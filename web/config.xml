@@ -36,7 +36,7 @@
   <section name="links">
     <title>Links</title>
     <item name="mint">
-      <title>FreeMiNT (our favourite operating system)</title>
+      <title>FreeMiNT</title>
       <link>http://www.freemint.de</link>
     </item>
     <item name="distro">
@@ -44,19 +44,19 @@
       <link>http://sparemint.atari.org</link>
     </item>
     <item name="sdl">
-      <title>SDL (the library we use)</title>
+      <title>SDL</title>
       <link>http://www.libsdl.org</link>
     </item>
     <item name="UAE">
-      <title>UAE (the CPU/FPU donor)</title>
+      <title>UAE</title>
       <link>http://www.freiburg.linux.de/~uae/</link>
     </item>
     <item name="basilisk">
-      <title>Basilisk II (the framework donor)</title>
+      <title>Basilisk II</title>
       <link>http://www.uni-mainz.de/~bauec002/B2Main.html</link>
     </item>
     <item name="bochs">
-      <title>Bochs (ATA donor)</title>
+      <title>Bochs</title>
       <link>http://bochs.sourceforge.net/</link>
     </item>
   </section>
