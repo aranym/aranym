@@ -399,11 +399,23 @@ bool XHDIDriver::setDiskSizeInBlocks(disk_t *disk)
 		return false;
 
 	struct stat buf;
+	long blocks = 0;
 	if (stat(disk->path, &buf))
 		return false;
 
-	// TODO: stat() doesn't handle physical devices (like /dev/hdaX), FIXME
-	long blocks = buf.st_size / XHDI_BLOCK_SIZE;
+	if (S_ISBLK(buf.st_mode)) {
+		int fd = open(disk->path, 0);
+		if (fd < 0) {
+			panicbug("open(%s) failed", disk->path);
+			return false;
+		}
+		blocks = lseek64(fd, 0, SEEK_END) / XHDI_BLOCK_SIZE;
+		close(fd);
+		panicbug("%ld blocks on %s", blocks, disk->path);
+	}
+	else {
+		blocks = buf.st_size / XHDI_BLOCK_SIZE;
+	}
 
 	if (disk->sim_root)
 		blocks++;	// add the virtual master boot record
