@@ -36,27 +36,27 @@ char genlock[] = {0};
 char unused[] = {1, 5};
 #endif
 
-char r_8[]   = {8};
-char g_8[]   = {8};
-char b_8[]   = {8};
-char r_16[]  = {5, 7, 6, 5, 4, 3};
-char g_16[]  = {6, 2, 1, 0, 15, 14, 13};
-char b_16[]  = {5, 12, 11, 10, 9, 8};
+char r_8[]	 = {8};
+char g_8[]	 = {8};
+char b_8[]	 = {8};
+char r_16[]	 = {5, 7, 6, 5, 4, 3};
+char g_16[]	 = {6, 2, 1, 0, 15, 14, 13};
+char b_16[]	 = {5, 12, 11, 10, 9, 8};
 char r_16f[] = {5, 15, 14, 13, 12, 11};
 char g_16f[] = {6, 10, 9, 8, 7, 6, 5};
 char b_16f[] = {5, 4, 3, 2, 1, 0};
-char r_32[]  = {8, 15, 14, 13, 12, 11, 10,  9,  8};
-char g_32[]  = {8, 23, 22, 21, 20, 19, 18, 17, 16};
-char b_32[]  = {8, 31, 30, 29, 28, 27, 26, 25, 24};
+char r_32[]	 = {8, 15, 14, 13, 12, 11, 10,	9,	8};
+char g_32[]	 = {8, 23, 22, 21, 20, 19, 18, 17, 16};
+char b_32[]	 = {8, 31, 30, 29, 28, 27, 26, 25, 24};
 char r_32f[] = {8, 23, 22, 21, 20, 19, 18, 17, 16};
-char g_32f[] = {8, 15, 14, 13, 12, 11, 10,  9,  8};
-char b_32f[] = {8,  7,  6,  5,  4,  3,  2,  1,  0};
+char g_32f[] = {8, 15, 14, 13, 12, 11, 10,	9,	8};
+char b_32f[] = {8,	7,	6,	5,	4,	3,	2,	1,	0};
 char none[] = {0};
 
-Mode mode[4] = /* FIXME: big ans little endian differences. */
-	{{ 8, CHUNKY | CHECK_PREVIOUS,               {r_8,  g_8,  b_8,  none, none, none}, 0,  2, 1, 1},
-	 {16, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_16, g_16, b_16, none, none, none}, 0,  2, 2, 1}, /*DEPTH_SUPPORT_565*/
-	 {24, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_32, g_32, b_32, none, none, none}, 0,  2, 2, 1}, /*DEPTH_SUPPORT_RGB*/
+Mode mode[4] = /* FIXME: big and little endian differences. */
+	{{ 8, CHUNKY | CHECK_PREVIOUS,				 {r_8,	g_8,  b_8,	none, none, none}, 0, 2, 1, 1},
+	 {16, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_16, g_16, b_16, none, none, none}, 0, 2, 2, 1}, /*DEPTH_SUPPORT_565*/
+	 {24, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_32, g_32, b_32, none, none, none}, 0, 2, 2, 1}, /*DEPTH_SUPPORT_RGB*/
 	 {32, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_32, g_32, b_32, none, none, none}, 0, 2, 2, 1}}; /*DEPTH_SUPPORT_ARGB*/
 
 extern Device device;
@@ -91,7 +91,7 @@ long wk_extend = 0;
 short accel_s = A_SET_PIX | A_GET_PIX | A_MOUSE | A_LINE | A_BLIT | A_FILL | A_EXPAND;
 short accel_c = A_SET_PAL | A_GET_COL;
 
-Mode *graphics_mode = &mode[0];
+Mode *graphics_mode = &mode[1];
 
 short debug = 0;
 
@@ -105,7 +105,7 @@ extern void *c_get_colour_8, *c_get_colour_16, *c_get_colour_32;
 
 void *set_colours_r = &c_set_colours_16;
 void *get_colours_r = &c_get_colours_16;
-void *get_colour_r  = &c_get_colour_16;
+void *get_colour_r	= &c_get_colour_16;
 
 #endif
 
@@ -120,7 +120,7 @@ extern short max_mode;
 
 extern Modes mode_tab[];
 
-char *preset[] = {"640x480x8@60    ", "800x600x8@70    ", "1024x768x8@70   ", "1152x864x8@70   ",
+char *preset[] = {"640x480x8@60	   ", "800x600x8@70	   ", "1024x768x8@70   ", "1152x864x8@70   ",
 		  "800x600x16@70   ", "1024x768x16@70  ", "1152x864x16@70  ", "1280x1024x16@70 ",
 		  "800x600x32@70   ", "1024x768x32@70  "};
 
@@ -131,14 +131,14 @@ long set_mode(const char **ptr);
 
 Option options[] = {
 #if 0
-   {"aesbuf",     set_aesbuf,     -1},  /* aesbuf address, set AES background buffer address */
-   {"screen",     set_screen,     -1},  /* screen address, set old screen address */
-   {"imgcache",   &cache_img,      1},  /* imgcache, turn on caching of images blitted to the screen */
+   {"aesbuf",	  set_aesbuf,	  -1},	/* aesbuf address, set AES background buffer address */
+   {"screen",	  set_screen,	  -1},	/* screen address, set old screen address */
+   {"imgcache",	  &cache_img,	   1},	/* imgcache, turn on caching of images blitted to the screen */
    {"screencache",&cache_from_screen, 1},  /* screencache, turn on caching of images blitted from the screen */
 #endif
-   {"mode",       set_mode,       -1},  /* mode key/<n>/WIDTHxHEIGHTxDEPTH@FREQ */
-   {"shadow",     &shadow,         1},  /* shadow, use a FastRAM buffer */
-   {"debug",      &debug,          2}   /* debug, turn on debugging aids */
+   {"mode",		  set_mode,		  -1},	/* mode key/<n>/WIDTHxHEIGHTxDEPTH@FREQ */
+   {"shadow",	  &shadow,		   1},	/* shadow, use a FastRAM buffer */
+   {"debug",	  &debug,		   2}	/* debug, turn on debugging aids */
 };
 
 
@@ -178,15 +178,15 @@ int search_mode(char *token)
 
 	b = 0;
 	while ((mode_tab[b].bpp != -1) &&
-	       ((unsigned int)mode_tab[b + 1].bpp <= bpp))
+		   ((unsigned int)mode_tab[b + 1].bpp <= bpp))
 		b++;
 	w = 0;
 	while ((mode_tab[b].res_freq[w].width != -1) &&
-	       ((unsigned int)mode_tab[b].res_freq[w + 1].width <= width))
+		   ((unsigned int)mode_tab[b].res_freq[w + 1].width <= width))
 		w++;
 	f = 0;
 	while ((f < mode_tab[b].res_freq[w].n) &&
-	       ((unsigned int)mode_tab[b].res_freq[w].freqs[f + 1].frequency <= freq))
+		   ((unsigned int)mode_tab[b].res_freq[w].freqs[f + 1].frequency <= freq))
 		f++;
 
 	return &mode_tab[b].res_freq[w].freqs[f] - res_info;
@@ -307,39 +307,39 @@ long check_token(char *token, const char **ptr)
    xtoken = token;
    switch (token[0]) {
    case '+':
-      xtoken++;
-      normal = 1;
-      break;
+	  xtoken++;
+	  normal = 1;
+	  break;
    case '-':
-      xtoken++;
-      normal = 0;
-      break;
+	  xtoken++;
+	  normal = 0;
+	  break;
    default:
-      normal = 1;
-      break;
+	  normal = 1;
+	  break;
    }
    for(i = 0; i < sizeof(options) / sizeof(Option); i++) {
-      if (access->funcs.equal(xtoken, options[i].name)) {
+	  if (access->funcs.equal(xtoken, options[i].name)) {
 	 switch (options[i].type) {
-	 case -1:     /* Function call */
-	    return ((long (*)(const char **))options[i].varfunc)(ptr);
-	 case 0:      /* Default 1, set to 0 */
-	    *(short *)options[i].varfunc = 1 - normal;
-	    return 1;
-	 case 1:     /* Default 0, set to 1 */
-	    *(short *)options[i].varfunc = normal;
-	    return 1;
-	 case 2:     /* Increase */
-	    *(short *)options[i].varfunc += -1 + 2 * normal;
-	    return 1;
+	 case -1:	  /* Function call */
+		return ((long (*)(const char **))options[i].varfunc)(ptr);
+	 case 0:	  /* Default 1, set to 0 */
+		*(short *)options[i].varfunc = 1 - normal;
+		return 1;
+	 case 1:	 /* Default 0, set to 1 */
+		*(short *)options[i].varfunc = normal;
+		return 1;
+	 case 2:	 /* Increase */
+		*(short *)options[i].varfunc += -1 + 2 * normal;
+		return 1;
 	 case 3:
 	   if (!(*ptr = access->funcs.skip_space(*ptr)))
-	      ;  /* *********** Error, somehow */
-	    *ptr = access->funcs.get_token(*ptr, token, 80);
+		  ;	 /* *********** Error, somehow */
+		*ptr = access->funcs.get_token(*ptr, token, 80);
 	   *(short *)options[i].varfunc = token[0];
 	   return 1;
 	 }
-      }
+	  }
    }
 
    return 0;
@@ -393,40 +393,37 @@ void CDECL initialize(Virtual *vwk)
 
 #ifdef ARANYM
 	if ( resolution.used ) {
+		resolution.bpp = graphics_mode->bpp; /* table value (like rounded down) --- e.g. no 23bit but 16 etc */
 		set_resolution( resolution.width, resolution.height, resolution.bpp, resolution.freq );
-	} else {
-		resolution.width = wk->screen.mfdb.width;
-		resolution.height = wk->screen.mfdb.height;
-		resolution.bpp = wk->screen.mfdb.bitplanes;
-	}
-#endif
+
+		wk->screen.mfdb.width = resolution.width;
+		wk->screen.mfdb.height = resolution.height;
+	} else
+		/* FIXME: Hack to get it working after boot in less than 16bit */
+		resolution.bpp = graphics_mode->bpp; /* 16bit bz default */
 
 	/*
-	 * Some things need to be changed from the
+	 * Some things need to be changed from the	
 	 * default workstation settings.
 	 */
-
-#ifdef ARANYM
 	wk->screen.mfdb.address = (void *)fb_base;
-	wk->screen.mfdb.width = resolution.width;
-	wk->screen.mfdb.height = resolution.height;
-	wk->screen.mfdb.wdwidth = ((long)resolution.width * graphics_mode->bpp) / 16;
-	wk->screen.mfdb.bitplanes = graphics_mode->bpp;
-	wk->screen.wrap = resolution.width * (graphics_mode->bpp / 8);
+	wk->screen.mfdb.wdwidth = ((long)wk->screen.mfdb.width * resolution.bpp) / 16;
+	wk->screen.mfdb.bitplanes = resolution.bpp;
+	wk->screen.wrap = wk->screen.mfdb.width * (resolution.bpp / 8);
 
-	wk->screen.coordinates.max_x = resolution.width - 1;
-	wk->screen.coordinates.max_y = (resolution.height & 0xfff0) - 1;    /* Desktop can't deal with non-16N heights */
+	wk->screen.coordinates.max_x = wk->screen.mfdb.width - 1;
+	wk->screen.coordinates.max_y = (wk->screen.mfdb.height & 0xfff0) - 1;	/* Desktop can't deal with non-16N heights */
 #endif
 
-	wk->screen.look_up_table = 0;			/* Was 1 (???)  Shouldn't be needed (graphics_mode) */
+	wk->screen.look_up_table = 0;			/* Was 1 (???)	Shouldn't be needed (graphics_mode) */
 	wk->screen.mfdb.standard = 0;
-	if (wk->screen.pixel.width > 0)        /* Starts out as screen width */
+	if (wk->screen.pixel.width > 0)		   /* Starts out as screen width */
 		wk->screen.pixel.width = (wk->screen.pixel.width * 1000L) / wk->screen.mfdb.width;
-	else                                   /*   or fixed DPI (negative) */
+	else								   /*	or fixed DPI (negative) */
 		wk->screen.pixel.width = 25400 / -wk->screen.pixel.width;
-	if (wk->screen.pixel.height > 0)        /* Starts out as screen height */
+	if (wk->screen.pixel.height > 0)		/* Starts out as screen height */
 		wk->screen.pixel.height = (wk->screen.pixel.height * 1000L) / wk->screen.mfdb.height;
-	else                                    /*   or fixed DPI (negative) */
+	else									/*	 or fixed DPI (negative) */
 		wk->screen.pixel.height = 25400 / -wk->screen.pixel.height;
 
 
@@ -465,6 +462,7 @@ void CDECL initialize(Virtual *vwk)
 #ifdef ARANYM
 #if 0
 	debug_aranym( wk->screen.mfdb.width ); /* STanda: ARAnyM emul_op debug call (20) */
+	debug_aranym( wk->screen.mfdb.bitplanes ); /* STanda: ARAnyM emul_op debug call (20) */
 #endif
 #endif
 

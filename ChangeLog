@@ -1,3 +1,9 @@
+2001/11/02 - STanda
+- fVDI: The driver now normally initializes to 16bit when no mode option
+  is provided in the fvdi.sys. The screen size remains the same as before
+  fvdi.prg initialization then.
+
+
 2001/11/01 - joy
 - mouse behaviour much improved. Automatic grab is configurable now. You can
   ungrab the mouse by Alt+Ctrl+Esc and grab it back by left mouse click.
