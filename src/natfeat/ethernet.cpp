@@ -1,7 +1,7 @@
 /**
- * Ethernet Emulation using tuntap driver in Linux
+ * Ethernet Card Emulation
  *
- * Standa and Joy of ARAnyM team (c) 2003 
+ * Standa and Joy of ARAnyM team (c) 2004 
  *
  * GPL
  */
@@ -14,18 +14,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <sys/poll.h>
-#include <sys/socket.h>
-#include <sys/wait.h>	// waitpid()
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <linux/if.h>
-
-#if defined(__FreeBSD__) || defined(sgi)
-#include <net/if.h>
-#endif
-
-#include <errno.h>
 
 #include <SDL.h>
 #include <SDL_thread.h>
@@ -36,9 +24,12 @@
  * Configuration zone begins
  */
 
-#define TAP_INIT	"aratapif"
-#define TAP_DEVICE	"tap0"
-#define TAP_MTU		"1500"
+#ifdef OS_cygwin
+#include "cygwin/ethernet_cygwin.h"
+#else
+#include "linux/ethernet_linux.h"
+#endif
+
 
 // Ethernet runs at interrupt level 3 by default but can be reconfigured
 #if 1
@@ -53,11 +44,11 @@
  * Configuration zone ends
  **************************/
 
+
 static ssize_t packet_length;
 static uint8 packet[1516];
 
 // Global variables
-static int fd = -1;							// fd of /dev/net/tun device
 static SDL_Thread *handlingThread;			// Packet reception thread
 static SDL_sem *intAck;					// Interrupt acknowledge semaphore
 
@@ -65,12 +56,15 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 {
 	D(bug("Ethernet: Dispatch %d", fncode));
 
+	// If disabled then do nothing (the initialization didn't went through)
+	if ( !handler ) return 0;
+
 	int32 ret = 0;
 	switch(fncode) {
-    	case GET_VERSION:
+		case GET_VERSION:
 			D(bug("Ethernet: getVersion"));
-    		ret = ARAETHER_NFAPI_VERSION;
-    		break;
+			ret = ARAETHER_NFAPI_VERSION;
+			break;
 
 		case XIF_INTLEVEL:	// what interrupt level is used?
 			D(bug("Ethernet: getINTlevel"));
@@ -99,7 +93,8 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 		case XIF_IRQ: // interrupt raised by native side thread polling tap0 interface
 			if ( !getParameter(0) ) {
 				D(bug("Ethernet: /IRQ"));
-				finishInterupt();
+				// Acknowledge interrupt to reception thread
+				SDL_SemPost(intAck);
 			} else {
 				D(bug("Ethernet: IRQ"));
 				ret = 0;	/* ethX requested the interrupt */
@@ -198,97 +193,26 @@ void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
 	Atari2Host_memcpy(packetToWrite, buffer, len );
 
 	// Transmit packet
-	if (write(fd, packetToWrite, len) < 0) {
+	if (handler->send(packetToWrite, len) < 0) {
 		D(bug("WARNING: Couldn't transmit packet"));
 	}
 }
 
-
-void ETHERNETDriver::finishInterupt()
-{
-	// Acknowledge interrupt to reception thread
-	D(bug(" Ethernet IRQ done"));
-	SDL_SemPost(intAck);
-}
 
 /*
  *  Initialization
  */
 bool ETHERNETDriver::init(void)
 {
-	// int nonblock = 1;
-	char devName[128]=TAP_DEVICE;
+	handlingThread = NULL;
+	handler = new ETHERNET_HANDLER_CLASSNAME;
 
-	// get the tunnel nif name if provided
-	if (strlen(bx_options.ethernet.tunnel))
-		strcpy(devName, bx_options.ethernet.tunnel);
-	
-	D(bug("Ethernet: init"));
-
-	fd = tapOpen( devName );
-	if (fd < 0) {
-		panicbug("NO_NET_DRIVER_WARN '%s': %s", devName, strerror(errno));
-		return false;
-	}
-
-	// if not a PPP then ok
 	strapply(bx_options.ethernet.type, tolower);
-	if ( strcmp(bx_options.ethernet.type,"ppp") )
-		return true;
-
-	int pid = fork();
-	if (pid < 0) {
-		panicbug("Ethernet ERROR: fork() failed. Ethernet disabled!");
-		close(fd);
-		fd = -1;
-		return false;
+	bool opened = handler->open( bx_options.ethernet.type );
+	if ( !opened ) {
+		delete handler;
+		handler = NULL;
 	}
-
-	if (pid == 0) {
-		// the arguments _need_ to be placed into the child process
-		// memory (otherwise this does not work here)
-		char *args[] = {
-			TAP_INIT, TAP_DEVICE,
-			bx_options.ethernet.ip_host,
-			bx_options.ethernet.ip_atari,
-			bx_options.ethernet.netmask,
-			TAP_MTU, NULL
-		};
-		int result;
-		result = execvp( TAP_INIT, args );
-		_exit(result);
-	}
-
-	D(bug("waiting for "TAP_INIT" at pid %d", pid));
-	int status;
-	waitpid(pid, &status, 0);
-	bool failed = true;
-	if (WIFEXITED(status)) {
-		int err = WEXITSTATUS(status);
-		if (err == 255) {
-			panicbug("Ethernet ERROR: "TAP_INIT" not found. Ethernet disabled!");
-		}
-		else if (err != 0) {
-			panicbug("Ethernet ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", err);
-		}
-		else {
-			failed = false;
-			D(bug("Ethernet: "TAP_INIT" initialized OK"));
-		}
-	} else {
-		panicbug("Ethernet ERROR: "TAP_INIT" could not be started. Ethernet disabled!");
-	}
-
-	// Close /dev/net/tun device if exec failed
-	if (failed) {
-		close(fd);
-		fd = -1;
-		return false;
-	}
-
-	// Set nonblocking I/O
-	//ioctl(fd, FIONBIO, &nonblock);
-
 	return true;
 }
 
@@ -303,24 +227,25 @@ void ETHERNETDriver::exit()
 	// Stop reception thread
 	stopThread(0 /* ethX */);
 
-	// Close /dev/net/tun device
-	if (fd > 0) {
-		close(fd);
-		fd = -1;
-	}
-}
-
-// ctor
-ETHERNETDriver::ETHERNETDriver()
-{
-	init();
+	if ( !handler ) return;
+	handler->close();
+	delete handler;
+	handler = NULL;
 }
 
 // reset, called upon OS reboot
 void ETHERNETDriver::reset()
 {
+	D(bug("Ethernet: reset"));
+
 	// TODO needs something smarter than exit&init
 	exit();
+	init();
+}
+
+// ctor
+ETHERNETDriver::ETHERNETDriver()
+{
 	init();
 }
 
@@ -335,7 +260,7 @@ ETHERNETDriver::~ETHERNETDriver()
  */
 bool ETHERNETDriver::startThread(int ethX)
 {
-	if (fd > 0 && !handlingThread) {
+	if (!handlingThread) {
 		D(bug("Ethernet: Start thread"));
 
 		if ((intAck = SDL_CreateSemaphore(0)) == NULL) {
@@ -343,7 +268,7 @@ bool ETHERNETDriver::startThread(int ethX)
 			return false;
 		}
 
-		handlingThread = SDL_CreateThread( receiveFunc, NULL );
+		handlingThread = SDL_CreateThread( receiveFunc, handler );
 		if (!handlingThread) {
 			D(bug("WARNING: Cannot start ETHERNETDriver thread"));
 			return false;
@@ -376,117 +301,25 @@ void ETHERNETDriver::stopThread(int ethX)
  */
 int ETHERNETDriver::receiveFunc(void *arg)
 {
+	Handler *handler = (Handler*)arg;
+
+	// Call protocol handler for received packets
+	// ssize_t length;
 	for (;;) {
-		D(bug("Ethernet: receive function"));
+		// Read packet device
+		packet_length = handler->recv(packet, 1514);
 
-		// Wait for packets to arrive
-		struct pollfd pf = {fd, POLLIN, 0};
-		int res = poll(&pf, 1, -1);
-		if (res <= 0)
-			break;
+		// Trigger ETHERNETDriver interrupt (call the m68k side)
+		D(bug(" packet received (len %d), triggering ETHERNETDriver interrupt", packet_length));
 
-		D(bug("Ethernet: going to read?"));
+		TRIGGER_INTERRUPT;
 
-		// Call protocol handler for received packets
-		// ssize_t length;
-		for (;;) {
-			// Read packet device
-			packet_length = read(fd, packet, 1514);
-			if (packet_length < 14)
-				break;
-
-			// Trigger ETHERNETDriver interrupt
-			D(bug(" packet received, triggering ETHERNETDriver interrupt"));
-
-			TRIGGER_INTERRUPT;
-
-			D(bug(" waiting for int acknowledge"));
-			// Wait for interrupt acknowledge by ETHERNETDriver::handleInteruptIf()
-			SDL_SemWait(intAck);
-			D(bug(" int acknowledged"));
-		}
+		// Wait for interrupt acknowledge (m68k network driver read interrupt to finish)
+		D(bug(" waiting for int acknowledge"));
+		SDL_SemWait(intAck);
+		D(bug(" int acknowledged"));
 	}
+
 	return 0;
 }
 
-
-
-/*
- * Allocate ETHERNETDriver TAP device, returns opened fd.
- * Stores dev name in the first arg(must be large enough).
- */
-int ETHERNETDriver::tapOpenOld(char *dev)
-{
-    char tapname[14];
-    int i, fd;
-
-    if( *dev ) {
-		sprintf(tapname, "/dev/%s", dev);
-		D(bug(" tapOpenOld %s", tapname));
-		return open(tapname, O_RDWR);
-    }
-
-    for(i=0; i < 255; i++) {
-		sprintf(tapname, "/dev/tap%d", i);
-		/* Open device */
-		if( (fd=open(tapname, O_RDWR)) > 0 ) {
-			sprintf(dev, "tap%d",i);
-			D(bug(" tapOpenOld %s", dev));
-			return fd;
-		}
-    }
-    return -1;
-}
-
-#ifdef HAVE_LINUX_IF_TUN_H /* New driver support */
-#include <linux/if_tun.h>
-
-/* pre 2.4.6 compatibility */
-#define OTUNSETNOCSUM  (('T'<< 8) | 200)
-#define OTUNSETDEBUG   (('T'<< 8) | 201)
-#define OTUNSETIFF     (('T'<< 8) | 202)
-#define OTUNSETPERSIST (('T'<< 8) | 203)
-#define OTUNSETOWNER   (('T'<< 8) | 204)
-
-int ETHERNETDriver::tapOpen(char *dev)
-{
-    struct ifreq ifr;
-
-    if( (fd = open("/dev/net/tun", O_RDWR)) < 0 ) {
-	    panicbug("Error opening /dev/net/tun. Check if module is loaded and privileges are OK");
-	    return tapOpenOld(dev);
-    }
-
-    memset(&ifr, 0, sizeof(ifr));
-
-    ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
-    if( *dev )
-	strncpy(ifr.ifr_name, dev, IFNAMSIZ);
-
-    if (ioctl(fd, TUNSETIFF, (void *) &ifr) < 0) {
-	    if (errno != EBADFD)
-		    goto failed;
-
-	    /* Try old ioctl */
-	    if (ioctl(fd, OTUNSETIFF, (void *) &ifr) < 0)
-		    goto failed;
-    }
-
-    strcpy(dev, ifr.ifr_name);
-
-    D(bug("Ethernet: if opened %s", dev));
-    return fd;
-
-  failed:
-    close(fd);
-    return -1;
-}
-
-#else
-
-int ETHERNETDriver::tapOpen(char *dev)
-{
-    return tapOpenOld(dev);
-}
-
-#endif /* New driver support */

@@ -6,28 +6,36 @@
  * GPL
  */
 
+#ifndef _ETHERNET_H
+#define _ETHERNET_H
+
 #include "nf_base.h"
 
 class ETHERNETDriver : public NF_Base
 {
+public:
+	class Handler {
+	public:
+		virtual bool open( const char *mode ) = 0;
+		virtual bool close() = 0;
+		virtual int recv(uint8 *buf, int len) = 0;
+		virtual int send(const uint8 *buf, int len) = 0;
+	};
+
+private:
+	Handler *handler;
+
 	int32 readPacketLength(int ethX);
 	void readPacket(int ethX, memptr buffer, uint32 len);
 	void sendPacket(int ethX, memptr buffer, uint32 len);
-
-	// interrupt handling
-	void finishInterupt();
 
 	bool init();
 	void exit();
 
 	// emulators handling the TAP device
-	static bool startThread(int ethX);
-	static void stopThread(int ethX);
+	bool startThread(int ethX);
+	void stopThread(int ethX);
 	static int receiveFunc(void *arg);
-
-	// the /dev/net/tun driver (TAP)
-	static int tapOpenOld(char *dev);
-	static int tapOpen(char *dev);
 
 protected:
 	typedef enum {HOST_IP, ATARI_IP, NETMASK} GET_PAR;
@@ -41,3 +49,5 @@ public:
 	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);
 };
+
+#endif // _ETHERNET_H

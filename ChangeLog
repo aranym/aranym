@@ -1,3 +1,10 @@
+2004/11/24 - STanda
+- TAP-Win32 networking for cygwin builds implemented and fully functional
+  The natfeat/ethernet.cpp split to natfeat card emulation and host OS
+  dependent driver part. The dependent part was moved to the appropriate
+  folder Unix/linux and Unix/cygwin.
+
+
 2004/11/21 - milan
 - CPU JIT: sync with the latest BII core, really many changes, amd64 corrected,
   cleanups

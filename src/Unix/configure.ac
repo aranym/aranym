@@ -250,12 +250,12 @@ DIRSEPARATOR='\"\/\"'
 
 case "$target_os" in
   linux*)
-    EXTRASYSSRCS=linux/parameters_linux.cpp
+    EXTRASYSSRCS="linux/parameters_linux.cpp linux/ethernet_linux.cpp"
     ;;
   cygwin*)
     DEFINES="$DEFINES -DARANYMHOME=\"\\\"aranym\\\"\""
     LIBS="$LIBS -liberty"
-    EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp"
+    EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp cygwin/ethernet_cygwin.cpp"
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
@@ -805,6 +805,11 @@ if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
     AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
     SYSSRCS="$SYSSRCS ../natfeat/ethernet.cpp"
     TAPIF="aratapif"
+    HAVE_ETHERNET="yes"
+  elif [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
+    AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
+    SYSSRCS="$SYSSRCS ../natfeat/ethernet.cpp"
+    TAPIF=""
     HAVE_ETHERNET="yes"
   else
     AC_MSG_WARN([Ethernet interface not supported on your system])
