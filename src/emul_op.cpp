@@ -181,6 +181,9 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		case M68K_EMUL_OP_MONd:
 		case M68K_EMUL_OP_MONe:
 			fprintf(stderr, "Monitor %08x\n", opcode);
+#if JIT_DEBUG
+			compiler_dumpstate();
+#else
 			fprintf(stderr, "d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"
 					"d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
 					"a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
@@ -206,8 +209,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 					r->sr,
 					(unsigned long)m68k_getpc(),
 					(unsigned long)ReadInt32(m68k_getpc()));
-#if JIT_DEBUG
-			compiler_dumpstate();
 #endif
 			break;
 		case M68K_EMUL_OP_DEBUGGER:

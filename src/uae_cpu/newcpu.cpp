@@ -23,7 +23,7 @@
 
 #include <cstdlib>
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #if defined(ENABLE_EXCLUSIVE_SPCFLAGS) && !defined(HAVE_HARDWARE_LOCKS)
@@ -674,7 +674,7 @@ void Exception(int nr, uaecptr oldpc)
 			}
 			else if (currprefs.cpu_level == 4)	{
 #endif
-	 panicbug("Exception Nr. %d CPC: %08lx NPC: %08lx SP=%08lx Addr: %08lx", nr, currpc, get_long (regs.vbr + 4*nr), m68k_areg(regs, 7), regs.mmu_fault_addr);
+	 D(panicbug("Exception Nr. %d CPC: %08lx NPC: %08lx SP=%08lx Addr: %08lx", nr, currpc, get_long (regs.vbr + 4*nr), m68k_areg(regs, 7), regs.mmu_fault_addr));
 	/* try to display more debug info - last instruction history */
 	if (currpc == prevpc) {
 #ifdef FULL_HISTORY

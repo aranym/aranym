@@ -948,7 +948,12 @@ dnl It needs computed gotos (supported by GNU C++)
 dnl DODO - test for computed gotos
 if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
   DEFINES="$DEFINES -DDISDIP"
-fi			
+fi
+
+dnl And also remove functions calls costs
+if [[ "xWANT_SIGSEGV_GOTO" = "xyes" ]]; then
+  AC_DEFINE(SIGSEGV_HANDLER_GOTO, 1, [Define if you want computed gotos for sigsegv handler])
+fi
 				
 dnl Select appropriate CPU source and REGPARAM define.
 ASM_OPTIMIZATIONS=none

@@ -6269,9 +6269,11 @@ void compiler_dumpstate(void)
 	panicbug("### Block in Atari address space");
 	panicbug("M68K block   : %p",
 			  (void *)last_regs_pc_p);
-	panicbug("Native block : %p (%d bytes)",
+	if (last_regs_pc_p != 0) {
+		panicbug("Native block : %p (%d bytes)",
 			  (void *)last_compiled_block_addr,
 			  get_blockinfo_addr(last_regs_pc_p)->direct_handler_size);
+	}
 	panicbug("");
 }
 #endif

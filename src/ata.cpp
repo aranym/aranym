@@ -1219,7 +1219,11 @@ if ( quantumsMax == 0)
 					  BX_SELECTED_CONTROLLER(channel).buffer[8+i] = vendor_id[i];
 
 				    // Product ID
+#ifdef WORDS_BIGENDIAN
 				    const char* product_id = "Turbo CD-ROM    ";
+#else
+				    const char* product_id = "rbTuCDo OM-R    ";
+#endif
 				    for (i = 0; i < 16; i++)
 					  BX_SELECTED_CONTROLLER(channel).buffer[16+i] = product_id[i];
 

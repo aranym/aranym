@@ -1,3 +1,11 @@
+2003/07/11 - milan
+- nice night - some stupid bugs in JIT compiler corrected:
+  - compiler_dumpstate() with no previous compilation
+  - not ended NEG in sigsegv handler
+  - etc. (sorry, it is too late)
+
+- ata.cpp: CD-ROM product ID corrected for little endian
+
 
 2003/06/26
 - ARANYM_0_8_0_BRANCH merged to main and tagged as _ABANDONED.

@@ -681,7 +681,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 		case 'g':
 			if (more_params(&inptr)) m68k_setpc(readhex(&inptr));
 			fill_prefetch_0();
-			grabMouse(true);
+			if (wasGrabbed) grabMouse(true);
 		//	deactivate_debugger();
 			if (do_breakpoints)
 				SPCFLAGS_SET( SPCFLAG_BRK );
@@ -1345,6 +1345,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.30  2002/10/15 21:26:53  milan
+ * non-cheaders support (for MipsPro C/C++ compiler)
+ *
  * Revision 1.29  2002/10/02 22:04:32  milan
  * ndebug supports breakpoints
  *

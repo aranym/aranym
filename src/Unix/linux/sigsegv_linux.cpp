@@ -12,6 +12,9 @@ typedef void (*sighandler_t)(int);
 int in_handler = 0;
 
 extern void compiler_status();
+#if JIT_DEBUG
+extern void compiler_dumpstate();
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -31,7 +34,10 @@ enum type_size_t {
 #if (__i386__)
 
 /* instruction jump table */
-//i386op_func *cpufunctbl[256];
+#if SIGSEGV_HANDLER_GOTO
+static void *sigsegvjmptbl[256];
+static bool sigsegvjmptbl_set = false;
+#endif
 
 enum instruction_t {
 	INSTR_UNKNOWN,
@@ -54,6 +60,17 @@ enum instruction_t {
 	INSTR_NEG8,
 	INSTR_NOT8,
 	INSTR_TESTIMM8
+};
+
+enum case_instr_t {
+	CASE_INSTR_ADD8MR	= 0x00,
+	CASE_INSTR_ADD8RM	= 0x02,
+	CASE_INSTR_OR8MR	= 0x08,
+	CASE_INSTR_OR8RM	= 0x0a,
+	CASE_INSTR_MOVxX	= 0x0f,
+	CASE_INSTR_MOVZX8RM	= 0xb6,
+	CASE_INSTR_MOVZX16RM	= 0xb7,
+	CASE_INSTR_MOVSX8RM	= 0xbe
 };
 
 static inline int get_instr_size_add(unsigned char *p)
@@ -112,6 +129,20 @@ static inline void set_eflags(int i, struct sigcontext *sc, type_size_t t) {
 		else sc->eflags &= 0xffffffbf;
 }
 
+static inline void *get_preg(int reg, struct sigcontext *sc, int size) {
+	switch (reg) {
+		case 0: return &(sc->eax);
+		case 1: return &(sc->ecx);
+		case 2: return &(sc->edx);
+		case 3: return &(sc->ebx);
+		case 4: return (((uae_u8*)&(sc->eax)) + 1);
+		case 5: return (size > 1) ? (void *)(&(sc->ebp)) : (void*)(((uae_u8*)&(sc->ecx)) + 1);
+		case 6: return (size > 1) ? (void*)(&(sc->esi)) : (void*)(((uae_u8*)&(sc->edx)) + 1);
+		case 7: return (size > 1) ? (void*)(&(sc->edi)) : (void*)(((uae_u8*)&(sc->ebx)) + 1);
+		default: abort();
+	}
+}
+
 static void segfault_vec(int x, struct sigcontext sc) {
 	memptr addr = sc.cr2;
 	memptr ainstr = sc.eip;
@@ -131,9 +162,18 @@ static void segfault_vec(int x, struct sigcontext sc) {
 		abort();
 	}
 #endif
+
+#if SIGSEGV_HANDLER_GOTO
+	if (!sigsegvjmptbl_set) {
+		for (int i = 0; i < 256; i++)
+			sigsegvjmptbl[i] = &&label_INSTR_UNKNOWN;
+		sigsegvjmptbl[CASE_INSTR_ADD8] = &&label_INSTR_ADD8_L;
+	}
+#endif
+
 	in_handler += 1;
 
-#ifdef JIT	/* does not compile with default configure */
+#ifdef USE_JIT	/* does not compile with default configure */
 	D(compiler_status());
 #endif
 	D(panicbug("\nBUS ERROR fault address is %08x at %08x", addr, ainstr));
@@ -153,7 +193,15 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	}
 	
 	switch (addr_instr[0]) {
-		case 0x02:
+		case CASE_INSTR_ADD8MR:
+			D(panicbug("ADD m8, r8"));
+			size = 1;
+			transfer_type = TYPE_STORE;
+			instruction = INSTR_ADD8;
+			reg = (addr_instr[1] >> 3) & 7;
+			len += 2 + get_instr_size_add(addr_instr + 1);
+			break;
+		case CASE_INSTR_ADD8RM:
 			D(panicbug("ADD r8, m8"));
 			size = 1;
 			transfer_type = TYPE_LOAD;
@@ -161,7 +209,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
-		case 0x08:
+		case CASE_INSTR_OR8MR:
 			D(panicbug("OR m8, r8"));
 			size = 1;
 			transfer_type = TYPE_STORE;
@@ -169,7 +217,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
-		case 0x0a:
+		case CASE_INSTR_OR8RM:
 			D(panicbug("OR r8, m8"));
 			size = 1;
 			transfer_type = TYPE_LOAD;
@@ -177,16 +225,16 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
-		case 0x0f:
+		case CASE_INSTR_MOVxX:
 			switch (addr_instr[1]) {
-				case 0xb6:
+				case CASE_INSTR_MOVZX8RM:
 					D(panicbug("MOVZX r32, m8"));
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_MOVZX8;
 					reg = (addr_instr[2] >> 3 ) & 7;
 					len += 3 + get_instr_size_add(addr_instr + 2);
 					break;
-				case 0xb7:
+				case CASE_INSTR_MOVZX16RM:
 					D(panicbug("MOVZX r32, m16"));
 					size = 2;
 					transfer_type = TYPE_LOAD;
@@ -194,7 +242,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 					reg = (addr_instr[2] >> 3 ) & 7;
 					len += 3 + get_instr_size_add(addr_instr + 2);
 					break;
-				case 0xbe:
+				case CASE_INSTR_MOVSX8RM:
 					D(panicbug("MOVSX r32, m8"));
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_MOVSX8;
@@ -369,24 +417,22 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	}
 
 	if (instruction == INSTR_UNKNOWN) {
+#if SIGSEGV_HANDLER_GOTO
+label_INSTR_UNKNOWN:
+#endif
 		panicbug("Unknown instruction %08x!", instr);
+#if USE_JIT
+		compiler_status();
+# if JIT_DEBUG
+		compiler_dumpstate();
+# endif
+#endif
 		abort();
 	}
 
 	if ((addr < 0x00f00000) || ((addr > 0x00ffffff) && (addr < 0xfff00000))) goto buserr;
 
-	switch (reg) {
-		case 0: preg = &(sc.eax); break;
-		case 1: preg = &(sc.ecx); break;
-		case 2: preg = &(sc.edx); break;
-		case 3: preg = &(sc.ebx); break;
-		case 4: preg = (((uae_u8*)&(sc.eax)) + 1); break;
-		case 5: preg = (size > 1) ? (void *)(&(sc.ebp)) : (void*)(((uae_u8*)&(sc.ecx)) + 1); break;
-		case 6: preg = (size > 1) ? (void*)(&(sc.esi)) : (void*)(((uae_u8*)&(sc.edx)) + 1); break;
-		case 7: preg = (size > 1) ? (void*)(&(sc.edi)) : (void*)(((uae_u8*)&(sc.ebx)) + 1); break;
-		default: abort();
-
-	}
+	preg = get_preg(reg, &sc, size);
 
 	D2(panicbug("Register %d, place %08x, address %08x", reg, preg, addr));
 
@@ -433,6 +479,9 @@ static void segfault_vec(int x, struct sigcontext sc) {
 				}
 				break;
 			case INSTR_ADD8:
+#if SIGSEGV_HANDLER_GOTO
+label_INSTR_ADD8_L:
+#endif
 				*((uae_u8 *)preg) += HWget_b(addr);
 				break;
 			case INSTR_CMP8:
@@ -479,6 +528,12 @@ static void segfault_vec(int x, struct sigcontext sc) {
 					HWput_w(addr, SDL_SwapBE16(*((uae_u16 *)preg)));
 				}
 				break;
+			case INSTR_AND8:
+				imm = HWget_b(addr);
+				imm &= *((uae_u8 *)preg);
+				HWput_b(addr, imm);
+				set_eflags(imm, &sc, TYPE_BYTE);
+				break;
 			case INSTR_OR8:
 				imm = HWget_b(addr);
 				imm |= *((uae_u8 *)preg);
@@ -515,6 +570,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 					sc.eflags &= 0xfffffffe;
 				else
 					sc.eflags |= 0x1;
+				break;
 			default: abort();
 		}
 	}
@@ -539,4 +595,9 @@ buserr:
 
 void install_sigsegv() {
 	signal(SIGSEGV, (sighandler_t)segfault_vec);
+#if SIGSEGV_HANDLER_GOTO
+	struct sigcontext sc;
+	segfault_vec(0, sc);
+	sigsegvjmptbl_set = true;
+#endif
 }
