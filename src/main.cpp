@@ -351,10 +351,11 @@ bool InitEmuTOS(void)
 	bool bEmuOK = (fread(ROMBaseHost, 1, RealROMSize, f) > 0);
 	fclose(f);
 	if (bEmuOK) {
-		printf("EmuTOS %02x/%02x/%04x loading... [OK]\n",
+		printf("EmuTOS %02x/%02x/%04x loading from '%s'... [OK]\n",
 			ROMBaseHost[0x18],
 			ROMBaseHost[0x19],
-			(ROMBaseHost[0x1a] << 8) | ROMBaseHost[0x1b]);
+			(ROMBaseHost[0x1a] << 8) | ROMBaseHost[0x1b],
+			emutos_path);
 	}
 	else
 		panicbug("EmuTOS image '%s' reading error.", rom_path);
@@ -371,7 +372,7 @@ bool InitOS(void)
 	 * Note that EmuTOS will always be available so this will be
 	 * a nice fallback.
 	 */
-	if (InitTOSROM())
+	if (!boot_emutos && InitTOSROM())
 		return true;
 	else if (InitEmuTOS())
 		return true;
@@ -530,6 +531,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.87  2002/10/25 07:37:08  joy
+ * SDL Timer check
+ *
  * Revision 1.86  2002/10/19 09:16:58  joy
  * cosmetics
  *
