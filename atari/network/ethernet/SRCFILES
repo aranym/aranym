@@ -1,0 +1,15 @@
+# This file gets included by the Makefile in this directory to determine
+# the files that should go only into source distributions.
+
+HEADER = \
+	araether.h 
+
+COMMON_SRCS = ../main.c
+ARAETHER_SRCS = aratie.s \
+		araether.c
+
+COBJS = \
+	$(COMMON_SRCS) \
+	$(ARAETHER_SRCS)
+
+SRCFILES = $(HEADER) $(COBJS)
