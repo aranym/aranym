@@ -45,7 +45,7 @@ uint32 RealROMSize;	// Real size of ROM
 
 uint32 TTRAMBase = 0x01000000;		// TT-RAM base (Atari address space)
 uint8 *TTRAMBaseHost;	// TT-RAM base (host address space)
-uint32 TTRAMSize;	// Size of TT-RAM
+uint32 TTRAMSize = 0;	// Size of TT-RAM
 
 uint32 VideoRAMBase = ARANYMVRAMSTART;	// VideoRAM base (Atari address space)
 uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)

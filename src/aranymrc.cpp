@@ -47,9 +47,7 @@
 #define Uses_TLabel
 #define Uses_TInputLine
 
-#ifndef HAVE_TVISION
 #include <tv.h>
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -379,5 +377,8 @@ int main(int argc, char **argv)
 
 /*
  * $Log$
+ * Revision 1.1  2001/08/29 18:36:25  milan
+ * Integration of TV conf. GUI, small patches of MMU and debugger
+ *
  *
  */

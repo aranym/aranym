@@ -30,13 +30,9 @@
 
 // CPU type (0 = 68000, 1 = 68010, 2 = 68020, 3 = 68030, 4 = 68040/060)
 extern int CPUType;
-// MJ extern bool CPUIs68060;		// Flag to distinguish 68040 and 68060
 
 // FPU type (0 = no FPU, 1 = 68881, 2 = 68882)
 extern int FPUType;
-
-// Flag: 24-bit-addressing?
-extern bool TwentyFourBitAddressing;
 
 // 68k register structure (for Execute68k())
 struct M68kRegisters {
@@ -52,7 +48,6 @@ extern bool grabMouse(bool grab);
 extern void invoke200HzInterrupt(void);
 
 // Platform-specific functions
-extern void FlushCodeCache(void *start, uint32 size);	// Code was patched, flush caches if neccessary
 extern void QuitEmulator(void);				// Quit emulator
 
 /*
@@ -77,6 +72,9 @@ extern void ClearInterruptFlag(uint32 flag);
 
 /*
  * $Log$
+ * Revision 1.8  2001/09/21 14:23:33  joy
+ * little things just to make it compilable
+ *
  * Revision 1.7  2001/09/10 15:21:57  joy
  * virtualInterrupt, will be called with 200 Hz freq.
  *

@@ -48,15 +48,6 @@
 
 // Constants
 const char ROM_FILE_NAME[] = DATADIR "/ROM";
-const int SCRATCH_MEM_SIZE = 0x10000;	// Size of scratch memory area
-
-#if USE_SCRATCHMEM_SUBTERFUGE
-uint8 *ScratchMem = NULL;			// Scratch memory for Mac ROM writes
-#endif
-
-#if REAL_ADDRESSING
-static bool lm_area_mapped = false;	// Flag: Low Memory area mmap()ped
-#endif
 
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
@@ -102,10 +93,9 @@ int main(int argc, char **argv)
 	if (start_debug) ndebug::init();
 #endif
 
-#ifndef SRACKA
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
-	TTRAMSize = TTRAMSize & -getpagesize();					// Round down to page boundary
-#endif
+	// Round down to page boundary
+	TTRAMSize = TTRAMSize & -getpagesize();
 
 	// Initialize VM system
 	vm_init();
@@ -116,32 +106,15 @@ int main(int argc, char **argv)
 	
 	// Under Solaris/SPARC and NetBSD/m68k, Basilisk II is known to crash
 	// when trying to map a too big chunk of memory starting at address 0
-#if defined(OS_solaris) || defined(OS_netbsd)
-	const bool can_map_all_memory = false;
-#else
-	const bool can_map_all_memory = true;
-#endif
 	
 	// Try to allocate all memory from 0x0000, if it is not known to crash
-	if (can_map_all_memory && (vm_acquire_fixed(0, RAMSize + ROMSize + TTRAMSize) == 0)) {
+	if (vm_acquire_fixed(0, RAMSize + ROMSize + TTRAMSize) == 0) {
 		D(bug("Could allocate RAM and ROM from 0x0000"));
 		memory_mapped_from_zero = true;
 	}
-	
-	// Otherwise, just create the Low Memory area (0x0000..0x2000)
-	else if (vm_acquire_fixed(0, 0x2000) == 0) {
-		D(bug("Could allocate the Low Memory globals"));
-		lm_area_mapped = true;
-	}
-	
-	// Exit on failure
-	else {
-		ErrorAlert("Cannot map Low Memory Globals.\n");
-		QuitEmulator();
-	}
 #endif
 
-	// Create areas for Mac RAM and ROM
+	// Create areas for Atari RAM and ROM
 #if REAL_ADDRESSING
 	if (memory_mapped_from_zero) {
 		RAMBaseHost = (uint8 *)0;
@@ -160,37 +133,20 @@ int main(int argc, char **argv)
 		}
 	}
 
-#if USE_SCRATCHMEM_SUBTERFUGE
-	// Allocate scratch memory
-	ScratchMem = (uint8 *)vm_acquire(SCRATCH_MEM_SIZE);
-	if (ScratchMem == VM_MAP_FAILED) {
-		ErrorAlert("Not enough free memory.\n");
-		QuitEmulator();
-	}
-	ScratchMem += SCRATCH_MEM_SIZE/2;	// ScratchMem points to middle of block
-#endif
-
 #if DIRECT_ADDRESSING
 	// RAMBase shall always be zero
 	MEMBaseDiff = (uintptr)RAMBaseHost;
-	RAMBase = 0;
-	ROMBase = 0xe00000;
-	TTRAMBase = 0x1000000;
 #endif
-#if REAL_ADDRESSING
-	RAMBase = (uint32)RAMBaseHost;
-	ROMBase = (uint32)ROMBaseHost;
-	TTRAMBase = (uint32)TTRAMBaseHost;
-#endif
-#else /* SRACKA */
-	RAMBaseHost = (uint8 *)malloc((14+2)*1024*1024 + TTRAMSize);
+
+#else
+	if ((RAMBaseHost = (uint8 *)malloc(RAMSize + ROMSize + TTRAMSize)) == NULL) {
+		ErrorAlert("Not enough free memory.\n");
+		QuitEmulator();
+	}
 	MEMBaseDiff = (uintptr)RAMBaseHost;
-	RAMBase = 0;
-	ROMBase = 0xe00000;
-	ROMBaseHost = ROMBase + RAMBaseHost;
-	TTRAMBase = 0x1000000;
-	TTRAMBaseHost = TTRAMBase + RAMBaseHost;
-#endif /* SRACKA */
+	ROMBaseHost = (uint8 *)(RAMBaseHost + ROMBase);
+	TTRAMBaseHost = (uint8 *)(RAMBaseHost + TTRAMBase);
+#endif
 
 	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
@@ -248,7 +204,7 @@ void QuitEmulator(void)
 #endif
 
 	// Free ROM/RAM areas
-#ifndef SRACKA
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
 	if (RAMBaseHost != VM_MAP_FAILED) {
 		vm_release(RAMBaseHost, RAMSize);
 		RAMBaseHost = NULL;
@@ -261,43 +217,21 @@ void QuitEmulator(void)
 		vm_release(ROMBaseHost, TTRAMSize);
 		ROMBaseHost = NULL;
 	}
-
-#if USE_SCRATCHMEM_SUBTERFUGE
-	// Delete scratch memory area
-	if (ScratchMem != (uint8 *)VM_MAP_FAILED) {
-		vm_release((void *)(ScratchMem - SCRATCH_MEM_SIZE/2), SCRATCH_MEM_SIZE);
-		ScratchMem = NULL;
-	}
+#else
+	free(RAMBaseHost);
 #endif
 
-#if REAL_ADDRESSING
-	// Delete Low Memory area
-	if (lm_area_mapped)
-		vm_release(0, 0x2000);
-#endif
-	
 	// Exit VM wrappers
 	vm_exit();
-#else /* SRACKA */
-	free(RAMBaseHost);
-#endif /* SRACKA */
 
 	exit(0);
 }
 
-
-/*
- *  Code was patched, flush caches if neccessary (i.e. when using a real 680x0
- *  or a dynamically recompiling emulator)
- */
-
-void FlushCodeCache(void *start, uint32 size)
-{
-}
-
-
 /*
  * $Log$
+ * Revision 1.45  2001/09/21 14:24:10  joy
+ * little things just to make it compilable
+ *
  * Revision 1.44  2001/09/11 11:45:27  joy
  * one more debug line never hurts.
  *
