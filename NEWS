@@ -1,3 +1,42 @@
+2002/04/11 - version 0.1.5 released
+==========
+
+ Since the previous public release we made a lot of changes. Probably the most
+ significant is the large rewrite of CPU. Current ARAnyM can be compiled
+ with full PMMU (Memory Management Unit of Motorola 68040 CPU). This brings
+ the ability to run FreeMiNT with memory protection enabled. It also opens
+ door for running Unix-like operating systems (Linux or NetBSD for m68k)
+ but unfortunately the current level of HW emulation is not sufficient for
+ those yet. But we are working on it (and gladly accept any help from you!)
+
+ While rewriting the CPU we also updated the FPU. ARAnyM's FPU now fully
+ supports all MC68881/2 as well as MC86040 FPU instructions.
+ 
+ There is also a developer version of ARAnyM with JIT (just-in-time compiler)
+ but it is not stable enough yet.
+
+ SGI/Irix is yet another supported host platform and we have added preliminary
+ support for MiNT as the host platform ;-)
+
+ On most supported host platforms the memory access was accelerated (thus
+ the overall speed of ARAnyM increased).
+
+ ARAnyM is the first Atari compatible platform with support for the native
+ instruction interface (Native Features). That will bring new possibilities
+ for next generation Atari software.
+
+ AranymFS - our system clean MetaDOS driver for accessing host filesystem
+ was greatly bugfixed. During debugging of this some Atari software proven
+ to be ill-designed (such as PureC IDE - it is unable to cope with files
+ on MetaDOS drives due to misusing certain range of GEMDOS handles. We
+ developed a patch for it so now you can enjoy compiling with PureC on
+ host filesystem).
+
+ The other improvements include new IDE emulation (including ATAPI CD-ROM,
+ try e.g. ejecting the CD from within Thing desktop), new config file
+ is created with correct default values, and many other fixes.
+
+
 2002/02/12 - version 0.0.21 released
 ==========
 
