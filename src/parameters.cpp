@@ -42,9 +42,7 @@ char *config_file = NULL;
 
 uint8 start_debug = 0;			// Start debugger
 int8 monitor = -1;				// VGA
-#ifndef FixedSizeFastRAM
-uint32 FastRAMSizeMB;
-#endif
+static uint32 FastRAMSizeMB;
 uint32 FastRAMSize;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 bool grabMouseAllowed = true;
@@ -57,9 +55,7 @@ bx_options_t bx_options;
 struct Config_Tag global_conf[]={
 	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
 	{ "EmuTOS", String_Tag, emutos_path, sizeof(emutos_path)},
-#ifndef FixedSizeFastRAM
 	{ "FastRAM", Int_Tag, &FastRAMSizeMB},
-#endif
 	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path)},
 	{ "Cookie_MCH", HexLong_Tag, &bx_options.cookies._mch},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab},
@@ -198,9 +194,7 @@ void update_cdrom1() {
 }
 
 int saveSettings(const char *fs) {
-#ifndef FixedSizeFastRAM
 	FastRAMSizeMB = FastRAMSize / 1024 / 1024;
-#endif
 	update_config(fs,global_conf,"[GLOBAL]");
 	update_config(fs,diskc_configs,"[IDE0]");
 	update_config(fs,diskd_configs,"[IDE1]");

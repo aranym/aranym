@@ -778,28 +778,30 @@ bool InitTOSROM(void)
 	ROMBaseHost[0x00418] = (bx_options.cookies._mch >> 8) & 0xff;
 	ROMBaseHost[0x00419] = (bx_options.cookies._mch) & 0xff;
 
-	// patch FastRAM
-	int ramtop = (FastRAMBase + FastRAMSize);
-	ROMBaseHost[0x001CC] = 0x4E;
-	ROMBaseHost[0x001CD] = 0xF9;	// JMP <abs.addr>
-	ROMBaseHost[0x001CE] = 0x00;
-	ROMBaseHost[0x001CF] = 0xE7;
-	ROMBaseHost[0x001D0] = 0xFF;
-	ROMBaseHost[0x001D1] = 0x00;	// abs.addr = $E7FF00
-	ROMBaseHost[0x7FF00] = 0x21;
-	ROMBaseHost[0x7FF01] = 0xFC;	// MOVE.L #imm, abs.addr.w
-	ROMBaseHost[0x7FF02] = ramtop >> 24;
-	ROMBaseHost[0x7FF03] = ramtop >> 16;
-	ROMBaseHost[0x7FF04] = ramtop >> 8;
-	ROMBaseHost[0x7FF05] = ramtop;
-	ROMBaseHost[0x7FF06] = 0x05;
-	ROMBaseHost[0x7FF07] = 0xA4;	// abs.addr.w = $5A4
-	ROMBaseHost[0x7FF08] = 0x4E;
-	ROMBaseHost[0x7FF09] = 0xF9;	// JMP <abs.addr>
-	ROMBaseHost[0x7FF0A] = 0x00;
-	ROMBaseHost[0x7FF0B] = 0xE0;
-	ROMBaseHost[0x7FF0C] = 0x01;
-	ROMBaseHost[0x7FF0D] = 0xD2;	// abs.addr = $E001D2
+	// patch TOS 4.04 to show FastRAM memory test
+	if (FastRAMSize > 0) {
+		uint32 ramtop = (FastRAMBase + FastRAMSize);
+		ROMBaseHost[0x001CC] = 0x4E;
+		ROMBaseHost[0x001CD] = 0xF9;	// JMP <abs.addr>
+		ROMBaseHost[0x001CE] = 0x00;
+		ROMBaseHost[0x001CF] = 0xE7;
+		ROMBaseHost[0x001D0] = 0xFF;
+		ROMBaseHost[0x001D1] = 0x00;	// abs.addr = $E7FF00
+		ROMBaseHost[0x7FF00] = 0x21;
+		ROMBaseHost[0x7FF01] = 0xFC;	// MOVE.L #imm, abs.addr.w
+		ROMBaseHost[0x7FF02] = ramtop >> 24;
+		ROMBaseHost[0x7FF03] = ramtop >> 16;
+		ROMBaseHost[0x7FF04] = ramtop >> 8;
+		ROMBaseHost[0x7FF05] = ramtop;
+		ROMBaseHost[0x7FF06] = 0x05;
+		ROMBaseHost[0x7FF07] = 0xA4;	// abs.addr.w = $5A4
+		ROMBaseHost[0x7FF08] = 0x4E;
+		ROMBaseHost[0x7FF09] = 0xF9;	// JMP <abs.addr>
+		ROMBaseHost[0x7FF0A] = 0x00;
+		ROMBaseHost[0x7FF0B] = 0xE0;
+		ROMBaseHost[0x7FF0C] = 0x01;
+		ROMBaseHost[0x7FF0D] = 0xD2;	// abs.addr = $E001D2
+	}
 
 #ifdef DIRECT_TRUECOLOR
 	// patch it for direct TC mode
@@ -831,10 +833,10 @@ bool InitOS(void)
 	// EmuTOS is the future. That's why I give it the precedence over the TOS ROM
 	if (strlen(emutos_path) > 0) {
 		// read EmuTOS file
-		D(bug("Reading EmuTOS..."));
+		D(bug("Reading EmuTOS: '%s'", emutos_path));
 		FILE *f = fopen(emutos_path, "rb");
 		if (f == NULL) {
-			ErrorAlert("EmuTOS file not found\n");
+			ErrorAlert("EmuTOS not found\n");
 			return false;
 		}
 		fread(ROMBaseHost, 1, ROMSize, f);
@@ -870,21 +872,22 @@ bool InitAll(void)
 	if (! InitOS())
 		return false;
 
+	int sdlInitParams = SDL_INIT_VIDEO;
 #ifdef USE_TIMERS
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
-#else
-	if (SDL_Init(SDL_INIT_VIDEO /*| SDL_INIT_TIMER */ ) != 0)
+	sdlInitParams |= SDL_INIT_TIMER;
 #endif
-	{
+	if (SDL_Init(sdlInitParams) != 0) {
 		ErrorAlert("SDL initialization failed.");
 		return false;
-	} else {
-		char driverName[32];
-		SDL_VideoDriverName( driverName, 31 );
-		D(bug("Video driver name: %s", driverName));
-		if ( strstr( driverName, "fb" ) )
-			bx_options.video.fullscreen = true;
 	}
+
+	// check video output device and if it's a framebuffer
+	// then enforce full screen
+	char driverName[32];
+	SDL_VideoDriverName( driverName, sizeof(driverName)-1 );
+	D(bug("Video driver name: %s", driverName));
+	if ( strstr( driverName, "fb" ) )		// fullscreen on framebuffer
+		bx_options.video.fullscreen = true;
 
 	// Be sure that the atexit function do not double any cleanup already done
 	// thus I changed the SDL_Quit to ExitAll & removed the ExitAll from QuitEmulator
@@ -893,10 +896,8 @@ bool InitAll(void)
 	CPUType = 4;
 	FPUType = 1;
 
-        // Setting "SP & PC"
+	// Setting "SP & PC"
 	for (int i = 0; i < 8; i++) RAMBaseHost[i] = ROMBaseHost[i];
-
-	//  SDL_EnableUNICODE(1);
 
 	init_fdc();
 
@@ -969,6 +970,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.54  2001/12/27 22:31:49  joy
+ * TOS patch to enable FastRAM visual check
+ *
  * Revision 1.53  2001/12/22 18:13:24  joy
  * most video related parameters moved to bx_options.video struct.
  * --refresh <x> added
