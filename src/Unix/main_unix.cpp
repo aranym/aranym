@@ -456,6 +456,10 @@ int main(int argc, char **argv)
 	}
 	atexit(SDL_Quit);
 
+	// The fullscreen mode implies mouse grab (standa)
+	if (fullscreen)
+		grab_mouse = true;
+
 	// grab mouse
 	if (grab_mouse) {
 		grabMouse(true);
@@ -590,6 +594,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.30  2001/07/03 23:02:41  milan
+ * cleaning
+ *
  * Revision 1.28  2001/06/21 20:20:01  standa
  * XMOUSEHACK define removed. This problem was solved directly within the
  * SDL x11 driver. SDL_GrabInput() function was patched to put the
