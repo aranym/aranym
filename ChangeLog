@@ -1,3 +1,7 @@
+2003/10/17 - Xavier
+- real trap for double bus errors
+
+
 2003/10/14 - patrice
 - newcpu.cpp: added exception per second limiter, configurable in .aranymrc
 

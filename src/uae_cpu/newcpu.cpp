@@ -689,6 +689,8 @@ static long last_exception_time=-1;
 static long exception_per_sec=0;
 #endif
 
+static int building_bus_fault_stack_frame=0;
+
 void Exception(int nr, uaecptr oldpc)
 {
     uae_u32 currpc = m68k_getpc ();
@@ -751,6 +753,13 @@ void Exception(int nr, uaecptr oldpc)
 	}
 	prevpc = currpc;
 
+	if (building_bus_fault_stack_frame) {
+		panicbug("HALT: Double bus fault detected !");
+		QuitEmulator();
+	}
+
+	building_bus_fault_stack_frame=1;
+
 	/* 68040 */
 	exc_push_long(0);	/* PD3 */
 	exc_push_long(0);	/* PD2 */
@@ -768,6 +777,8 @@ void Exception(int nr, uaecptr oldpc)
 	exc_push_word(regs.mmu_ssw);
 	exc_push_long(0 /* was regs.mmu_fault_addr */);	/* EA *//* bullshit here, took 10 hours to debug with PureC $12345678 test. It should be an internal register, keep 0 to preserve MSP in PureC */
 	exc_make_frame(7, regs.sr, currpc, 2, 0, 0);
+
+	building_bus_fault_stack_frame=0;
     } else if (nr == 3) {
 	exc_make_frame(2, regs.sr, last_addr_for_exception_3, nr,
 			last_fault_for_exception_3 & 0xfffffffe, 0);
