@@ -8,11 +8,13 @@
 #define DSP_RAMSIZE 32768
 
 /* Dsp State */
-#define DSP_BOOTING 0		/* Dsp loads bootstrap code */
-#define DSP_RUNNING 1		/* Execute instructions */
-#define DSP_WAITHOSTWRITE 2	/* Dsp waits for host to write data */
-#define DSP_WAITHOSTREAD 3	/* Dsp waits for host to read data */
-#define DSP_HALT 4
+#define DSP_BOOTING			0	/* Dsp loads bootstrap code */
+#define DSP_RUNNING			1	/* Execute instructions */
+#define DSP_WAITHOSTWRITE	2	/* Dsp waits for host to write data */
+#define DSP_WAITHOSTREAD	3	/* Dsp waits for host to read data */
+#define DSP_HALT			4	/* Dsp is halted */
+#define DSP_STOPTHREAD		5	/* Stop emulation thread */
+#define DSP_STOPPEDTHREAD	6	/* Dsp thread stopped and finished */
 
 /* Host port, CPU side */
 #define CPU_HOST_ICR	0x00

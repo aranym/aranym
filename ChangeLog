@@ -1,4 +1,8 @@
-2004/02/05 joy (on behalf of Carlo)
+2004/02/05 - patrice
+- New DSP thread killing when shutdown.
+
+
+2004/02/05 - joy (on behalf of Carlo)
 - MacOSX/*: modified the project for version 0.8.6. Also included a shell
   script for calling the autogen.sh inside the project.
 

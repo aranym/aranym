@@ -145,14 +145,14 @@ void DSP::reset(void)
 {
 	int i;
 
+	/* Kill existing thread and semaphore */
+	shutdown();
+
 	/* Pause thread */
 	state = DSP_BOOTING;
 #if DSP_DISASM_STATE
 	D(bug("Dsp: state = BOOTING"));
 #endif
-
-	/* Kill existing thread and semaphore */
-	shutdown();
 
 	/* Memory */
 	memset(periph, 0,sizeof(periph));
@@ -200,10 +200,25 @@ void DSP::reset(void)
 void DSP::shutdown(void)
 {
 	if (dsp56k_thread != NULL) {
-		SDL_KillThread(dsp56k_thread);
-		dsp56k_thread = NULL;
+
+		/* Stop thread */
+		state = DSP_STOPTHREAD;
+#if DSP_DISASM_STATE
+		D(bug("Dsp: state = STOPTHREAD"));
+#endif
+
+		/* Release semaphore, if thread waiting for it */
+		if (SDL_SemValue(dsp56k_sem)==0) {
+			SDL_SemPost(dsp56k_sem);
+		}
+
+		/* Wait for the thread to finish */
+		while (state != DSP_STOPPEDTHREAD) {
+			SDL_Sleep(0);
+		}
 	}
 
+	/* Destroy the semaphore */
 	if (dsp56k_sem != NULL) {
 		SDL_DestroySemaphore(dsp56k_sem);
 		dsp56k_sem = NULL;
