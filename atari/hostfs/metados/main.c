@@ -69,6 +69,7 @@ void _cdecl ShowBanner( void )
 /* ../aranym_xfs and ../aranym_dev internals used */
 extern long     _cdecl aranym_fs_native_init(int fs_devnum, char *mountpoint, char *hostroot, int halfsensitive,
 											 void *fs, void *fs_dev);
+extern void* ara_fs_root;
 extern FILESYS aranym_fs;
 extern DEVDRV  aranym_fs_devdrv;
 
@@ -76,7 +77,7 @@ extern DEVDRV  aranym_fs_devdrv;
 void* _cdecl InitDevice( long bosDevID, long dosDevID )
 {
 	static fcookie root;
-	char mountPoint[2] = "a:";
+	char mountPoint[3] = "a:";
 	mountPoint[0] += (bosDevID = (bosDevID-'A')&0x1f); // mask out bad values of the bosDevID
 
 	/*
@@ -84,7 +85,7 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 	 * because MetaDOS (in contrary to BetaDOS) does not provide
 	 * the dosDevID
 	 */
-	DEBUG(("InitDevice: %s [%ld - %lx]: [%ld]", mountPoint, dosDevID, dosDevID, bosDevID ));
+	DEBUG(("InitDevice: %s [%ld - %lx]: [%ld] addr: %lx", mountPoint, dosDevID, dosDevID, bosDevID, &ara_fs_root ));
 
 	aranym_fs_init();
 	aranym_fs_native_init(bosDevID, mountPoint, "/tmp", 1,
@@ -105,6 +106,9 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 /**
  * $Log$
+ * Revision 1.3  2003/03/03 20:39:44  standa
+ * Parameter passing fixed.
+ *
  * Revision 1.2  2002/12/11 08:05:54  standa
  * The /tmp/calam host fs mount point changed to /tmp one.
  *
