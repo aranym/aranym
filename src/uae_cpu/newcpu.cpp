@@ -714,7 +714,6 @@ static int building_bus_fault_stack_frame=0;
 void Exception(int nr, uaecptr oldpc)
 {
     uae_u32 currpc = m68k_getpc ();
-    int i;
     MakeSR();
     if (!regs.s) {
 	regs.usp = m68k_areg(regs, 7);

@@ -27,7 +27,7 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #include <cstdio>
@@ -327,6 +327,7 @@ int LiloCheckKernel(
 	void *kernel, unsigned long kernel_length,
 	void *ramdisk, unsigned long ramdisk_length)
 {
+	DUNUSED(kernel_length);
     Elf32_Ehdr *kexec_elf;	/* header of kernel executable */
     Elf32_Phdr *kernel_phdrs;
 	unsigned long min_addr=0xffffffff, max_addr=0;

@@ -414,6 +414,7 @@ int FVDIDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y, uint32 color)
  **/
 uint32 FVDIDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 {
+	DUNUSED(vwk);
 	uint32 color = 0;
 
 	if (!src) {
@@ -483,6 +484,7 @@ void FVDIDriver::getHwColor(uint16 index, uint32 red, uint32 green, uint32 blue,
  **/
 void FVDIDriver::setColor(memptr vwk, uint32 paletteIndex, uint32 red, uint32 green, uint32 blue)
 {
+	DUNUSED(vwk);
 	D(bug("fVDI: setColor [NULL]: %03d (%03d) - %04d,%04d,%04d - %02x,%02x,%02x", paletteIndex, toTosColors(paletteIndex) & 0xff, red, green, blue, (uint8)((red * ((1L << 8) - 1) + 500L) / 1000), (uint8)((green * ((1L << 8) - 1) + 500L) / 1000), (uint8)((blue * ((1L << 8) - 1) + 500L) / 1000) ));
 
 	if (hostScreen.getBpp() != 2)
@@ -502,6 +504,7 @@ void FVDIDriver::setColor(memptr vwk, uint32 paletteIndex, uint32 red, uint32 gr
 
 void FVDIDriver::setResolution(int32 width, int32 height, int32 depth, int32 freq)
 {
+	DUNUSED(freq);
 	D(bug("fVDI: setResolution: %dx%dx%d@%d", width, height, depth, freq));
 	hostScreen.setWindowSize(width, height, depth > 8 ? depth : 8);
 }
@@ -624,6 +627,8 @@ int FVDIDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode, uint32 data,
 		      uint32 fgColor, uint32 bgColor,
  uint32 mouse_type)
 {
+	DUNUSED(wk);
+	DUNUSED(mouse_type);
 	D2(bug("fVDI: mouse mode: %x", mode));
 
 	switch (mode) {
@@ -793,6 +798,7 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
                            int32 w, int32 h, uint32 logOp,
 		      uint32 fgColor, uint32 bgColor)
 {
+	DUNUSED(vwk);
 	if (hostScreen.getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
@@ -1046,6 +1052,7 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
 		         uint32 fgColor, uint32 bgColor,
 			 uint32 logOp, uint32 interior_style)
 {
+	DUNUSED(interior_style);
 	if (hostScreen.getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
@@ -1192,6 +1199,7 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
 int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
                          int32 w, int32 h, uint32 logOp)
 {
+	DUNUSED(vwk);
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d", "blitArea", logOp, sx, sy, dx, dy, w, h ));
 	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest,
               (src) ? (ReadInt32(src)) : 0, (dest) ? (ReadInt32(dest)) : 0));
@@ -1849,6 +1857,7 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
                          memptr pattern_addr, uint32 fgColor, uint32 bgColor,
 			 uint32 logOp, uint32 interior_style, memptr clip)
 {
+	DUNUSED(interior_style);
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
 
@@ -2018,6 +2027,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.60  2005/01/11 20:32:13  standa
+ * One more bugfix regarding the pointers and 64bit clean.
+ *
  * Revision 1.59  2005/01/11 19:02:52  standa
  * 64bit cleanup revisited.
  *

@@ -7,6 +7,9 @@
 #include "sysdeps.h"
 #include "file.h"
 
+#define DEBUG 0
+#include "debug.h"
+
 #ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
 # include <cstdio>
@@ -281,6 +284,7 @@ bool File_FileNameIsST(char *pszFileName)
 */
 void *File_Read(const char *pszFileName, void *pAddress, long *pFileSize, char *ppszExts[])
 {
+	DUNUSED(ppszExts);
   FILE *DiscFile;
   void *pFile=NULL;
   long FileSize=0;

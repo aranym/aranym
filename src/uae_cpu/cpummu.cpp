@@ -112,8 +112,8 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 		PTR_TABLE_SIZE = 128,
 		PAGE_TABLE_SIZE = 64,
 		ROOT_INDEX_SHIFT = 25,
-		PTR_INDEX_SHIFT = 18,
-		PAGE_INDEX_SHIFT = 12;
+		PTR_INDEX_SHIFT = 18;
+	// const int PAGE_INDEX_SHIFT = 12;
 	int root_idx, ptr_idx, page_idx;
 	uae_u32 root_des, ptr_des, page_des;
 	uaecptr ptr_des_addr, page_addr,
@@ -268,13 +268,14 @@ static void phys_dump_mem (uaecptr addr, int lines)
 
 uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, uaecptr pc, int size, int test)
 {
+	DUNUSED(pc);
 	uae_u32 
 		atc_hit_addr = 0,
 		root_ptr,
 		root_des, root_des_addr,
 		ptr_des = 0, ptr_des_addr = 0,
 		page_des = 0, page_des_addr = 0,
-		phys_addr = 0,
+	//	phys_addr = 0,
 		fslw = 0;
 	uae_u8	ri, pi, pgi, wp = 0;
 	uae_u16	ssw = 0;
@@ -346,7 +347,7 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, uaecptr pc, 
 		page_frame = theaddr & 0xfffff000;
 		atc_sel = ((theaddr & 0xf000) >> 12) & 0xf;
 	}
-check_atc:
+// check_atc:
 	
 	atc_rand++;	/* for random replacement */
 	
@@ -679,6 +680,7 @@ make_non_resident_atc:
 
 void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
+	DUNUSED(extra);
 	if ((opcode & 0xFE0) == 0x0500) {
 		int i, regno, didflush = 0;
 		uae_u32 addr;

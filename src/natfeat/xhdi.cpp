@@ -83,6 +83,12 @@ int32 XHDIDriver::XHDrvMap()
 int32 XHDIDriver::XHInqDriver(uint16 bios_device, memptr name, memptr version,
 					memptr company, wmemptr ahdi_version, wmemptr maxIPL)
 {
+	DUNUSED(bios_device);
+	DUNUSED(name);
+	DUNUSED(version);
+	DUNUSED(company);
+	DUNUSED(ahdi_version);
+	DUNUSED(maxIPL);
 	D(bug("ARAnyM XHInqDriver(bios_device=%u)", bios_device));
 
 	return EINVFN;
@@ -157,6 +163,13 @@ int32 XHDIDriver::XHInqDev2(uint16 bios_device, wmemptr major, wmemptr minor,
 					lmemptr start_sector, memptr bpb, lmemptr blocks,
 					memptr partid)
 {
+	DUNUSED(bios_device);
+	DUNUSED(major);
+	DUNUSED(minor);
+	DUNUSED(start_sector);
+	DUNUSED(bpb);
+	DUNUSED(blocks);
+	DUNUSED(partid);
 	D(bug("ARAnyM XHInqDev2(bios_device=%u)", bios_device));
 
 	return EINVFN;

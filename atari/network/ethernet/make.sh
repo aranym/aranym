@@ -1,5 +1,5 @@
 if [ x$FREEMINT_SRC_HOME == x ]; then 
-	FREEMINT_SRC_HOME=/opt/home/stop/projects/freemint
+	FREEMINT_SRC_HOME=/home/joy/freemint
 fi
 
 if [ ! -e $FREEMINT_SRC_HOME/COPYING.MiNT ]; then 

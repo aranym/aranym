@@ -1,10 +1,15 @@
+2005/01/12 - Petr
+- ata.cpp: fixed scary hack for hiding an unused variable
+- all files: "unused variable" GCC warnings are gone thanks to DUNUSED macro
+- natfeat/ethernet.cpp: possibly fixed buffer overflow bug in readPacket()
+
+
 2005/01/12 - Patrice
 - nfcdrom.cpp: 64 bit fix.
 
 
 2005/01/11 - milan (thanks Andreas Jochens)
 - uae_cpu/aranym_glue.cpp: 64 bit fix for GCC 4.0 happy
-
 - uae_cpu/newcpu.cpp: 64 bit fix for pc_offset computation
 
 

@@ -15,6 +15,12 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#if DEBUG
+#define DUNUSED(x)
+#else
+#define DUNUSED(x)	((void)x)
+#endif
+
 #define	MAX_HIST	10000
 
 extern unsigned int firsthist;

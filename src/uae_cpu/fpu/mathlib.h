@@ -897,7 +897,7 @@ PRIVATE inline fpu_extended fp_do_cos(fpu_extended x)
 
 PRIVATE inline fpu_extended fp_do_tan(fpu_extended x)
 {
-	fpu_extended value, value2;
+	fpu_extended value;
 	__asm__ __volatile__("fptan" : "=t" (value), "=u" (value) : "0" (x));
 	return value;
 }

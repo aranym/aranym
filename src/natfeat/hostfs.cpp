@@ -1106,6 +1106,7 @@ int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 
 int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, XfsCookie *fc )
 {
+	DUNUSED(flags);
 	char fname[MAXPATHNAMELEN];
 	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
@@ -1174,6 +1175,7 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 
 int32 HostFs::xfs_dev_close(ExtFile *fp, int16 pid)
 {
+	DUNUSED(pid);
 	D(bug("HOSTFS:  dev_close (fd = %d, links = %d, pid = %d)", fp->hostFd, fp->links, pid));
 
 	if ( fp->links <= 0 ) {
