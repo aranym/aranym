@@ -77,8 +77,8 @@ static char *strhelp[] = {"Help:\n",
 	" P <number> <value>   set USP(0), ISP(1), MSP(2), VBR(3), IMASK(4), PC(5)\n",
 	" S <number> <value>   set TC(0), SRP(1), URP(2), DTT0(3), DTT1(4),\n",
 	"                      ITT0(5), ITT1(6), CACR(7), CAAR(8)\n",
-	" i                    enable IRQ\n",
-	" I                    disable IRQ\n",
+	" i                    enable/disable IRQ\n",
+	" I                    enable/disable IRQ debugging\n",
 	" g <address>          start execution at the current address or <address>\n",
 	" t <address>          step one instruction at current addres or <address>\n",
 	" z                    step through one instruction - useful for JSR, DBRA etc\n",
@@ -653,10 +653,10 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			m68k_reset();
 			break;
 		case 'i':
-			irqindebug = true;
+			irqindebug = !irqindebug; bug("IRQ %s\n", irqindebug ? "enabled" : "disabled"); break;
 			break;
 		case 'I':
-			irqindebug = false;
+			ignore_irq = !ignore_irq; bug("IRQ debugging %s\n", ignore_irq ? "enabled" : "disabled"); break;
 			break;
 		case 'e':
 			dump_traps (f);
@@ -1343,6 +1343,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.34  2004/07/09 18:41:56  milan
+ * (sig)set/longjmp corrections
+ *
  * Revision 1.33  2003/12/27 21:02:40  joy
  * warning fixed
  *

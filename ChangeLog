@@ -2,6 +2,8 @@
 - newcpu.cpp: removing "patch" from 2002/09/28 (PureC hack), it can be enabled
               with configure script
 
+- debuggers: switch 'I' modified, debugger can ignore interupt mode
+
 
 2004/07/28 - joy
 - atari/tools/pcpatch.c: verbose error handling

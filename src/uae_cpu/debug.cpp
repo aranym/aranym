@@ -45,6 +45,8 @@ static int debugger_active = 0;
 int debugging = 0;
 int irqindebug = false;
 
+int ignore_irq = 0;
+
 #ifndef NEWDEBUG
 static int do_skip;
 static uaecptr skipaddr;
@@ -223,6 +225,11 @@ void showBackTrace(int count, bool showLast = true)
 
 void debug (void)
 {
+   MakeFromSR();
+   if (ignore_irq && regs.m) {
+     SPCFLAGS_SET( SPCFLAG_BRK );
+     return;
+   }
 #ifdef NEWDEBUG
   ndebug::run();
 #else
@@ -294,8 +301,8 @@ void debug (void)
 	memcpy (old_debug_cmd, input, 80);
 	cmd = next_char (&inptr);
 	switch (cmd) {
-	 case 'i': irqindebug = true; break;
-	 case 'I': irqindebug = false; break;
+	 case 'i': irqindebug = !irqindebug; printf("IRQ %s\n", irqindebug ? "enabled" : "disabled"); break;
+	 case 'I': ignore_irq = !ignore_irq; printf("IRQ debugging %s\n", ignore_irq ? "enabled" : "disabled"); break;
 	 case 'r': m68k_dumpstate (&nextpc); break;
 	 case 'R': m68k_reset(); break;
 	 case 'A':
@@ -454,8 +461,8 @@ void debug (void)
 		printf ("  g: <address>          Start execution at the current address or <address>\n");
 		printf ("  r:                    Dump state of the CPU\n");
 		printf ("  R:                    Reset CPU & FPU\n");
-		printf ("  i:                    Enable IRQ\n");
-		printf ("  I:                    Disable IRQ\n");
+		printf ("  i:                    Enable/Disable IRQ\n");
+		printf ("  I:                    Enable/Disable IRQ debbuging\n");
 		printf ("  A <number> <value>:   Set Ax\n");
 		printf ("  D <number> <value>:   Set Dx\n");
 		printf ("  m <address> <lines>:  Memory dump starting at <address>\n");
