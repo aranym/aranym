@@ -255,6 +255,13 @@ static void sync_m68k_pc (void)
     m68k_pc_offset = 0;
 }
 
+static void gen_set_fault_pc (void)
+{
+    sync_m68k_pc();
+    printf ("regs.fault_pc = m68k_getpc ();\n");
+    m68k_pc_offset = 0;
+}
+
 /* getv == 1: fetch data; getv != 0: check for odd address. If movem != 0,
  * the calling routine handles Apdi and Aipi modes.
  * gb-- movem == 2 means the same thing but for a MOVE16 instruction */
@@ -320,19 +327,19 @@ static void genamode (amodes mode, char *reg, wordsizes size, char *name, int ge
 	    if (movem)
 		printf ("\tuaecptr %sa = m68k_areg(regs, %s);\n", name, reg);
 	    else
-		printf ("\tuaecptr %sa = m68k_areg_autoinc(regs, %s, -areg_byteinc[%s]);\n", name, reg, reg);
+		printf ("\tuaecptr %sa = m68k_areg(regs, %s) -= areg_byteinc[%s];\n", name, reg, reg);
 	    break;
 	 case sz_word:
 	    if (movem)
 		printf ("\tuaecptr %sa = m68k_areg(regs, %s);\n", name, reg);
 	    else
-		printf ("\tuaecptr %sa = m68k_areg_autoinc(regs, %s, -2);\n", name, reg);
+		printf ("\tuaecptr %sa = m68k_areg(regs, %s) -= 2;\n", name, reg);
 	    break;
 	 case sz_long:
 	    if (movem)
 		printf ("\tuaecptr %sa = m68k_areg(regs, %s);\n", name, reg);
 	    else
-		printf ("\tuaecptr %sa = m68k_areg_autoinc(regs, %s, -4);\n", name, reg);
+		printf ("\tuaecptr %sa = m68k_areg(regs, %s) -= 4;\n", name, reg);
 	    break;
 	 default:
 	    abort ();
@@ -455,13 +462,13 @@ static void genamode (amodes mode, char *reg, wordsizes size, char *name, int ge
 	 case Aipi:
 	    switch (size) {
 	     case sz_byte:
-		printf ("\tm68k_areg_autoinc(regs, %s, areg_byteinc[%s]);\n", reg, reg);
+		printf ("\tm68k_areg(regs, %s) += areg_byteinc[%s];\n", reg, reg);
 		break;
 	     case sz_word:
-		printf ("\tm68k_areg_autoinc(regs, %s, 2);\n", reg);
+		printf ("\tm68k_areg(regs, %s) += 2;\n", reg);
 		break;
 	     case sz_long:
-		printf ("\tm68k_areg_autoinc(regs, %s, 4);\n", reg);
+		printf ("\tm68k_areg(regs, %s) += 4;\n", reg);
 		break;
 	     default:
 		abort ();
@@ -512,8 +519,7 @@ static void genastore (char *from, amodes mode, char *reg, wordsizes size, char 
      case absl:
      case PC16:
      case PC8r:
-	if (using_prefetch)
-	    sync_m68k_pc ();
+	gen_set_fault_pc ();
 	switch (size) {
 	 case sz_byte:
 	    printf ("\t%sput_byte(%sa,%s);\n", mem_prefix[xlateflag], to, from);
@@ -589,8 +595,7 @@ static void genmovemle (uae_u16 opcode)
     printf ("\tuae_u16 mask = %s;\n", gen_nextiword ());
     genamode (table68k[opcode].dmode, "dstreg", table68k[opcode].size, "src",
 			GENA_GETV_FETCH_ALIGN, GENA_MOVEM_NO_INC, XLATE_LOG);
-    if (using_prefetch)
-	sync_m68k_pc ();
+    sync_m68k_pc ();
 
     start_brace ();
     if (table68k[opcode].dmode == Apdi) {
@@ -1207,9 +1212,8 @@ static void gen_opcode (unsigned long int opcode)
 	break;
      case i_TRAP:
 	genamode (curi->smode, "srcreg", curi->size, "src", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
-	sync_m68k_pc ();
+	gen_set_fault_pc ();
 	printf ("\tException(src+32,0);\n");
-	m68k_pc_offset = 0;
 	break;
      case i_MVR2USP:
 	genamode (curi->smode, "srcreg", curi->size, "src", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
@@ -1997,6 +2001,7 @@ static void gen_opcode (unsigned long int opcode)
 			printf ("\t} else {\n");
 			genastore ("src", Dreg, "(extra >> 12) & 7", curi->size, "", XLATE_LOG);
 			printf ("\t}\n");
+			sync_m68k_pc();
 			pop_braces (old_brace_level);
 		}
 	}
@@ -2122,11 +2127,11 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\tm68k_dreg(regs, dstreg) = (m68k_dreg(regs, dstreg) & 0xffffff00) | ((val >> 4) & 0xf0) | (val & 0xf);\n");
 	} else {
 	    printf ("\tuae_u16 val;\n");
-	    printf ("\tm68k_areg_autoinc(regs, srcreg, -areg_byteinc[srcreg]);\n");
-	    printf ("\tval = (uae_u16)get_byte(m68k_areg(regs, srcreg));\n");
-	    printf ("\tm68k_areg_autoinc(regs, srcreg, -areg_byteinc[srcreg]);\n");
-	    printf ("\tval = (val | ((uae_u16)get_byte(m68k_areg(regs, srcreg)) << 8)) + %s;\n", gen_nextiword ());
-	    printf ("\tm68k_areg_autoinc(regs, dstreg, -areg_byteinc[dstreg]);\n");
+	    printf ("\tval = (uae_u16)get_byte(m68k_areg(regs, srcreg) - areg_byteinc[srcreg]);\n");
+	    printf ("\tval = (val | ((uae_u16)get_byte(m68k_areg(regs, srcreg) - 2 * areg_byteinc[srcreg]) << 8)) + %s;\n", gen_nextiword ());
+	    printf ("\tm68k_areg(regs, srcreg) -= 2;\n");
+	    printf ("\tm68k_areg(regs, dstreg) -= areg_byteinc[dstreg];\n");
+	    gen_set_fault_pc ();
 	    printf ("\tput_byte(m68k_areg(regs, dstreg),((val >> 4) & 0xf0) | (val & 0xf));\n");
 	}
 	break;
@@ -2137,13 +2142,12 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\tm68k_dreg(regs, dstreg) = (m68k_dreg(regs, dstreg) & 0xffff0000) | (val & 0xffff);\n");
 	} else {
 	    printf ("\tuae_u16 val;\n");
-	    printf ("\tm68k_areg_autoinc(regs, srcreg, -areg_byteinc[srcreg]);\n");
-	    printf ("\tval = (uae_u16)get_byte(m68k_areg(regs, srcreg));\n");
+	    printf ("\tval = (uae_u16)get_byte(m68k_areg(regs, srcreg) - areg_byteinc[srcreg]);\n");
 	    printf ("\tval = (((val << 4) & 0xf00) | (val & 0xf)) + %s;\n", gen_nextiword ());
-	    printf ("\tm68k_areg_autoinc(regs, dstreg, -areg_byteinc[dstreg]);\n");
-	    printf ("\tput_byte(m68k_areg(regs, dstreg),val);\n");
-	    printf ("\tm68k_areg_autoinc(regs, dstreg, -areg_byteinc[dstreg]);\n");
-	    printf ("\tput_byte(m68k_areg(regs, dstreg),val >> 8);\n");
+	    printf ("\tm68k_areg(regs, srcreg) -= areg_byteinc[srcreg];\n");
+	    printf ("\tm68k_areg(regs, dstreg) -= 2;\n");
+	    gen_set_fault_pc ();
+	    printf ("\tput_word(m68k_areg(regs, dstreg), val);\n");
 	}
 	break;
      case i_TAS:
@@ -2520,6 +2524,7 @@ static void generate_one_opcode (int rp)
     printf ("\t\t\tLONGJMP(loop_env, 1);\n");
     printf ("\t}\n");
     printf ("\tpc = m68k_getpc();\n");
+#ifndef FULLMMU
 #if ARAM_PAGE_CHECK
     printf ("\tif (((pc ^ pc_page) > ARAM_PAGE_MASK)) {\n");
     printf ("\t\tcheck_ram_boundary(pc, 2, false);\n");
@@ -2528,6 +2533,7 @@ static void generate_one_opcode (int rp)
     printf ("\t}\n");
 #else
     printf ("\tcheck_ram_boundary(pc, 2, false);\n");
+#endif
 #endif
     printf ("\topcode = GET_OPCODE;}\n");
 #if 0
