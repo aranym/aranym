@@ -426,6 +426,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
               value32 |=  BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index+(bs?offset:0)];
           }
           }
+	  if (io_len == 4) value32 = ((value32 >> 16) & 0x0000ffff) | ((value32 & 0x0000ffff) << 16); /* FALCON (word swap for long access to data register) */
           BX_SELECTED_CONTROLLER.buffer_index += io_len;
 
           // if buffer completely read
@@ -846,6 +847,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
           int offset = 0;
           switch(io_len){
             case 4:
+	      value = ((value >> 16) & 0x0000ffff) | ((value & 0x0000ffff) << 16); /* FALCON (word swap for long access to data register) */
               BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index+(bs?offset++:3)] = (Bit8u)(value >> 24);
               BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index+(bs?offset++:2)] = (Bit8u)(value >> 16);
             case 2:
@@ -1400,6 +1402,11 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  WRITE_FEATURES(value);
       break;
 #endif
+
+    case 0xf00005: // hard disk error register
+      BX_SELECTED_CONTROLLER.status.err = value ? 1 : 0;
+      BX_SELECTED_CONTROLLER.error_register = value;
+      break;
 
     case 0xf00009: /* hard disk sector count */
 	  WRITE_SECTOR_COUNT(value);

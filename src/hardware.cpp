@@ -35,7 +35,7 @@ VIDEL videl;
 YAMAHA yamaha;
 ARADATA aradata;
 
-#ifdef USE_JIT
+#ifdef HW_SIGSEGV
 extern int in_handler;
 # define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); in_handler = 0; longjmp(excep_env, 2); }
 #else
@@ -181,6 +181,9 @@ void HWput_b (uaecptr addr, uae_u8 b) {
 
 /*
  * $Log$
+ * Revision 1.43  2002/08/01 15:19:16  joy
+ * better debugging of HWget_b
+ *
  * Revision 1.42  2002/07/24 18:34:18  joy
  * parameter size fixed
  *

@@ -9,7 +9,7 @@ int in_handler = 0;
 
 extern void compiler_status();
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 enum transfer_type_t {
@@ -20,6 +20,9 @@ enum transfer_type_t {
 
 #if (__i386__)
 
+/* instruction jump table */
+//i386op_func *cpufunctbl[256];
+
 enum instruction_t {
 	INSTR_UNKNOWN,
 	INSTR_MOVZX8,
@@ -28,7 +31,9 @@ enum instruction_t {
 	INSTR_MOV8,
 	INSTR_MOV32,
 	INSTR_MOVIMM8,
+	INSTR_MOVIMM32,
 	INSTR_OR8,
+	INSTR_ORIMM8,
 	INSTR_AND8,
 	INSTR_ADD8,
 	INSTR_CMP8
@@ -79,21 +84,21 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	int imm = 0;
 	instruction_t instruction = INSTR_UNKNOWN;
 	void *preg;
-
-	if (in_handler) {
+#if 1
+	if (in_handler > 1) {
 		panicbug("Segmentation fault in handler :-(");
 		abort();
 	}
-
-	in_handler = 1;
+#endif
+	in_handler += 1;
 
 #ifdef JIT	/* does not compile with default configure */
 	D(compiler_status());
 #endif
 	D(panicbug("\nBUS ERROR fault address is %08x at %08x", addr, ainstr));
-	D(panicbug("instruction is %08x", instr));
+	D2(panicbug("instruction is %08x", instr));
 
-	D(panicbug("PC %08x", regs.pc)); 
+	D2(panicbug("PC %08x", regs.pc)); 
 
 #ifdef HW_SIGSEGV
 
@@ -115,10 +120,18 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
-		case 0x0a:
+		case 0x08:
 			D(panicbug("OR m8, r8"));
 			size = 1;
-			transfer_type = TYPE_LOAD;	// JOY: was TYPE_STORE(!!)
+			transfer_type = TYPE_STORE;
+			instruction = INSTR_OR8;
+			reg = (addr_instr[1] >> 3) & 7;
+			len += 2 + get_instr_size_add(addr_instr + 1);
+			break;
+		case 0x0a:
+			D(panicbug("OR r8, m8"));
+			size = 1;
+			transfer_type = TYPE_LOAD;
 			instruction = INSTR_OR8;
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
@@ -165,6 +178,15 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
+		case 0x80:
+			D(panicbug("OR m8, imm8"));
+			size = 1;
+			transfer_type = TYPE_STORE;
+			instruction = INSTR_ORIMM8;
+			reg = (addr_instr[1] >> 3) & 7;
+			imm = addr_instr[3];
+			len += 3 + get_instr_size_add(addr_instr + 1);
+			break;
 		case 0x8a:
 			D(panicbug("MOV r8, m8"));
 			size = 1;
@@ -201,13 +223,26 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			size = 1;
 			instruction = INSTR_MOVIMM8;
 			reg = (addr_instr[1] >> 3) & 7;
-			imm = addr_instr[3];	// JOY: was 2
+			imm = addr_instr[2];	// JOY: was 2
 			len += 3 + get_instr_size_add(addr_instr + 1);
+			break;
+		case 0xc7:
+			D(panicbug("MOV m32, imm32"));
+			transfer_type = TYPE_STORE;
+			instruction = INSTR_MOVIMM32;
+			reg = (addr_instr[1] >> 3) & 7;
+			if (size == 2) {
+				imm = ((uae_u16)addr_instr[7] << 8) + addr_instr[6];
+			} else {
+				imm = ((uae_u32)addr_instr[9] << 24) + ((uae_u32)addr_instr[8] << 16) + ((uae_u32)addr_instr[7] << 8) + addr_instr[6];
+			}
+			len += 4 + get_instr_size_add(addr_instr + 1);
+			if (size == 4) len += 2;
 			break;
 	}
 
 	if (instruction == INSTR_UNKNOWN) {
-		panicbug("Unknown instruction!");
+		panicbug("Unknown instruction %08x!", instr);
 		abort();
 	}
 
@@ -226,13 +261,10 @@ static void segfault_vec(int x, struct sigcontext sc) {
 
 	}
 
-	D(panicbug("Register %d, place %08x, address %08x", reg, preg, addr));
+	D2(panicbug("Register %d, place %08x, address %08x", reg, preg, addr));
 
 	if (addr >= 0xff000000)
 		addr -= 0xff000000;
-
-	D(panicbug("Next instruction on %08x", sc.eip + len));
-	sc.eip += len;
 
 	if (transfer_type == TYPE_LOAD) {
 		switch (instruction) {
@@ -251,7 +283,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 				}
 				break;
 			case INSTR_OR8:
-				D(bug("OR LOADING %x", addr));
+//				D(bug("OR LOADING %x", addr));
 				*((uae_u8 *)preg) |= HWget_b(addr);
 				break;
 			case INSTR_AND8:
@@ -276,15 +308,24 @@ static void segfault_vec(int x, struct sigcontext sc) {
 				break;
 			case INSTR_CMP8:
 				imm = *((uae_u8 *)preg);
-				*((uae_u8 *)preg) -= HWget_b(addr);
-				*((uae_u8 *)preg) = (uae_u8)imm;
+				imm -= HWget_b(addr);
+				if (imm < 0) sc.eflags |= 0x1;
+					else sc.eflags &= 0xfffffffe;
+				if ((imm % 2) == 0) sc.eflags |= 0x4;
+					else sc.eflags &= 0xfffffffb;
+				if (imm == 0) sc.eflags |= 0x40;
+					else sc.eflags &= 0xffffffbf;
+				if (imm > 127) sc.eflags |= 0x80;
+					else sc.eflags &= 0xffffff7f;
+				if ((imm > 255) || (imm < 0)) sc.eflags |= 0x1;
+					else sc.eflags &= 0xfffffffe;
 				break;
 			default: abort();
 		}
 	} else {
 		switch (instruction) {
 			case INSTR_MOV8:
-				D(bug("MOV value = $%x\n", *((uae_u8 *)preg)));
+//				D(bug("MOV value = $%x\n", *((uae_u8 *)preg)));
 				HWput_b(addr, *((uae_u8 *)preg));
 				break;
 			case INSTR_MOV32:
@@ -295,20 +336,34 @@ static void segfault_vec(int x, struct sigcontext sc) {
 				}
 				break;
 			case INSTR_OR8:
-				D(bug("OR STORING $%x to %x", *((uae_u8 *)preg), addr));
+//				D(bug("OR STORING $%x to %x", *((uae_u8 *)preg), addr));
 				HWput_b(addr, *((uae_u8 *)preg) | HWget_b(addr));
+				break;
+			case INSTR_ORIMM8:
+				HWput_b(addr, (uae_u8)imm | HWget_b(addr));
 				break;
 			case INSTR_MOVIMM8:
 				HWput_b(addr, (uae_u8)imm);
+				break;
+			case INSTR_MOVIMM32:
+				if (size == 4) {
+					HWput_l(addr, (uae_u32)imm);
+				} else {
+					HWput_w(addr, (uae_u16)imm);
+				}
 				break;
 			default: abort();
 		}
 	}
 
-	in_handler = 0;
+	D2(panicbug("Access handled"));
+	D2(panicbug("Next instruction on %08x", sc.eip + len));
+	sc.eip += len;
+
+	in_handler -= 1;
 	return;
 buserr:
-	D(panicbug("Atari bus error"));
+	panicbug("Atari bus error");
 
 #endif /* HW_SIGSEGV */
 

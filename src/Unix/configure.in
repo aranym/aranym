@@ -973,6 +973,13 @@ if [[ "x$HAVE_OFAST" = "xyes" ]]; then
   LDFLAGS="$LDFLAGS -ipa"
 fi
 
+dnl For computed gotos it is necessary no-gcse
+if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
+  if [[ "x$HAVE_GCC27" = "xyes" ]]; then
+    CXXFLAGS="$CXXFLAGS -fno-gcse"
+  fi
+fi
+
 SDL_CFLAGS=
 SDL_LIBS=
 AM_PATH_SDL(1.2.0, )

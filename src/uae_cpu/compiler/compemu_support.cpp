@@ -31,7 +31,7 @@
 #include "fpu/flags.h"
 #include "parameters.h"
 
-#define DEBUG 2
+#define DEBUG 0
 #include "debug.h"
 
 #ifdef ENABLE_MON

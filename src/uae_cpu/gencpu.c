@@ -2368,13 +2368,16 @@ static void generate_one_opcode (int rp)
     printf ("\tuae_u32 pc;\n");
     printf ("\tif (initial) {\n");
     printf ("\t\topcode = opc;\n");
+    printf ("\t\talloca(1000);\n");
     printf ("\t\tgoto op_%lx_%d_lab;\n", opcode, postfix);
     printf ("\t}\n");
     printf ("\top_smalltbl_0_lab[opc] = &&op_%lx_%d_lab;\n", opcode, postfix);
     printf ("\treturn;\n");
     printf ("op_%lx_%d_lab: /* %s */\n", opcode, postfix, lookuptab[i].name);
     printf ("\t{\n");
+#if 0
     printf ("\tprintf(\"%%08x: %lx -> %%lx\\n\", m68k_getpc(), opcode);\n", opcode);
+#endif
 #else
     printf ("cpuop_rettype REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
 	printf ("\tcpuop_begin();\n");
@@ -2529,7 +2532,9 @@ static void generate_one_opcode (int rp)
     printf ("\tcheck_ram_boundary(pc, 2, false);\n");
 #endif
     printf ("\topcode = GET_OPCODE;}\n");
-    printf ("\tprintf(\"%%lx\\n\",opcode);\n");
+#if 0
+    printf ("\tprintf(\"%%lx 0x%%08x 0x%%08x\\n\", opcode, op_smalltbl_0_lab,op_smalltbl_0_lab[opcode]);\n");
+#endif
     printf ("\tgoto *op_smalltbl_0_lab[opcode];\n\n");
 #else
     printf ("\tcpuop_end(%s);\n", cflow_string_of(opcode));

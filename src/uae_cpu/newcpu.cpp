@@ -58,7 +58,7 @@ uaecptr last_addr_for_exception_3;
 uaecptr last_fault_for_exception_3;
 
 #ifdef DISDIP
-/* Is opcode label tabel initialized?*/
+/* Is opcode label table initialized?*/
 bool initial;
 
 /* Jump table */
@@ -123,8 +123,12 @@ static void build_cpufunctbl (void)
 	    cpufunctbl[cft_map (tbl[i].opcode)] = tbl[i].handler;
     }
 #ifdef DISDIP
-    for (i = 0; i < 65536; i++)
-	(*cpufunctbl[i])(i);
+    for (opcode = 0; opcode < 65536; opcode++)
+	(*cpufunctbl[opcode])(opcode);
+#if 0
+    for (opcode = 0; opcode < 65536; opcode++)
+	panicbug("%lx 0x%08x", opcode, op_smalltbl_0_lab[opcode]);
+#endif
     initial = true;
 #endif
 }
@@ -1264,27 +1268,38 @@ void m68k_natfeat_call(void)
 #ifdef DISDIP
 cpuop_rettype REGPARAM2 op_illg (uae_u32 opc)
 {
+	uae_u32 xpc;
 	if (initial) {
 		opcode = opc;
 		goto op_illg_lab;
 	}
+	opc = cft_map(opc);
 	op_smalltbl_0_lab[opc] = &&op_illg_lab;
 	return;
 op_illg_lab:
+	opcode = cft_map(opcode);
 #else
 cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
-{		
 #endif
+{		
 	uaecptr pc = m68k_getpc ();
 
 	if ((opcode & 0xF000) == 0xA000) {
 	Exception(0xA,0);
+#ifdef DISDIP
+	longjmp(loop_env, 0);
+#else
 	cpuop_return(CFLOW_TRAP);
+#endif
 	}
 
 	if ((opcode & 0xF000) == 0xF000) {
 	Exception(0xB,0);
+#ifdef DISDIP
+	longjmp(loop_env, 0);
+#else
 	cpuop_return(CFLOW_TRAP);
+#endif
 	}
 
 	D(bug("Illegal instruction: %04x at %08lx", opcode, pc));
@@ -1293,9 +1308,11 @@ cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
 #endif
 
 	Exception (4,0);
-	cpuop_return(CFLOW_TRAP);
 #ifdef DISDIP
+}
 	longjmp(loop_env, 0);
+#else
+	cpuop_return(CFLOW_TRAP);
 #endif
 }
 
@@ -1493,9 +1510,6 @@ void m68k_do_execute (void)
 	check_ram_boundary(pc, 2, false);
 #endif
 	opcode = GET_OPCODE;
-#ifdef DISDIP
-	printf("%lx\n",opcode);
-#endif
 
 // Seems to be faster without the assembly... - yes, it is "bugfix"
 #if (0 && defined(X86_ASSEMBLY))
