@@ -1,3 +1,9 @@
+2003/09/15 - STanda & !joy
+- STOP instruction emulation greatly improved. usleep() was replaced with
+  SDL_CondWait() - better portable and what's more important - fixing
+  jerky mouse movement under new FreeMiNT, fVDI and EmuTOS!
+
+
 2003/09/10 - joy (comiting patches submitted by Guy Harrison, thanks!)
 
 - Makefile.in: fixes possible conflicts between aranym headers and system ones

@@ -50,8 +50,6 @@ that particular programmer but rather who is the author of the idea :-)
 
 - joy: diskimage embedded into ARAnyM directly, available from SDL GUI
 
-- joy: fix the mouse jumping in fVDI with STOP#$2000 enabled FreeMiNT kernel
-
 - joy: rename panicbug() to something that not evoke panic.
 
 - joy: correct copyright headers in ALL files (do it together with 

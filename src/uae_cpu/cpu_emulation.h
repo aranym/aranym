@@ -131,6 +131,9 @@ extern void Start680x0(void);	// Reset and start 680x0
 extern void Restart680x0(void);	// Restart running 680x0
 extern void Quit680x0(void);	// Quit 680x0
 
+extern void SleepAndWait(void);
+extern void AwakeFromSleep(void);
+
 // Interrupt functions
 extern void TriggerInternalIRQ(void);
 extern void TriggerInt3(void);		// Trigger interrupt level 3

@@ -28,11 +28,6 @@
 
 #define SANITY_CHECK_ATC 1
 
-// from aranym_glue.cpp
-extern SDL_mutex *stopCondLock;
-extern SDL_cond  *stopCondition;
-
-
 int quit_program = 0;
 
 // For instruction $7139
@@ -1507,9 +1502,7 @@ int m68k_do_specialties(void)
 	}
 	while (SPCFLAGS_TEST( SPCFLAG_STOP )) {
 		// give unused time slices back to OS
-		SDL_mutexP(stopCondLock);
-		SDL_CondWait(stopCondition, stopCondLock);
-		SDL_mutexV(stopCondLock);
+		SleepAndWait();
 
 		SERVE_INTERNAL_IRQ();
 		SERVE_VBL_MFP(true);

@@ -191,37 +191,25 @@ void Quit680x0(void)
 void TriggerInternalIRQ(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INTERNAL_IRQ );
-
-	SDL_mutexP(stopCondLock);
-	SDL_CondSignal(stopCondition);
-	SDL_mutexV(stopCondLock);
+	AwakeFromSleep();
 }
 
 void TriggerInt3(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INT3 );
-
-	SDL_mutexP(stopCondLock);
-	SDL_CondSignal(stopCondition);
-	SDL_mutexV(stopCondLock);
+	AwakeFromSleep();
 }
 
 void TriggerVBL(void)
 {
 	SPCFLAGS_SET( SPCFLAG_VBL );
-
-	SDL_mutexP(stopCondLock);
-	SDL_CondSignal(stopCondition);
-	SDL_mutexV(stopCondLock);
+	AwakeFromSleep();
 }
 
 void TriggerInt5(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INT5 );
-
-	SDL_mutexP(stopCondLock);
-	SDL_CondSignal(stopCondition);
-	SDL_mutexV(stopCondLock);
+	AwakeFromSleep();
 }
 
 void TriggerMFP(bool enable)
@@ -231,15 +219,24 @@ void TriggerMFP(bool enable)
 	else
 		SPCFLAGS_CLEAR( SPCFLAG_MFP );
 
-	SDL_mutexP(stopCondLock);
-	SDL_CondSignal(stopCondition);
-	SDL_mutexV(stopCondLock);
+	AwakeFromSleep();
 }
 
 void TriggerNMI(void)
 {
 	SPCFLAGS_SET( SPCFLAG_NMI );
+	AwakeFromSleep();
+}
 
+void SleepAndWait(void)
+{
+	SDL_mutexP(stopCondLock);
+	SDL_CondWait(stopCondition, stopCondLock);
+	SDL_mutexV(stopCondLock);
+}
+
+void AwakeFromSleep(void)
+{
 	SDL_mutexP(stopCondLock);
 	SDL_CondSignal(stopCondition);
 	SDL_mutexV(stopCondLock);
