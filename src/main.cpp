@@ -663,25 +663,24 @@ static void check_event(void)
  */
 void invoke200HzInterrupt()
 {
+#define VBL_IN_TIMERC	4	/* VBL happens once in 4 TimerC 200 Hz interrupts ==> 50 Hz VBL */
+#define VIDEL_REFRESH	2	/* VIDEL screen is refreshed once in 2 VBL interrupts ==> 25 Hz */
+
 	static int VBL_counter = 0;
 	static int refreshCounter = 0;
 
-	if (!debugging || irqindebug) {
-		/* syncing to 200 Hz */
-		long newTicks = SDL_GetTicks();
-		int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
-		if (count == 0)
-			return;
+	/* syncing to 200 Hz */
+	long newTicks = SDL_GetTicks();
+	int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
+	if (count == 0)
+		return;
+	if (!debugging || irqindebug)
 		mfp.IRQ(5, count);
-#ifdef PUVODNI_ALE_SPATNY_SYNC
-		lastTicks = newTicks;
-#else
-		lastTicks += (count * 5);
-#endif /* PUVODNI_ALE_SPATNY_SYNC */
-	}
+	lastTicks += (count * 5);
 
-	if (++VBL_counter == 4) {	// divided by 4 => 50 Hz VBL
-		VBL_counter = 0;
+	VBL_counter += count;
+	if (VBL_counter >= VBL_IN_TIMERC) {	// divided by 4 => 50 Hz VBL
+		VBL_counter -= VBL_IN_TIMERC;
 
 #ifdef USE_TIMERS
 		// Thread safety patch
@@ -691,7 +690,7 @@ void invoke200HzInterrupt()
 		check_event();		// process keyboard and mouse events
 		TriggerVBL();		// generate VBL
 
-		if (++refreshCounter == 2) {// divided by 2 again ==> 25 Hz screen update
+		if (++refreshCounter == VIDEL_REFRESH) {// divided by 2 again ==> 25 Hz screen update
 			videl.renderScreen();
 			refreshCounter = 0;
 		}
@@ -947,6 +946,10 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.51  2001/12/17 08:33:00  standa
+ * Thread synchronization added. The check_event and fvdidriver actions are
+ * synchronized each to other.
+ *
  * Revision 1.50  2001/12/17 00:26:13  joy
  * SDL Timer is back! Use --enable-sdltimer to emulate TimerC (200 Hz interrupt) using a separate timer thread.
  *
