@@ -1,3 +1,14 @@
+2001/12/05 - joy
+- "-N" or "--nomouse" added to cmdline options. It basically disables
+  the auto mouse grabbing at startup. Suitable especially for debugging.
+
+- one more illegal/emul_op instruction enabled: 0x7135 can be used for
+  debug prints - especially for EmuTOS debugging.
+
+- CMOS/NVRAM now starts with English/UK/USA keyboard layout. Thus you get the
+  right keys even without Clocky on most regular PC keyboards.
+
+
 2001/12/05 - milan
 - "initialization" of 0-7 moved to reset routine, more secure solution
 
