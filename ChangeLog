@@ -1,4 +1,8 @@
-[ version 0.1.3 - don't forget to update your Atari fVDI driver ]
+2002/04/02 - joy
+- MFP and ACIA/FDC/ATA updated to be ready for major MFP rewrite.
+
+
+[ Version 0.1.3 - don't forget to update your Atari fVDI driver ]
 
 2002/03/27 - STanda
 - extfs.cpp/transformFileName rewritten nearly from scratch. Now it should be

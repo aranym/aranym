@@ -72,6 +72,7 @@ private:
 	USART usart;
 	int flags;
 	int timerCounter;
+	int vr;
 	enum FLAGS {F_ACIA=(1<<6),F_TIMERC=(1<<5)};
 
 public:
@@ -79,6 +80,7 @@ public:
 	virtual uint8 handleRead(uaecptr);
 	virtual void handleWrite(uaecptr, uint8);
 	void IRQ(int, int count);
+	void setGPIPbit(int mask, int value);
 	int doInterrupt(void);
 };
 
