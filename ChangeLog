@@ -25,6 +25,23 @@
 - Makefile.in: make depend for linux corrected
 
 
+2003/07/28 - joy
+- natfeat/xhdi.cpp: XHInqTarget2 implemented. Also some little cleanup
+  (error codes replaced with symbolic names)
+
+- parameters.[cpp,h]: added floppy status ('inserted'). Floppy path correctly
+  initialized
+
+- version.h: version increased to 0.8.1 CVS
+
+- SDL GUI: MAX_FILENAME_LENGTH defined in file.h
+
+- newcpu.cpp: exceptions (bombs) are displayed again (dunno who and why
+  disabled it)
+
+- parameters.cpp: printing of version at startup is in main_unix.cpp
+
+
 2003/07/18 - joy
  My little cleanups:
 - #ifdef OS_mingw cleaned up. Created a new Unix/mingw_include.h file that
