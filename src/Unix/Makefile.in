@@ -81,6 +81,7 @@ SRCS = ../main.cpp \
 	../natfeat/nf_objs.cpp \
 	../natfeat/xhdi.cpp \
 	../natfeat/nf_name.cpp \
+	../natfeat/nf_stderr.cpp \
 	$(SYSSRCS) \
 	$(CPUSRCS)
 APP = aranym
