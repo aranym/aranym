@@ -103,7 +103,21 @@ int main(int argc, char **argv)
 	FastRAMBaseHost = NULL;
 
 	fprintf(stderr, VERSION_STRING " (compiled on "__DATE__ ") starting\n");
+
+	// remember program name
 	program_name = argv[0];
+
+	// remember path to program
+	strcpy(program_home, program_name);
+	char *ptr = strrchr(program_home, '/');
+	if (ptr != NULL)
+		ptr[0] = '\0';	// strip out filename and separator from the path
+	else if ((ptr = strrchr(program_home, DIRSEPARATOR[0])) != NULL)
+		ptr[0] = '\0';	// strip out filename and separator from the path
+	else
+		ptr[0] = '\0';
+
+	// parse command line switches
 	if (!decode_switches(stderr, argc, argv))
 		exit(-1);
 
@@ -314,6 +328,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.80  2002/10/20 08:44:04  joy
+ * NatFeat opcodes changed back to good old ones
+ *
  * Revision 1.79  2002/10/19 09:16:58  joy
  * cosmetics
  *

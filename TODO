@@ -3,9 +3,6 @@ Before 0.8.0 final release:
 - man page from deb package to standard archive
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
-- correct path to font8.bmp (use native dir separator)
-- develop relative path to data files support (global files: TOS/EmuTOS
-  and font8.bmp, user files: config and nvram)
 - provide also MMU build
 - make sure DOS drives are handled in HostFS paths correctly
 

@@ -228,12 +228,8 @@ bool ETHERNETDriver::init(void)
 
 	// prepare exec path to aratapif
 	char tapifPath[500];
-	strcpy(tapifPath, program_name);
-	char *ptr = strrchr(tapifPath, '/');
-	if (ptr != NULL)
-		ptr[1] = '\0';	// strip out filename from the path
-	else
-		ptr[0] = '\0';
+	strcpy(tapifPath, program_home);
+	strcat(tapifPath, DIRSEPARATOR);
 	strcat(tapifPath, TAP_INIT);
 
 	// make sure aratapif is available and suid root

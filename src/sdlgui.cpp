@@ -53,7 +53,7 @@ extern int eventY;
 bool SDLGui_Init()
 {
   char fontname[256];
-  sprintf(fontname, "%s/font8.bmp", DATADIR);
+  getDataFilename("font8.bmp", fontname, sizeof(fontname));
 
   /* Load the font graphics: */
   stdfontgfx = SDL_LoadBMP(fontname);

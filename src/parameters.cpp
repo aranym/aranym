@@ -38,9 +38,14 @@ static struct option const long_options[] =
   {NULL, 0, NULL, 0}
 };
 
-char *program_name;
-char rom_path[512] = DATADIR "/ROM";
-char emutos_path[512] = DATADIR "/etos512k.img";
+#define TOS_FILENAME	"ROM"
+#define EMUTOS_FILENAME	"etos512k.img"
+
+char *program_name;		// set by main()
+char program_home[512];	// set by main()
+char rom_path[512];		// set by build_datafilenames()
+char emutos_path[512];	// set by build_datafilenames()
+
 bool boot_emutos = false;
 bool ide_swap = false;
 uint32 FastRAMSize;
@@ -646,6 +651,7 @@ int process_cmdline(int argc, char **argv)
 	return optind;
 }
 
+// build a complete path to an user-specific file
 char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 {
 	unsigned int len = strlen(config_folder)+1 + strlen(file)+1;
@@ -660,9 +666,40 @@ char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 	return buffer;
 }
 
+// build a complete path to system wide data file
+char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
+{
+	// data folder is either defined at compile time with DATADIR
+	// or if the DATADIR is "." (actual folder) then the data folder
+	// path is the executable program path ('program_home')
+	char *data_folder = (strlen(DATADIR) > 1) ? DATADIR : program_home;
+
+	unsigned int len = strlen(data_folder)+1 + strlen(file)+1;
+	if (len < bufsize) {
+		strcpy(buffer, data_folder);
+		strcat(buffer, DIRSEPARATOR);
+		strcat(buffer, file);
+	}
+	else
+		strcpy(buffer, file);	// at least the filename
+
+	return buffer;
+}
+
 void build_cfgfilename()
 {
+	// Unix-like systems define HOME variable as the user home folder
 	char *home = getenv("HOME");
+
+	// Windows 2000 use a different variable with the same meaning
+	if (home == NULL)
+		home = getenv("USERPROFILE");
+
+	// if environment failed use program home folder as the user home
+	// this might be useful in single user systems
+	if (home == NULL)
+		home = program_home;
+
 	if (home != NULL) {
 		int homelen = strlen(home);
 		if (homelen > 0) {
@@ -684,6 +721,12 @@ void build_cfgfilename()
 
 	if (strlen(config_file) == 0)
 		getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
+}
+
+void build_datafilenames()
+{
+	getDataFilename(TOS_FILENAME, rom_path, sizeof(rom_path));
+	getDataFilename(EMUTOS_FILENAME, emutos_path, sizeof(emutos_path));
 }
 
 static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose)
@@ -791,6 +834,7 @@ bool check_cfg()
 bool decode_switches(FILE *f, int argc, char **argv)
 {
 	build_cfgfilename();
+	build_datafilenames();
 	early_cmdline_check(argc, argv);
 	preset_cfg();
 	decode_ini_file(f, config_file);

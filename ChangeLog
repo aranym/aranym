@@ -10,10 +10,23 @@
   file automatically is as easy as starting aranym with -s. After that you
   may just remove the [ARANYMFS] block from your config file.
 
+- user-specific files ("config", "nvram") are stored in subfolder ".aranym"
+  in the $HOME folder. If $HOME is not defined, $USERPROFILE is used instead
+  (Windows 2000). If neither $HOME nor $USERPROFILE is defined then the path
+  to the ARAnyM binary is used.
+
+- system-wide data files ("ROM", "etos512k.img", "font8.bmp") are stored
+  in subfolder "aranym" in the "/usr/local/share" folder (by default). This
+  folder can be changed in configure by --datadir=<path>. If this folder
+  is defined as 1 char long path ("." for the actual folder) or is empty
+  then ARAnyM tries to use the path to the ARAnyM binary instead.
+
+- DIR_SEPARATOR renamed to DIRSEPARATOR and corrected (it's been already
+  used in several places).
+
 
 2003/03/27 - milan
-- configure.ac: DIR_SEPARATOR added. Also cygwin now automatically changes
-  the ARANYMHOME from default ".aranym" to "aranym".
+- configure.ac: DIR_SEPARATOR added.
 
 2003/03/26 - milan
 - JIT games, sync with BailiskII
