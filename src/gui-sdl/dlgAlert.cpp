@@ -91,9 +91,12 @@ int FormatTextToBox(char *text, int max_width)
 */
 int Dialog_AlertDlg(const char *text)
 {
-  char *t = strdupa(text);
+  char *t = (char *)malloc(strlen(text)+1);
+  char *orig_t = t;
   static int maxlen = sizeof(dlglines[0])-1;
-  int lines = FormatTextToBox(t, maxlen);
+  int lines;
+  strcpy(t, text);
+  lines = FormatTextToBox(t, maxlen);
   for(int i=0; i<MAX_LINES; i++) {
   	if (i < lines) {
     	strcpy(dlglines[i], t);
@@ -103,5 +106,6 @@ int Dialog_AlertDlg(const char *text)
     	dlglines[i][0] = '\0';
     }
   }
+  free(orig_t);
   return (SDLGui_DoDialog(alertdlg) == 5);
 }
