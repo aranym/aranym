@@ -239,6 +239,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 #ifdef ENABLE_OPENGL
 	if (bx_options.opengl.enabled) {
 		GLint MaxTextureSize;
+		int filtering;		
 
 		/* Set video mode if not already done */
 		if (SdlGlSurface==NULL) {
@@ -308,8 +309,12 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		glGenTextures(1, &SdlGlTexObj);
 		glBindTexture(GL_TEXTURE_2D, SdlGlTexObj);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // scale when image bigger than texture
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // scale when image smaller than texture
+		filtering = GL_NEAREST;		
+		if (bx_options.opengl.filtered) {
+			filtering = GL_LINEAR;
+		}
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering); // scale when image bigger than texture
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering); // scale when image smaller than texture
 
 		glTexImage2D(GL_TEXTURE_2D, 0, 4, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
 
@@ -1179,6 +1184,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.33  2002/12/02 16:54:38  milan
+ * non-OpenGL support
+ *
  * Revision 1.32  2002/12/01 10:28:29  pmandin
  * OpenGL rendering
  *

@@ -192,6 +192,7 @@ struct Config_Tag opengl_conf[]={
 	{ "Width", Int_Tag, &bx_options.opengl.width},
 	{ "Height", Int_Tag, &bx_options.opengl.height},
 	{ "Bpp", Int_Tag, &bx_options.opengl.bpp},
+	{ "Filtered", Bool_Tag, &bx_options.opengl.filtered},
 	{ NULL , Error_Tag, NULL }
 };
 
@@ -200,6 +201,7 @@ void preset_opengl() {
   bx_options.opengl.width = 640;
   bx_options.opengl.height = 480;
   bx_options.opengl.bpp = 16;
+  bx_options.opengl.filtered = false;
 }
 
 void postload_opengl() {
