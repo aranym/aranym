@@ -1,5 +1,5 @@
 2002/05/14 - milan
-- vm_alloc.cpp: better structure, ont own OS dependent includes
+- vm_alloc.cpp: better structure, not own OS dependent includes
 
 - main.cpp, main_unix.cpp, aranym_glue.cpp, cpu_emulation.h:
     some debug outputs added for JIT compiler
