@@ -46,25 +46,7 @@ VIDEL::VIDEL()
 
 void VIDEL::init()
 {
-	// preset certain VIDEL registers so that it displays something even
-	// if the VIDEL was not initialized fully and correctly (current EmuTOS)
-	// the following values were read from TOS VGA2 resolution (640x480x1).
-	// for bpp detection (default 1)
-	handleWriteW(HW+0x60, 0x0000);
-	handleWriteW(HW+0x66, 0x0400);
-	handleWriteW(HW+0x82, 0x00c6);
-	// for width (default 640)
-	handleWriteW(HW+0x10, 0x0028);
-	// lineoffset is zero: on 9 bits
-	handleWriteW(HW+0x0e, 0x0000);
-	// linewidth in words: on 10 bits
-	handleWriteW(HW+0x10, 0x0028);
-	// for height
-	handleWriteW(HW+0xa8, 0x003f);
-	handleWriteW(HW+0xaa, 0x03ff);
-	handleWriteW(HW+0xc2, 0x0008);
-
-	hostScreen.setWindowSize( width, height, 16 );
+	hostScreen.setWindowSize( width, height, 8 );
 }
 
 // monitor writting to Falcon and ST/E color palette registers
@@ -72,27 +54,30 @@ void VIDEL::handleWrite(uint32 addr, uint8 value)
 {
 	BASE_IO::handleWrite(addr, value);
 
-	if ((addr >= 0xff9800 && addr < 0xffa200) || (addr >= 0xff8240 && addr < 0xff8260))
+	if ((addr >= 0xff9800 && addr < 0xffa200) || (addr >= 0xff8240 && addr < 0xff8260)) {
 		hostColorsSync = false;
-	else if (addr == 0xff8260) {
-		D(bug("VIDEL write: %06x = %d ($%02x)", addr, value, value));
+		return;
+	}
+
+	if ((addr & ~1) == HW+0x60) {
+		D(bug("VIDEL st_shift: %06x = %d ($%02x)", addr, value, value));
 		// writing to st_shift changed scn_width and vid_mode
 		// BASE_IO::handleWrite(HW+0x10, 0x0028);
 		// BASE_IO::handleWrite(HW+0xc2, 0x0008);
 	}
-	else if (addr == 0xff8266 && value == 0) {
+	else if ((addr & ~1) == HW+0x66) {
+		D(bug("VIDEL f_shift: %06x = %d ($%02x)", addr, value, value));
 		// IMPORTANT:
 		// set st_shift to 0, so we can tell the screen-depth if f_shift==0.
 		// Writing 0 to f_shift enables 4 plane Falcon mode but
 		// doesn't set st_shift. st_shift!=0 (!=4planes) is impossible
 		// with Falcon palette so we set st_shift to 0 manually.
-		D(bug("VIDEL write: %06x = %d ($%02x)", addr, value, value));
-		BASE_IO::handleWrite(HW+0x60, 0);
+		if (handleReadW(HW+0x66) == 0) {
+			BASE_IO::handleWrite(HW+0x60, 0);
+		}
 	}
-#if DEBUG
-	else
-		D(bug("VIDEL write: %06x = %d ($%02x)", addr, value, value));
-#endif
+
+	// D(bug("VIDEL write: %06x = %d ($%02x)", addr, value, value));
 
 	if ((addr & ~3) == HW)	// Atari tries to change the VideoRAM address (after a RESET?)
 		doRender = true;	// that's a sign that Videl should render the screen
@@ -127,6 +112,8 @@ int VIDEL::getScreenBpp()
 		bits_per_pixel = 2;
 	else /* if (st_shift == 0x200) */
 		bits_per_pixel = 1;
+
+	// D(bug("Videl works in %d bpp, f_shift=%04x, st_shift=%d", bits_per_pixel, f_shift, st_shift));
 
 	return bits_per_pixel;
 }
@@ -928,6 +915,9 @@ void VIDEL::renderScreenZoom()
 
 /*
  * $Log$
+ * Revision 1.49  2003/02/18 17:10:09  joy
+ * ChangeLog
+ *
  * Revision 1.48  2003/02/16 21:07:45  joy
  * cleanup in NatFeats
  *
