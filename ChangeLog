@@ -1,5 +1,6 @@
 2005/01/08  Andreas Schwab
-- lilo.cpp: Load ramdisk at end of ST ram.  64-bit fixes.
+- lilo.cpp: Load ramdisk at end of ST ram.  64-bit fixes.  Copy needed
+  bits from Linux/m68k kernel headers instead of including them.
 
 
 2005/01/08 - Petr Stehlik

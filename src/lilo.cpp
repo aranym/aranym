@@ -39,11 +39,77 @@
 
 /* linux specific include files */
 #include <elf.h>
-#include <asm-m68k/bootinfo.h>
-#include <asm-m68k/page.h>
-#define __KERNEL__
-#include <asm-m68k/setup.h>
-#undef __KERNEL__
+
+/* #include <asm-m68k/bootinfo.h> */
+struct bi_record {
+    uint16 tag;			/* tag ID */
+    uint16 size;		/* size of record (in bytes) */
+    uint32 data[0];		/* data */
+};
+
+    /*
+     *  Tag Definitions
+     *
+     *  Machine independent tags start counting from 0x0000
+     *  Machine dependent tags start counting from 0x8000
+     */
+
+#define BI_LAST			0x0000	/* last record (sentinel) */
+#define BI_MACHTYPE		0x0001	/* machine type (u_long) */
+#define BI_CPUTYPE		0x0002	/* cpu type (u_long) */
+#define BI_FPUTYPE		0x0003	/* fpu type (u_long) */
+#define BI_MMUTYPE		0x0004	/* mmu type (u_long) */
+#define BI_MEMCHUNK		0x0005	/* memory chunk address and size */
+					/* (struct mem_info) */
+#define BI_RAMDISK		0x0006	/* ramdisk address and size */
+					/* (struct mem_info) */
+#define BI_COMMAND_LINE		0x0007	/* kernel command line parameters */
+					/* (string) */
+
+    /*
+     *  Atari-specific tags
+     */
+
+#define BI_ATARI_MCH_COOKIE	0x8000	/* _MCH cookie from TOS (u_long) */
+#define BI_ATARI_MCH_TYPE	0x8001	/* special machine type (u_long) */
+
+/* mch_type values */
+#define ATARI_MACH_AB40		3	/* Afterburner040 on Falcon */
+
+/* #include <asm-m68k/setup.h> */
+    /*
+     *  Linux/m68k Architectures
+     */
+
+#define MACH_ATARI    2
+
+    /*
+     *  CPU, FPU and MMU types
+     *
+     *  Note: we may rely on the following equalities:
+     *
+     *      CPU_68020 == MMU_68851
+     *      CPU_68030 == MMU_68030
+     *      CPU_68040 == FPU_68040 == MMU_68040
+     *      CPU_68060 == FPU_68060 == MMU_68060
+     */
+
+#define CPUB_68040     2
+#define CPU_68040      (1<<CPUB_68040)
+#define FPUB_68040     2                       /* Internal FPU */
+#define FPU_68040      (1<<FPUB_68040)
+#define MMUB_68040     2                       /* Internal MMU */
+#define MMU_68040      (1<<MMUB_68040)
+
+#define NUM_MEMINFO	4
+#define CL_SIZE		256
+
+struct mem_info {
+	uint32 addr;		/* physical address of memory chunk */
+	uint32 size;		/* length of memory chunk (in bytes) */
+};
+
+#define PAGE_SIZE 4096
 
 /*--- Defines ---*/
 
@@ -73,7 +139,7 @@ struct atari_bootinfo {
     uint32 cputype;		/* system CPU */
     uint32 fputype;		/* system FPU */
     uint32 mmutype;		/* system MMU */
-    int num_memory;			/* # of memory blocks found */
+    int32 num_memory;		/* # of memory blocks found */
     struct mem_info memory[NUM_MEMINFO];  /* memory description */
     struct mem_info ramdisk;	/* ramdisk description */
     char command_line[CL_SIZE];	/* kernel command line parameters */
@@ -264,7 +330,7 @@ int LiloCheckKernel(
     Elf32_Ehdr *kexec_elf;	/* header of kernel executable */
     Elf32_Phdr *kernel_phdrs;
 	unsigned long min_addr=0xffffffff, max_addr=0;
-	unsigned long kernel_size, memptr;
+	unsigned long kernel_size, mem_ptr;
 	int i;
 	char *kname, *kernel_name="vmlinux";
 
@@ -330,7 +396,7 @@ int LiloCheckKernel(
 	kernel_size = max_addr - min_addr;
 	D(bug("lilo: kernel_size=%lu",kernel_size));
 
-	memptr = KERNEL_START;
+	mem_ptr = KERNEL_START;
 	for (i=0; i<SDL_SwapBE16(kexec_elf->e_phnum); i++) {
 		unsigned long segment_length;
 		unsigned long segment_ptr;
@@ -345,9 +411,9 @@ int LiloCheckKernel(
 		}
 		segment_ptr =  SDL_SwapBE32(kernel_phdrs[i].p_vaddr)-PAGE_SIZE;
 
-		memcpy(((char *)RAMBaseHost) + memptr + segment_ptr, ((char *) kexec_elf) + segment_offset, segment_length);
+		memcpy(((char *)RAMBaseHost) + mem_ptr + segment_ptr, ((char *) kexec_elf) + segment_offset, segment_length);
 
-	    D(bug("lilo: Copied segment %d: 0x%08x,0x%08x at 0x%08x",i,segment_offset,segment_length,memptr+segment_ptr));
+	    D(bug("lilo: Copied segment %d: 0x%08x,0x%08x at 0x%08x",i,segment_offset,segment_length,mem_ptr+segment_ptr));
 	}
 
 	/*--- Copy the ramdisk after kernel (and reserved bootinfo) ---*/
