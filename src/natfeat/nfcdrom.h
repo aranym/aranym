@@ -31,7 +31,8 @@ class CdromDriver : public NF_Base
 		uint32	drives_mask;
 		int drive_handles[32];	/* Handle for each possible opened drive */
 		int GetDrive(memptr device);	/* Return drive letter of a metados device */
-		int CheckDrive(memptr device);	/* Check if device is ready */
+		int OpenDrive(memptr device);	/* Check if device is ready */
+		void CloseDrive(int drive);	/* Check if device is ready */
 		uint16 AtariToLinuxIoctl(uint16 opcode);	/* Translate ioctl numbers */
 		unsigned char BinaryToBcd(unsigned char value);	/* Convert a value to BCD */
 
