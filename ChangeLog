@@ -1,3 +1,7 @@
+2004/08/16 - Xavier
+- Unix/cygwin/sigsegv_cygwin.cpp: fixed GCC warnings.
+
+
 2004/08/12 - Xavier
 - Unix/configure.ac, Unix/cygwin/sigsegv_cygwin.cpp, uae_cpu/cpu_emulation.h :
   clean solution to avoid nested sigsegv on Windows/Cygwin and any other OS

@@ -3,7 +3,7 @@
 
 #define SIGSEGV_HANDLER_GOTO 0
 
-#define DEBUG 0
+#define DEBUG 2
 #include "debug.h"
 
 /* No header file for this ? */
@@ -221,7 +221,11 @@ static inline void unknown_instruction(uint32 instr) {
 		abort();
 }
 
+#ifdef NO_NESTED_SIGSEGV
+static inline void handle_access_fault2(CONTEXT_TYPE CONTEXT_NAME, memptr faultaddr) {
+#else /* NO_NESTED_SIGSEGV */
 static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultaddr) {
+#endif /* NO_NESTED_SIGSEGV */
 	memptr addr = faultaddr;
 	memptr ainstr = CONTEXT_EIP;
 	uint32 instr = (uint32)*(uint32 *)ainstr;
@@ -610,11 +614,6 @@ label_INSTR_UNKNOWN:
 	if ((addr < 0x00f00000) || (addr > 0x00ffffff))
 		goto buserr;
 
-#ifdef NO_NESTED_SIGSEGV
-	if (SETJMP(sigsegv_env) != 0)
-		goto buserr;
-#endif /* NO_NESTED_SIGSEGV */
-
 	preg = get_preg(reg, CONTEXT_NAME, size);
 
 	D2(panicbug("Register %d, place %08x, address %08x", reg, preg, addr));
@@ -880,14 +879,22 @@ buserr:
 
 #endif /* HW_SIGSEGV */
 
-#ifdef NO_NESTED_SIGSEGV
-	in_handler = 0;
-	regs.mmu_fault_addr = addr;
-	CONTEXT_EIP = (long unsigned int)atari_bus_fault;
-#else /* NO_NESTED_SIGSEGV */
 	BUS_ERROR(addr);
-#endif /* NO_NESTED_SIGSEGV */
 }
+
+#ifdef NO_NESTED_SIGSEGV
+static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultaddr) {
+	if (SETJMP(sigsegv_env) != 0)
+	{
+		in_handler = 0;
+		regs.mmu_fault_addr = faultaddr - FMEMORY;
+		CONTEXT_EIP = (long unsigned int)atari_bus_fault;
+		return;
+	}
+
+	handle_access_fault2(CONTEXT_NAME, faultaddr);
+}
+#endif /* NO_NESTED_SIGSEGV */
 
 #endif /* (__i386__) */
 
