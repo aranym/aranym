@@ -47,6 +47,9 @@
 /* Define if using DSP */
 #undef DSP_EMULATION
 
+/* Define if using DSP thread */
+#undef DSP_THREADED
+
 /* Define if DSP disassembly */
 #undef DSP_DISASM
 
