@@ -113,6 +113,17 @@ feature services do not fully support multi-thread native environments
 in which the 68k memory can be modified during the execution of one
 native feature call.
 
+All 68k memory accessed during the execution of a native function, 
+either directly (the stack), or indirectly (following pointers) must
+reside in physical memory before the native function is called. 
+As it is an error to call a native function with non-accessible
+memory, the implementation of native functions may ignore the 
+possibility that bus errors occur when they fetch 68k memory. 
+(so, they can let the 68k glue raise a bus error automatically, 
+without testing beforehand that the memory is valid and without
+having to take steps to ensure that no resource lossage occurs
+due to such automatic bus errors being raised).
+
 Some of these limitations might be solved by changing the implementation of
 native feature services. 
 
@@ -477,3 +488,5 @@ Appendix G - modifications to this document
 - NF_STDERR added, NF_NAME corrected (returns the number of chars before
   truncating).
 
+2002-10-29
+- a note about valid m68k physical memory added
