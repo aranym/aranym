@@ -87,8 +87,8 @@ extern void mmu_dump_tables(void);
 #define MMU_MMUSR_CM		(1 << 6) | ( 1 << 5)
 #define MMU_MMUSR_M			(1 << 4)
 #define MMU_MMUSR_W			(1 << 2)
-#define MMU_MMUSR_R			(1 << 1)
-#define MMU_MMUSR_T			(1 << 0)
+#define MMU_MMUSR_T			(1 << 1)
+#define MMU_MMUSR_R			(1 << 0)
 
 struct mmu_atc_line	{
 	int	v, umode, g, s, cm, m, w, r, fc2;
