@@ -1544,7 +1544,9 @@ setjmpagain:
     int prb = setjmp(excep_env);
     if (prb != 0) {
         Exception(prb, 0);
+#ifdef DEBUGGER
 	after_exception = true;
+#endif
     	goto setjmpagain;
     }
     for (;;) {
