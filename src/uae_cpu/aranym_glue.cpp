@@ -175,7 +175,7 @@ void Start680x0(void)
 	if (bx_options.jit.jit) {
 # ifdef X86_ASSEMBLY_disable
 setjmpagain:
-	    int prb = setjmp(excep_env);
+	    int prb = SETJMP(excep_env);
 	    if (prb != 0) {
 		flush_icache(0);
 	        Exception(prb, 0);

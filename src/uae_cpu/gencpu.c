@@ -2516,7 +2516,7 @@ static void generate_one_opcode (int rp)
 #ifdef DISDIP
     printf ("\tif (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {\n");
     printf ("\t\tif (m68k_do_specialties())\n");
-    printf ("\t\t\tlongjmp(loop_env, 1);\n");
+    printf ("\t\t\tLONGJMP(loop_env, 1);\n");
     printf ("\t}\n");
     printf ("\tpc = m68k_getpc();\n");
 #if ARAM_PAGE_CHECK

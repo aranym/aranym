@@ -569,9 +569,9 @@ void ndebug::log2phys(FILE *, uaecptr addr) {
 #ifdef FULLMMU
 	if (regs.mmu_enabled) {
 setjmpagain:
-		jmp_buf excep_env_old;
-		memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
-	        int prb = setjmp(excep_env);
+		JMP_BUF excep_env_old;
+		memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
+	        int prb = SETJMP(excep_env);
         	if (prb == 2) {
 			bug("Bus error");
 	                goto setjmpagain;
@@ -584,7 +584,7 @@ setjmpagain:
 		}
 		bug("MMU enabled: %08lx -> %08lx",	(unsigned long)addr,
 			(unsigned long)mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_long, 0));
-		memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
+		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 	} else {
 #endif /* FULLMMU */
 		bug("MMU disabled: %08lx", (unsigned long)addr);
@@ -1168,8 +1168,8 @@ void ndebug::nexit() {
 
 void ndebug::dumpmem(FILE *f, volatile uaecptr addr, uaecptr * nxmem, volatile unsigned int lns)
 {
-	jmp_buf excep_env_old;
-	memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
+	JMP_BUF excep_env_old;
+	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
 	uaecptr a;
 	broken_in = 0;
 	for (; lns-- && !broken_in;) {
@@ -1177,7 +1177,7 @@ void ndebug::dumpmem(FILE *f, volatile uaecptr addr, uaecptr * nxmem, volatile u
 		fprintf(f, "%08lx: \n", (unsigned long)addr);
 		for (i = 0; i < 16; i++) {
 setjmpagain:
-        		if (setjmp(excep_env) != 0) {
+        		if (SETJMP(excep_env) != 0) {
 				fprintf (f, "UA   ");
 				addr += 2;
 				if (++i == 16) break;
@@ -1195,7 +1195,7 @@ setjmpagain:
 		fprintf(f, "\n");
 	}
 	*nxmem = addr;
-	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
+	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 }
 
 uae_u32 ndebug::readhex (char v, char **c)
@@ -1343,6 +1343,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.33  2003/12/27 21:02:40  joy
+ * warning fixed
+ *
  * Revision 1.32  2003/09/03 20:15:55  milan
  * ndebug compilation warnings fixed
  *

@@ -49,12 +49,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef HW_SIGSEGV
-#define SETJMP(a)	sigsetjmp(a, 1)
-#else
-#define SETJMP(a)	setjmp(a)
-#endif
-
 #define SANITY_CHECK_ATC 1
 
 int quit_program = 0;
@@ -65,9 +59,9 @@ bool cpu_debugging = false;
 struct flag_struct regflags;
 
 /* LongJump buffers */
-jmp_buf excep_env;
+JMP_BUF excep_env;
 #ifdef DISDIP
-jmp_buf loop_env;
+JMP_BUF loop_env;
 #endif
 /* Opcode of faulting instruction */
 uae_u16 last_op_for_exception_3;
@@ -1270,7 +1264,7 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 	if ((opcode & 0xF000) == 0xA000) {
 	Exception(0xA,0);
 #ifdef DISDIP
-	longjmp(loop_env, 0);
+	LONGJMP(loop_env, 0);
 #else
 	return;
 #endif
@@ -1279,7 +1273,7 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 	if ((opcode & 0xF000) == 0xF000) {
 	Exception(0xB,0);
 #ifdef DISDIP
-	longjmp(loop_env, 0);
+	LONGJMP(loop_env, 0);
 #else
 	return;
 #endif
@@ -1293,7 +1287,7 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 	Exception (4,0);
 #ifdef DISDIP
 }
-	longjmp(loop_env, 0);
+	LONGJMP(loop_env, 0);
 #else
 	return;
 #endif
@@ -1462,7 +1456,7 @@ void m68k_do_execute (void)
     uae_u32 pc;
     uae_u32 opcode;
 #ifdef DISDIP
-    if (setjmp(loop_env)) return;
+    if (SETJMP(loop_env)) return;
 #endif	    
     for (;;) {
 	pc = m68k_getpc();
@@ -1663,13 +1657,13 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, volatile unsigned int cnt)
 {
     char *buffer = (char *)malloc(80 * sizeof(char));
-    jmp_buf excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
+    JMP_BUF excep_env_old;
+    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
     strcpy(buffer,"");
     volatile uaecptr newpc = 0;
     m68kpc_offset = addr - m68k_getpc ();
     if (cnt == 0) {
-        int prb = setjmp(excep_env);
+        int prb = SETJMP(excep_env);
         if (prb != 0) {
             goto setjmpagainx;
         }
@@ -1706,7 +1700,7 @@ void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, volatile unsigned in
         }
     } else {
 setjmpagain:
-        int prb = setjmp(excep_env);
+        int prb = SETJMP(excep_env);
         if (prb != 0) {
 		fprintf (f, " unknown address\n");
                 goto setjmpagain;
@@ -1770,7 +1764,7 @@ setjmpagainx:
     if (nextpc)
 	*nextpc = m68k_getpc () + m68kpc_offset;
     free(buffer);
-    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
+    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 }
 
 #ifdef FULL_HISTORY
@@ -1787,11 +1781,11 @@ void showDisasm(uaecptr addr) {
 		buff[i] = (char *)malloc(80 * sizeof(char));
 		strcpy(buff[i],"");
 	}
-	jmp_buf excep_env_old;
-	memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
+	JMP_BUF excep_env_old;
+	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
 	uaecptr newpc = 0;
 	m68kpc_offset = addr - m68k_getpc ();
-	int prb = setjmp(excep_env);
+	int prb = SETJMP(excep_env);
 	if (prb != 0) {
 		bug("%s%s%s%s%s%s%s%s%s%s%s%s unknown address", sbuffer[0], buff[0],  buff[1],  buff[2], buff[3], buff[4], sbuffer[1], sbuffer[2], sbuffer[3], sbuffer[4], sbuffer[5], sbuffer[6]);
 		free(buffer);
@@ -1852,7 +1846,7 @@ void showDisasm(uaecptr addr) {
 	free(buffer);
 	for (int i = 0; i < 7; i++) free(sbuffer[i]);
 	for (int i = 0; i < 5; i++) free(buff[i]);
-	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
+	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 }
 #endif
 #endif

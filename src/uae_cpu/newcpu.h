@@ -273,7 +273,7 @@ extern void m68k_instr_set(void);
 extern void mmu_op (uae_u32, uae_u16);
 
 #ifdef DISDIP
-extern jmp_buf loop_env;
+extern JMP_BUF loop_env;
 
 extern uae_u32 opcode;
 #endif

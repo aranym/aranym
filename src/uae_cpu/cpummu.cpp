@@ -645,7 +645,7 @@ bus_err:
 
 	if ((test & MMU_TEST_NO_BUSERR) == 0)	{
 //		Exception(2, pc);
-		longjmp(excep_env, 2);
+		LONGJMP(excep_env, 2);
 	}
 	return 0;
 

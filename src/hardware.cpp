@@ -40,9 +40,9 @@
 
 #ifdef HW_SIGSEGV
 extern int in_handler;
-# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); in_handler = 0; siglongjmp(excep_env, 2); }
+# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); in_handler = 0; LONGJMP(excep_env, 2); }
 #else
-# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); longjmp(excep_env, 2); }
+# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); LONGJMP(excep_env, 2); }
 #endif
 
 #define debug_print_IO(a) "unknown"

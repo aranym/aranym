@@ -97,8 +97,8 @@ static inline void WriteInt32(memptr addr, uint32 l) {put_long(addr, l);}
 static inline void WriteInt16(memptr addr, uint16 w) {put_word(addr, w);}
 static inline void WriteInt8(memptr addr, uint8 b) {put_byte(addr, b);}
 
-// For Exception longjmp
-extern jmp_buf excep_env;
+// For Exception LONGJMP
+extern JMP_BUF excep_env;
 
 // For address validation
 static inline bool ValidAtariAddr(memptr addr, bool write, uint32 len) { return phys_valid_address(addr, write, len); }

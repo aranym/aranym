@@ -459,4 +459,16 @@ extern "C" char *strdup(const char *s);
 
 extern CFBundleRef mainBundle;
 
+
+
 #endif /* MACOSX_support */
+
+#ifdef HW_SIGSEGV
+# define SETJMP(a)	sigsetjmp(a, 1)
+# define LONGJMP(a,b)	siglongjmp(a, b)
+# define JMP_BUF	sigjmp_buf
+#else
+# define SETJMP(a)	setjmp(a)
+# define LONGJMP(a,b)	longjmp(a,b)
+# define JMP_BUF	jmp_buf
+#endif
