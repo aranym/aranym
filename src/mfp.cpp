@@ -8,11 +8,6 @@
 
 #define DEBUG 0
 #include "debug.h"
-#include <SDL/SDL.h>
-
-static bool dP = false;		/* debug print */
-
-static long lastTicks = SDL_GetTicks();
 
 static const int HW = 0xfffa00;
 
@@ -30,8 +25,7 @@ static const int HW = 0xfffa00;
 		control = value & 0x0f;
 		if (value & 0x10)
 			state = false;
-		if (dP)
-			D(bug("Set MFP Timer%c control to $%x", name, value));
+		D(bug("Set MFP Timer%c control to $%x", name, value));
 	}
 
 	uae_u8 MFP_Timer::getControl() {
@@ -39,32 +33,22 @@ static const int HW = 0xfffa00;
 	}
 
 	void MFP_Timer::setData(uae_u8 value) {
-		if (dP)
-			D(bug("Set MFP Timer%c data to %d", name, value));
+		D(bug("Set MFP Timer%c data to %d", name, value));
 		start_data = value;
 		if (! isRunning())
 			current_data = value;
 	}
 
-	void MFP_Timer::tick() {
-		// D(bug("tick for Timer%c", name);
+	void MFP_Timer::reset() {
+		D(bug("reset of Timer%c", name));
 		if (isRunning()) {
 			state = true;
-			// Trigger 200Hz interrupt
-			long newTicks = SDL_GetTicks();
-			int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
-			TriggerMFP(5, count);
-			lastTicks = newTicks;
-			if (dP)
-				D(bug("TriggerMFP($4BA) = %ld", get_long_direct(0x4ba)));
 			current_data = start_data;
 		}
-		else
-			lastTicks = SDL_GetTicks();
 	}
 
 	uae_u8 MFP_Timer::getData() {
-		// D(bug("get MFP Timer%c data = %d", name, current_data));
+		D(bug("get MFP Timer%c data = %d", name, current_data));
 
 		if (isRunning() && current_data > 2)
 			current_data--;		// hack to overcome microseconds delays in TOS (e.g. at $E02570)
@@ -100,21 +84,21 @@ static const int HW = 0xfffa00;
 			case 0x0b:	return 0x20; //(irq_pending >> 8) | (tA->getControl() & 0x10);	// finish
 						break;
 
-			case 0x0d:	if (dP) D(bug("Read: TimerC IRQ %s pending", (irq_pending & 0x20) ? "" : "NOT"));
+			case 0x0d:	D(bug("Read: TimerC IRQ %s pending", (irq_pending & 0x20) ? "" : "NOT"));
 						return irq_pending;
 						break;
 
 			case 0xf:	return irq_inservice >> 8;
 						break;
 
-			case 0x11:	if (dP) D(bug("Read: TimerC IRQ %s in-service", (irq_inservice & 0x20) ? "" : "NOT"));
+			case 0x11:	D(bug("Read: TimerC IRQ %s in-service", (irq_inservice & 0x20) ? "" : "NOT"));
 						return irq_inservice;
 						break;
 						
 			case 0x13:	return irq_mask >> 8;
 						break;
 						
-			case 0x15:	if (dP) D(bug("Read: TimerC IRQ %s masked", (irq_mask & 0x20) ? "" : "NOT"));
+			case 0x15:	D(bug("Read: TimerC IRQ %s masked", (irq_mask & 0x20) ? "" : "NOT"));
 						return irq_mask;
 						break;
 						
@@ -170,39 +154,51 @@ static const int HW = 0xfffa00;
 			case 0x07:	irq_enable = (irq_enable & 0x00ff) | (value << 8);
 						break;
 
-			case 0x09:	if (dP && (irq_enable ^ value) & 0x20)
+			case 0x09:
+#if DEBUG
+						if ((irq_enable ^ value) & 0x20)
 							D(bug("Write: TimerC IRQ %sabled", (value & 20) ? "en" : "dis"));
-						if (dP && (irq_enable ^ value) & 0x40)
+						if ((irq_enable ^ value) & 0x40)
 							D(bug("Write: IKBD IRQ %sabled", (value & 40) ? "en" : "dis"));
+#endif /* DEBUG */
 						irq_enable = (irq_enable & 0xff00) | value;
 						break;
 
 			case 0x0b:	irq_pending = (irq_pending & 0x00ff) | (value << 8);
 						break;
 
-			case 0x0d:	if (dP && (irq_pending ^ value) & 0x20)
+			case 0x0d:
+#if DEBUG
+						if ((irq_pending ^ value) & 0x20)
 							D(bug("Write: TimerC IRQ %s pending", (value & 20) ? "" : "NOT"));
+#endif /* DEBUG */
 						irq_pending = (irq_pending & 0xff00) | value;
 						break;
 
 			case 0xf:	irq_inservice = (irq_inservice & 0x00ff) | (value << 8);
 						break;
 
-			case 0x11:	if (dP && (irq_inservice ^ value) & 0x20)
+			case 0x11:
+#if DEBUG
+						if ((irq_inservice ^ value) & 0x20)
 							D(bug("Write: TimerC IRQ %s in-service at %08x", (value & 20) ? "" : "NOT", showPC()));
+#endif /* DEBUG */
 						irq_inservice = (irq_inservice & 0xff00) | (irq_inservice & value);
 						break;
 						
 			case 0x13:	irq_mask = (irq_mask & 0x00ff) | (value << 8);
 						break;
 						
-			case 0x15:	if (dP && (irq_mask ^ value) & 0x20)
+			case 0x15:
+#if DEBUG
+						if ((irq_mask ^ value) & 0x20)
 							D(bug("Write: TimerC IRQ %s masked", (value & 20) ? "" : "NOT"));
+#endif /* DEBUG */
 						irq_mask = (irq_mask & 0xff00) | value;
 						break;
 						
 			case 0x17:	automaticServiceEnd = (value & 0x08) ? true : false;
-						if (dP) D(bug("MFP autoServiceEnd: %s", automaticServiceEnd ? "YES" : "NO"));
+						D(bug("MFP autoServiceEnd: %s", automaticServiceEnd ? "YES" : "NO"));
 						break;
 
 			case 0x19:	A.setControl(value);
@@ -239,12 +235,17 @@ static const int HW = 0xfffa00;
 
 void MFP::IRQ(int no) {
 	switch(no) {
-		case 0:	break;	// BUSY
-		case 5: C.tick(); break;	// TimerC 200 Hz
-		case 6: {
-					GPIP_data &= ~0x10;
-					TriggerMFP(6, 0);
-				}
+		// printer BUSY interrupt
+		case 0:	break;
+
+		// TimerC 200 Hz interrupt
+		case 5: C.reset();
+				TriggerMFP(5);
+				break;
+
+		// ACIA received data interrupt
+		case 6: GPIP_data &= ~0x10;
+				TriggerMFP(6);
 				break;
 	}
 }
