@@ -14,6 +14,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#define SAVE_BKG_TO_FILE	/* for some reason storing to memory fails */
 
 
 /*
@@ -60,6 +61,29 @@ void HostScreen::toggleFullScreen()
 	SDL_WM_ToggleFullScreen(surf);
 }
 
+void HostScreen::save_bkg()
+{
+#ifdef SAVE_BKG_TO_FILE
+	SDL_SaveBMP(surf, "background");
+#else
+	saved_background_size = surf->pitch * surf->h;
+	saved_background = realloc(saved_background, saved_background_size);
+	int ret = SDL_SaveBMP_RW(surf, SDL_RWFromMem(saved_background, saved_background_size), 0);
+	D(bug("screen size (%dx%d) = %d saved to %p with code %d", surf->pitch, surf->h, saved_background_size, saved_background, ret));
+#endif
+}
+
+void HostScreen::restore_bkg()
+{
+#ifdef SAVE_BKG_TO_FILE
+	SDL_Surface *emisurf = SDL_LoadBMP("background");
+#else
+	SDL_Surface *emisurf = SDL_LoadBMP_RW(SDL_RWFromMem(saved_background, saved_background_size), 0);
+#endif
+	int ret = SDL_BlitSurface(emisurf, NULL, surf, NULL);
+	fprintf(stderr, "screen restored from %p, code %d\n", emisurf, ret);
+	update(true);
+}
 
 void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 {
@@ -913,6 +937,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.26  2002/06/07 20:56:56  joy
+ * added window/fullscreen mode switch
+ *
  * Revision 1.25  2002/01/08 21:20:57  standa
  * fVDI driver palette store on res change implemented.
  *
