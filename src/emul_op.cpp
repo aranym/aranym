@@ -120,8 +120,14 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			}
 			break;
 
-		case M68K_EMUL_OP_VIDEO_CONTROL:
-			fVDIDrv.dispatch( ReadInt32(r->a[7]), r );  // SO
+		case M68K_EMUL_OP_VIDEO_CONTROL:	// DEPRECATED
+				D(bug("old fVDI native driver API(opcode=%d)", ReadInt32(r->a[7])));
+				panicbug("old fVDI native driver API - deprecated call");
+				r->d[0] = 0xbadc0de;
+			break;
+
+		case M68K_EMUL_OP_VIDEO_DRIVER:
+		    fVDIDrv.dispatch(r);
 #ifdef __CYGWIN__
 			invoke200HzInterrupt();	/* Windows has a broken threading - we have to call it manually */
 #endif /* __CYGWIN__ */
