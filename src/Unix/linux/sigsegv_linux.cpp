@@ -316,7 +316,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 					instruction = INSTR_NEG8;
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
-#if 1
+#if 0
 				case 4:
 					D(panicbug("TEST m8, imm8"));
 					transfer_type = TYPE_STORE;
