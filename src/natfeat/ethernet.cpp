@@ -9,6 +9,7 @@
 #include "cpu_emulation.h"
 #include "main.h"
 #include "ethernet.h"
+#include "tools.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -87,8 +88,10 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				if (! ValidAddr(buf_ptr, true, buf_size))
 					BUS_ERROR(buf_ptr);
 
-				// generate the MAC as 'ARETH0' for eth0
-				uint8 mac_addr[6] = {'A','R','E','T','H', ' '+ethX };
+				// generate the MAC as '\0AETH0' for eth0
+				// CAUTION: the 'ARETH0' wasn't a good choice
+				// (Linux bridging didn't work with that)
+				uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
 				memcpy(Atari2HostAddr(buf_ptr), mac_addr, buf_size);	// use H2Amemcpy
 			}
 			break;
@@ -215,8 +218,12 @@ void ETHERNETDriver::finishInterupt()
 bool ETHERNETDriver::init(void)
 {
 	// int nonblock = 1;
-	char devName[128]="/dev/"TAP_DEVICE;
+	char devName[128]=TAP_DEVICE;
 
+	// get the tunnel nif name if provided
+	if (strlen(bx_options.ethernet.tunnel))
+		strcpy(devName, bx_options.ethernet.tunnel);
+	
 	D(bug("Ethernet: init"));
 
 	fd = tapOpen( devName );
@@ -224,6 +231,11 @@ bool ETHERNETDriver::init(void)
 		panicbug("NO_NET_DRIVER_WARN '%s': %s", devName, strerror(errno));
 		return false;
 	}
+
+	// if not a PPP then ok
+	strapply(bx_options.ethernet.type, tolower);
+	if ( strcmp(bx_options.ethernet.type,"ppp") )
+		return true;
 
 	int pid = fork();
 	if (pid < 0) {
@@ -244,7 +256,7 @@ bool ETHERNETDriver::init(void)
 			TAP_MTU, NULL
 		};
 		int result;
-		result = execvp( TAP_INIT, args );
+		result = execvp( "./" TAP_INIT, args );
 		_exit(result);
 	}
 
@@ -354,8 +366,8 @@ void ETHERNETDriver::stopThread(int ethX)
 		// pthread_cancel(handlingThread); // FIXME: set the cancel flag.
 		SDL_WaitThread(handlingThread, NULL);
 		SDL_DestroySemaphore(intAck);
-		handlingThread = NULL;
 #endif
+		handlingThread = NULL;
 	}
 }
 
@@ -442,24 +454,28 @@ int ETHERNETDriver::tapOpen(char *dev)
     struct ifreq ifr;
 
     if( (fd = open("/dev/net/tun", O_RDWR)) < 0 ) {
-    	panicbug("Error opening /dev/net/tun. Check if module is loaded and privileges are OK");
-		return tapOpenOld(dev);
-	}
+	    panicbug("Error opening /dev/net/tun. Check if module is loaded and privileges are OK");
+	    return tapOpenOld(dev);
+    }
 
     memset(&ifr, 0, sizeof(ifr));
+
     ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
+    if( *dev )
+	strncpy(ifr.ifr_name, dev, IFNAMSIZ);
 
     if (ioctl(fd, TUNSETIFF, (void *) &ifr) < 0) {
-		if (errno == EBADFD) {
-			/* Try old ioctl */
-			if (ioctl(fd, OTUNSETIFF, (void *) &ifr) < 0)
-				goto failed;
-		} else
-			goto failed;
+	    if (errno != EBADFD)
+		    goto failed;
+
+	    /* Try old ioctl */
+	    if (ioctl(fd, OTUNSETIFF, (void *) &ifr) < 0)
+		    goto failed;
     }
 
     strcpy(dev, ifr.ifr_name);
-	D(bug("Ethernet: if opened %s", dev));
+
+    D(bug("Ethernet: if opened %s", dev));
     return fd;
 
   failed:
