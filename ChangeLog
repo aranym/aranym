@@ -1,3 +1,8 @@
+2002/07/16 - Patrice
+- Host port reworked. More bugfixes and completion of the emulator.
+  DspDebug can be run, it finds the DSP.
+
+
 2002/07/15 - milan
 - main.cpp: SDL_Delay on exit increased (for slower machines)
 
