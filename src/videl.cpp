@@ -8,6 +8,8 @@
 
 static const int HW = 0xff8200;
 
+static bool dP = false;
+
 VIDEL::VIDEL() {
 	syncmode = shifter = videoctrl = videoctrl2 = videomode = 0xff;
 	videl = 0xfffe;
@@ -18,7 +20,7 @@ uae_u8 VIDEL::handleRead(uaecptr addr) {
 	if (addr < 0 || addr > 0x400)
 		return 0;
 
-	if (addr < 0x40 || (addr > 0x60 && addr < 0x400))
+	if (dP && (addr < 0x40 || (addr > 0x60 && addr < 0x400)))
 		fprintf(stderr, "VIDEL reads %06x at $%06x\n", 0xff8200+addr, showPC());
 
 	switch(addr) {
@@ -38,7 +40,7 @@ void VIDEL::handleWrite(uaecptr addr, uae_u8 value) {
 	if (addr < 0 || addr > 0x400)
 		return;
 
-	if (addr < 0x40 || (addr > 0x60 && addr < 0x400))
+	if (dP && (addr < 0x40 || (addr > 0x60 && addr < 0x400)))
 		fprintf(stderr, "VIDEL writes %06x = %d ($%02x) at $%06x\n", 0xff8200+addr, value, value, showPC());
 
 	switch(addr) {
