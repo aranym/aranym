@@ -16,12 +16,14 @@ EmuTOS =
 ; grab mouse to ARAnyM window when the mouse enters the window rectangle
 AutoGrabMouse = Yes
 
+
 [STARTUP]
 ; grab mouse at startup
 GrabMouse = Yes
 
 ; start ARAnyM with debugger
 Debugger = No
+
 
 [VIDEO]
 ; start ARAnyM in fullscreen
@@ -36,12 +38,23 @@ VidelRefresh = 2
 ; set the connected monitor (-1 = don't change NVRAM setting)
 VidelMonitor = -1
 
+; Undocumented
+AutoZoom = No
+
+; Undocumented
+AutoZoomInteger = No
+
+
 [TOS]
 ; patch TOS _MCH cookie value (30000 is the TOS 4.04 value and means Falcon030)
 Cookie_MCH = 30000
 
 ; redirect TOS bconout characters to the host console window
-Console = No
+RedirConsole = No
+
+; Undocumented
+RedirPrinter = No
+
 
 [ARANYMFS]
 A = 
@@ -52,10 +65,12 @@ E =
 F = 
 G = 
 
+
 ; IDE Devices configuration
 ; update the Cylinders/Heads/SectorsPerTrack according to your drive geometry!
 [IDE0]
 Present = Yes
+XhdiWrite = No
 Path = /home/user/.aranym/diskImageC
 Cylinders = 2100
 Heads = 16
@@ -66,3 +81,23 @@ ByteSwap = No
 Present = Yes
 IsCDROM = Yes
 Path = /dev/hdc
+
+
+[JIT]
+; enable JIT compiler
+JIT = No
+
+; enable JIT compiler for FPU (if JIT compiler is enabled)
+JITFPU = No
+
+; size of cache for compiled code
+JITCacheSize = 8192
+
+; enable lazy flush (invalidation) of JIT cache
+JITLazyFlush = 1
+
+; enable NOP alignment
+TuneAlignment = Yes
+
+; enable better version of NOP alignment (if NOP alignment is enabled)
+TuneNOPfill = Yes

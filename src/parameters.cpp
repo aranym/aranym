@@ -99,6 +99,7 @@ struct Config_Tag jit_conf[]={
 	{ "JIT", Bool_Tag, &bx_options.jit.jit},
 	{ "JITFPU", Bool_Tag, &bx_options.jit.jitfpu},
 	{ "TuneAlignment", Bool_Tag, &bx_options.jit.tunealign},
+	{ "TuneNOPfill", Bool_Tag, &bx_options.jit.tunenop},
 	{ "JITCacheSize", Int_Tag, &bx_options.jit.jitcachesize},
 	{ "JITLazyFlush", Int_Tag, &bx_options.jit.jitlazyflush},
 	{ NULL , Error_Tag, NULL }

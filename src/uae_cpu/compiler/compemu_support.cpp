@@ -126,7 +126,8 @@ static bool		lazy_flush			= true;		// Flag: lazy translation cache invalidation
 static bool		avoid_fpu			= true;		// Flag: compile FPU instructions ?
 static bool		have_cmov			= false;	// target has CMOV instructions ?
 static bool		have_rat_stall		= true;		// target has partial register stalls ?
-static bool		tune_alignment		= false;	// Tune code alignments for running CPU ?
+static bool		tune_alignment		= true;		// Tune code alignments for running CPU ?
+static bool             tune_nop_fillers        = true;         // Tune no-op fillers for architecture
 static int		align_loops			= 32;		// Align the start of loops
 static int		align_jumps			= 32;		// Align the start of jumps
 static int		zero_fd				= -1;
@@ -702,6 +703,12 @@ static __inline__ void emit_long(uae_u32 x)
 {
     *((uae_u32*)target)=x;
     target+=4;
+}
+
+static __inline__ void emit_block(const uae_u8 *block, uae_u32 blocklen)
+{
+	memcpy((uae_u8 *)target,block,blocklen);
+	target+=blocklen;
 }
 
 static __inline__ uae_u32 reverse32(uae_u32 v)
@@ -4666,6 +4673,10 @@ void compiler_init(void)
 	tune_alignment = bx_options.jit.tunealign;
 	D(panicbug("<JIT compiler> : tune alignment : %\n", str_on_off(tune_alignment)));
 
+	// NOP fill
+	tune_nop_fillers = bx_options.jit.tunenop;
+	D(panicbug("<JIT compiler> : tune nop fillers : %\n", str_on_off(tune_nop_fillers)));
+
 	// Translation cache flush mechanism
 	lazy_flush = (bx_options.jit.jitlazyflush == 0) ? false : true;
 	D(panicbug("<JIT compiler> : lazy translation cache invalidation : %s\n", str_on_off(lazy_flush)));
@@ -4684,11 +4695,11 @@ void compiler_init(void)
 	initialized = true;
 
 #if PROFILE_UNTRANSLATED_INSNS
-	panicbug("<JIT compiler> : gather statistics on untranslated insns count");
+	D(panicbug("<JIT compiler> : gather statistics on untranslated insns count"));
 #endif
 
 #if PROFILE_COMPILE_TIME
-	panicbug("<JIT compiler> : gather statistics on translation time");
+	D(panicbug("<JIT compiler> : gather statistics on translation time"));
 	emul_start_time = clock();
 #endif
 }
@@ -4969,9 +4980,13 @@ void freescratch(void)
 
 static void align_target(uae_u32 a)
 {
-    /* Fill with NOPs --- makes debugging with gdb easier */
-    while ((uae_u32)target&(a-1)) 
-	*target++=0x90;
+	if (tune_nop_fillers)
+		raw_emit_nop_filler(a - (((uae_u32)target) & (a - 1)));
+	else {
+		/* Fill with NOPs --- makes debugging with gdb easier */
+		while ((uae_u32)target&(a-1))
+			*target++=0x90;
+	}
 }
 
 static __inline__ int isinrom(uintptr addr)
