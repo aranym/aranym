@@ -6,7 +6,8 @@
 #include "memory.h"
 #include "acsifdc.h"
 
-#define FDC_VERBOSE 0
+#define DEBUG 0
+#include "debug.h"
 
 static const int HW = 0xff8600;
 
@@ -139,9 +140,7 @@ uae_u8 ACSIFDC::LOAD_B_ff8607(void)
 
 void ACSIFDC::STORE_B_ff8604(uae_u8 vv)
 {
-#if FDC_VERBOSE
-	fprintf(stderr,"DMA car/scr hi <- %x (mode=%x)\n",vv,dma_mode);
-#endif
+	D(bug("DMA car/scr hi <- %x (mode=%x)", vv, dma_mode));
 	if (dma_mode&0x10)
 	{
 		dma_scr &= 0xff;
@@ -181,9 +180,7 @@ void ACSIFDC::STORE_B_ff8604(uae_u8 vv)
 
 void ACSIFDC::STORE_B_ff8605(uae_u8 vv)
 {
-#if FDC_VERBOSE
-	fprintf(stderr,"DMA car/scr lo <- %x (mode=%x)\n",vv,dma_mode);
-#endif
+	D(bug("DMA car/scr lo <- %x (mode=%x)", vv, dma_mode));
 	if (dma_mode&0x10)
 	{
 		dma_scr &= 0xff00;
@@ -226,17 +223,13 @@ void ACSIFDC::STORE_B_ff8606(uae_u8 vv)
 {
 	dma_mode &= 0xff;
 	dma_mode |= vv<<8;
-#if FDC_VERBOSE
-	fprintf(stderr,"DMA mode <- %04x\n",dma_mode);
-#endif
+	D(bug("DMA mode <- %04x", dma_mode));
 }
 
 void ACSIFDC::STORE_B_ff8607(uae_u8 vv)
 {
 	dma_mode &= 0xff00;
 	dma_mode |= vv;
-#if FDC_VERBOSE
-	fprintf(stderr,"DMA mode <- %04x\n",dma_mode);
-#endif
+	D(bug("DMA mode <- %04x", dma_mode));
 	return;
 }
