@@ -1511,11 +1511,13 @@ bool ExtFs::filterFiles( ExtDta *dta, char *fpathName, char *mask, struct dirent
 	//FIXME	 if ( stat(fpathName, &statBuf) )
 	//	return false;
 
-	// The . and .. dirs shouldn't be returned
-	if ( dirEntry->d_name[0] == '.' &&
-		 ( dirEntry->d_name[1] == '\0' ||
-		   dirEntry->d_name[1] == '.' && dirEntry->d_name[2] == '\0' ) )
-		return false;
+	#if 0
+	    // The . and .. dirs _should_ be returned (Julian Reschke said)
+	    if ( dirEntry->d_name[0] == '.' &&
+		   ( dirEntry->d_name[1] == '\0' ||
+			 dirEntry->d_name[1] == '.' && dirEntry->d_name[2] == '\0' ) )
+			return false;
+	#endif
 
 	// match from STonX
 	if ( strcmp(mask,"*.*") == 0 )
@@ -1588,6 +1590,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.11  2001/10/16 19:06:01  standa
+ * The debug changed to 0.
+ *
  * Revision 1.10  2001/09/18 12:35:12  joy
  * getDrvBits() added
  *
