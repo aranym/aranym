@@ -1,3 +1,7 @@
+2002/11/03 - joy
+- XHDI - returning values corrected
+
+
 2002/10/29 - Didier & joy
 - found and fixed serious buffer overflow in uae_cpu/readcpu.cpp.
   EMULOP_RETURN (unused), NATFEAT_ID and NATFEAT_CALL should behave
