@@ -158,14 +158,14 @@ opcodes are taken in the range 0x73nn (illegal moveq instructions).
 The following opcodes are defined:
 
   mnemonic nf_getid (in ARAnyM debugger it's NATFEAT_ID)
-  value 0xfe00
+  value 0x7300
   prototype  long nf_get_id(long ret_addr, const char * feature_name);
   if the feature name passed as argument is an implemented
   native feature, then return its ID in register D0, else
   return zero.
 
   mnemonic nf_call (in ARAnyM debugger it's NATFEAT_CALL)
-  value 0xfe01
+  value 0x7301
   prototype   long nf_call(long ret_addr, long id, ...);
   calls the feature defined by the id, passing the rest of the
   stack arguments as parameters. returns in D0 the value returned by

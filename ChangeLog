@@ -1,4 +1,10 @@
-2002/10/19 - joy (marked as 0.6.7-beta2)
+2002/10/20 - joy (version 0.6.8-beta)
+- NatFeat instruction opcodes changed back to good old $7300/$7301.
+  The LineF interface requires the $fe0x instructions to be long words
+  and I am not ready to accept such change of NatFeat calling convention.
+
+
+2002/10/19 - joy (version 0.6.7-beta2 - NatFeat opcode change!)
 - GFA Basic "fix" - it writes 0x16 to IKBD and then waits for a joystick
   packet in an endless loop. So we are sending a joy packet now.
 
