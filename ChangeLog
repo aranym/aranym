@@ -1,6 +1,6 @@
 * tagged as ARANYM_0_8_9_BETA
 
-2004/07/05 - joy
+2004/07/06 - joy
 - ikbd.cpp: write to MFP directly, don't throw nested SIGSEGV. This not only
   fixes the JIT CPU crash on keypress in linux 2.6.x but also seems to help
   booting linux-m68k (it doesn't freeze now when you press a key)
