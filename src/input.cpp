@@ -26,6 +26,7 @@
 #ifdef SDL_GUI
 #include "dialog.h"
 #endif
+#include "host.h"			// for fullscreen switch
 
 #define DEBUG 0
 #include "debug.h"
@@ -57,9 +58,9 @@ static bool hiddenMouse = false;
 
 void InputInit()
 {
-	// warp mouse to center of Atari 640x480 screen and grab it
+	// warp mouse to center of Atari 320x200 screen and grab it
 	if (! bx_options.video.fullscreen)
-		SDL_WarpMouse(640/2, 480/2);
+		SDL_WarpMouse(320/2, 200/2);
 	grabMouse(true);
 	// hide mouse unconditionally
 	hideMouse(true);
@@ -491,6 +492,11 @@ void check_event()
 							bx_hard_drive.set_cd_media_status(bx_hard_drive.get_cd_media_status() == 0);
 							send2Atari = false;
 						}
+						break;
+
+					case SDLK_SCROLLOCK:
+						hostScreen.toggleFullScreen();
+						send2Atari = false;
 						break;
 
 					default: break;
