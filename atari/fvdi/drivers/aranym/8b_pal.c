@@ -5,30 +5,26 @@
 #include "fvdi.h"
 #include "relocate.h"
 
-
-extern void CDECL c_set_colour_hook(long paletteIndex, long red, long green, long blue, long tcWord); /* STanda */
-
-#define ECLIPSE 0
-#define NOVA 0		/* 1 - byte swap 16 bit colour value (NOVA etc) */
-
-
-#undef NORMAL_NAME
-
-#ifndef PIXEL
- #define GETNAME	c_get_colours_8
- #define GET1NAME	c_get_colour_8
- #define SETNAME	c_set_colours_8
- #define PIXEL		unsigned char
+#define GETNAME	c_get_colours_8
+#define GET1NAME	c_get_colour_8
+#define SETNAME	c_set_colours_8
+#define PIXEL		unsigned char
 
 #define red_bits   8	/* 5 for all normal 16 bit hardware */
 #define green_bits 8	/* 6 for Falcon TC and NOVA 16 bit, 5 for NOVA 15 bit */
 			/* (I think 15 bit Falcon TC disregards the green LSB) */
 #define blue_bits  8	/* 5 for all normal 16 bit hardware */
-#endif
+
+/* from dispatch.c */
+void CDECL c_set_colour(Virtual *vwk, long paletteIndex, long red, long green, long blue);
+
+static unsigned char tos_colours[] = {0, 255, 1, 2, 4, 6, 3, 5, 7, 8, 9, 10, 12, 14, 11, 13};
 
 
-static char tos_colours[] = {0, 255, 1, 2, 4, 6, 3, 5, 7, 8, 9, 10, 12, 14, 11, 13};
+#define ECLIPSE 0
+#define NOVA 0		/* 1 - byte swap 16 bit colour value (NOVA etc) */
 
+#undef NORMAL_NAME
 
 #ifdef NORMAL_NAME
 long CDECL
@@ -55,7 +51,7 @@ GET1NAME(Virtual *vwk, long colour)
 	else
 		background = colour & 0xff;
 
-	return (background << 16) | foreground;
+	return ((long)background << 16) | (long)foreground;
 }
 
 
@@ -121,8 +117,14 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 				break;
 			}
 #endif
-			c_set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
-			                palette[start + i].vdi.blue, (long)tc_word ); /* STanda */
+			if ( palette == vwk->real_address->screen.palette.colours ) {
+				c_set_colour(	vwk,
+						start + i,
+						palette[start + i].vdi.red,
+						palette[start + i].vdi.green,
+		              			palette[start + i].vdi.blue);
+			}
+
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
 	} else {
@@ -163,8 +165,14 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 				break;
 			}
 #endif
-			c_set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
-			                palette[start + i].vdi.blue, (long)tc_word ); /* STanda */
+			if ( palette == vwk->real_address->screen.palette.colours ) {
+				c_set_colour(	vwk,
+						start + i,
+						palette[start + i].vdi.red,
+						palette[start + i].vdi.green,
+		              			palette[start + i].vdi.blue);
+			}
+
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
 	}

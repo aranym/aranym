@@ -5,26 +5,13 @@
 #include "relocate.h"
 
 
-extern void CDECL c_set_colour_hook(long paletteIndex, long red, long green, long blue, long tcWord); /* STanda */
+long CDECL c_get_hw_colour(short index, long red, long green, long blue, unsigned long *hw_value);
+
 
 #define ECLIPSE 0
 #define NOVA 0		/* 1 - byte swap 16 bit colour value (NOVA etc) */
 
-
 #undef NORMAL_NAME
-
-#ifndef PIXEL
- #define GETNAME	c_get_colours_16
- #define GET1NAME	c_get_colour_16
- #define SETNAME	c_set_colours_16
- #define PIXEL		unsigned short
-
- #define red_bits   5	/* 5 for all normal 16 bit hardware */
- #define green_bits 6	/* 6 for Falcon TC and NOVA 16 bit, 5 for NOVA 15 bit */
-			/* (I think 15 bit Falcon TC disregards the green LSB) */
- #define blue_bits  5	/* 5 for all normal 16 bit hardware */
-#endif
-
 
 #ifdef NORMAL_NAME
 long CDECL
@@ -56,6 +43,7 @@ GET1NAME(Virtual *vwk, long colour)
 
 	tc_word = *(PIXEL *)&fore_pal[(short)colour].real;
 	tc_word2 = *(PIXEL *)&back_pal[colour >> 16].real;
+
 #if NOVA
 	switch (sizeof(PIXEL)) {
 	case 2:
@@ -68,6 +56,7 @@ GET1NAME(Virtual *vwk, long colour)
 		break;
 	}
 #endif
+
 	if (sizeof(PIXEL) > 2)
 		return tc_word;
 	else
@@ -104,6 +93,7 @@ GETNAME(Virtual *vwk, long colour, long *foreground, long *background)
 	}
 
 	tc_word = *(PIXEL *)&fore_pal[(short)colour].real;
+
 #if NOVA
 	switch (sizeof(PIXEL)) {
 	case 2:
@@ -115,8 +105,10 @@ GETNAME(Virtual *vwk, long colour, long *foreground, long *background)
 		break;
 	}
 #endif
+
 	*foreground = tc_word;
 	tc_word = *(PIXEL *)&back_pal[colour >> 16].real;
+
 #if NOVA
 	switch (sizeof(PIXEL)) {
 	case 2:
@@ -128,6 +120,7 @@ GETNAME(Virtual *vwk, long colour, long *foreground, long *background)
 		break;
 	}
 #endif
+
 	*background = tc_word;
 }
 
@@ -152,74 +145,45 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 			component = *requested++;
 			palette[start + i].vdi.red = component;
 			palette[start + i].hw.red = component;	/* Not at all correct */
-			colour = component >> (16 - red_bits);	/* (component + (1 << (14 - red_bits))) */
-			tc_word = colour << green_bits;
 			component = *requested++;
 			palette[start + i].vdi.green = component;
 			palette[start + i].hw.green = component;	/* Not at all correct */
-			colour = component >> (16 - green_bits);	/* (component + (1 << (14 - green_bits))) */
-			tc_word |= colour;
-			tc_word <<= blue_bits;
 			component = *requested++;
 			palette[start + i].vdi.blue = component;
 			palette[start + i].hw.blue = component;	/* Not at all correct */
-			colour = component >> (16 - blue_bits);		/* (component + (1 << (14 - blue_bits))) */
-			tc_word |= colour;
-#if NOVA
-			switch (sizeof(PIXEL)) {
-			case 2:
-				tc_word = ((tc_word & 0x000000ffL) << 8) | ((tc_word & 0x0000ff00L) >>  8);
-				break;
-			default:
-				tc_word = ((tc_word & 0x000000ffL) << 24) | ((tc_word & 0x0000ff00L) <<  8) |
-				          ((tc_word & 0x00ff0000L) >>  8) | ((tc_word & 0xff000000L) >> 24);
-				break;
-			}
-#endif
-			c_set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
-			                palette[start + i].vdi.blue, (long)tc_word ); /* STanda */
+
+			c_get_hw_colour(  start + i,
+					  palette[start + i].vdi.red,
+					  palette[start + i].vdi.green,
+		              		  palette[start + i].vdi.blue,
+					  &tc_word );
+
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
 	} else {
 		for(i = 0; i < entries; i++) {
 			component = *requested++;
 			palette[start + i].vdi.red = component;
-#if 0
 			palette[start + i].hw.red = component;	/* Not at all correct */
-#endif
 			colour = (component * ((1L << red_bits) - 1) + 500L) / 1000;
 			palette[start + i].hw.red = (colour * 1000 + (1L << (red_bits - 1))) / ((1L << red_bits) - 1);
-			tc_word = colour << green_bits;
 			component = *requested++;
 			palette[start + i].vdi.green = component;
-#if 0
 			palette[start + i].hw.green = component;	/* Not at all correct */
-#endif
 			colour = (component * ((1L << green_bits) - 1) + 500L) / 1000;
 			palette[start + i].hw.green = (colour * 1000 + (1L << (green_bits - 1))) / ((1L << green_bits) - 1);
-			tc_word |= colour;			/* Was (colour + colour) */
-			tc_word <<= blue_bits;
 			component = *requested++;
 			palette[start + i].vdi.blue = component;
-#if 0
 			palette[start + i].hw.blue = component;	/* Not at all correct */
-#endif
 			colour = (component * ((1L << blue_bits) - 1) + 500L) / 1000;
 			palette[start + i].hw.blue = (colour * 1000 + (1L << (blue_bits - 1))) / ((1L << blue_bits) - 1);
-			tc_word |= colour;
-#if NOVA
-			switch (sizeof(PIXEL)) {
-			case 2:
-				tc_word = ((tc_word & 0x000000ffL) << 8) | ((tc_word & 0x0000ff00L) >>  8);
-				break;
-			default:
-				tc_word = ((tc_word & 0x000000ffL) << 24) | ((tc_word & 0x0000ff00L) <<  8) |
-				          ((tc_word & 0x00ff0000L) >>  8) | ((tc_word & 0xff000000L) >> 24);
-				break;
-			}
-#endif
-			c_set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
-			                palette[start + i].vdi.blue, (long)tc_word ); /* STanda */
+
+			c_get_hw_colour(  start + i,
+					  palette[start + i].vdi.red,
+					  palette[start + i].vdi.green,
+		              		  palette[start + i].vdi.blue,
+					  &tc_word );
+
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
 	}

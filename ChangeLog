@@ -1,3 +1,14 @@
+2003/01/04 - STanda
+- fvdidrv:
+   * NF API interface polished (made with a use of the enum {} like
+     e.g. hostfs). The old non-NF interface dispatch routine removed.
+   * Color handling rewritten to be able to support virtual workstation
+     local palette. The NF API functions now take HW color values instead
+     of the color index (XaAES RSC palette feature works properly now).
+   * The interface version bumped to 1.100 (nfapi version constant
+     0x10000960 -> 0x11000960) due to the color handling changes.
+
+
 2004/01/03 - joy
 - videl.cpp, parameters.*, main.cpp, configure.ac, documentation.txt:
   DIRECT_TRUECOLOR hack removed. I don't think it was ever used.

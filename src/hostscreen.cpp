@@ -67,9 +67,6 @@ HostScreen::HostScreen(void) {
 		palette.standard[i].g = (color >> 16) & 0xff;
 		palette.standard[i].b = color & 0xff;
 	}
-	// setting up the static palette settings
-	palette.sdl.ncolors = 256;
-	palette.sdl.colors = palette.standard;
 
 	// the counter init
 	snapCounter = 0;
@@ -314,11 +311,6 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	this->height = height;
 	this->bpp = bpp;
 
-	// backup the pallete settings
-	SDL_Color paletteBackup[256];
-	for (int i = 0; i < 256; i++)
-		paletteBackup[i] = palette.standard[i];
-
 	// SelectVideoMode();
 	sdl_videoparams = SDL_HWSURFACE | SDL_HWPALETTE;
 	if (bx_options.video.fullscreen)
@@ -444,9 +436,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 
-	// restore the pallete settings
-	for (int i = 0; i < 256; i++)
-		setPaletteColor( i, paletteBackup[i].r, paletteBackup[i].g, paletteBackup[i].b );
+	// update the surface's palette
 	updatePalette( 256 );
 
 	D(bug("Surface Pitch = %d, width = %d, height = %d", surf->pitch, surf->w, surf->h));
@@ -1277,6 +1267,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.41  2003/12/28 19:34:04  joy
+ * IPC fix - SDL user events
+ *
  * Revision 1.40  2003/12/27 23:26:56  joy
  * color palette initialized to default TOS colors
  *

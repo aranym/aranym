@@ -80,7 +80,6 @@ class HostScreen {
 	bool   doUpdate; // the HW surface is available -> the SDL need not to update the surface after ->pixel access
 
 	struct { // TOS palette (bpp < 16) to SDL color mapping
-		SDL_Palette sdl;
 		SDL_Color	standard[256];
 		uint32		native[256];
 	} palette;
@@ -437,6 +436,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.45  2003/12/24 23:30:54  joy
+ * when GUI is open the background is being updated with running ARAnyM
+ *
  * Revision 1.44  2003/06/01 08:35:39  milan
  * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
  *

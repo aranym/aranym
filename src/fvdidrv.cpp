@@ -25,6 +25,8 @@
 # include <string.h>
 #endif
 
+#include "../atari/fvdi/drivers/aranym/fvdidrv_nfapi.h"	/* FVDI_xx enum */
+
 // this serves for debugging the color palette code
 #undef DEBUG_DRAW_PALETTE
 
@@ -72,21 +74,9 @@ static const uint8 vdi_colours[] = { 0,2,3,6,4,7,5,8,9,10,11,14,12,15,13,255 };
 static const uint8 tos_colours[] = { 0,255,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
 #define toTosColors( color ) \
     ( (color)<(sizeof(tos_colours)/sizeof(*tos_colours)) ? tos_colours[color] : ((color) == 255 ? 15 : (color)) )
+#define toVdiColors( color ) \
+    ( (color)<(sizeof(vdi_colours)/sizeof(*vdi_colours)) ? vdi_colours[color] : color)
 
-/**
- * The SDL surface uses the TOS colors (if bpp==1) and therefore
- * the VDI pen index needs to be converted to this. If bpp>1
- * then this method returns the actual surface dependent pixel
- * color value to be set to surface->pixels.
- */
-inline uint32 FVDIDriver::getTosColor( uint16 colorIndex )
-{
-	if (hostScreen.getBpp() > 1) {
-		return hostScreen.getPaletteColor( toTosColors(colorIndex) );
-	} else {
-		return (uint8)toTosColors(colorIndex);
-	}
-}
 
 // The polygon code needs some arrays of unknown size
 // These routines and members are used so that no unnecessary allocations are done
@@ -167,154 +157,6 @@ class Points {
 };
 
 
-int32 FVDIDriver::get_par(M68kRegisters *r, int n)
-{
-	return ReadInt32(r->a[7] + 4 + n * 4);
-}
-
-
-void FVDIDriver::dispatch(M68kRegisters *r)
-{
-	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
-	hostScreen.lock();
-
-	getVIDEL()->setRendering(false);
-
-	uint32 fncode = ReadInt32(r->a[7] + 4);
-	switch (fncode) {
-		// NEEDED functions
-
-		case 1: // read_pixel
-			r->d[0] = getPixel((memptr)get_par(r, 1),		// vwk
-			                   (memptr)get_par(r, 2),		// src MFDB*
-			                   get_par(r, 3), get_par(r, 4));	// x, y
-			break;
-
-		case 2: // write_pixel
-			r->d[0] = putPixel((memptr)get_par(r, 1),		// vwk
-			                   (memptr)get_par(r, 2),		// dst MFDB*
-			                   get_par(r, 3), get_par(r, 4),	// x, y
-			                                                	// table*, table length/type (0 - coordinates)
-			                   get_par(r, 5));			// color
-			break;
-
-		case 3: // mouse_draw
-			r->d[0] = drawMouse((memptr)get_par(r, 1),		// wk
-			                    get_par(r, 2), get_par(r, 3),	// x, y
-			                    get_par(r, 4),			// mask*
-			                                  			// mode (0 - move, 1 - hide, 2 - show)
-			                                  			// These are only valid when not mode
-			                    get_par(r, 5),			//   data*
-			                    get_par(r, 6), get_par(r, 7),	//   hot_x, hot_y
-			                    get_par(r, 8),			//   color
-			                    get_par(r, 9));			//   type
-			break;
-
-
-		// SPEEDUP functions
-
-		case 4: // expand_area
-			r->d[0] = expandArea((memptr)get_par(r, 1),		// vwk
-			                     (memptr)get_par(r, 2),		// src MFDB*
-			                     get_par(r, 3), get_par(r, 4),	// sx, sy
-			                     (memptr)get_par(r, 5),		// dest MFDB*
-			                     get_par(r, 6), get_par(r, 7),	// dx, dy
-			                     get_par(r, 8),			// width
-			                     get_par(r, 9),			// height
-			                     get_par(r, 10),			// logical operation
-			                     get_par(r, 11));			// bgColor fgColor
-			break;
-
-		case 5: // fill_area
-			r->d[0] = fillArea((memptr)get_par(r, 1),		// vwk
-			                   get_par(r, 2), get_par(r, 3),	// x, y
-			                                                	// table*, table length/type (0 - y/x1/x2 spans)
-			                   get_par(r, 4), get_par(r, 5),	// width, height
-			                   (memptr)get_par(r, 6),		// pattern*
-			                   get_par(r, 7),			// bgColor fgColor
-			                   get_par(r, 8),			// mode
-			                   get_par(r, 9));			// interior style
-			break;
-
-		case 6: // blit_area
-			r->d[0] = blitArea((memptr)get_par(r, 1),		// vwk
-			                   (memptr)get_par(r, 2),		// src MFDB*
-			                   get_par(r, 3), get_par(r, 4),	// sx, sy
-			                   (memptr)get_par(r, 5),		// dest MFDB*
-			                   get_par(r, 6), get_par(r, 7),	// dx, dy
-			                   get_par(r, 8),			// width
-			                   get_par(r, 9),			// height
-			                   get_par(r, 10));			// logical operation
-			break;
-
-		case 7: // drawLine:
-			r->d[0] = drawLine((memptr)get_par(r, 1),		// vwk
-			                   get_par(r, 2), get_par(r, 3),	// x1, y1
-			                                                	// table*, table length/type (0 - coordinate pairs, 1 - pairs + moves)
-			                   get_par(r, 4), get_par(r, 5),	// x2, y2
-			                                                	// move point count, move index*
-			                   get_par(r, 6) & 0xffff,		// pattern
-			                   get_par(r, 7),			// bgColor fgColor
-			                   get_par(r, 8) & 0xffff,		// logical operation
-			                   (memptr)get_par(r, 9));		// clip rectangle* (0 or long[4])
-			break;
-
-		case 8: // fill_polygon
-			r->d[0] = fillPoly((memptr)get_par(r, 1),		// vwk
-			                   (memptr)get_par(r, 2),		// points*
-			                   get_par(r, 3),			// point count
-			                   (memptr)get_par(r, 4),		// index*
-			                   get_par(r, 5),			// index count
-			                   (memptr)get_par(r, 6),		// pattern*
-			                   get_par(r, 7),			// bgColor fgColor
-			                   get_par(r, 8),			// logic operation
-			                   get_par(r, 9),			// interior style
-			                   (memptr)get_par(r, 10));		// clip rectangle
-			break;
-
-		case 9: // setColor:
-			setColor(get_par(r, 1), get_par(r, 2), get_par(r, 3), get_par(r, 4));
-			break;
-
-		case 10: // setResolution:
-			setResolution(get_par(r, 1), get_par(r, 2), get_par(r, 3), get_par(r, 4));
-			break;
-
-		case 15: // getVideoramAddress:
-#ifdef FIXED_VIDEORAM
-			r->d[0] = ARANYMVRAMSTART;
-#else
-			r->d[0] = VideoRAMBase;
-#endif
-			D(bug("fVDI: getVideoramAddress: %#lx", r->d[0]));
-			break;
-
-		case 20: // debug_aranym:
-			bug("fVDI: DEBUG %ld (%x)", get_par(r, 1), get_par(r, 1));
-			break;
-
-			// not implemented functions
-		default:
-			D(bug("fVDI: Unknown %d", fncode));
-			r->d[0] = 1;
-	}
-
-#ifdef DEBUG_DRAW_PALETTE
-	uint16 ptrn[16] = {
-		0xffff, 0xffff, 0xffff, 0xffff,
-		0xffff, 0xffff, 0xffff, 0xffff,
-		0xffff, 0xffff, 0xffff, 0xffff,
-		0xffff, 0xffff, 0xffff, 0xffff
-	};
-	for(int i = 0; i < 16; i++)
-		hostScreen.fillArea(i << 4, hostScreen.getHeight() - 16, 15, 16, ptrn, getTosColor(i) );
-#endif  // DEBUG_DRAW_PALETTE
-
-
-	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
-	hostScreen.unlock();
-}
-
 int32 FVDIDriver::dispatch(uint32 fncode)
 {
 	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
@@ -326,17 +168,17 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 	switch (fncode) {
 		// NEEDED functions
 
-		case 0: // Version information
-			result = 0x10000960;	// fVDI v0.960 driver API, fVDI Natfeat v1.000
+		case FVDI_GET_VERSION:
+			result = FVDIDRV_NFAPI_VERSION;
 			break;
 
-		case 1: // read_pixel
+		case FVDI_GET_PIXEL:
 			result = getPixel((memptr)getParameter(0),		// vwk
 			                  (memptr)getParameter(1),		// src MFDB*
 			                  getParameter(2), getParameter(3));	// x, y
 			break;
 
-		case 2: // write_pixel
+		case FVDI_PUT_PIXEL:
 			result = putPixel((memptr)getParameter(0),		// vwk
 			                  (memptr)getParameter(1),		// dst MFDB*
 			                  getParameter(2), getParameter(3),	// x, y
@@ -344,7 +186,7 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 			                  getParameter(4));			// color
 			break;
 
-		case 3: // mouse_draw
+		case FVDI_MOUSE:
 			{
 				// mode (0 - move, 1 - hide, 2 - show)
 				// These are only valid when not mode
@@ -355,13 +197,14 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 									   mask,                                // mask*
 									   getParameter(4),			            // data*
 									   getParameter(5), getParameter(6),	// hot_x, hot_y
-									   getParameter(7),			            // color
-									   getParameter(8));			        // type
+			   					           getParameter(7),			// fgColor
+			                  				   getParameter(8),			// bgColor
+									   getParameter(9));			        // type
 				} else {
 					result = drawMouse((memptr)getParameter(0),		        // wk
 									   getParameter(1), getParameter(2),	// x, y
 									   mask,
-									   0, 0, 0, 0, 0); // dummy
+									   0, 0, 0, 0, 0, 0); // dummy
 				}
 			}
 			break;
@@ -369,7 +212,7 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 
 		// SPEEDUP functions
 
-		case 4: // expand_area
+		case FVDI_EXPAND_AREA:
 			result = expandArea((memptr)getParameter(0),		// vwk
 			                    (memptr)getParameter(1),		// src MFDB*
 			                    getParameter(2), getParameter(3),	// sx, sy
@@ -378,21 +221,23 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 			                    getParameter(7),			// width
 			                    getParameter(8),			// height
 			                    getParameter(9),			// logical operation
-			                    getParameter(10));			// bgColor fgColor
+			                  getParameter(10),			// fgColor
+			                  getParameter(11));			// bgColor
 			break;
 
-		case 5: // fill_area
+		case FVDI_FILL_AREA:
 			result = fillArea((memptr)getParameter(0),		// vwk
 			                  getParameter(1), getParameter(2),	// x, y
 			                                               		// table*, table length/type (0 - y/x1/x2 spans)
 			                  getParameter(3), getParameter(4),	// width, height
 			                  (memptr)getParameter(5),		// pattern*
-			                  getParameter(6),			// bgColor fgColor
-			                  getParameter(7),			// mode
-			                  getParameter(8));			// interior style
+			                  getParameter(6),			// fgColor
+			                  getParameter(7),			// bgColor
+			                  getParameter(8),			// mode
+			                  getParameter(9));			// interior style
 			break;
 
-		case 6: // blit_area
+		case FVDI_BLIT_AREA:
 			result = blitArea((memptr)getParameter(0),		// vwk
 			                  (memptr)getParameter(1),		// src MFDB*
 			                  getParameter(2), getParameter(3),	// sx, sy
@@ -403,40 +248,47 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 			                  getParameter(9));			// logical operation
 			break;
 
-		case 7: // drawLine:
+		case FVDI_LINE:
 			result = drawLine((memptr)getParameter(0),		// vwk
 			                  getParameter(1), getParameter(2),	// x1, y1
 			                                                	// table*, table length/type (0 - coordinate pairs, 1 - pairs + moves)
 			                  getParameter(3), getParameter(4),	// x2, y2
 			                                                	// move point count, move index*
 			                  getParameter(5) & 0xffff,		// pattern
-			                  getParameter(6),			// bgColor fgColor
-			                  getParameter(7) & 0xffff,		// logical operation
-			                  (memptr)getParameter(8));		// clip rectangle* (0 or long[4])
+			                  getParameter(6),			// fgColor
+			                  getParameter(7),			// bgColor
+			                  getParameter(8) & 0xffff,		// logical operation
+			                  (memptr)getParameter(9));		// clip rectangle* (0 or long[4])
 			break;
 
-		case 8: // fill_polygon
+		case FVDI_FILL_POLYGON:
 			result = fillPoly((memptr)getParameter(0),		// vwk
 			                  (memptr)getParameter(1),		// points*
 			                  getParameter(2),			// point count
 			                  (memptr)getParameter(3),		// index*
 			                  getParameter(4),			// index count
 			                  (memptr)getParameter(5),		// pattern*
-			                  getParameter(6),			// bgColor fgColor
-			                  getParameter(7),			// logic operation
-			                  getParameter(8),			// interior style
-			                  (memptr)getParameter(9));		// clip rectangle
+			                  getParameter(6),			// fgColor
+			                  getParameter(7),			// bgColor
+			                  getParameter(8),			// logic operation
+			                  getParameter(9),			// interior style
+			                  (memptr)getParameter(10));		// clip rectangle
 			break;
 
-		case 9: // setColor:
-			setColor(getParameter(0), getParameter(1), getParameter(2), getParameter(3));
+		case FVDI_GET_HWCOLOR:
+			getHwColor(getParameter(0), getParameter(1), getParameter(2), getParameter(3), getParameter(4));
 			break;
 
-		case 10: // setResolution:
+		case FVDI_SET_COLOR:
+			setColor(getParameter(4), getParameter(0), getParameter(1), getParameter(2), getParameter(3));
+			break;
+
+		case FVDI_SET_RESOLUTION:
 			setResolution(getParameter(0), getParameter(1), getParameter(2), getParameter(3));
 			break;
 
-		case 15: // getVideoramAddress:
+
+		case FVDI_GET_FBADDR:
 #ifdef FIXED_VIDEORAM
 			result = ARANYMVRAMSTART;
 #else
@@ -445,12 +297,8 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 			D(bug("fVDI: getVideoramAddress: %#lx", result));
 			break;
 
-		case 20: // debug_aranym:
-			bug("fVDI: DEBUG %d", getParameter(0));
-			break;
-
-			// not implemented functions
 		default:
+			// not implemented functions
 			D(bug("fVDI: Unknown %d", fncode));
 			result = 1;
 	}
@@ -463,7 +311,7 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 		0xffff, 0xffff, 0xffff, 0xffff
 	};
 	for(int i = 0; i < 16; i++)
-		hostScreen.fillArea(i << 4, hostScreen.getHeight() - 16, 15, 16, ptrn, getTosColor(i));
+		hostScreen.fillArea(i << 4, hostScreen.getHeight() - 16, 15, 16, ptrn, i);
 #endif  // DEBUG_DRAW_PALETTE
 
 
@@ -593,6 +441,27 @@ uint32 FVDIDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 	return color;
 }
 
+void FVDIDriver::getHwColor(uint16 index, uint32 red, uint32 green, uint32 blue, memptr hw_value)
+{
+	if (hostScreen.getBpp() != 2)
+		// <16bit, 24 and 32bit graphics
+		WriteInt32( hw_value,
+			    hostScreen.getColor((red * ((1L << 8) - 1) + 500L) / 1000,
+		                                (green * ((1L << 8) - 1) + 500L) / 1000,
+		                                (blue * ((1L << 8) - 1) + 500L) / 1000) );
+	else
+		// 5+6+5 rounding needed
+		WriteInt32( hw_value,
+			    hostScreen.getColor(((red * ((1L << 5) - 1) + 500L) / 1000) << 3,
+		                       		((green * ((1L << 6) - 1) + 500L) / 1000) << 2,
+		                           	((blue * ((1L << 5) - 1) + 500L) / 1000) << 3) );
+
+	if (hostScreen.getBpp() <= 1) {
+		WriteInt32( hw_value, index );
+	}
+
+	D(bug("fVDI: getHwColor %04d,%04d,%04d - %lx", red, green, blue, ReadInt32( hw_value )));
+}
 
 /**
  * Set palette colour (hooked into the c_set_colors driver function by STanda)
@@ -603,9 +472,9 @@ uint32 FVDIDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
  *  10(a7)  green component byte value
  *  12(a7)  blue component byte value
  **/
-void FVDIDriver::setColor(uint32 paletteIndex, uint32 red, uint32 green, uint32 blue)
+void FVDIDriver::setColor(memptr vwk, uint32 paletteIndex, uint32 red, uint32 green, uint32 blue)
 {
-	D(bug("fVDI: setColor: %03d (%03d) - %04d,%04d,%04d - %02x,%02x,%02x", paletteIndex, toTosColors(paletteIndex) & 0xff, red, green, blue, (uint8)((red * ((1L << 8) - 1) + 500L) / 1000), (uint8)((green * ((1L << 8) - 1) + 500L) / 1000), (uint8)((blue * ((1L << 8) - 1) + 500L) / 1000) ));
+	D(bug("fVDI: setColor [NULL]: %03d (%03d) - %04d,%04d,%04d - %02x,%02x,%02x", paletteIndex, toTosColors(paletteIndex) & 0xff, red, green, blue, (uint8)((red * ((1L << 8) - 1) + 500L) / 1000), (uint8)((green * ((1L << 8) - 1) + 500L) / 1000), (uint8)((blue * ((1L << 8) - 1) + 500L) / 1000) ));
 
 	if (hostScreen.getBpp() != 2)
 		// <16bit, 24 and 32bit graphics
@@ -741,8 +610,10 @@ void FVDIDriver::saveMouseBackground(int16 x, int16 y, int16 width, int16 height
 }
 
 
-int FVDIDriver::drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data,
-                          uint32 hot_x, uint32 hot_y, uint32 color, uint32 mouse_type)
+int FVDIDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode, uint32 data,
+                          uint32 hot_x, uint32 hot_y,
+		      uint32 fgColor, uint32 bgColor,
+ uint32 mouse_type)
 {
 	D2(bug("fVDI: mouse mode: %x", mode));
 
@@ -759,7 +630,7 @@ int FVDIDriver::drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data
 		break;
 
 	default: // change pointer shape
-		D(bug("fVDI: mouse : %08x, %08x, %08x", hot_x, hot_y, color));
+		D(bug("fVDI: mouse : %08x, %08x, (%08x,%08x)", hot_x, hot_y, fgColor, bgColor));
 		memptr fPatterAddress = (memptr)mode;
 		for(uint16 i = 0; i < 32; i += 2)
 			Mouse.mask[i >> 1] = reverse_bits(ReadInt16(fPatterAddress + i));
@@ -769,8 +640,8 @@ int FVDIDriver::drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data
 
 		Mouse.hotspot.x = hot_x & 0xf;
 		Mouse.hotspot.y = hot_y & 0xf;
-		Mouse.storage.color.foreground = getTosColor(color & 0xffff);
-		Mouse.storage.color.background = getTosColor(color >> 16);
+		Mouse.storage.color.foreground = fgColor;
+		Mouse.storage.color.background = bgColor;
 
 #if DEBUG > 1
 		char buffer[30];
@@ -910,15 +781,18 @@ static inline void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp, uint16 bitp
 }
 
 int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
-                           int32 w, int32 h, uint32 logOp, uint32 colors)
+                           int32 w, int32 h, uint32 logOp,
+		      uint32 fgColor, uint32 bgColor)
 {
+	if (hostScreen.getBpp() <= 1) {
+		fgColor &= 0xff;
+		bgColor &= 0xff;
+	}
+
 	uint16 pitch = ReadInt16(src + MFDB_WDWIDTH) * 2; // the byte width (always monochrom);
 	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
 
-	uint32 fgColor = getTosColor(colors & 0xffff);
-	uint32 bgColor = getTosColor(colors >> 16);
-
-	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
+	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%lx, %lx)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
 	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32( src ),ReadInt32( dest )));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
@@ -1160,10 +1034,14 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
  * with no more fallback possible.
  **/
 int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
-                         memptr pattern_addr, uint32 colors, uint32 logOp, uint32 interior_style)
+                         memptr pattern_addr, 
+		         uint32 fgColor, uint32 bgColor,
+			 uint32 logOp, uint32 interior_style)
 {
-	uint32 fgColor = getTosColor(colors & 0xffff);
-	uint32 bgColor = getTosColor(colors >> 16);
+	if (hostScreen.getBpp() <= 1) {
+		fgColor &= 0xff;
+		bgColor &= 0xff;
+	}
 
 	uint16 pattern[16];
 	for(int i = 0; i < 16; ++i)
@@ -1182,10 +1060,9 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
 		vwk -= 1;
 	}
 
-	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "fillArea",
+	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%lx : bgc:%lx)", "fillArea",
 	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
-	      fgColor, hostScreen.getPaletteColor(fgColor),
-	      bgColor, hostScreen.getPaletteColor(bgColor)));
+	      fgColor, bgColor));
 
 	if (!hostScreen.renderBegin())
 		return 1;
@@ -1735,7 +1612,7 @@ int FVDIDriver::drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
                                int cliprect[], int minmax[])
 {
 	if (clipLine(x1, y1, x2, y2, cliprect)) {	// Do not draw the line when it is out
-		D(bug("fVDI: %s %d,%d:%d,%d", "drawSingleLine", x1, y1, x2, y2));
+		D(bug("fVDI: %s %d,%d:%d,%d (%lx,%lx)", "drawSingleLine", x1, y1, x2, y2, fgColor, bgColor));
 		hostScreen.drawLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp, last_pixel);
 		if (x1 < x2) {
 			if (x1 < minmax[0])
@@ -1825,10 +1702,14 @@ int FVDIDriver::drawMoveLine(int16 table[], int length, uint16 index[], int move
 
 
 int FVDIDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 y2_,
-                         uint32 pattern, uint32 colors, uint32 logOp, memptr clip)
+                         uint32 pattern,
+		        uint32 fgColor, uint32 bgColor,
+			uint32 logOp, memptr clip)
 {
-	uint32 fgColor = getTosColor(colors & 0xffff);
-	uint32 bgColor = getTosColor(colors >> 16);
+	if (hostScreen.getBpp() <= 1) {
+		fgColor &= 0xff;
+		bgColor &= 0xff;
+	}
 
 	int16* table = 0;
 	uint16* index = 0;
@@ -1957,13 +1838,11 @@ int FVDIDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 //#define SMUL_DIV(x,y,z)	((short)(((short)(x)*(long)((short)(y)))/(short)(z)))
 
 int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_addr, int moves,
-                         memptr pattern_addr, int32 colors, uint32 logOp, uint32 interior_style, memptr clip)
+                         memptr pattern_addr, uint32 fgColor, uint32 bgColor,
+			 uint32 logOp, uint32 interior_style, memptr clip)
 {
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
-
-	uint32 fgColor = getTosColor(colors & 0xffff);
-	uint32 bgColor = getTosColor(colors >> 16);
 
 	// Allocate arrays for data
 	if (!AllocPoints(n) || !AllocIndices(moves) || !AllocCrossings(200))
@@ -2131,6 +2010,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.52  2003/11/25 22:56:49  joy
+ * part of a major hardware dispatcher rewrite
+ *
  * Revision 1.51  2003/04/22 21:22:14  johan
  * Reverse transparent mode for vrt_cpyfm corrected.
  *

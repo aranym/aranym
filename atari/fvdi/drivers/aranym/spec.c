@@ -65,7 +65,7 @@ Mode mode[7] = /* FIXME: big and little endian differences. */
 
 extern Device device;
 
-char driver_name[] = "NatFeat/ARAnyM 2002-10-21 (xx bit, shadow)";
+char driver_name[] = "NatFeat/ARAnyM 2003-12-22 (xx bit, shadow)";
 
 struct {
 	short used; /* Whether the mode option was used or not. */
@@ -122,7 +122,7 @@ void *mouse_draw_r  = &c_mouse_draw;
 void *set_colours_r = &c_set_colours_16;
 void *get_colours_r = &c_get_colours_16;
 void *get_colour_r  = &c_get_colour_16;
-
+/* void CDECL (*get_colours_r)(Virtual *vwk, long colour, long *foreground, long *background) = &c_get_colours_16; */
 
 #if 0
 short cache_img = 0;
@@ -189,31 +189,28 @@ long set_mode(const char **ptr)
 	switch (resolution.bpp) {
 	case 1:
 		graphics_mode = &mode[0];
+		driver_name[28] = '1';
 		break;
 	case 2:
 		graphics_mode = &mode[1];
+		driver_name[28] = '2';
 		break;
 	case 4:
 		graphics_mode = &mode[2];
+		driver_name[28] = '4';
 		break;
-	default:
-		resolution.bpp = 16;		/* Default as 16 bit */
 	case 8:
+		driver_name[28] = '8';
 	case 16:
 	case 24:
 	case 32:
 		graphics_mode = &mode[resolution.bpp / 8 + 2];
 		break;
+	default:
+		resolution.bpp = 16;		/* Default as 16 bit */
 	}
 
 	switch (resolution.bpp) {
-	case 8:
-		set_colours_r = &c_set_colours_8;
-		get_colours_r = &c_get_colours_8;
-		get_colour_r  = &c_get_colour_8;
-		driver_name[27] = '8';
-		driver_name[28] = ' ';
-		break;
 	case 16:
 		set_colours_r = &c_set_colours_16;
 		get_colours_r = &c_get_colours_16;
@@ -228,6 +225,13 @@ long set_mode(const char **ptr)
 		get_colour_r  = &c_get_colour_32;
 		driver_name[27] = '3';
 		driver_name[28] = '2';
+		break;
+	/* indexed color modes */
+	default:
+		set_colours_r = &c_set_colours_8;
+		get_colours_r = &c_get_colours_8;
+		get_colour_r  = &c_get_colour_8;
+		driver_name[27] = ' ';
 		break;
 	}
 
@@ -291,7 +295,7 @@ long set_scrninfo(const char** ptr)
 		mode[5].bits.red = r_32f;
 		mode[5].bits.green = g_32f;
 		mode[5].bits.blue = b_32f;
-		mode[5].org = 0x81;
+		mode[5].org = 0x01;
 		mode[6].bits.red = r_32f;
 		mode[6].bits.green = g_32f;
 		mode[6].bits.blue = b_32f;
@@ -460,6 +464,8 @@ void CDECL initialize(Virtual *vwk)
 		access->funcs.puts("\x0d\x0a");
 	}
 
+	/* The following should be here due to bpp <= 8 modes */
+	/* the palette is updated on resolution change */
 	if (accel_c & A_SET_PAL)
 		c_initialize_palette(vwk, 0, wk->screen.palette.size, colours, wk->screen.palette.colours);
 	else
@@ -501,10 +507,20 @@ long CDECL setup(long type, long value)
  */
 Virtual* CDECL opnwk(Virtual *vwk)
 {
+	Workstation *wk;
+	vwk = me->default_vwk;	/* This is what we're interested in */
+	wk = vwk->real_address;
+
 	if (resolution.used) {
 		c_set_resolution(resolution.width, resolution.height, resolution.bpp, resolution.freq);
+
+		/* The following should be here due to bpp > 8 modes */
+		/* the palette needs the appropriate surf->format to be set prior use */
+		/* i.e. _after_ the resolution change */
+		c_initialize_palette(vwk, 0, wk->screen.palette.size, colours, wk->screen.palette.colours);
+
 		device.address = (void*)c_get_videoramaddress();
-		me->default_vwk->real_address->screen.mfdb.address = device.address;
+		vwk->real_address->screen.mfdb.address = device.address;
 	}
 
 	return 0;

@@ -13,6 +13,6 @@ aranym.sys
 spec.c	(..\..\include\fvdi.h)
 dispatch.c	(..\..\include\fvdi.h)
 8b_pal.c	(..\..\include\fvdi.h)
-palette.c	(..\..\include\fvdi.h)
+16b_pal.c	(..\..\include\fvdi.h)
 32b_pal.c	(..\..\include\fvdi.h)
 PCSTDLIB.LIB       ; standard library

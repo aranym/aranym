@@ -10,6 +10,7 @@
 #include "cpu_emulation.h"
 #include "nf_base.h"
 
+
 class FVDIDriver : public NF_Base {
   private:
 	struct _Mouse {
@@ -33,8 +34,6 @@ class FVDIDriver : public NF_Base {
 		uint16 shape[16];
 	} Mouse;
 
-	int32 get_par(M68kRegisters *r, int n);
-
 	int drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 	                   uint32 fgColor, uint32 bgColor, int logOp, bool last_pixel,
 	                   int cliprect[], int minmax[]);
@@ -42,8 +41,6 @@ class FVDIDriver : public NF_Base {
 	                  uint32 fgColor, uint32 bgColor, int logOp, int cliprect[], int minmax[]);
 	int drawMoveLine(int16 table[], int length, uint16 index[], int moves, uint16 pattern,
 	                 uint32 fgColor, uint32 bgColor, int logOp, int cliprect[], int minmax[]);
-
-	uint32 getTosColor( uint16 colorIndex );
 
 	// fillPoly helpers
 	bool AllocIndices(int n);
@@ -76,29 +73,39 @@ class FVDIDriver : public NF_Base {
 		delete[] alloc_point;
 	}
 
-	void dispatch(M68kRegisters *r);
 	char *name() { return "fVDI"; }
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);
 
 	void restoreMouseBackground();
 	void saveMouseBackground(int16 x, int16 y, int16 width, int16 height);
-	void setColor(uint32 paletteIndex, uint32 red, uint32 green, uint32 blue);
 	void setResolution(int32 width, int32 height, int32 depth, int32 freq);
 
-	int putPixel(memptr vwk, memptr dst, int32 x, int32 y, uint32 colour);
+	void setColor(memptr vwk, uint32 paletteIndex, uint32 red, uint32 green, uint32 blue);
+	void getHwColor(uint16 index, uint32 red, uint32 green, uint32 blue, memptr hw_value);
+
+	int putPixel(memptr vwk, memptr dst, int32 x, int32 y, uint32 color);
 	uint32 getPixel(memptr vwk, memptr src, int32 x, int32 y);
-	int drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data,
-	              uint32 hot_x, uint32 hot_y, uint32 color, uint32 mouse_type);
+	int drawMouse(memptr wk, int32 x, int32 y, uint32 mode, uint32 data,
+	              uint32 hot_x, uint32 hot_y,
+		      uint32 fgColor, uint32 bgColor,
+                      uint32 mouse_type);
 
 	int fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
-	             memptr pattern_address, uint32 colors, uint32 logOp, uint32 interior_style);
+	             memptr pattern_address,
+		     uint32 fgColor, uint32 bgColor,
+                     uint32 logOp, uint32 interior_style);
 	int drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 y2_,
-	             uint32 pattern, uint32 colors, uint32 logOp, memptr clip);
+			uint32 pattern,
+			uint32 fgColor, uint32 bgColor,
+			uint32 logOp, memptr clip);
 	int fillPoly(memptr vwk, memptr points_addr, int n, memptr index_addr, int moves,
-	             memptr pattern_addr, int32 colors, uint32 logOp, uint32 interior_style, memptr clip);
+		     memptr pattern_addr,
+                     uint32 fgColor, uint32 bgColor,
+		     uint32 logOp, uint32 interior_style, memptr clip);
 	int expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
-	               int32 w, int32 h, uint32 logOp, uint32 colors);
+	               int32 w, int32 h, uint32 logOp,
+                     uint32 fgColor, uint32 bgColor);
 	int blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
 	             int32 w, int32 h, uint32 logOp);
 };
@@ -108,6 +115,10 @@ class FVDIDriver : public NF_Base {
 
 /*
  * $Log$
+ * Revision 1.17  2003/02/19 19:39:38  standa
+ * SDL surface is now in TOS colors internally for bitplane modes. This
+ * allows much simpler blits and expands.
+ *
  * Revision 1.16  2002/10/21 22:50:33  johan
  * NatFeat support added.
  *

@@ -12,6 +12,6 @@ aranymlc.sys
 spec.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -i..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
 dispatch.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
 8b_pal.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
-palette.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
+16b_pal.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
 32b_pal.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
 LC.LIB
