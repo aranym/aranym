@@ -1,3 +1,15 @@
+2004/08/07 - version 0.8.10beta released
+
+ Great news for MS Windows users: ARAnyM runs with JIT CPU compiler now
+ thanks to Xavier's work on sigsegv handler.
+
+ Other than that we have been fixing bugs and cleaning the source code:
+
+ o Francois fixed sinh and tanh (FPU instructions)
+ o 'aratapif' is found in $PATH again
+ o many more internal bug fixes that are not directly visible to users
+
+
 2004/07/06 - version 0.8.9beta released
 
  Great bug fixes:

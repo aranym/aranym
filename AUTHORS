@@ -57,6 +57,13 @@ Patrice Mandin <pmandin@caramail.com>
 - close examination of our code and finding obvious and not-so-obvious
   bugs (IDE, parameters handling, TOS patches)
 
+Xavier Joubert
+- for Windows/cygwin improvements
+- HostFS fixes
+- CPU Double Bus Fault handling
+- SDL GUI improvements
+- enabled JIT CPU compiler in MS Windows by writing Win sigsegv handler
+
 
 ARAnyM source code consists of several parts. Some were taken from other
 projects (in alphabetical order):
@@ -132,6 +139,7 @@ Antonin Kral
 
 Frank Naumann
 - termio -> termios conversion
+- NatFeat support in FreeMiNT 1.16
 
 Thomas Huth
 - SDL GUI (from hatari project)
@@ -150,12 +158,6 @@ Carsten Gaschler
 
 Matti Levänen
 - for BeOS port
-
-Xavier Joubert
-- for Windows/cygwin improvements
-- HostFS fixes
-- CPU Double Bus Fault handling
-- SDL GUI improvements
 
 Stefan Kuhr
 - for Mac OS X port improvements

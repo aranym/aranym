@@ -1,3 +1,11 @@
+* tagged as ARANYM_0_8_10_BETA
+
+2004/08/07 - joy on behalf of Carlo
+- added a target to generate the DMG file (inspired by bochs)
+- The SDL library is inserted automatically in the application bundle;
+  now it does not require any installation.
+
+
 2004/08/05 - Xavier
 - Unix/cygwin/sigsegv_cygwin.cpp: small cleaning.
 
