@@ -5,8 +5,9 @@
  o JIT CPU is working on Linux 2.6.x
  o Blitter is finally not crashing anymore
  o integrated LILO (Linux Loader) reads gzipped files
+ o SDL GUI now accepts numbers typed on numpad
 
- Especially the blitter fix itself justifies a new release
+ Especially the Blitter fix itself justifies a new release
  since it has always been buggy and it was so annoying. Now we've won.
 
 

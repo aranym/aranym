@@ -23,6 +23,9 @@
 - lilo.cpp: fixed reading of gzipped files. Simply the macro is HAVE_LIBZ,
   not HAVE_ZLIB :-)
 
+- gui-sdl/sdlgui.cpp: accept numbers on numpad. This is still not correct
+  code, it should use the unicode field of the keysym struct.
+
 
 * tagged as ARANYM_0_8_8_BETA
 

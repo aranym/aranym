@@ -754,8 +754,12 @@ void SDLGui_EditField(SGOBJ *dlg, int objnum)
                   memmove(&txt[cursorPos], &txt[cursorPos+1], strlen(&txt[cursorPos+1])+1);
                 break;
               default:
+              	if (keysym >= SDLK_KP0 && keysym <= SDLK_KP9) {
+              		// map numpad numbers to normal numbers
+              		keysym -= (SDLK_KP0 - SDLK_0);
+              	}
                 /* If it is a "good" key then insert it into the text field */
-                if(keysym >= 32 && keysym < 256)
+                if(keysym >= SDLK_SPACE && keysym < SDLK_KP0)
                 {
                   if(strlen(txt) < dlg[objnum].w)
                   {
