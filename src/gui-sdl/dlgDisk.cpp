@@ -1,10 +1,40 @@
+/*
+ * dlgDisk.cpp - dialog for editing Disk settings
+ *
+ * Copyright (c) 2003-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ *
+ * gui-sdl original code and ideas borrowed from Hatari emulator
+ * disk_image() borrowed from Bochs project, IIRC
+ * 
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include "config.h"
 #include "sdlgui.h"
 #include "file.h"
 #include "ata.h"
 #include "tools.h"
 #include "hardware.h"		// for getFDC()
+#include "debug.h"
 
 extern bx_options_t gui_options;
+
+extern int Dialog_AlertDlg(const char *);
 
 // floppy
 static char ide0_name[22];	// size of this array defines also the GUI edit size
@@ -88,7 +118,7 @@ static SGOBJ discdlg[] =
   { SGTEXT, 0, 0,		 2,12, 5,1, "Size:" },
   { SGEDITFIELD, 0, 0,	 8,12, 5,1, ide0_size},
   { SGTEXT, 0, 0,		14,12, 2,1, "MB" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, SG_DISABLED,	17,12, 10,1, "Generate" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0,	17,12, 10,1, "Generate" },
   { SGBOX, 0, 0,		 1,15, 38,6, NULL },
   { SGTEXT, 0, 0,		 2,14, 6,1, "IDE1:" },
   { SGEDITFIELD, 0, 0,	 8,14, sizeof(ide1_name)-1,1, ide1_name},
@@ -106,7 +136,7 @@ static SGOBJ discdlg[] =
   { SGTEXT, 0, 0,		 2,20, 5,1, "Size:" },
   { SGEDITFIELD, 0, 0,	 8,20, 5,1, ide1_size},
   { SGTEXT, 0, 0,		14,20, 2,1, "MB" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, SG_DISABLED,	17,20, 10,1, "Generate" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0,	17,20, 10,1, "Generate" },
   { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0,	10,23, 20,1, "Back to main menu" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
@@ -179,7 +209,7 @@ static off_t DiskImageSize(const char *fname)
 	return buf.st_size;
 }
 
-static void UpdateDiskParameters(const char *fname, char *bufsize, int cyl, char *bufcyl, int head, char *bufhead, int spt, char *bufspt)
+static void UpdateDiskParameters(int disk, const char *fname, int cyl, int head, int spt)
 {
 	off_t size = DiskImageSize(fname);
 	int sizeMB = ((size / 1024) + 512) / 1024;
@@ -193,14 +223,70 @@ static void UpdateDiskParameters(const char *fname, char *bufsize, int cyl, char
 	}
 
 	// output
-	if (bufsize)
-		sprintf(bufsize, "%5d", sizeMB);
-	if (bufcyl)
-		sprintf(bufcyl, "%5d", cyl);
-	if (bufhead)
-		sprintf(bufhead, "%3d", head);
-	if (bufspt)
-		sprintf(bufspt, "%2d", spt);
+	sprintf(disk==0 ? ide0_size : ide1_size, "%5d", sizeMB);
+	sprintf(disk==0 ? ide0_cyl : ide1_cyl, "%5d", cyl);
+	sprintf(disk==0 ? ide0_head : ide1_head, "%3d", head);
+	sprintf(disk==0 ? ide0_spt : ide1_spt, "%2d", spt);
+}
+
+/* produce the image file */
+bool make_image(long sec, const char *filename)
+{
+	FILE *fp;
+	char buffer[1024];
+
+	fp = fopen(filename, "w");
+	if (fp == NULL) {
+		// attempt to print an error
+		panicbug("make_image: error while opening '%s' for writing", filename);
+		return false;
+	}
+
+	/*
+	 * seek to sec*512-1 and write a single character.
+	 * can't just do: fseek(fp, 512*sec-1, SEEK_SET)
+	 * because 512*sec may be too large for signed int.
+	 */
+	while (sec > 0) {
+		/* temp <-- min(sec, 4194303)
+		 * 4194303 is (int)(0x7FFFFFFF/512)
+		 */
+		long temp = ((sec < 4194303) ? sec : 4194303);
+		fseek(fp, 512 * temp, SEEK_CUR);
+		sec -= temp;
+	}
+
+	fseek(fp, -1, SEEK_CUR);
+	if (fputc('\0', fp) == EOF) {
+		fclose(fp);
+		panicbug("ERROR: The just created disk image is not complete!");
+		return false;
+	}
+
+	fclose(fp);
+	return true;
+}
+
+static bool create_disk_image(int disk)
+{
+	const char *path = gui_options.atadevice[0][disk].path;
+	long size = atoi(disk == 0 ? ide0_size : ide1_size);
+	char text[250];
+	bool ret = false;
+ 	sprintf(text, "Create disk image '%s' with size %ld MB?", path, size);
+ 	if (Dialog_AlertDlg(text) == 1) {
+		int cyl, heads = 16, spt = 63, sectors;
+		if (File_Exists(path) && Dialog_AlertDlg("File Exists. Overwrite?")!=1) {
+			return false;
+		}
+		// create the file
+		cyl = (int) (size * 1024.0 * 1024.0 / (float)heads / (float)spt / 512.0);
+		assert(cyl < 65536);
+		sectors = cyl * heads * spt;
+		ret = make_image(sectors, path);
+  		UpdateDiskParameters(disk, gui_options.atadevice[0][disk].path, cyl, heads, spt);
+ 	}
+ 	return ret;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -224,10 +310,10 @@ void Dialog_DiscDlg(void)
   File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path, discdlg[IDE0_PATH].w);
   discdlg[IDE0_PATH].txt = ide0_path;
   safe_strncpy(ide0_name, gui_options.atadevice[0][0].model, sizeof(ide0_name));
-  UpdateDiskParameters(	gui_options.atadevice[0][0].path, ide0_size,
-  						gui_options.atadevice[0][0].cylinders, ide0_cyl,
-  						gui_options.atadevice[0][0].heads, ide0_head,
-  						gui_options.atadevice[0][0].spt, ide0_spt);
+  UpdateDiskParameters(	0, gui_options.atadevice[0][0].path,
+  						gui_options.atadevice[0][0].cylinders,
+  						gui_options.atadevice[0][0].heads,
+  						gui_options.atadevice[0][0].spt);
   setSelected(IDE0_PRESENT, gui_options.atadevice[0][0].present);
   setSelected(IDE0_CDROM, gui_options.atadevice[0][0].isCDROM);
   setSelected(IDE0_READONLY, gui_options.atadevice[0][0].readonly);
@@ -238,10 +324,10 @@ void Dialog_DiscDlg(void)
   File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path, discdlg[IDE1_PATH].w);
   discdlg[IDE1_PATH].txt = ide1_path;
   safe_strncpy(ide1_name, gui_options.atadevice[0][1].model, sizeof(ide1_name));
-  UpdateDiskParameters(	gui_options.atadevice[0][1].path, ide1_size,
-  						gui_options.atadevice[0][1].cylinders, ide1_cyl,
-  						gui_options.atadevice[0][1].heads, ide1_head,
-  						gui_options.atadevice[0][1].spt, ide1_spt);
+  UpdateDiskParameters(	1, gui_options.atadevice[0][1].path,
+  						gui_options.atadevice[0][1].cylinders,
+  						gui_options.atadevice[0][1].heads,
+  						gui_options.atadevice[0][1].spt);
   setSelected(IDE1_PRESENT, gui_options.atadevice[0][1].present);
   setSelected(IDE1_READONLY, gui_options.atadevice[0][1].readonly);
   setSelected(IDE1_CDROM, gui_options.atadevice[0][1].isCDROM);
@@ -284,10 +370,10 @@ void Dialog_DiscDlg(void)
           if( !File_DoesFileNameEndWithSlash(tmpname)/*&& File_Exists(tmpname)*/) {
             strcpy(gui_options.atadevice[0][0].path, tmpname);
             File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
-  UpdateDiskParameters(	gui_options.atadevice[0][0].path, ide0_size,
-  						gui_options.atadevice[0][0].cylinders, ide0_cyl,
-  						gui_options.atadevice[0][0].heads, ide0_head,
-  						gui_options.atadevice[0][0].spt, ide0_spt);
+  UpdateDiskParameters(	0, gui_options.atadevice[0][0].path,
+  						gui_options.atadevice[0][0].cylinders,
+  						gui_options.atadevice[0][0].heads,
+  						gui_options.atadevice[0][0].spt);
           }
           else {
           	ide0_path[0] = 0;
@@ -302,14 +388,33 @@ void Dialog_DiscDlg(void)
           if( !File_DoesFileNameEndWithSlash(tmpname)/*&& File_Exists(tmpname)*/) {
             strcpy(gui_options.atadevice[0][1].path, tmpname);
             File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
-  UpdateDiskParameters(	gui_options.atadevice[0][1].path, ide1_size,
-  						gui_options.atadevice[0][1].cylinders, ide1_cyl,
-  						gui_options.atadevice[0][1].heads, ide1_head,
-  						gui_options.atadevice[0][1].spt, ide1_spt);
+  			UpdateDiskParameters(1,
+  						gui_options.atadevice[0][1].path,
+  						gui_options.atadevice[0][1].cylinders,
+  						gui_options.atadevice[0][1].heads,
+  						gui_options.atadevice[0][1].spt);
           }
           else {
           	ide1_path[0] = 0;
           }
+        }
+        break;
+
+      case IDE0_GENERATE:
+      	if (create_disk_image(0)) {
+        	File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path, discdlg[IDE0_PATH].w);
+        }
+        else {
+          	ide0_path[0] = 0;
+        }
+        break;
+
+      case IDE1_GENERATE:
+      	if (create_disk_image(1)) {
+        	File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path, discdlg[IDE1_PATH].w);
+        }
+        else {
+          	ide1_path[0] = 0;
         }
         break;
 
