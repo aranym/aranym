@@ -144,9 +144,10 @@ install: $(APP) installdirs
 	$(INSTALL_DATA) ../../atari/tools/fastram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
 	$(INSTALL_DATA) ../../atari/tools/pc101us.kbd.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
 	$(INSTALL_DATA) ../../atari/tools/pcpatch.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2
+	$(INSTALL_DATA) ../../atari/sound/zmagxsnd.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2
 	
 installdirs:
-	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
 
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
@@ -177,10 +178,12 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2
 	rmdir $(DESTDIR)$(datadir)/$(APP)/createdisk
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/fvdi
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/tools
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/sound
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari
 	rmdir $(DESTDIR)$(datadir)/$(APP)
 	rmdir $(DESTDIR)$(docdir)/$(APP)
@@ -201,7 +204,7 @@ mrproper: distclean
 	rm -f aclocal.m4 configure config.h.in
 
 bindistdirs:
-	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/createdisk tmpdist$(datadir)/$(APP)/atari/aranymfs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/createdisk tmpdist$(datadir)/$(APP)/atari/aranymfs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
 bindist: $(APP) bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
@@ -232,6 +235,7 @@ bindist: $(APP) bindistdirs
 	$(INSTALL_DATA) ../../atari/tools/fastram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
 	$(INSTALL_DATA) ../../atari/tools/pc101us.kbd.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
 	$(INSTALL_DATA) ../../atari/tools/pcpatch.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2	
+	$(INSTALL_DATA) ../../atari/sound/zmagxsnd.prg.bz2 tmpdist$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2	
 	chmod -R a+r tmpdist
 	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
 	rm -rf tmpdist
