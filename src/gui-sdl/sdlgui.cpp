@@ -43,6 +43,14 @@ SDL_Color darkgreyc[]  = {{128, 128, 128, 0}};
 SDL_Color greyc[]      = {{192, 192, 192, 0}};
 SDL_Color whitec[]     = {{255, 255, 255, 0}};
 
+typedef struct
+{
+  int Object;
+  int Position;
+  int BlinkCounter;
+  bool BlinkState;
+} CursorState;
+
 /*-----------------------------------------------------------------------*/
 /*
   Load an 1 plane XBM into a 8 planes SDL_Surface.
@@ -180,6 +188,8 @@ void SDLGui_ObjFullCoord(SGOBJ *dlg, int objnum, SDL_Rect *coord)
       }
       break;
     case SGEDITFIELD:
+      // Allow one more pixel to the right for cursor
+      coord->w += 1;
       // There is a line below
       coord->h += 1;
       break;
@@ -328,6 +338,7 @@ void SDLGui_DrawEditField(SGOBJ *edlg, int objnum)
     textc = blackc;
 
   SDLGui_ObjCoord(edlg, objnum, &coord);
+  coord.w += 1;
   SDL_FillRect(sdlscrn, &coord, SDLGui_MapColor(greyc));
   SDLGui_Text(coord.x, coord.y, edlg[objnum].txt, textc);
 
@@ -335,6 +346,34 @@ void SDLGui_DrawEditField(SGOBJ *edlg, int objnum)
   coord.y = coord.y + coord.h;
   coord.h = 1;
   SDL_FillRect(sdlscrn, &coord, SDLGui_MapColor(darkgreyc));
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Draw or erase cursor.
+*/
+void SDLGui_DrawCursor(SGOBJ *dlg, CursorState *Cursor)
+{
+  if (Cursor->Object != -1)
+  {
+    SDL_Rect coord;
+    SDL_Color *cursorc;
+
+    SDLGui_DrawEditField(dlg, Cursor->Object);
+
+    if (Cursor->BlinkState)
+      cursorc = blackc;
+    else
+      cursorc = greyc;
+
+    SDLGui_ObjCoord(dlg, Cursor->Object, &coord);
+    coord.x += (Cursor->Position * fontwidth);
+    coord.w = 1;
+    SDL_FillRect(sdlscrn, &coord, SDLGui_MapColor(cursorc));
+
+    SDLGui_RefreshObj(dlg, Cursor->Object);
+  }
 }
 
 
@@ -682,124 +721,6 @@ void SDLGui_DrawPopupButton(SGOBJ *pdlg, int objnum)
 
 /*-----------------------------------------------------------------------*/
 /*
-  Let the user insert text into an edit field object.
-  NOTE: The dlg[objnum].txt must point to an an array that is big enough
-  for dlg[objnum].w characters!
-*/
-void SDLGui_EditField(SGOBJ *dlg, int objnum)
-{
-  unsigned int cursorPos;               /* Position of the cursor in the edit field */
-  int blinkState = 0;                   /* Used for cursor blinking */
-  bool bStopEditing = false;            /* true if user wants to exit the edit field */
-  char *txt;                            /* Shortcut for dlg[objnum].txt */
-  SDL_Rect rect;
-  Uint32 grey, cursorCol;
-  SDL_Event event;
-  SDL_Color *textc = blackc;
-
-  grey = SDLGui_MapColor(greyc);
-  cursorCol = SDLGui_MapColor(darkgreyc);
-
-  SDLGui_ObjCoord(dlg, objnum, &rect);
-  // Add some place for cursor
-  rect.w += fontwidth;
-
-  txt = dlg[objnum].txt;
-  cursorPos = strlen(txt);
-
-  do
-  {
-    /* Look for events */
-    if (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT)) == 0)
-    {
-      /* No event: Wait some time for cursor blinking */
-      SDL_Delay(250);
-      blinkState ^= 1;
-    }
-    else
-    {
-      /* Handle events */
-      do
-      {
-        switch(event.user.code)
-        {
-          case SDL_MOUSEBUTTONDOWN:             /* Mouse pressed -> stop editing */
-            bStopEditing = true;
-            break;
-          case SDL_KEYDOWN:                     /* Key pressed */
-            int keysym = (int)event.user.data1;
-            switch(keysym)
-            {
-              case SDLK_RETURN:
-              case SDLK_KP_ENTER:
-                bStopEditing = true;
-                break;
-              case SDLK_LEFT:
-                if(cursorPos > 0)
-                  cursorPos -= 1;
-                break;
-              case SDLK_RIGHT:
-                if(cursorPos < strlen(txt))
-                  cursorPos += 1;
-                break;
-              case SDLK_BACKSPACE:
-                if(cursorPos > 0)
-                {
-                  memmove(&txt[cursorPos-1], &txt[cursorPos], strlen(&txt[cursorPos])+1);
-                  cursorPos -= 1;
-                }
-                break;
-              case SDLK_DELETE:
-                if(cursorPos < strlen(txt))
-                  memmove(&txt[cursorPos], &txt[cursorPos+1], strlen(&txt[cursorPos+1])+1);
-                break;
-              default:
-              	if (keysym >= SDLK_KP0 && keysym <= SDLK_KP9) {
-              		// map numpad numbers to normal numbers
-              		keysym -= (SDLK_KP0 - SDLK_0);
-              	}
-                /* If it is a "good" key then insert it into the text field */
-                if(keysym >= SDLK_SPACE && keysym < SDLK_KP0)
-                {
-                  if(strlen(txt) < dlg[objnum].w)
-                  {
-                    memmove(&txt[cursorPos+1], &txt[cursorPos], strlen(&txt[cursorPos])+1);
-                    if(event.key.keysym.mod & (KMOD_LSHIFT|KMOD_RSHIFT))
-                      txt[cursorPos] = toupper(keysym);
-                    else
-                      txt[cursorPos] = keysym;
-                    cursorPos += 1;
-                  }
-                }
-                break;
-            }
-            break;
-        }
-      }
-      while(SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT))>0);
-
-      blinkState = 1;
-    }
-
-    /* Redraw the text field: */
-    SDL_FillRect(sdlscrn, &rect, grey);  /* Draw background */
-    /* Draw the cursor: */
-    if(blinkState && !bStopEditing)
-    {
-      SDL_Rect cursorrect;
-      cursorrect.x = rect.x + cursorPos * fontwidth;  cursorrect.y = rect.y;
-      cursorrect.w = fontwidth;  cursorrect.h = rect.h;
-      SDL_FillRect(sdlscrn, &cursorrect, cursorCol);
-    }
-    SDLGui_Text(rect.x, rect.y, dlg[objnum].txt, textc);  /* Draw text */
-    SDLGui_RefreshObj(dlg, objnum);
-  }
-  while(!bStopEditing);
-}
-
-
-/*-----------------------------------------------------------------------*/
-/*
   Draw an object.
 */
 void SDLGui_DrawObject(SGOBJ *dlg, int objnum)
@@ -845,6 +766,46 @@ void SDLGui_DrawDialog(SGOBJ *dlg)
     SDLGui_DrawObject(dlg, i);
   }
   SDLGui_RefreshObj(dlg, 0);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Search next edit field in a dialog.
+*/
+int SDLGui_FindNextEditField(SGOBJ *dlg, int objnum)
+{
+  int i = objnum + 1;
+
+  while (dlg[i].type != -1)
+  {
+    if ((dlg[i].type == SGEDITFIELD) &&
+        ((dlg[i].state & (SG_HIDDEN | SG_DISABLED)) == 0))
+      return i;
+    i++;
+  }
+
+  return objnum;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Search previous edit field in a dialog.
+*/
+int SDLGui_FindPreviousEditField(SGOBJ *dlg, int objnum)
+{
+  int i = objnum - 1;
+
+  while (i >= 0)
+  {
+    if ((dlg[i].type == SGEDITFIELD) &&
+        ((dlg[i].state & (SG_HIDDEN | SG_DISABLED)) == 0))
+      return i;
+    i--;
+  }
+
+  return objnum;
 }
 
 
@@ -969,7 +930,7 @@ bool SDLGui_UpdateObjState(SGOBJ *dlg, int clicked_obj, int original_state,
 /*
   Handle mouse clicks.
 */
-int SDLGui_MouseClick(SGOBJ *dlg, int fx, int fy)
+int SDLGui_MouseClick(SGOBJ *dlg, int fx, int fy, CursorState *Cursor)
 {
   int clicked_obj;
   int return_obj = -1;
@@ -1028,10 +989,26 @@ int SDLGui_MouseClick(SGOBJ *dlg, int fx, int fy)
               SDLGui_SelectRadioObject(dlg, clicked_obj);
 
             if (dlg[clicked_obj].type == SGEDITFIELD)
-              SDLGui_EditField(dlg, clicked_obj);
+            {
+              SDL_Rect coord;
+              int i, j;
+
+              Cursor->BlinkState = false;
+              SDLGui_DrawCursor(dlg, Cursor);
+
+              SDLGui_ObjFullCoord(dlg, clicked_obj, &coord);
+              i = (x - coord.x + (fontwidth / 2)) / fontwidth;
+              j = strlen(dlg[clicked_obj].txt);
+
+              Cursor->Object = clicked_obj;
+              Cursor->Position = MIN(i, j);
+              Cursor->BlinkState = true;
+              Cursor->BlinkCounter = 0;
+              SDLGui_DrawCursor(dlg, Cursor);
+            }
           }
 
-          // Were done. Exit from mouse click handling.
+          // We're done. Exit from mouse click handling.
           clicked_obj = -1;
 
           break;
@@ -1057,10 +1034,176 @@ int SDLGui_MouseClick(SGOBJ *dlg, int fx, int fy)
 /*
   Handle key press.
 */
-int SDLGui_KeyPress(SGOBJ *dlg, int keysym)
+int SDLGui_KeyPress(SGOBJ *dlg, int keysym, int mod, CursorState *Cursor)
 {
   int return_obj = -1;
   int obj;
+
+  if (Cursor->Object != -1)
+    switch(keysym)
+    {
+      case SDLK_RETURN:
+      case SDLK_KP_ENTER:
+        break;
+
+      case SDLK_BACKSPACE:
+        if (Cursor->Position > 0)
+        {
+          memmove(&dlg[Cursor->Object].txt[Cursor->Position-1],
+                  &dlg[Cursor->Object].txt[Cursor->Position],
+                  strlen(&dlg[Cursor->Object].txt[Cursor->Position])+1);
+          Cursor->Position--;
+        }
+        break;
+
+      case SDLK_DELETE:
+        if(Cursor->Position < (int)strlen(dlg[Cursor->Object].txt))
+          memmove(&dlg[Cursor->Object].txt[Cursor->Position],
+                  &dlg[Cursor->Object].txt[Cursor->Position+1],
+                  strlen(&dlg[Cursor->Object].txt[Cursor->Position+1])+1);
+        break;
+
+      case SDLK_LEFT:
+        if (Cursor->Position > 0)
+          Cursor->Position--;
+        break;
+
+      case SDLK_RIGHT:
+        if (Cursor->Position < (int)strlen(dlg[Cursor->Object].txt))
+          Cursor->Position++;
+        break;
+
+      case SDLK_DOWN:
+        {
+          int NewObject;
+
+          NewObject = SDLGui_FindNextEditField(dlg, Cursor->Object);
+          if (NewObject != Cursor->Object)
+          {
+            Cursor->BlinkState = false;
+            SDLGui_DrawCursor(dlg, Cursor);
+            Cursor->Object = NewObject;
+            Cursor->Position = strlen(dlg[NewObject].txt);
+          }
+          else
+            Cursor->Position = strlen(dlg[Cursor->Object].txt);
+        }
+        break;
+
+      case SDLK_UP:
+        {
+          int NewObject;
+
+          NewObject = SDLGui_FindPreviousEditField(dlg, Cursor->Object);
+          if (NewObject != Cursor->Object)
+          {
+            Cursor->BlinkState = false;
+            SDLGui_DrawCursor(dlg, Cursor);
+            Cursor->Object = NewObject;
+            Cursor->Position = strlen(dlg[NewObject].txt);
+          }
+          else
+            Cursor->Position = 0;
+        }
+        break;
+
+      case SDLK_TAB:
+        {
+          int NewObject;
+
+          if (mod & KMOD_SHIFT)
+            NewObject = SDLGui_FindPreviousEditField(dlg, Cursor->Object);
+          else
+            NewObject = SDLGui_FindNextEditField(dlg, Cursor->Object);
+
+          if (NewObject != Cursor->Object)
+          {
+            Cursor->BlinkState = false;
+            SDLGui_DrawCursor(dlg, Cursor);
+            Cursor->Object = NewObject;
+            Cursor->Position = strlen(dlg[NewObject].txt);
+          }
+          else
+          {
+            if (mod & KMOD_SHIFT)
+              Cursor->Position = 0;
+            else
+              Cursor->Position = strlen(dlg[Cursor->Object].txt);
+          }
+        }
+        break;
+
+      case SDLK_HOME:
+        if (mod & KMOD_CTRL)
+        {
+          int NewObject;
+
+          NewObject = SDLGui_FindNextEditField(dlg, -1);
+          if (NewObject != Cursor->Object)
+          {
+            Cursor->BlinkState = false;
+            SDLGui_DrawCursor(dlg, Cursor);
+            Cursor->Object = NewObject;
+            Cursor->Position = strlen(dlg[NewObject].txt);
+          }
+          else
+            Cursor->Position = 0;
+        }
+        else
+          Cursor->Position = 0;
+        break;
+
+      case SDLK_END:
+        if (mod & KMOD_CTRL)
+        {
+          int NewObject, i;
+
+          /* Find last edit field in dialog */
+          i = -1;
+          NewObject =  Cursor->Object;
+          while (i != NewObject)
+          {
+            i = NewObject;
+            NewObject = SDLGui_FindNextEditField(dlg, NewObject);
+          }
+
+          if (NewObject != Cursor->Object)
+          {
+            Cursor->BlinkState = false;
+            SDLGui_DrawCursor(dlg, Cursor);
+            Cursor->Object = NewObject;
+            Cursor->Position = strlen(dlg[NewObject].txt);
+          }
+          else
+            Cursor->Position = strlen(dlg[NewObject].txt);
+        }
+        else
+          Cursor->Position = strlen(dlg[Cursor->Object].txt);
+        break;
+
+      default:
+        if ((keysym >= SDLK_KP0) && (keysym <= SDLK_KP9))
+        {
+          // map numpad numbers to normal numbers
+          keysym -= (SDLK_KP0 - SDLK_0);
+        }
+        /* If it is a "good" key then insert it into the text field */
+        if ((keysym >= SDLK_SPACE) && (keysym < SDLK_KP0))
+        {
+          if (strlen(dlg[Cursor->Object].txt) < dlg[Cursor->Object].w)
+          {
+            memmove(&dlg[Cursor->Object].txt[Cursor->Position+1],
+                    &dlg[Cursor->Object].txt[Cursor->Position],
+                    strlen(&dlg[Cursor->Object].txt[Cursor->Position])+1);
+            if (mod & KMOD_SHIFT)
+              dlg[Cursor->Object].txt[Cursor->Position] = toupper(keysym);
+            else
+              dlg[Cursor->Object].txt[Cursor->Position] = keysym;
+            Cursor->Position += 1;
+          }
+        }
+        break;
+    }
 
   switch(keysym)
   {
@@ -1080,6 +1223,12 @@ int SDLGui_KeyPress(SGOBJ *dlg, int keysym)
       }
       break;
   }
+
+  // Force cursor display. Should ease text input.
+  Cursor->BlinkState = true;
+  Cursor->BlinkCounter = 0;
+  // Redraw current edit field...
+  SDLGui_DrawCursor(dlg, Cursor);
 
   return return_obj;
 }
@@ -1217,7 +1366,8 @@ int SDLGui_DoDialog(SGOBJ *dlg)
   int return_obj = -1;
   int obj;
   int x, y;
-  int keysym;
+  int keysym, mod;
+  CursorState Cursor;
 
   /* Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here */
 
@@ -1233,6 +1383,14 @@ int SDLGui_DoDialog(SGOBJ *dlg)
     return_obj = obj;
   }
 
+  Cursor.Object = SDLGui_FindNextEditField(dlg, -1);
+  if (Cursor.Object != -1)
+    Cursor.Position = strlen(dlg[Cursor.Object].txt);
+  else
+    Cursor.Position = -1;
+  Cursor.BlinkCounter = 0;
+  Cursor.BlinkState = true;
+
   SDLGui_DrawDialog(dlg);
 
   /* The main loop */
@@ -1246,7 +1404,8 @@ int SDLGui_DoDialog(SGOBJ *dlg)
       {
       	case SDL_KEYDOWN:
           keysym = (int)evnt.user.data1;
-          return_obj = SDLGui_KeyPress(dlg, keysym);
+          mod = (int)evnt.user.data2;
+          return_obj = SDLGui_KeyPress(dlg, keysym, mod, &Cursor);
       	  break;
 
         case SDL_USEREVENT:
@@ -1257,7 +1416,7 @@ int SDLGui_DoDialog(SGOBJ *dlg)
         case SDL_MOUSEBUTTONDOWN:
           x = (int)evnt.user.data1;
           y = (int)evnt.user.data2;
-          return_obj = SDLGui_MouseClick(dlg, x, y);
+          return_obj = SDLGui_MouseClick(dlg, x, y, &Cursor);
           break;
       }
     }
@@ -1265,7 +1424,14 @@ int SDLGui_DoDialog(SGOBJ *dlg)
     {
       // No special event occured.
       // Wait a little to avoid eating CPU.
-      SDL_Delay(100);
+      SDL_Delay(50);
+      Cursor.BlinkCounter++;
+      if (Cursor.BlinkCounter >= 10)
+      {
+        Cursor.BlinkCounter = 0;
+        Cursor.BlinkState = Cursor.BlinkState ? false : true;
+        SDLGui_DrawCursor(dlg, &Cursor);
+      }
     }
   }
 

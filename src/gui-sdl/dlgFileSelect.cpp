@@ -87,15 +87,9 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
   int selection = -1;                          /* The actual selection, -1 if none selected */
 
   if(bAllowNew)
-  {
     fsdlg[SGFSDLG_FILENAME].type = SGEDITFIELD;
-    fsdlg[SGFSDLG_FILENAME].flags |= SG_EXIT;
-  }
   else
-  {
     fsdlg[SGFSDLG_FILENAME].type = SGTEXT;
-    fsdlg[SGFSDLG_FILENAME].flags &= ~SG_EXIT;
-  }
 
   /* Prepare the path and filename variables */
   File_splitpath(path_and_name, path, fname, NULL);
@@ -270,9 +264,6 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
           }
           SDL_Delay(20);
           break;
-        case SGFSDLG_FILENAME:              /* User entered new filename */
-          strcpy(fname, dlgfname);
-          break;
       } /* switch */
     } /* other button code */
 
@@ -283,6 +274,15 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
   if( oldcursorstate==SDL_DISABLE )
     SDL_ShowCursor(SDL_DISABLE);
   SCRUNLOCK;
+
+  {
+    /* if user edited filename, use new one */
+    char dlgfname2[33];
+    File_ShrinkName(dlgfname2, fname, 32);
+    if (strcmp(dlgfname, dlgfname2) != 0)
+      strcpy(fname, dlgfname);
+  }
+
   File_makepath(path_and_name, path, fname, NULL);
 
   /* Free old allocated memory: */

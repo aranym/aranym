@@ -1,3 +1,9 @@
+2004/08/28 - Xavier
+- gui-sdl/sdlgui.cpp, input.cpp: rewrote edit field handling.
+
+- gui-sdl/dlgFileSelect.cpp: updated for the new edit field handling.
+
+
 2004/08/27 - joy
 - lilo.cpp: thanks to David Muse analysis and suggestions I corrected
   the LiloCheckKernel() simply by copy&pasting it from linux bootstrap
