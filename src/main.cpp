@@ -511,7 +511,7 @@ bool InitAll(void)
 #endif
 
 #ifdef SDL_GUI
-	if (false /* --config */) {
+	if (isGuiAvailable && false /* --reconfig */) {
 extern int open_gui(void *);
 		open_gui(NULL);
 	}
