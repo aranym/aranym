@@ -1,3 +1,10 @@
+2001/10/31 - STanda
+- fVDI: The resolution change works now with the current driver. Do not try
+  to compile the m68k part, it's just full of hacks, but it works for me.
+  Just use the binary from CVS. The only useable is the 16bpp in any resolution
+  in X11. I didn't try it in framebuffer or so.
+
+
 2001/10/30 - STanda
 - The HostScreen support for 8,16,24 and 32 BPP finished. Many optimalizations
   done in getting the switches out from loops. There should be some speedup, but
