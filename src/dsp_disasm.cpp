@@ -13,7 +13,7 @@
 #include "dsp_cpu.h"
 #include "dsp_disasm.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /* More disasm infos, if wanted */
@@ -91,7 +91,7 @@ void dsp56k_disasm_reg_compare(void)
 			case REG_A1:
 			case REG_B0:
 			case REG_B1:
-				D(bug("Dsp: Reg: %s:0x%06x -> 0x%06x", registers_name[i], registers_save[i] & BITMASK(24), dsp.registers[i]  & BITMASK(24)));
+				fprintf(stderr,"Dsp: Reg: %s:0x%06x -> 0x%06x", registers_name[i], registers_save[i] & BITMASK(24), dsp.registers[i]  & BITMASK(24));
 				break;
 			case REG_R0:
 			case REG_R1:
@@ -120,7 +120,7 @@ void dsp56k_disasm_reg_compare(void)
 			case REG_SR:
 			case REG_LA:
 			case REG_LC:
-				D(bug("Dsp: Reg: %s:0x%04x -> 0x%04x", registers_name[i], registers_save[i] & BITMASK(16), dsp.registers[i]  & BITMASK(16)));
+				fprintf(stderr,"Dsp: Reg: %s:0x%04x -> 0x%04x", registers_name[i], registers_save[i] & BITMASK(16), dsp.registers[i]  & BITMASK(16));
 				break;
 			case REG_A2:
 			case REG_B2:
@@ -128,13 +128,13 @@ void dsp56k_disasm_reg_compare(void)
 			case REG_SP:
 			case REG_SSH:
 			case REG_SSL:
-				D(bug("Dsp: Reg: %s:0x%02x -> 0x%02x", registers_name[i], registers_save[i] & BITMASK(8), dsp.registers[i]  & BITMASK(8)));
+				fprintf(stderr,"Dsp: Reg: %s:0x%02x -> 0x%02x", registers_name[i], registers_save[i] & BITMASK(8), dsp.registers[i]  & BITMASK(8));
 				break;
 		}
 	}
 #if DSP_DISASM_REG_PC
 	if (pc_save != dsp.pc) {
-		D(bug("Dsp: Reg: pc:0x%04x -> 0x%04x", pc_save, dsp.pc));
+		fprintf(stderr,"Dsp: Reg: pc:0x%04x -> 0x%04x", pc_save, dsp.pc);
 	}
 #endif
 }
@@ -821,7 +821,7 @@ static void opcode8h_b(void)
 
 static void dsp_undefined(void)
 {
-	D(bug("Dsp: 0x%04x: 0x%06x unknown instruction",dsp.pc, cur_inst));
+	fprintf(stderr,"Dsp: 0x%04x: 0x%06x unknown instruction",dsp.pc, cur_inst);
 }
 
 static void dsp_andi(void)
@@ -835,11 +835,11 @@ static void dsp_andi(void)
 		default: regname="";	break;
 	}
 
-	D(bug("Dsp: 0x%04x: andi #0x%02x,%s",
+	fprintf(stderr,"Dsp: 0x%04x: andi #0x%02x,%s",
 		dsp.pc,
 		(cur_inst>>8) & BITMASK(8),
 		regname
-	));
+	);
 }
 
 static void dsp_bchg(void)
@@ -886,7 +886,7 @@ static void dsp_bchg(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: bchg #%d,%s",dsp.pc, numbit, name));
+	fprintf(stderr,"Dsp: 0x%04x: bchg #%d,%s",dsp.pc, numbit, name);
 }
 
 static void dsp_bclr(void)
@@ -933,7 +933,7 @@ static void dsp_bclr(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: bclr #%d,%s",dsp.pc, numbit, name));
+	fprintf(stderr,"Dsp: 0x%04x: bclr #%d,%s",dsp.pc, numbit, name);
 }
 
 static void dsp_bset(void)
@@ -980,7 +980,7 @@ static void dsp_bset(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: bset #%d,%s",dsp.pc, numbit, name));
+	fprintf(stderr,"Dsp: 0x%04x: bset #%d,%s",dsp.pc, numbit, name);
 }
 
 static void dsp_btst(void)
@@ -1027,7 +1027,7 @@ static void dsp_btst(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: btst #%d,%s",dsp.pc, numbit, name));
+	fprintf(stderr,"Dsp: 0x%04x: btst #%d,%s",dsp.pc, numbit, name);
 }
 
 static void dsp_div(void)
@@ -1050,7 +1050,7 @@ static void dsp_div(void)
 	}
 	destreg = REG_A+((cur_inst>>3) & 1);
 
-	D(bug("Dsp: 0x%04x: div %s,%s",dsp.pc, registers_name[srcreg],registers_name[destreg]));
+	fprintf(stderr,"Dsp: 0x%04x: div %s,%s",dsp.pc, registers_name[srcreg],registers_name[destreg]);
 }
 
 static void dsp_do(void)
@@ -1074,20 +1074,20 @@ static void dsp_do_0(void)
 		sprintf(name, "x:0x%04x", (cur_inst>>8) & BITMASK(6));
 	}
 
-	D(bug("Dsp: 0x%04x: do %s,p:0x%04x",
+	fprintf(stderr,"Dsp: 0x%04x: do %s,p:0x%04x",
 		dsp.pc,
 		name,
 		dsp.ram[SPACE_P][dsp.pc+1] & BITMASK(16)
-	));
+	);
 }
 
 static void dsp_do_2(void)
 {
-	D(bug("Dsp: 0x%04x: do #0x%04x,p:0x%04x",
+	fprintf(stderr,"Dsp: 0x%04x: do #0x%04x,p:0x%04x",
 		dsp.pc,
 		((cur_inst>>8) & BITMASK(8))|((cur_inst & BITMASK(4))<<8),
 		dsp.ram[SPACE_P][dsp.pc+1] & BITMASK(16)
-	));
+	);
 }
 
 static void dsp_do_4(void)
@@ -1104,30 +1104,30 @@ static void dsp_do_4(void)
 		sprintf(name, "x:%s", addr_name);
 	}
 
-	D(bug("Dsp: 0x%04x: do %s,p:0x%04x", 
+	fprintf(stderr,"Dsp: 0x%04x: do %s,p:0x%04x", 
 		dsp.pc,
 		name,
 		dsp.ram[SPACE_P][dsp.pc+1] & BITMASK(16)
-	));
+	);
 }
 
 static void dsp_do_c(void)
 {
-	D(bug("Dsp: 0x%04x: do %s,p:0x%04x",
+	fprintf(stderr,"Dsp: 0x%04x: do %s,p:0x%04x",
 		dsp.pc,
 		registers_name[(cur_inst>>8) & BITMASK(6)],
 		dsp.ram[SPACE_P][dsp.pc+1] & BITMASK(16)
-	));
+	);
 }
 
 static void dsp_enddo(void)
 {
-	D(bug("Dsp: 0x%04x: enddo",dsp.pc));
+	fprintf(stderr,"Dsp: 0x%04x: enddo",dsp.pc);
 }
 
 static void dsp_illegal(void)
 {
-	D(bug("Dsp: 0x%04x: illegal",dsp.pc));
+	fprintf(stderr,"Dsp: 0x%04x: illegal",dsp.pc);
 }
 
 static void dsp_jcc(void)
@@ -1147,7 +1147,7 @@ static void dsp_jcc(void)
 	}
 	dsp_calc_cc(cc_code, cond_name);	
 
-	D(bug("Dsp: 0x%04x: j%s p:%s",dsp.pc, cond_name, addr_name));
+	fprintf(stderr,"Dsp: 0x%04x: j%s p:%s",dsp.pc, cond_name, addr_name);
 }
 
 static void dsp_jclr(void)
@@ -1195,12 +1195,12 @@ static void dsp_jclr(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: jclr #%d,%s,p:0x%04x",
+	fprintf(stderr,"Dsp: 0x%04x: jclr #%d,%s,p:0x%04x",
 		dsp.pc,
 		numbit,
 		srcname,
 		dsp.ram[SPACE_P][dsp.pc+1]
-	));
+	);
 }
 
 static void dsp_jmp(void)
@@ -1216,7 +1216,7 @@ static void dsp_jmp(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: jmp p:%s",dsp.pc, dstname));
+	fprintf(stderr,"Dsp: 0x%04x: jmp p:%s",dsp.pc, dstname);
 }
 
 static void dsp_jscc(void)
@@ -1236,7 +1236,7 @@ static void dsp_jscc(void)
 	}
 	dsp_calc_cc(cc_code, cond_name);	
 
-	D(bug("Dsp: 0x%04x: js%s p:%s",dsp.pc, cond_name, addr_name));
+	fprintf(stderr,"Dsp: 0x%04x: js%s p:%s",dsp.pc, cond_name, addr_name);
 }
 	
 static void dsp_jsclr(void)
@@ -1284,12 +1284,12 @@ static void dsp_jsclr(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: jsclr #%d,%s,p:0x%04x",
+	fprintf(stderr,"Dsp: 0x%04x: jsclr #%d,%s,p:0x%04x",
 		dsp.pc,
 		numbit,
 		srcname,
 		dsp.ram[SPACE_P][dsp.pc+1]
-	));
+	);
 }
 
 static void dsp_jset(void)
@@ -1337,12 +1337,12 @@ static void dsp_jset(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: jset #%d,%s,p:0x%04x",
+	fprintf(stderr,"Dsp: 0x%04x: jset #%d,%s,p:0x%04x",
 		dsp.pc,
 		numbit,
 		srcname,
 		dsp.ram[SPACE_P][dsp.pc+1]
-	));
+	);
 }
 
 static void dsp_jsr(void)
@@ -1355,7 +1355,7 @@ static void dsp_jsr(void)
 		dsp_calc_ea((cur_inst>>8) & BITMASK(6),dstname);
 	}
 
-	D(bug("Dsp: 0x%04x: jsr p:%s",dsp.pc, dstname));
+	fprintf(stderr,"Dsp: 0x%04x: jsr p:%s",dsp.pc, dstname);
 }
 
 static void dsp_jsset(void)
@@ -1403,12 +1403,12 @@ static void dsp_jsset(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: jsset #%d,%s,p:0x%04x",
+	fprintf(stderr,"Dsp: 0x%04x: jsset #%d,%s,p:0x%04x",
 		dsp.pc,
 		numbit,
 		srcname,
 		dsp.ram[SPACE_P][dsp.pc+1]
-	));
+	);
 }
 
 static void dsp_lua(void)
@@ -1417,7 +1417,7 @@ static void dsp_lua(void)
 
 	dsp_calc_ea((cur_inst>>8) & BITMASK(5), addr_name);
 
-	D(bug("Dsp: 0x%04x: lua %s,r%d",dsp.pc, addr_name, cur_inst & BITMASK(3)));
+	fprintf(stderr,"Dsp: 0x%04x: lua %s,r%d",dsp.pc, addr_name, cur_inst & BITMASK(3));
 }
 
 static void dsp_movec(void)
@@ -1444,10 +1444,10 @@ static void dsp_movec_7(void)
 
 	if (cur_inst & (1<<15)) {
 		/* Write D1 */
-		D(bug("Dsp: 0x%04x: movec %s,%s",dsp.pc, registers_name[numreg2], registers_name[numreg1]));
+		fprintf(stderr,"Dsp: 0x%04x: movec %s,%s",dsp.pc, registers_name[numreg2], registers_name[numreg1]);
 	} else {
 		/* Read S1 */
-		D(bug("Dsp: 0x%04x: movec %s,%s",dsp.pc, registers_name[numreg1], registers_name[numreg2]));
+		fprintf(stderr,"Dsp: 0x%04x: movec %s,%s",dsp.pc, registers_name[numreg1], registers_name[numreg2]);
 	}
 }
 
@@ -1480,7 +1480,7 @@ static void dsp_movec_9(void)
 		sprintf(dstname, "%s:0x%04x", spacename, addr);
 	}
 
-	D(bug("Dsp: 0x%04x: movec %s,%s",dsp.pc, srcname, dstname));
+	fprintf(stderr,"Dsp: 0x%04x: movec %s,%s",dsp.pc, srcname, dstname);
 }
 
 static void dsp_movec_b(void)
@@ -1491,7 +1491,7 @@ static void dsp_movec_b(void)
 
 	numreg = (cur_inst & BITMASK(5))|0x20;
 
-	D(bug("Dsp: 0x%04x: movec #0x%02x,%s",dsp.pc, (cur_inst>>8) & BITMASK(8), registers_name[numreg]));
+	fprintf(stderr,"Dsp: 0x%04x: movec #0x%02x,%s",dsp.pc, (cur_inst>>8) & BITMASK(8), registers_name[numreg]);
 }
 
 static void dsp_movec_d(void)
@@ -1530,7 +1530,7 @@ static void dsp_movec_d(void)
 		sprintf(dstname, "%s:%s", spacename, addr_name);
 	}
 
-	D(bug("Dsp: 0x%04x: movec %s,%s",dsp.pc, srcname, dstname));
+	fprintf(stderr,"Dsp: 0x%04x: movec %s,%s",dsp.pc, srcname, dstname);
 }
 
 static void dsp_movem(void)
@@ -1562,7 +1562,7 @@ static void dsp_movem(void)
 		sprintf(dstname, "p:%s", addr_name);
 	}
 
-	D(bug("Dsp: 0x%04x: movem %s,%s",dsp.pc, srcname, dstname));
+	fprintf(stderr,"Dsp: 0x%04x: movem %s,%s",dsp.pc, srcname, dstname);
 }
 
 static void dsp_movep(void)
@@ -1610,7 +1610,7 @@ static void dsp_movep_0(void)
 		strcpy(dstname, registers_name[numreg]);
 	}
 
-	D(bug("Dsp: 0x%04x: movep %s,%s",dsp.pc, srcname, dstname));
+	fprintf(stderr,"Dsp: 0x%04x: movep %s,%s",dsp.pc, srcname, dstname);
 }
 
 static void dsp_movep_1(void)
@@ -1649,7 +1649,7 @@ static void dsp_movep_1(void)
 		sprintf(dstname, "p:%s", name);
 	}
 
-	D(bug("Dsp: 0x%04x: movep %s,%s",dsp.pc, srcname, dstname));
+	fprintf(stderr,"Dsp: 0x%04x: movep %s,%s",dsp.pc, srcname, dstname);
 }
 
 static void dsp_movep_2(void)
@@ -1708,12 +1708,12 @@ static void dsp_movep_2(void)
 		}
 	}
 
-	D(bug("Dsp: 0x%04x: movep %s,%s",dsp.pc, srcname, dstname));
+	fprintf(stderr,"Dsp: 0x%04x: movep %s,%s",dsp.pc, srcname, dstname);
 }
 
 static void dsp_nop(void)
 {
-	D(bug("Dsp: 0x%04x: nop",dsp.pc));
+	fprintf(stderr,"Dsp: 0x%04x: nop",dsp.pc);
 }
 
 static void dsp_norm(void)
@@ -1723,7 +1723,7 @@ static void dsp_norm(void)
 	srcreg = REG_R0+((cur_inst>>8) & BITMASK(3));
 	destreg = REG_A+((cur_inst>>3) & 1);
 
-	D(bug("Dsp: 0x%04x: norm %s,%s",dsp.pc, registers_name[srcreg], registers_name[destreg]));
+	fprintf(stderr,"Dsp: 0x%04x: norm %s,%s",dsp.pc, registers_name[srcreg], registers_name[destreg]);
 }
 
 static void dsp_ori(void)
@@ -1737,11 +1737,11 @@ static void dsp_ori(void)
 		default: regname="";	break;
 	}
 
-	D(bug("Dsp: 0x%04x: ori #0x%02x,%s",
+	fprintf(stderr,"Dsp: 0x%04x: ori #0x%02x,%s",
 		dsp.pc,
 		(cur_inst>>8) & BITMASK(8),
 		regname
-	));
+	);
 }
 
 static void dsp_rep(void)
@@ -1768,13 +1768,13 @@ static void dsp_rep_1(void)
 		sprintf(name, "x:0x%04x",(cur_inst>>8) & BITMASK(6));
 	}
 
-	D(bug("Dsp: 0x%04x: rep %s",dsp.pc, name));
+	fprintf(stderr,"Dsp: 0x%04x: rep %s",dsp.pc, name);
 }
 
 static void dsp_rep_3(void)
 {
 	/* #xxx */
-	D(bug("Dsp: 0x%04x: rep #0x%02x",dsp.pc, (cur_inst>>8) & BITMASK(8)));
+	fprintf(stderr,"Dsp: 0x%04x: rep #0x%02x",dsp.pc, (cur_inst>>8) & BITMASK(8));
 }
 
 static void dsp_rep_5(void)
@@ -1791,39 +1791,39 @@ static void dsp_rep_5(void)
 		sprintf(name, "x:%s",addr_name);
 	}
 
-	D(bug("Dsp: 0x%04x: rep %s",dsp.pc, name));
+	fprintf(stderr,"Dsp: 0x%04x: rep %s",dsp.pc, name);
 }
 
 static void dsp_rep_d(void)
 {
 	/* R */
 
-	D(bug("Dsp: 0x%04x: rep %s",dsp.pc, registers_name[(cur_inst>>8) & BITMASK(6)]));
+	fprintf(stderr,"Dsp: 0x%04x: rep %s",dsp.pc, registers_name[(cur_inst>>8) & BITMASK(6)]);
 }
 
 static void dsp_reset(void)
 {
-	D(bug("Dsp: 0x%04x: reset",dsp.pc));
+	fprintf(stderr,"Dsp: 0x%04x: reset",dsp.pc);
 }
 
 static void dsp_rti(void)
 {
-	D(bug("Dsp: 0x%04x: rti",dsp.pc));
+	fprintf(stderr,"Dsp: 0x%04x: rti",dsp.pc);
 }
 
 static void dsp_rts(void)
 {
-	D(bug("Dsp: 0x%04x: rts",dsp.pc));
+	fprintf(stderr,"Dsp: 0x%04x: rts",dsp.pc);
 }
 
 static void dsp_stop(void)
 {
-	D(bug("Dsp: 0x%04x: stop",dsp.pc));
+	fprintf(stderr,"Dsp: 0x%04x: stop",dsp.pc);
 }
 	
 static void dsp_swi(void)
 {
-	D(bug("Dsp: 0x%04x: swi",dsp.pc));
+	fprintf(stderr,"Dsp: 0x%04x: swi",dsp.pc);
 }
 
 static void dsp_tcc(void)
@@ -1839,27 +1839,27 @@ static void dsp_tcc(void)
 		src2reg = REG_R0+(cur_inst & BITMASK(3));
 		dst2reg = REG_R0+((cur_inst>>8) & BITMASK(3));
 
-		D(bug("Dsp: 0x%04x: t%s %s,%s %s,%s",
+		fprintf(stderr,"Dsp: 0x%04x: t%s %s,%s %s,%s",
 			dsp.pc,
 			ccname,
 			registers_name[src1reg],
 			registers_name[dst1reg],
 			registers_name[src2reg],
 			registers_name[dst2reg]
-		));
+		);
 	} else {
-		D(bug("Dsp: 0x%04x: t%s %s,%s",
+		fprintf(stderr,"Dsp: 0x%04x: t%s %s,%s",
 			dsp.pc,
 			ccname,
 			registers_name[src1reg],
 			registers_name[dst1reg]
-		));
+		);
 	}
 }
 
 static void dsp_wait(void)
 {
-	D(bug("Dsp: 0x%04x: wait",dsp.pc));
+	fprintf(stderr,"Dsp: 0x%04x: wait",dsp.pc);
 }
 
 /**********************************
@@ -2216,11 +2216,11 @@ static void dsp_pm_8(void)
 
 static void dsp_abs(void)
 {
-	D(bug("Dsp: 0x%04x: abs %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: abs %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_adc(void)
@@ -2233,12 +2233,12 @@ static void dsp_adc(void)
 		srcname="x";
 	}
 
-	D(bug("Dsp: 0x%04x: adc %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: adc %s,%s %s",
 		dsp.pc,
 		srcname,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_add(void)
@@ -2271,12 +2271,12 @@ static void dsp_add(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: add %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: add %s,%s %s",
 		dsp.pc,
 		srcname,
 		registers_name[REG_A+dstreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_addl(void)
@@ -2285,12 +2285,12 @@ static void dsp_addl(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	D(bug("Dsp: 0x%04x: addl %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: addl %s,%s %s",
 		dsp.pc,
 		registers_name[REG_A+(numreg ^ 1)],
 		registers_name[REG_A+numreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_addr(void)
@@ -2299,49 +2299,49 @@ static void dsp_addr(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	D(bug("Dsp: 0x%04x: addr %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: addr %s,%s %s",
 		dsp.pc,
 		registers_name[REG_A+(numreg ^ 1)],
 		registers_name[REG_A+numreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_and(void)
 {
-	D(bug("Dsp: 0x%04x: and %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: and %s,%s %s",
 		dsp.pc,
 		registers_name[REG_X0+((cur_inst>>4) & BITMASK(2))],
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_asl(void)
 {
-	D(bug("Dsp: 0x%04x: asl %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: asl %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_asr(void)
 {
-	D(bug("Dsp: 0x%04x: asr %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: asr %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_clr(void)
 {
-	D(bug("Dsp: 0x%04x: clr %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: clr %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_cmp(void)
@@ -2369,12 +2369,12 @@ static void dsp_cmp(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: cmp %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: cmp %s,%s %s",
 		dsp.pc,
 		registers_name[srcreg],
 		registers_name[REG_A+dstreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_cmpm(void)
@@ -2402,40 +2402,40 @@ static void dsp_cmpm(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: cmpm %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: cmpm %s,%s %s",
 		dsp.pc,
 		registers_name[srcreg],
 		registers_name[REG_A+dstreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_eor(void)
 {
-	D(bug("Dsp: 0x%04x: eor %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: eor %s,%s %s",
 		dsp.pc,
 		registers_name[REG_X0+((cur_inst>>4) & BITMASK(2))],
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_lsl(void)
 {
-	D(bug("Dsp: 0x%04x: lsl %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: lsl %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_lsr(void)
 {
-	D(bug("Dsp: 0x%04x: lsr %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: lsr %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_mac(void)
@@ -2485,14 +2485,14 @@ static void dsp_mac(void)
 	}
 	dstreg = (cur_inst>>3) & 1;
 
-	D(bug("Dsp: 0x%04x: mac %s%s,%s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: mac %s%s,%s,%s %s",
 		dsp.pc,
 		sign_name,
 		registers_name[src1reg],
 		registers_name[src2reg],
 		registers_name[REG_A+dstreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_macr(void)
@@ -2542,25 +2542,25 @@ static void dsp_macr(void)
 	}
 	dstreg = (cur_inst>>3) & 1;
 
-	D(bug("Dsp: 0x%04x: macr %s%s,%s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: macr %s%s,%s,%s %s",
 		dsp.pc,
 		sign_name,
 		registers_name[src1reg],
 		registers_name[src2reg],
 		registers_name[REG_A+dstreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_move(void)
 {
-	D(bug("Dsp: 0x%04x: move %s",dsp.pc, parallelmove_name));
+	fprintf(stderr,"Dsp: 0x%04x: move %s",dsp.pc, parallelmove_name);
 }
 
 static void dsp_move_nopm(void)
 {
 	dsp_pm();
-	D(bug("Dsp: 0x%04x: move %s",dsp.pc, parallelmove_name));
+	fprintf(stderr,"Dsp: 0x%04x: move %s",dsp.pc, parallelmove_name);
 }
 
 static void dsp_mpy(void)
@@ -2610,14 +2610,14 @@ static void dsp_mpy(void)
 	}
 	dstreg = (cur_inst>>3) & 1;
 
-	D(bug("Dsp: 0x%04x: mpy %s%s,%s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: mpy %s%s,%s,%s %s",
 		dsp.pc,
 		sign_name,
 		registers_name[src1reg],
 		registers_name[src2reg],
 		registers_name[REG_A+dstreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_mpyr(void)
@@ -2667,69 +2667,69 @@ static void dsp_mpyr(void)
 	}
 	dstreg = (cur_inst>>3) & 1;
 
-	D(bug("Dsp: 0x%04x: mpyr %s%s,%s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: mpyr %s%s,%s,%s %s",
 		dsp.pc,
 		sign_name,
 		registers_name[src1reg],
 		registers_name[src2reg],
 		registers_name[REG_A+dstreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_neg(void)
 {
-	D(bug("Dsp: 0x%04x: neg %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: neg %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_not(void)
 {
-	D(bug("Dsp: 0x%04x: not %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: not %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_or(void)
 {
-	D(bug("Dsp: 0x%04x: or %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: or %s,%s %s",
 		dsp.pc,
 		registers_name[REG_X0+((cur_inst>>4) & BITMASK(2))],
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_rnd(void)
 {
-	D(bug("Dsp: 0x%04x: rnd %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: rnd %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_rol(void)
 {
-	D(bug("Dsp: 0x%04x: rol %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: rol %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_ror(void)
 {
-	D(bug("Dsp: 0x%04x: ror %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: ror %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_sbc(void)
@@ -2742,12 +2742,12 @@ static void dsp_sbc(void)
 		srcname="x";
 	}
 
-	D(bug("Dsp: 0x%04x: sbc %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: sbc %s,%s %s",
 		dsp.pc,
 		srcname,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_sub(void)
@@ -2780,12 +2780,12 @@ static void dsp_sub(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: sub %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: sub %s,%s %s",
 		dsp.pc,
 		srcname,
 		registers_name[REG_A+dstreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_subl(void)
@@ -2794,12 +2794,12 @@ static void dsp_subl(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	D(bug("Dsp: 0x%04x: subl %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: subl %s,%s %s",
 		dsp.pc,
 		registers_name[REG_A+(numreg ^ 1)],
 		registers_name[REG_A+numreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_subr(void)
@@ -2808,12 +2808,12 @@ static void dsp_subr(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	D(bug("Dsp: 0x%04x: subr %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: subr %s,%s %s",
 		dsp.pc,
 		registers_name[REG_A+(numreg ^ 1)],
 		registers_name[REG_A+numreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_tfr(void)
@@ -2827,24 +2827,25 @@ static void dsp_tfr(void)
 		srcreg = REG_A+(dstreg ^ 1);
 	}
 
-	D(bug("Dsp: 0x%04x: tfr %s,%s %s",
+	fprintf(stderr,"Dsp: 0x%04x: tfr %s,%s %s",
 		dsp.pc,
 		registers_name[srcreg],
 		registers_name[REG_A+dstreg],
 		parallelmove_name
-	));
+	);
 }
 
 static void dsp_tst(void)
 {
-	D(bug("Dsp: 0x%04x: tst %s %s",
+	fprintf(stderr,"Dsp: 0x%04x: tst %s %s",
 		dsp.pc,
 		registers_name[REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
-	));
+	);
 }
 
 /*
+	2002-07-22:PM	FIX:disasm output changed from D(bug()) to fprintf()
 	2002-07-19:PM	BUG:movec_b and movec_d operations permuted
 					BUG:pm_5: bad calc of address in [x|y]:aa addressing
 */
