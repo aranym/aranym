@@ -409,7 +409,7 @@ bool XHDIDriver::setDiskSizeInBlocks(disk_t *disk)
 			panicbug("open(%s) failed", disk->path);
 			return false;
 		}
-		blocks = lseek64(fd, 0, SEEK_END) / XHDI_BLOCK_SIZE;
+		blocks = lseek(fd, 0, SEEK_END) / XHDI_BLOCK_SIZE;
 		close(fd);
 		D(bug("%ld blocks on %s", blocks, disk->path));
 	}
