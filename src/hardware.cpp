@@ -35,7 +35,12 @@ VIDEL videl;
 YAMAHA yamaha;
 ARADATA aradata;
 
-#define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); longjmp(excep_env, 2); }
+#ifdef USE_JIT
+extern int in_handler;
+# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); in_handler = 0; longjmp(excep_env, 2); }
+#else
+# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); longjmp(excep_env, 2); }
+#endif
 
 Parallel parallel;
 
@@ -174,6 +179,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.40  2002/07/18 20:52:43  joy
+ * DSP host port simplified if DSP_EMULATION is not defined
+ *
  * Revision 1.39  2002/07/08 22:03:49  joy
  * DSP support by Patrice
  *

@@ -5131,7 +5131,7 @@ static __inline__ void writemem(int address, int source, int offset, int size, i
 {
 #if FIXED_ADDRESSING
 	// shall not be called in those addressing modes
-	panicbug("writemem: in real or direct addressing mode\n");
+	panicbug("writemem: in fixed addressing mode\n");
 	abort();
 #else
     int f=tmp;
@@ -5272,7 +5272,7 @@ static __inline__ void readmem(int address, int dest, int offset, int size, int 
 {
 #if FIXED_ADDRESSING
 	// shall not be called in those addressing modes
-	panicbug("readmem: in real or direct addressing mode\n");
+	panicbug("readmem: in fixed addressing mode\n");
 	abort();
 #else
     int f=tmp;
@@ -6225,9 +6225,9 @@ void compiler_dumpstate(void)
 	
 	panicbug("### Block in Atari address space");
 	panicbug("M68K block   : %p",
-			  (void *)get_virtual_address(last_regs_pc_p));
+			  (void *)last_regs_pc_p);
 	panicbug("Native block : %p (%d bytes)",
-			  (void *)get_virtual_address(last_compiled_block_addr),
+			  (void *)last_compiled_block_addr,
 			  get_blockinfo_addr(last_regs_pc_p)->direct_handler_size);
 	panicbug("");
 }

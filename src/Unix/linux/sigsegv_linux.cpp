@@ -4,7 +4,9 @@
 
 #include <csignal>
 
-#define DEBUG 1
+int in_handler = 0;
+
+#define DEBUG 1 
 #include "debug.h"
 
 enum transfer_type_t {
@@ -74,6 +76,13 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	int imm = 0;
 	instruction_t instruction = INSTR_UNKNOWN;
 	void *preg;
+
+	if (in_handler) {
+		panicbug("Segmentation fault in handler :-(");
+		abort();
+	}
+
+	in_handler = 1;
 
 	D(panicbug("BUS ERROR fault address is %08x at %08x", addr, ainstr));
 	D(panicbug("instruction is %08x", instr));
@@ -216,7 +225,8 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	if (addr >= 0xff000000)
 		addr -= 0xff000000;
 
-	D(panicbug("Next instruction on %08x", sc.eip += len));
+	D(panicbug("Next instruction on %08x", sc.eip + len));
+	sc.eip += len;
 
 	if (transfer_type == TYPE_LOAD) {
 		switch (instruction) {
@@ -286,6 +296,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 		}
 	}
 
+	in_handler = 0;
 	return;
 buserr:
 	D(panicbug("Atari bus error"));
@@ -293,6 +304,7 @@ buserr:
 #endif /* HW_SIGSEGV */
 
 	regs.mmu_fault_addr = addr;
+	in_handler = 0;
 	longjmp(excep_env, 2);
 }
 
