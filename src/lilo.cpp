@@ -30,7 +30,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <SDL/SDL_endian.h>
+#include <SDL_endian.h>
 #ifdef ENABLE_ZLIB
 #include <zlib.h>
 #endif

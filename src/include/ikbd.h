@@ -8,8 +8,8 @@
 #ifndef _IKBD_H
 #define _IKBD_H
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_thread.h>
+#include <SDL.h>
+#include <SDL_thread.h>
 
 #include "acia.h"
 

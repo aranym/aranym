@@ -15,10 +15,10 @@
 # include <string.h>
 #endif
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_thread.h>
+#include <SDL.h>
+#include <SDL_thread.h>
 #ifdef ENABLE_OPENGL
-#include <SDL/SDL_opengl.h>
+#include <SDL_opengl.h>
 #endif
 
 #include "parameters.h"
@@ -436,6 +436,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.43  2003/04/16 19:35:49  pmandin
+ * Correct inclusion of SDL headers
+ *
  * Revision 1.42  2003/02/19 09:02:56  standa
  * The bitplane modes expandArea fix.
  *

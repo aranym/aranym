@@ -15,7 +15,7 @@
 #include "debug.h"
 
 #ifdef ENABLE_OPENGL
-#include <SDL/SDL_opengl.h>
+#include <SDL_opengl.h>
 #endif
 
 HostScreen::HostScreen(void) {
@@ -1183,6 +1183,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.36  2003/04/16 19:35:49  pmandin
+ * Correct inclusion of SDL headers
+ *
  * Revision 1.35  2003/03/29 08:45:38  milan
  * capabilities output
  * manpage

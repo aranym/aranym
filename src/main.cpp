@@ -48,7 +48,7 @@
 # include <stdlib.h>
 #endif
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #ifdef SDL_GUI
 #include "sdlgui.h"
@@ -563,6 +563,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.97  2003/04/25 07:39:31  pmandin
+ * Fix broken compilation when lilo disabled
+ *
  * Revision 1.96  2003/04/24 22:32:18  pmandin
  * Linux kernel loader added
  *

@@ -7,7 +7,7 @@
 #ifndef _SDLGUI_H
 #define _SDLGUI_H
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 enum
 {

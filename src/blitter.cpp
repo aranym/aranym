@@ -28,7 +28,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #if DEBUG
 #define SHOWPARAMS												\

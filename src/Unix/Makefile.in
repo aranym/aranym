@@ -95,15 +95,17 @@ SRCS = ../main.cpp \
 	$(LILOSRCS)
 APP = aranym
 APP_STATIC = aranym-static
+APP_LIB = libaranym.a
 APP_DI = diskimage
 APP_IFC = aratapif
+TARGET = @TARGET@
 
 ## Rules
 .PHONY: install installdirs uninstall mostlyclean clean distclean depend dep
 .SUFFIXES:
 .SUFFIXES: .c .cpp .s .o .h
 
-all: $(APP) $(APP_DI) $(TAPIF)
+all: $(TARGET) $(APP_DI) $(TAPIF)
 
 OBJ_DIR = obj
 $(OBJ_DIR)::

@@ -281,8 +281,8 @@ dnl    WANT_ARANYMFS="no"
   darwin*)
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS="parameters_unix.cpp"
-    CXXFLAGS="$CXXFLAGS -I\$(HOME)/Library/Frameworks/SDL.framework/Headers"
-    CFLAGS="$CFLAGS -I\$(HOME)/Library/Frameworks/SDL.framework/Headers"
+    CXXFLAGS="$CXXFLAGS -F\$(HOME)/Library/Frameworks"
+    CFLAGS="$CFLAGS -F\$(HOME)/Library/Frameworks"
     LDFLAGS="$LDFLAGS -F\$(HOME)/Library/Frameworks"
     LIBS="$LIBS -framework AppKit -framework IOKit -framework CoreFoundation -framework SDL"
     ;;
@@ -1490,10 +1490,13 @@ dnl Data directory
 
 APP=aranym
 case "$target_os" in
-	mingw*)
+	darwin*)
+		TARGET="\$(APP_LIB)"
+		;;
+	mingw*) TARGET="\$(APP)"
 		ARANYM_DATADIR="\"\\\"./\${APP}\\\"\""
 		;;
-	*)
+	*)	TARGET="\$(APP)"
 		ARANYM_DATADIR="\"\\\"\${datadir}/\${APP}\\\"\""
 		;;
 esac
@@ -1511,6 +1514,7 @@ AC_SUBST(DSPSRCS)
 AC_SUBST(LILOSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
+AC_SUBST(TARGET)
 AC_OUTPUT(Makefile)
 
 dnl Print summary.
