@@ -6,6 +6,9 @@ AC_INIT(main_unix.cpp)
 AC_PREREQ(2.52)
 AC_CONFIG_HEADER(config.h)
 
+dnl Canonical system information.
+AC_CANONICAL_SYSTEM
+
 dnl Options.
 AC_ARG_ENABLE(nat-debug,     [  --enable-nat-debug      enable native debugger support [default=yes]], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
 
@@ -115,10 +118,6 @@ AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distrubuted dis
 
 AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation [default=no]], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=no])
 
-dnl Canonical system information.
-AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
-
 dnl Target OS type (target is host if not cross-compiling).
 case "$target_os" in
   linux*)	OS_TYPE=linux;;
@@ -131,6 +130,7 @@ case "$target_os" in
   irix*)	OS_TYPE=irix;;
   mint*)	OS_TYPE=mint;;
   beos*)	OS_TYPE=beos;;
+  mingw*)	OS_TYPE=mingw;;
   *)		OS_TYPE=`echo $target_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
 esac
 DEFINES="$DEFINES -DOS_$OS_TYPE"
@@ -207,6 +207,7 @@ AC_CHECK_SIZEOF(void *, 4)
 AC_TYPE_OFF_T
 AC_CHECK_TYPE(loff_t, off_t)
 AC_TYPE_SIZE_T
+AC_CHECK_TYPE(ssize_t, size_t)
 AC_TYPE_SIGNAL
 AC_HEADER_TIME
 AC_STRUCT_TM
@@ -1439,6 +1440,8 @@ if [[ "x$WANT_OPENGL" = "xyes" ]]; then
   fi
 fi
 
+dnl SDL
+
 SDL_CFLAGS=
 SDL_LIBS=
 AM_PATH_SDL(1.2.0, )
@@ -1446,7 +1449,22 @@ LIBS="$LIBS $SDL_LIBS"
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
 
+dnl Data directory
+
+APP=aranym
+case "$target_os" in
+	mingw* | cygwin*)
+		ARANYM_DATADIR="\"\\\"./\${APP}\\\"\""
+		;;
+	*)
+		ARANYM_DATADIR="\"\\\"\${datadir}/\${APP}\\\"\""
+		;;
+esac
+CFLAGS="$CFLAGS -DDATADIR=$ARANYM_DATADIR"
+CXXFLAGS="$CXXFLAGS -DDATADIR=$ARANYM_DATADIR"
+
 dnl Generate Makefile.
+
 AC_SUBST(SET_MAKE)
 AC_SUBST(DEFINES)
 AC_SUBST(SYSSRCS)

@@ -33,7 +33,9 @@
 # include <string.h>
 #endif
 
+#ifndef OS_mingw
 #include <netinet/in.h>
+#endif
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 void

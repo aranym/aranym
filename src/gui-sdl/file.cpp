@@ -23,10 +23,12 @@
 # include <string.h>
 #endif
 
-#if defined(__BEOS__) || defined(OS_solaris)
+#if defined(__BEOS__) || defined(OS_solaris) || defined(OS_mingw)
 /* The scandir() and alphasort() functions aren't available on BeOS, */
 /* so let's declare them here... */
+#ifndef OS_mingw
 #include <strings.h>
+#endif
 
 #undef DIRSIZ
 
@@ -44,6 +46,19 @@ int alphasort(const void *d1, const void *d2)
   return(strcmp((*(struct dirent **)d1)->d_name, (*(struct dirent **)d2)->d_name));
 }
 
+/*-----------------------------------------------------------------------*/
+/*
+  bcopy for mingw
+*/
+#ifdef OS_mingw
+void bcopy(const void *src, void *dest, size_t n)
+{
+	if (n==0)
+		return;
+
+	memcpy(dest, src, n);
+}
+#endif
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -54,7 +69,7 @@ int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const 
   register struct dirent *d, *p, **names;
   register size_t nitems;
   struct stat stb;
-  long arraysz;
+  unsigned long arraysz;
   DIR *dirp;
 
   if ((dirp = opendir(dirname)) == NULL)
@@ -62,6 +77,8 @@ int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const 
 
 #ifdef OS_solaris
   if (fstat(dirp->d_fd, &stb) < 0)
+#elif defined(OS_mingw)
+  if (fstat(dirp->dd_handle, &stb) < 0)
 #else
   if (fstat(dirp->fd, &stb) < 0)
 #endif
@@ -106,6 +123,8 @@ int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const 
 
 #ifdef OS_solaris
        if (fstat(dirp->d_fd, &stb) < 0)
+#elif defined(OS_mingw)
+       if (fstat(dirp->dd_handle, &stb) < 0)
 #else
        if (fstat(dirp->fd, &stb) < 0)
 #endif

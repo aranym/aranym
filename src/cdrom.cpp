@@ -156,6 +156,22 @@ static char CDDevicePath[ MAXPATHLEN ];
 #include "aspi-win32.h"
 #include "scsidefs.h"
 
+#ifdef OS_mingw
+/*	FIXME: These are not defined in my current mingw setup, is it
+ *  available in more uptodates mingw packages ? I took these from
+ *  the wine project
+ */
+#ifndef FILE_DEVICE_MASS_STORAGE
+#define FILE_DEVICE_MASS_STORAGE        0x0000002d
+#endif
+#ifndef IOCTL_STORAGE_BASE
+#define IOCTL_STORAGE_BASE FILE_DEVICE_MASS_STORAGE
+#endif
+#ifndef IOCTL_STORAGE_EJECT_MEDIA
+#define IOCTL_STORAGE_EJECT_MEDIA        CTL_CODE(IOCTL_STORAGE_BASE, 0x0202, METHOD_BUFFERED, FILE_READ_ACCESS)
+#endif
+#endif
+
 DWORD (*GetASPI32SupportInfo)(void);
 DWORD (*SendASPI32Command)(LPSRB);
 BOOL  (*GetASPI32Buffer)(PASPI32BUFF);

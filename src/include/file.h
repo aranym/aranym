@@ -17,7 +17,7 @@ enum {
   FILEFILTER_MEMORYFILE,
 };
 
-#if defined(__BEOS__) || defined(OS_solaris)
+#if defined(__BEOS__) || defined(OS_solaris) || defined(OS_mingw)
 #include <dirent.h>
 extern int alphasort(const void *d1, const void *d2);
 extern int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const struct dirent *), int (*dcomp) (const void *, const void *));

@@ -25,6 +25,10 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifndef M_PI
+#define M_PI	3.141592653589793238462643383279502
+#endif
+
 #if DSP_EMULATION
 
 /* More disasm infos, if wanted */

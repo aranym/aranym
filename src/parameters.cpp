@@ -67,7 +67,7 @@ static struct option const long_options[] =
 };
 
 char *program_name;
-char rom_path[512] = DATADIR "/ROM";
+char rom_path[512] = DATADIR "/rom";
 char emutos_path[512] = DATADIR "/etos512k.img";
 bool boot_emutos = false;
 bool ide_swap = false;
@@ -709,7 +709,11 @@ void build_cfgfilename()
 	struct stat buf;
 	if (stat(config_folder, &buf) == -1) {
 		D(bug("Creating config folder '%s'", config_folder));
-		mkdir(config_folder, 0755);
+		mkdir(config_folder
+#ifndef OS_mingw
+			, 0755
+#endif
+		);
 	}
 
 	if (strlen(config_file) == 0)

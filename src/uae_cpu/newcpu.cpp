@@ -1449,7 +1449,9 @@ int m68k_do_specialties(void)
 		Exception (9,last_trace_ad);
 	}
 	while (SPCFLAGS_TEST( SPCFLAG_STOP )) {
+#ifndef OS_mingw	/* FIXME: How to do it under Win32 ? */
 		usleep(1000);	// give unused time slices back to OS
+#endif
 		SERVE_INTERNAL_IRQ();
 		SERVE_VBL_MFP(true);
 		if (SPCFLAGS_TEST( SPCFLAG_NMI ))
