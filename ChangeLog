@@ -1,3 +1,8 @@
+2005/01/18 - Patrice
+- nfosmesa: revert back mandatory SDL 1.2.6 check. Now nfosmesa disabled if SDL
+  don't have loadable libraries functions.
+
+
 2005/01/17 - Patrice
 - nfosmesa: libGL is also dynamically loaded now. It is easier to control which
 libGL library ARAnyM will use.

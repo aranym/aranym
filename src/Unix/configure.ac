@@ -1488,7 +1488,7 @@ dnl SDL
 SDL_CFLAGS=
 SDL_LIBS=
 if test "$OS_TYPE" != "darwin" -o "x$with_fink" = "xyes"; then
-	AM_PATH_SDL(1.2.6, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found! ***]))
+	AM_PATH_SDL(1.2.0, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found! ***]))
 fi
 LIBS="$LIBS $SDL_LIBS"
 CFLAGS="$CFLAGS $SDL_CFLAGS"
@@ -1560,8 +1560,15 @@ if test "x$WANT_NFOSMESA" = "xyes"; then
 		AC_MSG_ERROR([*** OpenGL rendering is not compatible with nfosmesa ***])
 		WANT_NFOSMESA="no"
 	else
-		AC_DEFINE([NFOSMESA_SUPPORT], 1, [Define if you want to use host OSMesa driver])
-		NFOSMESASRCS="../natfeat/nfosmesa.cpp"
+		AC_CHECK_HEADER(SDL/SDL_loadso.h, have_sdlloadso_hdr=yes)
+		AC_CHECK_LIB(SDL, SDL_LoadObject, have_sdlloadso=yes, have_sdlloadso=no)
+		if test "x$have_sdlloadso_hdr" = "xyes" -a "x$have_sdlloadso" = "xyes"; then
+			AC_DEFINE([NFOSMESA_SUPPORT], 1, [Define if you want to use host OSMesa driver])
+			NFOSMESASRCS="../natfeat/nfosmesa.cpp"
+		else
+			AC_MSG_ERROR([*** SDL>=1.2.6 mandatory for nfosmesa ***])
+			WANT_NFOSMESA="no"
+		fi
 	fi
 fi
 
