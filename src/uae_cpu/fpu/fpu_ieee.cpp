@@ -1042,7 +1042,7 @@ void FFPU fpuop_scc(uae_u32 opcode, uae_u32 extra)
 {
 	fpu_debug(("fscc_opp %X, %X at %08lx\n", (uae_u32)opcode, (uae_u32)extra, m68k_getpc ()));
 	
-	uae_u32 ad;
+	uae_u32 ad = 0;
 	int cc = fpp_cond(extra & 0x3f);
 	if (cc == -1) {
 		m68k_setpc (m68k_getpc () - 4);
@@ -1096,7 +1096,7 @@ void FFPU fpuop_save(uae_u32 opcode)
 {
 	fpu_debug(("fsave_opp at %08lx\n", m68k_getpc ()));
 
-	uae_u32 ad;
+	uae_u32 ad = 0;
 	int incr = (opcode & 0x38) == 0x20 ? -1 : 1;
 	int i;
 
@@ -1157,7 +1157,7 @@ void FFPU fpuop_restore(uae_u32 opcode)
 {
 	fpu_debug(("frestore_opp at %08lx\n", m68k_getpc ()));
 
-	uae_u32 ad;
+	uae_u32 ad = 0;
 	uae_u32 d;
 	int incr = (opcode & 0x38) == 0x20 ? -1 : 1;
 
@@ -1354,7 +1354,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 		}
 		else if (extra & 0x2000) {
 			/* FMOVEM FPP->memory */
-			uae_u32 ad;
+			uae_u32 ad = 0;
 			int incr = 0;
 
 			if (get_fp_ad(opcode, &ad) == 0) {
@@ -1396,7 +1396,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 		}
 		else {
 			/* FMOVEM memory->FPP */
-			uae_u32 ad;
+			uae_u32 ad = 0;
 
 			if (get_fp_ad(opcode, &ad) == 0) {
 				m68k_setpc (m68k_getpc () - 4);
@@ -1442,7 +1442,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 		return;
 	case 6:
 	case 7: {
-		uae_u32 ad, list = 0;
+		uae_u32 ad = 0, list = 0;
 		int incr = 0;
 		if (extra & 0x2000) {
 			/* FMOVEM FPP->memory */
