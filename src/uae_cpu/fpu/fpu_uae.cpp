@@ -920,8 +920,8 @@ PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fp_register
 	fpu_debug(("get_fp_value m68k_getpc()=%X\n",m68k_getpc()));
 	fpu_debug(("get_fp_value ad=%X\n",ad));
 	fpu_debug(("get_fp_value get_long (ad)=%X\n",get_long (ad)));
-	dump_first_bytes( get_real_address(ad, 0, 0)-64, 64 );
-	dump_first_bytes( get_real_address(ad, 0, 0), 64 );
+	dump_first_bytes( get_real_address(ad, 0, 1)-64, 64 );
+	dump_first_bytes( get_real_address(ad, 0, 1), 64 );
 
 	switch (size) {
 	case 0:

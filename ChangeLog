@@ -1,3 +1,7 @@
+2002/03/11 - milan
+- MMU is back, based on Wez Furlong's patch (UAE)
+
+
 2002/03/06 - STanda
 - ExtFs: xfs_getname implemented. The Pure C now finds the project file, but
   it crashes on assembler compilation.

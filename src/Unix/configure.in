@@ -479,6 +479,11 @@ fi
 dnl fixed start of VideoRAM
 if [[ "x$WANT_FIXEDVIDEORAM" = "xyes" ]]; then
     AC_DEFINE(FIXED_VIDEORAM)
+else
+    if [[ "x$WANT_MMU" = "xyes" ]]; then
+        AC_MSG_WARN([MMU needs fixed position of VideoRAM])
+	AC_DEFINE(FIXED_VIDEORAM)
+    fi
 fi
 
 dnl Direct Truecolor

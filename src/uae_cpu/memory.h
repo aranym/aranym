@@ -273,9 +273,14 @@ static __inline__ void put_byte(uaecptr addr, uae_u16 b)
     phys_put_byte(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_byte, 0),b);
 }
 
-static __inline__ uae_u8 *get_real_address(uaecptr addr, int write, wordsizes sz)
+static __inline__ uae_u8 *get_real_address(uaecptr addr, int write, int sz)
 {
-    return phys_get_real_address(mmu_translate(addr, FC_DATA, write, m68k_getpc(), sz, 0));
+    wordsizes i = sz_long;
+    switch (sz) {
+        case 1: i = sz_byte; break;
+        case 2: i = sz_word; break;
+    }
+    return phys_get_real_address(mmu_translate(addr, FC_DATA, write, m68k_getpc(), i, 0));
 }
 
 static __inline__ uae_u32 sfc_get_long(uaecptr addr)
@@ -309,7 +314,7 @@ static __inline__ bool valid_address(uaecptr addr, bool write, uaecptr pc, int s
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
     int prb = setjmp(excep_env);
-    wordsize i = sz_long;
+    wordsizes i = sz_long;
     switch (sz) {
         case 1: i = sz_byte; break;
         case 2: i = sz_word; break;
