@@ -26,29 +26,26 @@
 
 #include "parameters.h"
 #include "sdlgui.h"
+#include "input.h"
 
 enum HOTKEYSDLG {
 	box_main,
 	box_hotkeys,
 	label_hotkeys,
-	setup_label,
-	setup_key,
 	SETUP,
-	quit_label,
-	quit_key,
+	setup_key,
 	QUIT,
-	reboot_label,
-	reboot_key,
+	quit_key,
 	REBOOT,
-	debug_label,
-	debug_key,
+	reboot_key,
+	UNGRAB,
+	ungrab_key,
 	DEBUG,
-	screenshot_label,
-	screenshot_key,
+	debug_key,
 	SCREENSHOT,
-	fullscreen_label,
-	fullscreen_key,
+	screenshot_key,
 	FULLSCREEN,
+	fullscreen_key,
 	APPLY,
 	CANCEL
 };
@@ -56,6 +53,7 @@ enum HOTKEYSDLG {
 static char key_setup[30];
 static char key_quit[30];
 static char key_reboot[30];
+static char key_ungrab[30];
 static char key_debug[30];
 static char key_screenshot[30];
 static char key_fullscreen[30];
@@ -63,29 +61,25 @@ static char key_fullscreen[30];
 /* The hotkeys dialog: */
 static SGOBJ hotkeysdlg[] =
 {
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL },
-	{ SGBOX, 0, 0, 1,2, 38,19, NULL },
+	{ SGBOX, SG_BACKGROUND, 0, 0,0, 40,22, NULL },
+	{ SGBOX, 0, 0, 1,2, 38,16, NULL },
 	{ SGTEXT, 0, 0, 12,1, 16,1, " Hotkeys Editor " },
-	{ SGTEXT, 0, 0, 2,3, 6,1, "Setup" },
-	{ SGTEXT, 0, 0, 13,3, 26,1, key_setup },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 3, 6,1, "Change" },
-	{ SGTEXT, 0, 0, 2,5, 6,1, "Quit" },
-	{ SGTEXT, 0, 0, 13,5, 26,1, key_quit },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 5, 6,1, "Change" },
-	{ SGTEXT, 0, 0, 2,7, 6,1, "Reboot" },
-	{ SGTEXT, 0, 0, 13,7, 26,1, key_reboot },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 7, 6,1, "Change" },
-	{ SGTEXT, 0, 0, 2,9, 6,1, "Debug" },
-	{ SGTEXT, 0, 0, 13,9, 26,1, key_debug },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 9, 6,1, "Change" },
-	{ SGTEXT, 0, 0, 2,11, 6,1, "ScreenShot" },
-	{ SGTEXT, 0, 0, 13,11, 26,1, key_screenshot },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 11, 6,1, "Change" },
-	{ SGTEXT, 0, 0, 2,13, 6,1, "FullScreen" },
-	{ SGTEXT, 0, 0, 13,13, 26,1, key_fullscreen },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 13, 6,1, "Change" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8,23, 8,1, "Apply" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28,23, 8,1, "Cancel" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 3, 11,1, "Setup" },
+	{ SGTEXT, 0, 0, 14,3, 25,1, key_setup },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 5, 11,1, "Quit" },
+	{ SGTEXT, 0, 0, 14,5, 25,1, key_quit },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 7, 11,1, "Reboot" },
+	{ SGTEXT, 0, 0, 14,7, 25,1, key_reboot },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 9, 11,1, "Ungrab" },
+	{ SGTEXT, 0, 0, 14,9, 25,1, key_ungrab },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 11, 11,1, "Debug" },
+	{ SGTEXT, 0, 0, 14,11, 25,1, key_debug },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 13, 11,1, "Screenshot" },
+	{ SGTEXT, 0, 0, 14,13, 25,1, key_screenshot },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 15, 11,1, "Fullscreen" },
+	{ SGTEXT, 0, 0, 14,15, 25,1, key_fullscreen },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8,20, 8,1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28,20, 8,1, "Cancel" },
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
@@ -108,9 +102,9 @@ SDL_keysym getKey()
 		SDL_Event e = getEvent(hotkeysdlg, NULL);
 		if (e.type == SDL_KEYDOWN) {
 			keysym.sym = e.key.keysym.sym;
-			keysym.mod = e.key.keysym.mod;
+			keysym.mod = (SDLMod)(e.key.keysym.mod & HOTKEYS_MOD_MASK);
 			if (keysym.sym >= SDLK_NUMLOCK && keysym.sym <= SDLK_COMPOSE) {
-				keysym.sym = SDLK_UNKNOWN;;
+				keysym.sym = SDLK_UNKNOWN;
 			}
 		}
 	} while(keysym.sym == SDLK_UNKNOWN);
@@ -128,6 +122,8 @@ char *show_modifiers(SDLMod mods)
 	if (mods & KMOD_RCTRL) strcat(buffer, "RC+");
 	if (mods & KMOD_LALT) strcat(buffer, "LA+");
 	if (mods & KMOD_RALT) strcat(buffer, "RA+");
+	if (mods & KMOD_LMETA) strcat(buffer, "LM+");
+	if (mods & KMOD_RMETA) strcat(buffer, "RM+");
 	return buffer;
 }
 
@@ -141,6 +137,7 @@ void Dialog_HotkeysDlg()
 		UPDATE_BUTTON(setup);
 		UPDATE_BUTTON(quit);
 		UPDATE_BUTTON(reboot);
+		UPDATE_BUTTON(ungrab);
 		UPDATE_BUTTON(debug);
 		UPDATE_BUTTON(screenshot);
 		UPDATE_BUTTON(fullscreen);
@@ -154,6 +151,9 @@ void Dialog_HotkeysDlg()
 				break;
 			case REBOOT:
 				hotkeys.reboot = getKey();
+				break;
+			case UNGRAB:
+				hotkeys.ungrab = getKey();
 				break;
 			case DEBUG:
 				hotkeys.debug = getKey();
