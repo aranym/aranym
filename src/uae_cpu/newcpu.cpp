@@ -674,7 +674,7 @@ void Exception(int nr, uaecptr oldpc)
     }
     if (CPUType > 0) {
 	if (nr == 2 || nr == 3) {	// 16 words on stack
-	    	// internal register
+	   // internal register
 		m68k_areg(regs, 7) -= 4;
 		put_long (m68k_areg(regs, 7), 0);
 
@@ -711,20 +711,9 @@ void Exception(int nr, uaecptr oldpc)
 	    put_word (m68k_areg(regs, 7), 0xa000 + nr * 4);
 
 		// PC
-    	m68k_areg(regs, 7) -= 4;
-    	fprintf(stderr, "Store PC for bus error: %x\n", m68k_getpc());
-    	put_long (m68k_areg(regs, 7), m68k_getpc ());
-    m68k_areg(regs, 7) -= 2;
-    put_word (m68k_areg(regs, 7), regs.sr);
-    ////
-    if (nr == 2)
-    	fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr, false));
-    ////
-    m68k_setpc (get_long (regs.vbr + 4*nr, false) /*-4 kludge*/);
-    fill_prefetch_0 ();
-    regs.t1 = regs.t0 = regs.m = 0;
-    regs.spcflags &= ~(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
-	return;
+    	    m68k_areg(regs, 7) -= 4;
+    	    put_long (m68k_areg(regs, 7), m68k_getpc ());
+	    goto kludge_me_do;
 	} else if (nr ==5 || nr == 6 || nr == 7 || nr == 9) {
 	    m68k_areg(regs, 7) -= 4;
 	    put_long (m68k_areg(regs, 7), oldpc);
@@ -766,6 +755,8 @@ kludge_me_do:
     put_word (m68k_areg(regs, 7), regs.sr);
     ////
     // fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr, false));
+    if (nr <= 8)
+    	fprintf(stderr, "Exception #%d (%s) at %x, vector = %x\n", nr, nr == 2 ? "BUS ERROR" : (nr == 3 ? "ADDRESS ERROR" : (nr == 4 ? "ILLEGAL INSN" : (nr == 5 ? "DIVIDE ERROR" : (nr == 6 ? "CHK INSN" : (nr == 7 ? "TRAPV INSN" : (nr == 8 ? "PRIVILEGE VIOLATION" : "")))))), m68k_getpc(), get_long(regs.vbr + 4*nr, false));
     ////
     m68k_setpc (get_long (regs.vbr + 4*nr, false));
     fill_prefetch_0 ();
@@ -1792,7 +1783,8 @@ static int do_specialties (void)
 static void m68k_run_1 (void)
 {
 	for (;;) {
-		if (setjmp(excep_env) == 0) {
+		int prb;
+		if ((prb = setjmp(excep_env)) == 0) {
 			uae_u32 opcode = GET_OPCODE;
 			(*cpufunctbl[opcode])(opcode);
 		} else {
@@ -1803,6 +1795,9 @@ static void m68k_run_1 (void)
 			    case 3: fprintf(stderr, "ACCESS ERROR\n");
 			            Exception(3, 0);
 				    break;
+			 	default:
+			 		// fprintf(stderr, "Exception #%d catched\n", prb);
+			        Exception(prb, 0);
 			}
 		}
 		if (regs.spcflags) {
