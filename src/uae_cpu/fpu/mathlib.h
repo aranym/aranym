@@ -951,8 +951,10 @@ PRIVATE fpu_extended fp_do_sinh(fpu_extended x);
 #else
 PRIVATE inline fpu_extended fp_do_sinh(fpu_extended x)
 {
-	fpu_extended exm1 = fp_expm1(fp_fabs(x));
-	return 0.5 * (exm1 / (exm1 + 1.0) + exm1) * fp_sgn1(x);
+	fpu_extended ex = fp_exp(x);
+	return 0.5 * (ex - 1.0 / ex);
+/*	fpu_extended exm1 = fp_expm1(fp_fabs(x));
+	return 0.5 * (exm1 / (exm1 + 1.0) + exm1) * fp_sgn1(x); */
 }
 #endif
 
@@ -979,8 +981,10 @@ PRIVATE fpu_extended fp_do_tanh(fpu_extended x);
 #else
 PRIVATE inline fpu_extended fp_do_tanh(fpu_extended x)
 {
-	fpu_extended exm1 = fp_expm1(-fp_fabs(x + x));
-	return exm1 / (exm1 + 2.0) * fp_sgn1(-x);
+	fpu_extended ex = fp_exp(2.0 * x);
+	return (ex - 1.0) / (ex + 1.0);
+/*	fpu_extended exm1 = fp_expm1(-fp_fabs(x + x));
+	return exm1 / (exm1 + 2.0) * fp_sgn1(-x); */
 }
 #endif
 
