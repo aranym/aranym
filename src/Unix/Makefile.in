@@ -470,8 +470,8 @@ memory.s: ../uae_cpu/memory.cpp
 $(APP_DI): ../../tools/diskimage.c
 	$(CC) $(LDFLAGS) -o $(APP_DI) ../../tools/diskimage.c
 
-$(APP_PIF): araifc/araifc.c araifc/config.h araifc/inet.c araifc/interface.h araifc/net-support.h
-	$(CC) $(LDFLAGS) -o $(APP_PIF) -DHAVE_AFINET -I./araifc araifc/araifc.c araifc/inet.c
+$(APP_PIF): araifc/aratapif.c
+	$(CC) $(LDFLAGS) -o $(APP_PIF) -DHAVE_AFINET araifc/aratapif.c
 
 #-------------------------------------------------------------------------
 # DO NOT DELETE THIS LINE -- make depend depends on it.

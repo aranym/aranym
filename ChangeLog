@@ -1,3 +1,8 @@
+2003/03/15 - joy
+- major rewrite of the aratapif (ARAnyM TAP IFconfig) and related
+  updates in natfeat/ethernet.cpp. Now it actually works!
+
+
 2003/03/14 - joy
 - dsp_cpu.cpp, araifc/inet.c: small fixes to remove GCC warnings
 

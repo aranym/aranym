@@ -1,5 +1,7 @@
 /**
- * Ethernet
+ * Ethernet Emulation using tuntap driver in Linux
+ *
+ * Standa and Joy of ARAnyM team (c) 2003 
  *
  * GPL
  */
@@ -8,7 +10,7 @@
 #include "main.h"
 #include "ethernet.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #include <sys/poll.h>
@@ -199,8 +201,8 @@ bool ETHERNETDriver::init(void)
 		// the arguments _need_ to be placed into the child process
 		// memory (otherwise this does not work here)
 		char *args[] = {
-			TAP_INIT, TAP_DEVICE, TAP_MTU,
-			XIF_HOST_IP, XIF_ATARI_IP, XIF_NETMASK,
+			TAP_INIT, TAP_DEVICE,
+			XIF_HOST_IP, XIF_ATARI_IP, XIF_NETMASK, TAP_MTU,
 			NULL
 		};
 		int result;
@@ -208,25 +210,24 @@ bool ETHERNETDriver::init(void)
 		::exit(result);
 	}
 
-	D(bug("waiting for tunifc"));
+	D(bug("waiting for "TAP_INIT));
 	int status;
 	waitpid(pid, &status, 0);
-	/*
 	if (WIFEXITED(status)) {
 		if (WEXITSTATUS(status)) {
-			D(bug("tunifc failed with code %d, closing device", WEXITSTATUS(status)));
+			panicbug(TAP_INIT" failed (code %d).", WEXITSTATUS(status));
 			// Close /dev/net/tun device
 			if (fd > 0)
 				close(fd);
 			return false;
 		}
 		else {
-			D(bug("tunifc initialized OK"));
+			D(bug(TAP_INIT" initialized OK"));
 		}
 	} else {
-		D(bug("tunifc failed badly"));
+		D(bug(TAP_INIT"'s fork/exec/waitpid failed badly"));
 	}
-*/
+
 	// Set nonblocking I/O
 	//ioctl(fd, FIONBIO, &nonblock);
 
@@ -374,7 +375,7 @@ int ETHERNETDriver::tapOpen(char *dev)
     struct ifreq ifr;
 
     if( (fd = open("/dev/net/tun", O_RDWR)) < 0 ) {
-    	panicbug("/dev/net/tun could not be opened read/write");
+    	panicbug("Error opening /dev/net/tun. Check if module is loaded and privileges are OK");
 		return tapOpenOld(dev);
 	}
 
