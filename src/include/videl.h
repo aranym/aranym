@@ -13,7 +13,10 @@
 class VIDEL : public BASE_IO {
 protected:
 	int width, height, od_posledni_zmeny;
-	bool host_colors_uptodate;
+	bool hostColorsSync;
+	bool doRender; // the HW surface is available -> videl writes directly into the Host videoram
+
+	void renderScreenNoFlag();
 
 public:
 	VIDEL();
@@ -21,8 +24,9 @@ public:
 
 	virtual void handleWrite(uaecptr addr, uint8 value);
 
-	void renderScreen();
 	void updateColors();
+	void renderScreen();
+	void setRendering( bool render );
 
 	int getScreenBpp();
 	int getScreenWidth();
@@ -31,11 +35,26 @@ public:
 	long getVideoramAddress();
 };
 
+
+inline void VIDEL::renderScreen() {
+	if ( doRender )
+		renderScreenNoFlag();
+}
+
+inline void VIDEL::setRendering( bool render ) {
+	doRender = render;
+}
+
+
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.10  2001/06/18 13:21:55  standa
+ * Several template.cpp like comments were added.
+ * HostScreen SDL encapsulation class.
+ *
  * Revision 1.9  2001/06/17 21:56:32  joy
  * updated to reflect changes in .cpp counterpart
  *

@@ -29,9 +29,11 @@ VIDEL::VIDEL()
 	// reasonable default values
 	width = 640;
 	height = 480;
+	doRender = true; // the rendering is on by default (VIDEL does the bitplane to chunky converision)
+
 	od_posledni_zmeny = 0;
 
-	host_colors_uptodate = false;
+	hostColorsSync = false;
 }
 
 void VIDEL::init() {
@@ -44,7 +46,7 @@ void VIDEL::handleWrite(uaecptr addr, uint8 value)
 	BASE_IO::handleWrite(addr, value);
 
 	if ((addr >= 0xff9800 && addr < 0xffa200) || (addr >= 0xff8240 && addr < 0xff8260))
-		host_colors_uptodate = false;
+		hostColorsSync = false;
 }
 
 long VIDEL::getVideoramAddress()
@@ -107,7 +109,7 @@ int VIDEL::getScreenHeight()
 
 void VIDEL::updateColors()
 {
-	if (!host_colors_uptodate) {
+	if (!hostColorsSync) {
 		// Test the ST compatible set or not.
 		bool st_compatible_mode = false;
 
@@ -146,10 +148,10 @@ void VIDEL::updateColors()
 		}
 	}
 
-	host_colors_uptodate = true;
+	hostColorsSync = true;
 }
 
-void VIDEL::renderScreen()
+void VIDEL::renderScreenNoFlag()
 {
 	int vw = getScreenWidth();
 	int vh = getScreenHeight();
@@ -339,12 +341,15 @@ void VIDEL::renderScreen()
 
 	hostScreen.renderEnd();
 
-	hostScreen.update();
+	hostScreen.update( false );
 }
 
 
 /*
  * $Log$
+ * Revision 1.18  2001/08/15 06:48:57  standa
+ * ST compatible modes VIDEL patch by Ctirad.
+ *
  * Revision 1.17  2001/08/09 12:35:43  standa
  * Forced commit to sync the CVS. ChangeLog should contain all details.
  *

@@ -12,12 +12,14 @@
 #include "parameters.h"
 #include "debug.h"
 
+#include "gfxprimitives.h"
+
 
 #if 0
-int SelectVideoMode()
+uint32 SelectVideoMode()
 {
 	SDL_Rect **modes;
-	int i;
+	uint32 i;
 
 	/* Get available fullscreen/hardware modes */
 	modes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_HWSURFACE);
@@ -44,7 +46,7 @@ int SelectVideoMode()
 #endif
 
 
-void HostScreen::setWindowSize(	int width, int height )
+void HostScreen::setWindowSize(	uint32 width, uint32 height )
 {
 	this->width  = width;
 	this->height = height;
@@ -58,6 +60,9 @@ void HostScreen::setWindowSize(	int width, int height )
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 	D(bug("Line Length = %d", surf->pitch));
 	D(bug("Must Lock? %s", SDL_MUSTLOCK(surf) ? "YES" : "NO"));
+
+	// is the SDL_update needed?
+	doUpdate = ( surf->flags & SDL_HWSURFACE ) == 0;
 
 	renderBegin();
 
@@ -78,8 +83,23 @@ void HostScreen::setWindowSize(	int width, int height )
 }
 
 
+void  HostScreen::drawLine( int32 x1, int32 y1, int32 x2, int32 y2, uint32 pattern, uint32 color )
+{
+	lineColor( surf, (int16)x1, (int16)y1, (int16)x2, (int16)y2, color ); // SDL_gfxPrimitives
+}
+
+
+void  HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint32 pattern, uint32 color )
+{
+	boxColor( surf, (int16)x1, (int16)y1, (int16)x2, (int16)y2, color ); // SDL_gfxPrimitives
+}
+
+
 /*
  * $Log$
+ * Revision 1.3  2001/08/13 22:29:06  milan
+ * IDE's params from aranymrc file etc.
+ *
  * Revision 1.2  2001/07/24 09:36:51  joy
  * D(bug) macro replaces fprintf
  *
