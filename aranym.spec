@@ -53,7 +53,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 install aranym $RPM_BUILD_ROOT/usr/bin
 install aranym-jit $RPM_BUILD_ROOT/usr/bin
 install aranym-mmu $RPM_BUILD_ROOT/usr/bin
-install diskimage $RPM_BUILD_ROOT/usr/bin
 install aratapif $RPM_BUILD_ROOT/usr/bin
 
 %clean
@@ -67,7 +66,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/aranym
 /usr/bin/aranym-jit
 /usr/bin/aranym-mmu
-/usr/bin/diskimage
 /usr/share/man/man1/aranym.1.gz
 /usr/share/aranym/atari/hostfs/hostfs.dos.bz2
 /usr/share/aranym/atari/hostfs/hostfs.xfs.bz2
