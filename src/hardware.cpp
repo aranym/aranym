@@ -129,11 +129,13 @@ uae_u32 handleRead(uaecptr addr) {
 		return midi.handleRead(addr);
 
 	else if (addr == 0xff8006)
-		return 0x96;
+		return 0xa6;
 	else if (addr == 0xff8007)
 		return 0x61;
 	else if (addr == 0xffa202)
 		return 0xff;	// DSP interrupt
+	else if (addr == HW_FPU)
+		return 0xff;
 	else if (addr == HW_YAMAHA && snd_reg == 14)
 		return snd_porta;
 	else {
@@ -147,7 +149,7 @@ void handleWrite(uaecptr addr, uae_u8 value) {
 		mfp.handleWrite(addr, value);
 	else if (addr >= HW_FDC && addr < HW_SCSI)
 		fdc.handleWrite(addr, value);
-	else if (addr > HW_BLITT && addr < HW_SCC)
+	else if (addr >= HW_BLITT && addr < HW_SCC)
 		blitter.handleWrite(addr, value);
 	else if (addr >= HW_VIDEO && addr < HW_FDC)
 		videl.handleWrite(addr, value);
@@ -201,7 +203,7 @@ uae_u32 HWget_w (uaecptr addr) {
 //	return do_get_mem_word(m);
 	if (dP)
 		fprintf(stderr, "HWget_w %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
-	if (addr >= 0xf00000 && addr < 0xf0003a)
+	if (addr == HW_IDE)
 		return ide.read_handler(&ide, addr, 2);
 	else
 		return (handleRead(addr) << 8) | handleRead(addr+1);
@@ -220,8 +222,10 @@ void HWput_l (uaecptr addr, uae_u32 l) {
 //	do_put_mem_long(m, l);
 	if (dP)
 		fprintf(stderr, "HWput_l %x,%d ($%08x) -> %s at %08x\n", addr, l, l, debug_print_IO(addr), showPC());
-	if (addr >= 0xf00000 && addr < 0xf0003a)
-		ide.write_handler(&ide, addr, l, 4);
+	if (addr == HW_IDE) {
+		HWput_w(addr, l >> 16);
+		HWput_w(addr, l & 0x0000ffff);
+	}
 	else {
 		handleWrite(addr, l >> 24);
 		handleWrite(addr+1, l >> 16);
@@ -235,7 +239,7 @@ void HWput_w (uaecptr addr, uae_u32 w) {
 //	do_put_mem_word(m, w);
 	if (dP)
 		fprintf(stderr, "HWput_w %x,%d ($%04x) -> %s at %08x\n", addr, w, w, debug_print_IO(addr), showPC());
-	if (addr >= 0xf00000 && addr < 0xf0003a)
+	if (addr == HW_IDE)
 		ide.write_handler(&ide, addr, w, 2);
 	else {
 		handleWrite(addr, w >> 8);
