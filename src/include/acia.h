@@ -3,6 +3,9 @@
 #ifndef _ACIA_H
 #define _ACIA_H
 
+#include <SDL.h>
+#include <SDL_thread.h>
+
 #include "icio.h"
 
 class ACIA : public ICio {
@@ -15,6 +18,8 @@ protected:
 
 public:
 	ACIA(uaecptr);
+	virtual ~ACIA() {};
+
 	virtual uae_u8 handleRead(uaecptr addr);
 	virtual void handleWrite(uaecptr addr, uae_u8 value);
 	virtual uae_u8 getStatus() { return 2; };
@@ -31,11 +36,16 @@ private:
 	int ikbd_inbuf;
 	int ikbd_bufpos;
 	bool inTransmit;
-	bool inGet;  //FIXME:has to be a semaphore
+
+	// Read/Write lock
+	bool inGet;
+	SDL_mutex   *rwLock;
 	void compressMouseMove( int &pos );
 
 public:
 	IKBD();
+	virtual ~IKBD();
+
 	bool isBufferEmpty();
 	virtual uae_u8 getStatus();
 	virtual void setMode(uae_u8 value);

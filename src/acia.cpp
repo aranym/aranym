@@ -38,8 +38,12 @@ IKBD::IKBD() : ACIA(0xfffc00) {
 	status = 0x0e;
 	ikbd_inbuf = ikbd_bufpos = 0;
 	inTransmit = false;
+	rwLock = SDL_CreateMutex();
 	inGet = false;
 };
+IKBD::~IKBD() {
+	SDL_DestroyMutex(rwLock);
+}
 
 bool IKBD::isBufferEmpty() {
 	return ikbd_inbuf == 0;
@@ -89,29 +93,45 @@ uae_u8 IKBD::getData() {
 		compressMouseMove( pos );
 	if (ikbd_inbuf-- > 0) {
 		if (ikbd_inbuf ==0) {
-			inGet = true;    // FIXME: this has to be a semaphore!!
+#undef IKBD_LOCKS
+#ifdef IKBD_LOCKS
+			while (SDL_mutexP(rwLock)==-1)  // lock the read
+				SDL_Delay(20);
+#else
+			inGet = true;
+#endif
+		
 			/* Clear GPIP/I4 */
 			status = 0;
 			uae_u8 x = ReadAtariInt8(0xfffa01);
 			x |= 0x10;
 			WriteAtariInt8(0xfffa01, x);
+		
+#ifdef IKBD_LOCKS
+			while (SDL_mutexV(rwLock)==-1)  // unlock
+				SDL_Delay(20);
+#endif
 		}
 		D(bug("IKBD read code %2x (%d left)", buffer[pos], ikbd_inbuf));
 		doTransmit();
-		inGet=false;
+		inGet = false;
 		return buffer[pos];
 	}
 	else {
 		ikbd_inbuf = 0;
-		inGet=false;
+		inGet = false;
 		return 0xa2;
 	}
 }
 
 void IKBD::send(int value)
 {
-	while( inGet )    // FIXME: this has to be a semaphore!!
-		;
+#ifdef IKBD_LOCKS
+	while (SDL_mutexP(rwLock)==-1)  // lock the read
+		SDL_Delay(20);
+#else
+	while (inGet) ;
+#endif
 
 	value &= 0xff;
 	if (ikbd_inbuf <= MAXBUF) {
@@ -122,6 +142,11 @@ void IKBD::send(int value)
 		D(bug("IKBD sends %2x (->buffer pos %d)", value, ikbd_bufpos-1));
 	}
 	doTransmit();
+
+#ifdef IKBD_LOCKS
+	while (SDL_mutexV(rwLock)==-1)  // unlock
+		SDL_Delay(20);
+#endif
 }
 
 void IKBD::doTransmit(void)
