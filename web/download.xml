@@ -22,7 +22,7 @@
       Most up-to-date source code is available in the <a href="cvs.html">CVS</a>. You need
       to have autoconf installed for compiling the CVS source code.
       <p/>
-      Nightly CVS snapshot (generated at 01:00 GMT) is <a href="http://atari.sh.cvut.cz/ftp/other/snapshot.tar.gz">here</a>. The configure script is pre-generated in this tar file so you
+      Nightly CVS snapshot (generated at 02:00 CEST) is <a href="http://atari.sh.cvut.cz/ftp/other/snapshot.tar.gz">here</a>. The configure script is pre-generated in this tar file so you
       don't need the autoconf.
       <p/>
       For running ARAnyM you will also need TOS 4.04 from Falcon (available <a href="http://www.atariroms.fsnet.co.uk/">here</a>) or EmuTOS (there is a binary image for Falcon so get that one <a href="http://emutos.sf.net/">here</a>).
