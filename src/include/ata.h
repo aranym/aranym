@@ -23,7 +23,7 @@
 
 #define BX_USE_HD_SMF	0
 // muj trick
-#define LOWLEVEL_CDROM cdrom_interface
+//#define LOWLEVEL_CDROM cdrom_interface
 // end of muj trick
 
 typedef enum _sense {
