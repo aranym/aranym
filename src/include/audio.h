@@ -1,4 +1,3 @@
-
 #ifndef _AUDIODRV_H
 #define _AUDIODRV_H
 
@@ -6,16 +5,15 @@
 
 typedef struct audio_parameters
 {
-    void *buffer;
-    int len;
-    int volume;
+	void *buffer;
+	uint32 len;
+	uint32 volume;
 } AUDIOPAR;
 
-class AudioDriver {
-  private:
-
-  public:
-	void dispatch( uint32 fncode, M68kRegisters *r );
+class AudioDriver
+{
+public:
+	void dispatch(uint32 fncode, M68kRegisters * r);
 };
 
 #endif
