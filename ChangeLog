@@ -1,13 +1,21 @@
-2002/12/07 - milan
+2002/09/12 - joy
+- TOS was not ready for real 68040 caches that are provided by JIT CPU compiler
+  I added a few missing 68040 cache patches that were developed by Douglas
+  originally.
+- version increased to 0.5.0-beta1 (version 0.4.0 was for working DSP and
+  0.3.0 for JIT CPU)
+
+
+2002/09/12 - milan
 - sigsegv_linux.cpp: set_eflags()
 
 - cpuopti.c, compemu_support.cpp: workaround for gcc 3.x
 
-- memory.h.patch: for a bit better access to HW space for JIT compiler,
-                  unoffical!
+- tools/memory.h.patch: for a bit better access to HW space for JIT compiler,
+                        unofficial!
 
 
-2002/10/07 - milan
+2002/09/10 - milan
 - autoconf 2.53+ needed now
 
 - ndebug.cpp, newcpu.cpp: ISO C++ forbids assignment of arrays, so Patrice's
