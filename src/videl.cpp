@@ -561,10 +561,12 @@ void VIDEL::renderScreenZoom()
 					/* One complete planar 2 chunky line */
 					uint8 *p2cline = new uint8[vw];
 
-					uint16 *fvram_line = fvram;
+					uint16 *fvram_line;
 					uint8 *hvram_line = hvram;
 
 					for (h = 0; h < scrheight; h++) {
+						fvram_line = fvram + (zoomytable[h] * ((vw+15)>>4)*bpp);
+
 						/* Recopy the same line ? */
 						if (zoomytable[h] == cursrcline) {
 							memcpy(hvram_line, hvram_line-scrpitch, scrwidth*scrbpp);
@@ -586,8 +588,6 @@ void VIDEL::renderScreenZoom()
 							for (w=0; w<scrwidth; w++) {
 								hvram_line[w] = p2cline[zoomxtable[w]];
 							}
-
-							fvram_line += ((vw+15)>>4)*bpp;
 						}
 
 						hvram_line += scrpitch;
@@ -606,6 +606,8 @@ void VIDEL::renderScreenZoom()
 					uint16 *hvram_line = (uint16 *)hvram;
 
 					for (h = 0; h < scrheight; h++) {
+						fvram_line = fvram + (zoomytable[h] * ((vw+15)>>4)*bpp);
+
 						/* Recopy the same line ? */
 						if (zoomytable[h] == cursrcline) {
 							memcpy(hvram_line, hvram_line-(scrpitch>>1), scrwidth*scrbpp);
@@ -628,8 +630,6 @@ void VIDEL::renderScreenZoom()
 							for (w=0; w<scrwidth; w++) {
 								hvram_line[w] = p2cline[zoomxtable[w]];
 							}
-
-							fvram_line += ((vw+15)>>4)*bpp;
 						}
 
 						hvram_line += scrpitch>>1;
@@ -644,10 +644,12 @@ void VIDEL::renderScreenZoom()
 					/* One complete planar 2 chunky line */
 					uint8 *p2cline = new uint8[vw*3];
 
-					uint16 *fvram_line = fvram;
+					uint16 *fvram_line;
 					uint8 *hvram_line = hvram;
 
 					for (h = 0; h < scrheight; h++) {
+						fvram_line = fvram + (zoomytable[h] * ((vw+15)>>4)*bpp);
+
 						/* Recopy the same line ? */
 						if (zoomytable[h] == cursrcline) {
 							memcpy(hvram_line, hvram_line-scrpitch, scrwidth*scrbpp);
@@ -674,8 +676,6 @@ void VIDEL::renderScreenZoom()
 								hvram_line[w*3+1] = p2cline[zoomxtable[w]*3+1];
 								hvram_line[w*3+2] = p2cline[zoomxtable[w]*3+2];
 							}
-
-							fvram_line += ((vw+15)>>4)*bpp;
 						}
 
 						hvram_line += scrpitch;
@@ -690,10 +690,12 @@ void VIDEL::renderScreenZoom()
 					/* One complete planar 2 chunky line */
 					uint32 *p2cline = new uint32[vw];
 
-					uint16 *fvram_line = fvram;
+					uint16 *fvram_line;
 					uint32 *hvram_line = (uint32 *)hvram;
 
 					for (h = 0; h < scrheight; h++) {
+						fvram_line = fvram + (zoomytable[h] * ((vw+15)>>4)*bpp);
+
 						/* Recopy the same line ? */
 						if (zoomytable[h] == cursrcline) {
 							memcpy(hvram_line, hvram_line-(scrpitch>>2), scrwidth*scrbpp);
@@ -716,8 +718,6 @@ void VIDEL::renderScreenZoom()
 							for (w=0; w<scrwidth; w++) {
 								hvram_line[w] = p2cline[zoomxtable[w]];
 							}
-
-							fvram_line += ((vw+15)>>4)*bpp;
 						}
 
 						hvram_line += scrpitch>>2;
@@ -735,10 +735,12 @@ void VIDEL::renderScreenZoom()
 			case 1:
 				{
 					/* FIXME: when Videl switches to 16bpp, set the palette to 3:3:2 */
-					uint16 *fvram_line = fvram;
+					uint16 *fvram_line;
 					uint8 *hvram_line = hvram;
 
 					for (int h = 0; h < scrheight; h++) {
+						fvram_line = fvram + (zoomytable[h] * vw);
+
 						uint16 *fvram_column = fvram_line;
 						uint8 *hvram_column = hvram_line;
 
@@ -761,8 +763,6 @@ void VIDEL::renderScreenZoom()
 
 								*hvram_column++ = dstbyte;
 							}
-
-							fvram_line += vw;
 						}
 
 						hvram_line += scrpitch;
@@ -772,10 +772,12 @@ void VIDEL::renderScreenZoom()
 				break;
 			case 2:
 				{
-					uint16 *fvram_line = fvram;
+					uint16 *fvram_line;
 					uint16 *hvram_line = (uint16 *)hvram;
 
 					for (int h = 0; h < scrheight; h++) {
+						fvram_line = fvram + (zoomytable[h] * vw);
+
 						uint16 *fvram_column = fvram_line;
 						uint16 *hvram_column = hvram_line;
 
@@ -793,8 +795,6 @@ void VIDEL::renderScreenZoom()
 #endif
 								*hvram_column++ = srcword;
 							}
-
-							fvram_line += vw;
 						}
 
 						hvram_line += scrpitch>>1;
@@ -804,10 +804,12 @@ void VIDEL::renderScreenZoom()
 				break;
 			case 3:
 				{
-					uint16 *fvram_line = fvram;
+					uint16 *fvram_line;
 					uint8 *hvram_line = hvram;
 
 					for (int h = 0; h < scrheight; h++) {
+						fvram_line = fvram + (zoomytable[h] * vw);
+
 						uint16 *fvram_column = fvram_line;
 						uint8 *hvram_column = hvram_line;
 
@@ -830,8 +832,6 @@ void VIDEL::renderScreenZoom()
 								putBpp24Pixel( hvram_column, dstlong );
 								hvram_column += 3;
 							}
-
-							fvram_line += vw;
 						}
 
 						hvram_line += scrpitch;
@@ -841,10 +841,12 @@ void VIDEL::renderScreenZoom()
 				break;
 			case 4:
 				{
-					uint16 *fvram_line = fvram;
+					uint16 *fvram_line;
 					uint32 *hvram_line = (uint32 *)hvram;
 
 					for (int h = 0; h < scrheight; h++) {
+						fvram_line = fvram + (zoomytable[h] * vw);
+
 						uint16 *fvram_column = fvram_line;
 						uint32 *hvram_column = hvram_line;
 
@@ -864,8 +866,6 @@ void VIDEL::renderScreenZoom()
 											  ((srcword >> 11) & 0x3c)),
 										(uint8) ((srcword >> 5) & 0xf8));
 							}
-
-							fvram_line += vw;
 						}
 
 						hvram_line += scrpitch>>2;
@@ -879,6 +879,9 @@ void VIDEL::renderScreenZoom()
 
 /*
  * $Log$
+ * Revision 1.43  2002/09/24 18:59:50  pmandin
+ * Autozoom done
+ *
  * Revision 1.42  2002/09/24 16:27:07  pmandin
  * Small bugfix
  *
