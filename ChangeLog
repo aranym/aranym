@@ -1,7 +1,13 @@
+2001/11/14 - joy
+- corrected XML->HTML compilation
+
+- made the IDE f00039 alternate status register same as the main IDE status reg.
+
+
 2001/11/13 - milan
 - web/Makefile corrected
 
-- saxon.jar not in CVS now (downloaded with wget from    )
+- saxon.jar not in CVS now (downloaded with wget from ftp.sophics.cz/pub/aranym/tools)
 
 - gemram removed from Makefile.in
 
