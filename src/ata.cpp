@@ -183,6 +183,34 @@ bx_hard_drive_c::init(void)
   for (channel=0; channel<BX_MAX_ATA_CHANNEL; channel++) {
     for (Bit8u device=0; device<2; device ++) {
 
+      // Initialize controller state, even if device is not present
+      BX_CONTROLLER(channel,device).status.busy           = 0;
+      BX_CONTROLLER(channel,device).status.drive_ready    = 1;
+      BX_CONTROLLER(channel,device).status.write_fault    = 0;
+      BX_CONTROLLER(channel,device).status.seek_complete  = 1;
+      BX_CONTROLLER(channel,device).status.drq            = 0;
+      BX_CONTROLLER(channel,device).status.corrected_data = 0;
+      BX_CONTROLLER(channel,device).status.index_pulse    = 0;
+      BX_CONTROLLER(channel,device).status.index_pulse_count = 0;
+      BX_CONTROLLER(channel,device).status.err            = 0;
+
+      BX_CONTROLLER(channel,device).error_register = 0x01; // diagnostic code: no error
+      BX_CONTROLLER(channel,device).head_no        = 0;
+      BX_CONTROLLER(channel,device).sector_count   = 1;
+      BX_CONTROLLER(channel,device).sector_no      = 1;
+      BX_CONTROLLER(channel,device).cylinder_no    = 0;
+      BX_CONTROLLER(channel,device).current_command = 0x00;
+      BX_CONTROLLER(channel,device).buffer_index = 0;
+
+      BX_CONTROLLER(channel,device).control.reset       = 0;
+      BX_CONTROLLER(channel,device).control.disable_irq = 0;
+      BX_CONTROLLER(channel,device).reset_in_progress   = 0;
+
+      BX_CONTROLLER(channel,device).sectors_per_block   = 0x80;
+      BX_CONTROLLER(channel,device).lba_mode            = 0;
+
+      BX_CONTROLLER(channel,device).features            = 0;
+
       // If not present
       BX_HD_THIS channels[channel].drives[device].device_type           = IDE_NONE;
       if (!bx_options.atadevice[channel][device].present) {
@@ -264,34 +292,6 @@ bx_hard_drive_c::init(void)
 	}
 #endif
       }
-
-    BX_CONTROLLER(channel,device).status.busy           = 0;
-    BX_CONTROLLER(channel,device).status.drive_ready    = 1;
-    BX_CONTROLLER(channel,device).status.write_fault    = 0;
-    BX_CONTROLLER(channel,device).status.seek_complete  = 1;
-    BX_CONTROLLER(channel,device).status.drq            = 0;
-    BX_CONTROLLER(channel,device).status.corrected_data = 0;
-    BX_CONTROLLER(channel,device).status.index_pulse    = 0;
-    BX_CONTROLLER(channel,device).status.index_pulse_count = 0;
-    BX_CONTROLLER(channel,device).status.err            = 0;
-
-    BX_CONTROLLER(channel,device).error_register = 0x01; // diagnostic code: no error
-    BX_CONTROLLER(channel,device).head_no        = 0;
-    BX_CONTROLLER(channel,device).sector_count   = 1;
-    BX_CONTROLLER(channel,device).sector_no      = 1;
-    BX_CONTROLLER(channel,device).cylinder_no    = 0;
-    BX_CONTROLLER(channel,device).current_command = 0x00;
-    BX_CONTROLLER(channel,device).buffer_index = 0;
-
-    BX_CONTROLLER(channel,device).control.reset       = 0;
-    BX_CONTROLLER(channel,device).control.disable_irq = 0;
-
-    BX_CONTROLLER(channel,device).reset_in_progress   = 0;
-
-    BX_CONTROLLER(channel,device).sectors_per_block   = 0x80;
-    BX_CONTROLLER(channel,device).lba_mode            = 0;
-
-    BX_CONTROLLER(channel,device).features            = 0;
     }
   }
 }
@@ -1505,7 +1505,10 @@ if ( quantumsMax == 0)
 
         case 0x10: // CALIBRATE DRIVE
 	  if (!BX_SELECTED_IS_HD(channel))
-		BX_PANIC(("calibrate drive issued to non-disk"));
+		D(bug("calibrate drive issued to non-disk"));
+
+	  // FIXME Maybe we should signal an error in case of cdrom
+	  // if (!BX_SELECTED_IS_PRESENT(channel) || !BX_SELECTED_IS_HD(channel))
           if (!BX_SELECTED_IS_PRESENT(channel)) {
             BX_SELECTED_CONTROLLER(channel).error_register = 0x02; // Track 0 not found
             BX_SELECTED_CONTROLLER(channel).status.busy = 0;
@@ -1708,6 +1711,7 @@ if ( quantumsMax == 0)
 	    case 0x55: //  Disable look-ahead cache.
 	    case 0xCC: // Enable and
 	    case 0x66: //  Disable reverting to power-on default
+	    case 0x03: // Set Transfer Mode
 	      D(bug("SET FEATURES subcommand not supported by disk."));
 	      command_aborted(channel, value);
 	    break;
