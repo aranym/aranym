@@ -89,7 +89,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/atari/tools/pc101us.kbd.bz2
 /usr/share/aranym/atari/tools/pcpatch.prg.bz2
 /usr/share/aranym/atari/newdesk.inf
-/usr/share/aranym/atari/aranymrc.example
 /usr/share/aranym/atari/mmusetup.cnf
 /usr/share/aranym/arabridge
 /usr/share/aranym/floppy.sh
@@ -97,7 +96,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sun Feb 20 2005 Petr Stehlik <pstehlik@sophics.cz>
-Version increased. LILO enabled in the MMU version.
+Version increased. LILO enabled in the MMU version. aranymrc.example removed.
 
 * Sun Nov 07 2004 Petr Stehlik <pstehlik@sophics.cz>
 Version increased.
