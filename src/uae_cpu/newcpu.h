@@ -61,12 +61,12 @@ static __inline__ void unset_special (uae_u32 x)
 #define m68k_dreg(r,num) ((r).regs[(num)])
 #define m68k_areg(r,num) (((r).regs + 8)[(num)])
 
-#define get_ibyte(o) do_get_mem_byte((uae_u8 *)(get_real_address(regs.pcp) + (o) + 1))
-#define get_iword(o) do_get_mem_word((uae_u16 *)(get_real_address(regs.pcp) + (o)))
-#define get_ilong(o) do_get_mem_long((uae_u32 *)(get_real_address(regs.pcp) + (o)))
+#define get_ibyte(o) do_get_mem_byte((uae_u8 *)(get_real_address(regs.pcp, 0, regs.pcp, sz_byte) + (o) + 1))
+#define get_iword(o) do_get_mem_word((uae_u16 *)(get_real_address(regs.pcp, 0, regs.pcp, sz_word) + (o)))
+#define get_ilong(o) do_get_mem_long((uae_u32 *)(get_real_address(regs.pcp, 0, regs.pcp, sz_long) + (o)))
 
 #ifdef HAVE_GET_WORD_UNSWAPPED
-#define GET_OPCODE (do_get_mem_word_unswapped (do_get_real_address(regs.pcp, false, false)))
+#define GET_OPCODE (do_get_mem_word_unswapped (get_real_address(regs.pcp, 0, regs.pcp, sz_word)))
 #else
 #define GET_OPCODE (get_iword (0))
 #endif

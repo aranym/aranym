@@ -11,12 +11,12 @@ Supported platforms:
 
 x86          GNU/Linux
 x86          MS Windows + Cygwin
+x86          NetBSD
 x86          OpenBSD
 Sun Sparc    Solaris
 
 In progress (in alphabetical order!!!):
 SGI xxx      Irix
-x86          NetBSD
 
 
 2) Compilation

@@ -284,6 +284,20 @@ static __inline__ void dfc_put_byte(uaecptr addr, uae_u16 b)
     phys_put_byte(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_byte, 0), b);
 }
 
+static __inline__ bool valid_address(uaecptr addr, int write, uaecptr pc, wordsizes sz)
+{
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	return false;
+    } 
+    check_ram_boundary(mmu_translate(addr, FC_DATA, write, pc, sz, 0), ((sz == sz_byte) ?  1 : ((sz == sz_word) ? 2 : 4)), (write == 0 ? false : true));
+    excep_env = excep_env_old;
+    return true;
+}
+
 #else
 
 #  define get_long(a)			phys_get_long(a)
@@ -292,7 +306,21 @@ static __inline__ void dfc_put_byte(uaecptr addr, uae_u16 b)
 #  define put_long(a,b)			phys_put_long(a,b)
 #  define put_word(a,b)			phys_put_word(a,b)
 #  define put_byte(a,b)			phys_put_byte(a,b)
-#  define get_real_address(a)		phys_get_real_address(a)
+#  define get_real_address(a,w,p,s)	phys_get_real_address(a)
+
+static __inline__ bool valid_address(uaecptr addr, int write, uaecptr pc, wordsizes sz)
+{
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+        excep_env = excep_env_old;
+        return false;
+    }
+    check_ram_boundary(addr, ((sz == sz_byte) ?  1 : ((sz == sz_word) ? 2 : 4)), (write == 0 ? false : true));
+    excep_env = excep_env_old;
+    return true;
+}
 
 #endif
 

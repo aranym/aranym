@@ -104,13 +104,13 @@ SRC_PATHS += $(sort $(foreach file, $(SRCS), $(dir $(file))))
 VPATH :=
 VPATH += $(addprefix :, $(subst  ,:, $(filter-out $($(subst, :, ,$(VPATH))), $(SRC_PATHS))))
 
-$(APP): $(OBJ_DIR) $(OBJS)
+$(APP): $(OBJ_DIR) $(OBJS) Makefile
 	$(CXX) -o $(APP) $(LDFLAGS) $(OBJS) $(LIBS)
 
-$(APP_STATIC): $(OBJ_DIR) $(OBJS)
+$(APP_STATIC): $(OBJ_DIR) $(OBJS) Makefile
 	$(CXX) -o $(APP_STATIC) -static $(LDFLAGS) $(OBJS) $(LIBS)
 
-Makefile: configure Makefile.in config.h
+Makefile: configure Makefile.in
 	./configure
 
 configure: configure.in aclocal.m4
@@ -232,7 +232,7 @@ dist: distclean
 	rm -r ../../web/
 	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=aranym/web/build/saxon.jar --exclude=autogen.sh --exclude=CVS aranym
 
-depend dep:
+depend dep: Makefile
 	makedepend $(CPPFLAGS) $(DEFS) -Y. $(SRCS) -p$(OBJ_DIR)/ 2>/dev/null
 	sed -n '/^# DO NOT DELETE THIS LINE -- make depend depends on it./,$$p' < Makefile > Makefile.wrk
 	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' < Makefile > Makefile.new
@@ -246,11 +246,11 @@ depend dep:
 	sed 's/\/..\//\//' < Makefile.wrk >> Makefile
 	rm -f Makefile.wrk
 
-$(OBJ_DIR)/%.o : %.c Makefile
+$(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) -Wall $(CFLAGS) -c $< -o $@
-$(OBJ_DIR)/%.o : %.cpp Makefile
+$(OBJ_DIR)/%.o : %.cpp
 	$(CXX) $(CPPFLAGS) $(DEFS) -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c $< -o $@
-$(OBJ_DIR)/%.o : %.s Makefile
+$(OBJ_DIR)/%.o : %.s
 	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/cpuopti: $(OBJ_DIR)/cpuopti.o Makefile
@@ -269,6 +269,8 @@ cpustbl_nf.cpp: cpustbl.cpp
 compstbl.cpp: compemu.cpp
 cputbl.h: cpuemu.cpp
 comptbl.h: compemu.cpp
+
+sysdeps.h: config.h
 
 cpuemu.cpp: $(OBJ_DIR)/gencpu Makefile
 	$(OBJ_DIR)/gencpu

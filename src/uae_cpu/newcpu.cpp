@@ -2878,7 +2878,7 @@ static void m68k_run_1 (void)
 	if (((regs.pcp ^ pc_page) > ARAM_PAGE_MASK)) {
 	    check_ram_boundary(regs.pcp, 2, false);
 //	    opcode = GET_OPCODE;
-	    uae_u16* addr = (uae_u16*)get_real_address(regs.pcp);
+	    uae_u16* addr = (uae_u16*)get_real_address(regs.pcp, 0, regs.pcp, sz_word);
 	    pc_page = regs.pcp;
 	    pc_offset = (uae_u32)addr - regs.pcp;
 	}

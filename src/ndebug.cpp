@@ -407,7 +407,7 @@ void ndebug::errorintofile(FILE *f, char **inl) {
 
 
 void ndebug::saveintofile(FILE *f, char **inl) {
-	uae_u32 src, len;
+	volatile uae_u32 src, len;
 	char *name;
 	FILE *fp;
 
@@ -424,12 +424,10 @@ void ndebug::saveintofile(FILE *f, char **inl) {
 	if (!more_params (inl)) goto S_argh;
 	len = readhex (inl);
 
-#if 0
-	if (! valid_address (src, len)) {
-		bug("Invalid memory block");
+	if (!valid_address(src, 0, 0, sz_byte)) {
+		bug("Invalid memory address\n");
 		return;
 	}
-#endif
 
 	fp = fopen (name, "w");
 	if (fp == NULL) {
@@ -535,19 +533,13 @@ void ndebug::writeintomem(FILE *f, char **c) {
 
 void ndebug::backtrace(FILE *f, volatile unsigned int lines) {
 	volatile uaecptr st = m68k_areg(regs,7);
-	jmp_buf excep_env_old;
-	excep_env_old = excep_env;
-setjmpagain:
-        int prb = setjmp(excep_env);
-        if (prb != 0) {
-		fprintf (f, " unknown address\n");
-                goto setjmpagain;
-        }
 	while (lines-- > 0) {
-		fprintf (f, "%08lx: %08x\n", (unsigned long)st, get_long(st));
+		if (valid_address(st, 0, 0, sz_long))
+			fprintf (f, "%08lx: %08x\n", (unsigned long)st, ReadAtariInt32(st));
+		else
+			fprintf (f, " unknown address\n");
 		st += 2;
 	}
-	excep_env = excep_env_old;
 }
 
 void ndebug::log2phys(FILE *f, uaecptr addr) {
@@ -1146,6 +1138,10 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.16  2002/02/19 20:04:05  milan
+ * src/ <-> CPU interaction cleaned
+ * memory access cleaned
+ *
  * Revision 1.15  2002/02/14 16:53:45  milan
  * new command for ndebug - 'L'
  *
