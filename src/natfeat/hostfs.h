@@ -77,7 +77,7 @@ class HostFs : public NF_Base {
 		}
 	};
 
-	typedef map<int16,ExtDrive*>  MountMap;
+	typedef std::map<int16,ExtDrive*> MountMap;
 	MountMap mounts;
 
 	bool isPathValid(const char *fileName);
@@ -182,5 +182,8 @@ class HostFs : public NF_Base {
 
 /*
  * $Log$
+ * Revision 1.1  2002/12/10 20:47:21  standa
+ * The HostFS (the host OS filesystem access via NatFeats) implementation.
+ *
  *
  */
