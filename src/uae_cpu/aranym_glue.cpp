@@ -93,6 +93,15 @@ void AtariReset(void)
 }
 
 /*
+ * Reset CPU
+ */
+
+void Reset680x0(void)
+{
+	m68k_reset();
+}
+
+/*
  *  Deinitialize 680x0 emulation
  */
 

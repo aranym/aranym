@@ -122,22 +122,27 @@ install: $(APP) installdirs
 	$(INSTALL_DATA) ../../COPYING $(DESTDIR)$(docdir)/$(APP)/COPYING
 	$(INSTALL_DATA) ../../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
 	$(INSTALL_DATA) ../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL
-	$(INSTALL_DATA) ../../documentation.txt $(DESTDIR)$(docdir)/$(APP)/documentation.txt
-	$(INSTALL_DATA) ../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
-	$(INSTALL_DATA) ../atari/aranymrc.example $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
-	$(INSTALL_DATA) ../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
-	$(INSTALL_DATA) ../atari/aranymfs/aranymfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
-	$(INSTALL_DATA) ../atari/aranymfs/aranym.xfs.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
-	$(INSTALL_DATA) ../atari/aranymfs/config.sys $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/config.sys
-	$(INSTALL_DATA) ../atari/createdisk/createdisk.README $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.README
-	$(INSTALL) ../atari/createdisk/createdisk.sh $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.sh
-	$(INSTALL_DATA) ../atari/createdisk/mbrdata $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/mbrdata
-	$(INSTALL_DATA) ../atari/fvdi/drivers/aranym.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
-	$(INSTALL_DATA) ../atari/fvdi/fvdi.sys $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.sys
-	$(INSTALL_DATA) ../atari/tools/fastram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
-
+	$(INSTALL_DATA) ../../doc/documentation.txt $(DESTDIR)$(docdir)/$(APP)/documentation.txt
+	$(INSTALL_DATA) ../../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
+	$(INSTALL_DATA) ../../atari/aranymrc.example $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
+	$(INSTALL_DATA) ../../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
+	$(INSTALL_DATA) ../../atari/aranymfs/aranymfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
+	$(INSTALL_DATA) ../../atari/aranymfs/aranym.xfs.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
+	$(INSTALL_DATA) ../../atari/aranymfs/config.sys $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/config.sys
+	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
+	$(INSTALL) ../../tools/createdisk/createdisk.sh $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
+	$(INSTALL_DATA) ../../tools/createdisk/mbrdata $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
+	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
+	$(INSTALL_DATA) ../../atari/fvdi/fvdi.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
+	$(INSTALL_DATA) ../../atari/fvdi/fvdi.sys $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.sys
+	$(INSTALL_DATA) ../../atari/tools/README $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
+	$(INSTALL_DATA) ../../atari/tools/clocky.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
+	$(INSTALL_DATA) ../../atari/tools/fastram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
+	$(INSTALL_DATA) ../../atari/tools/pc101us.kbd.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
+	$(INSTALL_DATA) ../../atari/tools/pcpatch.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2
+	
 installdirs:
-	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(docdir)/$(APP)
 
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
@@ -157,13 +162,18 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/config.sys
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.README
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.sh
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/mbrdata
+	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
+	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
+	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.sys
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
-	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/createdisk
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2
+	rmdir $(DESTDIR)$(datadir)/$(APP)/createdisk
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/fvdi
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/tools
@@ -200,19 +210,24 @@ bindist: $(APP) bindistdirs
 	$(INSTALL_DATA) ../../COPYING tmpdist$(docdir)/$(APP)/COPYING
 	$(INSTALL_DATA) ../../BUGS tmpdist$(docdir)/$(APP)/BUGS
 	$(INSTALL_DATA) ../../INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
-	$(INSTALL_DATA) ../../documentation.txt tmpdist$(docdir)/$(APP)/documentation.tx
-	$(INSTALL_DATA) ../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
-	$(INSTALL_DATA) ../atari/aranymrc.example tmpdist$(datadir)/$(APP)/atari/aranymrc.example
-	$(INSTALL_DATA) ../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
-	$(INSTALL_DATA) ../atari/aranymfs/aranymfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
-	$(INSTALL_DATA) ../atari/aranymfs/aranym.xfs.bz2 tmpdist$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
-	$(INSTALL_DATA) ../atari/aranymfs/config.sys tmpdist$(datadir)/$(APP)/atari/aranymfs/config.sys
-	$(INSTALL_DATA) ../atari/createdisk/createdisk.README tmpdist$(datadir)/$(APP)/atari/createdisk/createdisk.README
-	$(INSTALL) ../atari/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/atari/createdisk/createdisk.sh
-	($INSTALL_DATA) ../atari/createdisk/mbrdata tmpdist$(datadir)/$(APP)/atari/createdisk/mbrdata
-	$(INSTALL_DATA) ../atari/fvdi/drivers/aranym.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
-	$(INSTALL_DATA) ../atari/fvdi/fvdi.sys tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.sys
-	$(INSTALL_DATA) ../atari/tools/fastram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
+	$(INSTALL_DATA) ../../doc/documentation.txt tmpdist$(docdir)/$(APP)/documentation.txt
+	$(INSTALL_DATA) ../../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
+	$(INSTALL_DATA) ../../atari/aranymrc.example tmpdist$(datadir)/$(APP)/atari/aranymrc.example
+	$(INSTALL_DATA) ../../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
+	$(INSTALL_DATA) ../../atari/aranymfs/aranymfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
+	$(INSTALL_DATA) ../../atari/aranymfs/aranym.xfs.bz2 tmpdist$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
+	$(INSTALL_DATA) ../../atari/aranymfs/config.sys tmpdist$(datadir)/$(APP)/atari/aranymfs/config.sys
+	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README tmpdist$(datadir)/$(APP)/createdisk/createdisk.README
+	$(INSTALL) ../../tools/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/createdisk/createdisk.sh
+	($INSTALL_DATA) ../../tools/createdisk/mbrdata tmpdist$(datadir)/$(APP)/createdisk/mbrdata
+	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
+	$(INSTALL_DATA) ../../atari/fvdi/fvdi.prg.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
+	$(INSTALL_DATA) ../../atari/fvdi/fvdi.sys tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.sys
+	$(INSTALL_DATA) ../../atari/tools/README tmpdist$(datadir)/$(APP)/atari/tools/README
+	$(INSTALL_DATA) ../../atari/tools/clocky.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
+	$(INSTALL_DATA) ../../atari/tools/fastram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
+	$(INSTALL_DATA) ../../atari/tools/pc101us.kbd.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
+	$(INSTALL_DATA) ../../atari/tools/pcpatch.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2	
 	chmod -R a+r tmpdist
 	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
 	rm -rf tmpdist

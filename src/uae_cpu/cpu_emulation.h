@@ -105,8 +105,9 @@ static inline void *Atari2Atari_memcpy(memptr dest, memptr src, size_t n) {retur
 // Initialization
 extern bool InitMEM();
 extern bool Init680x0(void);
-extern void AtariReset(void);
+extern void Reset680x0(void);
 extern void Exit680x0(void);
+extern void AtariReset(void);
 
 // 680x0 emulation functions
 struct M68kRegisters;
