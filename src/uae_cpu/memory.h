@@ -33,13 +33,13 @@
 
 extern uintptr VMEMBaseDiff;
 
-#if PAGE_CHECK
+#if ARAM_PAGE_CHECK
 extern uaecptr pc_page, read_page, write_page;
 extern uae_u32 pc_offset, read_offset, write_offset;
 # ifdef FULLMMU
-#  define PAGE_MASK 0xfff
+#  define ARAM_PAGE_MASK 0xfff
 # else
-#  define PAGE_MASK 0xfffff
+#  define ARAM_PAGE_MASK 0xfffff
 # endif
 #endif
 
@@ -123,15 +123,15 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 
 static __inline__ uae_u32 get_long_direct(uaecptr addr)
 {
-#if PAGE_CHECK
-    if (((addr ^ read_page) <= PAGE_MASK))
+#if ARAM_PAGE_CHECK
+    if (((addr ^ read_page) <= ARAM_PAGE_MASK))
         return do_get_mem_long((uae_u32*)((uae_u8*)addr + read_offset));
 #endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
     check_ram_boundary(addr, 4, false);
     uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
-#if PAGE_CHECK
+#if ARAM_PAGE_CHECK
     read_page = addr;
     read_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -140,15 +140,15 @@ static __inline__ uae_u32 get_long_direct(uaecptr addr)
 
 static __inline__ uae_u32 get_word_direct(uaecptr addr)
 {
-#if PAGE_CHECK
-    if (((addr ^ read_page) <= PAGE_MASK))
+#if ARAM_PAGE_CHECK
+    if (((addr ^ read_page) <= ARAM_PAGE_MASK))
         return do_get_mem_word((uae_u16*)((uae_u8*)addr + read_offset));
 #endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_w(addr);
     check_ram_boundary(addr, 2, false);
     uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
-#if PAGE_CHECK
+#if ARAM_PAGE_CHECK
     read_page = addr;
     read_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -157,15 +157,15 @@ static __inline__ uae_u32 get_word_direct(uaecptr addr)
 
 static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 {
-#if PAGE_CHECK
-    if (((addr ^ read_page) <= PAGE_MASK))
+#if ARAM_PAGE_CHECK
+    if (((addr ^ read_page) <= ARAM_PAGE_MASK))
         return do_get_mem_byte((uae_u32*)((uae_u8*)addr + read_offset));
 #endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_b(addr);
     check_ram_boundary(addr, 1, false);
     uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
-#if PAGE_CHECK
+#if ARAM_PAGE_CHECK
     read_page = addr;
     read_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -174,8 +174,8 @@ static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 
 static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
 {
-#if PAGE_CHECK
-    if (((addr ^ write_page) <= PAGE_MASK)) {
+#if ARAM_PAGE_CHECK
+    if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
         do_put_mem_long((uae_u32*)((uae_u8*)addr + write_offset), l);
         return;
     }
@@ -187,7 +187,7 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
     } 
     check_ram_boundary(addr, 4, true);
     uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
-#if PAGE_CHECK
+#if ARAM_PAGE_CHECK
     write_page = addr;
     write_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -196,8 +196,8 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
 
 static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
 {
-#if PAGE_CHECK
-    if (((addr ^ write_page) <= PAGE_MASK)) {
+#if ARAM_PAGE_CHECK
+    if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
         do_put_mem_word((uae_u16*)((uae_u8*)addr + write_offset), w);
         return;
     }
@@ -209,7 +209,7 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
     }
     check_ram_boundary(addr, 2, true);
     uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
-#if PAGE_CHECK
+#if ARAM_PAGE_CHECK
     write_page = addr;
     write_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -218,8 +218,8 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
 
 static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
 {
-#if PAGE_CHECK
-    if (((addr ^ write_page) <= PAGE_MASK)) {
+#if ARAM_PAGE_CHECK
+    if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
         do_put_mem_byte((uae_u8*)((uae_u8*)addr + write_offset), b);
         return;
     }
@@ -231,7 +231,7 @@ static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
     }
     check_ram_boundary(addr, 1, true);
     uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
-#if PAGE_CHECK
+#if ARAM_PAGE_CHECK
     write_page = addr;
     write_offset = (uintptr)m - (uintptr)addr;
 #endif

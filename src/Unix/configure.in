@@ -500,7 +500,7 @@ fi
 
 dnl Page check
 if [[ "x$WANT_PAGECHECK" = "xyes" ]]; then
-    AC_DEFINE(PAGE_CHECK)
+    AC_DEFINE(ARAM_PAGE_CHECK)
 fi
 
 dnl fixed size FastRAM

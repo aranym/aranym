@@ -45,7 +45,7 @@
 #undef USE_TIMERS
 
 /* Define if you want to try out a different memory check */
-#undef PAGE_CHECK
+#undef ARAM_PAGE_CHECK
 
 /* Define if you want FastRAM of fixed size */
 #undef FixedSizeFastRAM

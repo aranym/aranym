@@ -1,3 +1,10 @@
+2002/02/01 - milan
+- PAGE_MASK renamed on ARAM_PAGE_MASK (ARAnym Memory PAGE_MASK), PAGE_MASK is
+  defined in /usr/include/machine/param.h on OpenBSD
+
+- PAGE_CHECK renamed on ARAM_PAGE_CHECK
+
+
 2002/02/01 - joy
 - fixed long-standing bug in ATA.cpp that made ARAnyM stuck when no IDE disk
   drive was found (or defined in config).

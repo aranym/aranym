@@ -2409,7 +2409,7 @@ void default_image_t::close ()
       }
 }
 
-#ifdef OS_irix
+#ifdef OS_irix || OS_openbsd || OS_netbsd
 loff_t default_image_t::lseek (loff_t offset, int whence)
 #else
 off_t default_image_t::lseek (off_t offset, int whence)

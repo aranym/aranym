@@ -19,7 +19,7 @@
 #include "main.h"
 #include "exceptions.h"
 
-#if PAGE_CHECK
+#if ARAM_PAGE_CHECK
 uaecptr pc_page = 0xeeeeeeee;
 uae_u32 pc_offset = 0;
 uaecptr read_page = 0xeeeeeeee;
