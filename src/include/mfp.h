@@ -1,5 +1,7 @@
 /* Joy 2001 */
 
+#include "icio.h"
+
 class MFP_Timer {
 private:
 	uae_u8 control;
@@ -50,7 +52,7 @@ public:
 
 /*****************************************************************/
 
-class MFP {
+class MFP : public ICio {
 private:
 	uae_u8 GPIP_data;
 	uae_u8 active_edge;
@@ -68,7 +70,7 @@ private:
 
 public:
 	MFP();
-	uae_u8 handleRead(uaecptr);
-	void handleWrite(uaecptr, uae_u8);
+	virtual uae_u8 handleRead(uaecptr);
+	virtual void handleWrite(uaecptr, uae_u8);
 	void IRQ(int);
 };

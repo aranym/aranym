@@ -16,8 +16,10 @@ extern void HWput_w(uaecptr addr, uae_u32 w);
 extern void HWput_b(uaecptr addr, uae_u32 b);
 
 extern uaecptr showPC(void);	// for debugging only
+extern char* debug_print_IO(uaecptr addr);	// for debugging only
 
 extern void MakeMFPIRQ(int);
 extern void ikbd_send(int);
 extern int getVideoMode();
+extern int getFloppyStats();
 #endif 

@@ -1,6 +1,8 @@
 /* Joy 2001 */
 
-class ACSIFDC {
+#include "icio.h"
+
+class ACSIFDC : public ICio {
 private:
 	uae_u16 DMAfifo;	/* write to $8606.w */
 	uae_u16 DMAstatus;	/* read from $8606.w */
@@ -13,8 +15,8 @@ private:
 
 public:
 	ACSIFDC();
-	uae_u8 handleRead(uaecptr);
-	void handleWrite(uaecptr, uae_u8);
+	virtual uae_u8 handleRead(uaecptr);
+	virtual void handleWrite(uaecptr, uae_u8);
 
 private:
 	uae_u8 LOAD_B_ff8604(void);

@@ -1,6 +1,8 @@
 /* Joy 2001 */
 
-class ACIA {
+#include "icio.h"
+
+class ACIA : public ICio {
 protected:
 	uaecptr baseaddr;
 	uae_u8 status;
@@ -10,8 +12,8 @@ protected:
 
 public:
 	ACIA(uaecptr);
-	uae_u8 handleRead(uaecptr addr);
-	void handleWrite(uaecptr addr, uae_u8 value);
+	virtual uae_u8 handleRead(uaecptr addr);
+	virtual void handleWrite(uaecptr addr, uae_u8 value);
 	virtual uae_u8 getStatus() { return 2; };
 	virtual void setMode(uae_u8 value) {};
 	virtual uae_u8 getData() { return 0xa2; };

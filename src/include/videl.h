@@ -2,7 +2,9 @@
 #ifndef _VIDEL_H
 #define _VIDEL_H
 
-class VIDEL {
+#include "icio.h"
+
+class VIDEL : public ICio {
 private:
 	uae_u8 shifter;
 	uae_u16 videl;
@@ -12,8 +14,8 @@ private:
 
 public:
 	VIDEL();
-	uae_u8 handleRead(uaecptr);
-	void handleWrite(uaecptr, uae_u8);
+	virtual uae_u8 handleRead(uaecptr);
+	virtual void handleWrite(uaecptr, uae_u8);
 	int getVideoMode();
 };
 

@@ -1,6 +1,8 @@
 /* Joy 2001 */
 
-class BLITTER {
+#include "icio.h"
+
+class BLITTER : public ICio {
 private:
 	uae_u16 halftone_ram[16];
 	uae_u16 end_mask_1,end_mask_2,end_mask_3;
@@ -15,8 +17,8 @@ private:
 
 public:
 	BLITTER(void);
-	uae_u8 handleRead(uaecptr);
-	void handleWrite(uaecptr, uae_u8);
+	virtual uae_u8 handleRead(uaecptr);
+	virtual void handleWrite(uaecptr, uae_u8);
 
 private:
 	uae_u16 LM_UW(uaecptr);

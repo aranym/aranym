@@ -1,13 +1,15 @@
 /* Joy 2001 */
 
-class RTC {
+#include "icio.h"
+
+class RTC : public ICio {
 private:
 	uae_u8 addr;
 
 public:
 	RTC();
-	uae_u8 handleRead(uaecptr);
-	void handleWrite(uaecptr, uae_u8);
+	virtual uae_u8 handleRead(uaecptr);
+	virtual void handleWrite(uaecptr, uae_u8);
 
 private:
 	void setAddr(uae_u8 value);
