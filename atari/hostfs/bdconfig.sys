@@ -1,0 +1,66 @@
+;----------------------------------------------------------------------------
+;File name:	BDCONFIG.SYS			Revision date:	1998.08.27
+;Purpose:	BetaDos configuration		Creation date:	1998.02.27
+;----------------------------------------------------------------------------
+;(C)1998 by Ronald Andersson			Email:	dlanor@oden.se
+;----------------------------------------------------------------------------
+;The first four entries are commented out, partly because you may not have
+;a CD-ROM to use them for, and partly because I have no distribution rights
+;for the BOS drivers.  They are from the SPIN distribution by Julian Reschke
+;and from ExtenDOS, and are what I use for CD-ROM access on my Falcon030.
+;
+;;;*BOS, c:\auto\cd.bos, A:13.0
+;;;*BOS, c:\auto\spin_sd.bos, B:14\0
+;;;*DOS, c:\auto\unidrive.dos, X:A
+;;;*DOS, c:\auto\bd_9660f.dos, Y:B
+;
+;One DOS driver above is my own, and is a slightly improved ISO9660F version.
+;This has been completely restructured, so as to simplify adding new abilities
+;(when I get time for that) such as support of long filenames and Dopendir etc.
+;
+;The filesystems below are my own, though 'Cook_FS' was inspired by Julian
+;Reschkes 'CookieFS'.  His pioneer effort in producing new DOS sources gave
+;me the impetus (and needed knowledge) to start the BetaDos project.
+;
+;Cluster.DOS implements a drive that holds a 'cluster' of other drives, that
+;are presented as subfolders, similar to the U: drive of MagiC and MiNT.
+;The main difference is that this one works in SingleTOS as well...
+;As yet many features of U: are still missing of course (\proc, \dev, etc.),
+;but some of these will be added later (especially link stuff).
+;
+;For SingleTOS users I recommend editing the 'V:0' of Cluster.Dos to 'U:0'...
+;Or like me, use both.  V: can also be used under MagiC and MiNT, so it has
+;proven a useful medium for symbolic links that can be used identically in
+;all available TOS systems, with or without multitasking.  I use it a lot !
+;
+;*DOS, c:\auto\cluster.dos, V:0
+;*DOS, c:\auto\cook_fs.dos, W:1
+;
+;Cook_FS is just another cookie filesystem, based on exactly the principles
+;and methods in Julian Reschke's CookieFS.  It has been completely recoded
+;though this did not motivate many changes, except where it concerned the
+;new object linking method, which enforced some changes.
+;
+;As yet these filesystems can be considered FreeWare, but I make no promises
+;as to what policy I will apply regarding future versions...
+;
+;In addition to the 'classic' MetaDOS commands, BetaDOS now also supports a
+;new command '*SLB,' Identically to how that has been implemented by Julian
+Reschke in his MetaDOS enhancements. So BetaDOS remains MetaDOS compatible.
+;
+;*SLB, c:\auto\slb_load.ovl c:\gemsys\magic\xtension
+;
+;Only one such command per BDCONFIG.SYS file is meaningful, and the path at
+;the end specifies the default path BetaDOS will look for .SLB files in. If
+;the SLBPATH environment variable is used, this replaces the default path
+;with a proper path list. The *SLB, command is still needed though, because
+;if it is not used BetaDOS will ignore the new GEMDOS functions Slbopen and
+;Slbclose, so the shared code libraries will not be accessible then.
+;Thanks go to Julian Reschke again for providing much info on the SLB stuff.
+;
+;ARAnyM HOSTFS configuration
+*DOS, \auto\hostfs.dos, M:M
+;ARAnyM HOSTFS configuration end
+;----------------------------------------------------------------------------
+;End of file:	BDCONFIG.SYS
+;----------------------------------------------------------------------------

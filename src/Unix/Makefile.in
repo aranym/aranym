@@ -149,6 +149,9 @@ install: $(APP) $(APP_DI) $(TAPIF) installdirs
 	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
 	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.xfs.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
 	$(INSTALL_DATA) ../../atari/hostfs/bdconfig.sys $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	$(INSTALL_DATA) ../../atari/network/ethernet/bin/aranym.xif.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/aranym.xif.bz2
+	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/nfeth-config.bz2
+	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
 	$(INSTALL) ../../tools/createdisk/createdisk.sh $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
 	$(INSTALL_DATA) ../../tools/createdisk/mbrdata $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
@@ -192,6 +195,9 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/aranym.xif.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/nfeth-config.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
 	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
 	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
@@ -208,6 +214,7 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
 	rmdir $(DESTDIR)$(datadir)/$(APP)/createdisk
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/hostfs
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/network
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/fvdi
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/tools
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/sound
@@ -231,7 +238,7 @@ mrproper: distclean
 	rm -rf aclocal.m4 configure config.h.in autom4te.cache
 
 bindistdirs:
-	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/createdisk tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/createdisk tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
 bindist: $(APP) $(APP_DI) bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
@@ -258,6 +265,9 @@ bindist: $(APP) $(APP_DI) bindistdirs
 	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
 	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.xfs.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
 	$(INSTALL_DATA) ../../atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	$(INSTALL_DATA) ../../atari/network/ethernet/bin/aranym.xif.bz2 tmpdist$(datadir)/$(APP)/atari/network/aranym.xif.bz2
+	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 tmpdist$(datadir)/$(APP)/atari/network/nfeth-config.bz2
+	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README tmpdist$(datadir)/$(APP)/createdisk/createdisk.README
 	$(INSTALL) ../../tools/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/createdisk/createdisk.sh
 	$(INSTALL_DATA) ../../tools/createdisk/mbrdata tmpdist$(datadir)/$(APP)/createdisk/mbrdata

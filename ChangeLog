@@ -3,7 +3,11 @@
 2003/03/24 - joy
 - aranym.xfs renamed to hostfs.xfs
 
-- Makefile.in: installs new hostfs instead of old aranymfs
+- new binary drivers (hostfs.dos, hostfs.xfs, aranym.xif, nfeth-config)
+  added to CVS.
+
+- Makefile.in: installs new hostfs (instead of old aranymfs) and also
+  new aranym.xif plus utilities.
 
 
 2003/03/23 - joy
