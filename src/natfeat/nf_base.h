@@ -25,9 +25,11 @@ protected:
 	 * Host<->Atari mem & str functions
 	 **/
 	void a2fmemcpy( char *dest, memptr source, size_t count );
-	void a2fstrcpy( char *dest, memptr source );
 	void f2amemcpy( memptr dest, char *source, size_t count );
+	void a2fstrcpy( char *dest, memptr source );
 	void f2astrcpy( memptr dest, char *source );
+	void atari2HostSafeStrncpy( char *dest, memptr source, size_t count );
+	void host2AtariSafeStrncpy( memptr dest, char *source, size_t count );
 
 public:
 	virtual bool init() { return true; }
