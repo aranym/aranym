@@ -23,7 +23,6 @@ Things for 1.0 release:
 - Networking for MiNTNet (like in vmware)
 
 - aranymfs  filesystem
-    - fixes (e.g. PureC don't want to compile a .prj file 8-().
     - the Host OS part should be rewritten nearly from scratch, I have 
       ideas to use some platform independent library and later either VFS lib.
     - m68k code cleanup... the .c file can be easily rewritten to .s.
@@ -37,9 +36,9 @@ Things for 1.0 release:
 
 - document the command line switches, keyboard combos and write Users Guide.
 
-- Bus error handling
-
 - OS-depend include files, not so redundant includes
+
+- fix uae FPU (add 68040 specific instructions)
 
 The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
 all Atari power users/MiNTers. Key elements are TCP/IP networking, large
