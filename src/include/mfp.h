@@ -1,7 +1,7 @@
 /*
  * mfp.h - MFP emulation - declaration
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -79,6 +79,7 @@ public:
 
 class MFP : public BASE_IO {
 private:
+	uint8 input;
 	uint8 GPIP_data;
 	uint8 active_edge;
 	uint8 data_direction;
@@ -86,16 +87,13 @@ private:
 	uint8 irq_pending;
 	uint16 irq_inservice;
 	uint16 irq_mask;
-	bool automaticServiceEnd;
 	MFP_TimerA A;
 	MFP_TimerB B;
 	MFP_TimerC C;
 	MFP_TimerD D;
 	USART usart;
-	int flags;
 	int timerCounter;
 	int vr;
-	enum FLAGS {F_SDMA=(1<<7),F_ACIA=(1<<6),F_TIMERC=(1<<5)};
 
 public:
 	MFP(memptr addr, uint32 size);
@@ -105,6 +103,9 @@ public:
 	void IRQ(int, int count);
 	void setGPIPbit(int mask, int value);
 	int doInterrupt(void);
+
+private:
+	void set_active_edge(uint8 value);
 };
 
 #endif /* _MFP_H */

@@ -1,9 +1,9 @@
 /*
  * mfp.cpp - MFP emulation
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
- * Based on info gathered in STonX source code 
+ * Copied almost bit-by-bit from STonC's mfp.c (thanks, Laurent!)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -96,9 +96,15 @@ MFP::MFP(memptr addr, uint32 size) : BASE_IO(addr, size)
 	reset();
 }
 
+#define MFP_VR_VECTOR 0xF0 
+#define MFP_VR_SEI 0x08         /* Software end of interrupt, 
+                                need software cancelling in inservice ? */
+#define MFP_VR_AEI 0x00         /* Automatic end of interrupt,
+                                ??? */
 void MFP::reset()
 {
-	GPIP_data = 0xff;
+	input = 0xff;
+	GPIP_data = input;
 	vr = 0x0100;
 	active_edge = 0;
 	data_direction = 0;
@@ -106,8 +112,6 @@ void MFP::reset()
 	irq_pending = 0;
 	irq_inservice = 0;
 	irq_mask = 0;
-	automaticServiceEnd = 0;
-	flags = 0;
 	timerCounter = 0;
 
 	A.reset();
@@ -160,7 +164,7 @@ uint8 MFP::handleRead(memptr addr)
 					value = irq_mask;
 					break;
 						
-		case 0x17:	value = (vr & 0xf0 ) | (automaticServiceEnd ? 8 : 0);
+		case 0x17:	value = vr;
 					break;
 
 		case 0x19:	value = A.getControl();
@@ -193,6 +197,37 @@ uint8 MFP::handleRead(memptr addr)
 	return value;
 }
 
+void MFP::set_active_edge(uint8 value)
+{
+static int map_gpip_to_ier[8] = {0, 1, 2, 3, 6, 7, 14, 15} ;	
+  /* AER : 1=Rising (0->1), 0=Falling (1->0) */
+  
+  /* [mfp.txt]
+   * The edge bit is simply one input to an exclusive-or
+   * gate, with the other input coming from the input buffer and the output going
+   * to a 1-0 transition detector. Thus, depending upon the state of the input,
+   * writing the AER can cause an interrupt-producing transition
+   */
+  /* this means : a = input xor aer, and interrupt when a 1->0.
+   *  ____before____ ______after_____ ___result___
+   *  input  aer  a   input  val  a    interrupt
+   *    0     0   0     0     1   1      
+   *    1     0   1     1     1   0       yes
+   *    0     1   1     0     0   0       yes
+   *    1     1   0     1     0   1      
+   */
+	int i, j;
+	for(j = 0, i = 1 ; j < 8 ; j++, i <<= 1) {
+		if( ((active_edge & i) != (value & i))        /* if AER changes */
+				&& (! (data_direction & i))               /* for input lines */
+				&& ((active_edge & i) != (input & i))) {
+			IRQ(map_gpip_to_ier[j], 1);
+		}
+	}
+ 
+	active_edge = value;
+}
+
 void MFP::handleWrite(memptr addr, uint8 value) {
 	addr -= getHWoffset();
 	if (addr > getHWsize())
@@ -206,14 +241,19 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 					D(bug("New GPIP=$%x from PC=$%x", GPIP_data, showPC()));
 					break;
 
-		case 0x03:	active_edge = value;
+		case 0x03:	set_active_edge(value);
 					break;
 
 		case 0x05:	data_direction = value;
+					GPIP_data &= data_direction;
+					GPIP_data |= input & (~data_direction);
 					D(bug("GPIP Data Direction set to %02x", value));
 					break;
 
 		case 0x07:	irq_enable = (irq_enable & 0x00ff) | (value << 8);
+					// cancel any pending interrupts, but do not alter ISR
+					irq_pending &= irq_enable;
+					// mfp_check_timers_ier();
 					break;
 
 		case 0x09:
@@ -226,10 +266,27 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 					}
 #endif /* DEBUG */
 					irq_enable = (irq_enable & 0xff00) | value;
+					// cancel any pending interrupts, but do not alter ISR
+					irq_pending &= irq_enable;
+					// mfp_check_timers_ier();
 					break;
 
-		case 0x0b:	irq_pending = (irq_pending & 0x00ff) | (value << 8);
-					break;
+  /* [mfp.txt]
+   * IPRA and IPRB are also writeable and a pending interrupt can be cleared
+   * without going through the acknowledge sequence by writing a zero to the
+   * appropriate bit. This allows any one bit to be cleared, without altering any
+   * other bits, simply by writing all ones except for the bit position to be
+   * cleared on IPRA or IPRB.
+   */
+ 
+		case 0x0b:	irq_pending &= (value << 8) | 0xff;
+  /* if no unmasked interrupt pending any more, there's no point in 
+   * keeping F_MFP active 
+   */
+				if ((irq_pending & irq_mask) == 0) {
+					TriggerMFP(false);
+				}
+				break;
 
 		case 0x0d:
 #if DEBUG_IPR
@@ -237,10 +294,22 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 						D(bug("Write: TimerC IRQ %s pending", (value & 20) ? "" : "NOT"));
 					}
 #endif /* DEBUG */
-					irq_pending = (irq_pending & 0xff00) | value;
-					break;
+					irq_pending &= 0xff00 | value;
+				if ((irq_pending & irq_mask) == 0) {
+					TriggerMFP(false);
+				}
 
-		case 0xf:	irq_inservice = (irq_inservice & 0x00ff) | (value << 8);
+					break;
+ 
+  /* [mfp.txt]
+   * Only a zero may be written into any bit of ISRA and ISRB; thus the 
+   * in-service may be cleared in software but cannot be set in software.
+   */
+		case 0xf:	irq_inservice &= (value << 8) | 0xff;
+					if (irq_pending & irq_mask) {
+						// unmasked interrupt pending, signal it to cpu
+						TriggerMFP(true);
+					}
 					break;
 
 		case 0x11:
@@ -249,10 +318,15 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 						D(bug("Write: TimerC IRQ %s in-service at %08x", (value & 20) ? "" : "NOT", showPC()));
 					}
 #endif /* DEBUG */
-					irq_inservice = (irq_inservice & 0xff00) | (irq_inservice & value);
+					irq_inservice &= 0xff00 | value;
+					if (irq_pending & irq_mask) {
+						// unmasked interrupt pending, signal it to cpu
+						TriggerMFP(true);
+					}
 					break;
 					
 		case 0x13:	irq_mask = (irq_mask & 0x00ff) | (value << 8);
+					TriggerMFP(irq_pending & irq_mask);
 					break;
 					
 		case 0x15:
@@ -262,11 +336,19 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 					}
 #endif /* DEBUG */
 					irq_mask = (irq_mask & 0xff00) | value;
+					TriggerMFP(irq_pending & irq_mask);
 					break;
 					
 		case 0x17:	vr = value;
-					automaticServiceEnd = (value & 0x08) ? true : false;
-					// D(bug("MFP autoServiceEnd: %s", automaticServiceEnd ? "YES" : "NO"));
+					if (vr & MFP_VR_SEI) {
+						// software end-of-interrupt mode
+					}
+					else {
+						// automatic end-of-interrupt mode : reset inservice bits?
+						irq_inservice = 0;
+						// try to pass a vector
+						TriggerMFP(irq_pending & irq_mask);
+					}
 					break;
 
 		case 0x19:	A.setControl(value);
@@ -308,9 +390,16 @@ void MFP::setGPIPbit(int mask, int value)
 {
 	static int map_gpip_to_ier[8] = {0, 1, 2, 3, 6, 7, 14, 15} ;	
 	mask &= 0xff;
+
 	int oldGPIP = GPIP_data;
+	input &= ~mask;
+	input |= (value & mask);
+	/* if output port, no interrupt */
+	mask &= ~data_direction;
+
 	GPIP_data &= ~mask;
 	GPIP_data |= (value & mask);
+	GPIP_data &= 0xFF;
 	D(bug("setGPIPbit($%x, $%x): old=$%x, new=$%x", mask, value, oldGPIP, GPIP_data));
 	int i, j;
 	for(j = 0, i = 1 ; j < 8 ; j++, i <<= 1) {
@@ -332,70 +421,139 @@ void MFP::setGPIPbit(int mask, int value)
 	}	
 }
 
-void MFP::IRQ(int irq, int count)
+/*
+        Ask for an interrupt. Depending on diverse factors, an
+        interrupt will eventually occur the next time 
+        MFP:doInterrupt() is called. 
+
+        0:  IO port 0 : Printer ?
+        1:  IO port 1 : RS232 Carrier detect
+        2:  IO port 2 : RS232 CTS
+        3:  IO port 3 : Blitter
+        4:  timer D
+        5:  timer C
+        6:  IO port 4 : ACIA (KBD/MIDI)
+        7:  IO port 5 : FDC/DMA/IDE
+        8:  Timer B
+        9:  Send error
+        10: Send buffer empty
+        11: Receive error
+        12: Receive buffer full
+        13: Timer A
+        14: IO port 6 : RS232 ring
+        15: IO port 7 : monochrome detect (DSP??)
+*/
+
+void MFP::IRQ(int int_level, int count)
 {
-	switch(irq) {
-		// printer BUSY interrupt
-		case 0:	break;
+	int i = 1 << int_level;
 
-		// TimerC 200 Hz interrupt
-		case 5: C.resetCounter();
-				if (irq_enable & 0x0020) {
-					flags |= F_TIMERC;
-					timerCounter += count;
-					TriggerMFP(true);
-				}
-				break;
+	if (int_level == 5) C.resetCounter(); // special hack for TimerC
 
-		// ACIA received data interrupt
-		case 6: flags |= F_ACIA;
-				TriggerMFP(true);
-				break;
+        /* interrupt enabled ? */
+        if( (irq_enable & i) == 0) {
+				// panicbug("interrupt %d not enabled", int_level);
+                return;
+		}
 
-		// Floppy/SCSI/IDE interrupt
-		case 7:	if (irq_enable & F_SDMA) {
-					panicbug("SDMA IRQ");
-					flags |= F_SDMA;
-					TriggerMFP(true);
-				}
-				break;
-	}
+	if (int_level == 5) timerCounter += count; // special hack for TimerC
+
+        /* same interrupt already pending */
+        if( (irq_pending & i) ) {
+				D(bug("same interrupt %d already pending", int_level));
+                return;
+		}
+        
+        
+        /* ok, we will request an interrupt to the mfp */
+#if 0
+        if(int_level) {
+          panicbug( "mfp ask interrupt %d\n", int_level) ;
+        }
+#endif
+        irq_pending |= i ;
+        /* interrupt masked ? */
+        if( ! (irq_mask & i) ) {
+                /* irq_pending set but no irq : stop here */
+               D(bug("irq_pending set but no irq"));
+          return ;
+        }
+                /* highest priority ? */
+        if(irq_inservice > i) {
+                /* no, do nothing (the mfp whill check when the current
+                  interrupt resumes, i.e. when irq_inservice is being cleared). */
+				panicbug("irq_inservice has higher priority");
+                return ;
+        }
+        /* say we want to interrupt the cpu */  
+        TriggerMFP(true);
+        /* when UAE CPU finds this flag set, according to the current IPL,
+          the function MFP::doInterrupt() will be called. This function 
+          will then decide what to do, and will treat the request that 
+          has the highest priority at that time. 
+        */
 }
 
-int MFP::doInterrupt() {
-	int irq = 0;
-	/* SDMA */
-	if ((flags & F_SDMA) && !(irq_inservice & (1<<7))) {
-		if (automaticServiceEnd) {
-			irq_inservice |= (1<<7);
-		}
-		TriggerMFP(false);
-		flags &= ~F_SDMA;
-		irq = 7;
-	}
-	/* ACIA */
-	else if ((flags & F_ACIA) && !(irq_inservice & (1<<6))) {
-		if (automaticServiceEnd) {
-			irq_inservice |= (1<<6);
-		}
-		TriggerMFP(false);
-		flags &= ~F_ACIA;
-		irq = 6;
-	}
-	/* TIMER C */
-	else if ((flags & F_TIMERC) && ! (irq_inservice & (1<<5))) {
-		if (automaticServiceEnd) {
-			irq_inservice |= (1<<5);
-		}
-		if (--timerCounter <= 0) {
-			TriggerMFP(false);
-			flags &= ~F_TIMERC;
-		}
-		irq = 5;
+// return : vector number, or zero if no interrupt
+int MFP::doInterrupt()
+{
+        int j, vector ;
+        unsigned i;
+        
+        /* what's happening here ? */
+#if 0
+        panicbug( "starting mfp_do_interrupt\n") ;
+        panicbug( "ier %04x, ipr %04x, isr %04x, imr %04x\n",
+               irq_enable, irq_pending, irq_inservice, irq_mask) ;
+#endif
+
+        /* any pending interrupts? */
+        for(j = 15, i = 0x8000 ; i ; j--, i>>=1) {
+                if(irq_pending & i & irq_mask)
+                        break ;
+        }
+        if(i == 0) {
+          /* this shouldn't happen :-) */
+                panicbug( "mfp_do_interrupt called "
+                        "with no pending interrupt\n") ;
+                TriggerMFP(false);
+                return 0 ;
+        }
+        if(irq_inservice >= i) {
+                /* Still busy. We shouldn't come here. */
+                panicbug( "mfp_do_interrupt called when "
+                        "another higher priority interrupt is running\n") ;
+                TriggerMFP(false);
+                return 0 ;
+        }
+        
+        /* ok, do the interrupt, i.e. "pass the vector". */
+        vector = (vr & MFP_VR_VECTOR) + j ;
+	
+	if (j != 5 || --timerCounter <= 0) {	// special hack for TimerC
+        irq_pending &= ~i ;
+        TriggerMFP(false);
 	}
 
-	if (irq)
-		irq |= (vr & 0xf0);
+        if(vr & MFP_VR_SEI) {
+                /* software mode of interrupt : irq_inservice will remain set until
+                   explicitely cleared by writing on it */
+                irq_inservice |= i ;
+        } else {
+                /* automatic mode of interrupt : irq_inservice automatically cleared
+                   when the interrupt starts (which is now). In this case,
+                   we must keep the flag raised if another unmasked 
+                   interrupt remains pending, since irq_inservice will not tell us 
+                   to re-raise the flag.
+                */
+                if((irq_pending & irq_mask)) {
+                  /* if other unmasked interrupt pending, keep the flag */
+                  TriggerMFP(true);
+                }
+        }
 
-	return irq;
+#if 0
+        panicbug( "MFP::doInterrupt : vector %d\n", vector) ;
+#endif
+        return vector ;
 }
