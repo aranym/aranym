@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.6.6
+%define ver	0.6.8
 %define rel	0
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -72,9 +72,12 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/atari/tools/pcpatch.prg.bz2
 /usr/share/aranym/atari/sound/zmagxsnd.prg.bz2
 /usr/share/aranym/font8.bmp
-/usr/share/aranym/emutos2.img
+/usr/share/aranym/etos512k.img
 
 %changelog
+* Sun Oct 20 2002 Petr Stehlik <pstehlik@sophics.cz>
+EmuTOS image file renamed back.
+
 * Sat Oct 12 2002 Petr Stehlik <pstehlik@sophics.cz>
 EmuTOS image file renamed. Updated for new release.
 

@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.6.6 released on 2002/10/12
+      version 0.6.8 released on 2002/10/20
 
 
  1) License
@@ -226,4 +226,4 @@ Example for bash: export SDL_MOUSEDEV_IMPS2=1; aranym
  For details go to http://aranym.atari.org/
 
 
-May the Power Without The Price be with you again!
+The "Power Without The Price" is back!

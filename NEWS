@@ -1,3 +1,45 @@
+2002/10/20 - version 0.6.8 released
+==========
+
+ Highlights:
+ - aranym on Mac OS X really works
+ - aranym can open read only disk drives or images (designed for aranym on CD)
+ - CD-ROM works like on real Atari (auto mount)
+ - GFA Basic works thanks to IKBD fix
+
+ Finally an active Mac OS X user cared to send us a few mails so Mac OS X
+ is now fully working and a binary package of aranym for Mac OS X will soon
+ be available. Thanks Wim!
+
+ The new option for read only disk drives has been extended so it's not
+ XHDI specific anymore but works generally also for emulated IDE interface.
+ Thus change your aranym config file - the XhdiWrite is replaced with
+ ReadOnly flag.
+ 
+ [IDE0|1]
+ # XhdiWrite = Yes|No 		; default is No, enable for EmuTOS
+ ReadOnly = Yes|No          ; default is No, change to Yes if you want
+                            ; to open read only disk image (e.g. from a CD)
+
+ Many various changes to JIT compiler (TuneAlignment, NOP filler and more).
+ Several JIT related statistics are enabled in this build.
+
+ CD-ROM support was greatly improved. CD Automount works like on real Atari,
+ you just insert a CD and access it. For unmounting a CD you can either use
+ various software utilities (try Ctrl+Shift+J in Thing!) or you can also
+ use the aranym GUI - you'll find there new section "Discs" and in that 
+ a CD-ROM button labelled either "Eject" or "Insert" (depends on the current
+ CD-ROM status).
+
+ Also an interesting fix in IKBD now allows GFA Basic (3.6TT) to run on
+ Aranym (even under EmuTOS :)
+
+ Some cosmetics changes - documentation updated mildly, aranym now prints
+ its version on startup (include in your debug reports), some clean ups
+ in the source code for better portability (non-c-headers support, generic
+ bool..).
+
+
 2002/10/12 - version 0.6.6 released
 ==========
 
