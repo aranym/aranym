@@ -1,3 +1,11 @@
+2003/01/12 - joy
+
+- natfeat/atari_example.c improved (using function pointers now)
+
+- include/version.h improved (automatically appends "CVS_date_"
+  to unoficial builds)
+
+
 2003/01/11 - joy
 
 - "__NF" cookie fixed - now the structure contains pointers to nfID and

@@ -21,11 +21,21 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-const int VERSION_MAJOR = 0;
-const int VERSION_MINOR = 6;
-const int VERSION_SUBMINOR = 9;
+#define VER_MAJOR	0
+#define VER_MINOR	6
+#define VER_MICRO	9
+
+#ifdef RELEASE
+#define VER_STATUS
+#else
+#define VER_STATUS	"+CVS " __DATE__
+#endif
+
+#define str(x)		_stringify (x)
+#define _stringify(x)	#x
 
 #define NAME_STRING "ARAnyM"
-#define VERSION_STRING NAME_STRING" 0.6.9-beta"
+
+#define VERSION_STRING	NAME_STRING " " str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VER_STATUS 
 
 #endif
