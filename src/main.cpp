@@ -33,6 +33,7 @@
 #include "host.h"			// for the HostScreen
 #include "araobjs.h"		// for the ExtFs
 #include "aradata.h"		// for getAtariMouseXY
+#include "md5.h"
 
 #define DEBUG 1
 #include "debug.h"
@@ -444,6 +445,7 @@ bool InitROM(void) {
 		ErrorAlert("ROM file not found\n");
 		return false;
 	}
+
 	int RealROMSize = 512 * 1024;
 	if (fread(ROMBaseHost, 1, RealROMSize, f) != (size_t)RealROMSize) {
 		ErrorAlert("ROM file reading error\n");
@@ -452,13 +454,25 @@ bool InitROM(void) {
 	}
 	fclose(f);
 
-	if (ReadAtariInt16(ROMBase + 2) != 0x0404) {
-		ErrorAlert("Wrong TOS version\n");
-		return false;
+	// check if this is the correct 68040 aware TOS ROM version
+	D(bug("Checking ROM version.."));
+	unsigned char TOS68040[16] = {0xd6,0x4b,0x00,0x16,0x01,0xf6,0xc6,0xd7,0x47,0x51,0xde,0x63,0xbb,0x35,0xed,0xe3};
+	unsigned char TOS404[16] = {0xe5,0xea,0x0f,0x21,0x6f,0xb4,0x46,0xf1,0xc4,0xa4,0xf4,0x76,0xbc,0x5f,0x03,0xd4};
+	MD5 md5;
+	if (! md5.compareSum(ROMBaseHost, RealROMSize, TOS68040)) {
+		// this is not our ROM
+		// check if it's at least the original TOS 4.04
+		if (md5.compareSum(ROMBaseHost, RealROMSize, TOS404)) {
+			// patch it for 68040 compatibility
+			D(bug("Patching ROM for 68040 compatibility.."));
+			// TODO
+			return false;
+		}
+		else {
+			ErrorAlert("Wrong TOS version\n");
+			return false;
+		}
 	}
-
-	// patch it for 68040 compatibility
-	// TODO
 
 	// patch cookies
 	ROMBaseHost[0x00416] = bx_options.cookies._mch >> 24;
@@ -595,6 +609,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.25  2001/10/16 19:38:44  milan
+ * Integration of BasiliskII' cxmon, FastRAM in aranymrc etc.
+ *
  * Revision 1.24  2001/10/12 07:56:14  standa
  * Pacal to C conversion ;( sorry for that.
  *
@@ -603,6 +620,9 @@ void ExitAll(void)
  *
  * Revision 1.22  2001/10/08 21:46:05  standa
  * The $Header$ and $Log$
+ * The $Header$ and Revision 1.25  2001/10/16 19:38:44  milan
+ * The $Header$ and Integration of BasiliskII' cxmon, FastRAM in aranymrc etc.
+ * The $Header$ and
  * The $Header$ and Revision 1.24  2001/10/12 07:56:14  standa
  * The $Header$ and Pacal to C conversion ;( sorry for that.
  * The $Header$ and
