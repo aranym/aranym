@@ -179,7 +179,7 @@ AC_DEFUN([AC_CXX_CHEADERS],
   AC_LANG_RESTORE
   ])
   if test "$ac_cv_cxx_cheaders" = yes; then
-    AC_CHECK_HEADER(cstdlib, [AC_DEFINE(HAVE_NEW_HEADERS, 1, [Define if using new version of ANSI C++ headers.])])
+    AC_DEFINE(HAVE_NEW_HEADERS, 1, [Define if using new version of ANSI C++ headers.])
   fi
 ])
 AC_CXX_CHEADERS

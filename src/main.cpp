@@ -40,10 +40,8 @@
 #include "debug.h"
 
 #ifdef HAVE_NEW_HEADERS
-# include <csignal>
 # include <cstdlib>
 #else
-# include <signal.h>
 # include <stdlib.h>
 #endif
 
@@ -79,9 +77,6 @@ void setactvdebug(int)
 
 #ifdef DEBUGGER
 	activate_debugger();
-# ifdef NEWDEBUG
-	signal(SIGINT, setactvdebug);
-# endif
 #endif
 }
 
@@ -531,6 +526,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.84  2002/10/15 21:26:52  milan
+ * non-cheaders support (for MipsPro C/C++ compiler)
+ *
  * Revision 1.83  2002/10/07 23:00:42  joy
  * CPU back in the main thread
  *

@@ -40,9 +40,15 @@
 # include "mon.h"
 #endif
 
-#include <cerrno>
-#include <csignal>
-#include <cstdlib>
+#ifdef HAVE_NEW_HEADERS
+# include <cerrno>
+# include <csignal>
+# include <cstdlib>
+#else
+# include <errno.h>
+# include <signal.h>
+# include <stdlib.h>
+#endif
 
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
@@ -102,6 +108,7 @@ int main(int argc, char **argv)
 
 #ifdef NEWDEBUG
 	if (bx_options.startup.debugger) ndebug::init();
+	signal(SIGINT, setactvdebug);
 #endif
 
 #if REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING
@@ -306,6 +313,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.77  2002/10/15 22:42:17  milan
+ * cleanups
+ *
  * Revision 1.76  2002/10/13 13:33:49  milan
  * byte checks for some JITed instruction (for debugging)
  * Mac OS X small patch for configure.ac
