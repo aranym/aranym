@@ -43,14 +43,6 @@ SDL_Color darkgreyc[]  = {{128, 128, 128, 0}};
 SDL_Color greyc[]      = {{192, 192, 192, 0}};
 SDL_Color whitec[]     = {{255, 255, 255, 0}};
 
-typedef struct
-{
-  int object;
-  int position;
-  int blink_counter;
-  bool blink_state;
-} cursor_state;
-
 enum
 {
   SG_FIRST_EDITFIELD,
@@ -1358,6 +1350,53 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
   return return_rect;
 }
 
+SDL_Event getEvent(SGOBJ *dlg, cursor_state *cursor)
+{
+  while(1) {
+    SDL_Event evnt;
+    if (SDL_PeepEvents(&evnt, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT)))
+    {
+      SDL_Event e;
+      switch(evnt.user.code)
+      {
+      	case SDL_KEYDOWN:
+	case SDL_KEYUP:
+	  e.type = evnt.user.code;
+          e.key.keysym.sym = (SDLKey)(int)evnt.user.data1;
+          e.key.keysym.mod = (SDLMod)(int)evnt.user.data2;
+	  return e;
+
+        case SDL_MOUSEBUTTONDOWN:
+	case SDL_MOUSEBUTTONUP:
+	  e.type = evnt.user.code;
+          e.button.x = (uintptr)evnt.user.data1;
+          e.button.y = (uintptr)evnt.user.data2;
+	  return e;
+
+        case SDL_USEREVENT:
+          // a signal that resolution has changed
+	  if (dlg != NULL)
+              SDLGui_DrawDialog(dlg);	// re-draw dialog
+          break;
+      }
+    }
+    else
+    {
+      // No special event occured.
+      // Wait a little to avoid eating CPU.
+      SDL_Delay(50);
+      if (cursor != NULL) {
+          cursor->blink_counter++;
+          if (cursor->blink_counter >= 10) {
+            cursor->blink_counter = 0;
+            cursor->blink_state = !cursor->blink_state;
+	    if (dlg != NULL)
+              SDLGui_DrawCursor(dlg, cursor);
+          }
+	}
+    }
+  }
+}
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -1370,12 +1409,10 @@ int SDLGui_DoDialog(SGOBJ *dlg)
   int return_obj = -1;
   int obj;
   int x, y;
-  int keysym, mod;
+  // int keysym, mod;
   cursor_state cursor;
 
-  /* Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here */
-
-  // SDL_PumpEvents(); - don't call it here, it's not thread safe probably
+  // Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here
   bool stillPressed = (SDL_GetMouseState(&x, &y) & SDL_BUTTON(1));
   obj = SDLGui_FindObj(dlg, x, y);
   if (stillPressed && (obj >= 0) && (dlg[obj].flags & SG_TOUCHEXIT))
@@ -1388,10 +1425,7 @@ int SDLGui_DoDialog(SGOBJ *dlg)
   }
 
   cursor.object = SDLGui_FindEditField(dlg, -1, SG_FIRST_EDITFIELD);
-  if (cursor.object != -1)
-    cursor.position = strlen(dlg[cursor.object].txt);
-  else
-    cursor.position = -1;
+  cursor.position = (cursor.object != -1) ? strlen(dlg[cursor.object].txt) : 0;
   cursor.blink_counter = 0;
   cursor.blink_state = true;
 
@@ -1400,43 +1434,17 @@ int SDLGui_DoDialog(SGOBJ *dlg)
   /* The main loop */
   while (return_obj < 0)
   {
-    SDL_Event evnt;
-    // SDL_PumpEvents() - not necessary, the main check_event thread calls it
-    if (SDL_PeepEvents(&evnt, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT)))
-    {
-      switch(evnt.user.code)
+    SDL_Event evnt = getEvent(dlg, &cursor);
+    switch(evnt.type)
       {
       	case SDL_KEYDOWN:
-          keysym = (uintptr)evnt.user.data1;
-          mod = (uintptr)evnt.user.data2;
-          return_obj = SDLGui_KeyPress(dlg, keysym, mod, &cursor);
+          return_obj = SDLGui_KeyPress(dlg, evnt.key.keysym.sym, evnt.key.keysym.mod, &cursor);
       	  break;
 
-        case SDL_USEREVENT:
-          // a signal that resolution has changed
-          SDLGui_DrawDialog(dlg);	// re-draw dialog
-          break;
-
         case SDL_MOUSEBUTTONDOWN:
-          x = (uintptr)evnt.user.data1;
-          y = (uintptr)evnt.user.data2;
-          return_obj = SDLGui_MouseClick(dlg, x, y, &cursor);
+          return_obj = SDLGui_MouseClick(dlg, evnt.button.x, evnt.button.y, &cursor);
           break;
       }
-    }
-    else
-    {
-      // No special event occured.
-      // Wait a little to avoid eating CPU.
-      SDL_Delay(50);
-      cursor.blink_counter++;
-      if (cursor.blink_counter >= 10)
-      {
-        cursor.blink_counter = 0;
-        cursor.blink_state = cursor.blink_state ? false : true;
-        SDLGui_DrawCursor(dlg, &cursor);
-      }
-    }
   }
 
   if (dlg[return_obj].type == SGBUTTON)
