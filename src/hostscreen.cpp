@@ -188,8 +188,8 @@ void HostScreen::restoreBackground()
 void HostScreen::blendBackgrounds()
 {
 	if (backgroundSurf != NULL) {
-		int dialogWidth = 320;	// FIXME should be fetched from the dialog.c
-		int dialogHeight = 200;	// should be the current dialog dimensions
+		int dialogWidth = 326;	// FIXME should be fetched from the dialog.c
+		int dialogHeight = 206;	// should be the current dialog dimensions
 		int halfRemWidth = (getWidth() - dialogWidth)/2;
 		int halfRemHeight = (getHeight() - dialogHeight)/2;
 		int xx = halfRemWidth + dialogWidth;
@@ -1267,6 +1267,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.42  2004/01/05 10:05:20  standa
+ * Palette handling reworked. Old non-NF dispatch removed.
+ *
  * Revision 1.41  2003/12/28 19:34:04  joy
  * IPC fix - SDL user events
  *

@@ -134,16 +134,21 @@ void SDLGui_FreeFont()
   }
 }
 
+
 /*-----------------------------------------------------------------------*/
 /*
-  Center a dialog so that it appears in the middle of the screen.
-  Note: We only store the coordinates in the root box of the dialog,
-  all other objects in the dialog are positioned relatively to this one.
+  Compute real coordinates for a given object.
+  Note: centers dialog on screen.
 */
-static void SDLGui_CenterDlg(SGOBJ *dlg)
+static void SDLGui_ObjCoord(SGOBJ *dlg, int objnum, SDL_Rect *rect)
 {
-  dlg[0].x = (sdlscrn->w/fontwidth-dlg[0].w)/2;
-  dlg[0].y = (sdlscrn->h/fontheight-dlg[0].h)/2;
+  rect->x = dlg[objnum].x*fontwidth;
+  rect->y = dlg[objnum].y*fontheight;
+  rect->w = dlg[objnum].w*fontwidth;
+  rect->h = dlg[objnum].h*fontheight;
+
+  rect->x += (sdlscrn->w-(dlg[0].w*fontwidth))/2;
+  rect->y += (sdlscrn->h-(dlg[0].h*fontheight))/2;
 }
 
 
@@ -177,10 +182,10 @@ void SDLGui_Text(int x, int y, const char *txt)
 */
 void SDLGui_DrawText(SGOBJ *tdlg, int objnum)
 {
-  int x, y;
-  x = (tdlg[0].x+tdlg[objnum].x)*fontwidth;
-  y = (tdlg[0].y+tdlg[objnum].y)*fontheight;
-  SDLGui_Text(x, y, tdlg[objnum].txt);
+  SDL_Rect coord;
+  
+  SDLGui_ObjCoord(tdlg, objnum, &coord);
+  SDLGui_Text(coord.x, coord.y, tdlg[objnum].txt);
 }
 
 
@@ -190,16 +195,68 @@ void SDLGui_DrawText(SGOBJ *tdlg, int objnum)
 */
 void SDLGui_DrawEditField(SGOBJ *edlg, int objnum)
 {
-  int x, y;
+  SDL_Rect coord;
+
+  SDLGui_ObjCoord(edlg, objnum, &coord);
+
+  SDLGui_Text(coord.x, coord.y, edlg[objnum].txt);
+
+  // Draw a line below.
+  coord.y = coord.y + coord.h;
+  coord.h = 1;
+  SDL_FillRect(sdlscrn, &coord, SDL_MapRGB(sdlscrn->format,160,160,160));
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Draw a 3D box.
+*/
+void SDLGui_Draw3DBox(SDL_Rect *coord, Uint32 upleftc, Uint32 downrightc)
+{
   SDL_Rect rect;
+  Uint32 grey = SDL_MapRGB(sdlscrn->format,192,192,192);
+  Uint32 black = SDL_MapRGB(sdlscrn->format,0,0,0);
 
-  x = (edlg[0].x+edlg[objnum].x)*fontwidth;
-  y = (edlg[0].y+edlg[objnum].y)*fontheight;
-  SDLGui_Text(x, y, edlg[objnum].txt);
+  SCRLOCK;
 
-  rect.x = x;    rect.y = y + edlg[objnum].h * fontwidth;
-  rect.w = edlg[objnum].w * fontwidth;    rect.h = 1;
-  SDL_FillRect(sdlscrn, &rect, SDL_MapRGB(sdlscrn->format,160,160,160));
+  rect.x = coord->x-3;          rect.y = coord->y-3;
+  rect.w = coord->w+6;          rect.h = 1;
+  SDL_FillRect(sdlscrn, &rect, black);
+
+  rect.x = coord->x-3;          rect.y = coord->y-3;
+  rect.w = 1;                   rect.h = coord->h+6;
+  SDL_FillRect(sdlscrn, &rect, black);
+
+  rect.x = coord->x+coord->w+2; rect.y = coord->y-3;
+  rect.w = 1;                   rect.h = coord->h+6;
+  SDL_FillRect(sdlscrn, &rect, black);
+
+  rect.x = coord->x-3;          rect.y = coord->y+coord->h+2;
+  rect.w = coord->w+6;          rect.h = 1;
+  SDL_FillRect(sdlscrn, &rect, black);
+
+  rect.x = coord->x-2;          rect.y = coord->y-2;
+  rect.w = coord->w+4;          rect.h = 1;
+  SDL_FillRect(sdlscrn, &rect, upleftc);
+
+  rect.x = coord->x-2;          rect.y = coord->y-2;
+  rect.w = 1;                   rect.h = coord->h+4;
+  SDL_FillRect(sdlscrn, &rect, upleftc);
+
+  rect.x = coord->x-1;          rect.y = coord->y+coord->h+1;
+  rect.w = coord->w+3;          rect.h = 1;
+  SDL_FillRect(sdlscrn, &rect, downrightc);
+
+  rect.x = coord->x+coord->w+1; rect.y = coord->y-1;
+  rect.w = 1;                   rect.h = coord->h+3;
+  SDL_FillRect(sdlscrn, &rect, downrightc);
+
+  rect.x = coord->x-1;          rect.y = coord->y-1;
+  rect.w = coord->w+2;          rect.h = coord->h+2;
+  SDL_FillRect(sdlscrn, &rect, grey);
+
+  SCRUNLOCK;
 }
 
 
@@ -209,20 +266,8 @@ void SDLGui_DrawEditField(SGOBJ *edlg, int objnum)
 */
 void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
 {
-  SDL_Rect rect;
-  int x, y, w, h;
-  Uint32 grey = SDL_MapRGB(sdlscrn->format,192,192,192);
+  SDL_Rect coord;
   Uint32 upleftc, downrightc;
-
-  x = bdlg[objnum].x*fontwidth;
-  y = bdlg[objnum].y*fontheight;
-  if(objnum>0)                    /* Since the root object is a box, too, */
-  {                               /* we have to look for it now here and only */
-    x += bdlg[0].x*fontwidth;     /* add its absolute coordinates if we need to */
-    y += bdlg[0].y*fontheight;
-  }
-  w = bdlg[objnum].w*fontwidth;
-  h = bdlg[objnum].h*fontheight;
 
   if( bdlg[objnum].state&SG_SELECTED )
   {
@@ -235,29 +280,9 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
     downrightc = SDL_MapRGB(sdlscrn->format,128,128,128);
   }
 
-  SCRLOCK;
+  SDLGui_ObjCoord(bdlg, objnum, &coord);
 
-  rect.x = x;  rect.y = y;
-  rect.w = w;  rect.h = h;
-  SDL_FillRect(sdlscrn, &rect, grey);
-
-  rect.x = x;  rect.y = y-1;
-  rect.w = w;  rect.h = 1;
-  SDL_FillRect(sdlscrn, &rect, upleftc);
-
-  rect.x = x-1;  rect.y = y;
-  rect.w = 1;  rect.h = h;
-  SDL_FillRect(sdlscrn, &rect, upleftc);
-
-  rect.x = x;  rect.y = y+h;
-  rect.w = w;  rect.h = 1;
-  SDL_FillRect(sdlscrn, &rect, downrightc);
-
-  rect.x = x+w;  rect.y = y;
-  rect.w = 1;  rect.h = h;
-  SDL_FillRect(sdlscrn, &rect, downrightc);
-
-  SCRUNLOCK;
+  SDLGui_Draw3DBox(&coord, upleftc, downrightc);
 }
 
 
@@ -267,19 +292,51 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
 */
 void SDLGui_DrawButton(SGOBJ *bdlg, int objnum)
 {
+  SDL_Rect coord;
   int x,y;
 
-  SDLGui_DrawBox(bdlg, objnum);
+  SDLGui_ObjCoord(bdlg, objnum, &coord);
 
-  x = (bdlg[0].x+bdlg[objnum].x+(bdlg[objnum].w-strlen(bdlg[objnum].txt))/2)*fontwidth;
-  y = (bdlg[0].y+bdlg[objnum].y+(bdlg[objnum].h-1)/2)*fontheight;
+  x = coord.x+((coord.w-(strlen(bdlg[objnum].txt)*fontwidth))/2);
+  y = coord.y+((coord.h-fontheight)/2);
 
   if( bdlg[objnum].state&SG_SELECTED )
   {
-    x+=1;
-    y+=1;
+    x += 1;
+    y += 1;
   }
+
+  SDLGui_DrawBox(bdlg, objnum);
   SDLGui_Text(x, y, bdlg[objnum].txt);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Draw a dialog radio button object state.
+*/
+void SDLGui_DrawRadioButtonState(SGOBJ *rdlg, int objnum)
+{
+  Uint32 grey = SDL_MapRGB(sdlscrn->format,192,192,192);
+  SDL_Rect coord;
+  char str[2];
+
+  SDLGui_ObjCoord(rdlg, objnum, &coord);
+
+  if( rdlg[objnum].state&SG_SELECTED )
+  {
+    str[0]=SGRADIOBUTTON_SELECTED;
+  }
+  else
+  {
+    str[0]=SGRADIOBUTTON_NORMAL;
+  }
+  str[1]='\0';
+
+  coord.w = fontwidth;
+  coord.h = fontheight;
+  SDL_FillRect(sdlscrn, &coord, grey);
+  SDLGui_Text(coord.x, coord.y, str);
 }
 
 
@@ -289,20 +346,47 @@ void SDLGui_DrawButton(SGOBJ *bdlg, int objnum)
 */
 void SDLGui_DrawRadioButton(SGOBJ *rdlg, int objnum)
 {
-  char str[80];
-  int x, y;
+  SDL_Rect coord;
 
-  x = (rdlg[0].x+rdlg[objnum].x)*fontwidth;
-  y = (rdlg[0].y+rdlg[objnum].y)*fontheight;
+  SDLGui_ObjCoord(rdlg, objnum, &coord);
 
-  if( rdlg[objnum].state&SG_SELECTED )
-    str[0]=SGRADIOBUTTON_SELECTED;
-   else
-    str[0]=SGRADIOBUTTON_NORMAL;
-  str[1]=' ';
-  strcpy(&str[2], rdlg[objnum].txt);
+  coord.x += (fontwidth*2);
+  SDLGui_Text(coord.x, coord.y, rdlg[objnum].txt);
 
-  SDLGui_Text(x, y, str);
+  SDLGui_DrawRadioButtonState(rdlg, objnum);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Draw a dialog check box object state.
+*/
+void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
+{
+  Uint32 grey = SDL_MapRGB(sdlscrn->format,192,192,192);
+  SDL_Rect coord;
+  char str[2];
+
+  SDLGui_ObjCoord(cdlg, objnum, &coord);
+
+  if (cdlg[objnum].state&SG_SELECTED)
+  {
+    str[0]=SGCHECKBOX_SELECTED;
+  }
+  else
+  {
+    str[0]=SGCHECKBOX_NORMAL;
+  }
+  str[1]='\0';
+
+  coord.w = fontwidth;
+  coord.h = fontheight;
+
+  if (cdlg[objnum].flags&SG_BUTTON_RIGHT)
+    coord.x += ((strlen(cdlg[objnum].txt) + 1) * fontwidth);
+
+  SDL_FillRect(sdlscrn, &coord, grey);
+  SDLGui_Text(coord.x, coord.y, str);
 }
 
 
@@ -312,27 +396,15 @@ void SDLGui_DrawRadioButton(SGOBJ *rdlg, int objnum)
 */
 void SDLGui_DrawCheckBox(SGOBJ *cdlg, int objnum)
 {
-  char *txtptr = cdlg[objnum].txt;
-  int txtlen = strlen(txtptr);
-  bool selected = cdlg[objnum].state&SG_SELECTED;
-  char str[txtlen+2+1];
+  SDL_Rect coord;
 
-  if (cdlg[objnum].flags&SG_BUTTON_RIGHT) {
-    strcpy(str, txtptr);
-    str[txtlen] = ' ';
-    str[txtlen+1] = selected ? SGCHECKBOX_SELECTED : SGCHECKBOX_NORMAL;
-    str[txtlen+2] = '\0';
-  }
-  else {
-    str[0] = selected ? SGCHECKBOX_SELECTED : SGCHECKBOX_NORMAL;
-    str[1] = ' ';
-    strcpy(&str[2], txtptr);
-  }
+  SDLGui_ObjCoord(cdlg, objnum, &coord);
 
-  int x = (cdlg[0].x+cdlg[objnum].x)*fontwidth;
-  int y = (cdlg[0].y+cdlg[objnum].y)*fontheight;
+  if (!(cdlg[objnum].flags&SG_BUTTON_RIGHT))
+    coord.x += (fontwidth * 2);
 
-  SDLGui_Text(x, y, str);
+  SDLGui_Text(coord.x, coord.y, cdlg[objnum].txt);
+  SDLGui_DrawCheckBoxState(cdlg, objnum);
 }
 
 
@@ -342,18 +414,15 @@ void SDLGui_DrawCheckBox(SGOBJ *cdlg, int objnum)
 */
 void SDLGui_DrawPopupButton(SGOBJ *pdlg, int objnum)
 {
-  int x, y, w, h;
+  SDL_Rect coord;
   const char *downstr = "\x02";
 
   SDLGui_DrawBox(pdlg, objnum);
 
-  x = (pdlg[0].x+pdlg[objnum].x)*fontwidth;
-  y = (pdlg[0].y+pdlg[objnum].y)*fontheight;
-  w = pdlg[objnum].w*fontwidth;
-  h = pdlg[objnum].h*fontheight;
+  SDLGui_ObjCoord(pdlg, objnum, &coord);
 
-  SDLGui_Text(x, y, pdlg[objnum].txt);
-  SDLGui_Text(x+w-fontwidth, y, downstr);
+  SDLGui_Text(coord.x, coord.y, pdlg[objnum].txt);
+  SDLGui_Text(coord.x+coord.w-fontwidth, coord.y, downstr);
 }
 
 
@@ -376,10 +445,9 @@ void SDLGui_EditField(SGOBJ *dlg, int objnum)
   grey = SDL_MapRGB(sdlscrn->format,192,192,192);
   cursorCol = SDL_MapRGB(sdlscrn->format,128,128,128);
 
-  rect.x = (dlg[0].x + dlg[objnum].x) * fontwidth;
-  rect.y = (dlg[0].y + dlg[objnum].y) * fontheight;
-  rect.w = (dlg[objnum].w + 1) * fontwidth - 1;
-  rect.h = dlg[objnum].h * fontheight;
+  SDLGui_ObjCoord(dlg, objnum, &rect);
+  // Add some place for cursor
+  rect.w += fontwidth;
 
   txt = dlg[objnum].txt;
   cursorPos = strlen(txt);
@@ -477,7 +545,6 @@ void SDLGui_EditField(SGOBJ *dlg, int objnum)
 */
 void SDLGui_DrawDialog(SGOBJ *dlg)
 {
-  SDLGui_CenterDlg(dlg);	// center dialog (screen size might have changed)
   for(int i=0; dlg[i].type!=-1; i++ )
   {
     if (dlg[i].state & SG_HIDDEN) continue;
@@ -515,26 +582,63 @@ void SDLGui_DrawDialog(SGOBJ *dlg)
 
 /*-----------------------------------------------------------------------*/
 /*
+  Refresh display to reflect an object change.
+*/
+void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
+{
+  SDL_Rect coord;
+
+  SDLGui_ObjCoord(dlg, objnum, &coord);
+
+  if ((dlg[objnum].type == SGBUTTON) ||
+      (dlg[objnum].type == SGBOX))
+  {
+    // Take border into account
+    coord.x -= 3;
+    coord.y -= 3;
+    coord.w += 6;
+    coord.h += 6;
+  }
+
+  SCRLOCK;
+  SDL_UpdateRects(sdlscrn, 1, &coord);
+  SCRUNLOCK;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
   Search an object at a certain position.
 */
 int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy)
 {
+  SDL_Rect coord;
+
   int len, i;
   int ob = -1;
-  int xpos, ypos;
   
   len = 0;
   while( dlg[len].type!=-1)   len++;
 
-  xpos = fx/fontwidth;
-  ypos = fy/fontheight;
   /* Now search for the object: */
   for(i=len; i>0; i--)
   {
-    if(xpos>=dlg[0].x+dlg[i].x &&
-       ypos>=dlg[0].y+dlg[i].y &&
-       xpos<(int)(dlg[0].x+dlg[i].x+dlg[i].w) &&
-       ypos<(int)(dlg[0].y+dlg[i].y+dlg[i].h))
+    SDLGui_ObjCoord(dlg, i, &coord);
+
+    if ((dlg[i].type == SGBUTTON) ||
+        (dlg[i].type == SGBOX))
+    {
+      // Take border into account
+      coord.x -= 3;
+      coord.y -= 3;
+      coord.w += 6;
+      coord.h += 6;
+    }
+
+    if(fx >= coord.x &&
+       fy >= coord.y &&
+       fx < (coord.x + coord.w) &&
+       fy < (coord.y + coord.h))
     {
       if (dlg[i].state & SG_HIDDEN) continue;
       ob = i;
@@ -559,10 +663,6 @@ int SDLGui_DoDialog(SGOBJ *dlg)
   int i;
   int x, y;
   int obj;
-  SDL_Rect rct;
-  Uint32 grey;
-
-  grey = SDL_MapRGB(sdlscrn->format,192,192,192);
 
   SDLGui_DrawDialog(dlg);
 
@@ -594,8 +694,8 @@ int SDLGui_DoDialog(SGOBJ *dlg)
       	case SDL_KEYDOWN:
       	  break;
 
-        case SDL_USEREVENT:			// a signal that resolution has changed
-          SDLGui_DrawDialog(dlg);	// re-draw dialog (re-center it)
+        case SDL_USEREVENT:		// a signal that resolution has changed
+          SDLGui_DrawDialog(dlg);	// re-draw dialog
           break;
 
         case SDL_MOUSEBUTTONDOWN:
@@ -606,10 +706,7 @@ int SDLGui_DoDialog(SGOBJ *dlg)
             {
               dlg[obj].state |= SG_SELECTED;
               SDLGui_DrawButton(dlg, obj);
-              SCRLOCK;
-              SDL_UpdateRect(sdlscrn, (dlg[0].x+dlg[obj].x)*fontwidth-2, (dlg[0].y+dlg[obj].y)*fontheight-2,
-                             dlg[obj].w*fontwidth+4, dlg[obj].h*fontheight+4);
-              SCRUNLOCK;
+              SDLGui_RefreshObj(dlg, obj);
               oldbutton=obj;
             }
             if( dlg[obj].flags&SG_TOUCHEXIT )
@@ -621,91 +718,75 @@ int SDLGui_DoDialog(SGOBJ *dlg)
           break;
 
         case SDL_MOUSEBUTTONUP:
+          if (dlg[oldbutton].state & SG_SELECTED)
+            // User clicked on a SGBUTTON and it is still selected when
+            // he release mouse button.
+            retbutton=oldbutton;
+          else
+          {
           obj = SDLGui_FindObj(dlg, x, y);
           if(obj>0)
           {
             switch(dlg[obj].type)
             {
               case SGBUTTON:
-                if(oldbutton==obj)
-                  retbutton=obj;
                 break;
               case SGEDITFIELD:
                 SDLGui_EditField(dlg, obj);
                 break;
               case SGRADIOBUT:
-                for(i=obj-1; i>0 && dlg[i].type==SGRADIOBUT; i--)
+                // Find first radio button in this group
+                i = obj-1;
+                while (dlg[i].type==SGRADIOBUT)
+                  i--;
+                i+=1;
+                // Update state
+                while (dlg[i].type==SGRADIOBUT)
                 {
-                  dlg[i].state &= ~SG_SELECTED;  /* Deselect all radio buttons in this group */
-                  rct.x = (dlg[0].x+dlg[i].x)*fontwidth;
-                  rct.y = (dlg[0].y+dlg[i].y)*fontheight;
-                  rct.w = fontwidth;  rct.h = fontheight;
-                  SCRLOCK;
-                  SDL_FillRect(sdlscrn, &rct, grey); /* Clear old */
-                  SCRUNLOCK;
-                  SDLGui_DrawRadioButton(dlg, i);
-                  SCRLOCK;
-                  SDL_UpdateRects(sdlscrn, 1, &rct);
-                  SCRUNLOCK;
+                  bool updated = false;
+                  if ((i == obj) && (~dlg[i].state & SG_SELECTED))
+                  {
+                    // Select this radio button
+                    dlg[obj].state |= SG_SELECTED;
+                    updated = true;
+                  }
+                  else if ((i != obj) && (dlg[i].state & SG_SELECTED))
+                  {
+                    // Deselect this radio button
+                    dlg[obj].state &= ~SG_SELECTED;
+                    updated = true;
+                  }
+
+                  if (updated)
+                  {
+                    SDLGui_DrawRadioButtonState(dlg, obj);
+                    SDLGui_RefreshObj(dlg, obj);
+
+                    updated = false;
+                  }
+
+                  i++;
                 }
-                for(i=obj+1; dlg[i].type==SGRADIOBUT; i++)
-                {
-                  dlg[i].state &= ~SG_SELECTED;  /* Deselect all radio buttons in this group */
-                  rct.x = (dlg[0].x+dlg[i].x)*fontwidth;
-                  rct.y = (dlg[0].y+dlg[i].y)*fontheight;
-                  rct.w = fontwidth;  rct.h = fontheight;
-                  SCRLOCK;
-                  SDL_FillRect(sdlscrn, &rct, grey); /* Clear old */
-                  SCRUNLOCK;
-                  SDLGui_DrawRadioButton(dlg, i);
-                  SCRLOCK;
-                  SDL_UpdateRects(sdlscrn, 1, &rct);
-                  SCRUNLOCK;
-                }
-                dlg[obj].state |= SG_SELECTED;  /* Select this radio button */
-                rct.x = (dlg[0].x+dlg[obj].x)*fontwidth;
-                rct.y = (dlg[0].y+dlg[obj].y)*fontheight;
-                rct.w = fontwidth;  rct.h = fontheight;
-                SCRLOCK;
-                SDL_FillRect(sdlscrn, &rct, grey); /* Clear old */
-                SCRUNLOCK;
-                SDLGui_DrawRadioButton(dlg, obj);
-                SCRLOCK;
-                SDL_UpdateRects(sdlscrn, 1, &rct);
-                SCRUNLOCK;
                 break;
               case SGCHECKBOX:
                 dlg[obj].state ^= SG_SELECTED;
-                rct.x = (dlg[0].x+dlg[obj].x)*fontwidth;
-                rct.y = (dlg[0].y+dlg[obj].y)*fontheight;
-                rct.w = fontwidth;  rct.h = fontheight;
-                SCRLOCK;
-                SDL_FillRect(sdlscrn, &rct, grey); /* Clear old */
-                SCRUNLOCK;
-                SDLGui_DrawCheckBox(dlg, obj);
-                SCRLOCK;
-                SDL_UpdateRects(sdlscrn, 1, &rct);
-                SCRUNLOCK;
+                SDLGui_DrawCheckBoxState(dlg, obj);
+                SDLGui_RefreshObj(dlg, obj);
                 break;
               case SGPOPUP:
                 dlg[obj].state |= SG_SELECTED;
                 SDLGui_DrawPopupButton(dlg, obj);
-                SCRLOCK;
-                SDL_UpdateRect(sdlscrn, (dlg[0].x+dlg[obj].x)*fontwidth-2, (dlg[0].y+dlg[obj].y)*fontheight-2,
-                           dlg[obj].w*fontwidth+4, dlg[obj].h*fontheight+4);
-                SCRUNLOCK;
+                SDLGui_RefreshObj(dlg, obj);
                 retbutton=obj;
                 break;
             }
+          }
           }
           if(oldbutton>0)
           {
             dlg[oldbutton].state &= ~SG_SELECTED;
             SDLGui_DrawButton(dlg, oldbutton);
-            SCRLOCK;
-            SDL_UpdateRect(sdlscrn, (dlg[0].x+dlg[oldbutton].x)*fontwidth-2, (dlg[0].y+dlg[oldbutton].y)*fontheight-2,
-                           dlg[oldbutton].w*fontwidth+4, dlg[oldbutton].h*fontheight+4);
-            SCRUNLOCK;
+            SDLGui_RefreshObj(dlg, oldbutton);
             oldbutton = 0;
           }
           if( dlg[obj].flags&SG_EXIT )
@@ -713,6 +794,34 @@ int SDLGui_DoDialog(SGOBJ *dlg)
             retbutton = obj;
           }
           break;
+      }
+    }
+    else
+    {
+      // No special event occured
+      if(oldbutton>0)
+      {
+        // User clicked on a SGBUTTON but did not release mouse button yet.
+        // Let's update button state according to mouse position
+        SDL_GetMouseState(&x, &y) & SDL_BUTTON(1);
+        obj = SDLGui_FindObj(dlg, x, y);
+
+        if ((obj != oldbutton) && (dlg[oldbutton].state & SG_SELECTED))
+        {
+          // The button is selected but the mouse is not on it anymore.
+          // Deselect it.
+          dlg[oldbutton].state &= ~SG_SELECTED;
+          SDLGui_DrawButton(dlg, oldbutton);
+          SDLGui_RefreshObj(dlg, oldbutton);
+        }
+        else if ((obj == oldbutton) && (~dlg[oldbutton].state & SG_SELECTED))
+        {
+          // The button is deselected but the mouse moved back on it.
+          // Reselect it.
+          dlg[oldbutton].state |= SG_SELECTED;
+          SDLGui_DrawButton(dlg, oldbutton);
+          SDLGui_RefreshObj(dlg, oldbutton);
+        }
       }
     }
     SDL_Delay(100);

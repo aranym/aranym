@@ -1,3 +1,22 @@
+2004/01/06 - Xavier
+- gui-sdl/sdlgui.cpp: improved maintainability and "look'n'feel".
+  - Factorized objects coordinate computation.
+  - Factorized objects refreshing code.
+  - Factorized objects drawing code.
+  - Radio button handling simplified.
+  - Dialog centered "on the fly" (root object coordinates not modified anymore).
+  - Dialog centered at the pixel level instead of char level.
+  - Boxes/Buttons borders more GEM-like.
+  - Buttons labels centered at the pixel level instead of char level.
+  - When user click on a button and move the mouse before he release mouse
+    button, the state of the button is dynamicaly updated.
+  - SDLGui_FindObj() takes buttons and boxes border into account.
+  Since ARAnyM GUI does not use radio buttons or popup buttons, these objects
+  have not been tested. Will do it ASAP. Please report any problem with them.
+
+- hostscreen.cpp: modified GUI size to keep root box borders on screen.
+
+
 2004/01/05 - joy
 - main_unix.cpp, parameters.cpp: 'program_name' is back (cygwin needs it)
 
