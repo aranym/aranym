@@ -336,7 +336,7 @@ void ether_udp_read(uint8 *packet, int length, struct sockaddr_in *from)
         r.a[3] = ether_data + ed_RHA + 14;                              // Pointer behind header in RHA
         r.a[4] = ether_data + ed_ReadPacket;                    // Pointer to ReadPacket/ReadRest routines
         D(bug(" calling protocol handler %08x, type %08x, length %08x, data %08x, rha %08x, read_packet %08x\n", handler, r.d[0], r.d[1], r.a[0], r.a[3], r.a[4]));
-        EmulOp(0 /*handler*/, &r);
+        EmulOp(M68K_EMUL_OP_ETHER_READ_PACKET, &r);
 }
 
 
@@ -417,7 +417,7 @@ void EtherInterrupt(void)
 			r.a[3] = ether_data + ed_RHA + 14;				// Pointer behind header in RHA
 			r.a[4] = ether_data + ed_ReadPacket;			// Pointer to ReadPacket/ReadRest routines
 			D(bug(" calling protocol handler %08x, type %08x, length %08x, data %08x, rha %08x, read_packet %08x\n", handler, r.d[0], r.d[1], r.a[0], r.a[3], r.a[4]));
-			EmulOp(0 /*handler*/, &r);
+			EmulOp(M68K_EMUL_OP_ETHER_READ_PACKET, &r);
 		}
 	}
 
