@@ -104,7 +104,7 @@ class HostScreen {
 	uint32 getPitch();
 	uint32 getWidth();
 	uint32 getHeight();
-	uint32 getVideoramAddress();
+	uintptr getVideoramAddress();
 
 	void   setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue );
 	uint32 getPaletteColor( uint8 index );
@@ -201,8 +201,8 @@ inline uint32 HostScreen::getHeight() {
 	return height;
 }
 
-inline uint32 HostScreen::getVideoramAddress() {
-	return (uint32)surf->pixels;
+inline uintptr HostScreen::getVideoramAddress() {
+	return (uintptr)surf->pixels;
 }
 
 inline void HostScreen::setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue ) {
@@ -377,6 +377,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.28  2002/01/09 19:37:33  standa
+ * The fVDI driver patched to not to pollute the HostScreen class getPaletteColor().
+ *
  * Revision 1.27  2002/01/08 22:40:00  standa
  * The palette fix and a little 8bit driver update.
  *

@@ -14,11 +14,11 @@
 
 #if ARAM_PAGE_CHECK
 uaecptr pc_page = 0xeeeeeeee;
-uae_u32 pc_offset = 0;
+uintptr pc_offset = 0;
 uaecptr read_page = 0xeeeeeeee;
-uae_u32 read_offset = 0;
+uintptr read_offset = 0;
 uaecptr write_page = 0xeeeeeeee;
-uae_u32 write_offset = 0;
+uintptr write_offset = 0;
 #endif
 
 #if !KNOWN_ALLOC && !NORMAL_ADDRESSING

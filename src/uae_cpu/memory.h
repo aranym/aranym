@@ -46,7 +46,7 @@ extern uae_u32 VideoRAMBase;
 
 #if ARAM_PAGE_CHECK
 extern uaecptr pc_page, read_page, write_page;
-extern uae_u32 pc_offset, read_offset, write_offset;
+extern uintptr pc_offset, read_offset, write_offset;
 # ifdef FULLMMU
 #  define ARAM_PAGE_MASK 0xfff
 # else
@@ -129,7 +129,7 @@ static __inline__ uae_u32 phys_get_long(uaecptr addr)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
-        return do_get_mem_long((uae_u32*)((uae_u8*)addr + read_offset));
+        return do_get_mem_long((uae_u32*)(addr + read_offset));
 #endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
@@ -146,7 +146,7 @@ static __inline__ uae_u32 phys_get_word(uaecptr addr)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
-        return do_get_mem_word((uae_u16*)((uae_u8*)addr + read_offset));
+        return do_get_mem_word((uae_u16*)(addr + read_offset));
 #endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_w(addr);
@@ -163,7 +163,7 @@ static __inline__ uae_u32 phys_get_byte(uaecptr addr)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
-        return do_get_mem_byte((uae_u32*)((uae_u8*)addr + read_offset));
+        return do_get_mem_byte((uae_u8*)(addr + read_offset));
 #endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_b(addr);
@@ -180,7 +180,7 @@ static __inline__ void phys_put_long(uaecptr addr, uae_u32 l)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
-        do_put_mem_long((uae_u32*)((uae_u8*)addr + write_offset), l);
+        do_put_mem_long((uae_u32*)(addr + write_offset), l);
         return;
     }
 #endif
@@ -202,7 +202,7 @@ static __inline__ void phys_put_word(uaecptr addr, uae_u32 w)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
-        do_put_mem_word((uae_u16*)((uae_u8*)addr + write_offset), w);
+        do_put_mem_word((uae_u16*)(addr + write_offset), w);
         return;
     }
 #endif
@@ -224,7 +224,7 @@ static __inline__ void phys_put_byte(uaecptr addr, uae_u32 b)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
-        do_put_mem_byte((uae_u8*)((uae_u8*)addr + write_offset), b);
+        do_put_mem_byte((uae_u8*)(addr + write_offset), b);
         return;
     }
 #endif
@@ -337,4 +337,3 @@ static __inline__ bool valid_address(uaecptr addr, bool write, uaecptr pc, int s
 #endif
 
 #endif /* MEMORY_H */
-
