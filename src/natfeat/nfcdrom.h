@@ -108,23 +108,23 @@ class CdromDriver : public NF_Base
 		int GetDrive(memptr device);	/* Return drive letter of a metados device */
 		unsigned char BinaryToBcd(unsigned char value);	/* Convert a value to BCD */
 
-		virtual void ScanDrives(void);
-		virtual int OpenDrive(memptr device);
-		virtual void CloseDrive(int drive);
+		virtual void ScanDrives(void) = 0;
+		virtual int OpenDrive(memptr device) = 0;
+		virtual void CloseDrive(int drive) = 0;
 
 		int32 cd_open(memptr device, memptr buffer);
 		int32 cd_close(memptr device);
-		virtual int32 cd_read(memptr device, memptr buffer, uint32 first, uint32 length);
+		virtual int32 cd_read(memptr device, memptr buffer, uint32 first, uint32 length) = 0;
 		int32 cd_write(memptr device, memptr buffer, uint32 first, uint32 length);
 		int32 cd_seek(memptr device, uint32 offset);
-		virtual int32 cd_status(memptr device, memptr ext_status);
-		virtual int32 cd_ioctl(memptr device, uint16 opcode, memptr buffer);
+		virtual int32 cd_status(memptr device, memptr ext_status) = 0;
+		virtual int32 cd_ioctl(memptr device, uint16 opcode, memptr buffer) = 0;
 	
-		virtual int32 cd_startaudio(memptr device, uint32 dummy, memptr buffer);
-		virtual int32 cd_stopaudio(memptr device);
-		virtual int32 cd_setsongtime(memptr device, uint32 dummy, uint32 start_msf, uint32 end_msf);
-		virtual int32 cd_gettoc(memptr device, uint32 dummy, memptr buffer);
-		virtual int32 cd_discinfo(memptr device, memptr buffer);
+		virtual int32 cd_startaudio(memptr device, uint32 dummy, memptr buffer) = 0;
+		virtual int32 cd_stopaudio(memptr device) = 0;
+		virtual int32 cd_setsongtime(memptr device, uint32 dummy, uint32 start_msf, uint32 end_msf) = 0;
+		virtual int32 cd_gettoc(memptr device, uint32 dummy, memptr buffer) = 0;
+		virtual int32 cd_discinfo(memptr device, memptr buffer) = 0;
 
 	public:
 		char *name();
