@@ -3,8 +3,8 @@
 #define _romdiff_h
 
 struct ROMdiff {
-	int pointer;
-	int difference;
+	int offset;
+	int newvalue;
 };
 
 extern ROMdiff tosdiff[];

@@ -256,8 +256,8 @@ bool InitTOSROM(void)
 		// patch it for 68040 compatibility
 		D(bug("Patching TOS 4.04 for 68040 compatibility.."));
 		int ptr, i=0;
-		while((ptr=tosdiff[i].pointer) >= 0)
-			ROMBaseHost[ptr] += tosdiff[i++].difference;
+		while((ptr=tosdiff[i].offset) >= 0)
+			ROMBaseHost[ptr] = tosdiff[i++].newvalue;
 	}
 	else {
 		panicbug("Wrong TOS version. You need the original TOS 4.04.");
@@ -525,6 +525,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.79  2002/08/01 22:26:19  joy
+ * fixed EmuTOS loading. Prints version of EmuTOS now
+ *
  * Revision 1.78  2002/08/01 15:33:19  joy
  * EmuTOS image can be just 256 kB long now
  *
