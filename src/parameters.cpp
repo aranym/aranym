@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include <ctype.h>  // for toupper
+#include <ctype.h>	// for toupper
 
 #include "parameters.h"
 
@@ -59,17 +59,17 @@ void usage (int status) {
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
   printf ("\
 Options:
-  -R, --rom NAME             ROM file NAME\n\
-  -T, --ttram SIZE           TT-RAM size\n\
-  -D, --debug                start debugger\n\
-  -f, --fullscreen           start in fullscreen\n\
-  -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n\
-  -g, --grab_mouse           ARAnyM grabs mouse and keyboard control in X-Windows\n\
-  -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
-  -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
-  -d, --disk CHAR:ROOTPATH   filesystem assignment e.g. d:/atari/d_drive\n\
-  -h, --help                 display this help and exit\n\
-  -V, --version              output version information and exit\n\
+  -R, --rom NAME			 ROM file NAME\n\
+  -T, --ttram SIZE			 TT-RAM size\n\
+  -D, --debug				 start debugger\n\
+  -f, --fullscreen			 start in fullscreen\n\
+  -t, --direct_truecolor	 patch TOS to enable direct true color, implies -f -r 16\n\
+  -g, --grab_mouse			 ARAnyM grabs mouse and keyboard control in X-Windows\n\
+  -r, --resolution <X>		 boot in X color depth [1,2,4,8,16]\n\
+  -m, --monitor <X>			 attached monitor: 0 = VGA, 1 = TV\n\
+  -d, --disk CHAR:ROOTPATH	 filesystem assignment e.g. d:/atari/d_drive\n\
+  -h, --help				 display this help and exit\n\
+  -V, --version				 output version information and exit\n\
 ");
   exit (status);
 }
@@ -82,22 +82,22 @@ void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int 
   if (byteswap == -1) ;
 
   switch (number) {
-    case 0: bx_options.diskc.present = 1;
-            bx_options.diskc.byteswap = byteswap;
-            bx_options.diskc.cylinders = cylinders;
-            bx_options.diskc.heads = heads;
-            bx_options.diskc.spt = spt;
-            strcpy(bx_options.diskc.path, dev_path);
-	    break;
+	case 0: bx_options.diskc.present = 1;
+			bx_options.diskc.byteswap = byteswap;
+			bx_options.diskc.cylinders = cylinders;
+			bx_options.diskc.heads = heads;
+			bx_options.diskc.spt = spt;
+			strcpy(bx_options.diskc.path, dev_path);
+		break;
 
-    case 1: bx_options.diskd.present = 1;
-            bx_options.diskd.byteswap = byteswap;
-            bx_options.diskd.cylinders = cylinders;
-            bx_options.diskd.heads = heads;
-            bx_options.diskd.spt = spt;
-            strcpy(bx_options.diskd.path, dev_path);
-	    break;
-    }
+	case 1: bx_options.diskd.present = 1;
+			bx_options.diskd.byteswap = byteswap;
+			bx_options.diskd.cylinders = cylinders;
+			bx_options.diskd.heads = heads;
+			bx_options.diskd.spt = spt;
+			strcpy(bx_options.diskd.path, dev_path);
+		break;
+	}
 }
 
 void preset_ide() {
@@ -216,7 +216,7 @@ int decode_switches (int argc, char **argv) {
 	return optind;
 }
 
-void process_config(const char *filename, struct Config_Tag *conf, char *title, bool verbose) {
+static void process_config(const char *filename, struct Config_Tag *conf, char *title, bool verbose) {
 	int status = input_config(filename, conf, title);
 	if (verbose) {
 		if (status >= 0)
@@ -234,11 +234,11 @@ static void decode_ini_file(void) {
 	if ((home = getenv("HOME")) == NULL)
 		home = "";
 	if ((rcfile = (char *)alloca((strlen(home) + strlen(ARANYMRC) + 1) * sizeof(char))) == NULL) {
-      fprintf(stderr, "Not enough memory\n");
-      exit(-1);
-    }
-    strcpy(rcfile, home);
-    strcat(rcfile, ARANYMRC);
+	  fprintf(stderr, "Not enough memory\n");
+	  exit(-1);
+	}
+	strcpy(rcfile, home);
+	strcat(rcfile, ARANYMRC);
 
 	process_config(rcfile, global_conf, "GLOBAL", true);
 	process_config(rcfile, diskc_configs, "IDE0", true);
