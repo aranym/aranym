@@ -85,7 +85,9 @@ const uae_u32	MIN_CACHE_SIZE		= 2048;		// Minimal translation cache size (2048 K
 static uae_u32	cache_size			= 0;		// Size of total cache allocated for compiled blocks
 static uae_u32	current_cache_size	= 0;		// Cache grows upwards: how much has been consumed yet
 static int		lazy_flush			= 0;		// (0: hard flush, [1-2]: lazy-flush version X)
+#if 0
 static bool		compile_atraps		= false;	// Flag: compile A-Traps
+#endif
 static bool		avoid_fpu			= true;		// Flag: compile FPU instructions ?
 static bool		have_cmov			= false;	// target has CMOV instructions ?
 static bool		have_rat_stall		= true;		// target has partial register stalls ?
@@ -4749,7 +4751,7 @@ void compiler_exit(void)
 	write_log("\n");
 #endif
 
-#if PROFILE_ATRAPS_EXEC
+#if 0 && PROFILE_ATRAPS_EXEC
 	write_log("### Compiled A-Traps statistics\n");
 	write_log("Total compilation count : %d\n", atraps_comp_count);
 	write_log("Total execution count   : %d\n", atraps_exec_count);
@@ -5939,11 +5941,6 @@ void build_comp(void)
 	}
 #endif
     struct cputbl *nfctbl = op_smalltbl_0_nf;
-
-#ifdef NATMEM_OFFSET
-    D(panicbug("Setting signal handler"));
-    signal(SIGSEGV, (sighandler_t)segfault_vec);
-#endif
 
     D(panicbug("<JIT compiler> : building compiler function tables"));
 	
