@@ -2285,13 +2285,11 @@ static void gen_opcode (unsigned long int opcode)
 
      case i_NATFEAT_ID:
 	printf ("\n");
-	swap_opcode ();
 	printf ("\tm68k_natfeat_id();\n");
 	break;
 
      case i_NATFEAT_CALL:
 	printf ("\n");
-	swap_opcode ();
 	printf ("\tm68k_natfeat_call();\n");
 	break;
 

@@ -280,6 +280,6 @@
 0111 0001 0000 0000:00:-----:-----:-R:00: EMULOP_RETURN
 0111 0001 EEEE EEEE:00:-----:-----:-J:10: EMULOP   #E
 
-% NatFea instructions (do I have the srcaddr correct?)
-0111 0011 0000 0000:00:-----:-----:-J:00: NATFEAT_ID
-0111 0011 0000 0001:00:-----:-----:-J:00: NATFEAT_CALL
+% NatFeat instructions (do I have the srcaddr correct?)
+1111 1110 0000 0000:00:-----:-----:-J:00: NATFEAT_ID
+1111 1110 0000 0001:00:-----:-----:-J:00: NATFEAT_CALL

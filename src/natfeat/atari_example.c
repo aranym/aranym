@@ -7,8 +7,8 @@
 #define CDECL
 #endif
 
-static long _NF_getid = 0x73004e75L;
-static long _NF_call  = 0x73014e75L;
+static long _NF_getid = 0xfe004e75L;
+static long _NF_call  = 0xfe014e75L;
 #define nfGetID(n)	(((long CDECL (*)(const char *))&_NF_getid)n)
 #define nfCall(n)	(((long CDECL (*)(long, ...))&_NF_call)n)
 
