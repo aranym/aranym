@@ -1488,39 +1488,17 @@ void m68k_do_execute (void)
 #endif
 
 #if ARAM_PAGE_CHECK
-# if 0
-	if (((pc ^ pc_page) > ARAM_PAGE_MASK)) {
-	    check_ram_boundary(pc, 2, false);
-//	    opcode = GET_OPCODE;
-	    uae_u16* addr = (uae_u16*)get_real_address(pc, 0, sz_word);
-	    pc_page = pc;
-	    pc_offset = (uae_u32)addr - pc;
-	}
-#  ifdef HAVE_GET_WORD_UNSWAPPED
-	opcode = do_get_mem_word_unswapped((uae_u16*)(pc + pc_offset));
-#  else
-	opcode = do_get_mem_word((uae_u16*)(pc + pc_offset));
-#  endif
-# else
 	if (((pc ^ pc_page) > ARAM_PAGE_MASK)) {
 	    check_ram_boundary(pc, 2, false);
 	    pc_page = pc;
 	    pc_offset = (uae_u32)get_real_address(pc, 0, sz_word) - pc;
 	}
-# endif
 #else
 	check_ram_boundary(pc, 2, false);
 #endif
 	opcode = GET_OPCODE;
 
-// Seems to be faster without the assembly...
-#if (0 && defined(X86_ASSEMBLY))
-	__asm__ __volatile__("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
-						 : : "b" (cpufunctbl[opcode]), "a" (opcode)
-						 : "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
-#else
 	(*cpufunctbl[opcode])(opcode);
-#endif
 
 #ifndef DISDIP
 	if (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {
@@ -1550,13 +1528,6 @@ setjmpagain:
 	}
 	m68k_do_compile_execute();
     }
-#if 0
-    if (debugging) {
-	uaecptr nextpc;
-	m68k_dumpstate(&nextpc);
-	exit(1);
-    }
-#endif
 }
 #endif
 

@@ -63,6 +63,7 @@
 #include <utime.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <dirent.h>
 
 #endif
 

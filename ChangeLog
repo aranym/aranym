@@ -1,3 +1,14 @@
+2002/10/02 - milan
+- add raw_cmp_b_mi() and raw_call_m_indexed() for generated, not used now,
+  BasiliskII used translated main loop now, ARAnyM not - ii's main loop is
+  more compilicated
+
+- x86 calls in loops removed as in BasiliskII but with another reason, not
+  enough stable for newer versions of compilers, in some cases slower
+
+- for OpenBSD dirent.h again in sysdeps.h
+
+
 2002/10/01 - patrice
 - ikbd: Joystick support bugfixed.
 

@@ -33,7 +33,7 @@
 #include "fpu/flags.h"
 #include "parameters.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #ifdef ENABLE_MON
@@ -504,66 +504,106 @@ static void prepare_block(blockinfo* bi);
    soft) request occurs.
 */
 
-#if USE_SEPARATE_BIA
-const int BLOCKINFO_POOL_SIZE = 128;
-struct blockinfo_pool {
-	blockinfo bi[BLOCKINFO_POOL_SIZE];
-	blockinfo_pool *next;
+template< class T >
+class LazyBlockAllocator
+{
+	enum {
+		kPoolSize = 1 + 4096 / sizeof(T)
+	};
+	struct Pool {
+		T chunk[kPoolSize];
+		Pool * next;
+	};
+	Pool * mPools;
+	T * mChunks;
+public:
+	LazyBlockAllocator() : mPools(0), mChunks(0) { }
+	~LazyBlockAllocator();
+	T * acquire();
+	void release(T * const);
 };
-static blockinfo_pool *	blockinfo_pools = 0;
-static blockinfo *		free_blockinfos = 0;
+
+template< class T >
+LazyBlockAllocator<T>::~LazyBlockAllocator()
+{
+	Pool * currentPool = mPools;
+	while (currentPool) {
+ 		Pool * deadPool = currentPool;
+		currentPool = currentPool->next;
+		free(deadPool);
+	}
+}
+
+template< class T >
+T * LazyBlockAllocator<T>::acquire()
+{
+	if (!mChunks) {
+		// There is no chunk left, allocate a new pool and link the
+		// chunks into the free list
+		Pool * newPool = (Pool *)malloc(sizeof(Pool));
+		for (T * chunk = &newPool->chunk[0]; chunk < &newPool->chunk[kPoolSize]; chunk++) {
+			chunk->next = mChunks;
+			mChunks = chunk;
+		}
+		newPool->next = mPools;
+		mPools = newPool;
+	}
+	T * chunk = mChunks;
+	mChunks = chunk->next;
+	return chunk;
+}
+
+template< class T >
+void LazyBlockAllocator<T>::release(T * const chunk)
+{
+	chunk->next = mChunks;
+	mChunks = chunk;
+}
+
+template< class T >
+class HardBlockAllocator
+{
+public:
+	T * acquire() {
+		T * data = (T *)current_compile_p;
+		current_compile_p += sizeof(T);
+		return data;
+	}
+
+	void release(T * const chunk) {
+		// Deallocated on invalidation
+	}
+};
+
+#if USE_SEPARATE_BIA
+static LazyBlockAllocator<blockinfo> BlockInfoAllocator;
+static LazyBlockAllocator<checksum_info> ChecksumInfoAllocator;
+#else
+static HardBlockAllocator<blockinfo> BlockInfoAllocator;
+static HardBlockAllocator<checksum_info> ChecksumInfoAllocator;
 #endif
+
 
 static __inline__ blockinfo *alloc_blockinfo(void)
 {
-#if USE_SEPARATE_BIA
-	if (!free_blockinfos) {
-		// There is no blockinfo struct left, allocate a new
-		// pool and link the chunks into the free list
-		blockinfo_pool *bi_pool = (blockinfo_pool *)malloc(sizeof(blockinfo_pool));
-		for (blockinfo *bi = &bi_pool->bi[0]; bi < &bi_pool->bi[BLOCKINFO_POOL_SIZE]; bi++) {
-			bi->next = free_blockinfos;
-			free_blockinfos = bi;
-		}
-		bi_pool->next = blockinfo_pools;
-		blockinfo_pools = bi_pool;
-	}
-	blockinfo *bi = free_blockinfos;
-	free_blockinfos = bi->next;
-#else
-	blockinfo *bi = (blockinfo*)current_compile_p;
-	current_compile_p += sizeof(blockinfo);
+	blockinfo *bi = BlockInfoAllocator.acquire();
+#if USE_CHECKSUM_INFO
+	bi->csi = NULL;
 #endif
 	return bi;
 }
 
 static __inline__ void free_blockinfo(blockinfo *bi)
 {
-#if USE_SEPARATE_BIA
-	bi->next = free_blockinfos;
-	free_blockinfos = bi;
-#endif
-}
-
-static void free_blockinfo_pools(void)
-{
-#if USE_SEPARATE_BIA
-	int blockinfo_pool_count = 0;
-	blockinfo_pool *curr_pool = blockinfo_pools;
-	while (curr_pool) {
-		blockinfo_pool_count++;
-		blockinfo_pool *dead_pool = curr_pool;
-		curr_pool = curr_pool->next;
-		free(dead_pool);
+#if USE_CHECKSUM_INFO
+	checksum_info *csi = bi->csi;
+	while (csi != NULL) {
+		checksum_info *csi2 = csi->next;
+		ChecksumInfoAllocator.release(csi);
+		csi = csi2;
 	}
-	
-	uae_u32 blockinfo_pools_size = blockinfo_pool_count * BLOCKINFO_POOL_SIZE * sizeof(blockinfo);
-	D(panicbug("### Blockinfo allocation statistics"));
-	D(panicbug("Number of blockinfo pools  : %d", blockinfo_pool_count));
-	D(panicbug("Total number of blockinfos : %d (%d KB)",
-			  blockinfo_pool_count * BLOCKINFO_POOL_SIZE,
-			  blockinfo_pools_size / 1024));
 #endif
+	BlockInfoAllocator.release(bi);
 }
 
 static __inline__ void alloc_blockinfos(void) 
@@ -4596,10 +4636,7 @@ void compiler_exit(void)
 		vm_release(compiled_code, cache_size * 1024);
 		compiled_code = 0;
 	}
-	
-	// Deallocate blockinfo pools
-	free_blockinfo_pools();
-	
+
 #ifndef WIN32
 	// Close /dev/zero
 	if (zero_fd > 0)
@@ -5194,12 +5231,12 @@ void alloc_cache(void)
 
 extern cpuop_rettype op_illg_1 (uae_u32 opcode) REGPARAM;
 
-static void calc_checksum(blockinfo* bi, uae_u32* c1, uae_u32* c2)
+static void calc_checksum(CSI_TYPE* csi, uae_u32* c1, uae_u32* c2)
 {
     uae_u32 k1=0;
     uae_u32 k2=0;
-    uae_s32 len=bi->len;
-    uae_u32 tmp=bi->min_pcp;
+    uae_s32 len=CSI_LENGTH(csi);
+    uae_u32 tmp=(uae_u32)CSI_START_P(csi);
     uae_u32* pos;
 
     len+=(tmp&3);
@@ -5222,12 +5259,12 @@ static void calc_checksum(blockinfo* bi, uae_u32* c1, uae_u32* c2)
     }
 }
 
-static void show_checksum(blockinfo* bi)
+static void show_checksum(CSI_TYPE* csi)
 {
     uae_u32 k1=0;
     uae_u32 k2=0;
-    uae_s32 len=bi->len;
-    uae_u32 tmp=(uae_u32)bi->pc_p;
+    uae_s32 len=CSI_LENGTH(csi);
+    uae_u32 tmp=(uae_u32)CSI_START_P(csi);
     uae_u32* pos;
 
     len+=(tmp&3);
@@ -5299,19 +5336,35 @@ static int called_check_checksum(blockinfo* bi);
 static inline int block_check_checksum(blockinfo* bi) 
 {
     uae_u32     c1,c2;
-    int         isgood;
+    bool        isgood;
     
     if (bi->status!=BI_NEED_CHECK)
 	return 1;  /* This block is in a checked state */
     
     checksum_count++;
+
+#if USE_CHECKSUM_INFO
+    checksum_info *csi = bi->csi;
+	Dif(!csi) abort();
+	isgood = true;
+	while (csi && isgood) {
+		if (csi->c1 || csi->c2)
+			calc_checksum(csi,&c1,&c2);
+		else
+			c1 = c2 = 1; /* Make sure it doesn't match */
+		isgood = isgood && (c1 == csi->c1 && c2 == csi->c2);
+		csi = csi->next;
+	}
+#else
     if (bi->c1 || bi->c2)
 	calc_checksum(bi,&c1,&c2);
     else {
 	c1=c2=1;  /* Make sure it doesn't match */
     }
-    
+
     isgood=(c1==bi->c1 && c2==bi->c2);
+#endif
+					    
     if (isgood) { 
 	/* This block is still OK. So we reactivate. Of course, that
 	   means we have to move it into the needs-to-be-flushed list */
@@ -5484,7 +5537,6 @@ static __inline__ void create_popalls(void)
   popall_recompile_block=(void *)recompile_block;
   popall_do_nothing=(void *)do_nothing;
   popall_check_checksum=(void *)check_checksum;
-  pushall_call_handler=get_target();  
 #endif
 
   /* And now, the code to do the matching pushes and then jump
@@ -6194,8 +6246,16 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	    max_pcp=next_pc_p+extra_len;  /* extra_len covers flags magic */
 	else
 	    max_pcp+=LONGEST_68K_INST;
+
+#if USE_CHECKSUM_INFO
+	checksum_info *csi = (bi->csi = ChecksumInfoAllocator.acquire());
+	csi->next = NULL;
+	csi->length = max_pcp - min_pcp;
+	csi->start_p = (uae_u8 *)min_pcp;
+#else
 	bi->len=max_pcp-min_pcp;
 	bi->min_pcp=min_pcp;
+#endif
 		    
 	remove_from_list(bi);
 	if (isinrom(min_pcp) && isinrom(max_pcp)) {
@@ -6268,13 +6328,7 @@ void exec_nostats(void)
 {
 	for (;;)  { 
 		uae_u32 opcode = GET_OPCODE;
-#if (0 && defined(X86_ASSEMBLY))
-		__asm__ __volatile__("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
-							 : : "b" (cpufunctbl[opcode]), "a" (opcode)
-							 : "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
-#else
 		(*cpufunctbl[opcode])(opcode);
-#endif
 		if (end_block(opcode) || SPCFLAGS_TEST(SPCFLAG_ALL)) {
 			return; /* We will deal with the spcflags in the caller */
 		}
@@ -6299,13 +6353,7 @@ void execute_normal(void)
 #if FLIGHT_RECORDER
 			m68k_record_step(m68k_getpc());
 #endif
-#if (0 && defined(X86_ASSEMBLY))
-			__asm__ __volatile__("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
-								 : : "b" (cpufunctbl[opcode]), "a" (opcode)
-								 : "%edx", "%ecx", "%esi", "%edi", "%ebp", "memory", "cc");
-#else
 			(*cpufunctbl[opcode])(opcode);
-#endif
 			if (end_block(opcode) || SPCFLAGS_TEST(SPCFLAG_ALL) || blocklen>=MAXRUN) {
 				compile_block(pc_hist, blocklen);
 				return; /* We will deal with the spcflags in the caller */
@@ -6321,13 +6369,7 @@ typedef void (*compiled_handler)(void);
 void m68k_do_compile_execute(void)
 {
 	for (;;) {
-#if (1 && defined(X86_ASSEMBLY))
-		__asm__ __volatile__("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
-							 : : "b" (cache_tags[cacheline(regs.pc_p)].handler)
-							 : "%edx", "%ecx", "%eax", "%esi", "%edi", "%ebp", "memory", "cc");
-#else
 		((compiled_handler)(pushall_call_handler))();
-#endif
 		/* Whenever we return from that, we should check spcflags */
 		if (SPCFLAGS_TEST(SPCFLAG_ALL)) {
 			if (m68k_do_specialties ())
