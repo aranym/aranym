@@ -1,3 +1,9 @@
+2004/08/02 - Xavier
+- Unix/configure.ac, Unix/cygwin/sigsegv_cygwin.cpp: extended sigsegv handler
+  for Windows/Cygwin. The code needs some cleaning, but at least allows to
+  boot Afros and TOS 4.04. We can now enjoy JIT speed on Windows too !
+
+
 2004/07/29 - milan
 - debug.cpp: S&!M means interupt mode, not only M
 

@@ -776,6 +776,13 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       fi
       ;;					
+    cygwin*)
+      if [[ "x$HAVE_I386" = "xyes" ]]; then
+        SYSSRCS="$SYSSRCS cygwin/sigsegv_cygwin.cpp"
+      else
+        AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
+      fi
+      ;;
     *)
       AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       ;;
