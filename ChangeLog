@@ -1,3 +1,7 @@
+2002/02/12 - milan & Thomas Huth
+- ARAnyM support only 68040 only. Other CPUs aren't generated
+
+
 2002/02/11 - milan
 - synced with Bochs IDE
 

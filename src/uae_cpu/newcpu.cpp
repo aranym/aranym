@@ -131,12 +131,7 @@ static void build_cpufunctbl (void)
 		else if (CPUType == 1)
 			cpu_level = 1;
 	}
-    struct cputbl *tbl = (
-		  cpu_level == 4 ? op_smalltbl_0
-		: cpu_level == 3 ? op_smalltbl_1
-		: cpu_level == 2 ? op_smalltbl_2
-		: cpu_level == 1 ? op_smalltbl_3
-		: op_smalltbl_4);
+    struct cputbl *tbl = op_smalltbl_0;
 
     for (opcode = 0; opcode < 65536; opcode++)
 	cpufunctbl[cft_map (opcode)] = op_illg_1;

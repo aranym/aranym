@@ -232,33 +232,6 @@ AC_DEFUN(AC_CXX_OPT,
 fi
 ])
 
-dnl GNU Autoconf macro AC_LIB_TVISION
-dnl Checks for Turbo Vision library. If it is available - adds it
-dnl to LIBS variable and defines HAVE_TVISION.
-
-AC_DEFUN(AC_LIB_TVISION, 
-[
-   AC_REQUIRE([AC_PROG_CXX])
-   AC_REQUIRE([AC_LANG_CPLUSPLUS])
-   AC_MSG_CHECKING([for Turbo Vision library])
-   ac_lb_save_LIBS="$LIBS"
-   LIBS="-lrhtv $LIBS"
-   AC_TRY_LINK([void win_ver(void);], [win_ver();], AC_DEFINE(HAVE_TVISION) tvlib=RHTV)
-   if test -z $tvlib; then
-      LIBS=$ac_lb_save_LIBS
-      LIBS="-ltv $LIBS"
-      AC_TRY_LINK([void win_ver(void);], [win_ver();], AC_DEFINE(HAVE_TVISION) tvlib=TV)
-      if test -z $tvlib; then
-         LIBS=$ac_lb_save_LIBS
-         AC_MSG_ERROR(not found)
-      else
-         AC_MSG_RESULT([old version 1.0.3- found])
-      fi
-   else
-      AC_MSG_RESULT(v1.0.4+ found)
-   fi
-])
-
 dnl Various checks if the system supports vm_allocate() and the like functions.
 have_mach_vm=no
 if [[ "x$ac_cv_func_vm_allocate" = "xyes" -a "x$ac_cv_func_vm_deallocate" = "xyes" -a \
@@ -838,8 +811,6 @@ AC_SUBST(DEFINES)
 AC_SUBST(SYSSRCS)
 AC_SUBST(CPUINCLUDES)
 AC_SUBST(CPUSRCS)
-AC_SUBST(TV_CFLAGS)
-AC_SUBST(TV_LIBS)
 AC_SUBST(TABLE68K)
 AC_OUTPUT(Makefile)
 

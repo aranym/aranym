@@ -231,16 +231,8 @@ extern uaecptr last_fault_for_exception_3;
 
 #define CPU_OP_NAME(a) op ## a
 
-/* 68020 + 68881 */
+/* 68040+ 68881 */
 extern struct cputbl op_smalltbl_0[];
-/* 68020 */
-extern struct cputbl op_smalltbl_1[];
-/* 68010 */
-extern struct cputbl op_smalltbl_2[];
-/* 68000 */
-extern struct cputbl op_smalltbl_3[];
-/* 68000 slow but compatible.  */
-extern struct cputbl op_smalltbl_4[];
 
 extern cpuop_func *cpufunctbl[65536] ASM_SYM_FOR_FUNC ("cpufunctbl");
 

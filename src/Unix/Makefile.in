@@ -26,9 +26,6 @@ LIBS = @LIBS@
 SDL_LIBS = @SDL_LIBS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_CFLAGS = @SDL_CFLAGS@
-TV_LIBS = @TV_LIBS@
-TV_CONFIG = @TV_CONFIG@
-TV_CFLAGS = @TV_CFLAGS@
 SYSSRCS = @SYSSRCS@
 CPUSRCS = @CPUSRCS@
 INSTALL = @INSTALL@
@@ -167,7 +164,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -f $(APP) $(OBJ_DIR)/* core* *.core *~ *.bak $(APPCONFTV)
+	rm -f $(APP) $(OBJ_DIR)/* core* *.core *~ *.bak
 
 clean: mostlyclean
 	rm -f cpuemu.cpp cpudefs.cpp cputmp*.s cpufast*.s cpustbl.cpp cputbl.h newcpu.s memory.s compemu.cpp compstbl.cpp comptbl.h
