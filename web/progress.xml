@@ -55,7 +55,7 @@
           <th bgcolor="#eeeeee" colspan="2" align="left">SOUND</th>
         </tr>
         <tr valign="top">
-          <td>GSXB driver</td><td>0%</td>
+          <td>GSXB driver</td><td>100%</td>
         </tr>
 
         <tr valign="top"><td colspan="2">&nbsp;</td></tr>
@@ -75,10 +75,10 @@
           <td>CD-ROM</td><td>80% (data CD works 100%, music CD currently unsupported)</td>
         </tr>
         <tr valign="top">
-          <td>HostOS filepath to TOS partition assignment</td><td>97% (MetaDOS driver)</td>
+          <td>HostOS file access</td><td>99% (MetaDOS driver)</td>
         </tr>
         <tr valign="top">
-          <td>HostOS fileaccess under MiNT </td><td>50% (XFS driver)</td>
+          <td>HostOS file access under MiNT </td><td>50% (XFS driver)</td>
         </tr>
 
         <tr valign="top"><td colspan="2">&nbsp;</td></tr>

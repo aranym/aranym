@@ -7,6 +7,15 @@
     <text>
       <table>
 
+        <tr><td valign="top">2002/04/22</td>
+            <td>
+              ARAnyM 0.1.7 has been released and you can <a href="download.html">
+              download</a> it at usual place.<br/>
+              Highlights of this release are sound support (thanks to Didier
+              of Aniplayer fame) and greatly debugged AranymFS.
+            </td>
+        </tr>
+
         <tr><td valign="top">2002/04/20</td>
             <td>
               The PurePascal <a href="snapshots.html">screenshots</a> added.<br/>
