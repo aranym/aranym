@@ -51,4 +51,4 @@ Compilation
    FREEMINT_SRC_HOME environment variable to its home (the
    COPYING.MiNT file is there).
  * use make.sh to compile
- * the binaries are placed into the .bin subfolder
+ * the binaries are placed into the bin subfolder
