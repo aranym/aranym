@@ -269,12 +269,12 @@ int LiloCheckKernel(
 	char *kname, *kernel_name="vmlinux";
 
 	kexec_elf = (Elf32_Ehdr *) kernel;
-    if (memcmp( (void *)(kexec_elf->e_ident[EI_MAG0]), ELFMAG, SELFMAG ) == 0) {
+	if (memcmp( &kexec_elf->e_ident[EI_MAG0], ELFMAG, SELFMAG ) == 0) {
 		if ((SDL_SwapBE16(kexec_elf->e_type) != ET_EXEC) || (SDL_SwapBE16(kexec_elf->e_machine) != EM_68K) ||
-	    	(SDL_SwapBE32(kexec_elf->e_version) != EV_CURRENT)) {
-		    fprintf(stderr, "lilo: Invalid ELF header contents in kernel\n");
+			(SDL_SwapBE32(kexec_elf->e_version) != EV_CURRENT)) {
+			fprintf(stderr, "lilo: Invalid ELF header contents in kernel\n");
+			return -1;
 		}
-		return -1;
 	}
 
 	/*--- Copy the kernel at start of RAM ---*/
