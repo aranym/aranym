@@ -97,7 +97,8 @@ int main(int argc, char **argv)
 	FastRAMBaseHost = NULL;
 
 	program_name = argv[0];
-	(void)decode_switches(stderr, argc, argv);
+	if (!decode_switches(stderr, argc, argv))
+		exit(-1);
 
 #ifdef NEWDEBUG
 	if (bx_options.startup.debugger) ndebug::init();
@@ -305,6 +306,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.75  2002/10/07 23:00:42  joy
+ * CPU back in the main thread
+ *
  * Revision 1.73  2002/07/20 11:33:33  joy
  * debug disabled
  *

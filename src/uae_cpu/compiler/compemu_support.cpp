@@ -4657,37 +4657,37 @@ void compiler_init(void)
 	// JIT FPU is always disabled
 	avoid_fpu = true;
 #endif
-	D(panicbug("<JIT compiler> : compile FPU instructions : %s", !avoid_fpu ? "yes" : "no"));
+	panicbug("<JIT compiler> : compile FPU instructions : %s", !avoid_fpu ? "yes" : "no");
 	
 	// Get size of the translation cache (in KB)
 	cache_size = bx_options.jit.jitcachesize;
-	D(panicbug("<JIT compiler> : requested translation cache size : %d KB", cache_size));
+	panicbug("<JIT compiler> : requested translation cache size : %d KB", cache_size);
 	
 	// Initialize target CPU (check for features, e.g. CMOV, rat stalls)
 	raw_init_cpu();
-	D(panicbug("<JIT compiler> : target processor has CMOV instructions : %s", have_cmov ? "yes" : "no"));
-	D(panicbug("<JIT compiler> : target processor can suffer from partial register stalls : %s", have_rat_stall ? "yes" : "no"));
-	D(panicbug("<JIT compiler> : alignment for loops, jumps are %d, %d\n", align_loops, align_jumps));
+	panicbug("<JIT compiler> : target processor has CMOV instructions : %s", have_cmov ? "yes" : "no");
+	panicbug("<JIT compiler> : target processor can suffer from partial register stalls : %s", have_rat_stall ? "yes" : "no");
+	panicbug("<JIT compiler> : alignment for loops, jumps are %d, %d", align_loops, align_jumps);
 
 	// Alignment
 	tune_alignment = bx_options.jit.tunealign;
-	D(panicbug("<JIT compiler> : tune alignment : %\n", str_on_off(tune_alignment)));
+	panicbug("<JIT compiler> : tune alignment : %s", str_on_off(tune_alignment));
 
 	// NOP fill
 	tune_nop_fillers = bx_options.jit.tunenop;
-	D(panicbug("<JIT compiler> : tune nop fillers : %\n", str_on_off(tune_nop_fillers)));
+	panicbug("<JIT compiler> : tune nop fillers : %s", str_on_off(tune_nop_fillers));
 
 	// Translation cache flush mechanism
 	lazy_flush = (bx_options.jit.jitlazyflush == 0) ? false : true;
-	D(panicbug("<JIT compiler> : lazy translation cache invalidation : %s\n", str_on_off(lazy_flush)));
+	panicbug("<JIT compiler> : lazy translation cache invalidation : %s", str_on_off(lazy_flush));
 	flush_icache = lazy_flush ? flush_icache_lazy : flush_icache_hard;
 	
 	// Compiler features
-	D(panicbug("<JIT compiler> : register aliasing : %s", str_on_off(1)));
-	D(panicbug("<JIT compiler> : FP register aliasing : %s", str_on_off(USE_F_ALIAS)));
-	D(panicbug("<JIT compiler> : lazy constant offsetting : %s", str_on_off(USE_OFFSET)));
-	D(panicbug("<JIT compiler> : block inlining : %s", str_on_off(USE_INLINING)));
-	D(panicbug("<JIT compiler> : separate blockinfo allocation : %s", str_on_off(USE_SEPARATE_BIA)));
+	panicbug("<JIT compiler> : register aliasing : %s", str_on_off(1));
+	panicbug("<JIT compiler> : FP register aliasing : %s", str_on_off(USE_F_ALIAS));
+	panicbug("<JIT compiler> : lazy constant offsetting : %s", str_on_off(USE_OFFSET));
+	panicbug("<JIT compiler> : block inlining : %s", str_on_off(USE_INLINING));
+	panicbug("<JIT compiler> : separate blockinfo allocation : %s", str_on_off(USE_SEPARATE_BIA));
 	
 	// Build compiler tables
 	build_comp();
@@ -4695,11 +4695,11 @@ void compiler_init(void)
 	initialized = true;
 
 #if PROFILE_UNTRANSLATED_INSNS
-	D(panicbug("<JIT compiler> : gather statistics on untranslated insns count"));
+	panicbug("<JIT compiler> : gather statistics on untranslated insns count");
 #endif
 
 #if PROFILE_COMPILE_TIME
-	D(panicbug("<JIT compiler> : gather statistics on translation time"));
+	panicbug("<JIT compiler> : gather statistics on translation time");
 	emul_start_time = clock();
 #endif
 }

@@ -2,6 +2,7 @@
 - sync with BasiliskII CVS
 
 - JIT compiler: NOP filler based on binutils
+                Gwenole added some checks
 
 - Mac OS X: some small corrections
 

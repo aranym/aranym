@@ -608,7 +608,23 @@ int saveSettings(const char *fs)
 	return 0;
 }
 
-int decode_switches(FILE *f, int argc, char **argv)
+bool check_cfg()
+{
+#ifdef REAL_ADDRESSING
+# if defined(__i386__) && defined(OS_linux)
+	if (FastRAMSize > (128 - 16))
+	{
+		panicbug("Maximum Fast RAM size for real addressing on x86/Linux is 112 MB");
+		panicbug("If you need bigger Fast RAM, you must recompile ARAnyM");
+		panicbug("./configure --enable-addressing=direct");
+		return false;
+	}
+# endif
+#endif
+	return true;
+}
+
+bool decode_switches(FILE *f, int argc, char **argv)
 {
 	build_cfgfilename();
 	check_for_help_version_configfile(argc, argv);
@@ -622,5 +638,5 @@ int decode_switches(FILE *f, int argc, char **argv)
 		saveSettings(config_file);
 	}
 
-	return 0;
+	return check_cfg();
 }

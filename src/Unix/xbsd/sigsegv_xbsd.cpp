@@ -13,7 +13,7 @@ int in_handler = 0;
 
 extern void compiler_status();
 
-#define DEBUG 0
+#define DEBUG 2
 #include "debug.h"
 
 enum transfer_type_t {
