@@ -148,7 +148,8 @@ struct Config_Tag global_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_global() {
+void preset_global()
+{
   bx_options.autoMouseGrab = true;
   strcpy(bx_options.floppy.path, "");
 #ifdef FixedSizeFastRAM
@@ -162,13 +163,15 @@ void preset_global() {
 #endif
 }
 
-void postload_global() {
+void postload_global()
+{
 #ifndef FixedSizeFastRAM
 	FastRAMSize = bx_options.fastram * 1024 * 1024;
 #endif
 }
 
-void presave_global() {
+void presave_global()
+{
 	bx_options.fastram = FastRAMSize / 1024 / 1024;
 }
 
@@ -181,7 +184,8 @@ struct Config_Tag startup_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_startup() {
+void preset_startup()
+{
   bx_options.startup.debugger = false;
   bx_options.startup.grabMouseAllowed = true;
 #ifdef GDBSTUB
@@ -191,10 +195,12 @@ void preset_startup() {
 #endif
 }
 
-void postload_startup() {
+void postload_startup()
+{
 }
 
-void presave_startup() {
+void presave_startup()
+{
 }
 
 /*************************************************************************/
@@ -209,7 +215,8 @@ struct Config_Tag jit_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_jit() {
+void preset_jit()
+{
 	bx_options.jit.jit = false;
 	bx_options.jit.jitfpu = true;
 	bx_options.jit.jitcachesize = 8192;
@@ -219,10 +226,12 @@ void preset_jit() {
 	strcpy(bx_options.jit.jitblacklist, "");
 }
 
-void postload_jit() {
+void postload_jit()
+{
 }
 
-void presave_jit() {
+void presave_jit()
+{
 }
 
 /*************************************************************************/
@@ -233,16 +242,19 @@ struct Config_Tag tos_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_tos() {
+void preset_tos()
+{
   bx_options.tos.redirect_CON = false;
   bx_options.tos.redirect_PRT = false;
   bx_options.tos.cookie_mch = 0x00050000; // ARAnyM
 }
 
-void postload_tos() {
+void postload_tos()
+{
 }
 
-void presave_tos() {
+void presave_tos()
+{
 }
 
 /*************************************************************************/
@@ -254,19 +266,22 @@ struct Config_Tag video_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_video() {
+void preset_video()
+{
   bx_options.video.fullscreen = false;		// Boot in Fullscreen
   bx_options.video.boot_color_depth = -1;	// Boot in color depth
   bx_options.video.monitor = -1;			// preserve default NVRAM monitor
   bx_options.video.refresh = 2;			// 25 Hz update
 }
 
-void postload_video() {
+void postload_video()
+{
 	if (bx_options.video.refresh < 1 || bx_options.video.refresh > 200)
 		bx_options.video.refresh = 2;	// default if input parameter is insane
 }
 
-void presave_video() {
+void presave_video()
+{
 }
 
 /*************************************************************************/
@@ -279,7 +294,8 @@ struct Config_Tag opengl_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_opengl() {
+void preset_opengl()
+{
   bx_options.opengl.enabled = false;
   bx_options.opengl.width = 640;
   bx_options.opengl.height = 480;
@@ -287,10 +303,12 @@ void preset_opengl() {
   bx_options.opengl.filtered = false;
 }
 
-void postload_opengl() {
+void postload_opengl()
+{
 }
 
-void presave_opengl() {
+void presave_opengl()
+{
 }
 
 /*************************************************************************/
@@ -310,7 +328,8 @@ void presave_opengl() {
 BX_DISK_CONFIG(diskc);
 BX_DISK_CONFIG(diskd);
 
-void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap, bool readonly, const char *model_name) {
+static void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap, bool readonly, const char *model_name)
+{
   // Autodetect ???
   if (cylinders == -1)
     if ((cylinders = get_geometry(dev_path, geoCylinders)) == -1) {
@@ -360,17 +379,20 @@ void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int 
 
 }
 
-void preset_ide() {
+void preset_ide()
+{
   set_ide(0, "", 0, 0, 0, false, false, "Master");
   set_ide(1, "", 0, 0, 0, false, false, "Slave");
 
   bx_options.newHardDriveSupport = true;
 }
 
-void postload_ide() {
+void postload_ide()
+{
 }
 
-void presave_ide() {
+void presave_ide()
+{
 }
 
 /*************************************************************************/
@@ -392,13 +414,16 @@ DISK_CONFIG(disk5);
 DISK_CONFIG(disk6);
 DISK_CONFIG(disk7);
 
-void preset_disk() {
+void preset_disk()
+{
 }
 
-void postload_disk() {
+void postload_disk()
+{
 }
 
-void presave_disk() {
+void presave_disk()
+{
 }
 
 /*************************************************************************/
@@ -432,7 +457,8 @@ struct Config_Tag arafs_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0}
 };
 
-void preset_arafs() {
+void preset_arafs()
+{
 	for(int i=0; i < 'Z'-'A'+1; i++) {
 		bx_options.aranymfs[i].rootPath[0] = '\0';
 		bx_options.aranymfs[i].configPath[0] = '\0';
@@ -440,7 +466,8 @@ void preset_arafs() {
 	}
 }
 
-void postload_arafs() {
+void postload_arafs()
+{
 	for(int i=0; i < 'Z'-'A'+1; i++) {
 		safe_strncpy(bx_options.aranymfs[i].rootPath, bx_options.aranymfs[i].configPath, sizeof(bx_options.aranymfs[i].rootPath));
 		int len = strlen(bx_options.aranymfs[i].configPath);
@@ -455,7 +482,8 @@ void postload_arafs() {
 	}
 }
 
-void presave_arafs() {
+void presave_arafs()
+{
 	for(int i=0; i < 'Z'-'A'+1; i++) {
 		safe_strncpy(bx_options.aranymfs[i].configPath, bx_options.aranymfs[i].rootPath, sizeof(bx_options.aranymfs[i].configPath));
 		if ( strlen(bx_options.aranymfs[i].rootPath) > 0 &&
@@ -477,7 +505,8 @@ struct Config_Tag ethernet_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_ethernet() {
+void preset_ethernet()
+{
   safe_strncpy(ETH(type), XIF_TYPE, sizeof(ETH(type)));
   safe_strncpy(ETH(tunnel), XIF_TUNNEL, sizeof(ETH(tunnel)));
   safe_strncpy(ETH(ip_host), XIF_HOST_IP, sizeof(ETH(ip_host)));
@@ -485,10 +514,12 @@ void preset_ethernet() {
   safe_strncpy(ETH(netmask), XIF_NETMASK, sizeof(ETH(netmask)));
 }
 
-void postload_ethernet() {
+void postload_ethernet()
+{
 }
 
-void presave_ethernet() {
+void presave_ethernet()
+{
 }
 
 /*************************************************************************/
@@ -501,16 +532,19 @@ struct Config_Tag lilo_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_lilo() {
+void preset_lilo()
+{
   safe_strncpy(LILO(kernel), "linux.bin", sizeof(LILO(kernel)));
   safe_strncpy(LILO(args), "root=/dev/ram video=atafb:vga16", sizeof(LILO(args)));
   safe_strncpy(LILO(ramdisk), "root.bin", sizeof(LILO(ramdisk)));
 }
 
-void postload_lilo() {
+void postload_lilo()
+{
 }
 
-void presave_lilo() {
+void presave_lilo()
+{
 }
 
 /*************************************************************************/
@@ -648,6 +682,72 @@ void presave_parallel() {
 }
 
 /*************************************************************************/
+#ifdef OS_darwin
+#define HOTKEY_OPENGUI		SDLK_PRINT	// F13
+#define	HOTKEY_FULLSCREEN	SDLK_NUMLOCK
+#define	HOTKEY_SCREENSHOT	SDLK_F15
+#else
+#define HOTKEY_OPENGUI		SDLK_PAUSE
+#define	HOTKEY_FULLSCREEN	SDLK_SCROLLOCK
+#define	HOTKEY_SCREENSHOT	SDLK_PRINT
+#endif
+
+static char hotkeys[10][20];
+struct Config_Tag hotkeys_conf[]={
+	{ "Setup", String_Tag, hotkeys[0], sizeof(hotkeys[0]), 0},
+	{ "Quit", String_Tag, hotkeys[1], sizeof(hotkeys[1]), 0},
+	{ "Reboot", String_Tag, hotkeys[2], sizeof(hotkeys[2]), 0},
+	{ "Ungrab", String_Tag, hotkeys[3], sizeof(hotkeys[3]), 0},
+	{ "Debug", String_Tag, hotkeys[4], sizeof(hotkeys[4]), 0},
+	{ "Screenshot", String_Tag, hotkeys[5], sizeof(hotkeys[5]), 0},
+	{ "Fullscreen", String_Tag, hotkeys[6], sizeof(hotkeys[6]), 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+struct { char *string; SDL_keysym *keysym; } hotkeys_rel[]={
+	{ hotkeys[0], &bx_options.hotkeys.setup },
+	{ hotkeys[1], &bx_options.hotkeys.quit },
+	{ hotkeys[2], &bx_options.hotkeys.reboot },
+	{ hotkeys[3], &bx_options.hotkeys.ungrab },
+	{ hotkeys[4], &bx_options.hotkeys.debug },
+	{ hotkeys[5], &bx_options.hotkeys.screenshot },
+	{ hotkeys[6], &bx_options.hotkeys.fullscreen }
+};
+
+void preset_hotkeys()
+{
+	// default values
+	bx_options.hotkeys.setup.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.setup.mod = KMOD_NONE;
+	bx_options.hotkeys.quit.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.quit.mod = KMOD_LSHIFT;
+	bx_options.hotkeys.reboot.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.reboot.mod = KMOD_LCTRL;
+	bx_options.hotkeys.ungrab.sym = SDLK_ESCAPE;
+	bx_options.hotkeys.ungrab.mod = (SDLMod)(KMOD_LCTRL | KMOD_LALT);
+	bx_options.hotkeys.debug.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.debug.mod = KMOD_LALT;
+	bx_options.hotkeys.screenshot.sym = HOTKEY_SCREENSHOT;
+	bx_options.hotkeys.screenshot.mod = KMOD_NONE;
+	bx_options.hotkeys.fullscreen.sym = HOTKEY_FULLSCREEN;
+	bx_options.hotkeys.fullscreen.mod = KMOD_NONE;
+}
+
+void postload_hotkeys() {
+	// convert from string to pair of ints
+	for(uint i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
+		sscanf(hotkeys_rel[i].string, "%d:%d", (int *)&hotkeys_rel[i].keysym->sym, (int *)&hotkeys_rel[i].keysym->mod);
+	}
+}
+
+void presave_hotkeys() {
+	// convert from pair of ints to string
+	for(uint i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
+		sprintf(hotkeys_rel[i].string, "%d:%d", hotkeys_rel[i].keysym->sym, hotkeys_rel[i].keysym->mod);
+	}
+}
+
+/*************************************************************************/
 void usage (int status) {
   printf ("Usage: %s [OPTIONS]\n", program_name);
   printf ("\
@@ -689,6 +789,7 @@ Options:\n\
 
 void preset_cfg() {
   preset_global();
+  preset_hotkeys();
   preset_ide();
   preset_disk();
   preset_arafs();
@@ -708,6 +809,7 @@ void preset_cfg() {
 
 void postload_cfg() {
   postload_global();
+  postload_hotkeys();
   postload_ide();
   postload_disk();
   postload_arafs();
@@ -727,6 +829,7 @@ void postload_cfg() {
 
 void presave_cfg() {
   presave_global();
+  presave_hotkeys();
   presave_ide();
   presave_disk();
   presave_arafs();
@@ -1032,6 +1135,7 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 	fprintf(f, "Using config file: '%s'\n", rcfile);
 
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
+	process_config(f, rcfile, hotkeys_conf, "[HOTKEYS]", true);
 	process_config(f, rcfile, startup_conf, "[STARTUP]", true);
 	process_config(f, rcfile, jit_conf, "[JIT]", true);
 	process_config(f, rcfile, video_conf, "[VIDEO]", true);
@@ -1081,6 +1185,7 @@ bool saveSettings(const char *fs)
 		fprintf(stderr, "Error while writing the '%s' config file.\n", fs);
 		return false;
 	}
+	update_config(fs, hotkeys_conf, "[HOTKEYS]");
 	update_config(fs, startup_conf, "[STARTUP]");
 	update_config(fs, jit_conf, "[JIT]");
 	update_config(fs, video_conf, "[VIDEO]");
