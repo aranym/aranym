@@ -1,0 +1,12 @@
+2001/05/28 - PS
+- implemented proper Bus Error (hardware.cpp and others). This helps
+  in a number of places, namely in FPU detection routines.
+
+- fixed floppy emulation (fdc.cpp). STonX code contained wrong HW register
+  addresses. I found it when I enabled FastRAM - the FDC was crashing
+  the virtual machine.
+
+- added memory bounds checking (memory.h). Ill behaving programs (and bad FDC
+  emulation, as mentioned above :) won't crash the virtual machine anymore!
+
+- new memory allocation (main_unix.cpp), enables 32 MB of FastRAM.
