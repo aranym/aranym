@@ -23,19 +23,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <getopt.h>
 #include <errno.h>
 
 #include <SDL/SDL.h>
 #include <sys/mman.h>
+#include <dirent.h>		// for extFS
 
 #include "cpu_emulation.h"
 #include "main.h"
 #include "hardware.h"
 #include "parameters.h"
 
+#include "extfs.h"
+#include "emul_op.h" // for the extFS
+
 #define DEBUG 1
 #include "debug.h"
 
+#define METADOS_DRV
 #define CONVPLANES
 #ifdef CONVPLANES
 // Temporary color palette table...
@@ -94,6 +100,7 @@ static int keyboardTable[0x80] = {
 /*70-72*/SDLK_KP0, SDLK_KP_PERIOD, SDLK_KP_ENTER};
 
 static int buttons[3]={0,0,0};
+
 
 static void check_event(void)
 {
@@ -368,6 +375,8 @@ int SelectVideoMode() {
 		for(i=0;modes[i];++i)
 			printf("  %d x %d\n", modes[i]->w, modes[i]->h);
 	}
+
+	return 0;
 }
 
 /*
@@ -383,6 +392,12 @@ int main(int argc, char **argv)
 
 	program_name = argv[0];
 	int i = decode_switches (argc, argv);
+
+#ifdef METADOS_DRV
+	// install the drives
+	extFS.install( 'M', "/home/atari", true );
+	extFS.install( 'N', "/home/standa", false );
+#endif // METADOS_DRV
 
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0) {
 		fprintf(stderr, "SDL initialization failed.\n");
@@ -403,6 +418,7 @@ int main(int argc, char **argv)
 		UpdateScreen = true;
 #endif // UPDATERECT
 	}
+
 	// grab mouse
 	if (grab_mouse) {
 		SDL_ShowCursor(SDL_DISABLE);
@@ -616,4 +632,3 @@ void QuitEmulator(void)
 void FlushCodeCache(void *start, uint32 size)
 {
 }
-

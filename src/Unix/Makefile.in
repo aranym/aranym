@@ -40,6 +40,7 @@ SRCS = ../main.cpp \
 	../emul_op.cpp \
 	../blitter.cpp \
 	../videl.cpp \
+	../extfs.cpp \
 	../parameters.cpp \
 	$(CPUSRCS)
 APP = aranym
