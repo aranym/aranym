@@ -2,6 +2,10 @@
 - natfeat/hostfs.cpp: DIRSEPARATOR used wherever possible. Might fix HostFS
   on Windows.
 
+- parameters.cpp: DATADIR can't be relative so now it checks for "//"
+  (configure --datadir="/") and then ARAnyM uses the path to the binary
+  as the DATADIR path.
+
 
 2003/03/27 - joy
 - parameters.cpp: correction and clarification of "-d" command line switch

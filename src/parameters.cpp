@@ -670,9 +670,9 @@ char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
 {
 	// data folder is either defined at compile time with DATADIR
-	// or if the DATADIR is "." (actual folder) then the data folder
+	// or if the DATADIR begins with "//" then the data folder
 	// path is the executable program path ('program_home')
-	char *data_folder = (strlen(DATADIR) > 1) ? DATADIR : program_home;
+	char *data_folder = (strncmp(DATADIR, "//", 2) == 0) ? DATADIR : program_home;
 
 	unsigned int len = strlen(data_folder)+1 + strlen(file)+1;
 	if (len < bufsize) {
