@@ -52,7 +52,7 @@ can edit it with a text editor. If the file is not found upon ARAnyM start
 it is generated automatically and the options contain default values.
 Have a look at the aranym/src/atari/aranymrc.example file for inspiration.
 
-ARAnyM also recognizes several command line options - try starting ARAnyM
+ARAnyM also recognises several command line options - try starting ARAnyM
 with the option "--help" to find out more. The command line options have 
 a higher priority over the config file. You can use it for temporary change
 of ARAnyM parameters or you can even store the command line options setting
