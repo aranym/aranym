@@ -70,6 +70,7 @@ SRCS = ../main.cpp \
 	../araobjs.cpp \
 	../aradata.cpp \
 	../md5.cpp \
+	../parallel.cpp \
 	../romdiff.cpp \
 	$(SYSSRCS) \
 	$(CPUSRCS)
