@@ -463,7 +463,7 @@ void check_event()
 						}
 						else if (controlled) {
 							send2Atari = false;
-							TriggerNMI();	// force Reboot
+							Restart680x0();	// force Cold Reboot
 						}
 #ifdef DEBUGGER
 						else if (bx_options.startup.debugger && alternated) {
@@ -631,5 +631,5 @@ void check_event()
 	}
 
 	if (pendingQuit)
-		TriggerQUIT();	// QUIT flag forces CPU to quit the loop
+		Quit680x0();	// forces CPU to quit the loop
 }
