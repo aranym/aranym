@@ -110,8 +110,9 @@ class HostFs : public NF_Base
 		NativeTypeMapper<int> fdMapper;
 	#endif
 
-	void xfs_debugCookie( XfsCookie *fc );
-
+	#if DEBUG
+		void debugCookie( HostFs::XfsCookie *fc );
+	#endif
   private:
     void freeMounts();
 

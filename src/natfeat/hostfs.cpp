@@ -34,7 +34,7 @@
 #include "tools.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #if 0
@@ -1016,7 +1016,8 @@ char *HostFs::cookie2Pathname( HostFs::XfsCookie *fc, const char *name, char *bu
 	return cookie2Pathname( fc->drv, fc->index, name, buf );
 }
 
-void HostFs::xfs_debugCookie( XfsCookie *fc )
+#if DEBUG
+void HostFs::debugCookie( HostFs::XfsCookie *fc )
 {
 	D(bug( "release():\n"
 		 "	fc = %08lx\n"
@@ -1038,7 +1039,7 @@ void HostFs::xfs_debugCookie( XfsCookie *fc )
 		   fc->index->refCount,
 		   fc->index->childCount ));
 }
-
+#endif
 
 int32 HostFs::xfs_dfree( XfsCookie *dir, uint32 diskinfop )
 {
@@ -1179,9 +1180,9 @@ int32 HostFs::xfs_dev_close(ExtFile *fp, int16 pid)
 		if ( close( fp->hostFd ) )
 			return errnoHost2Mint(errno,TOS_EIO);
 
-        #if SIZEOF_INT != 4 || DEBUG_NON32BIT
+		#if SIZEOF_INT != 4 || DEBUG_NON32BIT
 			fdMapper.removeNative( fp->hostFd );
-	    #endif
+		#endif
 
 	    D(bug("HOSTFS: /dev_close (fd = %d, %d)", fp->hostFd, pid));
 	}
@@ -1688,8 +1689,10 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
 			D(bug( "HOSTFS: fs_getxattr: follow symlink -> %s", target ));
 
 			// get the information from the link target
-			if ( stat(target, &statBuf) )
-				return errnoHost2Mint(errno,TOS_EFILNF);
+			if ( stat(target, &statBuf) ) {
+				// on error just rollback to a symlink (broken one)
+				lstat(fpathName, &statBuf);
+			}
 		}
 	}
 
