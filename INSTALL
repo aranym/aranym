@@ -7,16 +7,19 @@ or from your distribution vendor.
 If you run a flavor of Unix or Linux, go to src/Unix folder.
 
 If you got the source code from CVS then type
-./autogen.sh && make
+./autogen.sh
 
-otherwise type ./configure && make
+Then type ./configure && make
+
+./configure --help shows you all the compile time options.
 
 If everything went OK you got an executable file named "aranym".
 Either install it with 'make install' (root privileges expected)
 or run it directly by typing ./aranym.
 
 It's a good idea to edit the config file ~/.aranymrc, an example you'll
-find in doc/src/atari/aranymrc.example.
+find in doc/src/atari/aranymrc.example. You can update the config file
+by running "aranym --save".
 
 
 2) Harddisk emulation
@@ -78,7 +81,7 @@ a floppy (or floppy image) with the driver and install it from that. If you are 
 atarian you know how to handle this. 
 
 
-2. The mounted Host OS filesystem directories
+2. The METADOS mounted Host OS filesystem directories
 
 This is done by the most clean way it could be. In order to not to patch the TOS,
 the MetaDOS (BetaDOS) driver is available in src/atari/aranymfs/aranymfs.dos.bz2.

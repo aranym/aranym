@@ -1,8 +1,6 @@
 
-      *****************
-      * ARAnyM        *
-      * Version 0.09a *
-      *****************
+      ARAnyM (Atari Running on Any Machine)
+      version 0.0.10 dated 2001/11/12
 
 
  1) License
@@ -46,22 +44,29 @@ Of course, you need GNU-C++ and (GNU) Make, too!
 
 Change to the src/Unix directory and run ./configure.
 If you got the source archive from cvs then run ./autogen.sh instead.
+You may want to check all the compile time options with ./configure --help.
 Then compile it by typing "make".  If all works fine, you'll get the
-executable "aranym".
+executable "aranym". "make install" maybe the next step (be root
+if you haven't changed the destination folder from /usr/local during
+the configure phase).
+
+Try starting ARAnyM with the option "--help" to find out more about its
+command line parameters. Also look at src/atari/aranymrc.example file
+for inspiration and/or generate/update your own ~/.aranymrc by starting
+"aranym --save".
 
 Then you'll have to obtain the original TOS 4.04 from Falcon. Copy it
 to the following path: "/usr/local/share/aranym/ROM".
 You can change this path either before compiling (try ./configure --help)
-or in the ARAnyM configuration file located in ~/.aranymrc
-(~/ is your home folder).
+or in the ARAnyM configuration file ("TOS=/path/to/TOS").
 
-You may also need a harddisk - either an image of it or a real thing
+ARAnyM should be ready for running with EmuTOS. Simply set the "EmuTOS="
+config option to point to your EmuTOS ROM image file. The TOS= is ignored
+in such case.
+
+You may also want a harddisk - either an image of it or a real thing
 from your Atari computer. We are working on providing a couple of 
 disk images. Stay tuned.
-
-Try starting ARAnyM with the option "--help" to find out more about its
-command line parameters. Also look at src/atari/aranymrc.example file
-for inspiration.
 
 The file INSTALL already provides more information on this topic.
 
@@ -74,7 +79,7 @@ to work around a bug in SDL.
 If your mouse doesn't work correctly on console you may want to set the
 SDL_MOUSEDEV_IMPS2 environment variable to 1 (this is if you have IMPS2 mouse).
 
-export SDL_MOUSEDEV_IMPS2=1; ./aranym
+export SDL_MOUSEDEV_IMPS2=1; aranym
 
 
  4) Keyboard shortcuts
@@ -108,5 +113,3 @@ Alt+PrintScreen grabs a screenshot.
 
 
 May the power without the price be with you again!
-
-P.S. Thanks to Thothy for this readme file format inspiration.

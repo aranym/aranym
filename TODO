@@ -38,8 +38,7 @@ Things that must be done before first beta release:
   are mainly exact 200 Hz (instead of approx 100 Hz we have currently) and
   screen updating in main thread (thus no inter-thread collisions)
 
-- enable SWACCEL and HWBLITS of Blitter - either in ./configure or make it
-  configurable in runtime (depends on runtime config GUI stuff Milan made)
+- enable SWACCEL and HWBLITS of Blitter - compile time configuration is enough.
 
 + [100%]
   move ROM file reading back to main.cpp, perhaps even with 040 patching routine so 
@@ -84,8 +83,7 @@ Things for 1.0 release:
       This would be usefull, not to need the C compiler for this, woudn't be?
     - .xfs filesystem modules for MagiC and MiNT.
 
-+ [80%] fVDI working (TOS+aranym drivers)
-    - add support for less than 16bit graphics
++ [90%] fVDI working (TOS+aranym drivers)
 
 - sound output using GSXB library
 
@@ -98,11 +96,11 @@ Estimated time for 1.0 release: spring 2002.
 Things for 2.0 release:
 =======================
 
-- MMU040 (MiNT with memory protection, Linux)
+- [33%] MMU040 (MiNT with memory protection, Linux)
 
 - configuration in GUI for X-Windows (GNOME/KDE)
 
-- perhaps port of aranym to Windows
+- [1%] perhaps port of aranym to Windows
 
 - Yamaha and DMA sound, DSP emulation etc.
 
