@@ -447,8 +447,6 @@ extern "C"
 #endif
 int main(int argc, char **argv)
 {
-	char str[256];
-
 	program_name = argv[0];
 	int i = decode_switches(argc, argv);
 

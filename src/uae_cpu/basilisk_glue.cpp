@@ -109,7 +109,7 @@ void TriggerInterrupt(void)
 }
 */
 
-const int VBL = 0x777;	// vymyslena hodnota, kruty hack
+const unsigned int VBL = 0x777;	// vymyslena hodnota, kruty hack
 void TriggerVBL(void)
 {
 	InterruptFlags = VBL;

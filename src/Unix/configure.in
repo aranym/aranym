@@ -453,7 +453,6 @@ fi
 
 CPUSRCS="$CPUSRCS ../uae_cpu/debug.cpp"
 
-#AC_CHECK_LIB(SDL, SDL_Init)
 SDL_CFLAGS=
 SDL_LIBS=
 AM_PATH_SDL(1.2.0, )

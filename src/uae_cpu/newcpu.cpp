@@ -155,7 +155,7 @@ static void build_cpufunctbl (void)
     for (opcode = 0; opcode < 65536; opcode++) {
 	cpuop_func *f;
 
-	if (table68k[opcode].mnemo == i_ILLG || table68k[opcode].clev > cpu_level)
+	if (table68k[opcode].mnemo == i_ILLG/* || table68k[opcode].clev > cpu_level*/)
 	    continue;
 
 	if (table68k[opcode].handler != -1) {
@@ -302,7 +302,7 @@ uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 	    sprintf (buffer,"(%s%c%d.%c*%d+%ld)+%ld == $%08lx", name,
 		    dp & 0x8000 ? 'A' : 'D', (int)r, dp & 0x800 ? 'L' : 'W',
 		    1 << ((dp >> 9) & 3),
-		    disp,outer,
+		    (unsigned long)disp, (unsigned long)outer,
 		    (unsigned long)addr);
 	} else {
 	  addr = m68k_areg(regs,reg) + (uae_s32)((uae_s8)disp8) + dispreg;
@@ -349,7 +349,7 @@ uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 	    sprintf (buffer,"(%s%c%d.%c*%d+%ld)+%ld == $%08lx", name,
 		    dp & 0x8000 ? 'A' : 'D', (int)r, dp & 0x800 ? 'L' : 'W',
 		    1 << ((dp >> 9) & 3),
-		    disp,outer,
+		    (unsigned long)disp, (unsigned long)outer,
 		    (unsigned long)addr);
 	} else {
 	  addr += (uae_s32)((uae_s8)disp8) + dispreg;
@@ -1194,17 +1194,19 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 	return;
     }
 
-    write_log ("Illegal instruction: %04x at %08lx\n", opcode, pc);
+    write_log ("Illegal instruction: %04x at %08lx\n", opcode, (unsigned long)pc);
 
     Exception (4,0);
 }
 
 void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
+#ifdef FULL_MMU
     uae_u16 i;
     uaecptr addr = m68k_areg(regs, extra);
+#endif
     if ((opcode & 0xFF8) == 0x0500) { /* PFLUSHN instruction (An) */
-#ifdef FULLMMU
+#ifdef FULL_MMU
         for (i = 0; i < ATCSIZE; i++) {
             if (!regs.atcglobald[i]
                 && (addr == regs.atcind[i]))
@@ -1216,7 +1218,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x0508) { /* PFLUSH instruction (An) */
-#ifdef FULLMMU
+#ifdef FULL_MMU
         for (i = 0; i < ATCSIZE; i++) {
             if (addr == regs.atcind[i])
                 regs.atcvald[i] = 0;
@@ -1226,7 +1228,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x0510) { /* PFLUSHAN instruction */
-#ifdef FULLMMU
+#ifdef FULL_MMU
         for (i = 0; i < ATCSIZE; i++) {
             if (!regs.atcglobald[i]) regs.atcvald[i] = 0;
             if (!regs.atcglobali[i]) regs.atcvali[i] = 0;
@@ -1234,7 +1236,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x0518) { /* PFLUSHA instruction */
-#ifdef FULLMMU
+#ifdef FULL_MMU
         for (i = 0; i < ATCSIZE; i++) {
             regs.atcvald[i] = 0;
             regs.atcvali[i] = 0;
@@ -1242,7 +1244,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x548) { /* PTESTW instruction */
-#ifdef FULLMMU
+#ifdef FULL_MMU
 	uaecptr mask;
         if (regs.dtt0 & 0x8000) {
 	    if ((regs.dtt0 & 0x4) != 0) throw access_error(addr);
@@ -1456,7 +1458,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 	}
 #endif
     } else if ((opcode & 0xFF8) == 0x568) { /* PTESTR instruction */
-#ifdef FULLMMU
+#ifdef FULL_MMU
 	uaecptr mask;
         if (regs.dtt0 & 0x8000) {
             mask = ((~regs.dtt0) & 0xff0000) << 8;
@@ -1893,11 +1895,11 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 	}
 	if (ccpt != 0) {
 	    if (cctrue(dp->cc))
-		printf (" == %08lx (TRUE)", newpc);
+		printf (" == %08lx (TRUE)", (unsigned long)newpc);
 	    else
-		printf (" == %08lx (FALSE)", newpc);
+		printf (" == %08lx (FALSE)", (unsigned long)newpc);
 	} else if ((opcode & 0xff00) == 0x6100) /* BSR */
-	    printf (" == %08lx", newpc);
+	    printf (" == %08lx", (unsigned long)newpc);
 	printf ("\n");
     }
     if (nextpc)
@@ -1908,18 +1910,19 @@ void m68k_dumpstate (uaecptr *nextpc)
 {
     int i;
     for (i = 0; i < 8; i++){
-	printf ("D%d: %08lx ", i, m68k_dreg(regs, i));
+	printf ("D%d: %08lx ", i, (unsigned long)m68k_dreg(regs, i));
 	if ((i & 3) == 3) printf ("\n");
     }
     for (i = 0; i < 8; i++){
-	printf ("A%d: %08lx ", i, m68k_areg(regs, i));
+	printf ("A%d: %08lx ", i, (unsigned long)m68k_areg(regs, i));
 	if ((i & 3) == 3) printf ("\n");
     }
     if (regs.s == 0) regs.usp = m68k_areg(regs, 7);
     if (regs.s && regs.m) regs.msp = m68k_areg(regs, 7);
     if (regs.s && regs.m == 0) regs.isp = m68k_areg(regs, 7);
     printf ("USP=%08lx ISP=%08lx MSP=%08lx VBR=%08lx\n",
-	    regs.usp,regs.isp,regs.msp,regs.vbr);
+	    (unsigned long)regs.usp, (unsigned long)regs.isp,
+	    (unsigned long)regs.msp, (unsigned long)regs.vbr);
     printf ("T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%d C=%d IMASK=%d\n",
 	    regs.t1, regs.t0, regs.s, regs.m,
 	    GET_XFLG, GET_NFLG, GET_ZFLG, GET_VFLG, GET_CFLG, regs.intmask);
@@ -1935,5 +1938,5 @@ void m68k_dumpstate (uaecptr *nextpc)
 
     m68k_disasm(m68k_getpc (), nextpc, 1);
     if (nextpc)
-	printf ("next PC: %08lx\n", *nextpc);
+	printf ("next PC: %08lx\n", (unsigned long)*nextpc);
 }

@@ -56,8 +56,22 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 				   "a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
 				   "a4 %08lx a5 %08lx a6 %08lx a7 %08lx\n"
 				   "sr %04x\n",
-				   r->d[0], r->d[1], r->d[2], r->d[3], r->d[4], r->d[5], r->d[6], r->d[7],
-				   r->a[0], r->a[1], r->a[2], r->a[3], r->a[4], r->a[5], r->a[6], r->a[7],
+				   (unsigned long)r->d[0],
+				   (unsigned long)r->d[1],
+				   (unsigned long)r->d[2],
+				   (unsigned long)r->d[3],
+				   (unsigned long)r->d[4],
+				   (unsigned long)r->d[5],
+				   (unsigned long)r->d[6],
+				   (unsigned long)r->d[7],
+				   (unsigned long)r->a[0],
+				   (unsigned long)r->a[1],
+				   (unsigned long)r->a[2],
+				   (unsigned long)r->a[3],
+				   (unsigned long)r->a[4],
+				   (unsigned long)r->a[5],
+				   (unsigned long)r->a[6],
+				   (unsigned long)r->a[7],
 				   r->sr);
 #ifdef ENABLE_MON
 			char *arg[4] = {"mon", "-m", "-r", NULL};
@@ -134,8 +148,22 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 				   "a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
 				   "a4 %08lx a5 %08lx a6 %08lx a7 %08lx\n"
 				   "sr %04x\n",
-				   r->d[0], r->d[1], r->d[2], r->d[3], r->d[4], r->d[5], r->d[6], r->d[7],
-				   r->a[0], r->a[1], r->a[2], r->a[3], r->a[4], r->a[5], r->a[6], r->a[7],
+				   (unsigned long)r->d[0],
+				   (unsigned long)r->d[1],
+				   (unsigned long)r->d[2],
+				   (unsigned long)r->d[3],
+				   (unsigned long)r->d[4],
+				   (unsigned long)r->d[5],
+				   (unsigned long)r->d[6],
+				   (unsigned long)r->d[7],
+				   (unsigned long)r->a[0],
+				   (unsigned long)r->a[1],
+				   (unsigned long)r->a[2],
+				   (unsigned long)r->a[3],
+				   (unsigned long)r->a[4],
+				   (unsigned long)r->a[5],
+				   (unsigned long)r->a[6],
+				   (unsigned long)r->a[7],
 				   r->sr);
 #ifdef ENABLE_MON
 			char *arg[4] = {"mon", "-m", "-r", NULL};

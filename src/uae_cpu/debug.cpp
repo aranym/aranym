@@ -15,7 +15,6 @@
 #include <signal.h>
 
 #include "config.h"
-#include "penguin.h"
 #include "memory.h"
 #include "newcpu.h"
 #include "debug.h"

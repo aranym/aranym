@@ -17,26 +17,8 @@
 /* Define to 'off_t' if <sys/types.h> doesn't define. */
 #undef loff_t
 
-/* Define if using ESD. */
-#undef ENABLE_ESD
-
-/* Define if using DGA with framebuffer device. */
-#undef ENABLE_FBDEV_DGA
-
-/* Define if using GTK. */
-#undef ENABLE_GTK
-
-/* Define if using "mon". */
-#undef ENABLE_MON
-
 /* Define if using native 68k mode. */
 #undef ENABLE_NATIVE_M68K
-
-/* Define if using XFree86 DGA extension. */
-#undef ENABLE_XF86_DGA
-
-/* Define if using XFree86 VidMode extension. */
-#undef ENABLE_XF86_VIDMODE
 
 /* Define if pthreads are available. */
 #undef HAVE_PTHREADS

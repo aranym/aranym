@@ -1,11 +1,11 @@
 #! /bin/sh
 # Run this to generate all the initial makefiles, etc.
-# This was lifted from the Gimp, and adapted slightly by
-# Christian Bauer.
+# This was lifted from the BasiliskII, and adapted slightly by
+# Milan Jurik.
 
 DIE=0
 
-PROG="Basilisk II"
+PROG="ARAnyM"
 
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
         echo
