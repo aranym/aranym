@@ -60,6 +60,8 @@ AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emul
 
 AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per second limiter (default=no)], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
 
+AC_ARG_ENABLE(lilo, [  --enable-lilo           enable Linux loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
+
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
 [  --enable-fpe=FPE        specify which fpu emulator to use (default=auto)],
@@ -1573,7 +1575,6 @@ AC_ARG_WITH(kernel-includes,
 dnl Linux loader
 
 LILOSRCS=""
-AC_ARG_ENABLE(lilo, [  --enable-lilo           enable Linux loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
 if [[ "x$WANT_LILO" = "xyes" ]]; then
 	if [[ "x$WANT_MMU" = "xyes" ]]; then
 		LILOSRCS="../lilo.cpp"
