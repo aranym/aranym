@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ext.h>
 
 
 /*
@@ -105,21 +104,21 @@ int findPart( unsigned char *buffer, size_t len )
 
 
 int main() {
-	int result = 0;
+	char *result = NULL;
 
-	fh = fopen ("pc.prg", "rb+");
+	fh = fopen ("PC.PRG", "rb+");
 	if ( !fh ) {
-		result = 1;
+		result = "PC.PRG not found in current directory";
 		goto finalize;
 	}
 
 	if ( fseek( fh, 2000, SEEK_SET ) < 0 ) {
-		result = 1;
+		result = "PC.PRG cannot seek to 2000 (too short file?)";
 		goto finalize;
 	}
 
 	if ( ! findPart( moveq100, sizeof( moveq100 ) / sizeof( *moveq100 ) ) ) {
-		result = 1;
+		result = "findPart(moveq100) failed";
 		goto finalize;
 	}
 
@@ -129,7 +128,7 @@ int main() {
 
 	while ( 1 ) {
 		if ( ! findPart( cmp100140, sizeof( cmp100140 ) / sizeof( *cmp100140 ) ) ) {
-			result = 1;
+			result = "findPart(cmp100140) failed";
 			break;
 		}
 
@@ -142,7 +141,7 @@ int main() {
 		fwrite( patchBuffer, 1, 1, fh );
 
 		if ( ! findPart( sub100d3, sizeof( sub100d3 ) / sizeof( *sub100d3 ) ) ) {
-			result = 1;
+			result = "findPart(sub100d3) failed";
 			break;
 		}
 
@@ -154,13 +153,14 @@ int main() {
 finalize:
 	fclose( fh );
 
-	if ( !result ) {
-		printf( "PureC was successfully patched.\n" );
+	if ( result == NULL ) {
+		printf( "PureC was patched successfully.\n" );
 	} else {
-		printf( "There is no a PureC binary (pc.prg).\n" );
+		printf( "Error patching PureC: %s\n", result );
 	}
 
-	getch();
+	puts("Press [Return] to quit.");
+	getchar();
 
-	return result;
+	return 0;
 }
