@@ -1,5 +1,12 @@
 2003/10/17 - Xavier
-- real trap for double bus errors
+- newcpu.cpp: real trap for double bus errors
+
+- configure.ac: allows to "make depend" on Cygwin and correct end message
+  of configure script so that user knows he should "make depend" before "make"
+
+- Makefile.in: sed script in "make depend" more readable
+
+- vmalloc.cpp: correct a build error on Cygwin (an mmap we forgot...)
 
 
 2003/10/14 - patrice

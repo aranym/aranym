@@ -325,25 +325,25 @@ depend dep:
 	sed -n '/^# DO NOT DELETE THIS LINE -- make depend depends on it./,$$p' < Makefile > Makefile.wrk
 	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' < Makefile > Makefile.new
 	mv Makefile.new Makefile
-	tail +2 Makefile.wrk | sed 's/\/..\/uae_cpu\/fpu\//\//' > Makefile.new
+	tail +2 Makefile.wrk | sed 's=/../uae_cpu/fpu/=/=' > Makefile.new
 	mv Makefile.new Makefile.wrk
-	sed 's/\/Unix\/beos\//\/Unix\//' < Makefile.wrk > Makefile.new
+	sed 's=/Unix/beos/=/Unix/=' < Makefile.wrk > Makefile.new
 	mv Makefile.new Makefile.wrk
-	sed 's/\/Unix\/cygwin\//\/Unix\//' < Makefile.wrk > Makefile.new
+	sed 's=/Unix/cygwin/=/Unix/=' < Makefile.wrk > Makefile.new
 	mv Makefile.new Makefile.wrk
-	sed 's/\/Unix\/irix\//\/Unix\//' < Makefile.wrk > Makefile.new
+	sed 's=/Unix/irix/=/Unix/=' < Makefile.wrk > Makefile.new
 	mv Makefile.new Makefile.wrk
-	sed 's/\/Unix\/linux\//\/Unix\//' < Makefile.wrk > Makefile.new
+	sed 's=/Unix/linux/=/Unix/=' < Makefile.wrk > Makefile.new
 	mv Makefile.new Makefile.wrk
-	sed 's/\/Unix\/solaris\//\/Unix\//' < Makefile.wrk > Makefile.new
+	sed 's=/Unix/solaris/=/Unix/=' < Makefile.wrk > Makefile.new
 	mv Makefile.new Makefile.wrk
-	sed 's/\/Unix\/xbsd\//\/Unix\//' < Makefile.wrk > Makefile.new
+	sed 's=/Unix/xbsd/=/Unix/=' < Makefile.wrk > Makefile.new
 	mv Makefile.new Makefile.wrk
-	sed 's/\/..\/uae_cpu\//\//' < Makefile.wrk > Makefile.new
+	sed 's=/../uae_cpu/=/=' < Makefile.wrk > Makefile.new
 	mv Makefile.new Makefile.wrk
-	sed 's/\/..\/natfeat\//\//' < Makefile.wrk > Makefile.new
+	sed 's=/../natfeat/=/=' < Makefile.wrk > Makefile.new
 	mv Makefile.new Makefile.wrk
-	sed 's/\/..\//\//' < Makefile.wrk >> Makefile
+	sed 's=/../=/=' < Makefile.wrk >> Makefile
 	rm -f Makefile.wrk
 
 $(OBJ_DIR)/%.o : %.c

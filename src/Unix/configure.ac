@@ -272,7 +272,7 @@ case "$target_os" in
     EXTRASYSSRCS=linux/parameters_linux.cpp
     ;;
   cygwin*)
-    DEFINES="$DEFINES -fpermissive -DARANYMHOME=\"\\\"aranym\\\"\""
+    DEFINES="$DEFINES -DARANYMHOME=\"\\\"aranym\\\"\""
     LIBS="$LIBS -lSDL -lSDLmain -liberty"
     EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp"
     ;;
@@ -1683,4 +1683,5 @@ echo Linux kernel includes .................. : $LINUXKERNEL_INCDIR
 echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo
-echo "Configuration done. Now type \"make\" (or \"gmake\")."
+echo "Configuration done. Now type \"make depend\" (or \"gmake depend\") then
+\"make\" (or \"gmake\")."

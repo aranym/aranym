@@ -116,7 +116,11 @@ void * vm_acquire(size_t size)
 		return VM_MAP_FAILED;
 #else
 #ifdef HAVE_MMAP_VM
+# ifdef OS_cygwin
+	if ((addr = mmap((char *)next_address, size, VM_PAGE_DEFAULT, map_flags, zero_fd, 0)) == MAP_FAILED)
+# else
 	if ((addr = mmap((void *)next_address, size, VM_PAGE_DEFAULT, map_flags, zero_fd, 0)) == MAP_FAILED)
+# endif
 		return VM_MAP_FAILED;
 	
 	next_address = (char *)addr + size;
