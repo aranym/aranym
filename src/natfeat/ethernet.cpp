@@ -82,20 +82,20 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			break;
 
 		case 2:	// what is the MAC address?
-			D(bug("Ethernet: getMACaddr"));
+			D(bug("Ethernet: getHWddr"));
+			/* store MAC address to provided buffer */
 			{
-				/* store MAC address to provided buffer */
-				char *text = MAC_ADDRESS;				// source
-				memptr name_ptr = getParameter(0);		// destination
-				uint32 name_maxlen = getParameter(1);	// max length
+				memptr buf_ptr = getParameter(0);	// destination buffer
+				uint32 buf_size = getParameter(1);	// buffer size
 
-				if (! ValidAddr(name_ptr, true, name_maxlen))
-					BUS_ERROR(name_ptr);
+				if (! ValidAddr(buf_ptr, true, buf_size))
+					BUS_ERROR(buf_ptr);
 
-				char *name = (char *)Atari2HostAddr(name_ptr);	// use A2Hstrcpy
-				strncpy(name, text, name_maxlen-1);
-				name[name_maxlen-1] = '\0';
-				ret = strlen(text);
+				if (strlen(MAC_ADDRESS) == buf_size)
+					memcpy(Atari2HostAddr(buf_ptr), MAC_ADDRESS, buf_size);	// use H2Amemcpy
+				else {
+					panicbug("Ethernet: getHWddr() with illegal buffer size");
+				}
 			}
 			break;
 

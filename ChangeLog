@@ -1,3 +1,8 @@
+2003/02/28 - joy
+- natfeat/ethernet.cpp: getHWaddr takes exactly 6 bytes and it's not a string
+  so no EOS should be added. Thus strncpy changed to memcpy.
+
+
 2003/02/27 - joy
 - Ethernet: README of aranym.xif made clearer, IP addresses in ece.cpp
   configurable by #define and the default ATARI IP address changed to
