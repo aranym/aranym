@@ -75,7 +75,8 @@ char *getConfFolder(char *buffer, unsigned int bufsize)
 			unsigned int len = strlen(ARANYMHOME);
 			if ((homelen + 1 + len + 1) < bufsize) {
 				strcpy(path, home);
-				strcat(path, DIRSEPARATOR);
+				if (homelen)
+					strcat(path, DIRSEPARATOR);
 				strcat(path, ARANYMHOME);
 			}
 		}

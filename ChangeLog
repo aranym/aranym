@@ -2,6 +2,11 @@
 - cfgopts: Thomas correctly suggested to use memmove() for overlapping
   blocks of memory.
 
+- hostfs.cpp: fixed very annoying bug that was causing bus error when opening
+  root of a host drive.
+
+- parameters_cygwin: fixed a bunch of small bugs, now tested and works OK.
+
 
 2003/04/07 - STanda
 - hostfs.cpp: General debug messages cleanup.
