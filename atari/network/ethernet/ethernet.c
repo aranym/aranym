@@ -1,11 +1,26 @@
 /*
- *	ARAnyM ethernet driver.
+ * ARAnyM ethernet driver.
  *
- *	based on dummy.xif skeleton 12/14/94, Kay Roemer.
+ * Copyright (c) 2002-2004 Standa and Petr of ARAnyM dev team (see AUTHORS)
+ * 
+ * based on dummy.xif skeleton 12/14/94, Kay Roemer.
  *
- *  written by Standa & Joy @ ARAnyM team
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
- *  GPL
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 # include "global.h"
@@ -20,16 +35,11 @@
 
 # include <osbind.h>
 
-#define AUTO_IP_CONFIGURE 0
-
-#if AUTO_IP_CONFIGURE
-#include "inet4/in.h"
-unsigned long inet_aton(const char *cp, struct in_addr *addr);
-#endif
+# include "mint/arch/nf_ops.h"
 
 #include "ethernet_nfapi.h"
 
-#define XIF_NAME	"ARAnyM Eth driver v0.4"
+#define XIF_NAME	"ARAnyM Eth driver v0.5"
 
 /* old handler */
 extern void (*old_interrupt)(void);
@@ -42,6 +52,7 @@ void _cdecl aranym_interrupt(void);
 
 long driver_init (void);
 
+unsigned long inet_aton(const char *cp, long *addr);
 
 /*
  * Our interface structure
@@ -59,7 +70,7 @@ static long	ara_config	(struct netif *, struct ifopt *);
 
 
 /* ================================================================ */
-static unsigned long nfEtherFsId;
+static unsigned long nfEtherID;
 
 /* NatFeat opcodes */
 static long _NF_getid = 0x73004e75L;
@@ -335,34 +346,29 @@ ara_output (struct netif *nif, BUF *buf, const char *hwaddr, short hwlen, short 
 static long
 ara_ioctl (struct netif *nif, short cmd, long arg)
 {
-#if AUTO_IP_CONFIGURE
-	enum {NONE, ADDR, NETMASK} gif = NONE;
-#endif
+	char buffer[128];
+	enum {
+		NONE = 0,
+		ADDR = XIF_GET_IPATARI,
+		DSTADDR = XIF_GET_IPHOST,
+		NETMASK = XIF_GET_NETMASK
+	} gif = NONE;
+
 	DEBUG (("araeth: ioctl cmd = %d \"('%c'<<8)|%d\" bytes", cmd, cmd>>8, cmd&0xff));
-
-
 
 	switch (cmd)
 	{
-#if AUTO_IP_CONFIGURE
-		case SIOCGIFADDR:
+		case SIOCGIFADDRFH:
 			if (gif == NONE) gif = ADDR;
 			/* fall through */
-		case SIOCGIFNETMASK:
+		case SIOCGIFDSTADDRFH:
+			if (gif == NONE) gif = DSTADDR;
+			/* fall through */
+		case SIOCGIFNETMASKFH:
 			if (gif == NONE) gif = NETMASK;
 
-			if (gif == NETMASK || gif == ADDR) {
-				char buffer[128];
-				struct ifreq *ifr = (struct ifreq *) arg;
-				struct sockaddr_in *s = (struct sockaddr_in *)&(
-					gif ? ifr->ifru.netmask : ifr->ifru.addr
-				);
-				nfCall((ETH(gif == NETMASK ? XIF_GET_NETMASK : XIF_GET_IPATARI),
-					0 /* ethX */, buffer, sizeof(buffer)));
-				inet_aton(buffer, &s->sin_addr);
-			}
-			return 0;
-#endif /* AUTO_IP_CONFIGURE */
+			nfCall((ETH(gif), 0 /* ethX */, buffer, sizeof(buffer)));
+			return (inet_aton(buffer, (long *)arg)) ? 0 : -1;
 
 		case SIOCSIFNETMASK:
 		case SIOCSIFFLAGS:
@@ -371,7 +377,7 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 
 		case SIOCSIFMTU:
 			/*
-			 * Limit MTU to 1500 bytes. MintNet has alraedy set nif->mtu
+			 * Limit MTU to 1500 bytes. MintNet has already set nif->mtu
 			 * to the new value, we only limit it here.
 			 */
 			if (nif->mtu > ETH_MAX_DLEN)
@@ -475,10 +481,13 @@ driver_init (void)
 	static char message[100];
 	static char my_file_name[128];
 
-
-	/* get the HostFs NatFeat ID */
-	nfEtherFsId = nfGetID(("ETHERNET"));
-	if ( nfEtherFsId == 0 ) {
+	nfEtherID = 0;
+	/* get the Ethernet NatFeat ID */
+	if (MINT_KVERSION >= 2 && KERNEL->nf_ops != NULL)
+		nfEtherID = KERNEL->nf_ops->get_id("ETHERNET");
+	else
+		nfEtherID = nfGetID(("ETHERNET"));
+	if ( nfEtherID == 0 ) {
 		c_conws(XIF_NAME " not installed - NatFeat not found\n\r");
 		return 1;
 	}
@@ -657,7 +666,6 @@ aranym_interrupt (void)
 	nfInterrupt( in_use = 0 );
 }
 
-#if AUTO_IP_CONFIGURE
 /*
  * Check whether "cp" is a valid ascii representation
  * of an Internet address and convert to a binary address.
@@ -665,8 +673,8 @@ aranym_interrupt (void)
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-/*in_addr_t*/
-unsigned long inet_aton(const char *cp, struct in_addr *addr)
+
+unsigned long inet_aton(const char *cp, long *addr)
 {
 	register unsigned long val;
 	int base;
@@ -756,11 +764,10 @@ unsigned long inet_aton(const char *cp, struct in_addr *addr)
 		break;
 	}
 	if (addr)
-		addr->s_addr = htonl(val);
+		*addr = val;
 
 	return (1);
 
 ret_0:
 	return (0);
 }
-#endif /* AUTO_IP_CONFIGURE */
