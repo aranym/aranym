@@ -30,7 +30,6 @@
 #include "input.h"
 #include "hardware.h"
 #include "parameters.h"
-#include "hostscreen.h"
 #include "host.h"			// for the HostScreen
 #include "aramd5.h"
 #include "romdiff.h"
@@ -53,8 +52,10 @@
 
 #ifdef SDL_GUI
 #include "sdlgui.h"
-extern SDL_Thread *GUIthread;
+extern bool start_GUI_thread();
+extern void kill_GUI_thread();
 #endif
+
 #ifdef ETHERNET_SUPPORT
 #include "natfeat/ethernet.h"
 extern ETHERNETDriver Ethernet;
@@ -493,16 +494,15 @@ bool InitAll(void)
 	isGuiAvailable = SDLGui_Init();
 
 	if (isGuiAvailable && startupGUI) {
-		// enable timer thread for input events
-		my_timer_id = SDL_AddTimer(20, input_callback, NULL);
-		if (my_timer_id != NULL) {
-extern int open_gui(void *);
-			// open GUI
-			open_gui(NULL);
-			// GUI finished - disable timer thread
-			SDL_RemoveTimer(my_timer_id);
-			my_timer_id = NULL;
+		start_GUI_thread();
+		do {
+			hostScreen.lock();
+			check_event();			// process mouse & keyboard events
+			hostScreen.unlock();
+
+			SDL_Delay(20);			// 50 Hz input events rate is OK
 		}
+		while(hostScreen.isGUIopen());
 	}
 #endif
 
@@ -570,10 +570,7 @@ void ExitAll(void)
 	}
 
 #ifdef SDL_GUI
-	if (GUIthread != NULL) {
-		SDL_KillThread(GUIthread);
-		GUIthread = NULL;
-	}
+	kill_GUI_thread();
 	SDLGui_UnInit();
 #endif
 

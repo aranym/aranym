@@ -1,3 +1,10 @@
+2003/12/31 - joy
+- main.cpp: startup GUI now uses the same thread schema as the normal GUI.
+  Windows SDL couldn't read mouse events in timer thread :-(
+
+- input.cpp: small clean up in the GUI handling
+
+
 2003/12/28 PM - joy
 - hostscreen.cpp: removed the scary IPC hack and switched to user SDL events
 

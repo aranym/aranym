@@ -30,7 +30,6 @@
 #ifdef SDL_GUI
 #  include "sdlgui.h"
 #endif
-#include "host.h"			// for fullscreen switch
 
 #define DEBUG 0
 #include "debug.h"
@@ -344,26 +343,36 @@ static bool mouseOut = false;
 
 #ifdef SDL_GUI
 extern bool isGuiAvailable;	// from main.cpp
-SDL_Thread *GUIthread = NULL;
+static SDL_Thread *GUIthread = NULL;
 
 int open_gui(void * /*ptr*/)
 {
 	hostScreen.openGUI();
 	int status = GUImainDlg();
-	hostScreen.closeGUI();
 
 	if (status == STATUS_SHUTDOWN)
 		pendingQuit = true;
 	else if (status == STATUS_REBOOT)
 		Restart680x0();
 
+	hostScreen.closeGUI();
 	return 0;
 }
 
-void start_GUI_thread()
+bool start_GUI_thread()
 {
-	if (isGuiAvailable && !hostScreen.isGUIopen())
+	if (isGuiAvailable && !hostScreen.isGUIopen()) {
 		GUIthread = SDL_CreateThread(open_gui, NULL);
+	}
+	return (GUIthread != NULL);
+}
+
+void kill_GUI_thread()
+{
+	if (GUIthread != NULL) {
+		SDL_KillThread(GUIthread);
+		GUIthread = NULL;
+	}
 }
 #endif
 
@@ -663,6 +672,7 @@ void check_event()
 		}
 	}
 
-	if (pendingQuit)
+	if (pendingQuit) {
 		Quit680x0();	// forces CPU to quit the loop
+	}
 }
