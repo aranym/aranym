@@ -1,3 +1,7 @@
+2002/06/09 - joy
+- SDL GUI restores original background (see hostScreen.save_bkg/restore_bkg)
+- SDL GUI "Quit" works
+
 2002/06/07 - joy
 - ScrollLock switches between fullscreen and windowed mode
 - in window mode you'll get a 'heart beat' - an activity indicator
