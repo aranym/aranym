@@ -1,3 +1,4 @@
+/* 2002 MJ */
  /*
   * UAE - The Un*x Amiga Emulator
   *

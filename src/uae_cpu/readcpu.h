@@ -1,3 +1,4 @@
+/* 2002 MJ */
 #ifndef READCPU_H
 #define READCPU_H
 

@@ -1,7 +1,9 @@
 /* 2001 MJ */
 
 /*
- *  cpu_emulation.h - Definitions for Basilisk II CPU emulation module (UAE 0.8.10 version)
+ *  cpu_emulation.h - Definitions for ARAnyM CPU emulation module
+ *
+ *  based on
  *
  *  Basilisk II (C) 1997-2001 Christian Bauer
  *

@@ -1,6 +1,8 @@
 /* 2001 MJ */
 /*
- *  basilisk_glue.cpp - Glue UAE CPU to Basilisk II CPU engine interface
+ *  aranym_glue.cpp - Glue UAE CPU to ARAnyM
+ *
+ *  based on
  *
  *  Basilisk II (C) 1997-2001 Christian Bauer
  *

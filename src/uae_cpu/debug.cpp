@@ -1,5 +1,4 @@
 /* 2001 MJ */
-
  /*
   * UAE - The Un*x Amiga Emulator
   *
