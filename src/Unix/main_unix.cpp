@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 	else if ((ptr = strrchr(program_home, DIRSEPARATOR[0])) != NULL)
 		ptr[0] = '\0';	// strip out filename and separator from the path
 	else
-		ptr[0] = '\0';
+		program_home[0] = '\0';
 
 	// parse command line switches
 	if (!decode_switches(stderr, argc, argv))
@@ -328,6 +328,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.80.2.1  2003/03/27 21:23:59  joy
+ * handling paths to aranym files improved
+ *
  * Revision 1.80  2002/10/20 08:44:04  joy
  * NatFeat opcodes changed back to good old ones
  *

@@ -148,7 +148,7 @@ int ETHERNETDriver::get_params(GET_PAR which)
 	uint32 name_maxlen = getParameter(2);
 	char *text = NULL;
 
-	D(bug("Ethernet: getPAR(%d) to (%d, %p, %d)", which, ethX, name_ptr, name_maxlen));
+	D(bug("Ethernet: getPAR(%d) to (%p, %d)", which, name_ptr, name_maxlen));
 
 	if (! ValidAddr(name_ptr, true, name_maxlen))
 		BUS_ERROR(name_ptr);

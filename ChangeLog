@@ -1,3 +1,10 @@
+2003/04/01 - joy & Honza/ATACK
+- main_unix.cpp: segfault on gentoo (where the argv[0] does not contain
+  the path (only filename)
+
+- natfeat/ethernet.cpp: missing ethX definition in DEBUG() statement
+
+
 2003/03/30 - joy
 - cygwin gets its own folder with a tools.cpp file.
 
