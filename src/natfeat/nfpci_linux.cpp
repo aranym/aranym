@@ -42,7 +42,20 @@
 /*--- Types ---*/
 
 typedef struct {
+	/* Infos read from PCI_FILE_DEVICES */
+	/* 0: bus, device, function */
+	/* 1: vendor id, device id */
+	/* 2: irq */
+	/* 3-8: base addresses */
+	/* 9: ROM base address */
+	/* 10-15: sizes */
+	/* 16: ROM size */
 	uint32 info[17];
+
+	/* Configuration bytes */
+	unsigned char config[64];
+
+	/* Device file to access config bytes */
 	char filename[256];
 } pci_device_t;
 
@@ -57,7 +70,7 @@ PciDriverLinux::PciDriverLinux()
 {
 	uint32 device[17], i;
 	char buffer[512];
-	FILE *f;
+	FILE *f, *fc;
 
 	D(bug(NFPCI_NAME "PciDriverLinux()"));
 
@@ -91,6 +104,17 @@ PciDriverLinux::PciDriverLinux()
 			(new_device->info[0] >> 3) & 0x1f,
 			new_device->info[0] & 0x07
 		);
+
+		/* Read configuration bytes */
+		memset(new_device->config, 0, sizeof(new_device->config));
+
+		fc=fopen(new_device->filename, "r");
+		if (fc==NULL) {
+			continue;
+		}
+
+		fread(&(new_device->config[0]), 1, sizeof(new_device->config), fc);
+		fclose(fc);
 	}
 
 	fclose(f);
@@ -99,11 +123,27 @@ PciDriverLinux::PciDriverLinux()
 #if DEBUG
 	D(bug(NFPCI_NAME " %d PCI devices found:", num_pci_devices));
 	for (i=0; i<num_pci_devices; i++) {
+		int k;
+
 		D(bug(NFPCI_NAME "  Bus %d, Vendor 0x%04x, Device 0x%04x, %s",
 			pci_devices[i].info[0], (pci_devices[i].info[1]>>16) & 0xffff,
 			pci_devices[i].info[1] & 0xffff,
 			pci_devices[i].filename
 		));
+
+		for (k=0; k<8; k++) {
+			sprintf(buffer, "0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x",
+				pci_devices[i].config[k*8+0],
+				pci_devices[i].config[k*8+1],
+				pci_devices[i].config[k*8+2],
+				pci_devices[i].config[k*8+3],
+				pci_devices[i].config[k*8+4],
+				pci_devices[i].config[k*8+5],
+				pci_devices[i].config[k*8+6],
+				pci_devices[i].config[k*8+7]
+			);
+			D(bug(NFPCI_NAME "   %s", buffer));
+		}		
 	}
 #endif	
 }
