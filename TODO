@@ -1,27 +1,52 @@
 Things that must be done before first beta release:
 ===================================================
 
-Critical:
 + fix system timer (200 Hz) - the system time slows down under heavy load now.
 
-- fix Makefile (dependencies fooled due to "obj/" folder) and remove Unix folder
-  (as SDL makes us platform independent).
++ fix Makefile (dependencies fooled due to "obj/" folder)
 
-- clean up source code - rewrite all HW modules, solve the OOP issue
-
-Technical:
-- system wide object with user settings that will include bx_options from ata.cpp.
-  Actually bx_options was such object - look into Plex86 for inspiration.
++ system wide object with user settings that will include bx_options from ata.cpp.
 
 + CMOS (NVRAM) settings stored on disk
 
-Cosmetical:
 + mouse pointer must be sync'ed with the host mouse (in X-Windows)
+
+- rewrite all HW modules to make use of BASE_IO::handle_read/write()
+
+- in fdc.cpp: replace HWget_b() and HWput_b() with something more appropriate
+              for inter-module communication
+
+- in acia.cpp: get_byte_direct() and put_byte_direct() are another example of code
+               that should be replaced by something better (more descriptive)
+
+- in hardware.cpp: HWget_l/HWput_l should not have the special case for HW_IDE
+
+- replace timer thread with SDL_getTimerMilis() in uae_cpu inner loop. The advantages
+  are as follows: exact 200 Hz (instead of approx 100 Hz we have currently) and
+  screen updating in main thread (thus no inter-thread collisions)
+
+- enable SWACCEL and HWBLITS of Blitter - either in ./configure or make it
+  configurable in runtime
+
+- move ROM reading back to main.cpp, perhaps even with 040 patching routine so 
+  aranym could use pure TOS 4.04
+
+- find out how the GUI config stuff by Milan works
+
+- find out how the new Milan debugger works
+
+- improve the keyboard emulation - make the keyboard layout editable (for national keyboards),
+  well define and DOCUMENT keyboard combos for quitting, mounting floppy/cdrom, screen shot
+  grabbing, debugger invoking, GUI config entering and others.
+
+- document the way the aranym works - especially the hardware emulation
+
+- document the command line switches, keyboard combos and write Users Guide.
 
 The goal for the first beta is to get functional Atari/TOS machine replacement
 fully usable for regular GEM users.
 
-Estimated amount of work for first beta release: 50 clovekohodin
+Estimated amount of work for first beta release: unknown
 
 Things for 1.0 release:
 =======================
@@ -30,7 +55,7 @@ Things for 1.0 release:
 
 + mouse pointer shared between X-Windows and aranym (like in vmware)
 
-- fVDI working (TOS+aranym drivers)
++ fVDI working (TOS+aranym drivers)
 
 - probably some sort of printing support (capture the printer output to file?)
 
