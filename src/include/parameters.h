@@ -37,56 +37,65 @@ typedef struct {
   unsigned int heads;
   unsigned int spt;
   } bx_disk_options;
- 
+
+
 struct bx_cdrom_options
 {
   bool present;
   char path[512];
   bool inserted;
 };
- 
+ /* 
 typedef struct {
   char *path;
   unsigned long address;
   } bx_rom_options;
-
+*/
 typedef struct {
-  long _mch;
-  } bx_cookies_options;
+  bool console_redirect;
+  long cookie_mch;
+  } bx_tos_options;
  
 typedef struct {
   bool fullscreen;		// boot in fullscreen
   int8 boot_color_depth;		// boot color depth
   uint8 refresh;
+  int8 monitor;				// VGA or TV
 #ifdef DIRECT_TRUECOLOR
   bool direct_truecolor;	// patch TOS to enable direct true color
 #endif /* DIRECT_TRUECOLOR */
   } bx_video_options;
- 
+
+
 typedef struct {
-  size_t megs;
-  } bx_mem_options;
- 
+  bool grabMouseAllowed;
+  bool debugger;
+  } bx_startup_options;
+
+/*
 typedef struct {
   char      *path;
   bool   cmosImage;
   unsigned int time0;
   } bx_cmos_options;
- 
+*/
+
 typedef struct {
   bx_floppy_options floppy;
   // bx_floppy_options floppyb;
   bx_disk_options   diskc;
   bx_disk_options   diskd;
   bx_cdrom_options  cdromd;
-  bx_cookies_options cookies;
+//  bx_cookies_options cookies;
   bx_video_options	video;
+  bx_tos_options	tos;
+  bx_startup_options   startup;
+  bool				autoMouseGrab;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;
   // unsigned long     keyboard_serial_delay;
   // unsigned long     floppy_command_delay;
   // unsigned long     ips;
-  bool           autoMouseGrab;
   // bool           private_colormap;
   // bx_cmos_options   cmos;
   bool           newHardDriveSupport;
@@ -94,11 +103,8 @@ typedef struct {
 
 extern bx_options_t bx_options;
 
-extern uint8 start_debug;		// starts debugger
-extern int8 monitor;				// VGA or TV
 extern ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 extern uint32 FastRAMSize;	// Size of Fast-RAM
-extern bool grabMouseAllowed;
 
 extern char *program_name;
 extern char rom_path[512];

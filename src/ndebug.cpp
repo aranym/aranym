@@ -134,7 +134,7 @@ int dbprintf(char *s, ...)
 	va_list a;
 	va_start(a, s);
 #ifdef NEWDEBUG
-	if (start_debug) {
+	if (bx_options.startup.debugger) {
 		int i;
 		if (dbbuffer[dbend] != NULL)
 			free(dbbuffer[dbend]);
@@ -1072,6 +1072,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.9  2001/12/07 00:31:31  milan
+ * small bug in 'z' command of ndebug corrected, big one stays, it needs better solution
+ *
  * Revision 1.8  2001/11/28 09:36:05  milan
  * cleaning
  * update of config.* file

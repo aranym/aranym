@@ -101,7 +101,7 @@ void hideMouse(bool hide)
 bool grabMouse(bool grab)
 {
 	int current = SDL_WM_GrabInput(SDL_GRAB_QUERY);
-	if (grabMouseAllowed && grab && current != SDL_GRAB_ON) {
+	if (bx_options.startup.grabMouseAllowed && grab && current != SDL_GRAB_ON) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 		grabbedMouse = true;
 		hideMouse(true);
@@ -490,7 +490,7 @@ static void check_event(void)
 							send2Atari = false;
 						}
 #ifdef DEBUGGER
-						else if (start_debug && alternated) {
+						else if (bx_options.startup.debugger && alternated) {
 							releaseTheMouse();
 							canGrabMouseAgain = false;	// let it leave our window
 							// activate debugger
@@ -773,10 +773,10 @@ bool InitTOSROM(void)
 	}
 
 	// patch cookies
-	ROMBaseHost[0x00416] = bx_options.cookies._mch >> 24;
-	ROMBaseHost[0x00417] = (bx_options.cookies._mch >> 16) & 0xff;
-	ROMBaseHost[0x00418] = (bx_options.cookies._mch >> 8) & 0xff;
-	ROMBaseHost[0x00419] = (bx_options.cookies._mch) & 0xff;
+	ROMBaseHost[0x00416] = bx_options.tos.cookie_mch >> 24;
+	ROMBaseHost[0x00417] = (bx_options.tos.cookie_mch >> 16) & 0xff;
+	ROMBaseHost[0x00418] = (bx_options.tos.cookie_mch >> 8) & 0xff;
+	ROMBaseHost[0x00419] = (bx_options.tos.cookie_mch) & 0xff;
 
 	// patch TOS 4.04 to show FastRAM memory test
 	if (FastRAMSize > 0) {
@@ -804,7 +804,7 @@ bool InitTOSROM(void)
 	}
 
 	// Xconout patch
-	if (true) {
+	if (bx_options.tos.console_redirect) {
 		ROMBaseHost[0x8d44] = ROMBaseHost[0x8d50] = 0x71;
 		ROMBaseHost[0x8d45] = ROMBaseHost[0x8d51] = 0x2a;
 		ROMBaseHost[0x8d46] = ROMBaseHost[0x8d52] = 0x4e;
@@ -927,7 +927,7 @@ bool InitAll(void)
 		return false;
 
 #ifdef DEBUGGER
-	if (start_debug) {
+	if (bx_options.startup.debugger) {
 		D(bug("Activate debugger..."));
 		activate_debugger();
 	}
@@ -978,6 +978,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.56  2002/01/03 23:10:41  joy
+ * redirect xconout to host console
+ *
  * Revision 1.55  2001/12/29 17:11:40  joy
  * cleaned up
  *

@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 	(void)decode_switches(stderr, argc, argv);
 
 #ifdef NEWDEBUG
-	if (start_debug) ndebug::init();
+	if (bx_options.startup.debugger) ndebug::init();
 #endif
 
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
@@ -157,7 +157,7 @@ int main(int argc, char **argv)
 	sigaction(SIGINT, &sigint_sa, NULL);
 #else
 # ifdef NEWDEBUG
-	if (start_debug) signal(SIGINT, setactvdebug);
+	if (bx_options.startup.debugger) signal(SIGINT, setactvdebug);
 # endif
 #endif
 
@@ -224,6 +224,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.55  2001/11/21 13:29:51  milan
+ * cleanning & portability
+ *
  * Revision 1.54  2001/11/08 16:46:37  milan
  * another correction of SDL's includes
  *

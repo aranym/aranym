@@ -35,8 +35,8 @@ RTC::~RTC() {
 void RTC::init() {
 	load();		// load CMOS file automatically
 
-	if (monitor != -1) {
-		if (monitor == 0)	// VGA
+	if (bx_options.video.monitor != -1) {
+		if (bx_options.video.monitor == 0)	// VGA
 			cmos[29] |= 32;
 		else
 			cmos[29] &= ~32;
