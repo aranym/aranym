@@ -5,12 +5,8 @@
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "aradata.h"
+#include "araobjs.h"
 #include "parameters.h"
-
-#ifdef EXTFS_SUPPORT
-#include "extfs.h"
-extern ExtFs extFS;
-#endif
 
 ARADATA::ARADATA() {
 	mouseDriver = false;

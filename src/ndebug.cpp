@@ -4,16 +4,10 @@
  * MJ 2001
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/ioctl.h>
+#include "sysdeps.h"
 
 #define DEBUG 1
 #include "debug.h"
-#include "sysdeps.h"
 
 #ifndef CONFGUI
 #include "main.h"
@@ -24,7 +18,8 @@
 
 #ifndef HAVE_GNU_SOURCE
 
-/* NDEBUG need vasprintf, implementation in GNU binutils (libiberty) */
+/* NDEBUG needs vasprintf, implementation in GNU binutils (libiberty) */
+extern "C" int vasprintf(char **, const char *, va_list);
 
 #endif
 
@@ -1077,6 +1072,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.6  2001/11/06 20:36:54  milan
+ * MMU's corrections
+ *
  * Revision 1.5  2001/10/29 08:15:45  milan
  * some changes around debuggers
  *

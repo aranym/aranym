@@ -100,6 +100,8 @@ AC_PROG_INSTALL
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/mman.h term.h sys/ioctl.h)
+AC_CHECK_HEADERS(features.h sys/feature_tests.h dirent.h signal.h getopt.h)
+AC_CHECK_HEADERS(termios.h termio.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
@@ -386,6 +388,8 @@ AC_CACHE_CHECK("for vasprintf",
 AC_TRANSLATE_DEFINE(HAVE_GNU_SOURCE, "$ac_cv_have_vasprintf")
 if [[ "x$ac_cv_have_vasprintf" = "xyes" ]]; then
   DEFINES="$DEFINES -D_GNU_SOURCE"
+else
+  SYSSRCS="$SYSSRCS vasprintf.c"
 fi
 
 dnl Check if we can mmap 0x2000 bytes from 0x0000

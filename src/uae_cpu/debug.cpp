@@ -11,8 +11,6 @@
 
 #include "sysdeps.h"
 
-#include <ctype.h>
-
 #include "config.h"
 #include "memory.h"
 #include "newcpu.h"

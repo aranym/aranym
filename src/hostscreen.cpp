@@ -4,8 +4,6 @@
  * STanda 2001
  */
 
-#include <string.h>
-
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
@@ -901,6 +899,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.20  2001/11/19 01:37:35  standa
+ * PaletteInversIndex search. Bugfix in fillArea in 8bit depth.
+ *
  * Revision 1.19  2001/11/04 23:17:08  standa
  * 8bit destination surface support in VIDEL. Blit routine optimalization.
  * Bugfix in compatibility modes palette copying.

@@ -8,24 +8,16 @@
 #include "cpu_emulation.h"
 #include "main.h"
 
-#include <errno.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/vfs.h>
 #include <utime.h>
-#include <dirent.h>
-#include <ctype.h>
-#ifdef __sun__
-extern "C" {
-#include <sys/feature_tests.h>
-}
-#endif /* __sun__ */
 
 #ifdef EXTFS_SUPPORT
 
 #include "parameters.h"
 #include "toserror.h"
 #include "extfs.h"
+#include "araobjs.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -1598,6 +1590,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.15  2001/11/20 21:25:19  milan
+ * Portability. And small correction in ATCs.
+ *
  * Revision 1.14  2001/11/13 18:26:32  milan
  * portability
  *

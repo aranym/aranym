@@ -26,10 +26,6 @@
 
 #include "sysdeps.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
 # include <sys/mman.h>
 #endif
@@ -41,7 +37,6 @@
 #include "parameters.h"
 #include "newcpu.h"
 #include <SDL.h>
-#include <signal.h>
 
 #define DEBUG 1
 #include "debug.h"
@@ -229,6 +224,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.54  2001/11/08 16:46:37  milan
+ * another correction of SDL's includes
+ *
  * Revision 1.53  2001/10/29 08:15:45  milan
  * some changes around debuggers
  *

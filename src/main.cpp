@@ -24,7 +24,6 @@
 
 #include "sysdeps.h"
 #include <SDL.h>
-#include <signal.h>
 
 #include "cpu_emulation.h"
 #include "main.h"
@@ -692,6 +691,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.42  2001/11/20 23:29:26  milan
+ * Extfs now not needed for ARAnyM's compilation
+ *
  * Revision 1.41  2001/11/19 17:50:28  joy
  * second MD5 check removed
  *

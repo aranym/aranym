@@ -3,9 +3,6 @@
 #ifndef NDEBUG_H
 #define NDEBUG_H
 
-#include <stdio.h>
-#include <ctype.h>
-#include <termio.h>
 #include "sysdeps.h"
 #include "identify.h"
 

@@ -29,6 +29,14 @@
 
 #include "config.h"
 
+#ifdef HAVE_FEATURES_H
+# include <features.h>
+#endif
+
+#ifdef HAVE_SYS_FEATURE_TESTS_H
+# include <sys/feature_tests.h>
+#endif
+
 #ifndef STDC_HEADERS
 #error "You don't have ANSI C header files."
 #endif
@@ -42,6 +50,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdarg.h>
+
+#ifdef HAVE_TERMIOS_H
+# include <termios.h>
+#else
+# ifdef HAVE_TERMIO_H
+#  include <termio.h>
+# endif
+#endif
 
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
@@ -56,6 +75,24 @@
 # else
 #  include <time.h>
 # endif
+#endif
+
+#ifdef HAVE_DIRENT_H
+# include <dirent.h>
+#endif
+
+#ifdef HAVE_SIGNAL_H
+# include <signal.h>
+#endif
+
+#ifdef HAVE_GETOPT_H
+# include <getopt.h>
+#else
+# include "getopt.h"
+#endif
+
+#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
 #endif
 
 /* Atari and host address space are distinct */

@@ -7,6 +7,7 @@
 #ifndef _FVDIDRV_H
 #define _FVDIDRV_H
 
+#include "cpu_emulation.h"
 
 class FVDIDriver {
   private:
@@ -77,6 +78,9 @@ class FVDIDriver {
 
 /*
  * $Log$
+ * Revision 1.10  2001/10/31 23:17:38  standa
+ * fVDI driver update The 16,24 and 32bit mode should work.
+ *
  * Revision 1.9  2001/10/30 22:59:34  standa
  * The resolution change is now possible through the fVDI driver.
  *

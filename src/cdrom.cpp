@@ -48,7 +48,6 @@ extern "C" {
 
 #ifdef __sun
 extern "C" {
-#include <sys/feature_tests.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>

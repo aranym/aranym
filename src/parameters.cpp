@@ -1,19 +1,13 @@
 /* MJ 2001 */
 #include "sysdeps.h"
 #include "config.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <getopt.h>
-#include <ctype.h>	// for toupper
-
 #include "parameters.h"
 
 #define DEBUG 1
 #include "debug.h"
 
 #ifdef __CYGWIN__
-#define ARANYMRC        "aranymrc"
+#define ARANYMRC	"/aranymrc"
 #else
 #define ARANYMRC	"/.aranymrc"
 #endif
@@ -62,6 +56,7 @@ struct Config_Tag global_conf[]={
 	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path)},
 	{ "Cookie_MCH", HexLong_Tag, &bx_options.cookies._mch},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab},
+	{ "FullScreen", Bool_Tag, &fullscreen},
 #ifdef DEBUGGER
 	{ "DebugOnStart", Bool_Tag, &start_debug},
 #endif
@@ -336,7 +331,7 @@ int decode_switches (FILE *f, int argc, char **argv) {
 #endif
 }
 
-static void process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose) {
+static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose) {
 	int status = input_config(filename, conf, title);
 	if (verbose) {
 		if (status >= 0)
@@ -344,6 +339,7 @@ static void process_config(FILE *f, const char *filename, struct Config_Tag *con
 		else
 			fprintf(f, "Error while reading/processing the '%s' config file.\n", filename);
 	}
+	return status;
 }
 
 static void decode_ini_file(FILE *f) {
@@ -366,7 +362,21 @@ static void decode_ini_file(FILE *f) {
 
 	fprintf(f, "Using config file: '%s'\n", rcfile);
 
+#ifdef __CYGWIN__
+	if(process_config(f, rcfile, global_conf, "[GLOBAL]", true)<0)
+	{	char *ptdest=&rcfile[0],*ptsrc=&rcfile[1];
+		strcpy(rcfile,ARANYMRC);
+		while(*ptsrc)  /* copy string without first caracter */
+		{
+		  *ptdest++=*ptsrc++;
+		}
+		*ptdest=0;
+		process_config(f, rcfile, global_conf, "[GLOBAL]", true);
+	}
+#else
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
+#endif
+	
 	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
 	process_config(f, rcfile, diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, diskd_configs, "[IDE1]", true);

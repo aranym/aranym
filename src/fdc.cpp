@@ -15,8 +15,6 @@
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
-#include <stdio.h>
-#include <unistd.h>
 #include "parameters.h"
 
 #define DEBUG 0

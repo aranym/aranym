@@ -9,7 +9,7 @@
   *
   */
 
-#include <stdio.h>
+#include "sysdeps.h"
 #include "ndebug.h"
 
 #ifndef DEBUG_H

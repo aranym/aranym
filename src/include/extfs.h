@@ -7,7 +7,8 @@
 #ifndef _EXTFS_H
 #define _EXTFS_H
 
-#include <dirent.h>
+#include "sysdeps.h"
+#include "cpu_emulation.h"
 
 // FIXME: it is stupid to place these here,
 //        but I didn't want to touch many files in CVS ;(
@@ -220,6 +221,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.7  2001/11/20 23:29:26  milan
+ * Extfs now not needed for ARAnyM's compilation
+ *
  * Revision 1.6  2001/09/18 12:37:16  joy
  * getDrvBits() added
  *

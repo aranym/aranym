@@ -8,9 +8,6 @@
   * (c) 1995 Bernd Schmidt
   */
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "sysdeps.h"
 
 #include "cpu_emulation.h"
