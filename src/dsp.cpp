@@ -24,8 +24,6 @@ void DSP::init(void)
 
 	memset(ram, 0,sizeof(ram));
 	memset(periph, 0,sizeof(periph));
-	memset(stack, 0,sizeof(stack));
-	memset(registers, 0,sizeof(registers));
 
 	/* Initialize Y:rom[0x0100-0x01ff] with a sin table */
 	{
@@ -133,6 +131,9 @@ void DSP::reset(void)
 {
 	int i;
 
+	memset(stack, 0,sizeof(stack));
+	memset(registers, 0,sizeof(registers));
+
 	state = DSP_BOOTING;
 	bootstrap_pos = bootstrap_accum = 0;
 	
@@ -235,7 +236,7 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 			hostport[CPU_HOST_CVR]=value & 0x9f;
 			/* if bit 7=1, host command */
 			if (value & (1<<7)) {
-				D(bug("Dsp: Host command for DSP"));
+				periph[SPACE_X][DSP_HOST_HSR] |= 1<<DSP_HOST_HSR_HCP;
 			}
 			break;
 		case CPU_HOST_ISR:
@@ -308,3 +309,7 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 /*	D(bug("HWput_b(0x%08x,0x%02x) at 0x%08x", addr+HW_DSP, value, showPC()));*/
 #endif	/* DSP_EMULATION */
 }
+
+/*
+	2002-07-19:PM	FIX:stack and registers init moved to reset function
+*/
