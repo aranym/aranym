@@ -93,7 +93,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/createdisk/createdisk.README
 /usr/share/aranym/createdisk/createdisk.sh
 /usr/share/aranym/createdisk/mbrdata
-/usr/share/aranym/diskimage
 /usr/share/aranym/floppy.sh
 /usr/share/aranym/font8.bmp
 /usr/share/aranym/etos512k.img
