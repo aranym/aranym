@@ -1,3 +1,70 @@
+2002/07/20 - version 0.1.9 released
+==========
+
+ Long time since previous release. I have been waiting for finishing
+ a couple of promising modules but I have just given up waiting and I am
+ releasing the current CVS 'as-is' so you can test the bunch of changes
+ and new features now while we'll be working towards next major release.
+
+ Standa created 'fvdicout.app' which, being based on TosWin II source code
+ should bring a complete VT52 emulation for applications with console
+ output under fVDI. You'll find it in atari/fvdi/utility folder.
+
+ Heiko Achilles added a 'mouse packet compressor' that is supposed to
+ remove any delay when moving with mouse more quickly (or on more loaded
+ machine). It may either fix problems you could have with your mouse
+ or it can create a new, previously unseen mouse events' bugs. Test
+ and let us know.
+
+ The aranymfs (the MetaDOS host filesystem driver) has been converted
+ to GCC compilable form. Please beware and test the host filesystem access
+ carefully.
+
+ Cool new keyboard hotkeys:
+
+ - Scroll Lock (the largely unused key on PC keyboards) now switches
+   between windowed and fullscreen mode!
+
+ - Ctrl+Pause/Break cold reboots the ARAnyM correctly now
+
+ - Pause/Break key now invokes cool new ARAnyM GUI configuration.
+
+ Unfortunately the GUI is FAR from finished. The only useful option is
+ the "Reset" and perhaps also the Quit (for those that can't remember
+ the Shift+Pause/Break combo). The GUI will soon be filled with tons
+ of useful configure options so stay tuned...
+
+ Another change from previous versions is that we now require original
+ TOS 4.04. Various patched versions we supported before are unsupported
+ now. So please get a clean original TOS 4.04 - or give the EmuTOS a try!
+
+ Long filename->TOS 8.3 format conversion was improved so that it now
+ handles also filenames ending with a dot.
+
+ A long standing bug in Yamaha emulation was fixed. This helps mainly
+ the lowlevel emulation of parallel port access. The parallel/printer
+ port is emulated so accurately that even PARCP works flawlessly.
+ Note though that this is not enabled automatically as it requires
+ root privileges to run ARAnyM. We are going to add other methods
+ for accessing the host parallel port in a more user/kernel friendly
+ manner.
+
+ I know that after releasing the input focus with Alt+Ctrl+Esc combo
+ sometimes the Alt+Ctrl stay held down. I added a special code for 
+ removing the stale Alt+Ctrl state. We'll see if it helps.
+
+ Hackers Guide (hguide.txt) was updated. If you want to hack on ARAnyM
+ you should read it first.
+
+ From the other exciting news: Patrice Mandin has started work on DSP
+ emulation for ARAnyM. He's actually nearly finished it so it may be
+ available in the next version of ARAnyM already!
+
+ Also if there is a developer that would be willing to finish the nearly
+ working ECE (Ethernet Card Emulation) then please join as in ARAnyM
+ development mailing list.
+
+
 2002/04/22 - version 0.1.7 released
 ==========
 
