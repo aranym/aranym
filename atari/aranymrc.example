@@ -4,11 +4,20 @@
 ; If you want debugger to start automatically, uncomment the next line
 ; DebugOnStart = Yes
 
-; ROM file path:
-; TOS = /usr/local/share/aranym/ROM
-;
+; path to TOS 4.04
+TOS = /usr/local/share/aranym/ROM
+
+; path to EmuTOS - if EmuTOS is defined the TOS= is ignored
+; EmuTOS = /usr/local/share/aranym/EmuTOS
+
+; amount of FastRAM in megabytes. You also need to start FASTRAM.PRG.
+FastRAM = 32
+
+; Atari floppy device (GEMDOS A:) is mapped to host floppy block device
+Floppy = /dev/fd0
 
 ; IDE Devices configuration
+; update the Cylinders/Heads/SectorsPerTrack according to your drive geometry!
 [IDE0]
 Present = Yes
 Path = /home/user/.aranym/diskImageC
