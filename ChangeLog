@@ -1,3 +1,10 @@
+2002/12/29 - joy
+- videl: Sébastien Briais sent a patch that allows virtual screen on VIDEL
+  by emulating the 'linewidth' and 'lineoffset' VIDEL registers.
+
+- videl: the 'od_posledni_zmeny' variable translated to English, at last.
+
+
 2002/12/19 - STanda
 - the atari/network/araeth aranym.xif for ECE (ethernet card emulation)
   added. It doesn't work ... see the README there.

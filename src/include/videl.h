@@ -14,7 +14,7 @@
 
 class VIDEL : public BASE_IO {
 protected:
-	int width, height, bpp, od_posledni_zmeny;
+	int width, height, bpp, since_last_change;
 	bool hostColorsSync;
 	bool doRender; // the HW surface is available -> videl writes directly into the Host videoram
 
@@ -60,6 +60,9 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.18  2002/09/24 16:08:24  pmandin
+ * Bugfixes+preliminary autozoom support
+ *
  * Revision 1.17  2002/04/22 18:30:50  milan
  * header files reform
  *

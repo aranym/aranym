@@ -30,7 +30,7 @@ VIDEL::VIDEL()
 
 	doRender = true; // the rendering is on by default (VIDEL does the bitplane to chunky conversion)
 
-	od_posledni_zmeny = 0;
+	since_last_change = 0;
 
 	hostColorsSync = false;
 
@@ -51,6 +51,10 @@ void VIDEL::init()
 	handleWriteW(HW+0x66, 0x0400);
 	handleWriteW(HW+0x82, 0x00c6);
 	// for width (default 640)
+	handleWriteW(HW+0x10, 0x0028);
+	// lineoffset is zero
+	handleWriteW(HW+0x0e, 0x0000);
+	// linewidth in words
 	handleWriteW(HW+0x10, 0x0028);
 	// for height
 	handleWriteW(HW+0xa8, 0x003f);
@@ -191,28 +195,28 @@ void VIDEL::renderScreenNoFlag()
 	int vh	 = getScreenHeight();
 	int vbpp = getScreenBpp();
 
-	if (od_posledni_zmeny > 2) {
+	if (since_last_change > 2) {
 		if (vw > 0 && vw != width) {
 			D(bug("CH width %d", width));
 			width = vw;
-			od_posledni_zmeny = 0;
+			since_last_change = 0;
 		}
 		if (vh > 0 && vh != height) {
 			D(bug("CH height %d", width));
 			height = vh;
-			od_posledni_zmeny = 0;
+			since_last_change = 0;
 		}
 		if (vbpp != bpp) {
 			D(bug("CH bpp %d", vbpp));
 			bpp = vbpp;
-			od_posledni_zmeny = 0;
+			since_last_change = 0;
 		}
 	}
-	if (od_posledni_zmeny == 3) {
+	if (since_last_change == 3) {
 		hostScreen.setWindowSize( width, height, bpp >= 8 ? bpp : 8 );
 	}
-	if (od_posledni_zmeny < 4) {
-		od_posledni_zmeny++;
+	if (since_last_change < 4) {
+		since_last_change++;
 		return;
 	}
 
@@ -235,6 +239,10 @@ void VIDEL::renderScreenNoZoom()
 {
 	int vw	 = getScreenWidth();
 	int vh	 = getScreenHeight();
+
+	int lineoffset = handleReadW(HW + 0x0e);
+	int linewidth = handleReadW(HW + 0x10);
+	int nextline = linewidth + lineoffset;
 
 	int scrpitch = hostScreen.getPitch();
 
@@ -289,7 +297,7 @@ void VIDEL::renderScreenNoZoom()
 						}
 
 						hvram_line += scrpitch;
-						fvram_line += ((vw+15)>>4)*bpp;
+						fvram_line += nextline;
 					}
 				}
 				break;
@@ -313,7 +321,7 @@ void VIDEL::renderScreenNoZoom()
 						}
 
 						hvram_line += scrpitch>>1;
-						fvram_line += ((vw+15)>>4)*bpp;
+						fvram_line += nextline;
 					}
 				}
 				break;
@@ -339,7 +347,7 @@ void VIDEL::renderScreenNoZoom()
 						}
 
 						hvram_line += scrpitch;
-						fvram_line += ((vw+15)>>4)*bpp;
+						fvram_line += nextline;
 					}
 				}
 				break;
@@ -363,7 +371,7 @@ void VIDEL::renderScreenNoZoom()
 						}
 
 						hvram_line += scrpitch>>2;
-						fvram_line += ((vw+15)>>4)*bpp;
+						fvram_line += nextline;
 					}
 				}
 				break;
@@ -400,7 +408,7 @@ void VIDEL::renderScreenNoZoom()
 						}
 
 						hvram_line += scrpitch;
-						fvram_line += vw;
+						fvram_line += nextline;
 					}
 				}
 				break;
@@ -431,7 +439,7 @@ void VIDEL::renderScreenNoZoom()
 #endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
 
 							hvram_line += scrpitch>>1;
-							fvram_line += vw;
+							fvram_line += nextline;
 						}
 					}
 				}
@@ -461,7 +469,7 @@ void VIDEL::renderScreenNoZoom()
 						}
 
 						hvram_line += scrpitch;
-						fvram_line += vw;
+						fvram_line += nextline;
 					}
 				}
 				break;
@@ -486,7 +494,7 @@ void VIDEL::renderScreenNoZoom()
 						}
 
 						hvram_line += scrpitch>>2;
-						fvram_line += vw;
+						fvram_line += nextline;
 					}
 				}
 				break;
@@ -503,6 +511,10 @@ void VIDEL::renderScreenZoom()
 	int vw	 = getScreenWidth();
 	int vh	 = getScreenHeight();
 	uint16 *fvram = (uint16 *) Atari2HostAddr(this->getVideoramAddress());
+
+	int lineoffset = handleReadW(HW + 0x0e);
+	int linewidth = handleReadW(HW + 0x10);
+	int nextline = linewidth + lineoffset;
 
 	/* Host screen infos */
 	int scrpitch = hostScreen.getPitch();
@@ -565,7 +577,7 @@ void VIDEL::renderScreenZoom()
 					uint8 *hvram_line = hvram;
 
 					for (h = 0; h < scrheight; h++) {
-						fvram_line = fvram + (zoomytable[h] * ((vw+15)>>4)*bpp);
+						fvram_line = fvram + (zoomytable[h] * nextline);
 
 						/* Recopy the same line ? */
 						if (zoomytable[h] == cursrcline) {
@@ -606,7 +618,7 @@ void VIDEL::renderScreenZoom()
 					uint16 *hvram_line = (uint16 *)hvram;
 
 					for (h = 0; h < scrheight; h++) {
-						fvram_line = fvram + (zoomytable[h] * ((vw+15)>>4)*bpp);
+						fvram_line = fvram + (zoomytable[h] * nextline);
 
 						/* Recopy the same line ? */
 						if (zoomytable[h] == cursrcline) {
@@ -648,7 +660,7 @@ void VIDEL::renderScreenZoom()
 					uint8 *hvram_line = hvram;
 
 					for (h = 0; h < scrheight; h++) {
-						fvram_line = fvram + (zoomytable[h] * ((vw+15)>>4)*bpp);
+						fvram_line = fvram + (zoomytable[h] * nextline);
 
 						/* Recopy the same line ? */
 						if (zoomytable[h] == cursrcline) {
@@ -694,7 +706,7 @@ void VIDEL::renderScreenZoom()
 					uint32 *hvram_line = (uint32 *)hvram;
 
 					for (h = 0; h < scrheight; h++) {
-						fvram_line = fvram + (zoomytable[h] * ((vw+15)>>4)*bpp);
+						fvram_line = fvram + (zoomytable[h] * nextline);
 
 						/* Recopy the same line ? */
 						if (zoomytable[h] == cursrcline) {
@@ -879,6 +891,9 @@ void VIDEL::renderScreenZoom()
 
 /*
  * $Log$
+ * Revision 1.44  2002/12/01 10:26:12  pmandin
+ * Autozoom bugfix
+ *
  * Revision 1.43  2002/09/24 18:59:50  pmandin
  * Autozoom done
  *
