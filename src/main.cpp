@@ -45,7 +45,7 @@
 
 #ifdef SDL_GUI
 #include "sdlgui.h"
-extern SDL_Thread *GUIthread = NULL;
+extern SDL_Thread *GUIthread;
 #endif
 
 #ifdef ENABLE_MON
@@ -243,20 +243,11 @@ bool InitTOSROM(void)
 
 	// check if this is the correct 68040 aware TOS ROM version
 	D(bug("Checking TOS version.."));
-	unsigned char TOS68040WinX[16] = {0xd6,0x4b,0x00,0x16,0x01,0xf6,0xc6,0xd7,0x47,0x51,0xde,0x63,0xbb,0x35,0xed,0xe3};
-
-	unsigned char TOS68040[16] = {0x6b,0x9f,0x43,0x5e,0xdc,0x46,0xdc,0x26,0x6f,0x2c,0x87,0xc2,0x6c,0x63,0xf9,0xd8};
 	unsigned char TOS404[16] = {0xe5,0xea,0x0f,0x21,0x6f,0xb4,0x46,0xf1,0xc4,0xa4,0xf4,0x76,0xbc,0x5f,0x03,0xd4};
 	MD5 md5;
 	unsigned char loadedTOS[16];
 	md5.computeSum(ROMBaseHost, RealROMSize, loadedTOS);
-	if (memcmp(loadedTOS, TOS68040, 16) == 0) {
-		fprintf(stderr, "68040 friendly TOS 4.04 found\n");
-	}
-	else if (memcmp(loadedTOS, TOS68040WinX, 16) == 0) {
-		fprintf(stderr, "68040 friendly WinX enhanced TOS 4.04 found\n");
-	}
-	else if (memcmp(loadedTOS, TOS404, 16) == 0) {
+	if (memcmp(loadedTOS, TOS404, 16) == 0) {
 		fprintf(stderr, "Original TOS 4.04 found\n");
 
 		// patch it for 68040 compatibility
@@ -264,15 +255,6 @@ bool InitTOSROM(void)
 		int ptr, i=0;
 		while((ptr=tosdiff[i].pointer) >= 0)
 			ROMBaseHost[ptr] += tosdiff[i++].difference;
-
-#if 0
-		// optional saving of patched TOS ROM
-		FILE *f = fopen("TOS68040", "wb");
-		if (f != NULL) {
-			fwrite(ROMBaseHost, RealROMSize, 1, f);
-			fclose(f);
-		}
-#endif
 	}
 	else {
 		panicbug("Wrong TOS version. You need the original TOS 4.04.");
@@ -515,6 +497,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.72  2002/06/26 20:59:43  joy
+ * render VIDEL only if SDL GUI is not open
+ *
  * Revision 1.71  2002/06/24 19:29:33  joy
  * give it a time to finish timer thread
  *
