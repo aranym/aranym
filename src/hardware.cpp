@@ -56,6 +56,7 @@ void HWInit (void) {
 	put_word(SYS_CTL_A,SYS_CTL);
 	*/
 	// ide.init();
+	rtc.init();
 }
 
 static const int HW_IDE 	= 0xf00000;
