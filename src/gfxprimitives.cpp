@@ -78,15 +78,7 @@ int fastPixelColorNolockWclip (SDL_Surface *dst, Sint16 x, Sint16 y, Uint32 colo
 				*(Uint16 *)p = color;
 				break;
 			case 3:
-				if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-					p[0] = (color >> 16) & 0xff;
-					p[1] = (color >> 8) & 0xff;
-					p[2] = color & 0xff;
-				} else {
-					p[0] = color & 0xff;
-					p[1] = (color >> 8) & 0xff;
-					p[2] = (color >> 16) & 0xff;
-				}
+				putBpp24Pixel( p, color );
 				break;
 			case 4:
 				*(Uint32 *)p = color;
@@ -119,15 +111,7 @@ int fastPixelColorNolock (SDL_Surface *dst, Sint16 x, Sint16 y, Uint32 color)
 			*(Uint16 *)p = color;
 			break;
 		case 3:
-			if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-				p[0] = (color >> 16) & 0xff;
-				p[1] = (color >> 8) & 0xff;
-				p[2] = color & 0xff;
-			} else {
-				p[0] = color & 0xff;
-				p[1] = (color >> 8) & 0xff;
-				p[2] = (color >> 16) & 0xff;
-			}
+			putBpp24Pixel( p, color );
 			break;
 		case 4:
 			*(Uint32 *)p = color;
@@ -663,17 +647,8 @@ int hlineColor (SDL_Surface *dst, Sint16 x1, Sint16 x2, Sint16 y, Uint32 color)
 				break;
 			case 3:
 				pixellast = pixel + dx + dx + dx;
-				for (; pixel<=pixellast; pixel += pixx) {
-					if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-						pixel[0] = (color >> 16) & 0xff;
-						pixel[1] = (color >> 8) & 0xff;
-						pixel[2] = color & 0xff;
-					} else {
-						pixel[0] = color & 0xff;
-						pixel[1] = (color >> 8) & 0xff;
-						pixel[2] = (color >> 16) & 0xff;
-					}
-				}
+				for (; pixel<=pixellast; pixel += pixx)
+					putBpp24Pixel( pixel, color );
 				break;
 			default: /* case 4*/
 				dx = dx + dx;
@@ -846,15 +821,7 @@ int vlineColor (SDL_Surface *dst, Sint16 x, Sint16 y1, Sint16 y2, Uint32 color)
 				break;
 			case 3:
 				for (; pixel<=pixellast; pixel += pixy) {
-					if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-						pixel[0] = (color >> 16) & 0xff;
-						pixel[1] = (color >> 8) & 0xff;
-						pixel[2] = color & 0xff;
-					} else {
-						pixel[0] = color & 0xff;
-						pixel[1] = (color >> 8) & 0xff;
-						pixel[2] = (color >> 16) & 0xff;
-					}
+					putBpp24Pixel( pixel, color );
 				}
 				break;
 			default: /* case 4*/
@@ -1183,15 +1150,7 @@ int boxColor (SDL_Surface *dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint
 				pixy -= (pixx*dx);
 				for (; pixel<=pixellast; pixel += pixy) {
 					for (x=0; x<dx; x++) {
-						if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-							pixel[0] = (color >> 16) & 0xff;
-							pixel[1] = (color >> 8) & 0xff;
-							pixel[2] = color & 0xff;
-						} else {
-							pixel[0] = color & 0xff;
-							pixel[1] = (color >> 8) & 0xff;
-							pixel[2] = (color >> 16) & 0xff;
-						}
+						putBpp24Pixel( pixel, color );
 						pixel += pixx;
 					}
 				}
@@ -1374,15 +1333,7 @@ int lineColor(SDL_Surface *dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint
 				break;
 			case 3:
 				for(; x < dx; x++, pixel += pixx) {
-					if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-						pixel[0] = (color >> 16) & 0xff;
-						pixel[1] = (color >> 8) & 0xff;
-						pixel[2] = color & 0xff;
-					} else {
-						pixel[0] = color & 0xff;
-						pixel[1] = (color >> 8) & 0xff;
-						pixel[2] = (color >> 16) & 0xff;
-					}
+					putBpp24Pixel( pixel, color );
 					y += dy;
 					if (y >= dx) {
 						y -= dx;
