@@ -426,22 +426,22 @@ void MFP::setGPIPbit(int mask, int value)
         interrupt will eventually occur the next time 
         MFP:doInterrupt() is called. 
 
-        0:  IO port 0 : Printer ?
-        1:  IO port 1 : RS232 Carrier detect
-        2:  IO port 2 : RS232 CTS
-        3:  IO port 3 : Blitter
+        0:  IO port 0 : Printer Busy
+        1:  IO port 1 : Printer Acknowledge (RS232 Carrier detect on ST)
+        2:  IO port 2 : MIDI Interrupt (RS232 CTS on ST)
+        3:  IO port 3 : DSP Interrupt (Blitter on ST)
         4:  timer D
         5:  timer C
-        6:  IO port 4 : ACIA (KBD/MIDI)
-        7:  IO port 5 : FDC/DMA/IDE
-        8:  Timer B
+        6:  IO port 4 : ACIA (IKBD/MIDI)
+        7:  IO port 5 : FDC/SCSI/IDE
+        8:  Timer B   : Display Enable
         9:  Send error
         10: Send buffer empty
         11: Receive error
         12: Receive buffer full
-        13: Timer A
+        13: Timer A   : DMA Sound Interrupt
         14: IO port 6 : RS232 ring
-        15: IO port 7 : monochrome detect (DSP??)
+        15: IO port 7 : DMA Sound Interrupt (monochrome detect on ST)
 */
 
 void MFP::IRQ(int int_level, int count)
