@@ -127,6 +127,7 @@ bool Init680x0(void)
 void AtariReset(void)
 {
 	// reset Atari hardware here
+	getVIDEL()->init();
 }
 
 /*

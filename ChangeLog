@@ -1,3 +1,17 @@
+2004/02/09 - Xavier
+- videl.cpp, uae_cpu/aranym_glue.cpp: connected virtual reset line of our
+  virtual CPU to our virtual videl. ;) Moved code from videl constructor to
+  init() method.
+  ARAnyM video mode/display/main surface is now reseted to its default upon
+  m68k RESET instruction. We won't see screens like
+  http://phoenix.inf.upol.cz/~opichals/aranym/jinneeXaAES.png anymore. (You'll
+  have to take your screenshots before rebooting from now on, Standa. ;) )
+  This is still minimal, as with real hardware, all videl registers are set to
+  0 when this event occurs (Display is turned off until TOS initialize videl
+  properly.). But I suspect EmuTOS wouldn't be able to turn it on yet.
+  BTW, other virtual components should be wired there, too...
+
+
 * tagged as ARANYM_0_8_6_BETA
 
 2004/02/08 - joy

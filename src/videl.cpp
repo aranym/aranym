@@ -50,6 +50,21 @@ extern HostScreen hostScreen;
 
 VIDEL::VIDEL(memptr addr, uint32 size) : BASE_IO(addr, size)
 {
+	init();
+}
+
+bool VIDEL::isMyHWRegister(memptr addr)
+{
+	// FALCON VIDEL COLOR REGISTERS
+	if (addr >= VIDEL_COLOR_REGS_BEGIN && addr < VIDEL_COLOR_REGS_END)
+		return true;
+
+	return BASE_IO::isMyHWRegister(addr);
+}
+
+// Called upon startup and when CPU encounters a RESET instruction.
+void VIDEL::init()
+{
 	// default resolution to boot with
 	width = 640;
 	height = 480;
@@ -66,20 +81,6 @@ VIDEL::VIDEL(memptr addr, uint32 size) : BASE_IO(addr, size)
 	zoomxtable=NULL;
 	zoomytable=NULL;
 
-	init();
-}
-
-bool VIDEL::isMyHWRegister(memptr addr)
-{
-	// FALCON VIDEL COLOR REGISTERS
-	if (addr >= VIDEL_COLOR_REGS_BEGIN && addr < VIDEL_COLOR_REGS_END)
-		return true;
-
-	return BASE_IO::isMyHWRegister(addr);
-}
-
-void VIDEL::init()
-{
 	hostScreen.setWindowSize( width, height, 8 );
 }
 
