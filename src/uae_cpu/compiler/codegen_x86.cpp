@@ -14,18 +14,18 @@
  * Adaptation for Basilisk II and improvements, copyright 2000-2004 Gwenole Beauchesne
  * Portions related to CPU detection come from linux/arch/i386/kernel/setup.c
  *
- * ARAnyM is free software; you can redistribute it and/or modify
+ * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * ARAnyM is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with ARAnyM; if not, write to the Free Software
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
@@ -46,48 +46,62 @@
 #define EBP_INDEX 5
 #define ESI_INDEX 6
 #define EDI_INDEX 7
+#if defined(__x86_64__)
+#define R8_INDEX  8
+#define R9_INDEX  9
+#define R10_INDEX 10
+#define R11_INDEX 11
+#define R12_INDEX 12
+#define R13_INDEX 13
+#define R14_INDEX 14
+#define R15_INDEX 15
+#endif
 
 /* The register in which subroutines return an integer return value */
-#define REG_RESULT 0
+#define REG_RESULT EAX_INDEX
 
 /* The registers subroutines take their first and second argument in */
 #if defined( _MSC_VER ) && !defined( USE_NORMAL_CALLING_CONVENTION )
 /* Handle the _fastcall parameters of ECX and EDX */
-#define REG_PAR1 1
-#define REG_PAR2 2
+#define REG_PAR1 ECX_INDEX
+#define REG_PAR2 EDX_INDEX
+#elif defined(__x86_64__)
+#define REG_PAR1 EDI_INDEX
+#define REG_PAR2 ESI_INDEX
 #else
-#define REG_PAR1 0
-#define REG_PAR2 2
+#define REG_PAR1 EAX_INDEX
+#define REG_PAR2 EDX_INDEX
 #endif
 
-/* Three registers that are not used for any of the above */
-#define REG_NOPAR1 6
-#define REG_NOPAR2 5
-#define REG_NOPAR3 3
-
-#define REG_PC_PRE 0 /* The register we use for preloading regs.pc_p */
+#define REG_PC_PRE EAX_INDEX /* The register we use for preloading regs.pc_p */
 #if defined( _MSC_VER ) && !defined( USE_NORMAL_CALLING_CONVENTION )
-#define REG_PC_TMP 0
+#define REG_PC_TMP EAX_INDEX
 #else
-#define REG_PC_TMP 1 /* Another register that is not the above */
+#define REG_PC_TMP ECX_INDEX /* Another register that is not the above */
 #endif
 
-#define SHIFTCOUNT_NREG 1  /* Register that can be used for shiftcount.
+#define SHIFTCOUNT_NREG ECX_INDEX  /* Register that can be used for shiftcount.
 			      -1 if any reg will do */
-#define MUL_NREG1 0 /* %eax will hold the low 32 bits after a 32x32 mul */
-#define MUL_NREG2 2 /* %edx will hold the high 32 bits */
+#define MUL_NREG1 EAX_INDEX /* %eax will hold the low 32 bits after a 32x32 mul */
+#define MUL_NREG2 EDX_INDEX /* %edx will hold the high 32 bits */
 
 uae_s8 always_used[]={4,-1};
+#if defined(__x86_64__)
+uae_s8 can_byte[]={0,1,2,3,5,6,7,8,9,10,11,12,13,14,15,-1};
+uae_s8 can_word[]={0,1,2,3,5,6,7,8,9,10,11,12,13,14,15,-1};
+#else
 uae_s8 can_byte[]={0,1,2,3,-1};
 uae_s8 can_word[]={0,1,2,3,5,6,7,-1};
+#endif
 
 #if USE_OPTIMIZED_CALLS
 /* Make sure interpretive core does not use cpuopti */
 uae_u8 call_saved[]={0,0,0,1,1,1,1,1};
+#error FIXME: code not ready
 #else
 /* cpuopti mutate instruction handlers to assume registers are saved
    by the caller */
-uae_u8 call_saved[]={0,0,0,0,1,0,0,0};
+uae_u8 call_saved[]={0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0};
 #endif
 
 /* This *should* be the same as call_saved. But:
@@ -97,7 +111,13 @@ uae_u8 call_saved[]={0,0,0,0,1,0,0,0};
    - Special registers (such like the stack pointer) should not be "preserved"
      by pushing, even though they are "saved" across function calls
 */
-uae_u8 need_to_preserve[]={1,1,1,1,0,1,1,1};
+#if defined(__x86_64__)
+/* callee-saved registers as defined by Linux/x86_64 ABI: rbx, rbp, rsp, r12 - r15 */
+/* preserve r11 because it's generally used to hold pointers to functions */
+static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,0,0,0,0,0,1,1,1,1,1};
+#else
+static const uae_u8 need_to_preserve[]={1,1,1,1,0,1,1,1};
+#endif
 
 /* Whether classes of instructions do or don't clobber the native flags */
 #define CLOBBER_MOV
@@ -134,7 +154,11 @@ uae_u8 need_to_preserve[]={1,1,1,1,0,1,1,1};
 #define CLOBBER_BSF  clobber_flags()
 
 /* FIXME: disabled until that's proofread.  */
-#if 0
+#if defined(__x86_64__)
+#define USE_NEW_RTASM 1
+#endif
+
+#if USE_NEW_RTASM
 
 #if defined(__x86_64__)
 #define X86_TARGET_64BIT		1
@@ -147,6 +171,7 @@ uae_u8 need_to_preserve[]={1,1,1,1,0,1,1,1};
 #define x86_emit_byte(B)		emit_byte(B)
 #define x86_emit_word(W)		emit_word(W)
 #define x86_emit_long(L)		emit_long(L)
+#define x86_emit_quad(Q)		emit_quad(Q)
 #define x86_get_target()		get_target()
 #define x86_emit_failure(MSG)	jit_fail(MSG, __FILE__, __LINE__, __FUNCTION__)
 
@@ -159,15 +184,33 @@ static void jit_fail(const char *msg, const char *file, int line, const char *fu
 
 LOWFUNC(NONE,WRITE,1,raw_push_l_r,(R4 r))
 {
+#if defined(__x86_64__)
+	PUSHQr(r);
+#else
 	PUSHLr(r);
+#endif
 }
 LENDFUNC(NONE,WRITE,1,raw_push_l_r,(R4 r))
 
 LOWFUNC(NONE,READ,1,raw_pop_l_r,(R4 r))
 {
+#if defined(__x86_64__)
+	POPQr(r);
+#else
 	POPLr(r);
+#endif
 }
 LENDFUNC(NONE,READ,1,raw_pop_l_r,(R4 r))
+
+LOWFUNC(NONE,READ,1,raw_pop_l_m,(MEMW d))
+{
+#if defined(__x86_64__)
+	POPQm(d, X86_NOREG, X86_NOREG, 1);
+#else
+	POPLm(d, X86_NOREG, X86_NOREG, 1);
+#endif
+}
+LENDFUNC(NONE,READ,1,raw_pop_l_m,(MEMW d))
 
 LOWFUNC(WRITE,NONE,2,raw_bt_l_ri,(R4 r, IMM i))
 {
@@ -490,6 +533,12 @@ LOWFUNC(WRITE,NONE,2,raw_bsf_l_rr,(W4 d, R4 s))
 }
 LENDFUNC(WRITE,NONE,2,raw_bsf_l_rr,(W4 d, R4 s))
 
+LOWFUNC(NONE,NONE,2,raw_sign_extend_32_rr,(W4 d, R4 s))
+{
+	MOVSLQrr(s, d);
+}
+LENDFUNC(NONE,NONE,2,raw_sign_extend_32_rr,(W4 d, R4 s))
+	
 LOWFUNC(NONE,NONE,2,raw_sign_extend_16_rr,(W4 d, R2 s))
 {
 	MOVSWLrr(s, d);
@@ -888,6 +937,12 @@ LOWFUNC(WRITE,NONE,2,raw_test_b_rr,(R1 d, R1 s))
 }
 LENDFUNC(WRITE,NONE,2,raw_test_b_rr,(R1 d, R1 s))
 
+LOWFUNC(WRITE,NONE,2,raw_xor_l_ri,(RW4 d, IMM i))
+{
+	XORLir(i, d);
+}
+LENDFUNC(WRITE,NONE,2,raw_xor_l_ri,(RW4 d, IMM i))
+	
 LOWFUNC(WRITE,NONE,2,raw_and_l_ri,(RW4 d, IMM i))
 {
 	ANDLir(i, d);
@@ -1171,6 +1226,14 @@ LOWFUNC(NONE,READ,1,raw_pop_l_r,(R4 r))
 }
 LENDFUNC(NONE,READ,1,raw_pop_l_r,(R4 r))
 
+LOWFUNC(NONE,READ,1,raw_pop_l_m,(MEMW d))
+{
+	emit_byte(0x8f);
+	emit_byte(0x05);
+	emit_long(d);
+}
+LENDFUNC(NONE,READ,1,raw_pop_l_m,(MEMW d))
+	
 LOWFUNC(WRITE,NONE,2,raw_bt_l_ri,(R4 r, IMM i))
 {
 	emit_byte(0x0f);
@@ -2463,6 +2526,14 @@ LOWFUNC(WRITE,NONE,2,raw_test_b_rr,(R1 d, R1 s))
 }
 LENDFUNC(WRITE,NONE,2,raw_test_b_rr,(R1 d, R1 s))
 
+LOWFUNC(WRITE,NONE,2,raw_xor_l_ri,(RW4 d, IMM i))
+{
+    emit_byte(0x81);
+    emit_byte(0xf0+d);
+    emit_long(i);
+}
+LENDFUNC(WRITE,NONE,2,raw_xor_l_ri,(RW4 d, IMM i))
+	
 LOWFUNC(WRITE,NONE,2,raw_and_l_ri,(RW4 d, IMM i))
 {
 	if (optimize_imm8 && isbyte(i)) {
@@ -2902,12 +2973,19 @@ LENDFUNC(WRITE,READ,0,raw_popfl,(void))
 
 static inline void raw_call_r(R4 r)
 {
+#if USE_NEW_RTASM
+    CALLsr(r);
+#else
     emit_byte(0xff);
     emit_byte(0xd0+r);
+#endif
 }
 
 static inline void raw_call_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
 {
+#if USE_NEW_RTASM
+    CALLsm(base, X86_NOREG, r, m);
+#else
     int mu;
     switch(m) {
      case 1: mu=0; break;
@@ -2920,16 +2998,24 @@ static inline void raw_call_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
     emit_byte(0x14);
     emit_byte(0x05+8*r+0x40*mu);
     emit_long(base);
+#endif
 }
 
 static inline void raw_jmp_r(R4 r)
 {
+#if USE_NEW_RTASM
+    JMPsr(r);
+#else
     emit_byte(0xff);
     emit_byte(0xe0+r);
+#endif
 }
 
 static inline void raw_jmp_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
 {
+#if USE_NEW_RTASM
+    JMPsm(base, X86_NOREG, r, m);
+#else
     int mu;
     switch(m) {
      case 1: mu=0; break;
@@ -2942,6 +3028,7 @@ static inline void raw_jmp_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
     emit_byte(0x24);
     emit_byte(0x05+8*r+0x40*mu);
     emit_long(base);
+#endif
 }
 
 static inline void raw_jmp_m(uae_u32 base)
@@ -2954,14 +3041,22 @@ static inline void raw_jmp_m(uae_u32 base)
 
 static inline void raw_call(uae_u32 t)
 {
+#if USE_NEW_RTASM
+    CALLm(t);
+#else
     emit_byte(0xe8);
     emit_long(t-(uae_u32)target-4);
+#endif
 }
 
 static inline void raw_jmp(uae_u32 t)
 {
+#if USE_NEW_RTASM
+    JMPm(t);
+#else
     emit_byte(0xe9);
     emit_long(t-(uae_u32)target-4);
+#endif
 }
 
 static inline void raw_jl(uae_u32 t)
@@ -3084,7 +3179,28 @@ static inline void raw_emit_nop_filler(int nbytes)
     f32_1, f32_2, f32_3, f32_4, f32_5, f32_6, f32_7, f32_8,
     f32_9, f32_10, f32_11, f32_12, f32_13, f32_14, f32_15
   };
+  static const uae_u8 prefixes[4] = { 0x66, 0x66, 0x66, 0x66 };
 
+#if defined(__x86_64__)
+  /* The recommended way to pad 64bit code is to use NOPs preceded by
+     maximally four 0x66 prefixes.  Balance the size of nops.  */
+  if (nbytes == 0)
+	  return;
+
+  int i;
+  int nnops = (nbytes + 3) / 4;
+  int len = nbytes / nnops;
+  int remains = nbytes - nnops * len;
+
+  for (i = 0; i < remains; i++) {
+	  emit_block(prefixes, len);
+	  raw_nop();
+  }
+  for (; i < nnops; i++) {
+	  emit_block(prefixes, len - 1);
+	  raw_nop();
+  }
+#else
   int nloops = nbytes / 16;
   while (nloops-- > 0)
 	emit_block(f32_16, sizeof(f32_16));
@@ -3092,6 +3208,7 @@ static inline void raw_emit_nop_filler(int nbytes)
   nbytes %= 16;
   if (nbytes)
 	emit_block(f32_patt[nbytes - 1], nbytes);
+#endif
 }
 
 
@@ -3107,11 +3224,11 @@ static inline void raw_flags_to_reg(int r)
 {
   raw_lahf(0);  /* Most flags in AH */
   //raw_setcc(r,0); /* V flag in AL */
-  raw_setcc_m((uae_u32)live.state[FLAGTMP].mem,0); 
+  raw_setcc_m((uintptr)live.state[FLAGTMP].mem,0); 
   
 #if 1   /* Let's avoid those nasty partial register stalls */
-  //raw_mov_b_mr((uae_u32)live.state[FLAGTMP].mem,r);
-  raw_mov_b_mr(((uae_u32)live.state[FLAGTMP].mem)+1,r+4);
+  //raw_mov_b_mr((uintptr)live.state[FLAGTMP].mem,r);
+  raw_mov_b_mr(((uintptr)live.state[FLAGTMP].mem)+1,r+4);
   //live.state[FLAGTMP].status=CLEAN;
   live.state[FLAGTMP].status=INMEM;
   live.state[FLAGTMP].realreg=-1;
@@ -3131,6 +3248,18 @@ static inline void raw_reg_to_flags(int r)
   raw_sahf(0);
 }
 
+#define FLAG_NREG3 0  /* Set to -1 if any register will do */
+static __inline__ void raw_flags_set_zero(int s, int tmp)
+{
+    raw_mov_l_rr(tmp,s);
+    raw_lahf(s); /* flags into ah */
+    raw_and_l_ri(s,0xffffbfff);
+    raw_and_l_ri(tmp,0x00004000);
+    raw_xor_l_ri(tmp,0x00004000);
+    raw_or_l(s,tmp);
+    raw_sahf(s);
+}
+
 #else
 
 #define FLAG_NREG1 -1  /* Set to -1 if any register will do */
@@ -3138,7 +3267,7 @@ static inline void raw_flags_to_reg(int r)
 {
 	raw_pushfl();
 	raw_pop_l_r(r);
-	raw_mov_l_mr((uae_u32)live.state[FLAGTMP].mem,r);
+	raw_mov_l_mr((uintptr)live.state[FLAGTMP].mem,r);
 //	live.state[FLAGTMP].status=CLEAN;
 	live.state[FLAGTMP].status=INMEM;
 	live.state[FLAGTMP].realreg=-1;
@@ -3157,6 +3286,19 @@ static inline void raw_reg_to_flags(int r)
 	raw_popfl();
 }
 
+#define FLAG_NREG3 -1  /* Set to -1 if any register will do */
+static __inline__ void raw_flags_set_zero(int s, int tmp)
+{
+    raw_mov_l_rr(tmp,s);
+    raw_pushfl();
+    raw_pop_l_r(s);
+    raw_and_l_ri(s,0xffffffbf);
+    raw_and_l_ri(tmp,0x00000040);
+    raw_xor_l_ri(tmp,0x00000040);
+    raw_or_l(s,tmp);
+    raw_push_l_r(s);
+    raw_popfl();
+}
 #endif
 
 /* Apparently, there are enough instructions between flag store and
@@ -3164,10 +3306,10 @@ static inline void raw_reg_to_flags(int r)
 static inline void raw_load_flagreg(uae_u32 target, uae_u32 r)
 {
 #if 1
-    raw_mov_l_rm(target,(uae_u32)live.state[r].mem);
+    raw_mov_l_rm(target,(uintptr)live.state[r].mem);
 #else
-    raw_mov_b_rm(target,(uae_u32)live.state[r].mem);
-    raw_mov_b_rm(target+4,((uae_u32)live.state[r].mem)+1);
+    raw_mov_b_rm(target,(uintptr)live.state[r].mem);
+    raw_mov_b_rm(target+4,((uintptr)live.state[r].mem)+1);
 #endif
 }
 
@@ -3175,27 +3317,11 @@ static inline void raw_load_flagreg(uae_u32 target, uae_u32 r)
 static inline void raw_load_flagx(uae_u32 target, uae_u32 r)
 {
     if (live.nat[target].canbyte)
-	raw_mov_b_rm(target,(uae_u32)live.state[r].mem);
+	raw_mov_b_rm(target,(uintptr)live.state[r].mem);
     else if (live.nat[target].canword)
-	raw_mov_w_rm(target,(uae_u32)live.state[r].mem);
+	raw_mov_w_rm(target,(uintptr)live.state[r].mem);
     else
-	raw_mov_l_rm(target,(uae_u32)live.state[r].mem);
-}
-
-#define NATIVE_FLAG_Z 0x40
-static __inline__ void raw_flags_set_zero(int f, int r, int t)
-{
-	// FIXME: this is really suboptimal
-	raw_pushfl();
-	raw_pop_l_r(f);
-	raw_and_l_ri(f,~NATIVE_FLAG_Z);
-	raw_test_l_rr(r,r);
-	raw_mov_l_ri(r,0);
-	raw_mov_l_ri(t,NATIVE_FLAG_Z);
-	raw_cmov_l_rr(r,t,NATIVE_CC_EQ);
-	raw_or_l(f,r);
-	raw_push_l_r(f);
-	raw_popfl();
+	raw_mov_l_rm(target,(uintptr)live.state[r].mem);
 }
 
 static inline void raw_inc_sp(int off)
@@ -3314,19 +3440,21 @@ static void
 cpuid(uae_u32 op, uae_u32 *eax, uae_u32 *ebx, uae_u32 *ecx, uae_u32 *edx)
 {
   static uae_u8 cpuid_space[256];   
+  static uae_u32 s_op, s_eax, s_ebx, s_ecx, s_edx;
   uae_u8* tmp=get_target();
 
+  s_op = op;
   set_target(cpuid_space);
   raw_push_l_r(0); /* eax */
   raw_push_l_r(1); /* ecx */
   raw_push_l_r(2); /* edx */
   raw_push_l_r(3); /* ebx */
-  raw_mov_l_rm(0,(uae_u32)&op);
+  raw_mov_l_rm(0,(uintptr)&s_op);
   raw_cpuid(0);
-  if (eax != NULL) raw_mov_l_mr((uae_u32)eax,0);
-  if (ebx != NULL) raw_mov_l_mr((uae_u32)ebx,3);
-  if (ecx != NULL) raw_mov_l_mr((uae_u32)ecx,1);
-  if (edx != NULL) raw_mov_l_mr((uae_u32)edx,2);
+  raw_mov_l_mr((uintptr)&s_eax,0);
+  raw_mov_l_mr((uintptr)&s_ebx,3);
+  raw_mov_l_mr((uintptr)&s_ecx,1);
+  raw_mov_l_mr((uintptr)&s_edx,2);
   raw_pop_l_r(3);
   raw_pop_l_r(2);
   raw_pop_l_r(1);
@@ -3335,6 +3463,10 @@ cpuid(uae_u32 op, uae_u32 *eax, uae_u32 *ebx, uae_u32 *ecx, uae_u32 *edx)
   set_target(tmp);
 
   ((cpuop_func*)cpuid_space)(0);
+  if (eax != NULL) *eax = s_eax;
+  if (ebx != NULL) *ebx = s_ebx;
+  if (ecx != NULL) *ecx = s_ecx;
+  if (edx != NULL) *edx = s_edx;
 }
 
 static void
@@ -3470,8 +3602,8 @@ static bool target_check_bsf(void)
 	for (int g_OF = 0; g_OF <= 1; g_OF++) {
 	for (int g_SF = 0; g_SF <= 1; g_SF++) {
 		for (int value = -1; value <= 1; value++) {
-			int flags = (g_SF << 7) | (g_OF << 11) | (g_ZF << 6) | g_CF;
-			int tmp = value;
+			unsigned long flags = (g_SF << 7) | (g_OF << 11) | (g_ZF << 6) | g_CF;
+			unsigned long tmp = value;
 			__asm__ __volatile__ ("push %0; popf; bsf %1,%1; pushf; pop %0"
 								  : "+r" (flags), "+r" (tmp) : : "cc");
 			int OF = (flags >> 11) & 1;
@@ -3609,23 +3741,54 @@ static inline void tos_make(int r)
     emit_byte(0xd8+(live.tos+1)-live.spos[r]);  /* store top of stack in reg, 
 					 and pop it*/
 }
-    
-	
+
+/* FP helper functions */
+#if USE_NEW_RTASM
+#define DEFINE_OP(NAME, GEN)			\
+static inline void raw_##NAME(uint32 m)		\
+{						\
+    GEN(m, X86_NOREG, X86_NOREG, 1);		\
+}
+DEFINE_OP(fstl,  FSTLm);
+DEFINE_OP(fstpl, FSTPLm);
+DEFINE_OP(fldl,  FLDLm);
+DEFINE_OP(fildl, FILDLm);
+DEFINE_OP(fistl, FISTLm);
+DEFINE_OP(flds,  FLDSm);
+DEFINE_OP(fsts,  FSTSm);
+DEFINE_OP(fstpt, FSTPTm);
+DEFINE_OP(fldt,  FLDTm);
+#else
+#define DEFINE_OP(NAME, OP1, OP2)		\
+static inline void raw_##NAME(uint32 m)		\
+{						\
+    emit_byte(OP1);				\
+    emit_byte(OP2);				\
+    emit_long(m);				\
+}
+DEFINE_OP(fstl,  0xdd, 0x15);
+DEFINE_OP(fstpl, 0xdd, 0x1d);
+DEFINE_OP(fldl,  0xdd, 0x05);
+DEFINE_OP(fildl, 0xdb, 0x05);
+DEFINE_OP(fistl, 0xdb, 0x15);
+DEFINE_OP(flds,  0xd9, 0x05);
+DEFINE_OP(fsts,  0xd9, 0x15);
+DEFINE_OP(fstpt, 0xdb, 0x3d);
+DEFINE_OP(fldt,  0xdb, 0x2d);
+#endif
+#undef DEFINE_OP
+
 LOWFUNC(NONE,WRITE,2,raw_fmov_mr,(MEMW m, FR r))
 {
     make_tos(r);
-    emit_byte(0xdd);
-    emit_byte(0x15);
-    emit_long(m);
+    raw_fstl(m);
 }
 LENDFUNC(NONE,WRITE,2,raw_fmov_mr,(MEMW m, FR r))
 
 LOWFUNC(NONE,WRITE,2,raw_fmov_mr_drop,(MEMW m, FR r))
 {
     make_tos(r);
-    emit_byte(0xdd);
-    emit_byte(0x1d);
-    emit_long(m);
+    raw_fstpl(m);
     live.onstack[live.tos]=-1;
     live.tos--;
     live.spos[r]=-2;
@@ -3634,18 +3797,14 @@ LENDFUNC(NONE,WRITE,2,raw_fmov_mr,(MEMW m, FR r))
 
 LOWFUNC(NONE,READ,2,raw_fmov_rm,(FW r, MEMR m))
 {
-    emit_byte(0xdd);
-    emit_byte(0x05);
-    emit_long(m);
+    raw_fldl(m);
     tos_make(r);
 }
 LENDFUNC(NONE,READ,2,raw_fmov_rm,(FW r, MEMR m))
 
 LOWFUNC(NONE,READ,2,raw_fmovi_rm,(FW r, MEMR m))
 {
-    emit_byte(0xdb);
-    emit_byte(0x05);
-    emit_long(m);
+    raw_fildl(m);
     tos_make(r);
 }
 LENDFUNC(NONE,READ,2,raw_fmovi_rm,(FW r, MEMR m))
@@ -3653,17 +3812,13 @@ LENDFUNC(NONE,READ,2,raw_fmovi_rm,(FW r, MEMR m))
 LOWFUNC(NONE,WRITE,2,raw_fmovi_mr,(MEMW m, FR r))
 {
     make_tos(r);
-    emit_byte(0xdb);
-    emit_byte(0x15);
-    emit_long(m);
+    raw_fistl(m);
 }
 LENDFUNC(NONE,WRITE,2,raw_fmovi_mr,(MEMW m, FR r))
 
 LOWFUNC(NONE,READ,2,raw_fmovs_rm,(FW r, MEMR m))
 {
-    emit_byte(0xd9);
-    emit_byte(0x05);
-    emit_long(m);
+    raw_flds(m);
     tos_make(r);
 }
 LENDFUNC(NONE,READ,2,raw_fmovs_rm,(FW r, MEMR m))
@@ -3671,9 +3826,7 @@ LENDFUNC(NONE,READ,2,raw_fmovs_rm,(FW r, MEMR m))
 LOWFUNC(NONE,WRITE,2,raw_fmovs_mr,(MEMW m, FR r))
 {
     make_tos(r);
-    emit_byte(0xd9);
-    emit_byte(0x15);
-    emit_long(m);
+    raw_fsts(m);
 }
 LENDFUNC(NONE,WRITE,2,raw_fmovs_mr,(MEMW m, FR r))
 
@@ -3688,9 +3841,7 @@ LOWFUNC(NONE,WRITE,2,raw_fmov_ext_mr,(MEMW m, FR r))
     emit_byte(0xd9);     /* Get a copy to the top of stack */
     emit_byte(0xc0+rs);
 
-    emit_byte(0xdb);  /* store and pop it */
-    emit_byte(0x3d);
-    emit_long(m);
+    raw_fstpt(m);	/* store and pop it */
 }
 LENDFUNC(NONE,WRITE,2,raw_fmov_ext_mr,(MEMW m, FR r))
 
@@ -3699,9 +3850,7 @@ LOWFUNC(NONE,WRITE,2,raw_fmov_ext_mr_drop,(MEMW m, FR r))
     int rs;
 
     make_tos(r);
-    emit_byte(0xdb);  /* store and pop it */
-    emit_byte(0x3d);
-    emit_long(m);
+    raw_fstpt(m);	/* store and pop it */
     live.onstack[live.tos]=-1;
     live.tos--;
     live.spos[r]=-2;
@@ -3710,9 +3859,7 @@ LENDFUNC(NONE,WRITE,2,raw_fmov_ext_mr,(MEMW m, FR r))
 
 LOWFUNC(NONE,READ,2,raw_fmov_ext_rm,(FW r, MEMR m))
 {
-    emit_byte(0xdb);
-    emit_byte(0x2d);
-    emit_long(m);
+    raw_fldt(m);
     tos_make(r);
 }
 LENDFUNC(NONE,READ,2,raw_fmov_ext_rm,(FW r, MEMR m))
@@ -3921,7 +4068,7 @@ LOWFUNC(NONE,NONE,2,raw_ftwotox_rr,(FW d, FR s))
     emit_byte(0xf0);  /* f2xm1 */
     emit_byte(0xdc);
     emit_byte(0x05);
-    emit_long((uae_u32)&one);  /* Add '1' without using extra stack space */
+    emit_long((uintptr)&one);  /* Add '1' without using extra stack space */
     emit_byte(0xd9);
     emit_byte(0xfd);  /* and scale it */
     emit_byte(0xdd);
@@ -3955,7 +4102,7 @@ LOWFUNC(NONE,NONE,2,raw_fetox_rr,(FW d, FR s))
     emit_byte(0xf0);  /* f2xm1 */
     emit_byte(0xdc);
     emit_byte(0x05);
-    emit_long((uae_u32)&one);  /* Add '1' without using extra stack space */
+    emit_long((uintptr)&one);  /* Add '1' without using extra stack space */
     emit_byte(0xd9);
     emit_byte(0xfd);  /* and scale it */
     emit_byte(0xdd);

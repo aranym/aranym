@@ -1,3 +1,8 @@
+2004/11/21 - milan
+- CPU JIT: sync with the latest BII core, really many changes, amd64 corrected,
+  cleanups
+
+
 2004/11/20 - milan
 - configure, vm_alloc, main_unix.cpp: a small memory management
   reorganization, 33BIT addressing, cleanups
