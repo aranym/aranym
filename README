@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.1.7 dated 2002/04/22
+      version 0.1.9 released on 2002/07/20
 
 
  1) License
@@ -43,6 +43,8 @@ where TOS/GEM applications could continue to live forever.
    o extended keyboard and mouse support (including mouse wheel)
    o direct access to host file system via MetaDOS and MiNT fs drivers
    o TOS 4.04 or EmuTOS as the booting operating system
+   o runs with FreeMiNT, MagiC, and any other operating system that runs
+     also on real Atari computer.
 
 Important: ARAnyM is not finished. Consider this to be a beta version
 and a work-in-progress. Sorry for incomplete and confusing documentation.
@@ -173,7 +175,8 @@ Note: The config.sys edit tool and the aranym config configuration will come
 
 While the emulator is running, you can quit it by pressing Shift+Break
 or reboot it with Ctrl+Break. And if you started ARAnyM with the debug
-option, you can enter the debugger by pressing Alt+Break.
+option, you can enter the debugger by pressing Alt+Break. Simple Break
+opens up configuration dialog that has not been finished yet.
 
 Press Alt+Ctrl+Esc keys to release the input focus (so you can use your
 keyboard/mouse in other applications).
