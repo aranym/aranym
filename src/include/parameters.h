@@ -30,6 +30,7 @@ typedef struct {
 
 typedef struct {
   bool present;
+  bool isCDROM;
   bool byteswap;
   char path[512];
   unsigned int cylinders;
