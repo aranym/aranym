@@ -1,16 +1,26 @@
 ; This is example of ~/.aranymrc file
-;
-; At the first - ; as the first char of line means comment
-;
-; If you want start debugger automaticly, uncomment next line
-;debugger
-;
+
+[GLOBAL]
+; If you want debugger to start automatically, uncomment the next line
+; DebugOnStart = 1
+
 ; ROM file path:
-;R /usr/local/share/aranym/ROM
+; TOS = /usr/local/share/aranym/ROM
 ;
-; Device IDE X:
-;iX file cylinders heads sectors byteswap(0/1)
-;
-;e.g:
-;i0 /home/user/.aranym/diskImageC 940 14 40 0
-;i1 /dev/hdd 2100 16 63 0
+
+; IDE Devices configuration
+[IDE0]
+Present = Yes
+Path = /home/user/.aranym/diskImageC
+Cylinders = 940
+Heads = 14
+SectorsPerTrack = 40
+ByteSwap = No
+
+[IDE1]
+Present = No
+Path = /dev/hdd
+Cylinders = 2100
+Heads = 16
+SectorsPerTrack = 63
+ByteSwap = No

@@ -29,9 +29,8 @@ static struct option const long_options[] =
   {NULL, 0, NULL, 0}
 };
 
-
 char *program_name;
-char *rom_path;
+char rom_path[512];
 
 uint8 start_debug = 0;			// Start debugger
 bool fullscreen = false;			// Boot in Fullscreen
@@ -43,6 +42,15 @@ bool grab_mouse = false;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 
 bx_options_t bx_options;
+
+BX_DISK_CONFIG(diskc);
+BX_DISK_CONFIG(diskd);
+
+struct Config_Tag global_conf[]={
+	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
+	{ "DebugOnStart", Long_Tag, &start_debug},
+	{ NULL , Error_Tag, NULL }
+};
 
 static void decode_ini_file(void);
 
@@ -107,7 +115,7 @@ void preset_cfg() {
 int decode_switches (int argc, char **argv) {
 	int c;
 
-        preset_cfg();
+	preset_cfg();
 	decode_ini_file();
   
 	while ((c = getopt_long (argc, argv,
@@ -155,7 +163,10 @@ int decode_switches (int argc, char **argv) {
 				break;
 	
 			case 'R':
-				rom_path = strdup(optarg);
+				if ((strlen(optarg)-1) > sizeof(rom_path))
+					fprintf(stderr, "ROM path longer that %d chars.\n", sizeof(rom_path));
+				strncpy(rom_path, optarg, sizeof(rom_path));
+				rom_path[sizeof(rom_path)-1] = '\0';
 				break;
 
 			case 'r':
@@ -205,119 +216,31 @@ int decode_switches (int argc, char **argv) {
 	return optind;
 }
 
+void process_config(const char *filename, struct Config_Tag *conf, char *title, bool verbose) {
+	int status = input_config(filename, conf, title);
+	if (verbose) {
+		if (status >= 0)
+			printf("(valid directives found: %d)\n", status);
+		else
+			printf("Error while reading/processing the '%s' config file.\n", filename);
+	}
+}
+
 static void decode_ini_file(void) {
-  FILE *f;
-  char c;
-  char *s;
-  char *rcfile;
-  char *home;
-  char *dsk;
-  unsigned int number = 0;
-  char *dev_path;
-  int cylinders = -1, heads = -1, spt = -1, byteswap = 0;
-  if ((home = getenv("HOME")) != NULL) {
-    if ((rcfile = (char *)malloc((strlen(home) + strlen(ARANYMRC) + 1) * sizeof(char))) == NULL) {
+	char *home;
+	char *rcfile;
+
+	// compose ini file name
+	if ((home = getenv("HOME")) == NULL)
+		home = "";
+	if ((rcfile = (char *)alloca((strlen(home) + strlen(ARANYMRC) + 1) * sizeof(char))) == NULL) {
       fprintf(stderr, "Not enough memory\n");
       exit(-1);
     }
     strcpy(rcfile, home);
     strcat(rcfile, ARANYMRC);
-    if ((f = fopen(rcfile, "r")) != 0) {
-      fprintf(stderr, ARANYMRC" found\n");
-      for (;;) {
-        switch(getc(f)) {
-	  case ';':
-            while ((c = getc(f)) != '\n' && (c != EOF))
-              ;
-          case '\n':
-	    break;
 
-          case 'd':
-            start_debug = 1;
-            while ((c = getc(f)) != '\n' && (c != EOF))
-              ;
-            break;
-
-          case 'R':
-            (void) getc(f);
-            if ((rom_path = (char *)malloc(sizeof(char))) == NULL) {
-	      fprintf(stderr, "Not enough memory\n");
-	      exit(-1);
-	    }
-	    strcpy(rom_path, "");
-
-            while ((c = getc(f)) != '\n' && (c != EOF)) {
-              s = rom_path;
-	      if ((rom_path = (char *)malloc((strlen(s)+2) * sizeof(char))) == NULL) {
-	        fprintf(stderr, "Not enough memory\n");
-		exit(-1);
-	      }
-	      strcpy(rom_path, s);
-	      rom_path[strlen(s)] = c;
-	      rom_path[strlen(s)+1] = '\0';
-	      free((void *)s);
-	    }
-	    D(bug("ROM file: %s",rom_path));
-            break;
-
-          case 'i':
-            if ((dsk = (char *)malloc(sizeof(char))) == NULL) {
-	      fprintf(stderr, "Not enough memory\n");
-	      exit(-1);
-	    }
-	    strcpy(dsk, "");
-
-            if ((dev_path = (char *)malloc(1024 * sizeof(char))) == NULL) {
-	      fprintf(stderr, "Not enough memory\n");
-	      exit(-1);
-	    }
-	    strcpy(dev_path, "");
-
-
-            while ((c = getc(f)) != '\n' && (c != EOF)) {
-              s = dsk;
-	      if ((dsk = (char *)malloc((strlen(s)+3) * sizeof(char))) == NULL) {
-	        fprintf(stderr, "Not enough memory\n");
-		exit(-1);
-	      }
-	      strcpy(dsk, s);
-	      dsk[strlen(s)] = c;
-	      dsk[strlen(s)+1] = '\0';
-	      free((void *)s);
-	    }
-            dsk[strlen(dsk)+1] = '\0';
-            dsk[strlen(dsk)] = '\n';
-
-            if (sscanf(dsk, "%u %1023s %d %d %d %d", &number, dev_path, &cylinders, &heads, &spt, &byteswap) > 1) {
-	      if (number > 1) {
-                fprintf(stderr, "Unknown IDE number: %d in " ARANYMRC "\n", number);
-	        exit(-1);
-              }
-	      set_ide(number, dev_path, cylinders, heads, spt, byteswap == 0 ? false : true);
-              D(bug("IDE %d: %s",number, dev_path));
-            } else {
-              fprintf(stderr, "Unknown in " ARANYMRC ": ");
-              fprintf(stderr, "i%s", dsk);
-	      fprintf(stderr, "\n");
-              exit(-1);
-            }
-	    
-	    free((void *)dsk);
-	    free((void *)dev_path);
-            break;
-
-          case EOF:
-	    fclose(f);
-	    return;
-
-          default:
-            fprintf(stderr, "Unknown in " ARANYMRC ": ");
-            while ((c = getc(f)) != '\n' && (c != EOF))
-              fprintf(stderr, "%c", c);
-	    fprintf(stderr, "\n");
-            exit(-1);
-        }
-      }
-    }
-  }
+	process_config(rcfile, global_conf, "GLOBAL", true);
+	process_config(rcfile, diskc_configs, "IDE0", true);
+	process_config(rcfile, diskd_configs, "IDE1", true);
 }
