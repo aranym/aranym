@@ -1323,7 +1323,6 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 
 	// search among the mount points to find suitable link...
 	size_t toNmLen = strlen( ftoname );
-	size_t mpLen;
 
 	// prefer the current device
 	ExtDrive *drv = dir->drv;
@@ -1341,9 +1340,13 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 
 	// compare the beginning of the link path with the current
 	// mountPoint path (if matches then use the current drive)
-	while ( drv && 
-			! ( ( mpLen = strlen( drv->mountPoint ) ) < toNmLen &&
-				!strncmp( drv->mountPoint, ftoname, mpLen ) ) ) {
+	size_t mpLen = 0; // Petr: this has to be initialized to something..
+	while ( drv ) {
+		mpLen = strlen( drv->mountPoint );
+		if (mpLen < toNmLen)
+			break;
+		if ( !strncmp( drv->mountPoint, ftoname, mpLen ) )
+			break;
 
 		// no more mountpoints available
 		if (it == mounts.end()) {
