@@ -393,45 +393,47 @@ void presave_disk() {
 
 /*************************************************************************/
 struct Config_Tag arafs_conf[]={
-	{ "A", Path_Tag, bx_options.aranymfs[0].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "B", Path_Tag, bx_options.aranymfs[1].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "C", Path_Tag, bx_options.aranymfs[2].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "D", Path_Tag, bx_options.aranymfs[3].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "E", Path_Tag, bx_options.aranymfs[4].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "F", Path_Tag, bx_options.aranymfs[5].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "G", Path_Tag, bx_options.aranymfs[6].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "H", Path_Tag, bx_options.aranymfs[7].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "I", Path_Tag, bx_options.aranymfs[8].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "J", Path_Tag, bx_options.aranymfs[9].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "K", Path_Tag, bx_options.aranymfs[10].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "L", Path_Tag, bx_options.aranymfs[11].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "M", Path_Tag, bx_options.aranymfs[12].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "N", Path_Tag, bx_options.aranymfs[13].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "O", Path_Tag, bx_options.aranymfs[14].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "P", Path_Tag, bx_options.aranymfs[15].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "Q", Path_Tag, bx_options.aranymfs[16].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "R", Path_Tag, bx_options.aranymfs[17].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "S", Path_Tag, bx_options.aranymfs[18].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "T", Path_Tag, bx_options.aranymfs[19].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "U", Path_Tag, bx_options.aranymfs[20].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "V", Path_Tag, bx_options.aranymfs[21].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "W", Path_Tag, bx_options.aranymfs[22].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "X", Path_Tag, bx_options.aranymfs[23].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "Y", Path_Tag, bx_options.aranymfs[24].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "Z", Path_Tag, bx_options.aranymfs[25].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "A", Path_Tag, bx_options.aranymfs[0].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "B", Path_Tag, bx_options.aranymfs[1].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "C", Path_Tag, bx_options.aranymfs[2].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "D", Path_Tag, bx_options.aranymfs[3].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "E", Path_Tag, bx_options.aranymfs[4].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "F", Path_Tag, bx_options.aranymfs[5].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "G", Path_Tag, bx_options.aranymfs[6].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "H", Path_Tag, bx_options.aranymfs[7].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "I", Path_Tag, bx_options.aranymfs[8].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "J", Path_Tag, bx_options.aranymfs[9].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "K", Path_Tag, bx_options.aranymfs[10].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "L", Path_Tag, bx_options.aranymfs[11].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "M", Path_Tag, bx_options.aranymfs[12].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "N", Path_Tag, bx_options.aranymfs[13].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "O", Path_Tag, bx_options.aranymfs[14].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "P", Path_Tag, bx_options.aranymfs[15].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "Q", Path_Tag, bx_options.aranymfs[16].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "R", Path_Tag, bx_options.aranymfs[17].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "S", Path_Tag, bx_options.aranymfs[18].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "T", Path_Tag, bx_options.aranymfs[19].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "U", Path_Tag, bx_options.aranymfs[20].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "V", Path_Tag, bx_options.aranymfs[21].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "W", Path_Tag, bx_options.aranymfs[22].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "X", Path_Tag, bx_options.aranymfs[23].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "Y", Path_Tag, bx_options.aranymfs[24].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	{ "Z", Path_Tag, bx_options.aranymfs[25].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
 	{ NULL , Error_Tag, NULL, 0, 0}
 };
 
 void preset_arafs() {
 	for(int i=0; i < 'Z'-'A'+1; i++) {
 		bx_options.aranymfs[i].rootPath[0] = '\0';
+		bx_options.aranymfs[i].configPath[0] = '\0';
 		bx_options.aranymfs[i].halfSensitive = true;
 	}
 }
 
 void postload_arafs() {
 	for(int i=0; i < 'Z'-'A'+1; i++) {
-		int len = strlen(bx_options.aranymfs[i].rootPath);
+		safe_strncpy(bx_options.aranymfs[i].rootPath, bx_options.aranymfs[i].configPath, sizeof(bx_options.aranymfs[i].rootPath));
+		int len = strlen(bx_options.aranymfs[i].configPath);
 		bx_options.aranymfs[i].halfSensitive = true;
 		if (len > 0) {
 			char *ptrLast = bx_options.aranymfs[i].rootPath + len-1;
@@ -445,11 +447,11 @@ void postload_arafs() {
 
 void presave_arafs() {
 	for(int i=0; i < 'Z'-'A'+1; i++) {
+		safe_strncpy(bx_options.aranymfs[i].configPath, bx_options.aranymfs[i].rootPath, sizeof(bx_options.aranymfs[i].configPath));
 		if ( strlen(bx_options.aranymfs[i].rootPath) > 0 &&
 			 bx_options.aranymfs[i].halfSensitive ) {
 			// set the halfSensitive indicator
-			// NOTE: I can't add more chars here due to the fixed char[] width
-			strcat( bx_options.aranymfs[i].rootPath, ":" );
+			strcat( bx_options.aranymfs[i].configPath, ":" );
 		}
 	}
 }
