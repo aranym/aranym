@@ -16,6 +16,7 @@ public:
 	uae_u8 getControl();
 	void setData(uae_u8);
 	uae_u8 getData();
+	void tick();
 };
 
 class MFP_TimerA:public MFP_Timer {
@@ -56,7 +57,7 @@ private:
 	uae_u16 irq_pending;
 	uae_u16 irq_inservice;
 	uae_u16 irq_mask;
-	uae_u8 irq_vector;
+	bool automaticServiceEnd;
 	MFP_TimerA A;
 	MFP_TimerB B;
 	MFP_TimerC C;
@@ -65,6 +66,7 @@ private:
 
 public:
 	MFP();
-	uae_u32 handleRead(uaecptr);
+	uae_u8 handleRead(uaecptr);
 	void handleWrite(uaecptr, uae_u8);
+	void tick();
 };
