@@ -8,6 +8,8 @@
 
 - hwsp possibility of checking memory boundary corrected
 
+- linux_sigsegv.cpp: Added support for MOVSX8, MOVZX8, OR8, MOV8
+
 
 2002/07/16 - Patrice
 - Host port reworked. More bugfixes and completion of the emulator.

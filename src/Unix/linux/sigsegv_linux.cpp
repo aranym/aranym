@@ -21,10 +21,11 @@ enum instruction_t {
 	INSTR_UNKNOWN,
 	INSTR_MOVZX8,
 	INSTR_MOVZX16,
-	INSTR_MOV8L,
-	INSTR_MOV32L,
-	INSTR_MOV8S,
-	INSTR_MOV32S
+	INSTR_MOVSX8,
+	INSTR_MOV8,
+	INSTR_MOV32,
+	INSTR_MOVIMM8,
+	INSTR_OR8
 };
 
 static inline int get_instr_size_add(unsigned char *p)
@@ -69,6 +70,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	int len = 0;
 	transfer_type_t transfer_type = TYPE_UNKNOWN;
 	int size = 4;
+	uint uimm = 0;
 	instruction_t instruction = INSTR_UNKNOWN;
 	void *preg;
 
@@ -94,11 +96,18 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	}
 	
 	switch (addr_instr[0]) {
+		case 0x0a:
+			D(panicbug("OR m8, r8"));
+			size = 1;
+			transfer_type = TYPE_STORE;
+			instruction = INSTR_OR8;
+			reg = (addr_instr[1] >> 3) & 7;
+			len += 2 + get_instr_size_add(addr_instr + 1);
+			break;
 		case 0x0f:
 			switch (addr_instr[1]) {
 				case 0xb6:
 					D(panicbug("MOVZX r32, m8"));
-					size = 1;
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_MOVZX8;
 					reg = (addr_instr[2] >> 3 ) & 7;
@@ -112,20 +121,27 @@ static void segfault_vec(int x, struct sigcontext sc) {
 					reg = (addr_instr[2] >> 3 ) & 7;
 					len += 3 + get_instr_size_add(addr_instr + 2);
 					break;
+				case 0xbe:
+					D(panicbug("MOVSX r32, m8"));
+					transfer_type = TYPE_LOAD;
+					instruction = INSTR_MOVSX8;
+					reg = (addr_instr[2] >> 3 ) & 7;
+					len += 3 + get_instr_size_add(addr_instr + 2);
+					break;
 			}
 			break;
 		case 0x8a:
 			D(panicbug("MOV r8, m8"));
 			size = 1;
 			transfer_type = TYPE_LOAD;
-			instruction = INSTR_MOV8L;
+			instruction = INSTR_MOV8;
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0x8b:
 			D(panicbug("MOV r32, m32"));
 			transfer_type = TYPE_LOAD;
-			instruction = INSTR_MOV32L;
+			instruction = INSTR_MOV32;
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
@@ -133,19 +149,24 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			D(panicbug("MOV m8, r8"));
 			transfer_type = TYPE_STORE;
 			size = 1;
-			instruction = INSTR_MOV8S;
+			instruction = INSTR_MOV8;
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0x89:
 			D(panicbug("MOV m32, r32"));
 			transfer_type = TYPE_STORE;
-			instruction = INSTR_MOV32S;
+			instruction = INSTR_MOV32;
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 +get_instr_size_add(addr_instr + 1);
 			break;
-		case 0x0a:
-			D(panicbug(""));
+		case 0xc6:
+			D(panicbug("MOV m8, imm8"));
+			transfer_type = TYPE_STORE;
+			instruction = INSTR_MOVIMM8;
+			reg = (addr_instr[1] >> 3) & 7;
+			uimm = addr_instr[2];
+			len += 3;
 			break;
 	}
 
@@ -174,30 +195,65 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	if (addr >= 0xff000000)
 		addr -= 0xff000000;
 
-	switch (instruction) {
-		case INSTR_MOVZX16:
-			*((uae_u32 *)preg) = 0;
-			*((uae_u16 *)preg) = HWget_w(addr);
-			break;
-		case INSTR_MOV32L:
-			if (size == 4) {
-				*((uae_u32 *)preg) = HWget_l(addr);
-			} else {
-				*((uae_u16 *)preg) = HWget_w(addr);
-			}
-			break;
-		case INSTR_MOV32S:
-			if (size == 4) {
-				HWput_l(addr, *((uae_u32 *)preg));
-			} else {
-				HWput_w(addr, *((uae_u16 *)preg));
-			}
-			break;
-		default: abort();
+	D(panicbug("Next instruction on %08x", sc.eip += len));
+
+	if (transfer_type == TYPE_LOAD) {
+		switch (instruction) {
+			case INSTR_MOVZX16:
+				*((uae_u32 *)preg) = 0;
+				*((uae_u16 *)preg) = (uae_u16)HWget_w(addr);
+				break;
+			case INSTR_MOV8:
+				*((uae_u8 *)preg) = HWget_b(addr);
+				break;
+			case INSTR_MOV32:
+				if (size == 4) {
+					*((uae_u32 *)preg) = HWget_l(addr);
+				} else {
+					*((uae_u16 *)preg) = HWget_w(addr);
+				}
+				break;
+			case INSTR_OR8:
+				*((uae_u8 *)preg) |= HWget_b(addr);
+				break;
+			case INSTR_MOVZX8:
+				if (size == 4) {
+					*((uae_u32 *)preg) = (uae_u8)HWget_b(addr);
+				} else {
+					*((uae_u16 *)preg) = (uae_u8)HWget_b(addr);
+				}
+				break;
+			case INSTR_MOVSX8:
+				if (size == 4) {
+					*((uae_s32 *)preg) = (uae_s8)HWget_b(addr);
+				} else {
+					*((uae_s16 *)preg) = (uae_s8)HWget_b(addr);
+				}
+				break;
+			default: abort();
+		}
+	} else {
+		switch (instruction) {
+			case INSTR_MOV8:
+				HWput_b(addr, *((uae_u8 *)preg));
+				break;
+			case INSTR_MOV32:
+				if (size == 4) {
+					HWput_l(addr, *((uae_u32 *)preg));
+				} else {
+					HWput_w(addr, *((uae_u16 *)preg));
+				}
+				break;
+			case INSTR_OR8:
+				HWput_b(addr, *((uae_u8 *)preg) | HWget_b(addr));
+				break;
+			case INSTR_MOVIMM8:
+				HWput_b(addr, (uae_u8)uimm);
+				break;
+			default: abort();
+		}
 	}
 
-	D(panicbug("HWspace access handled!"));
-	D(panicbug("Next instruction on %08x", sc.eip += len));
 	in_handler = 0;
 	return;
 buserr:

@@ -34,10 +34,6 @@ Things for 1.0 release:
 
 - document the command line switches, keyboard combos and write Users Guide.
 
-- OS-depend include files, not so redundant includes
-
-- use a better sigsegv handler, some inspirations in BasiliskII and JIT
-
 The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
 all Atari power users/MiNTers. Key elements are TCP/IP networking, large
 screen resolution in high color/true color, fast CPU/FPU and plenty of RAM.
