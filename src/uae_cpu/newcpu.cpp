@@ -680,8 +680,6 @@ static inline void exc_make_frame(
     exc_push_word(sr);
 }
 
-// MJ int in_exception_2 = 0;
-
 extern void showBackTrace(int, bool=true);
 
 #ifdef ENABLE_EPSLIMITER
@@ -700,13 +698,6 @@ void Exception(int nr, uaecptr oldpc)
 	m68k_areg(regs, 7) = regs.m ? regs.msp : regs.isp;
 	regs.s = 1;
     }
-
-#if 0
-    if (nr == 2 && in_exception_2++)	{
-	panicbug("HALT: Double Bus Error means bad news! PC: %08lx", m68k_getpc());
-	abort();
-    }
-#endif
 
     if (nr == 2) {
     	static uaecptr prevpc = 0;
@@ -754,8 +745,15 @@ void Exception(int nr, uaecptr oldpc)
 	prevpc = currpc;
 
 	if (building_bus_fault_stack_frame) {
+#if 0
 		panicbug("HALT: Double bus fault detected !");
 		QuitEmulator();
+#else
+		panicbug("RESET: Double bus fault detected !");
+		building_bus_fault_stack_frame=0;
+		Restart680x0();
+		return;
+#endif
 	}
 
 	building_bus_fault_stack_frame=1;
