@@ -1,3 +1,9 @@
+2003/02/20 - joy
+- videl.cpp: fixed wrong st_shift reset, removed VIDEL regs initialization
+  (since EmuTOS now initializes VIDEL properly). Startup color depth
+  of host window is 8bit now (should be enough).
+
+
 2003/02/19 - STanda
 - fvdidrv.cpp: the expandArea M->M for bitplanes fixed
   The only TODO for full bitplane support is to support non-word
