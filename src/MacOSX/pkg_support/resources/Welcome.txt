@@ -1,1 +1,1 @@
-This package install Aranym in the Application folder, Aranym_files in the Documents folder and SDL library framework on your system
+This package install Aranym in the Application folder, Aranym_files in the Documents folder
