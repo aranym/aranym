@@ -3,6 +3,10 @@
   For example TOS Fcreate() returns -34 if the path to file does not exist.
   The fix I put there helps ST-Zip to unpack folders onto host fs.
 
+- AranymFS: Dpathconf(DP_XATTR) disabled (because I didn't know the correct
+  parameter). Suddenly Thing is able to refresh the destination window
+  correctly.
+
 
 ** Version 0.1.6
 
