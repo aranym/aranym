@@ -505,7 +505,7 @@ int32 CdromDriverLinux::cd_gettoc(memptr device, uint32 dummy, memptr buffer)
 	int drive, i, numtracks, errorcode;
 	struct cdrom_tochdr tochdr;
 	struct cdrom_tocentry tocentry;
-	gettoc_tocentry_t *atari_tocentry;
+	atari_tocentry_t *atari_tocentry;
 
 	drive = OpenDrive(device);
 	if (drive<0) {
@@ -524,7 +524,7 @@ int32 CdromDriverLinux::cd_gettoc(memptr device, uint32 dummy, memptr buffer)
 	numtracks = tochdr.cdth_trk1-tochdr.cdth_trk0+1;
 
 	/* Read TOC entries */
-	atari_tocentry = (gettoc_tocentry_t *) Atari2HostAddr(buffer);
+	atari_tocentry = (atari_tocentry_t *) Atari2HostAddr(buffer);
 	for (i=0; i<=numtracks; i++) {
 		D(bug(NFCD_NAME "GetToc():  reading TOC entry for track %d", i));
 
