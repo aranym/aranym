@@ -2,14 +2,10 @@ These are the first basic tools for Aranym:
 
 - fastram.prg that reads the fastram size from $f90006
 
-- gemram.prg that allows winx to run and takes just 1 kB of RAM
-
 - clocky.prg that write actual mouse position to $f9000e/$f90010
-  (this is only a part of the archive on the ftp site for
-   compyright reasons. It was faster to implement it into
-   Clocky (TM) than to write a new TSR).
+  (It was faster to implement it into Clocky (TM) than to write a new TSR).
 
-Soon there will be a tool for arafs (fandafs) that will edit the
+Soon there will be a tool for arafs that will edit the
 MetaDOS' config.sys file automatically.
 
 The archive you can find at the following URL:
