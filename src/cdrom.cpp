@@ -297,7 +297,11 @@ cdrom_interface::insert_cdrom(char *dev)
 	}
 #else
       // all platforms except win32
-      fd = open(path, O_RDONLY);
+      fd = open(path, O_RDONLY
+#ifdef O_BINARY
+		  | O_BINARY
+#endif
+           );
 #endif
     if (fd < 0) {
        bug( "open cd failed for %s: %s", path, strerror(errno));

@@ -1329,7 +1329,11 @@ int32 ExtFs::xfs_creat( XfsCookie *dir, char *name, uint16 mode, int16 flags, Xf
 	char fpathName[MAXPATHNAMELEN];
 	convertPathA2F( fpathName, pathName, "" ); // convert the fname into the hostfs form (check the 8+3 file existence)
 
-	int fd = open( fpathName, O_CREAT|O_WRONLY|O_TRUNC, mode );
+	int fd = open( fpathName, O_CREAT|O_WRONLY|O_TRUNC
+#ifdef O_BINARY
+					| O_BINARY
+#endif
+					, mode );
 	if (fd < 0)
 		return unix2toserrno(errno,TOS_EFILNF);
 	close( fd );
@@ -1350,7 +1354,11 @@ int32 ExtFs::xfs_creat( XfsCookie *dir, char *name, uint16 mode, int16 flags, Xf
 
 int32 ExtFs::Fopen_( const char* pathName, int flags, int mode_, ExtFile *fp )
 {
-	int fd = open( pathName, flags, mode_ );
+	int fd = open( pathName, flags
+#ifdef O_BINARY
+					| O_BINARY
+#endif
+					, mode_ );
 	if (fd < 0)
 		return unix2toserrno(errno,TOS_EFILNF);
 
@@ -2377,6 +2385,10 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.27  2002/02/19 20:04:05  milan
+ * src/ <-> CPU interaction cleaned
+ * memory access cleaned
+ *
  * Revision 1.26  2002/02/18 09:30:05  standa
  * Olivier Landemarre <Olivier.Landemarre@utbm.fr> && STanda extfs.cpp patch.
  * The statvfs stuff conditional compile fixed (no ifdef OS_linux, but OS_*bsd
