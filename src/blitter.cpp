@@ -594,7 +594,7 @@ void BLITTER::hop2op3p()
 #endif
 	do
 	{
-		memmove(get_real_address(dest_addr), get_real_address(source_addr), x_count*2);
+		memmove(get_real_address_direct(dest_addr), get_real_address_direct(source_addr), x_count*2); // ??
 		source_addr += ((x_count-1)*source_x_inc)+source_y_inc;
 		dest_addr += ((x_count-1)*dest_x_inc)+dest_y_inc;
 	} while (--y_count > 0);
@@ -629,7 +629,7 @@ void BLITTER::hop2op3n()
 #endif
 	do
 	{
-		memmove(get_real_address(dest_addr), get_real_address(source_addr), x_count*2);
+		memmove(get_real_address_direct(dest_addr), get_real_address_direct(source_addr), x_count*2); // tu to chce revizi taky
 		source_addr += ((x_count)*source_x_inc)+source_y_inc;
 		dest_addr += ((x_count-1)*dest_x_inc)+dest_y_inc;
 	} while (--y_count > 0);
