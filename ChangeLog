@@ -1,3 +1,9 @@
+2003/02/26 - STanda & joy
+- natfeat/ece.cpp: after removing hostScreen.lock and one unfortunate D(bug)
+  it started working. Wonderful. TODO: change interrupt (probably to INT3).
+  Also would be good if root privileges for tuntap weren't necessary.
+
+
 2003/02/20 - joy
 - videl.cpp: fixed wrong st_shift reset, removed VIDEL regs initialization
   (since EmuTOS now initializes VIDEL properly). Startup color depth
