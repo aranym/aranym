@@ -8,6 +8,7 @@ private:
 
 public:
 	RTC();
+	void init(void);
 	virtual uae_u8 handleRead(uaecptr);
 	virtual void handleWrite(uaecptr, uae_u8);
 
