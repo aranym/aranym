@@ -8,7 +8,6 @@
 
 #include "cpu_emulation.h"
 #include "main.h"
-#include "parameters.h"
 #include "ethernet.h"
 
 #define DEBUG 0
