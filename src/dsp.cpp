@@ -286,7 +286,7 @@ uae_u8 DSP::handleRead(uaecptr addr)
 
 	return value;
 #else
-	return 0xff;	// this value prevents TOS hanging in the DSP init code */
+	return 0xff;	// this value prevents TOS from hanging in the DSP init code */
 #endif	/* DSP_EMULATION */
 }
 
