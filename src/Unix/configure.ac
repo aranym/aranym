@@ -740,9 +740,9 @@ if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
   AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
   AC_CHECK_HEADERS(linux/if_tun.h)
   SYSSRCS="$SYSSRCS ../natfeat/ethernet.cpp"
-  ARAPIF="aratapif"
+  TAPIF="aratapif"
 else
-  ARAPIF=""
+  TAPIF=""
 fi
 
 dnl Support for direct access to host's fs
@@ -1447,7 +1447,7 @@ AC_SUBST(SYSSRCS)
 AC_SUBST(CPUINCLUDES)
 AC_SUBST(CPUSRCS)
 AC_SUBST(DBGSP)
-AC_SUBST(ARAPIF)
+AC_SUBST(TAPIF)
 AC_OUTPUT(Makefile)
 
 dnl Print summary.

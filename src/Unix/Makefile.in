@@ -29,7 +29,7 @@ SDL_CFLAGS = @SDL_CFLAGS@
 SYSSRCS = @SYSSRCS@
 CPUSRCS = @CPUSRCS@
 DBGSP = @DBGSP@
-ARAPIF = @ARAPIF@
+TAPIF = @TAPIF@
 
 ACLOCAL = aclocal
 AUTOCONF = autoconf
@@ -89,14 +89,14 @@ SRCS = ../main.cpp \
 APP = aranym
 APP_STATIC = aranym-static
 APP_DI = diskimage
-APP_PIF = aratapif
+APP_IFC = aratapif
 
 ## Rules
 .PHONY: install installdirs uninstall mostlyclean clean distclean depend dep
 .SUFFIXES:
 .SUFFIXES: .c .cpp .s .o .h
 
-all: $(APP) $(APP_DI) $(ARAPIF)
+all: $(APP) $(APP_DI) $(TAPIF)
 
 OBJ_DIR = obj
 $(OBJ_DIR)::
@@ -124,10 +124,10 @@ $(APP): $(OBJ_DIR) $(OBJS)
 $(APP_STATIC): $(OBJ_DIR) $(OBJS)
 	$(CXX) -o $(APP_STATIC) -static $(LDFLAGS) $(OBJS) $(LIBS)
 
-install: $(APP) $(APP_DI) $(ARAPIF) installdirs
+install: $(APP) $(APP_DI) $(TAPIF) installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
-	if [ "x$(APP_PIF)" = "x$(ARAPIF)" ]; then\
-	$(INSTALL_PROGRAM) $(APP_PIF) $(DESTDIR)$(bindir)/$(APP_PIF);\
+	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then\
+	$(INSTALL_PROGRAM) $(APP_IFC) $(DESTDIR)$(bindir)/$(APP_IFC);\
 	fi
 	$(INSTALL_PROGRAM) $(APP_DI) $(DESTDIR)$(bindir)/$(APP_DI)
 	$(INSTALL_DATA) ../../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog
@@ -169,8 +169,8 @@ installdirs:
 
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
-	if [ "x$(APP_PIF)" = "x$(ARAPIF)" ]; then\
-	rm -f $(DESTDIR)$(bindir)/$(APP_PIF);\
+	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then\
+	rm -f $(DESTDIR)$(bindir)/$(APP_IFC);\
 	fi
 	rm -f $(DESTDIR)$(bindir)/$(APP_DI)
 	rm -f $(DESTDIR)$(docdir)/$(APP)/changelog
@@ -216,7 +216,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -f $(APP) $(APP_DI) $(ARAPIF) $(OBJ_DIR)/* core* *.core *~ *.bak
+	rm -f $(APP) $(APP_DI) $(TAPIF) $(OBJ_DIR)/* core* *.core *~ *.bak
 
 clean: mostlyclean
 	rm -f cpuemu.cpp cpudefs.cpp cputmp*.s cpufast*.s cpustbl.cpp cputbl.h newcpu.s memory.s compemu.cpp compstbl.cpp comptbl.h
@@ -235,8 +235,8 @@ bindistdirs:
 
 bindist: $(APP) $(APP_DI) bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
-	if [ "x$(APP_PIF)" = "x$(ARAPIF)" ]; then\
-	$(INSTALL_PROGRAM) $(APP_PIF) tmpdist$(bindir)/$(APP_PIF);\
+	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then\
+	$(INSTALL_PROGRAM) $(APP_IFC) tmpdist$(bindir)/$(APP_IFC);\
 	fi
 	$(INSTALL_PROGRAM) $(APP_DI) tmpdist$(bindir)/$(APP_DI)
 	$(INSTALL_DATA) ../../ChangeLog tmpdist$(docdir)/$(APP)/changelog
@@ -470,8 +470,8 @@ memory.s: ../uae_cpu/memory.cpp
 $(APP_DI): ../../tools/diskimage.c
 	$(CC) $(LDFLAGS) -o $(APP_DI) ../../tools/diskimage.c
 
-$(APP_PIF): aratapif.c
-	$(CC) $(LDFLAGS) -o $(APP_PIF) -DHAVE_AFINET aratapif.c
+$(APP_IFC): aratapif.c
+	$(CC) $(LDFLAGS) -o $(APP_IFC) -DHAVE_AFINET aratapif.c
 
 #-------------------------------------------------------------------------
 # DO NOT DELETE THIS LINE -- make depend depends on it.
