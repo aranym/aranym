@@ -35,6 +35,7 @@ void ACIA::handleWrite(uaecptr addr, uae_u8 value) {
 IKBD::IKBD() : ACIA(0xfffc00) {
 	status = 0x0e;
 	ikbd_inbuf = ikbd_bufpos = 0;
+	inTransmit = false;
 };
 
 bool IKBD::isBufferEmpty() {
@@ -49,6 +50,7 @@ void IKBD::setMode(uae_u8 value) {
 }
 
 uae_u8 IKBD::getData() {
+	inTransmit = false;
 	int pos = (ikbd_bufpos - ikbd_inbuf) & MAXBUF;
 	if (ikbd_inbuf-- > 0) {
 		if (ikbd_inbuf ==0) {
@@ -59,6 +61,7 @@ uae_u8 IKBD::getData() {
 			put_byte_direct(0xfffa01, x);
 		}
 		D(bug("IKBD read code %2x (%d left)", buffer[pos], ikbd_inbuf));
+		doTransmit();
 		return buffer[pos];
 	}
 	else {
@@ -77,11 +80,19 @@ void IKBD::send(int value)
 		ikbd_bufpos++;
 		ikbd_bufpos &= MAXBUF;
 		ikbd_inbuf++;
+		D(bug("IKBD sends %2x (->buffer pos %d)\n", value, ikbd_bufpos-1));
 	}
+	doTransmit();
+}
+
+void IKBD::doTransmit(void)
+{
+	if (inTransmit) return;
 	if ((HWget_b(0xfffa09) & 0x40) == 0) return;
-	D(bug("IKBD sends %2x (->buffer pos %d)\n", value, ikbd_bufpos-1));
+	if (ikbd_inbuf == 0) return;
 	/* set Interrupt Request */
 	status |= 0x81;
+	inTransmit = true;
 	/* signal ACIA interrupt */
 	mfp.IRQ(6);
 }
