@@ -177,8 +177,9 @@ void VIDEL::renderScreenNoFlag()
 	if (!hostScreen.renderBegin())
 		return;
 
+	long atariVideoRAM = direct_truecolor ? ARANYMVRAMSTART : this->getVideoramAddress();
+	uint16 *fvram = (uint16 *) get_real_address_direct(atariVideoRAM);
 	VideoRAMBaseHost = (uint8 *) hostScreen.getVideoramAddress();
-	uint16 *fvram = (uint16 *) get_real_address_direct(this->getVideoramAddress());
 	uint16 *hvram = (uint16 *) VideoRAMBaseHost;
 	int bpp = getScreenBpp();
 
@@ -321,7 +322,7 @@ void VIDEL::renderScreenNoFlag()
 
 		}
 		else if (destBPP == 4) {
-			// THIS is the only correct way to do the Falcon TC to SDL conversion!!! (for littel endian machines)
+			// THIS is the only correct way to do the Falcon TC to SDL conversion!!! (for little endian machines)
 			for (int i = 0; i < planeWordCount; i++) {
 				// The byteswap is done by correct shifts (not so obvious)
 				int data = fvram[i];
@@ -347,6 +348,14 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.19  2001/08/28 23:26:09  standa
+ * The fVDI driver update.
+ * VIDEL got the doRender flag with setter setRendering().
+ *       The host_colors_uptodate variable name was changed to hostColorsSync.
+ * HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
+ *       was created.
+ * fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
+ *
  * Revision 1.18  2001/08/15 06:48:57  standa
  * ST compatible modes VIDEL patch by Ctirad.
  *
