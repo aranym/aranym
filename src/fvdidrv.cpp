@@ -13,7 +13,7 @@
 
 #include "fvdidrv.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 // this serves for debugging the color palette code
@@ -452,15 +452,15 @@ uint32 FVDIDriver::drawMouse( void *wrk, int32 x, int32 y, uint32 mode ) {
 			for( uint16 i=0; i<=30; i+=2 )
 				Mouse.shape[i >> 1] = reverse_bits( get_word( fPatterAddress + i, true ) );
 
-#if DEBUG == 1
+#if DEBUG > 1
 			char buffer[30];
 			for( uint16 i=0; i<=15; i++ ) {
 				getBinary( Mouse.mask[i], buffer );
-				D(fprintf(stderr, "fVDI: apm:%s\n", buffer ));
+				D2(fprintf(stderr, "fVDI: apm:%s\n", buffer ));
 			}
 			for( uint16 i=0; i<=15; i++ ) {
 				getBinary( Mouse.shape[i], buffer );
-				D(fprintf(stderr, "fVDI: apd:%s\n", buffer ));
+				D2(fprintf(stderr, "fVDI: apd:%s\n", buffer ));
 			}
 #endif // DEBUG == 1
 
@@ -545,18 +545,18 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
 		return 1;
 
 	for( uint16 j=0; j<h; j++ ) {
-		D(fprintf(stderr,"fVDI: bmp:"));
+		D2(fprintf(stderr,"fVDI: bmp:"));
 
 		uint16 theWord = get_word(data + j*pitch + ((sx>>3)&0xfffe), true);
 		for( uint16 i=sx; i<sx+w; i++ ) {
 			if ( i % 16 == 0 )
 				theWord = get_word(data + j*pitch + ((i>>3)&0xfffe), true);
 
-			D(fprintf(stderr,"%s", ((theWord >> (15-(i&15))) & 1) ? "1" : " " ));
+			D2(fprintf(stderr,"%s", ((theWord >> (15-(i&15))) & 1) ? "1" : " " ));
 			if ((theWord >> (15-(i&15))) & 1)
 				hostScreen.putPixel(dx + i - sx, dy + j, fgColor );
 		}
-		D(fprintf(stderr,"\n"));
+		D2(fprintf(stderr,"\n"));
 	}
 
 	hostScreen.renderEnd();
@@ -695,6 +695,10 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2, u
 
 /*
  * $Log$
+ * Revision 1.8  2001/09/21 06:53:26  standa
+ * The blitting is now said to be working, although it is not implemented.
+ * expand to memory (not to SDL surface) is not either processed or dispalyed.
+ *
  * Revision 1.7  2001/09/20 18:12:09  standa
  * Off by one bug fixed in fillArea.
  * Separate functions for transparent and opaque background.
