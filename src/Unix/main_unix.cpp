@@ -43,11 +43,8 @@
 #include <SDL/SDL_timer.h>
 #include <signal.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
-
-// Constants
-const char ROM_FILE_NAME[] = DATADIR "/ROM";
 
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
@@ -60,7 +57,7 @@ extern "C" char *strdup(const char *s)
 
 void segmentationfault(int x)
 {
-	printf("Dostali te na PC = $%x!\n", (unsigned)showPC());
+	printf("Gotcha! Illegal memory access. Atari PC = $%x\n", (unsigned)showPC());
 	exit(0);
 }
 
@@ -83,8 +80,7 @@ int main(int argc, char **argv)
 	// Initialize variables
 	RAMBaseHost = NULL;
 	ROMBaseHost = NULL;
-	TTRAMBaseHost = NULL;
-	TTRAMSize = 32*1024*1024;
+	FastRAMBaseHost = NULL;
 
 	program_name = argv[0];
 	(void)decode_switches(stderr, argc, argv);
@@ -106,26 +102,23 @@ int main(int argc, char **argv)
 	// when trying to map a too big chunk of memory starting at address 0
 	
 	// Try to allocate all memory from 0x0000, if it is not known to crash
-	if (vm_acquire_fixed(0, RAMSize + ROMSize + TTRAMSize) == 0) {
+	if (vm_acquire_fixed(0, RAMSize + ROMSize + FastRAMSize) == 0) {
 		D(bug("Could allocate RAM and ROM from 0x0000"));
 		memory_mapped_from_zero = true;
 	}
-#endif
 
-	// Create areas for Atari RAM and ROM
-#if REAL_ADDRESSING
 	if (memory_mapped_from_zero) {
 		RAMBaseHost = (uint8 *)0;
 		ROMBaseHost = RAMBaseHost + RAMSize;
-		TTRAMBaseHost = RAMBaseHost + 0x1000000;
+		FastRAMBaseHost = RAMBaseHost + 0x1000000;
 	}
 	else
 #endif
 	{
 		RAMBaseHost = (uint8 *)vm_acquire(RAMSize);
 		ROMBaseHost = (uint8 *)vm_acquire(ROMSize);
-		TTRAMBaseHost = (uint8 *)vm_acquire(TTRAMSize);
-		if (RAMBaseHost == VM_MAP_FAILED || ROMBaseHost == VM_MAP_FAILED || TTRAMBaseHost == VM_MAP_FAILED) {
+		FastRAMBaseHost = (uint8 *)vm_acquire(FastRAMSize);
+		if (RAMBaseHost == VM_MAP_FAILED || ROMBaseHost == VM_MAP_FAILED || FastRAMBaseHost == VM_MAP_FAILED) {
 			ErrorAlert("Not enough free memory.\n");
 			QuitEmulator();
 		}
@@ -137,38 +130,18 @@ int main(int argc, char **argv)
 #endif
 
 #else
-	if ((RAMBaseHost = (uint8 *)malloc(RAMSize + ROMSize + TTRAMSize)) == NULL) {
+	if ((RAMBaseHost = (uint8 *)malloc(RAMSize + ROMSize + FastRAMSize)) == NULL) {
 		ErrorAlert("Not enough free memory.\n");
 		QuitEmulator();
 	}
 	MEMBaseDiff = (uintptr)RAMBaseHost;
 	ROMBaseHost = (uint8 *)(RAMBaseHost + ROMBase);
-	TTRAMBaseHost = (uint8 *)(RAMBaseHost + TTRAMBase);
+	FastRAMBaseHost = (uint8 *)(RAMBaseHost + FastRAMBase);
 #endif
 
 	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
-	D(bug("TT-RAM starts at %p (%08x)", TTRAMBaseHost, TTRAMBase));
-
-	// Load TOS ROM
-	int rom_fd = open(rom_path ? rom_path : ROM_FILE_NAME, O_RDONLY);
-	if (rom_fd < 0) {
-		ErrorAlert("ROM file not found\n");
-		QuitEmulator();
-	}
-	D(bug("Reading ROM file..."));
-	RealROMSize = lseek(rom_fd, 0, SEEK_END);
-	if (RealROMSize != 512 * 1024) {
-		ErrorAlert("Invalid ROM size\n");
-		close(rom_fd);
-		QuitEmulator();
-	}
-	lseek(rom_fd, 0, SEEK_SET);
-	if (read(rom_fd, ROMBaseHost, RealROMSize) != (ssize_t) RealROMSize) {
-		ErrorAlert("ROM file reading error\n");
-		close(rom_fd);
-		QuitEmulator();
-	}
+	D(bug("TT-RAM starts at %p (%08x)", FastRAMBaseHost, FastRAMBase));
 
 	// Initialize everything
 	D(bug("Initializing All Modules..."));
@@ -176,7 +149,9 @@ int main(int argc, char **argv)
 		QuitEmulator();
 	D(bug("Initialization complete"));
 
-	signal(SIGSEGV, segmentationfault);
+	// register segmentation fault handler only if you don't start with debugging enabled
+	if (! start_debug)
+		signal(SIGSEGV, segmentationfault);
 
 	// Start 68k and jump to ROM boot routine
 	D(bug("Starting emulation..."));
@@ -211,8 +186,8 @@ void QuitEmulator(void)
 		vm_release(ROMBaseHost, ROMSize);
 		ROMBaseHost = NULL;
 	}
-	if (TTRAMBaseHost !=VM_MAP_FAILED) {
-		vm_release(ROMBaseHost, TTRAMSize);
+	if (FastRAMBaseHost !=VM_MAP_FAILED) {
+		vm_release(ROMBaseHost, FastRAMSize);
 		ROMBaseHost = NULL;
 	}
 #else
@@ -227,6 +202,9 @@ void QuitEmulator(void)
 
 /*
  * $Log$
+ * Revision 1.47  2001/09/25 10:00:06  milan
+ * cleaning of MM, static version of ARAnyM
+ *
  * Revision 1.46  2001/09/25 00:04:17  milan
  * cleaning of memory managment
  *
