@@ -29,13 +29,13 @@
 #include "file.h"
 #include "ata.h"
 #include "tools.h"
-#include "hardware.h"		// for getFDC()
+#include "hardware.h"			// for getFDC()
 #include "debug.h"
 
 bx_options_t gui_options;
 
 // floppy
-static char ide0_name[22];	// size of this array defines also the GUI edit size
+static char ide0_name[22];		// size of this array defines also the GUI edit size
 static char ide1_name[22];
 
 static char ide0_size[6], ide0_cyl[6], ide0_head[4], ide0_spt[3];
@@ -93,71 +93,69 @@ enum DISCDLG {
 	CANCEL
 };
 
-static SGOBJ discdlg[] =
-{
-  { SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL },
-  { SGBOX, 0, 0, 1,2, 38,3, NULL },
-  { SGTEXT, 0, 0, 2,1, 14,1, "Floppy disk A:" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 30,2, 8,1, NULL },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2,4, 5,1, "Path:" },
-  { SGTEXT, 0, 0, 8,4, 30,1, NULL },
-  { SGBOX, 0, 0,		  1,7, 38,6, NULL },
-  { SGTEXT, 0, 0,		  2,6, 6,1, "IDE0:" },
-  { SGEDITFIELD, 0, 0,	  8,6, sizeof(ide0_name)-1,1, ide0_name},
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0,	 30,6, 8,1, NULL },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0,	  2,8, 5,1, "Path:" },
-  { SGTEXT, 0, 0,		  8,8, 30,1, NULL },
-  { SGCHECKBOX, SG_SELECTABLE, 0,	28,9, 8,1, "Present" },
-  { SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0,	28,10, 8,1, "CDROM" },
-  { SGCHECKBOX, SG_SELECTABLE, 0,	28,11, 8,1, "ReadOnly" },
-  { SGCHECKBOX, SG_SELECTABLE, 0,	28,12, 8,1, "ByteSwap" },
-  { SGTEXT, 0, 0,		 2,10, 10,1, "Geo C/H/S:" },
-  { SGEDITFIELD, 0, 0,	12,10, 5,1, ide0_cyl},
-  { SGEDITFIELD, 0, 0,	19,10, 3,1, ide0_head},
-  { SGEDITFIELD, 0, 0,	24,10, 2,1, ide0_spt},
-  { SGTEXT, 0, 0,		 2,12, 5,1, "Size:" },
-  { SGEDITFIELD, 0, 0,	 8,12, 5,1, ide0_size},
-  { SGTEXT, 0, 0,		14,12, 2,1, "MB" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0,	17,12, 10,1, "Generate" },
-  { SGBOX, 0, 0,		 1,15, 38,6, NULL },
-  { SGTEXT, 0, 0,		 2,14, 6,1, "IDE1:" },
-  { SGEDITFIELD, 0, 0,	 8,14, sizeof(ide1_name)-1,1, ide1_name},
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0,	30,14, 8,1, NULL },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0,	 2,16, 5,1, "Path:" },
-  { SGTEXT, 0, 0,		 8,16, 30,1, NULL },
-  { SGCHECKBOX, SG_SELECTABLE, 0,	28,17, 8,1, "Present" },
-  { SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0,	28,18, 8,1, "CDROM" },
-  { SGCHECKBOX, SG_SELECTABLE, 0,	28,19, 8,1, "ReadOnly" },
-  { SGCHECKBOX, SG_SELECTABLE, 0,	28,20, 8,1, "ByteSwap" },
-  { SGTEXT, 0, 0,		 2,18, 10,1, "Geo C/H/S:" },
-  { SGEDITFIELD, 0, 0,	12,18, 5,1, ide1_cyl},
-  { SGEDITFIELD, 0, 0,	19,18, 3,1, ide1_head},
-  { SGEDITFIELD, 0, 0,	24,18, 2,1, ide1_spt},
-  { SGTEXT, 0, 0,		 2,20, 5,1, "Size:" },
-  { SGEDITFIELD, 0, 0,	 8,20, 5,1, ide1_size},
-  { SGTEXT, 0, 0,		14,20, 2,1, "MB" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0,	17,20, 10,1, "Generate" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2,23, 6,1, "Help" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 20,23, 8,1, "Apply" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 30,23, 8,1, "Cancel" },
-  { -1, 0, 0, 0,0, 0,0, NULL }
+static SGOBJ discdlg[] = {
+	{SGBOX, SG_BACKGROUND, 0, 0, 0, 40, 25, NULL},
+	{SGBOX, 0, 0, 1, 2, 38, 3, NULL},
+	{SGTEXT, 0, 0, 2, 1, 14, 1, "Floppy disk A:"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 30, 2, 8, 1, NULL},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 4, 5, 1, "Path:"},
+	{SGTEXT, 0, 0, 8, 4, 30, 1, NULL},
+	{SGBOX, 0, 0, 1, 7, 38, 6, NULL},
+	{SGTEXT, 0, 0, 2, 6, 6, 1, "IDE0:"},
+	{SGEDITFIELD, 0, 0, 8, 6, sizeof(ide0_name) - 1, 1, ide0_name},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 30, 6, 8, 1, NULL},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 8, 5, 1, "Path:"},
+	{SGTEXT, 0, 0, 8, 8, 30, 1, NULL ,
+	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 9, 8, 1, "Present"},
+	{SGCHECKBOX, SG_SELECTABLE | SG_EXIT, 0, 28, 10, 8, 1, "CDROM"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 11, 8, 1, "ReadOnly"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 12, 8, 1, "ByteSwap"},
+	{SGTEXT, 0, 0, 2, 10, 10, 1, "Geo C/H/S:"},
+	{SGEDITFIELD, 0, 0, 12, 10, 5, 1, ide0_cyl},
+	{SGEDITFIELD, 0, 0, 19, 10, 3, 1, ide0_head},
+	{SGEDITFIELD, 0, 0, 24, 10, 2, 1, ide0_spt},
+	{SGTEXT, 0, 0, 2, 12, 5, 1, "Size:"},
+	{SGEDITFIELD, 0, 0, 8, 12, 5, 1, ide0_size},
+	{SGTEXT, 0, 0, 14, 12, 2, 1, "MB"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 17, 12, 10, 1, "Generate"},
+	{SGBOX, 0, 0, 1, 15, 38, 6, NULL},
+	{SGTEXT, 0, 0, 2, 14, 6, 1, "IDE1:"},
+	{SGEDITFIELD, 0, 0, 8, 14, sizeof(ide1_name) - 1, 1, ide1_name},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 30, 14, 8, 1, NULL},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 16, 5, 1, "Path:"},
+	{SGTEXT, 0, 0, 8, 16, 30, 1, NULL},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 17, 8, 1, "Present"},
+	{SGCHECKBOX, SG_SELECTABLE | SG_EXIT, 0, 28, 18, 8, 1, "CDROM"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 19, 8, 1, "ReadOnly"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 20, 8, 1, "ByteSwap"},
+	{SGTEXT, 0, 0, 2, 18, 10, 1, "Geo C/H/S:"},
+	{SGEDITFIELD, 0, 0, 12, 18, 5, 1, ide1_cyl},
+	{SGEDITFIELD, 0, 0, 19, 18, 3, 1, ide1_head},
+	{SGEDITFIELD, 0, 0, 24, 18, 2, 1, ide1_spt},
+	{SGTEXT, 0, 0, 2, 20, 5, 1, "Size:"},
+	{SGEDITFIELD, 0, 0, 8, 20, 5, 1, ide1_size},
+	{SGTEXT, 0, 0, 14, 20, 2, 1, "MB"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 17, 20, 10, 1, "Generate"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 23, 6, 1, "Help"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, 20, 23, 8, 1, "Apply"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 30, 23, 8, 1, "Cancel"},
+	{-1, 0, 0, 0, 0, 0, 0, NULL}
 };
 
 static const char *HELP_TEXT =
-"For creating new disk image click on the [Path] and select an existing file (beware - its contents will be lost!).\n"
-"\n"
-"Then set the desired [Size:] of the new disk in MegaBytes.\n"
-"\n"
-"At last click on Generate and the disk image will be created.\n"
-"\n"
-"Now you can reboot to your OS and partition this new disk.";
+	"For creating new disk image click on the [Path] and select an existing file (beware - its contents will be lost!).\n"
+	"\n"
+	"Then set the desired [Size:] of the new disk in MegaBytes.\n"
+	"\n"
+	"At last click on Generate and the disk image will be created.\n"
+	"\n" "Now you can reboot to your OS and partition this new disk.";
 
 void setState(int index, int bits, bool set)
 {
-  if (set)
-  	discdlg[index].state |= bits;
-  else
-  	discdlg[index].state &= ~bits;
+	if (set)
+		discdlg[index].state |= bits;
+	else
+		discdlg[index].state &= ~bits;
 }
 
 void setSelected(int index, bool set)
@@ -172,7 +170,7 @@ bool getSelected(int index)
 
 static void UpdateFloppyStatus(void)
 {
-	discdlg[FLOPPY_MOUNT].txt = getFDC()->is_floppy_inserted() ? eject : insert;
+	discdlg[FLOPPY_MOUNT].txt = getFDC()->is_floppy_inserted()? eject : insert;
 }
 
 static void HideDiskSettings(int handle, bool state)
@@ -180,7 +178,7 @@ static void HideDiskSettings(int handle, bool state)
 	int start = (handle == 0) ? IDE0_READONLY : IDE1_READONLY;
 	int end = (handle == 0) ? IDE0_GENERATE : IDE1_GENERATE;
 	// READONLY, BYTESWAP, chs, CYL, HEAD, SEC, size, SIZE, sizemb
-	for(int i=start; i<=end; i++) {
+	for (int i = start; i <= end; i++) {
 		setState(i, SG_HIDDEN, state);
 	}
 }
@@ -188,9 +186,10 @@ static void HideDiskSettings(int handle, bool state)
 static void UpdateCDROMstatus(int handle)
 {
 	int index = (handle == 0) ? IDE0_MOUNT : IDE1_MOUNT;
-  	bool isCDROM = gui_options.atadevice[0][handle].isCDROM;
-  	if (isCDROM) {
-		discdlg[index].txt = bx_hard_drive.get_cd_media_status(handle) ? eject : insert;
+	bool isCDROM = gui_options.atadevice[0][handle].isCDROM;
+	if (isCDROM) {
+		discdlg[index].txt =
+			bx_hard_drive.get_cd_media_status(handle) ? eject : insert;
 	}
 	// MOUNT button visibility
 	setState(index, SG_HIDDEN, !isCDROM);
@@ -198,10 +197,10 @@ static void UpdateCDROMstatus(int handle)
 
 static void RemountCDROM(int handle)
 {
-  	if (gui_options.atadevice[0][handle].isCDROM) {
+	if (gui_options.atadevice[0][handle].isCDROM) {
 		bool status = bx_hard_drive.get_cd_media_status(handle);
 		// fprintf(stderr, "handle=%d, status=%s\n", handle, status ? "in" : "out");
-		bx_hard_drive.set_cd_media_status(handle, ! status);
+		bx_hard_drive.set_cd_media_status(handle, !status);
 		UpdateCDROMstatus(handle);
 	}
 }
@@ -213,7 +212,7 @@ static off_t DiskImageSize(const char *fname)
 		// error reading file
 		return 0;
 	}
-	if (! S_ISREG(buf.st_mode)) {
+	if (!S_ISREG(buf.st_mode)) {
 		// not regular file (perhaps block device?)
 		return 0;
 	}
@@ -223,9 +222,9 @@ static off_t DiskImageSize(const char *fname)
 static void UpdateDiskParameters(int disk, bool updateCHS)
 {
 	const char *fname = gui_options.atadevice[0][disk].path;
-  	int cyl = gui_options.atadevice[0][disk].cylinders;
-  	int head = gui_options.atadevice[0][disk].heads;
-  	int spt = gui_options.atadevice[0][disk].spt;
+	int cyl = gui_options.atadevice[0][disk].cylinders;
+	int head = gui_options.atadevice[0][disk].heads;
+	int spt = gui_options.atadevice[0][disk].spt;
 	off_t size = DiskImageSize(fname);
 	int sizeMB = ((size / 1024) + 512) / 1024;
 
@@ -247,10 +246,10 @@ static void UpdateDiskParameters(int disk, bool updateCHS)
 	}
 
 	// output
-	sprintf(disk==0 ? ide0_size : ide1_size, "%5d", sizeMB);
-	sprintf(disk==0 ? ide0_cyl : ide1_cyl, "%5d", cyl);
-	sprintf(disk==0 ? ide0_head : ide1_head, "%3d", head);
-	sprintf(disk==0 ? ide0_spt : ide1_spt, "%2d", spt);
+	sprintf(disk == 0 ? ide0_size : ide1_size, "%5d", sizeMB);
+	sprintf(disk == 0 ? ide0_cyl : ide1_cyl, "%5d", cyl);
+	sprintf(disk == 0 ? ide0_head : ide1_head, "%3d", head);
+	sprintf(disk == 0 ? ide0_spt : ide1_spt, "%2d", spt);
 }
 
 /* produce the image file */
@@ -296,20 +295,24 @@ static bool create_disk_image(int disk)
 	long size = atoi(disk == 0 ? ide0_size : ide1_size);
 	char text[250];
 	bool ret = false;
- 	sprintf(text, "Create disk image '%s' with size %ld MB?", path, size);
- 	if (SDLGui_Alert(text, ALERT_OKCANCEL)) {
+	sprintf(text, "Create disk image '%s' with size %ld MB?", path, size);
+	if (SDLGui_Alert(text, ALERT_OKCANCEL)) {
 		int cyl, heads = 16, spt = 63, sectors;
-		if (File_Exists(path) && SDLGui_Alert("File Exists. Overwrite?", ALERT_OKCANCEL) == false) {
+		if (File_Exists(path)
+			&& SDLGui_Alert("File Exists. Overwrite?",
+							ALERT_OKCANCEL) == false) {
 			return false;
 		}
 		// create the file
-		cyl = (int) (size * 1024.0 * 1024.0 / (float)heads / (float)spt / 512.0);
+		cyl =
+			(int) (size * 1024.0 * 1024.0 / (float) heads / (float) spt /
+				   512.0);
 		assert(cyl < 65536);
 		sectors = cyl * heads * spt;
 		ret = make_image(sectors, path);
-  		UpdateDiskParameters(disk, true);
- 	}
- 	return ret;
+		UpdateDiskParameters(disk, true);
+	}
+	return ret;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -318,183 +321,187 @@ static bool create_disk_image(int disk)
 */
 void Dialog_DiscDlg(void)
 {
-  int but;
-  char tmpname[MAX_FILENAME_LENGTH];
-  char floppy_path[80]="";
-  char ide0_path[80]="";
-  char ide1_path[80]="";
+	int but;
+	char tmpname[MAX_FILENAME_LENGTH];
+	char floppy_path[80] = "";
+	char ide0_path[80] = "";
+	char ide1_path[80] = "";
 
-  // preload bx settings
-  gui_options = bx_options;
+	// preload bx settings
+	gui_options = bx_options;
 
-  /* Set up dialog to actual values: */
-  // floppy
-  File_ShrinkName(floppy_path, gui_options.floppy.path, discdlg[FLP_PATH].w);
-  discdlg[FLP_PATH].txt = floppy_path;
+	/* Set up dialog to actual values: */
+	// floppy
+	File_ShrinkName(floppy_path, gui_options.floppy.path, discdlg[FLP_PATH].w);
+	discdlg[FLP_PATH].txt = floppy_path;
 
-  // IDE0
-  File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path, discdlg[IDE0_PATH].w);
-  discdlg[IDE0_PATH].txt = ide0_path;
-  safe_strncpy(ide0_name, gui_options.atadevice[0][0].model, sizeof(ide0_name));
-  UpdateDiskParameters(0, false);
-  setSelected(IDE0_PRESENT, gui_options.atadevice[0][0].present);
-  setSelected(IDE0_CDROM, gui_options.atadevice[0][0].isCDROM);
-  setSelected(IDE0_READONLY, gui_options.atadevice[0][0].readonly);
-  setSelected(IDE0_BYTESWAP, gui_options.atadevice[0][0].byteswap);
-  HideDiskSettings(0, gui_options.atadevice[0][0].isCDROM);
+	// IDE0
+	File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path,
+					discdlg[IDE0_PATH].w);
+	discdlg[IDE0_PATH].txt = ide0_path;
+	safe_strncpy(ide0_name, gui_options.atadevice[0][0].model,
+				 sizeof(ide0_name));
+	UpdateDiskParameters(0, false);
+	setSelected(IDE0_PRESENT, gui_options.atadevice[0][0].present);
+	setSelected(IDE0_CDROM, gui_options.atadevice[0][0].isCDROM);
+	setSelected(IDE0_READONLY, gui_options.atadevice[0][0].readonly);
+	setSelected(IDE0_BYTESWAP, gui_options.atadevice[0][0].byteswap);
+	HideDiskSettings(0, gui_options.atadevice[0][0].isCDROM);
 
-  // IDE1
-  File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path, discdlg[IDE1_PATH].w);
-  discdlg[IDE1_PATH].txt = ide1_path;
-  safe_strncpy(ide1_name, gui_options.atadevice[0][1].model, sizeof(ide1_name));
-  UpdateDiskParameters(1, false);
-  setSelected(IDE1_PRESENT, gui_options.atadevice[0][1].present);
-  setSelected(IDE1_READONLY, gui_options.atadevice[0][1].readonly);
-  setSelected(IDE1_CDROM, gui_options.atadevice[0][1].isCDROM);
-  setSelected(IDE1_BYTESWAP, gui_options.atadevice[0][1].byteswap);
-  HideDiskSettings(1, gui_options.atadevice[0][1].isCDROM);
+	// IDE1
+	File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path,
+					discdlg[IDE1_PATH].w);
+	discdlg[IDE1_PATH].txt = ide1_path;
+	safe_strncpy(ide1_name, gui_options.atadevice[0][1].model,
+				 sizeof(ide1_name));
+	UpdateDiskParameters(1, false);
+	setSelected(IDE1_PRESENT, gui_options.atadevice[0][1].present);
+	setSelected(IDE1_READONLY, gui_options.atadevice[0][1].readonly);
+	setSelected(IDE1_CDROM, gui_options.atadevice[0][1].isCDROM);
+	setSelected(IDE1_BYTESWAP, gui_options.atadevice[0][1].byteswap);
+	HideDiskSettings(1, gui_options.atadevice[0][1].isCDROM);
 
-  UpdateFloppyStatus();
-  UpdateCDROMstatus(0);
-  UpdateCDROMstatus(1);
+	UpdateFloppyStatus();
+	UpdateCDROMstatus(0);
+	UpdateCDROMstatus(1);
 
-  // note that File_Exists() checks were disabled since they didn't work
-  // on /dev/fd0 or /dev/cdrom if no media were inserted
+	// note that File_Exists() checks were disabled since they didn't work
+	// on /dev/fd0 or /dev/cdrom if no media were inserted
 
-  /* Draw and process the dialog */
-  do
-  {
-    but = SDLGui_DoDialog(discdlg);
-    switch(but)
-    {
-      case FLP_BROWSE:   /* Choose a new disc A: */
-        strcpy(tmpname, gui_options.floppy.path);
-        if( SDLGui_FileSelect(tmpname, false) )
-        {
-          if( !File_DoesFileNameEndWithSlash(tmpname)/*&& File_Exists(tmpname)*/)
-          {
-          	strcpy(gui_options.floppy.path, tmpname);
-            File_ShrinkName(floppy_path, tmpname, discdlg[FLP_PATH].w);
-          }
-          else
-          {
-            floppy_path[0] = 0;
-          }
-        }
-        break;
-
-      case IDE0_BROWSE:
-        strcpy(tmpname, gui_options.atadevice[0][0].path);
-        if( SDLGui_FileSelect(tmpname, false) )
-        {
-          if( !File_DoesFileNameEndWithSlash(tmpname)/*&& File_Exists(tmpname)*/) {
-            strcpy(gui_options.atadevice[0][0].path, tmpname);
-            File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
-            UpdateDiskParameters(0, true);
-          }
-          else {
-          	ide0_path[0] = 0;
-          }
-        }
-        break;
-
-      case IDE1_BROWSE:
-        strcpy(tmpname, gui_options.atadevice[0][1].path);
-        if( SDLGui_FileSelect(tmpname, false) )
-        {
-          if( !File_DoesFileNameEndWithSlash(tmpname)/*&& File_Exists(tmpname)*/) {
-            strcpy(gui_options.atadevice[0][1].path, tmpname);
-            File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
-            UpdateDiskParameters(1, true);
-          }
-          else {
-          	ide1_path[0] = 0;
-          }
-        }
-        break;
-
-      case IDE0_GENERATE:
-      	if (create_disk_image(0)) {
-        	File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path, discdlg[IDE0_PATH].w);
-        }
-        else {
-          	ide0_path[0] = 0;
-        }
-        break;
-
-      case IDE1_GENERATE:
-      	if (create_disk_image(1)) {
-        	File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path, discdlg[IDE1_PATH].w);
-        }
-        else {
-          	ide1_path[0] = 0;
-        }
-        break;
-
-      case IDE0_CDROM:
-  		HideDiskSettings(0, getSelected(IDE0_CDROM));
-        break;
-
-      case IDE1_CDROM:
-  		HideDiskSettings(1, getSelected(IDE1_CDROM));
-        break;
-
-      case FLOPPY_MOUNT:
-		if (getFDC()->is_floppy_inserted()) {
-			getFDC()->remove_floppy();
-		}
-		else {
-			if (! getFDC()->insert_floppy()) {
-				// report error
+	/* Draw and process the dialog */
+	do {
+		but = SDLGui_DoDialog(discdlg);
+		switch (but) {
+		case FLP_BROWSE:		/* Choose a new disc A: */
+			strcpy(tmpname, gui_options.floppy.path);
+			if (SDLGui_FileSelect(tmpname, false)) {
+				if (!File_DoesFileNameEndWithSlash(tmpname)
+					/*&& File_Exists(tmpname) */ ) {
+					strcpy(gui_options.floppy.path, tmpname);
+					File_ShrinkName(floppy_path, tmpname, discdlg[FLP_PATH].w);
+				}
+				else {
+					floppy_path[0] = 0;
+				}
 			}
+			break;
+
+		case IDE0_BROWSE:
+			strcpy(tmpname, gui_options.atadevice[0][0].path);
+			if (SDLGui_FileSelect(tmpname, false)) {
+				if (!File_DoesFileNameEndWithSlash(tmpname)
+					/*&& File_Exists(tmpname) */ ) {
+					strcpy(gui_options.atadevice[0][0].path, tmpname);
+					File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
+					UpdateDiskParameters(0, true);
+				}
+				else {
+					ide0_path[0] = 0;
+				}
+			}
+			break;
+
+		case IDE1_BROWSE:
+			strcpy(tmpname, gui_options.atadevice[0][1].path);
+			if (SDLGui_FileSelect(tmpname, false)) {
+				if (!File_DoesFileNameEndWithSlash(tmpname)
+					/*&& File_Exists(tmpname) */ ) {
+					strcpy(gui_options.atadevice[0][1].path, tmpname);
+					File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
+					UpdateDiskParameters(1, true);
+				}
+				else {
+					ide1_path[0] = 0;
+				}
+			}
+			break;
+
+		case IDE0_GENERATE:
+			if (create_disk_image(0)) {
+				File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path,
+								discdlg[IDE0_PATH].w);
+			}
+			else {
+				ide0_path[0] = 0;
+			}
+			break;
+
+		case IDE1_GENERATE:
+			if (create_disk_image(1)) {
+				File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path,
+								discdlg[IDE1_PATH].w);
+			}
+			else {
+				ide1_path[0] = 0;
+			}
+			break;
+
+		case IDE0_CDROM:
+			HideDiskSettings(0, getSelected(IDE0_CDROM));
+			break;
+
+		case IDE1_CDROM:
+			HideDiskSettings(1, getSelected(IDE1_CDROM));
+			break;
+
+		case FLOPPY_MOUNT:
+			if (getFDC()->is_floppy_inserted()) {
+				getFDC()->remove_floppy();
+			}
+			else {
+				if (!getFDC()->insert_floppy()) {
+					// report error
+				}
+			}
+			UpdateFloppyStatus();
+			break;
+
+		case IDE0_MOUNT:
+			RemountCDROM(0);
+			break;
+
+		case IDE1_MOUNT:
+			RemountCDROM(1);
+			break;
+
+		case HELP:
+			SDLGui_Alert(HELP_TEXT, ALERT_OK);
+			break;
 		}
-        UpdateFloppyStatus();
-        break;
+	}
+	while (but != APPLY && but != CANCEL);
 
-      case IDE0_MOUNT:
-      	RemountCDROM(0);
-        break;
+	/* Read values from dialog */
+	int cyl, head, spt;
+	safe_strncpy(gui_options.atadevice[0][0].model, ide0_name,
+				 sizeof(gui_options.atadevice[0][0].model));
+	sscanf(ide0_cyl, "%d", &cyl);
+	sscanf(ide0_head, "%d", &head);
+	sscanf(ide0_spt, "%d", &spt);
+	gui_options.atadevice[0][0].cylinders = cyl;
+	gui_options.atadevice[0][0].heads = head;
+	gui_options.atadevice[0][0].spt = spt;
+	gui_options.atadevice[0][0].present = getSelected(IDE0_PRESENT);
+	gui_options.atadevice[0][0].readonly = getSelected(IDE0_READONLY);
+	gui_options.atadevice[0][0].isCDROM = getSelected(IDE0_CDROM);
+	gui_options.atadevice[0][0].byteswap = getSelected(IDE0_BYTESWAP);
 
-      case IDE1_MOUNT:
-      	RemountCDROM(1);
-        break;
+	safe_strncpy(gui_options.atadevice[0][1].model, ide1_name,
+				 sizeof(gui_options.atadevice[0][1].model));
+	sscanf(ide1_cyl, "%d", &cyl);
+	sscanf(ide1_head, "%d", &head);
+	sscanf(ide1_spt, "%d", &spt);
+	gui_options.atadevice[0][1].cylinders = cyl;
+	gui_options.atadevice[0][1].heads = head;
+	gui_options.atadevice[0][1].spt = spt;
+	gui_options.atadevice[0][1].present = getSelected(IDE1_PRESENT);
+	gui_options.atadevice[0][1].readonly = getSelected(IDE1_READONLY);
+	gui_options.atadevice[0][1].isCDROM = getSelected(IDE1_CDROM);
+	gui_options.atadevice[0][1].byteswap = getSelected(IDE1_BYTESWAP);
 
-			case HELP:
-				SDLGui_Alert(HELP_TEXT, ALERT_OK);
-				break;
-    }
-  }
-  while(but!=APPLY && but!=CANCEL);
-
-  /* Read values from dialog */
-  int cyl, head, spt;
-  safe_strncpy(gui_options.atadevice[0][0].model, ide0_name, sizeof(gui_options.atadevice[0][0].model));
-  sscanf(ide0_cyl, "%d", &cyl);
-  sscanf(ide0_head, "%d", &head);
-  sscanf(ide0_spt, "%d", &spt);
-  gui_options.atadevice[0][0].cylinders = cyl;
-  gui_options.atadevice[0][0].heads = head;
-  gui_options.atadevice[0][0].spt = spt;
-  gui_options.atadevice[0][0].present = getSelected(IDE0_PRESENT);
-  gui_options.atadevice[0][0].readonly = getSelected(IDE0_READONLY);
-  gui_options.atadevice[0][0].isCDROM = getSelected(IDE0_CDROM);
-  gui_options.atadevice[0][0].byteswap = getSelected(IDE0_BYTESWAP);
-
-  safe_strncpy(gui_options.atadevice[0][1].model, ide1_name, sizeof(gui_options.atadevice[0][1].model));
-  sscanf(ide1_cyl, "%d", &cyl);
-  sscanf(ide1_head, "%d", &head);
-  sscanf(ide1_spt, "%d", &spt);
-  gui_options.atadevice[0][1].cylinders = cyl;
-  gui_options.atadevice[0][1].heads = head;
-  gui_options.atadevice[0][1].spt = spt;
-  gui_options.atadevice[0][1].present = getSelected(IDE1_PRESENT);
-  gui_options.atadevice[0][1].readonly = getSelected(IDE1_READONLY);
-  gui_options.atadevice[0][1].isCDROM = getSelected(IDE1_CDROM);
-  gui_options.atadevice[0][1].byteswap = getSelected(IDE1_BYTESWAP);
-
-  /* apply the values */
-  if (but == APPLY)
-	  bx_options = gui_options;
+	/* apply the values */
+	if (but == APPLY)
+		bx_options = gui_options;
 }
 
 /*
