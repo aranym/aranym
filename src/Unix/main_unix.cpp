@@ -41,6 +41,7 @@
 #include "hardware.h"
 #include "parameters.h"
 #include <SDL/SDL_timer.h>
+#include <signal.h>
 
 #define DEBUG 1
 #include "debug.h"
@@ -65,6 +66,12 @@ extern "C" char *strdup(const char *s)
 	return n;
 }
 #endif
+
+void segmentationfault(int x)
+{
+	printf("Dostali te na PC = $%lx!\n", showPC());
+	exit(0);
+}
 
 
 /*
@@ -213,6 +220,8 @@ int main(int argc, char **argv)
 		QuitEmulator();
 	D(bug("Initialization complete"));
 
+	signal(SIGSEGV, segmentationfault);
+
 	// Start 68k and jump to ROM boot routine
 	D(bug("Starting emulation..."));
 	Start680x0();
@@ -287,6 +296,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.42  2001/09/11 10:12:41  joy
+ * define SRACKA if you want to get rid of the complicated vm management. Use ./configure --enable-addressing=direct at the same time, otherwise it's not compilable.
+ *
  * Revision 1.41  2001/09/10 15:27:30  joy
  * new bogomips-like test. Need to find out if every 100 instructions test in cpu emulation is not too late for slow machines.
  *
