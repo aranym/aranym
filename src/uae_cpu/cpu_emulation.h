@@ -43,11 +43,9 @@ extern uint32 RealROMSize;	// Real size of ROM
 
 extern uint32 FastRAMBase;	// Fast-RAM base (Atari address space)
 extern uint8 *FastRAMBaseHost;	// Fast-RAM base (host address space)
-extern uint32 FastRAMSize;	// Size of Fast-RAM
 
 extern uint32 VideoRAMBase;	// VideoRAM base (Atari address space)
 extern uint8 *VideoRAMBaseHost;	// VideoRAM base (host address space)
-//extern uint32 VideoRAMSize;	// Size of VideoRAM
 
 // Atari memory access functions
 #include "memory.h"

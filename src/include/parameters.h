@@ -97,7 +97,7 @@ extern bx_options_t bx_options;
 extern uint8 start_debug;		// starts debugger
 extern int8 monitor;				// VGA or TV
 extern ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
-extern uint32 FastRAMSizeMB;	// size of FastRAM, needed for configuration's GUI
+extern uint32 FastRAMSize;	// Size of Fast-RAM
 extern bool grabMouseAllowed;
 
 extern char *program_name;
