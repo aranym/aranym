@@ -37,10 +37,10 @@
 #include "sdlgui.h"
 #include "host.h"
 
-#define Screen_Save()		{ hostScreen.lock(); hostScreen.save_bkg(); hostScreen.unlock(); }
+#define Screen_Save()		{ hostScreen.lock(); hostScreen.saveBackground(); hostScreen.unlock(); }
 		
 #define Screen_SetFullUpdate()
-#define Screen_Draw()		{ hostScreen.lock(); hostScreen.restore_bkg(); hostScreen.unlock(); }
+#define Screen_Draw()		{ hostScreen.lock(); hostScreen.restoreBackground(); hostScreen.unlock(); }
 
 static bool bQuitProgram;
 
@@ -1024,7 +1024,7 @@ void Dialog_CpuDlg(void)
 /*
   This functions sets up the actual font and then displays the main dialog.
 */
-int Dialog_MainDlg(bool *bReset, bool *bQuit)
+int Dialog_MainDlg(bool *bReset)
 {
   int retbut;
 
@@ -1098,8 +1098,6 @@ int Dialog_MainDlg(bool *bReset, bool *bQuit)
   else
     *bReset = false;
 
-  *bQuit = bQuitProgram;
-
   return(retbut==MAINDLG_OK);
 }
 
@@ -1109,11 +1107,10 @@ int Dialog_MainDlg(bool *bReset, bool *bQuit)
   Open Property sheet Options dialog
   Return true if user choses OK, or false if cancel!
 */
-bool Dialog_DoProperty(void)
+bool Dialog_DoProperty(bool *bForceReset, bool *bForceQuit)
 {
   bool bOKDialog;  /* Did user 'OK' dialog? */
-  bool bForceReset;
-  bool bQuit;
+  bool bReset;
 #if 0
   Main_PauseEmulation();
 
@@ -1123,9 +1120,12 @@ bool Dialog_DoProperty(void)
 
   bSaveMemoryState = false;
   bRestoreMemoryState = false;
-  bForceReset = false;
 #endif
-  bOKDialog = Dialog_MainDlg(&bForceReset, &bQuit);
+  bOKDialog = Dialog_MainDlg(&bReset);
+  *bForceQuit = bQuitProgram;
+  if (bOKDialog) {
+    *bForceReset = bReset;
+  }
 #if 0
   /* Copy details to configuration, and ask user if wishes to reset */
   if (bOKDialog)
@@ -1138,6 +1138,6 @@ bool Dialog_DoProperty(void)
 
   Main_UnPauseEmulation();
 #endif
-  return(bQuit);
+  return(bOKDialog);
 }
 

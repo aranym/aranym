@@ -434,9 +434,18 @@ SDL_Thread *GUIthread = NULL;
 
 int open_gui(void *ptr)
 {
+	bool reboot = false;
+	bool quit = false;
+
 	hostScreen.setGUIopen(true);
-	pendingQuit = Dialog_DoProperty();
+	Dialog_DoProperty(&reboot, &quit);
 	hostScreen.setGUIopen(false);
+
+	if (quit)
+		pendingQuit = true;
+	else if (reboot)
+		Restart680x0();	// force Cold Reboot
+
 	return 0;
 }
 #endif
