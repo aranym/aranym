@@ -2567,7 +2567,7 @@ static void generate_func (void)
     }
 }
 
-int main (int argc, char **argv)
+int main ()
 {
     read_table68k ();
     do_merges ();

@@ -69,7 +69,7 @@ extern void showBackTrace(int, bool=true);
 #ifdef OS_irix
 void segmentationfault()
 #else
-void segmentationfault(int x)
+void segmentationfault(int)
 #endif
 {
 	grabMouse(false);
@@ -318,6 +318,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.84  2003/07/28 21:16:16  joy
+ * better place for printing the version
+ *
  * Revision 1.83  2003/07/28 20:57:45  joy
  * superfluous print of version at startup removed
  *

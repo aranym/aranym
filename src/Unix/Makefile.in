@@ -20,6 +20,7 @@ CXX = @CXX@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 CPPFLAGS = @CPPFLAGS@ -I../include -I. -I../natfeat @CPUINCLUDES@
+WFLAGS = @WFLAGS@
 DEFS = @DEFS@ @DEFINES@ -D_REENTRANT -D_THREAD_SAFE
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -337,9 +338,9 @@ depend dep:
 	rm -f Makefile.wrk
 
 $(OBJ_DIR)/%.o : %.c
-	$(CC) $(CPPFLAGS) $(DEFS) -Wall $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -Wall -Winline $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.s
 	$(CXX) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 

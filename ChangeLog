@@ -1,3 +1,13 @@
+2003/08/29 - milan
+- some compiler warnings solved
+
+- more warnings support with GCC
+
+- inline warnings not showed now
+
+- MONITOR0-9 Emulops for JIT modified
+
+
 2003/08/15 - milan
 - new CPUDEBUG emulops, switches for new internal variable cpu_debugging,
   for CPU debugging

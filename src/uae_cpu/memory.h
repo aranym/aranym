@@ -73,12 +73,12 @@ extern uintptr MEMBaseDiff;
 #define InitVMEMBaseDiff(va, ra)        (ra = (uintptr)(va) + MEMBaseDiff)
 #endif
 
+#ifndef NOCHECKBOUNDARY
 /*
  * "size" is the size of the memory access (byte = 1, word = 2, long = 4)
  */
 static inline void check_ram_boundary(uaecptr addr, int size, bool write)
 {
-#ifndef NOCHECKBOUNDARY
 	if (addr <= (FastRAM_BEGIN + FastRAM_SIZE - size)) {
 		if (!write)
 			return;
@@ -98,8 +98,11 @@ static inline void check_ram_boundary(uaecptr addr, int size, bool write)
 	// D(bug("BUS ERROR %s at $%x\n", (write ? "writing" : "reading"), addr));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, 2);
-#endif
 }
+
+#else
+static inline void check_ram_boundary(uaecptr, int, bool) { }
+#endif
 
 #ifdef FIXED_VIDEORAM
 # define do_get_real_address(a)		((uae_u8 *)(((uaecptr)(a) < ARANYMVRAMSTART) ? ((uaecptr)(a) + MEMBaseDiff) : ((uaecptr)(a) + VMEMBaseDiff)))
@@ -112,7 +115,8 @@ static inline uae_u8 *phys_get_real_address(uaecptr addr)
     return do_get_real_address(addr);
 }
 
-static inline bool phys_valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
+#ifndef NOCHECKBOUNDARY
+static inline bool phys_valid_address(uaecptr addr, bool write, int sz)
 {
     jmp_buf excep_env_old;
     memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
@@ -125,7 +129,9 @@ static inline bool phys_valid_address(uaecptr addr, bool write, uaecptr pc, int 
     memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
     return true;
 }
-
+#else
+static inline bool phys_valid_address(uaecptr, bool, int) { return true; }
+#endif
 
 static inline uae_u32 phys_get_long(uaecptr addr)
 {
@@ -472,10 +478,10 @@ static inline bool valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
 #  define put_byte(a,b)			phys_put_byte(a,b)
 #  define get_real_address(a,w,s)	phys_get_real_address(a)
 
-#define valid_address(a,w,p,s)		phys_valid_address(a,w,p,s)
+#define valid_address(a,w,p,s)		phys_valid_address(a,w,s)
 #endif
 
-static void inline flush_internals() {
+static inline void flush_internals() {
 #if ARAM_PAGE_CHECK
     pc_page = 0xeeeeeeee;
     read_page = 0xeeeeeeee;

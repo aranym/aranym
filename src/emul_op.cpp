@@ -139,7 +139,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		case M68K_EMUL_OP_DEBUGUTIL:	// for EmuTOS - code 0x7135
 		{
 			uint32 textAddr = ReadAtariInt32(r->a[7]+4);
-			if (textAddr >=0 && textAddr < (RAMSize + ROMSize + FastRAMSize)) {
+			if (textAddr < (RAMSize + ROMSize + FastRAMSize)) {
 				uint8 *textPtr = Atari2HostAddr(textAddr);
 				printf("%s", textPtr);
 				fflush(stdout);
@@ -183,6 +183,33 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		case M68K_EMUL_OP_MON7:
 		case M68K_EMUL_OP_MON8:
 		case M68K_EMUL_OP_MON9:
+			fprintf(stderr, "Monitor %08x\n", opcode);
+			fprintf(stderr, "d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"
+					"d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
+					"a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
+					"a4 %08lx a5 %08lx a6 %08lx a7 %08lx\n"
+					"sr %04x\n"
+					"pc %08lx instr %08lx\n",
+					(unsigned long)r->d[0],
+					(unsigned long)r->d[1],
+					(unsigned long)r->d[2],
+					(unsigned long)r->d[3],
+					(unsigned long)r->d[4],
+					(unsigned long)r->d[5],
+					(unsigned long)r->d[6],
+					(unsigned long)r->d[7],
+					(unsigned long)r->a[0],
+					(unsigned long)r->a[1],
+					(unsigned long)r->a[2],
+					(unsigned long)r->a[3],
+					(unsigned long)r->a[4],
+					(unsigned long)r->a[5],
+					(unsigned long)r->a[6],
+					(unsigned long)r->a[7],
+					r->sr,
+					(unsigned long)m68k_getpc(),
+					(unsigned long)ReadInt32(m68k_getpc()));
+			break;
 		case M68K_EMUL_OP_MONa:
 		case M68K_EMUL_OP_MONb:
 		case M68K_EMUL_OP_MONc:

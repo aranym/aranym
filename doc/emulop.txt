@@ -1,0 +1,24 @@
+$7101	M68K_EMUL_BREAK
+	Breakpoint
+	If Monitor is supported then, before ARAnyM ends, Monitor is started
+
+$712a	M68K_EMUL_OP_PUT_SCRAP
+	VT52 Xconout > console
+	VT52 emulation, char is in D1
+
+$7135	M68K_EMUL_OP_DEBUGUTIL
+	Text > console
+	Write text from stack on console. String in ANSI C form (ended with 0).
+
+$7139	M68K_EMUL_OP_CPUDEBUG_ON
+$713a	M68K_EMUL_OP_CPUDEBUG_OFF
+	For changing of internal ARAnyM variable - cpu_debugging.
+	Can be used for debugging CPU internals.
+
+$71f0-9	M68K_EMUL_OP_MONx
+$71fa-e	M68K_EMUL_OP_MONx
+	Print CPU state on console. The second set has some enhancements
+	for JIT compiler
+
+$71ff	M68K_EMUL_OP_DEBUGGER
+	Activate ARAnyM debugger

@@ -3016,7 +3016,7 @@ generate_func (int noflags)
 }
 
 int 
-main (int argc, char **argv)
+main ()
 {
     read_table68k ();
     do_merges ();

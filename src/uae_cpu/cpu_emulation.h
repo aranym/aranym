@@ -101,7 +101,7 @@ static inline void WriteInt8(memptr addr, uint8 b) {put_byte(addr, b);}
 extern jmp_buf excep_env;
 
 // For address validation
-static inline bool ValidAtariAddr(memptr addr, bool write, uint32 len) { return phys_valid_address(addr, write, 0, len); }
+static inline bool ValidAtariAddr(memptr addr, bool write, uint32 len) { return phys_valid_address(addr, write, len); }
 static inline bool ValidAddr(memptr addr, bool write, uint32 len) { return valid_address(addr, write, 0, len); }
 
 // This function will be removed

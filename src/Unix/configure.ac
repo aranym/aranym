@@ -918,10 +918,12 @@ AC_EGREP_CPP(xyes,
 ], [AC_MSG_RESULT(yes); HAVE_GCC30=yes], AC_MSG_RESULT(no))
 
 dnl Set "-fomit-frame-pointer" on i386 GCC 2.7 or higher.
+dnl Also set "-fno-exceptions" for C++ because exception handling requires
+dnl the frame pointer.
 dnl No RTTI
 if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   CFLAGS="$CFLAGS -fomit-frame-pointer"
-  CXXFLAGS="$CXXFLAGS -fomit-frame-pointer -fno-rtti"
+  CXXFLAGS="$CXXFLAGS -fomit-frame-pointer -fno-rtti -fno-exceptions"
 fi
 
 dnl (gb) Do not merge constants since it breaks fpu/fpu_x86.cpp.
@@ -1317,8 +1319,13 @@ if [[ "x$HAVE_GCC27" = "xyes" ]]; then
 fi
 if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
   DBGSP="-g"
+  WFLAGS="-Wall"
+  if [[ "x$HAVE_GCC27" = "xyes" ]]; then
+    WFLAGS="$WFLAGS -W"
+  fi
 else
   DBGSP=""
+  WFLAGS=""
 fi
 
 dnl Remove the "-O2" option if set for GCC and set the "-O3" option.
@@ -1575,6 +1582,7 @@ CXXFLAGS="$CXXFLAGS -DDATADIR=$ARANYM_DATADIR"
 
 dnl Generate Makefile.
 
+AC_SUBST(WFLAGS)
 AC_SUBST(SET_MAKE)
 AC_SUBST(DEFINES)
 AC_SUBST(SYSSRCS)

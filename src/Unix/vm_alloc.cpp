@@ -138,7 +138,7 @@ bool vm_acquire_fixed(void * addr, size_t size)
 	if (mmap((char *)addr, size, VM_PAGE_DEFAULT, map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
 # else
 	if (mmap(addr, size, VM_PAGE_DEFAULT, map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
-# endif OS_cygwin
+# endif
 		return false;
 
 	// Since I don't know the standard behavior of mmap(), zero-fill here
