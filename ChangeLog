@@ -1,3 +1,7 @@
+2004/07/03 - joy
+- uae_cpu/fpu/mathlib.h: fixed tan() error Martin Tarenskeen reported.
+
+
 2004/07/01 - joy
 - BUGS: FPU problems documented. We need fix even for Pentium host based
   systems!
