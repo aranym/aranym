@@ -42,6 +42,8 @@
 //
 
 #include "emu_bochs.h"
+#include "cdrom.h"
+#include "ata.h"
 
 #define LOG_THIS 
 
