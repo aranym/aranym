@@ -13,6 +13,9 @@
 #include "hardware.h"
 #include "parameters.h"
 
+#define DEBUG 0
+#include "debug.h"
+
 // from hardware.cpp
 extern HostScreen hostScreen;
 
@@ -110,26 +113,30 @@ int VIDEL::getScreenHeight()
 void VIDEL::updateColors()
 {
 	if (!hostColorsSync) {
+		D(bug("ColorUpdate in progress"));
+
 		// Test the ST compatible set or not.
-		bool st_compatible_mode = false;
+		bool stCompatibleColorPalette = false;
 
 		int st_shift = handleReadW(HW + 0x60);
 		if (st_shift == 0) {		   // bpp == 4
 			int hreg = handleReadW(HW + 0x82); // Too lame!
-			if (hreg == 0x17 | hreg == 0x3e)   // Better way how to make out ST LOW mode wanted
-				st_compatible_mode = true;
+			if (hreg == 0x10 | hreg == 0x17 | hreg == 0x3e)   // Better way how to make out ST LOW mode wanted
+				stCompatibleColorPalette = true;
+
+			D(bug("ColorUpdate %x", hreg));
 		}
 		else if (st_shift == 0x100)	   // bpp == 2
-			st_compatible_mode = true;
+			stCompatibleColorPalette = true;
 		else						   // bpp == 1	// if (st_shift == 0x200)
-			st_compatible_mode = true;
+			stCompatibleColorPalette = true;
 
 		// map the colortable into the correct pixel format
 
 #define F_COLORS(i) handleRead(0xff9800 + (i))
 #define STE_COLORS(i)	handleRead(0xff8240 + (i))
 
-		if (!st_compatible_mode) {
+		if (!stCompatibleColorPalette) {
 			for (int i = 0; i < 256; i++) {
 				int offset = i << 2;
 				hostScreen.setPaletteColor( i,
@@ -348,6 +355,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.20  2001/09/08 23:33:47  joy
+ * atariVideoRAM is at ARANYMVRAMSTART if direct_truecolor is enabled.
+ *
  * Revision 1.19  2001/08/28 23:26:09  standa
  * The fVDI driver update.
  * VIDEL got the doRender flag with setter setRendering().
