@@ -15,8 +15,8 @@
  */
 
 /*
-#define SWACCEL		// this replaces complicated logic of word-by-word copying by simple and fast memmove()
-#define HWBLITS		// this accelerates screen to screen blits with host VGA hardware accelerated routines (using SDL_BlitSurface)
+#define BLITTER_MEMMOVE		// this replaces complicated logic of word-by-word copying by simple and fast memmove()
+#define BLITTER_SDLBLIT		// this accelerates screen to screen blits with host VGA hardware accelerated routines (using SDL_BlitSurface)
 */
 
 #include "sysdeps.h"
@@ -25,6 +25,7 @@
 #include "memory.h"
 #include "blitter.h"
 #include <SDL.h>
+#define DEBUG 0
 #include "debug.h"
 
 #if DEBUG
@@ -64,6 +65,12 @@ UW BLITTER::LM_UW(uaecptr addr) {
 }
 
 void BLITTER::SM_UW(uaecptr addr, UW value) {
+#if DEBUG
+	if (addr < 0 || addr >= 0xe00000) {
+		D(bug("Blitter Error! Tries to write to %06lx\n", addr));
+		exit(-1);
+	}
+#endif
 	put_word_direct(addr, value);	//??
 }
 
@@ -264,14 +271,13 @@ HOP_OPS(_HOP_3_OP_15_P,(0xffff) ,source_buffer <<=16,source_buffer |= ((unsigned
 
 void hop2op3p( BLITTER& b )
 {
-#ifndef SWACCEL
-	_HOP_2_OP_03_P( b );
-#else
-#ifdef HWBLITS
+#if BLITTER_MEMMOVE
+#if BLITTER_SDLBLIT
 	if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
 		SDL_Rect src, dest;
 		int src_offset = b.source_addr - ARANYMVRAMSTART;
 		int dest_offset = b.dest_addr - ARANYMVRAMSTART;
+		int VidelScreenWidth = videl.getScreenWidth();
 		src.x = (src_offset % (2*VidelScreenWidth))/2;
 		src.y = (src_offset / (2*VidelScreenWidth));
 		src.w = dest.w = b.x_count;
@@ -285,30 +291,31 @@ void hop2op3p( BLITTER& b )
 		b.y_count = 0;
 		return;
 	}
-#endif /* HWBLITS */
+#endif /* BLITTER_SDLBLIT */
 	do
 	{
 		memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2);
 		b.source_addr += ((b.x_count-1)*b.source_x_inc)+b.source_y_inc;
 		b.dest_addr += ((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc;
 	} while (--b.y_count > 0);
-#endif /* SWACCEL */
+#else
+	_HOP_2_OP_03_P( b );
+#endif /* BLITTER_MEMMOVE */
 }
 
 void hop2op3n( BLITTER& b )
 {
-#ifndef SWACCEL
-	_HOP_2_OP_03_N( b );
-#else
+#if BLITTER_MEMMOVE
 	b.source_addr += ((b.x_count-1)*b.source_x_inc);
 	b.dest_addr += ((b.x_count-1)*b.dest_x_inc);
-#ifdef HWBLITS
+#if BLITTER_SDLBLIT
 	if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
 		b.source_addr += (((b.x_count)*b.source_x_inc)+b.source_y_inc)*b.y_count;
 		b.dest_addr += (((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc)*b.y_count;
 		SDL_Rect src, dest;
 		int src_offset = b.source_addr - ARANYMVRAMSTART;
 		int dest_offset = b.dest_addr - ARANYMVRAMSTART;
+		int VidelScreenWidth = videl.getScreenWidth();
 		src.x = (src_offset % (2*VidelScreenWidth))/2;
 		src.y = (src_offset / (2*VidelScreenWidth));
 		src.w = dest.w = b.x_count;
@@ -320,14 +327,16 @@ void hop2op3n( BLITTER& b )
 		b.y_count = 0;
 		return;
 	}
-#endif /* HWBLITS */
+#endif /* BLITTER_SDLBLIT */
 	do
 	{
 		memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2);
 		b.source_addr += ((b.x_count)*b.source_x_inc)+b.source_y_inc;
 		b.dest_addr += ((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc;
 	} while (--b.y_count > 0);
-#endif /* SWACCEL */
+#else
+	_HOP_2_OP_03_N( b );
+#endif /* BLITTER_MEMMOVE */
 }
 
 
@@ -420,7 +429,7 @@ void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
 		return;
 	}
 
-	D(bug(stderr, "Blitter writes: %x = %d ($%x) at %06x\n", addr+HW, value, value, showPC()));
+	D(bug("Blitter writes: %x = %d ($%x) at %06x\n", addr+HW, value, value, showPC()));
 
 	switch(addr) {
 		case 0x20: source_x_inc = (source_x_inc & 0x00ff) | (value << 8); break;
