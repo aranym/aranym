@@ -1,3 +1,14 @@
+2004/08/31 - joy
+- atari/network/ethernet/ethernet.c:
+  - updated for FreeMiNT 1.16
+  - makes use of nf_ops in kerinfo for clean NatFeat usage (if available)
+  - IP_AUTO configuration was plain wrong thus removed
+  - implements three new control calls for the nfeth-config (SIOCGIFADDRFH,
+    SIOCGIFDSTADDRFH, SIOCGIFNETMASKFH) that have also been defined
+    in FreeMiNT's sockio.h
+  - proper GPL headers added
+
+
 2004/08/30 - patrice
 - videl.cpp: with JIT, Atari video screen size was 0 for both height and width,
   with autozoom, hence the crash.
