@@ -362,10 +362,7 @@ int LiloCheckKernel(
 			memcpy(FastRAMBaseHost, ((unsigned char *)ramdisk) + RAMDISK_FS_START, rd_len);
 		} else {
 			/* Load in ST-RAM */
-/*			rd_start = RAMSize - rd_len;*/
-			rd_start = KERNEL_START + kernel_size + MAX_BI_SIZE;
-			rd_start |= PAGE_SIZE-1;	/* Align on page size boundary */
-			rd_start++;
+			rd_start = RAMSize - rd_len;
 			memcpy(RAMBaseHost+rd_start, ((unsigned char *)ramdisk) + RAMDISK_FS_START, rd_len);
 		}
 
