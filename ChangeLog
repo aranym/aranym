@@ -1,3 +1,7 @@
+2002/07/31 - joy
+- bug in fresh IDE emulation code fixed (thanks Johan and Standa)
+
+
 2002/07/26 - Patrice
 - dsp_cpu.cpp: lua operation and read_memory fixed
 - dsp_disasm.cpp: Added missing '\n' in disasm output
@@ -8,6 +12,7 @@
 - dsp.cpp: Added mu-law table generator
 - dsp_disasm.cpp: Changed all output from D(bug()) to fprintf()
 - yamaha.cpp, dsp_cpu.cpp: Removed useless #include "config.h"
+
 
 2002/07/23 - milan
 - support for cdrom under MacOS X ported from Bochs, not tested yet

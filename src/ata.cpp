@@ -391,7 +391,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
   Bit16u value16;
   Bit32u value32;
 
-  if (io_len>1 && address!=0x1f0) {
+  if (io_len>1 && address!=0xf00000) {
     panicbug("non-byte IO read to %04x", (unsigned) address);
     }
 
@@ -825,7 +825,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
   Bit32u logical_sector;
   int ret;
 
-  if (io_len>1 && address!=0x1f0) {
+  if (io_len>1 && address!=0xf00000) {
     panicbug("non-byte IO write to %04x", (unsigned) address);
     }
 
