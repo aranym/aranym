@@ -33,6 +33,7 @@ SRCS = ../main.cpp \
 	../timer.cpp timer_unix.cpp \
 	../hardware.cpp \
 	../mfp.cpp \
+	../acia.cpp \
 	$(CPUSRCS)
 APP = aranym
 
