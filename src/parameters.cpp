@@ -506,7 +506,7 @@ void presave_midi() {
 
 /*************************************************************************/
 #define NFCDROM_ENTRY(c,n) \
-	{ c, String_Tag, &bx_options.nfcdroms[n].physdevtohostdev, sizeof(bx_options.nfcdroms[n].physdevtohostdev)}
+	{ c, Int_Tag, &bx_options.nfcdroms[n].physdevtohostdev, sizeof(bx_options.nfcdroms[n].physdevtohostdev)}
 
 struct Config_Tag nfcdroms_conf[]={
 	NFCDROM_ENTRY("A", 0),
@@ -540,7 +540,7 @@ struct Config_Tag nfcdroms_conf[]={
 
 void preset_nfcdroms() {
 	for(int i=0; i < 'Z'-'A'+1; i++) {
-		bx_options.nfcdroms[i].physdevtohostdev[0] = '\0';
+		bx_options.nfcdroms[i].physdevtohostdev = -1;
 	}
 }
 

@@ -422,6 +422,9 @@ bool InitAll(void)
 		return false;
 
  	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_TIMER;
+#if NFCDROM_SUPPORT
+	sdlInitParams |= SDL_INIT_CDROM;
+#endif
 	if (SDL_Init(sdlInitParams) != 0) {
 		panicbug("SDL initialization failed.");
 		return false;
@@ -563,6 +566,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.99  2003/08/15 19:24:04  milan
+ * md5.h -> aramd5.h (Guy Harrison)
+ *
  * Revision 1.98  2003/06/01 08:35:39  milan
  * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
  *

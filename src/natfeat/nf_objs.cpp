@@ -7,7 +7,15 @@
 #include "ethernet.h"
 #include "fvdidrv.h"
 #include "debugprintf.h"
-#include "nfcdrom.h"
+#ifdef NFCDROM_SUPPORT
+# include "nfcdrom.h"
+# ifdef NFCDROM_LINUX_SUPPORT
+#  include "nfcdrom_linux.h"
+# endif
+# ifdef NFCDROM_SDL_SUPPORT
+#  include "nfcdrom_sdl.h"
+# endif
+#endif
 /* add your NatFeat class definition here */
 
 
@@ -29,7 +37,12 @@ HostFs hostFs;
 ETHERNETDriver Ethernet;
 #endif
 #ifdef NFCDROM_SUPPORT
-CdromDriver CdRom;
+# ifdef NFCDROM_LINUX_SUPPORT
+CdromDriverLinux CdRom;
+# endif
+# ifdef NFCDROM_SDL_SUPPORT
+CdromDriverSdl CdRom;
+# endif
 #endif
 /* add your NatFeat object declaration here */
 

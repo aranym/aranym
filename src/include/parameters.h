@@ -150,7 +150,7 @@ typedef struct {
 
 // NfCdrom options
 typedef struct {
-	char physdevtohostdev[512];
+	int32 physdevtohostdev;
 } bx_nfcdrom_options_t;
 
 /*

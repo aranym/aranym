@@ -137,5 +137,7 @@ Enabled = No
 Output = /tmp/aranym-midi.txt
 
 [CDROMS]
-; MetaDOS Physical device letter = host device
-Z = /dev/cdrom
+; MetaDOS physical device letter = SDL CD-ROM drive number
+A = 2
+W = 1
+Z = 0

@@ -1585,14 +1585,16 @@ dnl Natfeat CD-ROM driver
 
 NFCDROMSRCS=""
 if [[ "x$WANT_NFCDROM" = "xyes" ]]; then
+	AC_DEFINE([NFCDROM_SUPPORT], 1, [Define if you want to use host CD-ROM driver])
+	NFCDROMSRCS="../natfeat/nfcdrom.cpp"
 	case "$target_os" in
 		linux*)
-			NFCDROMSRCS="../natfeat/nfcdrom.cpp"
-			AC_DEFINE([NFCDROM_SUPPORT], 1, [Define if you want to use host CD-ROM driver])
+			NFCDROMSRCS="$NFCDROMSRCS ../natfeat/nfcdrom_linux.cpp"
+			AC_DEFINE([NFCDROM_LINUX_SUPPORT], 1, [Define if you want to use Linux support as CD-ROM driver])
 			;;
 		*)
-			AC_MSG_WARN([*** NatFeat CD-ROM not supported for this system ***])
-			WANT_NFCDROM="no"
+			NFCDROMSRCS="$NFCDROMSRCS ../natfeat/nfcdrom_sdl.cpp"
+			AC_DEFINE([NFCDROM_SDL_SUPPORT], 1, [Define if you want to use SDL as CD-ROM driver])
 			;;
 	esac
 fi
