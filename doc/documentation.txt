@@ -357,7 +357,7 @@ the possibility of linking HOST fs directories as a logical disk.
 ------------------------
 
   Aranym can emulate both channels of Falcon IDE interface thus it's 
-able to use any disk device (or file) as an harddisk. It uses direct
+able to use any disk device (or file) as a harddisk. It uses direct
 access to devices so you don't need to have the disk mounted under
 the HOST OS; paths to devices are enough.
 
@@ -491,18 +491,17 @@ the Aranym side.
 7.2. Aranym Fs driver
 --------------------
 
-  This driver allows you to map any *already mounted* HOST directory as an 
-logical disk drive. This is done using MetaDOS (BetaDOS). Aranym driver
-for MetaDOS is available in src/atari/aranymfs/aranymfs.dos.bz2. You can
-unpack it and add to the MetaDOS configuration file (config.sys).
-  The example of config.sys you will find in the same directory as
-the driver.
-  The problem is how to put it on the harddisk image you possibly created.
+  This driver allows you to map any HOST directory as a logical disk drive.
+This is done using BetaDOS (=bugfixed MetaDOS). Aranym driver
+for BetaDOS is available in atari/hostfs/hostfs.dos.bz2. You can
+unpack it and add to the BetaDOS configuration file (bdconfig.sys).
+The example of config.sys you will find in the same directory as the driver.
+The problem is how to put it on the harddisk image you possibly created.
 There is no other way than using the floppy (or its image file).
 
   As you setup the config.sys (e.g.):
 
-*DOS, c:\auto\aranymfs.dos, M:1
+*DOS, c:\auto\aranymfs.dos, M:M
 
   The M:1 means you want to have the TOS M: drive mapped to some HOST OS
 directory. The directory must be put to aranym by the command line argument -d
@@ -519,10 +518,8 @@ Note: These drives aren't bootable. They are also not designed as
       transfer files between HOST fs and Aranym.
 
 
-7.3. Aranym.xfs driver for Mint (alpha version!)
-------------------------------------------------
+7.3. Hostfs.xfs driver for Mint
+-------------------------------
 
-  This is Mint version of aranymfs driver. Place it into your MINT 
-directory; it will map complete HOST fs onto /u/nativefs/ under 
-Aranym/Mint.
-
+  This is Mint version of ARAnyM HostFS driver. Place it into your MINT 
+directory; it will map the host fs to logical disks automatically.
