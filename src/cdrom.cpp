@@ -37,6 +37,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifdef SUPPORT_CDROM
 #ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
 # include <cstdio>
@@ -503,8 +504,8 @@ cdrom_interface::insert_cdrom(char *dev)
     }
 	if(bUseASPI) {
 		DWORD d;
-		int cdr, cnt, max;
-		int i, j, k;
+		unsigned int cdr, cnt, max;
+		unsigned int i, j, k;
 		SRB_HAInquiry sh;
 		SRB_GDEVBlock sd;
 		if (!hASPI) {
@@ -641,6 +642,23 @@ cdrom_interface::insert_cdrom(char *dev)
     return(true);
 }
 
+  int
+cdrom_interface::start_cdrom()
+{
+  // Spin up the cdrom drive.
+
+  if (fd >= 0) {
+#if defined(__NetBSD__)
+    if (ioctl (fd, CDIOCSTART) < 0)
+       BX_DEBUG(( "start_cdrom: start returns error: %s", strerror (errno) ));
+    return(true);
+#else
+    BX_INFO(("start_cdrom: your OS is not supported yet."));
+    return(false); // OS not supported yet, return false always.
+#endif
+    }
+  return(false);
+}
 
   void
 cdrom_interface::eject_cdrom()
@@ -1264,3 +1282,4 @@ cdrom_interface::read_block(uint8* buf, int lba)
     panicbug("cdrom: read_block: read returned %d", (int) n);
   }
 }
+#endif /* SUPPORT_CDROM */

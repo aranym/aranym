@@ -52,6 +52,9 @@ public:
   // Read a single block from the CD
   void read_block(uint8* buf, int lba);
 
+  // Start (spin up) the CD.
+  int start_cdrom();
+
 private:
   int fd;
   char *path;

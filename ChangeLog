@@ -1,8 +1,12 @@
-2004/10/04 - joy
+2003/10/04 - Milan
+- Bochs sync and cleanup, mainly around CD-ROM support
+
+
+2003/10/04 - joy
 - natfeat/nf_basicset: added OS_TYPE and CPU_TYPE to NF_NAME(1)
 
 
-2004/10/02 - STanda
+2003/10/02 - STanda
 - Harddisk usage related documentation made up-to-date.
 - HOSTFS: cleanup + some new features.
   * Fxattr() now returns the (uint32)MAPVOIDPTO32( fc->index ) instead

@@ -29,7 +29,9 @@
 
 #include "parameters.h"
 
-#define LOWLEVEL_CDROM cdrom_interface
+#ifdef SUPPORT_CDROM
+# define LOWLEVEL_CDROM cdrom_interface
+#endif
 
 typedef enum _sense {
       SENSE_NONE = 0, SENSE_NOT_READY = 2, SENSE_ILLEGAL_REQUEST = 5,

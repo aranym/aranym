@@ -60,6 +60,8 @@ AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default
 
 AC_ARG_ENABLE(nfcdrom,         [  --enable-nfcdrom        enable NatFeat CD-ROM (default=yes)], [WANT_NFCDROM=$enableval], [WANT_NFCDROM=yes])
 
+AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emulation (default=yes)], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
+
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
 [  --enable-fpe=FPE        specify which fpu emulator to use (default=auto)],
@@ -697,6 +699,11 @@ fi
 dnl CPU flight recorder
 if [[ "x$WANT_FLIGHTRECORDER" = "xyes" ]]; then
      AC_DEFINE([FLIGHT_RECORDER], 1, [Define if you want to use CPU flight recorder])
+fi
+
+dnl ATA CD-ROM emulation
+if [[ "x$WANT_CDROM" = "xyes" ]]; then
+     AC_DEFINE([SUPPORT_CDROM], 1, [Define if you want to use ATA CD-ROM emulation])
 fi
 
 dnl Full MMU

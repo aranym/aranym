@@ -105,35 +105,9 @@ static unsigned curr_multiple_sectors = 0; // was 0x3f
 
 bx_hard_drive_c::bx_hard_drive_c(void)
 {
-#if DLL_HD_SUPPORT
-#    error code must be fixed to use DLL_HD_SUPPORT and 4 ata channels
-#endif
-      
     for (Bit8u channel=0; channel<BX_MAX_ATA_CHANNEL; channel++) {
-      channels[channel].drives[0].hard_drive =  NULL;
-      channels[channel].drives[1].hard_drive =  NULL;
-#if EXTERNAL_DISK_SIMULATOR
-      channels[channel].drives[0].hard_drive = new EXTERNAL_DISK_SIMULATOR_CLASS();
-      channels[channel].drives[1].hard_drive = new EXTERNAL_DISK_SIMULATOR_CLASS();
-#else
-
-#if BX_SPLIT_HD_SUPPORT
-      // use new concatenated image object
-      channels[channel].drives[0].hard_drive = new concat_image_t();
-#if DLL_HD_SUPPORT
-      channels[channel].drives[1].hard_drive = new dll_image_t();
-#else
-      channels[channel].drives[1].hard_drive = new concat_image_t();
-#endif
-#else
       channels[channel].drives[0].hard_drive = new default_image_t();
-#if DLL_HD_SUPPORT
-      channels[channel].drives[1].hard_drive = new dll_image_t();
-#else
       channels[channel].drives[1].hard_drive = new default_image_t();
-#endif
-#endif
-#endif
       }
 }
 
@@ -193,10 +167,6 @@ nila2io(Bit32u address)
 bx_hard_drive_c::init(void)
 {
   Bit8u channel;
-  Bit8u device;
-#if 0
-  BX_HD_THIS devices = d;
-#endif
 
   for (channel=0; channel<BX_MAX_ATA_CHANNEL; channel++) {
     switch (channel) {
@@ -211,7 +181,7 @@ bx_hard_drive_c::init(void)
   }
      
   for (channel=0; channel<BX_MAX_ATA_CHANNEL; channel++) {
-    for (device=0; device<2; device ++) {
+    for (Bit8u device=0; device<2; device ++) {
 
       // If not present
       BX_HD_THIS channels[channel].drives[device].device_type           = IDE_NONE;
@@ -538,7 +508,7 @@ if ( quantumsMax == 0)
 
 	    case 0xa0: {
 		  unsigned index = BX_SELECTED_CONTROLLER(channel).buffer_index;
-                  unsigned increment = 0;
+		  unsigned increment = 0;
 
 		  // Load block if necessary
 		  if (index >= 2048) {
@@ -579,7 +549,7 @@ if ( quantumsMax == 0)
 			increment += 2;
 		  }
 		  BX_SELECTED_CONTROLLER(channel).buffer_index = index + increment;
-                  BX_SELECTED_CONTROLLER(channel).drq_index += increment;
+		  BX_SELECTED_CONTROLLER(channel).drq_index += increment;
 
 		  if (BX_SELECTED_CONTROLLER(channel).drq_index >= (unsigned)BX_SELECTED_DRIVE(channel).atapi.drq_bytes) {
 			BX_SELECTED_CONTROLLER(channel).status.drq = 0;
@@ -978,8 +948,8 @@ if ( quantumsMax == 0)
 					  atapi_cmd_nop(channel);
 				    } else {
 					  atapi_cmd_error(channel, SENSE_NOT_READY, ASC_MEDIUM_NOT_PRESENT);
-					  // force Insert of CD-ROM media
-					  set_cd_media_status(get_device_handle(channel, BX_SLAVE_SELECTED(channel)), true);
+//					  // force Insert of CD-ROM media
+//					  set_cd_media_status(get_device_handle(channel, BX_SLAVE_SELECTED(channel)), true);
 				    }
 				    raise_interrupt(channel);
 				    break;
@@ -1021,7 +991,10 @@ if ( quantumsMax == 0)
 					  panicbug("Stop disc not implemented");
 					  atapi_cmd_nop(channel);
 					  raise_interrupt(channel);
-				    } else if (!LoEj && Start) { // start the disc and read the TOC
+				    } else if (!LoEj && Start) { // start (spin up) the disc
+#ifdef LOWLEVEL_CDROM
+					  BX_SELECTED_DRIVE(channel).cdrom.cd->start_cdrom();
+#endif
 					  panicbug("FIXME: ATAPI start disc not reading TOC");
 					  atapi_cmd_nop(channel);
 					  raise_interrupt(channel);
@@ -2142,12 +2115,9 @@ bx_hard_drive_c::identify_ATAPI_drive(Bit8u channel)
 	BX_SELECTED_DRIVE(channel).id_drive[23+i] = (firmware[i*2] << 8) |
 	      firmware[i*2 + 1];
   }
-  assert((23+i) == 27);
-
   for (i = 0; i < strlen((char *) BX_SELECTED_MODEL(channel))/2; i++)
 	BX_SELECTED_DRIVE(channel).id_drive[27+i] = (BX_SELECTED_MODEL(channel)[i*2] << 8) |
 	      BX_SELECTED_MODEL(channel)[i*2 + 1];
-  assert((27+i) == 47);
 
   BX_SELECTED_DRIVE(channel).id_drive[47] = 0;
   BX_SELECTED_DRIVE(channel).id_drive[48] = 1; // 32 bits access
@@ -2249,14 +2219,12 @@ bx_hard_drive_c::identify_drive(Bit8u channel)
 	BX_SELECTED_DRIVE(channel).id_drive[23+i] = (firmware[i*2] << 8) |
 	      firmware[i*2 + 1];
   }
-  assert((23+i) == 27);
 
   char* model = "Conner Peripherals 540MB - CFA540A      ";
   for (i = 0; i < strlen(model)/2; i++) {
 	BX_SELECTED_DRIVE(channel).id_drive[27+i] = (model[i*2] << 8) |
 	      model[i*2 + 1];
   }
-  assert((27+i) == 47);
 
   BX_SELECTED_DRIVE(channel).id_drive[47] = 0x8080; // multiple mode identification
   BX_SELECTED_DRIVE(channel).id_drive[48] = 0;
@@ -2820,211 +2788,6 @@ ssize_t default_image_t::write (const void* buf, size_t count)
 {
       return ::write(fd, (char*) buf, count);
 }
-
-#if BX_SPLIT_HD_SUPPORT
-/*** concat_image_t function definitions ***/
-
-concat_image_t::concat_image_t ()
-{
-  fd = -1;
-}
-
-void concat_image_t::increment_string (char *str)
-{
-  // find the last character of the string, and increment it.
-  char *p = str;
-  while (*p != 0) p++;
-  assert(p>str);  // choke on zero length strings
-  p--;  // point to last character of the string
-  ++(*p);  // increment to next ascii code.
-  D(bug("concat_image.increment string returning '%s'", str));
-}
-
-int concat_image_t::open (const char* pathname0, bool readonly)
-{
-  int open_flags = readonly ? O_RDONLY : O_RDWR;
-#ifdef O_BINARY
-  open_flags |= O_BINARY;
-#endif
-  char *pathname = strdup (pathname0);
-  D(bug("concat_image_t.open"));
-  off_t start_offset = 0;
-  for (int i=0; i<BX_CONCAT_MAX_IMAGES; i++) {
-    fd_table[i] = ::open(pathname, open_flags);
-    if (fd_table[i] < 0) {
-      // open failed.
-      // if no FD was opened successfully, return -1 (fail).
-      if (i==0) return -1;
-      // otherwise, it only means that all images in the series have 
-      // been opened.  Record the number of fds opened successfully.
-      maxfd = i; 
-      break;
-    }
-    D(bug("concat_image: open image %s, fd[%d] = %d", pathname, i, fd_table[i]));
-    /* look at size of image file to calculate disk geometry */
-    struct stat stat_buf;
-    int ret = fstat(fd_table[i], &stat_buf);
-    if (ret) {
-	  panicbug("fstat() returns error!");
-    }
-    if ((stat_buf.st_size % 512) != 0) {
-      panicbug("size of disk image must be multiple of 512 bytes");
-    }
-    length_table[i] = stat_buf.st_size;
-    start_offset_table[i] = start_offset;
-    start_offset += stat_buf.st_size;
-    increment_string (pathname);
-  }
-  // start up with first image selected
-  index = 0;
-  fd = fd_table[0];
-  thismin = 0;
-  thismax = length_table[0]-1;
-  seek_was_last_op = 0;
-  return 0; // success.
-}
-
-void concat_image_t::close ()
-{
-  D(bug("concat_image_t.close"));
-  if (fd > -1) {
-    ::close(fd);
-  }
-}
-
-off_t concat_image_t::lseek (off_t offset, int whence)
-{
-  if ((offset % 512) != 0) 
-    panicbug("lseek HD with offset not multiple of 512");
-  D(bug("concat_image_t.lseek(%d)", whence));
-  // is this offset in this disk image?
-  if (offset < thismin) {
-    // no, look at previous images
-    for (int i=index-1; i>=0; i--) {
-      if (offset >= start_offset_table[i]) {
-	index = i;
-	fd = fd_table[i];
-	thismin = start_offset_table[i];
-	thismax = thismin + length_table[i] - 1;
-	D(bug("concat_image_t.lseek to earlier image, index=%d", index));
-	break;
-      }
-    }
-  } else if (offset > thismax) {
-    // no, look at later images
-    for (int i=index+1; i<maxfd; i++) {
-      if (offset < start_offset_table[i] + length_table[i]) {
-	index = i;
-	fd = fd_table[i];
-	thismin = start_offset_table[i];
-	thismax = thismin + length_table[i] - 1;
-	D(bug("concat_image_t.lseek to earlier image, index=%d", index));
-	break;
-      }
-    }
-  }
-  // now offset should be within the current image.
-  offset -= start_offset_table[index];
-  if (offset < 0 || offset >= length_table[index]) {
-    panicbug("concat_image_t.lseek to byte %ld failed", (long)offset);
-    return -1;
-  }
-
-  seek_was_last_op = 1;
-  return ::lseek(fd, offset, whence);
-}
-
-ssize_t concat_image_t::read (void* buf, size_t count)
-{
-  // notice if anyone does sequential read or write without seek in between.
-  // This can be supported pretty easily, but needs additional checks for
-  // end of a partial image.
-  if (!seek_was_last_op) 
-    panicbug("no seek before read");
-  return ::read(fd, buf, count);
-}
-
-ssize_t concat_image_t::write (const void* buf, size_t count)
-{
-  // notice if anyone does sequential read or write without seek in between.
-  // This can be supported pretty easily, but needs additional checks for
-  // end of a partial image.
-  if (!seek_was_last_op) 
-    panicbug("no seek before write");
-  return ::write(fd, (char*) buf, count);
-}
-#endif   /* BX_SPLIT_HD_SUPPORT */
-
-#if DLL_HD_SUPPORT
-/*** dll_image_t function definitions ***/
-
-/*
-function vdisk_open(path:PChar;numclusters,clustersize:integer):integer;
-procedure vdisk_read(vunit:integer;blk:integer;var buf:TBlock);
-procedure vdisk_write(vunit:integer;blk:integer;var buf:TBlock);
-procedure vdisk_close(vunit:integer);
-*/
-
-HINSTANCE hlib_vdisk = 0;
-
-int (*vdisk_open)  (const char *path,int numclusters,int clustersize);
-void (*vdisk_read)   (int vunit,int blk,void *buf);
-void (*vdisk_write)  (int vunit,int blk,const void *buf);
-void (*vdisk_close) (int vunit);
-
-int dll_image_t::open (const char* pathname, bool readonly)
-{
-    if (hlib_vdisk == 0) {
-      hlib_vdisk = LoadLibrary("vdisk.dll");
-      if (hlib_vdisk != 0) {
-        vdisk_read = (void (*)(int,int,void*))        GetProcAddress(hlib_vdisk,"vdisk_read");
-        vdisk_write = (void (*)(int,int,const void*)) GetProcAddress(hlib_vdisk,"vdisk_write");
-        vdisk_open = (int (*)(const char *,int,int))  GetProcAddress(hlib_vdisk,"vdisk_open");
-        vdisk_close = (void (*)(int))                 GetProcAddress(hlib_vdisk,"vdisk_close");
-      }
-    }
-    if (hlib_vdisk != 0) {
-      vunit = vdisk_open(pathname,0x10000,64);
-      vblk = 0;
-    } else {
-      vunit = -2;
-    }
-    return vunit;
-}
-
-void dll_image_t::close ()
-{
-   if (vunit >= 0 && hlib_vdisk != 0) {
-     vdisk_close(vunit);
-   }
-}
-
-off_t dll_image_t::lseek (off_t offset, int whence)
-{
-      vblk = offset >> 9;
-      return 0;
-}
-
-ssize_t dll_image_t::read (void* buf, size_t count)
-{
-      if (vunit >= 0 && hlib_vdisk != 0) {
-         vdisk_read(vunit,vblk,buf);
-         return count;
-      } else {
-         return -1;
-      }
-}
-
-ssize_t dll_image_t::write (const void* buf, size_t count)
-{
-      if (vunit >= 0 && hlib_vdisk != 0) {
-        vdisk_write(vunit,vblk,buf);
-        return count;
-      } else {
-         return -1;
-      }
-}
-#endif
 
 error_recovery_t::error_recovery_t ()
 {
