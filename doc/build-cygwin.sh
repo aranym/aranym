@@ -67,7 +67,7 @@
 
 #----------------------------------------------
 # EDIT this to suit your configuration !
-SDL_SOURCES=${PWD}/SDL-1.2.7
+SDL_SOURCES=${PWD}/SDL-1.2.8
 ARANYM_SOURCES=${PWD}/aranym
 #----------------------------------------------
 

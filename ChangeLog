@@ -1,3 +1,7 @@
+2005/02/25 - Xavier
+- doc/build-cygwin.sh: defaults to SDL 1.2.8.
+
+
 2005/02/24 - Petr
 - lilo.cpp: <elf.h> required defines copied to lilo.cpp to allow compiling
   under non-linux systems.
