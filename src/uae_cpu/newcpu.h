@@ -108,6 +108,10 @@ extern struct regstruct
     flagtype tcp;
     uae_u32 dtt0,dtt1,itt0,itt1,mmusr;
 
+    flagtype atcval[256];
+    uaecptr atcin[256];
+    uaecptr atcout[256];
+
     /* Cache reg*/
     int cacr,caar;
 } regs, lastint_regs;
@@ -225,11 +229,7 @@ extern void m68k_setpc (uaecptr newpc);
 
 static __inline__ uaecptr m68k_getpc (void)
 {
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
-	return get_virtual_address(regs.pc_p);
-#else
-    return regs.pc + ((char *)regs.pc_p - (char *)regs.pc_oldp);
-#endif
+    return get_virtual_address(regs.pc_p);
 }
 
 #ifdef USE_COMPILER

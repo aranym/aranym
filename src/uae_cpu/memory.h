@@ -12,6 +12,8 @@
 #ifndef UAE_MEMORY_H
 #define UAE_MEMORY_H
 
+#include "hardware.h"
+
 extern uintptr MEMBaseDiff;
 extern uintptr VMEMBaseDiff;
 //#define do_get_real_address(a)		((uae_u8 *)(a) + MEMBaseDiff)
@@ -22,31 +24,46 @@ extern uintptr VMEMBaseDiff;
 
 static __inline__ uae_u32 get_long(uaecptr addr)
 {
+    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_l(addr & 0xf00000);
     uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
     return do_get_mem_long(m);
 }
 static __inline__ uae_u32 get_word(uaecptr addr)
 {
+    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_w(addr & 0xf00000);
     uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
     return do_get_mem_word(m);
 }
 static __inline__ uae_u32 get_byte(uaecptr addr)
 {
+    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_b(addr & 0xf00000);
     uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
     return do_get_mem_byte(m);
 }
 static __inline__ void put_long(uaecptr addr, uae_u32 l)
 {
+    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) {
+        HWput_l(addr & 0xf00000, l);
+        return;
+    } 
     uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
     do_put_mem_long(m, l);
 }
 static __inline__ void put_word(uaecptr addr, uae_u32 w)
 {
+    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) {
+        HWput_w(addr & 0xf00000, w);
+        return;
+    }
     uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
     do_put_mem_word(m, w);
 }
 static __inline__ void put_byte(uaecptr addr, uae_u32 b)
 {
+    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) {
+        HWput_b(addr & 0xf00000, b);
+        return;
+    }
     uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
     do_put_mem_byte(m, b);
 }
