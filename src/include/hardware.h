@@ -26,12 +26,12 @@ extern uae_u32 vram_addr;
 extern void HWInit(void);
 
 extern uae_u32 HWget_l(uaecptr addr);
-extern uae_u32 HWget_w(uaecptr addr);
-extern uae_u32 HWget_b(uaecptr addr);
+extern uae_u16 HWget_w(uaecptr addr);
+extern uae_u8 HWget_b(uaecptr addr);
 
 extern void HWput_l(uaecptr addr, uae_u32 l);
-extern void HWput_w(uaecptr addr, uae_u32 w);
-extern void HWput_b(uaecptr addr, uae_u32 b);
+extern void HWput_w(uaecptr addr, uae_u16 w);
+extern void HWput_b(uaecptr addr, uae_u8 b);
 
 extern char* debug_print_IO(uaecptr addr);	// for debugging only
 
@@ -40,6 +40,9 @@ extern char* debug_print_IO(uaecptr addr);	// for debugging only
 
 /*
  * $Log$
+ * Revision 1.18  2001/11/19 17:48:58  joy
+ * parallel port emulation
+ *
  * Revision 1.17  2001/09/21 14:23:33  joy
  * little things just to make it compilable
  *

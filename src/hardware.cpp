@@ -136,7 +136,7 @@ uae_u32 HWget_l (uaecptr addr) {
 		return (HWget_w(addr) << 16) | HWget_w(addr+2);
 }
 
-uae_u32 HWget_w (uaecptr addr) {
+uae_u16 HWget_w (uaecptr addr) {
 	D(bug("HWget_w %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE)
 		return ide.handleReadW(addr);
@@ -144,7 +144,7 @@ uae_u32 HWget_w (uaecptr addr) {
 		return (handleRead(addr) << 8) | handleRead(addr+1);
 }
 
-uae_u32 HWget_b (uaecptr addr) {
+uae_u8 HWget_b (uaecptr addr) {
 	D(bug("HWget_b %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	return handleRead(addr);
 }
@@ -161,7 +161,7 @@ void HWput_l (uaecptr addr, uae_u32 l) {
 	}
 }
 
-void HWput_w (uaecptr addr, uae_u32 w) {
+void HWput_w (uaecptr addr, uae_u16 w) {
 	D(bug("HWput_w %x,%d ($%04x) -> %s at %08x", addr, w, w, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE)
 		ide.handleWriteW(addr, w);
@@ -171,7 +171,7 @@ void HWput_w (uaecptr addr, uae_u32 w) {
 	}
 }
 
-void HWput_b (uaecptr addr, uae_u32 b) {
+void HWput_b (uaecptr addr, uae_u8 b) {
 	D(bug("HWput_b %x,%u ($%02x) -> %s at %08x", addr, b & 0xff, b & 0xff, debug_print_IO(addr), showPC()));
 	handleWrite(addr, b);
 }
@@ -179,6 +179,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.41  2002/07/21 15:22:57  milan
+ * mon readded
+ *
  * Revision 1.40  2002/07/18 20:52:43  joy
  * DSP host port simplified if DSP_EMULATION is not defined
  *
