@@ -20,6 +20,13 @@
 #define DEBUG 0
 #include "debug.h"
 
+// parameters of default floppy (3.5" HD 1.44 MB)
+#define SECSIZE		512
+#define SPT			18
+#define SIDES		2
+#define TRACKS		80
+#define SECTORS		(SPT * SIDES * TRACKS)
+
 struct disk_geom
 {
 	int head, sides, tracks, sectors, secsize;
@@ -76,26 +83,47 @@ void init_fdc(void)
 		int fd=drive_fd[i];
 		if (fd > 0)
 		{
+			// read bootsector
 			lseek(fd, 0, SEEK_SET);
 			read(fd, buf, 512);
-			disk[i].head=0;
-			disk[i].sides=2;
-			disk[i].sectors=18;
-			disk[i].secsize=512;
-			disk[i].tracks=80;
-			// if MS-DOS or Atari TOS boot sector sum valid
-			if (true) {
-				disk[i].sides=(int)buf[26];
-				disk[i].sectors=(int)buf[24];
-				disk[i].secsize=(int)(buf[12]<<8)|buf[11];
-				int denom = (disk[i].sides*disk[i].sectors);
-				if (denom != 0)
-					disk[i].tracks=((int)(buf[20]<<8)|buf[19]);
 
-				D(bug("FDC %c: %d/%d/%d %d bytes/sector",
-					'A'+i,disk[i].sides,disk[i].tracks,disk[i].sectors,
-					disk[i].secsize));
+			// detect floppy geometry from bootsector data
+			int secsize=(buf[12]<<8)|buf[11];
+			int sectors=(buf[20]<<8)|buf[19];
+			int spt=buf[24];
+			int sides=buf[26];
+			bool valid = true;	// suppose the bootsector data is valid
+
+			// check validity of data
+			if (secsize <= 0 || sectors <= 0 || spt <=0 || sides <= 0) {
+				// data is obviously invalid (probably unformatted disk)
+				valid = false;
 			}
+			else {
+				int tracks = sectors / spt / sides;
+				// check if all sectors are on the tracks
+				if ((sides * spt * tracks) != sectors)
+					valid = false;
+			}
+
+			if (! valid) {
+				// bootsector contains invalid data - use our default
+				secsize = SECSIZE;
+				spt = SPT;
+				sides = SIDES;
+				sectors = SECTORS;
+			}
+
+			// init struct data
+			disk[i].head = 0;
+			disk[i].sides = sides;
+			disk[i].sectors = spt;
+			disk[i].secsize = secsize;
+			disk[i].tracks = (sectors / spt / sides);
+
+			D(bug("FDC %c: %d/%d/%d %d bytes/sector",
+				'A'+i,disk[i].sides,disk[i].tracks,disk[i].sectors,
+				disk[i].secsize));
 		}
 	}
 }
