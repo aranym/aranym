@@ -280,6 +280,11 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			}
 			break;
 
+			case M68K_EMUL_OP_AUDIO:
+				AudioDrv.dispatch( ReadInt32(r->a[7]), r );  // DM
+				break;
+
+
 		default:
 			printf("FATAL: EMUL_OP called with bogus opcode %08x\n", opcode);
 			printf("d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"

@@ -73,6 +73,7 @@ SRCS = ../main.cpp \
 	../md5.cpp \
 	../parallel.cpp \
 	../romdiff.cpp \
+	../audio.cpp \
 	$(SYSSRCS) \
 	$(CPUSRCS)
 APP = aranym

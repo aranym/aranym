@@ -334,7 +334,7 @@ bool InitAll(void)
 	if (! InitOS())
 		return false;
 
-	int sdlInitParams = SDL_INIT_VIDEO;
+	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
 #ifdef USE_TIMERS
 	sdlInitParams |= SDL_INIT_TIMER;
 #endif
@@ -433,6 +433,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.63  2002/04/13 21:55:50  joy
+ * TOS patch for redirecting printer output added
+ *
  * Revision 1.62  2002/02/23 13:40:41  joy
  * input related code separated from main.cpp
  *
