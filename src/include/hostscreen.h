@@ -1,7 +1,24 @@
 /*
- * $Header$
+ * hostscreen.cpp - host video routines
  *
- * STanda 2001
+ * Copyright (c) 2001-2003 STanda of ARAnyM developer team (see AUTHORS)
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef _HOSTSCREEN_H
@@ -440,6 +457,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.47  2004/01/08 21:44:34  pmandin
+ * Missing inclusion of config.h for ENABLE_OPENGL
+ *
  * Revision 1.46  2004/01/05 10:05:20  standa
  * Palette handling reworked. Old non-NF dispatch removed.
  *
