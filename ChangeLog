@@ -1,3 +1,9 @@
+2002/02/18 - Olivier Landemarre <Olivier.Landemarre@utbm.fr> & STanda
+- Compilation problem under Cygwin fixed. In extfs.c for Cygwin
+  MFSNAMELEN is undefined should replace by buf.f_namelen. The condition
+  was added due to the BSD systems so I've changed it to if OS_*bsd then...
+
+
 2002/02/12 - joy
 - IDE emulation adapted for Falcon: $f00039 is recognized but ignored.
 
