@@ -1544,8 +1544,8 @@ void m68k_compile_execute (void)
 setjmpagain:
     int prb = setjmp(excep_env);
     if (prb != 0) {
-#if 0
 	flush_icache(0);
+#if 0	// the following call is not needed, it seems
 	flush_internals();
 #endif
         Exception(prb, 0);
