@@ -25,7 +25,7 @@
  */
 
 #include "sysdeps.h"
-#include "md5.h"
+#include "aramd5.h"
 
 #ifdef HAVE_NEW_HEADERS
 # include <cstring>

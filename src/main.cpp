@@ -31,7 +31,7 @@
 #include "hostscreen.h"
 #include "host.h"			// for the HostScreen
 #include "araobjs.h"		// for the ExtFs
-#include "md5.h"
+#include "aramd5.h"
 #include "romdiff.h"
 #include "parameters.h"
 #include "version.h"		// for heartBeat
@@ -563,6 +563,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.98  2003/06/01 08:35:39  milan
+ * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
+ *
  * Revision 1.97  2003/04/25 07:39:31  pmandin
  * Fix broken compilation when lilo disabled
  *

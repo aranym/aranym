@@ -6,6 +6,8 @@
 
 - gencomp.c: compilation warning cleaned
 
+- md5.h -> aramd5.h : thanks, Guy Harrison
+
 
 2003/08/06 - milan
 - mingw support cleaned (added to sysdeps.h)
