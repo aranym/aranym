@@ -33,12 +33,13 @@ char *rom_path;
 uint8 start_debug = 0;			// Start debugger
 bool fullscreen = false;			// Boot in Fullscreen
 int8 boot_color_depth = -1;	// Boot in color depth
-int8 monitor = 0;				// VGA
+int8 monitor = -1;				// VGA
 extern uint32 TTRAMSize;		// TTRAM size
 bool direct_truecolor = false;
 bool grab_mouse = false;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 
+bx_options_t bx_options;
 
 static void decode_ini_file(void);
 
@@ -60,6 +61,26 @@ Options:
   -V, --version              output version information and exit\n\
 ");
   exit (status);
+}
+
+void init_ide() {
+	// init options and debug first
+	bx_options.diskc.present = 1;
+	bx_options.diskc.byteswap = false;
+	bx_options.diskc.cylinders = 2100;
+	bx_options.diskc.heads = 16;
+	bx_options.diskc.spt = 63;
+	strcpy(bx_options.diskc.path, "/home/joy/aranym/src/Unix/diskImage");
+
+	bx_options.diskd.present = 1;
+	bx_options.diskd.byteswap = false;
+	bx_options.diskd.cylinders = 2100;
+	bx_options.diskd.heads = 16;
+	bx_options.diskd.spt = 63;
+	strcpy(bx_options.diskd.path, "/dev/hdd");
+
+	bx_options.newHardDriveSupport = 1;
+	bx_options.cdromd.present = 0;
 }
 
 int decode_switches (int argc, char **argv) {
