@@ -15,3 +15,10 @@
 NativeTypeMapper<void*> memptrMapper;
 
 #endif  // SIZEOF_VOID_P != 4
+
+char *safe_strncpy(char *dest, const char *src, size_t size)
+{
+	strncpy(dest, src, size);
+	dest[size-1] = '\0';
+	return dest;
+}

@@ -174,4 +174,6 @@ class NativeTypeMapper
 #endif
 
 
+char *safe_strncpy(char *dest, const char *src, size_t size);
+
 #endif  // _TOOLS_H
