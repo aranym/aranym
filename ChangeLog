@@ -1,3 +1,8 @@
+2005/01/22 - Petr
+- input.{cpp,h}: little cleanup, private things declared static
+- main.cpp: little cleanup, removed unused function
+
+
 2005/01/21 - Patrice
 - nfjpeg: Decoding images, with width not multiple of 16 works in Brainstorm's
   viewer. Zview has a bug in its plugin.
