@@ -1,4 +1,8 @@
-/* MJ 2001 */
+/*
+ * $Header$
+ *
+ * MJ 2001
+ */
 
 #ifndef HARDWARE_H
 #define HARDWARE_H
@@ -26,3 +30,9 @@ extern void renderScreen();
 extern int getFloppyStats();
 extern bool isIkbdBufEmpty();
 #endif 
+
+
+/*
+ * $Log$
+ *
+ */

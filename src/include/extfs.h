@@ -1,4 +1,9 @@
-/* STanda 3.5.2001 */
+/*
+ * $Header$
+ *
+ * STanda 3.5.2001
+ */
+
 #ifndef _EXTFS_H
 #define _EXTFS_H
 
@@ -200,3 +205,9 @@ class ExtFs {
 };
 
 #endif
+
+
+/*
+ * $Log$
+ *
+ */

@@ -1,4 +1,10 @@
 /*
+ * $Header$
+ *
+ * ARAnym Team 2000
+ */
+
+/*
  *  main_unix.cpp - Startup code for Unix
  *
  *  Basilisk II (C) 1997-2000 Christian Bauer
@@ -541,3 +547,9 @@ void QuitEmulator(void)
 void FlushCodeCache(void *start, uint32 size)
 {
 }
+
+
+/*
+ * $Log$
+ *
+ */

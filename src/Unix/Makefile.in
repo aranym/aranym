@@ -49,6 +49,8 @@ SRCS = ../main.cpp \
 	../dsp.cpp \
 	../mmu.cpp \
 	../extfs.cpp \
+	../fvdidrv.cpp \
+	../hostscreen.cpp \
 	../parameters.cpp \
 	$(CPUSRCS)
 APP = aranym

@@ -1,4 +1,8 @@
-/* MJ 2001 */
+/*
+ * $Header$
+ *
+ * MJ 2001
+ */
 
 #include "sysdeps.h"
 #include "hardware.h"
@@ -15,9 +19,14 @@
 #include "yamaha.h"
 #include "dsp.h"
 #include "mmu.h"
+#include "hostscreen.h"
 #include "exceptions.h"
 #include "uae_cpu/newcpu.h"	// for regs.pc
 
+// host OS dependent objects
+HostScreen hostScreen;
+
+// chipset IOs
 BASE_IO fake_io;
 MMU mmu;
 MFP mfp;
@@ -219,3 +228,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 		fprintf(stderr, "HWput_b %x,%u ($%02x) -> %s at %08x\n", addr, bb, bb, debug_print_IO(addr), showPC());
 	handleWrite(addr, b);
 }
+
+
+/*
+ * $Log$
+ *
+ */

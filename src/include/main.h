@@ -1,4 +1,8 @@
-/* 2001 MJ */
+/*
+ * $Header$
+ *
+ * 2001 MJ
+ */
 
 /*
  *  main.h - General definitions
@@ -67,3 +71,9 @@ extern void SetInterruptFlag(uint32 flag);	// Set/clear interrupt flags
 extern void ClearInterruptFlag(uint32 flag);
 
 #endif
+
+
+/*
+ * $Log$
+ *
+ */

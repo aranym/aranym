@@ -12,35 +12,23 @@
 
 class VIDEL : public BASE_IO {
 protected:
-	SDL_Surface *surf;
-	int sdl_videoparams;
 	int width, height, od_posledni_zmeny;
-	uint32 sdl_colors[256];
-	bool sdl_colors_uptodate;
+	bool host_colors_uptodate;
 
 public:
 	VIDEL();
 	void init();
+
 	virtual void handleWrite(uaecptr addr, uint8 value);
+
 	void renderScreen();
-
-	bool lockScreen();
-	void unlockScreen();
-
-	// the w, h should be width & height (but C++ complains -> 'if's in the implementation)
-	void updateScreen( int x = 0, int y = 0, int w = -1, int h = -1 );
-
 	void updateColors();
 
-	int getVideoMode();
+	int getScreenBpp();
 	int getScreenWidth();
 	int getScreenHeight();
 
 	long getVideoramAddress();
-	long getHostVideoramAddress();
-
-protected:
-	void setHostWindow();
 };
 
 #endif
@@ -48,6 +36,9 @@ protected:
 
 /*
  * $Log$
+ * Revision 1.9  2001/06/17 21:56:32  joy
+ * updated to reflect changes in .cpp counterpart
+ *
  * Revision 1.8  2001/06/15 14:16:06  joy
  * VIDEL palette registers are now processed by the VIDEL object.
  *

@@ -1,3 +1,9 @@
+/*
+ * $Header$
+ *
+ * STanda 2001
+ */
+
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
@@ -1515,3 +1521,8 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 	return TOS_E_OK;
 }
 
+
+/*
+ * $Log$
+ *
+ */

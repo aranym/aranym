@@ -33,7 +33,7 @@ char *rom_path;
 uint8 start_debug = 0;			// Start debugger
 bool fullscreen = false;			// Boot in Fullscreen
 int8 boot_color_depth = -1;	// Boot in color depth
-int8 monitor = -1;				// VGA
+int8 monitor = 0;				// VGA
 extern uint32 TTRAMSize;		// TTRAM size
 bool direct_truecolor = false;
 bool grab_mouse = false;

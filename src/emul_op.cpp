@@ -26,16 +26,19 @@
 #include "cpu_emulation.h"
 #include "main.h"
 #include "extfs.h"
+#include "fvdidrv.h"
 #include "emul_op.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 
 /**
  * External filesystem access object.
  **/
-ExtFs extFS;
+ExtFs      extFS;
+
+FVDIDriver fVDIDrv;
 
 
 /*
@@ -111,8 +114,12 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			}
 			break;
 
-	        case M68K_EMUL_OP_EXTFS_COMM:		// External file system routines
-	                extFS.dispatch( get_long(r->a[7], true), r );  // SO
+		case M68K_EMUL_OP_VIDEO_CONTROL:
+			fVDIDrv.dispatch( get_long(r->a[7], true), r );  // SO
+			break;
+
+		case M68K_EMUL_OP_EXTFS_COMM:		// External file system routines
+			extFS.dispatch( get_long(r->a[7], true), r );  // SO
 			break;
 
 		case M68K_EMUL_OP_DEBUGUTIL:
