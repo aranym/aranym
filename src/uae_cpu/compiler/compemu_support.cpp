@@ -31,7 +31,7 @@
 #include "fpu/flags.h"
 #include "parameters.h"
 
-#define DEBUG 1
+#define DEBUG 2
 #include "debug.h"
 
 #ifdef ENABLE_MON
@@ -361,14 +361,14 @@ static __inline__ void adjust_jmpdep(dependency* d, cpuop_func* a)
 
 static __inline__ void set_dhtu(blockinfo* bi, cpuop_func* dh)
 {
-    //write_log("bi is %p\n",bi);
+    D2(panicbug("bi is %p",bi));
     if (dh!=bi->direct_handler_to_use) {
 	dependency* x=bi->deplist;
-	//write_log("bi->deplist=%p\n",bi->deplist);
+	D2(panicbug("bi->deplist=%p",bi->deplist));
 	while (x) {
-	    //write_log("x is %p\n",x);
-	    //write_log("x->next is %p\n",x->next);
-	    //write_log("x->prev_p is %p\n",x->prev_p);
+	    D2(panicbug("x is %p",x));
+	    D2(panicbug("x->next is %p",x->next));
+	    D2(panicbug("x->prev_p is %p",x->prev_p));
 	    
 	    if (x->jmp_off) {
 		adjust_jmpdep(x,dh);
@@ -442,7 +442,7 @@ static __inline__ void mark_callers_recompile(blockinfo * bi)
 	  blockinfo *cbi = x->source;
 
 	  Dif(cbi->status == BI_INVALID) {
-		// write_log("invalid block in dependency list\n"); // FIXME?
+		D(panicbug("invalid block in dependency list")); // FIXME?
 		// abort();
 	  }
 	  if (cbi->status == BI_ACTIVE || cbi->status == BI_NEED_CHECK) {
@@ -456,7 +456,7 @@ static __inline__ void mark_callers_recompile(blockinfo * bi)
 		/* nothing */
 	  }
 	  else {
-		//write_log("Status %d in mark_callers\n",cbi->status); // FIXME?
+		D2(panicbug("Status %d in mark_callers",cbi->status)); // FIXME?
 	  }
 	}
 	x = next;
@@ -958,8 +958,7 @@ static  void tomem(int r)
     if (isinreg(r)) {
 	if (live.state[r].val && live.nat[rr].nholds==1
 		&& !live.nat[rr].locked) {
-	    // write_log("RemovingA offset %x from reg %d (%d) at %p\n",
-	    //   live.state[r].val,r,rr,target); 
+	    D2(panicbug("RemovingA offset %x from reg %d (%d) at %p", live.state[r].val,r,rr,target)); 
 	    adjust_nreg(rr,live.state[r].val);
 	    live.state[r].val=0;
 	    live.state[r].dirtysize=4;
@@ -1356,8 +1355,7 @@ static __inline__ void remove_offset(int r, int spec)
     rr=live.state[r].realreg;
 
     if (live.nat[rr].nholds==1) {
-	//write_log("RemovingB offset %x from reg %d (%d) at %p\n",
-	//       live.state[r].val,r,rr,target); 
+	D2(panicbug("RemovingB offset %x from reg %d (%d) at %p", live.state[r].val,r,rr,target)); 
 	adjust_nreg(rr,live.state[r].val);
 	live.state[r].dirtysize=4;
 	live.state[r].val=0;
@@ -1539,13 +1537,13 @@ static __inline__ int rmw_general(int r, int wsize, int rsize, int spec)
     int answer=-1;
     
 	if (live.state[r].status==UNDEF) {
-		write_log("WARNING: Unexpected read of undefined register %d\n",r);
+		D(panicbug("WARNING: Unexpected read of undefined register %d",r));
 	}
     remove_offset(r,spec);
     make_exclusive(r,0,spec);
 
     Dif (wsize<rsize) {
-	write_log("Cannot handle wsize<rsize in rmw_general()\n");
+	D(panicbug("Cannot handle wsize<rsize in rmw_general()"));
 	abort();
     }
     if (isinreg(r) && live.state[r].validsize>=rsize) {
@@ -1593,7 +1591,7 @@ static __inline__ int rmw_general(int r, int wsize, int rsize, int spec)
     live.nat[answer].touched=touchcnt++;
 
     Dif (live.state[r].val) {
-	write_log("Problem with val(rmw)\n");
+	D(panicbug("Problem with val(rmw)"));
 	abort();
     }
     return answer;
@@ -1669,7 +1667,7 @@ static void f_evict(int r)
 
     Dif (live.fat[rr].locked &&
 	live.fat[rr].nholds==1) {
-	write_log("FPU register %d in nreg %d is locked!\n",r,live.fate[r].realreg);
+	D(panicbug("FPU register %d in nreg %d is locked!",r,live.fate[r].realreg));
 	abort();
     }
 
@@ -1696,7 +1694,7 @@ static __inline__ void f_free_nreg(int r)
 	f_evict(vr);
     }
     Dif (live.fat[r].nholds!=0) {
-	write_log("Failed to free nreg %d, nholds is %d\n",r,live.fat[r].nholds);
+	D(panicbug("Failed to free nreg %d, nholds is %d",r,live.fat[r].nholds));
 	abort();
     }
 }
@@ -1829,13 +1827,13 @@ static __inline__ void f_make_exclusive(int r, int clobber)
 	    }
 	}
 	Dif (live.fat[rr].nholds!=1) {
-	    write_log("realreg %d holds %d (",rr,live.fat[rr].nholds);
+	    D(panicbug("realreg %d holds %d (",rr,live.fat[rr].nholds));
 	    for (i=0;i<live.fat[rr].nholds;i++) {
-		write_log(" %d(%d,%d)",live.fat[rr].holds[i],
+		D(panicbug(" %d(%d,%d)",live.fat[rr].holds[i],
 		       live.fate[live.fat[rr].holds[i]].realreg,
-		       live.fate[live.fat[rr].holds[i]].realind);
+		       live.fate[live.fat[rr].holds[i]].realind));
 	    }
-	    write_log("\n");
+	    D(panicbug(""));
 	    abort();
 	}
 	return;
@@ -2186,7 +2184,7 @@ MIDFUNC(2,rol_l_rr,(RW4 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,4,4);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_rol_b\n",r);
+	D(panicbug("Illegal register %d in raw_rol_b",r));
 	abort();
     }
     raw_rol_l_rr(d,r) ;
@@ -2206,7 +2204,7 @@ MIDFUNC(2,rol_w_rr,(RW2 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,2,2);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_rol_b\n",r);
+	D(panicbug("Illegal register %d in raw_rol_b",r));
 	abort();
     }
     raw_rol_w_rr(d,r) ;
@@ -2227,7 +2225,7 @@ MIDFUNC(2,rol_b_rr,(RW1 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,1,1);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_rol_b\n",r);
+	D(panicbug("Illegal register %d in raw_rol_b",r));
 	abort();
     }
     raw_rol_b_rr(d,r) ;
@@ -2247,7 +2245,7 @@ MIDFUNC(2,shll_l_rr,(RW4 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,4,4);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_rol_b\n",r);
+	D(panicbug("Illegal register %d in raw_rol_b",r));
 	abort();
     }
     raw_shll_l_rr(d,r) ;
@@ -2267,7 +2265,7 @@ MIDFUNC(2,shll_w_rr,(RW2 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,2,2);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_shll_b\n",r);
+	D(panicbug("Illegal register %d in raw_shll_b",r));
 	abort();
     }
     raw_shll_w_rr(d,r) ;
@@ -2288,7 +2286,7 @@ MIDFUNC(2,shll_b_rr,(RW1 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,1,1);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_shll_b\n",r);
+	D(panicbug("Illegal register %d in raw_shll_b",r));
 	abort();
     }
     raw_shll_b_rr(d,r) ;
@@ -2387,7 +2385,7 @@ MIDFUNC(2,shrl_l_rr,(RW4 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,4,4);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_rol_b\n",r);
+	D(panicbug("Illegal register %d in raw_rol_b",r));
 	abort();
     }
     raw_shrl_l_rr(d,r) ;
@@ -2407,7 +2405,7 @@ MIDFUNC(2,shrl_w_rr,(RW2 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,2,2);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_shrl_b\n",r);
+	D(panicbug("Illegal register %d in raw_shrl_b",r));
 	abort();
     }
     raw_shrl_w_rr(d,r) ;
@@ -2428,7 +2426,7 @@ MIDFUNC(2,shrl_b_rr,(RW1 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,1,1);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_shrl_b\n",r);
+	D(panicbug("Illegal register %d in raw_shrl_b",r));
 	abort();
     }
     raw_shrl_b_rr(d,r) ;
@@ -2556,7 +2554,7 @@ MIDFUNC(2,shra_l_rr,(RW4 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,4,4);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_rol_b\n",r);
+	D(panicbug("Illegal register %d in raw_rol_b",r));
 	abort();
     }
     raw_shra_l_rr(d,r) ;
@@ -2576,7 +2574,7 @@ MIDFUNC(2,shra_w_rr,(RW2 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,2,2);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_shra_b\n",r);
+	D(panicbug("Illegal register %d in raw_shra_b",r));
 	abort();
     }
     raw_shra_w_rr(d,r) ;
@@ -2597,7 +2595,7 @@ MIDFUNC(2,shra_b_rr,(RW1 d, R1 r))
     r=readreg_specific(r,1,SHIFTCOUNT_NREG);
     d=rmw(d,1,1);
     Dif (r!=1) {
-	write_log("Illegal register %d in raw_shra_b\n",r);
+	D(panicbug("Illegal register %d in raw_shra_b",r));
 	abort();
     }
     raw_shra_b_rr(d,r) ;
@@ -3486,8 +3484,7 @@ MIDFUNC(2,mov_l_rr,(W4 d, R4 s))
     live.nat[s].holds[live.nat[s].nholds]=d;
     live.nat[s].nholds++;
     log_clobberreg(d);
-    /* write_log("Added %d to nreg %d(%d), now holds %d regs\n",
-       d,s,live.state[d].realind,live.nat[s].nholds); */
+    D2(panicbug("Added %d to nreg %d(%d), now holds %d regs", d,s,live.state[d].realind,live.nat[s].nholds));
     unlock2(s);
 }
 MENDFUNC(2,mov_l_rr,(W4 d, R4 s))
@@ -4560,7 +4557,7 @@ uae_u32 get_const(int r)
     if (!reg_alloc_run) 
 #endif
 	Dif (!isconst(r)) {
-	    write_log("Register %d should be constant, but isn't\n",r);
+	    D(panicbug("Register %d should be constant, but isn't",r));
 	    abort();
 	}
     return live.state[r].val;
@@ -4742,13 +4739,11 @@ void compiler_exit(void)
 #endif
 	
 #if PROFILE_COMPILE_TIME
-	write_log("### Compile Block statistics\n");
-	write_log("Number of calls to compile_block : %d\n", compile_count);
+	D(panicbug("### Compile Block statistics"));
+	D(panicbug("Number of calls to compile_block : %d", compile_count));
 	uae_u32 emul_time = emul_end_time - emul_start_time;
-	write_log("Total emulation time   : %.1f sec\n", double(emul_time)/double(CLOCKS_PER_SEC));
-	write_log("Total compilation time : %.1f sec (%.1f%%)\n", double(compile_time)/double(CLOCKS_PER_SEC),
-		100.0*double(compile_time)/double(emul_time));
-	write_log("\n");
+	D(panicbug("Total emulation time   : %.1f sec", double(emul_time)/double(CLOCKS_PER_SEC)));
+	D(panicbug("Total compilation time : %.1f sec (%.1f%%)", double(compile_time)/double(CLOCKS_PER_SEC), 100.0*double(compile_time)/double(emul_time)));
 #endif
 
 #if 0 && PROFILE_ATRAPS_EXEC
@@ -4908,8 +4903,7 @@ void flush(int save_regs)
 		 default: break;
 		}
 		Dif (live.state[i].val && i!=PC_P) {
-		    write_log("Register %d still has val %x\n",
-			   i,live.state[i].val);
+		    D(panicbug("Register %d still has val %x", i,live.state[i].val));
 		}
 	    }
 	}
@@ -4922,7 +4916,7 @@ void flush(int save_regs)
 	raw_fp_cleanup_drop();
     }
     if (needflags) {
-	write_log("Warning! flush with needflags=1!\n");
+	D(panicbug("Warning! flush with needflags=1!"));
     }
 
     lopt_emit_all();
@@ -4970,7 +4964,7 @@ void freescratch(void)
     int i;
     for (i=0;i<N_REGS;i++)
 	if (live.nat[i].locked && i!=4)
-	    write_log("Warning! %d is locked\n",i);
+	    D(panicbug("Warning! %d is locked",i));
 
     for (i=0;i<VREGS;i++)
 	if (live.state[i].needflush==NF_SCRATCH) {
@@ -5137,7 +5131,7 @@ static __inline__ void writemem(int address, int source, int offset, int size, i
 {
 #if FIXED_ADDRESSING
 	// shall not be called in those addressing modes
-	write_log("writemem: in real or direct addressing mode\n");
+	panicbug("writemem: in real or direct addressing mode\n");
 	abort();
 #else
     int f=tmp;
@@ -5278,7 +5272,7 @@ static __inline__ void readmem(int address, int dest, int offset, int size, int 
 {
 #if FIXED_ADDRESSING
 	// shall not be called in those addressing modes
-	write_log("readmem: in real or direct addressing mode\n");
+	panicbug("readmem: in real or direct addressing mode\n");
 	abort();
 #else
     int f=tmp;
@@ -5356,7 +5350,7 @@ static __inline__ void get_n_addr_old(int address, int dest, int tmp)
 {
 #if FIXED_ADDRESSING
 	// shall not be called in those addressing modes
-	write_log("get_n_addr_old: in real or direct addressing mode\n");
+	panicbug("get_n_addr_old: in real or direct addressing mode\n");
 	abort();
 #else
     readmem(address,dest,24,4,tmp);
@@ -5614,11 +5608,11 @@ static void show_checksum(blockinfo* bi)
     }
     else {
 	while (len>0) {
-	    write_log("%08x ",*pos);
+	    D(panicbug("%08x ",*pos));
 	    pos++;
 	    len-=4;
 	}
-	write_log(" bla\n");
+	D(panicbug(" bla"));
     }
 }
 
@@ -5696,8 +5690,7 @@ static inline int block_check_checksum(blockinfo* bi)
 	isgood=called_check_checksum(bi);
     }
     if (isgood) {
-	/*	write_log("reactivate %p/%p (%x %x/%x %x)\n",bi,bi->pc_p,
-		c1,c2,bi->c1,bi->c2);*/
+	D2(panicbug("reactivate %p/%p (%x %x/%x %x)",bi,bi->pc_p, c1,c2,bi->c1,bi->c2));
 	remove_from_list(bi);
 	add_to_active(bi);
 	raise_in_cl_list(bi);
@@ -5706,8 +5699,7 @@ static inline int block_check_checksum(blockinfo* bi)
     else {
 	/* This block actually changed. We need to invalidate it,
 	   and set it up to be recompiled */
-	/* write_log("discard %p/%p (%x %x/%x %x)\n",bi,bi->pc_p,
-	   c1,c2,bi->c1,bi->c2); */
+	D2(panicbug("discard %p/%p (%x %x/%x %x)",bi,bi->pc_p, c1,c2,bi->c1,bi->c2));
 	invalidate_block(bi);
 	raise_in_cl_list(bi);
     }
@@ -5766,7 +5758,7 @@ static __inline__ void match_states(blockinfo* bi)
 					 certain vregs) */
 	for (i=0;i<16;i++) {
 	    if (s->virt[i]==L_UNNEEDED) {
-		// write_log("unneeded reg %d at %p\n",i,target);
+		D2(panicbug("unneeded reg %d at %p",i,target));
 		COMPCALL(forget_about)(i); // FIXME
 	    }
 	}
@@ -6279,14 +6271,12 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	    Dif (bi!=bi2) { 
 		/* I don't think it can happen anymore. Shouldn't, in 
 		   any case. So let's make sure... */
-		write_log("WOOOWOO count=%d, ol=%d %p %p\n",
-		       bi->count,bi->optlevel,bi->handler_to_use,
-		       cache_tags[cl].handler);
+		panicbug("WOOOWOO count=%d, ol=%d %p %p", bi->count,bi->optlevel,bi->handler_to_use, cache_tags[cl].handler);
 		abort();
 	    }
 
 	    Dif (bi->count!=-1 && bi->status!=BI_NEED_RECOMP) {
-		write_log("bi->count=%d, bi->status=%d\n",bi->count,bi->status);
+		panicbug("bi->count=%d, bi->status=%d",bi->count,bi->status);
 		/* What the heck? We are not supposed to be here! */
 		abort();
 	    }
