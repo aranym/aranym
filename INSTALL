@@ -29,9 +29,9 @@ and mounted directories.
 
 1. Harddisk files
 
-Harddisk files are large files that contain the image of an Amiga filesystem.
+Harddisk files are large files that contain the image of an atari harddisk.
 They work much the same way as a disk file. You can simply create a large
-empty file and tell ARAnyM to use it as a hardfile, but you will need to format
+file and tell ARAnyM to use it as a hardfile, but you will need to format
 it from the emulation before you can actually use it.
 
 Under Unix, You can create a harddisk image file this way:
@@ -49,11 +49,15 @@ Under Unix, You can create a harddisk image file this way:
  readahead    =  8 (on)
  geometry     = 1871/255/63, sectors = 30064608, start = 0
 
-[root@linuxHost /root]# dd if=/dev/hda of=hardfile bsize=512 count=30064608
+[root@linuxHost /root]# dd if=/dev/hda of=hardfile bs=512 count=30064608
 
-That will create an image file. Note that the count parameter is the same as
-it is told by the hdparm command. After this you must setup the image file
-geometry in the ~/.aranymrc file like the following:
+That will create an image file of the whole disk (carefuly this example would
+create a file of 14GB size. Note that the count parameter is the same as
+it is told by the hdparm command.
+CAUTION: Be _very_ carefull using the dd command as long you are root now and
+you can destroy your system by a simple typo mistake.
+After this you must setup the image file geometry in the ~/.aranymrc file like
+the following:
 
 [IDE0]
 Present = Yes
@@ -75,10 +79,10 @@ atarian you know how to handle this.
 
 2. The mounted Host OS filesystem directories
 
-This is done by the most clean way it could be. The MetaDOS (BetaDOS) driver is
-available in src/atari/aranymfs/aranymfs.dos.bz2. You can extract it and add
-to the MetaDOS configuration file (config.sys). The example you can find in
-config.sys in the same directory as the driver .bz2 file.
+This is done by the most clean way it could be. In order to not to patch the TOS,
+the MetaDOS (BetaDOS) driver is available in src/atari/aranymfs/aranymfs.dos.bz2.
+You can extract it and add to the MetaDOS configuration file (config.sys). The
+example you can find in config.sys in the same directory as the driver .bz2 file.
 The problem is how to put it on the harddisc image you possibly created. There
 is no other way than the floppy (or its image file).
 
