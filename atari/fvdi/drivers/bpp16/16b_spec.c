@@ -43,7 +43,7 @@ extern void *c_set_colours;		/* Just to check if the routine is available */
 
 long wk_extend = 0;
 
-short accel_s = A_SET_PIX | A_GET_PIX | A_LINE | A_BLIT | A_FILL | A_EXPAND;
+short accel_s = A_SET_PIX | A_GET_PIX | A_MOUSE | A_LINE | A_BLIT | A_FILL | A_EXPAND;
 short accel_c = A_SET_PAL | A_GET_COL;
 
 Mode *graphics_mode = &mode[0];

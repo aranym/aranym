@@ -15,10 +15,10 @@ void line_draw   (void) { }
 void expand_area (void) { }
 void blit_area   (void) { }
 void fill_area   (void) { }
+void mouse_draw  (void) { }
 #endif
 void fill_polygon(void) { }
 void text_area   (void) { }
-void mouse_draw  (void) { }
 void set_colours (void) { }
 void get_colour  (void) { }
 

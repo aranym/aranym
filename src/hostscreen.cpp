@@ -10,6 +10,8 @@
 #include "memory.h"
 #include "hostscreen.h"
 #include "parameters.h"
+
+#define DEBUG 1
 #include "debug.h"
 
 #include "gfxprimitives.h"
@@ -74,29 +76,59 @@ void HostScreen::setWindowSize(	uint32 width, uint32 height )
 
 	renderEnd();
 
-	D(bug("Pixel format:tmasks r=%04x g=%04x b=%04x"
+	D(bug("Pixel format:bitspp=%d, tmasks r=%04x g=%04x b=%04x"
 			", tshifts r=%d g=%d b=%d"
 			", tlosses r=%d g=%d b=%d",
+		    surf->format->BitsPerPixel,
 			surf->format->Rmask, surf->format->Gmask, surf->format->Bmask,
 			surf->format->Rshift, surf->format->Gshift, surf->format->Bshift,
 			surf->format->Rloss, surf->format->Gloss, surf->format->Bloss));
 }
 
 
-void  HostScreen::drawLine( int32 x1, int32 y1, int32 x2, int32 y2, uint32 pattern, uint32 color )
+void  HostScreen::drawLine( int32 x1, int32 y1, int32 x2, int32 y2, uint16 pattern, uint32 color )
 {
-	lineColor( surf, (int16)x1, (int16)y1, (int16)x2, (int16)y2, color ); // SDL_gfxPrimitives
+	//	linePattern( pattern );
+	uint8 r,g,b,a; SDL_GetRGBA( color, surf->format, &r, &g, &b, &a);
+	lineRGBA( surf, (int16)x1, (int16)y1, (int16)x2, (int16)y2, r,g,b,a ); // SDL_gfxPrimitives
 }
 
 
-void  HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint32 pattern, uint32 color )
+extern "C" {
+	static void getBinary( uint16 data, char *buffer ) {
+		for( uint16 i=0; i<=15; i++ ) {
+			buffer[i] = (data & 1)?'1':' ';
+			data>>=1;
+		}
+		buffer[16]='\0';
+	}
+}
+void  HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color )
 {
-	boxColor( surf, (int16)x1, (int16)y1, (int16)x2, (int16)y2, color ); // SDL_gfxPrimitives
+	areaPattern = pattern;
+	/*
+	char buffer[30];
+	for( uint16 i=0; i<=15; i++ ) {
+		getBinary( areaPattern[i], buffer );
+		D(fprintf(stderr, "fVDI: fillP:%s\n", buffer ));
+	}
+	*/
+	uint8 r,g,b,a; SDL_GetRGBA( color, surf->format, &r, &g, &b, &a);
+	boxRGBA( surf, (int16)x1, (int16)y1, (int16)x2, (int16)y2, r,g,b,a ); // SDL_gfxPrimitives
+	areaPattern = NULL;
 }
 
 
 /*
  * $Log$
+ * Revision 1.4  2001/08/28 23:26:09  standa
+ * The fVDI driver update.
+ * VIDEL got the doRender flag with setter setRendering().
+ *       The host_colors_uptodate variable name was changed to hostColorsSync.
+ * HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
+ *       was created.
+ * fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
+ *
  * Revision 1.3  2001/08/13 22:29:06  milan
  * IDE's params from aranymrc file etc.
  *

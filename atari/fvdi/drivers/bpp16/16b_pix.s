@@ -8,6 +8,8 @@
 	xdef		write_pixel
 	xdef		_read_pixel
 	xdef		read_pixel
+	xdef		_mouse_draw
+	xdef		mouse_draw
 	xdef		_line_draw
 	xdef		line_draw
 	xdef		_expand_area
@@ -28,6 +30,18 @@ ENDM
 
 
 *----------
+* Get pixel
+*----------
+* In:	a1	VDI struct, source MFDB
+*	d1	x
+*	d2	y
+_read_pixel:
+read_pixel:
+;begin // STanda
+	FVDI_DISPATCH	1
+	rts
+
+*----------
 * Set pixel
 *----------
 * In:	a1	VDI struct, destination MFDB (odd address marks table operation)
@@ -42,16 +56,9 @@ write_pixel:
 	rts
 ;end //STanda
 
-*----------
-* Get pixel
-*----------
-* In:	a1	VDI struct, source MFDB
-*	d1	x
-*	d2	y
-_read_pixel:
-read_pixel:
-;begin // STanda
-	FVDI_DISPATCH	1
+_mouse_draw:
+mouse_draw:
+	FVDI_DISPATCH	3
 	rts
 
 _expand_area:

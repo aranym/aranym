@@ -32,6 +32,11 @@ extern "C" {
  #define DLLINTERFACE
 #endif
 
+/* STanda: pattern ability... HACK */
+
+extern unsigned short *areaPattern;
+extern unsigned short  linePattern;
+
 /* ----- Prototypes */
 
 /* Note: all ___Color routines expect the color to be in format 0xRRGGBBAA */

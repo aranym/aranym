@@ -9,22 +9,24 @@
 
 
 #include <SDL/SDL.h>
+#include "gfxprimitives.h"
 
 
 class HostScreen {
 protected:
-	SDL_Surface *surf; // The main window surface
+	SDL_Surface *surf;  // The main window surface
 	uint32 sdl_videoparams;
 	uint32 width, height;
 	bool   doUpdate; // the HW surface is available -> the SDL need not to update the surface after ->pixel access
 	uint32 sdl_colors[256]; // TOS palette (bpp < 16) to SDL color mapping
 
 public:
+
 	HostScreen() {
 	}
 
-	bool   renderBegin();
-	void   renderEnd();
+	inline bool   renderBegin();
+	inline void   renderEnd();
 
 	// the w, h should be width & height (but C++ complains -> 'if's in the implementation)
 	inline void   update( uint32 x = 0, uint32 y = 0, int32 w = -1, int32 h = -1, bool forced = false );
@@ -44,8 +46,10 @@ public:
 	void   setRendering( bool render );
 
 	// gfx Primitives draw functions
-	void   drawLine( int32 x1, int32 y1, int32 x2, int32 y2, uint32 pattern, uint32 color );
-	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint32 pattern, uint32 color );
+	uint32 getPixel( int32 x, int32 y );
+	void   putPixel( int32 x, int32 y, uint32 color );
+	void   drawLine( int32 x1, int32 y1, int32 x2, int32 y2, uint16 pattern, uint32 color );
+	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color );
 };
 
 
@@ -125,11 +129,38 @@ inline void HostScreen::update( uint32 x, uint32 y, int32 w, int32 h, bool force
 }
 
 
+inline uint32 HostScreen::getPixel( int32 x, int32 y ) {
+	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height || !renderBegin() )
+		return 0;
+
+	// HACK for bpp == 2 FIXME!
+	uint32 color = ((uint16*)surf->pixels)[((uint32)y*width)+(uint32)x*getBpp()];
+	renderEnd();
+	return color;
+}
+
+inline void HostScreen::putPixel( int32 x, int32 y, uint32 color ) {
+	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
+		return;
+
+	uint8 r,g,b,a; SDL_GetRGBA( color, surf->format, &r, &g, &b, &a);
+	pixelRGBA( surf, x, y, r, g, b, a );
+}
+
+
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.2  2001/08/28 23:26:09  standa
+ * The fVDI driver update.
+ * VIDEL got the doRender flag with setter setRendering().
+ *       The host_colors_uptodate variable name was changed to hostColorsSync.
+ * HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
+ *       was created.
+ * fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
+ *
  * Revision 1.1  2001/06/18 13:21:55  standa
  * Several template.cpp like comments were added.
  * HostScreen SDL encapsulation class.
