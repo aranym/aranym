@@ -110,7 +110,6 @@ void ParallelParport::setData(uint8 value)
 uint8 ParallelParport::getBusy()
 {
 	uint8 value;
-	struct ppdev_frob_struct frob;
 
 	value=0;
 	D(bug("ParallelParport: getBusy"));
