@@ -69,16 +69,16 @@
 /*--- Structures ---*/
 
 struct atari_bootinfo {
-    unsigned long machtype;		/* machine type */
-    unsigned long cputype;		/* system CPU */
-    unsigned long fputype;		/* system FPU */
-    unsigned long mmutype;		/* system MMU */
-    int num_memory;				/* # of memory blocks found */
+    uint32 machtype;		/* machine type */
+    uint32 cputype;		/* system CPU */
+    uint32 fputype;		/* system FPU */
+    uint32 mmutype;		/* system MMU */
+    int num_memory;			/* # of memory blocks found */
     struct mem_info memory[NUM_MEMINFO];  /* memory description */
     struct mem_info ramdisk;	/* ramdisk description */
     char command_line[CL_SIZE];	/* kernel command line parameters */
-    unsigned long mch_cookie;	/* _MCH cookie from TOS */
-    unsigned long mch_type;		/* special machine types */
+    uint32 mch_cookie;		/* _MCH cookie from TOS */
+    uint32 mch_type;		/* special machine types */
 };
 
 /*--- Variables ---*/
@@ -170,9 +170,9 @@ void LiloShutdown(void)
 		int i;
 
 		for (i=0; i<16; i++) {
-			unsigned long *tmp;
+			uint32 *tmp;
 
-			tmp = (unsigned long *)(((unsigned char *)FastRAMBaseHost) /*+ 0x14a000*/ + 512);
+			tmp = (uint32 *)(((unsigned char *)FastRAMBaseHost) /*+ 0x14a000*/ + 512);
 			D(bug("lilo: ramdisk[%d]=0x%08x",i, SDL_SwapBE32(tmp[i])));
 		}
 	}
@@ -372,9 +372,9 @@ int LiloCheckKernel(
 
 #if 0
 		for (i=0; i<16; i++) {
-			unsigned long *tmp;
+			uint32 *tmp;
 
-			tmp = (unsigned long *)(((unsigned char *)FastRAMBaseHost) /*+ rd_start*/ + 512);
+			tmp = (uint32 *)(((unsigned char *)FastRAMBaseHost) /*+ rd_start*/ + 512);
 			D(bug("lilo: ramdisk[%d]=0x%08x",i, SDL_SwapBE32(tmp[i])));
 		}
 #endif
@@ -428,17 +428,17 @@ int LiloCheckKernel(
     D(bug("lilo: bootinfo at 0x%08x",KERNEL_START + kernel_size));
 
 	for (i=0; i<16; i++) {
-		unsigned long *tmp;
+		uint32 *tmp;
 
-		tmp = (unsigned long *)(((unsigned char *)RAMBaseHost) + KERNEL_START + kernel_size);
+		tmp = (uint32 *)(((unsigned char *)RAMBaseHost) + KERNEL_START + kernel_size);
 		D(bug("lilo: bi_union.record[%d]=0x%08x",i, SDL_SwapBE32(tmp[i])));
 	}
 
 	/*--- Init SP & PC ---*/
 	{
-		unsigned long *tmp;
+		uint32 *tmp;
 
-		tmp = (unsigned long *)RAMBaseHost;
+		tmp = (uint32 *)RAMBaseHost;
 		tmp[0] = SDL_SwapBE32(KERNEL_START);	/* SP */
 		tmp[1] = SDL_SwapBE32(KERNEL_START);	/* PC */
 	}
