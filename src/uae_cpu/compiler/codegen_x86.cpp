@@ -132,17 +132,17 @@ const bool optimize_shift_once	= true;
  * Actual encoding of the instructions on the target CPU                 *
  *************************************************************************/
 
-static __inline__ int isaccum(int r)
+static inline int isaccum(int r)
 {
 	return (r == EAX_INDEX);
 }
 
-static __inline__ int isbyte(uae_s32 x)
+static inline int isbyte(uae_s32 x)
 {
 	return (x>=-128 && x<=127);
 }
 
-static __inline__ int isword(uae_s32 x)
+static inline int isword(uae_s32 x)
 {
 	return (x>=-32768 && x<=32767);
 }
@@ -1934,13 +1934,13 @@ LENDFUNC(WRITE,READ,0,raw_popfl,(void))
  * Unoptimizable stuff --- jump                                          *
  *************************************************************************/
 
-static __inline__ void raw_call_r(R4 r)
+static inline void raw_call_r(R4 r)
 {
     emit_byte(0xff);
     emit_byte(0xd0+r);
 }
 
-static __inline__ void raw_call_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
+static inline void raw_call_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
 {
     int mu;
     switch(m) {
@@ -1956,13 +1956,13 @@ static __inline__ void raw_call_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
     emit_long(base);
 }
 
-static __inline__ void raw_jmp_r(R4 r)
+static inline void raw_jmp_r(R4 r)
 {
     emit_byte(0xff);
     emit_byte(0xe0+r);
 }
 
-static __inline__ void raw_jmp_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
+static inline void raw_jmp_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
 {
     int mu;
     switch(m) {
@@ -1978,7 +1978,7 @@ static __inline__ void raw_jmp_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
     emit_long(base);
 }
 
-static __inline__ void raw_jmp_m(uae_u32 base)
+static inline void raw_jmp_m(uae_u32 base)
 {
     emit_byte(0xff);
     emit_byte(0x25);
@@ -1986,87 +1986,87 @@ static __inline__ void raw_jmp_m(uae_u32 base)
 }
 
 
-static __inline__ void raw_call(uae_u32 t)
+static inline void raw_call(uae_u32 t)
 {
     emit_byte(0xe8);
     emit_long(t-(uae_u32)target-4);
 }
 
-static __inline__ void raw_jmp(uae_u32 t)
+static inline void raw_jmp(uae_u32 t)
 {
     emit_byte(0xe9);
     emit_long(t-(uae_u32)target-4);
 }
 
-static __inline__ void raw_jl(uae_u32 t)
+static inline void raw_jl(uae_u32 t)
 {
     emit_byte(0x0f);
     emit_byte(0x8c);
     emit_long(t-(uae_u32)target-4);
 }
 
-static __inline__ void raw_jz(uae_u32 t)
+static inline void raw_jz(uae_u32 t)
 {
     emit_byte(0x0f);
     emit_byte(0x84);
     emit_long(t-(uae_u32)target-4);
 }
 
-static __inline__ void raw_jnz(uae_u32 t)
+static inline void raw_jnz(uae_u32 t)
 {
     emit_byte(0x0f);
     emit_byte(0x85);
     emit_long(t-(uae_u32)target-4);
 }
 
-static __inline__ void raw_jnz_l_oponly(void)
+static inline void raw_jnz_l_oponly(void)
 {
     emit_byte(0x0f); 
     emit_byte(0x85); 
 }
 
-static __inline__ void raw_jcc_l_oponly(int cc)
+static inline void raw_jcc_l_oponly(int cc)
 {
     emit_byte(0x0f); 
     emit_byte(0x80+cc); 
 }
 
-static __inline__ void raw_jnz_b_oponly(void)
+static inline void raw_jnz_b_oponly(void)
 {
     emit_byte(0x75); 
 }
 
-static __inline__ void raw_jz_b_oponly(void)
+static inline void raw_jz_b_oponly(void)
 {
     emit_byte(0x74); 
 }
 
-static __inline__ void raw_jcc_b_oponly(int cc)
+static inline void raw_jcc_b_oponly(int cc)
 {
 	emit_byte(0x70+cc);
 }
 
-static __inline__ void raw_jmp_l_oponly(void)
+static inline void raw_jmp_l_oponly(void)
 {
     emit_byte(0xe9); 
 }
 
-static __inline__ void raw_jmp_b_oponly(void)
+static inline void raw_jmp_b_oponly(void)
 {
     emit_byte(0xeb); 
 }
 
-static __inline__ void raw_ret(void)
+static inline void raw_ret(void)
 {
     emit_byte(0xc3);  
 }
 
-static __inline__ void raw_nop(void)
+static inline void raw_nop(void)
 {
     emit_byte(0x90);
 }
 
-static __inline__ void raw_emit_nop_filler(int nbytes)
+static inline void raw_emit_nop_filler(int nbytes)
 {
   /* Source: GNU Binutils 2.12.90.0.15 */
   /* Various efficient no-op patterns for aligning code labels.
@@ -2136,7 +2136,7 @@ static __inline__ void raw_emit_nop_filler(int nbytes)
 
 #define FLAG_NREG1 0  /* Set to -1 if any register will do */
 
-static __inline__ void raw_flags_to_reg(int r)
+static inline void raw_flags_to_reg(int r)
 {
   raw_lahf(0);  /* Most flags in AH */
   //raw_setcc(r,0); /* V flag in AL */
@@ -2158,7 +2158,7 @@ static __inline__ void raw_flags_to_reg(int r)
 }
 
 #define FLAG_NREG2 0  /* Set to -1 if any register will do */
-static __inline__ void raw_reg_to_flags(int r)
+static inline void raw_reg_to_flags(int r)
 {
   raw_cmp_b_ri(r,-127); /* set V */
   raw_sahf(0);
@@ -2167,7 +2167,7 @@ static __inline__ void raw_reg_to_flags(int r)
 #else
 
 #define FLAG_NREG1 -1  /* Set to -1 if any register will do */
-static __inline__ void raw_flags_to_reg(int r)
+static inline void raw_flags_to_reg(int r)
 {
 	raw_pushfl();
 	raw_pop_l_r(r);
@@ -2184,7 +2184,7 @@ static __inline__ void raw_flags_to_reg(int r)
 }
 
 #define FLAG_NREG2 -1  /* Set to -1 if any register will do */
-static __inline__ void raw_reg_to_flags(int r)
+static inline void raw_reg_to_flags(int r)
 {
 	raw_push_l_r(r);
 	raw_popfl();
@@ -2194,7 +2194,7 @@ static __inline__ void raw_reg_to_flags(int r)
 
 /* Apparently, there are enough instructions between flag store and
    flag reload to avoid the partial memory stall */
-static __inline__ void raw_load_flagreg(uae_u32 target, uae_u32 r)
+static inline void raw_load_flagreg(uae_u32 target, uae_u32 r)
 {
 #if 1
     raw_mov_l_rm(target,(uae_u32)live.state[r].mem);
@@ -2205,7 +2205,7 @@ static __inline__ void raw_load_flagreg(uae_u32 target, uae_u32 r)
 }
 
 /* FLAGX is byte sized, and we *do* write it at that size */
-static __inline__ void raw_load_flagx(uae_u32 target, uae_u32 r)
+static inline void raw_load_flagx(uae_u32 target, uae_u32 r)
 {
     if (live.nat[target].canbyte)
 	raw_mov_b_rm(target,(uae_u32)live.state[r].mem);
@@ -2216,7 +2216,7 @@ static __inline__ void raw_load_flagx(uae_u32 target, uae_u32 r)
 }
 
 
-static __inline__ void raw_inc_sp(int off)
+static inline void raw_inc_sp(int off)
 {
     raw_add_l_ri(ESP_INDEX,off);
 }
@@ -3029,7 +3029,7 @@ raw_init_cpu(void)
  *************************************************************************/
 
 
-static __inline__ void raw_fp_init(void)
+static inline void raw_fp_init(void)
 {
     int i;
     
@@ -3038,7 +3038,7 @@ static __inline__ void raw_fp_init(void)
     live.tos=-1;  /* Stack is empty */
 }
 
-static __inline__ void raw_fp_cleanup_drop(void)
+static inline void raw_fp_cleanup_drop(void)
 {
 #if 0
     /* using FINIT instead of popping all the entries.
@@ -3064,7 +3064,7 @@ static __inline__ void raw_fp_cleanup_drop(void)
     raw_fp_init();
 }
 
-static __inline__ void make_tos(int r)
+static inline void make_tos(int r)
 {
     int p,q;
 
@@ -3090,7 +3090,7 @@ static __inline__ void make_tos(int r)
     live.spos[q]=p;
 }
 
-static __inline__ void make_tos2(int r, int r2)
+static inline void make_tos2(int r, int r2)
 {
     int q;
 
@@ -3114,7 +3114,7 @@ static __inline__ void make_tos2(int r, int r2)
     make_tos(r); /* And r into 1 */
 }
 
-static __inline__ int stackpos(int r)
+static inline int stackpos(int r)
 {
     if (live.spos[r]<0)
 	abort();
@@ -3125,7 +3125,7 @@ static __inline__ int stackpos(int r)
     return live.tos-live.spos[r];
 }
 
-static __inline__ void usereg(int r)
+static inline void usereg(int r)
 {
     if (live.spos[r]<0)
 	make_tos(r);
@@ -3133,7 +3133,7 @@ static __inline__ void usereg(int r)
 
 /* This is called with one FP value in a reg *above* tos, which it will
    pop off the stack if necessary */
-static __inline__ void tos_make(int r)
+static inline void tos_make(int r)
 {
     if (live.spos[r]<0) {
 	live.tos++;
@@ -3698,7 +3698,7 @@ LENDFUNC(NONE,NONE,1,raw_ftst_r,(FR r))
 #define FFLAG_NREG_CLOBBER_CONDITION !have_cmov
 #define FFLAG_NREG EAX_INDEX
 
-static __inline__ void raw_fflags_into_flags(int r)
+static inline void raw_fflags_into_flags(int r)
 {
     int p;
 

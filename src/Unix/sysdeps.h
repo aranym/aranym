@@ -237,6 +237,12 @@ typedef int64 intptr;
 
 #define memptr uint32
 
+#ifndef HAVE_BOOL
+# define bool int
+# define true 1
+# define false 0
+#endif
+
 /* Define codes for all the float formats that we know of.
  * Though we only handle IEEE format.  */
 #define UNKNOWN_FLOAT_FORMAT 0
@@ -370,7 +376,6 @@ static inline uae_u32 do_byteswap_16(uae_u32 v)
 
 #define call_mem_get_func(func, addr) ((*func)(addr))
 #define call_mem_put_func(func, addr, v) ((*func)(addr, v))
-#define __inline__ inline
 #define CPU_EMU_SIZE 0
 #undef NO_INLINE_MEMORY_ACCESS
 #undef MD_HAVE_MEM_1_FUNCS

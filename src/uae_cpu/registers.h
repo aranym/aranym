@@ -129,7 +129,7 @@ extern struct regstruct
     uae_u32 cacr,caar;
 } regs, lastint_regs;
 
-static __inline__ uaecptr m68k_getpc (void)
+static inline uaecptr m68k_getpc (void)
 {
     return regs.pc + ((char *)regs.pc_p - (char *)regs.pc_oldp);
 }

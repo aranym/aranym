@@ -72,7 +72,7 @@ extern uintptr MEMBaseDiff;
 /*
  * "size" is the size of the memory access (byte = 1, word = 2, long = 4)
  */
-static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
+static inline void check_ram_boundary(uaecptr addr, int size, bool write)
 {
 #ifndef NOCHECKBOUNDARY
 	if (addr <= (FastRAM_BEGIN + FastRAM_SIZE - size)) {
@@ -103,12 +103,12 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 # define do_get_real_address(a)		((uae_u8 *)((uintptr)(a) + MEMBaseDiff))
 #endif
 
-static __inline__ uae_u8 *phys_get_real_address(uaecptr addr)
+static inline uae_u8 *phys_get_real_address(uaecptr addr)
 {
     return do_get_real_address(addr);
 }
 
-static __inline__ bool phys_valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
+static inline bool phys_valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
 {
     jmp_buf excep_env_old;
     memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
@@ -123,7 +123,7 @@ static __inline__ bool phys_valid_address(uaecptr addr, bool write, uaecptr pc, 
 }
 
 
-static __inline__ uae_u32 phys_get_long(uaecptr addr)
+static inline uae_u32 phys_get_long(uaecptr addr)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
@@ -142,7 +142,7 @@ static __inline__ uae_u32 phys_get_long(uaecptr addr)
     return do_get_mem_long(m);
 }
 
-static __inline__ uae_u32 phys_get_word(uaecptr addr)
+static inline uae_u32 phys_get_word(uaecptr addr)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
@@ -161,7 +161,7 @@ static __inline__ uae_u32 phys_get_word(uaecptr addr)
     return do_get_mem_word(m);
 }
 
-static __inline__ uae_u32 phys_get_byte(uaecptr addr)
+static inline uae_u32 phys_get_byte(uaecptr addr)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
@@ -180,7 +180,7 @@ static __inline__ uae_u32 phys_get_byte(uaecptr addr)
     return do_get_mem_byte(m);
 }
 
-static __inline__ void phys_put_long(uaecptr addr, uae_u32 l)
+static inline void phys_put_long(uaecptr addr, uae_u32 l)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
@@ -204,7 +204,7 @@ static __inline__ void phys_put_long(uaecptr addr, uae_u32 l)
     do_put_mem_long(m, l);
 }
 
-static __inline__ void phys_put_word(uaecptr addr, uae_u32 w)
+static inline void phys_put_word(uaecptr addr, uae_u32 w)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
@@ -228,7 +228,7 @@ static __inline__ void phys_put_word(uaecptr addr, uae_u32 w)
     do_put_mem_word(m, w);
 }
 
-static __inline__ void phys_put_byte(uaecptr addr, uae_u32 b)
+static inline void phys_put_byte(uaecptr addr, uae_u32 b)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
@@ -253,7 +253,7 @@ static __inline__ void phys_put_byte(uaecptr addr, uae_u32 b)
 }
 
 #ifdef FULLMMU
-static __inline__ uae_u32 get_long(uaecptr addr)
+static inline uae_u32 get_long(uaecptr addr)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -269,7 +269,7 @@ static __inline__ uae_u32 get_long(uaecptr addr)
     return l;
 }
 
-static __inline__ uae_u16 get_word(uaecptr addr)
+static inline uae_u16 get_word(uaecptr addr)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -285,7 +285,7 @@ static __inline__ uae_u16 get_word(uaecptr addr)
     return w;
 }
 
-static __inline__ uae_u8 get_byte(uaecptr addr)
+static inline uae_u8 get_byte(uaecptr addr)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -301,7 +301,7 @@ static __inline__ uae_u8 get_byte(uaecptr addr)
     return b;
 }
 
-static __inline__ void put_long(uaecptr addr, uae_u32 l)
+static inline void put_long(uaecptr addr, uae_u32 l)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -315,7 +315,7 @@ static __inline__ void put_long(uaecptr addr, uae_u32 l)
     excep_env = excep_env_old;
 }
 
-static __inline__ void put_word(uaecptr addr, uae_u16 w)
+static inline void put_word(uaecptr addr, uae_u16 w)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -329,7 +329,7 @@ static __inline__ void put_word(uaecptr addr, uae_u16 w)
     excep_env = excep_env_old;
 }
 
-static __inline__ void put_byte(uaecptr addr, uae_u16 b)
+static inline void put_byte(uaecptr addr, uae_u16 b)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -343,7 +343,7 @@ static __inline__ void put_byte(uaecptr addr, uae_u16 b)
     excep_env = excep_env_old;
 }
 
-static __inline__ uae_u8 *get_real_address(uaecptr addr, int write, int sz)
+static inline uae_u8 *get_real_address(uaecptr addr, int write, int sz)
 {
     wordsizes i = sz_long;
     switch (sz) {
@@ -353,7 +353,7 @@ static __inline__ uae_u8 *get_real_address(uaecptr addr, int write, int sz)
     return phys_get_real_address(mmu_translate(addr, FC_DATA, write, m68k_getpc(), i, 0));
 }
 
-static __inline__ uae_u32 sfc_get_long(uaecptr addr)
+static inline uae_u32 sfc_get_long(uaecptr addr)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -368,7 +368,7 @@ static __inline__ uae_u32 sfc_get_long(uaecptr addr)
     excep_env = excep_env_old;
     return l;
 }
-static __inline__ uae_u16 sfc_get_word(uaecptr addr)
+static inline uae_u16 sfc_get_word(uaecptr addr)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -383,7 +383,7 @@ static __inline__ uae_u16 sfc_get_word(uaecptr addr)
     excep_env = excep_env_old;
     return w;
 }
-static __inline__ uae_u8 sfc_get_byte(uaecptr addr)
+static inline uae_u8 sfc_get_byte(uaecptr addr)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -399,7 +399,7 @@ static __inline__ uae_u8 sfc_get_byte(uaecptr addr)
     return b;
 }
 
-static __inline__ void dfc_put_long(uaecptr addr, uae_u32 l)
+static inline void dfc_put_long(uaecptr addr, uae_u32 l)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -412,7 +412,7 @@ static __inline__ void dfc_put_long(uaecptr addr, uae_u32 l)
     phys_put_long(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_long, 0), l);
     excep_env = excep_env_old;
 }
-static __inline__ void dfc_put_word(uaecptr addr, uae_u16 w)
+static inline void dfc_put_word(uaecptr addr, uae_u16 w)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -425,7 +425,7 @@ static __inline__ void dfc_put_word(uaecptr addr, uae_u16 w)
     phys_put_word(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_word, 0), w);
     excep_env = excep_env_old;
 }
-static __inline__ void dfc_put_byte(uaecptr addr, uae_u16 b)
+static inline void dfc_put_byte(uaecptr addr, uae_u16 b)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
@@ -439,7 +439,7 @@ static __inline__ void dfc_put_byte(uaecptr addr, uae_u16 b)
     excep_env = excep_env_old;
 }
 
-static __inline__ bool valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
+static inline bool valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;

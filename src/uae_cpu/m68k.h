@@ -46,7 +46,7 @@ struct flag_struct {
 
 extern struct flag_struct regflags __asm__ ("regflags");
 
-static __inline__ int cctrue(int cc)
+static inline int cctrue(int cc)
 {
     uae_u32 cznv = regflags.cznv;
     switch(cc){
@@ -189,7 +189,7 @@ struct flag_struct {
 
 extern struct flag_struct regflags __asm__ ("regflags");
 
-static __inline__ int cctrue(int cc)
+static inline int cctrue(int cc)
 {
     uae_u32 cznv = regflags.cznv;
     switch(cc){
@@ -361,7 +361,7 @@ extern struct flag_struct regflags;
 
 #define COPY_CARRY (regflags.x = regflags.nzvc)
 
-static __inline__ int cctrue(int cc)
+static inline int cctrue(int cc)
 {
     uae_u32 nzvc = regflags.nzvc;
     switch(cc){
@@ -1023,7 +1023,7 @@ extern struct flag_struct regflags;
 
 #define COPY_CARRY (SET_XFLG (GET_CFLG))
 
-static __inline__ int cctrue(const int cc)
+static inline int cctrue(const int cc)
 {
     switch(cc){
      case 0: return 1;                       /* T */

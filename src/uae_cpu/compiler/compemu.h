@@ -282,7 +282,7 @@ extern int touchcnt;
 #define MENDFUNC(nargs,func,args) 
 #define COMPCALL(func) func
 
-#define LOWFUNC(flags,mem,nargs,func,args) static __inline__ void func args
+#define LOWFUNC(flags,mem,nargs,func,args) static inline void func args
 #define LENDFUNC(flags,mem,nargs,func,args) 
 
 /* What we expose to the outside */
@@ -585,8 +585,8 @@ void do_nothing(void);
 
 #else
 
-static __inline__ void flush_icache(int) { }
-static __inline__ void build_comp() { }
+static inline void flush_icache(int) { }
+static inline void build_comp() { }
 
 #endif /* !USE_JIT */
 

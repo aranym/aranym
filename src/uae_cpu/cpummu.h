@@ -77,7 +77,7 @@ extern struct mmu_atc_line atc[64];
 #define TTR_NO_WRITE	1
 #define TTR_OK_MATCH	2
 
-static __inline__ void mmu_set_tc(uae_u16 tc)
+static inline void mmu_set_tc(uae_u16 tc)
 {
 	extern void activate_debugger (void);
 	regs.tc = tc;
@@ -98,7 +98,7 @@ static __inline__ void mmu_set_tc(uae_u16 tc)
 
 extern void mmu_make_transparent_region(uaecptr baseaddr, uae_u32 size, int datamode);
 
-static __inline__ void mmu_set_ttr(int regno, uae_u32 val)
+static inline void mmu_set_ttr(int regno, uae_u32 val)
 {
 	uae_u32 * ttr;
 	switch(regno)	{
@@ -111,12 +111,12 @@ static __inline__ void mmu_set_ttr(int regno, uae_u32 val)
 	*ttr = val;
 }
 
-static __inline__ void mmu_set_mmusr(uae_u32 val)
+static inline void mmu_set_mmusr(uae_u32 val)
 {
 	regs.mmusr = val;
 }
 
-static __inline__ void mmu_set_root_pointer(int regno, uae_u32 val)
+static inline void mmu_set_root_pointer(int regno, uae_u32 val)
 {
 	uae_u32 * rp;
 	switch(regno)	{

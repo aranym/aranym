@@ -94,17 +94,17 @@ PRIVATE void FFPU FPU_CONSISTENCY_CHECK_START(void);
 PRIVATE void FFPU FPU_CONSISTENCY_CHECK_STOP(const char *name);
 
 // Get special floating-point value class
-PRIVATE __inline__ uae_u32 FFPU IS_INFINITY (fpu_register const & f);
-PRIVATE __inline__ uae_u32 FFPU IS_NAN (fpu_register const & f);
-PRIVATE __inline__ uae_u32 FFPU IS_ZERO (fpu_register const & f);
-PRIVATE __inline__ uae_u32 FFPU IS_NEGATIVE (fpu_register const & f);
+PRIVATE inline uae_u32 FFPU IS_INFINITY (fpu_register const & f);
+PRIVATE inline uae_u32 FFPU IS_NAN (fpu_register const & f);
+PRIVATE inline uae_u32 FFPU IS_ZERO (fpu_register const & f);
+PRIVATE inline uae_u32 FFPU IS_NEGATIVE (fpu_register const & f);
 
 // Make a special floating-point value
-PRIVATE __inline__ void FFPU MAKE_NAN (fpu_register & f);
-PRIVATE __inline__ void FFPU MAKE_INF_POSITIVE (fpu_register & f);
-PRIVATE __inline__ void FFPU MAKE_INF_NEGATIVE (fpu_register & f);
-PRIVATE __inline__ void FFPU MAKE_ZERO_POSITIVE (fpu_register & f);
-PRIVATE __inline__ void FFPU MAKE_ZERO_NEGATIVE (fpu_register & f);
+PRIVATE inline void FFPU MAKE_NAN (fpu_register & f);
+PRIVATE inline void FFPU MAKE_INF_POSITIVE (fpu_register & f);
+PRIVATE inline void FFPU MAKE_INF_NEGATIVE (fpu_register & f);
+PRIVATE inline void FFPU MAKE_ZERO_POSITIVE (fpu_register & f);
+PRIVATE inline void FFPU MAKE_ZERO_NEGATIVE (fpu_register & f);
 
 // Conversion from extended floating-point values
 PRIVATE uae_s32 FFPU extended_to_signed_32 ( fpu_register const & f ) REGPARAM;
@@ -369,9 +369,9 @@ PRIVATE int FFPU get_fp_ad(uae_u32 opcode, uae_u32 * ad) REGPARAM;
 PRIVATE int FFPU fpp_cond(uae_u32 opcode, int condition) REGPARAM;
 
 // Misc functions
-PRIVATE void __inline__ FFPU set_host_fpu_control_word ();
-PRIVATE void __inline__ FFPU SET_BSUN_ON_NAN ();
-PRIVATE void __inline__ FFPU build_ex_status ();
+PRIVATE void inline FFPU set_host_fpu_control_word ();
+PRIVATE void inline FFPU SET_BSUN_ON_NAN ();
+PRIVATE void inline FFPU build_ex_status ();
 PRIVATE void FFPU do_null_frestore ();
 PRIVATE void FFPU build_fpp_opp_lookup_table ();
 PRIVATE void FFPU set_constant ( fpu_register & f, char *name, double value, uae_s32 mult );

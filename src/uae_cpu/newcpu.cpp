@@ -67,7 +67,7 @@ cpuop_func *cpufunctbl[65536];
 
 int broken_in;
 
-static __inline__ unsigned int cft_map (unsigned int f)
+static inline unsigned int cft_map (unsigned int f)
 {
 #ifndef HAVE_GET_WORD_UNSWAPPED
     return f;
@@ -164,17 +164,17 @@ int lastint_no;
 
 
 #ifdef FULLMMU
-static __inline__ uae_u8 get_ibyte_1(uae_u32 o)
+static inline uae_u8 get_ibyte_1(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o + 1;
     return phys_get_byte(mmu_translate(addr, FC_INST, 0, addr, sz_byte, 0));
 }
-static __inline__ uae_u16 get_iword_1(uae_u32 o)
+static inline uae_u16 get_iword_1(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o;
     return phys_get_word(mmu_translate(addr, FC_INST, 0, addr, sz_word, 0));
 }
-static __inline__ uae_u32 get_ilong_1(uae_u32 o)
+static inline uae_u32 get_ilong_1(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o;
     return phys_get_long(mmu_translate(addr, FC_INST, 0, addr, sz_long, 0));
@@ -602,18 +602,18 @@ void MakeFromSR (void)
 }
 
 /* for building exception frames */
-static __inline__ void exc_push_word(uae_u16 w)
+static inline void exc_push_word(uae_u16 w)
 {
     m68k_areg(regs, 7) -= 2;
     put_word(m68k_areg(regs, 7), w);
 }
-static __inline__ void exc_push_long(uae_u32 l)
+static inline void exc_push_long(uae_u32 l)
 {
     m68k_areg(regs, 7) -= 4;
     put_long (m68k_areg(regs, 7), l);
 }
 
-static __inline__ void exc_make_frame(
+static inline void exc_make_frame(
 		int format,
 		uae_u16	sr,
 		uae_u32 currpc,
@@ -899,7 +899,7 @@ int m68k_movec2 (int regno, uae_u32 *regp)
     return 1;
 }
 
-static __inline__ int
+static inline int
 div_unsigned(uae_u32 src_hi, uae_u32 src_lo, uae_u32 div, uae_u32 *quot, uae_u32 *rem)
 {
 	uae_u32 q = 0, cbit = 0;
@@ -1045,7 +1045,7 @@ void m68k_divl (uae_u32 opcode, uae_u32 src, uae_u16 extra, uaecptr oldpc)
 #endif
 }
 
-static __inline__ void
+static inline void
 mul_unsigned(uae_u32 src1, uae_u32 src2, uae_u32 *dst_hi, uae_u32 *dst_lo)
 {
 	uae_u32 r0 = (src1 & 0xffff) * (src2 & 0xffff);

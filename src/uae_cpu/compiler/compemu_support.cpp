@@ -279,12 +279,12 @@ uae_u32 needflags=0;
  * is in the register and/or the native flags is seen as valid.
  */
 
-static __inline__ blockinfo* get_blockinfo(uae_u32 cl)
+static inline blockinfo* get_blockinfo(uae_u32 cl)
 {
     return cache_tags[cl+1].bi;
 }
 
-static __inline__ blockinfo* get_blockinfo_addr(void* addr)
+static inline blockinfo* get_blockinfo_addr(void* addr)
 {
     blockinfo*  bi=get_blockinfo(cacheline(addr));
 
@@ -301,7 +301,7 @@ static __inline__ blockinfo* get_blockinfo_addr(void* addr)
  * All sorts of list related functions for all of the lists        *
  *******************************************************************/
 
-static __inline__ void remove_from_cl_list(blockinfo* bi)
+static inline void remove_from_cl_list(blockinfo* bi)
 {
     uae_u32 cl=cacheline(bi->pc_p);
 
@@ -315,7 +315,7 @@ static __inline__ void remove_from_cl_list(blockinfo* bi)
 	cache_tags[cl].handler=(cpuop_func *)popall_execute_normal;
 }
 
-static __inline__ void remove_from_list(blockinfo* bi)
+static inline void remove_from_list(blockinfo* bi)
 {
     if (bi->prev_p) 
 	*(bi->prev_p)=bi->next;
@@ -323,13 +323,13 @@ static __inline__ void remove_from_list(blockinfo* bi)
 	bi->next->prev_p=bi->prev_p;
 }
 
-static __inline__ void remove_from_lists(blockinfo* bi)
+static inline void remove_from_lists(blockinfo* bi)
 {
     remove_from_list(bi);
     remove_from_cl_list(bi);
 }
 
-static __inline__ void add_to_cl_list(blockinfo* bi)
+static inline void add_to_cl_list(blockinfo* bi)
 {
     uae_u32 cl=cacheline(bi->pc_p);
     
@@ -343,13 +343,13 @@ static __inline__ void add_to_cl_list(blockinfo* bi)
     cache_tags[cl].handler=bi->handler_to_use;
 }
 
-static __inline__ void raise_in_cl_list(blockinfo* bi)
+static inline void raise_in_cl_list(blockinfo* bi)
 {
     remove_from_cl_list(bi);
     add_to_cl_list(bi);
 }
 
-static __inline__ void add_to_active(blockinfo* bi)
+static inline void add_to_active(blockinfo* bi)
 {
     if (active) 
 	active->prev_p=&(bi->next);
@@ -359,7 +359,7 @@ static __inline__ void add_to_active(blockinfo* bi)
     bi->prev_p=&active;
 }
 
-static __inline__ void add_to_dormant(blockinfo* bi)
+static inline void add_to_dormant(blockinfo* bi)
 {
     if (dormant) 
 	dormant->prev_p=&(bi->next);
@@ -369,7 +369,7 @@ static __inline__ void add_to_dormant(blockinfo* bi)
     bi->prev_p=&dormant;
 }
 
-static __inline__ void remove_dep(dependency* d)
+static inline void remove_dep(dependency* d)
 {
     if (d->prev_p) 
 	*(d->prev_p)=d->next;
@@ -381,13 +381,13 @@ static __inline__ void remove_dep(dependency* d)
 
 /* This block's code is about to be thrown away, so it no longer
    depends on anything else */
-static __inline__ void remove_deps(blockinfo* bi)
+static inline void remove_deps(blockinfo* bi)
 {
     remove_dep(&(bi->dep[0]));
     remove_dep(&(bi->dep[1]));
 }
 
-static __inline__ void adjust_jmpdep(dependency* d, cpuop_func* a)
+static inline void adjust_jmpdep(dependency* d, cpuop_func* a)
 {
     *(d->jmp_off)=(uintptr)a-((uintptr)d->jmp_off+4);
 }
@@ -396,7 +396,7 @@ static __inline__ void adjust_jmpdep(dependency* d, cpuop_func* a)
  * Soft flush handling support functions                            *
  ********************************************************************/
 
-static __inline__ void set_dhtu(blockinfo* bi, cpuop_func* dh)
+static inline void set_dhtu(blockinfo* bi, cpuop_func* dh)
 {
     D2(panicbug("bi is %p",bi));
     if (dh!=bi->direct_handler_to_use) {
@@ -416,7 +416,7 @@ static __inline__ void set_dhtu(blockinfo* bi, cpuop_func* dh)
     }
 }
 
-static __inline__ void invalidate_block(blockinfo* bi)
+static inline void invalidate_block(blockinfo* bi)
 {
     int i;
 
@@ -435,7 +435,7 @@ static __inline__ void invalidate_block(blockinfo* bi)
     remove_deps(bi);
 }
 
-static __inline__ void create_jmpdep(blockinfo* bi, int i, uae_u32* jmpaddr, uae_u32 target)
+static inline void create_jmpdep(blockinfo* bi, int i, uae_u32* jmpaddr, uae_u32 target)
 {
     blockinfo*  tbi=get_blockinfo_addr((void*)target);
     
@@ -453,7 +453,7 @@ static __inline__ void create_jmpdep(blockinfo* bi, int i, uae_u32* jmpaddr, uae
     tbi->deplist=&(bi->dep[i]);
 }
 
-static __inline__ void block_need_recompile(blockinfo * bi)
+static inline void block_need_recompile(blockinfo * bi)
 {
   uae_u32 cl = cacheline(bi->pc_p);
   
@@ -467,7 +467,7 @@ static __inline__ void block_need_recompile(blockinfo * bi)
   bi->status = BI_NEED_RECOMP;
 }
 
-static __inline__ void mark_callers_recompile(blockinfo * bi)
+static inline void mark_callers_recompile(blockinfo * bi)
 {
   dependency *x = bi->deplist;
 
@@ -500,7 +500,7 @@ static __inline__ void mark_callers_recompile(blockinfo * bi)
   }
 }
 
-static __inline__ blockinfo* get_blockinfo_addr_new(void* addr, int setstate)
+static inline blockinfo* get_blockinfo_addr_new(void* addr, int setstate)
 {
     blockinfo*  bi=get_blockinfo_addr(addr);
     int i;
@@ -625,20 +625,20 @@ static HardBlockAllocator<blockinfo> BlockInfoAllocator;
 static HardBlockAllocator<checksum_info> ChecksumInfoAllocator;
 #endif
 
-static __inline__ checksum_info *alloc_checksum_info(void)
+static inline checksum_info *alloc_checksum_info(void)
 {
 	checksum_info *csi = ChecksumInfoAllocator.acquire();
 	csi->next = NULL;
 	return csi;
 }
 
-static __inline__ void free_checksum_info(checksum_info *csi)
+static inline void free_checksum_info(checksum_info *csi)
 {
 	csi->next = NULL;
 	ChecksumInfoAllocator.release(csi);
 }
 
-static __inline__ void free_checksum_info_chain(checksum_info *csi)
+static inline void free_checksum_info_chain(checksum_info *csi)
 {
 	while (csi != NULL) {
 		checksum_info *csi2 = csi->next;
@@ -647,7 +647,7 @@ static __inline__ void free_checksum_info_chain(checksum_info *csi)
 	}
 }
 
-static __inline__ blockinfo *alloc_blockinfo(void)
+static inline blockinfo *alloc_blockinfo(void)
 {
 	blockinfo *bi = BlockInfoAllocator.acquire();
 #if USE_CHECKSUM_INFO
@@ -656,7 +656,7 @@ static __inline__ blockinfo *alloc_blockinfo(void)
 	return bi;
 }
 
-static __inline__ void free_blockinfo(blockinfo *bi)
+static inline void free_blockinfo(blockinfo *bi)
 {
 #if USE_CHECKSUM_INFO
 	free_checksum_info_chain(bi->csi);
@@ -665,7 +665,7 @@ static __inline__ void free_blockinfo(blockinfo *bi)
 	BlockInfoAllocator.release(bi);
 }
 
-static __inline__ void alloc_blockinfos(void) 
+static inline void alloc_blockinfos(void) 
 {
     int i;
     blockinfo* bi;
@@ -688,30 +688,30 @@ static  void emit_init(void)
 {
 }
 
-static __inline__ void emit_byte(uae_u8 x)
+static inline void emit_byte(uae_u8 x)
 {
     *target++=x;
 }
 
-static __inline__ void emit_word(uae_u16 x)
+static inline void emit_word(uae_u16 x)
 {
     *((uae_u16*)target)=x;
     target+=2;
 }
 
-static __inline__ void emit_long(uae_u32 x)
+static inline void emit_long(uae_u32 x)
 {
     *((uae_u32*)target)=x;
     target+=4;
 }
 
-static __inline__ void emit_block(const uae_u8 *block, uae_u32 blocklen)
+static inline void emit_block(const uae_u8 *block, uae_u32 blocklen)
 {
 	memcpy((uae_u8 *)target,block,blocklen);
 	target+=blocklen;
 }
 
-static __inline__ uae_u32 reverse32(uae_u32 v)
+static inline uae_u32 reverse32(uae_u32 v)
 {
 #if 1
 	// gb-- We have specialized byteswapping functions, just use them
@@ -732,12 +732,12 @@ void set_target(uae_u8* t)
     target=t;
 }
 
-static __inline__ uae_u8* get_target_noopt(void)
+static inline uae_u8* get_target_noopt(void)
 {
     return target;
 }
 
-__inline__ uae_u8* get_target(void)
+inline uae_u8* get_target(void)
 {
     return get_target_noopt();
 }
@@ -790,7 +790,7 @@ static void flags_to_stack(void)
     live.flags_on_stack=VALID;
 }
 
-static __inline__ void clobber_flags(void)
+static inline void clobber_flags(void)
 {
     if (live.flags_in_flags==VALID && live.flags_on_stack!=VALID)
 	flags_to_stack();
@@ -798,7 +798,7 @@ static __inline__ void clobber_flags(void)
 }
 
 /* Prepare for leaving the compiled stuff */
-static __inline__ void flush_flags(void)
+static inline void flush_flags(void)
 {
     flags_to_stack();
     return;
@@ -819,7 +819,7 @@ static uae_s8 nstate[N_REGS];
 #define L_NEEDED -2
 #define L_UNNEEDED -3
 
-static __inline__ void big_to_small_state(bigstate * b, smallstate * s)
+static inline void big_to_small_state(bigstate * b, smallstate * s)
 {
   int i;
 	
@@ -829,7 +829,7 @@ static __inline__ void big_to_small_state(bigstate * b, smallstate * s)
 	s->nat[i] = nstate[i];
 }
 
-static __inline__ int callers_need_recompile(bigstate * b, smallstate * s)
+static inline int callers_need_recompile(bigstate * b, smallstate * s)
 {
   int i;
   int reverse = 0;
@@ -852,7 +852,7 @@ static __inline__ int callers_need_recompile(bigstate * b, smallstate * s)
   return 0;
 }
 
-static __inline__ void log_startblock(void)
+static inline void log_startblock(void)
 {
   int i;
 
@@ -865,19 +865,19 @@ static __inline__ void log_startblock(void)
 }
 
 /* Using an n-reg for a temp variable */
-static __inline__ void log_isused(int n)
+static inline void log_isused(int n)
 {
   if (nstate[n] == L_UNKNOWN)
 	nstate[n] = L_UNAVAIL;
 }
 
-static __inline__ void log_visused(int r)
+static inline void log_visused(int r)
 {
   if (vstate[r] == L_UNKNOWN)
 	vstate[r] = L_NEEDED;
 }
 
-static __inline__ void do_load_reg(int n, int r)
+static inline void do_load_reg(int n, int r)
 {
   if (r == FLAGTMP)
 	raw_load_flagreg(n, r);
@@ -887,18 +887,18 @@ static __inline__ void do_load_reg(int n, int r)
 	raw_mov_l_rm(n, (uae_u32) live.state[r].mem);
 }
 
-static __inline__ void check_load_reg(int n, int r)
+static inline void check_load_reg(int n, int r)
 {
   raw_mov_l_rm(n, (uae_u32) live.state[r].mem);
 }
 
-static __inline__ void log_vwrite(int r)
+static inline void log_vwrite(int r)
 {
   vwritten[r] = 1;
 }
 
 /* Using an n-reg to hold a v-reg */
-static __inline__ void log_isreg(int n, int r)
+static inline void log_isreg(int n, int r)
 {
   static int count = 0;
   
@@ -913,7 +913,7 @@ static __inline__ void log_isreg(int n, int r)
 	vstate[r] = L_NEEDED;
 }
 
-static __inline__ void log_clobberreg(int r)
+static inline void log_clobberreg(int r)
 {
   if (vstate[r] == L_UNKNOWN)
 	vstate[r] = L_UNNEEDED;
@@ -921,7 +921,7 @@ static __inline__ void log_clobberreg(int r)
 
 /* This ends all possibility of clever register allocation */
 
-static __inline__ void log_flush(void)
+static inline void log_flush(void)
 {
   int i;
   
@@ -933,7 +933,7 @@ static __inline__ void log_flush(void)
 	  nstate[i] = L_UNAVAIL;
 }
 
-static __inline__ void log_dump(void)
+static inline void log_dump(void)
 {
   int i;
   
@@ -963,19 +963,19 @@ static __inline__ void log_dump(void)
  * register status handling. EMIT TIME!                             *
  ********************************************************************/
 
-static __inline__ void set_status(int r, int status)
+static inline void set_status(int r, int status)
 {
 	if (status == ISCONST)
 		log_clobberreg(r);
     live.state[r].status=status;
 }
 
-static __inline__ int isinreg(int r)
+static inline int isinreg(int r)
 {
     return live.state[r].status==CLEAN || live.state[r].status==DIRTY;
 }
 
-static __inline__ void adjust_nreg(int r, uae_u32 val)
+static inline void adjust_nreg(int r, uae_u32 val)
 {
     if (!val)
 	return;
@@ -1010,7 +1010,7 @@ static  void tomem(int r)
     }
 }
 
-static __inline__ int isconst(int r)
+static inline int isconst(int r)
 {
     return live.state[r].status==ISCONST;
 }
@@ -1020,7 +1020,7 @@ int is_const(int r)
     return isconst(r);
 }
 
-static __inline__ void writeback_const(int r)
+static inline void writeback_const(int r)
 {
     if (!isconst(r))
 	return;
@@ -1035,7 +1035,7 @@ static __inline__ void writeback_const(int r)
     set_status(r,INMEM);
 }
 
-static __inline__ void tomem_c(int r)
+static inline void tomem_c(int r)
 {
     if (isconst(r)) {
 	writeback_const(r);
@@ -1071,7 +1071,7 @@ static  void evict(int r)
     set_status(r,INMEM);
 }
 
-static __inline__ void free_nreg(int r)
+static inline void free_nreg(int r)
 {
     int i=live.nat[r].nholds;
 
@@ -1089,7 +1089,7 @@ static __inline__ void free_nreg(int r)
 }
 
 /* Use with care! */
-static __inline__ void isclean(int r)
+static inline void isclean(int r)
 {
     if (!isinreg(r))
 	return;
@@ -1099,20 +1099,20 @@ static __inline__ void isclean(int r)
     set_status(r,CLEAN);
 }
 
-static __inline__ void disassociate(int r)
+static inline void disassociate(int r)
 {
     isclean(r);
     evict(r);
 }
 
-static __inline__ void set_const(int r, uae_u32 val)
+static inline void set_const(int r, uae_u32 val)
 {
     disassociate(r);
     live.state[r].val=val;
     set_status(r,ISCONST);
 }
 
-static __inline__ uae_u32 get_offset(int r)
+static inline uae_u32 get_offset(int r)
 {
     return live.state[r].val;
 }
@@ -1282,7 +1282,7 @@ static void mov_nregs(int d, int s)
 }
 
 
-static __inline__ void make_exclusive(int r, int size, int spec)
+static inline void make_exclusive(int r, int size, int spec)
 {
     int clobber;
     reg_status oldstate;
@@ -1354,12 +1354,12 @@ static __inline__ void make_exclusive(int r, int size, int spec)
     unlock2(rr); 
 }
 
-static __inline__ void add_offset(int r, uae_u32 off)
+static inline void add_offset(int r, uae_u32 off)
 {
     live.state[r].val+=off;
 }
 
-static __inline__ void remove_offset(int r, int spec)
+static inline void remove_offset(int r, int spec)
 {
     reg_status oldstate;
     int rr;
@@ -1397,7 +1397,7 @@ static __inline__ void remove_offset(int r, int spec)
     abort();
 }
 
-static __inline__ void remove_all_offsets(void)
+static inline void remove_all_offsets(void)
 {
     int i;
 
@@ -1405,7 +1405,7 @@ static __inline__ void remove_all_offsets(void)
 	remove_offset(i,-1);
 }
 
-static __inline__ int readreg_general(int r, int size, int spec, int can_offset)
+static inline int readreg_general(int r, int size, int spec, int can_offset)
 {
     int n;
     int answer=-1;
@@ -1481,7 +1481,7 @@ static int readreg_offset(int r, int size)
  * OUTPUT
  * - hard (physical, x86 here) register allocated to virtual register r
  */
-static __inline__ int writereg_general(int r, int size, int spec)
+static inline int writereg_general(int r, int size, int spec)
 {
     int n;
     int answer=-1;
@@ -1562,7 +1562,7 @@ static int writereg_specific(int r, int size, int spec)
     return writereg_general(r,size,spec);
 }
 
-static __inline__ int rmw_general(int r, int wsize, int rsize, int spec)
+static inline int rmw_general(int r, int wsize, int rsize, int spec)
 {
     int n;
     int answer=-1;
@@ -1679,7 +1679,7 @@ static  void f_tomem_drop(int r)
 }
 
 
-static __inline__ int f_isinreg(int r)
+static inline int f_isinreg(int r)
 {
     return live.fate[r].status==CLEAN || live.fate[r].status==DIRTY;
 }
@@ -1713,7 +1713,7 @@ static void f_evict(int r)
     live.fate[r].realreg=-1;
 }
 
-static __inline__ void f_free_nreg(int r)
+static inline void f_free_nreg(int r)
 {
     int i=live.fat[r].nholds;
 
@@ -1732,14 +1732,14 @@ static __inline__ void f_free_nreg(int r)
 
 
 /* Use with care! */
-static __inline__ void f_isclean(int r)
+static inline void f_isclean(int r)
 {
     if (!f_isinreg(r))
 	return;
     live.fate[r].status=CLEAN;
 }
 
-static __inline__ void f_disassociate(int r)
+static inline void f_disassociate(int r)
 {
     f_isclean(r);
     f_evict(r);
@@ -1811,7 +1811,7 @@ static  void f_setlock(int r)
     live.fat[r].locked++;
 }
 
-static __inline__ int f_readreg(int r)
+static inline int f_readreg(int r)
 {
     int n;
     int answer=-1;
@@ -1830,7 +1830,7 @@ static __inline__ int f_readreg(int r)
     return answer;
 }
 
-static __inline__ void f_make_exclusive(int r, int clobber)
+static inline void f_make_exclusive(int r, int clobber)
 {
     freg_status oldstate;
     int rr=live.fate[r].realreg;
@@ -1888,7 +1888,7 @@ static __inline__ void f_make_exclusive(int r, int clobber)
 }
 
 
-static __inline__ int f_writereg(int r)
+static inline int f_writereg(int r)
 {
     int n;
     int answer=-1;
@@ -4620,7 +4620,7 @@ static inline const char *str_on_off(bool b)
 	return b ? "on" : "off";
 }
 
-static __inline__ unsigned int cft_map (unsigned int f)
+static inline unsigned int cft_map (unsigned int f)
 {
 #ifndef HAVE_GET_WORD_UNSWAPPED
     return f;
@@ -4989,7 +4989,7 @@ static void align_target(uae_u32 a)
 	}
 }
 
-static __inline__ int isinrom(uintptr addr)
+static inline int isinrom(uintptr addr)
 {
 	return ((addr >= (uintptr)ROMBaseHost) && (addr < (uintptr)ROMBaseHost + ROMSize));
 }
@@ -5100,7 +5100,7 @@ void writebyte(int address, int source, int tmp)
 	writemem_real(address,source,20,1,tmp,0);
 }
 
-static __inline__ void writeword_general(int address, int source, int tmp,
+static inline void writeword_general(int address, int source, int tmp,
 					 int clobber)
 {
 	writemem_real(address,source,16,2,tmp,clobber);
@@ -5116,7 +5116,7 @@ void writeword(int address, int source, int tmp)
     writeword_general(address,source,tmp,0);
 }
 
-static __inline__ void writelong_general(int address, int source, int tmp, 
+static inline void writelong_general(int address, int source, int tmp, 
 					 int clobber)
 {
 	writemem_real(address,source,12,4,tmp,clobber);
@@ -5531,7 +5531,7 @@ static void check_checksum(void)
 	execute_normal();
 }
 
-static __inline__ void match_states(blockinfo* bi)
+static inline void match_states(blockinfo* bi)
 {
     int i;
     smallstate* s=&(bi->env);
@@ -5572,7 +5572,7 @@ static __inline__ void match_states(blockinfo* bi)
 
 static uae_u8 popallspace[1024]; /* That should be enough space */
 
-static __inline__ void create_popalls(void)
+static inline void create_popalls(void)
 {
   int i,r;
 
@@ -5657,7 +5657,7 @@ static __inline__ void create_popalls(void)
   raw_jmp_m_indexed((uae_u32)cache_tags,r,4);
 }
 
-static __inline__ void reset_lists(void)
+static inline void reset_lists(void)
 {
     int i;
     
@@ -5874,7 +5874,7 @@ static void flush_icache_hard(int n)
    we simply mark everything as "needs to be checked". 
 */
 
-static __inline__ void flush_icache_lazy(int n)
+static inline void flush_icache_lazy(int n)
 {
     uae_u32 i;
     blockinfo* bi;

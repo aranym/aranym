@@ -48,7 +48,7 @@ extern void mmu_make_transparent_region(uaecptr baseaddr, uae_u32 size, int data
 }
 
 /* check if an address matches a ttr */
-static __inline__ int mmu_match_ttr(uae_u32 ttr, uaecptr addr, int write, int test)
+static inline int mmu_match_ttr(uae_u32 ttr, uaecptr addr, int write, int test)
 {
 	if (ttr & MMU_TTR_BIT_ENABLED)	{	/* TTR enabled */
 		uae_u8 msb, match, mask;

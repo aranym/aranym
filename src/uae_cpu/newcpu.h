@@ -77,17 +77,17 @@ extern cpuop_rettype REGPARAM2 op_illg (uae_u32) REGPARAM;
 #define m68k_areg(r,num) (((r).regs + 8)[(num)])
 
 #ifdef FULLMMU
-static __inline__ uae_u8 get_ibyte(uae_u32 o)
+static inline uae_u8 get_ibyte(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o + 1;
     return phys_get_byte(mmu_translate(addr, FC_INST, 0, addr, sz_byte, 0));
 }
-static __inline__ uae_u16 get_iword(uae_u32 o)
+static inline uae_u16 get_iword(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o;
     return phys_get_word(mmu_translate(addr, FC_INST, 0, addr, sz_word, 0));
 }
-static __inline__ uae_u32 get_ilong(uae_u32 o)
+static inline uae_u32 get_ilong(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o;
     return phys_get_long(mmu_translate(addr, FC_INST, 0, addr, sz_long, 0));
@@ -100,21 +100,21 @@ static __inline__ uae_u32 get_ilong(uae_u32 o)
 #endif
 
 #if 0
-static __inline__ uae_u32 get_ibyte_prefetch (uae_s32 o)
+static inline uae_u32 get_ibyte_prefetch (uae_s32 o)
 {
     if (o > 3 || o < 0)
 	return do_get_mem_byte((uae_u8 *)(do_get_real_address(regs.pcp, false, false) + o + 1));
 
     return do_get_mem_byte((uae_u8 *)(((uae_u8 *)&regs.prefetch) + o + 1));
 }
-static __inline__ uae_u32 get_iword_prefetch (uae_s32 o)
+static inline uae_u32 get_iword_prefetch (uae_s32 o)
 {
     if (o > 3 || o < 0)
 	return do_get_mem_word((uae_u16 *)(do_get_real_address(regs.pcp, false, false) + o));
 
     return do_get_mem_word((uae_u16 *)(((uae_u8 *)&regs.prefetch) + o));
 }
-static __inline__ uae_u32 get_ilong_prefetch (uae_s32 o)
+static inline uae_u32 get_ilong_prefetch (uae_s32 o)
 {
     if (o > 3 || o < 0)
 	return do_get_mem_long((uae_u32 *)(do_get_real_address(regs.pcp, false, false) + o));
@@ -126,7 +126,7 @@ static __inline__ uae_u32 get_ilong_prefetch (uae_s32 o)
 
 #define m68k_incpc(o) (regs.pc_p += (o))
 
-static __inline__ void fill_prefetch_0 (void)
+static inline void fill_prefetch_0 (void)
 {
 #if USE_PREFETCH_BUFFER
     uae_u32 r;
@@ -141,7 +141,7 @@ static __inline__ void fill_prefetch_0 (void)
 }
 
 #if 0
-static __inline__ void fill_prefetch_2 (void)
+static inline void fill_prefetch_2 (void)
 {
     uae_u32 r = do_get_mem_long (&regs.prefetch) << 16;
     uae_u32 r2 = do_get_mem_word (((uae_u16 *)do_get_real_address(regs.pcp, false, false)) + 1);
@@ -154,28 +154,28 @@ static __inline__ void fill_prefetch_2 (void)
 
 /* These are only used by the 68020/68881 code, and therefore don't
  * need to handle prefetch.  */
-static __inline__ uae_u32 next_ibyte (void)
+static inline uae_u32 next_ibyte (void)
 {
     uae_u32 r = get_ibyte (0);
     m68k_incpc (2);
     return r;
 }
 
-static __inline__ uae_u32 next_iword (void)
+static inline uae_u32 next_iword (void)
 {
     uae_u32 r = get_iword (0);
     m68k_incpc (2);
     return r;
 }
 
-static __inline__ uae_u32 next_ilong (void)
+static inline uae_u32 next_ilong (void)
 {
     uae_u32 r = get_ilong (0);
     m68k_incpc (4);
     return r;
 }
 
-static __inline__ void m68k_setpc (uaecptr newpc)
+static inline void m68k_setpc (uaecptr newpc)
 {
     regs.pc_p = regs.pc_oldp = get_real_address(newpc, 0, sz_word);
     regs.pc = newpc;
@@ -185,27 +185,27 @@ static __inline__ void m68k_setpc (uaecptr newpc)
 #define m68k_setpc_bcc  m68k_setpc
 #define m68k_setpc_rte  m68k_setpc
 
-static __inline__ void m68k_do_rts(void)
+static inline void m68k_do_rts(void)
 {
     m68k_setpc(get_long(m68k_areg(regs, 7)));
     m68k_areg(regs, 7) += 4;
 }
  
-static __inline__ void m68k_do_bsr(uaecptr oldpc, uae_s32 offset)
+static inline void m68k_do_bsr(uaecptr oldpc, uae_s32 offset)
 {
     m68k_areg(regs, 7) -= 4;
     put_long(m68k_areg(regs, 7), oldpc);
     m68k_incpc(offset);
 }
  
-static __inline__ void m68k_do_jsr(uaecptr oldpc, uaecptr dest)
+static inline void m68k_do_jsr(uaecptr oldpc, uaecptr dest)
 {
     m68k_areg(regs, 7) -= 4;
     put_long(m68k_areg(regs, 7), oldpc);
     m68k_setpc(dest);
 }
 
-static __inline__ void m68k_setstopped (int stop)
+static inline void m68k_setstopped (int stop)
 {
     regs.stopped = stop;
     /* A traced STOP instruction drops through immediately without

@@ -162,11 +162,33 @@ AC_CHECK_HEADERS(termios.h termio.h alloca.h sys/statfs.h sys/statvfs.h)
 AC_CHECK_HEADERS(sys/types.h sys/stat.h sys/vfs.h utime.h sys/param.h)
 AC_CHECK_HEADERS(sys/mount.h types.h stat.h)
 
+dnl checks for new version of ANSI C++ includes
+AC_DEFUN([AC_CXX_CHEADERS],
+  [AC_CACHE_CHECK([for ANSI C++ headers],
+  ac_cv_cxx_cheaders,
+  [AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_COMPILE([
+  #include <cstdlib>
+  #include <cstdio>
+  #include <cerrno>
+  #include <cstring>
+  #include <new>
+  ],[return 0;],
+  ac_cv_cxx_cheaders=yes, ac_cv_cxx_cheaders=no)
+  AC_LANG_RESTORE
+  ])
+  if test "$ac_cv_cxx_cheaders" = yes; then
+    AC_CHECK_HEADER(cstdlib, [AC_DEFINE(HAVE_NEW_HEADERS, 1, [Define if using new version of ANSI C++ headers.])])
+  fi
+])
+AC_CXX_CHEADERS
+
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
 AC_C_CONST
 AC_C_INLINE
-#AC_C_VOLATILE
+AC_C_VOLATILE
 AC_CHECK_SIZEOF(short, 2)
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
@@ -181,6 +203,25 @@ AC_TYPE_SIZE_T
 AC_TYPE_SIGNAL
 AC_HEADER_TIME
 AC_STRUCT_TM
+
+AC_DEFUN([AC_CXX_BOOL],
+  [AC_CACHE_CHECK(whether the compiler recognizes bool as a built-in type,
+    ac_cv_cxx_bool,
+    [AC_LANG_SAVE
+    AC_LANG_CPLUSPLUS
+    AC_TRY_COMPILE([
+  int f(int  x){return 1;}
+  int f(char x){return 1;}
+  int f(bool x){return 1;}
+  ],[bool b = true; return f(b);],
+  ac_cv_cxx_bool=yes, ac_cv_cxx_bool=no)
+  AC_LANG_RESTORE
+  ])
+  if test "$ac_cv_cxx_bool" = yes; then
+    AC_DEFINE(HAVE_BOOL,,[define if bool is a built-in type])
+  fi
+])
+AC_CXX_BOOL
 
 dnl Checks for libraries
 AC_CHECK_LIB(m, sin)

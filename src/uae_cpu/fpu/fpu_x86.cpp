@@ -236,8 +236,6 @@ PUBLIC void FFPU fpu_dump_flags(void)
 #include "debug.h"
 
 #if FPU_DEBUG
-#undef __inline__
-#define __inline__
 
 PRIVATE void FFPU dump_first_bytes_buf(char *b, uae_u8* buf, uae_s32 actual)
 {
@@ -388,7 +386,7 @@ PRIVATE void FFPU FPU_CONSISTENCY_CHECK_STOP(const char *)
 
 /* ---------------------------- Status functions ---------------------------- */
 
-PRIVATE void __inline__ FFPU SET_BSUN_ON_NAN ()
+PRIVATE void inline FFPU SET_BSUN_ON_NAN ()
 {
 	if( (x86_status_word & (SW_Z_I_NAN_MASK)) == SW_NAN ) {
 		x86_status_word |= SW_FAKE_BSUN;
@@ -396,7 +394,7 @@ PRIVATE void __inline__ FFPU SET_BSUN_ON_NAN ()
 	}
 }
 
-PRIVATE void __inline__ FFPU build_ex_status ()
+PRIVATE void inline FFPU build_ex_status ()
 {
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
@@ -413,7 +411,7 @@ When the FPU creates a NAN, the NAN always contains the same bit pattern
 in the mantissa. All bits of the mantissa are ones for any precision.
 When the user creates a NAN, any nonzero bit pattern can be stored in the mantissa.
 */
-PRIVATE __inline__ void FFPU MAKE_NAN (fpu_register & f)
+PRIVATE inline void FFPU MAKE_NAN (fpu_register & f)
 {
 	// Make it non-signaling.
 	uae_u8 * p = (uae_u8 *) &f;
@@ -426,7 +424,7 @@ For single- and double-precision infinities the fraction is a zero.
 For extended-precision infinities, the mantissa’s MSB, the explicit
 integer bit, can be either one or zero.
 */
-PRIVATE __inline__ uae_u32 FFPU IS_INFINITY (fpu_register const & f)
+PRIVATE inline uae_u32 FFPU IS_INFINITY (fpu_register const & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
 	if( ((p[9] & 0x7F) == 0x7F) && p[8] == 0xFF ) {
@@ -437,7 +435,7 @@ PRIVATE __inline__ uae_u32 FFPU IS_INFINITY (fpu_register const & f)
 	return(0);
 }
 
-PRIVATE __inline__ uae_u32 FFPU IS_NAN (fpu_register const & f)
+PRIVATE inline uae_u32 FFPU IS_NAN (fpu_register const & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
 	if( ((p[9] & 0x7F) == 0x7F) && p[8] == 0xFF ) {
@@ -448,7 +446,7 @@ PRIVATE __inline__ uae_u32 FFPU IS_NAN (fpu_register const & f)
 	return(0);
 }
 
-PRIVATE __inline__ uae_u32 FFPU IS_ZERO (fpu_register const & f)
+PRIVATE inline uae_u32 FFPU IS_ZERO (fpu_register const & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
 	return *((uae_u32 *)p) == 0 &&
@@ -456,34 +454,34 @@ PRIVATE __inline__ uae_u32 FFPU IS_ZERO (fpu_register const & f)
 				 ( *((uae_u16 *)&p[8]) & 0x7FFF ) == 0;
 }
 
-PRIVATE __inline__ void FFPU MAKE_INF_POSITIVE (fpu_register & f)
+PRIVATE inline void FFPU MAKE_INF_POSITIVE (fpu_register & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
 	memset( p, 0, sizeof(fpu_register)-2 );
 	*((uae_u16 *)&p[8]) = 0x7FFF;
 }
 
-PRIVATE __inline__ void FFPU MAKE_INF_NEGATIVE (fpu_register & f)
+PRIVATE inline void FFPU MAKE_INF_NEGATIVE (fpu_register & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
 	memset( p, 0, sizeof(fpu_register)-2 );
 	*((uae_u16 *)&p[8]) = 0xFFFF;
 }
 
-PRIVATE __inline__ void FFPU MAKE_ZERO_POSITIVE (fpu_register & f)
+PRIVATE inline void FFPU MAKE_ZERO_POSITIVE (fpu_register & f)
 {
 	uae_u32 * const p = (uae_u32 *) &f;
 	memset( p, 0, sizeof(fpu_register) );
 }
 
-PRIVATE __inline__ void FFPU MAKE_ZERO_NEGATIVE (fpu_register & f)
+PRIVATE inline void FFPU MAKE_ZERO_NEGATIVE (fpu_register & f)
 {
 	uae_u32 * const p = (uae_u32 *) &f;
 	memset( p, 0, sizeof(fpu_register) );
 	*((uae_u32 *)&p[4]) = 0x80000000;
 }
 
-PRIVATE __inline__ uae_u32 FFPU IS_NEGATIVE (fpu_register const & f)
+PRIVATE inline uae_u32 FFPU IS_NEGATIVE (fpu_register const & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
 	return( (p[9] & 0x80) != 0 );

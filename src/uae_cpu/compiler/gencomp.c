@@ -216,7 +216,7 @@ bit_mask (int size)
     return 0;
 }
 
-static __inline__ void gen_update_next_handler(void)
+static inline void gen_update_next_handler(void)
 {
     return; /* Can anything clever be done here? */
 }
