@@ -125,11 +125,8 @@ uae_u32 HWget_l (uaecptr addr) {
 	if (addr >= 0xf00000 && addr < 0xf0003a)
 		return ide.read_handler(&ide, addr, 4);
 */
-	if (addr == HW_IDE) {
-		uae_u16 x = HWget_w(addr);
-		uae_u16 y = HWget_w(addr);
-		return (x << 16)| y;
-	}
+	if (addr == HW_IDE)
+		return ide.handleReadL(addr);
 	else
 		return (HWget_w(addr) << 16) | HWget_w(addr+2);
 }
@@ -155,10 +152,8 @@ void HWput_l (uaecptr addr, uae_u32 l) {
 //	uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
 //	do_put_mem_long(m, l);
 	D(bug("HWput_l %x,%d ($%08x) -> %s at %08x", addr, l, l, debug_print_IO(addr), showPC()));
-	if (addr == HW_IDE) {
-		HWput_w(addr, l >> 16);
-		HWput_w(addr, l & 0x0000ffff);
-	}
+	if (addr == HW_IDE)
+		ide.handleWriteL(addr, l);
 	else {
 		handleWrite(addr, l >> 24);
 		handleWrite(addr+1, l >> 16);
@@ -189,6 +184,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.34  2001/11/19 17:45:56  joy
+ * parallel port emulation
+ *
  * Revision 1.33  2001/11/15 13:46:01  joy
  * don't use uint, it's undefined on Solaris
  *

@@ -9,4 +9,6 @@ public:
 	virtual void handleWrite(uaecptr addr, uae_u8 value);
 	virtual uae_u16 handleReadW(uaecptr addr);
 	virtual void handleWriteW(uaecptr addr, uae_u16 value);
+	virtual uae_u32 handleReadL(uaecptr addr);
+	virtual void handleWriteL(uaecptr addr, uae_u32 value);
 };
