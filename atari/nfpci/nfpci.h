@@ -23,20 +23,20 @@
 
 /* Functions called by each PCIBIOS backend (_PCI via cookie, XPCI via Xbios */
 
-long find_device(unsigned long device_vendor_id, unsigned short index);
-long find_classcode(unsigned long class_code, unsigned short index);
-long read_config_byte(unsigned long device_handle, void *data, unsigned char num_register);
-long read_config_word(unsigned long device_handle, void *data, unsigned char num_register);
-long read_config_long(unsigned long device_handle, void *data, unsigned char num_register);
-unsigned char read_config_byte_fast(unsigned long device_handle, unsigned char num_register);
-unsigned short read_config_word_fast(unsigned long device_handle, unsigned char num_register);
-unsigned long read_config_long_fast(unsigned long device_handle, unsigned char num_register);
-long write_config_byte(unsigned long device_handle, unsigned char num_register, unsigned char value);
-long write_config_word(unsigned long device_handle, unsigned char num_register, unsigned short value);
-long write_config_long(unsigned long device_handle, unsigned char num_register, unsigned long value);
+long find_device(unsigned long device_vendor_id, unsigned long index);
+long find_classcode(unsigned long class_code, unsigned long index);
+long read_config_byte(unsigned long device_handle, void *data, unsigned long num_register);
+long read_config_word(unsigned long device_handle, void *data, unsigned long num_register);
+long read_config_long(unsigned long device_handle, void *data, unsigned long num_register);
+unsigned char read_config_byte_fast(unsigned long device_handle, unsigned long num_register);
+unsigned short read_config_word_fast(unsigned long device_handle, unsigned long num_register);
+unsigned long read_config_long_fast(unsigned long device_handle, unsigned long num_register);
+long write_config_byte(unsigned long device_handle, unsigned long num_register, unsigned long value);
+long write_config_word(unsigned long device_handle, unsigned long num_register, unsigned long value);
+long write_config_long(unsigned long device_handle, unsigned long num_register, unsigned long value);
 long hook_interrupt(unsigned long device_handle, void (*data)(), unsigned long parameter); 
 long unhook_interrupt(unsigned long device_handle); 
-long special_cycle(unsigned char num_bus, unsigned long data); 
+long special_cycle(unsigned long num_bus, unsigned long data); 
 /* get_routing */
 /* set_interrupt */
 long get_resource(unsigned long device_handle); 
@@ -48,8 +48,8 @@ long read_mem_long(unsigned long device_handle, unsigned long pci_address, unsig
 unsigned char read_mem_byte_fast(unsigned long device_handle, unsigned long pci_address);
 unsigned short read_mem_word_fast(unsigned long device_handle, unsigned long pci_address);
 unsigned long read_mem_long_fast(unsigned long device_handle, unsigned long pci_address);
-long write_mem_byte(unsigned long device_handle, unsigned long pci_address, unsigned char value);
-long write_mem_word(unsigned long device_handle, unsigned long pci_address, unsigned short value);
+long write_mem_byte(unsigned long device_handle, unsigned long pci_address, unsigned long value);
+long write_mem_word(unsigned long device_handle, unsigned long pci_address, unsigned long value);
 long write_mem_long(unsigned long device_handle, unsigned long pci_address, unsigned long value);
 long read_io_byte(unsigned long device_handle, unsigned long pci_address, unsigned char *data);
 long read_io_word(unsigned long device_handle, unsigned long pci_address, unsigned short *data);
@@ -57,8 +57,8 @@ long read_io_long(unsigned long device_handle, unsigned long pci_address, unsign
 unsigned char read_io_byte_fast(unsigned long device_handle, unsigned long pci_address);
 unsigned short read_io_word_fast(unsigned long device_handle, unsigned long pci_address);
 unsigned long read_io_long_fast(unsigned long device_handle, unsigned long pci_address);
-long write_io_byte(unsigned long device_handle, unsigned long pci_address, unsigned char value);
-long write_io_word(unsigned long device_handle, unsigned long pci_address, unsigned short value);
+long write_io_byte(unsigned long device_handle, unsigned long pci_address, unsigned long value);
+long write_io_word(unsigned long device_handle, unsigned long pci_address, unsigned long value);
 long write_io_long(unsigned long device_handle, unsigned long pci_address, unsigned long value);
 long get_machine_id(void);
 unsigned long get_pagesize(void);

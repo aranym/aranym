@@ -204,57 +204,57 @@ static void install_pci_xbios(void)
 
 /* NF PCI functions */
 
-long find_device(unsigned long device_vendor_id, unsigned short index)
+long find_device(unsigned long device_vendor_id, unsigned long index)
 {
 	return nfCall((NFPCI(NFPCI_FIND_DEVICE), device_vendor_id, index));
 }
 
-long find_classcode(unsigned long class_code, unsigned short index)
+long find_classcode(unsigned long class_code, unsigned long index)
 {
 	return nfCall((NFPCI(NFPCI_FIND_CLASSCODE), class_code, index));
 }
 
-long read_config_byte(unsigned long device_handle, void *data, unsigned char num_register)
+long read_config_byte(unsigned long device_handle, void *data, unsigned long num_register)
 {
 	return nfCall((NFPCI(NFPCI_READ_CONFIG_BYTE), device_handle, data, num_register));
 }
 
-long read_config_word(unsigned long device_handle, void *data, unsigned char num_register)
+long read_config_word(unsigned long device_handle, void *data, unsigned long num_register)
 {
 	return nfCall((NFPCI(NFPCI_READ_CONFIG_WORD), device_handle, data, num_register));
 }
 
-long read_config_long(unsigned long device_handle, void *data, unsigned char num_register)
+long read_config_long(unsigned long device_handle, void *data, unsigned long num_register)
 {
 	return nfCall((NFPCI(NFPCI_READ_CONFIG_LONG), device_handle, data, num_register));
 }
 
-unsigned char read_config_byte_fast(unsigned long device_handle, unsigned char num_register)
+unsigned char read_config_byte_fast(unsigned long device_handle, unsigned long num_register)
 {
 	return nfCall((NFPCI(NFPCI_READ_CONFIG_BYTE_FAST), device_handle, num_register));
 }
 
-unsigned short read_config_word_fast(unsigned long device_handle, unsigned char num_register)
+unsigned short read_config_word_fast(unsigned long device_handle, unsigned long num_register)
 {
 	return nfCall((NFPCI(NFPCI_READ_CONFIG_WORD_FAST), device_handle, num_register));
 }
 
-unsigned long read_config_long_fast(unsigned long device_handle, unsigned char num_register)
+unsigned long read_config_long_fast(unsigned long device_handle, unsigned long num_register)
 {
 	return nfCall((NFPCI(NFPCI_READ_CONFIG_LONG_FAST), device_handle, num_register));
 }
 
-long write_config_byte(unsigned long device_handle, unsigned char num_register, unsigned char value)
+long write_config_byte(unsigned long device_handle, unsigned long num_register, unsigned long value)
 {
 	return nfCall((NFPCI(NFPCI_WRITE_CONFIG_BYTE), device_handle, num_register, value));
 }
 
-long write_config_word(unsigned long device_handle, unsigned char num_register, unsigned short value)
+long write_config_word(unsigned long device_handle, unsigned long num_register, unsigned long value)
 {
 	return nfCall((NFPCI(NFPCI_WRITE_CONFIG_WORD), device_handle, num_register, value));
 }
 
-long write_config_long(unsigned long device_handle, unsigned char num_register, unsigned long value)
+long write_config_long(unsigned long device_handle, unsigned long num_register, unsigned long value)
 {
 	return nfCall((NFPCI(NFPCI_WRITE_CONFIG_LONG), device_handle, num_register, value));
 }
@@ -269,7 +269,7 @@ long unhook_interrupt(unsigned long device_handle)
 	return nfCall((NFPCI(NFPCI_UNHOOK_INTERRUPT), device_handle));
 }
  
-long special_cycle(unsigned char num_bus, unsigned long data)
+long special_cycle(unsigned long num_bus, unsigned long data)
 {
 	return nfCall((NFPCI(NFPCI_SPECIAL_CYCLE), num_bus, data));
 }
@@ -323,12 +323,12 @@ unsigned long read_mem_long_fast(unsigned long device_handle, unsigned long pci_
 	return nfCall((NFPCI(NFPCI_READ_MEM_LONG_FAST), device_handle, pci_address));
 }
 
-long write_mem_byte(unsigned long device_handle, unsigned long pci_address, unsigned char value)
+long write_mem_byte(unsigned long device_handle, unsigned long pci_address, unsigned long value)
 {
 	return nfCall((NFPCI(NFPCI_WRITE_MEM_BYTE), device_handle, pci_address, value));
 }
 
-long write_mem_word(unsigned long device_handle, unsigned long pci_address, unsigned short value)
+long write_mem_word(unsigned long device_handle, unsigned long pci_address, unsigned long value)
 {
 	return nfCall((NFPCI(NFPCI_WRITE_MEM_WORD), device_handle, pci_address, value));
 }
@@ -368,12 +368,12 @@ unsigned long read_io_long_fast(unsigned long device_handle, unsigned long pci_a
 	return nfCall((NFPCI(NFPCI_READ_IO_LONG_FAST), device_handle, pci_address));
 }
 
-long write_io_byte(unsigned long device_handle, unsigned long pci_address, unsigned char value)
+long write_io_byte(unsigned long device_handle, unsigned long pci_address, unsigned long value)
 {
 	return nfCall((NFPCI(NFPCI_WRITE_IO_BYTE), device_handle, pci_address, value));
 }
 
-long write_io_word(unsigned long device_handle, unsigned long pci_address, unsigned short value)
+long write_io_word(unsigned long device_handle, unsigned long pci_address, unsigned long value)
 {
 	return nfCall((NFPCI(NFPCI_WRITE_IO_WORD), device_handle, pci_address, value));
 }

@@ -56,12 +56,11 @@ _pcixbios_newtrap:
 	bnes	supervisor_mode
 	movl	usp,a0
 supervisor_mode:
-	movw	a0@,d0
+	movw	a0@+,d0
 	subw	#300,d0
 	bmis	old_xbios
 	cmpw	#42,d0
 	bhis	old_xbios
-	addql	#2,a0
 	jsr		@(pcixbios_function_table,d0:w:4)@(0)
 	rte
 old_xbios:
@@ -89,9 +88,9 @@ _pcixbios_find_classcode:
 
 _pcixbios_read_config_byte:
 	moveql	#0,d0
-	movl	a0@(6),sp@-
-	movw	a0@(4),d0
+	movb	a0@(5),d0
 	movl	d0,sp@-
+	movl	a0@(6),sp@-
 	movl	a0@,sp@-
 	bsr		_read_config_byte
 	lea		sp@(12),sp
@@ -99,9 +98,9 @@ _pcixbios_read_config_byte:
 
 _pcixbios_read_config_word:
 	moveql	#0,d0
-	movl	a0@(6),sp@-
-	movw	a0@(4),d0
+	movb	a0@(5),d0
 	movl	d0,sp@-
+	movl	a0@(6),sp@-
 	movl	a0@,sp@-
 	bsr		_read_config_word
 	lea		sp@(12),sp
@@ -109,9 +108,9 @@ _pcixbios_read_config_word:
 
 _pcixbios_read_config_long:
 	moveql	#0,d0
-	movl	a0@(6),sp@-
-	movw	a0@(4),d0
+	movb	a0@(5),d0
 	movl	d0,sp@-
+	movl	a0@(6),sp@-
 	movl	a0@,sp@-
 	bsr		_read_config_long
 	lea		sp@(12),sp
@@ -119,7 +118,7 @@ _pcixbios_read_config_long:
 
 _pcixbios_read_config_byte_fast:
 	moveql	#0,d0
-	movw	a0@(4),d0
+	movb	a0@(5),d0
 	movl	d0,sp@-
 	movl	a0@,sp@-
 	bsr		_read_config_byte_fast
@@ -128,7 +127,7 @@ _pcixbios_read_config_byte_fast:
 
 _pcixbios_read_config_word_fast:
 	moveql	#0,d0
-	movw	a0@(4),d0
+	movb	a0@(5),d0
 	movl	d0,sp@-
 	movl	a0@,sp@-
 	bsr		_read_config_word_fast
@@ -137,7 +136,7 @@ _pcixbios_read_config_word_fast:
 
 _pcixbios_read_config_long_fast:
 	moveql	#0,d0
-	movw	a0@(4),d0
+	movb	a0@(5),d0
 	movl	d0,sp@-
 	movl	a0@,sp@-
 	bsr		_read_config_long_fast
@@ -146,10 +145,10 @@ _pcixbios_read_config_long_fast:
 
 _pcixbios_write_config_byte:
 	moveql	#0,d0
-	movw	a0@(6),d0
+	movb	a0@(7),d0
 	movl	d0,sp@-
 	moveql	#0,d0
-	movw	a0@(4),d0
+	movb	a0@(5),d0
 	movl	d0,sp@-
 	movl	a0@,sp@-
 	bsr		_write_config_byte
@@ -161,7 +160,7 @@ _pcixbios_write_config_word:
 	movw	a0@(6),d0
 	movl	d0,sp@-
 	moveql	#0,d0
-	movw	a0@(4),d0
+	movb	a0@(5),d0
 	movl	d0,sp@-
 	movl	a0@,sp@-
 	bsr		_write_config_word
@@ -171,7 +170,7 @@ _pcixbios_write_config_word:
 _pcixbios_write_config_long:
 	movl	a0@(6),sp@-
 	moveql	#0,d0
-	movw	a0@(4),d0
+	movb	a0@(5),d0
 	movl	d0,sp@-
 	movl	a0@,sp@-
 	bsr		_write_config_long

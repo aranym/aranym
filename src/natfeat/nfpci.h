@@ -39,6 +39,8 @@
 #define ATARI_PCI_GENERAL_ERROR			0xfffffff8L
 #define ATARI_PCI_BAD_HANDLE			0xfffffff7L
 
+#define ARANYM_PCI_ID	((3<<24)|1)
+
 /*--- Types ---*/
 
 /*--- Class ---*/
