@@ -23,13 +23,13 @@ enum MAINDLG {
 	HOSTFS,
 	CDROM,
 	INOUT,
+	APPLY,
 	text_aranym,
 	REBOOT,
 	SHUTDOWN,
-	text_config,
+	text_conffile,
 	LOAD,
 	SAVE,
-	APPLY,
 	CLOSE
 };
 
@@ -45,15 +45,15 @@ SGOBJ maindlg[] =
   { SGBUTTON, 0, 0, 22,4, 14,1, "Video" },
   { SGBUTTON, 0, 0, 22,6, 14,1, "JIT CPU" },
   { SGBUTTON, 0, 0, 22,8, 14,1, "Host FS" },
-  { SGBUTTON, 0, 0, 22,10, 14,1, "CD-ROM" },
+  { SGBUTTON, 0, 0, 22,10, 14,1, "Host CD/DVD" },
   { SGBUTTON, 0, 0, 22,12, 14,1, "Input/Output" },
+  { SGBUTTON, 0, 0, 7,15, 26,1, "Apply changed settings" },
   { SGTEXT, 0, 0, 4,18, 10,1, "ARAnyM:" },
   { SGBUTTON, 0, 0, 2,20, 10,1, "Reboot" },
   { SGBUTTON, 0, 0, 2,22, 10,1, "Shutdown" },
   { SGTEXT, 0, 0, 17,18, 7,1, "Config:" },
   { SGBUTTON, 0, 0, 17,20, 7,1, "Load" },
   { SGBUTTON, 0, 0, 17,22, 7,1, "Save" },
-  { SGBUTTON, 0, 0, 30,20, 8,1, "Apply" },
   { SGBUTTON, 0, 0, 30,22, 8,1, "Close" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
@@ -127,6 +127,8 @@ void Dialog_MainDlg()
 
       case LOAD:
         LoadSettings();
+  		// preload bx settings
+  		gui_options = bx_options;
       	break;
 
       case SAVE:
