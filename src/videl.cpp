@@ -30,10 +30,10 @@ static const uae_u32 HW = 0xff8200UL;
 
 VIDEL::VIDEL()
 {
-	// SelectVideoMode();
-	// reasonable default values
+	// default resolution to boot with
 	width = 640;
 	height = 480;
+
 	doRender = true; // the rendering is on by default (VIDEL does the bitplane to chunky conversion)
 
 	od_posledni_zmeny = 0;
@@ -41,7 +41,22 @@ VIDEL::VIDEL()
 	hostColorsSync = false;
 }
 
-void VIDEL::init() {
+void VIDEL::init()
+{
+	// preset certain VIDEL registers so that it displays something even
+	// if the VIDEL was not initialized fully and correctly (current EmuTOS)
+	// the following values were read from TOS VGA2 resolution (640x480x1).
+	// for bpp detection (default 1)
+	handleWriteW(HW+0x60, 0x0000);
+	handleWriteW(HW+0x66, 0x0400);
+	handleWriteW(HW+0x82, 0x00c6);
+	// for width (default 640)
+	handleWriteW(HW+0x10, 0x0028);
+	// for height
+	handleWriteW(HW+0xa8, 0x003f);
+	handleWriteW(HW+0xaa, 0x03ff);
+	handleWriteW(HW+0xc2, 0x0008);
+
 	hostScreen.setWindowSize( width, height, 16 );
 }
 
@@ -109,7 +124,7 @@ int VIDEL::getScreenHeight()
 	int yres = vde - vdb;
 	if (!(vmode & 0x02))		// interlace
 		yres >>= 1;
-	if (vmode & 0x01)			// double
+	else if (vmode & 0x01)		// double (mutually exclusive with interlace)
 		yres >>= 1;
 
 	return yres;
@@ -363,6 +378,10 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.32  2001/12/03 20:56:07  standa
+ * The gfsprimitives library files removed. All the staff was moved and
+ * adjusted directly into the HostScreen class.
+ *
  * Revision 1.31  2001/11/18 21:23:20  standa
  * The little/big endian compiletime check. No runtime for big endian graphic
  * cards on little enddian machines, but I think there is no such case.
