@@ -1,3 +1,7 @@
+2001/10/08 - STanda
+- fVDI: the blitting works on destination 16bpp (still no shadow buffer used).
+
+
 2001/10/09 - milan
 - some changes in memory allocation, now support for malloc on dummy platforms
 
