@@ -49,6 +49,7 @@ struct M68kRegisters {
 extern bool InitAll(void);
 extern void ExitAll(void);
 extern bool grabMouse(bool grab);
+extern void virtualInterrupt(void);
 
 // Platform-specific functions
 extern void FlushCodeCache(void *start, uint32 size);	// Code was patched, flush caches if neccessary
@@ -74,6 +75,9 @@ extern void ClearInterruptFlag(uint32 flag);
 
 /*
  * $Log$
+ * Revision 1.6  2001/08/10 18:41:24  milan
+ * Some patches, see ChangeLog (CPU API etc.), debianized
+ *
  * Revision 1.5  2001/07/24 13:58:52  joy
  * grabMouse() called from uae debugger
  *
