@@ -1,3 +1,8 @@
+2003/03/02 - joy
+- natfeat/atari_example_gfa.lst: example for GFA Basic programmers
+- natfeat/atari_example.c: updated for Ssystem() call
+
+
 2003/03/01 - joy
 - parameters.[cpp|h]: single partition devices under the SCSI nickname
   need the partition ID to be configurable
