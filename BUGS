@@ -1,38 +1,23 @@
 General (all platforms) known bugs:
 -----------------------------------
 
-Bug:
-  PureC cannot open project file on host filesystem.
-
-Reason:
-  A MetaDOS related bug in PureC.
-
-Solution:
-  Patch your PureC with supplied patch.
-
+Bug: fVDI (ir its aranym driver) disables bconout during boot
+Reason: unknown, probably a bug in the driver
+Solution: unknown, needs to be debugged and fixed
 --
-
-Bug:
-  Programs started from MetaDOS HOSTFS sometime crash.
-
-Reason:
-  A MetaDOS bug in its Pexec implementation.
-
-Solution:
-  Forget MetaDOS and use BetaDOS 3.12+ instead. Eventually we may develop
-  a binary path for MetaDOS but why would we do that when BetaDOS is a better
-  replacement?
-
+Bug: PureC cannot open project file on host filesystem.
+Reason: A MetaDOS related bug in PureC.
+Solution: Patch your PureC with supplied patch.
 --
-
-Bug:
-  Videlity Configure Tool does not work (hangs during launching)
-
+Bug: Programs started from MetaDOS HOSTFS sometime crash.
+Reason: A MetaDOS bug in its Pexec implementation.
+Solution: Forget MetaDOS and use BetaDOS 3.12+ instead.
+--
+Bug: Videlity Configure Tool does not work (hangs during launching)
 Reason:
   Dirty delay loop - while(clock() == certain_value). This may not work
   even under multitasking system and does not work in current ARAnyM where
   TimerC interrupts come in pairs (100 Hz host interrupt).
-
 Solution:
   General solution is to get a more precise host timer interrupt (at least
   200 Hz). Specific (and suggested) solution is to stop using Videlity and
@@ -49,6 +34,10 @@ This is a limitation of Cygwin, or rather a limitation of the windows itself.
 
 Windows do not allow switching from window to full-screen and back using
 the ScrollLock key.  This might be a limitation of SDL, not sure yet.
+
+Windows have a problem with floppy disk since 0.8.x. Not sure why.
+
+Windows have a problem with NVRAM since 0.8.5. Not sure why.
 
 Only Linux currently supports TUNTAP based Ethernet emulation (AFAIK).
 Although http://home.sprintmail.com/~dtrout/Hercules/ctci-w32-index.html
