@@ -33,7 +33,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-int32 DebugPrintf::dispatch(uint32 fncode)
+int32 DebugPrintf::dispatch(uint32 /*fncode*/)
 {
 	memptr str_ptr = getParameter(0);
 	D(bug("DebugPrintf(%d, %p)", fncode, str_ptr));

@@ -42,7 +42,7 @@ int32 NF_Name::dispatch(uint32 fncode)
 	return strlen(text);
 }
 
-int32 NF_Version::dispatch(uint32 fncode)
+int32 NF_Version::dispatch(uint32 /*fncode*/)
 {
 	return 0x00010000UL;
 }
@@ -55,7 +55,7 @@ int32 NF_Shutdown::dispatch(uint32 fncode)
 	return 0;
 }
 
-int32 NF_StdErr::dispatch(uint32 fncode)
+int32 NF_StdErr::dispatch(uint32 /*fncode*/)
 {
 	memptr str_ptr = getParameter(0);
 	D(bug("NF_StdErr(%d, %p)", fncode, str_ptr));

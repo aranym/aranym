@@ -437,7 +437,7 @@ int eventX = 0;
 int eventY = 0;
 SDL_Thread *GUIthread = NULL;
 
-int open_gui(void *ptr)
+int open_gui(void * /*ptr*/)
 {
 	bool reboot = false;
 	bool quit = false;

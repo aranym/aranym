@@ -787,7 +787,7 @@ static void dsp_postexecute_interrupts(void)
 /* reg1 has bits 47..24 */
 /* reg2 has bits 23..0 */
 
-static void dsp_ccr_extension(uint32 *reg0, uint32 *reg1, uint32 *reg2)
+static void dsp_ccr_extension(uint32 *reg0, uint32 *reg1, uint32 * /*reg2*/)
 {
 	uint32 scaling, value, numbits;
 
@@ -3046,7 +3046,7 @@ static void dsp_pm_4(void)
 	dsp_pm_5();
 }
 
-static void dsp_pm_4x(int immediat, uint32 l_addr)
+static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 {
 	uint32 value, numreg, numreg2;
 /*

@@ -27,7 +27,7 @@ uae_u8 MMU::handleRead(uaecptr addr) {
 	return 0;
 }
 
-void MMU::handleWrite(uaecptr addr, uae_u8 value) {
+void MMU::handleWrite(uaecptr addr, uae_u8 /*value*/) {
 	addr -= HW;
 	switch(addr) {
 		case 1: break;
@@ -39,6 +39,9 @@ void MMU::handleWrite(uaecptr addr, uae_u8 value) {
 
 /*
  * $Log$
+ * Revision 1.6  2002/01/08 16:13:17  joy
+ * config variables moved from global ones to bx_options struct.
+ *
  * Revision 1.5  2001/10/25 19:56:01  standa
  * The Log and Header CVS tags in the Log removed. Was recursing.
  *
