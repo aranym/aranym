@@ -70,7 +70,7 @@ static int set_ip_using(const char *name, int c, const char *ip, const char *tex
     sin.sin_family = AF_INET;
 	safe_strncpy(host, ip, (sizeof host));
     if (! inet_aton(host, &sin.sin_addr)) {
-		fprintf(stderr, "%s invalid\n", text);
+		fprintf(stderr, "%s '%s' invalid\n", text, ip);
     	return 1;
     }
 
