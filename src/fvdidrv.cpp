@@ -336,7 +336,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 		0xffff, 0xffff, 0xffff, 0xffff
 	};
 	for( int i=0; i<16; i++ )
-		hostScreen.fillArea( i<<4, hostScreen.getHeight()-16, 15, 16, ptrn, hostScreen.getPaletteColor( i ), hostScreen.getPaletteColor( 0 ) );
+		hostScreen.fillArea( i<<4, hostScreen.getHeight()-16, 15, 16, ptrn, hostScreen.getPaletteColor(i) );
 #endif  // DEBUG_DRAW_PALETTE
 
 
@@ -864,6 +864,39 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 							case 4:
 								if ( !((theWord >> (15-(i&0xf))) & 1) )
 									put_long(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, fgColor );
+								break;
+						}
+					}
+					D2(bug("")); //newline
+				}
+				break;
+			default:
+				for( uint16 j=0; j<h; j++ ) {
+					D2(fprintf(stderr,"fVDI: bmp:"));
+
+					uint16 theWord = get_word(data + j*pitch + ((sx>>3)&0xfffe), true);
+					for( uint16 i=sx; i<sx+w; i++ ) {
+						if ( i % 16 == 0 )
+							theWord = get_word(data + j*pitch + ((i>>3)&0xfffe), true);
+
+						D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
+						switch( logOp ) {
+							case 1:
+								for( uint16 d=0; d<destPlanes; d++ )
+									put_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch, theWord );
+								break;
+							case 2:
+								for( uint16 d=0; d<destPlanes; d++ )
+									put_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch,
+											  get_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch, true ) | theWord );
+								break;
+							case 3:
+								for( uint16 d=0; d<destPlanes; d++ )
+									put_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch, ~ get_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch, true ) );
+								break;
+							case 4:
+								for( uint16 d=0; d<destPlanes; d++ )
+									put_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch, ~theWord );
 								break;
 						}
 					}
@@ -1892,6 +1925,9 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.30  2002/01/08 21:20:57  standa
+ * fVDI driver palette store on res change implemented.
+ *
  * Revision 1.29  2001/12/29 17:03:23  joy
  * Johan: new(nothrow) => new(std:nothrow)
  *

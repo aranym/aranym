@@ -212,6 +212,9 @@ inline void HostScreen::setPaletteColor( uint8 index, uint32 red, uint32 green, 
 }
 
 inline uint32 HostScreen::getPaletteColor( uint8 index ) {
+	if ( surf->format->BytesPerPixel < 2 )
+		return index;
+
 	return palette.native[index];
 }
 
@@ -377,6 +380,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.26  2002/01/08 21:20:57  standa
+ * fVDI driver palette store on res change implemented.
+ *
  * Revision 1.25  2001/12/17 09:38:09  standa
  * The inline update() function order change to not to cause warnings.
  *

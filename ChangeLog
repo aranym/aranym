@@ -3,7 +3,9 @@
 - fVDI driver doesn't destroy palette setting on resolution change
   The SDL_SetVideoMode clears the palette setting -> the palette is stored
   and restored after change (hostscreen.cpp/setWindowSize()) 
+- the driver has also correct 8bit inverse color handling.
 - up and running
+
 
 2002/01/08 - joy
 - the config file format and location has changed (now at $HOME/.aranym/config)
