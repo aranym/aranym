@@ -1,3 +1,9 @@
+2003/03/24 - milan
+- Solaris support updated
+
+- one paranoia "volatile" fix in CPU
+
+
 ** ARAnyM 0.8.0beta1 released
 
 2003/03/24 - joy
