@@ -35,7 +35,9 @@
 #include "romdiff.h"
 #include "parameters.h"
 #include "version.h"		// for heartBeat
+#ifdef ENABLE_LILO
 #include "lilo.h"
+#endif
 
 #define DEBUG 1
 #include "debug.h"
@@ -379,9 +381,12 @@ bool InitOS(void)
 	 * Note that EmuTOS will always be available so this will be
 	 * a nice fallback.
 	 */
+#ifdef ENABLE_LILO
 	if (boot_lilo && LiloInit())
 		return true;
-	else if (!boot_emutos && InitTOSROM())
+	else
+#endif
+	if (!boot_emutos && InitTOSROM())
 		return true;
 	else if (InitEmuTOS())
 		return true;
@@ -446,7 +451,10 @@ bool InitAll(void)
 	FPUType = 1;
 
 	// Setting "SP & PC" for TOS and EmuTOS
-	if (!(boot_lilo && lilo_ready)) {
+#ifdef ENABLE_LILO
+	if (!(boot_lilo && lilo_ready))
+#endif
+	{
 		for (int i = 0; i < 8; i++) RAMBaseHost[i] = ROMBaseHost[i];
 	}
 
@@ -512,9 +520,11 @@ bool InitAll(void)
 
 void ExitAll(void)
 {
+#ifdef ENABLE_LILO
 	if (boot_lilo) {
 		LiloShutdown();
 	}
+#endif
 
 #ifdef ETHERNET_SUPPORT
 	Ethernet.exit();
@@ -553,6 +563,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.96  2003/04/24 22:32:18  pmandin
+ * Linux kernel loader added
+ *
  * Revision 1.95  2003/04/16 19:35:49  pmandin
  * Correct inclusion of SDL headers
  *

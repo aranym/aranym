@@ -1452,6 +1452,7 @@ AC_ARG_ENABLE(lilo, [  --enable-lilo           enable Linux loader (default=no)]
 if test x$WANT_LILO = xyes; then
 	if test x$WANT_MMU = xyes; then
 		LILOSRCS="../lilo.cpp"
+		AC_DEFINE([ENABLE_LILO], 1, [Define if lilo enabled])
 	else
 		AC_MSG_ERROR([Linux kernel requires fonctionnal MMU emulation])
 	fi
