@@ -1,12 +1,14 @@
-2005/01/08  Andreas Schwab
-- lilo.cpp: Load ramdisk at end of ST ram.  64-bit fixes.  Copy needed
-  bits from Linux/m68k kernel headers instead of including them.
-
-
-2005/01/08 - Petr Stehlik
+2005/01/08 - Petr
 - mfp.cpp: irq handling (enable/pending/masked) copied bit-by-bit from STonC.
   And it seems to work! At last... Thanks, Laurent, for your great MFP
   emulation.
+
+- configure.ac, TODO: linux kernel headers no longer necessary
+
+
+2005/01/08  Andreas Schwab
+- lilo.cpp: Load ramdisk at end of ST ram.  64-bit fixes.  Copy needed
+  bits from Linux/m68k kernel headers instead of including them.
 
 
 2005/01/07 - Andreas Schwab
@@ -21,7 +23,7 @@
   rte insn.
 
 
-2005/01/06 - joy
+2005/01/06 - Petr
 - mfp.cpp: Laurent (STonC author whose code has been used for ARAnyM
   MFP emulation) identified copy&rename_variables&paste error.
   Fixing that finally made the setGPIPbit() working (has been waiting 
@@ -112,7 +114,7 @@
 
 * tagged as ARANYM_0_8_11_BETA
 
-2004/11/07 - joy
+2004/11/07 - Petr
 - wheel mouse support: based on discussion in mailing list and patch provided
   by Xavier. Switchable between original arrow up/down key simulation and
   new Eiffel compatible set of extended scancodes in the SETUP GUI.
@@ -138,7 +140,7 @@
 - FVDI aranym.sys modified, for the host resolution to be read.
 
 
-2004/10/31 - joy
+2004/10/31 - Petr
 - Carlo provided a new keyboard translation routine that translate directly 
   mac scancodes into atari scancodes: all keys are translated correctly.
   SDL routine translate mac scancodes in their internal codes but for 
@@ -161,7 +163,7 @@
   really set on the host side
 
 
-2004/09/13 - joy
+2004/09/13 - Petr
 - newcpu.cpp, spcflags.h: SPCFLAGS_NMI removed, _BRK used instead (like
   seen in hatari). SPCFLAGS_MODE_CHANGE removed (it was unused).
 
@@ -180,7 +182,7 @@
 - src/gui-sdl/sdlgui.cpp: edit field handling cleaned.
 
 
-2004/09/07 - joy
+2004/09/07 - Petr
 - src/parameters.[cpp,h]: configPath added to aranymfs struct. Fixes problem
   with adding more colons on repeated saving of config file.
 
@@ -192,7 +194,7 @@
 - src/parameters.cpp: don't show parameters, which aren't compiled in
 
 
-2004/09/03 - joy
+2004/09/03 - Petr
 - atari/network/ethernet/ethernet.c, nfeth-config.c: the idea of new IOCTLs
   was not working because inet4.xdd blocks the IOCTLs and does not pass them
   to the XIF driver. So now I am using SIOCGLNKSTATS and it works!
@@ -203,7 +205,7 @@
 - src/natfeat/ethernet.cpp: better debug message. Make use of safe strncpy.
 
 
-2004/09/02 - joy
+2004/09/02 - Petr
 - atari/network/ethernet/ethernet.c, nfeth-config.c: corrected some scary
   bugs, now it should work but doesn't yet. Seems like the new IOCTLs are
   blocked somewhere.
@@ -212,14 +214,14 @@
   also when host screen size changes.
 
 
-2004/09/01 - joy
+2004/09/01 - Petr
 - tools/arabridge: modified to allow bridging a non-defaultroute interface.
   Useful for situations when the machine is on public Internet and you don't
   want to put ARAnyM there. Also all RedHat specific things replaced so now
   it works on Debian nicely.
 
 
-2004/08/31 - joy
+2004/08/31 - Petr
 - atari/network/ethernet/ethernet.c:
   - updated for FreeMiNT 1.16
   - makes use of nf_ops in kerinfo for clean NatFeat usage (if available)
@@ -241,7 +243,7 @@
 - gui-sdl/dlgFileSelect.cpp: updated for the new edit field handling.
 
 
-2004/08/27 - joy
+2004/08/27 - Petr
 - lilo.cpp: thanks to David Muse analysis and suggestions I corrected
   the LiloCheckKernel() simply by copy&pasting it from linux bootstrap
   properly :-)
@@ -280,7 +282,7 @@
 
 * tagged as ARANYM_0_8_10_BETA
 
-2004/08/07 - joy on behalf of Carlo
+2004/08/07 - Petr on behalf of Carlo
 - added a target to generate the DMG file (inspired by bochs)
 - The SDL library is inserted automatically in the application bundle;
   now it does not require any installation.
@@ -307,7 +309,7 @@
 - debuggers: switch 'I' modified, debugger can ignore interupt mode
 
 
-2004/07/28 - joy
+2004/07/28 - Petr
 - atari/tools/pcpatch.c: verbose error handling
 
 
@@ -350,7 +352,7 @@
 - Unix/configure.ac: fixed error message about extended segfault handler.
 
 
-2004/07/13 - joy
+2004/07/13 - Petr
 - natfeat/ethernet.cpp: ARATAPIF is now found in $PATH again (Standa forgot
   to remove some of his debugging stuff). Thank for the bug report goes to
   Clement BENRABAH.
@@ -362,7 +364,7 @@
 - some other minor (mainly cosmetic) corrections
 
 
-2004/07/12 - joy
+2004/07/12 - Petr
 - ide.cpp: Xavier explained that Adam's open source IDE driver might use
   the f00002 register because it's mapped to the same 16-bit IDE port as
   the f00000.
@@ -382,7 +384,7 @@
 - minor (cosmetic) corrections
 
 
-2004/07/07 - joy
+2004/07/07 - Petr
 - uae_cpu/fpu/mathlib.h: Francois fixes sinh and tanh by following the cosh
   emulation example.
 
@@ -393,7 +395,7 @@
 
 * tagged as ARANYM_0_8_9_BETA
 
-2004/07/06 - joy
+2004/07/06 - Petr
 - ikbd.cpp: write to MFP directly, don't throw nested SIGSEGV. This not only
   fixes the JIT CPU crash on keypress in linux 2.6.x but also seems to help
   booting linux-m68k (it doesn't freeze now when you press a key)
@@ -422,7 +424,7 @@
 
 * tagged as ARANYM_0_8_8_BETA
 
-2004/07/05 - joy
+2004/07/05 - Petr
 - gui-sdl/dlgAlert.cpp: an AES like AlertBox created. So far a rough code
   but does what I needed.
 
@@ -444,7 +446,7 @@
   standard updates for new release.
 
 
-2004/07/04 - joy
+2004/07/04 - Petr
 - input.cpp: iconification of fullscreen window on releasing the grabbed
   input disabled since Standa added there switching from fullscreen
   to window.
@@ -454,7 +456,7 @@
   several different file extensions automagically.
 
 
-2004/07/03 - joy
+2004/07/03 - Petr
 - uae_cpu/fpu/mathlib.h: fixed tan() error Martin Tarenskeen reported.
 
 - uea_cpu/newcpu.cpp, hardware.cpp: if HW_SIGSEGV is used (mainly for
@@ -463,7 +465,7 @@
   boot when reading the $ff8e09 register.
 
 
-2004/07/01 - joy
+2004/07/01 - Petr
 - BUGS: FPU problems documented. We need fix even for Pentium host based
   systems!
 
@@ -503,7 +505,7 @@
 - parameters_*.cpp: separated the getDataFolder() and getHomeFolder().
   The getHomeFolder() is used for the '~' expansions in parameters.cpp.
 - hostfs.cpp:
-  * JOY's version of xfs_native_init() fixed, extended and used.
+  * Petr's version of xfs_native_init() fixed, extended and used.
   * symlinks should work better now: if there is a HOSTFS mapping for the
     symlink target then it is translated as a symlink to that target else
     the real hostfs target is shown (the user doesn't notice it is a symlink
@@ -528,12 +530,12 @@
     (tested on RH9.0).
 
 
-2004/04/10 - joy on behalf of Carlo
+2004/04/10 - Petr on behalf of Carlo
 - acsifdc.cpp: local variable masked out class variable of same name. Bug
   was there since 2004/02/02. Fixed.
 
 
-2004/04/06 - joy on behalf of Carlo
+2004/04/06 - Petr on behalf of Carlo
 - MacOSX/: obsolete aranym_for_library and pkg_support were removed.
   main_OSX.cpp added, with modified memory allocation routines.
   The installation package is no longer required. Now there is only a folder
@@ -569,7 +571,7 @@
 - sigsegv handler for Linux as computed gotos (partially), disabled, slower
 
 
-2004/02/22 - joy on behalf of Carlo
+2004/02/22 - Petr on behalf of Carlo
 - MacOSX/*: I have solved the problem with DIRSEPARATOR and ARANYM_DATADIR
   defines in my project. I have modified the shell script that call autogen.sh:
   now calls it only if it exist (on official release autogen.sh is missing),
@@ -618,14 +620,14 @@
 
 * tagged as ARANYM_0_8_7_BETA
 
-2004/02/15 - joy
+2004/02/15 - Petr
 - natfeat/hostfs.cpp: restore 0.8.5's xfs_init to fix the mount root bug.
 
 - README, NEWS, TODO, aranym.1, aranym.spec, version.h:
   standard updates for new release.
 
 
-2004/02/14 - joy
+2004/02/14 - Petr
 - all HW chips' classes: made sure they contain function reset() that
   initializes internal variables of the objects. This will be called
   when RESET instruction is executed to provide complete hardware reset.
@@ -681,7 +683,7 @@
 
 * tagged as ARANYM_0_8_6_BETA
 
-2004/02/08 - joy
+2004/02/08 - Petr
 - gui-sdl/dlgAbout.cpp: RTFM AUTHORS
 
 - gui-sdl/dlgMain.cpp: visually restructured a bit, added three buttons
@@ -715,7 +717,7 @@
 - New DSP thread killing when shutdown.
 
 
-2004/02/05 - joy (on behalf of Carlo)
+2004/02/05 - Petr (on behalf of Carlo)
 - MacOSX/*: modified the project for version 0.8.6. Also included a shell
   script for calling the autogen.sh inside the project.
 
@@ -723,7 +725,7 @@
   call (BLITTER_MEMMOVE only)
 
 
-2004/02/04 2:11am - joy (dedicated to Konrad :)
+2004/02/04 2:11am - Petr (dedicated to Konrad :)
 - rtc.cpp: fixed two real scary bugs. How could this code work previously??
   Weird that these bugs didn't appear under Linux for so long. Sorry guys :)
   Now Windows boot in correct resolution and without double bus errors!
@@ -731,7 +733,7 @@
 - include/version.h: version 0.8.6alpha
 
 
-2004/02/03 - joy
+2004/02/03 - Petr
 - gui-sdl/*: dimensions made smaller (39x24) to fix the crashes in ST-Low
   (Xavier increased the dialog dimensions by a few pixels)
 
@@ -744,7 +746,7 @@
 - cdrom.cpp: Solaris support corrected
 
 
-2004/02/02 - joy
+2004/02/02 - Petr
 - acsifdc.cpp: when fixing my 0.8.5beta bug that Xavier has found I decided
   to clean the whole floppy code. FDC routines were included from fdc.cpp.
   Dropped emulation of second floppy drive. Fixed remounting a floppy
@@ -762,7 +764,7 @@
 - main.cpp: init floppy after reboot
 
 
-2004/02/01 - joy
+2004/02/01 - Petr
 - MacOSX/*: some unspecified updates from Carlo, used for building the binary
   that is on download.
 
@@ -781,13 +783,13 @@
 - cdrom.cpp: some corrections in the latest port from Bochs
 
 
-2004/01/29 - joy
+2004/01/29 - Petr
 - src/MacOSX/*: suddenly Carlo Baiocco appeared and sent me a complete
   MacOSX Project builder folder. Give it a try, perhaps it finally builds
   a binary for MacOSX? Follow the MacOSX/README.rtf for more info.
 
 
-2004/01/28 - joy
+2004/01/28 - Petr
 - cdrom.cpp,h: Stefan replaced it with a file from current Bochs and forgot
   to update the ChangeLog. It might break some other platforms. Beware.
 
@@ -849,7 +851,7 @@
 - sync with BasiliskII
 
 
-2004/01/23 - joy
+2004/01/23 - Petr
 - gui-sdl/dlgDisk.cpp: changed floppy path was not applied to the bx_options
 
 - doc/documentation.txt: Bjoern Spruck has contributed a network init script.
@@ -895,7 +897,7 @@
 
 * tagged as ARANYM_0_8_5_BETA
 
-2004/01/07 - joy
+2004/01/07 - Petr
 - gui-sdl/dlgMain.cpp: show "unsupported yet" everywhere for the curious.
 
 - NEWS, README etc: update for release
@@ -922,7 +924,7 @@
 - hostscreen.cpp: modified GUI size to keep root box borders on screen.
 
 
-2004/01/05 - joy
+2004/01/05 - Petr
 - main_unix.cpp, parameters.cpp: 'program_name' is back (cygwin needs it)
 
 - input.cpp: try to iconify fullscreen window when user wants to release
@@ -958,7 +960,7 @@
      0x10000960 -> 0x11000960) due to the color handling changes.
 
 
-2004/01/03 - joy
+2004/01/03 - Petr
 - videl.cpp, parameters.*, main.cpp, configure.ac, documentation.txt:
   DIRECT_TRUECOLOR hack removed. I don't think it was ever used.
 
@@ -978,7 +980,7 @@
 - main_unix.cpp: 'program_name' is gone.
 
 
-2004/01/02 - joy
+2004/01/02 - Petr
 - gui-sdl/dlgDisk.cpp: Disk geometry added (C/H/S).
   Also, there is Insert/Eject button in each IDE set so it now supports
   mounting of two IDE CD-ROMs simultaneously :)
@@ -1002,7 +1004,7 @@
 - TODO: one thing done (font8), another ideas arrived (floppy bootup insert)
 
 
-2004/01/01 PM - joy
+2004/01/01 PM - Petr
 - fdc.cpp: added is_floppy_inserted() (used in the config GUI). Also
   changeFloppy() called on insert_floppy() - this fixes the old reported
   problem with installing NVDI from several diskettes.
@@ -1035,7 +1037,7 @@
 - TODO: large update/rewrite. Get involved if you have some spare time.
 
 
-2004/01/01 AM - joy
+2004/01/01 AM - Petr
 - gui-sdl/dlgMain: adding more options
 
 - input.cpp, main.cpp,h: RestartAll() now reinitializes the OS (in future
@@ -1047,14 +1049,14 @@
  ~~ Happy New Year to all ARAnyM fans ~~
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-2003/12/31 - joy
+2003/12/31 - Petr
 - main.cpp: startup GUI now uses the same thread schema as the normal GUI.
   Windows SDL couldn't read mouse events in timer thread :-(
 
 - input.cpp: small clean up in the GUI handling
 
 
-2003/12/28 PM - joy
+2003/12/28 PM - Petr
 - hostscreen.cpp: removed the scary IPC hack and switched to user SDL events
 
 - input.cpp: same IPC hack fix, SDL keyboard and mouse events mapped to
@@ -1073,7 +1075,7 @@
   GUI timer thread _before_ the actual 200 Hz timer thread is started...
 
 
-2003/12/28 AM - joy
+2003/12/28 AM - Petr
 - sdl-gui.cpp, dlgMain.cpp: font init moved back to the main dialog,
   freeing of font surface added.
 
@@ -1085,7 +1087,7 @@
 - parameters.cpp,h: "-G" command line parameter opens the startup GUI.
 
 
-2003/12/27 - joy
+2003/12/27 - Petr
 - SDL GUI cleanup: first, all SDL GUI related files are in gui-sdl/ folder
   now. Then, each dialog is in its own file. At last, SDL GUI now supports
   EDIT field (have yet to add passing the keyboard info) and the FileSelect
@@ -1107,18 +1109,18 @@
 - include/version.h: we are at 0.8.5alpha now
 
 
-2003/12/26 - joy
+2003/12/26 - Petr
 - input.cpp: cleaned up.
 
 
-2003/12/25 - joy
+2003/12/25 - Petr
 - hostscreen.cpp: terrific hack that lets the SDL GUI thread know about
   resolution change.
 
 
 * tagged as ARANYM_0_8_4_ALPHA
 
-2003/12/24 - joy
+2003/12/24 - Petr
 - hostscreen.cpp: blendBackgrounds() added. This function updates the 
   background of active GUI with the running ARAnyM screen contents.
   I played with SDL_SRCALPHA etc. to make the background a bit greyed out
@@ -1137,7 +1139,7 @@
   conflicting with their system headers).
   
 
-2003/12/17 - joy
+2003/12/17 - Petr
 - parameters.cpp: "GUIfont" config option added (as promised). Most of
   the complicated logic for guessing the right path for non-Unix systems
   can be removed soon.
@@ -1149,7 +1151,7 @@
   (and that one surely reads unix-like paths).
 
 
-2003/12/16 - joy
+2003/12/16 - Petr
 - mfp.cpp: initializing the internal variables suddenly fixed all the 
   weird problems I had with booting the aranym since I converted the HW
   classes to dynamically created objects. So it's finally solved. 
@@ -1165,7 +1167,7 @@
   build-cygwin.sh.
 
 
-2003/12/15 - joy
+2003/12/15 - Petr
 - why to bother with demoing weird problems in extfs.cpp when the file
   is obsolete and can be removed? Good idea from Standa. ExtFS removed.
   HostFS is the only right choice now.
@@ -1187,7 +1189,7 @@
   but he was too lazy to do it :)
 
 
-2003/12/09 - joy
+2003/12/09 - Petr
 - extfs.cpp: rewritten the initialization of rootPath a bit. And added
   #define DEMO_WEIRD_PROBLEM. That is the "AFROS does not boot" problem
   that is still there and can be easily exhibited just by allocating the
@@ -1206,14 +1208,14 @@
   proved wrong. Rolling it back. 
 
 
-2003/11/28 - joy
+2003/11/28 - Petr
 - extfs.cpp: made sure the drives[].rootPaths are really initialized to
   a defined value. Also, I don't like functions in header files so moved
   constructor/destructor to the CPP. And it seems to fix the problem
   with freezing EmuTOS due to a MFP problem.
 
 
-2003/11/27 - joy
+2003/11/27 - Petr
 - forgotten "extern DSP" declarations removed
 
 * interesting thing: I figured out that AFROS boots on the 0.8.4+ ARAnyM
@@ -1223,7 +1225,7 @@
   an encouraging thing to debug... Hopefully not a compiler bug!
 
 
-2003/11/25 - joy
+2003/11/25 - Petr
 - Patrice convinced me to do a two years pending rewrite of the hardware
   emulation dispatcher. This is a pretty fundamental change to the deepest
   internals of ARAnyM so please take it with great care and do backup
@@ -1274,13 +1276,13 @@
   a compiler warning.
 
 
-2003/10/26 - joy
+2003/10/26 - Petr
 - doc/hguide.txt: written "Threads and Interrupts" chapter. I always
   wanted to document it since I myself had often hard time recalling
   how it was actually implemented.
 
 
-2003/10/25 - joy
+2003/10/25 - Petr
 - newcpu.cpp, aranym_glue.cpp: bus error handling code rearranged a bit:
   SDL related code should not pollute the newcpu.cpp. Also tried to fix
   the indentation (in the BUS ERROR handler of the Exception function
@@ -1348,7 +1350,7 @@
 
 ** ARAnyM 0.8.2beta released
 
-2003/10/04 - joy
+2003/10/04 - Petr
 - natfeat/nf_basicset: added OS_TYPE and CPU_TYPE to NF_NAME(1)
 - minor TODO update
 - Makefile.in: nfcdrom.bos added to install targets
@@ -1413,20 +1415,20 @@
   was integrated properly to the uae_cpu core.
 
 
-2003/09/15 - STanda & !joy
+2003/09/15 - STanda & !Petr
 - STOP instruction emulation greatly improved. usleep() was replaced with
   SDL_CondWait() - better portable and what's more important - fixing
   jerky mouse movement under new FreeMiNT, fVDI and EmuTOS!
 
 
-2003/09/10 - joy (comiting patches submitted by Guy Harrison, thanks!)
+2003/09/10 - Petr (commiting patches submitted by Guy Harrison, thanks!)
 
 - Makefile.in: fixes possible conflicts between aranym headers and system ones
 
 - autogen.sh: shouldn't 'make depend' unless it configures...
 
 
-2003/09/05 - joy
+2003/09/05 - Petr
 - blitter.cpp, mfp.cpp, rtc.cpp: rid of compiler warning "comparing unsigned
   variable with signed value"
 
@@ -1476,7 +1478,7 @@
 - Makefile.in: make depend for linux corrected
 
 
-2003/07/28 - joy
+2003/07/28 - Petr
 - natfeat/xhdi.cpp: XHInqTarget2 implemented. Also some little cleanup
   (error codes replaced with symbolic names)
 
@@ -1493,7 +1495,7 @@
 - parameters.cpp: printing of version at startup is in main_unix.cpp
 
 
-2003/07/18 - joy
+2003/07/18 - Petr
  My little cleanups:
 - #ifdef OS_mingw cleaned up. Created a new Unix/mingw_include.h file that
   should be included to a generally available include file (config.h?)
@@ -1506,19 +1508,19 @@
   whole emulation.
 
 
-2003/07/17 - joy
+2003/07/17 - Petr
 - src/natfeat/hostfs.cpp: converPathA2F() tried to strip a drive letter
   from base path. Xavier debugged this and patched it to not remove
   the drive letter since it's the HostFS path (and drive letter on Windows
   is important).
 
 
-2003/07/16 - joy
+2003/07/16 - Petr
 - src/natfeat/hostfs: a small workaround for a bug in Cygwin's GCC allows
   extending the path buffers back to 2048 chars (thanks to Xavier)
 
 
-2003/07/13 - joy
+2003/07/13 - Petr
 - configure.ac: ARANYMHOME quotation mark encapsulation fixed for cygwin
   (thanks to Xavier)
 
@@ -1612,14 +1614,14 @@
     appropriate.
 
 
-2003/04/12 - joy
+2003/04/12 - Petr
 - compemu_support.cpp: unnecessary fopen("/dev/zero", O_RDWR) removed.
   This allows running aranym-jit on ARAnyM Demo CD (Knoppix based).
 
 
 ** ARAnyM 0.8.0beta3 released
 
-2003/04/10 - joy
+2003/04/10 - Petr
 - parameters.cpp: addFilename() has a different order of arguments
   and is able to deal with additional path separators
 
@@ -1637,13 +1639,13 @@
   Note that this fixes the wrong mapping of host folders under Cygwin..
 
 
-2003/04/09 - joy
+2003/04/09 - Petr
 - parameters.cpp: do not include emu_bochs.h - this breaks some platforms.
 
 - tools_cygwin.cpp: Xavier submits a routine for reading the registry
 
 
-2003/04/08 - joy
+2003/04/08 - Petr
 - hostfs.cpp: fixed very annoying bug that was causing bus error when opening
   root of a host drive.
 
@@ -1657,7 +1659,7 @@
 
 ** ARAnyM 0.8.0beta2 released
 
-2003/04/08 - joy
+2003/04/08 - Petr
 - cfgopts: Thomas correctly suggested to use memmove() for overlapping
   blocks of memory.
 
@@ -1675,12 +1677,12 @@
     Dpathconf(8-9) added and 7 fixed (Thing has a bug in 1.27 here IIRC).
 
 
-2003/04/07 - joy
+2003/04/07 - Petr
 - configure.ac: parameters.cpp and its children updated. Should be ready
   for adding more cygwin specific functions.
 
 
-2003/04/06 - joy
+2003/04/06 - Petr
 - parameters.cpp: '-S' handling corrected. Small cleanup in getopt()..
 
 - natfeat/ethernet.cpp: back to execp(), now starting of 'aratapif'
@@ -1704,14 +1706,14 @@
   void* and int. Several other functions were moved to the tools.h.
 
 
-2003/04/01 - joy & Honza/ATACK
+2003/04/01 - Petr & Honza/ATACK
 - main_unix.cpp: segfault on gentoo (where the argv[0] does not contain
   the path (only filename)).
 
 - natfeat/ethernet.cpp: missing ethX definition in DEBUG() statement
 
 
-2003/03/30 - joy
+2003/03/30 - Petr
 - cygwin gets its own folder with a tools.cpp file.
 
 - sdlgui.cpp really needs the explicit conversion of the path. Xavier was
@@ -1719,14 +1721,14 @@
 
 
 2003/03/29 - milan
-- Joy's version capabilities implemented
+- Petr's version capabilities implemented
 
-- infoprint as cname for panicbug, sorry Joy
+- infoprint as cname for panicbug, sorry Petr
 
 - man page from debian added
 
 
-2003/03/28 - STanda & joy
+2003/03/28 - STanda & Petr
 - natfeat/hostfs.cpp: DIRSEPARATOR used wherever possible. Might fix HostFS
   on Windows.
 
@@ -1735,7 +1737,7 @@
   as the DATADIR path (fixed later the same day)
 
 
-2003/03/27 - joy
+2003/03/27 - Petr
 - parameters.cpp: correction and clarification of "-d" command line switch
 
 - input.cpp: a key for generating screenshots changed to "PrintScreen"
@@ -1777,7 +1779,7 @@
 
 ** ARAnyM 0.8.0beta1 released
 
-2003/03/24 - joy
+2003/03/24 - Petr
 - aranym.xfs renamed to hostfs.xfs
 
 - new binary drivers (hostfs.dos, hostfs.xfs, aranym.xif, nfeth-config)
@@ -1791,7 +1793,7 @@
 - doc/documentation.txt: slight update (regarding BetaDOS only)
 
 
-2003/03/23 - joy
+2003/03/23 - Petr
 - nfeth-config.sh: added, calls araethip and shows how easy is to configure
   the device automagically.
 
@@ -1815,7 +1817,7 @@
 - TODO, BUGS, INSTALL, NEWS, README and other files updated.
 
 
-2003/03/22 - joy
+2003/03/22 - Petr
 - [ETH0] settings in the config file
 
 - aranym_xfs.c: ifdef'ed one debug print
@@ -1823,7 +1825,7 @@
 - araethip.c: improved and adapted for possible many eth devices
 
 
-2003/03/21 - joy
+2003/03/21 - Petr
 - networking: NF API extended to allow emulating more than 1 network card
 
 - aranym.xif: added SIOCGIF modes to autoconfigure the device with its IP
@@ -1876,7 +1878,7 @@
   It just compiles ATM.
 
 
-2003/03/16 - joy
+2003/03/16 - Petr
 - natfeat/doc/native.txt updated (used Laurent's latest version without
   the NF_CONTROL stuff and with corrected unsigned long ID).
 
@@ -1899,12 +1901,12 @@
   'araethip' is not covered yet in this README.
 
 
-2003/03/15 - joy
+2003/03/15 - Petr
 - major rewrite of the aratapif (ARAnyM TAP IFconfig) and related
   updates in natfeat/ethernet.cpp. Now it actually works!
 
 
-2003/03/14 - joy
+2003/03/14 - Petr
 - dsp_cpu.cpp, araifc/inet.c: small fixes to remove GCC warnings
 
 
@@ -1938,12 +1940,12 @@
   at all in my 1.16 setup - it does in 1.15.12 however)
 
 
-2003/03/07 - joy
+2003/03/07 - Petr
 - aranym.spec: paths to share/aranym had to be corrected (though I'd say
   they were OK previously and that our Makefile install: is wrong)
 
 
-2003/03/06 - joy
+2003/03/06 - Petr
 - external configuration tool for the setting up the tap0 device
 
 
@@ -1951,19 +1953,19 @@
 - small fix in hostfs/metados/main.c
 
 
-2003/03/04 - joy
+2003/03/04 - Petr
 - ata.[cpp|h], parameters.[cpp|h] cleaned up:  obsolete disk_options_t
   and cdrom_options_t structures removed. Everything is stored in the
   atadevice_options_t now. Nice bonus is the possibility of naming the IDE
   device with new config option "ModelName" (string, up to 40 characters).
 
 
-2003/03/02 - joy
+2003/03/02 - Petr
 - natfeat/atari_example_gfa.lst: example for GFA Basic programmers
 - natfeat/atari_example.c: updated for Ssystem() call
 
 
-2003/03/01 - joy
+2003/03/01 - Petr
 - parameters.[cpp|h]: single partition devices under the SCSI nickname
   need the partition ID to be configurable
 
@@ -1974,12 +1976,12 @@
   only now. Also the mount point in MiNT is "U:\hostfs" now.
 
 
-2003/02/28 - joy
+2003/02/28 - Petr
 - natfeat/ethernet.cpp: getHWaddr takes exactly 6 bytes and it's not a string
   so no EOS should be added. Thus strncpy changed to memcpy.
 
 
-2003/02/27 - joy
+2003/02/27 - Petr
 - Ethernet: README of aranym.xif made clearer, IP addresses in ece.cpp
   configurable by #define and the default ATARI IP address changed to
   192.168.0.2 (to prevent users from asking a question why it was .5).
@@ -1991,7 +1993,7 @@
   from the host side. Also the ETHERNET NF is Supervisor only (naturally).
 
 
-2003/02/26 - joy
+2003/02/26 - Petr
 - ETHERNET_OLD (the one from Basilisk) removed completely
 
 - Networking now at interrupt level 3 (Audio stays at int level 5)
@@ -2003,7 +2005,7 @@
   partition mounting)
 
 
-2003/02/26 - STanda & joy
+2003/02/26 - STanda & Petr
 - natfeat/ece.cpp: after removing hostScreen.lock and one unfortunate D(bug)
   it started working. Wonderful. TODO: change interrupt (probably to INT3).
   Also would be good if root privileges for tuntap weren't necessary.
@@ -2011,7 +2013,7 @@
 - "araeth" -> "eth" rename
 
 
-2003/02/20 - joy
+2003/02/20 - Petr
 - videl.cpp: fixed wrong st_shift reset, removed VIDEL regs initialization
   (since EmuTOS now initializes VIDEL properly). Startup color depth
   of host window is 8bit now (should be enough).
@@ -2031,7 +2033,7 @@
   some little imperfection there.
 
 
-2003/02/18 - joy
+2003/02/18 - Petr
 - videl.cpp: writing to f_shift resets the st_shift and that fixes
   the color depth detection routine.
 
@@ -2040,7 +2042,7 @@
 - BeOS patches for extfs.cpp and natfeat/hostfs.cpp
 
 
-2003/02/16 - joy
+2003/02/16 - Petr
 - cleanup in src/natfeat - fundamental NF functions grouped in 'basicset'
 - cleanup in emulop.cpp - removed everything that has a NF replacement
 - cleanup in araobjs.cpp - removed everything that is in src/natfeat as well
@@ -2066,7 +2068,7 @@
   if you want do enable/disable linear filtering for screen rendering.
 
 
-2003/02/04 - joy
+2003/02/04 - Petr
 - input.cpp: fixed a long-standing bug with automatic mouse grab upon
   entering the ARAnyM window. This didn't work correctly when the ARAnyM
   window didn't have input focus.
@@ -2088,7 +2090,7 @@
 
 ** ARAnyM 0.7.0 released
 
-2003/01/29 - joy
+2003/01/29 - Petr
 - xhdi.cpp: used off_t in fseek hoping that this would make it LFS compatible
 
 - Makefile.in, aranym.spec: three more contrib files added for installation
@@ -2113,7 +2115,7 @@
   fVDI since now.
 
  
-2003/01/12 - joy
+2003/01/12 - Petr
 
 - natfeat/atari_example.c improved (using function pointers now)
 
@@ -2121,7 +2123,7 @@
   to unoficial builds)
 
 
-2003/01/11 - joy
+2003/01/11 - Petr
 
 - "__NF" cookie fixed - now the structure contains pointers to nfID and
   nfCall.
@@ -2130,13 +2132,13 @@
   only.
 
 
-2003/01/10 - joy
+2003/01/10 - Petr
 - tools/diskimage.c: a tool for creating disk images up to 32 GB large.
   Note that our IDE emulation is limited to 2 GB disks for now. Will be
   fixed soon, hopefully.
 
 
-2003/01/09 - joy
+2003/01/09 - Petr
 - fixed _SND cookie value: now it contains just '4' to indicate that no
   hardware is available except of XBIOS functions. If DSP emulation is
   compiled in and active the _SND cookie contains %00001100 (according
@@ -2148,7 +2150,7 @@
 - Didier updated audio driver to use NatFeats when available...
 
 
-2002/12/29 - joy
+2002/12/29 - Petr
 - videl: Sébastien Briais sent a patch that allows virtual screen on VIDEL
   by emulating the 'linewidth' and 'lineoffset' VIDEL registers.
 
@@ -2191,22 +2193,22 @@
 - sync with BasiliskII: some obsolete structures removed, support for Opteron
 
 
-2002/11/06 - joy
+2002/11/06 - Petr
 - aranym can be compiled without the DSP emulation again
 - ulong in nf_stderr fixed to uint32
 
 
-2002/11/03 - joy
+2002/11/03 - Petr
 - XHDI - returning values corrected
 
 
-2002/10/29 - Didier & joy
+2002/10/29 - Didier & Petr
 - found and fixed serious buffer overflow in uae_cpu/readcpu.cpp.
   EMULOP_RETURN (unused), NATFEAT_ID and NATFEAT_CALL should behave
   better now.
 
 
-2002/10/28 - joy
+2002/10/28 - Petr
 - NF_STDERR added to NatFeats
 
 - NF_VERSION corrected (should display version of NatFeat API, not version
@@ -2219,15 +2221,15 @@
 - fVDI driver NatFeat support added.
 
 
-2002/10/20 - joy (version 0.6.8-beta)
+2002/10/20 - Petr (version 0.6.8-beta)
 - NatFeat instruction opcodes changed back to good old $7300/$7301.
   The LineF interface requires the $fe0x instructions to be long words
   and I am not ready to accept such change of NatFeat calling convention.
 
 
-2002/10/19 - joy (version 0.6.7-beta2 - NatFeat opcode change!)
+2002/10/19 - Petr (version 0.6.7-beta2 - NatFeat opcode change!)
 - GFA Basic "fix" - it writes 0x16 to IKBD and then waits for a joystick
-  packet in an endless loop. So we are sending a joy packet now.
+  packet in an endless loop. So we are sending a Petr packet now.
 
 - NatFeat instruction codes changed to unused LineF ones: $fe00 and $fe01.
   Hope that this will make all future ColdFire CPU users happy ;-)
@@ -2256,7 +2258,7 @@
 - configure & etc.: generic bool, volatile and inline handling
 
 
-2002/10/13 - joy
+2002/10/13 - Petr
 - fixed CDROM mount/unmount support
 - fixed FastRAM max size check on Linux with real addressing and no JIT
 - added CD-ROM automount (like on real Atari :-)
@@ -2299,7 +2301,7 @@
 - sigsegv_linux.cpp: x86 F6 instructions was badly decoded. NOT8, NEG8, IDIV8,
                      MUL8, IMUL8 implemented, TEST8 corrected
 
-2002/10/08 - joy (version 0.6.5-beta)
+2002/10/08 - Petr (version 0.6.5-beta)
 - the major arch change in version 0.6.0 has been reverted. CPU is running
   in the main thread again. SDL_Timer thread is back on all platforms but
   it's not doing anything but setting up a CPU flag that is being checked
@@ -2351,7 +2353,7 @@
 - typo fix in configure.ac script
 
 
-2002/09/28 - joy (version 0.6.4-beta)
+2002/09/28 - Petr (version 0.6.4-beta)
 - XHDI writing to disk fixed. Previously it was appending the new records
   at the end of the disk image file so it did not destroy any data but
   made the disk image larger. Now it's fixed and rewrites real data in the
@@ -2359,7 +2361,7 @@
   config file if you want to preserve your data intact.
 
 
-2002/09/28 - joy (version 0.6.3-beta)
+2002/09/28 - Petr (version 0.6.3-beta)
 - fixed #ifdef NEED_TO_DEBUG_BADLY code
 
 - BUS ERROR loops are detected and back trace is displayed (the latter only
@@ -2405,7 +2407,7 @@
        use of C++ constructor/destructor for the DSP class.
 
 
-2002/09/15 - joy (version 0.6.0-alpha)
+2002/09/15 - Petr (version 0.6.0-alpha)
 - major architectural change: SDL_Timer stuff removed, #define USE_TIMERS
   removed. Now CPU emulation runs in a separate SDL thread and the main thread
   just loops (waits for 10ms, executes 'invoke200HzInterrupt' and loops back).
@@ -2423,7 +2425,7 @@
   from the CPU thread to the main thread using some sort of IPC.
 
 
-2002/09/12 - joy (version 0.5.0-beta)
+2002/09/12 - Petr (version 0.5.0-beta)
 - TOS was not ready for large 68040 caches that are provided by JIT compiler.
   I added a few missing 68040 cache patches that were developed by Douglas
   originally.
@@ -2447,7 +2449,7 @@
                           patch completed
 
 
-2002/09/07 - joy (commiting for milan)
+2002/09/07 - Petr (commiting for milan)
 - newcpu.cpp - flush_icache(0) is required otherwise JIT does not work
 
 
@@ -2468,7 +2470,7 @@
 - Thread support for DSP bugfixed.
 
 
-2002/08/26 - joy
+2002/08/26 - Petr
 - JIT (actually sigsegv handler) fixed again, better this time.
 
 
@@ -2488,18 +2490,18 @@
                       corretcly on little endian platforms now
 
 
-2002/08/13 - joy
+2002/08/13 - Petr
 - NF_Name() now returns the number of characters (excluding the trailing '\0')
   which would have been written to the final string if enough space had been
   available.
 
 
-2002/08/12 - joy
+2002/08/12 - Petr
 - nf_call changed to return a signed 32-bit number (type 'long' in C lang.)
 - nf_call for invalid NatFeat ID returns an undefined value now.
 
 
-2002/08/11 - joy
+2002/08/11 - Petr
 - NatFeats now keep their name and SupervisorRequired flag with them.
 
 - NatFeats main dispatcher now checks for user/supervisor mode and throws
@@ -2521,7 +2523,7 @@
 - DSP: CCR-related stuff written, some bugfixes.
 
 
-2002/08/05 - joy
+2002/08/05 - Petr
 - NATFEA_ID and NATFEA_RCALL can now be used in User mode as well. Supervisor
   mode is not required. NatFeats themselves have to throw illegal instruction
   exception if they require Supervisor mode and are called from User mode.
@@ -2530,7 +2532,7 @@
   and throws proper BUS ERROR.
 
 
-2002/08/04 - joy (version 0.3.0b1)
+2002/08/04 - Petr (version 0.3.0b1)
 - Native Features implemented. The CPU recognizes two new instructions:
   NATFEA_ID (opcode $7300) and
   NATFEA_RCALL (opcode $7301).
@@ -2552,7 +2554,7 @@
   are needed, and are also checked in.
   
 
-2002/08/02 - joy
+2002/08/02 - Petr
 - EmuTOS loading fixed again - it can be any (>0) size now.
 - EmuTOS loading routine display the date when the EmuTOS was built.
 - XHDI support moved to separate xhdi.[ch] file and XHDIDriver class.
@@ -2561,7 +2563,7 @@
 - nearly all compile time warnings removed!
 
 
-2002/08/01 - joy
+2002/08/01 - Petr
 - EmuTOS image size can be either 256 or 512 kB long
 - two serious bugs in linux sigsegv handler fixed: OR and MOV. There are
   more bugs in the ia32 emulated routine, unfortunately. JIT won't work
@@ -2572,7 +2574,7 @@
 - DSP emulator: Many bugs fixed (end of dsp_*.cpp files for complete changes)
 
 
-2002/07/31 - joy
+2002/07/31 - Petr
 - bug in fresh IDE emulation code fixed (thanks Johan and Standa)
 
 
@@ -2595,7 +2597,7 @@
 
 ** ARAnyM 0.2.0 released
 
-2002/07/20 - joy
+2002/07/20 - Petr
 - saving/restoring screen background under SDL GUI fixed
 
 - SDL GUI now survives resolution change without a crash but the dialog
@@ -2620,7 +2622,7 @@
   changelog
 
 
-2002/07/19 - joy
+2002/07/19 - Petr
 - SDL GUI now stores background to another (cloned) surface. Also fVDI
   does not draw into the physical video surface when GUI is visible.
 
@@ -2629,7 +2631,7 @@
 - if GUI font8.bmp is not loaded the GUI is not accessible
 
 
-2002/07/18 - joy
+2002/07/18 - Petr
 - DSP host code is disabled when DSP_EMULATION is not defined. This was
   required to get Alt+Ctrl+Del warm boot working again (there must be a bug
   in current DSP emulation).
@@ -2638,7 +2640,7 @@
   that causes ARAnyM to drop the mouse/keyboard exclusive control.
 
 
-2002/07/16 - joy
+2002/07/16 - Petr
 - fixed pretty scary bug in yamaha.cpp. As a direct result PARCP started 
   working reliably.
 
@@ -2667,7 +2669,7 @@
   (disabled by default but you can enable it with --enable-dspdisasm)
 
 
-2002/07/09 - joy
+2002/07/09 - Petr
 - DSP integrated properly in the autoconfig system. By default it's disabled
   but you can enable it with --enable-dsp in configure phase.
 
@@ -2693,7 +2695,7 @@
   a hash code as an extension.
 
 
-2002/06/26 - joy
+2002/06/26 - Petr
 - SDL GUI integrated properly: it is now running in its own SDL thread
   so it's able to run in parallel with Atari emulation. The input events
   are still fetched in the Timer thread and are passed to the GUI thread
@@ -2715,7 +2717,7 @@
   reset).
 
 
-2002/06/24 - joy
+2002/06/24 - Petr
 - do_get_real_addr() replaced with Atari2HostAddr() in fdc.cpp and audio.cpp
 - ExitAll()/QuitEmulator() reworked to allow clean exit from debugger even on
   slow machines (the timer thread must be stopped first before the Atari
@@ -2727,12 +2729,12 @@
   should be no (or at least less) problems with the ia64 compilation.
 
 
-2002/06/09 - joy
+2002/06/09 - Petr
 - SDL GUI restores original background (see hostScreen.save_bkg/restore_bkg)
 - SDL GUI "Quit" works
 
 
-2002/06/07 - joy
+2002/06/07 - Petr
 - ScrollLock switches between fullscreen and windowed mode
 - in window mode you'll get a 'heart beat' - an activity indicator
 - SDL GUI is enabled by default now (can be disabled with --disable-gui)
@@ -2745,7 +2747,7 @@
 - newcpu.cpp: SDL_mutex for exclusive spcflags handling initialised
 
 
-2002/05/24 - joy
+2002/05/24 - Petr
 - as suggested by Heiko I added a complete locking to the virtual IKBD queue.
   Let's see if it works OK or if the mouse/keyboard is not working properly.
 
@@ -2781,18 +2783,18 @@
 - JIT compiler: one debug output added for segfault handler of JIT compiler
 
 
-2002/05/12 - milan (record in ChangeLog by joy)
+2002/05/12 - milan (record in ChangeLog by Petr)
 - ata.cpp: updated to bochs' latest source (supported SEEK and something else)
 
 
-2002/05/10 - milan (record in ChangeLog by joy)
+2002/05/10 - milan (record in ChangeLog by Petr)
 - input.cpp: hack for remounting CD on Ctrl+SysRq, needs to be removed!
 - gencpu.cpp: lotsa weird changes, probably related to distributed dispatcher
 - newcpu.cpp: minor distributed dispatcher related changes
 - JIT compiler: one segfault fixed
 
 
-2002/04/29 - joy
+2002/04/29 - Petr
 - ErrorAlert() has been replaced with panicbug() as I needed sprintf
   like parameter parsing. Now all file errors in main() report also
   the problematic filename.
@@ -2824,7 +2826,7 @@
 - pre-support of FreeBSD
 
 
-2002/04/21 - joy
+2002/04/21 - Petr
 - ExtFs: Dpathconf(DP_XATTR) disabled altogether. It was causing problems
   in Thing (Thing didn't refresh source window of 'move' operation).
 - $7135 illegal insn (debug print) was not printing until LF was sent.
@@ -2834,7 +2836,7 @@
 - EmuTOS loading: now checked for proper file length.
 
 
-2002/04/20 - joy
+2002/04/20 - Petr
 - audio.cpp - wrong memset() addr fixed. No more crashes, sound works
   like a charm.
 
@@ -2843,14 +2845,14 @@
 - ExtFs: Small general code cleanup
 
 
-2002/04/19 - Didier MEQUIGNON & joy
+2002/04/19 - Didier MEQUIGNON & Petr
 - audio driver: Atari side uses ZMAGXSND.PRG, a slightly modified
   MagiCMac sound driver. The communication is based on illegal instruction
   $712c and IRQ 5 used as a callback from host to Atari. Aniplayer is
-  supposed to play sound nicely but so far it's crashing on me (joy).
+  supposed to play sound nicely but so far it's crashing on me (Petr).
 
-2002/04/19 - STanda & joy
-- ExtFs: JOY have discovered that ExtFs:Fxattr should probably _not_
+2002/04/19 - STanda & Petr
+- ExtFs: Petr has discovered that ExtFs:Fxattr should probably _not_
   take the DTA structure. This bug was originating in the Julian
   Reschke's cookfs01 driver sources that I started to program from
   (he uses DTA in the Fxattr signature, although he never uses this
@@ -2866,7 +2868,7 @@
   * QED save and load problems fixed.
 
   Here it seems that the most ExtFs MetaDOS problems on Linux host
-  OS are gone. Please test heavily. Thanks goes to JOY and his hackers
+  OS are gone. Please test heavily. Thanks goes to Petr and his hacker's
   history! ;)
 
 - ExtFs namespace method/function recognition doesn't work under
@@ -2888,7 +2890,7 @@
   calls. No _emu suffix. Needs to be tried to compile under FreeMiNT.
 
 
-2002/04/13 - joy
+2002/04/13 - Petr
 - AranymFS: we can't rely on error codes returned by hostfs functions.
   For example TOS Fcreate() returns -34 if the path to file does not exist.
   The fix I put there helps ST-Zip to unpack folders onto host fs.
@@ -2906,7 +2908,7 @@
 
 ** Version 0.1.6
 
-2002/04/12 - joy
+2002/04/12 - Petr
 - newcpu.cpp: NMI will break out of the STOP jail. From user point
   of view - if EmuTOS happens to crash you'll be able to quit ARAnyM
   now.
@@ -2917,7 +2919,7 @@
 
 ** Version 0.1.5
 
-2002/04/10 - joy
+2002/04/10 - Petr
 - fixed bug in Reset insn emulation that caused EmuTOS crash
 
 - uae_cpu/spcflags.h cleaned up. NMI flag introduced.
@@ -2938,7 +2940,7 @@
 
 ** Version 0.1.4
 
-2002/04/09 - joy
+2002/04/09 - Petr
 - fixed my own stupid bug in acsifdc.cpp that broke floppy support.
   Thanks Martin for reporting it.
 
@@ -2971,7 +2973,7 @@
 - pre-patched for Atari MiNT :-)
 
 
-2002/04/02 - joy
+2002/04/02 - Petr
 - MFP and ACIA/FDC/ATA updated to be ready for major MFP rewrite.
 
 
@@ -2990,26 +2992,26 @@
 - IEEE FPU is default only for i386
 
 
-2002/03/26 - joy
+2002/03/26 - Petr
 - transformFileName in extfs.cpp fixed three times. ARAnyM will not crash
   when it encounters a long filename. ST-Zip will not crash when browsing
   MetaDOS drive. Maybe that PureC works now as well?
 
 
-2002/03/22 - joy
+2002/03/22 - Petr
 - IEEE FPU emulation fixed: 68040 specific insn (like FSMOVE) don't throw
   illegal opcode exception anymore.
 - IEEE FPU is now the default FPU emulation in configure phase.
 
 
-2002/03/21 - milan & joy
+2002/03/21 - milan & Petr
 - forgot to set the faulty address when invoking BUS ERROR from hardware
   registers access.
 - Exception 2 panicbug displays the faulty address now.
 - wrong bus error stack frame format 7 fixed.
 
 
-2002/03/20 - joy
+2002/03/20 - Petr
 - MFP and RTC tweaking to get Linux-m68k running
 
 
@@ -3082,13 +3084,13 @@
 - EmulOp (0x71XX) is handled as usual instruction
 
 
-2002/02/25 - joy
+2002/02/25 - Petr
 - web updated (Ctirad wrote new About)
 - simplified most of the presentation.xlst but it's still not good enough.
 - limited the text size to 600 pixels for more pleasant reading on wide screens
 
 
-2002/02/23 - joy
+2002/02/23 - Petr
 - separated input related code from main.cpp into input.cpp
 - all open() functions have "O_BINARY" flag appended so that Cygwin
   binaries won't mess CRLF in files (cdrom.cpp, extfs.cpp, fdc.cpp)
@@ -3096,7 +3098,7 @@
 
 ** Version 0.0.22 so you can see new IDE code is there.
 
-2002/02/21 - milan & joy
+2002/02/21 - milan & Petr
 - cdrom.cpp sync with Bochs (CD-ROM eject supported)
 - ata.cpp sync with Bochs (32-bit data access supported)
 - CD-ROM eject in Linux added
@@ -3104,7 +3106,7 @@
   It did not work so it is disabled in ide.cpp for now.
 
 
-2002/02/20 - joy
+2002/02/20 - Petr
 - config file is created with proper default values
 - IDE devices are disabled by default
 - CONFGUI obsolete #ifdef stuff removed from parameters.cpp
@@ -3131,7 +3133,7 @@
 
 ** ARAnyM 0.0.21 released
 
-2002/02/12 - joy
+2002/02/12 - Petr
 - IDE emulation adapted for Falcon: $f00039 is recognized but ignored.
 
 
@@ -3144,7 +3146,7 @@
 - new version of CPU interface
 
 
-2002/02/01 - Frank Naumann & joy & milan
+2002/02/01 - Frank Naumann & Petr & milan
 - PAGE_MASK renamed on ARAM_PAGE_MASK (ARAnym Memory PAGE_MASK), PAGE_MASK is
   defined in /usr/include/machine/param.h on OpenBSD
 - PAGE_CHECK renamed on ARAM_PAGE_CHECK
@@ -3152,7 +3154,7 @@
 - support for statfs on [Net|Open]BSD
 
 
-2002/02/01 - joy
+2002/02/01 - Petr
 - fixed long-standing bug in ATA.cpp that made ARAnyM stuck when no IDE disk
   drive was found (or defined in config).
 
@@ -3179,25 +3181,25 @@
   essential files on the mounted host filesystem.
 
 
-2002/01/30 - joy
+2002/01/30 - Petr
 - emul_op.cpp: OP_DEBUGUTIL made more secure (wrong addr will not crash aranym)
 
 
-2002/01/29 - joy
+2002/01/29 - Petr
 - two EmuTOS screenshots added
 - unsupported Windows binary available in download section
 
 
 ** ARAnyM 0.0.20 released
 
-2002/01/28 - joy
+2002/01/28 - Petr
 - tools/clocky.prg.bz2 updated - the hotkey combo is back at LShift+RShift
   (the Alt+LShift collided with Thing).
 - updated aranymrc.example
 - updated most documentation and web pages
 
 
-2002/01/27 - joy
+2002/01/27 - Petr
 - XHDI dispatch added to emul_op
 - XHGetCapacity() implemented
 - DMAread() improved
@@ -3207,7 +3209,7 @@
 - extfs.[ch]* cleanup from non needed arguments
 
 
-2002/01/24 - Olivier & joy
+2002/01/24 - Olivier & Petr
 - on Windows the host operations (fVDI, aranymfs) block the timer thread
   so we have to call the invoke200HzInterrupt() manually as soon as the
   host operations finish.
@@ -3224,7 +3226,7 @@
 - cleaning in ./src - memory access etc.
 
 
-2002/01/15 - joy
+2002/01/15 - Petr
 - you can undefine USE_GETTICKS in main.cpp to replace SDL_GetTicks()
   with gettimeofday(). This might help on platforms where SDL_GetTicks()
   is slowed down by aranymfs or fVDI driver.
@@ -3237,13 +3239,13 @@
   aligned when they shoud not be.
 
 
-2002/01/13 - joy
+2002/01/13 - Petr
 - DMAread() added to emul_op interface (used in current EmuTOS)
 - faq.xml updated by Ctirad
 - configure.in: SDLTIMER and PAGE_CHECK are enabled by default.
 
 
-2002/01/11 - Olivier Landemarre & joy
+2002/01/11 - Olivier Landemarre & Petr
 - fixed bug in time sync (signed long is bad for GetTicks())
 - fixed bug in TimerC disabling (wrong bit mask for &)
 
@@ -3259,7 +3261,7 @@
 
 
 2002/01/08 - STanda
-- The aranymfs config file setting finished (thanks to JOY)
+- The aranymfs config file setting finished (thanks to Petr)
 - fVDI driver doesn't destroy palette setting on resolution change
   The SDL_SetVideoMode clears the palette setting -> the palette is stored
   and restored after change (hostscreen.cpp/setWindowSize()) 
@@ -3267,14 +3269,14 @@
 - up and running
 
 
-2002/01/08 - joy
+2002/01/08 - Petr
 - the config file format and location has changed (now at $HOME/.aranym/config)
 - most global config variables moved to bx_options struct
 - NVRAM (formerly CMOS) file is stored in the aranym config folder as well now.
 - fixed many bugs in the parameters.cpp code. It should be quite usable now.
 
 
-2002/01/07 - joy [ ARANYM_0_0_17 tag ]
+2002/01/07 - Petr [ ARANYM_0_0_17 tag ]
 - NVRAM RTC getting current year fixed.
 
 
@@ -3288,11 +3290,11 @@
   #endif
 
 
-2002/01/05 - joy
+2002/01/05 - Petr
 - floppy geometry detection fixed. It could never work before!
 
 
-2002/01/03 - joy
+2002/01/03 - Petr
 - Blitter now calls Do_Blit() on reading status register only. Doesn't seem
   to fix the errors during Bconout, though.
 - Xconout redirected to host console using poor VT52 emulation.
@@ -3303,13 +3305,13 @@
   creation. Copyright notes updated (synchronized with Johan's).
 
 
-2001/12/30 - joy
+2001/12/30 - Petr
 - Johan increased PAGE of PAGE_CHECK to 1MB (for nonMMU mode). This greatly
   improved the performance - 36k5 dhry on my machine now. For the MMU040
   the PAGE is 4kB.
 
 
-2001/12/29 - joy (tagged as ARANYM_0_0_16)
+2001/12/29 - Petr (tagged as ARANYM_0_0_16)
 - Johan Klockars' PAGE_CHECK (dividing address space into 4k blocks) added.
   It produces slightly better dhrystones than 0.0.14 (34k2 vs 33k5) but
   real-life gcc benchmark didn't show any speed up. Perhaps this is a great
@@ -3317,7 +3319,7 @@
 - parameters.cpp and main.cpp cleaned up a bit.
 
 
-2001/12/27 - joy (tagged as ARANYM_0_0_15)
+2001/12/27 - Petr (tagged as ARANYM_0_0_15)
 - FastRAM can be fixed size ("./configure --enable-fastram=X") - that makes the
   check_ram_boundary() even faster (comparing with constant instead of fetching
   the value of a global variable). 35k2 dhry now (this is probably the fastest
@@ -3326,19 +3328,19 @@
 - fullmmu is disabled by default now.
 
 
-2001/12/26 - joy (tagged as ARANYM_0_0_14)
+2001/12/26 - Petr (tagged as ARANYM_0_0_14)
 - handling of MFP interrupts moved from CPU to MFP module
 - checking for VBL and MFP joined in one 'if' - another nice speedup (33k5 now)
 
 
-2001/12/25 - joy (tagged as ARANYM_0_0_13)
+2001/12/25 - Petr (tagged as ARANYM_0_0_13)
 - ACIA IRQs are not buffered (like TimerC IRQs are) - it was causing bad
   keyboard&mouse lockups. Apparently TOS can read several scancodes from IKBD
   in one IRQ and our poor implementation fits that feature :-)
 - TimerC interrupt fired only if enabled in MFP IRQ enable reg.
 
 
-2001/12/22 - joy (tagged as ARANYM_0_0_12)
+2001/12/22 - Petr (tagged as ARANYM_0_0_12)
 - most video related parameters moved to bx_options.video struct
 - added "--refresh <x>" cmdline option. Default value is 2 = 50/2 Hz screen
   refresh. Allowed values are 1 - 200 (50Hz - 1/4 Hz)
@@ -3351,13 +3353,13 @@
   are before the linetrailing backslash.
 
 
-2001/12/20 - joy
+2001/12/20 - Petr
 - cleaned up newcpu.cpp do_specialties()
 - STOP instruction handling really works and gives CPU time slices back
   to host OS!
 
 
-2001/12/19 - joy
+2001/12/19 - Petr
 - check_ram_boundary() cleaner now - no default value for 'write' parameter
   and the 'size' parameter contains the natural value - 1 for byte access,
   2 for a word access and 4 for a long (doubleword) access.
@@ -3365,13 +3367,13 @@
   speed of old unsafe, often crashing ARAnyM (Dhry: 27k -> 31k)
 
 
-2001/12/17 - joy
+2001/12/17 - Petr
 - SDL Timers are back! --enable-sdltimer
 - VBL timer runs at precise 50 Hz now
 - VIDEL screen refresh at fixed 25 Hz now
 
 
-2001/12/16 - joy
+2001/12/16 - Petr
 - check_ram_boundary() takes an additional parameter that sets the size 
   of memory access. Now finally all memory accesses are checked and nothing
   can escape from ARAnyM allocated memory.
@@ -3399,14 +3401,14 @@
   where doesn't cause floating point exceptions and aranym crashes in fbcon.
  
 
-2001/12/07 - joy
+2001/12/07 - Petr
 - first two long words (addresses 0..7) are readonly now like on real Atari.
   Thanks to Patrice for forcing us to fix it :-)
 
 
 ** ARAnyM 0.0.11 released
 
-2001/12/05 - joy
+2001/12/05 - Petr
 - "-N" or "--nomouse" added to cmdline options. It basically disables
   the auto mouse grabbing at startup. Suitable especially for debugging.
 
@@ -3432,7 +3434,7 @@
 - ExtFs: Frename fix.
 
 
-2001/12/02 - joy
+2001/12/02 - Petr
 - keyboard conversion code rewritten again. As the SDL returns different
   scancodes for same keys under different OSes I created a heuristic
   analysis of pressed keys that tries to detect the offset between the
@@ -3447,12 +3449,12 @@
   The old m68k part source will be removed later.
 
 
-2001/11/28 - joy
+2001/11/28 - Petr
 - new keyboard conversion code: now based on pure scancodes. Clocky for Aranym
   now distributed with English PC101 keyboard. With Clocky loaded you have real
   WYSIWYG. Feel free to submit other .KBD files for Clocky (French, German,..?)
 
-2001/11/25 - joy
+2001/11/25 - Petr
 - new FastRAM.PRG with automatic size detection and _FRB buffer.
 
 2001/11/21 - milan
@@ -3477,7 +3479,7 @@
 - the 2nd step for Cygwin
 
 
-2001/11/19 - joy
+2001/11/19 - Petr
 - MD5 should be OK on big endian machines (Sparc)
 
 - new TOS 4.04 patches - cleaned up a lot thanks to the disassembly made by
@@ -3499,7 +3501,7 @@
   booted in the same color depth.
 
 
-2001/11/14 - joy
+2001/11/14 - Petr
 - corrected XML->HTML compilation
 
 - made the IDE f00039 alternate status register same as the main IDE status reg.
@@ -3517,7 +3519,7 @@
 - support for Cygwin
 
 
-2001/11/11 - joy
+2001/11/11 - Petr
 - during configure you can "--enable-directcolor" which is the infamous TOS
   and Aranym patch for direct truecolor with VIDEL. I made it configurable
   in compile time to simplify the memory boundary checks in uae-cpu/memory.h.
@@ -3560,7 +3562,7 @@
 - the 1st step for Solaris
 
 
-2001/11/06 - joy
+2001/11/06 - Petr
 - TOS was patched with WinX by a mistake. Fixed. GEMRAM 1.0 from Aratools
   does not work correctly as the ROM area is not writeable. Use real GEMRAM
   instead.
@@ -3579,7 +3581,7 @@
   fvdi.prg initialization then.
 
 
-2001/11/01 - joy
+2001/11/01 - Petr
 - mouse behaviour much improved. Automatic grab is configurable now. You can
   ungrab the mouse by Alt+Ctrl+Esc and grab it back by left mouse click.
 
@@ -3604,7 +3606,7 @@
   this I can't see on my computer and I didn't even try to make any benchmarks.
 
 
-2001/10/29 - joy
+2001/10/29 - Petr
 - --floppy <path> added to the command line options
 
 - --rom <path> removed
@@ -3636,7 +3638,7 @@
 - small change in m68k_run_1
 
 
-2001/10/25 - joy
+2001/10/25 - Petr
 - when the aranym catches segmentation fault it releases mouse and keyboard
   and shows last 20 instructions prior the segfaulting instruction (only
   if compiled with --enable-fullhistory).
@@ -3677,7 +3679,7 @@
         time to fix it now. I know exactly what is the problem.
 
 
-2001/10/18 - joy
+2001/10/18 - Petr
 - MD5 class added
 - InitROM() detects both our ABTOS and the original TOS 4.04.
 - InitROM() patches TOS 4.04
@@ -3689,7 +3691,7 @@
          works and the ftp must stay @sophics, the absolute path problems)
 - ExtFs: Small bug fix. The Fsfirst&next returns the . and .. dirs too.
          (according to Julian Reschke's advice)
-- Tools: The changes that were made and uploaded to JOY's ftp are in CVS now
+- Tools: The changes that were made and uploaded to Petr's ftp are in CVS now
          The README was modified a bit.
 
 
@@ -3734,7 +3736,7 @@
 - platform's independent memory allocation, if ARAnyM doesn't know better
 
 
-2001/10/02 - joy
+2001/10/02 - Petr
 - ROM file reading back in main.cpp
 - TTRAM renamed to FastRAM everywhere
 - --ttram renamed to --fastram, -T renamed to -F
@@ -3759,7 +3761,7 @@
 - cleaning of memory allocation
 
 
-2001/09/21 [ARAnyM 0.0.8] - joy
+2001/09/21 [ARAnyM 0.0.8] - Petr
 - in a fVDI session (when VIDEL rendering is disabled) if VIDEL VideoRAM address
   is changed the VIDEL rendering is enabled again. This is essential for example
   when you reset the Atari machine (you want to see the Fuji logo, don't you? :)
@@ -3779,7 +3781,7 @@
   fVDI driver Shouldn't cause BUS ERROR now.
 
 
-2001/09/20 - joy
+2001/09/20 - Petr
 - fixed very annoying bug in direct_tc mode (no more segfaults at $e08ba8 I hope!)
 
 - mouse code for host-client transformation is now conditional (only when not running
@@ -3794,7 +3796,7 @@
 - gfxprimitives cleanup
 
 
-2001/09/19 - joy
+2001/09/19 - Petr
 - TT-RAM (or FastRAM) size entered on command line (--ttram) is in MB now.
 - new .aranymrc option named "FastRAM", acts as the --tram switch.
 - first release of aratools.tgz, available at ftp.sophics.cz/pub/aranym.
@@ -3802,7 +3804,7 @@
   crashes, I suspect it's due to the weird Milan's virtual memory management).
 
 
-2001/09/18 - joy
+2001/09/18 - Petr
 - keys remapped: Atari Help is on the F11 host key, Atari Undo is on F12 key.
   Keys PageUp/PageDown are mapped to Atari combo Shift+ArrowUp/Down which
   should work in most GEM programs (handy stuff, you get used to it fairly
@@ -3820,7 +3822,7 @@
   for that.
 
 
-2001/09/11 [ARAnyM 0.0.7] - joy
+2001/09/11 [ARAnyM 0.0.7] - Petr
 - real hard fight with Aniplayer. I found that it checks whether there's
   a $CAFEFADE number at $F4000014. This check was killing aranym since
   my check_ram_boundary() was broken (due to a number of stupid bugs).
@@ -3829,7 +3831,7 @@
   and that is a bad sign for us since we wanted to have the host videoram there.
 
 
-2001/09/10 [ARAnyM 0.0.6] - joy
+2001/09/10 [ARAnyM 0.0.6] - Petr
 - proper check_ram_boundary in memory.h. Has to be always enabled, otherwise
   programs like e.g. Aniplayer can kill the whole aranym..
   FastRAM works again (still fixed to 32 MB).
@@ -3839,14 +3841,14 @@
   The original behavior with timers may be enabled with -DUSE_TIMERS.
 
 
-2001/09/09 - joy
+2001/09/09 - Petr
 - direct TrueColor works again
 - clicking in fullscreen X11 works again (generally mouse grabbing works again)
 - disabled the shit in main_unix.cpp (the memory management)
 - fixed a few little bugs
 
 
-2001/09/04 - joy
+2001/09/04 - Petr
 - milan's port of ata.cpp and cdrom.cpp from Bochs v1.2 now enables direct
   access to CD-ROM! Use "IsCDROM = Yes" in your [IDE1] section of aranym
   conf file.
@@ -3902,7 +3904,7 @@
 - devdist in Makefile
 
 
-2001/08/16 - Joy
+2001/08/16 - Petr
 
 - config file taken from PARCP. Feel free to extend the global_conf struct in parameters.cpp
   with more options.
@@ -3936,7 +3938,7 @@
   non-POSIX OS's
 
 
-2001/08/09 - joy
+2001/08/09 - Petr
 
 - added ata-new.cpp and cdrom.cpp from Bochs. Compilable but don't work yet (dunno why).
 
@@ -3950,7 +3952,7 @@
 - bitplane to chunky conversion speedup (enrolling the conversion loop etc.)
 
 
-2001/07/24 - joy
+2001/07/24 - Petr
 - portable stuff moved from Unix folder up to the main.cpp (should be cleaned up)
 
 - bx_options moved from ata.cpp to parameters and should become global structure
@@ -4013,12 +4015,12 @@
 - videl renderScreen() fix (lock & unlock screen added - again)
 
 - the Shift+Pause combination is now used to exit the emulator immediately
-  (this was joy's code change, but forgotten to tell us ;))... anyway thanks
+  (this was Petr's code change, but forgotten to tell us ;))... anyway thanks
   for really good working videl now. I seem not to have any problems with
   color palette here :).
 
 
-2001/06/17 - joy
+2001/06/17 - Petr
 - System Timer (200 Hz Timer C) should be precise even under heavy load now.
   The MFP stuff needs to be rewritten from scratch. My C++ OOP knowledge sucks.
 
@@ -4046,7 +4048,7 @@
   as they are invoked before main(). Fix the ExtFs stuff (install "A" ???)
 
 
-2001/06/15 - joy
+2001/06/15 - Petr
 - VIDEL finished. Hardware color palette registers are used properly now.
 
 
@@ -4058,7 +4060,7 @@
   original method functionality was captured in new renderScreen() method
 
 
-2001/06/12 - joy
+2001/06/12 - Petr
 - VIDEL rewritten using the new BASE_IO class. Got proper getVideoMode()
   and getWidth/Height (all stolen from Linux-m68k source code).
   Extended resolutions (using BlowUP030) work now perfectly (e.g. 1024x768).
@@ -4067,12 +4069,12 @@
   HW emulation stuff now.
 
 
-2001/06/08 - joy
+2001/06/08 - Petr
 - highly unfinished, very preliminary, often crashing support for extended
   VIDEL resolutions. I know how to fix it, just give me some time.
 
 
-2001/06/06 - joy
+2001/06/06 - Petr
 - '--grab_mouse' command line switch for X-Windows
 
 - floppy can be inserted and removed in run-time. Press F11 to insert
@@ -4096,7 +4098,7 @@
 - the short -debug option was redesigned to -D
 
 
-2001/05/29 - joy - version increased to 0.0.3
+2001/05/29 - Petr - version increased to 0.0.3
 - major speed up (22 -> 27 thousand dhrystones) thanks to moving setjmp()
   out of main CPU loop
 
@@ -4105,7 +4107,7 @@
 - fixed VBL invocation (main_unix.cpp)
 
 
-2001/05/29 - joy - version increased to 0.0.2
+2001/05/29 - Petr - version increased to 0.0.2
 - uae_cpu/memory.h - you can enable or disable CHECK_MEMORY_END.
   When enabled, direct_truecolor bombs out in early stage of TOS boot (because
   TOS cannot write to videoram).
@@ -4123,7 +4125,7 @@
   VGA card video memory (if framebuffer is used as the SDL_VIDEODRIVER).
 
 
-2001/05/28 - joy
+2001/05/28 - Petr
 - implemented proper Bus Error (hardware.cpp and others). This helps
   in a number of places, namely in FPU detection routines.
 

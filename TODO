@@ -28,10 +28,6 @@ TODO in TOS patches and utilities:
 
 TODO in documentation:
 - update the man page (and fix two manpages in RPM)
-- README and doc/documentation.txt largely overlap. Must be fixed ASAP
-  by stripping down the README to a few basic instructions and
-  extending/revising and rewriting the documentation.txt into an useful
-  and up-to-date aranym documentation (aranym.txt would be a better name).
 - keep working on ARAnyM Hackers Guide (hguide.txt).
 
 TODO in ARAnyM source code itself:
@@ -55,13 +51,13 @@ Some hot ideas (before they get forgotten)
 Note that the name before a TODO item doesn't mean the item is assigned to
 that particular programmer but rather who is author of the idea :-)
 
-- joy: make.sh magic: "nfeth-config.c" build by ./make.sh of the xif.
+- Petr: make.sh magic: "nfeth-config.c" build by ./make.sh of the xif.
 
-- joy: write some doc about bridging the tuntap - perhaps the following
+- Petr: write some doc about bridging the tuntap - perhaps the following
        URL could help?
        http://tldp.org/HOWTO/Ethernet-Bridge-netfilter-HOWTO-3.html#ss3.1
 
-- joy: Clipboard sharing between host and atari. Some URLs for inspiration:
+- Petr: Clipboard sharing between host and atari. Some URLs for inspiration:
   http://www.idata.sk/~robo/mpcb/
   http://www.freedesktop.org/standards/clipboards.txt
 
@@ -71,12 +67,12 @@ that particular programmer but rather who is author of the idea :-)
   Extra cool idea: PRIMARY selection on X11 could be stored to IKBD buffer
   directly so it would simulate typing.
 
-- joy: printing to configurable file (/dev/lp)
+- Petr: printing to configurable file (/dev/lp)
 
-- joy: ARAnyM should test if SDL timers work OK at startup and if not, stop
+- Petr: ARAnyM should test if SDL timers work OK at startup and if not, stop
        booting and exit gracefully with a loud warning (e.g. on NetBSD).
 
-- joy: emulating a serial port compatible with MiNT/HSMODEM
+- Petr: emulating a serial port compatible with MiNT/HSMODEM
 
 - Milan: distributed dispatcher for JIT compiler sigsegv handler
   UPDATE: partially done, slower :-(
@@ -93,6 +89,3 @@ that particular programmer but rather who is author of the idea :-)
 - patrice: rework dsp thread synchronization. It seems it may hang sometimes.
 
 - patrice: full automake/autoconf support.
-
-- patrice: put needed Linux kernel include files to compile Lilo support,
-           without needing to unpack the huge kernel archive.

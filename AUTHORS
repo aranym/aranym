@@ -26,7 +26,7 @@ Stanislav Opichal <opichals@seznam.cz>
 
 Petr Stehlik <pstehlik@sophics.cz>
 - some hardware emulation (Falcon-specific HW)
-- interrupt system (inspired by STonX)
+- interrupt system (inspired by STonX and STonC)
 - 68040 friendly TOS (based on old information from Douglas Little of BSS)
 - host input/output (keyboard and mouse, parallel port)
 - XHDI interface
@@ -65,6 +65,12 @@ Xavier Joubert
 - SDL GUI improvements
 - enabled JIT CPU compiler in MS Windows by writing Win sigsegv handler
 
+Andreas Schwab
+- damn important fix of MOVES instruction (for Linux-m68k boot)
+- fix of PTESTR/PTESTW and more MMU fixes
+- LILO fixes, no longer needs /usr/src/linux/include for compiling
+
+---
 
 ARAnyM source code consists of several parts. Some were taken from other
 projects (in alphabetical order):
@@ -170,10 +176,6 @@ Stefan Kuhr
 Carlo Baiocco
 - new Mac OS X port (src/MacOSX/*)
 - various bugfixes (floppy, parameters, memory management)
-
-Andreas Schwab
-- damn important fix of MOVES instruction (for Linux-m68k boot)
-- fix of PTESTR/PTESTW and more MMU fixes
 
 Laurent Vogel
 - crucial MFP/IKBD GPIP fix
