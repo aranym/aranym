@@ -291,7 +291,7 @@ compemu.cpp: $(OBJ_DIR)/gencomp
 $(OBJ_DIR)/cpustbl_nf.o: cpustbl.cpp
 	$(CXX) $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -DNOFLAGS -c $< -o $@
 
-$(OBJ_DIR)/compemu_support.o: compemu_support.cpp comptbl.h
+$(OBJ_DIR)/compemu_support.o: compemu_support.cpp comptbl.h codegen_x86.cpp
 	$(CXX) $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/cpuemu1.o: cpuemu.cpp

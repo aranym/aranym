@@ -1438,6 +1438,9 @@ void m68k_do_execute (void)
 	check_ram_boundary(pc, 2, false);
 #endif
 	opcode = GET_OPCODE;
+#ifdef DISDIP
+	printf("%lx\n",opcode);
+#endif
 
 // Seems to be faster without the assembly... - yes, it is "bugfix"
 #if (0 && defined(X86_ASSEMBLY))

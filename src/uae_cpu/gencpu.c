@@ -211,9 +211,9 @@ static void fill_prefetch_2 (void)
 
 static void swap_opcode (void)
 {
-  printf ("#ifdef HAVE_GET_WORD_UNSWAPPED\n");
+#ifdef HAVE_GET_WORD_UNSWAPPED
   printf ("\topcode = do_byteswap_16(opcode);\n");
-  printf ("#endif\n");
+#endif
 }
 
 static void sync_m68k_pc (void)
@@ -2365,6 +2365,7 @@ static void generate_one_opcode (int rp)
     printf ("\top_smalltbl_0_lab[opcode] = &&op_%lx_%d_lab;\n", opcode, postfix);
     printf ("\treturn;\n");
     printf ("op_%lx_%d_lab: /* %s */\n", opcode, postfix, lookuptab[i].name);
+    printf ("\tprintf(\"%%08x: %lx -> %%lx\\n\", m68k_getpc(), opcode);\n", opcode);
 #else
 	printf ("\tcpuop_begin();\n");
 #endif
@@ -2414,7 +2415,7 @@ static void generate_one_opcode (int rp)
 	    if (pos < 8 && (smsk >> (8 - pos)) != 0)
 		abort ();
 #endif
-	    printf ("#ifdef HAVE_GET_WORD_UNSWAPPED\n");
+#ifdef HAVE_GET_WORD_UNSWAPPED
 
 	    if (pos < 8 && (smsk >> (8 - pos)) != 0)
 		sprintf (source, "(((opcode >> %d) | (opcode << %d)) & %d)",
@@ -2431,7 +2432,7 @@ static void generate_one_opcode (int rp)
 	    else
 		printf ("\tuae_u32 srcreg = %s;\n", source);
 
-	    printf ("#else\n");
+#else
 
 	    if (pos)
 		sprintf (source, "((opcode >> %d) & %d)", pos, smsk);
@@ -2445,7 +2446,7 @@ static void generate_one_opcode (int rp)
 	    else
 		printf ("\tuae_u32 srcreg = %s;\n", source);
 
-	    printf ("#endif\n");
+#endif
 	}
     }
     if (table68k[opcode].duse
@@ -2466,7 +2467,7 @@ static void generate_one_opcode (int rp)
 	    if (pos < 8 && (dmsk >> (8 - pos)) != 0)
 		abort ();
 #endif	    
-	    printf ("#ifdef HAVE_GET_WORD_UNSWAPPED\n");
+#ifdef HAVE_GET_WORD_UNSWAPPED
 
 	    if (pos < 8 && (dmsk >> (8 - pos)) != 0)
 		printf ("\tuae_u32 dstreg = ((opcode >> %d) | (opcode << %d)) & %d;\n",
@@ -2477,7 +2478,7 @@ static void generate_one_opcode (int rp)
 	    else
 		printf ("\tuae_u32 dstreg = opcode & %d;\n", dmsk);
 
-	    printf ("#else\n");
+#else
 
 	    if (pos)
 		printf ("\tuae_u32 dstreg = (opcode >> %d) & %d;\n",
@@ -2485,7 +2486,7 @@ static void generate_one_opcode (int rp)
 	    else
 		printf ("\tuae_u32 dstreg = opcode & %d;\n", dmsk);
 
-	    printf ("#endif\n");
+#endif
 	}
     }
     need_endlabel = 0;
@@ -2518,6 +2519,7 @@ static void generate_one_opcode (int rp)
     printf ("\tcheck_ram_boundary(pc, 2, false);\n");
 #endif
     printf ("\topcode = GET_OPCODE;\n");
+    printf ("\tprintf(\"%%lx\\n\",opcode);\n");
     printf ("\tgoto *op_smalltbl_0_lab[opcode];\n\n");
     previous_gener_opcode = opcode;
 #else

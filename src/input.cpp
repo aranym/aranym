@@ -22,6 +22,7 @@
 #include "input.h"
 #include "aradata.h"		// for getAtariMouseXY
 #include "host.h"			// for the HostScreen
+#include "ata.h"
 #ifdef SDL_GUI
 #include "dialog.h"
 #endif
@@ -484,6 +485,10 @@ void check_event()
 					case SDLK_PRINT:
 						if (alternated) {
 							hostScreen.makeSnapshot();
+							send2Atari = false;
+						}
+						if (controlled) {
+							bx_hard_drive.set_cd_media_status(bx_hard_drive.get_cd_media_status() == 0);
 							send2Atari = false;
 						}
 						break;

@@ -6050,9 +6050,9 @@ static void flush_icache_hard(int n)
     blockinfo* bi, *dbi;
 
     hard_flush_count++;
+    D(panicbug("Flush Icache_hard(%d/%x/%p), %u KB",
+	   n,regs.pc,regs.pc_p,current_cache_size/1024));
 #if 0
-    write_log("Flush Icache_hard(%d/%x/%p), %u KB\n",
-	   n,regs.pc,regs.pc_p,current_cache_size/1024);
 	current_cache_size = 0;
 #endif
     bi=active;
@@ -6607,10 +6607,10 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	
 	if (JITDebug && disasm_block) {
 		uaecptr block_addr = start_pc + ((char *)pc_hist[0].location - (char *)start_pc_p);
-		D(bug("M68K block @ 0x%08x (%d insns)\n", block_addr, blocklen));
+		D(panicbug("M68K block @ 0x%08x (%d insns)\n", block_addr, blocklen));
 		uae_u32 block_size = ((uae_u8 *)pc_hist[blocklen - 1].location - (uae_u8 *)pc_hist[0].location) + 1;
 		disasm_m68k_block((uae_u8 *)pc_hist[0].location, block_size);
-		D(bug("Compiled block @ 0x%08x\n", pc_hist[0].location));
+		D(panicbug("Compiled block @ 0x%08x\n", pc_hist[0].location));
 		disasm_native_block((uae_u8 *)current_block_start_target, bi->direct_handler_size);
 		getchar();
 	}

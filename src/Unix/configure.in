@@ -901,6 +901,7 @@ echo Floating-Point emulation core .......... : $FPE_CORE_STR
 echo Assembly optimizations ................. : $ASM_OPTIMIZATIONS
 echo Addressing mode ........................ : $ADDRESSING_MODE
 echo Full MMU support ....................... : $WANT_MMU
+echo Distributed dispatcher ................. : $WANT_DIS_DIP
 echo Debugger ............................... : $WHICH_DEBUG
 echo Monitor ................................ : $WANT_MON
 echo Timer C using SDL Timer ................ : $WANT_SDLTIMER

@@ -2373,11 +2373,24 @@ static void segfault_vec(int x, struct sigcontext sc)
 	
 	switch(i[0]) {
 	 case 0x8a:
-	      if ((i[1]&0xc0)==0x80) {
+	    switch(i[1]&0xc0) {
+	    case 0x80:
 		r=(i[1]>>3)&7;
 		dir=SIG_READ;
 		size=1;
 		len+=6;
+		break;
+	    case 0x40:
+		r=(i[1]>>3)&7;
+		dir=SIG_READ;
+		size=1;
+		len+=3;
+		break;
+	    case 0x00:
+		r=(i[1]>>3)&7;
+		dir=SIG_READ;
+		size=1;
+		len+=2;
 		break;
 	    }
 	    break;
@@ -2553,6 +2566,7 @@ static void segfault_vec(int x, struct sigcontext sc)
 		target=(uae_u8 *)tmp;
 	    }
 	    bi=active;
+	    panicbug("%p\n", active);
 	    while (bi) {
 		if (bi->handler && 
 		    (uae_u8*)bi->direct_handler<=i &&
