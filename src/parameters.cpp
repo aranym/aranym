@@ -238,7 +238,6 @@ void presave_jit()
 struct Config_Tag tos_conf[]={
 	{ "Cookie_MCH", HexLong_Tag, &bx_options.tos.cookie_mch, 0, 0},
 	{ "RedirConsole", Bool_Tag, &bx_options.tos.redirect_CON, 0, 0},
-	{ "RedirPrinter", Bool_Tag, &bx_options.tos.redirect_PRT, 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -694,7 +693,7 @@ struct Config_Tag parallel_conf[]={
 
 void preset_parallel() {
   safe_strncpy(PARALLEL_CONF(type), "file", sizeof(PARALLEL_CONF(type)));
-  safe_strncpy(PARALLEL_CONF(file), "/tmp/aranym-parallel.txt", sizeof(PARALLEL_CONF(type)));
+  safe_strncpy(PARALLEL_CONF(file), "stderr", sizeof(PARALLEL_CONF(type)));
   safe_strncpy(PARALLEL_CONF(parport), "/dev/parport0", sizeof(PARALLEL_CONF(parport)));
 }
 

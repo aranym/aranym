@@ -423,16 +423,6 @@ bool InitTOSROM(void)
 		ROMBaseHost[0x8d46] = ROMBaseHost[0x8d52] = 0x4e;
 		ROMBaseHost[0x8d47] = ROMBaseHost[0x8d53] = 0x75;
 	}
-	if (bx_options.tos.redirect_PRT) {
-		ROMBaseHost[0x23ec] = 0x32;
-		ROMBaseHost[0x23ed] = 0x2f;
-		ROMBaseHost[0x23ee] = 0x00;
-		ROMBaseHost[0x23ef] = 0x06;
-		ROMBaseHost[0x23f0] = 0x71;
-		ROMBaseHost[0x23f1] = 0x2a;
-		ROMBaseHost[0x23f2] = 0x4e;
-		ROMBaseHost[0x23f3] = 0x75;
-	}
 
 	infoprint("TOS 4.04 loading... [OK]");
 	return true;

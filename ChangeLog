@@ -1,3 +1,8 @@
+2005/02/22 - Petr
+- parameters.cpp: 'RedirPrinter' removed.
+  Default printer file is 'stderr'.
+
+
 * tagged as ARANYM_0_9_0_BETA
 
 2005/02/20 - Petr

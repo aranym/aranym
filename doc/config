@@ -93,9 +93,6 @@ Cookie_MCH = 50000
 # redirect TOS bconout characters to the host console window
 RedirConsole = No
 
-# Undocumented
-RedirPrinter = No
-
 
 # IDE Devices configuration
 # update the Cylinders/Heads/SectorsPerTrack according to your drive geometry!
@@ -225,7 +222,7 @@ LibOSMesa = libOSMesa.so
 #  parport -> Use /dev/parport device under Linux
 Type = file
 # Output to file: filename, stdout, or stderr
-File = /tmp/aranym-parallel.txt
+File = stderr
 #  File = stdout
 #  File = stderr
 # Linux parport device for Type=parport
