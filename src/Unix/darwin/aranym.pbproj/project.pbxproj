@@ -29,20 +29,6 @@
 			remoteGlobalIDString = F87BDEF60488FB6400F69266;
 			remoteInfo = ARAnyM.app;
 		};
-		F853CC1205C70845005B6F8D = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = SDL.framework;
-			path = /Users/stefan/Library/Frameworks/SDL.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F853CC1305C70845005B6F8D = {
-			fileRef = F853CC1205C70845005B6F8D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F86B50B205C476E20089468F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3927,7 +3913,7 @@
 				F87BE13B0488FCE000F69266,
 				F87BE13C0488FCE000F69266,
 				F86B528105C47A540089468F,
-				F853CC1305C70845005B6F8D,
+				F8DD8BF905C70E7800C87C7F,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3948,7 +3934,7 @@
 				F87BDEF50488FB6400F69266,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = "\"$(HOME)/Library/Frameworks\"";
 				HEADER_SEARCH_PATHS = "\"$(HOME)/Library/Frameworks/SDL.framework/Versions/A/Headers\"";
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
 				LIBRARY_SEARCH_PATHS = ..;
@@ -4022,7 +4008,7 @@
 		};
 		F87BE1340488FC4700F69266 = {
 			children = (
-				F853CC1205C70845005B6F8D,
+				F8DD8BF805C70E7800C87C7F,
 				F87BE1350488FC7E00F69266,
 				F87BE1370488FCE000F69266,
 				F87BE1380488FCE000F69266,
@@ -4143,6 +4129,20 @@
 			isa = PBXTargetDependency;
 			target = F87BE158048901B400F69266;
 			targetProxy = F83AFFC005C09F8200F1E83F;
+		};
+		F8DD8BF805C70E7800C87C7F = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = SDL.framework;
+			path = "~/Library/Frameworks/SDL.framework";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F8DD8BF905C70E7800C87C7F = {
+			fileRef = F8DD8BF805C70E7800C87C7F;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 	};
 	rootObject = F87BDEF00488FB4800F69266;
