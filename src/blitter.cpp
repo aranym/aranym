@@ -272,71 +272,75 @@ HOP_OPS(_HOP_3_OP_15_P,(0xffff) ,source_buffer <<=16,source_buffer |= ((unsigned
 void hop2op3p( BLITTER& b )
 {
 #if BLITTER_MEMMOVE
+	if (videl.getScreenBpp() == 16) {
 #if BLITTER_SDLBLIT
-	if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
-		SDL_Rect src, dest;
-		int src_offset = b.source_addr - ARANYMVRAMSTART;
-		int dest_offset = b.dest_addr - ARANYMVRAMSTART;
-		int VidelScreenWidth = videl.getScreenWidth();
-		src.x = (src_offset % (2*VidelScreenWidth))/2;
-		src.y = (src_offset / (2*VidelScreenWidth));
-		src.w = dest.w = b.x_count;
-		src.h = dest.h = b.y_count;
-		dest.x = (dest_offset % (2*VidelScreenWidth))/2;
-		dest.y = (dest_offset / (2*VidelScreenWidth));
-		SDL_Surface *surf = SDL_GetVideoSurface();
-		SDL_BlitSurface(surf, &src, surf, &dest);
-		b.source_addr += (((b.x_count-1)*b.source_x_inc)+b.source_y_inc)*b.y_count;
-		b.dest_addr += (((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc)*b.y_count;
-		b.y_count = 0;
-		return;
-	}
+		if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
+			SDL_Rect src, dest;
+			int src_offset = b.source_addr - ARANYMVRAMSTART;
+			int dest_offset = b.dest_addr - ARANYMVRAMSTART;
+			int VidelScreenWidth = videl.getScreenWidth();
+			src.x = (src_offset % (2*VidelScreenWidth))/2;
+			src.y = (src_offset / (2*VidelScreenWidth));
+			src.w = dest.w = b.x_count;
+			src.h = dest.h = b.y_count;
+			dest.x = (dest_offset % (2*VidelScreenWidth))/2;
+			dest.y = (dest_offset / (2*VidelScreenWidth));
+			SDL_Surface *surf = SDL_GetVideoSurface();
+			SDL_BlitSurface(surf, &src, surf, &dest);
+			b.source_addr += (((b.x_count-1)*b.source_x_inc)+b.source_y_inc)*b.y_count;
+			b.dest_addr += (((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc)*b.y_count;
+			b.y_count = 0;
+			return;
+		}
 #endif /* BLITTER_SDLBLIT */
-	do
-	{
-		memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2);
-		b.source_addr += ((b.x_count-1)*b.source_x_inc)+b.source_y_inc;
-		b.dest_addr += ((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc;
-	} while (--b.y_count > 0);
-#else
-	_HOP_2_OP_03_P( b );
+		do
+		{
+			memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2);
+			b.source_addr += ((b.x_count-1)*b.source_x_inc)+b.source_y_inc;
+			b.dest_addr += ((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc;
+		} while (--b.y_count > 0);
+	}
+	else
 #endif /* BLITTER_MEMMOVE */
+	_HOP_2_OP_03_P( b );
 }
 
 void hop2op3n( BLITTER& b )
 {
 #if BLITTER_MEMMOVE
-	b.source_addr += ((b.x_count-1)*b.source_x_inc);
-	b.dest_addr += ((b.x_count-1)*b.dest_x_inc);
+	if (videl.getScreenBpp() == 16) {
+		b.source_addr += ((b.x_count-1)*b.source_x_inc);
+		b.dest_addr += ((b.x_count-1)*b.dest_x_inc);
 #if BLITTER_SDLBLIT
-	if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
-		b.source_addr += (((b.x_count)*b.source_x_inc)+b.source_y_inc)*b.y_count;
-		b.dest_addr += (((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc)*b.y_count;
-		SDL_Rect src, dest;
-		int src_offset = b.source_addr - ARANYMVRAMSTART;
-		int dest_offset = b.dest_addr - ARANYMVRAMSTART;
-		int VidelScreenWidth = videl.getScreenWidth();
-		src.x = (src_offset % (2*VidelScreenWidth))/2;
-		src.y = (src_offset / (2*VidelScreenWidth));
-		src.w = dest.w = b.x_count;
-		src.h = dest.h = b.y_count;
-		dest.x = (dest_offset % (2*VidelScreenWidth))/2;
-		dest.y = (dest_offset / (2*VidelScreenWidth));
-		SDL_Surface *surf = SDL_GetVideoSurface();
-		SDL_BlitSurface(surf, &src, surf, &dest);
-		b.y_count = 0;
-		return;
-	}
+		if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
+			b.source_addr += (((b.x_count)*b.source_x_inc)+b.source_y_inc)*b.y_count;
+			b.dest_addr += (((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc)*b.y_count;
+			SDL_Rect src, dest;
+			int src_offset = b.source_addr - ARANYMVRAMSTART;
+			int dest_offset = b.dest_addr - ARANYMVRAMSTART;
+			int VidelScreenWidth = videl.getScreenWidth();
+			src.x = (src_offset % (2*VidelScreenWidth))/2;
+			src.y = (src_offset / (2*VidelScreenWidth));
+			src.w = dest.w = b.x_count;
+			src.h = dest.h = b.y_count;
+			dest.x = (dest_offset % (2*VidelScreenWidth))/2;
+			dest.y = (dest_offset / (2*VidelScreenWidth));
+			SDL_Surface *surf = SDL_GetVideoSurface();
+			SDL_BlitSurface(surf, &src, surf, &dest);
+			b.y_count = 0;
+			return;
+		}
 #endif /* BLITTER_SDLBLIT */
-	do
-	{
-		memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2);
-		b.source_addr += ((b.x_count)*b.source_x_inc)+b.source_y_inc;
-		b.dest_addr += ((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc;
-	} while (--b.y_count > 0);
-#else
-	_HOP_2_OP_03_N( b );
+		do
+		{
+			memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2);
+			b.source_addr += ((b.x_count)*b.source_x_inc)+b.source_y_inc;
+			b.dest_addr += ((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc;
+		} while (--b.y_count > 0);
+	}
+	else
 #endif /* BLITTER_MEMMOVE */
+	_HOP_2_OP_03_N( b );
 }
 
 
