@@ -10,7 +10,7 @@ Floppy = /dev/fd0
 ; path to TOS 4.04
 TOS = /usr/local/share/aranym/ROM
 
-; path to EmuTOS - if EmuTOS is defined the TOS= is ignored
+; path to EmuTOS - make the "TOS=" empty otherwise EmuTOS= is ignored
 EmuTOS = 
 
 ; grab mouse to ARAnyM window when the mouse enters the window rectangle
