@@ -40,9 +40,13 @@ SRCS = ../main.cpp \
 	../fdc.cpp \
 	../rtc.cpp \
 	../ata.cpp \
+	../ide.cpp \
+	../fakeio.cpp \
 	../emul_op.cpp \
 	../blitter.cpp \
 	../videl.cpp \
+	../yamaha.cpp \
+	../mmu.cpp \
 	../extfs.cpp \
 	../parameters.cpp \
 	$(CPUSRCS)
