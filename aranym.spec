@@ -37,7 +37,7 @@ rm -rf %{realname}
 make
 mv aranym aranym-jit
 make clean
-./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug --enable-fullmmu
+./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug --enable-fullmmu --enable-lilo --enable-fixed-videoram
 make
 mv aranym aranym-mmu
 make clean
@@ -97,7 +97,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sun Feb 20 2005 Petr Stehlik <pstehlik@sophics.cz>
-Version increased.
+Version increased. LILO enabled in the MMU version.
 
 * Sun Nov 07 2004 Petr Stehlik <pstehlik@sophics.cz>
 Version increased.
