@@ -65,6 +65,22 @@
 # define HOSTFS_SUPPORT 0
 #endif
 
+#ifndef NFCDROM_SUPPORT
+# define NFCDROM_SUPPORT 0
+#endif
+
+#ifndef NFCDROM_LINUX_SUPPORT
+# define NFCDROM_LINUX_SUPPORT 0
+#endif
+
+#ifndef NFOSMESA_SUPPORT
+# define NFOSMESA_SUPPORT 0
+#endif
+
+#ifndef NFJPEG_SUPPORT
+# define NFJPEG_SUPPORT 0
+#endif
+
 static struct option const long_options[] =
 {
 #ifndef FixedSizeFastRAM
