@@ -6,6 +6,12 @@
 
 - cpuotpi "disabled" - not used now, needs reimplementig
 
+- IDE: sync with Bochs CVS (only some small corrections in debug messages,
+  result data of the ATAPI command 'inquiry' fixed, added multiple cdrom
+  support for win32 - still not used)
+
+- dialog.cpp: enabled Discs, the 1st CDROM driver mount/unmount
+
 
 2002/10/10 - patrice (version 0.6.6-beta)
 - dsp: dsp nothread code removed.

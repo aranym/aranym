@@ -54,5 +54,11 @@ private:
   char *path;
 
   int using_file;
+#ifdef WIN32
+  HANDLE hFile;
+  int hid;
+  int tid;
+  int lun;
+#endif
   };
 
