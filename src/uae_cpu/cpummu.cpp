@@ -72,7 +72,7 @@ extern void mmu_make_transparent_region(uaecptr baseaddr, uae_u32 size, int data
 }
 
 /* check if an address matches a ttr */
-static inline int mmu_match_ttr(uae_u32 ttr, uaecptr addr, int write, int test)
+static inline int mmu_match_ttr(uae_u32 ttr, uaecptr addr, int write, int super, int test)
 {
 	if (ttr & MMU_TTR_BIT_ENABLED)	{	/* TTR enabled */
 		uae_u8 msb, match, mask;
@@ -84,10 +84,7 @@ static inline int mmu_match_ttr(uae_u32 ttr, uaecptr addr, int write, int test)
 		if ((msb & ~mask) == match) {
 
 			if ((ttr & MMU_TTR_BIT_SFIELD_ENABLED) == 0)	{
-				if ((ttr & MMU_TTR_BIT_SFIELD_SUPER) && !regs.s)	{
-					return TTR_NO_MATCH;
-				}
-				if ((ttr & MMU_TTR_BIT_SFIELD_SUPER) == 0 && regs.s)	{
+				if (((ttr & MMU_TTR_BIT_SFIELD_SUPER) == 0) != (super == 0))	{
 					return TTR_NO_MATCH;
 				}
 			}
@@ -236,7 +233,7 @@ void mmu_dump_atc(void)
 		if (!atc[i].v)
 			continue;
 		D(bug("ATC[%02d] G=%d S=%d CM=%d M=%d W=%d R=%d FC2=%d log=%08x --> phys=%08x",
-				i, atc[i].g ? 1 : 0, atc[i].s, atc[i].cm, atc[i].m, atc[i].w, atc[i].r,
+				i, atc[i].g ? 1 : 0, atc[i].s ? 1 : 0, atc[i].cm, atc[i].m, atc[i].w, atc[i].r,
 				atc[i].fc2 ? 1 : 0,
 				atc[i].log,
 				atc[i].phys
@@ -303,7 +300,7 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, uaecptr pc, 
 			break;
 		case 7:
 		default:
-			panicbug("FC=%d should not happen", datamode);
+			panicbug("FC=%d should not happen", fc);
 			abort();
 	}
 	
@@ -316,7 +313,7 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, uaecptr pc, 
 	 * But AmigaOS depends on PTEST to operate when the MMU is disabled;
 	 * it uses the result in the ssw to detect a working MMU and then enables the MMU */
 	if (regs.mmu_enabled || test)	{
-		switch(mmu_match_ttr(datamode ? regs.dtt0 : regs.itt0, theaddr, write, test))	{
+		switch(mmu_match_ttr(datamode ? regs.dtt0 : regs.itt0, theaddr, write, supervisor, test))	{
 			case TTR_NO_WRITE:
 				D(bug("MMU: write protected (via ttr) %lx", theaddr));
 				goto bus_err;
@@ -324,7 +321,7 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, uaecptr pc, 
 				return theaddr;
 		}
 		/* check ttr1 */
-		switch(mmu_match_ttr(datamode ? regs.dtt1 : regs.itt1, theaddr, write, test))	{
+		switch(mmu_match_ttr(datamode ? regs.dtt1 : regs.itt1, theaddr, write, supervisor, test))	{
 			case TTR_NO_WRITE:
 				D(bug("MMU: write protected (via ttr) %lx", theaddr));
 				goto bus_err;
@@ -353,28 +350,25 @@ check_atc:
 	
 	atc_rand++;	/* for random replacement */
 	
-	if (test & MMU_TEST_FORCE_TABLE_SEARCH)
-		goto table_search;
-	
 	for (i = 0; i < 4; i++)	{
-		atc_index = atc_sel + (4 * i);
+		atc_index = atc_sel + (16 * i);
 
 #if DBG_MMU_VERBOSE
 	if (test & MMU_TEST_VERBOSE)
 		D(bug("MMU: %lx checking atc %d v=%d log=%lx s=%d PHYS=%lx (frame=%lx s=%d)",
 				theaddr, atc_index,
-				atc[atc_index].v, atc[atc_index].log, atc[atc_index].s,
+				atc[atc_index].v, atc[atc_index].log, atc[atc_index].s ? 1 : 0,
 				atc[atc_index].phys,
-				page_frame, regs.s));
+				page_frame, supervisor != 0));
 #endif
 
 
-		if (atc[atc_index].v && (atc[atc_index].log == page_frame) && atc[atc_index].fc2 == (fc & 4))
+		if (atc[atc_index].v && (atc[atc_index].log == page_frame) && atc[atc_index].fc2 == supervisor)
 			break;
 		atc_index = -1;
 	}
 
-	if (test)
+	if (test & MMU_TEST_FORCE_TABLE_SEARCH)
 		goto table_search;
 
 	if (atc_index != -1)	{
@@ -382,15 +376,17 @@ atc_matched:
 
 		/* it's a hit! */
 
+		wp = atc[atc_index].w;
+
+		if (test && wp)
+			regs.mmusr |= MMU_MMUSR_W;
+
 		if (!atc[atc_index].r)	{
 #if DBG_MMU_VERBOSE
 			D(bug("MMU: non-resident page!"));
 #endif
 			goto bus_err;
 		}
-
-
-		wp = atc[atc_index].w;
 
 		atc_hit_addr = atc[atc_index].phys | ((regs.mmu_pagesize == MMU_PAGE_8KB) 
 				? (theaddr & 0x1fff)
@@ -403,8 +399,6 @@ atc_matched:
 				regs.mmusr |= MMU_MMUSR_S;
 			if (atc[atc_index].m)
 				regs.mmusr |= MMU_MMUSR_M;
-			if (atc[atc_index].w)
-				regs.mmusr |= MMU_MMUSR_W;
 			if (atc[atc_index].r)
 				regs.mmusr |= MMU_MMUSR_R;
 
@@ -419,7 +413,7 @@ atc_matched:
 				D(bug("MMU: ATC v=%d log=%lx s=%d PHYS=%lx (frame=%lx s=%d)",
 						atc[atc_index].v, atc[atc_index].log, atc[atc_index].s,
 						atc[atc_index].phys,
-						page_frame, regs.s));
+						page_frame, supervisor != 0));
 
 			}
 #endif
@@ -456,14 +450,14 @@ table_search:
 	if (atc_index == -1)	{
 		//write_log("MMU: replace atc: ");
 		for (i = 0; i < 4; i++)	{
-			if (!atc[atc_sel + (4 * i)].v)	{
-				atc_index = atc_sel + (4 * i);
+			if (!atc[atc_sel + (16 * i)].v)	{
+				atc_index = atc_sel + (16 * i);
 				break;
 			}
 		}
 		/* random choice */
 		if (atc_index == -1)	{
-			atc_index = atc_sel + (4 * (atc_rand & 2));
+			atc_index = atc_sel + (16 * (atc_rand & 2));
 		}
 	}
 
@@ -602,7 +596,7 @@ get_page_descriptor:
 	atc[atc_index].r = 1;
 	atc[atc_index].s = page_des & MMU_DES_SUPER;	/* supervisor */
 	atc[atc_index].w = wp;
-	atc[atc_index].fc2 = fc & 4;
+	atc[atc_index].fc2 = supervisor;
 	atc[atc_index].g = page_des & MMU_DES_GLOBAL;
 	atc[atc_index].phys = page_des & (regs.mmu_pagesize ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
 
@@ -642,18 +636,19 @@ bus_err:
 #endif
 
 	ssw |= fc & 7; /* Copy TM */
-	
+	ssw |= size << 5;
+
 	regs.mmu_fault_addr = theaddr;
 	regs.mmu_fslw = fslw;
 	regs.mmu_ssw = ssw;
 
-	if (test)
-		return 0;
-	
 	D(bug("BUS ERROR: fc=%d w=%d log=%08x ssw=%04x fslw=%08x", fc, write, theaddr, ssw, fslw));
 
-//	Exception(2, pc);
-	LONGJMP(excep_env, 2);
+	if ((test & MMU_TEST_NO_BUSERR) == 0)	{
+//		Exception(2, pc);
+		LONGJMP(excep_env, 2);
+	}
+	return 0;
 
 make_non_resident_atc:
 #if DBG_MMU_VERBOSE
@@ -670,8 +665,15 @@ make_non_resident_atc:
 
 	atc[atc_index].log = page_frame;
 	atc[atc_index].phys = 0;
-	atc[atc_index].v = 0;
+	atc[atc_index].v = 1;
+	atc[atc_index].s = 0;
 	atc[atc_index].r = 0;
+	atc[atc_index].w = wp;
+	atc[atc_index].fc2 = supervisor;
+	atc[atc_index].g = 0;
+	atc[atc_index].m = 0;
+	if (test && wp)
+		regs.mmusr |= MMU_MMUSR_W;
 	goto bus_err;
 }
 
@@ -679,17 +681,17 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
 	if ((opcode & 0xFE0) == 0x0500) {
 		int i, regno, didflush = 0;
+		uae_u32 addr;
 		/* PFLUSH */
-		mmu_set_mmusr(0);
-
 		regno = opcode & 7;
 		
 		switch((opcode & 24) >> 3)	{
 			case 0:
 				/* PFLUSHN (An) flush page entry if not global */
-				D(bug("PFLUSHN (A%d) %08x DFC=%d", regno, m68k_areg(regs, regno), regs.dfc));
+				addr = m68k_areg(regs, regno) & (regs.mmu_pagesize == MMU_PAGE_4KB ? MMU_PAGE_ADDR_MASK_4 : MMU_PAGE_ADDR_MASK_8);
+				D(bug("PFLUSHN (A%d) %08x DFC=%d", regno, addr, regs.dfc));
 				for (i = 0; i < 64; i++)	{
-					if (atc[i].v && !atc[i].g && (atc[i].log == m68k_areg(regs, regno))
+					if (atc[i].v && !atc[i].g && atc[i].log == addr
 							&& (int)(regs.dfc & 4) == atc[i].fc2)
 					{
 						atc[i].v = 0;
@@ -699,9 +701,10 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 				break;
 			case 1:
 				/* PFLUSH (An) flush page entry */
-				D(bug("PFLUSH (A%d) %08x DFC=%d", regno, m68k_areg(regs, regno), regs.dfc));
+				addr = m68k_areg(regs, regno) & (regs.mmu_pagesize == MMU_PAGE_4KB ? MMU_PAGE_ADDR_MASK_4 : MMU_PAGE_ADDR_MASK_8);
+				D(bug("PFLUSH (A%d) %08x DFC=%d", regno, addr, regs.dfc));
 				for (i = 0; i < 64; i++)	{
-					if (atc[i].v && (atc[i].log == m68k_areg(regs, regno))
+					if (atc[i].v && atc[i].log == addr
 							&& (int)(regs.dfc & 4) == atc[i].fc2)
 					{
 						atc[i].v = 0;
@@ -715,8 +718,11 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 				/* PFLUSHAN flush all except global */
 				D(bug("PFLUSHAN"));
 				for (i = 0; i < 64; i++)	{
-					if (atc[i].v && !atc[i].g && (atc[i].log == m68k_areg(regs, regno)))
+					if (atc[i].v && !atc[i].g)
+					{
 						atc[i].v = 0;
+						didflush++;
+					}
 				}
 				break;
 
@@ -739,11 +745,13 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 #endif
 	} else if ((opcode & 0x0FD8) == 0x548) {
 		int write, regno;
+		uae_u32 addr;
 		regno = opcode & 7;
 		write = (opcode & 32) == 0;
-		D(bug("PTEST%c (A%d) %08x DFC=%d", write ? 'W' : 'R', regno, m68k_areg(regs, regno), regs.dfc));
+		addr = m68k_areg(regs, regno) & (regs.mmu_pagesize == MMU_PAGE_4KB ? MMU_PAGE_ADDR_MASK_4 : MMU_PAGE_ADDR_MASK_8);
+		D(bug("PTEST%c (A%d) %08x DFC=%d", write ? 'W' : 'R', regno, addr, regs.dfc));
 		mmu_set_mmusr(0);
-		mmu_translate(m68k_areg(regs, regno), regs.dfc, write, m68k_getpc(), sz_byte, 1); 
+		mmu_translate(addr, regs.dfc, write, m68k_getpc(), sz_byte, MMU_TEST_FORCE_TABLE_SEARCH | MMU_TEST_NO_BUSERR); 
 		D(bug("PTEST result: mmusr %08x", regs.mmusr));
 	} else
 		op_illg (opcode);

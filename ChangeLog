@@ -1,3 +1,15 @@
+2005/01/10 - Andreas
+- uae_cpu/cpummu.cpp: Many MMU emulation fixes.
+- uea_cpu/gencpu.c: Make sure that memory stores are performed after all
+  changes visible by the emulation.
+- uae_cpu/memory.h: Set wb3 for the execption routine on memory write.
+- uae_cpu/newcpu.cpp: Pass wb3 fields in the access fault exception frame.
+  Don't call check_ram_boundary on a virtual address.
+- uea_cpu/newcpu.h: Don't call get_real_address in m68k_setpc when
+  FULLMMU.  Remove autoinc stuff again.
+- uae_cpu/registers.h: Add wb3_data, wb3_status, fault_pc, remove
+  autoinc.  Don't use pc_p and pc_oldp when FULLMMU.
+
 2005/01/08 - Petr
 - mfp.cpp: irq handling (enable/pending/masked) copied bit-by-bit from STonC.
   And it seems to work! At last... Thanks, Laurent, for your great MFP
