@@ -18,7 +18,7 @@
 # Copy this script in this directory (please check it has the executable
 # flag set - if not, "chmod +x build-cygwin.sh").
 #
-# Untar SDL sources in this directory. I used SDL 1.2.7, but it should
+# Untar SDL sources in this directory. I used SDL 1.2.8, but it should
 # work with newer releases as they will be available (CVS won't work !).
 # Please edit the SDL_SOURCES variable below to reflect the path where
 # SDL sources lie.
