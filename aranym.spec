@@ -33,15 +33,15 @@ rm -rf %{realname}
 #%patch -p1
 
 %build
-./configure --prefix=/usr --mandir=/usr/share --disable-nat-debug --enable-jit-compiler
+./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug --enable-jit-compiler
 make
 mv aranym aranym-jit
 make clean
-./configure --prefix=/usr --mandir=/usr/share --disable-nat-debug --enable-fullmmu
+./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug --enable-fullmmu
 make
 mv aranym aranym-mmu
 make clean
-./configure --prefix=/usr --mandir=/usr/share --disable-nat-debug
+./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug
 make
 
 %install
