@@ -8,6 +8,8 @@
 
 static const int HW = 0xfffc00;
 
+static bool dP = false;
+
 ACIA::ACIA(uaecptr addr) {
 	baseaddr = addr;
 }
@@ -54,7 +56,8 @@ uae_u8 IKBD::getData() {
 			x |= 0x10;
 			put_byte(0xfffa01,x);
 		}
-		fprintf(stderr, "IKBD read code %2x (%d left)\n", buffer[pos], ikbd_inbuf);
+		if (dP)
+			fprintf(stderr, "IKBD read code %2x (%d left)\n", buffer[pos], ikbd_inbuf);
 		return buffer[pos];
 	}
 	else {
@@ -76,7 +79,8 @@ void IKBD::ikbd_send(int value)
 		ikbd_inbuf++;
 	}
 //	if ((LM_UB(MEM(0xfffa09)) & 0x40) == 0) return;
-	fprintf(stderr, "IKBD sends %2x (->buffer pos %d)\n", value, ikbd_bufpos-1);
+	if (dP)
+		fprintf(stderr, "IKBD sends %2x (->buffer pos %d)\n", value, ikbd_bufpos-1);
 	/* set Interrupt Request */
 	status |= 0x81;
 	/* signal ACIA interrupt */
@@ -97,5 +101,6 @@ void IKBD::ikbd_send(int value)
 
 void IKBD::setData(uae_u8 value) {
 	/* send data */
-	fprintf(stderr, "IKBD data = %02x\n", value);
+	if (dP)
+		fprintf(stderr, "IKBD data = %02x\n", value);
 }
