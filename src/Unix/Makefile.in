@@ -128,7 +128,7 @@ install: $(APP) installdirs
 	$(INSTALL_DATA) ../atari/aranymfs/aranymfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
 	$(INSTALL_DATA) ../atari/aranymfs/config.sys $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/config.sys
 	$(INSTALL_DATA) ../atari/createdisk/createdisk.README $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.README
-	$(INSTALL_DATA) ../atari/createdisk/createdisk.sh $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.sh
+	$(INSTALL) ../atari/createdisk/createdisk.sh $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.sh
 	$(INSTALL_DATA) ../atari/createdisk/mbrdata $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/mbrdata
 	$(INSTALL_DATA) ../atari/fvdi/drivers/aranym.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
 	$(INSTALL_DATA) ../atari/fvdi/fvdi.sys $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.sys
@@ -202,7 +202,7 @@ bindist: $(APP) bindistdirs
 	$(INSTALL_DATA) ../atari/aranymfs/aranymfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
 	$(INSTALL_DATA) ../atari/aranymfs/config.sys tmpdist$(datadir)/$(APP)/atari/aranymfs/config.sys
 	$(INSTALL_DATA) ../atari/createdisk/createdisk.README tmpdist$(datadir)/$(APP)/atari/createdisk/createdisk.README
-	$(INSTALL_DATA) ../atari/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/atari/createdisk/createdisk.sh
+	$(INSTALL) ../atari/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/atari/createdisk/createdisk.sh
 	($INSTALL_DATA) ../atari/createdisk/mbrdata tmpdist$(datadir)/$(APP)/atari/createdisk/mbrdata
 	$(INSTALL_DATA) ../atari/fvdi/drivers/aranym.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
 	$(INSTALL_DATA) ../atari/fvdi/fvdi.sys tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.sys
