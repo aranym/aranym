@@ -109,7 +109,8 @@ extern "C" {
  *
  * @author STanda
  **/
-void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 fgColor, uint32 bgColor)
+void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
+									 uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp)
 {
 	uint8 *pixel, *pixellast;
 	int16 x, dx, dy;
@@ -167,9 +168,30 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2, uin
 			pixy -= (pixx*dx);
 			for (; pixel<=pixellast; pixel += pixy) {
 				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
-				for (x=0; x<dx; x++) {
-					*(uint16*)pixel = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
-					pixel += pixx;
+				switch (logOp) {
+					case 1:
+						for (x=0; x<dx; x++) {
+							*(uint16*)pixel = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+							pixel += pixx;
+						}; break;
+					case 2:
+						for (x=0; x<dx; x++) {
+							if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 )
+								*(uint16*)pixel = fgColor; // STanda
+							pixel += pixx;
+						}; break;
+					case 3:
+						for (x=0; x<dx; x++) {
+							if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 )
+								*(uint16*)pixel = ~(*(uint16*)pixel);
+							pixel += pixx;
+						}; break;
+					case 4:
+						for (x=0; x<dx; x++) {
+							if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) == 0 )
+								*(uint16*)pixel = fgColor; // STanda
+							pixel += pixx;
+						}; break;
 				}
 			}
 			break;
@@ -315,6 +337,11 @@ void HostScreen::gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y
 
 /*
  * $Log$
+ * Revision 1.8  2001/09/20 18:12:09  standa
+ * Off by one bug fixed in fillArea.
+ * Separate functions for transparent and opaque background.
+ * gfxPrimitives methods moved to the HostScreen
+ *
  * Revision 1.7  2001/09/05 15:06:41  joy
  * SelectVideoMode() commented out.
  *

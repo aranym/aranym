@@ -24,7 +24,8 @@ protected:
 	 * This is the SDL_gfxPrimitives derived functions.
 	 **/
 	inline void gfxFastPixelColorNolock(int16 x, int16 y, uint32 color);
-	       void gfxBoxColorPattern(int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 fgColor, uint32 bgColor);
+	       void gfxBoxColorPattern(int16 x1, int16 y1, int16 x2, int16 y2,
+								   uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp);
 	       void gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 color);
 
 public:
@@ -36,7 +37,7 @@ public:
 	inline void   renderEnd();
 
 	// the w, h should be width & height (but C++ complains -> 'if's in the implementation)
-	inline void   update( uint32 x = 0, uint32 y = 0, int32 w = -1, int32 h = -1, bool forced = false );
+	inline void   update( int32 x = 0, int32 y = 0, int32 w = -1, int32 h = -1, bool forced = false );
 	inline void   update( bool forced );
 
 	uint32 getBpp();
@@ -59,7 +60,7 @@ public:
 	// transparent background
 	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color );
 	// VDI required function to fill areas
-	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor );
+	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 };
 
 
@@ -156,7 +157,7 @@ inline void HostScreen::update( bool forced )
 }
 
 
-inline void HostScreen::update( uint32 x, uint32 y, int32 w, int32 h, bool forced )
+inline void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced )
 {
 	if ( !forced && !doUpdate ) // the HW surface is available
 		return;
@@ -191,9 +192,10 @@ inline void HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16
 	gfxBoxColorPatternBgTrans( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, color );
 }
 
-inline void HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor )
+inline void HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2,
+								  uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
 {
-	gfxBoxColorPattern( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, fgColor, bgColor );
+	gfxBoxColorPattern( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, fgColor, bgColor, logOp );
 }
 
 #endif
@@ -201,6 +203,11 @@ inline void HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16
 
 /*
  * $Log$
+ * Revision 1.6  2001/09/20 18:12:09  standa
+ * Off by one bug fixed in fillArea.
+ * Separate functions for transparent and opaque background.
+ * gfxPrimitives methods moved to the HostScreen
+ *
  * Revision 1.5  2001/09/19 22:52:43  standa
  * The putPixel is now much faster because it doesn't either update or surface locking.
  *
