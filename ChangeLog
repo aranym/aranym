@@ -1,3 +1,7 @@
+2005/01/11 - Petr
+- gui-sdl/sdlgui.cpp: 64bit cleanup thanks to Debian BTS #288992
+
+
 2005/01/11 - STanda
 - fvdidrv.cpp: 64bit cleanup attempt
 - CygWin networking tunnel NIF name taken into account
