@@ -89,7 +89,6 @@ static int need_endlabel;
 
 static int n_braces = 0;
 static int m68k_pc_offset = 0;
-static int insn_n_cycles;
 
 static void start_brace (void)
 {
@@ -144,8 +143,6 @@ static const char *gen_nextilong (void)
     int r = m68k_pc_offset;
     m68k_pc_offset += 4;
 
-    insn_n_cycles += 4;
-
     if (using_prefetch)
 	sprintf (buffer, "get_ilong_prefetch(%d)", r);
     else
@@ -159,8 +156,6 @@ static const char *gen_nextiword (void)
     int r = m68k_pc_offset;
     m68k_pc_offset += 2;
 
-    insn_n_cycles += 2;
-
     if (using_prefetch)
 	sprintf (buffer, "get_iword_prefetch(%d)", r);
     else
@@ -173,8 +168,6 @@ static const char *gen_nextibyte (void)
     static char buffer[80];
     int r = m68k_pc_offset;
     m68k_pc_offset += 2;
-
-    insn_n_cycles += 2;
 
     if (using_prefetch)
 	sprintf (buffer, "get_ibyte_prefetch(%d)", r);
@@ -391,9 +384,9 @@ static void genamode (amodes mode, char *reg, wordsizes size, char *name, int ge
 
     if (getv == 1) {
 	switch (size) {
-	 case sz_byte: insn_n_cycles += 2; break;
-	 case sz_word: insn_n_cycles += 2; break;
-	 case sz_long: insn_n_cycles += 4; break;
+	 case sz_byte: break;
+	 case sz_word: break;
+	 case sz_long: break;
 	 default: abort ();
 	}
 	start_brace ();
@@ -476,17 +469,14 @@ static void genastore (char *from, amodes mode, char *reg, wordsizes size, char 
 	    sync_m68k_pc ();
 	switch (size) {
 	 case sz_byte:
-	    insn_n_cycles += 2;
 	    printf ("\tput_byte(%sa,%s);\n", to, from);
 	    break;
 	 case sz_word:
-	    insn_n_cycles += 2;
 	    if (cpu_level < 2 && (mode == PC16 || mode == PC8r))
 		abort ();
 	    printf ("\tput_word(%sa,%s);\n", to, from);
 	    break;
 	 case sz_long:
-	    insn_n_cycles += 4;
 	    if (cpu_level < 2 && (mode == PC16 || mode == PC8r))
 		abort ();
 	    printf ("\tput_long(%sa,%s);\n", to, from);
@@ -828,7 +818,6 @@ static int source_is_imm1_8 (struct instr *i)
 static void gen_opcode (unsigned long int opcode)
 {
     struct instr *curi = table68k + opcode;
-    insn_n_cycles = 2;
 
     start_brace ();
 #if 0
@@ -1384,7 +1373,6 @@ static void gen_opcode (unsigned long int opcode)
 	genastore ("newv", curi->dmode, "dstreg", sz_long, "dst");
 	printf ("\t}\n");
 	printf ("\t}\n");
-	insn_n_cycles += 68;
 	need_endlabel = 1;
 	break;
      case i_DIVS:
@@ -1402,7 +1390,6 @@ static void gen_opcode (unsigned long int opcode)
 	genastore ("newv", curi->dmode, "dstreg", sz_long, "dst");
 	printf ("\t}\n");
 	printf ("\t}\n");
-	insn_n_cycles += 72;
 	need_endlabel = 1;
 	break;
      case i_MULU:
@@ -1412,7 +1399,6 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tuae_u32 newv = (uae_u32)(uae_u16)dst * (uae_u32)(uae_u16)src;\n");
 	genflags (flag_logical, sz_long, "newv", "", "");
 	genastore ("newv", curi->dmode, "dstreg", sz_long, "dst");
-	insn_n_cycles += 32;
 	break;
      case i_MULS:
 	genamode (curi->smode, "srcreg", sz_word, "src", 1, 0);
@@ -1421,7 +1407,6 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tuae_u32 newv = (uae_s32)(uae_s16)dst * (uae_s32)(uae_s16)src;\n");
 	genflags (flag_logical, sz_long, "newv", "", "");
 	genastore ("newv", curi->dmode, "dstreg", sz_long, "dst");
-	insn_n_cycles += 32;
 	break;
      case i_CHK:
 	printf ("\tuaecptr oldpc = m68k_getpc();\n");
@@ -2018,6 +2003,8 @@ static void gen_opcode (unsigned long int opcode)
 	    break;
 	 case i_BFINS:
 	    printf ("\ttmp = m68k_dreg(regs, (extra >> 12) & 7);\n");
+	    printf ("\tSET_NFLG (tmp & (1 << (width - 1)) ? 1 : 0);\n");
+	    printf ("\tSET_ZFLG (tmp == 0);\n");
 	    break;
 	 default:
 	    break;

@@ -638,7 +638,7 @@ void MakeFromSR (void)
     if (regs.t1 || regs.t0)
 	regs.spcflags |= SPCFLAG_TRACE;
     else
-	regs.spcflags &= ~(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
+	regs.spcflags &= ~(SPCFLAG_TRACE/* | SPCFLAG_DOTRACE*/);
 }
 
 void Exception(int nr, uaecptr oldpc)
@@ -1073,8 +1073,10 @@ static char* ccnames[] =
 
 void m68k_reset (void)
 {
-    m68k_areg (regs, 7) = get_long(0x00000000, false);
-    m68k_setpc (get_long(0x00000004, false));
+    put_long_direct(0x00000000, get_long_direct(ROMBase));
+    put_long_direct(0x00000004, get_long_direct(ROMBase + 4));
+    m68k_areg (regs, 7) = get_long_direct(0x00000000);
+    m68k_setpc (get_long_direct(0x00000004));
     fill_prefetch_0 ();
     regs.kick_mask = 0xF80000;
     regs.s = 1;
@@ -3120,6 +3122,7 @@ setjmpagain:
 		    newpc = m68k_getpc () + m68kpc_offset;
 		    newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
 		    fprintf(f, "%s", buffer);
+		    strcpy(buffer,"");
 		}
 		if (ccpt != 0) {
 		    if (cctrue(dp->cc))
@@ -3204,6 +3207,7 @@ void showDisasm(uaecptr addr) {
 		newpc = m68k_getpc () + m68kpc_offset;
 		newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
 		sprintf(sbuffer[5], "%s", buffer);
+		strcpy(buffer,"");
 	}
 	if (ccpt != 0) {
 		if (cctrue(dp->cc)) sprintf (sbuffer[6], " == %08lx (TRUE)", (unsigned long)newpc);

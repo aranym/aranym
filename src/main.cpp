@@ -828,10 +828,6 @@ bool InitAll(void)
 
 	maxInnerCounter = 10000;	// finetune this! Slower machines require lower number
 
-	// Setting "SP & PC"
-	WriteAtariInt32(0x00000000, ReadAtariInt32(ROMBase));
-	WriteAtariInt32(0x00000004, ReadAtariInt32(ROMBase + 4));
-
 	//  SDL_EnableUNICODE(1);
 
 	// warp mouse to center of Atari 640x480 screen and grab it
@@ -896,6 +892,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.45  2001/12/02 01:31:20  joy
+ * keyboard conversion rewritten again, this time with heuristic analysis to detect the scancode2scancode conversion offset of SDL automatically.
+ *
  * Revision 1.44  2001/11/28 22:52:17  joy
  * keyboard conversion based on scancodes now.
  * page up/down takes care of previously held Shift

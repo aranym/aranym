@@ -1,3 +1,14 @@
+2001/12/05 - milan
+- "initialization" of 0-7 moved to reset routine, more secure solution
+
+- patched ins. BFINS (uae 0.8.19)
+
+- sync with my "Pragues versions"
+
+- buffer in newm68k_disasm cleared after every ShowEA/fprintf, disasm in
+  ndebug corrected
+
+
 2001/12/03 - Olivier Landemarre <Olivier.Landemarre@utbm.fr> & STanda
 - ExtFs: Frename fix.
 
