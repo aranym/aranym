@@ -69,8 +69,6 @@ void init_fdc();	// fdc.cpp
 
 extern int irqindebug;
 
-bool grab_mouse = false;
-
 SDL_Surface *surf = NULL;
 
 static int keyboardTable[0x80] = {
@@ -91,7 +89,28 @@ static int keyboardTable[0x80] = {
 /*70-72*/SDLK_KP0, SDLK_KP_PERIOD, SDLK_KP_ENTER};
 
 static int buttons[3]={0,0,0};
+#define MAXDRIVES	32
+int drive_fd[MAXDRIVES];
 
+void remove_floppy() {
+	if (drive_fd[0] >= 0) {
+		close(drive_fd[0]);
+		drive_fd[0] = -1;
+		fprintf(stderr, "Floppy removed\n");
+	}
+}
+
+void insert_floppy(bool rw = false) {
+	remove_floppy();
+	drive_fd[0] = open("/dev/fd0", rw ? (O_RDWR | O_SYNC) : O_RDONLY);
+	if (drive_fd[0] >= 0) {
+    	init_fdc();
+    	fprintf(stderr, "Floppy inserted %s\n", rw ? "read-write" : "read-only");
+    }
+    else {
+    	fprintf(stderr, "Inserting of floppy failed.\n");
+    }
+}
 
 static void check_event(void)
 {
@@ -101,12 +120,23 @@ static void check_event(void)
 		if (type == SDL_KEYDOWN || type == SDL_KEYUP) {
 			bool pressed = (type == SDL_KEYDOWN);
 			int sym = event.key.keysym.sym;
-			if (sym == SDLK_END)
-				QuitEmulator();
+
+			if (pressed) {
+				// process some hotkeys
+				if (sym == SDLK_END)
+					QuitEmulator();
+				else if (sym == SDLK_F11)
+					insert_floppy(SDL_GetModState() & KMOD_SHIFT);
+				else if (sym == SDLK_F12)
+					remove_floppy();
+			}
+			// map right Control and Alternate keys to the left ones
 			if (sym == SDLK_RCTRL)
 				sym = SDLK_LCTRL;
 			if (sym == SDLK_RALT)
 				sym = SDLK_LALT;
+
+			// send all pressed keys to IKBD
 			for(int i=0; i < 0x73; i++) {
 				if (keyboardTable[i] == sym) {
 					if (! pressed)
@@ -362,8 +392,6 @@ int SelectVideoMode() {
  *  Main program
  */
 #define ErrorAlert(a)	fprintf(stderr, a)
-#define MAXDRIVES	32
-int drive_fd[MAXDRIVES];
 
 int main(int argc, char **argv)
 {
@@ -459,10 +487,7 @@ int main(int argc, char **argv)
 #endif
 	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
 
-	//	drive_fd[0] = open("/dev/fd0", O_RDONLY);
-	drive_fd[0] = open("/opt/home/atari/floppy4mb", O_RDWR);
-	if (drive_fd[0] >= 0)
-    	init_fdc();
+	insert_floppy();
 
 	// Initialize variables
 	RAMBaseHost = NULL;
@@ -563,6 +588,8 @@ void QuitEmulator(void)
 
 	// Exit 680x0 emulation
 	Exit680x0();
+
+	remove_floppy();
 
 	// Deinitialize everything
 	ExitAll();
