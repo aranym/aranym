@@ -1,5 +1,5 @@
 2005/01/25 - Patrice
-- parallel: small fixes.
+- parallel: small fixes. Can redirect to a file, to stdout or stderr.
 
 
 2005/01/25 - Andreas

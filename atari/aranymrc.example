@@ -176,5 +176,7 @@ LibOSMesa = libOSMesa.so
 ;  file -> Output to file
 ;  x86 -> Hardware access under Linux/X86
 Type = file
-; Filename in case of file output
+; Output to file: filename, stdout, or stderr
 File = /tmp/aranym-parallel.txt
+; File = stdout
+; File = stderr

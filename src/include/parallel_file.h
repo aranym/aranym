@@ -29,7 +29,8 @@
 class ParallelFile: public Parallel
 {
 	private:
-		FILE *handle;
+		int close_handle;	/* Close handle at end of usage ? */
+		FILE *handle;		/* Handle to file/stdout/stderr output */
 
 	public:
 		ParallelFile(void);

@@ -34,13 +34,14 @@
 ParallelFile::ParallelFile(void)
 {
 	D(bug("parallel_file: created"));
+	close_handle = 0;
 	handle = NULL;
 }
 
 ParallelFile::~ParallelFile(void)
 {
 	D(bug("parallel_file: destroyed"));
-	if (handle) {
+	if (handle && close_handle) {
 		fclose(handle);
 		handle=NULL;
 	}
@@ -66,10 +67,17 @@ void ParallelFile::setData(uint8 value)
 {
 	D(bug("parallel_file: setData"));
 	if (!handle) {
-		handle = fopen("/tmp/aranym-parallel.txt", "w");
-		if (!handle) {
-			fprintf(stderr,"Can not open file for parallel port\n");
-			return;
+		if (strcmp("stdout", bx_options.parallel.file)==0) {
+			handle = stdout;
+		} else if (strcmp("stderr", bx_options.parallel.file)==0) {
+			handle = stderr;
+		} else {
+			handle = fopen(bx_options.parallel.file, "w");
+			if (!handle) {
+				fprintf(stderr,"Can not open file for parallel port\n");
+				return;
+			}
+			close_handle=1;
 		}
 	}
 	fprintf(handle,"%c",value);	
