@@ -483,6 +483,26 @@ void presave_lilo() {
 }
 
 /*************************************************************************/
+#define MIDI(x) bx_options.midi.x
+
+struct Config_Tag midi_conf[]={
+	{ "Enabled", Bool_Tag, &MIDI(enabled)},
+	{ "Output", String_Tag, &MIDI(output), sizeof(MIDI(output))},
+	{ NULL , Error_Tag, NULL }
+};
+
+void preset_midi() {
+  MIDI(enabled)=false;
+  safe_strncpy(MIDI(output), "/tmp/aranym-midi.txt", sizeof(MIDI(output)));
+}
+
+void postload_midi() {
+}
+
+void presave_midi() {
+}
+
+/*************************************************************************/
 void usage (int status) {
   printf ("%s\n", VERSION_STRING);
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
@@ -527,6 +547,7 @@ void preset_cfg() {
   preset_opengl();
   preset_ethernet();
   preset_lilo();
+  preset_midi();
 }
 
 void postload_cfg() {
@@ -541,6 +562,7 @@ void postload_cfg() {
   postload_opengl();
   postload_ethernet();
   postload_lilo();
+  postload_midi();
 }
 
 void presave_cfg() {
@@ -555,6 +577,7 @@ void presave_cfg() {
   presave_opengl();
   presave_ethernet();
   presave_lilo();
+  presave_midi();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -804,6 +827,7 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
 	process_config(f, rcfile, ethernet_conf, "[ETH0]", true);
 	process_config(f, rcfile, lilo_conf, "[LILO]", true);
+	process_config(f, rcfile, midi_conf, "[MIDI]", true);
 }
 
 int saveSettings(const char *fs)
@@ -835,6 +859,7 @@ int saveSettings(const char *fs)
 	update_config(fs, opengl_conf, "[OPENGL]");
 	update_config(fs, ethernet_conf, "[ETH0]");
 	update_config(fs, lilo_conf, "[LILO]");
+	update_config(fs, midi_conf, "[MIDI]");
 
 	return 0;
 }

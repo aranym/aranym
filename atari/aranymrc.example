@@ -128,3 +128,10 @@ Args = root=/dev/ram video=atafb:vga16
 
 ; Full path to a (optionnally gzipped) ramdisk file
 Ramdisk = root.bin
+
+[MIDI]
+; Enable MIDI output to file
+Enabled = No
+
+; Full path to the midi output file
+Output = /tmp/aranym-midi.txt

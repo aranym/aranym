@@ -142,6 +142,12 @@ typedef struct {
 	char ramdisk[512];	/* /path/to/ramdisk[.gz] */
 } bx_lilo_options_t;
 
+// Midi options
+typedef struct {
+	bool enabled;		/* MIDI output to file enabled ? */
+	char output[512];	/* /path/to/output.txt */
+} bx_midi_options_t;
+
 /*
 typedef struct {
   char      *path;
@@ -172,6 +178,7 @@ typedef struct {
   bx_opengl_options_t	opengl;
   bx_ethernet_options_t ethernet;
   bx_lilo_options_t		lilo;
+  bx_midi_options_t		midi;
   bool			autoMouseGrab;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;
