@@ -856,7 +856,7 @@ bool HostFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const
 
 			// in case of halfsensitive filesystem,
 			// an upper case filename should be lowecase?
-			if ( nonexisting && !drv || drv->halfSensitive ) {
+			if ( nonexisting && (!drv || drv->halfSensitive) ) {
 				bool isUpper = true;
 				for( char *curr = result; *curr; curr++ ) {
 					if ( *curr != toupper( *curr ) ) {
@@ -1957,6 +1957,12 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.11.2.7  2003/04/08 00:42:14  standa
+ * The st2flags() and flags2st() methods fixed (a need for open()).
+ * The isPathValid() method removed (was only useful for aranymfs.dos).
+ * Dpathconf(8-9) added and 7 fixed (Thing has a bug in 1.27 here IIRC).
+ * General debug messages cleanup.
+ *
  * Revision 1.11.2.6  2003/04/03 12:11:29  standa
  * 32bit <-> host mapping + general hostfs cleanup.
  *
