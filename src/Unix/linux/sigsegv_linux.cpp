@@ -13,7 +13,7 @@ int in_handler = 0;
 
 extern void compiler_status();
 
-#define DEBUG 1 
+#define DEBUG 0
 #include "debug.h"
 
 enum transfer_type_t {
@@ -228,6 +228,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			// imm = addr_instr[3];
 			switch(addr_instr[1] & 0x07) {
 				case 0: imm = addr_instr[2]; break;
+				case 2: imm = addr_instr[6]; break;
 				case 4: imm = addr_instr[3]; break;
 				default:
 					instruction = INSTR_UNKNOWN;
@@ -274,6 +275,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			// imm = addr_instr[3];	// JOY: was 2
 			switch(addr_instr[1] & 0x07) {
 				case 0: imm = addr_instr[2]; break;
+				case 2: imm = addr_instr[2]; break;
 				case 4: imm = addr_instr[3]; break;
 				case 5: imm = addr_instr[6]; break; // used in JIT raw_mov_b_mi
 				default:
