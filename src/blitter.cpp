@@ -61,7 +61,7 @@ BLITTER::BLITTER(void) {
 }
 
 UW BLITTER::LM_UW(uaecptr addr) {
-	return get_word_direct(addr);	//??
+	return ReadAtariInt16(addr);	//??
 }
 
 void BLITTER::SM_UW(uaecptr addr, UW value) {
@@ -71,7 +71,7 @@ void BLITTER::SM_UW(uaecptr addr, UW value) {
 		exit(-1);
 	}
 #endif
-	put_word_direct(addr, value);	//??
+	WriteAtariInt16(addr, value);	//??
 }
 
 

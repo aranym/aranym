@@ -12,6 +12,7 @@
 #include "videl.h"
 
 #include "fvdidrv.h"
+#include "hardware.h"
 #include <new>     // Johan Klockars
 #include <cstring> // Johan Klockars
 
@@ -1275,7 +1276,7 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 					uint8 color[16];
 
 					D(bug("fVDI: blitArea M->S: bitplaneToCunky conversion"));
-					data = (uint16*)get_real_address_direct((uint32)data); // FIXME: Hack! Should use the get_X() methods
+					data = (uint16*)Atari2HostAddr((uint32)data); // FIXME: Hack! Should use the get_X() methods
 
 					for( uint16 j=0; j<h; j++ ) {
 						uint32 wordIndex = (j*pitch>>1) + (sx>>4)*planes;
@@ -1947,6 +1948,10 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.33  2002/01/13 23:08:49  standa
+ * The fVDI driver expandArea 24 and 32bit patch. 1, 2 and 4bit depth driver
+ * configuration available.
+ *
  * Revision 1.32  2002/01/09 19:37:33  standa
  * The fVDI driver patched to not to pollute the HostScreen class getPaletteColor().
  *

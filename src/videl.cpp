@@ -228,7 +228,7 @@ void VIDEL::renderScreenNoFlag()
 	if (bx_options.video.direct_truecolor)
 		atariVideoRAM = ARANYMVRAMSTART;
 #endif
-	uint16 *fvram = (uint16 *) get_real_address_direct(atariVideoRAM);
+	uint16 *fvram = (uint16 *) Atari2HostAddr(atariVideoRAM);
 	VideoRAMBaseHost = (uint8 *) hostScreen.getVideoramAddress();
 	uint16 *hvram = (uint16 *) VideoRAMBaseHost;
 
@@ -380,6 +380,10 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.35  2001/12/17 08:33:00  standa
+ * Thread synchronization added. The check_event and fvdidriver actions are
+ * synchronized each to other.
+ *
  * Revision 1.34  2001/12/14 12:15:18  joy
  * double line didn't work due to my stupid idea. Fixed.
  * Debugginng of write access to VIDEL registers added.

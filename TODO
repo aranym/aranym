@@ -30,7 +30,7 @@ Things that must be done before first beta release:
 - in fdc.cpp: replace HWget_b() and HWput_b() with something more appropriate
               for inter-module communication
 
-- in acia.cpp: get_byte_direct() and put_byte_direct() are another example of code
++ in acia.cpp: get_byte_direct() and put_byte_direct() are another example of code
                that should be replaced by something better (more descriptive)
 
 - in hardware.cpp: HWget_l/HWput_l should not have the special case for HW_IDE
@@ -54,6 +54,12 @@ Things that must be done before first beta release:
 - document the command line switches, keyboard combos and write Users Guide.
 
 + create several disk images with preinstalled _free_ software:
+
+- full support of instr. MOVES
+
+- full revision of CPU/FPU instr. set
+
+- support for Just-In-Time compilation
 
 The goal for the first beta is to get functional Atari/TOS machine replacement
 fully usable for regular GEM users.

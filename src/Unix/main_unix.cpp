@@ -113,7 +113,7 @@ int main(int argc, char **argv)
 	// Flag: RAM and ROM are contigously allocated from address 0
 	bool memory_mapped_from_zero = false;
 	
-	// Prabable all OSes have problems
+	// Probably all OSes have problems
 	// when trying to map a too big chunk of memory starting at address 0
 	
 	// Try to allocate all memory from 0x0000, if it is not known to crash
@@ -228,6 +228,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.58  2002/01/10 00:09:11  milan
+ * vm_acquire_fixed corrected
+ *
  * Revision 1.57  2002/01/09 19:14:12  milan
  * Preliminary support for SGI/Irix
  *

@@ -74,7 +74,7 @@ extern struct regstruct
     double fp[8];
     uae_u32 fpcr,fpsr,fpiar;
 
-    uae_u32 spcflags;
+    volatile uae_u32 spcflags;
     uae_u32 kick_mask;
 
     /* Fellow sources say this is 4 longwords. That's impossible. It needs

@@ -65,7 +65,7 @@ extern int quit_program;
 
 bool InitMEM() {
 #if REAL_ADDRESSING
-	// Mac address space = host address space
+	// Atari address space = host address space
 	RAMBase = (uint32)RAMBaseHost;
 	ROMBase = (uint32)ROMBaseHost;
 #else

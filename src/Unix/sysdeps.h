@@ -302,6 +302,10 @@ static inline uae_u32 do_byteswap_16(uae_u32 v)
 #define ENUMNAME(name) name
 #define write_log printf
 
+#ifndef ASM_VOLATILE
+#define ASM_VOLATILE __asm__ __volatile__
+#endif
+
 #ifdef X86_ASSEMBLY
 #define ASM_SYM_FOR_FUNC(a) __asm__(a)
 #else
@@ -315,13 +319,13 @@ static inline uae_u32 do_byteswap_16(uae_u32 v)
 
 #undef NOT_MALLOC
 
-#if REAL_ADDRESSING
+#if REAL_ADDRESSING || JIT_ADDRESSING
 # define NOT_MALLOC
 #endif
 
 #undef KNOWN_ALLOC
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+#if REAL_ADDRESSING || DIRECT_ADDRESSING || JIT_ADDRESSING
 # define KNOWN_ALLOC	1
 #else
 # define KNOWN_ALLOC	0

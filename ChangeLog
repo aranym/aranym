@@ -1,3 +1,7 @@
+2002/01/17 - milan
+- cleaning in ./src - memory access etc.
+
+
 2002/01/15 - joy
 - you can undefine USE_GETTICKS in main.cpp to replace SDL_GetTicks()
   with gettimeofday(). This might help on platforms where SDL_GetTicks()

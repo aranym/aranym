@@ -35,6 +35,8 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@ -s
 INSTALL_DATA = @INSTALL_DATA@
 
+TABLE68K = @TABLE68K@
+
 host_alias = @host_alias@
 host_triplet = @host@
 
@@ -236,7 +238,7 @@ $(OBJ_DIR)/gencomp: $(OBJ_DIR)/gencomp.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs
 	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/gencomp $(OBJ_DIR)/gencomp.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
 
 cpudefs.cpp: $(OBJ_DIR)/build68k ../uae_cpu/table68k
-	$(OBJ_DIR)/build68k <../uae_cpu/table68k >cpudefs.cpp
+	$(OBJ_DIR)/build68k <$(TABLE68K) >cpudefs.cpp
 cpustbl.cpp: cpuemu.cpp
 cpustbl_nf.cpp: cpustbl.cpp
 compstbl.cpp: compemu.cpp

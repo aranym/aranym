@@ -58,9 +58,9 @@ uae_u8 IKBD::getData() {
 		if (ikbd_inbuf ==0) {
 			/* Clear GPIP/I4 */
 			status = 0;
-			uae_u8 x = get_byte_direct(0xfffa01);
+			uae_u8 x = ReadAtariInt8(0xfffa01);
 			x |= 0x10;
-			put_byte_direct(0xfffa01, x);
+			WriteAtariInt8(0xfffa01, x);
 		}
 		D(bug("IKBD read code %2x (%d left)", buffer[pos], ikbd_inbuf));
 		doTransmit();

@@ -1893,7 +1893,7 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\t}\n");
 	}
 	break;
-     case i_MOVES:		/* ignore DFC and SFC because we have no MMU */
+     case i_MOVES:		/* ignore DFC and SFC !!! no MMU */
 	{
 	    int old_brace_level;
 	    genamode (curi->smode, "srcreg", curi->size, "extra", 1, 0);
