@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL_endian.h>
-#ifdef HAVE_ZLIB
+#ifdef HAVE_LIBZ
 #include <zlib.h>
 #endif
 
@@ -187,7 +187,7 @@ void LiloShutdown(void)
 static void *LoadFile(char *filename, unsigned long *length)
 {
 	void *buffer;
-#ifdef HAVE_ZLIB
+#ifdef HAVE_LIBZ
 	unsigned long unc_len;
 	gzFile handle;
 #else
@@ -200,7 +200,7 @@ static void *LoadFile(char *filename, unsigned long *length)
 	}
 
 	/* Try to open the file, libz takes care of non-gzipped files */
-#ifdef HAVE_ZLIB
+#ifdef HAVE_LIBZ
 	handle = gzopen(filename, "rb");
 	if (handle == NULL)
 #else
@@ -212,7 +212,7 @@ static void *LoadFile(char *filename, unsigned long *length)
 		return NULL;
 	}
 
-#ifdef HAVE_ZLIB
+#ifdef HAVE_LIBZ
 	/* Search the length of the uncompressed stream */
 	buffer = (char *)malloc(MAXREAD_BLOCK_SIZE);
 	if (buffer==NULL) {
@@ -241,7 +241,7 @@ static void *LoadFile(char *filename, unsigned long *length)
 	buffer = (char *)malloc(*length);
 	if (buffer==NULL) {
 		D(bug("lilo: unable to allocate %d bytes", *length));
-#ifdef HAVE_ZLIB
+#ifdef HAVE_LIBZ
 		gzclose(handle);
 #else
 		close(handle);
@@ -249,7 +249,7 @@ static void *LoadFile(char *filename, unsigned long *length)
 		return NULL;
 	}
 
-#ifdef HAVE_ZLIB
+#ifdef HAVE_LIBZ
 	gzread(handle, buffer, *length);
 	gzclose(handle);
 #else
