@@ -45,7 +45,7 @@ typedef struct {
 // Floppy device
 typedef struct {
   char path[512];
-  // bool inserted;
+  bool inserted;
   // bool enforceRemount;
 } bx_floppy_options_t;
 
@@ -159,7 +159,6 @@ typedef struct {
 // Options 
 typedef struct {
   bx_floppy_options_t	floppy;
-  // bx_floppy_options_t floppyb;
   bx_atadevice_options_t atadevice[BX_MAX_ATA_CHANNEL][2];
   bx_scsidevice_options_t	disk0;
   bx_scsidevice_options_t	disk1;
