@@ -16,7 +16,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-// from hardware.cpp
+// from host.cpp
 extern HostScreen hostScreen;
 
 // Support for other than 2 byte hostscreen bpp is disabled by default
@@ -293,6 +293,10 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.24  2001/10/01 22:22:41  standa
+ * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).
+ * fvdidrv/blitArea form memory works in TC.
+ *
  * Revision 1.23  2001/09/30 23:07:39  standa
  * Just the loop variables renamed from i to w.
  *

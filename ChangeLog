@@ -1,7 +1,19 @@
+2001/10/08 - STanda
+- ALT+PrintScreen generates a snapshot file using the SDL_SaveBMP.
+
+- Host OS dependent objects moved to the host.cpp(h) and aranym specific
+  objects like ExtFs and FVDIDrv moved to araobjs.cpp(h)
+
+- general cleanup of unused variables (fdc.cpp)
+
+- the WEB pages updated
+
+
 2001/10/02 - milan
 - the first "public" version of "ndebug", some modes still disabled
 
 - platform's independent memory allocation, if ARAnyM doesn't know better
+
 
 2001/10/02 - joy
 - ROM file reading back in main.cpp

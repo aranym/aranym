@@ -20,9 +20,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-// host OS dependent objects
-HostScreen hostScreen;
-
 // chipset IOs
 BASE_IO fake_io;
 MMU mmu;
@@ -212,6 +209,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.30  2001/09/21 14:11:48  joy
+ * little helper functions removed. Modules call each other via the public functions directly now.
+ *
  * Revision 1.29  2001/09/18 12:35:44  joy
  * ARADATA placed at $f90000-$f9ffff
  *

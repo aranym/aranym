@@ -20,6 +20,8 @@ protected:
 	bool   doUpdate; // the HW surface is available -> the SDL need not to update the surface after ->pixel access
 	uint32 sdl_colors[256]; // TOS palette (bpp < 16) to SDL color mapping
 
+	uint16 snapCounter; // ALT+PrintScreen to make a snap?
+
 	/**
 	 * This is the SDL_gfxPrimitives derived functions.
 	 **/
@@ -74,6 +76,9 @@ public:
 	 * Atari bitplane to chunky conversion helper.
 	 **/
 	void   bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp, uint8 colorValues[16] );
+
+	// Create a BMP file with a snapshot of the screen surface
+	void   makeSnapshot();
 };
 
 
@@ -259,6 +264,10 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.9  2001/10/01 22:22:41  standa
+ * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).
+ * fvdidrv/blitArea form memory works in TC.
+ *
  * Revision 1.8  2001/09/30 23:09:23  standa
  * The line logical operation added.
  * The first version of blitArea (screen to screen only).

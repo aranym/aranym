@@ -65,6 +65,8 @@ SRCS = ../main.cpp \
 	../rtc.cpp \
 	../videl.cpp \
 	../yamaha.cpp \
+	../host.cpp \
+	../araobjs.cpp \
 	../aradata.cpp \
 	$(SYSSRCS) \
 	$(CPUSRCS)

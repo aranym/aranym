@@ -81,6 +81,9 @@ Things for 1.0 release:
     - reorganize the loop nesting (performance) in HostScreen::gfxXXX methods.
     - add support for other than 16bit host color depth surfaces
 
+- .xfs filesystem modules for MagiC and MiNT that uses the VFS (virtual
+  filesystem portable library) to access any disc (or network drive).
+ 
 - sound output using GSXB library
 
 The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by

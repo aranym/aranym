@@ -4,6 +4,8 @@
  * STanda 2001
  */
 
+#include <string.h>
+
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
@@ -46,6 +48,15 @@ void SelectVideoMode()
 */
 
 
+void HostScreen::makeSnapshot()
+{
+	char filename[15];
+	sprintf( filename, "snap%03d.bmp", snapCounter++ );
+
+	SDL_SaveBMP( surf, filename );
+}
+
+
 void HostScreen::setWindowSize(	uint32 width, uint32 height )
 {
 	this->width  = width;
@@ -81,6 +92,10 @@ void HostScreen::setWindowSize(	uint32 width, uint32 height )
 			surf->format->Rmask, surf->format->Gmask, surf->format->Bmask,
 			surf->format->Rshift, surf->format->Gshift, surf->format->Bshift,
 			surf->format->Rloss, surf->format->Gloss, surf->format->Bloss));
+
+
+	// the counter init (should probably be placed in the constructor) FIXME
+	snapCounter = 0;
 }
 
 
@@ -584,6 +599,11 @@ void HostScreen::gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y
 
 /*
  * $Log$
+ * Revision 1.11  2001/10/03 06:37:41  standa
+ * General cleanup. Some constants added. Better "to screen" operation
+ * recognition (the videoram address is checked too - instead of only the
+ * MFDB == NULL || MFDB->address == NULL)
+ *
  * Revision 1.10  2001/09/30 23:09:23  standa
  * The line logical operation added.
  * The first version of blitArea (screen to screen only).

@@ -253,8 +253,8 @@ void setVirtualTimer() {
  */ 
 void incrementVirtualTimer() {
 	long newMillisecond = SDL_GetTicks();
-	if (newMillisecond >= lastMillisecond + 5) {// 5 ticks = 5 milliseconds
-		lastMillisecond += 5;					// 5 milliseconds = 200 Hz
+	if (newMillisecond >= lastMillisecond + 20) {// 5 ticks = 5 milliseconds
+		lastMillisecond += 20;					// 5 milliseconds = 200 Hz
 		invoke200HzInterrupt();					// 200 Hz interrupt
 	}
 }

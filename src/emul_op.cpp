@@ -25,20 +25,11 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
-#include "extfs.h"
-#include "fvdidrv.h"
 #include "emul_op.h"
+#include "araobjs.h"
 
 #define DEBUG 0
 #include "debug.h"
-
-
-/**
- * External filesystem access object.
- **/
-ExtFs      extFS;
-
-FVDIDriver fVDIDrv;
 
 
 /*
@@ -99,7 +90,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 				static bool Esc = false;
 				static bool inverse = false;
 				static int params = 0;
-				
+
 				uae_u8 value = r->d[1];
 				fprintf(stderr, "XConOut printing '%c' (%d/$%x)\n", value, value, value);
 				if (Esc) {
@@ -173,4 +164,3 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 	}
 }
-

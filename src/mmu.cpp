@@ -1,4 +1,8 @@
-/* Joy 2001 */
+/*
+ * $Header$
+ *
+ * Joy 2001
+ */
 
 #include "sysdeps.h"
 #include "hardware.h"
@@ -31,3 +35,10 @@ void MMU::handleWrite(uaecptr addr, uae_u8 value) {
 		case 7: break;
 	}
 }
+
+
+/*
+ * $Log$
+ *
+ *
+ */

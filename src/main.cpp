@@ -29,9 +29,10 @@
 #include "main.h"
 #include "hardware.h"
 #include "parameters.h"
-#include "extfs.h"
-#include "emul_op.h"			// for the extFS
-#include "aradata.h"			// for getAtariMouseXY
+#include "hostscreen.h"
+#include "host.h"			// for the HostScreen
+#include "araobjs.h"		// for the ExtFs
+#include "aradata.h"		// for getAtariMouseXY
 
 #define DEBUG 1
 #include "debug.h"
@@ -249,6 +250,10 @@ static void check_event(void)
 					}
 				}
 
+				if (alternated and sym == SDLK_PRINT) {
+					hostScreen.makeSnapshot();
+				}
+
 				else if (sym == SDLK_SCROLLOCK) {
 					if (is_floppy_inserted())
 						remove_floppy();
@@ -426,7 +431,7 @@ bool InitROM(void) {
 		return false;
 	}
 	int RealROMSize = 512 * 1024;
-	if (fread(ROMBaseHost, 1, RealROMSize, f) != (ssize_t) RealROMSize) {
+	if (fread(ROMBaseHost, 1, RealROMSize, f) != (size_t)RealROMSize) {
 		ErrorAlert("ROM file reading error\n");
 		fclose(f);
 		return false;
@@ -556,3 +561,10 @@ void ExitAll(void)
 
 	SDL_Quit();
 }
+
+
+/*
+ * $Log$
+ *
+ *
+ */
