@@ -30,7 +30,7 @@
 
 #include "md5.h"
 
-#ifdef WORDS_BIGENDIAN
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 void
 byteSwap(UWORD32 *buf, unsigned words)
 {
@@ -44,7 +44,7 @@ byteSwap(UWORD32 *buf, unsigned words)
 }
 #else
 #define byteSwap(buf,words)
-#endif
+#endif /* SDL_BYTEORDER == SDL_BIG_ENDIAN */
 
 /*
  * Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious
