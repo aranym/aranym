@@ -1,3 +1,17 @@
+2005/03/15 - Petr
+- gui-sdl/file.cpp: current dir is no longer presented as "./" but it's simply
+  an empty string (fileselector had to be adapted to this change, see below).
+
+- gui-sdl/dlgFileSelect.cpp:
+  - initialized 'eol' to remove compiler warning.
+  - if there is an empty path to dir the getcwd() is used to preset it
+    with a reasonable value.
+  - filename "." removed from the fileselector.
+
+- gui-sdl/dlgDisk.cpp: allows entering non-existing filename (useful for
+  generating new disk images). Help page updated accordingly.
+
+
 2005/03/14 - Xavier
 - gui-sdl/dlgFileSelect.cpp:
   - New sorting algoritm : folders at the top, files at the bottom.
