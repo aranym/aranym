@@ -977,7 +977,7 @@ void ndebug::nexit() {
 void ndebug::dumpmem(FILE *f, volatile uaecptr addr, uaecptr * nxmem, volatile unsigned int lns)
 {
 	jmp_buf excep_env_old;
-	excep_env_old = excep_env;
+	memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
 	uaecptr a;
 	broken_in = 0;
 	for (; lns-- && !broken_in;) {
@@ -1003,7 +1003,7 @@ setjmpagain:
 		fprintf(f, "\n");
 	}
 	*nxmem = addr;
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 }
 
 uae_u32 ndebug::readhex (char v, char **c)
@@ -1149,6 +1149,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.25  2002/08/01 22:21:47  joy
+ * compiler warning fixed
+ *
  * Revision 1.24  2002/07/23 08:43:50  pmandin
  * gcc-3 friendliness
  *

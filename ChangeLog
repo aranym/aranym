@@ -1,8 +1,8 @@
 2002/10/07 - milan
 - autoconf 2.53+ needed now
 
-- ndebug.cpp: ISO C++ forbids assignment of arrays, so Patrice's patch
-  completed
+- ndebug.cpp, newcpu.cpp: ISO C++ forbids assignment of arrays, so Patrice's
+                          patch completed
 
 
 2002/09/07 - joy (commiting for milan)

@@ -1694,7 +1694,7 @@ void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, volatile unsigned in
 {
     char *buffer = (char *)malloc(80 * sizeof(char));
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     strcpy(buffer,"");
     volatile uaecptr newpc = 0;
     m68kpc_offset = addr - m68k_getpc ();
@@ -1800,7 +1800,7 @@ setjmpagainx:
     if (nextpc)
 	*nextpc = m68k_getpc () + m68kpc_offset;
     free(buffer);
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 }
 
 #ifdef FULL_HISTORY
