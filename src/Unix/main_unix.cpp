@@ -42,19 +42,6 @@
 #include "debug.h"
 
 #define METADOS_DRV
-#define CONVPLANES
-#ifdef CONVPLANES
-// Temporary color palette table...
-#include "../colorpalette.cpp"
-
-char tos_colors[] =
-	{ 0, 255, 1, 2, 4, 6, 3, 5, 7, 8, 9, 10, 12, 14, 11, 13 };
-char vdi_colors[] =
-	{ 0, 2, 3, 6, 4, 7, 5, 8, 9, 10, 11, 14, 12, 15, 13, 1 };
-uint32 sdl_colors[256];
-
-#endif							// CONVPLANES
-
 // Constants
 const char ROM_FILE_NAME[] = DATADIR "/ROM";
 const int SIG_STACK_SIZE = SIGSTKSZ;	// Size of signal stack
@@ -70,8 +57,6 @@ static uint32 mapped_ram_rom_size;	// Total size of mmap()ed RAM/ROM area
 void init_fdc();				// fdc.cpp
 
 extern int irqindebug;
-
-SDL_Surface *surf = NULL;
 
 static int keyboardTable[0x80] = {
 /* 0-7 */ 0, SDLK_ESCAPE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5,
@@ -216,145 +201,6 @@ static void check_event(void)
 	}
 }
 
-int sdl_videoparams;
-int SDLw = 640, SDLh = 480;
-int od_posledni_zmeny = 0;
-int getSDLScreenWidth() {
-	return SDLw;
-}
-
-int getSDLScreenHeight() {
-	return SDLh;
-}
-
-void update_screen()
-{
-	if (od_posledni_zmeny > 2 && (getSDLScreenWidth() != getVidelScreenWidth() || getSDLScreenHeight() != getVidelScreenHeight())) {
-		if (getVidelScreenWidth() > 0)
-			SDLw = getVidelScreenWidth();
-		if (getVidelScreenHeight() > 0)
-			SDLh = getVidelScreenHeight();
-		fprintf(stderr, "Chysta se zmena rozliseni na %d x %d\n", SDLw, SDLh);
-		od_posledni_zmeny = 0;
-	}
-	if (od_posledni_zmeny == 3) {
-		surf = SDL_SetVideoMode(getSDLScreenWidth(), getSDLScreenHeight(), 16, sdl_videoparams);
-	}
-	if (od_posledni_zmeny < 4) {
-		od_posledni_zmeny++;
-		return;
-	}
-	if (SDL_MUSTLOCK(surf))
-		if (SDL_LockSurface(surf) < 0) {
-			printf("Couldn't lock surface to refresh!\n");
-			return;
-		}
-
-	VideoRAMBaseHost = (uint8 *) surf->pixels;
-	uint16 *fvram =
-		(uint16 *) get_real_address_direct(getVideoramAddress());
-	uint16 *hvram = (uint16 *) VideoRAMBaseHost;
-	int mode = getVideoMode();
-
-	uint8 destBPP = surf->format->BytesPerPixel;
-	if (mode < 16) {
-		//BEGIN
-		//
-		// FIXME:
-		// This should be done ONLY when the screen mode
-		// changes... e.g. in the videl emulation
-		uint8 col1st = 1;
-		uint8 col3rd = 3;
-
-		if (mode == 1)			// set the black in 1 plane mode to the index 1
-			col1st = 15;
-		else if (mode == 2)		// set the black to the index 3 in 2 plane mode (4 colors)
-			col3rd = 15;
-
-		sdl_colors[1] = SDL_MapRGB(surf->format,
-								   (uint8) colors[vdi_colors[col1st] * 3],
-								   (uint8) colors[vdi_colors[col1st] * 3 +
-												  1],
-								   (uint8) colors[vdi_colors[col1st] * 3 +
-												  2]);
-		sdl_colors[3] =
-			SDL_MapRGB(surf->format,
-					   (uint8) colors[vdi_colors[col3rd] * 3],
-					   (uint8) colors[vdi_colors[col3rd] * 3 + 1],
-					   (uint8) colors[vdi_colors[col3rd] * 3 + 2]);
-		//
-		//END
-
-		// The SDL colors blitting...
-		// FIXME: The destBPP tests should probably not
-		//        be inside the loop... (reorganise?)
-		uint16 words[mode];
-		int screenlen = getVidelScreenWidth() * getVidelScreenHeight() / 16;
-		for (int i = 0; i < screenlen; i++) {
-			// perform byteswap (prior to plane to chunky conversion)
-			for (int l = 0; l < mode; l++) {
-				uint16 b = fvram[i * mode + l];
-				words[l] = (b >> 8) | ((b & 0xff) << 8);	// byteswap
-			}
-
-			// To support other formats see
-			// the SDL video examples (docs 1.1.7)
-			if (destBPP == 2) {
-				// bitplane to chunky conversion
-				for (int j = 0; j < 16; j++) {
-					uint8 color = 0;
-					for (int l = mode - 1; l >= 0; l--) {
-						color <<= 1;
-						color |= (words[l] >> (15 - j)) & 1;
-					}
-					((uint16 *) hvram)[(i * 16 + j)] = (uint16) sdl_colors[color];
-				}
-			}
-			else if (destBPP == 4) {
-				// bitplane to chunky conversion
-				for (int j = 0; j < 16; j++) {
-					uint8 color = 0;
-					for (int l = mode - 1; l >= 0; l--) {
-						color <<= 1;
-						color |= (words[l] >> (15 - j)) & 1;
-					}
-					((uint32 *) hvram)[(i * 16 + j)] = (uint32) sdl_colors[color];
-				}
-			}
-			// FIXME: support for destBPP other than 2 or 4 BPP is missing
-		}
-	}
-	else {
-		int screenlen = getVidelScreenWidth() * getVidelScreenHeight();
-		// Falcon TC (High Color)
-		if (destBPP == 2) {
-			if (/* videocard memory in Motorola format */ false) {
-				memcpy(hvram, fvram, screenlen*2);
-			}
-			else {
-				for (int i = 0; i < screenlen; i++) {
-					// byteswap
-					((uint16 *) hvram)[i] =
-						(((uint16 *) fvram)[i] >> 8) |
-						((((uint16 *) fvram)[i] & 0xff) << 8);
-				}
-			}
-
-		}
-		else if (destBPP == 4) {
-			for (int i = 0; i < screenlen; i++)
-				// The byteswap is done by correct shifts (not so obvious) 
-				((uint32 *) hvram)[i] = SDL_MapRGB(surf->format,
-							(uint8) ((fvram[i] >> 5) & 0xf8),
-							(uint8) (((fvram[i] & 0x07) << 5) | ((fvram[i] >> 11) & 0x3c)),
-							(uint8) (fvram[i] & 0xf8));
-		}
-		// FIXME: support for destBPP other than 2 or 4 BPP is missing
-	}
-
-	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, getSDLScreenWidth(), getSDLScreenHeight());
-}
-
 Uint32 my_callback_function(Uint32 interval, void *param)
 {
 	static int VBL_counter = 0;
@@ -385,38 +231,6 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 }
 
 /*
- *  Ersatz functions
- */
-
-int SelectVideoMode()
-{
-	SDL_Rect **modes;
-	int i;
-
-	/* Get available fullscreen/hardware modes */
-	modes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_HWSURFACE);
-
-	/* Check is there are any modes available */
-	if (modes == (SDL_Rect **) 0) {
-		printf("No modes available!\n");
-		exit(-1);
-	}
-
-	/* Check if or resolution is restricted */
-	if (modes == (SDL_Rect **) - 1) {
-		printf("All resolutions available.\n");
-	}
-	else {
-		/* Print valid modes */
-		printf("Available Modes\n");
-		for (i = 0; modes[i]; ++i)
-			printf("  %d x %d\n", modes[i]->w, modes[i]->h);
-	}
-
-	return 0;
-}
-
-/*
  *  Main program
  */
 #define ErrorAlert(a)	fprintf(stderr, a)
@@ -433,17 +247,6 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	atexit(SDL_Quit);
-	SelectVideoMode();
-	sdl_videoparams = SDL_HWSURFACE;
-	if (fullscreen)
-		sdl_videoparams |= SDL_FULLSCREEN;
-	surf = SDL_SetVideoMode(getSDLScreenWidth(), getSDLScreenHeight(), 16, sdl_videoparams);
-	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
-	fprintf(stderr, "Line Length = %d\n", surf->pitch);
-	fprintf(stderr, "Must Lock? %s\n", SDL_MUSTLOCK(surf) ? "YES" : "NO");
-	if (SDL_MUSTLOCK(surf)) {
-		SDL_LockSurface(surf);
-	}
 
 	// grab mouse
 	if (grab_mouse) {
@@ -451,60 +254,6 @@ int main(int argc, char **argv)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	}
 
-	VideoRAMBaseHost = (uint8 *) surf->pixels;
-	fprintf(stderr, "surf->pixels = %x, getVideoSurface() = %x\n",
-			VideoRAMBaseHost, SDL_GetVideoSurface()->pixels);
-	if (SDL_MUSTLOCK(surf))
-		SDL_UnlockSurface(surf);
-
-	fprintf(stderr,
-			"Pixel format: \tmasks  r %04x, g %04x, b %04x\n"
-			"\t\tshifts r %d, g %d, b %d\n"
-			"\t\tlosses r %d, g %d, b %d\n",
-			surf->format->Rmask,
-			surf->format->Gmask,
-			surf->format->Bmask,
-			surf->format->Rshift,
-			surf->format->Gshift,
-			surf->format->Bshift,
-			surf->format->Rloss, surf->format->Gloss, surf->format->Bloss);
-
-#ifdef CONVPLANES
-	// Convert the table from 0..1000 RGB to 0..255 RBG format
-	for (int i = 0; i < sizeof(colors) / sizeof(*colors); i++)
-		colors[i] = ((((uint16) colors[i] << 6) - 63) / 250) & 0xff;
-
-	// Prepare the native format color values
-	//
-	// FIXME: This should be done on every VDI palette change
-	//        and this pass should work with TOS built in palette
-	//        (I don't know where to get the TOS palette, so I've stolen it from fVDI)
-	{
-		uint16 vdi2pix[256];
-		int i = 0;
-
-		for (i = 0; i < 16; i++)
-			vdi2pix[i] = vdi_colors[i];
-		for (; i < 256; i++)
-			vdi2pix[i] = i;
-
-		// map the colortable into the correct pixel format
-		for (int i = 0; i < 256; i++) {
-			/*
-			   D(fprintf(stderr, "map color %03d -> %03d (#%02x%02x%02x)\n",
-			   (uint8)i, (uint8)vdi2pix[i],
-			   (uint8)colors[vdi2pix[i]*3],
-			   (uint8)colors[vdi2pix[i]*3+1],
-			   (uint8)colors[vdi2pix[i]*3+2] ));
-			 */
-
-			sdl_colors[i] = SDL_MapRGB(surf->format,
-									   (uint8) colors[vdi2pix[i] * 3],
-									   (uint8) colors[vdi2pix[i] * 3 + 1],
-									   (uint8) colors[vdi2pix[i] * 3 + 2]);
-		}
-	}
-#endif
 	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
 
 	insert_floppy();
@@ -531,11 +280,9 @@ int main(int argc, char **argv)
 	// ROMBase = RAMBase + 0xe00000;
 
 	InitMEMBaseDiff(RAMBaseHost, RAMBase);
-	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
 	D(bug("ST-RAM starts at %p (%08x)\n", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)\n", ROMBaseHost, ROMBase));
 	//D(bug("TT-RAM starts at %p (%08x)\n", TTRAMBaseHost, TTRAMBase));
-	D(bug("VideoRAM starts at %p (%08x)\n", VideoRAMBaseHost, VideoRAMBase));
 
 	// Load TOS ROM
 	int rom_fd = open(rom_path ? rom_path : ROM_FILE_NAME, O_RDONLY);
