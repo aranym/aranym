@@ -1,3 +1,8 @@
+2002/07/16 - joy
+- fixed pretty scary bug in yamaha.cpp. As a direct result PARCP started 
+  working reliably.
+
+
 2002/07/16 - milan
 - hguide.txt: updated, added section 9 (Checking memory boundary)
 
