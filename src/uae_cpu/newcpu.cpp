@@ -13,8 +13,8 @@
 #include "emul_op.h"
 #include "ndebug.h"
 
-extern int intlev(void);	// From basilisk_glue.cpp
-extern int timerCinterrupts;
+extern int intlev(void);			// From basilisk_glue.cpp
+extern int mfpCounter5, mfpCounter6;// From basilisk_glue.cpp
 
 #include "m68k.h"
 #include "memory.h"
@@ -2802,99 +2802,71 @@ static void do_trace (void)
     }
 }
 
+#define SERVE_DOINT										\
+{														\
+	if (regs.spcflags & SPCFLAG_DOINT) {				\
+		int intr = intlev ();							\
+		regs.spcflags &= ~SPCFLAG_DOINT;				\
+		if (intr != -1 && intr > regs.intmask) {		\
+			Interrupt (intr);							\
+			regs.stopped = 0;							\
+			regs.spcflags &= ~SPCFLAG_STOP;				\	/* needed only if in while(STOP) */
+		}												\
+	}													\
+}
 
-static int do_specialties (void)
+#define SERVE_MFP(irq, mask)							\
+{														\
+	if ((regs.spcflags & (mask))						\
+		&& (6 > regs.intmask)) {						\
+		int value = get_byte_direct(0xfffa11);			\
+		int mfpMask = 1 << irq;							\
+		if (! (value & (mask))) {						\
+			put_byte_direct(0xfffa11, value | mfpMask);	\
+   			MFPInterrupt(irq);							\
+			regs.stopped = 0;							\
+			regs.spcflags &= ~SPCFLAG_STOP;				\	/* needed only if in while(STOP) */
+			if (--mfpCounter ## irq <= 0)				\
+				regs.spcflags &= ~(mask);				\	/* shouldn't be this reset even if it's masked out (like the DOINT)? */
+		}												\
+	}													\
+}
+
+#define SERVE_ALL_MFP									\
+{														\
+	SERVE_MFP(6, SPCFLAG_MFP_ACIA);						\
+	SERVE_MFP(5, SPCFLAG_MFP_TIMERC);					\
+}
+
+static int do_specialties(void)
 {
-    /*n_spcinsns++;*/
-    if (regs.spcflags & SPCFLAG_DOTRACE) {
-	Exception (9,last_trace_ad);
-    }
-    while (regs.spcflags & SPCFLAG_STOP) {
-    	int mask = (SPCFLAG_INT | SPCFLAG_DOINT | SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_ACIA);
-	if (regs.spcflags & mask){
-	    int intr = intlev ();
-	    regs.spcflags &= ~mask;
-	    if (intr != -1 && intr > regs.intmask) {
-		Interrupt (intr);
-		regs.stopped = 0;
-		regs.spcflags &= ~SPCFLAG_STOP;
-	    }
+	/*n_spcinsns++;*/
+	if (regs.spcflags & SPCFLAG_DOTRACE) {
+		Exception (9,last_trace_ad);
 	}
-    }
-    if (regs.spcflags & SPCFLAG_TRACE)
-       do_trace ();
+	while (regs.spcflags & SPCFLAG_STOP) {
+		usleep(1000);	// give slices to OS
+		SERVE_DOINT;
+		SERVE_ALL_MFP;
+	}
+	if (regs.spcflags & SPCFLAG_TRACE)
+		do_trace ();
 
-    if (regs.spcflags & SPCFLAG_DOINT) {
-	int intr = intlev ();
-	regs.spcflags &= ~SPCFLAG_DOINT;
-	if (intr != -1 && intr > regs.intmask) {
-	    Interrupt (intr);
-	    regs.stopped = 0;
-	}
-    }
+	SERVE_DOINT;
+	SERVE_ALL_MFP;
 
-#if 0
-    // check for MFP interrupts
-    // 5: TimerC
-    // 6: ACIA received data
-/*
-	static int mfpFlags[8] = {0, 0, 0, 0, 0, SPCFLAG_MFP_TIMERC, SPCFLAG_MFP_ACIA, 0};
-	static int SPCFLAG_MFP_ALL = SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_ACIA;
-	if (regs.spcflags & SPCFLAG_MFP_ALL) {
-		for(int mfpInt = 6; mfpInt >= 5; mfpInt--) {
-			int mfpFlag = mfpFlags[mfpInt];
-			if ((regs.spcflags & mfpFlag) && (6 > regs.intmask)) {
-				int value = get_byte_direct(0xfffa11);
-				int mfpMask = 1 << mfpInt;
-				if (! (value & mfpMask)) {
-					put_byte_direct(0xfffa11, value | mfpMask);
-	    			MFPInterrupt(mfpInt);
-					regs.stopped = 0;
-					regs.spcflags &= ~mfpFlag;
-				}
-			}
-		}
-	}
-*/
-#else
-/* old code, maybe was faster but not expandable */
-			int mfpInt = 6;
-			int mfpFlag = SPCFLAG_MFP_ACIA;
-			if ((regs.spcflags & mfpFlag) && (6 > regs.intmask)) {
-				int value = get_byte_direct(0xfffa11);
-				int mfpMask = 1 << 6;
-				if (! (value & mfpMask)) {
-					put_byte_direct(0xfffa11, value | mfpMask);
-	    			MFPInterrupt(mfpInt);
-					regs.stopped = 0;
-					regs.spcflags &= ~mfpFlag;
-				}
-			}
-			mfpInt = 5;
-			mfpFlag = SPCFLAG_MFP_TIMERC;
-			if ((regs.spcflags & mfpFlag) && (6 > regs.intmask)) {
-				int value = get_byte_direct(0xfffa11);
-				int mfpMask = 1 << 5;
-				if (! (value & mfpMask)) {
-					put_byte_direct(0xfffa11, value | mfpMask);
-	    			MFPInterrupt(mfpInt);
-					regs.stopped = 0;
-					if (--timerCinterrupts <= 0)
-						regs.spcflags &= ~mfpFlag;
-				}
-			}
-#endif
 /*  
 // do not understand the INT vs DOINT stuff so I disabled it (joy)
-    if (regs.spcflags & SPCFLAG_INT) {
-	regs.spcflags &= ~SPCFLAG_INT;
-	regs.spcflags |= SPCFLAG_DOINT;
-    }*/
-    if (regs.spcflags & (SPCFLAG_BRK | SPCFLAG_MODE_CHANGE)) {
-	regs.spcflags &= ~(SPCFLAG_BRK | SPCFLAG_MODE_CHANGE);
-	return 1;
-    }
-    return 0;
+	if (regs.spcflags & SPCFLAG_INT) {
+		regs.spcflags &= ~SPCFLAG_INT;
+		regs.spcflags |= SPCFLAG_DOINT;
+	}*/
+	if (regs.spcflags & (SPCFLAG_BRK | SPCFLAG_MODE_CHANGE)) {
+		regs.spcflags &= ~(SPCFLAG_BRK | SPCFLAG_MODE_CHANGE);
+		return 1;
+	}
+
+	return 0;
 }
 
 #ifndef USE_TIMERS
