@@ -305,6 +305,11 @@ fi
 AC_TRANSLATE_DEFINE(HAVE_MACH_VM, "$have_mach_vm",
   [Define if your system has a working vm_allocate()-based memory allocator.])
 
+case "$target_os" in
+  darwin*)	OSdarwinReq="#define OS_darwin";;
+  *)		OSdarwinReq= ;;
+esac
+
 dnl Check that vm_allocate(), vm_protect() work
 if [[ "x$have_mach_vm" = "xyes" ]]; then
 
@@ -318,6 +323,7 @@ AC_CACHE_CHECK([whether vm_protect works],
     AC_TRY_RUN([
       #define CONFIGURE_TEST_VM_MAP
       #define TEST_VM_PROT_$test_def
+	  $OSdarwinReq
       #include "vm_alloc.cpp"
     ], ac_cv_vm_protect_works=no, rm -f core,
     dnl When cross-compiling, do not assume anything
@@ -327,6 +333,7 @@ AC_CACHE_CHECK([whether vm_protect works],
   AC_TRY_RUN([
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_PROT_RDWR_WRITE
+	$OSdarwinReq
     #include "vm_alloc.cpp"
   ], , ac_cv_vm_protect_works=no,
   dnl When cross-compiling, do not assume anything
@@ -448,7 +455,8 @@ AC_CACHE_CHECK([whether we can map Low Memory area 0x0000-0x2000],
   AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
   AC_TRY_RUN([
-    #include "vm_alloc.cpp"
+    $OSdarwinReq
+	#include "vm_alloc.cpp"
     int main(void) { /* returns 0 if we could map the lowmem globals */
       volatile char * lm = 0;
       if (vm_init() < 0) exit(1);
