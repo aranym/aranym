@@ -244,21 +244,18 @@ typedef struct dev_ {
 	short organization;
    } bits;
    short dummy2;
-/* Should be 0 below, but that is non-ANSI!!!  FIX FIX FIX ****** */
-#ifdef __PUREC__
-   short vdi2pix[1];		/* Of course really 256... */
-#else
-   short vdi2pix[0];		/* Of course really 256... */
-#endif
-   struct bitnumber_ {
-	short red[16];
-	short green[16];
-	short blue[16];
-	short alpha[16];
-	short genlock[16];
-	short unused[32];
-   } bitnumber;
-   short reserved[144];
+   union scrmap_u {
+    short vdi2pix[256];
+    struct bitnumber_s {
+     short red[16];
+     short green[16];
+     short blue[16];
+     short alpha[16];
+     short genlock[16];
+     short unused[32];
+     short reserved[144];
+    } bitnumber;
+   } scrmap;
 } Device;
 
 typedef struct Driver_ {

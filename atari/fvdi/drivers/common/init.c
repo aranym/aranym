@@ -184,41 +184,41 @@ void setup_scrninfo(Device *device, Mode *graphics_mode)
 	device->dummy2 = 0;
 	if (device->clut == 2) {
 		for(i = 0; i < gmbits->red[0]; i++)
-			device->bitnumber.red[i] = gmbits->red[i + 1];
+			device->scrmap.bitnumber.red[i] = gmbits->red[i + 1];
 		for(i = gmbits->red[0]; i < 16; i++)
-			device->bitnumber.red[i] = -1;		/* Not used */
+			device->scrmap.bitnumber.red[i] = -1;		/* Not used */
 		for(i = 0; i < gmbits->green[0]; i++)
-			device->bitnumber.green[i] = gmbits->green[i + 1];
+			device->scrmap.bitnumber.green[i] = gmbits->green[i + 1];
 		for(i = gmbits->green[0]; i < 16; i++)
-			device->bitnumber.green[i] = -1;		/* Not used */
+			device->scrmap.bitnumber.green[i] = -1;		/* Not used */
 		for(i = 0; i < gmbits->blue[0]; i++)
-			device->bitnumber.blue[i] = gmbits->blue[i + 1];
+			device->scrmap.bitnumber.blue[i] = gmbits->blue[i + 1];
 		for(i = gmbits->blue[0]; i < 16; i++)
-			device->bitnumber.blue[i] = -1;		/* Not used */
+			device->scrmap.bitnumber.blue[i] = -1;		/* Not used */
 		for(i = 0; i < gmbits->alpha[0]; i++)
-			device->bitnumber.alpha[i] = gmbits->alpha[i + 1];
+			device->scrmap.bitnumber.alpha[i] = gmbits->alpha[i + 1];
 		for(i = gmbits->alpha[0]; i < 16; i++)
-			device->bitnumber.alpha[i] = -1;		/* Not used */
+			device->scrmap.bitnumber.alpha[i] = -1;		/* Not used */
 		for(i = 0; i < gmbits->genlock[0]; i++)
-			device->bitnumber.genlock[i] = gmbits->genlock[i + 1];
+			device->scrmap.bitnumber.genlock[i] = gmbits->genlock[i + 1];
 		for(i = gmbits->genlock[0]; i < 16; i++)
-			device->bitnumber.genlock[i] = -1;	/* Not used */
+			device->scrmap.bitnumber.genlock[i] = -1;	/* Not used */
 		for(i = 0; i < gmbits->unused[0]; i++)
-			device->bitnumber.unused[i] = gmbits->unused[i + 1];
+			device->scrmap.bitnumber.unused[i] = gmbits->unused[i + 1];
 		for(i = gmbits->unused[0]; i < 32; i++)
-			device->bitnumber.unused[i] = -1;	/* Not used */
+			device->scrmap.bitnumber.unused[i] = -1;	/* Not used */
 		for(i = 0; i < 144; i++)
-			device->reserved[i] = 0;
+			device->scrmap.bitnumber.reserved[i] = 0;
 	} else {
 		for(i = 0; i < sizeof(tos_colours); i++)
-			device->vdi2pix[i] = tos_colours[i];
+			device->scrmap.vdi2pix[i] = tos_colours[i];
 		if (graphics_mode->bpp == 8) {
 			for(; i < 255; i++)
-				device->vdi2pix[i] = i;
-			device->vdi2pix[255] = 15;
+				device->scrmap.vdi2pix[i] = i;
+			device->scrmap.vdi2pix[255] = 15;
 		} else {
 			for(; i < 256; i++)
-				device->vdi2pix[i] = 0;
+				device->scrmap.vdi2pix[i] = 0;
 		}
 	}
 }

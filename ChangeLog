@@ -1,3 +1,13 @@
+2002/01/07 - Patrice Mandin <pmandin@caramail.com> & STanda
+- Patrice: I did a simple patch for the vdi color mapping.
+  The following ugly piece of code removed.
+  #ifdef __PUREC__
+     short vdi2pix[1];            /* Of course really 256... */
+  #else
+     short vdi2pix[0];            /* Of course really 256... */
+  #endif
+
+
 2002/01/05 - joy
 - floppy geometry detection fixed. It could never work before!
 
