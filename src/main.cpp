@@ -420,9 +420,10 @@ void invoke200HzInterrupt()
 }
 
 /*
- * TOS ROM
+ * Load, check and patch the TOS 4.04 ROM file
  */
-bool InitROM(void) {
+bool InitTOSROM(void)
+{
 	// read ROM file
 	D(bug("Reading ROM file..."));
 	FILE *f = fopen(rom_path, "rb");
@@ -486,6 +487,29 @@ bool InitROM(void) {
 	return true;
 }
 
+/*
+ * Initialize the Operating System - either the EmuTOS or TOS 4.04
+ */
+bool InitOS(void)
+{
+	// EmuTOS is the future. That's why I give it the precedence over the TOS ROM
+	if (strlen(emutos_path) > 0) {
+		// read EmuTOS file
+		D(bug("Reading EmuTOS..."));
+		FILE *f = fopen(emutos_path, "rb");
+		if (f == NULL) {
+			ErrorAlert("EmuTOS file not found\n");
+			return false;
+		}
+		fread(ROMBaseHost, 1, ROMSize, f);
+		fclose(f);
+		return true;
+	}
+	else {
+		return InitTOSROM();
+	}
+}
+
 
 /*
  *  Initialize everything, returns false on error
@@ -507,7 +531,7 @@ bool InitAll(void)
 	if (!InitMEM())
 		return false;
 
-	if (! InitROM())
+	if (! InitOS())
 		return false;
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -591,6 +615,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.32  2001/10/29 08:15:45  milan
+ * some changes around debuggers
+ *
  * Revision 1.31  2001/10/25 19:56:01  standa
  * The Log and Header CVS tags in the Log removed. Was recursing.
  *

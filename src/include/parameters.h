@@ -93,12 +93,12 @@ extern bool fullscreen;		// boot in fullscreen
 extern int8 boot_color_depth;		// boot color depth
 extern int8 monitor;				// VGA or TV
 extern bool direct_truecolor;	// patch TOS to enable direct true color
-extern bool grab_mouse;
 extern ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 extern uint32 FastRAMSizeMB;	// size of FastRAM, needed for configuration's GUI
 
 extern char *program_name;
 extern char rom_path[512];
+extern char emutos_path[512];
 
 void usage(int);
 extern int decode_switches(FILE *, int, char **);
