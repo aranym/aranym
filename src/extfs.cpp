@@ -1214,7 +1214,8 @@ int32 ExtFs::Frename(LogicalDev *ldp, char *pathName, ExtFile *fp,
 	convertPathA2F( fpathName, pathName );
 	//	convertPathA2F( fnewPathName, (char*)newPathName );
 
-	if ( newPathName[0] != '\0' && ( newPathName[0] == '\\' || newPathName[1] == ':' ))
+	if (   newPathName[0] == '\\' ||
+		 ( newPathName[0] != '\0' && newPathName[1] == ':' ))
 		convertPathA2F( fnewPathName, newPathName );
 	else {
 		strcpy(fnewPathName,fpathName);
@@ -1599,6 +1600,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.17  2001/12/04 09:32:18  standa
+ * Olivier Landemarre <Olivier.Landemarre@utbm.fr>: Frename patch.
+ *
  * Revision 1.16  2001/11/21 13:29:51  milan
  * cleanning & portability
  *
