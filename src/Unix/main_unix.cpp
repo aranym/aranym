@@ -54,7 +54,7 @@ uint32 sdl_colors[256];
 #endif // CONVPLANES
 
 // Constants
-const char ROM_FILE_NAME[] = "ROM";
+const char ROM_FILE_NAME[] = DATADIR"/ROM";
 const int SIG_STACK_SIZE = SIGSTKSZ;	// Size of signal stack
 
 // CPU and FPU type, addressing mode
