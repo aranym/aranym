@@ -29,42 +29,36 @@ extern HostScreen hostScreen;
 
 
 // The Atari structures offsets
-#define MOUSE_HOTSPOT_X            8
-#define MOUSE_HOTSPOT_Y            10
-#define MOUSE_BGCOLOR              12
-#define MOUSE_FGCOLOR              14
-#define MOUSE_MASK                 16
-#define MOUSE_SHAPE                48
+#define MFDB_ADDRESS                0
+#define MFDB_WIDTH                  4
+#define MFDB_HEIGHT                 6 
 #define MFDB_WDWIDTH                8
-#define MFDB_BITPLANES             12
-#define VWK_SCREEN_MFDB_ADDRESS    24
-#define VWK_CLIP_RECT              80
-#define VWK_MODE                   90
-
+#define MFDB_STAND                 10
+#define MFDB_NPLANES               12
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
-#define put_dtriplet( address, data ) \
+#define put_dtriplet(address, data) \
 { \
-	WriteInt8((address)  , ((data) >> 16) & 0xff ); \
-	WriteInt8((address)+1, ((data) >> 8) & 0xff ); \
-	WriteInt8((address)+2, (data) & 0xff ); \
+	WriteInt8((address), ((data) >> 16) & 0xff); \
+	WriteInt8((address) + 1, ((data) >> 8) & 0xff); \
+	WriteInt8((address) + 2, (data) & 0xff); \
 }
 
-#define get_dtriplet( address ) \
-	( (ReadInt8((address)) << 16) | (ReadInt8((address)+1) << 8) | ReadInt8((address)+2) )
+#define get_dtriplet(address) \
+	((ReadInt8((address)) << 16) | (ReadInt8((address) + 1) << 8) | ReadInt8((address) + 2))
 
 #else
 
-#define put_dtriplet( address, data ) \
+#define put_dtriplet(address, data) \
 { \
-	WriteInt8((address)  , (data) & 0xff ); \
-	WriteInt8((address)+1, ((data) >> 8) & 0xff ); \
-	WriteInt8((address)+2, ((data) >> 16) & 0xff ); \
+	WriteInt8((address), (data) & 0xff); \
+	WriteInt8((address) + 1, ((data) >> 8) & 0xff); \
+	WriteInt8((address) + 2, ((data) >> 16) & 0xff); \
 }
 
-#define get_dtriplet( address ) \
-	( (ReadInt8((address)+2) << 16) | (ReadInt8((address)+1) << 8) | ReadInt8((address)) )
+#define get_dtriplet(address) \
+	((ReadInt8((address) + 2) << 16) | (ReadInt8((address) + 1) << 8) | ReadInt8((address)))
 
 #endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
 
@@ -76,7 +70,7 @@ inline bool FVDIDriver::AllocIndices(int n)
 {
 	if (n > index_count) {
 		D2(bug("More indices %d->%d\n", index_count, n));
-		int count = n * 2;	// Take a few extra right away
+		int count = n * 2;		// Take a few extra right away
 		int16* tmp = new(std::nothrow) int16[count];
 		if (!tmp) {
 			count = n;
@@ -121,7 +115,7 @@ inline bool FVDIDriver::AllocPoints(int n)
 {
 	if (n > point_count) {
 		D2(bug("More points %d->%d", point_count, n));
-		int count = n * 2;	// Take a few extra right away
+		int count = n * 2;		// Take a few extra right away
 		int16* tmp = new(std::nothrow) int16[count * 2];
 		if (!tmp) {
 			count = n;
@@ -149,171 +143,119 @@ class Points {
 };
 
 
+int32 FVDIDriver::get_par(M68kRegisters *r, int n)
+{
+	return ReadInt32(r->a[7] + 4 + n * 4);
+}
 
-void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
+
+void FVDIDriver::dispatch(M68kRegisters *r)
 {
 #ifdef USE_TIMERS
 	// Thread safety patch
 	hostScreen.lock();
 #endif
 
-	// fix the stack (the fncode was pushed onto the stack)
-	r->a[7] += 4;
+	videl.setRendering(false);
 
-	videl.setRendering( false );
-
+	uint32 fncode = ReadInt32(r->a[7] + 4);
 	switch (fncode) {
 		// NEEDED functions
 
-		case 1: // getPixel:
-			/*
-			 * read_pixel
-			 * In:  a1  VDI struct, source MFDB
-			 *  d1  x
-			 *  d2  y
-			 */
-			D(bug("fVDI: %s %d,%d", "readPixel", (uint16)r->d[1], (uint16)r->d[2] ));
-			r->d[0] = getPixel( r->a[1],
-								ReadInt32( r->a[1] + 4 ),
-								r->d[1] /* x */, r->d[2] /* y */);
+		case 1: // read_pixel
+			r->d[0] = getPixel((memptr)get_par(r, 1),		// vwk
+			                   (memptr)get_par(r, 2),		// src MFDB*
+			                   get_par(r, 3), get_par(r, 4));	// x, y
 			break;
 
-		case 2: // putPixel:
-			/*
-			 * write_pixel
-			 * In:  a1  VDI struct, destination MFDB
-			 *  d0  colour
-			 *  d1  x or table address
-			 *  d2  y or table length (high) and type (low)
-			 * XXX: ?
-			 */
-			D(bug("fVDI: %s %d,%d (%x)", "writePixel", (uint16)r->d[1], (uint16)r->d[2], (memptr)r->d[0] ));
-			r->d[0] = putPixel( r->a[1],
-								ReadInt32( r->a[1] + 4 ),
-								r->d[1] /* x */, r->d[2] /* y */,
-								r->d[0] /* color */);
+		case 2: // write_pixel
+			r->d[0] = putPixel((memptr)get_par(r, 1),		// vwk
+			                   (memptr)get_par(r, 2),		// dst MFDB*
+			                   get_par(r, 3), get_par(r, 4),	// x, y
+			                                                	// table*, table length/type (0 - coordinates)
+			                   get_par(r, 5));			// color
 			break;
 
-		case 3: // drawMouse:
-			/*
-			 * mouse_draw
-			 * In:  a1  Pointer to Workstation struct
-			 *  d0/d1   x,y
-			 *  d2  0 - move shown  1 - move hidden  2 - hide  3 - show  >3 - change shape (pointer to mouse struct)
-			 */
-			r->d[0] = drawMouse( r->a[1],
-								 (int16)r->d[0] /* x */, (int16)r->d[1] /* y */, r->d[2] /* mode/Mouse* */ );
+		case 3: // mouse_draw
+			r->d[0] = drawMouse((memptr)get_par(r, 1),		// wk
+			                    get_par(r, 2), get_par(r, 3),	// x, y
+			                    get_par(r, 4),			// mask*
+			                                  			// mode (0 - move, 1 - hide, 2 - show)
+			                                  			// These are only valid when not mode
+			                    get_par(r, 5),			//   data*
+			                    get_par(r, 6), get_par(r, 7),	//   hot_x, hot_y
+			                    get_par(r, 8),			//   color
+			                    get_par(r, 9));			//   type
 			break;
+
 
 		// SPEEDUP functions
 
-		case 4: // expandArea:
-			/*
-			 * expand_area
-			 * In:  a1  VDI struct, destination MFDB, VDI struct, source MFDB
-			 *  d0  height and width to move (high and low word)
-			 *  d1-d2   source coordinates
-			 *  d3-d4   destination coordinates
-			 *  d6  background and foreground colour
-			 *  d7  logic operation
-			 */
-
-			if (r->a[1] & 1)
-				r->d[0] = (uint32)-1; // we can do only one line at once
-			else
-				r->d[0] = expandArea( (memptr)ReadInt32( r->a[1]),
-									  (memptr)ReadInt32( r->a[1] + 12 ) /* src MFDB* */,
-									  (memptr)ReadInt32( r->a[1] + 4 ) /* dest MFDB* */,
-									  r->d[1] /* sx */, r->d[2] /* sy */,
-									  r->d[3] /* dx */, r->d[4] /* dy */,
-									  r->d[0] & 0xffff /* w */, r->d[0] >> 16 /* h */,
-									  r->d[6] & 0xffff /* fgcolor */, r->d[6] >> 16 /* bgcolor */,
-									  r->d[7] & 0xffff /* logical operation */ );
+		case 4: // expand_area
+			r->d[0] = expandArea((memptr)get_par(r, 1),		// vwk
+			                     (memptr)get_par(r, 2),		// src MFDB*
+			                     get_par(r, 3), get_par(r, 4),	// sx, sy
+			                     (memptr)get_par(r, 5),		// dest MFDB*
+			                     get_par(r, 6), get_par(r, 7),	// dx, dy
+			                     get_par(r, 8),			// width
+			                     get_par(r, 9),			// height
+			                     get_par(r, 10),			// logical operation
+			                     get_par(r, 11));			// bgColor fgColor
 			break;
 
-		case 5: // fillArea
-			/*
-			 * fill_area
-			 * In:  a1  VDI struct
-			 *  d0  height and width to fill (high and low word)
-			 *  d1  x or table address
-			 *  d2  y or table length (high) and type (low)
-			 *  d3  pattern address
-			 *  d4  colour
-			 */
-			r->d[0] = fillArea(r->a[1],		// vwk
-			                   r->d[1], r->d[2],	// x, y
-			                   r->d[0] & 0xffff,    // width
-			                   r->d[0] >> 16,	// height
-			                   r->d[3],		// pattern
-			                   r->d[4]);		// bgColor fgColor
+		case 5: // fill_area
+			r->d[0] = fillArea((memptr)get_par(r, 1),		// vwk
+			                   get_par(r, 2), get_par(r, 3),	// x, y
+			                                                	// table*, table length/type (0 - y/x1/x2 spans)
+			                   get_par(r, 4), get_par(r, 5),	// width, height
+			                   (memptr)get_par(r, 6),		// pattern*
+			                   get_par(r, 7),			// bgColor fgColor
+			                   get_par(r, 8),			// mode
+			                   get_par(r, 9));			// interior style
 			break;
 
-		case 6: // blitArea
-			/*
-			 * blit_area
-			 * In:  a1  VDI struct, destination MFDB, VDI struct, source MFDB
-			 *  d0  height and width to move (high and low word)
-			 *  d1-d2   source coordinates
-			 *  d3-d4   destination coordinates
-			 *  d7  logic operation
-			 */
-			r->d[0] = blitArea( (memptr)ReadInt32( r->a[1] ),
-								(memptr)ReadInt32( r->a[1] + 12 ) /* src MFDB* */,
-								(memptr)ReadInt32( r->a[1] + 4 ) /* dest MFDB* */,
-								r->d[1] /* sx */, r->d[2] /* sy */,
-								r->d[3] /* dx */, r->d[4] /* dy */,
-								r->d[0] & 0xffff /* w */, r->d[0] >> 16 /* h */,
-								r->d[7] & 0xffff /* logical operation */ );
+		case 6: // blit_area
+			r->d[0] = blitArea((memptr)get_par(r, 1),		// vwk
+			                   (memptr)get_par(r, 2),		// src MFDB*
+			                   get_par(r, 3), get_par(r, 4),	// sx, sy
+			                   (memptr)get_par(r, 5),		// dest MFDB*
+			                   get_par(r, 6), get_par(r, 7),	// dx, dy
+			                   get_par(r, 8),			// width
+			                   get_par(r, 9),			// height
+			                   get_par(r, 10));			// logical operation
 			break;
 
 		case 7: // drawLine:
-			/*
-			 * draw_line
-			 * In:  a1  VDI struct
-			 *  d0  logic operation
-			 *  d1  x1 or table address
-			 *  d2  y1 or table length (high) and type (low)
-			 *  d3  x2 or move point count
-			 *  d4  y2 or move index address
-			 *  d5  pattern
-			 *  d6  colour
-			 */
-			r->d[0] = drawLine(r->a[1],		// vwk
-			                   r->d[1], r->d[2],	// x1, y1
-			                   r->d[3], r->d[4],	// x2, y2
-			                   r->d[5] & 0xffff,	// pattern
-			                   r->d[6],		// bgColor fgColor
-			                   r->d[0] & 0xffff);	// logical operation
+			r->d[0] = drawLine((memptr)get_par(r, 1),		// vwk
+			                   get_par(r, 2), get_par(r, 3),	// x1, y1
+			                                                	// table*, table length/type (0 - coordinate pairs, 1 - pairs + moves)
+			                   get_par(r, 4), get_par(r, 5),	// x2, y2
+			                                                	// move point count, move index*
+			                   get_par(r, 6) & 0xffff,		// pattern
+			                   get_par(r, 7),			// bgColor fgColor
+			                   get_par(r, 8) & 0xffff,		// logical operation
+			                   (memptr)get_par(r, 9));		// clip rectangle* (0 or long[4])
 			break;
 
-		case 8: // fillPoly
-			/*
-			 * fill_polygon
-			 * In:  a1  VDI struct
-			 *  d0  number of points and indices (high and low word)
-			 *  d1  points address
-			 *  d2  index address
-			 *  d3  pattern address
-			 *  d4  colour
-			 */
-			r->d[0] = fillPoly(r->a[1],		// vwk
-			                   r->d[1],		// points address
-			                   r->d[0] >> 16,	// points
-			                   r->d[2],		// index address
-			                   r->d[0] & 0xffff,	// indices
-			                   r->d[3],		// pattern address
-			                   r->d[4]);		// bgColor fgColor
+		case 8: // fill_polygon
+			r->d[0] = fillPoly((memptr)get_par(r, 1),		// vwk
+			                   (memptr)get_par(r, 2),		// points*
+			                   get_par(r, 3),			// point count
+			                   (memptr)get_par(r, 4),		// index*
+			                   get_par(r, 5),			// index count
+			                   (memptr)get_par(r, 6),		// pattern*
+			                   get_par(r, 7),			// bgColor fgColor
+			                   get_par(r, 8),			// logic operation
+			                   get_par(r, 9),			// interior style
+			                   (memptr)get_par(r, 10));		// clip rectangle
 			break;
 
 		case 9: // setColor:
-			setColor( ReadInt32( r->a[7] + 4 ), ReadInt16( r->a[7] + 8 ),
-					  ReadInt16( r->a[7] + 10 ), ReadInt16( r->a[7] + 12 ) );
+			setColor(get_par(r, 1), get_par(r, 2), get_par(r, 3), get_par(r, 4));
 			break;
 
 		case 10: // setResolution:
-			setResolution( ReadInt32( r->a[7] + 4 ), ReadInt32( r->a[7] + 8 ),
-						   ReadInt32( r->a[7] + 12 ), ReadInt32( r->a[7] + 16 ) );
+			setResolution(get_par(r, 1), get_par(r, 2), get_par(r, 3), get_par(r, 4));
 			break;
 
 		case 15: // getVideoramAddress:
@@ -322,11 +264,11 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 #else
 			r->d[0] = VideoRAMBase;
 #endif
-			D(bug("fVDI: getVideoramAddress: %#lx", r->d[0] ));
+			D(bug("fVDI: getVideoramAddress: %#lx", r->d[0]));
 			break;
 
 		case 20: // debug_aranym:
-			bug("fVDI: DEBUG %d", ReadInt32( r->a[7] + 4 ) );
+			bug("fVDI: DEBUG %d", get_par(r, 1));
 			break;
 
 			// not implemented functions
@@ -342,9 +284,9 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 		0xffff, 0xffff, 0xffff, 0xffff,
 		0xffff, 0xffff, 0xffff, 0xffff
 	};
-	for( int i=0; i<16; i++ )
-		hostScreen.fillArea( i<<4, hostScreen.getHeight()-16, 15, 16, ptrn,
-                             hostScreen.getBpp() > 1 ? hostScreen.getPaletteColor(i) : i );
+	for(int i = 0; i < 16; i++)
+		hostScreen.fillArea(i << 4, hostScreen.getHeight() - 16, 15, 16, ptrn,
+		                    hostScreen.getBpp() > 1 ? hostScreen.getPaletteColor(i) : i);
 #endif  // DEBUG_DRAW_PALETTE
 
 
@@ -384,21 +326,36 @@ int FVDIDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y, uint32 color)
 	if (vwk & 1)
 		return 0;
 
-	if ( dst == 0 || ReadInt32( dst ) == 0 || ReadInt32( dst ) == ReadInt32( ReadInt32( vwk ) + VWK_SCREEN_MFDB_ADDRESS ) ) {
+	if (!dst) {
 		// To screen
 		if (!hostScreen.renderBegin())
 			return 1;
-		hostScreen.putPixel( x, y, color );
+		hostScreen.putPixel((int16)x, (int16)y, color);
 		hostScreen.renderEnd();
-		hostScreen.update( (int16)x, (int16)y, 1, 1, true );
+		hostScreen.update((int16)x, (int16)y, 1, 1, true);
 	} else {
 		D(bug("fVDI: %s %d,%d (%d)", "write_pixel no screen", (uint16)x, (uint16)y, (uint32)color));
-		//    uint32 offset;
-
-		/* WRONG CODE!!!
-		   offset = (dst->wdwidth * 2 * dst->bitplanes) * y + x * sizeof(uint16);
-		   WriteInt16( (uint32)dst->address + offset, color );
-		*/
+		uint16 planes = ReadInt16(dst + MFDB_NPLANES);
+		uint32 row_address = ReadInt32(dst + MFDB_ADDRESS) +
+		                     ReadInt16(dst + MFDB_WDWIDTH) * 2 * planes * y;
+		switch (planes) {
+		case 8:
+			WriteInt8(row_address + x, color);
+			break;
+		case 16:
+			WriteInt16(row_address + x * 2, color);
+			break;
+		case 24:
+			WriteInt8(row_address + x * 3, (color >> 16) & 0xff);
+			WriteInt8(row_address + x * 3 + 1, (color >> 8) & 0xff);
+			WriteInt8(row_address + x * 3 + 2, color & 0xff);
+			break;
+		case 32:
+			WriteInt32(row_address + x * 4, color);
+			break;
+		default:
+			break;
+		}
 	}
 
 	return 1;
@@ -425,19 +382,35 @@ uint32 FVDIDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 {
 	uint32 color = 0;
 
-	if ( src == 0 || ReadInt32( src ) == 0 || ReadInt32( src ) == ReadInt32( ReadInt32( vwk ) + VWK_SCREEN_MFDB_ADDRESS ) ) {
+	if (!src) {
 		if (!hostScreen.renderBegin())
 			return 0;
-		color = hostScreen.getPixel( x, y );
+		color = hostScreen.getPixel((int16)x, (int16)y);
 		hostScreen.renderEnd();
 	} else {
 		D(bug("fVDI: %s %d,%d (%d)", "read_pixel no screen", (uint16)x, (uint16)y, (uint32)color));
-		//    uint32 offset;
-
-		/* WRONG CODE!!!
-		   offset = (src->wdwidth * 2 * src->bitplanes) * y + x * sizeof(uint16);
-		   color = ReadInt16((uint32)src->address + offset);
-		*/
+		uint16 planes = ReadInt16(src + MFDB_NPLANES);
+		uint32 row_address = ReadInt32(src + MFDB_ADDRESS) +
+		                     ReadInt16(src + MFDB_WDWIDTH) * 2 * planes * y;
+		switch (planes) {
+		case 8:
+			color = ReadInt8(row_address + x);
+			break;
+		case 16:
+			color = ReadInt16(row_address + x * 2);
+			break;
+		case 24:
+			color = ((uint32)ReadInt8(row_address + x * 3) << 16) +
+			        ((uint32)ReadInt8(row_address + x * 3 + 1) << 8) +
+			        (uint32)ReadInt8(row_address + x * 3 + 2);
+			break;
+		case 32:
+			color = ReadInt32(row_address + x * 4);
+			break;
+		default:
+			color = 0xffffffff;
+			break;
+		}
 	}
 
 	return color;
@@ -453,20 +426,20 @@ uint32 FVDIDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
  *  10(a7)  green component byte value
  *  12(a7)  blue component byte value
  **/
-void FVDIDriver::setColor( uint32 paletteIndex, uint32 red, uint32 green, uint32 blue )
+void FVDIDriver::setColor(uint32 paletteIndex, uint32 red, uint32 green, uint32 blue)
 {
-	D(bug("fVDI: setColor: %03d - %3d,%3d,%3d - %02x,%02x,%02x", paletteIndex, red, green, blue, (uint8)(((red<<8)-1)/1000), (uint8)(((green<<8)-1)/1000), (uint8)(((blue<<8)-1)/1000) ));
+	D(bug("fVDI: setColor: %03d - %3d,%3d,%3d - %02x,%02x,%02x", paletteIndex, red, green, blue, (uint8)(((red << 8) - 1) / 1000), (uint8)(((green << 8) - 1) / 1000), (uint8)(((blue << 8) - 1) / 1000)));
 
-	if ( hostScreen.getBpp() == 2 ) // 5+6+5 rounding needed
-		hostScreen.setPaletteColor( paletteIndex,
-									((red * ((1L << 5) - 1) + 500L) / 1000) << 3,
-									((green * ((1L << 6) - 1) + 500L) / 1000) << 2,
-									((blue * ((1L << 5) - 1) + 500L) / 1000) << 3 );
+	if (hostScreen.getBpp() == 2) // 5+6+5 rounding needed
+		hostScreen.setPaletteColor(paletteIndex,
+		                           ((red * ((1L << 5) - 1) + 500L) / 1000) << 3,
+		                           ((green * ((1L << 6) - 1) + 500L) / 1000) << 2,
+		                           ((blue * ((1L << 5) - 1) + 500L) / 1000) << 3);
 	else // 8+8+8 graphics
-		hostScreen.setPaletteColor( paletteIndex,
-									((red * ((1L << 8) - 1) + 500L) / 1000),
-									((green * ((1L << 8) - 1) + 500L) / 1000),
-									((blue * ((1L << 8) - 1) + 500L) / 1000) );
+		hostScreen.setPaletteColor(paletteIndex,
+		                           ((red * ((1L << 8) - 1) + 500L) / 1000),
+		                           ((green * ((1L << 8) - 1) + 500L) / 1000),
+		                           ((blue * ((1L << 8) - 1) + 500L) / 1000));
 
 	/*
 	  (uint8)((color >> 8) & 0xf8),
@@ -476,10 +449,10 @@ void FVDIDriver::setColor( uint32 paletteIndex, uint32 red, uint32 green, uint32
 }
 
 
-void FVDIDriver::setResolution( int32 width, int32 height, int32 depth, int32 freq )
+void FVDIDriver::setResolution(int32 width, int32 height, int32 depth, int32 freq)
 {
-	D(bug("fVDI: setResolution: %dx%dx%d@%d", width, height, depth, freq ));
-	hostScreen.setWindowSize( width, height, depth > 8 ? depth : 8 );
+	D(bug("fVDI: setResolution: %dx%dx%d@%d", width, height, depth, freq));
+	hostScreen.setWindowSize(width, height, depth > 8 ? depth : 8);
 }
 
 
@@ -543,18 +516,20 @@ void FVDIDriver::setResolution( int32 width, int32 height, int32 depth, int32 fr
  **/
 extern "C" {
 #if DEBUG > 0
-	static void getBinary( uint16 data, char *buffer ) {
-		for( uint16 i=0; i<=15; i++ ) {
-			buffer[i] = (data & 1)?'1':' ';
-			data>>=1;
+	static void getBinary(uint16 data, char *buffer)
+	{
+		for(uint16 i = 0; i <= 15; i++) {
+			buffer[i] = (data & 1) ? '1' : ' ';
+			data >>= 1;
 		}
-		buffer[16]='\0';
+		buffer[16] = '\0';
 	}
 #endif
-	static uint16 reverse_bits( uint16 data ) {
+	static uint16 reverse_bits(uint16 data)
+	{
 		uint16 res = 0;
-		for( uint16 i=0; i<=15; i++ )
-			res |= (( data >> i ) & 1 ) << ( 15 - i );
+		for(uint16 i = 0; i <= 15; i++)
+			res |= ((data >> i) & 1) << (15 - i);
 		return res;
 	}
 }
@@ -568,24 +543,24 @@ void FVDIDriver::restoreMouseBackground()
 	if (!hostScreen.renderBegin())
 		return;
 
-	for( uint16 i=0; i<Mouse.storage.height; i++ )
-		for( uint16 j=0; j<Mouse.storage.width; j++ )
-			hostScreen.putPixel(x + j, y + i, Mouse.storage.background[i][j] );
+	for(uint16 i = 0; i < Mouse.storage.height; i++)
+		for(uint16 j = 0; j < Mouse.storage.width; j++)
+			hostScreen.putPixel(x + j, y + i, Mouse.storage.background[i][j]);
 
 	hostScreen.renderEnd();
-	hostScreen.update( x, y, Mouse.storage.width, Mouse.storage.height, true );
+	hostScreen.update(x, y, Mouse.storage.width, Mouse.storage.height, true);
 }
 
 
-void FVDIDriver::saveMouseBackground( int16 x, int16 y, int16 width, int16 height )
+void FVDIDriver::saveMouseBackground(int16 x, int16 y, int16 width, int16 height)
 {
-	D2(bug("fVDI: saveMouseBackground: %d,%d,%d,%d", x, y, width, height ));
+	D2(bug("fVDI: saveMouseBackground: %d,%d,%d,%d", x, y, width, height));
 
 	if (!hostScreen.renderBegin())
 		return;
 
-	for( uint16 i=0; i<height; i++ )
-		for( uint16 j=0; j<width; j++ ) {
+	for(uint16 i = 0; i < height; i++)
+		for(uint16 j = 0; j < width; j++) {
 			Mouse.storage.background[i][j] = hostScreen.getPixel(x + j, y + i);
 		}
 
@@ -598,52 +573,53 @@ void FVDIDriver::saveMouseBackground( int16 x, int16 y, int16 width, int16 heigh
 }
 
 
-int FVDIDriver::drawMouse( memptr wrk, int16 x, int16 y, uint32 mode )
+int FVDIDriver::drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data,
+                          uint32 hot_x, uint32 hot_y, uint32 color, uint32 mouse_type)
 {
-	D2(bug("fVDI: mouse mode: %x", mode ));
+	D2(bug("fVDI: mouse mode: %x", mode));
 
-	switch ( mode ) {
-		case 0:  // move shown
-			restoreMouseBackground();
-			break;
-		case 1:  // move hidden
-			return 1;
-		case 2:  // hide
-			restoreMouseBackground();
-			return 1;
-		case 3:  // show
-			break;
+	switch (mode) {
+	case 0:  // move shown
+		restoreMouseBackground();
+		break;
+	case 1:  // move hidden
+		return 1;
+	case 2:  // hide
+		restoreMouseBackground();
+		return 1;
+	case 3:  // show
+		break;
 
-		default: // change pointer shape
-			memptr fPatterAddress = (memptr)mode + MOUSE_MASK;
-			for( uint16 i=0; i<32; i+=2 )
-				Mouse.mask[i >> 1] = reverse_bits( ReadInt16( fPatterAddress + i ) );
-			fPatterAddress  = mode + MOUSE_SHAPE;
-			for( uint16 i=0; i<32; i+=2 )
-				Mouse.shape[i >> 1] = reverse_bits( ReadInt16( fPatterAddress + i ) );
+	default: // change pointer shape
+		memptr fPatterAddress = (memptr)mode;
+		for(uint16 i = 0; i < 32; i += 2)
+			Mouse.mask[i >> 1] = reverse_bits(ReadInt16(fPatterAddress + i));
+		fPatterAddress  = (memptr)data;
+		for(uint16 i = 0; i < 32; i += 2)
+			Mouse.shape[i >> 1] = reverse_bits(ReadInt16(fPatterAddress + i));
 
-			Mouse.hotspot.x = ReadInt16( mode + MOUSE_HOTSPOT_X );
-			Mouse.hotspot.y = ReadInt16( mode + MOUSE_HOTSPOT_Y);
-			Mouse.storage.color.foreground = ReadInt16( mode + MOUSE_FGCOLOR );
-			Mouse.storage.color.background = ReadInt16( mode + MOUSE_BGCOLOR );
-			if ( hostScreen.getBpp() > 1 ) {
-				Mouse.storage.color.foreground = hostScreen.getPaletteColor( Mouse.storage.color.foreground );
-				Mouse.storage.color.background = hostScreen.getPaletteColor( Mouse.storage.color.background );
-			}
+		Mouse.hotspot.x = hot_x;
+		Mouse.hotspot.y = hot_y;
+		Mouse.storage.color.foreground = (int16)(color & 0xffff);
+		Mouse.storage.color.background = (int16)(color >> 16);
+		if (hostScreen.getBpp() > 1) {
+			Mouse.storage.color.foreground = hostScreen.getPaletteColor(Mouse.storage.color.foreground);
+			Mouse.storage.color.background = hostScreen.getPaletteColor(Mouse.storage.color.background);
+		}
 
 #if DEBUG > 1
-			char buffer[30];
-			for( uint16 i=0; i<=15; i++ ) {
-				getBinary( Mouse.mask[i], buffer );
-				D2(bug("fVDI: apm:%s", buffer ));
-			}
-			for( uint16 i=0; i<=15; i++ ) {
-				getBinary( Mouse.shape[i], buffer );
-				D2(bug("fVDI: apd:%s", buffer ));
-			}
+		char buffer[30];
+		for(uint16 i = 0; i <= 15; i++) {
+			getBinary(Mouse.mask[i], buffer);
+			D2(bug("fVDI: apm:%s", buffer));
+		}
+		for(uint16 i = 0; i <= 15; i++) {
+			getBinary(Mouse.shape[i], buffer);
+			D2(bug("fVDI: apd:%s", buffer));
+		}
 #endif // DEBUG == 1
 
-			return 1;
+		return 1;
 	}
 
 	// handle the mouse hotspot point
@@ -654,45 +630,45 @@ int FVDIDriver::drawMouse( memptr wrk, int16 x, int16 y, uint32 mode )
 	uint16 mm[16];
 	uint16 md[16];
 	uint16 shift = x & 0xf;
-	for( uint16 i=0; i<=15; i++ ) {
-		mm[(i + (y&0xf)) & 0xf] = ( Mouse.mask[i]  << shift ) | ((Mouse.mask[i]  >> (16-shift)) & ((1<<shift)-1) );
-		md[(i + (y&0xf)) & 0xf] = ( Mouse.shape[i] << shift ) | ((Mouse.shape[i] >> (16-shift)) & ((1<<shift)-1) );
+	for(uint16 i = 0; i <= 15; i++) {
+		mm[(i + (y & 0xf)) & 0xf] = (Mouse.mask[i]  << shift) | ((Mouse.mask[i]  >> (16 - shift)) & ((1 << shift) - 1));
+		md[(i + (y & 0xf)) & 0xf] = (Mouse.shape[i] << shift) | ((Mouse.shape[i] >> (16 - shift)) & ((1 << shift) - 1));
 	}
 
 	// beware of the edges of the screen
 	int16 w, h;
 
-	if ( x < 0 ) {
+	if (x < 0) {
 		w = 16 + x;
 		x = 0;
 	} else {
 		w = 16;
-		if ( (int16)x + 16 >= (int32)hostScreen.getWidth() )
+		if ((int16)x + 16 >= (int32)hostScreen.getWidth())
 			w = hostScreen.getWidth() - (int16)x;
 	}
-	if ( y < 0 ) {
+	if (y < 0) {
 		h = 16 + y;
 		y = 0;
 	} else {
 		h = 16;
-		if ( (int16)y + 16 >= (int32)hostScreen.getHeight() )
+		if ((int16)y + 16 >= (int32)hostScreen.getHeight())
 			h = hostScreen.getHeight() - (int16)y;
 	}
 
 	D2(bug("fVDI: mouse x,y: %d,%d,%d,%d (%x,%x)", x, y, w, h,
-		   Mouse.storage.color.background, Mouse.storage.color.foreground ));
+	   Mouse.storage.color.background, Mouse.storage.color.foreground));
 
 	// draw the mouse
 	if (!hostScreen.renderBegin())
 		return 1;
 
-	saveMouseBackground( x, y, w, h );
+	saveMouseBackground(x, y, w, h);
 
-	hostScreen.fillArea( x, y, w, h, mm, Mouse.storage.color.background );
-	hostScreen.fillArea( x, y, w, h, md, Mouse.storage.color.foreground );
+	hostScreen.fillArea(x, y, w, h, mm, Mouse.storage.color.background);
+	hostScreen.fillArea(x, y, w, h, md, Mouse.storage.color.foreground);
 
 	hostScreen.renderEnd();
-	hostScreen.update( (uint16)x, (uint16)y, w, h, true );
+	hostScreen.update((uint16)x, (uint16)y, w, h, true);
 
 	return 1;
 }
@@ -735,10 +711,11 @@ int FVDIDriver::drawMouse( memptr wrk, int16 x, int16 y, uint32 mode )
  * } MFDB;
  **/
 extern "C" {
-	void keypress() {
+	void keypress()
+	{
 		SDL_Event event;
 		int quit = 0;
-		while(! quit) {
+		while (!quit) {
 			while (SDL_PollEvent(&event)) {
 				if (event.type == SDL_KEYDOWN) {
 					quit = 1;
@@ -749,166 +726,166 @@ extern "C" {
 	}
 }
 
-int FVDIDriver::expandArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 sy, int32 dx, int32 dy,
-                           int32 w, int32 h, uint32 fgColor, uint32 bgColor, uint32 logOp)
+int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
+                           int32 w, int32 h, uint32 logOp, uint32 colors)
 {
 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
 	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32( src ),ReadInt32( dest )));
 
-	uint16 pitch = ReadInt16( src + MFDB_WDWIDTH ) << 1; // the byte width (always monochrom);
-	memptr data  = ReadInt32( src ) + sy*pitch; // MFDB *src->address;
+	uint16 pitch = ReadInt16(src + MFDB_WDWIDTH) * 2; // the byte width (always monochrom);
+	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
 
-	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_BITPLANES )));
-	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32( dest ), ReadInt16( dest + MFDB_WDWIDTH ) * (ReadInt16( dest + MFDB_BITPLANES )>>2), ReadInt16( dest + MFDB_BITPLANES )));
+	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
+	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
 
-	if ( hostScreen.getBpp() > 1 ) {
-		fgColor = hostScreen.getPaletteColor( fgColor );
-		bgColor = hostScreen.getPaletteColor( bgColor );
+	uint32 fgColor = (int16)(colors & 0xffff);
+	uint32 bgColor = (int16)(colors >> 16);
+	if (hostScreen.getBpp() > 1) {
+		fgColor = hostScreen.getPaletteColor(fgColor);
+		bgColor = hostScreen.getPaletteColor(bgColor);
 	}
 
-	if ( dest != 0 && // no MFDB structure
-		 ReadInt32( dest ) != 0 && // mfdb->address == 0 => screen
-		 ReadInt32( dest ) != ReadInt32( ReadInt32( vwk ) + VWK_SCREEN_MFDB_ADDRESS ) ) {
+	if (dest) {
 		// mfdb->address = videoramstart
 
 		D(bug("fVDI: expandArea M->M"));
 
-		uint32 destPlanes  = (uint32)ReadInt16( dest + MFDB_BITPLANES );
-		uint32 destPitch   = ReadInt16( dest + MFDB_WDWIDTH ) * destPlanes << 1; // MFDB *dest->pitch
-		uint32 destAddress = ReadInt32( dest );
+		uint32 destPlanes  = (uint32)ReadInt16( dest + MFDB_NPLANES );
+		uint32 destPitch   = ReadInt16(dest + MFDB_WDWIDTH) * destPlanes << 1; // MFDB *dest->pitch
+		uint32 destAddress = ReadInt32(dest);
 
-		switch( destPlanes ) {
-			case 16:
-				for( uint16 j=0; j<h; j++ ) {
-					D2(fprintf(stderr,"fVDI: bmp:"));
+		switch(destPlanes) {
+		case 16:
+			for(uint16 j = 0; j < h; j++) {
+				D2(fprintf(stderr, "fVDI: bmp:"));
 
-					uint16 theWord = ReadInt16(data + j*pitch + ((sx>>3)&0xfffe));
-					for( uint16 i=sx; i<sx+w; i++ ) {
-						if ( i % 16 == 0 )
-							theWord = ReadInt16(data + j*pitch + ((i>>3)&0xfffe));
+				uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
+				for(uint16 i = sx; i < sx + w; i++) {
+					uint32 offset = (dx + i - sx) * 2 + (dy + j) * destPitch;
+					if (i % 16 == 0)
+						theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 
-						D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
-						switch( logOp ) {
-							case 1:
-								WriteInt16(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, ((theWord >> (15-(i&0xf))) & 1) ? fgColor : bgColor );
-								break;
-							case 2:
-								if ((theWord >> (15-(i&0xf))) & 1)
-									WriteInt16(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, fgColor );
-								break;
-							case 3:
-								if ((theWord >> (15-(i&0xf))) & 1)
-									WriteInt16(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, ~ ReadInt16(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch ) );
-								break;
-							case 4:
-								if ( !((theWord >> (15-(i&0xf))) & 1) )
-									WriteInt16(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, fgColor );
-								break;
-						}
+					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
+					switch(logOp) {
+					case 1:
+						WriteInt16(destAddress + offset, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
+						break;
+					case 2:
+						if ((theWord >> (15 - (i & 0xf))) & 1)
+							WriteInt16(destAddress + offset, fgColor);
+						break;
+					case 3:
+						if ((theWord >> (15 - (i & 0xf))) & 1)
+							WriteInt16(destAddress + offset, ~ReadInt16(destAddress + offset));
+						break;
+					case 4:
+						if (!((theWord >> (15 - (i & 0xf))) & 1))
+							WriteInt16(destAddress + offset, fgColor);
+						break;
 					}
-					D2(bug("")); //newline
 				}
-				break;
-			case 24:
-				for( uint16 j=0; j<h; j++ ) {
-					D2(fprintf(stderr,"fVDI: bmp:"));
+				D2(bug("")); //newline
+			}
+			break;
+		case 24:
+			for(uint16 j = 0; j < h; j++) {
+				D2(fprintf(stderr, "fVDI: bmp:"));
 
-					uint16 theWord = ReadInt16(data + j*pitch + ((sx>>3)&0xfffe));
-					for( uint16 i=sx; i<sx+w; i++ ) {
-						if ( i % 16 == 0 )
-							theWord = ReadInt16(data + j*pitch + ((i>>3)&0xfffe));
+				uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
+				for(uint16 i = sx; i < sx + w; i++) {
+					uint32 offset = (dx + i - sx) * 3 + (dy + j) * destPitch;
+					if (i % 16 == 0)
+						theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 
-						D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
-						uint16 xoffset = ((dx+i-sx)<<1)+(dx+i-sx);
-						switch( logOp ) {
-							case 1:
-								put_dtriplet(destAddress + xoffset + (dy+j)*destPitch, ((theWord >> (15-(i&0xf))) & 1) ? fgColor : bgColor );
-								break;
-							case 2:
-								if ((theWord >> (15-(i&0xf))) & 1)
-									put_dtriplet(destAddress + xoffset + (dy+j)*destPitch, fgColor );
-								break;
-							case 3:
-								if ((theWord >> (15-(i&0xf))) & 1)
-									put_dtriplet(destAddress + xoffset + (dy+j)*destPitch, ~ get_dtriplet(destAddress + xoffset + (dy+j)*destPitch ) );
-								break;
-							case 4:
-								if ( !((theWord >> (15-(i&0xf))) & 1) )
-									put_dtriplet(destAddress + xoffset + (dy+j)*destPitch, fgColor );
-								break;
-						}
+					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
+					switch(logOp) {
+					case 1:
+						put_dtriplet(destAddress + offset, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
+						break;
+					case 2:
+						if ((theWord >> (15 - (i & 0xf))) & 1)
+							put_dtriplet(destAddress + offset, fgColor);
+						break;
+					case 3:
+						if ((theWord >> (15-(i&0xf))) & 1)
+							put_dtriplet(destAddress + offset, ~get_dtriplet(destAddress + offset));
+						break;
+					case 4:
+						if (!((theWord >> (15 - (i & 0xf))) & 1))
+							put_dtriplet(destAddress + offset, fgColor);
+						break;
 					}
-					D2(bug("")); //newline
 				}
-				break;
-			case 32:
-				for( uint16 j=0; j<h; j++ ) {
-					D2(fprintf(stderr,"fVDI: bmp:"));
+				D2(bug("")); //newline
+			}
+			break;
+		case 32:
+			for(uint16 j = 0; j < h; j++) {
+				D2(fprintf(stderr, "fVDI: bmp:"));
 
-					uint16 theWord = ReadInt16(data + j*pitch + ((sx>>3)&0xfffe));
-					for( uint16 i=sx; i<sx+w; i++ ) {
-						if ( i % 16 == 0 )
-							theWord = ReadInt16(data + j*pitch + ((i>>3)&0xfffe));
+				uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
+				for(uint16 i = sx; i < sx + w; i++) {
+					uint32 offset = (dx + i - sx) * 4 + (dy + j) * destPitch;
+					if (i % 16 == 0)
+						theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 
-						D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
-						switch( logOp ) {
-							case 1:
-								WriteInt32(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, ((theWord >> (15-(i&0xf))) & 1) ? fgColor : bgColor );
-								break;
-							case 2:
-								if ((theWord >> (15-(i&0xf))) & 1)
-									WriteInt32(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, fgColor );
-								break;
-							case 3:
-								if ((theWord >> (15-(i&0xf))) & 1)
-									WriteInt32(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, ~ ReadInt32(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch ) );
-								break;
-							case 4:
-								if ( !((theWord >> (15-(i&0xf))) & 1) )
-									WriteInt32(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, fgColor );
-								break;
-						}
+					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
+					switch(logOp) {
+					case 1:
+						WriteInt32(destAddress + offset, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
+						break;
+					case 2:
+						if ((theWord >> (15-(i&0xf))) & 1)
+							WriteInt32(destAddress + offset, fgColor);
+						break;
+					case 3:
+						if ((theWord >> (15 - (i & 0xf))) & 1)
+							WriteInt32(destAddress + offset, ~ReadInt32(destAddress + offset));
+						break;
+					case 4:
+						if (!((theWord >> (15 - (i & 0xf))) & 1))
+							WriteInt32(destAddress + offset, fgColor);
+						break;
 					}
-					D2(bug("")); //newline
 				}
-				break;
-			default:
-				for( uint16 j=0; j<h; j++ ) {
-					D2(fprintf(stderr,"fVDI: bmp:"));
+				D2(bug("")); //newline
+			}
+			break;
+		default:
+			for(uint16 j = 0; j < h; j++) {
+				D2(fprintf(stderr, "fVDI: bmp:"));
 
-					uint16 theWord = ReadInt16(data + j*pitch + ((sx>>3)&0xfffe));
-					for( uint16 i=sx; i<sx+w; i++ ) {
-						if ( i % 16 == 0 )
-							theWord = ReadInt16(data + j*pitch + ((i>>3)&0xfffe));
+				uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
+				for(uint16 i = sx; i < sx + w; i++) {
+					uint32 wordIndex = ((dx + i - sx) >> 4) * destPlanes;
+					uint32 offset = wordIndex * 2 + (dy + j) * destPitch;
+					if (i % 16 == 0)
+						theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 
-						D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
-						uint32 wordIndex = ((dx+i-sx)>>4)*destPlanes;
-						switch( logOp ) {
-							case 1:
-								for( uint16 d=0; d<destPlanes; d++ )
-									WriteInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, (fgColor ? theWord : ~theWord) );
-								break;
-							case 2:
-								for( uint16 d=0; d<destPlanes; d++ )
-									WriteInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
-											  ReadInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch ) | (fgColor ? theWord : ~theWord) );
-								break;
-							case 3:
-								for( uint16 d=0; d<destPlanes; d++ )
-									WriteInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
-											  ~ ReadInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch ) );
-								break;
-							case 4:
-								for( uint16 d=0; d<destPlanes; d++ )
-									WriteInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
-											  ReadInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch ) | (fgColor ? theWord : ~theWord) );
-								break;
-						}
+					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
+					switch(logOp) {
+					case 1:
+						for(uint16 d = 0; d < destPlanes; d++)
+							WriteInt16(destAddress + offset + d * 2, (fgColor ? theWord : ~theWord));
+						break;
+					case 2:
+						for(uint16 d = 0; d < destPlanes; d++)
+							WriteInt16(destAddress + offset + d * 2, ReadInt16(destAddress + offset + d * 2) | (fgColor ? theWord : ~theWord));
+						break;
+					case 3:
+						for(uint16 d = 0; d < destPlanes; d++)
+							WriteInt16(destAddress + offset + d * 2, ~ReadInt16(destAddress + offset + d * 2));
+						break;
+					case 4:
+						for(uint16 d = 0; d < destPlanes; d++)
+							WriteInt16(destAddress + offset + d * 2, ReadInt16(destAddress + offset + d * 2) | (fgColor ? theWord : ~theWord));
+						break;
 					}
-					D2(bug("")); //newline
 				}
-				break;
+				D2(bug("")); //newline
+			}
+			break;
 		}
 
 		return 1;
@@ -918,38 +895,38 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 
 		return 1;
 
 	D2(bug("fVDI: expandArea M->S"));
-	for( uint16 j=0; j<h; j++ ) {
-		D2(fprintf(stderr,"fVDI: bmp:"));
+	for(uint16 j = 0; j < h; j++) {
+		D2(fprintf(stderr, "fVDI: bmp:"));
 
-		uint16 theWord = ReadInt16(data + j*pitch + ((sx>>3)&0xfffe));
-		for( uint16 i=sx; i<sx+w; i++ ) {
-			if ( i % 16 == 0 )
-				theWord = ReadInt16(data + j*pitch + ((i>>3)&0xfffe));
+		uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
+		for(uint16 i = sx; i < sx + w; i++) {
+			if (i % 16 == 0)
+				theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 
-			D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
-			switch( logOp ) {
-				case 1:
-					hostScreen.putPixel(dx + i - sx, dy + j, ((theWord >> (15-(i&0xf))) & 1) ? fgColor : bgColor );
-					break;
-				case 2:
-					if ((theWord >> (15-(i&0xf))) & 1)
-						hostScreen.putPixel(dx + i - sx, dy + j, fgColor );
-					break;
-				case 3:
-					if ((theWord >> (15-(i&0xf))) & 1)
-						hostScreen.putPixel(dx + i - sx, dy + j, ~ hostScreen.getPixel(dx + i - sx, dy + j) );
-					break;
-				case 4:
-					if ( !((theWord >> (15-(i&0xf))) & 1) )
-						hostScreen.putPixel(dx + i - sx, dy + j, fgColor );
-					break;
+			D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
+			switch(logOp) {
+			case 1:
+				hostScreen.putPixel(dx + i - sx, dy + j, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
+				break;
+			case 2:
+				if ((theWord >> (15 - (i & 0xf))) & 1)
+					hostScreen.putPixel(dx + i - sx, dy + j, fgColor);
+				break;
+			case 3:
+				if ((theWord >> (15 - (i & 0xf))) & 1)
+					hostScreen.putPixel(dx + i - sx, dy + j, ~hostScreen.getPixel(dx + i - sx, dy + j));
+				break;
+			case 4:
+				if (!((theWord >> (15 - (i & 0xf))) & 1))
+					hostScreen.putPixel(dx + i - sx, dy + j, fgColor);
+				break;
 			}
 		}
 		D2(bug("")); //newline
 	}
 
 	hostScreen.renderEnd();
-	hostScreen.update( dx, dy, w, h, true );
+	hostScreen.update(dx, dy, w, h, true);
 
 	return 1;
 }
@@ -959,7 +936,7 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 
  * Fill a coloured area using a monochrome pattern.
  *
  * c_fill_area(Virtual *vwk, long x, long y, long w, long h,
- *                           short *pattern, long colour)
+ *                           short *pattern, long colour, long mode, long interior_style)
  * fill_area
  * In:  a1  VDI struct
  *  d0  height and width to fill (high and low word)
@@ -980,8 +957,8 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 
  * A negative return will break down the special mode into separate calls,
  * with no more fallback possible.
  **/
-int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int w, int h,
-                         memptr pattern_addr, int32 colors)
+int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
+                         memptr pattern_addr, uint32 colors, uint32 logOp, uint32 interior_style)
 {
 	uint32 fgColor = (int16)(colors & 0xffff);
 	uint32 bgColor = (int16)(colors >> 16);
@@ -1003,14 +980,12 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int w, int h,
 		vwk -= 1;
 	}
 
-	int logOp = (int16)ReadInt16(vwk + VWK_MODE); // Virtual *vwk->mode // fill logOp;
-
 	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "fillArea",
 	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
 	      fgColor, hostScreen.getPaletteColor(fgColor),
 	      bgColor, hostScreen.getPaletteColor(bgColor)));
 
-	if ( hostScreen.getBpp() > 1 ) {
+	if (hostScreen.getBpp() > 1) {
 		fgColor = hostScreen.getPaletteColor(fgColor);
 		bgColor = hostScreen.getPaletteColor(bgColor);
 	}
@@ -1079,66 +1054,66 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int w, int h,
  * A return with 0 gives a fallback (normally pixel by pixel drawing by the
  * fVDI engine).
  **/
-#define applyBlitLogOperation( logicalOperation, destinationData, sourceData ) \
+#define applyBlitLogOperation(logicalOperation, destinationData, sourceData) \
 	switch(logicalOperation) { \
-		case 0: \
-			destinationData = 0; \
-			break; \
-		case 1: \
-			destinationData = sourceData & destinationData; \
-			break; \
-		case 2: \
-			destinationData = sourceData & ~destinationData; \
-			break; \
-		case 3: \
-			destinationData = sourceData; \
-			break; \
-		case 4: \
-			destinationData = ~sourceData & destinationData; \
-			break; \
-		case 5: \
-			destinationData = destinationData; \
-			break; \
-		case 6: \
-			destinationData = sourceData ^ destinationData; \
-			break; \
-		case 7: \
-			destinationData = sourceData | destinationData; \
-			break; \
-		case 8: \
-			destinationData = ~(sourceData | destinationData); \
-			break; \
-		case 9: \
-			destinationData = ~(sourceData ^ destinationData); \
-			break; \
-		case 10: \
-			destinationData = ~destinationData; \
-			break; \
-		case 11: \
-			destinationData = sourceData | ~destinationData; \
-			break; \
-		case 12: \
-			destinationData = ~sourceData; \
-			break; \
-		case 13: \
-			destinationData = ~sourceData | destinationData; \
-			break; \
-		case 14: \
-			destinationData = ~(sourceData & destinationData); \
-			break; \
-		case 15: \
-			destinationData = 0xffff; \
-			break; \
+	case 0: \
+		destinationData = 0; \
+		break; \
+	case 1: \
+		destinationData = sourceData & destinationData; \
+		break; \
+	case 2: \
+		destinationData = sourceData & ~destinationData; \
+		break; \
+	case 3: \
+		destinationData = sourceData; \
+		break; \
+	case 4: \
+		destinationData = ~sourceData & destinationData; \
+		break; \
+	case 5: \
+		destinationData = destinationData; \
+		break; \
+	case 6: \
+		destinationData = sourceData ^ destinationData; \
+		break; \
+	case 7: \
+		destinationData = sourceData | destinationData; \
+		break; \
+	case 8: \
+		destinationData = ~(sourceData | destinationData); \
+		break; \
+	case 9: \
+		destinationData = ~(sourceData ^ destinationData); \
+		break; \
+	case 10: \
+		destinationData = ~destinationData; \
+		break; \
+	case 11: \
+		destinationData = sourceData | ~destinationData; \
+		break; \
+	case 12: \
+		destinationData = ~sourceData; \
+		break; \
+	case 13: \
+		destinationData = ~sourceData | destinationData; \
+		break; \
+	case 14: \
+		destinationData = ~(sourceData & destinationData); \
+		break; \
+	case 15: \
+		destinationData = 0xffff; \
+		break; \
 	}
 
 
 extern "C" {
-static void chunkyToBitplane( uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8] )
+static void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8])
 {
-	memset( bitplaneWords, 0, sizeof(bitplaneWords) ); // clear the color values for the 8 pixels (word length)
+	memset(bitplaneWords, 0, sizeof(bitplaneWords)); // clear the color values for the 8 pixels (word length)
 
 	for (int l = 0; l < 16; l++) {
-		uint8 data = sdlPixelData[l]; // note: this is about 2000 dryhstones sppedup (the local variable)
+		uint8 data = sdlPixelData[l]; // note: this is about 2000 dryhstones speedup (the local variable)
 
 		bitplaneWords[0] <<= 1; bitplaneWords[0] |= (data >> 0) & 1;
 		bitplaneWords[1] <<= 1; bitplaneWords[1] |= (data >> 1) & 1;
@@ -1152,74 +1127,68 @@ static void chunkyToBitplane( uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWo
 }
 }
 
-int FVDIDriver::blitArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 sy, int32 dx, int32 dy,
+int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
                          int32 w, int32 h, uint32 logOp)
 {
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d", "blitArea", logOp, sx, sy, dx, dy, w, h ));
-	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest, (src)?(ReadInt32( src )):0,(dest)?(ReadInt32( dest )):0));
+	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest,
+              (src) ? (ReadInt32(src)) : 0, (dest) ? (ReadInt32(dest)) : 0));
 
-	memptr screenMFDBAddr = ReadInt32( vwk ) + VWK_SCREEN_MFDB_ADDRESS;
-	memptr videoRam = (memptr)ReadInt32( screenMFDBAddr );
-
-#if DEBUG > 0
-	uint32 screenPlanes = (uint32)ReadInt16( screenMFDBAddr + MFDB_BITPLANES );
-	uint32 screenPitch = ReadInt16( screenMFDBAddr + MFDB_WDWIDTH ) * screenPlanes << 1;
-	D(bug("fVDI: screen args: address %x, pitch %d, planes %d", videoRam, screenPitch, screenPlanes));
-#endif
-
-	bool toMemory = ( dest != 0 && ReadInt32( dest ) != 0 && ReadInt32( dest ) != videoRam );
-	if ( src != 0 && ReadInt32( src ) != 0 && ReadInt32( src ) != videoRam ) { // fromMemory
-		uint32 planes = ReadInt16( src + MFDB_BITPLANES ); // MFDB *src->bitplanes
-		uint32 pitch  = ReadInt16( src + MFDB_WDWIDTH ) * planes << 1; // MFDB *src->pitch
-		memptr data   = ReadInt32( src ) + sy*pitch; // MFDB *src->address host OS address
+	bool toMemory = dest;
+	if (src) { // fromMemory
+		uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *src->bitplanes
+		uint32 pitch  = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *src->pitch
+		memptr data   = ReadInt32(src) + sy * pitch;			// MFDB *src->address host OS address
 
 		D(bug("fVDI: blitArea M->: address %x, pitch %d, planes %d", data, pitch, planes));
 
-		if ( toMemory ) {
+		if (toMemory) {
 			// the destPlanes is always the same?
-			planes = ReadInt16( dest + MFDB_BITPLANES ); // MFDB *dest->bitplanes
-			uint32 destPitch = ReadInt16( dest + MFDB_WDWIDTH ) * planes << 1; // MFDB *dest->pitch
-			memptr destAddress = (memptr)ReadInt32( dest );
+			planes = ReadInt16(dest + MFDB_NPLANES);		// MFDB *dest->bitplanes
+			uint32 destPitch = ReadInt16(dest + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
+			memptr destAddress = (memptr)ReadInt32(dest);
 
 			D(bug("fVDI: blitArea M->M"));
 
 			memptr srcData;
 			memptr destData;
 
-			switch( planes ) {
-				case 16:
-					for( uint16 j=0; j<h; j++ )
-						for( uint16 i=sx; i<sx+w; i++ ) {
-							srcData = ReadInt16(data + j*pitch + ((i*planes)>>3));
-							destData = ReadInt16( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch );
-							applyBlitLogOperation( logOp, destData, srcData );
-							WriteInt16( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, destData );
-						}
-					break;
-				case 24:
-					for( uint16 j=0; j<h; j++ )
-						for( uint16 i=sx; i<sx+w; i++ ) {
-							uint16 xoffset = ((dx+i-sx)<<1)+(dx+i-sx);
-							srcData = get_dtriplet(data + j*pitch + ((i*planes)>>3));
-							destData = get_dtriplet( destAddress + xoffset + (dy+j)*destPitch );
-							applyBlitLogOperation( logOp, destData, srcData );
-							put_dtriplet( destAddress + xoffset + (dy+j)*destPitch, destData );
-						}
-					break;
-				case 32:
-					for( uint16 j=0; j<h; j++ )
-						for( uint16 i=sx; i<sx+w; i++ ) {
-							srcData = ReadInt32(data + j*pitch + ((i*planes)>>3));
-							destData = ReadInt32( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch );
-							applyBlitLogOperation( logOp, destData, srcData );
-							WriteInt32( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, destData );
-						}
-					break;
-
-				default:
-					if ( planes < 16 ) {
-						D(bug("fVDI: blitArea M->M: NOT TESTED bitplaneToCunky conversion"));
+			switch(planes) {
+			case 16:
+				for(int32 j = 0; j < h; j++)
+					for(int32 i = sx; i < sx + w; i++) {
+						uint32 offset = (dx + i - sx) * 2 + (dy + j) * destPitch;
+						srcData = ReadInt16(data + j * pitch + i * 2);
+						destData = ReadInt16(destAddress + offset);
+						applyBlitLogOperation(logOp, destData, srcData);
+						WriteInt16(destAddress + offset, destData);
 					}
+				break;
+			case 24:
+				for(int32 j = 0; j < h; j++)
+					for(int32 i = sx; i < sx + w; i++) {
+						uint32 offset = (dx + i - sx) * 3 + (dy + j) * destPitch;
+						srcData = get_dtriplet(data + j * pitch + i * 3);
+						destData = get_dtriplet(destAddress + offset);
+						applyBlitLogOperation(logOp, destData, srcData);
+						put_dtriplet(destAddress + offset, destData);
+					}
+				break;
+			case 32:
+				for(int32 j = 0; j < h; j++)
+					for(int32 i = sx; i < sx + w; i++) {
+						uint32 offset = (dx + i - sx) * 4 + (dy + j) * destPitch;
+						srcData = ReadInt32(data + j * pitch + i * 4);
+						destData = ReadInt32(destAddress + offset);
+						applyBlitLogOperation(logOp, destData, srcData);
+						WriteInt32(destAddress + offset, destData);
+					}
+				break;
+
+			default:
+				if (planes < 16) {
+					D(bug("fVDI: blitArea M->M: NOT TESTED bitplaneToCunky conversion"));
+				}
 			}
 			return 1;
 		}
@@ -1235,67 +1204,67 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 sy
 		memptr srcData;
 		memptr destData;
 
-		switch( planes ) {
-			case 16:
-				for( uint16 j=0; j<h; j++ )
-					for( uint16 i=sx; i<sx+w; i++ ) {
-						srcData = ReadInt16(data + j*pitch + ((i*planes)>>3));
-						//uint16 destData = ReadInt16( videoRam + ((dx+i-sx)<<1) + (dy+j)*screenPitch ); // shadow?
-						destData = hostScreen.getPixel( dx + i - sx, dy + j );
-						applyBlitLogOperation( logOp, destData, srcData );
-						//WriteInt16( videoRam + ((dx+i-sx)<<1) + (dy+j)*screenPitch, destData ); // shadow?
-						hostScreen.putPixel( dx+i-sx, dy+j, destData );
-					}
-				break;
-			case 24:
-				for( uint16 j=0; j<h; j++ )
-					for( uint16 i=sx; i<sx+w; i++ ) {
-						srcData = get_dtriplet(data + j*pitch + ((i*planes)>>3));
-						destData = hostScreen.getPixel( dx + i - sx, dy + j );
-						applyBlitLogOperation( logOp, destData, srcData );
-						hostScreen.putPixel( dx+i-sx, dy+j, destData );
-					}
-				break;
-			case 32:
-				for( uint16 j=0; j<h; j++ )
-					for( uint16 i=sx; i<sx+w; i++ ) {
-						srcData = ReadInt32(data + j*pitch + ((i*planes)>>3));
-						destData = hostScreen.getPixel( dx + i - sx, dy + j );
-						applyBlitLogOperation( logOp, destData, srcData );
-						hostScreen.putPixel( dx+i-sx, dy+j, destData );
-					}
-				break;
+		switch(planes) {
+		case 16:
+			for(int32 j = 0; j < h; j++)
+				for(int32 i = sx; i < sx + w; i++) {
+					srcData = ReadInt16(data + j * pitch + i * 2);
+					//uint16 destData = ReadInt16(videoRam + (dx + i - sx) * 2 + (dy + j) * screenPitch); // shadow?
+					destData = hostScreen.getPixel(dx + i - sx, dy + j);
+					applyBlitLogOperation(logOp, destData, srcData);
+					//WriteInt16(videoRam + (dx + i - sx) * 2 + (dy + j) * screenPitch, destData); // shadow?
+					hostScreen.putPixel(dx + i - sx, dy + j, destData);
+				}
+			break;
+		case 24:
+			for(int32 j = 0; j < h; j++)
+				for(int32 i = sx; i < sx + w; i++) {
+					srcData = get_dtriplet(data + j * pitch + i * 3);
+					destData = hostScreen.getPixel(dx + i - sx, dy + j);
+					applyBlitLogOperation(logOp, destData, srcData);
+					hostScreen.putPixel(dx + i - sx, dy + j, destData);
+				}
+			break;
+		case 32:
+			for(int32 j = 0; j < h; j++)
+				for(int32 i = sx; i < sx + w; i++) {
+					srcData = ReadInt32(data + j * pitch + i * 4);
+					destData = hostScreen.getPixel(dx + i - sx, dy + j);
+					applyBlitLogOperation(logOp, destData, srcData);
+					hostScreen.putPixel(dx + i - sx, dy + j, destData);
+				}
+			break;
 
-			default: // bitplane modes...
-				if ( planes < 16 ) {
-					uint8 color[16];
+		default: // bitplane modes...
+			if (planes < 16) {
+				uint8 color[16];
 
-					D(bug("fVDI: blitArea M->S: bitplaneToCunky conversion"));
-					uint16 *dataHost = (uint16*)Atari2HostAddr(data); // FIXME: Hack! Should use the get_X() methods
+				D(bug("fVDI: blitArea M->S: bitplaneToCunky conversion"));
+				uint16 *dataHost = (uint16*)Atari2HostAddr(data); // FIXME: Hack! Should use the get_X() methods
 
-					for( uint16 j=0; j<h; j++ ) {
-						uint32 wordIndex = (j*pitch>>1) + (sx>>4)*planes;
-						hostScreen.bitplaneToChunky( &dataHost[ wordIndex ], planes, color );
+				for(int32 j = 0; j < h; j++) {
+					uint32 wordIndex = (j * pitch >> 1) + (sx >> 4) * planes;
+					hostScreen.bitplaneToChunky(&dataHost[wordIndex], planes, color);
 
-						for( uint16 i=sx; i<sx+w; i++ ) {
-							uint8 bitNo = i & 0xf;
-							if ( bitNo == 0 ) {
-								uint32 wordIndex = (j*pitch>>1) + (i>>4)*planes;
-								hostScreen.bitplaneToChunky( &dataHost[ wordIndex ], planes, color );
-							}
-							hostScreen.putPixel(dx+i-sx, dy+j, color[ bitNo ] );
+					for(int32 i = sx; i < sx + w; i++) {
+						uint8 bitNo = i & 0xf;
+						if (bitNo == 0) {
+							uint32 wordIndex = (j * pitch >> 1) + (i >> 4) * planes;
+							hostScreen.bitplaneToChunky(&dataHost[wordIndex], planes, color);
 						}
+						hostScreen.putPixel(dx + i - sx, dy + j, color[bitNo]);
 					}
 				}
+			}
 		}
 
 		hostScreen.renderEnd();
-		hostScreen.update( dx, dy, w, h, true );
+		hostScreen.update(dx, dy, w, h, true);
 
 		return 1;
 	}
 
-	if ( toMemory ) {
+	if (toMemory) {
 		D(bug("fVDI: blitArea S->M"));
 
 		if (!hostScreen.renderBegin())
@@ -1305,92 +1274,94 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 sy
 		//uint32 pitch  = screenPitch;
 		//memptr data   = videoRam + sy*pitch;
 
-		uint32 planes = ReadInt16( dest + MFDB_BITPLANES ); // MFDB *dest->bitplanes
-		uint32 destPitch = ReadInt16( dest + MFDB_WDWIDTH ) * planes << 1; // MFDB *dest->pitch
-		memptr destAddress = ReadInt32( dest );
+		uint32 planes = ReadInt16(dest + MFDB_NPLANES);			// MFDB *dest->bitplanes
+		uint32 destPitch = ReadInt16(dest + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
+		memptr destAddress = ReadInt32(dest);
 
 		D(bug("fVDI: S->M: address %x, pitch %d, planes %d", destAddress, destPitch, planes));
 
 		memptr srcData;
 		memptr destData;
 
-		switch( planes ) {
-			case 16:
-				for( uint16 j=0; j<h; j++ )
-					for( uint16 i=sx; i<sx+w; i++ ) {
-						//uint16 srcData = ReadInt16( data + ((i*planes)>>3) + j*pitch ); // from the shadow?
-						srcData = hostScreen.getPixel( i, sy + j );
-						destData = ReadInt16( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch );
-						applyBlitLogOperation( logOp, destData, srcData );
-						WriteInt16( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, destData );
-					}
-				break;
-			case 24:
-				for( uint16 j=0; j<h; j++ )
-					for( uint16 i=sx; i<sx+w; i++ ) {
-						uint16 xoffset = ((dx+i-sx)<<1)+(dx+i-sx);
-						srcData = hostScreen.getPixel( i, sy + j );
-						destData = get_dtriplet( destAddress + xoffset + (dy+j)*destPitch );
-						applyBlitLogOperation( logOp, destData, srcData );
-						put_dtriplet( destAddress + xoffset + (dy+j)*destPitch, destData );
-					}
-				break;
-			case 32:
-				for( uint16 j=0; j<h; j++ )
-					for( uint16 i=sx; i<sx+w; i++ ) {
-						srcData = hostScreen.getPixel( i, sy + j );
-						destData = ReadInt32( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch );
-						applyBlitLogOperation( logOp, destData, srcData );
-						WriteInt32( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, destData );
-					}
-				break;
+		switch(planes) {
+		case 16:
+			for(int32 j = 0; j < h; j++)
+				for(int32 i = sx; i < sx + w; i++) {
+					uint32 offset = (dx + i - sx) * 2 + (dy + j) * destPitch;
+					//uint16 srcData = ReadInt16(data + i * 2 + j * pitch ); // from the shadow?
+					srcData = hostScreen.getPixel(i, sy + j);
+					destData = ReadInt16(destAddress + offset);
+					applyBlitLogOperation(logOp, destData, srcData);
+					WriteInt16(destAddress + offset, destData);
+				}
+			break;
+		case 24:
+			for(int32 j = 0; j < h; j++)
+				for(int32 i = sx; i < sx + w; i++) {
+					uint32 offset = (dx + i - sx) * 3 + (dy + j) * destPitch;
+					srcData = hostScreen.getPixel( i, sy + j );
+					destData = get_dtriplet(destAddress + offset);
+					applyBlitLogOperation(logOp, destData, srcData);
+					put_dtriplet(destAddress + offset, destData);
+				}
+			break;
+		case 32:
+			for(int32 j = 0; j < h; j++)
+				for(int32 i = sx; i < sx + w; i++) {
+					uint32 offset = (dx + i - sx) * 4 + (dy + j) * destPitch;
+					srcData = hostScreen.getPixel(i, sy + j);
+					destData = ReadInt32(destAddress + offset);
+					applyBlitLogOperation(logOp, destData, srcData);
+					WriteInt32(destAddress + offset, destData);
+				}
+			break;
 
-			default:
-				if ( planes < 16 ) {
-					D(bug("fVDI: blitArea S->M: bitplane conversion"));
+		default:
+			if (planes < 16) {
+				D(bug("fVDI: blitArea S->M: bitplane conversion"));
 
-					uint16 bitplanePixels[8];
-					uint32 pitch = hostScreen.getPitch();
-					uint8* dataHost = (uint8*)hostScreen.getVideoramAddress() + sy*pitch;
+				uint16 bitplanePixels[8];
+				uint32 pitch = hostScreen.getPitch();
+				uint8* dataHost = (uint8*)hostScreen.getVideoramAddress() + sy * pitch;
 
-					for( int32 j=0; j<h; j++ ) {
-						uint32 pixelPosition = j*pitch + sx & ~0xf; // div 16
-						chunkyToBitplane( dataHost + pixelPosition, planes, bitplanePixels );
-						for( uint16 d=0; d<planes; d++ )
-							WriteInt16( destAddress + ((((dx>>4)*planes)+d)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
+				for(int32 j = 0; j < h; j++) {
+					uint32 pixelPosition = j * pitch + sx & ~0xf; // div 16
+					chunkyToBitplane(dataHost + pixelPosition, planes, bitplanePixels);
+					for(uint32 d = 0; d < planes; d++)
+						WriteInt16(destAddress + (((dx >> 4) * planes) + d) * 2 + (dy + j) * destPitch, bitplanePixels[d]);
 
-						for( uint16 i=sx; i<sx+w; i++ ) {
-							uint8 bitNo = i & 0xf;
-							if ( bitNo == 0 ) {
-								uint32 wordIndex = ((dx+i-sx)>>4)*planes;
-								uint32 pixelPosition = j*pitch + i & ~0xf; // div 16
-								chunkyToBitplane( dataHost + pixelPosition, planes, bitplanePixels );
-								for( uint16 d=0; d<planes; d++ )
-									WriteInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
-							}
+					for(int32 i = sx; i < sx + w; i++) {
+						uint8 bitNo = i & 0xf;
+						if (bitNo == 0) {
+							uint32 wordIndex = ((dx + i - sx) >> 4) * planes;
+							uint32 pixelPosition = j * pitch + i & ~0xf; // div 16
+							chunkyToBitplane(dataHost + pixelPosition, planes, bitplanePixels);
+							for(uint32 d = 0; d < planes; d++)
+								WriteInt16(destAddress + (wordIndex + d) * 2 + (dy + j) * destPitch, bitplanePixels[d]);
 						}
 					}
 				}
+			}
 		}
 
 		hostScreen.renderEnd();
 		return 1;
 	}
 
-	D(bug("fVDI: %s ", "blitArea - S->S!" ));
+	D(bug("fVDI: %s ", "blitArea - S->S!"));
 
 	// if (!hostScreen.renderBegin()) // the surface must _not_ be locked for blitArea (SDL_BlitSurface)
 	//      return 1;
 
 	// FIXME: There are no logical operation implementation ATM
 	// for S->S blits... -> SDL does the whole thing at once
-	if ( logOp == 3 )
-		hostScreen.blitArea( sx, sy, dx, dy, w, h );
+	if (logOp == 3)
+		hostScreen.blitArea(sx, sy, dx, dy, w, h);
 	else
-		D(bug("fVDI: %s %d", "blitArea - S->S! mode NOT IMPLEMENTED!!!", logOp ));
+		D(bug("fVDI: %s %d", "blitArea - S->S! mode NOT IMPLEMENTED!!!", logOp));
 
-	hostScreen.update( sx, sy, w, h, true );
-	hostScreen.update( dx, dy, w, h, true );
+	hostScreen.update(sx, sy, w, h, true);
+	hostScreen.update(dx, dy, w, h, true);
 
 	return 1;
 }
@@ -1625,12 +1596,11 @@ int FVDIDriver::drawMoveLine(int16 table[], int length, uint16 index[], int move
 
 
 int FVDIDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 y2_,
-                         uint16 pattern, int32 colors, int logOp)
+                         uint32 pattern, uint32 colors, uint32 logOp, memptr clip)
 {
 	uint32 fgColor = (int16)(colors & 0xffff);
 	uint32 bgColor = (int16)(colors >> 16);
-
-	if ( hostScreen.getBpp() > 1 ) {
+	if (hostScreen.getBpp() > 1) {
 		fgColor = hostScreen.getPaletteColor(fgColor);
 		bgColor = hostScreen.getPaletteColor(bgColor);
 	}
@@ -1663,12 +1633,12 @@ int FVDIDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 
 	int cliparray[4];
 	int* cliprect = 0;
-	if (ReadInt16(vwk + VWK_CLIP_RECT)) {	// Clipping is not off
+	if (clip) {				// Clipping is not off
 		cliprect = cliparray;
-		cliprect[0] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 2);
-		cliprect[1] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 4);
-		cliprect[2] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 6);
-		cliprect[3] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 8);
+		cliprect[0] = (int16)ReadInt32(clip);
+		cliprect[1] = (int16)ReadInt32(clip + 4);
+		cliprect[2] = (int16)ReadInt32(clip + 8);
+		cliprect[3] = (int16)ReadInt32(clip + 12);
 		D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", cliprect[0], cliprect[1],
 		       cliprect[2], cliprect[3]));
 	}
@@ -1685,7 +1655,7 @@ int FVDIDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 			             logOp, cliprect, minmax);
 		else {
 #if TEST_STRAIGHT	// Not yet working
-			if (eq_coord && ((pattern & 0xffff) == 0xffff) && (vwk->mode < 3)) {
+			if (eq_coord && ((pattern & 0xffff) == 0xffff) && (logOp < 3)) {
 				table += 4;
 				for(--length; length > 0; length--) {
 					if (eq_coord & 1) {
@@ -1761,8 +1731,8 @@ int FVDIDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 //#define SMUL_DIV(x,y,z)	((long)(y - y1) * (x2 - x1) / (y2 - y1))
 //#define SMUL_DIV(x,y,z)	((short)(((short)(x)*(long)((short)(y)))/(short)(z)))
 
-int FVDIDriver::fillPoly(memptr vwk, int32 points_addr, int n, memptr index_addr, int moves,
-                         memptr pattern_addr, int32 colors)
+int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_addr, int moves,
+                         memptr pattern_addr, int32 colors, uint32 logOp, uint32 interior_style, memptr clip)
 {
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
@@ -1770,7 +1740,7 @@ int FVDIDriver::fillPoly(memptr vwk, int32 points_addr, int n, memptr index_addr
 	uint32 fgColor = (int16)(colors & 0xffff);
 	uint32 bgColor = (int16)(colors >> 16);
 
-	if ( hostScreen.getBpp() > 1 ) {
+	if (hostScreen.getBpp() > 1) {
 		fgColor = hostScreen.getPaletteColor(fgColor);
 		bgColor = hostScreen.getPaletteColor(bgColor);
 	}
@@ -1785,17 +1755,15 @@ int FVDIDriver::fillPoly(memptr vwk, int32 points_addr, int n, memptr index_addr
 
 	int cliparray[4];
 	int* cliprect = 0;
-	if (ReadInt16(vwk + VWK_CLIP_RECT)) {	// Clipping is not off
+	if (clip) {	// Clipping is not off
 		cliprect = cliparray;
-		cliprect[0] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 2);
-		cliprect[1] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 4);
-		cliprect[2] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 6);
-		cliprect[3] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 8);
+		cliprect[0] = (int16)ReadInt32(clip);
+		cliprect[1] = (int16)ReadInt32(clip + 4);
+		cliprect[2] = (int16)ReadInt32(clip + 8);
+		cliprect[3] = (int16)ReadInt32(clip + 12);
 		D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", cliprect[0], cliprect[1],
 		       cliprect[2], cliprect[3]));
 	}
-
-	int logOp = (int16)ReadInt16(vwk + VWK_MODE); // Virtual *vwk->mode // fill logOp;
 
 	Points p(alloc_point);
 	int16* index = alloc_index;
@@ -1943,6 +1911,9 @@ int FVDIDriver::fillPoly(memptr vwk, int32 points_addr, int n, memptr index_addr
 
 /*
  * $Log$
+ * Revision 1.38  2002/06/24 17:08:48  standa
+ * The pointer arithmetics fixed. The memptr usage introduced in my code.
+ *
  * Revision 1.37  2002/04/22 18:30:50  milan
  * header files reform
  *
