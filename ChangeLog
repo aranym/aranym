@@ -1,3 +1,9 @@
+2002/02/23 - joy
+- separated input related code from main.cpp into input.cpp
+- all open() functions have "O_BINARY" flag appended so that Cygwin
+  binaries won't mess CRLF in files (cdrom.cpp, extfs.cpp, fdc.cpp)
+
+
 2002/02/21 - milan & joy
 - cdrom.cpp sync with Bochs (CD-ROM eject supported)
 - ata.cpp sync with Bochs (32-bit data access supported)
