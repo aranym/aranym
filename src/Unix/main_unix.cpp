@@ -102,8 +102,6 @@ int main(int argc, char **argv)
 	HWBaseHost = NULL;
 	FastRAMBaseHost = NULL;
 
-	fprintf(stderr, VERSION_STRING " (compiled on "__DATE__ ") starting\n");
-
 	// remember program name
 	program_name = argv[0];
 
@@ -318,6 +316,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.82  2003/04/08 10:44:07  joy
+ * merging changes from 0_8_0 branch
+ *
  * Revision 1.80.2.3  2003/04/07 21:58:05  joy
  * parameters spliting finished
  *
