@@ -17,7 +17,7 @@
 static struct option const long_options[] =
 {
   {"fastram", required_argument, 0, 'T'},
-  {"rom", required_argument, 0, 'R'},
+  {"floppy", required_argument, 0, 'a'},
   {"resolution", required_argument, 0, 'r'},
   {"debug", no_argument, 0, 'D'},
   {"fullscreen", no_argument, 0, 'f'},
@@ -31,6 +31,7 @@ static struct option const long_options[] =
 
 char *program_name;
 char rom_path[512] = DATADIR "/ROM";
+char emutos_path[512] = DATADIR "/EmuTOS";
 
 uint8 start_debug = 0;			// Start debugger
 bool fullscreen = false;			// Boot in Fullscreen
@@ -46,10 +47,13 @@ bx_options_t bx_options;
 // configuration file 
 struct Config_Tag global_conf[]={
 	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
+	{ "EmuTOS", String_Tag, emutos_path, sizeof(emutos_path)},
 	{ "FastRAM", Int_Tag, &FastRAMSizeMB},
 	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path)},
 	{ "Cookie_MCH", HexLong_Tag, &bx_options.cookies._mch},
+#ifdef DEBUGGER
 	{ "DebugOnStart", Bool_Tag, &start_debug},
+#endif
 	{ NULL , Error_Tag, NULL }
 };
 
@@ -74,17 +78,19 @@ void usage (int status) {
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
   printf ("\
 Options:
-  -R, --rom NAME             ROM file NAME\n\
+  -a, --floppy NAME          floppy image file NAME\n\
   -F, --fastram SIZE         FastRAM size (in MB)\n\
-  -D, --debug                start debugger (if installed)\n\
   -f, --fullscreen           start in fullscreen\n\
   -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
-  -d, --disk CHAR:ROOTPATH   filesystem assignment e.g. d:/atari/d_drive\n\
+  -d, --disk CHAR:ROOTPATH   METADOS filesystem assignment e.g. d:/atari/d_drive\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
+#ifdef DEBUGGER
+  printf("-D, --debug                start debugger (if compiled in)\n");
+#endif
   exit (status);
 }
 
@@ -165,8 +171,10 @@ int decode_switches (FILE *f, int argc, char **argv) {
 #ifndef CONFGUI
 	int c;
 	while ((c = getopt_long (argc, argv,
-							 "R:" /* ROM file */
+							 "a:" /* floppy image file */
+#ifdef DEBUGGER
 							 "D"  /* debugger */
+#endif
 							 "F:" /* TT-RAM */
 							 "f"  /* fullscreen */
 							 "t"  /* direct truecolor */
@@ -185,9 +193,11 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				usage (0);
 				exit(0);
 	
+#ifdef DEBUGGER
 			case 'D':
 				start_debug = 1;
 				break;
+#endif
 	
 			case 'f':
 				fullscreen = true;
@@ -203,11 +213,11 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				monitor = atoi(optarg);
 				break;
 	
-			case 'R':
-				if ((strlen(optarg)-1) > sizeof(rom_path))
-					fprintf(stderr, "ROM path longer that %d chars.\n", sizeof(rom_path));
-				strncpy(rom_path, optarg, sizeof(rom_path));
-				rom_path[sizeof(rom_path)-1] = '\0';
+			case 'a':
+				if ((strlen(optarg)-1) > sizeof(bx_options.floppy.path))
+					fprintf(stderr, "Floppy image filename longer that %d chars.\n", sizeof(bx_options.floppy.path));
+				strncpy(bx_options.floppy.path, optarg, sizeof(bx_options.floppy.path));
+				bx_options.floppy.path[sizeof(bx_options.floppy.path)-1] = '\0';
 				break;
 
 			case 'r':
