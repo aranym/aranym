@@ -68,7 +68,9 @@ enum {
 	regs.spcflags &= ~(m); \
 } while (0)
 
-#elif defined(__i386__) && defined(X86_ASSEMBLY)
+#define SleepAndWait()	usleep(1000);
+
+#elif defined(__i386__) && defined(X86_ASSEMBLY) && !defined(ENABLE_REALSTOP)
 
 #define HAVE_HARDWARE_LOCKS 1
 
@@ -80,7 +82,9 @@ enum {
 	__asm__ __volatile__("lock\n\tandl %1,%0" : "=m" (regs.spcflags) : "i" (~(m))); \
 } while (0)
 
-#else
+#define SleepAndWait()	usleep(1000);
+
+#elif !defined(ENABLE_REALSTOP)
 
 #undef HAVE_HARDWARE_LOCKS
 extern  SDL_mutex *spcflags_lock;
@@ -97,9 +101,35 @@ extern  SDL_mutex *spcflags_lock;
 	SDL_UnlockMutex(spcflags_lock);	\
 } while (0)
 
-#endif
+#define SleepAndWait()	usleep(1000);
 
-/// Sleep on STOP insn
-void SleepAndWait(void);
+#else
+/// Full STOP instruction implementation (default configuration)
+
+#undef HAVE_HARDWARE_LOCKS
+extern  SDL_mutex *spcflags_lock;
+extern  SDL_cond *stop_condition;
+
+#define SPCFLAGS_SET(m) do { 				\
+	SDL_LockMutex(spcflags_lock);		\
+	regs.spcflags |= (m);					\
+	if (regs.spcflags & SPCFLAG_STOP)			\
+		SDL_CondSignal(stop_condition);			\
+	SDL_UnlockMutex(spcflags_lock);	\
+} while (0)
+
+#define SPCFLAGS_CLEAR(m) do {				\
+	SDL_LockMutex(spcflags_lock);		\
+	regs.spcflags &= ~(m);					\
+	SDL_UnlockMutex(spcflags_lock);	\
+} while (0)
+
+#define SleepAndWait() do { \
+	SDL_LockMutex(spcflags_lock);		\
+	SDL_CondWait(stop_condition, spcflags_lock); \
+	SDL_UnlockMutex(spcflags_lock);	\
+} while (0)
+
+#endif
 
 #endif /* SPCFLAGS_H */

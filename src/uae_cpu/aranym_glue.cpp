@@ -72,9 +72,9 @@ extern int quit_program;
 #if defined(ENABLE_EXCLUSIVE_SPCFLAGS) && !defined(HAVE_HARDWARE_LOCKS)
 SDL_mutex *spcflags_lock;
 #endif
-
-SDL_mutex *stopCondLock;
-SDL_cond  *stopCondition;
+#if defined(ENABLE_REALSTOP)
+SDL_cond *stop_condition;
+#endif
 
 
 /*
@@ -104,15 +104,12 @@ bool Init680x0(void)
     }
 #endif
 
-    if ((stopCondLock = SDL_CreateMutex()) ==  NULL) {
-		panicbug("Error by SDL_CreateMutex()");
-		exit(EXIT_FAILURE);
-    }
-    if ((stopCondition = SDL_CreateCond()) ==  NULL) {
+#if ENABLE_REALSTOP
+    if ((stop_condition = SDL_CreateCond()) ==  NULL) {
 		panicbug("Error by SDL_CreateCond()");
 		exit(EXIT_FAILURE);
     }
-
+#endif
 
 #ifdef USE_JIT
 	if (bx_options.jit.jit) compiler_init();
@@ -186,54 +183,26 @@ void Quit680x0(void)
 
 
 /*
- * Handle the STOP insn CPU thread sleep.
- */
-void SleepAndWait(void)
-{
-	SDL_mutexP(stopCondLock);
-	SDL_CondWait(stopCondition, stopCondLock);
-	SDL_mutexV(stopCondLock);
-}
-
-static inline void AwakeFromSleep(void)
-{
-	// avoid locking when not in STOP state
-	if (SPCFLAGS_TEST(SPCFLAG_STOP)) {
-		SDL_mutexP(stopCondLock);
-		// are we really in the STOP state?
-		//  * the another thread might have changed the flag
-		//    in the if -> mutexP moment
-		if (SPCFLAGS_TEST(SPCFLAG_STOP))
-			SDL_CondSignal(stopCondition);
-		SDL_mutexV(stopCondLock);
-	}
-}
-
-/*
  *  Trigger interrupts
  */
 void TriggerInternalIRQ(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INTERNAL_IRQ );
-	AwakeFromSleep();
 }
 
 void TriggerInt3(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INT3 );
-	AwakeFromSleep();
 }
 
 void TriggerVBL(void)
 {
 	SPCFLAGS_SET( SPCFLAG_VBL );
-	AwakeFromSleep();
 }
 
 void TriggerInt5(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INT5 );
-	AwakeFromSleep();
 }
 
 void TriggerMFP(bool enable)
@@ -242,13 +211,10 @@ void TriggerMFP(bool enable)
 		SPCFLAGS_SET( SPCFLAG_MFP );
 	else
 		SPCFLAGS_CLEAR( SPCFLAG_MFP );
-
-	AwakeFromSleep();
 }
 
 void TriggerNMI(void)
 {
 	SPCFLAGS_SET( SPCFLAG_NMI );
-	AwakeFromSleep();
 }
 

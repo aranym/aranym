@@ -34,6 +34,8 @@ AC_ARG_ENABLE(flightrecorder,     [  --enable-flightrecoder  enable CPU flight r
 
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU (default=no)], [WANT_MMU=$enableval], [WANT_MMU=no])
 
+AC_ARG_ENABLE(realstop,        [  --enable-realstop       enable real STOP instruction (default=yes)], [WANT_REALSTOP=$enableval], [WANT_REALSTOP=yes])
+
 AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 (default=yes)], [WANT_DSP=$enableval], [WANT_DSP=yes])
 
 AC_ARG_ENABLE(dsp-disasm,      [  --enable-dsp-disasm     enable DSP 56001 disassembler (default=no)], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
@@ -726,6 +728,12 @@ else
     AC_MSG_WARN([MMU needs fixed position of VideoRAM])
     AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
   fi
+fi
+
+dnl Full STOP instruction
+if [[ "x$WANT_REALSTOP" = "xyes" ]]; then
+  AC_DEFINE([ENABLE_REALSTOP], 1, [Define if you want real STOP instruction implementation])
+  WANT_SPCFLAGS_EXCL=yes
 fi
 
 dnl Direct Truecolor
@@ -1614,6 +1622,7 @@ echo Floating-Point emulation core .......... : $FPE_CORE
 echo Assembly optimizations ................. : $ASM_OPTIMIZATIONS
 echo Addressing mode ........................ : $ADDRESSING_MODE
 echo Full MMU support ....................... : $WANT_MMU
+echo Real STOP implementation ............... : $WANT_REALSTOP
 echo DSP 56001 support ...................... : $WANT_DSP
 echo DSP 56001 disassembly support .......... : $WANT_DSP_DISASM
 echo Distributed dispatcher ................. : $WANT_DIS_DIP
