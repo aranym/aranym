@@ -1,3 +1,8 @@
+2003/03/28 - STanda & joy
+- natfeat/hostfs.cpp: DIRSEPARATOR used wherever possible. Might fix HostFS
+  on Windows.
+
+
 2003/03/27 - joy
 - parameters.cpp: correction and clarification of "-d" command line switch
 

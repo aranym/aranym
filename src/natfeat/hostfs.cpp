@@ -69,7 +69,7 @@ extern "C" {
 	{
 		char* result = dest;
 		while( *src ) {
-			*dest++ = (*src == '\\' ? '/' : *src);
+			*dest++ = (((*src == '\\') || (*src == '/')) ? DIRSEPARATOR[0] : *src);
 			src++;
 		}
 		*dest=0;
@@ -904,7 +904,7 @@ void HostFs::convertPathA2F( ExtDrive *drv, char* fpathName, char* pathName, con
 
 		getHostFileName( ffileName, drv, fpathName, n );
 		ffileName += strlen( ffileName );
-		*ffileName++ = '/';
+		*ffileName++ = DIRSEPARATOR[0];
 
 		*tp = sep;
 		n = tp+1;
@@ -939,13 +939,13 @@ char *HostFs::cookie2Pathname( HostFs::XfsFsFile *fs, const char *name, char *bu
 	}
 	else
 	{
-		char *h;
 		if (!cookie2Pathname(fs->parent, fs->name, buf))
 			return NULL;
 		if (name && *name)
 		{
-			if ((h = strchr(buf, '\0'))[-1] != '/')
-				*h++ = '/';
+			char *h;
+			if ((h = strchr(buf, '\0'))[-1] != DIRSEPARATOR[0])
+				*h++ = DIRSEPARATOR[0];
 
 			*h = '\0';
 			getHostFileName( h, NULL, buf, name );
@@ -1031,7 +1031,7 @@ int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 bool HostFs::isPathValid(const char *fileName)
 {
 	char *path = strdup(fileName);
-	char *end = strrchr(path, '/');
+	char *end = strrchr(path, DIRSEPARATOR[0]);
 	if (end != NULL)
 		*end = '\0';
 	D(bug("Checking folder validity of path '%s'", path));
@@ -1819,7 +1819,7 @@ int32 HostFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, in
 
     D2(bug( "HOSTFS: fs_getname: relto = \"%s\"", base ));
     size_t baselength = strlen(base);
-    if ( baselength && base[baselength-1] == '/' ) {
+    if ( baselength && base[baselength-1] == DIRSEPARATOR[0] ) {
         baselength--;
         base[baselength] = '\0';
         D2(bug( "HOSTFS: fs_getname: fixed relto = \"%s\"", base ));
@@ -1980,6 +1980,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.11.2.1  2003/03/26 18:18:15  milan
+ * stolen from head
+ *
  * Revision 1.12  2003/03/24 19:11:00  milan
  * Solaris support updated
  *
