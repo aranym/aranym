@@ -13,12 +13,12 @@ Ctirad Fertr <phanatic@volny.cz>
 Milan Jurik <M.Jurik@sh.cvut.cz>
 - main framework from Basilisk and building system (autoconf stuff)
 - continuous updates and syncing with UAE CPU core
-- memory management (direct, real addressing modes)
-- portability generally, Solaris, Irix and Windows
+- memory management
+- portability
 - 68040 MMU (Memory Management Unit) emulation (in progress)
 - 68040 JIT (in progress)
 - ndebug (New Debug)
-- TV conf GUI (nobody seen it yet :)
+- TV conf GUI (nobody seen it yet :) - it isn't truth I saw it (MJ) :-)
 
 Stanislav Opichal <opichals@seznam.cz>
 - aranymfs: host filesystem access based on MetaDOS driver
@@ -54,3 +54,7 @@ Rodolphe Pineau
 
 Antonin Kral
 - Debian maintainer
+
+Frank Naumann
+- for the NetBSD port
+- termio -> termios conversion
