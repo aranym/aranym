@@ -1,10 +1,6 @@
 General (all platforms) known bugs:
 -----------------------------------
 
-Bug: fVDI (or its aranym driver) disables bconout during boot
-Reason: unknown, probably a bug in the driver
-Solution: unknown, needs to be debugged and fixed
---
 Bug: PureC cannot open project file on host filesystem.
 Reason: A MetaDOS related bug in PureC.
 Solution: Patch your PureC with supplied patch.
@@ -35,10 +31,6 @@ This is a limitation of Cygwin, or rather a limitation of the windows itself.
 
 Windows do not allow switching from window to full-screen and back using
 the ScrollLock key. A bug in libSDL.
-
-Only Linux currently supports TUNTAP based Ethernet emulation (AFAIK).
-Although http://home.sprintmail.com/~dtrout/Hercules/ctci-w32-index.html
-gives some chance to Windows users as well.
 
 Only Linux-ia32 (x86) and MS-Windows currently support JIT compiler
 for the CPU emulator. This is not a design limitation or a bug

@@ -4,6 +4,9 @@
 
 - parameters.cpp: fixed wrong sizeof() for [HOTKEYS]
 
+- doc/documentation.txt updated (networking, LILO)
+  doc/aranym-lilo.txt removed
+
 
 2005/02/18 - Patrice
 - nfosmesa: Can not autodetect which libOSMesa is loaded, so ChannelSize in

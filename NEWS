@@ -1,3 +1,34 @@
+2005/02/20 - version 0.9.0beta pre-release
+
+ We've been providing 68040 PMMU (a memory management unit emulation,
+ required for running FreeMiNT with MMU protection, and Linux/m68k)
+ since version 0.1.5 (almost three years ago) though this is the first
+ version of ARAnyM where the PMMU really works, thanks to awesome
+ debugging and fixing done by Andreas Schwab.
+
+ So ARAnyM runs Linux/m68k kernel now. Really. This opens up a new
+ area of usage - ARAnyM can help developing Linux/m68k kernel and
+ systems based on it (Debian/m68k, for example).
+
+ Besides the PMMU there is a whole lot of new features and fixes:
+
+ o multisession CD in IDE emulation
+ o Win32 networking (TAP based, like in Linux)
+ o NFOSMESA: OpenGL rendering for Atari applications using host CPU
+ o NFJPEG: JPEG decoder (a TSR) using host CPU power via NatFeats, based
+   on Brainstorm's JPEG DSP decoder API
+ o direct disk partitions access
+ o MFP interrupts fixed
+ o LILO fixes, compiles without linux headers now
+ o many 64-bit fixes and cleanups
+ o compiling using the Fink suite on MacOSX
+ o famous fVDI boot bug fixed
+ o fVDI fixes in bitplanes
+ o parallel port mapped to parport (in linux) or to a file
+ o hotkeys configuration: Setup, Quit, Reboot, Ungrab, Debugger, ScreenShot
+   and FullScreen hotkeys can be configured at runtime in the SETUP.
+
+
 2004/11/07 - version 0.8.11beta released
 
  We've been slow and quiet lately but nevertheless a progress has been
