@@ -144,8 +144,8 @@ void heartBeat()
 
 		static char beats[] = "\\|/-\\|/-";
 		static unsigned int beat_idx = 0;
-		char buf[sizeof(VERSION_STRING)+4];
-		sprintf(buf, "%s %c", VERSION_STRING, beats[beat_idx++]);
+		char buf[sizeof(VERSION_STRING)+128];
+		sprintf(buf, "%s (press Pause key for GUI) %c", VERSION_STRING, beats[beat_idx++]);
 		if (beat_idx == strlen(beats))
 			beat_idx = 0;
 
@@ -522,6 +522,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.76  2002/07/20 11:33:27  joy
+ * OS loading revamped. Now it first tries TOS, then EmuTOS and if both fail a warning and an advice how to obtain EmuTOS is displayed.
+ *
  * Revision 1.75  2002/07/19 23:29:56  joy
  * don't crash when GUI font is not loaded
  *
