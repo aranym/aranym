@@ -1,3 +1,8 @@
+2004/04/10 - joy on behalf of Carlo
+- acsifdc.cpp: local variable masked out class variable of same name. Bug
+  was there since 2004/02/02. Fixed.
+
+
 2004/04/06 - joy on behalf of Carlo
 - MacOSX/: obsolete aranym_for_library and pkg_support were removed.
   main_OSX.cpp added, with modified memory allocation routines.
