@@ -114,7 +114,7 @@ void hideMouse(bool hide) {
 	}
 }
 
-void grabMouse(bool grab) {
+bool grabMouse(bool grab) {
 	int current = SDL_WM_GrabInput(SDL_GRAB_QUERY);
 	if (grab && current != SDL_GRAB_ON) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
@@ -124,7 +124,9 @@ void grabMouse(bool grab) {
 	else if (!grab && current != SDL_GRAB_OFF) {
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
 		grabbedMouse = false;
+		hideMouse(false);
 	}
+	return (current == SDL_GRAB_ON);
 }
 
 static int but = 0;
