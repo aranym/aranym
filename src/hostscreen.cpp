@@ -14,35 +14,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-/*
-void SelectVideoMode()
-{
-	SDL_Rect **modes;
-	uint32 i;
-
-	// Get available fullscreen/hardware modes
-	modes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_HWSURFACE);
-
-	// Check is there are any modes available
-	if (modes == (SDL_Rect **) 0) {
-		printf("No modes available!\n");
-		exit(-1);
-	}
-
-	// Check if or resolution is restricted
-	if (modes == (SDL_Rect **) - 1) {
-		printf("All resolutions available.\n");
-	}
-	else {
-		// Print valid modes
-		printf("Available Modes\n");
-		for (i = 0; modes[i]; ++i)
-			printf("  %d x %d\n", modes[i]->w, modes[i]->h);
-	}
-}
-*/
-
-
 void HostScreen::makeSnapshot()
 {
 	char filename[15];
@@ -118,8 +89,88 @@ void HostScreen::restoreBackground()
 	}
 }
 
+int HostScreen::selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height)
+{
+	int i, bestw, besth;
+
+	/* Search the smallest nearest mode */
+	bestw = modes[0]->w;
+	besth = modes[0]->h;
+	for (i=0;modes[i]; ++i) {
+		if ((modes[i]->w >= *width) && (modes[i]->h >= *height)) {
+			if ((modes[i]->w < bestw) || (modes[i]->h < besth)) {
+				bestw = modes[i]->w;
+				besth = modes[i]->h;
+			}			
+		}
+	}
+
+	*width = bestw;
+	*height = besth;
+	D(bug("hostscreen: video mode found: %dx%d",*width,*height));
+
+	return 1;
+}
+
+void HostScreen::searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp )
+{
+	SDL_Rect **modes;
+	SDL_PixelFormat pixelformat;
+	int modeflags;
+
+	/* Search in available modes the best suited */
+	D(bug("hostscreen: video mode asked: %dx%dx%d",*width,*height,*bpp));
+
+	if ((*width == 0) || (*height == 0)) {
+		*width = 640;
+		*height = 480;
+	}
+
+	/* Read available video modes */
+	modeflags = SDL_HWSURFACE | SDL_HWPALETTE;
+	if (bx_options.video.fullscreen)
+		modeflags |= SDL_FULLSCREEN;
+
+	/*--- Search a video mode with asked bpp ---*/
+	if (*bpp != 0) {
+		pixelformat.BitsPerPixel = *bpp;
+		modes = SDL_ListModes(&pixelformat, modeflags);
+		if ((modes != (SDL_Rect **) 0) && (modes != (SDL_Rect **) -1)) {
+			D(bug("hostscreen: searching a good video mode (any bpp)"));
+			if (selectVideoMode(modes,width,height)) {
+				D(bug("hostscreen: video mode selected: %dx%dx%d",*width,*height,*bpp));
+				return;
+			}
+		}
+	}
+
+	/*--- Search a video mode with any bpp ---*/
+	modes = SDL_ListModes(NULL, modeflags);
+	if ((modes != (SDL_Rect **) 0) && (modes != (SDL_Rect **) -1)) {
+		D(bug("hostscreen: searching a good video mode"));
+		if (selectVideoMode(modes,width,height)) {
+			D(bug("hostscreen: video mode selected: %dx%dx%d",*width,*height,*bpp));
+			return;
+		}
+	}
+
+	if (modes == (SDL_Rect **) 0) {
+		D(bug("hostscreen: No modes available"));
+	}
+
+	if (modes == (SDL_Rect **) -1) {
+		/* Any mode available */
+		D(bug("hostscreen: Any modes available"));
+	}
+
+	D(bug("hostscreen: video mode selected: %dx%dx%d",*width,*height,*bpp));
+}
+
 void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 {
+	// Select a correct video mode
+	searchVideoMode(&width, &height, &bpp);	
+
 	this->width	 = width;
 	this->height = height;
 	this->bpp = bpp;
@@ -979,6 +1030,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.30  2002/07/20 12:44:17  joy
+ * GUI can survive even video mode change now. Just the dialog is not redrawn yet
+ *
  * Revision 1.29  2002/07/20 08:10:55  joy
  * GUI background saving/restoring fixed
  *

@@ -52,6 +52,8 @@ class HostScreen {
   	void allocateBackgroundSurf();
   	void freeBackgroundSurf();
 
+	int selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height);
+	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
   public:
 	SDL_mutex   *screenLock;
 	uint32 sdl_videoparams;
@@ -403,6 +405,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.37  2002/07/25 13:44:29  pmandin
+ * gcc-3.1 does not like a parameter to be set both in the definition and the method (drawline)
+ *
  * Revision 1.36  2002/07/20 12:41:19  joy
  * always update() the physical video surface
  *
