@@ -94,8 +94,6 @@ int main(int argc, char **argv)
 #endif
 
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
-	// Round down to page boundary
-	TTRAMSize = TTRAMSize & -getpagesize();
 
 	// Initialize VM system
 	vm_init();
@@ -229,6 +227,9 @@ void QuitEmulator(void)
 
 /*
  * $Log$
+ * Revision 1.46  2001/09/25 00:04:17  milan
+ * cleaning of memory managment
+ *
  * Revision 1.45  2001/09/21 14:24:10  joy
  * little things just to make it compilable
  *

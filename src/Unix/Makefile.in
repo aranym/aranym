@@ -69,6 +69,7 @@ SRCS = ../main.cpp \
 	$(SYSSRCS) \
 	$(CPUSRCS)
 APP = aranym
+APP_STATIC = aranym-static
 APPCONFTV = aranymrc
 
 ## Rules
@@ -100,6 +101,9 @@ VPATH += $(addprefix :, $(subst  ,:, $(filter-out $($(subst, :, ,$(VPATH))), $(S
 
 $(APP): $(OBJ_DIR) $(OBJS)
 	$(CXX) -o $(APP) $(LDFLAGS) $(OBJS) $(LIBS)
+
+$(APP_STATIC): $(OBJ_DIR) $(OBJS)
+	$(CXX) -o $(APP_STATIC) -static $(LDFLAGS) $(OBJS) $(LIBS)
 
 install: $(APP) installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
