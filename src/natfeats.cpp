@@ -14,9 +14,16 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifdef USE_JIT
+extern int in_handler;
+# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); in_handler = 0; longjmp(excep_env, 2); }
+#else
+# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); longjmp(excep_env, 2); }
+#endif
+
 #define ID_SHIFT	20
 
-enum { NF_NAME = 1, NF_VERSION, NF_XHDI, NF_FVDI, NF_LAST };
+enum { NF_NAME = 1, NF_VERSION, NF_XHDI, NF_FVDI };
 
 /* forward declaration until these functions find a new home in
    a separate file */
@@ -27,18 +34,18 @@ uint32 nf_get_id(memptr stack)
 {
 	D(bug("nf_get_id"));
 
-	typedef struct NATFEATS { const char *name; int id; };
+	typedef struct NATFEATS { const char *name; int id; bool supervisor; };
 	NATFEATS nat_feats[] = {
-		{"NF_NAME", NF_NAME},
-		{"NF_VERSION", NF_VERSION},
-		{"XHDI", NF_XHDI},
-		{"fVDI", NF_FVDI},
-		{NULL, NF_LAST}
+		{"NF_NAME", NF_NAME, false},
+		{"NF_VERSION", NF_VERSION, false},
+		{"XHDI", NF_XHDI, true},
+		{"fVDI", NF_FVDI, false}
 	};
 
-	memptr name_ptr = ReadAtariInt32(stack);
-	if (name_ptr < 0 || name_ptr >= (RAMSize + ROMSize + FastRAMSize))
-		return 0;	/* illegal pointer to name */
+	memptr name_ptr = ReadInt32(stack);
+	if (! ValidAddr(name_ptr, false, 1))
+		BUS_ERROR(name_ptr);
+
 	char *name = (char *)Atari2HostAddr(name_ptr);
 
 	for(unsigned int i=0; i < sizeof(nat_feats) / sizeof(nat_feats[0]); i++) {
@@ -51,7 +58,7 @@ uint32 nf_get_id(memptr stack)
 	return 0;		/* ID with given name not found */
 }
 
-uint32 nf_rcall(memptr stack)
+uint32 nf_rcall(memptr stack, bool inSuper)
 {
 	D(bug("nf_rcall"));
 
@@ -83,8 +90,9 @@ uint32 nf_name(uint32 *params)
 	memptr name_ptr = params[1];
 	uint32 name_maxlen = params[2];
 
-	if (name_ptr < 0 || name_ptr > (RAMSize + ROMSize + FastRAMSize - name_maxlen))
-		return 0;	/* illegal pointer to name */
+	if (! ValidAddr(name_ptr, true, name_maxlen))
+		BUS_ERROR(name_ptr);
+
 	char *name = (char *)Atari2HostAddr(name_ptr);
 
 	uint32 ret = 0;
