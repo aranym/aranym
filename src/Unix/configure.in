@@ -830,7 +830,7 @@ if [[ "x$HAVE_OFAST" = "xyes" ]]; then
   CFLAGS="`echo $CFLAGS | sed -e 's/-g//g'` -Ofast"
   CXXFLAGS="`echo $CXXFLAGS | sed -e 's/-g//g'` -Ofast"
   CXXFLAGS="-LANG:std $CXXFLAGS"
-  LDFLAGS="$LDFLAGS -Ofast"
+  LDFLAGS="$LDFLAGS -ipa"
 fi
 
 SDL_CFLAGS=

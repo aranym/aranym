@@ -134,17 +134,17 @@ longjmp(excep_env, No. of Exception);
 --------------
 CPU:
 
-BasiliskII (CVS 24.1.2002)
+BasiliskII (CVS 20.3.2002)
 BasiliskII JIT (15.1.2002)
 AmigaXL (Amithlon, AmigaOSXL) (12.6.2001)
 hatari (CVS 2.2.2002)
-UAE 0.8.20
+UAE 0.8.21
 MMU patch 2 against 0.8.20 
 
 
 IDE:
 
-Bochs (CVS 21.2.20002)
+Bochs (CVS 20.3.20002)
 
 
 8) debuggers
