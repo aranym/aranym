@@ -1,3 +1,17 @@
+2004/01/29 - joy
+- src/MacOSX/*: suddenly Carlo Baiocco appeared and sent me a complete
+  MacOSX Project builder folder. Give it a try, perhaps it finally builds
+  a binary for MacOSX? Follow the MacOSX/README.rtf for more info.
+
+
+2004/01/28 - joy
+- cdrom.cpp,h: Stefan replaced it with a file from current Bochs and forgot
+  to update the ChangeLog. It might break some other platforms. Beware.
+
+- BUGS: two Windows related problems Konrad reported are documented and will
+  hopefully be resolved in next release.
+
+
 2004/01/26 - Xavier
 - doc/build-cygwin.sh: preserve timestamps when copying ARAnyM sources. This
   allows CVS to find which files where modified when commiting from
