@@ -1,0 +1,15 @@
+1) For compiling the ARAnyM HTML presentation you need the "saxon.jar" file.
+   You may get it from http://saxon.sf.net/. Place it into the build folder.
+
+2) Go to the build folder and run the saxon server in the background using
+   the following commands:
+
+   cd build
+   ./saxonserver &
+
+3) Go back to the parent folder and compile the xml files to html:
+
+   cd ..
+   make
+
+4) You'll find the output in the "out" folder.
