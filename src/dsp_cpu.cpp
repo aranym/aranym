@@ -43,8 +43,6 @@
  *	Variables
  **********************************/
 
-extern DSP dsp;
-
 /* Length of current instruction */
 static uint32 cur_inst_len;	/* =0:jump, >0:increment */
 

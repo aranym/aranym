@@ -1,3 +1,13 @@
+2003/11/27 - joy
+- forgotten "extern DSP" declarations removed
+
+* interesting thing: I figured out that AFROS boots on the 0.8.4+ ARAnyM
+  if the [HOSTFS] H=<path> is at least 12 bytes long.
+  Example: stock AFROS contains just "H=/tmp/". The boot freezes. But if
+  this path is extended to "H=/tmp/6789012" AFROS boots. Sounds like
+  an encouraging thing to debug... Hopefully not a compiler bug!
+
+
 2003/11/25 - joy
 - Patrice convinced me to do a two years pending rewrite of the hardware
   emulation dispatcher. This is a pretty fundamental change to the deepest

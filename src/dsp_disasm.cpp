@@ -13,7 +13,7 @@
 #include "dsp_cpu.h"
 #include "dsp_disasm.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /* More disasm infos, if wanted */
@@ -28,8 +28,6 @@
 /**********************************
  *	Variables
  **********************************/
-
-extern DSP dsp;
 
 /* Current instruction */
 static uint32 cur_inst;

@@ -9,11 +9,9 @@
 
 #ifdef DSP_EMULATION
 #include "dsp.h"
-
-extern DSP dsp;
 #endif
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 YAMAHA::YAMAHA(memptr addr, uint32 size) : BASE_IO(addr, size) {
