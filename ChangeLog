@@ -1,4 +1,5 @@
 2004/10/02 - STanda
+- Harddisk usage related documentation made up-to-date.
 - HOSTFS: cleanup + some new features.
   * Fxattr() now returns the (uint32)MAPVOIDPTO32( fc->index ) instead
     of the host OS' statBuf.st_ino. This is a problem IMO due to that
