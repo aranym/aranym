@@ -41,6 +41,7 @@ DSP dsp;
 BLITTER blitter;
 VIDEL videl;
 YAMAHA yamaha;
+ARADATA aradata;
 
 #define BUS_ERROR	longjmp(excep_env, 2)
 
@@ -58,6 +59,7 @@ void HWInit (void) {
 
 /* obsolete */
 static const uint HW_IDE 	= 0xf00000;
+static const uint HW_ARADATA= 0xf90000;
 static const uint HW_ROM	= 0xfa0000;
 static const uint HW_MMU 	= 0xff8000;
 static const uint HW_VIDEO 	= 0xff8200;
@@ -89,7 +91,7 @@ struct HARDWARE {
 
 HARDWARE ICs[] = {
 	{"IDE", 0xf00000, 0x3a, &ide},
-	{"Aranym", 0xf90000, 0x04, &fake_io},
+	{"Aranym", 0xf90000, 0xffff, &aradata},
 	{"Cartridge", 0xfa0000, 0x20000, &fake_io},
 	{"Memory Management", 0xff8000, 8, &mmu},
 	{"VIDEL", 0xff8200, 0xc4, &videl},
@@ -225,6 +227,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.28  2001/09/05 15:06:09  joy
+ * using D(bug())
+ *
  * Revision 1.27  2001/08/21 18:19:16  milan
  * CPU update, disk's geometry autodetection - the 1st step
  *
