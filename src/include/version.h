@@ -23,7 +23,7 @@
 
 #define VER_MAJOR	0
 #define VER_MINOR	8
-#define VER_MICRO	4
+#define VER_MICRO	5
 
 #ifndef VER_STATUS
 #define VER_STATUS	"alpha"
