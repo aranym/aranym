@@ -1152,6 +1152,9 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 	if (stat(rcfile, &buf) == -1) {
 		fprintf(f, "Config file '%s' not found.\nThe config file is created with default values. Edit it to suit your needs.\n", rcfile);
 		saveConfigFile = true;
+#ifdef SDL_GUI
+		startupGUI = true;
+#endif
 		return false;
 	}
 
