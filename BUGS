@@ -1,18 +1,21 @@
+General (all platforms) known bugs:
+-----------------------------------
+
 Bug:
-  Desktop viewer crashes and kills whole ARAnyM.
+  Desktop viewer (or certain other VT52 activity) touches wrong memory
+  which causes ARAnyM to quit unexpectedly.
 
 Reason:
   Something regarding the blitter emulation
-  as with NVDI installed it does not crash.
+  as with NVDI/fVDI installed it does not happen.
 
 ---
 
 Bug:
-  Unzip doesn't write to MetaDOS' mapped host filesystem.
-  PureC cannot open project file.
+  PureC cannot open project file on host filesystem.
 
 Reason:
-  A bug in aranymfs. Please help with fixing it.
+  A MetaDOS related bug in PureC. Patch your PureC with supplied patch.
 
 ---
 
@@ -23,3 +26,19 @@ Bug:
 Reason:
   A bug in sdltimer (maybe in lib, maybe in ARAnyM, who knows)
   Configure ARAnyM with --disable-sdltimer if you have this problem
+
+
+Platform dependent known bugs and limitations:
+----------------------------------------------
+
+SDL_Timer works properly on Linux only, it seems. So for most other
+platforms (including Windows) you have to configure the build with
+--disable-sdltimer. Without SDL_Timer the keyboard does not have
+full control over the CPU run (sometimes you might not be able
+to e.g. quit). Also, the STOP instruction is not emulated propely
+in such case, IMHO.
+
+There are three different FPU emulators in ARAnyM, and only the IEEEE
+version has full 68040 FPU instruction set. On non-Linux-i386 platforms
+the uae FPU emulation is used and so some 68040 specific FPU instructions
+are missing. This will be fixed eventually.
