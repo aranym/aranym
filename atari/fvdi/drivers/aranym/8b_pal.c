@@ -1,9 +1,12 @@
 /*
  *      8 bit colour index handling
  */
+
 #include "fvdi.h"
 #include "relocate.h"
-extern void CDECL set_colour_hook(long paletteIndex, short red, short green, short blue, long tcWord); /* STanda */
+
+
+extern void CDECL c_set_colour_hook(long paletteIndex, long red, long green, long blue, long tcWord); /* STanda */
 
 #define ECLIPSE 0
 #define NOVA 0		/* 1 - byte swap 16 bit colour value (NOVA etc) */
@@ -35,11 +38,24 @@ long CDECL
 GET1NAME(Virtual *vwk, long colour)
 #endif
 {
-	if ( (colour>>16) < 16 )
-		colour = ( colour & 0xffff ) | ( tos_colours[ (colour>>16) ] << 16 );
-	if ( (short)colour < 16 )
-		(short)colour = tos_colours[ (short)colour ];
-	return colour;
+	short foreground, background;
+
+	if ((colour & 0xff) < 16)
+		foreground = tos_colours[colour & 0x0f];
+	else if ((colour & 0xff) == 255)
+		foreground = 15;
+	else
+		foreground = colour & 0xff;
+
+	colour >>= 16;
+	if ((colour & 0xff) < 16)
+		background = tos_colours[colour & 0x0f];
+	else if ((colour & 0xff) == 255)
+		background = 15;
+	else
+		background = colour & 0xff;
+
+	return (background << 16) | foreground;
 }
 
 
@@ -51,12 +67,13 @@ void CDECL
 GETNAME(Virtual *vwk, long colour, long *foreground, long *background)
 #endif
 {
-	if ( (colour>>16) < 16 )
-		colour = ( colour & 0xffff ) | ( tos_colours[ (colour>>16) ] << 16 );
-	if ( (short)colour < 16 )
-		(short)colour = tos_colours[ (short)colour ];
-	*foreground = (short)colour;
-	*background = colour>>16;
+#ifdef NORMAL_NAME
+	long colours = c_get_colour(vwk, colour);
+#else
+	long colours = GET1NAME(vwk, colour);
+#endif
+	*foreground = colours & 0xffffL;
+	*background = (colours >> 16) & 0xffffL;
 }
 
 
@@ -74,7 +91,7 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 	int i;
 	
 	if ((long)requested & 1) {			/* New entries? */
-		requested = (short *)((long)requested & 0xfffffffe);
+		requested = (short *)((long)requested & 0xfffffffeL);
 		for(i = 0; i < entries; i++) {
 			requested++;				/* First word is reserved */
 			component = *requested++;
@@ -96,17 +113,16 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 #if NOVA
 			switch (sizeof(PIXEL)) {
 			case 2:
-				tc_word = ((tc_word & 0x000000ff) << 8) | ((tc_word & 0x0000ff00) >>  8);
+				tc_word = ((tc_word & 0x000000ffL) << 8) | ((tc_word & 0x0000ff00L) >>  8);
 				break;
 			default:
-				tc_word = ((tc_word & 0x000000ff) << 24) | ((tc_word & 0x0000ff00) <<  8) |
-				          ((tc_word & 0x00ff0000) >>  8) | ((tc_word & 0xff000000) >> 24);
+				tc_word = ((tc_word & 0x000000ffL) << 24) | ((tc_word & 0x0000ff00L) <<  8) |
+				          ((tc_word & 0x00ff0000L) >>  8) | ((tc_word & 0xff000000L) >> 24);
 				break;
 			}
 #endif
-			set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
+			c_set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
 			                palette[start + i].vdi.blue, (long)tc_word ); /* STanda */
-
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
 	} else {
@@ -139,17 +155,16 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 #if NOVA
 			switch (sizeof(PIXEL)) {
 			case 2:
-				tc_word = ((tc_word & 0x000000ff) << 8) | ((tc_word & 0x0000ff00) >>  8);
+				tc_word = ((tc_word & 0x000000ffL) << 8) | ((tc_word & 0x0000ff00L) >>  8);
 				break;
 			default:
-				tc_word = ((tc_word & 0x000000ff) << 24) | ((tc_word & 0x0000ff00) <<  8) |
-				          ((tc_word & 0x00ff0000) >>  8) | ((tc_word & 0xff000000) >> 24);
+				tc_word = ((tc_word & 0x000000ffL) << 24) | ((tc_word & 0x0000ff00L) <<  8) |
+				          ((tc_word & 0x00ff0000L) >>  8) | ((tc_word & 0xff000000L) >> 24);
 				break;
 			}
 #endif
-			set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
+			c_set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
 			                palette[start + i].vdi.blue, (long)tc_word ); /* STanda */
-
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
 	}

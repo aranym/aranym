@@ -1,0 +1,515 @@
+*-------------------------------------------------------*
+*	Macros for planar mode drawing			*	
+*-------------------------------------------------------*
+
+  ifne 0
+	macro
+	setpix1	mask,data,temp
+	ifeq	both
+	 ifeq	get
+	and.l		\1,(a0)
+	or.l		\2,(a0)+
+	 endc
+	 ifne	get
+	move.l		(a0),\3
+	and.l		\1,\3
+	or.l		\2,\3
+	move.l		\3,(a0)+
+	 endc
+	endc
+
+	ifne	both
+	 ifeq	get
+	and.l		\1,(a4)
+	or.l		\2,(a4)
+	  ifeq	longs
+	move.w		(a4)+,(a0)+
+	  endc
+	  ifne	longs
+	move.l		(a4)+,(a0)+
+	  endc
+	 endc
+	 ifne	get
+	move.l		(a4),\3
+	and.l		\1,\3
+	or.l		\2,\3
+	  ifeq	longs
+	move.l		\3,(a4)
+	move.w		(a4)+,(a0)+
+	  endc
+	  ifne	longs
+	move.l		\3,(a4)+
+	move.l		\3,(a0)+
+	  endc
+	 endc
+	endc
+	endm
+
+	macro
+	setpix2	mask,data,temp
+	ifeq	both
+	 ifeq	get
+	and.l		\1,(a0)
+	or.l		\2,(a0)+
+	 endc
+	 ifne	get
+	move.l		(a0),\3
+	and.l		\1,\3
+	or.l		\2,\3
+	move.l		\3,(a0)+
+	 endc
+	endc
+
+	ifne	both
+	 ifeq	longs
+	move.w		(a4)+,(a0)+
+	 endc
+	 ifeq	get
+	and.l		\1,(a4)
+	or.l		\2,(a4)
+	  ifeq	longs
+	move.w		(a4)+,(a0)+
+	  endc
+	  ifne	longs
+	move.l		(a4)+,(a0)+
+	  endc
+	 endc
+	 ifne	get
+	move.l		(a4),\3
+	and.l		\1,\3
+	or.l		\2,\3
+	  ifeq	longs
+	move.l		\3,(a4)
+	move.w		(a4)+,(a0)+
+	  endc
+	  ifne	longs
+	move.l		\3,(a4)+
+	move.l		\3,(a0)+
+	  endc
+	 endc
+	endc
+	endm
+
+	macro
+	setpix3	mask,data,temp
+	ifeq	both
+	 ifeq	get
+	and.l		\1,(a0)
+	or.l		\2,(a0)+
+	 endc
+	 ifne	get
+	move.l		(a0),\3
+	and.l		\1,\3
+	or.l		\2,\3
+	move.l		\3,(a0)+
+	 endc
+	endc
+
+	ifne	both
+	 ifeq	longs
+	move.w		(a4)+,(a0)+
+	 endc
+	 ifeq	get
+	and.l		\1,(a4)
+	or.l		\2,(a4)
+	  ifeq	longs
+	move.w		(a4)+,(a0)+
+	  endc
+	  ifne	longs
+	move.l		(a4)+,(a0)+
+	  endc
+	 endc
+	 ifne	get
+	move.l		(a4),\3
+	and.l		\1,\3
+	or.l		\2,\3
+	  ifeq	longs
+	move.l		\3,(a4)
+	move.w		(a4)+,(a0)+
+	move.w		(a4)+,(a0)+
+	  endc
+	  ifne	longs
+	move.l		\3,(a4)+
+	move.l		\3,(a0)+
+	  endc
+	 endc
+	endc
+	endm
+
+	macro
+	setpix4	mask,data,temp
+	and.l		\1,\3
+	or.l		\2,\3
+	ifeq	both
+	move.l		\3,(a0)+
+	endc
+	ifne	both
+	 ifeq	longs
+	move.l		\3,(a4)
+	move.w		(a4)+,(a0)+
+	 endc
+	 ifne	longs
+	move.l		\3,(a4)+
+	move.l		\3,(a0)+
+	 endc
+	endc
+	endm
+
+	macro
+	setpix5	mask,data,temp
+	and.l		\1,\3
+	or.l		\2,\3
+	ifeq	both
+	move.l		\3,(a0)+
+	endc
+	ifne	both
+	 ifeq	longs
+	move.w		(a4)+,(a0)+
+	 endc
+	 ifeq	longs
+	move.l		\3,(a4)
+	move.w		(a4)+,(a0)+
+	 endc
+	 ifne	longs
+	move.l		\3,(a4)+
+	move.l		\3,(a0)+
+	 endc
+	endc
+	endm
+  endc
+
+
+	macro	label name
+	ifeq	shadow
+mfdb_&name:
+	else
+shadow_&name:
+	endc
+	endm
+
+	macro	jump type,name
+	ifeq	shadow
+	type	mfdb_&name
+	else
+	type	shadow_&name
+	endc
+	endm
+
+
+	macro	RandorW
+	ifeq	both
+	move.w		(a1),d4
+	endc
+	ifne	both
+	move.w		(a4),d4
+	endc
+	and.w		d6,d4
+	or.w		d7,d4
+	ifeq	both
+	move.w		d4,(a1)+
+	endc
+	ifne	both
+	move.w		d4,(a4)+
+	move.w		d4,(a1)+
+	endc
+	endm
+
+	macro	RorW
+	ifeq	both
+	move.w		(a1),d4
+	endc
+	ifne	both
+	move.w		(a4),d4
+	endc
+	or.w		d7,d4
+	ifeq	both
+	move.w		d4,(a1)+
+	endc
+	ifne	both
+	move.w		d4,(a4)+
+	move.w		d4,(a1)+
+	endc
+	endm
+
+	macro	RandW
+	ifeq	both
+	move.w		(a1),d4
+	endc
+	ifne	both
+	move.w		(a4),d4
+	endc
+	and.w		d7,d4
+	ifeq	both
+	move.w		d4,(a1)+
+	endc
+	ifne	both
+	move.w		d4,(a4)+
+	move.w		d4,(a1)+
+	endc
+	endm
+
+	macro	ReorW
+	ifeq	both
+	move.w		(a1),d4
+	endc
+	ifne	both
+	move.w		(a4),d4
+	endc
+	eor.w		d7,d4
+	ifeq	both
+	move.w		d4,(a1)+
+	endc
+	ifne	both
+	move.w		d4,(a4)+
+	move.w		d4,(a1)+
+	endc
+	endm
+
+	macro	RandorWl
+	ifeq	both
+	move.w		(a1),d4
+	endc
+	ifne	both
+	move.w		(a4),d4
+	endc
+	and.w		d6,d4
+	or.w		d7,d4
+	ifeq	both
+	move.w		d4,(a1)
+	endc
+	ifne	both
+	move.w		d4,(a4)
+	move.w		d4,(a1)
+	endc
+	endm
+
+	macro	RorWl
+	ifeq	both
+	move.w		(a1),d4
+	endc
+	ifne	both
+	move.w		(a4),d4
+	endc
+	or.w		d7,d4
+	ifeq	both
+	move.w		d4,(a1)
+	endc
+	ifne	both
+	move.w		d4,(a4)
+	move.w		d4,(a1)
+	endc
+	endm
+
+	macro	RandWl
+	ifeq	both
+	move.w		(a1),d4
+	endc
+	ifne	both
+	move.w		(a4),d4
+	endc
+	and.w		d7,d4
+	ifeq	both
+	move.w		d4,(a1)
+	endc
+	ifne	both
+	move.w		d4,(a4)
+	move.w		d4,(a1)
+	endc
+	endm
+
+	macro	ReorWl
+	ifeq	both
+	move.w		(a1),d4
+	endc
+	ifne	both
+	move.w		(a4),d4
+	endc
+	eor.w		d7,d4
+	ifeq	both
+	move.w		d4,(a1)
+	endc
+	ifne	both
+	move.w		d4,(a4)
+	move.w		d4,(a1)
+	endc
+	endm
+
+	macro	nopW
+	ifeq	both
+	move.w		d7,(a1)+
+	endc
+	ifne	both
+	move.w		d7,(a4)+
+	move.w		d7,(a1)+
+	endc
+	endm
+
+
+	macro	opmWw
+	ifeq	both
+	move.w		(a1),d4
+	endc
+	ifne	both
+	move.w		(a4),d4
+	endc
+	jsr		(a6)
+	ifeq	both
+	move.w		d4,(a1)+
+	endc
+	ifne	both
+	move.w		d4,(a4)+
+	move.w		d4,(a1)+
+	endc
+	endm
+
+	macro	opWl
+	ifeq	both
+	move.l		(a1),d4
+	endc
+	ifne	both
+	move.l		(a4),d4
+	endc
+	jsr		12(a6)
+	ifeq	both
+	move.l		d4,(a1)+
+	endc
+	ifne	both
+	move.l		d4,(a4)+
+	move.l		d4,(a1)+
+	endc
+	endm
+
+  ifne 0
+	macro	opmWlr	dst,shadow,v,tmp,mask
+	ifeq	both
+	move.l		(a1),\4
+	endc
+	ifne		both
+	move.l		(a4),\4
+	endc
+	jsr		(a6)
+	ifeq	both
+	move.l		\4,(a1)+
+	endc
+	ifne	both
+	move.l		\4,(a4)+
+	move.l		\4,(a1)+
+	endc
+	endm
+
+	macro	opWlr	dst,shadow,v,tmp
+	ifeq	both
+	move.l		(a1),\4
+	endc
+	ifne		both
+	move.l		(a4),\4
+	endc
+	jsr		12(a6)
+	ifeq	both
+	move.l		\4,(a1)+
+	endc
+	ifne	both
+	move.l		\4,(a4)+
+	move.l		\4,(a1)+
+	endc
+	endm
+
+	macro	nopmWlr	dst,shadow,v,tmp,mask
+	ifeq	both
+	move.l		(\1),\4
+	endc
+	ifne		both
+	move.l		(\2),\4
+	endc
+	eor.l		\4,\3
+	and.l		\5,\3
+	eor.l		\4,\3
+	ifeq	both
+	move.l		\3,(\1)+
+	endc
+	ifne	both
+	move.l		\3,(\2)+
+	move.l		\3,(\1)+
+	endc
+	endm
+
+	macro	nopmWlrs	dst,shadow,v,tmp,mask
+	local	.draw,.no_draw
+	ifeq	both
+	move.l		(\1),\4
+	endc
+	ifne		both
+	move.l		(\2),\4
+	endc
+	eor.l		\4,\3
+	and.l		\5,\3
+	eor.l		\4,\3
+
+	ifne	smartdraw
+	cmp.l		(\2),\3
+	bne		.draw
+	addq.l		#4,\2
+	addq.l		#4,\1
+	bra		.no_draw
+.draw:
+	endc
+	ifeq	both
+	move.l		\3,(\1)+
+	endc
+	ifne	both
+	move.l		\3,(\2)+
+	move.l		\3,(\1)+
+	endc
+.no_draw:
+	endm
+
+	macro	nopWlr	dst,shadow,v
+	ifeq	both
+	move.l		\3,(\1)+
+	endc
+	ifne	both
+	move.l		\3,(\2)+
+	move.l		\3,(\1)+
+	endc
+	endm
+
+	macro	nopWlrs	dst,shadow,v,delta
+	local	.draw,.no_draw
+	ifne	smartdraw
+	ifne	0
+	cmp.l		\4(\2),\3
+	bne		.draw
+	addq.l		#4,\1
+	bra		.no_draw
+.draw:
+;	move.l		\3,(\2)+
+;	move.l		\3,a3
+	move.l		\3,\4(\2)
+	move.l		\3,(\1)+
+;	move.l		\3,\4(\1)
+.no_draw:
+	endc
+	ifeq	0
+	cmp.l		\4(\2),\3
+	beq		.no_draw
+.draw:
+	move.l		\3,\4(\2)
+	move.l		\3,(\1)
+.no_draw:
+	addq.l		#4,\1
+	endc
+	endc
+	ifeq	smartdraw
+;	move.l		\3,(\2)+
+;	move.l		\3,a3
+	ifne	both
+	move.l		\3,\4(\2)
+	move.l		\3,(\1)+
+	endc
+	ifeq	both
+	move.l		\3,(\1)+
+	endc
+;	move.l		\3l,\4(\1)
+	endc
+	endm
+  endc

@@ -3,7 +3,9 @@
  */
 #include "fvdi.h"
 #include "relocate.h"
-extern void CDECL set_colour_hook(long paletteIndex, short red, short green, short blue, long tcWord); /* STanda */
+
+
+extern void CDECL c_set_colour_hook(long paletteIndex, long red, long green, long blue, long tcWord); /* STanda */
 
 #define ECLIPSE 0
 #define NOVA 0		/* 1 - byte swap 16 bit colour value (NOVA etc) */
@@ -40,7 +42,7 @@ GET1NAME(Virtual *vwk, long colour)
 	if (local_palette && !((long)local_palette & 1))	/* Complete local palette? */
 		fore_pal = back_pal = local_palette;
 	else {						/* Global or only negative local */
-		local_palette = (Colour *)((long)local_palette & 0xfffffffe);
+		local_palette = (Colour *)((long)local_palette & 0xfffffffeL);
 		global_palette = vwk->real_address->screen.palette.colours;
 		if (local_palette && ((short)colour < 0))
 			fore_pal = local_palette;
@@ -57,12 +59,12 @@ GET1NAME(Virtual *vwk, long colour)
 #if NOVA
 	switch (sizeof(PIXEL)) {
 	case 2:
-		tc_word = ((tc_word & 0x000000ff) << 8) | ((tc_word & 0x0000ff00) >>  8);
-		tc_word2 = ((tc_word2 & 0x000000ff) << 8) | ((tc_word2 & 0x0000ff00) >>  8);
+		tc_word = ((tc_word & 0x000000ffL) << 8) | ((tc_word & 0x0000ff00L) >>  8);
+		tc_word2 = ((tc_word2 & 0x000000ffL) << 8) | ((tc_word2 & 0x0000ff00L) >>  8);
 		break;
 	default:
-		tc_word = ((tc_word & 0x000000ff) << 24) | ((tc_word & 0x0000ff00) <<  8) |
-		          ((tc_word & 0x00ff0000) >>  8) | ((tc_word & 0xff000000) >> 24);
+		tc_word = ((tc_word & 0x000000ffL) << 24) | ((tc_word & 0x0000ff00L) <<  8) |
+		          ((tc_word & 0x00ff0000L) >>  8) | ((tc_word & 0xff000000L) >> 24);
 		break;
 	}
 #endif
@@ -89,7 +91,7 @@ GETNAME(Virtual *vwk, long colour, long *foreground, long *background)
 	if (local_palette && !((long)local_palette & 1))	/* Complete local palette? */
 		fore_pal = back_pal = local_palette;
 	else {						/* Global or only negative local */
-		local_palette = (Colour *)((long)local_palette & 0xfffffffe);
+		local_palette = (Colour *)((long)local_palette & 0xfffffffeL);
 		global_palette = vwk->real_address->screen.palette.colours;
 		if (local_palette && ((short)colour < 0))
 			fore_pal = local_palette;
@@ -105,11 +107,11 @@ GETNAME(Virtual *vwk, long colour, long *foreground, long *background)
 #if NOVA
 	switch (sizeof(PIXEL)) {
 	case 2:
-		tc_word = ((tc_word & 0x000000ff) << 8) | ((tc_word & 0x0000ff00) >>  8);
+		tc_word = ((tc_word & 0x000000ffL) << 8) | ((tc_word & 0x0000ff00L) >>  8);
 		break;
 	default:
-		tc_word = ((tc_word & 0x000000ff) << 24) | ((tc_word & 0x0000ff00) <<  8) |
-		          ((tc_word & 0x00ff0000) >>  8) | ((tc_word & 0xff000000) >> 24);
+		tc_word = ((tc_word & 0x000000ffL) << 24) | ((tc_word & 0x0000ff00L) <<  8) |
+		          ((tc_word & 0x00ff0000L) >>  8) | ((tc_word & 0xff000000L) >> 24);
 		break;
 	}
 #endif
@@ -118,11 +120,11 @@ GETNAME(Virtual *vwk, long colour, long *foreground, long *background)
 #if NOVA
 	switch (sizeof(PIXEL)) {
 	case 2:
-		tc_word = ((tc_word & 0x000000ff) << 8) | ((tc_word & 0x0000ff00) >>  8);
+		tc_word = ((tc_word & 0x000000ffL) << 8) | ((tc_word & 0x0000ff00L) >>  8);
 		break;
 	default:
-		tc_word = ((tc_word & 0x000000ff) << 24) | ((tc_word & 0x0000ff00) <<  8) |
-		          ((tc_word & 0x00ff0000) >>  8) | ((tc_word & 0xff000000) >> 24);
+		tc_word = ((tc_word & 0x000000ffL) << 24) | ((tc_word & 0x0000ff00L) <<  8) |
+		          ((tc_word & 0x00ff0000L) >>  8) | ((tc_word & 0xff000000L) >> 24);
 		break;
 	}
 #endif
@@ -144,7 +146,7 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 	int i;
 	
 	if ((long)requested & 1) {			/* New entries? */
-		requested = (short *)((long)requested & 0xfffffffe);
+		requested = (short *)((long)requested & 0xfffffffeL);
 		for(i = 0; i < entries; i++) {
 			requested++;				/* First word is reserved */
 			component = *requested++;
@@ -166,17 +168,16 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 #if NOVA
 			switch (sizeof(PIXEL)) {
 			case 2:
-				tc_word = ((tc_word & 0x000000ff) << 8) | ((tc_word & 0x0000ff00) >>  8);
+				tc_word = ((tc_word & 0x000000ffL) << 8) | ((tc_word & 0x0000ff00L) >>  8);
 				break;
 			default:
-				tc_word = ((tc_word & 0x000000ff) << 24) | ((tc_word & 0x0000ff00) <<  8) |
-				          ((tc_word & 0x00ff0000) >>  8) | ((tc_word & 0xff000000) >> 24);
+				tc_word = ((tc_word & 0x000000ffL) << 24) | ((tc_word & 0x0000ff00L) <<  8) |
+				          ((tc_word & 0x00ff0000L) >>  8) | ((tc_word & 0xff000000L) >> 24);
 				break;
 			}
 #endif
-			set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
+			c_set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
 			                palette[start + i].vdi.blue, (long)tc_word ); /* STanda */
-
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
 	} else {
@@ -209,19 +210,17 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 #if NOVA
 			switch (sizeof(PIXEL)) {
 			case 2:
-				tc_word = ((tc_word & 0x000000ff) << 8) | ((tc_word & 0x0000ff00) >>  8);
+				tc_word = ((tc_word & 0x000000ffL) << 8) | ((tc_word & 0x0000ff00L) >>  8);
 				break;
 			default:
-				tc_word = ((tc_word & 0x000000ff) << 24) | ((tc_word & 0x0000ff00) <<  8) |
-				          ((tc_word & 0x00ff0000) >>  8) | ((tc_word & 0xff000000) >> 24);
+				tc_word = ((tc_word & 0x000000ffL) << 24) | ((tc_word & 0x0000ff00L) <<  8) |
+				          ((tc_word & 0x00ff0000L) >>  8) | ((tc_word & 0xff000000L) >> 24);
 				break;
 			}
 #endif
-			set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
+			c_set_colour_hook(start + i, palette[start + i].vdi.red, palette[start + i].vdi.green,
 			                palette[start + i].vdi.blue, (long)tc_word ); /* STanda */
-
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
 	}
 }
-

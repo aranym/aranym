@@ -5,4 +5,4 @@
 * It's not copyrighted or under any sort of license.
 *****
 
-lattice		equ	0		; Assemble for DevPac/Lattice?
+;lattice		equ	1		; Assemble for DevPac/Lattice?

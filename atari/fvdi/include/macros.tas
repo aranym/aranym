@@ -45,11 +45,11 @@ special_stack	set	0
 	restore_regs
   if transparent
 	tst.w	_stand_alone
-	bne	do_rte
+	bne	.&do_rte
 	moveq	#$73,d0
 	move.l	vdi_address(pc),-(a7)
 	rts
-do_rte:
+.&do_rte:
 	rte
   else
 	rte
@@ -81,9 +81,9 @@ special_stack	set	1
 	or	#$700,sr
 	move.l	stack_address,a2
 	cmp.l	#vdi_stack,a2
-	beq	ok
+	beq	.&ok
 	illegal
-ok:
+.&ok:
 	move.l	a7,-(a2)
 	move.l	a2,a7
 	sub.w	#SPECIAL_STACK_SIZE-4,a2
@@ -92,11 +92,24 @@ ok:
 	endm
 
 	macro	ijsr indirect
+  if mc68000 == 1
+	local	return
+	pea	.&return
+	move.l	indirect,-(a7)
+	rts
+.&return:
+  else
 	jsr	([indirect])
+  endc
 	endm
 
 	macro	ijmp indirect
+  ifne mc68000 == 1
+	move.l	indirect,-(a7)
+	rts
+  else
 	jmp	([indirect])
+  endc
 	endm
 
 	macro	label name,number

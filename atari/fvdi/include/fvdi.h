@@ -3,6 +3,8 @@
 /* 
  * fVDI structure declarations, by Johan Klockars.
  *
+ * $Id$
+ *
  * Most C files in the fVDI engine, as well as in its
  * device drivers, need to include this file.
  *
@@ -213,6 +215,14 @@ typedef struct vwk_ {
 		short multiplane;
 	} user;
    } fill;
+   struct console_ {
+	short cursor;
+	short reversed;
+	struct pos_ {
+		short x;
+		short y;
+	} pos;
+   } console;
    struct clip_ {
 	short on;
 	struct rectangle_ {
@@ -244,18 +254,22 @@ typedef struct dev_ {
 	short organization;
    } bits;
    short dummy2;
-   union scrmap_u {
-    short vdi2pix[256];
-    struct bitnumber_s {
-     short red[16];
-     short green[16];
-     short blue[16];
-     short alpha[16];
-     short genlock[16];
-     short unused[32];
-     short reserved[144];
-    } bitnumber;
-   } scrmap;
+   union scrmap_ {
+	short vdi2pix[256];
+	struct bitnumber_ {
+		short red[16];
+		short green[16];
+		short blue[16];
+		short alpha[16];
+		short genlock[16];
+		short unused[32];
+		short reserved[144];
+	} bitnumber;
+#ifdef ANONYMOUS
+   };
+#else
+   } scrmap;			/* Should be anonymous, but that is not ANSI C */
+#endif
 } Device;
 
 typedef struct Driver_ {
@@ -433,10 +447,6 @@ typedef struct wk_ {
 	short typing;
 	short workstation_type;
    } various;
-   struct console_ {
-/*	Cursor status, position, etc, etc (p278) */
-	short dummy;	/* Lattice wants something here */
-   } console;
    Mouse mouse;
    struct r_ {
    	void *set_palette;

@@ -1,19 +1,18 @@
 aranym.sys
 .C	[-X -Y -P -I=..\..\include\ -I=..\include\]
-.S	[-3 -S -Y -I=..\..\include]
+.S	[-Dmc68000=0 -Dlattice=0 -3 -S -Y -I=..\..\include]
 .L
 =
 ..\COMMON\PUREC.S
 ..\COMMON\INIT.C	(..\..\include\fvdi.h,..\..\include\relocate.h)
-..\COMMON\COLOURS.C	(..\..\include\fvdi.h,..\..\include\relocate.h)
+..\COMMON\COLOURS.C
 ..\COMMON\LINEACHK.S	(..\..\include\vdi.inc,..\..\include\types.inc,..\include\linea.inc)
 ..\COMMON\CLIP.S	(..\..\include\vdi.inc,..\..\include\types.inc)
 ..\COMMON\COMMON.S	(..\..\include\vdi.inc,..\..\include\types.inc)
-C_COMMON.S	(..\..\include\vdi.inc,..\..\include\types.inc)
+..\COMMON\C_COMMON.S	(..\..\include\vdi.inc,..\..\include\types.inc)
 spec.c	(..\..\include\fvdi.h)
-dispatch.s	(..\..\include\vdi.inc,..\..\include\types.inc)
-not_def.c
-8b_pal.c	(..\..\include\vdi.inc,..\..\include\types.inc)
-palette.c	(..\..\include\vdi.inc,..\..\include\types.inc)
-32b_pal.c	(..\..\include\vdi.inc,..\..\include\types.inc)
+dispatch.c	(..\..\include\fvdi.h)
+8b_pal.c	(..\..\include\fvdi.h)
+palette.c	(..\..\include\fvdi.h)
+32b_pal.c	(..\..\include\fvdi.h)
 PCSTDLIB.LIB       ; standard library

@@ -1,6 +1,8 @@
 /*
  * fVDI generic device driver initialization, by Johan Klockars
  *
+ * $Id$
+ *
  * Since it would be difficult to do without this file when
  * writing new device drivers, and to make it possible for
  * some such drivers to be commercial, this file is put in
@@ -36,8 +38,8 @@ extern void CDECL check_linea(Workstation *);
  */
 extern void *set_palette;
 extern void *c_set_palette;
-extern void *get_colour;
-extern void *c_get_colour;
+extern void *colour;
+extern void *c_colour;
 extern void *set_pixel;
 extern void *c_set_pixel;
 extern void *get_pixel;
@@ -103,7 +105,7 @@ Locator locator = {MAGIC, 0x0010, init};
 
 Access *access;
 
-short colour[16][4];		/* Allocate instead? */
+short mask[16][4];		/* Allocate instead? */
 
 Driver *me = 0;			/* Access to this seems to be needed */
 
@@ -233,7 +235,6 @@ void setup_scrninfo(Device *device, Mode *graphics_mode)
  */
 long CDECL init(Access *_access, Driver *driver, Virtual *vwk, char *opts)
 {
-	int i, j, v;
 	Workstation *wk;
 	Virtual *default_vwk = 0;
 	Workstation *default_wk = 0;
@@ -366,9 +367,9 @@ long CDECL init(Access *_access, Driver *driver, Virtual *vwk, char *opts)
 	else
 		wk->r.set_palette = &c_set_palette;
 	if (accel_s & A_GET_COL)
-		wk->r.get_colour = &get_colour;
+		wk->r.get_colour = &colour;
 	else
-		wk->r.get_colour = &c_get_colour;
+		wk->r.get_colour = &c_colour;
 	if (accel_s & A_SET_PIX)
 		wk->r.set_pixel = &set_pixel;
 	else
@@ -440,6 +441,7 @@ long CDECL init(Access *_access, Driver *driver, Virtual *vwk, char *opts)
 	 */
 
 	if (!(graphics_mode->flags & CHUNKY)) {
+		int i, j, v;
 		for(i = 0; i < 16; i++) {
 			switch (wk->screen.mfdb.bitplanes) {
 			case 1:
@@ -455,9 +457,9 @@ long CDECL init(Access *_access, Driver *driver, Virtual *vwk, char *opts)
 			}
 			for(j = 0; j < 4; j++) {
 				if (v & 0x01)
-					colour[i][j] = 0xffff;
+					mask[i][j] = 0xffff;
 				else
-					colour[i][j] = 0;
+					mask[i][j] = 0;
 				v >>= 1;
 			}
 		}

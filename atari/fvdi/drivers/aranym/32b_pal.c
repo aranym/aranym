@@ -1,6 +1,7 @@
 /*
  *      32 bit colour index handling
  */
+
 #define GETNAME	c_get_colours_32
 #define GET1NAME	c_get_colour_32
 #define SETNAME	c_set_colours_32
@@ -13,4 +14,3 @@
 
 
 #include "palette.c"
-

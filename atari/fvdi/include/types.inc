@@ -1,7 +1,12 @@
 *****
 * fVDI structure declarations, by Johan Klockars
 *
-* This is auto-generated from fVDI.h
+* $Id$
+*
+* This is auto-generated from fVDI.h using
+*  gcc -E -DANONYMOUS fvdi.h | structer Virtual=vwk Workstation=wk \
+*  Fontheader=font MFDB=mfdb Colour=colour RGB=rgb List=list \
+*  Driver=driver Mouse=mouse Device=dev > types.inc
 *
 * Most assembly files in the fVDI engine, as well as in its
 * device drivers, need to include this file.
@@ -65,16 +70,22 @@ vwk_fill_user_pattern	equ	70
 vwk_fill_user_pattern_in_use	equ	70
 vwk_fill_user_pattern_extra	equ	74
 vwk_fill_user_multiplane	equ	78
-vwk_clip	equ	80
-vwk_clip_on	equ	80
-vwk_clip_rectangle	equ	82
-vwk_clip_rectangle_x1	equ	82
-vwk_clip_rectangle_y1	equ	84
-vwk_clip_rectangle_x2	equ	86
-vwk_clip_rectangle_y2	equ	88
-vwk_mode	equ	90
-vwk_palette	equ	92
-vwk_struct_size	equ	96
+vwk_console	equ	80
+vwk_console_cursor	equ	80
+vwk_console_reversed	equ	82
+vwk_console_pos	equ	84
+vwk_console_pos_x	equ	84
+vwk_console_pos_y	equ	86
+vwk_clip	equ	88
+vwk_clip_on	equ	88
+vwk_clip_rectangle	equ	90
+vwk_clip_rectangle_x1	equ	90
+vwk_clip_rectangle_y1	equ	92
+vwk_clip_rectangle_x2	equ	94
+vwk_clip_rectangle_y2	equ	96
+vwk_mode	equ	98
+vwk_palette	equ	100
+vwk_struct_size	equ	104
 
 wk_driver	equ	0
 wk_screen	equ	4
@@ -180,46 +191,44 @@ wk_various_number_entry	equ	168
 wk_various_selection	equ	170
 wk_various_typing	equ	172
 wk_various_workstation_type	equ	174
-wk_console	equ	176
-wk_console_dummy	equ	176
-wk_mouse	equ	178
-wk_mouse_type	equ	178
-wk_mouse_hide	equ	180
-wk_mouse_position	equ	182
-wk_mouse_position_x	equ	182
-wk_mouse_position_y	equ	184
-wk_mouse_hotspot	equ	186
-wk_mouse_hotspot_x	equ	186
-wk_mouse_hotspot_y	equ	188
-wk_mouse_colour	equ	190
-wk_mouse_colour_background	equ	190
-wk_mouse_colour_foreground	equ	192
-wk_mouse_mask	equ	194
-wk_mouse_data	equ	226
-wk_mouse_extra_info	equ	258
-wk_r	equ	262
-wk_r_set_palette	equ	262
-wk_r_get_colour	equ	266
-wk_r_set_pixel	equ	270
-wk_r_get_pixel	equ	274
-wk_r_line	equ	278
-wk_r_expand	equ	282
-wk_r_fill	equ	286
-wk_r_fillpoly	equ	290
-wk_r_blit	equ	294
-wk_r_text	equ	298
-wk_r_mouse	equ	302
-wk_dummy	equ	306
-wk_dummy_retvals	equ	306
-wk_dummy_code	equ	310
-wk_function	equ	314
-wk_function_retvals	equ	314
-wk_function_code	equ	318
-wk_opcode5_count	equ	2362
-wk_opcode5	equ	2364
-wk_opcode11_count	equ	2460
-wk_opcode11	equ	2462
-wk_struct_size	equ	2518
+wk_mouse	equ	176
+wk_mouse_type	equ	176
+wk_mouse_hide	equ	178
+wk_mouse_position	equ	180
+wk_mouse_position_x	equ	180
+wk_mouse_position_y	equ	182
+wk_mouse_hotspot	equ	184
+wk_mouse_hotspot_x	equ	184
+wk_mouse_hotspot_y	equ	186
+wk_mouse_colour	equ	188
+wk_mouse_colour_background	equ	188
+wk_mouse_colour_foreground	equ	190
+wk_mouse_mask	equ	192
+wk_mouse_data	equ	224
+wk_mouse_extra_info	equ	256
+wk_r	equ	260
+wk_r_set_palette	equ	260
+wk_r_get_colour	equ	264
+wk_r_set_pixel	equ	268
+wk_r_get_pixel	equ	272
+wk_r_line	equ	276
+wk_r_expand	equ	280
+wk_r_fill	equ	284
+wk_r_fillpoly	equ	288
+wk_r_blit	equ	292
+wk_r_text	equ	296
+wk_r_mouse	equ	300
+wk_dummy	equ	304
+wk_dummy_retvals	equ	304
+wk_dummy_code	equ	308
+wk_function	equ	312
+wk_function_retvals	equ	312
+wk_function_code	equ	316
+wk_opcode5_count	equ	2360
+wk_opcode5	equ	2362
+wk_opcode11_count	equ	2458
+wk_opcode11	equ	2460
+wk_struct_size	equ	2516
 
 font_id	equ	0
 font_size	equ	2
@@ -350,6 +359,6 @@ dev_bitnumber_blue	equ	96
 dev_bitnumber_alpha	equ	128
 dev_bitnumber_genlock	equ	160
 dev_bitnumber_unused	equ	192
-dev_reserved	equ	256
+dev_bitnumber_reserved	equ	256
 dev_struct_size	equ	544
 

@@ -1,5 +1,7 @@
 *****
-* fVDI->driver interface (assembly routines), by Johan Klockars
+* fVDI->driver interface (assembly functions), by Johan Klockars
+*
+* $Id$
 *
 * Most fVDI device drivers are expected to make use of this file.
 *
@@ -16,9 +18,9 @@ upto8		equ	0	; Handle 8 bit drawing
 	include		"vdi.inc"
 
   ifne lattice
-	include	"macros.dev"
+	include		"macros.dev"
   else
-	include	"macros.tas"
+	include		"macros.tas"
   endc
 
 	xdef		_line
@@ -31,16 +33,17 @@ upto8		equ	0	; Handle 8 bit drawing
 	xdef		_text
 	xdef		_mouse
 	xdef		_set_palette
+	xdef		_colour
 	xdef		_initialize_palette
 	xdef		get_colour_masks
 
-	xref		_line_draw,_write_pixel,_read_pixel,_expand_area
-	xref		_fill_area,_fill_polygon,_blit_area,_text_area,_mouse_draw
-	xref		_set_colours
-	xref		_colour
+	xref		_line_draw_r,_write_pixel_r,_read_pixel_r,_expand_area_r
+	xref		_fill_area_r,_fill_poly_r,_blit_area_r,_text_area_r,_mouse_draw_r
+	xref		_set_colours_r,_get_colour_r
 	xref		_fallback_line,_fallback_text,_fallback_fill
 	xref		_fallback_fillpoly,_fallback_expand,_fallback_blit
 	xref		clip_line
+	xref		_mask
 
 
 	text
@@ -59,11 +62,11 @@ upto8		equ	0	; Handle 8 bit drawing
 *---------
 _set_pixel:
 set_pixel:
-	movem.l		d0-d7/a0-a6,-(sp)	; Used to have -3/4/6 for normal/both/upto8
+	movem.l		d0-d7/a0-a6,-(a7)	; Used to have -3/4/6 for normal/both/upto8
 
 	move.l		a0,a1
 
-	bsr		_write_pixel
+	ijsr		_write_pixel_r
 	tst.l		d0
 	bgt		.write_done
 
@@ -81,13 +84,13 @@ set_pixel:
 	move.l		a2,2(a7)
 	move.l		6(a7),a1
 	move.l		10+0(a7),d0		; Fetch d0
-	bsr		_write_pixel
+	ijsr		_write_pixel_r
 	subq.w		#1,(a7)
 	bne		.write_loop
 	add.w		#10,a7
 .write_done:
 
-	movem.l		(sp)+,d0-d7/a0-a6
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
 
 
@@ -104,13 +107,13 @@ set_pixel:
 *---------
 _get_pixel:
 get_pixel:
-	movem.l		d1-d7/a0-a6,-(sp)	; Used to have -3/4/6 for normal/both/upto8
+	movem.l		d1-d7/a0-a6,-(a7)	; Used to have -3/4/6 for normal/both/upto8
 
 	move.l		a0,a1
 	
-	bsr		_read_pixel
+	ijsr		_read_pixel_r
 
-	movem.l		(sp)+,d1-d7/a0-a6
+	movem.l		(a7)+,d1-d7/a0-a6
 	rts
 
 
@@ -124,6 +127,7 @@ get_pixel:
 *	d3	x2 or move point count
 *	d4	y2 or move index address
 *	d5	pattern
+*	d6	mode
 * Call:	a1	VDI struct (odd adress marks table operation)
 *	d0	logic operation
 *	d1	x1 or table address
@@ -135,38 +139,24 @@ get_pixel:
 *---------
 _line:
 line:
-	movem.l		d0-d7/a0-a6,-(sp)	; Used to have -3/4/6 for normal/both/upto8
+	movem.l		d0-d7/a0-a6,-(a7)	; Used to have -3/4/6 for normal/both/upto8
 
 	move.l		a0,a1
+	exg		d0,d6
 
-	move.l		d0,d6
-
-	move.l		a0,d0				; Must even out a0!!!  [010109]
-	and.b		#$fe,d0
-	move.l		d0,a0
-	moveq		#0,d0
-	move.w		vwk_mode(a0),d0		; Probably not a good idea to do here!!!!
-	move.l		a1,a0
-
-	bsr		_line_draw
+	ijsr		_line_draw_r
 	tst.l		d0
-;	bgt		1$
-	lbgt	.l1,1
-;	bmi		2$
-	lbmi	.l2,2
+	lbgt		.l1,1
+	lbmi		.l2,2
 	move.l		_fallback_line,d0
 	bra		give_up
-;1$:
- label .l1,1
 
-	movem.l		(sp)+,d0-d7/a0-a6
+ label .l1,1
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
 
-;2$:					; Transform multiline to single ones
- label .l2,2
+ label .l2,2					; Transform multiline to single ones
 	move.w		8+2(a7),d0
-;	tst.w		d0
-;	bne		.line_done		; Only coordinate pairs available so far
 	move.w		d3,d7
 	cmp.w		#1,d0
 	bhi		.line_done		; Only coordinate pairs and pairs+marks available so far
@@ -206,9 +196,9 @@ line:
 	bvs		.no_draw
 	move.l		0(a7),d6		; Colour
 	move.l		5*4(a7),d5		; Pattern
-	move.w		vwk_mode(a0),d0		; Probably not a good idea to do here!!!!
+	move.l		6*4(a7),d0		; Mode
 	movem.l		d7/a1-a2/a6,-(a7)
-	bsr		_line_draw
+	ijsr		_line_draw_r
 	movem.l		(a7)+,d7/a1-a2/a6
 .no_draw:
 	tst.w		d7
@@ -235,7 +225,7 @@ line:
 	subq.w		#1,2*4(a7)
 	bgt		.line_loop
 .line_done:
-	movem.l		(sp)+,d0-d7/a0-a6
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
 
 
@@ -247,8 +237,7 @@ line:
 *	d1-d2	x1,y1 source
 *	d3-d6	x1,y1 x2,y2 destination
 *	d7	logic operation
-* Call:	a1	VDI struct, destination MFDB, VDI struct, source MFDB
-*	d0	height and width to move (high and low word)
+* Call:	d0	height and width to move (high and low word)
 *	d1-d2	source coordinates
 *	d3-d4	destination coordinates
 *	d6	background and foreground colour
@@ -256,7 +245,7 @@ line:
 *---------
 _expand:
 expand:
-	movem.l		d0-d7/a0-a6,-(sp)	; Used to have -3(/6)/4(/6)/6 for normal/both/upto8
+	movem.l		d0-d7/a0-a6,-(a7)	; Used to have -3(/6)/4(/6)/6 for normal/both/upto8
 
 	move.l		a0,a1
 
@@ -268,16 +257,14 @@ expand:
 	sub.w		d3,d0
 	addq.w		#1,d0
 
-	bsr		_expand_area
+	ijsr		_expand_area_r
 	tst.l		d0
-;	bgt		1$
-	lbgt	.l1,1
+	lbgt		.l1,1
 	move.l		_fallback_expand,d0
 	bra		give_up
-;1$:
- label .l1,1
 
-	movem.l		(sp)+,d0-d7/a0-a6
+ label .l1,1
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
 
 
@@ -290,17 +277,21 @@ expand:
 *	d2	y1    - " -    or table length (high) and type (0 - y/x1/x2 spans)
 *	d3-d4	x2,y2 destination
 *	d5	pattern address
+*	d6	mode
+*	d7	interior/style
 * Call:	a1	VDI struct (odd address marks table operation)
 *	d0	height and width to fill (high and low word)
 *	d1	x or table address
 *	d2	y or table length (high) and type (0 - y/x1/x2 spans)
 *	d3	pattern address
 *	d4	colour
+*	d6	mode
+*	d7	interior/style
 **	+colour in a really dumb way...
 *---------
 _fill:
 fill:
-	movem.l		d0-d7/a0-a6,-(sp)	; Used to have -3/4/6 for normal/both/upto8
+	movem.l		d0-d7/a0-a6,-(a7)	; Used to have -3/4/6 for normal/both/upto8
 
 	move.l		a0,a1
 
@@ -309,24 +300,24 @@ fill:
 ; That's needed for non-solid replace mode.
 ; None of this is any kind of good idea except for bitplanes!
 
-	ifne 0
+  ifne 0
 ; ******************** Should probably use get_colour_masks like the rest **************
 	lea		_colour,a3
-	ifne	upto8
+    ifne	upto8
 ;	move.w		d0,d5
-;	lsr.w		#1,d5		; (d5 >> 4) << 3
+;	lsr.w		#1,d5			; (d5 >> 4) << 3
 ;	and.w		#$0078,d5
 ;	move.l		(a3,d5.w),a5
 ;	move.l		4(a3,d5.w),a6
 	move.l		d0,d5
-	lsr.l		#1,d5		; (d5 >> 4) << 3
+	lsr.l		#1,d5			; (d5 >> 4) << 3
 	and.l		#$00780078,d5
 	swap		d5
 	pea		(a3,d5.w)
 	swap		d5
 	move.l		(a3,d5.w),a5
 	move.l		4(a3,d5.w),a6
-	endc
+    endc
 ;	and.w		#$000f,d0
 ;	lsl.w		#3,d0
 ;	move.l		(a3,d0.w),a2
@@ -338,7 +329,7 @@ fill:
 	swap		d0
 	move.l		0(a3,d0.w),a2
 	move.l		4(a3,d0.w),a3
-	endc
+  endc
 
 	exg		d4,d0
 ;	move.w		d4,d0
@@ -351,37 +342,34 @@ fill:
 
 	move.l		d5,d3
 
-	bsr		_fill_area
+	ijsr		_fill_area_r
 	tst.l		d0
-;	bgt		1$
-	lbgt	.l1,1
-;	bmi		2$
-	lbmi	.l2,2
-	ifne 0
-	ifeq	upto8
+	lbgt		.l1,1
+	lbmi		.l2,2
+  ifne 0
+    ifeq	upto8
 	addq.l		#4,a7
-	endc
-	ifne	upto8
+    endc
+    ifne	upto8
 	addq.l		#8,a7
-	endc
-	endc
+    endc
+  endc
 	move.l		_fallback_fill,d0
 	bra		give_up
-;1$:
+
  label .l1,1
-	ifne 0
-	ifeq	upto8
+  ifne 0
+    ifeq	upto8
 	addq.l		#4,a7
-	endc
-	ifne	upto8
+    endc
+    ifne	upto8
 	addq.l		#8,a7
-	endc
-	endc
-	movem.l		(sp)+,d0-d7/a0-a6
+    endc
+  endc
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
 
-;2$:				; Transform table fill into ordinary one
- label .l2,2
+ label .l2,2					; Transform table fill into ordinary one
 	move.w		8+2(a7),d0
 	tst.w		d0
 	bne		.fill_done		; Only y/x1/x2 spans available so far
@@ -402,12 +390,12 @@ fill:
 	move.l		5*4(a7),d3
 	move.l		0(a7),d4
 	movem.l		a1-a2,-(a7)
-	bsr		_fill_area
+	ijsr		_fill_area_r
 	movem.l		(a7)+,a1-a2
 	subq.w		#1,2*4(a7)
 	bne		.fill_loop
 .fill_done:
-	movem.l	(a7)+,d0-d7/a0-a6
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
 
 
@@ -421,17 +409,21 @@ fill:
 *	d3	index address
 *	d4	number of indices
 *	d5	pattern address
+*	d6	mode
+*	d7	interior/style
 * Call:	a1	VDI struct (odd address marks table operation)
 *	d0	number of points and indices (high and low word)
 *	d1	points address
 *	d2	index address
 *	d3	pattern address
 *	d4	colour
+*	d6	mode
+*	d7	interior/style
 **	+colour in a really dumb way...
 *---------
 _fillpoly:
 fillpoly:
-	movem.l		d0-d7/a0-a6,-(sp)	; Used to have -3/4/6 for normal/both/upto8
+	movem.l		d0-d7/a0-a6,-(a7)	; Used to have -3/4/6 for normal/both/upto8
 
 	move.l		a0,a1
 
@@ -440,24 +432,24 @@ fillpoly:
 ; That's needed for non-solid replace mode.
 ; None of this is any kind of good idea except for bitplanes!
 
-	ifne 0
+  ifne 0
 ; ******************** Should probably use get_colour_masks like the rest **************
 	lea		_colour,a3
-	ifne	upto8
+    ifne	upto8
 ;	move.w		d0,d5
-;	lsr.w		#1,d5		; (d5 >> 4) << 3
+;	lsr.w		#1,d5			; (d5 >> 4) << 3
 ;	and.w		#$0078,d5
 ;	move.l		(a3,d5.w),a5
 ;	move.l		4(a3,d5.w),a6
 	move.l		d0,d5
-	lsr.l		#1,d5		; (d5 >> 4) << 3
+	lsr.l		#1,d5			; (d5 >> 4) << 3
 	and.l		#$00780078,d5
 	swap		d5
 	pea		(a3,d5.w)
 	swap		d5
 	move.l		(a3,d5.w),a5
 	move.l		4(a3,d5.w),a6
-	endc
+    endc
 ;	and.w		#$000f,d0
 ;	lsl.w		#3,d0
 ;	move.l		(a3,d0.w),a2
@@ -478,35 +470,33 @@ fillpoly:
 	move.l	d3,d2
 	move.l	d5,d3
 
-	bsr		_fill_polygon
+	ijsr		_fill_poly_r
 	tst.l		d0
-;	bgt		1$
-	lbgt	.l1,1
-;	bmi		2$
-	lbmi	.l2,2
-;2$:
+	lbgt		.l1,1
+	lbmi		.l2,2
+
  label .l2,2
-	ifne 0
-	ifeq	upto8
+  ifne 0
+    ifeq	upto8
 	addq.l		#4,a7
-	endc
-	ifne	upto8
+    endc
+    ifne	upto8
 	addq.l		#8,a7
-	endc
-	endc
+    endc
+  endc
 	move.l		_fallback_fillpoly,d0
 	bra		give_up
-;1$:
+
  label .l1,1
-	ifne 0
-	ifeq	upto8
+  ifne 0
+    ifeq	upto8
 	addq.l		#4,a7
-	endc
-	ifne	upto8
+    endc
+    ifne	upto8
 	addq.l		#8,a7
-	endc
-	endc
-	movem.l		(sp)+,d0-d7/a0-a6
+    endc
+  endc
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
 
 
@@ -525,7 +515,7 @@ fillpoly:
 *---------
 _blit:
 blit:
-	movem.l		d0-d7/a0-a6,-(sp)	; Used to have -3/4/6 for normal/both/upto8
+	movem.l		d0-d7/a0-a6,-(a7)	; Used to have -3/4/6 for normal/both/upto8
 
 	move.l		a0,a1
 
@@ -539,16 +529,14 @@ blit:
 	sub.w		d3,d0
 	addq.w		#1,d0
 
-	bsr		_blit_area
+	ijsr		_blit_area_r
 	tst.l		d0
-;	bgt		1$
-	lbgt	.l1,1
+	lbgt		.l1,1
 	move.l		_fallback_blit,d0
 	bra		give_up
-;1$:
- label .l1,1
 
-	movem.l		(sp)+,d0-d7/a0-a6
+ label .l1,1
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
 
 
@@ -568,7 +556,7 @@ blit:
 *---------
 _text:
 text:
-	movem.l		d0-d7/a0-a6,-(sp)	; Was d2-d7/a3-a6
+	movem.l		d0-d7/a0-a6,-(a7)	; Was d2-d7/a3-a6
 
 	move.l		a1,a4
 	move.l		a0,a1
@@ -577,16 +565,14 @@ text:
 	swap		d1
 	move.w		d1,d3
 
-	bsr		_text_area
+	ijsr		_text_area_r
 	tst.l		d0
-;	bgt		1$
-	lbgt	.l1,1
+	lbgt		.l1,1
 	move.l		_fallback_text,d0
 	bra		give_up
-;1$:
- label .l1,1
 
-	movem.l		(sp)+,d0-d7/a0-a6
+ label .l1,1
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
 
 
@@ -602,7 +588,7 @@ text:
 *---------
 _mouse:
 mouse:
-	bsr		_mouse_draw
+	ijsr		_mouse_draw_r
 	rts
 
 
@@ -616,15 +602,32 @@ mouse:
 *---------
 _set_palette:
 set_palette:
-	movem.l		d0-d7/a0-a6,-(sp)	; Overkill
+	movem.l		d0-d7/a0-a6,-(a7)	; Overkill
 
-	bsr		_set_colours
+	ijsr		_set_colours_r
 
-	movem.l		(sp)+,d0-d7/a0-a6
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
 
 
-	ifne	1
+	dc.b		"colour"
+*---------
+* Get palette colour
+* In:	a0	VDI struct
+*	d0	fore- and background colour indices
+* Out:	d0	fore- and background colour
+*---------
+_colour:
+colour:
+	movem.l		d1-d7/a0-a6,-(a7)
+
+	ijsr		_get_colour_r
+
+	movem.l		(a7)+,d1-d7/a0-a6
+	rts
+
+
+  ifne	1
 	dc.b		"initialize_palette"
 *---------
 * Set palette colours
@@ -632,7 +635,7 @@ set_palette:
 * To be called from C
 *---------
 _initialize_palette:
-	movem.l		d0-d7/a0-a6,-(sp)	; Overkill
+	movem.l		d0-d7/a0-a6,-(a7)	; Overkill
 
 	move.l		15*4+4(a7),a0
 	move.l		15*4+8(a7),d1
@@ -642,11 +645,11 @@ _initialize_palette:
 	move.l		15*4+16(a7),a1
 	move.l		15*4+20(a7),a2
 
-	bsr		_set_colours
+	ijsr		_set_colours_r
 
-	movem.l		(sp)+,d0-d7/a0-a6
+	movem.l		(a7)+,d0-d7/a0-a6
 	rts
-	endc
+  endc
 
 
 *---------
@@ -659,15 +662,15 @@ _initialize_palette:
 * XXX:	d0
 *---------
 get_colour_masks:
-	lea		_colour,a3
-	ifne	upto8
+	lea		_mask,a3
+  ifne	upto8
 	move.w		d0,a2
-	lsr.l		#1,d0		; (d5 >> 4) << 3
+	lsr.l		#1,d0			; (d5 >> 4) << 3
 	and.l		#$00780078,d0
 	move.l		(a3,d0.w),a5
 	move.l		4(a3,d0.w),a6
 	move.w		a2,d0
-	endc
+  endc
 	and.l		#$000f000f,d0
 	lsl.l		#3,d0
 	swap		d0

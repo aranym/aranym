@@ -90,13 +90,25 @@ special_stack	set	1
 	endm
 
 ijsr	macro	indirect
+  ifd mc68000
+	pea	\@
+	move.l	\1,-(a7)
+	rts
+\@:
+  else
 	dc.l	$4eb001f1
 	dc.l	\1
+  endc
 	endm
 
 ijmp	macro	indirect
+  ifd mc68000
+	move.l	\1,-(a7)
+	rts
+  else
 	dc.l	$4ef001f1
 	dc.l	\1
+  endc
 	endm
 
 ;	macro
