@@ -51,4 +51,8 @@ public:
 };
 
 # define GDBSTUB_STOP_NO_REASON   (0xac0)
+
+# define GDBSTUB_TEXT_BASE (0x0)
+# define GDBSTUB_DATA_BASE (0x0)
+# define GDBSTUB_BSS_BASE (0x0)
 #endif /* GDBSTUB_H */

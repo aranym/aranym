@@ -77,8 +77,6 @@ that particular programmer but rather who is author of the idea :-)
 - Milan: distributed dispatcher for JIT compiler sigsegv handler
   UPDATE: partially done, slower :-(
 
-- Milan: gdb as debugger for ARAnyM
-
 - Milan: SIGINT ndebug problem solution
 
 - Milan: --with-opengl-prefix

@@ -32,6 +32,8 @@
 
 #include "cpu_emulation.h"
 
+#include "main.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -439,7 +441,8 @@ void gdbstub::debug_loop(void)
                  }
 #endif
 		 SPCFLAGS_SET( SPCFLAG_BRK );
-		 m68k_do_execute();
+		 ne == 1;
+//		 m68k_do_execute();
 #if 0
                  DEV_vga_refresh();
 #endif
@@ -476,7 +479,8 @@ void gdbstub::debug_loop(void)
                  bx_cpu.cpu_loop(-1);
 #else
 		 SPCFLAGS_SET( SPCFLAG_BRK );
-		 m68k_do_execute();
+		 ne == 1;
+//		 m68k_do_execute();
 #endif
 #if 0
                  DEV_vga_refresh();
@@ -676,15 +680,11 @@ void gdbstub::debug_loop(void)
               }
             else if (strncmp(&buffer[1], "Offsets", strlen("Offsets")) == 0)
               {
-#if 0
                  sprintf(obuf,
                          "Text=%x;Data=%x;Bss=%x",
                          bx_options.gdbstub.text_base, 
                          bx_options.gdbstub.data_base, 
                          bx_options.gdbstub.bss_base);
-#else
-		 sprintf(obuf, "Text=%x;Data=%x;Bss=%x", 0, 0, 0);
-#endif
                  put_reply(obuf);
               }
             else
@@ -694,7 +694,9 @@ void gdbstub::debug_loop(void)
             break;
             
           case 'k':
-            panicbug("Debugger asked us to quit");
+            infoprint("Debugger asked us to quit");
+	    QuitEmulator();
+	    ne = 1;
             break;
             
           default:

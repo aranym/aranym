@@ -1,3 +1,7 @@
+2005/01/18 - milan
+- gdbstub: a few fixes in communication, configuration for base pointers added
+
+
 2005/01/18 - Patrice
 - nfosmesa: revert back mandatory SDL 1.2.6 check. Now nfosmesa disabled if SDL
   don't have loadable libraries functions.

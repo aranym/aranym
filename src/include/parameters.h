@@ -214,6 +214,14 @@ typedef struct {
   } bx_cmos_options;
 */
 
+#ifdef GDBSTUB
+typedef struct {
+  memptr text_base;
+  memptr data_base;
+  memptr bss_base;
+} bx_gdbstub_t;
+#endif
+
 // Options 
 typedef struct {
   bx_floppy_options_t	floppy;
@@ -243,6 +251,9 @@ typedef struct {
 #endif
   bx_autozoom_options_t	autozoom;
   bx_nfosmesa_options_t	osmesa;
+#ifdef GDBSTUB
+  bx_gdbstub_t		gdbstub;
+#endif
   char			tos_path[512];
   char			emutos_path[512];
   uint32		fastram;

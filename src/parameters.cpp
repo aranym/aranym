@@ -76,6 +76,7 @@ static struct option const long_options[] =
   {"debug", no_argument, 0, 'D'},
 # ifdef GDBSTUB
   {"port", required_argument, 0, 'p'},
+  {"base", required_argument, 0, 'b'},
 # endif
 #endif
   {"fullscreen", no_argument, 0, 'f'},
@@ -179,6 +180,11 @@ struct Config_Tag startup_conf[]={
 void preset_startup() {
   bx_options.startup.debugger = false;
   bx_options.startup.grabMouseAllowed = true;
+#ifdef GDBSTUB
+  bx_options.gdbstub.text_base = GDBSTUB_TEXT_BASE;
+  bx_options.gdbstub.data_base = GDBSTUB_DATA_BASE;
+  bx_options.gdbstub.bss_base = GDBSTUB_BSS_BASE;
+#endif
 }
 
 void postload_startup() {
@@ -646,6 +652,7 @@ Options:\n\
   printf("  -D, --debug                start debugger\n");
 # ifdef GDBSTUB
   printf("  -p, --port NUMBER          port number for GDB (default: 1234)\n");
+  printf("  -b, --base TEXT DATA BSS   base pointers\n");
 #endif
 #endif
   exit (status);
@@ -748,7 +755,8 @@ int process_cmdline(int argc, char **argv)
 #if (defined(DEBUGGER) || defined(GDBSTUB))
 							 "D"  /* debugger */
 # ifdef GDBSTUB
-							 "p:"  /* gdb port */
+							 "p:" /* gdb port */
+							 "b:" /* base */
 # endif
 #endif
 #ifndef FixedSizeFastRAM
@@ -789,6 +797,18 @@ int process_cmdline(int argc, char **argv)
 # ifdef GDBSTUB
 			case 'p':
 				port_number = atoi(optarg); 
+				break;
+			case 'b':
+				if ((optind + 2 ) > argc)
+				{
+					fprintf(stderr, "Not enough parameters for  --base option");
+					usage(EXIT_FAILURE);
+				} else {
+					bx_options.gdbstub.text_base = atoi(optarg);
+					bx_options.gdbstub.data_base = atoi(argv[optind]);
+					bx_options.gdbstub.bss_base = atoi(argv[optind]);
+				}
+				break;
 # endif
 #endif
 
