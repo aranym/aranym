@@ -1,6 +1,7 @@
 2001/08/16 - Joy
 
-- config file taken from PARCP, compilable but not linkable yet. Dunno why. Help me fix this.
+- config file taken from PARCP. Feel free to extend the global_conf struct in parameters.cpp
+  with more options.
 
 2001/08/15 - STanda
 
