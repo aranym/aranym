@@ -93,6 +93,10 @@ STonX
   http://stonx.sf.net/
   Blitter, FDC, .xfs
 
+STonC
+  http://lvogel.free.fr/stonc.htm
+  MFP
+
 SDL_gfxPrimitves (LGPL)
   http://www.ferzkopp.net/Software/SDL_gfx-2.0/index.html
   Base for the fVDI driver drawing functions
@@ -170,3 +174,7 @@ Carlo Baiocco
 Andreas Schwab
 - damn important fix of MOVES instruction (for Linux-m68k boot)
 - fix of PTESTR/PTESTW and more MMU fixes
+
+Laurent Vogel
+- crucial MFP/IKBD GPIP fix
+

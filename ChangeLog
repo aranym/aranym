@@ -1,3 +1,14 @@
+2005/01/06 - joy
+- mfp.cpp: Laurent (STonC author whose code has been used for ARAnyM
+  MFP emulation) identified copy&rename_variables&paste error.
+  Fixing that finally made the setGPIPbit() working (has been waiting 
+  for the fix since ARAnyM version 0.1.4! :-O )
+
+- ikbd.cpp: Laurent pointed out that IKBD should not access the MFP
+  externally via the 0xfffa01 address but rather use the setGPIPbit()
+  only. Fixed.
+
+
 2005/01/05 - Andreas Schwab
 - uae_cpu/cpummu.cpp:
   ptestr/ptestw must never generate an exception, and always to a full
