@@ -40,7 +40,7 @@
 
 extern "C" {
 
-#if (0 && defined(OS_darwin))  // Stupid hack
+#if (defined(HAVE_WCHAR_T) && defined(OS_darwin))  // Stupid hack
 	char* strapply( char* str, __wchar_t (*functor)(__wchar_t) )
 	{
 		char* pos = str;
@@ -2640,6 +2640,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.58  2002/10/15 21:26:52  milan
+ * non-cheaders support (for MipsPro C/C++ compiler)
+ *
  * Revision 1.57  2002/10/13 11:28:08  milan
  * small corrections for Mac OS X
  *

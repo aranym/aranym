@@ -38,6 +38,10 @@ Things for 1.0 release:
 
 - SIGINT ndebug problem solution
 
+- wchar_t detection for MacOS X headers (configure)
+
+- 200Hz timer test (configure)
+
 The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
 all Atari power users/MiNTers. Key elements are TCP/IP networking, large
 screen resolution in high color/true color, fast CPU/FPU and plenty of RAM.
