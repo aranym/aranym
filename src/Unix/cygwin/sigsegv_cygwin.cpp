@@ -33,6 +33,11 @@ enum type_size_t {
 
 #include <csignal>
 
+#if 0
+#include "sysdeps.h"
+#include "memory.h"
+#endif
+
 #ifndef HAVE_SIGHANDLER_T
 typedef void (*sighandler_t)(int);
 #endif
@@ -80,13 +85,6 @@ atari_bus_fault(void)
 #endif /* OS_cygwin */
 
 /******************************************************************************/
-
-#if 0
-
-#include "sysdeps.h"
-#include "memory.h"
-
-#endif
 
 #if (__i386__)
 
@@ -606,11 +604,20 @@ label_INSTR_UNKNOWN:
 	if ((addr < 0x00f00000) || (addr > 0x00ffffff))
 		goto buserr;
 
-	if ((addr == 0x00ff8400) ||
-	    (addr == 0x00ff8e09) ||
-	    (addr == 0x00fffa42) ||
-	    (addr == 0x00fffc21))
+#ifdef OS_cygwin
+	/* Generate bus error here so we can cleanly exit sigsegv handler.
+	   Windows does not support nested sigsegv.
+	   FIXME: handles only the subset needed to boot Afros or TOS 4.04.
+	   FIXME: slows down hardware emulation.
+	   FIXME: May cause trouble if new hardware emulation is added to
+	          ARAnyM.
+	*/
+	if ((addr == 0x00ff8400) || /* TT Palette registers */
+	    (addr == 0x00ff8e09) || /* Mega STe and TT VME expansion port */
+	    (addr == 0x00fffa42) || /* Mega ST(e) math coprocessor (68 881)*/
+	    (addr == 0x00fffc21))   /* Mega ST real time clock */
 		goto buserr;
+#endif /* OS_cygwin */
 
 	preg = get_preg(reg, CONTEXT_NAME, size);
 
