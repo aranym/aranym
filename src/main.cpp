@@ -284,29 +284,137 @@ bool InitTOSROM(void)
 	ROMBaseHost[0x00437] = 0x04;	/* no hardware, only XBIOS routines */
 #endif
 
-	// patch TOS 4.04 to show FastRAM memory test
 	if (FastRAMSize > 0) {
+		int i;
+
+		// patch to show FastRAM memory test
+		i = 0x001CC;
+		ROMBaseHost[i++] = 0x4E;
+		ROMBaseHost[i++] = 0xF9;	// JMP <abs.addr>
+		ROMBaseHost[i++] = 0x00;	// Can't use JSR, stack pointer
+		ROMBaseHost[i++] = 0xE7;	// is not initialized yet.
+		ROMBaseHost[i++] = 0xFF;
+		ROMBaseHost[i++] = 0x00;	// abs.addr = $E7FF00
+
+		i = 0x7FF00;
 		uint32 ramtop = (FastRAMBase + FastRAMSize);
-		ROMBaseHost[0x001CC] = 0x4E;
-		ROMBaseHost[0x001CD] = 0xF9;	// JMP <abs.addr>
-		ROMBaseHost[0x001CE] = 0x00;
-		ROMBaseHost[0x001CF] = 0xE7;
-		ROMBaseHost[0x001D0] = 0xFF;
-		ROMBaseHost[0x001D1] = 0x00;	// abs.addr = $E7FF00
-		ROMBaseHost[0x7FF00] = 0x21;
-		ROMBaseHost[0x7FF01] = 0xFC;	// MOVE.L #imm, abs.addr.w
-		ROMBaseHost[0x7FF02] = ramtop >> 24;
-		ROMBaseHost[0x7FF03] = ramtop >> 16;
-		ROMBaseHost[0x7FF04] = ramtop >> 8;
-		ROMBaseHost[0x7FF05] = ramtop;
-		ROMBaseHost[0x7FF06] = 0x05;
-		ROMBaseHost[0x7FF07] = 0xA4;	// abs.addr.w = $5A4
-		ROMBaseHost[0x7FF08] = 0x4E;
-		ROMBaseHost[0x7FF09] = 0xF9;	// JMP <abs.addr>
-		ROMBaseHost[0x7FF0A] = 0x00;
-		ROMBaseHost[0x7FF0B] = 0xE0;
-		ROMBaseHost[0x7FF0C] = 0x01;
-		ROMBaseHost[0x7FF0D] = 0xD2;	// abs.addr = $E001D2
+		ROMBaseHost[i++] = 0x21;
+		ROMBaseHost[i++] = 0xFC;	// MOVE.L #imm, abs.addr.w
+		ROMBaseHost[i++] = ramtop >> 24;
+		ROMBaseHost[i++] = ramtop >> 16;
+		ROMBaseHost[i++] = ramtop >> 8;
+		ROMBaseHost[i++] = ramtop;
+		ROMBaseHost[i++] = 0x05;
+		ROMBaseHost[i++] = 0xA4;	// abs.addr.w = $5A4 - ramtop
+		ROMBaseHost[i++] = 0x4E;
+		ROMBaseHost[i++] = 0xF9;	// JMP <abs.addr>
+		ROMBaseHost[i++] = 0x00;
+		ROMBaseHost[i++] = 0xE0;
+		ROMBaseHost[i++] = 0x01;
+		ROMBaseHost[i++] = 0xD2;	// abs.addr = $E001D2
+
+		// Patch to make FastRAM available to GEMDOS
+		i = 0x0096E;
+		ROMBaseHost[i++] = 0x4E;
+		ROMBaseHost[i++] = 0xB9;	// JSR <abs.addr>
+		ROMBaseHost[i++] = 0x00;
+		ROMBaseHost[i++] = 0xE7;
+		ROMBaseHost[i++] = 0xFF;
+		ROMBaseHost[i++] = 0x0E;	// abs.addr = $E7FF0E
+
+		i = 0x7FF0E;
+		// Declare FastRAM with Maddalt()
+		ROMBaseHost[i++] = 0x2F;
+		ROMBaseHost[i++] = 0x3C;	// MOVE.L #imm, -(sp)
+		ROMBaseHost[i++] = FastRAMSize >> 24;
+		ROMBaseHost[i++] = FastRAMSize >> 16;
+		ROMBaseHost[i++] = FastRAMSize >> 8;
+		ROMBaseHost[i++] = FastRAMSize;
+		ROMBaseHost[i++] = 0x2F;
+		ROMBaseHost[i++] = 0x3C;	// MOVE.L #imm, -(sp)
+		ROMBaseHost[i++] = FastRAMBase >> 24;
+		ROMBaseHost[i++] = FastRAMBase >> 16;
+		ROMBaseHost[i++] = FastRAMBase >> 8;
+		ROMBaseHost[i++] = FastRAMBase;
+		ROMBaseHost[i++] = 0x3F;
+		ROMBaseHost[i++] = 0x3C;	// MOVE.W #imm, -(sp)
+		ROMBaseHost[i++] = 0x00;
+		ROMBaseHost[i++] = 0x14;	// imm = $14 - Maddalt()
+		ROMBaseHost[i++] = 0x4E;
+		ROMBaseHost[i++] = 0x41;	// TRAP	#1
+		ROMBaseHost[i++] = 0x4F;
+		ROMBaseHost[i++] = 0xEF;	// LEA d16(sp), sp
+		ROMBaseHost[i++] = 0x00;
+		ROMBaseHost[i++] = 0x0A;	// d16 = $A
+
+		// Allocate 64k _FRB buffer
+		ROMBaseHost[i++] = 0x42;
+		ROMBaseHost[i++] = 0x67;	// CLR.W -(sp) - ST-Ram only
+		ROMBaseHost[i++] = 0x2F;
+		ROMBaseHost[i++] = 0x3C;	// MOVE.L #imm, -(sp)
+		ROMBaseHost[i++] = 0x00;
+		ROMBaseHost[i++] = 0x01;
+		ROMBaseHost[i++] = 0x20;
+		ROMBaseHost[i++] = 0x00;	// imm = 64k + 8k
+		ROMBaseHost[i++] = 0x3F;
+		ROMBaseHost[i++] = 0x3C;	// MOVE.W #imm, -(sp)
+		ROMBaseHost[i++] = 0x00;
+		ROMBaseHost[i++] = 0x44;	// imm = $44 - Mxalloc()
+		ROMBaseHost[i++] = 0x4E;
+		ROMBaseHost[i++] = 0x41;	// TRAP	#1
+		ROMBaseHost[i++] = 0x50;
+		ROMBaseHost[i++] = 0x4F;	// ADDQ.W #8,sp
+		ROMBaseHost[i++] = 0x06;
+		ROMBaseHost[i++] = 0x80;	// ADDI.L #imm, d0
+		ROMBaseHost[i++] = 0x00;
+		ROMBaseHost[i++] = 0x00;
+		ROMBaseHost[i++] = 0x1F;
+		ROMBaseHost[i++] = 0xFF;	// imm = 8k - 1
+		ROMBaseHost[i++] = 0x02;
+		ROMBaseHost[i++] = 0x40;	// ANDI.W #imm, d0
+		ROMBaseHost[i++] = 0xE0;
+		ROMBaseHost[i++] = 0x00;	// imm = $E000 - 8k alignment
+
+		// Store _FRB cookie
+		ROMBaseHost[i++] = 0x20;
+		ROMBaseHost[i++] = 0x78;	// MOVEA.L addr.w, a0
+		ROMBaseHost[i++] = 0x05;
+		ROMBaseHost[i++] = 0xA0;	// addr.w = 0x5A0 - cookie jar
+		ROMBaseHost[i++] = 0x51;
+		ROMBaseHost[i++] = 0x48;	// SUBQ.W #8,a0
+		// .find_last_cookie:
+		ROMBaseHost[i++] = 0x50;
+		ROMBaseHost[i++] = 0x48;	// ADDQ.W #8,a0
+		ROMBaseHost[i++] = 0x4A;
+		ROMBaseHost[i++] = 0x90;	// TST.L (a0)
+		ROMBaseHost[i++] = 0x66;
+		ROMBaseHost[i++] = 0xFA;	// BNE.S .find_last_cookie
+		ROMBaseHost[i++] = 0x20;
+		ROMBaseHost[i++] = 0xFC;	// MOVE.L #imm, (a0)+
+		ROMBaseHost[i++] = 0x5F;
+		ROMBaseHost[i++] = 0x46;
+		ROMBaseHost[i++] = 0x52;
+		ROMBaseHost[i++] = 0x42;	// imm = '_FRB'
+		ROMBaseHost[i++] = 0x21;
+		ROMBaseHost[i++] = 0x50;	// MOVE.L (a0), 8(a0)
+		ROMBaseHost[i++] = 0x00;
+		ROMBaseHost[i++] = 0x08;	// d16 = 8 - copy jar size
+		ROMBaseHost[i++] = 0x20;
+		ROMBaseHost[i++] = 0xC0;	// MOVE.L d0,(a0)+
+		ROMBaseHost[i++] = 0x42;
+		ROMBaseHost[i++] = 0x90;	// CLR.L (a0)
+
+		// Code overwritten by JSR
+		ROMBaseHost[i++] = 0x70;
+		ROMBaseHost[i++] = 0x03;	// MOVEQ.L #3,d0
+		ROMBaseHost[i++] = 0x4E;
+		ROMBaseHost[i++] = 0xB9;	// JSR <abs.addr>
+		ROMBaseHost[i++] = 0x00;
+		ROMBaseHost[i++] = 0xE0;
+		ROMBaseHost[i++] = 0x0B;
+		ROMBaseHost[i++] = 0xD2;	// abs.addr = $E00BD2
+		ROMBaseHost[i++] = 0x4E;
+		ROMBaseHost[i++] = 0x75;	// RTS
 	}
 
 	// Xconout patch

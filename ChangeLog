@@ -3,6 +3,9 @@
 
 - uae_cpu/debug.cpp: fixed a bug in debugger that corrupted SR.
 
+- main.cpp: added a patch that allows TOS 4.04 to detect TT-Ram without any
+  AUTO folder program. FASTRAM.PRG not needed anymore.
+
 
 2004/09/24 - Patrice
 - Natfeat FVDI driver: added functions to read back the screen width and height
