@@ -486,6 +486,9 @@ void process_keyboard_event(SDL_Event event)
 				break;
 
 			case SDLK_PAUSE:
+#ifdef OS_darwin
+			case SDLK_PRINT:	//	F13
+#endif
 				if (shifted) {
 					pendingQuit = true;
 					send2Atari = false;
@@ -511,12 +514,18 @@ void process_keyboard_event(SDL_Event event)
 #endif
 				break;
 
+#ifdef OS_darwin
+#else
 			case SDLK_PRINT:
 				hostScreen.makeSnapshot();
 				send2Atari = false;
 				break;
+#endif
 
 			case SDLK_SCROLLOCK:
+#ifdef OS_darwin
+			case SDLK_NUMLOCK:
+#endif
 				hostScreen.toggleFullScreen();
 				send2Atari = false;
 				break;
