@@ -1,8 +1,26 @@
 /*
- * $Header$
+ * hostscreen.cpp - host video routines
  *
- * STanda 2001
+ * Copyright (c) 2001-2003 Standa of ARAnyM developer team (see AUTHORS)
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 
 #include "sysdeps.h"
 #include "hardware.h"
@@ -18,7 +36,37 @@
 #include <SDL_opengl.h>
 #endif
 
+#define RGB_BLACK     0x00000000
+#define RGB_BLUE      0x000000ff
+#define RGB_GREEN     0x00ff0000
+#define RGB_CYAN      0x00ff00ff
+#define RGB_RED       0xff000000
+#define RGB_MAGENTA   0xff0000ff
+#define RGB_LTGRAY    0xbbbb00bb
+#define RGB_GRAY      0x88880088
+#define RGB_LTBLUE    0x000000aa
+#define RGB_LTGREEN   0x00aa0000
+#define RGB_LTCYAN    0x00aa00aa
+#define RGB_LTRED     0xaa000000
+#define RGB_LTMAGENTA 0xaa0000aa
+#define RGB_YELLOW    0xffff0000
+#define RGB_LTYELLOW  0xaaaa0000
+#define RGB_WHITE     0xffff00ff
+
+static const unsigned long default_palette[] = {
+    RGB_WHITE, RGB_RED, RGB_GREEN, RGB_YELLOW,
+    RGB_BLUE, RGB_MAGENTA, RGB_CYAN, RGB_LTGRAY,
+    RGB_GRAY, RGB_LTRED, RGB_LTGREEN, RGB_LTYELLOW,
+    RGB_LTBLUE, RGB_LTMAGENTA, RGB_LTCYAN, RGB_BLACK
+};
+
 HostScreen::HostScreen(void) {
+	for(int i=0; i<256; i++) {
+		unsigned long color = default_palette[i%16];
+		palette.standard[i].r = color >> 24;
+		palette.standard[i].g = (color >> 16) & 0xff;
+		palette.standard[i].b = color & 0xff;
+	}
 	// setting up the static palette settings
 	palette.sdl.ncolors = 256;
 	palette.sdl.colors = palette.standard;
@@ -388,8 +436,9 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 extern int eventTyp;
 		eventTyp = 0x87654321; // maximal interthread communication HACK
 	}
-	else
+	else {
 		surf = mainSurface;
+	}
 
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 
@@ -1226,6 +1275,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.39  2003/12/25 22:51:05  joy
+ * dirty hack for redrawing SDL GUI if screen size changed
+ *
  * Revision 1.38  2003/12/24 23:31:15  joy
  * when GUI is open the background is being updated with running ARAnyM
  *
