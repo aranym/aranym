@@ -1,3 +1,10 @@
+2001/10/19 - STanda
+- fVDI: The driver updated to work with FVDI.PRG beta. This beta enables
+        e.g. the monochrome images in ST-Guide and fixes many bugs.
+        There is still a bug in new line clipping, but I just don't have
+        time to fix it now. I know exactly what is the problem.
+
+
 2001/10/18 - joy
 - MD5 class added
 - InitROM() detects both our ABTOS and the original TOS 4.04.
