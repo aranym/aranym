@@ -254,6 +254,13 @@ AC_CHECK_FUNCS(sigaction signal)
 AC_CHECK_FUNCS(mmap mprotect munmap)
 AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect)
 
+dnl Defines caddr_t as void * if not already defined
+AC_CHECK_TYPES(caddr_t)
+AH_BOTTOM(
+[#ifndef HAVE_CADDR_T
+typedef void * caddr_t;
+#endif])
+
 dnl Darwin seems to define mach_task_self() instead of task_self().
 AC_CHECK_FUNCS(mach_task_self task_self)
 
