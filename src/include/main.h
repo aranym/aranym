@@ -48,6 +48,7 @@ struct M68kRegisters {
 // General functions
 extern bool InitAll(void);
 extern void ExitAll(void);
+extern bool grabMouse(bool grab);
 
 // Platform-specific functions
 extern void FlushCodeCache(void *start, uint32 size);	// Code was patched, flush caches if neccessary
@@ -76,6 +77,10 @@ extern void ClearInterruptFlag(uint32 flag);
 
 /*
  * $Log$
+ * Revision 1.4  2001/07/20 22:48:19  milan
+ * mmu_op use only set/longjmp now, first step for ndebug integration, signals
+ * and pthread checks removed, cleaning etc.
+ *
  * Revision 1.3  2001/06/18 13:21:55  standa
  * Several template.cpp like comments were added.
  * HostScreen SDL encapsulation class.
