@@ -270,6 +270,7 @@ void Dialog_DiscDlg(void)
         {
           if( !File_DoesFileNameEndWithSlash(tmpname)/*&& File_Exists(tmpname)*/)
           {
+          	strcpy(gui_options.floppy.path, tmpname);
             File_ShrinkName(floppy_path, tmpname, discdlg[FLP_PATH].w);
           }
           else
