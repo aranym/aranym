@@ -28,7 +28,7 @@ extern uint32 RAMSize;
 static int debugger_active = 0;
 static uaecptr skipaddr;
 static int do_skip;
-int debugging = 1;
+int debugging = 0;
 int irqindebug = false;
 
 // MJ static FILE *logfile;
