@@ -42,6 +42,7 @@ extern uae_u32 vram_addr;
 
 void HWInit(void);
 void HWExit(void);
+void HWReset(void);
 
 ARADATA *getARADATA(void);
 MFP *getMFP(void);

@@ -30,7 +30,7 @@
 class IDE : public BASE_IO {
 public:
 	IDE(memptr, uint32);
-	void init();
+	void reset();
 	virtual uae_u8 handleRead(uaecptr addr);
 	virtual void handleWrite(uaecptr addr, uae_u8 value);
 	virtual uae_u16 handleReadW(uaecptr addr);

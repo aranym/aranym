@@ -51,13 +51,12 @@ private:
 
 public:
 	ACSIFDC(memptr, uint32);
+	void reset();
 	virtual uint16 handleReadW(memptr);
 	virtual void handleWriteW(memptr, uint16);
 	virtual uint8 handleRead(memptr);
 	virtual void handleWrite(memptr, uint8);
-	memptr getDMAaddr() { return DMAaddr; }
-	void setDMAaddr(memptr addr) { DMAaddr = addr; }
-	void init();
+
 	void remove_floppy();
 	bool insert_floppy();
 	bool is_floppy_inserted();

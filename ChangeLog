@@ -1,3 +1,14 @@
+2004/02/14 - joy
+- all HW chips' classes: made sure they contain function reset() that
+  initializes internal variables of the objects. This will be called
+  when RESET instruction is emulated to emulate CPU peripherals reset.
+
+- hardware.cpp: added HWReset(), calls reset functions of all HW chips.
+
+- uae_cpu/aranym_glue.cpp: RESET instruction emulation now resets all
+  emulated HW chips.
+
+
 2004/02/13 - Xavier
 - gui-sdl/sdlgui.*:
   - introduced new flags : SG_SELECTABLE and SG_BACKGROUND.

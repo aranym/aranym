@@ -34,6 +34,7 @@ private:
 public:
 	RTC(memptr, uint32);
 	virtual ~RTC();
+	void reset();
 	void init(void);
 	bool load(void);
 	bool save(void);

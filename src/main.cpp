@@ -569,9 +569,7 @@ void RestartAll()
 	exitNatFeats();
 	initNatFeats();
 
-	// HW init
-	getIDE()->init();	// all HW modules should be reinitialized!
-	getFDC()->init();
+	// HW init provided by the RESET instruction hook
 
 	// OS init
 	InitOS();

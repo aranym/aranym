@@ -1,4 +1,27 @@
-/* Joy 2001 */
+/*
+ * blitter.h - Atari Blitter emulation code - declaration
+ *
+ * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ *
+ * Based on work by Martin Griffiths for the STonX, see below.
+ * 
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #ifndef _BLITTER_H
 #define _BLITTER_H
@@ -7,24 +30,25 @@
 
 class BLITTER : public BASE_IO {
   public:
-	uae_u16 halftone_ram[16];
-	uae_u16 end_mask_1,end_mask_2,end_mask_3;
-	uae_u8 NFSR,FXSR; 
-	uae_u16 x_count,y_count;
-	uae_u8 hop,op,line_num,skewreg;
+	uint16 halftone_ram[16];
+	uint16 end_mask_1,end_mask_2,end_mask_3;
+	uint8 NFSR,FXSR; 
+	uint16 x_count,y_count;
+	uint8 hop,op,line_num,skewreg;
 	short int halftone_curroffset,halftone_direction;
 	short int source_x_inc, source_y_inc, dest_x_inc, dest_y_inc;
-	uae_u32 source_addr;
-	uae_u32 dest_addr;
+	uint32 source_addr;
+	uint32 dest_addr;
 	bool blit;
 
 public:
 	BLITTER(memptr, uint32);
-	virtual uae_u8 handleRead(uaecptr);
-	virtual void handleWrite(uaecptr, uae_u8);
+	void reset();
+	virtual uint8 handleRead(memptr);
+	virtual void handleWrite(memptr, uint8);
 
-	uae_u16 LM_UW(uaecptr);
-	void SM_UW(uaecptr, uae_u16);
+	uint16 LM_UW(memptr);
+	void SM_UW(memptr, uint16);
 
 private:
 	void Do_Blit(void);

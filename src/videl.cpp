@@ -50,7 +50,7 @@ extern HostScreen hostScreen;
 
 VIDEL::VIDEL(memptr addr, uint32 size) : BASE_IO(addr, size)
 {
-	init();
+	reset();
 }
 
 bool VIDEL::isMyHWRegister(memptr addr)
@@ -63,7 +63,7 @@ bool VIDEL::isMyHWRegister(memptr addr)
 }
 
 // Called upon startup and when CPU encounters a RESET instruction.
-void VIDEL::init()
+void VIDEL::reset()
 {
 	// default resolution to boot with
 	width = 640;

@@ -105,6 +105,13 @@ void HWExit()
 	}
 }
 
+void HWReset()
+{
+	for(int i=0; i<iITEMS; i++) {
+		arhw[i]->reset();
+	}
+}
+
 BASE_IO *getModule(memptr addr)
 {
 	for(int i=0; i<iITEMS; i++) {

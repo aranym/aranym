@@ -15,6 +15,7 @@ public:
 		hw_offset = addr;
 		hw_size = size;
 	}
+	virtual void reset() {};
 	virtual ~BASE_IO() {};
 	virtual bool isMyHWRegister(memptr addr) { return (addr >= hw_offset && addr < (hw_offset + hw_size)); }
 

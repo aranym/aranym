@@ -57,18 +57,19 @@ enum {
 static NCR5380 ncr5380;
 
 ACSIFDC::ACSIFDC(memptr addr, uint32 size) : BASE_IO(addr, size) {
+	drive_fd = -1;
+
+	reset();
+}
+
+void ACSIFDC::reset()
+{
 	DMAaddr = 0;
 	floppy_changed = false;
-	drive_fd = -1;
 	head = sides = tracks = spt = secsize = 0;
 	dma_mode = dma_scr = dma_car = dma_sr = 0;
 	fdc_command = fdc_track = fdc_sector = fdc_data = fdc_status = 0;
 
-	init();
-}
-
-void ACSIFDC::init()
-{
 	insert_floppy();
 }
 
@@ -344,7 +345,7 @@ void ACSIFDC::fdc_exec_command()
 	long count;
 	uint8 *buffer;
 
-	address = getDMAaddr();
+	address = DMAaddr;
 	buffer = Atari2HostAddr(address);
 	int snd_porta = getYAMAHA()->getFloppyStat();
 	D(bug("FDC DMA virtual address = %06x, physical = %08x, snd = %d", address, buffer, snd_porta));
@@ -448,7 +449,7 @@ void ACSIFDC::fdc_exec_command()
 						if (count==read(drive_fd, buffer, count))
 						{
 							address += count;
-							setDMAaddr(address);
+							DMAaddr = address;
 							dma_scr=0;
 							dma_sr=1;
 							break;
@@ -468,7 +469,7 @@ void ACSIFDC::fdc_exec_command()
 						if (count==read(drive_fd, buffer, count))
 						{
 							address += count;
-							setDMAaddr(address);
+							DMAaddr = address;
 							dma_scr=0;
 							dma_sr=1;
 							fdc_sector += dma_scr; /* *(512/secsize);*/
@@ -485,7 +486,7 @@ void ACSIFDC::fdc_exec_command()
 						if (count==write(drive_fd, buffer, count))
 						{
 							address += count;
-							setDMAaddr(address);
+							DMAaddr = address;
 							dma_scr=0;
 							dma_sr=1;
 							break;
@@ -501,7 +502,7 @@ void ACSIFDC::fdc_exec_command()
 						if (count==write(drive_fd, buffer, count))
 						{
 							address += count;
-							setDMAaddr(address);
+							DMAaddr = address;
 							dma_scr=0;
 							dma_sr=1;
 							fdc_sector += dma_scr; /* *(512/secsize);*/

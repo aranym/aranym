@@ -1,7 +1,31 @@
 /*
- * $Header$
+ * videl.h - Falcon VIDEL emulation - declaration
  *
- * Joy 2001
+ * Copyright (c) 2001-2004 ARAnyM developer team (see AUTHORS)
+ *
+ * Authors:
+ *  joy		Petr Stehlik
+ *	standa	Standa Opichal
+ *	pmandin	Patrice Mandin
+ * 
+ * VIDEL HW regs inspired by Linux-m68k kernel (linux/drivers/video/atafb.c)
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef _VIDEL_H
@@ -31,7 +55,7 @@ protected:
 public:
 	VIDEL(memptr, uint32);
 	bool isMyHWRegister(memptr addr);
-	void init();
+	void reset();
 
 	virtual void handleWrite(uint32 addr, uint8 value);
 
@@ -62,6 +86,9 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.22  2003/11/25 22:56:49  joy
+ * part of a major hardware dispatcher rewrite
+ *
  * Revision 1.21  2003/06/01 08:35:39  milan
  * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
  *

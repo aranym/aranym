@@ -1,8 +1,28 @@
-/* This file is part of STonX, the Atari ST Emulator for Unix/X
- * ============================================================
- * STonX is free software and comes with NO WARRANTY - read the file
- * COPYING for details
+/*
+ * blitter.cpp - Atari Blitter emulation code
  *
+ * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ *
+ * Based on work by Martin Griffiths for the STonX, see below.
+ * 
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+/*
  *	Blitter Emulator,
  *	Martin Griffiths, 1995/96.
  *	
@@ -14,10 +34,9 @@
  *	
  */
 
-/*
-#define BLITTER_MEMMOVE		// this replaces complicated logic of word-by-word copying by simple and fast memmove()
-#define BLITTER_SDLBLIT		// this accelerates screen to screen blits with host VGA hardware accelerated routines (using SDL_BlitSurface)
-*/
+
+#undef BLITTER_MEMMOVE		// when defined it replaces complicated logic of word-by-word copying by simple and fast memmove()
+#undef BLITTER_SDLBLIT		// when defined it accelerates screen to screen blits with host VGA hardware accelerated routines (using SDL_BlitSurface)
 
 #include "sysdeps.h"
 #include "hardware.h"
@@ -53,25 +72,40 @@
 }
 #endif
 
-typedef uae_u16	UW;
-typedef uae_u8	UB;
+typedef uint16	UW;
+typedef uint8	UB;
 typedef char	B;
 
 #define ADDR(a)		(a)
 
-BLITTER::BLITTER(memptr addr, uint32 size) : BASE_IO(addr, size) {}
+BLITTER::BLITTER(memptr addr, uint32 size) : BASE_IO(addr, size)
+{
+	reset();
+}
 
-UW BLITTER::LM_UW(uaecptr addr) {
+void BLITTER::reset()
+{
+	// halftone_ram[16];
+	end_mask_1 = end_mask_2 = end_mask_3 = 0;
+	NFSR = FXSR = 0;
+	x_count = y_count = 0;
+	hop = op = line_num = skewreg = 0;
+	halftone_curroffset = halftone_direction = 0;
+	source_x_inc = source_y_inc = dest_x_inc = dest_y_inc = 0;
+	source_addr = 0;
+	dest_addr = 0;
+	blit = false;
+}
+
+UW BLITTER::LM_UW(memptr addr) {
 	return ReadAtariInt16(addr);	//??
 }
 
-void BLITTER::SM_UW(uaecptr addr, UW value) {
-#if DEBUG
+void BLITTER::SM_UW(memptr addr, UW value) {
 	if (addr <= 0x800 || addr >= 0xe00000) {
-		D(bug("Blitter Error! Tries to write to %06lx", addr));
+		panicbug("Blitter Error! Tries to write to %06lx", addr);
 		exit(-1);
 	}
-#endif
 	WriteAtariInt16(addr, value);	//??
 }
 
@@ -361,11 +395,9 @@ static void (*do_hop_op_P[4][16])( BLITTER& ) =
 };
 
 
-static const int HW = 0xff8a00;
-
-uae_u8 BLITTER::handleRead(uaecptr addr) {
-	addr -= HW;
-	if (addr > 0x3d)
+uint8 BLITTER::handleRead(memptr addr) {
+	addr -= getHWoffset();
+	if (addr > getHWsize())
 		return 0;
 
 /*
@@ -376,7 +408,7 @@ uae_u8 BLITTER::handleRead(uaecptr addr) {
 */
 
 	if (addr < 0x20) {
-		uae_u16 hfr = halftone_ram[addr / 2];
+		uint16 hfr = halftone_ram[addr / 2];
 		if (addr % 1)
 			return hfr & 0x00ff;
 		else
@@ -421,13 +453,13 @@ uae_u8 BLITTER::handleRead(uaecptr addr) {
 	return 0;
 }
 
-void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
-	addr -= HW;
-	if (addr > 0x3d)
+void BLITTER::handleWrite(memptr addr, uint8 value) {
+	addr -= getHWoffset();
+	if (addr > getHWsize())
 		return;
 
 	if (addr < 0x20) {
-		uae_u16 hfr = halftone_ram[addr / 2];
+		uint16 hfr = halftone_ram[addr / 2];
 		if (addr & 1)
 			hfr = (hfr & 0xff00) | value;
 		else

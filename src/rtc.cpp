@@ -46,8 +46,13 @@ int byte14th = VGA:TV ? line doubling : half screen;
 */
 
 RTC::RTC(memptr addr, uint32 size) : BASE_IO(addr, size) {
-	index = 0;
 	init();
+	reset();
+}
+
+void RTC::reset()
+{
+	index = 0;
 }
 
 RTC::~RTC() {

@@ -1,8 +1,24 @@
 /*
- *	IKBD 6301 emulation
+ * ikbd.cpp - IKBD 6301 emulation code
  *
- *	Joy 2001
- *	Patrice Mandin
+ * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * 
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "sysdeps.h"
@@ -32,8 +48,8 @@ IKBD::IKBD(memptr addr, uint32 size) : ACIA(addr, size)
 	inbufferlen = DEFAULT_INBUFFERLEN;
 	outbufferlen = DEFAULT_OUTBUFFERLEN;
 
-	inbuffer = new uae_u8[inbufferlen];
-	outbuffer = new uae_u8[outbufferlen];
+	inbuffer = new uint8[inbufferlen];
+	outbuffer = new uint8[outbufferlen];
 
 	reset();
 };
@@ -74,13 +90,13 @@ void IKBD::reset()
 	D(bug("ikbd: reset"));
 }
 
-uae_u8 IKBD::ReadStatus()
+uint8 IKBD::ReadStatus()
 {
 	D(bug("ikbd: ReadStatus()=0x%02x",sr));
 	return sr;
 }
 
-void IKBD::WriteControl(uae_u8 value)
+void IKBD::WriteControl(uint8 value)
 {
 	SDL_LockMutex(rwLock);
 	cr = value;
@@ -93,7 +109,7 @@ void IKBD::WriteControl(uae_u8 value)
 #endif
 }
 
-uae_u8 IKBD::ReadData()
+uint8 IKBD::ReadData()
 {
 	SDL_LockMutex(rwLock);
 
@@ -108,7 +124,7 @@ uae_u8 IKBD::ReadData()
 			/* Queue empty */
 
 			/* Update MFP GPIP */
-			uae_u8 x = ReadAtariInt8(0xfffa01);
+			uint8 x = ReadAtariInt8(0xfffa01);
 			x |= 0x10;
 			WriteAtariInt8(0xfffa01, x);
 
@@ -132,7 +148,7 @@ inline uint8 IKBD::int2bcd(int a)
 	return (a % 10) + ((a / 10) << 4);
 }
 
-void IKBD::WriteData(uae_u8 value)
+void IKBD::WriteData(uint8 value)
 {
 	if (outbuffer==NULL)
 		return;
@@ -322,7 +338,7 @@ void IKBD::WriteData(uae_u8 value)
 
 /*--- Functions called to transmit an input event from host to IKBD ---*/
 
-void IKBD::SendKey(uae_u8 scancode)
+void IKBD::SendKey(uint8 scancode)
 {
 	intype = IKBD_PACKET_KEYBOARD;
 	send(scancode);
@@ -420,7 +436,7 @@ void IKBD::MergeMousePacket(int *relx, int *rely, int buttons)
 
 void IKBD::SendJoystickAxis(int numjoy, int numaxis, int value)
 {
-	uae_u8 newjoy_state;
+	uint8 newjoy_state;
 
 	if (!joy_enabled[numjoy])
 		return;
@@ -458,7 +474,7 @@ void IKBD::SendJoystickAxis(int numjoy, int numaxis, int value)
 
 void IKBD::SendJoystickButton(int numjoy, int pressed)
 {
-	uae_u8 newjoy_state;
+	uint8 newjoy_state;
 
 	if (!joy_enabled[numjoy])
 		return;
@@ -478,7 +494,7 @@ void IKBD::SendJoystickButton(int numjoy, int pressed)
 
 /*--- Queue manager, host side ---*/
 
-void IKBD::send(uae_u8 value)
+void IKBD::send(uint8 value)
 {
 	if (inbuffer == NULL)
 		return;

@@ -31,10 +31,10 @@
 #define BX_INSERTED	true	// copied from emu_bochs.h
 
 IDE::IDE(memptr addr, uint32 size) : BASE_IO(addr, size) {
-	init();
+	reset();
 }
 
-void IDE::init() {
+void IDE::reset() {
 	// convert aranym's "present" and "isCDROM" to bochs' "status" and "type"
 	int channel = 0;
 	for(int device=0; device<2; device++) {

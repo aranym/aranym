@@ -1,9 +1,9 @@
 /*
  * mfp.cpp - MFP emulation
  *
- * Based on info gathered in STonX source code 
+ * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
- * Copyright (c) 2001-2003 Joy of ARAnyM development team (see AUTHORS)
+ * Based on info gathered in STonX source code 
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -32,10 +32,14 @@
 #define DEBUG 0
 #include "debug.h"
 
-
 MFP_Timer::MFP_Timer(int value)
 {
 	name = 'A' + value;
+	reset();
+}
+
+void MFP_Timer::reset()
+{
 	control = start_data = current_data = 0;
 	state = false;
 }
@@ -66,7 +70,7 @@ void MFP_Timer::setData(uint8 value)
 		current_data = value;
 }
 
-void MFP_Timer::reset()
+void MFP_Timer::resetCounter()
 {
 	// D(bug("reset of Timer%c", name));
 	if (isRunning()) {
@@ -89,6 +93,11 @@ uint8 MFP_Timer::getData()
 
 MFP::MFP(memptr addr, uint32 size) : BASE_IO(addr, size)
 {
+	reset();
+}
+
+void MFP::reset()
+{
 	GPIP_data = 0xff;
 	vr = 0x0100;
 	active_edge = 0;
@@ -98,19 +107,19 @@ MFP::MFP(memptr addr, uint32 size) : BASE_IO(addr, size)
 	irq_inservice = 0;
 	irq_mask = 0;
 	automaticServiceEnd = 0;
-	// MFP_TimerA A;
-	// MFP_TimerB B;
-	// MFP_TimerC C;
-	// MFP_TimerD D;
-	// USART usart;
 	flags = 0;
 	timerCounter = 0;
+
+	A.reset();
+	B.reset();
+	C.reset();
+	D.reset();
 }
 
-uint8 MFP::handleRead(uaecptr addr)
+uint8 MFP::handleRead(memptr addr)
 {
 	addr -= getHWoffset();
-	if (addr > 0x2f)
+	if (addr > getHWsize())
 		return 0;	// unhandled
 
 	uint8 value;
@@ -184,9 +193,9 @@ uint8 MFP::handleRead(uaecptr addr)
 	return value;
 }
 
-void MFP::handleWrite(uaecptr addr, uint8 value) {
+void MFP::handleWrite(memptr addr, uint8 value) {
 	addr -= getHWoffset();
-	if (addr > 0x2f)
+	if (addr > getHWsize())
 		return;	// unhandled
 
 	D(bug("Writing MFP data to %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
@@ -335,7 +344,7 @@ void MFP::IRQ(int no, int count)
 		case 0:	break;
 
 		// TimerC 200 Hz interrupt
-		case 5: C.reset();
+		case 5: C.resetCounter();
 				if (irq_enable & 0x0020) {
 					flags |= F_TIMERC;
 					timerCounter += count;
