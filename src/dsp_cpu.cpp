@@ -23,7 +23,7 @@
 #include "debug.h"
 
 /* More disasm infos, if wanted */
-#define DSP_DISASM_INST 1		/* Instructions */
+#define DSP_DISASM_INST 0		/* Instructions */
 #define DSP_DISASM_REG 0		/* Registers changes */
 #define DSP_DISASM_MEM 0		/* Memory changes */
 
@@ -67,6 +67,7 @@ typedef void (*dsp_emul_t)(void);
 
 static void dsp_execute_instruction(void);
 static void dsp_postexecute_update_pc(void);
+static void dsp_postexecute_interrupts(void);
 
 static void dsp_host2dsp(void);
 static void dsp_dsp2host(void);
@@ -647,6 +648,9 @@ static void dsp_execute_instruction(void)
 
 	/* Write available data from DSP for the host */
 	dsp_dsp2host();
+
+	/* Interrupts ? */
+	dsp_postexecute_interrupts();
 }
 
 /**********************************
@@ -655,7 +659,7 @@ static void dsp_execute_instruction(void)
 
 static void dsp_postexecute_update_pc(void)
 {
-	/* Are we running a rep ? */
+	/* When running a REP, PC must stay on the current instruction */
 	if (dsp.loop_rep) {
 		/* Is PC on the instruction to repeat ? */		
 		if (pc_on_rep==0) {
@@ -682,7 +686,8 @@ static void dsp_postexecute_update_pc(void)
 		dsp.pc += cur_inst_len;
 	}
 
-	/* Are we running a do loop ? */
+	/* When running a DO loop, we test the end of loop with the */
+	/* updated PC, pointing to last instruction of the loop */
 	if (dsp.registers[REG_SR] & (1<<SR_LF)) {
 
 		/* Did we execute the last instruction in loop ? */
@@ -707,6 +712,55 @@ static void dsp_postexecute_update_pc(void)
 		if (dsp.pc == dsp.registers[REG_LA]) {
 			/* We are executing the last loop instruction */
 			dsp.last_loop_inst = 1;
+		}
+	}
+}
+
+/**********************************
+ *	Interrupts
+**********************************/
+
+static void dsp_postexecute_interrupts(void)
+{
+	uint32 ipl, ipl_hi;
+	
+	ipl = (dsp.registers[REG_SR]>>SR_I0) & BITMASK(2);
+	ipl_hi = (dsp.periph[SPACE_X][DSP_IPR]>>10) & BITMASK(2);
+
+	/* Trace, level 3 */
+	if (dsp.registers[REG_SR] & (1<<SR_T)) {
+		/* Raise interrupt p:0x0004 */
+			D(bug("Dsp: Interrupt: Trace"));
+	}
+
+	/* Host interface interrupts */
+	if ((ipl_hi>0) && ((ipl_hi-1)>=ipl)) {
+
+		/* Host transmit */
+		if (
+			(dsp.periph[SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HTIE)) &&
+			((dsp.periph[SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HTDE))==0)
+			) {
+			/* Raise interrupt p:0x0022 */
+			D(bug("Dsp: Interrupt: Host transmit"));
+		}
+
+		/* Host receive */
+		if (
+			(dsp.periph[SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HRIE)) &&
+			((dsp.periph[SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HRDF))==0)
+			) {
+			/* Raise interrupt p:0x0020 */
+			D(bug("Dsp: Interrupt: Host receive"));
+		}
+
+		/* Host command */
+		if (
+			(dsp.periph[SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HCIE)) &&
+			(dsp.periph[SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HCP))
+			) {
+			/* Raise interrupt p:((hostport[CPU_HOST_CVR] & 31)<<1) */
+			D(bug("Dsp: Interrupt: Host command"));
 		}
 	}
 }
@@ -1682,6 +1736,10 @@ static void dsp_div(void)
 		}
 	}
 
+	dsp.registers[REG_A2+(destreg & 1)] = dest[0];
+	dsp.registers[REG_A1+(destreg & 1)] = dest[1];
+	dsp.registers[REG_A0+(destreg & 1)] = dest[2];
+
 	dsp.registers[REG_SR] &= BITMASK(16)-(1<<SR_C);
 	dsp.registers[REG_SR] |= ((~(dest[0]>>7)) & 1)<<SR_C;
 }
@@ -1766,8 +1824,8 @@ static void dsp_enddo(void)
 
 static void dsp_illegal(void)
 {
-	D(bug("Dsp: 0x%04x: illegal",dsp.pc));
-/*	cur_inst_len = 0;*/
+	/* Raise interrupt p:0x003e */
+	D(bug("Dsp: Interrupt: Illegal"));
 }
 
 static void dsp_jcc(void)
@@ -2083,10 +2141,10 @@ static void dsp_movec(void)
 
 static void dsp_movec_7(void)
 {
+	uint32 numreg1, numreg2, value;
+
 	/* S1,D2 */
 	/* S2,D1 */
-
-	uint32 numreg1, numreg2, value;
 
 	numreg2 = (cur_inst>>8) & BITMASK(6);
 	numreg1 = (cur_inst & BITMASK(5))|0x20;
@@ -2118,12 +2176,12 @@ static void dsp_movec_7(void)
 
 static void dsp_movec_9(void)
 {
+	uint32 numreg, addr, memspace;
+
 	/* x:aa,D1 */
 	/* S1,x:aa */
 	/* y:aa,D1 */
 	/* S1,y:aa */
-
-	uint32 numreg, addr, memspace;
 
 	numreg = (cur_inst & BITMASK(5))|0x20;
 	addr = (cur_inst>>8) & BITMASK(6);
@@ -2142,14 +2200,24 @@ static void dsp_movec_9(void)
 
 static void dsp_movec_b(void)
 {
+	uint32 numreg;
+
+	/* #xx,D1 */
+
+	numreg = (cur_inst & BITMASK(5))|0x20;
+	dsp.registers[numreg] = (cur_inst>>8) & BITMASK(8);
+}
+
+static void dsp_movec_d(void)
+{
+	uint32 numreg, addr, memspace, ea_mode;
+	int retour;
+
 	/* x:ea,D1 */
 	/* S1,x:ea */
 	/* y:ea,D1 */
 	/* S1,y:ea */
 	/* #xxxx,D1 */
-
-	uint32 numreg, addr, memspace, ea_mode;
-	int retour;
 
 	numreg = (cur_inst & BITMASK(5))|0x20;
 	ea_mode = (cur_inst>>8) & BITMASK(6);
@@ -2171,16 +2239,6 @@ static void dsp_movec_b(void)
 
 		write_memory(memspace, addr, dsp.registers[numreg]);
 	}
-}
-
-static void dsp_movec_d(void)
-{
-	/* #xx,D1 */
-
-	uint32 numreg;
-
-	numreg = (cur_inst & BITMASK(5))|0x20;
-	dsp.registers[numreg] = (cur_inst>>8) & BITMASK(8);
 }
 
 static void dsp_movem(void)
@@ -2487,8 +2545,8 @@ static void dsp_stop(void)
 
 static void dsp_swi(void)
 {
-	D(bug("Dsp: 0x%04x: swi",dsp.pc));
-/*	cur_inst_len = 0;*/
+	/* Raise interrupt p:0x0006 */
+	D(bug("Dsp: Interrupt: Swi"));
 }
 
 static void dsp_tcc(void)
@@ -2651,7 +2709,7 @@ static void dsp_pm_0(void)
 	dsp_calc_ea((cur_inst>>8) & BITMASK(6), &dummy);
 
 	/* [A|B] to [x|y]:ea */	
-	dsp_pm_read_accu24(numreg, &tmp_parmove_src[0][1]);
+	dsp_pm_read_accu24(REG_A+numreg, &tmp_parmove_src[0][1]);
 	tmp_parmove_dest[0][1]=(uint32 *)dummy;
 
 	tmp_parmove_start[0] = 1;
@@ -3046,7 +3104,7 @@ static void dsp_pm_5(void)
 	numreg = (cur_inst>>16) & BITMASK(3);
 	numreg |= (cur_inst>>17) & (BITMASK(2)<<3);
 
-	if (cur_inst & (1<<14)) {
+	if (cur_inst & (1<<15)) {
 		/* Write D */
 
 		if (retour) {
@@ -4366,3 +4424,11 @@ static void dsp_tst(void)
 
 	dsp.registers[REG_SR] &= BITMASK(16)-(1<<SR_V);
 }
+
+/*
+	2002-07-19:PM	BUG:movec_b and movec_d operations permuted
+					BUG:pm_5: wrong bit number used for write flag
+					BUG:div: did not save the result
+	2002-07-18:PM	FIX:modified ccr stuff to test arbitrary accumulator,
+						not only A and B, which are not always modified		
+*/

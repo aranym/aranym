@@ -44,7 +44,7 @@ static uint32 pc_save;
 #endif
 
 static char *registers_name[64]={
-	"undefined","undefined","undefined","undefined",
+	"","","","",
 	"x0","x1","y0","y1",
 	"a0","b0","a2","b2",
 	"a1","b1","a","b",
@@ -56,12 +56,12 @@ static char *registers_name[64]={
 
 	"m0","m1","m2","m3",
 	"m4","m5","m6","m7",
-	"undefined","undefined","undefined","undefined",
-	"undefined","undefined","undefined","undefined",
+	"","","","",
+	"","","","",
 
-	"undefined","undefined","undefined","undefined",
-	"undefined","undefined","undefined","undefined",
-	"undefined","sr","omr","sp",
+	"","","","",
+	"","","","",
+	"","sr","omr","sp",
 	"ssh","ssl","la","lc"
 };
 
@@ -826,18 +826,13 @@ static void dsp_undefined(void)
 
 static void dsp_andi(void)
 {
-	char regname[4]="";
+	char *regname;
 
 	switch(cur_inst & BITMASK(2)) {
-		case 0:
-			strcpy(regname,"mr");
-			break;
-		case 1:
-			strcpy(regname,"ccr");
-			break;
-		case 2:
-			strcpy(regname,"omr");
-			break;
+		case 0:	regname="mr";	break;
+		case 1:	regname="ccr";	break;
+		case 2:	regname="omr";	break;
+		default: regname="";	break;
 	}
 
 	D(bug("Dsp: 0x%04x: andi #0x%02x,%s",
@@ -1490,6 +1485,17 @@ static void dsp_movec_9(void)
 
 static void dsp_movec_b(void)
 {
+	uint32 numreg;
+
+	/* #xx,D1 */
+
+	numreg = (cur_inst & BITMASK(5))|0x20;
+
+	D(bug("Dsp: 0x%04x: movec #0x%02x,%s",dsp.pc, (cur_inst>>8) & BITMASK(8), registers_name[numreg]));
+}
+
+static void dsp_movec_d(void)
+{
 	char *spacename, srcname[16], dstname[16], addr_name[16];
 	uint32 numreg, ea_mode;
 	int retour;
@@ -1525,17 +1531,6 @@ static void dsp_movec_b(void)
 	}
 
 	D(bug("Dsp: 0x%04x: movec %s,%s",dsp.pc, srcname, dstname));
-}
-
-static void dsp_movec_d(void)
-{
-	uint32 numreg;
-
-	/* #xx,D1 */
-
-	numreg = (cur_inst & BITMASK(5))|0x20;
-
-	D(bug("Dsp: 0x%04x: movec #0x%02x,%s",dsp.pc, (cur_inst>>8) & BITMASK(8), registers_name[numreg]));
 }
 
 static void dsp_movem(void)
@@ -1733,18 +1728,13 @@ static void dsp_norm(void)
 
 static void dsp_ori(void)
 {
-	char regname[4]="";
+	char *regname;
 
 	switch(cur_inst & BITMASK(2)) {
-		case 0:
-			strcpy(regname,"mr");
-			break;
-		case 1:
-			strcpy(regname,"ccr");
-			break;
-		case 2:
-			strcpy(regname,"omr");
-			break;
+		case 0:	regname="mr";	break;
+		case 1:	regname="ccr";	break;
+		case 2:	regname="omr";	break;
+		default: regname="";	break;
 	}
 
 	D(bug("Dsp: 0x%04x: ori #0x%02x,%s",
@@ -1893,8 +1883,8 @@ static void dsp_pm_0(void)
 	0000 100d 00mm mrrr S,x:ea	x0,D
 	0000 100d 10mm mrrr S,y:ea	y0,D
 */
-	memspace = (cur_inst>>15) & BITMASK(1);
-	numreg1 = (cur_inst>>16) & BITMASK(1);
+	memspace = (cur_inst>>15) & 1;
+	numreg1 = REG_A+((cur_inst>>16) & 1);
 	dsp_calc_ea((cur_inst>>8) & BITMASK(6), addr_name);
 
 	if (memspace) {
@@ -1933,25 +1923,17 @@ static void dsp_pm_1(void)
 	write_flag = (cur_inst>>15) & 1;
 	retour = dsp_calc_ea((cur_inst>>8) & BITMASK(6), addr_name);
 
-	if (memspace) {
+	if (memspace==SPACE_Y) {
 		s2reg = d2reg = REG_Y0;
 		switch((cur_inst>>16) & BITMASK(2)) {
-			case 0:
-				s2reg = d2reg = REG_Y0;
-				break;
-			case 1:
-				s2reg = d2reg = REG_Y1;
-				break;
-			case 2:
-				s2reg = d2reg = REG_A;
-				break;
-			case 3:
-				s2reg = d2reg = REG_B;
-				break;
+			case 0:	s2reg = d2reg = REG_Y0;	break;
+			case 1:	s2reg = d2reg = REG_Y1;	break;
+			case 2:	s2reg = d2reg = REG_A;	break;
+			case 3:	s2reg = d2reg = REG_B;	break;
 		}
 
-		s1reg = REG_A+(cur_inst>>19) & 1;
-		d1reg = REG_X0+(cur_inst>>18) & 1;
+		s1reg = REG_A+((cur_inst>>19) & 1);
+		d1reg = REG_X0+((cur_inst>>18) & 1);
 
 		if (write_flag) {
 			/* Write D2 */
@@ -1984,22 +1966,14 @@ static void dsp_pm_1(void)
 	} else {
 		s1reg = d1reg = REG_X0;
 		switch((cur_inst>>18) & BITMASK(2)) {
-			case 0:
-				s1reg = d1reg = REG_X0;
-				break;
-			case 1:
-				s1reg = d1reg = REG_X1;
-				break;
-			case 2:
-				s1reg = d1reg = REG_A;
-				break;
-			case 3:
-				s1reg = d1reg = REG_B;
-				break;
+			case 0:	s1reg = d1reg = REG_X0;	break;
+			case 1:	s1reg = d1reg = REG_X1;	break;
+			case 2:	s1reg = d1reg = REG_A;	break;
+			case 3:	s1reg = d1reg = REG_B;	break;
 		}
 
-		s2reg = REG_A+(cur_inst>>17) & 1;
-		d2reg = REG_Y0+(cur_inst>>16) & 1;
+		s2reg = REG_A+((cur_inst>>17) & 1);
+		d2reg = REG_Y0+((cur_inst>>16) & 1);
 
 		if (write_flag) {
 			/* Write D1 */
@@ -2089,6 +2063,7 @@ static void dsp_pm_4(void)
 	ea_mode = (cur_inst>>8) & BITMASK(6);
 
 	if ((value>>2)==0) {
+		/* L: memory move */
 		if (cur_inst & (1<<14)) {
 			retour = dsp_calc_ea(ea_mode, addr_name);	
 		} else {
@@ -2119,12 +2094,9 @@ static void dsp_pm_4(void)
 	if (cur_inst & (1<<14)) {
 		retour = dsp_calc_ea(ea_mode, addr_name);	
 	} else {
-		sprintf(addr_name,"0x%04x", value);
+		sprintf(addr_name,"0x%04x", ea_mode);
 		retour = 0;
 	}
-
-	value = (cur_inst>>16) & BITMASK(3);
-	value |= (cur_inst>>17) & (BITMASK(2)<<3);
 
 	if (memspace) {
 		/* Y: */
@@ -2871,3 +2843,8 @@ static void dsp_tst(void)
 		parallelmove_name
 	));
 }
+
+/*
+	2002-07-19:PM	BUG:movec_b and movec_d operations permuted
+					BUG:pm_5: bad calc of address in [x|y]:aa addressing
+*/
