@@ -1,3 +1,10 @@
+2002/03/06 - STanda
+- ExtFs: xfs_getname implemented. The Pure C now finds the project file, but
+  it crashes on assembler compilation.
+  The ExtFs::cookie2Pathname() now uses getHostFileName to be able to work
+  case insensitively.
+
+
 2002/03/05 - milan
 - memptr for addressing in Atari memory out of uae_cpu
 

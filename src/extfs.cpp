@@ -15,6 +15,7 @@
 #include "extfs.h"
 #include "araobjs.h"
 
+#undef DEBUG_FILENAMETRANSFORMATION
 #define DEBUG 0
 #include "debug.h"
 
@@ -421,7 +422,6 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 	1 D(bug("%s", "fs_chattr"));
 	1 D(bug("%s", "fs_chown"));
 	1 D(bug("%s", "fs_chmode"));
-	1 D(bug("%s", "fs_getname"));
 	  D(bug("%s", "fs_writelabel"));
 	  D(bug("%s", "fs_readlabel"));
 	1 D(bug("%s", "fs_symlink"));
@@ -451,9 +451,9 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 				  ,mint_fs_drv
 				  ,mint_fs_devdrv
 				  ,(int)mint_fs_devnum));
-			D(bug("%s", "fs_root"));
 			break;
 		case SBC_STX_FS+0x01:
+			D(bug("%s", "fs_root"));
 			fetchXFSC( &fc, ReadInt32(r->a[7] + 6) );
 			r->d[0] = xfs_root( ReadInt16(r->a[7] + 4),   /* dev */
 								&fc ); /* fcookie */
@@ -525,7 +525,14 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 			break;
 		case SBC_STX_FS+0x0c:
 			D(bug("%s", "fs_getname"));
-			r->d[0] = (uint32)TOS_EINVFN;
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
+			fetchXFSC( &resFc, ReadInt32(r->a[7] + 8) );
+			r->d[0] = xfs_getname( &fc,
+								   &resFc,
+								   (char*)ReadInt32(r->a[7] + 12), // pathName
+								   ReadInt16( r->a[7] + 16 ) ); // size
+			// not needed: flushXFSC( &fc, ReadInt32(r->a[7] + 4) );
+			// not needed: flushXFSC( &resFc, ReadInt32(r->a[7] + 12) );
 			break;
 		case SBC_STX_FS+0x0d:
 			D(bug("%s", "fs_rename"));
@@ -1054,7 +1061,7 @@ void ExtFs::transformFileName( char* dest, const char* source )
 }
 
 
-bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, char* name )
+bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const char* name )
 {
 	struct stat statBuf;
 
@@ -1071,7 +1078,7 @@ bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, char* 
 		{
 			// the TOS filename was adjusted (lettercase, length, ..)
 			char testName[MAXPATHNAMELEN];
-			char *finalName = name;
+			const char *finalName = name;
 			struct dirent *dirEntry;
 
 #ifdef DEBUG_FILENAMETRANSFORMATION
@@ -1082,16 +1089,23 @@ bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, char* 
 			*result = '\0';
 
 			DIR *dh = opendir( pathName );
-			if ( dh == NULL )
+			if ( dh == NULL ) {
+				D(bug("MetaDOS: getHostFileName dopendir(%s) failed.", pathName));
 				goto lbl_final;  // should never happen
+			}
 
 			while ( true ) {
-				if ((dirEntry = readdir( dh )) == NULL)
+				if ((dirEntry = readdir( dh )) == NULL) {
+					D(bug("MetaDOS: getHostFileName dreaddir: no more files."));
 					goto lbl_final;
+				}
 
-				if ( drv->halfSensitive )
+				if ( !drv || drv->halfSensitive )
 					if ( ! strcasecmp( name, dirEntry->d_name ) ) {
 						finalName = dirEntry->d_name;
+#ifdef DEBUG_FILENAMETRANSFORMATION
+						D(bug("MetaDOS: getHostFileName found final file."));
+#endif
 						goto lbl_final;
 					}
 
@@ -1133,11 +1147,15 @@ ExtFs::ExtDrive* ExtFs::getDrive( const char* pathName )
 {
 	ExtDrive *drv = NULL;
 
-	if ( pathName[0] != '\0' && pathName[1] == ':' )
+	if ( pathName[0] != '\0' && pathName[1] == ':' ) {
+		D(bug("MetaDOS: getDrive '%c'", pathName[0]));
 		drv = &drives[ toupper( pathName[0] ) - 'A' ];
+	}
 
-	if ( drv == NULL || drv->rootPath == NULL )
+	if ( drv == NULL || drv->rootPath == NULL ) {
+		D(bug("MetaDOS: getDrive fail"));
 		drv = &drives[0];
+	}
 
 	return drv;
 }
@@ -1166,16 +1184,61 @@ void ExtFs::convertPathA2F( char* fpathName, char* pathName, char* basePath )
 		return; // the path is ok except the backslashes
 
 	// construct the pathName to get stat() from
-	while ( (tp = strchr( n, '\\' )) != NULL ) {
+	while ( (tp = strpbrk( n, "\\/" )) != NULL ) {
+		char sep = *tp;
 		*tp = '\0';
+
 		getHostFileName( ffileName, drv, fpathName, n );
 		ffileName += strlen( ffileName );
-		strcpy( ffileName, "/" ); ffileName++;
-		*tp = '\\';
+		*ffileName++ = '/';
+
+		*tp = sep;
 		n = tp+1;
 	}
+
 	getHostFileName( ffileName, drv, fpathName, n );
 }
+
+
+/*
+ * build a complete linux filepath
+ * --> fs    something like a handle to a known file
+ *     name  a postfix to the path of fs or NULL, if no postfix
+ *     buf   buffer for the complete filepath or NULL if static one
+ *           should be used.
+ * <-- complete filepath or NULL if error
+ */
+char *ExtFs::cookie2Pathname( ExtFs::XfsFsFile *fs, const char *name, char *buf )
+{
+    static char sbuf[MAXPATHNAMELEN]; /* FIXME: size should told by unix */
+
+    if (!buf)
+        buf = sbuf;
+    if (!fs)
+    {
+        /* we are at root */
+        if (!name)
+            return NULL;
+        else
+            strcpy(buf, name);
+    }
+    else
+    {
+        char *h;
+        if (!cookie2Pathname(fs->parent, fs->name, buf))
+            return NULL;
+        if (name && *name)
+        {
+            if ((h = strchr(buf, '\0'))[-1] != '/')
+                *h++ = '/';
+
+			*h = '\0';
+			getHostFileName( h, NULL, buf, name );
+        }
+    }
+    return buf;
+}
+
 
 
 int32 ExtFs::Dfree_(char *fpathName, uint32 diskinfop )
@@ -1687,7 +1750,6 @@ int32 ExtFs::Fdatime_( char *fpathName, ExtFile *fp, uint32 *datetimep, int16 wf
 				  ttm.tm_hour
 				  ));
 	}
-	D(bug(""));
 
 	datetime =
 		( time2dos(statBuf.st_mtime) << 16 ) | date2dos(statBuf.st_mtime);
@@ -2047,44 +2109,6 @@ int32 ExtFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
 }
 
 
-/*
- * build a complete linux filepath
- * --> fs    something like a handle to a known file
- *     name  a postfix to the path of fs or NULL, if no postfix
- *     buf   buffer for the complete filepath or NULL if static one
- *           should be used.
- * <-- complete filepath or NULL if error
- */
-char *ExtFs::cookie2Pathname( ExtFs::XfsFsFile *fs, const char *name, char *buf )
-{
-    static char sbuf[256]; /* FIXME: size should told by unix */
-
-    if (!buf)
-        buf = sbuf;
-    if (!fs)
-    {
-        /* we are at root */
-        if (!name)
-            return NULL;
-        else
-            strcpy(buf, name);
-    }
-    else
-    {
-        char *h;
-        if (!cookie2Pathname(fs->parent, fs->name, buf))
-            return NULL;
-        if (name && *name)
-        {
-            if ((h = strchr(buf, '\0'))[-1] != '/')
-                *h++ = '/';
-            strcpy( h, name );
-        }
-    }
-    return buf;
-}
-
-
 int32 ExtFs::xfs_root( uint16 dev, XfsCookie *fc )
 {
 	D2(bug( "root:\n"
@@ -2148,7 +2172,7 @@ void ExtFs::xfs_freefs( XfsFsFile *fs )
 		 "    parent   = %08lx\n"
 		 "    name     = \"%s\"\n"
 		 "    usecnt   = %d\n"
-		 "    childcnt = %d\n",
+		 "    childcnt = %d",
 		 (long)fs,
 		 (long)(fs->parent),
 		 fs->name,
@@ -2156,7 +2180,7 @@ void ExtFs::xfs_freefs( XfsFsFile *fs )
 		 fs->childCount ));
 
     if ( !fs->refCount && !fs->childCount )	{
-		D2(bug( "freefs: realfree\n" ));
+		D2(bug( "freefs: realfree" ));
 		if ( fs->parent ) {
 			fs->parent->childCount--;
 			xfs_freefs( fs->parent );
@@ -2164,7 +2188,7 @@ void ExtFs::xfs_freefs( XfsFsFile *fs )
 		}
 		delete fs;
 	} else {
-		D(bug( "freefs: notfree\n" ));
+		D2(bug( "freefs: notfree" ));
 	}
 }
 
@@ -2222,13 +2246,66 @@ int32 ExtFs::xfs_lookup( XfsCookie *dir, char *name, XfsCookie *fc )
 }
 
 
+int32 ExtFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, char *pathName, int16 size )
+{
+	char base[MAXPATHNAMELEN];
+	cookie2Pathname(relto->index,NULL,base); // get the cookie filename
+
+	char dirBuff[MAXPATHNAMELEN];
+	char *dirPath = dirBuff;
+	cookie2Pathname(dir->index,NULL,dirBuff); // get the cookie filename
+
+	char fpathName[MAXPATHNAMELEN];
+
+    D2(bug( "    XFS:       getname: relto = \"%s\"", base ));
+    size_t baselength = strlen(base);
+    if ( baselength && base[baselength-1] == '/' ) {
+		baselength--;
+		base[baselength] = '\0';
+		D2(bug( "    XFS:       getname: fixed relto = \"%s\"", base ));
+    }
+
+    D2(bug( "    XFS:       getname: dir = \"%s\"", dirPath ));
+    size_t dirlength = strlen(dirPath);
+    if ( dirlength < baselength ||
+		 strncmp( dirPath, base, baselength ) ) {
+		/* dir is not a sub...directory of relto, so use absolute */
+		/* FIXME: try to use a relative path, if relativ is smaller */
+		D2(bug( "    XFS:       getname: dir not relativ to relto!" ));
+    } else {
+		/* delete "same"-Part */
+		dirPath += baselength;
+    }
+    D2(bug( "    XFS:       getname: relativ dir to relto = \"%s\"", dirPath ));
+
+    /* copy and unix2dosname */
+	char *pfpathName = fpathName;
+    for ( ; *dirPath && size > 0; size--, dirPath++ )
+		if ( *dirPath == '/' )
+			*pfpathName++ = '\\';
+		else
+			*pfpathName++ = *dirPath;
+
+    if ( !size ) {
+		D2(bug( "    XFS:       getname: Relative dir is to long for buffer!" ));
+		return TOS_ERANGE;
+    } else {
+		*pfpathName = '\0';
+		D(bug( "    XFS:       getname result = \"%s\"", fpathName ));
+
+		f2astrcpy( (uint8*)pathName, (uint8*)fpathName );
+		return TOS_E_OK;
+    }
+}
+
+
 int32 ExtFs::xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook )
 {
     XfsFsFile *fs = new XfsFsFile();
 
     if ( ( fs->parent = oldCook->index->parent ) != NULL ) {
 		if ( (fs->name = strdup(oldCook->index->name)) == NULL ) {
-			D(bug( "dupcookie: strdup() failed!\n" ));
+			D(bug( "    XFS:       dupcookie: strdup() failed!" ));
 			delete fs;
 			return TOS_ENSMEM;
 		}
@@ -2269,7 +2346,7 @@ int32 ExtFs::xfs_release( XfsCookie *fc )
 
     if ( !fc->index->refCount )
 		{
-			D(bug( "release: RELEASE OF UNUSED FILECOOKIE!\n" ));
+			D(bug( "    XFS:       release: RELEASE OF UNUSED FILECOOKIE!" ));
 			return TOS_EACCDN;
 		}
     fc->index->refCount--;
@@ -2385,6 +2462,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.28  2002/02/23 13:47:07  joy
+ * open() needs O_BINARY to not mess with CR/LF conversion (OSes from Microsoft)
+ *
  * Revision 1.27  2002/02/19 20:04:05  milan
  * src/ <-> CPU interaction cleaned
  * memory access cleaned
