@@ -851,10 +851,17 @@ void OSMesaDriver::ConvertContext16(Uint32 ctx)
 
 void OSMesaDriver::ConvertContext32(Uint32 ctx)
 {
-	int x,y, r,g,b,a, srcpitch, dstpitch, color;
-	Uint32 *srcline, *srccol;	/* FIXME: source values are float */
+#define FLOAT_TO_INT(source, value, maximum) \
+	{	\
+		value = (int) (source * maximum ## .0); \
+		if (value>maximum) value=maximum; \
+		if (value<0) value=0; \
+	}
 
-	srcline = (Uint32 *) contexts[ctx].src_buffer;
+	int x,y, r,g,b,a, srcpitch, dstpitch, color;
+	float *srcline, *srccol;
+
+	srcline = (float *) contexts[ctx].src_buffer;
 	srcpitch = contexts[ctx].width * 4;
 
 	switch(contexts[ctx].dstformat) {
@@ -869,9 +876,9 @@ void OSMesaDriver::ConvertContext32(Uint32 ctx)
 					dstcol = dstline;
 					for (x=0;x<contexts[ctx].width;x++) {
 						srccol++; /* Skip alpha */
-						r = ((*srccol++)>>27) & 31;
-						g = ((*srccol++)>>26) & 63;
-						b = ((*srccol++)>>27) & 31;
+						FLOAT_TO_INT(*srccol++, r, 31);
+						FLOAT_TO_INT(*srccol++, g, 63);
+						FLOAT_TO_INT(*srccol++, b, 31);
 
 						color = (r<<11)|(g<<5)|b;
 						*dstcol++ = SDL_SwapBE16(color);
@@ -892,9 +899,9 @@ void OSMesaDriver::ConvertContext32(Uint32 ctx)
 					dstcol = dstline;
 					for (x=0;x<contexts[ctx].width;x++) {
 						srccol++; /* Skip alpha */
-						r = ((*srccol++)>>24) & 255;
-						g = ((*srccol++)>>24) & 255;
-						b = ((*srccol++)>>24) & 255;
+						FLOAT_TO_INT(*srccol++, r, 255);
+						FLOAT_TO_INT(*srccol++, g, 255);
+						FLOAT_TO_INT(*srccol++, b, 255);
 
 						*dstcol++ = r;
 						*dstcol++ = g;
@@ -916,9 +923,9 @@ void OSMesaDriver::ConvertContext32(Uint32 ctx)
 					dstcol = dstline;
 					for (x=0;x<contexts[ctx].width;x++) {
 						srccol++; /* Skip alpha */
-						r = ((*srccol++)>>24) & 255;
-						g = ((*srccol++)>>24) & 255;
-						b = ((*srccol++)>>24) & 255;
+						FLOAT_TO_INT(*srccol++, r, 255);
+						FLOAT_TO_INT(*srccol++, g, 255);
+						FLOAT_TO_INT(*srccol++, b, 255);
 
 						*dstcol++ = b;
 						*dstcol++ = g;
@@ -939,10 +946,10 @@ void OSMesaDriver::ConvertContext32(Uint32 ctx)
 					srccol = srcline;
 					dstcol = dstline;
 					for (x=0;x<contexts[ctx].width;x++) {
-						a = ((*srccol++)>>24) & 255;
-						r = ((*srccol++)>>24) & 255;
-						g = ((*srccol++)>>24) & 255;
-						b = ((*srccol++)>>24) & 255;
+						FLOAT_TO_INT(*srccol++, a, 255);
+						FLOAT_TO_INT(*srccol++, r, 255);
+						FLOAT_TO_INT(*srccol++, g, 255);
+						FLOAT_TO_INT(*srccol++, b, 255);
 
 						color = (b<<24)|(g<<16)|(r<<8)|a;
 						*dstcol++ = SDL_SwapBE32(color);
@@ -962,10 +969,10 @@ void OSMesaDriver::ConvertContext32(Uint32 ctx)
 					srccol = srcline;
 					dstcol = dstline;
 					for (x=0;x<contexts[ctx].width;x++) {
-						a = ((*srccol++)>>24) & 255;
-						r = ((*srccol++)>>24) & 255;
-						g = ((*srccol++)>>24) & 255;
-						b = ((*srccol++)>>24) & 255;
+						FLOAT_TO_INT(*srccol++, a, 255);
+						FLOAT_TO_INT(*srccol++, r, 255);
+						FLOAT_TO_INT(*srccol++, g, 255);
+						FLOAT_TO_INT(*srccol++, b, 255);
 
 						color = (a<<24)|(r<<16)|(g<<8)|b;
 						*dstcol++ = SDL_SwapBE32(color);
@@ -985,10 +992,10 @@ void OSMesaDriver::ConvertContext32(Uint32 ctx)
 					srccol = srcline;
 					dstcol = dstline;
 					for (x=0;x<contexts[ctx].width;x++) {
-						a = ((*srccol++)>>24) & 255;
-						r = ((*srccol++)>>24) & 255;
-						g = ((*srccol++)>>24) & 255;
-						b = ((*srccol++)>>24) & 255;
+						FLOAT_TO_INT(*srccol++, a, 255);
+						FLOAT_TO_INT(*srccol++, r, 255);
+						FLOAT_TO_INT(*srccol++, g, 255);
+						FLOAT_TO_INT(*srccol++, b, 255);
 
 						color = (r<<24)|(g<<16)|(g<<8)|a;
 						*dstcol++ = SDL_SwapBE32(color);
