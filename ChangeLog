@@ -1,3 +1,8 @@
+2003/04/08 - joy
+- cfgopts: Thomas correctly suggested to use memmove() for overlapping
+  blocks of memory.
+
+
 2003/04/07 - STanda
 - hostfs.cpp: General debug messages cleanup.
     The st2flags() and flags2st() methods fixed (a need for open()).
