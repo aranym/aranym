@@ -2,7 +2,7 @@ aranym.xfs
 ==========
 
 The xfs contains only the HOSTFS (NatFeat) driven .XFS interface
-implementation stub mounted to U:\hostfs.
+implementation stub mounted to U:\[a-z].
 Later there might be some more devices so that we would only need
 single FreeMiNT kernel module (aranym.xfs).
 
@@ -20,25 +20,23 @@ Installation
 ------------
 MetaDOS driver:
  * copy new hostfs.dos to your AUTO folder and add the entries
-   into your config.sys (or bdconfig.sys) - like for aranymfs.dos
- * configure your paths - not implemented yet
+   into your bdconfig.sys, as follows:
 
-note: due to the bugs you might need to keep the aranymfs.dos to be
-      able to run programs under TOS.
+   \AUTO\HOSTFS.DOS, E:E
+   \AUTO\HOSTFS.DOS, F:F
+
+   This example maps drives E: and F:.
 
 FreeMiNT .XFS driver:
  * copy new aranym.xfs (replace the old one) to your
-   bootdrive:\MINT folder
- * configure your paths - not implemented yet
-
- You'll find "U:\hostfs" folder which maps the root of your host filesystem.
+   bootdrive:\MINT folder - drives are mounted automatically.
 
 
 BUGS
 ----
 hostfs.dos
- - relocatable programs crash
-   - a Pexec problem (most probably stack mangling)
+ - relocatable programs crash due to a serious bug in MetaDOS. Use BetaDOS
+   instead (version 3.12 - http://www.ettnet.se/~dlanor/main/html/ra_files.htm)
 
 aranym.xfs
  - the symlinks are not finished (work somehow).
