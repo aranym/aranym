@@ -126,7 +126,7 @@ int main(int argc, char **argv)
     const char *device;
 
     if (argc != 6) {
-    	fprintf(stderr, "Usage: %s tap_device host_IP atari_IP netmask mtu_size\n");
+    	fprintf(stderr, "Usage: %s tap_device host_IP atari_IP netmask mtu_size\n", argv[0]);
     	return -1;
     }
 
