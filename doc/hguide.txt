@@ -1,0 +1,109 @@
+1st step to Hacker's Guide
+--------------------------
+
+1) Types
+--------
+
+  In "sysdeps.h" there are declared platform independent integer types:
+
+int8     - signed 8 bit
+uint8    - unsigned 8 bit
+int16    - signed 16 bit
+uint16   - unsigned 16 bit
+int32    - signed 32 bit
+uint32   - unsigned 32 bit
+int64    - signed 64 bit
+uint64   - unsigned 64 bit
+
+uintptr  - unsigned size of (void *)
+intptr   - signed size of (void *)
+
+  For compatibility between ARAnyM and UAE CPU there are declared also these types:
+
+uae_s8   ~ int8
+uae_u8   ~ uint8
+uae_s16  ~ int16
+uae_u16  ~ uint16
+uae_s32  ~ int32
+uae_u32  ~ uint32
+uae_s64  ~ int64
+uae_u64  ~ uint64
+
+uaecptr  ~ uint32   - this type represents Atari's pointer
+
+  These types are only for interaction with CPU core. It is better to use uintXX/intXX types than uae_XXX types.
+
+  For compatibility between ARAnyM and Bochs IDE emulation there are declared also these types:
+Bit8u   ~ uint8
+Bit16u  ~ uint16
+Bit32u  ~ uint32
+
+  These types are only for internal IDE emulation, not for ARAnyM.
+
+2) Interaction with memory
+--------------------------
+
+  For interaction with memory there are six functions declared in "cpu_emulation.h", three for reading, three for writing:
+
+uint32 ReadAtariInt32(uint32 addr)
+uint16 ReadAtariInt16(uint32 addr)
+uint8 ReadAtariInt8(uint32 addr)
+
+void WriteAtariInt32(uint32 addr, uint32 l)
+void WriteAtariInt16(uint32 addr, uint16 w)
+void WriteAtariInt8(uint32 addr, uint8 b)
+
+  These functions have direct access to memory space. They ignore all settings of CPU (inclusive of MMU). All functions for an emulation of HW (DMA) in ARAnyM must become only physical addresses, not logical.
+  For all emulations of SW, there are another six functions declared in the same place:
+
+uint32 ReadInt32(uint32 addr)
+uint16 ReadInt16(uint32 addr)
+uint8 ReadInt8(uint32 addr)
+
+void WriteInt32(uint32 addr, uint32 l)
+void WriteInt16(uint32 addr, uint16 w)
+void WriteInt8(uint32 addr, uint8 b)
+
+  If you want to use underlying memory (memory allocated in HW I/O address space), you can use special, quick functions (they don't make any checking):
+
+uint32 ReadHWMemInt32(uint32 addr)
+uint16 ReadHWMemInt16(uint32 addr)
+uint8 ReadHWMemInt8(uint32 addr)
+
+void WriteHWMemInt32(uint32 addr, uint32 l)
+void WriteHWMemInt16(uint32 addr, uint16 w)
+void WriteHWMemInt8(uint32 addr, uint8 b)
+
+  If you want to generate some Exception, it can be done with this sample code:
+
+Exception(2, m68k_getpc());
+longjmp(excep_env, 0);
+
+  It generates Bus error (Exception No. 2)
+
+
+4) HW emulation
+---------------
+
+  In ARAnyM there are two possibilities how to emulate HW - old, classic, Motorola's - to use HW address space mapped to RAM address space and the second, which needs special drivers - to use emulated opcode. For the second possibility look at sections 5th and 6th of these guide.
+  If you want to write new emulated "HW" from original Atari computers for ARAnyM you must use older (but better) access for it - mapped address space. For inspiration look at "hardware.cpp" and e.g. "mmu.cpp".
+
+
+5) Emulated opcode
+------------------
+
+  For implementation of ARAnyM's specific HW, which cannot be supported by any emulator of Atari computer, you can use one opcode from 0x71XX. Look at "emul_op.cpp".
+
+
+6) Native features
+------------------
+  HW (or better functions) which are "emulator-independent can use Native features. In progress.
+
+7) CPU sources
+--------------
+BasiliskII (CVS 24.1.2002)
+BasiliskII JIT (15.1.2002)
+AmigaXL (Amithlon, AmigaOSXL) (12.6.2001)
+hatari (CVS 2.2.2002)
+UAE 0.8.20
+MMU patch 2 against 0.8.20 
