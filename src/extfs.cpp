@@ -1052,7 +1052,8 @@ void ExtFs::transformFileName( char* dest, const char* source )
 	D(bug("MetaDOS: transformFileName:... nameLen = %i, extLen = %i", nameLen, extLen));
 #endif
 
-	if ( nameLen > 8 || extLen > 3 )
+	if (	nameLen > 8 || extLen > 3 ||  // the filename is longer than the 8+3 standard
+		( nameLen <= 8 && extLen == 0 && dot != NULL ) )  // there is a dot at the end of the filename
 	{
 		// calculate a hash value from the long name
 		uint32 hashValue = 0;
@@ -1066,18 +1067,24 @@ void ExtFs::transformFileName( char* dest, const char* source )
 		char *hashStr = &hashString[5];
 
 		if ( extLen == 0 ) {
-			if ( nameLen < 12 ) {
-				// filename is max 11 chars long and no extension
-				// -> insert the . char into the name after the 8th char
-				nameLen = 8;
-				extLen = 3;
-				dot = (char*)source + nameLen;
-			} else {
+			if ( nameLen >= 12 ) {
 				// filename is longer than 8+3 and has no extension
 				// -> put the hash string as the file extension
 				nameLen = 8;
 				extLen = 3;
 				dot = hashStr;
+			} else {
+				// filename is max 11 chars long and no extension
+				if ( dot == NULL ) {
+					// no dot at the end -> insert the . char into the name after the 8th char
+					nameLen = 8;
+					dot = (char*)source + nameLen;
+				} else {
+					// there is a . at the end of the filename
+					nameLen = MIN(8,nameLen);
+					dot = hashStr;
+				}
+				extLen = 3;
 			}
 		} else {
 			// shorten the name part to max 5
@@ -2616,6 +2623,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.53  2002/06/25 08:37:40  standa
+ * DEBUG #if added to let it compile warn free.
+ *
  * Revision 1.52  2002/06/24 17:08:48  standa
  * The pointer arithmetics fixed. The memptr usage introduced in my code.
  *

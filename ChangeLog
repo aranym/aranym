@@ -1,3 +1,9 @@
+2002/07/01 - STanda
+- The filename -> 8.3 format transformation adjusted. Now it should handle
+  also the filenames ending with a dot (.). These should be appended with
+  a hash code as an extension.
+
+
 2002/06/26 - joy
 - SDL GUI integrated properly: it is now running in its own SDL thread
   so it's able to run in parallel with Atari emulation. The input events
