@@ -338,35 +338,14 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 	}
 
 	/* Select format */
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-	switch(format) {
-		case OSMESA_BGRA:
-			osmesa_format = OSMESA_ARGB;
-			contexts[j].conversion = SDL_FALSE;
-			break;
-		case OSMESA_ARGB:
-			osmesa_format = OSMESA_BGRA;
-			contexts[j].conversion = SDL_FALSE;
-			break;
-		case OSMESA_RGBA:
-			osmesa_format = OSMESA_BGRA;
-			contexts[j].conversion = SDL_TRUE;
-			break;
-		case OSMESA_RGB_565:
-			osmesa_format = OSMESA_RGB_565;
-			contexts[j].conversion = SDL_TRUE;
-			break;
-		case OSMESA_RGB:
-		case OSMESA_BGR:
-		case OSMESA_COLOR_INDEX:
-		default:
-			osmesa_format = format;
-			contexts[j].conversion = SDL_FALSE;
-			break;
-	}
-#else
 	osmesa_format = format;
 	contexts[j].conversion = SDL_FALSE;
+
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	if (format == OSMESA_RGB_565) {
+		osmesa_format = OSMESA_RGB_565;
+		contexts[j].conversion = SDL_TRUE;
+	}
 #endif
 
 	if (!libgl_needed && (format!=OSMESA_COLOR_INDEX)) {
@@ -383,7 +362,8 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 	memset((void *)&(contexts[j].index),0,sizeof(vertexarray_t));
 	memset((void *)&(contexts[j].edgeflag),0,sizeof(vertexarray_t));
 
-	D(bug("nfosmesa: format=%d, depth=%d, stencil=%d, accum=%d", osmesa_format, depthBits, stencilBits, accumBits));
+	D(bug("nfosmesa: format:%d -> %d, conversion: %s", osmesa_format, format, contexts[j].conversion ? "true" : "false"));
+	D(bug("nfosmesa: depth=%d, stencil=%d, accum=%d", depthBits, stencilBits, accumBits));
 	contexts[j].ctx=fn.OSMesaCreateContextExt(osmesa_format,depthBits,stencilBits,accumBits,share_ctx);
 	if (contexts[j].ctx==NULL) {
 		D(bug("nfosmesa: Can not create context"));
@@ -636,24 +616,6 @@ void OSMesaDriver::ConvertContext(Uint32 ctx)
 						*srccol++=color;
 					}
 					srcline += srcpitch;
-				}
-			}
-			break;
-		case OSMESA_BGRA: /* le:bgra to be:rgba */
-			{
-				Uint32 *srcline,*srccol,color;
-
-				D(bug("nfosmesa: ConvertContext LE:BGRA->BE:RGBA"));
-				srcline = (Uint32 *)contexts[ctx].dst_buffer;
-				srcpitch = contexts[ctx].width;
-				for (y=0;y<contexts[ctx].height;y++) {
-					srccol = srcline;
-					for (x=0;x<contexts[ctx].width;x++) {
-						color=*srccol; /* le:bgra = be:argb */
-						color=(((color&0xffffff00)>>8)|((color&0xff)<<24)); /* le:abgr = be:rgba */
-						*srccol++=color;
-					}
-					srcline+=srcpitch;
 				}
 			}
 			break;

@@ -1,6 +1,8 @@
 2005/02/18 - Patrice
 - nfosmesa: Can not autodetect which libOSMesa is loaded, so ChannelSize in
   config file is mandatory for any libOSMesa library used.
+  The OpenGL contexts created by OSMesa are endianness independent, no need to
+  convert them after rendering.
 - nfjpeg: Correct SDL include path.
 
 
