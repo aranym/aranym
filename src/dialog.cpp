@@ -37,9 +37,9 @@
 #include "sdlgui.h"
 #include "host.h"
 
-#define Screen_Save		hostScreen.save
+#define Screen_Save		hostScreen.save_bkg
 #define Screen_SetFullUpdate()
-#define Screen_Draw		hostScreen.restore
+#define Screen_Draw		hostScreen.restore_bkg
 
 static bool bQuitProgram;
 
