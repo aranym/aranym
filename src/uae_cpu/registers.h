@@ -55,7 +55,6 @@ struct log_addr8 {
 extern struct regstruct
 {
     uae_u32 regs[16];
-    signed char autoinc[8];
     uaecptr  usp,isp,msp;
     uae_u16 sr;
     flagtype t1;
@@ -67,6 +66,7 @@ extern struct regstruct
     int intmask;
 
     uae_u32 pc;
+    uae_u32 fault_pc;
     uae_u8 *pc_p;
     uae_u8 *pc_oldp;
 
@@ -98,6 +98,8 @@ extern struct regstruct
 
     uae_u32 mmu_fslw, mmu_fault_addr;
     uae_u16 mmu_ssw;
+    uae_u32 wb3_data;
+    uae_u16 wb3_status;
 
 #if 0
     flagtype atcvali[ATCSIZE];
@@ -132,7 +134,11 @@ extern struct regstruct
 
 static inline uaecptr m68k_getpc (void)
 {
+#ifdef FULLMMU
+    return regs.pc;
+#else
     return regs.pc + ((char *)regs.pc_p - (char *)regs.pc_oldp);
+#endif
 }
 
 #endif
