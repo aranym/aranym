@@ -1,4 +1,8 @@
-/* Joy 2001 */
+/*
+ * $Header$
+ *
+ * Joy 2001
+ */
 
 #include "sysdeps.h"
 #include "hardware.h"
@@ -344,3 +348,9 @@ void VIDEL::update_screen()
 
 	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
 }
+
+
+
+/*
+ * $log$
+ */
