@@ -1,5 +1,5 @@
 aranym.sys
-.C	[-X -Y -P -I=..\..\include\ -I=..\..\drivers\include\]
+.C	[-X -Y -P -I=..\..\include\ -I=..\include\]
 .S	[-3 -S -Y -I=..\..\include]
 .L
 =

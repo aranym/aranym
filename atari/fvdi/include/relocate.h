@@ -1,5 +1,14 @@
 #ifndef RELOCATE_H
 #define RELOCATE_H
+/*
+ * fVDI driver->engine interface declarations, by Johan Klockars.
+ *
+ * Since it would be difficult to do without this file when
+ * writing new device drivers, and to make it possible for
+ * some such drivers to be commercial, this file is put in
+ * the public domain. It's not copyrighted or under any sort
+ * of license.
+ */
 
 #include "fvdi.h"
 

@@ -1,5 +1,17 @@
 #ifndef FVDI_H
 #define FVDI_H
+/* 
+ * fVDI structure declarations, by Johan Klockars.
+ *
+ * Most C files in the fVDI engine, as well as in its
+ * device drivers, need to include this file.
+ *
+ * Since it would be difficult to do without this file when
+ * writing new device drivers, and to make it possible for
+ * some such drivers to be commercial, this file is put in
+ * the public domain. It's not copyrighted or under any sort
+ * of license.
+ */
 
 #ifdef __PUREC__
 #define CDECL cdecl

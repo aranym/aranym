@@ -1,3 +1,18 @@
+*****
+* fVDI structure declarations, by Johan Klockars
+*
+* This is auto-generated from fVDI.h
+*
+* Most assembly files in the fVDI engine, as well as in its
+* device drivers, need to include this file.
+*
+* Since it would be difficult to do without this file when
+* writing new device drivers, and to make it possible for
+* some such drivers to be commercial, this file is put in
+* the public domain. It's not copyrighted or under any sort
+* of license.
+*****
+
 vwk_real_address	equ	0
 vwk_standard_handle	equ	4
 vwk_text	equ	6

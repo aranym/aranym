@@ -1,9 +1,11 @@
 /*
- * fVDI generic device driver initialization
+ * fVDI generic device driver initialization, by Johan Klockars
  *
- * Copyright 1998-2000, Johan Klockars 
- * This software is licensed under the GNU General Public License.
- * Please, see LICENSE.TXT for further information.
+ * Since it would be difficult to do without this file when
+ * writing new device drivers, and to make it possible for
+ * some such drivers to be commercial, this file is put in
+ * the public domain. It's not copyrighted or under any sort
+ * of license.
  *
  * I don't expect this file to need many changes for different modes
  * and hardware.

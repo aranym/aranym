@@ -1,28 +1,32 @@
 *****
-* FenixVDI Device Driver graphics mode check
+* fVDI device driver graphics mode check, by Johan Klockars
 *
-* The tables are mostly outdated
+* This file is put in the public domain.
+* It's not copyrighted or under any sort of license.
 *****
+
 doaline		equ	0	; Do actual drawing w/ linea (clip)
 mul		equ	1	; Multiply rather than use table
 shift		equ	1
 
 	include		"vdi.inc"
-	ifne	doaline
+  ifne	doaline
 	include		"linea.inc"
-	endc
+  endc
 
 	xdef		_check_linea
-	ifeq		shift
+  ifeq		shift
 	xdef		dot,line,rline
-	endc
-	ifeq		mul
+  endc
+  ifeq		mul
 	xdef		row
-	endc
+  endc
 	xdef		_font_table
 
 
 	text
+
+* The tables are mostly outdated
 	
 ;colour:
 ;	dc.l		$00000000,$00000000
@@ -42,7 +46,7 @@ shift		equ	1
 ;	dc.l		$0000ffff,$ffffffff
 ;	dc.l		$ffffffff,$ffffffff
 
-	ifeq	shift
+  ifeq	shift
 dot:	dc.l		$80008000,$40004000,$20002000,$10001000
 	dc.l		$08000800,$04000400,$02000200,$01000100
 	dc.l		$00800080,$00400040,$00200020,$00100010
@@ -57,11 +61,11 @@ rline:	dc.l		$80008000,$c000c000,$e000e000,$f000f000
 	dc.l		$f800f800,$fc00fc00,$fe00fe00,$ff00ff00
 	dc.l		$ff80ff80,$ffc0ffc0,$ffe0ffe0,$fff0fff0
 	dc.l		$fff8fff8,$fffcfffc,$fffefffe,$ffffffff
-	endc
+  endc
 
-	ifeq	mul
+  ifeq	mul
 row:	ds.l		1024
-	endc
+  endc
 
 ; This used to setup clip as x,y,w,h
 * _check_linea - Initialization function
@@ -83,13 +87,13 @@ _check_linea:
 	move.w		d1,wk_screen_mfdb_height(a4)
 	move.w		(a0),wk_screen_mfdb_bitplanes(a4)
 
-	ifne	doaline
+  ifne	doaline
 	move.w		#$ffff,lnmask(a0)	; solid line
 	move.w		#0,wmode(a0)	; replace mode
 	move.w		#0,lst_lin(a0)	; don't write last pixel
-	endc
+  endc
 
-	ifeq	mul
+  ifeq	mul
 	move.l		wk_screen_mfdb_address(a4),d0
 	moveq		#0,d1
 	move.w		wk_screen_wrap(a4),d1
@@ -100,7 +104,7 @@ _check_linea:
 	move.l		d0,(a0)+
 	add.l		d1,d0
 	dbra		d7,.row_l
-	endc
+  endc
 
 	movem.l	(a7)+,d0-d3/a0-a4
 	rts

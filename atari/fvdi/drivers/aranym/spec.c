@@ -395,7 +395,6 @@ void CDECL initialize(Virtual *vwk)
 #ifdef ARANYM
 	if (resolution.used) {
 		resolution.bpp = graphics_mode->bpp; /* Table value (like rounded down) --- e.g. no 23bit but 16 etc */
-		set_resolution( resolution.width, resolution.height, resolution.bpp, resolution.freq );
 
 		wk->screen.mfdb.width = resolution.width;
 		wk->screen.mfdb.height = resolution.height;
@@ -527,6 +526,9 @@ long CDECL setup(long type, long value)
  */
 Virtual* CDECL opnwk(Virtual *vwk)
 {
+	if (resolution.used)
+		set_resolution( resolution.width, resolution.height, resolution.bpp, resolution.freq );
+
 	return 0;
 }
 

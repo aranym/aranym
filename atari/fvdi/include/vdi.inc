@@ -1,4 +1,10 @@
-;lattice		equ	1		; Assemble for DevPac/Lattice?
+*****
+* fVDI VDI declarations, by Johan Klockars
+*
+* This file is put in the public domain.
+* It's not copyrighted or under any sort of license.
+*****
+
 	include	"compiler.inc"
 
 CHUNKY		equ	1

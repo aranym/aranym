@@ -1,3 +1,13 @@
+/* 
+ * fVDI default colours, by Johan Klockars
+ *
+ * Generated automatically with what should
+ * be the default VDI colours under TOS4.04.
+ *
+ * This file is put in the public domain.
+ * It's not copyrighted or under any sort of license.
+ */
+
 short colours[] = {
 1000,1000,1000,     0,   0,   0,  1000,   1,   0,     0,1000,   0,  
    0,   0,1000,     0,1000,1000,  1000,1000,   0,  1000,   0,1000,  

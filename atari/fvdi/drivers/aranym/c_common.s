@@ -1,6 +1,14 @@
-*-------------------------------------------------------*
-*	fVDI->driver interface (C functions)		*	
-*-------------------------------------------------------*
+*****
+* fVDI->driver interface (C functions), by Johan Klockars
+*
+* Most fVDI device drivers are expected to make use of this file.
+*
+* Since it would be difficult to do without this file when
+* writing new device drivers, and to make it possible for
+* some such drivers to be commercial, this file is put in
+* the public domain. It's not copyrighted or under any sort
+* of license.
+*****
 
 	include		"vdi.inc"
 

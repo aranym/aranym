@@ -1,3 +1,10 @@
+*****
+* fVDI helper functions for PureC, by Johan Klockars
+*
+* This file is put in the public domain.
+* It's not copyrighted or under any sort of license.
+*****
+
 	xref	_init
 	xref	_ulmod,_uldiv,_ldiv,_ulmul,_lmul
 

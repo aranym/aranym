@@ -1,5 +1,5 @@
 /*
- *      32 bit colour index handling
+ *      8 bit colour index handling
  */
 
 #define GETNAME	    c_get_colours_8

@@ -1,5 +1,14 @@
 #ifndef DRIVER_H
 #define DRIVER_H
+/* 
+ * fVDI driver declarations, by Johan Klockars.
+ *
+ * Since it would be difficult to do without this file when
+ * writing new device drivers, and to make it possible for
+ * some such drivers to be commercial, this file is put in
+ * the public domain. It's not copyrighted or under any sort
+ * of license.
+ */
 
 #define MAGIC     "InitMagic"
 

@@ -1,10 +1,14 @@
-*-------------------------------------------------------*
-*	fVDI->driver interface (assembly routines)	*	
-*-------------------------------------------------------*
+*****
+* fVDI->driver interface (assembly routines), by Johan Klockars
 *
-* Copyright 1997-2000, Johan Klockars 
-* This software is licensed under the GNU General Public License.
-* Please, see LICENSE.TXT for further information.
+* Most fVDI device drivers are expected to make use of this file.
+*
+* Since it would be difficult to do without this file when
+* writing new device drivers, and to make it possible for
+* some such drivers to be commercial, this file is put in
+* the public domain. It's not copyrighted or under any sort
+* of license.
+*****
 
 both		equ	1	; Write in both FastRAM and on screen
 upto8		equ	0	; Handle 8 bit drawing
