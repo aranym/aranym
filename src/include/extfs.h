@@ -156,7 +156,7 @@ class ExtFs {
 	 **/
 	ExtDrive* getDrive( const char* pathName );
 	void transformFileName( char* dest, const char* source );
-	bool getHostFileName( char* result, ExtDrive* drv, char* path, char* name );
+	bool getHostFileName( char* result, ExtDrive* drv, char* pathName, const char* name );
 	void convertPathA2F( char* fpathName, char* pathName, char* basePath = NULL );
 
 	int16  getFreeDirIndex( char **pathNames );
@@ -247,6 +247,7 @@ class ExtFs {
 	int32 xfs_getxattr( XfsCookie *fc, uint32 xattrp );
 	int32 xfs_getdev( XfsCookie *fc, int32 *devspecial );
 	int32 xfs_lookup( XfsCookie *dir, char *name, XfsCookie *fc );
+	int32 xfs_getname( XfsCookie *relto, XfsCookie *dir, char *pathName, int16 size );
 	int32 xfs_creat( XfsCookie *dir, char *name, uint16 mode, int16 flags, XfsCookie *fc );
 	int32 xfs_rename( XfsCookie *olddir, char *oldname, XfsCookie *newdir, char *newname );
 	int32 xfs_remove( XfsCookie *dir, char *name );
@@ -270,6 +271,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.12  2002/01/31 23:51:22  standa
+ * The aranym.xfs for MiNT. Preliminary version.
+ *
  * Revision 1.11  2002/01/26 21:22:24  standa
  * Cleanup from no needed method arguments.
  *
