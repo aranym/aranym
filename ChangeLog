@@ -1,6 +1,17 @@
 2002/02/25 - milan
 - fp_extended, fp_single, fp_double -> fpu_extended, fpu_single, fpu_double
 
+- spcflags handling rewritten
+
+- original PC handling, must be converted to ARAnyM's after stabilization
+  (slower)
+
+- exception stack handling is for 68040 now
+
+- table68k based on JIT BasiliskII
+
+- EmulOp (0x71XX) is handled as usual instruction
+
 
 2002/02/25 - joy
 - web updated (Ctirad wrote new About)

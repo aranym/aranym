@@ -25,27 +25,107 @@ extern int movem_next[256];
 
 extern int broken_in;
 
-typedef void REGPARAM2 cpuop_func (uae_u32) REGPARAM;
+/* Control flow information */
+#define CFLOW_NORMAL		0
+#define CFLOW_BRANCH		1
+#define CFLOW_JUMP			2
+#define CFLOW_TRAP			CFLOW_JUMP
+#define CFLOW_RETURN		3
+#define CFLOW_SPCFLAGS		32	/* some spcflags are set */
+#define CFLOW_EXEC_RETURN	64	/* must exit from the execution loop */
+
+#define cpuop_rettype		void
+#define cpuop_return(v)		do { (v); return; } while (0)
+
+#ifdef X86_ASSEMBLY
+/* This hack seems to force all register saves (pushl %reg) to be moved to the
+   begining of the function, thus making it possible to cpuopti to remove them
+   since m68k_run_1 will save those registers before calling the instruction
+   handler */
+# define cpuop_tag(tag)		ASM_VOLATILE ( "#cpuop_" tag )
+#else
+# define cpuop_tag(tag)		;
+#endif
+
+#define cpuop_begin()		do { cpuop_tag("begin"); } while (0)
+#define cpuop_end(cflow)	do { cpuop_tag("end"); cpuop_return(cflow); } while (0)
+
+typedef cpuop_rettype REGPARAM2 cpuop_func (uae_u32) REGPARAM;
 
 struct cputbl {
     cpuop_func *handler;
-    int specific;
+    uae_u16 specific;
     uae_u16 opcode;
 };
 
-extern void REGPARAM2 op_illg (uae_u32) REGPARAM;
+extern cpuop_func *cpufunctbl[65536] ASM_SYM_FOR_FUNC ("cpufunctbl");
+
+#if USE_JIT
+typedef void compop_func (uae_u32) REGPARAM;
+
+struct comptbl {
+    compop_func *handler;
+	uae_u32		specific;
+	uae_u32		opcode;
+};
+#endif
+
+extern cpuop_rettype REGPARAM2 op_illg (uae_u32) REGPARAM;
 
 #define m68k_dreg(r,num) ((r).regs[(num)])
 #define m68k_areg(r,num) (((r).regs + 8)[(num)])
 
-#define get_ibyte(o) do_get_mem_byte((uae_u8 *)(get_real_address(regs.pcp, 0, regs.pcp, sz_byte) + (o) + 1))
-#define get_iword(o) do_get_mem_word((uae_u16 *)(get_real_address(regs.pcp, 0, regs.pcp, sz_word) + (o)))
-#define get_ilong(o) do_get_mem_long((uae_u32 *)(get_real_address(regs.pcp, 0, regs.pcp, sz_long) + (o)))
+#ifdef FULLMMU
+static __inline__ uae_u8 get_ibyte(uae_u32 o)
+{
+    uaecptr addr = m68k_getpc() + o + 1;
+    return phys_get_byte(mmu_translate(addr, FC_INST, 0, addr, sz_byte, 0));
+}
+static __inline__ uae_u16 get_iword(uae_u32 o)
+{
+    uaecptr addr = m68k_getpc() + o;
+    return phys_get_word(mmu_translate(addr, FC_INST, 0, addr, sz_word, 0));
+}
+static __inline__ uae_u32 get_ilong(uae_u32 o)
+{
+    uaecptr addr = m68k_getpc() + o;
+    return phys_get_long(mmu_translate(addr, FC_INST, 0, addr, sz_long, 0));
+}
 
+static __inline__ uae_u8 get_ibyte_1(uae_u32 o)
+{
+    uaecptr addr = m68k_getpc() + o + 1;
+    return phys_get_byte(mmu_translate(addr, FC_INST, 0, addr, sz_byte, 0));
+}
+static __inline__ uae_u16 get_iword_1(uae_u32 o)
+{
+    uaecptr addr = m68k_getpc() + o;
+    return phys_get_word(mmu_translate(addr, FC_INST, 0, addr, sz_word, 0));
+}
+
+static __inline__ uae_u32 get_ilong_1(uae_u32 o)
+{
+    uaecptr addr = m68k_getpc() + o;
+    return phys_get_long(mmu_translate(addr, FC_INST, 0, addr, sz_long, 0));
+}
+#else
+#define get_ibyte(o) do_get_mem_byte((uae_u8 *)(get_real_address(m68k_getpc(), 0, sz_byte) + (o) + 1))
+#define get_iword(o) do_get_mem_word((uae_u16 *)(get_real_address(m68k_getpc(), 0, sz_word) + (o)))
+#define get_ilong(o) do_get_mem_long((uae_u32 *)(get_real_address(m68k_getpc(), 0, sz_long) + (o)))
+#endif
+
+#ifdef ARAM_PAGE_CHECK
+# ifdef HAVE_GET_WORD_UNSWAPPED
+#define GET_OPCODE (do_get_mem_word_unswapped((uae_u16*)(pc + pc_offset)));
+# else
+#define GET_OPCODE (do_get_mem_word((uae_u16*)(pc + pc_offset)));
+# endif
+#else
 #ifdef HAVE_GET_WORD_UNSWAPPED
-#define GET_OPCODE (do_get_mem_word_unswapped (get_real_address(regs.pcp, 0, regs.pcp, sz_word)))
+#define GET_OPCODE (do_get_mem_word_unswapped (get_real_address(m68k_getpc(), 0, sz_word)))
 #else
 #define GET_OPCODE (get_iword (0))
+#endif
 #endif
 
 #if 0
@@ -73,17 +153,17 @@ static __inline__ uae_u32 get_ilong_prefetch (uae_s32 o)
 }
 #endif
 
-#define m68k_incpc(o) (regs.pcp += (o))
+#define m68k_incpc(o) (regs.pc_p += (o))
 
 static __inline__ void fill_prefetch_0 (void)
 {
 #if USE_PREFETCH_BUFFER
     uae_u32 r;
 #ifdef UNALIGNED_PROFITABLE
-    r = *(uae_u32 *)do_get_real_address(regs.pcp, false, false);
+    r = *(uae_u32 *)do_get_real_address(m68k_getpc(), false, false);
     regs.prefetch = r;
 #else
-    r = do_get_mem_long ((uae_u32 *)do_get_real_address(regs.pcp, false, false));
+    r = do_get_mem_long ((uae_u32 *)do_get_real_address(m68k_getpc(), false, false));
     do_put_mem_long (&regs.prefetch, r);
 #endif
 #endif
@@ -126,12 +206,8 @@ static __inline__ uae_u32 next_ilong (void)
 
 static __inline__ void m68k_setpc (uaecptr newpc)
 {
-	regs.pcp = newpc;
-}
-
-static __inline__ uaecptr m68k_getpc (void)
-{
-    return regs.pcp;
+    regs.pc_p = regs.pc_oldp = get_real_address(newpc, 0, sz_word);
+    regs.pc = newpc;
 }
 
 #define m68k_setpc_fast m68k_setpc
@@ -172,10 +248,12 @@ extern void MakeSR (void);
 extern void MakeFromSR (void);
 extern void Exception (int, uaecptr);
 extern void dump_counts (void);
-extern uae_u32 m68k_move2c (int, uae_u32 *);
-extern uae_u32 m68k_movec2 (int, uae_u32 *);
+extern int m68k_move2c (int, uae_u32 *);
+extern int m68k_movec2 (int, uae_u32 *);
 extern void m68k_divl (uae_u32, uae_u32, uae_u16, uaecptr);
 extern void m68k_mull (uae_u32, uae_u32, uae_u16);
+extern void m68k_emulop (uae_u32);
+extern void m68k_emulop_return (void);
 extern void init_m68k (void);
 extern void exit_m68k (void);
 extern void m68k_go (int);
@@ -199,7 +277,5 @@ extern uaecptr last_fault_for_exception_3;
 
 /* 68040+ 68881 */
 extern struct cputbl op_smalltbl_0[];
-
-extern cpuop_func *cpufunctbl[65536] ASM_SYM_FOR_FUNC ("cpufunctbl");
 
 #endif /* NEWCPU_H */

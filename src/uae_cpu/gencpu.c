@@ -191,7 +191,7 @@ static void fill_prefetch_2 (void)
 static void swap_opcode (void)
 {
   printf ("#ifdef HAVE_GET_WORD_UNSWAPPED\n");
-  printf ("\topcode = ((opcode << 8) & 0xFF00) | ((opcode >> 8) & 0xFF);\n");
+  printf ("\topcode = do_byteswap_16(opcode);\n");
   printf ("#endif\n");
 }
 
@@ -815,13 +815,32 @@ static int source_is_imm1_8 (struct instr *i)
     return i->stype == 3;
 }
 
+static const char * cflow_string_of(uae_u32 opcode)
+{
+	const char * cflow_type_str;
+	
+	int cflow_type = table68k[opcode].cflow & ~fl_trap;
+	switch (cflow_type) {
+		case fl_branch:		cflow_type_str = "CFLOW_BRANCH";		break;
+		case fl_jump:		cflow_type_str = "CFLOW_JUMP";			break;
+		case fl_return:		cflow_type_str = "CFLOW_RETURN";		break;
+		default:			cflow_type_str = "CFLOW_NORMAL";
+	}
+	
+	/* Patch M68K_EXEC_RETURN instruction */
+	if (table68k[opcode].mnemo == i_EMULOP_RETURN)
+		cflow_type_str = "CFLOW_EXEC_RETURN";
+	
+	return cflow_type_str;
+}
+
 static void gen_opcode (unsigned long int opcode)
 {
     struct instr *curi = table68k + opcode;
 
     start_brace ();
 #if 0
-    printf ("uae_u8 *m68k_pc = regs.pcp;\n");
+    printf ("uae_u8 *m68k_pc = m68k_getpc();\n");
 #endif
     m68k_pc_offset = 2;
     switch (curi->plev) {
@@ -1192,7 +1211,7 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\telse if ((format & 0xF000) == 0x1000) { ; }\n");
 	    printf ("\telse if ((format & 0xF000) == 0x2000) { m68k_areg(regs, 7) += 4; break; }\n");
 	    printf ("\telse if ((format & 0xF000) == 0x3000) { m68k_areg(regs, 7) += 4; break; }\n");
-	    printf ("\telse if ((format & 0xF000) == 0x7000) { m68k_areg(regs, 7) += 52; break; }\n");
+	    printf ("\telse if ((format & 0xF000) == 0x7000) { m68k_areg(regs, 7) += 60; break; }\n");
 	    printf ("\telse if ((format & 0xF000) == 0x8000) { m68k_areg(regs, 7) += 50; break; }\n");
 	    printf ("\telse if ((format & 0xF000) == 0x9000) { m68k_areg(regs, 7) += 12; break; }\n");
 	    printf ("\telse if ((format & 0xF000) == 0xa000) { m68k_areg(regs, 7) += 24; break; }\n");
@@ -1308,7 +1327,7 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tm68k_incpc ((uae_s32)src + 2);\n");
 #endif
 	fill_prefetch_0 ();
-	printf ("\tgoto %s;\n", endlabelstr);
+	printf ("cpuop_return(%s);\n", cflow_string_of(opcode));
 	printf ("didnt_jump:;\n");
 	need_endlabel = 1;
 	break;
@@ -1344,7 +1363,7 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\t\t\tm68k_incpc((uae_s32)offs + 2);\n");
 #endif
 	fill_prefetch_0 ();
-	printf ("\t\tgoto %s;\n", endlabelstr);
+	printf ("cpuop_return(%s);\n", cflow_string_of(opcode));
 	printf ("\t\t}\n");
 	printf ("\t}\n");
 	need_endlabel = 1;
@@ -1438,7 +1457,7 @@ static void gen_opcode (unsigned long int opcode)
 	    abort ();
 	}
 	printf ("\tSET_ZFLG (upper == reg || lower == reg);\n");
-	printf ("\tSET_CFLG (lower <= upper ? reg < lower || reg > upper : reg > upper || reg < lower);\n");
+	printf ("\tSET_CFLG_ALWAYS (lower <= upper ? reg < lower || reg > upper : reg > upper || reg < lower);\n");
 	printf ("\tif ((extra & 0x800) && GET_CFLG) { Exception(6,oldpc); goto %s; }\n}\n", endlabelstr);
 	need_endlabel = 1;
 	break;
@@ -1828,14 +1847,14 @@ static void gen_opcode (unsigned long int opcode)
 	start_brace ();
 	printf ("\tint regno = (src >> 12) & 15;\n");
 	printf ("\tuae_u32 *regp = regs.regs + regno;\n");
-	printf ("\tm68k_movec2(src & 0xFFF, regp);\n");
+	printf ("\tif (!m68k_movec2(src & 0xFFF, regp)) goto %s;\n", endlabelstr);
 	break;
      case i_MOVE2C:
 	genamode (curi->smode, "srcreg", curi->size, "src", 1, 0);
 	start_brace ();
 	printf ("\tint regno = (src >> 12) & 15;\n");
 	printf ("\tuae_u32 *regp = regs.regs + regno;\n");
-	printf ("\tm68k_move2c(src & 0xFFF, regp);\n");
+	printf ("\tif (!m68k_move2c(src & 0xFFF, regp)) goto %s;\n", endlabelstr);
 	break;
      case i_CAS:
 	{
@@ -1975,7 +1994,7 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\ttmp = (bf0 << (offset & 7)) | (bf1 >> (8 - (offset & 7)));\n");
 	}
 	printf ("\ttmp >>= (32 - width);\n");
-	printf ("\tSET_NFLG (tmp & (1 << (width-1)) ? 1 : 0);\n");
+	printf ("\tSET_NFLG_ALWAYS (tmp & (1 << (width-1)) ? 1 : 0);\n");
 	printf ("\tSET_ZFLG (tmp == 0); SET_VFLG (0); SET_CFLG (0);\n");
 	switch (curi->mnemo) {
 	 case i_BFTST:
@@ -2003,7 +2022,7 @@ static void gen_opcode (unsigned long int opcode)
 	    break;
 	 case i_BFINS:
 	    printf ("\ttmp = m68k_dreg(regs, (extra >> 12) & 7);\n");
-	    printf ("\tSET_NFLG (tmp & (1 << (width - 1)) ? 1 : 0);\n");
+	    printf ("\tSET_NFLG_ALWAYS (tmp & (1 << (width - 1)) ? 1 : 0);\n");
 	    printf ("\tSET_ZFLG (tmp == 0);\n");
 	    break;
 	 default:
@@ -2075,19 +2094,19 @@ static void gen_opcode (unsigned long int opcode)
 	genamode (curi->smode, "srcreg", curi->size, "extra", 1, 0);
 	sync_m68k_pc ();
 	swap_opcode ();
-	printf ("\tfpuop_arithmetic(opcode,extra);\n");
+	printf ("\tfpuop_arithmetic(opcode, extra);\n");
 	break;
      case i_FDBcc:
 	genamode (curi->smode, "srcreg", curi->size, "extra", 1, 0);
 	sync_m68k_pc ();
 	swap_opcode ();
-	printf ("\tfpuop_dbcc(opcode,extra);\n");
+	printf ("\tfpuop_dbcc(opcode, extra);\n");
 	break;
      case i_FScc:
 	genamode (curi->smode, "srcreg", curi->size, "extra", 1, 0);
 	sync_m68k_pc ();
 	swap_opcode ();
-	printf ("\tfpuop_scc(opcode,extra);\n");
+	printf ("\tfpuop_scc(opcode, extra);\n");
 	break;
      case i_FTRAPcc:
 	sync_m68k_pc ();
@@ -2097,7 +2116,7 @@ static void gen_opcode (unsigned long int opcode)
 	    genamode (curi->smode, "srcreg", curi->size, "dummy", 1, 0);
 	sync_m68k_pc ();
 	swap_opcode ();
-	printf ("\tfpuop_trapcc(opcode,oldpc);\n");
+	printf ("\tfpuop_trapcc(opcode, oldpc);\n");
 	break;
      case i_FBcc:
 	sync_m68k_pc ();
@@ -2106,7 +2125,7 @@ static void gen_opcode (unsigned long int opcode)
 	genamode (curi->dmode, "srcreg", curi->size, "extra", 1, 0);
 	sync_m68k_pc ();
 	swap_opcode ();
-	printf ("\tfpuop_bcc(opcode,pc,extra);\n");
+	printf ("\tfpuop_bcc(opcode, pc, extra);\n");
 	break;
      case i_FSAVE:
 	sync_m68k_pc ();
@@ -2190,6 +2209,18 @@ static void gen_opcode (unsigned long int opcode)
 	swap_opcode ();
 	printf ("\tmmu_op(opcode,extra);\n");
 	break;
+
+     case i_EMULOP_RETURN:
+	printf ("\tm68k_emulop_return();\n");
+	m68k_pc_offset = 0;
+	break;
+	
+     case i_EMULOP:
+	printf ("\n");
+	swap_opcode ();
+	printf ("\tm68k_emulop(opcode);\n");
+	break;
+
      default:
 	abort ();
 	break;
@@ -2207,6 +2238,16 @@ static void generate_includes (FILE * f)
     fprintf (f, "#include \"newcpu.h\"\n");
     fprintf (f, "#include \"fpu/fpu.h\"\n");
     fprintf (f, "#include \"cputbl.h\"\n");
+
+    fprintf (f, "#define SET_CFLG_ALWAYS(x) SET_CFLG(x)\n");
+    fprintf (f, "#define SET_NFLG_ALWAYS(x) SET_NFLG(x)\n");
+    fprintf (f, "#define CPUFUNC_FF(x) x##_ff\n");
+    fprintf (f, "#define CPUFUNC_NF(x) x##_nf\n");
+    fprintf (f, "#define CPUFUNC(x) CPUFUNC_FF(x)\n");
+	
+    fprintf (f, "#ifdef NOFLAGS\n");
+    fprintf (f, "# include \"noflags.h\"\n");
+    fprintf (f, "#endif\n");
 }
 
 static int postfix;
@@ -2230,13 +2271,28 @@ static void generate_one_opcode (int rp)
 	return;
 
     if (opcode_next_clev[rp] != cpu_level) {
-	fprintf (stblfile, "{ op_%lx_%d, 0, %ld }, /* %s */\n", opcode, opcode_last_postfix[rp],
+	fprintf (stblfile, "{ CPUFUNC(op_%lx_%d), 0, %ld }, /* %s */\n", opcode, opcode_last_postfix[rp],
 		 opcode, lookuptab[i].name);
 	return;
     }
-    fprintf (stblfile, "{ op_%lx_%d, 0, %ld }, /* %s */\n", opcode, postfix, opcode, lookuptab[i].name);
-    fprintf (headerfile, "extern cpuop_func op_%lx_%d;\n", opcode, postfix);
-    printf ("void REGPARAM2 op_%lx_%d(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
+
+	if (table68k[opcode].flagdead == 0)
+	/* force to the "ff" variant since the instruction doesn't set at all the condition codes */
+    fprintf (stblfile, "{ CPUFUNC_FF(op_%lx_%d), 0, %ld }, /* %s */\n", opcode, postfix, opcode, lookuptab[i].name);
+	else
+    fprintf (stblfile, "{ CPUFUNC(op_%lx_%d), 0, %ld }, /* %s */\n", opcode, postfix, opcode, lookuptab[i].name);
+
+    fprintf (headerfile, "extern cpuop_func op_%lx_%d_nf;\n", opcode, postfix);
+    fprintf (headerfile, "extern cpuop_func op_%lx_%d_ff;\n", opcode, postfix);
+    printf ("cpuop_rettype REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
+	printf ("\tcpuop_begin();\n");
+	
+	/* gb-- The "nf" variant for an instruction that doesn't set the condition
+	   codes at all is the same as the "ff" variant, so we don't need the "nf"
+	   variant to be compiled since it is mapped to the "ff" variant in the
+	   smalltbl. */
+	if (table68k[opcode].flagdead == 0)
+	printf ("#ifndef NOFLAGS\n");
 
     switch (table68k[opcode].stype) {
      case 0: smsk = 7; break;
@@ -2245,7 +2301,8 @@ static void generate_one_opcode (int rp)
      case 3: smsk = 7; break;
      case 4: smsk = 7; break;
      case 5: smsk = 63; break;
-	 case 7: smsk = 3; break;
+     case 6: smsk = 255; break;
+     case 7: smsk = 3; break;
      default: abort ();
     }
     dmsk = 7;
@@ -2255,7 +2312,12 @@ static void generate_one_opcode (int rp)
 	&& table68k[opcode].smode != imm && table68k[opcode].smode != imm0
 	&& table68k[opcode].smode != imm1 && table68k[opcode].smode != imm2
 	&& table68k[opcode].smode != absw && table68k[opcode].smode != absl
-	&& table68k[opcode].smode != PC8r && table68k[opcode].smode != PC16)
+	&& table68k[opcode].smode != PC8r && table68k[opcode].smode != PC16
+	/* gb-- We don't want to fetch the EmulOp code since the EmulOp()
+	   routine uses the whole opcode value. Maybe all the EmulOps
+	   could be expanded out but I don't think it is an improvement */
+	&& table68k[opcode].stype != 6
+	)
     {
 	if (table68k[opcode].spos == -1) {
 	    if (((int) table68k[opcode].sreg) >= 128)
@@ -2351,6 +2413,9 @@ static void generate_one_opcode (int rp)
     gen_opcode (opcode);
     if (need_endlabel)
 	printf ("%s: ;\n", endlabelstr);
+    if (table68k[opcode].flagdead == 0)
+	printf ("\n#endif\n");
+    printf ("\tcpuop_end(%s);\n", cflow_string_of(opcode));
     printf ("}\n");
     opcode_next_clev[rp] = next_cpu_level;
     opcode_last_postfix[rp] = postfix;

@@ -20,6 +20,13 @@
 #define DEBUG 1
 #include "debug.h"
 
+#if defined(ENABLE_EXCLUSIVE_SPCFLAGS) && !defined(HAVE_HARDWARE_LOCKS) && defined(HAVE_PTHREADS)
+#include <pthread.h>
+pthread_mutex_t spcflags_lock = PTHREAD_MUTEX_INITIALIZER;
+#endif
+
+#define SANITY_CHECK_ATC 1
+
 int quit_program = 0;
 
 struct flag_struct regflags;
@@ -101,32 +108,22 @@ static __inline__ unsigned int cft_map (unsigned int f)
 #ifndef HAVE_GET_WORD_UNSWAPPED
     return f;
 #else
-    return ((f >> 8) & 255) | ((f & 255) << 8);
+    return do_byteswap_16(f);
 #endif
 }
 
-static void REGPARAM2 op_illg_1 (uae_u32 opcode) REGPARAM;
+cpuop_rettype REGPARAM2 op_illg_1 (uae_u32 opcode) REGPARAM;
 
-static void REGPARAM2 op_illg_1 (uae_u32 opcode)
+cpuop_rettype REGPARAM2 op_illg_1 (uae_u32 opcode)
 {
-    op_illg (cft_map (opcode));
+    cpuop_return( op_illg (cft_map (opcode)) );
 }
 
 static void build_cpufunctbl (void)
 {
     int i;
     unsigned long opcode;
-	int cpu_level = 0;		// 68000 (default)
-	if (CPUType == 4)
-		cpu_level = 4;		// 68040 with FPU
-	else {
-		if (FPUType)
-			cpu_level = 3;	// 68020 with FPU
-		else if (CPUType >= 2)
-			cpu_level = 2;	// 68020
-		else if (CPUType == 1)
-			cpu_level = 1;
-	}
+    int cpu_level = 4;
     struct cputbl *tbl = op_smalltbl_0;
 
     for (opcode = 0; opcode < 65536; opcode++)
@@ -201,9 +198,9 @@ struct regstruct regs, lastint_regs;
 static long int m68kpc_offset;
 int lastint_no;
 
-#define get_ibyte_1(o) get_byte(regs.pcp + (o) + 1)
-#define get_iword_1(o) get_word(regs.pcp + (o))
-#define get_ilong_1(o) get_long(regs.pcp + (o))
+#define get_ibyte_1(o) get_byte(m68k_getpc() + (o) + 1)
+#define get_iword_1(o) get_word(m68k_getpc() + (o))
+#define get_ilong_1(o) get_long(m68k_getpc() + (o))
 
 uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 {
@@ -619,15 +616,121 @@ void MakeFromSR (void)
 	SPCFLAGS_CLEAR( SPCFLAG_TRACE/* | SPCFLAG_DOTRACE */);
 }
 
+/* for building exception frames */
+static __inline__ void exc_push_word(uae_u16 w)
+{
+    m68k_areg(regs, 7) -= 2;
+    put_word(m68k_areg(regs, 7), w);
+}
+static __inline__ void exc_push_long(uae_u32 l)
+{
+    m68k_areg(regs, 7) -= 4;
+    put_long (m68k_areg(regs, 7), l);
+}
+
+static __inline__ void exc_make_frame(
+		int format,
+		uae_u16	sr,
+		uae_u32 currpc,
+		int nr,
+		uae_u32 x0,
+		uae_u32 x1
+)
+{
+    switch(format) {
+     case 4:
+	exc_push_long(x1);
+	exc_push_long(x0);
+	break;
+     case 3:
+     case 2:
+	exc_push_long(x0);
+	break;
+    }
+
+    exc_push_word((format << 12) + (nr * 4));	/* format | vector */
+    exc_push_long(currpc);
+    exc_push_word(sr);
+}
+
+// MJ int in_exception_2 = 0;
+
 void Exception(int nr, uaecptr oldpc)
 {
-   uae_u32 currpc = m68k_getpc ();
-   MakeSR();
+    uae_u32 currpc = m68k_getpc ();
+    MakeSR();
     if (!regs.s) {
 	regs.usp = m68k_areg(regs, 7);
-	    m68k_areg(regs, 7) = regs.m ? regs.msp : regs.isp;
+	m68k_areg(regs, 7) = regs.m ? regs.msp : regs.isp;
 	regs.s = 1;
     }
+
+#if 0
+    if (nr == 2 && in_exception_2++)	{
+	panicbug("HALT: Double Bus Error means bad news! PC: %08lx", m68k_getpc());
+	abort();
+    }
+#endif
+
+    if (nr == 2) {
+#if 0
+			if (currprefs.cpu_level == 5)	{
+				/* 68060 */
+				exc_make_frame(4,
+						regs.sr,
+						currpc,
+						nr,
+						regs.mmu_fault_addr, /* fault address */
+						regs.mmu_fslw /* fault status long-word */
+						);
+			}
+			else if (currprefs.cpu_level == 4)	{
+#endif
+	panicbug("Exception Nr. %d PC: %08lx", nr, oldpc);
+	/* 68040 */
+	exc_push_long(0);	/* PD3 */
+	exc_push_long(0);	/* PD2 */
+	exc_push_long(0);	/* PD1 */
+	exc_push_long(0);	/* PD0/WB1D */
+	exc_push_long(0);	/* WB1A */
+	exc_push_long(0);	/* WB2D */
+	exc_push_long(0);	/* WB2A */
+	exc_push_long(0);	/* WB3D */
+	exc_push_long(0);	/* WB3A */
+	exc_push_long(regs.mmu_fault_addr);
+	exc_push_word(0);	/* WB1S */
+	exc_push_word(0);	/* WB2S */
+	exc_push_word(0);	/* WB3S */
+	exc_push_word(0);	/* WB3S */
+	exc_push_word(regs.mmu_ssw);
+	exc_push_long(regs.mmu_fault_addr);	/* EA */
+	exc_make_frame(7, regs.sr, currpc, 2, 0, 0);
+    } else if (nr == 3) {
+	int i;
+
+	exc_make_frame(2, regs.sr, last_addr_for_exception_3, nr,
+			last_fault_for_exception_3 & 0xfffffffe, 0);
+    } else if (nr ==5 || nr == 6 || nr == 7 || nr == 9) {
+	/* div by zero, CHK, TRAP or TRACE */
+	exc_make_frame(2, regs.sr, currpc, nr, oldpc, 0);
+    } else if (regs.m && nr >= 24 && nr < 32) {
+	/* interrupts! */
+	exc_make_frame(0, regs.sr, currpc, nr, 0, 0);
+	regs.sr |= (1 << 13);
+	regs.msp = m68k_areg(regs, 7);
+	m68k_areg(regs, 7) = regs.isp;
+
+	exc_make_frame(1,	/* throwaway */
+			regs.sr, currpc, nr, 0, 0);
+    } else {
+	exc_make_frame(0, regs.sr, currpc, nr, 0, 0);
+    }
+    m68k_setpc (get_long (regs.vbr + 4*nr));
+    fill_prefetch_0 ();
+    regs.t1 = regs.t0 = regs.m = 0;
+    SPCFLAGS_CLEAR(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
+
+#if 0  
 	if (nr == 2 || nr == 3) {	// 16 words on stack
 	   // internal register
 		m68k_areg(regs, 7) -= 4;
@@ -647,11 +750,11 @@ void Exception(int nr, uaecptr oldpc)
 
 	    	// instruction B prefetch
 		m68k_areg(regs, 7) -= 2;
-		put_word (m68k_areg(regs, 7), get_word(regs.pc+2));
+		put_word (m68k_areg(regs, 7), get_word(regs.pc+2, false));
 
 	    	// instruction C prefetch
 		m68k_areg(regs, 7) -= 2;
-		put_word (m68k_areg(regs, 7), get_word(regs.pc+4));
+		put_word (m68k_areg(regs, 7), get_word(regs.pc+4, false));
 
 	    	// special status register ssw
 		m68k_areg(regs, 7) -= 2;
@@ -695,10 +798,11 @@ void Exception(int nr, uaecptr oldpc)
 kludge_me_do:
     m68k_areg(regs, 7) -= 2;
     put_word (m68k_areg(regs, 7), regs.sr);
-    m68k_setpc (get_long (regs.vbr + 4*nr));
+    m68k_setpc (get_long (regs.vbr + 4*nr, false));
     fill_prefetch_0 ();
     regs.t1 = regs.t0 = regs.m = 0;
-    SPCFLAGS_CLEAR( SPCFLAG_TRACE | SPCFLAG_DOTRACE );
+    regs.spcflags &= ~(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
+#endif
 }
 
 static void Interrupt(int nr)
@@ -724,7 +828,7 @@ static void MFPInterrupt(int nr)
     regs.intmask = 6;
 }
 
-uae_u32 m68k_move2c (int regno, uae_u32 *regp)
+int m68k_move2c (int regno, uae_u32 *regp)
 {
 /* MJ   if ((CPUType == 1 && (regno & 0x7FF) > 1)
 	|| (CPUType < 4 && (regno & 0x7FF) > 2)
@@ -754,7 +858,7 @@ uae_u32 m68k_move2c (int regno, uae_u32 *regp)
 	 case 0x802: regs.caar = *regp & 0xfc; break;
 	 case 0x803: regs.msp = *regp; if (regs.m == 1) m68k_areg(regs, 7) = regs.msp; break;
 	 case 0x804: regs.isp = *regp; if (regs.m == 0) m68k_areg(regs, 7) = regs.isp; break;
-	 case 0x805: regs.mmusr = *regp; break;
+	 case 0x805: mmu_set_mmusr(*regp); break;
 	 case 0x806: regs.urp = *regp & 0xffffff00; break;
 	 case 0x807: regs.srp = *regp & 0xffffff00; break;
 	 default:
@@ -765,7 +869,7 @@ uae_u32 m68k_move2c (int regno, uae_u32 *regp)
     return 1;
 }
 
-uae_u32 m68k_movec2 (int regno, uae_u32 *regp)
+int m68k_movec2 (int regno, uae_u32 *regp)
 {
 /* MJ    if ((CPUType == 1 && (regno & 0x7FF) > 1)
 	|| (CPUType < 4 && (regno & 0x7FF) > 2)
@@ -1077,1672 +1181,79 @@ void m68k_reset (void)
     regs.fpcr = regs.fpsr = regs.fpiar = 0; */
     fpu_reset();
     // MMU
-    regs.urp = 0;
-    regs.srp = 0;
-    regs.dtt0 = 0;
-    regs.dtt1 = 0;
-    regs.itt0 = 0;
-    regs.itt1 = 0;
-    regs.mmusr = 0;
+    mmu_set_root_pointer(0x806, 0);	// regs.urp = 0;
+    mmu_set_root_pointer(0x807, 0);	// regs.srp = 0;
+    mmu_set_ttr(TTR_D0, 0);
+    mmu_set_ttr(TTR_D1, 0);
+    mmu_set_ttr(TTR_I0, 0);
+    mmu_set_ttr(TTR_I1, 0);
+    mmu_set_mmusr(0);
     // Cache
     regs.cacr = 0;
     regs.caar = 0;
 }
 
-void REGPARAM2 op_illg (uae_u32 opcode)
+void m68k_emulop_return(void)
 {
-#if DEBUG
-    uaecptr pc = m68k_getpc ();
-#endif
-
-	if ((opcode & 0xFF00) == 0x7100) {
-		struct M68kRegisters r;
-		int i;
-
-		// Return from Execute68k()?
-		if (opcode == M68K_EXEC_RETURN) {
-			SPCFLAGS_SET( SPCFLAG_BRK );
-			quit_program = 1;
-			return;
-		}
-
-		// Call EMUL_OP opcode
-		for (i=0; i<8; i++) {
-			r.d[i] = m68k_dreg(regs, i);
-			r.a[i] = m68k_areg(regs, i);
-		}
-		MakeSR();
-		r.sr = regs.sr;
-		EmulOp(opcode, &r);
-		for (i=0; i<8; i++) {
-			m68k_dreg(regs, i) = r.d[i];
-			m68k_areg(regs, i) = r.a[i];
-		}
-		regs.sr = r.sr;
-		MakeFromSR();
-		m68k_incpc(2);
-		fill_prefetch_0 ();
-		return;
-	}
-
-    if ((opcode & 0xF000) == 0xA000) {
-	Exception(0xA,0);
-	return;
-    }
-
-//    D(bug("Illegal instruction: %04x at %08lx", opcode, pc));
-
-    if ((opcode & 0xF000) == 0xF000) {
-	Exception(0xB,0);
-	return;
-    }
-
-    D(bug("Illegal instruction: %04x at %08lx", opcode, (unsigned long)pc));
-
-    Exception (4,0);
+	SPCFLAGS_SET( SPCFLAG_BRK );
+	quit_program = 1;
 }
 
+void m68k_emulop(uae_u32 opcode)
+{
+	struct M68kRegisters r;
+	int i;
+	
+	for (i=0; i<8; i++) {
+		r.d[i] = m68k_dreg(regs, i);
+		r.a[i] = m68k_areg(regs, i);
+	}
+	MakeSR();
+	r.sr = regs.sr;
+	EmulOp(opcode, &r);
+	for (i=0; i<8; i++) {
+		m68k_dreg(regs, i) = r.d[i];
+		m68k_areg(regs, i) = r.a[i];
+	}
+	regs.sr = r.sr;
+	MakeFromSR();
+}
+
+cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
+{
+	uaecptr pc = m68k_getpc ();
+
+	if ((opcode & 0xF000) == 0xA000) {
+	Exception(0xA,0);
+	cpuop_return(CFLOW_TRAP);
+	}
+
+	if ((opcode & 0xF000) == 0xF000) {
+	Exception(0xB,0);
+	cpuop_return(CFLOW_TRAP);
+	}
+
+	write_log ("Illegal instruction: %04x at %08lx\n", opcode, pc);
+#if USE_JIT && JIT_DEBUG
+	compiler_dumpstate();
+#endif
+
+	Exception (4,0);
+	cpuop_return(CFLOW_TRAP);
+}
+
+#ifndef FULLMMU
 void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
-#ifdef FULLMMU
-    uae_u16 i;
-    uaecptr addr = m68k_areg(regs, extra);
-    uint16 excep_nono;
-    jmp_buf excep_env_old;
-    excep_env_old = excep_env;
-    uaecptr mask;
-    uaecptr atcindex;
-    uaecptr rootp;
-    uae_u32 root;
-    uaecptr apdt, apd;
-    uae_u32 pdt, pd;
-    flagtype wr;
-//    set_special(SPCFLAG_BRK);
-#endif
     if ((opcode & 0xFF8) == 0x0500) { /* PFLUSHN instruction (An) */
-#ifdef FULLMMU
-        for (i = 0; i < ATCSIZE; i++) {
-            if (!regs.atcglobald[i]
-                && (addr == regs.atcind[i]))
-                    regs.atcvald[i] = 0;
-            if (!regs.atcglobali[i]
-                && (addr == regs.atcini[i]))
-                    regs.atcvali[i] = 0;
-        }
-        regs.mmusr = 0;
-#endif
     } else if ((opcode & 0xFF8) == 0x0508) { /* PFLUSH instruction (An) */
-#ifdef FULLMMU
-        switch (regs.dfc) {
-	    case 1:
-	    case 2:
-                    for (i = 0; i < ATCSIZE; i++) {
-                        if ((!regs.atcsuperd[i]) && (addr == regs.atcind[i]))
-                            regs.atcvald[i] = 0;
-                        if ((!regs.atcsuperi[i]) && (addr == regs.atcini[i]))
-                            regs.atcvali[i] = 0;
-                    }
-	            break;
-	    case 5:
-	    case 6:
-                    for (i = 0; i < ATCSIZE; i++) {
-                        if ((regs.atcsuperd[i]) && (addr == regs.atcind[i]))
-                            regs.atcvald[i] = 0;
-                        if ((regs.atcsuperi[i]) && (addr == regs.atcini[i]))
-                            regs.atcvali[i] = 0;
-                    }
-	            break;
-	    default: break;
-	}
-        regs.mmusr = 0;
-#endif
     } else if ((opcode & 0xFF8) == 0x0510) { /* PFLUSHAN instruction */
-#ifdef FULLMMU
-        for (i = 0; i < ATCSIZE; i++) {
-            if (!regs.atcglobald[i]) regs.atcvald[i] = 0;
-            if (!regs.atcglobali[i]) regs.atcvali[i] = 0;
-        }
-        regs.mmusr = 0;
-#endif
     } else if ((opcode & 0xFF8) == 0x0518) { /* PFLUSHA instruction */
-#ifdef FULLMMU
-        for (i = 0; i < ATCSIZE; i++) {
-            regs.atcvald[i] = 0;
-            regs.atcvali[i] = 0;
-        }
-        regs.mmusr = 0;
-#endif
     } else if ((opcode & 0xFF8) == 0x548) { /* PTESTW instruction */
-#ifdef FULLMMU
-/* DFC = 1 - data / user
-         2 - instr / user
-	 5 - data / super
-	 6 - instr / super*/
-        switch (regs.dfc) {
-          case 1:
-                  if ((regs.dtt0 & 0x8000)
-                      && (!(regs.dtt0 & 0x60) || (regs.dtt0 & 0x40))) {
-                    mask = ((~regs.dtt0) & 0xff0000) << 8;
-                    if ((addr & mask) == (regs.dtt0 & mask)) {
-                      if ((regs.dtt0 & 0x4) != 0) {} // WP??
-                      regs.mmusr = 3;
-                      return;
-                    }
-                  }
-                  if ((regs.dtt1 & 0x8000)
-                      && (!(regs.dtt1 & 0x60) || (regs.dtt1 & 0x40))) {
-                    mask = ((~regs.dtt1) & 0xff0000) << 8;
-                    if ((addr & mask) == (regs.dtt1 & mask)) {
-                      if ((regs.dtt1 & 0x4) != 0) {} // WP??
-                      regs.mmusr = 3;
-                      return;
-                    }
-                  }
-                  if ((excep_nono = setjmp(excep_env)) == 0) {
-                    if (regs.tcp) {
-                      atcindex = ((addr << 11) >> 24);
-                      rootp = regs.urp | ((addr >> 25) << 2);
-                      root = get_long_direct(rootp);
-                      if ((root & 0x3) > 1) {
-                        wr = (root & 0x4) >> 2;
-                        put_long_direct(rootp, root | 0x8);
-                        apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                        pdt = get_long_direct(apdt);
-                        if ((pdt & 0x3) > 1) {
-                          wr += (pdt & 0x4) >> 2;
-                          put_long_direct(apdt, pdt | 0x8);
-                          apd = (pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11);
-                          pd = get_long_direct(apd);
-                          switch (pd & 0x3) {
-                            case 0:  regs.mmusr = 0x800;
-                                     excep_env = excep_env_old;
-                                     return;
-                            case 2:  apd = pd & 0xfffffffc;
-                                     pd = get_long_direct(apd);
-                                     if (((pd & 0x3) % 2) == 0) {
-                                       regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                                     }
-                            default: wr += (pd & 0x4) >> 2;
-                                     if (wr > 1) {} // WP??
-                                     put_long_direct(apd, pd | 0x18);
-                                     regs.atcind[atcindex] = addr & 0xffffe000;
-               	                     regs.atcoutd[atcindex] = pd & 0xffffe000;
-                                     regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-                                     regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-                                     regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-                                     regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-                                     regs.atcmodifd[atcindex] = 1;
-                                     regs.atcwritepd[atcindex] = wr;
-                                     regs.atcresidd[atcindex] = 1;
-                                     regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-                                     regs.atcfc2d[atcindex] = regs.s; // ??
-
-                                     regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
-                                     regs.mmusr |= pd & 0x000007e0;
-                                     regs.mmusr |= wr ? 0x4 : 0;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      } else {
-                        regs.mmusr = 0x800;
-                        excep_env = excep_env_old;
-                        return;
-                      }
-                    } else {
-                      atcindex = ((addr << 12) >> 24);
-                      rootp = regs.urp | ((addr >> 25) << 2);
-                      root = get_long_direct(rootp);
-                      if ((root & 0x3) > 1) {
-                        wr = (root & 0x4) >> 2;
-                        put_long_direct(rootp, root | 0x8);
-                        apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                        pdt = get_long_direct(apdt);
-                        if ((pdt & 0x3) > 1) {
-                          wr += (pdt & 0x4) >> 2;
-                          put_long_direct(apdt, pdt | 0x8);
-                          apd = (pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10);
-                          pd = get_long_direct(apd);
-                          switch (pd & 0x3) {
-                            case 0:  regs.mmusr = 0x800;
-                                     excep_env = excep_env_old;
-                                     return;
-                            case 2:  apd = pd & 0xfffffffc;
-                                     pd = get_long_direct(apd);
-                                     if (((pd & 0x3) % 2) == 0) {
-                                       regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                                     }
-                            default: wr += (pd & 0x4) >> 2;
-                                     if (wr > 1) {} // WP??
-                                     put_long_direct(apd, pd | 0x18);
-                                     regs.atcind[atcindex] = addr & 0xfffff000;
-                                     regs.atcoutd[atcindex] = pd & 0xfffff000;
-                                     regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-                                     regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-                                     regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-                                     regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-                                     regs.atcmodifd[atcindex] = 1;
-                                     regs.atcwritepd[atcindex] = wr;
-                                     regs.atcresidd[atcindex] = 1;
-                                     regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-                                     regs.atcfc2d[atcindex] = regs.s; // ??
-                                     regs.mmusr = (pd & 0xfffff000) | 0x11;
-                                     regs.mmusr |= pd & 0x000007e0;
-                                     regs.mmusr |= wr ? 0x4 : 0;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      } else {
-                        regs.mmusr = 0x800;
-                        excep_env = excep_env_old;
-                        return;
-                      }
-		    }
-                  } else {
-                    switch (excep_nono) {
-                          case 2: regs.mmusr = 0x800;
-                                  excep_env = excep_env_old;
-                                  return;
-                          default:
-                                  excep_env = excep_env_old;
-                                  longjmp(excep_env, excep_nono);
-                    }
-                  }
-                  break;
-	  case 2:
-                  if ((regs.itt0 & 0x8000)
-                          && (!(regs.itt0 & 0x60) || (regs.itt0 & 0x40))) {
-                      mask = ((~regs.itt0) & 0xff0000) << 8;
-                      if ((addr & mask) == (regs.itt0 & mask)) {
-                          if ((regs.itt0 & 0x4) != 0) {} // WP??
-                              regs.mmusr = 3;
-	                      return;
-                      }
-	          }
-                  if ((regs.itt1 & 0x8000)
-                          && (!(regs.itt1 & 0x60) || (regs.itt1 & 0x40))) {
-                      mask = ((~regs.itt1) & 0xff0000) << 8;
-                      if ((addr & mask) == (regs.itt1 & mask)) {
-                          if ((regs.itt1 & 0x4) != 0) {} // WP??
-                          regs.mmusr = 3;
-                          return;
-                      }
-                  }
-                  if ((excep_nono = setjmp(excep_env)) == 0) {
-                    if (regs.tcp) {
-                      atcindex = ((addr << 11) >> 24);
-                      rootp = regs.urp | ((addr >> 25) << 2);
-                      root = get_long_direct(rootp);
-                      if ((root & 0x3) > 1) {
-                        wr = (root & 0x4) >> 2;
-                        put_long_direct(rootp, root | 0x8);
-                        apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                        pdt = get_long_direct(apdt);
-                        if ((pdt & 0x3) > 1) {
-                          wr += (pdt & 0x4) >> 2;
-                          put_long_direct(apdt, pdt | 0x8);
-                          apd = (pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11);
-                          pd = get_long_direct(apd);
-                          switch (pd & 0x3) {
-                            case 0:  regs.mmusr = 0x800;
-                                     excep_env = excep_env_old;
-                                     return;
-                            case 2:  apd = pd & 0xfffffffc;
-                                     pd = get_long_direct(apd);
-                                     if (((pd & 0x3) % 2) == 0) {
-                                       regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                                     }
-                            default: wr += (pd & 0x4) >> 2;
-                                     if (wr > 1) {} // WP??
-                                     put_long_direct(apd, pd | 0x18);
-                                     regs.atcini[atcindex] = addr & 0xffffe000;
-               	                     regs.atcouti[atcindex] = pd & 0xffffe000;
-                                     regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                                     regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                                     regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                                     regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                                     regs.atcmodifi[atcindex] = 1;
-                                     regs.atcwritepi[atcindex] = wr;
-                                     regs.atcresidi[atcindex] = 1;
-                                     regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                                     regs.atcfc2i[atcindex] = regs.s; // ??
-
-                                     regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
-                                     regs.mmusr |= pd & 0x000007e0;
-                                     regs.mmusr |= wr ? 0x4 : 0;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      } else {
-                        excep_env = excep_env_old;
-                        regs.mmusr = 0x800;
-                        return;
-                      }
-                    } else {
-                      atcindex = ((addr << 12) >> 24);
-                      rootp = regs.urp | ((addr >> 25) << 2);
-                      root = get_long_direct(rootp);
-                      if ((root & 0x3) > 1) {
-                        wr = (root & 0x4) >> 2;
-                        put_long_direct(rootp, root | 0x8);
-                        apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                        pdt = get_long_direct(apdt);
-                        if ((pdt & 0x3) > 1) {
-                          wr += (pdt & 0x4) >> 2;
-                          put_long_direct(apdt, pdt | 0x8);
-                          apd = (pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10);
-                          pd = get_long_direct(apd);
-                          switch (pd & 0x3) {
-                            case 0:  regs.mmusr = 0x800;
-                                     excep_env = excep_env_old;
-                                     return;
-                            case 2:  apd = pd & 0xfffffffc;
-                                     pd = get_long_direct(apd);
-                                     if (((pd & 0x3) % 2) == 0) {
-                                       regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                                     }
-                            default: wr += (pd & 0x4) >> 2;
-                                     if (wr > 1) {} // WP??
-                                     put_long_direct(apd, pd | 0x18);
-                                     regs.atcini[atcindex] = addr & 0xfffff000;
-                                     regs.atcouti[atcindex] = pd & 0xfffff000;
-                                     regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                                     regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                                     regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                                     regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                                     regs.atcmodifi[atcindex] = 1;
-                                     regs.atcwritepi[atcindex] = wr;
-                                     regs.atcresidi[atcindex] = 1;
-                                     regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                                     regs.atcfc2i[atcindex] = regs.s; // ??
-                                     regs.mmusr = (pd & 0xfffff000) | 0x11;
-                                     regs.mmusr |= pd & 0x000007e0;
-                                     regs.mmusr |= wr ? 0x4 : 0;
-                          }
-                          } else {
-                            regs.mmusr = 0x800;
-                            excep_env = excep_env_old;
-                            return;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-		      }
-                    } else {
-                      switch (excep_nono) {
-                            case 2: regs.mmusr = 0x800;
-                                    excep_env = excep_env_old;
-                                    return;
-                            default:
-                                    excep_env = excep_env_old;
-                                    longjmp(excep_env, excep_nono);
-                      }
-                    }
-	            break;
-          case 5:
-                  if ((regs.dtt0 & 0x8000)
-		            && (!(regs.dtt0 & 0x20) || (regs.dtt0 & 0x40))) {
-                        mask = ((~regs.dtt0) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.dtt0 & mask)) {
-                            if ((regs.dtt0 & 0x4) != 0) {} // WP??
-                	    regs.mmusr = 3;
-	                    return;
-               		}
-	            }
-                    if ((regs.dtt1 & 0x8000)
-		            && (!(regs.dtt1 & 0x20) || (regs.dtt1 & 0x40))) {
-                        mask = ((~regs.dtt1) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.dtt1 & mask)) {
-                            if ((regs.dtt1 & 0x4) != 0) {} // WP??
-                            regs.mmusr = 3;
-                            return;
-                        }
-                    }
-                  if ((excep_nono = setjmp(excep_env)) == 0) {
-                    if (regs.tcp) {
-                      atcindex = ((addr << 11) >> 24);
-                      rootp = regs.srp | ((addr >> 25) << 2);
-                      root = get_long_direct(rootp);
-                      if ((root & 0x3) > 1) {
-                        wr = (root & 0x4) >> 2;
-                        put_long_direct(rootp, root | 0x8);
-                        apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                        pdt = get_long_direct(apdt);
-                        if ((pdt & 0x3) > 1) {
-                          wr += (pdt & 0x4) >> 2;
-                          put_long_direct(apdt, pdt | 0x8);
-                          apd = (pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11);
-                          pd = get_long_direct(apd);
-                          switch (pd & 0x3) {
-                            case 0:  regs.mmusr = 0x800;
-                                     excep_env = excep_env_old;
-                                     return;
-                            case 2:  apd = pd & 0xfffffffc;
-                                     pd = get_long_direct(apd);
-                                     if (((pd & 0x3) % 2) == 0) {
-                                       regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                                     }
-                            default: wr += (pd & 0x4) >> 2;
-                                     if (wr > 1) {} // WP??
-                                     put_long_direct(apd, pd | 0x18);
-                                     regs.atcind[atcindex] = addr & 0xffffe000;
-               	                     regs.atcoutd[atcindex] = pd & 0xffffe000;
-                                     regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-                                     regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-                                     regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-                                     regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-                                     regs.atcmodifd[atcindex] = 1;
-                                     regs.atcwritepd[atcindex] = wr;
-                                     regs.atcresidd[atcindex] = 1;
-                                     regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-                                     regs.atcfc2d[atcindex] = regs.s; // ??
-
-                                     regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
-                                     regs.mmusr |= pd & 0x000007e0;
-                                     regs.mmusr |= wr ? 0x4 : 0;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      } else {
-                        regs.mmusr = 0x800;
-                        excep_env = excep_env_old;
-                        return;
-                      }
-                    } else {
-                      atcindex = ((addr << 12) >> 24);
-                      rootp = regs.srp | ((addr >> 25) << 2);
-                      root = get_long_direct(rootp);
-                      if ((root & 0x3) > 1) {
-                        wr = (root & 0x4) >> 2;
-                        put_long_direct(rootp, root | 0x8);
-                        apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                        pdt = get_long_direct(apdt);
-                        if ((pdt & 0x3) > 1) {
-                          wr += (pdt & 0x4) >> 2;
-                          put_long_direct(apdt, pdt | 0x8);
-                          apd = (pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10);
-                          pd = get_long_direct(apd);
-                          switch (pd & 0x3) {
-                            case 0:  regs.mmusr = 0x800;
-                                     excep_env = excep_env_old;
-                                     return;
-                            case 2:  apd = pd & 0xfffffffc;
-                                     pd = get_long_direct(apd);
-                                     if (((pd & 0x3) % 2) == 0) {
-                                       regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                                     }
-                            default: wr += (pd & 0x4) >> 2;
-                                     if (wr > 1) {} // WP??
-                                     put_long_direct(apd, pd | 0x18);
-                                     regs.atcind[atcindex] = addr & 0xfffff000;
-                                     regs.atcoutd[atcindex] = pd & 0xfffff000;
-                                     regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-                                     regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-                                     regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-                                     regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-                                     regs.atcmodifd[atcindex] = 1;
-                                     regs.atcwritepd[atcindex] = wr;
-                                     regs.atcresidd[atcindex] = 1;
-                                     regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-                                     regs.atcfc2d[atcindex] = regs.s; // ??
-                                     regs.mmusr = (pd & 0xfffff000) | 0x11;
-                                     regs.mmusr |= pd & 0x000007e0;
-                                     regs.mmusr |= wr ? 0x4 : 0;
-                            }
-                          } else {
-                            regs.mmusr = 0x800;
-                            excep_env = excep_env_old;
-                            return;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      }
-                    } else {
-                      switch (excep_nono) {
-                            case 2: regs.mmusr = 0x800;
-                                    excep_env = excep_env_old;
-                                    return;
-                            default:
-                                    excep_env = excep_env_old;
-                                    longjmp(excep_env, excep_nono);
-                      }
-                    }
-                    break;
-	    case 6:
-                    if ((regs.itt0 & 0x8000)
-		            && (!(regs.itt0 & 0x20) || (regs.itt0 & 0x40))) {
-                        mask = ((~regs.itt0) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.itt0 & mask)) {
-                            if ((regs.itt0 & 0x4) != 0) {} // WP??
-                	    regs.mmusr = 3;
-	                    return;
-               		}
-	            }
-                    if ((regs.itt1 & 0x8000)
-		            && (!(regs.itt1 & 0x20) || (regs.itt1 & 0x40))) {
-                        mask = ((~regs.itt1) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.itt1 & mask)) {
-                            if ((regs.itt1 & 0x4) != 0) {} // WP??
-                            regs.mmusr = 3;
-                            return;
-                        }
-                    }
-                  if ((excep_nono = setjmp(excep_env)) == 0) {
-                    if (regs.tcp) {
-                      atcindex = ((addr << 11) >> 24);
-                      rootp = regs.srp | ((addr >> 25) << 2);
-                      root = get_long_direct(rootp);
-                      if ((root & 0x3) > 1) {
-                        wr = (root & 0x4) >> 2;
-                        put_long_direct(rootp, root | 0x8);
-                        apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                        pdt = get_long_direct(apdt);
-                        if ((pdt & 0x3) > 1) {
-                          wr += (pdt & 0x4) >> 2;
-                          put_long_direct(apdt, pdt | 0x8);
-                          apd = (pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11);
-                          pd = get_long_direct(apd);
-                          switch (pd & 0x3) {
-                            case 0:  regs.mmusr = 0x800;
-                                     excep_env = excep_env_old;
-                                     return;
-                            case 2:  apd = pd & 0xfffffffc;
-                                     pd = get_long_direct(apd);
-                                     if (((pd & 0x3) % 2) == 0) {
-                                       regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                                     }
-                            default: wr += (pd & 0x4) >> 2;
-                                     if (wr > 1) {} // WP??
-                                     put_long_direct(apd, pd | 0x18);
-                                     regs.atcini[atcindex] = addr & 0xffffe000;
-               	                     regs.atcouti[atcindex] = pd & 0xffffe000;
-                                     regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                                     regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                                     regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                                     regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                                     regs.atcmodifi[atcindex] = 1;
-                                     regs.atcwritepi[atcindex] = wr;
-                                     regs.atcresidi[atcindex] = 1;
-                                     regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                                     regs.atcfc2i[atcindex] = regs.s; // ??
-
-                                     regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
-                                     regs.mmusr |= pd & 0x000007e0;
-                                     regs.mmusr |= wr ? 0x4 : 0;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      } else {
-                        regs.mmusr = 0x800;
-                        excep_env = excep_env_old;
-                        return;
-                      }
-                    } else {
-                      atcindex = ((addr << 12) >> 24);
-                      rootp = regs.srp | ((addr >> 25) << 2);
-                      root = get_long_direct(rootp);
-                      if ((root & 0x3) > 1) {
-                        wr = (root & 0x4) >> 2;
-                        put_long_direct(rootp, root | 0x8);
-                        apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                        pdt = get_long_direct(apdt);
-                        if ((pdt & 0x3) > 1) {
-                          wr += (pdt & 0x4) >> 2;
-                          put_long_direct(apdt, pdt | 0x8);
-                          apd = (pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10);
-                          pd = get_long_direct(apd);
-                          switch (pd & 0x3) {
-                            case 0:  regs.mmusr = 0x800;
-                                     excep_env = excep_env_old;
-                                     return;
-                            case 2:  apd = pd & 0xfffffffc;
-                                     pd = get_long_direct(apd);
-                                     if (((pd & 0x3) % 2) == 0) {
-                                       regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                                     }
-                            default: wr += (pd & 0x4) >> 2;
-                                     if (wr > 1) {} // WP??
-                                     put_long_direct(apd, pd | 0x18);
-                                     regs.atcini[atcindex] = addr & 0xfffff000;
-                                     regs.atcouti[atcindex] = pd & 0xfffff000;
-                                     regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                                     regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                                     regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                                     regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                                     regs.atcmodifi[atcindex] = 1;
-                                     regs.atcwritepi[atcindex] = wr;
-                                     regs.atcresidi[atcindex] = 1;
-                                     regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                                     regs.atcfc2i[atcindex] = regs.s; // ??
-                                     regs.mmusr = (pd & 0xfffff000) | 0x11;
-                                     regs.mmusr |= pd & 0x000007e0;
-                                     regs.mmusr |= wr ? 0x4 : 0;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      } else {
-                        regs.mmusr = 0x800;
-                        excep_env = excep_env_old;
-                        return;
-                      }
-		      }
-                    } else {
-                      switch (excep_nono) {
-                            case 2: regs.mmusr = 0x800;
-                                    excep_env = excep_env_old;
-                                    return;
-                            default:
-                                    excep_env = excep_env_old;
-                                    longjmp(excep_env, excep_nono);
-                      }
-                    }
-
-                    break;
-	    default: break;
-	}
-/*
-	if (regs.tcp) {
-            atcindex = ((addr << 11) >> 24);
-	    if ((excep_nono = setjmp(excep_env)) == 0) {
-	        rootp = regs.srp | ((addr >> 25) << 2);
-	    } else {
-		switch (excep_nono) {
-		    case 2: regs.mmusr = 0x800;
-		            excep_env = excep_env_old;
-		            return;
-		    default:
-		            excep_env = excep_env_old;
-			    longjmp(excep_env, excep_nono);
-		}
-	    }
-	    root = get_long_direct(rootp);
-	    if ((root & 0x3) > 1) {
-	        wr = (root & 0x4) >> 2;
-	        put_long_direct(rootp, root | 0x8);
-		if ((excep_nono = setjmp(excep_env)) == 0) {
-		    apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-		} else {
-		    switch (excep_nono) {
-		        case 2: regs.mmusr = 0x800;
-			        excep_env = excep_env_old;
-		                return;
-			default:
-		        	excep_env = excep_env_old;
-				longjmp(excep_env, excep_nono);
-		    }
-		}
-	        pdt = get_long_direct(apdt);
-	        if ((pdt & 0x3) > 1) {
-	            wr += (pdt & 0x4) >> 2;
-		    put_long_direct(apdt, pdt | 0x8);
-		    if ((excep_nono = setjmp(excep_env)) == 0) {
-		       	apd = (pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11);
-		    } else {
-			switch (excep_nono) {
-			    case 2: regs.mmusr = 0x800;
-			            excep_env = excep_env_old;
-				    return;
-			    default:
-			            excep_env = excep_env_old;
-				    longjmp(excep_env, excep_nono);
-			}
-		    }
-                    pd = get_long_direct(apd);
-		    switch (pd & 0x3) {
-		       	case 0:  regs.mmusr = 0x800;
-			         return;
-		       	case 2:  if ((excep_nono = setjmp(excep_env)) == 0) {
-				     apd = pd & 0xfffffffc;
-				 } else {
-				     switch (excep_nono) {
-				         case 2: regs.mmusr = 0x800;
-					         excep_env = excep_env_old;
-						 return;
-					default:
-				        	excep_env = excep_env_old;
-						longjmp(excep_env, excep_nono);
-				     }
-				 }
-		        	 pd = get_long_direct(apd);
-			         if (((pd & 0x3) % 2) == 0) {
-				     regs.mmusr = 0x800;
-				     return;
-				 }
-                    	default: wr += (pd & 0x4) >> 2;
-				 if (!wr) throw access_error(addr);
-                        	 put_long_direct(apd, pd | 0x18);
-			         regs.atcind[atcindex] = addr & 0xffffe000;
-			         regs.atcini[atcindex] = addr & 0xffffe000;
-				 regs.atcouti[atcindex] = pd & 0xffffe000;
-               			 regs.atcoutd[atcindex] = pd & 0xffffe000;
-				 regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                         	 regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-				 regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                         	 regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-				 regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                         	 regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-				 regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                         	 regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-				 regs.atcmodifi[atcindex] = 1;
-                         	 regs.atcmodifd[atcindex] = 1;
-				 regs.atcwritepi[atcindex] = wr;
-                         	 regs.atcwritepd[atcindex] = wr;
-				 regs.atcresidi[atcindex] = 1;
-                         	 regs.atcresidd[atcindex] = 1;
-				 regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                         	 regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-				 regs.atcfc2i[atcindex] = regs.s; // ??
-                         	 regs.atcfc2d[atcindex] = regs.s; // ??
-
-				 regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
-				 regs.mmusr |= pd & 0x000007e0;
-				 regs.mmusr |= wr ? 0x4 : 0;
-		    }
-	        } else {
-		    regs.mmusr = 0x800;
-		    return;
-		}
-	    } else {
-		regs.mmusr = 0x800;
-		return;
-	    }
-        } else {
-            atcindex = ((addr << 12) >> 24);
-	    if ((excep_nono = setjmp(excep_env)) == 0) {
-		rootp = regs.srp | ((addr >> 25) << 2);
-	    } else {
-		regs.mmusr = 0x800;
-                excep_env = excep_env_old;
-		return;
-	    }
-	    root = get_long_direct(rootp);
-	    if ((root & 0x3) > 1) {
-	       	wr = (root & 0x4) >> 2;
-	       	put_long_direct(rootp, root | 0x8);
-		if ((excep_nono = setjmp(excep_env)) == 0) {
-	            apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-		} else {
-		    switch (excep_nono) {
-		        case 2: regs.mmusr = 0x800;
-			        excep_env = excep_env_old;
-		                return;
-			default:
-		        	excep_env = excep_env_old;
-				longjmp(excep_env, excep_nono);
-		    }
-		}
-	        pdt = get_long_direct(apdt);
-	        if ((pdt & 0x3) > 1) {
-	            wr += (pdt & 0x4) >> 2;
-		    put_long_direct(apdt, pdt | 0x8);
-		    if ((excep_nono = setjmp(excep_env)) == 0) {
-		    	apd = (pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10);
-		    } else {
-		        switch (excep_nono) {
-		            case 2: regs.mmusr = 0x800;
-			            excep_env = excep_env_old;
-		                    return;
-			    default:
-		        	    excep_env = excep_env_old;
-				    longjmp(excep_env, excep_nono);
-			}
-		    }
-                    pd = get_long_direct(apd);
-		    switch (pd & 0x3) {
-		        case 0:  regs.mmusr = 0x800;
-			         return;
-		        case 2:  if ((excep_nono = setjmp(excep_env)) == 0) {
-			             apd = pd & 0xfffffffc;
-				 } else {
-				     switch (excep_nono) {
-				        case 2: regs.mmusr = 0x800;
-					         excep_env = excep_env_old;
-						 return;
-					default:
-			        		excep_env = excep_env_old;
-						longjmp(excep_env, excep_nono);
-				     }
-				 }
-		                 pd = get_long_direct(apd);
-			         if (((pd & 0x3) % 2) == 0) {
-				     regs.mmusr = 0x800;
-				     return;
-				 }
-                        default: wr += (pd & 0x4) >> 2;
-				 if (!wr) throw access_error(addr);
-                                 put_long_direct(apd, pd | 0x18);
-			         regs.atcind[atcindex] = addr & 0xfffff000;
-			         regs.atcini[atcindex] = addr & 0xfffff000;
-				 regs.atcouti[atcindex] = pd & 0xfffff000;
-				 regs.atcoutd[atcindex] = pd & 0xfffff000;
-				 regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                         	 regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-				 regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                         	 regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-				 regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                         	 regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-				 regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                         	 regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-				 regs.atcmodifi[atcindex] = 1;
-                         	 regs.atcmodifd[atcindex] = 1;
-				 regs.atcwritepi[atcindex] = wr;
-                         	 regs.atcwritepd[atcindex] = wr;
-				 regs.atcresidi[atcindex] = 1;
-                         	 regs.atcresidd[atcindex] = 1;
-				 regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                         	 regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-				 regs.atcfc2i[atcindex] = regs.s; // ??
-                         	 regs.atcfc2d[atcindex] = regs.s; // ??
-				 				                      	
-				 regs.mmusr = (pd & 0xfffff000) | 0x11;
-				 regs.mmusr |= pd & 0x000007e0;
-				 regs.mmusr |= wr ? 0x4 : 0;
-		    }
-	        } else {
-		    regs.mmusr = 0x800;
-		    return;
-		}
-	    } else {
-		regs.mmusr = 0x800;
-		return;
-	    }
-	}*/
-#endif /* FULLMMU */
     } else if ((opcode & 0xFF8) == 0x568) { /* PTESTR instruction */
-#ifdef FULLMMU
-        switch (regs.dfc) {
-	    case 1:
-                    if ((regs.dtt0 & 0x8000)
-		            && (!(regs.dtt0 & 0x60) || (regs.dtt0 & 0x40))) {
-                        mask = ((~regs.dtt0) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.dtt0 & mask)) {
-                	    regs.mmusr = 3;
-	                    return;
-               		}
-	            }
-                    if ((regs.dtt1 & 0x8000)
-		            && (!(regs.dtt1 & 0x60) || (regs.dtt1 & 0x40))) {
-                        mask = ((~regs.dtt1) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.dtt1 & mask)) {
-                            regs.mmusr = 3;
-                            return;
-                        }
-                    }
-                    if ((excep_nono = setjmp(excep_env)) == 0) {
-                      if (regs.tcp) {
-                        atcindex = ((addr << 11) >> 24);
-                        rootp = regs.urp | ((addr >> 25) << 2);
-                        root = get_long_direct(rootp);
-                        if ((root & 0x3) > 1) {
-                          wr = (root & 0x4) >> 2;
-                          put_long_direct(rootp, root | 0x8);
-                          apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                          pdt = get_long_direct(apdt);
-                          if ((pdt & 0x3) > 1) {
-                            wr += (pdt & 0x4) >> 2;
-                            put_long_direct(apdt, pdt | 0x8);
-                            apd = (pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11);
-                            pd = get_long_direct(apd);
-                            switch (pd & 0x3) {
-                              case 0:  regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                              case 2:  apd = pd & 0xfffffffc;
-                                       pd = get_long_direct(apd);
-                                       if (((pd & 0x3) % 2) == 0) {
-                                         regs.mmusr = 0x800;
-                                         excep_env = excep_env_old;
-                                         return;
-                                       }
-                              default: wr += (pd & 0x4) >> 2;
-                                       put_long_direct(apd, pd | 0x18);
-                                       regs.atcind[atcindex] = addr & 0xffffe000;
-                                       regs.atcoutd[atcindex] = pd & 0xffffe000;
-                                       regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-                                       regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-                                       regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-                                       regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-                                       regs.atcmodifd[atcindex] = 1;
-                                       regs.atcwritepd[atcindex] = wr;
-                                       regs.atcresidd[atcindex] = 1;
-                                       regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-                                       regs.atcfc2d[atcindex] = regs.s; // ??
-                                       regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
-                                       regs.mmusr |= pd & 0x000007e0;
-                                       regs.mmusr |= wr ? 0x4 : 0;
-                            }
-                          } else {
-                            regs.mmusr = 0x800;
-                            excep_env = excep_env_old;
-                            return;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      } else {
-                        atcindex = ((addr << 12) >> 24);
-                        rootp = regs.urp | ((addr >> 25) << 2);
-                        root = get_long_direct(rootp);
-                        if ((root & 0x3) > 1) {
-                          wr = (root & 0x4) >> 2;
-                          put_long_direct(rootp, root | 0x8);
-                          apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                          pdt = get_long_direct(apdt);
-                          if ((pdt & 0x3) > 1) {
-                            wr += (pdt & 0x4) >> 2;
-                            put_long_direct(apdt, pdt | 0x8);
-                            apd = (pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10);
-                            pd = get_long_direct(apd);
-                            switch (pd & 0x3) {
-                              case 0:  regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                              case 2:  apd = pd & 0xfffffffc;
-                                       pd = get_long_direct(apd);
-                                       if (((pd & 0x3) % 2) == 0) {
-                                         regs.mmusr = 0x800;
-                                         excep_env = excep_env_old;
-                                         return;
-                                       }
-                              default: wr += (pd & 0x4) >> 2;
-                                       put_long_direct(apd, pd | 0x18);
-                                       regs.atcind[atcindex] = addr & 0xfffff000;
-                                       regs.atcoutd[atcindex] = pd & 0xfffff000;
-                                       regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-                                       regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-                                       regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-                                       regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-                                       regs.atcmodifd[atcindex] = 1;
-                                       regs.atcwritepd[atcindex] = wr;
-                                       regs.atcresidd[atcindex] = 1;
-                                       regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-                                       regs.atcfc2d[atcindex] = regs.s; // ??
-                                       regs.mmusr = (pd & 0xfffff000) | 0x11;
-                                       regs.mmusr |= pd & 0x000007e0;
-                                       regs.mmusr |= wr ? 0x4 : 0;
-                            }
-                          } else {
-                            regs.mmusr = 0x800;
-                            excep_env = excep_env_old;
-                            return;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      }
-                    } else {
-                      switch (excep_nono) {
-                        case 2: regs.mmusr = 0x800;
-                                excep_env = excep_env_old;
-                                return;
-                        default:
-                                excep_env = excep_env_old;
-                                longjmp(excep_env, excep_nono);
-                      }
-                    }
-                    break;
-	    case 2:
-                    if ((regs.itt0 & 0x8000)
-		            && (!(regs.itt0 & 0x60) || (regs.itt0 & 0x40))) {
-                        mask = ((~regs.itt0) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.itt0 & mask)) {
-                	    regs.mmusr = 3;
-	                    return;
-               		}
-	            }
-                    if ((regs.itt1 & 0x8000)
-		            && (!(regs.itt1 & 0x60) || (regs.itt1 & 0x40))) {
-                        mask = ((~regs.itt1) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.itt1 & mask)) {
-                            regs.mmusr = 3;
-                            return;
-                        }
-                    }
-                    if ((excep_nono = setjmp(excep_env)) == 0) {
-                      if (regs.tcp) {
-                        atcindex = ((addr << 11) >> 24);
-                        rootp = regs.urp | ((addr >> 25) << 2);
-                        root = get_long_direct(rootp);
-                        if ((root & 0x3) > 1) {
-                          wr = (root & 0x4) >> 2;
-                          put_long_direct(rootp, root | 0x8);
-                          apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                          pdt = get_long_direct(apdt);
-                          if ((pdt & 0x3) > 1) {
-                            wr += (pdt & 0x4) >> 2;
-                            put_long_direct(apdt, pdt | 0x8);
-                            apd = (pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11);
-                            pd = get_long_direct(apd);
-                            switch (pd & 0x3) {
-                              case 0:  regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                              case 2:  apd = pd & 0xfffffffc;
-                                       pd = get_long_direct(apd);
-                                       if (((pd & 0x3) % 2) == 0) {
-                                         regs.mmusr = 0x800;
-                                         excep_env = excep_env_old;
-                                         return;
-                                       }
-                              default: wr += (pd & 0x4) >> 2;
-                                       put_long_direct(apd, pd | 0x18);
-                                       regs.atcini[atcindex] = addr & 0xffffe000;
-                                       regs.atcouti[atcindex] = pd & 0xffffe000;
-                                       regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                                       regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                                       regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                                       regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                                       regs.atcmodifi[atcindex] = 1;
-                                       regs.atcwritepi[atcindex] = wr;
-                                       regs.atcresidi[atcindex] = 1;
-                                       regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                                       regs.atcfc2i[atcindex] = regs.s; // ??
-                                       regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
-                                       regs.mmusr |= pd & 0x000007e0;
-                                       regs.mmusr |= wr ? 0x4 : 0;
-                            }
-                          } else {
-                            regs.mmusr = 0x800;
-                            excep_env = excep_env_old;
-                            return;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      } else {
-                        atcindex = ((addr << 12) >> 24);
-                        rootp = regs.urp | ((addr >> 25) << 2);
-                        root = get_long_direct(rootp);
-                        if ((root & 0x3) > 1) {
-                          wr = (root & 0x4) >> 2;
-                          put_long_direct(rootp, root | 0x8);
-                          apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                          pdt = get_long_direct(apdt);
-                          if ((pdt & 0x3) > 1) {
-                            wr += (pdt & 0x4) >> 2;
-                            put_long_direct(apdt, pdt | 0x8);
-                            apd = (pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10);
-                            pd = get_long_direct(apd);
-                            switch (pd & 0x3) {
-                              case 0:  regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                              case 2:  apd = pd & 0xfffffffc;
-                                       pd = get_long_direct(apd);
-                                       if (((pd & 0x3) % 2) == 0) {
-                                         regs.mmusr = 0x800;
-                                         excep_env = excep_env_old;
-                                         return;
-                                       }
-                              default: wr += (pd & 0x4) >> 2;
-                                       put_long_direct(apd, pd | 0x18);
-                                       regs.atcini[atcindex] = addr & 0xfffff000;
-                                       regs.atcouti[atcindex] = pd & 0xfffff000;
-                                       regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                                       regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                                       regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                                       regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                                       regs.atcmodifi[atcindex] = 1;
-                                       regs.atcwritepi[atcindex] = wr;
-                                       regs.atcresidi[atcindex] = 1;
-                                       regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                                       regs.atcfc2i[atcindex] = regs.s; // ??
-                                       regs.mmusr = (pd & 0xfffff000) | 0x11;
-                                       regs.mmusr |= pd & 0x000007e0;
-                                       regs.mmusr |= wr ? 0x4 : 0;
-                            }
-                          } else {
-                            regs.mmusr = 0x800;
-                            excep_env = excep_env_old;
-                            return;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      }
-                    } else {
-                      switch (excep_nono) {
-                        case 2: regs.mmusr = 0x800;
-                                excep_env = excep_env_old;
-                                return;
-                        default:
-                                excep_env = excep_env_old;
-                                longjmp(excep_env, excep_nono);
-                      }
-                    }
-
-	            break;
-	    case 5:
-                    if ((regs.dtt0 & 0x8000)
-		            && (!(regs.dtt0 & 0x20) || (regs.dtt0 & 0x40))) {
-                        mask = ((~regs.dtt0) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.dtt0 & mask)) {
-                	    regs.mmusr = 3;
-	                    return;
-               		}
-	            }
-                    if ((regs.dtt1 & 0x8000)
-		            && (!(regs.dtt1 & 0x20) || (regs.dtt1 & 0x40))) {
-                        mask = ((~regs.dtt1) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.dtt1 & mask)) {
-                            regs.mmusr = 3;
-                            return;
-                        }
-                    }
-                    if ((excep_nono = setjmp(excep_env)) == 0) {
-                      if (regs.tcp) {
-                        atcindex = ((addr << 11) >> 24);
-                        rootp = regs.srp | ((addr >> 25) << 2);
-                        root = get_long_direct(rootp);
-                        if ((root & 0x3) > 1) {
-                          wr = (root & 0x4) >> 2;
-                          put_long_direct(rootp, root | 0x8);
-                          apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                          pdt = get_long_direct(apdt);
-                          if ((pdt & 0x3) > 1) {
-                            wr += (pdt & 0x4) >> 2;
-                            put_long_direct(apdt, pdt | 0x8);
-                            apd = (pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11);
-                            pd = get_long_direct(apd);
-                            switch (pd & 0x3) {
-                              case 0:  regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                              case 2:  apd = pd & 0xfffffffc;
-                                       pd = get_long_direct(apd);
-                                       if (((pd & 0x3) % 2) == 0) {
-                                         regs.mmusr = 0x800;
-                                         excep_env = excep_env_old;
-                                         return;
-                                       }
-                              default: wr += (pd & 0x4) >> 2;
-                                       put_long_direct(apd, pd | 0x18);
-                                       regs.atcind[atcindex] = addr & 0xffffe000;
-                                       regs.atcoutd[atcindex] = pd & 0xffffe000;
-                                       regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-                                       regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-                                       regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-                                       regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-                                       regs.atcmodifd[atcindex] = 1;
-                                       regs.atcwritepd[atcindex] = wr;
-                                       regs.atcresidd[atcindex] = 1;
-                                       regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-                                       regs.atcfc2d[atcindex] = regs.s; // ??
-                                       regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
-                                       regs.mmusr |= pd & 0x000007e0;
-                                       regs.mmusr |= wr ? 0x4 : 0;
-                            }
-                          } else {
-                            regs.mmusr = 0x800;
-                            excep_env = excep_env_old;
-                            return;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      } else {
-                        atcindex = ((addr << 12) >> 24);
-                        rootp = regs.srp | ((addr >> 25) << 2);
-                        root = get_long_direct(rootp);
-                        if ((root & 0x3) > 1) {
-                          wr = (root & 0x4) >> 2;
-                          put_long_direct(rootp, root | 0x8);
-                          apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                          pdt = get_long_direct(apdt);
-                          if ((pdt & 0x3) > 1) {
-                            wr += (pdt & 0x4) >> 2;
-                            put_long_direct(apdt, pdt | 0x8);
-                            apd = (pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10);
-                            pd = get_long_direct(apd);
-                            switch (pd & 0x3) {
-                              case 0:  regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                              case 2:  apd = pd & 0xfffffffc;
-                                       pd = get_long_direct(apd);
-                                       if (((pd & 0x3) % 2) == 0) {
-                                         regs.mmusr = 0x800;
-                                         excep_env = excep_env_old;
-                                         return;
-                                       }
-                              default: wr += (pd & 0x4) >> 2;
-                                       put_long_direct(apd, pd | 0x18);
-                                       regs.atcind[atcindex] = addr & 0xfffff000;
-                                       regs.atcoutd[atcindex] = pd & 0xfffff000;
-                                       regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-                                       regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-                                       regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-                                       regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-                                       regs.atcmodifd[atcindex] = 1;
-                                       regs.atcwritepd[atcindex] = wr;
-                                       regs.atcresidd[atcindex] = 1;
-                                       regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-                                       regs.atcfc2d[atcindex] = regs.s; // ??
-                                       regs.mmusr = (pd & 0xfffff000) | 0x11;
-                                       regs.mmusr |= pd & 0x000007e0;
-                                       regs.mmusr |= wr ? 0x4 : 0;
-                            }
-                          } else {
-                            regs.mmusr = 0x800;
-                            excep_env = excep_env_old;
-                            return;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      }
-                    } else {
-                      switch (excep_nono) {
-                        case 2: regs.mmusr = 0x800;
-                                excep_env = excep_env_old;
-                                return;
-                        default:
-                                excep_env = excep_env_old;
-                                longjmp(excep_env, excep_nono);
-                      }
-                    }
-
-                    break;
-	    case 6:
-                    if ((regs.itt0 & 0x8000)
-		            && (!(regs.itt0 & 0x20) || (regs.itt0 & 0x40))) {
-                        mask = ((~regs.itt0) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.itt0 & mask)) {
-                	    regs.mmusr = 3;
-	                    return;
-               		}
-	            }
-                    if ((regs.itt1 & 0x8000)
-		            && (!(regs.itt1 & 0x20) || (regs.itt1 & 0x40))) {
-                        mask = ((~regs.itt1) & 0xff0000) << 8;
-                        if ((addr & mask) == (regs.itt1 & mask)) {
-                            regs.mmusr = 3;
-                            return;
-                        }
-                    }
-                    if ((excep_nono = setjmp(excep_env)) == 0) {
-                      if (regs.tcp) {
-                        atcindex = ((addr << 11) >> 24);
-                        rootp = regs.srp | ((addr >> 25) << 2);
-                        root = get_long_direct(rootp);
-                        if ((root & 0x3) > 1) {
-                          wr = (root & 0x4) >> 2;
-                          put_long_direct(rootp, root | 0x8);
-                          apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                          pdt = get_long_direct(apdt);
-                          if ((pdt & 0x3) > 1) {
-                            wr += (pdt & 0x4) >> 2;
-                            put_long_direct(apdt, pdt | 0x8);
-                            apd = (pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11);
-                            pd = get_long_direct(apd);
-                            switch (pd & 0x3) {
-                              case 0:  regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                              case 2:  apd = pd & 0xfffffffc;
-                                       pd = get_long_direct(apd);
-                                       if (((pd & 0x3) % 2) == 0) {
-                                         regs.mmusr = 0x800;
-                                         excep_env = excep_env_old;
-                                         return;
-                                       }
-                              default: wr += (pd & 0x4) >> 2;
-                                       put_long_direct(apd, pd | 0x18);
-                                       regs.atcini[atcindex] = addr & 0xffffe000;
-                                       regs.atcouti[atcindex] = pd & 0xffffe000;
-                                       regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                                       regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                                       regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                                       regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                                       regs.atcmodifi[atcindex] = 1;
-                                       regs.atcwritepi[atcindex] = wr;
-                                       regs.atcresidi[atcindex] = 1;
-                                       regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                                       regs.atcfc2i[atcindex] = regs.s; // ??
-                                       regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
-                                       regs.mmusr |= pd & 0x000007e0;
-                                       regs.mmusr |= wr ? 0x4 : 0;
-                            }
-                          } else {
-                            regs.mmusr = 0x800;
-                            excep_env = excep_env_old;
-                            return;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      } else {
-                        atcindex = ((addr << 12) >> 24);
-                        rootp = regs.srp | ((addr >> 25) << 2);
-                        root = get_long_direct(rootp);
-                        if ((root & 0x3) > 1) {
-                          wr = (root & 0x4) >> 2;
-                          put_long_direct(rootp, root | 0x8);
-                          apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-                          pdt = get_long_direct(apdt);
-                          if ((pdt & 0x3) > 1) {
-                            wr += (pdt & 0x4) >> 2;
-                            put_long_direct(apdt, pdt | 0x8);
-                            apd = (pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10);
-                            pd = get_long_direct(apd);
-                            switch (pd & 0x3) {
-                              case 0:  regs.mmusr = 0x800;
-                                       excep_env = excep_env_old;
-                                       return;
-                              case 2:  apd = pd & 0xfffffffc;
-                                       pd = get_long_direct(apd);
-                                       if (((pd & 0x3) % 2) == 0) {
-                                         regs.mmusr = 0x800;
-                                         excep_env = excep_env_old;
-                                         return;
-                                       }
-                              default: wr += (pd & 0x4) >> 2;
-                                       put_long_direct(apd, pd | 0x18);
-                                       regs.atcini[atcindex] = addr & 0xfffff000;
-                                       regs.atcouti[atcindex] = pd & 0xfffff000;
-                                       regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                                       regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                                       regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                                       regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                                       regs.atcmodifi[atcindex] = 1;
-                                       regs.atcwritepi[atcindex] = wr;
-                                       regs.atcresidi[atcindex] = 1;
-                                       regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                                       regs.atcfc2i[atcindex] = regs.s; // ??
-                                       regs.mmusr = (pd & 0xfffff000) | 0x11;
-                                       regs.mmusr |= pd & 0x000007e0;
-                                       regs.mmusr |= wr ? 0x4 : 0;
-                            }
-                          } else {
-                            regs.mmusr = 0x800;
-                            excep_env = excep_env_old;
-                            return;
-                          }
-                        } else {
-                          regs.mmusr = 0x800;
-                          excep_env = excep_env_old;
-                          return;
-                        }
-                      }
-                    } else {
-                      switch (excep_nono) {
-                        case 2: regs.mmusr = 0x800;
-                                excep_env = excep_env_old;
-                                return;
-                        default:
-                                excep_env = excep_env_old;
-                                longjmp(excep_env, excep_nono);
-                      }
-                    }
-                    break;
-	    default: break;
-	}
-
-/*
-	if (regs.tcp) {
-            atcindex = ((addr << 11) >> 24);
-	    if ((excep_nono = setjmp(excep_env)) == 0) {
-	        rootp = regs.srp | ((addr >> 25) << 2);
-	    } else {
-		switch (excep_nono) {
-		    case 2: regs.mmusr = 0x800;
-			    excep_env = excep_env_old;
-			    return;
-		    default:
-			    excep_env = excep_env_old;
-			    longjmp(excep_env, excep_nono);
-		}
-	    }
-	    root = get_long_direct(rootp);
-	    if ((root & 0x3) > 1) {
-	        wr = (root & 0x4) >> 2;
-	        put_long_direct(rootp, root | 0x8);
-		if ((excep_nono = setjmp(excep_env)) == 0) {
-		    apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-		} else {
-		    switch (excep_nono) {
-			case 2: regs.mmusr = 0x800;
-				excep_env = excep_env_old;
-				return;
-			default:
-				excep_env = excep_env_old;
-				longjmp(excep_env, excep_nono);
-		    }
-		}
-	        pdt = get_long_direct(apdt);
-	        if ((pdt & 0x3) > 1) {
-	            wr += (pdt & 0x4) >> 2;
-		    put_long_direct(apdt, pdt | 0x8);
-		    if ((excep_nono = setjmp(excep_env)) == 0) {
-		       	apd = (pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11);
-		    } else {
-			switch (excep_nono) {
-			    case 2: regs.mmusr = 0x800;
-				    excep_env = excep_env_old;
-				    return;
-			    default:
-				    excep_env = excep_env_old;
-				    longjmp(excep_env, excep_nono);
-			}
-		    }
-                    pd = get_long_direct(apd);
-		    switch (pd & 0x3) {
-		       	case 0:  regs.mmusr = 0x800;
-			         return;
-		       	case 2:  if ((excep_nono = setjmp(excep_env)) == 0) {
-				     apd = pd & 0xfffffffc;
-				 } else {
-				     switch (excep_nono) {
-				         case 2: regs.mmusr = 0x800;
-					         excep_env = excep_env_old;
-						 return;
-					 default:
-						 excep_env = excep_env_old;
-						 longjmp(excep_env, excep_nono);
-				     }
-				 }
-		        	 pd = get_long_direct(apd);
-			         if (((pd & 0x3) % 2) == 0) {
-				     regs.mmusr = 0x800;
-				     return;
-				 }
-                    	default: wr += (pd & 0x4) >> 2;
-                        	 put_long_direct(apd, pd | 0x18);
-			         regs.atcind[atcindex] = addr & 0xffffe000;
-			         regs.atcini[atcindex] = addr & 0xffffe000;
-				 regs.atcouti[atcindex] = pd & 0xffffe000;
-               			 regs.atcoutd[atcindex] = pd & 0xffffe000;
-				 regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                         	 regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-				 regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                         	 regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-				 regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                         	 regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-				 regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                         	 regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-				 regs.atcmodifi[atcindex] = 1;
-                         	 regs.atcmodifd[atcindex] = 1;
-				 regs.atcwritepi[atcindex] = wr;
-                         	 regs.atcwritepd[atcindex] = wr;
-				 regs.atcresidi[atcindex] = 1;
-                         	 regs.atcresidd[atcindex] = 1;
-				 regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                         	 regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-				 regs.atcfc2i[atcindex] = regs.s; // ??
-                         	 regs.atcfc2d[atcindex] = regs.s; // ??
-
-				 regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
-				 regs.mmusr |= pd & 0x000007e0;
-				 regs.mmusr |= wr ? 0x4 : 0;
-		    }
-	        } else {
-		    regs.mmusr = 0x800;
-		    return;
-		}
-	    } else {
-		regs.mmusr = 0x800;
-		return;
-	    }
-        } else {
-            atcindex = ((addr << 12) >> 24);
-	    if ((excep_nono = setjmp(excep_env)) == 0) {
-		rootp = regs.srp | ((addr >> 25) << 2);
-	    } else {
-		regs.mmusr = 0x800;
-		excep_env = excep_env_old;
-		return;
-	    }
-	    root = get_long_direct(rootp);
-	    if ((root & 0x3) > 1) {
-	       	wr = (root & 0x4) >> 2;
-	       	put_long_direct(rootp, root | 0x8);
-		if ((excep_nono = setjmp(excep_env)) == 0) {
-	            apdt = (root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16);
-		} else {
-		     switch (excep_nono) {
-		        case 2: regs.mmusr = 0x800;
-			        excep_env = excep_env_old;
-				return;
-			default:
-				excep_env = excep_env_old;
-				longjmp(excep_env, excep_nono);
-		    }
-		}
-	        pdt = get_long_direct(apdt);
-	        if ((pdt & 0x3) > 1) {
-	            wr += (pdt & 0x4) >> 2;
-		    put_long_direct(apdt, pdt | 0x8);
-		    if ((excep_nono = setjmp(excep_env)) == 0) {
-		    	apd = (pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10);
-		    } else {
-			switch (excep_nono) {
-			    case 2: regs.mmusr = 0x800;
-				    excep_env = excep_env_old;
-				    return;
-			    default:
-				    excep_env = excep_env_old;
-				    longjmp(excep_env, excep_nono);
-		        }
-		    }
-                    pd = get_long_direct(apd);
-		    switch (pd & 0x3) {
-		        case 0:  regs.mmusr = 0x800;
-			         return;
-		        case 2:  if ((excep_nono = setjmp(excep_env)) == 0) {
-			             apd = pd & 0xfffffffc;
-				 } else {
-				     switch (excep_nono) {
-				         case 2: regs.mmusr = 0x800;
-					         excep_env = excep_env_old;
-						 return;
-					 default:
-						 excep_env = excep_env_old;
-						 longjmp(excep_env, excep_nono);
-				     }
-				 }
-		                 pd = *apd;
-			         if (((pd & 0x3) % 2) == 0) {
-				     regs.mmusr = 0x800;
-				     return;
-				 }
-                        default: wr += (pd & 0x4) >> 2;
-                                 put_long_direct(apd, pd | 0x18);
-			         regs.atcind[atcindex] = addr & 0xfffff000;
-			         regs.atcini[atcindex] = addr & 0xfffff000;
-				 regs.atcouti[atcindex] = pd & 0xfffff000;
-				 regs.atcoutd[atcindex] = pd & 0xfffff000;
-				 regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
-                         	 regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
-				 regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
-                         	 regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
-				 regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
-                         	 regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
-				 regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
-                         	 regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
-				 regs.atcmodifi[atcindex] = 1;
-                         	 regs.atcmodifd[atcindex] = 1;
-				 regs.atcwritepi[atcindex] = wr;
-                         	 regs.atcwritepd[atcindex] = wr;
-				 regs.atcresidi[atcindex] = 1;
-                         	 regs.atcresidd[atcindex] = 1;
-				 regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
-                         	 regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
-				 regs.atcfc2i[atcindex] = regs.s; // ??
-                         	 regs.atcfc2d[atcindex] = regs.s; // ??
-				 				                      	
-				 regs.mmusr = (pd & 0xfffff000) | 0x11;
-				 regs.mmusr |= pd & 0x000007e0;
-				 regs.mmusr |= wr ? 0x4 : 0;
-		    }
-	        } else {
-		    regs.mmusr = 0x800;
-		    return;
-		}
-	    } else {
-		regs.mmusr = 0x800;
-		return;
-	    }
-	}*/
-#endif /* FULLMMU */
     } else op_illg(opcode);
-#ifdef FULLMMU
-    excep_env = excep_env_old;
-#endif /* FULLMMU */
 }
-
-// MJ static int n_insns = 0, n_spcinsns = 0;
+#endif
 
 static uaecptr last_trace_ad = 0;
 
@@ -2755,7 +1266,7 @@ static void do_trace (void)
        /* We can afford this to be inefficient... */
        m68k_setpc (m68k_getpc ());
        fill_prefetch_0 ();
-       opcode = get_word (regs.pc);
+       opcode = get_word (m68k_getpc());
        if (opcode == 0x4e72            /* RTE */
            || opcode == 0x4e74                 /* RTD */
            || opcode == 0x4e75                 /* RTS */
@@ -2847,8 +1358,10 @@ extern void ivoke200HzInterrupt(void);	// in main.cpp
 
 static void m68k_run_1 (void)
 {
+    uae_u32 pc;
     uae_u32 opcode;
     for (;;) {
+	pc = m68k_getpc();
 #ifdef FULL_HISTORY
 #ifdef NEED_TO_DEBUG_BADLY
 	history[lasthist] = regs;
@@ -2863,27 +1376,34 @@ static void m68k_run_1 (void)
 #endif
 
 #if ARAM_PAGE_CHECK
-	if (((regs.pcp ^ pc_page) > ARAM_PAGE_MASK)) {
-	    check_ram_boundary(regs.pcp, 2, false);
+# if 0
+	if (((pc ^ pc_page) > ARAM_PAGE_MASK)) {
+	    check_ram_boundary(pc, 2, false);
 //	    opcode = GET_OPCODE;
-	    uae_u16* addr = (uae_u16*)get_real_address(regs.pcp, 0, regs.pcp, sz_word);
-	    pc_page = regs.pcp;
-	    pc_offset = (uae_u32)addr - regs.pcp;
+	    uae_u16* addr = (uae_u16*)get_real_address(pc, 0, sz_word);
+	    pc_page = pc;
+	    pc_offset = (uae_u32)addr - pc;
 	}
-# ifdef HAVE_GET_WORD_UNSWAPPED
-	opcode = do_get_mem_word_unswapped((uae_u16*)(regs.pcp + pc_offset));
+#  ifdef HAVE_GET_WORD_UNSWAPPED
+	opcode = do_get_mem_word_unswapped((uae_u16*)(pc + pc_offset));
+#  else
+	opcode = do_get_mem_word((uae_u16*)(pc + pc_offset));
+#  endif
 # else
-	opcode = do_get_mem_word((uae_u16*)(regs.pcp + pc_offset));
+	if (((pc ^ pc_page) > ARAM_PAGE_MASK)) {
+	    check_ram_boundary(pc, 2, false);
+	    pc_page = pc;
+	    pc_offset = (uae_u32)get_real_address(pc, 0, sz_word) - pc;
+	}
 # endif
 #else
-	check_ram_boundary(regs.pcp, 2, false);
-	opcode = GET_OPCODE;
+	check_ram_boundary(pc, 2, false);
 #endif
+	opcode = GET_OPCODE;
 
-// Seems to be faster without the assembly...
-//#ifdef X86_ASSEMBLY
-#if 0
-        __asm__ __volatile__ ("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
+// Seems to be faster without the assembly... - yes, it is "bugfix"
+#if (0 && defined(X86_ASSEMBLY))
+	__asm__ __volatile__ ("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
                      : : "b" (cpufunctbl[opcode]), "a" (opcode)
                      : "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
 #else
@@ -2988,7 +1508,7 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 	    opcode = 0x4AFC;
 	}
 	dp = table68k + opcode;
-	for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
+	for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
 	    ;
 
 	strcpy (instrname, lookup->name);
@@ -3095,7 +1615,7 @@ setjmpagain:
 			opcode = 0x4AFC;
 		}
 		dp = table68k + opcode;
-		for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
+		for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
 		    ;
 		strcpy (instrname, lookup->name);
 		ccpt = strstr (instrname, "cc");

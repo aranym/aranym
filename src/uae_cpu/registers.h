@@ -66,8 +66,8 @@ extern struct regstruct
     int intmask;
 
     uae_u32 pc;
-    uae_u32 pcp;	//    uae_u8 *pc_p;
-    uae_u32 pcoldp;	//    uae_u8 *pc_oldp;
+    uae_u8 *pc_p;
+    uae_u8 *pc_oldp;
 
     uae_u32 vbr,sfc,dfc;
 
@@ -128,5 +128,10 @@ extern struct regstruct
     /* Cache reg*/
     uae_u32 cacr,caar;
 } regs, lastint_regs;
+
+static __inline__ uaecptr m68k_getpc (void)
+{
+    return regs.pc + ((char *)regs.pc_p - (char *)regs.pc_oldp);
+}
 
 #endif

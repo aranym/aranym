@@ -225,7 +225,7 @@ void debug (void)
 #endif
 	m68k_dumpstate (&nextpc);
 	trace_same_insn_count = 1;
-	memcpy (trace_insn_copy, do_get_real_address(regs.pcp, true, false), 10);
+	memcpy (trace_insn_copy, do_get_real_address(m68k_getpc(), true, false), 10);
 	memcpy (&trace_prev_regs, &regs, sizeof regs);
     }
 
@@ -376,7 +376,7 @@ void debug (void)
 	    SPCFLAGS_SET( SPCFLAG_BRK );
 	    if (skipaddr == 0xC0DEDBAD) {
 	        trace_same_insn_count = 0;
-		memcpy (trace_insn_copy, do_get_real_address(regs.pcp, true, false), 10);
+		memcpy (trace_insn_copy, do_get_real_address(m68k_getpc(), true, false), 10);
 		memcpy (&trace_prev_regs, &regs, sizeof regs);
 	    }
 		if (wasGrabbed) grabMouse(true);	// lock keyboard and mouse

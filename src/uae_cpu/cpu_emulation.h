@@ -100,6 +100,7 @@ static inline void *Atari2Atari_memcpy(uint32 dest, uint32 src, size_t n) {retur
 // Initialization
 extern bool InitMEM();
 extern bool Init680x0(void);
+extern void AtariReset(void);
 extern void Exit680x0(void);
 
 // 680x0 emulation functions
@@ -118,6 +119,6 @@ extern void TriggerNMI(void);		// Trigger interrupt level 7
 
 
 // This function will be removed
-static uaecptr showPC(void) { return regs.pcp; }	// for debugging only
+static uaecptr showPC(void) { return m68k_getpc(); }	// for debugging only
 
 #endif

@@ -132,7 +132,7 @@ extern uaecptr mmu_translate(uaecptr addr,
 		int fc,
 		int write,
 		uaecptr pc,
-		int size,       /* sz_xxx */
+		int size,
 		int test
 		) REGPARAM;
 

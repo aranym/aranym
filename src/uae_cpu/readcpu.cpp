@@ -139,6 +139,9 @@ struct mnemolookup lookuptab[] = {
     { i_CPUSHA, "CPUSHA" },
     { i_MOVE16, "MOVE16" },
 
+    { i_EMULOP_RETURN, "EMULOP_RETURN" },
+    { i_EMULOP, "EMULOP" },
+
     { i_MMUOP, "MMUOP" },
     { i_ILLG, "" },
 };
@@ -195,11 +198,30 @@ static void build_insn (int insn)
     int variants;
     struct instr_def id;
     const char *opcstr;
-    int i;
+    int i, n;
 
     int flaglive = 0, flagdead = 0;
+    int cflow = 0;
 
     id = defs68k[insn];
+
+    // Control flow information
+    cflow = id.cflow;
+
+    // Mask of flags set/used
+    unsigned char flags_set(0), flags_used(0);
+
+    for (i = 0, n = 4; i < 5; i++, n--) {
+	switch (id.flaginfo[i].flagset) {
+	    case fa_unset: case fa_isjmp: break;
+	    default: flags_set |= (1 << n);
+	}
+
+	switch (id.flaginfo[i].flaguse) {
+	    case fu_unused: case fu_isjmp: break;
+	    default: flags_used |= (1 << n);
+	}
+    }
 
     for (i = 0; i < 5; i++) {
 	switch (id.flaginfo[i].flagset){
@@ -274,6 +296,9 @@ static void build_insn (int insn)
 	if (bitcnt[bitI] && (bitval[bitI] == 0x00 || bitval[bitI] == 0xff))
 	    continue;
 
+	if (bitcnt[bitE] && (bitval[bitE] == 0x00))
+		continue;
+
 	/* bitI and bitC get copied to biti and bitc */
 	if (bitcnt[bitI]) {
 	    bitval[biti] = bitval[bitI]; bitpos[biti] = bitpos[bitI];
@@ -339,6 +364,7 @@ static void build_insn (int insn)
 	 case 'A':
 	    srcmode = Areg;
 	    switch (opcstr[pos++]) {
+	     case 'l': srcmode = absl; break;
 	     case 'r': srcreg = bitval[bitr]; srcgather = 1; srcpos = bitpos[bitr]; break;
 	     case 'R': srcreg = bitval[bitR]; srcgather = 1; srcpos = bitpos[bitR]; break;
 	     default: abort();
@@ -348,9 +374,11 @@ static void build_insn (int insn)
 	     case 'P': srcmode = Aipi; pos++; break;
 	    }
 	    break;
+#if 0
 	case 'L':
 		srcmode = absl;
 		break;
+#endif
 	 case '#':
 	    switch (opcstr[pos++]) {
 	     case 'z': srcmode = imm; break;
@@ -396,8 +424,16 @@ static void build_insn (int insn)
 		    srcpos = bitpos[bitK];
 		}
 		break;
-		 case 'p': srcmode = immi; srcreg = bitval[bitp];
-		if (CPU_EMU_SIZE < 5) {
+	     case 'E': srcmode = immi; srcreg = bitval[bitE];
+		if (CPU_EMU_SIZE < 5) { // gb-- what is CPU_EMU_SIZE used for ??
+			/* 1..255 */
+			srcgather = 1;
+			srctype = 6;
+			srcpos = bitpos[bitE];
+		}
+		break;
+	     case 'p': srcmode = immi; srcreg = bitval[bitp];
+		if (CPU_EMU_SIZE < 5) { // gb-- what is CPU_EMU_SIZE used for ??
 			/* 0..3 */
 			srcgather = 1;
 			srctype = 7;
@@ -534,21 +570,22 @@ static void build_insn (int insn)
 	 case 'A':
 	    destmode = Areg;
 	    switch (opcstr[pos++]) {
+	     case 'l': destmode = absl; break;
 	     case 'r': destreg = bitval[bitr]; dstgather = 1; dstpos = bitpos[bitr]; break;
 	     case 'R': destreg = bitval[bitR]; dstgather = 1; dstpos = bitpos[bitR]; break;
-		case 'x': destreg = 0; dstgather = 0; dstpos = 0; break;
+	     case 'x': destreg = 0; dstgather = 0; dstpos = 0; break;
 	     default: abort();
 	    }
-		if (dstpos < 0 || dstpos >= 32)
-			abort();
 	    switch (opcstr[pos]) {
 	     case 'p': destmode = Apdi; pos++; break;
 	     case 'P': destmode = Aipi; pos++; break;
 	    }
 	    break;
+#if 0
 	case 'L':
 		destmode = absl;
 		break;
+#endif
 	 case '#':
 	    switch (opcstr[pos++]) {
 	     case 'z': destmode = imm; break;
@@ -719,8 +756,16 @@ static void build_insn (int insn)
 	    table68k[opc].flaginfo[i].flaguse = id.flaginfo[i].flaguse;
 	}
 #endif
+
+#if 1
+	/* gb-- flagdead and flaglive would not have correct information */
+	table68k[opc].flagdead = flags_set;
+	table68k[opc].flaglive = flags_used;
+#else
 	table68k[opc].flagdead = flagdead;
 	table68k[opc].flaglive = flaglive;
+#endif
+	table68k[opc].cflow = cflow;
 	nomatch:
 	/* FOO! */;
     }
@@ -738,6 +783,66 @@ void read_table68k (void)
     }
     for (i = 0; i < n_defs68k; i++) {
 	build_insn (i);
+    }
+
+    /* Extra fixes in table68k for control flow information and flag usage */
+    for (i = 0; i < 65536; i++) {
+	instrmnem mnemo = (instrmnem)(table68k[i].mnemo);
+		
+#define IS_CONST_JUMP(opc) \
+	(	((table68k[opc].mnemo == i_Bcc) && (table68k[opc].cc < 2)) \
+	||	(table68k[opc].mnemo == i_BSR) \
+	)
+
+#if 0
+	// gb-- Don't follow false and true branches as we may not be
+	// able to determine the whole block length in bytes in order
+	// to compute the block checksum
+
+	// We can follow unconditional jumps if neither Lazy Flusher
+	// nor Dynamic Code Patches feature is enabled
+
+	// UPDATE: this is no longer permitted since we can decide
+	// at runtime whether the JIT compiler is used or not
+	if (IS_CONST_JUMP(i))
+		table68k[i].cflow = fl_normal;
+#endif
+		
+	// Fix flags used information for Scc, Bcc, TRAPcc, DBcc instructions
+	int flags_used = table68k[i].flaglive;
+	if ((mnemo == i_Scc)
+		|| (mnemo == i_Bcc)
+		|| (mnemo == i_DBcc)
+		|| (mnemo == i_TRAPcc)
+		) {
+	    switch (table68k[i].cc) {
+		// CC mask:	XNZVC
+		//		8421
+		case 0: flags_used = 0x00; break;	/*  T */
+		case 1: flags_used = 0x00; break;	/*  F */
+		case 2: flags_used = 0x05; break;	/* HI */
+		case 3: flags_used = 0x05; break;	/* LS */
+		case 4: flags_used = 0x01; break;	/* CC */
+		case 5: flags_used = 0x01; break;	/* CS */
+		case 6: flags_used = 0x04; break;	/* NE */
+		case 7: flags_used = 0x04; break;	/* EQ */
+		case 8: flags_used = 0x02; break;	/* VC */
+		case 9: flags_used = 0x02; break;	/* VS */
+		case 10:flags_used = 0x08; break;	/* PL */
+		case 11:flags_used = 0x08; break;	/* MI */
+		case 12:flags_used = 0x0A; break;	/* GE */
+		case 13:flags_used = 0x0A; break;	/* LT */
+		case 14:flags_used = 0x0E; break;	/* GT */
+		case 15:flags_used = 0x0E; break;	/* LE */
+	    }
+	}
+
+	/* Unconditional jumps don't evaluate condition codes, so they
+	   don't actually use any flags themselves */
+	if (IS_CONST_JUMP(i))
+	    flags_used = 0;
+
+	table68k[i].flaglive = flags_used;
     }
 }
 
@@ -766,6 +871,8 @@ static void handle_merges (long int opcode)
 	    smsk = 7; sbitdst = 8; break;
 	 case 5:
 	    smsk = 63; sbitdst = 64; break;
+	 case 6:
+	    smsk = 255; sbitdst = 256; break;
 	 case 7:
 	 	smsk = 3; sbitdst = 4; break;
 	 default:

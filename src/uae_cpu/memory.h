@@ -258,9 +258,9 @@ static __inline__ void put_byte(uaecptr addr, uae_u16 b)
     phys_put_byte(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_byte, 0),b);
 }
 
-static __inline__ uae_u8 *get_real_address(uaecptr addr, int write, uaecptr pc, wordsizes sz)
+static __inline__ uae_u8 *get_real_address(uaecptr addr, int write, wordsizes sz)
 {
-    return phys_get_real_address(mmu_translate(addr, FC_DATA, write, pc, sz, 0));
+    return phys_get_real_address(mmu_translate(addr, FC_DATA, write, m68k_getpc(), sz, 0));
 }
 
 static __inline__ uae_u32 sfc_get_long(uaecptr addr)
@@ -311,7 +311,7 @@ static __inline__ bool valid_address(uaecptr addr, int write, uaecptr pc, wordsi
 #  define put_long(a,b)			phys_put_long(a,b)
 #  define put_word(a,b)			phys_put_word(a,b)
 #  define put_byte(a,b)			phys_put_byte(a,b)
-#  define get_real_address(a,w,p,s)	phys_get_real_address(a)
+#  define get_real_address(a,w,s)	phys_get_real_address(a)
 
 static __inline__ bool valid_address(uaecptr addr, int write, uaecptr pc, wordsizes sz)
 {
