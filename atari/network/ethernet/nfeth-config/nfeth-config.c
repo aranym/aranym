@@ -12,7 +12,7 @@
 #include <mintbind.h>
 #endif
 #include <string.h>				/* for strcmp */
-#include "../araether_nfapi.h"
+#include "../ethernet_nfapi.h"
 
 /* compiler and library compatibility defines */
 #if __PUREC__

@@ -30,7 +30,7 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
-#include "../../atari/network/araeth/araether_nfapi.h"
+#include "../../atari/network/ethernet/ethernet_nfapi.h"
 
 /****************************
  * Configuration zone begins
