@@ -1,3 +1,9 @@
+2005/01/08 - Petr Stehlik
+- mfp.cpp: irq handling (enable/pending/masked) copied bit-by-bit from STonC.
+  And it seems to work! At last... Thanks, Laurent, for your great MFP
+  emulation.
+
+
 2005/01/07 - Andreas Schwab
 - uae_cpu/cpummu.h: Fix values of MMU_MMUSR_T and MMU_MMUSR_R.
 
