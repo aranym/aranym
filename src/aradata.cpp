@@ -6,8 +6,11 @@
 #include "memory.h"
 #include "aradata.h"
 #include "parameters.h"
+
+#ifdef EXTFS_SUPPORT
 #include "extfs.h"
 extern ExtFs extFS;
+#endif
 
 ARADATA::ARADATA() {
 	mouseDriver = false;
@@ -30,10 +33,12 @@ uae_u8 ARADATA::handleRead(uaecptr addr) {
 		case 7: return FastRAMSize >> 16;
 		case 8: return FastRAMSize >> 8;
 		case 9: return FastRAMSize;
+#ifdef EXTFS_SUPPORT
 		case 10: return extFS.getDrvBits() >> 24;
 		case 11: return extFS.getDrvBits() >> 16;
 		case 12: return extFS.getDrvBits() >> 8;
 		case 13: return extFS.getDrvBits();
+#endif /* EXTFS_SUPPORT */
 	}
 
 	return 0;

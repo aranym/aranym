@@ -22,7 +22,7 @@
 
 #define MAXPATHNAMELEN 2048
 
-
+#ifdef EXTFS_SUPPORT
 class ExtFs {
   private:
 
@@ -213,11 +213,16 @@ class ExtFs {
 					 int16 len, int32 dirhandle, char* buff, uint32 xattrp, uint32 xretp );
 };
 
+#endif /* EXTFS_SUPPORT */
+
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.6  2001/09/18 12:37:16  joy
+ * getDrvBits() added
+ *
  * Revision 1.5  2001/06/21 20:16:53  standa
  * Dgetdrv(), Dsetdrv(), Dgetpath(), Dsetpath() propagation added.
  * Only Dsetpath() ever noticed to be propagated by MetaDOS.

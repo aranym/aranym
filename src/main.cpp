@@ -66,7 +66,9 @@ void setactvdebug(int) {
 
 void init_fdc();
 
+#ifdef EXTFS_SUPPORT
 #define METADOS_DRV
+#endif
 
 // CPU and FPU type, addressing mode
 int CPUType;
@@ -690,6 +692,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.41  2001/11/19 17:50:28  joy
+ * second MD5 check removed
+ *
  * Revision 1.40  2001/11/11 22:03:55  joy
  * direct truecolor is optional (compile time configurable)
  *
