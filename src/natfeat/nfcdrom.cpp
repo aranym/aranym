@@ -281,6 +281,10 @@ uint16 CdromDriver::AtariToLinuxIoctl(uint16 opcode)
 {
 	uint16 new_opcode;
 
+	if ((opcode<(('C'<<8)|0x00)) || (opcode>(('C'<<8)|0x14))) {
+		return 0xffff;
+	}
+
 	new_opcode = opcode;
 	switch(opcode) {
 		case (('C'<<8)|0x00):
