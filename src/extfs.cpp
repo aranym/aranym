@@ -63,10 +63,15 @@ void ExtFs::install( const char driveSign, const char* rootPath, bool halfSensit
 {
 	int8 driveNo = toupper(driveSign) - 'A';
 
-	drives[ driveNo ].rootPath = strdup( (char*)rootPath );
-	drives[ driveNo ].halfSensitive = halfSensitive;
+	if ( rootPath != NULL ) {
+		drives[ driveNo ].rootPath = strdup( (char*)rootPath );
+		drives[ driveNo ].halfSensitive = halfSensitive;
 
-	D(fprintf(stderr, "MetaDOS: installing %c:%s:%s\n", driveNo + 'A', rootPath, halfSensitive ? "halfSensitive" : "full"));
+		D(fprintf(stderr, "MetaDOS: installing %c:%s:%s\n",
+				  driveNo + 'A',
+				  rootPath ? rootPath : "null",
+				  halfSensitive ? "halfSensitive" : "full"));
+	}
 }
 
 

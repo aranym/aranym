@@ -55,7 +55,7 @@ Options:
   -g, --grab_mouse           ARAnyM grabs mouse and keyboard control in X-Windows\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
-  -d, --disk CHAR:ROOTPATH   filesystem assignment e.g. d:/atari/d_drive
+  -d, --disk CHAR:ROOTPATH   filesystem assignment e.g. d:/atari/d_drive\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
