@@ -25,6 +25,8 @@ AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history fo
 
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU [default=no]], [WANT_MMU=$enableval], [WANT_MMU=no])
 
+AC_ARG_ENABLE(dsp,         [  --enable-dsp        enable DSP 56001 [default=no]], [WANT_DSP=$enableval], [WANT_DSP=no])
+
 AC_ARG_ENABLE(sdltimer,        [  --enable-sdltimer       use SDL Timer for Timer C [default=yes]], [WANT_SDLTIMER=$enableval], [WANT_SDLTIMER=yes])
 
 AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB [default=no]], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
@@ -513,6 +515,14 @@ else
     MMUSRCS=""
 fi
 
+dnl DSP
+if [[ "x$WANT_DSP" = "xyes" ]]; then
+    AC_DEFINE(DSP_EMULATION)
+    DSPSRCS="../dsp_cpu.cpp"
+else
+    DSPSRCS=""
+fi
+
 dnl Timer C
 if [[ "x$WANT_SDLTIMER" = "xyes" ]]; then
   AC_DEFINE(USE_TIMERS)
@@ -910,7 +920,7 @@ fi
 dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
   CPUINCLUDES="-I../uae_cpu"
-  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp cpustbl.cpp $CPUSRCS $JITSRCS $MMUSRCS"
+  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp cpustbl.cpp $CPUSRCS $JITSRCS $MMUSRCS $DSPSRCS"
 fi
 
 dnl Remove the "-g" option if set for GCC.
@@ -963,6 +973,7 @@ echo Floating-Point emulation core .......... : $FPE_CORE_STR
 echo Assembly optimizations ................. : $ASM_OPTIMIZATIONS
 echo Addressing mode ........................ : $ADDRESSING_MODE
 echo Full MMU support ....................... : $WANT_MMU
+echo DSP 56001 support ...................... : $WANT_DSP
 echo Distributed dispatcher ................. : $WANT_DIS_DIP
 echo Debugger ............................... : $WHICH_DEBUG
 echo Monitor ................................ : $WANT_MON

@@ -20,7 +20,6 @@
 # include "compiler/compemu.h"
 #endif
 #include "fpu/fpu.h"
-#define DSP_EMULATION	1	// until proper ./configure support
 #ifdef DSP_EMULATION
 #include "../include/dsp_cpu.h"
 #endif
