@@ -614,7 +614,7 @@ bool check_cfg()
 {
 #ifdef REAL_ADDRESSING
 # if defined(__i386__) && defined(OS_linux)
-	if (FastRAMSize > (128 - 16))
+	if (FastRAMSizeMB > (128 - 16))
 	{
 		panicbug("Maximum Fast RAM size for real addressing on x86/Linux is 112 MB");
 		panicbug("If you need bigger Fast RAM, you must recompile ARAnyM");
