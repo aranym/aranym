@@ -1362,8 +1362,8 @@ SDL_Event getEvent(SGOBJ *dlg, cursor_state *cursor)
       	case SDL_KEYDOWN:
 	case SDL_KEYUP:
 	  e.type = evnt.user.code;
-          e.key.keysym.sym = (SDLKey)(int)evnt.user.data1;
-          e.key.keysym.mod = (SDLMod)(int)evnt.user.data2;
+          e.key.keysym.sym = (SDLKey)(uintptr)evnt.user.data1;
+          e.key.keysym.mod = (SDLMod)(uintptr)evnt.user.data2;
 	  return e;
 
         case SDL_MOUSEBUTTONDOWN:

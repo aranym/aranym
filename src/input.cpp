@@ -453,8 +453,8 @@ static void process_keyboard_event(SDL_Event &event)
 		SDL_Event ev;
 		ev.type = SDL_USEREVENT;	// map key down/up event to user event
 		ev.user.code = event.type;
-		ev.user.data1 = (void *)sym;
-		ev.user.data2 = (void *)state;
+		ev.user.data1 = (void *)(uintptr)sym;
+		ev.user.data2 = (void *)(uintptr)state;
 		SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
 		return;	// don't pass the key events to emulation
 	}
