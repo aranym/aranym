@@ -31,6 +31,16 @@
 #include "sysdeps.h"
 #include "fpu/types.h"
 
+/* Always use x87 FPU stack on IA-32.  */
+#if defined(X86_ASSEMBLY)
+#define USE_X87_ASSEMBLY 1
+#endif
+
+/* Only use x87 FPU on x86-64 if long double precision is requested.  */
+#if defined(X86_64_ASSEMBLY) && USE_LONG_DOUBLE
+#define USE_X87_ASSEMBLY 1
+#endif
+
 /* ========================================================================== */
 /* ========================= FPU CONTEXT DEFINITION ========================= */
 /* ========================================================================== */

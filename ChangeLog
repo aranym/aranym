@@ -1,3 +1,7 @@
+2003/03/17 - milan
+- FPU updated, preparation for K8
+
+
 2003/03/17 - STanda
 - hostfs.cpp: the chattr/chmod functions ported from STonX. Not tested.
   It just compiles ATM.
