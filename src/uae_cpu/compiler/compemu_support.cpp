@@ -127,14 +127,14 @@ const bool		JITDebug			= false;	// Don't use JIT debug mode at all
 
 const uae_u32	MIN_CACHE_SIZE		= 2048;		// Minimal translation cache size (2048 KB)
 static uae_u32	cache_size			= 0;		// Size of total cache allocated for compiled blocks
-static uae_u32	current_cache_size	= 0;		// Cache grows upwards: how much has been consumed yet
+static uae_u32	current_cache_size	= 0;		// Cache grows upwards: how much has been consumed already
 static bool		lazy_flush			= true;		// Flag: lazy translation cache invalidation
 static bool		avoid_fpu			= true;		// Flag: compile FPU instructions ?
 static bool		have_cmov			= false;	// target has CMOV instructions ?
 static bool		have_rat_stall		= true;		// target has partial register stalls ?
 static bool		tune_alignment		= true;		// Tune code alignments for running CPU ?
-static bool		setzflg_uses_bsf	= false;	// setzflg virtual instruction can use native BSF instruction correctly?
 static bool             tune_nop_fillers        = true;         // Tune no-op fillers for architecture
+static bool		setzflg_uses_bsf	= false;	// setzflg virtual instruction can use native BSF instruction correctly?
 static int		align_loops			= 32;		// Align the start of loops
 static int		align_jumps			= 32;		// Align the start of jumps
 static int		optcount[10]		= {
@@ -218,23 +218,6 @@ blockinfo* dormant;
 extern struct cputbl op_smalltbl_0_nf[];
 extern struct comptbl op_smalltbl_0_comp_nf[];
 extern struct comptbl op_smalltbl_0_comp_ff[];
-
-#if 0
-/* 68020 + 68881 */
-extern struct cputbl op_smalltbl_1_nf[];
-
-/* 68020 */
-extern struct cputbl op_smalltbl_2_nf[];
-
-/* 68010 */
-extern struct cputbl op_smalltbl_3_nf[];
-
-/* 68000 */
-extern struct cputbl op_smalltbl_4_nf[];
-
-/* 68000 slow but compatible.  */
-extern struct cputbl op_smalltbl_5_nf[];
-#endif
 
 static void flush_icache_hard(int n);
 static void flush_icache_lazy(int n);
@@ -580,7 +563,7 @@ LazyBlockAllocator<T>::~LazyBlockAllocator()
 {
 	Pool * currentPool = mPools;
 	while (currentPool) {
- 		Pool * deadPool = currentPool;
+		Pool * deadPool = currentPool;
 		currentPool = currentPool->next;
 		free(deadPool);
 	}
@@ -2184,6 +2167,7 @@ static void fflags_into_flags_internal(uae_u32 tmp)
 	else
     raw_fflags_into_flags(r);
     f_unlock(r);
+    live_flags();
 }
 
 
@@ -5001,14 +4985,6 @@ bool compiler_use_jit(void)
 		return false;
 	}
 	
-#if 0
-	// FIXME: there are currently problems with JIT compilation and anything below a 68040
-	if (CPUType < 4) {
-		write_log("<JIT compiler> : 68040 emulation is required instead of 680%d0. Disabling JIT.\n", CPUType);
-		return false;
-	}
-#endif
-	
 	return true;
 }
 
@@ -5521,6 +5497,62 @@ uae_u32 get_jitted_size(void)
     return 0;
 }
 
+const int CODE_ALLOC_MAX_ATTEMPTS = 10;
+const int CODE_ALLOC_BOUNDARIES   = 128 * 1024; // 128 KB
+
+static uint8 *do_alloc_code(uint32 size, int depth)
+{
+#if defined(__linux__) && 0
+	/*
+	  This is a really awful hack that is known to work on Linux at
+	  least.
+	  
+	  The trick here is to make sure the allocated cache is nearby
+	  code segment, and more precisely in the positive half of a
+	  32-bit address space. i.e. addr < 0x80000000. Actually, it
+	  turned out that a 32-bit binary run on AMD64 yields a cache
+	  allocated around 0xa0000000, thus causing some troubles when
+	  translating addresses from m68k to x86.
+	*/
+	static uint8 * code_base = NULL;
+	if (code_base == NULL) {
+		uintptr page_size = getpagesize();
+		uintptr boundaries = CODE_ALLOC_BOUNDARIES;
+		if (boundaries < page_size)
+			boundaries = page_size;
+		code_base = (uint8 *)sbrk(0);
+		for (int attempts = 0; attempts < CODE_ALLOC_MAX_ATTEMPTS; attempts++) {
+			if (vm_acquire_fixed(code_base, size) == 0) {
+				uint8 *code = code_base;
+				code_base += size;
+				return code;
+			}
+			code_base += boundaries;
+		}
+		return NULL;
+	}
+
+	if (vm_acquire_fixed(code_base, size) == 0) {
+		uint8 *code = code_base;
+		code_base += size;
+		return code;
+	}
+
+	if (depth >= CODE_ALLOC_MAX_ATTEMPTS)
+		return NULL;
+
+	return do_alloc_code(size, depth + 1);
+#else
+	uint8 *code = (uint8 *)vm_acquire(size);
+	return code == VM_MAP_FAILED ? NULL : code;
+#endif
+}
+
+static inline uint8 *alloc_code(uint32 size)
+{
+	return do_alloc_code(size, 0);
+}
+
 void alloc_cache(void)
 {
 	if (compiled_code) {
@@ -5533,7 +5565,7 @@ void alloc_cache(void)
 		return;
 	
 	while (!compiled_code && cache_size) {
-		if ((compiled_code = (uae_u8 *)vm_acquire(cache_size * 1024)) == VM_MAP_FAILED) {
+		if ((compiled_code = alloc_code(cache_size * 1024)) == NULL) {
 			compiled_code = 0;
 			cache_size /= 2;
 		}
@@ -5961,18 +5993,6 @@ void build_comp(void)
     struct comptbl* nftbl=op_smalltbl_0_comp_nf;
     int count;
 	int cpu_level = 4;			// 68040
-#if 0
-	if (CPUType == 4)
-		cpu_level = 4;			// 68040 with FPU
-	else {
-		if (FPUType)
-			cpu_level = 3;		// 68020 with FPU
-		else if (CPUType >= 2)
-			cpu_level = 2;		// 68020
-		else if (CPUType == 1)
-			cpu_level = 1;
-	}
-#endif
     struct cputbl *nfctbl = op_smalltbl_0_nf;
 
 #ifdef NATMEM_OFFSET
@@ -6249,10 +6269,8 @@ static uae_u8 *last_compiled_block_addr = 0;
 
 void compiler_dumpstate(void)
 {
-#if 0
 	if (!JITDebug)
 		return;
-#endif
 	
 	panicbug("### Host addresses");
 	panicbug("MEM_BASE    : %x", MEMBaseDiff);
