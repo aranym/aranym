@@ -91,6 +91,8 @@ class ExtFs {
 	ExtDrive drives[ 'Z'-'A'+1 ];
 
 	bool isPathValid(const char *fileName);
+	void xfs_debugCookie( XfsCookie *fc );
+
 
   public:
 	ExtFs()
@@ -243,7 +245,7 @@ class ExtFs {
 	int32 xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook );
 	int32 xfs_release( XfsCookie *fc );
 	int32 xfs_getxattr( XfsCookie *fc, memptr xattrp );
-	int32 xfs_getdev( XfsCookie *fc, int32 *devspecial );
+	int32 xfs_getdev( XfsCookie *fc, memptr devspecial );
 	int32 xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc );
 	int32 xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, int16 size );
 	int32 xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, XfsCookie *fc );
@@ -269,6 +271,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.20  2002/06/24 17:08:48  standa
+ * The pointer arithmetics fixed. The memptr usage introduced in my code.
+ *
  * Revision 1.19  2002/04/20 10:03:23  standa
  * General code clean up.
  *
