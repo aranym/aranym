@@ -2810,7 +2810,7 @@ static void do_trace (void)
 		if (intr != -1 && intr > regs.intmask) {		\
 			Interrupt (intr);							\
 			regs.stopped = 0;							\
-			regs.spcflags &= ~SPCFLAG_STOP;				\	/* needed only if in while(STOP) */
+			regs.spcflags &= ~SPCFLAG_STOP;					/* needed only if in while(STOP) */	\
 		}												\
 	}													\
 }
@@ -2825,9 +2825,9 @@ static void do_trace (void)
 			put_byte_direct(0xfffa11, value | mfpMask);	\
    			MFPInterrupt(irq);							\
 			regs.stopped = 0;							\
-			regs.spcflags &= ~SPCFLAG_STOP;				\	/* needed only if in while(STOP) */
+			regs.spcflags &= ~SPCFLAG_STOP;					/* needed only if in while(STOP) */	\
 			if (--mfpCounter ## irq <= 0)				\
-				regs.spcflags &= ~(mask);				\	/* shouldn't be this reset even if it's masked out (like the DOINT)? */
+				regs.spcflags &= ~(mask);					/* shouldn't be this reset even if it's masked out (like the DOINT)? */	\
 		}												\
 	}													\
 }
