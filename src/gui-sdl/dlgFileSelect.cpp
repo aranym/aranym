@@ -44,22 +44,22 @@ static SGOBJ fsdlg[] =
     { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 36,1, 3,1, "/" },
     { SGBOX, 0, 0, 1,6, 38,16, NULL },
     { SGBOX, 0, 0, 38,6, 1,16, NULL },
-    { SGTEXT, SG_EXIT, 0, 2,6, 35,1, dlgfilenames[0] },
-    { SGTEXT, SG_EXIT, 0, 2,7, 35,1, dlgfilenames[1] },
-    { SGTEXT, SG_EXIT, 0, 2,8, 35,1, dlgfilenames[2] },
-    { SGTEXT, SG_EXIT, 0, 2,9, 35,1, dlgfilenames[3] },
-    { SGTEXT, SG_EXIT, 0, 2,10, 35,1, dlgfilenames[4] },
-    { SGTEXT, SG_EXIT, 0, 2,11, 35,1, dlgfilenames[5] },
-    { SGTEXT, SG_EXIT, 0, 2,12, 35,1, dlgfilenames[6] },
-    { SGTEXT, SG_EXIT, 0, 2,13, 35,1, dlgfilenames[7] },
-    { SGTEXT, SG_EXIT, 0, 2,14, 35,1, dlgfilenames[8] },
-    { SGTEXT, SG_EXIT, 0, 2,15, 35,1, dlgfilenames[9] },
-    { SGTEXT, SG_EXIT, 0, 2,16, 35,1, dlgfilenames[10] },
-    { SGTEXT, SG_EXIT, 0, 2,17, 35,1, dlgfilenames[11] },
-    { SGTEXT, SG_EXIT, 0, 2,18, 35,1, dlgfilenames[12] },
-    { SGTEXT, SG_EXIT, 0, 2,19, 35,1, dlgfilenames[13] },
-    { SGTEXT, SG_EXIT, 0, 2,20, 35,1, dlgfilenames[14] },
-    { SGTEXT, SG_EXIT, 0, 2,21, 35,1, dlgfilenames[15] },
+    { SGTEXT, 0, 0, 2,6, 35,1, dlgfilenames[0] },
+    { SGTEXT, 0, 0, 2,7, 35,1, dlgfilenames[1] },
+    { SGTEXT, 0, 0, 2,8, 35,1, dlgfilenames[2] },
+    { SGTEXT, 0, 0, 2,9, 35,1, dlgfilenames[3] },
+    { SGTEXT, 0, 0, 2,10, 35,1, dlgfilenames[4] },
+    { SGTEXT, 0, 0, 2,11, 35,1, dlgfilenames[5] },
+    { SGTEXT, 0, 0, 2,12, 35,1, dlgfilenames[6] },
+    { SGTEXT, 0, 0, 2,13, 35,1, dlgfilenames[7] },
+    { SGTEXT, 0, 0, 2,14, 35,1, dlgfilenames[8] },
+    { SGTEXT, 0, 0, 2,15, 35,1, dlgfilenames[9] },
+    { SGTEXT, 0, 0, 2,16, 35,1, dlgfilenames[10] },
+    { SGTEXT, 0, 0, 2,17, 35,1, dlgfilenames[11] },
+    { SGTEXT, 0, 0, 2,18, 35,1, dlgfilenames[12] },
+    { SGTEXT, 0, 0, 2,19, 35,1, dlgfilenames[13] },
+    { SGTEXT, 0, 0, 2,20, 35,1, dlgfilenames[14] },
+    { SGTEXT, 0, 0, 2,21, 35,1, dlgfilenames[15] },
     { SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT      , 0, 38,6, 1,1, "\x01" },  /* Arrow up */
     { SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT      , 0, 38,21, 1,1, "\x02" }, /* Arrow down */
     { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 10,23, 8,1, "Okay" },
@@ -163,9 +163,14 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
           strcat(tempstr, files[i+ypos]->d_name);
           if( stat(tempstr, &filestat)==0 && S_ISDIR(filestat.st_mode) )
             dlgfilenames[i][0] = SGFOLDER;    /* Mark folders */
+          fsdlg[SGFSDLG_ENTRY1+i].flags=(SG_SELECTABLE|SG_EXIT|SG_RADIO);
         }
         else
+        {
           dlgfilenames[i][0] = 0;  /* Clear entry */
+          fsdlg[SGFSDLG_ENTRY1+i].flags=0;
+        }
+        fsdlg[SGFSDLG_ENTRY1+i].state=0;
       }
       refreshentries = false;
     }
@@ -174,7 +179,7 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
     retbut = SDLGui_DoDialog(fsdlg);
 
     /* Has the user clicked on a file or folder? */
-    if( retbut>=SGFSDLG_ENTRY1 && retbut<=SGFSDLG_ENTRY16 && retbut-SGFSDLG_ENTRY1+ypos<entries)
+    if( retbut>=SGFSDLG_ENTRY1 && retbut<=SGFSDLG_ENTRY16)
     {
       char tempstr[MAX_FILENAME_LENGTH];
       struct stat filestat;

@@ -19,7 +19,6 @@ enum
   SGTEXT,
   SGEDITFIELD,
   SGBUTTON,
-  SGRADIOBUT,
   SGCHECKBOX,
   SGPOPUP
 };
@@ -32,16 +31,18 @@ enum
 #define SG_DEFAULT       8
 #define SG_SELECTABLE   16
 #define SG_BACKGROUND   32
+#define SG_RADIO        64
 
 /* Object states: */
 #define SG_SELECTED   1
 #define SG_HIDDEN     2
+#define SG_DISABLED   4
 
 /* Special characters: */
-#define SGRADIOBUTTON_NORMAL    12
-#define SGRADIOBUTTON_SELECTED  13
-#define SGCHECKBOX_NORMAL    14
-#define SGCHECKBOX_SELECTED  15
+#define SGCHECKBOX_RADIO_NORMAL   12
+#define SGCHECKBOX_RADIO_SELECTED 13
+#define SGCHECKBOX_NORMAL         14
+#define SGCHECKBOX_SELECTED       15
 #define SGARROWUP    1
 #define SGARROWDOWN  2
 #define SGFOLDER     5

@@ -1,3 +1,25 @@
+2004/02/16 - Xavier
+- gui-sdl/sdlgui* :
+  - added SG_RADIO flag.
+  - removed SGRADIOBUT objects. The exact same effect is now obtained with a
+    SGCHECKBOX object with the SG_RADIO flag.
+  - font is now loaded into a 8 biplanes surface. SDL has some strange reactions
+    with 1 bitplane...
+  - removed converted font. We now directly use the 8 bitplane font. This allows
+    to choose text color and correct a bug where the font was not correctly
+    converted (after a screen depth change while GUI is displayed).
+  - removed SDLGui_PrepareFont() and SDLGui_FreeFont().
+  - added SG_DISABLED state. Not finished yet.
+  - cleaned color handling.
+  - SGTEXT objects drawn differently if SG_SELECTED flag is set.
+
+- gui-sdl/dlgMain.cpp: removed calls to SDLGui_PrepareFont() and
+  SDLGui_FreeFont().
+
+- gui-sdl/dlgFileSelect.cpp: files list elements are now SG_SELECTABLE so user
+  can see which one is selected.
+
+
 * tagged as ARANYM_0_8_7_BETA
 
 2004/02/15 - joy
