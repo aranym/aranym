@@ -9,6 +9,8 @@
 - Makefile.in: installs new hostfs (instead of old aranymfs) and also
   new aranym.xif plus utilities.
 
+- aranym.spec: updated for new release, install new files.
+
 
 2003/03/23 - joy
 - nfeth-config.sh: added, calls araethip and shows how easy is to configure

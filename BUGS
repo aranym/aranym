@@ -45,7 +45,13 @@ Platform dependent known bugs and limitations:
 MacOS X does not like floating videoram. Compile with --enable-fixedvideoram.
 
 Windows 95/98/99/00 do not support direct disk access (Windows NT/2K/XP do).
+This is a limitation of Cygwin, or rather a limitation of the windows itself.
+
+Windows do not support full-screen for ARAnyM.
+This might be a limitation of SDL, not sure yet.
 
 Only Linux currently supports TUNTAP based Ethernet emulation (AFAIK).
+Although http://home.sprintmail.com/~dtrout/Hercules/ctci-w32-index.html
+gives some chance to Windows users as well.
 
 Only Linux-ia32 (x86) currently supports JIT compiler for the CPU emulator.
