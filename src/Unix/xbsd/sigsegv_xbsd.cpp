@@ -27,6 +27,8 @@ enum transfer_type_t {
 /* instruction jump table */
 //i386op_func *cpufunctbl[256];
 
+static struct sigaction sigsegv_sa;
+
 enum instruction_t {
 	INSTR_UNKNOWN,
 	INSTR_MOVZX8,
@@ -449,5 +451,9 @@ buserr:
 #endif
 
 void install_sigsegv() {
-	signal(SIGSEGV, (sighandler_t)segfault_vec);
+	sigemptyset(&sigsegv_sa.sa_mask);
+	sigsegv_sa.sa_handler = segfault_vec;
+	sigsegv_sa.sa_flags = SA_SIGINFO;
+	sigaction(SIGSEGV, &sigsegv_sa, NULL);
+//	signal(SIGSEGV, (sighandler_t)segfault_vec);
 }

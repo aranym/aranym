@@ -6,6 +6,8 @@
 
 - Mac OS X: some small corrections
 
+- xBSD: sigsegv handler setting for JIT compiler corrected
+
 
 2002/10/12 - milan
 - sync with BasiliskII CVS
