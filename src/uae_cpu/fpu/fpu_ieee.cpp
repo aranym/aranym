@@ -186,14 +186,14 @@ PRIVATE void FFPU dump_first_bytes(uae_u8 * buffer, uae_s32 actual)
 
 // Quotient Byte is loaded with the sign and least significant
 // seven bits of the quotient.
-PRIVATE inline void FFPU make_quotient(fp_register const & quotient, uae_u32 sign)
+PRIVATE inline void FFPU make_quotient(fpu_register const & quotient, uae_u32 sign)
 {
 	uae_u32 lsb = (uae_u32)fp_fabs(quotient) & 0x7f;
 	FPU fpsr.quotient = sign | (lsb << 16);
 }
 
 // to_single
-PRIVATE inline fp_register FFPU make_single(uae_u32 value)
+PRIVATE inline fpu_register FFPU make_single(uae_u32 value)
 {
 #if 1
 	// Use a single, otherwise some checks for NaN, Inf, Zero would have to
@@ -209,7 +209,7 @@ PRIVATE inline fp_register FFPU make_single(uae_u32 value)
 	if ((value & 0x7fffffff) == 0)
 		return (0.0);
 	
-	fp_register result;
+	fpu_register result;
 	uae_u32 * p = (uae_u32 *)&result;
 
 	uae_u32 sign = (value & 0x80000000);
@@ -225,7 +225,7 @@ PRIVATE inline fp_register FFPU make_single(uae_u32 value)
 }
 
 // from_single
-PRIVATE inline uae_u32 FFPU extract_single(fp_register const & src)
+PRIVATE inline uae_u32 FFPU extract_single(fpu_register const & src)
 {
 #if 1
 	fpu_single input = (fpu_single) src;
@@ -262,7 +262,7 @@ PRIVATE inline uae_u32 FFPU extract_single(fp_register const & src)
 }
 
 // to_exten
-PRIVATE inline fp_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3)
+PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3)
 {
 #if 1
 	// FIXME: USE_QUAD_DOUBLE
@@ -278,7 +278,7 @@ PRIVATE inline fp_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u3
 	if ((wrd1 & 0x7fff0000) == 0 && wrd2 == 0 && wrd3 == 0)
 		return 0.0;
 	
-	fp_register result;
+	fpu_register result;
 	uae_u32 *p = (uae_u32 *)&result;
 	
 	uae_u32 sign =  wrd1 & 0x80000000;
@@ -332,7 +332,7 @@ PRIVATE inline fp_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u3
 */
 // make_extended_no_normalize
 PRIVATE inline void FFPU make_extended_no_normalize(
-	uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fp_register & result
+	uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fpu_register & result
 )
 {
 #if 1
@@ -380,7 +380,7 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 }
 
 // from_exten
-PRIVATE inline void FFPU extract_extended(fp_register const & src,
+PRIVATE inline void FFPU extract_extended(fpu_register const & src,
 	uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3
 )
 {
@@ -421,7 +421,7 @@ PRIVATE inline void FFPU extract_extended(fp_register const & src,
 }
 
 // to_double
-PRIVATE inline fp_register FFPU make_double(uae_u32 wrd1, uae_u32 wrd2)
+PRIVATE inline fpu_register FFPU make_double(uae_u32 wrd1, uae_u32 wrd2)
 {
 	union {
 		fpu_double value;
@@ -435,11 +435,11 @@ PRIVATE inline fp_register FFPU make_double(uae_u32 wrd1, uae_u32 wrd2)
 	dest.parts[1] = wrd1;
 #endif
 	fpu_debug(("make_double (%X,%X) = %.04f\n",wrd1,wrd2,dest.value));
-	return (fp_register)(dest.value);
+	return (fpu_register)(dest.value);
 }
 
 // from_double
-PRIVATE inline void FFPU extract_double(fp_register const & src, 
+PRIVATE inline void FFPU extract_double(fpu_register const & src, 
 	uae_u32 * wrd1, uae_u32 * wrd2
 )
 {
@@ -459,7 +459,7 @@ PRIVATE inline void FFPU extract_double(fp_register const & src,
 }
 
 // to_pack
-PRIVATE inline fp_register FFPU make_packed(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3)
+PRIVATE inline fpu_register FFPU make_packed(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3)
 {
 	fpu_double d;
 	char *cp;
@@ -502,14 +502,14 @@ PRIVATE inline fp_register FFPU make_packed(uae_u32 wrd1, uae_u32 wrd2, uae_u32 
 }
 
 // from_pack
-PRIVATE inline void FFPU extract_packed(fp_register const & src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3)
+PRIVATE inline void FFPU extract_packed(fpu_register const & src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3)
 {
 	int i;
 	int t;
 	char *cp;
 	char str[100];
 
-	sprintf(str, "%.16e", (double)src);
+	sprintf(str, "%.16e", src);
 
 	fpu_debug(("extract_packed(%.04f,%s)\n",(double)src,str));
 
@@ -553,7 +553,7 @@ PRIVATE inline void FFPU extract_packed(fp_register const & src, uae_u32 * wrd1,
 	fpu_debug(("extract_packed(%.04f) = %X,%X,%X\n",(double)src,*wrd1,*wrd2,*wrd3));
 }
 
-PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fp_register & src)
+PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fpu_register & src)
 {
 	uaecptr tmppc;
 	uae_u16 tmp;
@@ -581,13 +581,13 @@ PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fp_register
 	case 0:
 		switch (size) {
 		case 6:
-			src = (fp_register) (uae_s8) m68k_dreg (regs, reg);
+			src = (fpu_register) (uae_s8) m68k_dreg (regs, reg);
 			break;
 		case 4:
-			src = (fp_register) (uae_s16) m68k_dreg (regs, reg);
+			src = (fpu_register) (uae_s16) m68k_dreg (regs, reg);
 			break;
 		case 0:
-			src = (fp_register) (uae_s32) m68k_dreg (regs, reg);
+			src = (fpu_register) (uae_s32) m68k_dreg (regs, reg);
 			break;
 		case 1:
 			src = make_single(m68k_dreg (regs, reg));
@@ -653,7 +653,7 @@ PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fp_register
 
 	switch (size) {
 	case 0:
-		src = (fp_register) (uae_s32) get_long (ad);
+		src = (fpu_register) (uae_s32) get_long (ad);
 		break;
 	case 1:
 		src = make_single(get_long (ad));
@@ -679,7 +679,7 @@ PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fp_register
 		break;
 	}
 	case 4:
-		src = (fp_register) (uae_s16) get_word(ad);
+		src = (fpu_register) (uae_s16) get_word(ad);
 		break;
 	case 5: {
 		uae_u32 wrd1, wrd2;
@@ -690,7 +690,7 @@ PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fp_register
 		break;
 	}
 	case 6:
-		src = (fp_register) (uae_s8) get_byte(ad);
+		src = (fpu_register) (uae_s8) get_byte(ad);
 		break;
 	default:
 		return 0;
@@ -701,9 +701,9 @@ PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fp_register
 }
 
 /* Convert the FP value to integer according to the current m68k rounding mode */
-PRIVATE inline uae_s32 FFPU toint(fp_register const & src)
+PRIVATE inline uae_s32 FFPU toint(fpu_register const & src)
 {
-	fp_register result;
+	fpu_register result;
 	switch (get_fpcr() & 0x30) {
 	case FPCR_ROUND_ZERO:
 		result = fp_round_to_zero(src);
@@ -724,7 +724,7 @@ PRIVATE inline uae_s32 FFPU toint(fp_register const & src)
 	return (uae_s32)result;
 }
 
-PRIVATE inline int FFPU put_fp_value (uae_u32 opcode, uae_u16 extra, fp_register const & value)
+PRIVATE inline int FFPU put_fp_value (uae_u32 opcode, uae_u16 extra, fpu_register const & value)
 {
 	uae_u16 tmp;
 	uaecptr tmppc;
@@ -1210,7 +1210,7 @@ void FFPU fpuop_restore(uae_u32 opcode)
 void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 {
 	int reg;
-	fp_register src;
+	fpu_register src;
 
 	fpu_debug(("FPP %04lx %04x at %08lx\n", opcode & 0xffff, extra & 0xffff,
 			   m68k_getpc () - 4));
@@ -1767,14 +1767,14 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				break;
 			default:
 				// Continue decode-execute 6888x instructions below
-				goto process_6888x_operations;
+				goto process_6888x_instructions;
 			}
 			fpu_debug(("END m68k_getpc()=%X\n",m68k_getpc()));
 			dump_registers( "END  ");
 			return;
 		}
-		
-	process_6888x_operations:		
+
+	process_6888x_instructions:		
 		switch (extra & 0x7f) {
 		case 0x00:		/* FMOVE */
 			fpu_debug(("FMOVE %.04f\n",(double)src));
@@ -1927,9 +1927,9 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			break;
 		case 0x21:		/* FMOD */
 			fpu_debug(("FMOD %.04f\n",(double)src));
-			// FPU registers[reg] = FPU registers[reg] - (fp_register) ((int) (FPU registers[reg] / src)) * src;
+			// FPU registers[reg] = FPU registers[reg] - (fpu_register) ((int) (FPU registers[reg] / src)) * src;
 			{
-				fp_register quot = fp_round_to_zero(FPU registers[reg] / src);
+				fpu_register quot = fp_round_to_zero(FPU registers[reg] / src);
 				uae_u32 sign = get_quotient_sign(FPU registers[reg],src);
 				FPU registers[reg] = FPU registers[reg] - quot * src;
 				make_fpsr(FPU registers[reg]);
@@ -1977,7 +1977,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			fpu_debug(("FREM %.04f\n",(double)src));
 			// FPU registers[reg] = FPU registers[reg] - (double) ((int) (FPU registers[reg] / src + 0.5)) * src;
 			{
-				fp_register quot = fp_round_to_nearest(FPU registers[reg] / src);
+				fpu_register quot = fp_round_to_nearest(FPU registers[reg] / src);
 				uae_u32 sign = get_quotient_sign(FPU registers[reg],src);
 				FPU registers[reg] = FPU registers[reg] - quot * src;
 				make_fpsr(FPU registers[reg]);

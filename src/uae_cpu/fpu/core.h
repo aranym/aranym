@@ -46,10 +46,10 @@ struct fpu_t {
 	/* ---------------------------------------------------------------------- */
 	
 	/* The eight %fp0 .. %fp7 registers */
-	fp_register	registers[8];
+	fpu_register	registers[8];
 	
 	/* Used for lazy evalualation of FPU flags */
-	fp_register	result;
+	fpu_register	result;
 	
 	/* ---------------------------------------------------------------------- */
 	/* --- Floating-Point Control Register                                --- */
@@ -209,7 +209,7 @@ struct fpu_t {
 extern fpu_t fpu;
 
 /* Return the address of a particular register */
-inline fp_register * const fpu_register_address(int i)
+inline fpu_register * const fpu_register_address(int i)
 	{ return &fpu.registers[i]; }
 
 /* Dump functions for m68k_dumpstate */

@@ -998,7 +998,7 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tuae_u16 newv_hi = (src & 0xF0) + (dst & 0xF0);\n");
 	printf ("\tuae_u16 newv, tmp_newv;\n");
 	printf ("\tint cflg;\n");
-	printf ("\tnewv = tmp_newv = newv_hi + newv_lo;");
+	printf ("\tnewv = tmp_newv = newv_hi + newv_lo;\n");
 	printf ("\tif (newv_lo > 9) { newv += 6; }\n");
 	printf ("\tcflg = (newv & 0x3F0) > 0x90;\n");
 	printf ("\tif (cflg) newv += 0x60;\n");
@@ -1030,7 +1030,7 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tuae_u16 newv;\n");
 	printf ("\tint cflg;\n");
 	printf ("\tif (newv_lo > 9) { newv_lo -= 6; }\n");
-	printf ("\tnewv = newv_hi + newv_lo;");
+	printf ("\tnewv = newv_hi + newv_lo;\n");
 	printf ("\tcflg = (newv & 0x1F0) > 0x90;\n");
 	printf ("\tif (cflg) newv -= 0x60;\n");
 	printf ("\tSET_CFLG (cflg);\n");
@@ -1353,11 +1353,7 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\t}\n");
 	    need_endlabel = 1;
 	}
-#ifdef USE_COMPILER
-	printf ("\tm68k_setpc_bcc(m68k_getpc() + 2 + (uae_s32)src);\n");
-#else
 	printf ("\tm68k_incpc ((uae_s32)src + 2);\n");
-#endif
 	fill_prefetch_0 ();
 	printf ("cpuop_return(%s);\n", cflow_string_of(opcode));
 	printf ("didnt_jump:;\n");
@@ -1389,11 +1385,7 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\t\t}\n");
 	    need_endlabel = 1;
 	}
-#ifdef USE_COMPILER
-	printf ("\t\t\tm68k_setpc_bcc(m68k_getpc() + (uae_s32)offs + 2);\n");
-#else
 	printf ("\t\t\tm68k_incpc((uae_s32)offs + 2);\n");
-#endif
 	fill_prefetch_0 ();
 	printf ("cpuop_return(%s);\n", cflow_string_of(opcode));
 	printf ("\t\t}\n");
@@ -1889,25 +1881,25 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tif (!m68k_move2c(src & 0xFFF, regp)) goto %s;\n", endlabelstr);
 	break;
      case i_CAS:
-    {
-	int old_brace_level;
-	genamode (curi->smode, "srcreg", curi->size, "src", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
-	genamode (curi->dmode, "dstreg", curi->size, "dst", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
-	start_brace ();
-	printf ("\tint ru = (src >> 6) & 7;\n");
-	printf ("\tint rc = src & 7;\n");
-	genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, rc)", "dst");
-	printf ("\tif (GET_ZFLG)");
-	old_brace_level = n_braces;
-	start_brace ();
-	genastore ("(m68k_dreg(regs, ru))", curi->dmode, "dstreg", curi->size, "dst", xlateflag);
-	pop_braces (old_brace_level);
-	printf ("else");
-	start_brace ();
-	printf ("m68k_dreg(regs, rc) = dst;\n");
-	pop_braces (old_brace_level);
-    }
-    break;
+	{
+	    int old_brace_level;
+	    genamode (curi->smode, "srcreg", curi->size, "src", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
+	    genamode (curi->dmode, "dstreg", curi->size, "dst", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
+	    start_brace ();
+	    printf ("\tint ru = (src >> 6) & 7;\n");
+	    printf ("\tint rc = src & 7;\n");
+	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, rc)", "dst");
+	    printf ("\tif (GET_ZFLG)");
+	    old_brace_level = n_braces;
+	    start_brace ();
+	    genastore ("(m68k_dreg(regs, ru))", curi->dmode, "dstreg", curi->size, "dst", xlateflag);
+	    pop_braces (old_brace_level);
+	    printf ("else");
+	    start_brace ();
+	    printf ("m68k_dreg(regs, rc) = dst;\n");
+	    pop_braces (old_brace_level);
+	}
+	break;
      case i_CAS2:
 	genamode (curi->smode, "srcreg", curi->size, "extra", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
 	printf ("\tuae_u32 rn1 = regs.regs[(extra >> 28) & 15];\n");
@@ -1993,7 +1985,7 @@ static void gen_opcode (unsigned long int opcode)
 			pop_braces (old_brace_level);
 		}
 	}
-    break;
+	break;
      case i_BKPT:		/* only needed for hardware emulators */
 	sync_m68k_pc ();
 	printf ("\top_illg(opcode);\n");

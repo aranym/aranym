@@ -58,8 +58,8 @@ typedef long double uae_f64;
 #endif
 
 /* Original UAE FPU registers are only 8 bytes long */
-typedef uae_f64		fp_register;
-typedef fp_register	fpu_extended;
+typedef uae_f64		fpu_register;
+typedef fpu_register	fpu_extended;
 typedef uae_f64		fpu_double;
 typedef uae_f32		fpu_single;
 
@@ -89,13 +89,13 @@ typedef double uae_f64;
 
 /* At least 10-byte floats are required */
 #if SIZEOF_LONG_DOUBLE >= 10
-typedef long double fp_register;
+typedef long double fpu_register;
 #else
 #error "No float type at least 10 bytes long, you lose."
 #endif
 
 /* X86 FPU has a custom register type that maps to a native X86 register */
-typedef fp_register	fpu_extended;
+typedef fpu_register	fpu_extended;
 typedef uae_f64		fpu_double;
 typedef uae_f32		fpu_single;
 
@@ -126,10 +126,10 @@ typedef long double uae_f64;
 /* 12-byte or 16-byte floats */
 #if SIZEOF_LONG_DOUBLE == 12
 typedef long double uae_f96;
-typedef uae_f96 fp_register;
+typedef uae_f96 fpu_register;
 #elif SIZEOF_LONG_DOUBLE == 16
 typedef long double uae_f128;
-typedef uae_f128 fp_register;
+typedef uae_f128 fpu_register;
 #else
 #error "No float type bigger than 8 bytes, you lose."
 #endif
@@ -139,7 +139,7 @@ typedef uae_f128 fp_register;
 #define	USE_LONG_DOUBLE 1
 
 /* We need all those floating-point types */
-typedef fp_register	fpu_extended;
+typedef fpu_register	fpu_extended;
 typedef uae_f64		fpu_double;
 typedef uae_f32		fpu_single;
 

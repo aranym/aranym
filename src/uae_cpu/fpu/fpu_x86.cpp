@@ -259,7 +259,7 @@ PUBLIC void FFPU dump_first_bytes(uae_u8 * buf, uae_s32 actual)
 	D(bug("%s\n", msg));
 }
 
-PRIVATE char * FFPU etos(fp_register const & e)
+PRIVATE char * FFPU etos(fpu_register const & e)
 {
 	static char _s[10][30];
 	static int _ix = 0;
@@ -413,11 +413,11 @@ When the FPU creates a NAN, the NAN always contains the same bit pattern
 in the mantissa. All bits of the mantissa are ones for any precision.
 When the user creates a NAN, any nonzero bit pattern can be stored in the mantissa.
 */
-PRIVATE __inline__ void FFPU MAKE_NAN (fp_register & f)
+PRIVATE __inline__ void FFPU MAKE_NAN (fpu_register & f)
 {
 	// Make it non-signaling.
 	uae_u8 * p = (uae_u8 *) &f;
-	memset( p, 0xFF, sizeof(fp_register) - 1 );
+	memset( p, 0xFF, sizeof(fpu_register) - 1 );
 	p[9] = 0x7F;
 }
 
@@ -426,7 +426,7 @@ For single- and double-precision infinities the fraction is a zero.
 For extended-precision infinities, the mantissa’s MSB, the explicit
 integer bit, can be either one or zero.
 */
-PRIVATE __inline__ uae_u32 FFPU IS_INFINITY (fp_register const & f)
+PRIVATE __inline__ uae_u32 FFPU IS_INFINITY (fpu_register const & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
 	if( ((p[9] & 0x7F) == 0x7F) && p[8] == 0xFF ) {
@@ -437,7 +437,7 @@ PRIVATE __inline__ uae_u32 FFPU IS_INFINITY (fp_register const & f)
 	return(0);
 }
 
-PRIVATE __inline__ uae_u32 FFPU IS_NAN (fp_register const & f)
+PRIVATE __inline__ uae_u32 FFPU IS_NAN (fpu_register const & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
 	if( ((p[9] & 0x7F) == 0x7F) && p[8] == 0xFF ) {
@@ -448,7 +448,7 @@ PRIVATE __inline__ uae_u32 FFPU IS_NAN (fp_register const & f)
 	return(0);
 }
 
-PRIVATE __inline__ uae_u32 FFPU IS_ZERO (fp_register const & f)
+PRIVATE __inline__ uae_u32 FFPU IS_ZERO (fpu_register const & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
 	return *((uae_u32 *)p) == 0 &&
@@ -456,34 +456,34 @@ PRIVATE __inline__ uae_u32 FFPU IS_ZERO (fp_register const & f)
 				 ( *((uae_u16 *)&p[8]) & 0x7FFF ) == 0;
 }
 
-PRIVATE __inline__ void FFPU MAKE_INF_POSITIVE (fp_register & f)
+PRIVATE __inline__ void FFPU MAKE_INF_POSITIVE (fpu_register & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
-	memset( p, 0, sizeof(fp_register)-2 );
+	memset( p, 0, sizeof(fpu_register)-2 );
 	*((uae_u16 *)&p[8]) = 0x7FFF;
 }
 
-PRIVATE __inline__ void FFPU MAKE_INF_NEGATIVE (fp_register & f)
+PRIVATE __inline__ void FFPU MAKE_INF_NEGATIVE (fpu_register & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
-	memset( p, 0, sizeof(fp_register)-2 );
+	memset( p, 0, sizeof(fpu_register)-2 );
 	*((uae_u16 *)&p[8]) = 0xFFFF;
 }
 
-PRIVATE __inline__ void FFPU MAKE_ZERO_POSITIVE (fp_register & f)
+PRIVATE __inline__ void FFPU MAKE_ZERO_POSITIVE (fpu_register & f)
 {
 	uae_u32 * const p = (uae_u32 *) &f;
-	memset( p, 0, sizeof(fp_register) );
+	memset( p, 0, sizeof(fpu_register) );
 }
 
-PRIVATE __inline__ void FFPU MAKE_ZERO_NEGATIVE (fp_register & f)
+PRIVATE __inline__ void FFPU MAKE_ZERO_NEGATIVE (fpu_register & f)
 {
 	uae_u32 * const p = (uae_u32 *) &f;
-	memset( p, 0, sizeof(fp_register) );
+	memset( p, 0, sizeof(fpu_register) );
 	*((uae_u32 *)&p[4]) = 0x80000000;
 }
 
-PRIVATE __inline__ uae_u32 FFPU IS_NEGATIVE (fp_register const & f)
+PRIVATE __inline__ uae_u32 FFPU IS_NEGATIVE (fpu_register const & f)
 {
 	uae_u8 * p = (uae_u8 *) &f;
 	return( (p[9] & 0x80) != 0 );
@@ -492,7 +492,7 @@ PRIVATE __inline__ uae_u32 FFPU IS_NEGATIVE (fp_register const & f)
 
 /* ---------------------------- Conversions ---------------------------- */
 
-PRIVATE void FFPU signed_to_extended ( uae_s32 x, fp_register & f )
+PRIVATE void FFPU signed_to_extended ( uae_s32 x, fpu_register & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	
@@ -507,7 +507,7 @@ PRIVATE void FFPU signed_to_extended ( uae_s32 x, fp_register & f )
 	FPU_CONSISTENCY_CHECK_STOP("signed_to_extended");
 }
 
-PRIVATE uae_s32 FFPU extended_to_signed_32 ( fp_register const & f )
+PRIVATE uae_s32 FFPU extended_to_signed_32 ( fpu_register const & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	volatile uae_s32 tmp;
@@ -549,7 +549,7 @@ PRIVATE uae_s32 FFPU extended_to_signed_32 ( fp_register const & f )
 	return tmp;
 }
 
-PRIVATE uae_s16 FFPU extended_to_signed_16 ( fp_register const & f )
+PRIVATE uae_s16 FFPU extended_to_signed_16 ( fpu_register const & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	volatile uae_s16 tmp;
@@ -589,7 +589,7 @@ PRIVATE uae_s16 FFPU extended_to_signed_16 ( fp_register const & f )
 	return tmp;
 }
 
-PRIVATE uae_s8 FFPU extended_to_signed_8 ( fp_register const & f )
+PRIVATE uae_s8 FFPU extended_to_signed_8 ( fpu_register const & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	volatile uae_s16 tmp;
@@ -634,7 +634,7 @@ PRIVATE uae_s8 FFPU extended_to_signed_8 ( fp_register const & f )
 	return (uae_s8)tmp;
 }
 
-PRIVATE void FFPU double_to_extended ( double x, fp_register & f )
+PRIVATE void FFPU double_to_extended ( double x, fpu_register & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 
@@ -654,7 +654,7 @@ PRIVATE void FFPU double_to_extended ( double x, fp_register & f )
 	FPU_CONSISTENCY_CHECK_STOP("double_to_extended");
 }
 
-PRIVATE fpu_double FFPU extended_to_double( fp_register const & f )
+PRIVATE fpu_double FFPU extended_to_double( fpu_register const & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double result;
@@ -676,7 +676,7 @@ PRIVATE fpu_double FFPU extended_to_double( fp_register const & f )
 	return result;
 }
 
-PRIVATE void FFPU to_single ( uae_u32 src, fp_register & f )
+PRIVATE void FFPU to_single ( uae_u32 src, fpu_register & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -697,7 +697,7 @@ PRIVATE void FFPU to_single ( uae_u32 src, fp_register & f )
 }
 
 // TODO_BIGENDIAN
-PRIVATE void FFPU to_exten_no_normalize ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fp_register & f )
+PRIVATE void FFPU to_exten_no_normalize ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fpu_register & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	uae_u32 *p = (uae_u32 *)&f;
@@ -712,7 +712,7 @@ PRIVATE void FFPU to_exten_no_normalize ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wr
 	FPU_CONSISTENCY_CHECK_STOP("to_exten_no_normalize");
 }
 
-PRIVATE void FFPU to_exten ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fp_register & f )
+PRIVATE void FFPU to_exten ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fpu_register & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	uae_u32 *p = (uae_u32 *)&f;
@@ -756,7 +756,7 @@ PRIVATE void FFPU to_exten ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fp_regist
 	FPU_CONSISTENCY_CHECK_STOP("to_exten");
 }
 
-PRIVATE void FFPU to_double ( uae_u32 wrd1, uae_u32 wrd2, fp_register & f )
+PRIVATE void FFPU to_double ( uae_u32 wrd1, uae_u32 wrd2, fpu_register & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	
@@ -790,7 +790,7 @@ PRIVATE void FFPU to_double ( uae_u32 wrd1, uae_u32 wrd2, fp_register & f )
 	FPU_CONSISTENCY_CHECK_STOP("to_double");
 }
 
-PRIVATE uae_u32 FFPU from_single ( fp_register const & f )
+PRIVATE uae_u32 FFPU from_single ( fpu_register const & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	volatile uae_u32 dest;
@@ -825,7 +825,7 @@ PRIVATE uae_u32 FFPU from_single ( fp_register const & f )
 }
 
 // TODO_BIGENDIAN
-PRIVATE void FFPU from_exten ( fp_register const & f, uae_u32 *wrd1, uae_u32 *wrd2, uae_u32 *wrd3 )
+PRIVATE void FFPU from_exten ( fpu_register const & f, uae_u32 *wrd1, uae_u32 *wrd2, uae_u32 *wrd3 )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	uae_u32 *p = (uae_u32 *)&f;
@@ -837,7 +837,7 @@ PRIVATE void FFPU from_exten ( fp_register const & f, uae_u32 *wrd1, uae_u32 *wr
 	FPU_CONSISTENCY_CHECK_STOP("from_exten");
 }
 
-PRIVATE void FFPU from_double ( fp_register const & f, uae_u32 *wrd1, uae_u32 *wrd2 )
+PRIVATE void FFPU from_double ( fpu_register const & f, uae_u32 *wrd1, uae_u32 *wrd2 )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	volatile uae_u32 dest[2];
@@ -875,7 +875,7 @@ PRIVATE void FFPU from_double ( fp_register const & f, uae_u32 *wrd1, uae_u32 *w
 	FPU_CONSISTENCY_CHECK_STOP("from_double");
 }
 
-PRIVATE void FFPU do_fmove ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fmove ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -899,7 +899,7 @@ PRIVATE void FFPU do_fmove ( fp_register & dest, fp_register const & src )
 }
 
 /*
-PRIVATE void FFPU do_fmove_no_status ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fmove_no_status ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	_asm {
@@ -915,7 +915,7 @@ PRIVATE void FFPU do_fmove_no_status ( fp_register & dest, fp_register const & s
 
 /* ---------------------------- Operations ---------------------------- */
 
-PRIVATE void FFPU do_fint ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fint ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -945,7 +945,7 @@ PRIVATE void FFPU do_fint ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fint");
 }
 
-PRIVATE void FFPU do_fintrz ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fintrz ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	WORD cw_temp;
@@ -989,7 +989,7 @@ PRIVATE void FFPU do_fintrz ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fintrz");
 }
 
-PRIVATE void FFPU do_fsqrt ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fsqrt ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1021,7 +1021,7 @@ PRIVATE void FFPU do_fsqrt ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fsqrt");
 }
 
-PRIVATE void FFPU do_ftst ( fp_register const & src )
+PRIVATE void FFPU do_ftst ( fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1051,7 +1051,7 @@ PRIVATE void FFPU do_ftst ( fp_register const & src )
 
 // These functions are calculated in 53 bits accuracy only.
 // Exception checking is not complete.
-PRIVATE void FFPU do_fsinh ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fsinh ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1062,7 +1062,7 @@ PRIVATE void FFPU do_fsinh ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fsinh");
 }
 
-PRIVATE void FFPU do_flognp1 ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_flognp1 ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1073,7 +1073,7 @@ PRIVATE void FFPU do_flognp1 ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_flognp1");
 }
 
-PRIVATE void FFPU do_fetoxm1 ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fetoxm1 ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1084,7 +1084,7 @@ PRIVATE void FFPU do_fetoxm1 ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fetoxm1");
 }
 
-PRIVATE void FFPU do_ftanh ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_ftanh ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1095,7 +1095,7 @@ PRIVATE void FFPU do_ftanh ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_ftanh");
 }
 
-PRIVATE void FFPU do_fatan ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fatan ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1106,7 +1106,7 @@ PRIVATE void FFPU do_fatan ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fatan");
 }
 
-PRIVATE void FFPU do_fasin ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fasin ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1117,7 +1117,7 @@ PRIVATE void FFPU do_fasin ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fasin");
 }
 
-PRIVATE void FFPU do_fatanh ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fatanh ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1128,7 +1128,7 @@ PRIVATE void FFPU do_fatanh ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fatanh");
 }
 
-PRIVATE void FFPU do_fetox ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fetox ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1139,7 +1139,7 @@ PRIVATE void FFPU do_fetox ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fetox");
 }
 
-PRIVATE void FFPU do_ftwotox ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_ftwotox ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1150,7 +1150,7 @@ PRIVATE void FFPU do_ftwotox ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_ftwotox");
 }
 
-PRIVATE void FFPU do_ftentox ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_ftentox ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1161,7 +1161,7 @@ PRIVATE void FFPU do_ftentox ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_ftentox");
 }
 
-PRIVATE void FFPU do_flogn ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_flogn ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1172,7 +1172,7 @@ PRIVATE void FFPU do_flogn ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_flogn");
 }
 
-PRIVATE void FFPU do_flog10 ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_flog10 ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1183,7 +1183,7 @@ PRIVATE void FFPU do_flog10 ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_flog10");
 }
 
-PRIVATE void FFPU do_flog2 ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_flog2 ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1194,7 +1194,7 @@ PRIVATE void FFPU do_flog2 ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_flog2");
 }
 
-PRIVATE void FFPU do_facos ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_facos ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1205,7 +1205,7 @@ PRIVATE void FFPU do_facos ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_facos");
 }
 
-PRIVATE void FFPU do_fcosh ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fcosh ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double x, y;
@@ -1216,7 +1216,7 @@ PRIVATE void FFPU do_fcosh ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fcosh");
 }
 
-PRIVATE void FFPU do_fsin ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fsin ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1247,7 +1247,7 @@ PRIVATE void FFPU do_fsin ( fp_register & dest, fp_register const & src )
 }
 
 // TODO: Should check for out-of-range condition (partial tangent)
-PRIVATE void FFPU do_ftan ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_ftan ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1279,7 +1279,7 @@ PRIVATE void FFPU do_ftan ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_ftan");
 }
 
-PRIVATE void FFPU do_fabs ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fabs ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1309,7 +1309,7 @@ PRIVATE void FFPU do_fabs ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fabs");
 }
 
-PRIVATE void FFPU do_fneg ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fneg ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1339,7 +1339,7 @@ PRIVATE void FFPU do_fneg ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fneg");
 }
 
-PRIVATE void FFPU do_fcos ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fcos ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1369,7 +1369,7 @@ PRIVATE void FFPU do_fcos ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fcos");
 }
 
-PRIVATE void FFPU do_fgetexp ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fgetexp ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1400,7 +1400,7 @@ PRIVATE void FFPU do_fgetexp ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fgetexp");
 }
 
-PRIVATE void FFPU do_fgetman ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fgetman ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1431,7 +1431,7 @@ PRIVATE void FFPU do_fgetman ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fgetman");
 }
 
-PRIVATE void FFPU do_fdiv ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fdiv ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1469,7 +1469,7 @@ PRIVATE void FFPU do_fdiv ( fp_register & dest, fp_register const & src )
 // Quotient Byte is loaded with the sign and least significant
 // seven bits of the quotient.
 
-PRIVATE void FFPU do_fmod ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fmod ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 
@@ -1594,7 +1594,7 @@ partial_loop:
 	FPU_CONSISTENCY_CHECK_STOP("do_fmod");
 }
 
-PRIVATE void FFPU do_frem ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_frem ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 
@@ -1719,7 +1719,7 @@ partial_loop:
 
 // Faster versions. The current rounding mode is already correct.
 #if !USE_3_BIT_QUOTIENT
-PRIVATE void FFPU do_fmod_dont_set_cw ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fmod_dont_set_cw ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 
@@ -1768,7 +1768,7 @@ partial_loop:
 	FPU_CONSISTENCY_CHECK_STOP("do_fmod_dont_set_cw");
 }
 
-PRIVATE void FFPU do_frem_dont_set_cw ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_frem_dont_set_cw ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 
@@ -1817,7 +1817,7 @@ partial_loop:
 }
 #endif //USE_3_BIT_QUOTIENT
 
-PRIVATE void FFPU do_fadd ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fadd ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1849,7 +1849,7 @@ PRIVATE void FFPU do_fadd ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fadd");
 }
 
-PRIVATE void FFPU do_fmul ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fmul ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1880,7 +1880,7 @@ PRIVATE void FFPU do_fmul ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fmul");
 }
 
-PRIVATE void FFPU do_fsgldiv ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fsgldiv ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	WORD cw_temp;
@@ -1925,7 +1925,7 @@ PRIVATE void FFPU do_fsgldiv ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fsgldiv");
 }
 
-PRIVATE void FFPU do_fscale ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fscale ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -1959,7 +1959,7 @@ PRIVATE void FFPU do_fscale ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fscale");
 }
 
-PRIVATE void FFPU do_fsglmul ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fsglmul ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	WORD cw_temp;
@@ -2004,7 +2004,7 @@ PRIVATE void FFPU do_fsglmul ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fsglmul");
 }
 
-PRIVATE void FFPU do_fsub ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fsub ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -2038,7 +2038,7 @@ PRIVATE void FFPU do_fsub ( fp_register & dest, fp_register const & src )
 	FPU_CONSISTENCY_CHECK_STOP("do_fsub");
 }
 
-PRIVATE void FFPU do_fsincos ( fp_register & dest_sin, fp_register & dest_cos, fp_register const & src )
+PRIVATE void FFPU do_fsincos ( fpu_register & dest_sin, fpu_register & dest_cos, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -2073,7 +2073,7 @@ PRIVATE void FFPU do_fsincos ( fp_register & dest_sin, fp_register & dest_cos, f
 	FPU_CONSISTENCY_CHECK_STOP("do_fsincos");
 }
 
-PRIVATE void FFPU do_fcmp ( fp_register & dest, fp_register const & src )
+PRIVATE void FFPU do_fcmp ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -2235,7 +2235,7 @@ PRIVATE void FFPU from_pack (fpu_double src, uae_u32 * wrd1, uae_u32 * wrd2, uae
 	FPU_CONSISTENCY_CHECK_STOP("from_pack");
 }
 
-PRIVATE int FFPU get_fp_value (uae_u32 opcode, uae_u32 extra, fp_register & src)
+PRIVATE int FFPU get_fp_value (uae_u32 opcode, uae_u32 extra, fpu_register & src)
 {
 	static const int sz1[8] = {4, 4, 12, 12, 2, 8, 1, 0};
 	static const int sz2[8] = {4, 4, 12, 12, 2, 8, 2, 0};
@@ -2244,7 +2244,7 @@ PRIVATE int FFPU get_fp_value (uae_u32 opcode, uae_u32 extra, fp_register & src)
 	// dump_first_bytes( regs.pc_p-4, 16 );
 
   if ((extra & 0x4000) == 0) {
-		memcpy( &src, &FPU registers[(extra >> 10) & 7], sizeof(fp_register) );
+		memcpy( &src, &FPU registers[(extra >> 10) & 7], sizeof(fpu_register) );
 //		do_fmove_no_status( src, FPU registers[(extra >> 10) & 7] );
 		return 1;
   }
@@ -2390,7 +2390,7 @@ PRIVATE int FFPU get_fp_value (uae_u32 opcode, uae_u32 extra, fp_register & src)
   return 1;
 }
 
-PRIVATE int FFPU put_fp_value (fp_register const & value, uae_u32 opcode, uae_u32 extra)
+PRIVATE int FFPU put_fp_value (fpu_register const & value, uae_u32 opcode, uae_u32 extra)
 {
 	static const int sz1[8] = {4, 4, 12, 12, 2, 8, 1, 0};
 	static const int sz2[8] = {4, 4, 12, 12, 2, 8, 2, 0};
@@ -4470,7 +4470,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_fmovem_fpp_2_Mem_dynamic_postinc( uae_u32 opco
 PRIVATE void REGPARAM2 FFPU fpuop_do_fldpi( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: Pi\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_pi, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_pi, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4478,7 +4478,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fldpi( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fldlg2( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: Log 10 (2)\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_lg2, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_lg2, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4486,7 +4486,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fldlg2( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_e( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: e\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_e, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_e, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4494,7 +4494,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_e( uae_u32 opcode, uae_u32 extra
 PRIVATE void REGPARAM2 FFPU fpuop_do_fldl2e( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: Log 2 (e)\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_l2e, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_l2e, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4502,7 +4502,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fldl2e( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_log_10_e( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: Log 10 (e)\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_log_10_e, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_log_10_e, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4510,7 +4510,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_log_10_e( uae_u32 opcode, uae_u3
 PRIVATE void REGPARAM2 FFPU fpuop_do_fldz( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: zero\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_z, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_z, sizeof(fpu_register) );
 	x86_status_word = SW_Z;
 	dump_registers( "END  ");
 }
@@ -4518,7 +4518,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fldz( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fldln2( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: ln(2)\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_ln2, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_ln2, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4526,7 +4526,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fldln2( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_ln_10( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: ln(10)\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_ln_10, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_ln_10, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4534,7 +4534,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_ln_10( uae_u32 opcode, uae_u32 e
 PRIVATE void REGPARAM2 FFPU fpuop_do_fld1( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e0\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE;
 	dump_registers( "END  ");
 }
@@ -4542,7 +4542,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fld1( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e1( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e1\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e1, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e1, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE;
 	dump_registers( "END  ");
 }
@@ -4550,7 +4550,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e1( uae_u32 opcode, uae_u32 ext
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e2( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e2\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e2, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e2, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE;
 	dump_registers( "END  ");
 }
@@ -4558,7 +4558,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e2( uae_u32 opcode, uae_u32 ext
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e4( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e4\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e4, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e4, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE;
 	dump_registers( "END  ");
 }
@@ -4566,7 +4566,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e4( uae_u32 opcode, uae_u32 ext
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e8( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e8\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e8, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e8, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2; // Is it really FPSR_EXCEPTION_INEX2?
 	dump_registers( "END  ");
 }
@@ -4574,7 +4574,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e8( uae_u32 opcode, uae_u32 ext
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e16( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e16\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e16, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e16, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4582,7 +4582,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e16( uae_u32 opcode, uae_u32 ex
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e32( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e32\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e32, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e32, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4590,7 +4590,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e32( uae_u32 opcode, uae_u32 ex
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e64( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e64\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e64, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e64, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4598,7 +4598,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e64( uae_u32 opcode, uae_u32 ex
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e128( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e128\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e128, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e128, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4606,7 +4606,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e128( uae_u32 opcode, uae_u32 e
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e256( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e256\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e256, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e256, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4614,7 +4614,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e256( uae_u32 opcode, uae_u32 e
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e512( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e512\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e512, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e512, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4622,7 +4622,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e512( uae_u32 opcode, uae_u32 e
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e1024( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e1024\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e1024, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e1024, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4630,7 +4630,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e1024( uae_u32 opcode, uae_u32 
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e2048( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e2048\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e2048, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e2048, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4638,7 +4638,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e2048( uae_u32 opcode, uae_u32 
 PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e4096( uae_u32 opcode, uae_u32 extra )
 {
 	D(bug("FMOVECR memory->FPP FP const: 1.0e4096\r\n"));
-	memcpy( &FPU registers[(extra>>7) & 7], &const_1e4096, sizeof(fp_register) );
+	memcpy( &FPU registers[(extra>>7) & 7], &const_1e4096, sizeof(fpu_register) );
 	x86_status_word = SW_FINITE | FPSR_EXCEPTION_INEX2;
 	dump_registers( "END  ");
 }
@@ -4649,7 +4649,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_load_const_1e4096( uae_u32 opcode, uae_u32 
 PRIVATE void REGPARAM2 FFPU fpuop_do_fmove( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4665,7 +4665,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fmove( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fint( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4680,7 +4680,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fint( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fsinh( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4696,7 +4696,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fsinh( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fintrz( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4711,7 +4711,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fintrz( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fsqrt( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4726,7 +4726,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fsqrt( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_flognp1( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4742,7 +4742,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_flognp1( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fetoxm1( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4758,7 +4758,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fetoxm1( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_ftanh( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4774,7 +4774,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_ftanh( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fatan( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4790,7 +4790,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fatan( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fasin( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4806,7 +4806,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fasin( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fatanh( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4822,7 +4822,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fatanh( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fsin( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4837,7 +4837,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fsin( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_ftan( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4852,7 +4852,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_ftan( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fetox( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4868,7 +4868,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fetox( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_ftwotox( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4884,7 +4884,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_ftwotox( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_ftentox( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4900,7 +4900,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_ftentox( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_flogn( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4916,7 +4916,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_flogn( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_flog10( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4932,7 +4932,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_flog10( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_flog2( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4948,7 +4948,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_flog2( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fabs( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4963,7 +4963,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fabs( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fcosh( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4979,7 +4979,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fcosh( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fneg( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -4994,7 +4994,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fneg( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_facos( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5010,7 +5010,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_facos( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fcos( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5025,7 +5025,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fcos( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fgetexp( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5047,7 +5047,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fgetexp( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fgetman( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5068,7 +5068,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fgetman( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fdiv( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5083,7 +5083,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fdiv( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fmod( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5107,7 +5107,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fmod( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_frem( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5130,7 +5130,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_frem( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fadd( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5145,7 +5145,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fadd( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fmul( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5160,7 +5160,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fmul( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fsgldiv( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5175,7 +5175,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fsgldiv( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fscale( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5198,7 +5198,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fscale( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fsglmul( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5213,7 +5213,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fsglmul( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fsub( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5228,7 +5228,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fsub( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fsincos( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5243,7 +5243,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fsincos( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_fcmp( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5288,7 +5288,7 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fcmp( uae_u32 opcode, uae_u32 extra )
 PRIVATE void REGPARAM2 FFPU fpuop_do_ftst( uae_u32 opcode, uae_u32 extra )
 {
 	int reg = (extra >> 7) & 7;
-  fp_register src;
+  fpu_register src;
 	if (get_fp_value (opcode, extra, src) == 0) {
 		m68k_setpc (m68k_getpc () - 4);
 		op_illg (opcode);
@@ -5874,7 +5874,7 @@ PRIVATE void FFPU build_fpp_opp_lookup_table ()
 
 /* ---------------------------- CONSTANTS ---------------------------- */
 
-PRIVATE void FFPU set_constant ( fp_register & f, char *name, double value, uae_s32 mult )
+PRIVATE void FFPU set_constant ( fpu_register & f, char *name, double value, uae_s32 mult )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	if(mult == 1) {
@@ -5910,7 +5910,7 @@ PRIVATE void FFPU set_constant ( fp_register & f, char *name, double value, uae_
 	FPU_CONSISTENCY_CHECK_STOP( mult==1 ? "set_constant(mult==1)" : "set_constant(mult>1)" );
 }
 
-PRIVATE void FFPU do_fldpi ( fp_register & dest )
+PRIVATE void FFPU do_fldpi ( fpu_register & dest )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -5930,7 +5930,7 @@ PRIVATE void FFPU do_fldpi ( fp_register & dest )
 	FPU_CONSISTENCY_CHECK_STOP("do_fldpi");
 }
 
-PRIVATE void FFPU do_fldlg2 ( fp_register & dest )
+PRIVATE void FFPU do_fldlg2 ( fpu_register & dest )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -5950,7 +5950,7 @@ PRIVATE void FFPU do_fldlg2 ( fp_register & dest )
 	FPU_CONSISTENCY_CHECK_STOP("do_fldlg2");
 }
 
-PRIVATE void FFPU do_fldl2e ( fp_register & dest )
+PRIVATE void FFPU do_fldl2e ( fpu_register & dest )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -5970,7 +5970,7 @@ PRIVATE void FFPU do_fldl2e ( fp_register & dest )
 	FPU_CONSISTENCY_CHECK_STOP("do_fldl2e");
 }
 
-PRIVATE void FFPU do_fldz ( fp_register & dest )
+PRIVATE void FFPU do_fldz ( fpu_register & dest )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -5990,7 +5990,7 @@ PRIVATE void FFPU do_fldz ( fp_register & dest )
 	FPU_CONSISTENCY_CHECK_STOP("do_fldz");
 }
 
-PRIVATE void FFPU do_fldln2 ( fp_register & dest )
+PRIVATE void FFPU do_fldln2 ( fpu_register & dest )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {
@@ -6010,7 +6010,7 @@ PRIVATE void FFPU do_fldln2 ( fp_register & dest )
 	FPU_CONSISTENCY_CHECK_STOP("do_fldln2");
 }
 
-PRIVATE void FFPU do_fld1 ( fp_register & dest )
+PRIVATE void FFPU do_fld1 ( fpu_register & dest )
 {
 	FPU_CONSISTENCY_CHECK_START();
 /*	_asm {

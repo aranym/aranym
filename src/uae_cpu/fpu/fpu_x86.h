@@ -53,30 +53,30 @@ PRIVATE fpuop_func fpufunctbl[65536];
 PRIVATE uae_u32 checked_sw_atstart;
 
 // FMOVECR constants supported byt x86 FPU
-PRIVATE fp_register const_pi;
-PRIVATE fp_register const_lg2;
-PRIVATE fp_register const_l2e;
-PRIVATE fp_register const_z;
-PRIVATE fp_register const_ln2;
-PRIVATE fp_register const_1;
+PRIVATE fpu_register const_pi;
+PRIVATE fpu_register const_lg2;
+PRIVATE fpu_register const_l2e;
+PRIVATE fpu_register const_z;
+PRIVATE fpu_register const_ln2;
+PRIVATE fpu_register const_1;
 
 // FMOVECR constants not not suported by x86 FPU
-PRIVATE fp_register const_e;
-PRIVATE fp_register const_log_10_e;
-PRIVATE fp_register const_ln_10;
-PRIVATE fp_register const_1e1;
-PRIVATE fp_register const_1e2;
-PRIVATE fp_register const_1e4;
-PRIVATE fp_register const_1e8;
-PRIVATE fp_register const_1e16;
-PRIVATE fp_register const_1e32;
-PRIVATE fp_register const_1e64;
-PRIVATE fp_register const_1e128;
-PRIVATE fp_register const_1e256;
-PRIVATE fp_register const_1e512;
-PRIVATE fp_register const_1e1024;
-PRIVATE fp_register const_1e2048;
-PRIVATE fp_register const_1e4096;
+PRIVATE fpu_register const_e;
+PRIVATE fpu_register const_log_10_e;
+PRIVATE fpu_register const_ln_10;
+PRIVATE fpu_register const_1e1;
+PRIVATE fpu_register const_1e2;
+PRIVATE fpu_register const_1e4;
+PRIVATE fpu_register const_1e8;
+PRIVATE fpu_register const_1e16;
+PRIVATE fpu_register const_1e32;
+PRIVATE fpu_register const_1e64;
+PRIVATE fpu_register const_1e128;
+PRIVATE fpu_register const_1e256;
+PRIVATE fpu_register const_1e512;
+PRIVATE fpu_register const_1e1024;
+PRIVATE fpu_register const_1e2048;
+PRIVATE fpu_register const_1e4096;
 
 // Saved host FPU state
 PRIVATE uae_u8 m_fpu_state_original[108]; // 90/94/108
@@ -87,92 +87,92 @@ PRIVATE uae_u8 m_fpu_state_original[108]; // 90/94/108
 
 // Debug support functions
 PRIVATE void FFPU dump_first_bytes_buf(char *b, uae_u8* buf, uae_s32 actual);
-PRIVATE char * FFPU etos(fp_register const & e) REGPARAM;
+PRIVATE char * FFPU etos(fpu_register const & e) REGPARAM;
 
 // FPU consistency
 PRIVATE void FFPU FPU_CONSISTENCY_CHECK_START(void);
 PRIVATE void FFPU FPU_CONSISTENCY_CHECK_STOP(const char *name);
 
 // Get special floating-point value class
-PRIVATE __inline__ uae_u32 FFPU IS_INFINITY (fp_register const & f);
-PRIVATE __inline__ uae_u32 FFPU IS_NAN (fp_register const & f);
-PRIVATE __inline__ uae_u32 FFPU IS_ZERO (fp_register const & f);
-PRIVATE __inline__ uae_u32 FFPU IS_NEGATIVE (fp_register const & f);
+PRIVATE __inline__ uae_u32 FFPU IS_INFINITY (fpu_register const & f);
+PRIVATE __inline__ uae_u32 FFPU IS_NAN (fpu_register const & f);
+PRIVATE __inline__ uae_u32 FFPU IS_ZERO (fpu_register const & f);
+PRIVATE __inline__ uae_u32 FFPU IS_NEGATIVE (fpu_register const & f);
 
 // Make a special floating-point value
-PRIVATE __inline__ void FFPU MAKE_NAN (fp_register & f);
-PRIVATE __inline__ void FFPU MAKE_INF_POSITIVE (fp_register & f);
-PRIVATE __inline__ void FFPU MAKE_INF_NEGATIVE (fp_register & f);
-PRIVATE __inline__ void FFPU MAKE_ZERO_POSITIVE (fp_register & f);
-PRIVATE __inline__ void FFPU MAKE_ZERO_NEGATIVE (fp_register & f);
+PRIVATE __inline__ void FFPU MAKE_NAN (fpu_register & f);
+PRIVATE __inline__ void FFPU MAKE_INF_POSITIVE (fpu_register & f);
+PRIVATE __inline__ void FFPU MAKE_INF_NEGATIVE (fpu_register & f);
+PRIVATE __inline__ void FFPU MAKE_ZERO_POSITIVE (fpu_register & f);
+PRIVATE __inline__ void FFPU MAKE_ZERO_NEGATIVE (fpu_register & f);
 
 // Conversion from extended floating-point values
-PRIVATE uae_s32 FFPU extended_to_signed_32 ( fp_register const & f ) REGPARAM;
-PRIVATE uae_s16 FFPU extended_to_signed_16 ( fp_register const & f ) REGPARAM;
-PRIVATE uae_s8 FFPU extended_to_signed_8 ( fp_register const & f ) REGPARAM;
-PRIVATE fpu_double FFPU extended_to_double( fp_register const & f ) REGPARAM;
-PRIVATE uae_u32 FFPU from_single ( fp_register const & f ) REGPARAM;
-PRIVATE void FFPU from_exten ( fp_register const & f, uae_u32 *wrd1, uae_u32 *wrd2, uae_u32 *wrd3 ) REGPARAM;
-PRIVATE void FFPU from_double ( fp_register const & f, uae_u32 *wrd1, uae_u32 *wrd2 ) REGPARAM;
+PRIVATE uae_s32 FFPU extended_to_signed_32 ( fpu_register const & f ) REGPARAM;
+PRIVATE uae_s16 FFPU extended_to_signed_16 ( fpu_register const & f ) REGPARAM;
+PRIVATE uae_s8 FFPU extended_to_signed_8 ( fpu_register const & f ) REGPARAM;
+PRIVATE fpu_double FFPU extended_to_double( fpu_register const & f ) REGPARAM;
+PRIVATE uae_u32 FFPU from_single ( fpu_register const & f ) REGPARAM;
+PRIVATE void FFPU from_exten ( fpu_register const & f, uae_u32 *wrd1, uae_u32 *wrd2, uae_u32 *wrd3 ) REGPARAM;
+PRIVATE void FFPU from_double ( fpu_register const & f, uae_u32 *wrd1, uae_u32 *wrd2 ) REGPARAM;
 PRIVATE void FFPU from_pack (fpu_double src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3) REGPARAM;
 
 // Conversion to extended floating-point values
-PRIVATE void FFPU signed_to_extended ( uae_s32 x, fp_register & f ) REGPARAM;
-PRIVATE void FFPU double_to_extended ( double x, fp_register & f ) REGPARAM;
-PRIVATE void FFPU to_single ( uae_u32 src, fp_register & f ) REGPARAM;
-PRIVATE void FFPU to_exten_no_normalize ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fp_register & f ) REGPARAM;
-PRIVATE void FFPU to_exten ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fp_register & f ) REGPARAM;
-PRIVATE void FFPU to_double ( uae_u32 wrd1, uae_u32 wrd2, fp_register & f ) REGPARAM;
+PRIVATE void FFPU signed_to_extended ( uae_s32 x, fpu_register & f ) REGPARAM;
+PRIVATE void FFPU double_to_extended ( double x, fpu_register & f ) REGPARAM;
+PRIVATE void FFPU to_single ( uae_u32 src, fpu_register & f ) REGPARAM;
+PRIVATE void FFPU to_exten_no_normalize ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fpu_register & f ) REGPARAM;
+PRIVATE void FFPU to_exten ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fpu_register & f ) REGPARAM;
+PRIVATE void FFPU to_double ( uae_u32 wrd1, uae_u32 wrd2, fpu_register & f ) REGPARAM;
 PRIVATE fpu_double FFPU to_pack(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3) REGPARAM;
 
 // Atomic floating-point arithmetic operations
-PRIVATE void FFPU do_fmove ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fmove_no_status ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fint ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fintrz ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fsqrt ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_ftst ( fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fsinh ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_flognp1 ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fetoxm1 ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_ftanh ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fatan ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fasin ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fatanh ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fetox ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_ftwotox ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_ftentox ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_flogn ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_flog10 ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_flog2 ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_facos ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fcosh ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fsin ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_ftan ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fabs ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fneg ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fcos ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fgetexp ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fgetman ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fdiv ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fmod ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_frem ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fmod_dont_set_cw ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_frem_dont_set_cw ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fadd ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fmul ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fsgldiv ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fscale ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fsglmul ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fsub ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fsincos ( fp_register & dest_sin, fp_register & dest_cos, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fcmp ( fp_register & dest, fp_register const & src ) REGPARAM;
-PRIVATE void FFPU do_fldpi ( fp_register & dest ) REGPARAM;
-PRIVATE void FFPU do_fldlg2 ( fp_register & dest ) REGPARAM;
-PRIVATE void FFPU do_fldl2e ( fp_register & dest ) REGPARAM;
-PRIVATE void FFPU do_fldz ( fp_register & dest ) REGPARAM;
-PRIVATE void FFPU do_fldln2 ( fp_register & dest ) REGPARAM;
-PRIVATE void FFPU do_fld1 ( fp_register & dest ) REGPARAM;
+PRIVATE void FFPU do_fmove ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fmove_no_status ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fint ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fintrz ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fsqrt ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_ftst ( fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fsinh ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_flognp1 ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fetoxm1 ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_ftanh ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fatan ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fasin ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fatanh ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fetox ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_ftwotox ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_ftentox ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_flogn ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_flog10 ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_flog2 ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_facos ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fcosh ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fsin ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_ftan ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fabs ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fneg ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fcos ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fgetexp ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fgetman ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fdiv ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fmod ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_frem ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fmod_dont_set_cw ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_frem_dont_set_cw ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fadd ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fmul ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fsgldiv ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fscale ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fsglmul ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fsub ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fsincos ( fpu_register & dest_sin, fpu_register & dest_cos, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fcmp ( fpu_register & dest, fpu_register const & src ) REGPARAM;
+PRIVATE void FFPU do_fldpi ( fpu_register & dest ) REGPARAM;
+PRIVATE void FFPU do_fldlg2 ( fpu_register & dest ) REGPARAM;
+PRIVATE void FFPU do_fldl2e ( fpu_register & dest ) REGPARAM;
+PRIVATE void FFPU do_fldz ( fpu_register & dest ) REGPARAM;
+PRIVATE void FFPU do_fldln2 ( fpu_register & dest ) REGPARAM;
+PRIVATE void FFPU do_fld1 ( fpu_register & dest ) REGPARAM;
 
 // Instructions handlers
 PRIVATE void REGPARAM2 FFPU fpuop_illg( uae_u32 opcode, uae_u32 extra );
@@ -343,8 +343,8 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fcmp( uae_u32 opcode, uae_u32 extra );
 PRIVATE void REGPARAM2 FFPU fpuop_do_ftst( uae_u32 opcode, uae_u32 extra );
 
 // Get & Put floating-point values
-PRIVATE int FFPU get_fp_value (uae_u32 opcode, uae_u32 extra, fp_register & src) REGPARAM;
-PRIVATE int FFPU put_fp_value (fp_register const & value, uae_u32 opcode, uae_u32 extra) REGPARAM;
+PRIVATE int FFPU get_fp_value (uae_u32 opcode, uae_u32 extra, fpu_register & src) REGPARAM;
+PRIVATE int FFPU put_fp_value (fpu_register const & value, uae_u32 opcode, uae_u32 extra) REGPARAM;
 PRIVATE int FFPU get_fp_ad(uae_u32 opcode, uae_u32 * ad) REGPARAM;
 
 // Floating-point condition-based instruction handlers
@@ -356,6 +356,6 @@ PRIVATE void __inline__ FFPU SET_BSUN_ON_NAN ();
 PRIVATE void __inline__ FFPU build_ex_status ();
 PRIVATE void FFPU do_null_frestore ();
 PRIVATE void FFPU build_fpp_opp_lookup_table ();
-PRIVATE void FFPU set_constant ( fp_register & f, char *name, double value, uae_s32 mult );
+PRIVATE void FFPU set_constant ( fpu_register & f, char *name, double value, uae_s32 mult );
 
 #endif /* FPU_X86_H */

@@ -97,7 +97,7 @@ using namespace std;
 // Taken from glibc 2.2.x: ieee754.h
 
 // IEEE-754 float format
-union fp_single_shape {
+union fpu_single_shape {
 	
 	fpu_single value;
 
@@ -133,7 +133,7 @@ union fp_single_shape {
 };
 
 // IEEE-754 double format
-union fp_double_shape {
+union fpu_double_shape {
 	fpu_double value;
 	
 	/* This is the IEEE 754 double-precision format.  */
@@ -199,7 +199,7 @@ union fp_double_shape {
 
 #ifndef USE_QUAD_DOUBLE
 // IEEE-854 long double format
-union fp_extended_shape {
+union fpu_extended_shape {
 	fpu_extended value;
 	
 	/* This is the IEEE 854 double-extended-precision format.  */
@@ -277,7 +277,7 @@ union fp_extended_shape {
 };
 #else
 // IEEE-854 quad double format
-union fp_extended_shape {
+union fpu_extended_shape {
 	fpu_extended value;
 	
 	/* This is the IEEE 854 quad-precision format.  */
@@ -349,7 +349,7 @@ union fp_extended_shape {
 
 // Declare and initialize a pointer to a shape of the requested FP type
 #define fp_declare_init_shape(psvar, rfvar, ftype) \
-	fp_ ## ftype ## _shape * psvar = (fp_ ## ftype ## _shape *)( &rfvar )
+	fpu_ ## ftype ## _shape * psvar = (fpu_ ## ftype ## _shape *)( &rfvar )
 
 /* -------------------------------------------------------------------------- */
 /* --- Extra Math Functions                                               --- */
@@ -363,7 +363,7 @@ union fp_extended_shape {
 # define isnan(x) fp_do_isnan((x))
 #endif
 
-PRIVATE inline bool FFPU fp_do_isnan(fp_register const & r)
+PRIVATE inline bool FFPU fp_do_isnan(fpu_register const & r)
 {
 	fp_declare_init_shape(sxp, r, extended);
 #ifdef BRANCHES_ARE_EXPENSIVE
@@ -404,7 +404,7 @@ PRIVATE inline bool FFPU fp_do_isnan(fp_register const & r)
 # define isinf(x) fp_do_isinf((x))
 #endif
 
-PRIVATE inline bool FFPU fp_do_isinf(fp_register const & r)
+PRIVATE inline bool FFPU fp_do_isinf(fpu_register const & r)
 {
 	fp_declare_init_shape(sxp, r, extended);
 #ifdef BRANCHES_ARE_EXPENSIVE
@@ -445,7 +445,7 @@ PRIVATE inline bool FFPU fp_do_isinf(fp_register const & r)
 #undef isneg
 #define isneg(x) fp_do_isneg((x))
 
-PRIVATE inline bool FFPU fp_do_isneg(fp_register const & r)
+PRIVATE inline bool FFPU fp_do_isneg(fpu_register const & r)
 {
 	fp_declare_init_shape(sxp, r, extended);
 	return	(sxp->ieee.negative)
@@ -455,7 +455,7 @@ PRIVATE inline bool FFPU fp_do_isneg(fp_register const & r)
 #undef iszero
 #define iszero(x) fp_do_iszero((x))
 
-PRIVATE inline bool FFPU fp_do_iszero(fp_register const & r)
+PRIVATE inline bool FFPU fp_do_iszero(fpu_register const & r)
 {
 	// TODO: BRANCHES_ARE_EXPENSIVE
 	fp_declare_init_shape(sxp, r, extended);
@@ -469,7 +469,7 @@ PRIVATE inline bool FFPU fp_do_iszero(fp_register const & r)
 		;
 }
 
-PRIVATE inline void FFPU get_dest_flags(fp_register const & r)
+PRIVATE inline void FFPU get_dest_flags(fpu_register const & r)
 {
 	fl_dest.negative	= isneg(r);
 	fl_dest.zero		= iszero(r);
@@ -478,7 +478,7 @@ PRIVATE inline void FFPU get_dest_flags(fp_register const & r)
 	fl_dest.in_range	= !fl_dest.zero && !fl_dest.infinity && !fl_dest.nan;
 }
 
-PRIVATE inline void FFPU get_source_flags(fp_register const & r)
+PRIVATE inline void FFPU get_source_flags(fpu_register const & r)
 {
 	fl_source.negative	= isneg(r);
 	fl_source.zero		= iszero(r);
@@ -487,7 +487,7 @@ PRIVATE inline void FFPU get_source_flags(fp_register const & r)
 	fl_source.in_range	= !fl_source.zero && !fl_source.infinity && !fl_source.nan;
 }
 
-PRIVATE inline void FFPU make_nan(fp_register & r)
+PRIVATE inline void FFPU make_nan(fpu_register & r)
 {
 	// FIXME: is that correct ?
 	fp_declare_init_shape(sxp, r, extended);
@@ -500,7 +500,7 @@ PRIVATE inline void FFPU make_nan(fp_register & r)
 #endif
 }
 
-PRIVATE inline void FFPU make_zero_positive(fp_register & r)
+PRIVATE inline void FFPU make_zero_positive(fpu_register & r)
 {
 #if 1
 	r = +0.0;
@@ -517,7 +517,7 @@ PRIVATE inline void FFPU make_zero_positive(fp_register & r)
 #endif
 }
 
-PRIVATE inline void FFPU make_zero_negative(fp_register & r)
+PRIVATE inline void FFPU make_zero_negative(fpu_register & r)
 {
 #if 1
 	r = -0.0;
@@ -534,7 +534,7 @@ PRIVATE inline void FFPU make_zero_negative(fp_register & r)
 #endif
 }
 
-PRIVATE inline void FFPU make_inf_positive(fp_register & r)
+PRIVATE inline void FFPU make_inf_positive(fpu_register & r)
 {
 	fp_declare_init_shape(sxp, r, extended);
 	sxp->ieee_nan.negative	= 0;
@@ -547,7 +547,7 @@ PRIVATE inline void FFPU make_inf_positive(fp_register & r)
 #endif
 }
 
-PRIVATE inline void FFPU make_inf_negative(fp_register & r)
+PRIVATE inline void FFPU make_inf_negative(fpu_register & r)
 {
 	fp_declare_init_shape(sxp, r, extended);
 	sxp->ieee_nan.negative	= 1;
@@ -560,7 +560,7 @@ PRIVATE inline void FFPU make_inf_negative(fp_register & r)
 #endif
 }
 
-PRIVATE inline void FFPU fast_scale(fp_register & r, int add)
+PRIVATE inline void FFPU fast_scale(fpu_register & r, int add)
 {
 	fp_declare_init_shape(sxp, r, extended);
 	// TODO: overflow flags
@@ -581,14 +581,14 @@ PRIVATE inline void FFPU fast_scale(fp_register & r, int add)
 	}
 }
 
-PRIVATE inline fp_register FFPU fast_fgetexp(fp_register const & r)
+PRIVATE inline fpu_register FFPU fast_fgetexp(fpu_register const & r)
 {
 	fp_declare_init_shape(sxp, r, extended);
 	return (sxp->ieee.exponent - FP_EXTENDED_EXP_BIAS);
 }
 
 // Normalize to range 1..2
-PRIVATE inline void FFPU fast_remove_exponent(fp_register & r)
+PRIVATE inline void FFPU fast_remove_exponent(fpu_register & r)
 {
 	fp_declare_init_shape(sxp, r, extended);
 	sxp->ieee.exponent = FP_EXTENDED_EXP_BIAS;
@@ -596,7 +596,7 @@ PRIVATE inline void FFPU fast_remove_exponent(fp_register & r)
 
 // The sign of the quotient is the exclusive-OR of the sign bits
 // of the source and destination operands.
-PRIVATE inline uae_u32 FFPU get_quotient_sign(fp_register const & ra, fp_register const & rb)
+PRIVATE inline uae_u32 FFPU get_quotient_sign(fpu_register const & ra, fpu_register const & rb)
 {
 	fp_declare_init_shape(sap, ra, extended);
 	fp_declare_init_shape(sbp, rb, extended);

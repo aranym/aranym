@@ -55,8 +55,8 @@ enum {
 };
 
 // Floating-point rounding support
-PRIVATE inline fp_register round_to_zero(fp_register const & x);
-PRIVATE inline fp_register round_to_nearest(fp_register const & x);
+PRIVATE inline fpu_register round_to_zero(fpu_register const & x);
+PRIVATE inline fpu_register round_to_nearest(fpu_register const & x);
 
 #if FPU_HAVE_IEEE_DOUBLE
 
@@ -70,55 +70,55 @@ struct double_flags {
 };
 PRIVATE double_flags fl_source;
 PRIVATE double_flags fl_dest;
-PRIVATE inline void FFPU get_dest_flags(fp_register const & r);
-PRIVATE inline void FFPU get_source_flags(fp_register const & r);
+PRIVATE inline void FFPU get_dest_flags(fpu_register const & r);
+PRIVATE inline void FFPU get_source_flags(fpu_register const & r);
 
-PRIVATE inline bool FFPU do_isnan(fp_register const & r);
-PRIVATE inline bool FFPU do_isinf(fp_register const & r);
-PRIVATE inline bool FFPU do_isneg(fp_register const & r);
-PRIVATE inline bool FFPU do_iszero(fp_register const & r);
+PRIVATE inline bool FFPU do_isnan(fpu_register const & r);
+PRIVATE inline bool FFPU do_isinf(fpu_register const & r);
+PRIVATE inline bool FFPU do_isneg(fpu_register const & r);
+PRIVATE inline bool FFPU do_iszero(fpu_register const & r);
 
-PRIVATE inline void FFPU make_nan(fp_register & r);
-PRIVATE inline void FFPU make_zero_positive(fp_register & r);
-PRIVATE inline void FFPU make_zero_negative(fp_register & r);
-PRIVATE inline void FFPU make_inf_positive(fp_register & r);
-PRIVATE inline void FFPU make_inf_negative(fp_register & r);
+PRIVATE inline void FFPU make_nan(fpu_register & r);
+PRIVATE inline void FFPU make_zero_positive(fpu_register & r);
+PRIVATE inline void FFPU make_zero_negative(fpu_register & r);
+PRIVATE inline void FFPU make_inf_positive(fpu_register & r);
+PRIVATE inline void FFPU make_inf_negative(fpu_register & r);
 
-PRIVATE inline void FFPU fast_scale(fp_register & r, int add);
-PRIVATE inline fp_register FFPU fast_fgetexp(fp_register const & r);
+PRIVATE inline void FFPU fast_scale(fpu_register & r, int add);
+PRIVATE inline fpu_register FFPU fast_fgetexp(fpu_register const & r);
 
 // May be optimized for particular processors
 #ifndef FPU_USE_NATIVE_FLAGS
-PRIVATE inline void FFPU make_fpsr(fp_register const & r);
+PRIVATE inline void FFPU make_fpsr(fpu_register const & r);
 #endif
 
 // Normalize to range 1..2
-PRIVATE inline void FFPU fast_remove_exponent(fp_register & r);
+PRIVATE inline void FFPU fast_remove_exponent(fpu_register & r);
 
 // The sign of the quotient is the exclusive-OR of the sign bits
 // of the source and destination operands.
 PRIVATE inline uae_u32 FFPU get_quotient_sign(
-	fp_register const & ra, fp_register const & rb
+	fpu_register const & ra, fpu_register const & rb
 );
 
 // Quotient Byte is loaded with the sign and least significant
 // seven bits of the quotient.
 PRIVATE inline void FFPU make_quotient(
-	fp_register const & quotient, uae_u32 sign
+	fpu_register const & quotient, uae_u32 sign
 );
 
 // to_single
-PRIVATE inline fp_register FFPU make_single(
+PRIVATE inline fpu_register FFPU make_single(
 	uae_u32 value
 );
 
 // from_single
 PRIVATE inline uae_u32 FFPU extract_single(
-	fp_register const & src
+	fpu_register const & src
 );
 
 // to_exten
-PRIVATE inline fp_register FFPU make_extended(
+PRIVATE inline fpu_register FFPU make_extended(
 	uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3
 );
 
@@ -128,21 +128,21 @@ PRIVATE inline fp_register FFPU make_extended(
 */
 // to_exten_no_normalize
 PRIVATE inline void FFPU make_extended_no_normalize(
-	uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fp_register & result
+	uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fpu_register & result
 );
 
 // from_exten
-PRIVATE inline void FFPU extract_extended(fp_register const & src,
+PRIVATE inline void FFPU extract_extended(fpu_register const & src,
 	uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3
 );
 
 // to_double
-PRIVATE inline fp_register FFPU make_double(
+PRIVATE inline fpu_register FFPU make_double(
 	uae_u32 wrd1, uae_u32 wrd2
 );
 
 // from_double
-PRIVATE inline void FFPU extract_double(fp_register const & src, 
+PRIVATE inline void FFPU extract_double(fpu_register const & src, 
 	uae_u32 * wrd1, uae_u32 * wrd2
 );
 
@@ -150,55 +150,55 @@ PRIVATE inline void FFPU extract_double(fp_register const & src,
 
 // FIXME: may be optimized for particular processors
 #ifndef FPU_USE_NATIVE_FLAGS
-PRIVATE inline void FFPU make_fpsr(fp_register const & r);
+PRIVATE inline void FFPU make_fpsr(fpu_register const & r);
 #endif
 
 // to_single
-PRIVATE inline fp_register make_single(
+PRIVATE inline fpu_register make_single(
 	uae_u32 value
 );
 
 // from_single
 PRIVATE inline uae_u32 FFPU extract_single(
-	fp_register const & src
+	fpu_register const & src
 );
 
 // to exten
-PRIVATE inline fp_register FFPU make_extended(
+PRIVATE inline fpu_register FFPU make_extended(
 	uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3
 );
 
 // from_exten
 PRIVATE inline void FFPU extract_extended(
-	fp_register const & src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3
+	fpu_register const & src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3
 );
 
 // to_double
-PRIVATE inline fp_register FFPU make_double(
+PRIVATE inline fpu_register FFPU make_double(
 	uae_u32 wrd1, uae_u32 wrd2
 );
 
 // from_double
 PRIVATE inline void FFPU extract_double(
-	fp_register const & src, uae_u32 * wrd1, uae_u32 * wrd2
+	fpu_register const & src, uae_u32 * wrd1, uae_u32 * wrd2
 );
 
 #endif /* FPU_HAVE_IEEE_DOUBLE */
 
-PRIVATE inline fp_register FFPU make_packed(
+PRIVATE inline fpu_register FFPU make_packed(
 	uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3
 );
 
 PRIVATE inline void FFPU extract_packed(
-	fp_register const & src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3
+	fpu_register const & src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3
 );
 
 PRIVATE inline int FFPU get_fp_value(
-	uae_u32 opcode, uae_u16 extra, fp_register & src
+	uae_u32 opcode, uae_u16 extra, fpu_register & src
 );
 
 PRIVATE inline int FFPU put_fp_value(
-	uae_u32 opcode, uae_u16 extra, fp_register const & value
+	uae_u32 opcode, uae_u16 extra, fpu_register const & value
 );
 
 PRIVATE inline int FFPU get_fp_ad(
