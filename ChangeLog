@@ -1,3 +1,7 @@
+2002/03/05 - milan
+- memptr for addressing in Atari memory out of uae_cpu
+
+
 2002/03/03 - Gwenole Beauchesne & milan
 - fpu_x86 debug mode corrected
 

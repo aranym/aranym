@@ -186,6 +186,8 @@ typedef int64 intptr;
 #error "Unsupported size of pointer"
 #endif
 
+#define memptr uint32
+
 /* UAE CPU data types */
 #define uae_s8 int8
 #define uae_u8 uint8

@@ -32,23 +32,23 @@
 #include "main.h"
 
 // RAM and ROM pointers
-uint32 RAMBase = 0;	// RAM base (Atari address space) gb-- init is important
+memptr RAMBase = 0;	// RAM base (Atari address space) gb-- init is important
 uint8 *RAMBaseHost;	// RAM base (host address space)
 uint32 RAMSize = 0x00e00000;		// Size of RAM
 
-uint32 ROMBase = 0x00e00000;		// ROM base (Atari address space)
+memptr ROMBase = 0x00e00000;		// ROM base (Atari address space)
 uint8 *ROMBaseHost;	// ROM base (host address space)
 uint32 ROMSize = 0x00200000;		// Size of ROM
 
 uint32 RealROMSize;	// Real size of ROM
 
-uint32 FastRAMBase = 0x01000000;		// Fast-RAM base (Atari address space)
+memptr FastRAMBase = 0x01000000;		// Fast-RAM base (Atari address space)
 uint8 *FastRAMBaseHost;	// Fast-RAM base (host address space)
 
 #ifdef FIXED_VIDEORAM
-uint32 VideoRAMBase = ARANYMVRAMSTART;  // VideoRAM base (Atari address space)
+memptr VideoRAMBase = ARANYMVRAMSTART;  // VideoRAM base (Atari address space)
 #else
-uint32 VideoRAMBase;                    // VideoRAM base (Atari address space)
+memptr VideoRAMBase;                    // VideoRAM base (Atari address space)
 #endif
 uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)
 //uint32 VideoRAMSize;	// Size of VideoRAM

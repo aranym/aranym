@@ -31,6 +31,8 @@ uint64   - unsigned 64 bit
 uintptr  - unsigned type with size of (void *)
 intptr   - signed type with size of (void *)
 
+memptr   - this type represents Atari's pointer
+
   For compatibility between ARAnyM and UAE CPU there are declared also these types:
 
 uae_s8   ~ int8
@@ -42,11 +44,9 @@ uae_u32  ~ uint32
 uae_s64  ~ int64
 uae_u64  ~ uint64
 
-  These types are only for interaction with CPU core. It is better to use uintXX/intXX types than uae_XXX types.
-
 uaecptr  - this type represents Atari's pointer
 
-  This type is for addressing in Atari address space.
+  These types are only for interaction with CPU core. It is better to use uintXX/intXX types than uae_XXX types.
 
   For compatibility between ARAnyM and Bochs IDE emulation there are declared also these types:
 Bit8u   ~ uint8
