@@ -1,3 +1,9 @@
+
+2003/06/26
+- ARANYM_0_8_0_BRANCH merged to main and tagged as _ABANDONED.
+  The merge brought just minor JIT and HostFS fixes (see 2003/04/1[25])
+
+
 2003/06/12 - milan
 - configure.ac: ECE support corrected
 
@@ -58,6 +64,20 @@
 2003/04/16 - patrice
 - Corrected inclusion of SDL headers.
   Removed useless glut library linking.
+
+
+2003/04/15 - STanda
+- hostfs:
+  * constant usage cleanup.
+  * xfs_creat()/xfs_dev_open() issues fixed (gunzip works properly now)
+  * xfs_native_init() improved to be able to handle both the 1.15.x
+    and 1.16 (new Dcntl() feature) - reacts on the 0-31 devnums when
+    appropriate.
+
+
+2003/04/12 - joy
+- compemu_support.cpp: unnecessary fopen("/dev/zero", O_RDWR) removed.
+  This allows running aranym-jit on ARAnyM Demo CD (Knoppix based).
 
 
 ** ARAnyM 0.8.0beta3 released

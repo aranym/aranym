@@ -1,10 +1,7 @@
-Before 0.8.0 final release:
----------------------------
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
 - check the JIT - when enabled XControl on FreeMiNT crashes on my machine.
   Or is it 68040 copyback issue under FreeMiNT 1.16alpha?
-- hostfs - gunzip problem
 
 Roadmap:
 --------
