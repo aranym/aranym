@@ -10,8 +10,9 @@ extern "C" {
 typedef enum {
 	Error_Tag,
 	Byte_Tag,
-	Boolean_Tag,
+	Bool_Tag,
 	Word_Tag,
+	Int_Tag,
 	Long_Tag,
 	OctWord_Tag,
 	OctLong_Tag,

@@ -31,20 +31,15 @@
 /					increased max cfg line length up to 32767 chars Joy/
 /		   1.7.1  : fcopy error values propagated to update_conf()	   /
 /					fcopy checks for incomplete write (disk full)	Joy/
+/          1.8.0  : C++ version, Boolean tag replaced with C++ bool,   /
+/                   Int_Tag added                                   Joy/
 /------------------------------------------------------------------->>*/
 /*	Please keep revision number current.							  */
-#define		  REVISION_NO "1.7.0"
+#define		  REVISION_NO "1.8.0"
 
 extern "C" {
 
-#ifndef Boolean_T_defined
-#define Boolean_T_defined
-
-typedef enum {
-	FALSE, TRUE
-} Boolean_T;
 #define ERROR	-1
-#endif
 
 /*---------------------------------------------------------------------/
 /
@@ -55,14 +50,14 @@ typedef enum {
 /  i.e. ???.CFG:
 /	 Port=1
 /	 work_space=C:\temp
-/	 menus=TRUE
+/	 menus=Yes
 /	 user=Jeffry Brickley
 /  will write to the following structure:
 /	 struct Config_Tag configs[] = {
 /	 {"port",		Word_Tag,	 &port_number},
-/	 {"work_space", String_Tag,	 &work_space},
-/	 {"menus",		Boolean_Tag, &menu_flag},
-/	 {"user",		String_Tag,	 &User_name, sizeof(User_name)},
+/	 {"work_space", String_Tag,	 work_space, sizeof(work_space)},
+/	 {"menus",		Bool_Tag, &menu_flag},
+/	 {"user",		String_Tag,	 User_name, sizeof(User_name)},
 /	 {NULL,			Error_Tag,	 NULL}
 /	 };
 /  Note that the structure must always be terminated by a NULL row as
@@ -255,8 +250,8 @@ int	input_config(const char *filename, struct Config_Tag configs[], char *header
 							continue;
 						}
 						switch ( ptr->type )	 /* check type */ {
-						case Boolean_Tag:
-							*((Boolean_T * )(ptr->buf)) = (!strcasecmp(next, "FALSE") || !strcasecmp(next, "No")) ? FALSE : TRUE;
+						case Bool_Tag:
+							*((bool * )(ptr->buf)) = (!strcasecmp(next, "FALSE") || !strcasecmp(next, "No")) ? false : true;
 							++count;
 							break;
 
@@ -268,6 +263,11 @@ int	input_config(const char *filename, struct Config_Tag configs[], char *header
 
 						case Word_Tag:
 							sscanf(next, "%hd", (short *)(ptr->buf));
+							++count;
+							break;
+
+						case Int_Tag:
+							sscanf(next, "%d", (int *)(ptr->buf));
 							++count;
 							break;
 
@@ -313,8 +313,10 @@ int	input_config(const char *filename, struct Config_Tag configs[], char *header
 
 						case String_Tag:
 							if (ptr->buf_size > 0) {
-								strncpy((char *)ptr->buf, next, ptr->buf_size);
-								*(char *)((long)ptr->buf + ptr->buf_size - 1) = 0;	/* EOS */
+								char *cptr = (char *)ptr->buf;
+								int bufsize = ptr->buf_size;
+								strncpy(cptr, next, bufsize);
+								cptr[bufsize-1] = '\0';	/* EOS */
 								++count;
 							}
 							else {
@@ -337,17 +339,17 @@ int	input_config(const char *filename, struct Config_Tag configs[], char *header
 	return count;
 }
 
-Boolean_T write_token(FILE *outfile, struct Config_Tag *ptr)
+bool write_token(FILE *outfile, struct Config_Tag *ptr)
 {
 	int temp;
-	Boolean_T ret_flag = TRUE;
+	bool ret_flag = true;
 
 	ptr->stat = 1;	/* jiz ulozeno do souboru */
 
 	fprintf(outfile, "%s = ", ptr->code);
 	switch ( ptr->type )  /* check type */ {
-	case Boolean_Tag:
-		fprintf(outfile, "%s\n", *((Boolean_T *)(ptr->buf)) ? "Yes" : "No");
+	case Bool_Tag:
+		fprintf(outfile, "%s\n", *((bool *)(ptr->buf)) ? "Yes" : "No");
 		break;
 
 	case Byte_Tag:
@@ -357,6 +359,10 @@ Boolean_T write_token(FILE *outfile, struct Config_Tag *ptr)
 
 	case Word_Tag:
 		fprintf(outfile, "%hd\n", *((short *)(ptr->buf)));
+		break;
+
+	case Int_Tag:
+		fprintf(outfile, "%d\n", *((int *)(ptr->buf)));
 		break;
 
 	case Long_Tag:
@@ -399,7 +405,7 @@ Boolean_T write_token(FILE *outfile, struct Config_Tag *ptr)
 	case Function_Tag:
 	default:
 		printf("Error in Config structure (Contact author).\n");
-		ret_flag = FALSE;
+		ret_flag = false;
 	}
 	return ret_flag;
 }
@@ -536,14 +542,14 @@ int	update_config(const char *filename, struct Config_Tag configs[], char *heade
 
 #include <stdlib.h>
 
-Boolean_T test1 = TRUE, test2 = FALSE;
+bool test1 = true, test2 = false;
 short	test3 = -37;
 long	test4 = 100000L;
 char	test5[80] = "Default string";
 
 struct Config_Tag configs[] = {
-	   { "test1", Boolean_Tag, &test1  }, /* Valid options		  */
-	   { "test2", Boolean_Tag, &test2  }, 
+	   { "test1", Bool_Tag, &test1  }, /* Valid options		  */
+	   { "test2", Bool_Tag, &test2  }, 
 	   { "test3", Word_Tag, &test3	   }, 
 	   { "test4", Long_Tag, &test4	  }, 
 	   { "test5", String_Tag, test5, sizeof(test5)	  }, 
@@ -579,8 +585,8 @@ int	main(int argc, char *argv[])
 		TFprint(test2), test3, test4, test5);
 
 #ifdef TEST_UPDATE
-	test1 = TRUE;
-	test2 = FALSE;
+	test1 = true;
+	test2 = false;
 	test3 = -37;
 	test4 = 100000L;
 	strcpy(test5, "Default value");
