@@ -167,6 +167,11 @@ typedef struct {
   uint32 height;
 } bx_autozoom_options_t;
 
+// Keyboard and mouse
+typedef struct {
+  bool wheel_eiffel;		// eiffel compatible scancodes for mouse wheel
+} bx_ikbd_options_t;
+
 /*
 typedef struct {
   char      *path;
@@ -197,6 +202,7 @@ typedef struct {
   bx_ethernet_options_t ethernet;
   bx_lilo_options_t		lilo;
   bx_midi_options_t		midi;
+  bx_ikbd_options_t		ikbd;
   bx_nfcdrom_options_t	nfcdroms[ 'Z'-'A'+1 ];
 #ifdef ENABLE_EPSLIMITER
   bx_cpu_options_t  cpu;

@@ -1,15 +1,32 @@
 #include "sdlgui.h"
 
+enum KEYBMOUSEDLG {
+	box_main,
+	box_wheel,
+	text_wheel,
+	ARROWKEYS,
+	EIFFEL,
+	APPLY,
+	CANCEL
+};
+
 /* The keyboard dialog: */
-SGOBJ keyboarddlg[] =
+static SGOBJ keyboarddlg[] =
 {
-  { SGBOX, SG_BACKGROUND, 0, 0,0, 30,8, NULL },
-  { SGTEXT, 0, 0, 2,4, 25,1, "Sorry, not yet supported." },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 5,6, 20,1, "Back to main menu" },
-  { -1, 0, 0, 0,0, 0,0, NULL }
+	{ SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL },
+	{ SGBOX, 0, 0, 1,2, 38,3, NULL },
+	{ SGTEXT, 0, 0, 2,3, 17,1, "Host mouse wheel:" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 20,2, 20,1, "Arrow keys" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 20,4, 20,1, "Eiffel scancodes" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8,23, 8,1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28,23, 8,1, "Cancel" },
+	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
 void Dialog_KeyboardDlg()
 {
-  SDLGui_DoDialog(keyboarddlg);
+	keyboarddlg[bx_options.ikbd.wheel_eiffel ? EIFFEL : ARROWKEYS].state |= SG_SELECTED;
+	if (SDLGui_DoDialog(keyboarddlg) == APPLY) {
+		bx_options.ikbd.wheel_eiffel = (keyboarddlg[EIFFEL].state & SG_SELECTED);
+	}
 }
