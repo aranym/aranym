@@ -85,10 +85,10 @@
     "\033pMiNT very old, this xfs wants at least FreeMiNT 1.15 with kerinfo version 2\033q\r\n"
 
 #define MSG_FAILURE(s)	\
-    "\7Sorry, aranym.xfs NOT installed: " s "!\r\n\r\n"
+    "\7Sorry, hostfs.xfs NOT installed: " s "!\r\n\r\n"
 
 #define MSG_PFAILURE(p,s) \
-    "\7Sorry, " p " of aranym.xfs NOT installed: " s "!\r\n"
+    "\7Sorry, " p " of hostfs.xfs NOT installed: " s "!\r\n"
 
 extern struct kerinfo *KERNEL;
 
@@ -100,6 +100,9 @@ extern struct kerinfo *KERNEL;
 
 /*
  * $Log$
+ * Revision 1.2  2003/03/01 11:57:37  joy
+ * major HOSTFS NF API cleanup
+ *
  * Revision 1.1  2002/12/10 20:47:21  standa
  * The HostFS (the host OS filesystem access via NatFeats) implementation.
  *

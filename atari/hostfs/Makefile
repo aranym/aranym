@@ -1,13 +1,13 @@
 #
-# Makefile for aranym.xfs
+# Makefile for hostfs.xfs
 # 
 # If you got these sources as part of STonX note:
 #    - You have to copy all files of this directory into the FreeMiNT source
-#      tree at "sys/xfs/aranymfs". Instead of you may change top_srcdir at this
+#      tree at "sys/xfs/hostfs". Instead of you may change top_srcdir at this
 #      Makefile to "sys" directory of the MiNT source tree.
 #      "make" does only work, if you do so!
 #
-# Note: You need a crosscompiler to make aranym.xfs or a native m68k-atari-mint
+# Note: You need a crosscompiler to make hostfs.xfs or a native m68k-atari-mint
 #       gcc, make etc.
 #       To use crosscompiling change the variables at CONFIGVARS.
 #       To crosscompile even FreeMiNT, you may have to change CRLF at 
@@ -16,7 +16,7 @@
 #       "flags"-calls at those Makefiles (resulting programms will only work
 #       if you're running at least version 1.15.10 of FreeMiNT.
 #
-TARGET = aranym.xfs
+TARGET = hostfs.xfs
 
 GENFILES = $(TARGET) .natfeat
 SHELL = /bin/sh

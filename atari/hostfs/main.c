@@ -50,7 +50,7 @@
  */
 
 #include "global.h"
-#include "aranym_xfs.h"
+#include "hostfs_xfs.h"
 
 #define ARANYM
 
@@ -114,6 +114,9 @@ FILESYS * _cdecl init(struct kerinfo *k)
 
 /*
  * $Log$
+ * Revision 1.2  2003/03/01 11:57:37  joy
+ * major HOSTFS NF API cleanup
+ *
  * Revision 1.1  2002/12/10 20:47:21  standa
  * The HostFS (the host OS filesystem access via NatFeats) implementation.
  *

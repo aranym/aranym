@@ -20,10 +20,10 @@
  */
 
 #include "natfeat.h"
-#include "aranym_xfs.h"
+#include "hostfs_xfs.h"
 #include "hostfs_nfapi.h"
 
-/* note: must include after aranym_xfs.h */
+/* note: must include after hostfs_xfs.h */
 #include "mint/kerinfo.h"
 
 
@@ -307,7 +307,7 @@ static struct fs_descr aranym_fs_descr =
 #endif /* USE_DCNTL */
 
 
-extern DEVDRV aranym_fs_devdrv; /* from aranym_dev.c */
+extern DEVDRV aranym_fs_devdrv; /* from hostfs_dev.c */
 
 
 #define MINT_FS_NAME    "hostfs"     /* mount point at u:\\ */
@@ -496,6 +496,9 @@ FILESYS *aranym_fs_init(void)
 
 /*
  * $Log$
+ * Revision 1.7  2003/03/23 12:44:44  joy
+ * updated
+ *
  * Revision 1.6  2003/03/22 22:46:25  joy
  * cosmetical change in displayed info
  *

@@ -21,8 +21,8 @@
 #include "mint/mint.h"
 #include "mint/filedesc.h"
 
-#include "../aranym_xfs.h"
-#include "../aranym_dev.h"
+#include "../hostfs_xfs.h"
+#include "../hostfs_dev.h"
 
 #include "mintproc.h"
 
@@ -66,7 +66,7 @@ void _cdecl ShowBanner( void )
 }
 
 
-/* ../aranym_xfs and ../aranym_dev internals used */
+/* ../hostfs_xfs and ../hostfs_dev internals used */
 extern long     _cdecl aranym_fs_native_init(int fs_devnum, char *mountpoint, char *hostroot, int halfsensitive,
 											 void *fs, void *fs_dev);
 extern void* ara_fs_root;
@@ -108,6 +108,9 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 /**
  * $Log$
+ * Revision 1.5  2003/03/20 21:27:22  standa
+ * The .xfs mapping to the U:\G mountpouints (single letter) implemented.
+ *
  * Revision 1.4  2003/03/05 09:30:45  standa
  * mountPath declaration fixed.
  *

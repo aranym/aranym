@@ -4,12 +4,12 @@
 HEADER = \
 	hostfs_nfapi.h \
 	global.h \
-	aranym_xfs.h \
-	aranym_dev.h
+	hostfs_xfs.h \
+	hostfs_dev.h
 
 COBJS = \
 	main.c \
-	aranym_xfs.c \
-	aranym_dev.c
+	hostfs_xfs.c \
+	hostfs_dev.c
 
 SRCFILES = $(HEADER) $(COBJS)

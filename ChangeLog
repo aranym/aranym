@@ -1,5 +1,11 @@
 ** ARAnyM 0.8.0beta1 released
 
+2003/03/24 - joy
+- aranym.xfs renamed to hostfs.xfs
+
+- Makefile.in: installs new hostfs instead of old aranymfs
+
+
 2003/03/23 - joy
 - nfeth-config.sh: added, calls araethip and shows how easy is to configure
   the device automagically.

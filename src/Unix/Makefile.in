@@ -146,9 +146,9 @@ install: $(APP) $(APP_DI) $(TAPIF) installdirs
 	$(INSTALL_DATA) ../../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) ../../atari/aranymrc.example $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
 	$(INSTALL_DATA) ../../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
-	$(INSTALL_DATA) ../../atari/aranymfs/aranymfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
-	$(INSTALL_DATA) ../../atari/aranymfs/aranym.xfs.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
-	$(INSTALL_DATA) ../../atari/aranymfs/config.sys $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/config.sys
+	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
+	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.xfs.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
+	$(INSTALL_DATA) ../../atari/hostfs/bdconfig.sys $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
 	$(INSTALL) ../../tools/createdisk/createdisk.sh $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
 	$(INSTALL_DATA) ../../tools/createdisk/mbrdata $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
@@ -165,7 +165,7 @@ install: $(APP) $(APP_DI) $(TAPIF) installdirs
 	$(INSTALL_DATA) ../../atari/sound/README $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
 	
 installdirs:
-	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/hostfs $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
 
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
@@ -189,9 +189,9 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/config.sys
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
 	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
@@ -207,7 +207,7 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
 	rmdir $(DESTDIR)$(datadir)/$(APP)/createdisk
-	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/hostfs
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/fvdi
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/tools
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/sound
@@ -231,7 +231,7 @@ mrproper: distclean
 	rm -rf aclocal.m4 configure config.h.in autom4te.cache
 
 bindistdirs:
-	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/createdisk tmpdist$(datadir)/$(APP)/atari/aranymfs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/createdisk tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
 bindist: $(APP) $(APP_DI) bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
@@ -255,9 +255,9 @@ bindist: $(APP) $(APP_DI) bindistdirs
 	$(INSTALL_DATA) ../../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) ../../atari/aranymrc.example tmpdist$(datadir)/$(APP)/atari/aranymrc.example
 	$(INSTALL_DATA) ../../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
-	$(INSTALL_DATA) ../../atari/aranymfs/aranymfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
-	$(INSTALL_DATA) ../../atari/aranymfs/aranym.xfs.bz2 tmpdist$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
-	$(INSTALL_DATA) ../../atari/aranymfs/config.sys tmpdist$(datadir)/$(APP)/atari/aranymfs/config.sys
+	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
+	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.xfs.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
+	$(INSTALL_DATA) ../../atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README tmpdist$(datadir)/$(APP)/createdisk/createdisk.README
 	$(INSTALL) ../../tools/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/createdisk/createdisk.sh
 	$(INSTALL_DATA) ../../tools/createdisk/mbrdata tmpdist$(datadir)/$(APP)/createdisk/mbrdata

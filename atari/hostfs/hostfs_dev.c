@@ -20,7 +20,7 @@
  */
 
 #include "natfeat.h"
-#include "aranym_dev.h"
+#include "hostfs_dev.h"
 #include "hostfs_nfapi.h"
 
 long _cdecl ara_fs_dev_open     (FILEPTR *f);
@@ -84,6 +84,9 @@ DEVDRV aranym_fs_devdrv =
 
 /*
  * $Log$
+ * Revision 1.2  2003/03/01 11:57:37  joy
+ * major HOSTFS NF API cleanup
+ *
  * Revision 1.1  2002/12/10 20:47:21  standa
  * The HostFS (the host OS filesystem access via NatFeats) implementation.
  *
