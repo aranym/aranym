@@ -111,6 +111,7 @@ struct Config_Tag global_conf[]={
 
 void preset_global() {
   bx_options.autoMouseGrab = true;
+  strcpy(bx_options.floppy.path, "");
 #ifdef FixedSizeFastRAM
   FastRAMSize = FixedSizeFastRAM * 1024 * 1024;
 #else
@@ -119,6 +120,7 @@ void preset_global() {
 }
 
 void postload_global() {
+	bx_options.floppy.inserted = (strlen(bx_options.floppy.path) > 0);
 #ifndef FixedSizeFastRAM
 	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
 #endif
