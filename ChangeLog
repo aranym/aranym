@@ -11,6 +11,8 @@
   generally - i.e. allows opening disk images on CD-ROMs (suitable for our
   aranym CD)
 
+- CD-ROM in GUI features [Insert] / [Eject] button now
+
 
 2002/10/15 - milan
 - Mac OS X: keyboard scancode workaround

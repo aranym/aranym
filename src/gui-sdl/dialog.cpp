@@ -168,7 +168,7 @@ SGOBJ discdlg[] =
   { SGCHECKBOX, 0, 0, 2,20, 14,1, "Boot from HD" },
 #endif
   { SGTEXT, 0, 0, 2,17, 13,1, "CD-ROM drive:" },
-  { SGBUTTON, 0, 0, 30,17, 1,1, "\x01" },
+  { SGBUTTON, 0, 0, 22,17, 8,1, "Insert" },
   { SGBUTTON, 0, 0, 10,23, 20,1, "Back to main menu" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
@@ -534,6 +534,14 @@ void Dialog_CopyDetailsFromConfiguration(bool bReset)
 
 #endif
 
+void UpdateCDROMstatus(void)
+{
+	static char *eject = "Eject";
+	static char *insert = "Insert";
+	int handle = bx_hard_drive.get_first_cd_handle();
+	discdlg[DISCDLG_CDROMUM].txt = bx_hard_drive.get_cd_media_status(handle) ? eject : insert;
+}
+
 /*-----------------------------------------------------------------------*/
 /*
   Show and process the disc image dialog.
@@ -544,6 +552,8 @@ void Dialog_DiscDlg(void)
 // MJ  char tmpname[256/*MAX_FILENAME_LENGTH*/];
 // MJ  char dlgnamea[40]="", dlgnameb[40]="", dlgdiscdir[40]="";
 // MJ  char dlgnamegdos[40]="", dlgnamehdimg[40]="";
+
+  UpdateCDROMstatus();
 
   SDLGui_CenterDlg(discdlg);
 
@@ -627,7 +637,13 @@ void Dialog_DiscDlg(void)
     switch(but)
     {
       case DISCDLG_CDROMUM:
-        bx_hard_drive.set_cd_media_status(bx_hard_drive.get_first_cd_handle(), bx_hard_drive.get_cd_media_status(bx_hard_drive.get_first_cd_handle()) == 0);
+        {
+		int handle = bx_hard_drive.get_first_cd_handle();
+		bool status = bx_hard_drive.get_cd_media_status(handle);
+        bx_hard_drive.set_cd_media_status(handle, ! status);
+        UpdateCDROMstatus();
+		}
+
         break;
 #if 0 // MJ
       case DISCDLG_BROWSEA:                       /* Choose a new disc A: */
