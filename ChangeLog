@@ -1,5 +1,10 @@
 2001/12/07 - joy
 - first two long words (addresses 0..7) are readonly now like on real Atari.
+  Thanks to Patrice for forcing us to fix it :-)
+
+
+ARAnyM 0.0.11 released
+----------------------
 
 
 2001/12/05 - joy
