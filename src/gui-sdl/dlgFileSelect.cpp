@@ -1,11 +1,27 @@
 /*
-  Hatari - dlgFileSelect.c
-
-  This file is distributed under the GNU Public License, version 2 or at
-  your option any later version. Read the file gpl.txt for details.
-
-  A file selection dialog for the graphical user interface for Hatari.
-*/
+ * dlgFileselect.cpp - dialog for selecting files (fileselector box)
+ *
+ * Copyright (c) 2003-2005 ARAnyM dev team (see AUTHORS)
+ *
+ * originally taken from the hatari project, thanks Thothy!
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include <SDL.h>
 #include <sys/stat.h>
@@ -93,6 +109,10 @@ struct listentry *create_list(char *path)
 		return NULL;
 
 	while ((direntry = readdir(dd)) != NULL) {
+		// skip "." name
+		if (strcmp(direntry->d_name, ".") == 0)
+			continue;
+
 		/* Allocate enough memory to store a new list entry and
 		   its filemane */
 		newentry =
@@ -171,7 +191,7 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
 	int oldcursorstate;
 	/* The actual selection, -1 if none selected */
 	int selection = -1;
-	bool eol;
+	bool eol = true;
 
 	if (bAllowNew)
 		fsdlg[SGFSDLG_FILENAME].type = SGEDITFIELD;
@@ -180,6 +200,10 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
 
 	/* Prepare the path and filename variables */
 	File_splitpath(path_and_name, path, fname, NULL);
+	if (strlen(path) == 0) {
+		getcwd(path, sizeof(path));
+		File_AddSlashToEndFileName(path);
+	}
 	File_ShrinkName(dlgpath, path, 38);
 	File_ShrinkName(dlgfname, fname, 32);
 
@@ -384,3 +408,7 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
 
 	return (retbut == SGFSDLG_OKAY);
 }
+
+/*
+vim:ts=4:sw=4:
+*/
