@@ -662,7 +662,7 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
 
 	fgColor = hostScreen.getPaletteColor( fgColor );
 	bgColor = hostScreen.getPaletteColor( bgColor );
-	
+
 	if ( dest != NULL && // no MFDB structure
 		 get_long( (uint32)dest, true ) != 0 && // mfdb->address == 0 => screen
 		 get_long( (uint32)dest, true ) != get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true ) ) {
@@ -994,7 +994,7 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 				case 16:
 					for( uint16 j=0; j<h; j++ )
 						for( uint16 i=sx; i<sx+w; i++ ) {
-							srcData = get_word((uint32)data + j*pitch + ((i*planes)>>2), true);
+							srcData = get_word((uint32)data + j*pitch + ((i*planes)>>3), true);
 							destData = get_word( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, true );
 							applyBlitLogOperation( logOp, destData, srcData );
 							put_word( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, destData );
@@ -1370,6 +1370,10 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.23  2001/11/19 01:39:10  standa
+ * The first bitplane mode version. The blit and expand M->M needs to be
+ * implemented. There is some pixel shift in blitting that I can't find.
+ *
  * Revision 1.22  2001/10/31 23:17:38  standa
  * fVDI driver update The 16,24 and 32bit mode should work.
  *
