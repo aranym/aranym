@@ -798,7 +798,7 @@ fi
 
 dnl SDL GUI
 if [[ "x$WANT_SDLGUI" = "xyes" ]]; then
-  SYSSRCS="$SYSSRCS ../sdlgui.cpp ../dialog.cpp ../file.cpp"
+  SYSSRCS="$SYSSRCS ../gui-sdl/sdlgui.cpp ../gui-sdl/dialog.cpp ../gui-sdl/file.cpp"
   AC_DEFINE([SDL_GUI], 1, [Define if you want to build SDL GUI])
 fi
 
