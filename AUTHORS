@@ -11,8 +11,6 @@ Milan Jurik <M.Jurik@sh.cvut.cz>
 - continuous updates and syncing with UAE CPU core
 - memory management
 - portability
-- 68040 MMU (Memory Management Unit) emulation (in progress)
-- 68040 JIT (in progress)
 - ndebug (New Debug)
 
 Stanislav Opichal <opichals@seznam.cz>
@@ -31,9 +29,9 @@ Petr Stehlik <pstehlik@sophics.cz>
 ARAnyM source code consists of several parts. Some were taken from other
 projects (in alphabetical order):
 
-AmigaOS XL - Amithlon
+AmigaOS XL
   http://amigaosxl.haage-partner.de/
-  CPU
+  Parts of CPU
 
 BasiliskII 
   http://www.uni-mainz.de/~bauec002/B2Main.html

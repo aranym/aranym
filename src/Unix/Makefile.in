@@ -76,7 +76,6 @@ SRCS = ../main.cpp \
 	$(CPUSRCS)
 APP = aranym
 APP_STATIC = aranym-static
-APPCONFTV = aranymrc
 
 ## Rules
 .PHONY: install installdirs uninstall mostlyclean clean distclean depend dep
@@ -399,22 +398,6 @@ newcpu.s: ../uae_cpu/newcpu.cpp
 
 memory.s: ../uae_cpu/memory.cpp
 	$(CXX) $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) ../uae_cpu/memory.cpp -o memory.s
-
-# ARAnyMrc
-#
-$(APPCONFTV): $(OBJ_DIR) $(OBJ_DIR)/aranymrc.o $(OBJ_DIR)/cfgoptsrc.o $(OBJ_DIR)/parametersrc.o $(OBJ_DIR)/parameters_unixrc.o $(OBJ_DIR)/ndebugrc.o
-	$(CXX) -o $(APPCONFTV) $(LDFLAGS) $(OBJ_DIR)/aranymrc.o $(OBJ_DIR)/cfgoptsrc.o $(OBJ_DIR)/parametersrc.o $(OBJ_DIR)/parameters_unixrc.o $(OBJ_DIR)/ndebugrc.o $(LIBS) $(TV_LIBS)
-	
-$(OBJ_DIR)/aranymrc.o: ../aranymrc.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) $(TV_CFLAGS) -DCONFGUI -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c ../aranymrc.cpp -o $@
-$(OBJ_DIR)/cfgoptsrc.o: ../cfgopts.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) -DCONFGUI -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c ../cfgopts.cpp -o $@
-$(OBJ_DIR)/parametersrc.o: ../parameters.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) -DCONFGUI -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c ../parameters.cpp -o $@
-$(OBJ_DIR)/parameters_unixrc.o: parameters_unix.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) -DCONFGUI -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c parameters_unix.cpp -o $@
-$(OBJ_DIR)/ndebugrc.o: ../ndebug.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) -DCONFGUI -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c ../ndebug.cpp -o $@
 
 #-------------------------------------------------------------------------
 # DO NOT DELETE THIS LINE -- make depend depends on it.

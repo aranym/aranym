@@ -66,8 +66,6 @@ AC_ARG_ENABLE(addressing,
 [ ADDRESSING_TEST_ORDER="real direct normal"
 ])
 
-AC_ARG_WITH(tvconfgui,         [  --with-tvconfgui        with TurboVision configuration GUI [default=no]], [WANT_TVCONFGUI=$withval], [WANT_TVCONFGUI=no])
-
 dnl Experimental hacks around spcflags handling.
 AC_ARG_ENABLE(spcflags-excl, [  --enable-spcflags-excl  enable exclusive spcflags handling [default=no]], [WANT_SPCFLAGS_EXCL=$enableval], [WANT_SPCFLAGS_EXCL=no])
 
@@ -479,15 +477,6 @@ if [[ "x$WANT_HISTORY" = "xyes" ]]; then
     AC_DEFINE(FULL_HISTORY)
 fi
 
-dnl TurboVision conf GUI
-if [[ "x$WANT_TVCONFGUI" = "xyes" ]]; then
-dnl     AC_LIB_TVISION need another func than win_ver
-    AC_CHECK_HEADERS(rhtvision/tv/applictn.h)
-    AC_DEFINE(HAVE_TVISION)
-    TV_CFLAGS="-I/usr/include/rhtvision"
-    TV_LIBS="-lrhtv"
-fi
-
 dnl Full MMU
 if [[ "x$WANT_MMU" = "xyes" ]]; then
     AC_DEFINE(FULLMMU)
@@ -869,7 +858,6 @@ echo Addressing mode ........................ : $ADDRESSING_MODE
 echo Full MMU support ....................... : $WANT_MMU
 echo Debugger ............................... : $WHICH_DEBUG
 echo Monitor ................................ : $WANT_MON
-echo Aranymrc confgui ....................... : $WANT_TVCONFGUI
 echo Timer C using SDL Timer ................ : $WANT_SDLTIMER
 echo Page check memory ...................... : $WANT_PAGECHECK
 echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM
