@@ -1,3 +1,16 @@
+2002/09/28 - version 0.6.2 - fVDI blitting accelerated, new IKBD/ACIA/joystick
+
+2002/09/24 - version 0.6.1 - VIDEL zooming on dest screen
+
+2002/09/15 - version 0.6.0 - SDL loop in main thread, CPU in separate thread
+
+2002/09/12 - version 0.5.0 - CPU JIT compiler works thanks to 68040 TOS patch
+
+2002/08/26 - version 0.4.0 - DSP runs in its own thread and is nearly complete
+
+2002/08/04 - version 0.3.0 - Native Features implemented
+
+
 2002/07/20 - version 0.2.0 released (celebrating the Woody release!)
 ==========
 
