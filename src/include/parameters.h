@@ -47,6 +47,7 @@ typedef struct {
   bool present;
   bool isCDROM;
   bool byteswap;
+  bool xhdiWrite;
   char path[512];
   unsigned int cylinders;
   unsigned int heads;

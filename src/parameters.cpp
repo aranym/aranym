@@ -177,6 +177,7 @@ void presave_video() {
 	{ "Present", Bool_Tag, &bx_options. ## a ## .present},	\
 	{ "IsCDROM", Bool_Tag, &bx_options. ## a ## .isCDROM},	\
 	{ "ByteSwap", Bool_Tag, &bx_options. ## a ## .byteswap},	\
+	{ "XhdiWrite", Bool_Tag, &bx_options. ## a ## .xhdiWrite},	\
 	{ "Path", String_Tag, bx_options. ## a ## .path, sizeof(bx_options. ## a ## .path)},	\
 	{ "Cylinders", Int_Tag, &bx_options. ## a ## .cylinders},	\
 	{ "Heads", Int_Tag, &bx_options. ## a ## .heads},	\
@@ -237,6 +238,8 @@ void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int 
 void preset_ide() {
   set_ide(0, "", 0, 0, 0, false);
   set_ide(1, "", 0, 0, 0, false);
+  bx_options.diskc.xhdiWrite = false;
+  bx_options.diskd.xhdiWrite = false;
 
   bx_options.newHardDriveSupport = true;
 }
