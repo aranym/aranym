@@ -146,6 +146,7 @@ struct Config_Tag video_conf[]={
 	{ "DirectTruecolor", Bool_Tag, &bx_options.video.direct_truecolor},
 #endif
 	{ "AutoZoom", Bool_Tag, &bx_options.video.autozoom},
+	{ "AutoZoomInteger", Bool_Tag, &bx_options.video.autozoomint},
 	{ NULL , Error_Tag, NULL }
 };
 

@@ -1,6 +1,6 @@
 2002/09/24 - patrice
-- videl: bugfixes, preliminary autozoom support (AutoZoom=[Yes|No] in [VIDEO]
-  section of config file).
+- videl: bugfixes, Atari screen centered on host screen, autozoom feature
+  added (with and without integer coefficients).
 
 
 2002/09/23 - patrice
