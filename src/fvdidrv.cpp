@@ -36,7 +36,7 @@ extern HostScreen hostScreen;
 // The Atari structures offsets
 #define MFDB_ADDRESS                0
 #define MFDB_WIDTH                  4
-#define MFDB_HEIGHT                 6 
+#define MFDB_HEIGHT                 6
 #define MFDB_WDWIDTH                8
 #define MFDB_STAND                 10
 #define MFDB_NPLANES               12
@@ -271,7 +271,7 @@ void FVDIDriver::dispatch(M68kRegisters *r)
 			break;
 
 		case 20: // debug_aranym:
-			bug("fVDI: DEBUG %d", get_par(r, 1));
+			bug("fVDI: DEBUG %ld (%x)", get_par(r, 1), get_par(r, 1));
 			break;
 
 			// not implemented functions
@@ -327,15 +327,25 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 			break;
 
 		case 3: // mouse_draw
-			result = drawMouse((memptr)getParameter(0),		// wk
-			                   getParameter(1), getParameter(2),	// x, y
-			                   getParameter(3),			// mask*
-			                                 			// mode (0 - move, 1 - hide, 2 - show)
-			                                 			// These are only valid when not mode
-			                   getParameter(4),			//   data*
-			                   getParameter(5), getParameter(6),	//   hot_x, hot_y
-			                   getParameter(7),			//   color
-			                   getParameter(8));			//   type
+			{
+				// mode (0 - move, 1 - hide, 2 - show)
+				// These are only valid when not mode
+				uint32 mask = getParameter(3);
+				if ( mask > 3 ) {
+					result = drawMouse((memptr)getParameter(0),		        // wk
+									   getParameter(1), getParameter(2),	// x, y
+									   mask,                                // mask*
+									   getParameter(4),			            // data*
+									   getParameter(5), getParameter(6),	// hot_x, hot_y
+									   getParameter(7),			            // color
+									   getParameter(8));			        // type
+				} else {
+					result = drawMouse((memptr)getParameter(0),		        // wk
+									   getParameter(1), getParameter(2),	// x, y
+									   mask,
+									   0, 0, 0, 0, 0); // dummy
+				}
+			}
 			break;
 
 
@@ -750,8 +760,8 @@ int FVDIDriver::drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data
 
 		Mouse.hotspot.x = hot_x;
 		Mouse.hotspot.y = hot_y;
-		Mouse.storage.color.foreground = (int16)(color & 0xffff);
-		Mouse.storage.color.background = (int16)(color >> 16);
+		Mouse.storage.color.foreground = (int16)(color >> 16);
+		Mouse.storage.color.background = (int16)(color & 0xffff);
 		if (hostScreen.getBpp() > 1) {
 			Mouse.storage.color.foreground = hostScreen.getPaletteColor(Mouse.storage.color.foreground);
 			Mouse.storage.color.background = hostScreen.getPaletteColor(Mouse.storage.color.background);
@@ -879,18 +889,17 @@ extern "C" {
 int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
                            int32 w, int32 h, uint32 logOp, uint32 colors)
 {
-
-	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
-	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32( src ),ReadInt32( dest )));
-
 	uint16 pitch = ReadInt16(src + MFDB_WDWIDTH) * 2; // the byte width (always monochrom);
 	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
 
+	uint32 fgColor = (int16)(colors & 0xffff);
+	uint32 bgColor = (int16)(colors >> 16);
+
+	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
+	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32( src ),ReadInt32( dest )));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
 
-	uint32 fgColor = (int16)(colors & 0xffff);
-	uint32 bgColor = (int16)(colors >> 16);
 	if (hostScreen.getBpp() > 1) {
 		fgColor = hostScreen.getPaletteColor(fgColor);
 		bgColor = hostScreen.getPaletteColor(bgColor);
@@ -1260,9 +1269,9 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
 extern "C" {
 static void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8])
 {
-	memset(bitplaneWords, 0, sizeof(bitplaneWords)); // clear the color values for the 8 pixels (word length)
+	memset(bitplaneWords, 0, sizeof(bitplaneWords)); // clear the color values for the 16 pixels (max 8bit depth)
 
-	for (int l = 0; l < 16; l++) {
+	for (int l=0; l<16; l++) {
 		uint8 data = sdlPixelData[l]; // note: this is about 2000 dryhstones speedup (the local variable)
 
 		bitplaneWords[0] <<= 1; bitplaneWords[0] |= (data >> 0) & 1;
@@ -1542,6 +1551,9 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 	if (logOp == 3)
 		hostScreen.blitArea(sx, sy, dx, dy, w, h);
 	else {
+		if (!hostScreen.renderBegin())
+			return 1;
+
 		memptr srcData;
 		memptr destData;
 
@@ -1552,6 +1564,8 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 				applyBlitLogOperation(logOp, destData, srcData);
 				hostScreen.putPixel(dx + i, dy + j, destData);
 			}
+
+		hostScreen.renderEnd();
 	}
 
 	hostScreen.update(sx, sy, w, h, true);
@@ -2105,6 +2119,10 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.44  2002/12/14 04:58:03  johan
+ * Fast 32 bit vro_cpyfm D=S mode.
+ * Screen->screen vro_cpyfm modes.
+ *
  * Revision 1.43  2002/10/21 22:50:08  johan
  * NatFeat support added.
  *
