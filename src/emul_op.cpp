@@ -20,14 +20,23 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <dirent.h>		// DIR * (in extfs.h)
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
+#include "extfs.h"
 #include "emul_op.h"
 
 #define DEBUG 1
 #include "debug.h"
+
+
+/**
+ * External filesystem access object.
+ **/
+ExtFs extFS;
+
 
 /*
  *  Execute EMUL_OP opcode (called by 68k emulator or Illegal Instruction trap handler)
@@ -373,6 +382,10 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 					TriggerNMI();
 				}
 			}*/
+			break;
+
+	        case M68K_EMUL_OP_EXTFS_COMM:		// External file system routines
+	                extFS.dispatch( get_long(r->a[7]), r );  // SO
 			break;
 
 		case M68K_EMUL_OP_BLOCK_MOVE:		// BlockMove() cache flushing
