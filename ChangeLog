@@ -1,3 +1,7 @@
+2005/01/12 - Andreas
+- natfeat/nfcdrom.cpp: Include <SDL_endian.h> for SDL_SwapBE16.
+
+
 2005/01/12 - Petr
 - ata.cpp: fixed scary hack for hiding an unused variable
 - all files: "unused variable" GCC warnings are gone thanks to DUNUSED macro
