@@ -101,7 +101,7 @@ void hideMouse(bool hide)
 bool grabMouse(bool grab)
 {
 	int current = SDL_WM_GrabInput(SDL_GRAB_QUERY);
-	if (grab && current != SDL_GRAB_ON) {
+	if (grabMouseAllowed && grab && current != SDL_GRAB_ON) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 		grabbedMouse = true;
 		hideMouse(true);
@@ -892,6 +892,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.46  2001/12/06 00:25:22  milan
+ * ndebug corrected, sync
+ *
  * Revision 1.45  2001/12/02 01:31:20  joy
  * keyboard conversion rewritten again, this time with heuristic analysis to detect the scancode2scancode conversion offset of SDL automatically.
  *

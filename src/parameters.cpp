@@ -19,6 +19,7 @@ static struct option const long_options[] =
   {"resolution", required_argument, 0, 'r'},
   {"debug", no_argument, 0, 'D'},
   {"fullscreen", no_argument, 0, 'f'},
+  {"nomouse", no_argument, 0, 'N'},
 #ifdef DIRECT_TRUECOLOR
   {"direct_truecolor", no_argument, 0, 't'},
 #endif
@@ -43,6 +44,7 @@ int8 monitor = -1;				// VGA
 extern uint32 FastRAMSize;		// FastRAM size
 uint32 FastRAMSizeMB;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
+bool grabMouseAllowed = true;
 
 static bool saveConfigFile = false;
 
@@ -86,6 +88,7 @@ void usage (int status) {
 Options:
   -a, --floppy NAME          floppy image file NAME\n\
   -F, --fastram SIZE         FastRAM size (in MB)\n\
+  -N, --nomouse              don't grab mouse at startup\n\
   -f, --fullscreen           start in fullscreen\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
@@ -219,6 +222,7 @@ int decode_switches (FILE *f, int argc, char **argv) {
 							 "D"  /* debugger */
 #endif
 							 "F:" /* TT-RAM */
+							 "N"  /* no mouse */
 							 "f"  /* fullscreen */
 							 "t"  /* direct truecolor */
 							 "r:" /* resolution */
@@ -249,6 +253,10 @@ int decode_switches (FILE *f, int argc, char **argv) {
 	
 			case 'f':
 				fullscreen = true;
+				break;
+	
+			case 'N':
+				grabMouseAllowed = false;
 				break;
 	
 #ifdef DIRECT_TRUECOLOR

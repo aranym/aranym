@@ -97,6 +97,7 @@ extern int8 boot_color_depth;		// boot color depth
 extern int8 monitor;				// VGA or TV
 extern ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 extern uint32 FastRAMSizeMB;	// size of FastRAM, needed for configuration's GUI
+extern bool grabMouseAllowed;
 
 extern char *program_name;
 extern char rom_path[512];
