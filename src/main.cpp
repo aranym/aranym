@@ -452,7 +452,7 @@ static void check_event(void)
 	static bool canGrabMouseAgain = true;
 
 
-	if (!fullscreen && mouseOut) {
+	if (!bx_options.video.fullscreen && mouseOut) {
 		// host mouse moved but the Atari mouse did not => mouse is
 		// probably at the Atari screen border. Ungrab it and warp the host mouse at
 		// the same location so the mouse moves smoothly.
@@ -608,7 +608,7 @@ static void check_event(void)
 				ikbd.send(yrel);
 			}
 
-			if (! fullscreen && aradata.isAtariMouseDriver()) {
+			if (! bx_options.video.fullscreen && aradata.isAtariMouseDriver()) {
 				// check whether user doesn't try to go out of window (top or left)
 				if ((xrel < 0 && aradata.getAtariMouseX() == 0) ||
 					(yrel < 0 && aradata.getAtariMouseY() == 0))
@@ -664,7 +664,7 @@ static void check_event(void)
 void invoke200HzInterrupt()
 {
 #define VBL_IN_TIMERC	4	/* VBL happens once in 4 TimerC 200 Hz interrupts ==> 50 Hz VBL */
-#define VIDEL_REFRESH	2	/* VIDEL screen is refreshed once in 2 VBL interrupts ==> 25 Hz */
+#define VIDEL_REFRESH	bx_options.video.refresh	/* VIDEL screen is refreshed once in 2 VBL interrupts ==> 25 Hz */
 
 	static int VBL_counter = 0;
 	static int refreshCounter = 0;
@@ -860,7 +860,7 @@ bool InitAll(void)
 		SDL_VideoDriverName( driverName, 31 );
 		D(bug("Video driver name: %s", driverName));
 		if ( strstr( driverName, "fb" ) )
-			fullscreen = true;
+			bx_options.video.fullscreen = true;
 	}
 
 	// Be sure that the atexit function do not double any cleanup already done
@@ -886,7 +886,7 @@ bool InitAll(void)
 	HWInit();
 
 	// warp mouse to center of Atari 640x480 screen and grab it
-	if (! fullscreen)
+	if (! bx_options.video.fullscreen)
 		SDL_WarpMouse(640/2, 480/2);
 	grabMouse(true);
 
@@ -946,6 +946,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.52  2001/12/17 09:56:56  joy
+ * VBL is at precise 50 Hz now. And screen refresh at 25 Hz.
+ *
  * Revision 1.51  2001/12/17 08:33:00  standa
  * Thread synchronization added. The check_event and fvdidriver actions are
  * synchronized each to other.

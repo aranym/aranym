@@ -62,7 +62,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 
 	// SelectVideoMode();
 	sdl_videoparams = SDL_HWSURFACE | SDL_HWPALETTE;
-	if (fullscreen)
+	if (bx_options.video.fullscreen)
 		sdl_videoparams |= SDL_FULLSCREEN;
 
 	surf = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
@@ -899,6 +899,10 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.23  2001/12/03 20:56:07  standa
+ * The gfsprimitives library files removed. All the staff was moved and
+ * adjusted directly into the HostScreen class.
+ *
  * Revision 1.22  2001/11/29 23:51:56  standa
  * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
  *

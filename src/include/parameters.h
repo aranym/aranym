@@ -55,6 +55,9 @@ typedef struct {
   } bx_cookies_options;
  
 typedef struct {
+  bool fullscreen;		// boot in fullscreen
+  int8 boot_color_depth;		// boot color depth
+  uint8 refresh;
 #ifdef DIRECT_TRUECOLOR
   bool direct_truecolor;	// patch TOS to enable direct true color
 #endif /* DIRECT_TRUECOLOR */
@@ -92,8 +95,6 @@ typedef struct {
 extern bx_options_t bx_options;
 
 extern uint8 start_debug;		// starts debugger
-extern bool fullscreen;		// boot in fullscreen
-extern int8 boot_color_depth;		// boot color depth
 extern int8 monitor;				// VGA or TV
 extern ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 extern uint32 FastRAMSizeMB;	// size of FastRAM, needed for configuration's GUI

@@ -20,6 +20,7 @@ static struct option const long_options[] =
   {"debug", no_argument, 0, 'D'},
   {"fullscreen", no_argument, 0, 'f'},
   {"nomouse", no_argument, 0, 'N'},
+  {"refresh", required_argument, 0, 'v'},
 #ifdef DIRECT_TRUECOLOR
   {"direct_truecolor", no_argument, 0, 't'},
 #endif
@@ -38,8 +39,6 @@ char emutos_path[512] = "";
 char *config_file = NULL;
 
 uint8 start_debug = 0;			// Start debugger
-bool fullscreen = false;			// Boot in Fullscreen
-int8 boot_color_depth = -1;	// Boot in color depth
 int8 monitor = -1;				// VGA
 extern uint32 FastRAMSize;		// FastRAM size
 uint32 FastRAMSizeMB;
@@ -58,7 +57,7 @@ struct Config_Tag global_conf[]={
 	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path)},
 	{ "Cookie_MCH", HexLong_Tag, &bx_options.cookies._mch},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab},
-	{ "FullScreen", Bool_Tag, &fullscreen},
+	{ "FullScreen", Bool_Tag, &bx_options.video.fullscreen},
 #ifdef DEBUGGER
 	{ "DebugOnStart", Bool_Tag, &start_debug},
 #endif
@@ -90,6 +89,7 @@ Options:
   -F, --fastram SIZE         FastRAM size (in MB)\n\
   -N, --nomouse              don't grab mouse at startup\n\
   -f, --fullscreen           start in fullscreen\n\
+  -v, --refresh <X>          VIDEL refresh rate in VBL (default 2)\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
   -d, --disk CHAR:ROOTPATH   METADOS filesystem assignment e.g. d:/atari/d_drive\n\
@@ -165,6 +165,10 @@ void preset_cfg() {
   preset_ide();
   bx_options.cookies._mch = 0x00030000; // Falcon030
   bx_options.autoMouseGrab = true;
+
+  bx_options.video.fullscreen = false;		// Boot in Fullscreen
+  bx_options.video.boot_color_depth = -1;	// Boot in color depth
+  bx_options.video.refresh = 2;			// 25 Hz update
 #ifdef DIRECT_TRUECOLOR
   bx_options.video.direct_truecolor = false;
 #endif
@@ -224,6 +228,7 @@ int decode_switches (FILE *f, int argc, char **argv) {
 							 "F:" /* TT-RAM */
 							 "N"  /* no mouse */
 							 "f"  /* fullscreen */
+							 "v:" /* VIDEL refresh */
 							 "t"  /* direct truecolor */
 							 "r:" /* resolution */
 							 "m:" /* attached monitor */
@@ -252,7 +257,13 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				break;
 	
 			case 'f':
-				fullscreen = true;
+				bx_options.video.fullscreen = true;
+				break;
+
+			case 'v':
+				bx_options.video.refresh = atoi(optarg);
+				if (bx_options.video.refresh < 1 || bx_options.video.refresh > 200)
+					bx_options.video.refresh = 2;	// default if input parameter is insane
 				break;
 	
 			case 'N':
@@ -262,8 +273,8 @@ int decode_switches (FILE *f, int argc, char **argv) {
 #ifdef DIRECT_TRUECOLOR
 			case 't':
 				bx_options.video.direct_truecolor = true;
-				fullscreen = true;
-				boot_color_depth = 16;
+				bx_options.video.fullscreen = true;
+				bx_options.video.boot_color_depth = 16;
 				break;
 #endif
 
@@ -279,7 +290,7 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				break;
 
 			case 'r':
-				boot_color_depth = atoi(optarg);
+				bx_options.video.boot_color_depth = atoi(optarg);
 				break;
 
 			case 'd':
