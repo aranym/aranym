@@ -10,22 +10,17 @@
 #include <string.h>				/* for strcmp */
 #include <sys/ioctl.h>			/* for ioctl */
 #include <net/if.h>				/* for ifreq */
-
-/* the following constants are defined in freemint/sys/mint/sockio.h */
-# define SIOCGIFADDRFH	(('S' << 8) | 53)	/* get iface address */
-# define SIOCGIFDSTADDRFH (('S' << 8) | 54)	/* get iface remote address */
-# define SIOCGIFNETMASKFH (('S' << 8) | 55)	/* get iface network mask */
+#include <sockios.h>			/* for SIOCGLNKSTATS */
 
 int main(int argc, char **argv)
 {
 	int usage = 0;
-	enum {
-		NONE = 0,
-		ADDR = SIOCGIFADDRFH,
-		DSTADDR = SIOCGIFDSTADDRFH,
-		NETMASK = SIOCGIFNETMASKFH
-	} which = NONE;
-	int ethX = 0;
+	enum { NONE = -1, ADDR, DSTADDR, NETMASK } which = NONE;
+	char *nif = "eth0";
+	int sockfd;
+	struct ifreq ifr;
+	long addr[10]; /* indexed by the enum 'which' */
+
 
 	if (argc <= 1) {
 		usage = 1;
@@ -54,7 +49,7 @@ int main(int argc, char **argv)
 					usage = 1;
 			}
 			else if (strncmp(p, PETH, strlen(PETH)) == 0) {
-				ethX = atoi(p+strlen(PETH));
+				nif = p;
 			}
 			else {
 				usage = 1;
@@ -67,25 +62,21 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	{
-		int sockfd;
-		struct ifreq ifr;
-		long addr = 0;
-
-		sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-		if (sockfd < 0) {
-			perror("socket could not be open");
-			return 1;
-		}
-		strcpy(ifr.ifr_name, "eth0");
-		if (ioctl(sockfd, which, &ifr) != 0) {
-			perror("ioctl failed");
-			return 1;
-		}
-		addr = (long)ifr.ifr_ifru.ifru_data;
-		printf("%ld.%ld.%ld.%ld\n", (addr >> 24) & 0xff, (addr >> 16) & 0xff,
-							  (addr >> 8) & 0xff, addr & 0xff);
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sockfd < 0) {
+		perror("socket failed");
+		return 1;
 	}
+	strcpy(ifr.ifr_name, nif);
+	ifr.ifr_ifru.ifru_data = (caddr_t)addr;
+	if (ioctl(sockfd, SIOCGLNKSTATS, &ifr) != 0) {
+		perror("ioctl failed");
+		return 1;
+	}
+	printf("%ld.%ld.%ld.%ld\n", (addr[which] >> 24) & 0xff,
+								(addr[which] >> 16) & 0xff,
+								(addr[which] >> 8) & 0xff,
+								addr[which] & 0xff);
 
 	return 0;
 }
