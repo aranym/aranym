@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# ARAnyM - bridging network
+# STanda (c) 2004
+#
+# description: TUN/TAP driver using transparent bridge networking setup
+#
+# dependencies: tun module, tunctl (kernel-utils),
+#               bridge module, brctl (bridge-utils)
+#
+# processname: arabridge 
+# chkconfig: - 62 18
+
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+USER=standa
+TAPS=tap0
+NETNIF=eth0
+BRIDGE=br0
+
+start_tap()
+{
+    TAP="$1"
+    /sbin/ifconfig $TAP 1>/dev/null 2>/dev/null
+    if [ $? -ne 0 ]; then
+        echo "Creating device $TAP..."
+        TAP=$(tunctl -t $TAP -u $USER)
+    fi
+}
+
+case "$1" in
+  start)
+	echo "Starting TUN/TAP bridging: "
+	touch /var/lock/subsys/arabridge
+
+	IP=$(/sbin/ifconfig $NETNIF | awk '/inet addr:/ {print substr($2, 6)}')
+	BCAST=$(/sbin/ifconfig $NETNIF | awk '/inet addr:/ {print substr($3, 7)}')
+	NETMASK=$(/sbin/ifconfig $NETNIF | awk '/inet addr:/ {print substr($4, 6)}')
+	DEFGW=$(/sbin/route -n | awk '/^0\.0\.0\.0/ {print $2}')
+
+	echo "IP=$IP, BCAST=$BCAST, NETMASK=$NETMASK, DEFGW=$DEFGW"
+
+	/sbin/modprobe tun
+	/sbin/modprobe bridge
+
+	echo "Setting up bridge $BRIDGE..."
+	brctl addbr $BRIDGE
+	brctl stp $BRIDGE off
+	brctl setfd $BRIDGE 1
+	brctl sethello $BRIDGE 1
+	brctl addif $BRIDGE $NETNIF
+
+	for tap in $TAPS; do
+		start_tap $tap
+		brctl addif $BRIDGE $tap
+		/sbin/ifconfig $tap 0.0.0.0 promisc up
+	done
+
+	# bring the bridge up
+	/sbin/ifconfig $BRIDGE $IP netmask $NETMASK broadcast $BCAST
+
+	# ifconfig needs to be called twice here after some delay
+	# I don't really know what is going on :(
+	# if not slept enouh then the IP, NETMASK and BCAST setting
+	# is cleared 8-| 
+	sleep 1
+
+	/sbin/ifconfig $NETNIF 0.0.0.0 promisc up
+	/sbin/ifconfig $BRIDGE $IP netmask $NETMASK broadcast $BCAST up
+	if [ -z "$DEFGW" ]; then
+	   /sbin/route add default dev $BRIDGE
+	else
+	   /sbin/route add default dev $BRIDGE gw $DEFGW
+	fi
+	echo
+	;;
+  stop)
+	echo "Shutting down arabridge: "
+
+	IP=$(/sbin/ifconfig $BRIDGE | awk '/inet addr:/ {print substr($2, 6)}')
+	BCAST=$(/sbin/ifconfig $BRIDGE | awk '/inet addr:/ {print substr($3, 7)}')
+	NETMASK=$(/sbin/ifconfig $BRIDGE | awk '/inet addr:/ {print substr($4, 6)}')
+	DEFGW=$(/sbin/route -n | awk '/^0\.0\.0\.0/ {print $2}')
+
+	# if not slept enouh then the IP, NETMASK and BCAST setting
+	# is not fetched properly 8-| 
+	sleep 1
+
+	echo -n "IP=$IP, BCAST=$BCAST, NETMASK=$NETMASK, DEFGW=$DEFGW"
+
+	# bring the previous network nif back
+	/sbin/ifconfig $NETNIF $IP netmask $NETMASK broadcast $BCAST up
+	/sbin/route add default dev $NETNIF gw $DEFGW
+
+	# get the bridge down
+	/sbin/ifconfig $BRIDGE down
+
+	for tap in $TAPS; do
+		brctl delif $BRIDGE $tap
+		/sbin/ifconfig $tap down
+		echo
+		tunctl -d $tap
+	done
+	brctl delbr $BRIDGE
+	rm -f /var/lock/subsys/arabridge
+	echo
+	;;
+  restart)
+        $0 stop
+        $0 start
+        ;;
+  status)
+        status arabridge
+        ;;
+  *)
+	echo "Usage: arabridge {start|stop|restart|status}"
+	exit 1
+esac
+
+exit 0
+
