@@ -20,9 +20,9 @@
 
 #define BUS_ERROR	longjmp(excep_env, 2)
 #define STRAM_END	0x0e00000UL	// should be replaced by global ROMBase as soon as ROMBase will be a constant
-#define ROM_END		0x0e80000UL	// should be replaced by ROMBase + RealROMSize if we are going tto work with larger TOS ROMs than 512 kilobytes
-#define TTRAM_BEGIN	0x1000000UL	// should be replaced by global TTRAMBase as soon as TTRAMBase will be a constant
-extern uint32 TTRAMSize;
+#define ROM_END		0x0e80000UL	// should be replaced by ROMBase + RealROMSize if we are going to work with larger TOS ROMs than 512 kilobytes
+#define FastRAM_BEGIN	0x1000000UL	// should be replaced by global FastRAMBase as soon as FastRAMBase will be a constant
+extern uint32 FastRAMSize;
 
 #define ARANYMVRAMSTART 0xf0000000UL
 #define ARANYMVRAMSIZE	0x00100000	// should be a variable to protect VGA card offscreen memory
@@ -66,7 +66,7 @@ static __inline__ void check_ram_boundary(uaecptr addr, bool write = false)
 {
 	if (addr < (write ? STRAM_END : ROM_END))		// ST-RAM or ROM
 		return;
-	if (addr >= TTRAM_BEGIN && addr < (TTRAM_BEGIN+TTRAMSize))	// FastRAM
+	if (addr >= FastRAM_BEGIN && addr < (FastRAM_BEGIN+FastRAMSize))	// FastRAM
 		return;
 	if (direct_truecolor) {		// VideoRAM
 		if (addr >= ARANYMVRAMSTART && addr < (ARANYMVRAMSTART + ARANYMVRAMSIZE))
