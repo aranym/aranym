@@ -38,6 +38,8 @@
 #include "host.h"
 #include "ata.h"
 
+extern bx_hard_drive_c ata;
+
 #define Screen_Save()		{ hostScreen.lock(); hostScreen.saveBackground(); hostScreen.unlock(); }
 		
 #define Screen_SetFullUpdate()
@@ -627,7 +629,7 @@ void Dialog_DiscDlg(void)
     switch(but)
     {
       case DISCDLG_CDROMUM:
-        bx_hard_drive.set_cd_media_status(bx_hard_drive.get_first_cd_handle(), bx_hard_drive.get_cd_media_status(bx_hard_drive.get_first_cd_handle()) == 0);
+        ata.set_cd_media_status(ata.get_first_cd_handle(), ata.get_cd_media_status(ata.get_first_cd_handle()) == 0);
         break;
 #if 0 // MJ
       case DISCDLG_BROWSEA:                       /* Choose a new disc A: */
