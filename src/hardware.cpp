@@ -35,7 +35,7 @@ VIDEL videl;
 YAMAHA yamaha;
 ARADATA aradata;
 
-#define BUS_ERROR	longjmp(excep_env, 2)
+#define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); longjmp(excep_env, 2); }
 
 Parallel parallel;
 
@@ -97,7 +97,7 @@ uae_u32 handleRead(uaecptr addr) {
 		}
 	}
 	D(bug("HWget_b %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
-	BUS_ERROR;
+	BUS_ERROR(addr);
 }
 
 void handleWrite(uaecptr addr, uae_u8 value) {
@@ -110,7 +110,7 @@ void handleWrite(uaecptr addr, uae_u8 value) {
 		}
 	}
 	D(bug("HWput_b %x = %d ($%x) <- %s at %08x", addr, value, value, debug_print_IO(addr), showPC()));
-	BUS_ERROR;
+	BUS_ERROR(addr);
 }
 
 #define HW_IDE	0xf00000
@@ -183,6 +183,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.36  2002/02/26 21:08:13  milan
+ * address validation in CPU interface
+ *
  * Revision 1.35  2002/02/21 17:48:45  joy
  * prepared for 32-bit access to IDE interface
  *
