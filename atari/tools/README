@@ -5,6 +5,9 @@ These are the first basic tools for Aranym:
 
 - clocky.prg that write actual mouse position to $f9000e/$f90010
   (It was faster to implement it into Clocky (TM) than to write a new TSR).
+  Clocky also comes with hardwired PC101 English keyboard. Get full
+  Clocky 3.0 distribution at http://joy.atari.org/ - there's a nice editor
+  of keyboard layout.
 
 Soon there will be a tool for arafs that will edit the
 MetaDOS' config.sys file automatically.
@@ -15,4 +18,3 @@ ftp://aranym.sophics.cz/pub/aranym/aratools.tgz
 Finally all these tools will be merged into one AraKit.
 
 Petr
-
