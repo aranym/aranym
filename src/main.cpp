@@ -335,6 +335,7 @@ bool InitTOSROM(void)
 	}
 #endif
 
+	printf("TOS 4.04 loading... [OK]\n");
 	return true;
 }
 
@@ -354,15 +355,16 @@ bool InitEmuTOS(void)
 		return false;
 	}
 	RealROMSize = 512 * 1024;
-	size_t realSize = fread(ROMBaseHost, 1, RealROMSize, f);
+	bool bEmuOK = (fread(ROMBaseHost, 1, RealROMSize, f) > 0);
 	fclose(f);
-	bool bEmuOK = false;	/* suppose it didn't load correctly */
-	if (realSize == (size_t)RealROMSize)
-		bEmuOK = true;	/* 512 kB image */
-	else if (realSize = (size_t)RealROMSize / 2)
-		bEmuOK = true;	/* 256 kB image */
-	if (! bEmuOK)
-		panicbug("EmuTOS image '%s' reading error.\nMake sure the file is readable and its size is either 256 or 512 kB.", rom_path);
+	if (bEmuOK) {
+		printf("EmuTOS %02x.%02x.%04x loading... [OK]\n",
+			ROMBaseHost[0x18],
+			ROMBaseHost[0x19],
+			(ROMBaseHost[0x1a] << 8) | ROMBaseHost[0x1b]);
+	}
+	else
+		panicbug("EmuTOS image '%s' reading error.", rom_path);
 	return bEmuOK;
 }
 
@@ -376,14 +378,10 @@ bool InitOS(void)
 	 * Note that EmuTOS will always be available so this will be
 	 * a nice fallback.
 	 */
-	if (InitTOSROM()) {
-		printf("TOS 4.04 loading... [OK]\n");
+	if (InitTOSROM())
 		return true;
-	}
-	else if (InitEmuTOS()) {
-		printf("EmuTOS loading... [OK]\n");
+	else if (InitEmuTOS())
 		return true;
-	}
 
 	panicbug("No operating system found. ARAnyM can not boot!");
 	printf("Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.\n");
@@ -527,6 +525,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.78  2002/08/01 15:33:19  joy
+ * EmuTOS image can be just 256 kB long now
+ *
  * Revision 1.77  2002/07/20 12:42:04  joy
  * hint for invoking the GUI displayed in the window
  *
