@@ -510,20 +510,21 @@ void presave_cfg() {
 
 void early_cmdline_check(int argc, char **argv) {
 	for (int c = 0; c < argc; c++) {
-		if (strcmp(argv[c], "--swap-ide") == 0)
+		char *p = argv[c];
+		if (strcmp(p, "-S") == 0  || strcmp(p, "--swap-ide") == 0)
 			ide_swap = true;
 
-		else if ((strcmp(argv[c], "-c") == 0) || (strcmp(argv[c], "--config") == 0)) {
+		else if ((strcmp(p, "-c") == 0) || (strcmp(p, "--config") == 0)) {
 			if ((c + 1) < argc) {
 				safe_strncpy(config_file, argv[c + 1], sizeof(config_file));
 			} else {
 				fprintf(stderr, "config switch requires one parameter\n");
 				exit(EXIT_FAILURE);
 			}
-		} else if ((strcmp(argv[c], "-h") == 0) || (strcmp(argv[c], "--help") == 0)) {
+		} else if ((strcmp(p, "-h") == 0) || (strcmp(p, "--help") == 0)) {
 			usage(0);
 			exit(0);
-		} else if ((strcmp(argv[c], "-V") == 0) || (strcmp(argv[c], "--version") == 0)) {
+		} else if ((strcmp(p, "-V") == 0) || (strcmp(p, "--version") == 0)) {
 			printf ("%s\n", VERSION_STRING);
 			exit (0);
 		}
