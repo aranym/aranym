@@ -1,3 +1,8 @@
+2003/08/05 - milan
+- autogen.sh, configure.ac: cleaning, free patch from Guy Harrison for MAKE,
+                            xeys problem solved
+
+
 2003/07/18 - joy
  My little cleanups:
 - #ifdef OS_mingw cleaned up. Created a new Unix/mingw_include.h file that

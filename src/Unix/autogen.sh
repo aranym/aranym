@@ -7,6 +7,10 @@ DIE=0
 
 PROG="ARAnyM"
 
+# Check for GNU make
+
+test -z "$MAKE" && MAKE=make
+
 # Check how echo works in this /bin/sh
 case `echo -n` in
 -n) _echo_n=   _echo_c='\c';;
@@ -56,6 +60,6 @@ if [ x"$NO_CONFIGURE" = "x" ]; then
 fi
 echo
 echo $_echo_n "Creating dependencies... $_echo_c"
-make depend >/dev/null
+$MAKE depend >/dev/null
 
 echo all done

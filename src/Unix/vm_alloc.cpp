@@ -98,7 +98,7 @@ void * vm_acquire(size_t size)
 		return VM_MAP_FAILED;
 #else
 #ifdef HAVE_MMAP_VM
-	if ((addr = mmap(next_address, size, VM_PAGE_DEFAULT, map_flags, zero_fd, 0)) == MAP_FAILED)
+	if ((addr = mmap((void *)next_address, size, VM_PAGE_DEFAULT, map_flags, zero_fd, 0)) == MAP_FAILED)
 		return VM_MAP_FAILED;
 	
 	next_address = (char *)addr + size;

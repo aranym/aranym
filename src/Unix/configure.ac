@@ -11,10 +11,10 @@ dnl Canonical system information.
 AC_CANONICAL_SYSTEM
 
 dnl Options.
-AC_ARG_ENABLE(nat-debug,     [  --enable-nat-debug      enable native debugger support [default=yes]], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
+AC_ARG_ENABLE(nat-debug,     [  --enable-nat-debug      enable native debugger support (default=yes)], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
 
 AC_ARG_ENABLE(debug,
-[  --enable-debug=which    specify which debugger to use [default=ndebug]],
+[  --enable-debug=which    specify which debugger to use (default=ndebug)],
 [ case "$enableval" in
     default)  WHICH_DEBUG="ndebug";;
         uae)  WHICH_DEBUG="uae";;
@@ -26,37 +26,37 @@ AC_ARG_ENABLE(debug,
 ],
 [WHICH_DEBUG="ndebug"
 ])
-AC_ARG_WITH(mon,               [  --with-mon              use mon as debugger [default=no]], [WANT_MON=$withval], [WANT_MON=no])
+AC_ARG_WITH(mon,               [  --with-mon              use mon as debugger (default=no)], [WANT_MON=$withval], [WANT_MON=no])
 
-AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history for debugger (slower) [default=no]], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
+AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history for debugger (default=no)], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
 
-AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU [default=no]], [WANT_MMU=$enableval], [WANT_MMU=no])
+AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU (default=no)], [WANT_MMU=$enableval], [WANT_MMU=no])
 
-AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 [default=yes]], [WANT_DSP=$enableval], [WANT_DSP=yes])
+AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 (default=yes)], [WANT_DSP=$enableval], [WANT_DSP=yes])
 
-AC_ARG_ENABLE(dsp-disasm,      [  --enable-dsp-disasm     enable DSP 56001 disassembler [default=no]], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
+AC_ARG_ENABLE(dsp-disasm,      [  --enable-dsp-disasm     enable DSP 56001 disassembler (default=no)], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
 
-AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB [default=no]], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
+AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB (default=no)], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
-AC_ARG_ENABLE(fixedvideoram,   [  --enable-fixedvideoram  use fixed start of VideoRAM [default=no]], [WANT_FIXEDVIDEORAM=$enableval], [WANT_FIXEDVIDEORAM=no])
+AC_ARG_ENABLE(fixedvideoram,   [  --enable-fixedvideoram  use fixed start of VideoRAM (default=no)], [WANT_FIXEDVIDEORAM=$enableval], [WANT_FIXEDVIDEORAM=no])
 
-AC_ARG_ENABLE(directcolor,     [  --enable-directcolor    enable TOS direct truecolor [default=no]], [WANT_DIRECTCOLOR=$enableval], [WANT_DIRECTCOLOR=no])
+AC_ARG_ENABLE(directcolor,     [  --enable-directcolor    enable TOS direct truecolor (default=no)], [WANT_DIRECTCOLOR=$enableval], [WANT_DIRECTCOLOR=no])
 
-AC_ARG_ENABLE(blitmemmove,     [  --enable-blitmemmove    enable Blitter memmove rout [default=no]], [WANT_BLITMEMMOVE=$enableval], [WANT_BLITMEMMOVE=no])
+AC_ARG_ENABLE(blitmemmove,     [  --enable-blitmemmove    enable Blitter memmove rout (default=no)], [WANT_BLITMEMMOVE=$enableval], [WANT_BLITMEMMOVE=no])
 
-AC_ARG_ENABLE(blitsdlblit,     [  --enable-blitsdlblit    enable SDL blitting routine [default=no]], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
+AC_ARG_ENABLE(blitsdlblit,     [  --enable-blitsdlblit    enable SDL blitting routine (default=no)], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
 
-AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support [default=yes]], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
+AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support (default=yes)], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
 
-AC_ARG_ENABLE(aranymfs,        [  --enable-aranymfs       enable aranymfs support [default=yes]], [WANT_ARANYMFS=$enableval], [WANT_ARANYMFS=yes])
+AC_ARG_ENABLE(aranymfs,        [  --enable-aranymfs       enable aranymfs support (default=yes)], [WANT_ARANYMFS=$enableval], [WANT_ARANYMFS=yes])
 
-AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI [default=yes]], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
+AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI (default=yes)], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
 
-AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL [default=no]], [WANT_OPENGL=$enableval], [WANT_OPENGL=no])
+AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default=no)], [WANT_OPENGL=$enableval], [WANT_OPENGL=no])
 
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
-[  --enable-fpe=FPE        specify which fpu emulator to use [default=auto]],
+[  --enable-fpe=FPE        specify which fpu emulator to use (default=auto)],
 [ case "$enableval" in
     auto)	FPE_CORE_TEST_ORDER="ieee uae";; dnl ieee
     uae)	FPE_CORE_TEST_ORDER="uae";;
@@ -70,7 +70,7 @@ AC_ARG_ENABLE(fpe,
 
 dnl Addressing modes.
 AC_ARG_ENABLE(addressing,
-[  --enable-addressing=AM  specify the addressing mode to use [default=fastest]],
+[  --enable-addressing=AM  specify the addressing mode to use (default=fastest)],
 [ case "$enableval" in
     real) 	ADDRESSING_TEST_ORDER="real";;
     direct)	ADDRESSING_TEST_ORDER="direct";;
@@ -83,7 +83,7 @@ AC_ARG_ENABLE(addressing,
 ])
 
 AC_ARG_ENABLE(addr-check,
-[  --enable-addr-check=AM  specify the memory check to use [default=page]],
+[  --enable-addr-check=AM  specify the memory check to use (default=page)],
 [ case "$enableval" in
     no)         MEMORY_CHECK="no";;
     full)	MEMORY_CHECK="full";;
@@ -98,13 +98,13 @@ AC_ARG_ENABLE(addr-check,
 ])
 
 dnl Experimental hacks around spcflags handling.
-AC_ARG_ENABLE(spcflags-excl, [  --enable-spcflags-excl  enable exclusive spcflags handling [default=no]], [WANT_SPCFLAGS_EXCL=$enableval], [WANT_SPCFLAGS_EXCL=no])
+AC_ARG_ENABLE(spcflags-excl, [  --enable-spcflags-excl  enable exclusive spcflags handling (default=no)], [WANT_SPCFLAGS_EXCL=$enableval], [WANT_SPCFLAGS_EXCL=no])
 
 dnl JIT compiler options.
-AC_ARG_ENABLE(jit-compiler,    [  --enable-jit-compiler   enable JIT compiler [default=no]], [WANT_JIT=$enableval], [WANT_JIT=no])
+AC_ARG_ENABLE(jit-compiler,    [  --enable-jit-compiler   enable JIT compiler (default=no)], [WANT_JIT=$enableval], [WANT_JIT=no])
 
 AC_ARG_ENABLE(jit-fpu,
-[  --enable-jit-fpu        enable JIT compiler for FPU instructions [default=yes]],
+[  --enable-jit-fpu        enable JIT compiler for FPU instructions (default=yes)],
 [WANT_JIT_FPU=$enableval],
 [ if [[ "x$WANT_JIT" = "xyes" ]]; then
     WANT_JIT_FPU=yes
@@ -113,11 +113,11 @@ AC_ARG_ENABLE(jit-fpu,
   fi
 ])
 
-AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code disassemblers [default=no]], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
+AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code disassemblers (default=no)], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
 
-AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distrubuted dispatcher [default=no]], [WANT_DIS_DIP=$enableval], [WANT_DIS_DIP=no])
+AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distrubuted dispatcher (default=no)], [WANT_DIS_DIP=$enableval], [WANT_DIS_DIP=no])
 
-AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation [default=yes]], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
+AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation (default=yes)], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
 
 dnl Target OS type (target is host if not cross-compiling).
 case "$target_os" in
@@ -902,18 +902,18 @@ AC_MSG_RESULT($HAVE_GAS)
 dnl Check for GCC 2.7 or higher.
 HAVE_GCC27=no
 AC_MSG_CHECKING(for GCC 2.7 or higher)
-AC_EGREP_CPP(yes,
+AC_EGREP_CPP(xyes,
 [#if __GNUC__ - 1 > 1 || __GNUC_MINOR__ - 1 > 5
-  yes
+  xyes
 #endif
 ], [AC_MSG_RESULT(yes); HAVE_GCC27=yes], AC_MSG_RESULT(no))
 
 dnl Check for GCC 3.0 or higher.
 HAVE_GCC30=no
 AC_MSG_CHECKING(for GCC 3.0 or higher)
-AC_EGREP_CPP(yes,
+AC_EGREP_CPP(xyes,
 [#if __GNUC__ >= 3
-  yes
+  xyes
 #endif
 ], [AC_MSG_RESULT(yes); HAVE_GCC30=yes], AC_MSG_RESULT(no))
 
@@ -1344,6 +1344,9 @@ if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
   fi
 fi
 
+dnl Check for Mesa first, unless we were asked not to.
+AC_ARG_ENABLE(mesa, [  --enable-mesa           prefer the Mesa library (default=yes)], [use_Mesa=$enableval], [use_Mesa=yes])
+
 AC_DEFUN([MDL_HAVE_OPENGL],
 [
   AC_REQUIRE([AC_PROG_CC])
@@ -1352,12 +1355,6 @@ AC_DEFUN([MDL_HAVE_OPENGL],
 
   AC_CACHE_CHECK([for OpenGL], mdl_cv_have_OpenGL,
   [
-dnl Check for Mesa first, unless we were asked not to.
-    AC_ARG_WITH([--with-Mesa],
-                   [Prefer the Mesa library over a vendors native OpenGL library (default=yes)],
-                   with_Mesa_help_string)
-    AC_ARG_ENABLE(Mesa, $with_Mesa_help_string, use_Mesa=$enableval, use_Mesa=yes)
-
     if test x"$use_Mesa" = xyes; then
       GL_search_list="MesaGL   GL"
       GLU_search_list="MesaGLU GLU"
@@ -1450,7 +1447,6 @@ dnl SDL
 
 SDL_CFLAGS=
 SDL_LIBS=
-SDL_CONFIG=
 
 case $target_os in
   darwin*)
