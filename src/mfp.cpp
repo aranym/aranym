@@ -240,7 +240,8 @@ void MFP::IRQ(int no, int count = 1) {
 
 		// TimerC 200 Hz interrupt
 		case 5: C.reset();
-				TriggerMFP(5, count);
+				if (irq_enable & 0x0020)
+					TriggerMFP(5, count);
 				break;
 
 		// ACIA received data interrupt
