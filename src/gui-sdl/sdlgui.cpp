@@ -15,13 +15,47 @@
 # include <stdlib.h>
 #endif
 
-#include <SDL.h>
+#include "font8.h"
 
 #define sdlscrn	hostScreen.getPhysicalSurface()
 
 static SDL_Surface *stdfontgfx=NULL;
 static SDL_Surface *fontgfx=NULL;   /* The actual font graphics */
 static int fontwidth, fontheight;   /* Height and width of the actual font */
+
+static SDL_Surface *SDLGui_LoadXBM(int w, int h, uint8 *bits)
+{
+	SDL_Surface *bitmap;
+	uint8 *line;    /* Allocate the bitmap */
+	bitmap = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 1, 0, 0, 0, 0);
+	if ( bitmap == NULL ) {
+		panicbug("Couldn't allocate bitmap: %s", SDL_GetError());
+		return(NULL);
+	}
+	/* Copy the pixels */
+	line = (uint8 *)bitmap->pixels;
+	w = (w+7)/8;
+	while ( h-- ) {
+		memcpy(line, bits, w);
+		/* X11 Bitmap images have the bits reversed */
+		{
+			int i, j;
+			uint8 *buf;
+			uint8 byte;
+			for ( buf=line, i=0; i<w; ++i, ++buf ) {
+				byte = *buf;
+				*buf = 0;
+				for ( j=7; j>=0; --j ) {
+					*buf |= (byte&0x01)<<j;
+					byte >>= 1;
+				}
+			}
+		}
+		line += bitmap->pitch;
+		bits += w;
+	}
+	return(bitmap);
+}
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -30,10 +64,10 @@ static int fontwidth, fontheight;   /* Height and width of the actual font */
 bool SDLGui_Init()
 {
   /* Load the font graphics: */
-  stdfontgfx = SDL_LoadBMP(guifont_path);
+  stdfontgfx = SDLGui_LoadXBM(font8_width, font8_height, font8_bits);
   if( stdfontgfx==NULL )
   {
-    panicbug("Could not load font %s", guifont_path);
+    panicbug("Could not create font data");
     panicbug("ARAnyM GUI will not be available");
     return false;
   }
