@@ -8,7 +8,7 @@
 #include "main.h"
 #include "ethernet.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #include <sys/poll.h>
@@ -178,7 +178,7 @@ void ETHERNETDriver::finishInterupt()
 bool ETHERNETDriver::init(void)
 {
 	// int nonblock = 1;
-	char devName[128];
+	char devName[128]="/dev/"TAP_DEVICE;
 
 	D(bug("Ethernet: init"));
 
@@ -200,29 +200,21 @@ bool ETHERNETDriver::init(void)
 		// memory (otherwise this does not work here)
 		char *args[] = {
 			TAP_INIT, TAP_DEVICE, TAP_MTU,
-			XIF_ATARI_IP, XIF_HOST_IP, XIF_NETMASK,
+			XIF_HOST_IP, XIF_ATARI_IP, XIF_NETMASK,
 			NULL
 		};
 		int result;
-
-		D(bug("\nexeclp(%s,%s,%s,%s,%s,%s)\n", TAP_INIT, TAP_DEVICE, TAP_MTU,
-			  XIF_ATARI_IP, XIF_HOST_IP, XIF_NETMASK));
-
-		result = execv( TAP_INIT, args );
-		panicbug("initTap failure: %d", result);
-		if (result == -1) {
-			perror("execl tunifc");
-			result = 5;
-		}
+		result = execvp( TAP_INIT, args );
 		::exit(result);
 	}
 
 	D(bug("waiting for tunifc"));
 	int status;
 	waitpid(pid, &status, 0);
+	/*
 	if (WIFEXITED(status)) {
 		if (WEXITSTATUS(status)) {
-			D(bug("tunifc failed, closing device"));
+			D(bug("tunifc failed with code %d, closing device", WEXITSTATUS(status)));
 			// Close /dev/net/tun device
 			if (fd > 0)
 				close(fd);
@@ -234,7 +226,7 @@ bool ETHERNETDriver::init(void)
 	} else {
 		D(bug("tunifc failed badly"));
 	}
-
+*/
 	// Set nonblocking I/O
 	//ioctl(fd, FIONBIO, &nonblock);
 
@@ -381,8 +373,10 @@ int ETHERNETDriver::tapOpen(char *dev)
 {
     struct ifreq ifr;
 
-    if( (fd = open("/dev/net/tun", O_RDWR)) < 0 )
+    if( (fd = open("/dev/net/tun", O_RDWR)) < 0 ) {
+    	panicbug("/dev/net/tun could not be opened read/write");
 		return tapOpenOld(dev);
+	}
 
     memset(&ifr, 0, sizeof(ifr));
     ifr.ifr_flags = IFF_TAP | IFF_NO_PI;

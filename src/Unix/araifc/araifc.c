@@ -234,6 +234,8 @@ int ifconfig(int argc, char **argv)
     extern struct aftype inet_aftype;
 #endif
 
+	fprintf(stderr, "argc=%d, argv=%s,%s,%s,%s,%s,%s,%s,%s,%s\n", argc,argv[0],argv[1],argv[2],argv[3],argv[4],argv[5],argv[6],argv[7],argv[8]);
+
     /* Create a channel to the NET kernel. */
     if ((skfd = socket (AF_INET, SOCK_DGRAM, 0)) < 0) {
 	perror("socket");
@@ -249,7 +251,6 @@ int ifconfig(int argc, char **argv)
         exit(1);
     }
 		
-
 #if 0
     /* The next argument is either an address family name, or an option. */
     if ((ap = get_aftype(*spp)) != NULL)
@@ -590,6 +591,7 @@ int ifconfig(int argc, char **argv)
 	}
 #endif
 
+	fprintf(stderr, "trying to copy hostname: %s\n", *spp);
 	/* If the next argument is a valid hostname, assume OK. */
 	safe_strncpy(host, *spp, (sizeof host));
 
@@ -701,18 +703,34 @@ static int set_ip_using(const char *name, int c, unsigned long ip)
 }
 
 int main(int argc, char **argv) {
-//	printf(stderr, argv[0]);
-	char *args[] = {
-		"tap0",
-		argv[0],
-		"pointopoint",
-		argv[1],
-		"mtu 1500",
-		"netmask 255.255.255.0",
-		"up"
-	};
+	int nargs = 9;
+	char *args[9];
+	args[0] = argv[1];
+	args[1] = argv[3];
+	args[2] = "pointopoint";
+	args[3] = argv[4];
+	args[4] = "mtu";
+	args[5] = argv[2];
+	args[6] = "netmask";
+	args[7] = argv[5];
+	args[8] = "up";
 
-	fprintf(stderr, argv[0]);
+	if (argc != 6) {
+		fprintf(stderr, "Usage: %s tap0 1500 192.168.0.1 192.168.0.2 255.255.255.0\n", argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
+		return 5;
+	}
 
-	ifconfig( sizeof(args)/sizeof(*args), args );			
+#if 1 || DEBUG
+	{
+		int i;
+		fprintf(stderr, "ifconfig");
+		for(i=0; i<nargs; i++)
+			fprintf(stderr, "_%s", args[i]);
+		fprintf(stderr, "\n");
+	}
+#endif
+
+	fprintf(stderr, "aratapif returning %d\n",
+		ifconfig( nargs, args ));
+	return 0;
 }
