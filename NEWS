@@ -1,3 +1,16 @@
+2004/02/08 - version 0.8.6beta released
+==========
+
+Important bugfixes, further SETUP improvements and new Mac OSX target:
+
+ o visual improvements in SETUP GUI
+ o new functions available in SETUP GUI (Fullscreen, ScreenShots, Help)
+ o fixed changing path to Floppy in the SETUP
+ o fixed serious bug in Floppy path configuration (crash at startup)
+ o fixed serious bug in NVRAM handling (might caused crashes at early TOS boot)
+ o hopefully fixed problem with HostFS mount points on aranym reboot
+
+
 2004/01/07 - version 0.8.5beta released
 ==========
 

@@ -148,6 +148,11 @@ Xavier Joubert
 - for Windows/cygwin improvements
 - HostFS fixes
 - CPU Double Bus Fault handling
+- SDL GUI improvements
 
 Stefan Kuhr
 - for Mac OS X port improvements
+
+Carlo Baiocco
+- new Mac OS X port (src/MacOSX/*)
+

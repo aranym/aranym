@@ -1,9 +1,28 @@
-2004/02/07 - joy
+* tagged as ARANYM_0_8_6_BETA
+
+2004/02/08 - joy
 - gui-sdl/dlgAbout.cpp: RTFM AUTHORS
-- gui-sdl/dlgMain.cpp: quick access to most often used functions
+
+- gui-sdl/dlgMain.cpp: visually restructured a bit, added three buttons
+  for quick access to most often used functions.
+
+- gui-sdl/dlgHelp.cpp, Unix/configure.ac: Help page added
+
 - hostscreen.cpp: added a comment that explains why user.code = SDL_USEREVENT
+
 - input.cpp: GUI thread talks back to INPUT thread by SDL message as well.
-  Should fix the infamous X async reply I started getting recently.
+  Should fix the infamous X async reply I started getting recently. Maybe
+  even the problem on Mac.
+
+- natfeat/nf_base.*: SafeStrncpy() added (respects buffer size).
+
+- natfeat/hostfs.*: ctor/dtor added, init/exit used for clearing the allocated
+  buffers. Resets the mounted points on ARAnyM Restart now. Also makes use
+  of SafeStrncpy(). Perhaps EasyMiNT installation won't require aranym quit
+  now.
+
+- AUTHORS, README, BUGS, NEWS, TODO, aranym.1, aranym.spec, version.h:
+  standard updates for new release.
 
 
 2004/02/06 - Xavier

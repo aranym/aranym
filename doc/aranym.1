@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH ARANYM 1 "January 18, 2002"
+.TH ARANYM 1 "February 8, 2004"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -26,7 +26,7 @@ ARanyM \- Atari Running on Any Machine
 .\" TeX users may be more comfortable with the \fB<whatever>\fP and
 .\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
 .\" respectively.
-The main goal of the \fBARanyM\fP project is to create a virtual machine that would allow everyone to install, use and also develop new 32bit Atari ST/TT/Falcon applications on their computer regardless if it's an IBM clone, an Apple, an Unix server, a graphics workstation or even a portable computer. We modeled the virtual machine after the most advanced Atari computer equipped with the latest hardware extensions - that is Falcon030 with Afterburner040 (upgrading the CPU to MC68040) and a graphics card.
+The main goal of the \fBARanyM\fP project is to create a virtual machine that would allow everyone to install, use and also develop new 32bit TOS/GEM applications running also on Atari ST/TT/Falcon computers and compatibles.
 .SH OPTIONS
 These programs follow the usual GNU command line syntax, with long
 options starting with two dashes (`-').
@@ -71,6 +71,18 @@ FastRAM size (in MB)
 .TP
 .B \-D, \-\-debug
 start debugger
+.TP
+.B \-e, \-\-emutos
+prefer EmuTOS for booting (normally prefers TOS)
+.TP
+.B \-s, \-\-lilo
+boot linux kernel directly
+.TP
+.B \-S, \-\-swap-ide
+swap IDE drives for this session
+.TP
+.B \-G, \-\-gui
+open SETUP GUI at startup
 .TP
 .SH SEE ALSO
 .BR /usr/share/doc/aranym

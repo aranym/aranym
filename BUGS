@@ -43,3 +43,8 @@ gives some chance to Windows users as well.
 Only Linux-ia32 (x86) currently supports JIT compiler for the CPU emulator.
 This is not a design limitation or a bug in other operating systems, it's 
 just lack of manpower willing to work on JIT support on the other systems.
+
+Linux 2.6.x is not ARAnyM friendly (or vice-versa). Not only JIT mode but
+also regular AFROS boot gets stuck, users report. Main developers don't
+run 2.6.x yet so this has to wait.
+
