@@ -37,7 +37,7 @@ extern bool File_FileNameIsST(char *pszFileName);
 extern void *File_Read(char *pszFileName, void *pAddress, long *pFileSize, char *ppszExts[]);
 extern bool File_Save(char *pszFileName, void *pAddress,long Size,bool bQueryOverwrite);
 extern int File_Length(char *pszFileName);
-extern bool File_Exists(char *pszFileName);
+extern bool File_Exists(const char *pszFileName);
 extern bool File_Delete(char *pszFileName);
 extern bool File_QueryOverwrite(char *pszFileName);
 extern bool File_FindPossibleExtFileName(char *pszFileName,char *ppszExts[]);
