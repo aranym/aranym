@@ -84,6 +84,7 @@ AC_ARG_ENABLE(addressing,
 [ case "$enableval" in
     real) 	ADDRESSING_TEST_ORDER="real";;
     direct)	ADDRESSING_TEST_ORDER="direct";;
+    banks)	ADDRESSING_TEST_ORDER="banks";;
     normal)	ADDRESSING_TEST_ORDER="normal";;
     fixed)	ADDRESSING_TEST_ORDER="fixed";;
     *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: real, direct, fixed, normal]);;
@@ -178,11 +179,17 @@ AC_PROG_INSTALL
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_DIRENT	
-AC_CHECK_HEADERS(unistd.h fcntl.h sys/mman.h sys/ioctl.h)
+AC_CHECK_HEADERS(unistd.h fcntl.h sys/mman.h mach/mach.h sys/ioctl.h)
 AC_CHECK_HEADERS(getopt.h)
 AC_CHECK_HEADERS(termios.h termio.h alloca.h sys/statfs.h sys/statvfs.h)
 AC_CHECK_HEADERS(sys/types.h sys/stat.h sys/vfs.h utime.h sys/param.h)
 AC_CHECK_HEADERS(sys/mount.h types.h stat.h)
+AC_CHECK_HEADERS(sys/socket.h)
+AC_CHECK_HEADERS(linux/if.h linux/if_tun.h net/if.h net/if_tun.h, [], [], [
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+])
 
 AC_CXX_CHEADERS
 
@@ -302,6 +309,32 @@ AC_CACHE_CHECK([for __wchar_t],
 ])
 AC_TRANSLATE_DEFINE(HAVE_WCHAR_T, "$ac_cv_wchar_t", [Define if wchar_t is present])
 
+dnl Check that the host supports TUN/TAP devices
+AC_CACHE_CHECK([whether TUN/TAP is supported],
+  ac_cv_tun_tap_support, [
+  AC_TRY_COMPILE([
+    #if defined(HAVE_LINUX_IF_H) && defined(HAVE_LINUX_IF_TUN_H)
+    #ifdef HAVE_SYS_SOCKET_H
+    #include <sys/socket.h>
+    #endif
+    #include <linux/if.h>
+    #include <linux/if_tun.h>
+    #endif
+    #if defined(HAVE_NET_IF_H) && defined(HAVE_NET_IF_TUN_H)
+    #include <net/if.h>
+    #include <net/if_tun.h>
+    #endif
+  ], [
+    struct ifreq ifr;
+    memset(&ifr, 0, sizeof(ifr));
+    ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
+  ],
+  ac_cv_tun_tap_support=yes, ac_cv_tun_tap_support=no
+  )
+])
+AC_TRANSLATE_DEFINE(ENABLE_TUNTAP, "$ac_cv_tun_tap_support",
+  [Define if your system supports TUN/TAP devices.])
+
 dnl Various checks if the system supports vm_allocate() and the like functions.
 have_mach_vm=no
 if [[ "x$ac_cv_func_vm_allocate" = "xyes" -a "x$ac_cv_func_vm_deallocate" = "xyes" -a \
@@ -339,7 +372,7 @@ AC_CACHE_CHECK([whether vm_protect works],
   AC_TRY_RUN([
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_PROT_RDWR_WRITE
-	$OSdarwinReq
+    $OSdarwinReq
     #include "vm_alloc.cpp"
   ], , ac_cv_vm_protect_works=no,
   dnl When cross-compiling, do not assume anything
@@ -462,7 +495,7 @@ AC_CACHE_CHECK([whether we can map Low Memory area 0x0000-0x2000],
   AC_LANG_CPLUSPLUS
   AC_TRY_RUN([
     $OSdarwinReq
-	#include "vm_alloc.cpp"
+    #include "vm_alloc.cpp"
     int main(void) { /* returns 0 if we could map the lowmem globals */
       volatile char * lm = 0;
       if (vm_init() < 0) exit(1);
@@ -474,6 +507,57 @@ AC_CACHE_CHECK([whether we can map Low Memory area 0x0000-0x2000],
   ], ac_cv_can_map_lm=yes, ac_cv_can_map_lm=no,
   dnl When cross-compiling, do not assume anything.
   ac_cv_can_map_lm="guessing no"
+  )
+  AC_LANG_RESTORE
+  ]
+)
+
+dnl Check if we have POSIX shared memory support
+AC_CACHE_CHECK([whether POSIX shared memory is working],
+  ac_cv_have_posix_shm, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_RUN([
+    #define HAVE_POSIX_SHM
+    $OSdarwinReq
+    #include "vm_alloc.cpp"
+    int main(void) { /* returns 0 if we have working POSIX shm */
+      if (vm_init() < 0) exit(2);
+      char *m1 = (char *)vm_acquire(32768, VM_MAP_DEFAULT | VM_MAP_33BIT);
+      if (m1 == VM_MAP_FAILED) exit(3);
+      vm_exit(); exit(0);
+    }
+  ], ac_cv_have_posix_shm=yes, ac_cv_have_posix_shm=no,
+  dnl When cross-compiling, do not assume anything.
+  ac_cv_have_posix_shm="guessing no"
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(HAVE_POSIX_SHM, "$ac_cv_have_posix_shm",
+  [Define if your system supports POSIX shared memory.])
+
+dnl Check if we have working 33-bit memory addressing
+AC_CACHE_CHECK([whether 33-bit memory addressing is working],
+  ac_cv_have_33bit_addressing, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_RUN([
+    #define USE_33BIT_ADDRESSING 1
+    #include "vm_alloc.cpp"
+    int main(void) { /* returns 0 if we have working 33-bit addressing */
+      if (sizeof(void *) < 8) exit(1);
+      if (vm_init() < 0) exit(2);
+      char *m1 = (char *)vm_acquire(32768, VM_MAP_DEFAULT | VM_MAP_33BIT);
+      if (m1 == VM_MAP_FAILED) exit(3);
+      char *m2 = m1 + (1L << 32);
+      m1[0] = 0x12; if (m2[0] != 0x12) exit(4);
+      m2[0] = 0x34; if (m1[0] != 0x34) exit(5);
+      vm_exit(); exit(0);
+    }
+  ], ac_cv_have_33bit_addressing=yes, ac_cv_have_33bit_addressing=no,
+  dnl When cross-compiling, do not assume anything.
+  ac_cv_have_33bit_addressing="guessing no"
   )
   AC_LANG_RESTORE
   ]
@@ -717,16 +801,15 @@ fi
 HAVE_ETHERNET=no
 dnl Ethernet card emulation
 if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
-  case "$target_os" in
-      linux*) AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
-              AC_CHECK_HEADERS(linux/if_tun.h)
-	      SYSSRCS="$SYSSRCS ../natfeat/ethernet.cpp"
-	      TAPIF="aratapif"
-	      HAVE_ETHERNET="yes"
-	      ;;
-	   *) AC_MSG_WARN([Ethernet interface not supported on your system])
-	      ;;
-  esac
+  if [[ "x$ac_cv_tun_tap_support" = "xyes" ]]; then
+    AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
+    SYSSRCS="$SYSSRCS ../natfeat/ethernet.cpp"
+    TAPIF="aratapif"
+    HAVE_ETHERNET="yes"
+  else
+    AC_MSG_WARN([Ethernet interface not supported on your system])
+    TAPIF=""
+  fi
 else
   TAPIF=""
 fi
@@ -831,6 +914,10 @@ else
       DEFINES="$DEFINES -DDIRECT_ADDRESSING"
       break
       ;;
+    banks)
+      ADDRESSING_MODE="memory banks"
+      break
+      ;;
     fixed)
       if [[ "x$HAVE_MMAP_VM" = "xno" -a "x$HAVE_MACH_VM" = "xno" ]]; then
         continue
@@ -922,6 +1009,22 @@ if [[ "x$HAVE_GCC27" = "xyes" -a "x$FPE_CORE" = "xi386" ]]; then
   fi
 fi
 
+dnl Store motion was introduced in 3.3-hammer branch and any gcc >= 3.4
+dnl However, there are some corner cases exposed on x86-64
+if [[ "x$HAVE_GCC27" = "xyes" ]]; then
+  SAVED_CXXFLAGS="$CXXFLAGS"
+  CXXFLAGS="$CXXFLAGS -fno-gcse-sm"
+  AC_CACHE_CHECK([whether GCC supports store motion], ac_cv_gcc_store_motion, [
+    AC_LANG_SAVE
+    AC_LANG_CPLUSPLUS
+    AC_TRY_COMPILE([],[],[ac_cv_gcc_store_motion=yes],[ac_cv_gcc_store_motion=no])
+    AC_LANG_RESTORE
+  ])
+  if [[ "x$ac_cv_gcc_store_motion" != "xyes" ]]; then
+    CXXFLAGS="$SAVED_CXXFLAGS"
+  fi
+fi
+
 dnl Distributed dispatcher eliminates pipeline stall
 dnl It needs computed gotos (supported by GNU C++)
 dnl DODO - test for computed gotos
@@ -968,6 +1071,9 @@ elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
     ASM_OPTIMIZATIONS="x86-64"
     DEFINES="$DEFINES -DX86_64_ASSEMBLY -DOPTIMIZED_FLAGS"
+    JITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $JITSRCS"
+    CAN_JIT=yes
+    WANT_33BIT_ADDRESSING=yes
   fi
 elif [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xyes" ]]; then
   dnl SPARC CPU
@@ -1027,6 +1133,150 @@ else
   WANT_JIT_DEBUG=no
   JITSRCS=""
 fi
+
+dnl Use 33-bit memory addressing?
+if [[ "$ac_cv_have_33bit_addressing:$WANT_33BIT_ADDRESSING" = "yes:yes" ]]; then
+  use_33bit_addressing=yes
+fi
+AC_TRANSLATE_DEFINE(USE_33BIT_ADDRESSING, "$use_33bit_addressing",
+  [Define to use 33-bit memory addressing on 64-bit JIT capable systems.])
+
+dnl Utility macro used by next two tests.
+dnl AC_EXAMINE_OBJECT(C source code,
+dnl	commands examining object file,
+dnl	[commands to run if compile failed]):
+dnl
+dnl Compile the source code to an object file; then convert it into a
+dnl printable representation.  All unprintable characters and
+dnl asterisks (*) are replaced by dots (.).  All white space is
+dnl deleted.  Newlines (ASCII 0x10) in the input are preserved in the
+dnl output, but runs of newlines are compressed to a single newline.
+dnl Finally, line breaks are forcibly inserted so that no line is
+dnl longer than 80 columns and the file ends with a newline.  The
+dnl result of all this processing is in the file conftest.dmp, which
+dnl may be examined by the commands in the second argument.
+dnl
+AC_DEFUN([gcc_AC_EXAMINE_OBJECT],
+[AC_LANG_SAVE
+AC_LANG_C
+dnl Next bit cribbed from AC_TRY_COMPILE.
+cat > conftest.$ac_ext <<EOF
+[#line __oline__ "configure"
+#include "confdefs.h"
+$1
+]EOF
+if AC_TRY_EVAL(ac_compile); then
+  od -c conftest.o |
+    sed ['s/^[0-7]*[ 	]*/ /
+	  s/\*/./g
+	  s/ \\n/*/g
+	  s/ [0-9][0-9][0-9]/./g
+	  s/  \\[^ ]/./g'] |
+    tr -d '
+ ' | tr -s '*' '
+' | fold | sed '$a\
+' > conftest.dmp
+  $2
+ifelse($3, , , else
+  $3
+)dnl
+fi
+rm -rf conftest*
+AC_LANG_RESTORE])
+
+dnl Floating point format probe.
+dnl The basic concept is the same as the above: grep the object
+dnl file for an interesting string.  We have to watch out for
+dnl rounding changing the values in the object, however; this is
+dnl handled by ignoring the least significant byte of the float.
+dnl
+dnl Does not know about VAX G-float or C4x idiosyncratic format.
+dnl It does know about PDP-10 idiosyncratic format, but this is
+dnl not presently supported by GCC.  S/390 "binary floating point"
+dnl is in fact IEEE (but maybe we should have that in EBCDIC as well
+dnl as ASCII?)
+dnl
+AC_DEFUN([gcc_AC_C_FLOAT_FORMAT],
+[AC_CACHE_CHECK(floating point format, ac_cv_c_float_format,
+[gcc_AC_EXAMINE_OBJECT(
+[/* This will not work unless sizeof(double) == 8.  */
+extern char sizeof_double_must_be_8 [sizeof(double) == 8 ? 1 : -1];
+
+/* This structure must have no internal padding.  */
+struct possibility {
+  char prefix[8];
+  double candidate;
+  char postfix[8];
+};
+
+#define C(cand) { "\nformat:", cand, ":tamrof\n" }
+struct possibility table [] =
+{
+  C( 3.25724264705901305206e+01), /* @@IEEEFP - IEEE 754 */
+  C( 3.53802595280598432000e+18), /* D__float - VAX */
+  C( 5.32201830133125317057e-19), /* D.PDP-10 - PDP-10 - the dot is 0x13a */
+  C( 1.77977764695171661377e+10), /* IBMHEXFP - s/390 format, ascii */
+  C(-5.22995989424860458374e+10)  /* IBMHEXFP - s/390 format, EBCDIC */
+};],
+ [if   grep 'format:.@IEEEF.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='IEEE (big-endian)'
+  elif grep 'format:.I@@PFE.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='IEEE (big-endian)'
+  elif grep 'format:.FEEEI@.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='IEEE (little-endian)'
+  elif grep 'format:.EFP@@I.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='IEEE (little-endian)'
+  elif grep 'format:.__floa.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='VAX D-float'
+  elif grep 'format:..PDP-1.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='PDP-10'
+  elif grep 'format:.BMHEXF.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='IBM 370 hex'
+  else
+    AC_MSG_ERROR(Unknown floating point format)
+  fi],
+  [AC_MSG_ERROR(compile failed)])
+])
+# IEEE is the default format.  If the float endianness isn't the same
+# as the integer endianness, we have to set FLOAT_WORDS_BIG_ENDIAN
+# (which is a tristate: yes, no, default).  This is only an issue with
+# IEEE; the other formats are only supported by a few machines each,
+# all with the same endianness.
+format=IEEE_FLOAT_FORMAT
+fbigend=
+case $ac_cv_c_float_format in
+    'IEEE (big-endian)' )
+	if test $ac_cv_c_bigendian = no; then
+	    fbigend=1
+	fi
+	;;
+    'IEEE (little-endian)' )
+	if test $ac_cv_c_bigendian = yes; then
+	    fbigend=0
+	fi
+	;;
+    'VAX D-float' )
+	format=VAX_FLOAT_FORMAT
+	;;
+    'PDP-10' )
+	format=PDP10_FLOAT_FORMAT
+	;;
+    'IBM 370 hex' )
+	format=IBM_FLOAT_FORMAT
+	;;
+esac
+AC_DEFINE_UNQUOTED(HOST_FLOAT_FORMAT, $format,
+  [Define to the floating point format of the host machine.])
+if test -n "$fbigend"; then
+	AC_DEFINE_UNQUOTED(HOST_FLOAT_WORDS_BIG_ENDIAN, $fbigend,
+  [Define to 1 if the host machine stores floating point numbers in
+   memory with the word containing the sign bit at the lowest address,
+   or to 0 if it does it the other way around.
+
+   This macro should not be defined if the ordering is the same as for
+   multi-word integers.])
+fi
+])
 
 dnl Select appropriate FPU source.
 gcc_AC_C_FLOAT_FORMAT
@@ -1151,8 +1401,8 @@ fi
 
 dnl Remove the "-g" option if set for GCC.
 if [[ "x$HAVE_GCC27" = "xyes" ]]; then
-  CFLAGS=`echo $CFLAGS | sed -e 's/-g//g'`
-  CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-g//g'`
+  CFLAGS=`echo $CFLAGS | sed -e 's/-g //g'`
+  CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-g //g'`
 fi
 if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
   DBGSP="-g"

@@ -21,13 +21,16 @@
 
 #include "vm_alloc.h"
 
-// TODO: Win32 VMs ?
 #ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
 # include <cstring>
 #else
 # include <stdlib.h>
 # include <string.h>
+#endif
+#ifdef HAVE_WIN32_VM
+#define WIN32_LEAN_AND_MEAN /* avoid including junk */
+#include <windows.h>
 #endif
 
 #ifdef HAVE_MACH_VM
@@ -47,6 +50,12 @@
 #ifndef MAP_32BIT
 #define MAP_32BIT 0
 #endif
+#ifndef MAP_ANON
+#define MAP_ANON 0
+#endif
+#ifndef MAP_ANONYMOUS
+#define MAP_ANONYMOUS 0
+#endif
 
 #define MAP_EXTRA_FLAGS (MAP_32BIT)
 
@@ -61,20 +70,140 @@
 #endif
 static char * next_address = (char *)MAP_BASE;
 #ifdef HAVE_MMAP_ANON
-#define map_flags	(MAP_PRIVATE | MAP_ANON | MAP_EXTRA_FLAGS)
+#define map_flags	(MAP_ANON | MAP_EXTRA_FLAGS)
 #define zero_fd		-1
 #else
 #ifdef HAVE_MMAP_ANONYMOUS
-#define map_flags	(MAP_PRIVATE | MAP_ANONYMOUS | MAP_EXTRA_FLAGS)
+#define map_flags	(MAP_ANONYMOUS | MAP_EXTRA_FLAGS)
 #define zero_fd		-1
 #else
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-#define map_flags	(MAP_PRIVATE | MAP_EXTRA_FLAGS)
+#define map_flags	(MAP_EXTRA_FLAGS)
 static int zero_fd	= -1;
 #endif
 #endif
+#endif
+
+/* Utility functions for POSIX SHM handling.  */
+
+#ifdef USE_33BIT_ADDRESSING
+struct shm_range_t {
+	const char *file;
+	void *base;
+	unsigned int size;
+	shm_range_t *next;
+};
+
+static shm_range_t *shm_ranges = NULL;
+
+static bool add_shm_range(const char *file, void *base, unsigned int size)
+{
+	shm_range_t *r = (shm_range_t *)malloc(sizeof(shm_range_t));
+	if (r) {
+		r->file = file;
+		r->base = base;
+		r->size = size;
+		r->next = shm_ranges ? shm_ranges : NULL;
+		shm_ranges = r;
+		return true;
+	}
+	return false;
+}
+
+static shm_range_t *find_shm_range(void *base, unsigned int size)
+{
+	for (shm_range_t *r = shm_ranges; r != NULL; r = r->next)
+		if (r->base == base && r->size == size)
+			return r;
+	return NULL;
+}
+
+static bool remove_shm_range(shm_range_t *r)
+{
+	if (r) {
+		for (shm_range_t *p = shm_ranges; p != NULL; p = p->next) {
+			if (p->next == r) {
+				p->next = r->next;
+				free(r);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+static bool remove_shm_range(void *base, unsigned int size)
+{
+	remove_shm_range(find_shm_range(base, size));
+}
+#endif
+
+/* Build a POSIX SHM memory segment file descriptor name.  */
+
+#ifdef USE_33BIT_ADDRESSING
+static const char *build_shm_filename(void)
+{
+	static int id = 0;
+	static char filename[PATH_MAX];
+	
+	int ret = snprintf(filename, sizeof(filename), "/BasiliskII-%d-shm-%d", getpid(), id);
+	if (ret == -1 || ret >= sizeof(filename))
+		return NULL;
+
+	id++;
+	return filename;
+}
+#endif
+
+/* Translate generic VM map flags to host values.  */
+
+#ifdef HAVE_MMAP_VM
+static int translate_map_flags(int vm_flags)
+{
+	int flags = 0;
+	if (vm_flags & VM_MAP_SHARED)
+		flags |= MAP_SHARED;
+	if (vm_flags & VM_MAP_PRIVATE)
+		flags |= MAP_PRIVATE;
+	if (vm_flags & VM_MAP_FIXED)
+		flags |= MAP_FIXED;
+	if (vm_flags & VM_MAP_32BIT)
+		flags |= MAP_32BIT;
+	return flags;
+}
+#endif
+
+/* Align ADDR and SIZE to 64K boundaries.  */
+
+#ifdef HAVE_WIN32_VM
+static inline LPVOID align_addr_segment(LPVOID addr)
+{
+	return (LPVOID)(((DWORD)addr) & -65536);
+}
+
+static inline DWORD align_size_segment(LPVOID addr, DWORD size)
+{
+	return size + ((DWORD)addr - (DWORD)align_addr_segment(addr));
+}
+#endif
+
+/* Translate generic VM prot flags to host values.  */
+
+#ifdef HAVE_WIN32_VM
+static int translate_prot_flags(int prot_flags)
+{
+	int prot = PAGE_READWRITE;
+	if (prot_flags == (VM_PAGE_EXECUTE | VM_PAGE_READ | VM_PAGE_WRITE))
+		prot = PAGE_EXECUTE_READWRITE;
+	else if (prot_flags == (VM_PAGE_EXECUTE | VM_PAGE_READ))
+		prot = PAGE_EXECUTE_READ;
+	else if (prot_flags == (VM_PAGE_READ | VM_PAGE_WRITE))
+		prot = PAGE_READWRITE;
+	else if (prot_flags == VM_PAGE_READ)
+		prot = PAGE_READONLY;
+	else if (prot_flags == 0)
+		prot = PAGE_NOACCESS;
+	return prot;
+}
 #endif
 
 /* Initialize the VM system. Returns 0 if successful, -1 for errors.  */
@@ -106,22 +235,72 @@ void vm_exit(void)
    and default protection bits are read / write. The return value
    is the actual mapping address chosen or VM_MAP_FAILED for errors.  */
 
-void * vm_acquire(size_t size)
+void * vm_acquire(size_t size, int options)
 {
 	void * addr;
-	
+
+	// VM_MAP_FIXED are to be used with vm_acquire_fixed() only
+	if (options & VM_MAP_FIXED)
+		return VM_MAP_FAILED;
+
 #ifdef HAVE_MACH_VM
 	// vm_allocate() returns a zero-filled memory region
 	if (vm_allocate(mach_task_self(), (vm_address_t *)&addr, size, TRUE) != KERN_SUCCESS)
 		return VM_MAP_FAILED;
 #else
 #ifdef HAVE_MMAP_VM
-	if ((addr = mmap((caddr_t)next_address, size, VM_PAGE_DEFAULT, map_flags, zero_fd, 0)) == MAP_FAILED)
+	int fd = zero_fd;
+	int the_map_flags = translate_map_flags(options) | map_flags;
+
+#ifdef USE_33BIT_ADDRESSING
+	const char *shm_file = NULL;
+	if (sizeof(void *) == 8 && (options & VM_MAP_33BIT)) {
+		the_map_flags &= ~(MAP_PRIVATE | MAP_ANON | MAP_ANONYMOUS);
+		the_map_flags |= MAP_SHARED;
+
+		if ((shm_file = build_shm_filename()) == NULL)
+			return VM_MAP_FAILED;
+
+		if ((fd = shm_open(shm_file, O_RDWR | O_CREAT | O_EXCL, 0644)) < 0)
+			return VM_MAP_FAILED;
+
+		if (ftruncate(fd, size) < 0)
+			return VM_MAP_FAILED;
+
+		the_map_flags |= MAP_SHARED;
+	}
+#endif
+
+	if ((addr = mmap((caddr_t)next_address, size, VM_PAGE_DEFAULT, the_map_flags, fd, 0)) == (void *)MAP_FAILED)
+		return VM_MAP_FAILED;
+	
+	// Sanity checks for 64-bit platforms
+	if (sizeof(void *) == 8 && (options & VM_MAP_32BIT) && !((char *)addr <= (char *)0xffffffff))
 		return VM_MAP_FAILED;
 	
 	next_address = (char *)addr + size;
 	
 	// Since I don't know the standard behavior of mmap(), zero-fill here
+	if (memset(addr, 0, size) != addr)
+		return VM_MAP_FAILED;
+
+	// Remap to 33-bit space
+#ifdef USE_33BIT_ADDRESSING
+	if (sizeof(void *) == 8 && (options & VM_MAP_33BIT)) {
+		if (!add_shm_range(strdup(shm_file), addr, size))
+			return VM_MAP_FAILED;
+
+		if (mmap((char *)addr + (1L << 32), size, VM_PAGE_DEFAULT, the_map_flags | MAP_FIXED, fd, 0) == (void *)MAP_FAILED)
+			return VM_MAP_FAILED;
+		close(fd);
+	}
+#endif
+#else
+#ifdef HAVE_WIN32_VM
+	if ((addr = VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE)) == NULL)
+		return VM_MAP_FAILED;
+
+	// Zero newly allocated memory
 	if (memset(addr, 0, size) != addr)
 		return VM_MAP_FAILED;
 #else
@@ -130,6 +309,7 @@ void * vm_acquire(size_t size)
 	
 	// Omit changes for protections because they are not supported in this mode
 	return addr;
+#endif
 #endif
 #endif
 
@@ -144,7 +324,7 @@ void * vm_acquire(size_t size)
 /* Allocate zero-filled memory at exactly ADDR (which must be page-aligned).
    Retuns 0 if successful, -1 on errors.  */
 
-bool vm_acquire_fixed(void * addr, size_t size)
+bool vm_acquire_fixed(void * addr, size_t size, int options)
 {
 #ifdef HAVE_MACH_VM
 	// vm_allocate() returns a zero-filled memory region
@@ -152,15 +332,34 @@ bool vm_acquire_fixed(void * addr, size_t size)
 		return false;
 #else
 #ifdef HAVE_MMAP_VM
-	if (mmap((caddr_t)addr, size, VM_PAGE_DEFAULT, map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
+	const int extra_map_flags = translate_map_flags(options);
+
+	if (mmap((caddr_t)addr, size, VM_PAGE_DEFAULT, extra_map_flags | map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
 		return false;
 
 	// Since I don't know the standard behavior of mmap(), zero-fill here
 	if (memset(addr, 0, size) != addr)
 		return false;
 #else
+#ifdef HAVE_WIN32_VM
+	// Windows cannot allocate Low Memory
+	if (addr == NULL)
+		return -1;
+
+	// Allocate a possibly offset region to align on 64K boundaries
+	LPVOID req_addr = align_addr_segment(addr);
+	DWORD  req_size = align_size_segment(addr, size);
+	LPVOID ret_addr = VirtualAlloc(req_addr, req_size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+	if (ret_addr != req_addr)
+		return -1;
+
+	// Zero newly allocated memory
+	if (memset(addr, 0, size) != addr)
+		return -1;
+#else
 	// Unsupported
 	return false;
+#endif
 #endif
 #endif
 
@@ -188,8 +387,28 @@ int vm_release(void * addr, size_t size)
 #ifdef HAVE_MMAP_VM
 	if (munmap((caddr_t)addr, size) != 0)
 		return -1;
+
+#ifdef USE_33BIT_ADDRESSING
+	shm_range_t *r = find_shm_range(addr, size);
+	if (r) {
+		if (munmap((char *)r->base + (1L << 32), size) != 0)
+			return -1;
+
+		if (shm_unlink(r->file) < 0)
+			return -1;
+		free((char *)r->file);
+
+		if (!remove_shm_range(r))
+			return -1;
+	}
+#endif
+#else
+#ifdef HAVE_WIN32_VM
+	if (VirtualFree(align_addr_segment(addr), 0, MEM_RELEASE) == 0)
+		return -1;
 #else
 	free(addr);
+#endif
 #endif
 #endif
 	
@@ -209,8 +428,14 @@ int vm_protect(void * addr, size_t size, int prot)
 	int ret_code = mprotect((caddr_t)addr, size, prot);
 	return ret_code == 0 ? 0 : -1;
 #else
+#ifdef HAVE_WIN32_VM
+	DWORD old_prot;
+	int ret_code = VirtualProtect(addr, size, translate_prot_flags(prot), &old_prot);
+	return ret_code != 0 ? 0 : -1;
+#else
 	// Unsupported
 	return -1;
+#endif
 #endif
 #endif
 }
@@ -225,7 +450,11 @@ int main(void)
 	vm_init();
 	
 #define page_align(address) ((char *)((unsigned long)(address) & -page_size))
+#ifdef _WIN32
+	const unsigned long page_size = 4096;
+#else
 	unsigned long page_size = getpagesize();
+#endif
 	
 	const int area_size = 6 * page_size;
 	volatile char * area = (volatile char *) vm_acquire(area_size);

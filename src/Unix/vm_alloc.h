@@ -33,8 +33,10 @@
 # include <sys/mman.h>
 #endif
 
-#if defined(OS_darwin)
+#ifdef HAVE_MACH_VM
+extern "C" {
 # include <mach/mach.h>
+}
 #endif
 
 /* Return value of `vm_acquire' in case of an error.  */
@@ -47,6 +49,16 @@
 #define VM_MAP_FAILED			0
 #endif
 #endif
+
+/* Mapping options.  */
+#define VM_MAP_SHARED			0x01
+#define VM_MAP_PRIVATE			0x02
+#define VM_MAP_FIXED			0x04
+#define VM_MAP_32BIT			0x08
+#define VM_MAP_33BIT			0x10
+
+/* Default mapping options.  */
+#define VM_MAP_DEFAULT			(VM_MAP_PRIVATE)
 
 /* Protection bits.  */
 #ifdef HAVE_MACH_VM
@@ -83,11 +95,11 @@ extern void vm_exit(void);
    and default protection bits are read / write. The return value
    is the actual mapping address chosen or VM_MAP_FAILED for errors.  */
 
-extern void * vm_acquire(size_t size);
+extern void * vm_acquire(size_t size, int options = VM_MAP_DEFAULT);
 
 /* Allocate zero-filled memory at exactly ADDR (which must be page-aligned). */
 
-extern bool vm_acquire_fixed(void * addr, size_t size);
+extern bool vm_acquire_fixed(void * addr, size_t size, int options = VM_MAP_DEFAULT);
 
 /* Deallocate any mapping for the region starting at ADDR and extending
    LEN bytes. Returns 0 if successful, -1 on errors.  */

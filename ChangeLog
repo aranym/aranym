@@ -1,6 +1,12 @@
+2004/11/20 - milan
+- configure, vm_alloc, main_unix.cpp: a small memory management
+  reorganization, 33BIT addressing, cleanups
+
+
 2004/11/14 - milan
-- ata.*, cdrom.* - a small cleanup, some things from Bochs (multisession read
+- ata.*, cdrom.*: a small cleanup, some things from Bochs (multisession read
   TOC)
+
 
 * tagged as ARANYM_0_8_11_BETA
 
