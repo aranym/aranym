@@ -43,7 +43,7 @@ char *getConfFolder(char *buffer, unsigned int bufsize)
 		safe_strncpy(buffer, getenv("HOME"), bufsize);
 	}
 	// If not then use registry to find out the "My Documents" folder
-	else if (get_home_dir(buffer, bufsize))
+	else if (get_home_dir(buffer, bufsize)) {
 		buffer[0] = '\0';	// last resort - current folder
 	}
 	return addFilename(buffer, ARANYMHOME, bufsize);
