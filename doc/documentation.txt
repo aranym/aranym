@@ -257,7 +257,9 @@ more informations.
 
 5. Sound
 
-Not supported yet.
+Put the atari/sound/zmagxsnd.prg to your AUTO folder and Aniplayer
+(after switching to XBIOS in its Sound Config dialog) should play
+all sounds nicely!
 
 
 6. Floppy 
