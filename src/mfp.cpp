@@ -11,35 +11,41 @@
 
 static const int HW = 0xfffa00;
 
-	MFP_Timer::MFP_Timer(int value) {
+	MFP_Timer::MFP_Timer(int value)
+	{
 		name = 'A' + value;
 		control = start_data = current_data = 0;
 		state = false;
 	}
 
-	bool MFP_Timer::isRunning() {
+	bool MFP_Timer::isRunning()
+	{
 		return ((control & 0x0f) > 0);
 	}
 
-	void MFP_Timer::setControl(uint8 value) {
+	void MFP_Timer::setControl(uint8 value)
+	{
 		control = value & 0x0f;
 		if (value & 0x10)
 			state = false;
-		D(bug("Set MFP Timer%c control to $%x", name, value));
+		// D(bug("Set MFP Timer%c control to $%x", name, value));
 	}
 
-	uint8 MFP_Timer::getControl() {
+	uint8 MFP_Timer::getControl()
+	{
 		return control | (state << 5);
 	}
 
-	void MFP_Timer::setData(uint8 value) {
-		D(bug("Set MFP Timer%c data to %d", name, value));
+	void MFP_Timer::setData(uint8 value)
+	{
+		// D(bug("Set MFP Timer%c data to %d", name, value));
 		start_data = value;
 		if (! isRunning())
 			current_data = value;
 	}
 
-	void MFP_Timer::reset() {
+	void MFP_Timer::reset()
+	{
 		// D(bug("reset of Timer%c", name));
 		if (isRunning()) {
 			state = true;
@@ -47,8 +53,9 @@ static const int HW = 0xfffa00;
 		}
 	}
 
-	uint8 MFP_Timer::getData() {
-		D(bug("get MFP Timer%c data = %d", name, current_data));
+	uint8 MFP_Timer::getData()
+	{
+		// D(bug("get MFP Timer%c data = %d", name, current_data));
 
 		if (isRunning() && current_data > 2)
 			current_data--;		// hack to overcome microseconds delays in TOS (e.g. at $E02570)
@@ -56,11 +63,16 @@ static const int HW = 0xfffa00;
 		return current_data;
 	}
 
-/*************************************************************************/
+	/*************************************************************************/
 
-	MFP::MFP() {}
+	MFP::MFP()
+	{
+		GPIP_data = 0xff;
+		vr = 0x0100;
+	}
 
-	uint8 MFP::handleRead(uaecptr addr) {
+	uint8 MFP::handleRead(uaecptr addr)
+	{
 		addr -= HW;
 		if (addr < 0 || addr > 0x2f)
 			return 0;	// unhandled
@@ -85,25 +97,25 @@ static const int HW = 0xfffa00;
 			case 0x0b:	value = 0x20; //(irq_pending >> 8) | (tA->getControl() & 0x10);	// finish
 						break;
 
-			case 0x0d:	D(bug("Read: TimerC IRQ %s pending", (irq_pending & 0x20) ? "" : "NOT"));
+			case 0x0d:	// D(bug("Read: TimerC IRQ %s pending", (irq_pending & 0x20) ? "" : "NOT"));
 						value = irq_pending;
 						break;
 
 			case 0xf:	value = irq_inservice >> 8;
 						break;
 
-			case 0x11:	D(bug("Read: TimerC IRQ %s in-service", (irq_inservice & 0x20) ? "" : "NOT"));
+			case 0x11:	// D(bug("Read: TimerC IRQ %s in-service", (irq_inservice & 0x20) ? "" : "NOT"));
 						value = irq_inservice;
 						break;
 						
 			case 0x13:	value = irq_mask >> 8;
 						break;
 						
-			case 0x15:	D(bug("Read: TimerC IRQ %s masked", (irq_mask & 0x20) ? "" : "NOT"));
+			case 0x15:	// D(bug("Read: TimerC IRQ %s masked", (irq_mask & 0x20) ? "" : "NOT"));
 						value = irq_mask;
 						break;
 						
-			case 0x17:	value = automaticServiceEnd ? 0x48 : 0x40;
+			case 0x17:	value = (vr & 0xf0 ) | (automaticServiceEnd ? 8 : 0);
 						break;
 
 			case 0x19:	value = A.getControl();
@@ -143,7 +155,10 @@ static const int HW = 0xfffa00;
 
 		D(bug("Writing MFP data to %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
 		switch(addr) {
-			case 0x01:	GPIP_data = value;
+			case 0x01:	//GPIP_data = value;
+						GPIP_data &= ~data_direction ;
+						GPIP_data |= value & data_direction;
+						D(bug("New GPIP=$%x from PC=$%x", GPIP_data, showPC()));
 						break;
 
 			case 0x03:	active_edge = value;
@@ -156,12 +171,12 @@ static const int HW = 0xfffa00;
 						break;
 
 			case 0x09:
-#if DEBUG
+	#if DEBUG_IER
 						if ((irq_enable ^ value) & 0x20)
 							D(bug("Write: TimerC IRQ %sabled", (value & 20) ? "en" : "dis"));
 						if ((irq_enable ^ value) & 0x40)
 							D(bug("Write: IKBD IRQ %sabled", (value & 40) ? "en" : "dis"));
-#endif /* DEBUG */
+	#endif /* DEBUG */
 						irq_enable = (irq_enable & 0xff00) | value;
 						break;
 
@@ -169,10 +184,10 @@ static const int HW = 0xfffa00;
 						break;
 
 			case 0x0d:
-#if DEBUG
+	#if DEBUG_IPR
 						if ((irq_pending ^ value) & 0x20)
 							D(bug("Write: TimerC IRQ %s pending", (value & 20) ? "" : "NOT"));
-#endif /* DEBUG */
+	#endif /* DEBUG */
 						irq_pending = (irq_pending & 0xff00) | value;
 						break;
 
@@ -180,10 +195,10 @@ static const int HW = 0xfffa00;
 						break;
 
 			case 0x11:
-#if DEBUG
+	#if DEBUG_ISR
 						if ((irq_inservice ^ value) & 0x20)
 							D(bug("Write: TimerC IRQ %s in-service at %08x", (value & 20) ? "" : "NOT", showPC()));
-#endif /* DEBUG */
+	#endif /* DEBUG */
 						irq_inservice = (irq_inservice & 0xff00) | (irq_inservice & value);
 						break;
 						
@@ -191,15 +206,16 @@ static const int HW = 0xfffa00;
 						break;
 						
 			case 0x15:
-#if DEBUG
+	#if DEBUG_IMR
 						if ((irq_mask ^ value) & 0x20)
 							D(bug("Write: TimerC IRQ %s masked", (value & 20) ? "" : "NOT"));
-#endif /* DEBUG */
+	#endif /* DEBUG */
 						irq_mask = (irq_mask & 0xff00) | value;
 						break;
 						
-			case 0x17:	automaticServiceEnd = (value & 0x08) ? true : false;
-						D(bug("MFP autoServiceEnd: %s", automaticServiceEnd ? "YES" : "NO"));
+			case 0x17:	vr = value;
+						automaticServiceEnd = (value & 0x08) ? true : false;
+						// D(bug("MFP autoServiceEnd: %s", automaticServiceEnd ? "YES" : "NO"));
 						break;
 
 			case 0x19:	A.setControl(value);
@@ -234,7 +250,45 @@ static const int HW = 0xfffa00;
 		};
 	}
 
-void MFP::IRQ(int no, int count) {
+/*
+ * setGPIPbit sets input port bits (peripheral interrupt request)
+ */
+void MFP::setGPIPbit(int mask, int value)
+{
+	// hack
+	if (mask == 0x10) {
+		IRQ(6, 1);
+	}
+	return;
+	// /hack
+	static int map_gpip_to_ier[8] = {0, 1, 2, 3, 6, 7, 14, 15} ;	
+	mask &= 0xff;
+	int oldGPIP = GPIP_data;
+	GPIP_data &= ~mask;
+	GPIP_data |= (value & mask);
+	D(bug("setGPIPbit($%x, $%x): old=$%x, new=$%x", mask, value, oldGPIP, GPIP_data));
+	int i, j;
+	for(j = 0, i = 1 ; j < 8 ; j++, i <<= 1) {
+		if ((oldGPIP & i) != (GPIP_data & i)) {
+			D(bug("setGPIPbit: i=$%x, irq_enable=$%x, old=$%x, new=$%x", i, irq_enable, oldGPIP, GPIP_data));
+			if (irq_enable & i) {
+				/* interrupt when going from 0 to 1  */
+				if (oldGPIP & i)
+					continue;
+			}
+			else {
+				/* interrupt when going from 1 to 0  */
+				if (GPIP_data & i)
+					continue;
+			}
+			D(bug("calling IRQ(%d)->%d", j, map_gpip_to_ier[j]));
+			IRQ(map_gpip_to_ier[j], 1) ;
+		}
+	}	
+}
+
+void MFP::IRQ(int no, int count)
+{
 	switch(no) {
 		// printer BUSY interrupt
 		case 0:	break;
@@ -245,26 +299,25 @@ void MFP::IRQ(int no, int count) {
 				{
 					flags |= F_TIMERC;
 					timerCounter += count;
-					D(bug("Triggering MFP IRQ"));
 					TriggerMFP(true);
 				}
 				break;
 
 		// ACIA received data interrupt
-		case 6: GPIP_data &= ~0x10;
-				flags |= F_ACIA;
+		case 6: flags |= F_ACIA;
 				TriggerMFP(true);
 				break;
 	}
 }
 
 int MFP::doInterrupt() {
+	int irq = 0;
 	/* ACIA */
 	if ((flags & F_ACIA) && !(irq_inservice & (1<<6))) {
 		irq_inservice |= (1<<6);
 		TriggerMFP(false);
 		flags &= ~F_ACIA;
-		return 6;
+		irq = 6;
 	}
 	/* TIMER C */
 	else if ((flags & F_TIMERC) && ! (irq_inservice & (1<<5))) {
@@ -274,7 +327,11 @@ int MFP::doInterrupt() {
 			TriggerMFP(false);
 			flags &= ~F_TIMERC;
 		}
-		return 5;
+		irq = 5;
 	}
-	return 0;
+
+	if (irq)
+		irq |= (vr & 0xf0);
+
+	return irq;
 }
