@@ -34,6 +34,7 @@ extern void HWput_b(Bit32u addr, uint32 b);
 //////////////////////////////
 bx_options_t bx_options;
 bx_debug_t bx_dbg;
+#define DEBUGDISK	false
 //////////////////////////////
 
 #define INDEX_PULSE_CYCLE 10
@@ -101,7 +102,7 @@ void bx_hard_drive_c::init( /*bx_devices_c *d, bx_cmos_c *cmos */ )
 	bx_options.diskc.spt = 63;
 	strcpy(bx_options.diskc.path, "/home/joy/aranym/src/Unix/diskImage");
 
-	bx_options.diskd.present = 1;
+	bx_options.diskd.present = 0;
 	bx_options.diskd.byteswap = false;
 	bx_options.diskd.cylinders = 2100;
 	bx_options.diskd.heads = 16;
@@ -111,7 +112,7 @@ void bx_hard_drive_c::init( /*bx_devices_c *d, bx_cmos_c *cmos */ )
 	bx_options.newHardDriveSupport = 1;
 	bx_options.cdromd.present = 0;
 
-	bx_dbg.disk = false;
+	bx_dbg.disk = DEBUGDISK;
 	// end of init options and debug
 
 	// BX_HD_THIS devices = d;
@@ -783,10 +784,18 @@ void bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 		case 0x30:
 			if (BX_SELECTED_CONTROLLER.buffer_index >= 512)
 				bx_panic("disk: IO write(1f0): buffer_index >= 512\n");
-			BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
+			if (BX_SELECTED_HD.hard_drive->byteswap) {	/* FALCON disk image (byte swap) */
+				BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
+										  buffer_index + 1] = value;
+				BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
+										  buffer_index] = (value >> 8);
+			}
+			else {
+				BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
 										  buffer_index] = value;
-			BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
+				BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
 										  buffer_index + 1] = (value >> 8);
+			}
 			BX_SELECTED_CONTROLLER.buffer_index += 2;
 
 			/* if buffer completely writtten */
