@@ -260,8 +260,7 @@ case "$target_os" in
   cygwin*)
     DEFINES="$DEFINES -fpermissive"
     LIBS="$LIBS -lSDL -lSDLmain -liberty"
-    EXTRASYSSRCS=parameters_unix.cpp
-    DIRSEPARATOR='\"\\\\\"'
+    EXTRASYSSRCS=parameters_unix.cpp cygwin/tools.cpp
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])

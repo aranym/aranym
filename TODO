@@ -5,6 +5,7 @@ Before 0.8.0 final release:
 - some doc update (networking, disk image, afros)
 - provide also MMU build
 - make sure DOS drives are handled in HostFS paths correctly
+- AFROS: new FreeMiNT, bconout.prg and older fVDI (new one is buggy)
 
 Roadmap:
 --------

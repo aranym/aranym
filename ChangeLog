@@ -1,3 +1,10 @@
+2003/03/30 - joy
+- cygwin gets its own folder with a tools.cpp file.
+
+- sdlgui.cpp really needs the explicit conversion of the path. Xavier was
+  right, after all.
+
+
 2003/03/28 - STanda & joy
 - natfeat/hostfs.cpp: DIRSEPARATOR used wherever possible. Might fix HostFS
   on Windows.
