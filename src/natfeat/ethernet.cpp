@@ -208,6 +208,7 @@ bool ETHERNETDriver::init(void)
 {
 	// int nonblock = 1;
 	char devName[128]="/dev/"TAP_DEVICE;
+	bool result = false;
 
 	D(bug("Ethernet: init"));
 
@@ -234,31 +235,36 @@ bool ETHERNETDriver::init(void)
 		};
 		int result;
 		result = execvp( TAP_INIT, args );
+		D(bug("execvp returns with %d", errno));
 		::exit(result);
 	}
-
 	D(bug("waiting for "TAP_INIT));
 	int status;
-	waitpid(pid, &status, 0);
+	wait3(&status,WNOHANG,NULL);
 	if (WIFEXITED(status)) {
 		if (WEXITSTATUS(status)) {
 			panicbug(TAP_INIT" failed (code %d).", WEXITSTATUS(status));
-			// Close /dev/net/tun device
-			if (fd > 0)
-				close(fd);
 			return false;
 		}
 		else {
+			result = true;
 			D(bug(TAP_INIT" initialized OK"));
 		}
 	} else {
+		fd = -1;
 		D(bug(TAP_INIT"'s fork/exec/waitpid failed badly"));
+	}
+
+	// Close /dev/net/tun device
+	if (fd >= 0) {
+		close(fd);
+		fd = -1;
 	}
 
 	// Set nonblocking I/O
 	//ioctl(fd, FIONBIO, &nonblock);
 
-	return true;
+	return result;
 }
 
 
@@ -284,7 +290,7 @@ void ETHERNETDriver::exit(void)
  */
 bool ETHERNETDriver::startThread(void)
 {
-	if (!handlingThread) {
+	if (!handlingThread && fd>=0) {
 		D(bug("Ethernet: Start thread"));
 
 		if ((intAck = SDL_CreateSemaphore(0)) == NULL) {
