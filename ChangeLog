@@ -1,3 +1,12 @@
+2004/01/30 - milan
+- configure.ac: support better native debugger with gcc and gdb
+
+- Makefile.in: small POSIX update
+
+- ata.cpp: small sync with Bochs (set transfer mode and better controller
+  init)
+
+
 2004/01/29 - joy
 - src/MacOSX/*: suddenly Carlo Baiocco appeared and sent me a complete
   MacOSX Project builder folder. Give it a try, perhaps it finally builds
