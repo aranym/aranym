@@ -23,7 +23,7 @@ extern HostScreen hostScreen;
 #undef SUPPORT_MULTIPLEDESTBPP
 
 
-static const int HW = 0xff8200;
+static const uae_u32 HW = 0xff8200UL;
 
 
 VIDEL::VIDEL()
@@ -32,7 +32,7 @@ VIDEL::VIDEL()
 	// reasonable default values
 	width = 640;
 	height = 480;
-	doRender = true; // the rendering is on by default (VIDEL does the bitplane to chunky converision)
+	doRender = true; // the rendering is on by default (VIDEL does the bitplane to chunky conversion)
 
 	od_posledni_zmeny = 0;
 
@@ -50,6 +50,9 @@ void VIDEL::handleWrite(uaecptr addr, uint8 value)
 
 	if ((addr >= 0xff9800 && addr < 0xffa200) || (addr >= 0xff8240 && addr < 0xff8260))
 		hostColorsSync = false;
+
+	if ((addr & ~3) == HW)	// Atari tries to change the VideoRAM address (after a RESET?)
+		doRender = true;	// that's a sign that Videl should render the screen
 }
 
 long VIDEL::getVideoramAddress()
@@ -315,13 +318,17 @@ void VIDEL::renderScreenNoFlag()
 		if (destBPP == 2) {
 #endif // SUPPORT_MULTIPLEDESTBPP
 
-			if ( /* videocard memory in Motorola endian format */ false) {
-				memcpy(hvram, fvram, planeWordCount << 1);
-			} else {
-				for (int i = 0; i < planeWordCount; i++) {
-					// byteswap
-					int data = fvram[i];
-					((uint16 *) hvram)[i] = (data >> 8) | ((data & 0xff) << 8);
+			// in direct_truecolor mode we set the Videl VIDEORAM directly to the host vram
+			if (! direct_truecolor) {
+				if ( /* videocard memory in Motorola endian format */ false) {
+					memcpy(hvram, fvram, planeWordCount << 1);
+				}
+				else {
+					for (int i = 0; i < planeWordCount; i++) {
+						// byteswap
+						int data = fvram[i];
+						((uint16 *) hvram)[i] = (data >> 8) | ((data & 0xff) << 8);
+					}
 				}
 			}
 
@@ -355,6 +362,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.21  2001/09/19 22:59:44  standa
+ * Some debug stuff; st_compatible_mode variable name changed to stCompatibleColorPalette.
+ *
  * Revision 1.20  2001/09/08 23:33:47  joy
  * atariVideoRAM is at ARANYMVRAMSTART if direct_truecolor is enabled.
  *
