@@ -765,83 +765,10 @@ void Exception(int nr, uaecptr oldpc)
 	exc_make_frame(0, regs.sr, currpc, nr, 0, 0);
     }
     m68k_setpc (get_long (regs.vbr + 4*nr));
+    SPCFLAGS_SET( SPCFLAG_JIT_END_COMPILE );
     fill_prefetch_0 ();
     regs.t1 = regs.t0 = regs.m = 0;
     SPCFLAGS_CLEAR(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
-
-#if 0  
-	if (nr == 2 || nr == 3) {	// 16 words on stack
-	   // internal register
-		m68k_areg(regs, 7) -= 4;
-		put_long (m68k_areg(regs, 7), 0);
-
-		// data to write
-		m68k_areg(regs, 7) -= 4;
-		put_long (m68k_areg(regs, 7), 0);
-
-	    	// internal register
-		m68k_areg(regs, 7) -= 4;
-		put_long (m68k_areg(regs, 7), 0);
-
-		// data to write
-		m68k_areg(regs, 7) -= 4;
-		put_long (m68k_areg(regs, 7), last_fault_for_exception_3);
-
-	    	// instruction B prefetch
-		m68k_areg(regs, 7) -= 2;
-		put_word (m68k_areg(regs, 7), get_word(regs.pc+2, false));
-
-	    	// instruction C prefetch
-		m68k_areg(regs, 7) -= 2;
-		put_word (m68k_areg(regs, 7), get_word(regs.pc+4, false));
-
-	    	// special status register ssw
-		m68k_areg(regs, 7) -= 2;
-		put_word (m68k_areg(regs, 7), 0x0100);
-
-	    	// internal register
-		m68k_areg(regs, 7) -= 2;
-		put_word (m68k_areg(regs, 7), 0);
-
-		// vector offset
-	    m68k_areg(regs, 7) -= 2;
-	    put_word (m68k_areg(regs, 7), 0xa000 + nr * 4);
-
-		// PC
-    	    m68k_areg(regs, 7) -= 4;
-    	    put_long (m68k_areg(regs, 7), currpc);
-	    goto kludge_me_do;
-	} else if (nr ==5 || nr == 6 || nr == 7 || nr == 9) {
-	    m68k_areg(regs, 7) -= 4;
-	    put_long (m68k_areg(regs, 7), oldpc);
-	    m68k_areg(regs, 7) -= 2;
-	    put_word (m68k_areg(regs, 7), 0x2000 + nr * 4);
-	} else if (regs.m && nr >= 24 && nr < 32) {
-	    m68k_areg(regs, 7) -= 2;
-	    put_word (m68k_areg(regs, 7), nr * 4);
-	    m68k_areg(regs, 7) -= 4;
-	    put_long (m68k_areg(regs, 7), currpc);
-	    m68k_areg(regs, 7) -= 2;
-	    put_word (m68k_areg(regs, 7), regs.sr);
-	    regs.sr |= (1 << 13);
-	    regs.msp = m68k_areg(regs, 7);
-	    m68k_areg(regs, 7) = regs.isp;
-	    m68k_areg(regs, 7) -= 2;
-	    put_word (m68k_areg(regs, 7), 0x1000 + nr * 4);
-	} else {
-	    m68k_areg(regs, 7) -= 2;
-	    put_word (m68k_areg(regs, 7), nr * 4);
-	}
-    m68k_areg(regs, 7) -= 4;
-    put_long (m68k_areg(regs, 7), currpc);
-kludge_me_do:
-    m68k_areg(regs, 7) -= 2;
-    put_word (m68k_areg(regs, 7), regs.sr);
-    m68k_setpc (get_long (regs.vbr + 4*nr, false));
-    fill_prefetch_0 ();
-    regs.t1 = regs.t0 = regs.m = 0;
-    regs.spcflags &= ~(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
-#endif
 }
 
 static void Interrupt(int nr)
