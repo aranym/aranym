@@ -59,37 +59,24 @@ void init_fdc();				// fdc.cpp
 extern int irqindebug;
 
 static int keyboardTable[0x80] = {
-/* 0-7 */ 0, SDLK_ESCAPE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5,
-		SDLK_6,
-/* 8-f */ SDLK_7, SDLK_8, SDLK_9, SDLK_0, SDLK_EQUALS, SDLK_QUOTE,
-		SDLK_BACKSPACE, SDLK_TAB,
-/*10-17*/ SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u,
-		SDLK_i,
-/*18-1f*/ SDLK_o, SDLK_p, SDLK_LEFTPAREN, SDLK_RIGHTPAREN, SDLK_RETURN,
-		SDLK_LCTRL, SDLK_a, SDLK_s,
-/*20-27*/ SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k, SDLK_l,
-		SDLK_SEMICOLON,
-/*28-2f*/ SDLK_QUOTE, SDLK_HASH, SDLK_LSHIFT, SDLK_BACKQUOTE, SDLK_z,
-		SDLK_x, SDLK_c, SDLK_v,
-/*30-37*/ SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH,
-		SDLK_RSHIFT, 0,
-/*38-3f*/ SDLK_LALT, SDLK_SPACE, SDLK_CAPSLOCK, SDLK_F1, SDLK_F2,
-		SDLK_F3, SDLK_F4, SDLK_F5,
-/*40-47*/ SDLK_F6, SDLK_F7, SDLK_F8, SDLK_F9, SDLK_F10, 0, 0,
-		SDLK_HOME,
-/*48-4f*/ SDLK_UP, 0, SDLK_KP_PLUS, SDLK_LEFT, 0, SDLK_RIGHT,
-		SDLK_KP_MINUS, 0,
-/*50-57*/ SDLK_DOWN, 0, SDLK_INSERT, SDLK_DELETE, SDLK_F11, SDLK_F12,
-		0, 0,
+/* 0-7 */ 0, SDLK_ESCAPE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6,
+/* 8-f */ SDLK_7, SDLK_8, SDLK_9, SDLK_0, SDLK_EQUALS, SDLK_QUOTE, SDLK_BACKSPACE, SDLK_TAB,
+/*10-17*/ SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,
+/*18-1f*/ SDLK_o, SDLK_p, SDLK_LEFTPAREN, SDLK_RIGHTPAREN, SDLK_RETURN, SDLK_LCTRL, SDLK_a, SDLK_s,
+/*20-27*/ SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k, SDLK_l, SDLK_SEMICOLON,
+/*28-2f*/ SDLK_QUOTE, SDLK_HASH, SDLK_LSHIFT, SDLK_BACKQUOTE, SDLK_z, SDLK_x, SDLK_c, SDLK_v,
+/*30-37*/ SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_RSHIFT, 0,
+/*38-3f*/ SDLK_LALT, SDLK_SPACE, SDLK_CAPSLOCK, SDLK_F1, SDLK_F2, SDLK_F3, SDLK_F4, SDLK_F5,
+/*40-47*/ SDLK_F6, SDLK_F7, SDLK_F8, SDLK_F9, SDLK_F10, 0, 0, SDLK_HOME,
+/*48-4f*/ SDLK_UP, 0, SDLK_KP_PLUS, SDLK_LEFT, 0, SDLK_RIGHT, SDLK_KP_MINUS, 0,
+/*50-57*/ SDLK_DOWN, 0, SDLK_INSERT, SDLK_DELETE, 0, 0, 0, 0,
 /*58-5f*/ 0, 0, 0, 0, 0, 0, 0, 0,
-	/*60-67*/ SDLK_LESS, SDLK_PAGEDOWN, SDLK_PAGEUP, 0 /* NumLock */ ,
-		SDLK_KP_DIVIDE, SDLK_KP_MULTIPLY, SDLK_KP_MINUS, SDLK_KP7,
-/*68-6f*/ SDLK_KP8, SDLK_KP9, SDLK_KP4, SDLK_KP5, SDLK_KP6, SDLK_KP1,
-		SDLK_KP2, SDLK_KP3,
-/*70-72*/ SDLK_KP0, SDLK_KP_PERIOD, SDLK_KP_ENTER
+/*60-67*/ SDLK_LESS, SDLK_PAGEDOWN, SDLK_PAGEUP, 0 /* NumLock */ , SDLK_KP_DIVIDE, SDLK_KP_MULTIPLY, SDLK_KP_MINUS, SDLK_KP7,
+/*68-6f*/ SDLK_KP8, SDLK_KP9, SDLK_KP4, SDLK_KP5, SDLK_KP6, SDLK_KP1, SDLK_KP2, SDLK_KP3,
+/*70-77*/ SDLK_KP0, SDLK_KP_PERIOD, SDLK_KP_ENTER, 0, 0, 0, 0, 0,
+/*78-7f*/ 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static int buttons[3] = { 0, 0, 0 };
 bool updateScreen = true;
 #define MAXDRIVES	32
 int drive_fd[MAXDRIVES];
@@ -117,21 +104,151 @@ void insert_floppy(bool rw = false)
 	}
 }
 
+bool grabbedMouse = false;
+bool hiddenMouse = false;
+bool canGrabAgain = true;
+
+void hideMouse(bool hide) {
+	if (hide) {
+		SDL_ShowCursor(SDL_DISABLE);
+		hiddenMouse = true;
+	}
+	else if (!hide) {
+		SDL_ShowCursor(SDL_ENABLE);
+		hiddenMouse = false;
+	}
+}
+
+void grabMouse(bool grab) {
+	int current = SDL_WM_GrabInput(SDL_GRAB_QUERY);
+	if (grab && current != SDL_GRAB_ON) {
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+		grabbedMouse = true;
+		hideMouse(true);
+	}
+	else if (!grab && current != SDL_GRAB_OFF) {
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
+		grabbedMouse = false;
+	}
+}
+
+static int sdl_mousex, sdl_mousey;
+static int but = 0;
+/* mouse from STonX's ikbd.c */
+/*
+static int ox=0, oy=0, px=0,py=0;
+
+void ikbd_send_relmouse (void)
+{
+	// ikbd_send (0xf8 | (btn[0]<<1) | btn[1]);
+	ikbd_send (0xf8 | but);
+	ikbd_send (px-ox);
+	ikbd_send (py-oy);
+	ox = px;
+	oy = py;
+}
+
+void ikbd_adjust (int dx, int dy)
+{
+	int tx=dx,ty=dy;
+
+	while (dx < -128 || dx > 127 || dy < -128 || dy > 127)
+	{
+		if (dx < -128) tx=-128;
+		else if (dx > 127) tx=127;
+		if (dy < -128) ty=-128;
+		else if (dy > 127) ty=127;
+		// ikbd_send (0xf8 | (btn[0]<<1) | btn[1]);
+		ikbd_send (0xf8 | but);
+		ikbd_send (tx);
+		ikbd_send (ty);
+		dx -= tx;
+		dy -= ty;
+	}
+	if (dy != 0 || dx != 0)
+	{
+		// ikbd_send (0xf8 | (btn[0]<<1) | btn[1]);
+		ikbd_send (0xf8 | but);
+		ikbd_send (dx);
+		ikbd_send (dy);
+	}
+	ox=px;
+	oy=py;
+}
+
+void ikbd_button (int button, int pressed)
+{
+    // handle two buton mice
+    if(button == 3) button = 2;
+
+	btn[button-1] = pressed;
+#if KB_DEBUG
+	fprintf (stderr, "IKBD sends button %d press (%d)\n",button,pressed);
+#endif
+	ikbd_send_relmouse();
+}
+
+void ikbd_pointer (int x, int y)
+{
+	px = x;
+	py = y;
+#if !NO_FLOODING
+	ikbd_send_relmouse();
+#endif
+}
+
+void updateXMouse(int xmouse_x, int xmouse_y) {
+	// frequently check the TOS mouse position and
+	// update it if the x mouse has moved and the ikbd
+	// buffer is empty, this is done here, because the
+	// buffer might have been full when the event occured
+      
+	  // get TOS mouse position
+	  int tx = HWget_w(0xf90002); // LM_W(MEM(abase-GCURX));
+	  int ty = HWget_w(0xf90000); // LM_W(MEM(abase-GCURY));
+
+	  int old_shiftmod = 0;
+	  int ikbd_inbuf = isIkbdBufEmpty() ? 0 : 1;
+
+	  // compensate zoom in st mid
+	  if(old_shiftmod == 1) ty *= 2;
+	  
+	  // match X and TOS mouse 
+	  if((ikbd_inbuf == 0)&&
+	     ((xmouse_x != tx)||(xmouse_y != ty))&&
+	     (xmouse_x != -1)) {
+	    // fprintf(stderr, "Adjusting %dx%d -> %dx%d\n", xmouse_x, xmouse_y, tx, ty);
+	    
+	    if(old_shiftmod == 1) 
+	      ikbd_adjust (xmouse_x-tx, (xmouse_y-ty)/2);
+	    else
+	      ikbd_adjust (xmouse_x-tx, xmouse_y-ty);
+	  }
+}
+end of STonX's borrowed code */
+
 static void check_event(void)
 {
+	static bool pendingQuit = false;
+
+	if (pendingQuit)
+		QuitEmulator();
+
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		int type = event.type;
 		if (type == SDL_KEYDOWN || type == SDL_KEYUP) {
 			bool pressed = (type == SDL_KEYDOWN);
 			int sym = event.key.keysym.sym;
+			bool shifted = SDL_GetModState() & KMOD_SHIFT;
 
 			if (pressed) {
 				// process some hotkeys
-				if (sym == SDLK_END)
-					QuitEmulator();
+				if (sym == SDLK_PAUSE && shifted) {
+					pendingQuit = true;
+				}
 				else if (sym == SDLK_F11)
-					insert_floppy(SDL_GetModState() & KMOD_SHIFT);
+					insert_floppy(shifted);
 				else if (sym == SDLK_F12)
 					remove_floppy();
 			}
@@ -152,25 +269,22 @@ static void check_event(void)
 			}
 		}
 		else if (type == SDL_MOUSEBUTTONDOWN || type == SDL_MOUSEBUTTONUP
-				 || type == SDL_MOUSEMOTION) {
+				 || type == SDL_MOUSEMOTION && grabbedMouse) {
 			int xrel = 0;
 			int yrel = 0;
-			static int but = 0;
 			int lastbut = but;
-			if (type == SDL_MOUSEMOTION) {
-				SDL_MouseMotionEvent eve = event.motion;
-				//eve.type/state/x,y/xrel,yrel
-				xrel = eve.xrel;
-				if (xrel < -127 || xrel > 127)
-					xrel = 0;
-				yrel = eve.yrel;
-				if (yrel < -127 || yrel > 127)
-					yrel = 0;
-			}
-			else if (type == SDL_MOUSEBUTTONDOWN) {
+			if (type == SDL_MOUSEBUTTONDOWN) {
 				// eve.type/state/button
-				if (event.button.button == SDL_BUTTON_RIGHT)
-					but |= 1;
+				if (event.button.button == SDL_BUTTON_RIGHT) {
+					if (SDL_GetModState() & KMOD_CTRL) {
+						// right mouse button + Control key = grab/ungrab mouse
+						grabMouse(false);	// release mouse
+						hideMouse(false);	// show it
+						canGrabAgain = false;	// let user quit the window before it's grabbed again
+					}
+					else
+						but |= 1;
+				}
 				else if (event.button.button == SDL_BUTTON_LEFT)
 					but |= 2;
 			}
@@ -180,57 +294,100 @@ static void check_event(void)
 				else if (event.button.button == SDL_BUTTON_LEFT)
 					but &= ~2;
 			}
+#if 0
+			if (type == SDL_MOUSEMOTION) {
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+				updateXMouse(x, y);
+			}
+#else
+			else if (type == SDL_MOUSEMOTION) {
+				SDL_MouseMotionEvent eve = event.motion;
+				xrel = eve.xrel;
+				yrel = eve.yrel;
+/*
+				//eve.type/state/x,y/xrel,yrel
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+				xrel = x - sdl_mousex;
+				yrel = y - sdl_mousey;
+				// fprintf(stderr, "Mouse abs %dx%d, rel %dx%d nebo %dx%d\n", x, y, eve.xrel, eve.yrel, xrel, yrel);
+				sdl_mousex = x;
+				sdl_mousey = y;
+*/
+				if (xrel < -127 || xrel > 127)
+					xrel = 0;
+				if (yrel < -127 || yrel > 127)
+					yrel = 0;
+			}
 			if (xrel || yrel || lastbut != but) {
 				ikbd_send(0xf8 | but);
 				ikbd_send(xrel);
 				ikbd_send(yrel);
-				// fprintf(stderr, "Mouse: %dx%d\t", xrel, yrel);
+				// fprintf(stderr, "Mouse: %dx%d\tLineA=%dx%d\t", xrel, yrel, HWget_w(0xf90000), HWget_w(0xf90002));
 			}
+#endif
 		}
-/*
 		else if (event.type == SDL_ACTIVEEVENT) {
-			if (event.state == SDL_APPMOUSEFOCUS) {
-				if (event.gain) {
-					// mouse entered our window -> update the Atari mouse position
-
+			if (event.active.state == SDL_APPMOUSEFOCUS) {
+				if (event.active.gain) {
+					if ((SDL_GetAppState() & SDL_APPINPUTFOCUS) && canGrabAgain) {
+						fprintf(stderr, "Mouse entered our window\n");
+						hideMouse(true);
+						if (false /* are we able to sync TOS and host mice? */) {
+							// sync the position of ST mouse with the X mouse cursor (or vice-versa?)
+						}
+						else {
+							// we got to grab the mouse completely, otherwise they'd be out of sync
+							grabMouse(true);
+						}
+					}
+				}
+				else {
+					fprintf(stderr, "Mouse left our window\n");
+					canGrabAgain = true;
+					hideMouse(false);
 				}
 			}
 		}
-*/
-		else if (event.type == SDL_QUIT)
-			QuitEmulator();
+		else if (event.type == SDL_QUIT) {
+			pendingQuit = true;
+		}
 	}
 }
 
 
+/*
+ * my_callback_function() is called every 10 miliseconds (~ 100 Hz)
+ */
 Uint32 my_callback_function(Uint32 interval, void *param)
 {
 	static int VBL_counter = 0;
+	static int refreshCounter = 0;
 
 	if (!debugging || irqindebug)
-		MakeMFPIRQ(5);
+		MakeMFPIRQ(5);				// TimerC interrupt (synchronized to 200 Hz internally)
 
-	if ((VBL_counter % 2) == 1) {
-		if (!debugging || irqindebug) {
-			check_event();		// check keyboard/mouse 100 times per second
-		}
-	}
-	if (++VBL_counter == 4) {
+	if (++VBL_counter == 2) {		// divided by 2 => 50 Hz VBL
 		VBL_counter = 0;
 
 		if (!debugging || irqindebug) {
-			TriggerVBL();
+			check_event();				// process keyboard and mouse events
+			TriggerVBL();				// generate VBL
 		}
 
-		if (direct_truecolor) {
-			// SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, getSDLScreenWidth(), getSDLScreenHeight());
-		}
-		else {
-			if ( updateScreen )
-				renderScreen();
+		if (++refreshCounter == 2) {	// divided by 2 again ==> 25 Hz screen update
+			if (direct_truecolor) {
+				// SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, getSDLScreenWidth(), getSDLScreenHeight());
+			}
+			else {
+				if ( updateScreen )
+					renderScreen();
+			}
+			refreshCounter = 0;
 		}
 	}
-	return 5;					// come back in 5 miliseconds, if possible
+	return 10;					// come back in 10 milliseconds
 }
 
 /*
@@ -238,6 +395,9 @@ Uint32 my_callback_function(Uint32 interval, void *param)
  */
 #define ErrorAlert(a)	fprintf(stderr, a)
 
+#ifdef __cplusplus
+extern "C"
+#endif
 int main(int argc, char **argv)
 {
 	char str[256];
@@ -253,9 +413,10 @@ int main(int argc, char **argv)
 
 	// grab mouse
 	if (grab_mouse) {
-		SDL_ShowCursor(SDL_DISABLE);
-		SDL_WM_GrabInput(SDL_GRAB_ON);
+		grabMouse(true);
 	}
+	// hide mouse unconditionally
+	hideMouse(true);
 
 	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
 
@@ -332,7 +493,7 @@ int main(int argc, char **argv)
 		QuitEmulator();
 	D(bug("Initialization complete\n"));
 
-	my_timer_id = SDL_AddTimer(5, my_callback_function, NULL);
+	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
 
 	// Start 68k and jump to ROM boot routine
 	D(bug("Starting emulation...\n"));
@@ -364,6 +525,8 @@ void QuitEmulator(void)
 
 	// Free ROM/RAM areas
 	free(RAMBaseHost);
+
+	SDL_VideoQuit();
 
 	exit(0);
 }
