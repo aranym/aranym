@@ -1,6 +1,7 @@
 2001/10/18 - joy
 - MD5 class added
 - InitROM() detects both our ABTOS and the original TOS 4.04.
+- InitROM() patches TOS 4.04
 
 
 2001/10/17 - STanda
