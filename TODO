@@ -2,14 +2,7 @@ Things to do (written by Joy, volunteers ask in the mailing list)
 -----------------------------------------------------------------
 
 TODO generally:
-- put 'program_name' back, windows rely on it
 - configurable insertion of floppy on bootup (perhaps also IDE CD?)
-- NatFeat XHDI should share disk access with the Falcon IDE (ata.cpp)
-  This solves also the danger of changing byteswap at runtime since
-  ata does not react to the change until ide->init() is called (at reboot)
-- make install must call chown root aratapif, or the documentation must
-  mention calling it otherwise chmod u+s has no effect.
-- Alt+Ctrl+Esc in fullscreen should switch to window mode, if possible
 
 TODO in keyboard support:
 - editable hotkeys (releasing input grab, Setup GUI, PrintScreen) [0.8.6]
@@ -36,7 +29,7 @@ TODO in TOS patches and utilities:
 - PureC patch more error-proof
 - separate mouse driver from Clocky and make it NatFeat based
 - enforce 0x50000 _MCH value (also in EmuTOS)
-- finish and publish XHDI disk driver
+- finish and publish TOS XHDI disk driver
 
 TODO in documentation:
 - README and doc/documentation.txt largely overlap. Must be fixed ASAP
