@@ -49,11 +49,6 @@
 
 #define METADOS_DRV
 
-#define XMOUSEHACK
-#ifdef XMOUSEHACK
-	static int ox=0, oy=0;
-#endif
-
 // Constants
 const char ROM_FILE_NAME[] = DATADIR "/ROM";
 const int SIG_STACK_SIZE = SIGSTKSZ;	// Size of signal stack
@@ -124,45 +119,22 @@ void hideMouse(bool hide) {
 	if (hide) {
 		SDL_ShowCursor(SDL_DISABLE);
 		hiddenMouse = true;
-
-		#ifdef XMOUSEHACK
-			SDL_WarpMouse(ox, oy);
-		#endif
 	}
 	else if (!hide) {
 		SDL_ShowCursor(SDL_ENABLE);
 		hiddenMouse = false;
-
-		#ifdef XMOUSEHACK
-			SDL_GetMouseState(&ox, &oy);
-		#endif
 	}
 }
 
 void grabMouse(bool grab) {
-#ifndef XMOUSEHACK
 	int current = SDL_WM_GrabInput(SDL_GRAB_QUERY);
-#else
-	int current = grabbedMouse ? SDL_GRAB_ON : SDL_GRAB_OFF;
-#endif
-
 	if (grab && current != SDL_GRAB_ON) {
-		#ifndef XMOUSEHACK
-			SDL_WM_GrabInput(SDL_GRAB_ON);
-		#else
-			SDL_WarpMouse(ox, oy); // STanda
-		#endif
-
+		SDL_WM_GrabInput(SDL_GRAB_ON);
 		grabbedMouse = true;
 		hideMouse(true);
 	}
 	else if (!grab && current != SDL_GRAB_OFF) {
-		#ifndef XMOUSEHACK
-			SDL_WM_GrabInput(SDL_GRAB_OFF);
-        #else
-			SDL_GetMouseState(&ox, &oy);
-		#endif
-
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
 		grabbedMouse = false;
 	}
 }
@@ -581,6 +553,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.27  2001/06/18 20:02:50  standa
+ * XMOUSEHACK define... just a test.
+ *
  * Revision 1.26  2001/06/18 13:21:55  standa
  * Several template.cpp like comments were added.
  * HostScreen SDL encapsulation class.
