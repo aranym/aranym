@@ -1,3 +1,7 @@
+2005/01/25 - Patrice
+- parallel: small fixes.
+
+
 2005/01/25 - Andreas
 - uae_cpu/cpummu.cpp, uae_cpu/memory.h: Fix wrong size field in ssw.
 

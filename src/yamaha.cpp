@@ -44,6 +44,8 @@ void YAMAHA::reset()
 	active_reg = 0;
 	for(unsigned int i=0; i<sizeof(yamaha_regs)/sizeof(yamaha_regs[0]); i++)
 		yamaha_regs[i] = 0;
+
+	parallel->reset();
 }
 
 uint8 YAMAHA::handleRead(memptr addr) {

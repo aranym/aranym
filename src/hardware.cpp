@@ -35,7 +35,9 @@
 #include "hostscreen.h"
 #include "parallel.h"
 #include "parallel_file.h"
+#ifdef ENABLE_PARALLELX86
 #include "parallel_x86.h"
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -66,6 +68,15 @@ BASE_IO *arhw[iITEMS];
 
 void HWInit()
 {
+	{
+#ifdef ENABLE_PARALLELX86
+		if (strcmp("x86", bx_options.parallel.type)==0)
+			parallel = new ParallelX86;
+		else
+#endif
+			parallel = new ParallelFile;
+	}
+
 	arhw[iMFP] = mfp = new MFP(0xfffa00, 0x30);
 	arhw[iMMU] = mmu = new MMU(0xff8000, 8);
 	arhw[iIKBD] = ikbd = new IKBD(0xfffc00, 4);
@@ -84,16 +95,6 @@ void HWInit()
 	arhw[iSCC] = new BASE_IO(0xff8c80, 0x16);
 	arhw[iPADDLE] = new BASE_IO(0xff9200, 0x24);
 	arhw[iCARTRIDGE] = new BASE_IO(0xfa0000, 0x20000);
-
-#ifdef ENABLE_PARALLELX86
-	if (strcmp("x86", bx_options.parallel.type)==0) {
-		parallel = new ParallelX86;
-	}
-	else
-#endif
-	{
-		parallel = new ParallelFile;
-	}
 }
 //	{"DMA/SCSI", 0xff8700, 0x16, &fake_io},
 // 	{"SCSI", 0xff8780, 0x10, &fake_io},
