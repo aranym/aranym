@@ -223,7 +223,14 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			size = 1;
 			instruction = INSTR_MOVIMM8;
 			reg = (addr_instr[1] >> 3) & 7;
-			imm = addr_instr[2];	// JOY: was 2
+			// imm = addr_instr[3];	// JOY: was 2
+			switch(addr_instr[1] & 0x07) {
+				case 0: imm = addr_instr[2]; break;
+				case 4: imm = addr_instr[3]; break;
+				case 5: imm = addr_instr[6]; break; // used in JIT raw_mov_b_mi
+				default:
+					panicbug("MOV m8, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+			}
 			len += 3 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0xc7:
