@@ -1,3 +1,10 @@
+2002/04/10 - joy
+- fixed bug in Reset insn emulation that caused EmuTOS crash
+- uae_cpu/spcflags.h cleaned up. NMI flag introduced.
+  I also added the MFP|VBL|NMI into periodic flags check (wondering
+  how it could work before).
+
+
 2002/04/10 - milan
 - IDE: synced with Bochs CVS (concat_image_t(), not used in ARAnyM now, but
        who knows)
