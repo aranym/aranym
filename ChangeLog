@@ -1,4 +1,14 @@
-2001/10/29
+2001/10/29 - joy
+- --floppy <path> added to the command line options
+
+- --rom <path> removed
+
+- EmuTOS=<path> in the config file. EmuTOS gets a higher priority over the TOS.
+
+- updated aranymrc.example
+
+
+2001/10/29 - milan
 - ARAnyM can be used now without support of debugger (--enable-debug=no)
 
 - ndebug can be activated now also if you send SIGINT to ARAnyM (and that's

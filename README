@@ -49,8 +49,8 @@ If you got the source archive from cvs then run ./autogen.sh instead.
 Then compile it by typing "make".  If all works fine, you'll get the
 executable "aranym".
 
-Then you'll have to copy a 68040 friendly TOS 4.04 ROM image to the
-following path: "/usr/local/share/aranym/ROM".
+Then you'll have to obtain the original TOS 4.04 from Falcon. Copy it
+to the following path: "/usr/local/share/aranym/ROM".
 You can change this path either before compiling (try ./configure --help)
 or in the ARAnyM configuration file located in ~/.aranymrc
 (~/ is your home folder).
@@ -89,9 +89,6 @@ PageUp/PageDown are mapped to Shift+ArrowUp/ArrowDown which is the
 most used combination in GEM programs.
 
 Alt+PrintScreen grabs a screenshot.
-
-ScrollLock inserts/removes (mounts/unmounts) a floppy.
-For read-write mount press Shift+ScrollLock.
 
 
  5) More information

@@ -1,3 +1,14 @@
+2001/10/29
+==========
+--rom removed
+--floppy added
+
+aranymrc.example updated
+
+.aranymrc has a new option "EmuTOS" that holds a path to the EmuTOS.
+When "EmuTOS=" is defined the "TOS=" is ignored (EmuTOS is the future! :)
+
+
 2001/10/18
 ==========
 
