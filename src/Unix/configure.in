@@ -27,7 +27,7 @@ AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU 
 
 AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 [default=no]], [WANT_DSP=$enableval], [WANT_DSP=no])
 
-AC_ARG_ENABLE(dspdisasm,       [  --enable-dspdisasm     enable DSP 56001 disassembly [default=no]], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
+AC_ARG_ENABLE(dspdisasm,       [  --enable-dspdisasm      enable DSP 56001 disassembly [default=no]], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
 
 AC_ARG_ENABLE(sdltimer,        [  --enable-sdltimer       use SDL Timer for Timer C [default=yes]], [WANT_SDLTIMER=$enableval], [WANT_SDLTIMER=yes])
 
