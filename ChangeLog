@@ -1,3 +1,22 @@
+2004/02/22 - joy on behalf of Carlo
+- MacOSX/*: I have solved the problem with DIRSEPARATOR and ARANYM_DATADIR
+  defines in my project. I have modified the shell script that call autogen.sh:
+  now calls it only if it exist (on official release autogen.sh is missing),
+  otherwise it calls configure.
+  I have added the directory "pkg_support": in this directory there are
+  instructions and files to build an installer package for aranym.
+  I have removed "aranym_for_library" directory: this is not needed for the
+  new installing method.
+
+  The directories ".aranym" "usr" "etc"... are all hidden under MacOSX Finder
+  so they are accessible only through the terminal window.
+  I have renamed ".aranym" in "Aranym_files" and moved the data dir in
+  $HOME/Documents/Aranym_files. In this manner they are accessible through the
+  Finder.
+  I have modified paths in conficure.ac so they are correctly expanded
+  in configure.
+
+
 2004/02/19 - Xavier
 - gui-sdl/sdlgui.cpp : SG_DISABLED state now ready for use.
 
