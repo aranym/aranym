@@ -1,3 +1,6 @@
+2003/04/22 - johan
+- fvdidrv.cpp: Reverse transparent mode for vrt_cpyfm corrected.
+
 2003/04/16 - patrice
 - Corrected inclusion of SDL headers.
   Removed useless glut library linking.
