@@ -16,6 +16,8 @@ static struct option const long_options[] =
   {"resolution", required_argument, 0, 'r'},
   {"debug", no_argument, 0, 'd'},
   {"fullscreen", no_argument, 0, 'f'},
+  {"direct_truecolor", no_argument, 0, 't'},
+  {"monitor", required_argument, 0, 'm'},
   {"help", no_argument, 0, 'h'},
   {"version", no_argument, 0, 'V'},
   {NULL, 0, NULL, 0}
@@ -28,6 +30,8 @@ uint8 start_debug = 0;			// Start debugger
 uint8 fullscreen = 0;			// Boot in Fullscreen
 uint16 boot_color_depth = 1;		// Boot in color depth
 extern uint32 TTRAMSize;		// TTRAM size
+bool direct_truecolor = false;
+uint8 monitor = 0;				// VGA
 
 static void decode_ini_file(void);
 
@@ -40,7 +44,9 @@ Options:
   -T, --ttram SIZE           TT-RAM size\n\
   -d, --debug                start debugger\n\
   -f, --fullscreen           start in fullscreen\n\
+  -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
+  -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
@@ -55,8 +61,10 @@ int decode_switches (int argc, char **argv) {
   while ((c = getopt_long (argc, argv,
                            "R:" /* ROM file */
                            "d"  /* debugger */
-			   "T:" /* TT-RAM */
+							"T:" /* TT-RAM */
                            "f"  /* fullscreen */
+                           "t"  /* direct truecolor */
+                           "m:"  /* attached monitor */
                            "r:"  /* resolution */
 			   "h"	/* help */
 			   "V"	/* version */,
@@ -75,6 +83,16 @@ int decode_switches (int argc, char **argv) {
 	
       case 'f':
         fullscreen = 1;
+        break;
+	
+      case 't':
+        direct_truecolor = true;
+        fullscreen = 1;
+        boot_color_depth = 16;
+        break;
+
+      case 'm':
+        monitor = atoi(optarg);
         break;
 	
       case 'R':
