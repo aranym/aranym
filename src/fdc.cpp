@@ -17,6 +17,9 @@
 #include "memory.h"
 #include <stdio.h>
 #include <unistd.h>
+#include "parameters.h"
+
+#define DEBUG 1
 #include "debug.h"
 
 struct disk_geom
@@ -24,15 +27,52 @@ struct disk_geom
 	int head, sides, tracks, sectors, secsize;
 } disk[2];
 
-extern int drive_fd[];
+int drive_fd[2] = { -1, -1 };
 
 int dma_mode,dma_scr,dma_car,dma_sr;
 int fdc_command,fdc_track,fdc_sector,fdc_data,fdc_int,fdc_status;
+
+void remove_floppy()
+{
+	if (drive_fd[0] >= 0) {
+		close(drive_fd[0]);
+		drive_fd[0] = -1;
+		D(bug("Floppy removed"));
+	}
+}
+
+bool insert_floppy()
+{
+	remove_floppy();
+
+	char *path = bx_options.floppy.path;
+
+	if (strlen(path) == 0)	// is path to floppy defined?
+		return false;
+
+	int status = open(path, O_RDWR | O_SYNC);
+	bool rw = true;
+	if (status < 0) {
+		status = open(path, O_RDONLY);
+		rw = false;
+	}
+	if (status < 0) {
+		D(bug("Inserting of floppy failed."));
+		return false;
+	}
+
+	D(bug("Floppy inserted %s", rw ? "read-write" : "read-only"));
+	drive_fd[0] = status;
+	return true;
+}
 
 void init_fdc(void)
 {
 	int i;
 	unsigned char buf[512];
+
+	insert_floppy();
+
 	for (i=0; i<2; i++)
 	{
 		int fd=drive_fd[i];
@@ -53,9 +93,9 @@ void init_fdc(void)
 				int delitel = (disk[i].sides*disk[i].sectors);
 				if (delitel != 0)
 					disk[i].tracks=((int)(buf[20]<<8)|buf[19])/
-				fprintf(stderr,"FDC %c: %d/%d/%d %d bytes/sector\n",
+				D(bug("FDC %c: %d/%d/%d %d bytes/sector",
 					'A'+i,disk[i].sides,disk[i].tracks,disk[i].sectors,
-					disk[i].secsize);
+					disk[i].secsize));
 			}
 		}
 	}
@@ -158,7 +198,13 @@ void fdc_exec_command (void)
 			switch(fdc_command & 0xf0)
 			{
 				case 0x80:
-					D(bug("\tFDC READ SECTOR %d to 0x%06lx", dma_scr,address));
+					D(bug("\tFDC READ SECTOR %d to 0x%06lx", offset/disk[d].secsize/*dma_scr*/,address));
+					// special hack for remounting physical floppy on media change
+					if (offset == 0) {
+						D(bug("Trying to remount the floppy - media change requested?"));
+						// reading boot sector might indicate media change
+						// init_fdc();
+					}
 					count=dma_scr*disk[d].secsize;
 					if (lseek(drive_fd[d], offset, SEEK_SET)>=0)
 					{
@@ -171,6 +217,9 @@ void fdc_exec_command (void)
 							dma_scr=0;
 							dma_sr=1;
 							break;
+						}
+						else {
+							D(bug("read(%d, %d, %d) didn't return correct len.", drive_fd[d], buffer, count));
 						}
 					}
 					fdc_status |= 0x10;
