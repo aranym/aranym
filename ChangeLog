@@ -1,6 +1,9 @@
 2002/10/07 - milan
 - autoconf 2.53+ needed now
 
+- ndebug.cpp: ISO C++ forbids assignment of arrays, so Patrice's patch
+  completed
+
 
 2002/09/07 - joy (commiting for milan)
 - newcpu.cpp - flush_icache(0) is required otherwise JIT does not work
