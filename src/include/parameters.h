@@ -129,6 +129,14 @@ typedef struct {
   uint32 jitlazyflush;
 } bx_jit_options_t;
 
+// OpenGL options
+typedef struct {
+  bool enabled;
+  uint32 width;
+  uint32 height;
+  uint32 bpp;
+} bx_opengl_options_t;
+
 /*
 typedef struct {
   char      *path;
@@ -151,6 +159,7 @@ typedef struct {
   bx_tos_options_t	tos;
   bx_startup_options_t	startup;
   bx_jit_options_t	jit;
+  bx_opengl_options_t	opengl;
   bool			autoMouseGrab;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;

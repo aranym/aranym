@@ -187,6 +187,28 @@ void presave_video() {
 }
 
 /*************************************************************************/
+struct Config_Tag opengl_conf[]={
+	{ "Enabled", Bool_Tag, &bx_options.opengl.enabled},
+	{ "Width", Int_Tag, &bx_options.opengl.width},
+	{ "Height", Int_Tag, &bx_options.opengl.height},
+	{ "Bpp", Int_Tag, &bx_options.opengl.bpp},
+	{ NULL , Error_Tag, NULL }
+};
+
+void preset_opengl() {
+  bx_options.opengl.enabled = false;
+  bx_options.opengl.width = 640;
+  bx_options.opengl.height = 480;
+  bx_options.opengl.bpp = 16;
+}
+
+void postload_opengl() {
+}
+
+void presave_opengl() {
+}
+
+/*************************************************************************/
 #define BX_DISK_CONFIG(a)	struct Config_Tag a ## _configs[] = {	\
 	{ "Present", Bool_Tag, &bx_options. ## a ## .present},	\
 	{ "IsCDROM", Bool_Tag, &bx_options. ## a ## .isCDROM},	\
@@ -372,6 +394,7 @@ void preset_cfg() {
   preset_tos();
   preset_startup();
   preset_jit();
+  preset_opengl();
 }
 
 void postload_cfg() {
@@ -382,6 +405,7 @@ void postload_cfg() {
   postload_tos();
   postload_startup();
   postload_jit();
+  postload_opengl();
 }
 
 void presave_cfg() {
@@ -392,6 +416,7 @@ void presave_cfg() {
   presave_tos();
   presave_startup();
   presave_jit();
+  presave_opengl();
 }
 
 void check_for_help_version_configfile(int argc, char **argv) {
@@ -600,6 +625,7 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, diskd_configs, "[IDE1]", true);
 	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
+	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
 }
 
 int saveSettings(const char *fs)
@@ -617,6 +643,7 @@ int saveSettings(const char *fs)
 	update_config(fs, diskc_configs, "[IDE0]");
 	update_config(fs, diskd_configs, "[IDE1]");
 	update_config(fs, arafs_conf, "[ARANYMFS]");
+	update_config(fs, opengl_conf, "[OPENGL]");
 
 	return 0;
 }
