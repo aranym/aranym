@@ -111,14 +111,14 @@ static __inline__ uae_u8 *phys_get_real_address(uaecptr addr)
 static __inline__ bool phys_valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     int prb = setjmp(excep_env);
     if (prb != 0) {
-        excep_env = excep_env_old;
+        memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
         return false;
     }
     check_ram_boundary(addr, sz, write);
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
     return true;
 }
 
