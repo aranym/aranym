@@ -34,9 +34,9 @@ enum DISCDLG {
 	IDE0_BROWSE,
 	IDE0_PATH,
 	IDE0_PRESENT,
+	IDE0_CDROM,
 	IDE0_READONLY,
 	IDE0_BYTESWAP,
-	IDE0_CDROM,
 	text_chs0,
 	IDE0_CYL,
 	IDE0_HEAD,
@@ -52,9 +52,9 @@ enum DISCDLG {
 	IDE1_BROWSE,
 	IDE1_PATH,
 	IDE1_PRESENT,
+	IDE1_CDROM,
 	IDE1_READONLY,
 	IDE1_BYTESWAP,
-	IDE1_CDROM,
 	text_chs1,
 	IDE1_CYL,
 	IDE1_HEAD,
@@ -81,9 +81,9 @@ SGOBJ discdlg[] =
   { SGBUTTON, 0, 0,		  2,9, 5,1, "Path:" },
   { SGTEXT, 0, 0,		  7,9, 31,1, NULL },
   { SGCHECKBOX, 0, 0,	28,10, 8,1, "Present" },
-  { SGCHECKBOX, 0, 0,	28,11, 8,1, "ReadOnly" },
-  { SGCHECKBOX, 0, 0,	28,12, 8,1, "ByteSwap" },
-  { SGCHECKBOX, 0, 0,	28,13, 8,1, "CDROM" },
+  { SGCHECKBOX, SG_EXIT, 0,	28,11, 8,1, "CDROM" },
+  { SGCHECKBOX, 0, 0,	28,12, 8,1, "ReadOnly" },
+  { SGCHECKBOX, 0, 0,	28,13, 8,1, "ByteSwap" },
   { SGTEXT, 0, 0,		 2,11, 10,1, "Geo C/H/S:" },
   { SGEDITFIELD, 0, 0,	12,11, 5,1, ide0_cyl},
   { SGEDITFIELD, 0, 0,	19,11, 3,1, ide0_head},
@@ -99,9 +99,9 @@ SGOBJ discdlg[] =
   { SGBUTTON, 0, 0,		 2,17, 5,1, "Path:" },
   { SGTEXT, 0, 0,		 7,17, 31,1, NULL },
   { SGCHECKBOX, 0, 0,	28,18, 8,1, "Present" },
-  { SGCHECKBOX, 0, 0,	28,19, 8,1, "ReadOnly" },
-  { SGCHECKBOX, 0, 0,	28,20, 8,1, "ByteSwap" },
-  { SGCHECKBOX, 0, 0,	28,21, 8,1, "CDROM" },
+  { SGCHECKBOX, SG_EXIT, 0,	28,19, 8,1, "CDROM" },
+  { SGCHECKBOX, 0, 0,	28,20, 8,1, "ReadOnly" },
+  { SGCHECKBOX, 0, 0,	28,21, 8,1, "ByteSwap" },
   { SGTEXT, 0, 0,		 2,19, 10,1, "Geo C/H/S:" },
   { SGEDITFIELD, 0, 0,	12,19, 5,1, ide1_cyl},
   { SGEDITFIELD, 0, 0,	19,19, 3,1, ide1_head},
@@ -137,20 +137,25 @@ void UpdateFloppyStatus(void)
 	discdlg[FLOPPY_MOUNT].txt = is_floppy_inserted() ? eject : insert;
 }
 
+static void HideDiskSettings(int handle, bool state)
+{
+	int start = (handle == 0) ? IDE0_READONLY : IDE1_READONLY;
+	int end = (handle == 0) ? text_size0mb : text_size1mb;
+	// READONLY, BYTESWAP, chs, CYL, HEAD, SEC, size, SIZE, sizemb
+	for(int i=start; i<=end; i++) {
+		setState(i, SG_HIDDEN, state);
+	}
+}
+
 void UpdateCDROMstatus(int handle)
 {
 	int index = (handle == 0) ? IDE0_MOUNT : IDE1_MOUNT;
-  	if (gui_options.atadevice[0][handle].isCDROM) {
+  	bool isCDROM = gui_options.atadevice[0][handle].isCDROM;
+  	if (isCDROM) {
 		discdlg[index].txt = bx_hard_drive.get_cd_media_status(handle) ? eject : insert;
-		discdlg[index].w = 8;
-		discdlg[index].h = 1;
 	}
-	else {
-		// make it invisible, if possible
-		discdlg[index].txt = "";
-		discdlg[index].w = 0;
-		discdlg[index].h = 0;
-	}
+	// MOUNT button visibility
+	setState(index, SG_HIDDEN, !isCDROM);
 }
 
 void RemountCDROM(int handle)
@@ -195,9 +200,10 @@ void Dialog_DiscDlg(void)
   sprintf(ide0_head, "%3d", head);
   sprintf(ide0_spt, "%2d", spt);
   setSelected(IDE0_PRESENT, gui_options.atadevice[0][0].present);
-  setSelected(IDE0_READONLY, gui_options.atadevice[0][0].readonly);
   setSelected(IDE0_CDROM, gui_options.atadevice[0][0].isCDROM);
+  setSelected(IDE0_READONLY, gui_options.atadevice[0][0].readonly);
   setSelected(IDE0_BYTESWAP, gui_options.atadevice[0][0].byteswap);
+  HideDiskSettings(0, gui_options.atadevice[0][0].isCDROM);
 
   // IDE1
   File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path, discdlg[IDE1_PATH].w);
@@ -215,6 +221,7 @@ void Dialog_DiscDlg(void)
   setSelected(IDE1_READONLY, gui_options.atadevice[0][1].readonly);
   setSelected(IDE1_CDROM, gui_options.atadevice[0][1].isCDROM);
   setSelected(IDE1_BYTESWAP, gui_options.atadevice[0][1].byteswap);
+  HideDiskSettings(1, gui_options.atadevice[0][1].isCDROM);
 
   UpdateFloppyStatus();
   UpdateCDROMstatus(0);
@@ -270,6 +277,14 @@ void Dialog_DiscDlg(void)
           	ide1_path[0] = 0;
           }
         }
+        break;
+
+      case IDE0_CDROM:
+  		HideDiskSettings(0, getSelected(IDE0_CDROM));
+        break;
+
+      case IDE1_CDROM:
+  		HideDiskSettings(1, getSelected(IDE1_CDROM));
         break;
 
       case FLOPPY_MOUNT:
