@@ -119,21 +119,12 @@ void TriggerVBL(void)
 	regs.spcflags |= SPCFLAG_VBL;
 }
 
-int mfpCounter5 = 0;
-void TriggerMFP(int no, int count = 1)
+void TriggerMFP(bool enable)
 {
-	if (count < 1)
-		return;
-
-	if (no == 5) {
-		regs.spcflags |= SPCFLAG_MFP_TIMERC;
-		mfpCounter5 += count;
-	}
-	else if (no == 6) {
-		regs.spcflags |= SPCFLAG_MFP_ACIA;
-	}
+	if (enable)
+		regs.spcflags |= SPCFLAG_MFP;
 	else
-		fprintf(stderr, "Unknown MFP interrupt!\n");
+		regs.spcflags &= SPCFLAG_MFP;
 }
 
 void TriggerNMI(void)

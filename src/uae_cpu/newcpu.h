@@ -22,8 +22,7 @@
 #define SPCFLAG_DOTRACE 128
 #define SPCFLAG_DOINT 256
 #define SPCFLAG_VBL 512
-#define SPCFLAG_MFP_TIMERC 1024
-#define SPCFLAG_MFP_ACIA 2048
+#define SPCFLAG_MFP 1024
 #define SPCFLAG_MODE_CHANGE 8192
 
 extern int areg_byteinc[];

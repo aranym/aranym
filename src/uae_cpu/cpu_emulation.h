@@ -83,7 +83,7 @@ extern "C" void Execute68kTrap(uint16 trap, M68kRegisters *r);	// Execute Atari 
 // Interrupt functions
 // extern void TriggerInterrupt(void);	// Trigger interrupt level 1 (InterruptFlag must be set first)
 extern void TriggerVBL(void);		// Trigger interrupt level 4
-extern void TriggerMFP(int, int count = 1);	// Trigger interrupt level 6
+extern void TriggerMFP(bool);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
 
 static uaecptr showPC(void) { return regs.pcp; }	// for debugging only
