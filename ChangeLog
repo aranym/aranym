@@ -1,6 +1,8 @@
 2003/09/03 - milan
 - CPU flight recorder from BasiliskII ported and SR support added
 
+- ndebug compilation warnings fixed
+
 
 2003/08/29 - milan
 - some compiler warnings solved

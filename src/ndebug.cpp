@@ -394,7 +394,7 @@ void ndebug::set_Sx(char **inl) {
 		}
 }
 
-void ndebug::errorintofile(FILE *f, char **inl) {
+void ndebug::errorintofile(FILE *, char **inl) {
 	char *name;
 	FILE *fp;
 	unsigned int ar;
@@ -429,7 +429,7 @@ void ndebug::errorintofile(FILE *f, char **inl) {
 
 
 
-void ndebug::saveintofile(FILE *f, char **inl) {
+void ndebug::saveintofile(FILE *, char **inl) {
 	volatile uae_u32 src, len;
 	char *name;
 	FILE *fp;
@@ -471,7 +471,7 @@ S_argh:
 	bug("s command needs more arguments!");
 }
 
-void ndebug::loadintomemory(FILE *f, char **inl) {
+void ndebug::loadintomemory(FILE *, char **inl) {
 	uae_u32 src;
 	char *name;
 	FILE *fp;
@@ -504,7 +504,7 @@ S_argh:
 	bug("l command needs more arguments!");
 }
 
-void ndebug::writeintomem(FILE *f, char **c) {
+void ndebug::writeintomem(FILE *, char **c) {
 	uae_u32 addr = 0;
 	uae_u32 val = 0;
 	char nc;
@@ -565,7 +565,7 @@ void ndebug::backtrace(FILE *f, volatile unsigned int lines) {
 	}
 }
 
-void ndebug::log2phys(FILE *f, uaecptr addr) {
+void ndebug::log2phys(FILE *, uaecptr addr) {
 #ifdef FULLMMU
 	if (regs.mmu_enabled) {
 setjmpagain:
@@ -906,7 +906,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 	return 1;
 }
 
-int ndebug::icanon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
+int ndebug::icanon(FILE *f, bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
 	struct termios newtty;
 	char buffer[1];
 	int count;
@@ -987,7 +987,7 @@ int ndebug::icanon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uae
 	return 1;
 }
 
-int ndebug::dm(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
+int ndebug::dm(FILE *f, bool, uaecptr, uaecptr &, uaecptr &nxmem) {
 	struct termios newtty;
 	char buffer[1];
 	int count;
@@ -1026,12 +1026,10 @@ int ndebug::dm(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr
 				case 'j':
 					nxmem = maddr - 32;
 					if (nxmem > RAMSize + ROMSize + FastRAMSize) nxmem = 0;
-					if (nxmem < 0) nxmem = 0;
 					break;
 				case 'J':
 					nxmem = maddr + 32 - 32 * count;
 					if (nxmem > RAMSize + ROMSize + FastRAMSize) nxmem = 0;
-					if (nxmem < 0) nxmem = 0;
 					break;
 				case 'k':
 					nxmem = maddr + 32;
@@ -1345,6 +1343,10 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.31  2003/07/11 18:51:03  milan
+ * some JIT bugs corrected
+ * CD-ROM product ID corrected for little endian
+ *
  * Revision 1.30  2002/10/15 21:26:53  milan
  * non-cheaders support (for MipsPro C/C++ compiler)
  *
