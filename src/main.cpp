@@ -449,7 +449,7 @@ bool InitROM(void) {
 
 	int RealROMSize = 512 * 1024;
 	if (fread(ROMBaseHost, 1, RealROMSize, f) != (size_t)RealROMSize) {
-		ErrorAlert("ROM file reading error\n");
+		ErrorAlert("ROM file reading error. Make sure the ROM image file size is 524288 bytes (512 kB).\n");
 		fclose(f);
 		return false;
 	}
@@ -611,6 +611,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.28  2001/10/23 21:26:15  standa
+ * The hostScreen size is used to handle the mouseOut flag.
+ *
  * Revision 1.27  2001/10/18 14:27:24  joy
  * TOS 4.04 is patched in runtime
  *
@@ -628,6 +631,9 @@ void ExitAll(void)
  *
  * Revision 1.22  2001/10/08 21:46:05  standa
  * The $Header$ and $Log$
+ * The $Header$ and Revision 1.28  2001/10/23 21:26:15  standa
+ * The $Header$ and The hostScreen size is used to handle the mouseOut flag.
+ * The $Header$ and
  * The $Header$ and Revision 1.27  2001/10/18 14:27:24  joy
  * The $Header$ and TOS 4.04 is patched in runtime
  * The $Header$ and
