@@ -124,6 +124,7 @@ install: $(APP) installdirs
 	$(INSTALL_DATA) ../../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
 	$(INSTALL_DATA) ../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL
 	$(INSTALL_DATA) ../../doc/documentation.txt $(DESTDIR)$(docdir)/$(APP)/documentation.txt
+	$(INSTALL_DATA) ../../data/font8.bmp $(DESTDIR)$(datadir)/$(APP)/font8.bmp
 	$(INSTALL_DATA) ../../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) ../../atari/aranymrc.example $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
 	$(INSTALL_DATA) ../../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
@@ -158,6 +159,7 @@ uninstall:
 	rm -f $(DESTDIR)$(docdir)/$(APP)/BUGS
 	rm -f $(DESTDIR)$(docdir)/$(APP)/INSTALL
 	rm -f $(DESTDIR)$(docdir)/$(APP)/documentation.txt
+	rm -f $(DESTDIR)$(datadir)/$(APP)/font8.bmp
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
@@ -215,6 +217,7 @@ bindist: $(APP) bindistdirs
 	$(INSTALL_DATA) ../../BUGS tmpdist$(docdir)/$(APP)/BUGS
 	$(INSTALL_DATA) ../../INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
 	$(INSTALL_DATA) ../../doc/documentation.txt tmpdist$(docdir)/$(APP)/documentation.txt
+	$(INSTALL_DATA) ../../data/font8.bmp tmpdist$(datadir)/$(APP)/font8.bmp
 	$(INSTALL_DATA) ../../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) ../../atari/aranymrc.example tmpdist$(datadir)/$(APP)/atari/aranymrc.example
 	$(INSTALL_DATA) ../../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
