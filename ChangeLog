@@ -1,3 +1,8 @@
+2001/11/28 - joy
+- new keyboard conversion code: now based on pure scancodes. Clocky for Aranym
+  now distributed with English PC101 keyboard. With Clocky loaded you have real
+  WYSIWYG. Feel free to submit other .KBD files for Clocky (French, German,..?)
+
 2001/11/25 - joy
 - new FastRAM.PRG with automatic size detection and _FRB buffer.
 
