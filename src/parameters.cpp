@@ -14,7 +14,9 @@
 
 static struct option const long_options[] =
 {
+#ifndef FixedSizeFastRAM
   {"fastram", required_argument, 0, 'F'},
+#endif
   {"floppy", required_argument, 0, 'a'},
   {"resolution", required_argument, 0, 'r'},
   {"debug", no_argument, 0, 'D'},
@@ -40,8 +42,10 @@ char *config_file = NULL;
 
 uint8 start_debug = 0;			// Start debugger
 int8 monitor = -1;				// VGA
-extern uint32 FastRAMSize;		// FastRAM size
+#ifndef FixedSizeFastRAM
 uint32 FastRAMSizeMB;
+#endif
+uint32 FastRAMSize;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 bool grabMouseAllowed = true;
 
@@ -53,7 +57,9 @@ bx_options_t bx_options;
 struct Config_Tag global_conf[]={
 	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
 	{ "EmuTOS", String_Tag, emutos_path, sizeof(emutos_path)},
+#ifndef FixedSizeFastRAM
 	{ "FastRAM", Int_Tag, &FastRAMSizeMB},
+#endif
 	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path)},
 	{ "Cookie_MCH", HexLong_Tag, &bx_options.cookies._mch},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab},
@@ -86,7 +92,6 @@ void usage (int status) {
   printf ("\
 Options:
   -a, --floppy NAME          floppy image file NAME\n\
-  -F, --fastram SIZE         FastRAM size (in MB)\n\
   -N, --nomouse              don't grab mouse at startup\n\
   -f, --fullscreen           start in fullscreen\n\
   -v, --refresh <X>          VIDEL refresh rate in VBL (default 2)\n\
@@ -98,6 +103,9 @@ Options:
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
+#ifndef FixedSizeFastRAM
+  printf("  -F, --fastram SIZE         FastRAM size (in MB)\n");
+#endif
 #ifdef DIRECT_TRUECOLOR
   printf("  -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n");
 #endif
@@ -163,6 +171,11 @@ void preset_ide() {
 
 void preset_cfg() {
   preset_ide();
+#ifdef FixedSizeFastRAM
+  FastRAMSize = FixedSizeFastRAM * 1024 * 1024;
+#else
+  FastRAMSize = 0;
+#endif
   bx_options.cookies._mch = 0x00030000; // Falcon030
   bx_options.autoMouseGrab = true;
 
@@ -185,7 +198,9 @@ void update_cdrom1() {
 }
 
 int saveSettings(const char *fs) {
+#ifndef FixedSizeFastRAM
 	FastRAMSizeMB = FastRAMSize / 1024 / 1024;
+#endif
 	update_config(fs,global_conf,"[GLOBAL]");
 	update_config(fs,diskc_configs,"[IDE0]");
 	update_config(fs,diskd_configs,"[IDE1]");
@@ -225,7 +240,9 @@ int decode_switches (FILE *f, int argc, char **argv) {
 #ifdef DEBUGGER
 							 "D"  /* debugger */
 #endif
-							 "F:" /* TT-RAM */
+#ifndef FixedSizeFastRAM
+							 "F:" /* FastRAM */
+#endif
 							 "N"  /* no mouse */
 							 "f"  /* fullscreen */
 							 "v:" /* VIDEL refresh */
@@ -331,10 +348,12 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				saveConfigFile = true;
 				break;
 
+#ifndef FixedSizeFastRAM
 			case 'F':
 				FastRAMSizeMB = atoi(optarg);
 				FastRAMSize = FastRAMSizeMB * 1024 * 1024;
 				break;
+#endif
 
 			default:
 				usage (EXIT_FAILURE);
@@ -396,7 +415,9 @@ static void decode_ini_file(FILE *f) {
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
 #endif
 	
+#ifndef FixedSizeFastRAM
 	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
+#endif
 	process_config(f, rcfile, diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, diskd_configs, "[IDE1]", true);
 }
