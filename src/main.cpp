@@ -37,6 +37,7 @@
 #ifdef SDL_GUI
 #include "sdlgui.h"
 #endif
+#include "version.h"		// for heartBeat
 
 #define DEBUG 0
 #include "debug.h"
@@ -125,6 +126,30 @@ void ClearInterruptFlag(uint32 flag)
 }
 
 /*
+ * called in VBL
+ * indicates that the ARAnyM is alive and kicking
+ */
+void heartBeat()
+{
+	if (bx_options.video.fullscreen)
+		return;	// think of different heart beat indicator
+
+	static int vblCounter = 0;
+	if (++vblCounter == 50) {
+		vblCounter = 0;
+
+		static char beats[] = "\\|/-\\|/-";
+		static unsigned int beat_idx = 0;
+		char buf[sizeof(VERSION_STRING)+4];
+		sprintf(buf, "%s %c", VERSION_STRING, beats[beat_idx++]);
+		if (beat_idx == strlen(beats))
+			beat_idx = 0;
+
+		SDL_WM_SetCaption(buf, NULL);
+	}
+}
+
+/*
  * the following function is called from the CPU emulation anytime
  * or it is called from the timer interrupt * approx. each 10 milliseconds.
  */
@@ -158,6 +183,8 @@ void invoke200HzInterrupt()
 	VBL_counter += count;
 	if (VBL_counter >= VBL_IN_TIMERC) {	// divided by 4 => 50 Hz VBL
 		VBL_counter -= VBL_IN_TIMERC;
+
+		heartBeat();
 
 #ifdef USE_TIMERS
 		// Thread safety patch
@@ -483,6 +510,11 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.68  2002/05/14 19:09:50  milan
+ * Better structure of vm_alloc, not own OS dependent includes
+ * Some debug outputs added for JIT compiler
+ * A small reform in memory allocation, one stupid bug (of course, I'm the author) found in QuitEmulator (vm_release(nil))
+ *
  * Revision 1.67  2002/04/29 11:44:35  joy
  * "ROM" => "TOS"
  * ErrorAlert() -> panicbug()
