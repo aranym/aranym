@@ -47,7 +47,7 @@ static const int HW = 0xfffa00;
 			// Trigger 200Hz interrupt
 			TriggerMFP(5);
 			if (dP)
-				fprintf(stderr, "TriggerMFP($4BA) = %ld\n", ReadMacInt32(0x4ba));
+				fprintf(stderr, "TriggerMFP($4BA) = %ld\n", get_long_direct(0x4ba));
 			current_data = start_data;
 		}
 	}

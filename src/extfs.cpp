@@ -19,7 +19,7 @@
 
 #define MAXPATHNAMELEN 2048
 
-extern "C" char *xstrdup(char*);
+//extern "C" char *xstrdup(char*);
 
 extern "C" {
 
@@ -51,7 +51,7 @@ void ExtFs::install( const char driveSign, const char* rootPath, bool halfSensit
 {
   int8 driveNo = toupper(driveSign) - 'A';
 
-  drives[ driveNo ].rootPath = xstrdup( (char*)rootPath );
+  drives[ driveNo ].rootPath = strdup( (char*)rootPath );
   drives[ driveNo ].halfSensitive = halfSensitive;
 }
 
@@ -72,10 +72,10 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Dfree( &ldp, (char*)pathname, &extFile, 
-					 get_long( r->a[7] ),
-					 (int16) get_word( r->a[7] + 4 ),
-					 get_long( r->a[7] + 6 ),            // diskinfop
-					 (int16) get_word( r->a[7] + 10 ) ); // drive
+					 get_long( r->a[7], true ),
+					 (int16) get_word( r->a[7] + 4, true ),
+					 get_long( r->a[7] + 6, true ),            // diskinfop
+					 (int16) get_word( r->a[7] + 10, true ) ); // drive
 	flushFILE( &extFile, r->a[5] );
 	break;
   case 57:	// Dcreate:
@@ -85,10 +85,10 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Dcreate"));
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
 	r->d[0] = Dcreate( &ldp, (char*)pathname, &extFile, 
-					   get_long( r->a[7] ),
-					   (int16) get_word( r->a[7] + 4 ),
+					   get_long( r->a[7], true ),
+					   (int16) get_word( r->a[7] + 4, true ),
 					   (const char*)pn );              // pathname
 	flushFILE( &extFile, r->a[5] );
 	}
@@ -100,10 +100,10 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Ddelete"));
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
 	r->d[0] = Ddelete( &ldp, (char*)pathname, &extFile, 
-					   get_long( r->a[7] ),
-					   (int16) get_word( r->a[7] + 4 ),
+					   get_long( r->a[7], true ),
+					   (int16) get_word( r->a[7] + 4, true ),
 					   (const char*)pn );              // pathname
 	flushFILE( &extFile, r->a[5] );
 	}
@@ -115,12 +115,12 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Fcreate"));
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
 	r->d[0] = Fcreate( &ldp, (char*)pathname, &extFile, 
-					   get_long( r->a[7] ),
-					   (int16) get_word( r->a[7] + 4 ),
+					   get_long( r->a[7], true ),
+					   (int16) get_word( r->a[7] + 4, true ),
 					   (const char*)pn,                    // pathname
-					   (int16) get_word( r->a[7] + 10 ) ); // mode
+					   (int16) get_word( r->a[7] + 10, true ) ); // mode
 	flushFILE( &extFile, r->a[5] );
 	}
 	break;
@@ -131,12 +131,12 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Fopen"));
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
 	r->d[0] = Fopen( &ldp, (char*)pathname, &extFile, 
-					 get_long( r->a[7] ),
-					 (int16) get_word( r->a[7] + 4 ),
+					 get_long( r->a[7], true ),
+					 (int16) get_word( r->a[7] + 4, true ),
 					 (const char*)pn,                    // pathname
-					 (int16) get_word( r->a[7] + 10 ) ); // mode
+					 (int16) get_word( r->a[7] + 10, true ) ); // mode
 	flushFILE( &extFile, r->a[5] );
 	D(fprintf(stderr, "MetaDOS: %s: %d\n", "/Fopen", (int32)r->d[0]));
 	}
@@ -146,9 +146,9 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Fclose( &ldp, (char*)pathname, &extFile, 
-					  get_long( r->a[7] ),
-					  (int16) get_word( r->a[7] + 4 ),
-					  (int16) get_word( r->a[7] + 6 ) ); // handle
+					  get_long( r->a[7], true ),
+					  (int16) get_word( r->a[7] + 4, true ),
+					  (int16) get_word( r->a[7] + 6, true ) ); // handle
 	flushFILE( &extFile, r->a[5] );
 	break;
   case 63:	// Fread:
@@ -156,11 +156,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Fread( &ldp, (char*)pathname, &extFile, 
-					 get_long( r->a[7] ),
-					 (int16) get_word( r->a[7] + 4 ),
-					 (int16) get_word( r->a[7] + 6 ),  // handle
-					 get_long( r->a[7] + 8 ),          // count
-					 (void*)get_long( r->a[7] + 12) ); // buffer
+					 get_long( r->a[7], true ),
+					 (int16) get_word( r->a[7] + 4, true ),
+					 (int16) get_word( r->a[7] + 6, true ),  // handle
+					 get_long( r->a[7] + 8, true ),          // count
+					 (void*)get_long( r->a[7] + 12, true) ); // buffer
 	flushFILE( &extFile, r->a[5] );
 	break;
   case 64:	// Fwrite:
@@ -168,11 +168,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Fwrite( &ldp, (char*)pathname, &extFile, 
-					  get_long( r->a[7] ),
-					  (int16) get_word( r->a[7] + 4 ),
-					  (int16) get_word( r->a[7] + 6 ),  // handle
-					  get_long( r->a[7] + 8 ),          // count
-					  (void*)get_long( r->a[7] + 12) ); // buffer
+					  get_long( r->a[7], true ),
+					  (int16) get_word( r->a[7] + 4, true ),
+					  (int16) get_word( r->a[7] + 6, true ),  // handle
+					  get_long( r->a[7] + 8, true ),          // count
+					  (void*)get_long( r->a[7] + 12, true ) ); // buffer
 	flushFILE( &extFile, r->a[5] );
 	break;
   case 65:	// Fdelete:
@@ -182,10 +182,10 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Fdelete"));
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
 	r->d[0] = Fdelete( &ldp, (char*)pathname, &extFile, 
-					   get_long( r->a[7] ),
-					   (int16) get_word( r->a[7] + 4 ),
+					   get_long( r->a[7], true ),
+					   (int16) get_word( r->a[7] + 4, true ),
 					   (const char*)pn );                 // pathname
 	flushFILE( &extFile, r->a[5] );
 	D(fprintf(stderr, "MetaDOS: %s: %d\n", "/Fdelete", (int32)r->d[0]));
@@ -196,11 +196,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Fseek( &ldp, (char*)pathname, &extFile, 
-					 get_long( r->a[7] ),
-					 (int16) get_word( r->a[7] + 4 ),
-					 get_long( r->a[7] + 6 ),          // offset
-					 (int16) get_word( r->a[7] + 10),  // handle
-					 (int16) get_word( r->a[7] + 12) );// seekmode
+					 get_long( r->a[7], true ),
+					 (int16) get_word( r->a[7] + 4, true ),
+					 get_long( r->a[7] + 6, true ),          // offset
+					 (int16) get_word( r->a[7] + 10, true ),  // handle
+					 (int16) get_word( r->a[7] + 12, true ) );// seekmode
 	flushFILE( &extFile, r->a[5] );
 	break;
   case 67:	// Fattrib:
@@ -210,13 +210,13 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Fattrib"));
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
 	r->d[0] = Fattrib( &ldp, (char*)pathname, &extFile, 
-					 get_long( r->a[7] ),
-					 (int16) get_word( r->a[7] + 4 ),
+					 get_long( r->a[7], true ),
+					 (int16) get_word( r->a[7] + 4, true ),
 					 (const char*)pn,                  // pathname
-					 (int16) get_word( r->a[7] + 10),  // wflag
-					 (int16) get_word( r->a[7] + 12) );// attr
+					 (int16) get_word( r->a[7] + 10, true ),  // wflag
+					 (int16) get_word( r->a[7] + 12, true ) );// attr
 	flushFILE( &extFile, r->a[5] );
 	}
 	break;
@@ -227,12 +227,12 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Fsfirst"));
 	fetchDTA( &dta, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
 	r->d[0] = Fsfirst( &ldp, (char*)pathname, &dta, 
-					   get_long( r->a[7] ),
-					   (int16) get_word( r->a[7] + 4 ),
+					   get_long( r->a[7], true ),
+					   (int16) get_word( r->a[7] + 4, true ),
 					   (const char*)pn,
-					   (int16) get_word( r->a[7] + 10 ) );
+					   (int16) get_word( r->a[7] + 10, true ) );
 	flushDTA( &dta, r->a[5] );
 	D(fprintf(stderr, "MetaDOS: %s\n", "/Fsfirst"));
 	}
@@ -242,8 +242,8 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchDTA( &dta, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Fsnext( &ldp, (char*)pathname, &dta, 
-					  get_long( r->a[7] ),
-					  (int16) get_word( r->a[7] + 4 ) );
+					  get_long( r->a[7], true ),
+					  (int16) get_word( r->a[7] + 4, true ) );
 	flushDTA( &dta, r->a[5] );
 	D(fprintf(stderr, "MetaDOS: %s\n", "/Fsnext"));
 	break;
@@ -255,12 +255,12 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Frename"));
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 8 ) );
-	a2fstrcpy( (char*)npn, (uint8*)get_long( r->a[7] + 12 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 8, true ) );
+	a2fstrcpy( (char*)npn, (uint8*)get_long( r->a[7] + 12, true ) );
 	r->d[0] = Frename( &ldp, (char*)pathname, &extFile, 
-					   get_long( r->a[7] ),
-					   (int16) get_word( r->a[7] + 4 ),
-					   (int16) get_word( r->a[7] + 6 ),
+					   get_long( r->a[7], true ),
+					   (int16) get_word( r->a[7] + 4, true ),
+					   (int16) get_word( r->a[7] + 6, true ),
 					   (const char*)pn,                // oldpathname
 					   (const char*)npn );           // newpathname
 	flushFILE( &extFile, r->a[5] );
@@ -271,11 +271,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Fdatime( &ldp, (char*)pathname, &extFile, 
-					   get_long( r->a[7] ),
-					   (int16) get_word( r->a[7] + 4 ),
-					   (uint32*)get_long( r->a[7] + 6 ), // datetimep
-					   (int16) get_word( r->a[7] + 10),  // handle
-					   (int16) get_word( r->a[7] + 12) );// wflag
+					   get_long( r->a[7], true ),
+					   (int16) get_word( r->a[7] + 4, true ),
+					   (uint32*)get_long( r->a[7] + 6, true ), // datetimep
+					   (int16) get_word( r->a[7] + 10, true ),  // handle
+					   (int16) get_word( r->a[7] + 12, true ) );// wflag
 	flushFILE( &extFile, r->a[5] );
 	break;
   case 260:	// Fcntl:
@@ -283,11 +283,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Fcntl( &ldp, (char*)pathname, &extFile, 
-					 get_long( r->a[7] ),
-					 (int16) get_word( r->a[7] + 4 ),
-					 (int16) get_word( r->a[7] + 6 ),   // handle
-					 (void*)get_long( r->a[7] + 8 ),    // arg
-					 (int16) get_word( r->a[7] + 12) ); // cmd
+					 get_long( r->a[7], true ),
+					 (int16) get_word( r->a[7] + 4, true ),
+					 (int16) get_word( r->a[7] + 6, true ),   // handle
+					 (void*)get_long( r->a[7] + 8, true ),    // arg
+					 (int16) get_word( r->a[7] + 12, true ) ); // cmd
 	flushFILE( &extFile, r->a[5] );
 	break;
   case 292:	// Dpathconf:
@@ -297,12 +297,12 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Dpathconf"));
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
 	r->d[0] = Dpathconf( &ldp, (char*)pathname, &extFile, 
-						 get_long( r->a[7] ),
-						 (int16) get_word( r->a[7] + 4 ),
+						 get_long( r->a[7], true ),
+						 (int16) get_word( r->a[7] + 4, true ),
 						 (const char*)pn,                    // pathname
-						 (int16) get_word( r->a[7] + 10 ) ); // cmd
+						 (int16) get_word( r->a[7] + 10, true ) ); // cmd
 	flushFILE( &extFile, r->a[5] );
 	D(fprintf(stderr, "MetaDOS: /Dpathconf res = %#8x (%d)\n", r->d[0],(int32)r->d[0]));
 	}
@@ -314,12 +314,12 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Dopendir"));
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
 	r->d[0] = Dopendir( &ldp, (char*)pathname, &extFile, 
-						get_long( r->a[7] ),
-						(int16) get_word( r->a[7] + 4 ),
+						get_long( r->a[7], true ),
+						(int16) get_word( r->a[7] + 4, true ),
 						(const char*)pn,                    // pathname
-						(int16) get_word( r->a[7] + 10 ) ); // flag
+						(int16) get_word( r->a[7] + 10, true ) ); // flag
 	flushFILE( &extFile, r->a[5] );
 	D(fprintf(stderr, "MetaDOS: /Dopendir res = %#08x (%d)\n", r->d[0],(int32)r->d[0]));
 	}
@@ -329,11 +329,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Dreaddir( &ldp, (char*)pathname, &extFile, 
-						get_long( r->a[7] ),
-						(int16) get_word( r->a[7] + 4 ),
-						(int16) get_word( r->a[7] + 6 ),   // len
-						get_long( r->a[7] + 8 ),           // dirhandle
-						(char*)get_long( r->a[7] + 12 ) ); // bufferp
+						get_long( r->a[7], true ),
+						(int16) get_word( r->a[7] + 4, true ),
+						(int16) get_word( r->a[7] + 6, true ),   // len
+						get_long( r->a[7] + 8, true ),           // dirhandle
+						(char*)get_long( r->a[7] + 12, true ) ); // bufferp
 	flushFILE( &extFile, r->a[5] );
 	break;
   case 298:	// Drewinddir:
@@ -341,9 +341,9 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Drewinddir( &ldp, (char*)pathname, &extFile, 
-						 get_long( r->a[7] ),
-						 (int16) get_word( r->a[7] + 4 ),
-						 get_long( r->a[7] + 6 ) );       // dirhandle
+						 get_long( r->a[7], true ),
+						 (int16) get_word( r->a[7] + 4, true ),
+						 get_long( r->a[7] + 6, true ) );       // dirhandle
 	flushFILE( &extFile, r->a[5] );
 	break;
   case 299:	// Dclosedir:
@@ -351,9 +351,9 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Dclosedir( &ldp, (char*)pathname, &extFile, 
-						 get_long( r->a[7] ),
-						 (int16) get_word( r->a[7] + 4 ),
-						 get_long( r->a[7] + 6 ) );       // dirhandle
+						 get_long( r->a[7], true ),
+						 (int16) get_word( r->a[7] + 4, true ),
+						 get_long( r->a[7] + 6, true ) );       // dirhandle
 	flushFILE( &extFile, r->a[5] );
 	break;
   case 300:	// Fxattr:
@@ -363,13 +363,13 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	D(fprintf(stderr, "MetaDOS: %s\n", "Fxattr"));
 	fetchDTA( &dta, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 8 ) );
+	a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 8, true ) );
 	r->d[0] = Fxattr( &ldp, (char*)pathname, &dta, 
-					  get_long( r->a[7] ),
-					  (int16) get_word( r->a[7] + 4 ),
-					  (int16) get_word( r->a[7] + 6 ), // flag
+					  get_long( r->a[7], true ),
+					  (int16) get_word( r->a[7] + 4, true ),
+					  (int16) get_word( r->a[7] + 6, true ), // flag
 					  (const char*)pn,                 // pathname
-					  get_long( r->a[7] + 12 ) );      // XATTR*
+					  get_long( r->a[7] + 12, true ) );      // XATTR*
 	flushDTA( &dta, r->a[5] );
 	D(fprintf(stderr, "MetaDOS: /Fxattr res = %#08x (%d)\n", r->d[0],(int32)r->d[0]));
 	}
@@ -379,13 +379,13 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	fetchFILE( &extFile, r->a[5] );
 	a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 	r->d[0] = Dxreaddir( &ldp, (char*)pathname, &extFile, 
-						get_long( r->a[7] ),
-						(int16) get_word( r->a[7] + 4 ),
-						(int16) get_word( r->a[7] + 6 ),   // len
-						get_long( r->a[7] + 8 ),           // dirhandle
-						(char*)get_long( r->a[7] + 12 ),   // bufferp
-						get_long( r->a[7] + 16 ),          // XATTR*	
-						get_long( r->a[7] + 20 ) );        // xret
+						get_long( r->a[7], true ),
+						(int16) get_word( r->a[7] + 4, true ),
+						(int16) get_word( r->a[7] + 6, true ),   // len
+						get_long( r->a[7] + 8, true ),           // dirhandle
+						(char*)get_long( r->a[7] + 12, true ),   // bufferp
+						get_long( r->a[7] + 16, true ),          // XATTR*	
+						get_long( r->a[7] + 20, true ) );        // xret
 	break;
   case 338:	// Dreadlabel:
 	D(fprintf(stderr, "MetaDOS: %s\n", "Dreadlabel"));
@@ -405,12 +405,12 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 void ExtFs::a2fmemcpy( uint8 *dest, uint8 *source, size_t count )
 {
   while ( count-- )
-	*dest++ = get_byte( (uint32)source++ );
+	*dest++ = get_byte( (uint32)source++, true );
 }
 
 void ExtFs::a2fstrcpy( char *dest, uint8 *source )
 {
-  while ( *dest++ = get_byte( (uint32)source++ ) );
+  while ( *dest++ = get_byte( (uint32)source++, true ) );
 }
 
 
@@ -431,17 +431,17 @@ void ExtFs::f2astrcpy( uint8 *dest, uint8 *source )
 void ExtFs::fetchDTA( ExtDta *dta, uint32 dtap )
 {
   // Normally reserved ... used in the CookFS
-  dta->ds_dirh     = (DIR*)get_long( dtap );
-  dta->ds_attrib   = get_word( dtap + 4 );
-  dta->ds_index    = get_byte( dtap + 6 );
-  //  dta->ds_ast      = get_byte( dtap + 6 );
+  dta->ds_dirh     = (DIR*)get_long( dtap, true );
+  dta->ds_attrib   = get_word( dtap + 4, true );
+  dta->ds_index    = get_byte( dtap + 6, true );
+  //  dta->ds_ast      = get_byte( dtap + 6, true );
   a2fmemcpy( (uint8*)dta->ds_name, (uint8*)(dtap + 7), 14 );
 
   // Common FS
-  dta->d_attrib = get_byte( dtap + 21 );
-  dta->d_time   = get_word( dtap + 22 );
-  dta->d_date   = get_word( dtap + 24 );
-  dta->d_length = get_long( dtap + 26 );
+  dta->d_attrib = get_byte( dtap + 21, true );
+  dta->d_time   = get_word( dtap + 22, true );
+  dta->d_date   = get_word( dtap + 24, true );
+  dta->d_length = get_long( dtap + 26, true );
   a2fmemcpy( (uint8*)dta->d_fname, (uint8*)(dtap + 30), 14 );
 }
 
@@ -466,12 +466,12 @@ void ExtFs::flushDTA( ExtDta *dta, uint32 dtap )
 
 void ExtFs::fetchFILE( ExtFile *extFile, uint32 filep )
 {
-  extFile->index   = get_word( filep     );
-  extFile->mode    = get_word( filep + 2 );
-  extFile->flags   = get_word( filep + 4 );
-  extFile->fandafh = get_long( filep + 6 );
-  extFile->offset  = get_long( filep + 10);
-  extFile->device  = get_word( filep + 14);
+  extFile->index   = get_word( filep,      true );
+  extFile->mode    = get_word( filep + 2,  true );
+  extFile->flags   = get_word( filep + 4,  true );
+  extFile->fandafh = get_long( filep + 6,  true );
+  extFile->offset  = get_long( filep + 10, true );
+  extFile->device  = get_word( filep + 14, true );
 }
 
 void ExtFs::flushFILE( ExtFile *extFile, uint32 filep )
@@ -1147,7 +1147,7 @@ int32 ExtFs::Fdatime( LogicalDev *ldp, char *pathName, ExtFile *fp,
 
   D(fprintf(stderr, "MetaDOS: Fdatime "));
 
-  uint32 datetime = get_long( (uint32)datetimep );
+  uint32 datetime = get_long( (uint32)datetimep, true );
   if (wflag != 0) {
 	struct tm ttm;
 	struct utimbuf tmb;

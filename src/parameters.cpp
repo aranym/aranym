@@ -9,6 +9,7 @@
 
 static struct option const long_options[] =
 {
+  {"ttram", required_argument, 0, 'T'},
   {"rom", required_argument, 0, 'R'},
   {"resolution", required_argument, 0, 'r'},
   {"debug", no_argument, 0, 'd'},
@@ -24,6 +25,7 @@ char *rom_path;
 uint8 start_debug = 0;			// Start debugger
 uint8 fullscreen = 0;			// Boot in Fullscreen
 uint16 boot_color_depth = 1;		// Boot in color depth
+extern uint32 TTRAMSize;		// TTRAM size
 
 void usage (int status)
 {
@@ -32,6 +34,7 @@ void usage (int status)
   printf ("\
 Options:
   -R, --rom NAME             ROM file NAME\n\
+  -T, --ttram SIZE           TT-RAM size\n\
   -d, --debug                start debugger\n\
   -f, --fullscreen           start in fullscreen\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
@@ -48,6 +51,7 @@ int decode_switches (int argc, char **argv)
   while ((c = getopt_long (argc, argv,
                            "R:" /* ROM file */
                            "d"  /* debugger */
+			   "T:" /* TT-RAM */
                            "f"  /* fullscreen */
                            "r:"  /* resolution */
 			   "h"	/* help */
@@ -77,6 +81,10 @@ int decode_switches (int argc, char **argv)
 
 	case 'r':
 	  boot_color_depth = atoi(optarg);
+	  break;
+
+        case 'T':
+	  TTRAMSize = atoi(optarg);
 	  break;
 
 	default:

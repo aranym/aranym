@@ -97,7 +97,7 @@ static void dumpmem (uaecptr addr, uaecptr *nxmem, int lines)
 	int i;
 	printf ("%08lx ", addr);
 	for (i = 0; i < 16; i++) {
-	    printf ("%04x ", get_word(addr)); addr += 2;
+	    printf ("%04x ", get_word(addr, true)); addr += 2;
 	}
 	printf ("\n");
     }
@@ -106,7 +106,7 @@ static void dumpmem (uaecptr addr, uaecptr *nxmem, int lines)
 
 static void writeintomem (char **c)
 {
-    uae_u8 *p = get_real_address (0);
+    uae_u8 *p = get_real_address (0, true, false);
     uae_u32 addr = 0;
     uae_u32 val = 0;
     char nc;
@@ -132,14 +132,11 @@ static void writeintomem (char **c)
 	}
     }
 
-    if (addr < RAMSize) {
       p[addr] = val>>24 & 0xff;
       p[addr+1] = val>>16 & 0xff;
       p[addr+2] = val>>8 & 0xff;
       p[addr+3] = val & 0xff;
       printf("Wrote %d at %08x\n",val,addr);
-    } else
-      printf("Invalid address %08x\n",addr);
 }
 
 static int trace_same_insn_count;
@@ -165,7 +162,7 @@ void debug (void)
 #endif
 	m68k_dumpstate (&nextpc);
 	trace_same_insn_count = 1;
-	memcpy (trace_insn_copy, regs.pc_p, 10);
+	memcpy (trace_insn_copy, do_get_real_address(regs.pcp, true, false), 10);
 	memcpy (&trace_prev_regs, &regs, sizeof regs);
     }
 
@@ -252,7 +249,7 @@ void debug (void)
 		    printf ("Invalid memory block\n");
 		    break;
 		}
-		memp = get_real_address (src);
+		memp = get_real_address (src, true, false);
 		fp = fopen (name, "w");
 		if (fp == NULL) {
 		    printf ("Couldn't open file\n");
@@ -302,7 +299,7 @@ void debug (void)
 	    set_special (SPCFLAG_BRK);
 	    if (skipaddr == 0xC0DEDBAD) {
 	        trace_same_insn_count = 0;
-		memcpy (trace_insn_copy, regs.pc_p, 10);
+		memcpy (trace_insn_copy, do_get_real_address(regs.pcp, true, false), 10);
 		memcpy (&trace_prev_regs, &regs, sizeof regs);
 	    }
 	    return;

@@ -89,7 +89,7 @@ extern void compiler_flush_jsr_stack(void);
 
 static __inline__ void m68k_do_rts(void)
 {
-    m68k_setpc(get_long(m68k_areg(regs, 7)));
+    m68k_setpc(get_long(m68k_areg(regs, 7), false));
     m68k_areg(regs, 7) += 4;
 }
 

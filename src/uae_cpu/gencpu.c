@@ -396,9 +396,9 @@ static void genamode (amodes mode, char *reg, wordsizes size, char *name, int ge
 	}
 	start_brace ();
 	switch (size) {
-	 case sz_byte: printf ("\tuae_s8 %s = get_byte(%sa);\n", name, name); break;
-	 case sz_word: printf ("\tuae_s16 %s = get_word(%sa);\n", name, name); break;
-	 case sz_long: printf ("\tuae_s32 %s = get_long(%sa);\n", name, name); break;
+	 case sz_byte: printf ("\tuae_s8 %s = get_byte(%sa, true);\n", name, name); break;
+	 case sz_word: printf ("\tuae_s16 %s = get_word(%sa, true);\n", name, name); break;
+	 case sz_long: printf ("\tuae_s32 %s = get_long(%sa, true);\n", name, name); break;
 	 default: abort ();
 	}
     }
@@ -511,9 +511,9 @@ static void genmovemel (uae_u16 opcode)
     int size = table68k[opcode].size == sz_long ? 4 : 2;
 
     if (table68k[opcode].size == sz_long) {
-	strcpy (getcode, "get_long(srca)");
+	strcpy (getcode, "get_long(srca, true)");
     } else {
-	strcpy (getcode, "(uae_s32)(uae_s16)get_word(srca)");
+	strcpy (getcode, "(uae_s32)(uae_s16)get_word(srca, true)");
     }
 
     printf ("\tuae_u16 mask = %s;\n", gen_nextiword ());
@@ -1401,10 +1401,10 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tuaecptr memp = m68k_areg(regs, srcreg) + (uae_s32)(uae_s16)%s;\n", gen_nextiword ());
 	genamode (curi->dmode, "dstreg", curi->size, "dst", 2, 0);
 	if (curi->size == sz_word) {
-	    printf ("\tuae_u16 val = (get_byte(memp) << 8) + get_byte(memp + 2);\n");
+	    printf ("\tuae_u16 val = (get_byte(memp, true) << 8) + get_byte(memp + 2, true);\n");
 	} else {
-	    printf ("\tuae_u32 val = (get_byte(memp) << 24) + (get_byte(memp + 2) << 16)\n");
-	    printf ("              + (get_byte(memp + 4) << 8) + get_byte(memp + 6);\n");
+	    printf ("\tuae_u32 val = (get_byte(memp, true) << 24) + (get_byte(memp + 2, true) << 16)\n");
+	    printf ("              + (get_byte(memp + 4, true) << 8) + get_byte(memp + 6, true);\n");
 	}
 	genastore ("val", curi->dmode, "dstreg", curi->size, "dst");
 	break;
@@ -1752,15 +1752,15 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\t{uae_s32 upper,lower,reg = regs.regs[(extra >> 12) & 15];\n");
 	switch (curi->size) {
 	 case sz_byte:
-	    printf ("\tlower=(uae_s32)(uae_s8)get_byte(dsta); upper = (uae_s32)(uae_s8)get_byte(dsta+1);\n");
+	    printf ("\tlower=(uae_s32)(uae_s8)get_byte(dsta, true); upper = (uae_s32)(uae_s8)get_byte(dsta+1, true);\n");
 	    printf ("\tif ((extra & 0x8000) == 0) reg = (uae_s32)(uae_s8)reg;\n");
 	    break;
 	 case sz_word:
-	    printf ("\tlower=(uae_s32)(uae_s16)get_word(dsta); upper = (uae_s32)(uae_s16)get_word(dsta+2);\n");
+	    printf ("\tlower=(uae_s32)(uae_s16)get_word(dsta, true); upper = (uae_s32)(uae_s16)get_word(dsta+2, true);\n");
 	    printf ("\tif ((extra & 0x8000) == 0) reg = (uae_s32)(uae_s16)reg;\n");
 	    break;
 	 case sz_long:
-	    printf ("\tlower=get_long(dsta); upper = get_long(dsta+4);\n");
+	    printf ("\tlower=get_long(dsta, true); upper = get_long(dsta+4, true);\n");
 	    break;
 	 default:
 	    abort ();
@@ -2191,7 +2191,7 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tuae_u32 rn2 = regs.regs[(extra >> 12) & 15];\n");
 	if (curi->size == sz_word) {
 	    int old_brace_level = n_braces;
-	    printf ("\tuae_u16 dst1 = get_word(rn1), dst2 = get_word(rn2);\n");
+	    printf ("\tuae_u16 dst1 = get_word(rn1, true), dst2 = get_word(rn2, true);\n");
 	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, (extra >> 16) & 7)", "dst1");
 	    printf ("\tif (GET_ZFLG) {\n");
 	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, extra & 7)", "dst2");
@@ -2206,7 +2206,7 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\t}\n");
 	} else {
 	    int old_brace_level = n_braces;
-	    printf ("\tuae_u32 dst1 = get_long(rn1), dst2 = get_long(rn2);\n");
+	    printf ("\tuae_u32 dst1 = get_long(rn1, true), dst2 = get_long(rn2, true);\n");
 	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, (extra >> 16) & 7)", "dst1");
 	    printf ("\tif (GET_ZFLG) {\n");
 	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, extra & 7)", "dst2");
@@ -2299,7 +2299,7 @@ static void gen_opcode (unsigned long int opcode)
 	} else {
 	    printf ("\tuae_u32 tmp,bf0,bf1;\n");
 	    printf ("\tdsta += (offset >> 3) | (offset & 0x80000000 ? ~0x1fffffff : 0);\n");
-	    printf ("\tbf0 = get_long(dsta);bf1 = get_byte(dsta+4) & 0xff;\n");
+	    printf ("\tbf0 = get_long(dsta, true);bf1 = get_byte(dsta+4, true) & 0xff;\n");
 	    printf ("\ttmp = (bf0 << (offset & 7)) | (bf1 >> (8 - (offset & 7)));\n");
 	}
 	printf ("\ttmp >>= (32 - width);\n");
@@ -2368,9 +2368,9 @@ static void gen_opcode (unsigned long int opcode)
 	} else {
 	    printf ("\tuae_u16 val;\n");
 	    printf ("\tm68k_areg(regs, srcreg) -= areg_byteinc[srcreg];\n");
-	    printf ("\tval = (uae_u16)get_byte(m68k_areg(regs, srcreg));\n");
+	    printf ("\tval = (uae_u16)get_byte(m68k_areg(regs, srcreg), true);\n");
 	    printf ("\tm68k_areg(regs, srcreg) -= areg_byteinc[srcreg];\n");
-	    printf ("\tval = (val | ((uae_u16)get_byte(m68k_areg(regs, srcreg)) << 8)) + %s;\n", gen_nextiword ());
+	    printf ("\tval = (val | ((uae_u16)get_byte(m68k_areg(regs, srcreg), true) << 8)) + %s;\n", gen_nextiword ());
 	    printf ("\tm68k_areg(regs, dstreg) -= areg_byteinc[dstreg];\n");
 	    printf ("\tput_byte(m68k_areg(regs, dstreg),((val >> 4) & 0xf0) | (val & 0xf));\n");
 	}
@@ -2383,7 +2383,7 @@ static void gen_opcode (unsigned long int opcode)
 	} else {
 	    printf ("\tuae_u16 val;\n");
 	    printf ("\tm68k_areg(regs, srcreg) -= areg_byteinc[srcreg];\n");
-	    printf ("\tval = (uae_u16)get_byte(m68k_areg(regs, srcreg));\n");
+	    printf ("\tval = (uae_u16)get_byte(m68k_areg(regs, srcreg), true);\n");
 	    printf ("\tval = (((val << 4) & 0xf00) | (val & 0xf)) + %s;\n", gen_nextiword ());
 	    printf ("\tm68k_areg(regs, dstreg) -= areg_byteinc[dstreg];\n");
 	    printf ("\tput_byte(m68k_areg(regs, dstreg),val);\n");
@@ -2455,10 +2455,10 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tuaecptr mems = m68k_areg(regs, srcreg) & ~15, memd;\n");
 	printf ("\tdstreg = (%s >> 12) & 7;\n", gen_nextiword());
 	printf ("\tmemd = m68k_areg(regs, dstreg) & ~15;\n");
-	printf ("\tput_long(memd, get_long(mems));\n");
-	printf ("\tput_long(memd+4, get_long(mems+4));\n");
-	printf ("\tput_long(memd+8, get_long(mems+8));\n");
-	printf ("\tput_long(memd+12, get_long(mems+12));\n");
+	printf ("\tput_long(memd, get_long(mems, true));\n");
+	printf ("\tput_long(memd+4, get_long(mems+4, true));\n");
+	printf ("\tput_long(memd+8, get_long(mems+8, true));\n");
+	printf ("\tput_long(memd+12, get_long(mems+12, true));\n");
 	printf ("\tm68k_areg(regs, srcreg) += 16;\n");
 	printf ("\tm68k_areg(regs, dstreg) += 16;\n");
 	break;

@@ -111,7 +111,7 @@ static char* debug_print_IO(uaecptr addr) {
 }
 
 uaecptr showPC() {
-	return do_get_virtual_address(regs.pc_p);
+	return regs.pcp;
 }
 
 uae_u32 handleRead(uaecptr addr) {

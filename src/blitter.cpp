@@ -61,12 +61,12 @@ BLITTER::BLITTER(void) {
 
 UW BLITTER::LM_UW(uaecptr addr) {
 	// fprintf(stderr, "Blitter cte data z %06x\n", addr);
-	return get_word(addr);
+	return get_word_direct(addr);	//??
 }
 
 void BLITTER::SM_UW(uaecptr addr, UW value) {
 	// fprintf(stderr, "Blitter zapisuje data do %06x = %04x\n", addr, value);
-	put_word(addr, value);
+	put_word_direct(addr, value);	//??
 }
 
 #define HOP_OPS(_fn_name,_op,_do_source_shift,_get_source_data,_shifted_hopd_data, _do_halftone_inc) \

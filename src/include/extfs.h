@@ -2,6 +2,7 @@
 #ifndef _EXTFS_H
 #define _EXTFS_H
 
+#include <dirent.h>
 
 // FIXME: it is stupid to place these here,
 //        but I didn't want to touch many files in CVS ;(

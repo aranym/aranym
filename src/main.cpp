@@ -40,8 +40,8 @@ bool InitAll(void)
 	FPUType = 1;
 
 	// Setting "SP & PC"
-	put_long(0x00000000,get_long(ROMBase));
-	put_long(0x00000004,get_long(ROMBase+4));
+	put_long_direct(0x00000000,get_long_direct(ROMBase));
+	put_long_direct(0x00000004,get_long_direct(ROMBase+4));
 
 	// Init HW
 	HWInit();

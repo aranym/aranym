@@ -25,6 +25,7 @@ extern int intlev(void);	// From baisilisk_glue.cpp
 #include "readcpu.h"
 #include "newcpu.h"
 #include "compiler.h"
+#include "exceptions.h"
 
 #include "debug.h"
 
@@ -32,6 +33,10 @@ int quit_program = 0;
 
 struct flag_struct regflags;
 
+/* LongJump buffer */
+jmp_buf excep_env;
+/* Exception number */
+uint32  excep_no;
 /* Opcode of faulting instruction */
 uae_u16 last_op_for_exception_3;
 /* PC at fault time */
@@ -227,9 +232,9 @@ static int backup_pointer = 0;
 static long int m68kpc_offset;
 int lastint_no;
 
-#define get_ibyte_1(o) get_byte(get_virtual_address(regs.pc_p) + (o) + 1)
-#define get_iword_1(o) get_word(get_virtual_address(regs.pc_p) + (o))
-#define get_ilong_1(o) get_long(get_virtual_address(regs.pc_p) + (o))
+#define get_ibyte_1(o) get_byte(regs.pcp + (o) + 1, false)
+#define get_iword_1(o) get_word(regs.pcp + (o), false)
+#define get_ilong_1(o) get_long(regs.pcp + (o), false)
 
 uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 {
@@ -287,7 +292,7 @@ uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 	    if ((dp & 0x3) == 0x3) { outer = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
 
 	    if (!(dp & 4)) base += dispreg;
-	    if (dp & 3) base = get_long (base);
+	    if (dp & 3) base = get_long (base, true);
 	    if (dp & 4) base += dispreg;
 
 	    addr = base + outer;
@@ -334,7 +339,7 @@ uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 	    if ((dp & 0x3) == 0x3) { outer = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
 
 	    if (!(dp & 4)) base += dispreg;
-	    if (dp & 3) base = get_long (base);
+	    if (dp & 3) base = get_long (base, true);
 	    if (dp & 4) base += dispreg;
 
 	    addr = base + outer;
@@ -460,7 +465,7 @@ static int verify_ea (int reg, amodes mode, wordsizes size, uae_u32 *val)
 	    if ((dp & 0x3) == 0x3) { outer = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
 
 	    if (!(dp & 4)) base += dispreg;
-	    if (dp & 3) base = get_long (base);
+	    if (dp & 3) base = get_long (base, true);
 	    if (dp & 4) base += dispreg;
 
 	    addr = base + outer;
@@ -548,7 +553,7 @@ uae_u32 get_disp_ea_020 (uae_u32 base, uae_u32 dp)
 	if ((dp & 0x3) == 0x3) outer = next_ilong();
 
 	if ((dp & 0x4) == 0) base += regd;
-	if (dp & 0x3) base = get_long (base);
+	if (dp & 0x3) base = get_long (base, true);
 	if (dp & 0x4) base += regd;
 
 	return base + outer;
@@ -687,11 +692,11 @@ void Exception(int nr, uaecptr oldpc)
 
 	    	// instruction B prefetch
 		m68k_areg(regs, 7) -= 2;
-		put_word (m68k_areg(regs, 7), get_word(regs.pc+2));
+		put_word (m68k_areg(regs, 7), get_word(regs.pc+2, false));
 
 	    	// instruction C prefetch
 		m68k_areg(regs, 7) -= 2;
-		put_word (m68k_areg(regs, 7), get_word(regs.pc+4));
+		put_word (m68k_areg(regs, 7), get_word(regs.pc+4, false));
 
 	    	// special status register ssw
 		m68k_areg(regs, 7) -= 2;
@@ -713,9 +718,9 @@ void Exception(int nr, uaecptr oldpc)
     put_word (m68k_areg(regs, 7), regs.sr);
     ////
     if (nr == 2)
-    	fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr));
+    	fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr, false));
     ////
-    m68k_setpc (get_long (regs.vbr + 4*nr) -4);
+    m68k_setpc (get_long (regs.vbr + 4*nr, false) /*-4 kludge*/);
     fill_prefetch_0 ();
     regs.t1 = regs.t0 = regs.m = 0;
     regs.spcflags &= ~(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
@@ -760,10 +765,9 @@ kludge_me_do:
     m68k_areg(regs, 7) -= 2;
     put_word (m68k_areg(regs, 7), regs.sr);
     ////
-    if (nr == 2)
-    	fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr));
+    // fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr, false));
     ////
-    m68k_setpc (get_long (regs.vbr + 4*nr));
+    m68k_setpc (get_long (regs.vbr + 4*nr, false));
     fill_prefetch_0 ();
     regs.t1 = regs.t0 = regs.m = 0;
     regs.spcflags &= ~(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
@@ -1122,8 +1126,8 @@ static char* ccnames[] =
 
 void m68k_reset (void)
 {
-    m68k_areg (regs, 7) = get_long(0x00000000);
-    m68k_setpc (get_long(0x00000004));
+    m68k_areg (regs, 7) = get_long(0x00000000, false);
+    m68k_setpc (get_long(0x00000004, false));
     fill_prefetch_0 ();
     regs.kick_mask = 0xF80000;
     regs.s = 1;
@@ -1214,11 +1218,461 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 
 void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
-    if ((opcode & 0xFE0) == 0x0500) { /* PFLUSH  instruction */
-	regs.mmusr = 0;
-    } else if ((opcode & 0x0FD8) == 0x548) { /* PTEST instruction */
-    } else
-	op_illg (opcode);
+    uae_u16 i;
+    uaecptr addr = m68k_areg(regs, extra);
+    if ((opcode & 0xFF8) == 0x0500) { /* PFLUSHN instruction (An) */
+#ifdef MMU
+        for (i = 0; i < ATCSIZE; i++) {
+            if (!regs.atcglobald[i]
+                && (addr == regs.atcind[i]))
+                    regs.atcvald[i] = 0;
+            if (!regs.atcglobali[i]
+                && (addr == regs.atcini[i]))
+                    regs.atcvali[i] = 0;
+        }
+        regs.mmusr = 0;
+#endif
+    } else if ((opcode & 0xFF8) == 0x0508) { /* PFLUSH instruction (An) */
+#ifdef MMU
+        for (i = 0; i < ATCSIZE; i++) {
+            if (addr == regs.atcind[i])
+                regs.atcvald[i] = 0;
+            if (addr == regs.atcini[i])
+                regs.atcvali[i] = 0;
+        }
+        regs.mmusr = 0;
+#endif
+    } else if ((opcode & 0xFF8) == 0x0510) { /* PFLUSHAN instruction */
+#ifdef MMU
+        for (i = 0; i < ATCSIZE; i++) {
+            if (!regs.atcglobald[i]) regs.atcvald[i] = 0;
+            if (!regs.atcglobali[i]) regs.atcvali[i] = 0;
+        }
+        regs.mmusr = 0;
+#endif
+    } else if ((opcode & 0xFF8) == 0x0518) { /* PFLUSHA instruction */
+#ifdef MMU
+        for (i = 0; i < ATCSIZE; i++) {
+            regs.atcvald[i] = 0;
+            regs.atcvali[i] = 0;
+        }
+        regs.mmusr = 0;
+#endif
+    } else if ((opcode & 0xFF8) == 0x548) { /* PTESTW instruction */
+#ifdef MMU
+	uaecptr mask;
+        if (regs.dtt0 & 0x8000) {
+	    if ((regs.dtt0 & 0x4) != 0) throw access_error(addr);
+            mask = ((~regs.dtt0) & 0xff0000) << 8;
+	    if ((addr & mask) == (regs.dtt0 & mask)) {
+	        regs.mmusr = 3;
+	        return;
+	    }
+        }
+	if (regs.dtt1 & 0x8000) {
+	    if ((regs.dtt1 & 0x4) != 0) throw access_error(addr);
+	    mask = ((~regs.dtt1) & 0xff0000) << 8;
+	    if ((addr & mask) == (regs.dtt1 & mask)) {
+	        regs.mmusr = 3;
+		return;
+            }
+	}
+	if (regs.itt0 & 0x8000) {
+	    if ((regs.itt0 & 0x4) != 0) throw access_error(addr);
+	    mask = ((~regs.itt0) & 0xff0000) << 8;
+	    if ((addr & mask) == (regs.itt0 & mask)) {
+	        regs.mmusr = 3;
+	        return;
+	    }
+	}
+	if (regs.itt1 & 0x8000) {
+	    if ((regs.itt1 & 0x4) != 0) throw access_error(addr);
+	    mask = ((~regs.itt1) & 0xff0000) << 8;
+	    if ((addr & mask) == (regs.itt1 & mask)) {
+	        regs.mmusr = 3;
+		return;
+	    }
+	}
+	if (regs.tcp) {
+            uaecptr atcindex = ((addr << 11) >> 24);
+	    uint16 *rootp;
+	    if (setjmp(excep_env) == 0) {
+	        rootp = (uint16 *)do_get_real_address_direct(regs.srp & ((addr >> 25) << 2));
+	    } else {
+		switch (excep_no) {
+		    case 2: regs.mmusr = 0x800;
+		            return;
+		}
+	    }
+	    uint16 root = *rootp;
+	    uint16 *apdt, *apd;
+	    uint16 pdt, pd;
+	    flagtype wr;
+	    if ((root & 0x3) > 1) {
+	        wr = (root & 0x4) >> 2;
+	        *rootp = root | 0x8;
+		if (setjmp(excep_env) == 0) {
+		    apdt = (uint16 *)do_get_real_address_direct((root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16));
+		} else {
+		    switch (excep_no) {
+		        case 2: regs.mmusr = 0x800;
+		                return;
+		    }
+		}
+	        pdt = *apdt;
+	        if ((pdt & 0x3) > 1) {
+	            wr += (pdt & 0x4) >> 2;
+		    *apdt = pdt | 0x8;
+		    if (setjmp(excep_env) == 0) {
+		       	apd = (uint16 *)do_get_real_address_direct((pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11));
+		    } else {
+			switch (excep_no) {
+			    case 2: regs.mmusr = 0x800;
+			            return;
+			}
+		    }
+                    pd = *apd;
+		    switch (pd & 0x3) {
+		       	case 0:  regs.mmusr = 0x800;
+			         return;
+		       	case 2:  try {
+				     apd = (uint16 *)do_get_real_address_direct(pd & 0xfffffffc);
+				 } catch (bus_error) {
+				     regs.mmusr = 0x800;
+				     return;
+				 }
+		        	 pd = *apd;
+			         if (((pd & 0x3) % 2) == 0) {
+				     regs.mmusr = 0x800;
+				     return;
+				 }
+                    	default: wr += (pd & 0x4) >> 2;
+				 if (!wr) throw access_error(addr);
+                        	 *apd = pd | 0x18;
+			         regs.atcind[atcindex] = addr & 0xffffe000;
+			         regs.atcini[atcindex] = addr & 0xffffe000;
+				 regs.atcouti[atcindex] = pd & 0xffffe000;
+               			 regs.atcoutd[atcindex] = pd & 0xffffe000;
+				 regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
+                         	 regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
+				 regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
+                         	 regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
+				 regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
+                         	 regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
+				 regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
+                         	 regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
+				 regs.atcmodifi[atcindex] = 1;
+                         	 regs.atcmodifd[atcindex] = 1;
+				 regs.atcwritepi[atcindex] = wr;
+                         	 regs.atcwritepd[atcindex] = wr;
+				 regs.atcresidi[atcindex] = 1;
+                         	 regs.atcresidd[atcindex] = 1;
+				 regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
+                         	 regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
+				 regs.atcfc2i[atcindex] = regs.s; // ??
+                         	 regs.atcfc2d[atcindex] = regs.s; // ??
+
+				 regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
+				 regs.mmusr |= pd & 0x000007e0;
+				 regs.mmusr |= wr ? 0x4 : 0;
+		    }
+	        } else {
+		    regs.mmusr = 0x800;
+		    return;
+		}
+	    } else {
+		regs.mmusr = 0x800;
+		return;
+	    }
+        } else {
+            uaecptr atcindex = ((addr << 12) >> 24);
+	    uint16 *rootp;
+	    try {
+		rootp = (uint16 *)do_get_real_address_direct(regs.srp & ((addr >> 25) << 2));
+	    } catch (bus_error) {
+		regs.mmusr = 0x800;
+		return;
+	    }
+	    uint16 root = *rootp;
+	    uint16 *apdt, *apd;
+	    uint16 pdt, pd;
+	    flagtype wr;
+	    if ((root & 0x3) > 1) {
+	       	wr = (root & 0x4) >> 2;
+	       	*rootp = root | 0x8;
+		try {
+	            apdt = (uint16 *)do_get_real_address_direct((root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16));
+		} catch (bus_error) {
+		    regs.mmusr = 0x800;
+		    return;
+		}
+	        pdt = *apdt;
+	        if ((pdt & 0x3) > 1) {
+	            wr += (pdt & 0x4) >> 2;
+		    *apdt = pdt | 0x8;
+		    try {
+		    	apd = (uint16 *)do_get_real_address_direct((pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10));
+		    } catch (bus_error) {
+			regs.mmusr = 0x800;
+			return;
+		    }
+                    pd = *apd;
+		    switch (pd & 0x3) {
+		        case 0:  regs.mmusr = 0x800;
+			         return;
+		        case 2:  try {
+			             apd = (uint16 *)do_get_real_address_direct(pd & 0xfffffffc);
+				 } catch (bus_error) {
+				     regs.mmusr = 0x800;
+				     return;
+				 }
+		                 pd = *apd;
+			         if (((pd & 0x3) % 2) == 0) {
+				     regs.mmusr = 0x800;
+				     return;
+				 }
+                        default: wr += (pd & 0x4) >> 2;
+				 if (!wr) throw access_error(addr);
+                                 *apd = pd | 0x18;
+			         regs.atcind[atcindex] = addr & 0xfffff000;
+			         regs.atcini[atcindex] = addr & 0xfffff000;
+				 regs.atcouti[atcindex] = pd & 0xfffff000;
+				 regs.atcoutd[atcindex] = pd & 0xfffff000;
+				 regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
+                         	 regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
+				 regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
+                         	 regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
+				 regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
+                         	 regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
+				 regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
+                         	 regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
+				 regs.atcmodifi[atcindex] = 1;
+                         	 regs.atcmodifd[atcindex] = 1;
+				 regs.atcwritepi[atcindex] = wr;
+                         	 regs.atcwritepd[atcindex] = wr;
+				 regs.atcresidi[atcindex] = 1;
+                         	 regs.atcresidd[atcindex] = 1;
+				 regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
+                         	 regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
+				 regs.atcfc2i[atcindex] = regs.s; // ??
+                         	 regs.atcfc2d[atcindex] = regs.s; // ??
+				 				                      	
+				 regs.mmusr = (pd & 0xfffff000) | 0x11;
+				 regs.mmusr |= pd & 0x000007e0;
+				 regs.mmusr |= wr ? 0x4 : 0;
+		    }
+	        } else {
+		    regs.mmusr = 0x800;
+		    return;
+		}
+	    } else {
+		regs.mmusr = 0x800;
+		return;
+	    }
+	}
+#endif
+    } else if ((opcode & 0xFF8) == 0x568) { /* PTESTR instruction */
+#ifdef MMU
+	uaecptr mask;
+        if (regs.dtt0 & 0x8000) {
+            mask = ((~regs.dtt0) & 0xff0000) << 8;
+	    if ((addr & mask) == (regs.dtt0 & mask)) {
+	        regs.mmusr = 3;
+	        return;
+	    }
+        }
+	if (regs.dtt1 & 0x8000) {
+	    mask = ((~regs.dtt1) & 0xff0000) << 8;
+	    if ((addr & mask) == (regs.dtt1 & mask)) {
+	        regs.mmusr = 3;
+		return;
+            }
+	}
+	if (regs.itt0 & 0x8000) {
+	    mask = ((~regs.itt0) & 0xff0000) << 8;
+	    if ((addr & mask) == (regs.itt0 & mask)) {
+	        regs.mmusr = 3;
+	        return;
+	    }
+	}
+	if (regs.itt1 & 0x8000) {
+	    mask = ((~regs.itt1) & 0xff0000) << 8;
+	    if ((addr & mask) == (regs.itt1 & mask)) {
+	        regs.mmusr = 3;
+		return;
+	    }
+	}
+	if (regs.tcp) {
+            uaecptr atcindex = ((addr << 11) >> 24);
+	    uint16 *rootp;
+	    try {
+	        rootp = (uint16 *)do_get_real_address_direct(regs.srp & ((addr >> 25) << 2));
+	    } catch (bus_error) {
+			regs.mmusr = 0x800;
+			return;
+	    }
+	    uint16 root = *rootp;
+	    uint16 *apdt, *apd;
+	    uint16 pdt, pd;
+	    flagtype wr;
+	    if ((root & 0x3) > 1) {
+	        wr = (root & 0x4) >> 2;
+	        *rootp = root | 0x8;
+		try {
+		    apdt = (uint16 *)do_get_real_address_direct((root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16));
+		} catch (bus_error) {
+		    regs.mmusr = 0x800;
+		    return;
+		}
+	        pdt = *apdt;
+	        if ((pdt & 0x3) > 1) {
+	            wr += (pdt & 0x4) >> 2;
+		    *apdt = pdt | 0x8;
+		    try {
+		       	apd = (uint16 *)do_get_real_address_direct((pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11));
+		    } catch (bus_error) {
+			regs.mmusr = 0x800;
+			return;
+		    }
+                    pd = *apd;
+		    switch (pd & 0x3) {
+		       	case 0:  regs.mmusr = 0x800;
+			         return;
+		       	case 2:  try {
+				     apd = (uint16 *)do_get_real_address_direct(pd & 0xfffffffc);
+				 } catch (bus_error) {
+				     regs.mmusr = 0x800;
+				     return;
+				 }
+		        	 pd = *apd;
+			         if (((pd & 0x3) % 2) == 0) {
+				     regs.mmusr = 0x800;
+				     return;
+				 }
+                    	default: wr += (pd & 0x4) >> 2;
+                        	 *apd = pd | 0x18;
+			         regs.atcind[atcindex] = addr & 0xffffe000;
+			         regs.atcini[atcindex] = addr & 0xffffe000;
+				 regs.atcouti[atcindex] = pd & 0xffffe000;
+               			 regs.atcoutd[atcindex] = pd & 0xffffe000;
+				 regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
+                         	 regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
+				 regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
+                         	 regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
+				 regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
+                         	 regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
+				 regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
+                         	 regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
+				 regs.atcmodifi[atcindex] = 1;
+                         	 regs.atcmodifd[atcindex] = 1;
+				 regs.atcwritepi[atcindex] = wr;
+                         	 regs.atcwritepd[atcindex] = wr;
+				 regs.atcresidi[atcindex] = 1;
+                         	 regs.atcresidd[atcindex] = 1;
+				 regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
+                         	 regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
+				 regs.atcfc2i[atcindex] = regs.s; // ??
+                         	 regs.atcfc2d[atcindex] = regs.s; // ??
+
+				 regs.mmusr = (pd & 0xffffe000) | (addr & 0x00001000) | 0x11;
+				 regs.mmusr |= pd & 0x000007e0;
+				 regs.mmusr |= wr ? 0x4 : 0;
+		    }
+	        } else {
+		    regs.mmusr = 0x800;
+		    return;
+		}
+	    } else {
+		regs.mmusr = 0x800;
+		return;
+	    }
+        } else {
+            uaecptr atcindex = ((addr << 12) >> 24);
+	    uint16 *rootp;
+	    try {
+		rootp = (uint16 *)do_get_real_address_direct(regs.srp & ((addr >> 25) << 2));
+	    } catch (bus_error) {
+		regs.mmusr = 0x800;
+		return;
+	    }
+	    uint16 root = *rootp;
+	    uint16 *apdt, *apd;
+	    uint16 pdt, pd;
+	    flagtype wr;
+	    if ((root & 0x3) > 1) {
+	       	wr = (root & 0x4) >> 2;
+	       	*rootp = root | 0x8;
+		try {
+	            apdt = (uint16 *)do_get_real_address_direct((root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16));
+		} catch (bus_error) {
+		    regs.mmusr = 0x800;
+		    return;
+		}
+	        pdt = *apdt;
+	        if ((pdt & 0x3) > 1) {
+	            wr += (pdt & 0x4) >> 2;
+		    *apdt = pdt | 0x8;
+		    try {
+		    	apd = (uint16 *)do_get_real_address_direct((pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10));
+		    } catch (bus_error) {
+			regs.mmusr = 0x800;
+			return;
+		    }
+                    pd = *apd;
+		    switch (pd & 0x3) {
+		        case 0:  regs.mmusr = 0x800;
+			         return;
+		        case 2:  try {
+			             apd = (uint16 *)do_get_real_address_direct(pd & 0xfffffffc);
+				 } catch (bus_error) {
+				     regs.mmusr = 0x800;
+				     return;
+				 }
+		                 pd = *apd;
+			         if (((pd & 0x3) % 2) == 0) {
+				     regs.mmusr = 0x800;
+				     return;
+				 }
+                        default: wr += (pd & 0x4) >> 2;
+                                 *apd = pd | 0x18;
+			         regs.atcind[atcindex] = addr & 0xfffff000;
+			         regs.atcini[atcindex] = addr & 0xfffff000;
+				 regs.atcouti[atcindex] = pd & 0xfffff000;
+				 regs.atcoutd[atcindex] = pd & 0xfffff000;
+				 regs.atcu0i[atcindex] = (pd & 0x00000100) >> 8;
+                         	 regs.atcu0d[atcindex] = (pd & 0x00000100) >> 8;
+				 regs.atcu1i[atcindex] = (pd & 0x00000200) >> 9;
+                         	 regs.atcu1d[atcindex] = (pd & 0x00000200) >> 9;
+				 regs.atcsuperi[atcindex] = (pd & 0x00000080) >> 7;
+                         	 regs.atcsuperd[atcindex] = (pd & 0x00000080) >> 7;
+				 regs.atccmi[atcindex] = (pd & 0x00000060) >> 5;
+                         	 regs.atccmd[atcindex] = (pd & 0x00000060) >> 5;
+				 regs.atcmodifi[atcindex] = 1;
+                         	 regs.atcmodifd[atcindex] = 1;
+				 regs.atcwritepi[atcindex] = wr;
+                         	 regs.atcwritepd[atcindex] = wr;
+				 regs.atcresidi[atcindex] = 1;
+                         	 regs.atcresidd[atcindex] = 1;
+				 regs.atcglobali[atcindex] = (pd & 0x00000400) >> 10;
+                         	 regs.atcglobald[atcindex] = (pd & 0x00000400) >> 10;
+				 regs.atcfc2i[atcindex] = regs.s; // ??
+                         	 regs.atcfc2d[atcindex] = regs.s; // ??
+				 				                      	
+				 regs.mmusr = (pd & 0xfffff000) | 0x11;
+				 regs.mmusr |= pd & 0x000007e0;
+				 regs.mmusr |= wr ? 0x4 : 0;
+		    }
+	        } else {
+		    regs.mmusr = 0x800;
+		    return;
+		}
+	    } else {
+		regs.mmusr = 0x800;
+		return;
+	    }
+	}
+#endif
+    } else op_illg(opcode);
 }
 
 static int n_insns = 0, n_spcinsns = 0;
@@ -1234,7 +1688,7 @@ static void do_trace (void)
        /* We can afford this to be inefficient... */
        m68k_setpc (m68k_getpc ());
        fill_prefetch_0 ();
-       opcode = get_word (regs.pc);
+       opcode = get_word (regs.pc, false);
        if (opcode == 0x4e72            /* RTE */
            || opcode == 0x4e74                 /* RTD */
            || opcode == 0x4e75                 /* RTS */
@@ -1270,7 +1724,7 @@ static int do_specialties (void)
     }
     while (regs.spcflags & SPCFLAG_STOP) {
     	int mask = (SPCFLAG_INT | SPCFLAG_DOINT | SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_TIMERC2 | SPCFLAG_MFP_ACIA);
-	if (regs.spcflags & mask) {
+	if (regs.spcflags & mask){
 	    int intr = intlev ();
 	    regs.spcflags &= ~mask;
 	    if (intr != -1 && intr > regs.intmask) {
@@ -1307,10 +1761,10 @@ static int do_specialties (void)
     if ((regs.spcflags & (SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_TIMERC2))
     	&& (6 > regs.intmask)) {
     	// fprintf(stderr, "uvnitr MFP_TIMERC\n");
-    	uae_u8 value = get_byte(0xfffa11);
+    	uae_u8 value = get_byte_direct(0xfffa11);
     	if ((value & 0x20) == 0) {
     		// fprintf(stderr, "Spoustim IRQ\n");
-    		put_byte(0xfffa11, value | mask);
+    		put_byte_direct(0xfffa11, value | mask);
         	MFPInterrupt(MFPintr);
 		regs.stopped = 0;
 		if (regs.spcflags & SPCFLAG_MFP_TIMERC) {
@@ -1321,6 +1775,7 @@ static int do_specialties (void)
 			regs.spcflags &= ~SPCFLAG_MFP_TIMERC2;
 	}
     }
+
 /*
     if (regs.spcflags & SPCFLAG_INT) {
 	regs.spcflags &= ~SPCFLAG_INT;
@@ -1337,8 +1792,19 @@ static int do_specialties (void)
 static void m68k_run_1 (void)
 {
 	for (;;) {
-		uae_u32 opcode = GET_OPCODE;
-		(*cpufunctbl[opcode])(opcode);
+		if (setjmp(excep_env) == 0) {
+			uae_u32 opcode = GET_OPCODE;
+			(*cpufunctbl[opcode])(opcode);
+		} else {
+			switch (excep_no) {
+			    case 2: fprintf(stderr, "BUS ERROR catched\n");
+			            Exception(2, 0);
+				    break;
+			    case 3: fprintf(stderr, "ACCESS ERROR\n");
+			            Exception(3, 0);
+				    break;
+			}
+		}
 		if (regs.spcflags) {
 			if (do_specialties())
 				return;

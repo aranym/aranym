@@ -49,19 +49,19 @@ extern uint32 VideoRAMSize;	// Size of VideoRAM
 
 // Mac memory access functions
 #include "memory.h"
-static inline uint32 ReadMacInt32(uint32 addr) {return get_long(addr);}
-static inline uint32 ReadMacInt16(uint32 addr) {return get_word(addr);}
-static inline uint32 ReadMacInt8(uint32 addr) {return get_byte(addr);}
-static inline void WriteMacInt32(uint32 addr, uint32 l) {put_long(addr, l);}
-static inline void WriteMacInt16(uint32 addr, uint32 w) {put_word(addr, w);}
-static inline void WriteMacInt8(uint32 addr, uint32 b) {put_byte(addr, b);}
-static inline uint8 *Mac2HostAddr(uint32 addr) {return get_real_address(addr);}
-static inline uint32 Host2MacAddr(uint8 *addr) {return get_virtual_address(addr);}
+//static inline uint32 ReadMacInt32(uint32 addr) {return get_long(addr);}
+//static inline uint32 ReadMacInt16(uint32 addr) {return get_word(addr);}
+//static inline uint32 ReadMacInt8(uint32 addr) {return get_byte(addr);}
+//static inline void WriteMacInt32(uint32 addr, uint32 l) {put_long(addr, l);}
+//static inline void WriteMacInt16(uint32 addr, uint32 w) {put_word(addr, w);}
+//static inline void WriteMacInt8(uint32 addr, uint32 b) {put_byte(addr, b);}
+//static inline uint8 *Mac2HostAddr(uint32 addr) {return get_real_address(addr);}
+//static inline uint32 Host2MacAddr(uint8 *addr) {return get_virtual_address(addr);}
 
-static inline void *Mac_memset(uint32 addr, int c, size_t n) {return memset(Mac2HostAddr(addr), c, n);}
-static inline void *Mac2Host_memcpy(void *dest, uint32 src, size_t n) {return memcpy(dest, Mac2HostAddr(src), n);}
-static inline void *Host2Mac_memcpy(uint32 dest, const void *src, size_t n) {return memcpy(Mac2HostAddr(dest), src, n);}
-static inline void *Mac2Mac_memcpy(uint32 dest, uint32 src, size_t n) {return memcpy(Mac2HostAddr(dest), Mac2HostAddr(src), n);}
+//static inline void *Mac_memset(uint32 addr, int c, size_t n) {return memset(Mac2HostAddr(addr), c, n);}
+//static inline void *Mac2Host_memcpy(void *dest, uint32 src, size_t n) {return memcpy(dest, Mac2HostAddr(src), n);}
+//static inline void *Host2Mac_memcpy(uint32 dest, const void *src, size_t n) {return memcpy(Mac2HostAddr(dest), src, n);}
+//static inline void *Mac2Mac_memcpy(uint32 dest, uint32 src, size_t n) {return memcpy(Mac2HostAddr(dest), Mac2HostAddr(src), n);}
 
 
 /*

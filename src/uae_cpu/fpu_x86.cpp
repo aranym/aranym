@@ -2439,45 +2439,45 @@ static int get_fp_value (uae_u32 opcode, uae_u16 extra, float80 src)
 
   switch ((uae_u8)size) {
     case 0:
-			signed_to_extended( (uae_s32) get_long (ad), src );
+			signed_to_extended( (uae_s32) get_long (ad, true), src );
 			break;
     case 1:
-			to_single( get_long (ad), src );
+			to_single( get_long (ad, true), src );
 			break;
 
     case 2:{
 	    uae_u32 wrd1, wrd2, wrd3;
-	    wrd1 = get_long (ad);
+	    wrd1 = get_long (ad, true);
 	    ad += 4;
-	    wrd2 = get_long (ad);
+	    wrd2 = get_long (ad, true);
 	    ad += 4;
-	    wrd3 = get_long (ad);
+	    wrd3 = get_long (ad, true);
 			to_exten( wrd1, wrd2, wrd3, src );
 			}
 			break;
     case 3:{
 	    uae_u32 wrd1, wrd2, wrd3;
-	    wrd1 = get_long (ad);
+	    wrd1 = get_long (ad, true);
 	    ad += 4;
-	    wrd2 = get_long (ad);
+	    wrd2 = get_long (ad, true);
 	    ad += 4;
-	    wrd3 = get_long (ad);
+	    wrd3 = get_long (ad, true);
 			double_to_extended( to_pack(wrd1, wrd2, wrd3), src );
 			}
 			break;
     case 4:
-			signed_to_extended( (uae_s32)(uae_s16) get_word(ad), src );
+			signed_to_extended( (uae_s32)(uae_s16) get_word(ad, true), src );
 			break;
     case 5:{
 	    uae_u32 wrd1, wrd2;
-	    wrd1 = get_long (ad);
+	    wrd1 = get_long (ad, true);
 	    ad += 4;
-	    wrd2 = get_long (ad);
+	    wrd2 = get_long (ad, true);
 			to_double(wrd1, wrd2, src);
 			}
 			break;
     case 6:
-			signed_to_extended( (uae_s32)(uae_s8) get_byte(ad), src );
+			signed_to_extended( (uae_s32)(uae_s8) get_byte(ad, true), src );
 			break;
     default:
 			return 0;
@@ -2979,7 +2979,7 @@ void REGPARAM2 frestore_opp(uae_u32 opcode)
 				D(bug("PROBLEM: frestore_opp incr < 0\r\n"));
 				// this may be wrong, but it's never called.
 				ad -= 4;
-				d = get_long (ad);
+				d = get_long (ad, true);
 				if ((d & 0xff000000) == 0) { // NULL
 					D(bug("frestore_opp found NULL frame at %X\r\n",ad-4));
 					do_null_frestore();
@@ -2995,7 +2995,7 @@ void REGPARAM2 frestore_opp(uae_u32 opcode)
 					D(bug("PROBLEM: frestore_opp did not find a frame at %X, d=%X\r\n",ad-4,d));
 				}
 			} else {
-				d = get_long (ad);
+				d = get_long (ad, true);
 				D(bug("frestore_opp frame at %X = %X\r\n",ad,d));
 				ad += 4;
 				if ((d & 0xff000000) == 0) { // NULL
@@ -3019,7 +3019,7 @@ void REGPARAM2 frestore_opp(uae_u32 opcode)
 				D(bug("PROBLEM: frestore_opp incr < 0\r\n"));
 				// this may be wrong, but it's never called.
 				ad -= 4;
-				d = get_long (ad);
+				d = get_long (ad, true);
 				if ((d & 0xff000000) == 0) { // NULL
 					do_null_frestore();
 				} else if ((d & 0x00ff0000) == 0x00180000) {
@@ -3030,7 +3030,7 @@ void REGPARAM2 frestore_opp(uae_u32 opcode)
 					ad -= 45 * 4;
 				}
 			} else {
-				d = get_long (ad);
+				d = get_long (ad, true);
 				D(bug("frestore_opp frame at %X = %X\r\n",ad,d));
 				ad += 4;
 				if ((d & 0xff000000) == 0) { // NULL
@@ -3732,7 +3732,7 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpiar_predecrement( uae_u32 opcode, uae_u16 ex
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 4;
-		regs.fpiar = get_long (ad);
+		regs.fpiar = get_long (ad, true);
 		D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad, regs.fpiar ));
 		m68k_areg (regs, opcode & 7) = ad;
 		dump_fp_regs( "END  ");
@@ -3744,7 +3744,7 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpsr_predecrement( uae_u32 opcode, uae_u16 ext
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 4;
-		regs.fpsr = get_long (ad);
+		regs.fpsr = get_long (ad, true);
 		from_fpsr();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad, regs.fpsr ));
 		m68k_areg (regs, opcode & 7) = ad;
@@ -3757,10 +3757,10 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpsr_fpiar_predecrement( uae_u32 opcode, uae_u
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 8;
-		regs.fpsr = get_long (ad);
+		regs.fpsr = get_long (ad, true);
 		from_fpsr();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad, regs.fpsr ));
-		regs.fpiar = get_long (ad+4);
+		regs.fpiar = get_long (ad+4, true);
 		D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad+4, regs.fpiar ));
 		m68k_areg (regs, opcode & 7) = ad;
 		dump_fp_regs( "END  ");
@@ -3772,7 +3772,7 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_predecrement( uae_u32 opcode, uae_u16 ext
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 4;
-		regs.fpcr = get_long (ad);
+		regs.fpcr = get_long (ad, true);
 		set_host_fpu_control_word();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
 		m68k_areg (regs, opcode & 7) = ad;
@@ -3785,10 +3785,10 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_fpiar_predecrement( uae_u32 opcode, uae_u
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 8;
-		regs.fpcr = get_long (ad);
+		regs.fpcr = get_long (ad, true);
 		set_host_fpu_control_word();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
-		regs.fpiar = get_long (ad+4);
+		regs.fpiar = get_long (ad+4, true);
 		D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad+4, regs.fpiar ));
 		m68k_areg (regs, opcode & 7) = ad;
 		dump_fp_regs( "END  ");
@@ -3800,10 +3800,10 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_fpsr_predecrement( uae_u32 opcode, uae_u1
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 8;
-		regs.fpcr = get_long (ad);
+		regs.fpcr = get_long (ad, true);
 		set_host_fpu_control_word();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
-		regs.fpsr = get_long (ad+4);
+		regs.fpsr = get_long (ad+4, true);
 		from_fpsr();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad+4, regs.fpsr ));
 		m68k_areg (regs, opcode & 7) = ad;
@@ -3816,13 +3816,13 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_fpsr_fpiar_predecrement( uae_u32 opcode, 
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
 		ad -= 12;
-		regs.fpcr = get_long (ad);
+		regs.fpcr = get_long (ad, true);
 		set_host_fpu_control_word();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
-		regs.fpsr = get_long (ad+4);
+		regs.fpsr = get_long (ad+4, true);
 		from_fpsr();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad+4, regs.fpsr ));
-		regs.fpiar = get_long (ad+8);
+		regs.fpiar = get_long (ad+8, true);
 		D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad+8, regs.fpiar ));
 		m68k_areg (regs, opcode & 7) = ad;
 		dump_fp_regs( "END  ");
@@ -3842,7 +3842,7 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpiar_postincrement( uae_u32 opcode, uae_u16 e
 {
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
-		regs.fpiar = get_long (ad);
+		regs.fpiar = get_long (ad, true);
 		D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad, regs.fpiar ));
 		m68k_areg (regs, opcode & 7) = ad+4;
 		dump_fp_regs( "END  ");
@@ -3853,7 +3853,7 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpsr_postincrement( uae_u32 opcode, uae_u16 ex
 {
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
-		regs.fpsr = get_long (ad);
+		regs.fpsr = get_long (ad, true);
 		from_fpsr();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad, regs.fpsr ));
 		m68k_areg (regs, opcode & 7) = ad+4;
@@ -3865,10 +3865,10 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpsr_fpiar_postincrement( uae_u32 opcode, uae_
 {
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
-		regs.fpsr = get_long (ad);
+		regs.fpsr = get_long (ad, true);
 		from_fpsr();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad, regs.fpsr ));
-		regs.fpiar = get_long (ad+4);
+		regs.fpiar = get_long (ad+4, true);
 		D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad+4, regs.fpiar ));
 		m68k_areg (regs, opcode & 7) = ad+8;
 		dump_fp_regs( "END  ");
@@ -3879,7 +3879,7 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_postincrement( uae_u32 opcode, uae_u16 ex
 {
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
-		regs.fpcr = get_long (ad);
+		regs.fpcr = get_long (ad, true);
 		set_host_fpu_control_word();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
 		m68k_areg (regs, opcode & 7) = ad+4;
@@ -3891,10 +3891,10 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_fpiar_postincrement( uae_u32 opcode, uae_
 {
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
-		regs.fpcr = get_long (ad);
+		regs.fpcr = get_long (ad, true);
 		set_host_fpu_control_word();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
-		regs.fpiar = get_long (ad+4);
+		regs.fpiar = get_long (ad+4, true);
 		D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad+4, regs.fpiar ));
 		m68k_areg (regs, opcode & 7) = ad+8;
 		dump_fp_regs( "END  ");
@@ -3905,10 +3905,10 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_fpsr_postincrement( uae_u32 opcode, uae_u
 {
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
-		regs.fpcr = get_long (ad);
+		regs.fpcr = get_long (ad, true);
 		set_host_fpu_control_word();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
-		regs.fpsr = get_long (ad+4);
+		regs.fpsr = get_long (ad+4, true);
 		from_fpsr();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad+4, regs.fpsr ));
 		m68k_areg (regs, opcode & 7) = ad+8;
@@ -3920,13 +3920,13 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_fpsr_fpiar_postincrement( uae_u32 opcode,
 {
 	uae_u32 ad;
 	if (get_fp_ad(opcode, &ad)) {
-		regs.fpcr = get_long (ad);
+		regs.fpcr = get_long (ad, true);
 		set_host_fpu_control_word();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
-		regs.fpsr = get_long (ad+4);
+		regs.fpsr = get_long (ad+4, true);
 		from_fpsr();
 		D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad+4, regs.fpsr ));
-		regs.fpiar = get_long (ad+8);
+		regs.fpiar = get_long (ad+8, true);
 		D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad+8, regs.fpiar ));
 		m68k_areg (regs, opcode & 7) = ad+12;
 		dump_fp_regs( "END  ");
@@ -3952,7 +3952,7 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpiar_2_Mem( uae_u32 opcode, uae_u16 extra )
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
-			regs.fpiar = get_long (ad);
+			regs.fpiar = get_long (ad, true);
 			D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad, regs.fpiar ));
 		}
 	}
@@ -3968,7 +3968,7 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpsr_2_Mem( uae_u32 opcode, uae_u16 extra )
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
-			regs.fpsr = get_long (ad);
+			regs.fpsr = get_long (ad, true);
 			from_fpsr();
 			D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad, regs.fpsr ));
 		}
@@ -3987,10 +3987,10 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpsr_fpiar_2_Mem( uae_u32 opcode, uae_u16 extr
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
-			regs.fpsr = get_long (ad);
+			regs.fpsr = get_long (ad, true);
 			from_fpsr();
 			D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad, regs.fpsr ));
-			regs.fpiar = get_long (ad+4);
+			regs.fpiar = get_long (ad+4, true);
 			D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad+4, regs.fpiar ));
 		}
 	}
@@ -4006,7 +4006,7 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_2_Mem( uae_u32 opcode, uae_u16 extra )
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
-			regs.fpcr = get_long (ad);
+			regs.fpcr = get_long (ad, true);
 			set_host_fpu_control_word();
 			D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
 		}
@@ -4025,10 +4025,10 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_fpiar_2_Mem( uae_u32 opcode, uae_u16 extr
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
-			regs.fpcr = get_long (ad);
+			regs.fpcr = get_long (ad, true);
 			set_host_fpu_control_word();
 			D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
-			regs.fpiar = get_long (ad+4);
+			regs.fpiar = get_long (ad+4, true);
 			D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad+4, regs.fpiar ));
 		}
 	}
@@ -4047,10 +4047,10 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_fpsr_2_Mem( uae_u32 opcode, uae_u16 extra
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
-			regs.fpcr = get_long (ad);
+			regs.fpcr = get_long (ad, true);
 			set_host_fpu_control_word();
 			D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
-			regs.fpsr = get_long (ad+4);
+			regs.fpsr = get_long (ad+4, true);
 			from_fpsr();
 			D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad+4, regs.fpsr ));
 		}
@@ -4072,13 +4072,13 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpcr_fpsr_fpiar_2_Mem( uae_u32 opcode, uae_u16
 	} else {
 		uae_u32 ad;
 		if (get_fp_ad(opcode, &ad)) {
-			regs.fpcr = get_long (ad);
+			regs.fpcr = get_long (ad, true);
 			set_host_fpu_control_word();
 			D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
-			regs.fpsr = get_long (ad+4);
+			regs.fpsr = get_long (ad+4, true);
 			from_fpsr();
 			D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad+4, regs.fpsr ));
-			regs.fpiar = get_long (ad+8);
+			regs.fpiar = get_long (ad+8, true);
 			D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad+8, regs.fpiar ));
 		}
 	}
@@ -4097,11 +4097,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_static_pred_postincrement( uae_u32 opcode,
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
 				ad -= 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad -= 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad -= 4;
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
 			list <<= 1;
@@ -4120,11 +4120,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_static_pred_predecrement( uae_u32 opcode, 
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
 				ad -= 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad -= 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad -= 4;
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
 			list <<= 1;
@@ -4143,11 +4143,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_static_pred( uae_u32 opcode, uae_u16 extra
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
 				ad -= 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad -= 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad -= 4;
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
 			list <<= 1;
@@ -4165,11 +4165,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_dynamic_pred_postincrement( uae_u32 opcode
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
 				ad -= 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad -= 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad -= 4;
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
 			list <<= 1;
@@ -4188,11 +4188,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_dynamic_pred_predecrement( uae_u32 opcode,
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
 				ad -= 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad -= 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad -= 4;
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
 			list <<= 1;
@@ -4211,11 +4211,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_dynamic_pred( uae_u32 opcode, uae_u16 extr
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
 				ad -= 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad -= 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad -= 4;
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
 			list <<= 1;
@@ -4232,11 +4232,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_static_postinc_postincrement( uae_u32 opco
 		for( int reg=0; reg<8; reg++ ) {
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				ad += 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad += 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad += 4;
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
@@ -4255,11 +4255,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_static_postinc_predecrement( uae_u32 opcod
 		for( int reg=0; reg<8; reg++ ) {
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				ad += 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad += 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad += 4;
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
@@ -4278,11 +4278,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_static_postinc( uae_u32 opcode, uae_u16 ex
 		for( int reg=0; reg<8; reg++ ) {
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				ad += 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad += 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad += 4;
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
@@ -4300,11 +4300,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_dynamic_postinc_postincrement( uae_u32 opc
 		for( int reg=0; reg<8; reg++ ) {
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				ad += 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad += 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad += 4;
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
@@ -4323,11 +4323,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_dynamic_postinc_predecrement( uae_u32 opco
 		for( int reg=0; reg<8; reg++ ) {
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				ad += 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad += 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad += 4;
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}
@@ -4346,11 +4346,11 @@ void REGPARAM2 fpuop_fmovem_Mem_2_fpp_dynamic_postinc( uae_u32 opcode, uae_u16 e
 		for( int reg=0; reg<8; reg++ ) {
 			uae_u32 wrd1, wrd2, wrd3;
 			if( list & 0x80 ) {
-				wrd1 = get_long (ad);
+				wrd1 = get_long (ad, true);
 				ad += 4;
-				wrd2 = get_long (ad);
+				wrd2 = get_long (ad, true);
 				ad += 4;
-				wrd3 = get_long (ad);
+				wrd3 = get_long (ad, true);
 				ad += 4;
 				to_exten_no_normalize (wrd1, wrd2, wrd3,fp_reg[reg]);
 			}

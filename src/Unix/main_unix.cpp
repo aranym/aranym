@@ -202,7 +202,7 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 			}
 
 			VideoRAMBaseHost = (uint8 *)surf->pixels;
-			uint16 *fvram = (uint16*)get_real_address(vram_addr/*ReadMacInt32(0x44e)*/);
+			uint16 *fvram = (uint16*)get_real_address_direct(vram_addr/*ReadMacInt32(0x44e)*/);
 			uint16 *hvram = (uint16 *)VideoRAMBaseHost;
 			int mode = getVideoMode();
 #ifdef CONVPLANES
@@ -494,6 +494,7 @@ int main(int argc, char **argv)
 	// Initialize variables
 	RAMBaseHost = NULL;
 	ROMBaseHost = NULL;
+	TTRAMBaseHost = NULL;
 	srand(time(NULL));
 	tzset();
 
@@ -514,7 +515,8 @@ int main(int argc, char **argv)
 	const uint32 page_size = getpagesize();
 	const uint32 page_mask = page_size - 1;
 	const uint32 aligned_ram_size = (RAMSize + page_mask) & ~page_mask;
-	mapped_ram_rom_size = aligned_ram_size + 0x100000 + 0x100000;
+	const uint32 aligned_ttram_size = (TTRAMSize + page_mask) & ~page_mask;
+	mapped_ram_rom_size = aligned_ram_size + 0x100000 + 0x100000 + aligned_ttram_size;
 
 	// Create areas for Mac RAM and ROM
 	// gb-- Overkill, needs to be cleaned up. Probably explode it for either
@@ -524,22 +526,19 @@ int main(int argc, char **argv)
 		ErrorAlert("Not enough memory\n");
 		QuitEmulator();
 	}
-	ROMBaseHost = RAMBaseHost + aligned_ram_size;
-	// ROMBaseHost = RAMBaseHost + 0xe00000;
+	ROMBaseHost = RAMBaseHost + ROMBase;
+	TTRAMBaseHost = RAMBaseHost + TTRAMBase;
 
 	// Initialize MEMBaseDiff now so that Host2MacAddr in the Video module
 	// will return correct results
-	RAMBase = 0;
-	ROMBase = RAMBase + aligned_ram_size;
 	// ROMBase = RAMBase + 0xe00000;
 
 	InitMEMBaseDiff(RAMBaseHost, RAMBase);
 	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
 	D(bug("ST-RAM starts at %p (%08x)\n", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)\n", ROMBaseHost, ROMBase));
+	D(bug("TT-RAM starts at %p (%08x)\n", TTRAMBaseHost, TTRAMBase));
 	D(bug("VideoRAM starts at %p (%08x)\n", VideoRAMBaseHost, VideoRAMBase));
-	fprintf(stderr, "Physical VRAM = %x\n", VideoRAMBaseHost);
-	
 	// Get rom file path from preferences
 //	const char *rom_path = "ROM";
 

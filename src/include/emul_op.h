@@ -91,7 +91,7 @@ enum {
 	M68K_EMUL_OP_MAX				// highest number
 };
 
-
+#include "extfs.h"
 // Variables
 extern ExtFs extFS;  // external filesystem access object /STanda/
 

@@ -89,6 +89,7 @@ distclean: clean
 	rm -rf $(OBJ_DIR)
 	rm -f Makefile
 	rm -f config.cache config.log config.status config.h
+	rm -f ROM
 
 depend dep:
 	makedepend $(CPPFLAGS) -Y. $(SRCS) 2>/dev/null

@@ -68,7 +68,7 @@ void fdc_exec_command (void)
 	address = (HWget_b(0xff8609)<<16)|(HWget_b(0xff860b)<<8)
 			|HWget_b(0xff860d);
 	fprintf(stderr, "FDC DMA virtual address = %06x\n", address);
-	buffer=do_get_real_address(address);
+	buffer=do_get_real_address(address, true, false);	//?? Je to OK?
 	sides=(~snd_porta)&1;
 	d=(~snd_porta)&6;
 	switch(d)
