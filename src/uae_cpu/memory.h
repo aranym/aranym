@@ -12,12 +12,12 @@
 #define UAE_MEMORY_H
 
 #include "hardware.h"
+#include "parameters.h"
 #include "exceptions.h"
 #include "sysdeps.h"
 #include "m68k.h"
 #include "registers.h"
 
-#define CHECK_RAM_END	1
 #define BUS_ERROR	longjmp(excep_env, 2)
 #define STRAM_END	0x0e00000	// should be replaced by global ROMBase as soon as ROMBase will be a constant
 #define TTRAM_BEGIN	0x1000000	// should be replaced by global TTRAMBase as soon as TTRAMBase will be a constant
@@ -165,7 +165,6 @@ extern uintptr VMEMBaseDiff;
 
 static __inline__ void check_ram_boundary(uaecptr addr)
 {
-#if CHECK_RAM_BOUNDARY
 	if (addr < STRAM_END)		// ST-RAM
 		return;
 	if (addr >= TTRAM_BEGIN && addr < (TTRAM_BEGIN+TTRAMSize))	// FastRAM
@@ -175,7 +174,6 @@ static __inline__ void check_ram_boundary(uaecptr addr)
 			return;
 	}
     BUS_ERROR;
-#endif
 }
 
 static __inline__ uae_u32 get_long_direct(uaecptr addr)
@@ -246,10 +244,7 @@ static __inline__ uae_u32 get_long_direct(uaecptr addr)
 {
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
-#if CHECK_RAM_END
-    if (addr >= READ_RAM_END)
-    	BUS_ERROR;
-#endif
+    check_ram_boundary(addr);
     uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
     return longget_1(addr);
 }
@@ -257,10 +252,7 @@ static __inline__ uae_u32 get_word_direct(uaecptr addr)
 {
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_w(addr);
-#if CHECK_RAM_END
-    if (addr >= READ_RAM_END)
-    	BUS_ERROR;
-#endif
+    check_ram_boundary(addr);
     uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
     return wordget_1(addr);
 }
@@ -268,10 +260,7 @@ static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 {
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_b(addr);
-#if CHECK_RAM_END
-    if (addr >= READ_RAM_END)
-    	BUS_ERROR;
-#endif
+    check_ram_boundary(addr);
     uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
     return byteget_1(addr);
 }
@@ -282,10 +271,7 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
         HWput_l(addr, l);
         return;
     } 
-#if CHECK_RAM_END
-    if (addr >= WRITE_RAM_END)
-    	BUS_ERROR;
-#endif
+    check_ram_boundary(addr);
     uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
     longput_1(addr, l);
 }
@@ -296,10 +282,7 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
         HWput_w(addr, w);
         return;
     }
-#if CHECK_RAM_END
-    if (addr >= WRITE_RAM_END)
-    	BUS_ERROR;
-#endif
+    check_ram_boundary(addr);
     uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
     wordput_1(addr, w);
 }
@@ -310,10 +293,7 @@ static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
         HWput_b(addr, b);
         return;
     }
-#if CHECK_RAM_END
-    if (addr >= WRITE_RAM_END)
-    	BUS_ERROR;
-#endif
+    check_ram_boundary(addr);
     uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
     byteput_1(addr, b);
 }
