@@ -1,9 +1,20 @@
+2001/06/15 - PS
+- VIDEL finished. Hardware color palette registers are used properly now.
+
 2001/06/13 - STanda
 - some VIDEL public routins adjusted to provide fVDI driver needed methods.
   (lockScreen(), unlockScreen(), getHostVideoramAddress())
 
 - updateScreen() semantics was updated to SDL_UpdateRect... (only). The
   original method functionality was captured in new renderScreen() method
+
+2001/06/12 - PS
+- VIDEL rewritten using the new BASE_IO class. Got proper getVideoMode()
+  and getWidth/Height (all stolen from Linux-m68k source code).
+  Extended resolutions (using BlowUP030) work now perfectly (e.g. 1024x768).
+
+- new DSP module is based on the new BASE_IO - you see, it's easy to write
+  HW emulation stuff now.
 
 2001/06/08 - PS
 - highly unfinished, very preliminary, often crashing support for extended

@@ -43,6 +43,7 @@ void HWInit (void) {
 	rtc.init();
 }
 
+/* obsolete */
 static const int HW_IDE 	= 0xf00000;
 static const int HW_ROM	= 0xfa0000;
 static const int HW_MMU 	= 0xff8000;
@@ -64,11 +65,12 @@ static const int HW_FPU	= 0xfffa40;
 static const int HW_TTMFP	= 0xfffa80;
 static const int HW_IKBD	= 0xfffc00;
 static const int HW_MIDI	= 0xfffc04;
+/* end of obsolete */
 
 struct HARDWARE {
 	char name[32];
 	int	begin;
-	int len;
+	int len;	// TODO replace len with end to save some CPU cycles in runtime
 	ICio *handle;
 };
 
@@ -90,7 +92,7 @@ HARDWARE ICs[] = {
 	{"SCC", 0xff8C80, 0x16, &fake_io},
 	// {"VME", 0xff8e00, 0x0c},
 	{"Paddle", 0xff9200, 0x24, &fake_io},
-	{"VIDEL Pallete", 0xff9800, 0x400, &fake_io},
+	{"VIDEL Pallete", 0xff9800, 0x400, &videl},
 	{"DSP", 0xffa200, 8, &dsp},
 	{"STMFP", 0xfffa00, 0x30, &mfp},
 	// {"STFPC", 0xfffa40, 8},

@@ -13,19 +13,6 @@
 
 static const int HW = 0xff8200;
 
-#define CONVPLANES
-#ifdef CONVPLANES
-// Temporary color palette table...
-#include "colorpalette.cpp"
-
-char tos_colors[] =
-	{ 0, 255, 1, 2, 4, 6, 3, 5, 7, 8, 9, 10, 12, 14, 11, 13 };
-char vdi_colors[] =
-	{ 0, 2, 3, 6, 4, 7, 5, 8, 9, 10, 11, 14, 12, 15, 13, 1 };
-uint32 sdl_colors[256];
-
-#endif							// CONVPLANES
-
 #if 0
 int SelectVideoMode()
 {
@@ -56,7 +43,8 @@ int SelectVideoMode()
 }
 #endif
 
-void VIDEL::setHostWindow() {
+void VIDEL::setHostWindow()
+{
 	surf = SDL_SetVideoMode(width, height, 16, sdl_videoparams);
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 	fprintf(stderr, "Line Length = %d\n", surf->pitch);
@@ -67,7 +55,8 @@ void VIDEL::setHostWindow() {
 
 	VideoRAMBaseHost = (uint8 *) surf->pixels;
 	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
-	fprintf(stderr, "VideoRAM starts at %p (%08x)\n", VideoRAMBaseHost, VideoRAMBase);
+	fprintf(stderr, "VideoRAM starts at %p (%08x)\n", VideoRAMBaseHost,
+			VideoRAMBase);
 
 	fprintf(stderr, "surf->pixels = %x, getVideoSurface() = %x\n",
 			VideoRAMBaseHost, SDL_GetVideoSurface()->pixels);
@@ -88,7 +77,8 @@ void VIDEL::setHostWindow() {
 
 }
 
-VIDEL::VIDEL() {
+VIDEL::VIDEL()
+{
 	// SelectVideoMode();
 	sdl_videoparams = SDL_HWSURFACE;
 	if (fullscreen)
@@ -101,76 +91,32 @@ VIDEL::VIDEL() {
 
 	setHostWindow();
 
-#ifdef CONVPLANES
-	// Convert the table from 0..1000 RGB to 0..255 RBG format
-	for (int i = 0; i < sizeof(colors) / sizeof(*colors); i++)
-		colors[i] = ((((uint16) colors[i] << 6) - 63) / 250) & 0xff;
-
-	// Prepare the native format color values
-	//
-	// FIXME: This should be done on every VDI palette change
-	//        and this pass should work with TOS built in palette
-	//        (I don't know where to get the TOS palette, so I've stolen it from fVDI)
-	{
-		uint16 vdi2pix[256];
-		int i = 0;
-
-		for (i = 0; i < 16; i++)
-			vdi2pix[i] = vdi_colors[i];
-		for (; i < 256; i++)
-			vdi2pix[i] = i;
-
-		// map the colortable into the correct pixel format
-		for (int i = 0; i < 256; i++) {
-			/*
-			   D(fprintf(stderr, "map color %03d -> %03d (#%02x%02x%02x)\n",
-			   (uint8)i, (uint8)vdi2pix[i],
-			   (uint8)colors[vdi2pix[i]*3],
-			   (uint8)colors[vdi2pix[i]*3+1],
-			   (uint8)colors[vdi2pix[i]*3+2] ));
-			 */
-
-			sdl_colors[i] = SDL_MapRGB(surf->format,
-									   (uint8) colors[vdi2pix[i] * 3],
-									   (uint8) colors[vdi2pix[i] * 3 + 1],
-									   (uint8) colors[vdi2pix[i] * 3 + 2]);
-		}
-	}
-#endif
+	sdl_colors_uptodate = false;
 }
 
-// mode 60    66   c0   c2
-// 1     0  0400 0082 0008
-// STHig 0  0400 0186 0008
-
-// 2     1  0000 0186 0008
-// STMid 1  0000 0186 0009 doublescan (protoze 640x200)
-
-// 4     1  0000 0082 0008 864x640 s BlowUP
-// 4     0  0000 0186 0008
-// STLow 0  0000 0186 0005 doublescan (protoze 320x200)
-
-// 8     1  0010 0186 0008
-
-// 16    1  0100 0182 0004
-
-// c2
-// 04: pixel clock = 2
-// 05: pixel clock = 2 + double scan
-// 08: pixel clock = 1
-// 09: pixel clock = 1 + double scan
-
-long VIDEL::getVideoramAddress() {
-	return (handleRead(HW+1) << 16) | (handleRead(HW+3) << 8) | handleRead(HW+0x0d);
+// monitor writting to Falcon color palette registers
+void VIDEL::handleWrite(uaecptr addr, uint8 value)
+{
+	BASE_IO::handleWrite(addr, value);
+	if (addr >= 0xff9800 && addr < 0xffa200)	// Falcon palette color registers
+		sdl_colors_uptodate = false;
 }
 
-long VIDEL::getHostVideoramAddress() {
-	return (long)surf->pixels;
+long VIDEL::getVideoramAddress()
+{
+	return (handleRead(HW + 1) << 16) | (handleRead(HW + 3) << 8) |
+		handleRead(HW + 0x0d);
 }
 
-int VIDEL::getVideoMode() {
-	int f_shift = handleReadW(HW+0x66);
-	int st_shift = handleReadW(HW+0x60);
+long VIDEL::getHostVideoramAddress()
+{
+	return (long) surf->pixels;
+}
+
+int VIDEL::getVideoMode()
+{
+	int f_shift = handleReadW(HW + 0x66);
+	int st_shift = handleReadW(HW + 0x60);
 	/* to get bpp, we must examine f_shift and st_shift.
 	 * f_shift is valid if any of bits no. 10, 8 or 4
 	 * is set. Priority in f_shift is: 10 ">" 8 ">" 4, i.e.
@@ -189,20 +135,22 @@ int VIDEL::getVideoMode() {
 		bits_per_pixel = 4;
 	else if (st_shift == 0x100)
 		bits_per_pixel = 2;
-	else /* if (st_shift == 0x200) */
+	else						/* if (st_shift == 0x200) */
 		bits_per_pixel = 1;
 
 	return bits_per_pixel;
 }
 
-int VIDEL::getScreenWidth() {
-	return handleReadW(HW+0x10) * 16 / getVideoMode();
+int VIDEL::getScreenWidth()
+{
+	return handleReadW(HW + 0x10) * 16 / getVideoMode();
 }
 
-int VIDEL::getScreenHeight() {
-	int vdb = handleReadW(HW+0xa8);
-	int vde = handleReadW(HW+0xaa);
-	int vmode = handleReadW(HW+0xc2);
+int VIDEL::getScreenHeight()
+{
+	int vdb = handleReadW(HW + 0xa8);
+	int vde = handleReadW(HW + 0xaa);
+	int vmode = handleReadW(HW + 0xc2);
 
 	/* visible y resolution:
 	 * Graphics display starts at line VDB and ends at line
@@ -210,9 +158,9 @@ int VIDEL::getScreenHeight() {
 	 * half lines, else lines.
 	 */
 	int yres = vde - vdb;
-	if (!(vmode & 0x02))	// interlace
+	if (!(vmode & 0x02))		// interlace
 		yres >>= 1;
-	if (vmode & 0x01)		// double
+	if (vmode & 0x01)			// double
 		yres >>= 1;
 
 	return yres;
@@ -236,6 +184,38 @@ void VIDEL::unlockScreen()
 		SDL_UnlockSurface(surf);
 }
 
+void VIDEL::updateColors()
+{
+	if (!sdl_colors_uptodate) {
+		// Prepare the native format color values
+		int vdi2pix[256] =
+			{ 0, 2, 3, 6, 4, 7, 5, 8, 9, 10, 11, 14, 12, 15, 13, 1 };
+		for (int i = 16; i < 256; i++)
+			vdi2pix[i] = i;
+
+		// map the colortable into the correct pixel format
+#define TOS_COLORS(i)	handleRead(0xff9800 + (i))
+		for (int i = 0; i < 256; i++) {
+			int offset = vdi2pix[i] << 2;
+			sdl_colors[i] = SDL_MapRGB(surf->format,
+									   TOS_COLORS(offset),
+									   TOS_COLORS(offset + 1),
+									   TOS_COLORS(offset + 3));
+		}
+
+		// special hack for 1 and 2 bitplane modes
+		switch (getVideoMode()) {
+		case 1:				// set the black in 1 plane mode to the index 1
+			sdl_colors[1] = sdl_colors[15];
+			break;
+		case 2:				// set the black to the index 3 in 2 plane mode (4 colors)
+			sdl_colors[3] = sdl_colors[15];
+			break;
+		}
+
+		sdl_colors_uptodate = true;
+	}
+}
 
 void VIDEL::renderScreen()
 {
@@ -263,39 +243,13 @@ void VIDEL::renderScreen()
 		return;
 
 	VideoRAMBaseHost = (uint8 *) surf->pixels;
-	uint16 *fvram =
-		(uint16 *) get_real_address_direct(getVideoramAddress());
+	uint16 *fvram = (uint16 *) get_real_address_direct(getVideoramAddress());
 	uint16 *hvram = (uint16 *) VideoRAMBaseHost;
 	int mode = getVideoMode();
 
 	uint8 destBPP = surf->format->BytesPerPixel;
 	if (mode < 16) {
-		//BEGIN
-		//
-		// FIXME:
-		// This should be done ONLY when the screen mode
-		// changes... e.g. in the videl emulation
-		uint8 col1st = 1;
-		uint8 col3rd = 3;
-
-		if (mode == 1)			// set the black in 1 plane mode to the index 1
-			col1st = 15;
-		else if (mode == 2)		// set the black to the index 3 in 2 plane mode (4 colors)
-			col3rd = 15;
-
-		sdl_colors[1] = SDL_MapRGB(surf->format,
-								   (uint8) colors[vdi_colors[col1st] * 3],
-								   (uint8) colors[vdi_colors[col1st] * 3 +
-												  1],
-								   (uint8) colors[vdi_colors[col1st] * 3 +
-												  2]);
-		sdl_colors[3] =
-			SDL_MapRGB(surf->format,
-					   (uint8) colors[vdi_colors[col3rd] * 3],
-					   (uint8) colors[vdi_colors[col3rd] * 3 + 1],
-					   (uint8) colors[vdi_colors[col3rd] * 3 + 2]);
-		//
-		//END
+		updateColors();
 
 		// The SDL colors blitting...
 		// FIXME: The destBPP tests should probably not
@@ -340,26 +294,28 @@ void VIDEL::renderScreen()
 		int screenlen = vw * vh;
 		// Falcon TC (High Color)
 		if (destBPP == 2) {
-			if (/* videocard memory in Motorola format */ false) {
-				memcpy(hvram, fvram, screenlen*2);
+			if ( /* videocard memory in Motorola endian format */ false) {
+				memcpy(hvram, fvram, screenlen * 2);
 			}
 			else {
 				for (int i = 0; i < screenlen; i++) {
 					// byteswap
-					((uint16 *) hvram)[i] =
-						(((uint16 *) fvram)[i] >> 8) |
-						((((uint16 *) fvram)[i] & 0xff) << 8);
+					int data = fvram[i];
+					((uint16 *) hvram)[i] = (data >> 8) | ((data & 0xff) << 8);
 				}
 			}
 
 		}
 		else if (destBPP == 4) {
-			for (int i = 0; i < screenlen; i++)
+			for (int i = 0; i < screenlen; i++) {
 				// The byteswap is done by correct shifts (not so obvious) 
+				int data = fvram[i];
 				((uint32 *) hvram)[i] = SDL_MapRGB(surf->format,
-							(uint8) ((fvram[i] >> 5) & 0xf8),
-							(uint8) (((fvram[i] & 0x07) << 5) | ((fvram[i] >> 11) & 0x3c)),
-							(uint8) (fvram[i] & 0xf8));
+												   (uint8) ((data >> 5) & 0xf8),
+												   (uint8) ( ((data & 0x07) << 5) |
+															((data >> 11) & 0x3c)),
+												   (uint8) (data & 0xf8));
+			}
 		}
 		// FIXME: support for destBPP other than 2 or 4 BPP is missing
 	}
@@ -369,14 +325,14 @@ void VIDEL::renderScreen()
 }
 
 
-void VIDEL::updateScreen( int x, int y, int w, int h )
+void VIDEL::updateScreen(int x, int y, int w, int h)
 {
-	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
+	//  SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
 
 	// the object variable could not be the default one for the method's w value
-	if ( w == -1 )
+	if (w == -1)
 		w = width;
-	if ( h == -1 )
+	if (h == -1)
 		h = height;
 
 	SDL_UpdateRect(surf, x, y, w, h);
@@ -385,6 +341,10 @@ void VIDEL::updateScreen( int x, int y, int w, int h )
 
 /*
  * $Log$
+ * Revision 1.11  2001/06/13 07:12:39  standa
+ * Various methods renamed to conform the sementics.
+ * Added videl fuctions needed for VDI driver.
+ *
  * Revision 1.10  2001/06/13 06:22:21  standa
  * Another comment fixed.
  *
