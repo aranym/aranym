@@ -47,8 +47,8 @@ protected:
 	void renderScreenZoom();
 
 	/* Autozoom */
-	int zoomwidth;
-	int zoomheight;
+	int zoomwidth, prev_scrwidth;
+	int zoomheight, prev_scrheight;
 	int *zoomxtable;
 	int *zoomytable;
 
@@ -86,6 +86,9 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.23  2004/02/14 01:37:31  joy
+ * reset all HW chips
+ *
  * Revision 1.22  2003/11/25 22:56:49  joy
  * part of a major hardware dispatcher rewrite
  *

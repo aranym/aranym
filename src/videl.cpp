@@ -76,8 +76,8 @@ void VIDEL::reset()
 	hostColorsSync = false;
 
 	/* Autozoom */
-	zoomwidth=0;
-	zoomheight=0;
+	zoomwidth=prev_scrwidth=0;
+	zoomheight=prev_scrheight=0;
 	zoomxtable=NULL;
 	zoomytable=NULL;
 
@@ -589,7 +589,7 @@ void VIDEL::renderScreenZoom()
 	}
 
 	/* New zoom ? */
-	if (zoomwidth != vw) {
+	if ((zoomwidth != vw) || (scrwidth != prev_scrwidth)) {
 		if (zoomxtable) {
 			delete zoomxtable;
 		}
@@ -598,8 +598,9 @@ void VIDEL::renderScreenZoom()
 			zoomxtable[i] = (vw*i)/scrwidth;
 		}
 		zoomwidth = vw;
+		prev_scrwidth = scrwidth;
 	}
-	if (zoomheight != vh) {
+	if ((zoomheight != vh) || (scrheight != prev_scrheight)) {
 		if (zoomytable) {
 			delete zoomytable;
 		}
@@ -608,6 +609,7 @@ void VIDEL::renderScreenZoom()
 			zoomytable[i] = (vh*i)/scrheight;
 		}
 		zoomheight = vh;
+		prev_scrheight = scrheight;
 	}
 
 	cursrcline = -1;

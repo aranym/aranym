@@ -3,6 +3,9 @@
   bugs, now it should work but doesn't yet. Seems like the new IOCTLs are
   blocked somewhere.
 
+- patrice: videl.cpp: second fix for autozoom, now zoom tables recalculated
+  also when host screen size changes.
+
 
 2004/09/01 - joy
 - tools/arabridge: modified to allow bridging a non-defaultroute interface.
