@@ -297,6 +297,155 @@ void FVDIDriver::dispatch(M68kRegisters *r)
 	hostScreen.unlock();
 }
 
+int32 FVDIDriver::dispatch(uint32 fncode)
+{
+	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
+	hostScreen.lock();
+
+	videl.setRendering(false);
+
+	uint32 result = 0;
+	switch (fncode) {
+		// NEEDED functions
+
+		case 0: // Version information
+			result = 0x10000960;	// fVDI v0.960 driver API, fVDI Natfeat v1.000
+			break;
+
+		case 1: // read_pixel
+			result = getPixel((memptr)getParameter(0),		// vwk
+			                  (memptr)getParameter(1),		// src MFDB*
+			                  getParameter(2), getParameter(3));	// x, y
+			break;
+
+		case 2: // write_pixel
+			result = putPixel((memptr)getParameter(0),		// vwk
+			                  (memptr)getParameter(1),		// dst MFDB*
+			                  getParameter(2), getParameter(3),	// x, y
+			                                                	// table*, table length/type (0 - coordinates)
+			                  getParameter(4));			// color
+			break;
+
+		case 3: // mouse_draw
+			result = drawMouse((memptr)getParameter(0),		// wk
+			                   getParameter(1), getParameter(2),	// x, y
+			                   getParameter(3),			// mask*
+			                                 			// mode (0 - move, 1 - hide, 2 - show)
+			                                 			// These are only valid when not mode
+			                   getParameter(4),			//   data*
+			                   getParameter(5), getParameter(6),	//   hot_x, hot_y
+			                   getParameter(7),			//   color
+			                   getParameter(8));			//   type
+			break;
+
+
+		// SPEEDUP functions
+
+		case 4: // expand_area
+			result = expandArea((memptr)getParameter(0),		// vwk
+			                    (memptr)getParameter(1),		// src MFDB*
+			                    getParameter(2), getParameter(3),	// sx, sy
+			                    (memptr)getParameter(4),		// dest MFDB*
+			                    getParameter(5), getParameter(6),	// dx, dy
+			                    getParameter(7),			// width
+			                    getParameter(8),			// height
+			                    getParameter(9),			// logical operation
+			                    getParameter(10));			// bgColor fgColor
+			break;
+
+		case 5: // fill_area
+			result = fillArea((memptr)getParameter(0),		// vwk
+			                  getParameter(1), getParameter(2),	// x, y
+			                                               		// table*, table length/type (0 - y/x1/x2 spans)
+			                  getParameter(3), getParameter(4),	// width, height
+			                  (memptr)getParameter(5),		// pattern*
+			                  getParameter(6),			// bgColor fgColor
+			                  getParameter(7),			// mode
+			                  getParameter(8));			// interior style
+			break;
+
+		case 6: // blit_area
+			result = blitArea((memptr)getParameter(0),		// vwk
+			                  (memptr)getParameter(1),		// src MFDB*
+			                  getParameter(2), getParameter(3),	// sx, sy
+			                  (memptr)getParameter(4),		// dest MFDB*
+			                  getParameter(5), getParameter(6),	// dx, dy
+			                  getParameter(7),			// width
+			                  getParameter(8),			// height
+			                  getParameter(9));			// logical operation
+			break;
+
+		case 7: // drawLine:
+			result = drawLine((memptr)getParameter(0),		// vwk
+			                  getParameter(1), getParameter(2),	// x1, y1
+			                                                	// table*, table length/type (0 - coordinate pairs, 1 - pairs + moves)
+			                  getParameter(3), getParameter(4),	// x2, y2
+			                                                	// move point count, move index*
+			                  getParameter(5) & 0xffff,		// pattern
+			                  getParameter(6),			// bgColor fgColor
+			                  getParameter(7) & 0xffff,		// logical operation
+			                  (memptr)getParameter(8));		// clip rectangle* (0 or long[4])
+			break;
+
+		case 8: // fill_polygon
+			result = fillPoly((memptr)getParameter(0),		// vwk
+			                  (memptr)getParameter(1),		// points*
+			                  getParameter(2),			// point count
+			                  (memptr)getParameter(3),		// index*
+			                  getParameter(4),			// index count
+			                  (memptr)getParameter(5),		// pattern*
+			                  getParameter(6),			// bgColor fgColor
+			                  getParameter(7),			// logic operation
+			                  getParameter(8),			// interior style
+			                  (memptr)getParameter(9));		// clip rectangle
+			break;
+
+		case 9: // setColor:
+			setColor(getParameter(0), getParameter(1), getParameter(2), getParameter(3));
+			break;
+
+		case 10: // setResolution:
+			setResolution(getParameter(0), getParameter(1), getParameter(2), getParameter(3));
+			break;
+
+		case 15: // getVideoramAddress:
+#ifdef FIXED_VIDEORAM
+			result = ARANYMVRAMSTART;
+#else
+			result = VideoRAMBase;
+#endif
+			D(bug("fVDI: getVideoramAddress: %#lx", result));
+			break;
+
+		case 20: // debug_aranym:
+			bug("fVDI: DEBUG %d", getParameter(0));
+			break;
+
+			// not implemented functions
+		default:
+			D(bug("fVDI: Unknown %d", fncode));
+			result = 1;
+	}
+
+#ifdef DEBUG_DRAW_PALETTE
+	uint16 ptrn[16] = {
+		0xffff, 0xffff, 0xffff, 0xffff,
+		0xffff, 0xffff, 0xffff, 0xffff,
+		0xffff, 0xffff, 0xffff, 0xffff,
+		0xffff, 0xffff, 0xffff, 0xffff
+	};
+	for(int i = 0; i < 16; i++)
+		hostScreen.fillArea(i << 4, hostScreen.getHeight() - 16, 15, 16, ptrn,
+		                    hostScreen.getBpp() > 1 ? hostScreen.getPaletteColor(i) : i);
+#endif  // DEBUG_DRAW_PALETTE
+
+
+	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
+	hostScreen.unlock();
+
+	return result;
+}
+
 
 /**
  * Set a coloured pixel.
@@ -1929,6 +2078,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.42  2002/10/15 21:26:52  milan
+ * non-cheaders support (for MipsPro C/C++ compiler)
+ *
  * Revision 1.41  2002/09/28 00:07:37  johan
  * Special handling of vro_cpyfm D=S mode. 16 bit only.
  *

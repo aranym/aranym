@@ -8,8 +8,9 @@
 #define _FVDIDRV_H
 
 #include "cpu_emulation.h"
+#include "nf_base.h"
 
-class FVDIDriver {
+class FVDIDriver : public NF_Base {
   private:
 
 	struct _Mouse {
@@ -68,13 +69,17 @@ class FVDIDriver {
 		Mouse.storage.width = 1;
 		Mouse.storage.height = 1;
 	}
-	~FVDIDriver() {
+	virtual ~FVDIDriver() {
 		delete[] alloc_index;
 		delete[] alloc_crossing;
 		delete[] alloc_point;
 	}
 
 	void dispatch(M68kRegisters *r);
+	char *name() { return "fVDI"; }
+	bool isSuperOnly() { return false; }
+	int32 dispatch(uint32 fncode);
+
 	void restoreMouseBackground();
 	void saveMouseBackground(int16 x, int16 y, int16 width, int16 height);
 	void setColor(uint32 paletteIndex, uint32 red, uint32 green, uint32 blue);
@@ -102,6 +107,9 @@ class FVDIDriver {
 
 /*
  * $Log$
+ * Revision 1.15  2002/08/03 12:25:08  johan
+ * API change to remove dependencies on internal fVDI structures.
+ *
  * Revision 1.14  2002/06/24 17:08:48  standa
  * The pointer arithmetics fixed. The memptr usage introduced in my code.
  *
