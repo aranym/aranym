@@ -1,3 +1,7 @@
+2002/07/31 - Patrice
+- DSP emulator: Many bugs fixed (end of dsp_*.cpp files for complete changes)
+
+
 2002/07/31 - joy
 - bug in fresh IDE emulation code fixed (thanks Johan and Standa)
 
@@ -40,7 +44,8 @@
 
 
 2002/07/20 - Patrice
-- Dsp: more bugfixes, see end of dsp_[cpu|disasm].cpp file for complete changelog
+- Dsp: more bugfixes, see end of dsp_[cpu|disasm].cpp file for complete
+  changelog
 
 
 2002/07/19 - joy
@@ -76,7 +81,7 @@
 
 2002/07/16 - Patrice
 - Host port reworked. More bugfixes and completion of the emulator.
-  DspDebug can be run, it finds the DSP.
+  DspDebug can be started, it finds the DSP.
 
 
 2002/07/15 - milan
