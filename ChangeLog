@@ -1,3 +1,11 @@
+2003/02/09 - patrice
+- ikbd.cpp: corrected SendMouseMotion() which don't modify the buttons variable
+  anymore.
+
+- hostscreen.cpp, parameters.cpp: added 'Filtered' property to [OPENGL] section
+  if you want do enable/disable linear filtering for screen rendering.
+
+
 2003/02/04 - joy
 - input.cpp: fixed a long-standing bug with automatic mouse grab upon
   entering the ARAnyM window. This didn't work correctly when the ARAnyM
