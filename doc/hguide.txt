@@ -33,7 +33,8 @@ intptr   - signed type with size of (void *)
 
 memptr   - this type represents Atari's pointer
 
-  For compatibility between ARAnyM and UAE CPU there are declared also these types:
+  For compatibility between ARAnyM and UAE CPU there are declared also these
+types:
 
 uae_s8   ~ int8
 uae_u8   ~ uint8
@@ -46,9 +47,12 @@ uae_u64  ~ uint64
 
 uaecptr  - this type represents Atari's pointer
 
-  These types are only for interaction with CPU core. It is better to use uintXX/intXX types than uae_XXX types.
+  These types are only for interaction with CPU core. It is better to use
+uintXX/intXX types than uae_XXX types.
 
-  For compatibility between ARAnyM and Bochs IDE emulation there are declared also these types:
+  For compatibility between ARAnyM and Bochs IDE emulation there are declared
+also these types:
+
 Bit8u   ~ uint8
 Bit16u  ~ uint16
 Bit32u  ~ uint32
@@ -58,7 +62,8 @@ Bit32u  ~ uint32
 2) Interaction with memory
 --------------------------
 
-  For interaction with memory there are six functions declared in "cpu_emulation.h", three for reading, three for writing:
+  For interaction with memory there are six functions declared in
+"cpu_emulation.h", three for reading, three for writing:
 
 uint32 ReadAtariInt32(uint32 addr)
 uint16 ReadAtariInt16(uint32 addr)
@@ -68,8 +73,11 @@ void WriteAtariInt32(uint32 addr, uint32 l)
 void WriteAtariInt16(uint32 addr, uint16 w)
 void WriteAtariInt8(uint32 addr, uint8 b)
 
-  These functions have direct access to memory space. They ignore all settings of CPU (inclusive of MMU). All functions for an emulation of HW (DMA) in ARAnyM must become only physical addresses, not logical.
-  For all emulations of SW, there are another six functions declared in the same place:
+  These functions have direct access to memory space. They ignore all settings
+of CPU (inclusive of MMU). All functions for an emulation of HW (DMA) in
+ARAnyM must become only physical addresses, not logical.
+  For all emulations of SW, there are another six functions declared in the
+same place:
 
 uint32 ReadInt32(uint32 addr)
 uint16 ReadInt16(uint32 addr)
@@ -79,7 +87,8 @@ void WriteInt32(uint32 addr, uint32 l)
 void WriteInt16(uint32 addr, uint16 w)
 void WriteInt8(uint32 addr, uint8 b)
 
-  If you want to use underlying memory (memory allocated in HW I/O address space), you can use special, quick functions (they don't make any checking):
+  If you want to use underlying memory (memory allocated in HW I/O address
+space), you can use special, quick functions (they don't make any checking):
 
 uint32 ReadHWMemInt32(uint32 addr)
 uint16 ReadHWMemInt16(uint32 addr)
@@ -89,13 +98,15 @@ void WriteHWMemInt32(uint32 addr, uint32 l)
 void WriteHWMemInt16(uint32 addr, uint16 w)
 void WriteHWMemInt8(uint32 addr, uint8 b)
 
-  If you want make some large operations in ST-RAM or FastRAM, you can use two functions for address validation:
+  If you want make some large operations in ST-RAM or FastRAM, you can use two
+functions for address validation:
 
 The 1st is for non-MMU access:
 
 bool ValidAtariAddr(uint32 addr, bool write, uint32 len)
 
-  You can use ReadHWMemIntXX and WriteHWMemIntXX after this function for ST-RAM and FastRAM with no problems. It doesn't check HW registers!
+  You can use ReadHWMemIntXX and WriteHWMemIntXX after this function for
+ST-RAM and FastRAM with no problems. It doesn't check HW registers!
 
 The 2nd is for MMU access:
 
@@ -116,19 +127,27 @@ longjmp(excep_env, No. of Exception);
 4) HW emulation
 ---------------
 
-  In ARAnyM there are two possibilities how to emulate HW - old, classic, Motorola's - to use HW address space mapped to RAM address space and the second, which needs special drivers - to use emulated opcode. For the second possibility look at sections 5th and 6th of these guide.
-  If you want to write new emulated "HW" from original Atari computers for ARAnyM you must use older (but better) access for it - mapped address space. For inspiration look at "hardware.cpp" and e.g. "mmu.cpp".
+  In ARAnyM there are two possibilities how to emulate HW - old, classic,
+Motorola's - to use HW address space mapped to RAM address space and the
+second, which needs special drivers - to use emulated opcode. For the second
+possibility look at sections 5th and 6th of these guide.
+  If you want to write new emulated "HW" from original Atari computers for
+ARAnyM you must use older (but better) access for it - mapped address space.
+For inspiration look at "hardware.cpp" and e.g. "mmu.cpp".
 
 
 5) Emulated opcode
 ------------------
 
-  For implementation of ARAnyM's specific HW, which cannot be supported by any emulator of Atari computer, you can use one opcode from 0x71XX. Look at "emul_op.cpp".
+  For implementation of ARAnyM's specific HW, which cannot be supported by any
+emulator of Atari computer, you can use one opcode from 0x71XX. Look at
+"emul_op.cpp".
 
 
 6) Native features
 ------------------
-  HW (or better functions) which are "emulator-independent" can use Native features. In progress.
+  HW (or better functions) which are "emulator-independent" can use Native
+features. In progress.
 
 7) Sources
 --------------
