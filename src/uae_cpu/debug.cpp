@@ -29,6 +29,7 @@ static int debugger_active = 0;
 static uaecptr skipaddr;
 static int do_skip;
 int debugging = 1;
+int irqindebug = false;
 
 // MJ static FILE *logfile;
 
@@ -103,138 +104,6 @@ static void dumpmem (uaecptr addr, uaecptr *nxmem, int lines)
     *nxmem = addr;
 }
 
-static void foundmod (uae_u32 ptr, char *type)
-{
-    char name[21];
-    uae_u8 *ptr2 = RAMBaseHost + ptr;
-    int i,length;
-
-    printf ("Found possible %s module at 0x%lx.\n", type, ptr);
-    memcpy (name, ptr2, 20);
-    name[20] = '\0';
-
-    /* Browse playlist */
-    length = 0;
-    for (i = 0x3b8; i < 0x438; i++)
-	if (ptr2[i] > length)
-	    length = ptr2[i];
-
-    length = (length+1)*1024 + 0x43c;
-
-    /* Add sample lengths */
-    ptr2 += 0x2A;
-    for (i = 0; i < 31; i++, ptr2 += 30)
-	length += 2*((ptr2[0]<<8)+ptr2[1]);
-    
-    printf ("Name \"%s\", Length 0x%lx bytes.\n", name, length);
-}
-
-static void modulesearch (void)
-{
-    uae_u8 *p = get_real_address (0);
-    uae_u32 ptr;
-
-    for (ptr = 0; ptr < RAMSize - 40; ptr += 2, p += 2) {
-	/* Check for Mahoney & Kaktus */
-	/* Anyone got the format of old 15 Sample (SoundTracker)modules? */
-	if (ptr >= 0x438 && p[0] == 'M' && p[1] == '.' && p[2] == 'K' && p[3] == '.')
-	    foundmod (ptr - 0x438, "ProTracker (31 samples)");
-
-	if (ptr >= 0x438 && p[0] == 'F' && p[1] == 'L' && p[2] == 'T' && p[3] == '4')
-	    foundmod (ptr - 0x438, "Startrekker");
-
-	if (strncmp ((char *)p, "SMOD", 4) == 0) {
-	    printf ("Found possible FutureComposer 1.3 module at 0x%lx, length unknown.\n", ptr);
-	}
-	if (strncmp ((char *)p, "FC14", 4) == 0) {
-	    printf ("Found possible FutureComposer 1.4 module at 0x%lx, length unknown.\n", ptr);
-	}
-	if (p[0] == 0x48 && p[1] == 0xe7 && p[4] == 0x61 && p[5] == 0
-	    && p[8] == 0x4c && p[9] == 0xdf && p[12] == 0x4e && p[13] == 0x75
-	    && p[14] == 0x48 && p[15] == 0xe7 && p[18] == 0x61 && p[19] == 0
-	    && p[22] == 0x4c && p[23] == 0xdf && p[26] == 0x4e && p[27] == 0x75) {
-	    printf ("Found possible Whittaker module at 0x%lx, length unknown.\n", ptr);
-	}
-	if (p[4] == 0x41 && p[5] == 0xFA) {
-	    int i;
-
-	    for (i = 0; i < 0x240; i += 2)
-		if (p[i] == 0xE7 && p[i + 1] == 0x42 && p[i + 2] == 0x41 && p[i + 3] == 0xFA)
-		    break;
-	    if (i < 0x240) {
-		uae_u8 *p2 = p + i + 4;
-		for (i = 0; i < 0x30; i += 2)
-		    if (p2[i] == 0xD1 && p2[i + 1] == 0xFA) {
-			printf ("Found possible MarkII module at %lx, length unknown.\n", ptr);
-		    }
-	    }
-	}
-    }
-}
-
-/* cheat-search by Holger Jakob */
-static void cheatsearch (char **c)
-{
-    uae_u8 *p = get_real_address (0);
-    static uae_u32 *vlist = NULL;
-    uae_u32 ptr;
-    uae_u32 val = 0;
-    uae_u32 type = 0; /* not yet */
-    uae_u32 count = 0;
-    uae_u32 fcount = 0;
-    uae_u32 full = 0;
-    char nc;
-
-    ignore_ws (c);
-
-    while (isxdigit (nc = **c)) {
-	(*c)++;
-	val *= 10;
-	nc = toupper (nc);
-	if (isdigit (nc)) {
-	    val += nc - '0';
-	}
-    }
-    if (vlist == NULL) {
-	vlist = (uae_u32 *)malloc (256*4);
-	if (vlist != 0) {
-	    for (count = 0; count<255; count++)
-		vlist[count] = 0;
-	    count = 0;
-	    for (ptr = 0; ptr < RAMSize - 40; ptr += 2, p += 2) {
-		if (ptr >= 0x438 && p[3] == (val & 0xff)
-		    && p[2] == (val >> 8 & 0xff)
-		    && p[1] == (val >> 16 & 0xff)
-		    && p[0] == (val >> 24 & 0xff))
-		{
-		    if (count < 255) {
-			vlist[count++]=ptr;
-			printf ("%08x: %x%x%x%x\n",ptr,p[0],p[1],p[2],p[3]);
-		    } else
-			full = 1;
-		}
-	    }
-	    printf ("Found %d possible addresses with %d\n",count,val);
-	    printf ("Now continue with 'g' and use 'C' with a different value\n");
-	}
-    } else {
-	for (count = 0; count<255; count++) {
-	    if (p[vlist[count]+3] == (val & 0xff)
-		&& p[vlist[count]+2] == (val>>8 & 0xff) 
-		&& p[vlist[count]+1] == (val>>16 & 0xff)
-		&& p[vlist[count]] == (val>>24 & 0xff))
-	    {
-		fcount++;
-		printf ("%08x: %x%x%x%x\n", vlist[count], p[vlist[count]],
-			p[vlist[count]+1], p[vlist[count]+2], p[vlist[count]+3]);
-	    }
-	}
-	printf ("%d hits of %d found\n",fcount,val);
-	free (vlist);
-	vlist = NULL;
-    }
-}
-
 static void writeintomem (char **c)
 {
     uae_u8 *p = get_real_address (0);
@@ -306,6 +175,8 @@ void debug (void)
     }
     do_skip = 0;
 
+    irqindebug = false;
+
 #ifdef NEED_TO_DEBUG_BADLY
     history[lasthist] = regs;
     historyf[lasthist] = regflags;
@@ -330,6 +201,8 @@ void debug (void)
 	inptr = input;
 	cmd = next_char (&inptr);
 	switch (cmd) {
+	 case 'i': irqindebug = true; break;
+	 case 'I': irqindebug = false; break;
 	 case 'r': m68k_dumpstate (&nextpc); break;
 	 case 'R': m68k_reset(); break;
 	 case 'A':
@@ -350,8 +223,6 @@ void debug (void)
 		            m68k_dreg (regs, reg) = readhex(&inptr);
 		break;
 	    }
-	 case 'M': modulesearch (); break;
-	 case 'C': cheatsearch (&inptr); break; 
 	 case 'W': writeintomem (&inptr); break;
 	 case 'S':
 	    {
@@ -420,12 +291,14 @@ void debug (void)
 	 case 'z':
 	    skipaddr = nextpc;
 	    do_skip = 1;
+	    irqindebug = true;
 	    set_special (SPCFLAG_BRK);
 	    return;
 
 	 case 'f':
 	    skipaddr = readhex (&inptr);
 	    do_skip = 1;
+	    irqindebug = true;
 	    set_special (SPCFLAG_BRK);
 	    if (skipaddr == 0xC0DEDBAD) {
 	        trace_same_insn_count = 0;
@@ -504,6 +377,8 @@ void debug (void)
 		printf ("  g: <address>          Start execution at the current address or <address>\n");
 		printf ("  r:                    Dump state of the CPU\n");
 		printf ("  R:                    Reset CPU & FPU\n");
+		printf ("  i:                    Enable IRQ\n");
+		printf ("  I:                    Disable IRQ\n");
 		printf ("  A <number> <value>:   Set Ax\n");
 		printf ("  D <number> <value>:   Set Dx\n");
 		printf ("  m <address> <lines>:  Memory dump starting at <address>\n");
@@ -512,10 +387,8 @@ void debug (void)
 		printf ("  z:                    Step through one instruction - useful for JSR, DBRA etc\n");
 		printf ("  f <address>:          Step forward until PC == <address>\n");
 		printf ("  H <count>:            Show PC history <count> instructions\n");
-		printf ("  M:                    Search for *Tracker sound modules\n");
-		printf ("  C <value>:            Search for values like energy or lifes in games\n");
-		printf ("  W <address> <value>:  Write into Amiga memory\n");
-		printf ("  S <file> <addr> <n>:  Save a block of Amiga memory\n");
+		printf ("  W <address> <value>:  Write into Aranym memory\n");
+		printf ("  S <file> <addr> <n>:  Save a block of Aranym memory\n");
 		printf ("  h,?:                  Show this help page\n");
 		printf ("  q:                    Quit the emulator. You don't want to use this command.\n\n");
 	    }
