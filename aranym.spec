@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.8.2beta
+%define ver	0.8.5beta
 %define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -98,6 +98,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Wed Jan 07 2004 Petr Stehlik <pstehlik@sophics.cz>
+Version increased. For other changes see the NEWS file.
+
 * Sat Jan 03 2004 Petr Stehlik <pstehlik@sophics.cz>
 font8.bmp removed.
 

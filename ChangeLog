@@ -1,3 +1,11 @@
+* tagged as ARANYM_0_8_5_BETA
+
+2004/01/07 - joy
+- gui-sdl/dlgMain.cpp: show "unsupported yet" everywhere for the curious.
+
+- NEWS, README etc: update for release
+
+
 2004/01/06 - Xavier
 - gui-sdl/sdlgui.cpp: improved maintainability and "look'n'feel".
   - Factorized objects coordinate computation.
@@ -21,7 +29,7 @@
 - main_unix.cpp, parameters.cpp: 'program_name' is back (cygwin needs it)
 
 - input.cpp: try to iconify fullscreen window when user wants to release
-  mouse and keyboard.
+  mouse and keyboard (Hi Guido :-)
 
 - main.cpp: NatFeats initialized at startup, de-initialized at exit and
   re-initialized at Restart. The re-init code (exit + init) is not optimal.

@@ -1,3 +1,31 @@
+2004/01/07 - version 0.8.5beta released
+==========
+
+Number of important changes:
+
+ o JIT CPU fixed! (although kernel 2.6 is not supported yet)
+ o double bus errors (infamous error loops) handled now correctly
+ o direct Mac OS X support for ARAnyM (compiles but doesn't run(?))
+ o HostFS fixed
+ o script for easy building of ARAnyM on Windows/cygwin 
+ o SETUP GUI greatly improved - Disks Setup is complete, other will follow
+ o SETUP GUI at startup of ARAnyM (-G command line switch)
+ o floppy insert/eject support at runtime (in the SETUP GUI)
+ o fVDI NatFeat driver with local color palette support (XaAES likes it)
+   You will have to update your fVDI driver.
+ o ARAnyM now defines new value for the _MCH cookie: 0x50000. Update
+   your .aranym/config files with this new value.
+ o Alt+Ctrl+Esc now helps releasing mouse&kbd input even in fullscreen
+
+ New AFROS is released together with ARAnyM to provide the updated
+ fVDI driver.
+
+ Generally most work went into the SDL GUI SETUP which is becoming
+ a central place for on-the-fly reconfiguration. Press the "Pause"
+ key to open up the SETUP GUI anytime. Currently only disk configuration
+ is complete but new setup dialogs will follow shortly.
+
+
 2003/10/04 - version 0.8.2beta released
 ==========
 
