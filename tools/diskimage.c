@@ -6,6 +6,9 @@
  *
  */
 
+#include "config.h"
+#include "sysdeps.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

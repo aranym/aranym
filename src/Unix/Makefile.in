@@ -17,7 +17,7 @@ DESTDIR =
 
 CC = @CC@
 CXX = @CXX@
-CFLAGS = @CFLAGS@
+CFLAGS = -I../include -I. -I../natfeat @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
 CPPFLAGS = -I../include -I. -I../natfeat @CPUINCLUDES@ @CPPFLAGS@
 WFLAGS = @WFLAGS@
@@ -513,10 +513,10 @@ memory.s: ../uae_cpu/memory.cpp
 	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) ../uae_cpu/memory.cpp -o memory.s
 
 $(APP_DI): ../../tools/diskimage.c
-	$(CC) $(LDFLAGS) -o $(APP_DI) ../../tools/diskimage.c
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $(APP_DI) ../../tools/diskimage.c
 
 $(APP_IFC): aratapif.c
-	$(CC) $(LDFLAGS) -o $(APP_IFC) -DHAVE_AFINET aratapif.c
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $(APP_IFC) -DHAVE_AFINET aratapif.c
 
 $(APP).1.gz: ../../doc/$(APP).1
 	gzip -c ../../doc/$(APP).1 > $(APP).1.gz

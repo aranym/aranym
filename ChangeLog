@@ -1,3 +1,7 @@
+2004/06/21 - milan
+- diskimage supports images lager than 2GB (large file support)
+
+
 2004/06/01 - STanda (actualy done the 2004/05/19)
 - input.cpp: The capslock keyboard LED and the m68k side OS capslock state
   synchronization should be better now.
