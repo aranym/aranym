@@ -10,6 +10,7 @@
 #include "memory.h"
 #include "hostscreen.h"
 #include "parameters.h"
+#include "debug.h"
 
 
 #if 0
@@ -55,33 +56,34 @@ void HostScreen::setWindowSize(	int width, int height )
 
 	surf = SDL_SetVideoMode(width, height, 16, sdl_videoparams);
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
-	fprintf(stderr, "Line Length = %d\n", surf->pitch);
-	fprintf(stderr, "Must Lock? %s\n", SDL_MUSTLOCK(surf) ? "YES" : "NO");
+	D(bug("Line Length = %d", surf->pitch));
+	D(bug("Must Lock? %s", SDL_MUSTLOCK(surf) ? "YES" : "NO"));
 
 	renderBegin();
 
 	VideoRAMBaseHost = (uint8 *) surf->pixels;
 	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
-	fprintf(stderr, "VideoRAM starts at %p (%08x)\n", VideoRAMBaseHost, VideoRAMBase);
-
-	fprintf(stderr, "surf->pixels = %x, getVideoSurface() = %x\n",
-			VideoRAMBaseHost, SDL_GetVideoSurface()->pixels);
+	D(bug("VideoRAM starts at %p (%08x)", VideoRAMBaseHost, VideoRAMBase));
+	D(bug("surf->pixels = %x, getVideoSurface() = %x",
+			VideoRAMBaseHost, SDL_GetVideoSurface()->pixels));
 
 	renderEnd();
 
-	fprintf(stderr,
-			"Pixel format:\n"
-			"\tmasks  r %04x, g %04x, b %04x\n"
-			"\tshifts r %d, g %d, b %d\n"
-			"\tlosses r %d, g %d, b %d\n",
+	D(bug("Pixel format:tmasks r=%04x g=%04x b=%04x"
+			", tshifts r=%d g=%d b=%d"
+			", tlosses r=%d g=%d b=%d",
 			surf->format->Rmask, surf->format->Gmask, surf->format->Bmask,
 			surf->format->Rshift, surf->format->Gshift, surf->format->Bshift,
-			surf->format->Rloss, surf->format->Gloss, surf->format->Bloss);
+			surf->format->Rloss, surf->format->Gloss, surf->format->Bloss));
 }
 
 
 /*
  * $Log$
+ * Revision 1.1  2001/06/18 13:21:55  standa
+ * Several template.cpp like comments were added.
+ * HostScreen SDL encapsulation class.
+ *
  *
  */
 
