@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH ARANYM 1 "July 5, 2004"
+.TH ARANYM 1 "July 6, 2004"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -70,12 +70,12 @@ output version information and exit
 FastRAM size (in MB)
 .TP
 .B \-D, \-\-debug
-start debugger
+start debugger (if compiled in)
 .TP
 .B \-e, \-\-emutos
 prefer EmuTOS for booting (normally prefers TOS)
 .TP
-.B \-s, \-\-lilo
+.B \-l, \-\-lilo
 boot linux kernel directly
 .TP
 .B \-S, \-\-swap-ide
@@ -83,7 +83,6 @@ swap IDE drives for this session
 .TP
 .B \-G, \-\-gui
 open SETUP GUI at startup
-.TP
 .SH SEE ALSO
 .BR /usr/share/doc/aranym
 .br
@@ -92,6 +91,7 @@ Directory with further reading.
 .BR /usr/share/aranym
 .br
 Directory with some useful tools and utilities.
+.br
 .BR http://aranym.atari.org
 .br
 Project web page.
