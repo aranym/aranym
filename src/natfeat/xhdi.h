@@ -1,7 +1,7 @@
 /*
  * xhdi.h - XHDI like disk driver interface - declaration
  *
- * Copyright (c) 2002-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2002-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -26,16 +26,36 @@
 #include "nf_base.h"
 #include "parameters.h"
 
+#define ACSI_START	0
+#define ACSI_END	7
+#define SCSI_START	8
+#define SCSI_END	15
+#define IDE_START	16
+#define IDE_END		17
+
 typedef memptr wmemptr;
 typedef memptr lmemptr;
+
+struct disk_t {
+	char path[512];
+	char name[41];
+	bool present;
+	bool readonly;
+	bool byteswap;
+	bool sim_root; // true if the disk has to simulate root sector
+	char partID[3];	// partition ID - not used for real harddisks
+	int  size_blocks; // partition size in blocks - not used for real harddisks
+};
 
 class XHDIDriver : public NF_Base
 {
 private:
-	bx_atadevice_options_t ide0, ide1;
+	disk_t disks[IDE_END+1];	// ACSI + SCSI + IDE
 
 private:
-	bx_atadevice_options_t *dev2disk(uint16 major, uint16 minor);
+	void copy_atadevice_settings(bx_atadevice_options_t *src, disk_t *dest);
+	void copy_scsidevice_settings(bx_scsidevice_options_t *src, disk_t *dest);
+	disk_t *dev2disk(uint16 major, uint16 minor);
 	void byteSwapBuf(uint8 *buf, int size);
 
 protected:

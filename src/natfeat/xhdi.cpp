@@ -1,7 +1,7 @@
 /*
  * xhdi.cpp - XHDI like disk driver interface
  *
- * Copyright (c) 2002-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2002-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -21,9 +21,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <SDL_endian.h>
+
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "xhdi.h"
+#include "atari_rootsec.h"
+#include "tools.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -39,26 +43,66 @@
 
 void XHDIDriver::reset()
 {
-	// remember the values here so that SETUP changes don't affect
-	// the pending disk operations
-	ide0 = bx_options.atadevice[0][0];
-	ide1 = bx_options.atadevice[0][1];
+	// setup disks array with copied disks and partitions values so that
+	// user's changes in SETUP GUI don't affect the pending disk operations
+	copy_scsidevice_settings(&bx_options.disk0, disks+SCSI_START+0);
+	copy_scsidevice_settings(&bx_options.disk1, disks+SCSI_START+1);
+	copy_scsidevice_settings(&bx_options.disk2, disks+SCSI_START+2);
+	copy_scsidevice_settings(&bx_options.disk3, disks+SCSI_START+3);
+	copy_scsidevice_settings(&bx_options.disk4, disks+SCSI_START+4);
+	copy_scsidevice_settings(&bx_options.disk5, disks+SCSI_START+5);
+	copy_scsidevice_settings(&bx_options.disk6, disks+SCSI_START+6);
+	copy_scsidevice_settings(&bx_options.disk7, disks+SCSI_START+7);
+
+	copy_atadevice_settings(&bx_options.atadevice[0][0], disks+IDE_START+0);
+	copy_atadevice_settings(&bx_options.atadevice[0][1], disks+IDE_START+1);
 }
 
-bx_atadevice_options_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
+void XHDIDriver::copy_atadevice_settings(bx_atadevice_options_t *src, disk_t *dest)
+{
+	safe_strncpy(dest->path, src->path, sizeof(dest->path));
+	safe_strncpy(dest->name, src->model, sizeof(dest->name));
+	dest->present = (src->isCDROM ? false : src->present);	// CD-ROMs not supported via XHDI
+	dest->readonly = src->readonly;
+	dest->byteswap = src->byteswap;
+	dest->sim_root = false;		// ATA devices are real disks
+	dest->size_blocks = 0;
+}
+
+void XHDIDriver::copy_scsidevice_settings(bx_scsidevice_options_t *src, disk_t *dest)
+{
+	safe_strncpy(dest->path, src->path, sizeof(dest->path));
+	safe_strncpy(dest->name, src->name, sizeof(dest->name));
+	dest->present = src->present;
+	dest->readonly = src->readonly;
+	dest->byteswap = src->byteswap;
+	dest->sim_root = true;		// SCSI devices are simulated by prepending a virtual root sector to a single partition
+
+	// check and remember disk size
+	struct stat buf;
+	if (dest->present && !stat(dest->path, &buf)) {
+		dest->size_blocks = buf.st_size / XHDI_BLOCK_SIZE;
+	}
+	else {
+		dest->size_blocks = 0;
+	}
+
+	dest->partID[0] = src->partID[0];
+	dest->partID[1] = src->partID[1];
+	dest->partID[2] = src->partID[2];
+}
+
+disk_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
 {
 	if (minor != 0)
 		return NULL;
 
-	bx_atadevice_options_t *disk;
-	switch(major) {
-		case 16:	disk = &ide0; break;
-		case 17:	disk = &ide1; break;
-		default:	disk = NULL; break;
-	}
-	if (disk != NULL) {
-		if (disk->present && !disk->isCDROM)
+	disk_t *disk = NULL;
+	if (major >= SCSI_START && major <= IDE_END) {
+		disk = &disks[major];
+		if (disk->present) {
 			return disk;
+		}
 	}
 
 	return NULL;
@@ -102,35 +146,92 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 		(rwflag & 1) ? "Write" : "Read",
 		major, minor, recno, count, buf));
 
-	bx_atadevice_options_t *disk = dev2disk(major, minor);
-	if (disk == NULL)
+	disk_t *disk = dev2disk(major, minor);
+	if (disk == NULL) {
 		return EUNDEV;
+	}
 
 	bool writing = (rwflag & 1);
-	if (writing && disk->readonly)
+	if (writing && disk->readonly) {
 		return EACCDN;
+	}
 
 	FILE *f = fopen(disk->path, writing ? "r+b" : "rb");
-	if (f != NULL) {
-		int size = XHDI_BLOCK_SIZE*count;
-		uint8 *hostbuf = Atari2HostAddr(buf);
-		off_t offset = (off_t)recno * XHDI_BLOCK_SIZE;
-		fseek(f, offset, SEEK_SET);
-		if (writing) {
-			if (! disk->byteswap)
-				byteSwapBuf(hostbuf, size);
-			fwrite(hostbuf, size, 1, f);
-			if (! disk->byteswap)
-				byteSwapBuf(hostbuf, size);
-		}
-		else {
-			fread(hostbuf, size, 1, f);
-			if (! disk->byteswap)
-				byteSwapBuf(hostbuf, size);
-
-		}
-		fclose(f);
+	if (f == NULL) {
+		return EDRVNR;
 	}
+
+	uint8 *hostbuf = Atari2HostAddr(buf);
+
+	if (disk->sim_root) {
+		assert(sizeof(rootsector) == XHDI_BLOCK_SIZE);
+		if (recno == 0 && !writing) {
+			// simulate the root sector
+			rootsector sector;
+			memset(&sector, 0, sizeof(rootsector));
+
+			sector.hd_siz = SDL_SwapBE32(disk->size_blocks + 1);
+
+			sector.part[0].flg = 1;
+			sector.part[0].id[0] = disk->partID[0];
+			sector.part[0].id[1] = disk->partID[1];
+			sector.part[0].id[2] = disk->partID[2];
+			sector.part[0].st = SDL_SwapBE32(1);
+			sector.part[0].siz = SDL_SwapBE32(disk->size_blocks);
+
+			sector.part[1].flg = 0;
+			sector.part[1].id[0] = 0;
+			sector.part[1].id[1] = 0;
+			sector.part[1].id[2] = 0;
+			sector.part[1].st = 0;
+			sector.part[1].siz = 0;
+
+			sector.part[2].flg = 0;
+			sector.part[2].id[0] = 0;
+			sector.part[2].id[1] = 0;
+			sector.part[2].id[2] = 0;
+			sector.part[2].st = 0;
+			sector.part[2].siz = 0;
+
+			sector.part[3].flg = 0;
+			sector.part[3].id[0] = 0;
+			sector.part[3].id[1] = 0;
+			sector.part[3].id[2] = 0;
+			sector.part[3].st = 0;
+			sector.part[3].siz = 0;
+
+			memcpy(hostbuf, &sector, sizeof(sector));
+		}
+		// correct the offset and count to the partition
+		recno--;
+		count--;
+		hostbuf+=XHDI_BLOCK_SIZE;
+		if (count == 0) {
+			return E_OK;
+		}
+	}
+
+	int size = XHDI_BLOCK_SIZE*count;
+	off_t offset = (off_t)recno * XHDI_BLOCK_SIZE;
+	fseek(f, offset, SEEK_SET);
+	if (writing) {
+		if (! disk->byteswap)
+			byteSwapBuf(hostbuf, size);
+		if (fwrite(hostbuf, size, 1, f) != 1) {
+			panicbug("error writing");
+		}
+		if (! disk->byteswap)
+			byteSwapBuf(hostbuf, size);
+	}
+	else {
+		if (fread(hostbuf, size, 1, f) != 1) {
+			panicbug("error reading");
+		}
+		if (! disk->byteswap)
+			byteSwapBuf(hostbuf, size);
+
+	}
+	fclose(f);
 	return E_OK;
 }
 
@@ -139,7 +240,7 @@ int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
 {
 	D(bug("ARAnyM XHInqTarget2(major=%u, minor=%u, product_name_len=%u)", major, minor, stringlen));
 
-	bx_atadevice_options_t *disk = dev2disk(major, minor);
+	disk_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
 		return EUNDEV;
 
@@ -148,12 +249,11 @@ int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
 	}
 
 	if (device_flags) {
-		WriteInt32(device_flags, 0);	// for CD-ROM could set REMOVABLE and EJECTABLE flags
+		WriteInt32(device_flags, 0);
 	}
 
 	if (product_name && stringlen) {
-		f2amemcpy(product_name, disk->model, stringlen);	// strncpy would be better
-		WriteInt8(product_name + stringlen-1, '\0');
+		host2AtariSafeStrncpy(product_name, disk->name, stringlen);
 	}
 
 	return E_OK;
@@ -180,7 +280,7 @@ int32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
 {
 	D(bug("ARAnyM XHGetCapacity(major=%u, minor=%u, blocks=%lu, blocksize=%lu)", major, minor, blocks, blocksize));
 
-	bx_atadevice_options_t *disk = dev2disk(major, minor);
+	disk_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
 		return EUNDEV;
 

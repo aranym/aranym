@@ -1,6 +1,12 @@
+2005/01/13 - Petr
+- natfeat/xhdi: direct access to partitions added (use [DISKx] in config)
+  Beware: the code is not well tested. Might destroy your data!
+- parameters.cpp: [DISKx] enabled in the config file
+
+
 2005/01/12 - milan
 - all files: "unused varible" GCC warnings can be viewed with
-             --enable-full-debug
+             ./configure --enable-full-debug
 	     a few other warnings gone
 
 
