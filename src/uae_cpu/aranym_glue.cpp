@@ -156,8 +156,18 @@ void Start680x0(void)
 {
 	m68k_reset();
 #ifdef USE_JIT
-	if (bx_options.jit.jit)
+	if (bx_options.jit.jit) {
+# ifdef X86_ASSEMBLY_disable
+setjmpagain:
+	    int prb = setjmp(excep_env);
+	    if (prb != 0) {
+		flush_icache(0);
+	        Exception(prb, 0);
+    		goto setjmpagain;
+	    }	
+# endif
 		m68k_compile_execute();
+	}
 	else
 #endif
 		m68k_execute();

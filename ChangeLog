@@ -3,6 +3,8 @@
 
 - nfcdrom.h: some methods are abstract now
 
+- aranym_glue.cpp: support for compiled mainloop in JIT
+
 
 ** ARAnyM 0.8.2beta released
 

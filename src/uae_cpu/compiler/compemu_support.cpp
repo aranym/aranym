@@ -118,6 +118,8 @@ compop_func *nfcompfunctbl[65536];
 cpuop_func *nfcpufunctbl[65536];
 uae_u8* comp_pc_p;
 
+extern int quit_program;
+
 // gb-- Extra data for Basilisk II/JIT
 #if JIT_DEBUG
 static bool		JITDebug			= false;	// Enable runtime disassemblers through mon?
