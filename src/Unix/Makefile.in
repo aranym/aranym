@@ -38,6 +38,7 @@ SRCS = ../main.cpp \
 	../fdc.cpp \
 	../rtc.cpp \
 	../ide.cpp \
+	../ata.cpp \
 	../emul_op.cpp \
 	../blitter.cpp \
 	../videl.cpp \
