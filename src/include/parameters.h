@@ -170,6 +170,7 @@ extern uint32 FastRAMSize;	// Size of Fast-RAM
 extern char *program_name;
 extern char rom_path[512];
 extern char emutos_path[512];
+extern bool boot_emutos;
 
 void usage(int);
 extern bool check_cfg();

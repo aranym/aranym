@@ -32,12 +32,14 @@ static struct option const long_options[] =
   {"version", no_argument, 0, 'V'},
   {"config", required_argument, 0, 'c'},
   {"save", no_argument, 0, 's'},
+  {"emutos", no_argument, 0, 'e'},
   {NULL, 0, NULL, 0}
 };
 
 char *program_name;
 char rom_path[512] = DATADIR "/ROM";
 char emutos_path[512] = DATADIR "/etos512k.img";
+bool boot_emutos = false;
 uint32 FastRAMSize;
 
 static char config_folder[512] = ARANYMHOME;
@@ -338,6 +340,7 @@ void usage (int status) {
   printf ("\
 Options:\n\
   -a, --floppy NAME          floppy image file NAME\n\
+  -e, --emutos               boot EmuTOS\n\
   -N, --nomouse              don't grab mouse at startup\n\
   -f, --fullscreen           start in fullscreen\n\
   -v, --refresh <X>          VIDEL refresh rate in VBL (default 2)\n\
@@ -416,6 +419,7 @@ int process_cmdline(int argc, char **argv)
 	int c;
 	while ((c = getopt_long (argc, argv,
 							 "a:" /* floppy image file */
+							 "e"  /* boot emutos */
 #ifdef DEBUGGER
 							 "D"  /* debugger */
 #endif
@@ -450,6 +454,10 @@ int process_cmdline(int argc, char **argv)
 #endif
 
 			case 'c':
+				break;
+
+			case 'e':
+				boot_emutos = true;
 				break;
 	
 			case 'f':
