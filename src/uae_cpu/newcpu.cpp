@@ -2756,7 +2756,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
     } else op_illg(opcode);
 #ifdef FULLMMU
     excep_env = excep_env_old;
-#endif FULLMMU /* FULLMMU */
+#endif /* FULLMMU */
 }
 
 // MJ static int n_insns = 0, n_spcinsns = 0;
@@ -2885,12 +2885,12 @@ static void m68k_run_1 (void)
 //	    opcode = GET_OPCODE;
 	    uae_u16* addr = (uae_u16*)do_get_real_address(regs.pcp, false, false);
 	    pc_page = regs.pcp;
-	    pc_offset = (uintptr)addr - (uintptr)regs.pcp;
+	    pc_offset = (uae_u32)addr - regs.pcp;
 	}
 # ifdef HAVE_GET_WORD_UNSWAPPED
-	opcode = do_get_mem_word_unswapped(regs.pcp + pc_offset);
+	opcode = do_get_mem_word_unswapped((uae_u16*)(regs.pcp + pc_offset));
 # else
-	opcode = do_get_mem_word(regs.pcp + pc_offset);
+	opcode = do_get_mem_word((uae_u16*)(regs.pcp + pc_offset));
 # endif
 #else
 	check_ram_boundary(regs.pcp, 2, false);

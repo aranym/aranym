@@ -11,7 +11,7 @@ bindir = @bindir@
 datadir = @datadir@
 mandir = @mandir@
 man1dir = $(mandir)/man1
-docdir = @prefix@/share/doc
+docdir = $(prefix)/share/doc
 
 DESTDIR =
 

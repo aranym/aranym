@@ -35,7 +35,7 @@ extern uintptr VMEMBaseDiff;
 
 #if PAGE_CHECK
 extern uaecptr pc_page, read_page, write_page;
-extern uintptr pc_offset, read_offset, write_offset;
+extern uae_u32 pc_offset, read_offset, write_offset;
 # ifdef FULLMMU
 #  define PAGE_MASK 0xfff
 # else
