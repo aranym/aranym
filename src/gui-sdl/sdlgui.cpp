@@ -25,7 +25,7 @@
 //static SDL_Surface *sdlscrn;
 #define SCRLOCK	hostScreen.lock()
 #define SCRUNLOCK	hostScreen.unlock()
-#define sdlscrn	hostScreen.surf
+#define sdlscrn	hostScreen.getPhysicalSurface()
 static bool bQuitProgram;
 #define MAX_FILENAME_LENGTH 260
 
@@ -534,8 +534,7 @@ int SDLGui_DoDialog(SGOBJ *dlg)
       switch(eventTyp)
       {
         case SDL_QUIT:
-          // bQuitProgram = true;
-          retbutton = 0;
+          bQuitProgram = true;
           break;
         case SDL_MOUSEBUTTONDOWN:
           retbutton = mousedown(dlg, eventX, eventY, &oldbutton);
