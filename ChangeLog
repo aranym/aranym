@@ -1,3 +1,7 @@
+2003/04/09 - joy
+- parameters.cpp: do not include emu_bochs.h - this breaks some platforms.
+
+
 2003/04/08 - joy
 - cfgopts: Thomas correctly suggested to use memmove() for overlapping
   blocks of memory.
