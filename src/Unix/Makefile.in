@@ -68,6 +68,7 @@ SRCS = ../main.cpp \
 	../host.cpp \
 	../araobjs.cpp \
 	../aradata.cpp \
+	../md5.cpp \
 	$(SYSSRCS) \
 	$(CPUSRCS)
 APP = aranym
