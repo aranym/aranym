@@ -1,3 +1,8 @@
+2004/07/05 - joy
+- ikbd.cpp: write to MFP directly, don't throw nested SIGSEGV (fixes crashes
+  in JIT CPU emulation)
+
+
 * tagged as ARANYM_0_8_8_BETA
 
 2004/07/05 - joy
