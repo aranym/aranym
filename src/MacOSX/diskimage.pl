@@ -33,7 +33,7 @@ local $imageName    = "'$fullfolderPath.dmg'";
 local $imageSectors = undef;
 local $imageTemp    = "'$fullfolderPath-tmp.dmg'";
 
-local $mount_point = "bochs-image-mount";
+local $mount_point = "aranym-image-mount";
 
 die "err: $folderName is not a directory\n" if(!-d $fullfolderPath);
 

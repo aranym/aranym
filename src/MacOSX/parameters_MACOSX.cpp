@@ -58,7 +58,7 @@ char *getConfFolder(char *buffer, unsigned int bufsize)
 
 char *getDataFolder(char *buffer, unsigned int bufsize)
 {
-
+ 
  static char path[512]="";
  CFURLRef tosURL;
 
@@ -69,6 +69,9 @@ char *getDataFolder(char *buffer, unsigned int bufsize)
 		{
 			CFURLGetFileSystemRepresentation (tosURL, true, (uint8 *)path, 512);
 			delete (tosURL);
+			unsigned int len = strlen(path);
+			if ((len+1) < 512) 
+					strcat(path, DIRSEPARATOR);
 		}
 	}	
 	return safe_strncpy(buffer, path, bufsize);

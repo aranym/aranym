@@ -139,8 +139,6 @@ static void allocate_all_memory()
 		RAMBaseHost = (uint8 *)vm_acquire(RAMSize+ROMSize+HWSize+FastRAMSize);
 		ROMBaseHost=RAMBaseHost+ROMBase;
 		HWBaseHost=RAMBaseHost+HWBase;
-//		ROMBaseHost = (uint8 *)vm_acquire(ROMSize);
-//		HWBaseHost = (uint8 *)vm_acquire(HWSize);
 //		if (FastRAMSize) FastRAMBaseHost = (uint8 *)vm_acquire(FastRAMSize); else FastRAMBaseHost = RAMBaseHost + 0x1000000;
 		if (FastRAMSize)
 		{
@@ -301,11 +299,7 @@ void QuitEmulator(void)
 #ifdef RAMENDNEEDED
 		vm_release(RAMBaseHost + RAMSize + ROMSize + HWSize + FastRAMSize, RAMEnd);
 #endif
-#ifdef MACOSX_support
 		vm_release(RAMBaseHost, RAMSize+ROMSize+HWSize+FastRAMSize);
-#else
-		vm_release(RAMBaseHost, RAMSize);
-#endif
 		RAMBaseHost = NULL;
 	}
 	ROMBaseHost = NULL;
