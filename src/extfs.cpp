@@ -959,12 +959,16 @@ uint16 ExtFs::statmode2xattrmode(mode_t m)
 int ExtFs::st2flags(uint16 flags)
 {
 	switch(flags & 0x3)
-		{
-			case 0: return O_RDONLY;
-			case 1: return O_WRONLY;	/* kludge to avoid files being created */
-			case 2: return O_RDWR;
-		}
-	return 0;
+	{
+		case 0:
+			return O_RDONLY;
+		case 1:
+			return O_WRONLY;	/* kludge to avoid files being created */
+		case 2:
+			return O_RDWR;
+		default:
+			return O_RDWR;      /* this should never happen (the O_WRONLY|O_RDWR simultaneously) */
+	}
 }
 
 
@@ -972,8 +976,8 @@ int16 ExtFs::flags2st(int flags)
 {
 	int16 res = 0;
 
-	if (flags | O_WRONLY) res |= 1;
-	if (flags | O_RDWR) res |= 2;
+	if (flags & O_WRONLY) res |= 1;
+	if (flags & O_RDWR) res |= 2;
 
 	return res;
 }
@@ -1090,13 +1094,17 @@ bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const 
 
 			DIR *dh = opendir( pathName );
 			if ( dh == NULL ) {
+#ifdef DEBUG_FILENAMETRANSFORMATION
 				D(bug("MetaDOS: getHostFileName dopendir(%s) failed.", pathName));
+#endif
 				goto lbl_final;  // should never happen
 			}
 
 			while ( true ) {
 				if ((dirEntry = readdir( dh )) == NULL) {
+#ifdef DEBUG_FILENAMETRANSFORMATION
 					D(bug("MetaDOS: getHostFileName dreaddir: no more files."));
+#endif
 					goto lbl_final;
 				}
 
@@ -1148,12 +1156,12 @@ ExtFs::ExtDrive* ExtFs::getDrive( const char* pathName )
 	ExtDrive *drv = NULL;
 
 	if ( pathName[0] != '\0' && pathName[1] == ':' ) {
-		D(bug("MetaDOS: getDrive '%c'", pathName[0]));
+		D2(bug("MetaDOS: getDrive '%c'", pathName[0]));
 		drv = &drives[ toupper( pathName[0] ) - 'A' ];
 	}
 
 	if ( drv == NULL || drv->rootPath == NULL ) {
-		D(bug("MetaDOS: getDrive fail"));
+		D2(bug("MetaDOS: getDrive fail"));
 		drv = &drives[0];
 	}
 
@@ -1375,11 +1383,28 @@ int32 ExtFs::Fcreate(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *p
 
 	D(bug("MetaDOS: Fcreate (%s,%s,%d)", pathName, fpathName, attr));
 
+#ifndef USE_CREAT_INSTEAD_OF_OPEN
+
 	return Fopen_( (char*)fpathName,
 				   O_CREAT|O_WRONLY|O_TRUNC,
-				   S_IRUSR|S_IWUSR | S_IRGRP | S_IROTH,
+				   S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH,
 				   fp );
+
+#else
+
+	int fd = creat( pathName, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH );
+	if (fd < 0)
+		return unix2toserrno(errno,TOS_EFILNF);
+
+	fp->flags   = flags2st(O_CREAT|O_WRONLY|O_TRUNC);
+	fp->offset = 0;
+	fp->hostfd = fd;
+
+	return TOS_E_OK;
+
+#endif
 }
+
 
 int32 ExtFs::xfs_creat( XfsCookie *dir, char *name, uint16 mode, int16 flags, XfsCookie *fc )
 {
@@ -1492,9 +1517,7 @@ int32 ExtFs::Fread(LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle, u
 		toRead -= readCount;
 	}
 
-	D(bug(" readCount (%d)", count - toRead));
-
-	//	D(bug("MetaDOS: Fread error (%d)", errno));
+	D(bug("MetaDOS: Fread readCount (%d)", count - toRead));
 	if ( readCount < 0 )
 		return unix2toserrno(errno,TOS_EINTRN);
 
@@ -1517,7 +1540,6 @@ int32 ExtFs::Fwrite(LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle, 
 		a2fmemcpy( fBuff, sourceBuff, toWriteNow );
 		writeCount = write( fp->hostfd, fBuff, toWriteNow );
 
-		D(bug("MetaDOS: Fwrite writeCount (%d)", writeCount));
 
 		if ( writeCount <= 0 )
 			break;
@@ -1527,6 +1549,7 @@ int32 ExtFs::Fwrite(LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle, 
 		toWrite -= writeCount;
 	}
 
+	D(bug("MetaDOS: Fwrite writeCount (%d)", count - toWrite));
 	if ( writeCount < 0 )
 		return unix2toserrno(errno,TOS_EINTRN);
 
@@ -2462,6 +2485,10 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.29  2002/03/06 10:04:21  standa
+ * xfs_getname implemented. cookie2PathName uses getHostFileName since now
+ * -> case insensitive fs should work.
+ *
  * Revision 1.28  2002/02/23 13:47:07  joy
  * open() needs O_BINARY to not mess with CR/LF conversion (OSes from Microsoft)
  *
