@@ -31,6 +31,10 @@
 
 extern int port_number;
 
+typedef enum {
+	no_command, break_command
+} last_command_t;
+
 class gdbstub {
   static int hex(char ch);
   static void put_debug_char(char ch);
@@ -45,12 +49,14 @@ class gdbstub {
   static int access_linear(memptr laddress, unsigned int len, bool write, uae_u8 *data);
   static void debug_loop(void);
   static void wait_for_connect(int portn);
+  static int socket_fd;
+  static int listen_socket_fd;
+  static int last_stop_reason;
+  static last_command_t last_command;
 public:
   static int init(int portn);
   static int check(memptr pc);
 };
-
-# define GDBSTUB_STOP_NO_REASON   (0xac0)
 
 # define GDBSTUB_TEXT_BASE (0x0)
 # define GDBSTUB_DATA_BASE (0x0)

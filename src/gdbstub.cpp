@@ -34,9 +34,12 @@
 
 #include "main.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdlib>
+#else
+# include <stdlib.h>
+#endif
+
 #ifdef __MINGW32__
 #include <winsock2.h>
 #define SIGTRAP 5
@@ -59,14 +62,16 @@
 
 int port_number = 1234;
 
-static int last_stop_reason = GDBSTUB_STOP_NO_REASON;
-
+#define GDBSTUB_STOP_NO_REASON          (0xac0)
 #define GDBSTUB_EXECUTION_BREAKPOINT    (0xac1)
 #define GDBSTUB_TRACE                   (0xac2)
 #define GDBSTUB_USER_BREAK              (0xac3)
 
-static int listen_socket_fd;
-static int socket_fd;
+int gdbstub::listen_socket_fd = 0;
+int gdbstub::socket_fd = 0;
+int gdbstub::last_stop_reason = GDBSTUB_STOP_NO_REASON;
+last_command_t gdbstub::last_command = no_command;
+
 
 int gdbstub::hex(char ch)
 {
@@ -406,7 +411,7 @@ void gdbstub::debug_loop(void)
    
    while (ne == 0)
      {
-       get_command(buffer);
+       if (last_command == no_command) get_command(buffer);
        D(bug("get_buffer %s", buffer));
        
        switch (buffer[0])
@@ -441,7 +446,7 @@ void gdbstub::debug_loop(void)
                  }
 #endif
 		 SPCFLAGS_SET( SPCFLAG_BRK );
-		 ne == 1;
+		 ne = 1;
 //		 m68k_do_execute();
 #if 0
                  DEV_vga_refresh();
@@ -479,7 +484,7 @@ void gdbstub::debug_loop(void)
                  bx_cpu.cpu_loop(-1);
 #else
 		 SPCFLAGS_SET( SPCFLAG_BRK );
-		 ne == 1;
+		 ne = 1;
 //		 m68k_do_execute();
 #endif
 #if 0
