@@ -1,3 +1,7 @@
+2001/12/07 - joy
+- first two long words (addresses 0..7) are readonly now like on real Atari.
+
+
 2001/12/05 - joy
 - "-N" or "--nomouse" added to cmdline options. It basically disables
   the auto mouse grabbing at startup. Suitable especially for debugging.
