@@ -2,13 +2,15 @@ Before 0.8.0 final release:
 ---------------------------
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
-- fix the bug with mapping of / (root) (example: D=/). Might be related to
-  EmuTOS/AFROS somehow.
+- fix wrong drive mapping under cygwin
+- fix HostFS bug: destination window of a file operation in Thing is not
+  updated
+- check the JIT - when enabled XControl on FreeMiNT crashes on my machine
 
 Roadmap:
 --------
 
-0.8.0 should bring long-awaited networking support and next level
+0.8.0 should bring long-awaited networking support and next generation
 of host filesystem access.
 
 0.9.0 should come with direct partition access and free XHDI disk driver

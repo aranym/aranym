@@ -126,6 +126,7 @@ Thomas Huth
 - SDL GUI (from hatari project)
 - suggestion to remove 680[023]0 CPU core generation
 - original README skeleton (from hatari)
+- cfgopts fixes
 
 Heiko Achilles
 - mouse packets compression in ACIA
@@ -138,3 +139,6 @@ Carsten Gaschler
 
 Matti Levänen
 - for BeOS port
+
+Xavier Joubert
+- for better Windows/cygwin support 

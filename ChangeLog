@@ -5,13 +5,17 @@
 
 
 2003/04/08 - joy
-- cfgopts: Thomas correctly suggested to use memmove() for overlapping
-  blocks of memory.
-
 - hostfs.cpp: fixed very annoying bug that was causing bus error when opening
   root of a host drive.
 
 - parameters_cygwin: fixed a bunch of small bugs, now tested and works OK.
+
+
+** ARAnyM 0.8.0beta2 released
+
+2003/04/08 - joy
+- cfgopts: Thomas correctly suggested to use memmove() for overlapping
+  blocks of memory.
 
 
 2003/04/07 - STanda
