@@ -170,6 +170,33 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			printf("%s", get_long(r->a[7]+4, true));
 			break;
 
+		case M68K_EMUL_OP_DMAREAD:	// for EmuTOS - code 0x7136
+		{
+			int dev = get_word(r->a[7]+14, true);
+			long buf = get_long(r->a[7]+10, true);
+			int cnt = get_word(r->a[7]+8, true);
+			long recnr = get_long(r->a[7]+4, true);
+			// printf("ara DMAread(%ld, %d, %ld, %d)\n", recnr, cnt, buf, dev);
+			FILE *f = fopen(bx_options.diskc.path, "rb");
+			if (f != NULL) {
+				const int size = 512*cnt;
+				char sectbuf[size];
+				fseek(f, recnr*512, SEEK_SET);
+				fread(sectbuf, size, 1, f);
+				fclose(f);
+				for(int i=0; i<size; i++) {
+#if 1
+					RAMBaseHost[buf++] = sectbuf[++i];
+					RAMBaseHost[buf++] = sectbuf[i-1];
+#else
+					RAMBaseHost[buf++] = sectbuf[i];
+#endif
+				}
+			}
+			r->d[0] = 0;	// 0 = no error
+		}
+			break;
+
 		default:
 			printf("FATAL: EMUL_OP called with bogus opcode %08x\n", opcode);
 			printf("d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"

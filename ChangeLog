@@ -1,3 +1,7 @@
+2002/01/13 - joy
+- DMAread() added to emul_op interface (used in current EmuTOS)
+
+
 2002/01/11 - Olivier Landemarre & joy
 - fixed bug in time sync (signed long is bad for GetTicks())
 - fixed bug in TimerC disabling (wrong bit mask for &)
