@@ -44,6 +44,12 @@
 /* Define if you want direct truecolor output */
 #undef DIRECT_TRUECOLOR
 
+/* Define if you want accelerated blitter output */
+#undef BLITTER_MEMMOVE
+
+/* Define if you want even more accelerated blitter output */
+#undef BLITTER_SDLBLIT
+
 /* Define if you want to try out a different memory boundary check (maybe faster) */
 #undef CHECK_BOUNDARY_BY_ARRAY
 
