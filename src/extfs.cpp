@@ -12,9 +12,15 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/vfs.h>
+#include <sys/statfs.h>
 #include <utime.h>
 #include <dirent.h>
 #include <ctype.h>
+#ifdef __sun__
+extern "C" {
+#include <sys/feature_tests.h>
+}
+#endif /* __sun__ */
 
 #include "parameters.h"
 #include "toserror.h"
@@ -1590,6 +1596,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.12  2001/10/17 18:07:00  standa
+ * the . and .. directories are returned by the Fsfirst and Fsnext (according to Julian Reschke)
+ *
  * Revision 1.11  2001/10/16 19:06:01  standa
  * The debug changed to 0.
  *

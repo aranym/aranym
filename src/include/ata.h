@@ -39,7 +39,10 @@ typedef enum _asc {
 
 class LOWLEVEL_CDROM;
 
-#define loff_t	long
+#ifdef loff_t
+#undef loff_t
+#endif
+#define loff_t long
 #ifdef ssize_t
 #undef ssize_t
 #endif
