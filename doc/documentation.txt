@@ -546,14 +546,17 @@ is hooked up to internet directly.
 
 For LAN setup, you probably want your ARAnyM to appear on the LAN just
 like any other machine so others can ssh, ftp or telnet into it. There
-are two possible ways: either you can use bridging (the arabridge
-script) or proxy-arp (see below).
+are two possible ways: either you can use bridging or proxy-arp (see
+below).
 
 For single host computer with public IP the problem is that you usually
 cannot afford assigning another public IP to ARAnyM so you'll want the
 host computer to hide ARAnyM and to route traffic to it. For this you'll
 probably use masquerading.
 
+
+8.1. Linux host OS networking setup
+-----------------------------------
 
 Proxy-ARP:
 ----------
@@ -591,52 +594,9 @@ And that's it. Now ARAnyM is connected to your LAN with IP 192.168.0.114
 and it's fully accessible. It can of course connect to any other machine
 and also access the internet via our company gateway.
 
-===
 
-  Make sure your host OS is Linux and your Atari OS is FreeMiNT. Then follow
-instructions in the atari/network/ethernet/README file.
-
-  Standa developed a XIF module for FreeMiNT TCP/IP networking. You have to
-put it into your MINT folder and reboot to load it into the FreeMiNT.
-As of ARAnyM 0.8.10+ the XIF driver requires FreeMiNT 1.16.0 or newer.
-You'll find related information in the atari/network/ethernet/README file.
-
-
-Apart from configuring the necessary IP addresses in the ARAnyM config file
-
-  for Point-to-Point setup enter this in the ARAnyM config file:
-      [ETH0]
-      type = ppp
-      HostIP = 192.168.1.3
-      AtariIP = 192.168.1.2
-      Netmask = 255.255.255.0
-
-  you also have to configure the Host OS (Linux) to share its single IP
-  address with the ARAnyM (which is basically another computer running in
-  parallel with the Host and hiding behind the Host IP address on your LAN).
-  There are several possibilities how to do that, for example by
-  Masquerading (special kind of Network Address Translation) or by Proxy-ARP.
-
-
-  Recently Standa developed a new method called Bridging that allows ARAnyM
-  to get its own IP address and to act like a regular machine on your LAN:
-
-    for Bridging setup enter this in the ARAnyM config file:
-      [ETH0]
-      type = bridge
-      tunnel = tap0
-      HostIP = 192.168.1.3
-      AtariIP = 192.168.1.2
-      Netmask = 255.255.255.0
-
-
-  At last you need to configure the IP address, route and netmask on the
-  FreeMiNT side. For that I developed the 'nfeth-config' tool that can
-  read the ethernet setting from the ARAnyM config file. As of ARAnyM
-  0.8.11 this requires FreeMiNT 1.16.0+ with NatFeat support.
-  You can simply run the 'eth0-config.sh' shell script during FreeMiNT
-  boot up and it will set up the eth0 interface properly.
-
+Masquerading
+------------
 
   Bjoern Spruck has contributed a piece of shell script that should set up
   the Linux Host OS' networking for ARAnyM in the masquerading mode:
@@ -668,6 +628,29 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
   Linux distributions by other methods. But using it doesn't hurt.
 
 
+Bridged
+-------
+
+  Recently Standa developed a new method called Bridging that allows ARAnyM
+  to get its own IP address and to act like a regular machine on your LAN:
+
+    for Bridging setup enter this in the ARAnyM config file:
+      [ETH0]
+      type = bridge
+      tunnel = tap0
+      HostIP = 192.168.1.3
+      AtariIP = 192.168.1.2
+      Netmask = 255.255.255.0
+
+
+  At last you need to configure the IP address, route and netmask on the
+  FreeMiNT side. For that I developed the 'nfeth-config' tool that can
+  read the ethernet setting from the ARAnyM config file. As of ARAnyM
+  0.8.11 this requires FreeMiNT 1.16.0+ with NatFeat support.
+  You can simply run the 'eth0-config.sh' shell script during FreeMiNT
+  boot up and it will set up the eth0 interface properly.
+
+
   My experience shows that the bridging is real easy to get working using
   the 'arabridge' script.
   Or even easier, follow (as root) this step by step HOWTO.
@@ -689,6 +672,79 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 
   I have updated the arabridge script, it now works well in Debian. Make
   sure you edit the USER, NIF and maybe also the TAPS and BRIDGE variables.
+
+
+8.1 MS Windows host OS networking setup
+---------------------------------------
+
+In MS Windows ARAnyM provides TAP-Win32 based networking. It can provide
+the point-to-point or bridged networking just like Linux's one. I didn't
+hear about ARP-Proxy for Windows so far though.
+
+It is required to install the Win32-TAP network driver (for this you can
+download the coLinux installer from
+http://prdownloads.sourceforge.net/colinux/coLinux-0.6.2.exe?download
+and install just the TAP driver using custom setup).
+
+
+Point-to-point
+--------------
+
+Configure the IP address and netmask of the TAP Connection in the connection
+properties dialog. We will take the 192.168.5.1 with netmask 255.255.255.0
+for example.
+
+Then in the ARANYM config file put an entry like this:
+
+[ETH0]
+Type = ppp
+Tunnel = ARAnyM TAP
+HostIP = 192.168.5.1
+AtariIP = 192.168.5.2
+Netmask = 255.255.255.0
+
+Tunnel is the name of the TAP device as shown in the control panel / network
+connections.
+
+
+Internet Connection Sharing (masquerading or NAT)
+-------------------------------------------------
+
+Configure the active internet connection 'Internet Connection Sharing'
+to be shared with the ARAnyM TAP Connection.  One note here
+is that the LAN address range cannot be a private address to begin with 
+192.168.0.xxx. Windows will complain that there is a network already
+configured for an Internet connection.  So if you are behind
+your own router, make sure the local addresses are something like
+192.168.1.x.  This way Windows will allow you share the internet
+connection.
+
+Then in the ARANYM config file put an entry like this:
+
+[ETH0]
+Type = ppp
+Tunnel = ARAnyM TAP
+HostIP = 192.168.0.1
+AtariIP = 192.168.0.2
+Netmask = 255.255.255.0
+
+
+Bridged
+-------
+
+Windows XP provide built-in bridge functionality. So you can create a bridged
+connection over your active internet connection and the ARAnyM TAP one.
+A very nice HowTo has been done for OpenVPN and is located at
+http://www.pavelec.net/adam/openvpn/bridge .
+
+Your ARANYM configuration file needs to reflect the LAN settings, of course.
+
+This way the running ARAnyM behaves like another machine connected to your
+LAN. You can use e.g. the SpareMiNT's dhcpclient package to lease the IP
+address from your DHCP server just as your host OS does. Or you can set
+the static IP address. All just like if you have another box sitting beside
+your host machine.
+
 
 
 9) CD-ROM drives
