@@ -1,3 +1,21 @@
+2003/12/15 - joy
+- why to bother with demoing weird problems in extfs.cpp when the file
+  is obsolete and can be removed? Good idea from Standa. ExtFS removed.
+  HostFS is the only right choice now.
+
+- emul_op.cpp: bunch of obsolete emul_op instructions was removed.
+
+- aradata.cpp: register 0x9000a.L removed (it used to report the ExtFS
+  drives bitmask but I can't recall if it was ever used in the planned
+  application for auto-configuration of the BetaDOS's config file).
+
+- hardware.cpp: the ARADATA now handle 18 bytes of HW regs only
+  and I plan to convert the remaining mouse information to NatFeats
+  so that ARADATA could be removed completely.
+
+- hostfs.cpp: debugging disabled. Proper GPL header added.
+
+
 2003/12/09 - joy
 - extfs.cpp: rewritten the initialization of rootPath a bit. And added
   #define DEMO_WEIRD_PROBLEM. That is the "AFROS does not boot" problem

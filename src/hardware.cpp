@@ -58,7 +58,7 @@ void HWInit()
 	arhw[iBLITTER] = blitter = new BLITTER(0xff8A00, 0x3e);
 	arhw[iVIDEL] = videl = new VIDEL(0xff8200, 0xc4);
 	arhw[iYAMAHA] = yamaha = new YAMAHA(0xff8800, 4);
-	arhw[iARADATA] = aradata = new ARADATA(0xf90000, 0x10000);
+	arhw[iARADATA] = aradata = new ARADATA(0xf90000, 18);
 
 	arhw[iSOUND] = new BASE_IO(0xff8900, 0x22);
 	arhw[iDSPDMA] = new BASE_IO(0xff8930, 0x14);

@@ -1,10 +1,25 @@
 /*
- * $Header$
+ * hostfs.cpp - HostFS routines
  *
- * (c) STanda @ ARAnyM development team 2001-2003
+ * Copyright (c) 2001-2003 STanda of ARAnyM development team (see AUTHORS)
  *
- * GPL
- */
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Atari800; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #include "sysdeps.h"
 
@@ -17,7 +32,6 @@
 #include "toserror.h"
 #include "hostfs.h"
 #include "tools.h"
-#include "araobjs.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
 #define DEBUG 0
@@ -2088,99 +2102,4 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	return TOS_E_OK;
 }
 
-
 #endif /* HOSTFS_SUPPORT */
-
-/*
- * $Log$
- * Revision 1.19  2003/12/09 09:38:57  standa
- * Rolling the st_ino and st_dev in getxattr back.
- *
- * Revision 1.18  2003/10/02 18:13:42  standa
- * Large HOSTFS cleanup (see the ChangeLog for more)
- *
- * Revision 1.17  2003/09/25 09:08:10  milan
- * OS_TYPE and CPU_TYPE for future natfeat exported to sources
- * debuginfo for hostfs blocked for CVS
- *
- * Revision 1.16  2003/07/17 13:52:33  joy
- * hostfs fixes by Xavier
- *
- * Revision 1.15  2003/06/26 21:27:14  joy
- * xfs_creat()/xfs_dev_open() fixed (gunzip problem)
- * xfs_native_init() fixed to handle the FreeMiNT requirements correctly
- * general cleanup
- *
- * Revision 1.11.2.10  2003/04/15 19:09:26  standa
- * xfs_creat()/xfs_dev_open() fixed (gunzip problem).
- * xfs_native_init() fixed to handle the FreeMiNT requirements correctly.
- * general cleanup
- *
- * Revision 1.11.2.9  2003/04/10 21:49:34  joy
- * cygwin mapping fixed - compiler bug found
- *
- * Revision 1.11.2.8  2003/04/08 22:11:14  joy
- * important difference in order of operator evaluation
- *
- * Revision 1.11.2.7  2003/04/08 00:42:14  standa
- * The st2flags() and flags2st() methods fixed (a need for open()).
- * The isPathValid() method removed (was only useful for aranymfs.dos).
- * Dpathconf(8-9) added and 7 fixed (Thing has a bug in 1.27 here IIRC).
- * General debug messages cleanup.
- *
- * Revision 1.11.2.6  2003/04/03 12:11:29  standa
- * 32bit <-> host mapping + general hostfs cleanup.
- *
- * Revision 1.11.2.5  2003/03/28 13:19:58  joy
- * little compile fixes
- *
- * Revision 1.11.2.4  2003/03/28 12:59:07  joy
- * little fix 2nd
- *
- * Revision 1.11.2.3  2003/03/28 12:57:38  joy
- * little fix
- *
- * Revision 1.11.2.2  2003/03/28 11:45:30  joy
- * DIRSEP in hostfs
- *
- * Revision 1.11.2.1  2003/03/26 18:18:15  milan
- * stolen from head
- *
- * Revision 1.12  2003/03/24 19:11:00  milan
- * Solaris support updated
- *
- * Revision 1.11  2003/03/20 21:27:22  standa
- * The .xfs mapping to the U:\G mountpouints (single letter) implemented.
- *
- * Revision 1.10  2003/03/20 01:08:17  standa
- * HOSTFS mapping update.
- *
- * Revision 1.9  2003/03/17 09:42:39  standa
- * The chattr,chmod implementation ported from stonx.
- *
- * Revision 1.8  2003/03/12 21:10:49  standa
- * Several methods changed from EINVFN -> E_OK (only fake /empty/ implementation)
- *
- * Revision 1.7  2003/03/11 18:53:29  standa
- * Ethernet initialization fixed to work also in nondebug mode.
- *
- * Revision 1.6  2003/03/08 08:51:51  joy
- * disable DEBUG
- *
- * Revision 1.5  2003/03/01 11:57:37  joy
- * major HOSTFS NF API cleanup
- *
- * Revision 1.4  2003/02/17 14:20:20  standa
- * #if defined(OS_beos) used.
- *
- * Revision 1.3  2003/02/17 14:16:16  standa
- * BeOS patch for aranymfs and hostfs
- *
- * Revision 1.2  2002/12/16 16:10:24  standa
- * just another std:: added.
- *
- * Revision 1.1  2002/12/10 20:47:21  standa
- * The HostFS (the host OS filesystem access via NatFeats) implementation.
- *
- *
- */

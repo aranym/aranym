@@ -30,7 +30,6 @@
 #include "parameters.h"
 #include "hostscreen.h"
 #include "host.h"			// for the HostScreen
-#include "araobjs.h"		// for the ExtFs
 #include "aramd5.h"
 #include "romdiff.h"
 #include "parameters.h"
@@ -459,10 +458,6 @@ bool InitAll(void)
 	CPUType = 4;
 	FPUType = 1;
 
-#ifdef EXTFS_SUPPORT
-	// install the drives
-	extFS.init();
-#endif
 #ifdef ETHERNET_SUPPORT
 	Ethernet.init();
 #endif

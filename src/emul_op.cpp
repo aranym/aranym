@@ -22,7 +22,6 @@
 #include "cpu_emulation.h"
 #include "main.h"
 #include "emul_op.h"
-#include "araobjs.h"
 #include "parameters.h"
 
 #ifdef ENABLE_MON
@@ -77,30 +76,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 		}
 
-		case M68K_EMUL_OP_VIDEO_OPEN:		// Video driver functions
-			panicbug("Obsolete VIDEO driver! Use NatFeat driver instead!\n");
-			QuitEmulator();
-
-		case M68K_EMUL_OP_VIDEO_CONTROL:	// DEPRECATED
-			panicbug("Obsolete VIDEO driver! Use NatFeat driver instead!\n");
-			QuitEmulator();
-			break;
-
-		case M68K_EMUL_OP_VIDEO_DRIVER:
-			panicbug("Obsolete VIDEO driver! Use NatFeat driver instead!\n");
-			QuitEmulator();
-			break;
-
-#ifdef EXTFS_SUPPORT
-		case M68K_EMUL_OP_EXTFS_COMM:		// External file system routines
-			extFS.dispatch( ReadInt32(r->a[7]), r );  // SO
-			break;
-
-		case M68K_EMUL_OP_EXTFS_HFS:
-			extFS.dispatchXFS( ReadInt32(r->a[7]), r );  // SO
-			break;
-#endif
-
 		// VT52 Xconout
 		case M68K_EMUL_OP_PUT_SCRAP:
 			{
@@ -134,35 +109,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 					}
 				}
 			}
-			break;
-
-		case M68K_EMUL_OP_DEBUGUTIL:	// for EmuTOS - code 0x7135
-		{
-			uint32 textAddr = ReadAtariInt32(r->a[7]+4);
-			if (textAddr < (RAMSize + ROMSize + FastRAMSize)) {
-				uint8 *textPtr = Atari2HostAddr(textAddr);
-				printf("%s", textPtr);
-				fflush(stdout);
-			}
-			else {
-				D(bug("Wrong debugText addr: %u", textAddr));
-			}
-		}
-			break;
-
-		case M68K_EMUL_OP_DMAREAD:	// DEPRECATED (for EmuTOS - code 0x7136)
-			panicbug("Obsolete DMA driver! Use NatFeat driver instead!\n");
-			QuitEmulator();
-			break;
-
-		case M68K_EMUL_OP_XHDI:	// for EmuTOS - code 0x7137
-			panicbug("Obsolete XHDI driver! Use NatFeat driver instead!\n");
-			QuitEmulator();
-			break;
-
-		case M68K_EMUL_OP_AUDIO:
-			panicbug("Obsolete AUDIO driver! Use NatFeat driver instead!\n");
-			QuitEmulator();
 			break;
 
 		case M68K_EMUL_OP_CPUDEBUG_ON:

@@ -39,10 +39,6 @@
 # define HOSTFS_SUPPORT 0
 #endif
 
-#ifndef EXTFS_SUPPORT
-# define EXTFS_SUPPORT 0
-#endif
-
 static struct option const long_options[] =
 {
 #ifndef FixedSizeFastRAM
@@ -664,7 +660,6 @@ void early_cmdline_check(int argc, char **argv) {
 			infoprint("DSP disassembler : %s", (DSP_DISASM == 1) ? "enabled" : "disabled");
 			infoprint("OpenGL support   : %s", (ENABLE_OPENGL == 1) ? "enabled" : "disabled");
 			infoprint("HOSTFS support   : %s", (HOSTFS_SUPPORT == 1) ? "enabled" : "disabled");
-			infoprint("ARANYMFS support : %s", (EXTFS_SUPPORT == 1) ? "enabled (obsolete)" : "disabled");
 
 			exit (0);
 		}

@@ -52,8 +52,6 @@ AC_ARG_ENABLE(blitsdlblit,     [  --enable-blitsdlblit    enable SDL blitting ro
 
 AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support (default=yes)], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
 
-AC_ARG_ENABLE(aranymfs,        [  --enable-aranymfs       enable aranymfs support (default=yes)], [WANT_ARANYMFS=$enableval], [WANT_ARANYMFS=yes])
-
 AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI (default=yes)], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
 
 AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default=no)], [WANT_OPENGL=$enableval], [WANT_OPENGL=no])
@@ -288,7 +286,6 @@ case "$target_os" in
     AC_DEFINE([_POSIX_C_SOURCE], 199506L, [Define if needed])
     DEFINES="$DEFINES -DBSD_COMP -fpermissive -D__EXTENSIONS__"
     EXTRASYSSRCS=parameters_unix.cpp
-dnl    WANT_ARANYMFS="no"
     ;;
   irix*)
     EXTRASYSSRCS="parameters_unix.cpp irix/unaligned.c"
@@ -797,12 +794,6 @@ dnl Support for direct access to host's fs
 if [[ "x$WANT_HOSTFS" = "xyes" ]]; then
   SYSSRCS="$SYSSRCS ../natfeat/hostfs.cpp"
   AC_DEFINE([HOSTFS_SUPPORT], 1, [Define if you want to use direct access to host's fs])
-fi
-
-dnl Support for direct access to host's fs
-if [[ "x$WANT_ARANYMFS" = "xyes" ]]; then
-  SYSSRCS="$SYSSRCS ../extfs.cpp"
-  AC_DEFINE([EXTFS_SUPPORT], 1, [Define if you want to use direct access to host's fs])
 fi
 
 dnl SDL GUI
@@ -1679,7 +1670,6 @@ echo Fixed position of VideoRAM ............. : $WANT_FIXEDVIDEORAM
 echo TOS Direct Truecolor.................... : $WANT_DIRECTCOLOR
 echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
 echo Blitter SDL blit acceleration .......... : $WANT_BLITSDLBLIT
-echo Support for aranymfs ................... : $WANT_ARANYMFS
 echo Support for hostfs ..................... : $WANT_HOSTFS
 echo Support for ethernet ................... : $HAVE_ETHERNET
 echo GUI .................................... : $WANT_SDLGUI

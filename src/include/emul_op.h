@@ -22,6 +22,7 @@
 #define EMUL_OP_H
 
 // 68k opcodes
+/*
 const uint16 M68K_ILLEGAL = 0x4afc;
 const uint16 M68K_NOP = 0x4e71;
 const uint16 M68K_RTS = 0x4e75;
@@ -31,11 +32,15 @@ const uint16 M68K_JMP = 0x4ef9;
 const uint16 M68K_JMP_A0 = 0x4ed0;
 const uint16 M68K_JSR = 0x4eb9;
 const uint16 M68K_JSR_A0 = 0x4e90;
+*/
 
 // Extended opcodes
 enum {
+/*
 	M68K_EXEC_RETURN = 0x7100,		// Extended opcodes (illegal moveq form)
-	M68K_EMUL_BREAK,			// 0x7101 - breakpoint
+*/
+	M68K_EMUL_BREAK = 0x7101,		// 0x7101 - breakpoint
+/*
 	M68K_EMUL_OP_SHUTDOWN,
 	M68K_EMUL_OP_RESET,
 	M68K_EMUL_OP_CLKNOMEM,
@@ -76,11 +81,13 @@ enum {
 	M68K_EMUL_OP_MICROSECONDS,
 	M68K_EMUL_OP_SCSI_DISPATCH,		// 0x7128
 	M68K_EMUL_OP_IRQ,
-	M68K_EMUL_OP_PUT_SCRAP,			// 0x712a - used in TOS ROM patch
+*/
+	M68K_EMUL_OP_PUT_SCRAP = 0x712a,	// 0x712a - used in TOS ROM patch
+/*
 	M68K_EMUL_OP_CHECKLOAD,
 	M68K_EMUL_OP_AUDIO,			// 0x712c - obsolete
-	M68K_EMUL_OP_EXTFS_COMM,		// 0x712d - Extfs support
-	M68K_EMUL_OP_EXTFS_HFS,			// 0x712e - Extfs support
+	M68K_EMUL_OP_EXTFS_COMM,		// 0x712d - obsolete
+	M68K_EMUL_OP_EXTFS_HFS,			// 0x712e - obsolete
 	M68K_EMUL_OP_BLOCK_MOVE,
 	M68K_EMUL_OP_SOUNDIN_OPEN,		// 0x7130
 	M68K_EMUL_OP_SOUNDIN_PRIME,
@@ -91,7 +98,8 @@ enum {
 	M68K_EMUL_OP_DMAREAD,			// 0x7136 - obsolete
 	M68K_EMUL_OP_XHDI,			// 0x7137 - obsolete
 	M68K_EMUL_OP_VIDEO_DRIVER,		// 0x7138 - obsolete
-	M68K_EMUL_OP_CPUDEBUG_ON,		// 0x7139 - cpu_debugging on
+*/
+	M68K_EMUL_OP_CPUDEBUG_ON = 0x7139,		// 0x7139 - cpu_debugging on
 	M68K_EMUL_OP_CPUDEBUG_OFF,		// 0x713a - cpu_debugging off
 	M68K_EMUL_OP_MAX,			// highest number
 	M68K_EMUL_OP_MON0 = 0x71f0,		// Monitor instructions
