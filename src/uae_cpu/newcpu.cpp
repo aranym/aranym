@@ -663,7 +663,7 @@ void Exception(int nr, uaecptr oldpc)
 #endif
 
     if (nr == 2) {
-    	static long prevpc = 0;
+    	static uaecptr prevpc = 0;
 #if 0
 			if (currprefs.cpu_level == 5)	{
 				/* 68060 */
@@ -705,7 +705,8 @@ void Exception(int nr, uaecptr oldpc)
 	exc_push_word(0);	/* WB2S */
 	exc_push_word(0);	/* WB3S */
 	exc_push_word(regs.mmu_ssw);
-	exc_push_long(regs.mmu_fault_addr);	/* EA */
+	// exc_push_long(regs.mmu_fault_addr);	/* EA */ bullshit here, took 10 hours to debug with PureC $12345678 test
+	exc_push_word(0);	/* internal register, keep 0 to preserve MSP in PureC */
 	exc_make_frame(7, regs.sr, currpc, 2, 0, 0);
     } else if (nr == 3) {
 	exc_make_frame(2, regs.sr, last_addr_for_exception_3, nr,

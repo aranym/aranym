@@ -1,13 +1,20 @@
 2002/09/28 - joy (version 0.6.2-beta)
-- fixed NEED_TO_DEBUG_BADLY
+- fixed #ifdef NEED_TO_DEBUG_BADLY code
+
 - BUS ERROR loops are detected and back trace is displayed (the latter only
   if fullhistory was enabled at compile time)
+
 - display better info when exception occurs (NPC = new PC = the exception
   handler address, SP = stack pointer)
+
+- irritating bus error loops that occur when 68000-only application tries to
+  catch bus error by its own (PureC IDE) should be fixed now.
+
 
 2002/09/28 - johan
 - Special handling of vro_cpyfm D=S mode for performance improvement.
   No loop unrolling yet, and only implemented for 16 bit mode.
+
 
 2002/09/27 - patrice
 - acia, ikbd, midi emulation updated. Preliminary joystick support (emulated
