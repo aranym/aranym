@@ -1,5 +1,6 @@
 2005/01/20 - Patrice
-- nfjpeg: More fixes.
+- nfjpeg: More fixes, now Brainstorm's JPEG viewer works, but images with width
+  not multiple of 16 have a problem.
 
 
 2005/01/19 - STanda
