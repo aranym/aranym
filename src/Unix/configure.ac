@@ -251,14 +251,17 @@ if [[ "x$HAVE_M68K" = "xyes" -a "x$CAN_NATIVE_M68K" = "xyes" ]]; then
   WANT_NATIVE_M68K=yes
 fi
 
+DIR_SEPARATOR="\"/\""
+
 case "$target_os" in
   linux*)
     EXTRASYSSRCS=linux/parameters_linux.cpp
     ;;
   cygwin*)
-    DEFINES="$DEFINES -fpermissive"
+    DEFINES="$DEFINES -fpermissive -DARANYMHOME=\"aranym\""
     LIBS="$LIBS -lSDL -lSDLmain -liberty"
     EXTRASYSSRCS=parameters_unix.cpp
+    DIR_SEPARATOR="\"\\\""
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
@@ -1449,6 +1452,7 @@ AC_SUBST(CPUINCLUDES)
 AC_SUBST(CPUSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
+AC_SUBST(DIR_SEPARATOR)
 AC_OUTPUT(Makefile)
 
 dnl Print summary.
