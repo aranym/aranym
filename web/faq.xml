@@ -43,10 +43,11 @@
   <chapter>
     <title>Does MiNT or MagiC work?</title>
     <text>
-      Yes, ARAnyM was primarilly created to allow user run MiNT and moreover
-      with a posiblity of memory protection. ARAnyM virtualizes the HW the way
-      that MagiC works as well. Basicaly every application cleanly programed to
-      be TOS complient should work. You can <contact>contact us</contact> if not.
+      Yes, ARAnyM was primarily created to allow users run MiNT (even with
+      memory protection). ARAnyM virtualizes the HW the way
+      that MagiC works as well. Basically every application cleanly programmed to
+      be TOS compliant should work. Please <contact>let us know</contact> if your
+      application does not run under ARAnyM.
     </text>
   </chapter>
   <chapter>
@@ -54,7 +55,7 @@
     <text>
       You simply turn on your host machine (PC, Mac, Sun, whatever) and after
       a while of booting (when the Fuji logo shines on the screen)
-      you end up in your favorite GEM desktop. In the background the 
+      you end up in your favourite GEM desktop. In the background the 
       HostOS booted up (we use Linux for now but ARAnyM can be ported to
       any OS) and started the ARAnyM, which now emulates MC68040 CPU, FPU and
       a couple of other Falcon030 chips so that a slightly patched TOS 4.04 boots
