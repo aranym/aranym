@@ -1,3 +1,16 @@
+2001/06/06 - PS
+- '--grab_mouse' command line switch for X-Windows
+
+- floppy can be inserted and removed in run-time. Press F11 to insert
+  a floppy read-only. Hold Shift and press F11 to insert the floppy read-write.
+  Make sure you have rw permissions on /dev/fd0 for this.
+  Press F12 to remove a floppy. It seems to be unnecessary to manually remove
+  the floppy each time since the writting should be synchronized (O_SYNC).
+
+  This is not a final stage yet - if we stopped supporting disk images we
+  could make the floppy inserting/removing fully automatic.
+
+
 2001/06/05 - STanda
 - extfs: the drives are assignable from commandline option -disk (-d)
   The AUTO/CONFIG.SYS must still contain the conresponding drive-letter
@@ -7,6 +20,7 @@
   ExtFs.init() method (called from main_unix.cpp)
 
 - the short -debug option was redesigned to -D
+  
 
 2001/05/29 - PS - version increased to 0.0.3
 - major speed up (22 -> 27 thousand dhrystones) thanks to moving setjmp()
@@ -15,6 +29,7 @@
 - excep_no var removed from memory.cpp and newcpu.cpp
 
 - fixed VBL invocation (main_unix.cpp)
+  
 
 2001/05/29 - PS - version increased to 0.0.2
 - uae_cpu/memory.h - you can enable or disable CHECK_MEMORY_END.
@@ -32,6 +47,7 @@
 - 'direct_truecolor' switch allows you to patch TOS so that Videl VideoRAM
   is set directly to host's VideoRAM. Thus VIDEL writes directly to host's
   VGA card video memory (if framebuffer is used as the SDL_VIDEODRIVER).
+  
 
 2001/05/28 - PS
 - implemented proper Bus Error (hardware.cpp and others). This helps
