@@ -641,10 +641,15 @@ int process_cmdline(int argc, char **argv)
 }
 
 // append a filename to a path
-static char *addFilename(const char *file, char *buffer, unsigned int bufsize)
+static char *addFilename(char *buffer, const char *file, unsigned int bufsize)
 {
-	if ((strlen(buffer) + 1 + strlen(file) + 1) < bufsize) {
-		strcat(buffer, DIRSEPARATOR);
+	int dirlen = strlen(buffer);
+	if ((dirlen + 1 + strlen(file) + 1) < bufsize) {
+		if (dirlen > 0) {
+			char *ptrLast = buffer + dirlen - 1;
+			if (*ptrLast != '/' && *ptrLast != '\\')
+				strcat(buffer, DIRSEPARATOR);
+		}
 		strcat(buffer, file);
 	}
 	else {
@@ -667,14 +672,14 @@ char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 		mkdir(buffer, 0755);
 	}
 
-	return addFilename(file, buffer, bufsize);
+	return addFilename(buffer, file, bufsize);
 }
 
 // build a complete path to system wide data file
 char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
 {
 	getDataFolder(buffer, bufsize);
-	return addFilename(file, buffer, bufsize);
+	return addFilename(buffer, file, bufsize);
 }
 
 static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose)

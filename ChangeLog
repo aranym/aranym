@@ -1,3 +1,11 @@
+2003/04/10 - joy
+- parameters.cpp: addFilename() has a different order of arguments
+  and is able to deal with additional path separators
+
+- cygwin support hopefully perfect now (uses registry to find out the path
+  to "My Documents" folder which is used instead of the Unix-ish $HOME).
+
+
 2003/04/09 - joy
 - parameters.cpp: do not include emu_bochs.h - this breaks some platforms.
 

@@ -3,6 +3,7 @@
 #define _CYGWIN_TOOLS_H
 
 #include "tools.h"
+#undef DATADIR	// unfortunately win32 defines a struct of the same name
 #include <sys/cygwin.h>
 #include <windows.h>
 
@@ -14,7 +15,7 @@ char *cygwin_path_to_win32(char *path, size_t size)
 	return path;
 }
 
-int get_app_dir(char *path, int len)
+int get_home_dir(char *path, int len)
 {
 	LONG r;
 	HKEY hkResult;
@@ -23,7 +24,7 @@ int get_app_dir(char *path, int len)
 	r = RegOpenKeyEx
 		(
 			HKEY_CURRENT_USER,
-			"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
+			"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders\\Personal",
 			(DWORD)0,
 			KEY_READ,
 			&hkResult
