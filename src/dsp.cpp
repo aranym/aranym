@@ -21,7 +21,7 @@ void DSP::init(void)
 	/* FIXME : initialize rom[] */
 
 	state = DSP_BOOTING;
-	D(bug("Dsp booting"));
+	D(bug("Dsp: booting"));
 	bootstrap_pos = bootstrap_accum = 0;
 	
 	/* Registers */
@@ -32,12 +32,12 @@ void DSP::init(void)
 	}
 
 	/* host port init, dsp side */
-	periph[PERIPH_HOST_HSR]=(1<<HOST_HSR_HTDE);
+	periph[SPACE_X][PERIPH_HOST_HSR]=(1<<HOST_HSR_HTDE);
 
 	/* host port init, cpu side */
-	periph[CPU_HOST_CVR]=0x12;
-	periph[CPU_HOST_ISR]=(1<<HOST_ISR_TRDY)|(1<<HOST_ISR_TXDE);
-	periph[CPU_HOST_IVR]=0x0f;
+	periph[SPACE_X][CPU_HOST_CVR]=0x12;
+	periph[SPACE_X][CPU_HOST_ISR]=(1<<HOST_ISR_TRDY)|(1<<HOST_ISR_TXDE);
+	periph[SPACE_X][CPU_HOST_IVR]=0x0f;
 
 	/* Misc */
 	loop_rep = 0;
@@ -51,28 +51,34 @@ uae_u8 DSP::handleRead(uaecptr addr)
 
 	switch(addr) {
 		case CPU_HOST_ICR:
-			value = periph[CPU_HOST_ICR];
+			value = periph[SPACE_X][CPU_HOST_ICR];
 			break;
 		case CPU_HOST_CVR:
-			value = periph[CPU_HOST_CVR];
+			value = periph[SPACE_X][CPU_HOST_CVR];
 			break;
 		case CPU_HOST_ISR:
-			value = periph[CPU_HOST_ISR];
+			value = periph[SPACE_X][CPU_HOST_ISR];
 			break;
 		case CPU_HOST_IVR:
-			value = periph[CPU_HOST_IVR];
+			value = periph[SPACE_X][CPU_HOST_IVR];
 			break;
 		case CPU_HOST_RX0:
 			value = 0;
 			break;
 		case CPU_HOST_RXH:
-			value = (periph[PERIPH_HOST_HRX]>>16) & 255;
+			value = (periph[SPACE_X][PERIPH_HOST_HRX]>>16) & 255;
 			break;
 		case CPU_HOST_RXM:
-			value = (periph[PERIPH_HOST_HRX]>>8) & 255;
+			value = (periph[SPACE_X][PERIPH_HOST_HRX]>>8) & 255;
 			break;
 		case CPU_HOST_RXL:
-			value = periph[PERIPH_HOST_HRX] & 255;
+			value = periph[SPACE_X][PERIPH_HOST_HRX] & 255;
+#if 0
+			/* Set HTDE bit to say that CPU has read */
+			periph[SPACE_X][PERIPH_HOST_HSR] |= 1<<HOST_HSR_HTDE;
+			/* Clear RXDF bit to say that CPU has read */
+			periph[SPACE_X][CPU_HOST_ISR] &= 0xff-(1<<HOST_ISR_RXDF);
+#endif
 			break;
 	}
 
@@ -86,17 +92,17 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 
 	switch(addr) {
 		case CPU_HOST_ICR:
-			periph[CPU_HOST_ICR]=value & 0xfb;
+			periph[SPACE_X][CPU_HOST_ICR]=value & 0xfb;
 			break;
 		case CPU_HOST_CVR:
-			periph[CPU_HOST_CVR]=value & 0x9f;
+			periph[SPACE_X][CPU_HOST_CVR]=value & 0x9f;
 			/* if bit 7=1, host command */
 			break;
 		case CPU_HOST_ISR:
 			/* Read only */
 			break;
 		case CPU_HOST_IVR:
-			periph[CPU_HOST_IVR]=value;
+			periph[SPACE_X][CPU_HOST_IVR]=value;
 			break;
 		case CPU_HOST_TX0:
 			bootstrap_accum = 0;
@@ -112,13 +118,6 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 
 			switch(state) {
 				case DSP_BOOTING:
-/*
-					D(bug("Writing 0x%06x at p:0x%04x, from 0x%08x",
-						bootstrap_accum,
-						bootstrap_pos,
-						showPC()
-					));
-*/
 					ram[SPACE_P][bootstrap_pos] = bootstrap_accum;
 					bootstrap_pos++;
 					if (bootstrap_pos == 0x200) {
@@ -129,24 +128,23 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 					break;
 				case DSP_WAITHOST:
 					/* Wake up DSP if a waiting data arrived */
-					periph[PERIPH_HOST_HTX]=bootstrap_accum;
+				case DSP_RUNNING:
+					/* New data available on host port */
+				case DSP_WAITINTERRUPT:
+					/* Wake up if host port interrupt */
+					periph[SPACE_X][PERIPH_HOST_HTX]=bootstrap_accum;
 					state = DSP_RUNNING;
 					D(bug("Writing 0x%06x on host port, from 0x%08x", bootstrap_accum, showPC()));
 					break;
-				case DSP_RUNNING:
-					/* New data available on host port */
-					periph[PERIPH_HOST_HTX]=bootstrap_accum;
-					D(bug("Writing 0x%06x on host port, from 0x%08x", bootstrap_accum, showPC()));
-					break;
-				case DSP_WAITINTERRUPT:
-					/* Wake up if host port interrupt */
-					periph[PERIPH_HOST_HTX]=bootstrap_accum;
-					D(bug("Writing 0x%06x on host port, from 0x%08x", bootstrap_accum, showPC()));
-					break;
 			}
-			break;
-		default:
-			D(bug("HWput_b(0x%08x,0x%02x) at 0x%08x", addr+HW_DSP, value, showPC()));
+#if 0
+			/* Set HRDF bit to say that DSP can read */
+			periph[SPACE_X][PERIPH_HOST_HSR] |= 1<<HOST_HSR_HRDF;
+			/* Clear TXDE bit to say that CPU has written */
+			periph[SPACE_X][CPU_HOST_ISR] &= 0xff-(1<<HOST_ISR_TXDE);
+#endif
 			break;
 	}
+
+/*	D(bug("HWput_b(0x%08x,0x%02x) at 0x%08x", addr+HW_DSP, value, showPC()));*/
 }

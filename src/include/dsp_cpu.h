@@ -1,3 +1,10 @@
+/*
+ *	DSP56K emulation
+ *	kernel
+ *
+ *	Patrice Mandin
+ */
+
 #ifndef _DSP_CPU_H_
 #define _DSP_CPU_H_
 

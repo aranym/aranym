@@ -1,9 +1,14 @@
+2002/07/10 - Patrice
+- I finished nearly all intructions. I also added a disassembler
+  (disabled by default but you can enable it with --enable-dspdisasm)
+
+
 2002/07/09 - joy
 - DSP integrated properly in the autoconfig system. By default it's disabled
   but you can enable it with --enable-dsp in configure phase.
 
 
-2002/07/08 - Patrice (record in ChangeLog by joy)
+2002/07/08 - Patrice
 - DSP 56001 emulation started. It is not finished, but I think it has
   a good shape. I wanted to do this because I would like to be able
   to run DSP development tools under Aranym, to assemble DSP programs.

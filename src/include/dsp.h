@@ -85,8 +85,8 @@ class DSP : public BASE_IO {
 		/* rom[0] is x:, rom[1] is y: */
 		uint32	rom[2][512];
 
-		/* peripheral space, x:0xffc0-0xffff */
-		uint32	periph[64];
+		/* peripheral space, [x|y]:0xffc0-0xffff */
+		uint32	periph[2][64];
 
 		/* Misc */
 		uint32 loop_rep;	/* executing rep ? */

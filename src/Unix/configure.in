@@ -19,13 +19,15 @@ AC_ARG_ENABLE(debug,
 ],
 [WHICH_DEBUG="ndebug"
 ])
-AC_ARG_WITH(mon,             [  --with-mon              use mon as debugger [default=no]], [WANT_MON=$withval], [WANT_MON=no])
+AC_ARG_WITH(mon,               [  --with-mon              use mon as debugger [default=no]], [WANT_MON=$withval], [WANT_MON=no])
 
 AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history for debugger (slower) [default=no]], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
 
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU [default=no]], [WANT_MMU=$enableval], [WANT_MMU=no])
 
-AC_ARG_ENABLE(dsp,         [  --enable-dsp        enable DSP 56001 [default=no]], [WANT_DSP=$enableval], [WANT_DSP=no])
+AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 [default=no]], [WANT_DSP=$enableval], [WANT_DSP=no])
+
+AC_ARG_ENABLE(dspdisasm,       [  --enable-dspdisasm     enable DSP 56001 disassembly [default=no]], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
 
 AC_ARG_ENABLE(sdltimer,        [  --enable-sdltimer       use SDL Timer for Timer C [default=yes]], [WANT_SDLTIMER=$enableval], [WANT_SDLTIMER=yes])
 
@@ -523,6 +525,14 @@ else
     DSPSRCS=""
 fi
 
+dnl DSP Disassembly
+if [[ "x$WANT_DSP_DISASM" = "xyes" ]]; then
+    AC_DEFINE(DSP_DISASM)
+	DSPDISSRCS="../dsp_disasm.cpp"
+else
+	DSPDISSRCS=""
+fi
+
 dnl Timer C
 if [[ "x$WANT_SDLTIMER" = "xyes" ]]; then
   AC_DEFINE(USE_TIMERS)
@@ -920,7 +930,7 @@ fi
 dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
   CPUINCLUDES="-I../uae_cpu"
-  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp cpustbl.cpp $CPUSRCS $JITSRCS $MMUSRCS $DSPSRCS"
+  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp cpustbl.cpp $CPUSRCS $JITSRCS $MMUSRCS $DSPSRCS $DSPDISSRCS"
 fi
 
 dnl Remove the "-g" option if set for GCC.
@@ -974,6 +984,7 @@ echo Assembly optimizations ................. : $ASM_OPTIMIZATIONS
 echo Addressing mode ........................ : $ADDRESSING_MODE
 echo Full MMU support ....................... : $WANT_MMU
 echo DSP 56001 support ...................... : $WANT_DSP
+echo DSP 56001 disassembly support .......... : $WANT_DSP_DISASM
 echo Distributed dispatcher ................. : $WANT_DIS_DIP
 echo Debugger ............................... : $WHICH_DEBUG
 echo Monitor ................................ : $WANT_MON
