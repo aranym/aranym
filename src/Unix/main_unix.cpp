@@ -32,6 +32,7 @@
 #include "timer.h"
 #include "version.h"
 #include "main.h"
+#include "hardware.h"
 
 #define DEBUG 1
 #include "debug.h"
@@ -57,7 +58,6 @@ extern int irqindebug;
 #define UPDATERECT
 #ifdef UPDATERECT
 bool UpdateScreen = true;
-bool convert_bitplanes = false;
 #define REFRESH_FREQ	1
 #endif // UPDATERECT
 
@@ -74,7 +74,9 @@ static int keyboardTable[0x80] = {
 /*48-4f*/SDLK_UP, 0, SDLK_KP_PLUS, SDLK_LEFT, 0, SDLK_RIGHT, SDLK_KP_MINUS, 0,
 /*50-57*/SDLK_DOWN, 0, SDLK_INSERT, SDLK_DELETE, SDLK_F11, SDLK_F12, 0, 0,
 /*58-5f*/0, 0, 0, 0, 0, 0, 0, 0,
-/*60-67*/SDLK_LESS, SDLK_PAGEDOWN, SDLK_PAGEUP};
+/*60-67*/SDLK_LESS, SDLK_PAGEDOWN, SDLK_PAGEUP, 0 /* NumLock */, SDLK_KP_DIVIDE, SDLK_KP_MULTIPLY, SDLK_KP_MINUS, SDLK_KP7,
+/*68-6f*/SDLK_KP8, SDLK_KP9, SDLK_KP4, SDLK_KP5, SDLK_KP6, SDLK_KP1, SDLK_KP2, SDLK_KP3,
+/*70-72*/SDLK_KP0, SDLK_KP_PERIOD, SDLK_KP_ENTER};
 
 static int buttons[3]={0,0,0};
 
@@ -88,7 +90,11 @@ static void check_event(void)
 			int sym = event.key.keysym.sym;
 			if (sym == SDLK_END)
 				QuitEmulator();
-			for(int i=0; i < 0x62; i++) {
+			if (sym == SDLK_RCTRL)
+				sym = SDLK_LCTRL;
+			if (sym == SDLK_RALT)
+				sym = SDLK_LALT;
+			for(int i=0; i < 0x73; i++) {
 				if (keyboardTable[i] == sym) {
 					if (! pressed)
 						i |= 0x80;
@@ -145,21 +151,24 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 		if (UpdateScreen && ++Refresh_counter == REFRESH_FREQ)
 		{
 			Refresh_counter = 0;
-			// memcpy(VideoRAMBaseHost, RAMBaseHost+0x369f00, 640*480*2);
-			// convert bitplanes
-			if (convert_bitplanes) {
-				uint8 *fvram = get_real_address(0x800000); //HWget_l(0x44e);
-				uint16 *hvram = (uint16 *)VideoRAMBaseHost;
-				for(int i=0; i < (80*480); i++) {
-					uint8 b = fvram[i];
-					for(int j=0; j<8; j++) {
+			uint16 *fvram = (uint16*)get_real_address(vram_addr/*ReadMacInt32(0x44e)*/);
+			uint16 *hvram = (uint16 *)VideoRAMBaseHost;
+			int mode = getVideoMode();
+			if (mode < 16) {
+				// convert bitplanes
+				for(int i=0; i < (80*480/2); i++) {
+					uint16 b = fvram[i*mode];
+					b = (b >> 8) | ((b & 0xff) << 8);	// byteswap
+					for(int j=0; j<16; j++) {
 						uint16 v = 0xffff;
-						if (b & (1 << (7-j)))
+						if (b & (1 << (15-j)))
 							v = 0;
-						hvram[(i*8+j)] = v;
+						hvram[(i*16+j)] = v;
 					}
 				}
 			}
+			else
+				memcpy(hvram, fvram, 640*480*2);
 			SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, 640, 480);
 		}
 #endif
@@ -305,7 +314,19 @@ int main(int argc, char **argv)
 		QuitEmulator();
 	}
 
-	// Patch TOS
+	// Patch TOS (enforce VideoRAM at 0xf0000000)
+	if (false) {
+		ROMBaseHost[35753]=0x3c;
+    	ROMBaseHost[35754]=0xf0;
+    	ROMBaseHost[35755]=0;
+    	ROMBaseHost[35756]=0;
+    	ROMBaseHost[35757]=0;
+    	ROMBaseHost[35758]=0x60;
+    	ROMBaseHost[35759]=6;
+    	ROMBaseHost[35760]=0x4e;
+    	ROMBaseHost[35761]=0x71;
+    }
+
 
 	// Initialize everything
 	if (!InitAll())
