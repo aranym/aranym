@@ -53,6 +53,7 @@ SRCS = ../main.cpp \
 	../cfgopts.c \
 	../dsp.cpp \
 	../emul_op.cpp \
+	../natfeats.cpp \
 	../fakeio.cpp \
 	../fdc.cpp \
 	../fvdidrv.cpp \

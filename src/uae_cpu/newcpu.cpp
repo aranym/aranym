@@ -12,6 +12,7 @@
 #include "cpu_emulation.h"
 #include "main.h"
 #include "emul_op.h"
+#include "natfeats.h"
 #include "m68k.h"
 #include "memory.h"
 #include "readcpu.h"
@@ -1212,7 +1213,17 @@ void m68k_emulop(uae_u32 opcode)
 	MakeFromSR();
 }
 
-void NatFea(uint16 opcode, M68kRegisters *r) { }
+
+void NatFea(uae_u32 opcode, M68kRegisters *r)
+{
+	fprintf(stderr, "NatFea!\n");
+	memptr stack = r->a[7] + 4;	/* skip return address */
+	switch(opcode & 0xff) {
+		case 1: r->d[0] = nf_get_id(stack); break;
+		case 2: r->d[0] = nf_rcall(stack); break;
+		default: /* throw illegal instruction error */; break;
+	}
+}
 
 void m68k_natfea(uae_u32 opcode)
 {
