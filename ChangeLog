@@ -1,3 +1,8 @@
+2004/09/24 - Patrice
+- Natfeat FVDI driver: added functions to read back the screen width and height
+  really set on the host side
+
+
 2004/09/13 - joy
 - newcpu.cpp, spcflags.h: SPCFLAGS_NMI removed, _BRK used instead (like
   seen in hatari). SPCFLAGS_MODE_CHANGE removed (it was unused).

@@ -6,6 +6,8 @@
 extern long CDECL c_get_videoramaddress(void); /* STanda */
 extern void CDECL c_set_resolution(long width, long height, long depth, long freq); /* STanda */
 extern int nf_initialize();
+extern long CDECL c_get_width(void);
+extern long CDECL c_get_height(void);
 
 #if 0
 char r_16[] = {5, 15, 14, 13, 12, 11};
@@ -513,6 +515,8 @@ Virtual* CDECL opnwk(Virtual *vwk)
 
 	if (resolution.used) {
 		c_set_resolution(resolution.width, resolution.height, resolution.bpp, resolution.freq);
+		resolution.width = c_get_width();
+		resolution.height = c_get_height();
 
 		/* The following should be here due to bpp > 8 modes */
 		/* the palette needs the appropriate surf->format to be set prior use */

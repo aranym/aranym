@@ -12,7 +12,7 @@
 
    fVDI v0.960 driver API, fVDI Natfeat v1.100
 */
-#define FVDIDRV_NFAPI_VERSION    0x11000960L
+#define FVDIDRV_NFAPI_VERSION    0x12000960L
 
 enum {
 	FVDI_GET_VERSION = 0,	/* subID = 0 */
@@ -27,7 +27,9 @@ enum {
 	FVDI_GET_HWCOLOR,
 	FVDI_SET_COLOR,
 	FVDI_GET_FBADDR,
-	FVDI_SET_RESOLUTION
+	FVDI_SET_RESOLUTION,
+	FVDI_GET_WIDTH,
+	FVDI_GET_HEIGHT
 };
 
 extern unsigned long nfFvdiDrvId;

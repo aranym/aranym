@@ -297,6 +297,12 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 			D(bug("fVDI: getVideoramAddress: %#lx", result));
 			break;
 
+		case FVDI_GET_WIDTH:
+			result = hostscreen.getWidth();
+			
+		case FVDI_GET_HEIGHT:
+			result = hostscreen.getHeight();
+
 		default:
 			// not implemented functions
 			D(bug("fVDI: Unknown %d", fncode));
@@ -2010,6 +2016,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.54  2004/06/07 08:39:23  standa
+ * Code beautyfying. Some remarks removed. Some debugs added.
+ *
  * Revision 1.53  2004/01/05 10:05:19  standa
  * Palette handling reworked. Old non-NF dispatch removed.
  *

@@ -193,3 +193,14 @@ c_get_videoramaddress()
    return ARAnyM((NF_fVDI+FVDI_GET_FBADDR));
 }
 
+long CDECL
+c_get_width(void)
+{
+   return ARAnyM((NF_fVDI+FVDI_GET_WIDTH));
+}
+
+long CDECL
+c_get_height(void)
+{
+   return ARAnyM((NF_fVDI+FVDI_GET_HEIGHT));
+}
