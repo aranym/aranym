@@ -32,16 +32,25 @@ extern "C" {
  #define DLLINTERFACE
 #endif
 
-/* STanda: pattern ability... HACK */
-
-extern unsigned short *areaPattern;
-extern unsigned short  linePattern;
-
 /* ----- Prototypes */
 
 /* STanda's internal published functions */
 
-DLLINTERFACE int fastPixelColorNolock (SDL_Surface *dst, Sint16 x, Sint16 y, Uint32 color);
+/**
+ * This macro handles the endianity for 24 bit per item data
+ **/
+#define putBpp24Pixel( address, color ) \
+{ \
+	if(SDL_BYTEORDER == SDL_BIG_ENDIAN) { \
+		((Uint8*)(address))[0] = ((color) >> 16) & 0xff; \
+		((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
+		((Uint8*)(address))[2] = (color) & 0xff; \
+	} else { \
+		((Uint8*)(address))[0] = (color) & 0xff; \
+		((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
+		((Uint8*)(address))[2] = ((color) >> 16) & 0xff; \
+    } \
+}
 
 /* Note: all ___Color routines expect the color to be in format 0xRRGGBBAA */
 
