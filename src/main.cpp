@@ -52,6 +52,7 @@
 
 #ifdef SDL_GUI
 #include "sdlgui.h"
+extern char *displayKeysym(SDL_keysym keysym, char *buffer);
 #endif
 
 #ifdef ENABLE_MON
@@ -142,7 +143,13 @@ void heartBeat()
 		static char beats[] = "\\|/-\\|/-";
 		static unsigned int beat_idx = 0;
 		char buf[sizeof(VERSION_STRING)+128];
-		sprintf(buf, "%s (press Pause key for GUI) %c", VERSION_STRING, beats[beat_idx++]);
+#ifdef SDL_GUI
+		char key[80];
+		displayKeysym(bx_options.hotkeys.setup, key);
+		snprintf(buf, sizeof(buf), "%s (press %s key for SETUP) %c", VERSION_STRING, key, beats[beat_idx++]);
+#else
+		snprintf(buf, sizeof(buf), "%s %c", VERSION_STRING, beats[beat_idx++]);
+#endif /* SDL_GUI */
 		if (beat_idx == strlen(beats))
 			beat_idx = 0;
 
