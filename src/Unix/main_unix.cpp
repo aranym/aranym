@@ -415,8 +415,6 @@ int main(int argc, char **argv)
 	if (grab_mouse) {
 		grabMouse(true);
 	}
-	// hide mouse unconditionally
-	hideMouse(true);
 
 	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
 
@@ -492,6 +490,9 @@ int main(int argc, char **argv)
 	if (!InitAll())
 		QuitEmulator();
 	D(bug("Initialization complete\n"));
+
+	// hide mouse unconditionally
+	hideMouse(true);
 
 	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
 
