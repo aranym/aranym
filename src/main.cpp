@@ -248,11 +248,21 @@ bool InitTOSROM(void)
 	}
 
 	// Xconout patch
-	if (bx_options.tos.console_redirect) {
+	if (bx_options.tos.redirect_CON) {
 		ROMBaseHost[0x8d44] = ROMBaseHost[0x8d50] = 0x71;
 		ROMBaseHost[0x8d45] = ROMBaseHost[0x8d51] = 0x2a;
 		ROMBaseHost[0x8d46] = ROMBaseHost[0x8d52] = 0x4e;
 		ROMBaseHost[0x8d47] = ROMBaseHost[0x8d53] = 0x75;
+	}
+	if (bx_options.tos.redirect_PRT) {
+		ROMBaseHost[0x23ec] = 0x32;
+		ROMBaseHost[0x23ed] = 0x2f;
+		ROMBaseHost[0x23ee] = 0x00;
+		ROMBaseHost[0x23ef] = 0x06;
+		ROMBaseHost[0x23f0] = 0x71;
+		ROMBaseHost[0x23f1] = 0x2a;
+		ROMBaseHost[0x23f2] = 0x4e;
+		ROMBaseHost[0x23f3] = 0x75;
 	}
 
 #ifdef DIRECT_TRUECOLOR
@@ -423,6 +433,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.62  2002/02/23 13:40:41  joy
+ * input related code separated from main.cpp
+ *
  * Revision 1.61  2002/01/18 20:37:47  milan
  * FixedSizeFastRAM & Makefile fixed
  *

@@ -7,7 +7,9 @@
   parameter). Suddenly Thing is able to refresh the destination window
   correctly.
 
-- an experimental spec file for building RPM package.
+- new experimental spec file for building RPM package.
+
+- new TOS patch for redirecting printer Xconout vector to host console
 
 
 ** Version 0.1.6

@@ -66,7 +66,8 @@ typedef struct {
 
 // TOS options
 typedef struct {
-  bool console_redirect;
+  bool redirect_PRT;
+  bool redirect_CON;
   long cookie_mch;
 } bx_tos_options_t;
 

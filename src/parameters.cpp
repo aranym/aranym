@@ -117,12 +117,14 @@ void presave_jit() {
 /*************************************************************************/
 struct Config_Tag tos_conf[]={
 	{ "Cookie_MCH", HexLong_Tag, &bx_options.tos.cookie_mch},
-	{ "Console", Bool_Tag, &bx_options.tos.console_redirect},
+	{ "RedirConsole", Bool_Tag, &bx_options.tos.redirect_CON},
+	{ "RedirPrinter", Bool_Tag, &bx_options.tos.redirect_PRT},
 	{ NULL , Error_Tag, NULL }
 };
 
 void preset_tos() {
-  bx_options.tos.console_redirect = false;
+  bx_options.tos.redirect_CON = false;
+  bx_options.tos.redirect_PRT = false;
   bx_options.tos.cookie_mch = 0x00030000; // Falcon030
 }
 
