@@ -40,6 +40,7 @@ private:
 
 public:
 	IKBD();
+	void init();
 	virtual ~IKBD();
 
 	bool isBufferEmpty();

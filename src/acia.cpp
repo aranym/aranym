@@ -35,10 +35,14 @@ void ACIA::handleWrite(uaecptr addr, uae_u8 value) {
 
 /*******************************/
 IKBD::IKBD() : ACIA(0xfffc00) {
+	rwLock = SDL_CreateMutex();
+	init();
+};
+
+void IKBD::init() {
 	status = 0x0e;
 	ikbd_inbuf = ikbd_bufpos = 0;
-	rwLock = SDL_CreateMutex();
-};
+}
 
 IKBD::~IKBD() {
 	SDL_DestroyMutex(rwLock);
