@@ -62,10 +62,10 @@ class ExtFs {
 	{
 		bool halfSensitive;
 		char *rootPath;
-		char *currPath;
+		char *currPath;      // Only Dsetpath uses this in the .DOS driver -> can be removed
     } ExtDrive;
 
-    ExtDrive drives[ 'Z' - 'A' ];
+    ExtDrive drives[ 'Z'-'A'+1 ];
 
   public:
 	ExtFs()
@@ -221,6 +221,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.9  2001/12/04 09:32:18  standa
+ * Olivier Landemarre <Olivier.Landemarre@utbm.fr>: Frename patch.
+ *
  * Revision 1.8  2001/11/21 13:29:51  milan
  * cleanning & portability
  *

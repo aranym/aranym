@@ -52,7 +52,7 @@ extern "C" {
 void ExtFs::init()
 {
 	// go through the drive table and assign drives their rootPaths
-	for( char i = 'B'-'A'; i < 'Z'-'A'; i++ ) {
+	for( char i = 'B'-'A'; i < 'Z'-'A'+1; i++ ) {
 		// D(bug("MetaDOS: init %c:%s", i + 'A', bx_options.aranymfs[i].rootPath ? bx_options.aranymfs[i].rootPath : "null"));
 
 		if ( bx_options.aranymfs[i].rootPath[0] != '\0' )
@@ -62,7 +62,7 @@ void ExtFs::init()
 
 uint32 ExtFs::getDrvBits() {
 	uint32 drvBits = 0;
-	for(int i='B'-'A'; i<'Z'-'A'; i++)
+	for(int i='B'-'A'; i<'Z'-'A'+1; i++)
 		if (drives[i].rootPath != NULL)
 			drvBits |= (1 << i);
 
@@ -1600,6 +1600,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.20  2002/01/08 17:51:07  standa
+ * The aranymfs config file settings finished. Thanks to JOY.
+ *
  * Revision 1.19  2001/12/11 21:04:32  standa
  * Debug set to 0
  *

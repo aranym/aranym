@@ -86,7 +86,7 @@ typedef struct {
   bx_disk_options      diskc;
   bx_disk_options      diskd;
   bx_cdrom_options     cdromd;
-  bx_aranymfs_options  aranymfs[ 'Z' - 'A' ];
+  bx_aranymfs_options  aranymfs[ 'Z'-'A'+1 ];
 //  bx_cookies_options cookies;
   bx_video_options	video;
   bx_tos_options	tos;

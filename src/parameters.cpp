@@ -271,11 +271,22 @@ void preset_arafs() {
 }
 
 void postload_arafs() {
-	// strip trailing ':' and set halfSensitive
+	for(int i=0; i < 'Z'-'A'+1; i++) {
+		char* colonPos = strrchr( bx_options.aranymfs[i].rootPath, ':' );
+		bx_options.aranymfs[i].halfSensitive = (colonPos == NULL);
+		if ( colonPos )
+			colonPos = '\0';
+	}
 }
 
 void presave_arafs() {
-	// add trailing ':' according to halfSensitive
+	for(int i=0; i < 'Z'-'A'+1; i++) {
+		if ( bx_options.aranymfs[i].rootPath != '\0' &&
+			 bx_options.aranymfs[i].halfSensitive )
+			// set the halfSensitive indicator
+			// NOTE: I can't add more chars here due to the fixed char[] width
+			strcat( bx_options.aranymfs[i].rootPath, ":" );
+	}
 }
 
 /*************************************************************************/
