@@ -279,17 +279,11 @@ bool File_FileNameIsST(char *pszFileName)
   Read file from PC into memory, allocate memory for it if need to (pass Address as NULL)
   Also may pass 'unsigned long' if want to find size of file read (may pass as NULL)
 */
-void *File_Read(char *pszFileName, void *pAddress, long *pFileSize, char *ppszExts[])
+void *File_Read(const char *pszFileName, void *pAddress, long *pFileSize, char *ppszExts[])
 {
   FILE *DiscFile;
   void *pFile=NULL;
   long FileSize=0;
-
-  /* Does the file exist? If not, see if can scan for other extensions and try these */
-  if (!File_Exists(pszFileName) && ppszExts) {
-    /* Try other extensions, if suceeds correct filename is now in 'pszFileName' */
-    File_FindPossibleExtFileName(pszFileName,ppszExts);
-  }
 
   /* Open our file */
   DiscFile = fopen(pszFileName, "rb");
@@ -372,7 +366,7 @@ int File_Length(char *pszFileName)
 /*
   Return true if file exists
 */
-bool File_Exists(char *pszFileName)
+bool File_Exists(const char *pszFileName)
 {
   FILE *DiscFile;
 
