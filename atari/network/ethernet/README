@@ -5,6 +5,32 @@ The xif interface for the eth0 interface for MiNT-Net.
 
 Installation and usage
 ----------------------
+
+ On host side (linux):
+ ---------------------
+
+Make sure the 'aratapif' (ARAnyM TAP IFconfig) binary is installed somewhere
+in your $PATH (/usr/bin or /usr/local/bin) and that it is installed setuid
+root. If it's not use the following commands (run them as root):
+
+linux:~# chown root /usr/bin/aratapif
+linux:~# chmod u+s /usr/bin/aratapif
+
+Another important thing is to load the tuntap device driver (if it isn't
+compiled in the host kernel). I load it with the following command:
+
+linux:~# modprobe tun
+
+And before loading this driver please check (and possibly fix) the 
+read/write permissions of the "/net/dev/tun" device:
+
+linux:~# chmod +rw /net/dev/tun
+
+Otherwise ARAnyM started by regular user could not access this device.
+
+ On Atari side:
+ --------------
+
 Install MiNT-Net and copy the aranym.xif into your mint folder.
 Then configure the eth0 interface - please note that the IP addresses are
 currently hardcoded in the ARAnyM source code (XIF_ATARI_IP and XIF_HOST_IP
@@ -15,21 +41,6 @@ mint:~# route add default eth0 gw 192.168.0.1
 
 Then in MiNT-Net you can e.g. ping to 192.168.0.1 (which is a host side
 of the TAP tunnel).
-
-IMPORTANT: ATM aranym need to be run as a root to get the TAP
-          interface else some error messages will be printed like these:
---- begin --
-ECE: init
-ECE: if opened tap0
-
-HHC894I Error setting MTU for tap0: Operation not permitted
-HHC897I Error setting driving system IP addr for tap0: Permission denied
-HHC897I Error setting Hercules IP addr for tap0: Permission denied
-HHC897I Error setting netmask for tap0: Permission denied
-HHC899I Error setting flags for tap0: Permission denied
-initTap failure
---- end ---
-
 
 How it works
 ------------

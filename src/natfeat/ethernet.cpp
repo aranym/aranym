@@ -10,7 +10,7 @@
 #include "main.h"
 #include "ethernet.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #include <sys/poll.h>
@@ -29,6 +29,8 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
+#include "../../atari/network/araeth/araether_nfapi.h"
+
 /****************************
  * Configuration zone begins
  */
@@ -45,9 +47,6 @@
 
 // the emulated network card HW address
 #define MAC_ADDRESS "\001\002\003\004\005\006"
-
-// the ETHERNET NatFeat API version number (change it if you change NF subIDs)
-#define XIF_VERSION	0x00000002
 
 // Ethernet runs at interrupt level 3 by default but can be reconfigured
 #if 1
@@ -76,17 +75,17 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 	int32 ret = 0;
 	switch(fncode) {
-		case 0:	// what version?
+    	case GET_VERSION:
 			D(bug("Ethernet: getVersion"));
-			ret = XIF_VERSION;
-			break;
+    		ret = ARAETHER_NFAPI_VERSION;
+    		break;
 
-		case 1:	// what interrupt level is used?
+		case XIF_INTLEVEL:	// what interrupt level is used?
 			D(bug("Ethernet: getINTlevel"));
 			ret = INTLEVEL;
 			break;
 
-		case 2:	// what is the MAC address?
+		case XIF_GETMAC:	// what is the MAC address?
 			D(bug("Ethernet: getHWddr"));
 			/* store MAC address to provided buffer */
 			{
@@ -104,7 +103,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			}
 			break;
 
-		case 3: // interrupt raised by native side thread polling tap0 interface
+		case XIF_IRQ: // interrupt raised by native side thread polling tap0 interface
 			if ( !getParameter(0) ) {
 				D(bug("Ethernet: /IRQ"));
 				finishInterupt();
@@ -112,23 +111,51 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				D(bug("Ethernet: IRQ"));
 
 			break;
-		case 4:
+		case XIF_START:
 			startThread();
 			break;
-		case 5:
+		case XIF_STOP:
 			stopThread();
 			break;
-		case 6:
+		case XIF_READLENGTH:
 			ret = readPacketLength( 0/* getParameter(0) *//* nif */ );
 			break;
-		case 7:
+		case XIF_READBLOCK:
 			readPacket( getParameter(0) /* buff */, getParameter(1) /* len */ );
 			break;
-		case 8:
+		case XIF_WRITEBLOCK:
 			sendPacket( getParameter(0) /* buff */, getParameter(1) /* len */ );
+			break;
+
+		case XIF_GET_IPHOST:
+			D(bug("XIF_GET_IPHOST\n"));
+			ret = get_params(XIF_HOST_IP);
+			break;
+		case XIF_GET_IPATARI:
+			D(bug("XIF_GET_IPHOST\n"));
+			ret = get_params(XIF_ATARI_IP);
+			break;
+		case XIF_GET_NETMASK:
+			D(bug("XIF_GET_IPHOST\n"));
+			ret = get_params(XIF_NETMASK);
 			break;
 	}
 	return ret;
+}
+
+
+int ETHERNETDriver::get_params(const char *text)
+{
+	memptr name_ptr = getParameter(0);
+	uint32 name_maxlen = getParameter(1);
+
+	if (! ValidAddr(name_ptr, true, name_maxlen))
+		BUS_ERROR(name_ptr);
+
+	char *name = (char *)Atari2HostAddr(name_ptr);	// use A2Hstrcpy
+	strncpy(name, text, name_maxlen-1);
+	name[name_maxlen-1] = '\0';
+	return strlen(text);
 }
 
 

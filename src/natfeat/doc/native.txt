@@ -230,7 +230,7 @@ The following opcodes are defined:
 
   mnemonic nf_call (in ARAnyM debugger it's NATFEAT_CALL)
   value 0x7301
-  prototype   long nf_call(long feature_id, ...);
+  prototype   long nf_call(unsigned long feature_id, ...);
   ignore the first long word on the stack; let feature_id be the second 
   long word on the stack; if feature_id is not a valid native function
   ID then the result is unspecified; else, call the function defined 

@@ -26,6 +26,9 @@ class ETHERNETDriver : public NF_Base
 	static int tapOpenOld(char *dev);
 	static int tapOpen(char *dev);
 
+protected:
+	int get_params(const char *text);
+
 public:
 	char *name() { return "ETHERNET"; }
 	bool isSuperOnly() { return true; }

@@ -20,10 +20,9 @@
 
 # include <osbind.h>
 
-#define XIF_NAME	"ARAnyM Eth driver v0.2"
+#include "araether_nfapi.h"
 
-/* this is the version of NatFeat ETHERNET API */
-#define XIF_VERSION	0x00000002
+#define XIF_NAME	"ARAnyM Eth driver v0.3"
 
 /* old handler */
 extern void (*old_interrupt)(void);
@@ -84,43 +83,43 @@ static long _NF_call  = 0x73014e75L;
 static inline unsigned long
 get_nfapi_version()
 {
-	return nfCall((nfEtherFsId + 0x00));
+	return nfCall((ETH(GET_VERSION)));
 }
 
 static inline unsigned long
 get_int_level()
 {
-	return nfCall((nfEtherFsId + 0x01));
+	return nfCall((ETH(XIF_INTLEVEL)));
 }
 
 static inline void
 get_hw_addr( char *buffer, int len )
 {
-	nfCall((nfEtherFsId + 0x02, buffer, (unsigned long)len));
+	nfCall((ETH(XIF_GETMAC), buffer, (unsigned long)len));
 }
 
 static inline void
 nfInterrupt ( short in_use )
 {
-	nfCall((nfEtherFsId + 0x03, (unsigned long)in_use));
+	nfCall((ETH(XIF_IRQ), (unsigned long)in_use));
 }
 
 static inline short
 read_packet_len ()
 {
-	return nfCall((nfEtherFsId + 0x06));
+	return nfCall((ETH(XIF_READLENGTH)));
 }
 
 static inline void
 read_block (char *cp, short len)
 {
-	nfCall((nfEtherFsId + 0x07, cp, (unsigned long)len));
+	nfCall((ETH(XIF_READBLOCK), cp, (unsigned long)len));
 }
 
 static inline void
 send_block (char *cp, short len)
 {
-	nfCall((nfEtherFsId + 0x08, cp, (unsigned long)len));
+	nfCall((ETH(XIF_WRITEBLOCK), cp, (unsigned long)len));
 }
 
 static void
@@ -139,7 +138,7 @@ static long
 ara_open (struct netif *nif)
 {
 	DEBUG (("araeth: open (nif = %08lx)", (long)nif));
-	return nfCall((nfEtherFsId + 0x04, nif));
+	return nfCall((ETH(XIF_START), nif));
 }
 
 /*
@@ -149,7 +148,7 @@ ara_open (struct netif *nif)
 static long
 ara_close (struct netif *nif)
 {
-	return nfCall((nfEtherFsId + 0x05, nif));
+	return nfCall((ETH(XIF_STOP), nif));
 }
 
 /*
@@ -453,8 +452,8 @@ driver_init (void)
 	}
 
 	/* compare the version */
-	if ( get_nfapi_version() != XIF_VERSION ) {
-		ksprintf (message, XIF_NAME " not installed - version mismatch: %ld != %d\n\r", get_nfapi_version(), XIF_VERSION);
+	if ( get_nfapi_version() != ARAETHER_NFAPI_VERSION ) {
+		ksprintf (message, XIF_NAME " not installed - version mismatch: %ld != %d\n\r", get_nfapi_version(), ARAETHER_NFAPI_VERSION);
 		c_conws(message);
 		return 1;
 	}

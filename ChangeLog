@@ -1,3 +1,26 @@
+2003/03/16 - joy
+- natfeat/doc/native.txt updated (used Laurent's latest version without
+  the NF_CONTROL stuff and with corrected unsigned long ID).
+
+- TODO updated
+
+- natfeat/ethernet.cpp, atari/network/araeth/araether.c: subIDs are now
+  defined in a separate header file named araether_nfapi.h. This should
+  make the connection between host side and atari side of the natfeat
+  clearly visible.
+
+- natfeat/ethernet.cpp: getting of IP addresses added. Used in a separate
+  program called 'araethip'. Version of the arether_nfapi must have been
+  increased so update your aranym.xif binary.
+
+- atari/network/araeth/getparams/araethip.c added. Can be run from MiNT's
+  rc.net to call the ifconfig and route with proper IP addresses.
+
+- atari/network/araeth/README: updated with info about 'aratapif' and
+  the tunnel device - simply about getting the whole thing working.
+  'araethip' is not covered yet in this README.
+
+
 2003/03/15 - joy
 - major rewrite of the aratapif (ARAnyM TAP IFconfig) and related
   updates in natfeat/ethernet.cpp. Now it actually works!
