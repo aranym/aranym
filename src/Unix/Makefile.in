@@ -32,6 +32,7 @@ CPUSRCS = @CPUSRCS@
 DSPSRCS = @DSPSRCS@
 LILOSRCS = @LILOSRCS@
 NFCDROMSRCS = @NFCDROMSRCS@
+GUISDLSRCS = @GUISDLSRCS@
 DBGSP = @DBGSP@
 TAPIF = @TAPIF@
 
@@ -93,7 +94,8 @@ SRCS = ../main.cpp \
 	$(SYSSRCS) \
 	$(CPUSRCS) \
 	$(DSPSRCS) \
-	$(LILOSRCS)
+	$(LILOSRCS) \
+	$(GUISDLSRCS)
 APP = aranym
 APP_STATIC = aranym-static
 APP_LIB = libaranym.a
@@ -154,7 +156,6 @@ install: $(APP) $(APP_DI) $(TAPIF) $(APP).1.gz installdirs
 	$(INSTALL_DATA) ../../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
 	$(INSTALL_DATA) ../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL
 	$(INSTALL_DATA) ../../doc/documentation.txt $(DESTDIR)$(docdir)/$(APP)/documentation.txt
-	$(INSTALL_DATA) ../../data/font8.bmp $(DESTDIR)$(datadir)/$(APP)/font8.bmp
 # JOY, uncomment it for releases
 #	$(INSTALL_DATA) ../../data/etos512k.img $(DESTDIR)$(datadir)/$(APP)/etos512k.img
 	$(INSTALL_DATA) ../../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
@@ -204,7 +205,6 @@ uninstall:
 	rm -f $(DESTDIR)$(docdir)/$(APP)/BUGS
 	rm -f $(DESTDIR)$(docdir)/$(APP)/INSTALL
 	rm -f $(DESTDIR)$(docdir)/$(APP)/documentation.txt
-	rm -f $(DESTDIR)$(datadir)/$(APP)/font8.bmp
 # JOY, uncomment it for releases
 #	rm -f $(DESTDIR)$(datadir)/$(APP)/etos512k.img
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
@@ -280,7 +280,6 @@ bindist: $(APP) $(APP_DI) $(TAPIF) $(APP).1.gz bindistdirs
 	$(INSTALL_DATA) ../../BUGS tmpdist$(docdir)/$(APP)/BUGS
 	$(INSTALL_DATA) ../../INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
 	$(INSTALL_DATA) ../../doc/documentation.txt tmpdist$(docdir)/$(APP)/documentation.txt
-	$(INSTALL_DATA) ../../data/font8.bmp tmpdist$(datadir)/$(APP)/font8.bmp
 # JOY, uncomment it for releases
 #	$(INSTALL_DATA) ../../data/etos512k.img tmpdist$(datadir)/$(APP)/etos512k.img
 	$(INSTALL_DATA) ../../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
