@@ -1,5 +1,12 @@
+2002/10/28 - joy
+- NF_STDERR added to NatFeats
+- NF_VERSION corrected (should display version of NatFeat API, not version
+  of aranym)
+
+
 2002/10/22 - johan
 - fVDI driver NatFeat support added.
+
 
 2002/10/20 - joy (version 0.6.8-beta)
 - NatFeat instruction opcodes changed back to good old $7300/$7301.
