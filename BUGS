@@ -13,3 +13,13 @@ Bug:
 
 Reason:
   A bug in aranymfs. Please help with fixing it.
+
+---
+
+Bug:
+  ARAnyM crashes after start with message:
+   "Xlib: async reply ...."
+
+Reason:
+  A bug in sdltimer (maybe in lib, maybe in ARAnyM, who knows)
+  Configure ARAnyM with --disable-sdltimer if you have this problem

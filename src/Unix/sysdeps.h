@@ -223,10 +223,7 @@ static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {*a = v;}
 
 #else /* CPU_CAN_ACCESS_UNALIGNED */
 
-#ifdef sgi
-
-#ifndef __GNUC__
-
+#if (defined(sgi) && !defined(__GNUC__))
 /* The SGI MIPSPro compilers can do unaligned accesses given enough hints.
  * They will automatically inline these routines. */
 #ifdef __cplusplus
@@ -240,14 +237,7 @@ extern void do_put_mem_word(uae_u16 *a, uae_u32 v);
 }
 #endif
 
-#else /* __GNUC__ */
-static inline uae_u32 do_get_mem_long(uae_u32 *a) {return *a;}
-static inline uae_u32 do_get_mem_word(uae_u16 *a) {return *a;}
-static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {*a = v;}
-static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {*a = v;}
-#endif /* __GNUC__ */
-
-#else /* sgi */
+#else /* sgi && !GNUC */
 
 /* Big-endian CPUs which can not do unaligned accesses (this is not the most efficient way to do this...) */
 static inline uae_u32 do_get_mem_long(uae_u32 *a) {uint8 *b = (uint8 *)a; return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];}

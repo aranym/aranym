@@ -1,3 +1,7 @@
+2002/03/12 - milan
+- Irix among supported platforms
+
+
 2002/03/11 - milan
 - MMU is back, based on Wez Furlong's patch (UAE)
 

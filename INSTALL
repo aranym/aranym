@@ -13,10 +13,12 @@ x86          GNU/Linux
 x86          MS Windows + Cygwin
 x86          NetBSD
 x86          OpenBSD
+SGI          Irix
 Sun Sparc    Solaris
 
 In progress (in alphabetical order!!!):
-SGI xxx      Irix
+
+No platform in preparation
 
 
 2) Compilation

@@ -186,7 +186,7 @@ case "$target_os" in
 dnl    WANT_ARANYMFS="no"
     ;;
   irix*)
-    EXTRASYSSRCS=parameters_unix.cpp
+    EXTRASYSSRCS=parameters_unix.cpp irix/unaligned.c
     ;;
   *)
     EXTRASYSSRCS=parameters_unix.cpp
