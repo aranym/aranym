@@ -23,7 +23,7 @@ bx_disk_options_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
 		default:	disk = NULL; break;
 	}
 	if (disk != NULL) {
-		if (disk.present && !disk.isCDROM)
+		if (disk->present && !disk->isCDROM)
 			return disk;
 	}
 
