@@ -1333,6 +1333,8 @@ int m68k_do_specialties(void)
 	while (SPCFLAGS_TEST( SPCFLAG_STOP )) {
 		usleep(1000);	// give unused time slices back to OS
 		SERVE_VBL_MFP(true);
+		if (SPCFLAGS_TEST( SPCFLAG_NMI ))
+			break;
 	}
 	if (SPCFLAGS_TEST( SPCFLAG_TRACE ))
 		do_trace ();
