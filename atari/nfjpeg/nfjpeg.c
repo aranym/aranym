@@ -210,18 +210,19 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 		}
 
 		/* Open file */
-		if (jpgd_ptr->OutPointer) {
-			filename = jpgd_ptr->OutPointer;
+		if (jpgd_ptr->Create) {
+			handle = jpgd_ptr->Create(jpgd_ptr);
+		} else {
+			if (jpgd_ptr->OutPointer) {
+				filename = jpgd_ptr->OutPointer;
+			}
+			handle = Fopen(filename, S_WRITE);
 		}
-		handle = Fopen(filename, S_WRITE);
 		if (handle<0) {
 			Mfree(jpgd_ptr->OutTmpPointer);
 			return (JPGD_ENUM) handle;
 		}
 		jpgd_ptr->OutHandle = handle & 0xffff;
-		if (jpgd_ptr->Create) {
-			jpgd_ptr->Create(jpgd_ptr);
-		}
 
 		/* Write part of image to file */
 		for (y=0;y<jpgd_ptr->YLoopCounter;y++) {
@@ -232,9 +233,12 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 				jpgd_ptr->UserRoutine(jpgd_ptr);
 			}
 
-			Fwrite(jpgd_ptr->OutHandle, row_length, jpgd_ptr->OutTmpPointer);
 			if (jpgd_ptr->Write) {
-				jpgd_ptr->Write(jpgd_ptr);
+				if ((jpgd_ptr->Write(jpgd_ptr))<0) {
+					break;
+				}
+			} else {
+				Fwrite(jpgd_ptr->OutHandle, row_length, jpgd_ptr->OutTmpPointer);
 			}
 
 			jpgd_ptr->MCUsCounter -= jpgd_ptr->XLoopCounter;
@@ -242,9 +246,10 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 		}
 
 		/* Close file */
-		Fclose(jpgd_ptr->OutHandle);
 		if (jpgd_ptr->Close) {
 			jpgd_ptr->Close(jpgd_ptr);
+		} else  {
+			Fclose(jpgd_ptr->OutHandle);
 		}
 
 		Mfree(jpgd_ptr->OutTmpPointer);
