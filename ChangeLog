@@ -1,3 +1,10 @@
+2002/08/03 - johan
+- Native part of fVDI driver updated to work with new API (dependencies
+  on internal fVDI structures removed, parameters passed on the stack).
+- Some internal fixes and cleanups in the native part of the driver.
+- New binaries for both the fVDI engine and the m68k part of the driver
+  are needed, and are also checked in.
+
 2002/08/02 - joy
 - EmuTOS loading fixed again - it can be any (>0) size now.
 - EmuTOS loading routine display the date when the EmuTOS was built.
