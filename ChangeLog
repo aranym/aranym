@@ -1,3 +1,7 @@
+2002/01/26 - STanda
+- extfs.[ch]* cleanup from non needed arguments
+
+
 2002/01/24 - Olivier & joy
 - on Windows the host operations (fVDI, aranymfs) block the timer thread
   so we have to call the invoke200HzInterrupt() manually as soon as the

@@ -37,7 +37,7 @@ class ExtFs {
 		int16   index;
 		int16   mode;
 		int16   flags;
-		int32   fandafh;
+		int32   hostfh;
 		int32   offset;
 		int16   device;
     } ExtFile;               // See MYFILE in Julian's COOK_FS
@@ -94,6 +94,7 @@ class ExtFs {
 	 * MetaDos DOS driver dispatch functions.
 	 **/
 	void dispatch( uint32 fncode, M68kRegisters *r );
+
 	void fetchDTA( ExtDta *dta, uint32 dtap );
 	void flushDTA( ExtDta *dta, uint32 dtap );
 	void fetchFILE( ExtFile *extFile, uint32 filep );
@@ -108,7 +109,7 @@ class ExtFs {
 	void f2astrcpy( uint8 *dest, uint8 *source );
 
 	/**
-	 * Unix to Fanda structure conversion routines.
+	 * Unix to ARAnyM structure conversion routines.
 	 **/
 	uint32 unix2toserrno( int unixerrno,int defaulttoserrno );
 	uint16 statmode2xattrmode( mode_t m );
@@ -137,80 +138,55 @@ class ExtFs {
 
 	// GEMDOS functions
 	int32 Dfree(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				int32 ret, int16 opcode,
 				uint32 diskinfop, int16 drive );
 	int32 Dcreate(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  int32 ret, int16 opcode,
 				  const char *pn);
 	int32 Ddelete(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  int32 ret, int16 opcode,
 				  const char *pn);
 	int32 Dsetpath(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				   int32 ret, int16 opcode,
 				   const char *pn);
 	int32 Fcreate(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  int32 ret, int16 opcode,
 				  const char *pn, int16 attr);
 	int32 Fopen(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				int32 ret, int16 opcode,
 				const char *pn, int16 mode);
 	int32 Fclose(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				 int32 ret, int16 opcode,
 				 int16 handle);
 	int32 Fread(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				int32 ret, int16 opcode,
 				int16 handle, uint32 count, void *buffer);
 	int32 Fwrite(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				 int32 ret, int16 opcode,
 				 int16 handle, uint32 count, void *buffer);
 	int32 Fdelete(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  int32 ret, int16 opcode,
 				  const char *pn);
 	int32 Fseek(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				int32 ret, int16 opcode,
 				int32 offset, int16 handle, int16 seekmode);
 
 	int32 Fattrib(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  int32 ret, int16 opcode,
 				  const char* pn, int16 wflag, int16 attr);
 
 	int32 Fsfirst( LogicalDev *ldp, char *pathname, ExtDta *dta,
-				   int32 ret, int16 opcode,
 				   const char *pn, int16 attribs );
-	int32 Fsnext ( LogicalDev *ldp, char *pathName, ExtDta *dta,
-				   int32 ret, int16 opcode );
+	int32 Fsnext ( LogicalDev *ldp, char *pathName, ExtDta *dta );
 	int32 Frename(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  int32 ret, int16 opcode,
 				  int16 reserved, char *oldpath, char *newPathName);
 	int32 Fdatime( LogicalDev *ldp, char *pathName, ExtFile *fp,
-				   int32 ret, int16 opcode,
 				   uint32 *datetimep, int16 handle, int16 wflag);
 	int32 Fcntl( LogicalDev *ldp, char *pathName, ExtFile *fp,
-				 int32 ret, int16 opcode,
 				 int16 handle, void *arg, int16 cmd );
 	int32 Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp,
-					 int32 ret, int16 opcode,
 					 const char* pn, int16 cmd);
 	int32 Dopendir( LogicalDev *ldp, char *pathName, ExtFile *fp,
-					int32 ret, int16 opcode,
 					const char* pn, int16 flag );
 	int32 Dclosedir( LogicalDev *ldp, char *pathName, ExtFile *fp,
-					 int32 ret, int16 opcode,
 					 int32 dirhandle );
 	int32 Dreaddir( LogicalDev *ldp, char *pathName, ExtFile *fp,
-					int32 ret, int16 opcode,
 					int16 len, int32 dirhandle, char* buff );
 	int32 Drewinddir( LogicalDev *ldp, char *pathName, ExtFile *fp,
-					  int32 ret, int16 opcode,
 					  int32 dirhandle );
 	int32 Fxattr( LogicalDev *ldp, char *pathName, ExtDta *dta,
-				  int32 ret, int16 opcode,
 				  int16 flag, const char* pn, uint32 xattrp );
 	int32 Fxattr_( LogicalDev *ldp, char *fpathName, ExtDta *dta,
-				   int32 ret, int16 opcode,
-				   int16 flag, const char* pn, uint32 xattrp );   // Taking Fanda pathName instead of Atari one.
+				   int16 flag, const char* pn, uint32 xattrp );   // Taking host pathName instead of Atari one.
 	int32 Dxreaddir( LogicalDev *ldp, char *pathName, ExtFile *fp,
-					 int32 ret, int16 opcode,
 					 int16 len, int32 dirhandle, char* buff, uint32 xattrp, uint32 xretp );
 };
 
@@ -221,6 +197,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.10  2002/01/08 18:33:49  standa
+ * The size of the bx_options.aranymfs[] and ExtFs::drives[] fixed.
+ *
  * Revision 1.9  2001/12/04 09:32:18  standa
  * Olivier Landemarre <Olivier.Landemarre@utbm.fr>: Frename patch.
  *
