@@ -612,6 +612,24 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
   esac
 fi
 
+AC_CACHE_CHECK("for sighandler_t",
+  ac_cv_have_sighandler_t, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_COMPILE([
+    #define _GNU_SOURCE
+    #include <signal.h>
+    #include <stdio.h>
+  ], [
+    signal(0, (sighandler_t)NULL);
+  ],
+  [ac_cv_have_sighandler_t=yes],
+  [ac_cv_have_sighandler_t=no]
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(HAVE_SIGHANDLER_T, "$ac_cv_have_sighandler_t")				      
 dnl Determine the addressing mode to use
 if [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
   ADDRESSING_MODE="real"

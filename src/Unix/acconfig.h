@@ -17,6 +17,9 @@
 /* Define to 'off_t' if <sys/types.h> doesn't define. */
 #undef loff_t
 
+/* Define if <signal.h> doesn't define sighandler_t */
+#undef HAVE_SIGHANDLER_T
+
 /* Define if you have the atanh function. */
 #undef HAVE_ATANH
 

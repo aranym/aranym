@@ -5,9 +5,9 @@
 
 #include <csignal>
 
-//#ifndef sighandler_t
-//#define sighandler_t sighandler
-//#endif
+#ifndef HAVE_SIGHANDLER_T
+typedef void (*sighandler_t)(int);
+#endif
 
 int in_handler = 0;
 
