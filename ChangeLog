@@ -1,8 +1,17 @@
+2003/07/13 - joy
+- configure.ac: ARANYMHOME quotation mark encapsulation fixed for cygwin
+  (thanks to Xavier)
+
+- updated TODO
+
+
 2003/07/11 - milan
 - nice night - some stupid bugs in JIT compiler corrected:
   - compiler_dumpstate() with no previous compilation
   - not ended NEG in sigsegv handler
   - etc. (sorry, it is too late)
+
+- Makefile.in: define -D_REENTRANT -D_THREAD_SAFE
 
 - ata.cpp: CD-ROM product ID corrected for little endian
 

@@ -260,7 +260,7 @@ case "$target_os" in
     EXTRASYSSRCS=linux/parameters_linux.cpp
     ;;
   cygwin*)
-    DEFINES="$DEFINES -fpermissive -DARANYMHOME=\"aranym\""
+    DEFINES="$DEFINES -fpermissive -DARANYMHOME=\"\\\"aranym\\\"\""
     LIBS="$LIBS -lSDL -lSDLmain -liberty"
     EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp"
     ;;
