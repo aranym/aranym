@@ -43,6 +43,7 @@ bool CPUIs68060;
 int FPUType;
 
 void init_fdc();                // fdc.cpp
+void setVirtualTimer(void);		// basilisk_glue
 
 SDL_TimerID my_timer_id;
 
@@ -321,12 +322,7 @@ static void check_event(void)
     }
 }
 
-
-/*
- * my_callback_function() is called every 10 miliseconds (~ 100 Hz)
- */
-Uint32 my_callback_function(Uint32 interval, void *param)
-{
+void virtualInterrupt() {
     static int VBL_counter = 0;
     static int refreshCounter = 0;
 
@@ -349,6 +345,14 @@ Uint32 my_callback_function(Uint32 interval, void *param)
             refreshCounter = 0;
         }
     }
+}
+
+/*
+ * my_callback_function() is called every 10 miliseconds (~ 100 Hz)
+ */
+Uint32 my_callback_function(Uint32 interval, void *param)
+{
+	virtualInterrupt();
     return 10;                  // come back in 10 milliseconds
 }
 
@@ -359,7 +363,11 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 
 bool InitAll(void)
 {
+#ifdef USE_TIMERS
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
+#else
+    if (SDL_Init(SDL_INIT_VIDEO /*| SDL_INIT_TIMER*/) != 0) {
+#endif
         ErrorAlert("SDL initialization failed.");
         return true; //FIXME?
     }
@@ -433,7 +441,12 @@ bool InitAll(void)
     hideMouse(true);
 
     // timer init
+#if USE_TIMERS
     my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
+    printf("Using timers\n");
+#else
+    setVirtualTimer();
+#endif
 
     return true;
 }
@@ -446,7 +459,9 @@ bool InitAll(void)
 void ExitAll(void)
 {
     // Exit Time Manager
+#if USE_TIMERS
     SDL_RemoveTimer(my_timer_id);
+#endif
 
     // remove floppy (flush buffers)
     remove_floppy();
