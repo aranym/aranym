@@ -9,12 +9,13 @@
 
 void InputInit();
 void InputReset();
-void hideMouse(bool hide);
 bool grabMouse(bool grab);
-void grabTheMouse();
-void releaseTheMouse();
 void check_event();
-extern void QuitEmulator();
+
+#ifdef SDL_GUI
+bool start_GUI_thread();
+void kill_GUI_thread();
+#endif
 
 extern SDL_Joystick *sdl_joystick;
 

@@ -52,8 +52,6 @@
 
 #ifdef SDL_GUI
 #include "sdlgui.h"
-extern bool start_GUI_thread();
-extern void kill_GUI_thread();
 #endif
 
 #ifdef ENABLE_MON
