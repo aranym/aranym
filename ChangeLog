@@ -4,6 +4,10 @@
   slow machines (the timer thread must be stopped first before the Atari
   memory is released).
 
+2002/06/24 - STanda
+- fvdidrv.*, videl.*, extfs.* cleanup. The memptr usage introduced. There
+  should be no (or at least less) problems with the ia64 compilation.
+
 
 2002/06/09 - joy
 - SDL GUI restores original background (see hostScreen.save_bkg/restore_bkg)
