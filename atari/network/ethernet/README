@@ -1,7 +1,7 @@
 aranym.xif
 ==========
 
-The xif interface for the araeth interface for FreeMiNTnet.
+The xif interface for the eth0 interface for FreeMiNTnet.
 Copy the .xif into your mint folder, install FreeMiNTnet and...
 Usage:
      ifconfig eth0 addr u.v.w.x up
@@ -23,23 +23,6 @@ HHC899I Error setting flags for tap0: Permission denied
 initTap failure
 --- end ---
 
-BUGS
-====
-
-It doesn't work. It crashes right upon ifconfig up. It looks like some
-general .xif problem, but I didn't have time to debug it.
-
-Snap from the host console (right upon the ifconfig up in toswin2):
---- beg ---
-ECE: Start thread
-Exception Nr. 2 CPC: 010ae814 NPC: 0109fb14 SP=02ef1e02 Addr: 0822fcac
-Gotcha! Illegal memory access. Atari PC = $115ef14
-If the Full History was enabled you would see the last 20 instructions here.
-Xlib: unexpected async reply (sequence 0x1629)!
-Gotcha! Illegal memory access. Atari PC = $115ef14
-If the Full History was enabled you would see the last 20 instructions here.
---- end ---
-
 
 How it works
 ------------
@@ -57,10 +40,11 @@ It's all hacked up to get it do at least something... study:
 After that the xif should trigger an interrupt on received packet from
 the tap interface tunnel from the host OS.
 
+
 Compilation
 -----------
- * to compile the xfs you need the source tree of FreeMiNT (at least
-   version 1.15.10b), set up so that it compiles. Point the
+ * to compile the xfs you need the source tree of FreeMiNT (I used the
+   uptodate 1.16 CVS branch), set up so that it compiles. Point the
    FREEMINT_SRC_HOME environment variable to its home (the
    COPYING.MiNT file is there).
  * use make.sh to compile
