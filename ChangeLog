@@ -1,3 +1,15 @@
+2003/11/23 - stefanq
+- added darwin folder containing all necessary files to make a Mac OS X
+  port of aranym
+- Makefile.in: added option -r to target APP_LIB, wich is necessary for 
+  darwin.
+- configure.ac: corrected the pathes for frameworks for darwin
+- input.cpp: added some #ifdef OS_darwin to reflect some differences in 
+  the keyboard layout of Apple computers.
+- parameters.cpp: changed a %d inside an fprintf() call to %lu to prevent
+  a compiler warning.
+
+
 2003/10/26 - joy
 - doc/hguide.txt: written "Threads and Interrupts" chapter. I always
   wanted to document it since I myself had often hard time recalling
