@@ -199,7 +199,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			long recnr = get_long(r->a[7]+4, true);
 			D(bug("ARAnyM DMAread(start=%ld, count=%d, buffer=%ld, device=%d)", recnr, cnt, buf, dev));
 
-			bx_disk_options *disk;
+			bx_disk_options_t *disk;
 			switch(dev) {
 				case 16:	disk = &bx_options.diskc; break;
 				case 17:	disk = &bx_options.diskd; break;
@@ -248,7 +248,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 							break;
 						}
 
-						bx_disk_options *disk;
+						bx_disk_options_t *disk;
 						switch(major) {
 							case 16:	disk = &bx_options.diskc; break;
 							case 17:	disk = &bx_options.diskd; break;

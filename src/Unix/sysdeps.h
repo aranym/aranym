@@ -41,6 +41,14 @@
 #error "You don't have ANSI C header files."
 #endif
 
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <stdarg.h>
+
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
 #endif
@@ -55,6 +63,14 @@
 
 #ifdef HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
+#endif
+
+#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
+#endif
+
+#ifdef HAVE_SYS_STATVFS_H
+# include <sys/statvfs.h>
 #endif
 
 #ifdef HAVE_UTIME_H
@@ -72,14 +88,6 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
-
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <errno.h>
-#include <stdarg.h>
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
@@ -112,14 +120,6 @@
 # include <getopt.h>
 #else
 # include "getopt.h"
-#endif
-
-#ifdef HAVE_SYS_IOCTL_H
-# include <sys/ioctl.h>
-#endif
-
-#ifdef HAVE_SYS_STATVFS_H
-# include <sys/statvfs.h>
 #endif
 
 /* Atari and host address space are distinct */

@@ -56,7 +56,6 @@
 const int cmOpenRc	= 200;
 const int cmSaveRc	= 202;
 
-uint32 FastRAMSize;	// Size of FastRAM
 char FRAMS[20];
 char IDE0cyl[20];
 char IDE0hea[20];
@@ -136,7 +135,7 @@ TSetWindow::TSetWindow(const TRect& r, const char *aTitle, short aNumber):
 	sDebugger = new TCheckBoxes32( TRect(1, 2, 15, 3),
             new TSItem( "~D~ebugger", NULL )
             );
-	if (start_debug) sDebugger->press(0);
+	if (bx_options.startup.debugger) sDebugger->press(0);
         sGlobal->insert( sDebugger );
 
 	sFastRAMSize = new TInputLine(TRect(43, 2, 54, 3), 10);
@@ -320,16 +319,16 @@ void TMyApp::openInfo()
 }
 
 void TSetWindow::saveSet() {
-	if (sDebugger->mark(0)) start_debug = 1; else start_debug = 0;
+	if (sDebugger->mark(0)) bx_options.startup.debugger = true; else bx_options.startup.debugger = false;
 	sTOS->getData(rom_path);
 
 	sFastRAMSize->getData(FRAMS);
 	FastRAMSize = atoi(FRAMS) * 1024 * 1024;
 
-	if (sIDE0i->mark(0)) bx_options.diskc.present = 1;
-		else bx_options.diskc.present = 0;
-	if (sIDE0i->mark(1)) bx_options.diskc.byteswap = 1;
-		else bx_options.diskc.byteswap = 0;
+	if (sIDE0i->mark(0)) bx_options.diskc.present = true;
+		else bx_options.diskc.present = false;
+	if (sIDE0i->mark(1)) bx_options.diskc.byteswap = true;
+		else bx_options.diskc.byteswap = false;
 	sIDE0cyl->getData(IDE0cyl);
 	bx_options.diskc.cylinders = atoi(IDE0cyl);
 	sIDE0hea->getData(IDE0hea);
@@ -338,10 +337,10 @@ void TSetWindow::saveSet() {
 	bx_options.diskc.spt = atoi(IDE0spt);
 	sIDE0pat->getData(bx_options.diskc.path);
 
-	if (sIDE1i->mark(0)) bx_options.diskd.present = 1;
-		else bx_options.diskd.present = 0;
-	if (sIDE1i->mark(1)) bx_options.diskd.byteswap = 1;
-		else bx_options.diskd.byteswap = 0;
+	if (sIDE1i->mark(0)) bx_options.diskd.present = true;
+		else bx_options.diskd.present = false;
+	if (sIDE1i->mark(1)) bx_options.diskd.byteswap = true;
+		else bx_options.diskd.byteswap = false;
 	sIDE1cyl->getData(IDE1cyl);
 	bx_options.diskd.cylinders = atoi(IDE1cyl);
 	sIDE1hea->getData(IDE1hea);
@@ -388,6 +387,9 @@ int main(int argc, char **argv)
 
 /*
  * $Log$
+ * Revision 1.6  2002/01/19 12:08:55  milan
+ * config folder & file are created if they don't exist
+ *
  * Revision 1.5  2001/12/27 22:24:14  joy
  * FastRAMSizeMB should not be global
  *
