@@ -30,7 +30,8 @@
 #define LOWLEVEL_CDROM cdrom_interface
 
 typedef enum _sense {
-      SENSE_NONE = 0, SENSE_NOT_READY = 2, SENSE_ILLEGAL_REQUEST = 5
+      SENSE_NONE = 0, SENSE_NOT_READY = 2, SENSE_ILLEGAL_REQUEST = 5,
+      SENSE_UNIT_ATTENTION = 6
 } sense_t;
 
 typedef enum _asc {

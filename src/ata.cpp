@@ -967,7 +967,15 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 				    } else if (!LoEj && Start) { // start the disc and read the TOC
 					  panicbug("Start disc not implemented");
 				    } else if (LoEj && !Start) { // Eject the disc
-					  panicbug("Eject the disc not implemented");
+					  atapi_cmd_nop();
+					  if (BX_HD_THIS s[1].cdrom.ready) {
+#ifdef LOWLEVEL_CDROM
+					    BX_HD_THIS s[1].cdrom.cd->eject_cdrom();
+#endif
+					    BX_HD_THIS s[1].cdrom.ready = 0;
+					    bx_options.cdromd.inserted = BX_EJECTED;
+					  }
+					  raise_interrupt();
 				    } else { // Load the disc
 					  // My guess is that this command only closes the tray, that's a no-op for us
 					  atapi_cmd_nop();
@@ -1316,7 +1324,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
                                     UNUSED(data_format);
                                     UNUSED(track_number);
 
-				    if (BX_SELECTED_HD.cdrom.ready) {
+				    if (!BX_SELECTED_HD.cdrom.ready) {
 					  atapi_cmd_error(SENSE_NOT_READY, ASC_MEDIUM_NOT_PRESENT);
 					  raise_interrupt();
 				    } else {
@@ -2612,11 +2620,17 @@ bx_hard_drive_c::set_cd_media_status(unsigned status)
       BX_HD_THIS s[1].cdrom.ready = 1;
       BX_HD_THIS s[1].cdrom.capacity = BX_HD_THIS s[1].cdrom.cd->capacity();
       bx_options.cdromd.inserted = BX_INSERTED;
+      BX_SELECTED_HD.sense.sense_key = SENSE_UNIT_ATTENTION;
+      BX_SELECTED_HD.sense.asc = 0;
+      BX_SELECTED_HD.sense.ascq = 0;
+      raise_interrupt();
       }
-    else {		    
+    else {
+#endif
       D(bug( "Could not locate CD-ROM, continuing with media not present"));
       BX_HD_THIS s[1].cdrom.ready = 0;
       bx_options.cdromd.inserted = BX_EJECTED;
+#ifdef LOWLEVEL_CDROM
       }
 #endif
     }
