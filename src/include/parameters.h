@@ -126,6 +126,8 @@ typedef struct {
 
 // Ethernet options
 typedef struct {
+  char type[16];
+  char tunnel[16];
   char ip_host[16];
   char ip_atari[16];
   char netmask[16];
@@ -225,6 +227,7 @@ extern char *getDataFilename(const char *file, char *buffer, unsigned int bufsiz
 char *addFilename(char *buffer, const char *file, unsigned int bufsize);
 
 // following functions implemented in parameters_[unix|linux|cygwin].cpp
+char *getHomeFolder(char *buffer, unsigned int bufsize);
 char *getConfFolder(char *buffer, unsigned int bufsize);
 char *getDataFolder(char *buffer, unsigned int bufsize);
 
