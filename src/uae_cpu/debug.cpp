@@ -149,6 +149,48 @@ static void writeintomem (char **c)
 static int trace_same_insn_count;
 static uae_u8 trace_insn_copy[10];
 static struct regstruct trace_prev_regs;
+
+void showBackTrace(int count, bool showLast = true)
+{
+	int temp;
+#ifdef NEED_TO_DEBUG_BADLY
+	struct regstruct save_regs = regs;
+	union flagu save_flags = regflags;
+#endif
+
+	if (! showLast) {
+		// do not show the last instruction as it causes the aranym to segfault
+		if (lasthist > 0)
+			lasthist--;
+		else
+			lasthist = MAX_HIST-1;
+	}
+	temp = lasthist;
+	while (count-- > 0 && temp != firsthist) {
+	    if (temp == 0)
+	    	temp = MAX_HIST-1;
+	    else
+	    	temp--;
+	}
+
+	while (temp != lasthist) {
+#ifdef NEED_TO_DEBUG_BADLY
+	    regs = history[temp];
+	    regflags = historyf[temp];
+	    m68k_dumpstate (NULL);
+#else
+	    m68k_disasm (history[temp], NULL, 1);
+#endif
+	    if (++temp == MAX_HIST)
+	    	temp = 0;
+	}
+
+#ifdef NEED_TO_DEBUG_BADLY
+	regs = save_regs;
+	regflags = save_flags;
+#endif
+}
+
 void debug (void)
 {
 #ifdef NEWDEBUG
@@ -350,11 +392,6 @@ void debug (void)
 	 case 'H':
 	    {
 		int count;
-		int temp;
-#ifdef NEED_TO_DEBUG_BADLY
-		struct regstruct save_regs = regs;
-		union flagu save_flags = regflags;
-#endif
 
 		if (more_params(&inptr))
 		    count = readhex(&inptr);
@@ -362,25 +399,8 @@ void debug (void)
 		    count = 10;
 		if (count < 0)
 		    break;
-		temp = lasthist;
-		while (count-- > 0 && temp != firsthist) {
-		    if (temp == 0) temp = MAX_HIST-1; else temp--;
+		showBackTrace(count);
 		}
-		while (temp != lasthist) {
-#ifdef NEED_TO_DEBUG_BADLY
-		    regs = history[temp];
-		    regflags = historyf[temp];
-		    m68k_dumpstate (NULL);
-#else
-		    m68k_disasm (history[temp], NULL, 1);
-#endif
-		    if (++temp == MAX_HIST) temp = 0;
-		}
-#ifdef NEED_TO_DEBUG_BADLY
-		regs = save_regs;
-		regflags = save_flags;
-#endif
-	    }
 	    break;
 	 case 'm':
 	    {
