@@ -5,8 +5,8 @@
     <title>What is ARAnyM?</title>
     <text>
       ARAnyM stands for "Atari Running on Any Machine".
-      The main aim of the project is to create a software layer
-      that would allow anyone to install and use 32bit Atari ST/TT/Falcon
+      The main goal of the project is to create a virtual machine
+      that would allow anyone to install, use and also <B>develop new</B> 32bit Atari ST/TT/Falcon
       applications on their computer regardless of its architecture.
     </text>
   </chapter>
@@ -14,16 +14,16 @@
     <title>What ARAnyM is NOT?</title>
     <text>
       ARAnyM has never been designed as a complete emulator of any
-      Atari machine. Thus we don't use the word "emulator" in any
-      context of ARAnyM. ARAnyM emulates only the hardware esentially
-      needed for boot the TOS ROM and MiNT in consequence. If you intended
-      to play games and (or) launch demos made for ST/E then just forget
+      Atari machine. Thus we don't like to use the word "emulator" when
+      talking about the ARAnyM. ARAnyM emulates only the hardware essentially
+      needed for booting the TOS ROM and MiNT in consequence. If you intended
+      to play games and (or) launch demos made for ST/Falcon then just forget
       ARAnyM and install some existing emulator created for this purpose
       (STonX, WinSTon, Steem, etc..)
     </text>
   </chapter>
   <chapter>
-    <title>Why we started ARAnyM?</title>
+    <title>Why did we start ARAnyM?</title>
     <text>
       The TOS compatible platform hardware goes slightly away from scene.
       The Atari hardware products and their clones are one big, nearly
@@ -31,7 +31,7 @@
       Milan II computer, had given it up in late 2000.
       Existing machines are of a rather low performace in comparison with
       any other up-to-date platform. The peripheral development is also
-      in convergence to null. On the other hand there exist a big bunch of
+      stopped. On the other hand there exist a big bunch of
       modern applications and quite modern OS with a big potential power.
       These are the things that we would like to keep alive and not to throw
       them away with the old slow hardware stuff. ARAnyM gives the TOS
@@ -42,25 +42,34 @@
   <chapter>
     <title>How does it work?</title>
     <text>
-      The core is the MC68040 emulation. Yes you read this right it is really
-      full featured 040 processor that is emulated! Besides the CPU there
-      are several integrated circuits emulation needed to boot and run TOS.
-      The platform independece follows the usage of Host OS providing hardware
-      dependent drivers and services. The Host OS is nearly invisible to the
-      ARAnyM user and thus they need not to pay any attention to it. More info
-      about the internal topics are in developer section.
+      You simply turn on your host machine (PC, Mac, Sun, whatever) and after
+      a while of booting (when the Fuji logo shines on the screen)
+      you end up in your favorite GEM desktop. In the background the 
+      HostOS booted up (we use Linux for now but ARAnyM can be ported to
+      any OS) and started the ARAnyM, which now emulates MC68040 CPU, FPU and
+      a couple of other Falcon030 chips so that a slightly patched TOS 4.04 boots
+      and runs your favourite Atari software. This is the ideal state (see also the <A HREF="#distribution">Distribution</A>)
+      for the 'ARAnyM only' mode of operation. We, while developing ARAnyM, use it in so called application mode when the Atari runs in a window on regular X11 Host desktop.
+
+
+      For conversion from your old Atari machine to this new powerful ARAnyM virtual machine
+      you simply take your Atari harddrive and put it into your new machine. Or you can create
+      a disk image of your working harddrive and work with that in ARAnyM. If you never
+      had a hard drive connected to your old Atari computer you can create an empty virtual
+      disk or use a physical one dedicated just to Atari software.
+     
     </text>
   </chapter>
   <chapter>
     <title>How does it work? (Technical)</title>
     <text>
       As said. There is a 040 CPU core taken from the UAE (Unix Amiga Emulator).
-      The MMU and some patches were added to it. The other circuits emulated are
+      The MMU and some patches were added to it. The other emulated chips are
       mainly ACIA, BLITTER, Falcon VIDEL and IDE and basic input peripherals
       handled by MFP (respective IKBD) like keyboard and mouse.
-      Afterburner 040 TOS is used. So ARAnyM has the Falcon 040 Afterburner in degree
-      of its big brother. The whole system runs on Host OS (primarily Linux, in future
-      maybe Windows, MAC, etc.). Linux system (we call it more generally "Host OS") is
+      Afterburner 040 TOS is used. So ARAnyM is actually a <B>Virtual AFTERBURNER040</B>.
+      The whole system runs on Host OS (primarily Linux, in future
+      maybe Windows, Mac, etc.). Linux system (we call it more generally "Host OS") is
       installed before ARAnyM and after that it is "invisible" to the user. That
       means that ARAnyM user wouldn't nearly notice its presence. It is also possible
       to install ARAnyM in so called "application mode" to already installed and being
@@ -71,12 +80,12 @@
   <chapter>
     <title>What are the aims in the ARAnyM future development?</title>
     <text>
-      Step by step should the missing features be added. These are (sound support,
-      accelerated graphics, I/O ports, etc.). The copyright free system should be ideally
+      Step by step should the missing features be added. These are sound support,
+      accelerated graphics, I/O ports, etc. The copyright free system should be ideally
       reached. The main licencing problem is the TOS ROM copyright and so a new "ROM"
       should be created just to enable to boot into the Atari FreeMiNT OS. After that
       we would get a multitasking, multiuser, GEM compatible ARAnyM system free
-      of all copyright issues, licensed under GPL! The next steps should be a deeper
+      of all copyright issues, licensed under the GPL! The next steps should be a deeper
       integration of other OS parts (FreeMiNT, fVDI, XaAES, Desktop). In future some
       parts of these might run natively in Host OS platform machine code. In a far future
       there can be a totally native ARAnyM system in that could the Host OS native
@@ -85,14 +94,15 @@
     </text>
   </chapter>
   <chapter>
+    <a name="distribution"/>
     <title>Distribution</title>
     <text>
       The standalone distribution should be created to simplify the installation process.
       This distribution should comprise all components needed to make use of all advantages
-      of the hardware used. The Host OS installation (prefferably Linux) as the base followed
+      of the hardware used. The Host OS installation (preferably Linux) as the base followed
       by the ARAnyM application itself further to complete MiNT installation including VDI,
       AES and Desktop. The distribution should contain all tools and applications needed
-      to install ARAnyM on a PC hardware. This includes partition tools, peripheral setup tools,
+      to install ARAnyM on a PC hardware. This includes partitioning tools, peripheral setup tools,
       network setup etc. All these in a user friendly enviroment, so that a regular user could
       handle that.
     </text>
