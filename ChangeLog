@@ -1,6 +1,8 @@
 2004/09/29 - Xavier
 - fvdidrv.cpp: fixed a typo that prevented ARAnyM to compile here.
 
+- uae_cpu/debug.cpp: fixed a bug in debugger that corrupted SR.
+
 
 2004/09/24 - Patrice
 - Natfeat FVDI driver: added functions to read back the screen width and height
