@@ -28,6 +28,8 @@
 #include "memory.h"
 #include "readcpu.h"
 #include "newcpu.h"
+#include <SDL/SDL_timer.h>
+#include "main.h"
 
 
 // RAM and ROM pointers
@@ -245,4 +247,19 @@ void Execute68k(uint32 addr, struct M68kRegisters *r)
 	for (i=0; i<7; i++)
 		r->a[i] = m68k_areg(regs, i);
 	quit_program = 0;
+}
+
+static long lastMilisecond = 0;
+
+void setVirtualTimer() {
+	lastMilisecond = SDL_GetTicks();
+}
+
+void incrementVirtualTimer() {
+	long newMilisecond = SDL_GetTicks();
+	if (newMilisecond > lastMilisecond + 10) {
+		lastMilisecond = newMilisecond;
+		// 200 Hz interrupt
+		virtualInterrupt();
+	}
 }
