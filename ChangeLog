@@ -1,4 +1,16 @@
+2001/08/29 STanda
+
+- VIDEL got the doRender flag with setter setRendering(). 
+  The host_colors_uptodate variable name was changed to hostColorsSync.
+
+- HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
+  was created.
+
+- fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
+
+
 2001/08/20
+
 - support for autodetection of a real disk's geometry in Linux, also for
   createdisk.sh's disks, but new version of parameters.cpp needs reorganization
   in IDEx part
@@ -15,9 +27,11 @@
 - config file taken from PARCP. Feel free to extend the global_conf struct in parameters.cpp
   with more options.
 
+
 2001/08/15 - STanda
 
 - the videl.cpp ST compatible color palette handling added (thanks to Ctirad)
+
 
 2001/08/13 - milan
 
@@ -28,7 +42,6 @@
 - IDE x's settings from aranymrc file
 
 
->>>>>>> 1.26
 2001/08/10 - milan
 - real addressing now working correct
 
