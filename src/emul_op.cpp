@@ -161,6 +161,50 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			QuitEmulator();
 			break;
 
+		case M68K_EMUL_OP_MON0:
+		case M68K_EMUL_OP_MON1:
+		case M68K_EMUL_OP_MON2:
+		case M68K_EMUL_OP_MON3:
+		case M68K_EMUL_OP_MON4:
+		case M68K_EMUL_OP_MON5:
+		case M68K_EMUL_OP_MON6:
+		case M68K_EMUL_OP_MON7:
+		case M68K_EMUL_OP_MON8:
+		case M68K_EMUL_OP_MON9:
+		case M68K_EMUL_OP_MONa:
+		case M68K_EMUL_OP_MONb:
+		case M68K_EMUL_OP_MONc:
+		case M68K_EMUL_OP_MONd:
+		case M68K_EMUL_OP_MONe:
+			fprintf(stderr, "Monitor %08x\n", opcode);
+			fprintf(stderr, "d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"
+					"d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
+					"a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
+					"a4 %08lx a5 %08lx a6 %08lx a7 %08lx\n"
+					"sr %04x\n",
+					(unsigned long)r->d[0],
+					(unsigned long)r->d[1],
+					(unsigned long)r->d[2],
+					(unsigned long)r->d[3],
+					(unsigned long)r->d[4],
+					(unsigned long)r->d[5],
+					(unsigned long)r->d[6],
+					(unsigned long)r->d[7],
+					(unsigned long)r->a[0],
+					(unsigned long)r->a[1],
+					(unsigned long)r->a[2],
+					(unsigned long)r->a[3],
+					(unsigned long)r->a[4],
+					(unsigned long)r->a[5],
+					(unsigned long)r->a[6],
+					(unsigned long)r->a[7],
+					r->sr);
+			break;
+		case M68K_EMUL_OP_DEBUGGER:
+#ifdef DEBUGGER
+			activate_debugger();
+#endif
+			break;
 		default:
 			printf("FATAL: EMUL_OP called with bogus opcode %08x\n", opcode);
 			printf("d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"
