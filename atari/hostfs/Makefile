@@ -40,7 +40,7 @@ INCLUDES = -I$(top_srcdir) -I.natfeat
 DEFINITIONS =
 LD = $(CC) -nostdlib -Wl,--entry -Wl,_init
 LIBS = $(LIBKERN) -lgcc
-CPU = 030
+CPU = 020-60
 CFLAGS += -D__KERNEL_XFS__
 
 

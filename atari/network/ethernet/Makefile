@@ -27,7 +27,7 @@ DEFINITIONS = -D__KERNEL_XDD__ $(XIF_DEFINITIONS)
 
 LD = $(CC) -mshort -nostdlib -Wl,--entry -Wl,_init
 LIBS = $(LIBKERN) -lgcc
-CPU = 000
+CPU = 020-60
 
 # default definitions
 OBJS = $(addsuffix .o, $(basename $(notdir $(COBJS))))
