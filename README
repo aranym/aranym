@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.7.0 released on 2003/01/29
+      version 0.8.0beta1 released on 2003/03/23
 
 
  1) License
@@ -42,6 +42,7 @@ where TOS/GEM applications could continue to live forever.
    o two IDE channels for connecting disk images, harddrives or CD-ROMs
    o extended keyboard and mouse support (including mouse wheel)
    o direct access to host file system via MetaDOS and MiNT fs drivers
+   o networking using ethernet emulation with a driver for MiNT-Net
    o TOS 4.04 or EmuTOS as the booting operating system
    o runs with FreeMiNT, MagiC, and any other operating system that runs
      also on real Atari computer.
@@ -74,7 +75,7 @@ to the config file using "aranym --save".
 
 You also need the operating system - either ATARI original TOS 4.04 (found
 in Falcon030) or the free TOS replacement called EmuTOS (get the latest
-version from CVS at http://emutos.sf.net/).
+version from http://emutos.sf.net/).
 
 ARAnyM expects to find the TOS 4.04 ROM image in $PREFIX/share/aranym/ROM
 ($PREFIX is usually "/usr" for the binary packages). If you want to keep
@@ -146,19 +147,22 @@ scanning is disabled) and Cecile to work OK.
  6) Accessing data on host OS filesystem
  ---------------------------------------
 
-This is done by the most clean way it could be. In order to not to patch
-the TOS, the MetaDOS (BetaDOS) driver is available in
-src/atari/aranymfs/aranymfs.dos.bz2. You can extract it and add to the MetaDOS
-configuration file (config.sys). The example you can find in config.sys
-in the same directory as the driver .bz2 file.
-The problem is how to put it on the harddisk image you possibly created. There
-is no other way than the floppy (or its image file).
+For accessing data on a host filesystem you can map the host fs to a logical
+drive in TOS or MiNT. We have created HostFS BetaDOS driver for use in TOS
+and also native MiNT HostFS.XFS driver. BetaDOS is a free and improved
+replacement of MetaDOS which in turn was Atari designed AUTO folder patch
+that extended the TOS ROM GEMDOS with support for loadable drivers. 
 
-As you setup the config.sys (e.g.):
+The problem is how to put it on a new harddisk. One way is to use floppy.
+Another possibility is to boot the AFROS (Aranym FRee OS) and attach your
+disk drive as Slave ([IDE1]).
 
-*DOS, c:\auto\aranymfs.dos, M:1
+BetaDOS also needs to know what disk drives you wish to map. Edit the
+\AUTO\BDCONFIG.SYS and add there the following line, for example:
 
-The M:1 stands for that you want to have the M: drive mapped to some Host OS
+*DOS, c:\auto\hostfs.dos, M:M
+
+The M:M stands for that you want to have the M: drive mapped to some Host FS
 directory. The directory must be put to aranym by the command line argument -d
 like:
 
@@ -166,8 +170,7 @@ like:
 
 This would map the /opt/home/atari/ to the TOS drive M:\.
 
-Note: The config.sys edit tool and the aranym config configuration will come
-      soon. The MiNT and MagiC .xfs drivers will be programmed in the future.
+Note: We are planning on writing a tool for BDCONFIG.SYS auto-configuration.
 
 
  7) Keyboard shortcuts

@@ -1,6 +1,6 @@
 %define name	aranym
-%define ver	0.7.0
-%define rel	2
+%define ver	0.8.0beta1
+%define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
 %define group	Console/Emulators
@@ -80,6 +80,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/floppy.sh
 /usr/share/aranym/font8.bmp
 /usr/share/aranym/etos512k.img
+
+%changelog
+* Sun Mar 23 2003 Petr Stehlik <pstehlik@sophics.cz>
+Version increased for the new release. See the NEWS file for details.
 
 %changelog
 * Fri Mar 07 2003 Petr Stehlik <pstehlik@sophics.cz>

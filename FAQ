@@ -1,7 +1,7 @@
 Contents:
   1) CVS read only
   2) AES Error (WinX)
-  3) disk from Atari in Aranym
+  3) disk from Atari in ARAnyM
   4) CD-ROM
   5) GEMBench blitter test crashes
 
@@ -24,13 +24,13 @@ Answer:
 ---
 
 Question:
-  I copied my mint setup on Aranym. It may works if I can use
+  I copied my mint setup on ARAnyM. It may works if I can use
   long file names and access rights. Should I use a new disk
   image for that ? How would I build one?
 
 Answer:
   if you have a working setup on Atari and want to have the same
-  on Aranym, follow these steps:
+  on ARAnyM, follow these steps:
 
 1) if you want to boot from the disk, reconfigure your harddisk driver:
 
@@ -43,7 +43,7 @@ Answer:
 
 2) if you want to use the disk directly, simply take it from your
    Atari machine and put it to your host machine (be it PC, Mac or
-   whatever, we don't care). Set up the drive in ./aranymrc, e.g.
+   whatever, we don't care). Set up the drive in .aranym/config, e.g.
 
    [IDE0]
    Present = Yes
@@ -59,7 +59,7 @@ Answer:
 
    The Cylinders/Heads/SectorsPerTrack values maybe either written on
    the disk label or in your hard drive utility (e.g. HDDRUTIL) - but
-   only if it's an IDE drive. Aranym also tries to guess the values,
+   only if it's an IDE drive. ARAnyM also tries to guess the values,
    if you set one from these values to -1 (supported only for real
    devices, only under Linux today).
 
@@ -79,13 +79,13 @@ Answer:
 
    For windows you may want to try out a "WinImage" (use download.com?)
    
-   For configuring Aranym see the 2) above, just the Path now points to
+   For configuring ARAnyM see the 2) above, just the Path now points to
    the /home/aranym/disk_image.
 
    Note: if the image has been created on Atari, you have to set the
-   ByteSwap IDE Aranym option to "Yes".
+   ByteSwap IDE ARAnyM option to "Yes".
 
-4) start aranym and enjoy. Everything should work as expected. However,
+4) start ARAnyM and enjoy. Everything should work as expected. However,
    if you were using some special HW drivers, like e.g. Afterburner,
    Centurbo or NOVA/Rage gfx card drivers, you want to disable them.
    So try the first boot with Ctrl held down (AUTO folder programs are
@@ -98,10 +98,10 @@ Answer:
 ---
 
 Question:
-  Is it possible to have CDRom under Aranym, how can I do?
+  Is it possible to have CDRom under ARAnyM, how can I do?
 
 Answer:
-  Edit your .aranymrc:
+  Edit your .aranym/config file:
 
     [IDE1]
     Present = Yes

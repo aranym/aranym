@@ -1,10 +1,6 @@
-2003/03/22 - joy
-- [ETH0] settings in the config file
+** ARAnyM 0.8.0beta1 released
 
-- aranym_xfs.c: ifdef'ed one debug print
-
-- araethip.c: improved and adapted for possible many eth devices
-
+2003/03/23 - joy
 - nfeth-config.sh: added, calls araethip and shows how easy is to configure
   the device automagically.
 
@@ -21,12 +17,26 @@
   started from. Also a couple of checks for file owner and setuid bit
   added so users get warnings if chown/chmod was not applied to aratapif.
 
+- version.h updated to 0.8.0beta1
+
+- configure.ac, Makefile.in: renamed "pif" to "ifc" and "arapif" to "tapif"
+
+- TODO, BUGS, INSTALL, NEWS, README and other files updated.
+
+
+2003/03/22 - joy
+- [ETH0] settings in the config file
+
+- aranym_xfs.c: ifdef'ed one debug print
+
+- araethip.c: improved and adapted for possible many eth devices
+
 
 2003/03/21 - joy
 - networking: NF API extended to allow emulating more than 1 network card
 
 - aranym.xif: added SIOCGIF modes to autoconfigure the device with its IP
-  and netmask (and even MTU if it was necessary)
+  and netmask.
 
 - natfeat/ethernet.cpp: initialization corrected. The XIF should not install
   on atari side unless the host initialization was finished OK.
@@ -152,7 +162,7 @@
 
 2003/03/04 - joy
 - ata.[cpp|h], parameters.[cpp|h] cleaned up:  obsolete disk_options_t
-  and cdrom_options_t were structure removed. Everything is stored in the
+  and cdrom_options_t structures removed. Everything is stored in the
   atadevice_options_t now. Nice bonus is the possibility of naming the IDE
   device with new config option "ModelName" (string, up to 40 characters).
 

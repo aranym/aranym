@@ -1,3 +1,23 @@
+2003/03/23 - version 0.8.0beta1 released
+==========
+
+New features:
+
+ o Networking. Yeah! ARAnyM.XIF as the Ethernet driver for MiNT-Net.
+ o VIDEL compatible (bitplane) 1, 2, 4 and 8 bit fVDI modes.
+ o new command line option "--swap-ide" that allows you to boot from [IDE1]
+ o new HostFS drivers (both BetaDOS and MiNT's xfs) are fully working now.
+ o for GFA programmers out there: natfeat/atari_example_gfa.lst
+ o new config option "ModelName" for [IDE0/1]. Name your drives :-)
+ o P4 fix for JIT (thanks to Gwenole of Basilisk II)
+ o CD-ROM now also on Windows/Cygwin
+
+ Naturally some bugs were fixed - most notably in mouse input.
+
+ Also we've received some BeOS related patches so ARAnyM might run on BeOS
+ as well now.
+
+
 2003/01/29 - version 0.7.0 released
 ==========
 

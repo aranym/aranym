@@ -29,7 +29,7 @@ x86          NetBSD
 
 2) Compilation
 --------------
-If you run a flavour of Unix or Linux, go to src/Unix folder.
+If you run a flavour of Unix or Linux, go to src/Unix folder first.
 
 If you got the source code from CVS then type
 ./autogen.sh && make
@@ -48,7 +48,9 @@ You may install ARAnyM by typing 'make install' (root privileges expected)
 or you may run the binary directly by typing ./aranym.
 
 Next step is to obtain the operating system (TOS 4.04 or EmuTOS) and install
-a harddrive. More on this in the README file.
+a harddrive. More on this in the README file. Easiest is to download
+one of the 'afros' disk images (Aranym FRee OS) that contain everything
+preinstalled.
 
 
 4) Troubleshooting

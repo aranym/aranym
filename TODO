@@ -1,7 +1,9 @@
-Before 0.8.0 release:
----------------------
+Before 0.8.0 final release:
+---------------------------
 - automagically updated CONFIG.SYS/BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
+- make sure the '-d' command line option works as documented in the README
+- enable OpenGL and DSP in default builds, provide also MMU build
 
 Roadmap:
 --------

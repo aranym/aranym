@@ -36,7 +36,8 @@ BUGS
 ----
 hostfs.dos
  - relocatable programs crash due to a serious bug in MetaDOS. Use BetaDOS
-   instead (version 3.12 - http://www.ettnet.se/~dlanor/main/html/ra_files.htm)
+   instead (version 3.12+ might be available at
+   http://www.ettnet.se/~dlanor/main/html/ra_files.htm).
 
 aranym.xfs
  - the symlinks are not finished (work somehow).
