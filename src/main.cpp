@@ -256,22 +256,22 @@ static void check_event(void)
 				}
 
 				else if (sym == SDLK_PAGEUP) {
-					ikbd_send(0x2a);	// press and hold LShift	// WARNING - shift might have been pressed already, in such case do not release it after user releases PAGEUP
-					ikbd_send(0x48);	// press keyUp
+					ikbd.send(0x2a);	// press and hold LShift	// WARNING - shift might have been pressed already, in such case do not release it after user releases PAGEUP
+					ikbd.send(0x48);	// press keyUp
 				}
 				else if (sym == SDLK_PAGEDOWN) {
-					ikbd_send(0x2a);	// press and hold LShift
-					ikbd_send(0x50);	// press keyDown
+					ikbd.send(0x2a);	// press and hold LShift
+					ikbd.send(0x50);	// press keyDown
 				}
 			}
 			else {
 				if (sym == SDLK_PAGEUP) {
-					ikbd_send(0xc8);	// release keyUp
-					ikbd_send(0xaa);	// release LShift
+					ikbd.send(0xc8);	// release keyUp
+					ikbd.send(0xaa);	// release LShift
 				}
 				else if (sym == SDLK_PAGEDOWN) {
-					ikbd_send(0xd0);	// release keyDown
-					ikbd_send(0xaa);	// release LShift
+					ikbd.send(0xd0);	// release keyDown
+					ikbd.send(0xaa);	// release LShift
 				}
 			}
 			// map right Control and Alternate keys to the left ones
@@ -285,7 +285,7 @@ static void check_event(void)
 				if (keyboardTable[i] == sym) {
 					if (!pressed)
 						i |= 0x80;
-					ikbd_send(i);
+					ikbd.send(i);
 					break;
 				}
 			}
@@ -333,9 +333,9 @@ static void check_event(void)
 
 			// send the mouse data packet
 			if (xrel || yrel || lastbut != but) {
-				ikbd_send(0xf8 | but);
-				ikbd_send(xrel);
-				ikbd_send(yrel);
+				ikbd.send(0xf8 | but);
+				ikbd.send(xrel);
+				ikbd.send(yrel);
 			}
 
 			if (! fullscreen) {
@@ -389,38 +389,28 @@ static void check_event(void)
 		QuitEmulator();
 }
 
-void virtualInterrupt()
+/*
+ * the following function is called from the CPU emulation
+ * each 5 milliseconds. The interrupt is "buffered".
+ */
+void invoke200HzInterrupt()
 {
 	static int VBL_counter = 0;
 	static int refreshCounter = 0;
 
-	if (!debugging || irqindebug)
-		MakeMFPIRQ(5);			// TimerC interrupt (synchronized to 200 Hz internally)
+	mfp.IRQ(5);			// TimerC interrupt 
 
-	if (++VBL_counter == 2) {	// divided by 2 => 50 Hz VBL
+	if (++VBL_counter == 4) {	// divided by 4 => 50 Hz VBL
 		VBL_counter = 0;
 
-		if (!debugging || irqindebug) {
-			check_event();		// process keyboard and mouse events
-			TriggerVBL();		// generate VBL
-		}
+		check_event();		// process keyboard and mouse events
+		TriggerVBL();		// generate VBL
 
-		if (++refreshCounter == 2) {	// divided by 2 again ==> 25 Hz screen update
-			if (!direct_truecolor) {
-				renderScreen();
-			}
+		if (++refreshCounter == 2) {// divided by 2 again ==> 25 Hz screen update
+			videl.renderScreen();
 			refreshCounter = 0;
 		}
 	}
-}
-
-/*
- * my_callback_function() is called every 10 miliseconds (~ 100 Hz)
- */
-Uint32 my_callback_function(Uint32 interval, void *param)
-{
-	virtualInterrupt();
-	return 10;					// come back in 10 milliseconds
 }
 
 
@@ -430,11 +420,7 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 
 bool InitAll(void)
 {
-#ifdef USE_TIMERS
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
-#else
 	if (SDL_Init(SDL_INIT_VIDEO /*| SDL_INIT_TIMER */ ) != 0) {
-#endif
 		ErrorAlert("SDL initialization failed.");
 		return true;			//FIXME?
 	}
@@ -478,9 +464,9 @@ bool InitAll(void)
 		ROMBaseHost[35752] = 0x2e;
 		ROMBaseHost[35753] = 0x3c;
 		ROMBaseHost[35754] = ARANYMVRAMSTART >> 24;
-		ROMBaseHost[35755] = ARANYMVRAMSTART >> 16;
-		ROMBaseHost[35756] = ARANYMVRAMSTART >> 8;
-		ROMBaseHost[35757] = ARANYMVRAMSTART;
+		ROMBaseHost[35755] = (ARANYMVRAMSTART >> 16) & 0xff;
+		ROMBaseHost[35756] = (ARANYMVRAMSTART >> 8) & 0xff;
+		ROMBaseHost[35757] = (ARANYMVRAMSTART) & 0xff;
 		ROMBaseHost[35758] = 0x60;
 		ROMBaseHost[35759] = 6;
 		ROMBaseHost[35760] = 0x4e;
@@ -514,12 +500,7 @@ bool InitAll(void)
 	hideMouse(true);
 
 	// timer init
-#if USE_TIMERS
-	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
-	printf("Using timers\n");
-#else
 	setVirtualTimer();
-#endif
 
 	return true;
 }
@@ -531,11 +512,6 @@ bool InitAll(void)
 
 void ExitAll(void)
 {
-	// Exit Time Manager
-#if USE_TIMERS
-	SDL_RemoveTimer(my_timer_id);
-#endif
-
 	// remove floppy (flush buffers)
 	remove_floppy();
 
