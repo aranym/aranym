@@ -1,3 +1,7 @@
+2003/03/06 - joy
+- external configuration tool for the setting up the tap0 device
+
+
 2003/03/05 - STanda
 - small fix in hostfs/metados/main.c
 
