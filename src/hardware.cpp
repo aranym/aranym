@@ -48,9 +48,6 @@ void HWInit (void) {
 	rtc.init();
 	videl.init();
 	ide.init();
-#if DSP_EMULATION
-	dsp.init();
-#endif
 }
 
 struct HARDWARE {
@@ -181,6 +178,9 @@ void HWput_b (uaecptr addr, uae_u8 b) {
 
 /*
  * $Log$
+ * Revision 1.44  2002/08/26 19:25:06  milan
+ * Large change of CPU, 32 bit IDE access corrected etc.
+ *
  * Revision 1.43  2002/08/01 15:19:16  joy
  * better debugging of HWget_b
  *

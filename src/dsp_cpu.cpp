@@ -938,6 +938,10 @@ static uint32 read_memory(int space, uint16 address)
 				if ((space==SPACE_X) && (address==0xffc0+DSP_HOST_HRX)) {
 					int trdy;
 
+#if DSP_THREADED
+					/* Read available data from host for the DSP */
+					dsp.host2dsp();
+#endif
 					/* Clear HRDF bit to say that DSP has read */
 					dsp.periph[SPACE_X][DSP_HOST_HSR] &= BITMASK(8)-(1<<DSP_HOST_HSR_HRDF);
 #if DSP_DISASM_HOSTREAD
@@ -1014,6 +1018,11 @@ static void write_memory(int space, uint16 address, uint32 value)
 						dsp.periph[SPACE_X][DSP_HOST_HSR] &= BITMASK(8)-(1<<DSP_HOST_HSR_HTDE);
 #if DSP_DISASM_HOSTWRITE
 						D(bug("Dsp: (D->H): Dsp HTDE cleared"));
+#endif
+
+#if DSP_THREADED
+						/* Write available data from DSP for the host */
+						dsp.dsp2host();
 #endif
 						break;
 					case DSP_HOST_HCR:
@@ -1217,21 +1226,22 @@ static void dsp_update_rn_bitreverse(uint32 numreg)
 
 	/* Check how many bits to reverse */
 	value = dsp.registers[REG_N0+numreg];
-	for (revbits=15;revbits>=0;--revbits) {
+	for (revbits=0;revbits<16;revbits++) {
 		if (value & (1<<revbits)) {
 			break;
 		}
 	}	
+	revbits++;
 		
 	/* Reverse Rn bits */
 	r_reg = dsp.registers[REG_R0+numreg];
 	value = r_reg & (BITMASK(16)-BITMASK(revbits));
 	for (i=0;i<revbits;i++) {
 		if (r_reg & (1<<i)) {
-			value |= 1<<(revbits-i);
+			value |= 1<<(revbits-i-1);
 		}
 	}
-		
+
 	/* Increment */
 	value++;
 	value &= BITMASK(revbits);
@@ -1243,7 +1253,7 @@ static void dsp_update_rn_bitreverse(uint32 numreg)
 	value = r_reg & (BITMASK(16)-BITMASK(revbits));
 	for (i=0;i<revbits;i++) {
 		if (r_reg & (1<<i)) {
-			value |= 1<<(revbits-i);
+			value |= 1<<(revbits-i-1);
 		}
 	}
 
@@ -4679,6 +4689,9 @@ static void dsp_tst(void)
 }
 
 /*
+	2002-09-20:PM
+		BUG: Bit-reversed addressing not working
+		BUG: host port transfer not done when necessary when using thread
 	2002-08-27:PM
 		BUG: Fixes in thread support
 		Host port transfer routines moved in dsp.cpp

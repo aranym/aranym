@@ -1,3 +1,8 @@
+2002/09/20 - patrice
+- DSP: bit-reversed addressing fixed, host port transfer when threaded fixed
+       use of C++ constructor/destructor for the DSP class
+
+
 2002/09/15 - joy (version 0.6.0-alpha)
 - major architectural change: SDL_Timer stuff removed, #define USE_TIMERS
   removed. Now CPU emulation runs in a separate SDL thread and the main thread

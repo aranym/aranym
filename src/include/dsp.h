@@ -83,8 +83,11 @@ class DSP : public BASE_IO {
 		virtual uae_u8 handleRead(uaecptr addr);
 		virtual void handleWrite(uaecptr, uae_u8);
 
+		/* Constructor, destructor */
+		DSP(void);
+		~DSP(void);
+
 		/* Setup functions */
-		void init(void);
 		void reset(void);
 		void shutdown(void);
 

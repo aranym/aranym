@@ -28,8 +28,10 @@
 /* Execute DSP instructions till the DSP waits for a read/write */
 #define DSP_HOST_FORCEEXEC 0
 
-void DSP::init(void)
+/* Constructor and  destructor for DSP class */
+DSP::DSP(void)
 {
+#if DSP_EMULATION
 	int i;
 
 	memset(ram, 0,sizeof(ram));
@@ -112,9 +114,22 @@ void DSP::init(void)
 	dsp56k_sem = NULL;
 #endif
 
-	reset();
+	state = DSP_HALT;
+#if DSP_DISASM_STATE
+	D(bug("Dsp: state = HALT"));
+#endif
+
+#endif /* DSP_EMULATION */
 }
 
+DSP::~DSP(void)
+{
+#if DSP_EMULATION
+	shutdown();
+#endif
+}
+
+/* Other functions to init/shutdown dsp emulation */
 void DSP::reset(void)
 {
 	int i;
@@ -479,6 +494,8 @@ void DSP::dsp2host(void)
 }
 
 /*
+	2002-09-20:PM
+		Constructor/destructor for DSP C++ class
 	2002-08-28:PM
 		BUG:host port read not working with thread
 	2002-08-27:PM
