@@ -33,6 +33,8 @@ class FVDIDriver {
 		uint16 shape[16];
 	} Mouse;
 
+	int32 get_par(M68kRegisters *r, int n);
+
 	int drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 	                   uint32 fgColor, uint32 bgColor, int logOp, bool last_pixel,
 	                   int cliprect[], int minmax[]);
@@ -61,6 +63,10 @@ class FVDIDriver {
 	   alloc_point(0), point_count(0)
 	{
 		// This is the default drv (shouldn't be used)
+		Mouse.storage.x = 0;
+		Mouse.storage.y = 0;
+		Mouse.storage.width = 1;
+		Mouse.storage.height = 1;
 	}
 	~FVDIDriver() {
 		delete[] alloc_index;
@@ -68,26 +74,26 @@ class FVDIDriver {
 		delete[] alloc_point;
 	}
 
-	void dispatch( uint32 fncode, M68kRegisters *r );
-
+	void dispatch(M68kRegisters *r);
 	void restoreMouseBackground();
-	void saveMouseBackground( int16 x, int16 y, int16 width, int16 height );
-	void setColor( uint32 paletteIndex, uint32 red, uint32 green, uint32 blue );
-	void setResolution( int32 width, int32 height, int32 depth, int32 freq );
+	void saveMouseBackground(int16 x, int16 y, int16 width, int16 height);
+	void setColor(uint32 paletteIndex, uint32 red, uint32 green, uint32 blue);
+	void setResolution(int32 width, int32 height, int32 depth, int32 freq);
 
-	int putPixel( memptr vwk, memptr dst, int32 x, int32 y, uint32 colour );
-	uint32 getPixel( memptr vwk, memptr src, int32 x, int32 y );
-	int drawMouse( memptr wrk, int16 x, int16 y, uint32 mode );
+	int putPixel(memptr vwk, memptr dst, int32 x, int32 y, uint32 colour);
+	uint32 getPixel(memptr vwk, memptr src, int32 x, int32 y);
+	int drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data,
+	              uint32 hot_x, uint32 hot_y, uint32 color, uint32 mouse_type);
 
-	int fillArea(memptr vwk, uint32 x_, uint32 y_, int w, int h,
-	             memptr pattern_address, int32 colors);
+	int fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
+	             memptr pattern_address, uint32 colors, uint32 logOp, uint32 interior_style);
 	int drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 y2_,
-	             uint16 pattern, int32 colors, int logOp);
-	int fillPoly(memptr vwk, int32 points_addr, int n, memptr index_addr, int moves,
-	             memptr pattern_addr, int32 colors);
-	int expandArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 sy, int32 dx, int32 dy,
-	               int32 w, int32 h, uint32 fgColor, uint32 bgColor, uint32 logOp);
-	int blitArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 sy, int32 dx, int32 dy,
+	             uint32 pattern, uint32 colors, uint32 logOp, memptr clip);
+	int fillPoly(memptr vwk, memptr points_addr, int n, memptr index_addr, int moves,
+	             memptr pattern_addr, int32 colors, uint32 logOp, uint32 interior_style, memptr clip);
+	int expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
+	               int32 w, int32 h, uint32 logOp, uint32 colors);
+	int blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
 	             int32 w, int32 h, uint32 logOp);
 };
 
@@ -96,6 +102,9 @@ class FVDIDriver {
 
 /*
  * $Log$
+ * Revision 1.14  2002/06/24 17:08:48  standa
+ * The pointer arithmetics fixed. The memptr usage introduced in my code.
+ *
  * Revision 1.13  2001/12/11 21:03:57  standa
  * Johan's patch caused DEBUG directive to fail e.g. in main.cpp.
  * The inline functions were put into the .cpp file.
