@@ -43,6 +43,7 @@
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "blitter.h"
+#include "icio.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -397,176 +398,118 @@ static void (*do_hop_op_P[4][16])( BLITTER& ) =
 
 uint8 BLITTER::handleRead(memptr addr) {
 	addr -= getHWoffset();
-	if (addr > getHWsize())
-		return 0;
-
 /*
 	if (blit) {
 		Do_Blit();
 		blit = false;
 	}
 */
+	switch(addr) {
+		case 0x3a: return hop;
+		case 0x3b: return op;
+		case 0x3c: return LOAD_B_ff8a3c();
+		case 0x3d: return skewreg;
+	}
+
+	panicbug("Blitter tried to read byte from register %x at %06x", addr+getHWoffset(), showPC());
+
+	return 0;
+}
+
+uae_u16 BLITTER::handleReadW(uaecptr addr) {
+	addr -= getHWoffset();
 
 	if (addr < 0x20) {
-		uint16 hfr = halftone_ram[addr / 2];
-		if (addr % 1)
-			return hfr & 0x00ff;
-		else
-			return hfr >> 8;
+		return halftone_ram[addr / 2];
 	}
-
-	D(bug("Blitter reads %x at %06x", addr+HW, showPC()));
 
 	switch(addr) {
-		case 0x20: return source_x_inc >> 8;
-		case 0x21: return source_x_inc;
-		case 0x22: return source_y_inc >> 8;
-		case 0x23: return source_y_inc;
-		case 0x24: return source_addr >> 24;
-		case 0x25: return source_addr >> 16;
-		case 0x26: return source_addr >> 8;
-		case 0x27: return source_addr;
-		case 0x28: return LOAD_B_ff8a28();
-		case 0x29: return LOAD_B_ff8a29();
-		case 0x2a: return LOAD_B_ff8a2a();
-		case 0x2b: return LOAD_B_ff8a2b();
-		case 0x2c: return LOAD_B_ff8a2c();
-		case 0x2d: return LOAD_B_ff8a2d();
-		case 0x2e: return dest_x_inc >> 8;
-		case 0x2f: return dest_x_inc;
-		case 0x30: return dest_y_inc >> 8;
-		case 0x31: return dest_y_inc;
-		case 0x32: return LOAD_B_ff8a32();
-		case 0x33: return LOAD_B_ff8a33();
-		case 0x34: return LOAD_B_ff8a34();
-		case 0x35: return LOAD_B_ff8a35();
-		case 0x36: return LOAD_B_ff8a36();
-		case 0x37: return LOAD_B_ff8a37();
-		case 0x38: return LOAD_B_ff8a38();
-		case 0x39: return LOAD_B_ff8a39();
-		case 0x3a: return LOAD_B_ff8a3a();
-		case 0x3b: return LOAD_B_ff8a3b();
-		case 0x3c: return LOAD_B_ff8a3c();
-		case 0x3d: return LOAD_B_ff8a3d();
+		case 0x20: return source_x_inc;
+		case 0x22: return source_y_inc;
+		case 0x28: return end_mask_1;
+		case 0x2a: return end_mask_2;
+		case 0x2c: return end_mask_3;
+		case 0x2e: return dest_x_inc;
+		case 0x30: return dest_y_inc;
+		case 0x36: return x_count;
+		case 0x38: return y_count;
+		case 0x3a: // fallthrough
+		case 0x3c: return BASE_IO::handleReadW(addr+getHWoffset());
 	}
+
+	panicbug("Blitter tried to read word from register %x at %06x", addr+getHWoffset(), showPC());
+
+	return 0;
+}
+
+uae_u32 BLITTER::handleReadL(uaecptr addr) {
+	addr -= getHWoffset();
+
+	if (addr < 0x20) {
+		return BASE_IO::handleReadL(addr+getHWoffset());
+	}
+
+	switch(addr) {
+		case 0x24: return source_addr;
+		case 0x32: return dest_addr;
+	}
+
+	panicbug("Blitter tried to read long word from register %x at %06x", addr+getHWoffset(), showPC());
 
 	return 0;
 }
 
 void BLITTER::handleWrite(memptr addr, uint8 value) {
 	addr -= getHWoffset();
-	if (addr > getHWsize())
-		return;
+/*
+	if (blit) {
+		Do_Blit();
+		blit = false;
+	}
+*/
+	switch(addr) {
+		case 0x3a: return STORE_B_ff8a3a(value);
+		case 0x3b: return STORE_B_ff8a3b(value);
+		case 0x3c: return STORE_B_ff8a3c(value);
+		case 0x3d: return STORE_B_ff8a3d(value);
+		default:
+			panicbug("Blitter tried to write byte %d to register %x at %06x", value, addr+getHWoffset(), showPC());
+	}
+}
+
+void BLITTER::handleWriteW(uaecptr addr, uint16 value) {
+	addr -= getHWoffset();
 
 	if (addr < 0x20) {
-		uint16 hfr = halftone_ram[addr / 2];
-		if (addr & 1)
-			hfr = (hfr & 0xff00) | value;
-		else
-			hfr = (hfr & 0x00ff) | (value << 8);
-		halftone_ram[addr / 2] = hfr;
+		halftone_ram[addr / 2] = value;
 		return;
 	}
 
-	D(bug("Blitter writes: %x = %d ($%x) at %06x", addr+HW, value, value, showPC()));
-
 	switch(addr) {
-		case 0x20: source_x_inc = (source_x_inc & 0x00ff) | (value << 8); break;
-		case 0x21: source_x_inc = (source_x_inc & 0xff00) | (value & 0xfe); break;
-		case 0x22: source_y_inc = (source_y_inc & 0x00ff) | (value << 8); break;
-		case 0x23: source_y_inc = (source_y_inc & 0xff00) | (value & 0xfe); break;
-		case 0x24: source_addr = (source_addr & 0x00ffffff) | (value << 24); break;
-		case 0x25: source_addr = (source_addr & 0xff00ffff) | (value << 16); break;
-		case 0x26: source_addr = (source_addr & 0xffff00ff) | (value << 8); break;
-		case 0x27: source_addr = (source_addr & 0xffffff00) | (value & 0xfe); break;	// ignore LSB
-		case 0x28: STORE_B_ff8a28(value); break;
-		case 0x29: STORE_B_ff8a29(value); break;
-		case 0x2a: STORE_B_ff8a2a(value); break;
-		case 0x2b: STORE_B_ff8a2b(value); break;
-		case 0x2c: STORE_B_ff8a2c(value); break;
-		case 0x2d: STORE_B_ff8a2d(value); break;
-		case 0x2e: dest_x_inc = (dest_x_inc & 0x00ff) | (value << 8); break;
-		case 0x2f: dest_x_inc = (dest_x_inc & 0xff00) | (value & 0xfe); break;
-		case 0x30: dest_y_inc = (dest_y_inc & 0x00ff) | (value << 8); break;
-		case 0x31: dest_y_inc = (dest_y_inc & 0xff00) | (value & 0xfe); break;
-		case 0x32: STORE_B_ff8a32(value); break;
-		case 0x33: STORE_B_ff8a33(value); break;
-		case 0x34: STORE_B_ff8a34(value); break;
-		case 0x35: STORE_B_ff8a35(value); break;
-		case 0x36: STORE_B_ff8a36(value); break;
-		case 0x37: STORE_B_ff8a37(value); break;
-		case 0x38: STORE_B_ff8a38(value); break;
-		case 0x39: STORE_B_ff8a39(value); break;
-		case 0x3a: STORE_B_ff8a3a(value); break;
-		case 0x3b: STORE_B_ff8a3b(value); break;
-		case 0x3c: STORE_B_ff8a3c(value); break;
-		case 0x3d: STORE_B_ff8a3d(value); break;
+		case 0x20: source_x_inc = value; break;
+		case 0x22: source_y_inc = value; break;
+		case 0x28: end_mask_1 = value; break;
+		case 0x2a: end_mask_2 = value; break;
+		case 0x2c: end_mask_3 = value; break;
+		case 0x2e: dest_x_inc = value; break;
+		case 0x30: dest_y_inc = value; break;
+		case 0x36: x_count = value; break;
+		case 0x38: y_count = value; break;
+		case 0x3a: // fallthrough
+		case 0x3c: BASE_IO::handleWriteW(addr+getHWoffset(), value); break;
+		default:
+			panicbug("Blitter tried to write word %d to register %x at %06x", value, addr+getHWoffset(), showPC());
+	}
+}
+
+void BLITTER::handleWriteL(uaecptr addr, uint32 value) {
+	addr -= getHWoffset();
+	switch(addr) {
+		case 0x24: source_addr = value & 0xfffffffe; break;
+		case 0x32: dest_addr = value & 0xfffffffe; break;
+		default: BASE_IO::handleWriteL(addr+getHWoffset(), value); break;
 	}
 
-}
-
-B BLITTER::LOAD_B_ff8a28(void)
-{	return (end_mask_1 >> 8) & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a29(void)
-{	return end_mask_1 & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a2a(void)
-{	return (end_mask_2 >> 8) & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a2b(void)
-{	return end_mask_2 & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a2c(void)
-{	return (end_mask_3 >> 8) & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a2d(void)
-{	return end_mask_3 & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a32(void)
-{	return (dest_addr >> 24);
-}
-
-B BLITTER::LOAD_B_ff8a33(void)
-{	return (dest_addr >> 16) & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a34(void)
-{	return (dest_addr >> 8) & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a35(void)
-{	return (dest_addr) & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a36(void)
-{	return (x_count >> 8) & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a37(void)
-{	return (x_count) & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a38(void)
-{	return (y_count >> 8) & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a39(void)
-{	return (y_count) & 0xff;
-}
-
-B BLITTER::LOAD_B_ff8a3a(void)
-{	return (B) hop;
-}
-
-B BLITTER::LOAD_B_ff8a3b(void)
-{	return (B) op;
 }
 
 B BLITTER::LOAD_B_ff8a3c(void)
@@ -578,81 +521,6 @@ B BLITTER::LOAD_B_ff8a3c(void)
 	return (B) line_num & 0x3f;
 }
 
-B BLITTER::LOAD_B_ff8a3d(void)
-{	
-	return (B) skewreg;
-}
-
-void BLITTER::STORE_B_ff8a32(B v)
-{	dest_addr &= 0x00ffffff;
-	dest_addr |= (v&0xff) << 24;
-}
-
-void BLITTER::STORE_B_ff8a33(B v)
-{	dest_addr &= 0xff00ffff;
-	dest_addr |= (v&0xff) << 16;
-}
-
-void BLITTER::STORE_B_ff8a34(B v)
-{	dest_addr &= 0xffff00ff;
-	dest_addr |= (v&0xff) << 8;
-}
-
-void BLITTER::STORE_B_ff8a35(B v)
-{	dest_addr &= 0xffffff00;
-	dest_addr |= (v & 0xfe);	// ignore LSB
-}
-
-void BLITTER::STORE_B_ff8a28(B v)
-{	end_mask_1 &= 0x00ff;
-	end_mask_1 |= (v&0xff) << 8;
-}
-
-void BLITTER::STORE_B_ff8a29(B v)
-{	end_mask_1 &= 0xff00;
-	end_mask_1 |= (v&0xff);
-}
-
-void BLITTER::STORE_B_ff8a2a(B v)
-{	end_mask_2 &= 0x00ff;
-	end_mask_2 |= (v&0xff) << 8;
-}
-
-void BLITTER::STORE_B_ff8a2b(B v)
-{	end_mask_2 &= 0xff00;
-	end_mask_2 |= (v&0xff);
-}
-
-void BLITTER::STORE_B_ff8a2c(B v)
-{	end_mask_3 &= 0x00ff;
-	end_mask_3 |= (v&0xff) << 8;
-}
-
-void BLITTER::STORE_B_ff8a2d(B v)
-{	end_mask_3 &= 0xff00;
-	end_mask_3 |= (v&0xff);
-}
-
-void BLITTER::STORE_B_ff8a36(B v)
-{	x_count &= 0x00ff;
-	x_count |= (v&0xff) << 8;
-}
-
-void BLITTER::STORE_B_ff8a37(B v)
-{	x_count &= 0xff00;
-	x_count |= (v&0xff);
-}
-
-void BLITTER::STORE_B_ff8a38(B v)
-{	y_count &= 0x00ff;
-	y_count |= (v&0xff) << 8;
-}
-
-void BLITTER::STORE_B_ff8a39(B v)
-{	y_count &= 0xff00;
-	y_count |= (v&0xff);
-}
-
 void BLITTER::STORE_B_ff8a3a(B v)
 {	hop = v & 3;	/* h/ware reg masks out the top 6 bits! */
 }
@@ -662,14 +530,14 @@ void BLITTER::STORE_B_ff8a3b(B v)
 }
 
 void BLITTER::STORE_B_ff8a3c(B v)
-{	
+{	// 765_3210  Line-Number
 	line_num   = (UB) v & 0x3f;
 	if ((y_count !=0) && (v & 0x80)) /* Busy bit set and lines to blit? */
 		blit = true;
 }
 
 void BLITTER::STORE_B_ff8a3d(B v)
-{	
+{	// 76__3210  Skew
 	NFSR = (v & 0x40) != 0;					
 	FXSR = (v & 0x80) != 0;					
 	skewreg = (unsigned char) v & 0xcf;	/* h/ware reg mask %11001111 !*/	
@@ -682,6 +550,15 @@ void BLITTER::Do_Blit(void)
 #if DEBUG
 	SHOWPARAMS;
 #endif
+
+	if (source_addr <= 0x800 || source_addr >= 0x1000000) {
+		panicbug("Blitter Source out of range: $%08lx", source_addr);
+//		return;
+	}
+	if (dest_addr <= 0x800 || dest_addr >= 0xe00000) {
+		panicbug("Blitter Destionation out of range: $%08lx", dest_addr);
+		return;
+	}
 
 	if (source_x_inc < 0) {
 		do_hop_op_N[hop][op]( *this );
