@@ -128,6 +128,13 @@ typedef struct {
   bool filtered;
 } bx_opengl_options_t;
 
+// Ethernet options
+typedef struct {
+  char ip_host[16];
+  char ip_atari[16];
+  char netmask[16];
+} bx_ethernet_options_t;
+
 /*
 typedef struct {
   char      *path;
@@ -156,6 +163,7 @@ typedef struct {
   bx_startup_options_t	startup;
   bx_jit_options_t	jit;
   bx_opengl_options_t	opengl;
+  bx_ethernet_options_t ethernet;
   bool			autoMouseGrab;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;

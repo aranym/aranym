@@ -48,6 +48,12 @@ uint32 FastRAMSize;
 static char config_folder[512] = ARANYMHOME;
 static char config_file[512] = "";	// empty by default - can be set by --config <fname>
 
+#if !defined(XIF_HOST_IP) && !defined(XIF_ATARI_IP) && !defined(XIF_NETMASK)
+# define XIF_HOST_IP	"192.168.0.1"
+# define XIF_ATARI_IP	"192.168.0.2"
+# define XIF_NETMASK	"255.255.255.0"
+#endif
+
 static uint32 FastRAMSizeMB;
 static bool saveConfigFile = false;
 
@@ -55,6 +61,13 @@ bx_options_t bx_options;
 
 static bx_atadevice_options_t *diskc = &bx_options.atadevice[0][0];
 static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
+
+static char *safe_strncpy(char *dest, const char *src, size_t size)
+{
+	strncpy(dest, src, size);
+	dest[size-1] = '\0';
+	return dest;
+}
 
 
 // configuration file 
@@ -275,8 +288,7 @@ void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int 
     disk->heads = heads;
     disk->spt = spt;
     strcpy(disk->path, dev_path);
-	strncpy(disk->model, model_name, sizeof(disk->model));
-	disk->model[sizeof(disk->model)-1] = '\0';
+	safe_strncpy(disk->model, model_name, sizeof(disk->model));
   }
 
   if (cylinders && heads && spt) {
@@ -400,6 +412,27 @@ void presave_arafs() {
 }
 
 /*************************************************************************/
+#define ETH(x) bx_options.ethernet.x
+struct Config_Tag ethernet_conf[]={
+	{ "HostIP", String_Tag, &ETH(ip_host), sizeof(ETH(ip_host))},
+	{ "AtariIP", String_Tag, &ETH(ip_atari), sizeof(ETH(ip_atari))},
+	{ "Netmask", String_Tag, &ETH(netmask), sizeof(ETH(netmask))},
+	{ NULL , Error_Tag, NULL }
+};
+
+void preset_ethernet() {
+  safe_strncpy(ETH(ip_host), XIF_HOST_IP, sizeof(ETH(ip_host)));
+  safe_strncpy(ETH(ip_atari ), XIF_ATARI_IP, sizeof(ETH(ip_atari)));
+  safe_strncpy(ETH(netmask), XIF_NETMASK, sizeof(ETH(netmask)));
+}
+
+void postload_ethernet() {
+}
+
+void presave_ethernet() {
+}
+
+/*************************************************************************/
 void usage (int status) {
   printf ("%s\n", VERSION_STRING);
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
@@ -441,6 +474,7 @@ void preset_cfg() {
   preset_startup();
   preset_jit();
   preset_opengl();
+  preset_ethernet();
 }
 
 void postload_cfg() {
@@ -453,6 +487,7 @@ void postload_cfg() {
   postload_startup();
   postload_jit();
   postload_opengl();
+  postload_ethernet();
 }
 
 void presave_cfg() {
@@ -465,6 +500,7 @@ void presave_cfg() {
   presave_startup();
   presave_jit();
   presave_opengl();
+  presave_ethernet();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -474,8 +510,7 @@ void early_cmdline_check(int argc, char **argv) {
 
 		else if ((strcmp(argv[c], "-c") == 0) || (strcmp(argv[c], "--config") == 0)) {
 			if ((c + 1) < argc) {
-				strncpy(config_file, argv[c + 1], sizeof(config_file)-1);
-				config_file[sizeof(config_file)-1] = '\0';
+				safe_strncpy(config_file, argv[c + 1], sizeof(config_file));
 			} else {
 				fprintf(stderr, "config switch requires one parameter\n");
 				exit(EXIT_FAILURE);
@@ -562,8 +597,7 @@ int process_cmdline(int argc, char **argv)
 			case 'a':
 				if ((strlen(optarg)-1) > sizeof(bx_options.floppy.path))
 					fprintf(stderr, "Floppy image filename longer that %d chars.\n", sizeof(bx_options.floppy.path));
-				strncpy(bx_options.floppy.path, optarg, sizeof(bx_options.floppy.path));
-				bx_options.floppy.path[sizeof(bx_options.floppy.path)-1] = '\0';
+				safe_strncpy(bx_options.floppy.path, optarg, sizeof(bx_options.floppy.path));
 				break;
 
 			case 'r':
@@ -582,7 +616,7 @@ int process_cmdline(int argc, char **argv)
 					if ( colonPos == NULL )
 						break;
 					colonPos++;
-					strncpy( bx_options.aranymfs[ driveNo ].rootPath, colonPos, sizeof(bx_options.aranymfs[ driveNo ].rootPath) - 1 );
+					safe_strncpy( bx_options.aranymfs[ driveNo ].rootPath, colonPos, sizeof(bx_options.aranymfs[ driveNo ].rootPath) );
 				}
 				break;
 
@@ -680,6 +714,7 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, tos_conf, "[TOS]", true);
 	process_config(f, rcfile, ide_swap ? diskd_configs : diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, ide_swap ? diskc_configs : diskd_configs, "[IDE1]", true);
+
 	process_config(f, rcfile, disk0_configs, "[DISK0]", true);
 	process_config(f, rcfile, disk1_configs, "[DISK1]", true);
 	process_config(f, rcfile, disk2_configs, "[DISK2]", true);
@@ -688,8 +723,10 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, disk5_configs, "[DISK5]", true);
 	process_config(f, rcfile, disk6_configs, "[DISK6]", true);
 	process_config(f, rcfile, disk7_configs, "[DISK7]", true);
+
 	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
+	process_config(f, rcfile, ethernet_conf, "[ETH0]", true);
 }
 
 int saveSettings(const char *fs)
@@ -706,6 +743,7 @@ int saveSettings(const char *fs)
 	update_config(fs, tos_conf, "[TOS]");
 	update_config(fs, ide_swap ? diskd_configs : diskc_configs, "[IDE0]");
 	update_config(fs, ide_swap ? diskc_configs : diskd_configs, "[IDE1]");
+/*
 	update_config(fs, disk0_configs, "[DISK0]");
 	update_config(fs, disk1_configs, "[DISK1]");
 	update_config(fs, disk2_configs, "[DISK2]");
@@ -714,8 +752,10 @@ int saveSettings(const char *fs)
 	update_config(fs, disk5_configs, "[DISK5]");
 	update_config(fs, disk6_configs, "[DISK6]");
 	update_config(fs, disk7_configs, "[DISK7]");
+*/
 	update_config(fs, arafs_conf, "[ARANYMFS]");
 	update_config(fs, opengl_conf, "[OPENGL]");
+	update_config(fs, ethernet_conf, "[ETH0]");
 
 	return 0;
 }
