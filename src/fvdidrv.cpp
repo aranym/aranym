@@ -20,7 +20,7 @@
 extern HostScreen hostScreen;
 
 extern VIDEL videl;
-extern bool updateScreen;
+// extern bool updateScreen;
 
 
 void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
@@ -76,7 +76,7 @@ uint32 FVDIDriver::write_pixel(void *vwk, MFDB *dst, uint32 x, uint32 y, uint32 
 	if ((uint32)vwk & 1)
 		return 0;
 
-	updateScreen = false;
+	// updateScreen = false;
 
 	if (!dst || !dst->address) {
 		//	Workstation *wk;
@@ -137,5 +137,8 @@ uint32 FVDIDriver::read_pixel(void *vwk, MFDB *src, uint32 x, uint32 y)
 
 /*
  * $Log$
+ * Revision 1.1  2001/06/18 15:48:42  standa
+ * fVDI driver object.
+ *
  *
  */
