@@ -1439,6 +1439,27 @@ int32 ExtFs::Dsetpath(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *
 }
 
 
+/*
+ * Check if the path is valid (if folders of the filename exist)
+ * return true if stat(folders) was OK, else otherwise
+ */
+bool ExtFs::isPathValid(const char *fileName)
+{
+	char *path = strdup(fileName);
+	char *end = strrchr(path, '/');
+	if (end != NULL)
+		*end = '\0';
+	D(bug("Checking folder validity of path '%s'", path));
+	if (*path) {
+		struct stat statBuf;
+		if (int staterr = stat(path, &statBuf) < 0) {
+			D(bug("stat(%s) returns %d, errno=%d", path, staterr, errno));
+			return false;	// path invalid
+		}
+	}
+	return true;
+}
+
 int32 ExtFs::Fcreate(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *pn, int16 attr)
 {
 	char fpathName[MAXPATHNAMELEN];
@@ -1456,8 +1477,12 @@ int32 ExtFs::Fcreate(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *p
 #else
 
 	int fd = creat( pathName, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH );
-	if (fd < 0)
-		return unix2toserrno(errno,TOS_EFILNF);
+	if (fd < 0) {
+		if (! isPathValid( pathName ))
+			return TOS_EPTHNF;
+		else
+			return unix2toserrno(errno,TOS_EFILNF);
+	}
 
 	fp->flags   = flags2st(O_CREAT|O_WRONLY|O_TRUNC);
 	fp->offset = 0;
@@ -1510,8 +1535,12 @@ int32 ExtFs::Fopen_( const char* pathName, int flags, int mode_, ExtFile *fp )
 					| O_BINARY
 #endif
 					, mode_ );
-	if (fd < 0)
-		return unix2toserrno(errno,TOS_EFILNF);
+	if (fd < 0) {
+		if (! isPathValid( pathName ))
+			return TOS_EPTHNF;
+		else
+			return unix2toserrno(errno,TOS_EFILNF);
+	}
 
 	fp->flags   = flags2st(flags);
 	fp->offset = 0;
@@ -2554,6 +2583,10 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.38  2002/04/04 19:13:51  standa
+ * PureC patch for MetaDOS usage.
+ * Upper case filenames to lower case conversion for new files on halfsensitive fs.
+ *
  * Revision 1.37  2002/04/04 09:00:19  standa
  * The Fopen( dir ) fix.
  *

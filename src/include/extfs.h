@@ -94,6 +94,8 @@ class ExtFs {
 
     ExtDrive drives[ 'Z'-'A'+1 ];
 
+	bool isPathValid(const char *fileName);
+
   public:
 	ExtFs()
 	{
@@ -271,6 +273,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.13  2002/03/07 08:06:08  standa
+ * Addition to the last commit of extfs.cpp
+ *
  * Revision 1.12  2002/01/31 23:51:22  standa
  * The aranym.xfs for MiNT. Preliminary version.
  *
