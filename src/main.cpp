@@ -474,6 +474,16 @@ bool InitROM(void) {
 
 bool InitAll(void)
 {
+	if (ROMBaseHost == NULL) {
+		if ((RAMBaseHost = (uint8 *)malloc(RAMSize + ROMSize + FastRAMSize)) == NULL) {
+			ErrorAlert("Not enough free memory.\n");
+			return false;
+		}
+		MEMBaseDiff = (uintptr)RAMBaseHost;
+		ROMBaseHost = (uint8 *)(RAMBaseHost + ROMBase);
+		FastRAMBaseHost = (uint8 *)(RAMBaseHost + FastRAMBase);
+	}
+
 	if (! InitROM())
 		return false;
 

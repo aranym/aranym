@@ -69,7 +69,7 @@ static int insn_references_reg (struct line *l, char *reg)
 
 static void do_function(struct func *f)
 {
-    int v;
+// MJ    int v;
     int pops_at_end = 0;
     struct line *l, *l1, *fl, *l2;
     char *s, *s2;

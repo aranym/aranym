@@ -89,8 +89,6 @@ int main(int argc, char **argv)
 	if (start_debug) ndebug::init();
 #endif
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
-
 	// Initialize VM system
 	vm_init();
 
@@ -98,7 +96,7 @@ int main(int argc, char **argv)
 	// Flag: RAM and ROM are contigously allocated from address 0
 	bool memory_mapped_from_zero = false;
 	
-	// Under Solaris/SPARC and NetBSD/m68k, Basilisk II is known to crash
+	// Prabable all OSes have problems
 	// when trying to map a too big chunk of memory starting at address 0
 	
 	// Try to allocate all memory from 0x0000, if it is not known to crash
@@ -127,16 +125,6 @@ int main(int argc, char **argv)
 #if DIRECT_ADDRESSING
 	// RAMBase shall always be zero
 	MEMBaseDiff = (uintptr)RAMBaseHost;
-#endif
-
-#else
-	if ((RAMBaseHost = (uint8 *)malloc(RAMSize + ROMSize + FastRAMSize)) == NULL) {
-		ErrorAlert("Not enough free memory.\n");
-		QuitEmulator();
-	}
-	MEMBaseDiff = (uintptr)RAMBaseHost;
-	ROMBaseHost = (uint8 *)(RAMBaseHost + ROMBase);
-	FastRAMBaseHost = (uint8 *)(RAMBaseHost + FastRAMBase);
 #endif
 
 	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
@@ -202,6 +190,10 @@ void QuitEmulator(void)
 
 /*
  * $Log$
+ * Revision 1.48  2001/10/02 12:13:50  joy
+ * ROM file reading moved to main.cpp
+ * SIGSEGV handler not installed if you start aranym with internal debugger enabled. This is to allow gdb to catch any problem. So under gdb start aranym with -D.
+ *
  * Revision 1.47  2001/09/25 10:00:06  milan
  * cleaning of MM, static version of ARAnyM
  *

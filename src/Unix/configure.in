@@ -599,6 +599,7 @@ echo Running m68k code natively ....... : $WANT_NATIVE_M68K
 echo Floating-Point emulation core .... : $FPE_CORE_STR
 echo Assembly optimizations ........... : $ASM_OPTIMIZATIONS
 echo Addressing mode .................. : $ADDRESSING_MODE
+echo Full MMU support ................. : $WANT_MMU
 echo Debugger ......................... : $WHICH_DEBUG
 echo Aranymrc confgui ................. : $WANT_TVCONFGUI
 
