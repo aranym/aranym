@@ -16,6 +16,13 @@
 
 - ndebug is now default debugger
 
+- support for gmake
+
+- --config FILE command line option added
+
+- the command line options are scanned for version/help/config before
+  parsing of a configuration file
+
 
 2001/10/26 - milan
 - support for instruction history now also in ndebug

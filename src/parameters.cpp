@@ -26,12 +26,14 @@ static struct option const long_options[] =
   {"disk", required_argument, 0, 'd'},
   {"help", no_argument, 0, 'h'},
   {"version", no_argument, 0, 'V'},
+  {"config", required_argument, 0, 'c'},
   {NULL, 0, NULL, 0}
 };
 
 char *program_name;
 char rom_path[512] = DATADIR "/ROM";
-char emutos_path[512] = DATADIR "/EmuTOS";
+char emutos_path[512] = "";
+char *config_file = NULL;
 
 uint8 start_debug = 0;			// Start debugger
 bool fullscreen = false;			// Boot in Fullscreen
@@ -74,7 +76,7 @@ BX_DISK_CONFIG(diskd);
 static void decode_ini_file(FILE *);
 
 void usage (int status) {
-  printf ("ARAnyM\n");
+  printf ("%s\n", VERSION_STRING);
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
   printf ("\
 Options:
@@ -85,11 +87,12 @@ Options:
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
   -d, --disk CHAR:ROOTPATH   METADOS filesystem assignment e.g. d:/atari/d_drive\n\
+  -c, --config FILE          configuration file\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
 #ifdef DEBUGGER
-  printf("-D, --debug                start debugger (if compiled in)\n");
+  printf("  -D, --debug                start debugger (if compiled in)\n");
 #endif
   exit (status);
 }
@@ -164,12 +167,33 @@ void update_cdrom1() {
 }
 
 int decode_switches (FILE *f, int argc, char **argv) {
+
+#ifndef CONFGUI
+	int c = 0;
+	
+	for (c = 0; c < argc; c++) {
+		if ((strcmp(argv[c], "-c") == 0) || (strcmp(argv[c], "--config") == 0)) {
+			if ((c + 1) < argc) {
+				config_file = argv[c + 1];
+			} else {
+				fprintf(stderr, "config switch requires one parameter\n");
+				exit(EXIT_FAILURE);
+			}
+		} else if ((strcmp(argv[c], "-h") == 0) || (strcmp(argv[c], "--help") == 0)) {
+			usage(0);
+			exit(0);
+		} else if ((strcmp(argv[c], "-V") == 0) || (strcmp(argv[c], "--version") == 0)) {
+			printf ("%s\n", VERSION_STRING);
+			exit (0);
+		}
+	}
+#endif /* CONFGUI */
+	
 	preset_cfg();
 	decode_ini_file(f);
 	update_cdrom1();
 
 #ifndef CONFGUI
-	int c;
 	while ((c = getopt_long (argc, argv,
 							 "a:" /* floppy image file */
 #ifdef DEBUGGER
@@ -181,6 +205,7 @@ int decode_switches (FILE *f, int argc, char **argv) {
 							 "r:" /* resolution */
 							 "m:" /* attached monitor */
 							 "d:" /* filesystem assignment */
+							 "c:" /* small hack*/
 							 "h"  /* help */
 							 "V"  /* version */,
 							 long_options, (int *) 0)) != EOF) {
@@ -198,6 +223,9 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				start_debug = 1;
 				break;
 #endif
+
+			case 'c':
+				break;
 	
 			case 'f':
 				fullscreen = true;
@@ -287,15 +315,20 @@ static void decode_ini_file(FILE *f) {
 	char *home;
 	char *rcfile;
 
-	// compose ini file name
-	if ((home = getenv("HOME")) == NULL)
-		home = "";
-	if ((rcfile = (char *)alloca((strlen(home) + strlen(ARANYMRC) + 1) * sizeof(char))) == NULL) {
-	  fprintf(stderr, "Not enough memory\n");
-	  exit(-1);
+	if (config_file == NULL) {
+		// compose ini file name
+		if ((home = getenv("HOME")) == NULL)
+			home = "";
+		if ((rcfile = (char *)alloca((strlen(home) + strlen(ARANYMRC) + 1) * sizeof(char))) == NULL) {
+			fprintf(stderr, "Not enough memory\n");
+			exit(-1);
+		}
+		strcpy(rcfile, home);
+		strcat(rcfile, ARANYMRC);
+	} else {
+		rcfile = config_file;
 	}
-	strcpy(rcfile, home);
-	strcat(rcfile, ARANYMRC);
+
 	fprintf(f, "Using config file: '%s'\n", rcfile);
 
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
