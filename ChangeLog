@@ -1,3 +1,9 @@
+2001/12/20 - joy
+- cleaned up newcpu.cpp do_specialties()
+- STOP instruction handling really works and gives CPU time slices back
+  to host OS!
+
+
 2001/12/19 - joy
 - check_ram_boundary() cleaner now - no default value for 'write' parameter
   and the 'size' parameter contains the natural value - 1 for byte access,
