@@ -22,8 +22,9 @@
 #define VERSION_H
 
 const int VERSION_MAJOR = 0;
-const int VERSION_MINOR = 8;
+const int VERSION_MINOR = 0;
+const int VERSION_SUBMINOR = 1;
 
-#define VERSION_STRING "Basilisk II V0.8"
+#define VERSION_STRING "ARAnyM pre-alpha"
 
 #endif
