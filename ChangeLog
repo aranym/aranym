@@ -1,3 +1,10 @@
+2003/09/10 - joy (comiting patches submitted by Guy Harrison, thanks!)
+
+- Makefile.in: fixes possible conflicts between aranym headers and system ones
+
+- autogen.sh: shouldn't 'make depend' unless it configures...
+
+
 2003/09/05 - joy
 - blitter.cpp, mfp.cpp, rtc.cpp: rid of compiler warning "comparing unsigned
   variable with signed value"

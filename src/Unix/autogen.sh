@@ -57,9 +57,12 @@ aclocalinclude="$ACLOCAL_FLAGS"; \
 if [ x"$NO_CONFIGURE" = "x" ]; then
     echo " + Running 'configure $@':"
     ./configure "$@"
+       echo
+       echo $_echo_n "Creating dependencies... $_echo_c"
+       $MAKE depend >/dev/null
+else
+       echo "Don't forget to 'make depend' after configure..."
+       echo "...or gnomes will steal your hat!"
 fi
-echo
-echo $_echo_n "Creating dependencies... $_echo_c"
-$MAKE depend >/dev/null
 
 echo all done
