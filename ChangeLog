@@ -1,3 +1,5 @@
+* tagged as ARANYM_0_8_7_BETA
+
 2004/02/15 - joy
 - natfeat/hostfs.cpp: restore 0.8.5's xfs_init to fix the mount root bug.
 
