@@ -141,6 +141,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 								   (const char*)pn,                    // pathname
 								   (int16) get_word( r->a[7] + 10, true ) ); // mode
 				flushFILE( &extFile, r->a[5] );
+				D(fprintf(stderr, "MetaDOS: %s: %d\n", "/Fcreate", (int32)r->d[0]));
 			}
 			break;
 		case 61:	// Fopen:
@@ -504,6 +505,9 @@ void ExtFs::flushFILE( ExtFile *extFile, uint32 filep )
 uint32 ExtFs::unix2toserrno(int unixerrno,int defaulttoserrno)
 {
 	int retval = defaulttoserrno;
+
+	D(fprintf(stderr, "MetaDOS: unix2toserrno (%d,%d)\n", unixerrno, defaulttoserrno));
+
 	switch(unixerrno) {
 		case EACCES: 
 		case EPERM:
@@ -1437,6 +1441,11 @@ bool ExtFs::filterFiles( ExtDta *dta, char *fpathName, char *mask, struct dirent
 
 	//FIXME  if ( stat(fpathName, &statBuf) )
 	//	return false;
+
+	if ( dirEntry->d_name[0] == '.' &&
+		 ( dirEntry->d_name[1] == '\0' ||
+		   dirEntry->d_name[1] == '.' && dirEntry->d_name[2] == '\0' ) )
+		return false;
 
 	// match from STonX
 	if ( strcmp(mask,"*.*") == 0 )

@@ -21,6 +21,7 @@ extern fs_fread (), fs_fwrite (), fs_fattrib ();
 extern fs_dcreate (), fs_ddelete (), fs_frename ();
 extern fs_fcreate (), fs_fseek (), fs_fcntl ();
 extern fs_dpathconf (), fs_dopendir (), fs_dreaddir ();
+extern fs_dgetpath (), fs_dsetpath ();
 extern fs_dxreaddir (), fs_dclosedir (), fs_drewinddir ();
 extern fs_fxattr (), fs_dreadlabel (), fs_fdelete ();
 
@@ -631,11 +632,11 @@ long FunctionTable[] =
 	-1L, -1L, -1L, -1L, -1L,
 	-1L, -1L, -1L, -1L, -1L, /* 49 */
 	-1L, -1L, -1L, -1L, (long) fs_dfree,
-	-1L, -1L, (long)fs_dcreate, (long)fs_ddelete, -1L, /* 59 */
+	-1L, -1L, (long)fs_dcreate, (long)fs_ddelete, (long)fs_dsetpath, /* 59 */
 	(long) fs_fcreate, (long) fs_fopen, (long) fs_fclose,
 	(long) fs_fread, (long) fs_fwrite,
 	(long) fs_fdelete, (long) fs_fseek, (long) fs_fattrib, -1L, -1L, /* 69 */
-	-1L, -1L, -1L, -1L, -1L,
+	-1L, (long)fs_dgetpath, -1L, -1L, -1L,
 	-1L, -1L, -1L, (long) fs_fsfirst, (long) fs_fsnext,
 	-1L, -1L, -1L, -1L, -1L,
 	-1L, (long)fs_frename, (long) fs_fdatime, -1L, -1L,

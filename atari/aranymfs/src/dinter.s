@@ -13,6 +13,7 @@
 	.globl	fs_fclose, fs_fdatime, fs_fwrite, fs_fread
 	.globl	fs_fattrib, fs_fcreate, fs_fseek, fs_fcntl
 	.globl  fs_dcreate, fs_ddelete, fs_frename
+	.globl  fs_dgetpath, fs_dsetpath
 	.globl	fs_dpathconf, fs_fxattr, fs_dopendir, fs_dreaddir
 	.globl	fs_dclosedir, fs_dxreaddir, fs_drewinddir
 	.globl	fs_dreadlabel, fs_fdelete
@@ -56,14 +57,13 @@ fs_ddelete:
 	METADOS_DISPATCH 58
 	rts
 
-fs_fsfirst:
-	METADOS_DISPATCH 78
-;	bsr		SearchFirst
+fs_dsetpath:
+	METADOS_DISPATCH 59
 	rts
 
-fs_fsnext:
-	METADOS_DISPATCH 79
-;	bsr		SearchNext
+fs_fcreate:
+	METADOS_DISPATCH 60
+;	bsr		CreateFile
 	rts
 
 fs_fopen:
@@ -76,6 +76,45 @@ fs_fclose:
 ;	bsr		CloseFile
 	rts
 
+fs_fread:
+	METADOS_DISPATCH 63
+;	bsr		ReadFile
+	rts
+
+fs_fwrite:
+	METADOS_DISPATCH 64
+;	bsr		WriteFile
+	rts
+
+fs_fdelete:
+	METADOS_DISPATCH 65
+;	bsr		FDelete
+	rts
+
+fs_fseek:
+	METADOS_DISPATCH 66
+;	bsr		SeekFile
+	rts
+
+fs_fattrib:
+	METADOS_DISPATCH 67
+;	bsr		FileAttributes
+	rts
+
+fs_dgetpath:
+	METADOS_DISPATCH 71
+	rts
+
+fs_fsfirst:
+	METADOS_DISPATCH 78
+;	bsr		SearchFirst
+	rts
+
+fs_fsnext:
+	METADOS_DISPATCH 79
+;	bsr		SearchNext
+	rts
+
 fs_frename:
 	METADOS_DISPATCH 86
 	rts
@@ -85,49 +124,14 @@ fs_fdatime:
 ;	bsr		DateAndTime
 	rts
 
-fs_fwrite:
-	METADOS_DISPATCH 64
-;	bsr		WriteFile
-	rts
-
-fs_fread:
-	METADOS_DISPATCH 63
-;	bsr		ReadFile
-	rts
-
-fs_fattrib:
-	METADOS_DISPATCH 67
-;	bsr		FileAttributes
-	rts
-
-fs_fcreate:
-	METADOS_DISPATCH 60
-;	bsr		CreateFile
-	rts
-
-fs_fseek:
-	METADOS_DISPATCH 66
-;	bsr		SeekFile
-	rts
-
 fs_fcntl:
 	METADOS_DISPATCH 260
 ;	bsr		FCntl
 	rts
 
-fs_fdelete:
-	METADOS_DISPATCH 65
-;	bsr		FDelete
-	rts
-
 fs_dpathconf:
 	METADOS_DISPATCH 292
 ;	bsr		DPathConf
-	rts
-
-fs_fxattr:
-	METADOS_DISPATCH 300
-;	bsr		FXAttr
 	rts
 
 fs_dopendir:
@@ -140,9 +144,9 @@ fs_dreaddir:
 ;	bsr		DReadDir
 	rts
 
-fs_dxreaddir:
-	METADOS_DISPATCH 322
-;	bsr		DXReadDir
+fs_drewinddir:
+	METADOS_DISPATCH 298
+;	bsr		DRewindDir
 	rts
 
 fs_dclosedir:
@@ -150,9 +154,14 @@ fs_dclosedir:
 ;	bsr		DCloseDir
 	rts
 
-fs_drewinddir:
-	METADOS_DISPATCH 298
-;	bsr		DRewindDir
+fs_fxattr:
+	METADOS_DISPATCH 300
+;	bsr		FXAttr
+	rts
+
+fs_dxreaddir:
+	METADOS_DISPATCH 322
+;	bsr		DXReadDir
 	rts
 
 fs_dreadlabel:
