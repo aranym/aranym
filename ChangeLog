@@ -1,3 +1,7 @@
+2004/05/14 - patrice
+- Nfpci.prg now finished. Time to implement it on the host side now.
+
+
 2004/05/13 - patrice
 - Added resident program NFPCI.PRG, does not work ATM: it thinks there is
   already a PCIBIOS driver installed.
