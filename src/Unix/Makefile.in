@@ -51,6 +51,7 @@ SRCS = ../main.cpp \
 	../fdc.cpp \
 	../fvdidrv.cpp \
 	../hardware.cpp \
+	../gfxprimitives.cpp \
 	../hostscreen.cpp \
 	../ide.cpp \
 	../mfp.cpp \
