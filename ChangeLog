@@ -1,3 +1,8 @@
+2005/02/14 - Petr
+- main.cpp: display the right key for invoking SETUP GUI in the window
+  caption bar.
+
+
 2005/02/13 - Petr
 - gui-sdl/sdlgui: getEvent() function fetches the keyboard and mouse events
   (now also UP events) from the USEREVENT queue and converts them to normal
