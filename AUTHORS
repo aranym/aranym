@@ -103,5 +103,6 @@ Frank Naumann
 
 Johan Klockars
 - fVDI author, helps with ARAnyM fVDI driver
+- fVDI driver polyline implementation
 - PAGE_MASK addressing speedup
 - info about ISO C++ norm (for MJ)
