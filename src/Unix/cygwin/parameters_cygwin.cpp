@@ -45,7 +45,7 @@ char *getConfFolder(char *buffer, unsigned int bufsize)
 		char *home = getenv("HOME");
 		if (IS_CYGWIN_FAKE_HOME(home))
 			home = getenv("USERPROFILE");	// WinNT/2K/XP use USERPROFILE
-		if (home == NULL || strcmp(home, "/") == 0)
+		if (home == NULL)
 			home = getenv("WINDIR");		// all Windows define WINDIR
 		if (home == NULL)
 			home = "";	// last resort - current folder
