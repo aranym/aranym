@@ -499,23 +499,37 @@ bool InitTOSROM(void)
 
 	// check if this is the correct 68040 aware TOS ROM version
 	D(bug("Checking ROM version.."));
-	unsigned char TOS68040[16] = {0xd6,0x4b,0x00,0x16,0x01,0xf6,0xc6,0xd7,0x47,0x51,0xde,0x63,0xbb,0x35,0xed,0xe3};
+	unsigned char TOS68040[16] = {0x6b,0x9f,0x43,0x5e,0xdc,0x46,0xdc,0x26,0x6f,0x2c,0x87,0xc2,0x6c,0x63,0xf9,0xd8};
 	unsigned char TOS404[16] = {0xe5,0xea,0x0f,0x21,0x6f,0xb4,0x46,0xf1,0xc4,0xa4,0xf4,0x76,0xbc,0x5f,0x03,0xd4};
 	MD5 md5;
 	if (! md5.compareSum(ROMBaseHost, RealROMSize, TOS68040)) {
 		// this is not our ROM
 		// check if it's at least the original TOS 4.04
-		if (md5.compareSum(ROMBaseHost, RealROMSize, TOS404)) {
-			// patch it for 68040 compatibility
-			D(bug("Patching ROM for 68040 compatibility.."));
-			int ptr, i=0;
-			while((ptr=tosdiff[i].pointer) >= 0)
-				ROMBaseHost[ptr] += tosdiff[i++].difference;
-		}
-		else {
+		if (! md5.compareSum(ROMBaseHost, RealROMSize, TOS404)) {
 			ErrorAlert("Wrong TOS version. You need the original TOS 4.04\n");
 			return false;
 		}
+
+		// patch it for 68040 compatibility
+		D(bug("Patching ROM for 68040 compatibility.."));
+		int ptr, i=0;
+		while((ptr=tosdiff[i].pointer) >= 0)
+			ROMBaseHost[ptr] += tosdiff[i++].difference;
+
+		// check again if it's true TOS68040
+		if (! md5.compareSum(ROMBaseHost, RealROMSize, TOS68040)) {
+			ErrorAlert("romdiff.cpp is wrong. Weird but fatal.\n");
+			return false;
+		}
+
+#if 0
+		// optional saving of patched TOS ROM
+		FILE *f = fopen("TOS68040", "wb");
+		if (f != NULL) {
+			fwrite(ROMBaseHost, RealROMSize, 1, f);
+			fclose(f);
+		}
+#endif
 	}
 
 	// patch cookies
@@ -672,6 +686,12 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.35  2001/11/01 16:03:54  joy
+ * mouse behavior fixed:
+ * 1) you can release mouse grab by pressing Alt+Ctrl+Esc (VMware compatible)
+ * 2) you can grab mouse by click the left mouse button (VMware compatible)
+ * 3) if the Atari mouse driver is active, you can release mouse by moving the mouse off the window and by moving back you grab it again. This can be disabled by AutoGrabMouse=false.
+ *
  * Revision 1.34  2001/10/29 20:00:05  standa
  * The button 4 and 5 mapped to KeyUp and KeyDown.
  *
