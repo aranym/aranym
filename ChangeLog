@@ -1,3 +1,9 @@
+2004/08/27 - joy
+- lilo.cpp: thanks to David Muse analysis and suggestions I corrected
+  the LiloCheckKernel() simply by copy&pasting it from linux bootstrap
+  properly :-)
+
+
 2004/08/19 - milan
 - Unix/cygwin/sigsegv_cygwin.cpp, Unix/linux/sigsegv_linux.cpp:
       cleaning, merging
