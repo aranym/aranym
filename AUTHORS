@@ -1,9 +1,0 @@
-ARAnyM source code consists of several parts. Some were taken from other
-projects (Basilisk II, Bochs, STonX) and the core, glue and additional
-features were written by the following ARAnyM developers:
-
-Ctirad Fertr <phanatic@volny.cz>
-Milan Jurik <M.Jurik@sh.cvut.cz>
-Stanislav Opichal <opichals@seznam.cz>
-Petr Stehlik <pstehlik@sophics.cz>
-
