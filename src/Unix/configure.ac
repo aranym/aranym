@@ -251,7 +251,7 @@ if [[ "x$HAVE_M68K" = "xyes" -a "x$CAN_NATIVE_M68K" = "xyes" ]]; then
   WANT_NATIVE_M68K=yes
 fi
 
-DIRSEPARATOR="/"
+DIRSEPARATOR='\"\/\"'
 
 case "$target_os" in
   linux*)
@@ -261,7 +261,7 @@ case "$target_os" in
     DEFINES="$DEFINES -fpermissive"
     LIBS="$LIBS -lSDL -lSDLmain -liberty"
     EXTRASYSSRCS=parameters_unix.cpp
-    DIRSEPARATOR="\\"
+    DIRSEPARATOR='\"\\\"'
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
@@ -293,7 +293,7 @@ esac
 
 SYSSRCS="$SYSSRCS $EXTRASYSSRCS"
 
-DEFINES="$DEFINES -DDIRSEPARATOR=\\\"$DIRSEPARATOR\\\""
+DEFINES="$DEFINES -DDIRSEPARATOR=$DIRSEPARATOR"
 
 dnl Define a macro that translates a yesno-variable into a C macro definition
 dnl to be put into the config.h file
