@@ -1,7 +1,16 @@
+2001/10/25 - joy
+- when the aranym catches segmentation fault it releases mouse and keyboard
+  and shows last 20 instructions prior the segfaulting instruction (only
+  if compiled with --enable-fullhistory).
+- InitROM() asks for 512 kB long file (on the net there are just 256 kB ROM
+  images).
+
+
 2001/10/24 - STanda
 - fVDI: Essential bugfixes added. Now the driver works properly except for the
   bugs in the fVDI engine. These are discussed with the fVDI author.
-  The lines with a negative y coordinate are drewn properly now.
+  The lines with a negative y coordinate are drawn properly now.
+
 
 2001/10/23 - STanda
 - Screenshot added to the website.
@@ -10,7 +19,7 @@
   Shouldn't crash on higher resolutions than 640x400.
   Put pixel fixed to take the pattern in mind.
   The lineClipping fixed. The lines that starts and ends out of the screen
-  are not drewn due to the fVDI.PRG beta engine.. the beta crashes sometimes too)
+  are not drawn due to the fVDI.PRG beta engine.. the beta crashes sometimes too)
   The v0.95 works quite well, but with display bugs like no pictures in
   ST-Guide, wrong colors of Thing's keyboard cursor.
 - the hardcoded screen resolution changed to the hostScreens one

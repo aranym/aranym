@@ -63,9 +63,17 @@ static struct sigaction sigint_sa;
 static void sigint_handler(...);
 #endif
 
+extern void showBackTrace(int, bool=true);
+
 void segmentationfault(int x)
 {
+	grabMouse(false);
 	printf("Gotcha! Illegal memory access. Atari PC = $%x\n", (unsigned)showPC());
+#ifdef FULL_HISTORY
+	showBackTrace(20, false);
+#else
+	printf("If the Full History was enabled you would see the last 20 instructions here.\n");
+#endif
 	exit(0);
 }
 
@@ -143,7 +151,7 @@ int main(int argc, char **argv)
 	D(bug("Initialization complete"));
 
 	// register segmentation fault handler only if you don't start with debugging enabled
-	if (! start_debug)
+	// if (! start_debug)
 		signal(SIGSEGV, segmentationfault);
 
 #ifdef ENABLE_MON
@@ -216,6 +224,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.51  2001/10/16 19:38:44  milan
+ * Integration of BasiliskII' cxmon, FastRAM in aranymrc etc.
+ *
  * Revision 1.50  2001/10/09 19:25:19  milan
  * MemAlloc's rewriting
  *
