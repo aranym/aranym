@@ -6,11 +6,10 @@
 #define DEBUG 1
 #include "debug.h"
 
-#ifdef __CYGWIN__
-#define ARANYMRC	"/aranymrc"
-#else
-#define ARANYMRC	"/.aranymrc"
-#endif
+#define ARANYMHOME		"/aranym"
+#define ARANYMCONFIG	ARANYMHOME"/config"
+#define ARANYMNVRAM		ARANYMHOME"/nvram"
+#define ARANYMKEYMAP	ARANYMHOME"/keymap"
 
 static struct option const long_options[] =
 {
@@ -40,32 +39,119 @@ char rom_path[512] = DATADIR "/ROM";
 char emutos_path[512] = "";
 char *config_file = NULL;
 
-uint8 start_debug = 0;			// Start debugger
-int8 monitor = -1;				// VGA
 static uint32 FastRAMSizeMB;
 uint32 FastRAMSize;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
-bool grabMouseAllowed = true;
 
 static bool saveConfigFile = false;
 
 bx_options_t bx_options;
 
 // configuration file 
+/*************************************************************************/
 struct Config_Tag global_conf[]={
-	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
-	{ "EmuTOS", String_Tag, emutos_path, sizeof(emutos_path)},
 	{ "FastRAM", Int_Tag, &FastRAMSizeMB},
 	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path)},
-	{ "Cookie_MCH", HexLong_Tag, &bx_options.cookies._mch},
+	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
+	{ "EmuTOS", String_Tag, emutos_path, sizeof(emutos_path)},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab},
-	{ "FullScreen", Bool_Tag, &bx_options.video.fullscreen},
+	{ NULL , Error_Tag, NULL }
+};
+
+void preset_global() {
+  bx_options.autoMouseGrab = true;
+#ifdef FixedSizeFastRAM
+  FastRAMSize = FixedSizeFastRAM * 1024 * 1024;
+#else
+  FastRAMSize = 0;
+#endif
+}
+
+void postload_global() {
+#ifndef FixedSizeFastRAM
+	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
+#endif
+}
+
+void presave_global() {
+	FastRAMSizeMB = FastRAMSize / 1024 / 1024;
+}
+
+/*************************************************************************/
+struct Config_Tag startup_conf[]={
+	{ "GrabMouse", Bool_Tag, &bx_options.startup.grabMouseAllowed},
 #ifdef DEBUGGER
-	{ "DebugOnStart", Bool_Tag, &start_debug},
+	{ "Debugger", Bool_Tag, &bx_options.startup.debugger},
 #endif
 	{ NULL , Error_Tag, NULL }
 };
 
+void preset_startup() {
+  bx_options.startup.debugger = false;
+  bx_options.startup.grabMouseAllowed = true;
+}
+
+void postload_startup() {
+}
+
+void presave_startup() {
+}
+
+/*************************************************************************/
+struct Config_Tag tos_conf[]={
+	{ "Cookie_MCH", HexLong_Tag, &bx_options.tos.cookie_mch},
+	{ "Console", Bool_Tag, &bx_options.tos.console_redirect},
+	{ NULL , Error_Tag, NULL }
+};
+
+void preset_tos() {
+  bx_options.tos.console_redirect = false;
+  bx_options.tos.cookie_mch = 0x00030000; // Falcon030
+}
+
+void postload_tos() {
+}
+
+void presave_tos() {
+}
+
+/*************************************************************************/
+struct Config_Tag video_conf[]={
+	{ "FullScreen", Bool_Tag, &bx_options.video.fullscreen},
+	{ "BootColorDepth", Byte_Tag, &bx_options.video.boot_color_depth},
+	{ "VidelRefresh", Byte_Tag, &bx_options.video.refresh},
+	{ "VidelMonitor", Byte_Tag, &bx_options.video.monitor},
+#ifdef DIRECT_TRUECOLOR
+	{ "DirectTruecolor", Bool_Tag, &bx_options.video.direct_truecolor},
+#endif
+	{ NULL , Error_Tag, NULL }
+};
+
+void preset_video() {
+  bx_options.video.fullscreen = false;		// Boot in Fullscreen
+  bx_options.video.boot_color_depth = -1;	// Boot in color depth
+  bx_options.video.monitor = -1;			// preserve default NVRAM monitor
+  bx_options.video.refresh = 2;			// 25 Hz update
+#ifdef DIRECT_TRUECOLOR
+  bx_options.video.direct_truecolor = false;
+#endif
+}
+
+void postload_video() {
+	if (bx_options.video.refresh < 1 || bx_options.video.refresh > 200)
+		bx_options.video.refresh = 2;	// default if input parameter is insane
+#ifdef DIRECT_TRUECOLOR
+	if (bx_options.video.direct_truecolor) {
+		bx_options.video.fullscreen = true;
+		bx_options.video.boot_color_depth = 16;
+	}
+#endif
+}
+
+void presave_video() {
+}
+
+/*************************************************************************/
 #define BX_DISK_CONFIG(a)	struct Config_Tag a ## _configs[] = {	\
 	{ "Present", Bool_Tag, &bx_options. ## a ## .present},	\
 	{ "IsCDROM", Bool_Tag, &bx_options. ## a ## .isCDROM},	\
@@ -79,37 +165,6 @@ struct Config_Tag global_conf[]={
 
 BX_DISK_CONFIG(diskc);
 BX_DISK_CONFIG(diskd);
-
-static void decode_ini_file(FILE *);
-
-void usage (int status) {
-  printf ("%s\n", VERSION_STRING);
-  printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
-  printf ("\
-Options:
-  -a, --floppy NAME          floppy image file NAME\n\
-  -N, --nomouse              don't grab mouse at startup\n\
-  -f, --fullscreen           start in fullscreen\n\
-  -v, --refresh <X>          VIDEL refresh rate in VBL (default 2)\n\
-  -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
-  -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
-  -d, --disk CHAR:ROOTPATH   METADOS filesystem assignment e.g. d:/atari/d_drive\n\
-  -c, --config FILE          read different configuration file\n\
-  -s, --save                 save configuration file\n\
-  -h, --help                 display this help and exit\n\
-  -V, --version              output version information and exit\n\
-");
-#ifndef FixedSizeFastRAM
-  printf("  -F, --fastram SIZE         FastRAM size (in MB)\n");
-#endif
-#ifdef DIRECT_TRUECOLOR
-  printf("  -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n");
-#endif
-#ifdef DEBUGGER
-  printf("  -D, --debug                start debugger\n");
-#endif
-  exit (status);
-}
 
 void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap) {
   // Autodetect ???
@@ -165,26 +220,8 @@ void preset_ide() {
   bx_options.newHardDriveSupport = 1;
 }
 
-void preset_cfg() {
-  preset_ide();
-#ifdef FixedSizeFastRAM
-  FastRAMSize = FixedSizeFastRAM * 1024 * 1024;
-#else
-  FastRAMSize = 0;
-#endif
-  bx_options.cookies._mch = 0x00030000; // Falcon030
-  bx_options.autoMouseGrab = true;
-
-  bx_options.video.fullscreen = false;		// Boot in Fullscreen
-  bx_options.video.boot_color_depth = -1;	// Boot in color depth
-  bx_options.video.refresh = 2;			// 25 Hz update
-#ifdef DIRECT_TRUECOLOR
-  bx_options.video.direct_truecolor = false;
-#endif
-}
-
+void postload_ide() {
 /* this is more or less a hack but it makes sense to put CDROM under IDEx config option */
-void update_cdrom1() {
 	if (bx_options.diskd.isCDROM) {
 		bx_options.cdromd.present = bx_options.diskd.present;
 		bx_options.diskd.present = false;
@@ -193,20 +230,115 @@ void update_cdrom1() {
 	}
 }
 
-int saveSettings(const char *fs) {
-	FastRAMSizeMB = FastRAMSize / 1024 / 1024;
-	update_config(fs,global_conf,"[GLOBAL]");
-	update_config(fs,diskc_configs,"[IDE0]");
-	update_config(fs,diskd_configs,"[IDE1]");
-	return 0;
+void presave_ide() {
 }
 
-int decode_switches (FILE *f, int argc, char **argv) {
+/*************************************************************************/
+struct Config_Tag arafs_conf[]={
+	{ "A", String_Tag, &extdrives[0].rootPath},
+	{ "B", String_Tag, &extdrives[1].rootPath},
+	{ "C", String_Tag, &extdrives[2].rootPath},
+	{ "D", String_Tag, &extdrives[3].rootPath},
+	{ "E", String_Tag, &extdrives[4].rootPath},
+	{ "F", String_Tag, &extdrives[5].rootPath},
+	{ "G", String_Tag, &extdrives[6].rootPath},
+	{ "H", String_Tag, &extdrives[7].rootPath},
+	{ "I", String_Tag, &extdrives[8].rootPath},
+	{ "J", String_Tag, &extdrives[9].rootPath},
+	{ "K", String_Tag, &extdrives[10].rootPath},
+	{ "L", String_Tag, &extdrives[11].rootPath},
+	{ "M", String_Tag, &extdrives[12].rootPath},
+	{ "N", String_Tag, &extdrives[13].rootPath},
+	{ "O", String_Tag, &extdrives[14].rootPath},
+	{ "P", String_Tag, &extdrives[15].rootPath},
+	{ "Q", String_Tag, &extdrives[16].rootPath},
+	{ "R", String_Tag, &extdrives[17].rootPath},
+	{ "S", String_Tag, &extdrives[18].rootPath},
+	{ "T", String_Tag, &extdrives[19].rootPath},
+	{ "U", String_Tag, &extdrives[20].rootPath},
+	{ "V", String_Tag, &extdrives[21].rootPath},
+	{ "W", String_Tag, &extdrives[22].rootPath},
+	{ "X", String_Tag, &extdrives[23].rootPath},
+	{ "Y", String_Tag, &extdrives[24].rootPath},
+	{ "Z", String_Tag, &extdrives[25].rootPath},
+	{ NULL , Error_Tag, NULL }
+};
 
+void preset_arafs() {
+	for(int i=0; i < 'Z'-'A'+1; i++) {
+		extdrives[i].rootPath[0] = '\0';
+		extdrives[i].halfSensitive = true;
+	}
+}
+
+void postload_arafs() {
+	// strip trailing ':' and set halfSensitive
+}
+
+void presave_arafs() {
+	// add trailing ':' according to halfSensitive
+}
+
+/*************************************************************************/
+void usage (int status) {
+  printf ("%s\n", VERSION_STRING);
+  printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
+  printf ("\
+Options:
+  -a, --floppy NAME          floppy image file NAME\n\
+  -N, --nomouse              don't grab mouse at startup\n\
+  -f, --fullscreen           start in fullscreen\n\
+  -v, --refresh <X>          VIDEL refresh rate in VBL (default 2)\n\
+  -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
+  -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
+  -d, --disk CHAR:ROOTPATH   METADOS filesystem assignment e.g. d:/atari/d_drive\n\
+  -c, --config FILE          read different configuration file\n\
+  -s, --save                 save configuration file\n\
+  -h, --help                 display this help and exit\n\
+  -V, --version              output version information and exit\n\
+");
+#ifndef FixedSizeFastRAM
+  printf("  -F, --fastram SIZE         FastRAM size (in MB)\n");
+#endif
+#ifdef DIRECT_TRUECOLOR
+  printf("  -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n");
+#endif
+#ifdef DEBUGGER
+  printf("  -D, --debug                start debugger\n");
+#endif
+  exit (status);
+}
+
+void preset_cfg() {
+  preset_global();
+  preset_ide();
+  preset_arafs();
+  preset_video();
+  preset_tos();
+  preset_startup();
+}
+
+void postload_cfg() {
+  postload_global();
+  postload_ide();
+  postload_arafs();
+  postload_video();
+  postload_tos();
+  postload_startup();
+}
+
+void presave_cfg() {
+  presave_global();
+  presave_ide();
+  presave_arafs();
+  presave_video();
+  presave_tos();
+  presave_startup();
+}
+
+void check_for_help_version_configfile(int argc, char **argv) {
 #ifndef CONFGUI
-	int c = 0;
-	
-	for (c = 0; c < argc; c++) {
+	for (int c = 0; c < argc; c++) {
 		if ((strcmp(argv[c], "-c") == 0) || (strcmp(argv[c], "--config") == 0)) {
 			if ((c + 1) < argc) {
 				config_file = argv[c + 1];
@@ -223,12 +355,12 @@ int decode_switches (FILE *f, int argc, char **argv) {
 		}
 	}
 #endif /* CONFGUI */
-	
-	preset_cfg();
-	decode_ini_file(f);
-	update_cdrom1();
+}
 
+int process_cmdline(int argc, char **argv)
+{
 #ifndef CONFGUI
+	int c;
 	while ((c = getopt_long (argc, argv,
 							 "a:" /* floppy image file */
 #ifdef DEBUGGER
@@ -260,7 +392,7 @@ int decode_switches (FILE *f, int argc, char **argv) {
 	
 #ifdef DEBUGGER
 			case 'D':
-				start_debug = 1;
+				bx_options.startup.debugger = true;
 				break;
 #endif
 
@@ -273,24 +405,20 @@ int decode_switches (FILE *f, int argc, char **argv) {
 
 			case 'v':
 				bx_options.video.refresh = atoi(optarg);
-				if (bx_options.video.refresh < 1 || bx_options.video.refresh > 200)
-					bx_options.video.refresh = 2;	// default if input parameter is insane
 				break;
 	
 			case 'N':
-				grabMouseAllowed = false;
+				bx_options.startup.grabMouseAllowed = false;
 				break;
 	
 #ifdef DIRECT_TRUECOLOR
 			case 't':
 				bx_options.video.direct_truecolor = true;
-				bx_options.video.fullscreen = true;
-				bx_options.video.boot_color_depth = 16;
 				break;
 #endif
 
 			case 'm':
-				monitor = atoi(optarg);
+				bx_options.video.monitor = atoi(optarg);
 				break;
 	
 			case 'a':
@@ -345,7 +473,6 @@ int decode_switches (FILE *f, int argc, char **argv) {
 #ifndef FixedSizeFastRAM
 			case 'F':
 				FastRAMSizeMB = atoi(optarg);
-				FastRAMSize = FastRAMSizeMB * 1024 * 1024;
 				break;
 #endif
 
@@ -353,10 +480,6 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				usage (EXIT_FAILURE);
 		}
 	}
-
-	if (saveConfigFile)
-		saveSettings(config_file);
-
 	return optind;
 #else /* CONFGUI */
 	return 0;
@@ -382,36 +505,52 @@ static void decode_ini_file(FILE *f) {
 		// compose ini file name
 		if ((home = getenv("HOME")) == NULL)
 			home = "";
-		if ((rcfile = (char *)alloca((strlen(home) + strlen(ARANYMRC) + 1) * sizeof(char))) == NULL) {
+		if ((rcfile = (char *)alloca((strlen(home) + strlen(ARANYMCONFIG) + 1) * sizeof(char))) == NULL) {
 			fprintf(stderr, "Not enough memory\n");
 			exit(-1);
 		}
 		strcpy(rcfile, home);
-		strcat(rcfile, ARANYMRC);
+		strcat(rcfile, ARANYMCONFIG);
 	} else {
 		rcfile = config_file;
 	}
 
 	fprintf(f, "Using config file: '%s'\n", rcfile);
 
-#ifdef __CYGWIN__
-	if(process_config(f, rcfile, global_conf, "[GLOBAL]", true)<0)
-	{	char *ptdest=&rcfile[0],*ptsrc=&rcfile[1];
-		strcpy(rcfile,ARANYMRC);
-		while(*ptsrc)  /* copy string without first caracter */
-		{
-		  *ptdest++=*ptsrc++;
-		}
-		*ptdest=0;
-		process_config(f, rcfile, global_conf, "[GLOBAL]", true);
-	}
-#else
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
-#endif
-	
-#ifndef FixedSizeFastRAM
-	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
-#endif
+	process_config(f, rcfile, startup_conf, "[STARTUP]", true);
+	process_config(f, rcfile, video_conf, "[VIDEO]", true);
+	process_config(f, rcfile, tos_conf, "[TOS]", true);
+	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
 	process_config(f, rcfile, diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, diskd_configs, "[IDE1]", true);
+}
+
+int saveSettings(const char *fs)
+{
+	presave_cfg();
+
+	update_config(fs, global_conf, "[GLOBAL]");
+	update_config(fs, startup_conf, "[STARTUP]");
+	update_config(fs, video_conf, "[VIDEO]");
+	update_config(fs, tos_conf, "[TOS]");
+	update_config(fs, arafs_conf, "[ARANYMFS]");
+	update_config(fs, diskc_configs, "[IDE0]");
+	update_config(fs, diskd_configs, "[IDE1]");
+
+	return 0;
+}
+
+int decode_switches (FILE *f, int argc, char **argv)
+{
+	check_for_help_version_configfile(argc, argv);
+	preset_cfg();
+	decode_ini_file(f);
+	process_cmdline(argc, argv);
+	postload_cfg();
+
+	if (saveConfigFile)
+		saveSettings(config_file);
+
+	return 0;
 }
