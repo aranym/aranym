@@ -47,6 +47,7 @@ bx_options_t bx_options;
 struct Config_Tag global_conf[]={
 	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
 	{ "FastRAM", Int_Tag, &FastRAMSizeMB},
+	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path)},
 	{ "Cookie_MCH", HexLong_Tag, &bx_options.cookies._mch},
 	{ "DebugOnStart", Bool_Tag, &start_debug},
 	{ NULL , Error_Tag, NULL }
