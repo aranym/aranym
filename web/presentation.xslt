@@ -115,11 +115,32 @@
     </tr>
   </xsl:template>
 
+  <xsl:template match="text">
+      <xsl:apply-templates select="* | text()"/>
+  </xsl:template>
+
   <xsl:template match="*">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates select="* | text()"/>
     </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="counter">
+    <xsl:comment> Begin RealHomepageTools </xsl:comment><script type="text/javascript"><xsl:comment>
+    var id=132650
+    var ua=navigator.userAgent;if(ua.indexOf('MSIE 3')>0){
+    document.write('<img src="http://11.rtcode.com/netpoll/ifree')
+    document.write('v3.asp?id='+id+'&amp;js=1&amp;to=0&amp;ref='
+    +escape(document.referrer)+'" />')}
+    // </xsl:comment></script><script type="text/javascript"
+    src="http://11.rtcode.com/netpoll/ifreev3i.asp?id=132650&amp;to=0">
+    </script><script type="text/javascript"><xsl:comment>
+    if(ua.indexOf('MSIE ')>0)document.write('&lt;!-' + '-')
+    // </xsl:comment></script><noscript><p><img
+    src="http://11.rtcode.com/netpoll/ifreev3.asp?id=132650&amp;to=0"
+    alt="RealTracker" /></p></noscript>
+    <xsl:comment> End RealHomepageTools </xsl:comment>
   </xsl:template>
 
 </xsl:stylesheet>
