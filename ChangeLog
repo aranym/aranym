@@ -1,3 +1,8 @@
+2003/02/18 - joy
+- videl.cpp - writing to f_shift resets the st_shift and that fixes
+  the color depth detection routine.
+
+
 2003/02/17 - STanda
 - BeOS patches for extfs.cpp and natfeat/hostfs.cpp
 
