@@ -4,6 +4,13 @@
 - input.cpp: a key for generating screenshots changed to "PrintScreen"
   (the Alt+PrintScreen collided with Linux kernel hacking SysRq combination)
 
+- [ARANYMFS] config file block header changed to [HOSTFS]. The [ARANYMFS]
+  is still read in case [HOSTFS] is not found in the config file. But in near
+  future ARAnyM will stop reading the old [ARANYMFS]. Updating your config
+  file automatically is as easy a running aranym with -s. After that you
+  may just remove the [ARANYMFS] (probably together with removing the extfs
+  support.
+
 
 2003/03/27 - milan
 - configure.ac: DIR_SEPARATOR added. Also cygwin now automatically changes

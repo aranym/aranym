@@ -610,17 +610,19 @@ int process_cmdline(int argc, char **argv)
 					break;
 				}
 				// set the drive
-				int8 i = toupper(optarg[0]) - 'A';
-				if (i <= 0 || i>('Z'-'A')) {
-					fprintf(stderr, "Drive out of [A-Z] range for -d\n");
-					break;
-				}
+				{
+					int8 i = toupper(optarg[0]) - 'A';
+					if (i <= 0 || i>('Z'-'A')) {
+						fprintf(stderr, "Drive out of [A-Z] range for -d\n");
+						break;
+					}
 
-				safe_strncpy( bx_options.aranymfs[i].rootPath, optarg+2,
+					safe_strncpy( bx_options.aranymfs[i].rootPath, optarg+2,
 								sizeof(bx_options.aranymfs[i].rootPath) );
-				// Note: tail colon processing (case sensitivity flag) is 
-				// done later by calling postload_cfg.
-				// Just make sure postload_cfg is called after this.
+					// Note: tail colon processing (case sensitivity flag) is 
+					// done later by calling postload_cfg.
+					// Just make sure postload_cfg is called after this.
+				}
 				break;
 
 			case 's':
@@ -728,8 +730,12 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, disk6_configs, "[DISK6]", true);
 	process_config(f, rcfile, disk7_configs, "[DISK7]", true);
 */
-
-	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
+	if (process_config(f, rcfile, arafs_conf, "[HOSTFS]", true) == 0) {
+		// fallback to obsolete [ARANYMFS]
+		fprintf(stderr, "[HOSTFS] section in config file not found.\n"
+						"falling back to obsolete [ARANYMFS]\n");
+		process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
+	}
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
 	process_config(f, rcfile, ethernet_conf, "[ETH0]", true);
 }
@@ -758,7 +764,8 @@ int saveSettings(const char *fs)
 	update_config(fs, disk6_configs, "[DISK6]");
 	update_config(fs, disk7_configs, "[DISK7]");
 */
-	update_config(fs, arafs_conf, "[ARANYMFS]");
+	/// update_config(fs, arafs_conf, "[ARANYMFS]");
+	update_config(fs, arafs_conf, "[HOSTFS]");
 	update_config(fs, opengl_conf, "[OPENGL]");
 	update_config(fs, ethernet_conf, "[ETH0]");
 
