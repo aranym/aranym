@@ -185,7 +185,6 @@
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
-				F580C35205A7166701DAC342,
 				F580C35605A7166701DAC342,
 				F580C37805A7166701DAC342,
 				F580C37A05A7166701DAC342,
@@ -287,7 +286,6 @@
 		29B97328FDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
 			files = (
-				F580C40805A7166801DAC342,
 				F580C40B05A7166801DAC342,
 				F580C42505A7166801DAC342,
 				F580C42605A7166801DAC342,
@@ -1818,11 +1816,6 @@
 			path = build/cputbl.h;
 			refType = 2;
 		};
-		F580C35205A7166701DAC342 = {
-			isa = PBXFileReference;
-			path = aranym.icns;
-			refType = 4;
-		};
 		F580C35605A7166701DAC342 = {
 			isa = PBXFileReference;
 			path = aranym2.icns;
@@ -1936,12 +1929,6 @@
 			isa = PBXFileReference;
 			path = sigsegv_xbsd.cpp;
 			refType = 4;
-		};
-		F580C40805A7166801DAC342 = {
-			fileRef = F580C35205A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F580C40B05A7166801DAC342 = {
 			fileRef = F580C35605A7166701DAC342;
