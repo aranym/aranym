@@ -143,8 +143,8 @@ inline void HostScreen::putPixel( int32 x, int32 y, uint32 color ) {
 	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
 		return;
 
-	uint8 r,g,b,a; SDL_GetRGBA( color, surf->format, &r, &g, &b, &a);
-	pixelRGBA( surf, x, y, r, g, b, a );
+	//	uint8 r,g,b,a; SDL_GetRGBA( color, surf->format, &r, &g, &b, &a);
+	fastPixelColorNolock( surf, x, y, color );
 }
 
 
@@ -153,6 +153,9 @@ inline void HostScreen::putPixel( int32 x, int32 y, uint32 color ) {
 
 /*
  * $Log$
+ * Revision 1.4  2001/09/17 10:36:08  joy
+ * color fixed by Standa at AHody 2001.
+ *
  * Revision 1.3  2001/08/30 14:04:59  standa
  * The fVDI driver. mouse_draw implemented. Partial pattern fill support.
  * Still buggy.
