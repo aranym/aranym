@@ -14,6 +14,7 @@ Content:
   8. Networking
   9. CD-ROM drives
   10. OpenGL rendering for Atari applications
+  11. Linux/m68k
 
 
 This document will explain you all Aranym features and configuration 
@@ -35,11 +36,12 @@ Note: "HOST" means the machine that `hosts' the Aranym virtual machine.
 configured. Required is version 1.2.x or later.
 
   Aranym keeps its configuration in a folder named ".aranym" in your HOME
-directory. Also NVRAM configuration is stored here. The config file is 
-$HOME/.aranym/config and is plain text so you can edit it with a text 
-editor. If the file is not found upon Aranym start it is generated 
+directory (NVRAM settings is stored in that directory as well).
+The full path to the config file is then $HOME/.aranym/config and
+is in plain text so you can edit it with a plain text editor.
+If the file is not found upon Aranym startup then it is generated 
 automatically and the options contain default values. Have a look at 
-the aranym/src/atari/aranymrc.example file for inspiration.
+the aranym/doc/config file for inspiration.
 
   Aranym also recognises several command line options - try starting ARAnyM
 with the option "--help" to find out more. The command line options have 
@@ -62,13 +64,11 @@ the TOS ROM elsewhere then don't forget to update your Aranym config file:
 edit the "TOS" line and set the right path to the file ("TOS=/path/to/TOS").
 
   Aranym also runs with latest EmuTOS. Simply set the "EmuTOS=" config
-option to point to your EmuTOS ROM image file. The TOS= is ignored in such
-case.
+option to point to your EmuTOS ROM image file.
 
   Aranym can directly load and a boot a Linux kernel from your host drive.
 You just need to fill the [LILO] sections with the correct parameters, and
 then to run aranym with '-l' or '--lilo' to use it instead of TOS/EmuTOS.
-This is currently not usable, due to missing/bugged MMU/hardware emulation.
 
 
 2. CPU and FPU
@@ -107,7 +107,7 @@ only if you have enough memory.
 
 JITLazyFlush = 1
 
-  I think that the best description has Gwenole Beauchesne
+  I think that the best description has Gwenole Beauchesne:
 
   The solution I came up with is what I called "lazy cache flushing" (oops,
 well s/flushing/invalidation/ ;-).  In that case, the whole cache is kept
@@ -134,13 +134,6 @@ recompile your Aranym binary:
 
   In "direct" addressing mode up to 4GB of RAM is possible but this 
 mode is a bit slower (that's why it is not the default mode).
-
-  In order to let TOS know about the FastRAM you need to start FASTRAM.PRG
-program after each Aranym power on. Best if you put it into your AUTO
-folder so it is started automatically during reboot.
-
-  Please note that EmuTOS does not need any FASTRAM.PRG - it detects all
-available ST-RAM and FastRAM automatically.
 
 
 4. Graphics output 
@@ -543,12 +536,71 @@ directory; it will map the host fs to logical disks automatically.
 8. Networking
 -------------
 
+The networking in ARAnyM is not an easy topic because there are
+several different ways you can hook up your virtual machine to the
+network and you need to choose the right one for your environment.
+
+I would say that the first question is whether you're on a LAN with
+spare IP addresses or if your host computer has a single public IP and
+is hooked up to internet directly.
+
+For LAN setup, you probably want your ARAnyM to appear on the LAN just
+like any other machine so others can ssh, ftp or telnet into it. There
+are two possible ways: either you can use bridging (the arabridge
+script) or proxy-arp (see below).
+
+For single host computer with public IP the problem is that you usually
+cannot afford assigning another public IP to ARAnyM so you'll want the
+host computer to hide ARAnyM and to route traffic to it. For this you'll
+probably use masquerading.
+
+
+Proxy-ARP:
+----------
+Setting up the proxy-arp is very easy. My host computer at office has IP
+address 192.168.0.5 and the netmask is 255.255.255.0. As I know IP
+addresses in the range 192.168.0.100+ are unused in our office I have
+chosen 192.168.0.113/114 as the IP addresses of the tap0 tunnel:
+
+[ETH0]
+Type = ppp
+HostIP = 192.168.0.113
+AtariIP = 192.168.0.114
+Netmask = 255.255.255.252
+
+Then the 'aratapif' is to be setuid root and located in $PATH and the
+tun/tap modules must be loaded (see the documentation.txt and the README
+in the ethernet folder). Then you can enable the proxy-arp with the
+following commands (as root):
+
+echo 1 >/proc/sys/net/ipv4/conf/eth0/proxy_arp
+echo 1 >/proc/sys/net/ipv4/conf/tap0/proxy_arp
+
+[this is what I've googled up. One of these commands might be
+unnecessary or it can be accomplished with the 'arp' command more
+elegantly - please correct me].
+
+After launching ARAnyM and loading FreeMiNT (with the aranym.xif driver)
+you just start my nfeth-config.sh script and it will run the following
+two commands in FreeMiNT:
+
+  ifconfig eth0 addr 192.168.0.114 netmask 255.255.255.252
+  route add default eth0 gw 192.168.0.113
+
+And that's it. Now ARAnyM is connected to your LAN with IP 192.168.0.114
+and it's fully accessible. It can of course connect to any other machine
+and also access the internet via our company gateway.
+
+===
+
   Make sure your host OS is Linux and your Atari OS is FreeMiNT. Then follow
 instructions in the atari/network/ethernet/README file.
 
   Standa developed a XIF module for FreeMiNT TCP/IP networking. You have to
 put it into your MINT folder and reboot to load it into the FreeMiNT.
 As of ARAnyM 0.8.10+ the XIF driver requires FreeMiNT 1.16.0 or newer.
+You'll find related information in the atari/network/ethernet/README file.
+
 
 Apart from configuring the necessary IP addresses in the ARAnyM config file
 
@@ -700,16 +752,61 @@ with included libGL) and libOSMesa32 (32 bits float value per channel, with
 included libGL). You need to adjust the config file this way:
 
 - libOSMesa:
-ChannelSize = 0								/* mandatory */
-libGL = /path/to/mesa/libGL.so				/* mandatory */
+ChannelSize = 0					/* mandatory */
+libGL = /path/to/mesa/libGL.so			/* mandatory */
 libOSMesa = /path/to/mesa/libOSMesa.so		/* mandatory */
 
 - libOSMesa16:
-ChannelSize = 16							/* mandatory */
-libGL = /path/to/mesa/libGL.so				/* unused */
+ChannelSize = 16				/* mandatory */
+libGL = /path/to/mesa/libGL.so			/* unused */
 libOSMesa = /path/to/mesa/libOSMesa16.so	/* mandatory */
 
 - libOSMesa32:
-ChannelSize = 32							/* mandatory */
-libGL = /path/to/mesa/libGL.so				/* unused */
+ChannelSize = 32				/* mandatory */
+libGL = /path/to/mesa/libGL.so			/* unused */
 libOSMesa = /path/to/mesa/libOSMesa32.so	/* mandatory */
+
+
+
+11) Linux/m68k on ARAnyM
+------------------------
+
+Since ARAnyM version 0.9.0 Linux/m68k kernel should boot up normally,
+like on a Falcon030 with MC68040. You can use normal Atari bootstrap
+for booting Linux/m68k from TOS or you can boot the linux kernel directly
+thanks to ARAnyM integrated LILO (Linux Loader). Of course you need
+the MMU enabled version of ARAnyM.
+
+Debian Woody:
+~~~~~~~~~~~~~
+ modify your config file:
+
+  [LILO]
+  Kernel = /path/to/linux.bin
+  Ramdisk = /path/to/root.bin
+  Args = root=/dev/ram load_ramdisk=1 ramdisk_size=13000 stram_swap=0 debug debug=par console=tty0 video=atafb:vga2 nolangchooser
+
+Source of Debian Woody linux kernel and ramdisk:
+  http://ftp.debian.org/dists/woody/main/disks-m68k/3.0.23-2002-05-21/atari/
+  (linux.bin and root.bin)
+
+
+Debian Sarge:
+~~~~~~~~~~~~~
+ modify your config file:
+
+  [LILO]
+  Kernel = /path/to/vmlinuz-2.4.27-atari
+  Ramdisk = /path/to/initrd.gz
+  Args = root=/dev/ram load_ramdisk=1 ramdisk_size=13000 stram_swap=0 debug debug=par console=tty0 video=atafb:vga2 debian-installer/framebuffer=false
+
+Debian Sarge linux kernels:
+  http://ftp.debian.org/dists/sarge/main/installer-m68k/current/images/kernels/
+  (vmlinuz-2.2.25-atari, vmlinuz-2.4.27-atari)
+
+Debian Sarge linux ramdisks:
+  http://ftp.debian.org/dists/sarge/main/installer-m68k/current/images/nativehd/
+  (initrd22.gz, initrd.gz)
+
+With correct config file you simply start "aranym -l" and that's it.
+
