@@ -1,3 +1,8 @@
+2001/06/08 - PS
+- highly unfinished, very preliminary, often crashing support for extended
+  VIDEL resolutions. I know how to fix it, just give me some time.
+
+
 2001/06/06 - PS
 - '--grab_mouse' command line switch for X-Windows
 
