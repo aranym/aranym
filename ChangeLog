@@ -1,7 +1,15 @@
-2002/08/04 - joy
-- preliminary support for NatFeats ($7301 and $7302). Unfinished. Subject
-  to changes.
-- XHDI updated to compile with NatFeats
+2002/08/04 - joy (version 0.3.0b1)
+- Native Features implemented. The CPU recognizes two new instructions:
+  NATFEA_ID (opcode $7300) and
+  NATFEA_RCALL (opcode $7301).
+  These instructions are privileged (can be executed in supervisor mode only).
+
+- Two new basic NatFeats (Native Features) implemented:
+  "NF_NAME" returns the name of "emulator" in a given string buffer.
+  "NF_VERSION" returns the version of "emulator" encoded in long hex number.
+
+- XHDI was adapted for NF "XHDI" (still callable also via old EmulOp but
+  that's deprecated and will be removed before release).
 
 
 2002/08/03 - johan
