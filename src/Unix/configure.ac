@@ -1454,6 +1454,12 @@ if [[ "x$HAVE_GCC27" = "xyes" ]]; then
   CXXFLAGS="-O3 $CXXFLAGS"
 fi
 
+dnl Remove -O[23] for cygwin gcc 3.x (gcc-3.3.3-3 found buggy).
+if [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_GCC30" = "xyes" ]]; then
+  CFLAGS=`echo $CFLAGS | sed -e 's/-O[[23]]//g'`
+  CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-O[[23]]//g'`
+fi
+
 dnl Or if we have -Ofast
 if [[ "x$HAVE_OFAST" = "xyes" ]]; then
   CFLAGS="`echo $CFLAGS | sed -e 's/-g//g'` -Ofast"
