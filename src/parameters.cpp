@@ -97,7 +97,7 @@ void preset_ide() {
   set_ide(1, "", 0, 0, 0, false);
 
   bx_options.newHardDriveSupport = 1;
-  bx_options.cdromd.present = 1;
+  bx_options.cdromd.present = 0;
 }
 
 void preset_cfg() {
