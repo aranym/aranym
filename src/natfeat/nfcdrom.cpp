@@ -24,7 +24,7 @@
 #include "nfcdrom.h"
 #include "../../atari/nfcdrom/nfcdrom_nfapi.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /*--- Defines ---*/

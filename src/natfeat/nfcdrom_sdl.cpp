@@ -28,7 +28,7 @@
 #include "nfcdrom.h"
 #include "nfcdrom_sdl.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /*--- Defines ---*/
