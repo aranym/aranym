@@ -49,7 +49,7 @@ AC_ARG_ENABLE(fpe,
 	uae)		FPE_CORE="uae";;
 	i386)		FPE_CORE="i386";;
 	ieee)		FPE_CORE="ieee";;
-	*)		AC_MSG_ERROR([--enable-fpe takes only one of the following values: default, uae, i386]);;
+	*)		AC_MSG_ERROR([--enable-fpe takes only one of the following values: default, uae, i386, ieee]);;
   esac
 ],
 [ FPE_CORE="default"
