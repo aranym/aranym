@@ -129,6 +129,8 @@ AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distrubuted dis
 
 AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation (default=yes)], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
 
+AC_ARG_ENABLE(purec,           [  --enable-purec          enable corrupted stack format (default=no)], [WANT_PUREC=$enableval], [WANT_PUREC=no])
+
 dnl Target OS type (target is host if not cross-compiling).
 case "$target_os" in
   linux*)	OS_TYPE=linux;;
@@ -662,6 +664,9 @@ if [[ "x$WANT_MMU" = "xyes" ]]; then
     MMUSRCS="../uae_cpu/cpummu.cpp"
 else
     MMUSRCS=""
+    if [[ "x$WANT_PUREC" = "xyes" ]]; then
+        AC_DEFINE([PUREC], 1, [Define if PureC hack needed])
+    fi
 fi
 
 dnl DSP

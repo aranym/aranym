@@ -747,7 +747,11 @@ void Exception(int nr, uaecptr oldpc)
 	exc_push_word(0);	/* WB2S */
 	exc_push_word(0);	/* WB3S */
 	exc_push_word(regs.mmu_ssw);
+#ifdef PUREC
 	exc_push_long(0 /* was regs.mmu_fault_addr */);	/* EA *//* bullshit here, took 10 hours to debug with PureC $12345678 test. It should be an internal register, keep 0 to preserve MSP in PureC */
+#else
+	exc_push_long(regs.mmu_fault_addr); /* EA *//* ARAnyM has 040, so stack format 7, not 000 stack format */
+#endif
 	exc_make_frame(7, regs.sr, currpc, 2, 0, 0);
 
 	building_bus_fault_stack_frame=0;
