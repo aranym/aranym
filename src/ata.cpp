@@ -41,7 +41,9 @@ bx_debug_t bx_dbg;
 
 
 static unsigned char model_no[41] =
-  "Generic 1234                            ";
+  "Generic Master                          ";
+static unsigned char model_noB[41] =
+  "Generic Slave                           ";
 
 static unsigned max_multiple_sectors  = 0; // was 0x3f
 static unsigned curr_multiple_sectors = 0; // was 0x3f
@@ -599,6 +601,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
       break;
 
     case 0xf0001d: // Hard Disk Status
+    case 0xf00039: // Hard Disk Alternate Status
 //    case 0xf0001f: // Hard Disk Alternate Status
       if (BX_HD_THIS drive_select && !bx_options.diskd.present) {
 	    // (mch) Just return zero for these registers
@@ -620,11 +623,6 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
         BX_SELECTED_CONTROLLER.status.index_pulse_count = 0;
         }
       }
-      goto return_value8;
-      break;
-
-    case 0xf00039:				// Hard Disk Alternate Status
-      value8 = 0x50;		// TOS wants just this value at 0xe01f1c
       goto return_value8;
       break;
 
@@ -2104,9 +2102,10 @@ bx_hard_drive_c::identify_drive(unsigned drive)
   // This field is left justified and padded with spaces (20h)
 //  for (i=27; i<=46; i++)
 //    BX_SELECTED_HD.id_drive[i] = 0;
+  unsigned char *model_name = BX_HD_THIS drive_select ? model_noB : model_no;
   for (i=0; i<20; i++) {
-    BX_SELECTED_HD.id_drive[27+i] = (model_no[i*2] << 8) |
-                                  model_no[i*2 + 1];
+    BX_SELECTED_HD.id_drive[27+i] = (model_name[i*2] << 8) |
+                                  model_name[i*2 + 1];
     }
 
   // Word 47: 15-8 Vendor unique
