@@ -4,6 +4,8 @@
 #include "fvdi.h"
 #include "relocate.h"
 
+extern void CDECL set_colour_hook( long paletteIndex, long tcWord ); /* STanda */
+
 #define NOVA 0		/* 1 - byte swap 16 bit colour value (NOVA etc) */
 
 #define red_bits   5	/* 5 for all normal 16 bit hardware */
@@ -71,6 +73,8 @@ c_set_colours(Virtual *vwk, long start, long entries, short *requested, Colour p
 			tc_word = ((tc_word & 0x000000ff) << 24) | ((tc_word & 0x0000ff00) <<  8) |
 			          ((tc_word & 0x00ff0000) >>  8) | ((tc_word & 0xff000000) >> 24);
 #endif
+			set_colour_hook( start + i, tc_word ); /* STanda */
+			
 			*(short *)&palette[start + i].real = tc_word;
 		}
 	} else {
@@ -94,6 +98,8 @@ c_set_colours(Virtual *vwk, long start, long entries, short *requested, Colour p
 #if NOVA
 			tc_word = (tc_word << 8) | (tc_word >> 8);
 #endif
+			set_colour_hook( start + i, tc_word ); /* STanda */
+
 			*(short *)&palette[start + i].real = tc_word;
 		}
 	}

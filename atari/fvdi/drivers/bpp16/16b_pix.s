@@ -18,8 +18,8 @@
 	xdef		blit_area
 	xdef		_fill_area
 	xdef		fill_area
-
-
+	xdef		_set_colour_hook
+	xdef		set_colour_hook
 		
 	text
 
@@ -80,6 +80,12 @@ _line_draw:
 line_draw:
 	FVDI_DISPATCH	7
 	rts
+
+_set_colour_hook:
+set_colour_hook:
+	FVDI_DISPATCH	9
+	rts
+
 
 ;end //STanda
 
