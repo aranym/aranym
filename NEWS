@@ -2,7 +2,8 @@
 ==========
 
  Sound is working! Put the atari/sound/zmagxsnd.prg to your AUTO
- folder and Aniplayer should play all sounds nicely!
+ folder and Aniplayer (after switching to XBIOS in its Sound Config
+ dialog) should play all sounds nicely!
 
  Several very bad or annoying bugs in aranymfs fixed. Now it should
  be real usable.
