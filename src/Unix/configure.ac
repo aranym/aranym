@@ -700,6 +700,20 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
         AC_MSG_ERROR([Sorry, extended segfault handler supported on your platform])
       fi
       ;;
+    netbsd*)
+      if [[ "x$HAVE_I386" = "xyes" ]]; then
+        SYSSRCS="$SYSSRCS xbsd/sigsegv_xbsd.cpp"
+      else
+        AC_MSG_ERROR([Sorry, extended segfault handler supported on your platform])
+      fi
+      ;;
+    freebsd*)
+      if [[ "x$HAVE_I386" = "xyes" ]]; then
+        SYSSRCS="$SYSSRCS xbsd/sigsegv_xbsd.cpp"
+      else
+        AC_MSG_ERROR([Sorry, extended segfault handler supported on your platform])
+      fi
+      ;;					
     *)
       AC_MSG_ERROR([Sorry, extended segfault handler supported on your platform])
       ;;
