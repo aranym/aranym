@@ -3,7 +3,7 @@
 ;
 ; 2001 STanda
 ;
-; The basic file lazout was taken from Julian Reschke's Cookies
+; The basic file layout was taken from Julian Reschke's Cookies
 ;
 	
 	.globl	FunctionTable, DriverName, ShowBanner, InitDevice
@@ -150,5 +150,8 @@ fs_dreadlabel:
 
 ;
 ; $Log$
+; Revision 1.3  2001/10/17 17:59:44  standa
+; The fandafs to aranymfs name change and code cleanup.
+;
 ;
 ;
