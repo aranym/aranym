@@ -616,7 +616,7 @@ int saveSettings(const char *fs)
 
 bool check_cfg()
 {
-#ifdef REAL_ADDRESSING
+#if REAL_ADDRESSING
 # if defined(__i386__) && defined(OS_linux)
 	if (FastRAMSizeMB > (128 - 16))
 	{
