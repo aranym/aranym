@@ -1,3 +1,17 @@
+2003/04/08 - version 0.8.0beta2 released
+==========
+
+Changes:
+
+ o the key for making a screenshot changed to PrintScreen
+ o [ARANYMFS] renamed to [HOSTFS]
+ o aratapif execution fixed
+ o HostFS improved
+ o Cygwin support should be better
+
+ For updating your ARAnyM config file simply run "aranym -s".
+
+
 2003/03/23 - version 0.8.0beta1 released
 ==========
 

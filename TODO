@@ -1,12 +1,9 @@
 Before 0.8.0 final release:
 ---------------------------
-- man page from deb package to standard archive
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
-- make sure the '-d' command line option works as documented in the README
-- enable OpenGL and DSP in default builds, provide also MMU build
-- change the hotkey for screenshot - Alt+PrintScreen = SysRq!
-- disable the old ARANYMFS EmulOp API
+- fix the bug with mapping of / (root) (example: D=/). Might be related to
+  EmuTOS/AFROS somehow.
 
 Roadmap:
 --------
@@ -26,9 +23,13 @@ Some hot ideas (before they get forgotten)
 Note that the name before a TODO item doesn't mean the item is assigned to
 that particular programmer but rather who is the author of the idea :-)
 
-- joy: hostfs.xfs sometime crash here? Isn't there a memory leak on host?
+- joy: hostfs.xfs sometime crash here - isn't there a memory leak on host?
 
 - joy: make.sh magic: "nfeth-config.c" build by ./make.sh of the xif.
+
+- joy: write some doc about bridging the tuntap - perhaps the following
+       URL could help?
+       http://tldp.org/HOWTO/Ethernet-Bridge-netfilter-HOWTO-3.html#ss3.1
 
 - joy: detect loop lockups (e.g. "Illegal instruction: 00e0 at 00000030"
        repeated endlessly) and allow restarting ARAnyM gracefully
@@ -41,7 +42,14 @@ that particular programmer but rather who is the author of the idea :-)
 
 - joy: diskimage updating config file automatically
 
+- joy: diskimage embedded into ARAnyM directly, available from SDL GUI
+
 - joy: fix the mouse jumping in fVDI with STOP#$2000 enabled FreeMiNT kernel
+
+- joy: rename panicbug() to something that not evoke panic.
+
+- joy: correct copyright headers in ALL files (do it together with 
+       the panicbug renaming above)
 
 - joy: Clipboard sharing between host and atari. Some URLs for inspiration:
   http://www.idata.sk/~robo/mpcb/
@@ -53,7 +61,10 @@ that particular programmer but rather who is the author of the idea :-)
   Extra cool idea: PRIMARY selection on X11 could be stored to IKBD buffer
   directly so it would simulate typing.
 
-- joy: printing to file (/dev/lp)
+- joy: printing to configurable file (/dev/lp)
+
+- joy: ARAnyM should test if SDL timers work OK at startup and if not, stop
+       booting and exit gracefully with a loud warning (e.g. on NetBSD).
 
 - joy: emulating a serial port compatible with MiNT/HSMODEM
 
@@ -65,6 +76,8 @@ that particular programmer but rather who is the author of the idea :-)
 - joy: in hardware.cpp: HWget_l/HWput_l should not have the special case
        for HW_IDE. Best would be to implement word and longword HW access
        emulation directly for all modules.
+
+- joy: keyboard mapping editable in a config file
 
 - joy: document the way the aranym works - especially the hardware
        emulation (ARAnyM Hackers Guide).

@@ -1,5 +1,62 @@
+2003/04/08 - joy
+- cfgopts: Thomas correctly suggested to use memmove() for overlapping
+  blocks of memory.
+
+- changes made between ARANYM_0_8_0BETA1 and 0_8_0_BETA2 merged to main.
+
+
 2003/04/07 - patrice
 - Preliminary support for mingw compilation suite.
+
+
+2003/04/07 - STanda
+- hostfs.cpp: General debug messages cleanup.
+    The st2flags() and flags2st() methods fixed (a need for open()).
+    The isPathValid() method removed (was only useful for aranymfs.dos).
+    Dpathconf(8-9) added and 7 fixed (Thing has a bug in 1.27 here IIRC).
+
+
+2003/04/07 - joy
+- configure.ac: parameters.cpp and its children updated. Should be ready
+  for adding more cygwin specific functions.
+
+
+2003/04/06 - joy
+- parameters.cpp: '-S' handling corrected. Small cleanup in getopt()..
+
+- natfeat/ethernet.cpp: back to execp(), now starting of 'aratapif'
+  works OK thanks to use of _exit().
+
+- parameters.cpp: cleanup in getConf/DataFilename(). Now uses 'callbacks'
+  for obtaining the folder path. These callbacks are defined for Unix
+  and for Cygwin so far (Cygwin needs a different handling). Hacks 
+  with "--datadir=/" removed completely. Thanks to Xavier for the Win32
+  related information and ideas.
+
+- Unix/cygwin: new folder with tools_cygwin.cpp and parameters_cygwin.cpp.
+  The Makefile.in was not updated yet.. Trying to find a more flexible
+  way than copying things from parameters_unix to parameters_linux...
+
+
+2003/04/03 - STanda
+- hostfs.*: general clean up
+
+- tools.*: The 32bit <-> host mapping for systems with non 32bit
+  void* and int. Several other functions were moved to the tools.h.
+
+
+2003/04/01 - joy & Honza/ATACK
+- main_unix.cpp: segfault on gentoo (where the argv[0] does not contain
+  the path (only filename)).
+
+- natfeat/ethernet.cpp: missing ethX definition in DEBUG() statement
+
+
+2003/03/30 - joy
+- cygwin gets its own folder with a tools.cpp file.
+
+- sdlgui.cpp really needs the explicit conversion of the path. Xavier was
+  right, after all.
 
 
 2003/03/29 - milan
@@ -9,6 +66,45 @@
 
 - man page from debian added
 
+
+2003/03/28 - STanda & joy
+- natfeat/hostfs.cpp: DIRSEPARATOR used wherever possible. Might fix HostFS
+  on Windows.
+
+- parameters.cpp: DATADIR can't be relative so now it checks for "//"
+  (configure --datadir="/") and then ARAnyM uses the path to the binary
+  as the DATADIR path (fixed later the same day)
+
+
+2003/03/27 - joy
+- parameters.cpp: correction and clarification of "-d" command line switch
+
+- input.cpp: a key for generating screenshots changed to "PrintScreen"
+  (the Alt+PrintScreen collided with Linux kernel hacking SysRq combination)
+
+- [ARANYMFS] config file block header changed to [HOSTFS]. The [ARANYMFS]
+  is still read in case [HOSTFS] is not found in the config file. But in near
+  future ARAnyM will stop reading the old [ARANYMFS]. Updating your config
+  file automatically is as easy as starting aranym with -s. After that you
+  may just remove the [ARANYMFS] block from your config file.
+
+- user-specific files ("config", "nvram") are stored in subfolder ".aranym"
+  in the $HOME folder. If $HOME is not defined, $USERPROFILE is used instead
+  (Windows 2000). If neither $HOME nor $USERPROFILE is defined then the path
+  to the ARAnyM binary is used.
+
+- system-wide data files ("ROM", "etos512k.img", "font8.bmp") are stored
+  in subfolder "aranym" in the "/usr/local/share" folder (by default). This
+  folder can be changed in configure by --datadir=<path>. If this folder
+  is defined as 1 char long path ("." for the actual folder) or is empty
+  then ARAnyM tries to use the path to the ARAnyM binary instead.
+
+- DIR_SEPARATOR renamed to DIRSEPARATOR and corrected (it's been already
+  used in several places).
+
+
+2003/03/27 - milan
+- configure.ac: DIR_SEPARATOR added.
 
 2003/03/26 - milan
 - JIT games, sync with BailiskII
@@ -20,6 +116,7 @@
 - one paranoia "volatile" fix in CPU
 
 
+>>>>>>> 1.390.2.18
 ** ARAnyM 0.8.0beta1 released
 
 2003/03/24 - joy
