@@ -119,6 +119,11 @@
       <xsl:apply-templates select="* | text()"/>
   </xsl:template>
 
+  <xsl:template match="contact">
+      <a href="mailto:aranym@sophics.cz"><xsl:value-of select="text()"/></a>
+  </xsl:template>
+
+
   <xsl:template match="*">
     <xsl:copy>
       <xsl:copy-of select="@*"/>

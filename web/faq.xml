@@ -41,6 +41,15 @@
     </text>
   </chapter>
   <chapter>
+    <title>Does MiNT or MagiC work?</title>
+    <text>
+      Yes, ARAnyM was primarilly created to allow user run MiNT and moreover
+      with a posiblity of memory protection. ARAnyM virtualizes the HW the way
+      that MagiC works as well. Basicaly every application cleanly programed to
+      be TOS complient should work. You can <contact>contact us</contact> if not.
+    </text>
+  </chapter>
+  <chapter>
     <title>How does it work?</title>
     <text>
       You simply turn on your host machine (PC, Mac, Sun, whatever) and after
