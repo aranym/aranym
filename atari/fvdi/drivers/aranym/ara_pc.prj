@@ -1,6 +1,6 @@
 aranym.sys
-.C	[-X -Y -P -I=f:\fvdi\include\ -I=f:\fvdi\drivers\include\]
-.S	[-3 -S -Y -I=f:\fvdi\include]
+.C	[-X -Y -P -I=..\..\include\ -I=..\..\drivers\include\]
+.S	[-3 -S -Y -I=..\..\include]
 .L
 =
 ..\COMMON\PUREC.S
