@@ -1,3 +1,17 @@
+2001/12/16 - joy
+- check_ram_boundary() takes an additional parameter that sets the size 
+  of memory access. Now finally all memory accesses are checked and nothing
+  can escape from ARAnyM allocated memory.
+
+- acceleration for blitter configurable: --enable-blitmemmove turns the
+  memmove acceleration on and --enable-blitsdlblit allows the SDL_blitsurface
+  to be used.
+
+- check memory by array experimental code removed altogether. It was not
+  faster unfortunately and it didn't allow the size check that has just been
+  added to check_ram_boundary.
+
+
 2001/12/11 - STanda
 - fVDI driver patch to not disable the DEBUG. There was the debug.h included
   from another .h file which wasn't correct. Some Johan's methods were moved
