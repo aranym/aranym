@@ -33,11 +33,7 @@ Windows 95/98/99/00 do not support direct disk access (Windows NT/2K/XP do).
 This is a limitation of Cygwin, or rather a limitation of the windows itself.
 
 Windows do not allow switching from window to full-screen and back using
-the ScrollLock key.  This might be a limitation of SDL, not sure yet.
-
-Windows have a problem with floppy disk since 0.8.x. Not sure why.
-
-Windows have a problem with NVRAM since 0.8.5. Not sure why.
+the ScrollLock key.  This is probably just wrong mapping for the ScrollKey
 
 Only Linux currently supports TUNTAP based Ethernet emulation (AFAIK).
 Although http://home.sprintmail.com/~dtrout/Hercules/ctci-w32-index.html
