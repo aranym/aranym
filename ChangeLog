@@ -13,7 +13,9 @@
 - dialog.cpp: enabled Discs, the 1st CDROM driver mount/unmount
 
 
-2002/10/10 - patrice (version 0.6.6-beta)
+** ARAnyM 0.6.6 released
+
+2002/10/10 - patrice  (version 0.6.6-beta)
 - dsp: dsp nothread code removed.
 - configure: DSP is enabled by default now
 
@@ -315,6 +317,8 @@
 - support for cdrom under MacOS X ported from Bochs, not tested yet
 - updated IDE emulation, some error states detected more correctly now
 
+
+** ARAnyM 0.2.0 released
 
 2002/07/20 - joy
 - saving/restoring screen background under SDL GUI fixed
