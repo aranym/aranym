@@ -36,6 +36,9 @@
 #include "md5.h"
 #include "romdiff.h"
 #include "parameters.h"
+#ifdef SDL_GUI
+#include "sdlgui.h"
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -170,7 +173,7 @@ bool InitTOSROM(void)
 		return false;
 	}
 
-	int RealROMSize = 512 * 1024;
+	RealROMSize = 512 * 1024;
 	if (fread(ROMBaseHost, 1, RealROMSize, f) != (size_t)RealROMSize) {
 		ErrorAlert("ROM file reading error. Make sure the ROM image file size is 524288 bytes (512 kB).\n");
 		fclose(f);
@@ -295,15 +298,17 @@ bool InitOS(void)
 	// EmuTOS is the future. That's why I give it the precedence over the TOS ROM
 	if (strlen(emutos_path) > 0) {
 		// read EmuTOS file
-		D(bug("Reading EmuTOS: '%s'", emutos_path));
+		fprintf(stderr, "Reading EmuTOS from '%s': ", emutos_path);
 		FILE *f = fopen(emutos_path, "rb");
 		if (f == NULL) {
 			ErrorAlert("EmuTOS not found\n");
 			return false;
 		}
-		fread(ROMBaseHost, 1, ROMSize, f);
+		RealROMSize = 512 * 1024;
+		bool bEmuOK = (fread(ROMBaseHost, 1, RealROMSize, f) == (size_t)RealROMSize);
 		fclose(f);
-		return true;
+		fprintf(stderr, "%s\n", bEmuOK ? "OK" : "failed");
+		return bEmuOK;
 	}
 	else {
 		return InitTOSROM();
@@ -373,6 +378,10 @@ bool InitAll(void)
 
 	InputInit();
 
+#ifdef SDL_GUI
+	SDLGui_Init();
+#endif
+
 	// Init 680x0 emulation
 	if (!Init680x0())
 		return false;
@@ -423,6 +432,10 @@ void ExitAll(void)
 #if ENABLE_MON
 	// Deinitialize mon
 	mon_exit();
+#endif
+
+#ifdef SDL_GUI
+	SDLGui_UnInit();
 #endif
 
 	SDL_VideoQuit();
