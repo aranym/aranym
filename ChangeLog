@@ -1,4 +1,4 @@
-2002/09/28 - joy (version 0.6.2-beta)
+2002/09/28 - joy (version 0.6.3-beta)
 - fixed #ifdef NEED_TO_DEBUG_BADLY code
 
 - BUS ERROR loops are detected and back trace is displayed (the latter only
@@ -11,7 +11,7 @@
   catch bus error by its own (PureC IDE) should be fixed now.
 
 
-2002/09/28 - johan
+2002/09/28 - johan (version 0.6.2-beta)
 - Special handling of vro_cpyfm D=S mode for performance improvement.
   No loop unrolling yet, and only implemented for 16 bit mode.
 
