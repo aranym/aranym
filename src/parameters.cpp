@@ -2,6 +2,7 @@
 #include "sysdeps.h"
 #include "config.h"
 #include "parameters.h"
+#include "emu_bochs.h"	// for BX_INSERTED define
 
 #define DEBUG 0
 #include "debug.h"
@@ -51,6 +52,10 @@ static uint32 FastRAMSizeMB;
 static bool saveConfigFile = false;
 
 bx_options_t bx_options;
+
+static bx_atadevice_options_t *diskc = &bx_options.atadevice[0][0];
+static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
+
 
 // configuration file 
 /*************************************************************************/
@@ -214,21 +219,22 @@ void presave_opengl() {
 
 /*************************************************************************/
 #define BX_DISK_CONFIG(Disk)	struct Config_Tag Disk ## _configs[] = {	\
-	{ "Present", Bool_Tag, &bx_options.Disk.present},	\
-	{ "IsCDROM", Bool_Tag, &bx_options.Disk.isCDROM},	\
-	{ "ByteSwap", Bool_Tag, &bx_options.Disk.byteswap},	\
-	{ "ReadOnly", Bool_Tag, &bx_options.Disk.readonly},	\
-	{ "Path", String_Tag, bx_options.Disk.path, sizeof(bx_options.Disk.path)},	\
-	{ "Cylinders", Int_Tag, &bx_options.Disk.cylinders},	\
-	{ "Heads", Int_Tag, &bx_options.Disk.heads},	\
-	{ "SectorsPerTrack", Int_Tag, &bx_options.Disk.spt},	\
+	{ "Present", Bool_Tag, &Disk->present},	\
+	{ "IsCDROM", Bool_Tag, &Disk->isCDROM},	\
+	{ "ByteSwap", Bool_Tag, &Disk->byteswap},	\
+	{ "ReadOnly", Bool_Tag, &Disk->readonly},	\
+	{ "Path", String_Tag, Disk->path, sizeof(Disk->path)},	\
+	{ "Cylinders", Int_Tag, &Disk->cylinders},	\
+	{ "Heads", Int_Tag, &Disk->heads},	\
+	{ "SectorsPerTrack", Int_Tag, &Disk->spt},	\
+	{ "ModelName", String_Tag, Disk->model, sizeof(Disk->model)},	\
 	{ NULL , Error_Tag, NULL }	\
 }
 
 BX_DISK_CONFIG(diskc);
 BX_DISK_CONFIG(diskd);
 
-void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap, bool readonly) {
+void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap, bool readonly, const char *model_name) {
   // Autodetect ???
   if (cylinders == -1)
     if ((cylinders = get_geometry(dev_path, geoCylinders)) == -1) {
@@ -254,13 +260,12 @@ void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int 
       exit(-1);
     }
 
-  bx_disk_options_t *disk;
-  switch (number) {
-    case 0: disk = &bx_options.diskc; break;
-    case 1: disk = &bx_options.diskd; break;
-    default: disk = NULL;
-  }
-
+	bx_atadevice_options_t *disk;
+	switch(number) {
+		case 0: disk = diskc; break;
+		case 1: disk = diskd; break;
+		default: disk = NULL; break;
+	}
   if (disk != NULL) {
     disk->present = strlen(dev_path) > 0;
     disk->isCDROM = false;
@@ -270,26 +275,33 @@ void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int 
     disk->heads = heads;
     disk->spt = spt;
     strcpy(disk->path, dev_path);
+	strncpy(disk->model, model_name, sizeof(disk->model));
+	disk->model[sizeof(disk->model)-1] = '\0';
   }
 
-  if (cylinders && heads && spt)
+  if (cylinders && heads && spt) {
     D(bug("IDE%d CHS geometry: %d/%d/%d %d", number, cylinders, heads, spt, byteswap));
+  }
+
 }
 
 void preset_ide() {
-  set_ide(0, "", 0, 0, 0, false, false);
-  set_ide(1, "", 0, 0, 0, false, false);
+  set_ide(0, "", 0, 0, 0, false, false, "Master");
+  set_ide(1, "", 0, 0, 0, false, false, "Slave");
 
   bx_options.newHardDriveSupport = true;
 }
 
 void postload_ide() {
-/* this is more or less a hack but it makes sense to put CDROM under IDEx config option */
-	if (bx_options.diskd.isCDROM) {
-		bx_options.cdromd.present = bx_options.diskd.present;
-// MJ		bx_options.diskd.present = false;
-		strcpy(bx_options.cdromd.path, bx_options.diskd.path);
-		bx_options.cdromd.inserted = true;	// this is auto insert of a CD
+	int channel = 0;
+	for(int device=0; device<2; device++) {
+    	if (bx_options.atadevice[channel][device].present) {
+    		bx_options.atadevice[channel][device].status = BX_INSERTED;
+			bx_options.atadevice[channel][device].type = (bx_options.atadevice[channel][device].isCDROM) ? IDE_CDROM : IDE_DISK;
+		}
+		else {
+			bx_options.atadevice[channel][device].type = IDE_NONE;
+		}
 	}
 }
 

@@ -49,32 +49,14 @@ typedef struct {
   // bool enforceRemount;
 } bx_floppy_options_t;
 
-// IDE device
-typedef struct {
-  bool present;
-  bool isCDROM;
-  bool byteswap;
-  bool readonly;
-  char path[512];
-  unsigned int cylinders;
-  unsigned int heads;
-  unsigned int spt;
-} bx_disk_options_t;
-
-// CDROM device
-typedef struct {
-  bool present;
-  char path[512];
-  bool inserted;
-} bx_cdrom_options_t;
-
 typedef enum {
       IDE_NONE, IDE_DISK, IDE_CDROM
 } device_type_t;
 
 // Generic ATA device
 typedef struct {
-  bool present;
+  bool present;		// is converted to device_type_t below
+  bool isCDROM;		// is converted to device_type_t below
   device_type_t type;
   char path[512];
   unsigned int cylinders;
@@ -82,7 +64,7 @@ typedef struct {
   unsigned int spt;
   bool byteswap;
   bool readonly;
-  bool status;
+  bool status;		// inserted = true
   char model[41];
 } bx_atadevice_options_t;
 
@@ -158,9 +140,6 @@ typedef struct {
 typedef struct {
   bx_floppy_options_t	floppy;
   // bx_floppy_options_t floppyb;
-  bx_disk_options_t	diskc;
-  bx_disk_options_t	diskd;
-  bx_cdrom_options_t	cdromd;
   bx_atadevice_options_t atadevice[BX_MAX_ATA_CHANNEL][2];
   bx_scsidevice_options_t	disk0;
   bx_scsidevice_options_t	disk1;

@@ -1,3 +1,10 @@
+2003/03/04 - joy
+- ata.[cpp|h], parameters.[cpp|h] cleaned up:  obsolete disk_options_t
+  and cdrom_options_t were structure removed. Everything is stored in the
+  atadevice_options_t now. Nice bonus is the possibility of naming the IDE
+  device with new config option "ModelName" (string, up to 40 characters).
+
+
 2003/03/02 - joy
 - natfeat/atari_example_gfa.lst: example for GFA Basic programmers
 - natfeat/atari_example.c: updated for Ssystem() call

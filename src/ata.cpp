@@ -59,11 +59,6 @@ bx_hard_drive_c bx_hard_drive;
 #endif
 
 
-static char model_noA[41] =
-  "Generic Master                          ";
-static char model_noB[41] =
-  "Generic Slave                           ";
-
 static unsigned max_multiple_sectors  = 0; // was 0x3f
 static unsigned curr_multiple_sectors = 0; // was 0x3f
 
@@ -214,39 +209,6 @@ bx_hard_drive_c::init(/* MJ bx_devices_c *d, bx_cmos_c *cmos */)
     BX_HD_THIS channels[channel].drive_select = 0;
   }
      
-  // Set Falcon IDE channel
-  channel = 0;
-  // Master
-  device = 0;
-  bx_options.atadevice[channel][device].present = bx_options.diskc.present;
-  bx_options.atadevice[channel][device].type = IDE_NONE;
-  if (bx_options.diskc.present) {
-    bx_options.atadevice[channel][device].type = (bx_options.diskc.isCDROM) ? IDE_CDROM : IDE_DISK;
-    strncpy(bx_options.atadevice[channel][device].path, bx_options.diskc.path, 512);
-    bx_options.atadevice[channel][device].cylinders = bx_options.diskc.cylinders;
-    bx_options.atadevice[channel][device].heads = bx_options.diskc.heads;
-    bx_options.atadevice[channel][device].spt = bx_options.diskc.spt;
-    bx_options.atadevice[channel][device].byteswap = bx_options.diskc.byteswap;
-    bx_options.atadevice[channel][device].readonly = bx_options.diskc.readonly;
-    bx_options.atadevice[channel][device].status = BX_INSERTED;
-    strncpy(bx_options.atadevice[channel][device].model, model_noA, 512);
-  }
-  // Slave
-  device = 1;
-  bx_options.atadevice[channel][device].present = bx_options.diskd.present;
-  bx_options.atadevice[channel][device].type = IDE_NONE;
-  if (bx_options.diskd.present) {
-    bx_options.atadevice[channel][device].type = (bx_options.diskd.isCDROM) ? IDE_CDROM : IDE_DISK;
-    strncpy(bx_options.atadevice[channel][device].path, bx_options.diskd.path, 512);
-    bx_options.atadevice[channel][device].cylinders = bx_options.diskd.cylinders;
-    bx_options.atadevice[channel][device].heads = bx_options.diskd.heads;
-    bx_options.atadevice[channel][device].spt = bx_options.diskd.spt;
-    bx_options.atadevice[channel][device].byteswap = bx_options.diskd.byteswap;
-    bx_options.atadevice[channel][device].readonly = bx_options.diskd.readonly;
-    bx_options.atadevice[channel][device].status = BX_INSERTED;
-    strncpy(bx_options.atadevice[channel][device].model, model_noB, 512);
-  }
-
   for (channel=0; channel<BX_MAX_ATA_CHANNEL; channel++) {
     for (device=0; device<2; device ++) {
 
@@ -263,7 +225,7 @@ bx_hard_drive_c::init(/* MJ bx_devices_c *d, bx_cmos_c *cmos */)
         strcat ((char*)BX_HD_THIS channels[channel].drives[device].model_no, " ");
         }
 
-      if (bx_options.atadevice[channel][device].type == BX_ATA_DEVICE_DISK) {
+      if (bx_options.atadevice[channel][device].type == IDE_DISK /*BX_ATA_DEVICE_DISK*/) {
         D(bug( "Hard-Disk on target %d/%d",channel,device));
         BX_HD_THIS channels[channel].drives[device].device_type           = IDE_DISK;
         BX_HD_THIS channels[channel].drives[device].hard_drive->cylinders = bx_options.atadevice[channel][device].cylinders;
@@ -278,7 +240,7 @@ bx_hard_drive_c::init(/* MJ bx_devices_c *d, bx_cmos_c *cmos */)
           }
         D2(bug("HD on ata%d-%d: '%s'",channel, device, bx_options.atadevice[channel][device].path));
         }
-      else if (bx_options.atadevice[channel][device].type == BX_ATA_DEVICE_CDROM) {
+      else if (bx_options.atadevice[channel][device].type == IDE_CDROM /* BX_ATA_DEVICE_CDROM */) {
         D(bug( "CDROM on target %d/%d",channel,device));
         BX_HD_THIS channels[channel].drives[device].device_type = IDE_CDROM;
         BX_HD_THIS channels[channel].drives[device].cdrom.locked = 0;

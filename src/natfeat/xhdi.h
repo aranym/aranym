@@ -9,7 +9,7 @@ typedef memptr lmemptr;
 class XHDIDriver : public NF_Base
 {
 private:
-	bx_disk_options_t *dev2disk(uint16 major, uint16 minor);
+	bx_atadevice_options_t *dev2disk(uint16 major, uint16 minor);
 	void byteSwapBuf(uint8 *buf, int size);
 
 protected:

@@ -365,7 +365,4 @@ extern bx_hard_drive_c bx_hard_drive;
 #  define UNUSED(x) ((void)x)
 #endif
 
-#define BX_ATA_DEVICE_DISK IDE_DISK
-#define BX_ATA_DEVICE_CDROM IDE_CDROM
-
 #endif /* ATA_H */

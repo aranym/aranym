@@ -11,15 +11,15 @@
 #define EINVFN	-32	/* invalid function number = unimplemented function */
 #define E_OK	0
 
-bx_disk_options_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
+bx_atadevice_options_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
 {
 	if (minor != 0)
 		return NULL;
 
-	bx_disk_options_t *disk;
+	bx_atadevice_options_t *disk;
 	switch(major) {
-		case 16:	disk = &bx_options.diskc; break;
-		case 17:	disk = &bx_options.diskd; break;
+		case 16:	disk = &bx_options.atadevice[0][0]; break;
+		case 17:	disk = &bx_options.atadevice[0][1]; break;
 		default:	disk = NULL; break;
 	}
 	if (disk != NULL) {
@@ -62,7 +62,7 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 		(rwflag & 1) ? "Write" : "Read",
 		major, minor, recno, count, buf));
 
-	bx_disk_options_t *disk = dev2disk(major, minor);
+	bx_atadevice_options_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
 		return -15L;	// EUNDEV (unknown device)
 
@@ -116,7 +116,7 @@ int32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
 {
 	D(bug("ARAnyM XHGetCapacity(major=%u, minor=%u, blocks=%lu, blocksize=%lu)", major, minor, blocks, blocksize));
 
-	bx_disk_options_t *disk = dev2disk(major, minor);
+	bx_atadevice_options_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
 		return -15L;	// EUNDEV (unknown device)
 
