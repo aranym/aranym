@@ -1,3 +1,7 @@
+2003/03/05 - STanda
+- small fix in hostfs/metados/main.c
+
+
 2003/03/04 - joy
 - ata.[cpp|h], parameters.[cpp|h] cleaned up:  obsolete disk_options_t
   and cdrom_options_t were structure removed. Everything is stored in the
