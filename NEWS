@@ -1,11 +1,16 @@
-2002/01/26 - version 0.0.19 released
+2002/01/28 - version 0.0.20 released
 ==========
 
- ARAnyM is at least 33% faster than the last release (v0.0.11).
+ ARAnyM is at least 33% faster than the previous release. We greatly
+ optimized the CPU memory access time and also interrupt emulation.
+
+ ARAnyM runs with the SDL TimerThread by default again. This gives us
+ more flexibility (see the STOP insn below) and is necessary for
+ the JIT CPU (just-in-time compilation of m68k code).
 
  ARAnyM supports STOP instruction that put the CPU to sleep. This works
  perfectly in latest EmuTOS (CVS version). ARAnyM does not eat CPU
- cycles when there is nothing to do in EmuTOS.
+ cycles when the EmuTOS is idle.
 
  ARAnyM configuration file changed its location and got more options:
  all ARAnyM user files are now located in $HOME/.aranym/ folder.
@@ -17,8 +22,12 @@
  New noteworthy command line options include "--refresh <x>" where you
  can specify the VIDEL refresh.
 
- Many many fixes - in floppy (formatting works), fVDI (colors after
- resolution change), NVRAM (year 2002 not 2001) and many more.
+ ARAnyM now contains special support for native harddrive access from
+ EmuTOS. This allows EmuTOS to actually boot from a harddrive attached
+ to ARAnyM machine.
+
+ Many many fixes - in floppy (formatting works), fVDI driver (colors after
+ resolution change), NVRAM (year 2002 not 2001), MFP (TimerC) and more.
 
  Look into ChangeLog for more details.
 
