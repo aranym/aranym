@@ -21,6 +21,7 @@
 #define BUS_ERROR	longjmp(excep_env, 2)
 #define STRAM_END	0x0e00000	// should be replaced by global ROMBase as soon as ROMBase will be a constant
 #define TTRAM_BEGIN	0x1000000	// should be replaced by global TTRAMBase as soon as TTRAMBase will be a constant
+extern uint32 TTRAMSize;
 
 #define ARANYMVRAMSTART 0xf0000000
 #define ARANYMVRAMSIZE	0x00100000	// should be a variable to protect VGA card offscreen memory
