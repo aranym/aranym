@@ -1,11 +1,47 @@
-2004/01/01 - joy
-- sdlgui/dlgMain: adding more options
+2004/01/01 PM - joy
+- fdc.cpp: added is_floppy_inserted() (used in the config GUI). Also
+  changeFloppy() called on insert_floppy() - this fixes the old reported
+  problem with installing NVDI from several diskettes.
+
+- hardware.cpp,h: getIDE() added (used in RestartAll for IDE reinit).
+
+- ide.cpp,h: init() added - contains the conversion of some bx_options
+  that was previously in parameters:postload_ide(). In init() it's better
+  as we need to convert the options also after config GUI changes (where
+  we don't want to call postload_* stuff).
+
+- main.cpp: call IDE::init() in RestartAll() to reinitialize
+  the IDE settings (possibly changed in the config GUI).
+
+- parameters.cpp,h: 'floppy.inserted' removed. Instead, we'd need something
+  like 'floppy.present' to indicate whether to mount the floppy on boot
+  or not.
+  Also the bx_options.atadevice parameters conversion moved to ide::init().
+
+- parameters.cpp: loadSettings() now properly pre-/postinitialized by
+  calling preset_cfg() and postload_cfg().
+
+- gui-sdl/dlgDisk.cpp: rewritten, finished, tested, working.
+
+- gui-sdl/dlgMain.cpp: load of settings from a config file now properly
+  update GUI settings. Also the "Apply" button is enlarged to emphasize
+  that without applying of the changes the Save Settings or Reboot/Close
+  actions ignore the changes made in config dialogs.
+
+- TODO: large update/rewrite. Get involved if you have some spare time.
+
+
+2004/01/01 AM - joy
+- gui-sdl/dlgMain: adding more options
 
 - input.cpp, main.cpp,h: RestartAll() now reinitializes the OS (in future
   it has to reinitialize also the memory and all hardware). Visible result
   of this change is the possibility of loading another config file from GUI
   in run-time and reboot with different OS (from TOS to AFROS, for example).
 
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~~ Happy New Year to all ARAnyM fans ~~
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 2003/12/31 - joy
 - main.cpp: startup GUI now uses the same thread schema as the normal GUI.
