@@ -22,13 +22,15 @@
 #include <SDL_endian.h>
 #include <GL/osmesa.h>
 
+#define NFOSMESA_GLEXT	0
+
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "parameters.h"
 #include "nfosmesa.h"
 #include "../../atari/nfosmesa/nfosmesa_nfapi.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /*--- Defines ---*/
@@ -464,6 +466,29 @@ void OSMesaDriver::Atari2HostFloatPtr(Uint32 size, Uint32 *src, GLfloat *dest)
 	
 	for (i=0;i<size;i++) {
 		tmp[i]=SDL_SwapBE32(src[i]);
+	}
+}
+
+void OSMesaDriver::Atari2HostIntPtr(Uint32 size, Uint32 *src, GLint *dest)
+{
+	Uint32 i,*tmp;
+	
+	tmp = (Uint32 *)dest;
+	
+	for (i=0;i<size;i++) {
+		tmp[i]=SDL_SwapBE32(src[i]);
+	}
+}
+
+void OSMesaDriver::Atari2HostShortPtr(Uint32 size, Uint16 *src, GLshort *dest)
+{
+	Uint32 i;
+	Uint16 *tmp;
+	
+	tmp = (Uint16 *)dest;
+	
+	for (i=0;i<size;i++) {
+		tmp[i]=SDL_SwapBE16(src[i]);
 	}
 }
 

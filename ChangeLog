@@ -1,3 +1,7 @@
+2004/12/14 - Patrice
+- nfosmesa: more bugfixes (mainly to adapt m68k arrays to host CPU endianness).
+
+
 2004/12/13 - Patrice
 - nfosmesa: many bugfixes. The hardest/longest part to do: converting all arrays
   (const TYPE *) to a temporary array for the host CPU. Disabled building of
@@ -8,8 +12,8 @@
   
 
 2004/12/11 - Patrice
-- hostscreen.cpp: move one update function using OpenGL from .h to .cpp, necessary
-  for compiling OSMesa.
+- hostscreen.cpp: move one update function using OpenGL from .h to .cpp, needed
+  for compiling for OSMesa.
   
 - NF: Add Natfeat OSMesa rendering support for Atari applications using host
   CPU (highly experimental!).

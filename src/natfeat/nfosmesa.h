@@ -31,8 +31,6 @@
 
 /*--- Defines ---*/
 
-#define NFOSMESA_GLEXT	0	/* 1 If you want to compile with extensions */
-
 #define MAX_OSMESA_CONTEXTS	16
 
 /*--- Types ---*/
@@ -66,6 +64,8 @@ class OSMesaDriver : public NF_Base
 		void Atari2HostDoublePtr(Uint32 size, Uint32 *src, GLdouble *dest);
 		GLfloat Atari2HostFloat(Uint32 high, Uint32 low);
 		void Atari2HostFloatPtr(Uint32 size, Uint32 *src, GLfloat *dest);
+		void Atari2HostIntPtr(Uint32 size, Uint32 *src, GLint *dest);
+		void Atari2HostShortPtr(Uint32 size, Uint16 *src, GLshort *dest);
 		void ConvertContext(Uint32 ctx);
 
 		Uint32 OSMesaCreateContext( GLenum format, Uint32 sharelist );
