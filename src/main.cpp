@@ -803,6 +803,14 @@ bool InitTOSROM(void)
 		ROMBaseHost[0x7FF0D] = 0xD2;	// abs.addr = $E001D2
 	}
 
+	// Xconout patch
+	if (true) {
+		ROMBaseHost[0x8d44] = ROMBaseHost[0x8d50] = 0x71;
+		ROMBaseHost[0x8d45] = ROMBaseHost[0x8d51] = 0x2a;
+		ROMBaseHost[0x8d46] = ROMBaseHost[0x8d52] = 0x4e;
+		ROMBaseHost[0x8d47] = ROMBaseHost[0x8d53] = 0x75;
+	}
+
 #ifdef DIRECT_TRUECOLOR
 	// patch it for direct TC mode
 	if (bx_options.video.direct_truecolor) {
@@ -970,6 +978,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.55  2001/12/29 17:11:40  joy
+ * cleaned up
+ *
  * Revision 1.54  2001/12/27 22:31:49  joy
  * TOS patch to enable FastRAM visual check
  *
