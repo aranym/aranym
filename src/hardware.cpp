@@ -22,6 +22,9 @@
 #include "hostscreen.h"
 #include "exceptions.h"
 #include "uae_cpu/newcpu.h"	// for regs.pc
+#include "debug.h"
+
+#define DEBUG 1
 
 // host OS dependent objects
 HostScreen hostScreen;
@@ -43,13 +46,12 @@ YAMAHA yamaha;
 #define BUS_ERROR	longjmp(excep_env, 2)
 
 void renderScreen() { videl.renderScreen(); }
-void updateHostScreen() { hostScreen.update(); }
 int getFloppyStats() { return yamaha.getFloppyStat(); }
 bool isIkbdBufEmpty() { return ikbd.isBufferEmpty(); }
 void MakeMFPIRQ(int no) { mfp.IRQ(no); }
 void ikbd_send(int code) { ikbd.ikbd_send(code); }
 
-bool dP = false;
+bool dP = true;
 
 void HWInit (void) {
 	rtc.init();
@@ -58,33 +60,33 @@ void HWInit (void) {
 }
 
 /* obsolete */
-static const int HW_IDE 	= 0xf00000;
-static const int HW_ROM	= 0xfa0000;
-static const int HW_MMU 	= 0xff8000;
-static const int HW_VIDEO 	= 0xff8200;
-static const int HW_FDC	= 0xff8600;
-static const int HW_SCSI	= 0xff8700;
-static const int HW_YAMAHA	= 0xff8800;
-static const int HW_SOUND	= 0xff8900;
-static const int HW_DSP	= 0xff8930;
-static const int HW_RTC	= 0xff8960;
-static const int HW_BLITT	= 0xff89a0;
-static const int HW_SCC	= 0xff8c00;
-static const int HW_SCU	= 0xff8e00;
-static const int HW_PADDLE	= 0xff9200;
-static const int HW_VIDEL	= 0xff9800;
-static const int HW_DSPH	= 0xffa200;
-static const int HW_STMFP	= 0xfffa00;
-static const int HW_FPU	= 0xfffa40;
-static const int HW_TTMFP	= 0xfffa80;
-static const int HW_IKBD	= 0xfffc00;
-static const int HW_MIDI	= 0xfffc04;
+static const uint HW_IDE 	= 0xf00000;
+static const uint HW_ROM	= 0xfa0000;
+static const uint HW_MMU 	= 0xff8000;
+static const uint HW_VIDEO 	= 0xff8200;
+static const uint HW_FDC	= 0xff8600;
+static const uint HW_SCSI	= 0xff8700;
+static const uint HW_YAMAHA	= 0xff8800;
+static const uint HW_SOUND	= 0xff8900;
+static const uint HW_DSP	= 0xff8930;
+static const uint HW_RTC	= 0xff8960;
+static const uint HW_BLITT	= 0xff89a0;
+static const uint HW_SCC	= 0xff8c00;
+static const uint HW_SCU	= 0xff8e00;
+static const uint HW_PADDLE	= 0xff9200;
+static const uint HW_VIDEL	= 0xff9800;
+static const uint HW_DSPH	= 0xffa200;
+static const uint HW_STMFP	= 0xfffa00;
+static const uint HW_FPU	= 0xfffa40;
+static const uint HW_TTMFP	= 0xfffa80;
+static const uint HW_IKBD	= 0xfffc00;
+static const uint HW_MIDI	= 0xfffc04;
 /* end of obsolete */
 
 struct HARDWARE {
 	char name[32];
-	int	begin;
-	int len;	// TODO replace len with end to save some CPU cycles in runtime
+	uint	begin;
+	uint len;	// TODO replace len with end to save some CPU cycles in runtime
 	ICio *handle;
 };
 
@@ -95,25 +97,25 @@ HARDWARE ICs[] = {
 	{"Memory Management", 0xff8000, 8, &mmu},
 	{"VIDEL", 0xff8200, 0xc4, &videl},
 	{"DMA/FDC", 0xff8600, 0x10, &fdc},
-	{"DMA/SCSI", 0xff8700, 0x16, &fake_io},
-	{"SCSI", 0xff8780, 0x10, &fake_io},
+//	{"DMA/SCSI", 0xff8700, 0x16, &fake_io},
+// 	{"SCSI", 0xff8780, 0x10, &fake_io},
 	{"Yamaha", 0xff8800, 4, &yamaha},
 	{"Sound", 0xff8900, 0x22, &fake_io},
-	// {"MicroWire", 0xff8922, 0x4},
+//	{"MicroWire", 0xff8922, 0x4},
 	{"DMA/DSP", 0xff8930, 0x14, &fake_io},
 	{"TT RTC", 0xff8960, 4, &rtc},
 	{"BLiTTER", 0xff8A00, 0x3e, &blitter},
-	// {"DMA/SCC", 0xff8C00, 0x16},
+//	{"DMA/SCC", 0xff8C00, 0x16},
 	{"SCC", 0xff8C80, 0x16, &fake_io},
-	// {"VME", 0xff8e00, 0x0c},
+//	{"VME", 0xff8e00, 0x0c},
 	{"Paddle", 0xff9200, 0x24, &fake_io},
 	{"VIDEL Pallete", 0xff9800, 0x400, &videl},
 	{"DSP", 0xffa200, 8, &dsp},
 	{"STMFP", 0xfffa00, 0x30, &mfp},
-	// {"STFPC", 0xfffa40, 8},
+//	{"STFPC", 0xfffa40, 8},
 	{"IKBD", 0xfffc00, 4, &ikbd},
 	{"MIDI", 0xfffc04, 4, &midi}
-	// {"RTC", 0xfffc20, 0x20}
+//	{"RTC", 0xfffc20, 0x20}
 };
 
 /*static*/char* debug_print_IO(uaecptr addr) {
@@ -136,7 +138,7 @@ uae_u32 handleRead(uaecptr addr) {
 			return ptr->handleRead(addr);
 		}
 	}
-	fprintf(stderr, "HWget_b %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
+	D(bug("HWget_b %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	BUS_ERROR;
 }
 
@@ -149,7 +151,7 @@ void handleWrite(uaecptr addr, uae_u8 value) {
 			return;
 		}
 	}
-	fprintf(stderr, "HWput_b %x = %d ($%x) <- %s at %08x\n", addr, value, value, debug_print_IO(addr), showPC());
+	D(bug("HWput_b %x = %d ($%x) <- %s at %08x", addr, value, value, debug_print_IO(addr), showPC()));
 	BUS_ERROR;
 }
 
@@ -157,7 +159,7 @@ uae_u32 HWget_l (uaecptr addr) {
 //	uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
 //	return do_get_mem_long(m);
 	if (dP)
-		fprintf(stderr, "HWget_l %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
+		D(bug("HWget_l %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	// return (handleRead(addr) << 24) | (handleRead(addr+1) << 16) | (handleRead(addr+2) << 8) | handleRead(addr+3);
 /*
 	if (addr >= 0xf00000 && addr < 0xf0003a)
@@ -176,7 +178,7 @@ uae_u32 HWget_w (uaecptr addr) {
 //	uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
 //	return do_get_mem_word(m);
 	if (dP)
-		fprintf(stderr, "HWget_w %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
+		D(bug("HWget_w %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE)
 		return ide.handleReadW(addr);
 	else
@@ -187,7 +189,7 @@ uae_u32 HWget_b (uaecptr addr) {
 //	uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
 //	return do_get_mem_byte(m);
 	if (dP)
-		fprintf(stderr, "HWget_b %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
+		D(bug("HWget_b %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	return handleRead(addr);
 }
 
@@ -195,7 +197,7 @@ void HWput_l (uaecptr addr, uae_u32 l) {
 //	uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
 //	do_put_mem_long(m, l);
 	if (dP)
-		fprintf(stderr, "HWput_l %x,%d ($%08x) -> %s at %08x\n", addr, l, l, debug_print_IO(addr), showPC());
+		D(bug("HWput_l %x,%d ($%08x) -> %s at %08x", addr, l, l, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE) {
 		HWput_w(addr, l >> 16);
 		HWput_w(addr, l & 0x0000ffff);
@@ -212,7 +214,7 @@ void HWput_w (uaecptr addr, uae_u32 w) {
 //	uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
 //	do_put_mem_word(m, w);
 	if (dP)
-		fprintf(stderr, "HWput_w %x,%d ($%04x) -> %s at %08x\n", addr, w, w, debug_print_IO(addr), showPC());
+		D(bug("HWput_w %x,%d ($%04x) -> %s at %08x", addr, w, w, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE)
 		ide.handleWriteW(addr, w);
 	else {
@@ -224,15 +226,17 @@ void HWput_w (uaecptr addr, uae_u32 w) {
 void HWput_b (uaecptr addr, uae_u32 b) {
 //	uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
 //	do_put_mem_byte(m, b);
-	unsigned int bb = b & 0x000000ff;
 	if (dP)
-		fprintf(stderr, "HWput_b %x,%u ($%02x) -> %s at %08x\n", addr, bb, bb, debug_print_IO(addr), showPC());
+		D(bug("HWput_b %x,%u ($%02x) -> %s at %08x", addr, b & 0xff, b & 0xff, debug_print_IO(addr), showPC()));
 	handleWrite(addr, b);
 }
 
 
 /*
  * $Log$
+ * Revision 1.23  2001/07/12 22:10:05  standa
+ * updateHostScreen() function added to let the direct_fullscreen mode work again.
+ *
  * Revision 1.22  2001/06/18 13:21:55  standa
  * Several template.cpp like comments were added.
  * HostScreen SDL encapsulation class.
