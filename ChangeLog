@@ -1,3 +1,8 @@
+2003/01/16 - milan
+- configure.ac: support for large files (>2GB)
+                correctd support for OpenGL
+
+
 2003/01/15 - STanda
 
 - fVDI: The drawMouse() hot_x/hot_y are stripped to 4 bits.
