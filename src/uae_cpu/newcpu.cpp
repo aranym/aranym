@@ -716,6 +716,9 @@ void Exception(int nr, uaecptr oldpc)
 kludge_me_do:
     m68k_areg(regs, 7) -= 2;
     put_word (m68k_areg(regs, 7), regs.sr);
+    ////
+    ///// fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr));
+    ////
     m68k_setpc (get_long (regs.vbr + 4*nr));
     fill_prefetch_0 ();
     regs.t1 = regs.t0 = regs.m = 0;
@@ -724,13 +727,25 @@ kludge_me_do:
 
 static void Interrupt(int nr)
 {
-    assert(nr < 8 && nr >= 0);
+    // fprintf(stderr, "CPU: jsem v Interruptu(%d)\n", nr);
+    // assert(nr < 8 && nr >= 0);
     lastint_regs = regs;
     lastint_no = nr;
     Exception(nr+24, 0);
 
     regs.intmask = nr;
-    regs.spcflags |= SPCFLAG_INT;
+    // regs.spcflags |= SPCFLAG_INT;
+}
+
+static void MFPInterrupt(int nr)
+{
+    // fprintf(stderr, "CPU: jsem v MFPInterruptu\n");
+    assert(nr < 16 && nr >= 0);
+    lastint_regs = regs;
+    lastint_no = 6;
+    Exception(nr+64, 0);
+
+    regs.intmask = 6;
 }
 
 //static int caar, cacr, tc, itt0, itt1, dtt0, dtt1;
@@ -1123,7 +1138,7 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 		}
 		MakeSR();
 		r.sr = regs.sr;
-// MJ		EmulOp(opcode, &r);
+		EmulOp(opcode, &r);
 		for (i=0; i<8; i++) {
 			m68k_dreg(regs, i) = r.d[i];
 			m68k_areg(regs, i) = r.a[i];
@@ -1209,9 +1224,9 @@ static int do_specialties (void)
 	Exception (9,last_trace_ad);
     }
     while (regs.spcflags & SPCFLAG_STOP) {
-	if (regs.spcflags & (SPCFLAG_INT | SPCFLAG_DOINT)){
+	if (regs.spcflags & (SPCFLAG_INT | SPCFLAG_DOINT | SPCFLAG_MFPINT)){
 	    int intr = intlev ();
-	    regs.spcflags &= ~(SPCFLAG_INT | SPCFLAG_DOINT);
+	    regs.spcflags &= ~(SPCFLAG_INT | SPCFLAG_DOINT | SPCFLAG_MFPINT);
 	    if (intr != -1 && intr > regs.intmask) {
 		Interrupt (intr);
 		regs.stopped = 0;
@@ -1230,10 +1245,44 @@ static int do_specialties (void)
 	    regs.stopped = 0;
 	}
     }
+    if (regs.spcflags & SPCFLAG_MFPINT) {
+	regs.spcflags &= ~SPCFLAG_MFPINT;
+	if (6 > regs.intmask) {
+		// fprintf(stderr, "Jdu cist z MFP\n");
+		uae_u8 value = get_byte(0xfffa11);
+		// fprintf(stderr, "Vycetl jsem %x\n", value);
+	    if (! (value & 0x20)) {
+	    	put_byte(0xfffa11, value | 0x20);
+	        // fprintf(stderr, "CPU:IntMask OK, volam MFPInterrupt\n");
+	        MFPInterrupt (5);
+	        regs.stopped = 0;
+	    }
+	    else {
+	    	// fprintf(stderr, "CPU:TimerC is already in-service: = %x\n", value);
+	    }
+	}
+	else {
+		// fprintf(stderr, "CPU:TimerC int masked out\n");
+	}
+    }
+/*
+    if (regs.spcflags & SPCFLAG_VBLINT) {
+	regs.spcflags &= ~SPCFLAG_VBLINT;
+	if (4 > regs.intmask) {
+        	Interrupt (4);
+	        regs.stopped = 0;
+	}
+	else {
+		fprintf(stderr, "CPU:VBL int masked out\n");
+	}
+    }
+*/
+/*
     if (regs.spcflags & SPCFLAG_INT) {
 	regs.spcflags &= ~SPCFLAG_INT;
 	regs.spcflags |= SPCFLAG_DOINT;
     }
+*/
     if (regs.spcflags & (SPCFLAG_BRK | SPCFLAG_MODE_CHANGE)) {
 	regs.spcflags &= ~(SPCFLAG_BRK | SPCFLAG_MODE_CHANGE);
 	return 1;
