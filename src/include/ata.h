@@ -1,5 +1,4 @@
-
-//  Copyright (C) 2000  MandrakeSoft S.A.
+//  Copyright (C) 2001  MandrakeSoft S.A.
 //
 //    MandrakeSoft S.A.
 //    43, rue d'Aboukir
@@ -21,10 +20,11 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
-#define BX_USE_HD_SMF	0
-// muj trick
-//#define LOWLEVEL_CDROM cdrom_interface
-// end of muj trick
+
+#ifndef ATA_H
+#define ATA_H
+
+#define LOWLEVEL_CDROM cdrom_interface
 
 typedef enum _sense {
       SENSE_NONE = 0, SENSE_NOT_READY = 2, SENSE_ILLEGAL_REQUEST = 5
@@ -52,9 +52,6 @@ class LOWLEVEL_CDROM;
 #define Bit8u unsigned char
 #define Bit16u unsigned short
 #define Bit32u unsigned int
-#define uint8 unsigned char
-#define uint16 unsigned short
-#define uint32 unsigned int
 
 class device_image_t
 {
@@ -108,6 +105,50 @@ class default_image_t : public device_image_t
       int fd;
       
 };
+
+#if BX_SPLIT_HD_SUPPORT
+class concat_image_t : public device_image_t
+{
+  public:
+      // Open a image. Returns non-negative if successful.
+      int open (const char* pathname);
+
+      // Close the image.
+      void close ();
+
+      // Position ourselves. Return the resulting offset from the
+      // beginning of the file.
+      off_t lseek (off_t offset, int whence);
+
+      // Read count bytes to the buffer buf. Return the number of
+      // bytes read (count).
+      ssize_t read (void* buf, size_t count);
+
+      // Write count bytes from buf. Return the number of bytes
+      // written (count).
+      ssize_t write (const void* buf, size_t count);
+
+  private:
+#define BX_CONCAT_MAX_IMAGES 8
+      int fd_table[BX_CONCAT_MAX_IMAGES];
+      ssize_t start_offset_table[BX_CONCAT_MAX_IMAGES];
+      ssize_t length_table[BX_CONCAT_MAX_IMAGES];
+      void increment_string (char *str);
+      int maxfd;  // number of entries in tables that are valid
+
+      // notice if anyone does sequential read or write without seek in between.
+      // This can be supported pretty easily, but needs additional checks.
+      // 0=something other than seek was last operation
+      // 1=seek was last operation
+      int seek_was_last_op;
+
+      // the following variables tell which partial image file to use for
+      // the next read and write.
+      int index;  // index into table
+      int fd;     // fd to use for reads and writes
+      int thismin, thismax; // byte offset boundary of this image
+};
+#endif /* BX_SPLIT_HD_SUPPORT */
 
 #if EXTERNAL_DISK_SIMULATOR
 #include "external-disk-simulator.h"
@@ -273,57 +314,16 @@ private:
 
   unsigned drive_select;
 
-  // bx_devices_c *devices;
+//  bx_devices_c *devices;
   };
 
-#if BX_USE_HD_SMF
 extern bx_hard_drive_c bx_hard_drive;
-#endif
 
-// emil.h
 #ifndef UNUSED
 #  define UNUSED(x) ((void)x)
 #endif
 
-#if 0
-typedef struct {
-  Boolean present;
-  Boolean byteswap;
-  char path[512];
-  unsigned int cylinders;
-  unsigned int heads;
-  unsigned int spt;
-  } bx_disk_options;
- 
-struct bx_cdrom_options
-{
-  Boolean present;
-  char dev[512];
-  Boolean inserted;
-};
-
-typedef struct {
-  char      *path;
-  Boolean   cmosImage;
-  unsigned int time0;
-  } bx_cmos_options;
- 
-typedef struct {
-  bx_disk_options   diskc;
-  bx_disk_options   diskd;
-  bx_cdrom_options  cdromd;
-  char              bootdrive[2];
-  bx_cmos_options   cmos;
-  Boolean           newHardDriveSupport;
-  } bx_options_t;
-#endif
 #define bx_ptr_t void *
-
-// extern bx_options_t bx_options;
-// extern bx_devices_c bx_devices;
-
-#define bx_panic	printf
-#define bx_printf	printf
 
 typedef struct {
   Boolean floppy;
@@ -360,3 +360,4 @@ typedef struct {
 
 extern bx_debug_t bx_dbg;
 
+#endif /* ATA_H */
