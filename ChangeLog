@@ -1,3 +1,8 @@
+2004/09/13 - joy
+- newcpu.cpp, spcflags.h: SPCFLAGS_NMI removed, _BRK used instead (like
+  seen in hatari). SPCFLAGS_MODE_CHANGE removed (it was unused).
+
+
 2004/09/10 - Patrice
 - hostscreen.cpp, videl.cpp, parameters.cpp: create a specific section in the
   configuration file for autozoom. You can now choose to want a constant host

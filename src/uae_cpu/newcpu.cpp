@@ -1433,7 +1433,7 @@ int m68k_do_specialties(void)
 
 		SERVE_INTERNAL_IRQ();
 		SERVE_VBL_MFP(true);
-		if (SPCFLAGS_TEST( SPCFLAG_NMI ))
+		if (SPCFLAGS_TEST( SPCFLAG_BRK ))
 			break;
 	}
 	if (SPCFLAGS_TEST( SPCFLAG_TRACE ))
@@ -1448,13 +1448,10 @@ int m68k_do_specialties(void)
 		regs.spcflags |= SPCFLAG_DOINT;
 	}
 */
-	if (SPCFLAGS_TEST( SPCFLAG_BRK | SPCFLAG_MODE_CHANGE )) {
-		SPCFLAGS_CLEAR( SPCFLAG_BRK | SPCFLAG_MODE_CHANGE );
+	if (SPCFLAGS_TEST( SPCFLAG_BRK /*| SPCFLAG_MODE_CHANGE*/ )) {
+		SPCFLAGS_CLEAR( SPCFLAG_BRK /*| SPCFLAG_MODE_CHANGE*/ );
 		return 1;
 	}
-
-	if (SPCFLAGS_TEST( SPCFLAG_NMI ))
-		return 1;
 
 	return 0;
 }

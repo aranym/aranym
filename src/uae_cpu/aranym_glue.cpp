@@ -246,7 +246,7 @@ void TriggerMFP(bool enable)
 
 void TriggerNMI(void)
 {
-	SPCFLAGS_SET( SPCFLAG_NMI );
+	SPCFLAGS_SET( SPCFLAG_BRK ); // use _BRK for NMI
 }
 
 #ifndef REBOOT_OR_HALT
