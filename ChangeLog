@@ -1,3 +1,7 @@
+2004/07/26 - milan
+- src/cdrom.cpp: typo bug (thanks, Konrad)
+
+
 2004/07/20 - Xavier
 - Unix/configure.ac: 
   - checks for direct, real and fixed addressing availability made more

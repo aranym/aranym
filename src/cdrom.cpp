@@ -82,7 +82,7 @@ extern "C" {
 #include "cdrom_beos.h"
 #define BX_CD_FRAMESIZE 2048
 
-#elif (defined (OS_netbsd) || defined(OS_openbsd) || defined(OS__freebsd))
+#elif (defined (OS_netbsd) || defined(OS_openbsd) || defined(OS_freebsd))
 // OpenBSD pre version 2.7 may require extern "C" { } structure around
 // all the includes, because the i386 sys/disklabel.h contains code which 
 // c++ considers invalid.
