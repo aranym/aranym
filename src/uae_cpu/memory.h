@@ -22,7 +22,11 @@
 #define STRAM_END	0x0e00000UL	// should be replaced by global ROMBase as soon as ROMBase will be a constant
 #define ROM_END		0x0e80000UL	// should be replaced by ROMBase + RealROMSize if we are going to work with larger TOS ROMs than 512 kilobytes
 #define FastRAM_BEGIN	0x1000000UL	// should be replaced by global FastRAMBase as soon as FastRAMBase will be a constant
-extern uint32 FastRAMSize;
+#ifdef FixedSizeFastRAM
+#define FastRAM_SIZE	(FixedSizeFastRAM * 1024 * 1024)
+#else
+#define FastRAM_SIZE	FastRAMSize
+#endif
 
 #define ARANYMVRAMSTART 0xf0000000UL
 #define ARANYMVRAMSIZE	0x00100000	// should be a variable to protect VGA card offscreen memory
@@ -103,10 +107,10 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 			return;
 	}
 
-	if (addr >= FastRAM_BEGIN && addr <= (FastRAM_BEGIN + FastRAMSize - size))	// FastRAM
+	if (addr >= FastRAM_BEGIN && addr <= (FastRAM_BEGIN + FastRAM_SIZE - size))	// FastRAM
 		return;
 #else
-	if (addr <= (FastRAM_BEGIN + FastRAMSize - size)) {
+	if (addr <= (FastRAM_BEGIN + FastRAM_SIZE - size)) {
 		if (!write)
 			return;
 		else {
