@@ -220,17 +220,13 @@ void HWput_l (uaecptr addr, uae_u32 l) {
 //	do_put_mem_long(m, l);
 	if (dP)
 		fprintf(stderr, "HWput_l %x,%d ($%08x) -> %s at %08x\n", addr, l, l, debug_print_IO(addr), showPC());
-/*
-	handleWrite(addr, l >> 24);
-	handleWrite(addr+1, l >> 16);
-	handleWrite(addr+2, l >> 8);
-	handleWrite(addr+3, l);
-*/
 	if (addr >= 0xf00000 && addr < 0xf0003a)
 		ide.write_handler(&ide, addr, l, 4);
 	else {
-		handleWrite(addr, l >> 16);
-		handleWrite(addr+2, l & 0xffff);
+		handleWrite(addr, l >> 24);
+		handleWrite(addr+1, l >> 16);
+		handleWrite(addr+2, l >> 8);
+		handleWrite(addr+3, l);
 	}
 }
 
