@@ -20,7 +20,7 @@
 #include "araobjs.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #ifdef HAVE_SYS_VFS_H
@@ -967,6 +967,29 @@ char *HostFs::cookie2Pathname( HostFs::XfsFsFile *fs, const char *name, char *bu
 }
 
 
+void HostFs::xfs_debugCookie( XfsCookie *fc )
+{
+	D(bug( "release():\n"
+		 "	fc = %08lx\n"
+		 "	  fs	= %08lx\n"
+		 "	  dev	= %04x\n"
+		 "	  aux	= %04x\n"
+		 "	  index = %08lx\n"
+		 "		parent	 = %08lx\n"
+		 "		name	 = \"%s\"\n"
+		 "		usecnt	 = %d\n"
+		 "		childcnt = %d\n",
+		 (long)fc,
+		 (long)fc->xfs,
+		 (int)fc->dev,
+		 (int)fc->aux,
+		 (long)fc->index,
+		 (long)fc->index->parent,
+		   fc->index->name,
+		   fc->index->refCount,
+		   fc->index->childCount ));
+}
+
 
 int32 HostFs::xfs_dfree( XfsCookie *dir, uint32 diskinfop )
 {
@@ -1003,7 +1026,7 @@ int32 HostFs::xfs_dfree( XfsCookie *dir, uint32 diskinfop )
 
 int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 {
-	char fname[MAXPATHNAME2LEN];
+	char fname[MAXPATHNAMELEN];
 	a2fstrcpy( fname, name );
 
 	char fpathName[MAXPATHNAMELEN];
@@ -1018,7 +1041,7 @@ int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 
 int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 {
-	char fname[MAXPATHNAME2LEN];
+	char fname[MAXPATHNAMELEN];
 	a2fstrcpy( fname, name );
 
 	char pathName[MAXPATHNAMELEN];
@@ -1037,8 +1060,10 @@ int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 
 int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, XfsCookie *fc )
 {
-	char fname[MAXPATHNAME2LEN];
+	char fname[MAXPATHNAMELEN];
 	a2fstrcpy( fname, name );
+
+	D(bug("HOSTFS:  dev_creat (%s,%x)", fname, flags));
 
 	char pathName[MAXPATHNAMELEN];
 	cookie2Pathname(dir->index,fname,pathName); // get the cookie filename
@@ -1047,9 +1072,7 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 	char fpathName[MAXPATHNAMELEN];
 	convertPathA2F( mounts.find(dir->dev)->second, fpathName, pathName, "" ); // convert the fname into the hostfs form (check the 8+3 file existence)
 
-	D(bug("HOSTFS:  dev_creat (%s,%x)", fpathName, flags));
-
-	int fd = open( fpathName, O_CREAT|O_WRONLY|O_TRUNC|O_BINARY, mode );
+	int fd = open( fpathName, O_CREAT|O_EXCL|O_WRONLY|O_BINARY, mode );
 	if (fd < 0)
 		return unix2toserrno(errno,TOS_EFILNF);
 	close( fd );
@@ -1059,37 +1082,13 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 	newFsFile->refCount = 1;
 	newFsFile->childCount = 0;
 	newFsFile->parent = dir->index;
+	newFsFile->created = false;
 	dir->index->childCount++;
 
 	*fc = *dir;
 	fc->index = newFsFile;
 
-	D(bug("HOSTFS: /dev_creat (%s,%d)", fpathName, flags));
 	return TOS_E_OK;
-}
-
-
-void HostFs::xfs_debugCookie( XfsCookie *fc )
-{
-	D(bug( "release():\n"
-		 "	fc = %08lx\n"
-		 "	  fs	= %08lx\n"
-		 "	  dev	= %04x\n"
-		 "	  aux	= %04x\n"
-		 "	  index = %08lx\n"
-		 "		parent	 = %08lx\n"
-		 "		name	 = \"%s\"\n"
-		 "		usecnt	 = %d\n"
-		 "		childcnt = %d\n",
-		 (long)fc,
-		 (long)fc->xfs,
-		 (int)fc->dev,
-		 (int)fc->aux,
-		 (long)fc->index,
-		 (long)fc->index->parent,
-		   fc->index->name,
-		   fc->index->refCount,
-		   fc->index->childCount ));
 }
 
 
@@ -1098,9 +1097,22 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname(fp->fc.index, NULL, fpathName);
 
-	D(bug("HOSTFS:  dev_open (%s, %d)", fpathName, fp->flags));
+	int flags = st2flags(fp->flags);
 
-	int fd = open( fpathName, st2flags(fp->flags)|O_BINARY, 0 );
+	D(bug("HOSTFS:  dev_open (%s, %x->%x)", fpathName, fp->flags, flags));
+
+	// the xfs_creat() does create the host fs file although
+	// it should not according to the FreeMiNT .XFS design
+	if ( !fp->fc.index->created && (flags & O_CREAT) ) {
+		// if xfs_creat()'ed file is now opened with O_CREAT
+		// then set the special index->created to true
+		fp->fc.index->created = true;
+
+		// crear the O_EXCL and O_CREAT flags
+		flags &= ~(O_CREAT|O_EXCL);
+	}
+
+	int fd = open( fpathName, flags|O_BINARY, 0 );
 	if (fd < 0)
 		return unix2toserrno(errno,TOS_EFILNF);
 	fp->hostFd = fd;
@@ -1220,7 +1232,7 @@ int32 HostFs::xfs_dev_lseek(ExtFile *fp, int32 offset, int16 seekmode)
 
 int32 HostFs::xfs_remove( XfsCookie *dir, memptr name )
 {
-	char fname[MAXPATHNAME2LEN];
+	char fname[MAXPATHNAMELEN];
 	a2fstrcpy( fname, name );
 
 	char pathName[MAXPATHNAMELEN];
@@ -1239,8 +1251,8 @@ int32 HostFs::xfs_remove( XfsCookie *dir, memptr name )
 
 int32 HostFs::xfs_rename( XfsCookie *olddir, memptr oldname, XfsCookie *newdir, memptr newname )
 {
-	char foldname[MAXPATHNAME2LEN];
-	char fnewname[MAXPATHNAME2LEN];
+	char foldname[MAXPATHNAMELEN];
+	char fnewname[MAXPATHNAMELEN];
 	a2fstrcpy( foldname, oldname );
 	a2fstrcpy( fnewname, newname );
 
@@ -1258,8 +1270,8 @@ int32 HostFs::xfs_rename( XfsCookie *olddir, memptr oldname, XfsCookie *newdir, 
 
 int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 {
-	char ffromname[MAXPATHNAME2LEN];
-	char ftoname[MAXPATHNAME2LEN];
+	char ffromname[MAXPATHNAMELEN];
+	char ftoname[MAXPATHNAMELEN];
 	a2fstrcpy( ffromname, fromname );
 	a2fstrcpy( ftoname, toname );
 
@@ -1729,7 +1741,7 @@ void HostFs::xfs_freefs( XfsFsFile *fs )
 
 int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 {
-	char fname[MAXPATHNAME2LEN];
+	char fname[MAXPATHNAMELEN];
 	a2fstrcpy( fname, name );
 
 	D(bug( "HOSTFS: fs_lookup: %s", fname ));
@@ -1894,11 +1906,25 @@ int32 HostFs::xfs_release( XfsCookie *fc )
 }
 
 
+
+HostFs::ExtDrive::ExtDrive( HostFs::ExtDrive *old ) {
+	if ( old ) {
+		driveNumber = old->driveNumber;
+		fsDrv = old->fsDrv;
+		fsDevDrv = old->fsDevDrv;
+		hostRoot = old->hostRoot ? strdup( old->hostRoot ) : NULL;
+		mountPoint = old->hostRoot ? strdup( old->mountPoint ) : NULL;
+		halfSensitive = old->halfSensitive;
+	}
+}
+
+
 int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
 							   memptr filesys, memptr filesys_devdrv )
 {
-	char fmountpoint[MAXPATHNAME2LEN];
+	char fmountpoint[MAXPATHNAMELEN];
 	a2fstrcpy( fmountpoint, mountpoint );
+	int dnum = -1;
 
 	ExtDrive *drv = new ExtDrive();
 	drv->fsDrv = filesys;
@@ -1906,10 +1932,10 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 	// The mountPoint is of a "A:" format:
 	//    MetaDOS mapping the devnum is <MAXDRIVES
-	if ( strlen( fmountpoint ) == 2 ) {
-		int dnum = fmountpoint[0]-'A';
+	if ( strlen( fmountpoint ) == 2 && fmountpoint[1] == ':' ) {
+		dnum = tolower(fmountpoint[0])-'a';
 
-		// -> use the [aranymfs] of config file here
+		// -> use the [HOSTFS] of config file here
 		drv->mountPoint = strdup( fmountpoint );
 		drv->hostRoot = strdup( bx_options.aranymfs[dnum].rootPath );
 		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
@@ -1917,15 +1943,15 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		drv->mountPoint = strdup( fmountpoint );
 
 		// the aranym.xfs tries to map drives to u:\\xx
-		// in this case we use the [aranymfs] of config file here
+		// in this case we use the [HOSTFS] of config file here
 		if ( !strncasecmp( fmountpoint, "u:\\", 3 ) &&
-			 (unsigned int)(fmountpoint[3]-'a') < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) )
+			 (unsigned int)(dnum = tolower(fmountpoint[3])-'a') < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) )
 		{
 			drv->hostRoot = strdup( bx_options.aranymfs[fmountpoint[3]-'a'].rootPath );
 			drv->halfSensitive = bx_options.aranymfs[fmountpoint[3]-'a'].halfSensitive;
 		} else {
 			// no [aranymfs] match -> map to the passed mountpoint (future extension to map from m68k side)
-			char fhostroot[MAXPATHNAME2LEN];
+			char fhostroot[MAXPATHNAMELEN];
 			a2fstrcpy( fhostroot, hostroot );
 
 			drv->hostRoot = strdup( fhostroot );
@@ -1935,6 +1961,19 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 	drv->driveNumber = devnum;
 	mounts.insert(std::make_pair( devnum, drv ));
+
+	// if the drive mount was mounted to some FreeMiNT mountpoint
+	// which devnum is higher that MAXDRIVES then serve also for the
+	// GEMDOS drive equivalent. This is a need for the current
+    // FreeMiNT kernel which requires to react to 0-31 devno's
+	if ( dnum != devnum &&
+		 dnum != -1 &&
+		 (unsigned int)dnum < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) ) {
+		drv = new ExtDrive( drv );
+		drv->driveNumber = dnum;
+		mounts.insert(std::make_pair( dnum, drv ));
+	}
+
 
 	D(bug("HOSTFS: fs_native_init:\n"
 		  "\t\t fs_drv	   = %#08x\n"
@@ -1957,6 +1996,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.11.2.9  2003/04/10 21:49:34  joy
+ * cygwin mapping fixed - compiler bug found
+ *
  * Revision 1.11.2.8  2003/04/08 22:11:14  joy
  * important difference in order of operator evaluation
  *
