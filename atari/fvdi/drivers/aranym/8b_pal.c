@@ -117,13 +117,11 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 				break;
 			}
 #endif
-			if ( palette == vwk->real_address->screen.palette.colours ) {
-				c_set_colour(	vwk,
-						start + i,
-						palette[start + i].vdi.red,
-						palette[start + i].vdi.green,
-		              			palette[start + i].vdi.blue);
-			}
+			c_set_colour(	vwk,
+					start + i,
+					palette[start + i].vdi.red,
+					palette[start + i].vdi.green,
+		       			palette[start + i].vdi.blue);
 
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
@@ -165,13 +163,11 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 				break;
 			}
 #endif
-			if ( palette == vwk->real_address->screen.palette.colours ) {
-				c_set_colour(	vwk,
-						start + i,
-						palette[start + i].vdi.red,
-						palette[start + i].vdi.green,
-		              			palette[start + i].vdi.blue);
-			}
+			c_set_colour(	vwk,
+					start + i,
+					palette[start + i].vdi.red,
+					palette[start + i].vdi.green,
+		       			palette[start + i].vdi.blue);
 
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
