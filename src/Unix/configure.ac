@@ -58,7 +58,7 @@ AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI (default=ye
 
 AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default=no)], [WANT_OPENGL=$enableval], [WANT_OPENGL=no])
 
-AC_ARG_ENABLE(nfcdrom,         [  --enable-nfcdrom        enable NatFeat CD-ROM (default=no)], [WANT_NFCDROM=$enableval], [WANT_NFCDROM=no])
+AC_ARG_ENABLE(nfcdrom,         [  --enable-nfcdrom        enable NatFeat CD-ROM (default=yes)], [WANT_NFCDROM=$enableval], [WANT_NFCDROM=yes])
 
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
