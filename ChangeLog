@@ -1,5 +1,16 @@
+2003/03/21 - joy
+- networking: NF API extended to allow emulating more than 1 network card
+
+- aranym.xif: added SIOCGIF modes to autoconfigure the device with its IP
+  and netmask (and even MTU if it was necessary)
+
+- natfeat/ethernet.cpp: initialization corrected. The XIF should not install
+  on atari side unless the host initialization was finished OK.
+
+
 2003/03/20 - STanda
 - hostfs.cpp: mapping improved.
+
 - .DOS/.XFS:  .xfs works now just like the MetaDOS's driver
   it maps all the drives under the same driver letters.
   It goes through the [aranymfs] for the mapping.
@@ -8,6 +19,7 @@
   kernel line. So do not use the .dos driver there as the
   very same thing is provided by the .xfs there now.
   The configuration stays the same.
+
 - aranym_xfs.c: the source can be swithed to use the Dcntl()
   to map the drives, but in that case you can't get the single
   letter mountpoints.
@@ -18,6 +30,7 @@
   same way as aranymfs.dos. No change for the user.
   NOTE: Do not use aranymfs.dos driver. It doesn't work under
   FreeMiNT 1.16 kernel
+
 - aranym.xfs: now mounts the [aranymfs] mountpoints to U:/GG
   (need to develop a hack to map that to U:\G only /single letter mount
    point) - not via Dcntl() which looks in BIOS in this case)
@@ -93,6 +106,7 @@
 - aratapif: made working even in nondebug mode. The exec() arguments
   needs to be put into the child process adress space to be able to
   execute any binary.
+
 - BetaDOS 3.12: works correctly with the hostfs.dos driver here it
   seems. Please test the driver throughly. It gives you the long names
   also under FreeMiNT (unlike the aranymfs.dos which does not work

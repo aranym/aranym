@@ -10,16 +10,16 @@
 
 class ETHERNETDriver : public NF_Base
 {
-	int32 readPacketLength(memptr nif);
-	void readPacket(memptr buffer, uint32 len);
-	void sendPacket(memptr buffer, uint32 len);
+	int32 readPacketLength(int ethX);
+	void readPacket(int ethX, memptr buffer, uint32 len);
+	void sendPacket(int ethX, memptr buffer, uint32 len);
 
 	// interrupt handling
 	void finishInterupt();
 
 	// emulators handling the TAP device
-	static bool startThread(void);
-	static void stopThread(void);
+	static bool startThread(int ethX);
+	static void stopThread(int ethX);
 	static int receiveFunc(void *arg);
 
 	// the /dev/net/tun driver (TAP)

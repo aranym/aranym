@@ -1,10 +1,7 @@
 Before 0.8.0 release:
 ---------------------
-- prepare ethernet emulation for several cards at once (eth0, eth1, ..)
 - host-ip, atari-ip, netmask, mtu in config file ([ETH0])
-- automagically configured ethernet device (araethip would not be needed)
 - automagically updated CONFIG.SYS/BDCONFIG.SYS
-- patch for fixing MetaDOS Pexec bug
 - some doc update (networking, disk image, afros)
 
 Roadmap:
@@ -24,6 +21,7 @@ Some hot ideas (before they get forgotten)
 Note that the name before a TODO item doesn't mean the item is assigned to
 that particular programmer but rather who is the author of the idea :-)
 
+- joy: patch for fixing MetaDOS Pexec bug (maybe not needed as BetaDOS is OK)
 - joy: make the PureC patch more error-proof
 
 - joy: put all ARAnyM patches and drivers together to a nice package
