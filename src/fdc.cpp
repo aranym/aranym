@@ -55,11 +55,16 @@ bool insert_floppy()
 	if (strlen(path) == 0)	// is path to floppy defined?
 		return false;
 
-	int status = open(path, O_RDWR | O_SYNC
-#ifdef O_BINARY
-					| O_BINARY
+	int status = open(path, O_RDWR
+#ifdef HAVE_O_FSYNC
+			| O_FSYNC
+#else
+			| O_SYNC
 #endif
-					);
+#ifdef O_BINARY
+			| O_BINARY
+#endif
+			);
 	bool rw = true;
 	if (status < 0) {
 		status = open(path, O_RDONLY

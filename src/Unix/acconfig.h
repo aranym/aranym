@@ -86,6 +86,9 @@
 /* Define if <getopt.h> knows getopt_long */
 #undef HAVE_GETOPT_H
 
+/* Define if you want to use FreeBSD's imitation of O_SYNC */
+#undef HAVE_O_FSYNC
+
 
 /* Leave that blank line there!!  Autoheader needs it.
    If you're adding to this file, keep in mind:

@@ -1,3 +1,7 @@
+2002/04/21 - milan
+- pre-support of FreeBSD
+
+
 2002/04/21 - joy
 - ExtFs: Dpathconf(DP_XATTR) disabled altogether. It was causing problems
   in Thing (Thing didn't refresh source window of 'move' operation).

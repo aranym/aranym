@@ -191,6 +191,10 @@ dnl    WANT_ARANYMFS="no"
   irix*)
     EXTRASYSSRCS="parameters_unix.cpp irix/unaligned.c"
     ;;
+  freebsd)
+    AC_DEFINE(HAVE_O_FSYNC)
+    EXTRASYSSRCS=parameters_unix.cpp
+    ;;	      
   *)
     EXTRASYSSRCS=parameters_unix.cpp
     ;;
@@ -634,8 +638,6 @@ dnl It needs computed gotos (supported by GNU C++)
 dnl DODO - test for computed gotos
 if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
   DEFINES="$DEFINES -DDISDIP"
-else
-  WANT_DIS_DIP = no
 fi			
 				
 dnl Select appropriate CPU source and REGPARAM define.
@@ -735,7 +737,7 @@ if [[ "x$FPE_CORE" = "xi386" ]]; then
 fi
 
 if [[ "x$FPE_CORE" = "xdefault" ]]; then
-  if [[ "x$HAVE_I386" = "xyes" ]];  then
+  if [[ "x$HAVE_I386" = "xyes" -a "x$OS_TYPE" != "freebsd" ]];  then
     FPE_CORE="ieee"
   else
     FPE_CORE="uae"
