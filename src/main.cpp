@@ -358,10 +358,10 @@ bool InitEmuTOS(void)
 	bool bEmuOK = (fread(ROMBaseHost, 1, RealROMSize, f) > 0);
 	fclose(f);
 	if (bEmuOK) {
-		infoprint("EmuTOS %02x/%02x/%04x loading from '%s'... [OK]",
-			ROMBaseHost[0x18],
-			ROMBaseHost[0x19],
-			(ROMBaseHost[0x1a] << 8) | ROMBaseHost[0x1b],
+		infoprint("EmuTOS %02x%02x/%02x/%02x loading from '%s'... [OK]",
+			ROMBaseHost[0x18], ROMBaseHost[0x19],
+			ROMBaseHost[0x1a],
+			ROMBaseHost[0x1b],
 			emutos_path);
 	}
 	else
@@ -566,6 +566,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.100  2003/09/30 08:47:11  pmandin
+ * Natfeat CD-ROM driver split
+ *
  * Revision 1.99  2003/08/15 19:24:04  milan
  * md5.h -> aramd5.h (Guy Harrison)
  *
