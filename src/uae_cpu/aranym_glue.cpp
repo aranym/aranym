@@ -89,7 +89,7 @@ bool Init680x0(void)
 
 void AtariReset(void)
 {
-	m68k_reset();
+	// reset Atari hardware here
 }
 
 /*
