@@ -1,3 +1,9 @@
+2002/12/19 - STanda
+- the atari/network/araeth aranym.xif for ECE (ethernet card emulation)
+  added. It doesn't work ... see the README there.
+- Installation and BUGS section added into the atari/hostfs/README
+
+
 2002/12/16 - STanda
 - several cleanups regarding the extfs and hostfs (main.cpp, nf_objs.cpp)
 - STL bugfix in natfeat/hostfs.h (the std namespace usage)
