@@ -23,14 +23,14 @@
 -->
       </head>
       <body>
-        <table width="100%" border="0" cellspacing="0" cellpadding="2">
+        <table border="0" cellspacing="0" cellpadding="2">
           <tr>
             <td valign="top" align="center">
               <h2>
                 ARAnyM
               </h2>
             </td>
-            <td align="center"> 
+            <td width="600" align="center"> 
               <h2>
                 <xsl:value-of select="/document/header"/>
               </h2>
@@ -47,7 +47,7 @@
             <td valign="top">
               <xsl:apply-templates select="$config/menu" mode="menu"/>
             </td>
-            <td align="left" valign="top" width="100%">
+            <td align="left" valign="top" width="600">
               <xsl:apply-templates/>
             </td>
           </tr>
