@@ -6,12 +6,12 @@
 #include "memory.h"
 #include "acia.h"
 
-int HW = 0xfffc00;
+static const int HW = 0xfffc00;
 
 ACIA::ACIA(bool value) {
 	midi = value;
 
-	status = 0x00;
+	status = 0x02;
 	mode = 0x00;
 	rxdata = 0x00;
 	txdata = 0x00;
@@ -30,5 +30,6 @@ uae_u8 ACIA::getData() {
 
 void ACIA::setData(uae_u8 value) {
 	/* send data */
+	fprintf(stderr, "IKBD data = %02x\n", value);
 	status |= 2;
 }
