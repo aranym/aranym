@@ -20,7 +20,7 @@
 #include "araobjs.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #if 0
@@ -2093,6 +2093,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.19  2003/12/09 09:38:57  standa
+ * Rolling the st_ino and st_dev in getxattr back.
+ *
  * Revision 1.18  2003/10/02 18:13:42  standa
  * Large HOSTFS cleanup (see the ChangeLog for more)
  *
