@@ -1,3 +1,13 @@
+2003/12/16 - Xavier
+- doc/build-cygwin.sh: added a small shell script to ease compilation on
+  Cygwin systems. This script is needed since SDL does not allow to build
+  Cygwin applications out of the box. Please read comments at the top of
+  build-cygwin.sh for detailed informations.
+
+- doc/compiling_for_windows.txt: removed old documentation superseded by
+  build-cygwin.sh.
+
+
 2003/12/15 - joy
 - why to bother with demoing weird problems in extfs.cpp when the file
   is obsolete and can be removed? Good idea from Standa. ExtFS removed.
