@@ -9,6 +9,8 @@
 
 - NEWS, README etc: update for release
 
+- doc/build-cygwin.sh: "bash" is in /bin/ (and rpmbuild insists on that)
+
 
 2004/01/06 - Xavier
 - gui-sdl/sdlgui.cpp: improved maintainability and "look'n'feel".
