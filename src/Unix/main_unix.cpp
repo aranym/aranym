@@ -102,6 +102,8 @@ int main(int argc, char **argv)
 	HWBaseHost = NULL;
 	FastRAMBaseHost = NULL;
 
+	infoprint("%s", VERSION_STRING);
+
 	// remember program name
 	program_name = argv[0];
 
@@ -316,6 +318,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.83  2003/07/28 20:57:45  joy
+ * superfluous print of version at startup removed
+ *
  * Revision 1.82  2003/04/08 10:44:07  joy
  * merging changes from 0_8_0 branch
  *

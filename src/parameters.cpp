@@ -506,7 +506,7 @@ void presave_midi() {
 
 /*************************************************************************/
 void usage (int status) {
-  printf ("%s\n", VERSION_STRING);
+  // printf ("%s\n", VERSION_STRING);
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
   printf ("\
 Options:\n\
@@ -599,7 +599,7 @@ void early_cmdline_check(int argc, char **argv) {
 			usage(0);
 			exit(0);
 		} else if ((strcmp(p, "-V") == 0) || (strcmp(p, "--version") == 0)) {
-			infoprint("%s\n", VERSION_STRING);
+			// infoprint("%s\n", VERSION_STRING);
 			infoprint("Capabilities:");
 			infoprint("JIT compiler     : %s", (USE_JIT == 1) ? "enabled" : "disabled");
 			infoprint("Full MMU         : %s", (FULLMMU == 1) ? "enabled" : "disabled");
