@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl Written in 1999 by Christian Bauer et al.
 dnl Adapted for ARAnyM by Milan Jurik
 
-AC_INIT(aranym,0.8,aranym-user@nightmare.sh.cvut.cz,aranym)
+AC_INIT(aranym,0.8,aranym@bobek.sh.cvut.cz,aranym)
 AC_PREREQ(2.52)
 AC_REVISION($Revision$)
 AC_CONFIG_HEADER(config.h)
@@ -1020,7 +1020,7 @@ elif [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
 fi
 
 dnl JIT sources if available
-if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" ]]; then
+if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" = "xyes" ]]; then
   if [[ "x$WANT_MMU" = "xyes" ]]; then
       AC_MSG_WARN([!!!!! MMU&JIT in progress, dangerous !!!!!])
   fi
@@ -1459,39 +1459,100 @@ LIBS="$LIBS $SDL_LIBS"
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
 
-dnl Linux loader
+dnl zlib
 
-LILOSRCS=""
-AC_ARG_ENABLE(lilo, [  --enable-lilo           enable Linux loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
-if test x$WANT_LILO = xyes; then
-	if test x$WANT_MMU = xyes; then
-		LILOSRCS="../lilo.cpp"
-		AC_DEFINE([ENABLE_LILO], 1, [Define if lilo enabled])
-	else
-		AC_MSG_ERROR([Linux kernel requires fonctionnal MMU emulation])
-	fi
+dnl Available from the GNU Autoconf Macro Archive at:
+dnl http://www.gnu.org/software/ac-archive/htmldoc/check_zlib.html
+dnl
+AC_DEFUN([CHECK_ZLIB],
+#
+# Handle user hints
+#
+[AC_MSG_CHECKING(if zlib is wanted)
+AC_ARG_WITH(zlib,
+[  --with-zlib=DIR         root directory path of zlib installation [defaults 
+                          to /usr/local or /usr if not found in /usr/local]
+  --without-zlib          disable zlib usage completely],
+[if test "$withval" != no ; then
+  AC_MSG_RESULT(yes)
+  ZLIB_HOME="$withval"
+  have_zlib="yes"
+else
+  AC_MSG_RESULT(no)
+  have_zlib="no"
+fi], [
+AC_MSG_RESULT(yes)
+have_zlib="yes"
+ZLIB_HOME=/usr/local
+if test ! -f "${ZLIB_HOME}/include/zlib.h"
+then
+        ZLIB_HOME=/usr
+fi
+])
+
+#
+# Locate zlib, if wanted
+#
+if test -n "${ZLIB_HOME}"
+then
+        ZLIB_OLD_LDFLAGS=$LDFLAGS
+        ZLIB_OLD_CPPFLAGS=$LDFLAGS
+        LDFLAGS="$LDFLAGS -L${ZLIB_HOME}/lib"
+        CPPFLAGS="$CPPFLAGS -I${ZLIB_HOME}/include"
+        AC_LANG_SAVE
+        AC_LANG_C
+        AC_CHECK_LIB(z, inflateEnd, [zlib_cv_libz=yes], [zlib_cv_libz=no])
+        AC_CHECK_HEADER(zlib.h, [zlib_cv_zlib_h=yes], [zlib_cvs_zlib_h=no])
+        AC_LANG_RESTORE
+        if test "$zlib_cv_libz" = "yes" -a "$zlib_cv_zlib_h" = "yes"
+        then
+                #
+                # If both library and header were found, use them
+                #
+                AC_CHECK_LIB(z, inflateEnd)
+                AC_MSG_CHECKING(zlib in ${ZLIB_HOME})
+                AC_MSG_RESULT(ok)
+		have_zlib="yes"
+        else
+                #
+                # If either header or library was not found, revert and bomb
+                #
+                AC_MSG_CHECKING(zlib in ${ZLIB_HOME})
+                LDFLAGS="$ZLIB_OLD_LDFLAGS"
+                CPPFLAGS="$ZLIB_OLD_CPPFLAGS"
+                AC_MSG_RESULT(failed)
+		have_zlib="no"
+                AC_MSG_ERROR(either specify a valid zlib installation with --with-zlib=DIR or disable zlib usage with --without-zlib)
+        fi
 fi
 
-dnl Zlib (for lilo)
+])
 
-AC_CHECK_HEADER(zlib.h, have_zlib_header=yes)
-AC_CHECK_LIB(z, zlibVersion, have_zlib_lib=yes)
-if test x$have_zlib_header = xyes -a x$have_zlib_lib = xyes; then
-	have_zlib="yes"
-	AC_DEFINE([ENABLE_ZLIB], 1, [Define if Zlib present])
-	if test x$WANT_LILO = xyes; then
-		LIBS="$LIBS -lz"
-	fi
+CHECK_ZLIB()
+
+if [[ "x$have_zlib" = "xyes" ]]; then
+  LIBS="$LIBS -lz"
 fi
 
 dnl Linux kernel includes (for lilo)
 
 AC_ARG_WITH(kernel-includes,
-	[  --with-kernel-includes=DIR Specify where to find Linux kernel headers],
-	LINUXKERNEL_INCDIR=$withval, LINUXKERNEL_INCDIR="/usr/src/linux/include")
-if test x$WANT_LILO = xyes; then
-	CFLAGS="$CFLAGS -I$LINUXKERNEL_INCDIR"
-	CXXFLAGS="$CXXFLAGS -I$LINUXKERNEL_INCDIR"
+        [  --with-kernel-includes=DIR Specify where to find Linux kernel headers],
+        LINUXKERNEL_INCDIR=$withval, LINUXKERNEL_INCDIR="/usr/src/linux/include")
+
+dnl Linux loader
+
+LILOSRCS=""
+AC_ARG_ENABLE(lilo, [  --enable-lilo           enable Linux loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
+if [[ "x$WANT_LILO" = "xyes" ]]; then
+	if [[ "x$WANT_MMU" = "xyes" ]]; then
+		LILOSRCS="../lilo.cpp"
+		CFLAGS="$CFLAGS -I$LINUXKERNEL_INCDIR"
+                CXXFLAGS="$CXXFLAGS -I$LINUXKERNEL_INCDIR"
+		AC_DEFINE([ENABLE_LILO], 1, [Define if lilo enabled])
+	else
+		AC_MSG_ERROR([Linux kernel requires functionnal MMU emulation])
+	fi
 fi
 
 dnl Data directory

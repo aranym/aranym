@@ -14,6 +14,7 @@
 #include "registers.h"
 #include "spcflags.h"
 #include "m68k.h"
+#include "memory.h"
 
 #ifdef HAVE_NEW_HEADERS
 # include <csetjmp>

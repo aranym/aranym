@@ -2,6 +2,11 @@
 - autogen.sh, configure.ac: cleaning, free patch from Guy Harrison for MAKE,
                             xeys problem solved
 
+- configure.ac, lilo.cpp: zlib & lilo support standardized
+                          nightmare -> bobek transfer
+
+- Makefile.in: make depend for linux corrected
+
 
 2003/07/18 - joy
  My little cleanups:

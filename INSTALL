@@ -16,10 +16,10 @@ and
 x86          BeOS
 x86          GNU/Linux
 x86          MS Windows + Cygwin
-x86          OpenBSD
+x86          OpenBSD (unmaintained)
 PPC          MacOS X
 SGI          Irix (unmaintained)
-Sun Sparc    Solaris (unmaintained)
+Sun Sparc    Solaris
 
 In progress (in alphabetical order):
 m68k         FreeMiNT
