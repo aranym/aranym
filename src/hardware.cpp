@@ -33,10 +33,7 @@ YAMAHA yamaha;
 
 #define BUS_ERROR	longjmp(excep_env, 2)
 
-long getVideoramAddress() { return videl.getVideoramAddress(); }
-int getVideoMode() { return videl.getVideoMode(); }
-int getVidelScreenWidth() { return videl.getScreenWidth(); }
-int getVidelScreenHeight() { return videl.getScreenHeight(); }
+void update_screen() { videl.update_screen(); }
 int getFloppyStats() { return yamaha.getFloppyStat(); }
 
 bool dP = false;
