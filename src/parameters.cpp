@@ -519,11 +519,13 @@ void build_cfgfilename()
 	char *home = getenv("HOME");
 	if (home != NULL) {
 		int homelen = strlen(home);
-		unsigned int len = strlen(ARANYMHOME);
-		if ((homelen+1 + len+1) < sizeof(config_folder)) {
-			strcpy(config_folder, home);
-			strcat(config_folder, DIRSEPARATOR);
-			strcat(config_folder, ARANYMHOME);
+		if (homelen > 0) {
+			unsigned int len = strlen(ARANYMHOME);
+			if ((homelen+1 + len+1) < sizeof(config_folder)) {
+				strcpy(config_folder, home);
+				strcat(config_folder, DIRSEPARATOR);
+				strcat(config_folder, ARANYMHOME);
+			}
 		}
 	}
 
