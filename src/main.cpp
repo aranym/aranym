@@ -263,8 +263,12 @@ bool InitTOSROM(void)
 	ROMBaseHost[0x00417] = (bx_options.tos.cookie_mch >> 16) & 0xff;
 	ROMBaseHost[0x00418] = (bx_options.tos.cookie_mch >> 8) & 0xff;
 	ROMBaseHost[0x00419] = (bx_options.tos.cookie_mch) & 0xff;
-	// _SND (disable DSP and DMA)
-	// TODO
+	// _SND
+#if DSP_EMULATION
+	ROMBaseHost[0x00437] = 0x0C;	/* DSP emulation and XBIOS routines */
+#else
+	ROMBaseHost[0x00437] = 0x04;	/* no hardware, only XBIOS routines */
+#endif
 
 	// patch TOS 4.04 to show FastRAM memory test
 	if (FastRAMSize > 0) {
@@ -538,6 +542,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.90  2002/12/19 10:18:46  standa
+ * ECE initialization and termination
+ *
  * Revision 1.89  2002/12/16 11:25:04  standa
  * METADOS_DRV removed ... was duplicating the EXTFS_SUPPORT
  *
