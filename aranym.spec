@@ -35,8 +35,6 @@ rm -rf %{realname}
 ./configure
 make
 make clean
-done
-touch aranym
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -57,4 +55,4 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sun Apr 14 2002 Petr Stehlik <pstehlik@sophics.cz>
-First (working) version
+First (beta) version
