@@ -54,7 +54,7 @@
 #endif
 
 #define DRIVER_NAME	"ARAnyM host JPEG driver"
-#define VERSION	"v0.1"
+#define VERSION	"v0.2"
 
 #define CALLJPEGROUTINE(jpgd_ptr,func_ptr)	\
 __extension__	\
@@ -105,15 +105,11 @@ static JPGDDRV_STRUCT nfjpeg_cookie = {
 	DecodeImage
 };
 
-static const char *jpd_already_installed="A JPEG driver is already installed on this system\r\n";
-static const char *nf_not_present="NatFeats not present on this system";
-
 /*--- Functions ---*/
 
 void install_driver(unsigned long resident_length)
 {
-	unsigned long dummy, cookie_nf;
-	unsigned short nf_present;
+	unsigned long cookie_nf;
 
 	Cconws(
 		"\033p " DRIVER_NAME " " VERSION " \033q\r\n"
@@ -122,26 +118,26 @@ void install_driver(unsigned long resident_length)
 
 	/* Check if _JPD already installed */
 	if (cookie_present(C__JPD, NULL)) {
-		Cconws(jpd_already_installed);
+		Cconws("A JPEG driver is already installed on this system\r\n");
 		press_any_key();
 		return;
 	}	
 
-	nf_present=(Getcookie(C___NF, &dummy) == C_FOUND);
-
-	/* Check if NF is present for PCI */
-	if (!cookie_present(C___NF, &cookie_nf)) {
-		Cconws(nf_not_present);
-		press_any_key();
-		return;
-	}	
-
-	nfJpegId = nfGetID(("JPEG"));
-	if (nfJpegId==0) {
-		Cconws(nf_not_present);
+	/* Check if NF is present for NFJPEG */
+	nfJpegId=0;
+	if (cookie_present(C___NF, &cookie_nf) == C_FOUND) {
+		nfJpegId = nfGetID(("JPEG"));
+	} else {
+		Cconws("__NF cookie not present on this system\r\n");
 		press_any_key();
 		return;
 	}
+
+	if (nfJpegId==0) {
+		Cconws("NF JPEG functions not present on this system\r\n");
+		press_any_key();
+		return;
+	}	
 
 	install_jpeg();
 
@@ -151,7 +147,7 @@ void install_driver(unsigned long resident_length)
 
 static void press_any_key(void)
 {
-	Cconws("- Press any key to continue -");
+	Cconws("- Press any key to continue -\r\n");
 	while (Bconstat(DEV_CONSOLE)==0);
 }
 

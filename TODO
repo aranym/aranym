@@ -86,3 +86,6 @@ that particular programmer but rather who is author of the idea :-)
 - patrice: rework dsp thread synchronization. It seems it may hang sometimes.
 
 - patrice: full automake/autoconf support.
+
+- patrice: rewrite nfosmesa to use a device driver under MiNT.
+

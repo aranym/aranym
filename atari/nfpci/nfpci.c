@@ -55,7 +55,7 @@
 #endif
 
 #define DRIVER_NAME	"ARAnyM host PCI driver"
-#define VERSION	"v0.1"
+#define VERSION	"v0.2"
 
 /*--- Types ---*/
 
@@ -119,10 +119,6 @@ static pcibios_cookie_t pcibios_cookie={
 	}
 };
 
-static const char *xpci_already_installed="A XPCI driver is already installed on this system\r\n";
-static const char *pci_already_installed="A _PCI driver is already installed on this system\r\n";
-static const char *nf_not_present="NatFeats not present on this system";
-
 /*--- External variables ---*/
 
 extern void pcixbios_newtrap(void);
@@ -147,27 +143,29 @@ void install_driver(unsigned long resident_length)
 
 	/* Check if a PCI driver is not already installed */
 	if (cookie_present(C_XPCI, NULL)) {
-		Cconws(xpci_already_installed);
+		Cconws("A XPCI driver is already installed on this system\r\n");
 		press_any_key();
 		return;
 	}	
 
 	if (cookie_present(C__PCI, NULL)) {
-		Cconws(pci_already_installed);
+		Cconws("A _PCI driver is already installed on this system\r\n");
 		press_any_key();
 		return;
 	}	
 
 	/* Check if NF is present for PCI */
-	if (!cookie_present(C___NF, &cookie_nf)) {
-		Cconws(nf_not_present);
+	nfPciId = 0;
+	if (cookie_present(C___NF, &cookie_nf) == C_FOUND) {
+		nfPciId = nfGetID(("PCI"));
+	} else {
+		Cconws("__NF cookie not present on this system\r\n");
 		press_any_key();
 		return;
 	}	
 
-	nfPciId = nfGetID(("PCI"));
 	if (nfPciId==0) {
-		Cconws(nf_not_present);
+		Cconws("NF PCI functions not present on this system\r\n");
 		press_any_key();
 		return;
 	}
@@ -184,7 +182,7 @@ void install_driver(unsigned long resident_length)
 
 static void press_any_key(void)
 {
-	Cconws("- Press any key to continue -");
+	Cconws("- Press any key to continue -\r\n");
 	while (Bconstat(DEV_CONSOLE)==0);
 }
 

@@ -77,7 +77,6 @@ int cookie_add(unsigned long cookie, unsigned long value)
 	while (*cookie_jar != 0) {
 		cookie_jar += 2;
 		count++;
-/*		Cconws("-");*/
 	}
 
 	/* Is there enough space ? */

@@ -25,6 +25,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <mint/cookie.h>
+#include <mint/osbind.h>
 
 #include <GL/gl.h>
 
@@ -35,7 +36,9 @@
 
 /*--- Defines ---*/
 
+#ifndef C___NF
 #define C___NF	0x5f5f4e46L
+#endif
 
 /*--- Local variables ---*/
 
@@ -46,14 +49,18 @@ OSMesaContext cur_context=0;
 
 static void InitNatfeat(void)
 {
-	unsigned short nf_present;
 	unsigned long dummy;
 
-	nf_present=(Getcookie(C___NF, &dummy) == C_FOUND);
-
 	nfOSMesaId=0;
-	if (nf_present) {
+	if (Getcookie(C___NF, &dummy) == C_FOUND) {
 		nfOSMesaId=nfGetID(("OSMESA"));
+	} else {
+		Cconws("__NF cookie not present on this system\r\n");
+		return;
+	}
+
+	if (nfOSMesaId==0) {
+		Cconws("NF OSMesa functions not present on this system\r\n");
 	}
 }
 

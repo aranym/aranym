@@ -1,3 +1,8 @@
+2005/02/23 - Patrice
+- nfjpeg, nfpci, nfosmesa: Display a message when __NF cookie is missing, or
+  when NF functions needed are missing in ARAnyM.
+
+
 2005/02/22 - Petr
 - parameters.cpp: 'RedirPrinter' removed.
   Default printer file is 'stderr'.
