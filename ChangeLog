@@ -19,7 +19,7 @@
 
 2001/08/08 - STanda
 
-- no atexit crash (atexit(ExitAll) called)
+- no atexit crash ( atexit(ExitAll) called )
 
 - numblock key mapping fixed. (/,*,-,+ keys fixed)
 
