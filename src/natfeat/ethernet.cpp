@@ -226,27 +226,6 @@ bool ETHERNETDriver::init(void)
 		return false;
 	}
 
-	// prepare exec path to aratapif
-	char tapifPath[500];
-	strcpy(tapifPath, program_home);
-	strcat(tapifPath, DIRSEPARATOR);
-	strcat(tapifPath, TAP_INIT);
-
-	// make sure aratapif is available and suid root
-	struct stat buf;
-	if (stat(tapifPath, &buf)) {
-		panicbug("Ethernet ERROR: '%s' not found. Ethernet disabled!", tapifPath);
-		close(fd);
-		fd = -1;
-		return false;
-	}
-	if (buf.st_uid != 0) {
-		panicbug("Ethernet warning: '%s' is not owned by root", tapifPath);
-	}
-	if ((buf.st_mode & S_ISUID) == 0) {
-		panicbug("Ethernet warning: '%s' is not setuid", tapifPath);
-	}
-
 	int pid = fork();
 	if (pid < 0) {
 		panicbug("Ethernet ERROR: fork() failed. Ethernet disabled!");
@@ -266,8 +245,8 @@ bool ETHERNETDriver::init(void)
 			TAP_MTU, NULL
 		};
 		int result;
-		result = execv( tapifPath, args );
-		::exit(result);
+		result = execvp( TAP_INIT, args );
+		_exit(result);
 	}
 
 	D(bug("waiting for "TAP_INIT" at pid %d", pid));
@@ -275,8 +254,12 @@ bool ETHERNETDriver::init(void)
 	waitpid(pid, &status, 0);
 	bool failed = true;
 	if (WIFEXITED(status)) {
-		if (WEXITSTATUS(status)) {
-			panicbug("Ethernet ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", WEXITSTATUS(status));
+		int err = WEXITSTATUS(status);
+		if (err == 255) {
+			panicbug("Ethernet ERROR: "TAP_INIT" not found. Ethernet disabled!");
+		}
+		else if (err != 0) {
+			panicbug("Ethernet ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", err);
 		}
 		else {
 			failed = false;
