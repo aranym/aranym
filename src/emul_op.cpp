@@ -24,10 +24,9 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
-//#include "timer.h"
 #include "emul_op.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 /*
@@ -157,13 +156,9 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 /* MJ		}
 */
 		case M68K_EMUL_OP_READ_XPRAM:		// Read from XPRAM (ROM10/11)
-// MJ			D(bug("Read XPRAM %02lx\n", r->d[1]));
-// MJ			r->d[1] = XPRAM[r->d[1] & 0xff];
 			break;
 
 		case M68K_EMUL_OP_READ_XPRAM2:		// Read from XPRAM (ROM15)
-// MJ			D(bug("Read XPRAM %02lx\n", r->d[0]));
-// MJ			r->d[0] = XPRAM[r->d[0] & 0xff];
 			break;
 
 		case M68K_EMUL_OP_PATCH_BOOT_GLOBS:	// Patch BootGlobs at startup
@@ -186,26 +181,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			WriteMacInt32(0x1ef4, RAMSize - diff);	// Logical RAM size
 			break;
 		}
-
-		case M68K_EMUL_OP_ADBOP:			// ADBOp() replacement
-// MJ			ADBOp(r->d[0], Mac2HostAddr(ReadMacInt32(r->a[0])));
-			break;
-
-		case M68K_EMUL_OP_INSTIME:			// InsTime() replacement
-// MJ			r->d[0] = InsTime(r->a[0], r->d[1]);
-			break;
-
-		case M68K_EMUL_OP_RMVTIME:			// RmvTime() replacement
-// MJ			r->d[0] = RmvTime(r->a[0]);
-			break;
-
-		case M68K_EMUL_OP_PRIMETIME:		// PrimeTime() replacement
-// MJ			r->d[0] = PrimeTime(r->a[0], r->d[0]);
-			break;
-
-		case M68K_EMUL_OP_MICROSECONDS: 	// Microseconds() replacement
-// MJ			Microseconds(r->a[0], r->d[0]);
-			break;
 
 		case M68K_EMUL_OP_INSTALL_DRIVERS:/* {// Patch to install our own drivers during startup
 			// Install drivers
@@ -246,59 +221,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 */			break;
 /* MJ		}
 */
-		case M68K_EMUL_OP_SERD:				// Install serial drivers
-// MJ			D(bug("InstallSERD\n"));
-// MJ			InstallSERD();
-			break;
-
-		case M68K_EMUL_OP_SONY_OPEN:		// Floppy driver functions
-// MJ			r->d[0] = SonyOpen(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_SONY_PRIME:
-// MJ			r->d[0] = SonyPrime(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_SONY_CONTROL:
-// MJ			r->d[0] = SonyControl(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_SONY_STATUS:
-// MJ			r->d[0] = SonyStatus(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_DISK_OPEN:		// Disk driver functions
-// MJ			r->d[0] = DiskOpen(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_DISK_PRIME:
-// MJ			r->d[0] = DiskPrime(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_DISK_CONTROL:
-// MJ			r->d[0] = DiskControl(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_DISK_STATUS:
-// MJ			r->d[0] = DiskStatus(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_CDROM_OPEN:		// CD-ROM driver functions
-// MJ			r->d[0] = CDROMOpen(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_CDROM_PRIME:
-// MJ			r->d[0] = CDROMPrime(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_CDROM_CONTROL:
-// MJ			r->d[0] = CDROMControl(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_CDROM_STATUS:
-// MJ			r->d[0] = CDROMStatus(r->a[0], r->a[1]);
-			break;
-
 		case M68K_EMUL_OP_VIDEO_OPEN:		// Video driver functions
 // MJ			r->d[0] = VideoDriverOpen(r->a[0], r->a[1]);
 			{
@@ -332,66 +254,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 					}
 				}
 			}
-			break;
-
-		case M68K_EMUL_OP_VIDEO_CONTROL:
-// MJ			r->d[0] = VideoDriverControl(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_VIDEO_STATUS:
-// MJ			r->d[0] = VideoDriverStatus(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_SERIAL_OPEN:		// Serial driver functions
-// MJ			r->d[0] = SerialOpen(r->a[0], r->a[1], r->d[0]);
-			break;
-
-		case M68K_EMUL_OP_SERIAL_PRIME:
-// MJ			r->d[0] = SerialPrime(r->a[0], r->a[1], r->d[0]);
-			break;
-
-		case M68K_EMUL_OP_SERIAL_CONTROL:
-// MJ			r->d[0] = SerialControl(r->a[0], r->a[1], r->d[0]);
-			break;
-
-		case M68K_EMUL_OP_SERIAL_STATUS:
-// MJ			r->d[0] = SerialStatus(r->a[0], r->a[1], r->d[0]);
-			break;
-
-		case M68K_EMUL_OP_SERIAL_CLOSE:
-// MJ			r->d[0] = SerialClose(r->a[0], r->a[1], r->d[0]);
-			break;
-
-		case M68K_EMUL_OP_ETHER_OPEN:		// Ethernet driver functions
-// MJ			r->d[0] = EtherOpen(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_ETHER_CONTROL:
-// MJ			r->d[0] = EtherControl(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_ETHER_READ_PACKET:
-// MJ			EtherReadPacket((uint8 **)&r->a[0], r->a[3], r->d[3], r->d[1]);
-			break;
-
-		case M68K_EMUL_OP_SOUNDIN_OPEN:		// Sound input driver functions
-// MJ			r->d[0] = SoundInOpen(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_SOUNDIN_PRIME:
-// MJ			r->d[0] = SoundInPrime(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_SOUNDIN_CONTROL:
-// MJ			r->d[0] = SoundInControl(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_SOUNDIN_STATUS:
-// MJ			r->d[0] = SoundInStatus(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_SOUNDIN_CLOSE:
-// MJ			r->d[0] = SoundInClose(r->a[0], r->a[1]);
 			break;
 
 		case M68K_EMUL_OP_SCSI_DISPATCH:/* {	// SCSIDispatch() replacement
@@ -512,42 +374,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 				}
 			}*/
 			break;
-
-		case M68K_EMUL_OP_PUT_SCRAP:/* {		// PutScrap() patch
-			void *scrap = Mac2HostAddr(ReadMacInt32(r->a[7] + 4));
-			uint32 type = ReadMacInt32(r->a[7] + 8);
-			int32 length = ReadMacInt32(r->a[7] + 12);
-			PutScrap(type, scrap, length);
-*/			break;
-/* MJ		}
-*/
-		case M68K_EMUL_OP_CHECKLOAD:/* {		// vCheckLoad() patch (resource loader)
-			uint32 type = r->d[1];
-			int16 id = ReadMacInt16(r->a[2]);
-			if (r->a[0] == 0)
-				break;
-			uint32 adr = ReadMacInt32(r->a[0]);
-			if (adr == 0)
-				break;
-			uint8 *p = Mac2HostAddr(adr);
-			uint32 size = ReadMacInt32(adr - 8) & 0xffffff;
-			CheckLoad(type, id, p, size);
-*/			break;
-/* MJ		}
-*/
-		case M68K_EMUL_OP_AUDIO:			// Audio component dispatch function
-// MJ			r->d[0] = AudioDispatch(r->a[3], r->a[4]);
-			break;
-
-#if SUPPORTS_EXTFS
-		case M68K_EMUL_OP_EXTFS_COMM:		// External file system routines
-// MJ			WriteMacInt16(r->a[7] + 14, ExtFSComm(ReadMacInt16(r->a[7] + 12), ReadMacInt32(r->a[7] + 8), ReadMacInt32(r->a[7] + 4)));
-			break;
-
-		case M68K_EMUL_OP_EXTFS_HFS:
-// MJ			WriteMacInt16(r->a[7] + 20, ExtFSHFS(ReadMacInt32(r->a[7] + 16), ReadMacInt16(r->a[7] + 14), ReadMacInt32(r->a[7] + 10), ReadMacInt32(r->a[7] + 6), ReadMacInt16(r->a[7] + 4)));
-			break;
-#endif
 
 		case M68K_EMUL_OP_BLOCK_MOVE:		// BlockMove() cache flushing
 			FlushCodeCache(Mac2HostAddr(r->a[0]), r->a[1]);

@@ -23,17 +23,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <getopt.h>
 #include <errno.h>
 
 #include <SDL/SDL.h>
 #include <sys/mman.h>
 
 #include "cpu_emulation.h"
-//#include "timer.h"
-#include "version.h"
 #include "main.h"
 #include "hardware.h"
+#include "parameters.h"
 
 #define DEBUG 1
 #include "debug.h"
@@ -96,26 +94,6 @@ static int keyboardTable[0x80] = {
 /*70-72*/SDLK_KP0, SDLK_KP_PERIOD, SDLK_KP_ENTER};
 
 static int buttons[3]={0,0,0};
-
-static struct option const long_options[] =
-{
-  {"rom", required_argument, 0, 'R'},
-  {"resolution", required_argument, 0, 'r'},
-  {"debug", no_argument, 0, 'd'},
-  {"fullscreen", no_argument, 0, 'f'},
-  {"help", no_argument, 0, 'h'},
-  {"version", no_argument, 0, 'V'},
-  {NULL, 0, NULL, 0}
-};
-
-char *program_name;
-char *rom_path;
-
-static int decode_switches (int argc, char **argv);
-
-int start_debug = 0;	// Automaticky start debuggeru
-int fullscreen = 0;		// Boot in Fullscreen
-int boot_color_depth = 1;		// Boot in Fullscreen
 
 static void check_event(void)
 {
@@ -637,69 +615,5 @@ void QuitEmulator(void)
 
 void FlushCodeCache(void *start, uint32 size)
 {
-}
-
-static void
-usage (int status)
-{
-  printf ("ARAnyM\n");
-  printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
-  printf ("\
-Options:
-  -R, --rom NAME             ROM file NAME\n\
-  -d, --debug                start debugger\n\
-  -f, --fullscreen           start in fullscreen\n\
-  -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
-  -h, --help                 display this help and exit\n\
-  -V, --version              output version information and exit\n\
-");
-  exit (status);
-}
-
-static int
-decode_switches (int argc, char **argv)
-{
-  int c;
-
-  while ((c = getopt_long (argc, argv,
-                           "R:" /* ROM file */
-                           "d"  /* debugger */
-                           "f"  /* fullscreen */
-                           "r:"  /* resolution */
-			   "h"	/* help */
-			   "V"	/* version */,
-			   long_options, (int *) 0)) != EOF)
-    {
-      switch (c)
-	{
-	case 'V':
-	  printf ("%s\n", VERSION_STRING);
-	  exit (0);
-
-	case 'h':
-	  usage (0);
-	
-	case 'd':
-	  start_debug = 1;
-	  break;
-	
-	case 'f':
-	  fullscreen = 1;
-	  break;
-	
-	case 'R':
-	  rom_path = strdup(optarg);
-	  break;
-
-	case 'r':
-	  boot_color_depth = atoi(optarg);
-	  break;
-
-	default:
-	  usage (EXIT_FAILURE);
-	}
-    }
-
-  return optind;
 }
 

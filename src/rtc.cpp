@@ -5,12 +5,11 @@
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "rtc.h"
+#include "parameters.h"
 
 uae_u8 cmos[64]={48,255,21,255,23,255,1,25,3,33,42,14,112,128,
 		0,0,0,0,0,0,0,1,17,46,32,1,255,0,0,56,135,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,224,31};
-
-extern int boot_color_depth;
 
 #if 0
 int byte15th = (colors & 7) | (80:40) << 3 | (VGA : TV) << 4 | (PAL : NTSC) << 5| overscan << 6 | STcompatible << 7);

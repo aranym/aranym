@@ -23,14 +23,12 @@
 #include "sysdeps.h"
 
 #include "cpu_emulation.h"
-// #include "timer.h"
 #include "main.h"
 #include "hardware.h"
+#include "parameters.h"
 
 #define DEBUG 1
 #include "debug.h"
-
-extern int start_debug;		// MJ
 
 /*
  *  Initialize everything, returns false on error
