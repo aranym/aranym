@@ -1,0 +1,8 @@
+if you run a flavor of Unix or Linux, go to src/Unix folder and type
+
+./configure && make
+
+not sure about make install but you can start aranym directly by
+typing ./aranym.
+
+It's a good idea to edit the config file ~/.aranymrc

@@ -1,0 +1,12 @@
+Falcon040 Virtual Machine
+-------------------------
+
+If you want to run in window under X11, start aranym without any parameter.
+Otherwise start aranym with "-f" for fullscreen (even on console).
+
+If your mouse doesn't work correctly on console you may want to set the
+SDL_MOUSEDEV_IMPS2 environment variable to 1 (this is if you have IMPS2 mouse).
+
+export SDL_MOUSEDEV_IMPS2=1; ./aranym
+
+

@@ -1,0 +1,8 @@
+--ttram renamed to --fastram
+-T renamed to -F
+--grab_mouse and -g removed (mouse is always grabbed)
+
+.aranymrc has a new option "cookie_MCH" that holds hex value.
+Example: cookie_MCH = 0x3000 is for standard Falcon _MCH
+
+Other details in src/ChangeLog
