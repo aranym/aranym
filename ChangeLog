@@ -1,3 +1,10 @@
+** Version 0.1.4
+
+2002/04/09 - joy
+- fixed my own stupid bug in acsifdc.cpp that broke floppy support.
+  Thanks Martin for reporting it.
+
+
 2002/04/04 - STanda
 - MetaDOS Fopen implementation shoudn't be able to open a directory.
   Fixed due to the Olivier Landemarre <Olivier.Landemarre@utbm.fr>
@@ -27,7 +34,7 @@
 - MFP and ACIA/FDC/ATA updated to be ready for major MFP rewrite.
 
 
-[ Version 0.1.3 - don't forget to update your Atari fVDI driver ]
+** Version 0.1.3 - don't forget to update your Atari fVDI driver
 
 2002/03/27 - STanda
 - extfs.cpp/transformFileName rewritten nearly from scratch. Now it should be
