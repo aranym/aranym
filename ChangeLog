@@ -1,3 +1,10 @@
+2001/10/29
+- ARAnyM can be used now without support of debugger (--enable-debug=no)
+
+- ndebug can be activated now also if you send SIGINT to ARAnyM (and that's
+  why it cannot cooperate with cxmon)
+
+
 2001/10/26 - milan
 - support for instruction history now also in ndebug
 

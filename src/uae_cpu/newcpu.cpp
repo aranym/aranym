@@ -1897,7 +1897,9 @@ setjmpagain:
 	    quit_program = 0;
 	    m68k_reset ();
 	}
+#ifdef DEBUGGER
 	if (debugging) debug();
+#endif
 	m68k_run1();
     }
     in_m68k_go--;

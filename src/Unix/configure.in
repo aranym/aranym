@@ -13,7 +13,8 @@ AC_ARG_ENABLE(debug,
         uae)  WHICH_DEBUG="uae";;
      ndebug)  WHICH_DEBUG="ndebug";;
      gdebug)  WHICH_DEBUG="gdebug";;
-	  *)  AC_MSG_ERROR([--enable-debug takes only one of the following values: default, uae, ndebug, gdebug]);;
+         no)  WHICH_DEBUG="no";;   
+	  *)  AC_MSG_ERROR([--enable-debug takes only one of the following values: default, uae, ndebug, no]);;
   esac
 ],
 [WHICH_DEBUG="uae"
@@ -101,15 +102,20 @@ AC_CHECK_SIZEOF(short, 2)
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
 AC_CHECK_SIZEOF(long long, 8)
+AC_CHECK_SIZEOF(float, 4)
+AC_CHECK_SIZEOF(double, 8)
+AC_CHECK_SIZEOF(long double, 12)
 AC_CHECK_SIZEOF(void *, 4)
 AC_TYPE_OFF_T
 AC_CHECK_TYPE(loff_t, off_t)
 AC_TYPE_SIZE_T
+AC_TYPE_SIGNAL
 AC_HEADER_TIME
 AC_STRUCT_TM
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
+AC_CHECK_FUNCS(sigaction signal)
 AC_CHECK_FUNCS(mmap mprotect munmap)
 AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect)
 
@@ -381,26 +387,37 @@ AC_CACHE_CHECK("whether we can map Low Memory area 0x0000-0x2000",
 
 dnl New debugger
 if [[ "x$WHICH_DEBUG" = "xndebug" ]]; then
-    AC_DEFINE(NEWDEBUG)
+  AC_DEFINE(DEBUGGER)
+  AC_DEFINE(NEWDEBUG)
+fi
+
+dnl UAE debugger
+if [[ "x$WHICH_DEBUG" = "xuae" ]]; then
+  AC_DEFINE(DEBUGGER)
 fi
 
 dnl We use mon if possible.
 MONSRCS=
 if [[ "x$WANT_MON" = "xyes" ]]; then
-  AC_MSG_CHECKING(for mon)
-  mon_srcdir=../mon/src
-  if grep mon_init $mon_srcdir/mon.h >/dev/null 2>/dev/null; then
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(ENABLE_MON)
-    MONSRCS="$mon_srcdir/mon.cpp $mon_srcdir/mon_6502.cpp $mon_srcdir/mon_z80.cpp $mon_srcdir/mon_cmd.cpp $mon_srcdir/mon_disass.cpp $mon_srcdir/mon_ppc.cpp $mon_srcdir/disass/floatformat.c $mon_srcdir/disass/i386-dis.c $mon_srcdir/disass/m68k-dis.c $mon_srcdir/disass/m68k-opc.c"
-    CXXFLAGS="$CXXFLAGS -I$mon_srcdir -I$mon_srcdir/disass"
-    AC_CHECK_LIB(readline, readline)
-    AC_CHECK_LIB(termcap, tputs)
-    AC_CHECK_HEADERS(readline.h history.h readline/readline.h readline/history.h)
-  else
-    AC_MSG_RESULT(no)
-    AC_MSG_WARN([Could not find mon, ignoring --with-mon.])
+  if [[ "x$WHICH_DEBUG" = "xndebug" ]]; then
+    AC_MSG_WARN([ndebug and mon couldn't cooperated today]);
     WANT_MON=no
+  else
+    AC_MSG_CHECKING(for mon)
+    mon_srcdir=../mon/src
+    if grep mon_init $mon_srcdir/mon.h >/dev/null 2>/dev/null; then
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(ENABLE_MON)
+      MONSRCS="$mon_srcdir/mon.cpp $mon_srcdir/mon_6502.cpp $mon_srcdir/mon_z80.cpp $mon_srcdir/mon_cmd.cpp $mon_srcdir/mon_disass.cpp $mon_srcdir/mon_ppc.cpp $mon_srcdir/disass/floatformat.c $mon_srcdir/disass/i386-dis.c $mon_srcdir/disass/m68k-dis.c $mon_srcdir/disass/m68k-opc.c"
+      CXXFLAGS="$CXXFLAGS -I$mon_srcdir -I$mon_srcdir/disass"
+      AC_CHECK_LIB(readline, readline)
+      AC_CHECK_LIB(termcap, tputs)
+      AC_CHECK_HEADERS(readline.h history.h readline/readline.h readline/history.h)
+    else
+      AC_MSG_RESULT(no)
+      AC_MSG_WARN([Could not find mon, ignoring --with-mon.])
+      WANT_MON=no
+    fi
   fi
 fi
 

@@ -29,6 +29,9 @@
 /* Define if your system support GNU SOURCEs (vasprintf function) */
 #undef HAVE_GNU_SOURCE
 
+/* Define if using some debugger */
+#undef DEBUGGER
+
 /* Define if using New Debugger */
 #undef NEWDEBUG
 

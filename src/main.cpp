@@ -24,6 +24,7 @@
 
 #include "sysdeps.h"
 #include <SDL/SDL.h>
+#include <signal.h>
 
 #include "cpu_emulation.h"
 #include "main.h"
@@ -52,6 +53,18 @@ static void mon_write_byte_b2(uint32 adr, uint32 b)
 	WriteAtariInt8(adr, b);
 }
 #endif
+
+//For starting debugger
+extern bool canGrabAgain;
+void setactvdebug(int) {
+	grabMouse(false);
+	hideMouse(false);
+	canGrabAgain = false;
+	activate_debugger();
+#ifdef NEWDEBUG
+	signal(SIGINT, setactvdebug);
+#endif
+}
 
 #define METADOS_DRV
 
@@ -229,7 +242,9 @@ static void check_event(void)
 				if (sym == SDLK_PAUSE) {
 					if (shifted)
 						pendingQuit = true;
+#ifdef DEBUGGER
 					else if (start_debug && alternated) {
+						
 						// release mouse
 						grabMouse(false);
 						// show it
@@ -239,6 +254,7 @@ static void check_event(void)
 						// activate debugger
 						activate_debugger();
 					}
+#endif
 				}
 
 				if (alternated && sym == SDLK_PRINT) {
@@ -532,10 +548,12 @@ bool InitAll(void)
 	if (!Init680x0())
 		return false;
 
+#ifdef DEBUGGER
 	if (start_debug) {
 		D(bug("Activate debugger..."));
 		activate_debugger();
 	}
+#endif
 
 	// hide mouse unconditionally
 	hideMouse(true);
@@ -573,6 +591,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.31  2001/10/25 19:56:01  standa
+ * The Log and Header CVS tags in the Log removed. Was recursing.
+ *
  * Revision 1.30  2001/10/25 15:03:20  joy
  * move floppy stuff from main to fdc
  *

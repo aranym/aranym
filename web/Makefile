@@ -1,5 +1,4 @@
-# Generated automatically from Makefile.in by configure.
-# Unix makefile for Basilisk II
+# Unix makefile for ARAnyM's WWW
 
 ## System specific configuration
 

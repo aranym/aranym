@@ -76,7 +76,7 @@ void usage (int status) {
 Options:
   -R, --rom NAME             ROM file NAME\n\
   -F, --fastram SIZE         FastRAM size (in MB)\n\
-  -D, --debug                start debugger\n\
+  -D, --debug                start debugger (if installed)\n\
   -f, --fullscreen           start in fullscreen\n\
   -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\

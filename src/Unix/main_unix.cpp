@@ -39,6 +39,7 @@
 #include "vm_alloc.h"
 #include "hardware.h"
 #include "parameters.h"
+#include "newcpu.h"
 #include <SDL/SDL_timer.h>
 #include <signal.h>
 
@@ -159,6 +160,10 @@ int main(int argc, char **argv)
 	sigint_sa.sa_handler = (void (*)(int))sigint_handler;
 	sigint_sa.sa_flags = 0;
 	sigaction(SIGINT, &sigint_sa, NULL);
+#else
+# ifdef NEWDEBUG
+	if (start_debug) signal(SIGINT, setactvdebug);
+# endif
 #endif
 
 	// Start 68k and jump to ROM boot routine
@@ -224,6 +229,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.52  2001/10/25 12:57:59  joy
+ * if segmentation fault occures then release the mouse and keyboard and display last 20 instructions before the sigsegv.
+ *
  * Revision 1.51  2001/10/16 19:38:44  milan
  * Integration of BasiliskII' cxmon, FastRAM in aranymrc etc.
  *

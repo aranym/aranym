@@ -1,4 +1,5 @@
-# Unix makefile for Basilisk II
+# Unix makefile for ARAnyM
+# Inspired in BasiliskII's Makefile
 
 ## System specific configuration
 @SET_MAKE@
@@ -180,7 +181,8 @@ devdist: mrproper
 	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz aranym
 
 dist: distclean
-	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=aranym/web/build/saxon.jar --exclude=CVS aranym
+	cd ../../web/ && make
+	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=aranym/web/build/saxon.jar --exclude=autogen.sh --exclude=CVS aranym
 
 depend dep:
 	makedepend $(CPPFLAGS) $(DEFS) -Y. $(SRCS) -p$(OBJ_DIR)/ 2>/dev/null

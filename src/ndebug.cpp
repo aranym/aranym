@@ -482,7 +482,6 @@ setjmpagain:
 
 void ndebug::log2phys(FILE *f, uaecptr addr) {
 #ifdef FULLMMU
-printf("bl");
 	if (regs.tce) {
 setjmpagain:
 		jmp_buf excep_env_old;
@@ -891,7 +890,7 @@ void ndebug::init()
 	if (ioctl(0, TCGETA, &savetty) == -1) {
 		fprintf(stderr, "ioctl error!\n");
 		exit(-1);
-	}	
+	}
 }
 
 void ndebug::nexit() {
@@ -1073,6 +1072,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.4  2001/10/25 22:33:18  milan
+ * fullhistory's support in ndebug
+ *
  * Revision 1.3  2001/10/03 11:10:03  milan
  * Px supports now P5 <addr>, PC=<addr>
  *
