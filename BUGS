@@ -50,6 +50,9 @@ This is a limitation of Cygwin, or rather a limitation of the windows itself.
 Windows do not support full-screen for ARAnyM.
 This might be a limitation of SDL, not sure yet.
 
+Windows do not open ARAnyM GUI configuration.
+This might be a limitation of SDL, not sure yet.
+
 Only Linux currently supports TUNTAP based Ethernet emulation (AFAIK).
 Although http://home.sprintmail.com/~dtrout/Hercules/ctci-w32-index.html
 gives some chance to Windows users as well.
