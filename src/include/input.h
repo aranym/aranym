@@ -7,6 +7,8 @@
 
 #include <SDL.h>
 
+#define HOTKEYS_MOD_MASK	(KMOD_SHIFT | KMOD_CTRL | KMOD_ALT | KMOD_META)
+
 void InputInit();
 void InputReset();
 bool grabMouse(bool grab);
