@@ -32,7 +32,6 @@
 #include "hardware.h"
 #include "parameters.h"
 #include "newcpu.h"
-#include "sigsegv.h"
 
 #define DEBUG 1
 #include "debug.h"
@@ -300,6 +299,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.70  2002/07/15 18:24:15  milan
+ * extended sigsegv handler upgraded
+ *
  * Revision 1.69  2002/07/03 19:27:15  milan
  * some minor JIT compiler corrections
  * extended sigsegv handler for x86/linux - no check of memory boundary
