@@ -1,4 +1,9 @@
+2001/08/15 - STanda
+
+- the videl.cpp ST compatible color palette handling added (thanks to Ctirad)
+
 2001/08/13 - milan
+
 - bindist in Makefile
 
 - aranymrc example
