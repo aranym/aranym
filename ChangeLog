@@ -1,7 +1,15 @@
+2001/12/29 - joy (tagged as ARANYM_0_0_16)
+- Johan Klockars' PAGE_CHECK (dividing address space into 4k blocks) added.
+  It produces slightly better dhrystones than 0.0.14 (34k2 vs 33k5) but
+  real-life gcc benchmark didn't show any speed up. Perhaps this is a great
+  idea for the MMU040 implementation but without MMU040 it doesn't help much.
+- parameters.cpp and main.cpp cleaned up a bit.
+
+
 2001/12/27 - joy (tagged as ARANYM_0_0_15)
 - FastRAM can be fixed size (--enable-fastram=X) - that makes the check
   ram_boundary() even faster (comparing with constant value instead of fetching
-  the value of a global variable). 34k7 dhry now (this is probably the fastest
+  the value of a global variable). 35k2 dhry now (this is probably the fastest
   possible solution before splitting the RAM into 4k blocks as Johan suggested.
   Please fix the configure.in - it doesn't work properly - there's no value
   for FixedSizeFastRAM in the config.h.
