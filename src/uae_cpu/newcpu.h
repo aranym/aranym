@@ -106,6 +106,8 @@ static inline uae_u16 get_iword(uae_u32 o)
 static inline uae_u32 get_ilong(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o;
+    if (is_unaligned (addr, 4))
+	return mmu_get_unaligned(addr, FC_INST, 4);
     return phys_get_long(mmu_translate(addr, FC_INST, 0, addr, sz_long, 0));
 }
 
