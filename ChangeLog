@@ -1,3 +1,7 @@
+2004/03/04 - Carlo & milan (thank you, Carlo, for your great job)
+- macro do_get_real_address() for OS_darwin corrected
+
+
 2004/03/03 - Carlo & milan
 - MacOS X doesn't support fixed allocation in ARAnyM, so special workaround
   needed
