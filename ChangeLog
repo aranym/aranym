@@ -1,8 +1,18 @@
+2002/06/26 - joy
+- SDL GUI integrated properly: it is now running in its own SDL thread
+  so it's able to run in parallel with Atari emulation. The input events
+  are still fetched in the Timer thread and are passed to the GUI thread
+  via a couple of global variables (should be reworked to a FIFO buffer).
+  Still needs to fix the screen double buffering...
+  A whole set of dialogs should be designed for ARAnyM now (see dialog.cpp).
+
+
 2002/06/24 - joy
 - do_get_real_addr() replaced with Atari2HostAddr() in fdc.cpp and audio.cpp
 - ExitAll()/QuitEmulator() reworked to allow clean exit from debugger even on
   slow machines (the timer thread must be stopped first before the Atari
   memory is released).
+
 
 2002/06/24 - STanda
 - fvdidrv.*, videl.*, extfs.* cleanup. The memptr usage introduced. There
@@ -91,7 +101,7 @@
   Using this I don't have problems here with TOS applications here.
   It needs to be started after the VDI initialization (e.g. from the
   desktop). There might be some code to initialize the VDI later in it.
-- AraEther made compilable. nearly no code chceck or test done.
+- AraEther made compilable. nearly no code check or test done.
 
  
 2002/04/21 - milan
