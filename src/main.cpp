@@ -80,6 +80,9 @@ SDL_TimerID my_timer_id;
 
 extern long maxInnerCounter;	// hack to edit newcpu.cpp's counter refresh
 
+////////////////////////////////////////////////
+// Input stuff (keyboard and mouse) begins here
+
 static bool grabbedMouse = false;
 static bool hiddenMouse = false;
 
@@ -144,7 +147,21 @@ void releaseTheMouse()
 	}
 }
 
-#if ASCIICODE_BASED_KEYBOARD_TRANSLATION
+/*
+ * Four different types of keyboard translation:
+ *
+ * SYMTABLE = table of symbols (the original method) - never worked properly
+ * FRAMEBUFFER = host to Atari scancode table - tested under framebuffer
+ * X11 = scancode table but with different host scancode offset (crappy SDL)
+ * SCANCODE = scancode table with heuristic detection of scancode offset
+ *
+ */
+#define KEYSYM_SYMTABLE	0
+#define KEYSYM_FRAMEBUFFER	0
+#define KEYSYM_X11	0
+#define KEYSYM_SCANCODE	1
+
+#if KEYSYM_SYMTABLE
 static int keyboardTable[0x80] = {
 /* 0-7 */ 0, SDLK_ESCAPE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5,
 		SDLK_6,
@@ -176,8 +193,9 @@ static int keyboardTable[0x80] = {
 /*78-7f*/ 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-int scancodePCtoAtari(int sym)
+int keysymToAtari(SDL_keysym keysym)
 {
+	int sym = keysym.sym;
 	// map right Control and Alternate keys to the left ones
 	if (sym == SDLK_RCTRL)
 		sym = SDLK_LCTRL;
@@ -191,11 +209,65 @@ int scancodePCtoAtari(int sym)
 
 	return 0;	/* invalid scancode */
 }
+#endif	/* KEYSYM_SYMTABLE */
 
-#else
-
-int scancodePCtoAtari(int scanPC)
+#if KEYSYM_FRAMEBUFFER
+int keysymToAtari(SDL_keysym keysym)
 {
+	int scanPC = keysym.scancode;
+	// map right Control and Alternate keys to the left ones
+	if (scanPC == 0x61)		/* Right Control */
+		scanPC = 0x1d;
+	else if (scanPC == 0x64)	/* Right Alternate */
+		scanPC = 0x38;
+
+	/*
+	 * surprisingly, PC101 is identical to Atari keyboard,
+	 * at least in the range <ESC, F10> (and NumPad '*'
+	 * is the single exception that confirms the rule)
+	 */
+	if (scanPC >= 1 /* ESC */ && scanPC <= 0x44 /* F10 */) {
+		if (scanPC == 0x37)	/* NumPad '*' */
+			return 0x66;	/* strict layout: 0x65 */
+		return scanPC;
+	}
+	switch(scanPC) {
+		case 0x47:	return 0x67;	/* NumPad 7 */
+		case 0x48:	return 0x68;	/* NumPad 8 */
+		case 0x49:	return 0x69;	/* NumPad 9 */
+		case 0x4a:	return 0x4a;	/* NumPad - */
+		case 0x4b:	return 0x6a;	/* NumPad 4 */
+		case 0x4c:	return 0x6b;	/* NumPad 5 */
+		case 0x4d:	return 0x6c;	/* NumPad 6 */
+		case 0x4e:	return 0x4e;	/* NumPad + */
+		case 0x4f:	return 0x6d;	/* NumPad 1 */
+		case 0x50:	return 0x6e;	/* NumPad 2 */
+		case 0x51:	return 0x6f;	/* NumPad 3 */
+		case 0x52:	return 0x70;	/* NumPad 0 */
+		case 0x53:	return 0x71;	/* NumPad . */
+		case 0x62:	return 0x65;	/* NumPad / */	/* strict layout: 0x64 */
+
+		case 0x57:	return 0x62;	/* F11 => Help */
+		case 0x58:	return 0x61;	/* F12 => Undo */
+		case 0x66:	return 0x47;	/* Home */
+		case 0x6b:	return 0x60;	/* End => "<>" on German Atari kbd */
+		case 0x67:	return 0x48;	/* Arrow Up */
+		case 0x6c:	return 0x4b;	/* Arrow Left */
+		case 0x69:	return 0x4d;	/* Arrow Right */
+		case 0x6a:	return 0x50;	/* Arrow Down */
+		case 0x6e:	return 0x52;	/* Insert */
+		case 0x6f:	return 0x53;	/* Delete */
+		case 0x60:	return 0x72;	/* NumPad Enter */
+
+		default:	return 0;		/* invalid scancode */
+	}
+}
+#endif	/* KEYSYM_FRAMEBUFFER */
+
+#if KEYSYM_X11
+int keysymToAtari(SDL_keysym keysym)
+{
+	int scanPC = keysym.scancode;
 	// map right Control and Alternate keys to the left ones
 	if (scanPC == 0x6d)		/* Right Control */
 		scanPC = 0x25;
@@ -203,18 +275,16 @@ int scancodePCtoAtari(int scanPC)
 		scanPC = 0x40;
 
 	/*
-	 * surprisingly, PC101 is nearly identical to Atari keyboard
-	 * with just one exception (the Asterix on the Numeric Pad)
-	 * and an offset of 8. This is true from the Escape key
-	 * up to the F10 key. Wonderful!
+	 * unfortunately SDL on X11 doesn't return physical scancodes.
+	 * For the basic range <ESC,F10> there's an offset = 8.
+	 * The rest of keys have rather random offsets.
 	 */
 	if (scanPC >= 9 /* ESC */ && scanPC <= 0x4c /* F10 */) {
 		if (scanPC == 0x3f)	/* NumPad '*' */
 			return 0x66;	/* strict layout: 0x65 */
-		return scanPC - 8;
+		return scanPC - 8;		/* remove the offset */
 	}
 	switch(scanPC) {
-		case 0x4d:	return 0x63;	/* Num Lock */
 		case 0x4f:	return 0x67;	/* NumPad 7 */
 		case 0x50:	return 0x68;	/* NumPad 8 */
 		case 0x51:	return 0x69;	/* NumPad 9 */
@@ -245,7 +315,134 @@ int scancodePCtoAtari(int scanPC)
 		default:	return 0;		/* invalid scancode */
 	}
 }
-#endif /* ASCIICODE_BASED_KEYBOARD_TRANSLATION */
+#endif /* KEYSYM_X11 */
+
+#if KEYSYM_SCANCODE
+int keysymToAtari(SDL_keysym keysym)
+{
+	static int offset = -1;		// uninitialized scancode offset
+
+	switch(keysym.sym) {
+		// Numeric Pad
+		case SDLK_KP_DIVIDE:	return 0x65;	/* Numpad / */
+		case SDLK_KP_MULTIPLY:	return 0x66;	/* NumPad * */
+		case SDLK_KP7:	return 0x67;	/* NumPad 7 */
+		case SDLK_KP8:	return 0x68;	/* NumPad 8 */
+		case SDLK_KP9:	return 0x69;	/* NumPad 9 */
+		case SDLK_KP_MINUS:	return 0x4a;	/* NumPad - */
+		case SDLK_KP4:	return 0x6a;	/* NumPad 4 */
+		case SDLK_KP5:	return 0x6b;	/* NumPad 5 */
+		case SDLK_KP6:	return 0x6c;	/* NumPad 6 */
+		case SDLK_KP_PLUS:	return 0x4e;	/* NumPad + */
+		case SDLK_KP1:	return 0x6d;	/* NumPad 1 */
+		case SDLK_KP2:	return 0x6e;	/* NumPad 2 */
+		case SDLK_KP3:	return 0x6f;	/* NumPad 3 */
+		case SDLK_KP0:	return 0x70;	/* NumPad 0 */
+		case SDLK_KP_PERIOD:	return 0x71;	/* NumPad . */
+		case SDLK_KP_ENTER:	return 0x72;	/* NumPad Enter */
+
+		// Special Keys
+		case SDLK_F11:	return 0x62;	/* F11 => Help */
+		case SDLK_F12:	return 0x61;	/* F12 => Undo */
+		case SDLK_HOME:	return 0x47;	/* Home */
+		case SDLK_END:	return 0x60;	/* End => "<>" on German Atari kbd */
+		case SDLK_UP:	return 0x48;	/* Arrow Up */
+		case SDLK_LEFT:	return 0x4b;	/* Arrow Left */
+		case SDLK_RIGHT:	return 0x4d;	/* Arrow Right */
+		case SDLK_DOWN:	return 0x50;	/* Arrow Down */
+		case SDLK_INSERT:	return 0x52;	/* Insert */
+		case SDLK_DELETE:	return 0x53;	/* Delete */
+
+		// Map Right Alt/Control to the Atari keys
+		case SDLK_RCTRL:	return 0x1d;	/* Control */
+		case SDLK_RALT:		return 0x38;	/* Alternate */
+
+		default:
+		{
+			// Process remaining keys: assume that it's PC101 keyboard
+			// and that it is compatible with Atari ST keyboard (basically
+			// same scancodes but on different platforms with different
+			// base offset (framebuffer = 0, X11 = 8).
+			// Try to detect the offset using a little bit of black magic.
+			// If offset is known then simply pass the scancode.
+			int scanPC = keysym.scancode;
+			if (offset == -1) {
+				// Heuristic analysis to find out the obscure scancode offset
+				switch(keysym.sym) {
+					case SDLK_ESCAPE:	offset = scanPC - 0x01; break;
+					case SDLK_1:	offset = scanPC - 0x02; break;
+					case SDLK_2:	offset = scanPC - 0x03; break;
+					case SDLK_3:	offset = scanPC - 0x04; break;
+					case SDLK_4:	offset = scanPC - 0x05; break;
+					case SDLK_5:	offset = scanPC - 0x06; break;
+					case SDLK_6:	offset = scanPC - 0x07; break;
+					case SDLK_7:	offset = scanPC - 0x08; break;
+					case SDLK_8:	offset = scanPC - 0x09; break;
+					case SDLK_9:	offset = scanPC - 0x0a; break;
+					case SDLK_0:	offset = scanPC - 0x0b; break;
+					case SDLK_BACKSPACE:	offset = scanPC - 0x0e; break;
+					case SDLK_TAB:	offset = scanPC - 0x0f; break;
+					case SDLK_RETURN:	offset = scanPC - 0x1c; break;
+					case SDLK_SPACE:	offset = scanPC - 0x39; break;
+					case SDLK_q:	offset = scanPC - 0x10; break;
+					case SDLK_w:	offset = scanPC - 0x11; break;
+					case SDLK_e:	offset = scanPC - 0x12; break;
+					case SDLK_r:	offset = scanPC - 0x13; break;
+					case SDLK_t:	offset = scanPC - 0x14; break;
+					case SDLK_y:	offset = scanPC - 0x15; break;
+					case SDLK_u:	offset = scanPC - 0x16; break;
+					case SDLK_i:	offset = scanPC - 0x17; break;
+					case SDLK_o:	offset = scanPC - 0x18; break;
+					case SDLK_p:	offset = scanPC - 0x19; break;
+					case SDLK_a:	offset = scanPC - 0x1e; break;
+					case SDLK_s:	offset = scanPC - 0x1f; break;
+					case SDLK_d:	offset = scanPC - 0x20; break;
+					case SDLK_f:	offset = scanPC - 0x21; break;
+					case SDLK_g:	offset = scanPC - 0x22; break;
+					case SDLK_h:	offset = scanPC - 0x23; break;
+					case SDLK_j:	offset = scanPC - 0x24; break;
+					case SDLK_k:	offset = scanPC - 0x25; break;
+					case SDLK_l:	offset = scanPC - 0x26; break;
+					case SDLK_z:	offset = scanPC - 0x2c; break;
+					case SDLK_x:	offset = scanPC - 0x2d; break;
+					case SDLK_c:	offset = scanPC - 0x2e; break;
+					case SDLK_v:	offset = scanPC - 0x2f; break;
+					case SDLK_b:	offset = scanPC - 0x30; break;
+					case SDLK_n:	offset = scanPC - 0x31; break;
+					case SDLK_m:	offset = scanPC - 0x32; break;
+					case SDLK_CAPSLOCK:	offset = scanPC - 0x3a; break;
+					case SDLK_LSHIFT:	offset = scanPC - 0x2a; break;
+					case SDLK_LCTRL:	offset = scanPC - 0x1d; break;
+					case SDLK_LALT:	offset = scanPC - 0x38; break;
+					case SDLK_F1:	offset = scanPC - 0x3b; break;
+					case SDLK_F2:	offset = scanPC - 0x3c; break;
+					case SDLK_F3:	offset = scanPC - 0x3d; break;
+					case SDLK_F4:	offset = scanPC - 0x3e; break;
+					case SDLK_F5:	offset = scanPC - 0x3f; break;
+					case SDLK_F6:	offset = scanPC - 0x40; break;
+					case SDLK_F7:	offset = scanPC - 0x41; break;
+					case SDLK_F8:	offset = scanPC - 0x42; break;
+					case SDLK_F9:	offset = scanPC - 0x43; break;
+					case SDLK_F10:	offset = scanPC - 0x44; break;
+					default:	break;
+				}
+				if (offset != -1) {
+					printf("Detected scancode offset = %d (key: '%s' with scancode $%02x)\n", offset, SDL_GetKeyName(keysym.sym), scanPC);
+				}
+			}
+
+			if (offset >= 0) {
+				// offset is defined so pass the scancode directly
+				return scanPC - offset;
+			}
+			else {
+				fprintf(stderr, "Unknown key: scancode = %d ($%02x), keycode = '%s' ($%02x)\n", scanPC, scanPC, SDL_GetKeyName(keysym.sym), keysym.sym);
+				return 0;	// unknown scancode
+			}
+		}
+	}
+}
+#endif /* KEYSYM_SCANCODE */
 
 static int but = 0;
 static void check_event(void)
@@ -267,12 +464,10 @@ static void check_event(void)
 	while (SDL_PollEvent(&event)) {
 		int type = event.type;
 		if (type == SDL_KEYDOWN || type == SDL_KEYUP) {
-			// D(bug(PrintKeyInfo((SDL_KeyboardEvent*)&event)));
-
 			bool pressed = (type == SDL_KEYDOWN);
-			SDLKey sym = event.key.keysym.sym;
-			int scancode = event.key.keysym.scancode;
-			int state = SDL_GetModState();
+			SDL_keysym keysym = event.key.keysym;
+			SDLKey sym = keysym.sym;
+			int state = keysym.mod;	// SDL_GetModState();
 			bool shifted = state & KMOD_SHIFT;
 			bool controlled = state & KMOD_CTRL;
 			bool alternated = state & KMOD_ALT;
@@ -346,12 +541,8 @@ static void check_event(void)
 
 			// send all pressed keys to IKBD
 			if (send2Atari) {
-#if ASCIICODE_BASED_KEYBOARD_TRANSLATION
-				int scanAtari = scancodePCtoAtari(sym);
-#else
-				int scanAtari = scancodePCtoAtari(scancode);
-#endif
-				D(bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = %s ($%02x)\n", scancode, scancode, scanAtari, scanAtari, SDL_GetKeyName(sym), sym));
+				int scanAtari = keysymToAtari(keysym);
+				D(bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = '%s' ($%02x)", keysym.scancode, keysym.scancode, scanAtari, scanAtari, SDL_GetKeyName(sym), sym));
 				if (scanAtari > 0) {
 					if (!pressed)
 						scanAtari |= 0x80;
@@ -462,6 +653,9 @@ static void check_event(void)
 	if (pendingQuit)
 		QuitEmulator();
 }
+
+// Input stuff (keyboard and mouse) ends here
+//////////////////////////////////////////////
 
 /*
  * the following function is called from the CPU emulation
@@ -702,6 +896,10 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.44  2001/11/28 22:52:17  joy
+ * keyboard conversion based on scancodes now.
+ * page up/down takes care of previously held Shift
+ *
  * Revision 1.43  2001/11/21 13:29:51  milan
  * cleanning & portability
  *
