@@ -36,8 +36,9 @@
 #include "aradata.h"		// for getAtariMouseXY
 #include "md5.h"
 #include "romdiff.h"
+#include "parameters.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #ifdef ENABLE_MON
@@ -55,16 +56,16 @@ static void mon_write_byte_b2(uint32 adr, uint32 b)
 #endif
 
 //For starting debugger
-extern bool canGrabAgain;
 void setactvdebug(int) {
 	grabMouse(false);
 	hideMouse(false);
-	canGrabAgain = false;
 	activate_debugger();
 #ifdef NEWDEBUG
 	signal(SIGINT, setactvdebug);
 #endif
 }
+
+void init_fdc();
 
 #define METADOS_DRV
 
@@ -73,12 +74,10 @@ int CPUType;
 bool CPUIs68060;
 int FPUType;
 
-void init_fdc();				// fdc.cpp
 void setVirtualTimer(void);		// basilisk_glue
 
 SDL_TimerID my_timer_id;
 
-extern int irqindebug;
 extern long maxInnerCounter;	// hack to edit newcpu.cpp's counter refresh
 
 static int keyboardTable[0x80] = {
@@ -112,9 +111,8 @@ static int keyboardTable[0x80] = {
 /*78-7f*/ 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-bool grabbedMouse = false;
-bool hiddenMouse = false;
-bool canGrabAgain = true;
+static bool grabbedMouse = false;
+static bool hiddenMouse = false;
 
 void hideMouse(bool hide)
 {
@@ -206,6 +204,37 @@ bool grabMouse(bool grab)
 //  PrintModifiers( key->keysym.mod );
 //  }
 
+void grabTheMouse()
+{
+#if DEBUG
+	int x,y;
+	SDL_GetMouseState(&x, &y);
+	D(bug("Mouse entered our window at [%d,%d]", x, y));
+#endif
+	hideMouse(true);
+	if (false) {	// are we able to sync TOS and host mice? 
+		// sync the position of ST mouse with the X mouse cursor (or vice-versa?)
+	}
+	else {
+		// we got to grab the mouse completely, otherwise they'd be out of sync
+		grabMouse(true);
+	}
+}
+
+void releaseTheMouse()
+{
+	grabMouse(false);	// release mouse
+	hideMouse(false);	// show it
+	if (aradata.isAtariMouseDriver()) {
+		int x = aradata.getAtariMouseX(); 
+		int y = aradata.getAtariMouseY();
+		SDL_WarpMouse(x, y);
+		D(bug("Mouse left our window at [%d,%d]", x, y));
+	}
+	else {
+		D(bug("Mouse left our window"));
+	}
+}
 
 static int but = 0;
 
@@ -214,15 +243,14 @@ static void check_event(void)
 	bool pendingQuit = false;
 	static bool wasShiftPressed = false;		// for correct emulation of PageUp/Down
 	static bool mouseOut = false;
+	static bool canGrabMouseAgain = true;
+
 
 	if (!fullscreen && mouseOut) {
 		// host mouse moved but the Atari mouse did not => mouse is
 		// probably at the Atari screen border. Ungrab it and warp the host mouse at
 		// the same location so the mouse moves smoothly.
-		grabMouse(false);	// release mouse
-		hideMouse(false);	// show it
-		SDL_WarpMouse(aradata.getAtariMouseX(), aradata.getAtariMouseY());
-		D(bug("Mouse left our window"));
+		releaseTheMouse();
 		mouseOut = false;
 	}
 
@@ -234,52 +262,75 @@ static void check_event(void)
 
 			bool pressed = (type == SDL_KEYDOWN);
 			int sym = event.key.keysym.sym;
-			bool shifted = SDL_GetModState() & KMOD_SHIFT;
-			bool alternated = SDL_GetModState() & KMOD_ALT;
+			int state = SDL_GetModState();
+			bool shifted = state & KMOD_SHIFT;
+			bool controlled = state & KMOD_CTRL;
+			bool alternated = state & KMOD_ALT;
+			bool send2Atari = true;
 
+			// process special hotkeys
 			if (pressed) {
-				// process special hotkeys
-				if (sym == SDLK_PAUSE) {
-					if (shifted)
-						pendingQuit = true;
+				switch(sym) {
+					case SDLK_ESCAPE:
+						if (controlled && alternated) {
+							releaseTheMouse();
+							canGrabMouseAgain = false;	// let it leave our window
+							send2Atari = false;
+						}
+						break;
+
+					case SDLK_PAUSE:
+						if (shifted) {
+							pendingQuit = true;
+							send2Atari = false;
+						}
 #ifdef DEBUGGER
-					else if (start_debug && alternated) {
-						
-						// release mouse
-						grabMouse(false);
-						// show it
-						hideMouse(false);
-						// let user quit the window before it's grabbed again
-						canGrabAgain = false;
-						// activate debugger
-						activate_debugger();
-					}
+						else if (start_debug && alternated) {
+							releaseTheMouse();
+							canGrabMouseAgain = false;	// let it leave our window
+							// activate debugger
+							activate_debugger();
+							send2Atari = false;
+						}
 #endif
-				}
+						break;
 
-				if (alternated && sym == SDLK_PRINT) {
-					hostScreen.makeSnapshot();
-				}
-
-				else if (sym == SDLK_PAGEUP) {
-					ikbd.send(0x2a);	// press and hold LShift	// WARNING - shift might have been pressed already, in such case do not release it after user releases PAGEUP
-					ikbd.send(0x48);	// press keyUp
-				}
-				else if (sym == SDLK_PAGEDOWN) {
-					ikbd.send(0x2a);	// press and hold LShift
-					ikbd.send(0x50);	// press keyDown
+					case SDLK_PRINT:
+						if (alternated) {
+							hostScreen.makeSnapshot();
+							send2Atari = false;
+						}
+						break;
 				}
 			}
-			else {
-				if (sym == SDLK_PAGEUP) {
-					ikbd.send(0xc8);	// release keyUp
-					ikbd.send(0xaa);	// release LShift
-				}
-				else if (sym == SDLK_PAGEDOWN) {
-					ikbd.send(0xd0);	// release keyDown
-					ikbd.send(0xaa);	// release LShift
-				}
+
+			// map special keys to Atari range of scancodes
+			switch(sym) {
+				case SDLK_PAGEUP:
+					if (pressed) {
+						ikbd.send(0x2a);	// press and hold LShift	// WARNING - shift might have been pressed already, in such case do not release it after user releases PAGEUP
+						ikbd.send(0x48);	// press keyUp
+					}
+					else {
+						ikbd.send(0xc8);	// release keyUp
+						ikbd.send(0xaa);	// release LShift
+					}
+					send2Atari = false;
+					break;
+				
+				case SDLK_PAGEDOWN:
+					if (pressed) {
+						ikbd.send(0x2a);	// press and hold LShift
+						ikbd.send(0x50);	// press keyDown
+					}
+					else {
+						ikbd.send(0xd0);	// release keyDown
+						ikbd.send(0xaa);	// release LShift
+					}
+					send2Atari = false;
+					break;
 			}
+
 			// map right Control and Alternate keys to the left ones
 			if (sym == SDLK_RCTRL)
 				sym = SDLK_LCTRL;
@@ -287,12 +338,14 @@ static void check_event(void)
 				sym = SDLK_LALT;
 
 			// send all pressed keys to IKBD
-			for (int i = 0; i < 0x73; i++) {
-				if (keyboardTable[i] == sym) {
-					if (!pressed)
-						i |= 0x80;
-					ikbd.send(i);
-					break;
+			if (send2Atari) {
+				for (int i = 0; i < 0x73; i++) {
+					if (keyboardTable[i] == sym) {
+						if (!pressed)
+							i |= 0x80;
+						ikbd.send(i);
+						break;
+					}
 				}
 			}
 		}
@@ -304,20 +357,14 @@ static void check_event(void)
 			if (type == SDL_MOUSEBUTTONDOWN) {
 				// eve.type/state/button
 				if (event.button.button == SDL_BUTTON_RIGHT) {
-					if (SDL_GetModState() & KMOD_CTRL) {
-						// right mouse button + Control key = grab/ungrab mouse
-						grabMouse(false);	// release mouse
-						hideMouse(false);	// show it
-						canGrabAgain = false;	// let user quit the window before it's grabbed again
-					}
-					else {
-						if (grabbedMouse)
+					if (grabbedMouse)
 							but |= 1;
-					}
 				}
 				else if (event.button.button == SDL_BUTTON_LEFT) {
 					if (grabbedMouse)
 						but |= 2;
+					else
+						grabTheMouse();
 				}
 				else if (event.button.button == 4) {
 					ikbd.send(0x48);	// press keyUp
@@ -360,46 +407,40 @@ static void check_event(void)
 				ikbd.send(yrel);
 			}
 
-			if (! fullscreen) {
+			if (! fullscreen && aradata.isAtariMouseDriver()) {
 				// check whether user doesn't try to go out of window (top or left)
 				if ((xrel < 0 && aradata.getAtariMouseX() == 0) ||
 					(yrel < 0 && aradata.getAtariMouseY() == 0))
 					mouseOut = true;
 
-				// warning - hardcoded values of screen size - stupid
 				if ((xrel > 0 && aradata.getAtariMouseX() >= (int32)hostScreen.getWidth() - 1) ||
 					(yrel > 0 && aradata.getAtariMouseY() >= (int32)hostScreen.getHeight() - 1))
 					mouseOut = true;
 			}
 		}
 		else if (event.type == SDL_ACTIVEEVENT) {
-			if (event.active.state == SDL_APPMOUSEFOCUS)
-			{
-				if (event.active.gain) {
-					if ((SDL_GetAppState() & SDL_APPINPUTFOCUS)
-						&& canGrabAgain) {
-						D(bug("Mouse entered our window"));
-						hideMouse(true);
-						if (false)// are we able to sync TOS and host mice? 
-						{
-							// sync the position of ST mouse with the X mouse cursor (or vice-versa?)
-						}
-						else {
-							// we got to grab the mouse completely, otherwise they'd be out of sync
-							grabMouse(true);
-						}
-					}
+			// if the mouse left our window we will let it be grabbed next time it comes back
+			if (event.active.state == SDL_APPMOUSEFOCUS && !event.active.gain)
+				canGrabMouseAgain = true;
+			else {
+				// if the mouse is comming back after it left our window and
+				// if we have input focus and
+				// if we can grab the mouse automatically and
+				// if the Atari mouse driver works then let's grab it!
+				if (SDL_GetAppState() & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) {
+					if (bx_options.autoMouseGrab && canGrabMouseAgain && aradata.isAtariMouseDriver())
+						grabTheMouse();
 				}
-/*
-				else {
-					if (grabbedMouse) {
-						D(bug("Mouse left our window"));
-						canGrabAgain = true;
-						hideMouse(false);
-					}
-				}
-*/
 			}
+
+#if DEBUG
+			if (event.active.state == SDL_APPMOUSEFOCUS) {
+				D(bug("We %s mouse focus", event.active.gain ? "got" : "lost"));
+			}
+			else if (event.active.state == SDL_APPINPUTFOCUS) {
+				D(bug("We %s input focus", event.active.gain ? "got" : "lost"));
+			}
+#endif
 		}
 
 		else if (event.type == SDL_QUIT) {
@@ -569,7 +610,7 @@ bool InitAll(void)
 
 	//  SDL_EnableUNICODE(1);
 
-	// warp mouse to center of Atari screen and grab it
+	// warp mouse to center of Atari 640x480 screen and grab it
 	if (! fullscreen)
 		SDL_WarpMouse(640/2, 480/2);
 	grabMouse(true);
@@ -631,6 +672,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.34  2001/10/29 20:00:05  standa
+ * The button 4 and 5 mapped to KeyUp and KeyDown.
+ *
  * Revision 1.33  2001/10/29 11:16:07  joy
  * emutos gets a special care
  *
