@@ -85,7 +85,8 @@ void HostScreen::allocateBackgroundSurf()
 	if (backgroundSurf != NULL)
 		panicbug("Memory leak? The background video surface should not be allocated.");
 
-	backgroundSurf = SDL_ConvertSurface(mainSurface, mainSurface->format, mainSurface->flags & ~SDL_HWSURFACE);
+	backgroundSurf = SDL_ConvertSurface(mainSurface, mainSurface->format, mainSurface->flags);
+
 	D(bug("Allocating background video surface"));
 }
 
@@ -136,6 +137,46 @@ void HostScreen::restoreBackground()
 		SDL_BlitSurface(backgroundSurf, NULL, mainSurface, NULL);
 		update(true);
 		D(bug("video surface restored"));
+	}
+}
+
+void HostScreen::blendBackgrounds()
+{
+	if (backgroundSurf != NULL) {
+		int dialogWidth = 320;	// should be fetched from the dialog.c
+		int dialogHeight = 200;
+		int halfRemWidth = (getWidth() - dialogWidth)/2;
+		int halfRemHeight = (getHeight() - dialogHeight)/2;
+		int xx = halfRemWidth + dialogWidth;
+		int yy = halfRemHeight + dialogHeight;
+		SDL_Rect topRect, leftRect, rightRect, bottomRect;
+
+		topRect.x = 0;
+		topRect.y = 0;
+		topRect.w = getWidth();
+		topRect.h = halfRemHeight;
+
+		leftRect.x = 0;
+		leftRect.y = halfRemHeight;
+		leftRect.w = halfRemWidth;
+		leftRect.h = dialogHeight;
+
+		rightRect.x = xx;
+		rightRect.y = halfRemHeight;
+		rightRect.w = halfRemWidth;
+		rightRect.h = dialogHeight;
+
+		bottomRect.x = 0;
+		bottomRect.y = yy;
+		bottomRect.w = getWidth();
+		bottomRect.h = halfRemHeight;
+
+		SDL_BlitSurface(backgroundSurf, &topRect, mainSurface, &topRect);
+		SDL_BlitSurface(backgroundSurf, &leftRect, mainSurface, &leftRect);
+		SDL_BlitSurface(backgroundSurf, &rightRect, mainSurface, &rightRect);
+		SDL_BlitSurface(backgroundSurf, &bottomRect, mainSurface, &bottomRect);
+
+		update(true);
 	}
 }
 
@@ -1183,6 +1224,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.37  2003/06/01 08:35:39  milan
+ * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
+ *
  * Revision 1.36  2003/04/16 19:35:49  pmandin
  * Correct inclusion of SDL headers
  *

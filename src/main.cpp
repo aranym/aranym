@@ -196,8 +196,14 @@ void invoke200HzInterrupt()
 		TriggerVBL();		// generate VBL
 
 		if (++refreshCounter == VIDEL_REFRESH) {// divided by 2 again ==> 25 Hz screen update
-			if (! hostScreen.isGUIopen())
-				getVIDEL()->renderScreen();
+			getVIDEL()->renderScreen();
+			if (hostScreen.isGUIopen()) {
+				static int blendRefresh = 0;
+				if (blendRefresh++ > 5) {
+					blendRefresh = 0;
+					hostScreen.blendBackgrounds();
+				}
+			}
 			refreshCounter = 0;
 		}
 

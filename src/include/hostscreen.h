@@ -124,6 +124,7 @@ class HostScreen {
 	// save and restore background under GUI
 	void saveBackground();
 	void restoreBackground();
+	void blendBackgrounds();
 	SDL_Surface *getPhysicalSurface() { return mainSurface; }
 
 	uint32 getBpp();
@@ -436,6 +437,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.44  2003/06/01 08:35:39  milan
+ * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
+ *
  * Revision 1.43  2003/04/16 19:35:49  pmandin
  * Correct inclusion of SDL headers
  *

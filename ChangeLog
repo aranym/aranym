@@ -1,3 +1,14 @@
+2003/12/24 - joy
+- hostscreen.cpp: blendBackgrounds() added. This function updates the 
+  background of active GUI with the running ARAnyM screen contents.
+  I played with SDL_SRCALPHA etc. to make the background a bit greyed out
+  or something but haven't succeeded.
+
+- main.cpp: blendBackgrounds() called with 5 Hz refresh. Also the VIDEL
+  renderScreen is now called even if GUI is active (naturally, otherwise
+  the blendBackground couldn't work).
+
+
 2003/12/19 - patrice
 
 - bad implementation of bcopy() macro for mingw in sysdeps.h.
