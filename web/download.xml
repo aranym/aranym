@@ -9,19 +9,22 @@
       status is somewhere between alpha and beta. It may work but we can't guarantee 
       anything. Better backup your data first.
       <p/>
-      Most up-to-date source code is available in the <a href="cvs.html">CVS</a>. You need
-      to have autoconf installed for compiling the CVS source code.
-      <p/>
-      Nightly CVS snapshot (generated at 01:00 GMT) is <a href="http://atari.sh.cvut.cz/ftp/other/snapshot.tar.gz">here</a>. The configure script is pre-generated in this tar file so you
-      don't need autoconf installed.
-      <p/>
-      Regular releases (source, binary and disk images) happen to be at
-      <a href="http://sourceforge.net/project/showfiles.php?group_id=41106">Sourceforge.net</a>.
+      Regular releases (source, binary and disk images) are located
+      <a href="http://sourceforge.net/project/showfiles.php?group_id=41106">here</a>.
+      Please note that while we may provide a binary of Aranym for Windows it's not
+      supported as the main development runs on Linux. The Windows version has some severe
+      limitations so do not judge the Aranym by looking at the Windows port, please.
       <p/>
       Debian users can fetch ARAnyM with apt from Debian Sid distribution. See 
       <a href="http://packages.debian.org/unstable/otherosfs/aranym.html">ARAnyM page in Debian</a>.
       <p/>
-      For running ARAnyM you will also need TOS 4.04 from Falcon (available <a href="http://www.atariroms.fsnet.co.uk/">here</a>) or EmuTOS (get fresh from <a href="http://emutos.sf.net/">CVS</a>).
+      Most up-to-date source code is available in the <a href="cvs.html">CVS</a>. You need
+      to have autoconf installed for compiling the CVS source code.
+      <p/>
+      Nightly CVS snapshot (generated at 01:00 GMT) is <a href="http://atari.sh.cvut.cz/ftp/other/snapshot.tar.gz">here</a>. The configure script is pre-generated in this tar file so you
+      don't need the autoconf.
+      <p/>
+      For running ARAnyM you will also need TOS 4.04 from Falcon (available <a href="http://www.atariroms.fsnet.co.uk/">here</a>) or EmuTOS (there is a binary image for Falcon so get that one <a href="http://emutos.sf.net/">here</a>).
     </text>
   </chapter>
 </document>
