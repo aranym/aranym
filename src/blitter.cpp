@@ -14,11 +14,17 @@
  *	
  */
 
+/*
+#define SWACCELL
+#define HWBLITS
+*/
+
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "blitter.h"
+#include <SDL/SDL.h>
 
 static const bool dP = false;
 
@@ -47,7 +53,8 @@ typedef uae_u16	UW;
 typedef uae_u8	UB;
 typedef char	B;
 
-#define ADDR(a)	(((a) >= FALCVRAMSTART) && ((a) < FALCVRAMEND)) ? ((a) + (ARANYMVRAMSTART - FALCVRAMSTART)) : (a)
+//#define ADDR(a)	(((a) >= FALCVRAMSTART) && ((a) < FALCVRAMEND)) ? ((a) + (ARANYMVRAMSTART - FALCVRAMSTART)) : (a)
+#define ADDR(a)		(a)
 
 BLITTER::BLITTER(void) {
 }
@@ -293,9 +300,9 @@ uae_u8 BLITTER::handleRead(uaecptr addr) {
 
 	switch(addr) {
 		case 0x20: return source_x_inc >> 8;
-		case 0x21: return source_x_inc & 0x00ff;
+		case 0x21: return source_x_inc;
 		case 0x22: return source_y_inc >> 8;
-		case 0x23: return source_y_inc & 0x00ff;
+		case 0x23: return source_y_inc;
 		case 0x24: return source_addr >> 24;
 		case 0x25: return source_addr >> 16;
 		case 0x26: return source_addr >> 8;
@@ -307,9 +314,9 @@ uae_u8 BLITTER::handleRead(uaecptr addr) {
 		case 0x2c: return LOAD_B_ff8a2c();
 		case 0x2d: return LOAD_B_ff8a2d();
 		case 0x2e: return dest_x_inc >> 8;
-		case 0x2f: return dest_x_inc & 0x00ff;
+		case 0x2f: return dest_x_inc;
 		case 0x30: return dest_y_inc >> 8;
-		case 0x31: return dest_y_inc & 0x00ff;
+		case 0x31: return dest_y_inc;
 		case 0x32: return LOAD_B_ff8a32();
 		case 0x33: return LOAD_B_ff8a33();
 		case 0x34: return LOAD_B_ff8a34();
@@ -332,7 +339,7 @@ void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
 
 	if (addr < 0x20) {
 		uae_u16 hfr = halftone_ram[addr / 2];
-		if (addr % 1)
+		if (addr & 1)
 			hfr = (hfr & 0xff00) | value;
 		else
 			hfr = (hfr & 0x00ff) | (value << 8);
@@ -345,13 +352,13 @@ void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
 
 	switch(addr) {
 		case 0x20: source_x_inc = (source_x_inc & 0x00ff) | (value << 8); break;
-		case 0x21: source_x_inc = (source_x_inc & 0xff00) | value; break;
+		case 0x21: source_x_inc = (source_x_inc & 0xff00) | (value & 0xfe); break;
 		case 0x22: source_y_inc = (source_y_inc & 0x00ff) | (value << 8); break;
-		case 0x23: source_y_inc = (source_y_inc & 0xff00) | value; break;
+		case 0x23: source_y_inc = (source_y_inc & 0xff00) | (value & 0xfe); break;
 		case 0x24: source_addr = (source_addr & 0x00ffffff) | (value << 24); break;
 		case 0x25: source_addr = (source_addr & 0xff00ffff) | (value << 16); break;
 		case 0x26: source_addr = (source_addr & 0xffff00ff) | (value << 8); break;
-		case 0x27: source_addr = (source_addr & 0xffffff00) | value; break;
+		case 0x27: source_addr = (source_addr & 0xffffff00) | (value & 0xfe); break;	// ignore LSB
 		case 0x28: STORE_B_ff8a28(value); break;
 		case 0x29: STORE_B_ff8a29(value); break;
 		case 0x2a: STORE_B_ff8a2a(value); break;
@@ -359,9 +366,9 @@ void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
 		case 0x2c: STORE_B_ff8a2c(value); break;
 		case 0x2d: STORE_B_ff8a2d(value); break;
 		case 0x2e: dest_x_inc = (dest_x_inc & 0x00ff) | (value << 8); break;
-		case 0x2f: dest_x_inc = (dest_x_inc & 0xff00) | value; break;
+		case 0x2f: dest_x_inc = (dest_x_inc & 0xff00) | (value & 0xfe); break;
 		case 0x30: dest_y_inc = (dest_y_inc & 0x00ff) | (value << 8); break;
-		case 0x31: dest_y_inc = (dest_y_inc & 0xff00) | value; break;
+		case 0x31: dest_y_inc = (dest_y_inc & 0xff00) | (value & 0xfe); break;
 		case 0x32: STORE_B_ff8a32(value); break;
 		case 0x33: STORE_B_ff8a33(value); break;
 		case 0x34: STORE_B_ff8a34(value); break;
@@ -482,7 +489,7 @@ void BLITTER::STORE_B_ff8a34(B v)
 
 void BLITTER::STORE_B_ff8a35(B v)
 {	dest_addr &= 0xffffff00;
-	dest_addr |= (v & 0xfe);
+	dest_addr |= (v & 0xfe);	// ignore LSB
 #ifdef DEBUG
 	fprintf(stderr,"write : ff8a35 : %X\n",v);
 #endif
@@ -561,22 +568,93 @@ void BLITTER::STORE_B_ff8a3d(B v)
 	skewreg = (unsigned char) v & 0xcf;	/* h/ware reg mask %11001111 !*/	
 }
 
+void BLITTER::hop2op3p()
+{
+#ifndef SWACCELL
+	_HOP_2_OP_03_P();
+#else
+#ifdef HWBLITS
+	if (source_addr >= ARANYMVRAMSTART && dest_addr >= ARANYMVRAMSTART) {
+		SDL_Rect src, dest;
+		int src_offset = source_addr - ARANYMVRAMSTART;
+		int dest_offset = dest_addr - ARANYMVRAMSTART;
+		src.x = (src_offset % (2*640))/2;
+		src.y = (src_offset / (2*640));
+		src.w = dest.w = x_count;
+		src.h = dest.h = y_count;
+		dest.x = (dest_offset % (2*640))/2;
+		dest.y = (dest_offset / (2*640));
+		SDL_Surface *surf = SDL_GetVideoSurface();
+		int result = SDL_BlitSurface(surf, &src, surf, &dest);
+		source_addr += (((x_count-1)*source_x_inc)+source_y_inc)*y_count;
+		dest_addr += (((x_count-1)*dest_x_inc)+dest_y_inc)*y_count;
+		y_count = 0;
+		return;
+	}
+#endif
+	do
+	{
+		memmove(get_real_address(dest_addr), get_real_address(source_addr), x_count*2);
+		source_addr += ((x_count-1)*source_x_inc)+source_y_inc;
+		dest_addr += ((x_count-1)*dest_x_inc)+dest_y_inc;
+	} while (--y_count > 0);
+#endif
+}
+
+void BLITTER::hop2op3n()
+{
+#ifndef SWACCELL
+	_HOP_2_OP_03_N();
+#else
+	source_addr += ((x_count-1)*source_x_inc);
+	dest_addr += ((x_count-1)*dest_x_inc);
+#ifdef HWBLITS
+	if (source_addr >= ARANYMVRAMSTART && dest_addr >= ARANYMVRAMSTART) {
+		source_addr += (((x_count)*source_x_inc)+source_y_inc)*y_count;
+		dest_addr += (((x_count-1)*dest_x_inc)+dest_y_inc)*y_count;
+		SDL_Rect src, dest;
+		int src_offset = source_addr - ARANYMVRAMSTART;
+		int dest_offset = dest_addr - ARANYMVRAMSTART;
+		src.x = (src_offset % (2*640))/2;
+		src.y = (src_offset / (2*640));
+		src.w = dest.w = x_count;
+		src.h = dest.h = y_count;
+		dest.x = (dest_offset % (2*640))/2;
+		dest.y = (dest_offset / (2*640));
+		SDL_Surface *surf = SDL_GetVideoSurface();
+		int result = SDL_BlitSurface(surf, &src, surf, &dest);
+		y_count = 0;
+		return;
+	}
+#endif
+	do
+	{
+		memmove(get_real_address(dest_addr), get_real_address(source_addr), x_count*2);
+		source_addr += ((x_count)*source_x_inc)+source_y_inc;
+		dest_addr += ((x_count-1)*dest_x_inc)+dest_y_inc;
+	} while (--y_count > 0);
+#endif
+}
+
 void BLITTER::Do_Blit(void)
 { 	
-	if (dP)
+	if (dP) {
 		fprintf(stderr, "Blitter started at %06x\n", showPC());
-	SHOWPARAMS;
+		SHOWPARAMS;
+	}
+/*
 	if ((dest_addr > FALCVRAMEND && dest_addr < ARANYMVRAMSTART)) {
 		fprintf(stderr, "Blitter - dest address out of range - exitting\n");
 		return;
 	}
+*/
 	if (source_x_inc < 0) {
 		// do_hop_op_N[hop][op]();
 		switch(op) {
 			case 0: if (hop == 0) _HOP_0_OP_00_N(); else if (hop == 1) _HOP_1_OP_00_N(); else if (hop == 2) _HOP_2_OP_00_N(); else _HOP_3_OP_00_N(); break;
 			case 1: if (hop == 0) _HOP_0_OP_01_N(); else if (hop == 1) _HOP_1_OP_01_N(); else if (hop == 2) _HOP_2_OP_01_N(); else _HOP_3_OP_01_N(); break;
 			case 2: if (hop == 0) _HOP_0_OP_02_N(); else if (hop == 1) _HOP_1_OP_02_N(); else if (hop == 2) _HOP_2_OP_02_N(); else _HOP_3_OP_02_N(); break;
-			case 3: if (hop == 0) _HOP_0_OP_03_N(); else if (hop == 1) _HOP_1_OP_03_N(); else if (hop == 2) _HOP_2_OP_03_N(); else _HOP_3_OP_03_N(); break;
+			case 3: if (hop == 0) _HOP_0_OP_03_N(); else if (hop == 1) _HOP_1_OP_03_N(); else if (hop == 2) hop2op3n() /*_HOP_2_OP_03_N()*/; else _HOP_3_OP_03_N(); break;
 			case 4: if (hop == 0) _HOP_0_OP_04_N(); else if (hop == 1) _HOP_1_OP_04_N(); else if (hop == 2) _HOP_2_OP_04_N(); else _HOP_3_OP_04_N(); break;
 			case 5: if (hop == 0) _HOP_0_OP_05_N(); else if (hop == 1) _HOP_1_OP_05_N(); else if (hop == 2) _HOP_2_OP_05_N(); else _HOP_3_OP_05_N(); break;
 			case 6: if (hop == 0) _HOP_0_OP_06_N(); else if (hop == 1) _HOP_1_OP_06_N(); else if (hop == 2) _HOP_2_OP_06_N(); else _HOP_3_OP_06_N(); break;
@@ -593,11 +671,11 @@ void BLITTER::Do_Blit(void)
 	}
 	else {
 		// do_hop_op_P[hop][op]();
-		switch(hop) {
+		switch(op) {
 			case 0: if (hop == 0) _HOP_0_OP_00_P(); else if (hop == 1) _HOP_1_OP_00_P(); else if (hop == 2) _HOP_2_OP_00_P(); else _HOP_3_OP_00_P(); break;
 			case 1: if (hop == 0) _HOP_0_OP_01_P(); else if (hop == 1) _HOP_1_OP_01_P(); else if (hop == 2) _HOP_2_OP_01_P(); else _HOP_3_OP_01_P(); break;
 			case 2: if (hop == 0) _HOP_0_OP_02_P(); else if (hop == 1) _HOP_1_OP_02_P(); else if (hop == 2) _HOP_2_OP_02_P(); else _HOP_3_OP_02_P(); break;
-			case 3: if (hop == 0) _HOP_0_OP_03_P(); else if (hop == 1) _HOP_1_OP_03_P(); else if (hop == 2) _HOP_2_OP_03_P(); else _HOP_3_OP_03_P(); break;
+			case 3: if (hop == 0) _HOP_0_OP_03_P(); else if (hop == 1) _HOP_1_OP_03_P(); else if (hop == 2) hop2op3p() /*_HOP_2_OP_03_P()*/; else _HOP_3_OP_03_P(); break;
 			case 4: if (hop == 0) _HOP_0_OP_04_P(); else if (hop == 1) _HOP_1_OP_04_P(); else if (hop == 2) _HOP_2_OP_04_P(); else _HOP_3_OP_04_P(); break;
 			case 5: if (hop == 0) _HOP_0_OP_05_P(); else if (hop == 1) _HOP_1_OP_05_P(); else if (hop == 2) _HOP_2_OP_05_P(); else _HOP_3_OP_05_P(); break;
 			case 6: if (hop == 0) _HOP_0_OP_06_P(); else if (hop == 1) _HOP_1_OP_06_P(); else if (hop == 2) _HOP_2_OP_06_P(); else _HOP_3_OP_06_P(); break;
