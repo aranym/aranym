@@ -123,7 +123,7 @@ extern char emutos_path[512];
 
 void usage(int);
 extern int decode_switches(FILE *, int, char **);
-extern int save_settings(const char *);
+extern int saveSettings(const char *);
 extern char *getConfFilename(const char *file, char *buffer, unsigned int bufsize);
 
 #endif

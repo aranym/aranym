@@ -495,6 +495,7 @@ char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 
 void build_cfgfilename()
 {
+	struct stat buf;
 	char *home = getenv("HOME");
 	if (home != NULL) {
 		int homelen = strlen(home);
@@ -505,12 +506,21 @@ void build_cfgfilename()
 			strcat(config_folder, ARANYMHOME);
 		}
 	}
-	// make sure the folder exists
-	D(bug("Creating config folder '%s'", config_folder));
-	mkdir(config_folder, 0755);
+	// Does the folder exist?
+	if (stat(config_folder, &buf) == -1) {
+		D(bug("Creating config folder '%s'", config_folder));
+		mkdir(config_folder, 0755);
+	}
 
 	if (strlen(config_file) == 0)
 		getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
+
+	// Does the config exist?
+	if (stat(config_file, &buf) == -1) {
+                D(bug("Creating default config file '%s'", config_file));
+		saveSettings(config_file);
+		saveConfigFile = false;	
+        }
 }
 
 static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose)

@@ -354,7 +354,7 @@ void TSetWindow::saveSet() {
 void TMyApp::saveSet() {
 	if (SetWindow != NULL) {
 		SetWindow->saveSet();
-		save_settings("aranymtest.rc");
+		saveSettings("aranymtest.rc");
 	}
 }
 
@@ -388,6 +388,9 @@ int main(int argc, char **argv)
 
 /*
  * $Log$
+ * Revision 1.5  2001/12/27 22:24:14  joy
+ * FastRAMSizeMB should not be global
+ *
  * Revision 1.4  2001/10/16 19:38:44  milan
  * Integration of BasiliskII' cxmon, FastRAM in aranymrc etc.
  *
