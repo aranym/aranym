@@ -244,7 +244,6 @@ struct Config_Tag tos_conf[]={
 void preset_tos()
 {
   bx_options.tos.redirect_CON = false;
-  bx_options.tos.redirect_PRT = false;
   bx_options.tos.cookie_mch = 0x00050000; // ARAnyM
 }
 
