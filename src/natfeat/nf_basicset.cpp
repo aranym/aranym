@@ -30,7 +30,7 @@ int32 NF_Name::dispatch(uint32 fncode)
 			break;
 
 		case 1:	/* get_complete_name(char *name, uint32 max_len) */
-			text = VERSION_STRING " (Host OS = " OS_TYPE ", CPU = " CPU_TYPE ")";
+			text = VERSION_STRING " (Host: " OS_TYPE "/" CPU_TYPE ")";
 			break;
 
 		default:
