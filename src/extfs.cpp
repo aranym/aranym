@@ -984,36 +984,37 @@ int16 ExtFs::flags2st(int flags)
 
 void ExtFs::transformFileName( char* dest_, const char* source )
 {
-	ssize_t len = strlen( source );
-	ssize_t dotPos = 0;
-	bool	doConversion = true;
-	char	*dot;
-	char	*dest = (char *)alloca(MAX(len, 13));	// convert here
+#ifdef DEBUG_FILENAMETRANSFORMATION
+	// D(bug("MetaDOS: transformFileName(\"%s\")...", source));
+#endif
 
-	// Get extension & convert other dots into underscores
-	if ( ( dot = strrchr( source, '.' ) ) != NULL ) {
-		dotPos = dot - source;
-
-		if ( *source == '.' )
-			if ( len == 1 ||
-				 ( len == 2 && source[1] == '.' ) ) {
-				doConversion = false;
-				dot = NULL;
-			} else if ( dotPos == 0 )
-				dot = NULL;
+	// . and .. system folders
+	if ( strcmp(source, ".") == 0 || strcmp(source, "..") == 0) {
+		strcpy(dest_, source);	// copy to final 8+3 buffer
+		return;
 	}
 
-	if ( dot == NULL )
-		dotPos = len;
+	ssize_t len = strlen( source );
 
-	strncpy( dest, source, dotPos );
+	// Get file name (strip off file extension)
+	char *dot = strrchr( source, '.' );
+
+	// ignore leading dot
+	if (dot == source)
+		dot = NULL;
+
+	// find out dot position
+	ssize_t dotPos = (dot == NULL) ? len : dot - source;
+
+	// source is const so do the conversion in local buffer
+	char *dest = (char *)alloca(MAX(len, 13));
+	strcpy(dest, source);
+
+	// strip off file extension
 	dest[dotPos] = '\0';
 
-	if ( !doConversion )	// . and .. system folders
-		return;
-
-	// if the filename is longer than 8+3 or if the extension is longer than 3
-	if ( len > ( dot == NULL ? 11 : 12 ) || len - dotPos - 1 > 3 ) {
+	// if the file name is longer than 8 or if the extension is longer than 3
+	if ( strlen(dest) > 8 || (len - dotPos - 1) > 3 ) {
 		// calculate a hash value from the long name
 		uint32 hashValue = 0;
 		for( int i=0; source[i] != '\0'; i++ )
@@ -1026,14 +1027,14 @@ void ExtFs::transformFileName( char* dest_, const char* source )
 
 		// put the value into the name or into extension
 		if ( dot == NULL )
-			destIdx = 8;
+			destIdx = 8;	// this is buggy, IMHO (joy)
 		else
 			destIdx = MIN(5,dotPos);
 
 		dest[destIdx] = '~';
 		memcpy( &dest[destIdx+1], &tmpStr[6], 3 ); // including the trailing \0!
 
-		dotPos = destIdx + 3;
+		dotPos = destIdx + 3;	// this is buggy for dot=NULL, IMHO (joy)
 	}
 
 	// if the file have no . and is 12 char long than shorten it and add the .
@@ -1041,9 +1042,10 @@ void ExtFs::transformFileName( char* dest_, const char* source )
 		strncpy( dest+dotPos, dot, 4 );
 		dest[dotPos+4] = '\0';
 	} else if ( len > 8 ) {
+		// this hack fixes the buggy things above, it seems (joy)
 		memmove( dest+9, dest+8, 4 );
 		dotPos = 8;
-		dot = dest+dotPos;
+		dot = dest+dotPos;	// real hack to allow setting the extension separator below (joy)
 	}
 
 	// replace spaces and dots in the filename with the _
@@ -1057,13 +1059,15 @@ void ExtFs::transformFileName( char* dest_, const char* source )
 		// set the extension separator
 		dest[ dotPos ] = '.';
 
-#ifdef DEBUG_FILENAMETRANSFORMATION
-	D(bug("MetaDOS: transformFileName (%s, len = %d)", dest, len));
-#endif
-
 	// upper case conversion
 	strapply( dest, toupper );
-	strcpy(dest_, dest);	// copy to final 8+3 buffer
+
+#ifdef DEBUG_FILENAMETRANSFORMATION
+	D(bug("MetaDOS: transformFileName(\"%s\") -> \"%s\"", source, dest));
+#endif
+
+	// copy to real destination buffer
+	strcpy(dest_, dest);
 }
 
 
@@ -2487,6 +2491,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.32  2002/03/26 09:43:19  joy
+ * the dest buf size must be at least 8+1+3+1=13 bytes long!
+ *
  * Revision 1.31  2002/03/26 09:29:06  joy
  * transformFileName was writing long filenames to 8+3 TOS filename buffer. This is way wrong - you need to do all filename manipulation on a separate buffer and copy only the resulting 8+3 filename to the TOS fn buffer.
  *
