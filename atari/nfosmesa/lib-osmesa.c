@@ -32,6 +32,7 @@
 #include "lib-osmesa.h"
 #include "lib-misc.h"
 #include "../natfeat/natfeat.h"
+#include "../nfpci/nfpci_cookie.h"
 #include "nfosmesa_nfapi.h"
 
 /*--- Defines ---*/
@@ -51,14 +52,12 @@ static void InitNatfeat(void)
 {
 	unsigned long dummy;
 
-	nfOSMesaId=0;
-	if (Getcookie(C___NF, &dummy) == C_FOUND) {
-		nfOSMesaId=nfGetID(("OSMESA"));
-	} else {
+	if (!cookie_present(C___NF, &dummy)) {
 		Cconws("__NF cookie not present on this system\r\n");
 		return;
 	}
 
+	nfOSMesaId=nfGetID(("OSMESA"));
 	if (nfOSMesaId==0) {
 		Cconws("NF OSMesa functions not present on this system\r\n");
 	}

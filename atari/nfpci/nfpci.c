@@ -155,15 +155,13 @@ void install_driver(unsigned long resident_length)
 	}	
 
 	/* Check if NF is present for PCI */
-	nfPciId = 0;
-	if (cookie_present(C___NF, &cookie_nf) == C_FOUND) {
-		nfPciId = nfGetID(("PCI"));
-	} else {
+	if (!cookie_present(C___NF, &cookie_nf)) {
 		Cconws("__NF cookie not present on this system\r\n");
 		press_any_key();
 		return;
 	}	
 
+	nfPciId = nfGetID(("PCI"));
 	if (nfPciId==0) {
 		Cconws("NF PCI functions not present on this system\r\n");
 		press_any_key();

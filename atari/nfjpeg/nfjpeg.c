@@ -124,15 +124,13 @@ void install_driver(unsigned long resident_length)
 	}	
 
 	/* Check if NF is present for NFJPEG */
-	nfJpegId=0;
-	if (cookie_present(C___NF, &cookie_nf) == C_FOUND) {
-		nfJpegId = nfGetID(("JPEG"));
-	} else {
+	if (!cookie_present(C___NF, &cookie_nf)) {
 		Cconws("__NF cookie not present on this system\r\n");
 		press_any_key();
 		return;
 	}
 
+	nfJpegId = nfGetID(("JPEG"));
 	if (nfJpegId==0) {
 		Cconws("NF JPEG functions not present on this system\r\n");
 		press_any_key();

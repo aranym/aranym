@@ -27,6 +27,7 @@
 #include <mint/osbind.h>
 
 #include "../natfeat/natfeat.h"
+#include "../nfpci/nfpci_cookie.h"
 #include "metados_bos.h"
 #include "nfcdrom_nfapi.h"
 
@@ -36,7 +37,13 @@
 #define EINVFN	-32
 #endif
 
+#ifndef C___NF
 #define C___NF	0x5f5f4e46L
+#endif
+
+#ifndef DEV_CONSOLE
+#define DEV_CONSOLE	2
+#endif
 
 #define DRIVER_NAME	"ARAnyM host CD-ROM driver"
 #define VERSION	"v0.1"
@@ -76,50 +83,61 @@ long cd_discinfo(metados_bosheader_t *device, metadiscinfo_t *discinfo);
 
 metados_bosheader_t *init_devices(unsigned long phys_letter, unsigned long phys_channel);
 
+static void press_any_key(void);
+
 /*--- Local variables ---*/
 
 static unsigned long nfCdRomId;
-static metados_bosheader_t * (*device_init_f)(void)=asm_init_devices;
-
 static unsigned long drives_mask;
+
+static metados_bosheader_t * (*device_init_f)(void)=asm_init_devices;
 
 /*--- Functions ---*/
 
 void *init_driver(void)
 {
 	unsigned long dummy;
-	unsigned short nf_present;
+	int i;
+	char letter[2]={0,0};
 
 	Cconws(
 		"\033p " DRIVER_NAME " " VERSION " \033q\r\n"
 		"Copyright (c) ARAnyM Development Team, " __DATE__ "\r\n"
 	);
 
-	nf_present=(Getcookie(C___NF, &dummy) == C_FOUND);
+	drives_mask=0;
 
-	nfCdRomId=0;
-	if (nf_present) {
-		nfCdRomId=nfGetID(("CDROM"));
+	if (!cookie_present(C___NF, &dummy)) {
+		Cconws("__NF cookie not present on this system\r\n");
+		press_any_key();
+		return &device_init_f;
 	}
 
 	/* List present drives */
-	drives_mask=0;
-	if (nfCdRomId != 0) {
-		int i;
-		char letter[2]={0,0};
+	nfCdRomId=nfGetID(("CDROM"));
+	if (nfCdRomId == 0) {
+		Cconws("NF CD-ROM functions not present on this system\r\n");
+		press_any_key();
+		return &device_init_f;
+	}
 
-		drives_mask=nfCall((NFCDROM(NFCD_DRIVESMASK)));
-		Cconws(" Host drives present: ");
-		for (i='A'; i<='Z'; i++) {
-			if (drives_mask & (1<<(i-'A'))) {
-				letter[0]=i;
-				Cconws(letter);			
-			}		
-		}
-		Cconws("\r\n");
-	}	
+	drives_mask=nfCall((NFCDROM(NFCD_DRIVESMASK)));
+	Cconws(" Host drives present: ");
+	for (i='A'; i<='Z'; i++) {
+		if (drives_mask & (1<<(i-'A'))) {
+			letter[0]=i;
+			Cconws(letter);			
+		}		
+	}
+	Cconws("\r\n");
 
 	return &device_init_f;
+}
+
+static void press_any_key(void)
+{
+	Cconws("- Press any key to continue -\r\n");
+	while (Bconstat(DEV_CONSOLE)==0);
 }
 
 metados_bosheader_t *init_devices(unsigned long phys_letter, unsigned long phys_channel)

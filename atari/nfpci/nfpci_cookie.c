@@ -40,7 +40,7 @@ int cookie_present(unsigned long cookie, unsigned long *value)
 	void *old_stack;
 	
 	old_stack=(void *)Super(NULL);
-	cookie_jar= *((volatile unsigned long *)_p_cookies);
+	cookie_jar= (unsigned long *) *_p_cookies;
 	Super(old_stack);
 
 	if (cookie_jar == NULL) {
@@ -66,7 +66,7 @@ int cookie_add(unsigned long cookie, unsigned long value)
 	int count;
 	
 	old_stack=(void *)Super(NULL);
-	cookie_jar= *((volatile unsigned long *)_p_cookies);
+	cookie_jar= (unsigned long *) *_p_cookies;
 	Super(old_stack);
 
 	if (cookie_jar == NULL) {

@@ -1,7 +1,7 @@
 
 TARGET = nfcdrom.bos
 
-COBJS = nfcdrom.c ../natfeat/natfeat.c
+COBJS = nfcdrom.c ../natfeat/natfeat.c ../nfpci/nfpci_cookie.c
 SOBJS = entry.S
 
 include ../CONFIGVARS
