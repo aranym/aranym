@@ -1,6 +1,7 @@
 These are the first basic tools for Aranym:
 
-- fastram.prg that reads the fastram size from $f90006
+- fastram.prg v2.0 that detects FastRAM size automatically and reserves
+  64kB block of RAM for DMA operations to FastRAM (Cookie "_FRB")
 
 - clocky.prg that write actual mouse position to $f9000e/$f90010
   (It was faster to implement it into Clocky (TM) than to write a new TSR).
