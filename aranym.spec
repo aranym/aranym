@@ -1,6 +1,6 @@
 %define name	aranym
 %define ver	0.2.0
-%define rel	0
+%define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
 %define group	Console/Emulators
@@ -70,8 +70,13 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/atari/tools/pc101us.kbd.bz2
 /usr/share/aranym/atari/tools/pcpatch.prg.bz2
 /usr/share/aranym/atari/sound/zmagxsnd.prg.bz2
+/usr/share/aranym/font8.bmp
+/usr/share/aranym/etos512k.img
 
 %changelog
+* Sun Jul 21 2002 Petr Stehlik <pstehlik@sophics.cz>
+SDL GUI font and EmuTOS image files added.
+
 * Sat Jul 20 2002 Petr Stehlik <pstehlik@sophics.cz>
 Version increased.
 
