@@ -726,6 +726,8 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
 //BX_CONTROLLER(0).lba_mode
 
     case 0xf0001d: // Hard Disk Status
+		mfp.setGPIPbit(0x20, 0x20);		// lower the interrupt
+
     case 0xf00039: // Hard Disk Alternate Status
       if ((!BX_HD_THIS drive_select && !bx_options.diskc.present) ||
           (BX_HD_THIS drive_select && !bx_options.diskd.present)) {
