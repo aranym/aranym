@@ -509,7 +509,7 @@ PRIVATE inline void FFPU extract_packed(fpu_register const & src, uae_u32 * wrd1
 	char *cp;
 	char str[100];
 
-	sprintf(str, "%.16e", src);
+	sprintf(str, "%.16Le", src);
 
 	fpu_debug(("extract_packed(%.04f,%s)\n",(double)src,str));
 

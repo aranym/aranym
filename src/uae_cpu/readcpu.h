@@ -100,7 +100,7 @@ extern struct instr {
     signed char spos;
     unsigned char sduse;
     int flagdead:8, flaglive:8;
-    unsigned int mnemo:8;
+    /*unsigned*/ int mnemo:8;
     unsigned int cc:4;
     unsigned int plev:2;
 #ifdef sgi
