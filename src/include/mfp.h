@@ -2,20 +2,40 @@
 
 class MFP_Timer {
 private:
-	char name;
 	uae_u8 control;
 	uae_u8 start_data, current_data;
 	bool state;
+	char name;
 
 protected:
 	bool MFP_Timer::isRunning();
 
 public:
-	MFP_Timer(char);
+	MFP_Timer(int);
 	void setControl(uae_u8);
 	uae_u8 getControl();
 	void setData(uae_u8);
 	uae_u8 getData();
+};
+
+class MFP_TimerA:public MFP_Timer {
+public:
+	MFP_TimerA() : MFP_Timer(0) {};
+};
+
+class MFP_TimerB:public MFP_Timer {
+public:
+	MFP_TimerB() : MFP_Timer(1) {};
+};
+
+class MFP_TimerC:public MFP_Timer {
+public:
+	MFP_TimerC() : MFP_Timer(2) {};
+};
+
+class MFP_TimerD:public MFP_Timer {
+public:
+	MFP_TimerD() : MFP_Timer(3) {};
 };
 
 class USART {
@@ -37,7 +57,10 @@ private:
 	uae_u16 irq_inservice;
 	uae_u16 irq_mask;
 	uae_u8 irq_vector;
-	MFP_Timer *tA, *tB, *tC, *tD;
+	MFP_TimerA A;
+	MFP_TimerB B;
+	MFP_TimerC C;
+	MFP_TimerD D;
 	USART usart;
 
 public:
