@@ -27,7 +27,9 @@
 #ifndef GDBSTUB_H
 # define GDBSTUB_H
 
-#include "sysdeps.h"
+# include "sysdeps.h"
+
+# ifdef GDBSTUB
 
 extern int port_number;
 
@@ -59,9 +61,11 @@ public:
   static int check(memptr pc);
 };
 
-#define GDBSTUB_STOP_NO_REASON          (0xac0)
+#  define GDBSTUB_STOP_NO_REASON          (0xac0)
 
-# define GDBSTUB_TEXT_BASE (0x0)
-# define GDBSTUB_DATA_BASE (0x0)
-# define GDBSTUB_BSS_BASE (0x0)
+#  define GDBSTUB_TEXT_BASE (0x0)
+#  define GDBSTUB_DATA_BASE (0x0)
+#  define GDBSTUB_BSS_BASE (0x0)
+
+# endif /* GDBSTUB */
 #endif /* GDBSTUB_H */
