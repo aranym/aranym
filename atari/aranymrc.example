@@ -165,7 +165,9 @@ Z = 0
 
 
 [NFOSMESA]
-; Library to load for standard OpenGL functions
+; Channel size (16 if you are using libOSMesa16, or 32 for libOSMesa32)
+ChannelSize = 0
+; Library to load for standard OpenGL functions (not needed for libOSMesa[16,32])
 LibGL = libGL.so
 ; Library to load for OSMesa rendering functions
 LibOSMesa = libOSMesa.so

@@ -1,3 +1,9 @@
+2005/02/12 - Patrice
+- nfosmesa: Add support for 16 and 32 bits per channel for OSMesa, using
+  libOSMesa16 or libOSMesa32. Need to fix ConvertContext32() to support float
+  values.
+
+
 2005/02/04 - Patrice
 - Added parallel port emulation driver via Linux /dev/parport device.
 

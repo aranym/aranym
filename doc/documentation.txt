@@ -693,3 +693,23 @@ give the complete path to your Mesa libGL and libOSMesa files.
 Atari side: just use osmesa.ldg provided in ARAnyM archive, instead of the
 original one. You can even use it instead of previous mesa_gl.ldg an
 tiny_gl.ldg.
+
+There are different libOSMesa libraries for the host: libOSMesa (8 bits per
+channel, with separated libGL), libOSMesa16 (16 bits integer value per channel,
+with included libGL) and libOSMesa32 (32 bits float value per channel, with
+included libGL). You need to adjust the config file this way:
+
+- libOSMesa:
+ChannelSize = 0 /* unused */
+libGL = /path/to/mesa/libGL.so /* mandatory */
+libOSMesa = /path/to/mesa/libOSMesa.so /* mandatory */
+
+- libOSMesa16:
+ChannelSize = 16 /* mandatory */
+libGL = /path/to/mesa/libGL.so /* unused */
+libOSMesa = /path/to/mesa/libOSMesa16.so /* mandatory */
+
+- libOSMesa32:
+ChannelSize = 32 /* mandatory */
+libGL = /path/to/mesa/libGL.so /* unused */
+libOSMesa = /path/to/mesa/libOSMesa32.so /* mandatory */

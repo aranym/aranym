@@ -607,14 +607,16 @@ void presave_autozoom() {
 #define OSMESA_CONF(x) bx_options.osmesa.x
 
 struct Config_Tag osmesa_conf[]={
+	{ "ChannelSize", Int_Tag, &OSMESA_CONF(channel_size), 0, 0},
 	{ "LibGL", String_Tag, &OSMESA_CONF(libgl), sizeof(OSMESA_CONF(libgl)), 0},
 	{ "LibOSMesa", String_Tag, &OSMESA_CONF(libosmesa), sizeof(OSMESA_CONF(libosmesa)), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_osmesa() {
-  safe_strncpy(OSMESA_CONF(libgl), "libGL.so", sizeof(OSMESA_CONF(libgl)));
-  safe_strncpy(OSMESA_CONF(libosmesa), "libOSMesa.so", sizeof(OSMESA_CONF(libosmesa)));
+	OSMESA_CONF(channel_size) = 0;
+	safe_strncpy(OSMESA_CONF(libgl), "libGL.so", sizeof(OSMESA_CONF(libgl)));
+	safe_strncpy(OSMESA_CONF(libosmesa), "libOSMesa.so", sizeof(OSMESA_CONF(libosmesa)));
 }
 
 void postload_osmesa() {

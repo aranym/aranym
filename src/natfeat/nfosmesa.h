@@ -51,7 +51,8 @@ typedef struct {
 
 typedef struct {
 	OSMesaContext	ctx;
-	void *buffer;
+	void *src_buffer;	/* Host buffer, if channel reduction needed */
+	void *dst_buffer;	/* Atari buffer */
 	GLenum type;
 	GLsizei width, height;
 
@@ -80,10 +81,15 @@ class OSMesaDriver : public NF_Base
 		void *libosmesa_handle, *libgl_handle;
 
 		/* Some special functions, which need a bit more work */
+		SDL_bool libgl_needed;
 		int OpenLibrary(void);
 		int CloseLibrary(void);
+		void InitPointersGL(void);
+		void InitPointersOSMesa(void);
 		void SelectContext(Uint32 ctx);
-		void ConvertContext(Uint32 ctx);
+		void ConvertContext(Uint32 ctx);	/* 8 bits per channel */
+		void ConvertContext16(Uint32 ctx);	/* 16 bits per channel */
+		void ConvertContext32(Uint32 ctx);	/* 32 bits per channel */
 
 		Uint32 LenglGetString(Uint32 ctx, GLenum name);
 		void PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer);

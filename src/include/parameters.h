@@ -196,8 +196,9 @@ typedef struct {
 
 // NfOSMesa options
 typedef struct {
-	char libgl[256];
-	char libosmesa[256];
+	uint32 channel_size;    /* If using libOSMesa[16|32], size of channel */
+	char libgl[256];		/* Pathname to libGL */
+	char libosmesa[256];	/* Pathname to libOSMesa */
 } bx_nfosmesa_options_t;
 
 // Parallel port options

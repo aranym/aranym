@@ -60,6 +60,7 @@ OSMesaDriver::OSMesaDriver()
 	num_contexts = 0;
 	cur_context = -1;
 	libgl_handle = libosmesa_handle = NULL;
+	libgl_needed = SDL_FALSE;
 }
 
 OSMesaDriver::~OSMesaDriver()
@@ -127,23 +128,7 @@ int OSMesaDriver::OpenLibrary(void)
 {
 	D(bug("nfosmesa: OpenLibrary"));
 
-	if (libgl_handle==NULL) {
-		libgl_handle=SDL_LoadObject(bx_options.osmesa.libgl);
-		if (libgl_handle==NULL) {
-			D(bug("nfosmesa: Can not load '%s' library\n", bx_options.osmesa.libgl));
-			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
-			return -1;
-		}
-
-#include "nfosmesa/load-gl.c"
-#if NFOSMESA_GLEXT
-# include "nfosmesa/load-glext.c"
-#endif
-
-	}
-
-	D(bug("nfosmesa: OpenLibrary(): libGL loaded"));
-
+	/* Check if libOSMesa contains libGL or not */
 	if (libosmesa_handle==NULL) {
 		libosmesa_handle=SDL_LoadObject(bx_options.osmesa.libosmesa);
 		if (libosmesa_handle==NULL) {
@@ -151,6 +136,137 @@ int OSMesaDriver::OpenLibrary(void)
 			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
 			return -1;
 		}
+
+		fn.glBegin =
+			( void (*)(GLenum mode ))
+			SDL_LoadFunction(libosmesa_handle,"glBegin");
+
+		libgl_needed = (SDL_bool) (fn.glBegin==NULL);
+		D(bug("nfosmesa: libGL needed: %s", libgl_needed ? "true" : "false"));
+
+		fn.glBegin = 
+			( void (*)(GLenum mode ))
+			NULL;
+
+		SDL_UnloadObject(libosmesa_handle);
+		libosmesa_handle=NULL;
+	}
+
+	/* Check if channel size is correct */
+	if (!libgl_needed) {
+		switch(bx_options.osmesa.channel_size) {
+			case 16:
+			case 32:
+				D(bug("nfosmesa: Channel size: %d", bx_options.osmesa.channel_size));
+				break;
+			default:
+				fprintf(stderr, "nfosmesa: Unsupported channel size, must be 16 or 32\n");
+				return -1;
+		}
+	}
+
+	/* Load LibGL if needed */
+	if ((libgl_handle==NULL) && libgl_needed) {
+		libgl_handle=SDL_LoadObject(bx_options.osmesa.libgl);
+		if (libgl_handle==NULL) {
+			D(bug("nfosmesa: Can not load '%s' library\n", bx_options.osmesa.libgl));
+			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
+			return -1;
+		}
+		InitPointersGL();
+		D(bug("nfosmesa: OpenLibrary(): libGL loaded"));
+	}
+
+	/* Load libOSMesa */
+	if (libosmesa_handle==NULL) {
+		libosmesa_handle=SDL_LoadObject(bx_options.osmesa.libosmesa);
+		if (libosmesa_handle==NULL) {
+			D(bug("nfosmesa: Can not load '%s' library\n", bx_options.osmesa.libosmesa));
+			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
+			return -1;
+		}
+		if (!libgl_needed) {
+			libgl_handle = libosmesa_handle;
+			InitPointersGL();
+			libgl_handle = NULL;
+		}
+		InitPointersOSMesa();
+		D(bug("nfosmesa: OpenLibrary(): libOSMesa loaded"));
+	}
+
+	return 0;
+}
+
+int OSMesaDriver::CloseLibrary(void)
+{
+	D(bug("nfosmesa: CloseLibrary"));
+
+	if (libosmesa_handle) {
+		SDL_UnloadObject(libosmesa_handle);
+		libosmesa_handle=NULL;
+	}
+
+		fn.OSMesaCreateContext =
+			(OSMesaContext (*)(GLenum,OSMesaContext))
+			NULL;
+		fn.OSMesaCreateContextExt =
+			(OSMesaContext (*)(GLenum,GLint,GLint,GLint,OSMesaContext))
+			NULL;
+		fn.OSMesaDestroyContext =
+			(void (*)(OSMesaContext))
+			NULL;
+		fn.OSMesaMakeCurrent =
+			(GLboolean (*)(OSMesaContext,void *,GLenum,GLsizei,GLsizei))
+			NULL;
+		fn.OSMesaGetCurrentContext =
+			(OSMesaContext (*)(void))
+			NULL;
+		fn.OSMesaPixelStore =
+			(void (*)(GLint,GLint))
+			NULL;
+		fn.OSMesaGetIntegerv =
+			(void (*)(GLint,GLint *))
+			NULL;
+		fn.OSMesaGetDepthBuffer =
+			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
+			NULL;
+		fn.OSMesaGetColorBuffer =
+			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
+			NULL;
+		fn.OSMesaGetProcAddress =
+			(void *(*)(const char *))
+			NULL;
+
+	D(bug("nfosmesa: CloseLibrary(): libOSMesa unloaded"));
+
+	if (libgl_handle) {
+		SDL_UnloadObject(libgl_handle);
+		libgl_handle=NULL;
+	}
+
+#include "nfosmesa/unload-gl.c"
+#if NFOSMESA_GLEXT
+# include "nfosmesa/unload-glext.c"
+#endif
+
+	D(bug("nfosmesa: CloseLibrary(): libGL unloaded"));
+
+	return 0;
+}
+
+void OSMesaDriver::InitPointersGL(void)
+{
+	D(bug("nfosmesa: InitPointersGL()"));
+
+#include "nfosmesa/load-gl.c"
+#if NFOSMESA_GLEXT
+# include "nfosmesa/load-glext.c"
+#endif
+}
+
+void OSMesaDriver::InitPointersOSMesa(void)
+{
+	D(bug("nfosmesa: InitPointersOSMesa()"));
 
 		fn.OSMesaCreateContext =
 			(OSMesaContext (*)(GLenum,OSMesaContext))
@@ -182,78 +298,21 @@ int OSMesaDriver::OpenLibrary(void)
 		fn.OSMesaGetProcAddress =
 			(void *(*)(const char *))
 			SDL_LoadFunction(libosmesa_handle,"OSMesaGetProcAddress");
-	}
-
-	D(bug("nfosmesa: OpenLibrary(): libOSMesa loaded"));
-
-	return 0;
-}
-
-int OSMesaDriver::CloseLibrary(void)
-{
-	D(bug("nfosmesa: CloseLibrary"));
-
-	if (libosmesa_handle) {
-		SDL_UnloadObject(libosmesa_handle);
-		libosmesa_handle=NULL;
-
-		fn.OSMesaCreateContext =
-			(OSMesaContext (*)(GLenum,OSMesaContext))
-			NULL;
-		fn.OSMesaCreateContextExt =
-			(OSMesaContext (*)(GLenum,GLint,GLint,GLint,OSMesaContext))
-			NULL;
-		fn.OSMesaDestroyContext =
-			(void (*)(OSMesaContext))
-			NULL;
-		fn.OSMesaMakeCurrent =
-			(GLboolean (*)(OSMesaContext,void *,GLenum,GLsizei,GLsizei))
-			NULL;
-		fn.OSMesaGetCurrentContext =
-			(OSMesaContext (*)(void))
-			NULL;
-		fn.OSMesaPixelStore =
-			(void (*)(GLint,GLint))
-			NULL;
-		fn.OSMesaGetIntegerv =
-			(void (*)(GLint,GLint *))
-			NULL;
-		fn.OSMesaGetDepthBuffer =
-			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
-			NULL;
-		fn.OSMesaGetColorBuffer =
-			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
-			NULL;
-		fn.OSMesaGetProcAddress =
-			(void *(*)(const char *))
-			NULL;
-	}
-
-	D(bug("nfosmesa: CloseLibrary(): libOSMesa unloaded"));
-
-	if (libgl_handle) {
-		SDL_UnloadObject(libgl_handle);
-		libgl_handle=NULL;
-
-#include "nfosmesa/unload-gl.c"
-#if NFOSMESA_GLEXT
-# include "nfosmesa/unload-glext.c"
-#endif
-
-	}
-
-	D(bug("nfosmesa: CloseLibrary(): libGL unloaded"));
-
-	return 0;
 }
 
 void OSMesaDriver::SelectContext(Uint32 ctx)
 {
+	void *draw_buffer;
+
 	if ((ctx>MAX_OSMESA_CONTEXTS) || (cur_context<0)) {
 		return;
 	}
 	if ((Uint32)cur_context != ctx) {
-		fn.OSMesaMakeCurrent(contexts[ctx].ctx, contexts[ctx].buffer, contexts[ctx].type, contexts[ctx].width, contexts[ctx].height);
+		draw_buffer = contexts[ctx].dst_buffer;
+		if (contexts[ctx].src_buffer) {
+			draw_buffer = contexts[ctx].src_buffer;
+		}
+		fn.OSMesaMakeCurrent(contexts[ctx].ctx, draw_buffer, contexts[ctx].type, contexts[ctx].width, contexts[ctx].height);
 		cur_context = ctx;
 	}
 }
@@ -333,6 +392,13 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 	osmesa_format = format;
 	contexts[j].conversion = SDL_FALSE;
 #endif
+
+	if (!libgl_needed && (format!=OSMESA_COLOR_INDEX)) {
+		/* We are using libOSMesa[16,32] */
+		osmesa_format = OSMESA_ARGB;
+		contexts[j].conversion = SDL_TRUE;
+	}
+
 	contexts[j].enabled_arrays=0;
 	memset((void *)&(contexts[j].vertex),0,sizeof(vertexarray_t));
 	memset((void *)&(contexts[j].normal),0,sizeof(vertexarray_t));
@@ -341,6 +407,7 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 	memset((void *)&(contexts[j].index),0,sizeof(vertexarray_t));
 	memset((void *)&(contexts[j].edgeflag),0,sizeof(vertexarray_t));
 
+	D(bug("nfosmesa: format=%d, depth=%d, stencil=%d, accum=%d", osmesa_format, depthBits, stencilBits, accumBits));
 	contexts[j].ctx=fn.OSMesaCreateContextExt(osmesa_format,depthBits,stencilBits,accumBits,share_ctx);
 	if (contexts[j].ctx==NULL) {
 		D(bug("nfosmesa: Can not create context"));
@@ -348,6 +415,7 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 	}
 	contexts[j].srcformat = osmesa_format;
 	contexts[j].dstformat = format;
+	contexts[j].src_buffer = contexts[j].dst_buffer = NULL;
 	num_contexts++;
 	return j;
 }
@@ -365,6 +433,9 @@ void OSMesaDriver::OSMesaDestroyContext( Uint32 ctx )
 
 	fn.OSMesaDestroyContext(contexts[ctx].ctx);
 	num_contexts--;
+	if (contexts[ctx].src_buffer) {
+		free(contexts[ctx].src_buffer);
+	}
 	contexts[ctx].ctx=NULL;
 /*
 	if (num_contexts==0) {
@@ -375,6 +446,8 @@ void OSMesaDriver::OSMesaDestroyContext( Uint32 ctx )
 
 GLboolean OSMesaDriver::OSMesaMakeCurrent( Uint32 ctx, void *buffer, GLenum type, GLsizei width, GLsizei height )
 {
+	void *draw_buffer;
+
 	D(bug("nfosmesa: OSMesaMakeCurrent"));
 	if (ctx>MAX_OSMESA_CONTEXTS) {
 		return GL_FALSE;
@@ -385,11 +458,26 @@ GLboolean OSMesaDriver::OSMesaMakeCurrent( Uint32 ctx, void *buffer, GLenum type
 	}
 
 	cur_context = ctx;
-	contexts[ctx].buffer = buffer;
+	contexts[ctx].dst_buffer = draw_buffer = buffer;
 	contexts[ctx].type = type;
+	if (!libgl_needed) {
+		if (contexts[ctx].src_buffer) {
+			free(contexts[ctx].src_buffer);
+		}
+		contexts[ctx].src_buffer = draw_buffer = malloc(width * height * 4 * (bx_options.osmesa.channel_size>>3));
+		D(bug("nfosmesa: Allocated shadow buffer for channel reduction"));
+		switch(bx_options.osmesa.channel_size) {
+			case 16:
+				contexts[ctx].type = GL_UNSIGNED_SHORT;
+				break;
+			case 32:
+				contexts[ctx].type = GL_FLOAT;
+				break;
+		}
+	}
 	contexts[ctx].width = width;
 	contexts[ctx].height = height;
-	return fn.OSMesaMakeCurrent(contexts[ctx].ctx, buffer, type, width, height);
+	return fn.OSMesaMakeCurrent(contexts[ctx].ctx, draw_buffer, contexts[ctx].type, width, height);
 }
 
 Uint32 OSMesaDriver::OSMesaGetCurrentContext( void )
@@ -562,8 +650,8 @@ void OSMesaDriver::ConvertContext(Uint32 ctx)
 			{
 				Uint16 *srcline,*srccol,color;
 
-	D(bug("nfosmesa: ConvertContext LE:565->BE:565, %dx%d",contexts[ctx].width,contexts[ctx].height));
-				srcline = (Uint16 *)contexts[ctx].buffer;
+				D(bug("nfosmesa: ConvertContext LE:565->BE:565, %dx%d",contexts[ctx].width,contexts[ctx].height));
+				srcline = (Uint16 *)contexts[ctx].dst_buffer;
 				srcpitch = contexts[ctx].width;
 				for (y=0;y<contexts[ctx].height;y++) {
 					srccol=srcline;
@@ -579,8 +667,8 @@ void OSMesaDriver::ConvertContext(Uint32 ctx)
 			{
 				Uint32 *srcline,*srccol,color;
 
-	D(bug("nfosmesa: ConvertContext LE:BGRA->BE:RGBA"));
-				srcline = (Uint32 *)contexts[ctx].buffer;
+				D(bug("nfosmesa: ConvertContext LE:BGRA->BE:RGBA"));
+				srcline = (Uint32 *)contexts[ctx].dst_buffer;
 				srcpitch = contexts[ctx].width;
 				for (y=0;y<contexts[ctx].height;y++) {
 					srccol = srcline;
@@ -590,6 +678,323 @@ void OSMesaDriver::ConvertContext(Uint32 ctx)
 						*srccol++=color;
 					}
 					srcline+=srcpitch;
+				}
+			}
+			break;
+		case OSMESA_ARGB:	/* 16 or 32 bits per channel */
+			switch (bx_options.osmesa.channel_size) {
+				case 16:
+					ConvertContext16(ctx);
+					break;
+				case 32:
+					ConvertContext32(ctx);
+					break;
+				default:
+					D(bug("nfosmesa: ConvertContext: Unsupported channel size"));
+					break;
+			}
+			break;
+	}
+}
+
+void OSMesaDriver::ConvertContext16(Uint32 ctx)
+{
+	int x,y, r,g,b,a, srcpitch, dstpitch, color;
+	Uint16 *srcline, *srccol;
+
+	srcline = (Uint16 *) contexts[ctx].src_buffer;
+	srcpitch = contexts[ctx].width * 4;
+
+	switch(contexts[ctx].dstformat) {
+		case OSMESA_RGB_565:
+			{
+				Uint16 *dstline, *dstcol;
+
+				dstline = (Uint16 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						srccol++; /* Skip alpha */
+						r = ((*srccol++)>>11) & 31;
+						g = ((*srccol++)>>10) & 63;
+						b = ((*srccol++)>>11) & 31;
+
+						color = (r<<11)|(g<<5)|b;
+						*dstcol++ = SDL_SwapBE16(color);
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+		case OSMESA_RGB:
+			{
+				Uint8 *dstline, *dstcol;
+
+				dstline = (Uint8 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width * 3;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						srccol++; /* Skip alpha */
+						r = ((*srccol++)>>8) & 255;
+						g = ((*srccol++)>>8) & 255;
+						b = ((*srccol++)>>8) & 255;
+
+						*dstcol++ = r;
+						*dstcol++ = g;
+						*dstcol++ = b;
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+		case OSMESA_BGR:
+			{
+				Uint8 *dstline, *dstcol;
+
+				dstline = (Uint8 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width * 3;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						srccol++; /* Skip alpha */
+						r = ((*srccol++)>>8) & 255;
+						g = ((*srccol++)>>8) & 255;
+						b = ((*srccol++)>>8) & 255;
+
+						*dstcol++ = b;
+						*dstcol++ = g;
+						*dstcol++ = r;
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+		case OSMESA_BGRA:
+			{
+				Uint32 *dstline, *dstcol;
+
+				dstline = (Uint32 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						a = ((*srccol++)>>8) & 255;
+						r = ((*srccol++)>>8) & 255;
+						g = ((*srccol++)>>8) & 255;
+						b = ((*srccol++)>>8) & 255;
+
+						color = (b<<24)|(g<<16)|(r<<8)|a;
+						*dstcol++ = SDL_SwapBE32(color);
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+		case OSMESA_ARGB:
+			{
+				Uint32 *dstline, *dstcol;
+
+				dstline = (Uint32 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						a = ((*srccol++)>>8) & 255;
+						r = ((*srccol++)>>8) & 255;
+						g = ((*srccol++)>>8) & 255;
+						b = ((*srccol++)>>8) & 255;
+
+						color = (a<<24)|(r<<16)|(g<<8)|b;
+						*dstcol++ = SDL_SwapBE32(color);
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+		case OSMESA_RGBA:
+			{
+				Uint32 *dstline, *dstcol;
+
+				dstline = (Uint32 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						a = ((*srccol++)>>8) & 255;
+						r = ((*srccol++)>>8) & 255;
+						g = ((*srccol++)>>8) & 255;
+						b = ((*srccol++)>>8) & 255;
+
+						color = (r<<24)|(g<<16)|(b<<8)|a;
+						*dstcol++ = SDL_SwapBE32(color);
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+	}
+}
+
+void OSMesaDriver::ConvertContext32(Uint32 ctx)
+{
+	int x,y, r,g,b,a, srcpitch, dstpitch, color;
+	Uint32 *srcline, *srccol;	/* FIXME: source values are float */
+
+	srcline = (Uint32 *) contexts[ctx].src_buffer;
+	srcpitch = contexts[ctx].width * 4;
+
+	switch(contexts[ctx].dstformat) {
+		case OSMESA_RGB_565:
+			{
+				Uint16 *dstline, *dstcol;
+
+				dstline = (Uint16 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						srccol++; /* Skip alpha */
+						r = ((*srccol++)>>27) & 31;
+						g = ((*srccol++)>>26) & 63;
+						b = ((*srccol++)>>27) & 31;
+
+						color = (r<<11)|(g<<5)|b;
+						*dstcol++ = SDL_SwapBE16(color);
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+		case OSMESA_RGB:
+			{
+				Uint8 *dstline, *dstcol;
+
+				dstline = (Uint8 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width * 3;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						srccol++; /* Skip alpha */
+						r = ((*srccol++)>>24) & 255;
+						g = ((*srccol++)>>24) & 255;
+						b = ((*srccol++)>>24) & 255;
+
+						*dstcol++ = r;
+						*dstcol++ = g;
+						*dstcol++ = b;
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+		case OSMESA_BGR:
+			{
+				Uint8 *dstline, *dstcol;
+
+				dstline = (Uint8 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width * 3;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						srccol++; /* Skip alpha */
+						r = ((*srccol++)>>24) & 255;
+						g = ((*srccol++)>>24) & 255;
+						b = ((*srccol++)>>24) & 255;
+
+						*dstcol++ = b;
+						*dstcol++ = g;
+						*dstcol++ = r;
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+		case OSMESA_BGRA:
+			{
+				Uint32 *dstline, *dstcol;
+
+				dstline = (Uint32 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						a = ((*srccol++)>>24) & 255;
+						r = ((*srccol++)>>24) & 255;
+						g = ((*srccol++)>>24) & 255;
+						b = ((*srccol++)>>24) & 255;
+
+						color = (b<<24)|(g<<16)|(r<<8)|a;
+						*dstcol++ = SDL_SwapBE32(color);
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+		case OSMESA_ARGB:
+			{
+				Uint32 *dstline, *dstcol;
+
+				dstline = (Uint32 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						a = ((*srccol++)>>24) & 255;
+						r = ((*srccol++)>>24) & 255;
+						g = ((*srccol++)>>24) & 255;
+						b = ((*srccol++)>>24) & 255;
+
+						color = (a<<24)|(r<<16)|(g<<8)|b;
+						*dstcol++ = SDL_SwapBE32(color);
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
+				}
+			}
+			break;
+		case OSMESA_RGBA:
+			{
+				Uint32 *dstline, *dstcol;
+
+				dstline = (Uint32 *) contexts[ctx].dst_buffer;
+				dstpitch = contexts[ctx].width;
+				for (y=0;y<contexts[ctx].height;y++) {
+					srccol = srcline;
+					dstcol = dstline;
+					for (x=0;x<contexts[ctx].width;x++) {
+						a = ((*srccol++)>>24) & 255;
+						r = ((*srccol++)>>24) & 255;
+						g = ((*srccol++)>>24) & 255;
+						b = ((*srccol++)>>24) & 255;
+
+						color = (r<<24)|(g<<16)|(g<<8)|a;
+						*dstcol++ = SDL_SwapBE32(color);
+					}
+					srcline += srcpitch;
+					dstline += dstpitch;
 				}
 			}
 			break;

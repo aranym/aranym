@@ -30,7 +30,7 @@
 #include "nfpci.h"
 #include "nfpci_linux.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /*--- Defines ---*/
