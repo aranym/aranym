@@ -2,32 +2,37 @@ Things that must be done before first beta release:
 ===================================================
 
 Critical:
-- fix system timer (200 Hz) - the system time slows down under heavy load now.
++ fix system timer (200 Hz) - the system time slows down under heavy load now.
+
+- fix Makefile (dependencies fooled due to "obj/" folder) and remove Unix folder
+  (as SDL makes us platform independent).
+
+- clean up source code - rewrite all HW modules, solve the OOP issue
 
 Technical:
 - system wide object with user settings that will include bx_options from ata.cpp.
   Actually bx_options was such object - look into Plex86 for inspiration.
 
-- CMOS (NVRAM) settings stored on disk
++ CMOS (NVRAM) settings stored on disk
 
 Cosmetical:
-- mouse pointer must be sync'ed with the host mouse (in X-Windows)
-
-- cleaned up source code
++ mouse pointer must be sync'ed with the host mouse (in X-Windows)
 
 The goal for the first beta is to get functional Atari/TOS machine replacement
 fully usable for regular GEM users.
 
-Estimated amount of work for first beta release: 40 clovekohodin
+Estimated amount of work for first beta release: 50 clovekohodin
 
 Things for 1.0 release:
 =======================
 
 - Networking for MiNTNet (like in vmware)
 
-- mouse pointer shared between X-Windows and aranym (like in vmware)
++ mouse pointer shared between X-Windows and aranym (like in vmware)
 
-- fVDI integrated
+- fVDI working (TOS+aranym drivers)
+
+- probably some sort of printing support (capture the printer output to file?)
 
 The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
 all Atari power users/MiNTers. Key elements are TCP/IP networking, large
@@ -38,11 +43,13 @@ Estimated time for 1.0 release: summer/fall 2001.
 Things for 2.0 release:
 =======================
 
+- MMU040 (MiNT with memory protection, Linux)
+
 - configuration in GUI for X-Windows (GNOME/KDE)
 
 - perhaps port of aranym to Windows
 
-- Yamaha sound, DSP emulation, MMU040
+- Yamaha and DMA sound, DSP emulation etc.
 
 - serial port, parallel port, joysticks etc.
 
