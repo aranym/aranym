@@ -101,7 +101,8 @@ Question:
   Is it possible to have CDRom under ARAnyM, how can I do?
 
 Answer 1:
-  Use Natfeat CD-ROM bos driver (only for Linux atm).
+  Use Natfeat CD-ROM bos driver. The SDL driver will only allow you audio CD
+  playing. The Linux driver can also access data CD-ROM.
 
   1) See section [CDROMS] in your config file. Each drive letter is a physical
      device for MetaDOS, and you can give it any host CD-ROM (if you have

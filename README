@@ -46,7 +46,7 @@ where TOS/GEM applications could continue to live forever.
    o TOS 4.04, EmuTOS or Linux as the booting operating system
    o runs with FreeMiNT, MagiC, and any other operating system that runs
      also on real Atari computer.
-   o Native CD-ROM access (under Linux, audio CD only on other OS), without
+   o Native CD-ROM access (under Linux, other OS: audio CD only), without
      scsi/ide/whatsoever emulation
 
 Important: ARAnyM is not finished. Consider this to be a beta version
@@ -158,8 +158,8 @@ scanning is disabled) and Cecile to work OK.
 
 You can use IDE emulation, but you can have only 2 IDE devices. So a better
 way is to use Natfeat CD-ROM driver, where you can have up to 26 CD-ROM
-drives (physical devices A to Z for MetaDOS). It is only supported under
-Linux at the moment.
+drives (physical devices A to Z for MetaDOS). The SDL driver allows only audio
+CD playing, whereas the Linux driver allows you also data CD-ROM access.
 
 First, See section [CDROMS] in your config file. Each drive letter is a
 physical device for MetaDOS, and you can give it any host CD-ROM drive number
