@@ -1251,7 +1251,8 @@ void m68k_natfea_rcall(void)
 	r.sr = regs.sr;
 
 	memptr stack = r.a[7] + 4;	/* skip return address */
-	r.d[0] = nf_rcall(stack);
+	bool isSupervisorMode = ((r.sr & 0x2000) == 0x2000);
+	r.d[0] = nf_rcall(stack, isSupervisorMode);
 
 	for (i=0; i<8; i++) {
 		m68k_dreg(regs, i) = r.d[i];
