@@ -28,6 +28,7 @@
 #ifdef USE_JIT
 # include "compiler/compemu.h"
 #endif
+#include "debug.h"
 
 // RAM and ROM pointers
 memptr RAMBase = 0;	// RAM base (Atari address space) gb-- init is important
@@ -72,6 +73,10 @@ extern int quit_program;
 SDL_mutex *spcflags_lock;
 #endif
 
+SDL_mutex *stopCondLock;
+SDL_cond  *stopCondition;
+
+
 /*
  *  Initialize 680x0 emulation
  */
@@ -94,10 +99,20 @@ bool Init680x0(void)
 
 #if (ENABLE_EXCLUSIVE_SPCFLAGS && !(HAVE_HARDWARE_LOCKS))
     if ((spcflags_lock = SDL_CreateMutex()) ==  NULL) {
-	panicbug("Error by SDL_CreateMutex()");
-	exit(EXIT_FAILURE);
+		panicbug("Error by SDL_CreateMutex()");
+		exit(EXIT_FAILURE);
     }
 #endif
+
+    if ((stopCondLock = SDL_CreateMutex()) ==  NULL) {
+		panicbug("Error by SDL_CreateMutex()");
+		exit(EXIT_FAILURE);
+    }
+    if ((stopCondition = SDL_CreateCond()) ==  NULL) {
+		panicbug("Error by SDL_CreateCond()");
+		exit(EXIT_FAILURE);
+    }
+
 
 #ifdef USE_JIT
 	if (bx_options.jit.jit) compiler_init();
@@ -176,21 +191,37 @@ void Quit680x0(void)
 void TriggerInternalIRQ(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INTERNAL_IRQ );
+
+	SDL_mutexP(stopCondLock);
+	SDL_CondSignal(stopCondition);
+	SDL_mutexV(stopCondLock);
 }
 
 void TriggerInt3(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INT3 );
+
+	SDL_mutexP(stopCondLock);
+	SDL_CondSignal(stopCondition);
+	SDL_mutexV(stopCondLock);
 }
 
 void TriggerVBL(void)
 {
 	SPCFLAGS_SET( SPCFLAG_VBL );
+
+	SDL_mutexP(stopCondLock);
+	SDL_CondSignal(stopCondition);
+	SDL_mutexV(stopCondLock);
 }
 
 void TriggerInt5(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INT5 );
+
+	SDL_mutexP(stopCondLock);
+	SDL_CondSignal(stopCondition);
+	SDL_mutexV(stopCondLock);
 }
 
 void TriggerMFP(bool enable)
@@ -199,9 +230,17 @@ void TriggerMFP(bool enable)
 		SPCFLAGS_SET( SPCFLAG_MFP );
 	else
 		SPCFLAGS_CLEAR( SPCFLAG_MFP );
+
+	SDL_mutexP(stopCondLock);
+	SDL_CondSignal(stopCondition);
+	SDL_mutexV(stopCondLock);
 }
 
 void TriggerNMI(void)
 {
 	SPCFLAGS_SET( SPCFLAG_NMI );
+
+	SDL_mutexP(stopCondLock);
+	SDL_CondSignal(stopCondition);
+	SDL_mutexV(stopCondLock);
 }
