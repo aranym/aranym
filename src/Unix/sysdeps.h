@@ -50,6 +50,23 @@
 #include <stdarg.h>
 #include <setjmp.h>
 
+#ifdef OS_irix
+#define OS_INCLUDES_DEFINED
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/statvfs.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <termios.h>
+#include <dirent.h>
+#include <time.h>
+#include <signal.h>
+
+#endif
+
+#ifndef OS_INCLUDES_DEFINED
+
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
 #endif
@@ -124,6 +141,8 @@
 #ifdef HAVE_SIGNAL_H
 # include <signal.h>
 #endif
+
+#endif /* OS_INCLUDES_DEFINE */
 
 #ifdef HAVE_GETOPT_H
 # include <getopt.h>
