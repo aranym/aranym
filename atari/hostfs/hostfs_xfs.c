@@ -380,7 +380,7 @@ FILESYS *aranym_fs_init(void)
 			mountPoint[3] = drvNumber+'a';
 			mountPoint[4] = '\0';
 
-			c_conws("Drive: ");
+			c_conws("\n  Drive: ");
 			if (0) {
 				char sss[50];
 				char *ptr = &sss[48];
@@ -494,6 +494,9 @@ FILESYS *aranym_fs_init(void)
 
 /*
  * $Log$
+ * Revision 1.5  2003/03/20 21:27:22  standa
+ * The .xfs mapping to the U:\G mountpouints (single letter) implemented.
+ *
  * Revision 1.4  2003/03/20 01:08:17  standa
  * HOSTFS mapping update.
  *
