@@ -1,3 +1,15 @@
+2001/09/21 [ARAnyM 0.0.8] - joy
+- in a fVDI session (when VIDEL rendering is disabled) if VIDEL VideoRAM address
+  is changed the VIDEL rendering is enabled again. This is essential for example
+  when you reset the Atari machine (you want to see the Fuji logo, don't you? :)
+
+- MFP TimerC emulation simplified - no more double TimerC interrupts as we
+  are now calling the invoke200HzInterrupt each 5 milliseconds.
+
+- hardware.cpp helper functions removed. Now modules call their public functions
+  directly. It's better readable and faster this way, I think.
+
+
 2001/09/20 - STanda
 
 - Off by one bug fixed in fillArea.
