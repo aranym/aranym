@@ -943,11 +943,12 @@ char *HostFs::cookie2Pathname( HostFs::XfsFsFile *fs, const char *name, char *bu
 			return NULL;
 		if (name && *name)
 		{
-			char *h;
-			if ((h = strchr(buf, '\0'))[-1] != DIRSEPARATOR[0])
-				*h++ = DIRSEPARATOR[0];
-
-			*h = '\0';
+			int len = strlen(buf);
+			if (len > 0) {
+				char last = buf[len-1];
+				if (last != '\\' && last == '/')
+					strcat(buf, DIRSEPARATOR);
+			}
 			getHostFileName( h, NULL, buf, name );
 		}
 	}
@@ -1980,6 +1981,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.11.2.2  2003/03/28 11:45:30  joy
+ * DIRSEP in hostfs
+ *
  * Revision 1.11.2.1  2003/03/26 18:18:15  milan
  * stolen from head
  *
