@@ -196,6 +196,28 @@ void OSMesaDriver::glEnableClientState(Uint32 ctx, GLenum cap )
 {
 	D(bug("nfosmesa: glEnableClientState"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	switch(cap) {
+		case GL_VERTEX_ARRAY:
+			contexts[ctx].enabled_arrays |= NFOSMESA_VERTEX_ARRAY;
+			break;
+		case GL_NORMAL_ARRAY:
+			contexts[ctx].enabled_arrays |= NFOSMESA_NORMAL_ARRAY;
+			break;
+		case GL_COLOR_ARRAY:
+			contexts[ctx].enabled_arrays |= NFOSMESA_COLOR_ARRAY;
+			break;
+		case GL_INDEX_ARRAY:
+			contexts[ctx].enabled_arrays |= NFOSMESA_INDEX_ARRAY;
+			break;
+		case GL_EDGE_FLAG_ARRAY:
+			contexts[ctx].enabled_arrays |= NFOSMESA_EDGEFLAG_ARRAY;
+			break;
+		case GL_TEXTURE_COORD_ARRAY:
+			contexts[ctx].enabled_arrays |= NFOSMESA_TEXCOORD_ARRAY;
+			break;
+	}
+#endif
 	fn.glEnableClientState(  cap );
 }
 
@@ -203,6 +225,28 @@ void OSMesaDriver::glDisableClientState(Uint32 ctx, GLenum cap )
 {
 	D(bug("nfosmesa: glDisableClientState"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	switch(cap) {
+		case GL_VERTEX_ARRAY:
+			contexts[ctx].enabled_arrays &= ~NFOSMESA_VERTEX_ARRAY;
+			break;
+		case GL_NORMAL_ARRAY:
+			contexts[ctx].enabled_arrays &= ~NFOSMESA_NORMAL_ARRAY;
+			break;
+		case GL_COLOR_ARRAY:
+			contexts[ctx].enabled_arrays &= ~NFOSMESA_COLOR_ARRAY;
+			break;
+		case GL_INDEX_ARRAY:
+			contexts[ctx].enabled_arrays &= ~NFOSMESA_INDEX_ARRAY;
+			break;
+		case GL_EDGE_FLAG_ARRAY:
+			contexts[ctx].enabled_arrays &= ~NFOSMESA_EDGEFLAG_ARRAY;
+			break;
+		case GL_TEXTURE_COORD_ARRAY:
+			contexts[ctx].enabled_arrays &= ~NFOSMESA_TEXCOORD_ARRAY;
+			break;
+	}
+#endif
 	fn.glDisableClientState(  cap );
 }
 
@@ -1791,6 +1835,12 @@ void OSMesaDriver::glVertexPointer(Uint32 ctx, GLint size, GLenum type, GLsizei 
 {
 	D(bug("nfosmesa: glVertexPointer"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	contexts[ctx].vertex.size = size;
+	contexts[ctx].vertex.type = type;
+	contexts[ctx].vertex.stride = stride;
+	contexts[ctx].vertex.ptr = (GLvoid *)ptr;
+#endif
 	fn.glVertexPointer(  size,  type,  stride,  ptr );
 }
 
@@ -1798,6 +1848,12 @@ void OSMesaDriver::glNormalPointer(Uint32 ctx, GLenum type, GLsizei stride, cons
 {
 	D(bug("nfosmesa: glNormalPointer"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	contexts[ctx].normal.size = 3;
+	contexts[ctx].normal.type = type;
+	contexts[ctx].normal.stride = stride;
+	contexts[ctx].normal.ptr = (GLvoid *)ptr;
+#endif
 	fn.glNormalPointer(  type,  stride,  ptr );
 }
 
@@ -1805,6 +1861,12 @@ void OSMesaDriver::glColorPointer(Uint32 ctx, GLint size, GLenum type, GLsizei s
 {
 	D(bug("nfosmesa: glColorPointer"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	contexts[ctx].color.size = size;
+	contexts[ctx].color.type = type;
+	contexts[ctx].color.stride = stride;
+	contexts[ctx].color.ptr = (GLvoid *)ptr;
+#endif
 	fn.glColorPointer(  size,  type,  stride,  ptr );
 }
 
@@ -1812,6 +1874,12 @@ void OSMesaDriver::glIndexPointer(Uint32 ctx, GLenum type, GLsizei stride, const
 {
 	D(bug("nfosmesa: glIndexPointer"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	contexts[ctx].index.size = 1;
+	contexts[ctx].index.type = type;
+	contexts[ctx].index.stride = stride;
+	contexts[ctx].index.ptr = (GLvoid *)ptr;
+#endif
 	fn.glIndexPointer(  type,  stride,  ptr );
 }
 
@@ -1819,6 +1887,12 @@ void OSMesaDriver::glTexCoordPointer(Uint32 ctx, GLint size, GLenum type, GLsize
 {
 	D(bug("nfosmesa: glTexCoordPointer"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	contexts[ctx].texcoord.size = size;
+	contexts[ctx].texcoord.type = type;
+	contexts[ctx].texcoord.stride = stride;
+	contexts[ctx].texcoord.ptr = (GLvoid *)ptr;
+#endif
 	fn.glTexCoordPointer(  size,  type,  stride,  ptr );
 }
 
@@ -1826,6 +1900,12 @@ void OSMesaDriver::glEdgeFlagPointer(Uint32 ctx, GLsizei stride, const GLvoid *p
 {
 	D(bug("nfosmesa: glEdgeFlagPointer"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	contexts[ctx].edgeflag.size = 1;
+	contexts[ctx].edgeflag.type = GL_UNSIGNED_BYTE;
+	contexts[ctx].edgeflag.stride = stride;
+	contexts[ctx].edgeflag.ptr = (GLvoid *)ptr;
+#endif
 	fn.glEdgeFlagPointer(  stride,  ptr );
 }
 
@@ -1840,28 +1920,638 @@ void OSMesaDriver::glArrayElement(Uint32 ctx, GLint i )
 {
 	D(bug("nfosmesa: glArrayElement"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	{
+		int stride;
+		GLubyte *ptr;
+
+		if (contexts[ctx].enabled_arrays & NFOSMESA_NORMAL_ARRAY) {
+			stride=contexts[ctx].vertex.stride;
+			ptr=(GLubyte *)contexts[ctx].vertex.ptr;
+			if (stride==0) {
+				stride = contexts[ctx].vertex.size;
+				switch(contexts[ctx].vertex.type) {
+					case GL_SHORT:
+						stride *= sizeof(GLshort);
+						break;
+					case GL_INT:
+						stride *= sizeof(GLint);
+						break;
+					case GL_FLOAT:
+						stride *= sizeof(GLfloat);
+						break;
+					case GL_DOUBLE:
+						stride *= sizeof(GLdouble);
+						break;
+				}
+			}
+			ptr += i*stride;
+			switch(contexts[ctx].vertex.type) {
+				case GL_BYTE:
+					glNormal3bv(ctx, (GLbyte *)ptr);
+					break;
+				case GL_SHORT:
+					glNormal3sv(ctx, (GLshort *)ptr);
+					break;
+				case GL_INT:
+					glNormal3iv(ctx, (GLint *)ptr);
+					break;
+				case GL_FLOAT:
+					glNormal3fv(ctx, (GLfloat *)ptr);
+					break;
+				case GL_DOUBLE:
+					glNormal3dv(ctx, (GLdouble *)ptr);
+					break;
+			}
+		}
+
+		if (contexts[ctx].enabled_arrays & NFOSMESA_INDEX_ARRAY) {
+			stride=contexts[ctx].vertex.stride;
+			ptr=(GLubyte *)contexts[ctx].vertex.ptr;
+			if (stride==0) {
+				stride = contexts[ctx].vertex.size;
+				switch(contexts[ctx].vertex.type) {
+					case GL_SHORT:
+						stride *= sizeof(GLshort);
+						break;
+					case GL_INT:
+						stride *= sizeof(GLint);
+						break;
+					case GL_FLOAT:
+						stride *= sizeof(GLfloat);
+						break;
+					case GL_DOUBLE:
+						stride *= sizeof(GLdouble);
+						break;
+				}
+			}
+			ptr += i*stride;
+			switch(contexts[ctx].vertex.type) {
+				case GL_UNSIGNED_BYTE:
+					glIndexubv(ctx, (GLubyte *)ptr);
+					break;
+				case GL_SHORT:
+					glIndexsv(ctx, (GLshort *)ptr);
+					break;
+				case GL_INT:
+					glIndexiv(ctx, (GLint *)ptr);
+					break;
+				case GL_FLOAT:
+					glIndexfv(ctx, (GLfloat *)ptr);
+					break;
+				case GL_DOUBLE:
+					glIndexdv(ctx, (GLdouble *)ptr);
+					break;
+			}
+		}
+
+		if (contexts[ctx].enabled_arrays & NFOSMESA_COLOR_ARRAY) {
+			stride=contexts[ctx].vertex.stride;
+			ptr=(GLubyte *)contexts[ctx].vertex.ptr;
+			if (stride==0) {
+				stride = contexts[ctx].vertex.size;
+				switch(contexts[ctx].vertex.type) {
+					case GL_SHORT:
+					case GL_UNSIGNED_SHORT:
+						stride *= sizeof(GLshort);
+						break;
+					case GL_INT:
+					case GL_UNSIGNED_INT:
+						stride *= sizeof(GLint);
+						break;
+					case GL_FLOAT:
+						stride *= sizeof(GLfloat);
+						break;
+					case GL_DOUBLE:
+						stride *= sizeof(GLdouble);
+						break;
+				}
+			}
+			ptr += i*stride;
+			switch(contexts[ctx].vertex.type) {
+				case GL_BYTE:
+					switch(contexts[ctx].vertex.size) {
+						case 3:
+							glColor3bv(ctx, (GLbyte *)ptr);
+							break;
+						case 4:
+							glColor4bv(ctx, (GLbyte *)ptr);
+							break;
+					}
+					break;
+				case GL_UNSIGNED_BYTE:
+					switch(contexts[ctx].vertex.size) {
+						case 3:
+							glColor3ubv(ctx, (GLubyte *)ptr);
+							break;
+						case 4:
+							glColor4ubv(ctx, (GLubyte *)ptr);
+							break;
+					}
+					break;
+				case GL_SHORT:
+					switch(contexts[ctx].vertex.size) {
+						case 3:
+							glColor3sv(ctx, (GLshort *)ptr);
+							break;
+						case 4:
+							glColor4sv(ctx, (GLshort *)ptr);
+							break;
+					}
+					break;
+				case GL_UNSIGNED_SHORT:
+					switch(contexts[ctx].vertex.size) {
+						case 3:
+							glColor3usv(ctx, (GLushort *)ptr);
+							break;
+						case 4:
+							glColor4usv(ctx, (GLushort *)ptr);
+							break;
+					}
+					break;
+				case GL_INT:
+					switch(contexts[ctx].vertex.size) {
+						case 3:
+							glColor3iv(ctx, (GLint *)ptr);
+							break;
+						case 4:
+							glColor4iv(ctx, (GLint *)ptr);
+							break;
+					}
+					break;
+				case GL_UNSIGNED_INT:
+					switch(contexts[ctx].vertex.size) {
+						case 3:
+							glColor3uiv(ctx, (GLuint *)ptr);
+							break;
+						case 4:
+							glColor4uiv(ctx, (GLuint *)ptr);
+							break;
+					}
+					break;
+				case GL_FLOAT:
+					switch(contexts[ctx].vertex.size) {
+						case 3:
+							glColor3fv(ctx, (GLfloat *)ptr);
+							break;
+						case 4:
+							glColor4fv(ctx, (GLfloat *)ptr);
+							break;
+					}
+					break;
+				case GL_DOUBLE:
+					switch(contexts[ctx].vertex.size) {
+						case 3:
+							glColor3dv(ctx, (GLdouble *)ptr);
+							break;
+						case 4:
+							glColor4dv(ctx, (GLdouble *)ptr);
+							break;
+					}
+					break;
+			}
+		}
+
+		if (contexts[ctx].enabled_arrays & NFOSMESA_EDGEFLAG_ARRAY) {
+			stride=contexts[ctx].vertex.stride;
+			ptr=(GLubyte *)contexts[ctx].vertex.ptr;
+			if (stride==0) {
+				stride = contexts[ctx].vertex.size;
+			}
+			ptr += i*stride;
+			glEdgeFlagv(ctx, (GLboolean *)ptr);
+		}
+
+		if (contexts[ctx].enabled_arrays & NFOSMESA_TEXCOORD_ARRAY) {
+			stride=contexts[ctx].vertex.stride;
+			ptr=(GLubyte *)contexts[ctx].vertex.ptr;
+			if (stride==0) {
+				stride = contexts[ctx].vertex.size;
+				switch(contexts[ctx].vertex.type) {
+					case GL_SHORT:
+						stride *= sizeof(GLshort);
+						break;
+					case GL_INT:
+						stride *= sizeof(GLint);
+						break;
+					case GL_FLOAT:
+						stride *= sizeof(GLfloat);
+						break;
+					case GL_DOUBLE:
+						stride *= sizeof(GLdouble);
+						break;
+				}
+			}
+			ptr += i*stride;
+			switch(contexts[ctx].vertex.type) {
+				case GL_SHORT:
+					switch(contexts[ctx].vertex.size) {
+						case 1:
+							glTexCoord1sv(ctx, (GLshort *)ptr);
+							break;
+						case 2:
+							glTexCoord2sv(ctx, (GLshort *)ptr);
+							break;
+						case 3:
+							glTexCoord3sv(ctx, (GLshort *)ptr);
+							break;
+						case 4:
+							glTexCoord4sv(ctx, (GLshort *)ptr);
+							break;
+					}
+					break;
+				case GL_INT:
+					switch(contexts[ctx].vertex.size) {
+						case 1:
+							glTexCoord1iv(ctx, (GLint *)ptr);
+							break;
+						case 2:
+							glTexCoord2iv(ctx, (GLint *)ptr);
+							break;
+						case 3:
+							glTexCoord3iv(ctx, (GLint *)ptr);
+							break;
+						case 4:
+							glTexCoord4iv(ctx, (GLint *)ptr);
+							break;
+					}
+					break;
+				case GL_FLOAT:
+					switch(contexts[ctx].vertex.size) {
+						case 1:
+							glTexCoord1fv(ctx, (GLfloat *)ptr);
+							break;
+						case 2:
+							glTexCoord2fv(ctx, (GLfloat *)ptr);
+							break;
+						case 3:
+							glTexCoord3fv(ctx, (GLfloat *)ptr);
+							break;
+						case 4:
+							glTexCoord4fv(ctx, (GLfloat *)ptr);
+							break;
+					}
+					break;
+				case GL_DOUBLE:
+					switch(contexts[ctx].vertex.size) {
+						case 1:
+							glTexCoord1dv(ctx, (GLdouble *)ptr);
+							break;
+						case 2:
+							glTexCoord2dv(ctx, (GLdouble *)ptr);
+							break;
+						case 3:
+							glTexCoord3dv(ctx, (GLdouble *)ptr);
+							break;
+						case 4:
+							glTexCoord4dv(ctx, (GLdouble *)ptr);
+							break;
+					}
+					break;
+			}
+		}
+
+		if (contexts[ctx].enabled_arrays & NFOSMESA_VERTEX_ARRAY) {
+			stride=contexts[ctx].vertex.stride;
+			ptr=(GLubyte *)contexts[ctx].vertex.ptr;
+			if (stride==0) {
+				stride = contexts[ctx].vertex.size;
+				switch(contexts[ctx].vertex.type) {
+					case GL_SHORT:
+						stride *= sizeof(GLshort);
+						break;
+					case GL_INT:
+						stride *= sizeof(GLint);
+						break;
+					case GL_FLOAT:
+						stride *= sizeof(GLfloat);
+						break;
+					case GL_DOUBLE:
+						stride *= sizeof(GLdouble);
+						break;
+				}
+			}
+			ptr += i*stride;
+			switch(contexts[ctx].vertex.type) {
+				case GL_SHORT:
+					switch(contexts[ctx].vertex.size) {
+						case 2:
+							glVertex2sv(ctx, (GLshort *)ptr);
+							break;
+						case 3:
+							glVertex3sv(ctx, (GLshort *)ptr);
+							break;
+						case 4:
+							glVertex4sv(ctx, (GLshort *)ptr);
+							break;
+					}
+					break;
+				case GL_INT:
+					switch(contexts[ctx].vertex.size) {
+						case 2:
+							glVertex2iv(ctx, (GLint *)ptr);
+							break;
+						case 3:
+							glVertex3iv(ctx, (GLint *)ptr);
+							break;
+						case 4:
+							glVertex4iv(ctx, (GLint *)ptr);
+							break;
+					}
+					break;
+				case GL_FLOAT:
+					switch(contexts[ctx].vertex.size) {
+						case 2:
+							glVertex2fv(ctx, (GLfloat *)ptr);
+							break;
+						case 3:
+							glVertex3fv(ctx, (GLfloat *)ptr);
+							break;
+						case 4:
+							glVertex4fv(ctx, (GLfloat *)ptr);
+							break;
+					}
+					break;
+				case GL_DOUBLE:
+					switch(contexts[ctx].vertex.size) {
+						case 2:
+							glVertex2dv(ctx, (GLdouble *)ptr);
+							break;
+						case 3:
+							glVertex3dv(ctx, (GLdouble *)ptr);
+							break;
+						case 4:
+							glVertex4dv(ctx, (GLdouble *)ptr);
+							break;
+					}
+					break;
+			}
+		}
+	}
+#else
 	fn.glArrayElement(  i );
+#endif
 }
 
 void OSMesaDriver::glDrawArrays(Uint32 ctx, GLenum mode, GLint first, GLsizei count )
 {
 	D(bug("nfosmesa: glDrawArrays"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	{
+		int i;
+
+		fn.glBegin(	mode);
+		for (i=0;i<count;i++) {
+			glArrayElement(ctx,first+i);
+		}
+		fn.glEnd();
+	}
+#else
 	fn.glDrawArrays(  mode,  first,  count );
+#endif
 }
 
 void OSMesaDriver::glDrawElements(Uint32 ctx, GLenum mode, GLsizei count, GLenum type, const GLvoid *indices )
 {
 	D(bug("nfosmesa: glDrawElements"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	{
+		int i;
+		Uint32 *ptr32;
+		Uint16 *ptr16;
+		Uint8 *ptr8;
+
+		ptr32 = (Uint32 *)indices;
+		ptr16 = (Uint16 *)indices;
+		ptr8 = (Uint8 *)indices;
+		fn.glBegin(	mode);
+		for (i=0;i<count;i++) {
+			switch(type) {
+				case GL_UNSIGNED_BYTE:
+					glArrayElement(ctx,ptr8[i]);
+					break;
+				case GL_UNSIGNED_SHORT:
+					glArrayElement(ctx,SDL_SwapBE16(ptr16[i]));
+					break;
+				case GL_UNSIGNED_INT:
+					glArrayElement(ctx,SDL_SwapBE32(ptr32[i]));
+					break;
+			}
+		}
+		fn.glEnd();
+	}
+#else
 	fn.glDrawElements(  mode,  count,  type,  indices );
+#endif
 }
 
 void OSMesaDriver::glInterleavedArrays(Uint32 ctx, GLenum format, GLsizei stride, const GLvoid *pointer )
 {
 	D(bug("nfosmesa: glInterleavedArrays"));
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	{
+		SDL_bool enable_texcoord, enable_normal, enable_color;
+		int texcoord_size, color_size, vertex_size;
+		int texcoord_stride, color_stride, vertex_stride, normal_stride;
+		GLubyte *texcoord_ptr,*normal_ptr,*color_ptr,*vertex_ptr;
+		GLenum color_type;
+
+		enable_texcoord=SDL_FALSE;
+		enable_normal=SDL_FALSE;
+		enable_color=SDL_FALSE;
+		texcoord_size=color_size=vertex_size=0;
+		texcoord_stride=color_stride=vertex_stride=normal_stride=stride;
+		texcoord_ptr=normal_ptr=color_ptr=vertex_ptr=(GLubyte *)pointer;
+		color_type = GL_FLOAT;
+		switch(format) {
+			case GL_V2F:
+				vertex_size=2;
+				break;
+			case GL_V3F:
+				vertex_size=3;
+				break;
+			case GL_C4UB_V2F:
+				vertex_size=2;
+				color_size=4;
+				enable_color=SDL_TRUE;
+				vertex_ptr += color_size*sizeof(GLubyte);
+				color_type = GL_UNSIGNED_BYTE;
+				if (stride==0) {
+					color_stride = vertex_stride =
+						(color_size*sizeof(GLubyte))+(vertex_size*sizeof(GLfloat));
+				}
+				break;
+			case GL_C4UB_V3F:
+				vertex_size=3;
+				color_size=4;
+				enable_color=SDL_TRUE;
+				vertex_ptr += color_size*sizeof(GLubyte);
+				color_type = GL_UNSIGNED_BYTE;
+				if (stride==0) {
+					color_stride = vertex_stride =
+						(color_size*sizeof(GLubyte))+(vertex_size*sizeof(GLfloat));
+				}
+				break;
+			case GL_C3F_V3F:
+				vertex_size=3;
+				color_size=3;
+				enable_color=SDL_TRUE;
+				vertex_ptr += color_size*sizeof(GLfloat);
+				if (stride==0) {
+					color_stride = vertex_stride =
+						(color_size+vertex_size)*sizeof(GLfloat);
+				}
+				break;
+			case GL_N3F_V3F:
+				vertex_size=3;
+				enable_normal=SDL_TRUE;
+				vertex_ptr += 3*sizeof(GLfloat);
+				if (stride==0) {
+					normal_stride = vertex_stride =
+						(vertex_size+3)*sizeof(GLfloat);
+				}
+				break;
+			case GL_C4F_N3F_V3F:
+				vertex_size=3;
+				color_size=4;
+				enable_color=SDL_TRUE;
+				enable_normal=SDL_TRUE;
+				vertex_ptr += (color_size+3)*sizeof(GLfloat);
+				normal_ptr += color_size*sizeof(GLfloat);
+				if (stride==0) {
+					normal_stride = vertex_stride = color_stride =
+						(color_size+vertex_size+3)*sizeof(GLfloat);
+				}
+				break;
+			case GL_T2F_V3F:
+				vertex_size=3;
+				texcoord_size=2;
+				enable_texcoord=SDL_TRUE;
+				vertex_ptr += texcoord_size*sizeof(GLfloat);
+				if (stride==0) {
+					texcoord_stride = vertex_stride =
+						(texcoord_size+vertex_size)*sizeof(GLfloat);
+				}
+				break;
+			case GL_T4F_V4F:
+				vertex_size=4;
+				texcoord_size=4;
+				enable_texcoord=SDL_TRUE;
+				vertex_ptr += texcoord_size*sizeof(GLfloat);
+				if (stride==0) {
+					texcoord_stride = vertex_stride =
+						(texcoord_size+vertex_size)*sizeof(GLfloat);
+				}
+				break;
+			case GL_T2F_C4UB_V3F:
+				vertex_size=3;
+				texcoord_size=2;
+				color_size=4;
+				enable_texcoord=SDL_TRUE;
+				enable_color=SDL_TRUE;
+				vertex_ptr += texcoord_size*sizeof(GLfloat);
+				vertex_ptr += color_size*sizeof(GLubyte);
+				color_ptr += texcoord_size*sizeof(GLfloat);
+				color_type = GL_UNSIGNED_BYTE;
+				if (stride==0) {
+					texcoord_stride = vertex_stride = color_stride =
+						((texcoord_size+vertex_size)*sizeof(GLfloat))+(color_size*sizeof(GLubyte));
+				}
+				break;
+			case GL_T2F_C3F_V3F:
+				vertex_size=3;
+				texcoord_size=2;
+				color_size=3;
+				enable_texcoord=SDL_TRUE;
+				enable_color=SDL_TRUE;
+				vertex_ptr += (texcoord_size+color_size)*sizeof(GLfloat);
+				color_ptr += texcoord_size*sizeof(GLfloat);
+				if (stride==0) {
+					texcoord_stride = vertex_stride = color_stride =
+						(texcoord_size+vertex_size+color_size)*sizeof(GLfloat);
+				}
+				break;
+			case GL_T2F_N3F_V3F:
+				vertex_size=3;
+				texcoord_size=2;
+				enable_normal=SDL_TRUE;
+				enable_texcoord=SDL_TRUE;
+				vertex_ptr += (texcoord_size+3)*sizeof(GLfloat);
+				normal_ptr += texcoord_size*sizeof(GLfloat);
+				if (stride==0) {
+					texcoord_stride = vertex_stride = normal_stride =
+						(texcoord_size+vertex_size+3)*sizeof(GLfloat);
+				}
+				break;
+			case GL_T2F_C4F_N3F_V3F:
+				vertex_size=3;
+				texcoord_size=2;
+				color_size=4;
+				enable_normal=SDL_TRUE;
+				enable_texcoord=SDL_TRUE;
+				enable_color=SDL_TRUE;
+				vertex_ptr += (texcoord_size+color_size+3)*sizeof(GLfloat);
+				normal_ptr += (texcoord_size+color_size)*sizeof(GLfloat);
+				color_ptr += texcoord_size*sizeof(GLfloat);
+				if (stride==0) {
+					texcoord_stride = vertex_stride = color_stride = normal_stride =
+						(texcoord_size+vertex_size+color_size+3)*sizeof(GLfloat);
+				}
+				break;
+			case GL_T4F_C4F_N3F_V4F:
+				vertex_size=4;
+				texcoord_size=4;
+				color_size=4;
+				enable_normal=SDL_TRUE;
+				enable_texcoord=SDL_TRUE;
+				enable_color=SDL_TRUE;
+				vertex_ptr += (texcoord_size+color_size+3)*sizeof(GLfloat);
+				normal_ptr += (texcoord_size+color_size)*sizeof(GLfloat);
+				color_ptr += texcoord_size*sizeof(GLfloat);
+				if (stride==0) {
+					texcoord_stride = vertex_stride = color_stride = normal_stride =
+						(texcoord_size+vertex_size+color_size+3)*sizeof(GLfloat);
+				}
+				break;
+		}
+
+		glDisableClientState(ctx, GL_EDGE_FLAG_ARRAY);
+		glDisableClientState(ctx, GL_INDEX_ARRAY);
+
+		if (enable_normal) {
+			glEnableClientState(ctx, GL_NORMAL_ARRAY);
+			glNormalPointer(ctx, GL_FLOAT, normal_stride, (GLfloat *)normal_ptr);
+		} else {
+			glDisableClientState(ctx, GL_NORMAL_ARRAY);
+		}
+
+		if (enable_color) {
+			glEnableClientState(ctx, GL_COLOR_ARRAY);
+			if (color_type == GL_FLOAT) {
+				glColorPointer(ctx, color_size, GL_FLOAT, color_stride, (GLfloat *)color_ptr);
+			} else {
+				glColorPointer(ctx, color_size, GL_UNSIGNED_BYTE, color_stride, (GLubyte *)color_ptr);
+			}
+		} else {
+			glDisableClientState(ctx, GL_COLOR_ARRAY);
+		}
+
+		if (enable_texcoord) {
+			glEnableClientState(ctx, GL_TEXTURE_COORD_ARRAY);
+			glTexCoordPointer(ctx, texcoord_size, GL_FLOAT, texcoord_stride, (GLfloat *)texcoord_ptr);
+		} else {
+			glDisableClientState(ctx, GL_TEXTURE_COORD_ARRAY);
+		}
+
+		glEnableClientState(ctx, GL_VERTEX_ARRAY);
+		glVertexPointer(ctx, vertex_size, GL_FLOAT, vertex_stride, (GLfloat *)vertex_ptr);
+	}
+#else
 	SelectContext(ctx);
 	fn.glInterleavedArrays(  format,  stride,  pointer );
+#endif
 }
 
 void OSMesaDriver::glShadeModel(Uint32 ctx, GLenum mode )

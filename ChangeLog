@@ -1,3 +1,8 @@
+2004/12/15 - Patrice
+- nfosmesa: more bugfixes, small doc in doc/documentation.txt, added ldg to
+  spec file.
+
+
 2004/12/14 - Patrice
 - nfosmesa: more bugfixes (mainly to adapt m68k arrays to host CPU endianness).
 

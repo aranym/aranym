@@ -33,15 +33,40 @@
 
 #define MAX_OSMESA_CONTEXTS	16
 
+#define	NFOSMESA_VERTEX_ARRAY	(1<<0)
+#define	NFOSMESA_NORMAL_ARRAY	(1<<1)
+#define	NFOSMESA_COLOR_ARRAY	(1<<2)
+#define	NFOSMESA_INDEX_ARRAY	(1<<3)
+#define	NFOSMESA_EDGEFLAG_ARRAY	(1<<4)
+#define	NFOSMESA_TEXCOORD_ARRAY	(1<<5)
+
 /*--- Types ---*/
+
+typedef struct {
+	GLint size;
+	GLenum type;
+	GLsizei stride;
+	GLvoid *ptr;
+} vertexarray_t;
 
 typedef struct {
 	OSMesaContext	ctx;
 	void *buffer;
 	GLenum type;
 	GLsizei width, height;
-	SDL_bool conversion;	/* conversion needed from srcformat to dstformat ? */
+
+	/* conversion needed from srcformat to dstformat ? */
+	SDL_bool conversion;
 	GLenum srcformat, dstformat;
+
+	/* Vertex arrays */
+	int enabled_arrays;
+	vertexarray_t	vertex;
+	vertexarray_t	normal;
+	vertexarray_t	color;
+	vertexarray_t	texcoord;
+	vertexarray_t	index;
+	vertexarray_t	edgeflag;
 } context_t;
 
 /*--- Class ---*/

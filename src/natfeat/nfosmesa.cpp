@@ -30,7 +30,7 @@
 #include "nfosmesa.h"
 #include "../../atari/nfosmesa/nfosmesa_nfapi.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 /*--- Defines ---*/
@@ -50,6 +50,9 @@ typedef struct {
 /*--- Variables ---*/
 
 static osmesa_funcs fn;
+#if !NFOSMESA_GLEXT
+static const char *glGetStringNull="";
+#endif
 
 /*--- Constructor/Destructor ---*/
 
@@ -318,6 +321,13 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 	osmesa_format = format;
 	contexts[j].conversion = SDL_FALSE;
 #endif
+	contexts[j].enabled_arrays=0;
+	memset((void *)&(contexts[j].vertex),0,sizeof(vertexarray_t));
+	memset((void *)&(contexts[j].normal),0,sizeof(vertexarray_t));
+	memset((void *)&(contexts[j].texcoord),0,sizeof(vertexarray_t));
+	memset((void *)&(contexts[j].color),0,sizeof(vertexarray_t));
+	memset((void *)&(contexts[j].index),0,sizeof(vertexarray_t));
+	memset((void *)&(contexts[j].edgeflag),0,sizeof(vertexarray_t));
 
 	contexts[j].ctx=fn.OSMesaCreateContextExt(osmesa_format,depthBits,stencilBits,accumBits,share_ctx);
 	if (contexts[j].ctx==NULL) {
@@ -420,13 +430,33 @@ void *OSMesaDriver::OSMesaGetProcAddress( const char *funcName )
 Uint32 OSMesaDriver::LenglGetString(Uint32 ctx, GLenum name)
 {
 	D(bug("nfosmesa: LenglGetString"));
+#if NFOSMESA_GLEXT
 	return strlen((const char *)glGetString(ctx,name));
+#else
+	switch(name) {
+		case GL_EXTENSIONS:
+			return 4;
+		default:
+			return strlen((const char *)glGetString(ctx,name));
+	}
+#endif
 }
 
 void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 {
 	D(bug("nfosmesa: PutglGetString"));
+#if NFOSMESA_GLEXT
 	strcpy((char *)buffer,(const char *)glGetString(ctx,name));
+#else
+	switch(name) {
+		case GL_EXTENSIONS:
+			strcpy((char *)buffer, glGetStringNull);
+			break;
+		default:
+			strcpy((char *)buffer,(const char *)glGetString(ctx,name));
+			break;
+	}
+#endif
 }
 
 GLdouble OSMesaDriver::Atari2HostDouble(Uint32 high, Uint32 low)

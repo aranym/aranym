@@ -13,6 +13,7 @@ Content:
   7. Disk devices
   8. Networking
   9. CD-ROM drives
+  10. OpenGL rendering for Atari applications
 
 
 This document will explain you all Aranym features and configuration 
@@ -673,3 +674,25 @@ BetaDOS, and add the lines:
 
 To have gemdos drives G, H, I (on your desktop) use the respective A, W, Z
 BetaDOS devices.
+
+
+10) OpenGL rendering for Atari applications (Linux only atm)
+-------------------------------------------
+
+  You can use the power of the host CPU to render OpenGL scenes, instead of
+using an emulated m68k and its fpu. This is not hardware accelerated!
+  First, you need to install Mesa and its offscreen rendering part (OSMesa).
+Something like (make linux or make linux-x86) should build a libOSMesa.so in
+the lib subdir of Mesa. If you don't want to break other OpenGL applications,
+you can install the libraries in something like /usr/local/lib/mesa, and do
+export LD_LIBRARY_PATH=/usr/local/lib/mesa before running ARAnyM.
+  Then you can configure ARAnyM to use OSMesa, with --enable-nfosmesa
+--enable-opengl, then make should do its work. Check with 'ldd aranym'
+if ARAnyM will use the library in /usr/local/lib/mesa. If it is the case,
+fill the [NFOSMESA] section in the config file as needed.
+
+Atari side: just use osmesa.ldg provided in ARAnyM archive, instead of the
+original one. You can even use it instead of previous mesa_gl.ldg an
+tiny_gl.ldg.
+
+
