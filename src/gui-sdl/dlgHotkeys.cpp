@@ -112,10 +112,10 @@ SDL_keysym getKey()
 	return keysym;
 }
 
-char *show_modifiers(SDLMod mods)
+char *displayKeysym(SDL_keysym keysym, char *buffer)
 {
-	static char buffer[80];
 	*buffer = 0;
+	SDLMod mods = keysym.mod;
 	if (mods & KMOD_LSHIFT) strcat(buffer, "LS+");
 	if (mods & KMOD_RSHIFT) strcat(buffer, "RS+");
 	if (mods & KMOD_LCTRL) strcat(buffer, "LC+");
@@ -124,10 +124,11 @@ char *show_modifiers(SDLMod mods)
 	if (mods & KMOD_RALT) strcat(buffer, "RA+");
 	if (mods & KMOD_LMETA) strcat(buffer, "LM+");
 	if (mods & KMOD_RMETA) strcat(buffer, "RM+");
+	strcat(buffer, SDL_GetKeyName(keysym.sym));
 	return buffer;
 }
 
-#define UPDATE_BUTTON(Button) snprintf(key_ ## Button, sizeof(key_ ## Button), "%s%s", show_modifiers(hotkeys.Button.mod), SDL_GetKeyName(hotkeys.Button.sym));
+#define UPDATE_BUTTON(Button) displayKeysym(hotkeys.Button, key_ ## Button)
 void Dialog_HotkeysDlg()
 {
 	int but = 0;
