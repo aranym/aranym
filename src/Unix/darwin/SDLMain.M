@@ -224,7 +224,7 @@ void CustomApplicationMain (argc, argv)
 #endif
 
     /* Hand off to main application code */
-//    status = SDL_main (gArgc, gArgv);
+    status = SDL_main (gArgc, gArgv);
 
     /* We're done, thank you for playing */
     exit(status);
