@@ -1910,7 +1910,8 @@ int32 ExtFs::xfs_dev_datime( ExtFile *fp, uint32 *datetimep, int16 wflag)
 
 int32 ExtFs::FcntlExtFs( LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle, void *arg, int16 cmd)
 {
-	D(bug("MetaDOS: Fcntl (NOT IMPLEMENTED!!!)"));
+	D(bug("MetaDOS: Fcntl #%x (\'%c\'<<8 | %d)", cmd, cmd>>8, cmd&0xff));
+	D(bug("MetaDOS: /Fcntl (NOT IMPLEMENTED!!!)"));
 	return TOS_EINVFN;
 }
 
@@ -2610,6 +2611,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.50  2002/04/22 18:30:50  milan
+ * header files reform
+ *
  * Revision 1.49  2002/04/21 19:28:02  joy
  * Dpathconf(DP_XATTR) disabled. It's been causing neverending problems in Thing (last one: thing does not refresh the source window of move operation).
  *
