@@ -42,13 +42,22 @@ void init_fdc(void)
 			lseek(fd, 0, SEEK_SET);
 			read(fd, buf, 512);
 			disk[i].head=0;
-			disk[i].sides=(int)buf[26];
-			disk[i].sectors=(int)buf[24];
-			disk[i].secsize=(int)(buf[12]<<8)|buf[11];
-			disk[i].tracks=((int)(buf[20]<<8)|buf[19])/(disk[i].sides*disk[i].sectors);
-			fprintf(stderr,"FDC %c: %d/%d/%d %d bytes/sector\n",
-				'A'+i,disk[i].sides,disk[i].tracks,disk[i].sectors,
-				disk[i].secsize);
+			disk[i].sides=2;
+			disk[i].sectors=18;
+			disk[i].secsize=512;
+			disk[i].tracks=80;
+			// if MS-DOS or Atari TOS boot sector sum valid
+			if (true) {
+				disk[i].sides=(int)buf[26];
+				disk[i].sectors=(int)buf[24];
+				disk[i].secsize=(int)(buf[12]<<8)|buf[11];
+				int delitel = (disk[i].sides*disk[i].sectors);
+				if (delitel != 0)
+					disk[i].tracks=((int)(buf[20]<<8)|buf[19])/
+				fprintf(stderr,"FDC %c: %d/%d/%d %d bytes/sector\n",
+					'A'+i,disk[i].sides,disk[i].tracks,disk[i].sectors,
+					disk[i].secsize);
+			}
 		}
 	}
 }
