@@ -4,7 +4,7 @@
 
 - parameters.cpp: DATADIR can't be relative so now it checks for "//"
   (configure --datadir="/") and then ARAnyM uses the path to the binary
-  as the DATADIR path.
+  as the DATADIR path (fixed later the same day)
 
 
 2003/03/27 - joy

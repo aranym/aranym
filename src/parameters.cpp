@@ -672,7 +672,7 @@ char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
 	// data folder is either defined at compile time with DATADIR
 	// or if the DATADIR begins with "//" then the data folder
 	// path is the executable program path ('program_home')
-	const char *data_folder = (strncmp(DATADIR, "//", 2) == 0) ? DATADIR : program_home;
+	const char *data_folder = (strncmp(DATADIR, "//", 2) != 0) ? DATADIR : program_home;
 
 	unsigned int len = strlen(data_folder)+1 + strlen(file)+1;
 	if (len < bufsize) {
@@ -788,7 +788,7 @@ int saveSettings(const char *fs)
 	presave_cfg();
 
 	if (update_config(fs, global_conf, "[GLOBAL]") < 0)
-		fprintf(stderr, "Error while writting the '%s' config file.\n", fs);
+		fprintf(stderr, "Error while writing the '%s' config file.\n", fs);
 	update_config(fs, startup_conf, "[STARTUP]");
 #ifdef USE_JIT
 	update_config(fs, jit_conf, "[JIT]");
