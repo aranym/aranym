@@ -173,9 +173,17 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 			sector.hd_siz = SDL_SwapBE32(disk->size_blocks + 1);
 
 			sector.part[0].flg = 1;
-			sector.part[0].id[0] = disk->partID[0];
-			sector.part[0].id[1] = disk->partID[1];
-			sector.part[0].id[2] = disk->partID[2];
+			if (disk->partID[0] == '$') {
+				sector.part[0].id[0] = 0;
+				sector.part[0].id[1] = 'D';
+				char str[3] = {disk->partID[1], disk->partID[2], 0};
+				sector.part[0].id[2] = strtol(str, NULL, 16);
+			}
+			else {
+				sector.part[0].id[0] = disk->partID[0];
+				sector.part[0].id[1] = disk->partID[1];
+				sector.part[0].id[2] = disk->partID[2];
+			}
 			sector.part[0].st = SDL_SwapBE32(1);
 			sector.part[0].siz = SDL_SwapBE32(disk->size_blocks);
 
@@ -387,3 +395,7 @@ int32 XHDIDriver::dispatch(uint32 fncode)
 	D(bug("ARAnyM XHDI function returning with %d", ret));
 	return ret;
 }
+
+/*
+vim:ts=4:sw=4:
+*/
