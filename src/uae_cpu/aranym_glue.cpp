@@ -68,6 +68,10 @@ uintptr VMEMBaseDiff;	// Global offset between a Atari VideoRAM address and /dev
 // From newcpu.cpp
 extern int quit_program;
 
+#if defined(ENABLE_EXCLUSIVE_SPCFLAGS) && !defined(HAVE_HARDWARE_LOCKS)
+SDL_mutex *spcflags_lock;
+#endif
+
 /*
  *  Initialize 680x0 emulation
  */
@@ -87,6 +91,14 @@ bool InitMEM() {
 bool Init680x0(void)
 {
 	init_m68k();
+
+#if (ENABLE_EXCLUSIVE_SPCFLAGS && !(HAVE_HARDWARE_LOCKS))
+    if ((spcflags_lock = SDL_CreateMutex()) ==  NULL) {
+	panicbug("Error by SDL_CreateMutex()");
+	exit(EXIT_FAILURE);
+    }
+#endif
+
 #ifdef USE_JIT
 	if (bx_options.jit.jit) compiler_init();
 #endif

@@ -26,10 +26,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#if defined(ENABLE_EXCLUSIVE_SPCFLAGS) && !defined(HAVE_HARDWARE_LOCKS)
-SDL_mutex *spcflags_lock;
-#endif
-
 #define SANITY_CHECK_ATC 1
 
 int quit_program = 0;
@@ -142,13 +138,6 @@ void init_m68k (void)
 
     build_cpufunctbl ();
     fpu_init (CPUType == 4);
-
-#if (ENABLE_EXCLUSIVE_SPCFLAGS && !(HAVE_HARDWARE_LOCKS))
-    if ((spcflags_lock = SDL_CreateMutex()) ==  NULL) {
-	panicbug("Error by SDL_CreateMutex()");
-	exit(EXIT_FAILURE);
-    }
-#endif
 }
 
 void exit_m68k (void)
@@ -1449,9 +1438,7 @@ int m68k_do_specialties(void)
 		Exception (9,last_trace_ad);
 	}
 	while (SPCFLAGS_TEST( SPCFLAG_STOP )) {
-#ifndef OS_mingw	/* FIXME: How to do it under Win32 ? */
 		usleep(1000);	// give unused time slices back to OS
-#endif
 		SERVE_INTERNAL_IRQ();
 		SERVE_VBL_MFP(true);
 		if (SPCFLAGS_TEST( SPCFLAG_NMI ))

@@ -23,6 +23,14 @@
 # include <string.h>
 #endif
 
+#ifdef OS_solaris
+  #define DIRHANDLE dirp->d_fd
+#elif defined(OS_mingw)
+  #define DIRHANDLE dirp->dd_handle
+#else
+  #define DIRHANDLE dirp->fd
+#endif
+
 #if defined(__BEOS__) || defined(OS_solaris) || defined(OS_mingw)
 /* The scandir() and alphasort() functions aren't available on BeOS, */
 /* so let's declare them here... */
@@ -48,20 +56,6 @@ int alphasort(const void *d1, const void *d2)
 
 /*-----------------------------------------------------------------------*/
 /*
-  bcopy for mingw
-*/
-#ifdef OS_mingw
-void bcopy(const void *src, void *dest, size_t n)
-{
-	if (n==0)
-		return;
-
-	memcpy(dest, src, n);
-}
-#endif
-
-/*-----------------------------------------------------------------------*/
-/*
   Scan a directory for all its entries
 */
 int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const struct dirent *), int (*dcomp) (const void *, const void *))
@@ -75,13 +69,7 @@ int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const 
   if ((dirp = opendir(dirname)) == NULL)
     return(-1);
 
-#ifdef OS_solaris
-  if (fstat(dirp->d_fd, &stb) < 0)
-#elif defined(OS_mingw)
-  if (fstat(dirp->dd_handle, &stb) < 0)
-#else
-  if (fstat(dirp->fd, &stb) < 0)
-#endif
+  if (fstat(DIRHANDLE, &stb) < 0)
     return(-1);
 
   /*
@@ -121,13 +109,7 @@ int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const 
 
      if (++nitems >= arraysz) {
 
-#ifdef OS_solaris
-       if (fstat(dirp->d_fd, &stb) < 0)
-#elif defined(OS_mingw)
-       if (fstat(dirp->dd_handle, &stb) < 0)
-#else
-       if (fstat(dirp->fd, &stb) < 0)
-#endif
+       if (fstat(DIRHANDLE, &stb) < 0)
          return(-1);     /* just might have grown */
 
        arraysz = stb.st_size / 12;

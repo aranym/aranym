@@ -19,13 +19,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-/*	FIXME: O_SYNC not defined in mingw, is there a replacement value ?
- *	Does it make floppy working even without it ?
- */
-#ifdef OS_mingw
-#define O_SYNC 0
-#endif
-
 // parameters of default floppy (3.5" HD 1.44 MB)
 #define SECSIZE		512
 #define SPT			18
