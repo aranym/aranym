@@ -3,7 +3,7 @@
 #include "config.h"
 #include "parameters.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 static struct option const long_options[] =
@@ -209,25 +209,25 @@ void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int 
       exit(-1);
     }
 
+  bx_disk_options_t *disk;
   switch (number) {
-    case 0: bx_options.diskc.present = 1;
-            bx_options.diskc.byteswap = byteswap;
-            bx_options.diskc.cylinders = cylinders;
-            bx_options.diskc.heads = heads;
-            bx_options.diskc.spt = spt;
-            strcpy(bx_options.diskc.path, dev_path);
-	    break;
+    case 0: disk = &bx_options.diskc; break;
+    case 1: disk = &bx_options.diskd; break;
+    default: disk = NULL;
+  }
 
-    case 1: bx_options.diskd.present = 1;
-            bx_options.diskd.byteswap = byteswap;
-            bx_options.diskd.cylinders = cylinders;
-            bx_options.diskd.heads = heads;
-            bx_options.diskd.spt = spt;
-            strcpy(bx_options.diskd.path, dev_path);
-	    break;
-    }
-    if (cylinders || heads || spt)
-      D(bug("Geometry of IDE%d: %d/%d/%d %d", number, cylinders, heads, spt, byteswap));
+  if (disk != NULL) {
+    disk->present = strlen(dev_path) > 0;
+    disk->isCDROM = false;
+    disk->byteswap = byteswap;
+    disk->cylinders = cylinders;
+    disk->heads = heads;
+    disk->spt = spt;
+    strcpy(disk->path, dev_path);
+  }
+
+  if (cylinders && heads && spt)
+    D(bug("IDE%d CHS geometry: %d/%d/%d %d", number, cylinders, heads, spt, byteswap));
 }
 
 void preset_ide() {
@@ -374,7 +374,6 @@ void presave_cfg() {
 }
 
 void check_for_help_version_configfile(int argc, char **argv) {
-#ifndef CONFGUI
 	for (int c = 0; c < argc; c++) {
 		if ((strcmp(argv[c], "-c") == 0) || (strcmp(argv[c], "--config") == 0)) {
 			if ((c + 1) < argc) {
@@ -392,12 +391,10 @@ void check_for_help_version_configfile(int argc, char **argv) {
 			exit (0);
 		}
 	}
-#endif /* CONFGUI */
 }
 
 int process_cmdline(int argc, char **argv)
 {
-#ifndef CONFGUI
 	int c;
 	while ((c = getopt_long (argc, argv,
 							 "a:" /* floppy image file */
@@ -501,9 +498,6 @@ int process_cmdline(int argc, char **argv)
 		}
 	}
 	return optind;
-#else /* CONFGUI */
-	return 0;
-#endif
 }
 
 char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
@@ -515,14 +509,13 @@ char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 		strcat(buffer, file);
 	}
 	else
-		strcpy(buffer, file);	// at least something
+		strcpy(buffer, file);	// at least the filename
 
 	return buffer;
 }
 
 void build_cfgfilename()
 {
-	struct stat buf;
 	char *home = getenv("HOME");
 	if (home != NULL) {
 		int homelen = strlen(home);
@@ -533,7 +526,9 @@ void build_cfgfilename()
 			strcat(config_folder, ARANYMHOME);
 		}
 	}
+
 	// Does the folder exist?
+	struct stat buf;
 	if (stat(config_folder, &buf) == -1) {
 		D(bug("Creating config folder '%s'", config_folder));
 		mkdir(config_folder, 0755);
@@ -541,13 +536,6 @@ void build_cfgfilename()
 
 	if (strlen(config_file) == 0)
 		getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
-
-	// Does the config exist?
-	if (stat(config_file, &buf) == -1) {
-                D(bug("Creating default config file '%s'", config_file));
-		saveSettings(config_file);
-		saveConfigFile = false;	
-        }
 }
 
 static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose)
@@ -564,6 +552,14 @@ static int process_config(FILE *f, const char *filename, struct Config_Tag *conf
 
 static void decode_ini_file(FILE *f, const char *rcfile)
 {
+	// Does the config exist?
+	struct stat buf;
+	if (stat(config_file, &buf) == -1) {
+		fprintf(f, "Config file '%s' not found.\nThe config file is created with default values. Edit it to suit your needs.\n", config_file);
+		saveConfigFile = true;
+		return;
+	}
+
 	fprintf(f, "Using config file: '%s'\n", rcfile);
 
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
@@ -573,9 +569,9 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 #endif
 	process_config(f, rcfile, video_conf, "[VIDEO]", true);
 	process_config(f, rcfile, tos_conf, "[TOS]", true);
-	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
 	process_config(f, rcfile, diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, diskd_configs, "[IDE1]", true);
+	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
 }
 
 int saveSettings(const char *fs)
@@ -590,14 +586,14 @@ int saveSettings(const char *fs)
 #endif
 	update_config(fs, video_conf, "[VIDEO]");
 	update_config(fs, tos_conf, "[TOS]");
-	update_config(fs, arafs_conf, "[ARANYMFS]");
 	update_config(fs, diskc_configs, "[IDE0]");
 	update_config(fs, diskd_configs, "[IDE1]");
+	update_config(fs, arafs_conf, "[ARANYMFS]");
 
 	return 0;
 }
 
-int decode_switches (FILE *f, int argc, char **argv)
+int decode_switches(FILE *f, int argc, char **argv)
 {
 	build_cfgfilename();
 	check_for_help_version_configfile(argc, argv);

@@ -1,12 +1,16 @@
+2002/02/20 - joy
+- config file is created with proper default values
+- IDE devices are disabled by default
+- CONFGUI obsolete #ifdef stuff removed from parameters.cpp
+
+
 2002/02/20 - milan
 - new FPU (based on JIT BasiliskII)
 
 
 2002/02/19 - milan
 - src/ <-> CPU interaction cleaned
-
 - memory access cleaned
-
 
 
 2002/02/18 - milan
@@ -19,6 +23,9 @@
   was added due to the BSD systems so I've changed it to if OS_*bsd then...
 
 
+ARAnyM 0.0.21 released
+----------------------
+
 2002/02/12 - joy
 - IDE emulation adapted for Falcon: $f00039 is recognized but ignored.
 
@@ -29,7 +36,6 @@
 
 2002/02/11 - milan
 - synced with Bochs IDE
-
 - new version of CPU interface
 
 
