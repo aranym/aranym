@@ -69,7 +69,7 @@ extern "C" char *strdup(const char *s)
 
 void segmentationfault(int x)
 {
-	printf("Dostali te na PC = $%lx!\n", showPC());
+	printf("Dostali te na PC = $%x!\n", (unsigned)showPC());
 	exit(0);
 }
 
@@ -79,6 +79,7 @@ void segmentationfault(int x)
  */
 int main(int argc, char **argv)
 {
+/*
 	long i = 0;
 	long x = SDL_GetTicks();
 	while(x == SDL_GetTicks())
@@ -87,7 +88,7 @@ int main(int argc, char **argv)
 	while(x == SDL_GetTicks())
 		i++;
 	printf("SDL_GetTicks = 1 / %d\n", i);
-
+*/
 	// Initialize variables
 	RAMBaseHost = NULL;
 	ROMBaseHost = NULL;
@@ -297,6 +298,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.44  2001/09/11 11:45:27  joy
+ * one more debug line never hurts.
+ *
  * Revision 1.43  2001/09/11 11:31:30  joy
  * detect segmentation fault and quit cleanly. Print the offending PC address.
  *

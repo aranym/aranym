@@ -7,7 +7,16 @@
 #define HARDWARE_H
 
 #include "aradata.h"
+#include "mfp.h"
+#include "acia.h"
+#include "yamaha.h"
+#include "videl.h"
+
 extern ARADATA aradata;
+extern MFP mfp;
+extern IKBD ikbd;
+extern YAMAHA yamaha;
+extern VIDEL videl;
 
 extern uae_u32 vram_addr;
 
@@ -21,23 +30,16 @@ extern void HWput_l(uaecptr addr, uae_u32 l);
 extern void HWput_w(uaecptr addr, uae_u32 w);
 extern void HWput_b(uaecptr addr, uae_u32 b);
 
-extern uaecptr showPC(void);	// for debugging only
 extern char* debug_print_IO(uaecptr addr);	// for debugging only
-
-extern void MakeMFPIRQ(int);
-extern void ikbd_send(int);
-
-extern void renderScreen();
-extern void updateHostScreen();
-
-extern int getFloppyStats();
-extern bool isIkbdBufEmpty();
 
 #endif 
 
 
 /*
  * $Log$
+ * Revision 1.16  2001/09/18 12:38:26  joy
+ * extern ARADATA until all I/O HW modules are placed in one Aranym object.
+ *
  * Revision 1.15  2001/08/21 18:19:16  milan
  * CPU update, disk's geometry autodetection - the 1st step
  *

@@ -11,8 +11,8 @@ class BLITTER : public ICio {
 	uae_u8 hop,op,line_num,skewreg;
 	short int halftone_curroffset,halftone_direction;
 	short int source_x_inc, source_y_inc, dest_x_inc, dest_y_inc;
-	int source_addr;
-	int dest_addr;
+	uae_u32 source_addr;
+	uae_u32 dest_addr;
 	bool blit;
 
 public:

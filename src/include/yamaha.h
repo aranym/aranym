@@ -1,5 +1,8 @@
 /* Joy 2001 */
 
+#ifndef _YAMAHA_H
+#define _YAMAHA_H
+
 #include "icio.h"
 
 class YAMAHA : public ICio {
@@ -13,3 +16,5 @@ public:
 	virtual void handleWrite(uaecptr addr, uae_u8 value);
 	int getFloppyStat();
 };
+
+#endif /* _YAMAHA_H */

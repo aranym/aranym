@@ -1,5 +1,8 @@
 /* Joy 2001 */
 
+#ifndef _ACIA_H
+#define _ACIA_H
+
 #include "icio.h"
 
 class ACIA : public ICio {
@@ -34,10 +37,12 @@ public:
 	virtual void setMode(uae_u8 value);
 	virtual uae_u8 getData();
 	virtual void setData(uae_u8);
-	void ikbd_send(int value);
+	void send(int value);
 };
 
 class MIDI: public ACIA {
 public:
 	MIDI() : ACIA(0xfffc02) {};
 };
+
+#endif /* _ACIA_H */

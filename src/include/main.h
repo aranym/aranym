@@ -49,12 +49,13 @@ struct M68kRegisters {
 extern bool InitAll(void);
 extern void ExitAll(void);
 extern bool grabMouse(bool grab);
-extern void virtualInterrupt(void);
+extern void invoke200HzInterrupt(void);
 
 // Platform-specific functions
 extern void FlushCodeCache(void *start, uint32 size);	// Code was patched, flush caches if neccessary
 extern void QuitEmulator(void);				// Quit emulator
 
+/*
 // Interrupt flags
 enum {
 	INTFLAG_200HZ = 1,	// 200Hz VBL
@@ -69,12 +70,16 @@ enum {
 extern uint32 InterruptFlags;			// Currently pending interrupts
 extern void SetInterruptFlag(uint32 flag);	// Set/clear interrupt flags
 extern void ClearInterruptFlag(uint32 flag);
+*/
 
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.7  2001/09/10 15:21:57  joy
+ * virtualInterrupt, will be called with 200 Hz freq.
+ *
  * Revision 1.6  2001/08/10 18:41:24  milan
  * Some patches, see ChangeLog (CPU API etc.), debianized
  *

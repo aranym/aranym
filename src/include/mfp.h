@@ -1,5 +1,8 @@
 /* Joy 2001 */
 
+#ifndef _MFP_H
+#define _MFP_H
+
 #include "icio.h"
 
 class MFP_Timer {
@@ -18,7 +21,7 @@ public:
 	uae_u8 getControl();
 	void setData(uae_u8);
 	uae_u8 getData();
-	void tick();
+	void reset();
 };
 
 class MFP_TimerA:public MFP_Timer {
@@ -74,3 +77,5 @@ public:
 	virtual void handleWrite(uaecptr, uae_u8);
 	void IRQ(int);
 };
+
+#endif /* _MFP_H */
