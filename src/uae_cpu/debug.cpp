@@ -55,7 +55,7 @@ int firsthist = 0;
 int lasthist = 0;
 #ifdef NEED_TO_DEBUG_BADLY
 struct regstruct history[MAX_HIST];
-union flagu historyf[MAX_HIST];
+struct flag_struct historyf[MAX_HIST];
 #else
 uaecptr history[MAX_HIST];
 #endif
@@ -162,7 +162,7 @@ void showBackTrace(int count, bool showLast = true)
 	int temp;
 #ifdef NEED_TO_DEBUG_BADLY
 	struct regstruct save_regs = regs;
-	union flagu save_flags = regflags;
+	struct flag_struct save_flags = regflags;
 #endif
 
 	if (! showLast) {

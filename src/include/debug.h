@@ -24,7 +24,7 @@ extern int irqindebug;
 
 #ifdef NEED_TO_DEBUG_BADLY
 extern struct regstruct history[MAX_HIST];
-extern union flagu historyf[MAX_HIST];
+extern struct flag_struct historyf[MAX_HIST];
 #else
 extern uaecptr history[MAX_HIST];
 #endif
