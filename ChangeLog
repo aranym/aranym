@@ -1,3 +1,11 @@
+2004/02/07 - joy
+- gui-sdl/dlgAbout.cpp: RTFM AUTHORS
+- gui-sdl/dlgMain.cpp: quick access to most often used functions
+- hostscreen.cpp: added a comment that explains why user.code = SDL_USEREVENT
+- input.cpp: GUI thread talks back to INPUT thread by SDL message as well.
+  Should fix the infamous X async reply I started getting recently.
+
+
 2004/02/06 - Xavier
 - gui-sdl/sdlgui.cpp: fix for resolutions smaller than the dialog size.
   Dialogs dimensions back to 40x25.
