@@ -376,7 +376,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	in_handler -= 1;
 	return;
 buserr:
-	panicbug("Atari bus error");
+	D(panicbug("Atari bus error"));
 
 #endif /* HW_SIGSEGV */
 

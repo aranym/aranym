@@ -45,6 +45,7 @@
 #include <termios.h>
 #include <dirent.h>
 #include <time.h>
+#include <alloca.h>
 
 #endif
 
