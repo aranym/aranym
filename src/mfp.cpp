@@ -21,18 +21,18 @@ static const int HW = 0xfffa00;
 		return ((control & 0x0f) > 0);
 	}
 
-	void MFP_Timer::setControl(uae_u8 value) {
+	void MFP_Timer::setControl(uint8 value) {
 		control = value & 0x0f;
 		if (value & 0x10)
 			state = false;
 		D(bug("Set MFP Timer%c control to $%x", name, value));
 	}
 
-	uae_u8 MFP_Timer::getControl() {
+	uint8 MFP_Timer::getControl() {
 		return control | (state << 5);
 	}
 
-	void MFP_Timer::setData(uae_u8 value) {
+	void MFP_Timer::setData(uint8 value) {
 		D(bug("Set MFP Timer%c data to %d", name, value));
 		start_data = value;
 		if (! isRunning())
@@ -47,7 +47,7 @@ static const int HW = 0xfffa00;
 		}
 	}
 
-	uae_u8 MFP_Timer::getData() {
+	uint8 MFP_Timer::getData() {
 		D(bug("get MFP Timer%c data = %d", name, current_data));
 
 		if (isRunning() && current_data > 2)
@@ -60,87 +60,88 @@ static const int HW = 0xfffa00;
 
 	MFP::MFP() {}
 
-	uae_u8 MFP::handleRead(uaecptr addr) {
+	uint8 MFP::handleRead(uaecptr addr) {
 		addr -= HW;
 		if (addr < 0 || addr > 0x2f)
 			return 0;	// unhandled
 
+		uint8 value;
 		switch(addr) {
-			case 0x01:	return (GPIP_data & ~ 0x21) | parallel.getBusy();
+			case 0x01:	value = (GPIP_data & ~ 0x21) | parallel.getBusy();
 						break;
 
-			case 0x03:	return active_edge;
+			case 0x03:	value = active_edge;
 						break;
 
-			case 0x05:	return data_direction;
+			case 0x05:	value = data_direction;
 						break;
 
-			case 0x07:	return irq_enable >> 8;
+			case 0x07:	value = irq_enable >> 8;
 						break;
 
-			case 0x09:	return irq_enable;
+			case 0x09:	value = irq_enable;
 						break;
 
-			case 0x0b:	return 0x20; //(irq_pending >> 8) | (tA->getControl() & 0x10);	// finish
+			case 0x0b:	value = 0x20; //(irq_pending >> 8) | (tA->getControl() & 0x10);	// finish
 						break;
 
 			case 0x0d:	D(bug("Read: TimerC IRQ %s pending", (irq_pending & 0x20) ? "" : "NOT"));
-						return irq_pending;
+						value = irq_pending;
 						break;
 
-			case 0xf:	return irq_inservice >> 8;
+			case 0xf:	value = irq_inservice >> 8;
 						break;
 
 			case 0x11:	D(bug("Read: TimerC IRQ %s in-service", (irq_inservice & 0x20) ? "" : "NOT"));
-						return irq_inservice;
+						value = irq_inservice;
 						break;
 						
-			case 0x13:	return irq_mask >> 8;
+			case 0x13:	value = irq_mask >> 8;
 						break;
 						
 			case 0x15:	D(bug("Read: TimerC IRQ %s masked", (irq_mask & 0x20) ? "" : "NOT"));
-						return irq_mask;
+						value = irq_mask;
 						break;
 						
-			case 0x17:	return automaticServiceEnd ? 0x48 : 0x40;
+			case 0x17:	value = automaticServiceEnd ? 0x48 : 0x40;
 						break;
 
-			case 0x19:	return A.getControl();
+			case 0x19:	value = A.getControl();
 						break;
 
-			case 0x1b:	return B.getControl();
+			case 0x1b:	value = B.getControl();
 						break;
 
-			case 0x1d:	return (C.getControl() << 4) | D.getControl();
+			case 0x1d:	value = (C.getControl() << 4) | D.getControl();
 						break;
 
-			case 0x1f:	return A.getData();
+			case 0x1f:	value = A.getData();
 						break;
 
-			case 0x21:	return B.getData();
+			case 0x21:	value = B.getData();
 						break;
 
-			case 0x23:	return C.getData();
+			case 0x23:	value = C.getData();
 						break;
 						
-			case 0x25:	return D.getData();
+			case 0x25:	value = D.getData();
 						break;
 						
-			case 0x27:
-			case 0x29:
-			case 0x2b:
-			case 0x2d:
-			case 0x2f:
-			default:
-				return 0;
+			case 0x2d:	value = 0x80;	// for Linux/m68k
+						break;
+
+			default: value = 0;
 		};
+		D(bug("Reading MFP data from %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
+		return value;
 	}
 
-	void MFP::handleWrite(uaecptr addr, uae_u8 value) {
+	void MFP::handleWrite(uaecptr addr, uint8 value) {
 		addr -= HW;
 		if (addr < 0 || addr > 0x2f)
 			return;	// unhandled
 
+		D(bug("Writing MFP data to %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
 		switch(addr) {
 			case 0x01:	GPIP_data = value;
 						break;
@@ -240,9 +241,11 @@ void MFP::IRQ(int no, int count) {
 
 		// TimerC 200 Hz interrupt
 		case 5: C.reset();
-				if (irq_enable & 0x0020) {
+				if (irq_enable & 0x0020)
+				{
 					flags |= F_TIMERC;
 					timerCounter += count;
+					D(bug("Triggering MFP IRQ"));
 					TriggerMFP(true);
 				}
 				break;
