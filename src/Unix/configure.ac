@@ -1167,6 +1167,16 @@ for fpe in $FPE_CORE_TEST_ORDER; do
       AC_CHECK_FUNCS(sinl cosl tanl sinhl coshl tanhl)
       AC_CHECK_FUNCS(asinl acosl atanl asinhl acoshl atanhl)
       AC_CHECK_FUNCS(floorl ceill)
+      case $CPU_TYPE in
+        alpha)
+          dnl Maybe -mieee-with-inexact
+	  CXXFLAGS="$CXXFLAGS -mieee"
+	  LDFLAGS="$LDFLAGS -mieee"
+	  break
+	  ;;
+        *)
+          ;;
+      esac
       break
       ;;
     esac
