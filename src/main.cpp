@@ -354,10 +354,15 @@ bool InitEmuTOS(void)
 		return false;
 	}
 	RealROMSize = 512 * 1024;
-	bool bEmuOK = (fread(ROMBaseHost, 1, RealROMSize, f) == (size_t)RealROMSize);
+	size_t realSize = fread(ROMBaseHost, 1, RealROMSize, f);
 	fclose(f);
+	bool bEmuOK = false;	/* suppose it didn't load correctly */
+	if (realSize == (size_t)RealROMSize)
+		bEmuOK = true;	/* 512 kB image */
+	else if (realSize = (size_t)RealROMSize / 2)
+		bEmuOK = true;	/* 256 kB image */
 	if (! bEmuOK)
-		panicbug("EmuTOS image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", rom_path);
+		panicbug("EmuTOS image '%s' reading error.\nMake sure the file is readable and its size is either 256 or 512 kB.", rom_path);
 	return bEmuOK;
 }
 
@@ -522,6 +527,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.77  2002/07/20 12:42:04  joy
+ * hint for invoking the GUI displayed in the window
+ *
  * Revision 1.76  2002/07/20 11:33:27  joy
  * OS loading revamped. Now it first tries TOS, then EmuTOS and if both fail a warning and an advice how to obtain EmuTOS is displayed.
  *
