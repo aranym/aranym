@@ -17,7 +17,7 @@
 #include "m68k.h"
 #include "registers.h"
 
-#define CHECK_RAM_END	1
+#define CHECK_RAM_END	0
 #if CHECK_RAM_END
 #define READ_RAM_END		0x1000000
 #define WRITE_RAM_END		0x0e00000
