@@ -63,7 +63,7 @@
 #define	HOTKEY_REBOOT		0
 #define	HOTKEY_SHUTDOWN		0
 #define	HOTKEY_FULLSCREEN	SDLK_SCROLLOCK
-#define	HOTKEY_PRINT		0
+#define	HOTKEY_PRINT		SDLK_PRINT
 #endif
 
 /*********************************************************************
