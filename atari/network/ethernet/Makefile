@@ -22,7 +22,8 @@ all-here: araether
 
 # default overwrites
 INCLUDES = -I../.. -I$(top_srcdir)
-DEFINITIONS =
+XIF_DEFINITIONS = 
+DEFINITIONS = -D__KERNEL_XDD__ $(XIF_DEFINITIONS)
 
 LD = $(CC) -mshort -nostdlib -Wl,--entry -Wl,_init
 LIBS = $(LIBKERN) -lgcc
