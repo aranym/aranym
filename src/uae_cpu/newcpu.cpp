@@ -784,10 +784,9 @@ static void Interrupt(int nr)
 static void MFPInterrupt(int nr)
 {
     // fprintf(stderr, "CPU: in MFPInterrupt\n");
-    assert(nr < 16 && nr >= 0);
     lastint_regs = regs;
     lastint_no = 6;
-    Exception(nr+64, 0);
+    Exception(nr, 0);
 
     regs.intmask = 6;
 }
