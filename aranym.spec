@@ -81,6 +81,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/atari/fvdi/fvdi.prg.bz2
 /usr/share/aranym/atari/fvdi/fvdi.sys
 /usr/share/aranym/atari/nfcdrom/nfcdrom.bos.bz2
+/usr/share/aranym/atari/nfpci/nfpci.prg.bz2
 /usr/share/aranym/atari/sound/README
 /usr/share/aranym/atari/sound/zmagxsnd.prg.bz2
 /usr/share/aranym/atari/tools/README
