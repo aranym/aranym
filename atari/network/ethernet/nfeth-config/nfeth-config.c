@@ -104,17 +104,17 @@ unsigned long nfEthernetID(const NatFeatCookie *nf_ptr)
 	return nf_ethernet_id;
 }
 
-char *getEthX(const NatFeatCookie *nf_ptr, unsigned long ID)
+void printEthX(const NatFeatCookie *nf_ptr, int ethX, unsigned long ID)
 {
 	char *oldssp;
 	static char buf[80];
 	buf[0] = '\0';
 	
 	oldssp = (char *)Super((void *)0L);
-	nf_ptr->nfCall(ID, buf, (long)sizeof(buf));
+	nf_ptr->nfCall(ID, (long)ethX, buf, (long)sizeof(buf));
 	Super(oldssp);
 	
-	return buf;
+	puts(buf);
 }
 
 int main(int argc, char **argv)
@@ -124,6 +124,7 @@ int main(int argc, char **argv)
 	int usage = FALSE;
 	enum { NONE, HOST, ATARI, NETMASK } which;
 	int ethX = 0;
+	unsigned long xifID = 0;
 
 	if (nfEtherFsId == 0) {
 		fprintf(stderr, "ERROR: NatFeat `ETHERNET' not found!\n");
@@ -136,19 +137,32 @@ int main(int argc, char **argv)
 	else {
 		int i;
 		which = NONE;
-		for(i=1; i<argc; i++) {
+		for(i=1; i<argc && !usage; i++) {
 			char *p = argv[i];
-			if (strcmp(p, "--get-host-ip") == 0)
-				which = HOST;
-			else if (strcmp(p, "--get-atari-ip") == 0)
-				which = ATARI;
-			else if (strcmp(p, "--get-netmask") == 0)
-				which = NETMASK;
-			else if (strcmp(p, "eth0") == 0)
-				ethX = 0;
+			#define PETH "eth"
+			if (strcmp(p, "--get-host-ip") == 0) {
+				if (which == NONE)
+					which = HOST;
+				else
+					usage = TRUE;
+			}
+			else if (strcmp(p, "--get-atari-ip") == 0) {
+				if (which == NONE)
+					which = ATARI;
+				else
+					usage = TRUE;
+			}
+			else if (strcmp(p, "--get-netmask") == 0) {
+				if (which == NONE)
+					which = NETMASK;
+				else
+					usage = TRUE;
+			}
+			else if (strncmp(p, PETH, strlen(PETH)) == 0) {
+				ethX = atoi(p+strlen(PETH));
+			}
 			else {
 				usage = TRUE;
-				break;
 			}
 		}
 	}
@@ -158,13 +172,12 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	unsigned long xifID = 0;
 	switch(which) {
 		case HOST:	xifID = ETH(XIF_GET_IPHOST); break;
 		case ATARI: xifID = ETH(XIF_GET_IPATARI); break;
-		case NETMAS: xifID = ETH(XIF_GET_NETMASK); break;
+		case NETMASK: xifID = ETH(XIF_GET_NETMASK); break;
 	}
-	puts(getEthX(nf_ptr, xifID));
+	printEthX(nf_ptr, ethX, xifID);
 
 	return 0;
 }
