@@ -107,10 +107,16 @@ void TriggerVBL(void)
 	regs.spcflags |= SPCFLAG_DOINT;
 }
 
-void TriggerMFP(int no)
+int timerCinterrupts = 0;
+void TriggerMFP(int no, int count)
 {
 	if (no == 5) {
 		regs.spcflags |= SPCFLAG_MFP_TIMERC;
+		/*
+		if (timerCinterrupts > 0)
+			fprintf(stderr, "TimerC clash!\n");
+		*/
+		timerCinterrupts += count;
 	}
 	else if (no == 6)
 		regs.spcflags |= SPCFLAG_MFP_ACIA;

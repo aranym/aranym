@@ -81,7 +81,7 @@ extern "C" void Execute68kTrap(uint16 trap, M68kRegisters *r);	// Execute MacOS 
 // Interrupt functions
 // extern void TriggerInterrupt(void);	// Trigger interrupt level 1 (InterruptFlag must be set first)
 extern void TriggerVBL(void);		// Trigger interrupt level 4
-extern void TriggerMFP(int);		// Trigger interrupt level 6
+extern void TriggerMFP(int, int);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
 
 #endif
