@@ -189,7 +189,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			char *arg[4] = {"mon", "-m", "-r", NULL};
 			mon(3, arg);
 #endif
-			QuitEmulator();
 			break;
 	}
 }
