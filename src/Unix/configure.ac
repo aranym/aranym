@@ -293,6 +293,8 @@ esac
 
 SYSSRCS="$SYSSRCS $EXTRASYSSRCS"
 
+DEFINES="$DEFINES -DDIR_SEPARATOR=$DIR_SEPARATOR"
+
 dnl Define a macro that translates a yesno-variable into a C macro definition
 dnl to be put into the config.h file
 dnl $1 -- the macro to define
@@ -1452,7 +1454,6 @@ AC_SUBST(CPUINCLUDES)
 AC_SUBST(CPUSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
-AC_SUBST(DIR_SEPARATOR)
 AC_OUTPUT(Makefile)
 
 dnl Print summary.
