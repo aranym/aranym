@@ -51,7 +51,7 @@ void VIDEL::init()
 	handleWriteW(HW+0xaa, 0x03ff);
 	handleWriteW(HW+0xc2, 0x0008);
 
-	hostScreen.setWindowSize( width, height, bx_options.video.bpp );
+	hostScreen.setWindowSize( width, height, 16 );
 }
 
 // monitor writting to Falcon and ST/E color palette registers
@@ -465,6 +465,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.39  2002/09/23 09:23:15  pmandin
+ * Render to/from any bpp, using screen pitch
+ *
  * Revision 1.38  2002/06/24 17:08:48  standa
  * The pointer arithmetics fixed. The memptr usage introduced in my code.
  *
