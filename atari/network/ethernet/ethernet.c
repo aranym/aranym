@@ -435,12 +435,12 @@ driver_init (void)
 	/*
 	 * Set interface name
 	 */
-	strcpy (if_ara.name, "araeth");
+	strcpy (if_ara.name, "eth");
 	/*
 	 * Set interface unit. if_getfreeunit("name") returns a yet
 	 * unused unit number for the interface type "name".
 	 */
-	if_ara.unit = if_getfreeunit ("araeth");
+	if_ara.unit = if_getfreeunit ("eth");
 	/*
 	 * Alays set to zero
 	 */
@@ -525,7 +525,7 @@ driver_init (void)
 	{
 		strncpy (my_file_name, NETINFO->fname, sizeof (my_file_name));
 		my_file_name[sizeof (my_file_name) - 1] = '\0';
-# if 1
+# if 0
 		ksprintf (message, "My file name is '%s'\n\r", my_file_name);
 		c_conws (message);
 # endif
@@ -533,7 +533,7 @@ driver_init (void)
 	/*
 	 * And say we are alive...
 	 */
-	ksprintf (message, "ARAnyM Eth driver v0.1 (araeth%d)\n\r", if_ara.unit);
+	ksprintf (message, "ARAnyM Eth driver v0.1 (eth%d)\n\r", if_ara.unit);
 	c_conws (message);
 	return 0;
 }
@@ -551,12 +551,12 @@ recv_packet (struct netif *nif)
 	/* read packet length (excluding 32 bit crc) */
 	pktlen = read_packet_len ();
 
-	DEBUG (("araether_recv_packet: %i", pktlen));
+	DEBUG (("araeth: recv_packet: %i", pktlen));
 
 	//if (pktlen < 32)
 	if (!pktlen)
 	{
-		DEBUG (("araether_recv_packet: pktlen == 0"));
+		DEBUG (("araeth: recv_packet: pktlen == 0"));
 		nif->in_errors++;
 		return;
 	}
@@ -564,7 +564,7 @@ recv_packet (struct netif *nif)
 	b = buf_alloc (pktlen+100, 50, BUF_ATOMIC);
 	if (!b)
 	{
-		DEBUG (("araether_recv_packet: out of mem (buf_alloc failed)"));
+		DEBUG (("araeth: recv_packet: out of mem (buf_alloc failed)"));
 		nif->in_errors++;
 		return;
 	}
@@ -590,15 +590,13 @@ recv_packet (struct netif *nif)
 void _cdecl
 aranym_int (void)
 {
-    static int in_use = 0;
-    if (in_use)
+	static int in_use = 0;
+	if (in_use)
 		return;
 
-    in_use = 1;
+	in_use = 1;
 	nfInterrupt( in_use );
 
-    // FIXME: the recv_packet it called only once per packet (we can read as much as possible maybe?)
-    // while (!buf_empty ())
 	recv_packet (&if_ara);
 
 	in_use = 0;
