@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 	// when trying to map a too big chunk of memory starting at address 0
 	
 	// Try to allocate all memory from 0x0000, if it is not known to crash
-	if (vm_acquire_fixed(0, RAMSize + ROMSize + FastRAMSize) == false) {
+	if (vm_acquire_fixed(0, RAMSize + ROMSize + FastRAMSize) == true) {
 		D(bug("Could allocate RAM and ROM from 0x0000"));
 		memory_mapped_from_zero = true;
 	}
@@ -228,6 +228,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.57  2002/01/09 19:14:12  milan
+ * Preliminary support for SGI/Irix
+ *
  * Revision 1.56  2002/01/08 16:21:45  joy
  * config variables moved from global ones to bx_options struct.
  *
