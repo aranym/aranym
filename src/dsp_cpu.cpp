@@ -103,58 +103,54 @@ static int dsp_calc_cc(uint32 cc_code);
 static void dsp_undefined(void);
 
 /* Instructions without parallel moves */
-							/* CCR stuff to do */
-static void dsp_andi(void);		/* done */
-static void dsp_bchg(void);		/* done */
-static void dsp_bclr(void);		/* done */
-static void dsp_bset(void);		/* done */
-static void dsp_btst(void);		/* done */
-static void dsp_div(void);		/* LV */
-static void dsp_do(void);		/* done */
-static void dsp_enddo(void);	/* done */
-static void dsp_illegal(void);	/* done */
-static void dsp_jcc(void);		/* done */
-static void dsp_jclr(void);		/* done */
-static void dsp_jmp(void);		/* done */
-static void dsp_jscc(void);		/* done */
-static void dsp_jsclr(void);	/* done */
-static void dsp_jset(void);		/* done */
-static void dsp_jsr(void);		/* done */
-static void dsp_jsset(void);	/* done */
-static void dsp_lua(void);		/* done */
-static void dsp_movec(void);	/* done */
-static void dsp_movem(void);	/* done */
-static void dsp_movep(void);	/* done */
-static void dsp_nop(void);		/* done */
-static void dsp_norm(void);		/* LV */
-static void dsp_ori(void);		/* done */
-static void dsp_rep(void);		/* done */
-static void dsp_reset(void);	/* done */
-static void dsp_rti(void);		/* done */
-static void dsp_rts(void);		/* done */
-static void dsp_stop(void);		/* done */
-static void dsp_swi(void);		/* done */
-static void dsp_tcc(void);		/* done */
-static void dsp_wait(void);		/* done */
+static void dsp_andi(void);
+static void dsp_bchg(void);
+static void dsp_bclr(void);
+static void dsp_bset(void);
+static void dsp_btst(void);
+static void dsp_div(void);
+static void dsp_do(void);
+static void dsp_enddo(void);
+static void dsp_illegal(void);
+static void dsp_jcc(void);
+static void dsp_jclr(void);
+static void dsp_jmp(void);
+static void dsp_jscc(void);
+static void dsp_jsclr(void);
+static void dsp_jset(void);
+static void dsp_jsr(void);
+static void dsp_jsset(void);
+static void dsp_lua(void);
+static void dsp_movec(void);
+static void dsp_movem(void);
+static void dsp_movep(void);
+static void dsp_nop(void);
+static void dsp_norm(void);
+static void dsp_ori(void);
+static void dsp_rep(void);
+static void dsp_reset(void);
+static void dsp_rti(void);
+static void dsp_rts(void);
+static void dsp_stop(void);
+static void dsp_swi(void);
+static void dsp_tcc(void);
+static void dsp_wait(void);
 
-static void dsp_do_0(void);		/* done */
-static void dsp_do_2(void);		/* done */
-static void dsp_do_4(void);		/* done */
-static void dsp_do_c(void);		/* done */
-
-static void dsp_rep_1(void);	/* done */
-static void dsp_rep_3(void);	/* done */
-static void dsp_rep_5(void);	/* done */
-static void dsp_rep_d(void);	/* done */
-
-static void dsp_movec_7(void);	/* done */
-static void dsp_movec_9(void);	/* done */
-static void dsp_movec_b(void);	/* done */
-static void dsp_movec_d(void);	/* done */
-
-static void dsp_movep_0(void);	/* done */
-static void dsp_movep_1(void);	/* done */
-static void dsp_movep_2(void);	/* done */
+static void dsp_do_0(void);
+static void dsp_do_2(void);
+static void dsp_do_4(void);
+static void dsp_do_c(void);
+static void dsp_rep_1(void);
+static void dsp_rep_3(void);
+static void dsp_rep_5(void);
+static void dsp_rep_d(void);
+static void dsp_movec_7(void);
+static void dsp_movec_9(void);
+static void dsp_movec_b(void);
+static void dsp_movec_d(void);
+static void dsp_movep_0(void);
+static void dsp_movep_1(void);
+static void dsp_movep_2(void);
 
 /* Parallel move analyzer */
 static void dsp_parmove_read(void);
@@ -163,59 +159,57 @@ static void dsp_parmove_write(void);
 static void dsp_pm_read_accu24(int numreg, uint32 *dest);
 static void dsp_pm_writereg(int numreg, int position);
 
-							/* CCR stuff to do */
-static void dsp_pm_0(void);		/* done */
-static void dsp_pm_1(void);		/* done */
-static void dsp_pm_2(void);		/* done */
-static void dsp_pm_2_2(void);	/* done */
-static void dsp_pm_3(void);		/* done */
-static void dsp_pm_4(void);		/* done */
-static void dsp_pm_4x(int immediat, uint16 l_addr);	/* done */
-static void dsp_pm_5(void);		/* done */
-static void dsp_pm_8(void);		/* done */
+static void dsp_pm_0(void);
+static void dsp_pm_1(void);
+static void dsp_pm_2(void);
+static void dsp_pm_2_2(void);
+static void dsp_pm_3(void);
+static void dsp_pm_4(void);
+static void dsp_pm_4x(int immediat, uint16 l_addr);
+static void dsp_pm_5(void);
+static void dsp_pm_8(void);
 
 /* 56bits arithmetic */
 static uint16 dsp_abs56(uint32 *dest);
-static void dsp_asl56(uint32 *dest);
-static void dsp_asr56(uint32 *dest);
+static uint16 dsp_asl56(uint32 *dest);
+static uint16 dsp_asr56(uint32 *dest);
 static uint16 dsp_add56(uint32 *source, uint32 *dest);
 static uint16 dsp_sub56(uint32 *source, uint32 *dest);
 static void dsp_mul56(uint32 source1, uint32 source2, uint32 *dest);
 static void dsp_rnd56(uint32 *dest);
 
 /* Instructions with parallel moves */
-							/* CCR stuff to do */
-static void dsp_abs(void);		/* done */
-static void dsp_adc(void);		/* done */
-static void dsp_add(void);		/* done */
-static void dsp_addl(void);		/* done */
-static void dsp_addr(void);		/* done */
-static void dsp_and(void);		/* done */
-static void dsp_asl(void);		/* done */
-static void dsp_asr(void);		/* done */
-static void dsp_clr(void);		/* done */
-static void dsp_cmp(void);		/* done */
-static void dsp_cmpm(void);		/* done */
-static void dsp_eor(void);		/* done */
-static void dsp_lsl(void);		/* done */
-static void dsp_lsr(void);		/* done */
-static void dsp_mac(void);		/* done */
-static void dsp_macr(void);		/* done */
-static void dsp_move(void);		/* done */
-static void dsp_mpy(void);		/* done */
-static void dsp_mpyr(void);		/* done */
-static void dsp_neg(void);		/* done */
-static void dsp_not(void);		/* done */
-static void dsp_or(void);		/* done */
-static void dsp_rnd(void);		/* done */
-static void dsp_rol(void);		/* done */
-static void dsp_ror(void);		/* done */
-static void dsp_sbc(void);		/* done */
-static void dsp_sub(void);		/* done */
-static void dsp_subl(void);		/* done */
-static void dsp_subr(void);		/* done */
-static void dsp_tfr(void);		/* done */
-static void dsp_tst(void);		/* done */
+static void dsp_abs(void);
+static void dsp_adc(void);
+static void dsp_add(void);
+static void dsp_addl(void);
+static void dsp_addr(void);
+static void dsp_and(void);
+static void dsp_asl(void);
+static void dsp_asr(void);
+static void dsp_clr(void);
+static void dsp_cmp(void);
+static void dsp_cmpm(void);
+static void dsp_eor(void);
+static void dsp_lsl(void);
+static void dsp_lsr(void);
+static void dsp_mac(void);
+static void dsp_macr(void);
+static void dsp_move(void);
+static void dsp_mpy(void);
+static void dsp_mpyr(void);
+static void dsp_neg(void);
+static void dsp_not(void);
+static void dsp_or(void);
+static void dsp_rnd(void);
+static void dsp_rol(void);
+static void dsp_ror(void);
+static void dsp_sbc(void);
+static void dsp_sub(void);
+static void dsp_subl(void);
+static void dsp_subr(void);
+static void dsp_tfr(void);
+static void dsp_tst(void);
 
 static void dsp_move_pm(void);
 
@@ -768,7 +762,7 @@ static void dsp_postexecute_interrupts(void)
 		/* Host receive */
 		if (
 			(dsp.periph[SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HRIE)) &&
-			((dsp.periph[SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HRDF))==0)
+			((dsp.periph[SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HRDF)))
 			) {
 			/* Raise interrupt p:0x0020 */
 #if DSP_DISASM_INTER
@@ -895,7 +889,7 @@ static void dsp_ccr_extension(uint32 *reg0, uint32 *reg1, uint32 *reg2)
 	}
 
 	dsp.registers[REG_SR] &= BITMASK(16)-(1<<SR_E);
-	dsp.registers[REG_SR] |= ((value==0) || (value==BITMASK(numbits)))<<SR_E;
+	dsp.registers[REG_SR] |= ((value==0) || (value==(uint32)(BITMASK(numbits))))<<SR_E;
 }
 
 static void dsp_ccr_unnormalized(uint32 *reg0, uint32 *reg1, uint32 *reg2)
@@ -1413,7 +1407,7 @@ static int dsp_calc_cc(uint32 cc_code)
 	value |= (CCR_BIT(value,SR_Z) | ((~CCR_BIT(value,SR_U)) & (~CCR_BIT(value,SR_E))))<<SR_ZUE;
 	value |= (CCR_BIT(value,SR_Z) | CCR_BIT(value, SR_NV))<<SR_ZNV;
 	
-	return CCR_BIT(value,cc_code_map[cc_code & BITMASK(3)])==((cc_code>>3) & 1);
+	return (uint32)(CCR_BIT(value,cc_code_map[cc_code & BITMASK(3)]))==((cc_code>>3) & 1);
 }
 
 /**********************************
@@ -1801,6 +1795,7 @@ static void dsp_btst(void)
 static void dsp_div(void)
 {
 	uint32 srcreg, destreg, source, dest[3], newcarry, cursign;
+	uint16 newsr;
 
 	srcreg = REG_NULL;
 	switch((cur_inst>>4) & BITMASK(2)) {
@@ -1817,7 +1812,7 @@ static void dsp_div(void)
 	dest[2] = dsp.registers[REG_A0+(destreg & 1)];
 	newcarry = 0;
 
-	dsp_asl56(dest);
+	newsr = dsp_asl56(dest);
 	dest[2] |= (dsp.registers[REG_SR]>>SR_C) & 1;
 
 	if (((dest[0]>>7) & 1) ^ ((source>>23) & 1)) {
@@ -1848,8 +1843,10 @@ static void dsp_div(void)
 	dsp.registers[REG_A1+(destreg & 1)] = dest[1];
 	dsp.registers[REG_A0+(destreg & 1)] = dest[2];
 
-	dsp.registers[REG_SR] &= BITMASK(16)-(1<<SR_C);
-	dsp.registers[REG_SR] |= newcarry<<SR_C;
+	dsp.registers[REG_SR] &= BITMASK(16)-((1<<SR_C)|(1<<SR_V));
+	dsp.registers[REG_SR] |= (newcarry<<SR_C);
+	dsp.registers[REG_SR] |= newsr & (1<<SR_L);
+	dsp.registers[REG_SR] |= newsr & (1<<SR_V);
 }
 
 static void dsp_do(void)
@@ -2521,6 +2518,7 @@ static void dsp_movep_2(void)
 static void dsp_norm(void)
 {
 	uint32 cursr,cur_e, cur_euz, dest[3], numreg, rreg;
+	uint16 newsr;
 
 	cursr = dsp.registers[REG_SR];
 	cur_e = (cursr>>SR_E) & 1;	/* E */
@@ -2536,13 +2534,15 @@ static void dsp_norm(void)
 	rreg = REG_R0+((cur_inst>>8) & BITMASK(3));
 
 	if (cur_euz) {
-		dsp_asl56(dest);
+		newsr = dsp_asl56(dest);
 		--dsp.registers[rreg];
 		dsp.registers[rreg] &= BITMASK(16);
 	} else if (cur_e) {
-		dsp_asr56(dest);
+		newsr = dsp_asr56(dest);
 		++dsp.registers[rreg];
 		dsp.registers[rreg] &= BITMASK(16);
+	} else {
+		newsr = 0;
 	}
 
 	dsp.registers[REG_A2+numreg] = dest[0];
@@ -2553,6 +2553,9 @@ static void dsp_norm(void)
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
+
+	dsp.registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
+	dsp.registers[REG_SR] |= newsr;
 }
 
 static void dsp_ori(void)
@@ -2790,7 +2793,7 @@ static void dsp_pm_read_accu24(int numreg, uint32 *dest)
 			break;
 	}
 
-	if ((value==0) || (value==BITMASK(numbits))) {
+	if ((value==0) || (value==(uint32)(BITMASK(numbits)))) {
 		/* No limiting */
 		*dest=dsp.registers[REG_A1+numreg];
 	} else if (dsp.registers[REG_A2+numreg] & (1<<7)) {
@@ -3419,9 +3422,13 @@ static uint16 dsp_abs56(uint32 *dest)
 	return newsr;
 }
 
-static void dsp_asl56(uint32 *dest)
+static uint16 dsp_asl56(uint32 *dest)
 {
+	uint16 overflow, carry;
+
 	/* Shift left dest 1 bit: D<<=1 */
+
+	carry = (dest[0]>>7) & 1;
 
 	dest[0] <<= 1;
 	dest[0] |= (dest[1]>>23) & 1;
@@ -3433,11 +3440,19 @@ static void dsp_asl56(uint32 *dest)
 	
 	dest[2] <<= 1;
 	dest[2] &= BITMASK(24);
+
+	overflow = (carry != ((dest[0]>>7) & 1));
+
+	return (overflow<<SR_L)|(overflow<<SR_V)|(carry<<SR_C);
 }
 
-static void dsp_asr56(uint32 *dest)
+static uint16 dsp_asr56(uint32 *dest)
 {
+	uint16 carry;
+
 	/* Shift right dest 1 bit: D>>=1 */
+
+	carry = dest[2] & 1;
 
 	dest[2] >>= 1;
 	dest[2] &= BITMASK(23);
@@ -3450,6 +3465,8 @@ static void dsp_asr56(uint32 *dest)
 	dest[0] >>= 1;
 	dest[0] &= BITMASK(7);
 	dest[0] |= (dest[0] & (1<<6))<<1;
+
+	return (carry<<SR_C);
 }
 
 static uint16 dsp_add56(uint32 *source, uint32 *dest)
@@ -3564,7 +3581,7 @@ static uint16 dsp_sub56(uint32 *source, uint32 *dest)
 static void dsp_mul56(uint32 source1, uint32 source2, uint32 *dest)
 {
 	uint32 negresult;	/* Negate the result ? */
-	uint32 part[4], zerodest[3];
+	uint32 part[4], zerodest[3], value;
 
 	/* Multiply: D = S1*S2 */
 	negresult = 0;
@@ -3582,46 +3599,37 @@ static void dsp_mul56(uint32 source1, uint32 source2, uint32 *dest)
 	/* bits 12-23 * bits 0-11 */
 	part[1]=((source1>>12) & BITMASK(12))*(source2 & BITMASK(12));
 	/* bits 0-11 * bits 12-23 */
-	part[2]=(source1 & BITMASK(12))*((source2>>12) & BITMASK(12));
+	part[2]=(source1 & BITMASK(12))*((source2>>12)  & BITMASK(12));
 	/* bits 12-23 * bits 12-23 */
 	part[3]=((source1>>12) & BITMASK(12))*((source2>>12) & BITMASK(12));
 
-	/* Init */
-	dest[2] = dest[1] = dest[0] = 0;
-
 	/* Calc dest 2 */
-	dest[2] += part[0];
-
+	dest[2] = part[0];
 	dest[2] += (part[1] & BITMASK(12)) << 12;
-	if (dest[2] & (1<<23)) {
-		dest[1]++;
-		dest[2] &= BITMASK(24);
-	}	
-
 	dest[2] += (part[2] & BITMASK(12)) << 12;
-	if (dest[2] & (1<<23)) {
-		dest[1]++;
-		dest[2] &= BITMASK(24);
-	}	
 
 	/* Calc dest 1 */
-	dest[1] += (part[1]>>12) & BITMASK(12);
-	if (dest[1] & (1<<23)) {
-		dest[0]++;
-		dest[1] &= BITMASK(24);
-	}	
-
+	dest[1] = (part[1]>>12) & BITMASK(12);
 	dest[1] += (part[2]>>12) & BITMASK(12);
-	if (dest[1] & (1<<23)) {
-		dest[0]++;
-		dest[1] &= BITMASK(24);
-	}	
-
 	dest[1] += part[3];
-	if (dest[1] & (1<<23)) {
-		dest[0]++;
+
+	/* Calc dest 0 */
+	dest[0] = 0;
+
+	/* Add carries */
+	value = (dest[2]>>24) & BITMASK(8);
+	if (value) {
+		dest[1] += value;
+		dest[2] &= BITMASK(24);
+	}
+	value = (dest[1]>>24) & BITMASK(8);
+	if (value) {
+		dest[0] += value;
 		dest[1] &= BITMASK(24);
-	}	
+	}
+
+	/* Get rid of extra sign bit */
+	dsp_asl56(dest);
 
 	if (negresult) {
 		zerodest[0] = zerodest[1] = zerodest[2] = 0;
@@ -3840,12 +3848,12 @@ static void dsp_addl(void)
 	dest[0] = dsp.registers[REG_A2+numreg];
 	dest[1] = dsp.registers[REG_A1+numreg];
 	dest[2] = dsp.registers[REG_A0+numreg];
-	dsp_asl56(dest);
+	newsr = dsp_asl56(dest);
 
 	source[0] = dsp.registers[REG_A2+(numreg ^ 1)];
 	source[1] = dsp.registers[REG_A1+(numreg ^ 1)];
 	source[2] = dsp.registers[REG_A0+(numreg ^ 1)];
-	newsr = dsp_add56(source, dest);
+	newsr |= dsp_add56(source, dest);
 
 	dsp.registers[REG_A2+numreg] = dest[0];
 	dsp.registers[REG_A1+numreg] = dest[1];
@@ -3870,12 +3878,12 @@ static void dsp_addr(void)
 	dest[0] = dsp.registers[REG_A2+numreg];
 	dest[1] = dsp.registers[REG_A1+numreg];
 	dest[2] = dsp.registers[REG_A0+numreg];
-	dsp_asr56(dest);
+	newsr = dsp_asr56(dest);
 
 	source[0] = dsp.registers[REG_A2+(numreg ^ 1)];
 	source[1] = dsp.registers[REG_A1+(numreg ^ 1)];
 	source[2] = dsp.registers[REG_A0+(numreg ^ 1)];
-	newsr = dsp_add56(source, dest);
+	newsr |= dsp_add56(source, dest);
 
 	dsp.registers[REG_A2+numreg] = dest[0];
 	dsp.registers[REG_A1+numreg] = dest[1];
@@ -3907,7 +3915,8 @@ static void dsp_and(void)
 
 static void dsp_asl(void)
 {
-	uint32 numreg, newcarry, dest[3], overflowed;
+	uint32 numreg, dest[3];
+	uint16 newsr;
 
 	numreg = (cur_inst>>3) & 1;
 
@@ -3915,18 +3924,14 @@ static void dsp_asl(void)
 	dest[1] = dsp.registers[REG_A1+numreg];
 	dest[2] = dsp.registers[REG_A0+numreg];
 
-	newcarry = (dest[0]>>7) & 1;
-
-	dsp_asl56(dest);
+	newsr = dsp_asl56(dest);
 
 	dsp.registers[REG_A2+numreg] = dest[0];
 	dsp.registers[REG_A1+numreg] = dest[1];
 	dsp.registers[REG_A0+numreg] = dest[2];
 
-	overflowed = (newcarry != ((dest[0]>>7) & 1));
-
 	dsp.registers[REG_SR] &= BITMASK(16)-((1<<SR_C)|(1<<SR_V));
-	dsp.registers[REG_SR] |= (newcarry<<SR_C)|(overflowed<<SR_V)|(overflowed<<SR_L);
+	dsp.registers[REG_SR] |= newsr;
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
@@ -3936,7 +3941,7 @@ static void dsp_asl(void)
 
 static void dsp_asr(void)
 {
-	uint32 numreg, newcarry, dest[3];
+	uint32 numreg, newsr, dest[3];
 
 	numreg = (cur_inst>>3) & 1;
 
@@ -3944,16 +3949,14 @@ static void dsp_asr(void)
 	dest[1] = dsp.registers[REG_A1+numreg];
 	dest[2] = dsp.registers[REG_A0+numreg];
 
-	newcarry = dest[2] & 1;
-
-	dsp_asr56(dest);
+	newsr = dsp_asr56(dest);
 
 	dsp.registers[REG_A2+numreg] = dest[0];
 	dsp.registers[REG_A1+numreg] = dest[1];
 	dsp.registers[REG_A0+numreg] = dest[2];
 
 	dsp.registers[REG_SR] &= BITMASK(16)-((1<<SR_C)|(1<<SR_V));
-	dsp.registers[REG_SR] |= newcarry<<SR_C;
+	dsp.registers[REG_SR] |= newsr;
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
@@ -4582,12 +4585,12 @@ static void dsp_subl(void)
 	dest[0] = dsp.registers[REG_A2+numreg];
 	dest[1] = dsp.registers[REG_A1+numreg];
 	dest[2] = dsp.registers[REG_A0+numreg];
-	dsp_asl56(dest);
+	newsr = dsp_asl56(dest);
 
 	source[0] = dsp.registers[REG_A2+(numreg ^ 1)];
 	source[1] = dsp.registers[REG_A1+(numreg ^ 1)];
 	source[2] = dsp.registers[REG_A0+(numreg ^ 1)];
-	newsr = dsp_sub56(source, dest);
+	newsr |= dsp_sub56(source, dest);
 
 	dsp.registers[REG_A2+numreg] = dest[0];
 	dsp.registers[REG_A1+numreg] = dest[1];
@@ -4612,12 +4615,12 @@ static void dsp_subr(void)
 	dest[0] = dsp.registers[REG_A2+numreg];
 	dest[1] = dsp.registers[REG_A1+numreg];
 	dest[2] = dsp.registers[REG_A0+numreg];
-	dsp_asr56(dest);
+	newsr = dsp_asr56(dest);
 
 	source[0] = dsp.registers[REG_A2+(numreg ^ 1)];
 	source[1] = dsp.registers[REG_A1+(numreg ^ 1)];
 	source[2] = dsp.registers[REG_A0+(numreg ^ 1)];
-	newsr = dsp_sub56(source, dest);
+	newsr |= dsp_sub56(source, dest);
 
 	dsp.registers[REG_A2+numreg] = dest[0];
 	dsp.registers[REG_A1+numreg] = dest[1];
@@ -4700,6 +4703,12 @@ static void dsp_tst(void)
 }
 
 /*
+	2002-08-08:PM
+		FIX:added some casts to avoid warnings
+		BUG:host receive interrupt not raised
+		BUG:mul56 operation fixed
+	2002-08-01:PM
+		FIX:Finished ccr bits stuff
 	2002-07-31:PM
 		FIX:Nearly finished ccr bits stuff
 		FIX:host port TRDY bit now correctly set
