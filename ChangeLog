@@ -1,3 +1,9 @@
+2001/11/02 - STanda
+- fVDI: The driver handles some bitplane functionality. It works somehow, but
+  it still has many bug in this mode. The color palette is correct only if
+  booted in the same color depth.
+
+
 2001/11/14 - joy
 - corrected XML->HTML compilation
 
