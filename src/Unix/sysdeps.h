@@ -77,6 +77,7 @@
 #include <dirent.h>
 #include <termios.h>
 #include <utime.h>
+#include <alloca.h>
 
 #endif
 
