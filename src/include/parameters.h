@@ -40,6 +40,7 @@ extern int get_geometry(char *, geo_type geo);
 typedef struct {
 	bool halfSensitive;
 	char rootPath[512];
+	char configPath[520];
 } bx_aranymfs_options_t;
 
 // Floppy device
