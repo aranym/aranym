@@ -33,6 +33,5 @@ enum {
 };
 
 extern unsigned long nfFvdiDrvId;
-#define FVDIDRV(a)	(nfHostFsId + a)
 
 #endif /* _FVDIDRV_NFAPI_H */
