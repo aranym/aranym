@@ -475,6 +475,10 @@ bool InitAll(void)
 #endif
 
 	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
+	if (my_timer_id == NULL) {
+		panicbug("SDL Timer does not work!");
+		return false;
+	}
 
 #if ENABLE_MON
 	// Initialize mon
@@ -526,6 +530,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.86  2002/10/19 09:16:58  joy
+ * cosmetics
+ *
  * Revision 1.85  2002/10/16 22:21:43  milan
  * cleanup
  *
