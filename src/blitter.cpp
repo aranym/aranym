@@ -366,7 +366,7 @@ static const int HW = 0xff8a00;
 
 uae_u8 BLITTER::handleRead(uaecptr addr) {
 	addr -= HW;
-	if (addr < 0 || addr > 0x3d)
+	if (addr > 0x3d)
 		return 0;
 
 /*
@@ -424,7 +424,7 @@ uae_u8 BLITTER::handleRead(uaecptr addr) {
 
 void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
 	addr -= HW;
-	if (addr < 0 || addr > 0x3d)
+	if (addr > 0x3d)
 		return;
 
 	if (addr < 0x20) {

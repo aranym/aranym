@@ -74,7 +74,7 @@ static const int HW = 0xfffa00;
 	uint8 MFP::handleRead(uaecptr addr)
 	{
 		addr -= HW;
-		if (addr < 0 || addr > 0x2f)
+		if (addr > 0x2f)
 			return 0;	// unhandled
 
 		uint8 value;
@@ -150,7 +150,7 @@ static const int HW = 0xfffa00;
 
 	void MFP::handleWrite(uaecptr addr, uint8 value) {
 		addr -= HW;
-		if (addr < 0 || addr > 0x2f)
+		if (addr > 0x2f)
 			return;	// unhandled
 
 		D(bug("Writing MFP data to %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));

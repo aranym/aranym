@@ -92,7 +92,7 @@ static const int HW = 0xff8960;
 
 uint8 RTC::handleRead(uaecptr addr) {
 	addr -= HW;
-	if (addr < 0 || addr > 3)
+	if (addr > 3)
 		return 0;
 
 	switch(addr) {
@@ -105,7 +105,7 @@ uint8 RTC::handleRead(uaecptr addr) {
 
 void RTC::handleWrite(uaecptr addr, uint8 value) {
 	addr -= HW;
-	if (addr < 0 || addr > 3)
+	if (addr > 3)
 		return;
 
 	switch(addr) {
