@@ -59,6 +59,7 @@ static struct option const long_options[] =
   {"version", no_argument, 0, 'V'},
   {"config", required_argument, 0, 'c'},
   {"save", no_argument, 0, 's'},
+  {"gui", no_argument, 0, 'G'},
   {"swap-ide", no_argument, 0, 'S'},
   {"emutos", no_argument, 0, 'e'},
   {"lilo", no_argument, 0, 'l'},
@@ -73,6 +74,8 @@ char *program_name;		// set by main()
 char rom_path[512];		// set by decode_switches()
 char emutos_path[512];	// set by decode_switches()
 char guifont_path[512];	// set by decode_switches()
+
+bool startupGUI = false;
 
 bool boot_emutos = false;
 bool boot_lilo = false;
@@ -574,6 +577,7 @@ Options:\n\
   -d, --disk CHAR:PATH[:]    HostFS mapping, e.g. d:/atari/d_drive\n\
   -c, --config FILE          read different configuration file\n\
   -s, --save                 save configuration file\n\
+  -G, --gui                  open GUI at startup\n\
   -S, --swap-ide             swap IDE drives\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
@@ -692,6 +696,7 @@ int process_cmdline(int argc, char **argv)
 							 "s"  /* save config file */
 
 							 "c:" /* path to config file */
+							 "G"  /* GUI startup */
 							 "S"  /* swap IDE drives */
 							 "h"  /* help */
 							 "V"  /* version */,
@@ -704,7 +709,10 @@ int process_cmdline(int argc, char **argv)
 				/* processed in early_cmdline_check already */
 				break;
 
-	
+			case 'G':
+				startupGUI = true;
+				break;
+
 #ifdef DEBUGGER
 			case 'D':
 				bx_options.startup.debugger = true;

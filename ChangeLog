@@ -1,3 +1,15 @@
+2003/12/28 - joy
+- sdl-gui.cpp, dlgMain.cpp: font init moved back to the main dialog,
+  freeing of font surface added.
+
+- hostscreen.cpp: color palette initialized to 16 default TOS colors
+
+- main.cpp: startup GUI with separate timer thread for handling input
+  events before the standard 200 Hz timer starts
+
+- parameters.cpp,h: "-G" command line parameter opens the startup GUI.
+
+
 2003/12/27 - joy
 - SDL GUI cleanup: first, all SDL GUI related files are in gui-sdl/ folder
   now. Then, each dialog is in its own file. At last, SDL GUI now supports

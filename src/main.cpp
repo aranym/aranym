@@ -1,26 +1,28 @@
 /*
- * $Header$
+ * main.cpp - startup/shutdown code
+ *
+ * Copyright (c) 2001-2003 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * 
+ * Inspired by Christian Bauer's Basilisk II
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/*
- *  main.cpp - Startup/shutdown code
- *
- *  Basilisk II (C) 1997-2000 Christian Bauer
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
@@ -219,6 +221,16 @@ Uint32 my_callback_function(Uint32 /*interval*/, void * /*param*/)
 {
 	TriggerInternalIRQ();
 	return 10;					// come back in 10 milliseconds
+}
+
+/*
+ * input_callback() is called every 20 ms and processes the input events
+ * for the initial SDL GUI popup.
+ */
+Uint32 input_callback(Uint32 /*interval*/, void * /*param*/)
+{
+	check_event();	// process keyboard and mouse events
+	return 20;		// 50 Hz
 }
 
 /*
@@ -511,9 +523,17 @@ bool InitAll(void)
 #endif
 
 #ifdef SDL_GUI
-	if (isGuiAvailable && false /* --reconfig */) {
+	if (isGuiAvailable && startupGUI) {
+		// enable timer thread for input events
+		my_timer_id = SDL_AddTimer(20, input_callback, NULL);
+		if (my_timer_id > 0) {
 extern int open_gui(void *);
-		open_gui(NULL);
+			// open GUI
+			open_gui(NULL);
+			// GUI finished - disable timer thread
+			SDL_RemoveTimer(my_timer_id);
+			my_timer_id = 0;
+		}
 	}
 #endif
 	return true;

@@ -1,6 +1,3 @@
-- hostscreen.setPalette() should be called in the constructor to initialize
-  all variables and allow for early open_gui()
-
 TODO before 0.8.5beta
 - the floppy exchange detection emulation (almost done)
 - keyboard layout configurable. This is a must.
