@@ -1,5 +1,6 @@
-2002/10/10 - patrice
+2002/10/10 - patrice (version 0.6.6-beta)
 - dsp: dsp nothread code removed.
+- configure: DSP is enabled by default now
 
 
 2002/10/09 - milan
