@@ -14,7 +14,7 @@
 #include "fvdidrv.h"
 #include "hardware.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #ifdef HAVE_NEW_HEADERS
@@ -1033,57 +1033,40 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 			}
 			break;
 		default:
-			if ( destPlanes < 8 ) {
-				for(uint16 j = 0; j < h; j++) {
-					D2(fprintf(stderr, "fVDI: bmp:"));
-
-					uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
-					for(uint16 i = sx; i < sx + w; i++) {
-						uint32 wordIndex = ((dx + i - sx) >> 4) * destPlanes;
-						uint32 offset = wordIndex * 2 + (dy + j) * destPitch;
-						if (i % 16 == 0)
-							theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
-
-						D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
-						switch(logOp) {
-							case 1:
-								for(uint16 d = 0; d < destPlanes; d++)
-									WriteInt16(destAddress + offset + d * 2, (fgColor ? theWord : ~theWord));
-								break;
-							case 2:
-								for(uint16 d = 0; d < destPlanes; d++)
-									WriteInt16(destAddress + offset + d * 2, ReadInt16(destAddress + offset + d * 2) | (fgColor ? theWord : ~theWord));
-								break;
-							case 3:
-								for(uint16 d = 0; d < destPlanes; d++)
-									WriteInt16(destAddress + offset + d * 2, ~ReadInt16(destAddress + offset + d * 2));
-								break;
-							case 4:
-								for(uint16 d = 0; d < destPlanes; d++)
-									WriteInt16(destAddress + offset + d * 2, ReadInt16(destAddress + offset + d * 2) | (fgColor ? theWord : ~theWord));
-								break;
-						}
-					}
-					D2(bug("")); //newline
-				}
-			} else {
+			{ // do the mangling for bitplanes. TOS<->VDI color conversions implemented.
 				uint8 color[16];
+				uint16 bitplanePixels[8];
 
 				for(uint16 j = 0; j < h; j++) {
 					D2(fprintf(stderr, "fVDI: bmp:"));
 
 					uint32 address = destAddress + ((((dx >> 4) * destPlanes) << 1) + (dy + j) * destPitch);
 					hostScreen.bitplaneToChunky((uint16*)address, destPlanes, color);
+					for(uint32 c = 0; c < 16; c++)
+						color[c] = color[c]<(sizeof(vdi_colours)/sizeof(*vdi_colours)) ? vdi_colours[color[c]] : color[c];
+
 					uint32 oldAddress = address;
 
 					uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
 					for(uint16 i = sx; i < sx + w; i++) {
-						uint32 wordIndex = ((dx + i - sx) >> 4) * destPlanes;
-						address = destAddress + ((wordIndex << 1) + (dy + j) * destPitch);
 						if (i % 16 == 0) {
-							chunkyToBitplane(color, destPlanes, (uint16*)oldAddress);
+							uint32 wordIndex = ((dx + i - sx) >> 4) * destPlanes;
+							address = destAddress + ((wordIndex << 1) + (dy + j) * destPitch);
+
+							// convert the 16pixels (VDI->TOS colors - within the chunkyToBitplane function)
+							// into the bitplane and write it to the destination
+							// note: we can't do the conversion directly into the oldAddress
+							//       because it needs the little->bigendian conversion
+							chunkyToBitplane(color, destPlanes, bitplanePixels);
+							for(uint32 d = 0; d < destPlanes; d++)
+								WriteInt16(oldAddress + (d<<1), bitplanePixels[d]);
+
+							// convert next 16pixels to chunky
 							hostScreen.bitplaneToChunky((uint16*)address, destPlanes, color);
 							oldAddress = address;
+							// convert into VDI colors
+							for(uint32 c = 0; c < 16; c++)
+								color[c] = color[c]<(sizeof(vdi_colours)/sizeof(*vdi_colours)) ? vdi_colours[color[c]] : color[c];
 
 							theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 						}
@@ -1107,7 +1090,10 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 								break;
 						}
 					}
-					chunkyToBitplane(color, destPlanes, (uint16*)oldAddress);
+					chunkyToBitplane(color, destPlanes, bitplanePixels);
+					for(uint32 d = 0; d < destPlanes; d++)
+						WriteInt16(oldAddress + (d<<1), bitplanePixels[d]);
+
 					D2(bug("")); //newline
 				}
 			}
@@ -2170,6 +2156,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.47  2003/02/18 22:05:07  standa
+ * The bitplane fVDI modes improved.
+ *
  * Revision 1.46  2003/01/15 08:35:08  standa
  * The drawMouse hotspot coordinates are not stripped to 4bits (0..15).
  *

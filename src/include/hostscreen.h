@@ -378,6 +378,10 @@ inline void HostScreen::blitArea( int16 sx, int16 sy, int16 dx, int16 dy, int16 
 }
 
 
+/**
+ * Performs conversion from the TOS's bitplane word order (big endian) data
+ * into the native chunky color index.
+ */
 inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp, uint8 colorValues[16] )
 {
 	memset( colorValues, 0, 16 ); // clear the color values for the 16 pixels (word length)
@@ -421,7 +425,6 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 		colorValues[13] <<= 1;	colorValues[13] |= (data >>  2) & 1;
 		colorValues[14] <<= 1;	colorValues[14] |= (data >>  1) & 1;
 		colorValues[15] <<= 1;	colorValues[15] |= (data >>  0) & 1;
-
 #endif
 	}
 }
@@ -433,6 +436,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.41  2002/12/02 16:54:38  milan
+ * non-OpenGL support
+ *
  * Revision 1.40  2002/12/01 10:28:29  pmandin
  * OpenGL rendering
  *

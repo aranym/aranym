@@ -1,11 +1,17 @@
+2003/02/19 - STanda
+- fvdidrv.cpp: the expandArea M->M for bitplanes fixed
+  The only TODO for full bitplane support is to support non-word
+  aligned blits and expands.
+
+
 2003/02/18 - STanda
-- fvdidrv.cpp - the bitplane modes improved. Up to the 4bit mode
+- fvdidrv.cpp: the bitplane modes improved. Up to the 4bit mode
   everything works well. The 8bit mode is on the way. There is still
   some little imperfection there.
 
 
 2003/02/18 - joy
-- videl.cpp - writing to f_shift resets the st_shift and that fixes
+- videl.cpp: writing to f_shift resets the st_shift and that fixes
   the color depth detection routine.
 
 
