@@ -1,3 +1,9 @@
+2002/10/29 - Didier & joy
+- found and fixed serious buffer overflow in uae_cpu/readcpu.cpp.
+  EMULOP_RETURN (unused), NATFEAT_ID and NATFEAT_CALL should behave
+  better now.
+
+
 2002/10/28 - joy
 - NF_STDERR added to NatFeats
 
