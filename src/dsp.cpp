@@ -21,15 +21,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef HAVE_NEW_HEADERS
-# include <cmath>
-#else
-# include <math.h>
-#endif
-
-#include <SDL.h>
-#include <SDL_thread.h>
-
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
@@ -39,6 +30,15 @@
 
 #define DEBUG 0
 #include "debug.h"
+
+#ifdef HAVE_NEW_HEADERS
+# include <cmath>
+#else
+# include <math.h>
+#endif
+
+#include <SDL.h>
+#include <SDL_thread.h>
 
 #ifndef M_PI
 #define M_PI	3.141592653589793238462643383279502

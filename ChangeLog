@@ -1,3 +1,9 @@
+2004/07/13 - milan
+- macro BUS_ERROR defined in cpu_emulation.h and documented
+
+- some other minor (mainly cosmetic) corrections
+
+
 2004/07/12 - joy
 - ide.cpp: Xavier explained that Adam's open source IDE driver might use
   the f00002 register because it's mapped to the same 16-bit IDE port as

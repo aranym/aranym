@@ -1681,7 +1681,7 @@ void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, volatile unsigned in
             opcode = 0x4AFC;
         }
         dp = table68k + opcode;
-        for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
+        for (lookup = lookuptab;(unsigned int)lookup->mnemo != dp->mnemo; lookup++)
             ;
         strcpy (instrname, lookup->name);
         ccpt = strstr (instrname, "cc");
@@ -1721,7 +1721,7 @@ setjmpagain:
 			opcode = 0x4AFC;
 		}
 		dp = table68k + opcode;
-		for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
+		for (lookup = lookuptab;(unsigned int)lookup->mnemo != dp->mnemo; lookup++)
 		    ;
 		strcpy (instrname, lookup->name);
 		ccpt = strstr (instrname, "cc");
@@ -1783,7 +1783,7 @@ void showDisasm(uaecptr addr) {
 	}
 	JMP_BUF excep_env_old;
 	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-	uaecptr newpc = 0;
+	volatile uaecptr newpc = 0;
 	m68kpc_offset = addr - m68k_getpc ();
 	int prb = SETJMP(excep_env);
 	if (prb != 0) {
@@ -1808,7 +1808,7 @@ void showDisasm(uaecptr addr) {
 		opcode = 0x4AFC;
 	}
 	dp = table68k + opcode;
-	for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
+	for (lookup = lookuptab;(unsigned int)lookup->mnemo != dp->mnemo; lookup++)
 		    ;
 	strcpy (instrname, lookup->name);
 	ccpt = strstr (instrname, "cc");

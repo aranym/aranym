@@ -123,7 +123,10 @@ bool ValidAddr(uint32 addr, bool write, uint32 len)
   If you want to generate some Exception, it can be done with this sample code:
 
 regs.mmu_fault_addr = addr;
-longjmp(excep_env, No. of Exception);
+LONGJMP(excep_env, No. of Exception);
+
+  If you need to generate bus error, use macro BUS_ERROR(fault_address)
+defined in cpu_emulation.h
 
 
 4) HW emulation

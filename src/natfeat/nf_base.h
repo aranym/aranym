@@ -26,13 +26,6 @@
 
 #include "natfeats.h"	/* nf_getparameter is defined there */
 
-#ifdef USE_JIT
-extern int in_handler;
-# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); in_handler = 0; LONGJMP(excep_env, 2); }
-#else
-# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); LONGJMP(excep_env, 2); }
-#endif
-
 class NF_Base
 {
 protected:

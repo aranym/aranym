@@ -1015,7 +1015,7 @@ fi
 
 dnl Select appropriate FPU source.
 gcc_AC_C_FLOAT_FORMAT
-AC_CHECK_HEADERS(ieee754.h ieeefp.h floatingpoint.h nan.h)
+AC_CHECK_HEADERS(ieee754.h ieeefp.h floatingpoint.h nan.h math.h)
 
 if [[ "x$WANT_JIT_FPU" = "xyes" -a "x$FPE_CORE_TEST_ORDER" != "xieee" ]]; then
 dnl  AC_MSG_WARN([Sorry, JIT-FPU supports only the "ieee" FPE implementation])
@@ -1122,9 +1122,6 @@ if [[ "x$WANT_JIT" = "xno" ]]; then
 fi
 
 SYSSRCS="$SYSSRCS $MONSRCS"
-
-AC_CHECK_FUNCS(isnan isinf)		dnl C99
-AC_CHECK_FUNCS(isnanl isinfl)	dnl IEEE ?
 
 dnl Exclusive spcflags handling
 if [[ "x$WANT_SPCFLAGS_EXCL" = "xyes" ]]; then
