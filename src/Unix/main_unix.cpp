@@ -40,6 +40,7 @@
 #include "vm_alloc.h"
 #include "hardware.h"
 #include "parameters.h"
+#include <SDL/SDL_timer.h>
 
 #define DEBUG 1
 #include "debug.h"
@@ -71,6 +72,15 @@ extern "C" char *strdup(const char *s)
  */
 int main(int argc, char **argv)
 {
+	long i = 0;
+	long x = SDL_GetTicks();
+	while(x == SDL_GetTicks())
+		;
+	x = SDL_GetTicks();
+	while(x == SDL_GetTicks())
+		i++;
+	printf("SDL_GetTicks = 1 / %d\n", i);
+
 	// Initialize variables
 	RAMBaseHost = NULL;
 	ROMBaseHost = NULL;
@@ -165,7 +175,7 @@ int main(int argc, char **argv)
 	TTRAMBase = (uint32)TTRAMBaseHost;
 #endif
 sracka ends here */
-	RAMBaseHost = (uint8 *)malloc((14+2+32)*1024*1024);
+	RAMBaseHost = (uint8 *)malloc((14+2)*1024*1024 + TTRAMSize);
 	MEMBaseDiff = (uintptr)RAMBaseHost;
 	RAMBase = 0;
 	ROMBase = 0xe00000;
@@ -275,6 +285,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.40  2001/09/08 23:42:26  joy
+ * all the shitty memory management disabled for now.
+ *
  * Revision 1.39  2001/08/29 18:36:25  milan
  * Integration of TV conf. GUI, small patches of MMU and debugger
  *
