@@ -45,8 +45,6 @@ typedef struct {
 // Floppy device
 typedef struct {
   char path[512];
-  bool inserted;
-  // bool enforceRemount;
 } bx_floppy_options_t;
 
 typedef enum {
