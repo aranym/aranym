@@ -1,3 +1,12 @@
+2002/04/21 - joy
+- ExtFs: Dpathconf(DP_XATTR) disabled altogether. It was causing problems
+  in Thing (Thing didn't refresh source window of 'move' operation).
+- $7135 illegal insn (debug print) was not printing until LF was sent.
+  fflush added.
+- SDL GUI, taken from hatari. Not working yet, but soon will be.
+- atari sound driver (from Didier) included in atari/sound CVS folder.
+
+
 2002/04/20 - joy
 - audio.cpp - wrong memset() addr fixed. No more crashes, sound works
   like a charm.
