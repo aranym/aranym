@@ -35,7 +35,7 @@ struct disk_geom
 int drive_fd[2] = { -1, -1 };
 
 int dma_mode,dma_scr,dma_car,dma_sr;
-int fdc_command,fdc_track,fdc_sector,fdc_data,fdc_int,fdc_status;
+int fdc_command,fdc_track,fdc_sector,fdc_data,fdc_status;
 
 void remove_floppy()
 {
@@ -220,8 +220,10 @@ void fdc_exec_command (void)
 	}
 	else if ((fdc_command & 0xf0) == 0xd0)
 	{
-		if (fdc_command == 0xd8) fdc_int=1;
-		else if (fdc_command == 0xd0) fdc_int=0;
+		if (fdc_command == 0xd8)
+			mfp.setGPIPbit(0x20, 0);
+		else if (fdc_command == 0xd0)
+			mfp.setGPIPbit(0x20, 0x20);
 	}
 	else
 	{
@@ -334,10 +336,7 @@ void fdc_exec_command (void)
 	if (motor)
 		fdc_status |= 0x80;
 	if (!(fdc_status & 1))
-	{
-		HWput_b(0xfffa0d, HWget_b(0xfffa0d) | (0x80 & HWget_b(0xfffa09)));
-		HWput_b(0xfffa01, HWget_b(0xfffa01) & ~0x20);
-	}
+		mfp.setGPIPbit(0x20, 0);
 }
 
 

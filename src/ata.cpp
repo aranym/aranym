@@ -2573,8 +2573,7 @@ bx_hard_drive_c::raise_interrupt()
 		BX_DEBUG(("Raising interrupt %d {%s}", irq, DEVICE_TYPE_STRING));
 	    BX_HD_THIS devices->pic->raise_irq(irq);
 #endif
-		HWput_b(0xfffa0d, HWget_b(0xfffa0d) | (0x80 & HWget_b(0xfffa09)));
-		HWput_b(0xfffa01, HWget_b(0xfffa01) & ~0x20);
+		mfp.setGPIPbit(0x20, 0);
       }
 }
 

@@ -6,7 +6,7 @@
 #include "memory.h"
 #include "acia.h"
 
-#define DEBUG	0
+#define DEBUG 0
 #include "debug.h"
 
 static const int HW = 0xfffc00;
@@ -94,7 +94,7 @@ void IKBD::doTransmit(void)
 	status |= 0x81;
 	inTransmit = true;
 	/* signal ACIA interrupt */
-	mfp.IRQ(6, 1);
+	mfp.setGPIPbit(0x10, 0);
 }
 
 static inline uint8 int2bcd(int a)
