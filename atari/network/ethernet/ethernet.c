@@ -370,7 +370,7 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 			if (gif == NONE) gif = NETMASK;
 
 			nfCall((ETH(gif), 0 /* ethX */, buffer, sizeof(buffer)));
-			return (inet_aton(buffer, ifr->ifru.data)) ? 0 : -1;
+			return (inet_aton(buffer, &(ifr->ifru.data))) ? 0 : -1;
 
 		case SIOCSIFNETMASK:
 		case SIOCSIFFLAGS:
