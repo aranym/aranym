@@ -16,13 +16,12 @@
 
 static struct option const long_options[] =
 {
-  {"ttram", required_argument, 0, 'T'},
+  {"fastram", required_argument, 0, 'T'},
   {"rom", required_argument, 0, 'R'},
   {"resolution", required_argument, 0, 'r'},
   {"debug", no_argument, 0, 'D'},
   {"fullscreen", no_argument, 0, 'f'},
   {"direct_truecolor", no_argument, 0, 't'},
-  {"grab_mouse", no_argument, 0, 'g'},
   {"monitor", required_argument, 0, 'm'},
   {"disk", required_argument, 0, 'd'},
   {"help", no_argument, 0, 'h'},
@@ -37,10 +36,9 @@ uint8 start_debug = 0;			// Start debugger
 bool fullscreen = false;			// Boot in Fullscreen
 int8 boot_color_depth = -1;	// Boot in color depth
 int8 monitor = -1;				// VGA
-extern uint32 TTRAMSize;		// TTRAM size
-int TTRAMSizeMB;
+extern uint32 FastRAMSize;		// FastRAM size
+int FastRAMSizeMB;
 bool direct_truecolor = false;
-bool grab_mouse = false;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 
 bx_options_t bx_options;
@@ -48,7 +46,8 @@ bx_options_t bx_options;
 // configuration file 
 struct Config_Tag global_conf[]={
 	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
-	{ "FastRAM", Int_Tag, &TTRAMSizeMB},
+	{ "FastRAM", Int_Tag, &FastRAMSizeMB},
+	{ "Cookie_MCH", HexLong_Tag, &bx_options.cookies._mch},
 	{ "DebugOnStart", Bool_Tag, &start_debug},
 	{ NULL , Error_Tag, NULL }
 };
@@ -74,17 +73,16 @@ void usage (int status) {
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
   printf ("\
 Options:
-  -R, --rom NAME			 ROM file NAME\n\
-  -T, --ttram SIZE			 TT-RAM size (in MB)\n\
-  -D, --debug				 start debugger\n\
-  -f, --fullscreen			 start in fullscreen\n\
-  -t, --direct_truecolor	 patch TOS to enable direct true color, implies -f -r 16\n\
-  -g, --grab_mouse			 ARAnyM grabs mouse and keyboard control in X-Windows\n\
-  -r, --resolution <X>		 boot in X color depth [1,2,4,8,16]\n\
-  -m, --monitor <X>			 attached monitor: 0 = VGA, 1 = TV\n\
-  -d, --disk CHAR:ROOTPATH	 filesystem assignment e.g. d:/atari/d_drive\n\
-  -h, --help				 display this help and exit\n\
-  -V, --version				 output version information and exit\n\
+  -R, --rom NAME             ROM file NAME\n\
+  -F, --fastram SIZE         FastRAM size (in MB)\n\
+  -D, --debug                start debugger\n\
+  -f, --fullscreen           start in fullscreen\n\
+  -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n\
+  -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
+  -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
+  -d, --disk CHAR:ROOTPATH   filesystem assignment e.g. d:/atari/d_drive\n\
+  -h, --help                 display this help and exit\n\
+  -V, --version              output version information and exit\n\
 ");
   exit (status);
 }
@@ -145,6 +143,7 @@ void preset_ide() {
 
 void preset_cfg() {
   preset_ide();
+  bx_options.cookies._mch = 0x00003000; // Falcon030
 }
 
 /* this is more or less a hack but it makes sense to put CDROM under IDEx config option */
@@ -167,10 +166,9 @@ int decode_switches (FILE *f, int argc, char **argv) {
 	while ((c = getopt_long (argc, argv,
 							 "R:" /* ROM file */
 							 "D"  /* debugger */
-							 "T:" /* TT-RAM */
+							 "F:" /* TT-RAM */
 							 "f"  /* fullscreen */
 							 "t"  /* direct truecolor */
-							 "g"  /* grab mouse */
 							 "r:" /* resolution */
 							 "m:" /* attached monitor */
 							 "d:" /* filesystem assignment */
@@ -198,10 +196,6 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				direct_truecolor = true;
 				fullscreen = true;
 				boot_color_depth = 16;
-				break;
-
-			case 'g':
-				grab_mouse = true;
 				break;
 
 			case 'm':
@@ -253,9 +247,9 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				}
 				break;
 
-			case 'T':
-				TTRAMSizeMB = atoi(optarg);
-				TTRAMSize = TTRAMSizeMB * 1024 * 1024;
+			case 'F':
+				FastRAMSizeMB = atoi(optarg);
+				FastRAMSize = FastRAMSizeMB * 1024 * 1024;
 				break;
 
 			default:
@@ -294,13 +288,13 @@ static void decode_ini_file(FILE *f) {
 	fprintf(f, "Using config file: '%s'\n", rcfile);
 
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
-	TTRAMSize = TTRAMSizeMB * 1024 * 1024;
+	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
 	process_config(f, rcfile, diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, diskd_configs, "[IDE1]", true);
 }
 
 int save_settings(const char *fs) {
-	TTRAMSizeMB = TTRAMSize / 1024 / 1024;
+	FastRAMSizeMB = FastRAMSize / 1024 / 1024;
 	update_config(fs,global_conf,"[GLOBAL]");
 	update_config(fs,diskc_configs,"[IDE0]");
 	update_config(fs,diskd_configs,"[IDE1]");
