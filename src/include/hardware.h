@@ -18,4 +18,8 @@ extern void HWput_l(uaecptr addr, uae_u32 l);
 extern void HWput_w(uaecptr addr, uae_u32 w);
 extern void HWput_b(uaecptr addr, uae_u32 b);
 
+extern uaecptr showPC(void);	// for debugging only
+
+extern void MakeMFPIRQ(int);
+extern void ikbd_send(int);
 #endif 

@@ -48,6 +48,8 @@ public:
 	uae_u8 data;
 };
 
+/*****************************************************************/
+
 class MFP {
 private:
 	uae_u8 GPIP_data;
@@ -68,5 +70,5 @@ public:
 	MFP();
 	uae_u8 handleRead(uaecptr);
 	void handleWrite(uaecptr, uae_u8);
-	void tick();
+	void IRQ(int);
 };

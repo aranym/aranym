@@ -1,27 +1,40 @@
 /* Joy 2001 */
 
 class ACIA {
-private:
-	bool midi;
+protected:
+	uaecptr baseaddr;
 	uae_u8 status;
 	uae_u8 mode;
 	uae_u8 rxdata;
 	uae_u8 txdata;
 
 public:
-	ACIA(bool);
-	uae_u8 getStatus();
-	void setMode(uae_u8 value);
-	uae_u8 getData();
-	void setData(uae_u8);
+	ACIA(uaecptr);
+	uae_u8 handleRead(uaecptr addr);
+	void handleWrite(uaecptr addr, uae_u8 value);
+	virtual uae_u8 getStatus() { return 2; };
+	virtual void setMode(uae_u8 value) {};
+	virtual uae_u8 getData() { return 0xa2; };
+	virtual void setData(uae_u8) {};
 };
 
+#define MAXBUF 		16383
 class IKBD: public ACIA {
+private:
+	int buffer[MAXBUF];
+	int ikbd_inbuf;
+	int ikbd_bufpos;
+
 public:
-	IKBD() : ACIA(false) {};
+	IKBD();
+	virtual uae_u8 getStatus();
+	virtual void setMode(uae_u8 value);
+	virtual uae_u8 getData();
+	virtual void setData(uae_u8);
+	void ikbd_send(int value);
 };
 
 class MIDI: public ACIA {
 public:
-	MIDI() : ACIA(true) {};
+	MIDI() : ACIA(0xfffc02) {};
 };
