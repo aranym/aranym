@@ -1,3 +1,8 @@
+2002/11/30 - patrice
+- videl: autozoom does not work correctly if target is smaller than source.
+- hostscreen: added OpenGL rendering for the Atari screen.
+
+
 2002/11/09 - milan
 - sync with BasiliskII: some obsolete structures removed, support for Opteron
 

@@ -44,6 +44,7 @@ Patrice Mandin
 - DSP M56001 emulation
 - IKBD/ACIA rewrite, joystick support
 - the SDL-MiNT port of ARAnyM
+- Videl autozoom
 - close examination of our code and finding obvious and not-so-obvious
   bugs (IDE, parameters handling, TOS patches)
 
