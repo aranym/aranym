@@ -1,6 +1,8 @@
 General (all platforms) known bugs:
 -----------------------------------
 
+=== with known solution or workaround:
+
 Bug:
   Desktop viewer (or certain other VT52 activity) touches wrong memory
   which causes ARAnyM to quit unexpectedly.
@@ -26,17 +28,6 @@ Solution:
 ---
 
 Bug:
-  After hard reboot (Ctrl+Break) keyboard/mouse does not work.
-
-Reason:
-  Probably unitialized IKBD.
-
-Solution:
-  Wait for next release, it should be fixed then.
-
----
-
-Bug:
   ARAnyM crashes after start with message:
    "Xlib: async reply ...."
 
@@ -45,6 +36,22 @@ Reason:
 
 Solution:
   Configure ARAnyM with --disable-sdltimer and recompile.
+
+---
+
+Bug:
+  After hard reboot (Ctrl+Break) keyboard/mouse does not work.
+
+Reason:
+  Probably unitialized IKBD.
+
+Solution:
+  Wait for next release, it should be fixed then.
+
+
+=== unknown solutions yet:
+
+Videlity Configure Tool does not work. It used to work, though. No idea.
 
 
 Platform dependent known bugs and limitations:

@@ -29,16 +29,12 @@ Things for 1.0 release:
       This would be useful, not to need the C compiler for this, woudn't be?
     - .xfs filesystem modules for MagiC and MiNT.
 
-- sound using GSXB library
-
 - document the way the aranym works - especially the hardware emulation
   (ARAnyM Hackers Guide)
 
 - document the command line switches, keyboard combos and write Users Guide.
 
 - OS-depend include files, not so redundant includes
-
-- fix uae FPU (add 68040 specific instructions)
 
 - use a better sigsegv handler, some inspirations in BasiliskII and JIT
 
