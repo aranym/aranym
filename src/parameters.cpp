@@ -14,7 +14,7 @@
 
 static struct option const long_options[] =
 {
-  {"fastram", required_argument, 0, 'T'},
+  {"fastram", required_argument, 0, 'F'},
   {"floppy", required_argument, 0, 'a'},
   {"resolution", required_argument, 0, 'r'},
   {"debug", no_argument, 0, 'D'},
