@@ -81,7 +81,7 @@ void ParallelFile::setData(uint8 value)
 		}
 	}
 	fprintf(handle,"%c",value);	
-	fflush(handle);	/* FIXME: really mandatory ? */
+	fflush(handle);	/* useful if you want to see the output before EOLN */
 }
 
 uint8 ParallelFile::getBusy()
