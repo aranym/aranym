@@ -40,7 +40,7 @@ Didier MEQUIGNON <didier.mequignon@wanadoo.fr>
 - audio support in ARAnyM
 - Atari XBIOS sound driver (atari/sound/*)
 
-Patrice Mandin <mandin.patrice@wanadoo.fr>
+Patrice Mandin <pmandin@caramail.com>
 - DSP M56001 emulation
 - IKBD/ACIA rewrite, joystick support
 - the SDL-MiNT port of ARAnyM
