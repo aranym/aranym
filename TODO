@@ -3,9 +3,9 @@ Things for 1.0 release:
 
 - fix known BUGS
 
-- implement native interface for accessing host parameters. Use it for Clocky
-  (mouse wrap at window border), aranymfs (auto editor of config.sys) and
-  EmuTOS (harddrives and more).
+- [50%] implement native interface for accessing host parameters. Use it for
+  Clocky (mouse wrap at window border), aranymfs (auto editor of config.sys)
+  and EmuTOS (harddrives and more).
 
 - printing to file (/dev/lp)
 
@@ -27,7 +27,7 @@ Things for 1.0 release:
       This would be useful, not to need the C compiler for this, woudn't be?
     - .xfs filesystem modules for MagiC and MiNT.
 
-- document the way the aranym works - especially the hardware emulation
+- [90%] document the way the aranym works - especially the hardware emulation
   (ARAnyM Hackers Guide)
 
 - document the command line switches, keyboard combos and write Users Guide.
@@ -37,4 +37,5 @@ all Atari power users/MiNTers. Key elements are TCP/IP networking, large
 screen resolution in high color/true color, fast CPU/FPU and plenty of RAM.
 
 Estimated time for 1.0 release: depends on number of attracted and helpful
-programmers. Ideally before end of 2002 but only if you help us...
+programmers. Ideally before end of 2002 but possible only if enough people
+will be interested.

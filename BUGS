@@ -1,21 +1,6 @@
 General (all platforms) known bugs:
 -----------------------------------
 
-=== with known solution or workaround:
-
-Bug:
-  Desktop viewer (or certain other VT52 activity) touches wrong memory
-  which causes ARAnyM to quit unexpectedly.
-
-Reason:
-  Something regarding the blitter emulation
-  as with NVDI/fVDI installed it does not happen.
-
-Solution:
-  Install NVDI or fVDI. And help us debug this issue.
-
----
-
 Bug:
   PureC cannot open project file on host filesystem.
 
@@ -25,17 +10,22 @@ Reason:
 Solution:
   Patch your PureC with supplied patch.
 
-=== unknown solutions yet:
 
-Videlity Configure Tool does not work. It used to work, though. No idea.
+Bug:
+  Videlity Configure Tool does not work (hangs during launching)
+
+Reason:
+  Dirty delay loop - while(clock() == certain_value). This may not work
+  even under multitasking system and does not work in current ARAnyM where
+  TimerC interrupts come in pairs (100 Hz host interrupt).
+
+Solution:
+  General solution is to get a more precise host timer interrupt (at least
+  200 Hz). Specific (and suggested) solution is to stop using Videlity and
+  replace it with BlowUP030 or something similar.
 
 
 Platform dependent known bugs and limitations:
 ----------------------------------------------
-
-There are three different FPU emulators in ARAnyM, and only the IEEE
-version has full 68040 FPU instruction set. On non-Linux-i386 platforms
-the uae FPU emulation is used and so some 68040 specific FPU instructions
-are missing. This will be fixed eventually.
 
 MacOS X does not like floating videoram. Compile with --enable-fixedvideoram.

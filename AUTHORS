@@ -1,5 +1,5 @@
-The ARAnyM core, glue and additional features were written (or adapted) by the
-following main ARAnyM developers:
+The ARAnyM core, glue and additional features were written or adapted from
+the projects mentioned below by the following main ARAnyM developers:
 
 Ctirad Fertr <phanatic@volny.cz>
 - the main idea of new Atari machine
@@ -13,7 +13,7 @@ Milan Jurik <M.Jurik@sh.cvut.cz>
 - portability
 - ndebug (New Debug)
 - MMU040 (memory protection unit)
-- JIT
+- JIT (just-in-time compiler for CPU and FPU)
 
 Stanislav Opichal <opichals@seznam.cz>
 - aranymfs: host filesystem access based on MetaDOS driver
@@ -27,11 +27,13 @@ Petr Stehlik <pstehlik@sophics.cz>
 - 68040 friendly TOS
 - host input/output (keyboard and mouse, parallel port)
 - XHDI interface
-- release management
+- SDL GUI
+- NatFeats
+- release manager and webmaster
 
 Johan Klockars <rand@cd.chalmers.se>
 - fVDI author, helps with ARAnyM fVDI driver
-- fVDI driver polyline implementation
+- fVDI driver polyline implementation and bitblt speedup
 - PAGE_MASK addressing speedup
 
 Didier MEQUIGNON <didier.mequignon@wanadoo.fr>
@@ -40,6 +42,7 @@ Didier MEQUIGNON <didier.mequignon@wanadoo.fr>
 
 Patrice Mandin
 - DSP M56001 emulation
+- IKBD/ACIA rewrite, joystick support
 - the SDL-MiNT port of ARAnyM
 - close examination of our code and finding obvious and not-so-obvious
   bugs (IDE, parameters handling, TOS patches)
