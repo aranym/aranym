@@ -61,8 +61,6 @@ const int SIG_STACK_SIZE = SIGSTKSZ;	// Size of signal stack
 int CPUType;
 int FPUType;
 
-static int zero_fd = -1;				// FD of /dev/zero
-
 SDL_TimerID my_timer_id;
 
 static uint32 mapped_ram_rom_size;		// Total size of mmap()ed RAM/ROM area
@@ -71,7 +69,7 @@ void init_fdc();	// fdc.cpp
 
 extern int irqindebug;
 
-bool grab_mouse = true;
+bool grab_mouse = false;
 
 SDL_Surface *surf = NULL;
 
@@ -175,37 +173,19 @@ static void check_event(void)
 	}
 }
 
-Uint32 my_callback_function(Uint32 interval, void *param)
-{
-	static int VBL_counter = 0;
-	static int Refresh_counter = 0;
-
-	if (!debugging || irqindebug)
-		MakeMFPIRQ(5);
-
-	if (++VBL_counter == 4) {
-		VBL_counter = 0;
-
-		if (!debugging || irqindebug) {
-			TriggerVBL();
-			check_event();
-		}
-#ifdef UPDATERECT
-		if (UpdateScreen && ++Refresh_counter == REFRESH_FREQ)
-		{
-			Refresh_counter = 0;
+void update_screen() {
 #ifdef COPYVRAM
 			if (SDL_MUSTLOCK(surf))
 				if (SDL_LockSurface(surf)<0) {
 					printf("Couldn't lock surface to refresh!\n");
-					return 5;
+					return;
 			}
 
 			VideoRAMBaseHost = (uint8 *)surf->pixels;
 			uint16 *fvram = (uint16*)get_real_address_direct(vram_addr/*ReadMacInt32(0x44e)*/);
 			uint16 *hvram = (uint16 *)VideoRAMBaseHost;
 			int mode = getVideoMode();
-#ifdef CONVPLANES
+
 			uint8 destBPP  = surf->format->BytesPerPixel;
 			if (mode < 16) {
 			    //BEGIN
@@ -322,30 +302,37 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 #endif
 			}
 			        //for(int i=0; i < 640*480*2; i++) hvram[i] = 0xffff - fvram[i];
-				
-#else // CONVPLANES
-			// take just the first plane
-			if (mode < 16) {
-				// convert bitplanes
-				for(int i=0; i < (80*480/2); i++) {
-					uint16 b = fvram[i*mode];
-					b = (b >> 8) | ((b & 0xff) << 8);	// byteswap
-					for(int j=0; j<16; j++) {
-						uint16 v = 0xffff;
-						if (b & (1 << (15-j)))
-							v = 0;
-						hvram[(i*16+j)] = v;
-					}
-				}
-			} else
-			  memcpy(hvram, fvram, 640*480*2);
-#endif // CONVPLANES
 #endif	// COPYVRAM
+
 			SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, 640, 480);
+}
+
+Uint32 my_callback_function(Uint32 interval, void *param)
+{
+	static int VBL_counter = 0;
+	static int Refresh_counter = 0;
+
+	if (!debugging || irqindebug)
+		MakeMFPIRQ(5);
+
+	if ((VBL_counter % 2) == 1) {
+		if (!debugging || irqindebug) {
+			TriggerVBL();
+			check_event();	// check keyboard/mouse 100 times per second
+		}
+	}
+	if (++VBL_counter == 4) {
+		VBL_counter = 0;
+
+#ifdef UPDATERECT
+		if (UpdateScreen && ++Refresh_counter == REFRESH_FREQ)
+		{
+			Refresh_counter = 0;
+			update_screen();
 		}
 #endif	// UPDATERECT
 	}
-	return 5;
+	return 5;	// come back in 5 miliseconds, if possible
 }
 
 /*
@@ -494,40 +481,19 @@ int main(int argc, char **argv)
 	// Initialize variables
 	RAMBaseHost = NULL;
 	ROMBaseHost = NULL;
-	TTRAMBaseHost = NULL;
+	//TTRAMBaseHost = NULL;
 	srand(time(NULL));
 	tzset();
 
-	// Open /dev/zero
-	zero_fd = open("/dev/zero", O_RDWR);
-	if (zero_fd < 0) {
-		sprintf(str, "Couldn't open /dev/zero\n", strerror(errno));
-		ErrorAlert(str);
-		QuitEmulator();
-	}
-
-	// Read RAM size
-	RAMSize = 14 * 1024 * 1024;	// Round down to 1MB boundary
-	if (RAMSize < 1024*1024) {
-		RAMSize = 1024*1024;
-	}
-
-	const uint32 page_size = getpagesize();
-	const uint32 page_mask = page_size - 1;
-	const uint32 aligned_ram_size = (RAMSize + page_mask) & ~page_mask;
-	const uint32 aligned_ttram_size = (TTRAMSize + page_mask) & ~page_mask;
-	mapped_ram_rom_size = aligned_ram_size + 0x100000 + 0x100000 + aligned_ttram_size;
-
-	// Create areas for Mac RAM and ROM
-	// gb-- Overkill, needs to be cleaned up. Probably explode it for either
-	// real or direct addressing mode.
-	RAMBaseHost = (uint8 *)mmap(0, mapped_ram_rom_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, zero_fd, 0);
-	if (RAMBaseHost == (uint8 *)MAP_FAILED) {
+	// Create areas for Atari ST-RAM, ROM, HW registers and TT-RAM
+	int MB = (1 << 20);
+	RAMBaseHost = (uint8 *)malloc((16+32)*MB);
+	if (RAMBaseHost == NULL) {
 		ErrorAlert("Not enough memory\n");
 		QuitEmulator();
 	}
 	ROMBaseHost = RAMBaseHost + ROMBase;
-	TTRAMBaseHost = RAMBaseHost + TTRAMBase;
+	//TTRAMBaseHost = RAMBaseHost + TTRAMBase;
 
 	// Initialize MEMBaseDiff now so that Host2MacAddr in the Video module
 	// will return correct results
@@ -537,7 +503,7 @@ int main(int argc, char **argv)
 	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
 	D(bug("ST-RAM starts at %p (%08x)\n", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)\n", ROMBaseHost, ROMBase));
-	D(bug("TT-RAM starts at %p (%08x)\n", TTRAMBaseHost, TTRAMBase));
+	//D(bug("TT-RAM starts at %p (%08x)\n", TTRAMBaseHost, TTRAMBase));
 	D(bug("VideoRAM starts at %p (%08x)\n", VideoRAMBaseHost, VideoRAMBase));
 	// Get rom file path from preferences
 //	const char *rom_path = "ROM";
@@ -610,14 +576,7 @@ void QuitEmulator(void)
 	ExitAll();
 
 	// Free ROM/RAM areas
-	if (RAMBaseHost != (uint8 *)MAP_FAILED) {
-		munmap((caddr_t)RAMBaseHost, mapped_ram_rom_size);
-		RAMBaseHost = NULL;
-	}
-
-	// Close /dev/zero
-	if (zero_fd > 0)
-		close(zero_fd);
+	free(RAMBaseHost);
 
 	exit(0);
 }
