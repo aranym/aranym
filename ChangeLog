@@ -1,3 +1,12 @@
+2001/09/11 [ARAnyM 0.0.7] - joy
+- real hard fight with Aniplayer. I found that it checks whether there's
+  a $CAFEFADE number at $F4000014. This check was killing aranym since
+  my check_ram_boundary() was broken (due to a number of stupid bugs).
+  Anyway, this CAFEFADE signals that there can be a hardware located at
+  that address already (or is it something in MagiCMac/MagiCPC?) and that
+  is a bad sign for us since we wanted to have the host videoram there.
+
+
 2001/09/10 [ARAnyM 0.0.6] - joy
 - proper check_ram_boundary in memory.h. Has to be always enabled, otherwise
   programs like e.g. Aniplayer can kill the whole aranym..
