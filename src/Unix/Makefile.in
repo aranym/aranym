@@ -246,7 +246,7 @@ mrproper: distclean
 bindistdirs:
 	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/createdisk tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
-bindist: $(APP) $(APP_DI) $(APP).1.gz bindistdirs
+bindist: $(APP) $(APP_DI) $(TAPIF) $(APP).1.gz bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then\
 	$(INSTALL_PROGRAM) $(APP_IFC) tmpdist$(bindir)/$(APP_IFC);\

@@ -78,4 +78,6 @@ extern void deactivate_debugger(void);
 #define D2(x) ;
 #endif
 
+#define infoprint panicbug
+
 #endif

@@ -332,7 +332,7 @@ bool InitTOSROM(void)
 	}
 #endif
 
-	panicbug("TOS 4.04 loading... [OK]");
+	infoprint("TOS 4.04 loading... [OK]");
 	return true;
 }
 
@@ -355,7 +355,7 @@ bool InitEmuTOS(void)
 	bool bEmuOK = (fread(ROMBaseHost, 1, RealROMSize, f) > 0);
 	fclose(f);
 	if (bEmuOK) {
-		panicbug("EmuTOS %02x/%02x/%04x loading from '%s'... [OK]",
+		infoprint("EmuTOS %02x/%02x/%04x loading from '%s'... [OK]",
 			ROMBaseHost[0x18],
 			ROMBaseHost[0x19],
 			(ROMBaseHost[0x1a] << 8) | ROMBaseHost[0x1b],
@@ -542,6 +542,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.93  2003/03/28 13:32:57  milan
+ * Joy's version capabilities implemented
+ *
  * Revision 1.92  2003/02/27 22:59:52  joy
  * ethernet reworked
  *

@@ -104,7 +104,7 @@ void HostScreen::openGUI()
 {
 	D(bug("open GUI"));
 	if (isGUIopen()) {
-		panicbug("GUI is already open!");
+		D(bug("GUI is already open!"));
 		return;
 	}
 	allocateBackgroundSurf();
@@ -1184,6 +1184,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.34  2003/02/09 14:51:04  pmandin
+ * Filtered parameter for OpenGL rendering
+ *
  * Revision 1.33  2002/12/02 16:54:38  milan
  * non-OpenGL support
  *

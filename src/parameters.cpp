@@ -547,14 +547,14 @@ void early_cmdline_check(int argc, char **argv) {
 			usage(0);
 			exit(0);
 		} else if ((strcmp(argv[c], "-V") == 0) || (strcmp(argv[c], "--version") == 0)) {
-			panicbug("Capabilities:");
-			panicbug("JIT compiler     : %s", (USE_JIT == 1) ? "enabled" : "disabled");
-			panicbug("Full MMU         : %s", (FULLMMU == 1) ? "enabled" : "disabled");
-			panicbug("DSP              : %s", (DSP_EMULATION == 1) ? "enabled" : "disabled");
-			panicbug("DSP disassembler : %s", (DSP_DISASM == 1) ? "enabled" : "disabled");
-			panicbug("OpenGL support   : %s", (ENABLE_OPENGL == 1) ? "enabled" : "disabled");
-			panicbug("HOSTFS support   : %s", (HOSTFS_SUPPORT == 1) ? "enabled" : "disabled");
-			panicbug("ARANYMFS support : %s", (EXTFS_SUPPORT == 1) ? "enabled (obsolete)" : "disabled");
+			infoprint("Capabilities:");
+			infoprint("JIT compiler     : %s", (USE_JIT == 1) ? "enabled" : "disabled");
+			infoprint("Full MMU         : %s", (FULLMMU == 1) ? "enabled" : "disabled");
+			infoprint("DSP              : %s", (DSP_EMULATION == 1) ? "enabled" : "disabled");
+			infoprint("DSP disassembler : %s", (DSP_DISASM == 1) ? "enabled" : "disabled");
+			infoprint("OpenGL support   : %s", (ENABLE_OPENGL == 1) ? "enabled" : "disabled");
+			infoprint("HOSTFS support   : %s", (HOSTFS_SUPPORT == 1) ? "enabled" : "disabled");
+			infoprint("ARANYMFS support : %s", (EXTFS_SUPPORT == 1) ? "enabled (obsolete)" : "disabled");
 			exit (0);
 		}
 	}
