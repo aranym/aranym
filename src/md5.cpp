@@ -270,11 +270,13 @@ bool MD5::computeSum(FILE *f, unsigned char digest[16])
 	int n;
 
 	MD5Init();
+	rewind(f);
 	while ((n = fread(buf, 1, sizeof(buf), f)) > 0)
 		MD5Update(buf, n);
 	MD5Final(digest);
 	if (ferror(f))
 		return false;
+	rewind(f);
 	return true;
 }
 
