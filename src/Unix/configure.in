@@ -1,0 +1,360 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl Written in 1999 by Christian Bauer et al.
+
+AC_INIT(main_unix.cpp)
+AC_PREREQ(2.12)
+AC_CONFIG_HEADER(config.h)
+
+dnl Options.
+AC_ARG_ENABLE(vosf,          [  --enable-vosf           enable video on SEGV signals [default=no]], [WANT_VOSF=$enableval], [WANT_VOSF=no])
+
+dnl Addressing modes.
+AC_ARG_ENABLE(addressing,
+[  --enable-addressing=AM  specify the addressing mode to use [default=fastest]],
+[ case "$enableval" in
+    real) 	ADDRESSING_TEST_ORDER="real";;
+    direct)	ADDRESSING_TEST_ORDER="direct";;
+    banks)	ADDRESSING_TEST_ORDER="banks";;
+    fastest)ADDRESSING_TEST_ORDER="direct banks";;
+    *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: fastest, real, direct, banks]);;
+  esac
+],
+[ ADDRESSING_TEST_ORDER="direct banks"
+])
+
+dnl External packages.
+AC_ARG_WITH(mon,             [  --with-mon              use mon as debugger [default=yes]], [WANT_MON=$withval], [WANT_MON=yes])
+
+dnl Canonical system information.
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+
+OS_TYPE=linux
+DEFINES="$DEFINES -DOS_$OS_TYPE"
+
+dnl Target CPU type.
+CPU_TYPE=i386
+HAVE_I386=yes
+DEFINES="$DEFINES -DCPU_$CPU_TYPE"
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_CC_C_O
+AC_PROG_CPP
+AC_PROG_CXX
+AC_PROG_MAKE_SET
+AC_PROG_INSTALL
+
+dnl We use mon if possible.
+MONSRCS=
+if [[ "x$WANT_MON" = "xyes" ]]; then
+  AC_MSG_CHECKING(for mon)
+  mon_srcdir=../../../mon/src
+  if grep mon_init $mon_srcdir/mon.h >/dev/null 2>/dev/null; then
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(ENABLE_MON)
+    MONSRCS="$mon_srcdir/mon.cpp $mon_srcdir/mon_6502.cpp $mon_srcdir/mon_z80.cpp $mon_srcdir/mon_cmd.cpp $mon_srcdir/mon_disass.cpp $mon_srcdir/mon_ppc.cpp $mon_srcdir/disass/floatformat.c $mon_srcdir/disass/i386-dis.c $mon_srcdir/disass/m68k-dis.c $mon_srcdir/disass/m68k-opc.c"
+    CXXFLAGS="$CXXFLAGS -I$mon_srcdir -I$mon_srcdir/disass"
+    AC_CHECK_LIB(readline, readline)
+    AC_CHECK_LIB(termcap, tputs)
+    AC_CHECK_HEADERS(readline.h history.h readline/readline.h readline/history.h)
+  else
+    AC_MSG_RESULT(no)
+    AC_MSG_WARN([Could not find mon, ignoring --with-mon.])
+    WANT_MON=no
+  fi
+fi
+
+dnl Checks for libraries.
+AC_CHECK_LIB(posix4, sem_init)
+
+dnl We want pthreads. Try libpthread first, then libc_r (FreeBSD), then PTL.
+HAVE_PTHREADS=yes
+AC_CHECK_LIB(pthread, pthread_create, , [
+  AC_CHECK_LIB(c_r, pthread_create, , [
+    AC_CHECK_LIB(PTL, pthread_create, , [
+      HAVE_PTHREADS=no
+    ])
+  ])
+])
+if [[ "x$HAVE_PTHREADS" = "xyes" ]]; then
+  AC_DEFINE(HAVE_PTHREADS)
+fi
+AC_CHECK_FUNCS(pthread_cancel)
+
+dnl If POSIX.4 semaphores are not available, we emulate them with pthread mutexes.
+SEMSRC=
+AC_CHECK_FUNCS(sem_init, , [
+  if test "x$HAVE_PTHREADS" = "xyes"; then
+    SEMSRC=posix_sem.cpp
+  fi
+])
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_BIGENDIAN
+AC_C_CONST
+AC_C_INLINE
+AC_CHECK_SIZEOF(short, 2)
+AC_CHECK_SIZEOF(int, 4)
+AC_CHECK_SIZEOF(long, 4)
+AC_CHECK_SIZEOF(long long, 8)
+AC_CHECK_SIZEOF(void *, 4)
+AC_TYPE_OFF_T
+AC_CHECK_TYPE(loff_t, off_t)
+AC_TYPE_SIZE_T
+AC_TYPE_SIGNAL
+AC_HEADER_TIME
+AC_STRUCT_TM
+
+dnl Checks for library functions.
+AC_CHECK_FUNCS(strdup cfmakeraw)
+AC_CHECK_FUNCS(clock_gettime timer_create)
+
+CAN_NATIVE_M68K=no
+WANT_NATIVE_M68K=no
+
+SYSSRCS="$SEMSRC $UISRCS $MONSRCS $EXTRASYSSRCS"
+
+dnl Define a macro that translates a yesno-variable into a C macro definition
+dnl to be put into the config.h file
+dnl $1 -- the macro to define
+dnl $2 -- the value to translate
+AC_DEFUN(AC_TRANSLATE_DEFINE, [
+    if [[ "x$2" = "xyes" ]]; then
+        AC_DEFINE($1)
+    fi
+])
+
+dnl Check if we can mmap 0x2000 bytes from 0x0000
+AC_CACHE_CHECK("whether we can map Low Memory area 0x0000-0x2000",
+  ac_cv_can_map_lm, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_RUN([
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <sys/mman.h>
+    
+    int main()
+    { int zero_fd; char * lm;
+      if ((zero_fd = open("/dev/zero", O_RDWR)) < 0) exit(1);
+      if ((lm = (char *)mmap((caddr_t)0x0000, 0x2000, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_PRIVATE, zero_fd, 0)) == MAP_FAILED) exit(1);
+      lm[0] = 0x12;
+	  munmap(lm, 0x2000);
+      close(zero_fd);
+      exit(0);
+    }
+  ],
+  [ac_cv_can_map_lm=yes],
+  [ac_cv_can_map_lm=no]
+  )
+  AC_LANG_RESTORE
+  ]
+)
+
+dnl Check if extended signals are supported.
+AC_CACHE_CHECK("whether your system supports extended signal handlers",
+  ac_cv_have_extended_signals, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_RUN([
+    #include <unistd.h>
+    #include <stdlib.h>
+    #include <signal.h>
+    #include <fcntl.h>
+    #include <sys/mman.h>
+
+    static volatile caddr_t mem = 0;
+    static int zero_fd = -1;
+
+    static RETSIGTYPE segfault_handler(int, siginfo_t * sip, void *)
+    { if ((caddr_t)(sip->si_addr) != mem) exit(1);
+      munmap(mem, getpagesize()); close(zero_fd); exit(0); }
+
+    int main()
+    { if ((zero_fd = open("/dev/zero", O_RDWR)) < 0) exit(1);
+      if ((mem = (caddr_t)mmap(0, getpagesize(), PROT_READ, MAP_PRIVATE, zero_fd, 0)) == (caddr_t)MAP_FAILED) exit(1);
+      struct sigaction sa; sa.sa_sigaction = segfault_handler; sa.sa_flags = SA_SIGINFO;
+      sigaction(SIGSEGV, &sa, 0);
+      mem[0] = 0;
+      exit(1); // should not be reached
+    }
+  ],
+  [ac_cv_have_extended_signals=yes],
+  [ac_cv_have_extended_signals=no]
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(HAVE_SIGINFO_T, "$ac_cv_have_extended_signals")
+ 
+dnl Otherwise, check for subterfuges.
+if [[ "x$ac_cv_have_extended_signals" = "xno" ]]; then
+  case "$target_os" in
+    linux*)
+      if [[ "x$HAVE_I386" = "xyes" ]]; then
+        AC_CACHE_CHECK("whether we then have a subterfuge for your system",
+		  ac_cv_have_sigcontext_hack, [
+          AC_LANG_SAVE
+          AC_LANG_CPLUSPLUS
+          AC_TRY_RUN([
+            #include <unistd.h>
+            #include <signal.h>
+            #include <fcntl.h>
+            #include <sys/mman.h>
+
+            static volatile caddr_t mem = 0;
+            static int zero_fd = -1;
+
+            static RETSIGTYPE segfault_handler(int, struct sigcontext scs)
+            { if ((caddr_t)(scs.cr2) != mem) exit(1);
+              munmap(mem, getpagesize()); close(zero_fd); exit(0); }
+
+            int main()
+            { if ((zero_fd = open("/dev/zero", O_RDWR)) < 0) exit(1);
+              if ((mem = (caddr_t)mmap(0, getpagesize(), PROT_READ, MAP_PRIVATE, zero_fd, 0)) == (caddr_t)MAP_FAILED) exit(1);
+              struct sigaction sa; sa.sa_flags = 0;
+              sa.sa_handler = (RETSIGTYPE (*)(int))segfault_handler;
+              sigaction(SIGSEGV, &sa, 0);
+              mem[0] = 0;
+              exit(1); // should not be reached
+            }
+          ],
+          [ac_cv_have_sigcontext_hack=yes],
+          [ac_cv_have_sigcontext_hack=no]
+          )
+          AC_LANG_RESTORE
+        ])
+        AC_TRANSLATE_DEFINE(HAVE_SIGCONTEXT_SUBTERFUGE, $ac_cv_have_sigcontext_hack)
+      fi
+      ;;
+    netbsd*)
+      if [[ "x$HAVE_M68K" = "xyes" ]]; then
+        AC_CACHE_CHECK("whether we then have a subterfuge for your system",
+		  ac_cv_have_sigcontext_hack, [
+          AC_LANG_SAVE
+          AC_LANG_CPLUSPLUS
+          AC_TRY_RUN([
+            #include <unistd.h>
+            #include <signal.h>
+            #include <fcntl.h>
+            #include <sys/mman.h>
+
+            static volatile caddr_t mem = 0;
+            static int zero_fd = -1;
+
+            static RETSIGTYPE segfault_handler(int, int code)
+            { if ((caddr_t)code != mem) exit(1);
+              munmap(mem, getpagesize()); close(zero_fd); exit(0); }
+
+            int main()
+            { if ((zero_fd = open("/dev/zero", O_RDWR)) < 0) exit(1);
+              if ((mem = (caddr_t)mmap(0, getpagesize(), PROT_READ, MAP_PRIVATE, zero_fd, 0)) == (caddr_t)MAP_FAILED) exit(1);
+              struct sigaction sa; sa.sa_flags = 0;
+              sa.sa_handler = (RETSIGTYPE (*)(int))segfault_handler;
+              sigaction(SIGSEGV, &sa, 0);
+              mem[0] = 0;
+              exit(1); // should not be reached
+            }
+          ],
+          [ac_cv_have_sigcontext_hack=yes],
+          [ac_cv_have_sigcontext_hack=no]
+          )
+          AC_LANG_RESTORE
+        ])
+        AC_TRANSLATE_DEFINE(HAVE_SIGCONTEXT_SUBTERFUGE, $ac_cv_have_sigcontext_hack)
+      fi
+    ;;
+  esac
+fi
+
+dnl Can we do Video on SEGV Signals ?
+CAN_VOSF=no
+if [[ "$ac_cv_have_extended_signals" = "yes" -o "$ac_cv_have_sigcontext_hack" = "yes" ]]; then
+  CAN_VOSF=yes
+fi
+
+dnl Determine the addressing mode to use
+if [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
+  ADDRESSING_MODE="real"
+else
+  ADDRESSING_MODE=""
+  AC_MSG_CHECKING([for the addressing mode to use])
+  for am in $ADDRESSING_TEST_ORDER; do
+    case $am in
+    real)
+      dnl Requires ability to mmap() Low Memory globals
+      if [[ "x$ac_cv_can_map_lm" = "xno" ]]; then
+        continue
+      fi
+	  dnl Requires VOSF screen updates
+      if [[ "x$CAN_VOSF" = "xno" ]]; then
+        continue
+      fi
+      dnl Real addressing will probably work.
+      ADDRESSING_MODE="real"
+      WANT_VOSF=yes dnl we can use VOSF and we need it actually
+      DEFINES="$DEFINES -DREAL_ADDRESSING"
+      break
+      ;;
+    direct)
+      dnl Requires VOSF screen updates
+      if [[ "x$CAN_VOSF" = "xyes" ]]; then
+        ADDRESSING_MODE="direct"
+        WANT_VOSF=yes dnl we can use VOSF and we need it actually
+        DEFINES="$DEFINES -DDIRECT_ADDRESSING"
+        break
+      fi
+      ;;
+    banks)
+      dnl Default addressing mode
+      ADDRESSING_MODE="memory banks"
+      break
+      ;;
+    *)
+      AC_MSG_ERROR([Internal configure.in script error for $am addressing mode])
+    esac
+  done
+  AC_MSG_RESULT($ADDRESSING_MODE)
+  if [[ "x$ADDRESSING_MODE" = "x" ]]; then
+    AC_MSG_WARN([Sorry, no suitable addressing mode in $ADDRESSING_TEST_ORDER])
+    ADDRESSING_MODE="memory banks"
+  fi
+fi
+
+dnl Enable VOSF screen updates with this feature is requested and feasible
+if [[ "x$WANT_VOSF" = "xyes" -a "x$CAN_VOSF" = "xyes" ]]; then
+    AC_DEFINE(ENABLE_VOSF)
+else
+    WANT_VOSF=no
+fi
+
+CFLAGS="$CFLAGS -fomit-frame-pointer"
+CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
+
+dnl i386 CPU
+DEFINES="$DEFINES -DREGPARAM=\"__attribute__((regparm(3)))\""
+ASM_OPTIMIZATIONS=i386
+DEFINES="$DEFINES -DX86_ASSEMBLY -DUNALIGNED_PROFITABLE -DOPTIMIZED_FLAGS"
+CPUSRCS="../uae_cpu/compiler.cpp cpufast1.s cpufast2.s cpufast3.s cpufast4.s cpufast5.s cpufast6.s cpufast7.s cpufast8.s"
+FPUSRCS="../uae_cpu/fpu_x86.cpp"
+
+CPUINCLUDES="-I../uae_cpu"
+CPUSRCS="../uae_cpu/basilisk_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpustbl.cpp cpudefs.cpp $CPUSRCS ../uae_cpu/debug.cpp"
+
+dnl Remove the "-g" option if set for GCC.
+dnl gb-- Probably not the cleanest way to take
+CFLAGS=`echo $CFLAGS | sed -e 's/ -g / /;s/^-g / /;s/ -g$/ /;s/^-g$//'`
+CXXFLAGS=`echo $CXXFLAGS | sed -e 's/ -g / /;s/^-g / /;s/ -g$/ /;s/^-g$//'`
+
+dnl Generate Makefile.
+AC_SUBST(DEFINES)
+AC_SUBST(SYSSRCS)
+AC_SUBST(CPUINCLUDES)
+AC_SUBST(CPUSRCS)
+AC_OUTPUT(Makefile)
+
