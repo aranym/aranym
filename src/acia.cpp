@@ -37,10 +37,9 @@ void ACIA::handleWrite(uaecptr addr, uae_u8 value) {
 IKBD::IKBD() : ACIA(0xfffc00) {
 	status = 0x0e;
 	ikbd_inbuf = ikbd_bufpos = 0;
-	inTransmit = false;
 	rwLock = SDL_CreateMutex();
-	inGet = false;
 };
+
 IKBD::~IKBD() {
 	SDL_DestroyMutex(rwLock);
 }
@@ -87,52 +86,34 @@ void IKBD::compressMouseMove( int &pos ) {
 }
 
 uae_u8 IKBD::getData() {
-	inTransmit = false;
+	SDL_LockMutex(rwLock);
+	int retChar;
 	int pos = (ikbd_bufpos - ikbd_inbuf) & MAXBUF;
 	if( (buffer[pos] & 0xfc) == SC_MOUSEMOVE )
 		compressMouseMove( pos );
 	if (ikbd_inbuf-- > 0) {
 		if (ikbd_inbuf ==0) {
-#undef IKBD_LOCKS
-#ifdef IKBD_LOCKS
-			while (SDL_mutexP(rwLock)==-1)  // lock the read
-				SDL_Delay(20);
-#else
-			inGet = true;
-#endif
-		
 			/* Clear GPIP/I4 */
 			status = 0;
 			uae_u8 x = ReadAtariInt8(0xfffa01);
 			x |= 0x10;
 			WriteAtariInt8(0xfffa01, x);
-		
-#ifdef IKBD_LOCKS
-			while (SDL_mutexV(rwLock)==-1)  // unlock
-				SDL_Delay(20);
-#endif
 		}
 		D(bug("IKBD read code %2x (%d left)", buffer[pos], ikbd_inbuf));
 		doTransmit();
-		inGet = false;
-		return buffer[pos];
+		retChar = buffer[pos];
 	}
 	else {
 		ikbd_inbuf = 0;
-		inGet = false;
-		return 0xa2;
+		retChar = 0xa2;
 	}
+	SDL_UnlockMutex(rwLock);
+	return retChar;
 }
 
 void IKBD::send(int value)
 {
-#ifdef IKBD_LOCKS
-	while (SDL_mutexP(rwLock)==-1)  // lock the read
-		SDL_Delay(20);
-#else
-	while (inGet) ;
-#endif
-
+	SDL_LockMutex(rwLock);
 	value &= 0xff;
 	if (ikbd_inbuf <= MAXBUF) {
 		buffer[ikbd_bufpos] = value;
@@ -142,21 +123,15 @@ void IKBD::send(int value)
 		D(bug("IKBD sends %2x (->buffer pos %d)", value, ikbd_bufpos-1));
 	}
 	doTransmit();
-
-#ifdef IKBD_LOCKS
-	while (SDL_mutexV(rwLock)==-1)  // unlock
-		SDL_Delay(20);
-#endif
+	SDL_UnlockMutex(rwLock);
 }
 
 void IKBD::doTransmit(void)
 {
-	if (inTransmit) return;
 	if ((HWget_b(0xfffa09) & 0x40) == 0) return;
 	if (ikbd_inbuf == 0) return;
 	/* set Interrupt Request */
 	status |= 0x81;
-	inTransmit = true;
 	/* signal ACIA interrupt */
 	mfp.setGPIPbit(0x10, 0);
 }

@@ -35,11 +35,7 @@ private:
 	int buffer[MAXBUF+1];
 	int ikbd_inbuf;
 	int ikbd_bufpos;
-	bool inTransmit;
-
-	// Read/Write lock
-	bool inGet;
-	SDL_mutex   *rwLock;
+	SDL_mutex   *rwLock;	// Read/Write lock
 	void compressMouseMove( int &pos );
 
 public:
