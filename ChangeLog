@@ -1,3 +1,10 @@
+2003/04/07 - STanda
+- hostfs.cpp: General debug messages cleanup.
+    The st2flags() and flags2st() methods fixed (a need for open()).
+    The isPathValid() method removed (was only useful for aranymfs.dos).
+    Dpathconf(8-9) added and 7 fixed (Thing has a bug in 1.27 here IIRC).
+
+
 2003/04/07 - joy
 - configure.ac: parameters.cpp and its children updated. Should be ready
   for adding more cygwin specific functions.
