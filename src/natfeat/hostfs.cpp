@@ -20,7 +20,7 @@
 #include "araobjs.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #ifdef HAVE_SYS_VFS_H
@@ -1997,6 +1997,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.16  2003/07/17 13:52:33  joy
+ * hostfs fixes by Xavier
+ *
  * Revision 1.15  2003/06/26 21:27:14  joy
  * xfs_creat()/xfs_dev_open() fixed (gunzip problem)
  * xfs_native_init() fixed to handle the FreeMiNT requirements correctly

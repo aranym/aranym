@@ -1,3 +1,9 @@
+2003/09/25 - milan
+- configure.ac: OS_TYPE and CPU_TYPE for future natfeat exported to sources
+
+- hostfs.cpp: debuginfo blocked for CVS
+
+
 2003/09/23 - patrice
 - Audio CD players should work now. And data CD-ROMs can be read using any
  iso9660 dos Atari driver.

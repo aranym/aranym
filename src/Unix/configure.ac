@@ -141,6 +141,7 @@ case "$target_os" in
   *)		OS_TYPE=`echo $target_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
 esac
 DEFINES="$DEFINES -DOS_$OS_TYPE"
+AC_DEFINE_UNQUOTED([OS_TYPE], "$OS_TYPE", [Define OS type])
 
 dnl Target CPU type.
 HAVE_I386=no
@@ -157,6 +158,7 @@ case "$target_cpu" in
   *) CPU_TYPE=`echo $target_cpu | sed -e 's/-/_/g'`;;
 esac
 DEFINES="$DEFINES -DCPU_$CPU_TYPE"
+AC_DEFINE_UNQUOTED([CPU_TYPE], "$CPU_TYPE", [Define CPU type])
 
 dnl Checks for programs.
 AC_PROG_CC
