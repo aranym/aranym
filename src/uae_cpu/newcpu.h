@@ -227,13 +227,13 @@ extern void m68k_emulop_return (void);
 extern void m68k_natfea (uae_u32);
 extern void init_m68k (void);
 extern void exit_m68k (void);
-extern void m68k_go (int);
 extern void m68k_dumpstate (uaecptr *);
 extern void m68k_disasm (uaecptr, uaecptr *, int);
 extern void newm68k_disasm(FILE *, uaecptr, uaecptr *, unsigned int);
 extern void showDisasm(uaecptr);
 extern void m68k_reset (void);
 extern void m68k_enter_debugger(void);
+extern int m68k_do_specialties(void);
 
 extern void mmu_op (uae_u32, uae_u16);
 
@@ -248,5 +248,12 @@ extern uaecptr last_fault_for_exception_3;
 
 /* 68040+ 68881 */
 extern struct cputbl op_smalltbl_0[];
+
+extern void m68k_do_execute(void);
+extern void m68k_execute(void);
+#if USE_JIT
+extern void m68k_do_compile_execute(void);
+extern void m68k_compile_execute(void);
+#endif
 
 #endif /* NEWCPU_H */

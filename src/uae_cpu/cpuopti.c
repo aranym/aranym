@@ -7,10 +7,6 @@
  * Copyright 1996 Bernd Schmidt
  */
 
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "sysdeps.h"
 
 struct line {
@@ -40,6 +36,22 @@ static char * match(struct line *l, const char *m)
     if (strncmp(str, m, len) != 0)
 	return NULL;
     return str + len;
+}
+
+static int is_label(struct line *l)
+{
+    char *str = l->data;
+    while (isspace(*str))
+	str++;
+
+    if ((*str != '.') && (*str != '_') && !isalnum(*str))
+	return 0;
+    str++;
+
+    while (isalnum(*str) || (*str == '_'))
+	str++;
+
+    return (*str == ':');
 }
 
 static int insn_references_reg (struct line *l, char *reg)
@@ -191,6 +203,24 @@ reordered:
 
     while (in_pop_area) {
 	char *popm, *pushm;
+#if 1 && (((__GNUC__ == 2) && (__GNUC_MINOR__ >= 95)) || (__GNUC__ >= 3))
+	/* gb-- This hack seems to work only for GCC versions greater or equal
+	 * to 2.95.2. The problem lays in newcpu.cpp/m68k_do_execute(), older
+	 * GCC wouldn't mind to save then restore registers.
+	 *
+	 * Eventually, I will completely disable this optimization depending
+	 * on users' demand ;-)
+	 */
+	char *s;
+	while	(	/* skip labels */
+				is_label(fl)
+			||	/* skip stack frame create */
+				((s = match(fl, "subl $")) && strstr(s, "%esp"))
+			||	/* skip register -> register moves */
+				((s = match(fl, "movl %")) && (strncmp(s+3, ",%", 2) == 0))
+			)
+	fl = fl->next;
+#endif
 	popm = match (l, "popl %");
 	pushm = match (fl, "pushl %");
 	if (popm && pushm && strcmp(pushm, popm) == 0) {

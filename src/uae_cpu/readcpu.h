@@ -48,7 +48,8 @@ ENUMDECL {
 } ENUMNAME (wordsizes);
 
 ENUMDECL {
-    fa_set, fa_unset, fa_zero, fa_one, fa_dontcare, fa_unknown, fa_isjmp
+    fa_set, fa_unset, fa_zero, fa_one, fa_dontcare, fa_unknown, fa_isjmp,
+    fa_isbranch
 } ENUMNAME (flagaffect);
 
 ENUMDECL {

@@ -51,22 +51,22 @@ extern uint8 *VideoRAMBaseHost;	// VideoRAM base (host address space)
 // Read/WriteAtariIntXX
 //
 static inline uint32 ReadAtariInt32(uint32 addr) {return phys_get_long(addr);}
-static inline uint32 ReadAtariInt16(uint32 addr) {return phys_get_word(addr);}
-static inline uint32 ReadAtariInt8(uint32 addr) {return phys_get_byte(addr);}
+static inline uint16 ReadAtariInt16(uint32 addr) {return phys_get_word(addr);}
+static inline uint8 ReadAtariInt8(uint32 addr) {return phys_get_byte(addr);}
 static inline void WriteAtariInt32(uint32 addr, uint32 l) {phys_put_long(addr, l);}
-static inline void WriteAtariInt16(uint32 addr, uint32 w) {phys_put_word(addr, w);}
-static inline void WriteAtariInt8(uint32 addr, uint32 b) {phys_put_byte(addr, b);}
+static inline void WriteAtariInt16(uint32 addr, uint16 w) {phys_put_word(addr, w);}
+static inline void WriteAtariInt8(uint32 addr, uint8 b) {phys_put_byte(addr, b);}
 
 // Direct access to allocated memory
 // Ignores HW checks, so that be carefull
 // Read/WriteHWMemIntXX
 // 
 static inline uint32 ReadHWMemInt32(uint32 addr) {return do_get_mem_long((uae_u32 *)phys_get_real_address(addr));}
-static inline uint32 ReadHWMemInt16(uint32 addr) {return do_get_mem_word((uae_u16 *)phys_get_real_address(addr));}
-static inline uint32 ReadHWMemInt8(uint32 addr) {return do_get_mem_byte((uae_u8 *)phys_get_real_address(addr));}
+static inline uint16 ReadHWMemInt16(uint32 addr) {return do_get_mem_word((uae_u16 *)phys_get_real_address(addr));}
+static inline uint8 ReadHWMemInt8(uint32 addr) {return do_get_mem_byte((uae_u8 *)phys_get_real_address(addr));}
 static inline void WriteHWMemInt32(uint32 addr, uint32 l) {do_put_mem_long((uae_u32 *)phys_get_real_address(addr), l);}
-static inline void WriteHWMemInt16(uint32 addr, uint32 w) {do_put_mem_word((uae_u16 *)phys_get_real_address(addr), w);}
-static inline void WriteHWMemInt8(uint32 addr, uint32 b) {do_put_mem_byte((uae_u8 *)phys_get_real_address(addr), b);}
+static inline void WriteHWMemInt16(uint32 addr, uint16 w) {do_put_mem_word((uae_u16 *)phys_get_real_address(addr), w);}
+static inline void WriteHWMemInt8(uint32 addr, uint8 b) {do_put_mem_byte((uae_u8 *)phys_get_real_address(addr), b);}
 
 // Indirect access to CPU address space
 // Uses MMU if available
@@ -75,11 +75,11 @@ static inline void WriteHWMemInt8(uint32 addr, uint32 b) {do_put_mem_byte((uae_u
 // Read/WriteIntXX
 // 
 static inline uint32 ReadInt32(uint32 addr) {return get_long(addr);}
-static inline uint32 ReadInt16(uint32 addr) {return get_word(addr);}
-static inline uint32 ReadInt8(uint32 addr) {return get_byte(addr);}
+static inline uint16 ReadInt16(uint32 addr) {return get_word(addr);}
+static inline uint8 ReadInt8(uint32 addr) {return get_byte(addr);}
 static inline void WriteInt32(uint32 addr, uint32 l) {put_long(addr, l);}
-static inline void WriteInt16(uint32 addr, uint32 w) {put_word(addr, w);}
-static inline void WriteInt8(uint32 addr, uint32 b) {put_byte(addr, b);}
+static inline void WriteInt16(uint32 addr, uint16 w) {put_word(addr, w);}
+static inline void WriteInt8(uint32 addr, uint8 b) {put_byte(addr, b);}
 
 // For Exception longjmp
 extern jmp_buf excep_env;
@@ -88,9 +88,8 @@ extern jmp_buf excep_env;
 static inline bool ValidAtariAddr(uint32 addr, bool write, uint32 len) { return phys_valid_address(addr, write, 0, len); }
 static inline bool ValidAddr(uint32 addr, bool write, uint32 len) { return valid_address(addr, write, 0, len); }
 
-// These functions will be removed
+// This function will be removed
 static inline uint8 *Atari2HostAddr(uint32 addr) {return phys_get_real_address(addr);}
-//static inline uint32 Host2AtariAddr(uint8 *addr) {return get_virtual_address(addr);}
 
 
 // These functions will be removed

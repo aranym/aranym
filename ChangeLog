@@ -1,6 +1,9 @@
 2002/02/28 - milan
 - get_i*_1 moved to newcpu.cpp
 
+- probably last sync with aranym2 (unofficial CVS) before MMU and pre-JIT
+  support (new gencpu.c and subdirectory compiler)
+
 
 2002/02/27 - milan
 - corrections of types in hostscreen.h and memory.h (using uintptr instead of
@@ -23,7 +26,7 @@
 
 - spcflags handling rewritten
 
-- original PC handling, must be converted to ARAnyM's after stabilization
+- original PC handling, must be converted to ARAnyM's after stabilisation
   (slower)
 
 - exception stack handling is for 68040 now

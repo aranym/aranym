@@ -6,10 +6,6 @@
  * Copyright 1995,1996 Bernd Schmidt
  */
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdio.h>
-
 #include "sysdeps.h"
 #include "readcpu.h"
 
@@ -159,6 +155,7 @@ int main(int argc, char **argv)
 	    switch(nextch){
 	     case '-': flagset[i] = fa_unset; break;
 	     case '/': flagset[i] = fa_isjmp; break;
+	     case '+': flagset[i] = fa_isbranch; break;
 	     case '0': flagset[i] = fa_zero; break;
 	     case '1': flagset[i] = fa_one; break;
 	     case 'x': flagset[i] = fa_dontcare; break;

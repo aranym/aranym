@@ -48,58 +48,6 @@ int movem_next[256];
 
 cpuop_func *cpufunctbl[65536];
 
-#define COUNT_INSTRS 0
-
-#if COUNT_INSTRS
-static unsigned long int instrcount[65536];
-static uae_u16 opcodenums[65536];
-
-static int compfn (const void *el1, const void *el2)
-{
-    return instrcount[*(const uae_u16 *)el1] < instrcount[*(const uae_u16 *)el2];
-}
-
-static char *icountfilename (void)
-{
-    char *name = getenv ("INSNCOUNT");
-    if (name)
-	return name;
-    return COUNT_INSTRS == 2 ? "frequent.68k" : "insncount";
-}
-
-void dump_counts (void)
-{
-    FILE *f = fopen (icountfilename (), "w");
-    unsigned long int total;
-    int i;
-
-    D(bug("Writing instruction count file..."));
-    for (i = 0; i < 65536; i++) {
-	opcodenums[i] = i;
-	total += instrcount[i];
-    }
-    qsort (opcodenums, 65536, sizeof(uae_u16), compfn);
-
-    fprintf (f, "Total: %lu\n", total);
-    for (i=0; i < 65536; i++) {
-	unsigned long int cnt = instrcount[opcodenums[i]];
-	struct instr *dp;
-	struct mnemolookup *lookup;
-	if (!cnt)
-	    break;
-	dp = table68k + opcodenums[i];
-	for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
-	    ;
-	fprintf (f, "%04x: %lu %s\n", opcodenums[i], cnt, lookup->name);
-    }
-    fclose (f);
-}
-#else
-void dump_counts (void)
-{
-}
-#endif
-
 int broken_in;
 
 static __inline__ unsigned int cft_map (unsigned int f)
@@ -163,22 +111,6 @@ void init_m68k (void)
 	movem_index2[i] = 7-j;
 	movem_next[i] = i & (~(1 << j));
     }
-#if COUNT_INSTRS
-    {
-	FILE *f = fopen (icountfilename (), "r");
-	memset (instrcount, 0, sizeof instrcount);
-	if (f) {
-	    uae_u32 opcode, count, total;
-	    char name[20];
-	    D(bug("Reading instruction count file..."));
-	    fscanf (f, "Total: %lu\n", &total);
-	    while (fscanf (f, "%lx: %lu %s\n", &opcode, &count, name) == 3) {
-		instrcount[opcode] = count;
-	    }
-	    fclose(f);
-	}
-    }
-#endif
     read_table68k ();
     do_merges ();
 
@@ -1190,6 +1122,11 @@ static char* ccnames[] =
 { "T ","F ","HI","LS","CC","CS","NE","EQ",
   "VC","VS","PL","MI","GE","LT","GT","LE" };
 
+// If value is greater than zero, this means we are still processing an EmulOp
+// because the counter is incremented only in m68k_execute(), i.e. interpretive
+// execution only
+static int m68k_execute_depth = 0;
+
 void m68k_reset (void)
 {
     m68k_areg (regs, 7) = phys_get_long(0x00000000);
@@ -1320,7 +1257,7 @@ static void do_trace (void)
        /* We can afford this to be inefficient... */
        m68k_setpc (m68k_getpc ());
        fill_prefetch_0 ();
-       opcode = get_word (m68k_getpc());
+       opcode = get_word(m68k_getpc());
        if (opcode == 0x4e72            /* RTE */
            || opcode == 0x4e74                 /* RTD */
            || opcode == 0x4e75                 /* RTS */
@@ -1374,8 +1311,19 @@ static void do_trace (void)
 	}														\
 }
 
-static int do_specialties(void)
+int m68k_do_specialties(void)
 {
+#if USE_JIT
+	// Block was compiled
+	SPCFLAGS_CLEAR( SPCFLAG_JIT_END_COMPILE );
+	
+	// Retain the request to get out of compiled code until
+	// we reached the toplevel execution, i.e. the one that
+	// can compile then run compiled code. This also means
+	// we processed all (nested) EmulOps
+	if ((m68k_execute_depth == 0) && SPCFLAGS_TEST( SPCFLAG_JIT_EXEC_RETURN ))
+		SPCFLAGS_CLEAR( SPCFLAG_JIT_EXEC_RETURN );
+#endif
 	/*n_spcinsns++;*/
 	if (SPCFLAGS_TEST( SPCFLAG_DOTRACE )) {
 		Exception (9,last_trace_ad);
@@ -1398,7 +1346,7 @@ static int do_specialties(void)
 */
 	if (SPCFLAGS_TEST( SPCFLAG_BRK | SPCFLAG_MODE_CHANGE )) {
 		SPCFLAGS_CLEAR( SPCFLAG_BRK | SPCFLAG_MODE_CHANGE );
-		return 1;
+		return CFLOW_EXEC_RETURN;
 	}
 
 	return 0;
@@ -1410,7 +1358,7 @@ static long innerCounter = 1;
 extern void ivoke200HzInterrupt(void);	// in main.cpp
 #endif /* !USE_TIMERS */
 
-static void m68k_run_1 (void)
+void m68k_do_execute (void)
 {
     uae_u32 pc;
     uae_u32 opcode;
@@ -1465,7 +1413,7 @@ static void m68k_run_1 (void)
 #endif
 
 	if (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {
-	    if (do_specialties())
+	    if (m68k_do_specialties())
 		return;
 	}
 #ifndef USE_TIMERS
@@ -1479,20 +1427,29 @@ static void m68k_run_1 (void)
     }
 }
 
-#define m68k_run1 m68k_run_1
-
-int in_m68k_go = 0;
-
-void m68k_go (int may_quit)
+#if USE_JIT
+void m68k_compile_execute (void)
 {
-// m68k_go() must be reentrant for Execute68k() and Execute68kTrap() to work
-/*
-    if (in_m68k_go || !may_quit) {
-	fprintf(stderr, "Bug! m68k_go is not reentrant."));
-	abort();
+    for (;;) {
+	if (quit_program > 0) {
+	    if (quit_program == 1)
+		break;
+	    quit_program = 0;
+	    m68k_reset ();
+	}
+	m68k_do_compile_execute();
     }
-*/
-    in_m68k_go++;
+    if (debugging) {
+	uaecptr nextpc;
+	m68k_dumpstate(&nextpc);
+	exit(1);
+    }
+}
+#endif
+
+void m68k_execute (void)
+{
+    m68k_execute_depth++;
 setjmpagain:
     int prb = setjmp(excep_env);
     if (prb != 0) {
@@ -1509,9 +1466,9 @@ setjmpagain:
 #ifdef DEBUGGER
 	if (debugging) debug();
 #endif
-	m68k_run1();
+	m68k_do_execute();
     }
-    in_m68k_go--;
+    m68k_execute_depth--;
 }
 
 static void m68k_verify (uaecptr addr, uaecptr *nextpc)

@@ -120,7 +120,7 @@ void Start680x0(void)
 		m68k_compile_execute();
 	else
 #endif
-		m68k_go(true);
+		m68k_execute();
 }
 
 
@@ -156,7 +156,7 @@ void TriggerNMI(void)
  *  Execute MacOS 68k trap
  *  r->a[7] and r->sr are unused!
  */
-
+#if 0
 void Execute68kTrap(uint16 trap, struct M68kRegisters *r)
 {
 	int i;
@@ -239,3 +239,4 @@ void Execute68k(uint32 addr, struct M68kRegisters *r)
 		r->a[i] = m68k_areg(regs, i);
 	quit_program = 0;
 }
+#endif

@@ -6,11 +6,6 @@
  * Copyright 1995,1996 Bernd Schmidt
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "sysdeps.h"
 #include "readcpu.h"
 
@@ -877,7 +872,7 @@ static void handle_merges (long int opcode)
 	 case 6:
 	    smsk = 255; sbitdst = 256; break;
 	 case 7:
-	 	smsk = 3; sbitdst = 4; break;
+	    smsk = 3; sbitdst = 4; break;
 	 default:
 	    smsk = 0; sbitdst = 0;
 	    abort();
