@@ -399,10 +399,10 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		freeBackgroundSurf();
 		allocateBackgroundSurf();
 		saveBackground();
-		// force SDL GUI to redraw the dialog
+		// force SDL GUI to redraw the dialog because resolution has changed
 		SDL_Event event;
 		event.type = SDL_USEREVENT;
-		event.user.code = SDL_USEREVENT;
+		event.user.code = SDL_USEREVENT; // misused this code for signalizing the resolution change. Did that because I knew the code was unique (needed something distinguishable from keyboard and mouse codes that are sent by the same event name from the input checking thread)
 		SDL_PeepEvents(&event, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
 	}
 	else {
@@ -1242,6 +1242,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.44  2004/01/25 15:13:04  xavier
+ * More work on SDL GUI
+ *
  * Revision 1.43  2004/01/06 22:36:22  xavier
  * Improved SDL Gui maintainability and "look'n'feel".
  *
