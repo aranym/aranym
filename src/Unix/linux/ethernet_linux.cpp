@@ -8,9 +8,9 @@
 
 #include "cpu_emulation.h"
 #include "main.h"
-#include "ethernet.h"
+#include "ethernet_linux.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #include <sys/poll.h>
@@ -74,7 +74,7 @@ bool TunTapEthernetHandler::open( const char* mode ) {
 	int pid = fork();
 	if (pid < 0) {
 		panicbug("TunTap: ERROR: fork() failed. Ethernet disabled!");
-		close(fd);
+		::close(fd);
 		return false;
 	}
 
@@ -115,7 +115,7 @@ bool TunTapEthernetHandler::open( const char* mode ) {
 
 	// Close /dev/net/tun device if exec failed
 	if (failed) {
-		close(fd);
+		::close(fd);
 		return false;
 	}
 
@@ -127,7 +127,7 @@ bool TunTapEthernetHandler::open( const char* mode ) {
 
 bool TunTapEthernetHandler::close() {
 	// Close /dev/net/tun device
-	close(fd);
+	::close(fd);
 	return true;
 }
 
@@ -164,13 +164,13 @@ int TunTapEthernetHandler::tapOpenOld(char *dev)
     if( *dev ) {
 		sprintf(tapname, "/dev/%s", dev);
 		D(bug("TunTap: tapOpenOld %s", tapname));
-		return open(tapname, O_RDWR);
+		return ::open(tapname, O_RDWR);
     }
 
     for(i=0; i < 255; i++) {
 		sprintf(tapname, "/dev/tap%d", i);
 		/* Open device */
-		if( (fd=open(tapname, O_RDWR)) > 0 ) {
+		if( (fd=::open(tapname, O_RDWR)) > 0 ) {
 			sprintf(dev, "tap%d",i);
 			D(bug("TunTap: tapOpenOld %s", dev));
 			return fd;
@@ -193,7 +193,7 @@ int TunTapEthernetHandler::tapOpen(char *dev)
 {
     struct ifreq ifr;
 
-    if( (fd = open("/dev/net/tun", O_RDWR)) < 0 ) {
+    if( (fd = ::open("/dev/net/tun", O_RDWR)) < 0 ) {
 	    panicbug("TunTap: Error opening /dev/net/tun. Check if module is loaded and privileges are OK");
 	    return tapOpenOld(dev);
     }
@@ -219,7 +219,7 @@ int TunTapEthernetHandler::tapOpen(char *dev)
     return fd;
 
   failed:
-    close(fd);
+    ::close(fd);
     return -1;
 }
 
