@@ -419,13 +419,18 @@ CAUTION: Be _very_ careful when using the dd command when you are root
          as you can destroy your system by a simple typo mistake !
 
 
-  You can also make a empty image file using createdisk.sh utility, 
-which is a part of Aranym distribution:
+  You can also create a empty disk image file in the SETUP GUI.
+  Press Pause (or run "aranym --gui"), specify the disk image size and
+  click on the Generate button. The current fileselector is unable
+  to specify an unexisting filename unfortunately (this must be fixed),
+  so for the time being please point it to an existing file that you don't
+  mind get destroyed.
 
-[root@linuxHost /root]# ./createdisk.sh /path/filename size_in_MB
+  Then the disk image must by partitioned and the partitions must be
+  formatted. Plain old AHDI could do that, I hope. I myself use HDDRIVER
+  as I bought it.
 
-  Createdisk then generates empty image file of chosen size and it also
-writes C/H/S parameters for this image.
+  Also please note that EmuTOS doesn't handle partitions larger than 255 MB.
 
   Then it is same as in 7.1.1. Only in Path will be a file instead
 of a device:
@@ -513,16 +518,46 @@ directory; it will map the host fs to logical disks automatically.
 
   Standa developed a XIF module for FreeMiNT TCP/IP networking. You have to
   put it into your MINT folder and reboot to load it into the FreeMiNT.
+  As of ARAnyM 0.8.10+ the XIF driver requires FreeMiNT 1.16.0 or newer.
 
   Apart from configuring the necessary IP addresses in the ARAnyM config file
+
+    for Point-to-Point setup enter this in the ARAnyM config file:
+      [ETH0]
+      type = ppp
+      HostIP = 192.168.1.3
+      AtariIP = 192.168.1.2
+      Netmask = 255.255.255.0
+
   you also have to configure the Host OS (Linux) to share its single IP
   address with the ARAnyM (which is basically another computer running in
-  parallel with the Host). There are several possibilities how to do that,
-  for example by Masquerading (special kind of Network Address Translation)
-  or by Proxy-ARP.
+  parallel with the Host and hiding behind the Host IP address on your LAN).
+  There are several possibilities how to do that, for example by
+  Masquerading (special kind of Network Address Translation) or by Proxy-ARP.
+
+
+  Recently Standa developed a new method called Bridging that allows ARAnyM
+  to get its own IP address and to act like a regular machine on your LAN:
+
+    for Bridging setup enter this in the ARAnyM config file:
+      [ETH0]
+      type = bridge
+      tunnel = tap0
+      HostIP = 192.168.1.3
+      AtariIP = 192.168.1.2
+      Netmask = 255.255.255.0
+
+
+  At last you need to configure the IP address, route and netmask on the
+  FreeMiNT side. For that I developed the 'nfeth-config' tool that can
+  read the ethernet setting from the ARAnyM config file. As of ARAnyM
+  0.8.11 this requires FreeMiNT 1.16.0+ with NatFeat support.
+  You can simply run the 'eth0-config.sh' shell script during FreeMiNT
+  boot up and it will set up the eth0 interface properly.
+
 
   Bjoern Spruck has contributed a piece of shell script that should set up
-  the Linux Host OS' networking for ARAnyM:
+  the Linux Host OS' networking for ARAnyM in the masquerading mode:
 
 #/bin/bash
 #
@@ -549,3 +584,27 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
   boot. Obviously the chmod is not necessary to call each time, it's there
   just as a reminder I guess. And the last "echo 1 >" is superseded in modern
   Linux distributions by other methods. But using it doesn't hurt.
+
+
+  My experience shows that the bridging is real easy to get working using
+  the 'arabridge' script.
+  Or even easier, follow (as root) this step by step HOWTO.
+
+  Let's say we want to hook the ARAnyM to the 'eth0' interface:
+
+  1) get ip and netmask of eth0
+  2) shut down eth0 (ifconfig eth0 0.0.0.0)
+  3) create tap0 (modprobe tun; tunctl -t tap0 -u <your_username>)
+  4) create bridge (brctl addbr br0)
+  5) add eth0+tap0 to the bridge (brctl addif br0 eth0; brctl addif br0
+     tap0)
+  6) set ip and netmask of br0 to be same as was the eth0 (ifconfig br0
+     192.168.0.1 netmask 255.255.255.0 up)
+
+  and that's it. Problems could arise if firewall is running on the
+  same host because the eth0 basically disappears (is replaced with the br0)
+  though it's still possible to fix the firewall setup afterwards.
+
+  I have updated the arabridge script, it now works well in Debian. Make
+  sure you edit the USER, NIF and maybe also the TAPS and BRIDGE variables.
+
