@@ -59,6 +59,7 @@ SRCS = ../main.cpp \
 	../rtc.cpp \
 	../videl.cpp \
 	../yamaha.cpp \
+	../cfgopts.c \
 	$(CPUSRCS)
 APP = aranym
 
