@@ -69,6 +69,9 @@ static uint32 mapped_ram_rom_size;		// Total size of mmap()ed RAM/ROM area
 static void *tick_func(void *arg);
 static void one_tick(...);
 
+void MakeIRQ();	// hardware.cpp
+void init_fdc();	// fdc.cpp
+
 
 /*
  *  Ersatz functions
@@ -78,10 +81,18 @@ static void one_tick(...);
 /*
  *  Main program
  */
+#define MAXDRIVES	32
+int drive_fd[MAXDRIVES];
 
 int main(int argc, char **argv)
 {
 	char str[256];
+
+	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
+
+	drive_fd[0] = open("/dev/fd0", O_RDONLY);
+	if (drive_fd[0] >= 0)
+    	init_fdc();
 
 	// Initialize variables
 	RAMBaseHost = NULL;
@@ -286,29 +297,42 @@ void ClearInterruptFlag(uint32 flag)
 }
 
 /*
- *  60Hz thread (really 60.15Hz)
+ *  200Hz thread
  */
+
+const int TICKSPERSEC = 200U;
+const int MICROSECSPERTICK = (1000000UL / TICKSPERSEC);
 
 static void one_second(void)
 {
+/*
 	// Pseudo Mac 1Hz interrupt, update local time
 	WriteMacInt32(0x20c, TimerDateTime());
 
 	SetInterruptFlag(INTFLAG_1HZ);
 	TriggerInterrupt();
+*/
+//	fprintf(stderr, "one second: ($4BA) = %ld\n", ReadMacInt32(0x4ba));
+	// SetInterruptFlag(INTFLAG_1HZ);
+	// TriggerVBL();
 }
 
 static void one_tick(...)
 {
 	static int tick_counter = 0;
-	if (++tick_counter > 60) {
+	static int VBL_counter = 0;
+	if (++tick_counter > TICKSPERSEC) {
 		tick_counter = 0;
 		one_second();
 	}
+	if (++VBL_counter > 4) {
+		VBL_counter = 0;
+		TriggerVBL();
+	}
 
-	// Trigger 60Hz interrupt
-	SetInterruptFlag(INTFLAG_60HZ);
-	TriggerInterrupt();
+	// Trigger 200Hz interrupt
+	// SetInterruptFlag(INTFLAG_200HZ);
+	MakeIRQ();
 }
 
 static void *tick_func(void *arg)
@@ -316,11 +340,11 @@ static void *tick_func(void *arg)
 	uint64 next = GetTicks_usec();
 	while (!tick_thread_cancel) {
 		one_tick();
-		next += 16625;
+		next += MICROSECSPERTICK;
 		int64 delay = next - GetTicks_usec();
 		if (delay > 0)
 			Delay_usec(delay);
-		else if (delay < -16625)
+		else if (delay < -MICROSECSPERTICK)
 			next = GetTicks_usec();
 	}
 	return NULL;
