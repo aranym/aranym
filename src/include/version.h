@@ -23,8 +23,8 @@
 
 const int VERSION_MAJOR = 0;
 const int VERSION_MINOR = 0;
-const int VERSION_SUBMINOR = 11;
+const int VERSION_SUBMINOR = 13;
 
-#define VERSION_STRING "ARAnyM 0.0.11"
+#define VERSION_STRING "ARAnyM 0.0.13"
 
 #endif
