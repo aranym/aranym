@@ -362,46 +362,12 @@ int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy)
   Show and process a dialog. Returns the button number that has been
   pressed or -1 if something went wrong.
 */
-int SDLGui_DoDialog(SGOBJ *dlg)
+int mousedown(SGOBJ *dlg, SDL_Event evnt)
 {
   int obj=0;
   int oldbutton=0;
   int retbutton=0;
-  int i, j, b;
-  SDL_Event evnt;
-  SDL_Rect rct;
-  Uint32 grey;
 
-  grey = SDL_MapRGB(sdlscrn->format,192,192,192);
-
-  SDLGui_DrawDialog(dlg);
-
-  /* Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here */
-  SDL_PumpEvents();
-  b = SDL_GetMouseState(&i, &j);
-  obj = SDLGui_FindObj(dlg, i, j);
-  if(obj>0 && (dlg[obj].flags&SG_TOUCHEXIT) )
-  {
-    oldbutton = obj;
-    if( b&SDL_BUTTON(1) )
-    {
-      dlg[obj].state |= SG_SELECTED;
-      return obj;
-    }
-  }
-
-  /* The main loop */
-  do
-  {
-    if( SDL_WaitEvent(&evnt)==1 )  /* Wait for events */
-      switch(evnt.type)
-      {
-        case SDL_KEYDOWN:
-          break;
-        case SDL_QUIT:
-          bQuitProgram = true;
-          break;
-        case SDL_MOUSEBUTTONDOWN:
           obj = SDLGui_FindObj(dlg, evnt.button.x, evnt.button.y);
           if(obj>0)
           {
@@ -419,8 +385,16 @@ int SDLGui_DoDialog(SGOBJ *dlg)
               retbutton = obj;
             }
           }
-          break;
-        case SDL_MOUSEBUTTONUP:
+	return retbutton;
+}
+
+int mouseup(SGOBJ *dlg, SDL_Event evnt, Uint32 grey)
+{
+  int obj=0;
+  int oldbutton=0;
+  int retbutton=0;
+  SDL_Rect rct;
+  int i;
           obj = SDLGui_FindObj(dlg, evnt.button.x, evnt.button.y);
           if(obj>0)
           {
@@ -489,6 +463,53 @@ int SDLGui_DoDialog(SGOBJ *dlg)
           {
             retbutton = obj;
           }
+
+	return retbutton;
+}
+
+int SDLGui_DoDialog(SGOBJ *dlg)
+{
+  int obj=0;
+  int oldbutton=0;
+  int retbutton=0;
+  int i, j, b;
+  SDL_Event evnt;
+  Uint32 grey;
+
+  grey = SDL_MapRGB(sdlscrn->format,192,192,192);
+
+  SDLGui_DrawDialog(dlg);
+
+  /* Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here */
+  SDL_PumpEvents();
+  b = SDL_GetMouseState(&i, &j);
+  obj = SDLGui_FindObj(dlg, i, j);
+  if(obj>0 && (dlg[obj].flags&SG_TOUCHEXIT) )
+  {
+    oldbutton = obj;
+    if( b&SDL_BUTTON(1) )
+    {
+      dlg[obj].state |= SG_SELECTED;
+      return obj;
+    }
+  }
+
+  /* The main loop */
+  do
+  {
+    if( SDL_WaitEvent(&evnt)==1 )  /* Wait for events */
+      switch(evnt.type)
+      {
+        case SDL_KEYDOWN:
+          break;
+        case SDL_QUIT:
+          bQuitProgram = true;
+          break;
+        case SDL_MOUSEBUTTONDOWN:
+          retbutton = mousedown(dlg, evnt);
+          break;
+        case SDL_MOUSEBUTTONUP:
+          retbutton = mouseup(dlg, evnt, grey);
           break;
       }
   }
