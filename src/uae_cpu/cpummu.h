@@ -3,6 +3,7 @@
 #define CPUMMU_H
 
 #include "registers.h"
+#include <cstdlib>
 
 #define MMU_TEST_PTEST		1
 #define MMU_TEST_VERBOSE	2
