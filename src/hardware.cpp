@@ -22,9 +22,10 @@
 #include "hostscreen.h"
 #include "exceptions.h"
 #include "uae_cpu/newcpu.h"	// for regs.pc
-#include "debug.h"
 
-#define DEBUG 1
+#define DEBUG 0
+#include "debug.h"
+bool dP = false;
 
 // host OS dependent objects
 HostScreen hostScreen;
@@ -50,8 +51,6 @@ int getFloppyStats() { return yamaha.getFloppyStat(); }
 bool isIkbdBufEmpty() { return ikbd.isBufferEmpty(); }
 void MakeMFPIRQ(int no) { mfp.IRQ(no); }
 void ikbd_send(int code) { ikbd.ikbd_send(code); }
-
-bool dP = true;
 
 void HWInit (void) {
 	rtc.init();
@@ -234,6 +233,10 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.24  2001/07/24 06:40:33  joy
+ * SCSI disabled
+ * D(bug()) replaces printf
+ *
  * Revision 1.23  2001/07/12 22:10:05  standa
  * updateHostScreen() function added to let the direct_fullscreen mode work again.
  *
