@@ -1,8 +1,24 @@
 2004/02/13 - Xavier
-- gui-sdl/sdlgui.*: Introduced new flags : SG_SELECTABLE and SG_BACKGROUND.
-  Boxes and Buttons drawing improved thanks to these new flags.
+- gui-sdl/sdlgui.*:
+  - introduced new flags : SG_SELECTABLE and SG_BACKGROUND.
+  - boxes and buttons drawing improved thanks to these new flags.
+  - SGTEXT and SGEDITFIELD objects are now drawn with a background.
+  - removed imports from hostscreen.cpp I added when writing
+    SDLGui_Get[First|Next]BackgroundRect().
 
-- gui-sdl/dlg*.cpp: Modified to take sdlgui.* improvements into account.
+- gui-sdl/dlg*.cpp: modified to take sdlgui.* improvements into account.
+
+- src/Unix/configure.ac: removed an old hack in Cygwin's $LIB. This was not
+  necessary anymore (thanks to build-cygwin.sh) and was preventing configure to
+  successfully compile some tests.
+  Configure tests impacted (which wrongly reported "no" before) :
+  - "whether mmap supports MAP_ANON",
+  - "whether mmap supports MAP_ANONYMOUS",
+  - "whether mprotect works",
+  - "for atanh",
+  - "for isnan",
+  - "for isinf", and
+  - "for finite".
 
 
 2004/02/09 - Xavier
