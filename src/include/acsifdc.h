@@ -32,11 +32,13 @@ private:
 	uae_u8 FDC_S, HDC_S;     /* Sector register */
 	uae_u8 FDC_D, HDC_D;     /* Data register */
 	uaecptr DMAaddr;
+	bool floppy_changed;
 
 public:
 	ACSIFDC();
 	virtual uae_u8 handleRead(uaecptr);
 	virtual void handleWrite(uaecptr, uae_u8);
+	void changeFloppy();
 
 private:
 	uae_u8 LOAD_B_ff8604(void);

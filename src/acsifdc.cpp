@@ -34,6 +34,7 @@ static NCR5380 ncr5380;
 ACSIFDC::ACSIFDC() {
 	DMAfifo = DMAstatus = DMAxor = 0;
 	DMAdiskctl = FDC_T = FDC_S = FDC_D = HDC_T = HDC_S = HDC_D = 0;
+	floppy_changed = false;
 }
 
 uae_u8 ACSIFDC::handleRead(uaecptr addr) {
@@ -105,6 +106,10 @@ uae_u8 ACSIFDC::LOAD_B_ff8605(void)
 				case WD1772_REG_STATUS:
           			if (! fdc_busy)
 						mfp.setGPIPbit(0x20, 0x20);
+					if (floppy_changed) {
+						floppy_changed = false;
+						return fdc_status | 0x40;
+					}
 					return fdc_status&0xff;
 				case WD1772_REG_TRACK:
 					return fdc_track&0xff;
@@ -236,4 +241,9 @@ void ACSIFDC::STORE_B_ff8607(uae_u8 vv)
 	dma_mode |= vv;
 	D(bug("DMA mode <- %04x", dma_mode));
 	return;
+}
+
+void ACSIFDC::changeFloppy()
+{
+	floppy_changed = true;
 }
