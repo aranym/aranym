@@ -32,8 +32,6 @@ AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 [defa
 
 AC_ARG_ENABLE(dsp-disasm,      [  --enable-dsp-disasm     enable DSP 56001 disassembler [default=no]], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
 
-AC_ARG_ENABLE(sdltimer,        [  --enable-sdltimer       use SDL Timer for Timer C [default=yes]], [WANT_SDLTIMER=$enableval], [WANT_SDLTIMER=yes])
-
 AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB [default=no]], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
 AC_ARG_ENABLE(fixedvideoram,   [  --enable-fixedvideoram  use fixed start of VideoRAM [default=no]], [WANT_FIXEDVIDEORAM=$enableval], [WANT_FIXEDVIDEORAM=no])
@@ -1250,7 +1248,6 @@ echo DSP 56001 disassembly support .......... : $WANT_DSP_DISASM
 echo Distributed dispatcher ................. : $WANT_DIS_DIP
 echo Debugger ............................... : $WHICH_DEBUG
 echo Monitor ................................ : $WANT_MON
-echo Timer C using SDL Timer ................ : $WANT_SDLTIMER
 echo Check memory ........................... : $MEMORY_CHECK
 echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM
 echo Fixed position of VideoRAM ............. : $WANT_FIXEDVIDEORAM
