@@ -228,6 +228,7 @@ dnl    WANT_ARANYMFS="no"
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS="parameters_unix.cpp darwin/cdrom_osx.cpp"
     DEFINES="$DEFINES -DDONTUSEUNIXCDROM"
+    LIBS="$LIBS -lIOKit"
     ;;
   *)
     EXTRASYSSRCS=parameters_unix.cpp
