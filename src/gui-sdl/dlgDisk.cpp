@@ -2,14 +2,11 @@
 #include "file.h"
 #include "ata.h"
 #include "tools.h"
+#include "hardware.h"		// for getFDC()
 
 extern bx_options_t gui_options;
 
 // floppy
-extern void remove_floppy();
-extern bool insert_floppy();
-extern bool is_floppy_inserted();
-
 static char ide0_name[22];	// size of this array defines also the GUI edit size
 static char ide1_name[22];
 
@@ -136,7 +133,7 @@ bool getSelected(int index)
 
 static void UpdateFloppyStatus(void)
 {
-	discdlg[FLOPPY_MOUNT].txt = is_floppy_inserted() ? eject : insert;
+	discdlg[FLOPPY_MOUNT].txt = getFDC()->is_floppy_inserted() ? eject : insert;
 }
 
 static void HideDiskSettings(int handle, bool state)
@@ -327,11 +324,11 @@ void Dialog_DiscDlg(void)
         break;
 
       case FLOPPY_MOUNT:
-		if (is_floppy_inserted()) {
-			remove_floppy();
+		if (getFDC()->is_floppy_inserted()) {
+			getFDC()->remove_floppy();
 		}
 		else {
-			if (! insert_floppy()) {
+			if (! getFDC()->insert_floppy()) {
 				// report error
 			}
 		}

@@ -62,7 +62,6 @@ SRCS = ../main.cpp \
 	../emul_op.cpp \
 	../natfeats.cpp \
 	../fakeio.cpp \
-	../fdc.cpp \
 	../fvdidrv.cpp \
 	../hardware.cpp \
 	../host.cpp \

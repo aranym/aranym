@@ -1,3 +1,26 @@
+2004/02/02 - joy
+- acsifdc.cpp: when fixing my 0.8.5beta bug that Xavier has found I decided
+  to clean the whole floppy code. FDC routines were included from fdc.cpp.
+  Dropped emulation of second floppy drive. Fixed remounting a floppy
+  with different geometry.
+
+  The hack for auto remounting a floppy disk is now configurable with
+  #define REMOUNT_FLOPPY_ON_BOOTSECTOR_READING. If it's enabled floppy access
+  is very slow but exchanging real floppies is detected.
+  When it is disabled then floppy access is fast but detecting of media change
+  does not work.
+
+- fdc.cpp: removed (its content is included in acsifdc.cpp)
+- Unix/Makefile.in: fdc.cpp dropped
+- gui-sdl/dlgDisk.cpp: better calling of the floppy functions
+- main.cpp: init floppy after reboot
+
+
+2004/02/01 - joy
+- MacOSX/*: some unspecified updates from Carlo, used for building the binary
+  that is on download.
+
+
 2004/01/30 - milan
 - configure.ac: support better native debugger with gcc and gdb
 

@@ -1,5 +1,25 @@
-/* Joy 2001 */
-/* Patrice Mandin */
+/*
+ * acsifdc.h - Atari floppy emulation code - class definition
+ *
+ * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * 
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #ifndef _ACSIFDC_H
 #define _ACSIFDC_H
@@ -22,33 +42,33 @@ enum {
 
 class ACSIFDC : public BASE_IO {
 private:
-	uae_u16 DMAfifo;	/* write to $8606.w */
-	uae_u16 DMAstatus;	/* read from $8606.w */
-	uae_u16 DMAxor;
-	uae_u8 DMAdiskctl;
-	uae_u8 FDC_T, HDC_T;     /* Track register */
-	uae_u8 FDC_S, HDC_S;     /* Sector register */
-	uae_u8 FDC_D, HDC_D;     /* Data register */
-	uaecptr DMAaddr;
+	memptr DMAaddr;
 	bool floppy_changed;
+	int drive_fd;
+	int head, sides, tracks, spt, secsize;
+	int dma_mode, dma_scr, dma_car, dma_sr;
+	int fdc_command, fdc_track, fdc_sector, fdc_data, fdc_status;
 
 public:
 	ACSIFDC(memptr, uint32);
-	virtual uae_u8 handleRead(uaecptr);
-	virtual void handleWrite(uaecptr, uae_u8);
+	virtual uint16 handleReadW(memptr);
+	virtual void handleWriteW(memptr, uint16);
+	virtual uint8 handleRead(memptr);
+	virtual void handleWrite(memptr, uint8);
 	memptr getDMAaddr() { return DMAaddr; }
 	void setDMAaddr(memptr addr) { DMAaddr = addr; }
-	void changeFloppy();
+	void init();
+	void remove_floppy();
+	bool insert_floppy();
+	bool is_floppy_inserted();
 
 private:
-	uae_u8 LOAD_B_ff8604(void);
-	uae_u8 LOAD_B_ff8605(void);
-	uae_u8 LOAD_B_ff8606(void);
-	uae_u8 LOAD_B_ff8607(void);
-	void STORE_B_ff8604(uae_u8);
-	void STORE_B_ff8605(uae_u8);
-	void STORE_B_ff8606(uae_u8);
-	void STORE_B_ff8607(uae_u8);
+	uint16 getDMAData();
+	uint16 getDMAStatus();
+	void setDMASectorCount(uint16);
+	void setDMAMode(uint16);
+	void set_floppy_geometry();
+	void fdc_exec_command();
 };
 
 #endif /* _ACSIFDC_H */

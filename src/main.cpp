@@ -571,6 +571,7 @@ void RestartAll()
 
 	// HW init
 	getIDE()->init();	// all HW modules should be reinitialized!
+	getFDC()->init();
 
 	// OS init
 	InitOS();
