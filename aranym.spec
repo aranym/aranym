@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.8.0beta1
+%define ver	0.8.0beta2
 %define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -33,20 +33,26 @@ rm -rf %{realname}
 #%patch -p1
 
 %build
-./configure --prefix=/usr --enable-ethernet --enable-jit-compiler
+./configure --prefix=/usr --enable-jit-compiler
 make
 mv aranym aranym-jit
 make clean
-./configure --prefix=/usr --enable-ethernet
+./configure --prefix=/usr --enable-fullmmu
+make
+mv aranym aranym-mmu
+make clean
+./configure --prefix=/usr
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/bin
+mkdir -p $RPM_BUILD_ROOT/usr/share/man/man1
 mkdir -p $RPM_BUILD_ROOT/usr/share/aranym
 make install DESTDIR=$RPM_BUILD_ROOT
 install aranym $RPM_BUILD_ROOT/usr/bin
 install aranym-jit $RPM_BUILD_ROOT/usr/bin
+install aranym-mmu $RPM_BUILD_ROOT/usr/bin
 install diskimage $RPM_BUILD_ROOT/usr/bin
 install aratapif $RPM_BUILD_ROOT/usr/bin
 
@@ -60,7 +66,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(4755,root,root) /usr/bin/aratapif
 /usr/bin/aranym
 /usr/bin/aranym-jit
+/usr/bin/aranym-mmu
 /usr/bin/diskimage
+/usr/share/man/man1/aranym.1.gz
 /usr/share/aranym/atari/hostfs/hostfs.dos.bz2
 /usr/share/aranym/atari/hostfs/hostfs.xfs.bz2
 /usr/share/aranym/atari/hostfs/bdconfig.sys
@@ -91,6 +99,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Mon Apr 08 2003 Petr Stehlik <pstehlik@sophics.cz>
+Various fixes for the 0.8.0. And full 68040 PMMU build added as aranym-mmu.
+Also manual page added.
+
 * Mon Mar 24 2003 Petr Stehlik <pstehlik@sophics.cz>
 HostFS and network drivers added. ARATAPIF installed setuid root.
 Ethernet enabled.
