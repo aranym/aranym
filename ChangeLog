@@ -1,5 +1,6 @@
 2002/09/05 - milan
-- DIV8 implemented (not tested)
+- DIV8, TEST8 implemented (not tested)
+- AND8, OR8, ORIMM8 now handle flags
 
 
 2002/09/01 - milan
