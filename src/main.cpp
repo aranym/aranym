@@ -611,6 +611,13 @@ bool InitAll(void)
 		return false;
 	}
 
+#ifdef GDBSTUB
+	if (bx_options.startup.debugger) {
+		D(bug("Activate gdbstub..."));
+		activate_debugger();
+	}
+#endif
+
 #if ENABLE_MON
 	// Initialize mon
 	mon_init();

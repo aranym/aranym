@@ -30,6 +30,7 @@
 #include "config.h"
 #include "parameters.h"
 #include "tools.h"		// for safe_strncpy()
+#include "gdbstub.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -71,8 +72,11 @@ static struct option const long_options[] =
 #endif
   {"floppy", required_argument, 0, 'a'},
   {"resolution", required_argument, 0, 'r'},
-#ifdef DEBUGGER
+#if (defined(DEBUGGER) || defined(GDBSTUB))
   {"debug", no_argument, 0, 'D'},
+# ifdef GDBSTUB
+  {"port", required_argument, 0, 'p'},
+# endif
 #endif
   {"fullscreen", no_argument, 0, 'f'},
   {"nomouse", no_argument, 0, 'N'},
@@ -638,8 +642,11 @@ Options:\n\
 #ifndef FixedSizeFastRAM
   printf("  -F, --fastram SIZE         FastRAM size (in MB)\n");
 #endif
-#ifdef DEBUGGER
+#if (defined(DEBUGGER) || defined(GDBSTUB))
   printf("  -D, --debug                start debugger\n");
+# ifdef GDBSTUB
+  printf("  -p, --port NUMBER          port number for GDB (default: 1234)\n");
+#endif
 #endif
   exit (status);
 }
@@ -738,8 +745,11 @@ int process_cmdline(int argc, char **argv)
 #ifdef ENABLE_LILO
 							 "l"  /* boot lilo */
 #endif
-#ifdef DEBUGGER
+#if (defined(DEBUGGER) || defined(GDBSTUB))
 							 "D"  /* debugger */
+# ifdef GDBSTUB
+							 "p:"  /* gdb port */
+# endif
 #endif
 #ifndef FixedSizeFastRAM
 							 "F:" /* FastRAM */
@@ -772,10 +782,14 @@ int process_cmdline(int argc, char **argv)
 				startupGUI = true;
 				break;
 
-#ifdef DEBUGGER
+#if (defined(DEBUGGER) || defined(GDBSTUB))
 			case 'D':
 				bx_options.startup.debugger = true;
 				break;
+# ifdef GDBSTUB
+			case 'p':
+				port_number = atoi(optarg); 
+# endif
 #endif
 
 			case 'e':

@@ -21,9 +21,9 @@ AC_ARG_ENABLE(debug,
     default)  WHICH_DEBUG="ndebug";;
         uae)  WHICH_DEBUG="uae";;
      ndebug)  WHICH_DEBUG="ndebug";;
-     gdebug)  WHICH_DEBUG="gdebug";;
+        gdb)  WHICH_DEBUG="gdb";;
          no)  WHICH_DEBUG="no";;   
-	  *)  AC_MSG_ERROR([--enable-debug takes only one of the following values: default, uae, ndebug, no]);;
+	  *)  AC_MSG_ERROR([--enable-debug takes only one of the following values: default, uae, ndebug, gdb, no]);;
   esac
 ],
 [WHICH_DEBUG="ndebug"
@@ -1359,15 +1359,23 @@ AC_CHECK_FUNCS(isnan isinf finite isnormal signbit)
 
 dnl Select debugger
 if [[ "x$WANT_JIT" = "xno" ]]; then
+  dnl new debugger
   if [[ "x$WHICH_DEBUG" = "xndebug" ]]; then
-    AC_DEFINE([DEBUGGER], 1, [Define if using some debugger])
-    AC_DEFINE([NEWDEBUG], 1, [Define if using New Debugger])
+    AC_DEFINE([DEBUGGER], 1, [Define if using some internal debugger])
+    AC_DEFINE([NEWDEBUG], 1, [Define if using new debugger])
     CPUSRCS="$CPUSRCS ../uae_cpu/debug.cpp"
+  fi
+
+  dnl External GDB
+  if [[ "x$WHICH_DEBUG" = "xgdb" ]]; then
+    AC_DEFINE([GDBSTUB], 1, [Define if using gdb.])
+    CPUSRCS="$CPUSRCS ../uae_cpu/debug.cpp ../gdbstub.cpp"
   fi
 
   dnl UAE debugger
   if [[ "x$WHICH_DEBUG" = "xuae" ]]; then
-    AC_DEFINE([DEBUGGER], 1, [Define if using some debugger])
+    AC_DEFINE([DEBUGGER], 1, [Define if using some internal debugger])
+    AC_DEFINE([UAEDEBUG], 1, [Define if using UAE debugger])
     CPUSRCS="$CPUSRCS ../uae_cpu/debug.cpp"
   fi
 

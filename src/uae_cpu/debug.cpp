@@ -41,13 +41,15 @@
 #include "input.h"
 #include "cpu_emulation.h"
 
+#include "gdbstub.h"
+
 static int debugger_active = 0;
 int debugging = 0;
 int irqindebug = 0;
 
 int ignore_irq = 0;
 
-#ifndef NEWDEBUG
+#ifdef UAEDEBUG
 static int do_skip;
 static uaecptr skipaddr;
 static char old_debug_cmd[80];
@@ -59,8 +61,12 @@ void activate_debugger (void)
 {
 #ifdef NEWDEBUG
     ndebug::do_skip = false;
-#else
+#endif
+#ifdef UAEDEBUG
     do_skip = 0;
+#endif
+#ifdef GDBSTUB
+    gdbstub::init(port_number);
 #endif
     if (debugger_active)
 	return;
@@ -90,7 +96,7 @@ static void ignore_ws (char **c)
     while (**c && isspace(**c)) (*c)++;
 }
 
-#ifndef NEWDEBUG
+#ifdef UAEDEBUG
 static uae_u32 readhex (char **c)
 {
     uae_u32 val = 0;
@@ -124,7 +130,7 @@ static int more_params (char **c)
     return (**c) != 0;
 }
 
-#ifndef NEWDEBUG
+#ifdef UAEDEBUG
 static void dumpmem (uaecptr addr, uaecptr *nxmem, int lines)
 {
     broken_in = 0;
@@ -232,6 +238,9 @@ void debug (void)
 #ifdef NEWDEBUG
   ndebug::run();
 #else
+# ifdef GDBSTUB
+  gdbstub::check(m68k_getpc());
+# else
     char input[80];
     uaecptr nextpc,nxdis,nxmem;
 
@@ -479,5 +488,6 @@ void debug (void)
 
 	}
     }
-#endif
+# endif /* GDBSTUB */
+#endif /* NEWDEBUG */
 }
