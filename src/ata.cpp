@@ -299,6 +299,7 @@ bx_hard_drive_c::init(void)
   void
 bx_hard_drive_c::reset(unsigned /*type*/)
 {
+  getMFP()->setGPIPbit(0x20, 0x20);		// lower the interrupt
 }
 
 
@@ -524,8 +525,6 @@ if ( quantumsMax == 0)
 				    BX_SELECTED_DRIVE(channel).cdrom.remaining_blocks--;
 
 				    // one block transfered, start at beginnig
-/*				    BX_SELECTED_DRIVE(channel).atapi.drq_bytes -= 2048;
-				    BX_SELECTED_DRIVE(channel).atapi.total_bytes_remaining -= 2048;*/
 				    index = 0;
 #else
 				    panicbug("Read with no LOWLEVEL_CDROM");
@@ -719,8 +718,6 @@ if ( quantumsMax == 0)
 //BX_CONTROLLER(channel,0).lba_mode
 
     case 0x07: // Hard Disk Status (f0001d)
-		getMFP()->setGPIPbit(0x20, 0x20);		// lower the interrupt
-
     case 0x16: // Hard Disk Alternate Status (f00039)
       if (!BX_ANY_IS_PRESENT(channel)) {
 	    // (mch) Just return zero for these registers
@@ -742,7 +739,9 @@ if ( quantumsMax == 0)
         BX_SELECTED_CONTROLLER(channel).status.index_pulse_count = 0;
         }
       }
-// MJ      if (address == 0x1f7) BX_HD_THIS devices->pic->lower_irq(14);
+      if (port == 0x07) {
+        getMFP()->setGPIPbit(0x20, 0x20);		// lower the interrupt
+      }
       goto return_value8;
       break;
 
@@ -948,8 +947,6 @@ if ( quantumsMax == 0)
 					  atapi_cmd_nop(channel);
 				    } else {
 					  atapi_cmd_error(channel, SENSE_NOT_READY, ASC_MEDIUM_NOT_PRESENT);
-//					  // force Insert of CD-ROM media
-//					  set_cd_media_status(get_device_handle(channel, BX_SLAVE_SELECTED(channel)), true);
 				    }
 				    raise_interrupt(channel);
 				    break;
@@ -999,7 +996,8 @@ if ( quantumsMax == 0)
 					  atapi_cmd_nop(channel);
 					  raise_interrupt(channel);
 				    } else if (LoEj && !Start) { // Eject the disc
-					  atapi_cmd_nop(channel);
+                                          atapi_cmd_nop(channel);
+
                                           if (BX_SELECTED_DRIVE(channel).cdrom.ready) {
 #ifdef LOWLEVEL_CDROM
 					    BX_SELECTED_DRIVE(channel).cdrom.cd->eject_cdrom();
@@ -1007,7 +1005,7 @@ if ( quantumsMax == 0)
 					    BX_SELECTED_DRIVE(channel).cdrom.ready = 0;
                                             bx_options.atadevice[channel][BX_SLAVE_SELECTED(channel)].status = BX_EJECTED;
                                           }
-					  raise_interrupt(channel);
+                                          raise_interrupt(channel);
 				    } else { // Load the disc
 					  // My guess is that this command only closes the tray, that's a no-op for us
 					  atapi_cmd_nop(channel);
@@ -1067,8 +1065,7 @@ if ( quantumsMax == 0)
 							      // Multisession, Mode 2 Form 2, Mode 2 Form 1
 							      BX_SELECTED_CONTROLLER(channel).buffer[12] = 0x70; 
 							      BX_SELECTED_CONTROLLER(channel).buffer[13] = (3 << 5);
-							      BX_SELECTED_CONTROLLER(channel).buffer[14] = (unsigned char)
-(1 |
+							      BX_SELECTED_CONTROLLER(channel).buffer[14] = (unsigned char) (1 |
 								      (BX_SELECTED_DRIVE(channel).cdrom.locked ? (1 << 1) : 0) |
 								      (1 << 3) |
 								      (1 << 5));
@@ -1138,10 +1135,38 @@ if ( quantumsMax == 0)
 
 					  case 0x2: // default values
 						switch (PageCode) {
+						      case 0x2a: // CD-ROM capabilities & mech. status, copied from current values
+						            init_send_atapi_command(channel, atapi_command, 28, alloc_length);
+							    init_mode_sense_single(channel, &BX_SELECTED_CONTROLLER(channel).buffer[8], 28);
+							    BX_SELECTED_CONTROLLER(channel).buffer[8] = 0x2a;
+							    BX_SELECTED_CONTROLLER(channel).buffer[9] = 0x12;
+							    BX_SELECTED_CONTROLLER(channel).buffer[10] = 0x00;
+							    BX_SELECTED_CONTROLLER(channel).buffer[11] = 0x00;
+							    // Multisession, Mode 2 Form 2, Mode 2 Form 1
+							    BX_SELECTED_CONTROLLER(channel).buffer[12] = 0x70; 
+							    BX_SELECTED_CONTROLLER(channel).buffer[13] = (3 << 5);
+							    BX_SELECTED_CONTROLLER(channel).buffer[14] = (unsigned char) (1 |
+								      (BX_SELECTED_DRIVE(channel).cdrom.locked ? (1 << 1) : 0) |
+								      (1 << 3) |
+								      (1 << 5));
+							    BX_SELECTED_CONTROLLER(channel).buffer[15] = 0x00;
+							    BX_SELECTED_CONTROLLER(channel).buffer[16] = (706 >> 8) & 0xff;
+							    BX_SELECTED_CONTROLLER(channel).buffer[17] = 706 & 0xff;
+							    BX_SELECTED_CONTROLLER(channel).buffer[18] = 0;
+							    BX_SELECTED_CONTROLLER(channel).buffer[19] = 2;
+							    BX_SELECTED_CONTROLLER(channel).buffer[20] = (512 >> 8) & 0xff;
+							    BX_SELECTED_CONTROLLER(channel).buffer[21] = 512 & 0xff;
+							    BX_SELECTED_CONTROLLER(channel).buffer[22] = (706 >> 8) & 0xff;
+							    BX_SELECTED_CONTROLLER(channel).buffer[23] = 706 & 0xff;
+							    BX_SELECTED_CONTROLLER(channel).buffer[24] = 0;
+							    BX_SELECTED_CONTROLLER(channel).buffer[25] = 0;
+							    BX_SELECTED_CONTROLLER(channel).buffer[26] = 0;
+							    BX_SELECTED_CONTROLLER(channel).buffer[27] = 0;
+							    ready_to_send_atapi(channel);
+							    break;
 						      case 0x01: // error recovery
 						      case 0x0d: // CD-ROM
 						      case 0x0e: // CD-ROM audio control
-						      case 0x2a: // CD-ROM capabilities & mech. status
 						      case 0x3f: // all
 							    panicbug("cdrom: MODE SENSE (dflt), code=%x",
 								     PageCode);
@@ -1248,6 +1273,7 @@ if ( quantumsMax == 0)
 #ifdef LOWLEVEL_CDROM
 					  bool msf = (BX_SELECTED_CONTROLLER(channel).buffer[1] >> 1) & 1;
 					  uint8 starting_track = BX_SELECTED_CONTROLLER(channel).buffer[6];
+					  int toc_length;
 #endif
 					  uint16 alloc_length = read_16bit(BX_SELECTED_CONTROLLER(channel).buffer + 7);
 
@@ -1256,9 +1282,8 @@ if ( quantumsMax == 0)
 					  switch (format) {
 						case 0:
 #ifdef LOWLEVEL_CDROM
-						      int toc_length;
 						      if (!(BX_SELECTED_DRIVE(channel).cdrom.cd->read_toc(BX_SELECTED_CONTROLLER(channel).buffer,
-										       &toc_length, msf, starting_track))) {
+										       &toc_length, msf, starting_track, format))) {
 							    atapi_cmd_error(channel, SENSE_ILLEGAL_REQUEST,
 									    ASC_INV_FIELD_IN_CMD_PACKET);
 							    raise_interrupt(channel);
@@ -1419,6 +1444,8 @@ if ( quantumsMax == 0)
 			      case 0xba: // scan
 			      case 0xbb: // set cd speed
 			      case 0x4e: // stop play/scan
+			      case 0x46: // ???
+			      case 0x4a: // ???
 			        D(bug("ATAPI command 0x%x not implemented yet",
 			                  atapi_command));
 			        atapi_cmd_error(channel, SENSE_ILLEGAL_REQUEST, ASC_INV_FIELD_IN_CMD_PACKET);
@@ -1427,6 +1454,7 @@ if ( quantumsMax == 0)
 			      default:
 				    panicbug("Unknown ATAPI command 0x%x (%d)",
 					     atapi_command, atapi_command);
+				    raise_interrupt(channel);
 				    break;
 			}
 		  }
@@ -1442,12 +1470,7 @@ if ( quantumsMax == 0)
     case 0x01: // hard disk write precompensation (f00005)
 	  WRITE_FEATURES(channel,value);
       break;
-/* MJ
-    case 0x05: // hard disk error register (f00005)
-      BX_SELECTED_CONTROLLER(channel).status.err = value ? 1 : 0;
-      BX_SELECTED_CONTROLLER(channel).error_register = value;
-      break;
-*/
+
     case 0x02: // hard disk sector count (f00009)
 	  WRITE_SECTOR_COUNT(channel,value);
 	  break;
@@ -1475,10 +1498,10 @@ if ( quantumsMax == 0)
       {
       if ( (value & 0xa0) != 0xa0 ) // 1x1xxxxx
         D(bug("IO write f00019 (%02x): not 1x1xxxxxb", (unsigned) value));
-      BX_HD_THIS channels[channel].drive_select = (value >> 4) & 0x01;
 #if DEBUG
-      Bit32u drvsel = (value >> 4) & 0x01;
+      Bit32u drvsel = 
 #endif
+      BX_HD_THIS channels[channel].drive_select = (value >> 4) & 0x01;
       WRITE_HEAD_NO(channel,value & 0xf);
       if (BX_SELECTED_CONTROLLER(channel).lba_mode == 0 && ((value >> 6) & 1) == 1)
         D(bug("enabling LBA mode"));
@@ -1496,6 +1519,8 @@ if ( quantumsMax == 0)
 	  // are ignored if no secondary device is present
       if ((BX_SLAVE_SELECTED(channel)) && (!BX_SLAVE_IS_PRESENT(channel)))
 	    break;
+      // Writes to the command register clear the IRQ
+      getMFP()->setGPIPbit(0x20, 0x20);		// lower the interrupt
 
       if (BX_SELECTED_CONTROLLER(channel).status.busy)
         panicbug("hard disk: command sent, controller BUSY");
@@ -1711,7 +1736,7 @@ if ( quantumsMax == 0)
 	    case 0x55: //  Disable look-ahead cache.
 	    case 0xCC: // Enable and
 	    case 0x66: //  Disable reverting to power-on default
-	    case 0x03: // Set Transfer Mode
+            case 0x03: // Set Transfer Mode
 	      D(bug("SET FEATURES subcommand not supported by disk."));
 	      command_aborted(channel, value);
 	    break;
@@ -1851,16 +1876,16 @@ if ( quantumsMax == 0)
 	case 0x70:  // SEEK (cgs)
 	  if (BX_SELECTED_IS_HD(channel)) {
 	    D(bug("write cmd 0x70 (SEEK) executing"));
-	    if (!calculate_logical_address(channel, &logical_sector)) {
+            if (!calculate_logical_address(channel, &logical_sector)) {
 	      panicbug("initial seek to sector %lu out of bounds, aborting", logical_sector);
-	      command_aborted(channel, value);
+              command_aborted(channel, value);
 	      break;
 	    }
             BX_SELECTED_CONTROLLER(channel).error_register = 0;
             BX_SELECTED_CONTROLLER(channel).status.busy  = 0;
             BX_SELECTED_CONTROLLER(channel).status.drive_ready = 1;
             BX_SELECTED_CONTROLLER(channel).status.seek_complete = 1;
-            BX_SELECTED_CONTROLLER(channel).status.drq   = 1;
+            BX_SELECTED_CONTROLLER(channel).status.drq   = 0;
             BX_SELECTED_CONTROLLER(channel).status.corrected_data = 0;
             BX_SELECTED_CONTROLLER(channel).status.err   = 0;
             BX_SELECTED_CONTROLLER(channel).buffer_index = 0;
@@ -1873,7 +1898,8 @@ if ( quantumsMax == 0)
 	    panicbug("write cmd 0x70 (SEEK) not supported for non-disk");
 	    command_aborted(channel, 0x70);
 	  }
-	break;
+          break;
+	  
 
 	// List all the write operations that are defined in the ATA/ATAPI spec
 	// that we don't support.  Commands that are listed here will cause a
@@ -1995,6 +2021,7 @@ if ( quantumsMax == 0)
 		      BX_CONTROLLER(channel,id).lba_mode          = 0;
 
 		      BX_CONTROLLER(channel,id).control.disable_irq = 0;
+		      getMFP()->setGPIPbit(0x20, 0x20);		// lower the interrupt
 		}
 	  } else if (BX_SELECTED_CONTROLLER(channel).reset_in_progress &&
 		     !BX_SELECTED_CONTROLLER(channel).control.reset) {
@@ -2023,9 +2050,6 @@ if ( quantumsMax == 0)
 	    D(bug("s[1].controller.control.disable_irq = %02x", (BX_HD_THIS channels[channel].drives[1]).controller.control.disable_irq));
 	  break;
 
-// MJ	case 0xf00039:	/* Falcon data out register ??? */
-// MJ		break;		/* ignore until we find out for what it's used */
-
     default:
       panicbug("hard drive: io write to address %x = %02x",
         (unsigned) address, (unsigned) value);
@@ -2048,19 +2072,21 @@ bx_hard_drive_c::calculate_logical_address(Bit8u channel, off_t *sector)
       off_t logical_sector;
 
       if (BX_SELECTED_CONTROLLER(channel).lba_mode) {
-            //bx_printf ("disk: calculate: %d %d %d\n", ((Bit32u)BX_SELECTED_CONTROLLER(channel).head_no), ((Bit32u)BX_SELECTED_CONTROLLER(channel).cylinder_no), (Bit32u)BX_SELECTED_CONTROLLER(channel).sector_no);
 	    logical_sector = ((Bit32u)BX_SELECTED_CONTROLLER(channel).head_no) << 24 |
 		  ((Bit32u)BX_SELECTED_CONTROLLER(channel).cylinder_no) << 8 |
 		  (Bit32u)BX_SELECTED_CONTROLLER(channel).sector_no;
-            //bx_printf ("disk: result: %u\n", logical_sector);
       } else
 	    logical_sector = (BX_SELECTED_CONTROLLER(channel).cylinder_no * BX_SELECTED_DRIVE(channel).hard_drive->heads *
 			      BX_SELECTED_DRIVE(channel).hard_drive->sectors) +
-		  (BX_SELECTED_CONTROLLER(channel).head_no * BX_SELECTED_DRIVE(channel).hard_drive->sectors) +
+		  (Bit32u)(BX_SELECTED_CONTROLLER(channel).head_no * BX_SELECTED_DRIVE(channel).hard_drive->sectors) +
 		  (BX_SELECTED_CONTROLLER(channel).sector_no - 1);
 
-      if (logical_sector >=
-	  (off_t)(BX_SELECTED_DRIVE(channel).hard_drive->cylinders * BX_SELECTED_DRIVE(channel).hard_drive->heads * BX_SELECTED_DRIVE(channel).hard_drive->sectors)) {
+      Bit32u sector_count= 
+           (Bit32u)BX_SELECTED_DRIVE(channel).hard_drive->cylinders * 
+           (Bit32u)BX_SELECTED_DRIVE(channel).hard_drive->heads * 
+           (Bit32u)BX_SELECTED_DRIVE(channel).hard_drive->sectors;
+
+      if (logical_sector >= sector_count) {
             bug("calc_log_addr: out of bounds");
 	    return false;
       }
@@ -2077,9 +2103,9 @@ bx_hard_drive_c::increment_address(Bit8u channel)
 	    off_t current_address;
 	    calculate_logical_address(channel, &current_address);
 	    current_address++;
-	    BX_SELECTED_CONTROLLER(channel).head_no = (current_address >> 24) & 0xf;
-	    BX_SELECTED_CONTROLLER(channel).cylinder_no = (current_address >> 8) & 0xffff;
-	    BX_SELECTED_CONTROLLER(channel).sector_no = (current_address) & 0xff;
+	    BX_SELECTED_CONTROLLER(channel).head_no = (Bit8u)((current_address >> 24) & 0xf);
+	    BX_SELECTED_CONTROLLER(channel).cylinder_no = (Bit16u)((current_address >> 8) & 0xffff);
+	    BX_SELECTED_CONTROLLER(channel).sector_no = (Bit8u)((current_address) & 0xff);
       } else {
             BX_SELECTED_CONTROLLER(channel).sector_no++;
             if (BX_SELECTED_CONTROLLER(channel).sector_no > BX_SELECTED_DRIVE(channel).hard_drive->sectors) {
@@ -2589,6 +2615,7 @@ void
 bx_hard_drive_c::atapi_cmd_error(Bit8u channel, sense_t sense_key, asc_t asc)
 {
       D(bug("atapi_cmd_error channel=%02x key=%02x asc=%02x", channel, sense_key, asc));
+
       BX_SELECTED_CONTROLLER(channel).error_register = sense_key << 4;
       BX_SELECTED_CONTROLLER(channel).interrupt_reason.i_o = 1;
       BX_SELECTED_CONTROLLER(channel).interrupt_reason.c_d = 1;
@@ -2622,7 +2649,10 @@ bx_hard_drive_c::init_mode_sense_single(Bit8u channel, const void* src, int size
       // Header
       BX_SELECTED_CONTROLLER(channel).buffer[0] = (size+6) >> 8;
       BX_SELECTED_CONTROLLER(channel).buffer[1] = (size+6) & 0xff;
-      BX_SELECTED_CONTROLLER(channel).buffer[2] = 0x70; // no media present
+      if (bx_options.atadevice[channel][BX_HD_THIS channels[channel].drive_select].status == BX_INSERTED)
+        BX_SELECTED_CONTROLLER(channel).buffer[2] = 0x12; // media present 120mm CD-ROM (CD-R) data/audio  door closed
+      else
+        BX_SELECTED_CONTROLLER(channel).buffer[2] = 0x70; // no media present
       BX_SELECTED_CONTROLLER(channel).buffer[3] = 0; // reserved
       BX_SELECTED_CONTROLLER(channel).buffer[4] = 0; // reserved
       BX_SELECTED_CONTROLLER(channel).buffer[5] = 0; // reserved

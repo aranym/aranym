@@ -97,7 +97,7 @@ class default_image_t : public device_image_t
 
   private:
       int fd;
-      
+
 };
 
 #if BX_SPLIT_HD_SUPPORT
@@ -296,7 +296,7 @@ public:
   bx_hard_drive_c(void);
   ~bx_hard_drive_c(void);
   BX_HD_SMF void   close_harddrive(void);
-  BX_HD_SMF void   init(/* MJ bx_devices_c *d, bx_cmos_c *cmos */);
+  BX_HD_SMF void   init();
   BX_HD_SMF void   reset(unsigned type);
   BX_HD_SMF Bit32u   get_device_handle(Bit8u channel, Bit8u device);
   BX_HD_SMF Bit32u   get_first_cd_handle(void);
@@ -358,7 +358,6 @@ private:
 
     } channels[BX_MAX_ATA_CHANNEL];
 
-// MJ  bx_devices_c *devices;
   };
 
 extern bx_hard_drive_c bx_hard_drive;

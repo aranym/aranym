@@ -713,70 +713,93 @@ if (using_file == 0)
 
 
   bool
-cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track)
+cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track, int format)
 {
   // Read CD TOC. Returns false if start track is out of bounds.
 
   if (fd < 0) {
     panicbug("cdrom: read_toc: file not open.");
-    }
+    return false;
+  }
 
 #if defined(WIN32)
   if (1) { // This is a hack and works okay if there's one rom track only
 #else
   if (using_file) {
 #endif
-    // From atapi specs : start track can be 0-63, AA
-    if ((start_track > 1) && (start_track != 0xaa)) 
-      return false;
-
-    buf[2] = 1;
-    buf[3] = 1;
-
+    uint32 blocks;
     int len = 4;
-    if (start_track <= 1) {
-      buf[len++] = 0; // Reserved
-      buf[len++] = 0x14; // ADR, control
-      buf[len++] = 1; // Track number
-      buf[len++] = 0; // Reserved
 
-      // Start address
-      if (msf) {
-        buf[len++] = 0; // reserved
-        buf[len++] = 0; // minute
-        buf[len++] = 2; // second
-        buf[len++] = 0; // frame
-      } else {
-        buf[len++] = 0;
-        buf[len++] = 0;
-        buf[len++] = 0;
-        buf[len++] = 0; // logical sector 0
-      }
+    switch (format) {
+      case 0:
+        // From atapi specs : start track can be 0-63, AA
+        if ((start_track > 1) && (start_track != 0xaa))
+          return false;
+
+        buf[2] = 1;
+        buf[3] = 1;
+
+        if (start_track <= 1) {
+          buf[len++] = 0; // Reserved
+          buf[len++] = 0x14; // ADR, control
+          buf[len++] = 1; // Track number
+          buf[len++] = 0; // Reserved
+
+          // Start address
+          if (msf) {
+            buf[len++] = 0; // reserved
+            buf[len++] = 0; // minute
+            buf[len++] = 2; // second
+            buf[len++] = 0; // frame
+          } else {
+            buf[len++] = 0;
+            buf[len++] = 0;
+            buf[len++] = 0;
+            buf[len++] = 16; // logical sector 0
+          }
+        }
+
+        // Lead out track
+        buf[len++] = 0; // Reserved
+        buf[len++] = 0x16; // ADR, control
+        buf[len++] = 0xaa; // Track number
+        buf[len++] = 0; // Reserved
+
+        blocks = capacity();
+
+        // Start address
+        if (msf) {
+          buf[len++] = 0; // reserved
+          buf[len++] = (uint8)(((blocks + 150) / 75) / 60); // minute
+          buf[len++] = (uint8)(((blocks + 150) / 75) % 60); // second
+          buf[len++] = (uint8)((blocks + 150) % 75); // frame;
+        } else {
+          buf[len++] = (blocks >> 24) & 0xff;
+          buf[len++] = (blocks >> 16) & 0xff;
+          buf[len++] = (blocks >> 8) & 0xff;
+          buf[len++] = (blocks >> 0) & 0xff;
+        }
+
+        buf[0] = ((len-2) >> 8) & 0xff;
+        buf[1] = (len-2) & 0xff;
+
+        break;
+
+      case 1:
+        // multi session stuff - emulate a single session only
+        buf[0] = 0;
+        buf[1] = 0x0a;
+        buf[2] = 1;
+        buf[3] = 1;
+        for (unsigned i = 0; i < 8; i++)
+          buf[4+i] = 0;
+        len = 12;
+        break;
+
+      default:
+        panicbug("cdrom: read_toc: unknown format");
+        return false;
     }
-
-    // Lead out track
-    buf[len++] = 0; // Reserved
-    buf[len++] = 0x16; // ADR, control
-    buf[len++] = 0xaa; // Track number
-    buf[len++] = 0; // Reserved
-
-    uint32 blocks = capacity();
-
-    // Start address
-    if (msf) {
-      buf[len++] = 0; // reserved
-      buf[len++] = (uint8)(((blocks + 150) / 75) / 60); // minute
-      buf[len++] = (uint8)(((blocks + 150) / 75) % 60); // second
-      buf[len++] = (uint8)((blocks + 150) % 75); // frame;
-    } else {
-      buf[len++] = (blocks >> 24) & 0xff;
-      buf[len++] = (blocks >> 16) & 0xff;
-      buf[len++] = (blocks >> 8) & 0xff;
-      buf[len++] = (blocks >> 0) & 0xff;
-    }
-
-    buf[0] = ((len-2) >> 8) & 0xff;
-    buf[1] = (len-2) & 0xff;
 
     *length = len;
 
@@ -1225,22 +1248,16 @@ cdrom_interface::capacity()
              MSF_TO_LBA(toc->trackdesc[i].p )));
 
     if ( start_sector != -1 ) {
-
       start_sector = MSF_TO_LBA(toc->trackdesc[i].p) - start_sector;
       break;
-
     }
 
-    if (( toc->trackdesc[i].ctrl_adr >> 4) != 1 ) continue;
+    if ((toc->trackdesc[i].ctrl_adr >> 4) != 1) continue;
 
     if ( toc->trackdesc[i].ctrl_adr & 0x04 ) {
-
       data_track = toc->trackdesc[i].point;
-
       start_sector = MSF_TO_LBA(toc->trackdesc[i].p);
-
     }
-      
   }  
 
   free( toc );

@@ -1,3 +1,7 @@
+2004/11/14 - milan
+- ata.*, cdrom.* - a small cleanup, some things from Bochs (multisession read
+  TOC)
+
 * tagged as ARANYM_0_8_11_BETA
 
 2004/11/07 - joy
