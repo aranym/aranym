@@ -19,7 +19,14 @@ protected:
 	bool doRender; // the HW surface is available -> videl writes directly into the Host videoram
 
 	void renderScreenNoFlag();
+	void renderScreenNoZoom();
+	void renderScreenZoom();
 
+	/* Autozoom */
+	int zoomwidth;
+	int zoomheight;
+	int *zoomxtable;
+	int *zoomytable;
 public:
 	VIDEL();
 	void init();
@@ -53,6 +60,9 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.17  2002/04/22 18:30:50  milan
+ * header files reform
+ *
  * Revision 1.16  2002/02/28 20:44:22  joy
  * uae_ vars replaced with uint's
  *

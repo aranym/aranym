@@ -33,6 +33,12 @@ VIDEL::VIDEL()
 	od_posledni_zmeny = 0;
 
 	hostColorsSync = false;
+
+	/* Autozoom */
+	zoomwidth=0;
+	zoomheight=0;
+	zoomxtable=NULL;
+	zoomytable=NULL;
 }
 
 void VIDEL::init()
@@ -185,8 +191,6 @@ void VIDEL::renderScreenNoFlag()
 	int vh	 = getScreenHeight();
 	int vbpp = getScreenBpp();
 
-	int scrpitch = hostScreen.getPitch();
-
 	if (od_posledni_zmeny > 2) {
 		if (vw > 0 && vw != width) {
 			D(bug("CH width %d", width));
@@ -215,6 +219,25 @@ void VIDEL::renderScreenNoFlag()
 	if (!hostScreen.renderBegin())
 		return;
 
+	if (bx_options.video.autozoom) {
+		renderScreenZoom();
+	} else {
+		renderScreenNoZoom();
+	}
+
+	hostScreen.renderEnd();
+
+	hostScreen.update( false );
+}
+
+
+void VIDEL::renderScreenNoZoom()
+{
+	int vw	 = getScreenWidth();
+	int vh	 = getScreenHeight();
+
+	int scrpitch = hostScreen.getPitch();
+
 	long atariVideoRAM = this->getVideoramAddress();
 #ifdef DIRECT_TRUECOLOR
 	if (bx_options.video.direct_truecolor)
@@ -223,6 +246,14 @@ void VIDEL::renderScreenNoFlag()
 	uint16 *fvram = (uint16 *) Atari2HostAddr(atariVideoRAM);
 	VideoRAMBaseHost = (uint8 *) hostScreen.getVideoramAddress();
 	uint16 *hvram = (uint16 *) VideoRAMBaseHost;
+
+	/* Clip to SDL_Surface dimensions */
+	int scrwidth = hostScreen.getWidth();
+	int scrheight = hostScreen.getHeight();
+	int vw_clip = vw;
+	int vh_clip = vh;
+	if (vw>scrwidth) vw_clip = scrwidth;
+	if (vh>scrheight) vh_clip = scrheight;	
 
 	if (bpp < 16) {
 		/* Bitplanes modes */
@@ -239,11 +270,11 @@ void VIDEL::renderScreenNoFlag()
 					uint16 *fvram_line = fvram;
 					uint8 *hvram_line = (uint8 *)hvram;
 
-					for (int h = 0; h < vh; h++) {
+					for (int h = 0; h < vh_clip; h++) {
 						uint16 *fvram_column = fvram_line;
 						uint8 *hvram_column = hvram_line;
 
-						for (int w = 0; w < (vw+15)>>4; w++) {
+						for (int w = 0; w < (vw_clip+15)>>4; w++) {
 							hostScreen.bitplaneToChunky( fvram_column, bpp, color );
 
 							memcpy(hvram_column, color, 16);
@@ -262,15 +293,15 @@ void VIDEL::renderScreenNoFlag()
 					uint16 *fvram_line = fvram;
 					uint16 *hvram_line = (uint16 *)hvram;
 
-					for (int h = 0; h < vh; h++) {
+					for (int h = 0; h < vh_clip; h++) {
 						uint16 *fvram_column = fvram_line;
 						uint16 *hvram_column = hvram_line;
 
-						for (int w = 0; w < (vw+15)>>4; w++) {
+						for (int w = 0; w < (vw_clip+15)>>4; w++) {
 							hostScreen.bitplaneToChunky( fvram_column, bpp, color );
 
 							for (int j=0; j<16; j++) {
-								*hvram_column++ = hostScreen.getPaletteColor( color[j++] );
+								*hvram_column++ = hostScreen.getPaletteColor( color[j] );
 							}
 
 							fvram_column += bpp;
@@ -286,15 +317,15 @@ void VIDEL::renderScreenNoFlag()
 					uint16 *fvram_line = fvram;
 					uint8 *hvram_line = (uint8 *)hvram;
 
-					for (int h = 0; h < vh; h++) {
+					for (int h = 0; h < vh_clip; h++) {
 						uint16 *fvram_column = fvram_line;
 						uint8 *hvram_column = hvram_line;
 
-						for (int w = 0; w < (vw+15)>>4; w++) {
+						for (int w = 0; w < (vw_clip+15)>>4; w++) {
 							hostScreen.bitplaneToChunky( fvram_column, bpp, color );
 
 							for (int j=0; j<16; j++) {
-								uint32 tmpColor = hostScreen.getPaletteColor( color[j++] );
+								uint32 tmpColor = hostScreen.getPaletteColor( color[j] );
 								putBpp24Pixel( hvram_column, tmpColor );
 								hvram_column += 3;
 							}
@@ -312,15 +343,15 @@ void VIDEL::renderScreenNoFlag()
 					uint16 *fvram_line = fvram;
 					uint32 *hvram_line = (uint32 *)hvram;
 
-					for (int h = 0; h < vh; h++) {
+					for (int h = 0; h < vh_clip; h++) {
 						uint16 *fvram_column = fvram_line;
 						uint32 *hvram_column = hvram_line;
 
-						for (int w = 0; w < (vw+15)>>4; w++) {
+						for (int w = 0; w < (vw_clip+15)>>4; w++) {
 							hostScreen.bitplaneToChunky( fvram_column, bpp, color );
 
 							for (int j=0; j<16; j++) {
-								*hvram_column++ = hostScreen.getPaletteColor( color[j++] );
+								*hvram_column++ = hostScreen.getPaletteColor( color[j] );
 							}
 
 							fvram_column += bpp;
@@ -343,11 +374,11 @@ void VIDEL::renderScreenNoFlag()
 					uint16 *fvram_line = fvram;
 					uint8 *hvram_line = (uint8 *)hvram;
 
-					for (int h = 0; h < vh; h++) {
+					for (int h = 0; h < vh_clip; h++) {
 						uint16 *fvram_column = fvram_line;
 						uint8 *hvram_column = hvram_line;
 
-						for (int w = 0; w < vw; w++) {
+						for (int w = 0; w < vw_clip; w++) {
 							int tmp;
 							
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -378,16 +409,16 @@ void VIDEL::renderScreenNoFlag()
 						uint16 *fvram_line = fvram;
 						uint16 *hvram_line = (uint16 *)hvram;
 
-						for (int h = 0; h < vh; h++) {
+						for (int h = 0; h < vh_clip; h++) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 							//FIXME: here might be a runtime little/big video endian switch like:
 							//      if ( /* videocard memory in Motorola endian format */ false) {
-							memcpy(hvram_line, fvram_line, vw<<1);
+							memcpy(hvram_line, fvram_line, vw_clip<<1);
 #else
 							uint16 *fvram_column = fvram_line;
 							uint16 *hvram_column = hvram_line;
 
-							for (int w = 0; w < vw; w++) {
+							for (int w = 0; w < vw_clip; w++) {
 								// byteswap
 								int data = *fvram_column++;
 								*hvram_column++ = (data >> 8) | (data << 8);
@@ -405,11 +436,11 @@ void VIDEL::renderScreenNoFlag()
 					uint16 *fvram_line = fvram;
 					uint8 *hvram_line = (uint8 *)hvram;
 
-					for (int h = 0; h < vh; h++) {
+					for (int h = 0; h < vh_clip; h++) {
 						uint16 *fvram_column = fvram_line;
 						uint8 *hvram_column = hvram_line;
 
-						for (int w = 0; w < vw; w++) {
+						for (int w = 0; w < vw_clip; w++) {
 							int data = *fvram_column++;
 
 							uint32 tmpColor =
@@ -434,11 +465,11 @@ void VIDEL::renderScreenNoFlag()
 					uint16 *fvram_line = fvram;
 					uint32 *hvram_line = (uint32 *)hvram;
 
-					for (int h = 0; h < vh; h++) {
+					for (int h = 0; h < vh_clip; h++) {
 						uint16 *fvram_column = fvram_line;
 						uint32 *hvram_column = hvram_line;
 
-						for (int w = 0; w < vw; w++) {
+						for (int w = 0; w < vw_clip; w++) {
 							int data = *fvram_column++;
 
 							*hvram_column++ =
@@ -456,12 +487,251 @@ void VIDEL::renderScreenNoFlag()
 				break;
 		}
 	}
-
-	hostScreen.renderEnd();
-
-	hostScreen.update( false );
 }
 
+
+void VIDEL::renderScreenZoom()
+{
+	int i, j, w, h, cursrcline;
+
+	/* Atari screen infos */
+	int vw	 = getScreenWidth();
+	int vh	 = getScreenHeight();
+	uint16 *fvram = (uint16 *) Atari2HostAddr(this->getVideoramAddress());
+
+	/* Host screen infos */
+	int scrpitch = hostScreen.getPitch();
+	int scrwidth = hostScreen.getWidth();
+	int scrheight = hostScreen.getHeight();
+	int scrbpp = hostScreen.getBpp();
+	uint16 *hvram = (uint16 *) hostScreen.getVideoramAddress();
+
+	/* New zoom ? */
+	if (zoomwidth != vw) {
+		if (zoomxtable) {
+			delete zoomxtable;
+		}
+		zoomxtable = new int[scrwidth];
+		for (i=0; i<scrwidth; i++) {
+			zoomxtable[i] = (vw*i)/scrwidth;
+		}
+		zoomwidth = vw;
+	}
+	if (zoomheight != vh) {
+		if (zoomytable) {
+			delete zoomytable;
+		}
+		zoomytable = new int[scrheight];
+		for (i=0; i<scrheight; i++) {
+			zoomytable[i] = (vh*i)/scrheight;
+		}
+		zoomheight = vh;
+	}
+
+	cursrcline = -1;
+
+	if (bpp<16) {
+		if (!hostColorsSync)
+			updateColors();
+
+		uint8 color[16];
+
+		/* Bitplanes modes */
+		switch(scrbpp) {
+			case 1:
+				{
+					/* One complete planar 2 chunky line */
+					uint8 *p2cline = new uint8[vw];
+
+					uint16 *fvram_line = fvram;
+					uint8 *hvram_line = (uint8 *)hvram;
+
+					for (h = 0; h < scrheight; h++) {
+						/* Recopy the same line ? */
+						if (zoomytable[h] == cursrcline) {
+							memcpy(hvram_line, hvram_line-scrpitch, scrwidth*scrbpp);
+						} else {
+							uint16 *fvram_column = fvram_line;
+							uint8 *hvram_column = p2cline;
+
+							/* Convert a new line */
+							for (w=0; w < (vw+15)>>4; w++) {
+								hostScreen.bitplaneToChunky( fvram_column, bpp, color );
+
+								memcpy(hvram_column, color, 16);
+
+								hvram_column += 16;
+								fvram_column += bpp;
+							}
+							
+							/* Zoom a new line */
+							for (w=0; w<scrwidth; w++) {
+								hvram_line[w] = p2cline[zoomxtable[w]];
+							}
+
+							fvram_line += ((vw+15)>>4)*bpp;
+						}
+
+						hvram_line += scrpitch;
+						cursrcline = zoomytable[h];
+					}
+
+					delete p2cline;
+				}
+				break;
+			case 2:
+				{
+					/* One complete planar 2 chunky line */
+					uint16 *p2cline = new uint16[vw];
+
+					uint16 *fvram_line = fvram;
+					uint16 *hvram_line = (uint16 *)hvram;
+
+					for (h = 0; h < scrheight; h++) {
+						/* Recopy the same line ? */
+						if (zoomytable[h] == cursrcline) {
+							memcpy(hvram_line, hvram_line-(scrpitch>>1), scrwidth*scrbpp);
+						} else {
+							uint16 *fvram_column = fvram_line;
+							uint16 *hvram_column = p2cline;
+
+							/* Convert a new line */
+							for (w=0; w < 1 /*(vw+15)>>4*/; w++) {
+								hostScreen.bitplaneToChunky( fvram_column, bpp, color );
+
+								for (j=0; j<16; j++) {
+									*hvram_column++ = hostScreen.getPaletteColor( color[j] );
+								}
+
+								fvram_column += bpp;
+							}
+							
+							/* Zoom a new line */
+							for (w=0; w<scrwidth; w++) {
+								hvram_line[w] = p2cline[zoomxtable[w]];
+							}
+
+							fvram_line += ((vw+15)>>4)*bpp;
+						}
+
+						hvram_line += scrpitch>>1;
+						cursrcline = zoomytable[h];
+					}
+
+					delete p2cline;
+				}
+				break;
+			case 3:
+				{
+					/* One complete planar 2 chunky line */
+					uint8 *p2cline = new uint8[vw*3];
+
+					uint16 *fvram_line = fvram;
+					uint8 *hvram_line = (uint8 *)hvram;
+
+					for (h = 0; h < scrheight; h++) {
+						/* Recopy the same line ? */
+						if (zoomytable[h] == cursrcline) {
+							memcpy(hvram_line, hvram_line-scrpitch, scrwidth*scrbpp);
+						} else {
+							uint16 *fvram_column = fvram_line;
+							uint8 *hvram_column = p2cline;
+
+							/* Convert a new line */
+							for (w=0; w < (vw+15)>>4; w++) {
+								hostScreen.bitplaneToChunky( fvram_column, bpp, color );
+
+								for (int j=0; j<16; j++) {
+									uint32 tmpColor = hostScreen.getPaletteColor( color[j] );
+									putBpp24Pixel( hvram_column, tmpColor );
+									hvram_column += 3;
+								}
+
+								fvram_column += bpp;
+							}
+							
+							/* Zoom a new line */
+							for (w=0; w<scrwidth; w++) {
+								hvram_line[w*3] = p2cline[zoomxtable[w]*3];
+								hvram_line[w*3+1] = p2cline[zoomxtable[w]*3+1];
+								hvram_line[w*3+2] = p2cline[zoomxtable[w]*3+2];
+							}
+
+							fvram_line += ((vw+15)>>4)*bpp;
+						}
+
+						hvram_line += scrpitch;
+						cursrcline = zoomytable[h];
+					}
+
+					delete p2cline;
+				}
+				break;
+			case 4:
+				{
+					/* One complete planar 2 chunky line */
+					uint32 *p2cline = new uint32[vw];
+
+					uint16 *fvram_line = fvram;
+					uint32 *hvram_line = (uint32 *)hvram;
+
+					for (h = 0; h < scrheight; h++) {
+						/* Recopy the same line ? */
+						if (zoomytable[h] == cursrcline) {
+							memcpy(hvram_line, hvram_line-(scrpitch>>2), scrwidth*scrbpp);
+						} else {
+							uint16 *fvram_column = fvram_line;
+							uint32 *hvram_column = p2cline;
+
+							/* Convert a new line */
+							for (w=0; w < (vw+15)>>4; w++) {
+								hostScreen.bitplaneToChunky( fvram_column, bpp, color );
+
+								for (j=0; j<16; j++) {
+									*hvram_column++ = hostScreen.getPaletteColor( color[j] );
+								}
+
+								fvram_column += bpp;
+							}
+							
+							/* Zoom a new line */
+							for (w=0; w<scrwidth; w++) {
+								hvram_line[w] = p2cline[zoomxtable[w]];
+							}
+
+							fvram_line += ((vw+15)>>4)*bpp;
+						}
+
+						hvram_line += scrpitch>>2;
+						cursrcline = zoomytable[h];
+					}
+
+					delete p2cline;
+				}
+				break;
+		}
+	} else {
+		/* Falcon TrueColour mode */
+		switch(scrbpp) {
+			case 1:
+				{
+				}
+				break;
+			case 2:
+				{
+				}
+				break;
+			case 3:
+				{
+				}
+				break;
+			case 4:
+				{
+				}
+				break;
+		}
+	}
+}
 
 /*
  * $Log$

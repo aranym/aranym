@@ -145,6 +145,7 @@ struct Config_Tag video_conf[]={
 #ifdef DIRECT_TRUECOLOR
 	{ "DirectTruecolor", Bool_Tag, &bx_options.video.direct_truecolor},
 #endif
+	{ "AutoZoom", Bool_Tag, &bx_options.video.autozoom},
 	{ NULL , Error_Tag, NULL }
 };
 
@@ -156,6 +157,7 @@ void preset_video() {
 #ifdef DIRECT_TRUECOLOR
   bx_options.video.direct_truecolor = false;
 #endif
+  bx_options.video.autozoom = false;
 }
 
 void postload_video() {

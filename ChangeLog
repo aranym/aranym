@@ -1,3 +1,8 @@
+2002/09/24 - patrice
+- videl: bugfixes, preliminary autozoom support (AutoZoom=[Yes|No] in [VIDEO]
+  section of config file).
+
+
 2002/09/23 - patrice
 - hostscreen: modified to select the nearest best video mode.
 - videl: modified to render from any bpp to any bpp, using any screen pitch.

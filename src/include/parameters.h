@@ -84,6 +84,7 @@ typedef struct {
 #ifdef DIRECT_TRUECOLOR
   bool direct_truecolor;	// patch TOS to enable direct true color
 #endif /* DIRECT_TRUECOLOR */
+  bool autozoom;
 } bx_video_options_t;
 
 // Startup options
