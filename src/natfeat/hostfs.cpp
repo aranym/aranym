@@ -943,15 +943,16 @@ char *HostFs::cookie2Pathname( HostFs::XfsFsFile *fs, const char *name, char *bu
 			return NULL;
 		if (name && *name)
 		{
-			// add a trailing dir separator if it's not there yet
+			// make sure there's the right trailing dir separator
 			int len = strlen(buf);
 			if (len > 0) {
-				char last = buf[len-1];
-				if (last != '\\' && last != '/')
-					strcat(buf, DIRSEPARATOR);
+				char *last = buf + len-1;
+				if (*last == '\\' || *last == '/') {
+					*last = '\0';
+				}
+				strcat(buf, DIRSEPARATOR);
 			}
-
-			getHostFileName( h, NULL, buf, name );
+			getHostFileName( buf + strlen(buf), NULL, buf, name );
 		}
 	}
 	D2(bug("HOSTFS: cookie2pathname '%s'", buf));
@@ -1983,6 +1984,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.11.2.4  2003/03/28 12:59:07  joy
+ * little fix 2nd
+ *
  * Revision 1.11.2.3  2003/03/28 12:57:38  joy
  * little fix
  *
