@@ -29,6 +29,10 @@
 #include "mon.h"
 #endif
 
+#ifdef ETHERNET_SUPPORT
+#include "ether.h"
+#endif
+
 #define DEBUG 0
 #include "debug.h"
 
