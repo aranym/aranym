@@ -43,7 +43,7 @@
 
 static int debugger_active = 0;
 int debugging = 0;
-int irqindebug = false;
+int irqindebug = 0;
 
 int ignore_irq = 0;
 
@@ -76,8 +76,8 @@ void deactivate_debugger(void)
    debugger_active = 0;
 }
 
-int firsthist = 0;
-int lasthist = 0;
+unsigned int firsthist = 0;
+unsigned int lasthist = 0;
 #ifdef NEED_TO_DEBUG_BADLY
 struct regstruct history[MAX_HIST];
 struct flag_struct historyf[MAX_HIST];
@@ -184,7 +184,7 @@ static struct regstruct trace_prev_regs;
 
 void showBackTrace(int count, bool showLast = true)
 {
-	int temp;
+	unsigned int temp;
 #ifdef NEED_TO_DEBUG_BADLY
 	struct regstruct save_regs = regs;
 	struct flag_struct save_flags = regflags;
@@ -264,7 +264,7 @@ void debug (void)
     }
     do_skip = 0;
 
-    irqindebug = false;
+    irqindebug = 0;
 
 #ifndef FULL_HISTORY
 #ifdef NEED_TO_DEBUG_BADLY

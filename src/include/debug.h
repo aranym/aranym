@@ -17,8 +17,8 @@
 
 #define	MAX_HIST	10000
 
-extern int firsthist;
-extern int lasthist;
+extern unsigned int firsthist;
+extern unsigned int lasthist;
 extern int debugging;
 extern int irqindebug;
 extern bool cpu_debugging;
