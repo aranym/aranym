@@ -41,7 +41,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/local/bin
 mkdir -p $RPM_BUILD_ROOT/usr/local/share
 mkdir -p $RPM_BUILD_ROOT/usr/local/share/aranym
-make install PREFIX=$RPM_BUILD_ROOT/usr/local
+make install DESTDIR=$RPM_BUILD_ROOT
 install aranym $RPM_BUILD_ROOT/usr/local/bin
 
 %clean
@@ -52,7 +52,24 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc ../../doc ../../AUTHORS ../../BUGS ../../COPYING ../../FAQ ../../INSTALL ../../NEWS ../../ChangeLog ../../README ../../TODO
 /usr/local/bin/aranym
+/usr/local/share/aranym/atari/newdesk.inf
+/usr/local/share/aranym/atari/aranymrc.example
+/usr/local/share/aranym/atari/mmusetup.cnf
+/usr/local/share/aranym/atari/aranymfs/aranymfs.dos.bz2
+/usr/local/share/aranym/atari/aranymfs/aranym.xfs.bz2
+/usr/local/share/aranym/atari/aranymfs/config.sys
+/usr/local/share/aranym/createdisk/createdisk.README
+/usr/local/share/aranym/createdisk/createdisk.sh
+/usr/local/share/aranym/createdisk/mbrdata
+/usr/local/share/aranym/atari/fvdi/aranym.sys.bz2
+/usr/local/share/aranym/atari/fvdi/fvdi.prg.bz2
+/usr/local/share/aranym/atari/fvdi/fvdi.sys
+/usr/local/share/aranym/atari/tools/README
+/usr/local/share/aranym/atari/tools/clocky.prg.bz2
+/usr/local/share/aranym/atari/tools/fastram.prg.bz2
+/usr/local/share/aranym/atari/tools/pc101us.kbd.bz2
+/usr/local/share/aranym/atari/tools/pcpatch.prg.bz2
 
 %changelog
 * Sun Apr 14 2002 Petr Stehlik <pstehlik@sophics.cz>
-First (beta) version
+First working version
