@@ -22,7 +22,7 @@ ARAnyM is an acronym and means Atari Running on Any Machine.
 
 Authors:
 Ctirad Fertr, Milan Jurik, Standa Opichal, Petr Stehlik
-and others (see CREDITS for a full list)
+and others (see AUTHORS for a full list)
 
 %prep
 rm -rf %{realname}
@@ -39,6 +39,8 @@ make clean
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/local/bin
+mkdir -p $RPM_BUILD_ROOT/usr/local/share
+mkdir -p $RPM_BUILD_ROOT/usr/local/share/aranym
 make install PREFIX=$RPM_BUILD_ROOT/usr/local
 install aranym $RPM_BUILD_ROOT/usr/local/bin
 
@@ -48,7 +50,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc ../../doc ../../README ../../COPYING
+%doc ../../doc ../../AUTHORS ../../BUGS ../../COPYING ../../FAQ ../../INSTALL ../../NEWS ../../ChangeLog ../../README ../../TODO
 /usr/local/bin/aranym
 
 %changelog
