@@ -103,12 +103,6 @@ typedef struct {
   char path[512];
   char partID[3+1];	// 3 chars + EOS ( = '\0')
 } bx_scsidevice_options_t;
- /* 
-typedef struct {
-  char *path;
-  unsigned long address;
-  } bx_rom_options_t;
-*/
 
 // TOS options
 typedef struct {
@@ -220,17 +214,10 @@ typedef struct {
 	SDL_keysym	quit;
 	SDL_keysym	reboot;
 	SDL_keysym	debug;
+	SDL_keysym	ungrab;
 	SDL_keysym	fullscreen;
 	SDL_keysym	screenshot;
 } bx_hotkeys_t;
-
-/*
-typedef struct {
-  char      *path;
-  bool   cmosImage;
-  unsigned int time0;
-  } bx_cmos_options;
-*/
 
 #ifdef GDBSTUB
 typedef struct {
@@ -255,7 +242,6 @@ typedef struct {
   bx_scsidevice_options_t	disk6;
   bx_scsidevice_options_t	disk7;	// last idx+1 = DISKS
   bx_aranymfs_options_t	aranymfs[ 'Z'-'A'+1 ];
-//  bx_cookies_options_t cookies;
   bx_video_options_t	video;
   bx_tos_options_t	tos;
   bx_startup_options_t	startup;
@@ -280,13 +266,6 @@ typedef struct {
   uint32		fastram;
   bool			autoMouseGrab;
   bx_hotkeys_t		hotkeys;
-  // char              bootdrive[2];
-  // unsigned long     vga_update_interval;
-  // unsigned long     keyboard_serial_delay;
-  // unsigned long     floppy_command_delay;
-  // unsigned long     ips;
-  // bool           private_colormap;
-  // bx_cmos_options_t	cmos;
   bool			newHardDriveSupport;
 } bx_options_t;
 
