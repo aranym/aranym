@@ -1,3 +1,7 @@
+2004/02/28 - milan
+- sigsegv handler for Linux as computed gotos (partially), disabled, slower
+
+
 2004/02/22 - joy on behalf of Carlo
 - MacOSX/*: I have solved the problem with DIRSEPARATOR and ARANYM_DATADIR
   defines in my project. I have modified the shell script that call autogen.sh:

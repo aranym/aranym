@@ -96,6 +96,7 @@ static void dummy_write_log(const char *, ...) { }
 #undef abort
 #define abort() do { \
 	fprintf(stderr, "Abort in file %s at line %d\n", __FILE__, __LINE__); \
+	compiler_dumpstate(); \
 	exit(EXIT_FAILURE); \
 } while (0)
 #endif

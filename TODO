@@ -82,9 +82,8 @@ that particular programmer but rather who is author of the idea :-)
 
 - joy: emulating a serial port compatible with MiNT/HSMODEM
 
-- Milan: full revision of CPU/FPU instr. set
-
 - Milan: distributed dispatcher for JIT compiler sigsegv handler
+  UPDATE: partially done, slower :-(
 
 - Milan: gdb as debugger for ARAnyM
 
