@@ -1,3 +1,35 @@
+2004/04/24-25 - STanda
+- parameters.cpp,cfgopts.*: Created a Path_Tag that serves as a String_Tag
+  like entry plus that there is the '~' replaced with $HOME and the
+  relative paths are made absolute (to the configuration file location).
+- parameters_*.cpp: separated the getDataFolder() and getHomeFolder().
+  The getHomeFolder() is used for the '~' expansions in parameters.cpp.
+- hostfs.cpp:
+  * JOY's version of xfs_native_init() fixed, extended and used.
+  * symlinks should work better now: if there is a HOSTFS mapping for the
+    symlink target then it is translated as a symlink to that target else
+    the real hostfs target is shown (the user doesn't notice it is a symlink
+    in fact in that case).
+- hostfs.dos (atari/hostfs/metados):
+  * Adjusted to the recent FreeMiNT CVS state to compile and also made
+    BetaDOS only. No more MetaDOS compatibility attempts.
+  * Dfree() fix - for Calamus to be able to save its documents.
+  * Some minor bugfix backports from the current FreeMiNTs CVS version.
+  * The mountpoint entries are now shared among several hostfs.dos instances
+    using a 'BDhf' cookie entry (atari/hostfs/metados/main.c).
+- ethernet.cpp:
+  * Alternative networking setup: aranym doesn't need to use the suid
+    aratapif now. CVSROOT/tools/arabridge script is able (with root
+    permissions) to establish a bridge over the tap0 tunnel and eth0 nif so
+    that aranym would become fully featured LAN machine from ethernet point
+    of view. E.g. you can try DHCP directly from within ARAnyM then.
+  * [ETH0] type = ppp|bridge and tunnel = tap0 config options added
+  * However there are still some problems: the initialization can fail
+    sometimes. I got it working several times, but in some network
+    configurations it simply doesn't work. I don't have a clue why ATM :(
+    (tested on RH9.0).
+
+
 2004/04/10 - joy on behalf of Carlo
 - acsifdc.cpp: local variable masked out class variable of same name. Bug
   was there since 2004/02/02. Fixed.

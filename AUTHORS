@@ -14,9 +14,11 @@ Milan Jurik <M.Jurik@sh.cvut.cz>
 - ndebug (New Debug)
 - MMU040 (memory protection unit)
 - JIT (just-in-time compiler for CPU and FPU)
+- TUN/TAP networking driver skeleton
 
 Stanislav Opichal <opichals@seznam.cz>
-- aranymfs: host filesystem access based on MetaDOS driver
+- Host filesystem access driver (hostfs) for FreeMiNT and MetaDOS
+- Networking driver work
 - VIDEL bitplanes to chunky conversion code
 - fVDI driver
 - general hostscreen and SDL work
@@ -28,6 +30,7 @@ Petr Stehlik <pstehlik@sophics.cz>
 - host input/output (keyboard and mouse, parallel port)
 - XHDI interface
 - SDL GUI (based on Hatari)
+- Networking adjustments and debugging
 - NatFeats
 - ARAnyM Release Manager and Webmaster
 
