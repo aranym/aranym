@@ -293,11 +293,12 @@ case "$target_os" in
     EXTRASYSSRCS=parameters_unix.cpp
     ;;	      
   darwin*)
+    DEFINES="$DEFINES -DARANYMHOME=\\\"aranym\\\""
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS="parameters_unix.cpp"
-    CXXFLAGS="$CXXFLAGS -F\$(HOME)/Library/Frameworks -I\$(HOME)/Library/Frameworks/SDL.framework/Headers"
-    CFLAGS="$CFLAGS -F\$(HOME)/Library/Frameworks -I\$(HOME)/Library/Frameworks/SDL.framework/Headers"
-    LDFLAGS="$LDFLAGS -F\$(HOME)/Library/Frameworks"
+    CXXFLAGS="$CXXFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
+    CFLAGS="$CFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
+    LDFLAGS="$LDFLAGS -F$HOME/Library/Frameworks"
     LIBS="$LIBS -framework AppKit -framework IOKit -framework CoreFoundation -framework SDL"
     ;;
   beos*)
