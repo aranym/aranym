@@ -1,3 +1,7 @@
+2005/01/20 - Patrice
+- nfjpeg: More fixes.
+
+
 2005/01/19 - STanda
 - atari/fvdi/../spec.c: bitplane modes are marked as bitplane in v_scrninfo(),
   unnecessary noshadow and assumenf options removed

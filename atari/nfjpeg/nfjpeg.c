@@ -56,6 +56,21 @@
 #define DRIVER_NAME	"ARAnyM host JPEG driver"
 #define VERSION	"v0.1"
 
+#define CALLJPEGROUTINE(jpgd_ptr,func_ptr)	\
+__extension__	\
+({	\
+	register long retvalue __asm__("d0");	\
+	\
+	__asm__ volatile (	\
+		"movl	%1,a0\n\t"	\
+		"jbsr	%2@"	\
+		: "=r"(retvalue)	\
+		: "a"(jpgd_ptr), "a"(func_ptr)	\
+		: "a0", "memory" \
+	);	\
+	retvalue; \
+})
+
 /*--- Functions prototypes ---*/
 
 JPGD_ENUM JpegDecOpenDriver(struct _JPGD_STRUCT *jpgd_ptr);
@@ -191,7 +206,7 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 			nfCall((NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, y));
 
 			if (jpgd_ptr->UserRoutine) {
-				jpgd_ptr->UserRoutine(jpgd_ptr);
+				CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->UserRoutine);
 			}
 
 			jpgd_ptr->OutTmpPointer += row_length;
@@ -211,7 +226,7 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 
 		/* Open file */
 		if (jpgd_ptr->Create) {
-			handle = jpgd_ptr->Create(jpgd_ptr);
+			handle = CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->Create);
 		} else {
 			if (jpgd_ptr->OutPointer) {
 				filename = jpgd_ptr->OutPointer;
@@ -230,11 +245,11 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 			nfCall((NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, y));
 
 			if (jpgd_ptr->UserRoutine) {
-				jpgd_ptr->UserRoutine(jpgd_ptr);
+				CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->UserRoutine);
 			}
 
 			if (jpgd_ptr->Write) {
-				if ((jpgd_ptr->Write(jpgd_ptr))<0) {
+				if (CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->Write)<0) {
 					break;
 				}
 			} else {
@@ -247,7 +262,7 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 
 		/* Close file */
 		if (jpgd_ptr->Close) {
-			jpgd_ptr->Close(jpgd_ptr);
+			CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->Close);
 		} else  {
 			Fclose(jpgd_ptr->OutHandle);
 		}
