@@ -179,7 +179,6 @@ void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 {
 	DUNUSED(ethX);
 	D(bug("Ethernet: ReadPacket dest %08lx, len %lx", buffer, len));
-	// Host2Atari_memcpy(buffer, packet, packet_length > 1514 ? 1514 : packet_length );
 	Host2Atari_memcpy(buffer, packet, len > 1514 ? 1514 : len );
 	if (len > 1514) {
 		panicbug("ETHERNETDriver::readPacket() - length %d > 1514", len);
