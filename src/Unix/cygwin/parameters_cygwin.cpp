@@ -34,9 +34,9 @@ int get_geometry(char *dev_path, geo_type geo) {
 #endif /* IS_CYGWIN_FHS */
 
 /*
- * Get the path to folder with user-specific files (configuration, NVRAM)
+ * Get the path to a user home folder.
  */
-char *getConfFolder(char *buffer, unsigned int bufsize)
+char *getHomeFolder(char *buffer, unsigned int bufsize)
 {
 	// Unix-like systems define HOME variable as the user home folder
 	if (IS_CYGWIN_FHS) {
@@ -46,6 +46,16 @@ char *getConfFolder(char *buffer, unsigned int bufsize)
 	else if (get_home_dir(buffer, bufsize)) {
 		buffer[0] = '\0';	// last resort - current folder
 	}
+
+	return buffer;
+}
+
+/*
+ * Get the path to folder with user-specific files (configuration, NVRAM)
+ */
+char *getConfFolder(char *buffer, unsigned int bufsize)
+{
+	getHomeFolder(buffer, bufsize);
 	return addFilename(buffer, ARANYMHOME, bufsize);
 }
 

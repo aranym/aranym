@@ -57,6 +57,20 @@ int get_geometry(char *dev_path, geo_type geo) {
 }
 
 /*
+ * Get the path to a user home folder.
+ */
+char *getHomeFolder(char *buffer, unsigned int bufsize)
+{
+	buffer[0] = '\0';	// last resort - current folder
+
+	// Unix-like systems define HOME variable as the user home folder
+	char *home = getenv("HOME");
+	if ( home )
+		strncpy( buffer, home, bufsize );
+	return buffer;
+}
+
+/*
  * Get the path to folder with user-specific files (configuration, NVRAM)
  */
 char *getConfFolder(char *buffer, unsigned int bufsize)
@@ -65,10 +79,7 @@ char *getConfFolder(char *buffer, unsigned int bufsize)
 	static char path[512] = "";
 
 	if (strlen(path) == 0) {
-		// Unix-like systems define HOME variable as the user home folder
-		char *home = getenv("HOME");
-		if (home == NULL)
-			home = "";	// alternatively use current directory
+		char *home = getHomeFolder(path, 512);
 
 		int homelen = strlen(home);
 		if (homelen > 0) {
