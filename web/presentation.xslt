@@ -2,6 +2,7 @@
 
 <!DOCTYPE xsl:stylesheet [
   <!ENTITY config SYSTEM "config.xml">
+  <!ENTITY nbsp "&#160;">
 ]>
 
 <xsl:stylesheet version="1.1" xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
@@ -13,9 +14,6 @@
   <xsl:variable name="config">
     &config;
   </xsl:variable>
-  <xsl:template name="nbsp">
-    <xsl:text disable-output-escaping="yes">&amp;</xsl:text><xsl:text>nbsp;</xsl:text>
-  </xsl:template>
 
   <xsl:template match="/">
     <html>
@@ -23,25 +21,22 @@
         <title>ARAnyM Home Page - <!--xsl:value-of select="$config/menu/item[@name=$page]/title"/--></title>
       </head>
       <body>
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <table width="100%" border="0" cellspacing="0" cellpadding="2">
           <tr>
-            <td colspan="4" align="center"><xsl:call-template name="nbsp"/> <h1>ARAnyM Homepage</h1><br/> </td>
+            <td colspan="4" align="center"> 
+              <h2>ARAnyM - <xsl:value-of select="/document/header"/>
+              <hr size="5"/>
+            </h2>
+            </td>
           </tr>
+          <tr><td colspan="4"></td></tr>
           <tr>
             <td valign="top">
               <xsl:apply-templates select="$config/menu" mode="menu"/>
             </td>
-            <td>
-              <xsl:call-template name="nbsp"/>
-              <xsl:call-template name="nbsp"/>
-              <xsl:call-template name="nbsp"/>
-              <xsl:call-template name="nbsp"/>
-            </td>
-            <td width="100%" valign="top">
-              <br/>
-              <p>
-                <xsl:apply-templates/>
-              </p>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td valign="top" width="100%">
+              <xsl:apply-templates/>
             </td>
           </tr>
         </table>
@@ -50,27 +45,27 @@
   </xsl:template>
 
   <xsl:template match="menu" mode="menu">
-    <dl>
+    <table>
       <xsl:apply-templates select="section" mode="menu"/>
-    </dl>
+    </table>
   </xsl:template>
 
   <xsl:template match="section" mode="menu">
-    <p>
-    <dt><strong>
-      <xsl:call-template name="nbsp"/>
-      <xsl:call-template name="nbsp"/>
-      <xsl:call-template name="nbsp"/>
-      <xsl:call-template name="nbsp"/>
-
-      <xsl:value-of select="title"/><br/>
-    </strong></dt>
+    <tr align="left">
+      <th>
+        &nbsp;&nbsp;
+        <xsl:value-of select="title"/>
+      </th>
+    </tr>
     <xsl:apply-templates select="item" mode="menu"/>
-    </p>
   </xsl:template>
 
   <xsl:template match="item" mode="menu">
-    <dd><a href="{link}"><strong><xsl:value-of select="title"/></strong></a></dd>
+    <tr>
+      <td>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{link}"><strong><xsl:value-of select="title"/></strong></a>
+      </td>
+    </tr>
   </xsl:template>
 
   <xsl:template match="item">
@@ -92,6 +87,8 @@
     </table>
   </xsl:template>
 
+  <xsl:template match="document/header"/>
+
   <xsl:template match="chapter">
     <tr align="left">
       <th colspan="2">
@@ -107,12 +104,11 @@
     </tr>
   </xsl:template>
 
-  <xsl:template match="text">
-    <xsl:copy-of select="* | text()"/>
-  </xsl:template>
-
   <xsl:template match="*">
-    <xsl:copy-of select="."/>
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="* | text()"/>
+    </xsl:copy>
   </xsl:template>
 
 </xsl:stylesheet>

@@ -5,9 +5,17 @@
       <title>Home</title>
       <link>index.html</link>
     </item>
+    <item name="news">
+      <title>News</title>
+      <link>news.html</link>
+    </item>
     <item name="licence">
       <title>Licensing</title>
       <link>licensing.html</link>
+    </item>
+    <item name="snaps">
+      <title>Snapshots</title>
+      <link>snapshots.html</link>
     </item>
     <item name="faq">
       <title>FAQ</title>
@@ -18,13 +26,13 @@
   <!-- development -->
   <section name="dev">
     <title>Development</title>
-    <item name="faq">
-      <title>Download</title>
-      <link>download.html</link>
-    </item>
     <item name="progres">
       <title>Progress</title>
       <link>progress.html</link>
+    </item>
+    <item name="faq">
+      <title>Download</title>
+      <link>download.html</link>
     </item>
     <item name="cvs">
       <title>CVS</title>

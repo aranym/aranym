@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<document>
+  <header>News</header>
+  <chapter>
+	<title>News</title>
+    <text>
+      <table>
+
+          <!-- Benchmarks added.<br/-->
+          <!-- Snapshots added.<br/-->
+
+        <tr><td valign="top">2001/10/09</td>
+            <td>
+              News page moved from Home to the News one.<br/>
+            </td>
+        </tr>
+        <tr><td valign="top"></td>
+            <td>
+              Several design improvements.<br/>
+            </td>
+        </tr>
+        <tr><td valign="top">2001/10/08</td>
+            <td>preliminary version of the WWW pages online.</td>
+        </tr>
+      </table>
+    </text>
+  </chapter>
+</document>

@@ -1,13 +1,18 @@
 <?xml version="1.0"?>
 
 <document>
-  <table border="0">
-    <tr>
-      <td valign="top">
-      <H4> News </H4>
-      2001/10/08: preliminary version of the WWW pages online.
-      </td>
-    </tr>
-  </table>
-
+  <header>Atari Running on Any Machine</header>
+  <chapter>
+    <title><h2><b>A</b>tari <b>R</b>unning on <b>An</b>y <b>M</b>achine</h2></title>
+    <text>
+      The main goal of the project is to create a virtual machine that would allow anyone to install,
+      use and also <B>develop new</B> 32bit Atari ST/TT/Falcon applications on their computer
+      regardless of its architecture.<br/>
+      The Falcon 040 Afterburner Virtual Machine was started under a project named ARAnyM to fulfil
+      this request.<br/>
+      <br/>
+      See the <a href="progress.html">progress</a> section and the <a href="faq.html">FAQ</a> for the
+      most current information.
+    </text>
+  </chapter>
 </document>

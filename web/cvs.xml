@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 
 <document>
-  The current development is kept in CVS. The CVS is not accessible yet. The code is
-  still under heavy reconstruction and not quite ready for 'open sourcing', sorry.
+  <header>CVS</header>
+  <chapter>
+    <title>CVS Repository</title>
+    <text>
+      The current development is kept in CVS. The CVS is not accessible yet. The code is
+      still under heavy reconstruction and not quite ready for 'open sourcing', sorry.
+    </text>
+  </chapter>
 </document>

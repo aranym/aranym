@@ -1,5 +1,12 @@
 <?xml version="1.0"?>
 
 <document>
-  Nothing to download yet. Stay tuned, please.
+  <header>Download</header>
+  <chapter>
+    <title>Download</title>
+    <text>
+      There is nothing to download yet. There are going to be placed the distribution packages here.<br/>
+      Stay tuned, please.
+    </text>
+  </chapter>
 </document>

@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
+<!DOCTYPE xsl:stylesheet [
+  <!ENTITY nbsp "&#160;">
+]>
 
 <document>
-  <chapter>
+  <header>Project Progress</header>
     <title>What is done?</title>
-    <text>
       <table>
         <tr>
           <th bgcolor="#eeeeee" colspan="2" align="left">m68k emulation</th>
@@ -20,6 +22,7 @@
         <tr>
           <td>TODO</td><td>speed optimalization, JIT</td>
         </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
         <tr>
           <th bgcolor="#eeeeee" colspan="2" align="left">RAM</th>
         </tr>
@@ -29,6 +32,7 @@
         <tr>
           <td>FastRAM</td><td>100% (theoretically up to 4GB of RAM)</td>
         </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
         <tr>
           <th bgcolor="#eeeeee" colspan="2" align="left">VIDEO</th>
         </tr>
@@ -50,6 +54,7 @@
         <tr>
           <td>TODO</td><td>finish fVDI driver</td>
         </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
         <tr>
           <th bgcolor="#eeeeee" colspan="2" align="left">SOUND</th>
         </tr>
@@ -65,6 +70,7 @@
         <tr>
           <td>YAMAHA PSG</td><td>0%</td>
         </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
         <tr>
           <th bgcolor="#eeeeee" colspan="2" align="left">Discs</th>
         </tr>
@@ -92,6 +98,7 @@
         <tr>
           <td>TODO</td><td>debug the MetaDOS driver (.xfs for MiNT &amp; MagiC)</td>
         </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
         <tr>
           <th bgcolor="#eeeeee" colspan="2" align="left">I/O Ports</th>
         </tr>
@@ -110,6 +117,7 @@
         <tr>
           <td>keyboard</td><td>mapped to PC keyboard (TODO: configurable map table)</td>
         </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
         <tr>
           <th bgcolor="#eeeeee" colspan="2" align="left">Operating System</th>
         </tr>
@@ -126,6 +134,4 @@
           <td>TODO</td><td>FreeMint support, network layer and interconnection with HostOS, opensource TOS replacement (EmuTOS), full FreeMiNT integration</td>
         </tr>
       </table>
-    </text>
-  </chapter>
 </document>
