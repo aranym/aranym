@@ -172,10 +172,18 @@ static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
 
 static __inline__ void check_ram_boundary(uaecptr addr, bool write = false)
 {
-	if (addr < (write ? STRAM_END : ROM_END))		// ST-RAM or ROM
-		return;
+	if (write) {
+		if (addr >= 8 && addr < STRAM_END)	// first two longwords are ROM
+			return;
+	}
+	else {
+		if (addr < ROM_END)
+			return;
+	}
+
 	if (addr >= FastRAM_BEGIN && addr < (FastRAM_BEGIN+FastRAMSize))	// FastRAM
 		return;
+
 #ifdef DIRECT_TRUECOLOR
 	if (bx_options.video.direct_truecolor) {		// VideoRAM
 		if (addr >= ARANYMVRAMSTART && addr < (ARANYMVRAMSTART + ARANYMVRAMSIZE))
