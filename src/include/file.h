@@ -7,6 +7,8 @@
 
 #include "sysdeps.h"
 
+#define MAX_FILENAME_LENGTH 260
+
 /* File types */
 enum {
   FILEFILTER_DISCFILES,
