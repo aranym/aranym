@@ -1,3 +1,8 @@
+2002/11/06 - joy
+- aranym can be compiled without the DSP emulation again
+- ulong in nf_stderr fixed to uint32
+
+
 2002/11/03 - joy
 - XHDI - returning values corrected
 
