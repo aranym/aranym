@@ -19,6 +19,15 @@
 #include "main.h"
 #include "exceptions.h"
 
+#if PAGE_CHECK
+uaecptr pc_page = 0xffffffff;
+uintptr pc_offset = 0;
+uaecptr read_page = 0xffffffff;
+uintptr read_offset = 0;
+uaecptr write_page = 0xffffffff;
+uintptr write_offset = 0;
+#endif
+
 #if !KNOWN_ALLOC && !NORMAL_ADDRESSING
 // This part need rewrite for ARAnyM !!
 // It can be taken from hatari.

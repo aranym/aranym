@@ -33,6 +33,11 @@
 
 extern uintptr VMEMBaseDiff;
 
+#if PAGE_CHECK
+extern uaecptr pc_page, read_page, write_page;
+extern uintptr pc_offset, read_offset, write_offset;
+#endif
+
 #if REAL_ADDRESSING
 const uintptr MEMBaseDiff = 0;
 
@@ -89,27 +94,11 @@ extern uintptr MEMBaseDiff;
 
 #define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 
-#ifdef NO_MEMORY_CHECK
-#define check_ram_boundary(a, b, c)
-#else
 /*
  * "size" is the size of the memory access (byte = 1, word = 2, long = 4)
  */
 static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 {
-#ifdef ORIGINAL_CHECK_THAT_MADE_STRAM_FASTER_THAN_FASTRAM
-	if (write) {
-		if (addr >= 8 && addr <= (STRAM_END - size))	// first two longwords are ROM
-			return;
-	}
-	else {
-		if (addr <= (ROM_END - size))
-			return;
-	}
-
-	if (addr >= FastRAM_BEGIN && addr <= (FastRAM_BEGIN + FastRAM_SIZE - size))	// FastRAM
-		return;
-#else
 	if (addr <= (FastRAM_BEGIN + FastRAM_SIZE - size)) {
 		if (!write)
 			return;
@@ -119,7 +108,6 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 				return;
 		}
 	}
-#endif
 
 	if (addr >= ARANYMVRAMSTART && addr <= (ARANYMVRAMSTART + ARANYMVRAMSIZE - size))
 		return;
@@ -127,37 +115,66 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 	// printf("BUS ERROR %s at $%x\n", (write ? "writting" : "reading"), addr);
 	BUS_ERROR;
 }
-#endif /* NO_MEMORY_CHECK */
 
 static __inline__ uae_u32 get_long_direct(uaecptr addr)
 {
+#if PAGE_CHECK
+    if (!((addr ^ read_page) >> 12))
+        return do_get_mem_long((uae_u32*)((uae_u8*)addr + read_offset));
+#endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
     check_ram_boundary(addr, 4, false);
     uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
+#if PAGE_CHECK
+    read_page = addr;
+    read_offset = (uintptr)m - (uintptr)addr;
+#endif
     return do_get_mem_long(m);
 }
 
 static __inline__ uae_u32 get_word_direct(uaecptr addr)
 {
+#if PAGE_CHECK
+    if (!((addr ^ read_page) >> 12))
+        return do_get_mem_word((uae_u16*)((uae_u8*)addr + read_offset));
+#endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_w(addr);
     check_ram_boundary(addr, 2, false);
     uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
+#if PAGE_CHECK
+    read_page = addr;
+    read_offset = (uintptr)m - (uintptr)addr;
+#endif
     return do_get_mem_word(m);
 }
 
 static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 {
+#if PAGE_CHECK
+    if (!((addr ^ read_page) >> 12))
+        return do_get_mem_byte((uae_u32*)((uae_u8*)addr + read_offset));
+#endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_b(addr);
     check_ram_boundary(addr, 1, false);
     uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
+#if PAGE_CHECK
+    read_page = addr;
+    read_offset = (uintptr)m - (uintptr)addr;
+#endif
     return do_get_mem_byte(m);
 }
 
 static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
 {
+#if PAGE_CHECK
+    if (!((addr ^ write_page) >> 12)) {
+        do_put_mem_long((uae_u32*)((uae_u8*)addr + write_offset), l);
+        return;
+    }
+#endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) {
         HWput_l(addr, l);
@@ -165,11 +182,21 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
     } 
     check_ram_boundary(addr, 4, true);
     uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
+#if PAGE_CHECK
+    write_page = addr;
+    write_offset = (uintptr)m - (uintptr)addr;
+#endif
     do_put_mem_long(m, l);
 }
 
 static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
 {
+#if PAGE_CHECK
+    if (!((addr ^ write_page) >> 12)) {
+        do_put_mem_word((uae_u16*)((uae_u8*)addr + write_offset), w);
+        return;
+    }
+#endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) {
         HWput_w(addr, w);
@@ -177,11 +204,21 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
     }
     check_ram_boundary(addr, 2, true);
     uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
+#if PAGE_CHECK
+    write_page = addr;
+    write_offset = (uintptr)m - (uintptr)addr;
+#endif
     do_put_mem_word(m, w);
 }
 
 static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
 {
+#if PAGE_CHECK
+    if (!((addr ^ write_page) >> 12)) {
+        do_put_mem_byte((uae_u8*)((uae_u8*)addr + write_offset), b);
+        return;
+    }
+#endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) {
         HWput_b(addr, b);
@@ -189,6 +226,10 @@ static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
     }
     check_ram_boundary(addr, 1, true);
     uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
+#if PAGE_CHECK
+    write_page = addr;
+    write_offset = (uintptr)m - (uintptr)addr;
+#endif
     do_put_mem_byte(m, b);
 }
 
