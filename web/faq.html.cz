@@ -1,0 +1,103 @@
+Co je ARANYM ?
+
+Aranym znamená "Atari running on any machine" (atari be?ící na jakémkoliv stroji) a jeho cílem je vytvoøení softwarové vrstvy, která umo?ní nainstalovat a provozovat na libovolném poèítaèi (primárnì PC) softwarové vybavení pùvodnì vytvoøené pro 32 bitovou platformu Atari ST/TT/Falcon.
+
+Co není ARANYM ?
+
+Aranym není a v ?ádném pøípadì nemá být kompletní emulací jakéhokoliv Atari poèítaèe.
+Aranym emuluje pouze ty hardwarové souèásti, které jsou nezbytné pro nabootování a bìh TOSu a pota?mo Mintu. Pokud tedy pomýslíte na hraní her èi poustìní dem z ST/E, zapomeòte na Aranym a pou?ijte nìkterý z vynikajících existujících ST emulátorù (StonX, WinSTon, STEem..).
+
+Proè ARANYM ?
+
+Proto?e pùvodní 32 bitové poèítaèe Atari i jejich klony ji? dosluhují a zdaleka nedostaèují výkonostním po?adavkùm, které jsou dnes na moderní poèítaèe kladené. Stejnì tak vývoj doplòkù pro tyto stroje se pomalu ale jistì blí?í nule a zanedlouho ustane docela. Na druhé stranì existuje znaèné mno?ství spièkových aplikací a moderní OS s obrovským potenciálem do budoucna, a to jsou vìci, které by bylo skoda pohøbít spoleènì s vyslou?ilým ?elezem. ARANYM dává jedineènou mo?nost TOS platformì pokraèovat a plnì vyu?ít vsech výhod moderních poèítaèových sestav.
+
+Jak to funguje:
+
+Základem je emulace procesoru 68040 a nìkolika nezbytných obvodù, nutných pro bìh TOSu (ACIA), výstup obrazu (blitter,VIDEL) a základní vstupní periferie (mys, klávesnice). Tento celek bì?í na Linuxovém jádøe za asistence SDL knihovny, co? nám umo?òuje nezávislost na konkrétním hardware poèítaèe a snadnou portabilitu. Linuxové jádro (oznaèené jako Host OS neboli hostitelský OS) a nìkolik málo dalsích potøebných utilit a knihoven bude ve výsledku pro u?ivatele Aranymu "neviditelné" a tudí? se jím nemusí zabývat. Pochopitelnì je mo?né Aranym nainstalovat do stávající instalace Linuxu (Redhat, Debian etc..) a pracovat s ním obdobnì jako s emulátorem.
+
+Kam by mìl smìøovat vývoj ARANYMu:
+
+Kromì samozøejmého vychytání much a postupného doplnìní vsech chybìjících funkcí (zvuk, akcelerovaná grafika, I/O porty..) bude dalsí vývoj smìøovat pøedevsím k odstranìní TOS image a jeho nahrazení
+Mint kerenelem s dodateènou vrstvou, která bude umo?òovat jeho nabootování i bez TOSu. Dalsím krokem by mìla být hlubsí integrace èástí OS (Mint, AES, desktop..) tak, aby alespoò jejich výkonovì kritické èásti bì?ely nativnì, mimo 68k emulaci. Futurologická vize potom pøipustí i mo?nost vzniku plnì nativního OS, zalo?eného na Mintu a umo?òujícího kompilovat a spoustìt nativní x86 aplikace stejnì jako "staré" 68k aplikace (obdobnì jako to dìlá MAC OS).
+
+Ditribuce:
+
+Pro snadnou instalaci celého prostøedí na PC by mìla vzniknout distribuce zastøesující vsechny komponenty, poèínaje Host OS, pøes Aranym a? po kompletní Mint instalaci. Tato distribuce by mìla obsahovat vse co je potøeba pro nainstalování TOS kompatibilního prostøedí na holé PC, tedy partitionování diskù, setup periferií, instalaci celého prostøedí a jeho nastavení, setup sítì atd. To vse pochopitelnì v "blbuvzdorném" provedení, aby to dokázal úplnì ka?dý.
+
+
+
+Souèasný stav:
+----------------
+
+*m68k emulace:*
+
+68040 CPU.......hotovo
+68040 FPU.......hotovo
+68040 MMU.......80%
+
+TODO: MMU, optimalizace, JIT
+
+
+*RAM*
+
+ST-RAM...........ANO, 14MB
+FastRAM..........95% (pevná velikost 32MB)
+
+TODO: nastavitelná velikost FastRAM
+
+
+*VIDEO:*
+
+Blitter.........................................funkèní
+emulace VIDELu (grafický èip z F030) ...........95%
+standardní VGA/RGB/TV módy .....................funkèní
+rozsíøené módy .................................funkèní pomocí BlowUp a Videl inside (VIDELITY nejde a ostatní netestováno)
+
+Emulace grafické karty pomocí akcelerovaného fVDI driveru........ 20%
+
+TODO: fVDI driver, urychlit konverze bitplanových módù
+
+
+*SOUND*
+
+Yamaha PSG ........NE
+STE DMA sound .....NE
+F030 DMA sound ....NE
+DSP ...............NE (vyu?ití Deesse karty ?)
+
+
+TODO: vsechno ;)
+
+*DISKY*
+
+ètení/zápis z PC Floppy mechaniky ...........................ANO vèetnì bootování
+ètení/zápis z disketových image..............................ANO vèetnì bootování
+
+harddisk image ..............................................ANO vèetnì bootování (*)
+pøístup na opravdové harddisky z ATARI.......................ANO vèetnì bootování (*)
+
+naasignování adresáøe hostitelského OS jako TOS partition....ANO - Metados driver (velmi nestabilní)
+
+(*) je tøeba zadat parametry disku do zdrojového kódu Aranymu a pou?ít HDDriver èi jiný driver, podporující Falcon IDE.
+
+TODO: doladit metados driver, èíst parametry opravdového harddisku/image automaticky, CD/DVD-ROM podpora
+
+
+*Porty*
+
+sériový..................NE
+paralelní................NE
+MIDI.....................NE
+mys......................namapována na PC mys
+klávesnice...............namapována na PC klávesnici
+
+TODO: doplnit chybìjící porty a opravit vsechny chyby v mysi a klávesnici
+
+
+*OS*
+
+TOS.................ANO, pouze 4.04
+MagiC...............funkèní
+Mint+N.AES/XaAES....funkèní
+
+TODO: podpora pro Mint, si?ová vrstva na propojení s HOST OS, náhrada TOS image free kódem a plná integrace Mintu
