@@ -1,3 +1,16 @@
+2002/04/25 - STanda
+- The fvdicout.app added to atari/fvdi/utility. This is the Johan'si
+  bconout.gtp replacement. It is built using the FreeMiNT CVS tree
+  and with heavy utilization of the TosWin2 vt52 emulation sources.
+  It needed only a slide changes in TosWin2 sources. This should not
+  be the final solution. The real one would by to implement the vt52
+  emulation into the fVDI engine itself which is on the TODO list in
+  the fVDI remainings. 
+  Using this I don't have problems here with TOS applications here.
+  It needs to be started after the VDI initialization (e.g. from the
+  desktop). There might be some code to initialize the VDI later in it.
+
+ 
 2002/04/21 - milan
 - header files reform
 - distributed dispatcher rewroted
