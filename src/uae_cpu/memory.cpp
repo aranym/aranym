@@ -31,9 +31,8 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
               || (!regs.s || !(regs.dtt0 & 0x6000))
               || (regs.s && ((regs.dtt0 & 0x6000) == 0x2000))) {
           if ((write) && ((regs.dtt0 & 0x4) != 0)) {
-	    excep_no = 3;
 	    last_fault_for_exception_3 = addr;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 3);
 	  }
           mask = ((~regs.dtt0) & 0xff0000) << 8;
           if ((addr & mask) == (regs.dtt0 & mask)) return addr;
@@ -44,9 +43,8 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
               || (!regs.s || !(regs.dtt1 & 0x6000))
               || (regs.s && ((regs.dtt1 & 0x6000) == 0x2000))) {
           if ((write) && ((regs.dtt1 & 0x4) != 0)) {
-	    excep_no = 3;
 	    last_fault_for_exception_3 = addr;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 3);
 	  }
           mask = ((~regs.dtt1) & 0xff0000) << 8;
           if ((addr & mask) == (regs.dtt1 & mask)) return addr;
@@ -77,50 +75,43 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
                     apd = do_get_real_address_direct((pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11));
                     pd = *apd;
                     switch (pd & 0x3) {
-                      case 0:  excep_no = 2;
+                      case 0: 
 		               last_fault_for_exception_3 = pd & 0xfffffffc;
-			       longjmp(excep_env, -1);
+			       longjmp(excep_env, 2);
                       case 2:  apd = do_get_real_address_direct(pd & 0xfffffffc);
                                pd = *apd;
                                if (((pd & 0x3) % 2) == 0) {
-			         excep_no = 2;
 			         last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 2);
 			       }
                       default: wr += (pd & 0x4) >> 2;
                                if (!(wr > 1)) {
-			         excep_no = 3;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 3);
 			       }
                                if (!regs.s && ((pd & 0x80) != 0)) {
-			         excep_no = 3;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 3);
 			       }
                                *apd = pd | 0x18;
                     }
                   } else {
-		    excep_no = 3;
 		    last_fault_for_exception_3 = pdt & 0xfffffffc;
-		    longjmp(excep_env, -1);
+		    longjmp(excep_env, 3);
 		  }
                 } else {
-		  excep_no = 3;
 		  last_fault_for_exception_3 = root & 0xfffffffc;
-		  longjmp(excep_env, -1);
+		  longjmp(excep_env, 3);
 		}
               }
               return regs.atcoutd[atcindex];
             } else {
-	      excep_no = 3;
 	      last_fault_for_exception_3 = addr;
-	      longjmp(excep_env, -1);
+	      longjmp(excep_env, 3);
 	    }
           } else {
-	    excep_no = 3;
 	    last_fault_for_exception_3 = addr;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 3);
 	  }
         } else {
           uint16 *rootp = (uint16 *)do_get_real_address_direct(rp & ((addr >> 25) << 2));
@@ -139,26 +130,23 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
               apd = do_get_real_address_direct((pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11));
               pd = *apd;
               switch (pd & 0x3) {
-                case 0:  excep_no = 2;
+                case 0: 
 		         last_fault_for_exception_3 = pd & 0xfffffffc;
-			 longjmp(excep_env, -1);
+			 longjmp(excep_env, 2);
                 case 2:  apd = do_get_real_address_direct(pd & 0xfffffffc);
                          pd = *apd;
                          if (((pd & 0x3) % 2) == 0) {
-			   excep_no = 2;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 2);
 			 }
                 default: wr += (pd & 0x4) >> 2;
                          if (write && !(wr > 1)) {
-			   excep_no = 3;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 3);
 			 }
                          if (!regs.s && ((pd & 0x80) != 0)) {
-			   excep_no = 3;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 3);
 			 }
                          *apd = pd | 0x8;
                          if (write) *apd = pd | 0x10;
@@ -176,14 +164,12 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
                          addr = (pd & 0xffffe000) | (addr & 0x00001fff);
               }
             } else {
-	      excep_no = 2;
 	      last_fault_for_exception_3 = pdt & 0xfffffffc;
-	      longjmp(excep_env, -1);
+	      longjmp(excep_env, 2);
 	    }
           } else {
-	    excep_no = 2;
 	    last_fault_for_exception_3 = root & 0xfffffffc;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 2);
           }
         }
       } else {
@@ -211,50 +197,43 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
                     apd = do_get_real_address_direct((pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10));
                     pd = *apd;
                     switch (pd & 0x3) {
-                      case 0:  excep_no = 2;
+                      case 0: 
 		               last_fault_for_exception_3 = pd & 0xfffffffc;
-			       longjmp(excep_env, -1);
+			       longjmp(excep_env, 2);
                       case 2:  apd = do_get_real_address_direct(pd & 0xfffffffc);
                                pd = *apd;
                                if (((pd & 0x3) % 2) == 0) {
-			         excep_no = 2;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 2);
 			       }
                       default: wr += (pd & 0x4) >> 2;
                                if (write && !(wr > 1)) {
-			         excep_no = 3;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 3);
 			       }
                                if (!regs.s && ((pd & 0x80) != 0)) {
-			         excep_no = 3;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 3);
 			       }
                                *apd = pd | 0x18;
                     }
                   } else {
-		    excep_no = 2;
 		    last_fault_for_exception_3 = pdt & 0xfffffffc;
-		    longjmp(excep_env, -1);
+		    longjmp(excep_env, 2);
 		  }
                 } else {
-		  excep_no = 2;
 		  last_fault_for_exception_3 = root & 0xfffffffc;
-		  longjmp(excep_env, -1);
+		  longjmp(excep_env, 2);
 		}
               }
               return regs.atcoutd[atcindex];
             } else {
-	      excep_no = 3;
 	      last_fault_for_exception_3 = addr;
-	      longjmp(excep_env, -1);
+	      longjmp(excep_env, 3);
 	    }
           } else {
-	    excep_no = 3;
 	    last_fault_for_exception_3 = addr;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 3);
 	  }
         } else {
           uint16 *rootp = (uint16 *)do_get_real_address_direct(rp & ((addr >> 25) << 2));
@@ -273,26 +252,23 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
               apd = do_get_real_address_direct((pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10));
               pd = *apd;
               switch (pd & 0x3) {
-                case 0:  excep_no = 2;
+                case 0: 
 		         last_fault_for_exception_3 = pd & 0xfffffffc;
-			 longjmp(excep_env, -1);
+			 longjmp(excep_env, 2);
                 case 2:  apd = do_get_real_address_direct(pd & 0xfffffffc);
                          pd = *apd;
                          if (((pd & 0x3) % 2) == 0) {
-			   excep_no = 2;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 2);
 			 }
                 default: wr += (pd & 0x4) >> 2;
                          if (write && !(wr > 1)) {
-			   excep_no = 3;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 3);
 			 }
                          if (!regs.s && ((pd & 0x80) != 0)) {
-			   excep_no = 3;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 3);
 			 }
                          *apd = pd | 0x8;
                          if (write) *apd = pd | 0x10;
@@ -310,14 +286,12 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
                          addr = (pd & 0xfffff000) | (addr & 0x00000fff);
               }
             } else {
-	      excep_no = 2;
 	      last_fault_for_exception_3 = pdt & 0xfffffffc;
-	      longjmp(excep_env, -1);
+	      longjmp(excep_env, 2);
 	    }
           } else {
-	    excep_no = 2;
 	    last_fault_for_exception_3 = root & 0xfffffffc;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 2);
 	  }
         }    
       }
@@ -327,9 +301,8 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
               || (!regs.s || !(regs.itt0 & 0x6000))
               || (regs.s && ((regs.itt0 & 0x6000) == 0x2000))) {
           if ((write) && ((regs.itt0 & 0x4) != 0)) {
-	    excep_no = 3;
 	    last_fault_for_exception_3 = addr;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 3);
 	  }
           mask = ((~regs.itt0) & 0xff0000) << 8;
           if ((addr & mask) == (regs.itt0 & mask)) return addr;
@@ -340,9 +313,8 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
               || (!regs.s || !(regs.itt1 & 0x6000))
               || (regs.s && ((regs.itt1 & 0x6000) == 0x2000))) {
           if ((write) && ((regs.itt1 & 0x4) != 0)) {
-	    excep_no = 3;
 	    last_fault_for_exception_3 = addr;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 3);
 	  }
           mask = ((~regs.itt1) & 0xff0000) << 8;
           if ((addr & mask) == (regs.itt1 & mask)) return addr;
@@ -373,50 +345,43 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
                     apd = do_get_real_address_direct((pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11));
                     pd = *apd;
                     switch (pd & 0x3) {
-                      case 0:  excep_no = 2;
+                      case 0: 
 		               last_fault_for_exception_3 = pd & 0xfffffffc;
-			       longjmp(excep_env, -1);
+			       longjmp(excep_env, 2);
                       case 2:  apd = do_get_real_address_direct(pd & 0xfffffffc);
                                pd = *apd;
                                if (((pd & 0x3) % 2) == 0) {
-			         excep_no = 2;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 2);
 			       }
                       default: wr += (pd & 0x4) >> 2;
                                if (!(wr > 1)) {
-			         excep_no = 3;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 3);
 			       }
                                if (!regs.s && ((pd & 0x80) != 0)) {
-			         excep_no = 3;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 3);
 			       }
                                *apd = pd | 0x18;
                     }
                   } else {
-		    excep_no = 2;
 		    last_fault_for_exception_3 = pdt & 0xfffffffc;
-		    longjmp(excep_env, -1);
+		    longjmp(excep_env, 2);
 		  }
                 } else {
-		  excep_no = 2;
 		  last_fault_for_exception_3 = root & 0xfffffffc;
-		  longjmp(excep_env, -1);
+		  longjmp(excep_env, 2);
 		}
               }
               return regs.atcouti[atcindex];
             } else {
-	      excep_no = 3;
 	      last_fault_for_exception_3 = addr;
-	      longjmp(excep_env, -1);
+	      longjmp(excep_env, 3);
 	    }
           } else {
-	    excep_no = 3;
 	    last_fault_for_exception_3 = addr;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 3);
 	  }
         } else {
           uint16 *rootp = (uint16 *)do_get_real_address_direct(rp & ((addr >> 25) << 2));
@@ -435,26 +400,23 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
               apd = do_get_real_address_direct((pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11));
               pd = *apd;
               switch (pd & 0x3) {
-                case 0:  excep_no = 2;
+                case 0: 
 		         last_fault_for_exception_3 = pd & 0xfffffffc;
-			 longjmp(excep_env, -1);
+			 longjmp(excep_env, 2);
                 case 2:  apd = do_get_real_address_direct(pd & 0xfffffffc);
                          pd = *apd;
                          if (((pd & 0x3) % 2) == 0) {
-			   excep_no = 2;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 2);
 			 }
                 default: wr += (pd & 0x4) >> 2;
                          if (write && !(wr > 1)) {
-			   excep_no = 3;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 3);
 			 }
                          if (!regs.s && ((pd & 0x80) != 0)) {
-			   excep_no = 3;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 3);
 			 }
                          *apd = pd | 0x8;
                          if (write) *apd = pd | 0x10;
@@ -472,14 +434,12 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
                          addr = (pd & 0xffffe000) | (addr & 0x00001fff);
               }
             } else {
-	      excep_no = 2;
 	      last_fault_for_exception_3 = pdt & 0xfffffffc;
-	      longjmp(excep_env, -1);
+	      longjmp(excep_env, 2);
 	    }
           } else {
-	    excep_no = 2;
 	    last_fault_for_exception_3 = root & 0xfffffffc;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 2);
 	  } 
         }
       } else {
@@ -507,50 +467,43 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
                     apd = do_get_real_address_direct((pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10));
                     pd = *apd;
                     switch (pd & 0x3) {
-                      case 0:  excep_no = 2;
+                      case 0: 
 		               last_fault_for_exception_3 = pd & 0xfffffffc;
-			       longjmp(excep_env, -1);
+			       longjmp(excep_env, 2);
                       case 2:  apd = do_get_real_address_direct(pd & 0xfffffffc);
                                pd = *apd;
                                if (((pd & 0x3) % 2) == 0) {
-			         excep_no = 2;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 2);
 			       }
                       default: wr += (pd & 0x4) >> 2;
                                if (write && !(wr > 1)) {
-			         excep_no = 3;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 3);
 			       }
                                if (!regs.s && ((pd & 0x80) != 0)) {
-			         excep_no = 3;
 				 last_fault_for_exception_3 = pd & 0xfffffffc;
-				 longjmp(excep_env, -1);
+				 longjmp(excep_env, 3);
 			       }
                                *apd = pd | 0x18;
                     }
                   } else {
-		    excep_no = 2;
 		    last_fault_for_exception_3 = pdt & 0xfffffffc;
-		    longjmp(excep_env, -1);
+		    longjmp(excep_env, 2);
 		  }
                 } else {
-		  excep_no = 2;
 		  last_fault_for_exception_3 = root & 0xfffffffc;
-		  longjmp(excep_env, -1);
+		  longjmp(excep_env, 2);
 		}
               }
               return regs.atcouti[atcindex];
             } else {
-	      excep_no = 3;
 	      last_fault_for_exception_3 = addr;
-	      longjmp(excep_env, -1);
+	      longjmp(excep_env, 3);
 	    }
           } else {
-	    excep_no = 3;
 	    last_fault_for_exception_3 = addr;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 3);
 	  }
         } else {
           uint16 *rootp = (uint16 *)do_get_real_address_direct(rp & ((addr >> 25) << 2));
@@ -569,26 +522,23 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
               apd = do_get_real_address_direct((pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10));
               pd = *apd;
               switch (pd & 0x3) {
-                case 0:  excep_no = 2;
+                case 0: 
 		         last_fault_for_exception_3 = pd & 0xfffffffc;
-			 longjmp(excep_env, -1);
+			 longjmp(excep_env, 2);
                 case 2:  apd = do_get_real_address_direct(pd & 0xfffffffc);
                          pd = *apd;
                          if (((pd & 0x3) % 2) == 0) {
-			   excep_no = 2;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 2);
 			 }
                 default: wr += (pd & 0x4) >> 2;
                          if (write && !(wr > 1)) {
-			   excep_no = 3;
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 3);
 			 }
                          if (!regs.s && ((pd & 0x80) != 0)) {
-			   excep_no = 3,
 			   last_fault_for_exception_3 = pd & 0xfffffffc;
-			   longjmp(excep_env, -1);
+			   longjmp(excep_env, 3);
 			 }
                          *apd = pd | 0x8;
                          if (write) *apd = pd | 0x10;
@@ -606,14 +556,12 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
                          addr = (pd & 0xfffff000) | (addr & 0x00000fff);
               }
             } else {
-	      excep_no = 2;
 	      last_fault_for_exception_3 = pdt & 0xfffffffc;
-	      longjmp(excep_env, -1);
+	      longjmp(excep_env, 2);
 	    }
           } else {
-	    excep_no = 2;
 	    last_fault_for_exception_3 = root & 0xfffffffc;
-	    longjmp(excep_env, -1);
+	    longjmp(excep_env, 2);
 	  }
         }    
       }
