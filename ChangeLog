@@ -1,3 +1,7 @@
+2005/01/25 - Andreas
+- uae_cpu/cpummu.cpp, uae_cpu/memory.h: Fix wrong size field in ssw.
+
+
 2005/01/24 - STanda
 - fVDI driver
   * famous fVDI boot bug fixed! VIDEL is shut off on openwk()

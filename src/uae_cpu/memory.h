@@ -124,7 +124,7 @@ static inline void check_ram_boundary(uaecptr addr, int size, bool write)
 
 	// D(bug("BUS ERROR %s at $%x\n", (write ? "writing" : "reading"), addr));
 	regs.mmu_fault_addr = addr;
-	regs.mmu_ssw = ((size - 1) << 5) | (write ? 0 : (1 << 8));
+	regs.mmu_ssw = ((size & 3) << 5) | (write ? 0 : (1 << 8));
 	LONGJMP(excep_env, 2);
 }
 
