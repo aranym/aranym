@@ -1,0 +1,15 @@
+#!/bin/sh
+# finish up the installation
+
+echo "Running post-install script"
+umask 022
+
+USER=basename ~
+echo "User is \"$USER\""
+
+echo "Aranym_files to ~/Documents"
+# move Aranym_files to its proper home
+cp -R "/Aranym_files" ~/Documents
+
+rm -rf "/Aranym_files"
+

@@ -69,7 +69,7 @@
 //174
 		17587328FF379C6511CA2CBB = {
 			isa = PBXApplicationReference;
-			path = MacAranym.app;
+			path = Aranym.app;
 			refType = 3;
 		};
 //170
@@ -125,10 +125,11 @@
 				F580C27805A715C901DAC342,
 				29B97317FDCFA39411CA2CEA,
 				29B97323FDCFA39411CA2CEA,
+				F596213005DF6C680187A6B8,
 				19C28FACFE9D520D11CA2CBB,
 			);
 			isa = PBXGroup;
-			name = macaranym;
+			name = Aranym;
 			path = "";
 			refType = 4;
 		};
@@ -184,6 +185,7 @@
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				F59621C605DF84C00187A6B8,
 				F580C35605A7166701DAC342,
 				F580C37805A7166701DAC342,
 				F580C37A05A7166701DAC342,
@@ -223,13 +225,13 @@
 				29B9732DFDCFA39411CA2CEA,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\"$(HOME)/Library/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(HOME)/Library/Frameworks\" /Users/carlobaiocco/Documents/pkg_support/aranym.pkg_temp/Library/Frameworks /Users/carlobaiocco/Documents/aranym-0.8.6beta/src/MacOSX/pkg_support/aranym.pkg_temp/Library/Frameworks";
 				HEADER_SEARCH_PATHS = "../gui-sdl ../Unix ../uae_cpu ../natfeat ../include \"$(HOME)/Library/Frameworks/SDL.framework/Headers\"";
 				LIBRARY_SEARCH_PATHS = ../Unix;
 				OPTIMIZATION_CFLAGS = "-O3";
-				OTHER_CFLAGS = "-no-cpp-precomp -flat_namespace -DHAVE_CONFIG_H  -DOS_darwin -DCPU_powerpc -D_GNU_SOURCE -DDIRECT_ADDRESSING -DFPU_IEEE -DDIRSEPARATOR=\\\"/\\\" -DENABLE_EXCLUSIVE_SPCFLAGS -D_REENTRANT -D_THREAD_SAFE -Wall -W -c\n";
+				OTHER_CFLAGS = "-no-cpp-precomp -flat_namespace -DHAVE_CONFIG_H  -DOS_darwin -DCPU_powerpc -D_GNU_SOURCE -DDIRECT_ADDRESSING -DFPU_IEEE -DARANYMHOME=\\\\\\\"Documents\\/Aranym_files\\\\\\\" -DDIRSEPARATOR=\\\\\\\"\\/\\\\\\\" -DARANYM_DATADIR=\\\\\\\"Documents\\/Aranym_files\\/data\\\\\\\" -DENABLE_EXCLUSIVE_SPCFLAGS -D_REENTRANT -D_THREAD_SAFE -Wall -W\n";
 				OTHER_LDFLAGS = "-lm -framework SDL";
-				PRODUCT_NAME = MacAranym;
+				PRODUCT_NAME = Aranym;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
@@ -247,21 +249,21 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>MacAranym</string>
+	<string>Aranym</string>
 	<key>CFBundleIconFile</key>
 	<string>aranym2.icns</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>MacAranym</string>
+	<string>Aranym macOSX version</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>macaranym beta</string>
+	<string>aranym beta</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.5 beta</string>
+	<string>0.8.6 beta</string>
 	<key>NSMainNibFile</key>
 	<string>SDLMain.nib</string>
 	<key>NSPrincipalClass</key>
@@ -291,6 +293,7 @@
 				F58022F105D1A504014E74AC,
 				F58022F205D1A52F014E74AC,
 				F58022F305D1A532014E74AC,
+				F5DA8D7B05DAE9A6013A9B3A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -301,6 +304,7 @@
 				F580C40B05A7166801DAC342,
 				F580C42505A7166801DAC342,
 				F580C42605A7166801DAC342,
+				F59621C705DF84C20187A6B8,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -374,6 +378,7 @@
 				F588045105A9FBB5013D8677,
 				F588045205A9FBBA013D8677,
 				F539E4E805B961B301C87F7F,
+				F583CC8705DAA79B01C71CA6,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2067,6 +2072,17 @@
 			settings = {
 			};
 		};
+		F583CC8605DAA79B01C71CA6 = {
+			isa = PBXFileReference;
+			path = dlgHelp.cpp;
+			refType = 4;
+		};
+		F583CC8705DAA79B01C71CA6 = {
+			fileRef = F583CC8605DAA79B01C71CA6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F587863205B7C555011F64EC = {
 			buildActionMask = 2147483647;
 			files = (
@@ -2153,6 +2169,7 @@
 				F588044205A9FBA9013D8677,
 				F588044305A9FBA9013D8677,
 				F588044405A9FBA9013D8677,
+				F583CC8605DAA79B01C71CA6,
 				F588044505A9FBA9013D8677,
 				F588044605A9FBA9013D8677,
 				F588044705A9FBA9013D8677,
@@ -2345,6 +2362,7 @@
 		F58CD58C05B8049B01EE9378 = {
 			buildActionMask = 2147483647;
 			files = (
+				F59621A205DF6FBE0187A6B8,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2364,6 +2382,7 @@
 				F58CD58D05B8049B01EE9378,
 			);
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "/Users/carlobaiocco/Documents/aranym-0.8.6beta/src/MacOSX/pkg_support/aranym.pkg_temp/Library/Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -2407,6 +2426,216 @@
 			settings = {
 			};
 		};
+		F596213005DF6C680187A6B8 = {
+			children = (
+				F59621C405DF82590187A6B8,
+				F596214105DF6C680187A6B8,
+				F596216005DF6C680187A6B8,
+			);
+			isa = PBXGroup;
+			path = pkg_support;
+			refType = 2;
+		};
+		F596214105DF6C680187A6B8 = {
+			children = (
+				F596214305DF6C680187A6B8,
+				F596215405DF6C680187A6B8,
+				F596215B05DF6C680187A6B8,
+			);
+			isa = PBXGroup;
+			path = aranym.pkg_temp;
+			refType = 4;
+		};
+		F596214305DF6C680187A6B8 = {
+			children = (
+				F596214505DF6C680187A6B8,
+			);
+			isa = PBXGroup;
+			path = Applications;
+			refType = 4;
+		};
+		F596214505DF6C680187A6B8 = {
+			children = (
+				F596214805DF6C680187A6B8,
+				F596214905DF6C680187A6B8,
+				F596215305DF6C680187A6B8,
+			);
+			isa = PBXGroup;
+			path = MacAranym;
+			refType = 4;
+		};
+		F596214805DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = COPYING.txt;
+			refType = 4;
+		};
+		F596214905DF6C680187A6B8 = {
+			children = (
+				F596214B05DF6C680187A6B8,
+				F596214C05DF6C680187A6B8,
+				F596214D05DF6C680187A6B8,
+				F596214E05DF6C680187A6B8,
+				F596214F05DF6C680187A6B8,
+				F596215005DF6C680187A6B8,
+				F596215105DF6C680187A6B8,
+				F596215205DF6C680187A6B8,
+			);
+			isa = PBXGroup;
+			path = doc;
+			refType = 4;
+		};
+		F596214B05DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = AUTHORS.txt;
+			refType = 4;
+		};
+		F596214C05DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = BUGS.txt;
+			refType = 4;
+		};
+		F596214D05DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = documentation.txt;
+			refType = 4;
+		};
+		F596214E05DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = FAQ.txt;
+			refType = 4;
+		};
+		F596214F05DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = INSTALL.txt;
+			refType = 4;
+		};
+		F596215005DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = NEWS.txt;
+			refType = 4;
+		};
+		F596215105DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = README.txt;
+			refType = 4;
+		};
+		F596215205DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = TODO.txt;
+			refType = 4;
+		};
+		F596215305DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = ReadMe.txt;
+			refType = 4;
+		};
+		F596215405DF6C680187A6B8 = {
+			children = (
+				F596215605DF6C680187A6B8,
+				F596215705DF6C680187A6B8,
+			);
+			isa = PBXGroup;
+			path = Aranym_files;
+			refType = 4;
+		};
+		F596215605DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = config;
+			refType = 4;
+		};
+		F596215705DF6C680187A6B8 = {
+			children = (
+				F596215905DF6C680187A6B8,
+			);
+			isa = PBXGroup;
+			path = data;
+			refType = 4;
+		};
+		F596215905DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = etos512k.img;
+			refType = 4;
+		};
+		F596215B05DF6C680187A6B8 = {
+			children = (
+				F596215D05DF6C680187A6B8,
+			);
+			isa = PBXGroup;
+			path = Library;
+			refType = 4;
+		};
+		F596215D05DF6C680187A6B8 = {
+			children = (
+				F59621A005DF6FBE0187A6B8,
+			);
+			isa = PBXGroup;
+			path = Frameworks;
+			refType = 4;
+		};
+		F596216005DF6C680187A6B8 = {
+			children = (
+				F596216205DF6C680187A6B8,
+				F596216305DF6C680187A6B8,
+				F596216405DF6C680187A6B8,
+				F596216505DF6C680187A6B8,
+				F596216605DF6C680187A6B8,
+			);
+			isa = PBXGroup;
+			path = resources;
+			refType = 4;
+		};
+		F596216205DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = License.txt;
+			refType = 4;
+		};
+		F596216305DF6C680187A6B8 = {
+			isa = PBXExecutableFileReference;
+			path = postinstall;
+			refType = 4;
+		};
+		F596216405DF6C680187A6B8 = {
+			isa = PBXExecutableFileReference;
+			path = postupgrade;
+			refType = 4;
+		};
+		F596216505DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = ReadMe.txt;
+			refType = 4;
+		};
+		F596216605DF6C680187A6B8 = {
+			isa = PBXFileReference;
+			path = Welcome.txt;
+			refType = 4;
+		};
+		F59621A005DF6FBE0187A6B8 = {
+			isa = PBXFrameworkReference;
+			path = SDL.framework;
+			refType = 4;
+		};
+		F59621A205DF6FBE0187A6B8 = {
+			fileRef = F59621A005DF6FBE0187A6B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F59621C405DF82590187A6B8 = {
+			isa = PBXFileReference;
+			path = readme.rtf;
+			refType = 4;
+		};
+		F59621C605DF84C00187A6B8 = {
+			isa = PBXFileReference;
+			path = aranym.icns;
+			refType = 4;
+		};
+		F59621C705DF84C20187A6B8 = {
+			fileRef = F59621C605DF84C00187A6B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5A145AF05A7EA78017C0BEF = {
 			isa = PBXFrameworkReference;
 			name = OpenGL.framework;
@@ -2431,6 +2660,12 @@
 			settings = {
 			};
 		};
+		F5DA8D7B05DAE9A6013A9B3A = {
+			fileRef = F580C27B05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5F07EA405B9698B012DB10D = {
 			buildActionMask = 12;
 			files = (
@@ -2442,7 +2677,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $PWD\ncd ../Unix\nexport ACLOCAL_FLAGS=\"-I /usr/local/share/aclocal\"\n./autogen.sh --enable-fixedvideoram --enable-dsp-disasm";
+			shellScript = "cd $PWD\ncd ../Unix\nexport ACLOCAL_FLAGS=\"-I /usr/local/share/aclocal\"\nif test -f autogen.sh\nthen\n./autogen.sh --prefix=$HOME\nelse\n./configure --prefix=$HOME\nfi";
 		};
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA;
