@@ -121,14 +121,20 @@ void Dialog_MainDlg()
         Dialog_DiscDlg();
         break;
 
-      case KEYBOARD:
+	  case HOTKEYS:
+	  case KEYBOARD:
+	  case TOS:
+	  case VIDEO:
+	  case MEMORY:
+	  case HOSTFS:
+	  case CDROM:
+	  case INOUT:
         Dialog_KeyboardDlg();
         break;
 
       case LOAD:
         LoadSettings();
-  		// preload bx settings
-  		gui_options = bx_options;
+  		gui_options = bx_options;	// preload bx settings
       	break;
 
       case SAVE:
@@ -148,8 +154,7 @@ void Dialog_MainDlg()
         break;
 
       case APPLY:
-        // apply bx settings
-        bx_options = gui_options;
+        bx_options = gui_options;	// apply bx settings
         break;
 
 	  case CLOSE:
