@@ -8,11 +8,6 @@
 #include "cpu_emulation.h"
 #include "main.h"
 
-#include <sys/stat.h>
-#include <sys/vfs.h>
-
-#include <utime.h>
-
 #ifdef EXTFS_SUPPORT
 
 #include "parameters.h"
@@ -23,6 +18,9 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifdef HAVE_SYS_VFS_H
+# include <sys/vfs.h>
+#endif
 
 extern "C" {
 
@@ -1258,7 +1256,11 @@ int32 ExtFs::Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp, const char
 #ifdef HAVE_SYS_STATVFS_H 
                         return buf.f_namemax;
 #else
+# ifdef OS_linux
 			return buf.f_namelen;
+# else
+			return MFSNAMELEN;
+# endif
 #endif
 
 		case 4:	  // DP_ATOMIC
@@ -1533,6 +1535,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.23  2002/01/26 21:22:24  standa
+ * Cleanup from no needed method arguments.
+ *
  * Revision 1.22  2002/01/09 19:14:12  milan
  * Preliminary support for SGI/Irix
  *

@@ -49,6 +49,18 @@
 # include <sys/types.h>
 #endif
 
+#ifdef HAVE_SYS_PARAM_H
+# include <sys/param.h>
+#endif
+
+#ifdef HAVE_SYS_MOUNT_H
+# include <sys/mount.h>
+#endif
+
+#ifdef HAVE_UTIME_H
+# include <utime.h>
+#endif
+
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif

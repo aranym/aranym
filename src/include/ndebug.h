@@ -128,6 +128,12 @@ public:
   int dbprintf(char *, ...);
 
 #ifdef NEWDEBUG
+public:
+    static
+#endif
+    int pdbprintf(char *, ...);
+
+#ifdef NEWDEBUG
   static bool do_skip;
   static void run();
   static void init();

@@ -62,8 +62,10 @@ extern void deactivate_debugger(void);
 
 #ifdef NEWDEBUG
 #define bug ndebug::dbprintf
+#define panicbug ndebug::pdbprintf
 #else
 #define bug dbprintf
+#define panicbug pdbprintf
 #endif
 
 #if DEBUG

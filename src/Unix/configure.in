@@ -7,7 +7,7 @@ AC_CONFIG_HEADER(config.h)
 
 dnl Options.
 AC_ARG_ENABLE(debug,
-[  --enable-debug=which    specify which debugger to use [default=uae]],
+[  --enable-debug=which    specify which debugger to use [default=ndebug]],
 [ case "$enableval" in
     default)  WHICH_DEBUG="ndebug";;
         uae)  WHICH_DEBUG="uae";;
@@ -93,6 +93,7 @@ AC_CANONICAL_TARGET
 dnl Target OS type (target is host if not cross-compiling).
 case "$target_os" in
   linux*)	OS_TYPE=linux;;
+  openbsd*)	OS_TYPE=openbsd;;
   netbsd*)	OS_TYPE=netbsd;;
   freebsd*)	OS_TYPE=freebsd;;
   solaris*)	OS_TYPE=solaris;;
@@ -130,7 +131,8 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/mman.h term.h sys/ioctl.h)
 AC_CHECK_HEADERS(features.h sys/feature_tests.h dirent.h signal.h getopt.h)
 AC_CHECK_HEADERS(termios.h termio.h alloca.h sys/statfs.h sys/statvfs.h)
-AC_CHECK_HEADERS(sys/types.h sys/stat.h)
+AC_CHECK_HEADERS(sys/types.h sys/stat.h sys/vfs.h utime.h sys/param.h)
+AC_CHECK_HEADERS(sys/mount.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
@@ -547,6 +549,10 @@ else
       fi
       dnl Problems with Solaris
       if [[ "x$OS_TYPE" = "xsolaris" ]]; then
+        continue
+      fi
+      dnl Problems with Irix
+      if [[ "x$OS_TYPE" = "xirix" ]]; then
         continue
       fi
       dnl Real addressing will probably work.

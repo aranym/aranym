@@ -160,6 +160,37 @@ int dbprintf(char *s, ...)
 }
 
 #ifdef NEWDEBUG
+int ndebug::pdbprintf(char *s, ...)
+{
+#else
+int pdbprintf(char *s, ...)
+{
+#endif
+	int i = 0;
+	va_list a;
+	va_start(a, s);
+#ifdef NEWDEBUG
+	if (bx_options.startup.debugger) {
+		if (dbbuffer[dbend] != NULL)
+			free(dbbuffer[dbend]);
+		i += vasprintf(&dbbuffer[dbend++], s, a);
+		if (dbend == dbsize) dbend = 0;
+		if (dbstart == dbend) dbstart++;
+		if (dbstart == dbsize) dbstart = 0;
+		reset_aktualrow();
+	}
+#endif
+	char *c;
+	i += vasprintf(&c, s, a);
+	i += fprintf(stderr, c);
+	i += fprintf(stderr, "\n");
+	free(c);
+	return i;
+	va_end(a);
+}
+
+
+#ifdef NEWDEBUG
 void ndebug::warn_print(FILE * f)
 {
 	unsigned int ar;
@@ -1072,6 +1103,10 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.12  2002/01/18 23:43:25  milan
+ * fgetc returns int
+ * abs needs stdlib.h
+ *
  * Revision 1.11  2002/01/18 20:37:47  milan
  * FixedSizeFastRAM & Makefile fixed
  *

@@ -57,7 +57,7 @@ extern "C" {
 }
 #endif /* __sun */
 
-#if (defined(__OpenBSD__) || defined(__FreeBSD__))
+#if (defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__))
 // OpenBSD pre version 2.7 may require extern "C" { } structure around
 // all the includes, because the i386 sys/disklabel.h contains code which 
 // c++ considers invalid.
