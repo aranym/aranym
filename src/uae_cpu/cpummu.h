@@ -95,7 +95,7 @@ struct mmu_atc_line	{
 	uaecptr phys, log;
 };
 
-extern struct mmu_atc_line atc[64];
+extern struct mmu_atc_line atc[128];
 
 #define TTR_I0	4
 #define TTR_I1	5
@@ -166,5 +166,8 @@ extern uaecptr mmu_translate(uaecptr addr,
 		int size,
 		int test
 		) REGPARAM;
+
+extern uae_u32 mmu_get_unaligned(uaecptr addr, int fc, int size);
+extern void mmu_put_unaligned(uaecptr addr, uae_u32 data, int fc, int size);
 
 #endif /* CPUMMU_H */
