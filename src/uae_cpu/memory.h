@@ -139,7 +139,7 @@ extern uintptr MEMBaseDiff;
 
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
 extern uintptr VMEMBaseDiff;
-#ifdef FULL_MMU
+#ifdef FULLMMU
 # define do_get_real_address(a,b,c)	do_get_real_address_mmu(a,b,c)
 # define get_long(a,b)			get_long_mmu(a,b)
 # define get_word(a,b)			get_word_mmu(a,b)
@@ -149,7 +149,7 @@ extern uintptr VMEMBaseDiff;
 # define put_byte(a,b)			put_byte_mmu(a,b)
 # define get_real_address(a,b,c)	get_real_address_mmu(a,b,c)
 #else
-# define do_get_real_address(a,b,c)		(((a) < 0xff000000) ? (((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8*)(a) + VMEMBaseDiff)) : ((uae_u8 *)(a & 0x00ffffff) + MEMBaseDiff))
+# define do_get_real_address(a,b,c)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8*)(a) + VMEMBaseDiff))
 # define get_long(a,b)			get_long_direct(a)
 # define get_word(a,b)			get_word_direct(a)
 # define get_byte(a,b)			get_byte_direct(a)
@@ -157,16 +157,17 @@ extern uintptr VMEMBaseDiff;
 # define put_word(a,b)			put_word_direct(a,b)
 # define put_byte(a,b)			put_byte_direct(a,b)
 # define get_real_address(a,b,c)	get_real_address_direct(a)
-#endif /* FULL_MMU */
+#endif /* FULLMMU */
 
-#define do_get_real_address_direct(a)		(((a) < 0xff000000) ? (((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff)) : ((uae_u8 *)(a & 0x00ffffff) + MEMBaseDiff))
+#define do_get_real_address_direct(a)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff))
 
 #define InitMEMBaseDiff(va, ra)		(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 #define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 
 static __inline__ uae_u32 get_long_direct(uaecptr addr)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_l(addr & 0x00ffffff);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
 #if CHECK_RAM_END
     if (addr >= READ_RAM_END)
     	BUS_ERROR;
@@ -176,7 +177,8 @@ static __inline__ uae_u32 get_long_direct(uaecptr addr)
 }
 static __inline__ uae_u32 get_word_direct(uaecptr addr)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_w(addr & 0x00ffffff);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) return HWget_w(addr);
 #if CHECK_RAM_END
     if (addr >= READ_RAM_END)
     	BUS_ERROR;
@@ -186,7 +188,8 @@ static __inline__ uae_u32 get_word_direct(uaecptr addr)
 }
 static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_b(addr & 0x00ffffff);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) return HWget_b(addr);
 #if CHECK_RAM_END
     if (addr >= READ_RAM_END)
     	BUS_ERROR;
@@ -196,8 +199,9 @@ static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 }
 static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) {
-        HWput_l(addr & 0x00ffffff, l);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) {
+        HWput_l(addr, l);
         return;
     } 
 #if CHECK_RAM_END
@@ -209,8 +213,9 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
 }
 static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) {
-        HWput_w(addr & 0x00ffffff, w);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) {
+        HWput_w(addr, w);
         return;
     }
 #if CHECK_RAM_END
@@ -222,8 +227,9 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
 }
 static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) {
-        HWput_b(addr & 0x00ffffff, b);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) {
+        HWput_b(addr, b);
         return;
     }
 #if CHECK_RAM_END
@@ -242,7 +248,8 @@ static __inline__ int valid_address(uaecptr addr, uae_u32 size)
 
 static __inline__ uae_u32 get_long_direct(uaecptr addr)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_l(addr & 0x00ffffff);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
 #if CHECK_RAM_END
     if (addr >= READ_RAM_END)
     	BUS_ERROR;
@@ -252,7 +259,8 @@ static __inline__ uae_u32 get_long_direct(uaecptr addr)
 }
 static __inline__ uae_u32 get_word_direct(uaecptr addr)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_w(addr & 0x00ffffff);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) return HWget_w(addr);
 #if CHECK_RAM_END
     if (addr >= READ_RAM_END)
     	BUS_ERROR;
@@ -262,7 +270,8 @@ static __inline__ uae_u32 get_word_direct(uaecptr addr)
 }
 static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_b(addr & 0x00ffffff);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) return HWget_b(addr);
 #if CHECK_RAM_END
     if (addr >= READ_RAM_END)
     	BUS_ERROR;
@@ -272,8 +281,9 @@ static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 }
 static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) {
-        HWput_l(addr & 0x00ffffff, l);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) {
+        HWput_l(addr, l);
         return;
     } 
 #if CHECK_RAM_END
@@ -285,8 +295,9 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
 }
 static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) {
-        HWput_w(addr & 0x00ffffff, w);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) {
+        HWput_w(addr, w);
         return;
     }
 #if CHECK_RAM_END
@@ -298,8 +309,9 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
 }
 static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
 {
-    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) {
-        HWput_b(addr & 0x00ffffff, b);
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) {
+        HWput_b(addr, b);
         return;
     }
 #if CHECK_RAM_END

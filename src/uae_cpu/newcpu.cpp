@@ -154,7 +154,7 @@ static void build_cpufunctbl (void)
     for (opcode = 0; opcode < 65536; opcode++) {
 	cpuop_func *f;
 
-	if (table68k[opcode].mnemo == i_ILLG || table68k[opcode].clev > cpu_level)
+	if (table68k[opcode].mnemo == i_ILLG || (unsigned)table68k[opcode].clev > (unsigned)cpu_level)
 	    continue;
 
 	if (table68k[opcode].handler != -1) {
@@ -1148,7 +1148,7 @@ void m68k_reset (void)
 
 void REGPARAM2 op_illg (uae_u32 opcode)
 {
-    uaecptr pc = m68k_getpc ();
+//    uaecptr pc = m68k_getpc ();
 
 	if ((opcode & 0xFF00) == 0x7100) {
 		struct M68kRegisters r;
@@ -1199,13 +1199,23 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 
 void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
-#ifdef FULL_MMU
+#ifdef FULLMMU
     uae_u16 i;
     uaecptr addr = m68k_areg(regs, extra);
-    jmp_buf excep_env_old = excep_env;
+    uint16 excep_nono;
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    uaecptr mask;
+    uaecptr atcindex;
+    uint16 *rootp;
+    uint16 root;
+    uint16 *apdt, *apd;
+    uint16 pdt, pd;
+    flagtype wr;
+
 #endif
     if ((opcode & 0xFF8) == 0x0500) { /* PFLUSHN instruction (An) */
-#ifdef FULL_MMU
+#ifdef FULLMMU
         for (i = 0; i < ATCSIZE; i++) {
             if (!regs.atcglobald[i]
                 && (addr == regs.atcind[i]))
@@ -1217,7 +1227,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x0508) { /* PFLUSH instruction (An) */
-#ifdef FULL_MMU
+#ifdef FULLMMU
         for (i = 0; i < ATCSIZE; i++) {
             if (addr == regs.atcind[i])
                 regs.atcvald[i] = 0;
@@ -1227,7 +1237,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x0510) { /* PFLUSHAN instruction */
-#ifdef FULL_MMU
+#ifdef FULLMMU
         for (i = 0; i < ATCSIZE; i++) {
             if (!regs.atcglobald[i]) regs.atcvald[i] = 0;
             if (!regs.atcglobali[i]) regs.atcvali[i] = 0;
@@ -1235,7 +1245,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x0518) { /* PFLUSHA instruction */
-#ifdef FULL_MMU
+#ifdef FULLMMU
         for (i = 0; i < ATCSIZE; i++) {
             regs.atcvald[i] = 0;
             regs.atcvali[i] = 0;
@@ -1243,8 +1253,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x548) { /* PTESTW instruction */
-#ifdef FULL_MMU
-	uaecptr mask;
+#ifdef FULLMMU
         if (regs.dtt0 & 0x8000) {
 	    if ((regs.dtt0 & 0x4) != 0) throw access_error(addr);
             mask = ((~regs.dtt0) & 0xff0000) << 8;
@@ -1278,9 +1287,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 	    }
 	}
 	if (regs.tcp) {
-            uaecptr atcindex = ((addr << 11) >> 24);
-	    uint16 *rootp;
-	    uint16 excep_nono;
+            atcindex = ((addr << 11) >> 24);
 	    if ((excep_nono = setjmp(excep_env)) == 0) {
 	        rootp = (uint16 *)do_get_real_address_direct(regs.srp & ((addr >> 25) << 2));
 	    } else {
@@ -1288,12 +1295,12 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		    case 2: regs.mmusr = 0x800;
 		            excep_env = excep_env_old;
 		            return;
+		    default:
+		            excep_env = excep_env_old;
+			    longjmp(excep_env, excep_nono);
 		}
 	    }
-	    uint16 root = *rootp;
-	    uint16 *apdt, *apd;
-	    uint16 pdt, pd;
-	    flagtype wr;
+	    root = *rootp;
 	    if ((root & 0x3) > 1) {
 	        wr = (root & 0x4) >> 2;
 	        *rootp = root | 0x8;
@@ -1304,6 +1311,9 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		        case 2: regs.mmusr = 0x800;
 			        excep_env = excep_env_old;
 		                return;
+			default:
+		        	excep_env = excep_env_old;
+				longjmp(excep_env, excep_nono);
 		    }
 		}
 	        pdt = *apdt;
@@ -1317,6 +1327,9 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 			    case 2: regs.mmusr = 0x800;
 			            excep_env = excep_env_old;
 				    return;
+			    default:
+			            excep_env = excep_env_old;
+				    longjmp(excep_env, excep_nono);
 			}
 		    }
                     pd = *apd;
@@ -1326,10 +1339,13 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		       	case 2:  if ((excep_nono = setjmp(excep_env)) == 0) {
 				     apd = (uint16 *)do_get_real_address_direct(pd & 0xfffffffc);
 				 } else {
-				     switch (excep_non) {
+				     switch (excep_nono) {
 				         case 2: regs.mmusr = 0x800;
 					         excep_env = excep_env_old;
 						 return;
+					default:
+				        	excep_env = excep_env_old;
+						longjmp(excep_env, excep_nono);
 				     }
 				 }
 		        	 pd = *apd;
@@ -1376,8 +1392,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		return;
 	    }
         } else {
-            uaecptr atcindex = ((addr << 12) >> 24);
-	    uint16 *rootp;
+            atcindex = ((addr << 12) >> 24);
 	    if ((excep_nono = setjmp(excep_env)) == 0) {
 		rootp = (uint16 *)do_get_real_address_direct(regs.srp & ((addr >> 25) << 2));
 	    } else {
@@ -1385,19 +1400,21 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
                 excep_env = excep_env_old;
 		return;
 	    }
-	    uint16 root = *rootp;
-	    uint16 *apdt, *apd;
-	    uint16 pdt, pd;
-	    flagtype wr;
+	    root = *rootp;
 	    if ((root & 0x3) > 1) {
 	       	wr = (root & 0x4) >> 2;
 	       	*rootp = root | 0x8;
 		if ((excep_nono = setjmp(excep_env)) == 0) {
 	            apdt = (uint16 *)do_get_real_address_direct((root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16));
 		} else {
-		    regs.mmusr = 0x800;
-                    excep_env = excep_env_old;
-		    return;
+		    switch (excep_nono) {
+		        case 2: regs.mmusr = 0x800;
+			        excep_env = excep_env_old;
+		                return;
+			default:
+		        	excep_env = excep_env_old;
+				longjmp(excep_env, excep_nono);
+		    }
 		}
 	        pdt = *apdt;
 	        if ((pdt & 0x3) > 1) {
@@ -1406,9 +1423,14 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		    if ((excep_nono = setjmp(excep_env)) == 0) {
 		    	apd = (uint16 *)do_get_real_address_direct((pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10));
 		    } else {
-			regs.mmusr = 0x800;
-			excep_env = excep_env_old;
-			return;
+		        switch (excep_nono) {
+		            case 2: regs.mmusr = 0x800;
+			            excep_env = excep_env_old;
+		                    return;
+			    default:
+		        	    excep_env = excep_env_old;
+				    longjmp(excep_env, excep_nono);
+			}
 		    }
                     pd = *apd;
 		    switch (pd & 0x3) {
@@ -1418,9 +1440,12 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 			             apd = (uint16 *)do_get_real_address_direct(pd & 0xfffffffc);
 				 } else {
 				     switch (excep_nono) {
-				         case 2: regs.mmusr = 0x800;
+				        case 2: regs.mmusr = 0x800;
 					         excep_env = excep_env_old;
 						 return;
+					default:
+			        		excep_env = excep_env_old;
+						longjmp(excep_env, excep_nono);
 				     }
 				 }
 		                 pd = *apd;
@@ -1467,10 +1492,9 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		return;
 	    }
 	}
-#endif
+#endif /* FULLMMU */
     } else if ((opcode & 0xFF8) == 0x568) { /* PTESTR instruction */
-#ifdef FULL_MMU
-	uaecptr mask;
+#ifdef FULLMMU
         if (regs.dtt0 & 0x8000) {
             mask = ((~regs.dtt0) & 0xff0000) << 8;
 	    if ((addr & mask) == (regs.dtt0 & mask)) {
@@ -1500,28 +1524,34 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 	    }
 	}
 	if (regs.tcp) {
-            uaecptr atcindex = ((addr << 11) >> 24);
-	    uint16 *rootp;
+            atcindex = ((addr << 11) >> 24);
 	    if ((excep_nono = setjmp(excep_env)) == 0) {
 	        rootp = (uint16 *)do_get_real_address_direct(regs.srp & ((addr >> 25) << 2));
 	    } else {
-		regs.mmusr = 0x800;
-		excep_env = excep_env_old;
-		return;
+		switch (excep_nono) {
+		    case 2: regs.mmusr = 0x800;
+			    excep_env = excep_env_old;
+			    return;
+		    default:
+			    excep_env = excep_env_old;
+			    longjmp(excep_env, excep_nono);
+		}
 	    }
-	    uint16 root = *rootp;
-	    uint16 *apdt, *apd;
-	    uint16 pdt, pd;
-	    flagtype wr;
+	    root = *rootp;
 	    if ((root & 0x3) > 1) {
 	        wr = (root & 0x4) >> 2;
 	        *rootp = root | 0x8;
 		if ((excep_nono = setjmp(excep_env)) == 0) {
 		    apdt = (uint16 *)do_get_real_address_direct((root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16));
 		} else {
-		    regs.mmusr = 0x800;
-                    excep_env = excep_env_old;
-		    return;
+		    switch (excep_nono) {
+			case 2: regs.mmusr = 0x800;
+				excep_env = excep_env_old;
+				return;
+			default:
+				excep_env = excep_env_old;
+				longjmp(excep_env, excep_nono);
+		    }
 		}
 	        pdt = *apdt;
 	        if ((pdt & 0x3) > 1) {
@@ -1530,9 +1560,14 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		    if ((excep_nono = setjmp(excep_env)) == 0) {
 		       	apd = (uint16 *)do_get_real_address_direct((pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11));
 		    } else {
-			regs.mmusr = 0x800;
-			excep_env = excep_env_old;
-			return;
+			switch (excep_nono) {
+			    case 2: regs.mmusr = 0x800;
+				    excep_env = excep_env_old;
+				    return;
+			    default:
+				    excep_env = excep_env_old;
+				    longjmp(excep_env, excep_nono);
+			}
 		    }
                     pd = *apd;
 		    switch (pd & 0x3) {
@@ -1545,6 +1580,9 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 				         case 2: regs.mmusr = 0x800;
 					         excep_env = excep_env_old;
 						 return;
+					 default:
+						 excep_env = excep_env_old;
+						 longjmp(excep_env, excep_nono);
 				     }
 				 }
 		        	 pd = *apd;
@@ -1590,8 +1628,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		return;
 	    }
         } else {
-            uaecptr atcindex = ((addr << 12) >> 24);
-	    uint16 *rootp;
+            atcindex = ((addr << 12) >> 24);
 	    if ((excep_nono = setjmp(excep_env)) == 0) {
 		rootp = (uint16 *)do_get_real_address_direct(regs.srp & ((addr >> 25) << 2));
 	    } else {
@@ -1599,19 +1636,21 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		excep_env = excep_env_old;
 		return;
 	    }
-	    uint16 root = *rootp;
-	    uint16 *apdt, *apd;
-	    uint16 pdt, pd;
-	    flagtype wr;
+	    root = *rootp;
 	    if ((root & 0x3) > 1) {
 	       	wr = (root & 0x4) >> 2;
 	       	*rootp = root | 0x8;
 		if ((excep_nono = setjmp(excep_env)) == 0) {
 	            apdt = (uint16 *)do_get_real_address_direct((root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16));
 		} else {
-		    regs.mmusr = 0x800;
-		    excep_env = excep_env_old;
-		    return;
+		     switch (excep_nono) {
+		        case 2: regs.mmusr = 0x800;
+			        excep_env = excep_env_old;
+				return;
+			default:
+				excep_env = excep_env_old;
+				longjmp(excep_env, excep_nono);
+		    }
 		}
 	        pdt = *apdt;
 	        if ((pdt & 0x3) > 1) {
@@ -1620,9 +1659,14 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		    if ((excep_nono = setjmp(excep_env)) == 0) {
 		    	apd = (uint16 *)do_get_real_address_direct((pdt & 0xffffff00) | ((addr & 0x0003f000) >> 10));
 		    } else {
-			regs.mmusr = 0x800;
-			excep_env = excep_env_old;
-			return;
+			switch (excep_nono) {
+			    case 2: regs.mmusr = 0x800;
+				    excep_env = excep_env_old;
+				    return;
+			    default:
+				    excep_env = excep_env_old;
+				    longjmp(excep_env, excep_nono);
+		        }
 		    }
                     pd = *apd;
 		    switch (pd & 0x3) {
@@ -1631,9 +1675,14 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		        case 2:  if ((excep_nono = setjmp(excep_env)) == 0) {
 			             apd = (uint16 *)do_get_real_address_direct(pd & 0xfffffffc);
 				 } else {
-				     regs.mmusr = 0x800;
-				     excep_env = excep_env_old;
-				     return;
+				     switch (excep_nono) {
+				         case 2: regs.mmusr = 0x800;
+					         excep_env = excep_env_old;
+						 return;
+					 default:
+						 excep_env = excep_env_old;
+						 longjmp(excep_env, excep_nono);
+				     }
 				 }
 		                 pd = *apd;
 			         if (((pd & 0x3) % 2) == 0) {
@@ -1678,7 +1727,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		return;
 	    }
 	}
-#endif
+#endif /* FULLMMU */
     } else op_illg(opcode);
 }
 
@@ -1889,7 +1938,7 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 	    opcode = 0x4AFC;
 	}
 	dp = table68k + opcode;
-	for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
+	for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
 	    ;
 
 	strcpy (instrname, lookup->name);
@@ -1967,7 +2016,7 @@ setjmpagain:
 			opcode = 0x4AFC;
 		}
 		dp = table68k + opcode;
-		for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
+		for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
 		    ;
 		strcpy (instrname, lookup->name);
 		ccpt = strstr (instrname, "cc");

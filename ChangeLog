@@ -1,3 +1,9 @@
+2001/08/31 - milan
+- other small corrections for MMU
+
+- memory access now a bit quicker
+
+
 2001/08/29 - milan
 - stupid buggy preversion of TV conf. GUI aranymrc, needs to rewrite in
   better form, something as powertweak's text mode conf. Output in

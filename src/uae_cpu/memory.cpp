@@ -129,7 +129,7 @@ int REGPARAM2 dummy_check (uaecptr addr, uae_u32 size)
 
 #endif /* !REAL_ADDRESSING && !DIRECT_ADDRESSING */
 
-#ifdef FULL_MMU
+#ifdef FULLMMU
 
 uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
 {
@@ -680,4 +680,4 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
   return addr;
 }
 
-#endif /* FULL_MMU */
+#endif /* FULLMMU */
