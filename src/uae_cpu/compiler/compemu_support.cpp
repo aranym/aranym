@@ -15,9 +15,7 @@
 #include <sys/mman.h>
 #endif
 
-#include <stdlib.h>
 #include <fcntl.h>
-#include <errno.h>
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
@@ -44,6 +42,10 @@
 #define PROFILE_COMPILE_TIME	1
 #define PROFILE_ATRAPS_EXEC		1
 #endif
+
+#include <csignal>
+#include <cstdlib>
+#include <cerrno>
 
 #ifdef WIN32
 #undef write_log
