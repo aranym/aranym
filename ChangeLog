@@ -1,4 +1,10 @@
-2002/04/19 - STanda & JOY
+2002/04/19 - Didier MEQUIGNON & joy
+- simple audio driver. Atari side uses ZMAGXSND.PRG, a slightly modified
+  MagiCMac sound driver. The communication is based on illegal instruction
+  $712c and IRQ 5 used as a callback from host to Atari. Aniplayer is
+  supposed to play sound nicely but so far it's crashing on me (joy).
+
+2002/04/19 - STanda & joy
 - ExtFs: JOY have discovered that ExtFs:Fxattr should probably _not_
   take the DTA structure. This bug was originating in the Julian
   Reschke's cookfs01 driver sources that I started to program from
