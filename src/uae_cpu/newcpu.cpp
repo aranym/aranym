@@ -32,6 +32,12 @@ pthread_mutex_t spcflags_lock = PTHREAD_MUTEX_INITIALIZER;
 
 int quit_program = 0;
 
+#ifndef USE_TIMERS
+long maxInnerCounter = 10000;	// default value good for 1GHz Athlon machines
+static long innerCounter = 1;
+extern void ivoke200HzInterrupt(void);	// in main.cpp
+#endif /* !USE_TIMERS */
+
 struct flag_struct regflags;
 
 /* LongJump buffer */
@@ -1335,6 +1341,13 @@ int m68k_do_specialties(void)
 		SERVE_VBL_MFP(true);
 		if (SPCFLAGS_TEST( SPCFLAG_NMI ))
 			break;
+#ifndef USE_TIMERS
+		innerCounter -= maxInnerCounter / 5;
+	    if (innerCounter <= 0) {
+			innerCounter = maxInnerCounter;
+			invoke200HzInterrupt();
+	    }
+#endif
 	}
 	if (SPCFLAGS_TEST( SPCFLAG_TRACE ))
 		do_trace ();
@@ -1360,12 +1373,6 @@ int m68k_do_specialties(void)
 
 	return 0;
 }
-
-#ifndef USE_TIMERS
-long maxInnerCounter = 10000;	// default value good for 1GHz Athlon machines
-static long innerCounter = 1;
-extern void ivoke200HzInterrupt(void);	// in main.cpp
-#endif /* !USE_TIMERS */
 
 void m68k_do_execute (void)
 {
