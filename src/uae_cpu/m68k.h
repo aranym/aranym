@@ -9,6 +9,8 @@
 #ifndef M68K_FLAGS_H
 #define M68K_FLAGS_H
 
+#include <cstdlib>
+
 #ifdef OPTIMIZED_FLAGS
 
 #if defined(__i386__) && defined(X86_ASSEMBLY)

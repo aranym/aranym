@@ -20,6 +20,8 @@
 # define DIRSEPARATOR	"/"
 #endif
 
+#define BX_MAX_ATA_CHANNEL 1
+
 enum geo_type {
 	geoCylinders,
 	geoHeads,
@@ -60,6 +62,23 @@ typedef struct {
   char path[512];
   bool inserted;
 } bx_cdrom_options_t;
+
+typedef enum {
+      IDE_NONE, IDE_DISK, IDE_CDROM
+} device_type_t;
+
+// Generic ATA device
+typedef struct {
+  bool present;
+  device_type_t type;
+  char path[512];
+  unsigned int cylinders;
+  unsigned int heads;
+  unsigned int spt;
+  bool byteswap;
+  bool status;
+  char model[41];
+} bx_atadevice_options_t;
 
  /* 
 typedef struct {
@@ -117,6 +136,7 @@ typedef struct {
   bx_disk_options_t	diskc;
   bx_disk_options_t	diskd;
   bx_cdrom_options_t	cdromd;
+  bx_atadevice_options_t atadevice[BX_MAX_ATA_CHANNEL][2];
   bx_aranymfs_options_t	aranymfs[ 'Z'-'A'+1 ];
 //  bx_cookies_options_t cookies;
   bx_video_options_t	video;

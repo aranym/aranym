@@ -251,7 +251,7 @@ void postload_ide() {
 /* this is more or less a hack but it makes sense to put CDROM under IDEx config option */
 	if (bx_options.diskd.isCDROM) {
 		bx_options.cdromd.present = bx_options.diskd.present;
-		bx_options.diskd.present = false;
+// MJ		bx_options.diskd.present = false;
 		strcpy(bx_options.cdromd.path, bx_options.diskd.path);
 		bx_options.cdromd.inserted = true;	// this is auto insert of a CD
 	}

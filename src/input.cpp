@@ -513,7 +513,7 @@ void process_keyboard_event(SDL_Event event)
 					send2Atari = false;
 				}
 				if (controlled) {
-					bx_hard_drive.set_cd_media_status(bx_hard_drive.get_cd_media_status() == 0);
+					bx_hard_drive.set_cd_media_status(bx_hard_drive.get_first_cd_handle(), bx_hard_drive.get_cd_media_status(bx_hard_drive.get_first_cd_handle()) == 0);
 					send2Atari = false;
 				}
 				break;

@@ -42,4 +42,6 @@ extern "C" {
 #define BX_EJECTED	false
 // konec mych triku
 
+#define bx_ptr_t void *
+
 #endif

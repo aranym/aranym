@@ -154,8 +154,7 @@ features. In progress.
 --------------
 CPU:
 
-BasiliskII (CVS 9.4.2002)
-BasiliskII JIT (25.3.2002)
+BasiliskII (CVS 24.9.2002)
 AmigaXL (Amithlon, AmigaOSXL) (12.6.2001)
 hatari (CVS 2.2.2002)
 UAE 0.8.21
@@ -164,7 +163,7 @@ MMU patch 2 against 0.8.20
 
 IDE:
 
-Bochs (CVS 23.7.2002)
+Bochs (CVS 24.9.2002)
 
 
 8) debuggers

@@ -6268,7 +6268,7 @@ void exec_nostats(void)
 {
 	for (;;)  { 
 		uae_u32 opcode = GET_OPCODE;
-#if (1 && defined(X86_ASSEMBLY))
+#if (0 && defined(X86_ASSEMBLY))
 		__asm__ __volatile__("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
 							 : : "b" (cpufunctbl[opcode]), "a" (opcode)
 							 : "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
@@ -6299,7 +6299,7 @@ void execute_normal(void)
 #if FLIGHT_RECORDER
 			m68k_record_step(m68k_getpc());
 #endif
-#if (1 && defined(X86_ASSEMBLY))
+#if (0 && defined(X86_ASSEMBLY))
 			__asm__ __volatile__("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
 								 : : "b" (cpufunctbl[opcode]), "a" (opcode)
 								 : "%edx", "%ecx", "%esi", "%edi", "%ebp", "memory", "cc");

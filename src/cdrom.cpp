@@ -60,6 +60,7 @@ extern "C" {
 #endif /* __sun */
 
 #ifdef __BEOS__
+#include "cdrom_beos.h"
 #define BX_CD_FRAMESIZE 2048
 #endif
 
@@ -151,7 +152,7 @@ int GetCDCapacity(unsigned int hid, unsigned int tid, unsigned int lun)
 	HANDLE hEventSRB;
 	SRB_ExecSCSICmd srb;
 	DWORD dwStatus;
-	char buf[8];
+	unsigned char buf[8];
 
 	hEventSRB = CreateEvent(NULL, TRUE, FALSE, NULL);
 	
@@ -298,7 +299,7 @@ cdrom_interface::insert_cdrom(char *dev)
 		fd=1;
 	} else {
 	  D(bug("Using direct access for CDROM"));
-      hFile=CreateFile((char *)&drive,  GENERIC_READ, 0 , NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
+      hFile=CreateFile((char *)&drive,  GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
       if (hFile !=(void *)0xFFFFFFFF)
         fd=1;
 	}
@@ -398,9 +399,65 @@ cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track)
     panicbug("cdrom: read_toc: file not open.");
     }
 
+#ifdef WIN32
+  if (1) { // This is a hack and works okay if there's one rom track only
+#else
   if (using_file) {
-    bug("WARNING: read_toc on a file is not implemented, just returning length=1");
-    *length = 1;
+#endif
+    // From atapi specs : start track can be 0-63, AA
+    if ((start_track > 1) && (start_track != 0xaa)) 
+      return false;
+
+    buf[2] = 1;
+    buf[3] = 1;
+
+    int len = 4;
+    if (start_track == 1) {
+      buf[len++] = 0; // Reserved
+      buf[len++] = 0x14; // ADR, control
+      buf[len++] = 1; // Track number
+      buf[len++] = 0; // Reserved
+
+      // Start address
+      if (msf) {
+        buf[len++] = 0; // reserved
+        buf[len++] = 0; // minute
+        buf[len++] = 2; // second
+        buf[len++] = 0; // frame
+      } else {
+        buf[len++] = 0;
+        buf[len++] = 0;
+        buf[len++] = 0;
+        buf[len++] = 0; // logical sector 0
+      }
+    }
+
+    // Lead out track
+    buf[len++] = 0; // Reserved
+    buf[len++] = 0x16; // ADR, control
+    buf[len++] = 0xaa; // Track number
+    buf[len++] = 0; // Reserved
+
+    uint32 blocks = capacity();
+
+    // Start address
+    if (msf) {
+      buf[len++] = 0; // reserved
+      buf[len++] = (uint8)(((blocks + 150) / 75) / 60); // minute
+      buf[len++] = (uint8)(((blocks + 150) / 75) % 60); // second
+      buf[len++] = (uint8)((blocks + 150) % 75); // frame;
+    } else {
+      buf[len++] = (blocks >> 24) & 0xff;
+      buf[len++] = (blocks >> 16) & 0xff;
+      buf[len++] = (blocks >> 8) & 0xff;
+      buf[len++] = (blocks >> 0) & 0xff;
+    }
+
+    buf[0] = ((len-2) >> 8) & 0xff;
+    buf[1] = (len-2) & 0xff;
+
+    *length = len;
+
     return true;
   }
   // all these implementations below are the platform-dependent code required
@@ -421,7 +478,7 @@ cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track)
   if (ioctl(fd, CDROMREADTOCHDR, &tochdr))
     panicbug("cdrom: read_toc: READTOCHDR failed.");
 
-  if (start_track > tochdr.cdth_trk1)
+  if ((start_track > tochdr.cdth_trk1) && (start_track != 0xaa))
     return false;
 
   buf[2] = tochdr.cdth_trk0;
@@ -499,7 +556,7 @@ cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track)
   if (ioctl (fd, CDIOREADTOCHEADER, &h) < 0)
     panicbug("cdrom: read_toc: READTOCHDR failed.");
 
-  if (start_track > h.ending_track)
+  if ((start_track > h.ending_track) && (start_track != 0xaa))
     return false;
 
   buf[2] = h.starting_track;
@@ -584,7 +641,7 @@ cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track)
 cdrom_interface::capacity()
 {
   // Return CD-ROM capacity.  I believe you want to return
-  // the number of bytes of capacity the actual media has.
+  // the number of blocks of capacity the actual media has.
 
 #if !(defined(WIN32) || defined(OS_cygwin))
   // win32 has its own way of doing this
@@ -603,7 +660,6 @@ cdrom_interface::capacity()
 #endif
 
 #ifdef __BEOS__
-	#include "cdrom_beos.h"
 	return GetNumDeviceBlocks(fd, BX_CD_FRAMESIZE);
 #elif defined(__sun)
   {
@@ -730,10 +786,10 @@ cdrom_interface::capacity()
 #elif (defined(WIN32) || defined(OS_cygwin))
   {
 	  if(bUseASPI) {
-		  return GetCDCapacity(hid, tid, lun);
+		  return (GetCDCapacity(hid, tid, lun) / 2352);
 	  } else {
 	    unsigned long FileSize;
-		return (GetFileSize(hFile, &FileSize));
+		return (GetFileSize(hFile, &FileSize) / 2048);
 	  }
   }
 #else
