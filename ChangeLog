@@ -2,8 +2,14 @@
 - when the aranym catches segmentation fault it releases mouse and keyboard
   and shows last 20 instructions prior the segfaulting instruction (only
   if compiled with --enable-fullhistory).
+
 - InitROM() asks for 512 kB long file (on the net there are just 256 kB ROM
   images).
+
+- Floppy stuff moved to fdc. Automatic mounting - first read/write with
+  fallback to read only. Media Change trick prepared but disabled for now
+  because the floppy does not read past 499 sector (try e.g. Diskus Read Test).
+  Dunno what's wrong. Wonder if the floppy ever worked correctly?
 
 
 2001/10/24 - STanda
