@@ -99,19 +99,19 @@ uint32 XHDIDriver::dispatch(uint32 fncode)
 	uint32 ret;
 	switch(fncode) {
 		case 10: ret = XHReadWrite(
-						getParameterAsInt(0), /* UWORD major */
-						getParameterAsInt(1), /* UWORD minor */
-						getParameterAsInt(2), /* UWORD rwflag */
-						getParameterAsInt(3), /* ULONG recno */
-						getParameterAsInt(4), /* UWORD count */
-						getParameterAsInt(5)  /* void *buf */
+						getParameter(0), /* UWORD major */
+						getParameter(1), /* UWORD minor */
+						getParameter(2), /* UWORD rwflag */
+						getParameter(3), /* ULONG recno */
+						getParameter(4), /* UWORD count */
+						getParameter(5)  /* void *buf */
 						);
 				break;
 		case 14: ret = XHGetCapacity(
-						getParameterAsInt(0), /* UWORD major */
-						getParameterAsInt(1), /* UWORD minor */
-						getParameterAsInt(2), /* ULONG *blocks */
-						getParameterAsInt(3) /* ULONG *blocksize */
+						getParameter(0), /* UWORD major */
+						getParameter(1), /* UWORD minor */
+						getParameter(2), /* ULONG *blocks */
+						getParameter(3) /* ULONG *blocksize */
 						);
 				break;
 		default: ret = (uint32)-32L; // EINVFN

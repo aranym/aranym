@@ -14,8 +14,8 @@
 
 uint32 NF_Name::dispatch(uint32 fncode)
 {
-	memptr name_ptr = getParameterAsInt(0);
-	uint32 name_maxlen = getParameterAsInt(1);
+	memptr name_ptr = getParameter(0);
+	uint32 name_maxlen = getParameter(1);
 	D(bug("NF_Name(%p, %d)", name_ptr, name_maxlen));
 
 	if (! ValidAddr(name_ptr, true, name_maxlen))
