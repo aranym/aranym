@@ -18,9 +18,6 @@ SectorsPerTrack = 40
 ByteSwap = No
 
 [IDE1]
-Present = No
+Present = Yes
+IsCDROM = Yes
 Path = /dev/hdd
-Cylinders = 2100
-Heads = 16
-SectorsPerTrack = 63
-ByteSwap = No
