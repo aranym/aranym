@@ -36,6 +36,7 @@
 #include "parameters.h"
 #include "version.h"		// for heartBeat
 #include "ata.h"			// for init()
+#include "nf_objs.h"
 #ifdef ENABLE_LILO
 #include "lilo.h"
 #endif
@@ -55,11 +56,6 @@
 #include "sdlgui.h"
 extern bool start_GUI_thread();
 extern void kill_GUI_thread();
-#endif
-
-#ifdef ETHERNET_SUPPORT
-#include "natfeat/ethernet.h"
-extern ETHERNETDriver Ethernet;
 #endif
 
 #ifdef ENABLE_MON
@@ -459,9 +455,8 @@ bool InitAll(void)
 	CPUType = 4;
 	FPUType = 1;
 
-#ifdef ETHERNET_SUPPORT
-	Ethernet.init();
-#endif
+	// Init NF
+	initNatFeats();
 
 	// Init HW
 	HWInit();
@@ -533,10 +528,6 @@ void ExitAll(void)
 	}
 #endif
 
-#ifdef ETHERNET_SUPPORT
-	Ethernet.exit();
-#endif
-
  	/* Close opened joystick */
  	if (SDL_NumJoysticks()>0) {
  		if (SDL_JoystickOpened(0)) {
@@ -556,6 +547,9 @@ void ExitAll(void)
 	SDLGui_UnInit();
 #endif
 
+	// cleanup NF
+	exitNatFeats();
+
 	// hardware
 	HWExit();
 
@@ -571,8 +565,12 @@ void RestartAll()
 {
 	// memory init
 
+	// NF re-init
+	exitNatFeats();
+	initNatFeats();
+
 	// HW init
-	getIDE()->init();
+	getIDE()->init();	// all HW modules should be reinitialized!
 
 	// OS init
 	InitOS();

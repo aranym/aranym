@@ -35,6 +35,6 @@ public:
 	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);
 
-	static bool init(void);
-	static void exit(void);
+	bool init();
+	void exit();
 };

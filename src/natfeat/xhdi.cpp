@@ -14,6 +14,15 @@
 #define EACCDN	-36	/* access denied, device is reserved */
 #define E_OK	0
 
+bool XHDIDriver::init()
+{
+	// remember the values here so that SETUP changes don't affect
+	// the pending disk operations
+	ide0 = bx_options.atadevice[0][0];
+	ide1 = bx_options.atadevice[0][1];
+	return true;
+}
+
 bx_atadevice_options_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
 {
 	if (minor != 0)
@@ -21,8 +30,8 @@ bx_atadevice_options_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
 
 	bx_atadevice_options_t *disk;
 	switch(major) {
-		case 16:	disk = &bx_options.atadevice[0][0]; break;
-		case 17:	disk = &bx_options.atadevice[0][1]; break;
+		case 16:	disk = &ide0; break;
+		case 17:	disk = &ide1; break;
 		default:	disk = NULL; break;
 	}
 	if (disk != NULL) {

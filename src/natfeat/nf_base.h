@@ -30,6 +30,8 @@ protected:
 	void f2astrcpy( memptr dest, char *source );
 
 public:
+	virtual bool init() { return true; }
+	virtual void exit() { }
 	virtual char *name() = 0;
 	virtual bool isSuperOnly() = 0;
 	virtual int32 dispatch(uint32 fncode) = 0;

@@ -9,6 +9,9 @@ typedef memptr lmemptr;
 class XHDIDriver : public NF_Base
 {
 private:
+	bx_atadevice_options_t ide0, ide1;
+
+private:
 	bx_atadevice_options_t *dev2disk(uint16 major, uint16 minor);
 	void byteSwapBuf(uint8 *buf, int size);
 
@@ -27,6 +30,7 @@ protected:
 				lmemptr blocks, lmemptr blocksize);
 
 public:
+	bool init();
 	char *name() { return "XHDI"; }
 	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);

@@ -103,7 +103,7 @@ class HostFs : public NF_Base
 	/**
 	 * Installs the drive.
 	 **/
-	void init();
+	// bool init();
 	void install( const char driveSign, const char* rootPath, bool halfSensitive );
 
 	uint32 getDrvBits();
@@ -194,6 +194,9 @@ class HostFs : public NF_Base
 
 /*
  * $Log$
+ * Revision 1.11  2003/10/02 18:13:42  standa
+ * Large HOSTFS cleanup (see the ChangeLog for more)
+ *
  * Revision 1.10  2003/07/17 13:52:34  joy
  * hostfs fixes by Xavier
  *

@@ -4,6 +4,24 @@
 - input.cpp: try to iconify fullscreen window when user wants to release
   mouse and keyboard.
 
+- main.cpp: NatFeats initialized at startup, de-initialized at exit and
+  re-initialized at Restart. The re-init code (exit + init) is not optimal.
+  Maybe we should come up with a reinit() function and let NF authors to
+  define what should happen at creation time only and what should be
+  refreshed upon each reboot.
+
+- natfeat/nf_base.*: bool init() and void exit() virtual functions defined.
+
+- natfeat/nf_objs.*: initNatFeats() calls all NF's init(). Similarly for
+  exitNatFeats().
+
+- natfeat/xhdi.cpp: the init() function is used for remembering the disk
+  settings so that on-the-fly changes in SETUP don't ruin the pending
+  disk operations. This was the main reason for introducing NF init/exit
+  although after reviewing the code it was obvious that such functions
+  were needed for a long time and will be useful for other complex modules
+  (hostfs?) in future.
+
 
 2003/01/04 - STanda
 - fvdidrv:
