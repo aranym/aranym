@@ -650,7 +650,7 @@ void Exception(int nr, uaecptr oldpc)
 			}
 			else if (currprefs.cpu_level == 4)	{
 #endif
-	panicbug("Exception Nr. %d CPC: %08lx RPC: %08lx", nr, currpc, oldpc);
+	panicbug("Exception Nr. %d CPC: %08lx RPC: %08lx Addr: %08lx", nr, currpc, oldpc, regs.mmu_fault_addr);
 	/* 68040 */
 	exc_push_long(0);	/* PD3 */
 	exc_push_long(0);	/* PD2 */
