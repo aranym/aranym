@@ -8,6 +8,8 @@
   now.
   This fix causes LZHSHELL.APP be able to extract an archive to the
   MetaDOS driven filesystem.
+- The Patrice's patch adjusted to be only namespace distiguished
+  calls. No _emu suffix. Needs to be tried to compile under FreeMiNT.
 
 
 2002/04/13 - joy
