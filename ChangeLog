@@ -1,3 +1,8 @@
+2001/10/24 - STanda
+- fVDI: Essential bugfixes added. Now the driver works properly except for the
+  bugs in the fVDI engine. These are discussed with the fVDI author.
+  The lines with a negative y coordinate are drewn properly now.
+
 2001/10/23 - STanda
 - Screenshot added to the website.
 - fVDI: Mouse Is not hidden at the right and bottom screen edge.

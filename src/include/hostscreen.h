@@ -226,15 +226,15 @@ inline void HostScreen::drawLine( int16 x1, int16 y1, int16 x2, int16 y2, uint16
 }
 
 
-inline void HostScreen::fillArea( int16 x1, int16 y1, int16 x2, int16 y2, uint16 *pattern, uint32 color )
+inline void HostScreen::fillArea( int16 x, int16 y, int16 w, int16 h, uint16 *pattern, uint32 color )
 {
-	gfxBoxColorPattern( x1, y1, x2, y2, pattern, color, color, 2 );
+	gfxBoxColorPattern( x, y, w, h, pattern, color, color, 2 );
 }
 
-inline void HostScreen::fillArea( int16 x1, int16 y1, int16 x2, int16 y2,
+inline void HostScreen::fillArea( int16 x, int16 y, int16 w, int16 h,
 								  uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
 {
-	gfxBoxColorPattern( x1, y1, x2, y2, pattern, fgColor, bgColor, logOp );
+	gfxBoxColorPattern( x, y, w, h, pattern, fgColor, bgColor, logOp );
 }
 
 inline void HostScreen::blitArea( int16 sx, int16 sy, int16 dx, int16 dy, int16 w, int16 h )
@@ -287,8 +287,18 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.11  2001/10/23 21:28:49  standa
+ * Several changes, fixes and clean up. Shouldn't crash on high resolutions.
+ * hostscreen/gfx... methods have fixed the loop upper boundary. The interface
+ * types have changed quite havily.
+ *
  * Revision 1.10  2001/10/08 21:46:05  standa
- * The $Header$ and $Log$ CVS tags added.
+ * The $Header$ and $Log$
+ * The $Header$ and Revision 1.11  2001/10/23 21:28:49  standa
+ * The $Header$ and Several changes, fixes and clean up. Shouldn't crash on high resolutions.
+ * The $Header$ and hostscreen/gfx... methods have fixed the loop upper boundary. The interface
+ * The $Header$ and types have changed quite havily.
+ * The $Header$ and CVS tags added.
  *
  * Revision 1.9  2001/10/01 22:22:41  standa
  * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).

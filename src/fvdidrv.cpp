@@ -102,7 +102,8 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *	d6	background and foreground colour
 			 *	d7	logic operation
 			 */
-			if ( ( r->d[2] >> 16 ) != 0 )
+
+			if (r->a[1] & 1)
 				r->d[0] = (uint32)-1; // we can do only one line at once
 			else
 				r->d[0] = expandArea( (void*)get_long( (uint32)r->a[1], true),
@@ -125,7 +126,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *	d3	pattern address
 			 *	d4	colour
 			 */
-			if ( ( r->d[2] >> 16 ) != 0 )
+			if (r->a[1] & 1)
 				r->d[0] = (uint32)-1; // we can do only the basic single mode
 			else {
 				uint16 pattern[16];
@@ -171,7 +172,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *	d5	pattern
 			 *	d6	colour
 			 */
-			if ( ( r->d[2] >> 16 ) != 0 )
+			if (r->a[1] & 1)
 				r->d[0] = (uint32)-1; // we can do only one line at once
 			else {
 				r->d[0] = drawLine( (void*)r->a[1],
@@ -201,7 +202,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 		0xffff, 0xffff, 0xffff, 0xffff
 	};
 	for( int i=0; i<16; i++ )
-		hostScreen.fillArea( i<<4, hostScreen.getHeight()-16, (i<<4) + 15, hostScreen.getHeight(), ptrn, hostScreen.getPaletteColor( i ), hostScreen.getPaletteColor( 0 ) );
+		hostScreen.fillArea( i<<4, hostScreen.getHeight()-16, 15, 16, ptrn, hostScreen.getPaletteColor( i ), hostScreen.getPaletteColor( 0 ) );
 #endif  // DEBUG_DRAW_PALETTE
 
 }
@@ -556,8 +557,8 @@ uint32 FVDIDriver::drawMouse( void *wrk, int16 x, int16 y, uint32 mode )
 
 	saveMouseBackground( x, y, w, h );
 
-	hostScreen.fillArea( x, y, x + w - 1, y + h - 1, mm, Mouse.storage.color.background );
-	hostScreen.fillArea( x, y, x + w - 1, y + h - 1, md, Mouse.storage.color.foreground );
+	hostScreen.fillArea( x, y, w, h, mm, Mouse.storage.color.background );
+	hostScreen.fillArea( x, y, w, h, md, Mouse.storage.color.foreground );
 
 	hostScreen.renderEnd();
 	hostScreen.update( (uint16)x, (uint16)y, w, h, true );
@@ -744,7 +745,7 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
  **/
 uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint16 *pattern, uint32 fgColor, uint32 bgColor)
 {
-	D(bug("fVDI: %s %d,%d:%d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "fillArea", x, y, x+w-1, y+h-1, *pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
+	D(bug("fVDI: %s %d,%d:%d,%d : %d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "fillArea", x, y, w, h, x+w-1, x+h-1, *pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
 
 	fgColor = hostScreen.getPaletteColor( fgColor );
 	bgColor = hostScreen.getPaletteColor( bgColor );
@@ -753,7 +754,7 @@ uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint1
 	if (!hostScreen.renderBegin())
 		return 1;
 
-	hostScreen.fillArea( x, y, x + w - 1, y + h - 1, pattern, fgColor, bgColor, logOp );
+	hostScreen.fillArea( x, y, w, h, pattern, fgColor, bgColor, logOp );
 
 	hostScreen.renderEnd();
 	hostScreen.update( x, y, w, h, true );
@@ -1231,6 +1232,7 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 		dy = sy2 - sy1 + 1;
 	}
 
+	D2(bug("fVDI: %s %d,%d:%d,%d", "drawLineUp", lx, ly, dx, dy ));
 	hostScreen.update( lx, ly, dx, dy, true );
 
 	return 1;
@@ -1239,6 +1241,11 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.18  2001/10/23 21:28:49  standa
+ * Several changes, fixes and clean up. Shouldn't crash on high resolutions.
+ * hostscreen/gfx... methods have fixed the loop upper boundary. The interface
+ * types have changed quite havily.
+ *
  * Revision 1.17  2001/10/19 11:58:46  standa
  * The line clipping added (has bug, when neither one point is within the rect).
  * expandArea not handles the spacial mode (fallbacks it).

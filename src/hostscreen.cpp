@@ -155,11 +155,13 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 		return;
 
 	/* More variable setup */
-	dx=w;
+	dx=w+1;
 	pixx = surf->format->BytesPerPixel;
 	pixy = surf->pitch;
 	pixel = ((uint8*)surf->pixels) + pixx * (int)x1 + pixy * (int)y;
 	ppos = 0;
+
+	D(bug("HLn %3d,%3d,%3d", x1, x2, y));
 
 	/* Draw */
 	switch(surf->format->BytesPerPixel) {
@@ -228,8 +230,10 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 
 	ppos = 0;
 
+	D(bug("VLn %3d,%3d,%3d", x, y1, y2));
+
 	/* More variable setup */
-	dy=h;
+	dy=h+1;
 	pixx = surf->format->BytesPerPixel;
 	pixy = surf->pitch;
 	pixel = ((uint8*)surf->pixels) + pixx * (int)x + pixy * (int)y1;
@@ -316,6 +320,8 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 		}
 	}
 
+	D(bug("CLn %3d,%3d,%3d,%3d", x1, x2, y1, y2));
+
 	/* Variable setup */
 	dx = x2 - x1;
 	dy = y2 - y1;
@@ -336,7 +342,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 		swaptmp = pixx; pixx = pixy; pixy = swaptmp;
 	}
 
-	D(bug("ln pix pixx, pixy: %d,%d : %d,%d : %x, %d", sx, sy, dx, dy, pixx, pixy));
+	//	D2(bug("ln pix pixx, pixy: %d,%d : %d,%d : %x, %d", sx, sy, dx, dy, pixx, pixy));
 
 	/* Draw */
 	x=0;
@@ -353,7 +359,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 			break;
 		case 2:
 			for (; x < dx; x++, pixel += pixx) {
-				D2(bug("ln pix: %x, %d", pixel, x));
+				//				D2(bug("ln pix: %x, %d", pixel, x));
 
 				switch (logOp) {
 					case 1:
@@ -411,37 +417,20 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
  *
  * @author STanda
  **/
-void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
+void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 									 uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp)
 {
 	uint8 *pixel, *pixellast;
-	int16 x, dx, dy;
 	int16 pixx, pixy;
-	int16 w,h,tmp;
-
-	/* Order coordinates */
-	if (x1>x2) {
-		tmp=x1;
-		x1=x2;
-		x2=tmp;
-	}
-	if (y1>y2) {
-		tmp=y1;
-		y1=y2;
-		y2=tmp;
-	}
-
-	/* Calculate width&height */
-	w=x2-x1+1; // STanda //+1
-	h=y2-y1;
+	int16 i;
+	int16 dx=w;
+	int16 dy=h;
 
 	/* More variable setup */
-	dx=w;
-	dy=h;
 	pixx = surf->format->BytesPerPixel;
 	pixy = surf->pitch;
-	pixel = ((uint8*)surf->pixels) + pixx * (int32)x1 + pixy * (int32)y1;
-	pixellast = pixel + pixx*dx + pixy*dy;
+	pixel = ((uint8*)surf->pixels) + pixx * (int32)x + pixy * (int32)y;
+	pixellast = pixel + pixy*dy;
 
 	// STanda // FIXME here the pattern should be checked out of the loops for performance
 	          // but for now it is good enough
@@ -453,9 +442,9 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 			// STanda // the loop is the same as the for the 2 BPP
 			pixy -= (pixx*dx);
 			for (; pixel<pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+				uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
 				for (x=0; x<dx; x++) {
-					*(uint8*)pixel = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+					*(uint8*)pixel = (( ( pattern & ( 1 << ( (x+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
 					pixel += pixx;
 				}
 			}
@@ -469,31 +458,31 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 		case 2:
 			pixy -= (pixx*dx);
 			for (; pixel<pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+				uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
 
-				D2(bug("bix pix: %d, %x, %d", y1, pixel, pixy));
+				//				D2(bug("bix pix: %d, %x, %d", y, pixel, pixy));
 
 				switch (logOp) {
 					case 1:
-						for (x=0; x<dx; x++) {
-							*(uint16*)pixel = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						for (i=0; i<dx; i++) {
+							*(uint16*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
 							pixel += pixx;
 						}; break;
 					case 2:
-						for (x=0; x<dx; x++) {
-							if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 )
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
 								*(uint16*)pixel = fgColor; // STanda
 							pixel += pixx;
 						}; break;
 					case 3:
-						for (x=0; x<dx; x++) {
-							if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 )
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
 								*(uint16*)pixel = ~(*(uint16*)pixel);
 							pixel += pixx;
 						}; break;
 					case 4:
-						for (x=0; x<dx; x++) {
-							if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) == 0 )
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
 								*(uint16*)pixel = fgColor; // STanda
 							pixel += pixx;
 						}; break;
@@ -503,9 +492,9 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 		case 3:
 			pixy -= (pixx*dx);
 			for (; pixel<pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
-				for (x=0; x<dx; x++) {
-					uint32 color = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+				uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+				for (i=0; i<dx; i++) {
+					uint32 color = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
 					putBpp24Pixel( pixel, color );
 					pixel += pixx;
 				}
@@ -514,9 +503,9 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 		default: /* case 4*/
 			pixy -= (pixx*dx);
 			for (; pixel<pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
-				for (x=0; x<dx; x++) {
-					*(uint32*)pixel = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+				uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+				for (i=0; i<dx; i++) {
+					*(uint32*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
 					pixel += pixx;
 				}
 			}
@@ -527,12 +516,22 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 
 /*
  * $Log$
+ * Revision 1.14  2001/10/23 21:28:49  standa
+ * Several changes, fixes and clean up. Shouldn't crash on high resolutions.
+ * hostscreen/gfx... methods have fixed the loop upper boundary. The interface
+ * types have changed quite havily.
+ *
  * Revision 1.13  2001/10/16 19:06:55  standa
  * The uint32 changed to int16 to make the gfxLineColor work.
  * Now it seems not to segfault anywhere.
  *
  * Revision 1.12  2001/10/08 21:46:05  standa
  * The $Header$ and $Log$
+ * The $Header$ and Revision 1.14  2001/10/23 21:28:49  standa
+ * The $Header$ and Several changes, fixes and clean up. Shouldn't crash on high resolutions.
+ * The $Header$ and hostscreen/gfx... methods have fixed the loop upper boundary. The interface
+ * The $Header$ and types have changed quite havily.
+ * The $Header$ and
  * The $Header$ and Revision 1.13  2001/10/16 19:06:55  standa
  * The $Header$ and The uint32 changed to int16 to make the gfxLineColor work.
  * The $Header$ and Now it seems not to segfault anywhere.
