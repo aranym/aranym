@@ -1,3 +1,9 @@
+2001/10/16 - STanda
+- fVDI:  The segfault bug in gfxLineColor removed.
+- VIDEL: The 16, 24 and 32 destBpp are supported when #define SUPPORT_MULTIPLEDESTBPP
+         in videl.cpp (the SDL surface depth setting is in hostscreen.cpp).
+
+
 2001/10/16 - milan
 - support for BasiliskII's monitor cxmon
 - aranymrc now supports FastRAM's size.
