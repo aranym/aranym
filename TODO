@@ -18,8 +18,6 @@ Things for 1.0 release:
 
 - full revision of CPU/FPU instr. set
 
-- support for Just-In-Time compilation
-
 - Networking for MiNTNet (Ethernet Card Emulation or direct socket mapping)
 
 - aranymfs  filesystem
