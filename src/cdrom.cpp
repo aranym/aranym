@@ -982,7 +982,7 @@ cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track)
   }
 #else
   bug("read_toc: your OS is not supported yet.");
-  returnfalse; // OS not supported yet, return false always.
+  return false; // OS not supported yet, return false always.
 #endif
 }
 
@@ -1133,7 +1133,7 @@ cdrom_interface::capacity()
   return(num_sectors);
 
   }
-#elif (defined(WIN32)
+#elif (defined(WIN32))
   {
 	  if(bUseASPI) {
 		  return (GetCDCapacity(hid, tid, lun) / 2352);
