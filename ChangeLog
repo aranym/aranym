@@ -1,3 +1,17 @@
+2001/10/23 - STanda
+- Screenshot added to the website.
+- fVDI: Mouse Is not hidden at the right and bottom screen edge.
+  Is colorized properly. The shape's hotspot shift implemented.
+  Shouldn't crash on higher resolutions than 640x400.
+  Put pixel fixed to take the pattern in mind.
+  The lineClipping fixed. The lines that starts and ends out of the screen
+  are not drewn due to the fVDI.PRG beta engine.. the beta crashes sometimes too)
+  The v0.95 works quite well, but with display bugs like no pictures in
+  ST-Guide, wrong colors of Thing's keyboard cursor.
+- the hardcoded screen resolution changed to the hostScreens one
+  in mouseOut handling.
+
+
 2001/10/19 - STanda
 - fVDI: The driver updated to work with FVDI.PRG beta. This beta enables
         e.g. the monochrome images in ST-Guide and fixes many bugs.
