@@ -63,6 +63,14 @@
       <title>SDL</title>
       <link>http://www.libsdl.org</link>
     </item>
+    <item name="stonx">
+      <title>STonX</title>
+      <link>http://stonx.sf.net/</link>
+    </item>
+    <item name="hatari">
+      <title>hatari</title>
+      <link>http://hatari.sf.net/</link>
+    </item>
     <item name="UAE">
       <title>UAE</title>
       <link>http://www.freiburg.linux.de/~uae/</link>
@@ -73,7 +81,7 @@
     </item>
     <item name="bochs">
       <title>Bochs</title>
-      <link>http://bochs.sourceforge.net/</link>
+      <link>http://bochs.sf.net/</link>
     </item>
   </section>
 </menu>
