@@ -82,10 +82,6 @@ void setactvdebug(int)
 
 void init_fdc();
 
-#ifdef EXTFS_SUPPORT
-#define METADOS_DRV
-#endif
-
 // CPU and FPU type, addressing mode
 int CPUType;
 bool CPUIs68060;
@@ -441,10 +437,10 @@ bool InitAll(void)
 
 	init_fdc();
 
-#ifdef METADOS_DRV
+#ifdef EXTFS_SUPPORT
 	// install the drives
 	extFS.init();
-#endif							// METADOS_DRV
+#endif
 
 	// Init HW
 	HWInit();
@@ -531,6 +527,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.88  2002/10/28 21:05:47  joy
+ * boot emutos
+ *
  * Revision 1.87  2002/10/25 07:37:08  joy
  * SDL Timer check
  *
