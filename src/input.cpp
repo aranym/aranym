@@ -47,7 +47,11 @@
 #define KEYSYM_X11	2
 #define KEYSYM_SCANCODE	3
 
+#ifdef OS_darwin
+#define KEYBOARD_TRANSLATION KEYSYM_SYMTABLE
+#else
 #define KEYBOARD_TRANSLATION	KEYSYM_SCANCODE
+#endif
 
 /*********************************************************************
  * Mouse handling
