@@ -23,7 +23,7 @@ class NF_Base
 public:
 	virtual char *name() = 0;
 	virtual bool isSuperOnly() = 0;
-	virtual uint32 dispatch(uint32 fncode) = 0;
+	virtual int32 dispatch(uint32 fncode) = 0;
 	uint32 getParameter(int i) { return nf_getparameter(i); }
 };
 

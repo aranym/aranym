@@ -31,7 +31,7 @@ void XHDIDriver::byteSwapBuf(uint8 *buf, int size)
 	}
 }
 
-uint32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
+int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 				 uint16 rwflag, uint32 recno, uint16 count, memptr buf)
 {
 	D(bug("ARAnyM XH%s(major=%u, minor=%u, recno=%lu, count=%u, buf=$%x)",
@@ -40,11 +40,11 @@ uint32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 
 	bx_disk_options_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
-		return (uint32)-15L;	// EUNDEV (unknown device)
+		return -15L;	// EUNDEV (unknown device)
 
 	bool writing = (rwflag & 1);
 	if (writing && !disk->xhdiWrite)
-		return (uint32)-36L;	// EACCDN (access denied)
+		return -36L;	// EACCDN (access denied)
 
 	FILE *f = fopen(disk->path, writing ? "a+b" : "rb");
 	if (f != NULL) {
@@ -69,14 +69,14 @@ uint32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 	return 0;	// 0 = no error
 }
 
-uint32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
+int32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
 					 memptr blocks, memptr blocksize)
 {
 	D(bug("ARAnyM XHGetCapacity(major=%u, minor=%u, blocks=%lu, blocksize=%lu)", major, minor, blocks, blocksize));
 
 	bx_disk_options_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
-		return (uint32)-15L;	// EUNDEV (unknown device)
+		return -15L;	// EUNDEV (unknown device)
 
 	struct stat buf;
 	if (! stat(disk->path, &buf)) {
@@ -89,11 +89,11 @@ uint32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
 		return 0;
 	}
 	else {
-		return (uint32)-2L;		// EDRVNR (device not responding)
+		return -2L;		// EDRVNR (device not responding)
 	}
 }
 
-uint32 XHDIDriver::dispatch(uint32 fncode)
+int32 XHDIDriver::dispatch(uint32 fncode)
 {
 	D(bug("ARAnyM XHDI(%u)\n", fncode));
 	uint32 ret;
@@ -114,7 +114,7 @@ uint32 XHDIDriver::dispatch(uint32 fncode)
 						getParameter(3) /* ULONG *blocksize */
 						);
 				break;
-		default: ret = (uint32)-32L; // EINVFN
+		default: ret = -32L; // EINVFN
 				break;
 	}
 	D(bug("ARAnyM XHDI function returning with %d", ret));

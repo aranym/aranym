@@ -12,7 +12,7 @@
 #define DEBUG 1
 #include "debug.h"
 
-uint32 NF_Name::dispatch(uint32 fncode)
+int32 NF_Name::dispatch(uint32 fncode)
 {
 	memptr name_ptr = getParameter(0);
 	uint32 name_maxlen = getParameter(1);

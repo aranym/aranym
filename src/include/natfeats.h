@@ -5,7 +5,7 @@
 
 // NatFeats CPU handlers
 extern uint32 nf_get_id(memptr);
-extern uint32 nf_call(memptr, bool);
+extern int32 nf_call(memptr, bool);
 
 // NatFeats call for getting parameters
 extern uint32 nf_getparameter(int);

@@ -13,5 +13,5 @@ class NF_Name : public NF_Base
 public:
 	char *name() { return "NF_NAME"; }
 	bool isSuperOnly() { return false; }
-	uint32 dispatch(uint32 fncode);
+	int32 dispatch(uint32 fncode);
 };
