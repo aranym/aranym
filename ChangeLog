@@ -1,6 +1,23 @@
 2002/07/20 - joy
 - saving/restoring screen background under SDL GUI fixed
 
+- SDL GUI now survives resolution change without a crash but the dialog
+  is not redrawn correctly yet.
+
+- hostScreen::update() now always update the mainSurface (the physical one).
+  Updating the logical (when GUI is opened the background) surface is IMHO
+  not required and it also caused problems when updating the screen upon
+  GUI closing.
+
+- OS loading changed: first TOS 4.04 is tried and if fails then EmuTOS
+  is tried. If even that fails (which should not since we include EmuTOS
+  in ARAnyM binary distribution now) then a warning and an advice for 
+  obtaining the EmuTOS is displayed.
+
+- the window mover now displays an advice for pressing the Pause key
+  for opening the GUI.
+
+
 2002/07/20 - Patrice
 - Dsp: more bugfixes, see end of dsp_[cpu|disasm].cpp file for complete changelog
 
@@ -1255,7 +1272,7 @@
 
 - directive DebugOnStart from ARANYMRC changed to Bool_Tag
 
-- patched stupid mistake by entry of debugger (Alt x Alt+Break)
+- patched stupid mistake by entry of debugger (Alt x Alt+Pause)
 
 - some small corrections for MMU
 
@@ -1397,7 +1414,7 @@
 2001/06/18 - STanda
 - videl renderScreen() fix (lock & unlock screen added - again)
 
-- the shift-break combination is now used to exit the emulator immediately
+- the Shift+Pause combination is now used to exit the emulator immediately
   (this was joy's code change, but forgotten to tell us ;))... anyway thanks
   for really good working videl now. I seem not to have any problems with
   color palette here :).
