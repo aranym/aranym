@@ -31,8 +31,24 @@ void XHDIDriver::byteSwapBuf(uint8 *buf, int size)
 	}
 }
 
+int32 XHDIDriver::XHDrvMap()
+{
+	D(bug("ARAnyM XHDrvMap"));
+
+	return 0;	// drive map
+}
+
+int32 XHDIDriver::XHInqDriver(uint16 bios_device, memptr name, memptr version,
+					memptr company, wmemptr ahdi_version, wmemptr maxIPL)
+{
+	D(bug("ARAnyM XHInqDriver(bios_device=%u)", bios_device));
+
+	return 0;	// 0 = no error
+}
+
+
 int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
-				 uint16 rwflag, uint32 recno, uint16 count, memptr buf)
+					uint16 rwflag, uint32 recno, uint16 count, memptr buf)
 {
 	D(bug("ARAnyM XH%s(major=%u, minor=%u, recno=%lu, count=%u, buf=$%x)",
 		(rwflag & 1) ? "Write" : "Read",
@@ -69,8 +85,25 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 	return 0;	// 0 = no error
 }
 
+int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
+					lmemptr device_flags, memptr product_name, uint16 stringlen)
+{
+	D(bug("ARAnyM XHInqTarget2(major=%u, minor=%u)", major, minor));
+	
+	return 0;	// 0 = no error
+}
+
+int32 XHDIDriver::XHInqDev2(uint16 bios_device, wmemptr major, wmemptr minor,
+					lmemptr start_sector, memptr bpb, lmemptr blocks,
+					memptr partid)
+{
+	D(bug("ARAnyM XHInqDev2(bios_device=%u)", bios_device));
+
+	return 0;	// 0 = no error
+}
+
 int32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
-					 memptr blocks, memptr blocksize)
+					lmemptr blocks, lmemptr blocksize)
 {
 	D(bug("ARAnyM XHGetCapacity(major=%u, minor=%u, blocks=%lu, blocksize=%lu)", major, minor, blocks, blocksize));
 
@@ -96,8 +129,45 @@ int32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
 int32 XHDIDriver::dispatch(uint32 fncode)
 {
 	D(bug("ARAnyM XHDI(%u)\n", fncode));
-	uint32 ret;
+	int32 ret;
 	switch(fncode) {
+		case  0: ret = 0x0130;	/* XHDI version */
+				break;
+
+		case  1: ret = XHInqTarget2(
+						getParameter(0), /* UWORD major */
+						getParameter(1), /* UWORD minor */
+						getParameter(2), /* ULONG *block_size */
+						getParameter(3), /* ULONG *device_flags */
+						getParameter(4), /* char  *product_name */
+						             33  /* UWORD stringlen */
+						);
+				break;
+
+		case  6: ret = XHDrvMap();
+				break;
+
+		case  7: ret = XHInqDev2(
+						getParameter(0), /* UWORD bios_device */
+						getParameter(1), /* UWORD *major */
+						getParameter(2), /* UWORD *minor */
+						getParameter(3), /* ULONG *start_sector */
+						getParameter(4), /* BPB   *bpb */
+						              0, /* ULONG *blocks */
+						              0  /* char *partid */
+						);
+				break;
+
+		case  8: ret = XHInqDriver(
+						getParameter(0), /* UWORD bios_device */
+						getParameter(1), /* char  *name */
+						getParameter(2), /* char  *version */
+						getParameter(3), /* char  *company */
+						getParameter(4), /* UWORD *ahdi_version */
+						getParameter(5)  /* UWORD *maxIPL */
+						);
+				break;
+
 		case 10: ret = XHReadWrite(
 						getParameter(0), /* UWORD major */
 						getParameter(1), /* UWORD minor */
@@ -107,14 +177,38 @@ int32 XHDIDriver::dispatch(uint32 fncode)
 						getParameter(5)  /* void *buf */
 						);
 				break;
+
+		case 11: ret = XHInqTarget2(
+						getParameter(0), /* UWORD major */
+						getParameter(1), /* UWORD minor */
+						getParameter(2), /* ULONG *block_size */
+						getParameter(3), /* ULONG *device_flags */
+						getParameter(4), /* char  *product_name */
+						getParameter(5)  /* UWORD stringlen */
+						);
+				break;
+
+		case 12: ret = XHInqDev2(
+						getParameter(0), /* UWORD bios_device */
+						getParameter(1), /* UWORD *major */
+						getParameter(2), /* UWORD *minor */
+						getParameter(3), /* ULONG *start_sector */
+						getParameter(4), /* BPB   *bpb */
+						getParameter(5), /* ULONG *blocks */
+						getParameter(6)  /* char *partid */
+						);
+				break;
+
 		case 14: ret = XHGetCapacity(
 						getParameter(0), /* UWORD major */
 						getParameter(1), /* UWORD minor */
 						getParameter(2), /* ULONG *blocks */
-						getParameter(3) /* ULONG *blocksize */
+						getParameter(3)  /* ULONG *blocksize */
 						);
 				break;
+				
 		default: ret = -32L; // EINVFN
+				D(bug("Unimplemented ARAnyM XHDI function #%d", fncode));
 				break;
 	}
 	D(bug("ARAnyM XHDI function returning with %d", ret));
