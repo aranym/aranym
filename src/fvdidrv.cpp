@@ -24,6 +24,12 @@ extern VIDEL videl;
 
 
 // The Atari structures offsets
+#define MOUSE_HOTSPOT_X            8
+#define MOUSE_HOTSPOT_Y            10
+#define MOUSE_BGCOLOR              12
+#define MOUSE_FGCOLOR              14
+#define MOUSE_MASK                 16
+#define MOUSE_SHAPE                48
 #define MFDB_WDWIDTH                8
 #define MFDB_BITPLANES             12
 #define VWK_SCREEN_MFDB_ADDRESS    24
@@ -81,7 +87,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *  d2	0 - move shown  1 - move hidden  2 - hide  3 - show  >3 - change shape (pointer to mouse struct)
 			 */
 			r->d[0] = drawMouse( (void*)r->a[1],
-								 r->d[0] /* x */, r->d[1] /* y */, r->d[2] /* mode/Mouse* */ );
+								 (int16)r->d[0] /* x */, (int16)r->d[1] /* y */, r->d[2] /* mode/Mouse* */ );
 			break;
 
 		// SPEEDUP functions
@@ -363,20 +369,20 @@ void FVDIDriver::setColor( uint32 paletteIndex, uint32 color ) {
  * } Fgbg;
  *
  * typedef struct Mouse_ {
- *   short type;
- *   short hide;
+ * 0  short type;
+ * 2   short hide;
  *   struct position_ {
- *	   short x;
- *	   short y;
+ * 4   short x;
+ * 6   short y;
  *   } position;
  *   struct hotspot_ {
- *	   short x;
- *	   short y;
+ * 8   short x;
+ * 10   short y;
  *   } hotspot;
- *   Fgbg colour;
- *   short mask[16];
- *   short data[16];
- *   void *extra_info;
+ * 12  Fgbg colour;
+ * 16  short mask[16];
+ * 48  short data[16];
+ * 80  void *extra_info;
  * } Mouse;
  **/
 extern "C" {
@@ -425,56 +431,73 @@ extern "C" {
 	}
 }
 
-void FVDIDriver::saveMouseBackground( int32 x, int32 y, bool save )
+
+void FVDIDriver::restoreMouseBackground()
 {
-	D2(bug("fVDI: saveMouseBackground: %d,%d,%d", x, y, save ));
+	int16 x = Mouse.storage.x;
+	int16 y = Mouse.storage.y;
 
 	if (!hostScreen.renderBegin())
 		return;
 
-	if ( save ) {
-		for( uint16 i=0; i<16; i++ )
-			for( uint16 j=0; j<16; j++ ) {
-				Mouse.storedBackround[i][j] =	hostScreen.getPixel(x + j, y + i);
-			}
+	for( uint16 i=0; i<Mouse.storage.height; i++ )
+		for( uint16 j=0; j<Mouse.storage.width; j++ )
+			hostScreen.putPixel(x + j, y + i, Mouse.storage.background[i][j] );
 
-		hostScreen.renderEnd();
-	} else {
-		for( uint16 i=0; i<16; i++ )
-			for( uint16 j=0; j<16; j++ )
-				hostScreen.putPixel(x + j, y + i, Mouse.storedBackround[i][j] );
-
-		hostScreen.renderEnd();
-		hostScreen.update( x, y, 16, 16, true );
-	}
+	hostScreen.renderEnd();
+	hostScreen.update( x, y, Mouse.storage.width, Mouse.storage.height, true );
 }
 
-uint32 FVDIDriver::drawMouse( void *wrk, int32 x, int32 y, uint32 mode ) {
-	//	uint8 r,g,b,a; SDL_GetRGBA( color, surf->format, &r, &g, &b, &a);
 
+void FVDIDriver::saveMouseBackground( int16 x, int16 y, int16 width, int16 height )
+{
+	D2(bug("fVDI: saveMouseBackground: %d,%d,%d,%d", x, y, width, height ));
+
+	if (!hostScreen.renderBegin())
+		return;
+
+	for( uint16 i=0; i<height; i++ )
+		for( uint16 j=0; j<width; j++ ) {
+			Mouse.storage.background[i][j] = hostScreen.getPixel(x + j, y + i);
+		}
+
+	hostScreen.renderEnd();
+
+	Mouse.storage.x = x;
+	Mouse.storage.y = y;
+	Mouse.storage.height = height;
+	Mouse.storage.width = width;
+}
+
+
+uint32 FVDIDriver::drawMouse( void *wrk, int16 x, int16 y, uint32 mode )
+{
 	D2(bug("fVDI: mouse mode: %x", mode ));
 
 	switch ( mode ) {
 		case 0:  // move shown
-			saveMouseBackground( Mouse.storedX, Mouse.storedY, false ); // restore
-			saveMouseBackground( Mouse.storedX = x, Mouse.storedY = y, true ); // save
+			restoreMouseBackground();
 			break;
 		case 1:  // move hidden
 			return 1;
 		case 2:  // hide
-			saveMouseBackground( Mouse.storedX, Mouse.storedY, false ); // restore
+			restoreMouseBackground();
 			return 1;
 		case 3:  // show
-			saveMouseBackground( Mouse.storedX = x, Mouse.storedY = y, true ); // save
 			break;
 
 		default: // change pointer shape
-			uint32 fPatterAddress = mode + sizeof( uint16 ) * 9;
-			for( uint16 i=0; i<=30; i+=2 )
+			uint32 fPatterAddress = mode + MOUSE_MASK;
+			for( uint16 i=0; i<32; i+=2 )
 				Mouse.mask[i >> 1] = reverse_bits( get_word( fPatterAddress + i, true ) );
-			fPatterAddress += 30;
-			for( uint16 i=0; i<=30; i+=2 )
+			fPatterAddress  = mode + MOUSE_SHAPE;
+			for( uint16 i=0; i<32; i+=2 )
 				Mouse.shape[i >> 1] = reverse_bits( get_word( fPatterAddress + i, true ) );
+
+			Mouse.storage.color.foreground = hostScreen.getPaletteColor( get_word( mode + MOUSE_FGCOLOR, true ) );
+			Mouse.storage.color.background = hostScreen.getPaletteColor( get_word( mode + MOUSE_BGCOLOR, true ) );
+			Mouse.hotspot.x = get_word( mode + MOUSE_HOTSPOT_X, true );
+			Mouse.hotspot.y = get_word( mode + MOUSE_HOTSPOT_Y, true );
 
 #if DEBUG > 1
 			char buffer[30];
@@ -491,6 +514,11 @@ uint32 FVDIDriver::drawMouse( void *wrk, int32 x, int32 y, uint32 mode ) {
 			return 1;
 	}
 
+	// handle the mouse hotspot point
+	x -= Mouse.hotspot.x;
+	y -= Mouse.hotspot.y;
+
+	// roll the pattern properly
 	uint16 mm[16];
 	uint16 md[16];
 	uint16 shift = x & 0xf;
@@ -499,16 +527,40 @@ uint32 FVDIDriver::drawMouse( void *wrk, int32 x, int32 y, uint32 mode ) {
 		md[(i + (y&0xf)) & 0xf] = ( Mouse.shape[i] << shift ) | ((Mouse.shape[i] >> (16-shift)) & ((1<<shift)-1) );
 	}
 
+	// beware of the edges of the screen
+	int16 w, h;
+
+	if ( x < 0 ) {
+		w = 16 + x;
+	    x = 0;
+	} else {
+		w = 16;
+		if ( (int16)x + 16 >= (int32)hostScreen.getWidth() )
+			w = hostScreen.getWidth() - (int16)x;
+	}
+	if ( y < 0 ) {
+		h = 16 + y;
+	    y = 0;
+	} else {
+		h = 16;
+		if ( (int16)y + 16 >= (int32)hostScreen.getHeight() )
+			h = hostScreen.getHeight() - (int16)y;
+	}
+
+	D2(bug("fVDI: mouse x,y: %d,%d,%d,%d (%x,%x)", x, y, w, h,
+		   Mouse.storage.color.background, Mouse.storage.color.foreground ));
+
+	// draw the mouse
 	if (!hostScreen.renderBegin())
 		return 1;
 
-	D2(bug("fVDI: mouse x,y: %d,%d", (uint16)x, (uint16)y ));
+	saveMouseBackground( x, y, w, h );
 
-	hostScreen.fillArea( x, y, x + 15, y + 15, mm, hostScreen.getColor( 0xfe, 0xfe, 0xfe ) /* white */ );
-	hostScreen.fillArea( x, y, x + 15, y + 15, md, hostScreen.getColor( 0, 0, 0 ) /* black */ );
+	hostScreen.fillArea( x, y, x + w - 1, y + h - 1, mm, Mouse.storage.color.background );
+	hostScreen.fillArea( x, y, x + w - 1, y + h - 1, md, Mouse.storage.color.foreground );
 
 	hostScreen.renderEnd();
-	hostScreen.update( (uint16)x, (uint16)y, 16, 16, true );
+	hostScreen.update( (uint16)x, (uint16)y, w, h, true );
 
 	return 1;
 }
@@ -586,7 +638,7 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
 		 get_long( (uint32)dest, true ) != get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true ) ) {
 		// mfdb->address = videoramstart
 
-		D2(bug("fVDI: expandArea M->M NOT TESTED!!!"));
+		D(bug("fVDI: expandArea M->M NOT TESTED!!!"));
 
 		uint16 destPitch = get_word( (uint32)dest + MFDB_WDWIDTH, true ) * get_word( (uint32)dest + MFDB_BITPLANES, true ) << 1; // MFDB *dest->pitch
 		uint32 destAddress = get_long( (uint32)dest, true );
@@ -661,8 +713,6 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
 	hostScreen.renderEnd();
 	hostScreen.update( dx, dy, w, h, true );
 
-	//flushVideo( get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true ) ); // REMOVE FIXME
-
 	return 1;
 }
 
@@ -707,10 +757,6 @@ uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint1
 
 	hostScreen.renderEnd();
 	hostScreen.update( x, y, w, h, true );
-
-	//	keypress();
-
-	//	flushVideo( get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true ) ); // REMOVE FIXME
 
 	return 1;
 }
@@ -846,7 +892,7 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 		if ( bpp < 16 ) {
 			uint8 color[16];
 
-			/// FIXME FIXME FIXME !!!
+			/// FIXME !!!
 			D(bug("fVDI: blitArea M->S: NOT TESTED bitplaneToCunky conversion"));
 
 			for( uint16 j=0; j<h; j++ ) {
@@ -1067,6 +1113,7 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 #define CLIP_REJECT(a,b) (a&b)
 #define CLIP_ACCEPT(a,b) (!(a|b))
 
+
 extern "C" {
 static inline int clipEncode (int16 x, int16 y, int16 left, int16 top, int16 right, int16 bottom)
 {
@@ -1096,15 +1143,13 @@ static inline int clipLine(void *vwk, int16 *x1, int16 *y1, int16 *x2, int16 *y2
 	if ( !get_word( (uint32)vwk + VWK_CLIP_RECT, true ) )
 		return 1; // clipping is off
 
-	D(bug("fVDI: %s %d,%d:%d,%d", "clipLineBEG", *x1, *y1, *x2, *y2 ));
-
 	/* Get clipping boundary */
 	left   = get_word( (uint32)vwk + VWK_CLIP_RECT + 2, true );
 	top    = get_word( (uint32)vwk + VWK_CLIP_RECT + 4, true );
 	right  = get_word( (uint32)vwk + VWK_CLIP_RECT + 6, true );
 	bottom = get_word( (uint32)vwk + VWK_CLIP_RECT + 8, true );
 
-	D(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", left, top, right, bottom ));
+	D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", left, top, right, bottom ));
 
 	while (1) {
 		code1 = clipEncode (*x1, *y1, left, top, right, bottom);
@@ -1112,9 +1157,9 @@ static inline int clipLine(void *vwk, int16 *x1, int16 *y1, int16 *x2, int16 *y2
 		if (CLIP_ACCEPT(code1, code2)) {
 			draw = 1;
 			break;
-		} else if (CLIP_REJECT(code1, code2))
+		} else if (CLIP_REJECT(code1, code2)) {
 			break;
-		else {
+		} else {
 			if(CLIP_INSIDE (code1)) {
 				int16* swapPtr;
 				swapPtr = x2; x2 = x1; x1 = swapPtr;
@@ -1143,11 +1188,10 @@ static inline int clipLine(void *vwk, int16 *x1, int16 *y1, int16 *x2, int16 *y2
 				}
 				*y1 = top;
 			}
-			D(bug("fVDI: %s %d,%d", "clipLineINS", *x1, *y1 ));
 		}
 	}
 
-	D(bug("fVDI: %s %d,%d:%d,%d", "clipLineEND", *x1, *y1, *x2, *y2 ));
+	D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineEND", *x1, *y1, *x2, *y2 ));
 
 	return draw;
 }
@@ -1156,17 +1200,15 @@ static inline int clipLine(void *vwk, int16 *x1, int16 *y1, int16 *x2, int16 *y2
 uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 							uint16 pattern, uint32 fgColor, uint32 bgColor, uint32 logOp )
 {
-	D(bug("fVDI: %s %x %d,%d:%d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "drawLine", logOp, x1, y1, x2, y2, pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
-
 	int16 sx1 = (int16)x1;
 	int16 sy1 = (int16)y1;
 	int16 sx2 = (int16)x2;
 	int16 sy2 = (int16)y2; // FIXME!!!
 
+	D(bug("fVDI: %s %x %d,%d:%d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "drawLine", logOp, x1, y1, x2, y2, pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
+
 	if ( !clipLine( vwk, &sx1, &sy1, &sx2, &sy2 ) ) // do not draw the line when it is out
 		return 1;
-
-	D(bug("fVDI: %s %x %d,%d:%d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "drawLine", logOp, sx1, sy1, sx2, sy2, pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
 
 	fgColor = hostScreen.getPaletteColor( fgColor );
 	bgColor = hostScreen.getPaletteColor( bgColor );
@@ -1191,14 +1233,17 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 	hostScreen.update( lx, ly, dx, dy, true );
 
-	//	flushVideo( get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true ) ); // REMOVE FIXME
-
 	return 1;
 }
 
 
 /*
  * $Log$
+ * Revision 1.17  2001/10/19 11:58:46  standa
+ * The line clipping added (has bug, when neither one point is within the rect).
+ * expandArea not handles the spacial mode (fallbacks it).
+ * working with fVDI beta.
+ *
  * Revision 1.16  2001/10/16 09:07:36  standa
  * The fVDI expandArea M->M implemented. The 16bit driver should work now.
  *

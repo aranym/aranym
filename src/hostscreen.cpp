@@ -69,7 +69,7 @@ void HostScreen::setWindowSize(	uint32 width, uint32 height )
 
 	surf = SDL_SetVideoMode(width, height, 16, sdl_videoparams);
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
-	D(bug("Line Length = %d", surf->pitch));
+	D(bug("Surface Pitch = %d, width = %d, height = %d", surf->pitch, surf->w, surf->h));
 	D(bug("Must Lock? %s", SDL_MUSTLOCK(surf) ? "YES" : "NO"));
 
 	// is the SDL_update needed?
@@ -111,6 +111,27 @@ extern "C" {
 
 
 
+inline void HostScreen::putPixel( int16 x, int16 y, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
+{
+	switch (logOp) {
+		case 1:
+			gfxFastPixelColorNolock( x, y, pattern ? fgColor : bgColor );
+			break;
+		case 2:
+			if ( pattern )
+				gfxFastPixelColorNolock( x, y, fgColor );
+			break;
+		case 3:
+			if ( pattern )
+				gfxFastPixelColorNolock( x, y, ~ gfxGetPixel( x, y ) );
+			break;
+		case 4:
+			if ( ! pattern )
+				gfxFastPixelColorNolock( x, y, fgColor );
+			break;
+	}
+}
+
 
 void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
 {
@@ -147,7 +168,7 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 			break;
 		case 2:
 			pixellast = pixel + dx + dx;
-			for (; pixel<=pixellast; pixel += pixx) {
+			for (; pixel<pixellast; pixel += pixx) {
 				switch (logOp) {
 					case 1:
 						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
@@ -169,13 +190,13 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 			break;
 		case 3:
 			pixellast = pixel + dx + dx + dx;
-			for (; pixel<=pixellast; pixel += pixx)
+			for (; pixel<pixellast; pixel += pixx)
 				putBpp24Pixel( pixel, fgColor );
 			break;
 		default: /* case 4*/
 			dx = dx + dx;
 			pixellast = pixel + dx + dx;
-			for (; pixel<=pixellast; pixel += pixx) {
+			for (; pixel<pixellast; pixel += pixx) {
 				*(uint32*)pixel = fgColor;
 			}
 			break;
@@ -217,12 +238,12 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 	/* Draw */
 	switch(surf->format->BytesPerPixel) {
 		case 1:
-			for (; pixel<=pixellast; pixel += pixy) {
+			for (; pixel<pixellast; pixel += pixy) {
 				*(uint8*)pixel = fgColor;
 			}
 			break;
 		case 2:
-			for (; pixel<=pixellast; pixel += pixy) {
+			for (; pixel<pixellast; pixel += pixy) {
 				switch (logOp) {
 					case 1:
 						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
@@ -243,12 +264,12 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 			}
 			break;
 		case 3:
-			for (; pixel<=pixellast; pixel += pixy) {
+			for (; pixel<pixellast; pixel += pixy) {
 				putBpp24Pixel( pixel, fgColor );
 			}
 			break;
 		default: /* case 4*/
-			for (; pixel<=pixellast; pixel += pixy) {
+			for (; pixel<pixellast; pixel += pixy) {
 				*(uint32*)pixel = fgColor;
 			}
 			break;
@@ -282,8 +303,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 			gfxVLineColor(x1, y2, y1, pattern, fgColor, bgColor, logOp);
 			return;
 		} else {
-			if ( pattern & 0x8000 != 0 ) // FIXME: The logOp is _not_ handled here
-				gfxFastPixelColorNolock( x1, y1, fgColor );
+			putPixel( x1, y1, pattern & 0x8000, fgColor, bgColor, logOp );
 		}
 	}
 	if (y1==y2) {
@@ -432,7 +452,7 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 		case 1:
 			// STanda // the loop is the same as the for the 2 BPP
 			pixy -= (pixx*dx);
-			for (; pixel<=pixellast; pixel += pixy) {
+			for (; pixel<pixellast; pixel += pixy) {
 				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
 				for (x=0; x<dx; x++) {
 					*(uint8*)pixel = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
@@ -448,8 +468,11 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 			break;
 		case 2:
 			pixy -= (pixx*dx);
-			for (; pixel<=pixellast; pixel += pixy) {
+			for (; pixel<pixellast; pixel += pixy) {
 				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+
+				D2(bug("bix pix: %d, %x, %d", y1, pixel, pixy));
+
 				switch (logOp) {
 					case 1:
 						for (x=0; x<dx; x++) {
@@ -479,7 +502,7 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 			break;
 		case 3:
 			pixy -= (pixx*dx);
-			for (; pixel<=pixellast; pixel += pixy) {
+			for (; pixel<pixellast; pixel += pixy) {
 				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
 				for (x=0; x<dx; x++) {
 					uint32 color = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
@@ -490,7 +513,7 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 			break;
 		default: /* case 4*/
 			pixy -= (pixx*dx);
-			for (; pixel<=pixellast; pixel += pixy) {
+			for (; pixel<pixellast; pixel += pixy) {
 				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
 				for (x=0; x<dx; x++) {
 					*(uint32*)pixel = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
@@ -502,109 +525,18 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 }
 
 
-/**
- * Derived from the SDL_gfxPrimitives::boxColor(). The color is in the destination surface format here.
- * The trivial cases optimalization removed.
- *
- * @author STanda
- **/
-void HostScreen::gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 color)
-{
-	uint8 *pixel, *pixellast;
-	int16 x, dx, dy;
-	int16 pixx, pixy;
-	int16 w,h,tmp;
-
-	/* Order coordinates */
-	if (x1>x2) {
-		tmp=x1;
-		x1=x2;
-		x2=tmp;
-	}
-	if (y1>y2) {
-		tmp=y1;
-		y1=y2;
-		y2=tmp;
-	}
-
-	/* Calculate width&height */
-	w=x2-x1+1;
-	h=y2-y1;
-
-	/* More variable setup */
-	dx=w;
-	dy=h;
-	pixx = surf->format->BytesPerPixel;
-	pixy = surf->pitch;
-	pixel = ((uint8*)surf->pixels) + pixx * (int32)x1 + pixy * (int32)y1;
-	pixellast = pixel + pixx*dx + pixy*dy;
-
-	// STanda // FIXME here the pattern should be checked out of the loops for performance
-	          // but for now it is good enough
-	          // FIXME not tested on other then 2 BPP
-
-	/* Draw */
-	switch(surf->format->BytesPerPixel) {
-		case 1:
-			// STanda // the loop is the same as the for the 2 BPP
-			pixy -= (pixx*dx);
-			for (; pixel<=pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
-				for (x=0; x<dx; x++) {
-					if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) // STanda
-						*(uint8*)pixel = color;
-					pixel += pixx;
-				}
-			}
-			break;
-
-			//for (; pixel<=pixellast; pixel += pixy) {
-			//	memset(pixel,(uint8)color,dx);
-			//}
-			// STanda
-			break;
-		case 2:
-			pixy -= (pixx*dx);
-			for (; pixel<=pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
-				for (x=0; x<dx; x++) {
-					if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) // STanda
-						*(uint16*)pixel = color;
-					pixel += pixx;
-				}
-			}
-			break;
-		case 3:
-			pixy -= (pixx*dx);
-			for (; pixel<=pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
-				for (x=0; x<dx; x++) {
-					if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 )
-						putBpp24Pixel( pixel, color );
-					pixel += pixx;
-				}
-			}
-			break;
-		default: /* case 4*/
-			pixy -= (pixx*dx);
-			for (; pixel<=pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
-				for (x=0; x<dx; x++) {
-					if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) // STanda
-						*(uint32*)pixel = color;
-					pixel += pixx;
-				}
-			}
-			break;
-	}  // switch
-}
-
-
-
 /*
  * $Log$
+ * Revision 1.13  2001/10/16 19:06:55  standa
+ * The uint32 changed to int16 to make the gfxLineColor work.
+ * Now it seems not to segfault anywhere.
+ *
  * Revision 1.12  2001/10/08 21:46:05  standa
- * The $Header$ and $Log$ CVS tags added.
+ * The $Header$ and $Log$
+ * The $Header$ and Revision 1.13  2001/10/16 19:06:55  standa
+ * The $Header$ and The uint32 changed to int16 to make the gfxLineColor work.
+ * The $Header$ and Now it seems not to segfault anywhere.
+ * The $Header$ and CVS tags added.
  *
  * Revision 1.11  2001/10/03 06:37:41  standa
  * General cleanup. Some constants added. Better "to screen" operation

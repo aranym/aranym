@@ -22,10 +22,24 @@ class FVDIDriver {
 	};
 
 	struct _Mouse {
+		struct {
+			uint16 x, y;
+			uint16 width, height;
+			uint32 background[16][16]; // The mouse background backup surface for FVDIDriver
+			struct {
+				uint32 foreground; // The mouse shape color for FVDIDriver
+				uint32 background; // The mouse mask color for FVDIDriver
+			} color;
+		} storage;
+		struct hotspot_ {
+			int16  x, y;
+		} hotspot;
+		struct colors_ {
+			int16  fgColorIndex, bgColorIndex;
+		} colors;
+
 		uint16 mask[16];
 		uint16 shape[16];
-		uint16 storedX, storedY;
-		uint32 storedBackround[16][16]; // The mouse background backup surface for FVDIDriver
 	} Mouse;
 
   public:
@@ -37,14 +51,16 @@ class FVDIDriver {
 	}
 
 	void dispatch( uint32 fncode, M68kRegisters *r );
-	void saveMouseBackground( int32 x, int32 y, bool save );
+
+	void restoreMouseBackground();
+	void saveMouseBackground( int16 x, int16 y, int16 width, int16 height );
 	void setColor( uint32 paletteIndex, uint32 color );
 
 	MFDB* FVDIDriver::fetchMFDB( MFDB* mfdb, uint32 pmfdb );
 
 	uint32 putPixel( void *vwk, MFDB *dst, int32 x, int32 y, uint32 colour );
 	uint32 getPixel( void *vwk, MFDB *src, int32 x, int32 y );
-	uint32 drawMouse( void *wrk, int32 x, int32 y, uint32 mode );
+	uint32 drawMouse( void *wrk, int16 x, int16 y, uint32 mode );
 
 	uint32 fillArea(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 					uint16 *pattern, uint32 fgColor, uint32 bgColor);
@@ -60,6 +76,11 @@ class FVDIDriver {
 
 /*
  * $Log$
+ * Revision 1.7  2001/10/03 06:37:41  standa
+ * General cleanup. Some constants added. Better "to screen" operation
+ * recognition (the videoram address is checked too - instead of only the
+ * MFDB == NULL || MFDB->address == NULL)
+ *
  * Revision 1.6  2001/09/30 23:09:23  standa
  * The line logical operation added.
  * The first version of blitArea (screen to screen only).

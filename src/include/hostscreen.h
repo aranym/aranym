@@ -25,16 +25,17 @@ protected:
 	/**
 	 * This is the SDL_gfxPrimitives derived functions.
 	 **/
-	inline void gfxFastPixelColorNolock( int16 x, int16 y, uint32 color );
-	       void gfxHLineColor ( int16 x1, int16 x2, int16 y,
-								uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
-		   void gfxVLineColor( int16 x, int16 y1, int16 y2,
-							   uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
-	       void gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
-							  uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
-	       void gfxBoxColorPattern( int16 x1, int16 y1, int16 x2, int16 y2,
-								    uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
-	       void gfxBoxColorPatternBgTrans( int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 color );
+	inline void   gfxFastPixelColorNolock( int16 x, int16 y, uint32 color );
+	inline uint32 gfxGetPixel( int16 x, int16 y );
+
+	void   gfxHLineColor ( int16 x1, int16 x2, int16 y,
+						   uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	void   gfxVLineColor( int16 x, int16 y1, int16 y2,
+						  uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	void   gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
+						 uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	void   gfxBoxColorPattern( int16 x1, int16 y1, int16 x2, int16 y2,
+									  uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 
 public:
 
@@ -45,8 +46,9 @@ public:
 	inline void   renderEnd();
 
 	// the w, h should be width & height (but C++ complains -> 'if's in the implementation)
-	inline void   update( int32 x = 0, int32 y = 0, int32 w = -1, int32 h = -1, bool forced = false );
+	inline void   update( int32 x, int32 y, int32 w, int32 h, bool forced = false );
 	inline void   update( bool forced );
+	inline void   update();
 
 	uint32 getBpp();
 	uint32 getWidth();
@@ -62,15 +64,16 @@ public:
 	void   setRendering( bool render );
 
 	// gfx Primitives draw functions
-	uint32 getPixel( int32 x, int32 y );
-	void   putPixel( int32 x, int32 y, uint32 color );
-	void   drawLine( int32 x1, int32 y1, int32 x2, int32 y2,
+	uint32 getPixel( int16 x, int16 y );
+	void   putPixel( int16 x, int16 y, uint32 color );
+	void   putPixel( int16 x, int16 y, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	void   drawLine( int16 x1, int16 y1, int16 x2, int16 y2,
 					 uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 	// transparent background
-	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color );
+	void   fillArea( int16 x1, int16 y1, int16 x2, int16 y2, uint16 *pattern, uint32 color );
 	// VDI required function to fill areas
-	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
-	void   blitArea( int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h );
+	void   fillArea( int16 x1, int16 y1, int16 x2, int16 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	void   blitArea( int16 sx, int16 sy, int16 dx, int16 dy, int16 w, int16 h );
 
 	/**
 	 * Atari bitplane to chunky conversion helper.
@@ -104,6 +107,27 @@ inline void HostScreen::gfxFastPixelColorNolock(int16 x, int16 y, uint32 color)
 		case 4:
 			*(uint32 *)p = color;
 			break;
+	} /* switch */
+}
+
+inline uint32 HostScreen::gfxGetPixel( int16 x, int16 y )
+{
+	int bpp;
+	uint8 *p;
+
+	/* Get destination format */
+	bpp = surf->format->BytesPerPixel;
+	p = (uint8 *)surf->pixels + y * surf->pitch + x * bpp;
+	switch(bpp) {
+		case 1:
+			return (uint32)(*(uint8 *)p);
+		case 2:
+			return (uint32)(*(uint16 *)p);
+		case 3:
+			// FIXME maybe some & problems? and endian
+			return ((uint32)p[0] << 16) | ((uint32)p[1] << 8) | (uint32)p[2];
+		case 4:
+			return *(uint32 *)p;
 	} /* switch */
 }
 
@@ -167,54 +191,53 @@ inline void HostScreen::update( bool forced )
 }
 
 
+inline void HostScreen::update()
+{
+	update( 0, 0, width, height, false );
+}
+
+
 inline void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced )
 {
 	if ( !forced && !doUpdate ) // the HW surface is available
 		return;
 
-	// the object variable could not be the default one for the method's w value
-	if ( w == -1 )
-		w = width;
-	if ( h == -1 )
-		h = height;
-
 	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
 	SDL_UpdateRect(surf, x, y, w, h);
 }
 
-inline uint32 HostScreen::getPixel( int32 x, int32 y ) {
+inline uint32 HostScreen::getPixel( int16 x, int16 y ) {
 	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
 		return 0;
 
-	// HACK for bpp == 2 FIXME!
-	return ((uint16*)surf->pixels)[((uint32)y*width)+(uint32)x];
+	return gfxGetPixel( x, y );
 }
 
-inline void HostScreen::putPixel( int32 x, int32 y, uint32 color ) {
+inline void HostScreen::putPixel( int16 x, int16 y, uint32 color ) {
 	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
 		return;
 
 	gfxFastPixelColorNolock( x, y, color );
 }
 
-inline void HostScreen::drawLine( int32 x1, int32 y1, int32 x2, int32 y2, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
+inline void HostScreen::drawLine( int16 x1, int16 y1, int16 x2, int16 y2, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
 {
-	gfxLineColor( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, fgColor, bgColor, logOp ); // SDL_gfxPrimitives
+	gfxLineColor( x1, y1, x2, y2, pattern, fgColor, bgColor, logOp ); // SDL_gfxPrimitives
 }
 
 
-inline void HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color )
+inline void HostScreen::fillArea( int16 x1, int16 y1, int16 x2, int16 y2, uint16 *pattern, uint32 color )
 {
-	gfxBoxColorPatternBgTrans( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, color );
+	gfxBoxColorPattern( x1, y1, x2, y2, pattern, color, color, 2 );
 }
 
-inline void HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2,
+inline void HostScreen::fillArea( int16 x1, int16 y1, int16 x2, int16 y2,
 								  uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
 {
-	gfxBoxColorPattern( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, fgColor, bgColor, logOp );
+	gfxBoxColorPattern( x1, y1, x2, y2, pattern, fgColor, bgColor, logOp );
 }
 
-inline void HostScreen::blitArea( int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h )
+inline void HostScreen::blitArea( int16 sx, int16 sy, int16 dx, int16 dy, int16 w, int16 h )
 {
 	SDL_Rect srcrect;
 	SDL_Rect dstrect;
@@ -264,6 +287,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.10  2001/10/08 21:46:05  standa
+ * The $Header$ and $Log$ CVS tags added.
+ *
  * Revision 1.9  2001/10/01 22:22:41  standa
  * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).
  * fvdidrv/blitArea form memory works in TC.
