@@ -34,6 +34,7 @@
 #include "araobjs.h"		// for the ExtFs
 #include "aradata.h"		// for getAtariMouseXY
 #include "md5.h"
+#include "romdiff.h"
 
 #define DEBUG 1
 #include "debug.h"
@@ -465,11 +466,12 @@ bool InitROM(void) {
 		if (md5.compareSum(ROMBaseHost, RealROMSize, TOS404)) {
 			// patch it for 68040 compatibility
 			D(bug("Patching ROM for 68040 compatibility.."));
-			// TODO
-			return false;
+			int ptr, i=0;
+			while((ptr=tosdiff[i].pointer) >= 0)
+				ROMBaseHost[ptr] += tosdiff[i++].difference;
 		}
 		else {
-			ErrorAlert("Wrong TOS version\n");
+			ErrorAlert("Wrong TOS version. You need the original TOS 4.04\n");
 			return false;
 		}
 	}
@@ -609,6 +611,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.26  2001/10/18 13:46:34  joy
+ * detect the ROM version. Knows both our 68040 friendly ABTOS and the original TOS 4.04.
+ *
  * Revision 1.25  2001/10/16 19:38:44  milan
  * Integration of BasiliskII' cxmon, FastRAM in aranymrc etc.
  *
@@ -620,6 +625,9 @@ void ExitAll(void)
  *
  * Revision 1.22  2001/10/08 21:46:05  standa
  * The $Header$ and $Log$
+ * The $Header$ and Revision 1.26  2001/10/18 13:46:34  joy
+ * The $Header$ and detect the ROM version. Knows both our 68040 friendly ABTOS and the original TOS 4.04.
+ * The $Header$ and
  * The $Header$ and Revision 1.25  2001/10/16 19:38:44  milan
  * The $Header$ and Integration of BasiliskII' cxmon, FastRAM in aranymrc etc.
  * The $Header$ and
