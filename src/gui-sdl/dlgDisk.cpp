@@ -105,7 +105,7 @@ static SGOBJ discdlg[] = {
 	{SGEDITFIELD, 0, 0, 8, 6, sizeof(ide0_name) - 1, 1, ide0_name},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 30, 6, 8, 1, NULL},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 8, 5, 1, "Path:"},
-	{SGTEXT, 0, 0, 8, 8, 30, 1, NULL ,
+	{SGTEXT, 0, 0, 8, 8, 30, 1, NULL},
 	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 9, 8, 1, "Present"},
 	{SGCHECKBOX, SG_SELECTABLE | SG_EXIT, 0, 28, 10, 8, 1, "CDROM"},
 	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 11, 8, 1, "ReadOnly"},
@@ -143,7 +143,7 @@ static SGOBJ discdlg[] = {
 };
 
 static const char *HELP_TEXT =
-	"For creating new disk image click on the [Path] and select an existing file (beware - its contents will be lost!).\n"
+	"For creating new disk image click on the [Path] and select a file (or type in a new filename).\n"
 	"\n"
 	"Then set the desired [Size:] of the new disk in MegaBytes.\n"
 	"\n"
@@ -388,7 +388,7 @@ void Dialog_DiscDlg(void)
 
 		case IDE0_BROWSE:
 			strcpy(tmpname, gui_options.atadevice[0][0].path);
-			if (SDLGui_FileSelect(tmpname, false)) {
+			if (SDLGui_FileSelect(tmpname, true)) {
 				if (!File_DoesFileNameEndWithSlash(tmpname)
 					/*&& File_Exists(tmpname) */ ) {
 					strcpy(gui_options.atadevice[0][0].path, tmpname);
@@ -403,7 +403,7 @@ void Dialog_DiscDlg(void)
 
 		case IDE1_BROWSE:
 			strcpy(tmpname, gui_options.atadevice[0][1].path);
-			if (SDLGui_FileSelect(tmpname, false)) {
+			if (SDLGui_FileSelect(tmpname, true)) {
 				if (!File_DoesFileNameEndWithSlash(tmpname)
 					/*&& File_Exists(tmpname) */ ) {
 					strcpy(gui_options.atadevice[0][1].path, tmpname);
