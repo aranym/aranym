@@ -70,7 +70,7 @@ G =
 ; update the Cylinders/Heads/SectorsPerTrack according to your drive geometry!
 [IDE0]
 Present = Yes
-XhdiWrite = No
+ReadOnly = No
 Path = /home/user/.aranym/diskImageC
 Cylinders = 2100
 Heads = 16
