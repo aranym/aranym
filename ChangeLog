@@ -1,3 +1,11 @@
+2002/09/28 - joy (version 0.6.4-beta)
+- XHDI writing to disk fixed. Previously it was appending the new records
+  at the end of the disk image file so it did not destroy any data but
+  made the disk image larger. Now it's fixed and rewrites real data in the
+  disk image so make sure you have 'XhdiWrite' set to 'No' in your aranym
+  config file if you want to preserve your data intact.
+
+
 2002/09/28 - joy (version 0.6.3-beta)
 - fixed #ifdef NEED_TO_DEBUG_BADLY code
 

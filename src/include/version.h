@@ -23,9 +23,9 @@
 
 const int VERSION_MAJOR = 0;
 const int VERSION_MINOR = 6;
-const int VERSION_SUBMINOR = 3;
+const int VERSION_SUBMINOR = 4;
 
 #define NAME_STRING "ARAnyM"
-#define VERSION_STRING NAME_STRING" 0.6.3-beta"
+#define VERSION_STRING NAME_STRING" 0.6.4-beta"
 
 #endif
