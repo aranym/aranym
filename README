@@ -173,10 +173,10 @@ Note: The config.sys edit tool and the aranym config configuration will come
  7) Keyboard shortcuts
  ---------------------
 
-While the emulator is running, you can quit it by pressing Shift+Break
-or reboot it with Ctrl+Break. And if you started ARAnyM with the debug
-option, you can enter the debugger by pressing Alt+Break. Simple Break
-opens up configuration dialog that has not been finished yet.
+While the emulator is running, you can quit it by pressing Shift+Pause
+or reboot it with Ctrl+Pause. And if you started ARAnyM with the debug
+option, you can enter the debugger by pressing Alt+Pause. Simple Pause
+key opens up configuration dialog that has not been finished yet.
 
 Press Alt+Ctrl+Esc keys to release the input focus (so you can use your
 keyboard/mouse in other applications).
