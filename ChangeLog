@@ -1,3 +1,13 @@
+2003/03/19 - STanda
+- hostfs.cpp: the metados hostfs.dos driver simply sets the mapping the
+  same way as aranymfs.dos. No change for the user.
+  NOTE: Do not use aranymfs.dos driver. It doesn't work under
+  FreeMiNT 1.16 kernel
+- aranym.xfs: now mounts the [aranymfs] mountpoints to U:/GG
+  (need to develop a hack to map that to U:\G only /single letter mount
+   point) - not via Dcntl() which looks in BIOS in this case)
+
+
 2003/03/18 - milan
 - P4 fix for JIT compiler
 

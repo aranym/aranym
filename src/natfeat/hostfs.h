@@ -138,8 +138,8 @@ class HostFs : public NF_Base {
 	char *cookie2Pathname( XfsFsFile *fs, const char *name, char *buf );
 	void xfs_freefs( XfsFsFile *fs );
 
-	void xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
-						  memptr filesys, memptr filesys_devdrv );
+	int32 xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
+						   memptr filesys, memptr filesys_devdrv );
 
 	int32 xfs_root( uint16 dev, XfsCookie *fc );
 	int32 xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook );
@@ -180,6 +180,9 @@ class HostFs : public NF_Base {
 
 /*
  * $Log$
+ * Revision 1.5  2003/03/17 09:42:39  standa
+ * The chattr,chmod implementation ported from stonx.
+ *
  * Revision 1.4  2003/03/01 11:57:37  joy
  * major HOSTFS NF API cleanup
  *

@@ -12,10 +12,11 @@
 /* if you change anything in the enum {} below you have to increase 
    this HOSTFS_NFAPI_VERSION!
 */
-#define HOSTFS_NFAPI_VERSION	0x00000002
+#define HOSTFS_NFAPI_VERSION	0x00000003
 
 enum {
 	GET_VERSION = 0,	/* subID = 0 */
+	GET_DRIVE_BITS,        /* get mapped drive bits */
 	/* aranym_xfs */
 	XFS_INIT, XFS_ROOT, XFS_LOOKUP, XFS_CREATE, XFS_GETDEV, XFS_GETXATTR,
 	XFS_CHATTR, XFS_CHOWN, XFS_CHMOD, XFS_MKDIR, XFS_RMDIR, XFS_REMOVE,

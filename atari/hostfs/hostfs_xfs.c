@@ -27,6 +27,7 @@
 #include "mint/kerinfo.h"
 
 
+ulong    _cdecl fs_drive_bits();
 long     _cdecl aranym_fs_native_init(int fs_devnum, char *mountpoint, char *hostroot, int halfsensitive,
 									  void *fs, void *fs_dev);
 
@@ -73,6 +74,11 @@ long     _cdecl ara_fs_unmount	 (int drv);
 
 
 unsigned long nfHostFsId;
+
+ulong     _cdecl fs_drive_bits()
+{
+	return nfCall((HOSTFS(GET_DRIVE_BITS)));
+}
 
 long     _cdecl aranym_fs_native_init(int fs_devnum, char *mountpoint, char *hostroot, int halfsensitive,
 									  void *fs, void *fs_dev)
@@ -284,13 +290,15 @@ FILESYS aranym_fs =
 /*
  * filesystem basic description
  */
-static struct fs_descr aranym_fs_descr =
+static struct fs_descr aranym_fs_descr[26];
+#if 0
     {
         &aranym_fs,
         0, /* this is filled in by MiNT at FS_MOUNT */
         0, /* FIXME: what about flags? */
         {0,0,0,0}  /* reserved */
     };
+#endif
 
 
 extern DEVDRV aranym_fs_devdrv; /* from aranym_dev.c */
@@ -306,7 +314,9 @@ FILESYS *aranym_fs_init(void)
 #	define c_conws(a) /* nothing */
 #else
 	long r;
-	int succ = 0;
+	int succ;
+	int keep = 0;
+	int fail = 0;
 #endif
 
 	/* get the HostFs NatFeat ID */
@@ -327,63 +337,116 @@ FILESYS *aranym_fs_init(void)
 #ifdef ARAnyM_MetaDOS
 	return &aranym_fs;
 #else
-	/* Try to install */
-	r = d_cntl (FS_INSTALL, "u:\\", (long) &aranym_fs_descr);
-	if (r != (long)kernel)
+
+	/* clear all the entries */
+	memset( aranym_fs_descr, 0, sizeof( aranym_fs_descr ) );
+
 	{
-		c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
-							  "Dcntl(FS_INSTALL,...) failed"));
-		DEBUG(("Return value was %li", r));
-		return NULL; /* Nothing installed, so nothing to stay resident */
-	} else {
-		succ |= 1;
-		/* mount */
-		r = d_cntl(FS_MOUNT, "u:\\"MINT_FS_NAME, (long) &aranym_fs_descr);
-		if (r != aranym_fs_descr.dev_no )
-		{
-			c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
-								  "Dcnt(FS_MOUNT,...) failed"));
-			DEBUG(("Return value was %li", r));
-		} else {
-			succ |= 2;
-			/* init */
-			r = aranym_fs_native_init(aranym_fs_descr.dev_no, "u:\\"MINT_FS_NAME, "/", 0 /*caseSensitive*/,
-									  &aranym_fs, &aranym_fs_devdrv );
-			r = 0;
-			if ( r < 0 ) {
-				c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
-									  "native init failed"));
-				DEBUG(("Return value was %li", r));
-			} else {
-				char buff[255];
-				ksprintf_old( buff, "fs_drv = %08lx", (long)&aranym_fs );
-				c_conws (buff);
-				return &aranym_fs; /* We where successfull */
+		ulong drvBits = fs_drive_bits();
+		ushort drvNumber = 0;
+		char mountPoint[] = "u:\\XX";
+
+		while ( drvBits ) {
+			/* search the 1st log 1 bit position -> drvNumber */
+			while( ! (drvBits & 1) ) { drvNumber++; drvBits>>=1; }
+
+			/* ready */
+			succ = 0;
+
+			/* fill in the driver pointer */
+			aranym_fs_descr[drvNumber].file_system = &aranym_fs;
+
+			mountPoint[4] = mountPoint[3] = drvNumber+'a';
+			nf_stderr("mountPoint: ");nf_stderr(mountPoint);nf_stderr("\n");
+
+			{
+				char sss[50];
+				char *ptr = &sss[48];
+				int R=10;
+				int x=drvNumber;
+				sss[49] = '\0';
+				while( x>0 ) { *ptr--="0123456789ABCDEF"[x%R]; x/=R; }; ptr++;
+
+				nf_stderr("drvNumber: ");nf_stderr(ptr);nf_stderr("\n");
 			}
+
+			/* Try to install */
+			r = d_cntl (FS_INSTALL, "u:\\", (long) &aranym_fs_descr[drvNumber]);
+			if (r != 0 && r != (long)kernel)
+			{
+				c_conws (MSG_PFAILURE("mountPoint",
+									  "Dcntl(FS_INSTALL,...) failed"));
+				DEBUG(("Return value was %li", r));
+				/* Nothing installed, so nothing to stay resident */
+			} else {
+				succ |= 1;
+
+				/* mount */
+				r = d_cntl(FS_MOUNT, mountPoint, (long) &aranym_fs_descr[drvNumber]);
+				if (r != aranym_fs_descr[drvNumber].dev_no )
+				{
+					c_conws (MSG_PFAILURE("mountPoint",
+										  "Dcnt(FS_MOUNT,...) failed"));
+					DEBUG(("Return value was %li", r));
+				} else {
+					succ |= 2;
+					/* init */
+
+					r = aranym_fs_native_init(aranym_fs_descr[drvNumber].dev_no, mountPoint, "/", 0 /*caseSensitive*/,
+											  &aranym_fs, &aranym_fs_devdrv );
+					r = 0;
+					if ( r < 0 ) {
+						c_conws (MSG_PFAILURE("mountPoint",
+											  "native init failed"));
+						DEBUG(("Return value was %li", r));
+					} else {
+						succ = 0; /* do not unmount */
+						keep = 1; /* at least one is mounted */
+					}
+				}
+			}
+
+			/* Try to uninstall, if necessary */
+			if ( succ & 2 ) {
+				/* unmount */
+				r = d_cntl(FS_UNMOUNT, mountPoint,
+						   (long) &aranym_fs_descr[drvNumber]);
+				nf_stderr("Dcntl(FS_UNMOUNT,...)\n");
+				DEBUG(("Dcntl(FS_UNMOUNT,...) = %li", r ));
+				if ( r < 0 ) {
+					/* Can't uninstall,
+					 * because unmount failed */
+					fail |= 2;
+				}
+			}
+			if ( succ & 1 ) {
+				/* uninstall */
+				r = d_cntl(FS_UNINSTALL, mountPoint,
+						   (long) &aranym_fs_descr[drvNumber]);
+				nf_stderr("Dcntl(FS_UNINSTALL,...)\n");
+				DEBUG(("Dcntl(FS_UNINSTALL,...) = %li", r ));
+				if ( r < 0 ) {
+					/* Can't say NULL,
+					 * because uninstall failed */
+					fail |= 1;
+				}
+			}
+
+			drvNumber++; drvBits>>=1;
 		}
 	}
 
-	/* Try to uninstall, if necessary */
-	if ( succ & 2 ) {
-		/* unmount */
-		r = d_cntl(FS_UNMOUNT, "u:\\"MINT_FS_NAME,
-				   (long) &aranym_fs_descr);
-		DEBUG(("Dcntl(FS_UNMOUNT,...) = %li", r ));
-		if ( r < 0 ) {
-			return (FILESYS *) 1; /* Can't uninstall,
-								   * because unmount failed */
-		}
+	/* everything OK */
+	if ( keep ) {
+		char buff[255];
+		ksprintf_old( buff, "fs_drv = %08lx", (long)&aranym_fs );
+		c_conws (buff);
+		return &aranym_fs; /* We where successfull */
 	}
-	if ( succ & 1 ) {
-		/* uninstall */
-		r = d_cntl(FS_UNINSTALL, "u:\\"MINT_FS_NAME,
-				   (long) &aranym_fs_descr);
-		DEBUG(("Dcntl(FS_UNINSTALL,...) = %li", r ));
-		if ( r < 0 ) {
-			return (FILESYS *) 1; /* Can't say NULL,
-								   * because uninstall failed */
-		}
-	}
+
+	if ( fail )
+		return (FILESYS *) 1; /* Can't say NULL,
+							   * because uninstall failed */
 
     return NULL; /* Nothing installed, so nothing to stay resident */
 #endif
@@ -391,6 +454,9 @@ FILESYS *aranym_fs_init(void)
 
 /*
  * $Log$
+ * Revision 1.3  2003/03/01 11:57:37  joy
+ * major HOSTFS NF API cleanup
+ *
  * Revision 1.2  2002/12/19 10:16:49  standa
  * Error message fixed.
  *

@@ -135,13 +135,21 @@ int32 HostFs::dispatch(uint32 fncode)
     		ret = HOSTFS_NFAPI_VERSION;
     		break;
 
+    	case GET_DRIVE_BITS:
+			ret = 0;
+			for(int i=0; i<(int)(sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0])); i++)
+				if (bx_options.aranymfs[i].rootPath != NULL && bx_options.aranymfs[i].rootPath[0])
+					ret |= (1 << i);
+			D(bug("HOSTFS: drvBits %08lx", (uint32)ret));
+    		break;
+
     	case XFS_INIT:
-			xfs_native_init( getParameter(0),
-							 getParameter(1),
-							 getParameter(2),
-							 getParameter(3),
-							 getParameter(4),
-							 getParameter(5) );
+			ret = xfs_native_init( getParameter(0),
+								   getParameter(1),
+								   getParameter(2),
+								   getParameter(3),
+								   getParameter(4),
+								   getParameter(5) );
 			break;
 
 		case XFS_ROOT:
@@ -1900,30 +1908,61 @@ int32 HostFs::xfs_release( XfsCookie *fc )
 }
 
 
-void HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
-							  memptr filesys, memptr filesys_devdrv )
+int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
+							   memptr filesys, memptr filesys_devdrv )
 {
 	char fmountpoint[2048];
-	char fhostroot[2048];
 	a2fstrcpy( fmountpoint, mountpoint );
-	a2fstrcpy( fhostroot, hostroot );
 
 	ExtDrive *drv = new ExtDrive();
 	drv->driveNumber = devnum;
 	drv->fsDrv = filesys;
 	drv->fsDevDrv = filesys_devdrv;
-	drv->mountPoint = strdup( fmountpoint );
-	drv->hostRoot = strdup( fhostroot );
-	drv->halfSensitive = halfSensitive;
+
+	// in case of MetaDOS mapping the devnum is <MAXDRIVES
+	// -> use the [aranymfs] of config file here
+	// note: maybe we should check the mountPoint to be "A:" rather than the device number
+	if ( (unsigned int)devnum < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) ) {
+		char mountPoint[] = "a:"; mountPoint[0] = devnum+'A';
+		drv->mountPoint = strdup( mountPoint );
+		drv->hostRoot = strdup( bx_options.aranymfs[devnum].rootPath );
+		drv->halfSensitive = bx_options.aranymfs[devnum].halfSensitive;
+	} else {
+		drv->mountPoint = strdup( fmountpoint );
+
+		// the aranym.xfs tries to map drives to u:\\xx
+		// in this case we use the [aranymfs] of config file here
+		if ( !strncasecmp( fmountpoint, "u:\\", 3 ) &&
+			 (unsigned int)(fmountpoint[3]-'a') < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) )
+		{
+			drv->hostRoot = strdup( bx_options.aranymfs[fmountpoint[3]-'a'].rootPath );
+			drv->halfSensitive = bx_options.aranymfs[fmountpoint[3]-'a'].halfSensitive;
+		} else {
+			// no [aranymfs] match -> map to the passed mountpoint (future extension to map from m68k side)
+			char fhostroot[2048];
+			a2fstrcpy( fhostroot, hostroot );
+
+			drv->hostRoot = strdup( fhostroot );
+			drv->halfSensitive = halfSensitive;
+		}
+	}
+
 	mounts.insert(std::make_pair( devnum, drv ));
 
 	D(bug("HOSTFS: fs_native_init:\n"
 		  "\t\t fs_drv	   = %#08x\n"
 		  "\t\t fs_devdrv  = %#08x\n"
 		  "\t\t fs_devnum  = %#04x\n"
+		  "\t\t fs_mountPoint = %s\n"
+		  "\t\t fs_hostRoot   = %s\n"
 		  ,drv->fsDrv
 		  ,drv->fsDevDrv
-		  ,(int)devnum));
+		  ,(int)devnum
+		  ,drv->mountPoint
+		  ,drv->hostRoot
+		  ));
+
+	return TOS_E_OK;
 }
 
 
@@ -1931,6 +1970,9 @@ void HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, 
 
 /*
  * $Log$
+ * Revision 1.9  2003/03/17 09:42:39  standa
+ * The chattr,chmod implementation ported from stonx.
+ *
  * Revision 1.8  2003/03/12 21:10:49  standa
  * Several methods changed from EINVFN -> E_OK (only fake /empty/ implementation)
  *
