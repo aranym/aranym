@@ -1,3 +1,8 @@
+2003/04/28 - patrice
+- midi: Added option to output bytes sent to MIDI interface in a file.
+- lilo: Bugfix, thanks to midi output.
+
+
 2003/04/25 - patrice
 - cfgopts modified so the value given can contain the '=' sign.
   Added Lilo to Aranym: you can boot a Linux/m68k kernel with it.

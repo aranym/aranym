@@ -56,23 +56,17 @@
 #define MAX_BI_SIZE     (4096)
 
 #define GRANULARITY (256*1024) /* min unit for memory */
-#define ADD_CHUNK(start,siz,force,kindstr)	\
-    do {	\
+#define ADD_CHUNK(start,siz)	\
+    {	\
 		unsigned long _start = (start);	\
 		unsigned long _size  = (siz) & ~(GRANULARITY-1);	\
-		int _force = (force);	\
 		\
-		if (_force >= 0) {	\
-			_size = _force;	\
-		} \
 		if (_size > 0) {	\
-			bi.memory[chunk].addr = SDL_SwapBE32(_start);	\
-			bi.memory[chunk].size = SDL_SwapBE32(_size);	\
-			total += _size;	\
-/*			printf( kindstr ": %s MB at 0x%08lx\n", format_mb(_size), _start );*/	\
-			chunk++;	\
+			bi.memory[bi.num_memory].addr = SDL_SwapBE32(_start);	\
+			bi.memory[bi.num_memory].size = SDL_SwapBE32(_size);	\
+			bi.num_memory++;	\
 		}	\
-	} while(0)
+	}
 
 /*--- Structures ---*/
 
@@ -141,6 +135,7 @@ bool LiloInit(void)
 	}
 
 	memset(RAMBaseHost, 0, RAMSize);
+	memset(FastRAMBaseHost, 0, FastRAMSize);
 
 	/* Check the kernel */
 	if (LiloCheckKernel(kernel,kernel_length,ramdisk,ramdisk_length)<0) {
@@ -385,12 +380,13 @@ int LiloCheckKernel(
 	bi.mmutype = SDL_SwapBE32(MMU_68040);
 	bi.mch_cookie = SDL_SwapBE32(0x00030000);
 	bi.mch_type = SDL_SwapBE32(ATARI_MACH_AB40);
-	{
-	    int chunk = 0;
-	    unsigned long total = 0;
-	
-		ADD_CHUNK(0, RAMSize, -1, "ST-RAM");
+
+	bi.num_memory=0;
+	ADD_CHUNK(0, RAMSize);
+	if (FastRAMSize>0) {
+		ADD_CHUNK(FastRAMBase, FastRAMSize);
 	}
+	bi.num_memory=SDL_SwapBE32(bi.num_memory);
 
 	if (!create_bootinfo()) {
 	    fprintf(stderr, "lilo: Can not create bootinfo structure\n");
@@ -427,41 +423,41 @@ int LiloCheckKernel(
 
 static int create_bootinfo(void)
 {
-    int i;
-    struct bi_record *record;
+	int i;
+	struct bi_record *record;
 
-    /* Initialization */
-    bi_size = 0;
+	/* Initialization */
+	bi_size = 0;
 
-    /* Generic tags */
-    if (!add_bi_record(BI_MACHTYPE, sizeof(bi.machtype), &bi.machtype))
-	return(0);
-    if (!add_bi_record(BI_CPUTYPE, sizeof(bi.cputype), &bi.cputype))
-	return(0);
-    if (!add_bi_record(BI_FPUTYPE, sizeof(bi.fputype), &bi.fputype))
-	return(0);
-    if (!add_bi_record(BI_MMUTYPE, sizeof(bi.mmutype), &bi.mmutype))
-	return(0);
-    for (i = 0; i < bi.num_memory; i++)
-	if (!add_bi_record(BI_MEMCHUNK, sizeof(bi.memory[i]), &bi.memory[i]))
-	    return(0);
-    if (bi.ramdisk.size)
-	if (!add_bi_record(BI_RAMDISK, sizeof(bi.ramdisk), &bi.ramdisk))
-	    return(0);
-    if (!add_bi_string(BI_COMMAND_LINE, bi.command_line))
-	return(0);
+	/* Generic tags */
+	if (!add_bi_record(BI_MACHTYPE, sizeof(bi.machtype), &bi.machtype))
+		return(0);
+	if (!add_bi_record(BI_CPUTYPE, sizeof(bi.cputype), &bi.cputype))
+		return(0);
+	if (!add_bi_record(BI_FPUTYPE, sizeof(bi.fputype), &bi.fputype))
+		return(0);
+	if (!add_bi_record(BI_MMUTYPE, sizeof(bi.mmutype), &bi.mmutype))
+		return(0);
+	for (i = 0; i < SDL_SwapBE32(bi.num_memory); i++) {
+		if (!add_bi_record(BI_MEMCHUNK, sizeof(bi.memory[i]), &bi.memory[i]))
+			return(0);
+	}
+	if (SDL_SwapBE32(bi.ramdisk.size)) {
+		if (!add_bi_record(BI_RAMDISK, sizeof(bi.ramdisk), &bi.ramdisk))
+			return(0);
+	}
+	if (!add_bi_string(BI_COMMAND_LINE, bi.command_line))
+		return(0);
 
-    /* Atari tags */
-    if (!add_bi_record(BI_ATARI_MCH_COOKIE, sizeof(bi.mch_cookie),
-		       &bi.mch_cookie))
-	return(0);
-    if (!add_bi_record(BI_ATARI_MCH_TYPE, sizeof(bi.mch_type),
-		       &bi.mch_type))
-	return(0);
+	/* Atari tags */
+	if (!add_bi_record(BI_ATARI_MCH_COOKIE, sizeof(bi.mch_cookie), &bi.mch_cookie))
+		return(0);
+	if (!add_bi_record(BI_ATARI_MCH_TYPE, sizeof(bi.mch_type), &bi.mch_type))
+		return(0);
 
     /* Trailer */
     record = (struct bi_record *)((u_long)&bi_union.record+bi_size);
-    record->tag = BI_LAST;
+    record->tag = SDL_SwapBE16(BI_LAST);
     bi_size += sizeof(bi_union.record.tag);
 
     return(1);
