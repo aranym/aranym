@@ -43,9 +43,9 @@ AC_ARG_ENABLE(aranymfs,        [  --enable-aranymfs       enable aranymfs suppor
 
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
-[  --enable-fpe=which      specify which fpu emulator to use [default=opt]],
+[  --enable-fpe=which      specify which fpu emulator to use [default=ieee]],
 [ case "$enableval" in
-    default)	FPE_CORE="default";; dnl ieee for JIT, uae otherwise
+    default)	FPE_CORE="default";; dnl ieee
 	uae)		FPE_CORE="uae";;
 	i386)		FPE_CORE="i386";;
 	ieee)		FPE_CORE="ieee";;
@@ -713,7 +713,7 @@ if [[ "x$FPE_CORE" = "xi386" ]]; then
 fi
 
 if [[ "x$FPE_CORE" = "xdefault" ]]; then
-  FPE_CORE="uae"
+  FPE_CORE="ieee"
 fi
 
 dnl 2. JIT-FPU only supports IEEE-based implementation.
