@@ -66,8 +66,8 @@ UW BLITTER::LM_UW(uaecptr addr) {
 
 void BLITTER::SM_UW(uaecptr addr, UW value) {
 #if DEBUG
-	if (addr < 0 || addr >= 0xe00000) {
-		D(bug("Blitter Error! Tries to write to %06lx\n", addr));
+	if (addr <= 0x800 || addr >= 0xe00000) {
+		D(bug("Blitter Error! Tries to write to %06lx", addr));
 		exit(-1);
 	}
 #endif
@@ -367,10 +367,12 @@ uae_u8 BLITTER::handleRead(uaecptr addr) {
 	if (addr < 0 || addr > 0x3d)
 		return 0;
 
+/*
 	if (blit) {
 		Do_Blit();
 		blit = false;
 	}
+*/
 
 	if (addr < 0x20) {
 		uae_u16 hfr = halftone_ram[addr / 2];
@@ -433,7 +435,7 @@ void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
 		return;
 	}
 
-	D(bug("Blitter writes: %x = %d ($%x) at %06x\n", addr+HW, value, value, showPC()));
+	D(bug("Blitter writes: %x = %d ($%x) at %06x", addr+HW, value, value, showPC()));
 
 	switch(addr) {
 		case 0x20: source_x_inc = (source_x_inc & 0x00ff) | (value << 8); break;
@@ -466,10 +468,6 @@ void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
 		case 0x3b: STORE_B_ff8a3b(value); break;
 		case 0x3c: STORE_B_ff8a3c(value); break;
 		case 0x3d: STORE_B_ff8a3d(value); break;
-	}
-	if (blit && addr != 0x3c) {
-		Do_Blit();
-		blit = false;
 	}
 
 }
@@ -540,6 +538,10 @@ B BLITTER::LOAD_B_ff8a3b(void)
 
 B BLITTER::LOAD_B_ff8a3c(void)
 {
+	if (blit) {
+		Do_Blit();
+		blit = false;
+	}
 	return (B) line_num & 0x3f;
 }
 
@@ -551,25 +553,21 @@ B BLITTER::LOAD_B_ff8a3d(void)
 void BLITTER::STORE_B_ff8a32(B v)
 {	dest_addr &= 0x00ffffff;
 	dest_addr |= (v&0xff) << 24;
-	D(bug("write : ff8a32 : %X", v));
 }
 
 void BLITTER::STORE_B_ff8a33(B v)
 {	dest_addr &= 0xff00ffff;
 	dest_addr |= (v&0xff) << 16;
-	D(bug("write : ff8a33 : %X", v));
 }
 
 void BLITTER::STORE_B_ff8a34(B v)
 {	dest_addr &= 0xffff00ff;
 	dest_addr |= (v&0xff) << 8;
-	D(bug("write : ff8a34: %X", v));
 }
 
 void BLITTER::STORE_B_ff8a35(B v)
 {	dest_addr &= 0xffffff00;
 	dest_addr |= (v & 0xfe);	// ignore LSB
-	D(bug("write : ff8a35 : %X", v));
 }
 
 void BLITTER::STORE_B_ff8a28(B v)
@@ -635,7 +633,6 @@ void BLITTER::STORE_B_ff8a3c(B v)
 	line_num   = (UB) v & 0x3f;
 	if ((y_count !=0) && (v & 0x80)) /* Busy bit set and lines to blit? */
 		blit = true;
-		// Do_Blit();
 }
 
 void BLITTER::STORE_B_ff8a3d(B v)
