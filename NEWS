@@ -1,3 +1,15 @@
+NEXT-RELEASE:
+
+Changes:
+
+ o HostFS cleaned up again
+ o SCSI emulation introduced which simplifies the harddisk driver
+   installation greatly
+ o STOP CPU instruction fixed to work properly (no more shaky
+   mouse under EmuTOS and FreeMiNT)
+ o BetaDOS' .bos NatFeat CDROM driver
+
+
 2003/04/11 - version 0.8.0beta3 released
 ==========
 

@@ -100,7 +100,7 @@ This is currently not usable, due to missing/bugged MMU/hardware emulation.
  ------------------------
 
 You may also want to use a harddisk - either as a disk image or a real thing
-from your Atari computer. Look into FAQ for more details.
+from your Atari computer.
 Also note that we prepared several disk images for you - visit our download
 area at http://aranym.atari.org/
 
@@ -109,48 +109,7 @@ They work much the same way as a floppy image. You can simply create a large
 file and tell ARAnyM to use it as a harddisk, but you will need to format
 it just like a real harddisk before you can actually use it.
 
-ARAnyM comes with a utility called "createdisk.sh" to create an empty harddisk
-image file. If you would like to create an image of a real Atari harddisk then
-you have two options: either create the image on the Atari (using some disk
-tool like Diamond Edge or Diskus) or connect your harddrive to the ARAnyM
-machine (say as a slave on the primary channel, so it's /dev/hdb under Linux).
-
-[root@linuxHost /root]# hdparm /dev/hdb
-
-/dev/hdb:
- multcount    = 16 (on)
- I/O support  =  1 (32-bit)
- unmaskirq    =  1 (on)
- using_dma    =  1 (on)
- keepsettings =  0 (off)
- nowerr       =  0 (off)
- readonly     =  0 (off)
- readahead    =  8 (on)
- geometry     = 1871/255/63, sectors = 30064608, start = 0
-
-[root@linuxHost /root]# dd if=/dev/hdb of=/path/to/my/AtariDrive
-
-That will create an image file of the whole disk.
-CAUTION: Be _very_ careful when using the dd command as you are root now and
-you can destroy your system by a simple typo mistake.
-After this you must setup the image file geometry in the ~/.aranym/config file
-like the following:
-	 
-[IDE0]
-Present = Yes
-Path = /path/to/my/AtariDrive
-Cylinders = 1871
-Heads = 255
-SectorsPerTrack = 63
-ByteSwap = No
-
-Note: The Cylinders/Heads/SectorPerTrack values must correspond to the geometry
-returned by the hdparm command (see above, the line beginning with "geometry").
-
-If the harddisk was not bootable (or is created as empty) you will want to
-install a harddisk driver on it so you could boot from the harddrive.
-We tested several harddisk drivers and found the HDDRIVER (once the SCSI bus
-scanning is disabled) and Cecile to work OK.
+Look into FAQ for more details.
 
 
  6) Connecting CD-ROM drives

@@ -1,11 +1,6 @@
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
 - continue fixing the JIT (we got a demo app already)
-- update DOC with the following items:
-  + hdparm returns logical geometry but we need the physical one from
-    /proc/ide/hdx/geometry
-  + all the messing with disk drivers in order to skip the SCSI initialization
-    is not needed anymore thanks to Patrice
 
 
 Roadmap:

@@ -32,16 +32,7 @@ Answer:
   if you have a working setup on Atari and want to have the same
   on ARAnyM, follow these steps:
 
-1) if you want to boot from the disk, reconfigure your harddisk driver:
-
-   - if you are using HDDRIVER, use HDDRUTIL to disable SCSI bus scan
-     (i.e. disable all SCSI devices)
-
-   - if you are using Cecile, you don't have to do anything (Ctirad?)
-
-   - if you are using anything else, cross your fingers (Ctirad?)
-
-2) if you want to use the disk directly, simply take it from your
+1) if you want to use the disk directly, simply take it from your
    Atari machine and put it to your host machine (be it PC, Mac or
    whatever, we don't care). Set up the drive in .aranym/config, e.g.
 
@@ -53,11 +44,11 @@ Answer:
    SectorsPerTrack = 63
    ByteSwap = No
 
-   The Path point to the physical device. /dev/hdc is master on
+   The "Path" point to the physical device. /dev/hdc is master on
    secondary IDE channel (ask someone if you don't know what I am
    talking about).
 
-   The Cylinders/Heads/SectorsPerTrack values maybe either written on
+   The "Cylinders/Heads/SectorsPerTrack" values maybe either written on
    the disk label or in your hard drive utility (e.g. HDDRUTIL) - but
    only if it's an IDE drive. ARAnyM also tries to guess the values,
    if you set one from these values to -1 (supported only for real
@@ -79,8 +70,14 @@ Answer:
 
    For windows you may want to try out a "WinImage" (use download.com?)
    
-   For configuring ARAnyM see the 2) above, just the Path now points to
-   the /home/aranym/disk_image.
+   For configuring ARAnyM see the 2) above, the Path now points to
+   the /home/aranym/disk_image. The "Cylinders/Heads/SectorsPerTrack"
+   are needed to be set to correct values. In case you are not sure
+   then go to the /proc/ide/hdX/geometry (applies for Linux only)
+   where X depends on what drive you are creating the image from and
+   use the values in the line starting with "physical" word respectively.
+   Beware of the hdparm utility which gives you only the "logical"
+   C/H/S which is not really what you need.
 
    Note: if the image has been created on Atari, you have to set the
    ByteSwap IDE ARAnyM option to "Yes".
@@ -90,9 +87,6 @@ Answer:
    Centurbo or NOVA/Rage gfx card drivers, you want to disable them.
    So try the first boot with Ctrl held down (AUTO folder programs are
    not executed then).
-
-5) don't forget to reconfigure your harddisk driver on the original
-   Atari (see the point 1) back to your favorite values.
 
 
 ---

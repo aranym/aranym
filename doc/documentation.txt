@@ -408,30 +408,22 @@ ways to obtain it. Easiest is to look onto harddrive label where
 C/H/S parameters are usually printed. On the PC you can look into the 
 BIOS SETUP. Or under Linux you can use utility called hdparm.
 
-[root@linuxHost /root]# hdparm /dev/hdc
+[root@linuxHost /root]# $ cat /proc/ide/hdc/geometry 
 
-  and see the output:
+physical     62016/15/63
+logical      3876/240/63
 
-/dev/hdc:
- multcount    = 16 (on)
- I/O support  =  1 (32-bit)
- unmaskirq    =  1 (on)
- using_dma    =  1 (on)
- keepsettings =  0 (off)
- nowerr       =  0 (off)
- readonly     =  0 (off)
- readahead    =  8 (on)
- geometry     = 1871/255/63, sectors = 30064608, start = 0
+  The line with "physical" is what you need, 62016/15/63 are C/H/S geometry 
+parameters. Beware of the hdparm utility which gives you only the "logical"
+C/H/S which is not really what you need.
 
-  The last line is what you need, 1871/255/63 are C/H/S geometry 
-parameters. Now open Aranym config file and write here those parameters
-and the path:
+Now open Aranym config file and write here those parameters and the path:
 
 [IDE0]
 Present = Yes
 Path = /dev/hdc
-Cylinders = 1871
-Heads = 255
+Cylinders = 62016
+Heads = 15
 SectorsPerTrack = 63
 ByteSwap = No
 
@@ -484,26 +476,15 @@ Note: C/H/S parameters must be correct even for image files!
 -----------------------------------
 
   Since TOS itself cannot manage harddisks you have to install a harddisk
-driver. There are several drivers but not all are suitable to work
-with Aranym (due to missing SCSI DMA emulation). Recommended ones are
-either Cecile (freeware - http://www.czuba-tech.com) or HDDRIVER
-(commercial software - http://www.seimet.de).
+driver. In case you use and empty harddisk or image, you have to run
+driver from floppy and partition it first like on real TOS machine.
 
   If you have connected a real harddisk from any TOS machine and this 
 drive is bootable (driver is already installed) then Aranym should 
-boot from it like usually. In case you use and empty harddisk or image, 
-you have to run driver from floppy and partition it first like on 
-real TOS machine.
-
-Note: In HDDriver, SCSI BUS checking must be turned off otherwise 
-      the boot process freezes! In order to do it start HDDRUTIL.APP
-      (and "locate HDDRIVER.PRG" when not installed), go into 
-      menus "setting/devices and partitions" and uncheck all except 
-      2.0 and 2.1 (even for an SCSI drive !). If you are going to connect 
-      real harddisk with HDDRIVER installed from your TOS machine
-      you have to perform this reconfiguration BEFORE you grab it
-      from the real machine - otherwise you will get trouble booting
-      under Aranym.
+boot from it like usually. However, if you were using some special HW
+drivers, like e.g. Afterburner, Centurbo or NOVA/Rage gfx card drivers,
+you want to disable them. So try the first boot with Ctrl held down (AUTO
+folder programs are not executed then).
 
 
 7.1.4. CD-ROM
@@ -521,8 +502,8 @@ Path = /dev/hdb
 the Aranym side.
 
 
-7.2. Aranym Fs driver
---------------------
+7.2. Host Fs driver
+---------------------
 
   This driver allows you to map any HOST directory as a logical disk drive.
 This is done using BetaDOS (=bugfixed MetaDOS). Aranym driver
@@ -532,9 +513,9 @@ The example of config.sys you will find in the same directory as the driver.
 The problem is how to put it on the harddisk image you possibly created.
 There is no other way than using the floppy (or its image file).
 
-  As you setup the config.sys (e.g.):
+  As you setup the bdconfig.sys (e.g.):
 
-*DOS, c:\auto\aranymfs.dos, M:M
+*DOS, c:\auto\hostfs.dos, M:M
 
   The M:1 means you want to have the TOS M: drive mapped to some HOST OS
 directory. The directory must be put to aranym by the command line argument -d
