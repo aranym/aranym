@@ -112,23 +112,29 @@ install: $(APP) installdirs
 	$(INSTALL_DATA) ../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog
 	$(INSTALL_DATA) ../TODO $(DESTDIR)$(docdir)/$(APP)/TODO
 	$(INSTALL_DATA) ../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
-	$(INSTALL_DATA) ../atari/fandafs/fandafs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fandafs/fandafs.dos.bz2
+	$(INSTALL_DATA) ../atari/aranymrc.example $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
+	$(INSTALL_DATA) ../atari/aranymfs/aranymfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
+	$(INSTALL_DATA) ../atari/aranymfs/config.sys $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/config.sys
+	$(INSTALL_DATA) ../atari/fvdi/drivers/16bit_pc.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/16bit_pc.sys.bz2
 	$(INSTALL_DATA) ../atari/tools/fastram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
 	$(INSTALL_DATA) ../atari/tools/gemram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/gemram.prg.bz2
 
 installdirs:
-	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/fandafs $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(docdir)/$(APP)
 
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
 	rm -f $(DESTDIR)$(docdir)/$(APP)/changelog
 	rm -f $(DESTDIR)$(docdir)/$(APP)/TODO
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fandafs/fandafs.dos.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/config.sys
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/16bit_pc.sys.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/gemram.prg.bz2
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/createdisk
-	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/fandafs
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/fvdi
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/tools
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari
@@ -146,23 +152,28 @@ distclean: clean
 	rm -f Makefile
 	rm -f config.cache config.log config.status config.h
 
+mrproper: distclean
+	rm -f aclocal.m4 cmos configure config.h.in aranymtest.rc
+
 bindistdirs:
-	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/createdisk tmpdist$(datadir)/$(APP)/atari/fandafs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/createdisk tmpdist$(datadir)/$(APP)/atari/aranymfs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(docdir)/$(APP)
 
 bindist: $(APP) bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
 	$(INSTALL_DATA) ../ChangeLog tmpdist$(docdir)/$(APP)/changelog
 	$(INSTALL_DATA) ../TODO tmpdist$(docdir)/$(APP)/TODO
 	$(INSTALL_DATA) ../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
-	$(INSTALL_DATA) ../atari/fandafs/fandafs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/fandafs/fandafs.dos.bz2
+	$(INSTALL_DATA) ../atari/aranymrc.example tmpdist$(datadir)/$(APP)/atari/aranymrc.example
+	$(INSTALL_DATA) ../atari/aranymfs/aranymfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
+	$(INSTALL_DATA) ../atari/aranymfs/config.sys tmpdist$(datadir)/$(APP)/atari/aranymfs/config.sys
+	$(INSTALL_DATA) ../atari/fvdi/drivers/16bit_pc.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/16bit_pc.sys.bz2
 	$(INSTALL_DATA) ../atari/tools/fastram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
 	$(INSTALL_DATA) ../atari/tools/gemram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/gemram.prg.bz2
 	chmod -R a+r tmpdist
 	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
 	rm -rf tmpdist
 
-devdist: distclean 
-	rm -f aclocal.m4 cmos config.h.in configure
+devdist: mrproper 
 	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz aranym
 
 depend dep:
