@@ -57,6 +57,7 @@ private:
 	void copy_scsidevice_settings(bx_scsidevice_options_t *src, disk_t *dest);
 	disk_t *dev2disk(uint16 major, uint16 minor);
 	void byteSwapBuf(uint8 *buf, int size);
+	bool setDiskSizeInBlocks(disk_t *disk);
 
 protected:
 	int32 XHDrvMap();
@@ -80,3 +81,7 @@ public:
 };
 
 #endif /* _XHDI_H */
+
+/*
+vim:ts=4:sw=4:
+*/

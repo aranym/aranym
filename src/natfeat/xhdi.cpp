@@ -66,7 +66,9 @@ void XHDIDriver::copy_atadevice_settings(bx_atadevice_options_t *src, disk_t *de
 	dest->readonly = src->readonly;
 	dest->byteswap = src->byteswap;
 	dest->sim_root = false;		// ATA devices are real disks
-	dest->size_blocks = 0;
+
+	// check and remember disk size
+	setDiskSizeInBlocks(dest);
 }
 
 void XHDIDriver::copy_scsidevice_settings(bx_scsidevice_options_t *src, disk_t *dest)
@@ -79,13 +81,7 @@ void XHDIDriver::copy_scsidevice_settings(bx_scsidevice_options_t *src, disk_t *
 	dest->sim_root = true;		// SCSI devices are simulated by prepending a virtual root sector to a single partition
 
 	// check and remember disk size
-	struct stat buf;
-	if (dest->present && !stat(dest->path, &buf)) {
-		dest->size_blocks = buf.st_size / XHDI_BLOCK_SIZE;
-	}
-	else {
-		dest->size_blocks = 0;
-	}
+	setDiskSizeInBlocks(dest);
 
 	dest->partID[0] = src->partID[0];
 	dest->partID[1] = src->partID[1];
@@ -142,7 +138,7 @@ int32 XHDIDriver::XHInqDriver(uint16 bios_device, memptr name, memptr version,
 int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 					uint16 rwflag, uint32 recno, uint16 count, memptr buf)
 {
-	D(bug("ARAnyM XH%s(major=%u, minor=%u, recno=%lu, count=%u, buf=$%x)",
+	D(bug("ARAnyM XH%s(%u.%u, recno=%lu, count=%u, buf=$%x)",
 		(rwflag & 1) ? "Write" : "Read",
 		major, minor, recno, count, buf));
 
@@ -170,7 +166,7 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 			rootsector sector;
 			memset(&sector, 0, sizeof(rootsector));
 
-			sector.hd_siz = SDL_SwapBE32(disk->size_blocks + 1);
+			sector.hd_siz = SDL_SwapBE32(disk->size_blocks);
 
 			sector.part[0].flg = 1;
 			if (disk->partID[0] == '$') {
@@ -184,8 +180,9 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 				sector.part[0].id[1] = disk->partID[1];
 				sector.part[0].id[2] = disk->partID[2];
 			}
-			sector.part[0].st = SDL_SwapBE32(1);
-			sector.part[0].siz = SDL_SwapBE32(disk->size_blocks);
+			int start_sect = 1;
+			sector.part[0].st = SDL_SwapBE32(start_sect);
+			sector.part[0].siz = SDL_SwapBE32(disk->size_blocks - start_sect);
 
 			sector.part[1].flg = 0;
 			sector.part[1].id[0] = 0;
@@ -210,13 +207,14 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 
 			memcpy(hostbuf, &sector, sizeof(sector));
 
+			// correct the count and buffer position
 			count--;
 			hostbuf+=XHDI_BLOCK_SIZE;
 			if (count == 0) {
 				return E_OK;
 			}
 		}
-		// correct the offset and count to the partition
+		// correct the start sector to the partition
 		recno--;
 	}
 
@@ -247,7 +245,7 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
 					lmemptr device_flags, memptr product_name, uint16 stringlen)
 {
-	D(bug("ARAnyM XHInqTarget2(major=%u, minor=%u, product_name_len=%u)", major, minor, stringlen));
+	D(bug("ARAnyM XHInqTarget2(%u.%u, product_name_len=%u)", major, minor, stringlen));
 
 	disk_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
@@ -287,30 +285,26 @@ int32 XHDIDriver::XHInqDev2(uint16 bios_device, wmemptr major, wmemptr minor,
 int32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
 					lmemptr blocks, lmemptr blocksize)
 {
-	D(bug("ARAnyM XHGetCapacity(major=%u, minor=%u, blocks=%lu, blocksize=%lu)", major, minor, blocks, blocksize));
+	D(bug("ARAnyM XHGetCapacity(%u.%u, blocks=%lu, blocksize=%lu)", major, minor, blocks, blocksize));
 
 	disk_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
 		return EUNDEV;
 
-	struct stat buf;
-	if (! stat(disk->path, &buf)) {
-		long t_blocks = buf.st_size / XHDI_BLOCK_SIZE;
-		D(bug("t_blocks = %ld\n", t_blocks));
-		if (blocks != 0)
-			WriteAtariInt32(blocks, t_blocks);
-		if (blocksize != 0)
-			WriteAtariInt32(blocksize, XHDI_BLOCK_SIZE);
-		return E_OK;
-	}
-	else {
+	if (! setDiskSizeInBlocks(disk))
 		return EDRVNR;
-	}
+
+	D(bug("XHGetCapacity in blocks = %ld\n", disk->size_blocks));
+	if (blocks != 0)
+		WriteAtariInt32(blocks, disk->size_blocks);
+	if (blocksize != 0)
+		WriteAtariInt32(blocksize, XHDI_BLOCK_SIZE);
+	return E_OK;
 }
 
 int32 XHDIDriver::dispatch(uint32 fncode)
 {
-	D(bug("ARAnyM XHDI(%u)\n", fncode));
+	D(bug("ARAnyM XHDI(%u)", fncode));
 	int32 ret;
 	switch(fncode) {
 		case  0: ret = 0x0130;	/* XHDI version */
@@ -395,6 +389,28 @@ int32 XHDIDriver::dispatch(uint32 fncode)
 	}
 	D(bug("ARAnyM XHDI function returning with %d", ret));
 	return ret;
+}
+
+bool XHDIDriver::setDiskSizeInBlocks(disk_t *disk)
+{
+	disk->size_blocks = 0;
+
+	if (! disk->present)
+		return false;
+
+	struct stat buf;
+	if (stat(disk->path, &buf))
+		return false;
+
+	// TODO: stat() doesn't handle physical devices (like /dev/hdaX), FIXME
+	long blocks = buf.st_size / XHDI_BLOCK_SIZE;
+
+	if (disk->sim_root)
+		blocks++;	// add the virtual master boot record
+
+	disk->size_blocks = blocks;
+
+	return true;
 }
 
 /*
