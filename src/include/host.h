@@ -17,6 +17,9 @@ extern HostScreen hostScreen;
 
 /*
  * $Log$
+ * Revision 1.1  2001/10/08 21:46:05  standa
+ * The Header and Log CVS tags added.
+ *
  *
  *
  */

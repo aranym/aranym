@@ -39,6 +39,9 @@ void MMU::handleWrite(uaecptr addr, uae_u8 value) {
 
 /*
  * $Log$
+ * Revision 1.4  2001/10/08 21:46:05  standa
+ * The Header and Log CVS tags added.
+ *
  *
  *
  */

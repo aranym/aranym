@@ -573,6 +573,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.30  2001/10/25 15:03:20  joy
+ * move floppy stuff from main to fdc
+ *
  * Revision 1.29  2001/10/25 12:25:28  joy
  * request the ROM to be 512 kB long. On the web there are just 256 kB long images...
  *
@@ -593,31 +596,6 @@ void ExitAll(void)
  *
  * Revision 1.23  2001/10/09 19:25:19  milan
  * MemAlloc's rewriting
- *
- * Revision 1.22  2001/10/08 21:46:05  standa
- * The $Header$ and $Log$
- * The $Header$ and Revision 1.29  2001/10/25 12:25:28  joy
- * The $Header$ and request the ROM to be 512 kB long. On the web there are just 256 kB long images...
- * The $Header$ and
- * The $Header$ and Revision 1.28  2001/10/23 21:26:15  standa
- * The $Header$ and The hostScreen size is used to handle the mouseOut flag.
- * The $Header$ and
- * The $Header$ and Revision 1.27  2001/10/18 14:27:24  joy
- * The $Header$ and TOS 4.04 is patched in runtime
- * The $Header$ and
- * The $Header$ and Revision 1.26  2001/10/18 13:46:34  joy
- * The $Header$ and detect the ROM version. Knows both our 68040 friendly ABTOS and the original TOS 4.04.
- * The $Header$ and
- * The $Header$ and Revision 1.25  2001/10/16 19:38:44  milan
- * The $Header$ and Integration of BasiliskII' cxmon, FastRAM in aranymrc etc.
- * The $Header$ and
- * The $Header$ and Revision 1.24  2001/10/12 07:56:14  standa
- * The $Header$ and Pacal to C conversion ;( sorry for that.
- * The $Header$ and
- * The $Header$ and Revision 1.23  2001/10/09 19:25:19  milan
- * The $Header$ and MemAlloc's rewriting
- * The $Header$ and CVS tags added.
- *
  *
  *
  */

@@ -209,6 +209,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.31  2001/10/08 21:46:05  standa
+ * The Header and Log CVS tags added.
+ *
  * Revision 1.30  2001/09/21 14:11:48  joy
  * little helper functions removed. Modules call each other via the public functions directly now.
  *

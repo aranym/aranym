@@ -516,6 +516,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.15  2001/10/24 17:55:01  standa
+ * The fVDI driver fixes. Finishing the functionality tuning.
+ *
  * Revision 1.14  2001/10/23 21:28:49  standa
  * Several changes, fixes and clean up. Shouldn't crash on high resolutions.
  * hostscreen/gfx... methods have fixed the loop upper boundary. The interface
@@ -526,16 +529,7 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
  * Now it seems not to segfault anywhere.
  *
  * Revision 1.12  2001/10/08 21:46:05  standa
- * The $Header$ and $Log$
- * The $Header$ and Revision 1.14  2001/10/23 21:28:49  standa
- * The $Header$ and Several changes, fixes and clean up. Shouldn't crash on high resolutions.
- * The $Header$ and hostscreen/gfx... methods have fixed the loop upper boundary. The interface
- * The $Header$ and types have changed quite havily.
- * The $Header$ and
- * The $Header$ and Revision 1.13  2001/10/16 19:06:55  standa
- * The $Header$ and The uint32 changed to int16 to make the gfxLineColor work.
- * The $Header$ and Now it seems not to segfault anywhere.
- * The $Header$ and CVS tags added.
+ * The Header and Log CVS tags added.
  *
  * Revision 1.11  2001/10/03 06:37:41  standa
  * General cleanup. Some constants added. Better "to screen" operation

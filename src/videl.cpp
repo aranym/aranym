@@ -321,8 +321,13 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.26  2001/10/16 20:28:43  standa
+ * The #define SUPPORT_MULTIPLEDESTBPP support extended to 16, 24 and 32 destBpp.
+ * Fixed RGB vs BRG bug in videl rendering.
+ * SDL_BYTEORDER handling improved in put24BitPixel macro.
+ *
  * Revision 1.25  2001/10/08 21:46:05  standa
- * The $Header$ and $Log$ CVS tags added.
+ * The Header and Log CVS tags added.
  *
  * Revision 1.24  2001/10/01 22:22:41  standa
  * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).

@@ -287,18 +287,16 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.12  2001/10/24 17:55:01  standa
+ * The fVDI driver fixes. Finishing the functionality tuning.
+ *
  * Revision 1.11  2001/10/23 21:28:49  standa
  * Several changes, fixes and clean up. Shouldn't crash on high resolutions.
  * hostscreen/gfx... methods have fixed the loop upper boundary. The interface
  * types have changed quite havily.
  *
  * Revision 1.10  2001/10/08 21:46:05  standa
- * The $Header$ and $Log$
- * The $Header$ and Revision 1.11  2001/10/23 21:28:49  standa
- * The $Header$ and Several changes, fixes and clean up. Shouldn't crash on high resolutions.
- * The $Header$ and hostscreen/gfx... methods have fixed the loop upper boundary. The interface
- * The $Header$ and types have changed quite havily.
- * The $Header$ and CVS tags added.
+ * The Header and Log CVS tags added.
  *
  * Revision 1.9  2001/10/01 22:22:41  standa
  * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).
