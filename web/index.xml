@@ -3,17 +3,25 @@
 <document>
   <table border="0">
     <tr>
-      <td valign="top" rowspan="2">
-        <p align="center">
-          <a href="http://www.libsdl.org/index.html">
-          </a>
-        </p>
-        <dl>
-          <dt><font color="#414141" size="4"><strong>Information</strong></font></dt>
-          <dd><a href="license.html"><font color="#414141"><strong>Licensing</strong></font></a></dd>
-          <dd><a href="installation.html"><font color="#414141"><strong>Installation</strong></font></a></dd>
-        </dl>
+      <td valign="top">
+      <H4> News </H4>
+      2001/10/08: preliminary version of the WWW pages online.
+<!-- Begin RealHomepageTools --><script type="text/javascript"><!--
+var id=132650
+var ua=navigator.userAgent;if(ua.indexOf('MSIE 3')>0){
+document.write('<img src="http://11.rtcode.com/netpoll/ifree')
+document.write('v3.asp?id='+id+'&js=1&to=0&ref='
++escape(document.referrer)+'" />')}
+// --></script><script type="text/javascript"
+src="http://11.rtcode.com/netpoll/ifreev3i.asp?id=132650&to=0">
+</script><script type="text/javascript"><!--
+if(ua.indexOf('MSIE ')>0)document.write('<!--')
+// --></script><noscript><p><img
+src="http://11.rtcode.com/netpoll/ifreev3.asp?id=132650&to=0"
+alt="RealTracker" /></p></noscript>
+<!-- End RealHomepageTools -->
       </td>
     </tr>
   </table>
+
 </document>
