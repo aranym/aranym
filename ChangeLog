@@ -11,6 +11,12 @@
   settings are hidden now when CD-ROM is selected.
   An automagic detection of C/H/S geometry for loaded disk images added.
 
+- parameters.*, main.cpp: tos and emutos paths moved to bx_options struct.
+  The goal is to keep everything in the struct for easier handling in the
+  SETUP GUI.
+
+- main_unix.cpp: 'program_name' is gone.
+
 
 2004/01/02 - joy
 - gui-sdl/dlgDisk.cpp: Disk geometry added (C/H/S).

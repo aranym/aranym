@@ -190,6 +190,9 @@ typedef struct {
 #ifdef ENABLE_EPSLIMITER
   bx_cpu_options_t  cpu;
 #endif
+  char			tos_path[512];
+  char			emutos_path[512];
+  uint32		fastram;
   bool			autoMouseGrab;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;

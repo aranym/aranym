@@ -91,10 +91,6 @@ static struct option const long_options[] =
 #define TOS_FILENAME		"ROM"
 #define EMUTOS_FILENAME		"etos512k.img"
 
-char *program_name;		// set by main()
-char rom_path[512];		// set by decode_switches()
-char emutos_path[512];	// set by decode_switches()
-
 bool startupGUI = false;
 
 bool boot_emutos = false;
@@ -110,7 +106,6 @@ static char config_file[512];
 # define XIF_NETMASK	"255.255.255.0"
 #endif
 
-static uint32 FastRAMSizeMB;
 static bool saveConfigFile = false;
 
 bx_options_t bx_options;
@@ -122,10 +117,10 @@ static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
 // configuration file 
 /*************************************************************************/
 struct Config_Tag global_conf[]={
-	{ "FastRAM", Int_Tag, &FastRAMSizeMB, 0, 0},
+	{ "FastRAM", Int_Tag, &bx_options.fastram, 0, 0},
 	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path), 0},
-	{ "TOS", String_Tag, rom_path, sizeof(rom_path), 0},
-	{ "EmuTOS", String_Tag, emutos_path, sizeof(emutos_path), 0},
+	{ "TOS", String_Tag, bx_options.tos_path, sizeof(bx_options.tos_path), 0},
+	{ "EmuTOS", String_Tag, bx_options.emutos_path, sizeof(bx_options.emutos_path), 0},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab, 0, 0},
 #ifdef ENABLE_EPSLIMITER
 	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
@@ -150,12 +145,12 @@ void preset_global() {
 
 void postload_global() {
 #ifndef FixedSizeFastRAM
-	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
+	FastRAMSize = bx_options.fastram * 1024 * 1024;
 #endif
 }
 
 void presave_global() {
-	FastRAMSizeMB = FastRAMSize / 1024 / 1024;
+	bx_options.fastram = FastRAMSize / 1024 / 1024;
 }
 
 /*************************************************************************/
@@ -215,7 +210,7 @@ struct Config_Tag tos_conf[]={
 void preset_tos() {
   bx_options.tos.redirect_CON = false;
   bx_options.tos.redirect_PRT = false;
-  bx_options.tos.cookie_mch = 0x00030000; // Falcon030
+  bx_options.tos.cookie_mch = 0x00050000; // ARAnyM
 }
 
 void postload_tos() {
@@ -558,8 +553,7 @@ void presave_nfcdroms() {
 
 /*************************************************************************/
 void usage (int status) {
-  // printf ("%s\n", VERSION_STRING);
-  printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
+  printf ("Usage: aranym [OPTIONS]\n");
   printf ("\
 Options:\n\
   -a, --floppy NAME          floppy image file NAME\n\
@@ -772,7 +766,7 @@ int process_cmdline(int argc, char **argv)
 
 #ifndef FixedSizeFastRAM
 			case 'F':
-				FastRAMSizeMB = atoi(optarg);
+				bx_options.fastram = atoi(optarg);
 				break;
 #endif
 
@@ -932,7 +926,7 @@ bool check_cfg()
 {
 #if REAL_ADDRESSING
 # if defined(__i386__) && defined(OS_linux)
-	if (FastRAMSizeMB > (128 - 16))
+	if (bx_options.fastram > (128 - 16))
 	{
 		panicbug("Maximum Fast RAM size for real addressing on x86/Linux is 112 MB");
 		panicbug("If you need bigger Fast RAM, you must recompile ARAnyM");
@@ -947,8 +941,8 @@ bool check_cfg()
 bool decode_switches(FILE *f, int argc, char **argv)
 {
 	getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
-	getDataFilename(TOS_FILENAME, rom_path, sizeof(rom_path));
-	getDataFilename(EMUTOS_FILENAME, emutos_path, sizeof(emutos_path));
+	getDataFilename(TOS_FILENAME, bx_options.tos_path, sizeof(bx_options.tos_path));
+	getDataFilename(EMUTOS_FILENAME, bx_options.emutos_path, sizeof(bx_options.emutos_path));
 
 	early_cmdline_check(argc, argv);
 	preset_cfg();

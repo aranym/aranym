@@ -240,20 +240,20 @@ Uint32 input_callback(Uint32 /*interval*/, void * /*param*/)
  */
 bool InitTOSROM(void)
 {
-	if (strlen(rom_path) == 0)
+	if (strlen(bx_options.tos_path) == 0)
 		return false;
 
 	// read ROM file
-	D(bug("Reading TOS image '%s'", rom_path));
-	FILE *f = fopen(rom_path, "rb");
+	D(bug("Reading TOS image '%s'", bx_options.tos_path));
+	FILE *f = fopen(bx_options.tos_path, "rb");
 	if (f == NULL) {
-		panicbug("TOS image '%s' not found.", rom_path);
+		panicbug("TOS image '%s' not found.", bx_options.tos_path);
 		return false;
 	}
 
 	RealROMSize = 512 * 1024;
 	if (fread(ROMBaseHost, 1, RealROMSize, f) != (size_t)RealROMSize) {
-		panicbug("TOS image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", rom_path);
+		panicbug("TOS image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", bx_options.tos_path);
 		fclose(f);
 		return false;
 	}
@@ -342,14 +342,14 @@ bool InitTOSROM(void)
  */
 bool InitEmuTOS(void)
 {
-	if (strlen(emutos_path) == 0)
+	if (strlen(bx_options.emutos_path) == 0)
 		return false;
 
 	// read EmuTOS file
-	D(bug("Reading EmuTOS from '%s'", emutos_path));
-	FILE *f = fopen(emutos_path, "rb");
+	D(bug("Reading EmuTOS from '%s'", bx_options.emutos_path));
+	FILE *f = fopen(bx_options.emutos_path, "rb");
 	if (f == NULL) {
-		panicbug("EmuTOS image '%s' not found.", emutos_path);
+		panicbug("EmuTOS image '%s' not found.", bx_options.emutos_path);
 		return false;
 	}
 	RealROMSize = 512 * 1024;
@@ -360,10 +360,10 @@ bool InitEmuTOS(void)
 			ROMBaseHost[0x18], ROMBaseHost[0x19],
 			ROMBaseHost[0x1a],
 			ROMBaseHost[0x1b],
-			emutos_path);
+			bx_options.emutos_path);
 	}
 	else
-		panicbug("EmuTOS image '%s' reading error.", rom_path);
+		panicbug("EmuTOS image '%s' reading error.", bx_options.tos_path);
 	return bEmuOK;
 }
 
