@@ -61,11 +61,32 @@ uintptr VMEMBaseDiff;	// Global offset between a Atari VideoRAM address and /dev
 // From newcpu.cpp
 extern int quit_program;
 
+#ifdef CHECK_BOUNDARY_BY_ARRAY
+bool isRMemory[4096];
+bool isWMemory[4096];
+#endif /* CHECK_BOUNDARY_BY_ARRAY */
+
 /*
  *  Initialize 680x0 emulation
  */
 
 bool InitMEM() {
+#ifdef CHECK_BOUNDARY_BY_ARRAY
+	// setup memory map
+	for(int i=0; i<4096; i++) {
+		if (i < 14)
+			isRMemory[i] = isWMemory[i] = true;
+		else if (i == 14) {
+			isRMemory[i] = true;
+			isWMemory[i] = false;
+		}
+		else if (i >=16 && i < ((FastRAMSize >> 20)+16))
+			isRMemory[i] = isWMemory[i] = true;
+		else
+			isRMemory[i] = isWMemory[i] = false;
+	}
+#endif /* CHECK_BOUNDARY_BY_ARRAY */
+
 #if REAL_ADDRESSING
 	// Mac address space = host address space
 	RAMBase = (uint32)RAMBaseHost;
