@@ -1,3 +1,8 @@
+2003/05/26 - milan
+- configure.ac, fpu_ieee.cpp: Sparc problem solved, see "2003/04/23 - milan"
+  and GCC bugs #8300 and #9763
+
+
 2003/05/01 - patrice
 - minimal ncr5380 scsi emulation to allow Linux boot. Maybe TOS harddisk drivers
   also do not hang anymore: need testing.
@@ -188,7 +193,6 @@
 - one paranoia "volatile" fix in CPU
 
 
->>>>>>> 1.390.2.18
 ** ARAnyM 0.8.0beta1 released
 
 2003/03/24 - joy
