@@ -197,9 +197,42 @@ struct regstruct regs, lastint_regs;
 static long int m68kpc_offset;
 int lastint_no;
 
-#define get_ibyte_1(o) get_byte(m68k_getpc() + (o) + 1)
-#define get_iword_1(o) get_word(m68k_getpc() + (o))
-#define get_ilong_1(o) get_long(m68k_getpc() + (o))
+
+#ifdef FULLMMU
+static __inline__ uae_u8 get_ibyte_1(uae_u32 o)
+{
+    uaecptr addr = m68k_getpc() + o + 1;
+    return phys_get_byte(mmu_translate(addr, FC_INST, 0, addr, sz_byte, 0));
+}
+static __inline__ uae_u16 get_iword_1(uae_u32 o)
+{
+    uaecptr addr = m68k_getpc() + o;
+    return phys_get_word(mmu_translate(addr, FC_INST, 0, addr, sz_word, 0));
+}
+static __inline__ uae_u32 get_ilong_1(uae_u32 o)
+{
+    uaecptr addr = m68k_getpc() + o;
+    return phys_get_long(mmu_translate(addr, FC_INST, 0, addr, sz_long, 0));
+}
+#else
+# define get_ibyte_1(o) get_byte(m68k_getpc() + (o) + 1)
+# define get_iword_1(o) get_word(m68k_getpc() + (o))
+# define get_ilong_1(o) get_long(m68k_getpc() + (o))
+#endif
+
+#ifdef ARAM_PAGE_CHECK
+# ifdef HAVE_GET_WORD_UNSWAPPED
+#  define GET_OPCODE (do_get_mem_word_unswapped((uae_u16*)(pc + pc_offset)));
+# else
+#  define GET_OPCODE (do_get_mem_word((uae_u16*)(pc + pc_offset)));
+# endif
+#else
+# ifdef HAVE_GET_WORD_UNSWAPPED
+#  define GET_OPCODE (do_get_mem_word_unswapped (get_real_address(m68k_getpc(), 0, sz_word)))
+# else
+#  define GET_OPCODE (get_iword (0))
+# endif
+#endif
 
 uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 {

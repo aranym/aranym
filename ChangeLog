@@ -1,3 +1,7 @@
+2002/02/28 - milan
+- get_i*_1 moved to newcpu.cpp
+
+
 2002/02/27 - milan
 - corrections of types in hostscreen.h and memory.h (using uintptr instead of
   uae_u32 with Host addressing)
