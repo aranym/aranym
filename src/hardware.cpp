@@ -1,7 +1,6 @@
 /*
  * $Header$
  *
- * MJ 2001
  */
 
 #include "sysdeps.h"
@@ -233,6 +232,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.26  2001/08/13 22:29:06  milan
+ * IDE's params from aranymrc file etc.
+ *
  * Revision 1.25  2001/07/24 13:54:11  joy
  * #define DEBUG before #include "debug"
  *

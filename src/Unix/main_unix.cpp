@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 	program_name = argv[0];
 	decode_switches(argc, argv);
 
-#ifdef NDEBUG
+#ifdef NEWDEBUG
 	if (start_debug) ndebug::init();
 #endif
 
@@ -262,6 +262,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.37  2001/08/10 18:41:24  milan
+ * Some patches, see ChangeLog (CPU API etc.), debianized
+ *
  * Revision 1.35  2001/07/24 07:10:46  joy
  * cleaned up a bit. Portable things moved to main.cpp.
  *

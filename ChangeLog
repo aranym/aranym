@@ -1,3 +1,15 @@
+2001/08/20
+- support for autodetection of a real disk's geometry in Linux, also for
+  createdisk.sh's disks, but new version of parameters.cpp needs reorganization
+  in IDEx part
+
+- patched ins. SBCD, ABCD, NBCD (uae 0.8.17), BDcc, Scc in table68k patched
+
+- UAE FPU as default FPU (now better than i386 opt!)
+
+- devdist in Makefile
+
+
 2001/08/16 - Joy
 
 - config file taken from PARCP. Feel free to extend the global_conf struct in parameters.cpp
@@ -16,6 +28,7 @@
 - IDE x's settings from aranymrc file
 
 
+>>>>>>> 1.26
 2001/08/10 - milan
 - real addressing now working correct
 

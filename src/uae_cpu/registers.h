@@ -14,8 +14,8 @@ struct xttrx {
     uae_u32 enable : 1;
     uae_u32 s_field : 2;
     uae_u32 : 3;
-    uae_u32 user1 : 1;
-    uae_u32 user0 : 1;
+    uae_u32 usr1 : 1;
+    uae_u32 usr0 : 1;
     uae_u32 : 1;
     uae_u32 cmode : 2;
     uae_u32 : 2;
@@ -27,8 +27,8 @@ struct mmusr_t {
    uae_u32 phys_addr : 20;
    uae_u32 bus_err : 1;
    uae_u32 global : 1;
-   uae_u32 user1 : 1;
-   uae_u32 user0 : 1;
+   uae_u32 usr1 : 1;
+   uae_u32 usr0 : 1;
    uae_u32 super : 1;
    uae_u32 cmode : 2;
    uae_u32 modif : 1;

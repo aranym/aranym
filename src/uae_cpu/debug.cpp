@@ -151,14 +151,14 @@ static uae_u8 trace_insn_copy[10];
 static struct regstruct trace_prev_regs;
 void debug (void)
 {
-#ifdef NDEBUG
+#ifdef NEWDEBUG
   ndebug::run();
 #else
     char input[80];
     uaecptr nextpc,nxdis,nxmem;
 
     input[0] = '\n';
-    input[1] = '0';
+    input[1] = '\0';
     
     if (do_skip && skipaddr == 0xC0DEDBAD) {
 #if 0

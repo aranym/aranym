@@ -1,5 +1,6 @@
 /* MJ 2001 */
 #include "sysdeps.h"
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +31,7 @@ static struct option const long_options[] =
 };
 
 char *program_name;
-char rom_path[512]="/usr/local/share/aranym/ROM";
+char rom_path[512] = DATADIR "/ROM";
 
 uint8 start_debug = 0;			// Start debugger
 bool fullscreen = false;			// Boot in Fullscreen
@@ -87,28 +88,49 @@ Options:
 
 void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap) {
   // Autodetect ???
-  if (cylinders == -1) ;
-  if (heads == -1) ;
-  if (spt == -1) ;
-  if (byteswap == -1) ;
+  if (cylinders == -1)
+    if ((cylinders = get_geometry(dev_path, geoCylinders)) == -1) {
+      fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
+      exit(-1);
+    }
+
+  if (heads == -1)
+    if ((heads = get_geometry(dev_path, geoHeads)) == -1) {
+      fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
+      exit(-1);
+    }
+
+  if (spt == -1)
+    if ((spt = get_geometry(dev_path, geoSpt)) == -1) {
+      fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
+      exit(-1);
+    }
+
+  if (byteswap == -1)
+    if ((byteswap = get_geometry(dev_path, geoByteswap)) == -1) {
+      fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
+      exit(-1);
+    }
 
   switch (number) {
-	case 0: bx_options.diskc.present = 1;
-			bx_options.diskc.byteswap = byteswap;
-			bx_options.diskc.cylinders = cylinders;
-			bx_options.diskc.heads = heads;
-			bx_options.diskc.spt = spt;
-			strcpy(bx_options.diskc.path, dev_path);
-		break;
+    case 0: bx_options.diskc.present = 1;
+            bx_options.diskc.byteswap = byteswap;
+            bx_options.diskc.cylinders = cylinders;
+            bx_options.diskc.heads = heads;
+            bx_options.diskc.spt = spt;
+            strcpy(bx_options.diskc.path, dev_path);
+	    break;
 
-	case 1: bx_options.diskd.present = 1;
-			bx_options.diskd.byteswap = byteswap;
-			bx_options.diskd.cylinders = cylinders;
-			bx_options.diskd.heads = heads;
-			bx_options.diskd.spt = spt;
-			strcpy(bx_options.diskd.path, dev_path);
-		break;
-	}
+    case 1: bx_options.diskd.present = 1;
+            bx_options.diskd.byteswap = byteswap;
+            bx_options.diskd.cylinders = cylinders;
+            bx_options.diskd.heads = heads;
+            bx_options.diskd.spt = spt;
+            strcpy(bx_options.diskd.path, dev_path);
+	    break;
+    }
+    if (cylinders || heads || spt)
+      D(bug("Geometry of IDE%d: %d/%d/%d %d", number, cylinders, heads, spt, byteswap));
 }
 
 void preset_ide() {
@@ -209,10 +231,10 @@ int decode_switches (int argc, char **argv) {
 
 					extdrives[ driveNo ].rootPath = strdup( path );
 
-					fprintf(stderr, "parameters: installing drive %c:%s:%d\n",
+					D(bug("parameters: installing drive %c:%s:%d",
 							driveNo + 'A',
 							extdrives[ driveNo ].rootPath,
-							extdrives[ driveNo ].halfSensitive);
+							extdrives[ driveNo ].halfSensitive));
 				}
 				break;
 

@@ -24,7 +24,7 @@
 #undef HAVE_GNU_SOURCE
 
 /* Define if using New Debugger */
-#undef NDEBUG
+#undef NEWDEBUG
 
 /* Define if using full MMU */
 #undef FULLMMU

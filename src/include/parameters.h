@@ -7,7 +7,14 @@
 #include "version.h"
 #include "cfgopts.h"
 
-extern void init_ide();
+enum geo_type {
+	geoCylinders,
+	geoHeads,
+	geoSpt,
+	geoByteswap
+};
+
+extern int get_geometry(char *, geo_type geo);
 
 // External filesystem type
 typedef struct {

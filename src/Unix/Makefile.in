@@ -43,6 +43,7 @@ SRCS = ../main.cpp \
 	../ata.cpp \
 	../blitter.cpp \
 	../cdrom.cpp \
+	../cfgopts.c \
 	../dsp.cpp \
 	../emul_op.cpp \
 	../extfs.cpp \
@@ -59,7 +60,7 @@ SRCS = ../main.cpp \
 	../rtc.cpp \
 	../videl.cpp \
 	../yamaha.cpp \
-	../cfgopts.c \
+	$(SYSSRCS) \
 	$(CPUSRCS)
 APP = aranym
 
@@ -147,6 +148,10 @@ bindist: $(APP) bindistdirs
 	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
 	rm -rf tmpdist
 
+devdist: distclean 
+	rm -f aclocal.m4 cmos config.h.in configure
+	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz aranym
+
 depend dep:
 	makedepend $(CPPFLAGS) $(DEFS) -Y. $(SRCS) -p$(OBJ_DIR)/ 2>/dev/null
 	sed -n '/^# DO NOT DELETE THIS LINE -- make depend depends on it./,$$p' < Makefile > Makefile.wrk
@@ -162,7 +167,7 @@ depend dep:
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) -Wall $(CFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) -g -Wall -Wtraditional $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(DEFS) -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.s
 	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 

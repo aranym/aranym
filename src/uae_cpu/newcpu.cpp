@@ -1,5 +1,3 @@
-/* 2001 MJ */
-
  /*
   * UAE - The Un*x Amiga Emulator
   *
@@ -1818,7 +1816,7 @@ void m68k_go (int may_quit)
 // m68k_go() must be reentrant for Execute68k() and Execute68kTrap() to work
 /*
     if (in_m68k_go || !may_quit) {
-	D(bug("Bug! m68k_go is not reentrant."));
+	fprintf(stderr, "Bug! m68k_go is not reentrant."));
 	abort();
     }
 */

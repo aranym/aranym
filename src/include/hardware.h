@@ -1,7 +1,6 @@
 /*
  * $Header$
  *
- * MJ 2001
  */
 
 #ifndef HARDWARE_H
@@ -35,6 +34,9 @@ extern bool isIkbdBufEmpty();
 
 /*
  * $Log$
+ * Revision 1.14  2001/08/13 22:29:06  milan
+ * IDE's params from aranymrc file etc.
+ *
  * Revision 1.13  2001/07/12 22:12:15  standa
  * updateHostScreen() added.
  *
