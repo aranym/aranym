@@ -45,6 +45,7 @@ uint32 TTRAMSize = 0;	// Size of TT-RAM
 uint32 VideoRAMBase = ARANYMVRAMSTART;	// VideoRAM base (Atari address space)
 uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)
 uint32 VideoRAMSize;	// Size of VideoRAM
+uint32 InterruptFlags;
 uint32 MFPInterruptFlags;
 
 uintptr MEMBaseDiff;	// Global offset between a Atari address and its Host equivalent
