@@ -254,9 +254,9 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 
 	D2(panicbug("PC %08x", regs.pc)); 
 
-#ifdef HW_SIGSEGV
-
 	addr -= FMEMORY;
+
+#ifdef HW_SIGSEGV
 
 	if (addr_instr[0] == 0x66) {
 		addr_instr++;

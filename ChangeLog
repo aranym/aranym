@@ -2,6 +2,10 @@
 - uae_cpu/cpu_emulation.h, Unix/cygwin/sigsegv_cygwin.cpp: hwsp and pagehwsp
   address checking modes support on Cygwin.
 
+- Unix/cygwin/sigsegv_cygwin.cpp, Unix/linux/sigsegv_linux.cpp,
+  Unix/xbsd/sigsegv_xbsd.cpp: hwsp and pagehwsp address checking modes fixed
+  (stacked address fault was wrong).
+
 
 2004/08/16 - Xavier
 - Unix/cygwin/sigsegv_cygwin.cpp: fixed GCC warnings.

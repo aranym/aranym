@@ -122,9 +122,9 @@ static void segfault_vec(int x, siginfo_t *sip, struct sigcontext *scp) {
 
 	D2(panicbug("PC %08x", regs.pc)); 
 
-#ifdef HW_SIGSEGV
-
 	addr -= FMEMORY;
+
+#ifdef HW_SIGSEGV
 
 	if (addr_instr[0] == 0x66) {
 		addr_instr++;
