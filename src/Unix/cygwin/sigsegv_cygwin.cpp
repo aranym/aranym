@@ -1,4 +1,5 @@
 #include <SDL_endian.h>
+#include "cpu_emulation.h"
 
 #define SIGSEGV_HANDLER_GOTO 0
 
@@ -34,7 +35,6 @@ enum type_size_t {
 #include <csignal>
 
 #if 0
-#include "sysdeps.h"
 #include "memory.h"
 #endif
 
@@ -76,15 +76,21 @@ typedef void (*sighandler_t)(int);
 #define CONTEXT_ESI    CONTEXT_NAME->Esi
 #define CONTEXT_EDI    CONTEXT_NAME->Edi
 
+#endif /* OS_cygwin */
+
+/******************************************************************************/
+
+#ifdef NO_NESTED_SIGSEGV
+
+JMP_BUF sigsegv_env;
+
 static void
 atari_bus_fault(void)
 {
 	LONGJMP(excep_env, 2);
 }
 
-#endif /* OS_cygwin */
-
-/******************************************************************************/
+#endif /* NO_NESTED_SIGSEGV */
 
 #if (__i386__)
 
@@ -604,20 +610,10 @@ label_INSTR_UNKNOWN:
 	if ((addr < 0x00f00000) || (addr > 0x00ffffff))
 		goto buserr;
 
-#ifdef OS_cygwin
-	/* Generate bus error here so we can cleanly exit sigsegv handler.
-	   Windows does not support nested sigsegv.
-	   FIXME: handles only the subset needed to boot Afros or TOS 4.04.
-	   FIXME: slows down hardware emulation.
-	   FIXME: May cause trouble if new hardware emulation is added to
-	          ARAnyM.
-	*/
-	if ((addr == 0x00ff8400) || /* TT Palette registers */
-	    (addr == 0x00ff8e09) || /* Mega STe and TT VME expansion port */
-	    (addr == 0x00fffa42) || /* Mega ST(e) math coprocessor (68 881)*/
-	    (addr == 0x00fffc21))   /* Mega ST real time clock */
+#ifdef NO_NESTED_SIGSEGV
+	if (SETJMP(sigsegv_env) != 0)
 		goto buserr;
-#endif /* OS_cygwin */
+#endif /* NO_NESTED_SIGSEGV */
 
 	preg = get_preg(reg, CONTEXT_NAME, size);
 
@@ -884,13 +880,13 @@ buserr:
 
 #endif /* HW_SIGSEGV */
 
-	regs.mmu_fault_addr = addr;
+#ifdef NO_NESTED_SIGSEGV
 	in_handler = 0;
-#ifdef OS_cygwin
+	regs.mmu_fault_addr = addr;
 	CONTEXT_EIP = (long unsigned int)atari_bus_fault;
-#else /* OS_cygwin */
-	LONGJMP(excep_env, 2);
-#endif /* OS_cygwin */
+#else /* NO_NESTED_SIGSEGV */
+	BUS_ERROR(addr);
+#endif /* NO_NESTED_SIGSEGV */
 }
 
 #endif /* (__i386__) */

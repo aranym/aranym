@@ -101,11 +101,16 @@ static inline void WriteInt8(memptr addr, uint8 b) {put_byte(addr, b);}
 //extern JMP_BUF excep_env;
 //
 #ifdef HW_SIGSEGV
+#ifdef NO_NESTED_SIGSEGV
+extern JMP_BUF sigsegv_env;
+# define BUS_ERROR(a)	{ LONGJMP(sigsegv_env, 1); }
+#else /* NO_NESTED_SIGSEGV */
 extern int in_handler;
 # define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); in_handler = 0; LONGJMP(excep_env, 2); }
-#else
+#endif /* NO_NESTED_SIGSEGV */
+#else /* HW_SIGSEGV */
 # define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); LONGJMP(excep_env, 2); }
-#endif
+#endif /* HW_SIGSEGV */
 
 // For address validation
 static inline bool ValidAtariAddr(memptr addr, bool write, uint32 len) { return phys_valid_address(addr, write, len); }
