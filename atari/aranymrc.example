@@ -1,32 +1,68 @@
-; This is example of ~/.aranymrc file
+; This is example of "$HOME/.aranym/config" file
 
 [GLOBAL]
-; If you want debugger to start automatically, uncomment the next line
-; DebugOnStart = Yes
+; amount of FastRAM in megabytes. You also need to start FASTRAM.PRG.
+FastRAM = 0
+
+; Atari floppy device (GEMDOS A:) is mapped to host floppy block device
+Floppy = /dev/fd0
 
 ; path to TOS 4.04
 TOS = /usr/local/share/aranym/ROM
 
 ; path to EmuTOS - if EmuTOS is defined the TOS= is ignored
-; EmuTOS = /usr/local/share/aranym/EmuTOS
+EmuTOS = 
 
-; amount of FastRAM in megabytes. You also need to start FASTRAM.PRG.
-FastRAM = 32
+; grab mouse to ARAnyM window when the mouse enters the window rectangle
+AutoGrabMouse = Yes
 
-; Atari floppy device (GEMDOS A:) is mapped to host floppy block device
-Floppy = /dev/fd0
+[STARTUP]
+; grab mouse at startup
+GrabMouse = Yes
+
+; start ARAnyM with debugger
+Debugger = No
+
+[VIDEO]
+; start ARAnyM in fullscreen
+FullScreen = No
+
+; set the booting color depth (-1 = don't change NVRAM setting)
+BootColorDepth = -1
+
+; VIDEL generated screen copied to host screen at 50/VidelRefresh (50/2 = 25 Hz)
+VidelRefresh = 2
+
+; set the connected monitor (-1 = don't change NVRAM setting)
+VidelMonitor = -1
+
+[TOS]
+; patch TOS _MCH cookie value (30000 is the TOS 4.04 value and means Falcon030)
+Cookie_MCH = 30000
+
+; redirect TOS bconout characters to the host console window
+Console = No
+
+[ARANYMFS]
+A = 
+B = 
+C = 
+D = 
+E = 
+F = 
+G = 
 
 ; IDE Devices configuration
 ; update the Cylinders/Heads/SectorsPerTrack according to your drive geometry!
 [IDE0]
 Present = Yes
 Path = /home/user/.aranym/diskImageC
-Cylinders = 940
-Heads = 14
-SectorsPerTrack = 40
+Cylinders = 2100
+Heads = 16
+SectorsPerTrack = 63
 ByteSwap = No
 
 [IDE1]
 Present = Yes
 IsCDROM = Yes
-Path = /dev/hdd
+Path = /dev/hdc
