@@ -418,15 +418,216 @@ int keysymToAtari(SDL_keysym keysym)
 /*********************************************************************
  * Input event checking
  *********************************************************************/
-
+static bool pendingQuit = false;
+static bool canGrabMouseAgain = true;
 static int but = 0;
+static bool mouseOut = false;
+
+void process_keyboard_event(SDL_Event event)
+{
+	bool pressed = (event.type == SDL_KEYDOWN);
+	SDL_keysym keysym = event.key.keysym;
+	SDLKey sym = keysym.sym;
+	int state = keysym.mod;	// SDL_GetModState();
+	bool shifted = state & KMOD_SHIFT;
+	bool controlled = state & KMOD_CTRL;
+	bool alternated = state & KMOD_ALT;
+	bool send2Atari = true;
+
+	// process special hotkeys
+	if (pressed) {
+		switch(sym) {
+			case SDLK_ESCAPE:
+				if (controlled && alternated) {
+					releaseTheMouse();
+					canGrabMouseAgain = false;	// let it leave our window
+					send2Atari = false;
+				}
+				break;
+
+			case SDLK_PAUSE:
+				if (shifted) {
+					pendingQuit = true;
+					send2Atari = false;
+				}
+				else if (controlled) {
+					send2Atari = false;
+					Restart680x0();	// force Cold Reboot
+				}
+#ifdef DEBUGGER
+				else if (bx_options.startup.debugger && alternated) {
+					releaseTheMouse();
+					canGrabMouseAgain = false;	// let it leave our window
+					// activate debugger
+					activate_debugger();
+					send2Atari = false;
+				}
+#endif
+#ifdef SDL_GUI
+				else
+					pendingQuit = Dialog_DoProperty();
+#endif
+				break;
+
+			case SDLK_PRINT:
+				if (alternated) {
+					hostScreen.makeSnapshot();
+					send2Atari = false;
+				}
+				if (controlled) {
+					bx_hard_drive.set_cd_media_status(bx_hard_drive.get_cd_media_status() == 0);
+					send2Atari = false;
+				}
+				break;
+
+			case SDLK_SCROLLOCK:
+				hostScreen.toggleFullScreen();
+				send2Atari = false;
+				break;
+
+			default: break;
+		}
+	}
+
+	// map special keys to Atari range of scancodes
+	if (sym == SDLK_PAGEUP) {
+		if (pressed) {
+			if (! shifted)
+				ikbd.send(0x2a);	// press and hold LShift
+			ikbd.send(0x48);	// press keyUp
+		}
+		else {
+			ikbd.send(0xc8);	// release keyUp
+			if (! shifted)
+				ikbd.send(0xaa);	// release LShift
+		}
+		send2Atari = false;
+	}
+	else if (sym == SDLK_PAGEDOWN) {
+		if (pressed) {
+			if (! shifted)
+				ikbd.send(0x2a);	// press and hold LShift
+			ikbd.send(0x50);	// press keyDown
+		}
+		else {
+			ikbd.send(0xd0);	// release keyDown
+			if (! shifted)
+				ikbd.send(0xaa);	// release LShift
+		}
+		send2Atari = false;
+	}
+
+	// send all pressed keys to IKBD
+	if (send2Atari) {
+		int scanAtari = keysymToAtari(keysym);
+		D(bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = '%s' ($%02x)", keysym.scancode, keysym.scancode, scanAtari, scanAtari, SDL_GetKeyName(sym), sym));
+		if (scanAtari > 0) {
+			if (!pressed)
+				scanAtari |= 0x80;
+			ikbd.send(scanAtari);
+		}
+	}
+}
+
+void process_mouse_event(SDL_Event event)
+{
+	int xrel = 0;
+	int yrel = 0;
+	int lastbut = but;
+	if (event.type == SDL_MOUSEBUTTONDOWN) {
+		// eve.type/state/button
+		if (event.button.button == SDL_BUTTON_RIGHT) {
+			if (grabbedMouse)
+					but |= 1;
+		}
+		else if (event.button.button == SDL_BUTTON_LEFT) {
+			if (grabbedMouse)
+				but |= 2;
+			else
+				grabTheMouse();
+		}
+		else if (event.button.button == 4) {	/* mouse wheel Up */
+			ikbd.send(0x48);	// press keyUp
+			return;
+		}
+		else if (event.button.button == 5) {	/* mouse wheel Down */
+			ikbd.send(0x50);	// press keyDown
+			return;
+		}
+	}
+	else if (event.type == SDL_MOUSEBUTTONUP) {
+		if (event.button.button == SDL_BUTTON_RIGHT)
+			but &= ~1;
+		else if (event.button.button == SDL_BUTTON_LEFT)
+			but &= ~2;
+		else if (event.button.button == 4) {	/* mouse wheel Up */
+			ikbd.send(0xc8);	// release keyUp
+			return;
+		}
+		else if (event.button.button == 5) {	/* mouse wheel Down */
+			ikbd.send(0xd0);	// release keyDown
+			return;
+		}
+	}
+	else if (event.type == SDL_MOUSEMOTION) {
+		SDL_MouseMotionEvent eve = event.motion;
+		xrel = eve.xrel;
+		yrel = eve.yrel;
+
+		if (xrel < -127 || xrel > 127)
+			xrel = 0;
+		if (yrel < -127 || yrel > 127)
+			yrel = 0;
+	}
+
+	// send the mouse data packet
+	if (xrel || yrel || lastbut != but) {
+		ikbd.send(0xf8 | but);
+		ikbd.send(xrel);
+		ikbd.send(yrel);
+	}
+
+	if (! bx_options.video.fullscreen && aradata.isAtariMouseDriver()) {
+		// check whether user doesn't try to go out of window (top or left)
+		if ((xrel < 0 && aradata.getAtariMouseX() == 0) ||
+			(yrel < 0 && aradata.getAtariMouseY() == 0))
+			mouseOut = true;
+
+		// same check but for bottom and right side of our window
+		if ((xrel > 0 && aradata.getAtariMouseX() >= (int32)hostScreen.getWidth() - 1) ||
+			(yrel > 0 && aradata.getAtariMouseY() >= (int32)hostScreen.getHeight() - 1))
+			mouseOut = true;
+	}
+}
+
+void process_active_event(SDL_Event event)
+{
+	// if the mouse left our window we will let it be grabbed next time it comes back
+	if (event.active.state == SDL_APPMOUSEFOCUS && !event.active.gain)
+		canGrabMouseAgain = true;
+	else {
+		// if the mouse is comming back after it left our window and
+		// if we have input focus and
+		// if we can grab the mouse automatically and
+		// if the Atari mouse driver works then let's grab it!
+		if (SDL_GetAppState() & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) {
+			if (bx_options.autoMouseGrab && canGrabMouseAgain && aradata.isAtariMouseDriver())
+				grabTheMouse();
+		}
+	}
+
+#if DEBUG
+	if (event.active.state == SDL_APPMOUSEFOCUS) {
+		D(bug("We %s mouse focus", event.active.gain ? "got" : "lost"));
+	}
+	else if (event.active.state == SDL_APPINPUTFOCUS) {
+		D(bug("We %s input focus", event.active.gain ? "got" : "lost"));
+	}
+#endif
+}
+
 void check_event()
 {
-	bool pendingQuit = false;
-	static bool mouseOut = false;
-	static bool canGrabMouseAgain = true;
-
-
 	if (!bx_options.video.fullscreen && mouseOut) {
 		// host mouse moved but the Atari mouse did not => mouse is
 		// probably at the Atari screen border. Ungrab it and warp the host mouse at
@@ -438,203 +639,16 @@ void check_event()
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		int type = event.type;
+
 		if (type == SDL_KEYDOWN || type == SDL_KEYUP) {
-			bool pressed = (type == SDL_KEYDOWN);
-			SDL_keysym keysym = event.key.keysym;
-			SDLKey sym = keysym.sym;
-			int state = keysym.mod;	// SDL_GetModState();
-			bool shifted = state & KMOD_SHIFT;
-			bool controlled = state & KMOD_CTRL;
-			bool alternated = state & KMOD_ALT;
-			bool send2Atari = true;
-
-			// process special hotkeys
-			if (pressed) {
-				switch(sym) {
-					case SDLK_ESCAPE:
-						if (controlled && alternated) {
-							releaseTheMouse();
-							canGrabMouseAgain = false;	// let it leave our window
-							send2Atari = false;
-						}
-						break;
-
-					case SDLK_PAUSE:
-						if (shifted) {
-							pendingQuit = true;
-							send2Atari = false;
-						}
-						else if (controlled) {
-							send2Atari = false;
-							Restart680x0();	// force Cold Reboot
-						}
-#ifdef DEBUGGER
-						else if (bx_options.startup.debugger && alternated) {
-							releaseTheMouse();
-							canGrabMouseAgain = false;	// let it leave our window
-							// activate debugger
-							activate_debugger();
-							send2Atari = false;
-						}
-#endif
-#ifdef SDL_GUI
-						else
-							pendingQuit = Dialog_DoProperty();
-#endif
-						break;
-
-					case SDLK_PRINT:
-						if (alternated) {
-							hostScreen.makeSnapshot();
-							send2Atari = false;
-						}
-						if (controlled) {
-							bx_hard_drive.set_cd_media_status(bx_hard_drive.get_cd_media_status() == 0);
-							send2Atari = false;
-						}
-						break;
-
-					case SDLK_SCROLLOCK:
-						hostScreen.toggleFullScreen();
-						send2Atari = false;
-						break;
-
-					default: break;
-				}
-			}
-
-			// map special keys to Atari range of scancodes
-			if (sym == SDLK_PAGEUP) {
-				if (pressed) {
-					if (! shifted)
-						ikbd.send(0x2a);	// press and hold LShift
-					ikbd.send(0x48);	// press keyUp
-				}
-				else {
-					ikbd.send(0xc8);	// release keyUp
-					if (! shifted)
-						ikbd.send(0xaa);	// release LShift
-				}
-				send2Atari = false;
-			}
-			else if (sym == SDLK_PAGEDOWN) {
-				if (pressed) {
-					if (! shifted)
-						ikbd.send(0x2a);	// press and hold LShift
-					ikbd.send(0x50);	// press keyDown
-				}
-				else {
-					ikbd.send(0xd0);	// release keyDown
-					if (! shifted)
-						ikbd.send(0xaa);	// release LShift
-				}
-				send2Atari = false;
-			}
-
-			// send all pressed keys to IKBD
-			if (send2Atari) {
-				int scanAtari = keysymToAtari(keysym);
-				D(bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = '%s' ($%02x)", keysym.scancode, keysym.scancode, scanAtari, scanAtari, SDL_GetKeyName(sym), sym));
-				if (scanAtari > 0) {
-					if (!pressed)
-						scanAtari |= 0x80;
-					ikbd.send(scanAtari);
-				}
-			}
+			process_keyboard_event(event);
 		}
 		else if (type == SDL_MOUSEBUTTONDOWN || type == SDL_MOUSEBUTTONUP
 				 || type == SDL_MOUSEMOTION && grabbedMouse) {
-			int xrel = 0;
-			int yrel = 0;
-			int lastbut = but;
-			if (type == SDL_MOUSEBUTTONDOWN) {
-				// eve.type/state/button
-				if (event.button.button == SDL_BUTTON_RIGHT) {
-					if (grabbedMouse)
-							but |= 1;
-				}
-				else if (event.button.button == SDL_BUTTON_LEFT) {
-					if (grabbedMouse)
-						but |= 2;
-					else
-						grabTheMouse();
-				}
-				else if (event.button.button == 4) {	/* mouse wheel Up */
-					ikbd.send(0x48);	// press keyUp
-					return;
-				}
-				else if (event.button.button == 5) {	/* mouse wheel Down */
-					ikbd.send(0x50);	// press keyDown
-					return;
-				}
-			}
-			else if (type == SDL_MOUSEBUTTONUP) {
-				if (event.button.button == SDL_BUTTON_RIGHT)
-					but &= ~1;
-				else if (event.button.button == SDL_BUTTON_LEFT)
-					but &= ~2;
-				else if (event.button.button == 4) {	/* mouse wheel Up */
-					ikbd.send(0xc8);	// release keyUp
-					return;
-				}
-				else if (event.button.button == 5) {	/* mouse wheel Down */
-					ikbd.send(0xd0);	// release keyDown
-					return;
-				}
-			}
-			else if (type == SDL_MOUSEMOTION) {
-				SDL_MouseMotionEvent eve = event.motion;
-				xrel = eve.xrel;
-				yrel = eve.yrel;
-
-				if (xrel < -127 || xrel > 127)
-					xrel = 0;
-				if (yrel < -127 || yrel > 127)
-					yrel = 0;
-			}
-
-			// send the mouse data packet
-			if (xrel || yrel || lastbut != but) {
-				ikbd.send(0xf8 | but);
-				ikbd.send(xrel);
-				ikbd.send(yrel);
-			}
-
-			if (! bx_options.video.fullscreen && aradata.isAtariMouseDriver()) {
-				// check whether user doesn't try to go out of window (top or left)
-				if ((xrel < 0 && aradata.getAtariMouseX() == 0) ||
-					(yrel < 0 && aradata.getAtariMouseY() == 0))
-					mouseOut = true;
-
-				// same check but for bottom and right side of our window
-				if ((xrel > 0 && aradata.getAtariMouseX() >= (int32)hostScreen.getWidth() - 1) ||
-					(yrel > 0 && aradata.getAtariMouseY() >= (int32)hostScreen.getHeight() - 1))
-					mouseOut = true;
-			}
+			process_mouse_event(event);
 		}
 		else if (event.type == SDL_ACTIVEEVENT) {
-			// if the mouse left our window we will let it be grabbed next time it comes back
-			if (event.active.state == SDL_APPMOUSEFOCUS && !event.active.gain)
-				canGrabMouseAgain = true;
-			else {
-				// if the mouse is comming back after it left our window and
-				// if we have input focus and
-				// if we can grab the mouse automatically and
-				// if the Atari mouse driver works then let's grab it!
-				if (SDL_GetAppState() & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) {
-					if (bx_options.autoMouseGrab && canGrabMouseAgain && aradata.isAtariMouseDriver())
-						grabTheMouse();
-				}
-			}
-
-#if DEBUG
-			if (event.active.state == SDL_APPMOUSEFOCUS) {
-				D(bug("We %s mouse focus", event.active.gain ? "got" : "lost"));
-			}
-			else if (event.active.state == SDL_APPINPUTFOCUS) {
-				D(bug("We %s input focus", event.active.gain ? "got" : "lost"));
-			}
-#endif
+			process_active_event(event);
 		}
 
 		else if (event.type == SDL_QUIT) {
