@@ -133,7 +133,8 @@ uae_u32 handleRead(uaecptr addr) {
 		return midi.handleRead(addr);
 
 	else if (addr == 0xff8006)
-		return 0xa6;
+		return 0xa6;	// a6 = 14MB, 96 = 4MB on VGA
+		// return 0xe6;	// 14 MB on TV
 	else if (addr == 0xff8007)
 		return 0x61;
 	else if (addr == 0xffa202)
