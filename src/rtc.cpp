@@ -17,7 +17,7 @@ int byte14th = VGA:TV ? line doubling : half screen;
 
 RTC::RTC() {
 	addr = 0;
-	cmos[24] = 10;	// boot delay
+	cmos[24] = 0;	// boot delay
 //	cmos[29] = 59;	// 256 colors with 80 columns on PAL VGA
 	cmos[29] = 60;	// TC colors on PAL VGA
 	setChecksum();	// in case somebody edited the cmos array manually
