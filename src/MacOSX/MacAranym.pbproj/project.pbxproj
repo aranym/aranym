@@ -151,7 +151,6 @@
 				F580C1EF05A7148B01DAC342,
 				F580C1E805A7148B01DAC342,
 				F580C1E605A7148B01DAC342,
-				F580C1F105A7148B01DAC342,
 				F580C20505A714AF01DAC342,
 				F580C20605A714AF01DAC342,
 				F580C20405A714AF01DAC342,
@@ -279,6 +278,19 @@
 			files = (
 				F580C42705A7166801DAC342,
 				F5A4EB1005AD4A9B013BD142,
+				F5826A4505D124440197DD2A,
+				F5826A4605D124B90197DD2A,
+				F5826A4705D124BB0197DD2A,
+				F58019DB05D1868F014E74AC,
+				F58022EB05D1A4A3014E74AC,
+				F58022EC05D1A4B7014E74AC,
+				F58022ED05D1A4C9014E74AC,
+				F58022EE05D1A4CE014E74AC,
+				F58022EF05D1A4CE014E74AC,
+				F58022F005D1A4DE014E74AC,
+				F58022F105D1A504014E74AC,
+				F58022F205D1A52F014E74AC,
+				F58022F305D1A532014E74AC,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -310,7 +322,6 @@
 				F580533105A7D136014C3AB3,
 				F580533205A7D13F014C3AB3,
 				F580533305A7D144014C3AB3,
-				F580533405A7D146014C3AB3,
 				F580533505A7D14A014C3AB3,
 				F580533605A7D14E014C3AB3,
 				F580533705A7D152014C3AB3,
@@ -376,7 +387,6 @@
 				F580C4E105A71D4201DAC342,
 				F580C78105A71FC001DAC342,
 				F580532005A73CEA014C3AB3,
-				F5A145C105A7EA78017C0BEF,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -441,6 +451,66 @@
 		};
 		F58013AD05A87DA70142E13B = {
 			fileRef = F5A47A9E01A0483001D3D55B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58019DB05D1868F014E74AC = {
+			fileRef = F580C28705A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58022EB05D1A4A3014E74AC = {
+			fileRef = F580C29E05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58022EC05D1A4B7014E74AC = {
+			fileRef = F580C28E05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58022ED05D1A4C9014E74AC = {
+			fileRef = F580C29C05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58022EE05D1A4CE014E74AC = {
+			fileRef = F580C28405A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58022EF05D1A4CE014E74AC = {
+			fileRef = F580C28505A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58022F005D1A4DE014E74AC = {
+			fileRef = F580C2A605A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58022F105D1A504014E74AC = {
+			fileRef = F580C30105A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58022F205D1A52F014E74AC = {
+			fileRef = F580C22705A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58022F305D1A532014E74AC = {
+			fileRef = F580C23205A7151301DAC342;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -537,12 +607,6 @@
 		};
 		F580533305A7D144014C3AB3 = {
 			fileRef = F580C1E605A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533405A7D146014C3AB3 = {
-			fileRef = F580C1F105A7148B01DAC342;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -853,11 +917,6 @@
 		F580C1EF05A7148B01DAC342 = {
 			isa = PBXFileReference;
 			path = dsp_disasm.cpp;
-			refType = 4;
-		};
-		F580C1F105A7148B01DAC342 = {
-			isa = PBXFileReference;
-			path = fdc.cpp;
 			refType = 4;
 		};
 		F580C1F305A7148B01DAC342 = {
@@ -1990,6 +2049,24 @@
 			settings = {
 			};
 		};
+		F5826A4505D124440197DD2A = {
+			fileRef = F580C34205A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5826A4605D124B90197DD2A = {
+			fileRef = F580C2E205A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5826A4705D124BB0197DD2A = {
+			fileRef = F580C2FF05A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F587863205B7C555011F64EC = {
 			buildActionMask = 2147483647;
 			files = (
@@ -2183,6 +2260,7 @@
 		F58C107D05B7B8120154426E = {
 			buildActionMask = 2147483647;
 			files = (
+				F5A5241A05CC4EE901B3881A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2335,12 +2413,6 @@
 			path = /System/Library/Frameworks/OpenGL.framework;
 			refType = 0;
 		};
-		F5A145C105A7EA78017C0BEF = {
-			fileRef = F5A145AF05A7EA78017C0BEF;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F5A47A9E01A0483001D3D55B = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2353,8 +2425,14 @@
 			settings = {
 			};
 		};
+		F5A5241A05CC4EE901B3881A = {
+			fileRef = F580C28B05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5F07EA405B9698B012DB10D = {
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			generatedFileNames = (
@@ -2364,7 +2442,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $PWD\ncd ../Unix\n./configure --enable-fixedvideoram";
+			shellScript = "cd $PWD\ncd ../Unix\nexport ACLOCAL_FLAGS=\"-I /usr/local/share/aclocal\"\n./autogen.sh --enable-fixedvideoram --enable-dsp-disasm";
 		};
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA;

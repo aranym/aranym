@@ -1,5 +1,5 @@
 [GLOBAL]
-FastRAM = 0
+FastRAM = 32
 Floppy = 
 TOS = 
 
@@ -38,8 +38,8 @@ IsCDROM = No
 ByteSwap = No
 ReadOnly = No
 
-# replace $HOME with your user directory (/users/....)
-Path = $HOME/library/Application Support/aranym/data/disk.img
+# setup path for disk image
+Path = disk.img
 Cylinders = 8
 Heads = 16
 SectorsPerTrack = 63

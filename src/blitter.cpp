@@ -273,13 +273,13 @@ HOP_OPS(_HOP_3_OP_15_P,(0xffff) ,source_buffer <<=16,source_buffer |= ((unsigned
 void hop2op3p( BLITTER& b )
 {
 #if BLITTER_MEMMOVE
-	if (videl.getScreenBpp() == 16) {
+	if (getVIDEL ()->getScreenBpp() == 16) {
 #if BLITTER_SDLBLIT
 		if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
 			SDL_Rect src, dest;
 			int src_offset = b.source_addr - ARANYMVRAMSTART;
 			int dest_offset = b.dest_addr - ARANYMVRAMSTART;
-			int VidelScreenWidth = videl.getScreenWidth();
+			int VidelScreenWidth = getVIDEL ()->getScreenWidth();
 			src.x = (src_offset % (2*VidelScreenWidth))/2;
 			src.y = (src_offset / (2*VidelScreenWidth));
 			src.w = dest.w = b.x_count;
@@ -296,7 +296,7 @@ void hop2op3p( BLITTER& b )
 #endif /* BLITTER_SDLBLIT */
 		do
 		{
-			memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2);
+			memmove(phys_get_real_address(b.dest_addr), phys_get_real_address(b.source_addr), b.x_count*2);
 			b.source_addr += ((b.x_count-1)*b.source_x_inc)+b.source_y_inc;
 			b.dest_addr += ((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc;
 		} while (--b.y_count > 0);
@@ -309,7 +309,7 @@ void hop2op3p( BLITTER& b )
 void hop2op3n( BLITTER& b )
 {
 #if BLITTER_MEMMOVE
-	if (videl.getScreenBpp() == 16) {
+	if (getVIDEL ()->getScreenBpp() == 16) {
 		b.source_addr += ((b.x_count-1)*b.source_x_inc);
 		b.dest_addr += ((b.x_count-1)*b.dest_x_inc);
 #if BLITTER_SDLBLIT
@@ -319,7 +319,7 @@ void hop2op3n( BLITTER& b )
 			SDL_Rect src, dest;
 			int src_offset = b.source_addr - ARANYMVRAMSTART;
 			int dest_offset = b.dest_addr - ARANYMVRAMSTART;
-			int VidelScreenWidth = videl.getScreenWidth();
+			int VidelScreenWidth = getVIDEL ()->getScreenWidth();
 			src.x = (src_offset % (2*VidelScreenWidth))/2;
 			src.y = (src_offset / (2*VidelScreenWidth));
 			src.w = dest.w = b.x_count;
@@ -334,7 +334,7 @@ void hop2op3n( BLITTER& b )
 #endif /* BLITTER_SDLBLIT */
 		do
 		{
-			memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2);
+			memmove(phys_get_real_address(b.dest_addr), phys_get_real_address(b.source_addr), b.x_count*2);
 			b.source_addr += ((b.x_count)*b.source_x_inc)+b.source_y_inc;
 			b.dest_addr += ((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc;
 		} while (--b.y_count > 0);

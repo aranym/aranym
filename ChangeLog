@@ -1,3 +1,11 @@
+2004/02/05 joy (on behalf of Carlo)
+- MacOSX/*: modified the project for version 0.8.6. Also included a shell
+  script for calling the autogen.sh inside the project.
+
+- blitter.cpp: updated for getVIDEL(), fixed wrong parameters in the memmove
+  call (BLITTER_MEMMOVE only)
+
+
 2004/02/04 2:11am - joy (dedicated to Konrad :)
 - rtc.cpp: fixed two real scary bugs. How could this code work previously??
   Weird that these bugs didn't appear under Linux for so long. Sorry guys :)
