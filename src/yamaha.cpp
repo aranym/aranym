@@ -42,7 +42,7 @@ YAMAHA::YAMAHA(memptr addr, uint32 size) : BASE_IO(addr, size) {
 void YAMAHA::reset()
 {
 	active_reg = 0;
-	for(int i=0; i<sizeof(yamaha_regs)/sizeof(yamaha_regs[0]); i++)
+	for(unsigned int i=0; i<sizeof(yamaha_regs)/sizeof(yamaha_regs[0]); i++)
 		yamaha_regs[i] = 0;
 }
 
