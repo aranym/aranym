@@ -6,7 +6,7 @@
 #define DEBUG 1
 #include "debug.h"
 
-#define ARANYMHOME		"/aranym"
+#define ARANYMHOME		"/.aranym"
 #define ARANYMCONFIG	ARANYMHOME"/config"
 #define ARANYMNVRAM		ARANYMHOME"/nvram"
 #define ARANYMKEYMAP	ARANYMHOME"/keymap"
@@ -41,7 +41,6 @@ char *config_file = NULL;
 
 static uint32 FastRAMSizeMB;
 uint32 FastRAMSize;
-ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 
 static bool saveConfigFile = false;
 
@@ -235,39 +234,39 @@ void presave_ide() {
 
 /*************************************************************************/
 struct Config_Tag arafs_conf[]={
-	{ "A", String_Tag, &extdrives[0].rootPath},
-	{ "B", String_Tag, &extdrives[1].rootPath},
-	{ "C", String_Tag, &extdrives[2].rootPath},
-	{ "D", String_Tag, &extdrives[3].rootPath},
-	{ "E", String_Tag, &extdrives[4].rootPath},
-	{ "F", String_Tag, &extdrives[5].rootPath},
-	{ "G", String_Tag, &extdrives[6].rootPath},
-	{ "H", String_Tag, &extdrives[7].rootPath},
-	{ "I", String_Tag, &extdrives[8].rootPath},
-	{ "J", String_Tag, &extdrives[9].rootPath},
-	{ "K", String_Tag, &extdrives[10].rootPath},
-	{ "L", String_Tag, &extdrives[11].rootPath},
-	{ "M", String_Tag, &extdrives[12].rootPath},
-	{ "N", String_Tag, &extdrives[13].rootPath},
-	{ "O", String_Tag, &extdrives[14].rootPath},
-	{ "P", String_Tag, &extdrives[15].rootPath},
-	{ "Q", String_Tag, &extdrives[16].rootPath},
-	{ "R", String_Tag, &extdrives[17].rootPath},
-	{ "S", String_Tag, &extdrives[18].rootPath},
-	{ "T", String_Tag, &extdrives[19].rootPath},
-	{ "U", String_Tag, &extdrives[20].rootPath},
-	{ "V", String_Tag, &extdrives[21].rootPath},
-	{ "W", String_Tag, &extdrives[22].rootPath},
-	{ "X", String_Tag, &extdrives[23].rootPath},
-	{ "Y", String_Tag, &extdrives[24].rootPath},
-	{ "Z", String_Tag, &extdrives[25].rootPath},
+	{ "A", String_Tag, &bx_options.aranymfs[0].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "B", String_Tag, &bx_options.aranymfs[1].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "C", String_Tag, &bx_options.aranymfs[2].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "D", String_Tag, &bx_options.aranymfs[3].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "E", String_Tag, &bx_options.aranymfs[4].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "F", String_Tag, &bx_options.aranymfs[5].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "G", String_Tag, &bx_options.aranymfs[6].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "H", String_Tag, &bx_options.aranymfs[7].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "I", String_Tag, &bx_options.aranymfs[8].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "J", String_Tag, &bx_options.aranymfs[9].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "K", String_Tag, &bx_options.aranymfs[10].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "L", String_Tag, &bx_options.aranymfs[11].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "M", String_Tag, &bx_options.aranymfs[12].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "N", String_Tag, &bx_options.aranymfs[13].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "O", String_Tag, &bx_options.aranymfs[14].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "P", String_Tag, &bx_options.aranymfs[15].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "Q", String_Tag, &bx_options.aranymfs[16].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "R", String_Tag, &bx_options.aranymfs[17].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "S", String_Tag, &bx_options.aranymfs[18].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "T", String_Tag, &bx_options.aranymfs[19].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "U", String_Tag, &bx_options.aranymfs[20].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "V", String_Tag, &bx_options.aranymfs[21].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "W", String_Tag, &bx_options.aranymfs[22].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "X", String_Tag, &bx_options.aranymfs[23].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "Y", String_Tag, &bx_options.aranymfs[24].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
+	{ "Z", String_Tag, &bx_options.aranymfs[25].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
 	{ NULL , Error_Tag, NULL }
 };
 
 void preset_arafs() {
 	for(int i=0; i < 'Z'-'A'+1; i++) {
-		extdrives[i].rootPath[0] = '\0';
-		extdrives[i].halfSensitive = true;
+		bx_options.aranymfs[i].rootPath[0] = '\0';
+		bx_options.aranymfs[i].halfSensitive = true;
 	}
 }
 
@@ -449,7 +448,7 @@ int process_cmdline(int argc, char **argv)
 					colonPos++;
 					char* colonPos2 = strchr( colonPos, ':' );
 
-					extdrives[ driveNo ].halfSensitive = (colonPos2 == NULL); //halfSensitive if the third part is NOT set;
+					bx_options.aranymfs[ driveNo ].halfSensitive = (colonPos2 == NULL); //halfSensitive if the third part is NOT set;
 
 					// copy the path only
 					if ( colonPos2 == NULL )
@@ -457,12 +456,12 @@ int process_cmdline(int argc, char **argv)
 					strncpy( path, colonPos, colonPos2 - colonPos );
 					path[ colonPos2 - colonPos ] = '\0';
 
-					extdrives[ driveNo ].rootPath = strdup( path );
+					strncpy( bx_options.aranymfs[ driveNo ].rootPath, path, sizeof(bx_options.aranymfs[ driveNo ].rootPath) - 1 );
 
 					D(bug("parameters: installing drive %c:%s:%d",
 							driveNo + 'A',
-							extdrives[ driveNo ].rootPath,
-							extdrives[ driveNo ].halfSensitive));
+							bx_options.aranymfs[ driveNo ].rootPath,
+							bx_options.aranymfs[ driveNo ].halfSensitive));
 				}
 				break;
 

@@ -1,3 +1,7 @@
+2002/01/08 - STanda
+- The aranymfs config file setting finished (thanks to JOY)
+- up and running
+
 2002/01/08 - joy
 - the config file format and location has changed (now at $HOME/.aranym/config)
 - most global config variables moved to bx_options struct

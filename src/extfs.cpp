@@ -53,17 +53,17 @@ void ExtFs::init()
 {
 	// go through the drive table and assign drives their rootPaths
 	for( char i = 'B'-'A'; i < 'Z'-'A'; i++ ) {
-		// D(bug("MetaDOS: init %c:%s", i + 'A', extdrives[i].rootPath ? extdrives[i].rootPath : "null"));
+		// D(bug("MetaDOS: init %c:%s", i + 'A', bx_options.aranymfs[i].rootPath ? bx_options.aranymfs[i].rootPath : "null"));
 
-		if ( extdrives[i].rootPath != NULL )
-			install( i+'A', extdrives[i].rootPath, extdrives[i].halfSensitive );
+		if ( bx_options.aranymfs[i].rootPath[0] != '\0' )
+			install( i+'A', bx_options.aranymfs[i].rootPath, bx_options.aranymfs[i].halfSensitive );
 	}
 }
 
 uint32 ExtFs::getDrvBits() {
 	uint32 drvBits = 0;
 	for(int i='B'-'A'; i<'Z'-'A'; i++)
-		if (extdrives[i].rootPath != NULL)
+		if (drives[i].rootPath != NULL)
 			drvBits |= (1 << i);
 
 	return drvBits;
@@ -1600,6 +1600,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.19  2001/12/11 21:04:32  standa
+ * Debug set to 0
+ *
  * Revision 1.18  2001/12/04 09:37:04  standa
  * One more Frename condition optimalization.
  *

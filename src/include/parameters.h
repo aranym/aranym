@@ -19,8 +19,8 @@ extern int get_geometry(char *, geo_type geo);
 // External filesystem type
 typedef struct {
 	bool halfSensitive;
-	char *rootPath;
-} ExtDrive;
+	char rootPath[512];
+} bx_aranymfs_options;
 
 typedef struct {
   char path[512];
@@ -81,11 +81,12 @@ typedef struct {
 */
 
 typedef struct {
-  bx_floppy_options floppy;
+  bx_floppy_options    floppy;
   // bx_floppy_options floppyb;
-  bx_disk_options   diskc;
-  bx_disk_options   diskd;
-  bx_cdrom_options  cdromd;
+  bx_disk_options      diskc;
+  bx_disk_options      diskd;
+  bx_cdrom_options     cdromd;
+  bx_aranymfs_options  aranymfs[ 'Z' - 'A' ];
 //  bx_cookies_options cookies;
   bx_video_options	video;
   bx_tos_options	tos;
@@ -103,7 +104,7 @@ typedef struct {
 
 extern bx_options_t bx_options;
 
-extern ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
+
 extern uint32 FastRAMSize;	// Size of Fast-RAM
 
 extern char *program_name;
