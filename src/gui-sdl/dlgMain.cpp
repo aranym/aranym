@@ -63,10 +63,9 @@ int Dialog_MainDlg()
 
   Screen_Save();
 
-  /*
   if (SDLGui_PrepareFont() == -1)
-  	return false;
-  */
+  	return 0;
+
   hostScreen.lock();
   SDL_ShowCursor(SDL_ENABLE);
   hostScreen.unlock();
@@ -112,6 +111,8 @@ int Dialog_MainDlg()
   hostScreen.lock();
   SDL_ShowCursor(SDL_DISABLE);
   hostScreen.unlock();
+
+  SDLGui_FreeFont();
 
   return(retbut==MAINDLG_OK);
 }
