@@ -243,7 +243,10 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 		for (y=0;y<jpgd_ptr->YLoopCounter;y++) {
 			/* Decode Y row in OutTmpPointer */
 			nfCall((NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, y));
-			jpgd_ptr->OutTmpHeight = 16;
+			jpgd_ptr->OutTmpHeight = jpgd_ptr->MFDBPixelHeight - y*16;
+			if (jpgd_ptr->OutTmpHeight > 16) {
+				jpgd_ptr->OutTmpHeight = 16;
+			}
 
 			if (jpgd_ptr->UserRoutine) {
 				CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->UserRoutine);

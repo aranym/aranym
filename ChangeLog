@@ -1,3 +1,8 @@
+2005/01/21 - Patrice
+- nfjpeg: Decoding images, with width not multiple of 16 works in Brainstorm's
+  viewer. Zview has a bug in its plugin.
+
+
 2005/01/20 - Patrice
 - nfjpeg: More fixes, now Brainstorm's JPEG viewer works, but images with width
   not multiple of 16 have a problem.
