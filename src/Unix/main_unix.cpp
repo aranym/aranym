@@ -28,6 +28,7 @@
 #include <pthread.h>
 
 #include <linux/fb.h>
+#include "SDL.h"
 #include <sys/mman.h>
 
 #include "cpu_emulation.h"
@@ -69,24 +70,65 @@ static uint32 mapped_ram_rom_size;		// Total size of mmap()ed RAM/ROM area
 static void *tick_func(void *arg);
 static void one_tick(...);
 
-void MakeIRQ();	// hardware.cpp
 void init_fdc();	// fdc.cpp
+
+extern int irqindebug;
 
 
 /*
  *  Ersatz functions
  */
 
+int SelectVideoMode() {
+	SDL_Rect **modes;
+	int i;
+
+	/* Get available fullscreen/hardware modes */
+	modes=SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_HWSURFACE);
+
+	/* Check is there are any modes available */
+	if(modes == (SDL_Rect **)0){
+		printf("No modes available!\n");
+		exit(-1);
+	}
+
+	/* Check if or resolution is restricted */
+	if(modes == (SDL_Rect **)-1){
+		printf("All resolutions available.\n");
+	}
+	else {
+		/* Print valid modes */
+		printf("Available Modes\n");
+		for(i=0;modes[i];++i)
+			printf("  %d x %d\n", modes[i]->w, modes[i]->h);
+	}
+}
 
 /*
  *  Main program
  */
 #define MAXDRIVES	32
 int drive_fd[MAXDRIVES];
+SDL_Surface *surf = NULL;
 
 int main(int argc, char **argv)
 {
 	char str[256];
+
+	if (SDL_Init(SDL_INIT_VIDEO) != 0)
+		return 1;
+	atexit(SDL_Quit);
+	SelectVideoMode();
+	surf = SDL_SetVideoMode(640, 480, 0, SDL_HWSURFACE);
+	fprintf(stderr, "Line Length = %d\n", surf->pitch);
+	fprintf(stderr, "Must Lock? %s\n", SDL_MUSTLOCK(surf) ? "YES" : "NO");
+	if (SDL_MUSTLOCK(surf))
+		SDL_LockSurface(surf);
+	VideoRAMBaseHost = (uint8 *)surf->pixels;
+//	memset(VideoRAMBaseHost, 0xff, 640*480*2);
+	if (SDL_MUSTLOCK(surf))
+		SDL_UnlockSurface(surf);
+	SDL_UpdateRect(surf, 0, 0, 640, 480);
 
 	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
 
@@ -142,7 +184,7 @@ int main(int argc, char **argv)
 	RAMBase = 0;
 	ROMBase = RAMBase + aligned_ram_size;
 
-/*
+#ifdef USE_FB
 	char *fbname;
 	fbname = getenv("FRAMEBUFFER");
 	if (!fbname) fbname = "/dev/fb0";
@@ -160,12 +202,14 @@ int main(int argc, char **argv)
 	if ((VideoRAMBaseHost = (uint8 *)mmap((void *)0,VideoRAMSize, PROT_READ | PROT_WRITE, MAP_SHARED, fb, 0)) == (void *)-1) {
 		ErrorAlert("mmap failed\n");
 	}
-*/
+#endif
+
 	InitMEMBaseDiff(RAMBaseHost, RAMBase);
 	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
 	D(bug("ST-RAM starts at %p (%08x)\n", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)\n", ROMBaseHost, ROMBase));
 	D(bug("VideoRAM starts at %p (%08x)\n", VideoRAMBaseHost, VideoRAMBase));
+	fprintf(stderr, "Physical VRAM = %x\n", VideoRAMBaseHost);
 	
 	// Get rom file path from preferences
 	const char *rom_path = "ROM";
@@ -178,7 +222,7 @@ int main(int argc, char **argv)
 	}
 	printf("Reading ROM file...\n");
 	ROMSize = lseek(rom_fd, 0, SEEK_END);
-	if (ROMSize != 64*1024 && ROMSize != 128*1024 && ROMSize != 256*1024 && ROMSize != 512*1024 && ROMSize != 1024*1024) {
+	if (ROMSize != 512*1024) {
 		ErrorAlert("Invalid ROM size\n");
 		close(rom_fd);
 		QuitEmulator();
@@ -189,6 +233,50 @@ int main(int argc, char **argv)
 		close(rom_fd);
 		QuitEmulator();
 	}
+
+	// patch ROM
+	int offset = 0x08b92;
+	uae_u8 * patchX = ROMBaseHost + offset;
+	*patchX++ = 0x2e;	// b92
+	*patchX++ = 0x3c;
+	*patchX++ = 0xf0;
+	*patchX++ = 0x00;
+	*patchX++ = 0x00;
+	*patchX++ = 0x00;
+	*patchX++ = 0x2c;	// b98
+	*patchX++ = 0x07;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
+
+	patchX = ROMBaseHost + 0x8bbe;
+	*patchX++ = 0x4e;
+	*patchX++ = 0x71;
 
 	// Initialize everything
 	if (!InitAll())
@@ -222,6 +310,7 @@ int main(int argc, char **argv)
 	Start680x0();
 
 	QuitEmulator();
+
 	return 0;
 }
 
@@ -303,36 +392,95 @@ void ClearInterruptFlag(uint32 flag)
 const int TICKSPERSEC = 200U;
 const int MICROSECSPERTICK = (1000000UL / TICKSPERSEC);
 
-static void one_second(void)
-{
-/*
-	// Pseudo Mac 1Hz interrupt, update local time
-	WriteMacInt32(0x20c, TimerDateTime());
+static int keyboardTable[0x80] = {
+/* 0-7 */0, SDLK_ESCAPE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6,
+/* 8-f */SDLK_7, SDLK_8, SDLK_9, SDLK_0, SDLK_EQUALS, SDLK_QUOTE, SDLK_BACKSPACE, SDLK_TAB,
+/*10-17*/SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u, SDLK_i,
+/*18-1f*/SDLK_o, SDLK_p, SDLK_LEFTPAREN, SDLK_RIGHTPAREN, SDLK_RETURN, SDLK_LCTRL, SDLK_a, SDLK_s,
+/*20-27*/SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k, SDLK_l, SDLK_SEMICOLON,
+/*28-2f*/SDLK_QUOTE, SDLK_HASH, SDLK_LSHIFT, SDLK_BACKQUOTE, SDLK_z, SDLK_x, SDLK_c, SDLK_v,
+/*30-37*/SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH, SDLK_RSHIFT, 0,
+/*38-3f*/SDLK_LALT, SDLK_SPACE, SDLK_CAPSLOCK, SDLK_F1, SDLK_F2, SDLK_F3, SDLK_F4, SDLK_F5,
+/*40-47*/SDLK_F6, SDLK_F7, SDLK_F8, SDLK_F9, SDLK_F10, 0, 0, SDLK_HOME,
+/*48-4f*/SDLK_UP, 0, SDLK_KP_PLUS, SDLK_LEFT, 0, SDLK_RIGHT, SDLK_KP_MINUS, 0,
+/*50-57*/SDLK_DOWN, 0, SDLK_INSERT, SDLK_DELETE, SDLK_F11, SDLK_F12, 0, 0,
+/*58-5f*/0, 0, 0, 0, 0, 0, 0, 0,
+/*60-67*/SDLK_LESS, SDLK_PAGEDOWN, SDLK_PAGEUP};
 
-	SetInterruptFlag(INTFLAG_1HZ);
-	TriggerInterrupt();
-*/
-//	fprintf(stderr, "one second: ($4BA) = %ld\n", ReadMacInt32(0x4ba));
-	// SetInterruptFlag(INTFLAG_1HZ);
-	// TriggerVBL();
+static int buttons[3]={0,0,0};
+
+static void check_event(void)
+{
+	SDL_Event event;
+	while(SDL_PollEvent(&event)) {
+		int type = event.type;
+		if (type == SDL_KEYDOWN || type == SDL_KEYUP) {
+			bool pressed = (type == SDL_KEYDOWN);
+			int sym = event.key.keysym.sym;
+			if (sym == SDLK_END)
+				QuitEmulator();
+			for(int i=0; i < 0x62; i++) {
+				if (keyboardTable[i] == sym) {
+					if (! pressed)
+						i |= 0x80;
+					ikbd_send(i);
+					break;
+				}
+			}
+		}
+		else if (type == SDL_MOUSEBUTTONDOWN || type == SDL_MOUSEBUTTONUP || type == SDL_MOUSEMOTION) {
+			int xrel = 0;
+			int yrel = 0;
+			int but = 0;
+			if (type == SDL_MOUSEMOTION) {
+				SDL_MouseMotionEvent eve = event.motion;
+				//eve.type/state/x,y/xrel,yrel
+				xrel = eve.xrel;
+				yrel = eve.yrel;
+			}
+			else if (SDL_MOUSEBUTTONDOWN) {
+			// eve.type/state/button
+				but = 1;
+			}
+			if (xrel || yrel || but) {
+				ikbd_send(0xf8 | but << 1);
+				ikbd_send(xrel);
+				ikbd_send(yrel);
+			}
+		}
+		else if (event.type == SDL_QUIT)
+			QuitEmulator();
+	}
 }
 
 static void one_tick(...)
 {
-	static int tick_counter = 0;
 	static int VBL_counter = 0;
+	static int event_counter = 0;
+#if 0
+	static int tick_counter = 0;
 	if (++tick_counter > TICKSPERSEC) {
 		tick_counter = 0;
-		one_second();
+		// one second
 	}
+#endif
 	if (++VBL_counter > 4) {
 		VBL_counter = 0;
-		TriggerVBL();
+
+		if (!debugging || irqindebug) {
+			TriggerVBL();
+			check_event();
+		}
+		if (++event_counter > 25) {
+			event_counter = 0;
+			SDL_UpdateRect(surf, 0, 0, 640, 480);
+		}
 	}
 
 	// Trigger 200Hz interrupt
 	// SetInterruptFlag(INTFLAG_200HZ);
-	MakeIRQ();
+	if (!debugging || irqindebug)
+		MakeMFPIRQ(5);
 }
 
 static void *tick_func(void *arg)
