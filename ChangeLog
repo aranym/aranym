@@ -1,3 +1,5 @@
+* tagged as ARANYM_0_9_0_BETA
+
 2005/02/20 - Petr
 - atari/aranymrc.example moved to doc/config and updated with all current
   config options
@@ -6,6 +8,12 @@
 
 - doc/documentation.txt updated (networking, LILO)
   doc/aranym-lilo.txt removed
+
+- Makefile.in: NFJPEG and NFOSMESA added
+
+- aranym.spec: LILO added to MMU build
+
+- README, BUGS, NEWS, include/version.h: updated for new release
 
 
 2005/02/18 - Patrice
