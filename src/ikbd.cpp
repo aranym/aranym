@@ -381,7 +381,7 @@ void IKBD::SendMouseMotion(int relx, int rely, int buttons)
 
 		/* Send the packet */
 		intype = IKBD_PACKET_MOUSE;
-		send(0xf8 | (buttons & 3));
+		send(0xf8 | ((buttons != -1) ? (buttons & 3) : 0));
 		send(movex);
 		send(movey);
 
