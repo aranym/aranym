@@ -8,6 +8,7 @@
 #include <SDL.h>
 
 void InputInit();
+void InputReset();
 void hideMouse(bool hide);
 bool grabMouse(bool grab);
 void grabTheMouse();

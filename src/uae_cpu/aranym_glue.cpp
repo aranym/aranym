@@ -28,6 +28,7 @@
 #include "cpu_emulation.h"
 #include "newcpu.h"
 #include "hardware.h"
+#include "input.h"
 #ifdef USE_JIT
 # include "compiler/compemu.h"
 #endif
@@ -136,6 +137,9 @@ void AtariReset(void)
 	HWReset();
 	// reset NatFeats here
 	NFReset();
+	// reset the input devices (input.cpp)
+	InputReset();
+
 }
 
 /*
