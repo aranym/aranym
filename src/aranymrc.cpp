@@ -140,7 +140,7 @@ TSetWindow::TSetWindow(const TRect& r, const char *aTitle, short aNumber):
         sGlobal->insert( sDebugger );
 
 	sFastRAMSize = new TInputLine(TRect(43, 2, 54, 3), 10);
-	sprintf(FRAMS, "%d", FastRAMSizeMB);
+	sprintf(FRAMS, "%d", FastRAMSize / 1024 / 1024);
 	sFastRAMSize->setData(FRAMS);
 	sGlobal->insert(sFastRAMSize);
 	sGlobal->insert(new TLabel(TRect(20, 2, 42, 3), "FastRAM size (in MB):", sFastRAMSize));
@@ -324,8 +324,7 @@ void TSetWindow::saveSet() {
 	sTOS->getData(rom_path);
 
 	sFastRAMSize->getData(FRAMS);
-	FastRAMSizeMB = atoi(FRAMS);
-	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
+	FastRAMSize = atoi(FRAMS) * 1024 * 1024;
 
 	if (sIDE0i->mark(0)) bx_options.diskc.present = 1;
 		else bx_options.diskc.present = 0;
@@ -389,6 +388,9 @@ int main(int argc, char **argv)
 
 /*
  * $Log$
+ * Revision 1.4  2001/10/16 19:38:44  milan
+ * Integration of BasiliskII' cxmon, FastRAM in aranymrc etc.
+ *
  * Revision 1.3  2001/10/09 19:25:19  milan
  * MemAlloc's rewriting
  *
