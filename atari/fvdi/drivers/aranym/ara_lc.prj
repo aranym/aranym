@@ -1,0 +1,18 @@
+aranym.sys
+.C	[-b0 -b4 -r6 -v -d0 -m0 -rs -fm -i..\..\include\ -i..\include\ -j*e]
+.S	[-d -m0 -i..\..\include\]
+.L	[DRISYM TTMALLOC TTLOAD ADDSYM]
+=
+..\COMMON\INIT.C	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h,../../include/relocate.h)
+..\COMMON\COLOURS.C		[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h,../../include/relocate.h)
+..\COMMON\LINEACHK.S	(../../include/vdi.inc,../../include/types.inc,../../include/linea.inc)
+..\COMMON\CLIP.S		(../../include/vdi.inc,../../include/types.inc)
+..\COMMON\COMMON.S	(../../include/vdi.inc,../../include/types.inc)
+C_COMMON.S	(../../include/vdi.inc,../../include/types.inc)
+spec.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -i..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
+dispatch.s	(../../include/vdi.inc,../../include/types.inc)
+not_def.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
+8b_pal.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
+palette.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
+32b_pal.c	[-b0 -b4 -r6 -v -d1 -m0 -rs -fm -i..\..\include\ -j*e -Oloop,alias]	(../../include/fvdi.h)
+LC.LIB

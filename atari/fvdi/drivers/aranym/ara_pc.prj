@@ -1,0 +1,19 @@
+aranym.sys
+.C	[-X -Y -P -I=f:\fvdi\include\ -I=f:\fvdi\drivers\include\]
+.S	[-3 -S -Y -I=f:\fvdi\include]
+.L
+=
+..\COMMON\PUREC.S
+..\COMMON\INIT.C	(..\..\include\fvdi.h,..\..\include\relocate.h)
+..\COMMON\COLOURS.C	(..\..\include\fvdi.h,..\..\include\relocate.h)
+..\COMMON\LINEACHK.S	(..\..\include\vdi.inc,..\..\include\types.inc,..\include\linea.inc)
+..\COMMON\CLIP.S	(..\..\include\vdi.inc,..\..\include\types.inc)
+..\COMMON\COMMON.S	(..\..\include\vdi.inc,..\..\include\types.inc)
+C_COMMON.S	(..\..\include\vdi.inc,..\..\include\types.inc)
+spec.c	(..\..\include\fvdi.h)
+dispatch.s	(..\..\include\vdi.inc,..\..\include\types.inc)
+not_def.c
+8b_pal.c	(..\..\include\vdi.inc,..\..\include\types.inc)
+palette.c	(..\..\include\vdi.inc,..\..\include\types.inc)
+32b_pal.c	(..\..\include\vdi.inc,..\..\include\types.inc)
+PCSTDLIB.LIB       ; standard library
