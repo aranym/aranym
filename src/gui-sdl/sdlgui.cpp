@@ -362,13 +362,11 @@ int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy)
   Show and process a dialog. Returns the button number that has been
   pressed or -1 if something went wrong.
 */
-int mousedown(SGOBJ *dlg, SDL_Event evnt)
+int mousedown(SGOBJ *dlg, SDL_Event evnt, int *oldbutton)
 {
-  int obj=0;
-  int oldbutton=0;
   int retbutton=0;
 
-          obj = SDLGui_FindObj(dlg, evnt.button.x, evnt.button.y);
+          int obj = SDLGui_FindObj(dlg, evnt.button.x, evnt.button.y);
           if(obj>0)
           {
             if(dlg[obj].type==SGBUTTON)
@@ -377,7 +375,7 @@ int mousedown(SGOBJ *dlg, SDL_Event evnt)
               SDLGui_DrawButton(dlg, obj);
               SDL_UpdateRect(sdlscrn, (dlg[0].x+dlg[obj].x)*fontwidth-2, (dlg[0].y+dlg[obj].y)*fontheight-2,
                              dlg[obj].w*fontwidth+4, dlg[obj].h*fontheight+4);
-              oldbutton=obj;
+              *oldbutton=obj;
             }
             if( dlg[obj].flags&SG_TOUCHEXIT )
             {
@@ -388,20 +386,18 @@ int mousedown(SGOBJ *dlg, SDL_Event evnt)
 	return retbutton;
 }
 
-int mouseup(SGOBJ *dlg, SDL_Event evnt, Uint32 grey)
+int mouseup(SGOBJ *dlg, SDL_Event evnt, int *oldbutton, Uint32 grey)
 {
-  int obj=0;
-  int oldbutton=0;
   int retbutton=0;
   SDL_Rect rct;
   int i;
-          obj = SDLGui_FindObj(dlg, evnt.button.x, evnt.button.y);
+          int obj = SDLGui_FindObj(dlg, evnt.button.x, evnt.button.y);
           if(obj>0)
           {
             switch(dlg[obj].type)
             {
               case SGBUTTON:
-                if(oldbutton==obj)
+                if(*oldbutton==obj)
                   retbutton=obj;
                 break;
               case SGRADIOBUT:
@@ -451,13 +447,13 @@ int mouseup(SGOBJ *dlg, SDL_Event evnt, Uint32 grey)
                 break;
             }
           }
-          if(oldbutton>0)
+          if(*oldbutton>0)
           {
-            dlg[oldbutton].state &= ~SG_SELECTED;
-            SDLGui_DrawButton(dlg, oldbutton);
-            SDL_UpdateRect(sdlscrn, (dlg[0].x+dlg[oldbutton].x)*fontwidth-2, (dlg[0].y+dlg[oldbutton].y)*fontheight-2,
-                           dlg[oldbutton].w*fontwidth+4, dlg[oldbutton].h*fontheight+4);
-            oldbutton = 0;
+            dlg[*oldbutton].state &= ~SG_SELECTED;
+            SDLGui_DrawButton(dlg, *oldbutton);
+            SDL_UpdateRect(sdlscrn, (dlg[0].x+dlg[*oldbutton].x)*fontwidth-2, (dlg[0].y+dlg[*oldbutton].y)*fontheight-2,
+                           dlg[*oldbutton].w*fontwidth+4, dlg[*oldbutton].h*fontheight+4);
+            *oldbutton = 0;
           }
           if( dlg[obj].flags&SG_EXIT )
           {
@@ -506,10 +502,10 @@ int SDLGui_DoDialog(SGOBJ *dlg)
           bQuitProgram = true;
           break;
         case SDL_MOUSEBUTTONDOWN:
-          retbutton = mousedown(dlg, evnt);
+          retbutton = mousedown(dlg, evnt, &oldbutton);
           break;
         case SDL_MOUSEBUTTONUP:
-          retbutton = mouseup(dlg, evnt, grey);
+          retbutton = mouseup(dlg, evnt, &oldbutton, grey);
           break;
       }
   }
