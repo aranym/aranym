@@ -733,7 +733,7 @@ PRIVATE inline void FFPU extract_double(fp_register const & src, uae_u32 * wrd1,
 // to_pack
 PRIVATE inline fp_register FFPU make_packed(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3)
 {
-	fp_double d;
+	fpu_double d;
 	char *cp;
 	char str[100];
 

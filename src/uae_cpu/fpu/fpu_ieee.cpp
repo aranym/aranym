@@ -198,7 +198,7 @@ PRIVATE inline fp_register FFPU make_single(uae_u32 value)
 #if 1
 	// Use a single, otherwise some checks for NaN, Inf, Zero would have to
 	// be performed
-	fp_single result;
+	fpu_single result;
 	fp_declare_init_shape(srp, result, single);
 	srp->ieee.negative	= (value >> 31) & 1;
 	srp->ieee.exponent	= (value >> 23) & FP_SINGLE_EXP_MAX;
@@ -228,7 +228,7 @@ PRIVATE inline fp_register FFPU make_single(uae_u32 value)
 PRIVATE inline uae_u32 FFPU extract_single(fp_register const & src)
 {
 #if 1
-	fp_single input = (fp_single) src;
+	fpu_single input = (fpu_single) src;
 	fp_declare_init_shape(sip, input, single);
 	uae_u32 result	= (sip->ieee.negative << 31)
 					| (sip->ieee.exponent << 23)
@@ -266,7 +266,7 @@ PRIVATE inline fp_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u3
 {
 #if 1
 	// FIXME: USE_QUAD_DOUBLE
-	fp_extended result;
+	fpu_extended result;
 	fp_declare_init_shape(srp, result, extended);
 	srp->ieee.negative	= (wrd1 >> 31) & 1;
 	srp->ieee.exponent	= (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
@@ -424,7 +424,7 @@ PRIVATE inline void FFPU extract_extended(fp_register const & src,
 PRIVATE inline fp_register FFPU make_double(uae_u32 wrd1, uae_u32 wrd2)
 {
 	union {
-		fp_double value;
+		fpu_double value;
 		uae_u32   parts[2];
 	} dest;
 #ifdef WORDS_BIGENDIAN
@@ -444,10 +444,10 @@ PRIVATE inline void FFPU extract_double(fp_register const & src,
 )
 {
 	union {
-		fp_double value;
+		fpu_double value;
 		uae_u32   parts[2];
 	} dest;
-	dest.value = (fp_double)src;
+	dest.value = (fpu_double)src;
 #ifdef WORDS_BIGENDIAN
 	*wrd1 = dest.parts[0];
 	*wrd2 = dest.parts[1];
@@ -461,7 +461,7 @@ PRIVATE inline void FFPU extract_double(fp_register const & src,
 // to_pack
 PRIVATE inline fp_register FFPU make_packed(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3)
 {
-	fp_double d;
+	fpu_double d;
 	char *cp;
 	char str[100];
 

@@ -59,9 +59,9 @@ typedef long double uae_f64;
 
 /* Original UAE FPU registers are only 8 bytes long */
 typedef uae_f64		fp_register;
-typedef fp_register	fp_extended;
-typedef uae_f64		fp_double;
-typedef uae_f32		fp_single;
+typedef fp_register	fpu_extended;
+typedef uae_f64		fpu_double;
+typedef uae_f32		fpu_single;
 
 /* -------------------------------------------------------------------------- */
 /* --- Optimized core for x86                                             --- */
@@ -95,9 +95,9 @@ typedef long double fp_register;
 #endif
 
 /* X86 FPU has a custom register type that maps to a native X86 register */
-typedef fp_register	fp_extended;
-typedef uae_f64		fp_double;
-typedef uae_f32		fp_single;
+typedef fp_register	fpu_extended;
+typedef uae_f64		fpu_double;
+typedef uae_f32		fpu_single;
 
 /* -------------------------------------------------------------------------- */
 /* --- C99 implementation                                                 --- */
@@ -139,9 +139,9 @@ typedef uae_f128 fp_register;
 #define	USE_LONG_DOUBLE 1
 
 /* We need all those floating-point types */
-typedef fp_register	fp_extended;
-typedef uae_f64		fp_double;
-typedef uae_f32		fp_single;
+typedef fp_register	fpu_extended;
+typedef uae_f64		fpu_double;
+typedef uae_f32		fpu_single;
 
 #endif
 

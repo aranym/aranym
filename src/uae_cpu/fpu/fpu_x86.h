@@ -110,11 +110,11 @@ PRIVATE __inline__ void FFPU MAKE_ZERO_NEGATIVE (fp_register & f);
 PRIVATE uae_s32 FFPU extended_to_signed_32 ( fp_register const & f ) REGPARAM;
 PRIVATE uae_s16 FFPU extended_to_signed_16 ( fp_register const & f ) REGPARAM;
 PRIVATE uae_s8 FFPU extended_to_signed_8 ( fp_register const & f ) REGPARAM;
-PRIVATE fp_double FFPU extended_to_double( fp_register const & f ) REGPARAM;
+PRIVATE fpu_double FFPU extended_to_double( fp_register const & f ) REGPARAM;
 PRIVATE uae_u32 FFPU from_single ( fp_register const & f ) REGPARAM;
 PRIVATE void FFPU from_exten ( fp_register const & f, uae_u32 *wrd1, uae_u32 *wrd2, uae_u32 *wrd3 ) REGPARAM;
 PRIVATE void FFPU from_double ( fp_register const & f, uae_u32 *wrd1, uae_u32 *wrd2 ) REGPARAM;
-PRIVATE void FFPU from_pack (fp_double src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3) REGPARAM;
+PRIVATE void FFPU from_pack (fpu_double src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3) REGPARAM;
 
 // Conversion to extended floating-point values
 PRIVATE void FFPU signed_to_extended ( uae_s32 x, fp_register & f ) REGPARAM;
@@ -123,7 +123,7 @@ PRIVATE void FFPU to_single ( uae_u32 src, fp_register & f ) REGPARAM;
 PRIVATE void FFPU to_exten_no_normalize ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fp_register & f ) REGPARAM;
 PRIVATE void FFPU to_exten ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fp_register & f ) REGPARAM;
 PRIVATE void FFPU to_double ( uae_u32 wrd1, uae_u32 wrd2, fp_register & f ) REGPARAM;
-PRIVATE fp_double FFPU to_pack(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3) REGPARAM;
+PRIVATE fpu_double FFPU to_pack(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3) REGPARAM;
 
 // Atomic floating-point arithmetic operations
 PRIVATE void FFPU do_fmove ( fp_register & dest, fp_register const & src ) REGPARAM;

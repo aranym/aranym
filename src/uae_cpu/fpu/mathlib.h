@@ -97,9 +97,9 @@ using namespace std;
 // Taken from glibc 2.2.x: ieee754.h
 
 // IEEE-754 float format
-union fp_single_shape {
+union fpu_single_shape {
 	
-	fp_single value;
+	fpu_single value;
 
 	/* This is the IEEE 754 single-precision format.  */
 	struct {
@@ -133,8 +133,8 @@ union fp_single_shape {
 };
 
 // IEEE-754 double format
-union fp_double_shape {
-	fp_double value;
+union fpu_double_shape {
+	fpu_double value;
 	
 	/* This is the IEEE 754 double-precision format.  */
 	struct {
@@ -199,8 +199,8 @@ union fp_double_shape {
 
 #ifndef USE_QUAD_DOUBLE
 // IEEE-854 long double format
-union fp_extended_shape {
-	fp_extended value;
+union fpu_extended_shape {
+	fpu_extended value;
 	
 	/* This is the IEEE 854 double-extended-precision format.  */
 	struct {
@@ -277,8 +277,8 @@ union fp_extended_shape {
 };
 #else
 // IEEE-854 quad double format
-union fp_extended_shape {
-	fp_extended value;
+union fpu_extended_shape {
+	fpu_extended value;
 	
 	/* This is the IEEE 854 quad-precision format.  */
 	struct {
@@ -659,11 +659,11 @@ PRIVATE inline uae_u32 FFPU get_quotient_sign(fp_register const & ra, fp_registe
 
 #ifndef FPU_FAST_MATH
 // FIXME: unimplemented
-PRIVATE fp_extended fp_do_log(fp_extended x);
+PRIVATE fpu_extended fp_do_log(fpu_extended x);
 #else
-PRIVATE inline fp_extended fp_do_log(fp_extended x)
+PRIVATE inline fpu_extended fp_do_log(fpu_extended x)
 {
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("fldln2; fxch; fyl2x" : "=t" (value) : "0" (x) : "st(1)");
 	return value;
 }
@@ -674,11 +674,11 @@ PRIVATE inline fp_extended fp_do_log(fp_extended x)
 
 #ifndef FPU_FAST_MATH
 // FIXME: unimplemented
-PRIVATE fp_extended fp_do_log10(fp_extended x);
+PRIVATE fpu_extended fp_do_log10(fpu_extended x);
 #else
-PRIVATE inline fp_extended fp_do_log10(fp_extended x)
+PRIVATE inline fpu_extended fp_do_log10(fpu_extended x)
 {
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("fldlg2; fxch; fyl2x" : "=t" (value) : "0" (x) : "st(1)");
 	return value;
 }
@@ -689,11 +689,11 @@ PRIVATE inline fp_extended fp_do_log10(fp_extended x)
 
 #ifndef FPU_FAST_MATH
 // FIXME: unimplemented
-PRIVATE fp_extended fp_do_exp(fp_extended x);
+PRIVATE fpu_extended fp_do_exp(fpu_extended x);
 #else
-PRIVATE inline fp_extended fp_do_exp(fp_extended x)
+PRIVATE inline fpu_extended fp_do_exp(fpu_extended x)
 {
-	fp_extended value, exponent;
+	fpu_extended value, exponent;
 	ASM_VOLATILE("fldl2e                    # e^x = 2^(x * log2(e))\n\t"
 				 "fmul      %%st(1)         # x * log2(e)\n\t"
 				 "fst       %%st(1)\n\t"
@@ -711,14 +711,14 @@ PRIVATE inline fp_extended fp_do_exp(fp_extended x)
 #undef fp_pow
 #define fp_pow fp_do_pow
 
-PRIVATE fp_extended fp_do_pow(fp_extended x, fp_extended y);
+PRIVATE fpu_extended fp_do_pow(fpu_extended x, fpu_extended y);
 
 #undef fp_fabs
 #define fp_fabs fp_do_fabs
 
-PRIVATE inline fp_extended fp_do_fabs(fp_extended x)
+PRIVATE inline fpu_extended fp_do_fabs(fpu_extended x)
 {
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("fabs" : "=t" (value) : "0" (x));
 	return value;
 }
@@ -726,9 +726,9 @@ PRIVATE inline fp_extended fp_do_fabs(fp_extended x)
 #undef fp_sqrt
 #define fp_sqrt fp_do_sqrt
 
-PRIVATE inline fp_extended fp_do_sqrt(fp_extended x)
+PRIVATE inline fpu_extended fp_do_sqrt(fpu_extended x)
 {
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("fsqrt" : "=t" (value) : "0" (x));
 	return value;
 }
@@ -736,9 +736,9 @@ PRIVATE inline fp_extended fp_do_sqrt(fp_extended x)
 #undef fp_sin
 #define fp_sin fp_do_sin
 
-PRIVATE inline fp_extended fp_do_sin(fp_extended x)
+PRIVATE inline fpu_extended fp_do_sin(fpu_extended x)
 {
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("fsin" : "=t" (value) : "0" (x));
 	return value;
 }
@@ -746,9 +746,9 @@ PRIVATE inline fp_extended fp_do_sin(fp_extended x)
 #undef fp_cos
 #define fp_cos fp_do_cos
 
-PRIVATE inline fp_extended fp_do_cos(fp_extended x)
+PRIVATE inline fpu_extended fp_do_cos(fpu_extended x)
 {
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("fcos" : "=t" (value) : "0" (x));
 	return value;
 }
@@ -756,9 +756,9 @@ PRIVATE inline fp_extended fp_do_cos(fp_extended x)
 #undef fp_tan
 #define fp_tan fp_do_tan
 
-PRIVATE inline fp_extended fp_do_tan(fp_extended x)
+PRIVATE inline fpu_extended fp_do_tan(fpu_extended x)
 {
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("fptan" : "=t" (value) : "0" (x));
 	return value;
 }
@@ -767,9 +767,9 @@ PRIVATE inline fp_extended fp_do_tan(fp_extended x)
 #define fp_expm1 fp_do_expm1
 
 // Returns: exp(X) - 1.0
-PRIVATE inline fp_extended fp_do_expm1(fp_extended x)
+PRIVATE inline fpu_extended fp_do_expm1(fpu_extended x)
 {
-	fp_extended value, exponent, temp;
+	fpu_extended value, exponent, temp;
 	ASM_VOLATILE("fldl2e                    # e^x - 1 = 2^(x * log2(e)) - 1\n\t"
 				 "fmul      %%st(1)         # x * log2(e)\n\t"
 				 "fst       %%st(1)\n\t"
@@ -787,7 +787,7 @@ PRIVATE inline fp_extended fp_do_expm1(fp_extended x)
 #undef fp_sgn1
 #define fp_sgn1 fp_do_sgn1
 
-PRIVATE inline fp_extended fp_do_sgn1(fp_extended x)
+PRIVATE inline fpu_extended fp_do_sgn1(fpu_extended x)
 {
 	fp_declare_init_shape(sxp, x, extended);
 	sxp->ieee_nan.exponent	= FP_EXTENDED_EXP_MAX;
@@ -803,11 +803,11 @@ PRIVATE inline fp_extended fp_do_sgn1(fp_extended x)
 
 #ifndef FPU_FAST_MATH
 // FIXME: unimplemented
-PRIVATE fp_extended fp_do_sinh(fp_extended x);
+PRIVATE fpu_extended fp_do_sinh(fpu_extended x);
 #else
-PRIVATE inline fp_extended fp_do_sinh(fp_extended x)
+PRIVATE inline fpu_extended fp_do_sinh(fpu_extended x)
 {
-	fp_extended exm1 = fp_expm1(fp_fabs(x));
+	fpu_extended exm1 = fp_expm1(fp_fabs(x));
 	return 0.5 * (exm1 / (exm1 + 1.0) + exm1) * fp_sgn1(x);
 }
 #endif
@@ -817,11 +817,11 @@ PRIVATE inline fp_extended fp_do_sinh(fp_extended x)
 
 #ifndef FPU_FAST_MATH
 // FIXME: unimplemented
-PRIVATE fp_extended fp_do_cosh(fp_extended x);
+PRIVATE fpu_extended fp_do_cosh(fpu_extended x);
 #else
-PRIVATE inline fp_extended fp_do_cosh(fp_extended x)
+PRIVATE inline fpu_extended fp_do_cosh(fpu_extended x)
 {
-	fp_extended ex = fp_exp(x);
+	fpu_extended ex = fp_exp(x);
 	return 0.5 * (ex + 1.0 / ex);
 }
 #endif
@@ -831,11 +831,11 @@ PRIVATE inline fp_extended fp_do_cosh(fp_extended x)
 
 #ifndef FPU_FAST_MATH
 // FIXME: unimplemented
-PRIVATE fp_extended fp_do_tanh(fp_extended x);
+PRIVATE fpu_extended fp_do_tanh(fpu_extended x);
 #else
-PRIVATE inline fp_extended fp_do_tanh(fp_extended x)
+PRIVATE inline fpu_extended fp_do_tanh(fpu_extended x)
 {
-	fp_extended exm1 = fp_expm1(-fp_fabs(x + x));
+	fpu_extended exm1 = fp_expm1(-fp_fabs(x + x));
 	return exm1 / (exm1 + 2.0) * fp_sgn1(-x);
 }
 #endif
@@ -843,9 +843,9 @@ PRIVATE inline fp_extended fp_do_tanh(fp_extended x)
 #undef fp_atan2
 #define fp_atan2 fp_do_atan2
 
-PRIVATE inline fp_extended fp_do_atan2(fp_extended y, fp_extended x)
+PRIVATE inline fpu_extended fp_do_atan2(fpu_extended y, fpu_extended x)
 {
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("fpatan" : "=t" (value) : "0" (x), "u" (y) : "st(1)");
 	return value;
 }
@@ -853,7 +853,7 @@ PRIVATE inline fp_extended fp_do_atan2(fp_extended y, fp_extended x)
 #undef fp_asin
 #define fp_asin fp_do_asin
 
-PRIVATE inline fp_extended fp_do_asin(fp_extended x)
+PRIVATE inline fpu_extended fp_do_asin(fpu_extended x)
 {
 	return fp_atan2(x, fp_sqrt(1.0 - x * x));
 }
@@ -861,7 +861,7 @@ PRIVATE inline fp_extended fp_do_asin(fp_extended x)
 #undef fp_acos
 #define fp_acos fp_do_acos
 
-PRIVATE inline fp_extended fp_do_acos(fp_extended x)
+PRIVATE inline fpu_extended fp_do_acos(fpu_extended x)
 {
 	return fp_atan2(fp_sqrt(1.0 - x * x), x);
 }
@@ -869,9 +869,9 @@ PRIVATE inline fp_extended fp_do_acos(fp_extended x)
 #undef fp_atan
 #define fp_atan fp_do_atan
 
-PRIVATE inline fp_extended fp_do_atan(fp_extended x)
+PRIVATE inline fpu_extended fp_do_atan(fpu_extended x)
 {
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("fld1; fpatan" : "=t" (value) : "0" (x) : "st(1)");
 	return value;
 }
@@ -880,21 +880,21 @@ PRIVATE inline fp_extended fp_do_atan(fp_extended x)
 #define fp_log1p fp_do_log1p
 
 // Returns: ln(1.0 + X)
-PRIVATE fp_extended fp_do_log1p(fp_extended x);
+PRIVATE fpu_extended fp_do_log1p(fpu_extended x);
 
 #undef fp_asinh
 #define fp_asinh fp_do_asinh
 
-PRIVATE inline fp_extended fp_do_asinh(fp_extended x)
+PRIVATE inline fpu_extended fp_do_asinh(fpu_extended x)
 {
-	fp_extended y = fp_fabs(x);
+	fpu_extended y = fp_fabs(x);
 	return (fp_log1p(y * y / (fp_sqrt(y * y + 1.0) + 1.0) + y) * fp_sgn1(x));
 }
 
 #undef fp_acosh
 #define fp_acosh fp_do_acosh
 
-PRIVATE inline fp_extended fp_do_acosh(fp_extended x)
+PRIVATE inline fpu_extended fp_do_acosh(fpu_extended x)
 {
 	return fp_log(x + fp_sqrt(x - 1.0) * fp_sqrt(x + 1.0));
 }
@@ -902,22 +902,22 @@ PRIVATE inline fp_extended fp_do_acosh(fp_extended x)
 #undef fp_atanh
 #define fp_atanh fp_do_atanh
 
-PRIVATE inline fp_extended fp_do_atanh(fp_extended x)
+PRIVATE inline fpu_extended fp_do_atanh(fpu_extended x)
 {
-	fp_extended y = fp_fabs(x);
+	fpu_extended y = fp_fabs(x);
 	return -0.5 * fp_log1p(-(y + y) / (1.0 + y)) * fp_sgn1(x);
 }
 
 #undef fp_floor
 #define fp_floor fp_do_floor
 
-PRIVATE inline fp_extended fp_do_floor(fp_extended x)
+PRIVATE inline fpu_extended fp_do_floor(fpu_extended x)
 {
 	volatile unsigned int cw;
 	ASM_VOLATILE("fnstcw %0" : "=m" (cw));
 	volatile unsigned int cw_temp = (cw & 0xf3ff) | 0x0400; // rounding down
 	ASM_VOLATILE("fldcw %0" : : "m" (cw_temp));
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("frndint" : "=t" (value) : "0" (x));
 	ASM_VOLATILE("fldcw %0" : : "m" (cw));
 	return value;
@@ -926,26 +926,26 @@ PRIVATE inline fp_extended fp_do_floor(fp_extended x)
 #undef fp_ceil
 #define fp_ceil fp_do_ceil
 
-PRIVATE inline fp_extended fp_do_ceil(fp_extended x)
+PRIVATE inline fpu_extended fp_do_ceil(fpu_extended x)
 {
 	volatile unsigned int cw;
 	ASM_VOLATILE("fnstcw %0" : "=m" (cw));
 	volatile unsigned int cw_temp = (cw & 0xf3ff) | 0x0800; // rounding up
 	ASM_VOLATILE("fldcw %0" : : "m" (cw_temp));
-	fp_extended value;
+	fpu_extended value;
 	ASM_VOLATILE("frndint" : "=t" (value) : "0" (x));
 	ASM_VOLATILE("fldcw %0" : : "m" (cw));
 	return value;
 }
 
 #define DEFINE_ROUND_FUNC(rounding_mode_str, rounding_mode)						\
-PRIVATE inline fp_extended fp_do_round_to_ ## rounding_mode_str(fp_extended x)	\
+PRIVATE inline fpu_extended fp_do_round_to_ ## rounding_mode_str(fpu_extended x)	\
 {																				\
 	volatile unsigned int cw;													\
 	ASM_VOLATILE("fnstcw %0" : "=m" (cw));										\
 	volatile unsigned int cw_temp = (cw & 0xf3ff) | (rounding_mode);			\
 	ASM_VOLATILE("fldcw %0" : : "m" (cw_temp));									\
-	fp_extended value;															\
+	fpu_extended value;															\
 	ASM_VOLATILE("frndint" : "=t" (value) : "0" (x));							\
 	ASM_VOLATILE("fldcw %0" : : "m" (cw));										\
 	return value;																\

@@ -40,9 +40,9 @@
 
 #if defined(FPU_IEEE) && defined(X86_ASSEMBLY)
 
-PRIVATE fp_extended fp_do_pow(fp_extended x, fp_extended y)
+PRIVATE fpu_extended fp_do_pow(fpu_extended x, fpu_extended y)
 {
-	fp_extended value, exponent;
+	fpu_extended value, exponent;
 	uae_s64 p = (uae_s64)y;
 	
 	if (x == 0.0) {
@@ -53,7 +53,7 @@ PRIVATE fp_extended fp_do_pow(fp_extended x, fp_extended y)
     }
 	
 	if (y == (double) p) {
-		fp_extended r = 1.0;
+		fpu_extended r = 1.0;
 		if (p == 0)
 			return 1.0;
 		if (p < 0) {
@@ -83,10 +83,10 @@ PRIVATE fp_extended fp_do_pow(fp_extended x, fp_extended y)
 	return value;
 }
 
-PRIVATE fp_extended fp_do_log1p(fp_extended x)
+PRIVATE fpu_extended fp_do_log1p(fpu_extended x)
 {
 	// TODO: handle NaN and +inf/-inf
-	fp_extended value;
+	fpu_extended value;
 	// The fyl2xp1 can only be used for values in
 	//   -1 + sqrt(2) / 2 <= x <= 1 - sqrt(2) / 2
 	// 0.29 is a safe value.

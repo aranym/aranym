@@ -654,7 +654,7 @@ PRIVATE void FFPU double_to_extended ( double x, fp_register & f )
 	FPU_CONSISTENCY_CHECK_STOP("double_to_extended");
 }
 
-PRIVATE fp_double FFPU extended_to_double( fp_register const & f )
+PRIVATE fpu_double FFPU extended_to_double( fp_register const & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
 	double result;
@@ -2107,7 +2107,7 @@ PRIVATE void FFPU do_fcmp ( fp_register & dest, fp_register const & src )
 }
 
 // More or less original. Should be reviewed.
-PRIVATE fp_double FFPU to_pack(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3)
+PRIVATE fpu_double FFPU to_pack(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3)
 {
 	FPU_CONSISTENCY_CHECK_START();
 
@@ -2155,7 +2155,7 @@ PRIVATE fp_double FFPU to_pack(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3)
 }
 
 // More or less original. Should be reviewed.
-PRIVATE void FFPU from_pack (fp_double src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3)
+PRIVATE void FFPU from_pack (fpu_double src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3)
 {
 	FPU_CONSISTENCY_CHECK_START();
 
