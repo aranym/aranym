@@ -1,3 +1,16 @@
+2004/09/02 - joy
+- atari/network/ethernet/ethernet.c, nfeth-config.c: corrected some scary
+  bugs, now it should work but doesn't yet. Seems like the new IOCTLs are
+  blocked somewhere.
+
+
+2004/09/01 - joy
+- tools/arabridge: modified to allow bridging a non-defaultroute interface.
+  Useful for situations when the machine is on public Internet and you don't
+  want to put ARAnyM there. Also all RedHat specific things replaced so now
+  it works on Debian nicely.
+
+
 2004/08/31 - joy
 - atari/network/ethernet/ethernet.c:
   - updated for FreeMiNT 1.16
