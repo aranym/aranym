@@ -18,8 +18,6 @@
 #include "font8.h"
 
 #define sdlscrn		hostScreen.getPhysicalSurface()
-#define scrwidth	hostScreen.getWidth()
-#define scrheight	hostScreen.getHeight()
 
 static SDL_Surface *stdfontgfx=NULL;
 static SDL_Surface *fontgfx=NULL;   /* The actual font graphics */
