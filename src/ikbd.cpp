@@ -210,6 +210,12 @@ void IKBD::WriteData(uae_u8 value)
 					break;
 				case 0x16:
 					D(bug("ikbd: Read joystick"));
+					{
+						// send a joystick packet to make GFA Basic happy
+						intype = IKBD_PACKET_JOYSTICK;
+						send(0xfe | 1);
+						send(joy_state[1]);
+					}
 					outwrite = 0;
 					break;
 				case 0x18:
