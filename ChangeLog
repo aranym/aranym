@@ -1,3 +1,9 @@
+2003/06/26 - joy
+- emul_op.cpp: QuitEmulator() removed from handling of an undefined emul_op.
+  That way undefined emul_op can be used for debugging (it displays all
+  registers).
+
+
 2003/05/26 - milan
 - configure.ac, fpu_ieee.cpp: Sparc problem solved, see "2003/04/23 - milan"
   and GCC bugs #8300 and #9763
