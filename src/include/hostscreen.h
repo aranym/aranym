@@ -271,14 +271,15 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 	for (int l = bpp - 1; l >= 0; l--) {
 		uint16 data = atariBitplaneData[l]; // note: this is about 2000 dryhstones sppedup (the local variable)
 
-		colorValues[ 0] <<= 1;	colorValues[ 0] |= (data >>	 7) & 1;
-		colorValues[ 1] <<= 1;	colorValues[ 1] |= (data >>	 6) & 1;
-		colorValues[ 2] <<= 1;	colorValues[ 2] |= (data >>	 5) & 1;
-		colorValues[ 3] <<= 1;	colorValues[ 3] |= (data >>	 4) & 1;
-		colorValues[ 4] <<= 1;	colorValues[ 4] |= (data >>	 3) & 1;
-		colorValues[ 5] <<= 1;	colorValues[ 5] |= (data >>	 2) & 1;
-		colorValues[ 6] <<= 1;	colorValues[ 6] |= (data >>	 1) & 1;
-		colorValues[ 7] <<= 1;	colorValues[ 7] |= (data >>	 0) & 1;
+#if SDL_BYTEORDER != SDL_BIG_ENDIAN
+		colorValues[ 0] <<= 1;	colorValues[ 0] |= (data >>  7) & 1;
+		colorValues[ 1] <<= 1;	colorValues[ 1] |= (data >>  6) & 1;
+		colorValues[ 2] <<= 1;	colorValues[ 2] |= (data >>  5) & 1;
+		colorValues[ 3] <<= 1;	colorValues[ 3] |= (data >>  4) & 1;
+		colorValues[ 4] <<= 1;	colorValues[ 4] |= (data >>  3) & 1;
+		colorValues[ 5] <<= 1;	colorValues[ 5] |= (data >>  2) & 1;
+		colorValues[ 6] <<= 1;	colorValues[ 6] |= (data >>  1) & 1;
+		colorValues[ 7] <<= 1;	colorValues[ 7] |= (data >>  0) & 1;
 
 		colorValues[ 8] <<= 1;	colorValues[ 8] |= (data >> 15) & 1;
 		colorValues[ 9] <<= 1;	colorValues[ 9] |= (data >> 14) & 1;
@@ -286,8 +287,28 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 		colorValues[11] <<= 1;	colorValues[11] |= (data >> 12) & 1;
 		colorValues[12] <<= 1;	colorValues[12] |= (data >> 11) & 1;
 		colorValues[13] <<= 1;	colorValues[13] |= (data >> 10) & 1;
-		colorValues[14] <<= 1;	colorValues[14] |= (data >>	 9) & 1;
-		colorValues[15] <<= 1;	colorValues[15] |= (data >>	 8) & 1;
+		colorValues[14] <<= 1;	colorValues[14] |= (data >>  9) & 1;
+		colorValues[15] <<= 1;	colorValues[15] |= (data >>  8) & 1;
+#else
+		colorValues[ 0] <<= 1;	colorValues[ 8] |= (data >> 15) & 1;
+		colorValues[ 1] <<= 1;	colorValues[ 9] |= (data >> 14) & 1;
+		colorValues[ 2] <<= 1;	colorValues[10] |= (data >> 13) & 1;
+		colorValues[ 3] <<= 1;	colorValues[11] |= (data >> 12) & 1;
+		colorValues[ 4] <<= 1;	colorValues[12] |= (data >> 11) & 1;
+		colorValues[ 5] <<= 1;	colorValues[13] |= (data >> 10) & 1;
+		colorValues[ 6] <<= 1;	colorValues[14] |= (data >>  9) & 1;
+		colorValues[ 7] <<= 1;	colorValues[15] |= (data >>  8) & 1;
+
+		colorValues[ 8] <<= 1;	colorValues[ 0] |= (data >>  7) & 1;
+		colorValues[ 9] <<= 1;	colorValues[ 1] |= (data >>  6) & 1;
+		colorValues[10] <<= 1;	colorValues[ 2] |= (data >>  5) & 1;
+		colorValues[11] <<= 1;	colorValues[ 3] |= (data >>  4) & 1;
+		colorValues[12] <<= 1;	colorValues[ 4] |= (data >>  3) & 1;
+		colorValues[13] <<= 1;	colorValues[ 5] |= (data >>  2) & 1;
+		colorValues[14] <<= 1;	colorValues[ 6] |= (data >>  1) & 1;
+		colorValues[15] <<= 1;	colorValues[ 7] |= (data >>  0) & 1;
+
+#endif 
 	}
 }
 
@@ -298,6 +319,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.18  2001/11/11 22:09:17  joy
+ * gcc warning fix
+ *
  * Revision 1.17  2001/11/07 21:18:25  milan
  * SDL_CFLAGS in CXXFLAGS now.
  *
