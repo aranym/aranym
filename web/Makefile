@@ -8,19 +8,17 @@ SHELL = /bin/sh
 OUT   = out
 STYLE = presentation.xslt
 SAXON = build/saxon
+SERVER = build/saxonserver
 HTML  := $(wildcard *.html)
 XML   := $(wildcard *.xml)
 
-all:	download $(OUT) $(XML:.xml=.html)
+all:	$(OUT) $(XML:.xml=.html)
 
 $(OUT)::
 	@[ -d $(OUT) ] || mkdir $(OUT) > /dev/null 2>&1
 
-download:
-	cd build && wget ftp:// /saxon.jar 
-
 saxon:
-	@[ $(SAXON) config.xml config.xml | grep cannot || echo "You need to start the 'build/saxonclient &' before make"	
+	@[ $(SAXON) config.xml config.xml
 
 clean:
 	rm -rf $(OUT)
