@@ -1,6 +1,9 @@
 2004/01/05 - joy
 - main_unix.cpp, parameters.cpp: 'program_name' is back (cygwin needs it)
 
+- input.cpp: try to iconify fullscreen window when user wants to release
+  mouse and keyboard.
+
 
 2003/01/04 - STanda
 - fvdidrv:
