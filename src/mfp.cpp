@@ -8,8 +8,8 @@
 
 const int HW = 0xfffa00;
 
-	MFP_Timer::MFP_Timer(char value) {
-		name = value;
+	MFP_Timer::MFP_Timer(int value) {
+		name = 'A' + value;
 		control = start_data = current_data = 0;
 		state = false;
 	}
@@ -51,12 +51,7 @@ const int HW = 0xfffa00;
 		return current_data;
 	}
 
-	MFP::MFP() {
-		tA = new MFP_Timer('A');
-		tB = new MFP_Timer('B');
-		tC = new MFP_Timer('C');
-		tD = new MFP_Timer('D');
-	}
+	MFP::MFP() {}
 
 	uae_u32 MFP::handleRead(uaecptr addr) {
 		addr -= HW;
@@ -79,7 +74,7 @@ const int HW = 0xfffa00;
 			case 0x09:	return irq_enable;
 						break;
 
-			case 0x0b:	return (irq_pending >> 8) | (tA->getControl() & 0x10);	// finish
+			case 0x0b:	return 0x20; //(irq_pending >> 8) | (tA->getControl() & 0x10);	// finish
 						break;
 
 			case 0x0d:	return irq_pending;
@@ -100,25 +95,25 @@ const int HW = 0xfffa00;
 			case 0x17:	return irq_vector;
 						break;
 
-			case 0x19:	return tA->getControl();
+			case 0x19:	return A.getControl();
 						break;
 
-			case 0x1b:	return tB->getControl();
+			case 0x1b:	return B.getControl();
 						break;
 
-			case 0x1d:	return (tC->getControl() >> 4) | tD->getControl();
+			case 0x1d:	return (C.getControl() >> 4) | D.getControl();
 						break;
 
-			case 0x1f:	return tA->getData();
+			case 0x1f:	return A.getData();
 						break;
 
-			case 0x21:	return tB->getData();
+			case 0x21:	return B.getData();
 						break;
 
-			case 0x23:	return tC->getData();
+			case 0x23:	return rand() % 0xff; // after Stonx // originally C.getData();
 						break;
 						
-			case 0x25:	return tD->getData();
+			case 0x25:	return D.getData();
 						break;
 						
 			case 0x27:
@@ -173,26 +168,26 @@ const int HW = 0xfffa00;
 			case 0x17:	irq_vector = 0x40 | (value & 0x0f);	/* wrong, the lowest 3 bits should be obtained elsewhere */
 						break;
 
-			case 0x19:	tA->setControl(value);
+			case 0x19:	A.setControl(value);
 						break;
 
-			case 0x1b:	tB->setControl(value);
+			case 0x1b:	B.setControl(value);
 						break;
 
-			case 0x1d:	tC->setControl(value >> 4);
-						tD->setControl(value & 0x0f);
+			case 0x1d:	C.setControl(value >> 4);
+						D.setControl(value & 0x0f);
 						break;
 
-			case 0x1f:	tA->setData(value);
+			case 0x1f:	A.setData(value);
 						break;
 
-			case 0x21:	tB->setData(value);
+			case 0x21:	B.setData(value);
 						break;
 
-			case 0x23:	tC->setData(value);
+			case 0x23:	C.setData(value);
 						break;
 						
-			case 0x25:	tD->setData(value);
+			case 0x25:	D.setData(value);
 						break;
 						
 			case 0x27:
