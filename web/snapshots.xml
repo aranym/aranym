@@ -5,9 +5,14 @@
   <chapter>
     <title>Snapshots</title>
     <text>
-      None snapshots right now. What would you like to see? SysInfo with memory info, Gembench with speed results, XaAES
-      under latest FreeMiNT, Aniplayer playing MPEG4 movie or what? Let <contact>me</contact> know, please.
-
+      We have received first couple of snapshots. They are quite interesting - just see 
+      for yourself:
+      <ul>
+        <li><a href="images/mint-aniplayer.jpg">FreeMiNT/N.AES desktop running Aniplayer</a> (71kB) </li>
+        <li><a href="images/mint-cab.jpg">Crystal Atari Browser</a> (92kB) </li>
+        <li>Neon <a href="images/neon1.jpg">1</a> (60kB) and <a href="images/neon2.jpg">2</a> (59kB) </li>
+        <li><a href="images/doom.png">PmDoom and GEMDemo running in TrueColor</a> (123kB) </li>
+      </ul>
     </text>
   </chapter>
 </document>

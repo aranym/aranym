@@ -10,10 +10,17 @@
           <!-- Benchmarks added.<br/-->
           <!-- Snapshots added.<br/-->
 
+        <tr><td valign="top">2001/10/19</td>
+            <td>
+              <a href="download.html">Download</a> contains first source code snapshot.<br/>
+              ARAnyM now boots with original TOS 4.04 as well as with our 68040 aware ABTOS.<br/>
+              <a href="snapshots.html">Snapshots</a> added.<br/>
+            </td>
+        </tr>
+
         <tr><td valign="top">2001/10/17</td>
             <td>
               <a href="cvs.html">CVS</a> opened for anonymous access.<br/>
-              <a href="download.html">Download</a> contains first source code snapshot.<br/>
               <a href="progress.html">Progress</a> updated due to fVDI improvements.<br/>
               Link to <a href="http://emutos.sf.net/">EmuTOS</a> project added.<br/>
             </td>

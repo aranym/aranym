@@ -5,9 +5,16 @@
   <chapter>
     <title>Download</title>
     <text>
-      You can fetch an unfinished alpha version of aranym from <a href="download/aranym20011017.tgz">here</a>. Please note that this source snapshot does not contain documentation and is generally not intented for regular use (note the alpha status). We provide it here mainly for other developers.
+      Please note that ARAnyM is not finished yet. It's a work in progress and the current
+      status is somewhere between alpha and beta. It may work but we can't guarantee 
+      anything. Better backup your data first and be ready for everything :-)
       <p/>
-      More up-to-date source code is available in <a href="cvs.html">CVS</a>.
+      Most up-to-date source code is available in the <a href="cvs.html">CVS</a>.
+      <p/>
+      The <a href="ftp://ftp.sophics.cz/pub/aranym/">ARAnyM FTP archive</a> contains
+      first source code snapshot (dated 2001/10/19) and the ARAnyM tools.
+      You may want to download the tools to get FastRAM support, enhanced mouse 
+      support and more.
     </text>
   </chapter>
 </document>
