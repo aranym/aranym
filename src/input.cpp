@@ -31,7 +31,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 /*
  * Four different types of keyboard translation:

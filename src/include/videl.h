@@ -10,7 +10,7 @@
 #include "icio.h"
 #include "hostscreen.h"
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 class VIDEL : public BASE_IO {
 protected:
@@ -60,6 +60,9 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.19  2002/12/29 13:54:46  joy
+ * linewidth and lineoffset registers emulated
+ *
  * Revision 1.18  2002/09/24 16:08:24  pmandin
  * Bugfixes+preliminary autozoom support
  *

@@ -26,8 +26,8 @@
 
 #include <errno.h>
 
-#include <SDL.h>
-#include <SDL_thread.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_thread.h>
 
 #include "../../atari/network/ethernet/ethernet_nfapi.h"
 

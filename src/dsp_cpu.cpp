@@ -5,8 +5,8 @@
  *	Patrice Mandin
  */
 
-#include <SDL.h>
-#include <SDL_thread.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_thread.h>
 
 #include "sysdeps.h"
 #include "hardware.h"

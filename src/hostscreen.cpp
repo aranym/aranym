@@ -15,8 +15,7 @@
 #include "debug.h"
 
 #ifdef ENABLE_OPENGL
-#include <SDL_opengl.h>
-#include <GL/glu.h>
+#include <SDL/SDL_opengl.h>
 #endif
 
 HostScreen::HostScreen(void) {
@@ -1184,6 +1183,11 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.35  2003/03/29 08:45:38  milan
+ * capabilities output
+ * manpage
+ * infoprint
+ *
  * Revision 1.34  2003/02/09 14:51:04  pmandin
  * Filtered parameter for OpenGL rendering
  *

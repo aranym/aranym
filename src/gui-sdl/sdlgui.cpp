@@ -18,7 +18,7 @@
 # include <stdlib.h>
 #endif
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #define SGRADIOBUTTON_NORMAL    12
 #define SGRADIOBUTTON_SELECTED  13

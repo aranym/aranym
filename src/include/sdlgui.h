@@ -4,7 +4,10 @@
   Header for the tiny graphical user interface for Hatari.
 */
 
-#include <SDL.h>
+#ifndef _SDLGUI_H
+#define _SDLGUI_H
+
+#include <SDL/SDL.h>
 
 enum
 {
@@ -42,3 +45,5 @@ int SDLGui_DoDialog(SGOBJ *dlg);
 int SDLGui_PrepareFont(void);
 void SDLGui_CenterDlg(SGOBJ *dlg);
 int SDLGui_FileSelect(char *path_and_name);
+
+#endif /* _SDLGUI_H */

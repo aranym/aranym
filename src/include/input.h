@@ -5,7 +5,7 @@
 #ifndef _INPUT_H
 #define _INPUT_H
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 void InputInit();
 void hideMouse(bool hide);

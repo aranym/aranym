@@ -45,7 +45,7 @@
 # include <stdlib.h>
 #endif
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #ifdef SDL_GUI
 #include "sdlgui.h"
@@ -542,6 +542,11 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.94  2003/03/29 08:45:38  milan
+ * capabilities output
+ * manpage
+ * infoprint
+ *
  * Revision 1.93  2003/03/28 13:32:57  milan
  * Joy's version capabilities implemented
  *

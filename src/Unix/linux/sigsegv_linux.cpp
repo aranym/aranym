@@ -1,7 +1,7 @@
 
 #include "sysdeps.h"
 #include "memory.h"
-#include "SDL_endian.h"
+#include <SDL/SDL_endian.h>
 
 #include <csignal>
 
