@@ -8,7 +8,7 @@
 #include "parameters.h"
 #include "debug.h"
 
-#ifdef USE_JIT
+#ifdef EXTENDED_SIGSEGV
 # define FakeIOPlace (addr - HWBase + FakeIOBaseHost)
 #else
 # define FakeIOPlace Atari2HostAddr(addr)

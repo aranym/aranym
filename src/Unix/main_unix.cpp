@@ -32,6 +32,7 @@
 #include "hardware.h"
 #include "parameters.h"
 #include "newcpu.h"
+#include "sigsegv.h"
 
 #define DEBUG 1
 #include "debug.h"
@@ -77,7 +78,7 @@ void segmentationfault(int x)
 	exit(0);
 }
 
-#ifdef NOCHECKBOUNDARY
+#ifdef EXTENDED_SIGSEGV
 extern void install_sigsegv();
 #else
 static void install_sigsegv() {
@@ -137,12 +138,17 @@ int main(int argc, char **argv)
 	ROMBaseHost = RAMBaseHost + ROMBase;
 	HWBaseHost = RAMBaseHost + HWBase;
 	FastRAMBaseHost = RAMBaseHost + FastRAMBase;
-# ifdef USE_JIT
+# ifdef EXTENDED_SIGSEGV
 	if (vm_acquire_fixed((void *)(FMEMORY + 0xff000000), RAMSize + ROMSize + HWSize) == false) {
 		panicbug("Not enough free memory.");
 		QuitEmulator();
 	}
-# endif
+
+	if ((FakeIOBaseHost = (uint8 *)vm_acquire(0x00100000)) == VM_MAP_FAILED) {
+		panicbug("Not enough free memory.");
+		QuitEmulator();
+	}
+# endif /* EXTENDED_SIGSEGV */
 #else
 	{
 		RAMBaseHost = (uint8 *)vm_acquire(RAMSize);
@@ -159,6 +165,9 @@ int main(int argc, char **argv)
 	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
 	D(bug("HW space starts at %p (%08x)", HWBaseHost, HWBase));
 	D(bug("TT-RAM starts at %p (%08x)", FastRAMBaseHost, FastRAMBase));
+#ifdef EXTENDED_SIGSEGV
+	D(panicbug("FakeIOspace %p", FakeIOBaseHost));
+#endif
 #ifdef RAMENDNEEDED
 	D(bug("RAMEnd needed"));
 #endif
@@ -171,6 +180,7 @@ int main(int argc, char **argv)
 	D(bug("Initialization complete"));
 
 	install_sigsegv();
+	D(bug("Sigsegv handler installed"));
 
 #ifdef ENABLE_MON
 	sigemptyset(&sigint_sa.sa_mask);
@@ -183,24 +193,23 @@ int main(int argc, char **argv)
 # endif
 #endif
 
-#ifdef NOCHECKBOUNDARY
+#ifdef EXTENDED_SIGSEGV
 	if (vm_protect(ROMBaseHost, ROMSize, VM_PAGE_READ)) {
 		panicbug("Couldn't protect ROM");
 		exit(-1);
 	}
 
 	D(panicbug("Protected ROM (%08lx - %08lx)", ROMBaseHost, ROMBaseHost + ROMSize));
-#endif
 
-#ifdef RAMENDNEEDED
+# ifdef RAMENDNEEDED
 	if (vm_protect(ROMBaseHost + ROMSize + HWSize + FastRAMSize, RAMEnd, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't protect RAMEnd");
 		exit(-1);
 	}
 	D(panicbug("Protected RAMEnd (%08lx - %08lx)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
-#endif
+# endif
 
-#ifdef USE_JIT
+# ifdef EXTENDED_SIGSEGV
 	if (vm_protect(HWBaseHost, HWSize, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't set HW address space");
 		exit(-1);
@@ -214,15 +223,8 @@ int main(int argc, char **argv)
 	}
 
 	D(panicbug("Protected mirror space (%08lx - %08lx)", RAMBaseHost + 0xff000000, RAMBaseHost + 0xff000000 + RAMSize + ROMSize + HWSize));
-#if 0
-	if ((FakeIOBaseHost = (uint8 *)vm_acquire(0x00100000)) == VM_MAP_FAILED) {
-		panicbug("Not enough free memory.");
-		QuitEmulator();
-	}
-
-	D(panicbug("FakeIOspace %p", FakeIOBaseHost));
-#endif
-#endif /* USE_JIT */
+# endif /* EXTENDED_SIGSEGV */
+#endif /* EXTENDED_SIGSEGV */
 
 	// Start 68k and jump to ROM boot routine
 	D(bug("Starting emulation..."));
@@ -298,6 +300,10 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.69  2002/07/03 19:27:15  milan
+ * some minor JIT compiler corrections
+ * extended sigsegv handler for x86/linux - no check of memory boundary
+ *
  * Revision 1.68  2002/06/24 19:14:14  joy
  * Call ExitAll() to safely stop the timer thread before releasing Atari memory()
  *

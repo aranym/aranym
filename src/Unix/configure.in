@@ -76,11 +76,13 @@ AC_ARG_ENABLE(addressing,
 AC_ARG_ENABLE(addr-check,
 [  --enable-addr-check=AM  specify the memory check to use [default=page]],
 [ case "$enableval" in
+    no)         MEMORY_CHECK="no";;
     full)	MEMORY_CHECK="full";;
     page)	MEMORY_CHECK="page";;
     hwsp)       MEMORY_CHECK="hwsp";;
     pagehwsp)   MEMORY_CHECK="pagehwsp";;
-    *)		AC_MSG_ERROR([--enable-addr-check takes only one of the following values: full, page, hwsp, pagehwsp]);;
+    sseg)       MEMORY_CHECK="sseg";;
+    *)		AC_MSG_ERROR([--enable-addr-check takes only one of the following values: no, full, page, hwsp, pagehwsp, sseg]);;
   esac
 ],
 [ MEMORY_CHECK="page"
@@ -485,22 +487,33 @@ SYSSRCS="$SYSSRCS $MONSRCS"
 
 if [[ "x$WANT_JIT" = "xyes" ]]; then
   WANT_EXSIGSEGV=yes
+  MEMORY_CHECK=sseg
 fi
   
 case $MEMORY_CHECK in
+  no)   AC_DEFINE(NOCHECKBOUNDARY)
+        ;;
   page) AC_DEFINE(ARAM_PAGE_CHECK)
         ;;
   hwsp) ADDRESSING_TEST_ORDER="fixed"
         WANT_EXSIGSEGV="yes"
-	AC_DEFINE(NOCHECKBOUNDARY)
-	AC_DEFINE(RAMENDNEEDED)
-	;;
+        AC_DEFINE(NOCHECKBOUNDARY)
+	AC_DEFINE(EXTENDED_SIGSEGV)
+        AC_DEFINE(RAMENDNEEDED)
+        ;;
   pagehwsp) ADDRESSING_TEST_ORDER="fixed"
         WANT_EXSIGSEGV="yes"
-	AC_DEFINE(ARAM_PAGE_CHECK)
-	AC_DEFINE(NOCHECKBOUNDARY)
+        AC_DEFINE(ARAM_PAGE_CHECK)
+        AC_DEFINE(NOCHECKBOUNDARY)
+	AC_DEFINE(EXTENDED_SIGSEGV)
+        AC_DEFINE(RAMENDNEEDED)
+        ;;
+   sseg) ADDRESSING_TEST_ORDER="fixed"
+        WANT_EXSIGSEGV="yes"
+        AC_DEFINE(NOCHECKBOUNDARY)
 	AC_DEFINE(RAMENDNEEDED)
-	;;
+        AC_DEFINE(EXTENDED_SIGSEGV, 2)
+        ;;					
   *) ;;
 esac
  
@@ -581,7 +594,7 @@ fi
 
 dnl Extended signal segmentation fault handler
 if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
-  case $target_os in
+  case "$target_os" in
     linux*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
         SYSSRCS="$SYSSRCS linux/sigsegv_linux.cpp"
@@ -594,7 +607,6 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       ;;
   esac
 fi
-
 
 dnl Determine the addressing mode to use
 if [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then

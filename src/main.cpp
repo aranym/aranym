@@ -476,7 +476,7 @@ void ExitAll(void)
 	if (my_timer_id) {
 		SDL_RemoveTimer(my_timer_id);
 		my_timer_id = 0;
-		SDL_Delay(10);	// give it a time to safely finish the timer thread
+		SDL_Delay(100);	// give it a time to safely finish the timer thread
 	}
 #endif
 
@@ -497,6 +497,10 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.73  2002/06/26 22:09:22  joy
+ * don't try to init extern variables
+ * do not support patched TOS 4.04 files
+ *
  * Revision 1.72  2002/06/26 20:59:43  joy
  * render VIDEL only if SDL GUI is not open
  *

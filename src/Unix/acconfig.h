@@ -68,9 +68,6 @@
 /* Define if you want even more accelerated blitter output */
 #undef BLITTER_SDLBLIT
 
-/* Define if you want TV conf GUI and have TV lib */
-#undef HAVE_TVISION
-
 /* Define if your system has a working vm_allocate()-based memory allocator */
 #undef HAVE_MACH_VM
 
@@ -100,6 +97,9 @@
 
 /* Define if you want to use ethernet card emulation */
 #undef ETHERNET_SUPPORT
+
+/* Define if you want to use extended segafault handler */
+#undef EXTENDED_SIGSEGV
 
 /* Define if you don't want to use check memory boundary */
 #undef NOCHECKBOUNDARY
