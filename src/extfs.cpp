@@ -15,8 +15,8 @@
 #include "extfs.h"
 #include "araobjs.h"
 
-#define DEBUG_FILENAMETRANSFORMATION
-#define DEBUG 1
+#undef  DEBUG_FILENAMETRANSFORMATION
+#define DEBUG 0
 #include "debug.h"
 
 #ifdef HAVE_SYS_VFS_H
@@ -2500,6 +2500,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.34  2002/03/27 15:53:29  standa
+ * The transformFileName() has been rewriten.
+ *
  * Revision 1.33  2002/03/26 12:22:09  joy
  * filename conversion in transformFileName() partially rewritten. Now ST-Zip does not crash when browsing MetaDOS drive.
  *
