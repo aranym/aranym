@@ -165,6 +165,7 @@ void DSP::reset(void)
 
 uae_u8 DSP::handleRead(uaecptr addr)
 {
+#if DSP_EMULATION
 	uae_u8 value=0;
 
 	addr -= HW_DSP;
@@ -211,10 +212,14 @@ uae_u8 DSP::handleRead(uaecptr addr)
 
 /*	D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr+HW_DSP, value, showPC()));*/
 	return value;
+#else
+	return 0xff;	// this value prevents TOS hanging in the DSP init code */
+#endif	/* DSP_EMULATION */
 }
 
 void DSP::handleWrite(uaecptr addr, uae_u8 value)
 {
+#if DSP_EMULATION
 	addr -= HW_DSP;
 
 	switch(addr) {
@@ -301,4 +306,5 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 	}
 
 /*	D(bug("HWput_b(0x%08x,0x%02x) at 0x%08x", addr+HW_DSP, value, showPC()));*/
+#endif	/* DSP_EMULATION */
 }

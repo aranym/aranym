@@ -43,7 +43,9 @@ void HWInit (void) {
 	rtc.init();
 	videl.init();
 	ide.init();
+#if DSP_EMULATION
 	dsp.init();
+#endif
 }
 
 struct HARDWARE {
@@ -172,6 +174,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.39  2002/07/08 22:03:49  joy
+ * DSP support by Patrice
+ *
  * Revision 1.38  2002/06/24 20:38:23  joy
  * do_get_real_addr is memory.h internal and should not be used outside of CPU. fixed.
  *
