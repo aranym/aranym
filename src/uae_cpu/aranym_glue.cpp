@@ -131,6 +131,24 @@ void Start680x0(void)
 		m68k_execute();
 }
 
+/*
+ * Restart running 680x0 emulation
+ */
+void Restart680x0(void)
+{
+	quit_program = 2;
+	TriggerNMI();
+}
+
+/*
+ * Quit 680x0 emulation
+ */
+void Quit680x0(void)
+{
+	quit_program = 1;
+	TriggerNMI();
+}
+
 
 /*
  *  Trigger interrupts
@@ -156,11 +174,6 @@ void TriggerMFP(bool enable)
 void TriggerNMI(void)
 {
 	SPCFLAGS_SET( SPCFLAG_NMI );
-}
-
-void TriggerQUIT(void)
-{
-	SPCFLAGS_SET( SPCFLAG_QUIT );
 }
 
 
