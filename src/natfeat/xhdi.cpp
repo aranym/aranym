@@ -19,11 +19,15 @@ bx_disk_options_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
 	bx_disk_options_t *disk;
 	switch(major) {
 		case 16:	disk = &bx_options.diskc; break;
-		case 17:	disk = &bx_options.diskd.isCDROM ? NULL : &bx_options.diskd; break;
+		case 17:	disk = &bx_options.diskd; break;
 		default:	disk = NULL; break;
 	}
+	if (disk != NULL) {
+		if (disk.present && !disk.isCDROM)
+			return disk;
+	}
 
-	return disk;
+	return NULL;
 }
 
 void XHDIDriver::byteSwapBuf(uint8 *buf, int size)
