@@ -480,6 +480,8 @@ void SDLGui_DrawDialog(SGOBJ *dlg)
   SDLGui_CenterDlg(dlg);	// center dialog (screen size might have changed)
   for(int i=0; dlg[i].type!=-1; i++ )
   {
+    if (dlg[i].state & SG_HIDDEN) continue;
+
     switch( dlg[i].type )
     {
       case SGBOX:
@@ -534,6 +536,7 @@ int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy)
        xpos<(int)(dlg[0].x+dlg[i].x+dlg[i].w) &&
        ypos<(int)(dlg[0].y+dlg[i].y+dlg[i].h))
     {
+      if (dlg[i].state & SG_HIDDEN) continue;
       ob = i;
       break;
     }

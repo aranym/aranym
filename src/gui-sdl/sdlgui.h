@@ -32,6 +32,7 @@ enum
 
 /* Object states: */
 #define SG_SELECTED   1
+#define SG_HIDDEN     2
 
 /* Special characters: */
 #define SGRADIOBUTTON_NORMAL    12
