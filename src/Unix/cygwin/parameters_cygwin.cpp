@@ -1,8 +1,12 @@
 /* MJ 2001 */
 
 #include "sysdeps.h"
+#include "config.h"
 #include "tools.h"
 #include "parameters.h"
+
+#define DEBUG 0
+#include "debug.h"
 
 #ifdef HAVE_NEW_HEADERS
 # include <cstdlib>

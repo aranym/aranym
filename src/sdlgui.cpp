@@ -9,6 +9,7 @@
 #include "host.h"
 #include "sdlgui.h"
 #include "file.h"
+#include "tools.h"
 #include "debug.h"
 
 #ifdef HAVE_NEW_HEADERS
