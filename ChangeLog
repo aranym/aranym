@@ -1,3 +1,8 @@
+2001/12/21 - STanda
+- RH gcc 2.96.98 preprocessor bug workaround: The remarks in multiline macros
+  are before the linetrailing backslash.
+
+
 2001/12/20 - joy
 - cleaned up newcpu.cpp do_specialties()
 - STOP instruction handling really works and gives CPU time slices back
