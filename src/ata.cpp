@@ -1006,6 +1006,8 @@ if ( quantumsMax == 0)
 					  atapi_cmd_nop(channel);
 				    } else {
 					  atapi_cmd_error(channel, SENSE_NOT_READY, ASC_MEDIUM_NOT_PRESENT);
+					  // force Insert of CD-ROM media
+					  set_cd_media_status(get_device_handle(channel, BX_SLAVE_SELECTED(channel)), true);
 				    }
 				    raise_interrupt(channel);
 				    break;
