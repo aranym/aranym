@@ -20,6 +20,10 @@
 
 # include <osbind.h>
 
+/* for SIOCGI */
+#include "inet4/in.h"
+unsigned long inet_aton(const char *cp, struct in_addr *addr);
+
 #include "araether_nfapi.h"
 
 #define XIF_NAME	"ARAnyM Eth driver v0.3"
@@ -95,7 +99,7 @@ get_int_level()
 static inline void
 get_hw_addr( char *buffer, int len )
 {
-	nfCall((ETH(XIF_GETMAC), buffer, (unsigned long)len));
+	nfCall((ETH(XIF_GET_MAC), 0L /* ethX */, buffer, (unsigned long)len));
 }
 
 static inline void
@@ -107,19 +111,19 @@ nfInterrupt ( short in_use )
 static inline short
 read_packet_len ()
 {
-	return nfCall((ETH(XIF_READLENGTH)));
+	return nfCall((ETH(XIF_READLENGTH), 0L /* ethX */));
 }
 
 static inline void
 read_block (char *cp, short len)
 {
-	nfCall((ETH(XIF_READBLOCK), cp, (unsigned long)len));
+	nfCall((ETH(XIF_READBLOCK), 0L /* ethX */, cp, (unsigned long)len));
 }
 
 static inline void
 send_block (char *cp, short len)
 {
-	nfCall((ETH(XIF_WRITEBLOCK), cp, (unsigned long)len));
+	nfCall((ETH(XIF_WRITEBLOCK), 0L /* ethX */, cp, (unsigned long)len));
 }
 
 static void
@@ -138,7 +142,7 @@ static long
 ara_open (struct netif *nif)
 {
 	DEBUG (("araeth: open (nif = %08lx)", (long)nif));
-	return nfCall((ETH(XIF_START), nif));
+	return nfCall((ETH(XIF_START), 0L /* ethX */));
 }
 
 /*
@@ -148,7 +152,7 @@ ara_open (struct netif *nif)
 static long
 ara_close (struct netif *nif)
 {
-	return nfCall((ETH(XIF_STOP), nif));
+	return nfCall((ETH(XIF_STOP), 0L /* ethX */));
 }
 
 /*
@@ -328,15 +332,34 @@ ara_output (struct netif *nif, BUF *buf, const char *hwaddr, short hwlen, short 
 static long
 ara_ioctl (struct netif *nif, short cmd, long arg)
 {
-	struct ifreq *ifr;
+	int gif = -1;
 
 	DEBUG (("araeth: ioctl cmd = %d (%x) bytes", cmd));
 
 	switch (cmd)
 	{
-		case SIOCSIFNETMASK:
-		case SIOCSIFFLAGS:
-		case SIOCSIFADDR:
+		case SIOCGIFADDR:
+			if (gif == -1) gif = 0;
+			/* fall through */
+		case SIOCGIFNETMASK:
+			if (gif == -1) gif = 1;
+			if (gif == 0 || gif == 1) {
+				char buffer[128];
+				struct ifreq *ifr = (struct ifreq *) arg;
+				struct sockaddr_in *s = (struct sockaddr_in *)&(
+					gif ? ifr->ifru.netmask : ifr->ifru.addr
+				);
+				nfCall((ETH(gif ? XIF_GET_NETMASK : XIF_GET_IPATARI),
+					0 /* ethX */, buffer, sizeof(buffer)));
+				inet_aton(buffer, &s->sin_addr);
+			}
+			return 0;
+
+		case SIOCGIFFLAGS:
+			return 0;
+
+		case SIOCGIFMTU:
+			nif->mtu = nfCall((ETH(XIF_GET_MTU), 0L /* ethX */));
 			return 0;
 
 		case SIOCSIFMTU:
@@ -352,8 +375,10 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 			/*
 			 * Interface configuration, handled by ara_config()
 			 */
-			ifr = (struct ifreq *) arg;
-			return ara_config (nif, ifr->ifru.data);
+			{
+				struct ifreq *ifr = (struct ifreq *) arg;
+				return ara_config (nif, ifr->ifru.data);
+			}
 	}
 
 	return ENOSYS;
@@ -627,4 +652,110 @@ aranym_interrupt (void)
 	nfInterrupt( in_use = 1 );
 	recv_packet (&if_ara);
 	nfInterrupt( in_use = 0 );
+}
+
+/*
+ * Check whether "cp" is a valid ascii representation
+ * of an Internet address and convert to a binary address.
+ * Returns 1 if the address is valid, 0 if not.
+ * This replaces inet_addr, the return value from which
+ * cannot distinguish between failure and a local broadcast address.
+ */
+/*in_addr_t*/
+unsigned long inet_aton(const char *cp, struct in_addr *addr)
+{
+	register unsigned long val;
+	int base;
+	register int n;
+	register char c;
+	unsigned long parts[4];
+	register unsigned long *pp = parts;
+
+	c = *cp;
+	for (;;) {
+		/*
+		 * Collect number up to ``.''.
+		 * Values are specified as for C:
+		 * 0x=hex, 0=octal, isdigit=decimal.
+		 */
+		if (!isdigit(c))
+			goto ret_0;
+		base = 10;
+		if (c == '0') {
+			c = *++cp;
+			if (c == 'x' || c == 'X')
+				base = 16, c = *++cp;
+			else
+				base = 8;
+		}
+		val = 0;
+		for (;;) {
+			if (isascii(c) && isdigit(c)) {
+				val = (val * base) + (c - '0');
+				c = *++cp;
+			} else if (base == 16 && isascii(c) && isxdigit(c)) {
+				val = (val << 4) |
+					(c + 10 - (islower(c) ? 'a' : 'A'));
+				c = *++cp;
+			} else
+				break;
+		}
+		if (c == '.') {
+			/*
+			 * Internet format:
+			 *	a.b.c.d
+			 *	a.b.c	(with c treated as 16 bits)
+			 *	a.b	(with b treated as 24 bits)
+			 */
+			if (pp >= parts + 3)
+				goto ret_0;
+			*pp++ = val;
+			c = *++cp;
+		} else
+			break;
+	}
+	/*
+	 * Check for trailing characters.
+	 */
+	if (c != '\0' && (!isascii(c) || !isspace(c)))
+		goto ret_0;
+	/*
+	 * Concoct the address according to
+	 * the number of parts specified.
+	 */
+	n = pp - parts + 1;
+	switch (n) {
+
+	case 0:
+		goto ret_0;		/* initial nondigit */
+
+	case 1:				/* a -- 32 bits */
+		break;
+
+	case 2:				/* a.b -- 8.24 bits */
+		if (parts[0] > 0xff || val > 0xffffff)
+			goto ret_0;
+		val |= parts[0] << 24;
+		break;
+
+	case 3:				/* a.b.c -- 8.8.16 bits */
+		if (parts[0] > 0xff || parts[1] > 0xff || val > 0xffff)
+			goto ret_0;
+		val |= (parts[0] << 24) | (parts[1] << 16);
+		break;
+
+	case 4:				/* a.b.c.d -- 8.8.8.8 bits */
+		if (parts[0] > 0xff || parts[1] > 0xff || parts[2] > 0xff
+		    || val > 0xff)
+			goto ret_0;
+		val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);
+		break;
+	}
+	if (addr)
+		addr->s_addr = htonl(val);
+
+	return (1);
+
+ret_0:
+	return (0);
 }
