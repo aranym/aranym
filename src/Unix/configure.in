@@ -561,11 +561,6 @@ else
 	DSPDISSRCS=""
 fi
 
-dnl Timer C
-if [[ "x$WANT_SDLTIMER" = "xyes" ]]; then
-  AC_DEFINE(USE_TIMERS)
-fi
-
 dnl fixed size FastRAM
 if [[ "x$WANT_FIXEDFASTRAM" != "xno" ]]; then
   AC_DEFINE_UNQUOTED(FixedSizeFastRAM, $WANT_FIXEDFASTRAM)

@@ -53,9 +53,6 @@
 /* Define if DSP disassembly */
 #undef DSP_DISASM
 
-/* Define if you want Timer C to be emulated using SDL Timers */
-#undef USE_TIMERS
-
 /* Define if you want to try out a different memory check */
 #undef ARAM_PAGE_CHECK
 

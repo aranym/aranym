@@ -25,19 +25,6 @@ Reason:
 Solution:
   Patch your PureC with supplied patch.
 
----
-
-Bug:
-  ARAnyM crashes after start with message:
-   "Xlib: async reply ...."
-
-Reason:
-  A bug in sdltimer (maybe in lib, maybe in ARAnyM, who knows)
-
-Solution:
-  Configure ARAnyM with --disable-sdltimer and recompile.
-
-
 === unknown solutions yet:
 
 Videlity Configure Tool does not work. It used to work, though. No idea.
@@ -45,10 +32,6 @@ Videlity Configure Tool does not work. It used to work, though. No idea.
 
 Platform dependent known bugs and limitations:
 ----------------------------------------------
-
-SDL_Timer works properly on Linux only, it seems. So for most other
-platforms (including Windows) you have to configure the build with
---disable-sdltimer.
 
 There are three different FPU emulators in ARAnyM, and only the IEEE
 version has full 68040 FPU instruction set. On non-Linux-i386 platforms

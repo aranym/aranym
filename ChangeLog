@@ -1,5 +1,23 @@
-2002/09/12 - joy
-- TOS was not ready for real 68040 caches that are provided by JIT CPU compiler
+2002/09/15 - joy (version 0.6.0-alpha)
+- major architectural change: SDL_Timer stuff removed, #define USE_TIMERS
+  removed. Now CPU emulation runs in a separate SDL thread and the main thread
+  just loops (waits for 10ms, executes 'invoke200HzInterrupt' and loops back).
+
+  Advantages:
+  - VIDEL screen redraw runs in the main SDL thread - that should make 
+    many host operating systems happier (please report)
+  - immediate reaction to hotkeys (Quit, GUI etc)
+  - same (or even higher) speed as previously (82 kdhrystones on XP 1G7+)
+
+  TODO: everything that makes use of SDL functions should be moved to the
+  main thread. This includes fVDI (actually hostscreen) and GUI. The GUI
+  could probably simply replace the current main_loop. With fVDI the problem
+  is more complicated. We will probably have to send all fVDI actions
+  from the CPU thread to the main thread using some sort of IPC.
+
+
+2002/09/12 - joy (version 0.5.0-beta)
+- TOS was not ready for large 68040 caches that are provided by JIT compiler.
   I added a few missing 68040 cache patches that were developed by Douglas
   originally.
 - version increased to 0.5.0-beta1 (version 0.4.0 was for working DSP and

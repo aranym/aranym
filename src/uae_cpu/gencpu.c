@@ -2515,12 +2515,6 @@ static void generate_one_opcode (int rp)
     printf ("\t\tif (m68k_do_specialties())\n");
     printf ("\t\t\tlongjmp(loop_env, 1);\n");
     printf ("\t}\n");
-#ifndef USE_TIMERS
-    printf ("\tif (--innerCounter == 0) {\n");
-    printf ("\t\tinnerCounter = maxInnerCounter;\n");
-    printf ("\t\tinvoke200HzInterrupt();\n");
-    printf ("\t}\n");
-#endif
     printf ("\tpc = m68k_getpc();\n");
 #if ARAM_PAGE_CHECK
     printf ("\tif (((pc ^ pc_page) > ARAM_PAGE_MASK)) {\n");

@@ -37,12 +37,6 @@ SDL_mutex *spcflags_lock;
 
 int quit_program = 0;
 
-#ifndef USE_TIMERS
-long maxInnerCounter = 10000;	// default value good for 1GHz Athlon machines
-static long innerCounter = 1;
-extern void ivoke200HzInterrupt(void);	// in main.cpp
-#endif /* !USE_TIMERS */
-
 struct flag_struct regflags;
 
 /* LongJump buffers */
@@ -1429,13 +1423,6 @@ int m68k_do_specialties(void)
 		SERVE_VBL_MFP(true);
 		if (SPCFLAGS_TEST( SPCFLAG_NMI ))
 			break;
-#ifndef USE_TIMERS
-		innerCounter -= maxInnerCounter / 5;
-		if (innerCounter <= 0) {
-			innerCounter = maxInnerCounter;
-			invoke200HzInterrupt();
-	    }
-#endif
 	}
 	if (SPCFLAGS_TEST( SPCFLAG_TRACE ))
 		do_trace ();
@@ -1524,15 +1511,6 @@ void m68k_do_execute (void)
 	if (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {
 	    if (m68k_do_specialties())
 		return;
-	}
-#endif
-
-#ifndef USE_TIMERS
-	{
-	    if (--innerCounter == 0) {
-		innerCounter = maxInnerCounter;
-		invoke200HzInterrupt();
-	    }
 	}
 #endif
     }

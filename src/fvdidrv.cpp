@@ -151,10 +151,8 @@ int32 FVDIDriver::get_par(M68kRegisters *r, int n)
 
 void FVDIDriver::dispatch(M68kRegisters *r)
 {
-#ifdef USE_TIMERS
-	// Thread safety patch
+	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
 	hostScreen.lock();
-#endif
 
 	videl.setRendering(false);
 
@@ -290,10 +288,8 @@ void FVDIDriver::dispatch(M68kRegisters *r)
 #endif  // DEBUG_DRAW_PALETTE
 
 
-#ifdef USE_TIMERS
-	// Thread safety patch
+	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
 	hostScreen.unlock();
-#endif
 }
 
 
@@ -1911,6 +1907,11 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.39  2002/08/03 12:36:42  johan
+ * Updated to work with new API (dependencies on internal fVDI structures
+ * have been removed and all parameters are passed on the stack).
+ * Some internal fixes and cleanups.
+ *
  * Revision 1.38  2002/06/24 17:08:48  standa
  * The pointer arithmetics fixed. The memptr usage introduced in my code.
  *

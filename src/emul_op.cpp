@@ -128,24 +128,15 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 
 		case M68K_EMUL_OP_VIDEO_DRIVER:
 		    fVDIDrv.dispatch(r);
-#ifdef __CYGWIN__
-			invoke200HzInterrupt();	/* Windows has a broken threading - we have to call it manually */
-#endif /* __CYGWIN__ */
 			break;
 
 #ifdef EXTFS_SUPPORT
 		case M68K_EMUL_OP_EXTFS_COMM:		// External file system routines
 			extFS.dispatch( ReadInt32(r->a[7]), r );  // SO
-#ifdef __CYGWIN__
-			invoke200HzInterrupt();	/* Windows has a broken threading - we have to call it manually */
-#endif /* __CYGWIN__ */
 			break;
 
 		case M68K_EMUL_OP_EXTFS_HFS:
 			extFS.dispatchXFS( ReadInt32(r->a[7]), r );  // SO
-#ifdef __CYGWIN__
-			invoke200HzInterrupt();	/* Windows has a broken threading - we have to call it manually */
-#endif /* __CYGWIN__ */
 			break;
 #endif
 

@@ -6,6 +6,6 @@ void hideMouse(bool hide);
 bool grabMouse(bool grab);
 void grabTheMouse();
 void releaseTheMouse();
-void check_event();
+bool check_event();
 extern void QuitEmulator();
 #endif /* _INPUT_H */

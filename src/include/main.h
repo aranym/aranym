@@ -44,7 +44,8 @@ struct M68kRegisters {
 // General functions
 extern bool InitAll(void);
 extern void ExitAll(void);
-extern void invoke200HzInterrupt(void);
+extern void main_loop(void);
+extern bool invoke200HzInterrupt(void);
 #ifdef OS_irix
 extern void setactvdebug();
 #else
@@ -74,6 +75,9 @@ extern void ClearInterruptFlag(uint32 flag);
 
 /*
  * $Log$
+ * Revision 1.15  2002/06/24 17:08:48  standa
+ * The pointer arithmetics fixed. The memptr usage introduced in my code.
+ *
  * Revision 1.14  2002/04/22 18:30:50  milan
  * header files reform
  *

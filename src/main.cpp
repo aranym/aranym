@@ -90,14 +90,6 @@ int CPUType;
 bool CPUIs68060;
 int FPUType;
 
-// Timer stuff
-static uint32 lastTicks;
-#define USE_GETTICKS 1		// undefine this if your ARAnyM time goes slower
-
-#ifdef USE_TIMERS
-SDL_TimerID my_timer_id = 0;
-#endif
-
 bool isGuiAvailable;
 
 uint32 InterruptFlags = 0;
@@ -157,8 +149,14 @@ void heartBeat()
  * the following function is called from the CPU emulation anytime
  * or it is called from the timer interrupt * approx. each 10 milliseconds.
  */
-void invoke200HzInterrupt()
+// Timer stuff
+static uint32 lastTicks;
+#define USE_GETTICKS 1		// undefine this if your ARAnyM time goes slower
+
+bool invoke200HzInterrupt()
 {
+	bool pendingQuit = false;
+
 #define VBL_IN_TIMERC	4	/* VBL happens once in 4 TimerC 200 Hz interrupts ==> 50 Hz VBL */
 #define VIDEL_REFRESH	bx_options.video.refresh	/* VIDEL screen is refreshed once in 2 VBL interrupts ==> 25 Hz */
 
@@ -175,7 +173,7 @@ void invoke200HzInterrupt()
 #endif
 	int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
 	if (count == 0)
-		return;
+		return false;
 	
 #ifdef DEBUGGER
 	if (!debugging || irqindebug)
@@ -190,12 +188,10 @@ void invoke200HzInterrupt()
 
 		heartBeat();
 
-#ifdef USE_TIMERS
-		// Thread safety patch
+		// Thread safety patch (remove it once the fVDI screen output is in the main thread)
 		hostScreen.lock();
-#endif
 
-		check_event();		// process keyboard and mouse events
+		pendingQuit = check_event();// process keyboard and mouse events
 		TriggerVBL();		// generate VBL
 
 		if (++refreshCounter == VIDEL_REFRESH) {// divided by 2 again ==> 25 Hz screen update
@@ -204,23 +200,12 @@ void invoke200HzInterrupt()
 			refreshCounter = 0;
 		}
 
-#ifdef USE_TIMERS
-		// Thread safety patch
+		// Thread safety patch (remove it once the fVDI screen output is in the main thread)
 		hostScreen.unlock();
-#endif
 	}
-}
 
-#ifdef USE_TIMERS
-/*
- * my_callback_function() is called every 10 miliseconds (~ 100 Hz)
- */
-Uint32 my_callback_function(Uint32 interval, void *param)
-{
-	invoke200HzInterrupt();
-	return 10;					// come back in 10 milliseconds
+	return pendingQuit;
 }
-#endif /* USE_TIMERS */
 
 /*
  * Load, check and patch the TOS 4.04 ROM image file
@@ -414,9 +399,6 @@ bool InitAll(void)
 		return false;
 
 	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
-#ifdef USE_TIMERS
-	sdlInitParams |= SDL_INIT_TIMER;
-#endif
 	if (SDL_Init(sdlInitParams) != 0) {
 		panicbug("SDL initialization failed.");
 		return false;
@@ -477,11 +459,6 @@ bool InitAll(void)
 	lastTicks = tv.tv_sec * 1000 + tv.tv_usec / 1000;
 #endif
 
-#ifdef USE_TIMERS
-	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
-	D(bug("Using timers\n"));
-#endif
-
 #if ENABLE_MON
 	// Initialize mon
 	mon_init();
@@ -492,6 +469,35 @@ bool InitAll(void)
 	return true;
 }
 
+SDL_Thread *CPUthread = NULL;
+
+int start_cpu(void *ptr)
+{
+	Start680x0();
+	return 0;
+}
+
+void main_loop()
+{
+	CPUthread = SDL_CreateThread(start_cpu, NULL);
+	D(bug("CPU started\n"));
+
+	bool bQuit = false;
+	while(! bQuit) {
+		// usleep(10000);	// give unused time slices back to OS
+		SDL_Delay(10);
+		bQuit = invoke200HzInterrupt();
+	}
+
+	// Terminate CPU thread
+	// Quit680x0();
+	if (CPUthread != NULL) {
+		SDL_KillThread(CPUthread);
+		CPUthread = NULL;
+	}
+
+}
+
 
 /*
  *  Deinitialize everything
@@ -499,18 +505,17 @@ bool InitAll(void)
 
 void ExitAll(void)
 {
-	// Exit Time Manager
-#if USE_TIMERS
-	if (my_timer_id) {
-		SDL_RemoveTimer(my_timer_id);
-		my_timer_id = 0;
-		SDL_Delay(100);	// give it a time to safely finish the timer thread
+	// Terminate CPU thread
+	if (CPUthread != NULL) {
+		SDL_KillThread(CPUthread);
+		CPUthread = NULL;
 	}
-#endif
 
 #ifdef SDL_GUI
-	if (GUIthread != NULL)
+	if (GUIthread != NULL) {
 		SDL_KillThread(GUIthread);
+		GUIthread = NULL;
+	}
 	SDLGui_UnInit();
 #endif
 
@@ -525,6 +530,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.80  2002/09/12 21:18:09  joy
+ * romdiff -> romset
+ *
  * Revision 1.79  2002/08/01 22:26:19  joy
  * fixed EmuTOS loading. Prints version of EmuTOS now
  *

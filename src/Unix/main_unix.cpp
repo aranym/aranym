@@ -233,7 +233,7 @@ int main(int argc, char **argv)
 
 	// Start 68k and jump to ROM boot routine
 	D(bug("Starting emulation..."));
-	Start680x0();
+	main_loop();
 
 	// returning from emulation after the NMI
 
@@ -305,6 +305,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.73  2002/07/20 11:33:33  joy
+ * debug disabled
+ *
  * Revision 1.72  2002/07/16 18:06:42  milan
  * hguide.txt updated, added section 9 (Checking memory boundary)
  * hwsp possibility of checking memory boundary corrected
