@@ -2,8 +2,8 @@ dnl Process this file with autoconf to produce a configure script.
 dnl Written in 1999 by Christian Bauer et al.
 
 AC_INIT(main_unix.cpp)
-AC_PREREQ(2.12)
-AC_CONFIG_HEADER(config.h)
+AC_PREREQ(2.53)
+AC_CONFIG_HEADERS(config.h)
 
 dnl Options.
 AC_ARG_ENABLE(nat-debug,     [  --enable-nat-debug      enable native debugger support [default=yes]], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
@@ -152,6 +152,7 @@ AC_PROG_CC
 AC_PROG_CC_C_O
 AC_PROG_CPP
 AC_PROG_CXX
+AC_PROG_CXXCPP
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 
@@ -428,6 +429,7 @@ AC_CACHE_CHECK("for vasprintf",
   AC_LANG_CPLUSPLUS
   AC_TRY_COMPILE([
     #define _GNU_SOURCE
+    #include <stdarg.h>
     #include <stdio.h>
   ], [
     va_list a;

@@ -207,7 +207,7 @@ distclean: clean
 	rm -f cmos aranymtest.rc
 
 mrproper: distclean
-	rm -f aclocal.m4 configure config.h.in
+	rm -rf aclocal.m4 configure config.h.in autom4te.cache
 
 bindistdirs:
 	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/createdisk tmpdist$(datadir)/$(APP)/atari/aranymfs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
