@@ -28,7 +28,6 @@ class cdrom_interface {
 public:
   cdrom_interface(char *dev);
   ~cdrom_interface(void);
-  void init(void);
 
   // Load CD-ROM. Returns false if CD is not ready.
   bool insert_cdrom();
@@ -40,7 +39,7 @@ public:
   bool read_toc(uint8* buf, int* length, bool msf, int start_track);
 
   // Return CD-ROM capacity (in 2048 byte frames)
-  unsigned long capacity();
+  uint32 capacity();
 
   // Read a single block from the CD
   void read_block(uint8* buf, int lba);
@@ -48,7 +47,4 @@ public:
 private:
   int fd;
   char *path;
-
-  int using_file;
   };
-
