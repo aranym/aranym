@@ -5,13 +5,7 @@
 */
 
 #include "sysdeps.h"
-#include "main.h"
-#include "dialog.h"
 #include "file.h"
-//#include "floppy.h"
-//#include "createBlankImage.h"
-//#include "memAlloc.h"
-//#include "misc.h"
 
 #ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
