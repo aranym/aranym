@@ -1,13 +1,18 @@
-NEXT-RELEASE:
+2003/10/04 - version 0.8.2beta released
+==========
 
 Changes:
 
- o HostFS cleaned up again
+ o Direct Linux-m68k loading with integrated LILO
+ o MIDI output to a file
+ o HostFS cleaned up again (you must upgrade your HOSTFS.DOS driver)
  o SCSI emulation introduced which simplifies the harddisk driver
    installation greatly
  o STOP CPU instruction fixed to work properly (no more shaky
    mouse under EmuTOS and FreeMiNT)
- o BetaDOS' .bos NatFeat CDROM driver
+ o Native access to host's CD/DVD-ROM using BetaDOS BOS NatFeat CDROM driver
+ o Various little updates in README, FAQ and doc/documentation.txt
+ o Literally tons of bugfixes and improvements (fVDI, JIT, XHDI, portability)
 
 
 2003/04/11 - version 0.8.0beta3 released

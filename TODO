@@ -1,14 +1,9 @@
-- automagically updated BDCONFIG.SYS
-- some doc update (networking, disk image, afros)
-- continue fixing the JIT (we got a demo app already)
-
+TODO before 0.8.2final:
+- the floppy exchange detection emulation (almost done)
+- keyboard layout configurable. This is a must.
 
 Roadmap:
 --------
-
-0.8.1 should bring long-awaited networking support, bugfixed next generation
-  of host filesystem access and primitive SCSI emulation (just enough
-  to forget those boring problems with SCSI initialization in disk drivers)
 
 0.9.0 should come with direct partition access and free XHDI disk driver
 
@@ -22,9 +17,13 @@ Some hot ideas (before they get forgotten)
 Note that the name before a TODO item doesn't mean the item is assigned to
 that particular programmer but rather who is the author of the idea :-)
 
+- joy: automagically updated BDCONFIG.SYS
+
+- joy: continue fixing the JIT (we got a demo app already)
+
 - joy: runtime configuration of keyboard input method (symtable/scan)
 
-- joy: hostfs.xfs sometime crash here - isn't there a memory leak on host?
+- joy: runtime on-the-fly reconfiguration of the keyboard layout
 
 - joy: make.sh magic: "nfeth-config.c" build by ./make.sh of the xif.
 

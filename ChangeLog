@@ -1,9 +1,18 @@
-2003/10/04 - Milan
-- Bochs sync and cleanup, mainly around CD-ROM support
-
+** ARAnyM 0.8.2beta released
 
 2003/10/04 - joy
 - natfeat/nf_basicset: added OS_TYPE and CPU_TYPE to NF_NAME(1)
+- minor TODO update
+- Makefile.in: nfcdrom.bos added to install targets
+- atari/network/ethernet/README: URL of site about TUN/TAP added
+- doc/compiling_for_windows.txt added
+- doc/aranym-lilo.txt added
+- doc/aranym.1 (man page) - small typo corrected
+- include/version.h: increased for 0.8.2beta release
+
+
+2003/10/04 - Milan
+- Bochs sync and cleanup, mainly around CD-ROM support
 
 
 2003/10/02 - STanda

@@ -28,6 +28,8 @@ linux:~# chmod +rw /net/dev/tun
 
 Otherwise ARAnyM started by regular user could not access this device.
 
+More information about TUN/TAP you'll find at http://vtun.sourceforge.net/tun/
+
  On Atari side:
  --------------
 
