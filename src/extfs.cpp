@@ -20,7 +20,7 @@
 #include "toserror.h"
 #include "extfs.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 
@@ -1588,6 +1588,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.10  2001/09/18 12:35:12  joy
+ * getDrvBits() added
+ *
  * Revision 1.9  2001/08/30 13:01:16  standa
  * The cast warnings removed.
  * missing return statements added.
