@@ -20,13 +20,14 @@
 
 # include <osbind.h>
 
-/* for SIOCGI */
+#if AUTO_IP_CONFIGURE
 #include "inet4/in.h"
 unsigned long inet_aton(const char *cp, struct in_addr *addr);
+#endif
 
 #include "araether_nfapi.h"
 
-#define XIF_NAME	"ARAnyM Eth driver v0.3"
+#define XIF_NAME	"ARAnyM Eth driver v0.4"
 
 /* old handler */
 extern void (*old_interrupt)(void);
@@ -332,12 +333,12 @@ ara_output (struct netif *nif, BUF *buf, const char *hwaddr, short hwlen, short 
 static long
 ara_ioctl (struct netif *nif, short cmd, long arg)
 {
-	int gif = -1;
-
 	DEBUG (("araeth: ioctl cmd = %d (%x) bytes", cmd));
 
 	switch (cmd)
 	{
+#if AUTO_IP_CONFIGURE
+		int gif = -1;
 		case SIOCGIFADDR:
 			if (gif == -1) gif = 0;
 			/* fall through */
@@ -354,12 +355,11 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 				inet_aton(buffer, &s->sin_addr);
 			}
 			return 0;
-
+#else
+		case SIOCGIFADDR:
+		case SIOCGIFNETMASK:
+#endif /* AUTO_IP_CONFIGURE */
 		case SIOCGIFFLAGS:
-			return 0;
-
-		case SIOCGIFMTU:
-			nif->mtu = nfCall((ETH(XIF_GET_MTU), 0L /* ethX */));
 			return 0;
 
 		case SIOCSIFMTU:
@@ -525,12 +525,8 @@ driver_init (void)
 	 * Set interface hardware and broadcast addresses. For real ethernet
 	 * drivers you must get them from the hardware of course!
 	 */
-#if 0
-	memcpy (if_ara.hwlocal.addr, "\001\002\003\004\005\006", ETH_ALEN);
-#else
 	/* ask host for the hardware address */
 	get_hw_addr(if_ara.hwlocal.addr, ETH_ALEN);
-#endif
 	memcpy (if_ara.hwbrcst.addr, "\377\377\377\377\377\377", ETH_ALEN);
 
 	/*
@@ -654,6 +650,7 @@ aranym_interrupt (void)
 	nfInterrupt( in_use = 0 );
 }
 
+#if AUTO_IP_CONFIGURE
 /*
  * Check whether "cp" is a valid ascii representation
  * of an Internet address and convert to a binary address.
@@ -759,3 +756,4 @@ unsigned long inet_aton(const char *cp, struct in_addr *addr)
 ret_0:
 	return (0);
 }
+#endif /* AUTO_IP_CONFIGURE */
