@@ -332,7 +332,7 @@ bool InitTOSROM(void)
 	}
 #endif
 
-	printf("TOS 4.04 loading... [OK]\n");
+	panicbug("TOS 4.04 loading... [OK]");
 	return true;
 }
 
@@ -355,7 +355,7 @@ bool InitEmuTOS(void)
 	bool bEmuOK = (fread(ROMBaseHost, 1, RealROMSize, f) > 0);
 	fclose(f);
 	if (bEmuOK) {
-		printf("EmuTOS %02x/%02x/%04x loading from '%s'... [OK]\n",
+		panicbug("EmuTOS %02x/%02x/%04x loading from '%s'... [OK]",
 			ROMBaseHost[0x18],
 			ROMBaseHost[0x19],
 			(ROMBaseHost[0x1a] << 8) | ROMBaseHost[0x1b],
@@ -382,7 +382,7 @@ bool InitOS(void)
 		return true;
 
 	panicbug("No operating system found. ARAnyM can not boot!");
-	printf("Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.\n");
+	panicbug("Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.");
 	return false;
 }
 
@@ -430,7 +430,7 @@ bool InitAll(void)
 	if (SDL_NumJoysticks()>0) {
 		sdl_joystick=SDL_JoystickOpen(0);
 		if (!sdl_joystick) {
-			printf("Could not open joystick #0\n");
+			panicbug("Could not open joystick #0");
 		}
 	}
 
@@ -542,6 +542,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.92  2003/02/27 22:59:52  joy
+ * ethernet reworked
+ *
  * Revision 1.91  2003/01/10 00:00:28  joy
  * correct _SND cookie
  *

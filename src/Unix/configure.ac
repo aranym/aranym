@@ -1013,7 +1013,7 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" ]]; then
       AC_MSG_WARN([!!!!! MMU&JIT in progress, dangerous !!!!!])
   fi
   JITSRCS="$JITSRCS ../uae_cpu/compiler/compemu_support.cpp"
-  DEFINES="$DEFINES -DUSE_JIT"
+  DEFINES="$DEFINES -DUSE_JIT=1"
 
   if [[ "x$WANT_JIT_DEBUG" = "xyes" ]]; then
 #    if [[ "x$WANT_MON" = "xyes" ]]; then
@@ -1025,7 +1025,7 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" ]]; then
   fi
 
   if [[ "x$WANT_JIT_FPU" = "xyes" ]]; then
-    DEFINES="$DEFINES -DUSE_JIT_FPU"
+    DEFINES="$DEFINES -DUSE_JIT_FPU=1"
     JITSRCS="$JITSRCS ../uae_cpu/compiler/compemu_fpp.cpp"
   fi
 

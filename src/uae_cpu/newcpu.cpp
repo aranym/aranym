@@ -682,7 +682,7 @@ void Exception(int nr, uaecptr oldpc)
 		m68k_dumpstate (NULL);
 		// sleep(1);
 #else
-		printf("If the Full History was enabled you would see the last 20 instructions here.\n");
+		panicbug("If the Full History was enabled you would see the last 20 instructions here.");
 #endif
 	}
 	prevpc = currpc;

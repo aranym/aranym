@@ -53,9 +53,6 @@ that particular programmer but rather who is the author of the idea :-)
   Extra cool idea: PRIMARY selection on X11 could be stored to IKBD buffer
   directly so it would simulate typing.
 
-- joy: aranym --version should display 'Capabilities' - a list of the
-  features it was built with (ETHERNET, DSP, JIT, OpenGL, HOSTFS, ..)
-
 - joy: printing to file (/dev/lp)
 
 - joy: emulating a serial port compatible with MiNT/HSMODEM

@@ -13,6 +13,34 @@
 # include <stdlib.h>
 #endif
 
+#ifndef USE_JIT
+# define USE_JIT 0
+#endif
+
+#ifndef FULLMMU
+# define FULLMMU 0
+#endif
+
+#ifndef DSP_EMULATION
+# define DSP_EMULATION 0
+#endif
+
+#ifndef DSP_DISASM
+# define DSP_DISASM 0
+#endif
+
+#ifndef ENABLE_OPENGL
+# define ENABLE_OPENGL 0
+#endif
+
+#ifndef HOSTFS_SUPPORT
+# define HOSTFS_SUPPORT 0
+#endif
+
+#ifndef EXTFS_SUPPORT
+# define EXTFS_SUPPORT 0
+#endif
+
 static struct option const long_options[] =
 {
 #ifndef FixedSizeFastRAM
@@ -519,7 +547,14 @@ void early_cmdline_check(int argc, char **argv) {
 			usage(0);
 			exit(0);
 		} else if ((strcmp(argv[c], "-V") == 0) || (strcmp(argv[c], "--version") == 0)) {
-			printf ("%s\n", VERSION_STRING);
+			panicbug("Capabilities:");
+			panicbug("JIT compiler     : %s", (USE_JIT == 1) ? "enabled" : "disabled");
+			panicbug("Full MMU         : %s", (FULLMMU == 1) ? "enabled" : "disabled");
+			panicbug("DSP              : %s", (DSP_EMULATION == 1) ? "enabled" : "disabled");
+			panicbug("DSP disassembler : %s", (DSP_DISASM == 1) ? "enabled" : "disabled");
+			panicbug("OpenGL support   : %s", (ENABLE_OPENGL == 1) ? "enabled" : "disabled");
+			panicbug("HOSTFS support   : %s", (HOSTFS_SUPPORT == 1) ? "enabled" : "disabled");
+			panicbug("ARANYMFS support : %s", (EXTFS_SUPPORT == 1) ? "enabled (obsolete)" : "disabled");
 			exit (0);
 		}
 	}

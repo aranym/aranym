@@ -73,12 +73,12 @@ void segmentationfault(int x)
 #endif
 {
 	grabMouse(false);
-	printf("Gotcha! Illegal memory access. Atari PC = $%x\n", (unsigned)showPC());
+	panicbug("Gotcha! Illegal memory access. Atari PC = $%x", (unsigned)showPC());
 #ifdef FULL_HISTORY
 	showBackTrace(20, false);
 	m68k_dumpstate (NULL);
 #else
-	printf("If the Full History was enabled you would see the last 20 instructions here.\n");
+	panicbug("If the Full History was enabled you would see the last 20 instructions here.");
 #endif
 	exit(0);
 }
@@ -314,6 +314,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.80  2002/10/20 08:44:04  joy
+ * NatFeat opcodes changed back to good old ones
+ *
  * Revision 1.79  2002/10/19 09:16:58  joy
  * cosmetics
  *
