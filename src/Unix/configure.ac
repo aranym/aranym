@@ -62,6 +62,8 @@ AC_ARG_ENABLE(nfpci,           [  --enable-nfpci          enable NatFeat PCI (de
 
 AC_ARG_ENABLE(nfosmesa,        [  --enable-nfosmesa       enable NatFeat OSMesa (default=no)], [WANT_NFOSMESA=$enableval], [WANT_NFOSMESA=no])
 
+AC_ARG_ENABLE(nfjpeg,          [  --enable-nfjpeg         enable NatFeat JPEG (default=no)], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=no])
+
 AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emulation (default=yes)], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
 AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per second limiter (default=no)], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
@@ -1553,6 +1555,20 @@ else
 	WANT_NFOSMESA="no"
 fi
 
+dnl Natfeat JPEG decoder
+
+NFJPEGSRCS=""
+if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
+	dnl Check for SDL_Image
+	AC_CHECK_HEADER(SDL/SDL_image.h, have_sdlimage_hdr=yes)
+	AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
+	if test "x$have_sdlimage_hdr"="xyes" -a "x$have_sdlimage_lib"="xyes"; then
+		AC_DEFINE([NFJPEG_SUPPORT], 1, [Define if you want to use host JPEG decoder])
+		NFJPEGSRCS="../natfeat/nfjpeg.cpp"
+		LIBS="$LIBS -lSDL_image"
+	fi
+fi
+
 dnl Exception per second limiter
 
 if [[ "x$WANT_EPSLIMITER" = "xyes" ]]; then
@@ -1590,6 +1606,7 @@ AC_SUBST(LILOSRCS)
 AC_SUBST(NFCDROMSRCS)
 AC_SUBST(NFPCISRCS)
 AC_SUBST(NFOSMESASRCS)
+AC_SUBST(NFJPEGSRCS)
 AC_SUBST(GUISDLSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
@@ -1628,6 +1645,7 @@ echo Zlib ................................... : $have_zlib
 echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
 echo NatFeat PCI driver ..................... : $WANT_NFPCI
 echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA
+echo NatFeat JPEG decoder ................... : $WANT_NFJPEG
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo
 echo "Configuration done. Now type \"make depend\" (or \"gmake depend\") then

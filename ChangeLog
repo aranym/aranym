@@ -1,3 +1,8 @@
+2005/01/14 - Patrice
+- Preliminary NatFeat JPEG decoder. Don't try it, it does not work atm. If you
+  think you can debug it, SDL_image with JPEG support is required.
+
+
 2005/01/13 - Petr
 - natfeat/xhdi: direct access to partitions added (use [DISKx] in config)
   Beware: the code is not well tested. Might destroy your data!

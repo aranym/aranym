@@ -25,6 +25,9 @@
 #ifdef NFOSMESA_SUPPORT
 # include "nfosmesa.h"
 #endif
+#ifdef NFJPEG_SUPPORT
+# include "nfjpeg.h"
+#endif
 /* add your NatFeat class definition here */
 
 
@@ -61,6 +64,9 @@ PciDriverLinux Pci;
 #ifdef NFOSMESA_SUPPORT
 OSMesaDriver OSMesa;
 #endif
+#ifdef NFOSMESA_SUPPORT
+JpegDriver Jpeg;
+#endif
 /* add your NatFeat object declaration here */
 
 pNatFeat nf_objects[] = {
@@ -82,6 +88,9 @@ pNatFeat nf_objects[] = {
 #endif
 #ifdef NFOSMESA_SUPPORT
 	&OSMesa,
+#endif
+#ifdef NFJPEG_SUPPORT
+	&Jpeg,
 #endif
 	/* add your NatFeat object below */
 
