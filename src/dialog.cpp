@@ -48,11 +48,10 @@ static bool bQuitProgram;
 /* The main dialog: */
 #define MAINDLG_ABOUT    2
 #define MAINDLG_DISCS    3
-#define MAINDLG_NORESET  4
-#define MAINDLG_RESET    5
-#define MAINDLG_OK       6
-#define MAINDLG_CANCEL   7
-#define MAINDLG_QUIT     8
+#define MAINDLG_REBOOT   5
+#define MAINDLG_QUIT     6
+#define MAINDLG_OK       10
+#define MAINDLG_CANCEL   11
 /*
 #define MAINDLG_TOSGEM   4
 #define MAINDLG_SCREEN   5
@@ -62,7 +61,6 @@ static bool bQuitProgram;
 #define MAINDLG_JOY      9
 #define MAINDLG_KEYBD    10
 #define MAINDLG_DEVICES  11
-#define MAINDLG_NORESET  12
 #define MAINDLG_RESET    13
 #define MAINDLG_OK       14
 #define MAINDLG_CANCEL   15
@@ -73,7 +71,7 @@ SGOBJ maindlg[] =
   { SGBOX, 0, 0, 0,0, 36,20, NULL },
   { SGTEXT, 0, 0, 10,1, 16,1, "ARAnyM main menu" },
   { SGBUTTON, 0, 0, 4,4, 12,1, "About" },
-  { SGBUTTON, 0, 0, 4,6, 12,1, "Discs" },
+  { SGBUTTON, 0, 0, 4,6, 12,1, "Disks" },
 /*
   { SGBUTTON, 0, 0, 4,8, 12,1, "TOS/GEM" },
   { SGBUTTON, 0, 0, 4,10, 12,1, "Screen" },
@@ -84,11 +82,14 @@ SGOBJ maindlg[] =
   { SGBUTTON, 0, 0, 20,10, 12,1, "Keyboard" },
   { SGBUTTON, 0, 0, 20,12, 12,1, "Devices" },
 */
-  { SGRADIOBUT, 0, 0, 2,16, 10,1, "No Reset" },
-  { SGRADIOBUT, 0, 0, 2,18, 10,1, "Reset" },
-  { SGBUTTON, 0, 0, 14,16, 8,3, "Okay" },
-  { SGBUTTON, 0, 0, 25,18, 8,1, "Cancel" },
-  { SGBUTTON, 0, 0, 25,16, 8,1, "Quit" },
+  { SGTEXT, 0, 0, 4,14, 10,1, "ARAnyM:" },
+  { SGBUTTON, 0, 0, 2,16, 10,1, "Reboot" },
+  { SGBUTTON, 0, 0, 2,18, 10,1, "Shutdown" },
+  { SGTEXT, 0, 0, 15,14, 7,1, "Config:" },
+  { SGBUTTON, 0, 0, 15,16, 7,1, "Load" },
+  { SGBUTTON, 0, 0, 15,18, 7,1, "Save" },
+  { SGBUTTON, 0, 0, 26,16, 8,1, "OK" },
+  { SGBUTTON, 0, 0, 26,18, 8,1, "Cancel" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 
@@ -113,62 +114,56 @@ SGOBJ aboutdlg[] =
   { SGTEXT, 0, 0, 1,18, 38,1, "hope that it will be useful, but" },
   { SGTEXT, 0, 0, 1,19, 38,1, "WITHOUT ANY WARRANTY. See the GNU Ge-" },
   { SGTEXT, 0, 0, 1,20, 38,1, "neral Public License for more details." },
-  { SGBUTTON, 0, 0, 16,23, 8,1, "Okay" },
+  { SGBUTTON, 0, 0, 16,23, 8,1, "OK" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-/* The discs dialog: */
-#define DISCDLG_CDROMUM     4
-#define DISCDLG_EXIT        5
-/*
-#define DISCDLG_DISCA       4
-#define DISCDLG_BROWSEA     5
-#define DISCDLG_DISCB       7
-#define DISCDLG_BROWSEB     8
-#define DISCDLG_IMGDIR      10
-#define DISCDLG_BROWSEIMG   11
-#define DISCDLG_AUTOB       12
-#define DISCDLG_CREATEIMG   13
-#define DISCDLG_BROWSEHDIMG 17
-#define DISCDLG_DISCHDIMG   18
-#define DISCDLG_UNMOUNTGDOS 20
-#define DISCDLG_BROWSEGDOS  21
-#define DISCDLG_DISCGDOS    22
-#define DISCDLG_BOOTHD      23
-#define DISCDLG_EXIT        24
-*/
+/* The disks dialog: */
+#define DISCDLG_FLP_BROWSE	3
+#define DISCDLG_FLP_PATH	4
+#define DISCDLG_FLP_ACTIVE	5
+#define DISCDLG_IDE0_BROWSE	8
+#define DISCDLG_IDE0_PATH	9
+#define DISCDLG_IDE0_RDONLY	10
+#define DISCDLG_IDE0_ACTIVE	11
+#define DISCDLG_IDE1_BROWSE	19
+#define DISCDLG_IDE1_PATH	20
+#define DISCDLG_IDE1_RDONLY	21
+#define DISCDLG_IDE1_ACTIVE	23
+#define DISCDLG_IDE1_ISCD	24
+#define DISCDLG_CDROMUM     27
+#define DISCDLG_EXIT        28
+
 SGOBJ discdlg[] =
 {
   { SGBOX, 0, 0, 0,0, 40,25, NULL },
-  { SGBOX, 0, 0, 1,1, 38,11, NULL },
-#if 0 // MJ
-  { SGTEXT, 0, 0, 14,1, 12,1, "Floppy discs" },
-  { SGTEXT, 0, 0, 2,3, 2,1, "A:" },
-  { SGTEXT, 0, 0, 5,3, 26,1, NULL },
-  { SGBUTTON, 0, 0, 32,3, 6,1, "Browse" },
-  { SGTEXT, 0, 0, 2,5, 2,1, "B:" },
-  { SGTEXT, 0, 0, 5,5, 26,1, NULL },
-  { SGBUTTON, 0, 0, 32,5, 6,1, "Browse" },
-  { SGTEXT, 0, 0, 2,7, 30,1, "Default disk images directory:" },
-  { SGTEXT, 0, 0, 2,8, 28,1, NULL },
-  { SGBUTTON, 0, 0, 32,8, 6,1, "Browse" },
-  { SGCHECKBOX, 0, 0, 2,10, 18,1, "Auto insert B" },
-  { SGTEXT/*SGBUTTON*/, 0, 0, 20,10, 18,1, ""/*"Create blank image"*/ }, /* Not yet supported */
-#endif
-  { SGBOX, 0, 0, 1,13, 38,9, NULL },
-#if 0 // MJ
-  { SGTEXT, 0, 0, 15,13, 10,1, "Hard discs" },
-  { SGTEXT, 0, 0, 2,14, 9,1, "HD image:" },
-  { SGBUTTON, 0, 0, 32,14, 6,1, "Browse" },
-  { SGTEXT, 0, 0, 2,15, 36,1, NULL },
-  { SGTEXT, 0, 0, 2,17, 13,1, "GEMDOS drive:" },
-  { SGBUTTON, 0, 0, 30,17, 1,1, "\x01" },         /* Up-arrow button for unmounting */
-  { SGBUTTON, 0, 0, 32,17, 6,1, "Browse" },
-  { SGTEXT, 0, 0, 2,18, 36,1, NULL },
-  { SGCHECKBOX, 0, 0, 2,20, 14,1, "Boot from HD" },
-#endif
-  { SGTEXT, 0, 0, 2,17, 13,1, "CD-ROM drive:" },
-  { SGBUTTON, 0, 0, 22,17, 8,1, "Insert" },
+  { SGBOX, 0, 0, 1,1, 38,5, NULL },
+  { SGTEXT, 0, 0, 14,1, 14,1, "Floppy disk A:" },
+  { SGBUTTON, 0, 0, 2,3, 5,1, "Path:" },
+  { SGTEXT, 0, 0, 7,3, 31,1, NULL },
+  { SGCHECKBOX, 0, 0, 2,5, 8,1, "Active" },
+  { SGBOX, 0, 0, 1,7, 38,7, NULL },
+  { SGTEXT, 0, 0, 8,7, 33,1, "Hard disk IDE0 (Master)" },
+  { SGBUTTON, 0, 0, 2,9, 5,1, "Path:" },
+  { SGTEXT, 0, 0, 7,9, 31,1, NULL },
+  { SGTEXT, 0, 0, 2,11, 6,1, "Type:" },
+  { SGRADIOBUT, 0, 0, 9,11, 6,1, "HDD" },
+  { SGRADIOBUT, 0, 0, 15,11, 6,1, "CD-ROM" },
+  { SGBUTTON, 0, 0, 29,11, 8,1, "Mount" },
+  { SGTEXT, 0, 0, 2,13, 6,1, "State:" },
+  { SGCHECKBOX, 0, 0, 9,13, 10,1, "Read Only" },
+  { SGCHECKBOX, 0, 0, 22,13, 8,1, "Active" },
+  { SGBOX, 0, 0, 1,15, 38,7, NULL },
+  { SGTEXT, 0, 0, 8,15, 33,1, "Hard disk IDE1 (Slave)" },
+  { SGBUTTON, 0, 0, 2,17, 5,1, "Path:" },
+  { SGTEXT, 0, 0, 7,17, 31,1, NULL },
+  { SGTEXT, 0, 0, 2,19, 6,1, "Type:" },
+  { SGRADIOBUT, 0, 0, 2,20, 6,1, "HDD" },
+  { SGRADIOBUT, 0, 0, 2,21, 6,1, "CD-ROM" },
+  { SGTEXT, 0, 0, 15,19, 6,1, "State:" },
+  { SGCHECKBOX, 0, 0, 15,20, 10,1, "Read Only" },
+  { SGCHECKBOX, 0, 0, 15,21, 8,1, "Active" },
+  { SGBUTTON, 0, 0, 29,19, 8,1, "Mount" },
   { SGBUTTON, 0, 0, 10,23, 20,1, "Back to main menu" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
@@ -533,7 +528,14 @@ void Dialog_CopyDetailsFromConfiguration(bool bReset)
 }
 
 #endif
-
+/*
+void UpdateFloppyStatus(void)
+{
+	static char *eject = "Eject";
+	static char *insert = "Insert";
+	discdlg[DISCDLG_FLP_MOUNT].txt = bx_options.floppy.inserted ? eject : insert;
+}
+*/
 void UpdateCDROMstatus(void)
 {
 	static char *eject = "Eject";
@@ -549,86 +551,24 @@ void UpdateCDROMstatus(void)
 void Dialog_DiscDlg(void)
 {
   int but;
-// MJ  char tmpname[256/*MAX_FILENAME_LENGTH*/];
-// MJ  char dlgnamea[40]="", dlgnameb[40]="", dlgdiscdir[40]="";
-// MJ  char dlgnamegdos[40]="", dlgnamehdimg[40]="";
+  char tmpname[MAX_FILENAME_LENGTH];
+  char floppy_path[80]="";
+  char ide0_path[80]="";
+  char ide1_path[80]="";
 
   UpdateCDROMstatus();
 
   SDLGui_CenterDlg(discdlg);
 
   /* Set up dialog to actual values: */
+  File_ShrinkName(floppy_path, bx_options.floppy.path, discdlg[DISCDLG_FLP_PATH].w);
+  discdlg[DISCDLG_FLP_PATH].txt = floppy_path;
 
-  /* Disc name A: */
-/*
-  if( EmulationDrives[0].bDiscInserted )
-    File_ShrinkName(dlgnamea, EmulationDrives[0].szFileName, discdlg[DISCDLG_DISCA].w);
-  else
-    dlgnamea[0] = 0;
-*/
-#if 0 // MJ
-  discdlg[DISCDLG_DISCA].txt = dlgnamea;
-#endif
+  File_ShrinkName(ide0_path, bx_options.atadevice[0][0].path, discdlg[DISCDLG_IDE0_PATH].w);
+  discdlg[DISCDLG_IDE0_PATH].txt = ide0_path;
 
-  /* Disc name B: */
-/*
-  if( EmulationDrives[1].bDiscInserted )
-    File_ShrinkName(dlgnameb, EmulationDrives[1].szFileName, discdlg[DISCDLG_DISCB].w);
-  else
-    dlgnameb[0] = 0;
-*/
-#if 0 // MJ
-  discdlg[DISCDLG_DISCB].txt = dlgnameb;
-#endif
-
-  /* Default image directory: */
-  // File_ShrinkName(dlgdiscdir, DialogParams.DiscImage.szDiscImageDirectory, discdlg[DISCDLG_IMGDIR].w);
-#if 0
-  discdlg[DISCDLG_IMGDIR].txt = dlgdiscdir;
-#endif
-
-  /* Auto insert disc B: */
-/*
-  if( DialogParams.DiscImage.bAutoInsertDiscB )
-    discdlg[DISCDLG_AUTOB].state |= SG_SELECTED;
-   else
-*/
-#if 0 // MJ
-    discdlg[DISCDLG_AUTOB].state &= ~SG_SELECTED;
-#endif
-
-  /* Boot from harddisk? */
-/*
-  if( DialogParams.HardDisc.bBootFromHardDisc )
-    discdlg[DISCDLG_BOOTHD].state |= SG_SELECTED;
-   else
-*/
-#if 0 //MJ
-    discdlg[DISCDLG_BOOTHD].state &= ~SG_SELECTED;
-#endif
-
-  /* GEMDOS Hard disc directory: */
-  /*
-  if( strcmp(DialogParams.HardDisc.szHardDiscDirectories[0], ConfigureParams.HardDisc.szHardDiscDirectories[0])!=0
-      || GEMDOS_EMU_ON )
-    File_ShrinkName(dlgnamegdos, DialogParams.HardDisc.szHardDiscDirectories[0], discdlg[DISCDLG_DISCGDOS].w);
-  else
-    dlgnamegdos[0] = 0;
-*/
-#if 0 // MJ
-  discdlg[DISCDLG_DISCGDOS].txt = dlgnamegdos;
-#endif
-
-  /* Hard disc image: */
-  /*
-  if( ACSI_EMU_ON )
-    File_ShrinkName(dlgnamehdimg, DialogParams.HardDisc.szHardDiscImage, discdlg[DISCDLG_DISCHDIMG].w);
-  else
-    dlgnamehdimg[0] = 0;
-  */
-#if 0 // MJ
-  discdlg[DISCDLG_DISCHDIMG].txt = dlgnamehdimg;
-#endif
+  File_ShrinkName(ide1_path, bx_options.atadevice[0][1].path, discdlg[DISCDLG_IDE1_PATH].w);
+  discdlg[DISCDLG_IDE1_PATH].txt = ide1_path;
 
   /* Draw and process the dialog */
   do
@@ -645,59 +585,50 @@ void Dialog_DiscDlg(void)
 		}
 
         break;
-#if 0 // MJ
-      case DISCDLG_BROWSEA:                       /* Choose a new disc A: */
-        /*
-        if( EmulationDrives[0].bDiscInserted )
-          strcpy(tmpname, EmulationDrives[0].szFileName);
-         else
-          strcpy(tmpname, DialogParams.DiscImage.szDiscImageDirectory);
-        */
-        strcpy(tmpname, "/home/joy/");
+
+      case DISCDLG_FLP_BROWSE:   /* Choose a new disc A: */
+        strcpy(tmpname, bx_options.floppy.path);
         if( SDLGui_FileSelect(tmpname) )
         {
           if( !File_DoesFileNameEndWithSlash(tmpname) && File_Exists(tmpname) )
           {
-            Floppy_InsertDiscIntoDrive(0, tmpname); /* FIXME: This shouldn't be done here but in Dialog_CopyDialogParamsToConfiguration */
-            File_ShrinkName(dlgnamea, tmpname, discdlg[DISCDLG_DISCA].w);
+            File_ShrinkName(floppy_path, tmpname, discdlg[DISCDLG_FLP_PATH].w);
           }
           else
           {
-            Floppy_EjectDiscFromDrive(0, false); /* FIXME: This shouldn't be done here but in Dialog_CopyDialogParamsToConfiguration */
-            dlgnamea[0] = 0;
+            floppy_path[0] = 0;
           }
         }
         break;
-      case DISCDLG_BROWSEB:                       /* Choose a new disc B: */
-        if( EmulationDrives[1].bDiscInserted )
-          strcpy(tmpname, EmulationDrives[1].szFileName);
-         else
-          strcpy(tmpname, DialogParams.DiscImage.szDiscImageDirectory);
+
+      case DISCDLG_IDE0_BROWSE:
+        strcpy(tmpname, bx_options.atadevice[0][0].path);
         if( SDLGui_FileSelect(tmpname) )
         {
-          if( !File_DoesFileNameEndWithSlash(tmpname) && File_Exists(tmpname) )
-          {
-            Floppy_InsertDiscIntoDrive(1, tmpname); /* FIXME: This shouldn't be done here but in Dialog_CopyDialogParamsToConfiguration */
-            File_ShrinkName(dlgnameb, tmpname, discdlg[DISCDLG_DISCB].w);
+          if( !File_DoesFileNameEndWithSlash(tmpname) && File_Exists(tmpname) ) {
+          // strcpy(bx_options.atadevice[0][0].path, tmpname);
+            File_ShrinkName(ide0_path, tmpname, discdlg[DISCDLG_IDE0_PATH].w);
           }
-          else
-          {
-            Floppy_EjectDiscFromDrive(1, false); /* FIXME: This shouldn't be done here but in Dialog_CopyDialogParamsToConfiguration */
-            dlgnameb[0] = 0;
+          else {
+          	ide0_path[0] = 0;
           }
         }
         break;
-      case DISCDLG_BROWSEIMG:
-        strcpy(tmpname, DialogParams.DiscImage.szDiscImageDirectory);
+
+      case DISCDLG_IDE1_BROWSE:
+        strcpy(tmpname, bx_options.atadevice[0][1].path);
         if( SDLGui_FileSelect(tmpname) )
         {
-          char *ptr;
-          ptr = strrchr(tmpname, '/');
-          if( ptr!=NULL )  ptr[1]=0;
-          strcpy(DialogParams.DiscImage.szDiscImageDirectory, tmpname);
-          File_ShrinkName(dlgdiscdir, DialogParams.DiscImage.szDiscImageDirectory, discdlg[DISCDLG_IMGDIR].w);
+          if( !File_DoesFileNameEndWithSlash(tmpname) && File_Exists(tmpname) ) {
+          // strcpy(bx_options.atadevice[0][1].path, tmpname);
+            File_ShrinkName(ide1_path, tmpname, discdlg[DISCDLG_IDE1_PATH].w);
+          }
+          else {
+          	ide1_path[0] = 0;
+          }
         }
         break;
+#if 0
       case DISCDLG_CREATEIMG:
         fprintf(stderr,"Sorry, creating disc images not yet supported\n");
         break;
@@ -1087,9 +1018,6 @@ int Dialog_MainDlg(bool *bReset)
   SDL_ShowCursor(SDL_ENABLE);
   hostScreen.unlock();
 
-  maindlg[MAINDLG_NORESET].state |= SG_SELECTED;
-  maindlg[MAINDLG_RESET].state &= ~SG_SELECTED;
-
   do
   {
     retbut = SDLGui_DoDialog(maindlg);
@@ -1130,6 +1058,10 @@ int Dialog_MainDlg(bool *bReset)
         SDLGui_DoDialog(devicedlg);
         break;
 */
+
+      case MAINDLG_REBOOT:
+        *bReset = true;
+        break;
       case MAINDLG_QUIT:
         bQuitProgram = true;
         break;
@@ -1140,16 +1072,11 @@ int Dialog_MainDlg(bool *bReset)
     Screen_SetFullUpdate();
     Screen_Draw();
   }
-  while(retbut!=MAINDLG_OK && retbut!=MAINDLG_CANCEL && !bQuitProgram);
+  while(retbut!=MAINDLG_OK && retbut!=MAINDLG_CANCEL && !bQuitProgram && !*bReset);
 
   hostScreen.lock();
   SDL_ShowCursor(SDL_DISABLE);
   hostScreen.unlock();
-
-  if( maindlg[MAINDLG_RESET].state & SG_SELECTED )
-    *bReset = true;
-  else
-    *bReset = false;
 
   return(retbut==MAINDLG_OK);
 }
@@ -1163,7 +1090,7 @@ int Dialog_MainDlg(bool *bReset)
 bool Dialog_DoProperty(bool *bForceReset, bool *bForceQuit)
 {
   bool bOKDialog;  /* Did user 'OK' dialog? */
-  bool bReset;
+  bool bReset = false;
 #if 0
   Main_PauseEmulation();
 
@@ -1176,9 +1103,7 @@ bool Dialog_DoProperty(bool *bForceReset, bool *bForceQuit)
 #endif
   bOKDialog = Dialog_MainDlg(&bReset);
   *bForceQuit = bQuitProgram;
-  if (bOKDialog) {
-    *bForceReset = bReset;
-  }
+  *bForceReset = bReset;
 #if 0
   /* Copy details to configuration, and ask user if wishes to reset */
   if (bOKDialog)
