@@ -13,16 +13,45 @@
 
 
 # source function library
-. /etc/rc.d/init.d/functions
+# . /etc/rc.d/init.d/functions
 
 # TO CHANGE!!!
-USER=standa
+USER=joy
 
 TAPS=tap0
 BRIDGE=br0
+NIF=eth0
+
+LOCK=/var/lock/subsys/arabridge
+
+# make sure grep in ifconfig output works
+LC_ALL=C
 
 # defaultroute's nif
-NIF=$(/sbin/route -n | awk '/^0\.0\.0\.0/ {print $8}')
+DR_NIF=$(/sbin/route -n 2>/dev/null | awk '/^0\.0\.0\.0/ {print $8}')
+DEFGW=$(/sbin/route -n 2>/dev/null | awk '/^0\.0\.0\.0/ {print $2}')
+
+# do we have the default route NIF?
+DEF_ROUTE=0
+if [ -n "$DR_NIF" -a "$NIF" = "$DR_NIF" -a -n "$DEFGW" ]; then
+	DEF_ROUTE=1
+	echo "Playing with default route at $DR_NIF with gateway to $DEFGW"
+fi
+
+success()
+{
+	echo "[OK]"
+}
+
+failure()
+{
+	echo "[FAILED]"
+}
+
+status()
+{
+	echo "status $1"
+}
 
 start_tap()
 {
@@ -33,25 +62,17 @@ start_tap()
         TAP=$(tunctl -t $TAP -u $USER)
     fi
 }
+
 case "$1" in
   start)
 	echo -n "Starting TUN/TAP bridging: "
 
-	# do we have the default route NIF?
-	if [ -z "$NIF" ]; then
-        	echo -n "... ERROR: no default route";
-		failure; echo; exit 1
-        fi
-	echo
-
 	# save the NIF name
-	echo $NIF >/var/lock/subsys/arabridge
+	echo $NIF >$LOCK
 
 	IP=$(/sbin/ifconfig $NIF | awk '/inet addr:/ {print substr($2, 6)}')
 	BCAST=$(/sbin/ifconfig $NIF | awk '/inet addr:/ {print substr($3, 7)}')
 	NETMASK=$(/sbin/ifconfig $NIF | awk '/inet addr:/ {print substr($4, 6)}')
-	DEFGW=$(/sbin/route -n | awk '/^0\.0\.0\.0/ {print $2}')
-
 	echo "NIF=$NIF IP=$IP, BCAST=$BCAST, NETMASK=$NETMASK, DEFGW=$DEFGW"
 
 	/sbin/modprobe tun
@@ -63,14 +84,16 @@ case "$1" in
 	brctl setfd $BRIDGE 1
 	brctl sethello $BRIDGE 1
 
-	# add the default route NIF to the bridge
+	# add NIF to the bridge
+	ifconfig $NIF 0.0.0.0
 	brctl addif $BRIDGE $NIF 2>&1 | grep -qi "invalid"
         if [ $? -eq 0 ]; then
         	echo -n "... ERROR: wrong NIF type";
 		failure; echo
 
 		brctl delbr $BRIDGE
-		rm -f /var/lock/subsys/arabridge
+		rm -f $LOCK
+		ifconfig $NIF $IP
 		exit 1 
         fi
 	echo
@@ -87,18 +110,20 @@ case "$1" in
 
 	# ifconfig needs to be called twice here after some delay
 	# I don't really know what is going on :(
-	# if not slept enouh then the IP, NETMASK and BCAST setting
-	# is cleared 8-| 
+	# if not slept enough then the IP, NETMASK and BCAST setting
+	# are cleared 8-| 
 	sleep 1
 
 	/sbin/ifconfig $NIF 0.0.0.0 promisc up
 
 	# bring the bridge up
 	/sbin/ifconfig $BRIDGE $IP netmask $NETMASK broadcast $BCAST up
-	if [ -z "$DEFGW" ]; then
+	if [ $DEF_ROUTE -eq 0 ]; then
 	   /sbin/route add default dev $BRIDGE
+	   echo "adding normal route"
 	else
 	   /sbin/route add default dev $BRIDGE gw $DEFGW
+	   echo "adding gateway route"
 	fi
 
 	echo
@@ -108,27 +133,28 @@ case "$1" in
   stop)
 	echo -n "Shutting down arabridge: "
 
-	NIF=$(cat /var/lock/subsys/arabridge 2>/dev/null)
+	NIF=$(cat $LOCK 2>/dev/null)
 	if [ -z "$NIF" ]; then
         	echo -n "... already stopped";
-		success; echo; exit 0
+		success;
+		echo;
+		exit 0
         fi
 	echo
 
 	IP=$(/sbin/ifconfig $BRIDGE 2>/dev/null| awk '/inet addr:/ {print substr($2, 6)}')
 	BCAST=$(/sbin/ifconfig $BRIDGE 2>/dev/null| awk '/inet addr:/ {print substr($3, 7)}')
 	NETMASK=$(/sbin/ifconfig $BRIDGE 2>/dev/null| awk '/inet addr:/ {print substr($4, 6)}')
-	DEFGW=$(/sbin/route -n 2>/dev/null| awk '/^0\.0\.0\.0/ {print $2}')
 
-	# if not slept enouh then the IP, NETMASK and BCAST setting
-	# is not fetched properly 8-| 
+	# if not slept long enough then the IP, NETMASK and BCAST setting
+	# are not fetched properly 8-| 
 	sleep 1
 
 	echo "NIF=$NIF IP=$IP, BCAST=$BCAST, NETMASK=$NETMASK, DEFGW=$DEFGW"
 
 	# bring the previous network nif back
 	/sbin/ifconfig $NIF $IP netmask $NETMASK broadcast $BCAST up
-	if [ -z "$DEFGW" ]; then
+	if [ $DEF_ROUTE -eq 0 ]; then
 	   /sbin/route add default dev $NIF
 	else
 	   /sbin/route add default dev $NIF gw $DEFGW
@@ -145,7 +171,7 @@ case "$1" in
 		tunctl -d $tap
 	done
 	brctl delbr $BRIDGE
-	rm -f /var/lock/subsys/arabridge
+	rm -f $LOCK
 	echo
 	;;
   restart)
