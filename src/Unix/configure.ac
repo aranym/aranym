@@ -1383,9 +1383,6 @@ fi
     AC_SEARCH_LIBS(glAccum,          $GL_search_list, have_GL=yes,   have_GL=no)
     AC_SEARCH_LIBS(gluBeginCurve,   $GLU_search_list, have_GLU=yes,  have_GLU=no)
     AC_SEARCH_LIBS(glXChooseVisual, $GLX_search_list, have_GLX=yes,  have_GLX=no)
-    AC_SEARCH_LIBS(glutInit,        glut,             have_glut=yes, have_glut=no)
-
-
 
     # Restore pretty messages.
     exec AC_FD_MSG>&8
@@ -1415,14 +1412,12 @@ dnl bugfix: dont forget to cache this variables, too
     mdl_cv_have_GL="$have_GL"
     mdl_cv_have_GLU="$have_GLU"
     mdl_cv_have_GLX="$have_GLX"
-    mdl_cv_have_glut="$have_glut"
   ])
   GL_CFLAGS="$mdl_cv_GL_CFLAGS"
   GL_LIBS="$mdl_cv_GL_LIBS"
   have_GL="$mdl_cv_have_GL"
   have_GLU="$mdl_cv_have_GLU"
   have_GLX="$mdl_cv_have_GLX"
-  have_glut="$mdl_cv_have_glut"
 ])
 dnl endof bugfix -ainan
 
