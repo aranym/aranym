@@ -21,10 +21,10 @@ extern int in_handler;
 class NF_Base
 {
 public:
-	virtual char *name() { return ""; }
-	virtual bool isSuperOnly() { return true; }	// by default requires supervisor mode
-	virtual uint32 dispatch(uint32 fncode) { return 0; }
-	uint32 getParameterAsInt(int i) { return nf_getparameter(i); }
+	virtual char *name() = 0;
+	virtual bool isSuperOnly() = 0;
+	virtual uint32 dispatch(uint32 fncode) = 0;
+	uint32 getParameter(int i) { return nf_getparameter(i); }
 };
 
 #endif /* _NF_BASE_H */
