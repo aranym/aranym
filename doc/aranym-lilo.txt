@@ -1,94 +1,17 @@
 Hello,
 
-I just made a Lilo (linux loader) for Aranym. It means Aranym directly
+Patrice made a Lilo (linux loader) for Aranym. It means Aranym directly
 load a linux/m68k kernel image (gzipped or not), then run it.
-Unfortunately, due to missing/incomplete mmu or hardware emulation, the
-kernel stops running after some instructions executed.
-
-I tested it with the Debian 3.0r1/m68k kernel and ramdisk, available at:
-http://ftp.fr.debian.org/debian/dists/Debian3.0r1a/main/disks-m68k/3.0.23-2002-05-21/atari/
 
 Aranym must be compiled with the following options, if you want to try:
---enable-fixedvideoram --enable-fullmmu --enable-lilo
-In config file, disable mousegrabbing (in case of an infinite loop) and jit.
-Also don't forget to give him a path to the full kernel sources includes, because
-the directory linux/include/asm-m68k is required for compilation
+--enable-fixedvideoram --enable-fullmmu --enable-lilo --disable-nfcdrom
+In config file, disable mousegrabbing (in case of an infinite loop) and JIT.
+
 And run aranym with '-l' or '--lilo'.
 
-Note that FastRAM is required to load the ramdisk in it, so
-the kernel does not overwrite it when booting (8MB minimum).
+Some disk images to play with are available at
+  http://www.zln.cz/?joy/linux_on_aranym.zip
 
--- 
-Patrice Mandin
-WWW: http://membres.lycos.fr/pmandin/
-Programmeur Linux, Atari
-Spécialité: Développement, jeux
+Please note that MMU is not 100% bugfixed so Linux is not running properly
+yet. But Andreas is working on it hard...
 
-P.S. The current state of Debian GNU/Linux m68k kernel booting in ARAnyM:
-
-Linux version 2.2.20 (root@sparks) (gcc version 2.7.2.3) #1 Sun Nov 25 14:00:42 GMT 2001
-Atari hardware found: VIDEL STDMA-SCSI ST_MFP STND_DMA YM2149 PCM CODEC DSP56K ANALOG_JOY BLITTER IDE TT_CLK FDC_SPEED 
-Console: colour dummy device 80x25
-Calibrating delay loop... 9.01 BogoMIPS
-Memory: 22132k/30720k available (1000k kernel code, 620k data, 68k init)
-Dentry hash table entries: 4096 (order 3, 32k)
-Buffer cache hash table entries: 32768 (order 5, 128k)
-Page cache hash table entries: 8192 (order 3, 32k)
-kmem_create: Forcing size word alignment - filp
-VFS: Diskquotas version dquot_6.4.0 initialized
-kmem_create: Forcing size word alignment - dquot
-POSIX conformance testing by UNIFIX
-Linux/m68k PCI BIOS32 revision 0.01
-PCI: No PCI bus detected
-Linux NET4.0 for Linux 2.2
-Based upon Swansea University Computer Society NET3.039
-kmem_create: Forcing size word alignment - sock
-kmem_create: Forcing size word alignment - skbuff_head_cache
-NET4: Unix domain sockets 1.0 for Linux NET4.0.
-NET4: Linux TCP/IP 1.0 for NET4.0
-IP Protocols: ICMP, UDP, TCP
-kmem_create: Forcing size word alignment - tcp_open_request
-kmem_create: Forcing size word alignment - tcp_tw_bucket
-TCP: Hash tables configured (ehash 32768 bhash 32768)
-Initializing RT netlink socket
-Starting kswapd v 1.5 
-Console: switching to colour frame buffer device 80x30
-Determined 640x480, depth 4
-   virtual 640x972
-fb0: Atari Builtin vga16 frame buffer device, using 304K of video memory
-WARNING: keyboard self test failed!
-M68K Serial driver version 1.01
-pty: 256 Unix98 ptys configured
-Atari mouse installed.
-Real Time Clock Driver v1.10
-Non-volatile memory driver v1.2
-Probing nvram size...  found 64 bytes
-RAM disk driver initialized:  16 RAM disks of 4096K size
-loop: registered device at major 7
-ide0: Falcon IDE interface
-hda: Master, ATA DISK drive
-ide0 at fff00000 on irq 0x0000000f
-hda: Master, 255MB w/256kB Cache, CHS=520/16/63
-Atari floppy driver: max. HD, track buffering
-Probing floppy drive(s):
-fd0
-md driver 0.36.6 MAX_MD_DEV=4, MAX_REAL=8
-Atari SCSI: resetting the SCSI bus... done
-scsi0: options CAN_QUEUE=8 CMD_PER_LUN=1 SCAT-GAT=0 TAGGED-QUEUING=no HOSTID=7 generic options AUTOSENSE REAL DMA SCSI-2 TAGGED QUEUING generic release=7
-scsi0 : Atari native SCSI
-scsi : 1 host.
-scsi : detected total.
-Partition check:
- hda:hda: lost interrupt
-hda: lost interrupt
-hda: lost interrupt
-hda: lost interrupt
-hda: lost interrupt
-hda: lost interrupt
- AHDI GEM(32) hda1 LNX(223) hda2
-RAMDISK: ext2 filesystem found at block 0
-RAMDISK: Loading 6900 blocks [1 disk] into ram disk... done.
-EXT2-fs warning: checktime reached, running e2fsck is recommended
-VFS: Mounted root (ext2 filesystem).
-Warning: unable to open an initial console.
-Kernel panic: No init found.  Try passing init= option to kernel.
