@@ -3,6 +3,10 @@
   read cookie jar pointer.
 
 
+2005/03/21 - milan
+- parameters.cpp: correct the previous commit
+
+
 2005/03/21 - Patrice
 - parameters.cpp: display custom enabled NatFeats.
 
