@@ -23,7 +23,7 @@
  */
 
 #include "sysdeps.h"
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <signal.h>
 
 #include "cpu_emulation.h"
@@ -694,6 +694,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.38  2001/11/06 20:36:54  milan
+ * MMU's corrections
+ *
  * Revision 1.37  2001/11/06 13:35:51  joy
  * now recognizes TOS from CVS 2001-05-02 and also the new one (WinX free).
  *

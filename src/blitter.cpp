@@ -24,7 +24,7 @@
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "blitter.h"
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "debug.h"
 
 #if DEBUG

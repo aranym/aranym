@@ -8,7 +8,7 @@
 #define _VIDEL_H
 
 #include "icio.h"
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 class VIDEL : public BASE_IO {
 protected:
@@ -51,6 +51,10 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.12  2001/11/04 23:17:08  standa
+ * 8bit destination surface support in VIDEL. Blit routine optimalization.
+ * Bugfix in compatibility modes palette copying.
+ *
  * Revision 1.11  2001/08/28 23:26:09  standa
  * The fVDI driver update.
  * VIDEL got the doRender flag with setter setRendering().

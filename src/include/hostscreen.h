@@ -8,7 +8,7 @@
 #define _HOSTSCREEN_H
 
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "gfxprimitives.h"
 
 
@@ -297,6 +297,10 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.16  2001/11/04 23:17:08  standa
+ * 8bit destination surface support in VIDEL. Blit routine optimalization.
+ * Bugfix in compatibility modes palette copying.
+ *
  * Revision 1.15  2001/10/30 22:59:34  standa
  * The resolution change is now possible through the fVDI driver.
  *
