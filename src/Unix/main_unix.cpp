@@ -216,10 +216,9 @@ static void check_event(void)
 	}
 }
 
-int SDLw = getVidelScreenWidth();
-int SDLh = getVidelScreenHeight();
 int sdl_videoparams;
-
+int SDLw = 640, SDLh = 480;
+int od_posledni_zmeny = 0;
 int getSDLScreenWidth() {
 	return SDLw;
 }
@@ -230,11 +229,20 @@ int getSDLScreenHeight() {
 
 void update_screen()
 {
-	if (getSDLScreenWidth() != getVidelScreenWidth() || getSDLScreenHeight() != getVidelScreenHeight()) {
-		SDLw = getVidelScreenWidth();
-		SDLh = getVidelScreenHeight();
+	if (od_posledni_zmeny > 2 && (getSDLScreenWidth() != getVidelScreenWidth() || getSDLScreenHeight() != getVidelScreenHeight())) {
+		if (getVidelScreenWidth() > 0)
+			SDLw = getVidelScreenWidth();
+		if (getVidelScreenHeight() > 0)
+			SDLh = getVidelScreenHeight();
 		fprintf(stderr, "Chysta se zmena rozliseni na %d x %d\n", SDLw, SDLh);
+		od_posledni_zmeny = 0;
+	}
+	if (od_posledni_zmeny == 3) {
 		surf = SDL_SetVideoMode(getSDLScreenWidth(), getSDLScreenHeight(), 16, sdl_videoparams);
+	}
+	if (od_posledni_zmeny < 4) {
+		od_posledni_zmeny++;
+		return;
 	}
 	if (SDL_MUSTLOCK(surf))
 		if (SDL_LockSurface(surf) < 0) {
@@ -244,8 +252,7 @@ void update_screen()
 
 	VideoRAMBaseHost = (uint8 *) surf->pixels;
 	uint16 *fvram =
-		(uint16 *) get_real_address_direct(vram_addr
-										   /*ReadMacInt32(0x44e) */ );
+		(uint16 *) get_real_address_direct(getVideoramAddress());
 	uint16 *hvram = (uint16 *) VideoRAMBaseHost;
 	int mode = getVideoMode();
 
