@@ -2257,7 +2257,11 @@ int32 ExtFs::Fxattr_( LogicalDev *ldp, char *fpathName, int16 flag, uint32 xattr
 	/* UWORD gid	   */  WriteInt16( xattrp + 14, statBuf.st_gid );	 // FIXME: this is Linux's one
 	/* LONG	 size	   */  WriteInt32( xattrp + 16, statBuf.st_size );
 	/* LONG	 blksize   */  WriteInt32( xattrp + 20, statBuf.st_blksize );
+#ifndef __BEOS__
 	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, statBuf.st_blocks );
+#else
+	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, 0 );
+#endif
 	/* UWORD mtime	   */  WriteInt16( xattrp + 28, time2dos(statBuf.st_mtime) );
 	/* UWORD mdate	   */  WriteInt16( xattrp + 30, date2dos(statBuf.st_mtime) );
 	/* UWORD atime	   */  WriteInt16( xattrp + 32, time2dos(statBuf.st_atime) );
@@ -2645,6 +2649,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.60  2002/12/10 20:38:21  standa
+ * interface & debug cleanup
+ *
  * Revision 1.59  2002/10/24 20:35:02  milan
  * wchar_t hack for Mac OS X
  *

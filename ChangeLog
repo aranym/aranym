@@ -1,3 +1,7 @@
+2003/02/17 - STanda
+- BeOS patches for extfs.cpp and natfeat/hostfs.cpp
+
+
 2003/02/16 - joy
 - cleanup in src/natfeat - fundamental NF functions grouped in 'basicset'
 - cleanup in emulop.cpp - removed everything that has a NF replacement
