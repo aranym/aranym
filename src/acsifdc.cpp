@@ -12,7 +12,7 @@
 static const int HW = 0xff8600;
 
 extern int dma_mode, dma_scr, dma_car, fdc_command, fdc_track, fdc_sector,
-	fdc_data, fdc_int, fdc_status, dma_sr;
+	fdc_data, fdc_status, dma_sr;
 extern void fdc_exec_command(void);
 
 ACSIFDC::ACSIFDC() {
@@ -25,17 +25,19 @@ uae_u8 ACSIFDC::handleRead(uaecptr addr) {
 	if (addr < 0 || addr > 0x0d)
 		return 0;
 
+	int value = 0;
 	switch(addr) {
-		case 4:	return LOAD_B_ff8604();
-		case 5: return LOAD_B_ff8605();
-		case 6: return LOAD_B_ff8606();
-		case 7: return LOAD_B_ff8607();
-		case 9: return DMAaddr >> 16;
-		case 0x0b: return DMAaddr >> 8;
-		case 0x0d: return DMAaddr;
+		case 4:	value = LOAD_B_ff8604();
+		case 5: value = LOAD_B_ff8605();
+		case 6: value = LOAD_B_ff8606();
+		case 7: value = LOAD_B_ff8607();
+		case 9: value = DMAaddr >> 16;
+		case 0x0b: value = DMAaddr >> 8;
+		case 0x0d: value = DMAaddr;
 	}
 
-	return 0;
+	D(bug("Reading ACSIFDC data from %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
+	return value;
 }
 
 void ACSIFDC::handleWrite(uaecptr addr, uae_u8 value) {
@@ -43,6 +45,7 @@ void ACSIFDC::handleWrite(uaecptr addr, uae_u8 value) {
 	if (addr < 0 || addr > 0x0d)
 		return;
 
+	D(bug("Writing ACSIFDC data to %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
 	switch(addr) {
 		case 4: STORE_B_ff8604(value); break;
 		case 5: STORE_B_ff8605(value); break;
@@ -56,39 +59,7 @@ void ACSIFDC::handleWrite(uaecptr addr, uae_u8 value) {
 
 uae_u8 ACSIFDC::LOAD_B_ff8604(void)
 {
-	if (dma_mode & 0x10)
-	{
-		return dma_scr>>8;
-	}
-	else
-	{
-		if (dma_mode & 8)
-		{
-			return dma_car>>8;
-		}
-		else
-		{
-			switch(dma_mode & 6)
-			{
-				case 0:
-					if (!fdc_int)
-					{
-						uae_u8 GPIPdata = HWget_b(0xfffa01);
-						GPIPdata |= 0x20;
-						HWput_b(0xfffa01, GPIPdata);
-					}
-					return fdc_status>>8;
-				case 2:
-					return fdc_track>>8;
-				case 4:
-					return fdc_sector>>8;
-				case 6:
-					return fdc_data>>8;
-				default:
-					return 0;
-			}
-		}
-	}
+	return 0;
 }
 
 uae_u8 ACSIFDC::LOAD_B_ff8605(void)
@@ -108,12 +79,6 @@ uae_u8 ACSIFDC::LOAD_B_ff8605(void)
 			switch(dma_mode & 6)
 			{
 				case 0:
-					if (!fdc_int)
-					{
-						uae_u8 GPIPdata = HWget_b(0xfffa01);
-						GPIPdata |= 0x20;
-						HWput_b(0xfffa01, GPIPdata);
-					}
 					return fdc_status&0xff;
 				case 2:
 					return fdc_track&0xff;
