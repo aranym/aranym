@@ -211,15 +211,15 @@ void presave_opengl() {
 }
 
 /*************************************************************************/
-#define BX_DISK_CONFIG(a)	struct Config_Tag a ## _configs[] = {	\
-	{ "Present", Bool_Tag, &bx_options. ## a ## .present},	\
-	{ "IsCDROM", Bool_Tag, &bx_options. ## a ## .isCDROM},	\
-	{ "ByteSwap", Bool_Tag, &bx_options. ## a ## .byteswap},	\
-	{ "ReadOnly", Bool_Tag, &bx_options. ## a ## .readonly},	\
-	{ "Path", String_Tag, bx_options. ## a ## .path, sizeof(bx_options. ## a ## .path)},	\
-	{ "Cylinders", Int_Tag, &bx_options. ## a ## .cylinders},	\
-	{ "Heads", Int_Tag, &bx_options. ## a ## .heads},	\
-	{ "SectorsPerTrack", Int_Tag, &bx_options. ## a ## .spt},	\
+#define BX_DISK_CONFIG(Disk)	struct Config_Tag Disk ## _configs[] = {	\
+	{ "Present", Bool_Tag, &bx_options.Disk.present},	\
+	{ "IsCDROM", Bool_Tag, &bx_options.Disk.isCDROM},	\
+	{ "ByteSwap", Bool_Tag, &bx_options.Disk.byteswap},	\
+	{ "ReadOnly", Bool_Tag, &bx_options.Disk.readonly},	\
+	{ "Path", String_Tag, bx_options.Disk.path, sizeof(bx_options.Disk.path)},	\
+	{ "Cylinders", Int_Tag, &bx_options.Disk.cylinders},	\
+	{ "Heads", Int_Tag, &bx_options.Disk.heads},	\
+	{ "SectorsPerTrack", Int_Tag, &bx_options.Disk.spt},	\
 	{ NULL , Error_Tag, NULL }	\
 }	\
 
