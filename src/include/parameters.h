@@ -205,6 +205,7 @@ typedef struct {
 typedef struct {
 	char type[256];
 	char file[256];
+	char parport[256];
 } bx_parallel_options_t;
 
 // Keyboard and mouse

@@ -175,8 +175,11 @@ LibOSMesa = libOSMesa.so
 ; Type of parallel port emulation:
 ;  file -> Output to file
 ;  x86 -> Hardware access under Linux/X86
+;  parport -> Use /dev/parport device under Linux
 Type = file
 ; Output to file: filename, stdout, or stderr
 File = /tmp/aranym-parallel.txt
-; File = stdout
-; File = stderr
+;  File = stdout
+;  File = stderr
+; Linux parport device for Type=parport
+Parport = /dev/parport0

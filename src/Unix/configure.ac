@@ -72,6 +72,8 @@ AC_ARG_ENABLE(lilo,            [  --enable-lilo           enable Linux loader (d
 
 AC_ARG_ENABLE(parallelx86,     [  --enable-parallelx86    enable Linux X86 hw access for parallel port (default=no)], [WANT_PARALLELX86=$enableval], [WANT_PARALLELX86=no])
 
+AC_ARG_ENABLE(parport,         [  --enable-parport        enable Linux /dev/parport access for parallel port (default=yes)], [WANT_PARALLELPARPORT=$enableval], [WANT_PARALLELPARPORT=yes])
+
 AC_ARG_WITH(fink,              [  --with-fink             Use Fink suite to build Aranym on MacOSX (default=no)], [WITH_FINK=$withval], [WITH_FINK=no])
 
 AC_ARG_WITH(mesa-headers,      [  --with-mesa-headers     Path to Mesa header files], [WITH_MESAINC=$withval], [WITH_MESAINC=no])
@@ -1618,6 +1620,18 @@ if test "x$WANT_PARALLELX86" = "xyes" ; then
 	fi
 fi
 
+dnl Linux /dev/parport access for parallel port
+
+PARALLELPARPORTSRCS=""
+if test "x$WANT_PARALLELPARPORT" = "xyes" ; then
+	if test "$OS_TYPE" = "linux"; then
+		AC_DEFINE([ENABLE_PARALLELPARPORT], 1, [Define if you want to use Linux /dev/parport access for parallel port])
+		PARALLELPARPORTSRCS="../parallel_parport.cpp"
+	else
+		WANT_PARALLELPARPORT="no"
+	fi
+fi
+
 dnl Data directory
 
 APP=aranym
@@ -1655,6 +1669,7 @@ AC_SUBST(NFPCISRCS)
 AC_SUBST(NFOSMESASRCS)
 AC_SUBST(NFJPEGSRCS)
 AC_SUBST(PARALLELX86SRCS)
+AC_SUBST(PARALLELPARPORTSRCS)
 AC_SUBST(GUISDLSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
@@ -1696,6 +1711,7 @@ echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA
 echo NatFeat JPEG decoder ................... : $WANT_NFJPEG
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86
+echo Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT
 echo
 echo "Configuration done. Now type \"make depend\" (or \"gmake depend\") then
 \"make\" (or \"gmake\")."

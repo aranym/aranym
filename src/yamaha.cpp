@@ -32,6 +32,9 @@
 #ifdef ENABLE_PARALLELX86
 #include "parallel_x86.h"
 #endif
+#ifdef ENABLE_PARALLELPARPORT
+#include "parallel_parport.h"
+#endif
 
 #ifdef DSP_EMULATION
 #include "dsp.h"
@@ -44,6 +47,11 @@ YAMAHA::YAMAHA(memptr addr, uint32 size) : BASE_IO(addr, size) {
 #ifdef ENABLE_PARALLELX86
 	if (strcmp("x86", bx_options.parallel.type)==0)
 		parallel = new ParallelX86;
+	else
+#endif
+#ifdef ENABLE_PARALLELPARPORT
+	if (strcmp("parport", bx_options.parallel.type)==0)
+		parallel = new ParallelParport;
 	else
 #endif
 		parallel = new ParallelFile;

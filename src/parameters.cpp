@@ -630,12 +630,14 @@ void presave_osmesa() {
 struct Config_Tag parallel_conf[]={
 	{ "Type", String_Tag, &PARALLEL_CONF(type), sizeof(PARALLEL_CONF(type)), 0},
 	{ "File", String_Tag, &PARALLEL_CONF(file), sizeof(PARALLEL_CONF(file)), 0},
+	{ "Parport", String_Tag, &PARALLEL_CONF(parport), sizeof(PARALLEL_CONF(parport)), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_parallel() {
   safe_strncpy(PARALLEL_CONF(type), "file", sizeof(PARALLEL_CONF(type)));
   safe_strncpy(PARALLEL_CONF(file), "/tmp/aranym-parallel.txt", sizeof(PARALLEL_CONF(type)));
+  safe_strncpy(PARALLEL_CONF(parport), "/dev/parport0", sizeof(PARALLEL_CONF(parport)));
 }
 
 void postload_parallel() {
