@@ -29,7 +29,7 @@
 #include "mon.h"
 #endif
 
-#ifdef ETHERNET_SUPPORT
+#ifdef ETHERNET_SUPPORT_OLD
 #include "ether.h"
 #endif
 
@@ -220,7 +220,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 
 
-#ifdef ETHERNET_SUPPORT
+#ifdef ETHERNET_SUPPORT_OLD
 		case M68K_EMUL_OP_ETHER_OPEN:           // Ethernet driver functions
 			r->d[0] = EtherOpen(r->a[0], r->a[1]);
 			break;
