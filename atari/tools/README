@@ -10,7 +10,7 @@ These are the first basic tools for Aranym:
   of keyboard layout.
 
 - PCPATCH.PRG that patches PureC (PC.PRG) to be able to compile
-  projects and files from the MetaDOS driven filesystem.
+  projects and files from the BetaDOS driven filesystem.
 
 Soon there will be a tool for arafs that will edit the
 MetaDOS' config.sys file automatically.
