@@ -1655,7 +1655,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			return;
 		}
 		fpu_debug(("returned from get_fp_value m68k_getpc()=%X\n",m68k_getpc()));
-
+		
 		if (FPU is_integral) {
 			// 68040-specific operations
 			switch (extra & 0x7f) {
@@ -1765,9 +1765,16 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				}
 				make_fpsr(FPU registers[reg]);
 				break;
+			default:
+				// Continue decode-execute 6888x instructions below
+				goto process_6888x_operations;
 			}
+			fpu_debug(("END m68k_getpc()=%X\n",m68k_getpc()));
+			dump_registers( "END  ");
+			return;
 		}
 		
+	process_6888x_operations:		
 		switch (extra & 0x7f) {
 		case 0x00:		/* FMOVE */
 			fpu_debug(("FMOVE %.04f\n",(double)src));
@@ -2036,8 +2043,6 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			make_fpsr(src);
 			break;
 		default:
-			if (FPU is_integral)
-				break;
 			fpu_debug(("ILLEGAL F OP %X\n",opcode));
 			m68k_setpc (m68k_getpc () - 4);
 			op_illg (opcode);
