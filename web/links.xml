@@ -33,6 +33,7 @@
     <text>
       <table>
       <tr><td><a href="http://www.libsdl.org/">SDL</a></td><td>multiplatform portable I/O library</td></tr>
+      <tr><td><a href="http://www.paragui.org/">ParaGUI</a></td><td>crossplatform GUI lib we could use for ARAnyM GUI</td></tr>
       </table>
     </text>
   </chapter>

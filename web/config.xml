@@ -5,6 +5,10 @@
       <title>Home</title>
       <link>index.html</link>
     </item>
+    <item name="about">
+      <title>About</title>
+      <link>about.html</link>
+    </item>
     <item name="news">
       <title>News</title>
       <link>news.html</link>
