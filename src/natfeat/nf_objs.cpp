@@ -27,6 +27,9 @@ HostFs hostFs;
 #ifdef ETHERNET_SUPPORT
 ETHERNETDriver Ethernet;
 #endif
+#ifdef NFCDROM_SUPPORT
+CdromDriver CdRom;
+#endif
 /* add your NatFeat object declaration here */
 
 pNatFeat nf_objects[] = {
@@ -39,6 +42,9 @@ pNatFeat nf_objects[] = {
 #endif
 #ifdef ETHERNET_SUPPORT
 	&Ethernet,
+#endif
+#ifdef NFCDROM_SUPPORT
+	&CdRom,
 #endif
 	/* add your NatFeat object below */
 

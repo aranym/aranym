@@ -89,6 +89,7 @@ SRCS = ../main.cpp \
 	../natfeat/audio.cpp \
 	../natfeat/nf_basicset.cpp \
 	../natfeat/debugprintf.cpp \
+	$(NFCDROMSRCS) \
 	$(SYSSRCS) \
 	$(CPUSRCS) \
 	$(DSPSRCS) \

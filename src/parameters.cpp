@@ -505,6 +505,52 @@ void presave_midi() {
 }
 
 /*************************************************************************/
+#define NFCDROM_ENTRY(c,n) \
+	{ c, String_Tag, &bx_options.nfcdroms[n].physdevtohostdev, sizeof(bx_options.nfcdroms[n].physdevtohostdev)}
+
+struct Config_Tag nfcdroms_conf[]={
+	NFCDROM_ENTRY("A", 0),
+	NFCDROM_ENTRY("B", 1),
+	NFCDROM_ENTRY("C", 2),
+	NFCDROM_ENTRY("D", 3),
+	NFCDROM_ENTRY("E", 4),
+	NFCDROM_ENTRY("F", 5),
+	NFCDROM_ENTRY("G", 6),
+	NFCDROM_ENTRY("H", 7),
+	NFCDROM_ENTRY("I", 8),
+	NFCDROM_ENTRY("J", 9),
+	NFCDROM_ENTRY("K", 10),
+	NFCDROM_ENTRY("L", 11),
+	NFCDROM_ENTRY("M", 12),
+	NFCDROM_ENTRY("N", 13),
+	NFCDROM_ENTRY("O", 14),
+	NFCDROM_ENTRY("P", 15),
+	NFCDROM_ENTRY("Q", 16),
+	NFCDROM_ENTRY("R", 17),
+	NFCDROM_ENTRY("S", 18),
+	NFCDROM_ENTRY("T", 19),
+	NFCDROM_ENTRY("U", 20),
+	NFCDROM_ENTRY("V", 21),
+	NFCDROM_ENTRY("W", 22),
+	NFCDROM_ENTRY("X", 23),
+	NFCDROM_ENTRY("Y", 24),
+	NFCDROM_ENTRY("Z", 25),
+	{ NULL , Error_Tag, NULL }
+};
+
+void preset_nfcdroms() {
+	for(int i=0; i < 'Z'-'A'+1; i++) {
+		bx_options.nfcdroms[i].physdevtohostdev[0] = '\0';
+	}
+}
+
+void postload_nfcdroms() {
+}
+
+void presave_nfcdroms() {
+}
+
+/*************************************************************************/
 void usage (int status) {
   // printf ("%s\n", VERSION_STRING);
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
@@ -550,6 +596,7 @@ void preset_cfg() {
   preset_ethernet();
   preset_lilo();
   preset_midi();
+  preset_nfcdroms();
 }
 
 void postload_cfg() {
@@ -565,6 +612,7 @@ void postload_cfg() {
   postload_ethernet();
   postload_lilo();
   postload_midi();
+  postload_nfcdroms();
 }
 
 void presave_cfg() {
@@ -580,6 +628,7 @@ void presave_cfg() {
   presave_ethernet();
   presave_lilo();
   presave_midi();
+  presave_nfcdroms();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -830,6 +879,7 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, ethernet_conf, "[ETH0]", true);
 	process_config(f, rcfile, lilo_conf, "[LILO]", true);
 	process_config(f, rcfile, midi_conf, "[MIDI]", true);
+	process_config(f, rcfile, nfcdroms_conf, "[CDROMS]", true);
 }
 
 int saveSettings(const char *fs)
@@ -862,6 +912,7 @@ int saveSettings(const char *fs)
 	update_config(fs, ethernet_conf, "[ETH0]");
 	update_config(fs, lilo_conf, "[LILO]");
 	update_config(fs, midi_conf, "[MIDI]");
+	update_config(fs, nfcdroms_conf, "[CDROMS]");
 
 	return 0;
 }

@@ -148,6 +148,11 @@ typedef struct {
 	char output[512];	/* /path/to/output.txt */
 } bx_midi_options_t;
 
+// NfCdrom options
+typedef struct {
+	char physdevtohostdev[512];
+} bx_nfcdrom_options_t;
+
 /*
 typedef struct {
   char      *path;
@@ -178,6 +183,7 @@ typedef struct {
   bx_ethernet_options_t ethernet;
   bx_lilo_options_t		lilo;
   bx_midi_options_t		midi;
+  bx_nfcdrom_options_t	nfcdroms[ 'Z'-'A'+1 ];
   bool			autoMouseGrab;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;

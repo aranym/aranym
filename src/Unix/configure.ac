@@ -58,6 +58,8 @@ AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI (default=ye
 
 AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default=no)], [WANT_OPENGL=$enableval], [WANT_OPENGL=no])
 
+AC_ARG_ENABLE(nfcdrom,         [  --enable-nfcdrom        enable NatFeat CD-ROM (default=no)], [WANT_NFCDROM=$enableval], [WANT_NFCDROM=no])
+
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
 [  --enable-fpe=FPE        specify which fpu emulator to use (default=auto)],
@@ -1577,6 +1579,22 @@ if [[ "x$WANT_LILO" = "xyes" ]]; then
 	fi
 fi
 
+dnl Natfeat CD-ROM driver
+
+NFCDROMSRCS=""
+if [[ "x$WANT_NFCDROM" = "xyes" ]]; then
+	case "$target_os" in
+		linux*)
+			NFCDROMSRCS="../natfeat/nfcdrom.cpp"
+			AC_DEFINE([NFCDROM_SUPPORT], 1, [Define if you want to use host CD-ROM driver])
+			;;
+		*)
+			AC_MSG_WARN([*** NatFeat CD-ROM not supported for this system ***])
+			WANT_NFCDROM="no"
+			;;
+	esac
+fi
+
 dnl Data directory
 
 APP=aranym
@@ -1605,6 +1623,7 @@ AC_SUBST(CPUINCLUDES)
 AC_SUBST(CPUSRCS)
 AC_SUBST(DSPSRCS)
 AC_SUBST(LILOSRCS)
+AC_SUBST(NFCDROMSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
 AC_SUBST(TARGET)
@@ -1642,5 +1661,6 @@ echo OpenGL ................................. : $WANT_OPENGL
 echo Linux loader ........................... : $WANT_LILO
 echo Zlib ................................... : $have_zlib
 echo Linux kernel includes .................. : $LINUXKERNEL_INCDIR
+echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
 echo
 echo "Configuration done. Now type \"make\" (or \"gmake\")."

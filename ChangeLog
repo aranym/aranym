@@ -1,3 +1,9 @@
+2003/09/21 - patrice
+- Added NF CD-ROM BOS driver. Very simple Atari CD player programs work, but
+  some ioctls are still not implemented correctly, and for the moment not
+  usable for iso9660 fs access, and only for Linux.
+  
+
 2003/09/15 - STanda
 - --enable-realstop added to the configure options (default=yes and implies
   the --enable-spcflags-excl option). The STOP condition wait and locking
