@@ -24,4 +24,5 @@ extern void ikbd_send(int);
 extern void renderScreen();
 
 extern int getFloppyStats();
+extern bool isIkbdBufEmpty();
 #endif 

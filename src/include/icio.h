@@ -3,6 +3,7 @@
 
 class ICio {
 public:
+	virtual ~ICio() {};
 	virtual uae_u8 handleRead(uaecptr addr) = 0;
 	virtual void handleWrite(uaecptr addr, uae_u8 value) = 0;
 };
