@@ -1,6 +1,7 @@
 2002/10/13 - joy
 - fixed CDROM mount/unmount support
 - fixed FastRAM max size check on Linux with real addressing and no JIT
+- added CD-ROM automount (like on real Atari :-)
 
 
 2002/10/13 - milan
