@@ -1,3 +1,8 @@
+2002/10/13 - joy
+- fixed CDROM mount/unmount support
+- fixed FastRAM max size check on Linux with real addressing and no JIT
+
+
 2002/10/13 - milan
 - sync with BasiliskII CVS
 
