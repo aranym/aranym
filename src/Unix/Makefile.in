@@ -69,6 +69,7 @@ SRCS = ../main.cpp \
 	../araobjs.cpp \
 	../aradata.cpp \
 	../md5.cpp \
+	../romdiff.cpp \
 	$(SYSSRCS) \
 	$(CPUSRCS)
 APP = aranym
