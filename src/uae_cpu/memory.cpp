@@ -20,11 +20,11 @@
 #include "exceptions.h"
 
 #if PAGE_CHECK
-uaecptr pc_page = 0xffffffff;
+uaecptr pc_page = 0xeeeeeeee;
 uintptr pc_offset = 0;
-uaecptr read_page = 0xffffffff;
+uaecptr read_page = 0xeeeeeeee;
 uintptr read_offset = 0;
-uaecptr write_page = 0xffffffff;
+uaecptr write_page = 0xeeeeeeee;
 uintptr write_offset = 0;
 #endif
 
