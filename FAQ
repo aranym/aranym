@@ -1,0 +1,127 @@
+Contents:
+  1) CVS read only
+  2) AES Error (WinX)
+  3) disk from Atari in Aranym
+  4) CD-ROM
+
+---
+
+Question:
+
+  I would like to contribute to the development. I wanted to use CVS but
+  it's read only. What can I do?
+
+Answer:
+
+  Create a diff file using the following command:
+
+    "diff -u original_archive/file.c my_changes/file.c >file.c.diff"
+
+    or if you changed more files and want to diff them at once:
+
+    "diff -u -r original_archive my_changes >my_changes.diff
+
+  Then mail the *.diff to pstehlik@sophics.cz.
+
+---
+
+Question:
+  With some programs like Eureka and Inshape, AES put a a form_error
+  with this informations
+  
+  AES ERROR
+  Application : Eureka
+  Function id : 104
+  wrong call
+
+Answer:
+  This is WinX. Please get ARAnyM 0.0.10 or newer and also use the original
+  Falcon TOS 4.04 (link for download on our WWW pages).
+
+---
+Question:
+  I copied my mint setup on Aranym. It may works if I can use
+  long file names and access rights. Should I use a new disk
+  image for that ? How would I build one?
+
+Answer:
+  if you have a working setup on Atari and want to have the same
+  on Aranym, follow these steps:
+
+1) if you want to boot from the disk, reconfigure your harddisk driver:
+
+   - if you are using HDDRIVER, use HDDRUTIL to disable SCSI bus scan
+     (i.e. disable all SCSI devices)
+
+   - if you are using Cecile, you don't have to do anything (Ctirad?)
+
+   - if you are using anything else, cross your fingers (Ctirad?)
+
+2) if you want to use the disk directly, simply take it from your
+   Atari machine and put it to your host machine (be it PC, Mac or
+   whatever, we don't care). Set up the drive in ./aranymrc, e.g.
+
+   [IDE0]
+   Present = Yes
+   Path = /dev/hdc
+   Cylinders = 2100
+   Heads = 16
+   SectorsPerTrack = 63
+   ByteSwap = No
+
+   The Path point to the physical device. /dev/hdc is master on
+   secondary IDE channel (ask someone if you don't know what I am
+   talking about).
+
+   The Cylinders/Heads/SectorsPerTrack values maybe either written on
+   the disk label or in your hard drive utility (e.g. HDDRUTIL) - but
+   only if it's an IDE drive. Aranym also tries to guess the values
+   (Milan?). Anyway, these values are used during partitioning only, so
+   you may not need them at all (is this true?).
+
+3) if you want to leave your original disk in your original Atari and
+   use just a copy of that disk then create a disk image:
+
+   On Atari you can use anything that allows you to store the whole disk
+   drive into one file - e.g. Diskus. Naturally you need a second
+   harddrive with more free space than is the size of your disk you are
+   creating the image of). Then you have to copy the image to the host
+   somehow.
+
+   On the host (PC, Mac, ...), in Unix like OS you can create the disk
+   image with as simple command as:
+
+   dd if=/dev/hdc of=/home/aranym/disk_image bs=1M
+
+   For windows you may want to try out a "WinImage" (use download.com?)
+   
+   For configuring Aranym see the 2) above, just the Path now points to
+   the /home/aranym/disk_image.
+
+   Note: if the image has been created on Atari, you have to set the
+   ByteSwap IDE Aranym option to "Yes".
+
+4) start aranym and enjoy. Everything should work as expected. However,
+   if you were using some special HW drivers, like e.g. Afterburner,
+   Centurbo or NOVA/Rage gfx card drivers, you want to disable them.
+   So try the first boot with Ctrl held down (AUTO folder programs are
+   not executed then).
+
+5) don't forget to reconfigure your harddisk driver on the original
+   Atari (see the point 1) back to your favorite values.
+
+---
+
+Question:
+  Is it possible to have CDRom under Aranym, how can I do?
+
+Answer:
+  Edit your .aranymrc:
+
+    [IDE1]
+    Present = Yes
+    IsCDROM = Yes
+    Path = /dev/cdrom
+
+  And then set up your Atari environment like you would did on a real Atari
+  with IDE CD-ROM attached. E.g. I used CD-Tools' driver and MetaDOS.
