@@ -339,5 +339,8 @@ void VIDEL::update_screen()
 		// FIXME: support for destBPP other than 2 or 4 BPP is missing
 	}
 
+	if (SDL_MUSTLOCK(surf))
+		SDL_UnlockSurface(surf);
+
 	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
 }
