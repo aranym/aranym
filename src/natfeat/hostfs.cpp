@@ -1,7 +1,7 @@
 /*
  * hostfs.cpp - HostFS routines
  *
- * Copyright (c) 2001-2003 STanda of ARAnyM development team (see AUTHORS)
+ * Copyright (c) 2001-2004 STanda of ARAnyM development team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -1076,7 +1076,7 @@ int32 HostFs::xfs_dfree( XfsCookie *dir, uint32 diskinfop )
 int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 {
 	char fname[MAXPATHNAMELEN];
-	a2fstrcpy( fname, name );
+	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname( dir, fname, fpathName );
@@ -1091,7 +1091,7 @@ int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 {
 	char fname[MAXPATHNAMELEN];
-	a2fstrcpy( fname, name );
+	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname( dir, fname, fpathName );
@@ -1106,7 +1106,7 @@ int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, XfsCookie *fc )
 {
 	char fname[MAXPATHNAMELEN];
-	a2fstrcpy( fname, name );
+	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
 	// convert and mask out the file type bits for unix open()
 	mode = modeMint2Host( mode ) & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO);
@@ -1277,7 +1277,7 @@ int32 HostFs::xfs_dev_lseek(ExtFile *fp, int32 offset, int16 seekmode)
 int32 HostFs::xfs_remove( XfsCookie *dir, memptr name )
 {
 	char fname[MAXPATHNAMELEN];
-	a2fstrcpy( fname, name );
+	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname(dir,fname,fpathName); // get the cookie filename
@@ -1293,8 +1293,8 @@ int32 HostFs::xfs_rename( XfsCookie *olddir, memptr oldname, XfsCookie *newdir, 
 {
 	char foldname[MAXPATHNAMELEN];
 	char fnewname[MAXPATHNAMELEN];
-	a2fstrcpy( foldname, oldname );
-	a2fstrcpy( fnewname, newname );
+	atari2HostSafeStrncpy( foldname, oldname, sizeof(foldname) );
+	atari2HostSafeStrncpy( fnewname, newname, sizeof(fnewname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	char fnewPathName[MAXPATHNAMELEN];
@@ -1312,8 +1312,8 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 {
 	char ffromname[MAXPATHNAMELEN];
 	char ftoname[MAXPATHNAMELEN];
-	a2fstrcpy( ffromname, fromname );
-	a2fstrcpy( ftoname, toname );
+	atari2HostSafeStrncpy( ffromname, fromname, sizeof(ffromname) );
+	atari2HostSafeStrncpy( ftoname, toname, sizeof(ftoname) );
 
 	char ffromName[MAXPATHNAMELEN];
 	cookie2Pathname( dir, ffromname, ffromName );
@@ -1553,7 +1553,7 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 			return TOS_ERANGE;
 
 		WriteInt32( (uint32)buff, dirEntry->d_ino );
-		f2astrcpy( buff + 4, dirEntry->d_name );
+		host2AtariSafeStrncpy( buff + 4, dirEntry->d_name, len-4 );
 	} else {
 		char truncFileName[MAXPATHNAMELEN];
 		transformFileName( truncFileName, (char*)dirEntry->d_name );
@@ -1563,7 +1563,7 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 		if ( (uint16)len < strlen( truncFileName ) )
 			return TOS_ERANGE;
 
-		f2astrcpy( buff, truncFileName );
+		host2AtariSafeStrncpy( buff, truncFileName, len );
 	}
 
 	dirh->index++;
@@ -1765,7 +1765,7 @@ int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 		strcpy( fpathName, fbuf );
 	}
 
-	f2astrcpy( buf, fpathName );
+	host2AtariSafeStrncpy( buf, fpathName, len );
 	return TOS_E_OK;
 }
 
@@ -1802,7 +1802,7 @@ void HostFs::xfs_freefs( XfsFsFile *fs )
 int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 {
 	char fname[MAXPATHNAMELEN];
-	a2fstrcpy( fname, name );
+	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
 	D(bug( "HOSTFS: fs_lookup: %s", fname ));
 
@@ -2024,62 +2024,57 @@ HostFs::ExtDrive::ExtDrive( HostFs::ExtDrive *old ) {
 }
 
 
-int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
-							   memptr filesys, memptr filesys_devdrv )
+int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
+				bool halfSensitive, memptr filesys, memptr filesys_devdrv )
 {
 	// Some magic to workaround a bug in GCC 3.2 on Cygwin.
 	// This allows to set MAXPATHNAMELEN back to something higher than 255
 	char temp[MAXPATHNAMELEN];
 	char *fmountpoint=temp;
 
-	a2fstrcpy( fmountpoint, mountpoint );
-	int dnum = -1;
+	atari2HostSafeStrncpy( fmountpoint, mountpoint, sizeof(fmountpoint) );
 
 	ExtDrive *drv = new ExtDrive();
 	drv->fsDrv = filesys;
 	drv->fsDevDrv = filesys_devdrv;
+	drv->mountPoint = strdup( fmountpoint );
 
-	// The mountPoint is of a "A:" format:
-	//    MetaDOS mapping the devnum is <MAXDRIVES
+	int dnum = -1;
 	if ( strlen( fmountpoint ) == 2 && fmountpoint[1] == ':' ) {
+		// The mountPoint is of a "A:" format: (BetaDOS mapping)
 		dnum = tolower(fmountpoint[0])-'a';
+	}
+	else if (strlen(fmountpoint) == 4 && !strncasecmp(fmountpoint, "u:\\", 3)) {
+		// the hostfs.xfs tries to map drives to u:\\X
+		dnum = tolower(fmountpoint[3])-'a';
+	}
 
-		// -> use the [HOSTFS] of config file here
-		drv->mountPoint = strdup( fmountpoint );
+	int maxdnum = sizeof(bx_options.aranymfs) / sizeof(bx_options.aranymfs[0]);
+	if (dnum >= 0 && dnum < maxdnum) {
 		drv->hostRoot = strdup( bx_options.aranymfs[dnum].rootPath );
 		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
 	} else {
-		drv->mountPoint = strdup( fmountpoint );
+		dnum = -1;	// invalidate dnum
 
-		// the aranym.xfs tries to map drives to u:\\xx
-		// in this case we use the [HOSTFS] of config file here
-		if ( !strncasecmp( fmountpoint, "u:\\", 3 ) &&
-			 (unsigned int)(dnum = tolower(fmountpoint[3])-'a') < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) )
-		{
-			drv->hostRoot = strdup( bx_options.aranymfs[fmountpoint[3]-'a'].rootPath );
-			drv->halfSensitive = bx_options.aranymfs[fmountpoint[3]-'a'].halfSensitive;
-		} else {
-			// no [aranymfs] match -> map to the passed mountpoint
-			//  - future extension to map from m68k side
-			char fhostroot[MAXPATHNAMELEN];
-			a2fstrcpy( fhostroot, hostroot );
+		// no [aranymfs] match -> map to the passed mountpoint
+		//  - future extension to map from m68k side
+		char fhostroot[MAXPATHNAMELEN];
+		atari2HostSafeStrncpy( fhostroot, hostroot, sizeof(fhostroot) );
 
-			drv->hostRoot = strdup( fhostroot );
-			drv->halfSensitive = halfSensitive;
-		}
+		drv->hostRoot = strdup( fhostroot );
+		drv->halfSensitive = halfSensitive;
 	}
 
 	drv->driveNumber = devnum;
 	mounts.insert(std::make_pair( devnum, drv ));
+	panicbug("inserting %d", devnum);
 
 	// if the drive mount was mounted to some FreeMiNT mountpoint
 	// which devnum is higher that MAXDRIVES then serve also as the
 	// GEMDOS drive equivalent. This is a need for the current
     // FreeMiNT kernel which requires the driver for u:\[a-z0-6] to react
 	// to 0-31 devno's
-	if ( dnum != devnum &&
-		 dnum != -1 &&
-		 (unsigned int)dnum < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) ) {
+	if (dnum != -1 && dnum != devnum) {
 		drv = new ExtDrive( drv );
 		drv->driveNumber = dnum;
 		mounts.insert(std::make_pair( dnum, drv ));
@@ -2100,6 +2095,35 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		  ));
 
 	return TOS_E_OK;
+}
+
+void HostFs::freeMounts()
+{
+	for(MountMap::iterator it = mounts.begin(); it != mounts.end(); it++) {
+		delete it->second;
+		mounts.erase(it);
+	}
+}
+
+HostFs::HostFs()
+{
+	mounts.clear();
+}
+
+bool HostFs::init()
+{
+	freeMounts();
+	return true;
+}
+
+void HostFs::exit()
+{
+	freeMounts();
+}
+
+HostFs::~HostFs()
+{
+	freeMounts();
 }
 
 #endif /* HOSTFS_SUPPORT */

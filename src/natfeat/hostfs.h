@@ -112,6 +112,9 @@ class HostFs : public NF_Base
 
 	void xfs_debugCookie( XfsCookie *fc );
 
+  private:
+    void freeMounts();
+
   public:
 	HostFs();
 	virtual ~HostFs();
