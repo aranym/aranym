@@ -460,6 +460,9 @@ void process_keyboard_event(SDL_Event event)
 					releaseTheMouse();
 					canGrabMouseAgain = false;	// let it leave our window
 					send2Atari = false;
+					// release the Control and Alt keys
+					ikbd.send(0x1d|0x80);	// Control released
+					ikbd.send(0x38|0x80);	// Alternate released
 				}
 #ifdef SDL_GUI
 				else {
