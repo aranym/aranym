@@ -33,11 +33,11 @@ rm -rf %{realname}
 #%patch -p1
 
 %build
-./configure --prefix=/usr --enable-jit-compiler
+./configure --prefix=/usr --enable-ethernet --enable-jit-compiler
 make
 mv aranym aranym-jit
 make clean
-./configure --prefix=/usr
+./configure --prefix=/usr --enable-ethernet
 make
 
 %install
@@ -47,6 +47,8 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/aranym
 make install DESTDIR=$RPM_BUILD_ROOT
 install aranym $RPM_BUILD_ROOT/usr/bin
 install aranym-jit $RPM_BUILD_ROOT/usr/bin
+install diskimage $RPM_BUILD_ROOT/usr/bin
+install aratapif $RPM_BUILD_ROOT/usr/bin
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -55,11 +57,18 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc ../../doc ../../AUTHORS ../../BUGS ../../COPYING ../../FAQ ../../INSTALL ../../NEWS ../../ChangeLog ../../README ../../TODO
+%attr(4755,root,root) /usr/bin/aratapif
 /usr/bin/aranym
 /usr/bin/aranym-jit
-/usr/share/aranym/atari/aranymfs/aranymfs.dos.bz2
-/usr/share/aranym/atari/aranymfs/aranym.xfs.bz2
-/usr/share/aranym/atari/aranymfs/config.sys
+/usr/bin/diskimage
+/usr/share/aranym/atari/hostfs/hostfs.dos.bz2
+/usr/share/aranym/atari/hostfs/hostfs.xfs.bz2
+/usr/share/aranym/atari/hostfs/bdconfig.sys
+/usr/share/aranym/atari/hostfs/README
+/usr/share/aranym/atari/network/aranym.xif.bz2
+/usr/share/aranym/atari/network/nfeth-config.bz2
+/usr/share/aranym/atari/network/eth0-config.sh
+/usr/share/aranym/atari/network/README
 /usr/share/aranym/atari/fvdi/aranym.sys.bz2
 /usr/share/aranym/atari/fvdi/fvdi.prg.bz2
 /usr/share/aranym/atari/fvdi/fvdi.sys
@@ -76,12 +85,16 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/createdisk/createdisk.README
 /usr/share/aranym/createdisk/createdisk.sh
 /usr/share/aranym/createdisk/mbrdata
-/usr/share/aranym/diskimage.c
+/usr/share/aranym/diskimage
 /usr/share/aranym/floppy.sh
 /usr/share/aranym/font8.bmp
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Mon Mar 24 2003 Petr Stehlik <pstehlik@sophics.cz>
+HostFS and network drivers added. ARATAPIF installed setuid root.
+Ethernet enabled.
+
 * Sun Mar 23 2003 Petr Stehlik <pstehlik@sophics.cz>
 Version increased for the new release. See the NEWS file for details.
 
