@@ -46,7 +46,6 @@ uint32 VideoRAMBase = ARANYMVRAMSTART;	// VideoRAM base (Atari address space)
 uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)
 uint32 VideoRAMSize;	// Size of VideoRAM
 uint32 InterruptFlags;
-uint32 MFPInterruptFlags;
 
 uintptr MEMBaseDiff;	// Global offset between a Atari address and its Host equivalent
 uintptr VMEMBaseDiff;	// Global offset between a Atari VideoRAM address and /dev/fb0 mmap
@@ -110,8 +109,13 @@ void TriggerVBL(void)
 
 void TriggerMFP(int no)
 {
-	MFPInterruptFlags = no;
-	regs.spcflags |= SPCFLAG_MFPINT;
+	if (no == 5) {
+		regs.spcflags |= SPCFLAG_MFP_TIMERC;
+	}
+	else if (no == 6)
+		regs.spcflags |= SPCFLAG_MFP_ACIA;
+	else
+		fprintf(stderr, "Unknown MFP interrupt!\n");
 }
 
 void TriggerNMI(void)
@@ -128,16 +132,6 @@ int intlev(void)
 {
 	return (InterruptFlags == VBL) ? 4 : 0;
 }
-
-/*
- *  Get 68k interrupt level
- */
-
-int MFPintlev(void)
-{
-	return MFPInterruptFlags;
-}
-
 
 /*
  *  Execute MacOS 68k trap
