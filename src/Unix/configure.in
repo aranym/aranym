@@ -542,7 +542,24 @@ elif [[ "x$FPE_CORE" = "xuae" ]]; then
 fi
 
 dnl Check for certain math functions
-AC_CHECK_FUNCS(atanh)
+dnl AC_CHECK_FUNCS(atanh)
+AC_CACHE_CHECK("for atanh",
+  ac_cv_have_atanh, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_COMPILE([
+    #include <math.h>
+  ], [
+    atanh(1);
+  ],
+  [ac_cv_have_atanh=yes],
+  [ac_cv_have_atanh=no]
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(HAVE_ATANH, "$ac_cv_have_atanh")
+
 AC_CHECK_FUNCS(isnan isinf)		dnl C99
 AC_CHECK_FUNCS(isnanl isinfl)	dnl IEEE ?
 

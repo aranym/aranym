@@ -17,6 +17,9 @@
 /* Define to 'off_t' if <sys/types.h> doesn't define. */
 #undef loff_t
 
+/* Define if you have the atanh function. */
+#undef HAVE_ATANH
+
 /* Define if using native 68k mode. */
 #undef ENABLE_NATIVE_M68K
 
