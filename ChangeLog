@@ -1,3 +1,11 @@
+2001/12/22 - joy
+- most video related parameters moved to bx_options.video struct
+- added "--refresh <x>" cmdline option. Default value is 2 = 50/2 Hz screen
+  refresh. Allowed values are 1 - 200 (50Hz - 1/4 Hz)
+- check_ram_boundary() allows direct access to physical videoram
+- check_ram_boundary() now makes FastRAM equally fast as ST-RAM
+
+
 2001/12/21 - STanda
 - RH gcc 2.96.98 preprocessor bug workaround: The remarks in multiline macros
   are before the linetrailing backslash.
