@@ -133,6 +133,9 @@ class HostScreen {
 
 	// Create a BMP file with a snapshot of the screen surface
 	void   makeSnapshot();
+
+	// Toggle Window/FullScreen mode
+	void   toggleFullScreen();
 };
 
 
@@ -377,6 +380,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.30  2002/04/22 18:30:50  milan
+ * header files reform
+ *
  * Revision 1.29  2002/02/27 12:08:01  milan
  * uae_u32 -> uintptr where it is necessary
  *
