@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 	if (start_debug) ndebug::init();
 #endif
 
-/* sracka begins here
+#ifndef SRACKA
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
 	TTRAMSize = TTRAMSize & -getpagesize();					// Round down to page boundary
 #endif
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
 	ROMBase = (uint32)ROMBaseHost;
 	TTRAMBase = (uint32)TTRAMBaseHost;
 #endif
-sracka ends here */
+#else /* SRACKA */
 	RAMBaseHost = (uint8 *)malloc((14+2)*1024*1024 + TTRAMSize);
 	MEMBaseDiff = (uintptr)RAMBaseHost;
 	RAMBase = 0;
@@ -182,6 +182,7 @@ sracka ends here */
 	ROMBaseHost = ROMBase + RAMBaseHost;
 	TTRAMBase = 0x1000000;
 	TTRAMBaseHost = TTRAMBase + RAMBaseHost;
+#endif /* SRACKA */
 
 	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
@@ -236,7 +237,7 @@ void QuitEmulator(void)
 #endif
 
 	// Free ROM/RAM areas
-/* sracka begins here
+#ifndef SRACKA
 	if (RAMBaseHost != VM_MAP_FAILED) {
 		vm_release(RAMBaseHost, RAMSize);
 		RAMBaseHost = NULL;
@@ -266,8 +267,9 @@ void QuitEmulator(void)
 	
 	// Exit VM wrappers
 	vm_exit();
-sracka ends here */
+#else /* SRACKA */
 	free(RAMBaseHost);
+#endif /* SRACKA */
 
 	exit(0);
 }
@@ -285,6 +287,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.41  2001/09/10 15:27:30  joy
+ * new bogomips-like test. Need to find out if every 100 instructions test in cpu emulation is not too late for slow machines.
+ *
  * Revision 1.40  2001/09/08 23:42:26  joy
  * all the shitty memory management disabled for now.
  *
