@@ -19,7 +19,7 @@
 #include <unistd.h>
 #include "parameters.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 struct disk_geom
@@ -198,12 +198,12 @@ void fdc_exec_command (void)
 			switch(fdc_command & 0xf0)
 			{
 				case 0x80:
-					D(bug("\tFDC READ SECTOR %d to 0x%06lx", offset/disk[d].secsize/*dma_scr*/,address));
+					D(bug("\tFDC READ SECTOR %d to 0x%06lx", (disk[d].secsize)?offset/disk[d].secsize:-1/*dma_scr*/,address));
 					// special hack for remounting physical floppy on media change
 					if (offset == 0) {
 						D(bug("Trying to remount the floppy - media change requested?"));
 						// reading boot sector might indicate media change
-						// init_fdc();
+						init_fdc();
 					}
 					count=dma_scr*disk[d].secsize;
 					if (lseek(drive_fd[d], offset, SEEK_SET)>=0)
