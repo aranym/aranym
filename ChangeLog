@@ -1,14 +1,19 @@
+2001/10/16 - milan
+- support for BasiliskII's monitor cxmon
+- aranymrc now supports FastRAM's size.
+
+
 2001/10/16 - STanda
 - fVDI: The driver should be working now in TC (I finally got the Thing
         executed and looking correctly)
 
 
-2001/10/08 - STanda
-- fVDI: the blitting works on destination 16bpp (still no shadow buffer used).
-
-
 2001/10/09 - milan
 - some changes in memory allocation, now support for malloc on dummy platforms
+
+
+2001/10/08 - STanda
+- fVDI: the blitting works on destination 16bpp (still no shadow buffer used).
 
 
 2001/10/08 - STanda

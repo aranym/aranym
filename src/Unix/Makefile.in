@@ -254,7 +254,7 @@ cpufast8.s: cpuemu.cpp $(OBJ_DIR)/cpuopti
 
 # ARAnyMrc
 #
-$(APPCONFTV): $(OBJ_DIR)/aranymrc.o $(OBJ_DIR)/cfgoptsrc.o $(OBJ_DIR)/parametersrc.o $(OBJ_DIR)/parameters_unixrc.o $(OBJ_DIR)/ndebugrc.o
+$(APPCONFTV): $(OBJ_DIR) $(OBJ_DIR)/aranymrc.o $(OBJ_DIR)/cfgoptsrc.o $(OBJ_DIR)/parametersrc.o $(OBJ_DIR)/parameters_unixrc.o $(OBJ_DIR)/ndebugrc.o
 	$(CXX) -o $(APPCONFTV) $(LDFLAGS) $(OBJ_DIR)/aranymrc.o $(OBJ_DIR)/cfgoptsrc.o $(OBJ_DIR)/parametersrc.o $(OBJ_DIR)/parameters_unixrc.o $(OBJ_DIR)/ndebugrc.o $(LIBS) $(TV_LIBS)
 	
 $(OBJ_DIR)/aranymrc.o: ../aranymrc.cpp

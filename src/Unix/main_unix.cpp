@@ -45,6 +45,10 @@
 #define DEBUG 1
 #include "debug.h"
 
+#ifdef ENABLE_MON
+# include "mon.h"
+#endif
+
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
 {
@@ -52,6 +56,11 @@ extern "C" char *strdup(const char *s)
 	strcpy(n, s);
 	return n;
 }
+#endif
+
+#ifdef ENABLE_MON
+static struct sigaction sigint_sa;
+static void sigint_handler(...);
 #endif
 
 void segmentationfault(int x)
@@ -137,6 +146,13 @@ int main(int argc, char **argv)
 	if (! start_debug)
 		signal(SIGSEGV, segmentationfault);
 
+#ifdef ENABLE_MON
+	sigemptyset(&sigint_sa.sa_mask);
+	sigint_sa.sa_handler = (void (*)(int))sigint_handler;
+	sigint_sa.sa_flags = 0;
+	sigaction(SIGINT, &sigint_sa, NULL);
+#endif
+
 	// Start 68k and jump to ROM boot routine
 	D(bug("Starting emulation..."));
 	Start680x0();
@@ -184,8 +200,25 @@ void QuitEmulator(void)
 	exit(0);
 }
 
+#ifdef ENABLE_MON
+static void sigint_handler(...)
+{
+#if EMULATED_68K
+	uaecptr nextpc;
+	extern void m68k_dumpstate(uaecptr *nextpc);
+	m68k_dumpstate(&nextpc);
+#endif
+	char *arg[4] = {"mon", "-m", "-r", NULL};
+	mon(3, arg);
+	QuitEmulator();
+}
+#endif
+
 /*
  * $Log$
+ * Revision 1.50  2001/10/09 19:25:19  milan
+ * MemAlloc's rewriting
+ *
  * Revision 1.49  2001/10/02 19:13:28  milan
  * ndebug, malloc
  *

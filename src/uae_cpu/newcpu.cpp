@@ -25,6 +25,7 @@ extern int timerCinterrupts;
 #include "readcpu.h"
 #include "newcpu.h"
 #include "exceptions.h"
+#define DEBUG 1
 #include "debug.h"
 
 int quit_program = 0;
@@ -228,15 +229,9 @@ struct regstruct regs, lastint_regs;
 static long int m68kpc_offset;
 int lastint_no;
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
 #define get_ibyte_1(o) get_byte(regs.pcp + (o) + 1, false)
 #define get_iword_1(o) get_word(regs.pcp + (o), false)
 #define get_ilong_1(o) get_long(regs.pcp + (o), false)
-#else
-#define get_ibyte_1(o) get_byte(regs.pc + (regs.pcp - regs.pcoldp) + (o) + 1, false)
-#define get_iword_1(o) get_word(regs.pc + (regs.pcp - regs.pcoldp) + (o), false)
-#define get_ilong_1(o) get_long(regs.pc + (regs.pcp - regs.pcoldp) + (o), false)
-#endif
 
 uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 {
@@ -622,7 +617,6 @@ void MakeFromSR (void)
     SET_ZFLG ((regs.sr >> 2) & 1);
     SET_VFLG ((regs.sr >> 1) & 1);
     SET_CFLG (regs.sr & 1);
-    if (CPUType >= 2) {
 	if (olds != regs.s) {
 	    if (olds) {
 		if (oldm)
@@ -643,17 +637,6 @@ void MakeFromSR (void)
 		m68k_areg(regs, 7) = regs.msp;
 	    }
 	}
-    } else {
-	if (olds != regs.s) {
-	    if (olds) {
-		regs.isp = m68k_areg(regs, 7);
-		m68k_areg(regs, 7) = regs.usp;
-	    } else {
-		regs.usp = m68k_areg(regs, 7);
-		m68k_areg(regs, 7) = regs.isp;
-	    }
-	}
-    }
 
     regs.spcflags |= SPCFLAG_INT;
     if (regs.t1 || regs.t0)
@@ -668,13 +651,9 @@ void Exception(int nr, uaecptr oldpc)
    MakeSR();
     if (!regs.s) {
 	regs.usp = m68k_areg(regs, 7);
-	if (CPUType >= 2)
 	    m68k_areg(regs, 7) = regs.m ? regs.msp : regs.isp;
-	else
-	    m68k_areg(regs, 7) = regs.isp;
 	regs.s = 1;
     }
-    if (CPUType > 0) {
 	if (nr == 2 || nr == 3) {	// 16 words on stack
 	   // internal register
 		m68k_areg(regs, 7) -= 4;
@@ -737,19 +716,6 @@ void Exception(int nr, uaecptr oldpc)
 	    m68k_areg(regs, 7) -= 2;
 	    put_word (m68k_areg(regs, 7), nr * 4);
 	}
-    } else {
-	if (nr == 2 || nr == 3) {
-	    m68k_areg(regs, 7) -= 12;
-	    /* ??????? */
-	    if (nr == 3) {
-		put_long (m68k_areg(regs, 7), last_fault_for_exception_3);
-		put_word (m68k_areg(regs, 7)+4, last_op_for_exception_3);
-		put_long (m68k_areg(regs, 7)+8, last_addr_for_exception_3);
-	    }
-	    D(bug("Exception!"));
-	    goto kludge_me_do;
-	}
-    }
     m68k_areg(regs, 7) -= 4;
     put_long (m68k_areg(regs, 7), currpc);
 kludge_me_do:
@@ -1148,7 +1114,9 @@ void m68k_reset (void)
 
 void REGPARAM2 op_illg (uae_u32 opcode)
 {
-//    uaecptr pc = m68k_getpc ();
+#if DEBUG
+    uaecptr pc = m68k_getpc ();
+#endif
 
 	if ((opcode & 0xFF00) == 0x7100) {
 		struct M68kRegisters r;
@@ -1212,7 +1180,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
     uint16 *apdt, *apd;
     uint16 pdt, pd;
     flagtype wr;
-
+    set_special(SPCFLAG_BRK);
 #endif
     if ((opcode & 0xFF8) == 0x0500) { /* PFLUSHN instruction (An) */
 #ifdef FULLMMU

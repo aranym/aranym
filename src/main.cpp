@@ -37,6 +37,20 @@
 #define DEBUG 1
 #include "debug.h"
 
+#ifdef ENABLE_MON
+#include "mon.h"
+
+static uint32 mon_read_byte_b2(uint32 adr)
+{
+	return ReadAtariInt8(adr);
+}
+
+static void mon_write_byte_b2(uint32 adr, uint32 b)
+{
+	WriteAtariInt8(adr, b);
+}
+#endif
+
 #define METADOS_DRV
 
 // CPU and FPU type, addressing mode
@@ -547,6 +561,13 @@ bool InitAll(void)
 
 	// timer init
 	setVirtualTimer();
+	
+#if ENABLE_MON
+	// Initialize mon
+	mon_init();
+	mon_read_byte = mon_read_byte_b2;
+	mon_write_byte = mon_write_byte_b2;
+#endif
 
 	return true;
 }
@@ -558,6 +579,11 @@ bool InitAll(void)
 
 void ExitAll(void)
 {
+#if ENABLE_MON
+	// Deinitialize mon
+	mon_exit();
+#endif
+
 	// remove floppy (flush buffers)
 	remove_floppy();
 
@@ -569,11 +595,17 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.24  2001/10/12 07:56:14  standa
+ * Pacal to C conversion ;( sorry for that.
+ *
  * Revision 1.23  2001/10/09 19:25:19  milan
  * MemAlloc's rewriting
  *
  * Revision 1.22  2001/10/08 21:46:05  standa
  * The $Header$ and $Log$
+ * The $Header$ and Revision 1.24  2001/10/12 07:56:14  standa
+ * The $Header$ and Pacal to C conversion ;( sorry for that.
+ * The $Header$ and
  * The $Header$ and Revision 1.23  2001/10/09 19:25:19  milan
  * The $Header$ and MemAlloc's rewriting
  * The $Header$ and CVS tags added.

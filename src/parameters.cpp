@@ -37,7 +37,7 @@ bool fullscreen = false;			// Boot in Fullscreen
 int8 boot_color_depth = -1;	// Boot in color depth
 int8 monitor = -1;				// VGA
 extern uint32 FastRAMSize;		// FastRAM size
-int FastRAMSizeMB;
+uint32 FastRAMSizeMB;
 bool direct_truecolor = false;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 

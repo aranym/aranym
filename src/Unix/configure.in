@@ -18,6 +18,7 @@ AC_ARG_ENABLE(debug,
 ],
 [WHICH_DEBUG="uae"
 ])
+AC_ARG_WITH(mon,             [  --with-mon              use mon as debugger [default=no]], [WANT_MON=$withval], [WANT_MON=no])
 
 AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history for debugger (slower) [default=no]], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
 
@@ -383,6 +384,28 @@ if [[ "x$WHICH_DEBUG" = "xndebug" ]]; then
     AC_DEFINE(NEWDEBUG)
 fi
 
+dnl We use mon if possible.
+MONSRCS=
+if [[ "x$WANT_MON" = "xyes" ]]; then
+  AC_MSG_CHECKING(for mon)
+  mon_srcdir=../mon/src
+  if grep mon_init $mon_srcdir/mon.h >/dev/null 2>/dev/null; then
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(ENABLE_MON)
+    MONSRCS="$mon_srcdir/mon.cpp $mon_srcdir/mon_6502.cpp $mon_srcdir/mon_z80.cpp $mon_srcdir/mon_cmd.cpp $mon_srcdir/mon_disass.cpp $mon_srcdir/mon_ppc.cpp $mon_srcdir/disass/floatformat.c $mon_srcdir/disass/i386-dis.c $mon_srcdir/disass/m68k-dis.c $mon_srcdir/disass/m68k-opc.c"
+    CXXFLAGS="$CXXFLAGS -I$mon_srcdir -I$mon_srcdir/disass"
+    AC_CHECK_LIB(readline, readline)
+    AC_CHECK_LIB(termcap, tputs)
+    AC_CHECK_HEADERS(readline.h history.h readline/readline.h readline/history.h)
+  else
+    AC_MSG_RESULT(no)
+    AC_MSG_WARN([Could not find mon, ignoring --with-mon.])
+    WANT_MON=no
+  fi
+fi
+
+SYSSRCS="$SYSSRCS $MONSRCS"
+
 dnl Full opcode's history
 if [[ "x$WANT_HISTORY" = "xyes" ]]; then
     AC_DEFINE(FULL_HISTORY)
@@ -624,6 +647,7 @@ echo Assembly optimizations ........... : $ASM_OPTIMIZATIONS
 echo Addressing mode .................. : $ADDRESSING_MODE
 echo Full MMU support ................. : $WANT_MMU
 echo Debugger ......................... : $WHICH_DEBUG
+echo Monitor .......................... : $WANT_MON
 echo Aranymrc confgui ................. : $WANT_TVCONFGUI
 
 echo

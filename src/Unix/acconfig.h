@@ -20,6 +20,9 @@
 /* Define if you have the atanh function. */
 #undef HAVE_ATANH
 
+/* Define if using "mon". */
+#undef ENABLE_MON
+
 /* Define if using native 68k mode. */
 #undef ENABLE_NATIVE_M68K
 

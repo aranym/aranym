@@ -146,38 +146,19 @@ static __inline__ uae_u32 next_ilong (void)
     return r;
 }
 
-#if !defined USE_COMPILER
 static __inline__ void m68k_setpc (uaecptr newpc)
 {
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
 	regs.pcp = newpc;
-#else
-    regs.pcp = regs.pcoldp = newpc;
-    regs.pc = newpc;
-#endif
 }
-#else
-extern void m68k_setpc (uaecptr newpc);
-#endif
 
 static __inline__ uaecptr m68k_getpc (void)
 {
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
     return regs.pcp;
-#else
-    return regs.pc + ((char *)regs.pcp - (char *)regs.pcoldp);
-#endif
 }
 
-#ifdef USE_COMPILER
-extern void m68k_setpc_fast (uaecptr newpc);
-extern void m68k_setpc_bcc (uaecptr newpc);
-extern void m68k_setpc_rte (uaecptr newpc);
-#else
 #define m68k_setpc_fast m68k_setpc
 #define m68k_setpc_bcc  m68k_setpc
 #define m68k_setpc_rte  m68k_setpc
-#endif
 
 static __inline__ void m68k_do_rts(void)
 {

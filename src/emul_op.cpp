@@ -28,6 +28,10 @@
 #include "emul_op.h"
 #include "araobjs.h"
 
+#ifdef ENABLE_MON
+#include "mon.h"
+#endif
+
 #define DEBUG 0
 #include "debug.h"
 

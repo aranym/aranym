@@ -57,18 +57,20 @@ const int cmOpenRc	= 200;
 const int cmSaveRc	= 202;
 
 uint32 FastRAMSize;	// Size of FastRAM
-char IDE0cyl[11];
-char IDE0hea[11];
-char IDE0spt[11];
-char IDE1cyl[11];
-char IDE1hea[11];
-char IDE1spt[11];
+char FRAMS[20];
+char IDE0cyl[20];
+char IDE0hea[20];
+char IDE0spt[20];
+char IDE1cyl[20];
+char IDE1hea[20];
+char IDE1spt[20];
 
 
 class TSetWindow : public TWindow
 {
 	TGroup *sGlobal;
 	TCheckBoxes32 *sDebugger;
+	TInputLine *sFastRAMSize;
 	TInputLine *sTOS;
 	TGroup *sIDE0;
 	TCheckBoxes32 *sIDE0i;
@@ -137,6 +139,12 @@ TSetWindow::TSetWindow(const TRect& r, const char *aTitle, short aNumber):
 	if (start_debug) sDebugger->press(0);
         sGlobal->insert( sDebugger );
 
+	sFastRAMSize = new TInputLine(TRect(43, 2, 54, 3), 10);
+	sprintf(FRAMS, "%d", FastRAMSizeMB);
+	sFastRAMSize->setData(FRAMS);
+	sGlobal->insert(sFastRAMSize);
+	sGlobal->insert(new TLabel(TRect(20, 2, 42, 3), "FastRAM size (in MB):", sFastRAMSize));
+	
 	sTOS = new TInputLine(TRect(8, 4, 75, 5), 511);
 	sTOS->setData(rom_path);
 	sGlobal->insert( sTOS);
@@ -315,6 +323,10 @@ void TSetWindow::saveSet() {
 	if (sDebugger->mark(0)) start_debug = 1; else start_debug = 0;
 	sTOS->getData(rom_path);
 
+	sFastRAMSize->getData(FRAMS);
+	FastRAMSizeMB = atoi(FRAMS);
+	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
+
 	if (sIDE0i->mark(0)) bx_options.diskc.present = 1;
 		else bx_options.diskc.present = 0;
 	if (sIDE0i->mark(1)) bx_options.diskc.byteswap = 1;
@@ -377,6 +389,9 @@ int main(int argc, char **argv)
 
 /*
  * $Log$
+ * Revision 1.3  2001/10/09 19:25:19  milan
+ * MemAlloc's rewriting
+ *
  * Revision 1.2  2001/09/25 00:04:17  milan
  * cleaning of memory managment
  *
