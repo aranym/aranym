@@ -233,7 +233,7 @@ int ECE::receiveFunc(void *arg)
 		if (res <= 0)
 			break;
 
-		hostScreen.lock();
+		// hostScreen.lock();
 		D(bug("ECE: going to read?"));
 
 		// Call protocol handler for received packets
@@ -244,21 +244,22 @@ int ECE::receiveFunc(void *arg)
 			if (packet_length < 14)
 				break;
 
-			break;
+			//// break; // commentThis
 			// Pointer to packet data (ECEnet header)
 			uint32 p = (uint32)packet;
-			D(bug(" header %08x%04x %08x%04x %04x\n", ReadInt32(p), ReadInt16(p + 4), ReadInt32(p + 6), ReadInt16(p + 10), ReadInt16(p + 12)));
+			// D(bug(" header %08x%04x %08x%04x %04x\n", ReadInt32(p), ReadInt16(p + 4), ReadInt32(p + 6), ReadInt16(p + 10), ReadInt16(p + 12)));
 
 			// Trigger ECEnet interrupt
 			D(bug(" packet received, triggering ECEnet interrupt\n"));
-			SetInterruptFlag(INTFLAG_ETHER);
 			TriggerInterrupt();
 
+			D(bug(" waiting for int acknowledge"));
 			// Wait for interrupt acknowledge by ECE::handleInteruptIf()
 			SDL_SemWait(intAck);
+			D(bug(" int acknowledged"));
 		}
 
-		hostScreen.unlock();
+		// hostScreen.unlock();
 	}
 	return 0;
 }

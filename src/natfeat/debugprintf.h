@@ -12,7 +12,7 @@
 class DebugPrintf : public NF_Base
 {
 public:
-	char *name() { return "NF_DEBUGPRINTF"; }
+	char *name() { return "DEBUGPRINTF"; }
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);
 

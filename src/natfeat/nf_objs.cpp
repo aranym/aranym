@@ -6,6 +6,7 @@
 #include "hostfs.h"
 #include "ece.h"
 #include "fvdidrv.h"
+#include "debugprintf.h"
 /* add your NatFeat class definition here */
 
 
@@ -16,6 +17,7 @@ NF_Shutdown nf_shutdown;
 NF_StdErr nf_stderr;
 
 /* additional NF */
+DebugPrintf dbgprintf;
 XHDIDriver Xhdi;
 AUDIODriver Audio;
 FVDIDriver fVDIDrv;
@@ -29,6 +31,7 @@ ECE ECe;
 
 pNatFeat nf_objects[] = {
 	&nf_name, &nf_version, &nf_shutdown, &nf_stderr,	/* NF basic set */
+	&dbgprintf,
 	&fVDIDrv,
 	&Xhdi,
 	&Audio,
