@@ -176,4 +176,8 @@ class NativeTypeMapper
 
 char *safe_strncpy(char *dest, const char *src, size_t size);
 
+#ifdef OS_cygwin
+char* cygwin_path_to_win32(fontname, sizeof(fontname));
+#endif
+
 #endif  // _TOOLS_H

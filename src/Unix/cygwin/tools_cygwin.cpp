@@ -2,7 +2,7 @@
 #ifndef _CYGWIN_TOOLS_H
 #define _CYGWIN_TOOLS_H
 
-#include "parameters.h"
+#include "tools.h"
 #include <sys/cygwin.h>
 
 char *cygwin_path_to_win32(char *path, size_t size)

@@ -3,6 +3,7 @@
 #include "config.h"
 #include "parameters.h"
 #include "emu_bochs.h"	// for BX_INSERTED define
+#include "tools.h"		// for safe_strncpy()
 
 #define DEBUG 0
 #include "debug.h"
@@ -50,8 +51,7 @@ bool boot_emutos = false;
 bool ide_swap = false;
 uint32 FastRAMSize;
 
-static char config_folder[512] = ARANYMHOME;
-static char config_file[512] = "";	// empty by default - can be set by --config <fname>
+static char config_file[512];
 
 #if !defined(XIF_HOST_IP) && !defined(XIF_ATARI_IP) && !defined(XIF_NETMASK)
 # define XIF_HOST_IP	"192.168.0.1"
@@ -66,13 +66,6 @@ bx_options_t bx_options;
 
 static bx_atadevice_options_t *diskc = &bx_options.atadevice[0][0];
 static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
-
-static char *safe_strncpy(char *dest, const char *src, size_t size)
-{
-	strncpy(dest, src, size);
-	dest[size-1] = '\0';
-	return dest;
-}
 
 
 // configuration file 
@@ -646,82 +639,75 @@ int process_cmdline(int argc, char **argv)
 	return optind;
 }
 
-// build a complete path to an user-specific file
-char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
+/*
+ * Get the path to folder with user-specific files (configuration, NVRAM)
+ */
+char *getConfFolder(char *buffer, unsigned int bufsize)
 {
-	unsigned int len = strlen(config_folder)+1 + strlen(file)+1;
-	if (len < bufsize) {
-		strcpy(buffer, config_folder);
+	// local cache
+	static char path[512] = "";
+
+	if (strlen(path) == 0) {
+		// Unix-like systems define HOME variable as the user home folder
+		char *home = getenv("HOME");
+		if (home == NULL)
+			home = "";	// alternatively use current directory
+
+		int homelen = strlen(home);
+		if (homelen > 0) {
+			unsigned int len = strlen(ARANYMHOME);
+			if ((homelen + 1 + len + 1) < bufsize) {
+				strcpy(path, home);
+				strcat(path, DIRSEPARATOR);
+				strcat(path, ARANYMHOME);
+			}
+		}
+	}
+
+	return safe_strncpy(buffer, path, bufsize);
+}
+
+char *getDataFolder(char *buffer, unsigned int bufsize)
+{
+	// data folder is defined at configure time in DATADIR (using --datadir)
+	return safe_strncpy(buffer, DATADIR, bufsize);
+}
+
+// append a filename to a path
+static char *addFilename(const char *file, char *buffer, unsigned int bufsize)
+{
+	if ((strlen(buffer) + 1 + strlen(file) + 1) < bufsize) {
 		strcat(buffer, DIRSEPARATOR);
 		strcat(buffer, file);
 	}
-	else
-		strcpy(buffer, file);	// at least the filename
+	else {
+		panicbug("addFilename(\"%s\") - buffer too small!", file);
+		safe_strncpy(buffer, file, bufsize);	// at least the filename
+	}
 
 	return buffer;
+}
+
+// build a complete path to an user-specific file
+char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
+{
+	getConfFolder(buffer, bufsize);
+
+	// Does the folder exist?
+	struct stat buf;
+	if (stat(buffer, &buf) == -1) {
+		D(bug("Creating config folder '%s'", buffer));
+		mkdir(buffer, 0755);
+	}
+
+	return addFilename(file, buffer, bufsize);
 }
 
 // build a complete path to system wide data file
 char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
 {
-	// data folder is either defined at compile time with DATADIR
-	// or if the DATADIR begins with "//" then the data folder
-	// path is the executable program path ('program_home')
-	const char *data_folder = (strncmp(DATADIR, "//", 2) != 0) ? DATADIR : program_home;
-
-	unsigned int len = strlen(data_folder)+1 + strlen(file)+1;
-	if (len < bufsize) {
-		strcpy(buffer, data_folder);
-		strcat(buffer, DIRSEPARATOR);
-		strcat(buffer, file);
-	}
-	else
-		strcpy(buffer, file);	// at least the filename
-
-	return buffer;
-}
-
-void build_cfgfilename()
-{
-	// Unix-like systems define HOME variable as the user home folder
-	char *home = getenv("HOME");
-
-	// Windows 2000 use a different variable with the same meaning
-	if (home == NULL)
-		home = getenv("USERPROFILE");
-
-	// if environment failed use program home folder as the user home
-	// this might be useful in single user systems
-	if (home == NULL)
-		home = program_home;
-
-	if (home != NULL) {
-		int homelen = strlen(home);
-		if (homelen > 0) {
-			unsigned int len = strlen(ARANYMHOME);
-			if ((homelen+1 + len+1) < sizeof(config_folder)) {
-				strcpy(config_folder, home);
-				strcat(config_folder, DIRSEPARATOR);
-				strcat(config_folder, ARANYMHOME);
-			}
-		}
-	}
-
-	// Does the folder exist?
-	struct stat buf;
-	if (stat(config_folder, &buf) == -1) {
-		D(bug("Creating config folder '%s'", config_folder));
-		mkdir(config_folder, 0755);
-	}
-
-	if (strlen(config_file) == 0)
-		getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
-}
-
-void build_datafilenames()
-{
-	getDataFilename(TOS_FILENAME, rom_path, sizeof(rom_path));
-	getDataFilename(EMUTOS_FILENAME, emutos_path, sizeof(emutos_path));
+	getDataFolder(buffer, bufsize);
+	return addFilename(file, buffer, bufsize);
 }
 
 static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose)
@@ -828,8 +814,10 @@ bool check_cfg()
 
 bool decode_switches(FILE *f, int argc, char **argv)
 {
-	build_cfgfilename();
-	build_datafilenames();
+	getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
+	getDataFilename(TOS_FILENAME, rom_path, sizeof(rom_path));
+	getDataFilename(EMUTOS_FILENAME, emutos_path, sizeof(emutos_path));
+
 	early_cmdline_check(argc, argv);
 	preset_cfg();
 	decode_ini_file(f, config_file);
