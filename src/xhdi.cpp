@@ -119,3 +119,31 @@ uint32 XHDIDriver::dispatch(uint16 fncode, memptr stack)
 	}
 	return ret;
 }
+
+uint32 XHDIDriver::dispatch_params(uint32 *params)
+{
+	uint32 fncode = params[0];
+	D(bug("ARAnyM XHDI(%u)\n", fncode));
+	uint32 ret;
+	switch(fncode) {
+		case 10: ret = XHReadWrite(
+						params[1], /* UWORD major */
+						params[2], /* UWORD minor */
+						params[3], /* UWORD rwflag */
+						params[4], /* ULONG recno */
+						params[5], /* UWORD count */
+						params[6]  /* void *buf */
+						);
+				break;
+		case 14: ret = XHGetCapacity(
+						params[1], /* UWORD major */
+						params[2], /* UWORD minor */
+						params[3], /* ULONG *blocks */
+						params[4] /* ULONG *blocksize */
+						);
+				break;
+		default: ret = (uint32)-32L; // EINVFN
+				break;
+	}
+	return ret;
+}
