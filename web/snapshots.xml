@@ -15,6 +15,7 @@
         <li><a href="images/mint-xaaes.png">EasyMiNT installed FreeMiNT, fVDI, XaAES 0.934</a> (14kB) </li>
         <li>EmuTOS <a href="images/emutos1.gif">booting</a> (7kB) and <a href="images/emutos2.gif"> running ParShell </a> (13kB) </li>
         <li>FreeMiNT running with <a href="images/mmuenabled.png">Memory Protection</a> (13kB)</li>
+        <li>PurePascal and its debugger <a href="images/ppdbg1.png">debugging</a> (9kB) my <a href="images/ppdbg2.png">Minesweeper 2.2</a> (2kB)</li>
       </ul>
     </text>
   </chapter>
