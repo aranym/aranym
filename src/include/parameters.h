@@ -55,8 +55,8 @@ typedef struct {
   } bx_cookies_options;
  
 typedef struct {
-  char *path;
-  } bx_vgarom_options;
+  bool direct_truecolor;	// patch TOS to enable direct true color
+  } bx_video_options;
  
 typedef struct {
   size_t megs;
@@ -75,6 +75,7 @@ typedef struct {
   bx_disk_options   diskd;
   bx_cdrom_options  cdromd;
   bx_cookies_options cookies;
+  bx_video_options	video;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;
   // unsigned long     keyboard_serial_delay;
@@ -92,7 +93,6 @@ extern uint8 start_debug;		// starts debugger
 extern bool fullscreen;		// boot in fullscreen
 extern int8 boot_color_depth;		// boot color depth
 extern int8 monitor;				// VGA or TV
-extern bool direct_truecolor;	// patch TOS to enable direct true color
 extern ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 extern uint32 FastRAMSizeMB;	// size of FastRAM, needed for configuration's GUI
 
