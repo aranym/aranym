@@ -31,12 +31,12 @@ char *program_name;
 char *rom_path;
 
 uint8 start_debug = 0;			// Start debugger
-uint8 fullscreen = 0;			// Boot in Fullscreen
-uint16 boot_color_depth = 1;		// Boot in color depth
+bool fullscreen = false;			// Boot in Fullscreen
+int8 boot_color_depth = -1;	// Boot in color depth
+int8 monitor = -1;				// VGA
 extern uint32 TTRAMSize;		// TTRAM size
 bool direct_truecolor = false;
 bool grab_mouse = false;
-uint8 monitor = 0;				// VGA
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 
 
@@ -87,18 +87,19 @@ int decode_switches (int argc, char **argv) {
 
 			case 'h':
 				usage (0);
+				exit(0);
 	
 			case 'D':
 				start_debug = 1;
 				break;
 	
 			case 'f':
-				fullscreen = 1;
+				fullscreen = true;
 				break;
 	
 			case 't':
 				direct_truecolor = true;
-				fullscreen = 1;
+				fullscreen = true;
 				boot_color_depth = 16;
 				break;
 
