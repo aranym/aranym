@@ -40,7 +40,7 @@ static const int HW = 0xfffa00;
 	}
 
 	void MFP_Timer::reset() {
-		D(bug("reset of Timer%c", name));
+		// D(bug("reset of Timer%c", name));
 		if (isRunning()) {
 			state = true;
 			current_data = start_data;
@@ -268,7 +268,8 @@ int MFP::doInterrupt() {
 	}
 	/* TIMER C */
 	else if ((flags & F_TIMERC) && ! (irq_inservice & (1<<5))) {
-		irq_inservice |= (1<<5);
+		if (automaticServiceEnd)
+			irq_inservice |= (1<<5);
 		if (--timerCounter <= 0) {
 			TriggerMFP(false);
 			flags &= ~F_TIMERC;
