@@ -88,6 +88,6 @@
 #define SPACE_P	0x02
 
 /* Functions */
-void dsp56k_do_execute(void);
+int dsp56k_do_execute(void *);
 
 #endif

@@ -80,10 +80,17 @@
 class DSP : public BASE_IO {
 	
 	public:
-		void init(void);
-		void reset(void);
 		virtual uae_u8 handleRead(uaecptr addr);
 		virtual void handleWrite(uaecptr, uae_u8);
+
+		/* Setup functions */
+		void init(void);
+		void reset(void);
+		void shutdown(void);
+
+		/* Host port transfer */
+		void host2dsp(void);
+		void dsp2host(void);
 
 		/* DSP state */
 		uint8	state;
@@ -112,9 +119,16 @@ class DSP : public BASE_IO {
 		uint32 last_loop_inst;	/* executing the last instruction in DO ? */
 		uint32 first_host_write;	/* first byte written to host port */
 
+#if DSP_THREADED
+		SDL_sem		*dsp56k_sem;
+#endif
 	private:
 		/* For bootstrap routine */
 		uint16	bootstrap_pos;
 		uint32	bootstrap_accum;
+
+#if DSP_THREADED
+		SDL_Thread	*dsp56k_thread;
+#endif
 };
 
