@@ -1,3 +1,11 @@
+2002/04/12 - version 0.1.6 released
+==========
+
+ Serious problem with NMI not being able to break STOPped CPU
+ fixed. Also when compiled with --disable-timer it now generates
+ system 200 Hz interrupt correctly even when the CPU is STOPped.
+
+
 2002/04/11 - version 0.1.5 released (please update your fVDI driver!)
 ==========
 

@@ -1,7 +1,12 @@
+** Version 0.1.6
+
 2002/04/12 - joy
 - newcpu.cpp: NMI will break out of the STOP jail. From user point
   of view - if EmuTOS happens to crash you'll be able to quit ARAnyM
   now.
+
+- newcpu.cpp: STOPped CPU did not generate 200 Hz system interrupt
+  when compiled with --disable-sdltimer. Fixed.
 
 
 ** Version 0.1.5
