@@ -15,6 +15,8 @@ extern int dma_mode, dma_scr, dma_car, fdc_command, fdc_track, fdc_sector,
 	fdc_data, fdc_status, dma_sr;
 extern void fdc_exec_command(void);
 
+static int fdc_busy = 0, hdc_busy = 0;	// from STonC
+
 ACSIFDC::ACSIFDC() {
 	DMAfifo = DMAstatus = DMAxor = 0;
 	DMAdiskctl = FDC_T = FDC_S = FDC_D = HDC_T = HDC_S = HDC_D = 0;
@@ -72,6 +74,8 @@ uae_u8 ACSIFDC::LOAD_B_ff8605(void)
 	{
 		if (dma_mode & 8)
 		{
+        	if (! hdc_busy)
+				mfp.setGPIPbit(0x20, 0x20);
 			return dma_car&0xff;
 		}
 		else
@@ -79,6 +83,8 @@ uae_u8 ACSIFDC::LOAD_B_ff8605(void)
 			switch(dma_mode & 6)
 			{
 				case 0:
+          			if (! fdc_busy)
+						mfp.setGPIPbit(0x20, 0x20);
 					return fdc_status&0xff;
 				case 2:
 					return fdc_track&0xff;
@@ -155,6 +161,7 @@ void ACSIFDC::STORE_B_ff8605(uae_u8 vv)
 	{
 		if (dma_mode&8)
 		{
+			mfp.setGPIPbit(0x20, 0x20);
 			dma_car &= 0xff00;
 			dma_car |= vv;
 		}
