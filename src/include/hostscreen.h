@@ -69,6 +69,11 @@ public:
 	// VDI required function to fill areas
 	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 	void   blitArea( int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h );
+
+	/**
+	 * Atari bitplane to chunky conversion helper.
+	 **/
+	void   bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp, uint8 colorValues[16] );
 };
 
 
@@ -219,11 +224,45 @@ inline void HostScreen::blitArea( int32 sx, int32 sy, int32 dx, int32 dy, int32 
 	SDL_BlitSurface(surf, &srcrect, surf, &dstrect);
 }
 
+
+inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp, uint8 colorValues[16] )
+{
+	memset( colorValues, 0, 16 ); // clear the color values for the 16 pixels (word length)
+
+	for (int l = bpp - 1; l >= 0; l--) {
+		uint16 data = atariBitplaneData[l]; // note: this is about 2000 dryhstones sppedup (the local variable)
+
+		colorValues[ 0] <<= 1;  colorValues[ 0] |= (data >>	 7) & 1;
+		colorValues[ 1] <<= 1;  colorValues[ 1] |= (data >>	 6) & 1;
+		colorValues[ 2] <<= 1;  colorValues[ 2] |= (data >>	 5) & 1;
+		colorValues[ 3] <<= 1;  colorValues[ 3] |= (data >>	 4) & 1;
+		colorValues[ 4] <<= 1;  colorValues[ 4] |= (data >>	 3) & 1;
+		colorValues[ 5] <<= 1;  colorValues[ 5] |= (data >>	 2) & 1;
+		colorValues[ 6] <<= 1;  colorValues[ 6] |= (data >>	 1) & 1;
+		colorValues[ 7] <<= 1;  colorValues[ 7] |= (data >>	 0) & 1;
+
+		colorValues[ 8] <<= 1;  colorValues[ 8] |= (data >> 15) & 1;
+		colorValues[ 9] <<= 1;  colorValues[ 9] |= (data >> 14) & 1;
+		colorValues[10] <<= 1;  colorValues[10] |= (data >> 13) & 1;
+		colorValues[11] <<= 1;  colorValues[11] |= (data >> 12) & 1;
+		colorValues[12] <<= 1;  colorValues[12] |= (data >> 11) & 1;
+		colorValues[13] <<= 1;  colorValues[13] |= (data >> 10) & 1;
+		colorValues[14] <<= 1;  colorValues[14] |= (data >>	 9) & 1;
+		colorValues[15] <<= 1;  colorValues[15] |= (data >>	 8) & 1;
+	}
+}
+
+
+
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.8  2001/09/30 23:09:23  standa
+ * The line logical operation added.
+ * The first version of blitArea (screen to screen only).
+ *
  * Revision 1.7  2001/09/24 23:16:28  standa
  * Another minor changes. some logical operation now works.
  * fvdidrv/fillArea and fvdidrv/expandArea got the first logOp handling.

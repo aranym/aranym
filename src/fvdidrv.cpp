@@ -13,7 +13,7 @@
 
 #include "fvdidrv.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 // this serves for debugging the color palette code
@@ -207,7 +207,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *	d0	height and width to move (high and low word)
 			 *	d1-d2	source coordinates
 			 *	d3-d4	destination coordinates
-			 *	d5	logic operation
+			 *	d7	logic operation
 			 */
 			r->d[0] = blitArea( (void*)get_long( (uint32)r->a[1], true),
 								(MFDB*)get_long( (uint32)r->a[1] + 12, true ) /* src MFDB* */,
@@ -215,7 +215,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 								r->d[1] /* sx */, r->d[2] /* sy */,
 								r->d[3] /* dx */, r->d[4] /* dy */,
 								r->d[0] & 0xffff /* w */, r->d[0] >> 16 /* h */,
-								r->d[5] & 0xffff /* logical operation */ );
+								r->d[7] & 0xffff /* logical operation */ );
 			break;
 
 		case 7: // drawLine:
@@ -612,12 +612,12 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
 {
 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
-	D(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, get_long( (uint32)src, true ),get_long( (uint32)dest, true )));
+	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, get_long( (uint32)src, true ),get_long( (uint32)dest, true )));
 
 	uint16 pitch = get_word( (uint32)src + 8, true ) << 1; // MFDB *src->wdwidth << 1 // the byte width (always monochrom);
 	uint32 data  = get_long( (uint32)src, true ) + sy*pitch; // MFDB *src->address;
 
-	D(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, get_word( (uint32)src + 12, true )));
+	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, get_word( (uint32)src + 12, true )));
 
 	if ( dest != NULL && get_long( (uint32)dest, true ) != 0 )
 		return 1; // FIXME this is the blitToMemory NOT IMPLEMENTED YET!
@@ -723,7 +723,7 @@ uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint1
  *	d0	height and width to move (high and low word)
  *	d1-d2	source coordinates
  *	d3-d4	destination coordinates
- *	d5	logic operation
+ *	d7	logic operation
  *
  * Only one mode here.
  *
@@ -741,38 +741,108 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 							uint32 logOp)
 {
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d", "blitArea", logOp, sx, sy, dx, dy, w, h ));
-	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest, get_long( (uint32)src, true ),get_long( (uint32)dest, true )));
+	D2(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest, get_long( (uint32)src, true ),get_long( (uint32)dest, true )));
 
 	if ( dest != NULL && get_long( (uint32)dest, true ) != 0 ) {
 		D(bug("fVDI: blitArea to memory NOT IMPLEMENTED"));
 		return 1; // FIXME this is the blitToMemory NOT IMPLEMENTED YET!
 	}
 	if ( src != NULL && get_long( (uint32)src, true ) != 0 ) {
-		D(bug("fVDI: blitArea from memory NOT IMPLEMENTED"));
+		uint16 bpp   = get_word( (uint32)src + 12, true ); // MFDB *src->bitplanes
+		uint16 pitch = get_word( (uint32)src + 8, true ) * bpp << 1; // MFDB *src->pitch
+		uint16 *data = (uint16*)get_real_address_direct(get_long( (uint32)src, true ) + sy*pitch); // MFDB *src->address host OS address
+		D2(bug("fVDI: blitArea from memory: address %x, pitch %d, bpp %d", data, pitch, bpp));
 
-		/*
-		uint16 *fvram = (uint16*)get_long( (uint32)src, true );
-		uint16 bpp = get_word( (uint32)src + 12, true );
+		if (!hostScreen.renderBegin())
+			return 1;
+
 		if ( bpp < 16 ) {
-		}
+			uint8 color[16];
 
-		for( uint16 j=0; j<h; j++ ) {
-			D2(fprintf(stderr,"fVDI: bmp:"));
+			D(bug("fVDI: blitArea to memory NOT TESTED bitplaneToCunky conversion"));
 
-			uint32 wordIndex = data + j*pitch + ((sx>>3)&0xfffe);
-			for( uint16 i=sx; i<sx+w; i++ ) {
-				if ( i % 16 == 0 ) {
-					uint32 wordIndex = data + j*pitch + ((sx>>3)&0xfffe);
-					// convert the word into the chunky
+			for( uint16 j=0; j<h; j++ ) {
+				uint32 wordIndex = j*pitch + ((sx>>3)&0xfffe);
+				hostScreen.bitplaneToChunky( &data[ wordIndex * bpp ], bpp, color );
+
+				for( uint16 i=sx; i<sx+w; i++ ) {
+					uint8 bitNo = i % 16;
+					if ( bitNo == 0 ) {
+						uint32 wordIndex = j*pitch + ((sx>>3)&0xfffe);
+						hostScreen.bitplaneToChunky( &data[ wordIndex * bpp ], bpp, color );
+					}
+
+					hostScreen.putPixel(dx + i - sx, dy + j, hostScreen.getPaletteColor( color[ bitNo ] ) );
 				}
 			}
+		} else {
+			for( uint16 j=0; j<h; j++ )
+				for( uint16 i=sx; i<sx+w; i++ ) {
+					uint16 dataWord = *(uint16*)((uint32)data + j*pitch + ((i*bpp)>>3));
+					dataWord = (dataWord >> 8) | ((dataWord & 0xff) << 8); // byte swap
+
+					uint32 destData = hostScreen.getPixel( dx + i - sx, dy + j );
+					switch(logOp) {
+						case 0:
+							destData = 0;
+							break;
+						case 1:
+							destData = destData & dataWord;
+							break;
+						case 2:
+							destData = destData & ~dataWord;
+							break;
+						case 3:
+							destData = destData;
+							break;
+						case 4:
+							destData = ~destData & dataWord;
+							break;
+						case 5:
+							destData = dataWord;
+							break;
+						case 6:
+							destData = destData ^ dataWord;
+							break;
+						case 7:
+							destData = destData | dataWord;
+							break;
+						case 8:
+							destData = ~(destData | dataWord);
+							break;
+						case 9:
+							destData = ~(destData ^ dataWord);
+							break;
+						case 10:
+							destData = ~dataWord;
+							break;
+						case 11:
+							destData = destData | ~dataWord;
+							break;
+						case 12:
+							destData = ~destData;
+							break;
+						case 13:
+							destData = ~destData | dataWord;
+							break;
+						case 14:
+							destData = ~(destData & dataWord);
+							break;
+						case 15:
+							destData = 0xffff;
+							break;
+					}
+					hostScreen.putPixel(dx + i - sx, dy + j, destData );
+				}
 		}
-		*/
+
+		hostScreen.renderEnd();
+		hostScreen.update( dx, dy, w, h, true );
 
 		return 1; // FIXME this is the blitFromMemory NOT IMPLEMENTED YET!
 	}
 
-	D(bug("fVDI: %s ", "blitArea - screen blit!" ));
+	D2(bug("fVDI: %s ", "blitArea - screen blit!" ));
 
 	// if (!hostScreen.renderBegin()) // the surface must _not_ be locked for blitArea (SDL_BlitSurface)
 	//		return 1;
@@ -813,7 +883,7 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
  * A negative return will break down the special modes into separate calls,
  * with no more fallback possible.
  **/
-uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2, 
+uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 							uint16 pattern, uint32 fgColor, uint32 bgColor, uint32 logOp )
 {
 	D(bug("fVDI: %s %x %d,%d:%d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "drawLine", logOp, x1, y1, x2, y2, pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
@@ -846,6 +916,10 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.11  2001/09/30 23:09:23  standa
+ * The line logical operation added.
+ * The first version of blitArea (screen to screen only).
+ *
  * Revision 1.10  2001/09/24 23:16:28  standa
  * Another minor changes. some logical operation now works.
  * fvdidrv/fillArea and fvdidrv/expandArea got the first logOp handling.

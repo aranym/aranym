@@ -201,39 +201,14 @@ void VIDEL::renderScreenNoFlag()
 		updateColors();
 
 		// The SDL colors blitting...
+		// FIXME!!! The SDL hvram need not to be line aligned (see the surface->format->pitch!!!)
 		// FIXME: The destBPP tests should probably not
 		//		  be inside the loop... (reorganise?)
-		int planeWordCount = vw * vh / 16;
+		int   planeWordCount = ((vw+15)>>4) * vh;
+		uint8 color[16];
 
-#define NEWCHUNKYCONV
-#ifdef NEWCHUNKYCONV
-		for (int w = 1; w <= planeWordCount; w++) {
-			int wordEndIndex = w * bpp - 1;
-
-			// bitplane to chunky conversion.. (the whole word at once)
-			uint8 color[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-
-			for (int l = wordEndIndex; l > wordEndIndex - bpp; l--) {
-				uint16 data = fvram[l]; // note: this is about 2000 dryhstones sppedup (the local variable)
-
-				color[ 0] <<= 1;  color[ 0] |= (data >>	 7) & 1;
-				color[ 1] <<= 1;  color[ 1] |= (data >>	 6) & 1;
-				color[ 2] <<= 1;  color[ 2] |= (data >>	 5) & 1;
-				color[ 3] <<= 1;  color[ 3] |= (data >>	 4) & 1;
-				color[ 4] <<= 1;  color[ 4] |= (data >>	 3) & 1;
-				color[ 5] <<= 1;  color[ 5] |= (data >>	 2) & 1;
-				color[ 6] <<= 1;  color[ 6] |= (data >>	 1) & 1;
-				color[ 7] <<= 1;  color[ 7] |= (data >>	 0) & 1;
-
-				color[ 8] <<= 1;  color[ 8] |= (data >> 15) & 1;
-				color[ 9] <<= 1;  color[ 9] |= (data >> 14) & 1;
-				color[10] <<= 1;  color[10] |= (data >> 13) & 1;
-				color[11] <<= 1;  color[11] |= (data >> 12) & 1;
-				color[12] <<= 1;  color[12] |= (data >> 11) & 1;
-				color[13] <<= 1;  color[13] |= (data >> 10) & 1;
-				color[14] <<= 1;  color[14] |= (data >>	 9) & 1;
-				color[15] <<= 1;  color[15] |= (data >>	 8) & 1;
-			}
+		for (int32 w = 0; w < planeWordCount; w++) {
+			hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
 
 			// To support other formats see
 			// the SDL video examples (docs 1.1.7)
@@ -246,18 +221,18 @@ void VIDEL::renderScreenNoFlag()
 
 				// note: by enroling this loop into 16 getPaletteColor calls we lost 500 dryhstones ;(
 				//		 so we should leave it as is.
-				int endBitIndex = w * 16;
+				int startBitIndex = w * 16;
 				int colIdx = 0;
-				for (int j = endBitIndex - 16; j < endBitIndex; j++) {
+				for (int j = startBitIndex; j < startBitIndex + 16; j++) {
 					((uint16 *) hvram)[ j ] = (uint16) hostScreen.getPaletteColor( color[ colIdx++ ] );
 				}
 
 #ifdef SUPPORT_MULTIPLEDESTBPP
 			}
 			else if (destBPP == 4) {
-				int endBitIndex = w * 16;
+				int startBitIndex = w * 16;
 				int colIdx = 0;
-				for (int j = endBitIndex - 16; j < endBitIndex; j++)
+				for (int j = startBitIndex; j < startBitIndex + 16; j++)
 					((uint32 *) hvram)[ j ] = (uint32) hostScreen.getPaletteColor( color[ colIdx++ ] );
 			}
 			// FIXME: support for destBPP other than 2 or 4 BPP is missing
@@ -265,50 +240,6 @@ void VIDEL::renderScreenNoFlag()
 #endif // SUPPORT_MULTIPLEDESTBPP
 
 		}  // for( int i; ...
-
-#else // NEWCHUNKYCONV
-
-		// FIXME: remove --- old slower
-
-		uint16 words[bpp];
-		for (int w = 0; w < planeWordCount; w++) {
-
-#ifdef SUPPORT_MULTIPLEDESTBPP
-			if (destBPP == 2) {
-#endif // SUPPORT_MULTIPLEDESTBPP
-
-				// perform byteswap (prior to plane to chunky conversion)
-				for (int l = 0; l < bpp; l++) {
-					uint16 b = fvram[w * bpp + l];
-					words[l] = (b >> 8) | ((b & 0xff) << 8);	// byteswap
-				}
-
-				for (int j = 0; j < 16; j++) {
-					uint8 color = 0;
-					for (int l = bpp - 1; l >= 0; l--) {
-						color <<= 1;
-						color |= (words[l] >> (15 - j)) & 1;
-					}
-					((uint16 *) hvram)[(w * 16 + j)] = (uint16) hostScreen.getPaletteColor(color);
-				}
-#ifdef SUPPORT_MULTIPLEDESTBPP
-			}
-			else if (destBPP == 4) {
-				// bitplane to chunky conversion
-				for (int j = 0; j < 16; j++) {
-					uint8 color = 0;
-					for (int l = bpp - 1; l >= 0; l--) {
-						color <<= 1;
-						color |= (words[l] >> (15 - j)) & 1;
-					}
-					((uint32 *) hvram)[(w * 16 + j)] = (uint32) hostScreen.getPaletteColor(color);
-				}
-			}
-#endif // SUPPORT_MULTIPLEDESTBPP
-
-		}  // for( int i; ...
-
-#endif // NEWCHUNKYCONV
 
 	} else {
 		// Falcon TC (High Color)
@@ -362,6 +293,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.23  2001/09/30 23:07:39  standa
+ * Just the loop variables renamed from i to w.
+ *
  * Revision 1.22  2001/09/21 14:15:05  joy
  * detect VideoRAM change and turn on Videl rendering again (after a fVDI session during the reset sequence, for example).
  * do not render on 16-bit host screen the Falcon TC mode if the direct_truecolor is set.
