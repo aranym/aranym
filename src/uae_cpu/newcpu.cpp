@@ -19,7 +19,6 @@
 #include "emul_op.h"
 
 extern int intlev(void);	// From baisilisk_glue.cpp
-extern int MFPintlev(void);	// From baisilisk_glue.cpp
 
 #include "m68k.h"
 #include "memory.h"
@@ -669,15 +668,58 @@ void Exception(int nr, uaecptr oldpc)
 	regs.s = 1;
     }
     if (CPUType > 0) {
-	if (nr == 2 || nr == 3) {
-	    int i;
-	    /* @@@ this is probably wrong (?) */
-	    for (i = 0 ; i < 12 ; i++) {
+	if (nr == 2 || nr == 3) {	// 16 words on stack
+	    	// internal register
+		m68k_areg(regs, 7) -= 4;
+		put_long (m68k_areg(regs, 7), 0);
+
+		// data to write
+		m68k_areg(regs, 7) -= 4;
+		put_long (m68k_areg(regs, 7), 0);
+
+	    	// internal register
+		m68k_areg(regs, 7) -= 4;
+		put_long (m68k_areg(regs, 7), 0);
+
+		// data to write
+		m68k_areg(regs, 7) -= 4;
+		put_long (m68k_areg(regs, 7), last_fault_for_exception_3);
+
+	    	// instruction B prefetch
+		m68k_areg(regs, 7) -= 2;
+		put_word (m68k_areg(regs, 7), get_word(regs.pc+2));
+
+	    	// instruction C prefetch
+		m68k_areg(regs, 7) -= 2;
+		put_word (m68k_areg(regs, 7), get_word(regs.pc+4));
+
+	    	// special status register ssw
+		m68k_areg(regs, 7) -= 2;
+		put_word (m68k_areg(regs, 7), 0x0100);
+
+	    	// internal register
 		m68k_areg(regs, 7) -= 2;
 		put_word (m68k_areg(regs, 7), 0);
-	    }
+
+		// vector offset
 	    m68k_areg(regs, 7) -= 2;
 	    put_word (m68k_areg(regs, 7), 0xa000 + nr * 4);
+
+		// PC
+    	m68k_areg(regs, 7) -= 4;
+    	fprintf(stderr, "Store PC for bus error: %x\n", m68k_getpc());
+    	put_long (m68k_areg(regs, 7), m68k_getpc ());
+    m68k_areg(regs, 7) -= 2;
+    put_word (m68k_areg(regs, 7), regs.sr);
+    ////
+    if (nr == 2)
+    	fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr));
+    ////
+    m68k_setpc (get_long (regs.vbr + 4*nr) -4);
+    fill_prefetch_0 ();
+    regs.t1 = regs.t0 = regs.m = 0;
+    regs.spcflags &= ~(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
+	return;
 	} else if (nr ==5 || nr == 6 || nr == 7 || nr == 9) {
 	    m68k_areg(regs, 7) -= 4;
 	    put_long (m68k_areg(regs, 7), oldpc);
@@ -718,7 +760,8 @@ kludge_me_do:
     m68k_areg(regs, 7) -= 2;
     put_word (m68k_areg(regs, 7), regs.sr);
     ////
-    ///// fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr));
+    if (nr == 2)
+    	fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr));
     ////
     m68k_setpc (get_long (regs.vbr + 4*nr));
     fill_prefetch_0 ();
@@ -747,7 +790,7 @@ static void MFPInterrupt(int nr)
     lastint_no = 6;
     Exception(nr+64, 0);
 
-    regs.intmask = 6;
+    regs.intmask = 6;//7;	// used to be 6 but STonX sets it to 7
 }
 
 //static int caar, cacr, tc, itt0, itt1, dtt0, dtt1;
@@ -1226,9 +1269,10 @@ static int do_specialties (void)
 	Exception (9,last_trace_ad);
     }
     while (regs.spcflags & SPCFLAG_STOP) {
-	if (regs.spcflags & (SPCFLAG_INT | SPCFLAG_DOINT | SPCFLAG_MFPINT)){
+    	int mask = (SPCFLAG_INT | SPCFLAG_DOINT | SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_TIMERC2 | SPCFLAG_MFP_ACIA);
+	if (regs.spcflags & mask) {
 	    int intr = intlev ();
-	    regs.spcflags &= ~(SPCFLAG_INT | SPCFLAG_DOINT | SPCFLAG_MFPINT);
+	    regs.spcflags &= ~mask;
 	    if (intr != -1 && intr > regs.intmask) {
 		Interrupt (intr);
 		regs.stopped = 0;
@@ -1247,26 +1291,34 @@ static int do_specialties (void)
 	    regs.stopped = 0;
 	}
     }
-    if (regs.spcflags & SPCFLAG_MFPINT) {
-	int intr = MFPintlev();
-	regs.spcflags &= ~SPCFLAG_MFPINT;
-	if (intr > 0 && 6 > regs.intmask) {
-		// fprintf(stderr, "Jdu cist z MFP\n");
-		uae_u8 value = get_byte(0xfffa11);
-		// fprintf(stderr, "Vycetl jsem %x\n", value);
-		int mask = (1 << intr);
-	    if (! (value & mask)) {
-	    	put_byte(0xfffa11, value | mask);
-	        // fprintf(stderr, "CPU:IntMask OK, volam MFPInterrupt\n");
-	        MFPInterrupt (intr);
-	        regs.stopped = 0;
-	    }
-	    else {
-	    	// fprintf(stderr, "CPU:TimerC is already in-service: = %x\n", value);
-	    }
-	}
-	else {
-		// fprintf(stderr, "CPU:TimerC int masked out\n");
+
+    // ACIA received data
+    uae_u8 MFPintr = 6;	// MFP interrupt 6 = ACIA
+    uae_u8 mask = 1 << MFPintr;
+    if ((regs.spcflags & SPCFLAG_MFP_ACIA) && (6 > regs.intmask)) {
+        MFPInterrupt(MFPintr);
+	regs.stopped = 0;
+    	regs.spcflags &= ~SPCFLAG_MFP_ACIA;
+    }
+
+    // Timer C (200 Hz system timer, simulated using two 100 Hz timers)
+    MFPintr = 5;	// MFP interrupt 5 = Timer C
+    mask = 1 << MFPintr;
+    if ((regs.spcflags & (SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_TIMERC2))
+    	&& (6 > regs.intmask)) {
+    	// fprintf(stderr, "uvnitr MFP_TIMERC\n");
+    	uae_u8 value = get_byte(0xfffa11);
+    	if ((value & 0x20) == 0) {
+    		// fprintf(stderr, "Spoustim IRQ\n");
+    		put_byte(0xfffa11, value | mask);
+        	MFPInterrupt(MFPintr);
+		regs.stopped = 0;
+		if (regs.spcflags & SPCFLAG_MFP_TIMERC) {
+			regs.spcflags &= ~SPCFLAG_MFP_TIMERC;
+			regs.spcflags |= SPCFLAG_MFP_TIMERC2;
+		}
+		else
+			regs.spcflags &= ~SPCFLAG_MFP_TIMERC2;
 	}
     }
 /*
