@@ -74,7 +74,7 @@ void XHDIDriver::copy_atadevice_settings(bx_atadevice_options_t *src, disk_t *de
 void XHDIDriver::copy_scsidevice_settings(bx_scsidevice_options_t *src, disk_t *dest)
 {
 	safe_strncpy(dest->path, src->path, sizeof(dest->path));
-	safe_strncpy(dest->name, src->name, sizeof(dest->name));
+	sprintf(dest->name, "DISK%d", 0);
 	dest->present = src->present;
 	dest->readonly = src->readonly;
 	dest->byteswap = src->byteswap;
@@ -184,26 +184,15 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 			sector.part[0].st = SDL_SwapBE32(start_sect);
 			sector.part[0].siz = SDL_SwapBE32(disk->size_blocks - start_sect);
 
-			sector.part[1].flg = 0;
-			sector.part[1].id[0] = 0;
-			sector.part[1].id[1] = 0;
-			sector.part[1].id[2] = 0;
-			sector.part[1].st = 0;
-			sector.part[1].siz = 0;
-
-			sector.part[2].flg = 0;
-			sector.part[2].id[0] = 0;
-			sector.part[2].id[1] = 0;
-			sector.part[2].id[2] = 0;
-			sector.part[2].st = 0;
-			sector.part[2].siz = 0;
-
-			sector.part[3].flg = 0;
-			sector.part[3].id[0] = 0;
-			sector.part[3].id[1] = 0;
-			sector.part[3].id[2] = 0;
-			sector.part[3].st = 0;
-			sector.part[3].siz = 0;
+			// zero out the other three partitions in PTBL
+			for(int i=1; i<4; i++) {
+				sector.part[i].flg = 0;
+				sector.part[i].id[0] = 0;
+				sector.part[i].id[1] = 0;
+				sector.part[i].id[2] = 0;
+				sector.part[i].st = 0;
+				sector.part[i].siz = 0;
+			}
 
 			memcpy(hostbuf, &sector, sizeof(sector));
 
