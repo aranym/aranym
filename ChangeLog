@@ -15,6 +15,12 @@
 
 - renamed things: "araeth*" -> "ethernet", "araethip" -> "nfeth-config"
 
+- atari/hostfs/README, atari/network/ethernet/README: updated
+
+- 'aratapif' started by 'execv()' from the same folder where aranym was
+  started from. Also a couple of checks for file owner and setuid bit
+  added so users get warnings if chown/chmod was not applied to aratapif.
+
 
 2003/03/21 - joy
 - networking: NF API extended to allow emulating more than 1 network card

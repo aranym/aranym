@@ -210,7 +210,6 @@ void ETHERNETDriver::finishInterupt()
 	SDL_SemPost(intAck);
 }
 
-
 /*
  *  Initialization
  */
@@ -227,10 +226,36 @@ bool ETHERNETDriver::init(void)
 		return false;
 	}
 
+	// prepare exec path to aratapif
+	char tapifPath[500];
+	strcpy(tapifPath, program_name);
+	char *ptr = strrchr(tapifPath, '/');
+	if (ptr != NULL)
+		ptr[1] = '\0';	// strip out filename from the path
+	else
+		ptr[0] = '\0';
+	strcat(tapifPath, TAP_INIT);
+
+	// make sure aratapif is available and suid root
+	struct stat buf;
+	if (stat(tapifPath, &buf)) {
+		panicbug("Ethernet ERROR: '%s' not found. Ethernet disabled!", tapifPath);
+		close(fd);
+		fd = -1;
+		return false;
+	}
+	if (buf.st_uid != 0) {
+		panicbug("Ethernet warning: '%s' is not owned by root", tapifPath);
+	}
+	if ((buf.st_mode & S_ISUID) == 0) {
+		panicbug("Ethernet warning: '%s' is not setuid", tapifPath);
+	}
+
 	int pid = fork();
 	if (pid < 0) {
-		panicbug("Ethernet: fork() failed! closing device");
+		panicbug("Ethernet ERROR: fork() failed. Ethernet disabled!");
 		close(fd);
+		fd = -1;
 		return false;
 	}
 
@@ -245,24 +270,24 @@ bool ETHERNETDriver::init(void)
 			TAP_MTU, NULL
 		};
 		int result;
-		result = execvp( TAP_INIT, args );
+		result = execv( tapifPath, args );
 		::exit(result);
 	}
 
-	D(bug("waiting for "TAP_INIT));
+	D(bug("waiting for "TAP_INIT" at pid %d", pid));
 	int status;
 	waitpid(pid, &status, 0);
 	bool failed = true;
 	if (WIFEXITED(status)) {
 		if (WEXITSTATUS(status)) {
-			panicbug(TAP_INIT" failed (code %d).", WEXITSTATUS(status));
+			panicbug("Ethernet ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", WEXITSTATUS(status));
 		}
 		else {
 			failed = false;
-			D(bug(TAP_INIT" initialized OK"));
+			D(bug("Ethernet: "TAP_INIT" initialized OK"));
 		}
 	} else {
-		D(bug(TAP_INIT"'s fork/exec/waitpid failed badly"));
+		panicbug("Ethernet ERROR: "TAP_INIT" could not be started. Ethernet disabled!");
 	}
 
 	// Close /dev/net/tun device if exec failed
