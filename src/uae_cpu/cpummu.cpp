@@ -723,7 +723,7 @@ uae_u32 mmu_get_unaligned (uaecptr addr, int fc, int size)
 		regs.mmu_ssw |= (1 << 11);
 		LONGJMP(excep_env, prb);
 	}
-	physaddr = mmu_translate(addr, fc, 0, pc, (size - size1) == 1 ? sz_byte : sz_word, 0);
+	physaddr = mmu_translate(addr + size1, fc, 0, pc, (size - size1) == 1 ? sz_byte : sz_word, 0);
 	result <<= (size - size1) * 8;
 	switch (size - size1) {
 	case 1:
