@@ -9,7 +9,7 @@
 #include "cpu_emulation.h"
 #include "nf_name.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 int32 NF_Name::dispatch(uint32 fncode)
