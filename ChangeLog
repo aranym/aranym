@@ -1,3 +1,5 @@
+** ARAnyM 0.8.0beta3 released
+
 2003/04/10 - joy
 - parameters.cpp: addFilename() has a different order of arguments
   and is able to deal with additional path separators

@@ -108,7 +108,7 @@ Francois LE COAT
 - for the Solaris port
 
 Olivier Landemarre
-- for the Windows/cygwin port
+- for the Windows/cygwin binaries
 - corrections related to timer
 
 Rodolphe Pineau
@@ -141,4 +141,4 @@ Matti Levänen
 - for BeOS port
 
 Xavier Joubert
-- for better Windows/cygwin support 
+- for Windows/cygwin improvements

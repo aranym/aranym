@@ -1,3 +1,18 @@
+2003/04/11 - version 0.8.0beta3 released
+==========
+
+Changes:
+
+ o Windows/Cygwin support greatly improved (see below)
+ o HostFS bugfixed and works equally well on Windows/Cygwin
+
+ Binaries released for Windows/Cygwin now define clearly where ARAnyM
+ files are stored: User-specific files (configuration, NVRAM) are in
+ subfolder ".aranym" in the My Documents folder (usually available from
+ your desktop directly).  System-wide data (TOS, EmuTOS, font8.bmp) are
+ stored in subfolder "aranym" relative to the aranym.exe binary.
+
+
 2003/04/08 - version 0.8.0beta2 released
 ==========
 
