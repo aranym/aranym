@@ -33,6 +33,7 @@
 #include "sysdeps.h"
 #include "version.h"
 #include "cfgopts.h"
+#include <SDL_keyboard.h>
 
 #ifdef HAVE_NEW_HEADERS
 # include <cassert>
@@ -213,6 +214,16 @@ typedef struct {
   bool wheel_eiffel;		// eiffel compatible scancodes for mouse wheel
 } bx_ikbd_options_t;
 
+// Hotkeys
+typedef struct {
+	SDL_keysym	setup;
+	SDL_keysym	quit;
+	SDL_keysym	reboot;
+	SDL_keysym	debug;
+	SDL_keysym	fullscreen;
+	SDL_keysym	screenshot;
+} bx_hotkeys_t;
+
 /*
 typedef struct {
   char      *path;
@@ -268,6 +279,7 @@ typedef struct {
   char			emutos_path[512];
   uint32		fastram;
   bool			autoMouseGrab;
+  bx_hotkeys_t		hotkeys;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;
   // unsigned long     keyboard_serial_delay;
@@ -307,3 +319,7 @@ extern bool loadSettings(const char *);
 extern bool saveSettings(const char *);
 
 #endif
+
+/*
+vim:ts=4:sw=4:
+*/
