@@ -8,19 +8,14 @@
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "icio.h"
-#include "mfp.h"
-#include "acia.h"
 #include "acsifdc.h"
 #include "rtc.h"
 #include "blitter.h"
 #include "ide.h"
-#include "videl.h"
-#include "yamaha.h"
 #include "dsp.h"
 #include "mmu.h"
 #include "hostscreen.h"
 #include "exceptions.h"
-#include "uae_cpu/newcpu.h"	// for regs.pc
 
 #define DEBUG 0
 #include "debug.h"
@@ -44,12 +39,6 @@ YAMAHA yamaha;
 ARADATA aradata;
 
 #define BUS_ERROR	longjmp(excep_env, 2)
-
-void renderScreen() { videl.renderScreen(); }
-int getFloppyStats() { return yamaha.getFloppyStat(); }
-bool isIkbdBufEmpty() { return ikbd.isBufferEmpty(); }
-void MakeMFPIRQ(int no) { mfp.IRQ(no); }
-void ikbd_send(int code) { ikbd.ikbd_send(code); }
 
 void HWInit (void) {
 	rtc.init();
@@ -123,10 +112,6 @@ HARDWARE ICs[] = {
 		if (addr >= ICs[i].begin && addr < (ICs[i].begin + ICs[i].len))
 			return ICs[i].name;
 	return "Unknown";
-}
-
-uaecptr showPC() {
-	return regs.pcp;
 }
 
 uae_u32 handleRead(uaecptr addr) {
@@ -227,6 +212,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.29  2001/09/18 12:35:44  joy
+ * ARADATA placed at $f90000-$f9ffff
+ *
  * Revision 1.28  2001/09/05 15:06:09  joy
  * using D(bug())
  *
