@@ -342,6 +342,24 @@ PRIVATE void REGPARAM2 FFPU fpuop_do_fsincos( uae_u32 opcode, uae_u32 extra );
 PRIVATE void REGPARAM2 FFPU fpuop_do_fcmp( uae_u32 opcode, uae_u32 extra );
 PRIVATE void REGPARAM2 FFPU fpuop_do_ftst( uae_u32 opcode, uae_u32 extra );
 
+// 040
+PRIVATE void REGPARAM2 FFPU fpuop_do_fsmove( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fdmove( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fssqrt( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fdsqrt( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fsabs( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fdabs( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fsneg( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fdneg( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fsdiv( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fddiv( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fsadd( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fdadd( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fssub( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fdsub( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fsmul( uae_u32 opcode, uae_u32 extra );
+PRIVATE void REGPARAM2 FFPU fpuop_do_fdmul( uae_u32 opcode, uae_u32 extra );
+
 // Get & Put floating-point values
 PRIVATE int FFPU get_fp_value (uae_u32 opcode, uae_u32 extra, fpu_register & src) REGPARAM;
 PRIVATE int FFPU put_fp_value (fpu_register const & value, uae_u32 opcode, uae_u32 extra) REGPARAM;

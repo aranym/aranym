@@ -1924,7 +1924,126 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			return;
 		}
 		fpu_debug(("returned from get_fp_value m68k_getpc()=%X\n",m68k_getpc()));
+#if 0 // MJ added, not tested now
+		if (FPU is_integral) {
+			// 68040-specific operations
+			switch (extra & 0x7f) {
+			case 0x40:              /* FSMOVE */
+				fpu_debug(("FSMOVE %.04f\n",(double)src));
+				FPU registers[reg] = (float)src;
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x44:              /* FDMOVE */
+				fpu_debug(("FDMOVE %.04f\n",(double)src));
+				FPU registers[reg] = (double)src;
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x41:              /* FSSQRT */
+				fpu_debug(("FSQRT %.04f\n",(double)src));
+				FPU registers[reg] = (float)sqrt (src);
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x45:              /* FDSQRT */
+				fpu_debug(("FSQRT %.04f\n",(double)src));
+				FPU registers[reg] = (double)sqrt (src);
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x58:              /* FSABS */
+				fpu_debug(("FSABS %.04f\n",(double)src));
+				FPU registers[reg] = (float)fabs(src);
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x5c:              /* FDABS */
+				fpu_debug(("FDABS %.04f\n",(double)src));
+				FPU registers[reg] = (double)fabs(src);
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x5a:              /* FSNEG */
+				fpu_debug(("FSNEG %.04f\n",(double)src));
+				FPU registers[reg] = (float)-src;
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x5e:              /* FDNEG */
+				fpu_debug(("FDNEG %.04f\n",(double)src));
+				FPU registers[reg] = (double)-src;
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x60:              /* FSDIV */
+				fpu_debug(("FSDIV %.04f\n",(double)src));
+				FPU registers[reg] = (float)(FPU registers[reg] / src);
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x64:              /* FDDIV */
+				fpu_debug(("FDDIV %.04f\n",(double)src));
+				FPU registers[reg] = (double)(FPU registers[reg] / src);
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x62:              /* FSADD */
+				fpu_debug(("FSADD %.04f\n",(double)src));
+				FPU registers[reg] = (float)(FPU registers[reg]	+ src);
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x66:              /* FDADD */
+				fpu_debug(("FDADD %.04f\n",(double)src));
+				FPU registers[reg] = (double)(FPU registers[reg] + src);
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x68:              /* FSSUB */
+				fpu_debug(("FSSUB %.04f\n",(double)src));
+				FPU registers[reg] = (float)(FPU registers[reg] - src);
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x6c:              /* FDSUB */
+				fpu_debug(("FDSUB %.04f\n",(double)src));
+				FPU registers[reg] = (double)(FPU registers[reg] - src);
+				make_fpsr(FPU registers[reg]);
+				break;
+			case 0x63:              /* FSMUL */
+			case 0x67:              /* FDMUL */
+				get_dest_flags(FPU registers[reg]);
+				get_source_flags(src);
+				if(fl_dest.in_range && fl_source.in_range) {
+					if ((extra & 0x7f) == 0x63)
+						FPU registers[reg] = (float)(FPU registers[reg] * src);
+					else
+						FPU registers[reg] = (double)(FPU registers[reg] * src);
+				}
+				else if (fl_dest.nan || fl_source.nan ||
+						fl_dest.zero && fl_source.infinity ||
+						fl_dest.infinity && fl_source.zero ) {
+					make_nan( FPU registers[reg] );
+				}
+				else if (fl_dest.zero || fl_source.zero ) {
+					if (fl_dest.negative && !fl_source.negative ||
+						!fl_dest.negative && fl_source.negative)  {
+						make_zero_negative(FPU registers[reg]);
+					}
+					else {
+						make_zero_positive(FPU registers[reg]);
+					}
+				}
+				else {
+					if( fl_dest.negative && !fl_source.negative ||
+						!fl_dest.negative && fl_source.negative)  {
+						make_inf_negative(FPU registers[reg]);
+					}
+					else {
+						make_inf_positive(FPU registers[reg]);
+					}
+				}
+				make_fpsr(FPU registers[reg]);
+				break;
+			default:
+				// Continue decode-execute 6888x instructions below
+				goto process_6888x_instructions;
+			}
+			fpu_debug(("END m68k_getpc()=%X\n",m68k_getpc()));
+			dump_registers( "END  ");
+			return;
+		}
 		
+	process_6888x_instructions:
+#endif
 		switch (extra & 0x7f) {
 		case 0x00:		/* FMOVE */
 			fpu_debug(("FMOVE %.04f\n",(double)src));
