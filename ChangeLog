@@ -1,3 +1,19 @@
+2001/11/19 - joy
+- MD5 should be OK on big endian machines (Sparc)
+
+- new TOS 4.04 patches - cleaned up a lot thanks to the disassembly made by
+  Patrice. Nemesis init routines removed. Reboot code not moved to $600.
+  Movem patch removed. The whole additional code moved behind the TOS end
+  so French and other RSCs are OK now.
+  You are encouraged to drop the previously patched TOS versions and to use
+  just plain original TOS 4.04.
+
+- parallel port emulation added. This is the lowelevel stuff - Yamaha and MFP
+  are mapped to IBM EPP parallel port. Several things are hardcoded and
+  the whole stuff is disabled by default for now. But when I tested it PARCP
+  ran quite well!
+
+
 2001/11/02 - STanda
 - fVDI: The driver handles some bitplane functionality. It works somehow, but
   it still has many bug in this mode. The color palette is correct only if
