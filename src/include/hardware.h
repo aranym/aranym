@@ -6,6 +6,9 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+#include "aradata.h"
+extern ARADATA aradata;
+
 extern uae_u32 vram_addr;
 
 extern void HWInit(void);
@@ -29,11 +32,15 @@ extern void updateHostScreen();
 
 extern int getFloppyStats();
 extern bool isIkbdBufEmpty();
+
 #endif 
 
 
 /*
  * $Log$
+ * Revision 1.15  2001/08/21 18:19:16  milan
+ * CPU update, disk's geometry autodetection - the 1st step
+ *
  * Revision 1.14  2001/08/13 22:29:06  milan
  * IDE's params from aranymrc file etc.
  *
