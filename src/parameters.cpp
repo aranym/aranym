@@ -787,7 +787,6 @@ int process_cmdline(int argc, char **argv)
 	return optind;
 }
 
-
 void postload_PathTag( const char *filename, struct Config_Tag *ptr ) {
 	char *path = (char *)ptr->buf;
 	if ( !strlen(path) )
@@ -802,6 +801,10 @@ void postload_PathTag( const char *filename, struct Config_Tag *ptr ) {
 		prefix = getHomeFolder(home, sizeof(home));
 		prefixLen = strlen( prefix );
 		path++;
+	} else if (path[0] == '*') {
+		prefix=getDataFolder(home, sizeof(home));
+		prefixLen = strlen( prefix );
+		path++;
 	} else if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
 		// find the last dirseparator
 		const char *slash = &filename[strlen(filename)];
@@ -814,15 +817,19 @@ void postload_PathTag( const char *filename, struct Config_Tag *ptr ) {
 	}
 
 	if ( prefixLen > 0 ) {
+		if (prefix[prefixLen-1]!=DIRSEPARATOR[0]) // if there isn't the last slash then add it 
+		{
+			prefixLen++;
+		}
 		if ( (size_t)ptr->buf_size >= prefixLen + strlen(path) ) {
 			memmove( (char*)ptr->buf + prefixLen, path, strlen(path)+1 );	
 			memmove( (char*)ptr->buf, prefix, prefixLen );
+			((char*)ptr->buf)[prefixLen-1]=DIRSEPARATOR[0];
 		} else {
 			fprintf(stderr, "Error - config entry size is insufficient\n" );
 		}
 	}
 }
-
 
 // append a filename to a path
 char *addFilename(char *buffer, const char *file, unsigned int bufsize)
