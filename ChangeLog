@@ -6,13 +6,15 @@
 - include/parameters.h: hotkey struct bx_hotkeys_t defined and added to
   global bx_options.
 
-- input.cpp: the following six hotkeys are user-definable now: Setup,
-  Quit, Reboot, Debugger, ScreenShot and FullScreen.
+- input.cpp: the following seven hotkeys are user-definable now: Setup,
+  Quit, Reboot, Ungrab, Debugger, ScreenShot and FullScreen.
 
 - gui-sdl/dlgHotkeys.cpp: hotkey editor added, allows for online editing
-  of the six hotkeys listed above.
+  of the seven hotkeys listed above.
 
 - gui-sdl/dlgMain.cpp: hotkey editor activated.
+
+- parameters.cpp: hotkeys are saved to config file, section [HOTKEYS].
 
 
 2005/02/12 - Patrice

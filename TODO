@@ -5,15 +5,12 @@ TODO generally:
 - configurable insertion of floppy on bootup (perhaps also IDE CD?)
 
 TODO in keyboard support:
-- editable hotkeys (releasing input grab, Setup GUI, PrintScreen)
-- runtime switch between symtable and scantable
 - loadable keyboard layout (similar to hatari)
 - editable keyboard layout (need WYSIWYG - impossible in 320x200)
 
 TODO in GUI-SDL:
 - open up GUI whenever the config file is not found (so that users can edit
   the default values before saving them).
-- Apply changes automatically before Save Config and perhaps also before Reboot
 - change GUI font loading routine - load standard TOS font (2048/4096 bytes)
   directly (instead of some MS Windows bitmap)
 - fileselector: sorting by file type (folders first) and then by file .ext
