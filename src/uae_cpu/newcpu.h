@@ -11,19 +11,10 @@
 #ifndef NEWCPU_H
 #define NEWCPU_H
 
+#include "sysdeps.h"
 #include "registers.h"
-
-#define SPCFLAG_STOP 2
-#define SPCFLAG_DISK 4
-#define SPCFLAG_INT  8
-#define SPCFLAG_BRK  16
-#define SPCFLAG_EXTRA_CYCLES 32
-#define SPCFLAG_TRACE 64
-#define SPCFLAG_DOTRACE 128
-#define SPCFLAG_DOINT 256
-#define SPCFLAG_VBL 512
-#define SPCFLAG_MFP 1024
-#define SPCFLAG_MODE_CHANGE 8192
+#include "spcflags.h"
+#include "m68k.h"
 
 extern int areg_byteinc[];
 extern int imm8_table[];

@@ -15,7 +15,7 @@
 #include "hardware.h"
 #include "parameters.h"
 #include "registers.h"
-//#include "cpummu.h"
+#include "cpummu.h"
 #include "readcpu.h"
 
 // newcpu.h
@@ -70,6 +70,8 @@ extern uintptr MEMBaseDiff;
 /*
  * "size" is the size of the memory access (byte = 1, word = 2, long = 4)
  */
+//#define NOCHECKBOUNDARY
+#ifndef NOCHECKBOUNDARY
 static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 {
 	if (addr <= (FastRAM_BEGIN + FastRAM_SIZE - size)) {
@@ -88,11 +90,14 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 #endif
 		return;
 
-	// printf("BUS ERROR %s at $%x\n", (write ? "writting" : "reading"), addr);
-//	regs.mmu_fault_addr = addr;
-//	Exception(2, regs.pcp);
+	// D(bug("BUS ERROR %s at $%x\n", (write ? "writting" : "reading"), addr));
+	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, 2);
 }
+#else
+static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write) { }
+#endif
+
 
 #ifdef FIXED_VIDEORAM
 # define do_get_real_address(a)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff))

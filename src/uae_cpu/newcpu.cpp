@@ -11,7 +11,6 @@
 #include "cpu_emulation.h"
 #include "main.h"
 #include "emul_op.h"
-#include "ndebug.h"
 #include "m68k.h"
 #include "memory.h"
 #include "readcpu.h"
@@ -737,14 +736,19 @@ uae_u32 m68k_move2c (int regno, uae_u32 *regp)
 	switch (regno) {
 	 case 0: regs.sfc = *regp & 7; break;
 	 case 1: regs.dfc = *regp & 7; break;
-	 case 2: regs.cacr = *regp & 0x80008000; break;
-	 case 3: regs.tce = (flagtype)(((*regp) & 0x8000) ? 1 : 0);
-	         regs.tcp = (flagtype)(((*regp) & 0x4000) ? 1 : 0);
+	 case 2: regs.cacr = *regp & 0x80008000;
+#ifdef USE_JIT
+		 set_cache_state((cacr & 0x8000) || 0);
+		 if (*regp & 0x08) {	/* Just to be on the safe side */
+			flush_icache(2);
+		 }
+#endif
 		 break;
-	 case 4: regs.itt0 = *regp & 0xffffe364; break;
-	 case 5: regs.itt1 = *regp & 0xffffe364; break;
-	 case 6: regs.dtt0 = *regp & 0xffffe364; break;
-	 case 7: regs.dtt1 = *regp & 0xffffe364; break;
+	 case 3: mmu_set_tc(*regp & 0xc000); break;
+	 case 4:
+	 case 5:
+	 case 6:
+	 case 7: mmu_set_ttr(regno, *regp & 0xffffe364); break;
 	 case 0x800: regs.usp = *regp; break;
 	 case 0x801: regs.vbr = *regp; break;
 	 case 0x802: regs.caar = *regp & 0xfc; break;
@@ -774,7 +778,7 @@ uae_u32 m68k_movec2 (int regno, uae_u32 *regp)
 	 case 0: *regp = regs.sfc; break;
 	 case 1: *regp = regs.dfc; break;
 	 case 2: *regp = regs.cacr; break;
-	 case 3: *regp = ((((int)regs.tce) << 15) | (((int)regs.tcp) << 14)); break;
+	 case 3: *regp = regs.tc; break;
 	 case 4: *regp = regs.itt0; break;
 	 case 5: *regp = regs.itt1; break;
 	 case 6: *regp = regs.dtt0; break;
@@ -1054,8 +1058,8 @@ void m68k_reset (void)
 {
     m68k_areg (regs, 7) = phys_get_long(0x00000000);
     m68k_setpc (phys_get_long(0x00000004));
+    mmu_set_tc(regs.tc & ~0x8000); /* disable mmu */
     fill_prefetch_0 ();
-    regs.kick_mask = 0xF80000;
     regs.s = 1;
     regs.m = 0;
     regs.stopped = 0;
@@ -1075,8 +1079,6 @@ void m68k_reset (void)
     // MMU
     regs.urp = 0;
     regs.srp = 0;
-    regs.tce = 0;
-//    regs.tcp = 0;    !!! Reset doesn't affect this bit
     regs.dtt0 = 0;
     regs.dtt1 = 0;
     regs.itt0 = 0;
@@ -3243,7 +3245,7 @@ void m68k_dumpstate (uaecptr *nextpc)
     printf ("T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%d C=%d IMASK=%d TCE=%d TCP=%d\n",
 	    regs.t1, regs.t0, regs.s, regs.m,
 	    GET_XFLG, GET_NFLG, GET_ZFLG, GET_VFLG, GET_CFLG, regs.intmask,
-	    regs.tce, regs.tcp);
+	    regs.mmu_enabled, regs.mmu_pagesize);
     printf ("CACR=%08lx CAAR=%08lx  URP=%08lx  SRP=%08lx\n",
             (unsigned long)regs.cacr,
 	    (unsigned long)regs.caar,
@@ -3255,15 +3257,16 @@ void m68k_dumpstate (uaecptr *nextpc)
 	    (unsigned long)regs.itt0,
 	    (unsigned long)regs.itt1);
     for (i = 0; i < 8; i++){
-	printf ("FP%d: %g ", i, regs.fp[i]);
+	printf ("FP%d: %g ", i, fpu.registers[i]);
 	if ((i & 3) == 3) printf ("\n");
     }
+#if 0
     printf ("N=%d Z=%d I=%d NAN=%d\n",
 		(regs.fpsr & 0x8000000) != 0,
 		(regs.fpsr & 0x4000000) != 0,
 		(regs.fpsr & 0x2000000) != 0,
 		(regs.fpsr & 0x1000000) != 0);
-
+#endif
     m68k_disasm(m68k_getpc (), nextpc, 1);
     if (nextpc)
 	printf ("next PC: %08lx\n", (unsigned long)*nextpc);

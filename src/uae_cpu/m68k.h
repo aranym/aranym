@@ -73,25 +73,25 @@ static __inline__ int cctrue(int cc)
 }
 
 #define optflag_testl(v) \
-  __asm__ __volatile__ ("andl %1,%1\n\t" \
+  ASM_VOLATILE ("andl %1,%1\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv) : "r" (v) : "cc")
 
 #define optflag_testw(v) \
-  __asm__ __volatile__ ("andw %w1,%w1\n\t" \
+  ASM_VOLATILE ("andw %w1,%w1\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv) : "r" (v) : "cc")
 
 #define optflag_testb(v) \
-  __asm__ __volatile__ ("andb %b1,%b1\n\t" \
+  ASM_VOLATILE ("andb %b1,%b1\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv) : "q" (v) : "cc")
 
 #define optflag_addl(v, s, d) do { \
-  __asm__ __volatile__ ("addl %k2,%k1\n\t" \
+  ASM_VOLATILE ("addl %k2,%k1\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "cc"); \
@@ -99,7 +99,7 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_addw(v, s, d) do { \
-  __asm__ __volatile__ ("addw %w2,%w1\n\t" \
+  ASM_VOLATILE ("addw %w2,%w1\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "cc"); \
@@ -107,7 +107,7 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_addb(v, s, d) do { \
-  __asm__ __volatile__ ("addb %b2,%b1\n\t" \
+  ASM_VOLATILE ("addb %b2,%b1\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv), "=q" (v) : "qmi" (s), "1" (d) : "cc"); \
@@ -115,7 +115,7 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_subl(v, s, d) do { \
-  __asm__ __volatile__ ("subl %k2,%k1\n\t" \
+  ASM_VOLATILE ("subl %k2,%k1\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "cc"); \
@@ -123,7 +123,7 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_subw(v, s, d) do { \
-  __asm__ __volatile__ ("subw %w2,%w1\n\t" \
+  ASM_VOLATILE ("subw %w2,%w1\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "cc"); \
@@ -131,7 +131,7 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_subb(v, s, d) do { \
-  __asm__ __volatile__ ("subb %b2,%b1\n\t" \
+  ASM_VOLATILE ("subb %b2,%b1\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv), "=q" (v) : "qmi" (s), "1" (d) : "cc"); \
@@ -139,19 +139,19 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_cmpl(s, d) \
-  __asm__ __volatile__ ("cmpl %k1,%k2\n\t" \
+  ASM_VOLATILE ("cmpl %k1,%k2\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv) : "rmi" (s), "r" (d) : "cc")
 
 #define optflag_cmpw(s, d) \
-  __asm__ __volatile__ ("cmpw %w1,%w2\n\t" \
+  ASM_VOLATILE ("cmpw %w1,%w2\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv) : "rmi" (s), "r" (d) : "cc")
 
 #define optflag_cmpb(s, d) \
-  __asm__ __volatile__ ("cmpb %b1,%b2\n\t" \
+  ASM_VOLATILE ("cmpb %b1,%b2\n\t" \
 			"pushfl\n\t" \
 			"popl %0\n\t" \
 			: "=r" (regflags.cznv) : "qmi" (s), "q" (d) : "cc")
@@ -219,7 +219,7 @@ static __inline__ int cctrue(int cc)
 /* Is there any way to do this without declaring *all* memory clobbered?
    I.e. any way to tell gcc that some byte-sized value is in %al? */
 #define optflag_testl(v) \
-  __asm__ __volatile__ ("andl %0,%0\n\t" \
+  ASM_VOLATILE ("andl %0,%0\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -227,7 +227,7 @@ static __inline__ int cctrue(int cc)
 			: : "r" (v) : "%eax","cc","memory")
 
 #define optflag_testw(v) \
-  __asm__ __volatile__ ("andw %w0,%w0\n\t" \
+  ASM_VOLATILE ("andw %w0,%w0\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -235,7 +235,7 @@ static __inline__ int cctrue(int cc)
 			: : "r" (v) : "%eax","cc","memory")
 
 #define optflag_testb(v) \
-  __asm__ __volatile__ ("andb %b0,%b0\n\t" \
+  ASM_VOLATILE ("andb %b0,%b0\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -243,7 +243,7 @@ static __inline__ int cctrue(int cc)
 			: : "q" (v) : "%eax","cc","memory")
 
 #define optflag_addl(v, s, d) do { \
-  __asm__ __volatile__ ("addl %k1,%k0\n\t" \
+  ASM_VOLATILE ("addl %k1,%k0\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -253,7 +253,7 @@ static __inline__ int cctrue(int cc)
 	} while (0)
 
 #define optflag_addw(v, s, d) do { \
-  __asm__ __volatile__ ("addw %w1,%w0\n\t" \
+  ASM_VOLATILE ("addw %w1,%w0\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -263,7 +263,7 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_addb(v, s, d) do { \
-  __asm__ __volatile__ ("addb %b1,%b0\n\t" \
+  ASM_VOLATILE ("addb %b1,%b0\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -273,7 +273,7 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_subl(v, s, d) do { \
-  __asm__ __volatile__ ("subl %k1,%k0\n\t" \
+  ASM_VOLATILE ("subl %k1,%k0\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -283,7 +283,7 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_subw(v, s, d) do { \
-  __asm__ __volatile__ ("subw %w1,%w0\n\t" \
+  ASM_VOLATILE ("subw %w1,%w0\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -293,7 +293,7 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_subb(v, s, d) do { \
-   __asm__ __volatile__ ("subb %b1,%b0\n\t" \
+   ASM_VOLATILE ("subb %b1,%b0\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -303,7 +303,7 @@ static __inline__ int cctrue(int cc)
     } while (0)
 
 #define optflag_cmpl(s, d) \
-  __asm__ __volatile__ ("cmpl %k0,%k1\n\t" \
+  ASM_VOLATILE ("cmpl %k0,%k1\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -311,7 +311,7 @@ static __inline__ int cctrue(int cc)
 			: : "rmi" (s), "r" (d) : "%eax","cc","memory")
 
 #define optflag_cmpw(s, d) \
-  __asm__ __volatile__ ("cmpw %w0,%w1\n\t" \
+  ASM_VOLATILE ("cmpw %w0,%w1\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
@@ -319,7 +319,7 @@ static __inline__ int cctrue(int cc)
 			: : "rmi" (s), "r" (d) : "%eax","cc","memory");
 
 #define optflag_cmpb(s, d) \
-  __asm__ __volatile__ ("cmpb %b0,%b1\n\t" \
+  ASM_VOLATILE ("cmpb %b0,%b1\n\t" \
 			"lahf\n\t" \
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \

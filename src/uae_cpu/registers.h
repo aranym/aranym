@@ -3,8 +3,8 @@
 #ifndef REGISTERS_H
 #define REGISTERS_H
 
-#define ATCSIZE	256
-#define REGS
+#include "sysdeps.h"
+#include "spcflags.h"
 typedef char flagtype;
 
 
@@ -71,10 +71,9 @@ extern struct regstruct
 
     uae_u32 vbr,sfc,dfc;
 
-    double fp[8];
-    uae_u32 fpcr,fpsr,fpiar;
-
     volatile uae_u32 spcflags;
+
+#if 0
     uae_u32 kick_mask;
 
     /* Fellow sources say this is 4 longwords. That's impossible. It needs
@@ -83,17 +82,23 @@ extern struct regstruct
      * The way this is implemented now seems like a good compromise.
      */
     uae_u32 prefetch;
+#endif
 
     /* MMU reg*/
     uae_u32 urp,srp;
-    flagtype tce;
-    flagtype tcp;
+    uae_u32 tc;
+
+    int mmu_enabled;   /* flagtype tce; */
+
+    int mmu_pagesize; /*  flagtype tcp; */
+
     uae_u32 dtt0,dtt1,itt0,itt1;
     uae_u32 mmusr;
 
     uae_u32 mmu_fslw, mmu_fault_addr;
     uae_u16 mmu_ssw;
 
+#if 0
     flagtype atcvali[ATCSIZE];
     flagtype atcvald[ATCSIZE];
     flagtype atcu0d[ATCSIZE];
@@ -118,6 +123,7 @@ extern struct regstruct
     uaecptr atcini[ATCSIZE];
     uaecptr atcoutd[ATCSIZE];
     uaecptr atcouti[ATCSIZE];
+#endif
 
     /* Cache reg*/
     uae_u32 cacr,caar;

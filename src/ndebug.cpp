@@ -6,16 +6,16 @@
 
 #include "sysdeps.h"
 
-#define DEBUG 1
-#include "debug.h"
-
-#ifndef CONFGUI
-#include "input.h"
 #include "memory.h"
 #include "newcpu.h"
 #include "m68k.h"
 #include "cpu_emulation.h"
-#endif
+#include "input.h"
+#include "cpummu.h"
+#include "fpu/fpu.h"
+
+#define DEBUG 1
+#include "debug.h"
 
 #ifndef HAVE_GNU_SOURCE
 
@@ -84,7 +84,10 @@ static char *strhelp[] = {"Help:\n",
 	" r                    refresh D(bug()) | reset aktual row\n",
 	" L <file>             save debugger's info to <file>\n",
 #ifdef FULL_HISTORY
-	" H <lines>            show history of PC",
+	" H <lines>            show history of PC\n",
+#endif
+#ifdef FULLMMU
+	" u                    dump the MMU translation tables and state\n",
 #endif
 	NULL
 };
@@ -246,8 +249,8 @@ void ndebug::m68k_print(FILE * f)
 	fprintf(f, "T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%d C=%d           TC=%04x\n",
 	    regs.t1, regs.t0, regs.s, regs.m,
 	    GET_XFLG, GET_NFLG, GET_ZFLG, GET_VFLG, GET_CFLG,
-	    		   (unsigned int) ((((int) regs.tce) << 15) |
-				(((int) regs.tcp) << 14)));
+	    		   (unsigned int) ((((int) regs.mmu_enabled) << 15) |
+				(((int) regs.mmu_pagesize) << 14)));
 
 	fprintf(f, "CACR=%08lx DTT0=%08lx ITT0=%08lx SRP=%08lx  SFC=%d%d%d\n",
 		   (unsigned long) regs.cacr, (unsigned long) regs.dtt0,
@@ -261,14 +264,13 @@ void ndebug::m68k_print(FILE * f)
 		   (int) (regs.dfc % 2));
 
     for (unsigned int i = 0; i < 8; i++) {
-	fprintf(f, "FP%d: %g ", i, regs.fp[i]);
+	fprintf(f, "FP%d: %g ", i, fpu.registers[i]);
 	if (i == 3) fprintf(f, "N=%d Z=%d\n",
-	    (regs.fpsr & 0x8000000) != 0,
-	    (regs.fpsr & 0x4000000) != 0);
+	    (fpu.fpsr.condition_codes & 0x8000000) != 0,
+	    (fpu.fpsr.condition_codes & 0x4000000) != 0);
 	if (i == 7) fprintf (f, "I=%d NAN=%d\n",
-		(regs.fpsr & 0x2000000) != 0,
-		(regs.fpsr & 0x1000000) != 0);
-
+		(fpu.fpsr.condition_codes & 0x2000000) != 0,
+		(fpu.fpsr.condition_codes & 0x1000000) != 0);
     }
 }
 
@@ -341,8 +343,9 @@ void ndebug::set_Sx(char **inl) {
 		if (more_params(inl)) switch (reg) {
 			case 0:
 				r = readhex(inl);
-				regs.tce = (flagtype) ((r & 0x8000) ? 1 : 0);
-				regs.tcp = (flagtype) ((r & 0x4000) ? 1 : 0);
+#ifdef FULLMMU
+				mmu_set_tc(r & 0xc000);
+#endif
 				break;
 			case 1:
 				regs.srp = readhex(inl);
@@ -544,7 +547,7 @@ void ndebug::backtrace(FILE *f, volatile unsigned int lines) {
 
 void ndebug::log2phys(FILE *f, uaecptr addr) {
 #ifdef FULLMMU
-	if (regs.tce) {
+	if (regs.mmu_enabled) {
 setjmpagain:
 		jmp_buf excep_env_old;
 		excep_env_old = excep_env;
@@ -560,7 +563,7 @@ setjmpagain:
 			goto setjmpagain;
 		}
 		bug("MMU enabled: %08lx -> %08lx",	(unsigned long)addr,
-			(unsigned long)mmu_decode_addr(addr, true, false));
+			(unsigned long)mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_long, 0));
 		excep_env = excep_env_old;
 	} else {
 #endif /* FULLMMU */
@@ -752,6 +755,11 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			if (!more_params(&inptr)) count = 10;
 				else count = readhex(&inptr);
 			showHistory(count);
+			break;
+#endif
+#ifdef FULLMMU
+		case 'u':
+			mmu_dump_tables();
 			break;
 #endif
 		case 'q':
