@@ -1,3 +1,8 @@
+2002/05/24 - joy
+- as suggested by Heiko I added a complete locking to the virtual IKBD queue.
+  Let's see if it works OK or if the mouse/keyboard is not working properly.
+
+
 2002/05/22 - STanda
 - The aranymfs atari sources updated. The MetaDOS part was converted
   into the gcc compilable code (Makefile created) and the mint .XFS
