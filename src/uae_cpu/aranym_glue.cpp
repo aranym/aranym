@@ -158,6 +158,11 @@ void TriggerNMI(void)
 	SPCFLAGS_SET( SPCFLAG_NMI );
 }
 
+void TriggerQUIT(void)
+{
+	SPCFLAGS_SET( SPCFLAG_QUIT );
+}
+
 
 // Two next functions ("executes") will be removed
 /*

@@ -23,6 +23,9 @@
 #include "input.h"
 #include "aradata.h"		// for getAtariMouseXY
 #include "host.h"			// for the HostScreen
+#ifdef SDL_GUI
+#include "dialog.h"
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -458,6 +461,10 @@ void check_event()
 							pendingQuit = true;
 							send2Atari = false;
 						}
+						else if (controlled) {
+							send2Atari = false;
+							TriggerNMI();	// force Reboot
+						}
 #ifdef DEBUGGER
 						else if (bx_options.startup.debugger && alternated) {
 							releaseTheMouse();
@@ -466,6 +473,10 @@ void check_event()
 							activate_debugger();
 							send2Atari = false;
 						}
+#endif
+#ifdef SDL_GUI
+						else
+							Dialog_DoProperty();
 #endif
 						break;
 
@@ -620,5 +631,5 @@ void check_event()
 	}
 
 	if (pendingQuit)
-		TriggerNMI();	// NMI causes CPU to quit the loop
+		TriggerQUIT();	// QUIT flag forces CPU to quit the loop
 }

@@ -120,6 +120,7 @@ extern void TriggerInterrupt(void);	// Trigger interrupt level 1
 extern void TriggerVBL(void);		// Trigger interrupt level 4
 extern void TriggerMFP(bool);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
+extern void TriggerQUIT(void);		// Trigger quit
 
 
 // This function will be removed

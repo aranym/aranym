@@ -1327,11 +1327,11 @@ int m68k_do_specialties(void)
 	while (SPCFLAGS_TEST( SPCFLAG_STOP )) {
 		usleep(1000);	// give unused time slices back to OS
 		SERVE_VBL_MFP(true);
-		if (SPCFLAGS_TEST( SPCFLAG_NMI ))
+		if (SPCFLAGS_TEST( SPCFLAG_NMI | SPCFLAG_QUIT ))
 			break;
 #ifndef USE_TIMERS
 		innerCounter -= maxInnerCounter / 5;
-	    if (innerCounter <= 0) {
+		if (innerCounter <= 0) {
 			innerCounter = maxInnerCounter;
 			invoke200HzInterrupt();
 	    }
@@ -1354,8 +1354,11 @@ int m68k_do_specialties(void)
 		return CFLOW_EXEC_RETURN;
 	}
 
-	if (SPCFLAGS_TEST( SPCFLAG_NMI )) {
-		quit_program = 1;
+	if (SPCFLAGS_TEST( SPCFLAG_NMI | SPCFLAG_QUIT )) {
+		if (SPCFLAGS_TEST( SPCFLAG_NMI ))
+			quit_program = 2;	// REBOOT
+		else
+			quit_program = 1;	// QUIT
 		return 1;
 	}
 
