@@ -221,6 +221,9 @@ void VIDEL::updateColors()
 
 void VIDEL::renderScreen()
 {
+	if (!lockScreen())
+		return;
+
 	int vw = getScreenWidth();
 	int vh = getScreenHeight();
 	if (od_posledni_zmeny > 2) {
@@ -240,9 +243,6 @@ void VIDEL::renderScreen()
 		od_posledni_zmeny++;
 		return;
 	}
-
-	if (!lockScreen())
-		return;
 
 	VideoRAMBaseHost = (uint8 *) surf->pixels;
 	uint16 *fvram = (uint16 *) get_real_address_direct(getVideoramAddress());
@@ -322,6 +322,8 @@ void VIDEL::renderScreen()
 		// FIXME: support for destBPP other than 2 or 4 BPP is missing
 	}
 
+	// DO NOT REMOVE THIS LINE ANY MORE ;((!!!
+    unlockScreen();
 
 	updateScreen();
 }
@@ -343,6 +345,10 @@ void VIDEL::updateScreen(int x, int y, int w, int h)
 
 /*
  * $Log$
+ * Revision 1.13  2001/06/17 21:23:35  joy
+ * late init() added
+ * tried to fix colors in 2,4 bit color depth - didn't help
+ *
  * Revision 1.12  2001/06/15 14:14:46  joy
  * VIDEL palette registers are now processed by the VIDEL object.
  *
