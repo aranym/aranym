@@ -23,6 +23,8 @@
 
 
 //static SDL_Surface *sdlscrn;
+#define SCRLOCK	hostScreen.lock()
+#define SCRUNLOCK	hostScreen.unlock()
 #define sdlscrn	hostScreen.surf
 static bool bQuitProgram;
 #define MAX_FILENAME_LENGTH 260
@@ -31,7 +33,12 @@ static SDL_Surface *stdfontgfx=NULL;
 static SDL_Surface *fontgfx=NULL;   /* The actual font graphics */
 static int fontwidth, fontheight;   /* Height and width of the actual font */
 
-
+// TODO:
+// the following 3 vars should be in a struct passed by a pointer from input
+// Actually it should be a small FIFO buffer for mouse events
+extern int eventTyp;
+extern int eventX;
+extern int eventY;
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -85,14 +92,18 @@ int SDLGui_PrepareFont()
 */
 
   /* Convert the font graphics to the actual screen format */
+  SCRLOCK;
   fontgfx = SDL_DisplayFormat(stdfontgfx);
+  SCRUNLOCK;
   if( fontgfx==NULL )
   {
     fprintf(stderr, "Could not convert font:\n %s\n", SDL_GetError() );
     return -1;
   }
   /* Set transparent pixel */
+  SCRLOCK;
   SDL_SetColorKey(fontgfx, (SDL_SRCCOLORKEY|SDL_RLEACCEL), SDL_MapRGB(fontgfx->format,255,255,255));
+  SCRUNLOCK;
   /* Get the font width and height: */
   fontwidth = fontgfx->w/16;
   fontheight = fontgfx->h/16;
@@ -123,7 +134,8 @@ void SDLGui_Text(int x, int y, const char *txt)
   int i;
   char c;
   SDL_Rect sr, dr;
-  
+
+  SCRLOCK;
   for(i=0; txt[i]!=0; i++)
   {
     c = txt[i];
@@ -133,6 +145,7 @@ void SDLGui_Text(int x, int y, const char *txt)
     dr.w=fontwidth;         dr.h=fontheight;
     SDL_BlitSurface(fontgfx, &sr, sdlscrn, &dr);
   }
+  SCRUNLOCK;
 }
 
 
@@ -181,6 +194,8 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
     downrightc = SDL_MapRGB(sdlscrn->format,128,128,128);
   }
 
+  SCRLOCK;
+
   rect.x = x;  rect.y = y;
   rect.w = w;  rect.h = h;
   SDL_FillRect(sdlscrn, &rect, grey);
@@ -200,6 +215,8 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
   rect.x = x+w;  rect.y = y;
   rect.w = 1;  rect.h = h;
   SDL_FillRect(sdlscrn, &rect, downrightc);
+
+  SCRUNLOCK;
 }
 
 
@@ -323,7 +340,9 @@ void SDLGui_DrawDialog(SGOBJ *dlg)
         break;
     }
   }
+  SCRLOCK;
   SDL_UpdateRect(sdlscrn, 0,0,0,0);
+  SCRUNLOCK;
 }
 
 
@@ -362,19 +381,21 @@ int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy)
   Show and process a dialog. Returns the button number that has been
   pressed or -1 if something went wrong.
 */
-int mousedown(SGOBJ *dlg, SDL_Event evnt, int *oldbutton)
+int mousedown(SGOBJ *dlg, int x, int y, int *oldbutton)
 {
   int retbutton=0;
 
-          int obj = SDLGui_FindObj(dlg, evnt.button.x, evnt.button.y);
+          int obj = SDLGui_FindObj(dlg, x, y);
           if(obj>0)
           {
             if(dlg[obj].type==SGBUTTON)
             {
               dlg[obj].state |= SG_SELECTED;
               SDLGui_DrawButton(dlg, obj);
+              SCRLOCK;
               SDL_UpdateRect(sdlscrn, (dlg[0].x+dlg[obj].x)*fontwidth-2, (dlg[0].y+dlg[obj].y)*fontheight-2,
                              dlg[obj].w*fontwidth+4, dlg[obj].h*fontheight+4);
+              SCRUNLOCK;
               *oldbutton=obj;
             }
             if( dlg[obj].flags&SG_TOUCHEXIT )
@@ -386,12 +407,12 @@ int mousedown(SGOBJ *dlg, SDL_Event evnt, int *oldbutton)
 	return retbutton;
 }
 
-int mouseup(SGOBJ *dlg, SDL_Event evnt, int *oldbutton, Uint32 grey)
+int mouseup(SGOBJ *dlg, int x, int y, int *oldbutton, Uint32 grey)
 {
   int retbutton=0;
   SDL_Rect rct;
   int i;
-          int obj = SDLGui_FindObj(dlg, evnt.button.x, evnt.button.y);
+          int obj = SDLGui_FindObj(dlg, x, y);
           if(obj>0)
           {
             switch(dlg[obj].type)
@@ -407,9 +428,13 @@ int mouseup(SGOBJ *dlg, SDL_Event evnt, int *oldbutton, Uint32 grey)
                   rct.x = (dlg[0].x+dlg[i].x)*fontwidth;
                   rct.y = (dlg[0].y+dlg[i].y)*fontheight;
                   rct.w = fontwidth;  rct.h = fontheight;
+                  SCRLOCK;
                   SDL_FillRect(sdlscrn, &rct, grey); /* Clear old */
+                  SCRUNLOCK;
                   SDLGui_DrawRadioButton(dlg, i);
+                  SCRLOCK;
                   SDL_UpdateRects(sdlscrn, 1, &rct);
+                  SCRUNLOCK;
                 }
                 for(i=obj+1; dlg[i].type==SGRADIOBUT; i++)
                 {
@@ -417,32 +442,46 @@ int mouseup(SGOBJ *dlg, SDL_Event evnt, int *oldbutton, Uint32 grey)
                   rct.x = (dlg[0].x+dlg[i].x)*fontwidth;
                   rct.y = (dlg[0].y+dlg[i].y)*fontheight;
                   rct.w = fontwidth;  rct.h = fontheight;
+                  SCRLOCK;
                   SDL_FillRect(sdlscrn, &rct, grey); /* Clear old */
+                  SCRUNLOCK;
                   SDLGui_DrawRadioButton(dlg, i);
+                  SCRLOCK;
                   SDL_UpdateRects(sdlscrn, 1, &rct);
+                  SCRUNLOCK;
                 }
                 dlg[obj].state |= SG_SELECTED;  /* Select this radio button */
                 rct.x = (dlg[0].x+dlg[obj].x)*fontwidth;
                 rct.y = (dlg[0].y+dlg[obj].y)*fontheight;
                 rct.w = fontwidth;  rct.h = fontheight;
+                SCRLOCK;
                 SDL_FillRect(sdlscrn, &rct, grey); /* Clear old */
+                SCRUNLOCK;
                 SDLGui_DrawRadioButton(dlg, obj);
+                SCRLOCK;
                 SDL_UpdateRects(sdlscrn, 1, &rct);
+                SCRUNLOCK;
                 break;
               case SGCHECKBOX:
                 dlg[obj].state ^= SG_SELECTED;
                 rct.x = (dlg[0].x+dlg[obj].x)*fontwidth;
                 rct.y = (dlg[0].y+dlg[obj].y)*fontheight;
                 rct.w = fontwidth;  rct.h = fontheight;
+                SCRLOCK;
                 SDL_FillRect(sdlscrn, &rct, grey); /* Clear old */
+                SCRUNLOCK;
                 SDLGui_DrawCheckBox(dlg, obj);
+                SCRLOCK;
                 SDL_UpdateRects(sdlscrn, 1, &rct);
+                SCRUNLOCK;
                 break;
               case SGPOPUP:
                 dlg[obj].state |= SG_SELECTED;
                 SDLGui_DrawPopupButton(dlg, obj);
+                SCRLOCK;
                 SDL_UpdateRect(sdlscrn, (dlg[0].x+dlg[obj].x)*fontwidth-2, (dlg[0].y+dlg[obj].y)*fontheight-2,
                            dlg[obj].w*fontwidth+4, dlg[obj].h*fontheight+4);
+                SCRUNLOCK;
                 retbutton=obj;
                 break;
             }
@@ -451,8 +490,10 @@ int mouseup(SGOBJ *dlg, SDL_Event evnt, int *oldbutton, Uint32 grey)
           {
             dlg[*oldbutton].state &= ~SG_SELECTED;
             SDLGui_DrawButton(dlg, *oldbutton);
+            SCRLOCK;
             SDL_UpdateRect(sdlscrn, (dlg[0].x+dlg[*oldbutton].x)*fontwidth-2, (dlg[0].y+dlg[*oldbutton].y)*fontheight-2,
                            dlg[*oldbutton].w*fontwidth+4, dlg[*oldbutton].h*fontheight+4);
+            SCRUNLOCK;
             *oldbutton = 0;
           }
           if( dlg[obj].flags&SG_EXIT )
@@ -465,21 +506,32 @@ int mouseup(SGOBJ *dlg, SDL_Event evnt, int *oldbutton, Uint32 grey)
 
 int SDLGui_DoDialog(SGOBJ *dlg)
 {
-  int obj=0;
   int oldbutton=0;
   int retbutton=0;
-  int i, j, b;
-  SDL_Event evnt;
   Uint32 grey;
+  static bool stillPressed = false;
 
   grey = SDL_MapRGB(sdlscrn->format,192,192,192);
 
   SDLGui_DrawDialog(dlg);
 
   /* Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here */
+
+  int obj = SDLGui_FindObj(dlg, eventX, eventY);
+  if(obj>0 && (dlg[obj].flags&SG_TOUCHEXIT) )
+  {
+    oldbutton = obj;
+    if( stillPressed && eventTyp == 0)
+    {
+      dlg[obj].state |= SG_SELECTED;
+      return obj;
+    }
+  }
+/*
   SDL_PumpEvents();
-  b = SDL_GetMouseState(&i, &j);
-  obj = SDLGui_FindObj(dlg, i, j);
+  int i, j;
+  int b = SDL_GetMouseState(&i, &j);
+  int obj = SDLGui_FindObj(dlg, i, j);
   if(obj>0 && (dlg[obj].flags&SG_TOUCHEXIT) )
   {
     oldbutton = obj;
@@ -489,25 +541,28 @@ int SDLGui_DoDialog(SGOBJ *dlg)
       return obj;
     }
   }
-
+*/
   /* The main loop */
   do
   {
-    if( SDL_WaitEvent(&evnt)==1 )  /* Wait for events */
-      switch(evnt.type)
+ //   if( SDL_WaitEvent(&evnt)==1 )  /* Wait for events */
+      switch(eventTyp)
       {
-        case SDL_KEYDOWN:
-          break;
         case SDL_QUIT:
-          bQuitProgram = true;
+          // bQuitProgram = true;
+          retbutton = 0;
           break;
         case SDL_MOUSEBUTTONDOWN:
-          retbutton = mousedown(dlg, evnt, &oldbutton);
+          retbutton = mousedown(dlg, eventX, eventY, &oldbutton);
+          stillPressed = true;
           break;
         case SDL_MOUSEBUTTONUP:
-          retbutton = mouseup(dlg, evnt, &oldbutton, grey);
+          retbutton = mouseup(dlg, eventX, eventY, &oldbutton, grey);
+          stillPressed = false;
           break;
       }
+      eventTyp = 0;
+      SDL_Delay(10);
   }
   while(retbutton==0 && !bQuitProgram);
 
@@ -589,9 +644,11 @@ int SDLGui_FileSelect(char *path_and_name)
   File_ShrinkName(dlgfname, fname, 32);
 
   /* Save old mouse cursor state and enable cursor anyway */
+  /*
   oldcursorstate = SDL_ShowCursor(SDL_QUERY);
   if( oldcursorstate==SDL_DISABLE )
     SDL_ShowCursor(SDL_ENABLE);
+  */
 
   do
   {
@@ -751,9 +808,10 @@ int SDLGui_FileSelect(char *path_and_name)
   }
   while(retbut!=SGFSDLG_OKAY && retbut!=SGFSDLG_CANCEL && !bQuitProgram);
 
+  /*
   if( oldcursorstate==SDL_DISABLE )
     SDL_ShowCursor(SDL_DISABLE);
-
+  */
   File_makepath(path_and_name, path, fname, NULL);
 
   /* Free old allocated memory: */
@@ -769,4 +827,3 @@ int SDLGui_FileSelect(char *path_and_name)
 
   return( retbut==SGFSDLG_OKAY );
 }
-
