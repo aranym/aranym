@@ -1,8 +1,17 @@
+2001/09/20 - STanda
+
+- The fVDI driver update: colors work correctly, expandArea implemented
+  to display icons and texts, putPixel speedup. Now it seems pretty fast
+  when DEBUG is 0 ;)
+
+- gfxprimitives cleanup
+
+
 2001/09/19 - joy
-- TT-RAM (or FastRAM) size entered on command line (--ttram) is in MB now. 
+- TT-RAM (or FastRAM) size entered on command line (--ttram) is in MB now.
 - new .aranymrc option named "FastRAM", acts as the --tram switch.
 - first release of aratools.tgz, available at ftp.sophics.cz/pub/aranym.
-  FastRAM (or TT-RAM?) can be anything from 0 to about 112 MB (then it 
+  FastRAM (or TT-RAM?) can be anything from 0 to about 112 MB (then it
   crashes, I suspect it's due to the weird Milan's virtual memory management).
 
 
@@ -82,9 +91,9 @@
   (set/longjmp problem)
 
 
-2001/08/29 STanda
+2001/08/29 - STanda
 
-- VIDEL got the doRender flag with setter setRendering(). 
+- VIDEL got the doRender flag with setter setRendering().
   The host_colors_uptodate variable name was changed to hostColorsSync.
 
 - HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
@@ -163,7 +172,7 @@
 - floppy is not inserted automatically upon start - this is because my machine does not
   have a floppy connected and it caused aranym to hang. Should be a command line parameter
   like -floppy or something.
-  
+
 
 2001/07/20 - milan
 - signals & pthread removed, now only SDL needs pthread
@@ -173,7 +182,7 @@
 - some warnings "killed"
 
 - "ndebug" integrated (only dbprintf), now D(bug()) without \n
-  
+
 
 2001/07/13 - STanda
 - BLITTER function table restored. (the only - bad - thing is that all
@@ -185,20 +194,20 @@
 - note: the original fVDI driver sources compiled as they are and got
   corrupted (parachute) one. fVDI author notified and requested the
   whole source tree again.
-  
 
-2001/07/09 - STanda 
+
+2001/07/09 - STanda
 - SDL comunity solved our mouse problem in Xs! Get the newest SDL cvs,
   make & install
 
 - the grab_mouse is set by default when in fullscreen
-  
+
 
 2001/07/02 - milan
 - new UAE CPU port from BasiliskII (CVS 25.6.2001)
 
 - more portable
-  
+
 
 2001/06/18 - STanda - version increased to 0.0.5
 - the SDL dependent parts of the code were moved to the HostScreen class.
@@ -211,7 +220,7 @@
 - some copyright (and CVS) comments added. Please - authors - put the CVS
   comments to the beginning and to the bottom of each source file conforming
   the template provided in the projects root directory (template.cpp).
-  
+
 
 2001/06/18 - STanda
 - videl renderScreen() fix (lock & unlock screen added - again)
@@ -298,7 +307,7 @@
   ExtFs.init() method (called from main_unix.cpp)
 
 - the short -debug option was redesigned to -D
-  
+
 
 2001/05/29 - joy - version increased to 0.0.3
 - major speed up (22 -> 27 thousand dhrystones) thanks to moving setjmp()
@@ -307,7 +316,7 @@
 - excep_no var removed from memory.cpp and newcpu.cpp
 
 - fixed VBL invocation (main_unix.cpp)
-  
+
 
 2001/05/29 - joy - version increased to 0.0.2
 - uae_cpu/memory.h - you can enable or disable CHECK_MEMORY_END.
@@ -325,7 +334,7 @@
 - 'direct_truecolor' switch allows you to patch TOS so that Videl VideoRAM
   is set directly to host's VideoRAM. Thus VIDEL writes directly to host's
   VGA card video memory (if framebuffer is used as the SDL_VIDEODRIVER).
-  
+
 
 2001/05/28 - joy
 - implemented proper Bus Error (hardware.cpp and others). This helps
