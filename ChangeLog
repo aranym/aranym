@@ -1,3 +1,7 @@
+2005/01/19 - Patrice
+- dsp_cpu.cpp: 64 bit fixes.
+
+
 2005/01/18 - milan
 - gdbstub: a few fixes in communication, configuration for base pointers added
 

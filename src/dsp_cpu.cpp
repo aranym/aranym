@@ -63,8 +63,13 @@ static uint32 cur_inst_len;	/* =0:jump, >0:increment */
 static uint32 cur_inst;		
 
 /* Parallel move temp data */
+union parmove_dest_u {
+	uint32 *host_pointer;
+	uint32 dsp_address;
+};
+
 static uint32 tmp_parmove_src[2][3];	/* What to read */
-static uint32 *tmp_parmove_dest[2][3];	/* Where to write */
+static parmove_dest_u tmp_parmove_dest[2][3];	/* Where to write */
 static uint32 tmp_parmove_start[2];		/* From where to read/write */
 static uint32 tmp_parmove_len[2];		/* How many to read/write */
 static uint32 tmp_parmove_type[2];		/* 0=register, 1=memory */
@@ -2700,7 +2705,6 @@ static void dsp_parmove_read(void)
 static void dsp_parmove_write(void)
 {
 	uint32 i,j;
-	uint32 *dest;
 	
 	for(i=0;i<2;i++) {
 		if (tmp_parmove_len[i]==0) {
@@ -2713,12 +2717,14 @@ static void dsp_parmove_write(void)
 			j<tmp_parmove_start[i]+tmp_parmove_len[i];
 			j++
 		) {
-			dest=tmp_parmove_dest[i][j];
 			if (tmp_parmove_type[i]) {
 				/* Write to memory */
-				write_memory(tmp_parmove_space[i], (uint32) dest, tmp_parmove_src[i][j]);
+				write_memory(tmp_parmove_space[i], tmp_parmove_dest[i][j].dsp_address, tmp_parmove_src[i][j]);
 			} else {
+				uint32 *dest;
+
 				/* Write to register */
+				dest=tmp_parmove_dest[i][j].host_pointer;
 				*dest = tmp_parmove_src[i][j];
 			}
 		}
@@ -2768,14 +2774,14 @@ static void dsp_pm_read_accu24(int numreg, uint32 *dest)
 static void dsp_pm_writereg(int numreg, int position)
 {
 	if ((numreg == REG_A) || (numreg == REG_B)) {
-		tmp_parmove_dest[position][0]=&getDSP()->registers[REG_A2+(numreg & 1)];
-		tmp_parmove_dest[position][1]=&getDSP()->registers[REG_A1+(numreg & 1)];
-		tmp_parmove_dest[position][2]=&getDSP()->registers[REG_A0+(numreg & 1)];
+		tmp_parmove_dest[position][0].host_pointer=&getDSP()->registers[REG_A2+(numreg & 1)];
+		tmp_parmove_dest[position][1].host_pointer=&getDSP()->registers[REG_A1+(numreg & 1)];
+		tmp_parmove_dest[position][2].host_pointer=&getDSP()->registers[REG_A0+(numreg & 1)];
 
 		tmp_parmove_start[position]=0;
 		tmp_parmove_len[position]=3;
 	} else {
-		tmp_parmove_dest[position][1]=&getDSP()->registers[numreg];
+		tmp_parmove_dest[position][1].host_pointer=&getDSP()->registers[numreg];
 
 		tmp_parmove_start[position]=1;
 		tmp_parmove_len[position]=1;
@@ -2795,7 +2801,7 @@ static void dsp_pm_0(void)
 
 	/* [A|B] to [x|y]:ea */	
 	dsp_pm_read_accu24(numreg, &tmp_parmove_src[0][1]);
-	tmp_parmove_dest[0][1]=(uint32 *)dummy;
+	tmp_parmove_dest[0][1].dsp_address=dummy;
 
 	tmp_parmove_start[0] = 1;
 	tmp_parmove_len[0] = 1;
@@ -2812,9 +2818,9 @@ static void dsp_pm_0(void)
 	}
 	tmp_parmove_src[1][1]=value;
 	tmp_parmove_src[1][2]=0x000000;
-	tmp_parmove_dest[1][0]=&getDSP()->registers[REG_A2+numreg];
-	tmp_parmove_dest[1][1]=&getDSP()->registers[REG_A1+numreg];
-	tmp_parmove_dest[1][2]=&getDSP()->registers[REG_A0+numreg];
+	tmp_parmove_dest[1][0].host_pointer=&getDSP()->registers[REG_A2+numreg];
+	tmp_parmove_dest[1][1].host_pointer=&getDSP()->registers[REG_A1+numreg];
+	tmp_parmove_dest[1][2].host_pointer=&getDSP()->registers[REG_A0+numreg];
 
 	tmp_parmove_start[1] = 0;
 	tmp_parmove_len[1] = 3;
@@ -2884,7 +2890,7 @@ static void dsp_pm_1(void)
 			tmp_parmove_src[0][1]=getDSP()->registers[numreg];
 		}
 
-		tmp_parmove_dest[0][1]=(uint32 *)xy_addr;
+		tmp_parmove_dest[0][1].dsp_address=xy_addr;
 
 		tmp_parmove_start[0]=1;
 		tmp_parmove_len[0]=1;
@@ -2912,7 +2918,7 @@ static void dsp_pm_1(void)
 		numreg = REG_X0 + ((cur_inst>>16) & 1);
 	}	
 	tmp_parmove_src[1][1] &= BITMASK(registers_mask[numreg]);
-	tmp_parmove_dest[1][1]=&getDSP()->registers[numreg];
+	tmp_parmove_dest[1][1].host_pointer=&getDSP()->registers[numreg];
 
 	tmp_parmove_start[0]=1;
 	tmp_parmove_len[0]=1;
@@ -3096,22 +3102,22 @@ static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 		tmp_parmove_src[1][2] = 0x000000;
 
 		/* D1 */
-		tmp_parmove_dest[0][0] = NULL;
+		tmp_parmove_dest[0][0].host_pointer = NULL;
 		tmp_parmove_start[0]=1;
 		tmp_parmove_len[0]=1;
 		if (numreg >= 4) {
-			tmp_parmove_dest[0][0] = &getDSP()->registers[REG_A2+(numreg & 1)];
+			tmp_parmove_dest[0][0].host_pointer = &getDSP()->registers[REG_A2+(numreg & 1)];
 			tmp_parmove_start[0]=0;
 			tmp_parmove_len[0]=2;
 		}
 		numreg2 = registers_lmove[numreg][0];
 		if ((numreg2 == REG_A) || (numreg2 == REG_B)) {
-			tmp_parmove_dest[0][1] = &getDSP()->registers[REG_A1+(numreg2 & 1)];
+			tmp_parmove_dest[0][1].host_pointer = &getDSP()->registers[REG_A1+(numreg2 & 1)];
 		} else {
-			tmp_parmove_dest[0][1] = &getDSP()->registers[numreg2];
+			tmp_parmove_dest[0][1].host_pointer = &getDSP()->registers[numreg2];
 		}
 		if (numreg >= 6) {
-			tmp_parmove_dest[0][2] = &getDSP()->registers[REG_A0+(numreg & 1)];
+			tmp_parmove_dest[0][2].host_pointer = &getDSP()->registers[REG_A0+(numreg & 1)];
 			tmp_parmove_start[0]=0;
 			tmp_parmove_len[0]=3;
 		}
@@ -3119,22 +3125,22 @@ static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 		tmp_parmove_type[0]=0;
 
 		/* D2 */
-		tmp_parmove_dest[1][0] = NULL;
+		tmp_parmove_dest[1][0].host_pointer = NULL;
 		tmp_parmove_start[1]=1;
 		tmp_parmove_len[1]=1;
 		if (numreg >= 4) {
-			tmp_parmove_dest[1][0] = &getDSP()->registers[REG_A2+(numreg & 1)];
+			tmp_parmove_dest[1][0].host_pointer = &getDSP()->registers[REG_A2+(numreg & 1)];
 			tmp_parmove_start[1]=0;
 			tmp_parmove_len[1]=2;
 		}
 		numreg2 = registers_lmove[numreg][1];
 		if ((numreg2 == REG_A) || (numreg2 == REG_B)) {
-			tmp_parmove_dest[1][1] = &getDSP()->registers[REG_A1+(numreg2 & 1)];
+			tmp_parmove_dest[1][1].host_pointer = &getDSP()->registers[REG_A1+(numreg2 & 1)];
 		} else {
-			tmp_parmove_dest[1][1] = &getDSP()->registers[numreg2];
+			tmp_parmove_dest[1][1].host_pointer = &getDSP()->registers[numreg2];
 		}
 		if (numreg >= 6) {
-			tmp_parmove_dest[1][2] = &getDSP()->registers[REG_A0+(numreg & 1)];
+			tmp_parmove_dest[1][2].host_pointer = &getDSP()->registers[REG_A0+(numreg & 1)];
 			tmp_parmove_start[1]=0;
 			tmp_parmove_len[1]=3;
 		}
@@ -3163,7 +3169,7 @@ static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 		}
 		
 		/* D1 */
-		tmp_parmove_dest[0][1]=(uint32 *)l_addr;
+		tmp_parmove_dest[0][1].dsp_address=l_addr;
 
 		tmp_parmove_start[0]=1;
 		tmp_parmove_len[0]=1;
@@ -3172,7 +3178,7 @@ static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 		tmp_parmove_space[0]=SPACE_X;
 
 		/* D2 */
-		tmp_parmove_dest[1][1]=(uint32 *)l_addr;
+		tmp_parmove_dest[1][1].dsp_address=l_addr;
 
 		tmp_parmove_start[1]=1;
 		tmp_parmove_len[1]=1;
@@ -3237,7 +3243,7 @@ static void dsp_pm_5(void)
 			tmp_parmove_src[0][1]=getDSP()->registers[numreg];
 		}
 
-		tmp_parmove_dest[0][1]=(uint32 *)xy_addr;
+		tmp_parmove_dest[0][1].dsp_address=xy_addr;
 
 		tmp_parmove_start[0]=1;
 		tmp_parmove_len[0]=1;
@@ -3311,7 +3317,7 @@ static void dsp_pm_8(void)
 			tmp_parmove_src[0][1]=getDSP()->registers[numreg1];
 		}
 
-		tmp_parmove_dest[0][1]=(uint32 *)dummy1;
+		tmp_parmove_dest[0][1].dsp_address=dummy1;
 
 		tmp_parmove_start[0]=1;
 		tmp_parmove_len[0]=1;
@@ -3341,7 +3347,7 @@ static void dsp_pm_8(void)
 			tmp_parmove_src[1][1]=getDSP()->registers[numreg1];
 		}
 
-		tmp_parmove_dest[1][1]=(uint32 *)dummy2;
+		tmp_parmove_dest[1][1].dsp_address=dummy2;
 
 		tmp_parmove_start[1]=1;
 		tmp_parmove_len[1]=1;
