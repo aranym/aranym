@@ -19,14 +19,12 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "sysdeps.h"
+#include "vm_alloc.h"
 
 // TODO: Win32 VMs ?
-#include <stdlib.h>
-#include <string.h>
-#include "vm_alloc.h"
+#include <cstdlib>
+#include <cstring>
 
 #ifdef HAVE_MACH_VM
 #ifndef HAVE_MACH_TASK_SELF

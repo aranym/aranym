@@ -23,13 +23,6 @@
 #ifndef VM_ALLOC_H
 #define VM_ALLOC_H
 
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
-
 /* Return value of `vm_acquire' in case of an error.  */
 #ifdef HAVE_MACH_VM
 #define VM_MAP_FAILED			((void *)-1)

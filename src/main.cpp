@@ -357,11 +357,12 @@ bool InitAll(void)
 {
 #ifndef NOT_MALLOC
 	if (ROMBaseHost == NULL) {
-		if ((RAMBaseHost = (uint8 *)malloc(RAMSize + ROMSize + FastRAMSize)) == NULL) {
+		if ((RAMBaseHost = (uint8 *)malloc(RAMSize + ROMSize + HWSize + FastRAMSize)) == NULL) {
 			panicbug("Not enough free memory.");
 			return false;
 		}
 		ROMBaseHost = (uint8 *)(RAMBaseHost + ROMBase);
+		HWBaseHost = (uint8 *)(RAMBaseHost + HWBase);
 		FastRAMBaseHost = (uint8 *)(RAMBaseHost + FastRAMBase);
 	}
 #endif
@@ -440,7 +441,7 @@ bool InitAll(void)
 
 #ifdef USE_TIMERS
 	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
-	printf("Using timers\n");
+	D(bug("Using timers\n"));
 #endif
 
 #if ENABLE_MON
@@ -482,6 +483,12 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.67  2002/04/29 11:44:35  joy
+ * "ROM" => "TOS"
+ * ErrorAlert() -> panicbug()
+ * always display filename when reporting a file error
+ * suggest to check readability of the TOS file image since Unix unzip does not set the rw- flags correctly
+ *
  * Revision 1.66  2002/04/22 18:30:50  milan
  * header files reform
  *

@@ -2346,7 +2346,7 @@ int EvalException ( LPEXCEPTION_POINTERS blah, int n_except )
 #else
 static void segfault_vec(int x, struct sigcontext sc)
 {
-    uae_u8 *i=(uae_u8 *)sc.eip;
+    uae_u8 *eip=(uae_u8 *)sc.eip;
     uae_u32 addr=sc.cr2;
     int r = -1;
     int size = 4;
@@ -2355,39 +2355,39 @@ static void segfault_vec(int x, struct sigcontext sc)
     int j;
     
     D(panicbug("fault address is %08x at %08x",sc.cr2,sc.eip));
-    D(panicbug("compiled code starts at %08x, current at %08x, handler %02x", compiled_code, current_compile_p, *i));
+    D(panicbug("compiled code starts at %08x, current at %08x, handler %02x", compiled_code, current_compile_p, *eip));
     if (!canbang) 
 	panicbug("Not happy! Canbang is 0 in SIGSEGV handler!");
     if (in_handler) 
 	panicbug("Argh --- Am already in a handler. Shouldn't happen!");
 
-    if (canbang && i>=compiled_code && i<=current_compile_p) {
-/*	if (*i++ != 0x65)
+    if (canbang && eip>=compiled_code && eip<=current_compile_p) {
+/*	if (*eip++ != 0x65)
 	    goto oh_dear;
 */
-	if (*i == 0x66) {
-	    i++;
+	if (*eip == 0x66) {
+	    eip++;
 	    size=2;
 	    len++;
 	}
 	
-	switch(i[0]) {
+	switch(eip[0]) {
 	 case 0x8a:
-	    switch(i[1]&0xc0) {
+	    switch(eip[1]&0xc0) {
 	    case 0x80:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_READ;
 		size=1;
 		len+=6;
 		break;
 	    case 0x40:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_READ;
 		size=1;
 		len+=3;
 		break;
 	    case 0x00:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_READ;
 		size=1;
 		len+=2;
@@ -2395,21 +2395,21 @@ static void segfault_vec(int x, struct sigcontext sc)
 	    }
 	    break;
 	 case 0x88:
-	    switch(i[1]&0xc0) {
+	    switch(eip[1]&0xc0) {
 	    case 0x80:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_WRITE;
 		size=1;
 		len+=6;
 		break;
 	    case 0x40:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_WRITE;
 		size=1;
 		len+=3;
 		break;
 	    case 0x00:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_WRITE;
 		size=1;
 		len+=2;
@@ -2417,19 +2417,19 @@ static void segfault_vec(int x, struct sigcontext sc)
 	    }
 	    break;
 	 case 0x8b:
-	    switch(i[1]&0xc0) {
+	    switch(eip[1]&0xc0) {
 	    case 0x80:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_READ;
 		len+=6;
 		break;
 	    case 0x40:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_READ;
 		len+=3;
 		break;
 	    case 0x00:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_READ;
 		len+=2;
 		break;
@@ -2438,19 +2438,19 @@ static void segfault_vec(int x, struct sigcontext sc)
 	    }
 	    break;
 	 case 0x89:
-	    switch(i[1]&0xc0) {
+	    switch(eip[1]&0xc0) {
 	    case 0x80:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_WRITE;
 		len+=6;
 		break;
 	    case 0x40:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_WRITE;
 		len+=3;
 		break;
 	    case 0x00:
-		r=(i[1]>>3)&7;
+		r=(eip[1]>>3)&7;
 		dir=SIG_WRITE;
 		len+=2;
 		break;
@@ -2568,12 +2568,13 @@ static void segfault_vec(int x, struct sigcontext sc)
 	    bi=active;
 	    panicbug("%p\n", active);
 	    while (bi) {
+		panicbug("%p %p %p %p %p\n", bi, bi->handler, bi->direct_handler, bi->nexthandler, bi->pc_p);
 		if (bi->handler && 
-		    (uae_u8*)bi->direct_handler<=i &&
-		    (uae_u8*)bi->nexthandler>i) {
+		    (uae_u8*)bi->direct_handler<=eip &&
+		    (uae_u8*)bi->nexthandler>eip) {
 		    D(panicbug("deleted trigger (%p<%p<%p) %p",
 			      bi->handler,
-			      i,
+			      eip,
 			      bi->nexthandler,
 			      bi->pc_p));
 		    invalidate_block(bi);
@@ -2589,11 +2590,11 @@ static void segfault_vec(int x, struct sigcontext sc)
 	    bi=dormant;
 	    while (bi) {
 		if (bi->handler && 
-		    (uae_u8*)bi->direct_handler<=i &&
-		    (uae_u8*)bi->nexthandler>i) {
+		    (uae_u8*)bi->direct_handler<=eip &&
+		    (uae_u8*)bi->nexthandler>eip) {
 		    D(panicbug("deleted trigger (%p<%p<%p) %p",
 			      bi->handler,
-			      i,
+			      eip,
 			      bi->nexthandler,
 			      bi->pc_p));
 		    invalidate_block(bi);

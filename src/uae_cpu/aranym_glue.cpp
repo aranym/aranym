@@ -32,15 +32,17 @@
 // RAM and ROM pointers
 memptr RAMBase = 0;	// RAM base (Atari address space) gb-- init is important
 uint8 *RAMBaseHost;	// RAM base (host address space)
-uint32 RAMSize = 0x00e00000;		// Size of RAM
+uint32 RAMSize = 0x00e00000;	// Size of RAM
 
-memptr ROMBase = 0x00e00000;		// ROM base (Atari address space)
+memptr ROMBase = 0x00e00000;	// ROM base (Atari address space)
 uint8 *ROMBaseHost;	// ROM base (host address space)
-uint32 ROMSize = 0x00200000;		// Size of ROM
+uint32 ROMSize = 0x00100000;	// Size of ROM
 
 uint32 RealROMSize;	// Real size of ROM
 
-const uint32 HWBase = 0x00f00000;	// HW base (Atari address space)
+memptr HWBase = 0x00f00000;	// HW base (Atari address space)
+uint8 *HWBaseHost;	// HW base (host address space)
+uint32 HWSize = 0x00100000;    // Size of HW space
 
 memptr FastRAMBase = 0x01000000;		// Fast-RAM base (Atari address space)
 uint8 *FastRAMBaseHost;	// Fast-RAM base (host address space)

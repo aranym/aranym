@@ -1,5 +1,20 @@
-2002/05/XX - milan (record in ChangeLog by joy)
+2002/05/14 - milan
+- vm_alloc.cpp: better structure, ont own OS dependent includes
+
+- main.cpp, main_unix.cpp, aranym_glue.cpp, cpu_emulation.h:
+    some debug outputs added for JIT compiler
+    a small reform in memory allocation
+    one stupid bug (of course, I'm the author) found in QuitEmulator
+    (vm_release(nil))
+
+- JIT compiler: one debug output added for segfault handler of JIT compiler
+
+
+2002/05/12 - milan (record in ChangeLog by joy)
 - ata.cpp: updated to bochs' latest source (supported SEEK and something else)
+
+
+2002/05/10 - milan (record in ChangeLog by joy)
 - input.cpp: hack for remounting CD on Ctrl+SysRq, needs to be removed!
 - gencpu.cpp: lotsa weird changes, probably related to distributed dispatcher
 - newcpu.cpp: minor distributed dispatcher related changes

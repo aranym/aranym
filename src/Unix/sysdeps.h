@@ -38,6 +38,7 @@
 
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <fcntl.h>
@@ -97,6 +98,10 @@
 
 #ifdef HAVE_TYPES_H
 # include <types.h>
+#endif
+
+#ifdef HAVE_SYS_MMAN_H
+# include <sys/mman.h>
 #endif
 
 #ifdef HAVE_SYS_PARAM_H

@@ -41,7 +41,10 @@ extern memptr ROMBase;		// ROM base (Atari address space)
 extern uint8 *ROMBaseHost;	// ROM base (host address space)
 extern uint32 ROMSize;		// Size of ROM
 extern uint32 RealROMSize;	// Real size of ROM
-extern const uint32 HWBase;	// HW Base (Atari address space)
+extern memptr HWBase;		// HW base (Atari address space)
+extern uint8 *HWBaseHost;	// HW base (host address space)
+extern uint32 HWSize;		// Size of HW space
+
 extern memptr FastRAMBase;	// Fast-RAM base (Atari address space)
 extern uint8 *FastRAMBaseHost;	// Fast-RAM base (host address space)
 extern memptr VideoRAMBase;	// VideoRAM base (Atari address space)

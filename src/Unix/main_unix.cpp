@@ -101,6 +101,7 @@ int main(int argc, char **argv)
 	// Initialize variables
 	RAMBaseHost = NULL;
 	ROMBaseHost = NULL;
+	HWBaseHost = NULL;
 	FastRAMBaseHost = NULL;
 
 	program_name = argv[0];
@@ -122,23 +123,25 @@ int main(int argc, char **argv)
 	// when trying to map a too big chunk of memory starting at address 0
 	
 	// Try to allocate all memory from 0x0000, if it is not known to crash
-	if (vm_acquire_fixed(0, RAMSize + ROMSize + FastRAMSize) == true) {
+	if (vm_acquire_fixed(0, RAMSize + ROMSize + HWSize + FastRAMSize) == true) {
 		D(bug("Could allocate RAM and ROM from 0x0000"));
 		memory_mapped_from_zero = true;
 	}
 
 	if (memory_mapped_from_zero) {
 		RAMBaseHost = (uint8 *)0;
-		ROMBaseHost = RAMBaseHost + RAMSize;
-		FastRAMBaseHost = RAMBaseHost + 0x1000000;
+		ROMBaseHost = RAMBaseHost + ROMBase;
+		HWBaseHost = RAMBaseHost + HWBase;
+		FastRAMBaseHost = RAMBaseHost + FastRAMBase;
 	}
 	else
 #endif
 	{
 		RAMBaseHost = (uint8 *)vm_acquire(RAMSize);
 		ROMBaseHost = (uint8 *)vm_acquire(ROMSize);
+		HWBaseHost = (uint8 *)vm_acquire(HWSize);
 		if (FastRAMSize) FastRAMBaseHost = (uint8 *)vm_acquire(FastRAMSize); else FastRAMBaseHost = RAMBaseHost + 0x1000000;
-		if (RAMBaseHost == VM_MAP_FAILED || ROMBaseHost == VM_MAP_FAILED || FastRAMBaseHost == VM_MAP_FAILED) {
+		if (RAMBaseHost == VM_MAP_FAILED || ROMBaseHost == VM_MAP_FAILED || HWBaseHost == VM_MAP_FAILED || FastRAMBaseHost == VM_MAP_FAILED) {
 			panicbug("Not enough free memory.");
 			QuitEmulator();
 		}
@@ -146,6 +149,7 @@ int main(int argc, char **argv)
 
 	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
+	D(bug("HW space starts at %p (%08x)", HWBaseHost, HWBase));
 	D(bug("TT-RAM starts at %p (%08x)", FastRAMBaseHost, FastRAMBase));
 #endif /* REAL_ADDRESSING || DIRECT_ADDRESSING */
 
@@ -171,19 +175,26 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef NATMEM_OFFSET
-	if (mprotect(ROMBaseHost, 0x100000, PROT_READ) == -1) {
+	if (mprotect(ROMBaseHost, ROMSize, PROT_READ) == -1) {
 		perror("Couldn't protect ROM");
 		exit(-1);
 	}
 
-	if (mprotect(ROMBaseHost + 0x100000, 0x100000, PROT_NONE) == -1) {
+	D(panicbug("Protect ROM (%08lx - %08lx)", ROMBaseHost, ROMBaseHost + ROMSize));
+
+	if (mprotect(HWBaseHost, HWSize, PROT_NONE) == -1) {
 		perror("Couldn't set HW address space");
 		exit(-1);
 	}
+
+	D(panicbug("Protect HW space (%08lx - %08lx)", HWBaseHost, HWBaseHost + HWSize));
+
 	if ((FakeIOBaseHost = (uint8 *)vm_acquire(0x00100000)) == VM_MAP_FAILED) {
 		panicbug("Not enough free memory.");
 		QuitEmulator();
 	}
+
+	D(panicbug("FakeIOspace %p", FakeIOBaseHost));
 #endif /* NATMEM_OFFESET */
 
 	// Start 68k and jump to ROM boot routine
@@ -221,9 +232,13 @@ void QuitEmulator(void)
 		vm_release(ROMBaseHost, ROMSize);
 		ROMBaseHost = NULL;
 	}
+	if (HWBaseHost != VM_MAP_FAILED) {
+		vm_release(HWBaseHost, HWSize);
+		HWBaseHost = NULL;
+	}
 	if (FastRAMBaseHost !=VM_MAP_FAILED) {
-		vm_release(ROMBaseHost, FastRAMSize);
-		ROMBaseHost = NULL;
+		vm_release(FastRAMBaseHost, FastRAMSize);
+		FastRAMBaseHost = NULL;
 	}
 #else
 	free(RAMBaseHost);
@@ -251,6 +266,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.66  2002/04/29 11:45:18  joy
+ * ErrorAlert() -> panicbug()
+ *
  * Revision 1.65  2002/04/22 21:20:32  milan
  * distributed dispatcher rewroted
  * JIT compiler integrated
