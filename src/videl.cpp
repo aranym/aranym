@@ -1,7 +1,10 @@
 /*
  * $Header$
  *
- * Joy 2001
+ * (c) Joy 2001-2003
+ *
+ * greatly inspired by linux/drivers/video/atafb.c - thanks to those guys!
+ *
  */
 
 #include "sysdeps.h"
@@ -13,7 +16,7 @@
 #include "hardware.h"
 #include "parameters.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 // from host.cpp
@@ -71,8 +74,25 @@ void VIDEL::handleWrite(uint32 addr, uint8 value)
 
 	if ((addr >= 0xff9800 && addr < 0xffa200) || (addr >= 0xff8240 && addr < 0xff8260))
 		hostColorsSync = false;
+	else if (addr == 0xff8260) {
+		D(bug("VIDEL write: %06x = %d ($%02x)", addr, value, value));
+		// writing to st_shift changed scn_width and vid_mode
+		// BASE_IO::handleWrite(HW+0x10, 0x0028);
+		// BASE_IO::handleWrite(HW+0xc2, 0x0008);
+	}
+	else if (addr == 0xff8266 && value == 0) {
+		// IMPORTANT:
+		// set st_shift to 0, so we can tell the screen-depth if f_shift==0.
+		// Writing 0 to f_shift enables 4 plane Falcon mode but
+		// doesn't set st_shift. st_shift!=0 (!=4planes) is impossible
+		// with Falcon palette so we set st_shift to 0 manually.
+		D(bug("VIDEL write: %06x = %d ($%02x)", addr, value, value));
+		BASE_IO::handleWrite(HW+0x60, 0);
+	}
+#if DEBUG
 	else
 		D(bug("VIDEL write: %06x = %d ($%02x)", addr, value, value));
+#endif
 
 	if ((addr & ~3) == HW)	// Atari tries to change the VideoRAM address (after a RESET?)
 		doRender = true;	// that's a sign that Videl should render the screen
@@ -105,7 +125,7 @@ int VIDEL::getScreenBpp()
 		bits_per_pixel = 4;
 	else if (st_shift == 0x100)
 		bits_per_pixel = 2;
-	else						/* if (st_shift == 0x200) */
+	else /* if (st_shift == 0x200) */
 		bits_per_pixel = 1;
 
 	return bits_per_pixel;
@@ -908,6 +928,9 @@ void VIDEL::renderScreenZoom()
 
 /*
  * $Log$
+ * Revision 1.48  2003/02/16 21:07:45  joy
+ * cleanup in NatFeats
+ *
  * Revision 1.47  2003/01/02 19:39:13  joy
  * emulation of width registers improved
  *
