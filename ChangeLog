@@ -6,6 +6,21 @@
 - gui-sdl/sdlgui.cpp,h: CHECKBOX can be placed on right side of the text.
   Same thing could/should be done for RADIO button.
 
+- gui-sdl/font8.h: font8.bmp included in the code itself to get rid of
+  problems with loading it at runtime
+
+- gui-sdl/sdlgui.cpp: Load_XBM() for initializing the font (kindly provided
+  by Martin Doering, thanks).
+
+- parameters.cpp,h: recently added guifont_path removed :) It will come back,
+  though, once the TOS font file format loading is implemented (see TODO).
+
+- Makefile.in: font8.bmp is not installed
+
+- configure.ac, Makefile.in: GUISDLSRCS introduced (contains gui-sdl/ files)
+
+- TODO: one thing done (font8), another ideas arrived (floppy bootup insert)
+
 
 2004/01/01 PM - joy
 - fdc.cpp: added is_floppy_inserted() (used in the config GUI). Also
