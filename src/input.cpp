@@ -620,5 +620,5 @@ void check_event()
 	}
 
 	if (pendingQuit)
-		QuitEmulator();
+		TriggerNMI();	// NMI causes CPU to quit the loop
 }
