@@ -246,6 +246,13 @@ static inline uae_u16 get_iword_1(uae_u32 o)
 static inline uae_u32 get_ilong_1(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o;
+    if (is_unaligned(addr, 4)) {
+	uae_u32 result;
+	result = phys_get_word(mmu_translate(addr, FC_INST, 0, addr, sz_word, 0));
+	result <<= 16;
+	result |= phys_get_word(mmu_translate(addr + 2, FC_INST, 0, addr, sz_word, 0));
+	return result;
+    }
     return phys_get_long(mmu_translate(addr, FC_INST, 0, addr, sz_long, 0));
 }
 #else
