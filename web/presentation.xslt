@@ -18,15 +18,26 @@
   <xsl:template match="/">
     <html>
       <head>
-        <title>ARAnyM Home Page - <!--xsl:value-of select="$config/menu/item[@name=$page]/title"/--></title>
+        <title>ARAnyM - <xsl:value-of select="/document/header"/></title>
       </head>
       <body>
         <table width="100%" border="0" cellspacing="0" cellpadding="2">
           <tr>
-            <td colspan="4" align="center"> 
-              <h2>ARAnyM - <xsl:value-of select="/document/header"/>
+            <td valign="top" align="center">
+              <h2>
+                ARAnyM
+              </h2>
+            </td>
+            <td></td>
+            <td colspan="2" align="center"> 
+              <h2>
+                <xsl:value-of select="/document/header"/>
+              </h2>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top" colspan="4">
               <hr size="5"/>
-            </h2>
             </td>
           </tr>
           <tr><td colspan="4"></td></tr>
