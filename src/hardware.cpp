@@ -43,35 +43,10 @@ void HWInit (void) {
 	ide.init();
 }
 
-/* obsolete */
-static const uint HW_IDE 	= 0xf00000;
-static const uint HW_ARADATA= 0xf90000;
-static const uint HW_ROM	= 0xfa0000;
-static const uint HW_MMU 	= 0xff8000;
-static const uint HW_VIDEO 	= 0xff8200;
-static const uint HW_FDC	= 0xff8600;
-static const uint HW_SCSI	= 0xff8700;
-static const uint HW_YAMAHA	= 0xff8800;
-static const uint HW_SOUND	= 0xff8900;
-static const uint HW_DSP	= 0xff8930;
-static const uint HW_RTC	= 0xff8960;
-static const uint HW_BLITT	= 0xff89a0;
-static const uint HW_SCC	= 0xff8c00;
-static const uint HW_SCU	= 0xff8e00;
-static const uint HW_PADDLE	= 0xff9200;
-static const uint HW_VIDEL	= 0xff9800;
-static const uint HW_DSPH	= 0xffa200;
-static const uint HW_STMFP	= 0xfffa00;
-static const uint HW_FPU	= 0xfffa40;
-static const uint HW_TTMFP	= 0xfffa80;
-static const uint HW_IKBD	= 0xfffc00;
-static const uint HW_MIDI	= 0xfffc04;
-/* end of obsolete */
-
 struct HARDWARE {
 	char name[32];
-	uint	begin;
-	uint len;	// TODO replace len with end to save some CPU cycles in runtime
+	uint32	begin;
+	uint32 len;	// TODO replace len with end to save some CPU cycles in runtime
 	ICio *handle;
 };
 
@@ -135,6 +110,8 @@ void handleWrite(uaecptr addr, uae_u8 value) {
 	D(bug("HWput_b %x = %d ($%x) <- %s at %08x", addr, value, value, debug_print_IO(addr), showPC()));
 	BUS_ERROR;
 }
+
+#define HW_IDE	0xf00000
 
 uae_u32 HWget_l (uaecptr addr) {
 //	uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
@@ -209,6 +186,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.32  2001/10/25 19:56:01  standa
+ * The Log and Header CVS tags in the Log removed. Was recursing.
+ *
  * Revision 1.31  2001/10/08 21:46:05  standa
  * The Header and Log CVS tags added.
  *
