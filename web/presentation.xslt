@@ -129,10 +129,10 @@
   <xsl:template match="counter">
     <xsl:comment> Begin RealHomepageTools </xsl:comment><script type="text/javascript"><xsl:comment>
     var id=132650
-    var ua=navigator.userAgent;if(ua.indexOf('MSIE 3')>0){
-    document.write('<img src="http://11.rtcode.com/netpoll/ifree')
+    var ua=navigator.userAgent;if(ua.indexOf('MSIE 3')&gt;0){
+    document.write('&lt;img src="http://11.rtcode.com/netpoll/ifree')
     document.write('v3.asp?id='+id+'&amp;js=1&amp;to=0&amp;ref='
-    +escape(document.referrer)+'" />')}
+    +escape(document.referrer)+'" /&gt;')}
     // </xsl:comment></script><script type="text/javascript"
     src="http://11.rtcode.com/netpoll/ifreev3i.asp?id=132650&amp;to=0">
     </script><script type="text/javascript"><xsl:comment>
