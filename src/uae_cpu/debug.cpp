@@ -91,12 +91,13 @@ struct flag_struct historyf[MAX_HIST];
 uaecptr history[MAX_HIST];
 #endif
 
+#ifdef UAEDEBUG
+
 static void ignore_ws (char **c)
 {
     while (**c && isspace(**c)) (*c)++;
 }
 
-#ifdef UAEDEBUG
 static uae_u32 readhex (char **c)
 {
     uae_u32 val = 0;
@@ -116,7 +117,6 @@ static uae_u32 readhex (char **c)
     }
     return val;
 }
-#endif
 
 static char next_char( char **c)
 {
@@ -130,7 +130,6 @@ static int more_params (char **c)
     return (**c) != 0;
 }
 
-#ifdef UAEDEBUG
 static void dumpmem (uaecptr addr, uaecptr *nxmem, int lines)
 {
     broken_in = 0;
