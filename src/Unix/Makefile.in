@@ -145,7 +145,7 @@ install: $(APP) installdirs
 	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
 	$(INSTALL) ../../tools/createdisk/createdisk.sh $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
 	$(INSTALL_DATA) ../../tools/createdisk/mbrdata $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
-	$(INSTALL_DATA) ../../tools/floppy.sh $(DESTDIR)$(datadir)/$(APP)/floppy.sh
+	$(INSTALL) ../../tools/floppy.sh $(DESTDIR)$(datadir)/$(APP)/floppy.sh
 	$(INSTALL_DATA) ../../tools/diskimage.c $(DESTDIR)$(datadir)/$(APP)/diskimage.c
 	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
 	$(INSTALL_DATA) ../../atari/fvdi/fvdi.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
@@ -248,7 +248,7 @@ bindist: $(APP) bindistdirs
 	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README tmpdist$(datadir)/$(APP)/createdisk/createdisk.README
 	$(INSTALL) ../../tools/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/createdisk/createdisk.sh
 	($INSTALL_DATA) ../../tools/createdisk/mbrdata tmpdist$(datadir)/$(APP)/createdisk/mbrdata
-	$(INSTALL_DATA) ../../tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
+	$(INSTALL) ../../tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
 	$(INSTALL_DATA) ../../tools/diskimage.c tmpdist$(datadir)/$(APP)/diskimage.c
 	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
 	$(INSTALL_DATA) ../../atari/fvdi/fvdi.prg.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2

@@ -260,91 +260,91 @@ static inline void phys_put_byte(uaecptr addr, uae_u32 b)
 static inline uae_u32 get_long(uaecptr addr)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     uae_u32 l;
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     l = phys_get_long(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_long, 0));
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
     return l;
 }
 
 static inline uae_u16 get_word(uaecptr addr)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     uae_u16 w;
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     w = phys_get_word(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_word, 0));
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
     return w;
 }
 
 static inline uae_u8 get_byte(uaecptr addr)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     uae_u8 b;
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     b = phys_get_byte(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_byte, 0));
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
     return b;
 }
 
 static inline void put_long(uaecptr addr, uae_u32 l)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     phys_put_long(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_long, 0),l);
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 }
 
 static inline void put_word(uaecptr addr, uae_u16 w)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     phys_put_word(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_word, 0),w);
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 }
 
 static inline void put_byte(uaecptr addr, uae_u16 b)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     phys_put_byte(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_byte, 0),b);
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 }
 
 static inline uae_u8 *get_real_address(uaecptr addr, int write, int sz)
@@ -360,93 +360,93 @@ static inline uae_u8 *get_real_address(uaecptr addr, int write, int sz)
 static inline uae_u32 sfc_get_long(uaecptr addr)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     uae_u32 l;
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     l = phys_get_long(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_long, 0));
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
     return l;
 }
 static inline uae_u16 sfc_get_word(uaecptr addr)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     uae_u16 w;
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     w = phys_get_word(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_word, 0));
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
     return w;
 }
 static inline uae_u8 sfc_get_byte(uaecptr addr)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     uae_u8 b;
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     b = phys_get_byte(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_byte, 0));
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
     return b;
 }
 
 static inline void dfc_put_long(uaecptr addr, uae_u32 l)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     phys_put_long(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_long, 0), l);
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 }
 static inline void dfc_put_word(uaecptr addr, uae_u16 w)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     phys_put_word(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_word, 0), w);
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 }
 static inline void dfc_put_byte(uaecptr addr, uae_u16 b)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     int prb = setjmp(excep_env);
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, prb);
     }
     phys_put_byte(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_byte, 0), b);
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 }
 
 static inline bool valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
 {
     jmp_buf excep_env_old;
-    excep_env_old = excep_env;
+    memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
     int prb = setjmp(excep_env);
     wordsizes i = sz_long;
     switch (sz) {
@@ -454,11 +454,11 @@ static inline bool valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
         case 2: i = sz_word; break;
     }
     if (prb != 0) {
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	return false;
     } 
     check_ram_boundary(mmu_translate(addr, FC_DATA, (write ? 1 : 0), pc, i, 0), sz, write);
-    excep_env = excep_env_old;
+    memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
     return true;
 }
 
