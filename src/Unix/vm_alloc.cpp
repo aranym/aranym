@@ -134,7 +134,11 @@ bool vm_acquire_fixed(void * addr, size_t size)
 		return false;
 #else
 #ifdef HAVE_MMAP_VM
+# ifdef OS_cygwin
+	if (mmap((char *)addr, size, VM_PAGE_DEFAULT, map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
+# else
 	if (mmap(addr, size, VM_PAGE_DEFAULT, map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
+# endif OS_cygwin
 		return false;
 
 	// Since I don't know the standard behavior of mmap(), zero-fill here
@@ -168,7 +172,11 @@ int vm_release(void * addr, size_t size)
 		return -1;
 #else
 #ifdef HAVE_MMAP_VM
+# ifdef OS_cygwin
+	if (munmap((char *)addr, size) != 0)
+# else
 	if (munmap(addr, size) != 0)
+# endif
 		return -1;
 #else
 	free(addr);
@@ -188,7 +196,11 @@ int vm_protect(void * addr, size_t size, int prot)
 	return ret_code == KERN_SUCCESS ? 0 : -1;
 #else
 #ifdef HAVE_MMAP_VM
+# ifdef OS_cygwin
+	int ret_code = mprotect((char *)addr, size, prot);
+# else
 	int ret_code = mprotect(addr, size, prot);
+# endif
 	return ret_code == 0 ? 0 : -1;
 #else
 	// Unsupported
