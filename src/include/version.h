@@ -25,8 +25,6 @@
 #define VER_MINOR	7
 #define VER_MICRO	0
 
-#define RELEASE
-
 #ifdef RELEASE
 #define VER_STATUS
 #else
