@@ -276,7 +276,7 @@ is written in one of the proposed implementation interfaces.
 Basic set features
 
 - "NF_NAME" :
-    void getName(char *buffer, unsigned long size)
+    unsigned long getName(char *buffer, unsigned long size)
       subID = 0
       fills 'buffer' with a null-terminated string representing the
       emulator name. At most 'size' bytes will be written in the
@@ -284,23 +284,30 @@ Basic set features
       contains more than size - 1 characters).
       the string should contain only printable ASCII characters
       (ASCII 32 to 126 inclusive).
- 
-> alternate solution:
->   unsigned long getName(char *buffer, unsigned long size)
->   
-> returns the length of the string before truncation
+      Returns the length of the string before truncation.
 
-    void getFullName(char *buffer, unsigned long size)
+    unsigned long getFullName(char *buffer, unsigned long size)
       subID = 1
       similar to getName, but the string is the emulator name plus 
       its version (and anything else that might be printed together 
       with the emulator name)
+      Returns the length of the string before truncation.
 
 - "NF_VERSION"
     long getVersion(void)
       returns the version of the native feature framework, hex encoded
       (upper word = major number, lower word = minor number). This document
       describes native features version 1.0 (hex encoding 0x00010000).
+
+- "NF_STDERR"
+  sub-id 0:
+    unsigned long output(const char *string);
+      emits a null-terminated string of printable ASCII chars on a
+      particular output stream, intended for use to display debug 
+      messages. Returns the number of chars printed. Characters
+      not among the set of ASCII chars 9 (horizontal tabulation '\t'), 
+      10, 13, (both meaning '\n' newline), 32-126 will have 
+      implementation defined representations.
 
 
 Error cases
@@ -466,4 +473,7 @@ Appendix G - modifications to this document
 - reworded a little the basic set (TODO, check with actual aranym 
   implementation (joy?))
 
+2002-10-28
+- NF_STDERR added, NF_NAME corrected (returns the number of chars before
+  truncating).
 
