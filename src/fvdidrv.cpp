@@ -835,7 +835,7 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 								break;
 							case 3:
 								if ((theWord >> (15-(i&0xf))) & 1)
-									put_dtriplet(destAddress + xoffset + (dy+j)*destPitch, ~ get_word(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, true ) );
+									put_dtriplet(destAddress + xoffset + (dy+j)*destPitch, ~ get_dtriplet(destAddress + xoffset + (dy+j)*destPitch, true ) );
 								break;
 							case 4:
 								if ( !((theWord >> (15-(i&0xf))) & 1) )
@@ -866,7 +866,7 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 								break;
 							case 3:
 								if ((theWord >> (15-(i&0xf))) & 1)
-									put_long(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, ~ get_word(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, true ) );
+									put_long(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, ~ get_long(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, true ) );
 								break;
 							case 4:
 								if ( !((theWord >> (15-(i&0xf))) & 1) )
@@ -887,23 +887,26 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 							theWord = get_word(data + j*pitch + ((i>>3)&0xfffe), true);
 
 						D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
+						uint32 wordIndex = ((dx+i-sx)>>4)*destPlanes;
 						switch( logOp ) {
 							case 1:
 								for( uint16 d=0; d<destPlanes; d++ )
-									put_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch, theWord );
+									put_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, (fgColor ? theWord : ~theWord) );
 								break;
 							case 2:
 								for( uint16 d=0; d<destPlanes; d++ )
-									put_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch,
-											  get_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch, true ) | theWord );
+									put_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
+											  get_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, true ) | (fgColor ? theWord : ~theWord) );
 								break;
 							case 3:
 								for( uint16 d=0; d<destPlanes; d++ )
-									put_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch, ~ get_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch, true ) );
+									put_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
+											  ~ get_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, true ) );
 								break;
 							case 4:
 								for( uint16 d=0; d<destPlanes; d++ )
-									put_word( destAddress + ((((dx>>4)*destPlanes)+destPlanes-d-1)<<1) + (dy+j)*destPitch, ~theWord );
+									put_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
+											  get_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, true ) | (fgColor ? theWord : ~theWord) );
 								break;
 						}
 					}
@@ -1141,14 +1144,14 @@ static void chunkyToBitplane( uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWo
 	for (int l = 0; l < 16; l++) {
 		uint8 data = sdlPixelData[l]; // note: this is about 2000 dryhstones sppedup (the local variable)
 
-		bitplaneWords[0] <<= 1; bitplaneWords[0] |= (data >> 7) & 1;
-		bitplaneWords[1] <<= 1; bitplaneWords[1] |= (data >> 6) & 1;
-		bitplaneWords[2] <<= 1; bitplaneWords[2] |= (data >> 5) & 1;
-		bitplaneWords[3] <<= 1; bitplaneWords[3] |= (data >> 4) & 1;
-		bitplaneWords[4] <<= 1; bitplaneWords[4] |= (data >> 3) & 1;
-		bitplaneWords[5] <<= 1; bitplaneWords[5] |= (data >> 2) & 1;
-		bitplaneWords[6] <<= 1; bitplaneWords[6] |= (data >> 1) & 1;
-		bitplaneWords[7] <<= 1; bitplaneWords[7] |= (data >> 0) & 1;
+		bitplaneWords[0] <<= 1; bitplaneWords[0] |= (data >> 0) & 1;
+		bitplaneWords[1] <<= 1; bitplaneWords[1] |= (data >> 1) & 1;
+		bitplaneWords[2] <<= 1; bitplaneWords[2] |= (data >> 2) & 1;
+		bitplaneWords[3] <<= 1; bitplaneWords[3] |= (data >> 3) & 1;
+		bitplaneWords[4] <<= 1; bitplaneWords[4] |= (data >> 4) & 1;
+		bitplaneWords[5] <<= 1; bitplaneWords[5] |= (data >> 5) & 1;
+		bitplaneWords[6] <<= 1; bitplaneWords[6] |= (data >> 6) & 1;
+		bitplaneWords[7] <<= 1; bitplaneWords[7] |= (data >> 7) & 1;
 	}
 }
 }
@@ -1358,7 +1361,7 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 						uint32 pixelPosition = j*pitch + sx & ~0xf; // div 16
 						chunkyToBitplane( data + pixelPosition, planes, bitplanePixels );
 						for( uint16 d=0; d<planes; d++ )
-							put_word( destAddress + ((((dx>>4)*planes)+planes-d-1)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
+							put_word( destAddress + ((((dx>>4)*planes)+d)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
 
 						for( uint16 i=sx; i<sx+w; i++ ) {
 							uint8 bitNo = i & 0xf;
@@ -1367,7 +1370,7 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 								uint32 pixelPosition = j*pitch + i & ~0xf; // div 16
 								chunkyToBitplane( data + pixelPosition, planes, bitplanePixels );
 								for( uint16 d=0; d<planes; d++ )
-									put_word( destAddress + ((wordIndex+planes-d-1)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
+									put_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
 							}
 						}
 					}
@@ -1944,6 +1947,9 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.32  2002/01/09 19:37:33  standa
+ * The fVDI driver patched to not to pollute the HostScreen class getPaletteColor().
+ *
  * Revision 1.31  2002/01/08 22:40:00  standa
  * The palette fix and a little 8bit driver update.
  *

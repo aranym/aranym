@@ -65,8 +65,12 @@ char b_32[] = {8,  0,  1,  2,  3,  4,  5,  6,  7};
 #endif
 char none[] = {0};
 
-Mode mode[4] = /* FIXME: big and little endian differences. */
-	{{ 8, CHUNKY | CHECK_PREVIOUS,               {r_8,  g_8,  b_8,  none, none, none}, 0, 2, 2, 1},
+Mode mode[7] = /* FIXME: big and little endian differences. */
+	{
+	 { 1, CHUNKY | CHECK_PREVIOUS,               {r_8,  g_8,  b_8,  none, none, none}, 0, 2, 2, 1},
+	 { 2, CHUNKY | CHECK_PREVIOUS,               {r_8,  g_8,  b_8,  none, none, none}, 0, 2, 2, 1},
+	 { 4, CHUNKY | CHECK_PREVIOUS,               {r_8,  g_8,  b_8,  none, none, none}, 0, 2, 2, 1},
+	 { 8, CHUNKY | CHECK_PREVIOUS,               {r_8,  g_8,  b_8,  none, none, none}, 0, 2, 2, 1},
 	 {16, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_16f, g_16f, b_16f, none, none, none}, 0, 2, 2, 1}, /*DEPTH_SUPPORT_565*/
 	 {24, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_32f, g_32f, b_32f, none, none, none}, 0, 2, 2, 1}, /*DEPTH_SUPPORT_RGB*/
 	 {32, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_32, g_32, b_32, none, none, none}, 0, 2, 2, 1}}; /*DEPTH_SUPPORT_ARGB*/
@@ -238,7 +242,18 @@ long set_mode(const char **ptr)
 	depth = (res_info[rage_mode].pll[3] & 3) - 1;
 #endif
 
-	graphics_mode = &mode[depth];
+	
+	switch (resolution.bpp) {
+		case 1:	graphics_mode = &mode[0];
+				break;
+		case 2:	graphics_mode = &mode[1];
+				break;
+		case 4:	graphics_mode = &mode[2];
+				break;
+		default:
+				graphics_mode = &mode[depth+3];
+				break;
+	}
 
 	switch (depth) {
 	case 0:

@@ -1,3 +1,10 @@
+2002/01/13 - STanda
+- fVDI driver patches for expandArea in 24 and 32bit depth.
+  Also the 1, 2, 4 bit depth modes were made available.
+  There are still bugs in the expandArea Mem->Mem. Also blits are word
+  aligned when they shoud not be.
+
+
 2002/01/13 - joy
 - DMAread() added to emul_op interface (used in current EmuTOS)
 - faq.xml updated by Ctirad
