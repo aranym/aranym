@@ -3,7 +3,6 @@ Native features proposal
 
 Laurent Vogel, 8 december 2001
 
-TODO: replace 'feature' by 'function'. 
 
 Introduction
 
@@ -11,30 +10,19 @@ This document describes a general technique to allow interaction between
 software running on a m68k processor inside an emulator, and native
 software.
 
-Definitions
-
 In this document, the emulator is some software running on a native 
 platform, to run software in a 68k platform. This document specifies
 a general technique by which 68k software can interact with special
 native software to achieve special effects not allowed directly on
 the 68k platform.
 
-These special effects are obtained by calling native 'features'. 
-A feature is 
-- a C function
-- a value ???
-in the rest of this document the term 'function' ???
-
-
 To this end two interfaces are specified
 - the 68k interface, describing special illegal opcodes by which the 68k
   code can call the native feature services.
 - the implementation interface, describing how native features can be
   implemented in a partable way independently of the specific emulator.
-- the 'id' is a meaning-less number used to denote a particular
-'feature'
 
-The following diagram illustrates this.
+This is illustrated in the following diagram.
 
 
                     native side                              68k side
@@ -65,11 +53,15 @@ The mandatory specifications is the 68k interface, i.e. the behaviour
 that can be observed from 68k side regardless of how it is implemented in
 the native side.
 
-The optional specifications is the implementation interface, i.e. the 
+One optional specification is the implementation interface, i.e. the 
 services provided by the emulator to implementations of particular native 
-features. THis specification is optional because it is perfectly valid to
+features. This specification is optional because it is perfectly valid to
 implement native features without using this interface (for example for 
 native features very tied to particular emulators).
+
+Other optional specifications may describe Operating System-related
+services on the 68k side to encapsulate the raw 68k interface. A suitable
+additional specification for TOS is provided in annex E.
 
 Optional implementations are
 - a supplied implementation of the generic native feature services;
@@ -79,7 +71,39 @@ These are optional, because it is perfectly valid to provide the same
 functionality using a different implementation.
 
 
+Definitions
+
+The 68k platform here is a virtual machine based on a motorola 680xx 
+processor, where xx is one of 00, 08, 10, 20, 30, 40, 60, or any other 
+processor with the same programming model and instruction set. 
+
+Each native 'feature' is a group of 'functions', each taking arguments and 
+returning a value.
+
+here is a short list of terms that have a special meaning in this document:
+
+  id - non-null feature identifier with bits 0-19 set to zero
+  sub-id - 20-bit function identifier integer 
+  feature - a groupe of functions
+  function - a native function
+  68k side - a virtual machine based on a supported processor
+  supported processor - 68008, 680[012346]0, and compatibles
+  illegal opcode - 68k opcodes used by the native feature framework
+  emulator - the container of both the 68k side and the native side
+  basic set - the mandatory set of features
+
+
 Limitations
+
+Other 68k processors like the ColdFire, whose instruction set is not
+compatible to the instruction set of the supported 68k processors, are
+not taken into account by this document. In the event where some 68k
+code were to be designed to support both the current specification 
+(when running on a supported 68k processor) and unsupported processors,
+that code should not use the native feature opcodes if it can be
+determined that the processor is unsupported, either by first checking 
+the processor type, or by determining in an operating-system-dependant
+way that native features are not available.
 
 This document does not support emulators emulating a multi-processor 
 68k machine (several 68k processors running in parallel).
@@ -95,12 +119,36 @@ native feature services.
 
 Principle
 
+Each native feature has a name uniquely identifying this feature.
+68k code inquires whether the feature is available by asking for the
+'ID' corresponding to the name:
+ 
+  long id = nf_get_id(name);
+
+If the returned ID is zero, then the feature isn't available. Else, 
+functions provided by this feature may be called given this ID, a sub-ID
+identifying the function among those provided by the feature, and 
+the requested function arguments:
+
+  long result_value = nf_call(id+sub_id, the, requested, arguments);
+
+IDs have the following format:
+- bits 20-31 hold a meaningless number internally managed by the emulator;
+- bits 0-19 are set to zero, and serve as a place-holder to contain the
+  sub-ID, a number that is given to the native implementation to allow
+  efficient handling of multiple actual functions all regrouped under
+  the same feature name.
+
+See Annex G for a full example of how to call the basic set.
+
+
 This document describes
 - a small number of 'opcodes' (m68k illegal instructions) used to manage
   native features
 - a 'basic set' of native features that any compliant emulator must
   provide
 - guidance for defining other native features.
+
 
 Compliant emulator
 
@@ -138,15 +186,10 @@ described here:
 
 string encoding are not specified in this document. Generally speaking
 native functions should document this. When a string is to be displayed
-to the user (as opposed as written in a file) tt can be assumed that 
+to the user (as opposed as written in a file) it can be assumed that 
 chars in the range 0x20 to 0x7e are ASCII (ISO-646).
 
-TODO : find a solution for this?
-
-Native functions should not alter registers other than d0. 
-(exception: registers SP and PC may be temporarily modified when 
-calling 68k code directly, but they should be restored at the end, 
-see 'direct call' below)
+Native functions may not alter registers other than d0. 
 
 Naming
 
@@ -159,18 +202,44 @@ The following opcodes are defined:
 
   mnemonic nf_getid (in ARAnyM debugger it's NATFEAT_ID)
   value 0x7300
-  prototype  long nf_get_id(long ret_addr, const char * feature_name);
-  if the feature name passed as argument is an implemented
-  native feature, then return its ID in register D0, else
-  return zero.
+  prototype  long nf_get_id(const char * feature_name);
+  ignore the first long word on the stack; let feature_name be the
+  second long word on the stack. if the null-ended string pointed to
+  by feature_name is the name of an implemented native feature, then 
+  return its ID in register D0, else return zero.
 
   mnemonic nf_call (in ARAnyM debugger it's NATFEAT_CALL)
   value 0x7301
-  prototype   long nf_call(long ret_addr, long id, ...);
-  calls the feature defined by the id, passing the rest of the
-  stack arguments as parameters. returns in D0 the value returned by
-  the feature. If the feature returns a 32bit value, then D0 
-  contains this value; else the value in D0 is unspecified (? (joy))
+  prototype   long nf_call(long id, ...);
+  ignore the first long word on the stack; let us call id the
+  second long word on the stack; if id is not a valid native function
+  id then the result is unspecified; else, call the function defined 
+  by the id (optionnally containing a non-null sub-id), passing the 
+  rest of the stack arguments (i.e. starting at address stack+8) as 
+  parameters. 
+  returns in D0 the 32bit value returned by the fonction. If the 
+  function is documented as not returning any meaningful value,
+  (i.e. declared as void function(...)) then the value in D0 is 
+  unspecified.
+
+Note: both these opcodes ignore the first long word on the stack. This
+is done so that these opcodes can be encapsulated into small assembler 
+routines that are declared with the same prototype as indicated
+above for each opcode. For instance, here is an actual declaration
+and code for nf_get_id:
+
+  extern long nf_get_id(const char * feature_name);
+
+        .global _nf_get_id:
+  _nf_get_id:
+        dc.w 0x7300
+        rts
+
+and here is another implementation of the same:
+
+  long nf_get_id_opcodes = 0x73004e75;
+  #define nf_get_id ((long (*)(const char *))&nf_get_id_opcodes)
+
 
 These opcodes are defined both for supervisor mode (Interrupt or
 Master modes on 680x0) and normal user mode. Each NatFeat has a bool
@@ -186,37 +255,52 @@ DISCUSSION:
 
 Feature documentation
 
-feature definitions shall include a text containing
-- the feature name
-- date, version, status ??
+feature documentation shall provide the following information:
+- the feature name, a case-insensitive string of printable ASCII
+  characters.
+- date, version, status ???
 - the features that are required for this one to work
-- a description of the way the feature works, including
-  a description of return values and error cases
+- the list of functions provided by this feature, and for each function:
+  - its sub-id
+  - a description of the way the feature works, including a function
+    prototype and a description of return values and error cases
 
 Optionally the feature text can include an implementation,
 that is, source code running inside the emulator. In this case
 it is recommended that it be given with a licence allowing it to
 be included in most emulators, including closed-source ones
 (licence like LGPL); also it is best if such sample implementation
-is written in C, using a the implementation interface specified in
-this document.
+is written in one of the proposed implementation interfaces.
 
 
-- "FN_NAME" :
+Basic set features
+
+- "NF_NAME" :
     void getName(char *buffer, unsigned long size)
       subID = 0
-      fills buffer with emulator name with max 'size' bytes
+      fills 'buffer' with a null-terminated string representing the
+      emulator name. At most 'size' bytes will be written in the
+      buffer (which means that the string will be truncated if it
+      contains more than size - 1 characters).
+      the string should contain only printable ASCII characters
+      (ASCII 32 to 126 inclusive).
+ 
+> alternate solution:
+>   unsigned long getName(char *buffer, unsigned long size)
+>   
+> returns the length of the string before truncation
 
     void getFullName(char *buffer, unsigned long size)
       subID = 1
-      fills buffer with emulator name plus version (or anything else
-      that might be printed together with the emu name)
+      similar to getName, but the string is the emulator name plus 
+      its version (and anything else that might be printed together 
+      with the emulator name)
 
-- "FN_VERSION"
+- "NF_VERSION"
     long getVersion(void)
-      returns hex encoded version - upper word = major number, lower
-      word = minor number. Example: version 1.12 = $0001000C
-
+      returns the version of the native feature framework, hex encoded
+      (upper word = major number, lower word = minor number). This document
+      describes native features version 1.0 (hex encoding 0x00010000).
 
 
 Error cases
@@ -275,32 +359,22 @@ DISCUSSION:
 
 Calling 68k code from native side.
 
-[section removed to the attic until it is better understood]
-
+There is no provision in this document to allow native features
+to call 68k subroutines. Therefore the control flow must reside
+entirely on the 68k side. Feature designers should decompose the
+native functions into small functions that can be interspersed, 
+on the 68k side, by calls to the required subroutines. 
 
 
 Appendix A - TODO list
 
-- character set of feature names restricted to 7bit printable ASCII,
-  or even C-like identifiers.
-- OS support for this. the _EMU cookie? ...
 - sample implementation for some features
-- add notes explaining the rationale, and the use of opcodes. 
-- define precisely the 'basic set'.
 
 - add a paragraph encouraging feature designers to think!
 
 - add a paragraph encouraging native features using interrupts
   to be as independent from other features as possible, to
   avoid deadlock
-
-- perhaps for direct call it could be best to add a fifth
-  opcode to do 'native rts', instead of handcrafting the
-  return code on the stack. this opcode would pop a 'context
-  identifier' from the stack. Problem is, how does the
-  'context identifier' pushed by the first native feature
-  indicate to the 'native rts' opcode how to call another
-  native feature to get the result ?
 
 - also for direct call it could help to add a binding in
   appendix B.
@@ -327,25 +401,69 @@ Martin Doering
 
 TODO: complete this list.
 
+Appendix E - TOS glue : the __NF cookie
 
-Appendix E - modifications to this document
+TOS-compatible operating systems may define a cookie named '__NF',
+pointing to the following data:
+
+  struct cookie__NF_data {
+    long magic;  /* equals 0x20021021 */
+    long (*getid)(const char *name);
+    long (*nfcall)(long id, ...);
+  };
+
+this cookie serves two purposes:
+a) report that native features are available
+b) provide pointers to functions encapsulating the illegal opcodes.
+
+It is intended to be used as follow:
+- 68k code that do not intend to ever run on unsupported processors is
+  not obliged to check for this cookie, and may instead use the 
+  illegal opcodes directly; However it may check for the cookie, and
+  if the cookie is not present it may still try the illegal opcodes.
+  if the cookie is present it may use either the supplied function
+  pointers or the illegal opcodes.
+- 68k code that must be able to run on a unsupported processor must
+  check for this cookie. In any case the illegal opcodes should NOT be
+  used directly. If the cookie is not present, then no native features
+  are available. If the cookie is present, then native features are 
+  available, throught the use of the provided function pointers in the 
+  cookie.
+
+
+Appendix F - a small example
+
+see file ../atari_example.c ???
+
+
+Appendix G - modifications to this document
 
 
 2001-12-08 
-  'native feature proposal' posted to aranym mailing list.
+- 'native feature proposal' posted to aranym mailing list.
 2001-12-09
-  erratum about an interrupt manager (not integrated in this document)
+- erratum about an interrupt manager (not integrated in this document)
 2001-12
-  discussions on the aranym mailing list; moving from 16 to 32bit ints,
+- discussions on the aranym mailing list; moving from 16 to 32bit ints,
   question about string charsets, replaced 'host side' by '68k side'.
 2002-03-02
-  rewriting of the document, put some things in attic.txt,
-  rewrote the beginning of the document, added an overall diagram.
-  put the implementation interface in a separate nf.h
+- rewriting of the document, put some things in attic.txt,
+- rewrote the beginning of the document, added an overall diagram.
+- put the implementation interface in a separate nf.h
 
 2002-08-11 (joy)
-  corrected the actual nf calls according to what is implemented in ARAnyM.
-  NatFeats are usermode callable now.
-  Value-only features removed.
-  Basic set of features replaced with list of current basic NF implemented
+- corrected the actual nf calls according to what is implemented in ARAnyM.
+- NatFeats are usermode callable now.
+- Value-only features removed.
+- Basic set of features replaced with list of current basic NF implemented
   in ARAnyM.
+
+2002-10-22
+- enumerated supported processors, natfeat usage on unsupported processor
+  need an OS-specific way (i.e. __NF cookie)
+- removed direct call; opcodes better explained (ignored return address)
+- told about sub-id, distinguished between 'features' and 'functions'
+- reworded a little the basic set (TODO, check with actual aranym 
+  implementation (joy?))
+
+
