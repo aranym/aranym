@@ -1,5 +1,13 @@
 2003/01/09 - joy
-- Didier updated audio driver to use NatFeats when available
+- fixed _SND cookie value: now it contains just '4' to indicate that no
+  hardware is available except of XBIOS functions. If DSP emulation is
+  compiled in and active the _SND cookie contains %00001100 (according
+  to recent info in mailing list the 3rd bit means DSP).
+
+- improved the patch of TOS 4.04 again - this time added "__NF" cookie
+  (untested yet) and also a nice example of how cool the boot logo may be.
+
+- Didier updated audio driver to use NatFeats when available...
 
 
 2002/12/29 - joy
