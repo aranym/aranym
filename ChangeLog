@@ -1,6 +1,6 @@
 2002/08/12 - joy
-- nf_call changed to return a signed number. Negative numbers are error codes.
-- nf_call returns -32 (E_INVFN) for invalid NatFeat ID
+- nf_call changed to return a signed 32-bit number (type 'long' in C lang.)
+- nf_call for invalid NatFeat ID returns an undefined value now.
 
 
 2002/08/11 - joy
