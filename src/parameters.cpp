@@ -2,8 +2,8 @@
 #include "sysdeps.h"
 #include "config.h"
 #include "parameters.h"
-#include "emu_bochs.h"	// for BX_INSERTED define
 #include "tools.h"		// for safe_strncpy()
+#include "emu_bochs.h"	// for BX_INSERTED define
 
 #define DEBUG 0
 #include "debug.h"
@@ -13,6 +13,7 @@
 #else
 # include <stdlib.h>
 #endif
+
 
 static struct option const long_options[] =
 {
