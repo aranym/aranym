@@ -1,3 +1,11 @@
+2003/12/09 - STanda
+  the change from (2003/10/02):
+  " Fxattr() now returns the (uint32)MAPVOIDPTO32( fc->index ) instead
+    of the host OS' statBuf.st_ino. This is a problem IMO due to that
+    the fc->index might change on releaseCookie()/dupCookie(). Proposals?"
+  proved wrong. Rolling it back. 
+
+
 2003/11/28 - joy
 - extfs.cpp: made sure the drives[].rootPaths are really initialized to
   a defined value. Also, I don't like functions in header files so moved
