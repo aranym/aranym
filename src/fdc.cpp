@@ -80,7 +80,13 @@ bool insert_floppy()
 
 	D(bug("Floppy inserted %s", rw ? "read-write" : "read-only"));
 	drive_fd[0] = status;
+	getFDC()->changeFloppy();
 	return true;
+}
+
+bool is_floppy_inserted()
+{
+	return (drive_fd[0] >= 0);
 }
 
 void init_fdc(void)
