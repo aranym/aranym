@@ -75,16 +75,6 @@ typedef struct {
 
 extern bx_options_t bx_options;
 
-#define BX_DISK_CONFIG(a)	struct Config_Tag a ## _configs[] = {	\
-	{ "Present", Boolean_Tag, &bx_options. ## a ## .present},	\
-	{ "Path", String_Tag, &bx_options. ## a ## .path, sizeof(bx_options. ## a ## .path)},	\
-	{ "Cylinders", Long_Tag, &bx_options. ## a ## .cylinders},	\
-	{ "Heads", Long_Tag, &bx_options. ## a ## .heads},	\
-	{ "SectorsPerTrack", Long_Tag, &bx_options. ## a ## .spt},	\
-	{ "ByteSwap", Boolean_Tag, &bx_options. ## a ## .byteswap},	\
-	{ NULL , Error_Tag, NULL }	\
-}	\
-
 extern uint8 start_debug;		// starts debugger
 extern bool fullscreen;		// boot in fullscreen
 extern int8 boot_color_depth;		// boot color depth
