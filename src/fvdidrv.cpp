@@ -318,6 +318,7 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
 	hostScreen.unlock();
 
+	D(bug("fVDI: result = %lx", result));
 	return result;
 }
 
@@ -460,7 +461,7 @@ void FVDIDriver::getHwColor(uint16 index, uint32 red, uint32 green, uint32 blue,
 		WriteInt32( hw_value, index );
 	}
 
-	D(bug("fVDI: getHwColor %04d,%04d,%04d - %lx", red, green, blue, ReadInt32( hw_value )));
+	D(bug("fVDI: getHwColor (%03d) %04d,%04d,%04d - %lx", index, red, green, blue, ReadInt32( hw_value )));
 }
 
 /**
@@ -1204,8 +1205,8 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 
 			D(bug("fVDI: blitArea M->M"));
 
-			memptr srcData;
-			memptr destData;
+			uint32 srcData;
+			uint32 destData;
 
 			switch(planes) {
 			case 16:
@@ -1255,8 +1256,8 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 
 		D(bug("fVDI: M->S: address %x, pitch %d, planes %d", data, pitch, planes));
 
-		memptr srcData;
-		memptr destData;
+		uint32 srcData;
+		uint32 destData;
 
 		switch(planes) {
 		case 16:
@@ -1264,10 +1265,8 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 				for(int32 j = 0; j < h; j++)
 					for(int32 i = sx; i < sx + w; i++) {
 						srcData = ReadInt16(data + j * pitch + i * 2);
-						//uint16 destData = ReadInt16(videoRam + (dx + i - sx) * 2 + (dy + j) * screenPitch); // shadow?
 						destData = hostScreen.getPixel(dx + i - sx, dy + j);
 						applyBlitLogOperation(logOp, destData, srcData);
-						//WriteInt16(videoRam + (dx + i - sx) * 2 + (dy + j) * screenPitch, destData); // shadow?
 						hostScreen.putPixel(dx + i - sx, dy + j, destData);
 					}
 			} else {
@@ -1328,7 +1327,8 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 				uint8 color[16];
 
 				D(bug("fVDI: blitArea M->S: bitplaneToCunky conversion"));
-				uint16 *dataHost = (uint16*)Atari2HostAddr(data); // FIXME: Hack! Should use the get_X() methods
+				uint16 *dataHost = (uint16*)Atari2HostAddr(data);
+				// FIXME: Hack! Should use the get_X() methods above
 
 				for(int32 j = 0; j < h; j++) {
 					uint32 wordIndex = (j * pitch >> 1) + (sx >> 4) * planes;
@@ -1371,15 +1371,14 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 
 		D(bug("fVDI: S->M: address %x, pitch %d, planes %d", destAddress, destPitch, planes));
 
-		memptr srcData;
-		memptr destData;
+		uint32 srcData;
+		uint32 destData;
 
 		switch(planes) {
 		case 16:
 			for(int32 j = 0; j < h; j++)
 				for(int32 i = sx; i < sx + w; i++) {
 					uint32 offset = (dx + i - sx) * 2 + (dy + j) * destPitch;
-					//uint16 srcData = ReadInt16(data + i * 2 + j * pitch ); // from the shadow?
 					srcData = hostScreen.getPixel(i, sy + j);
 					destData = ReadInt16(destAddress + offset);
 					applyBlitLogOperation(logOp, destData, srcData);
@@ -1435,25 +1434,26 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 			}
 		}
 
+		D(bug("fVDI: blitArea S->M: renderEnd"));
 		hostScreen.renderEnd();
+		D(bug("fVDI: blitArea S->M: return 1"));
 		return 1;
 	}
 
 	D(bug("fVDI: %s ", "blitArea - S->S!"));
 
-	// if (!hostScreen.renderBegin()) // the surface must _not_ be locked for blitArea (SDL_BlitSurface)
-	//      return 1;
 
-	// FIXME: There are no logical operation implementation ATM
-	// for S->S blits... -> SDL does the whole thing at once
-	if (logOp == 3)
+	if (logOp == 3) {
+	        // for S->S blits... -> SDL does the whole thing at once
+
+		// if (!hostScreen.renderBegin()) // the surface must _not_ be locked for blitArea (SDL_BlitSurface)
 		hostScreen.blitArea(sx, sy, dx, dy, w, h);
-	else {
+	} else {
 		if (!hostScreen.renderBegin())
 			return 1;
 
-		memptr srcData;
-		memptr destData;
+		uint32 srcData;
+		uint32 destData;
 
 		for(int32 j = 0; j < h; j++)
 			for(int32 i = 0; i < w; i++) {
@@ -2010,6 +2010,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.53  2004/01/05 10:05:19  standa
+ * Palette handling reworked. Old non-NF dispatch removed.
+ *
  * Revision 1.52  2003/11/25 22:56:49  joy
  * part of a major hardware dispatcher rewrite
  *
