@@ -17,35 +17,33 @@
 #include "gfxprimitives.h"
 
 
-#if 0
-uint32 SelectVideoMode()
+/*
+void SelectVideoMode()
 {
 	SDL_Rect **modes;
 	uint32 i;
 
-	/* Get available fullscreen/hardware modes */
+	// Get available fullscreen/hardware modes
 	modes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_HWSURFACE);
 
-	/* Check is there are any modes available */
+	// Check is there are any modes available
 	if (modes == (SDL_Rect **) 0) {
 		printf("No modes available!\n");
 		exit(-1);
 	}
 
-	/* Check if or resolution is restricted */
+	// Check if or resolution is restricted
 	if (modes == (SDL_Rect **) - 1) {
 		printf("All resolutions available.\n");
 	}
 	else {
-		/* Print valid modes */
+		// Print valid modes
 		printf("Available Modes\n");
 		for (i = 0; modes[i]; ++i)
 			printf("  %d x %d\n", modes[i]->w, modes[i]->h);
 	}
-
-	return 0;
 }
-#endif
+*/
 
 
 void HostScreen::setWindowSize(	uint32 width, uint32 height )
@@ -121,6 +119,9 @@ void  HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *patt
 
 /*
  * $Log$
+ * Revision 1.6  2001/09/04 13:51:45  joy
+ * debug disabled
+ *
  * Revision 1.5  2001/08/30 14:04:59  standa
  * The fVDI driver. mouse_draw implemented. Partial pattern fill support.
  * Still buggy.
