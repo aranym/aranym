@@ -105,16 +105,10 @@ int VIDEL::getScreenHeight()
 void VIDEL::updateColors()
 {
 	if (!host_colors_uptodate) {
-		// Prepare the native format color values
-		int vdi2pix[256] =
-			{ 0, 2, 3, 6, 4, 7, 5, 8, 9, 10, 11, 14, 12, 15, 13, 1 };
-		for (int i = 16; i < 256; i++)
-			vdi2pix[i] = i;
-		
 		// map the colortable into the correct pixel format
 #define TOS_COLORS(i)	handleRead(0xff9800 + (i))
 		for (int i = 0; i < 256; i++) {
-			int offset = i /*vdi2pix[i]*/ << 2;
+			int offset = i << 2;
 			hostScreen.setPaletteColor( i,
 										TOS_COLORS(offset),
 										TOS_COLORS(offset + 1),
@@ -247,6 +241,10 @@ void VIDEL::renderScreen()
 
 /*
  * $Log$
+ * Revision 1.15  2001/06/18 13:21:55  standa
+ * Several template.cpp like comments were added.
+ * HostScreen SDL encapsulation class.
+ *
  * Revision 1.14  2001/06/18 08:15:23  standa
  * lockScreen() moved to the very begining of the renderScreen() method.
  * unlockScreen() call added before updateScreen() call (again ;()
