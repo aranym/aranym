@@ -20,12 +20,14 @@
 #include "cpu_emulation.h"
 
 static int debugger_active = 0;
-static uaecptr skipaddr;
 static int do_skip;
 int debugging = 0;
 int irqindebug = false;
 
+#ifndef NEWDEBUG
+static uaecptr skipaddr;
 static char old_debug_cmd[80];
+#endif
 
 // MJ static FILE *logfile;
 
@@ -60,6 +62,7 @@ static void ignore_ws (char **c)
     while (**c && isspace(**c)) (*c)++;
 }
 
+#ifndef NEWDEBUG
 static uae_u32 readhex (char **c)
 {
     uae_u32 val = 0;
@@ -79,6 +82,7 @@ static uae_u32 readhex (char **c)
     }
     return val;
 }
+#endif
 
 static char next_char( char **c)
 {
@@ -92,6 +96,7 @@ static int more_params (char **c)
     return (**c) != 0;
 }
 
+#ifndef NEWDEBUG
 static void dumpmem (uaecptr addr, uaecptr *nxmem, int lines)
 {
     broken_in = 0;
@@ -147,6 +152,7 @@ static void writeintomem (char **c)
 static int trace_same_insn_count;
 static uae_u8 trace_insn_copy[10];
 static struct regstruct trace_prev_regs;
+#endif
 
 void showBackTrace(int count, bool showLast = true)
 {

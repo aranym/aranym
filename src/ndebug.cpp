@@ -462,8 +462,8 @@ void ndebug::writeintomem(FILE *f, char **c) {
 	}
 }
 
-void ndebug::backtrace(FILE *f, unsigned int lines) {
-	uaecptr st = m68k_areg(regs,7);
+void ndebug::backtrace(FILE *f, volatile unsigned int lines) {
+	volatile uaecptr st = m68k_areg(regs,7);
 	jmp_buf excep_env_old;
 	excep_env_old = excep_env;
 setjmpagain:
@@ -897,14 +897,14 @@ void ndebug::nexit() {
 	ioctl(0, TCSETAF, &savetty);
 }
 
-void ndebug::dumpmem(FILE *f, uaecptr addr, uaecptr * nxmem, unsigned int lns)
+void ndebug::dumpmem(FILE *f, volatile uaecptr addr, uaecptr * nxmem, volatile unsigned int lns)
 {
 	jmp_buf excep_env_old;
 	excep_env_old = excep_env;
 	uaecptr a;
 	broken_in = 0;
 	for (; lns-- && !broken_in;) {
-		int i;
+		volatile int i;
 		fprintf(f, "%08lx: \n", (unsigned long)addr);
 		for (i = 0; i < 16; i++) {
 setjmpagain:
@@ -1072,6 +1072,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.7  2001/11/21 13:29:51  milan
+ * cleanning & portability
+ *
  * Revision 1.6  2001/11/06 20:36:54  milan
  * MMU's corrections
  *

@@ -388,9 +388,32 @@ AC_CACHE_CHECK("for vasprintf",
 AC_TRANSLATE_DEFINE(HAVE_GNU_SOURCE, "$ac_cv_have_vasprintf")
 if [[ "x$ac_cv_have_vasprintf" = "xyes" ]]; then
   DEFINES="$DEFINES -D_GNU_SOURCE"
-else
-  SYSSRCS="$SYSSRCS vasprintf.c"
 fi
+dnl else SYSSRCS="$SYSSRCS vasprintf.c"
+
+dnl Check if we have getopt_long
+AC_CACHE_CHECK("for getopt_long",
+  ac_cv_have_getopt_long, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_COMPILE([
+    #define _GNU_SOURCE
+    #include <unistd.h>
+    #include <getopt.h>
+  ], [
+    getopt_long(0, NULL, NULL, NULL, NULL);
+  ],
+  [ac_cv_have_getopt_long=yes],
+  [ac_cv_have_getopt_long=no]
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(HAVE_GETOPT_H, "$ac_cv_have_getopt_long")
+
+dnl if [[ "x$ac_cv_have_getopt_long" = "xno" ]]; then
+dnl   SYSSRCS="$SYSSRCS getopt.c"
+dnl fi
 
 dnl Check if we can mmap 0x2000 bytes from 0x0000
 AC_CACHE_CHECK("whether we can map Low Memory area 0x0000-0x2000",

@@ -68,6 +68,9 @@
 /* Define if you want to use direct access to host's fs */
 #undef EXTFS_SUPPORT
 
+/* Define if <getopt.h> knows getopt_long */
+#undef HAVE_GETOPT_H
+
 
 /* Leave that blank line there!!  Autoheader needs it.
    If you're adding to this file, keep in mind:

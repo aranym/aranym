@@ -3055,13 +3055,13 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 }
 
 #ifdef NEWDEBUG
-void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, unsigned int cnt)
+void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, volatile unsigned int cnt)
 {
     char *buffer = (char *)malloc(80 * sizeof(char));
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
     strcpy(buffer,"");
-    uaecptr newpc = 0;
+    volatile uaecptr newpc = 0;
     m68kpc_offset = addr - m68k_getpc ();
     if (cnt == 0) {
 	int opwords;
