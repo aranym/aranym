@@ -2833,10 +2833,11 @@ static int do_specialties (void)
 	}
     }
 
-#if 1
+#if 0
     // check for MFP interrupts
     // 5: TimerC
     // 6: ACIA received data
+/*
 	static int mfpFlags[8] = {0, 0, 0, 0, 0, SPCFLAG_MFP_TIMERC, SPCFLAG_MFP_ACIA, 0};
 	static int SPCFLAG_MFP_ALL = SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_ACIA;
 	if (regs.spcflags & SPCFLAG_MFP_ALL) {
@@ -2854,8 +2855,9 @@ static int do_specialties (void)
 			}
 		}
 	}
+*/
 #else
-/* old code, maybe was faster but not expandable
+/* old code, maybe was faster but not expandable */
 			int mfpInt = 6;
 			int mfpFlag = SPCFLAG_MFP_ACIA;
 			if ((regs.spcflags & mfpFlag) && (6 > regs.intmask)) {
@@ -2877,10 +2879,10 @@ static int do_specialties (void)
 					put_byte_direct(0xfffa11, value | mfpMask);
 	    			MFPInterrupt(mfpInt);
 					regs.stopped = 0;
-					regs.spcflags &= ~mfpFlag;
+					if (--timerCinterrupts <= 0)
+						regs.spcflags &= ~mfpFlag;
 				}
 			}
-*/
 #endif
 /*  
 // do not understand the INT vs DOINT stuff so I disabled it (joy)
@@ -2895,9 +2897,11 @@ static int do_specialties (void)
     return 0;
 }
 
-long maxInnerCounter = 1000;	// default value good for 500+ MHz machines
+#ifndef USE_TIMERS
+long maxInnerCounter = 10000;	// default value good for 1GHz Athlon machines
 static long innerCounter = 1;
-extern void incrementVirtualTimer(void);
+extern void ivoke200HzInterrupt(void);	// in main.cpp
+#endif /* !USE_TIMERS */
 
 static void m68k_run_1 (void)
 {
@@ -2934,7 +2938,7 @@ static void m68k_run_1 (void)
 	{
 	    if (--innerCounter == 0) {
 		innerCounter = maxInnerCounter;
-		incrementVirtualTimer();
+		invoke200HzInterrupt();
 	    }
 	}
 #endif

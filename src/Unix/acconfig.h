@@ -41,6 +41,9 @@
 /* Define if using full MMU */
 #undef FULLMMU
 
+/* Define if you want Timer C to be emulated using SDL Timers */
+#undef USE_TIMERS
+
 /* Define if you want direct truecolor output */
 #undef DIRECT_TRUECOLOR
 

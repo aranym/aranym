@@ -74,11 +74,11 @@ int CPUType;
 bool CPUIs68060;
 int FPUType;
 
-void setVirtualTimer(void);		// basilisk_glue
-
+// Timer stuff
+static long lastTicks;
+#ifdef USE_TIMERS
 SDL_TimerID my_timer_id;
-
-extern long maxInnerCounter;	// hack to edit newcpu.cpp's counter refresh
+#endif
 
 ////////////////////////////////////////////////
 // Input stuff (keyboard and mouse) begins here
@@ -658,15 +658,27 @@ static void check_event(void)
 //////////////////////////////////////////////
 
 /*
- * the following function is called from the CPU emulation
- * each 5 milliseconds. The interrupt is "buffered".
+ * the following function is called from the CPU emulation anytime
+ * or it is called from the timer interrupt * approx. each 10 milliseconds.
  */
 void invoke200HzInterrupt()
 {
 	static int VBL_counter = 0;
 	static int refreshCounter = 0;
 
-	mfp.IRQ(5);			// TimerC interrupt 
+	if (!debugging || irqindebug) {
+		/* syncing to 200 Hz */
+		long newTicks = SDL_GetTicks();
+		int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
+		if (count == 0)
+			return;
+		mfp.IRQ(5, count);
+#ifdef PUVODNI_ALE_SPATNY_SYNC
+		lastTicks = newTicks;
+#else
+		lastTicks += (count * 5);
+#endif /* PUVODNI_ALE_SPATNY_SYNC */
+	}
 
 	if (++VBL_counter == 4) {	// divided by 4 => 50 Hz VBL
 		VBL_counter = 0;
@@ -680,6 +692,17 @@ void invoke200HzInterrupt()
 		}
 	}
 }
+
+#ifdef USE_TIMERS
+/*
+ * my_callback_function() is called every 10 miliseconds (~ 100 Hz)
+ */
+Uint32 my_callback_function(Uint32 interval, void *param)
+{
+	invoke200HzInterrupt();
+	return 10;					// come back in 10 milliseconds
+}
+#endif /* USE_TIMERS */
 
 /*
  * Load, check and patch the TOS 4.04 ROM file
@@ -815,7 +838,12 @@ bool InitAll(void)
 	if (! InitOS())
 		return false;
 
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+#ifdef USE_TIMERS
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
+#else
+	if (SDL_Init(SDL_INIT_VIDEO /*| SDL_INIT_TIMER */ ) != 0)
+#endif
+	{
 		ErrorAlert("SDL initialization failed.");
 		return false;
 	} else {
@@ -832,8 +860,6 @@ bool InitAll(void)
 
 	CPUType = 4;
 	FPUType = 1;
-
-	maxInnerCounter = 10000;	// finetune this! Slower machines require lower number
 
         // Setting "SP & PC"
 	for (int i = 0; i < 8; i++) RAMBaseHost[i] = ROMBaseHost[i];
@@ -870,7 +896,11 @@ bool InitAll(void)
 	hideMouse(true);
 
 	// timer init
-	setVirtualTimer();
+	lastTicks = SDL_GetTicks();
+#ifdef USE_TIMERS
+	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
+	printf("Using timers\n");
+#endif
 	
 #if ENABLE_MON
 	// Initialize mon
@@ -889,6 +919,11 @@ bool InitAll(void)
 
 void ExitAll(void)
 {
+	// Exit Time Manager
+#if USE_TIMERS
+	SDL_RemoveTimer(my_timer_id);
+#endif
+
 #if ENABLE_MON
 	// Deinitialize mon
 	mon_exit();
@@ -902,6 +937,13 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.49  2001/12/11 21:08:25  standa
+ * The SDL_WarpMouse() was causing Floating Point error on fbcon.
+ * It was moved behind the HWInit() to be called after SDL_SetVideoMode (correct
+ * place to call it).
+ * The fullscreen detection was added for "fb" drivers to not to cause mouse cursor
+ * redraw problems when using Clocky(TM) and touching the screen edges.
+ *
  * Revision 1.48  2001/12/07 17:29:13  milan
  * e00000 -> 0 back in InitAll
  *

@@ -233,14 +233,14 @@ static const int HW = 0xfffa00;
 		};
 	}
 
-void MFP::IRQ(int no) {
+void MFP::IRQ(int no, int count = 1) {
 	switch(no) {
 		// printer BUSY interrupt
 		case 0:	break;
 
 		// TimerC 200 Hz interrupt
 		case 5: C.reset();
-				TriggerMFP(5);
+				TriggerMFP(5, count);
 				break;
 
 		// ACIA received data interrupt
