@@ -8,6 +8,8 @@
 2002/01/08 - joy
 - the config file format and location has changed (now at $HOME/.aranym/config)
 - most global config variables moved to bx_options struct
+- NVRAM (formerly CMOS) file is stored in the aranym config folder as well now.
+- fixed many bugs in the parameters.cpp code. It should be quite usable now.
 
 
 2002/01/07 - joy [ ARANYM_0_0_17 tag ]
