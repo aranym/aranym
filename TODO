@@ -3,9 +3,8 @@ Before 0.8.0 final release:
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
 - fix wrong drive mapping under cygwin
-- fix HostFS bug: destination window of a file operation in Thing is not
-  updated
-- check the JIT - when enabled XControl on FreeMiNT crashes on my machine
+- check the JIT - when enabled XControl on FreeMiNT crashes on my machine.
+  Or is it 68040 copyback issue under FreeMiNT 1.16alpha?
 
 Roadmap:
 --------
