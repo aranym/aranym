@@ -715,6 +715,7 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, ide_swap ? diskd_configs : diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, ide_swap ? diskc_configs : diskd_configs, "[IDE1]", true);
 
+/*
 	process_config(f, rcfile, disk0_configs, "[DISK0]", true);
 	process_config(f, rcfile, disk1_configs, "[DISK1]", true);
 	process_config(f, rcfile, disk2_configs, "[DISK2]", true);
@@ -723,6 +724,7 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, disk5_configs, "[DISK5]", true);
 	process_config(f, rcfile, disk6_configs, "[DISK6]", true);
 	process_config(f, rcfile, disk7_configs, "[DISK7]", true);
+*/
 
 	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
