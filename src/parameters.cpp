@@ -550,29 +550,27 @@ int process_cmdline(int argc, char **argv)
 							 "r:" /* resolution */
 							 "m:" /* attached monitor */
 							 "d:" /* filesystem assignment */
-							 "c:" /* small hack*/
 							 "s"  /* save config file */
-							 "S"  /* IDE swap */
+
+							 "c:" /* path to config file */
+							 "S"  /* swap IDE drives */
 							 "h"  /* help */
 							 "V"  /* version */,
 							 long_options, (int *) 0)) != EOF) {
 		switch (c) {
 			case 'V':
-				printf ("%s\n", VERSION_STRING);
-				exit (0);
-
 			case 'h':
-				usage (0);
-				exit(0);
+			case 'c':
+			case 'S':
+				/* processed in early_cmdline_check already */
+				break;
+
 	
 #ifdef DEBUGGER
 			case 'D':
 				bx_options.startup.debugger = true;
 				break;
 #endif
-
-			case 'c':
-				break;
 
 			case 'e':
 				boot_emutos = true;
@@ -633,10 +631,6 @@ int process_cmdline(int argc, char **argv)
 
 			case 's':
 				saveConfigFile = true;
-				break;
-
-			case 'S':
-				ide_swap = true;	/* this is just a cosmetic code to make get_opt() happy - in fact it's pre-set in the early_cmdline_check */
 				break;
 
 #ifndef FixedSizeFastRAM
