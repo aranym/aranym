@@ -129,6 +129,41 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 #endif
 
+		// VT52 Xconout
+		case M68K_EMUL_OP_PUT_SCRAP:
+			{
+				static bool Esc = false;
+				static bool inverse = false;
+				static int params = 0;
+				
+				uae_u8 value = r->d[1];
+				D(bug("XConout printing '%c' (%d/$%x)", value, value, value));
+				if (Esc) {
+					if (value == 'p')
+						inverse = true;
+					if (value == 'q')
+						inverse = false;
+					else if (value == 'K')
+						; /* delete to end of line (I guess) */
+					else if (value == 'Y')
+						params = 2;
+					Esc = false;
+				}
+				else {
+					if (params > 0)
+						params--;
+					else {
+						if (value == 27)
+							Esc = true;
+						else {
+							fprintf(stdout, "%c", (value == 32 && inverse) ? '_' : value);
+							fflush(stdout);
+						}
+					}
+				}
+			}
+			break;
+
 		case M68K_EMUL_OP_DEBUGUTIL:	// for EmuTOS - code 0x7135
 //			printf("DebugUtil d0=%08lx  a5=%08lx\n", r->d[0], r->a[5]);
 //			r->d[0] = DebugUtil(r->d[0]);

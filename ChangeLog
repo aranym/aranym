@@ -1,6 +1,8 @@
 2002/01/03 - joy
 - Blitter now calls Do_Blit() on reading status register only. Doesn't seem
   to fix the errors during Bconout, though.
+- Xconout redirected to host console using poor VT52 emulation.
+
 
 2002/01/03 - STanda
 - fVDI driver: the resolution is changed during the virtual workstation
