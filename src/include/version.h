@@ -22,9 +22,9 @@
 #define VERSION_H
 
 const int VERSION_MAJOR = 0;
-const int VERSION_MINOR = 2;
-const int VERSION_SUBMINOR = 1;
+const int VERSION_MINOR = 3;
+const int VERSION_SUBMINOR = 0;
 
-#define VERSION_STRING "ARAnyM 0.2.1b1"
+#define VERSION_STRING "ARAnyM 0.3.0b1"
 
 #endif
