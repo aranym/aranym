@@ -107,16 +107,6 @@ int main(int argc, char **argv)
 	// remember program name
 	program_name = argv[0];
 
-	// remember path to program
-	strcpy(program_home, program_name);
-	char *ptr = strrchr(program_home, '/');
-	if (ptr != NULL)
-		ptr[0] = '\0';	// strip out filename and separator from the path
-	else if ((ptr = strrchr(program_home, DIRSEPARATOR[0])) != NULL)
-		ptr[0] = '\0';	// strip out filename and separator from the path
-	else
-		program_home[0] = '\0';
-
 	// parse command line switches
 	if (!decode_switches(stderr, argc, argv))
 		exit(-1);
@@ -328,6 +318,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.80.2.2  2003/04/01 21:44:23  joy
+ * little fixes for ATACK
+ *
  * Revision 1.80.2.1  2003/03/27 21:23:59  joy
  * handling paths to aranym files improved
  *

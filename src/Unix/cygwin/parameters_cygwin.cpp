@@ -1,6 +1,14 @@
 /* MJ 2001 */
 
+#include "sysdeps.h"
+#include "tools.h"
 #include "parameters.h"
+
+#ifdef HAVE_NEW_HEADERS
+# include <cstdlib>
+#else
+# include <stdlib.h>
+#endif
 
 #define ARADATA		"aranym"
 
@@ -45,6 +53,18 @@ char *getConfFolder(char *buffer, unsigned int bufsize)
 
 char *getDataFolder(char *buffer, unsigned int bufsize)
 {
+	char program_home[512];	// set by main()
+
+	// remember path to program
+	strcpy(program_home, program_name);
+	char *ptr = strrchr(program_home, '/');
+	if (ptr != NULL)
+		ptr[0] = '\0';	// strip out filename and separator from the path
+	else if ((ptr = strrchr(program_home, DIRSEPARATOR[0])) != NULL)
+		ptr[0] = '\0';	// strip out filename and separator from the path
+	else
+		program_home[0] = '\0';
+
 	// test if Unix-like filesystem is in place
 	char *home = getenv("HOME");
 	if (home == NULL || strcmp(home, "/") == 0) {

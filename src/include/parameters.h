@@ -181,7 +181,6 @@ extern bx_options_t bx_options;
 extern uint32 FastRAMSize;	// Size of Fast-RAM
 
 extern char *program_name;
-extern char program_home[512];
 extern char rom_path[512];
 extern char emutos_path[512];
 extern bool boot_emutos;
@@ -192,5 +191,9 @@ extern bool decode_switches(FILE *, int, char **);
 extern int saveSettings(const char *);
 extern char *getConfFilename(const char *file, char *buffer, unsigned int bufsize);
 extern char *getDataFilename(const char *file, char *buffer, unsigned int bufsize);
+
+// following functions implemented in parameters_[unix|linux|cygwin].cpp
+char *getConfFolder(char *buffer, unsigned int bufsize);
+char *getDataFolder(char *buffer, unsigned int bufsize);
 
 #endif
