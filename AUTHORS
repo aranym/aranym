@@ -19,6 +19,7 @@ Milan Jurik <M.Jurik@sh.cvut.cz>
 Stanislav Opichal <opichals@seznam.cz>
 - Host filesystem access driver (hostfs) for FreeMiNT and MetaDOS
 - Networking driver work
+- Network Bridging
 - VIDEL bitplanes to chunky conversion code
 - fVDI driver
 - general hostscreen and SDL work
@@ -52,6 +53,7 @@ Patrice Mandin <pmandin@caramail.com>
 - the SDL-MiNT port of ARAnyM
 - Videl autozoom
 - EPS limiter
+- NatFeat based PCI bridge (atari software can access host PCI)
 - close examination of our code and finding obvious and not-so-obvious
   bugs (IDE, parameters handling, TOS patches)
 
@@ -113,6 +115,7 @@ Thanks go to :-
 
 Francois LE COAT
 - for the Solaris port
+- for work on MacOSX port
 
 Olivier Landemarre
 - for the Windows/cygwin binaries
@@ -158,4 +161,5 @@ Stefan Kuhr
 
 Carlo Baiocco
 - new Mac OS X port (src/MacOSX/*)
+- various bugfixes (floppy, parameters, memory management)
 

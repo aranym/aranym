@@ -1,3 +1,27 @@
+* tagged as ARANYM_0_8_8_BETA
+
+2004/07/05 - joy
+- gui-sdl/dlgAlert.cpp: an AES like AlertBox created. So far a rough code
+  but does what I needed.
+
+- gui-sdl/dlgDisk.cpp: Disk Image generation added.
+
+- on behalf of Carlo: UAE FPU is (thanks to Francois' tests) the default
+  for MacOSX target in their project builder.
+  Filename expansion takes a special '*' wildcard that gets expanded to
+  Data folder path (the bundle folder for MACOSX).
+
+- parameters.cpp: Carlo corrected a bug in the relative path expansion
+  routine - now if there isn't the trailing slash it's added.
+
+- tools/createdisk/*, tools/disk_image.c: removed
+
+- Makefile.in, aranym.spec: createdisk & disk_image removed, arabridge added
+
+- README, NEWS, TODO, aranym.1, aranym.spec, version.h:
+  standard updates for new release.
+
+
 2004/07/04 - joy
 - input.cpp: iconification of fullscreen window on releasing the grabbed
   input disabled since Standa added there switching from fullscreen
@@ -138,7 +162,7 @@
   I have renamed ".aranym" in "Aranym_files" and moved the data dir in
   $HOME/Documents/Aranym_files. In this manner they are accessible through the
   Finder.
-  I have modified paths in conficure.ac so they are correctly expanded
+  I have modified paths in configure.ac so they are correctly expanded
   in configure.
 
 

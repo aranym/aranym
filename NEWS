@@ -1,3 +1,35 @@
+2004/07/05 - version 0.8.8beta released
+
+ Main bug fixes:
+
+ o MC68881 tan() insn fixed on ia-32 host cpu arch
+ o one of JIT SIGSEGV crashes on linux 2.6.x
+ o floppy emulation (corrupted in 0.8.6beta release)
+ o HostFS fixes (symlinks, Dfree)
+ o many MACOSX fixes (FPU works) and improvements
+ o CapsLock under X11 fixed
+ o various SDL GUI bugfixes
+
+ New features:
+
+ o new networking based on bridging:
+   tools/arabridge is able to establish a bridge over the tap0 tunnel
+   and eth0 nif so that aranym becomes part of your LAN visible from
+   other machines etc. For example DHCP from ARAnyM works now.
+   [ETH0] type = ppp|bridge and tunnel = tap0 config options added
+ 
+ o Patrice's experimental PCI bridge (disabled in default builds), can
+   be used for developing PCI drivers for Milan/Hades on ARAnyM :-)
+ 
+ o SETUP GUI visually improved again (3D Look! :)
+
+ o easy Disk Image generation in the SETUP - just enter your desired disk
+   image path and size in MB and click on Generate.
+
+ o configuration file parser now recognizes "~" special char that is
+   expanded to $HOME (path to user home dir).
+
+
 2004/02/15 - version 0.8.7beta released
 ==========
 

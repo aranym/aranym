@@ -5,23 +5,20 @@ TODO generally:
 - configurable insertion of floppy on bootup (perhaps also IDE CD?)
 
 TODO in keyboard support:
-- editable hotkeys (releasing input grab, Setup GUI, PrintScreen) [0.8.8]
-- runtime switch between symtable and scantable [0.8.8]
-- loadable keyboard layout (similar to hatari) [0.8.8]
+- editable hotkeys (releasing input grab, Setup GUI, PrintScreen) [0.8.9]
+- runtime switch between symtable and scantable [0.8.9]
+- loadable keyboard layout (similar to hatari) [0.8.9]
 - editable keyboard layout (need WYSIWYG - impossible in 320x200) [0.9.0?]
 
 TODO in GUI-SDL:
-- create AlertBox() for the GUI-SDL
 - open up GUI whenever the config file is not found (so that users can edit
-  the default values before saving them). [0.8.8]
+  the default values before saving them). [0.8.9]
 - Apply changes automatically before Save Config and perhaps also before Reboot
-- simple window/fullscreen switch
 - change GUI font loading routine - load standard TOS font (2048/4096 bytes)
   directly (instead of some MS Windows bitmap) [0.9.0]
 - fileselector: sorting by file type (folders first) and then by file .ext
 - edit field: allow upper case
 - create other dialogs for editing the rest of config file settings
-- include disk image generator that updates the config file with proper CHS
 
 TODO in TOS patches and utilities:
 - automatic updater of BDCONFIG.SYS

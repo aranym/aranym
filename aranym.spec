@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.8.7beta
+%define ver	0.8.8beta
 %define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -92,13 +92,15 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/atari/newdesk.inf
 /usr/share/aranym/atari/aranymrc.example
 /usr/share/aranym/atari/mmusetup.cnf
-/usr/share/aranym/createdisk/createdisk.README
-/usr/share/aranym/createdisk/createdisk.sh
-/usr/share/aranym/createdisk/mbrdata
+/usr/share/aranym/arabridge
 /usr/share/aranym/floppy.sh
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Mon Jul 05 2004 Petr Stehlik <pstehlik@sophics.cz>
+Version increased. tools/createdisk/ removed. tools/arabridge added.
+For other changes see the NEWS file.
+
 * Sun Feb 15 2004 Petr Stehlik <pstehlik@sophics.cz>
 Version increased. For other changes see the NEWS file.
 
