@@ -39,7 +39,7 @@
 #endif
 
 // the ETHERNET NatFeat API version number (change it if you change NF subIDs)
-#define XIF_VERSION	0x00000001
+#define XIF_VERSION	0x00000002
 
 // the emulated network card HW address
 #define MAC_ADDRESS "\001\002\003\004\005\006"
@@ -72,14 +72,17 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 	int32 ret = 0;
 	switch(fncode) {
 		case 0:	// what version?
+			D(bug("Ethernet: getVersion"));
 			ret = XIF_VERSION;
 			break;
 
 		case 1:	// what interrupt level is used?
+			D(bug("Ethernet: getINTlevel"));
 			ret = INTLEVEL;
 			break;
 
 		case 2:	// what is the MAC address?
+			D(bug("Ethernet: getMACaddr"));
 			{
 				/* store MAC address to provided buffer */
 				char *text = MAC_ADDRESS;				// source
@@ -92,7 +95,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				char *name = (char *)Atari2HostAddr(name_ptr);	// use A2Hstrcpy
 				strncpy(name, text, name_maxlen-1);
 				name[name_maxlen-1] = '\0';
-				return strlen(text);
+				ret = strlen(text);
 			}
 			break;
 

@@ -20,8 +20,10 @@
 
 # include <osbind.h>
 
+#define XIF_NAME	"ARAnyM Eth driver v0.2"
+
 /* this is the version of NatFeat ETHERNET API */
-#define XIF_VERSION	0x00000001
+#define XIF_VERSION	0x00000002
 
 /* old handler */
 extern void (*old_interrupt)(void);
@@ -79,9 +81,20 @@ static long _NF_call  = 0x73014e75L;
 #endif /* _natfeat_h_ */
 /* ================================================================ */
 
+static inline unsigned long
+get_nfapi_version()
+{
+	return nfCall((nfEtherFsId + 0x00));
+}
+
+static inline unsigned long
+get_int_level()
+{
+	return nfCall((nfEtherFsId + 0x01));
+}
 
 static inline void
-nfGetHWAddress( char *buffer, int len )
+get_hw_addr( char *buffer, int len )
 {
 	nfCall((nfEtherFsId + 0x02, buffer, (unsigned long)len));
 }
@@ -113,9 +126,8 @@ send_block (char *cp, short len)
 static void
 aranym_install_int (void)
 {
-	int int_level = nfCall((nfEtherFsId+1));
 # define vector(x)      (x / 4)
-	old_interrupt = Setexc(vector(0x60) + int_level, (long) my_interrupt);
+	old_interrupt = Setexc(vector(0x60) + get_int_level(), (long) my_interrupt);
 }
 
 
@@ -436,13 +448,14 @@ driver_init (void)
 	/* get the HostFs NatFeat ID */
 	nfEtherFsId = nfGetID(("ETHERNET"));
 	if ( nfEtherFsId == 0 ) {
-		c_conws("ARAnyM Eth driver v0.1 not installed - NatFeat not found\n\r");
+		c_conws(XIF_NAME " not installed - NatFeat not found\n\r");
 		return 1;
 	}
 
 	/* compare the version */
-	if ( nfCall((0)) != XIF_VERSION ) {
-		c_conws("ARAnyM Eth driver v0.1 not installed - version mismatch\n\r");
+	if ( get_nfapi_version() != XIF_VERSION ) {
+		ksprintf (message, XIF_NAME " not installed - version mismatch: %ld != %d\n\r", get_nfapi_version(), XIF_VERSION);
+		c_conws(message);
 		return 1;
 	}
 
@@ -492,7 +505,7 @@ driver_init (void)
 	memcpy (if_ara.hwlocal.addr, "\001\002\003\004\005\006", ETH_ALEN);
 #else
 	/* ask host for the hardware address */
-	nfGetHWAddress(if_ara.hwlocal.addr, ETH_ALEN);
+	get_hw_addr(if_ara.hwlocal.addr, ETH_ALEN);
 #endif
 	memcpy (if_ara.hwbrcst.addr, "\377\377\377\377\377\377", ETH_ALEN);
 
@@ -552,7 +565,7 @@ driver_init (void)
 	/*
 	 * And say we are alive...
 	 */
-	ksprintf (message, "ARAnyM Eth driver v0.1 (eth%d)\n\r", if_ara.unit);
+	ksprintf (message, XIF_NAME " (eth%d)\n\r", if_ara.unit);
 	c_conws (message);
 	return 0;
 }
