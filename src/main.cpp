@@ -53,8 +53,10 @@ bool InitAll(void)
 	if (!Init680x0())
 		return false;
 
-	printf("Activate debugger...\n");
-	// activate_debugger();
+	if (false) {
+		printf("Activate debugger...\n");
+		activate_debugger();
+	}
 
 	return true;
 }
