@@ -1,3 +1,9 @@
+2004/07/12 - joy
+- ide.cpp: Xavier explained that Adam's open source IDE driver might use
+  the f00002 register because it's mapped to the same 16-bit IDE port as
+  the f00000.
+
+
 2004/07/11 - milan
 - lilo support corrected
 
