@@ -2,8 +2,9 @@
 #include "sysdeps.h"
 #include "config.h"
 #include "parameters.h"
-#include "emu_bochs.h"	// for BX_INSERTED define
 #include "tools.h"		// for safe_strncpy()
+
+#define BX_INSERTED	true	// copied from emu_bochs.h
 
 #define DEBUG 0
 #include "debug.h"
@@ -676,10 +677,15 @@ int process_cmdline(int argc, char **argv)
 }
 
 // append a filename to a path
-static char *addFilename(const char *file, char *buffer, unsigned int bufsize)
+char *addFilename(char *buffer, const char *file, unsigned int bufsize)
 {
-	if ((strlen(buffer) + 1 + strlen(file) + 1) < bufsize) {
-		strcat(buffer, DIRSEPARATOR);
+	int dirlen = strlen(buffer);
+	if ((dirlen + 1 + strlen(file) + 1) < bufsize) {
+		if (dirlen > 0) {
+			char *ptrLast = buffer + dirlen - 1;
+			if (*ptrLast != '/' && *ptrLast != '\\')
+				strcat(buffer, DIRSEPARATOR);
+		}
 		strcat(buffer, file);
 	}
 	else {
@@ -702,14 +708,14 @@ char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 		mkdir(buffer, 0755);
 	}
 
-	return addFilename(file, buffer, bufsize);
+	return addFilename(buffer, file, bufsize);
 }
 
 // build a complete path to system wide data file
 char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
 {
 	getDataFolder(buffer, bufsize);
-	return addFilename(file, buffer, bufsize);
+	return addFilename(buffer, file, bufsize);
 }
 
 static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose)
@@ -728,8 +734,8 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 {
 	// Does the config exist?
 	struct stat buf;
-	if (stat(config_file, &buf) == -1) {
-		fprintf(f, "Config file '%s' not found.\nThe config file is created with default values. Edit it to suit your needs.\n", config_file);
+	if (stat(rcfile, &buf) == -1) {
+		fprintf(f, "Config file '%s' not found.\nThe config file is created with default values. Edit it to suit your needs.\n", rcfile);
 		saveConfigFile = true;
 		return;
 	}

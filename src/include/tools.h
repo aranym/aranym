@@ -179,6 +179,7 @@ char *safe_strncpy(char *dest, const char *src, size_t size);
 
 #ifdef OS_cygwin
 char* cygwin_path_to_win32(char *, size_t);
+int get_home_dir(char *path, int len);
 #endif
 
 #endif  // _TOOLS_H

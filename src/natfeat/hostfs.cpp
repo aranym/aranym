@@ -856,7 +856,7 @@ bool HostFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const
 
 			// in case of halfsensitive filesystem,
 			// an upper case filename should be lowecase?
-			if ( nonexisting && !drv || drv->halfSensitive ) {
+			if ( nonexisting && (!drv || drv->halfSensitive) ) {
 				bool isUpper = true;
 				for( char *curr = result; *curr; curr++ ) {
 					if ( *curr != toupper( *curr ) ) {
@@ -1003,7 +1003,7 @@ int32 HostFs::xfs_dfree( XfsCookie *dir, uint32 diskinfop )
 
 int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 {
-	char fname[2048];
+	char fname[MAXPATHNAME2LEN];
 	a2fstrcpy( fname, name );
 
 	char fpathName[MAXPATHNAMELEN];
@@ -1018,7 +1018,7 @@ int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 
 int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 {
-	char fname[2048];
+	char fname[MAXPATHNAME2LEN];
 	a2fstrcpy( fname, name );
 
 	char pathName[MAXPATHNAMELEN];
@@ -1037,7 +1037,7 @@ int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 
 int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, XfsCookie *fc )
 {
-	char fname[2048];
+	char fname[MAXPATHNAME2LEN];
 	a2fstrcpy( fname, name );
 
 	char pathName[MAXPATHNAMELEN];
@@ -1220,7 +1220,7 @@ int32 HostFs::xfs_dev_lseek(ExtFile *fp, int32 offset, int16 seekmode)
 
 int32 HostFs::xfs_remove( XfsCookie *dir, memptr name )
 {
-	char fname[2048];
+	char fname[MAXPATHNAME2LEN];
 	a2fstrcpy( fname, name );
 
 	char pathName[MAXPATHNAMELEN];
@@ -1239,8 +1239,8 @@ int32 HostFs::xfs_remove( XfsCookie *dir, memptr name )
 
 int32 HostFs::xfs_rename( XfsCookie *olddir, memptr oldname, XfsCookie *newdir, memptr newname )
 {
-	char foldname[2048];
-	char fnewname[2048];
+	char foldname[MAXPATHNAME2LEN];
+	char fnewname[MAXPATHNAME2LEN];
 	a2fstrcpy( foldname, oldname );
 	a2fstrcpy( fnewname, newname );
 
@@ -1258,8 +1258,8 @@ int32 HostFs::xfs_rename( XfsCookie *olddir, memptr oldname, XfsCookie *newdir, 
 
 int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 {
-	char ffromname[2048];
-	char ftoname[2048];
+	char ffromname[MAXPATHNAME2LEN];
+	char ftoname[MAXPATHNAME2LEN];
 	a2fstrcpy( ffromname, fromname );
 	a2fstrcpy( ftoname, toname );
 
@@ -1729,7 +1729,7 @@ void HostFs::xfs_freefs( XfsFsFile *fs )
 
 int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 {
-	char fname[2048];
+	char fname[MAXPATHNAME2LEN];
 	a2fstrcpy( fname, name );
 
 	D(bug( "HOSTFS: fs_lookup: %s", fname ));
@@ -1897,7 +1897,7 @@ int32 HostFs::xfs_release( XfsCookie *fc )
 int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
 							   memptr filesys, memptr filesys_devdrv )
 {
-	char fmountpoint[2048];
+	char fmountpoint[MAXPATHNAME2LEN];
 	a2fstrcpy( fmountpoint, mountpoint );
 
 	ExtDrive *drv = new ExtDrive();
@@ -1925,7 +1925,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 			drv->halfSensitive = bx_options.aranymfs[fmountpoint[3]-'a'].halfSensitive;
 		} else {
 			// no [aranymfs] match -> map to the passed mountpoint (future extension to map from m68k side)
-			char fhostroot[2048];
+			char fhostroot[MAXPATHNAME2LEN];
 			a2fstrcpy( fhostroot, hostroot );
 
 			drv->hostRoot = strdup( fhostroot );
@@ -1957,6 +1957,12 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.11.2.9  2003/04/10 21:49:34  joy
+ * cygwin mapping fixed - compiler bug found
+ *
+ * Revision 1.11.2.8  2003/04/08 22:11:14  joy
+ * important difference in order of operator evaluation
+ *
  * Revision 1.11.2.7  2003/04/08 00:42:14  standa
  * The st2flags() and flags2st() methods fixed (a need for open()).
  * The isPathValid() method removed (was only useful for aranymfs.dos).

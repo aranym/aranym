@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.8.0beta2
+%define ver	0.8.0beta3
 %define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -33,15 +33,15 @@ rm -rf %{realname}
 #%patch -p1
 
 %build
-./configure --prefix=/usr --enable-jit-compiler
+./configure --prefix=/usr --mandir=/usr/share --disable-nat-debug --enable-jit-compiler
 make
 mv aranym aranym-jit
 make clean
-./configure --prefix=/usr --enable-fullmmu
+./configure --prefix=/usr --mandir=/usr/share --disable-nat-debug --enable-fullmmu
 make
 mv aranym aranym-mmu
 make clean
-./configure --prefix=/usr
+./configure --prefix=/usr --mandir=/usr/share --disable-nat-debug
 make
 
 %install
@@ -93,12 +93,14 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/createdisk/createdisk.README
 /usr/share/aranym/createdisk/createdisk.sh
 /usr/share/aranym/createdisk/mbrdata
-/usr/share/aranym/diskimage
 /usr/share/aranym/floppy.sh
 /usr/share/aranym/font8.bmp
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Fri Apr 11 2003 Petr Stehlik <pstehlik@sophics.cz>
+Man dir fixed. Debug info disabled.
+
 * Mon Apr 08 2003 Petr Stehlik <pstehlik@sophics.cz>
 Various fixes for the 0.8.0. And full 68040 PMMU build added as aranym-mmu.
 Also manual page added.

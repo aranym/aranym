@@ -26,7 +26,11 @@ class HostFs : public NF_Base
 	// the maximum pathname length allowed
 	// note: this would be nice to be rewriten using
 	//       the std::string to become unlimited
-	static const int MAXPATHNAMELEN = 2048;
+	static const int MAXPATHNAMELEN = 255;		// was 2048
+
+	// after long debugging night joy found out that
+	// gcc 3.2 cannot handle 2048 chars on stack.
+	static const int MAXPATHNAME2LEN = 255;		// was 2048
 
 	struct XfsFsFile {
 		XfsFsFile *parent;
@@ -178,6 +182,9 @@ class HostFs : public NF_Base
 
 /*
  * $Log$
+ * Revision 1.6.2.3  2003/04/10 21:49:34  joy
+ * cygwin mapping fixed - compiler bug found
+ *
  * Revision 1.6.2.2  2003/04/08 00:42:14  standa
  * The st2flags() and flags2st() methods fixed (a need for open()).
  * The isPathValid() method removed (was only useful for aranymfs.dos).

@@ -1,7 +1,42 @@
+** ARAnyM 0.8.0beta3 released
+
+2003/04/10 - joy
+- parameters.cpp: addFilename() has a different order of arguments
+  and is able to deal with additional path separators
+
+- cygwin support hopefully perfect now (uses registry to find out the path
+  to "My Documents" folder which is used instead of the Unix-ish $HOME).
+
+- hostfs.cpp: char a[2048] - local arrays for filenames now defined with
+  MAXPATHNAME2LEN (MAXPATHNAMELEN was already used and I wasn't sure if
+  it can be used in the other cases as well).
+
+- !IMPORTANT! With MAXPATHNAME2LEN set to 2048 gcc 3.2 created incorrect
+  code on cygwin. Thus both MAXPATHNAME[2]LEN were set to 255 for now.
+  I realize it's dangerously low value but if we are suffering from
+  stack overwrites we need to go low and re-check all issues again.
+  Note that this fixes the wrong mapping of host folders under Cygwin..
+
+
+2003/04/09 - joy
+- parameters.cpp: do not include emu_bochs.h - this breaks some platforms.
+
+- tools_cygwin.cpp: Xavier submits a routine for reading the registry
+
+
+2003/04/08 - joy
+- hostfs.cpp: fixed very annoying bug that was causing bus error when opening
+  root of a host drive.
+
+- parameters_cygwin: fixed a bunch of small bugs, now tested and works OK.
+
+
 2003/04/08 - patrice
 - Document autozoom in the [VIDEL] section, and [OPENGL] section, in
   documentation.txt and aranymrc.example
 
+
+** ARAnyM 0.8.0beta2 released
 
 2003/04/08 - joy
 - cfgopts: Thomas correctly suggested to use memmove() for overlapping
