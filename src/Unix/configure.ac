@@ -113,7 +113,7 @@ AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code d
 
 AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distrubuted dispatcher [default=no]], [WANT_DIS_DIP=$enableval], [WANT_DIS_DIP=no])
 
-AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation [default=no]], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=no])
+AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation [default=yes]], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
 
 dnl Canonical system information.
 AC_CANONICAL_HOST
