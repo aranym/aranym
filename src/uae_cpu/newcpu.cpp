@@ -223,6 +223,9 @@ void init_m68k (void)
 void exit_m68k (void)
 {
 	fpu_exit ();
+
+	free(table68k);
+	table68k = NULL;
 }
 
 struct regstruct regs, lastint_regs;

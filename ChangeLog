@@ -1,3 +1,7 @@
+2005/04/01 - Thomas Huth
+- uae_cpu/newcpu.cpp: free table68k memory
+
+
 2005/03/24 - Patrice
 - natfeats: don't switch to supervisor mode if already in supervisor mode to
   read cookie jar pointer.
