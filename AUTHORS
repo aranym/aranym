@@ -167,3 +167,5 @@ Carlo Baiocco
 - new Mac OS X port (src/MacOSX/*)
 - various bugfixes (floppy, parameters, memory management)
 
+Andreas Schwab
+- damn important fix of MOVES instruction (for Linux-m68k boot)

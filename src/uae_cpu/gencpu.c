@@ -176,14 +176,12 @@ static const char *bit_mask (int size)
     return 0;
 }
 
-int nexti_no_inc = 0;
-
 static const char *gen_nextilong (void)
 {
     static char buffer[80];
     int r = m68k_pc_offset;
 
-    if (!nexti_no_inc) m68k_pc_offset += 4;
+    m68k_pc_offset += 4;
 
     if (using_prefetch)
 	sprintf (buffer, "get_ilong_prefetch(%d)", r);
@@ -197,7 +195,7 @@ static const char *gen_nextiword (void)
     static char buffer[80];
     int r = m68k_pc_offset;
 
-    if (!nexti_no_inc) m68k_pc_offset += 2;
+    m68k_pc_offset += 2;
 
     if (using_prefetch)
 	sprintf (buffer, "get_iword_prefetch(%d)", r);
@@ -1958,24 +1956,24 @@ static void gen_opcode (unsigned long int opcode)
 		start_brace();
 		printf ("\tif (extra & 0x0800)\n");	/* from reg to ea */
 		{
+			int old_m68k_pc_offset = m68k_pc_offset;
 			/* use DFC */
 			old_brace_level = n_braces;
 			start_brace ();
 			printf ("\tuae_u32 src = regs.regs[(extra >> 12) & 15];\n");
-			nexti_no_inc = 1; /* prevent strange problems with misaligned insns */
 #ifdef FULLMMU
 			genamode (curi->dmode, "dstreg", curi->size, "dst", GENA_GETV_FETCH_ALIGN, GENA_MOVEM_DO_INC, XLATE_DFC);
 #else
 			genamode (curi->dmode, "dstreg", curi->size, "dst", GENA_GETV_FETCH_ALIGN, GENA_MOVEM_DO_INC, XLATE_LOG);
 						
 #endif
-			nexti_no_inc = 0;
 #ifdef FULLMMU
 			genastore ("src", curi->dmode, "dstreg", curi->size, "dst", XLATE_DFC);
 #else
 			genastore ("src", curi->dmode, "dstreg", curi->size, "dst", XLATE_LOG);
 #endif
 			pop_braces (old_brace_level);
+			m68k_pc_offset = old_m68k_pc_offset;
 		}
 		printf ("else");	/* from ea to reg */
 		{

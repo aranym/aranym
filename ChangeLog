@@ -1,3 +1,8 @@
+2004/12/17 - Andreas Schwab
+- uae_cpu/gencpu.c - emulation of the moves insn fixed. It is one step further
+  into being able to boot Linux/m68k on ARAnyM.
+
+
 2004/12/17 - Patrice
 - nfosmesa: more endianness fixes. Extensions reenabled, beware the lengthy
   compilation!
