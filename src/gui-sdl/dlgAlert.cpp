@@ -1,7 +1,7 @@
 /*
  * dlgAlert.cpp - AES-like AlertBox 
  *
- * Copyright (c) 2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2004-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -23,22 +23,18 @@
 
 #include "sdlgui.h"
 
-#define MAX_LINES 4
-
-static char dlglines[MAX_LINES][37];
+#define MAX_LINES 20
 
 /* The "Alert"-dialog: */
-SGOBJ alertdlg[] =
+SGOBJ alertdlg[1/*BACKGROUND*/ + MAX_LINES/*text*/ + 1/*OK*/ + 1/*Cancel*/ + 1/*NULL*/] =
 {
-  { SGBOX, SG_BACKGROUND, 0, 0,0, 38,7, NULL },
-  { SGTEXT, 0, 0, 1,1, 36,1, dlglines[0] },
-  { SGTEXT, 0, 0, 1,2, 36,1, dlglines[1] },
-  { SGTEXT, 0, 0, 1,3, 36,1, dlglines[2] },
-  { SGTEXT, 0, 0, 1,4, 36,1, dlglines[3] },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 5,5, 8,1, "OK" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 24,5, 8,1, "Cancel" },
-  { -1, 0, 0, 0,0, 0,0, NULL }
+  { SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL }
 };
+
+SGOBJ obj_text = { SGTEXT, 0, 0, 1,1, 38,1, NULL };
+SGOBJ obj_but_ok = { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 5,5, 8,1, "OK" };
+SGOBJ obj_but_cancel = { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 24,5, 8,1, "Cancel" };
+SGOBJ obj_null = { -1, 0, 0, 0,0, 0,0, NULL };
 
 /*
    Breaks long string to several strings of max_width, divided by '\0'
@@ -50,35 +46,32 @@ int FormatTextToBox(char *text, int max_width)
 	int delka = strlen(text);
 	char *p;		/* pointer to begin of actual line */
 	char *q;		/* pointer to start of next search */
-	char *rozdel;	/* pointer to last place suitable for breaking the line */
+	char *rozdel = text-1;	/* pointer to last place suitable for breaking the line */
 	char *konec;	/* pointer to end of the text */
 	q = p = text;
-	rozdel = text-1;/* pointer to last line break */
 	konec = text + delka;
 
-	if (delka > max_width) {
-		while(q < konec) {		/* q was last place suitable for breaking */
-			char *r = strpbrk(q, " \t/\\\n");	/* find next suitable place for the break */
-			if (r == NULL)
-				r = konec;		/* if there's no place then point to the end */
+	while(q < konec) {		/* q was last place suitable for breaking */
+		char *r = strpbrk(q, " \t/\\\n");	/* find next suitable place for the break */
+		if (r == NULL)
+			r = konec;		/* if there's no place then point to the end */
 
-			if ((r-p) < max_width && *r != '\n') {		/* '\n' is always used for breaking */
-				rozdel = r;		/* remember new place suitable for breaking */
-				q++;
-				continue;		/* search again */
-			}
-
-			if ((r-p) > max_width) {	/* too long line already? */
-				if (p > rozdel)				/* bad luck - no place for the delimiter. Let's do it the strong way */
-					rozdel = p + max_width;		/* we loose one character */
-			}
-			else
-				rozdel = r;			/* break in this place */
-
-			*rozdel = '\0';			/* BREAK */
-			p = q = rozdel+1;		/* next line begins here */
-			lines++;				/* increment line counter */
+		if ((r-p) < max_width && *r != '\n') {		/* '\n' is always used for breaking */
+			rozdel = r;		/* remember new place suitable for breaking */
+			q++;
+			continue;		/* search again */
 		}
+
+		if ((r-p) > max_width) {	/* too long line already? */
+			if (p > rozdel)				/* bad luck - no place for the delimiter. Let's do it the strong way */
+				rozdel = p + max_width;		/* we loose one character */
+		}
+		else
+			rozdel = r;			/* break in this place */
+
+		*rozdel = '\0';			/* BREAK */
+		p = q = rozdel+1;		/* next line begins here */
+		lines++;				/* increment line counter */
 	}
 	return lines;					/* return line counter */
 }
@@ -89,23 +82,38 @@ int FormatTextToBox(char *text, int max_width)
 /*
   Show the "alert" dialog:
 */
-int Dialog_AlertDlg(const char *text)
+bool SDLGui_Alert(const char *text, alert_type type)
 {
-  char *t = (char *)malloc(strlen(text)+1);
-  char *orig_t = t;
-  static int maxlen = sizeof(dlglines[0])-1;
-  int lines;
-  strcpy(t, text);
-  lines = FormatTextToBox(t, maxlen);
-  for(int i=0; i<MAX_LINES; i++) {
-  	if (i < lines) {
-    	strcpy(dlglines[i], t);
-    	t += strlen(t)+1;
-    }
-    else {
-    	dlglines[i][0] = '\0';
-    }
-  }
-  free(orig_t);
-  return (SDLGui_DoDialog(alertdlg) == 5);
+	char *t = (char *)malloc(strlen(text)+1);
+	char *orig_t = t;
+	int lines;
+	int ok_but_idx;
+	strcpy(t, text);
+	lines = FormatTextToBox(t, obj_text.w);
+	int idx = 1;
+	for(int i=0; i<lines && i<MAX_LINES; i++) {
+		obj_text.y = i+1;
+		obj_text.txt = t;
+		alertdlg[idx++] = obj_text;
+		t += strlen(t)+1;
+	}
+	obj_but_ok.y = lines+2;
+	obj_but_cancel.y = lines+2;
+	ok_but_idx = idx;
+	alertdlg[idx++] = obj_but_ok;
+	if (type == ALERT_OKCANCEL) {
+		alertdlg[idx++] = obj_but_cancel;
+	}
+	else {
+		alertdlg[ok_but_idx].x = (alertdlg[0].w - alertdlg[ok_but_idx].w) / 2;
+	}
+	alertdlg[idx] = obj_null;
+	alertdlg[0].h = lines+4;
+	bool ret = (SDLGui_DoDialog(alertdlg) == ok_but_idx);
+	free(orig_t);
+	return ret;
 }
+
+/*
+vim:ts=4:sw=4:
+*/
