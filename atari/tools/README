@@ -9,6 +9,9 @@ These are the first basic tools for Aranym:
   Clocky 3.0 distribution at http://joy.atari.org/ - there's a nice editor
   of keyboard layout.
 
+- PCPATCH.PRG that patches PureC (PC.PRG) to be able to compile
+  projects and files from the MetaDOS driven filesystem.
+
 Soon there will be a tool for arafs that will edit the
 MetaDOS' config.sys file automatically.
 

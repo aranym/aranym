@@ -4,6 +4,15 @@
   and the CharView author who provided a source of the application
   that had this problem. The EasyGEM library tries to open directory
   entries using Fopen. Thanks for EasyGEM beeing open-source.
+- Newly created files specified with all letters in upper case will
+  be automatically converted to lowercase ones. This follows a small
+  limitation that there is no way to create e.g. PC.PRG on halfsensitive
+  fs (it will be pc.prg... but the Pc.prg and any other combination
+  would work). This can be made optional.
+- m68k part of the MetaDOS driver was pretty printed and converted
+  to correct (DOS mode newlines). No need to update the binary here.
+- PureC (PC.PRG) patch to let it working on MetaDOS driven filesystem
+  (src/atari/tools/pcpatch.*).
 
 
 2002/04/03 - milan

@@ -897,7 +897,7 @@ uint16 ExtFs::time2dos(time_t t)
 {
 	struct tm *x;
 	x = localtime (&t);
-	return (x->tm_sec>>1)|(x->tm_min<<5)|(x->tm_hour<<11);
+	return ((x->tm_sec&0x3f)>>1)|((x->tm_min&0x3f)<<5)|((x->tm_hour&0x1f)<<11);
 }
 
 
@@ -1129,6 +1129,7 @@ bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const 
 			char testName[MAXPATHNAMELEN];
 			const char *finalName = name;
 			struct dirent *dirEntry;
+			bool nonexisting = false;
 
 #ifdef DEBUG_FILENAMETRANSFORMATION
 			D(bug(" (stat failed)"));
@@ -1150,6 +1151,7 @@ bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const 
 #ifdef DEBUG_FILENAMETRANSFORMATION
 					D(bug("MetaDOS: getHostFileName dreaddir: no more files."));
 #endif
+					nonexisting = true;
 					goto lbl_final;
 				}
 
@@ -1183,6 +1185,22 @@ bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const 
 #endif
 
 			strcpy( result, finalName );
+
+			// in case of halfsensitive filesystem,
+			// an upper case filename should be lowecase?
+			if ( nonexisting && !drv || drv->halfSensitive ) {
+				bool isUpper = true;
+				for( char *curr = result; *curr; curr++ ) {
+					if ( *curr != toupper( *curr ) ) {
+						isUpper = false;
+						break;
+					}
+				}
+				if ( isUpper ) {
+					// lower case conversion
+					strapply( result, tolower );
+				}
+			}
 			if ( dh != NULL )
 				closedir( dh );
 		}
@@ -2140,7 +2158,7 @@ int32 ExtFs::Fxattr_( LogicalDev *ldp, char *fpathName, int16 flag, uint32 xattr
 	}
 
 	// XATTR structure conversion (COMPEND.HYP)
-	/* UWORD mode	   */  WriteInt16( xattrp		, statmode2xattrmode(statBuf.st_mode));
+	/* UWORD mode	   */  WriteInt16( xattrp     , statmode2xattrmode(statBuf.st_mode));
 	/* LONG	 index	   */  WriteInt32( xattrp +  2, statBuf.st_ino );
 	/* UWORD dev	   */  WriteInt16( xattrp +  6, statBuf.st_dev );	 // FIXME: this is Linux's one
 	/* UWORD reserved1 */  WriteInt16( xattrp +  8, 0 );
@@ -2160,6 +2178,8 @@ int32 ExtFs::Fxattr_( LogicalDev *ldp, char *fpathName, int16 flag, uint32 xattr
 	/* UWORD reserved2 */  WriteInt16( xattrp + 42, 0 );
 	/* LONG	 reserved3 */  WriteInt32( xattrp + 44, 0 );
 	/* LONG	 reserved4 */  WriteInt32( xattrp + 48, 0 );
+
+	D(bug("MetaDOS: Fxattr mtime %#04x, mdate %#04x", ReadInt16(xattrp + 28), ReadInt16(xattrp + 30)));
 
 	return TOS_E_OK;
 }
@@ -2534,6 +2554,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.37  2002/04/04 09:00:19  standa
+ * The Fopen( dir ) fix.
+ *
  * Revision 1.36  2002/03/27 16:14:39  standa
  * The JavaDoc documentation written into the extfs.cpp/transformFileName.
  *
