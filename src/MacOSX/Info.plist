@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>MacAranym</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Aranym for MacOSX v 0.8.7beta</string>
+	<string>Aranym for MacOSX v 0.8.9beta</string>
 	<key>CFBundleIconFile</key>
 	<string>aranym2.icns</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.7 beta</string>
+	<string>0.8.9 beta</string>
 	<key>NSMainNibFile</key>
 	<string>SDLMain.nib</string>
 	<key>NSPrincipalClass</key>
