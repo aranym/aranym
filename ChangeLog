@@ -1,4 +1,10 @@
-2004/02/04 - joy
+2004/02/04 2:11am - joy (dedicated to Konrad :)
+- rtc.cpp: fixed two real scary bugs. How could this code work previously??
+  Weird that these bugs didn't appear under Linux for so long. Sorry guys :)
+  Now Windows boot in correct resolution and without double bus errors!
+
+
+2004/02/03 - joy
 - gui-sdl/*: dimensions made smaller (39x24) to fix the crashes in ST-Low
   (Xavier increased the dialog dimensions by a few pixels)
 

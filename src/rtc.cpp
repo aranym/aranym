@@ -1,4 +1,25 @@
-/* Joy 2001 */
+/*
+ * rtc.cpp - Atari NVRAM emulation code
+ *
+ * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * 
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include "sysdeps.h"
 #include "hardware.h"
@@ -25,7 +46,7 @@ int byte14th = VGA:TV ? line doubling : half screen;
 */
 
 RTC::RTC(memptr addr, uint32 size) : BASE_IO(addr, size) {
-	addr = 0;
+	index = 0;
 	init();
 }
 
@@ -96,24 +117,22 @@ bool RTC::save() {
 	return ret;
 }
 
-static const int HW = 0xff8960;
-
-uint8 RTC::handleRead(uaecptr addr) {
-	addr -= HW;
-	if (addr > 3)
+uint8 RTC::handleRead(memptr addr) {
+	addr -= getHWoffset();
+	if (addr > getHWsize())
 		return 0;
 
 	switch(addr) {
-		case 1: return addr;
+		case 1: return index;
 		case 3: return getData();
 	}
 
 	return 0;
 }
 
-void RTC::handleWrite(uaecptr addr, uint8 value) {
-	addr -= HW;
-	if (addr > 3)
+void RTC::handleWrite(memptr addr, uint8 value) {
+	addr -= getHWoffset();
+	if (addr > getHWsize())
 		return;
 
 	switch(addr) {
@@ -123,16 +142,16 @@ void RTC::handleWrite(uaecptr addr, uint8 value) {
 }
 
 void RTC::setAddr(uint8 value) {
-	if (addr < 64)
-		addr = value;
+	if (value < 64)
+		index = value;
 }
 
 uint8 RTC::getData() {
 	uint8 value = 0;
-	if (addr == 0 || addr == 2 || addr == 4 || (addr >=7 && addr <=9) ) {
+	if (index == 0 || index == 2 || index == 4 || (index >=7 && index <=9) ) {
 		time_t tim = time(NULL);
 		struct tm *curtim = localtime(&tim);	// current time
-		switch(addr) {
+		switch(index) {
 			case 0:	value = curtim->tm_sec; break;
 			case 2: value = curtim->tm_min; break;
 			case 4: value = curtim->tm_hour; break;
@@ -141,20 +160,20 @@ uint8 RTC::getData() {
 			case 9: value = curtim->tm_year - 68; break;
 		}
 	}
-	else if (addr == 10) {
+	else if (index == 10) {
 		static bool rtc_uip = true;
 		value = rtc_uip ? 0x80 : 0;
 		rtc_uip = !rtc_uip;
 	}
 	else
-		value = nvram[addr];
-	D(bug("Reading NVRAM data at %d = %d ($%02x) at %06x\n", addr, value, value, showPC()));
+		value = nvram[index];
+	D(bug("Reading NVRAM data at %d = %d ($%02x) at %06x\n", index, value, value, showPC()));
 	return value;
 }
 
 void RTC::setData(uint8 value) {
-	D(bug("Writing NVRAM data at %d = %d ($%02x) at %06x\n", addr, value, value, showPC()));
-	nvram[addr] = value;
+	D(bug("Writing NVRAM data at %d = %d ($%02x) at %06x\n", index, value, value, showPC()));
+	nvram[index] = value;
 }
 
 /* the checksum is over all bytes except the checksum bytes
