@@ -1,5 +1,34 @@
+2001/06/17 - PS
+- System Timer (200 Hz Timer C) should be precise even under heavy load now.
+  The MFP stuff needs to be rewritten from scratch. My C++ OOP knowledge sucks.
+
+- implemented virtual destructor in ICio class. Thanks to that the desctructor
+  of RTC is called and saves the settings to disk (file "cmos" - actual folder,
+  needs to be fixed - "$HOME/.aranym/cmos" looks like a good idea).
+
+- NVRAM is read from disk/stored to disk automatically. You can use your
+  favorite NVRAM editor now.
+
+- system date/time is restored from RTC (host local time is used, not GMT).
+  Year needs to be fixed yet.
+
+- a lot of work on mouse cursor, still not as good as STonX's one.
+  Mouse is grabbed automatically when you move the cursor over Aranym window.
+  To release it hold Control and right click. Then you can leave the aranym
+  window - when you move the mouse pointer back over the window it's grabbed
+  again.
+
+- it seems that Videl uses different color register sets for different color
+  depths (as 4 and 16 color depth's colors are incorrect). Scary. Probably
+  some compatibility nightmare.
+
+- fixed too early SDL_Video initialization. Do not init stuff in constructors
+  as they are invoked before main(). Fix the ExtFs stuff (install "A" ???)
+
+
 2001/06/15 - PS
 - VIDEL finished. Hardware color palette registers are used properly now.
+
 
 2001/06/13 - STanda
 - some VIDEL public routins adjusted to provide fVDI driver needed methods.
@@ -8,6 +37,7 @@
 - updateScreen() semantics was updated to SDL_UpdateRect... (only). The
   original method functionality was captured in new renderScreen() method
 
+
 2001/06/12 - PS
 - VIDEL rewritten using the new BASE_IO class. Got proper getVideoMode()
   and getWidth/Height (all stolen from Linux-m68k source code).
@@ -15,6 +45,7 @@
 
 - new DSP module is based on the new BASE_IO - you see, it's easy to write
   HW emulation stuff now.
+
 
 2001/06/08 - PS
 - highly unfinished, very preliminary, often crashing support for extended
