@@ -372,7 +372,7 @@ FILESYS *aranym_fs_init(void)
         }
     } else {
         c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
-                              "not activated at ARAnyM"));
+                              "\r\nThe HOSTFS was not compiled in!"));
     }
 
     return NULL; /* Nothing installed, so nothing to stay resident */
@@ -381,6 +381,9 @@ FILESYS *aranym_fs_init(void)
 
 /*
  * $Log$
+ * Revision 1.1  2002/12/10 20:47:21  standa
+ * The HostFS (the host OS filesystem access via NatFeats) implementation.
+ *
  * Revision 1.1  2002/05/22 07:53:22  standa
  * The PureC -> gcc conversion (see the CONFIGVARS).
  * MiNT .XFS sources added.
