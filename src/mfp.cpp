@@ -351,14 +351,33 @@ void MFP::IRQ(int irq, int count)
 		case 6: flags |= F_ACIA;
 				TriggerMFP(true);
 				break;
+
+		// Floppy/SCSI/IDE interrupt
+		case 7:	if (irq_enable & F_SDMA) {
+					panicbug("SDMA IRQ");
+					flags |= F_SDMA;
+					TriggerMFP(true);
+				}
+				break;
 	}
 }
 
 int MFP::doInterrupt() {
 	int irq = 0;
+	/* SDMA */
+	if ((flags & F_SDMA) && !(irq_inservice & (1<<7))) {
+		if (automaticServiceEnd) {
+			irq_inservice |= (1<<7);
+		}
+		TriggerMFP(false);
+		flags &= ~F_SDMA;
+		irq = 7;
+	}
 	/* ACIA */
-	if ((flags & F_ACIA) && !(irq_inservice & (1<<6))) {
-		irq_inservice |= (1<<6);
+	else if ((flags & F_ACIA) && !(irq_inservice & (1<<6))) {
+		if (automaticServiceEnd) {
+			irq_inservice |= (1<<6);
+		}
 		TriggerMFP(false);
 		flags &= ~F_ACIA;
 		irq = 6;
