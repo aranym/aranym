@@ -7,7 +7,6 @@
 
 /* the following block is the output of romdiff.c tool */
 ROMdiff tosdiff[] = {
-	{57, 1},
 	{90, 45},
 	{91, 190},
 	{93, 8},
