@@ -47,6 +47,7 @@ class HostScreen {
   private:
  	void *saved_background;
   	int saved_background_size;
+  	bool GUIopened;
 
   public:
 	SDL_mutex   *screenLock;
@@ -91,6 +92,7 @@ class HostScreen {
 		screenLock = SDL_CreateMutex();
 
 		saved_background = NULL;
+		GUIopened = false;
 	}
 	~HostScreen() {
 		SDL_DestroyMutex(screenLock);
@@ -111,6 +113,8 @@ class HostScreen {
 	// save and restore background (cannot be nested)
 	void save_bkg();
 	void restore_bkg();
+	bool isGUIopen()	{ return GUIopened; }
+	void setGUIopen(bool opened)	{ GUIopened = opened; }
 
 	uint32 getBpp();
 	uint32 getPitch();
@@ -392,6 +396,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.32  2002/06/09 20:06:07  joy
+ * save_bkg/restore_bkg added (used in SDL GUI)
+ *
  * Revision 1.31  2002/06/07 20:55:35  joy
  * added toggle window/fullscreen mode switch
  *
