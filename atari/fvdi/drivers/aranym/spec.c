@@ -3,11 +3,12 @@
 #include "driver.h"
 
 
-extern long CDECL c_get_videoramaddress(void); /* STanda */
-extern void CDECL c_set_resolution(long width, long height, long depth, long freq); /* STanda */
-extern int nf_initialize();
-extern long CDECL c_get_width(void);
-extern long CDECL c_get_height(void);
+int nf_initialize(void);
+
+long CDECL c_get_videoramaddress(void); /* STanda */
+void CDECL c_set_resolution(long width, long height, long depth, long freq); /* STanda */
+long CDECL c_get_width(void);
+long CDECL c_get_height(void);
 
 #if 0
 char r_16[] = {5, 15, 14, 13, 12, 11};
@@ -301,6 +302,8 @@ long set_screen(const char **ptr)
 #endif
 
 
+void setup_scrninfo(Device *device, Mode *graphics_mode); /* from init.c */
+
 long set_scrninfo(const char** ptr)
 {
 	char token[80];
@@ -518,7 +521,7 @@ long CDECL setup(long type, long value)
 	long ret;
 
 	ret = -1;
-	switch(type) {
+	switch((int)type) {
 	case Q_NAME:
 		ret = (long)driver_name;
 		break;
