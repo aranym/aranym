@@ -93,6 +93,8 @@ struct rec_step {
 	uae_u32 a[8];
 	uae_u32 pc;
 	uae_u16 sr;
+	uae_u32 msp;
+	uae_u32 isp;
 };
 
 const int LOG_SIZE = 8192;
@@ -114,6 +116,8 @@ void m68k_record_step(uaecptr pc)
 	log[log_ptr].pc = pc;
 	MakeSR();
 	log[log_ptr].sr = regs.sr;
+	log[log_ptr].msp = regs.msp;
+	log[log_ptr].isp = regs.isp;
 	log_ptr = (log_ptr + 1) % LOG_SIZE;
 }
 
@@ -124,7 +128,7 @@ static void dump_log(void)
 		return;
 	for (int i = 0; i < LOG_SIZE; i++) {
 		int j = (i + log_ptr) % LOG_SIZE;
-		fprintf(f, "pc %08x %04x\n", log[j].pc, log[j].sr);
+		fprintf(f, "pc %08x sr %04x msp %08x isp %08x\n", log[j].pc, log[j].sr, log[j].msp, log[j].isp);
 		fprintf(f, "d0 %08x d1 %08x d2 %08x d3 %08x\n", log[j].d[0], log[j].d[1], log[j].d[2], log[j].d[3]);
 		fprintf(f, "d4 %08x d5 %08x d6 %08x d7 %08x\n", log[j].d[4], log[j].d[5], log[j].d[6], log[j].d[7]);
 		fprintf(f, "a0 %08x a1 %08x a2 %08x a3 %08x\n", log[j].a[0], log[j].a[1], log[j].a[2], log[j].a[3]);
