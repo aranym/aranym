@@ -1,3 +1,20 @@
+2005/02/13 - Petr
+- gui-sdl/sdlgui: getEvent() function fetches the keyboard and mouse events
+  (now also UP events) from the USEREVENT queue and converts them to normal
+  SDLKey and SDLMouse events.
+
+- include/parameters.h: hotkey struct bx_hotkeys_t defined and added to
+  global bx_options.
+
+- input.cpp: the following six hotkeys are user-definable now: Setup,
+  Quit, Reboot, Debugger, ScreenShot and FullScreen.
+
+- gui-sdl/dlgHotkeys.cpp: hotkey editor added, allows for online editing
+  of the six hotkeys listed above.
+
+- gui-sdl/dlgMain.cpp: hotkey editor activated.
+
+
 2005/02/12 - Patrice
 - nfosmesa: Add support for 16 and 32 bits per channel for OSMesa, using
   libOSMesa16 or libOSMesa32.
@@ -22,6 +39,7 @@
 2005/01/26 - Patrice
 - Move all parallel port implementation stuff in yamaha. Don't flush on output
   to a real file.
+
 - Remove useless FAQ item about CD-ROM configuration.
 
 
