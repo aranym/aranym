@@ -134,7 +134,7 @@ inline uint32 HostScreen::getPixel( int32 x, int32 y ) {
 		return 0;
 
 	// HACK for bpp == 2 FIXME!
-	uint32 color = ((uint16*)surf->pixels)[((uint32)y*width)+(uint32)x*getBpp()];
+	uint32 color = ((uint16*)surf->pixels)[((uint32)y*width)+(uint32)x];
 	renderEnd();
 	return color;
 }
@@ -153,6 +153,10 @@ inline void HostScreen::putPixel( int32 x, int32 y, uint32 color ) {
 
 /*
  * $Log$
+ * Revision 1.3  2001/08/30 14:04:59  standa
+ * The fVDI driver. mouse_draw implemented. Partial pattern fill support.
+ * Still buggy.
+ *
  * Revision 1.2  2001/08/28 23:26:09  standa
  * The fVDI driver update.
  * VIDEL got the doRender flag with setter setRendering().
