@@ -1,3 +1,11 @@
+2001/06/18 - STanda
+- videl renderScreen() fix (lock & unlock screen added - again)
+
+- the shift-break combination is now used to exit the emulator immediately
+  (this was PS code change, but forgotten to tell us ;))... anyway thanks
+  for really good working videl now. I seem not to have any problems with
+  color palette here :).
+
 2001/06/17 - PS
 - System Timer (200 Hz Timer C) should be precise even under heavy load now.
   The MFP stuff needs to be rewritten from scratch. My C++ OOP knowledge sucks.
