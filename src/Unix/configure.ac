@@ -58,6 +58,8 @@ AC_ARG_ENABLE(nfcdrom,         [  --enable-nfcdrom        enable NatFeat CD-ROM 
 
 AC_ARG_ENABLE(nfpci,           [  --enable-nfpci          enable NatFeat PCI (default=no)], [WANT_NFPCI=$enableval], [WANT_NFPCI=no])
 
+AC_ARG_ENABLE(nfosmesa,        [  --enable-nfosmesa       enable NatFeat OSMesa (default=no)], [WANT_NFOSMESA=$enableval], [WANT_NFOSMESA=no])
+
 AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emulation (default=yes)], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
 AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per second limiter (default=no)], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
@@ -1542,6 +1544,16 @@ if [[ "x$WANT_NFPCI" = "xyes" ]]; then
 	esac
 fi
 
+dnl Natfeat OSMesa driver
+
+NFOSMESASRCS=""
+if [[ "x$WANT_NFOSMESA" = "xyes" -a "x$WANT_OPENGL" = "xyes" ]]; then
+	AC_DEFINE([NFOSMESA_SUPPORT], 1, [Define if you want to use host OSMesa driver])
+	NFOSMESASRCS="../natfeat/nfosmesa.cpp"
+else
+	WANT_NFOSMESA="no"
+fi
+
 dnl Exception per second limiter
 
 if [[ "x$WANT_EPSLIMITER" = "xyes" ]]; then
@@ -1578,6 +1590,7 @@ AC_SUBST(DSPSRCS)
 AC_SUBST(LILOSRCS)
 AC_SUBST(NFCDROMSRCS)
 AC_SUBST(NFPCISRCS)
+AC_SUBST(NFOSMESASRCS)
 AC_SUBST(GUISDLSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
@@ -1616,6 +1629,7 @@ echo Zlib ................................... : $have_zlib
 echo Linux kernel includes .................. : $LINUXKERNEL_INCDIR
 echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
 echo NatFeat PCI driver ..................... : $WANT_NFPCI
+echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo
 echo "Configuration done. Now type \"make depend\" (or \"gmake depend\") then

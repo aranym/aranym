@@ -590,6 +590,26 @@ void presave_autozoom() {
 }
 
 /*************************************************************************/
+#define OSMESA_CONF(x) bx_options.osmesa.x
+
+struct Config_Tag osmesa_conf[]={
+	{ "Enabled", Bool_Tag, &OSMESA_CONF(enabled), 0, 0},
+	{ "Library", String_Tag, &OSMESA_CONF(library), sizeof(OSMESA_CONF(library)), 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+void preset_osmesa() {
+  OSMESA_CONF(enabled) = false;
+  safe_strncpy(OSMESA_CONF(library), "libOSMesa.so", sizeof(OSMESA_CONF(library)));
+}
+
+void postload_osmesa() {
+}
+
+void presave_osmesa() {
+}
+
+/*************************************************************************/
 void usage (int status) {
   printf ("Usage: %s [OPTIONS]\n", program_name);
   printf ("\
@@ -638,6 +658,7 @@ void preset_cfg() {
   preset_midi();
   preset_nfcdroms();
   preset_autozoom();
+  preset_osmesa();
 }
 
 void postload_cfg() {
@@ -655,6 +676,7 @@ void postload_cfg() {
   postload_midi();
   postload_nfcdroms();
   postload_autozoom();
+  postload_osmesa();
 }
 
 void presave_cfg() {
@@ -672,6 +694,7 @@ void presave_cfg() {
   presave_midi();
   presave_nfcdroms();
   presave_autozoom();
+  presave_osmesa();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -974,6 +997,7 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, midi_conf, "[MIDI]", true);
 	process_config(f, rcfile, nfcdroms_conf, "[CDROMS]", true);
 	process_config(f, rcfile, autozoom_conf, "[AUTOZOOM]", true);
+	process_config(f, rcfile, osmesa_conf, "[NFOSMESA]", true);
 
 	return true;
 }
@@ -1017,6 +1041,7 @@ bool saveSettings(const char *fs)
 	update_config(fs, midi_conf, "[MIDI]");
 	update_config(fs, nfcdroms_conf, "[CDROMS]");
 	update_config(fs, autozoom_conf, "[AUTOZOOM]");
+	update_config(fs, osmesa_conf, "[NFOSMESA]");
 
 	return true;
 }

@@ -54,6 +54,7 @@ Patrice Mandin <pmandin@caramail.com>
 - Videl autozoom
 - EPS limiter
 - NatFeat based PCI bridge (atari software can access host PCI)
+- Natfeat OpenGL rendering, using host's OSMesa
 - close examination of our code and finding obvious and not-so-obvious
   bugs (IDE, parameters handling, TOS patches)
 

@@ -22,6 +22,9 @@
 #  include "nfpci_linux.h"
 # endif
 #endif
+#ifdef NFOSMESA_SUPPORT
+# include "nfosmesa.h"
+#endif
 /* add your NatFeat class definition here */
 
 
@@ -55,6 +58,9 @@ CdromDriverSdl CdRom;
 PciDriverLinux Pci;
 # endif
 #endif
+#ifdef NFOSMESA_SUPPORT
+OSMesaDriver OSMesa;
+#endif
 /* add your NatFeat object declaration here */
 
 pNatFeat nf_objects[] = {
@@ -73,6 +79,9 @@ pNatFeat nf_objects[] = {
 #endif
 #ifdef NFPCI_SUPPORT
 	&Pci,
+#endif
+#ifdef NFOSMESA_SUPPORT
+	&OSMesa,
 #endif
 	/* add your NatFeat object below */
 

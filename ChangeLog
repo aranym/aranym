@@ -1,3 +1,11 @@
+2004/12/11 - Patrice
+- hostscreen.cpp: move one update function using OpenGL from .h to .cpp, necessary
+  for compiling OSMesa.
+  
+- NF: Add Natfeat OSMesa rendering support for Atari applications using host
+  CPU (highly experimental!).
+
+
 2004/11/24 - STanda
 - TAP-Win32 networking for cygwin builds implemented and fully functional
   The natfeat/ethernet.cpp split to natfeat card emulation and host OS

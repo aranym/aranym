@@ -167,6 +167,12 @@ typedef struct {
   uint32 height;
 } bx_autozoom_options_t;
 
+// NfOSMesa options
+typedef struct {
+	bool enabled;
+	char library[256];
+} bx_nfosmesa_options_t;
+
 // Keyboard and mouse
 typedef struct {
   bool wheel_eiffel;		// eiffel compatible scancodes for mouse wheel
@@ -208,6 +214,7 @@ typedef struct {
   bx_cpu_options_t  cpu;
 #endif
   bx_autozoom_options_t	autozoom;
+  bx_nfosmesa_options_t	osmesa;
   char			tos_path[512];
   char			emutos_path[512];
   uint32		fastram;
