@@ -100,7 +100,6 @@ typedef struct {
   bool byteswap;
   bool readonly;
   char path[512];
-  char name[41];
   char partID[3+1];	// 3 chars + EOS ( = '\0')
 } bx_scsidevice_options_t;
  /* 
@@ -229,6 +228,8 @@ typedef struct {
 } bx_gdbstub_t;
 #endif
 
+#define DISKS	8
+
 // Options 
 typedef struct {
   bx_floppy_options_t	floppy;
@@ -240,7 +241,7 @@ typedef struct {
   bx_scsidevice_options_t	disk4;
   bx_scsidevice_options_t	disk5;
   bx_scsidevice_options_t	disk6;
-  bx_scsidevice_options_t	disk7;
+  bx_scsidevice_options_t	disk7;	// last idx+1 = DISKS
   bx_aranymfs_options_t	aranymfs[ 'Z'-'A'+1 ];
 //  bx_cookies_options_t cookies;
   bx_video_options_t	video;
