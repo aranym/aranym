@@ -30,6 +30,8 @@
 #define DEBUG 1
 #include "debug.h"
 
+extern int start_debug;		// MJ
+
 /*
  *  Initialize everything, returns false on error
  */
@@ -53,7 +55,7 @@ bool InitAll(void)
 	if (!Init680x0())
 		return false;
 
-	if (false) {
+	if (start_debug) {
 		printf("Activate debugger...\n");
 		activate_debugger();
 	}
