@@ -5,6 +5,8 @@
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "acia.h"
+
+#define DEBUG	0
 #include "debug.h"
 
 static const int HW = 0xfffc00;
@@ -95,7 +97,32 @@ void IKBD::doTransmit(void)
 	mfp.IRQ(6);
 }
 
-void IKBD::setData(uae_u8 value) {
+static inline uint8 int2bcd(int a)
+{
+	return (a % 10) + ((a / 10) << 4);
+}
+
+void IKBD::setData(uae_u8 value)
+{
 	/* send data */
+	if (value == 0x1c) {
+		printf("IKBD_ReadClock\n");
+		// Get current time
+		time_t tim = time(NULL);
+		struct tm *curtim = localtime(&tim);	// current time
+
+		// Return packet
+		send(0xfc);
+		// Return time-of-day clock as yy-mm-dd-hh-mm-ss as BCD
+		send(int2bcd(curtim->tm_year % 100));
+		send(int2bcd(curtim->tm_mon+1));
+		send(int2bcd(curtim->tm_mday));
+		send(int2bcd(curtim->tm_hour));
+		send(int2bcd(curtim->tm_min));
+		send(int2bcd(curtim->tm_sec));
+
+		return;
+	}
+
 	D(bug("IKBD data = %02x", value));
 }
