@@ -26,6 +26,7 @@
 #include <sys/stat.h>			// for stat
 #include <unistd.h>				// for close
 #include "ata.h"
+//#include "parameters.h"
 
 extern Bit32u showPC(void);	// for debugging only
 extern uint32 HWget_b(Bit32u addr);
