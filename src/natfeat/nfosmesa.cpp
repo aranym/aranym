@@ -50,9 +50,6 @@ typedef struct {
 /*--- Variables ---*/
 
 static osmesa_funcs fn;
-#if !NFOSMESA_GLEXT
-static const char *glGetStringNull="";
-#endif
 
 /*--- Constructor/Destructor ---*/
 
@@ -442,6 +439,7 @@ GLboolean OSMesaDriver::OSMesaGetColorBuffer( Uint32 c, GLint *width, GLint *hei
 
 void *OSMesaDriver::OSMesaGetProcAddress( const char *funcName )
 {
+	DUNUSED(funcName);
 	D(bug("nfosmesa: OSMesaGetProcAddress"));
 	return NULL;
 }
@@ -454,6 +452,7 @@ Uint32 OSMesaDriver::LenglGetString(Uint32 ctx, GLenum name)
 #else
 	switch(name) {
 		case GL_EXTENSIONS:
+		case GL_VERSION:
 			return 4;
 		default:
 			return strlen((const char *)glGetString(ctx,name));
@@ -469,7 +468,10 @@ void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 #else
 	switch(name) {
 		case GL_EXTENSIONS:
-			strcpy((char *)buffer, glGetStringNull);
+			strcpy((char *)buffer, "");
+			break;
+		case GL_VERSION:
+			strcpy((char *)buffer, "1.0");
 			break;
 		default:
 			strcpy((char *)buffer,(const char *)glGetString(ctx,name));

@@ -1,3 +1,7 @@
+2005/01/24 - Patrice
+- nfosmesa: Return OpenGL version as 1.0 when extensions disabled.
+
+
 2005/01/24 - Andreas
 - More MMU emulation fixes.  Linux boots now.
 
