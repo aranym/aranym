@@ -127,8 +127,8 @@ int CdromDriver::GetDrive(memptr device)
 	metados_bos_header_t *bos_device;
 
 /*	D(bug(NFCD_NAME "GetDrive()"));*/
-	bos_device=(metados_bos_header_t *) device;
-	return ReadInt16((uint32) &(bos_device->phys_letter));
+	bos_device=(metados_bos_header_t *)Atari2HostAddr(device);
+	return SDL_SwapBE16(bos_device->phys_letter);
 }
 
 unsigned char CdromDriver::BinaryToBcd(unsigned char value)
