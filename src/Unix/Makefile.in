@@ -136,10 +136,12 @@ install: $(APP) installdirs
 	$(INSTALL_DATA) ../../COPYING $(DESTDIR)$(docdir)/$(APP)/COPYING
 	$(INSTALL_DATA) ../../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
 	$(INSTALL_DATA) ../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL
+	$(INSTALL_DATA) ../../documentation.txt $(DESTDIR)$(docdir)/$(APP)/documentation.txt
 	$(INSTALL_DATA) ../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) ../atari/aranymrc.example $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
 	$(INSTALL_DATA) ../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
 	$(INSTALL_DATA) ../atari/aranymfs/aranymfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
+	$(INSTALL_DATA) ../atari/aranymfs/aranym.xfs.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
 	$(INSTALL_DATA) ../atari/aranymfs/config.sys $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/config.sys
 	$(INSTALL_DATA) ../atari/createdisk/createdisk.README $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.README
 	$(INSTALL) ../atari/createdisk/createdisk.sh $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.sh
@@ -162,10 +164,12 @@ uninstall:
 	rm -f $(DESTDIR)$(docdir)/$(APP)/COPYING
 	rm -f $(DESTDIR)$(docdir)/$(APP)/BUGS
 	rm -f $(DESTDIR)$(docdir)/$(APP)/INSTALL
+	rm -f $(DESTDIR)$(docdir)/$(APP)/documentation.txt
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs/config.sys
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/createdisk.sh
@@ -206,14 +210,16 @@ bindist: $(APP) bindistdirs
 	$(INSTALL_DATA) ../../AUTHORS tmpdist$(docdir)/$(APP)/AUTHORS
 	$(INSTALL_DATA) ../../NEWS tmpdist$(docdir)/$(APP)/NEWS
 	$(INSTALL_DATA) ../../README tmpdist$(docdir)/$(APP)/README
-	$(INSTALL_DATA) ../../FAQ $(DESTDIR)$(docdir)/$(APP)/FAQ
-	$(INSTALL_DATA) ../../COPYING $(DESTDIR)$(docdir)/$(APP)/COPYING
-	$(INSTALL_DATA) ../../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
-	$(INSTALL_DATA) ../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL	
+	$(INSTALL_DATA) ../../FAQ tmpdist$(docdir)/$(APP)/FAQ
+	$(INSTALL_DATA) ../../COPYING tmpdist$(docdir)/$(APP)/COPYING
+	$(INSTALL_DATA) ../../BUGS tmpdist$(docdir)/$(APP)/BUGS
+	$(INSTALL_DATA) ../../INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
+	$(INSTALL_DATA) ../../documentation.txt tmpdist$(docdir)/$(APP)/documentation.tx
 	$(INSTALL_DATA) ../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) ../atari/aranymrc.example tmpdist$(datadir)/$(APP)/atari/aranymrc.example
 	$(INSTALL_DATA) ../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
 	$(INSTALL_DATA) ../atari/aranymfs/aranymfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/aranymfs/aranymfs.dos.bz2
+	$(INSTALL_DATA) ../atari/aranymfs/aranym.xfs.bz2 tmpdist$(datadir)/$(APP)/atari/aranymfs/aranym.xfs.bz2
 	$(INSTALL_DATA) ../atari/aranymfs/config.sys tmpdist$(datadir)/$(APP)/atari/aranymfs/config.sys
 	$(INSTALL_DATA) ../atari/createdisk/createdisk.README tmpdist$(datadir)/$(APP)/atari/createdisk/createdisk.README
 	$(INSTALL) ../atari/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/atari/createdisk/createdisk.sh
