@@ -72,6 +72,7 @@ void segmentationfault(int x)
 	printf("Gotcha! Illegal memory access. Atari PC = $%x\n", (unsigned)showPC());
 #ifdef FULL_HISTORY
 	showBackTrace(20, false);
+	m68k_dumpstate (NULL);
 #else
 	printf("If the Full History was enabled you would see the last 20 instructions here.\n");
 #endif
@@ -233,6 +234,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.62  2002/04/10 21:05:33  joy
+ * just comment added
+ *
  * Revision 1.61  2002/03/15 12:22:41  milan
  * Exception() is called only one time
  * JIT c. uses own SEGV handler
