@@ -28,14 +28,13 @@
 #include "nfcdrom.h"
 #include "../../atari/nfcdrom/nfcdrom_nfapi.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /*--- Defines ---*/
 
-#ifndef EINVFN
+#define ENOTREADY	-2
 #define EINVFN -32
-#endif
 
 #define CDROM_LEADOUT_CDAR	0xa2
 
@@ -371,15 +370,37 @@ int32 CdromDriver::cd_seek(memptr device, uint32 offset)
 
 int32 CdromDriver::cd_status(memptr device, memptr ext_status)
 {
-	int drive;
+	int drive, errorcode, mediachanged;
+	unsigned long status;
 
 	drive = OpenDrive(device);
 	if (drive<0) {
 		return EINVFN;
 	}
 
+	status = 0;
+	errorcode=ioctl(drive_handles[drive], CDROM_MEDIA_CHANGED, &status);
+	D(bug("nf: cdrom: Status(CDROM_MEDIA_CHANGED): errorcode=0x%08x", errorcode));
+	if (errorcode<0) {
+		CloseDrive(device);
+		return errorcode;
+	}
+	mediachanged = (errorcode==1);
+
+	status = 0;
+	errorcode=ioctl(drive_handles[drive], CDROM_DRIVE_STATUS, &status);
+	D(bug("nf: cdrom: Status(CDROM_DRIVE_STATUS): errorcode=0x%08x", errorcode));
+	if (errorcode<0) {
+		CloseDrive(device);
+		return errorcode;
+	}
+	if (errorcode == CDS_DRIVE_NOT_READY) {
+		CloseDrive(drive);
+		return ENOTREADY;
+	}
+
 	CloseDrive(drive);
-	return 0;
+	return (mediachanged<<3);
 }
 
 int32 CdromDriver::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
