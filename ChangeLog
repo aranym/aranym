@@ -1,3 +1,9 @@
+2001/07/09 - STanda - version increased to 0.0.5
+- SDL comunity solved our mouse problem in Xs! Get the newest SDL cvs,
+  make & install
+
+- the grab_mouse is set by default when in fullscreen
+
 2001/07/02 - milan
 - new UAE CPU port from BasiliskII (CVS 25.6.2001)
 
