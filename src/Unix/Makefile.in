@@ -455,5 +455,8 @@ newcpu.s: ../uae_cpu/newcpu.cpp
 memory.s: ../uae_cpu/memory.cpp
 	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) ../uae_cpu/memory.cpp -o memory.s
 
+diskimage: ../../tools/diskimage.c
+	$(CC) $(LDFLAGS) -o diskimage ../../tools/diskimage.c
+
 #-------------------------------------------------------------------------
 # DO NOT DELETE THIS LINE -- make depend depends on it.
