@@ -1,3 +1,8 @@
+2003/09/29 - milan
+- Makefile.in: APP_LIB added (hmmm, sorry, diploma thesis, thanks Francois and
+  Stefan :-)
+
+
 2003/09/25 - milan
 - configure.ac: OS_TYPE and CPU_TYPE for future natfeat exported to sources
 

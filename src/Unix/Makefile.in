@@ -135,6 +135,9 @@ $(APP): $(OBJ_DIR) $(OBJS)
 $(APP_STATIC): $(OBJ_DIR) $(OBJS)
 	$(CXX) -o $(APP_STATIC) -static $(LDFLAGS) $(OBJS) $(LIBS)
 
+$(APP_LIB): $(OBJ_DIR) $(OBJS)
+	$(LD) -o $(APP_LIB) $(LDFLAGS) $(OBJS) $(LIBS)
+
 install: $(APP) $(APP_DI) $(TAPIF) $(APP).1.gz installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then\
