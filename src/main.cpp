@@ -367,8 +367,8 @@ static void check_event(void)
 					mouseOut = true;
 
 				// warning - hardcoded values of screen size - stupid
-				if ((xrel > 0 && aradata.getAtariMouseX() >= 639) ||
-					(yrel > 0 && aradata.getAtariMouseY() >= 479))
+				if ((xrel > 0 && aradata.getAtariMouseX() >= (int32)hostScreen.getWidth() - 1) ||
+					(yrel > 0 && aradata.getAtariMouseY() >= (int32)hostScreen.getHeight() - 1))
 					mouseOut = true;
 			}
 		}
@@ -611,6 +611,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.27  2001/10/18 14:27:24  joy
+ * TOS 4.04 is patched in runtime
+ *
  * Revision 1.26  2001/10/18 13:46:34  joy
  * detect the ROM version. Knows both our 68040 friendly ABTOS and the original TOS 4.04.
  *
@@ -625,6 +628,9 @@ void ExitAll(void)
  *
  * Revision 1.22  2001/10/08 21:46:05  standa
  * The $Header$ and $Log$
+ * The $Header$ and Revision 1.27  2001/10/18 14:27:24  joy
+ * The $Header$ and TOS 4.04 is patched in runtime
+ * The $Header$ and
  * The $Header$ and Revision 1.26  2001/10/18 13:46:34  joy
  * The $Header$ and detect the ROM version. Knows both our 68040 friendly ABTOS and the original TOS 4.04.
  * The $Header$ and
