@@ -172,9 +172,16 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 
 		case M68K_EMUL_OP_DEBUGUTIL:	// for EmuTOS - code 0x7135
-//			printf("DebugUtil d0=%08lx  a5=%08lx\n", r->d[0], r->a[5]);
-//			r->d[0] = DebugUtil(r->d[0]);
-			printf("%s", (char *)get_long(r->a[7]+4, true));
+		{
+			uint32 textAddr = ReadAtariInt32(r->a[7]+4);
+			if (textAddr >=0 && textAddr < (RAMSize + ROMSize + FastRAMSize)) {
+				uint8 *textPtr = Atari2HostAddr(textAddr);
+				printf("%s", textPtr);
+			}
+			else {
+				D(bug("Wrong debugText addr: %u", textAddr));
+			}
+		}
 			break;
 
 		case M68K_EMUL_OP_DMAREAD:	// for EmuTOS - code 0x7136
@@ -183,7 +190,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			long buf = get_long(r->a[7]+10, true);
 			int cnt = get_word(r->a[7]+8, true);
 			long recnr = get_long(r->a[7]+4, true);
-			D(bug("ARAnyM DMAread(start=%ld, count=%d, buffer=%ld, device=%d)\n", recnr, cnt, buf, dev));
+			D(bug("ARAnyM DMAread(start=%ld, count=%d, buffer=%ld, device=%d)", recnr, cnt, buf, dev));
 
 			bx_disk_options *disk;
 			switch(dev) {
@@ -227,7 +234,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 						uint16 minor = get_word(r->a[7]+8, true);
 						uint32 blocks = get_long(r->a[7]+10, true);
 						uint32 blocksize = get_long(r->a[7]+14, true);
-						D(bug("ARAnyM XHGetCapacity(major=%u, minor=%u, blocks=%lu, blocksize=%lu)\n", major, minor, blocks, blocksize));
+						D(bug("ARAnyM XHGetCapacity(major=%u, minor=%u, blocks=%lu, blocksize=%lu)", major, minor, blocks, blocksize));
 
 						if (minor != 0) {
 							r->d[0] = (uint32)-15L;	// EUNDEV (unknown device)

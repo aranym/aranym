@@ -1,3 +1,7 @@
+2002/01/30 - joy
+- emul_op.cpp: OP_DEBUGUTIL made more secure (wrong addr will not crash aranym)
+
+
 2002/01/29 - joy
 - two EmuTOS screenshots added
 - unsupported Windows binary available in download section
