@@ -1,4 +1,7 @@
 2001/10/17 - STanda
+- README The sophics.cz replaced by atari.org for http access. The ftp
+         and email addresses was left. (I don't know wheter aranym@atari.org
+         works and the ftp must stay @sophics, the absolute path problems)
 - ExtFs: Small bug fix. The Fsfirst&next returns the . and .. dirs too.
          (according to Julian Reschke's advice)
 - Tools: The changes that were made and uploaded to JOY's ftp are in CVS now
