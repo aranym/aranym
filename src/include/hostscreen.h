@@ -16,7 +16,7 @@ class HostScreen {
 protected:
 	SDL_Surface *surf;  // The main window surface
 	uint32 sdl_videoparams;
-	uint32 width, height;
+	uint32 width, height, bpp;
 	bool   doUpdate; // the HW surface is available -> the SDL need not to update the surface after ->pixel access
 	uint32 sdl_colors[256]; // TOS palette (bpp < 16) to SDL color mapping
 
@@ -60,7 +60,7 @@ public:
 	uint32 getPaletteColor( uint32 index );
 	uint32 getColor( uint32 red, uint32 green, uint32 blue );
 
-	void   setWindowSize( uint32 width, uint32 height );
+	void   setWindowSize( uint32 width, uint32 height, uint32 bpp );
 	void   setRendering( bool render );
 
 	// gfx Primitives draw functions
@@ -287,6 +287,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.14  2001/10/29 23:14:17  standa
+ * The HostScreen support for arbitrary destination BPP (8,16,24,32bit).
+ *
  * Revision 1.13  2001/10/25 19:56:01  standa
  * The Log and Header CVS tags in the Log removed. Was recursing.
  *

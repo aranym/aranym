@@ -57,17 +57,18 @@ void HostScreen::makeSnapshot()
 }
 
 
-void HostScreen::setWindowSize(	uint32 width, uint32 height )
+void HostScreen::setWindowSize(	uint32 width, uint32 height, uint32 bpp )
 {
 	this->width  = width;
 	this->height = height;
+	this->bpp = bpp;
 
 	// SelectVideoMode();
 	sdl_videoparams = SDL_HWSURFACE;
 	if (fullscreen)
 		sdl_videoparams |= SDL_FULLSCREEN;
 
-	surf = SDL_SetVideoMode(width, height, 16, sdl_videoparams);
+	surf = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 	D(bug("Surface Pitch = %d, width = %d, height = %d", surf->pitch, surf->w, surf->h));
 	D(bug("Must Lock? %s", SDL_MUSTLOCK(surf) ? "YES" : "NO"));
@@ -902,6 +903,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.17  2001/10/29 23:14:17  standa
+ * The HostScreen support for arbitrary destination BPP (8,16,24,32bit).
+ *
  * Revision 1.16  2001/10/25 19:56:01  standa
  * The Log and Header CVS tags in the Log removed. Was recursing.
  *

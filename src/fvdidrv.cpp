@@ -188,6 +188,15 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			setColor( get_long( (uint32)r->a[7] + 4, true ), get_long( (uint32)r->a[7] + 8, true ) );
 			break;
 
+		case 10: // setResolution:
+			setResolution( get_long( (uint32)r->a[7] + 4, true ), get_long( (uint32)r->a[7] + 8, true ),
+						   get_long( (uint32)r->a[7] + 12, true ), get_long( (uint32)r->a[7] + 16, true ) );
+			break;
+
+		case 20: // debug_aranym:
+			D(bug("fVDI: DEBUG %d", get_long( (uint32)r->a[7] + 4, true ) ));
+			break;
+
 		// not implemented functions
 		default:
 			D(bug("fVDI: Unknown %d", fncode));
@@ -315,7 +324,8 @@ uint32 FVDIDriver::getPixel(void *vwk, MFDB *src, int32 x, int32 y)
  *	4(a7)	paletteIndex
  *	8(a7)   5+6+4 FalconTC RGB color value
  **/
-void FVDIDriver::setColor( uint32 paletteIndex, uint32 color ) {
+void FVDIDriver::setColor( uint32 paletteIndex, uint32 color )
+{
 	D(bug("fVDI: setColor: %03d,%x - %x,%x,%x", paletteIndex, color,
 			  (uint8) ((color >> 8) & 0xf8),
 			  (uint8) ((color >> 3) & 0xf8),
@@ -325,6 +335,13 @@ void FVDIDriver::setColor( uint32 paletteIndex, uint32 color ) {
 								(uint8)((color >> 8) & 0xf8),
 								(uint8)((color >> 3) & 0xfc),
 								(uint8)(color & 0x1f) << 3);
+}
+
+
+void FVDIDriver::setResolution( int32 width, int32 height, int32 depth, int32 freq )
+{
+	D(bug("fVDI: setResolution: %dx%dx%d@%d", width, height, depth, freq ));
+	hostScreen.setWindowSize( width, height, depth );
 }
 
 
@@ -1160,6 +1177,9 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.20  2001/10/29 23:15:26  standa
+ * The blitArea method rewitten to use macros. More readable code.
+ *
  * Revision 1.19  2001/10/24 17:55:01  standa
  * The fVDI driver fixes. Finishing the functionality tuning.
  *

@@ -43,7 +43,7 @@ VIDEL::VIDEL()
 }
 
 void VIDEL::init() {
-	hostScreen.setWindowSize( width, height );
+	hostScreen.setWindowSize( width, height, 16 );
 }
 
 // monitor writting to Falcon and ST/E color palette registers
@@ -183,7 +183,7 @@ void VIDEL::renderScreenNoFlag()
 		}
 	}
 	if (od_posledni_zmeny == 3) {
-		hostScreen.setWindowSize( width, height );
+		hostScreen.setWindowSize( width, height, 16 );
 	}
 	if (od_posledni_zmeny < 4) {
 		od_posledni_zmeny++;
@@ -321,6 +321,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.27  2001/10/25 19:56:01  standa
+ * The Log and Header CVS tags in the Log removed. Was recursing.
+ *
  * Revision 1.26  2001/10/16 20:28:43  standa
  * The #define SUPPORT_MULTIPLEDESTBPP support extended to 16, 24 and 32 destBpp.
  * Fixed RGB vs BRG bug in videl rendering.

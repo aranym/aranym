@@ -55,6 +55,7 @@ class FVDIDriver {
 	void restoreMouseBackground();
 	void saveMouseBackground( int16 x, int16 y, int16 width, int16 height );
 	void setColor( uint32 paletteIndex, uint32 color );
+	void setResolution( int32 width, int32 height, int32 depth, int32 freq );
 
 	MFDB* FVDIDriver::fetchMFDB( MFDB* mfdb, uint32 pmfdb );
 
@@ -76,6 +77,11 @@ class FVDIDriver {
 
 /*
  * $Log$
+ * Revision 1.8  2001/10/23 21:28:49  standa
+ * Several changes, fixes and clean up. Shouldn't crash on high resolutions.
+ * hostscreen/gfx... methods have fixed the loop upper boundary. The interface
+ * types have changed quite havily.
+ *
  * Revision 1.7  2001/10/03 06:37:41  standa
  * General cleanup. Some constants added. Better "to screen" operation
  * recognition (the videoram address is checked too - instead of only the
