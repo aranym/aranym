@@ -104,16 +104,8 @@ class HostFs : public NF_Base {
 	 * MetaDos DOS driver dispatch functions.
 	 **/
 	char *name() { return "HOSTFS"; }
-	bool isSuperOnly() { return false; }
+	bool isSuperOnly() { return true; }
 	int32 dispatch( uint32 emulop );
-
-	/**
-	 * Some crossplatform mem & str functions to use in GEMDOS replacement.
-	 **/
-	void a2fmemcpy( char *dest, memptr source, size_t count );
-	void a2fstrcpy( char *dest, memptr source );
-	void f2amemcpy( memptr dest, char *source, size_t count );
-	void f2astrcpy( memptr dest, char *source );
 
 	/**
 	 * Unix to ARAnyM structure conversion routines.
@@ -186,6 +178,9 @@ class HostFs : public NF_Base {
 
 /*
  * $Log$
+ * Revision 1.3  2002/12/17 14:20:48  standa
+ * Better STL suppor
+ *
  * Revision 1.2  2002/12/16 15:39:18  standa
  * The map -> std::map
  *

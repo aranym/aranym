@@ -21,6 +21,7 @@
 
 #include "natfeat.h"
 #include "aranym_xfs.h"
+#include "hostfs_nfapi.h"
 
 /* note: must include after aranym_xfs.h */
 #include "mint/kerinfo.h"
@@ -73,175 +74,174 @@ long     _cdecl ara_fs_unmount	 (int drv);
 
 unsigned long nfHostFsId;
 
-
 long     _cdecl aranym_fs_native_init(int fs_devnum, char *mountpoint, char *hostroot, int halfsensitive,
 									  void *fs, void *fs_dev)
 {
-	return nfCall((nfHostFsId + 0x00, (long)fs_devnum, mountpoint, hostroot, (long)halfsensitive, fs, fs_dev));
+	return nfCall((HOSTFS(XFS_INIT), (long)fs_devnum, mountpoint, hostroot, (long)halfsensitive, fs, fs_dev));
 }
 
 long     _cdecl ara_fs_root       (int drv, fcookie *fc)
 {
-	return nfCall((nfHostFsId + 0x01, (long)drv, fc));
+	return nfCall((HOSTFS(XFS_ROOT), (long)drv, fc));
 }
 
 long     _cdecl ara_fs_lookup     (fcookie *dir, const char *name, fcookie *fc)
 {
-	return nfCall((nfHostFsId + 0x02, dir, name, fc));
+	return nfCall((HOSTFS(XFS_LOOKUP), dir, name, fc));
 }
 
 long     _cdecl ara_fs_creat      (fcookie *dir, const char *name,
 								   unsigned int mode, int attrib, fcookie *fc)
 {
-	return nfCall((nfHostFsId + 0x03, dir, name, (long)mode, (long)attrib, fc));
+	return nfCall((HOSTFS(XFS_CREATE), dir, name, (long)mode, (long)attrib, fc));
 }
 
 DEVDRV * _cdecl ara_fs_getdev     (fcookie *fc, long *devspecial)
 {
-	return (DEVDRV*) nfCall((nfHostFsId + 0x04, fc, devspecial));
+	return (DEVDRV*) nfCall((HOSTFS(XFS_GETDEV), fc, devspecial));
 }
 
 long     _cdecl ara_fs_getxattr   (fcookie *file, XATTR *xattr)
 {
-	return nfCall((nfHostFsId + 0x05, file, xattr));
+	return nfCall((HOSTFS(XFS_GETXATTR), file, xattr));
 }
 
 long     _cdecl ara_fs_chattr     (fcookie *file, int attr)
 {
-	return nfCall((nfHostFsId + 0x06, file, (long)attr));
+	return nfCall((HOSTFS(XFS_CHATTR), file, (long)attr));
 }
 
 long     _cdecl ara_fs_chown      (fcookie *file, int uid, int gid)
 {
-	return nfCall((nfHostFsId + 0x07, file, (long)uid, (long)gid));
+	return nfCall((HOSTFS(XFS_CHOWN), file, (long)uid, (long)gid));
 }
 
 long     _cdecl ara_fs_chmode     (fcookie *file, unsigned int mode)
 {
-	return nfCall((nfHostFsId + 0x08, file, (long)mode));
+	return nfCall((HOSTFS(XFS_CHMOD), file, (long)mode));
 }
 
 long     _cdecl ara_fs_mkdir      (fcookie *dir, const char *name, unsigned int mode)
 {
-	return nfCall((nfHostFsId + 0x09, dir, name, (long)mode));
+	return nfCall((HOSTFS(XFS_MKDIR), dir, name, (long)mode));
 }
 
 long     _cdecl ara_fs_rmdir      (fcookie *dir, const char *name)
 {
-	return nfCall((nfHostFsId + 0x0a, dir, name));
+	return nfCall((HOSTFS(XFS_RMDIR), dir, name));
 }
 
 long     _cdecl ara_fs_remove     (fcookie *dir, const char *name)
 {
-	return nfCall((nfHostFsId + 0x0b, dir, name));
+	return nfCall((HOSTFS(XFS_REMOVE), dir, name));
 }
 
 long     _cdecl ara_fs_getname    (fcookie *relto, fcookie *dir,
 								   char *pathname, int size)
 {
-	return nfCall((nfHostFsId + 0x0c, relto, dir, pathname, (long)size));
+	return nfCall((HOSTFS(XFS_GETNAME), relto, dir, pathname, (long)size));
 }
 
 long     _cdecl ara_fs_rename     (fcookie *olddir, char *oldname,
 								   fcookie *newdir, const char *newname)
 {
-	return nfCall((nfHostFsId + 0x0d, olddir, oldname, newdir, newname));
+	return nfCall((HOSTFS(XFS_RENAME), olddir, oldname, newdir, newname));
 }
 
 long     _cdecl ara_fs_opendir    (DIR *dirh, int tosflag)
 {
-	return nfCall((nfHostFsId + 0x0e, dirh, (long)tosflag));
+	return nfCall((HOSTFS(XFS_OPENDIR), dirh, (long)tosflag));
 }
 
 long     _cdecl ara_fs_readdir    (DIR *dirh, char *name, int namelen,
 								   fcookie *fc)
 {
-	return nfCall((nfHostFsId + 0x0f, dirh, name, (long)namelen, fc));
+	return nfCall((HOSTFS(XFS_READDIR), dirh, name, (long)namelen, fc));
 }
 
 long     _cdecl ara_fs_rewinddir  (DIR *dirh)
 {
-	return nfCall((nfHostFsId + 0x10, dirh));
+	return nfCall((HOSTFS(XFS_REWINDDIR), dirh));
 }
 
 long     _cdecl ara_fs_closedir   (DIR *dirh)
 {
-	return nfCall((nfHostFsId + 0x11, dirh));
+	return nfCall((HOSTFS(XFS_CLOSEDIR), dirh));
 }
 
 long     _cdecl ara_fs_pathconf   (fcookie *dir, int which)
 {
-	return nfCall((nfHostFsId + 0x12, dir, (long)which));
+	return nfCall((HOSTFS(XFS_PATHCONF), dir, (long)which));
 }
 
 long     _cdecl ara_fs_dfree      (fcookie *dir, long *buf)
 {
-	return nfCall((nfHostFsId + 0x13, dir, buf));
+	return nfCall((HOSTFS(XFS_DFREE), dir, buf));
 }
 
 long     _cdecl ara_fs_writelabel (fcookie *dir, const char *name)
 {
-	return nfCall((nfHostFsId + 0x14, dir, name));
+	return nfCall((HOSTFS(XFS_WRITELABEL), dir, name));
 }
 
 long     _cdecl ara_fs_readlabel  (fcookie *dir, char *name,
 								   int namelen)
 {
-	return nfCall((nfHostFsId + 0x15, dir, name, (long)namelen));
+	return nfCall((HOSTFS(XFS_READLABEL), dir, name, (long)namelen));
 }
 
 long     _cdecl ara_fs_symlink    (fcookie *dir, const char *name,
 								   const char *to)
 {
-	return nfCall((nfHostFsId + 0x16, dir, name, to));
+	return nfCall((HOSTFS(XFS_SYMLINK), dir, name, to));
 }
 
 long     _cdecl ara_fs_readlink   (fcookie *dir, char *buf, int len)
 {
-	return nfCall((nfHostFsId + 0x17, dir, buf, (long)len));
+	return nfCall((HOSTFS(XFS_READLINK), dir, buf, (long)len));
 }
 
 long     _cdecl ara_fs_hardlink   (fcookie *fromdir,
 								   const char *fromname,
 								   fcookie *todir, const char *toname)
 {
-	return nfCall((nfHostFsId + 0x18, fromdir, fromname, todir, toname));
+	return nfCall((HOSTFS(XFS_HARDLINK), fromdir, fromname, todir, toname));
 }
 
 long     _cdecl ara_fs_fscntl     (fcookie *dir, const char *name,
 								   int cmd, long arg)
 {
-	return nfCall((nfHostFsId + 0x19, dir, name, (long)cmd, arg));
+	return nfCall((HOSTFS(XFS_FSCNTL), dir, name, (long)cmd, arg));
 }
 
 long     _cdecl ara_fs_dskchng    (int drv, int mode)
 {
-	return nfCall((nfHostFsId + 0x1a, (long)drv, (long)mode));
+	return nfCall((HOSTFS(XFS_DSKCHNG), (long)drv, (long)mode));
 }
 
 long     _cdecl ara_fs_release    (fcookie *fc)
 {
-	return nfCall((nfHostFsId + 0x1b, fc));
+	return nfCall((HOSTFS(XFS_RELEASE), fc));
 }
 
 long     _cdecl ara_fs_dupcookie  (fcookie *new, fcookie *old)
 {
-	return nfCall((nfHostFsId + 0x1c, new, old));
+	return nfCall((HOSTFS(XFS_DUPCOOKIE), new, old));
 }
 
 long     _cdecl ara_fs_sync       (void)
 {
-	return nfCall((nfHostFsId + 0x1d));
+	return nfCall((HOSTFS(XFS_SYNC)));
 }
 
 long     _cdecl ara_fs_mknod      (fcookie *dir, const char *name, ulong mode)
 {
-	return nfCall((nfHostFsId + 0x1e, dir, name, mode));
+	return nfCall((HOSTFS(XFS_MKNOD), dir, name, mode));
 }
 
 long     _cdecl ara_fs_unmount    (int drv)
 {
-	return nfCall((nfHostFsId + 0x1f, (long)drv));
+	return nfCall((HOSTFS(XFS_UNMOUNT), (long)drv));
 }
 
 
@@ -296,84 +296,94 @@ static struct fs_descr aranym_fs_descr =
 extern DEVDRV aranym_fs_devdrv; /* from aranym_dev.c */
 
 
-#define MINT_FS_NAME    "nativefs"   /* mount point at u:\\ */
+#define MINT_FS_NAME    "hostfs"     /* mount point at u:\\ */
 #define MINT_SER_NAME   "serial2"    /* device name in u:\\dev\\ */
 #define MINT_COM_NAME   "aranym"     /* device name in u:\\dev\\ */
 
-
 FILESYS *aranym_fs_init(void)
 {
-	// get the HostFs NatFeat ID
+#ifdef ARAnyM_MetaDOS
+#	define c_conws(a) /* nothing */
+#else
+	long r;
+	int succ = 0;
+#endif
+
+	/* get the HostFs NatFeat ID */
 	nfHostFsId = nfGetID(("HOSTFS"));
+	if (nfHostFsId == 0) {
+        c_conws(MSG_PFAILURE("u:\\"MINT_FS_NAME,
+                             "\r\nThe HOSTFS NatFeat not found\r\n"));
+		return NULL;
+	}
+
+	/* compare the version */
+	if (nfCall((HOSTFS(GET_VERSION))) != HOSTFS_NFAPI_VERSION) {
+		c_conws(MSG_PFAILURE("u:\\"MINT_FS_NAME,
+							 "\r\nHOSTFS NFAPI version mismatch\n\r"));
+		return NULL;
+	}
 
 #ifdef ARAnyM_MetaDOS
-	return nfHostFsId ? &aranym_fs : NULL;
+	return &aranym_fs;
 #else
-    if ( nfHostFsId ) {
-        long r;
-        int succ = 0;
+	/* Try to install */
+	r = d_cntl (FS_INSTALL, "u:\\", (long) &aranym_fs_descr);
+	if (r != (long)kernel)
+	{
+		c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
+							  "Dcntl(FS_INSTALL,...) failed"));
+		DEBUG(("Return value was %li", r));
+		return NULL; /* Nothing installed, so nothing to stay resident */
+	} else {
+		succ |= 1;
+		/* mount */
+		r = d_cntl(FS_MOUNT, "u:\\"MINT_FS_NAME, (long) &aranym_fs_descr);
+		if (r != aranym_fs_descr.dev_no )
+		{
+			c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
+								  "Dcnt(FS_MOUNT,...) failed"));
+			DEBUG(("Return value was %li", r));
+		} else {
+			succ |= 2;
+			/* init */
+			r = aranym_fs_native_init(aranym_fs_descr.dev_no, "u:\\"MINT_FS_NAME, "/", 0 /*caseSensitive*/,
+									  &aranym_fs, &aranym_fs_devdrv );
+			r = 0;
+			if ( r < 0 ) {
+				c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
+									  "native init failed"));
+				DEBUG(("Return value was %li", r));
+			} else {
+				char buff[255];
+				ksprintf_old( buff, "fs_drv = %08lx", (long)&aranym_fs );
+				c_conws (buff);
+				return &aranym_fs; /* We where successfull */
+			}
+		}
+	}
 
-        /* Try to install */
-        r = d_cntl (FS_INSTALL, "u:\\", (long) &aranym_fs_descr);
-        if (r != (long)kernel)
-        {
-            c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
-                                  "Dcntl(FS_INSTALL,...) failed"));
-            DEBUG(("Return value was %li", r));
-            return NULL; /* Nothing installed, so nothing to stay resident */
-        } else {
-            succ |= 1;
-            /* mount */
-            r = d_cntl(FS_MOUNT, "u:\\"MINT_FS_NAME, (long) &aranym_fs_descr);
-            if (r != aranym_fs_descr.dev_no )
-            {
-                c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
-                                      "Dcnt(FS_MOUNT,...) failed"));
-                DEBUG(("Return value was %li", r));
-            } else {
-                succ |= 2;
-                /* init */
-                r = aranym_fs_native_init(aranym_fs_descr.dev_no, "u:\\"MINT_FS_NAME, "/", 0 /*caseSensitive*/,
-										  &aranym_fs, &aranym_fs_devdrv );
-                r = 0;
-                if ( r < 0 ) {
-                    c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
-                                          "native init failed"));
-                    DEBUG(("Return value was %li", r));
-                } else {
-                    char buff[255];
-                    ksprintf_old( buff, "fs_drv = %08lx", (long)&aranym_fs );
-                    c_conws (buff);
-                    return &aranym_fs; /* We where successfull */
-                }
-            }
-        }
-
-        /* Try to uninstall, if necessary */
-        if ( succ & 2 ) {
-            /* unmount */
-            r = d_cntl(FS_UNMOUNT, "u:\\"MINT_FS_NAME,
-                       (long) &aranym_fs_descr);
-            DEBUG(("Dcntl(FS_UNMOUNT,...) = %li", r ));
-            if ( r < 0 ) {
-                return (FILESYS *) 1; /* Can't uninstall,
-                                       * because unmount failed */
-            }
-        }
-        if ( succ & 1 ) {
-            /* uninstall */
-            r = d_cntl(FS_UNINSTALL, "u:\\"MINT_FS_NAME,
-                       (long) &aranym_fs_descr);
-            DEBUG(("Dcntl(FS_UNINSTALL,...) = %li", r ));
-            if ( r < 0 ) {
-                return (FILESYS *) 1; /* Can't say NULL,
-                                       * because uninstall failed */
-            }
-        }
-    } else {
-        c_conws (MSG_PFAILURE("u:\\"MINT_FS_NAME,
-                              "\r\nThe HOSTFS was not compiled in!"));
-    }
+	/* Try to uninstall, if necessary */
+	if ( succ & 2 ) {
+		/* unmount */
+		r = d_cntl(FS_UNMOUNT, "u:\\"MINT_FS_NAME,
+				   (long) &aranym_fs_descr);
+		DEBUG(("Dcntl(FS_UNMOUNT,...) = %li", r ));
+		if ( r < 0 ) {
+			return (FILESYS *) 1; /* Can't uninstall,
+								   * because unmount failed */
+		}
+	}
+	if ( succ & 1 ) {
+		/* uninstall */
+		r = d_cntl(FS_UNINSTALL, "u:\\"MINT_FS_NAME,
+				   (long) &aranym_fs_descr);
+		DEBUG(("Dcntl(FS_UNINSTALL,...) = %li", r ));
+		if ( r < 0 ) {
+			return (FILESYS *) 1; /* Can't say NULL,
+								   * because uninstall failed */
+		}
+	}
 
     return NULL; /* Nothing installed, so nothing to stay resident */
 #endif
@@ -381,6 +391,9 @@ FILESYS *aranym_fs_init(void)
 
 /*
  * $Log$
+ * Revision 1.2  2002/12/19 10:16:49  standa
+ * Error message fixed.
+ *
  * Revision 1.1  2002/12/10 20:47:21  standa
  * The HostFS (the host OS filesystem access via NatFeats) implementation.
  *

@@ -1,11 +1,11 @@
 /*
  * $Header$
  *
- * 2001/2002 STanda
+ * 2001-2003 STanda
  *
  * This is a part of the ARAnyM project sources.
  *
- * Originaly taken from the STonX CVS repository.
+ * Originally taken from the STonX CVS repository.
  *
  */
 
@@ -21,12 +21,7 @@
 
 #include "natfeat.h"
 #include "aranym_dev.h"
-
-
-extern unsigned long nfHostFsId; /* from aranym_xfs.c */
-
-#define NF_DEV_ID_OFFSET 0x30
-
+#include "hostfs_nfapi.h"
 
 long _cdecl ara_fs_dev_open     (FILEPTR *f);
 long _cdecl ara_fs_dev_write    (FILEPTR *f, const char *buf, long bytes);
@@ -41,39 +36,39 @@ void _cdecl ara_fs_dev_unselect (FILEPTR *f, long proc, int mode);
 
 
 long _cdecl ara_fs_dev_open     (FILEPTR *f) {
-	return nfCall((nfHostFsId + NF_DEV_ID_OFFSET + 0x01, f));
+	return nfCall((HOSTFS(DEV_OPEN), f));
 }
 
 long _cdecl ara_fs_dev_write    (FILEPTR *f, const char *buf, long bytes) {
-	return nfCall((nfHostFsId + NF_DEV_ID_OFFSET + 0x02, f, buf, bytes));
+	return nfCall((HOSTFS(DEV_WRITE), f, buf, bytes));
 }
 
 long _cdecl ara_fs_dev_read     (FILEPTR *f, char *buf, long bytes) {
-	return nfCall((nfHostFsId + NF_DEV_ID_OFFSET + 0x03, f, buf, bytes));
+	return nfCall((HOSTFS(DEV_READ), f, buf, bytes));
 }
 
 long _cdecl ara_fs_dev_lseek    (FILEPTR *f, long where, int whence) {
-	return nfCall((nfHostFsId + NF_DEV_ID_OFFSET + 0x04, f, where, (long)whence));
+	return nfCall((HOSTFS(DEV_LSEEK), f, where, (long)whence));
 }
 
 long _cdecl ara_fs_dev_ioctl    (FILEPTR *f, int mode, void *buf) {
-	return nfCall((nfHostFsId + NF_DEV_ID_OFFSET + 0x05, f, (long)mode, buf));
+	return nfCall((HOSTFS(DEV_IOCTL), f, (long)mode, buf));
 }
 
 long _cdecl ara_fs_dev_datime   (FILEPTR *f, ushort *timeptr, int rwflag) {
-	return nfCall((nfHostFsId + NF_DEV_ID_OFFSET + 0x06, f, timeptr, (long)rwflag));
+	return nfCall((HOSTFS(DEV_DATIME), f, timeptr, (long)rwflag));
 }
 
 long _cdecl ara_fs_dev_close    (FILEPTR *f, int pid) {
-	return nfCall((nfHostFsId + NF_DEV_ID_OFFSET + 0x07, f, (long)pid));
+	return nfCall((HOSTFS(DEV_CLOSE), f, (long)pid));
 }
 
 long _cdecl ara_fs_dev_select   (FILEPTR *f, long proc, int mode) {
-	return nfCall((nfHostFsId + NF_DEV_ID_OFFSET + 0x08, f, proc, (long)mode));
+	return nfCall((HOSTFS(DEV_SELECT), f, proc, (long)mode));
 }
 
 void _cdecl ara_fs_dev_unselect (FILEPTR *f, long proc, int mode) {
-	nfCall((nfHostFsId + NF_DEV_ID_OFFSET + 0x09, f, proc, (long)mode));
+	nfCall((HOSTFS(DEV_UNSELECT), f, proc, (long)mode));
 }
 
 
@@ -89,6 +84,9 @@ DEVDRV aranym_fs_devdrv =
 
 /*
  * $Log$
+ * Revision 1.1  2002/12/10 20:47:21  standa
+ * The HostFS (the host OS filesystem access via NatFeats) implementation.
+ *
  * Revision 1.1  2002/05/22 07:53:22  standa
  * The PureC -> gcc conversion (see the CONFIGVARS).
  * MiNT .XFS sources added.

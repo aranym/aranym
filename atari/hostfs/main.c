@@ -1,11 +1,11 @@
 /*
  * $Header$
  *
- * 2001/2002 STanda
+ * (c) 2001-2003 STanda
  *
  * This is a part of the ARAnyM project sources.
  *
- * Originaly taken from the STonX CVS repository.
+ * Originally taken from the STonX CVS repository.
  *
  */
 
@@ -81,14 +81,10 @@ FILESYS * _cdecl init(struct kerinfo *k)
 		   (long)MINT_MAJOR, (long)MINT_MINOR, (long)MINT_KVERSION));
 
 	/* check for MiNT version */
-#if 0
 	if ( MINT_MAJOR < 1 || (MINT_MAJOR == 1 && MINT_MINOR < 15))
-#else
-	if ( MINT_MAJOR < 1 || (MINT_MAJOR == 1 && MINT_MINOR < 14))
-#endif
 	{
 		c_conws (MSG_OLDMINT);
-		c_conws (MSG_FAILURE("MiNT to old"));
+		c_conws (MSG_FAILURE("MiNT too old"));
 
 		return NULL;
 	}
@@ -118,6 +114,9 @@ FILESYS * _cdecl init(struct kerinfo *k)
 
 /*
  * $Log$
+ * Revision 1.1  2002/12/10 20:47:21  standa
+ * The HostFS (the host OS filesystem access via NatFeats) implementation.
+ *
  * Revision 1.1  2002/05/22 07:53:22  standa
  * The PureC -> gcc conversion (see the CONFIGVARS).
  * MiNT .XFS sources added.

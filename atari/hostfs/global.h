@@ -1,11 +1,11 @@
 /*
  * $Header$
  *
- * 2001/2002 STanda
+ * 2001-2003 STanda
  *
  * This is a part of the ARAnyM project sources.
  *
- * Originaly taken from the STonX CVS repository.
+ * Originally taken from the STonX CVS repository.
  *
  */
 
@@ -65,7 +65,7 @@
 #define MSG_BUILDDATE	__DATE__
 
 #define MSG_BOOT       \
-    "\033p ARAnyM fs/modem/communication version " MSG_VERSION " \033q\r\n"
+    "\033p ARAnyM host filesystem driver version " MSG_VERSION " \033q\r\n"
 
 #define MSG_GREET	\
     "½ 1998, 1999, 2001 by Markus Kohm <Markus.Kohm@gmx.de>.\r\n" \
@@ -79,7 +79,7 @@
     "\033p WARNING: This is a test version - BETA! \033q\7\r\n"
 
 #define MSG_OLDMINT	\
-    "\033pMiNT to old, this xfs requires at least FreeMiNT 1.14!\033q\r\n"
+    "\033pMiNT to old, this xfs requires at least FreeMiNT 1.15!\033q\r\n"
 
 #define MSG_OLDKERINFO     \
     "\033pMiNT very old, this xfs wants at least FreeMiNT 1.15 with kerinfo version 2\033q\r\n"
@@ -100,6 +100,9 @@ extern struct kerinfo *KERNEL;
 
 /*
  * $Log$
+ * Revision 1.1  2002/12/10 20:47:21  standa
+ * The HostFS (the host OS filesystem access via NatFeats) implementation.
+ *
  * Revision 1.1  2002/05/22 07:53:22  standa
  * The PureC -> gcc conversion (see the CONFIGVARS).
  * MiNT .XFS sources added.

@@ -1,11 +1,11 @@
 /*
  * $Header$
  *
- * 2001/2002 STanda
+ * 2001-2003 STanda
  *
  * This is a part of the ARAnyM project sources.
  *
- * Originaly taken from the STonX CVS repository.
+ * Originally taken from the STonX CVS repository.
  *
  */
 
@@ -31,6 +31,9 @@ extern FILESYS *aranym_fs_init(void); /* init filesystem driver */
 
 /*
  * $Log$
+ * Revision 1.1  2002/12/10 20:47:21  standa
+ * The HostFS (the host OS filesystem access via NatFeats) implementation.
+ *
  * Revision 1.1  2002/05/22 07:53:22  standa
  * The PureC -> gcc conversion (see the CONFIGVARS).
  * MiNT .XFS sources added.

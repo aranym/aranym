@@ -1,3 +1,14 @@
+2003/03/01 - joy
+- parameters.[cpp|h]: single partition devices under the SCSI nickname
+  need the partition ID to be configurable
+
+- natfeat/nf_base.cpp: added, contains Atari<->Host memcpy and strcpy
+  functions (taken from hostfs.cpp).
+
+- hostfs: major NF API clean up. Versioning added. HOSTFS is Supervisor
+  only now. Also the mount point in MiNT is "U:\hostfs" now.
+
+
 2003/02/28 - joy
 - natfeat/ethernet.cpp: getHWaddr takes exactly 6 bytes and it's not a string
   so no EOS should be added. Thus strncpy changed to memcpy.

@@ -31,17 +31,19 @@ FreeMiNT .XFS driver:
    bootdrive:\MINT folder
  * configure your paths - not implemented yet
 
+ You'll find "U:\HOSTFS" folder which maps the root of your host filesystem.
+
 
 BUGS
 ----
-hostfs.doc
+hostfs.dos
  - relocatable programs crash
-   - a Pexec problem (most probable stack mangling)
+   - a Pexec problem (most probably stack mangling)
 
 aranym.xfs
  - the symlinks are not finished (work somehow).
- - other problems might occur as it is in the early stage of
-   its live
+ - other problems might occur as it is in the early stage of development
+ - file/group owners are not mapped between atari and host in any way
 
 Compilation
 -----------

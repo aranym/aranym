@@ -1,9 +1,10 @@
 /*
  * $Header$
  *
- * STanda 2001
+ * (c) STanda @ ARAnyM development team 2001-2003
+ *
+ * GPL
  */
-
 
 #include "sysdeps.h"
 
@@ -40,6 +41,7 @@
 #include <mint/mintbind.h>
 #endif /* OS_mint */
 
+#include "../../atari/hostfs/hostfs_nfapi.h"	/* XFS_xx and DEV_xx enum */
 
 extern "C" {
 
@@ -126,13 +128,15 @@ int32 HostFs::dispatch(uint32 fncode)
     XfsDir     dirh;
     ExtFile    extFile;
 
-#define DEV_FNCODE_OFFSET 0x30
-
     D(bug("HOSTFS: calling %d", fncode));
 
-    uint32 ret = 0;
+    int32 ret = 0;
     switch (fncode) {
-    	case 0x00:
+    	case GET_VERSION:
+    		ret = HOSTFS_NFAPI_VERSION;
+    		break;
+
+    	case XFS_INIT:
 			xfs_native_init( getParameter(0),
 							 getParameter(1),
 							 getParameter(2),
@@ -140,14 +144,16 @@ int32 HostFs::dispatch(uint32 fncode)
 							 getParameter(4),
 							 getParameter(5) );
 			break;
-		case 0x01:
+
+		case XFS_ROOT:
 			D(bug("%s", "fs_root"));
 			fetchXFSC( &fc, getParameter(1) );
 			ret = xfs_root( getParameter(0),   /* dev */
 							&fc ); /* fcookie */
 			flushXFSC( &fc, getParameter(1) );
 			break;
-		case 0x02:
+			
+		case XFS_LOOKUP:
 			D(bug("%s", "fs_lookup"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_lookup( &fc,
@@ -156,7 +162,8 @@ int32 HostFs::dispatch(uint32 fncode)
 			flushXFSC( &fc, getParameter(0) );
 			flushXFSC( &resFc, getParameter(2) );
 			break;
-		case 0x03:
+			
+		case XFS_CREATE:
 			D(bug("%s", "fs_creat"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_creat( &fc,
@@ -167,52 +174,61 @@ int32 HostFs::dispatch(uint32 fncode)
 			flushXFSC( &fc, getParameter(0) );
 			flushXFSC( &resFc, getParameter(4) );
 			break;
-		case 0x04:
+			
+		case XFS_GETDEV:
 			D(bug("%s", "fs_getdev"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_getdev( &fc,
 							  getParameter(1) /* *devspecial */ );
 			break;
-		case 0x05:
+			
+		case XFS_GETXATTR:
 			D(bug("%s", "fs_getxattr"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_getxattr( &fc,
 								getParameter(1) /* XATTR* */ );
 			flushXFSC( &fc, getParameter(0) );
 			break;
-		case 0x06:
+			
+		case XFS_CHATTR:
 			D(bug("%s", "fs_chattr"));
-			ret = (uint32)TOS_EINVFN;
+			ret = TOS_EINVFN;
 			break;
-		case 0x07:
+			
+		case XFS_CHOWN:
 			D(bug("%s", "fs_chown"));
-			ret = (uint32)TOS_EINVFN;
+			ret = TOS_EINVFN;
 			break;
-		case 0x08:
+			
+		case XFS_CHMOD:
 			D(bug("%s", "fs_chmode"));
-			ret = (uint32)TOS_EINVFN;
+			ret = TOS_EINVFN;
 			break;
-		case 0x09:
+			
+		case XFS_MKDIR:
 			D(bug("%s", "fs_mkdir"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_mkdir( &fc,
 							 (memptr)getParameter(1) /* name */,
 							 getParameter(2) /* mode */ );
 			break;
-		case 0x0a:
+			
+		case XFS_RMDIR:
 			D(bug("%s", "fs_rmdir"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_rmdir( &fc,
 							 (memptr)getParameter(1) /* name */ );
 			break;
-		case 0x0b:
+			
+		case XFS_REMOVE:
 			D(bug("%s", "fs_remove"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_remove( &fc,
 							  (memptr)getParameter(1) /* name */ );
 			flushXFSC( &fc, getParameter(0) );
 			break;
-		case 0x0c:
+			
+		case XFS_GETNAME:
 			D(bug("%s", "fs_getname"));
 			fetchXFSC( &fc, getParameter(0) );
 			fetchXFSC( &resFc, getParameter(1) );
@@ -223,7 +239,8 @@ int32 HostFs::dispatch(uint32 fncode)
 			// not needed: flushXFSC( &fc, getParameter(0) );
 			// not needed: flushXFSC( &resFc, getParameter(1) );
 			break;
-		case 0x0d:
+			
+		case XFS_RENAME:
 			D(bug("%s", "fs_rename"));
 			fetchXFSC( &fc, getParameter(0) );
 			fetchXFSC( &resFc, getParameter(2) );
@@ -234,14 +251,16 @@ int32 HostFs::dispatch(uint32 fncode)
 			// not needed: flushXFSC( &fc, getParameter(0) );
 			// not needed: flushXFSC( &resFc, getParameter(1) );
 			break;
-		case 0x0e:
+			
+		case XFS_OPENDIR:
 			D(bug("%s", "fs_opendir"));
 			fetchXFSD( &dirh, getParameter(0) );
 			ret = xfs_opendir( &dirh,
 							   getParameter(1) /* flags */ );
 			flushXFSD( &dirh, getParameter(0) );
 			break;
-		case 0x0f:
+			
+		case XFS_READDIR:
 			D(bug("%s", "fs_readdir"));
 			fetchXFSD( &dirh, getParameter(0) );
 			ret = xfs_readdir( &dirh,
@@ -251,72 +270,85 @@ int32 HostFs::dispatch(uint32 fncode)
 			flushXFSD( &dirh, getParameter(0) );
 			flushXFSC( &resFc, getParameter(3) );
 			break;
-		case 0x10:
+			
+		case XFS_REWINDDIR:
 			D(bug("%s", "fs_rewinddir"));
 			fetchXFSD( &dirh, getParameter(0) );
 			ret = xfs_rewinddir( &dirh );
 			flushXFSD( &dirh, getParameter(0) );
 			break;
-		case 0x11:
+			
+		case XFS_CLOSEDIR:
 			D(bug("%s", "fs_closedir"));
 			fetchXFSD( &dirh, getParameter(0) );
 			ret = xfs_closedir( &dirh );
 			flushXFSD( &dirh, getParameter(0) );
 			break;
-		case 0x12:
+			
+		case XFS_PATHCONF:
 			D(bug("%s", "fs_pathconf"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_pathconf( &fc,
 								getParameter(1) /* which */ );
 			flushXFSC( &fc, getParameter(0) );
 			break;
-		case 0x13:
+			
+		case XFS_DFREE:
 			D(bug("%s", "fs_dfree"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_dfree( &fc,
 							 (memptr)getParameter(1) /* buff */ );
 			break;
-		case 0x14:
+			
+		case XFS_WRITELABEL:
 			D(bug("%s", "fs_writelabel"));
-			ret = (uint32)TOS_EINVFN;
+			ret = TOS_EINVFN;
 			break;
-		case 0x15:
+			
+		case XFS_READLABEL:
 			D(bug("%s", "fs_readlabel"));
-			ret = (uint32)TOS_EINVFN;
+			ret = TOS_EINVFN;
 			break;
-		case 0x16:
+			
+		case XFS_SYMLINK:
 			D(bug("%s", "fs_symlink"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_symlink( &fc,
 							   (memptr)getParameter(1), /* fromName */
 							   (memptr)getParameter(2)  /* toName */ );
 			break;
-		case 0x17:
+			
+		case XFS_READLINK:
 			D(bug("%s", "fs_readlink"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_readlink( &fc,
 								(memptr)getParameter(1) /* buff */,
 								getParameter(2) /* len */ );
 			break;
-		case 0x18:
+			
+		case XFS_HARDLINK:
 			D(bug("%s", "fs_hardlink"));
-			ret = (uint32)TOS_EINVFN;
+			ret = TOS_EINVFN;
 			break;
-		case 0x19:
+			
+		case XFS_FSCNTL:
 			D(bug("%s", "fs_fscntl"));
-			ret = (uint32)TOS_EINVFN;
+			ret = TOS_EINVFN;
 			break;
-		case 0x1a:
+			
+		case XFS_DSKCHNG:
 			D(bug("%s", "fs_dskchng"));
-			ret = (uint32)TOS_EINVFN;
+			ret = TOS_EINVFN;
 			break;
-		case 0x1b:
+			
+		case XFS_RELEASE:
 			D(bug("%s", "fs_release"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_release( &fc );
 			flushXFSC( &fc, getParameter(0) );
 			break;
-		case 0x1c:
+			
+		case XFS_DUPCOOKIE:
 			D(bug("%s", "fs_dupcookie"));
 			fetchXFSC( &resFc, getParameter(0) );
 			fetchXFSC( &fc, getParameter(1) );
@@ -324,26 +356,28 @@ int32 HostFs::dispatch(uint32 fncode)
 			flushXFSC( &resFc, getParameter(0) );
 			flushXFSC( &fc, getParameter(1) );
 			break;
-		case 0x1d:
-			D(bug("%s", "fs_sync"));
-			ret = (uint32)TOS_EINVFN;
-			break;
-		case 0x1e:
-			D(bug("%s", "fs_mknod"));
-			ret = (uint32)TOS_EINVFN;
-			break;
-		case 0x1f:
-			D(bug("%s", "fs_unmount"));
-			ret = (uint32)TOS_EINVFN;
-			break;
 
-		case DEV_FNCODE_OFFSET+0x01:
+		case XFS_SYNC:
+			D(bug("%s", "fs_sync"));
+			ret = TOS_EINVFN;
+			break;
+		case XFS_MKNOD:
+			D(bug("%s", "fs_mknod"));
+			ret = TOS_EINVFN;
+			break;
+		case XFS_UNMOUNT:
+			D(bug("%s", "fs_unmount"));
+			ret = TOS_EINVFN;
+			break;
+		
+		case DEV_OPEN:
 			D(bug("%s", "fs_dev_open"));
 			fetchXFSF( &extFile, getParameter(0) );
 			ret = xfs_dev_open( &extFile );
 			flushXFSF( &extFile, getParameter(0) );
 			break;
-		case DEV_FNCODE_OFFSET+0x02:
+		
+		case DEV_WRITE:
 			D(bug("%s", "fs_dev_write"));
 			fetchXFSF( &extFile, getParameter(0) );
 			ret = xfs_dev_write( &extFile,
@@ -351,7 +385,8 @@ int32 HostFs::dispatch(uint32 fncode)
 								 getParameter(2) /* bytes */ );
 			flushXFSF( &extFile, getParameter(0) );
 			break;
-		case DEV_FNCODE_OFFSET+0x03:
+		
+		case DEV_READ:
 			D(bug("%s", "fs_dev_read"));
 			fetchXFSF( &extFile, getParameter(0) );
 			ret = xfs_dev_read( &extFile,
@@ -359,7 +394,8 @@ int32 HostFs::dispatch(uint32 fncode)
 								getParameter(2) /* bytes */ );
 			flushXFSF( &extFile, getParameter(0) );
 			break;
-		case DEV_FNCODE_OFFSET+0x04:
+		
+		case DEV_LSEEK:
 			D(bug("%s", "fs_dev_lseek"));
 			fetchXFSF( &extFile, getParameter(0) );
 			ret = xfs_dev_lseek( &extFile,
@@ -367,11 +403,13 @@ int32 HostFs::dispatch(uint32 fncode)
 								 getParameter(2) );		  // seekmode
 			//			flushXFSF( &extFile, getParameter(0) );
 			break;
-		case DEV_FNCODE_OFFSET+0x05:
+		
+		case DEV_IOCTL:
 			D(bug("%s", "fs_dev_ioctl"));
-			ret = (uint32)TOS_EINVFN;
+			ret = TOS_EINVFN;
 			break;
-		case DEV_FNCODE_OFFSET+0x06:
+		
+		case DEV_DATIME:
 			D(bug("%s", "fs_dev_datime"));
 			fetchXFSF( &extFile, getParameter(0) );
 			ret = xfs_dev_datime( &extFile,
@@ -379,52 +417,29 @@ int32 HostFs::dispatch(uint32 fncode)
 								  getParameter(2) );// wflag
 			flushXFSF( &extFile, getParameter(0) );
 			break;
-		case DEV_FNCODE_OFFSET+0x07:
+		
+		case DEV_CLOSE:
 			D(bug("%s", "fs_dev_close"));
 			fetchXFSF( &extFile, getParameter(0) );
 			ret = xfs_dev_close( &extFile,
 								 0 ); // pid
 			break;
-		case DEV_FNCODE_OFFSET+0x08:
+		
+		case DEV_SELECT:
 			D(bug("%s", "fs_dev_select"));
-			ret = (uint32)TOS_E_OK;
+			ret = TOS_E_OK;
 			break;
-		case DEV_FNCODE_OFFSET+0x09:
+
+		case DEV_UNSELECT:
 			D(bug("%s", "fs_dev_unselect"));
-			ret = (uint32)TOS_E_OK;
+			ret = TOS_E_OK;
 			break;
 
 		default:
-			D(bug("Unknown"));
-			ret = (uint32)TOS_EINVFN;
+			panicbug("Unknown HOSTFS subID %d", fncode);
+			ret = TOS_EINVFN;
 	}
 	return ret;
-}
-
-
-void HostFs::a2fmemcpy( char *dest, memptr source, size_t count )
-{
-	while ( count-- )
-		*dest++ = (char)ReadInt8( (uint32)source++ );
-}
-
-void HostFs::a2fstrcpy( char *dest, memptr source )
-{
-	while ( (*dest++ = (char)ReadInt8( (uint32)source++ )) != 0 );
-}
-
-
-void HostFs::f2amemcpy( memptr dest, char *source, size_t count )
-{
-	while ( count-- )
-		WriteInt8( dest++, (uint8)*source++ );
-}
-
-void HostFs::f2astrcpy( memptr dest, char *source )
-{
-	while ( *source )
-		WriteInt8( dest++, (uint8)*source++ );
-	WriteInt8( dest, 0 );
 }
 
 void HostFs::fetchXFSC( XfsCookie *fc, memptr filep )
@@ -1862,6 +1877,9 @@ void HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, 
 
 /*
  * $Log$
+ * Revision 1.4  2003/02/17 14:20:20  standa
+ * #if defined(OS_beos) used.
+ *
  * Revision 1.3  2003/02/17 14:16:16  standa
  * BeOS patch for aranymfs and hostfs
  *
