@@ -818,7 +818,14 @@ bool InitAll(void)
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		ErrorAlert("SDL initialization failed.");
 		return false;
+	} else {
+		char driverName[32];
+		SDL_VideoDriverName( driverName, 31 );
+		D(bug("Video driver name: %s", driverName));
+		if ( strstr( driverName, "fb" ) )
+			fullscreen = true;
 	}
+
 	// Be sure that the atexit function do not double any cleanup already done
 	// thus I changed the SDL_Quit to ExitAll & removed the ExitAll from QuitEmulator
 	atexit(ExitAll);
@@ -833,11 +840,6 @@ bool InitAll(void)
 
 	//  SDL_EnableUNICODE(1);
 
-	// warp mouse to center of Atari 640x480 screen and grab it
-	if (! fullscreen)
-		SDL_WarpMouse(640/2, 480/2);
-	grabMouse(true);
-
 	init_fdc();
 
 #ifdef METADOS_DRV
@@ -847,6 +849,11 @@ bool InitAll(void)
 
 	// Init HW
 	HWInit();
+
+	// warp mouse to center of Atari 640x480 screen and grab it
+	if (! fullscreen)
+		SDL_WarpMouse(640/2, 480/2);
+	grabMouse(true);
 
 	// Init 680x0 emulation
 	if (!Init680x0())
@@ -895,6 +902,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.48  2001/12/07 17:29:13  milan
+ * e00000 -> 0 back in InitAll
+ *
  * Revision 1.47  2001/12/06 01:06:54  joy
  * disable mouse grabbing at start
  *
