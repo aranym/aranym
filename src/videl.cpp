@@ -352,5 +352,5 @@ void VIDEL::update_screen()
 
 
 /*
- * $log$
+ * $Log$
  */
