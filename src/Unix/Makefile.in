@@ -28,6 +28,7 @@ SDL_CONFIG = @SDL_CONFIG@
 SDL_CFLAGS = @SDL_CFLAGS@
 SYSSRCS = @SYSSRCS@
 CPUSRCS = @CPUSRCS@
+DBGSP = @DBGSP@
 
 ACLOCAL = aclocal
 AUTOCONF = autoconf
@@ -271,7 +272,7 @@ depend dep:
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) -Wall $(CFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -Wall -Wtraditional -Winline $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.s
 	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 
@@ -431,10 +432,10 @@ cpufast8_nf.s: cpuemu.cpp $(OBJ_DIR)/cpuopti
 
 # For tests
 newcpu.s: ../uae_cpu/newcpu.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) ../uae_cpu/newcpu.cpp -o newcpu.s
+	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) ../uae_cpu/newcpu.cpp -o newcpu.s
 
 memory.s: ../uae_cpu/memory.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) ../uae_cpu/memory.cpp -o memory.s
+	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) ../uae_cpu/memory.cpp -o memory.s
 
 #-------------------------------------------------------------------------
 # DO NOT DELETE THIS LINE -- make depend depends on it.
