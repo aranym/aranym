@@ -153,9 +153,10 @@ distclean: clean
 	rm -rf $(OBJ_DIR)
 	rm -f Makefile
 	rm -f config.cache config.log config.status config.h
+	rm -f cmos aranymtest.rc
 
 mrproper: distclean
-	rm -f aclocal.m4 cmos configure config.h.in aranymtest.rc
+	rm -f aclocal.m4 configure config.h.in
 
 bindistdirs:
 	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/createdisk tmpdist$(datadir)/$(APP)/atari/aranymfs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(docdir)/$(APP)
@@ -176,6 +177,9 @@ bindist: $(APP) bindistdirs
 	rm -rf tmpdist
 
 devdist: mrproper 
+	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz aranym
+
+dist: distclean
 	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz aranym
 
 depend dep:
