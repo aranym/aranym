@@ -62,7 +62,6 @@
 
 int port_number = 1234;
 
-#define GDBSTUB_STOP_NO_REASON          (0xac0)
 #define GDBSTUB_EXECUTION_BREAKPOINT    (0xac1)
 #define GDBSTUB_TRACE                   (0xac2)
 #define GDBSTUB_USER_BREAK              (0xac3)
