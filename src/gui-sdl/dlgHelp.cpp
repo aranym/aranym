@@ -12,7 +12,7 @@
 /* The "Help"-dialog: */
 SGOBJ helpdlg[] =
 {
-  { SGBOX, 0, 0, 0,0, 40,25, NULL },
+  { SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL },
   { SGTEXT, 0, 0, 12,1, 16,1, "ARAnyM Help Page" },
   { SGTEXT, 0, 0, 12,2, 16,1, "================" },
   { SGTEXT, 0, 0, 1,4, 38,1, "ARAnyM Hotkeys:" },
@@ -30,7 +30,7 @@ SGOBJ helpdlg[] =
   { SGTEXT, 0, 0, 1,17, 38,1,"  reboot in order to take effect." },
   { SGTEXT, 0, 0, 1,18, 38,1,"  It's actually safest to always" },
   { SGTEXT, 0, 0, 1,19, 38,1,"  reboot after any change." },
-  { SGBUTTON, SG_EXIT|SG_DEFAULT, 0, 16,23, 8,1, "OK" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 16,23, 8,1, "OK" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 

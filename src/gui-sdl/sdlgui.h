@@ -26,10 +26,12 @@ enum
 
 
 /* Object flags: */
-#define SG_TOUCHEXIT    1
-#define SG_EXIT         2
-#define SG_BUTTON_RIGHT 4
-#define SG_DEFAULT      8
+#define SG_TOUCHEXIT     1
+#define SG_EXIT          2
+#define SG_BUTTON_RIGHT  4
+#define SG_DEFAULT       8
+#define SG_SELECTABLE   16
+#define SG_BACKGROUND   32
 
 /* Object states: */
 #define SG_SELECTED   1

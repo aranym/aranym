@@ -172,13 +172,13 @@ void SDLGui_FreeFont()
 */
 static void SDLGui_ObjCoord(SGOBJ *dlg, int objnum, SDL_Rect *rect)
 {
-  rect->x = dlg[objnum].x*fontwidth;
-  rect->y = dlg[objnum].y*fontheight;
-  rect->w = dlg[objnum].w*fontwidth;
-  rect->h = dlg[objnum].h*fontheight;
+  rect->x = dlg[objnum].x * fontwidth;
+  rect->y = dlg[objnum].y * fontheight;
+  rect->w = dlg[objnum].w * fontwidth;
+  rect->h = dlg[objnum].h * fontheight;
 
-  rect->x += (sdlscrn->w-(dlg[0].w*fontwidth))/2;
-  rect->y += (sdlscrn->h-(dlg[0].h*fontheight))/2;
+  rect->x += (sdlscrn->w - (dlg[0].w * fontwidth)) / 2;
+  rect->y += (sdlscrn->h - (dlg[0].h * fontheight)) / 2;
 }
 
 
@@ -191,25 +191,33 @@ void SDLGui_ObjFullCoord(SGOBJ *dlg, int objnum, SDL_Rect *coord)
 {
   SDLGui_ObjCoord(dlg, objnum, coord);
 
-  switch( dlg[objnum].type )
+  switch (dlg[objnum].type)
   {
     case SGBOX:
     case SGBUTTON:
-      // Take border into account
-      if (dlg[objnum].flags & SG_DEFAULT)
       {
-        // Wider border if default
-        coord->x -= 4;
-        coord->y -= 4;
-        coord->w += 8;
-        coord->h += 8;
-      }
-      else
-      {
-        coord->x -= 3;
-        coord->y -= 3;
-        coord->w += 6;
-        coord->h += 6;
+        // Take border into account
+        int border_size;
+
+        if (dlg[objnum].flags & SG_SELECTABLE)
+        {
+          if (dlg[objnum].flags & SG_DEFAULT)
+            border_size = 4;
+          else
+            border_size = 3;
+        }
+        else
+        {
+          if (dlg[objnum].flags & SG_BACKGROUND)
+            border_size = 6;
+          else
+            border_size = 5;
+        }
+
+        coord->x -= border_size;
+        coord->y -= border_size;
+        coord->w += (border_size * 2);
+        coord->h += (border_size * 2);
       }
       break;
     case SGEDITFIELD:
@@ -312,20 +320,21 @@ void SDLGui_DrawText(SGOBJ *tdlg, int objnum)
   SDL_Rect coord;
   
   SDLGui_ObjCoord(tdlg, objnum, &coord);
+  SDL_FillRect(sdlscrn, &coord, SDL_MapRGB(sdlscrn->format,192,192,192));
   SDLGui_Text(coord.x, coord.y, tdlg[objnum].txt);
 }
 
 
 /*-----------------------------------------------------------------------*/
 /*
-  Draw a edit field object.
+  Draw an edit field object.
 */
 void SDLGui_DrawEditField(SGOBJ *edlg, int objnum)
 {
   SDL_Rect coord;
 
   SDLGui_ObjCoord(edlg, objnum, &coord);
-
+  SDL_FillRect(sdlscrn, &coord, SDL_MapRGB(sdlscrn->format,192,192,192));
   SDLGui_Text(coord.x, coord.y, edlg[objnum].txt);
 
   // Draw a line below.
@@ -337,78 +346,154 @@ void SDLGui_DrawEditField(SGOBJ *edlg, int objnum)
 
 /*-----------------------------------------------------------------------*/
 /*
-  Draw a 3D box.
+  Draw a 3D effect around a given rectangle.
+  Rectangle is updated to the full size of the new object.
 */
-void SDLGui_Draw3DBox(SDL_Rect *coord, Uint32 upleftc, Uint32 downrightc, int width3D, int borderwidth)
+void SDLGui_Draw3DAround(SDL_Rect *coord, Uint32 upleftc, Uint32 downrightc, Uint32 cornerc, int width)
 {
   SDL_Rect rect;
-  Uint32 grey = SDL_MapRGB(sdlscrn->format,192,192,192);
-  Uint32 black = SDL_MapRGB(sdlscrn->format,0,0,0);
-  int backgroundwidth = 1;
   int i;
 
   SCRLOCK;
 
-  rect.x = coord->x-backgroundwidth;
-  rect.y = coord->y-backgroundwidth;
-  rect.w = coord->w+backgroundwidth*2;
-  rect.h = coord->h+backgroundwidth*2;
-  SDL_FillRect(sdlscrn, &rect, grey);
-
-  for ( i = backgroundwidth+1 ; i <= width3D+backgroundwidth ; i++)
+  for ( i = 1 ; i <= width ; i++)
   {
-    rect.x = coord->x-i;
-    rect.y = coord->y-i;
-    rect.w = coord->w+i*2;
+    rect.x = coord->x - i;
+    rect.y = coord->y - i;
+    rect.w = coord->w + (i * 2) - 1;
     rect.h = 1;
     SDL_FillRect(sdlscrn, &rect, upleftc);
 
-    rect.x = coord->x-i;
-    rect.y = coord->y-i;
+    rect.x = coord->x - i;
+    rect.y = coord->y - i;
     rect.w = 1;
-    rect.h = coord->h+i*2;
+    rect.h = coord->h + (i * 2) - 1;
     SDL_FillRect(sdlscrn, &rect, upleftc);
 
-    rect.x = coord->x-i+1;
-    rect.y = coord->y+coord->h-1+i;
-    rect.w = coord->w+i*2-1;
+    rect.x = coord->x - i + 1;
+    rect.y = coord->y + coord->h - 1 + i;
+    rect.w = coord->w + (i * 2) - 1;
     rect.h = 1;
     SDL_FillRect(sdlscrn, &rect, downrightc);
 
-    rect.x = coord->x+coord->w-1+i;
-    rect.y = coord->y-i+1;
+    rect.x = coord->x + coord->w - 1 + i;
+    rect.y = coord->y - i + 1;
     rect.w = 1;
-    rect.h = coord->h+i*2-1;
+    rect.h = coord->h + (i * 2) - 1;
     SDL_FillRect(sdlscrn, &rect, downrightc);
+
+    rect.x = coord->x + coord->w + i - 1;
+    rect.y = coord->y - i;
+    rect.w = 1;
+    rect.h = 1;
+    SDL_FillRect(sdlscrn, &rect, cornerc);
+
+    rect.x = coord->x - i;
+    rect.y = coord->y + coord->h + i - 1;
+    rect.w = 1;
+    rect.h = 1;
+    SDL_FillRect(sdlscrn, &rect, cornerc);
   }
 
-  i = borderwidth+width3D+backgroundwidth;
+  SCRUNLOCK;
 
-  rect.x = coord->x-i;
-  rect.y = coord->y-i;
-  rect.w = coord->w+i*2;
-  rect.h = borderwidth;
-  SDL_FillRect(sdlscrn, &rect, black);
+  coord->x -= width;
+  coord->y -= width;
+  coord->w += (width * 2);
+  coord->h += (width * 2);
+}
 
-  rect.x = coord->x-i;
-  rect.y = coord->y-i;
-  rect.w = borderwidth;
-  rect.h = coord->h+i*2;
-  SDL_FillRect(sdlscrn, &rect, black);
 
-  rect.x = coord->x+coord->w+i-borderwidth;
-  rect.y = coord->y-i;
-  rect.w = borderwidth;
-  rect.h = coord->h+i*2;
-  SDL_FillRect(sdlscrn, &rect, black);
+/*-----------------------------------------------------------------------*/
+/*
+  Draw a colored box around a given rectangle.
+  Rectangle is updated to the full size of the new object.
+*/
+void SDLGui_DrawBoxAround(SDL_Rect *coord, Uint32 color, int width)
+{
+  SDL_Rect rect;
 
-  rect.x = coord->x-i;
-  rect.y = coord->y+coord->h+i-borderwidth;
-  rect.w = coord->w+i*2;
-  rect.h = borderwidth;
-  SDL_FillRect(sdlscrn, &rect, black);
+  SCRLOCK;
+
+  rect.x = coord->x - width;
+  rect.y = coord->y - width;
+  rect.w = coord->w + (width * 2);
+  rect.h = width;
+  SDL_FillRect(sdlscrn, &rect, color);
+
+  rect.x = coord->x - width;
+  rect.y = coord->y - width;
+  rect.w = width;
+  rect.h = coord->h + (width * 2);
+  SDL_FillRect(sdlscrn, &rect, color);
+
+  rect.x = coord->x + coord->w;
+  rect.y = coord->y - width;
+  rect.w = width;
+  rect.h = coord->h + (width * 2);
+  SDL_FillRect(sdlscrn, &rect, color);
+
+  rect.x = coord->x - width;
+  rect.y = coord->y + coord->h;
+  rect.w = coord->w + (width * 2);
+  rect.h = width;
+  SDL_FillRect(sdlscrn, &rect, color);
 
   SCRUNLOCK;
+
+  coord->x -= width;
+  coord->y -= width;
+  coord->w += (width * 2);
+  coord->h += (width * 2);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Draw a 3D box with given attributes.
+*/
+void SDLGui_Draw3DBox(SDL_Rect *coord,
+                      Uint32 backgroundc,
+                      Uint32 inboxc,
+                      Uint32 upleftc,
+                      Uint32 downrightc,
+                      Uint32 outboxc,
+                      int widthbackground,
+                      int widthinbox,
+                      int width3D1,
+                      int width3D2,
+                      int widthoutbox)
+{
+  SDL_Rect rect;
+
+  SCRLOCK;
+
+  // Draw background
+  rect.x = coord->x - widthbackground;
+  rect.y = coord->y - widthbackground;
+  rect.w = coord->w + (widthbackground * 2);
+  rect.h = coord->h + (widthbackground * 2);
+  SDL_FillRect(sdlscrn, &rect, backgroundc);
+
+  SCRUNLOCK;
+
+  // Update coords
+  coord->x -= widthbackground;
+  coord->y -= widthbackground;
+  coord->w += (widthbackground * 2);
+  coord->h += (widthbackground * 2);
+
+  if (widthinbox > 0)
+    SDLGui_DrawBoxAround(coord, inboxc, widthinbox);
+
+  if (width3D1 > 0)
+    SDLGui_Draw3DAround(coord, upleftc, downrightc, backgroundc, width3D1);
+
+  if (width3D2 > 0)
+    SDLGui_Draw3DAround(coord, downrightc, upleftc, backgroundc, width3D2);
+
+  if (widthoutbox > 0)
+    SDLGui_DrawBoxAround(coord, outboxc, widthoutbox);
 }
 
 
@@ -422,8 +507,13 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
   Uint32 upleftc, downrightc;
   Uint32 darkgreyc = SDL_MapRGB(sdlscrn->format,128,128,128);
   Uint32 whitec    = SDL_MapRGB(sdlscrn->format,255,255,255);
+  Uint32 greyc     = SDL_MapRGB(sdlscrn->format,192,192,192);
+  Uint32 blackc    = SDL_MapRGB(sdlscrn->format,0,0,0);
 
-  if( bdlg[objnum].state&SG_SELECTED )
+  SDLGui_ObjCoord(bdlg, objnum, &coord);
+
+  // Modify box drawing according to object state
+  if (bdlg[objnum].state & SG_SELECTED)
   {
     upleftc    = darkgreyc;
     downrightc = whitec;
@@ -434,12 +524,34 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
     downrightc = darkgreyc;
   }
 
-  SDLGui_ObjCoord(bdlg, objnum, &coord);
-
-  if (bdlg[objnum].flags & SG_DEFAULT)
-    SDLGui_Draw3DBox(&coord, upleftc, downrightc, 1, 2);
-  else
-    SDLGui_Draw3DBox(&coord, upleftc, downrightc, 1, 1);
+  // Draw box according to object flags
+  switch (bdlg[objnum].flags & (SG_SELECTABLE | SG_DEFAULT | SG_BACKGROUND))
+  {
+    case (SG_SELECTABLE | SG_DEFAULT | SG_BACKGROUND):
+    case (SG_SELECTABLE | SG_DEFAULT):
+      SDLGui_Draw3DBox(&coord,
+                       greyc, 0, upleftc, downrightc, blackc,
+                       1, 0, 1, 0, 2);
+      break;
+    case (SG_SELECTABLE | SG_BACKGROUND):
+    case SG_SELECTABLE:
+      SDLGui_Draw3DBox(&coord,
+                       greyc, 0, upleftc, downrightc, blackc,
+                       1, 0, 1, 0, 1);
+      break;
+    case (SG_DEFAULT | SG_BACKGROUND):
+    case SG_BACKGROUND:
+      SDLGui_Draw3DBox(&coord,
+                       greyc, blackc, upleftc, downrightc, darkgreyc,
+                       0, 2, 3, 0, 1);
+      break;
+    case SG_DEFAULT:
+    case 0:
+      SDLGui_Draw3DBox(&coord,
+                       greyc, 0, upleftc, downrightc, 0,
+                       3, 0, 1, 1, 0);
+      break;
+  }
 }
 
 
@@ -454,10 +566,10 @@ void SDLGui_DrawButton(SGOBJ *bdlg, int objnum)
 
   SDLGui_ObjCoord(bdlg, objnum, &coord);
 
-  x = coord.x+((coord.w-(strlen(bdlg[objnum].txt)*fontwidth))/2);
-  y = coord.y+((coord.h-fontheight)/2);
+  x = coord.x + ((coord.w - (strlen(bdlg[objnum].txt) * fontwidth)) / 2);
+  y = coord.y + ((coord.h - fontheight) / 2);
 
-  if( bdlg[objnum].state&SG_SELECTED )
+  if (bdlg[objnum].state & SG_SELECTED)
   {
     x += 1;
     y += 1;
@@ -480,7 +592,7 @@ void SDLGui_DrawRadioButtonState(SGOBJ *rdlg, int objnum)
 
   SDLGui_ObjCoord(rdlg, objnum, &coord);
 
-  if( rdlg[objnum].state&SG_SELECTED )
+  if (rdlg[objnum].state & SG_SELECTED)
   {
     str[0]=SGRADIOBUTTON_SELECTED;
   }
@@ -507,7 +619,7 @@ void SDLGui_DrawRadioButton(SGOBJ *rdlg, int objnum)
 
   SDLGui_ObjCoord(rdlg, objnum, &coord);
 
-  coord.x += (fontwidth*2);
+  coord.x += (fontwidth * 2);
   SDLGui_Text(coord.x, coord.y, rdlg[objnum].txt);
 
   SDLGui_DrawRadioButtonState(rdlg, objnum);
@@ -526,7 +638,7 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
 
   SDLGui_ObjCoord(cdlg, objnum, &coord);
 
-  if (cdlg[objnum].state&SG_SELECTED)
+  if (cdlg[objnum].state & SG_SELECTED)
   {
     str[0]=SGCHECKBOX_SELECTED;
   }
@@ -539,7 +651,7 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
   coord.w = fontwidth;
   coord.h = fontheight;
 
-  if (cdlg[objnum].flags&SG_BUTTON_RIGHT)
+  if (cdlg[objnum].flags & SG_BUTTON_RIGHT)
     coord.x += ((strlen(cdlg[objnum].txt) + 1) * fontwidth);
 
   SDL_FillRect(sdlscrn, &coord, grey);
@@ -1036,8 +1148,8 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
         // Let's redraw the full screen.
       	BackgroundRect.x = 0;
       	BackgroundRect.y = 0;
-      	BackgroundRect.w = scrwidth;
-      	BackgroundRect.h = scrheight;
+      	BackgroundRect.w = sdlscrn->w;
+      	BackgroundRect.h = sdlscrn->h;
         return_rect = &BackgroundRect;
         // We reached the end of the list.
         BackgroundRectCounter = SG_BCKGND_RECT_END;
@@ -1055,7 +1167,7 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
       {
       	BackgroundRect.x = 0;
       	BackgroundRect.y = 0;
-      	BackgroundRect.w = scrwidth;
+      	BackgroundRect.w = sdlscrn->w;
       	BackgroundRect.h = DialogRect.y;
         return_rect = &BackgroundRect;
       }
@@ -1071,9 +1183,9 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
         BackgroundRect.y = (DialogRect.y > 0) ? DialogRect.y : 0;
         BackgroundRect.w = DialogRect.x;
         BackgroundRect.h =
-          ((DialogRect.y + DialogRect.h) < (int)scrheight) ?
+          ((DialogRect.y + DialogRect.h) < (int)sdlscrn->h) ?
           (DialogRect.h + DialogRect.y - BackgroundRect.y) :
-          (scrheight - DialogRect.y);
+          (sdlscrn->h - DialogRect.y);
         return_rect = &BackgroundRect;
       }
       else
@@ -1082,15 +1194,15 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
 
     case SG_BCKGND_RECT_RIGHT:
       BackgroundRectCounter = SG_BCKGND_RECT_BOTTOM;
-      if ((DialogRect.x + DialogRect.w) < (int)scrwidth)
+      if ((DialogRect.x + DialogRect.w) < (int)sdlscrn->w)
       {
         BackgroundRect.x = DialogRect.x + DialogRect.w;
         BackgroundRect.y = (DialogRect.y > 0) ? DialogRect.y : 0;
-        BackgroundRect.w = scrwidth - (DialogRect.x + DialogRect.w);
+        BackgroundRect.w = sdlscrn->w - (DialogRect.x + DialogRect.w);
         BackgroundRect.h =
-          ((DialogRect.y + DialogRect.h) < (int)scrheight) ?
+          ((DialogRect.y + DialogRect.h) < (int)sdlscrn->w) ?
           (DialogRect.h + DialogRect.y - BackgroundRect.y) :
-          (scrheight - DialogRect.y);
+          (sdlscrn->h - DialogRect.y);
         return_rect = &BackgroundRect;
       }
       else
@@ -1099,13 +1211,13 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
 
     case SG_BCKGND_RECT_BOTTOM:
       BackgroundRectCounter = SG_BCKGND_RECT_END;
-      if ((DialogRect.y + DialogRect.h) < (int)scrheight)
+      if ((DialogRect.y + DialogRect.h) < (int)sdlscrn->h)
       {
         // Bottom
         BackgroundRect.x = 0;
         BackgroundRect.y = DialogRect.y + DialogRect.h;
-        BackgroundRect.w = scrwidth;
-        BackgroundRect.h = scrheight - (DialogRect.y + DialogRect.h);
+        BackgroundRect.w = sdlscrn->w;
+        BackgroundRect.h = sdlscrn->h - (DialogRect.y + DialogRect.h);
         return_rect = &BackgroundRect;
       }
       else

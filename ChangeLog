@@ -1,3 +1,10 @@
+2004/02/13 - Xavier
+- gui-sdl/sdlgui.*: Introduced new flags : SG_SELECTABLE and SG_BACKGROUND.
+  Boxes and Buttons drawing improved thanks to these new flags.
+
+- gui-sdl/dlg*.cpp: Modified to take sdlgui.* improvements into account.
+
+
 2004/02/09 - Xavier
 - videl.cpp, uae_cpu/aranym_glue.cpp: connected virtual reset line of our
   virtual CPU to our virtual videl. ;) Moved code from videl constructor to

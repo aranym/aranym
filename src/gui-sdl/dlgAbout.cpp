@@ -12,7 +12,7 @@
 /* The "About"-dialog: */
 SGOBJ aboutdlg[] =
 {
-  { SGBOX, 0, 0, 0,0, 40,25, NULL },
+  { SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL },
   { SGTEXT, 0, 0, 16,1, 12,1, "ARAnyM" },
   { SGTEXT, 0, 0, 16,2, 12,1, "======" },
   { SGTEXT, 0, 0, 1,4, 38,1, "ARAnyM as an Open Source project has  " },
@@ -30,7 +30,7 @@ SGOBJ aboutdlg[] =
   { SGTEXT, 0, 0, 1,18, 38,1,"hope that it will be useful, but" },
   { SGTEXT, 0, 0, 1,19, 38,1,"WITHOUT ANY WARRANTY. See the GNU Ge-" },
   { SGTEXT, 0, 0, 1,20, 38,1,"neral Public License for more details." },
-  { SGBUTTON, SG_EXIT|SG_DEFAULT, 0, 16,23, 8,1, "OK" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 16,23, 8,1, "OK" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 

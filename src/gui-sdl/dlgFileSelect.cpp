@@ -34,16 +34,16 @@ static char dlgfilenames[16][36];
 /* The dialog data: */
 static SGOBJ fsdlg[] =
 {
-    { SGBOX, 0, 0, 0,0, 40,25, NULL },
+    { SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL },
     { SGTEXT, 0, 0, 13,1, 13,1, "Choose a file" },
     { SGTEXT, 0, 0, 1,2, 7,1, "Folder:" },
     { SGTEXT, 0, 0, 1,3, 38,1, dlgpath },
     { SGTEXT, 0, 0, 1,4, 6,1, "File:" },
     { SGTEXT, 0, 0, 7,4, 31,1, dlgfname },
-    { SGBUTTON, SG_EXIT, 0, 31,1, 4,1, ".." },
-    { SGBUTTON, SG_EXIT, 0, 36,1, 3,1, "/" },
+    { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 31,1, 4,1, ".." },
+    { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 36,1, 3,1, "/" },
     { SGBOX, 0, 0, 1,6, 38,16, NULL },
-    { SGBOX, 0, 0, 38,7, 1,14, NULL },
+    { SGBOX, 0, 0, 38,6, 1,16, NULL },
     { SGTEXT, SG_EXIT, 0, 2,6, 35,1, dlgfilenames[0] },
     { SGTEXT, SG_EXIT, 0, 2,7, 35,1, dlgfilenames[1] },
     { SGTEXT, SG_EXIT, 0, 2,8, 35,1, dlgfilenames[2] },
@@ -60,10 +60,10 @@ static SGOBJ fsdlg[] =
     { SGTEXT, SG_EXIT, 0, 2,19, 35,1, dlgfilenames[13] },
     { SGTEXT, SG_EXIT, 0, 2,20, 35,1, dlgfilenames[14] },
     { SGTEXT, SG_EXIT, 0, 2,21, 35,1, dlgfilenames[15] },
-    { SGBUTTON, SG_TOUCHEXIT      , 0, 38,6, 1,1, "\x01" },  /* Arrow up */
-    { SGBUTTON, SG_TOUCHEXIT      , 0, 38,21, 1,1, "\x02" }, /* Arrow down */
-    { SGBUTTON, SG_EXIT|SG_DEFAULT, 0, 10,23, 8,1, "Okay" },
-    { SGBUTTON, SG_EXIT           , 0, 24,23, 8,1, "Cancel" },
+    { SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT      , 0, 38,6, 1,1, "\x01" },  /* Arrow up */
+    { SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT      , 0, 38,21, 1,1, "\x02" }, /* Arrow down */
+    { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 10,23, 8,1, "Okay" },
+    { SGBUTTON, SG_SELECTABLE|SG_EXIT           , 0, 24,23, 8,1, "Cancel" },
     { -1, 0, 0, 0,0, 0,0, NULL }
   };
 
