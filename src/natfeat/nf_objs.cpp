@@ -70,14 +70,14 @@ unsigned int nf_objs_cnt = sizeof(nf_objects) / sizeof(nf_objects[0]);
 
 void initNatFeats()
 {
-	for(int i=0; i<nf_objs_cnt; i++) {
+	for(unsigned int i=0; i<nf_objs_cnt; i++) {
 		nf_objects[i]->init();
 	}
 }
 
 void exitNatFeats()
 {
-	for(int i=0; i<nf_objs_cnt; i++) {
+	for(unsigned int i=0; i<nf_objs_cnt; i++) {
 		nf_objects[i]->exit();
 	}
 }
