@@ -34,7 +34,7 @@
 #include "sysdeps.h"
 #include "emu_bochs.h"
 #include "cdrom.h"
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #define LOG_THIS /* no SMF tricks here, not needed */
