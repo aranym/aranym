@@ -1,3 +1,11 @@
+2002/05/XX - milan (record in ChangeLog by joy)
+- ata.cpp: updated to bochs' latest source (supported SEEK and something else)
+- input.cpp: hack for remounting CD on Ctrl+SysRq, needs to be removed!
+- gencpu.cpp: lotsa weird changes, probably related to distributed dispatcher
+- newcpu.cpp: minor distributed dispatcher related changes
+- JIT compiler: one segfault fixed
+
+
 2002/04/29 - joy
 - ErrorAlert() has been replaced with panicbug() as I needed sprintf
   like parameter parsing. Now all file errors in main() report also
