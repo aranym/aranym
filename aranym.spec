@@ -1,6 +1,6 @@
 %define name	aranym
-%define ver	0.2.0
-%define rel	1
+%define ver	0.6.6
+%define rel	0
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
 %define group	Console/Emulators
@@ -18,11 +18,12 @@ Source: http://prdownloads.sourceforge.net/aranym/%{src}
 BuildRoot: /var/tmp/%{name}-root
 #Patch: %{name}-%{ver}.patch
 %description
-ARAnyM is an acronym and means Atari Running on Any Machine.
+ARAnyM is a software only TOS clone - a virtual machine that allows you
+to run TOS/FreeMiNT/MagiC operating systems and TOS/GEM applications.
 
 Authors:
-Ctirad Fertr, Milan Jurik, Standa Opichal, Petr Stehlik
-and others (see AUTHORS for a full list)
+Ctirad Fertr, Milan Jurik, Standa Opichal, Petr Stehlik, Johan Klockars,
+Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 
 %prep
 rm -rf %{realname}
@@ -71,9 +72,12 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/atari/tools/pcpatch.prg.bz2
 /usr/share/aranym/atari/sound/zmagxsnd.prg.bz2
 /usr/share/aranym/font8.bmp
-/usr/share/aranym/etos512k.img
+/usr/share/aranym/emutos2.img
 
 %changelog
+* Sat Oct 12 2002 Petr Stehlik <pstehlik@sophics.cz>
+EmuTOS image file renamed. Updated for new release.
+
 * Sun Jul 21 2002 Petr Stehlik <pstehlik@sophics.cz>
 SDL GUI font and EmuTOS image files added.
 

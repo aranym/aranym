@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.1.9 released on 2002/07/20
+      version 0.6.6 released on 2002/10/12
 
 
  1) License
@@ -26,8 +26,8 @@ this program; if not, write to the
  ----------------
 
 ARAnyM is a multiplatform virtual machine (a software layer) for running Atari
-ST/TT/Falcon TOS/GEM applications on any hardware and under any host operating
-system. The reason for writing ARAnyM is to provide Atari power users with
+ST/TT/Falcon TOS/GEM applications on any hardware with many host operating
+systems. The reason for writing ARAnyM is to provide Atari power users with
 faster and better machines. The ultimate goal is to create a new platform
 where TOS/GEM applications could continue to live forever.
 
@@ -35,7 +35,7 @@ where TOS/GEM applications could continue to live forever.
  ---------
    o 68040 CPU (including MMU040)
    o 68040 and 68881/2 FPU
-   o 14 MB ST-RAM and unlimited (configurable) amount of FastRAM
+   o 14 MB ST-RAM and up to 3840 MB (configurable) of FastRAM
    o VIDEL, Blitter, MFP, ACIA, IKBD for highest possible compatibility
    o Sound (compatible with Atari XBIOS Sound subsystem, incl. TimerA DMA IRQ)
    o Atari floppy DD/HD for connecting floppy image or real floppy drive
@@ -76,8 +76,8 @@ You also need the operating system - either ATARI original TOS 4.04 (found
 in Falcon030) or the free TOS replacement called EmuTOS (get the latest
 version from CVS at http://emutos.sf.net/).
 
-ARAnyM expects to find the TOS 4.04 ROM image in /usr/local/share/aranym/ROM
-(if not specified otherwise in the ./configure phase). If you want to keep
+ARAnyM expects to find the TOS 4.04 ROM image in $PREFIX/share/aranym/ROM
+($PREFIX is usually "/usr" for the binary packages). If you want to keep
 the TOS ROM elsewhere then don't forget to update your ARAnyM config file:
 edit the "TOS" and set the right path to the file ("TOS=/path/to/TOS").
 
@@ -173,20 +173,29 @@ Note: The config.sys edit tool and the aranym config configuration will come
  7) Keyboard shortcuts
  ---------------------
 
-While the emulator is running, you can quit it by pressing Shift+Pause
-or reboot it with Ctrl+Pause. And if you started ARAnyM with the debug
-option, you can enter the debugger by pressing Alt+Pause. Simple Pause
-key opens up configuration dialog that has not been finished yet.
+Keys not found on a PC keyboard:
+--------------------------------
 
-Press Alt+Ctrl+Esc keys to release the input focus (so you can use your
-keyboard/mouse in other applications).
+Atari Help key - mapped on the F11
+Atari Undo key - mapped on the F12
 
-F11 is the Help key while F12 is the Undo key.
+Keys not found on Atari keyboard:
+---------------------------------
 
-PageUp/PageDown are mapped to Shift+ArrowUp/ArrowDown which is the
-most often used combination for paging up and down in GEM programs.
+Page Up key    - mapped as Shift+Arrow Up (usual combination in GEM apps)
+Page Down key  - mappped as Shift+Arrow Down (usual combo in GEM apps)
 
-Alt+PrintScreen grabs a screenshot.
+Special keys:
+-------------
+Pause/Break    - opens up GUI dialog (unfinished)
+Shift+Pause    - QUIT ARAnyM
+Ctrl+Pause     - REBOOT ARAnyM
+Alt+Pause      - enter integrated debugger (only if started with "-D")
+
+Alt+PrintScreen  create a screenshot in actual directory
+
+Alt+Ctrl+Esc   - release the input focus if ARAnyM runs in a window (so you
+                 could use your keyboard and mouse in other host windows).
 
 
  8) Troubleshooting
