@@ -34,6 +34,10 @@ SRCS = ../main.cpp \
 	../hardware.cpp \
 	../mfp.cpp \
 	../acia.cpp \
+	../acsifdc.cpp \
+	../fdc.cpp \
+	../rtc.cpp \
+	../emul_op.cpp \
 	$(CPUSRCS)
 APP = aranym
 
