@@ -1932,7 +1932,7 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 
 	switch (which) {
 		case -1:
-			return 9;  // maximal which value
+			return 7;  // maximal which value
 
 		case 0:	  // DP_IOPEN
 			return 0x7fffffffL; // unlimited
@@ -1979,6 +1979,7 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 		// FIXME: Has to be different for .XFS and for MetaDOS.
 			return 0x0ff0001fL;	 // only the archive bit is not recognised in the Fxattr
 
+#if 0 // Not supported now
 		case 8:	  // DP_XATTR
 		// This argument should be set accordingly to the filesystem type mounted
 		// to the particular path.
@@ -1987,7 +1988,7 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 
 		case 9:	  // DP_VOLNAMEMAX
 			return 0;
-
+#endif
 		default:
 			return TOS_EINVFN;
 	}
@@ -2605,6 +2606,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.48  2002/04/20 10:03:23  standa
+ * General code clean up.
+ *
  * Revision 1.47  2002/04/19 16:23:24  standa
  * The Fxattr bug fixed. QED works, Thing can refresh without the JOY's ugly
  * patch in Dpathconf.
