@@ -240,6 +240,8 @@ uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
     uae_s32 offset = 0;
     char buffer[80];
 
+    strcpy(buffer, "");
+
     switch (mode){
      case Dreg:
 	sprintf (buffer,"D%d", reg);
