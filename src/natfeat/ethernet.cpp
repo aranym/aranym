@@ -145,12 +145,13 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 int ETHERNETDriver::get_params(GET_PAR which)
 {
-	// int ethX = getParameter(0);
+	int ethX = getParameter(0);
 	memptr name_ptr = getParameter(1);
 	uint32 name_maxlen = getParameter(2);
 	char *text = NULL;
 
-	D(bug("Ethernet: getPAR(%d) to (%p, %d)", which, name_ptr, name_maxlen));
+	D(bug("Ethernet: getPAR(%d) for eth%d to buffer at %p of size %d",
+			which, ethX, name_ptr, name_maxlen));
 
 	if (! ValidAddr(name_ptr, true, name_maxlen))
 		BUS_ERROR(name_ptr);
@@ -162,9 +163,7 @@ int ETHERNETDriver::get_params(GET_PAR which)
 		default: text = "";
 	}
 
-	char *name = (char *)Atari2HostAddr(name_ptr);	// use A2Hstrcpy
-	strncpy(name, text, name_maxlen-1);
-	name[name_maxlen-1] = '\0';
+	host2AtariSafeStrncpy(name_ptr, text, name_maxlen);
 	return strlen(text);
 }
 
