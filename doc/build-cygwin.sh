@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 #
 # Easy ARAnyM compilation under Cygwin
 # (c) october 2003 Xavier Joubert for the ARAnyM team
