@@ -129,6 +129,7 @@ class HostScreen {
 	void update( bool forced );
 	void update();
 
+#ifdef SDL_GUI
 	// GUI
 	void openGUI();
 	void closeGUI();
@@ -138,6 +139,7 @@ class HostScreen {
 	void restoreBackground();
 	void blendBackgrounds();
 	SDL_Surface *getPhysicalSurface() { return mainSurface; }
+#endif
 
 	uint32 getBpp();
 	uint32 getPitch();
@@ -400,6 +402,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.49  2004/12/11 09:55:52  pmandin
+ * Move update function from .h to .cpp, mandatory for NFOSMesa
+ *
  * Revision 1.48  2004/04/26 07:25:59  standa
  * GPL header & comment adjustments.
  *

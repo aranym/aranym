@@ -1,6 +1,8 @@
 2005/01/22 - Petr
 - input.{cpp,h}: little cleanup, private things declared static
 - main.cpp: little cleanup, removed unused function
+- hostscreen.*, input.cpp, main.cpp, parameters.cpp: "--disable-gui" now
+  disables the SDL GUI related code in these files.
 
 
 2005/01/21 - Patrice

@@ -1,7 +1,7 @@
 /*
  * hostscreen.cpp - host video routines
  *
- * Copyright (c) 2001-2003 STanda of ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2001-2005 STanda of ARAnyM developer team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -125,6 +125,7 @@ void HostScreen::toggleFullScreen()
 	SDL_WM_ToggleFullScreen(mainSurface);
 }
 
+#ifdef SDL_GUI
 void HostScreen::allocateBackgroundSurf()
 {
 	// allocate new background video surface
@@ -185,7 +186,6 @@ void HostScreen::restoreBackground()
 		D(bug("video surface restored"));
 	}
 }
-
 void HostScreen::blendBackgrounds()
 {
 	if (backgroundSurf != NULL) {
@@ -199,6 +199,7 @@ void HostScreen::blendBackgrounds()
 		update(true);
 	}
 }
+#endif /* SDL_GUI */
 
 int HostScreen::selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height)
 {
@@ -400,6 +401,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
 	}
 
+#ifdef SDL_GUI
 	if (isGUIopen()) {
 		freeBackgroundSurf();
 		allocateBackgroundSurf();
@@ -410,7 +412,9 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		event.user.code = SDL_USEREVENT; // misused this code for signalizing the resolution change. Did that because I knew the code was unique (needed something distinguishable from keyboard and mouse codes that are sent by the same event name from the input checking thread)
 		SDL_PeepEvents(&event, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
 	}
-	else {
+	else
+#endif /* SDL_GUI */
+	{
 		surf = mainSurface;
 	}
 
@@ -1293,6 +1297,9 @@ void HostScreen::update()
 
 /*
  * $Log$
+ * Revision 1.50  2005/01/12 14:35:16  joy
+ * more unused variables hidden
+ *
  * Revision 1.49  2004/12/11 09:55:52  pmandin
  * Move update function from .h to .cpp, mandatory for NFOSMesa
  *
@@ -1464,3 +1471,7 @@ void HostScreen::update()
  *
  *
  */
+
+/*
+vim:ts=4:sw=4:
+*/

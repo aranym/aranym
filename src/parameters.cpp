@@ -90,7 +90,9 @@ static struct option const long_options[] =
   {"version", no_argument, 0, 'V'},
   {"config", required_argument, 0, 'c'},
   {"save", no_argument, 0, 's'},
+#ifdef SDL_GUI
   {"gui", no_argument, 0, 'G'},
+#endif
   {"swap-ide", no_argument, 0, 'S'},
   {"emutos", no_argument, 0, 'e'},
 #ifdef ENABLE_LILO
@@ -104,7 +106,9 @@ static struct option const long_options[] =
 
 char *program_name;		// set by main()
 
+#ifdef SDL_GUI
 bool startupGUI = false;
+#endif
 
 bool boot_emutos = false;
 bool boot_lilo = false;
@@ -634,11 +638,13 @@ Options:\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
   -c, --config FILE          read different configuration file\n\
   -s, --save                 save configuration file\n\
-  -G, --gui                  open GUI at startup\n\
   -S, --swap-ide             swap IDE drives\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
+#ifdef SDL_GUI
+  printf("  -G, --gui                  open GUI at startup\n");
+#endif
 #if HOSTFS_SUPPORT
   printf("  -d, --disk CHAR:PATH[:]    HostFS mapping, e.g. d:/atari/d_drive\n");
 #endif
@@ -773,7 +779,9 @@ int process_cmdline(int argc, char **argv)
 							 "s"  /* save config file */
 
 							 "c:" /* path to config file */
+#ifdef SDL_GUI
 							 "G"  /* GUI startup */
+#endif
 							 "S"  /* swap IDE drives */
 							 "h"  /* help */
 							 "V"  /* version */,
@@ -785,11 +793,11 @@ int process_cmdline(int argc, char **argv)
 			case 'S':
 				/* processed in early_cmdline_check already */
 				break;
-
+#ifdef SDL_GUI
 			case 'G':
 				startupGUI = true;
 				break;
-
+#endif
 #if (defined(DEBUGGER) || defined(GDBSTUB))
 			case 'D':
 				bx_options.startup.debugger = true;
@@ -1114,3 +1122,7 @@ bool decode_switches(FILE *f, int argc, char **argv)
 const char *getConfigFile() {
 	return config_file;
 }
+
+/*
+vim:ts=4:sw=4:
+*/

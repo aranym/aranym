@@ -449,7 +449,7 @@ void kill_GUI_thread()
 		GUIthread = NULL;
 	}
 }
-#endif
+#endif /* SDL_GUI */
 
 static void process_keyboard_event(SDL_Event &event)
 {
@@ -533,7 +533,7 @@ static void process_keyboard_event(SDL_Event &event)
 		SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
 		return;	// don't pass the key events to emulation
 	}
-#endif
+#endif /* SDL_GUI */
 
 	// map special keys to Atari range of scancodes
 	if (sym == SDLK_PAGEUP) {
@@ -590,7 +590,7 @@ static void process_mouse_event(SDL_Event event)
 		}
 		return;	// don't pass the mouse events to emulation
 	}
-#endif
+#endif /* SDL_GUI */
 
 	int xrel = 0;
 	int yrel = 0;
@@ -795,7 +795,7 @@ void check_event()
 			else if (status == STATUS_REBOOT)
 				RestartAll();
 		}
-#endif
+#endif /* SDL_GUI */
 		else if (type == SDL_QUIT) {
 			pendingQuit = true;
 		}

@@ -93,7 +93,9 @@ static uint32 lastTicks;
 
 SDL_TimerID my_timer_id = NULL;
 
+#ifdef SDL_GUI
 bool isGuiAvailable;
+#endif
 
 uint32 InterruptFlags = 0;
 SDL_mutex *InterruptFlagLock;
@@ -193,6 +195,7 @@ void invoke200HzInterrupt()
 
 		if (++refreshCounter == VIDEL_REFRESH) {// divided by 2 again ==> 25 Hz screen update
 			getVIDEL()->renderScreen();
+#ifdef SDL_GUI
 			if (hostScreen.isGUIopen()) {
 				static int blendRefresh = 0;
 				if (blendRefresh++ > 5) {
@@ -200,6 +203,7 @@ void invoke200HzInterrupt()
 					hostScreen.blendBackgrounds();
 				}
 			}
+#endif /* SDL_GUI */
 			refreshCounter = 0;
 		}
 
@@ -575,7 +579,7 @@ bool InitAll(void)
 		}
 		while(hostScreen.isGUIopen());
 	}
-#endif
+#endif /* SDL_GUI */
 
 #ifdef DEBUGGER
 	if (bx_options.startup.debugger) {
