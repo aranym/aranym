@@ -1,6 +1,19 @@
 1st step to Hacker's Guide
 --------------------------
 
+0) Content
+----------
+1) Types
+2) Interaction with memory
+3) Exceptions
+4) HW emulation
+5) Emulated opcode
+6) Native features
+7) Sources
+8) debuggers
+
+
+
 1) Types
 --------
 
@@ -15,8 +28,8 @@ uint32   - unsigned 32 bit
 int64    - signed 64 bit
 uint64   - unsigned 64 bit
 
-uintptr  - unsigned size of (void *)
-intptr   - signed size of (void *)
+uintptr  - unsigned type with size of (void *)
+intptr   - signed type with size of (void *)
 
   For compatibility between ARAnyM and UAE CPU there are declared also these types:
 
@@ -74,12 +87,13 @@ void WriteHWMemInt32(uint32 addr, uint32 l)
 void WriteHWMemInt16(uint32 addr, uint16 w)
 void WriteHWMemInt8(uint32 addr, uint8 b)
 
+3) Exceptions
+-------------
+
   If you want to generate some Exception, it can be done with this sample code:
 
-Exception(2, m68k_getpc());
-longjmp(excep_env, 0);
-
-  It generates Bus error (Exception No. 2)
+regs.mmu_fault_addr = addr;
+longjmp(excep_env, No. of Exception);
 
 
 4) HW emulation
@@ -97,13 +111,36 @@ longjmp(excep_env, 0);
 
 6) Native features
 ------------------
-  HW (or better functions) which are "emulator-independent can use Native features. In progress.
+  HW (or better functions) which are "emulator-independent" can use Native features. In progress.
 
-7) CPU sources
+7) Sources
 --------------
+CPU:
+
 BasiliskII (CVS 24.1.2002)
 BasiliskII JIT (15.1.2002)
 AmigaXL (Amithlon, AmigaOSXL) (12.6.2001)
 hatari (CVS 2.2.2002)
 UAE 0.8.20
 MMU patch 2 against 0.8.20 
+
+
+IDE:
+
+Bochs (CVS 21.2.20002)
+
+
+8) debuggers
+------------
+ARAnyM has three different debuggers:
+
+a) uae     - based on UAE's debugger, most portable
+b) ndebug
+c) mon     - based on BasiliskII's monitor, it isn't included in ARAnyM's
+             sources, you could download it from CVS
+
+                 anoncvs@down.physik.uni-mainz.de:/cvs
+
+You can select a debugger with ./configure script.
+There are some functions and macros defined in debug.h for debugger output.
+
