@@ -1,0 +1,65 @@
+README - November 25th, 2000
+by Eric Laberge
+
+Synopsys
+--------
+
+'createdisk.sh' is a quick and dirty utility designed to help people create
+their hard disk images. Designed for use with Plex86 on Mandrake 7.2, but it
+should work with anything that uses standard images.
+
+Usage
+-----
+
+createdisk.sh file size
+  file : File name
+  size : Requested size (MB)
+
+Missing parameters will be prompted.
+
+'createdisk.sh' then tries to figure out the correct CHS value and creates the
+file, adding a master boot record if it finds a 'mbrdata' file. The default
+'mbrdata' supplied file is from the '10M.FreeDOS' disk image.
+
+Be sure to note the CHS values, because they'll come in handy later!
+
+Setting up the image
+--------------------
+
+The way I suggest to set up your image partition is to use fdisk with these
+extra steps:
+
+1) As root (required to use fdisk), call fdisk with your image for parameter
+  root>fdisk myimage.img
+
+2) Go to expert mode by typing 'x'
+  Command (m for help) : x
+
+3) Manually set the CHS values you previously noted for your image
+  Expert Command (m for help) : c
+  Number of cylinders (1-4321): 20
+
+  Expert Command (m for help) : h
+  Number of heads (1-256): 16
+
+  Expert Command (m for help) : s
+  Number of sectors (1-63): 63
+
+4) You may have a warning, it's not really important
+
+5) Go back to standard mode with the 'r' command
+  Expert Command (m for help) : r
+
+6) You can now use fdisk as you normally would.
+
+Notes
+-----
+
+This is my first attempt at shell scripting.
+I made the script use hard-coded maximum values for heads and sectors. Unless
+speed can be gained in the VM by tweaking these parameters, I don't see why
+it should be changed.
+
+Eric Laberge
+e.laberge@videotron.ca
+
