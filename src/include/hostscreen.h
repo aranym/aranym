@@ -24,10 +24,6 @@
 #ifndef _HOSTSCREEN_H
 #define _HOSTSCREEN_H
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
 # include <cstring>
@@ -38,9 +34,6 @@
 
 #include <SDL.h>
 #include <SDL_thread.h>
-#ifdef ENABLE_OPENGL
-#include <SDL_opengl.h>
-#endif
 
 #include "parameters.h"
 
@@ -87,13 +80,12 @@ class HostScreen {
 	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
 
 	// OpenGL stuff
-#ifdef ENABLE_OPENGL
 	SDL_Surface *SdlGlSurface;
-	GLuint SdlGlTexObj;
-	GLuint SdlGlTextureWidth;
-	GLuint SdlGlTextureHeight;
+	unsigned int SdlGlTexObj;
+	unsigned int SdlGlTextureWidth;
+	unsigned int SdlGlTextureHeight;
 	uint8 *SdlGlTexture;
-#endif /* ENABLE_OPENGL */
+
   public:
 	SDL_mutex   *screenLock;
 	uint32 sdl_videoparams;
@@ -133,9 +125,9 @@ class HostScreen {
 	inline void	  renderEnd();
 
 	// the w, h should be width & height (but C++ complains -> 'if's in the implementation)
-	inline void	  update( int32 x, int32 y, int32 w, int32 h, bool forced = false );
-	inline void	  update( bool forced );
-	inline void	  update();
+	void update( int32 x, int32 y, int32 w, int32 h, bool forced = false );
+	void update( bool forced );
+	void update();
 
 	// GUI
 	void openGUI();
@@ -303,55 +295,6 @@ inline void HostScreen::renderEnd() {
 		SDL_UnlockSurface(surf);
 }
 
-
-inline void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced )
-{
-	if ( !forced && !doUpdate ) // the HW surface is available
-		return;
-
-	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
-	// SDL_UpdateRect(surf, x, y, w, h);
-#ifdef ENABLE_OPENGL
-	if (bx_options.opengl.enabled) {
-		/* Update the texture */
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SdlGlTextureWidth, SdlGlTextureHeight, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
-
-		/* Render the textured quad */
-		glBegin(GL_QUADS);
-			glTexCoord2f( 0.0, 0.0 );
-			glVertex2i( 0, 0);
-
-			glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), 0.0 );
-			glVertex2i( bx_options.opengl.width, 0);
-
-			glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
-			glVertex2i( bx_options.opengl.width, bx_options.opengl.height);
-
-			glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
-			glVertex2i( 0, bx_options.opengl.height);
-		glEnd();
-
-		SDL_GL_SwapBuffers();
-	}
-	else
-#endif	/* ENABLE_OPENGL */
-	{
-		SDL_UpdateRect(mainSurface, x, y, w, h);
-	}
-}
-
-inline void HostScreen::update( bool forced )
-{
-	update( 0, 0, width, height, forced );
-}
-
-
-inline void HostScreen::update()
-{
-	update( 0, 0, width, height, false );
-}
-
-
 inline uint32 HostScreen::getPixel( int16 x, int16 y ) {
 	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
 		return 0;
@@ -457,6 +400,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.48  2004/04/26 07:25:59  standa
+ * GPL header & comment adjustments.
+ *
  * Revision 1.47  2004/01/08 21:44:34  pmandin
  * Missing inclusion of config.h for ENABLE_OPENGL
  *

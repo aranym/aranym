@@ -1245,9 +1245,57 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 	}  // switch
 }
 
+void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced )
+{
+	if ( !forced && !doUpdate ) // the HW surface is available
+		return;
+
+	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
+	// SDL_UpdateRect(surf, x, y, w, h);
+#ifdef ENABLE_OPENGL
+	if (bx_options.opengl.enabled) {
+		/* Update the texture */
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SdlGlTextureWidth, SdlGlTextureHeight, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
+
+		/* Render the textured quad */
+		glBegin(GL_QUADS);
+			glTexCoord2f( 0.0, 0.0 );
+			glVertex2i( 0, 0);
+
+			glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), 0.0 );
+			glVertex2i( bx_options.opengl.width, 0);
+
+			glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
+			glVertex2i( bx_options.opengl.width, bx_options.opengl.height);
+
+			glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
+			glVertex2i( 0, bx_options.opengl.height);
+		glEnd();
+
+		SDL_GL_SwapBuffers();
+	}
+	else
+#endif	/* ENABLE_OPENGL */
+	{
+		SDL_UpdateRect(mainSurface, x, y, w, h);
+	}
+}
+
+void HostScreen::update( bool forced )
+{
+	update( 0, 0, width, height, forced );
+}
+
+void HostScreen::update()
+{
+	update( 0, 0, width, height, false );
+}
 
 /*
  * $Log$
+ * Revision 1.48  2004/10/31 23:15:56  pmandin
+ * Do not need to enable autozoom to force screen size
+ *
  * Revision 1.47  2004/09/10 17:07:25  pmandin
  * Autozoom: now you can choose a specific host screen size that will remain constant accross Atari screen size changes
  *
