@@ -164,7 +164,7 @@ fi
 echo ${LINE2}
 if [ ! -d ${ARANYM_BUILD} ] ; then
   echo -n "Copying sources... "
-  cp -r ${ARANYM_SOURCES} ${ARANYM_BUILD}
+  cp -r -p ${ARANYM_SOURCES} ${ARANYM_BUILD}
   check_return "Unable to copy ${ARANYM_SOURCES} to ${ARANYM_BUILD}."
   echo "done."
   echo ${LINE}

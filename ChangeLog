@@ -1,3 +1,9 @@
+2004/01/26 - Xavier
+- doc/build-cygwin.sh: preserve timestamps when copying ARAnyM sources. This
+  allows CVS to find which files where modified when commiting from
+  ${ARANYM_BUILD}.
+
+
 2004/01/25 - Xavier
 - gui-sdl/sdlgui.*:
   - aligned SGBUTTONs handling on other objects. They now need to have SG_EXIT
