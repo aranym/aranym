@@ -1,7 +1,12 @@
+2002/07/26 - Patrice
+- dsp_cpu.cpp: lua operation and read_memory fixed
+- dsp_disasm.cpp: Added missing '\n' in disasm output
+
+
 2002/07/23 - Patrice
 - ndebug.cpp: Make it gcc-3 friendly.
 - dsp.cpp: Added mu-law table generator
-- dspdisasm.cpp: Changed all output from D(bug()) to fprintf()
+- dsp_disasm.cpp: Changed all output from D(bug()) to fprintf()
 - yamaha.cpp, dsp_cpu.cpp: Removed useless #include "config.h"
 
 2002/07/23 - milan
