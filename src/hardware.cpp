@@ -43,6 +43,7 @@ void HWInit (void) {
 	rtc.init();
 	videl.init();
 	ide.init();
+	dsp.init();
 }
 
 struct HARDWARE {
@@ -72,7 +73,7 @@ HARDWARE ICs[] = {
 //	{"VME", 0xff8e00, 0x0c},
 	{"Paddle", 0xff9200, 0x24, &fake_io},
 	{"VIDEL Pallete", 0xff9800, 0x400, &videl},
-	{"DSP", 0xffa200, 8, &dsp},
+	{"DSP", HW_DSP, 8, &dsp},
 	{"STMFP", 0xfffa00, 0x30, &mfp},
 //	{"STFPC", 0xfffa40, 8},
 	{"IKBD", 0xfffc00, 4, &ikbd},
@@ -171,6 +172,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.38  2002/06/24 20:38:23  joy
+ * do_get_real_addr is memory.h internal and should not be used outside of CPU. fixed.
+ *
  * Revision 1.37  2002/03/21 10:26:31  joy
  * serious bug fixed - we forgot to set the faulty address in hardware register accesses!
  *
