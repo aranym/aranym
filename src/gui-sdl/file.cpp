@@ -469,7 +469,7 @@ void File_splitpath(char *pSrcFileName, char *pDir, char *pName, char *pExt)
   }
   else
   {
-    strcpy(pDir, "./");
+    strcpy(pDir, "");
     strcpy(pName, pSrcFileName);
   }
 
@@ -498,7 +498,7 @@ void File_makepath(char *pDestFileName, char *pDir, char *pName, char *pExt)
 {
   strcpy(pDestFileName, pDir);
   if( strlen(pDestFileName)==0 )
-    strcpy(pDestFileName, "./");
+    strcpy(pDestFileName, "");
   if( pDestFileName[strlen(pDestFileName)-1]!='/' )
     strcat(pDestFileName, "/");
 
