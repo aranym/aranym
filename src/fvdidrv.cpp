@@ -387,7 +387,7 @@ extern "C" {
 				put_word( videoRam + j*2 + i*hostScreen.getWidth()*2 , dataWord );
 			}
 		hostScreen.renderEnd();
-		videl.renderScreenNoFlag();
+//		videl.renderScreenNoFlag();
 	}
 	static void unflushVideo( uint32 videoRam ) {
 		if (!hostScreen.renderBegin())
@@ -400,7 +400,7 @@ extern "C" {
 				hostScreen.putPixel(j,i,dataWord);
 			}
 		hostScreen.renderEnd();
-		videl.renderScreenNoFlag();
+//		videl.renderScreenNoFlag();
 	}
 	static void getBinary( uint16 data, char *buffer ) {
 		for( uint16 i=0; i<=15; i++ ) {
@@ -957,6 +957,10 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.14  2001/10/12 08:25:38  standa
+ * The fVDI blitting fixed and extended. Now only the expandToMemory and
+ * blit mem2mem is to be done.
+ *
  * Revision 1.13  2001/10/03 06:37:41  standa
  * General cleanup. Some constants added. Better "to screen" operation
  * recognition (the videoram address is checked too - instead of only the
