@@ -36,12 +36,12 @@
 /*--- Types ---*/
 
 typedef struct {
-	void *next;
+	unsigned long next;	/* (void *) for Atari */
 	unsigned long attrib;
 	unsigned short phys_letter;
 	unsigned short dma_channel;
 	unsigned short sub_device;
-	void *functions;
+	unsigned long functions;	/* (void *) for Atari */
 	unsigned short status;
 	unsigned long reserved[2];
 	char name[32];
