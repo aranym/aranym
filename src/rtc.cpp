@@ -12,37 +12,37 @@
 #define CKS_RANGE_LEN	(CKS_RANGE_END-CKS_RANGE_START+1)
 #define CKS_LOC			(14+48)
 
-#define CMOS_PATH		"cmos"
-
-uae_u8 cmos[64]={48,255,21,255,23,255,1,25,3,33,42,14,112,128,
+uae_u8 nvram[64]={48,255,21,255,23,255,1,25,3,33,42,14,112,128,
 		0,0,0,0,0,0,0,0,17,46,32,1,255,0,0,56,135,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,224,31};
 
-#if 0
+/*
 int byte15th = (colors & 7) | (80:40) << 3 | (VGA : TV) << 4 | (PAL : NTSC) << 5| overscan << 6 | STcompatible << 7);
 int byte14th = VGA:TV ? line doubling : half screen;
-#endif
+*/
 
 RTC::RTC() {
 	addr = 0;
-	init();
 }
 
 RTC::~RTC() {
-	save();		// save CMOS file upon exit automatically
+	save();		// save NVRAM file upon exit automatically (should be conditionalized)
 }
 
 void RTC::init() {
-	load();		// load CMOS file automatically
+	// set up the nvram filename
+	getConfFilename(ARANYMNVRAM, nvram_filename, sizeof(nvram_filename));
+
+	load();		// load NVRAM file automatically
 
 	if (bx_options.video.monitor != -1) {
 		if (bx_options.video.monitor == 0)	// VGA
-			cmos[29] |= 32;
+			nvram[29] |= 32;		// the monitor type should be set on a working copy only
 		else
-			cmos[29] &= ~32;
+			nvram[29] &= ~32;
 	}
 	if (bx_options.video.boot_color_depth != -1) {
-		int res = cmos[29] & 0x07;
+		int res = nvram[29] & 0x07;
 		switch(bx_options.video.boot_color_depth) {
 			case 1: res = 0; break;
 			case 2: res = 1; break;
@@ -50,8 +50,8 @@ void RTC::init() {
 			case 8: res = 3; break;
 			case 16: res = 4; break;
 		}
-		cmos[29] &= ~0x07;
-		cmos[29] |= res;
+		nvram[29] &= ~0x07;
+		nvram[29] |= res;		// the booting resolution should be set on a working copy only
 	}
 
 	setChecksum();
@@ -59,11 +59,11 @@ void RTC::init() {
 
 bool RTC::load() {
 	bool ret = false;
-	FILE *f = fopen(CMOS_PATH, "rb");
+	FILE *f = fopen(nvram_filename, "rb");
 	if (f != NULL) {
-		uae_u8 fcmos[CKS_RANGE_LEN];
-		if (fread(fcmos, 1, CKS_RANGE_LEN, f) == CKS_RANGE_LEN) {
-			memcpy(cmos+CKS_RANGE_START, fcmos, CKS_RANGE_LEN);
+		uae_u8 fnvram[CKS_RANGE_LEN];
+		if (fread(fnvram, 1, CKS_RANGE_LEN, f) == CKS_RANGE_LEN) {
+			memcpy(nvram+CKS_RANGE_START, fnvram, CKS_RANGE_LEN);
 			ret = true;
 		}
 		fclose(f);
@@ -74,9 +74,9 @@ bool RTC::load() {
 
 bool RTC::save() {
 	bool ret = false;
-	FILE *f = fopen(CMOS_PATH, "wb");
+	FILE *f = fopen(nvram_filename, "wb");
 	if (f != NULL) {
-		if (fwrite(cmos+CKS_RANGE_START, 1, CKS_RANGE_LEN, f) == CKS_RANGE_LEN) {
+		if (fwrite(nvram+CKS_RANGE_START, 1, CKS_RANGE_LEN, f) == CKS_RANGE_LEN) {
 			ret = true;
 		}
 		fclose(f);
@@ -117,7 +117,7 @@ void RTC::setAddr(uae_u8 value) {
 }
 
 uae_u8 RTC::getData() {
-//	fprintf(stderr, "Reading NVRAM data at %d = %d ($%02x) at %06x\n", addr, cmos[addr], cmos[addr], showPC());
+//	fprintf(stderr, "Reading NVRAM data at %d = %d ($%02x) at %06x\n", addr, nvram[addr], nvram[addr], showPC());
 	if (addr <= 9) {
 		time_t tim = time(NULL);
 		struct tm *curtim = localtime(&tim);	// current time
@@ -128,16 +128,16 @@ uae_u8 RTC::getData() {
 			case 7: return curtim->tm_mday;
 			case 8: return curtim->tm_mon+1;
 			case 9: return curtim->tm_year - 68;
-			default:return cmos[addr];
+			default:return nvram[addr];
 		}
 	}
 	else
-		return cmos[addr];
+		return nvram[addr];
 }
 
 void RTC::setData(uae_u8 value) {
 //	fprintf(stderr, "Writting NVRAM data at %d = %d ($%02x) at %06x\n", addr, value, value, showPC());
-	cmos[addr] = value;
+	nvram[addr] = value;
 }
 
 /* the checksum is over all bytes except the checksum bytes
@@ -148,7 +148,7 @@ void RTC::setChecksum()
 	unsigned char sum = 0;
 	
 	for(i = CKS_RANGE_START; i <= CKS_RANGE_END; ++i)
-		sum += cmos[i];
-	cmos[CKS_LOC] = ~sum;
-	cmos[CKS_LOC+1] = sum;
+		sum += nvram[i];
+	nvram[CKS_LOC] = ~sum;
+	nvram[CKS_LOC+1] = sum;
 }
