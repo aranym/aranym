@@ -44,6 +44,9 @@
 /* Define if you want Timer C to be emulated using SDL Timers */
 #undef USE_TIMERS
 
+/* Define if you want to try out a different memory check */
+#undef PAGE_CHECK
+
 /* Define if you want FastRAM of fixed size */
 #undef FixedSizeFastRAM
 
@@ -55,9 +58,6 @@
 
 /* Define if you want even more accelerated blitter output */
 #undef BLITTER_SDLBLIT
-
-/* Define if you want to try out a different memory boundary check (maybe faster) */
-#undef CHECK_BOUNDARY_BY_ARRAY
 
 /* Define if you want TV conf GUI and have TV lib */
 #undef HAVE_TVISION

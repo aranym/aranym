@@ -27,6 +27,8 @@ AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU 
 
 AC_ARG_ENABLE(sdltimer,        [  --enable-sdltimer       use SDL Timer for Timer C [default=no]], [WANT_SDLTIMER=$enableval], [WANT_SDLTIMER=no])
 
+AC_ARG_ENABLE(pagecheck,       [  --enable-pagecheck      different memory check [default=no]], [WANT_PAGECHECK=$enableval], [WANT_PAGECHECK=no])
+
 AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB [default=no]], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
 AC_ARG_ENABLE(directcolor,     [  --enable-directcolor    enable TOS direct truecolor [default=no]], [WANT_DIRECTCOLOR=$enableval], [WANT_DIRECTCOLOR=no])
@@ -479,6 +481,11 @@ if [[ "x$WANT_SDLTIMER" = "xyes" ]]; then
     AC_DEFINE(USE_TIMERS)
 fi
 
+dnl Page check
+if [[ "x$WANT_PAGECHECK" = "xyes" ]]; then
+    AC_DEFINE(PAGE_CHECK)
+fi
+
 dnl fixed size FastRAM
 if [[ "x$WANT_FIXEDFASTRAM" != "xno" ]]; then
     AC_DEFINE(FixedSizeFastRAM, $WANT_FIXEDFASTRAM)
@@ -839,6 +846,7 @@ echo Debugger ............................... : $WHICH_DEBUG
 echo Monitor ................................ : $WANT_MON
 echo Aranymrc confgui ....................... : $WANT_TVCONFGUI
 echo Timer C using SDL Timer ................ : $WANT_SDLTIMER
+echo Page check memory ...................... : $WANT_PAGECHECK
 echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM
 echo TOS Direct Truecolor.................... : $WANT_DIRECTCOLOR
 echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
