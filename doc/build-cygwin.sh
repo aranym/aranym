@@ -18,7 +18,7 @@
 # Copy this script in this directory (please check it has the executable
 # flag set - if not, "chmod +x build-cygwin.sh").
 #
-# Untar SDL sources in this directory. I used SDL 1.2.6, but it should
+# Untar SDL sources in this directory. I used SDL 1.2.7, but it should
 # work with newer releases as they will be available (CVS won't work !).
 # Please edit the SDL_SOURCES variable below to reflect the path where
 # SDL sources lie.
@@ -54,8 +54,9 @@
 #
 # Cygwin packages that should be installed :
 # - gcc
+# - gcc-g++
 # - make
-# - XFree86-bin (for the makedepend binary)
+# - xorg-x11-bin (for the makedepend binary)
 # - cvs, autoconf and automake (if you want to use CVS version, or if
 #   you modify configure.ac)
 #
@@ -66,7 +67,7 @@
 
 #----------------------------------------------
 # EDIT this to suit your configuration !
-SDL_SOURCES=${PWD}/SDL-1.2.6
+SDL_SOURCES=${PWD}/SDL-1.2.7
 ARANYM_SOURCES=${PWD}/aranym
 #----------------------------------------------
 

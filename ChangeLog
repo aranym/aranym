@@ -1,3 +1,12 @@
+2004/07/14 - Xavier
+- doc/build-cygwin.sh: updated for SDL 1.2.7 and latest Cygwin (new GCC and
+  X.org/X11 packages).
+
+- Unix/acinclude.m4: updated for automake 1.8+.
+
+- Unix/configure.ac: fixed error message about extended segfault handler.
+
+
 2004/07/13 - joy
 - natfeat/ethernet.cpp: ARATAPIF is now found in $PATH again (Standa forgot
   to remove some of his debugging stuff). Thank for the bug report goes to

@@ -46,7 +46,7 @@ dnl $1 -- the macro to define
 dnl $2 -- the value to translate
 dnl $3 -- template name
 
-AC_DEFUN(AC_TRANSLATE_DEFINE, [
+AC_DEFUN([AC_TRANSLATE_DEFINE], [
     if [[ "x$2" = "xyes" -o "x$2" = "xguessing yes" ]]; then
         AC_DEFINE([$1], 1, [$3])
     fi
@@ -57,7 +57,7 @@ dnl GNU Autoconf macro AC_CXX_OPT(option)
 dnl Checks if C++ compiler supports specified option.
 dnl If yes - adds that option to CXXFLAGS.
 
-AC_DEFUN(AC_CXX_OPT,
+AC_DEFUN([AC_CXX_OPT],
 [
    AC_REQUIRE([AC_PROG_CXX])
    AC_REQUIRE([AC_LANG_CPLUSPLUS])
