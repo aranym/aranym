@@ -1,3 +1,7 @@
+2004/02/15 - joy
+- natfeat/hostfs.cpp: restore 0.8.5's xfs_init to fix the mount root bug.
+
+
 2004/02/14 - joy
 - all HW chips' classes: made sure they contain function reset() that
   initializes internal variables of the objects. This will be called

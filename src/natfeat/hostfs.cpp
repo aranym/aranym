@@ -2024,6 +2024,84 @@ HostFs::ExtDrive::ExtDrive( HostFs::ExtDrive *old ) {
 }
 
 
+int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
+							   memptr filesys, memptr filesys_devdrv )
+{
+	// Some magic to workaround a bug in GCC 3.2 on Cygwin.
+	// This allows to set MAXPATHNAMELEN back to something higher than 255
+	char temp[MAXPATHNAMELEN];
+	char *fmountpoint=temp;
+
+	a2fstrcpy( fmountpoint, mountpoint );
+	int dnum = -1;
+
+	ExtDrive *drv = new ExtDrive();
+	drv->fsDrv = filesys;
+	drv->fsDevDrv = filesys_devdrv;
+
+	// The mountPoint is of a "A:" format:
+	//    MetaDOS mapping the devnum is <MAXDRIVES
+	if ( strlen( fmountpoint ) == 2 && fmountpoint[1] == ':' ) {
+		dnum = tolower(fmountpoint[0])-'a';
+
+		// -> use the [HOSTFS] of config file here
+		drv->mountPoint = strdup( fmountpoint );
+		drv->hostRoot = strdup( bx_options.aranymfs[dnum].rootPath );
+		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
+	} else {
+		drv->mountPoint = strdup( fmountpoint );
+
+		// the aranym.xfs tries to map drives to u:\\xx
+		// in this case we use the [HOSTFS] of config file here
+		if ( !strncasecmp( fmountpoint, "u:\\", 3 ) &&
+			 (unsigned int)(dnum = tolower(fmountpoint[3])-'a') < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) )
+		{
+			drv->hostRoot = strdup( bx_options.aranymfs[fmountpoint[3]-'a'].rootPath );
+			drv->halfSensitive = bx_options.aranymfs[fmountpoint[3]-'a'].halfSensitive;
+		} else {
+			// no [aranymfs] match -> map to the passed mountpoint
+			//  - future extension to map from m68k side
+			char fhostroot[MAXPATHNAMELEN];
+			a2fstrcpy( fhostroot, hostroot );
+
+			drv->hostRoot = strdup( fhostroot );
+			drv->halfSensitive = halfSensitive;
+		}
+	}
+
+	drv->driveNumber = devnum;
+	mounts.insert(std::make_pair( devnum, drv ));
+
+	// if the drive mount was mounted to some FreeMiNT mountpoint
+	// which devnum is higher that MAXDRIVES then serve also as the
+	// GEMDOS drive equivalent. This is a need for the current
+    // FreeMiNT kernel which requires the driver for u:\[a-z0-6] to react
+	// to 0-31 devno's
+	if ( dnum != devnum &&
+		 dnum != -1 &&
+		 (unsigned int)dnum < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) ) {
+		drv = new ExtDrive( drv );
+		drv->driveNumber = dnum;
+		mounts.insert(std::make_pair( dnum, drv ));
+	}
+
+
+	D(bug("HOSTFS: fs_native_init:\n"
+		  "\t\t fs_drv	   = %#08x\n"
+		  "\t\t fs_devdrv  = %#08x\n"
+		  "\t\t fs_devnum  = %#04x\n"
+		  "\t\t fs_mountPoint = %s\n"
+		  "\t\t fs_hostRoot   = %s\n"
+		  ,drv->fsDrv
+		  ,drv->fsDevDrv
+		  ,(int)devnum
+		  ,drv->mountPoint
+		  ,drv->hostRoot
+		  ));
+
+	return TOS_E_OK;
+}
+/*
 int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 				bool halfSensitive, memptr filesys, memptr filesys_devdrv )
 {
@@ -2044,7 +2122,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		// The mountPoint is of a "A:" format: (BetaDOS mapping)
 		dnum = tolower(fmountpoint[0])-'a';
 	}
-	else if (strlen(fmountpoint) == 4 && !strncasecmp(fmountpoint, "u:\\", 3)) {
+	else if (strlen(fmountpoint) >= 4 && !strncasecmp(fmountpoint, "u:\\", 3)) {
 		// the hostfs.xfs tries to map drives to u:\\X
 		dnum = tolower(fmountpoint[3])-'a';
 	}
@@ -2080,7 +2158,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	}
 
 
-	D(bug("HOSTFS: fs_native_init:\n"
+	panicbug("HOSTFS: fs_native_init:\n"
 		  "\t\t fs_drv	   = %#08x\n"
 		  "\t\t fs_devdrv  = %#08x\n"
 		  "\t\t fs_devnum  = %#04x\n"
@@ -2091,11 +2169,11 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		  ,(int)devnum
 		  ,drv->mountPoint
 		  ,drv->hostRoot
-		  ));
+		  );
 
 	return TOS_E_OK;
 }
-
+*/
 void HostFs::freeMounts()
 {
 	for(MountMap::iterator it = mounts.begin(); it != mounts.end(); it++) {
