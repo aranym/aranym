@@ -1282,10 +1282,10 @@ static void gen_opcode (unsigned long int opcode)
      case i_LINK:
 	genamode (Apdi, "7", sz_long, "old", GENA_GETV_FETCH_ALIGN, GENA_MOVEM_DO_INC, XLATE_LOG);
 	genamode (curi->smode, "srcreg", sz_long, "src", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
-	genastore ("src", Apdi, "7", sz_long, "old", xlateflag);
 	genastore ("m68k_areg(regs, 7)", curi->smode, "srcreg", sz_long, "src", xlateflag);
 	genamode (curi->dmode, "dstreg", curi->size, "offs", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
 	printf ("\tm68k_areg(regs, 7) += offs;\n");
+	genastore ("src", Apdi, "7", sz_long, "old", xlateflag);
 	break;
      case i_UNLK:
 	genamode (curi->smode, "srcreg", curi->size, "src", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
