@@ -218,8 +218,10 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				break;
 
 			case 'd':
-				if ( strlen(optarg) < 4 )
+				if ( strlen(optarg) < 4 ) {
+					fprintf(stderr, "Not enough parameters for -d\n");
 					break;
+				}
 				{
 					char path[2048];
 
