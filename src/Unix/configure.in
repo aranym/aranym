@@ -351,6 +351,8 @@ dnl gb-- Probably not the cleanest way to take
 CFLAGS=`echo $CFLAGS | sed -e 's/ -g / /;s/^-g / /;s/ -g$/ /;s/^-g$//'`
 CXXFLAGS=`echo $CXXFLAGS | sed -e 's/ -g / /;s/^-g / /;s/ -g$/ /;s/^-g$//'`
 
+AC_CHECK_LIB(SDL, SDL_Init)
+
 dnl Generate Makefile.
 AC_SUBST(DEFINES)
 AC_SUBST(SYSSRCS)

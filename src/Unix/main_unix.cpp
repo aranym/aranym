@@ -28,7 +28,7 @@
 #include <pthread.h>
 
 #include <linux/fb.h>
-#include "SDL.h"
+#include <SDL/SDL.h>
 #include <sys/mman.h>
 
 #include "cpu_emulation.h"

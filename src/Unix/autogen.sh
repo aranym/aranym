@@ -33,6 +33,6 @@ do
   autoheader; autoconf)
 done
 
-bunzip2 -k ROM.bz2
+bunzip2 -k -f ROM.bz2
 
 ./configure "$@"
