@@ -44,7 +44,6 @@ a higher priority over the config file. You can use it for temporary change
 of Aranym parameters or you can even store the command line options setting
 to the config file using "aranym --save".
 
-
 1.1 Operating systems
 ---------------------
 
