@@ -1,3 +1,15 @@
+2003/12/17 - joy
+- parameters.cpp: "GUIfont" config option added (as promised). Most of
+  the complicated logic for guessing the right path for non-Unix systems
+  can be removed soon.
+
+- sdlgui.cpp: removed the cygwin_to_win32 conversion of the GUI font path.
+  Two reasons for that: first, user can specify the path in MS-DOS format
+  in the config file now (if ever needed). Second, the mingw32 compiled
+  SDL does not work properly anyway so we use cygwin compiled SDL now
+  (and that one surely reads unix-like paths).
+
+
 2003/12/16 - joy
 - mfp.cpp: initializing the internal variables suddenly fixed all the 
   weird problems I had with booting the aranym since I converted the HW

@@ -65,12 +65,14 @@ static struct option const long_options[] =
   {NULL, 0, NULL, 0}
 };
 
-#define TOS_FILENAME	"ROM"
-#define EMUTOS_FILENAME	"etos512k.img"
+#define TOS_FILENAME		"ROM"
+#define EMUTOS_FILENAME		"etos512k.img"
+#define GUIFONT_FILENAME	"font8.bmp"
 
 char *program_name;		// set by main()
-char rom_path[512];		// set by build_datafilenames()
-char emutos_path[512];	// set by build_datafilenames()
+char rom_path[512];		// set by decode_switches()
+char emutos_path[512];	// set by decode_switches()
+char guifont_path[512];	// set by decode_switches()
 
 bool boot_emutos = false;
 bool boot_lilo = false;
@@ -101,6 +103,7 @@ struct Config_Tag global_conf[]={
 	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path), 0},
 	{ "TOS", String_Tag, rom_path, sizeof(rom_path), 0},
 	{ "EmuTOS", String_Tag, emutos_path, sizeof(emutos_path), 0},
+	{ "GUIfont", String_Tag, guifont_path, sizeof(guifont_path), 0},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab, 0, 0},
 #ifdef ENABLE_EPSLIMITER
 	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
@@ -941,6 +944,7 @@ bool decode_switches(FILE *f, int argc, char **argv)
 	getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
 	getDataFilename(TOS_FILENAME, rom_path, sizeof(rom_path));
 	getDataFilename(EMUTOS_FILENAME, emutos_path, sizeof(emutos_path));
+	getDataFilename(GUIFONT_FILENAME, guifont_path, sizeof(guifont_path));
 
 	early_cmdline_check(argc, argv);
 	preset_cfg();
