@@ -1850,6 +1850,18 @@ static void m68k_run_1 (void)
 		uae_u32 opcode = GET_OPCODE;
 //fprintf(stderr, "%08lx", opcode);
 		(*cpufunctbl[opcode])(opcode);
+#ifdef FULL_HISTORY
+#ifdef NEED_TO_DEBUG_BADLY
+		history[lasthist] = regs;
+		historyf[lasthist] =  regflags;
+#else
+		history[lasthist] = m68k_getpc();
+#endif
+		if (++lasthist == MAX_HIST) lasthist = 0;
+		if (lasthist == firsthist) {
+			if (++firsthist == MAX_HIST) firsthist = 0;
+		}
+#endif
 		if (regs.spcflags) {
 			if (do_specialties())
 				return;

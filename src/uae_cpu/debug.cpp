@@ -187,6 +187,7 @@ void debug (void)
 
     irqindebug = false;
 
+#ifndef FULL_HISTORY
 #ifdef NEED_TO_DEBUG_BADLY
     history[lasthist] = regs;
     historyf[lasthist] = regflags;
@@ -195,8 +196,9 @@ void debug (void)
 #endif
     if (++lasthist == MAX_HIST) lasthist = 0;
     if (lasthist == firsthist) {
-	if (++firsthist == MAX_HIST) firsthist = 0;
+        if (++firsthist == MAX_HIST) firsthist = 0;
     }
+#endif
 
     m68k_dumpstate (&nextpc);
     nxdis = nextpc; nxmem = 0;
