@@ -7,12 +7,15 @@
 #include "rtc.h"
 #include "parameters.h"
 
+#define DEBUG 0
+#include "debug.h"
+
 #define CKS_RANGE_START	14
 #define CKS_RANGE_END	(14+47)
 #define CKS_RANGE_LEN	(CKS_RANGE_END-CKS_RANGE_START+1)
 #define CKS_LOC			(14+48)
 
-uae_u8 nvram[64]={48,255,21,255,23,255,1,25,3,33,42,14,112,128,
+uint8 nvram[64]={48,255,21,255,23,255,1,25,3,33,42,14,112,128,
 		0,0,0,0,0,0,0,0,17,46,32,1,255,0,0,56,135,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,224,31};
 
@@ -61,7 +64,7 @@ bool RTC::load() {
 	bool ret = false;
 	FILE *f = fopen(nvram_filename, "rb");
 	if (f != NULL) {
-		uae_u8 fnvram[CKS_RANGE_LEN];
+		uint8 fnvram[CKS_RANGE_LEN];
 		if (fread(fnvram, 1, CKS_RANGE_LEN, f) == CKS_RANGE_LEN) {
 			memcpy(nvram+CKS_RANGE_START, fnvram, CKS_RANGE_LEN);
 			ret = true;
@@ -87,7 +90,7 @@ bool RTC::save() {
 
 static const int HW = 0xff8960;
 
-uae_u8 RTC::handleRead(uaecptr addr) {
+uint8 RTC::handleRead(uaecptr addr) {
 	addr -= HW;
 	if (addr < 0 || addr > 3)
 		return 0;
@@ -100,7 +103,7 @@ uae_u8 RTC::handleRead(uaecptr addr) {
 	return 0;
 }
 
-void RTC::handleWrite(uaecptr addr, uae_u8 value) {
+void RTC::handleWrite(uaecptr addr, uint8 value) {
 	addr -= HW;
 	if (addr < 0 || addr > 3)
 		return;
@@ -111,32 +114,38 @@ void RTC::handleWrite(uaecptr addr, uae_u8 value) {
 	}
 }
 
-void RTC::setAddr(uae_u8 value) {
+void RTC::setAddr(uint8 value) {
 	if (addr < 64)
 		addr = value;
 }
 
-uae_u8 RTC::getData() {
-//	fprintf(stderr, "Reading NVRAM data at %d = %d ($%02x) at %06x\n", addr, nvram[addr], nvram[addr], showPC());
-	if (addr <= 9) {
+uint8 RTC::getData() {
+	uint8 value = 0;
+	if (addr == 0 || addr == 2 || addr == 4 || (addr >=7 && addr <=9) ) {
 		time_t tim = time(NULL);
 		struct tm *curtim = localtime(&tim);	// current time
 		switch(addr) {
-			case 0:	return curtim->tm_sec;
-			case 2: return curtim->tm_min;
-			case 4: return curtim->tm_hour;
-			case 7: return curtim->tm_mday;
-			case 8: return curtim->tm_mon+1;
-			case 9: return curtim->tm_year - 68;
-			default:return nvram[addr];
+			case 0:	value = curtim->tm_sec; break;
+			case 2: value = curtim->tm_min; break;
+			case 4: value = curtim->tm_hour; break;
+			case 7: value = curtim->tm_mday; break;
+			case 8: value = curtim->tm_mon+1; break;
+			case 9: value = curtim->tm_year - 68; break;
 		}
 	}
+	else if (addr == 10) {
+		static bool rtc_uip = true;
+		value = rtc_uip ? 0x80 : 0;
+		rtc_uip = !rtc_uip;
+	}
 	else
-		return nvram[addr];
+		value = nvram[addr];
+	D(bug("Reading NVRAM data at %d = %d ($%02x) at %06x\n", addr, value, value, showPC()));
+	return value;
 }
 
-void RTC::setData(uae_u8 value) {
-//	fprintf(stderr, "Writting NVRAM data at %d = %d ($%02x) at %06x\n", addr, value, value, showPC());
+void RTC::setData(uint8 value) {
+	D(bug("Writing NVRAM data at %d = %d ($%02x) at %06x\n", addr, value, value, showPC()));
 	nvram[addr] = value;
 }
 
