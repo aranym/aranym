@@ -300,8 +300,8 @@ dnl    WANT_ARANYMFS="no"
   darwin*)
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS="parameters_unix.cpp"
-    CXXFLAGS="$CXXFLAGS -F\$(HOME)/Library/Frameworks -I$(HOME)/Library/Framworks/SDL.framework/Headers"
-    CFLAGS="$CFLAGS -F\$(HOME)/Library/Frameworks -I$(HOME)/Library/Framworks/SDL.framework/Headers"
+    CXXFLAGS="$CXXFLAGS -F\$(HOME)/Library/Frameworks -I\$(HOME)/Library/Frameworks/SDL.framework/Headers"
+    CFLAGS="$CFLAGS -F\$(HOME)/Library/Frameworks -I\$(HOME)/Library/Frameworks/SDL.framework/Headers"
     LDFLAGS="$LDFLAGS -F\$(HOME)/Library/Frameworks"
     LIBS="$LIBS -framework AppKit -framework IOKit -framework CoreFoundation -framework SDL"
     ;;
