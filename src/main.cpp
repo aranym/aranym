@@ -81,6 +81,8 @@ int FPUType;
 
 // Timer stuff
 static uint32 lastTicks;
+#define USE_GETTICKS 1		// undefine this if your ARAnyM time goes slower
+
 #ifdef USE_TIMERS
 SDL_TimerID my_timer_id;
 #endif
@@ -675,7 +677,13 @@ void invoke200HzInterrupt()
 	static int refreshCounter = 0;
 
 	/* syncing to 200 Hz */
+#if USE_GETTICKS
 	uint32 newTicks = SDL_GetTicks();
+#else
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	uint32 newTicks = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+#endif
 	int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
 	if (count == 0)
 		return;
@@ -942,7 +950,14 @@ bool InitAll(void)
 	hideMouse(true);
 
 	// timer init
+#if USE_GETTICKS
 	lastTicks = SDL_GetTicks();
+#else
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	lastTicks = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+#endif
+
 #ifdef USE_TIMERS
 	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
 	printf("Using timers\n");
@@ -983,6 +998,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.59  2002/01/11 11:55:41  joy
+ * SDL_GetTicks() returns unsigned value! Thanks to Olivier for the fix. This could lead to stop after 23 days of aranym run :-(
+ *
  * Revision 1.58  2002/01/09 19:14:12  milan
  * Preliminary support for SGI/Irix
  *
