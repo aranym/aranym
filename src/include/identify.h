@@ -4,17 +4,19 @@
   * Tables for labelling ARAnyM internals. 
   *
   */
-		
+
+#include "sysdeps.h"
+
 struct mem_labels
 {
     const char *name;
-    uae_u32 adr;
+    memptr adr;
 };
 
 struct customData
 {
     const char *name;
-    uae_u32 adr;
+    memptr adr;
 };
 
 

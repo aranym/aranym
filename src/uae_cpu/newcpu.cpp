@@ -1525,7 +1525,7 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 	    opcode = 0x4AFC;
 	}
 	dp = table68k + opcode;
-	for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
+	for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
 	    ;
 
 	strcpy (instrname, lookup->name);
@@ -1592,7 +1592,7 @@ void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, volatile unsigned in
             opcode = 0x4AFC;
         }
         dp = table68k + opcode;
-        for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
+        for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
             ;
         strcpy (instrname, lookup->name);
         ccpt = strstr (instrname, "cc");
@@ -1632,7 +1632,7 @@ setjmpagain:
 			opcode = 0x4AFC;
 		}
 		dp = table68k + opcode;
-		for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
+		for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
 		    ;
 		strcpy (instrname, lookup->name);
 		ccpt = strstr (instrname, "cc");
@@ -1719,7 +1719,7 @@ void showDisasm(uaecptr addr) {
 		opcode = 0x4AFC;
 	}
 	dp = table68k + opcode;
-	for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
+	for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
 		    ;
 	strcpy (instrname, lookup->name);
 	ccpt = strstr (instrname, "cc");

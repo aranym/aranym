@@ -5,8 +5,6 @@
   *
   */
 
-#include "sysdeps.h"
-#include "memory.h"
 #include "identify.h"
 
 struct mem_labels int_labels[] =
