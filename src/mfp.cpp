@@ -6,7 +6,10 @@
 #include "memory.h"
 #include "mfp.h"
 
-const int HW = 0xfffa00;
+uaecptr showPC();
+static bool dP = false;		/* debug print */
+
+static const int HW = 0xfffa00;
 
 	MFP_Timer::MFP_Timer(int value) {
 		name = 'A' + value;
@@ -22,7 +25,8 @@ const int HW = 0xfffa00;
 		control = value & 0x0f;
 		if (value & 0x10)
 			state = false;
-		fprintf(stderr, "Set MFP Timer%c control to $%x\n", name, value);
+		if (dP)
+			fprintf(stderr, "Set MFP Timer%c control to $%x\n", name, value);
 	}
 
 	uae_u8 MFP_Timer::getControl() {
@@ -30,36 +34,50 @@ const int HW = 0xfffa00;
 	}
 
 	void MFP_Timer::setData(uae_u8 value) {
-		fprintf(stderr, "Set MFP Timer%c data to %d\n", name, value);
+		if (dP)
+			fprintf(stderr, "Set MFP Timer%c data to %d\n", name, value);
 		start_data = value;
 		if (! isRunning())
 			current_data = value;
 	}
 
-	uae_u8 MFP_Timer::getData() {
+	void MFP_Timer::tick() {
+	// fprintf(stderr, "tick for Timer%c\n", name);
 		if (isRunning()) {
-			if (current_data > 1)
+			// if (current_data > 1)
+			if (current_data == start_data && current_data > 1)
 				current_data--;
 			else {
 				state = true;
-				// interrupt !!
+				// Trigger 200Hz interrupt
+				TriggerMFP();
+				if (dP)
+					fprintf(stderr, "TriggerMFP($4BA) = %ld\n", ReadMacInt32(0x4ba));
 				current_data = start_data;
 			}
 		}
-		fprintf(stderr, "get MFP Timer%c data = %d\n", name, current_data);
+	}
+
+	uae_u8 MFP_Timer::getData() {
+		// fprintf(stderr, "get MFP Timer%c data = %d\n", name, current_data);
+
+		if (isRunning() && current_data > 2)
+			current_data--;		// hack to overcome microseconds delays in TOS (e.g. at $E02570)
 
 		return current_data;
 	}
 
+/*************************************************************************/
+
 	MFP::MFP() {}
 
-	uae_u32 MFP::handleRead(uaecptr addr) {
+	uae_u8 MFP::handleRead(uaecptr addr) {
 		addr -= HW;
 		if (addr < 0 || addr > 0x2f)
 			return 0;	// unhandled
 
 		switch(addr) {
-			case 0x01:	return GPIP_data;
+			case 0x01:	return GPIP_data & ~ 0x20;
 						break;
 
 			case 0x03:	return active_edge;
@@ -71,28 +89,32 @@ const int HW = 0xfffa00;
 			case 0x07:	return irq_enable >> 8;
 						break;
 
-			case 0x09:	return irq_enable;
+			case 0x09:	if (dP) fprintf(stderr, "Read: TimerC IRQ %sabled\n", (irq_enable & 0x20) ? "en" : "dis");
+						return irq_enable;
 						break;
 
 			case 0x0b:	return 0x20; //(irq_pending >> 8) | (tA->getControl() & 0x10);	// finish
 						break;
 
-			case 0x0d:	return irq_pending;
+			case 0x0d:	if (dP) fprintf(stderr, "Read: TimerC IRQ %s pending\n", (irq_pending & 0x20) ? "" : "NOT");
+						return irq_pending;
 						break;
 
 			case 0xf:	return irq_inservice >> 8;
 						break;
 
-			case 0x11:	return irq_inservice;
+			case 0x11:	if (dP) fprintf(stderr, "Read: TimerC IRQ %s in-service\n", (irq_inservice & 0x20) ? "" : "NOT");
+						return irq_inservice;
 						break;
 						
 			case 0x13:	return irq_mask >> 8;
 						break;
 						
-			case 0x15:	return irq_mask;
+			case 0x15:	if (dP) fprintf(stderr, "Read: TimerC IRQ %s masked\n", (irq_mask & 0x20) ? "" : "NOT");
+						return irq_mask;
 						break;
 						
-			case 0x17:	return irq_vector;
+			case 0x17:	return automaticServiceEnd ? 0x48 : 0x40;
 						break;
 
 			case 0x19:	return A.getControl();
@@ -101,7 +123,7 @@ const int HW = 0xfffa00;
 			case 0x1b:	return B.getControl();
 						break;
 
-			case 0x1d:	return (C.getControl() >> 4) | D.getControl();
+			case 0x1d:	return (C.getControl() << 4) | D.getControl();
 						break;
 
 			case 0x1f:	return A.getData();
@@ -110,7 +132,7 @@ const int HW = 0xfffa00;
 			case 0x21:	return B.getData();
 						break;
 
-			case 0x23:	return rand() % 0xff; // after Stonx // originally C.getData();
+			case 0x23:	return C.getData();
 						break;
 						
 			case 0x25:	return D.getData();
@@ -144,28 +166,37 @@ const int HW = 0xfffa00;
 			case 0x07:	irq_enable = (irq_enable & 0x00ff) | (value << 8);
 						break;
 
-			case 0x09:	irq_enable = (irq_enable & 0xff00) | value;
+			case 0x09:	if ((irq_enable ^ value) & 0x20)
+							fprintf(stderr, "Write: TimerC IRQ %sabled\n", (value & 20) ? "en" : "dis");
+						irq_enable = (irq_enable & 0xff00) | value;
 						break;
 
 			case 0x0b:	irq_pending = (irq_pending & 0x00ff) | (value << 8);
 						break;
 
-			case 0x0d:	irq_pending = (irq_pending & 0xff00) | value;
+			case 0x0d:	if ((irq_pending ^ value) & 0x20)
+							fprintf(stderr, "Write: TimerC IRQ %s pending\n", (value & 20) ? "" : "NOT");
+						irq_pending = (irq_pending & 0xff00) | value;
 						break;
 
 			case 0xf:	irq_inservice = (irq_inservice & 0x00ff) | (value << 8);
 						break;
 
-			case 0x11:	irq_inservice = (irq_inservice & 0xff00) | value;
+			case 0x11:	if (dP && (irq_inservice ^ value) & 0x20)
+							fprintf(stderr, "Write: TimerC IRQ %s in-service at %08x\n", (value & 20) ? "" : "NOT", showPC());
+						irq_inservice = (irq_inservice & 0xff00) | (irq_inservice & value);
 						break;
 						
 			case 0x13:	irq_mask = (irq_mask & 0x00ff) | (value << 8);
 						break;
 						
-			case 0x15:	irq_mask = (irq_mask & 0xff00) | value;
+			case 0x15:	if (dP && (irq_mask ^ value) & 0x20)
+							fprintf(stderr, "Write: TimerC IRQ %s masked\n", (value & 20) ? "" : "NOT");
+						irq_mask = (irq_mask & 0xff00) | value;
 						break;
 						
-			case 0x17:	irq_vector = 0x40 | (value & 0x0f);	/* wrong, the lowest 3 bits should be obtained elsewhere */
+			case 0x17:	automaticServiceEnd = (value & 0x08) ? true : false;
+						if (dP) fprintf(stderr, "MFP autoServiceEnd: %s\n", automaticServiceEnd ? "YES" : "NO");
 						break;
 
 			case 0x19:	A.setControl(value);
@@ -198,4 +229,8 @@ const int HW = 0xfffa00;
 			default:
 				break;
 		};
+	}
+
+	void MFP::tick() {
+		C.tick();
 	}
