@@ -58,6 +58,14 @@ typedef struct
   char *txt;            /* Text string */
 }  SGOBJ;
 
+typedef struct
+{
+  int object;
+  int position;
+  int blink_counter;
+  bool blink_state;
+} cursor_state;
+
 #define SCRLOCK	hostScreen.lock()
 #define SCRUNLOCK	hostScreen.unlock()
 
@@ -73,5 +81,6 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void);
 #define STATUS_REBOOT	1
 #define STATUS_SHUTDOWN	2
 int GUImainDlg();
+SDL_Event getEvent(SGOBJ *dlg, cursor_state *cursor);
 
 #endif /* _SDLGUI_H */
