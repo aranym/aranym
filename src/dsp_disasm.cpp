@@ -16,6 +16,9 @@
 #define DEBUG 1
 #include "debug.h"
 
+/* More disasm infos, if wanted */
+#define DSP_DISASM_REG_PC 0
+
 /**********************************
  *	Defines
  **********************************/
@@ -36,6 +39,9 @@ static uint32 cur_inst;
  **********************************/
 
 static uint32 registers_save[64];
+#if DSP_DISASM_REG_PC
+static uint32 pc_save;
+#endif
 
 static char *registers_name[64]={
 	"undefined","undefined","undefined","undefined",
@@ -62,6 +68,9 @@ static char *registers_name[64]={
 void dsp56k_disasm_reg_read(void)
 {
 	memcpy(registers_save, dsp.registers , sizeof(registers_save));
+#if DSP_DISASM_REG_PC
+	pc_save = dsp.pc;
+#endif
 }
 
 void dsp56k_disasm_reg_compare(void)
@@ -123,6 +132,11 @@ void dsp56k_disasm_reg_compare(void)
 				break;
 		}
 	}
+#if DSP_DISASM_REG_PC
+	if (pc_save != dsp.pc) {
+		D(bug("Dsp: Reg: pc:0x%04x -> 0x%04x", pc_save, dsp.pc));
+	}
+#endif
 }
 
 /**********************************
@@ -826,7 +840,7 @@ static void dsp_andi(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: andi 0x%02x,%s",
+	D(bug("Dsp: 0x%04x: andi #0x%02x,%s",
 		dsp.pc,
 		(cur_inst>>8) & BITMASK(8),
 		regname
@@ -1131,7 +1145,7 @@ static void dsp_jcc(void)
 			dsp_calc_ea((cur_inst >>8) & BITMASK(6), addr_name);
 			cc_code=cur_inst & BITMASK(4);
 			break;
-		case 0x0c:
+		case 0x0e:
 			sprintf(addr_name, "0x%04x", cur_inst & BITMASK(12));
 			cc_code=(cur_inst>>12) & BITMASK(4);
 			break;
@@ -1580,17 +1594,7 @@ static void dsp_movep_0(void)
 	numreg = (cur_inst>>8) & BITMASK(6);
 
 	if (cur_inst & (1<<15)) {
-		/* Write D */
-
-		if (memspace) {
-			sprintf(srcname, "y:0x%04x", addr);
-		} else {
-			sprintf(srcname, "x:0x%04x", addr);
-		}
-
-		strcpy(dstname, registers_name[numreg]);
-	} else {
-		/* Read S */
+		/* Write pp */
 
 		strcpy(srcname, registers_name[numreg]);
 
@@ -1599,9 +1603,19 @@ static void dsp_movep_0(void)
 		} else {
 			sprintf(dstname, "x:0x%04x", addr);
 		}
+	} else {
+		/* Read pp */
+
+		if (memspace) {
+			sprintf(srcname, "y:0x%04x", addr);
+		} else {
+			sprintf(srcname, "x:0x%04x", addr);
+		}
+
+		strcpy(dstname, registers_name[numreg]);
 	}
 
-	D(bug("Dsp: 0x%04x: movep %s,%s",dsp.pc, dstname, srcname));
+	D(bug("Dsp: 0x%04x: movep %s,%s",dsp.pc, srcname, dstname));
 }
 
 static void dsp_movep_1(void)
@@ -1619,17 +1633,7 @@ static void dsp_movep_1(void)
 	memspace = (cur_inst>>16) & 1;
 
 	if (cur_inst & (1<<15)) {
-		/* Write D */
-
-		if (memspace) {
-			sprintf(srcname, "y:0x%04x", addr);
-		} else {
-			sprintf(srcname, "x:0x%04x", addr);
-		}
-
-		sprintf(dstname, "p:%s", name);
-	} else {
-		/* Read S */
+		/* Write pp */
 
 		sprintf(srcname, "p:%s", name);
 
@@ -1638,9 +1642,19 @@ static void dsp_movep_1(void)
 		} else {
 			sprintf(dstname, "x:0x%04x", addr);
 		}
+	} else {
+		/* Read pp */
+
+		if (memspace) {
+			sprintf(srcname, "y:0x%04x", addr);
+		} else {
+			sprintf(srcname, "x:0x%04x", addr);
+		}
+
+		sprintf(dstname, "p:%s", name);
 	}
 
-	D(bug("Dsp: 0x%04x: movep %s,%s",dsp.pc, dstname, srcname));
+	D(bug("Dsp: 0x%04x: movep %s,%s",dsp.pc, srcname, dstname));
 }
 
 static void dsp_movep_2(void)
@@ -1666,30 +1680,16 @@ static void dsp_movep_2(void)
 	easpace = (cur_inst>>6) & 1;
 
 	if (cur_inst & (1<<15)) {
-		/* Write D */
-
-		if (memspace) {
-			sprintf(srcname, "y:0x%04x", addr);
-		} else {
-			sprintf(srcname, "x:0x%04x", addr);
-		}
+		/* Write pp */
 
 		if (retour) {
-			sprintf(dstname, "#%s", name);
+			sprintf(srcname, "#%s", name);
 		} else {
 			if (easpace) {
-				sprintf(dstname, "y:%s", name);
+				sprintf(srcname, "y:%s", name);
 			} else {
-				sprintf(dstname, "x:%s", name);
+				sprintf(srcname, "x:%s", name);
 			}
-		}
-	} else {
-		/* Read S */
-
-		if (easpace) {
-			sprintf(dstname, "y:%s", name);
-		} else {
-			sprintf(dstname, "x:%s", name);
 		}
 
 		if (memspace) {
@@ -1697,9 +1697,23 @@ static void dsp_movep_2(void)
 		} else {
 			sprintf(dstname, "x:0x%04x", addr);
 		}
+	} else {
+		/* Read pp */
+
+		if (memspace) {
+			sprintf(srcname, "y:0x%04x", addr);
+		} else {
+			sprintf(srcname, "x:0x%04x", addr);
+		}
+
+		if (easpace) {
+			sprintf(dstname, "y:%s", name);
+		} else {
+			sprintf(dstname, "x:%s", name);
+		}
 	}
 
-	D(bug("Dsp: 0x%04x: movep %s,%s",dsp.pc, dstname, srcname));
+	D(bug("Dsp: 0x%04x: movep %s,%s",dsp.pc, srcname, dstname));
 }
 
 static void dsp_nop(void)
@@ -1733,7 +1747,7 @@ static void dsp_ori(void)
 			break;
 	}
 
-	D(bug("Dsp: 0x%04x: ori 0x%02x,%s",
+	D(bug("Dsp: 0x%04x: ori #0x%02x,%s",
 		dsp.pc,
 		(cur_inst>>8) & BITMASK(8),
 		regname
@@ -2158,41 +2172,31 @@ static void dsp_pm_8(void)
 */
 	numreg1 = REG_X0;
 	switch((cur_inst>>18) & BITMASK(2)) {
-		case 0:
-			numreg1 = REG_X0;
-			break;
-		case 1:
-			numreg1 = REG_X1;
-			break;
-		case 2:
-			numreg1 = REG_A;
-			break;
-		case 3:
-			numreg1 = REG_B;
-			break;
+		case 0:	numreg1 = REG_X0;	break;
+		case 1:	numreg1 = REG_X1;	break;
+		case 2:	numreg1 = REG_A;	break;
+		case 3:	numreg1 = REG_B;	break;
 	}
 
 	numreg2 = REG_Y0;
 	switch((cur_inst>>16) & BITMASK(2)) {
-		case 0:
-			numreg2 = REG_Y0;
-			break;
-		case 1:
-			numreg2 = REG_Y1;
-			break;
-		case 2:
-			numreg2 = REG_A;
-			break;
-		case 3:
-			numreg2 = REG_B;
-			break;
+		case 0:	numreg2 = REG_Y0;	break;
+		case 1:	numreg2 = REG_Y1;	break;
+		case 2:	numreg2 = REG_A;	break;
+		case 3:	numreg2 = REG_B;	break;
 	}
 
 	ea_mode1 = (cur_inst>>8) & BITMASK(5);
-	ea_mode2 = (cur_inst>>13) & BITMASK(3);
+	if ((ea_mode1>>3) == 0) {
+		ea_mode1 |= (1<<5);
+	}
+	ea_mode2 = (cur_inst>>13) & BITMASK(2);
 	ea_mode2 |= ((cur_inst>>20) & BITMASK(2))<<3;
 	if ((ea_mode1 & (1<<2))==0) {
 		ea_mode2 |= 1<<2;
+	}
+	if ((ea_mode2>>3) == 0) {
+		ea_mode2 |= (1<<5);
 	}
 
 	dsp_calc_ea(ea_mode1, addr1_name);
@@ -2375,8 +2379,22 @@ static void dsp_cmp(void)
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	dstreg = (cur_inst>>3) & 1;
 
-	if (srcreg==0) {
-		srcreg = REG_A+(dstreg ^ 1);
+	switch(srcreg) {
+		case 0:
+			srcreg = REG_A+(dstreg ^ 1);
+			break;
+		case 4:
+			srcreg = REG_X0;
+			break;
+		case 5:
+			srcreg = REG_Y0;
+			break;
+		case 6:
+			srcreg = REG_X1;
+			break;
+		case 7:
+			srcreg = REG_Y1;
+			break;
 	}
 
 	D(bug("Dsp: 0x%04x: cmp %s,%s %s",
@@ -2394,8 +2412,22 @@ static void dsp_cmpm(void)
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	dstreg = (cur_inst>>3) & 1;
 
-	if (srcreg==0) {
-		srcreg = REG_A+(dstreg ^ 1);
+	switch(srcreg) {
+		case 0:
+			srcreg = REG_A+(dstreg ^ 1);
+			break;
+		case 4:
+			srcreg = REG_X0;
+			break;
+		case 5:
+			srcreg = REG_Y0;
+			break;
+		case 6:
+			srcreg = REG_X1;
+			break;
+		case 7:
+			srcreg = REG_Y1;
+			break;
 	}
 
 	D(bug("Dsp: 0x%04x: cmpm %s,%s %s",
