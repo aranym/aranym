@@ -25,7 +25,7 @@ AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history fo
 
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU [default=no]], [WANT_MMU=$enableval], [WANT_MMU=no])
 
-AC_ARG_ENABLE(sdltimer,        [  --enable-sdltimer       use SDL Timer for Timer C [default=no]], [WANT_SDLTIMER=$enableval], [WANT_SDLTIMER=yes])
+AC_ARG_ENABLE(sdltimer,        [  --enable-sdltimer       use SDL Timer for Timer C [default=yes]], [WANT_SDLTIMER=$enableval], [WANT_SDLTIMER=yes])
 
 AC_ARG_ENABLE(pagecheck,       [  --enable-pagecheck      different memory check [default=no]], [WANT_PAGECHECK=$enableval], [WANT_PAGECHECK=yes])
 
@@ -128,7 +128,7 @@ AC_PROG_INSTALL
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/mman.h term.h sys/ioctl.h)
+AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/mman.h sys/ioctl.h)
 AC_CHECK_HEADERS(features.h sys/feature_tests.h dirent.h signal.h getopt.h)
 AC_CHECK_HEADERS(termios.h termio.h alloca.h sys/statfs.h sys/statvfs.h)
 AC_CHECK_HEADERS(sys/types.h sys/stat.h sys/vfs.h utime.h sys/param.h)

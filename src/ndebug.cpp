@@ -36,7 +36,7 @@ extern "C" char *strdup(const char *s)
 }
 #endif
 
-static termio savetty;
+static termios savetty;
 
 unsigned int ndebug::rowlen = 78;
 //unsigned int ndebug::dbsize = 1000;
@@ -727,7 +727,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 }
 
 int ndebug::icanon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
-	struct termio newtty;
+	struct termios newtty;
 	char buffer[1];
 	int count;
 	uae_u32 daddr;
@@ -741,8 +741,8 @@ int ndebug::icanon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uae
 	newtty.c_lflag &= ~ECHO;
 	newtty.c_cc[VMIN] = 1;
 	newtty.c_cc[VTIME] = 1;
-	if (ioctl(0, TCSETAF, &newtty) == -1) {
-		fprintf(stderr, "ioctl error\n");
+	if (tcsetattr(0, TCSAFLUSH, &newtty) == -1) {
+		fprintf(stderr, "tcsetattr error\n");
 		exit(-1);
 	}
 	for (;;) {
@@ -751,27 +751,27 @@ int ndebug::icanon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uae
 				case 't':
 					set_special(SPCFLAG_BRK);
 					fprintf(stderr, "\n");
-					ioctl(0, TCSETAF, &savetty);
+					tcsetattr(0, TCSAFLUSH, &savetty);
 					fflush(stderr);
 					return 0;
 				case 'd':
 					daddr = nxdis;
 					count = get_len() - 3;
 					fprintf(stderr, "\n");
-					ioctl(0, TCSETAF, &savetty);
+					tcsetattr(0, TCSAFLUSH, &savetty);
 					fflush(stderr);
 					newm68k_disasm(f, daddr, &nxdis, count);
-					ioctl(0, TCSETAF, &newtty);
+					tcsetattr(0, TCSAFLUSH, &newtty);
 					read(0, buffer, sizeof(buffer));
 					break;
 				case 'm':
 					maddr = nxmem;
 					count = (get_len() - 2) / 2;
 					fprintf(stderr, "\n");
-					ioctl(0, TCSETAF, &savetty);
+					tcsetattr(0, TCSAFLUSH, &savetty);
 					fflush(stderr);
 					dumpmem(f, maddr, &nxmem, count);
-					ioctl(0, TCSETAF, &newtty);
+					tcsetattr(0, TCSAFLUSH, &newtty);
 					read(0, buffer, sizeof(buffer));
 					break;
 				case 'T':
@@ -802,13 +802,13 @@ int ndebug::icanon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uae
 	}
 	
 	fprintf(stderr, "\n");
-	ioctl(0, TCSETAF, &savetty);
+	tcsetattr(0, TCSAFLUSH, &savetty);
 	fflush(stderr);
 	return 1;
 }
 
 int ndebug::dm(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
-	struct termio newtty;
+	struct termios newtty;
 	char buffer[1];
 	int count;
 	uae_u32 maddr;
@@ -818,25 +818,25 @@ int ndebug::dm(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr
 	newtty.c_lflag &= ~ECHO;
 	newtty.c_cc[VMIN] = 1;
 	newtty.c_cc[VTIME] = 1;
-	if (ioctl(0, TCSETAF, &newtty) == -1) {
-		fprintf(stderr, "ioctl error\n");
+	if (tcsetattr(0, TCSAFLUSH, &newtty) == -1) {
+		fprintf(stderr, "tcsetattr error\n");
 		exit(-1);
 	}
 	for (;;) {
 		maddr = nxmem;
 		count = (get_len() - 2) / 2;
 		fprintf(stderr, "\n");
-		ioctl(0, TCSETAF, &savetty);
+		tcsetattr(0, TCSAFLUSH, &savetty);
 		fflush(stderr);
 		dumpmem(f, maddr, &nxmem, count);
-		ioctl(0, TCSETAF, &newtty);
+		tcsetattr(0, TCSAFLUSH, &newtty);
 		if (read(0, buffer, sizeof(buffer)) > 0) {
 			switch (buffer[0]) {
 				case 't':
 					nxmem = maddr;
 					set_special(SPCFLAG_BRK);
 					fprintf(stderr, "\n");
-					ioctl(0, TCSETAF, &savetty);
+					tcsetattr(0, TCSAFLUSH, &savetty);
 					fflush(stderr);
 					return 0;
 				case 'T':
@@ -873,7 +873,7 @@ int ndebug::dm(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr
 	}
 	
 	fprintf(stderr, "\n");
-	ioctl(0, TCSETAF, &savetty);
+	tcsetattr(0, TCSAFLUSH, &savetty);
 	fflush(stderr);
 	return 1;
 }
@@ -918,14 +918,14 @@ void ndebug::init()
 	}
 	for (unsigned int i = 0; i < dbsize; i++)
 		dbbuffer[i] = NULL;
-	if (ioctl(0, TCGETA, &savetty) == -1) {
-		fprintf(stderr, "ioctl error!\n");
+	if (tcgetattr(0, &savetty) == -1) {
+		fprintf(stderr, "tcgetattr error!\n");
 		exit(-1);
 	}
 }
 
 void ndebug::nexit() {
-	ioctl(0, TCSETAF, &savetty);
+	tcsetattr(0, TCSAFLUSH, &savetty);
 }
 
 void ndebug::dumpmem(FILE *f, volatile uaecptr addr, uaecptr * nxmem, volatile unsigned int lns)
@@ -1103,6 +1103,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.13  2002/01/31 19:37:47  milan
+ * panicbug, cleaning
+ *
  * Revision 1.12  2002/01/18 23:43:25  milan
  * fgetc returns int
  * abs needs stdlib.h

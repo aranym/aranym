@@ -4,6 +4,8 @@
 
 - PAGE_CHECK renamed on ARAM_PAGE_CHECK
 
+- ndebug doesn't use ioctl() now for any switching tty's setting
+
 
 2002/02/01 - joy
 - fixed long-standing bug in ATA.cpp that made ARAnyM stuck when no IDE disk

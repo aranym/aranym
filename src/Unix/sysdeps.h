@@ -61,6 +61,14 @@
 # include <utime.h>
 #endif
 
+#ifdef HAVE_TERMIOS_H
+# include <termios.h>
+#endif
+
+#ifdef HAVE_TERMIO_H
+# include <termio.h>
+#endif
+
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -75,14 +83,6 @@
 
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
-#endif
-
-#ifdef HAVE_TERMIOS_H
-# include <termios.h>
-#endif
-
-#ifdef HAVE_TERMIO_H
-# include <termio.h>
 #endif
 
 #ifdef HAVE_FCNTL_H
