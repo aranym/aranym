@@ -8,6 +8,8 @@
 #include "main.h"
 #include "ece.h"
 
+#include "host.h"
+
 #define DEBUG 1
 #include "debug.h"
 
@@ -37,6 +39,8 @@ static SDL_sem *intAck;					// Interrupt acknowledge semaphore
 
 int32 ECE::dispatch(uint32 fncode)
 {
+	D(bug("ECE: Dispatch %d\n", fncode));
+
 	int32 ret = 0;
 	switch(fncode) {
 		case 0x00: // interrupt raised by native side thread polling tap0 interface
@@ -58,7 +62,7 @@ int32 ECE::dispatch(uint32 fncode)
 			stopThread();
 			break;
 		case 0x03:
-			ret = readPacketLength( getParameter(0) /* nif */ );
+			ret = readPacketLength( 0/* getParameter(0) *//* nif */ );
 			break;
 		case 0x04:
 			readPacket( getParameter(0) /* buff */, getParameter(1) /* len */ );
@@ -221,11 +225,16 @@ void ECE::stopThread(void)
 int ECE::receiveFunc(void *arg)
 {
 	for (;;) {
+		D(bug("ECE: receive function"));
+
 		// Wait for packets to arrive
 		struct pollfd pf = {fd, POLLIN, 0};
 		int res = poll(&pf, 1, -1);
 		if (res <= 0)
 			break;
+
+		hostScreen.lock();
+		D(bug("ECE: going to read?"));
 
 		// Call protocol handler for received packets
 		// ssize_t length;
@@ -235,6 +244,7 @@ int ECE::receiveFunc(void *arg)
 			if (packet_length < 14)
 				break;
 
+			break;
 			// Pointer to packet data (ECEnet header)
 			uint32 p = (uint32)packet;
 			D(bug(" header %08x%04x %08x%04x %04x\n", ReadInt32(p), ReadInt16(p + 4), ReadInt32(p + 6), ReadInt16(p + 10), ReadInt16(p + 12)));
@@ -247,6 +257,8 @@ int ECE::receiveFunc(void *arg)
 			// Wait for interrupt acknowledge by ECE::handleInteruptIf()
 			SDL_SemWait(intAck);
 		}
+
+		hostScreen.unlock();
 	}
 	return 0;
 }
