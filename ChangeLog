@@ -1,3 +1,10 @@
+2002/07/31 - joy
+- EmuTOS image size can be either 256 or 512 kB long
+- two serious bugs in linux sigsegv handler fixed: OR and MOV. There are
+  more bugs in the ia32 emulated routine, unfortunately. JIT won't work
+  until all of them get fixed.
+
+
 2002/07/31 - Patrice
 - DSP emulator: Many bugs fixed (end of dsp_*.cpp files for complete changes)
 
