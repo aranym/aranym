@@ -26,6 +26,7 @@ extern void MakeMFPIRQ(int);
 extern void ikbd_send(int);
 
 extern void renderScreen();
+extern void updateHostScreen();
 
 extern int getFloppyStats();
 extern bool isIkbdBufEmpty();
@@ -34,5 +35,9 @@ extern bool isIkbdBufEmpty();
 
 /*
  * $Log$
+ * Revision 1.12  2001/06/18 13:21:55  standa
+ * Several template.cpp like comments were added.
+ * HostScreen SDL encapsulation class.
+ *
  *
  */
