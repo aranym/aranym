@@ -1,3 +1,9 @@
+2003/03/12 - milan
+- list of supported OS updated
+
+- Makefile.in: diskimage cleaning 
+
+
 2003/03/11 - STanda
 - aratapif: made working even in nondebug mode. The exec() arguments
   needs to be put into the child process adress space to be able to
