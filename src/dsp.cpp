@@ -214,7 +214,7 @@ void DSP::shutdown(void)
 
 		/* Wait for the thread to finish */
 		while (state != DSP_STOPPEDTHREAD) {
-			SDL_Sleep(0);
+			SDL_Delay(1);
 		}
 	}
 
