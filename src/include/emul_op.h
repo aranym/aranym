@@ -91,9 +91,11 @@ enum {
 	M68K_EMUL_OP_MAX				// highest number
 };
 
+#ifdef EXTFS_SUPPORT
 #include "extfs.h"
 // Variables
 extern ExtFs extFS;  // external filesystem access object /STanda/
+#endif
 
 // Functions
 extern void EmulOp(uint16 opcode, struct M68kRegisters *r);	// Execute EMUL_OP opcode (called by 68k emulator or Line-F trap handler)
