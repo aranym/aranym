@@ -291,7 +291,7 @@ int get_device_guid(
 			}
 			else {
 				if (is_tap_win32_dev(enum_name)) {
-					D(bug("WinTap: found TAP device named \"%s\"", name_data));
+					D(bug("WinTap: found TAP device named \"%s\" ~ \"%s\"", name_data, actual_name));
 
 					snprintf(name, name_size, "%s", enum_name);
 					if (actual_name) {
@@ -323,7 +323,6 @@ int get_device_guid(
 	return 0;
 }
 
-
 bool WinTapEthernetHandler::open( const char *mode )
 {
 	(void)mode; // ppp or bridge setting is done by the host OS
@@ -331,6 +330,10 @@ bool WinTapEthernetHandler::open( const char *mode )
 	char device_path[256];
 	char device_guid[0x100];
 	char name_buffer[0x100] = {0, };
+
+	if ( strlen(bx_options.ethernet.tunnel) )
+		strncpy(name_buffer, bx_options.ethernet.tunnel, sizeof(name_buffer));
+
  	if ( get_device_guid(device_guid, sizeof(device_guid), name_buffer, sizeof(name_buffer)) < 0 ) {
 		panicbug("WinTap: ERROR: Could not find Windows tap device: %s", winerror(GetLastError()));
 		return false;
