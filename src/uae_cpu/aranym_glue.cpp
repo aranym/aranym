@@ -140,6 +140,7 @@ void TriggerNMI(void)
 }
 
 
+// Two next functions ("executes") will be removed
 /*
  *  Execute MacOS 68k trap
  *  r->a[7] and r->sr are unused!
@@ -166,7 +167,6 @@ void Execute68kTrap(uint16 trap, struct M68kRegisters *r)
 
 	// Execute trap
 	m68k_setpc(m68k_areg(regs, 7));
-	fill_prefetch_0();
 	quit_program = 0;
 	m68k_go(true);
 
@@ -175,7 +175,6 @@ void Execute68kTrap(uint16 trap, struct M68kRegisters *r)
 
 	// Restore old PC
 	m68k_setpc(oldpc);
-	fill_prefetch_0();
 
 	// Get registers
 	for (i=0; i<8; i++)
@@ -213,7 +212,6 @@ void Execute68k(uint32 addr, struct M68kRegisters *r)
 
 	// Execute routine
 	m68k_setpc(addr);
-	fill_prefetch_0();
 	quit_program = 0;
 	m68k_go(true);
 
@@ -222,7 +220,6 @@ void Execute68k(uint32 addr, struct M68kRegisters *r)
 
 	// Restore old PC
 	m68k_setpc(oldpc);
-	fill_prefetch_0();
 
 	// Get registers
 	for (i=0; i<8; i++)

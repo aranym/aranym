@@ -121,7 +121,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 
 		case M68K_EMUL_OP_VIDEO_CONTROL:
-			fVDIDrv.dispatch( get_long(r->a[7], true), r );  // SO
+			fVDIDrv.dispatch( ReadInt32(r->a[7]), r );  // SO
 #ifdef __CYGWIN__
 			invoke200HzInterrupt();	/* Windows has a broken threading - we have to call it manually */
 #endif /* __CYGWIN__ */
@@ -129,14 +129,14 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 
 #ifdef EXTFS_SUPPORT
 		case M68K_EMUL_OP_EXTFS_COMM:		// External file system routines
-			extFS.dispatch( get_long(r->a[7], true), r );  // SO
+			extFS.dispatch( ReadInt32(r->a[7]), r );  // SO
 #ifdef __CYGWIN__
 			invoke200HzInterrupt();	/* Windows has a broken threading - we have to call it manually */
 #endif /* __CYGWIN__ */
 			break;
 
 		case M68K_EMUL_OP_EXTFS_HFS:
-			extFS.dispatchXFS( get_long(r->a[7], true), r );  // SO
+			extFS.dispatchXFS( ReadInt32(r->a[7]), r );  // SO
 #ifdef __CYGWIN__
 			invoke200HzInterrupt();	/* Windows has a broken threading - we have to call it manually */
 #endif /* __CYGWIN__ */
@@ -193,10 +193,10 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 
 		case M68K_EMUL_OP_DMAREAD:	// for EmuTOS - code 0x7136
 		{
-			int dev = get_word(r->a[7]+14, true);
-			long buf = get_long(r->a[7]+10, true);
-			int cnt = get_word(r->a[7]+8, true);
-			long recnr = get_long(r->a[7]+4, true);
+			int dev = ReadInt32(r->a[7]+14);
+			long buf = ReadInt32(r->a[7]+10);
+			int cnt = ReadInt32(r->a[7]+8);
+			long recnr = ReadInt32(r->a[7]+4);
 			D(bug("ARAnyM DMAread(start=%ld, count=%d, buffer=%ld, device=%d)", recnr, cnt, buf, dev));
 
 			bx_disk_options_t *disk;
@@ -233,14 +233,14 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 
 		case M68K_EMUL_OP_XHDI:	// for EmuTOS - code 0x7137
 			// D(bug("ARAnyM XHDI(%u)\n", get_word(r->a[7]+4, true)));
-			switch(get_word(r->a[7]+4, true)) {
+			switch(ReadInt32(r->a[7]+4)) {
 				case 14:	/* XHGetCapatity */
 					{
 						// UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
-						uint16 major = get_word(r->a[7]+6, true);
-						uint16 minor = get_word(r->a[7]+8, true);
-						uint32 blocks = get_long(r->a[7]+10, true);
-						uint32 blocksize = get_long(r->a[7]+14, true);
+						uint16 major = ReadInt32(r->a[7]+6);
+						uint16 minor = ReadInt32(r->a[7]+8);
+						uint32 blocks = ReadInt32(r->a[7]+10);
+						uint32 blocksize = ReadInt32(r->a[7]+14);
 						D(bug("ARAnyM XHGetCapacity(major=%u, minor=%u, blocks=%lu, blocksize=%lu)", major, minor, blocks, blocksize));
 
 						if (minor != 0) {

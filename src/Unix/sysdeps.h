@@ -48,6 +48,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <setjmp.h>
 
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
@@ -195,6 +196,7 @@ typedef int64 intptr;
 #define uae_s64 int64
 #define uae_u64 uint64
 typedef uae_u32 uaecptr;
+typedef char flagtype;
 
 /* Bochs data types */
 #define Bit8u uint8
@@ -344,13 +346,13 @@ static inline uae_u32 do_byteswap_16(uae_u32 v)
 
 #undef NOT_MALLOC
 
-#if REAL_ADDRESSING || JIT_ADDRESSING
+#if REAL_ADDRESSING
 # define NOT_MALLOC
 #endif
 
 #undef KNOWN_ALLOC
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING || JIT_ADDRESSING
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
 # define KNOWN_ALLOC	1
 #else
 # define KNOWN_ALLOC	0

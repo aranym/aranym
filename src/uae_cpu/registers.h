@@ -91,6 +91,9 @@ extern struct regstruct
     uae_u32 dtt0,dtt1,itt0,itt1;
     uae_u32 mmusr;
 
+    uae_u32 mmu_fslw, mmu_fault_addr;
+    uae_u16 mmu_ssw;
+
     flagtype atcvali[ATCSIZE];
     flagtype atcvald[ATCSIZE];
     flagtype atcu0d[ATCSIZE];

@@ -45,25 +45,25 @@ extern HostScreen hostScreen;
 
 #define put_dtriplet( address, data ) \
 { \
-	put_byte((address)  , ((data) >> 16) & 0xff ); \
-	put_byte((address)+1, ((data) >> 8) & 0xff ); \
-	put_byte((address)+2, (data) & 0xff ); \
+	WriteInt8((address)  , ((data) >> 16) & 0xff ); \
+	WriteInt8((address)+1, ((data) >> 8) & 0xff ); \
+	WriteInt8((address)+2, (data) & 0xff ); \
 }
 
-#define get_dtriplet( address, dataFlag ) \
-	( (get_byte((address),dataFlag) << 16) | (get_byte((address)+1,dataFlag) << 8) | get_byte((address)+2,dataFlag) )
+#define get_dtriplet( address ) \
+	( (ReadInt8((address)) << 16) | (ReadInt8((address)+1) << 8) | ReadInt8((address)+2) )
 
 #else
 
 #define put_dtriplet( address, data ) \
 { \
-	put_byte((address)  , (data) & 0xff ); \
-	put_byte((address)+1, ((data) >> 8) & 0xff ); \
-	put_byte((address)+2, ((data) >> 16) & 0xff ); \
+	WriteInt8((address)  , (data) & 0xff ); \
+	WriteInt8((address)+1, ((data) >> 8) & 0xff ); \
+	WriteInt8((address)+2, ((data) >> 16) & 0xff ); \
 }
 
-#define get_dtriplet( address, dataFlag ) \
-	( (get_byte((address)+2,dataFlag) << 16) | (get_byte((address)+1,dataFlag) << 8) | get_byte((address),dataFlag) )
+#define get_dtriplet( address ) \
+	( (ReadInt8((address)+2) << 16) | (ReadInt8((address)+1) << 8) | ReadInt8((address)) )
 
 #endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
 
@@ -177,7 +177,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 */
 			D(bug("fVDI: %s %d,%d", "readPixel", (uint16)r->d[1], (uint16)r->d[2] ));
 			r->d[0] = getPixel( (void*)r->a[1],
-								fetchMFDB( &src, get_long( (uint32)r->a[1] + 4, true ) ),
+								fetchMFDB( &src, ReadInt32( (uint32)r->a[1] + 4 ) ),
 								r->d[1] /* x */, r->d[2] /* y */);
 			break;
 
@@ -192,7 +192,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 */
 			D(bug("fVDI: %s %d,%d (%x)", "writePixel", (uint16)r->d[1], (uint16)r->d[2], (uint32)r->d[0] ));
 			r->d[0] = putPixel( (void*)r->a[1],
-								fetchMFDB( &dst, get_long( (uint32)r->a[1] + 4, true ) ),
+								fetchMFDB( &dst, ReadInt32( (uint32)r->a[1] + 4 ) ),
 								r->d[1] /* x */, r->d[2] /* y */,
 								r->d[0] /* color */);
 			break;
@@ -224,9 +224,9 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			if (r->a[1] & 1)
 				r->d[0] = (uint32)-1; // we can do only one line at once
 			else
-				r->d[0] = expandArea( (void*)get_long( (uint32)r->a[1], true),
-									  (MFDB*)get_long( (uint32)r->a[1] + 12, true ) /* src MFDB* */,
-									  (MFDB*)get_long( (uint32)r->a[1] + 4, true ) /* dest MFDB* */,
+				r->d[0] = expandArea( (void*)ReadInt32( (uint32)r->a[1]),
+									  (MFDB*)ReadInt32( (uint32)r->a[1] + 12 ) /* src MFDB* */,
+									  (MFDB*)ReadInt32( (uint32)r->a[1] + 4 ) /* dest MFDB* */,
 									  r->d[1] /* sx */, r->d[2] /* sy */,
 									  r->d[3] /* dx */, r->d[4] /* dy */,
 									  r->d[0] & 0xffff /* w */, r->d[0] >> 16 /* h */,
@@ -261,9 +261,9 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *  d3-d4   destination coordinates
 			 *  d7  logic operation
 			 */
-			r->d[0] = blitArea( (void*)get_long( (uint32)r->a[1], true),
-								(MFDB*)get_long( (uint32)r->a[1] + 12, true ) /* src MFDB* */,
-								(MFDB*)get_long( (uint32)r->a[1] + 4, true ) /* dest MFDB* */,
+			r->d[0] = blitArea( (void*)ReadInt32( (uint32)r->a[1]),
+								(MFDB*)ReadInt32( (uint32)r->a[1] + 12 ) /* src MFDB* */,
+								(MFDB*)ReadInt32( (uint32)r->a[1] + 4 ) /* dest MFDB* */,
 								r->d[1] /* sx */, r->d[2] /* sy */,
 								r->d[3] /* dx */, r->d[4] /* dy */,
 								r->d[0] & 0xffff /* w */, r->d[0] >> 16 /* h */,
@@ -310,17 +310,17 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			break;
 
 		case 9: // setColor:
-			setColor( get_long( (uint32)r->a[7] + 4, true ), get_word( (uint32)r->a[7] + 8, true ),
-					  get_word( (uint32)r->a[7] + 10, true ), get_word( (uint32)r->a[7] + 12, true ) );
+			setColor( ReadInt32( (uint32)r->a[7] + 4 ), ReadInt16( (uint32)r->a[7] + 8 ),
+					  ReadInt16( (uint32)r->a[7] + 10 ), ReadInt16( (uint32)r->a[7] + 12 ) );
 			break;
 
 		case 10: // setResolution:
-			setResolution( get_long( (uint32)r->a[7] + 4, true ), get_long( (uint32)r->a[7] + 8, true ),
-						   get_long( (uint32)r->a[7] + 12, true ), get_long( (uint32)r->a[7] + 16, true ) );
+			setResolution( ReadInt32( (uint32)r->a[7] + 4 ), ReadInt32( (uint32)r->a[7] + 8 ),
+						   ReadInt32( (uint32)r->a[7] + 12 ), ReadInt32( (uint32)r->a[7] + 16 ) );
 			break;
 
 		case 20: // debug_aranym:
-			bug("fVDI: DEBUG %d", get_long( (uint32)r->a[7] + 4, true ) );
+			bug("fVDI: DEBUG %d", ReadInt32( (uint32)r->a[7] + 4 ) );
 			break;
 
 			// not implemented functions
@@ -352,7 +352,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 FVDIDriver::MFDB* FVDIDriver::fetchMFDB( FVDIDriver::MFDB* mfdb, uint32 pmfdb )
 {
 	if ( pmfdb != 0 ) {
-		mfdb->address = get_long( pmfdb, true );
+		mfdb->address = ReadInt32( pmfdb );
 		return mfdb;
 	}
 
@@ -389,7 +389,7 @@ int FVDIDriver::putPixel(void *vwk, MFDB *dst, int32 x, int32 y, uint32 color)
 	if ((uint32)vwk & 1)
 		return 0;
 
-	if (!dst || !dst->address || dst->address==get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true )) {
+	if (!dst || !dst->address || dst->address==ReadInt32( ReadInt32( (uint32)vwk ) + VWK_SCREEN_MFDB_ADDRESS )) {
 		// To screen
 		if (!hostScreen.renderBegin())
 			return 1;
@@ -402,7 +402,7 @@ int FVDIDriver::putPixel(void *vwk, MFDB *dst, int32 x, int32 y, uint32 color)
 
 		/* WRONG CODE!!!
 		   offset = (dst->wdwidth * 2 * dst->bitplanes) * y + x * sizeof(uint16);
-		   put_word( (uint32)dst->address + offset, color );
+		   WriteInt16( (uint32)dst->address + offset, color );
 		*/
 	}
 
@@ -430,7 +430,7 @@ uint32 FVDIDriver::getPixel(void *vwk, MFDB *src, int32 x, int32 y)
 {
 	uint32 color = 0;
 
-	if (!src || !src->address || src->address==get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true )) {
+	if (!src || !src->address || src->address==ReadInt32( ReadInt32( (uint32)vwk ) + VWK_SCREEN_MFDB_ADDRESS )) {
 		if (!hostScreen.renderBegin())
 			return 0;
 		color = hostScreen.getPixel( x, y );
@@ -441,7 +441,7 @@ uint32 FVDIDriver::getPixel(void *vwk, MFDB *src, int32 x, int32 y)
 
 		/* WRONG CODE!!!
 		   offset = (src->wdwidth * 2 * src->bitplanes) * y + x * sizeof(uint16);
-		   color = get_word((uint32)src->address + offset, true);
+		   color = ReadInt16((uint32)src->address + offset);
 		*/
 	}
 
@@ -622,15 +622,15 @@ int FVDIDriver::drawMouse( void *wrk, int16 x, int16 y, uint32 mode )
 		default: // change pointer shape
 			uint32 fPatterAddress = mode + MOUSE_MASK;
 			for( uint16 i=0; i<32; i+=2 )
-				Mouse.mask[i >> 1] = reverse_bits( get_word( fPatterAddress + i, true ) );
+				Mouse.mask[i >> 1] = reverse_bits( ReadInt16( fPatterAddress + i ) );
 			fPatterAddress  = mode + MOUSE_SHAPE;
 			for( uint16 i=0; i<32; i+=2 )
-				Mouse.shape[i >> 1] = reverse_bits( get_word( fPatterAddress + i, true ) );
+				Mouse.shape[i >> 1] = reverse_bits( ReadInt16( fPatterAddress + i ) );
 
-			Mouse.hotspot.x = get_word( mode + MOUSE_HOTSPOT_X, true );
-			Mouse.hotspot.y = get_word( mode + MOUSE_HOTSPOT_Y, true );
-			Mouse.storage.color.foreground = get_word( mode + MOUSE_FGCOLOR, true );
-			Mouse.storage.color.background = get_word( mode + MOUSE_BGCOLOR, true );
+			Mouse.hotspot.x = ReadInt16( mode + MOUSE_HOTSPOT_X );
+			Mouse.hotspot.y = ReadInt16( mode + MOUSE_HOTSPOT_Y);
+			Mouse.storage.color.foreground = ReadInt16( mode + MOUSE_FGCOLOR );
+			Mouse.storage.color.background = ReadInt16( mode + MOUSE_BGCOLOR );
 			if ( hostScreen.getBpp() > 1 ) {
 				Mouse.storage.color.foreground = hostScreen.getPaletteColor( Mouse.storage.color.foreground );
 				Mouse.storage.color.background = hostScreen.getPaletteColor( Mouse.storage.color.background );
@@ -759,13 +759,13 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 {
 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
-	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, get_long( (uint32)src, true ),get_long( (uint32)dest, true )));
+	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32( (uint32)src ),ReadInt32( (uint32)dest )));
 
-	uint16 pitch = get_word( (uint32)src + MFDB_WDWIDTH, true ) << 1; // the byte width (always monochrom);
-	uint32 data  = get_long( (uint32)src, true ) + sy*pitch; // MFDB *src->address;
+	uint16 pitch = ReadInt16( (uint32)src + MFDB_WDWIDTH ) << 1; // the byte width (always monochrom);
+	uint32 data  = ReadInt32( (uint32)src ) + sy*pitch; // MFDB *src->address;
 
-	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, get_word( (uint32)src + MFDB_BITPLANES, true )));
-	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", get_long( (uint32)dest, true ), get_word( (uint32)dest + MFDB_WDWIDTH, true ) * (get_word( (uint32)dest + MFDB_BITPLANES, true )>>2), get_word( (uint32)dest + MFDB_BITPLANES, true )));
+	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( (uint32)src + MFDB_BITPLANES )));
+	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32( (uint32)dest ), ReadInt16( (uint32)dest + MFDB_WDWIDTH ) * (ReadInt16( (uint32)dest + MFDB_BITPLANES )>>2), ReadInt16( (uint32)dest + MFDB_BITPLANES )));
 
 	if ( hostScreen.getBpp() > 1 ) {
 		fgColor = hostScreen.getPaletteColor( fgColor );
@@ -773,42 +773,42 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 	}
 
 	if ( dest != NULL && // no MFDB structure
-		 get_long( (uint32)dest, true ) != 0 && // mfdb->address == 0 => screen
-		 get_long( (uint32)dest, true ) != get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true ) ) {
+		 ReadInt32( (uint32)dest ) != 0 && // mfdb->address == 0 => screen
+		 ReadInt32( (uint32)dest ) != ReadInt32( ReadInt32( (uint32)vwk ) + VWK_SCREEN_MFDB_ADDRESS ) ) {
 		// mfdb->address = videoramstart
 
 		D(bug("fVDI: expandArea M->M"));
 
-		uint32 destPlanes  = (uint32)get_word( (uint32)dest + MFDB_BITPLANES, true );
-		uint32 destPitch   = get_word( (uint32)dest + MFDB_WDWIDTH, true ) * destPlanes << 1; // MFDB *dest->pitch
-		uint32 destAddress = get_long( (uint32)dest, true );
+		uint32 destPlanes  = (uint32)ReadInt16( (uint32)dest + MFDB_BITPLANES );
+		uint32 destPitch   = ReadInt16( (uint32)dest + MFDB_WDWIDTH ) * destPlanes << 1; // MFDB *dest->pitch
+		uint32 destAddress = ReadInt32( (uint32)dest );
 
 		switch( destPlanes ) {
 			case 16:
 				for( uint16 j=0; j<h; j++ ) {
 					D2(fprintf(stderr,"fVDI: bmp:"));
 
-					uint16 theWord = get_word(data + j*pitch + ((sx>>3)&0xfffe), true);
+					uint16 theWord = ReadInt16(data + j*pitch + ((sx>>3)&0xfffe));
 					for( uint16 i=sx; i<sx+w; i++ ) {
 						if ( i % 16 == 0 )
-							theWord = get_word(data + j*pitch + ((i>>3)&0xfffe), true);
+							theWord = ReadInt16(data + j*pitch + ((i>>3)&0xfffe));
 
 						D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
 						switch( logOp ) {
 							case 1:
-								put_word(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, ((theWord >> (15-(i&0xf))) & 1) ? fgColor : bgColor );
+								WriteInt16(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, ((theWord >> (15-(i&0xf))) & 1) ? fgColor : bgColor );
 								break;
 							case 2:
 								if ((theWord >> (15-(i&0xf))) & 1)
-									put_word(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, fgColor );
+									WriteInt16(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, fgColor );
 								break;
 							case 3:
 								if ((theWord >> (15-(i&0xf))) & 1)
-									put_word(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, ~ get_word(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, true ) );
+									WriteInt16(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, ~ ReadInt16(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch ) );
 								break;
 							case 4:
 								if ( !((theWord >> (15-(i&0xf))) & 1) )
-									put_word(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, fgColor );
+									WriteInt16(destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, fgColor );
 								break;
 						}
 					}
@@ -819,10 +819,10 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 				for( uint16 j=0; j<h; j++ ) {
 					D2(fprintf(stderr,"fVDI: bmp:"));
 
-					uint16 theWord = get_word(data + j*pitch + ((sx>>3)&0xfffe), true);
+					uint16 theWord = ReadInt16(data + j*pitch + ((sx>>3)&0xfffe));
 					for( uint16 i=sx; i<sx+w; i++ ) {
 						if ( i % 16 == 0 )
-							theWord = get_word(data + j*pitch + ((i>>3)&0xfffe), true);
+							theWord = ReadInt16(data + j*pitch + ((i>>3)&0xfffe));
 
 						D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
 						uint16 xoffset = ((dx+i-sx)<<1)+(dx+i-sx);
@@ -836,7 +836,7 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 								break;
 							case 3:
 								if ((theWord >> (15-(i&0xf))) & 1)
-									put_dtriplet(destAddress + xoffset + (dy+j)*destPitch, ~ get_dtriplet(destAddress + xoffset + (dy+j)*destPitch, true ) );
+									put_dtriplet(destAddress + xoffset + (dy+j)*destPitch, ~ get_dtriplet(destAddress + xoffset + (dy+j)*destPitch ) );
 								break;
 							case 4:
 								if ( !((theWord >> (15-(i&0xf))) & 1) )
@@ -851,27 +851,27 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 				for( uint16 j=0; j<h; j++ ) {
 					D2(fprintf(stderr,"fVDI: bmp:"));
 
-					uint16 theWord = get_word(data + j*pitch + ((sx>>3)&0xfffe), true);
+					uint16 theWord = ReadInt16(data + j*pitch + ((sx>>3)&0xfffe));
 					for( uint16 i=sx; i<sx+w; i++ ) {
 						if ( i % 16 == 0 )
-							theWord = get_word(data + j*pitch + ((i>>3)&0xfffe), true);
+							theWord = ReadInt16(data + j*pitch + ((i>>3)&0xfffe));
 
 						D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
 						switch( logOp ) {
 							case 1:
-								put_long(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, ((theWord >> (15-(i&0xf))) & 1) ? fgColor : bgColor );
+								WriteInt32(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, ((theWord >> (15-(i&0xf))) & 1) ? fgColor : bgColor );
 								break;
 							case 2:
 								if ((theWord >> (15-(i&0xf))) & 1)
-									put_long(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, fgColor );
+									WriteInt32(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, fgColor );
 								break;
 							case 3:
 								if ((theWord >> (15-(i&0xf))) & 1)
-									put_long(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, ~ get_long(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, true ) );
+									WriteInt32(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, ~ ReadInt32(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch ) );
 								break;
 							case 4:
 								if ( !((theWord >> (15-(i&0xf))) & 1) )
-									put_long(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, fgColor );
+									WriteInt32(destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, fgColor );
 								break;
 						}
 					}
@@ -882,32 +882,32 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 				for( uint16 j=0; j<h; j++ ) {
 					D2(fprintf(stderr,"fVDI: bmp:"));
 
-					uint16 theWord = get_word(data + j*pitch + ((sx>>3)&0xfffe), true);
+					uint16 theWord = ReadInt16(data + j*pitch + ((sx>>3)&0xfffe));
 					for( uint16 i=sx; i<sx+w; i++ ) {
 						if ( i % 16 == 0 )
-							theWord = get_word(data + j*pitch + ((i>>3)&0xfffe), true);
+							theWord = ReadInt16(data + j*pitch + ((i>>3)&0xfffe));
 
 						D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
 						uint32 wordIndex = ((dx+i-sx)>>4)*destPlanes;
 						switch( logOp ) {
 							case 1:
 								for( uint16 d=0; d<destPlanes; d++ )
-									put_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, (fgColor ? theWord : ~theWord) );
+									WriteInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, (fgColor ? theWord : ~theWord) );
 								break;
 							case 2:
 								for( uint16 d=0; d<destPlanes; d++ )
-									put_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
-											  get_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, true ) | (fgColor ? theWord : ~theWord) );
+									WriteInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
+											  ReadInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch ) | (fgColor ? theWord : ~theWord) );
 								break;
 							case 3:
 								for( uint16 d=0; d<destPlanes; d++ )
-									put_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
-											  ~ get_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, true ) );
+									WriteInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
+											  ~ ReadInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch ) );
 								break;
 							case 4:
 								for( uint16 d=0; d<destPlanes; d++ )
-									put_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
-											  get_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, true ) | (fgColor ? theWord : ~theWord) );
+									WriteInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch,
+											  ReadInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch ) | (fgColor ? theWord : ~theWord) );
 								break;
 						}
 					}
@@ -926,10 +926,10 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 	for( uint16 j=0; j<h; j++ ) {
 		D2(fprintf(stderr,"fVDI: bmp:"));
 
-		uint16 theWord = get_word(data + j*pitch + ((sx>>3)&0xfffe), true);
+		uint16 theWord = ReadInt16(data + j*pitch + ((sx>>3)&0xfffe));
 		for( uint16 i=sx; i<sx+w; i++ ) {
 			if ( i % 16 == 0 )
-				theWord = get_word(data + j*pitch + ((i>>3)&0xfffe), true);
+				theWord = ReadInt16(data + j*pitch + ((i>>3)&0xfffe));
 
 			D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
 			switch( logOp ) {
@@ -993,7 +993,7 @@ int FVDIDriver::fillArea(uint32 vwk, uint32 x_, uint32 y_, int w, int h,
 
 	uint16 pattern[16];
 	for(int i = 0; i < 16; ++i)
-		pattern[i] = get_word(pattern_addr + i * 2, true);
+		pattern[i] = ReadInt16(pattern_addr + i * 2);
 
 	int16* table = 0;
 
@@ -1008,7 +1008,7 @@ int FVDIDriver::fillArea(uint32 vwk, uint32 x_, uint32 y_, int w, int h,
 		vwk -= 1;
 	}
 
-	int logOp = (int16)get_word(vwk + VWK_MODE, true); // Virtual *vwk->mode // fill logOp;
+	int logOp = (int16)ReadInt16(vwk + VWK_MODE); // Virtual *vwk->mode // fill logOp;
 
 	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "fillArea",
 	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
@@ -1037,9 +1037,9 @@ int FVDIDriver::fillArea(uint32 vwk, uint32 x_, uint32 y_, int w, int h,
 		maxy = y + h - 1;
 	} else {
 		for(h = h - 1; h >= 0; h--) {
-			y = (int16)get_word((uint32)table++, true);
-			x = (int16)get_word((uint32)table++, true);
-			w = (int16)get_word((uint32)table++, true) - x + 1;
+			y = (int16)ReadInt16((uint32)table++);
+			x = (int16)ReadInt16((uint32)table++);
+			w = (int16)ReadInt16((uint32)table++) - x + 1;
 			hostScreen.fillArea(x, y, w, 1, pattern, fgColor, bgColor, logOp);
 			if (x < minx)
 				minx = x;
@@ -1161,30 +1161,30 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
                          int32 w, int32 h, uint32 logOp)
 {
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d", "blitArea", logOp, sx, sy, dx, dy, w, h ));
-	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest, (src)?(get_long( (uint32)src, true )):0,(dest)?(get_long( (uint32)dest, true )):0));
+	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest, (src)?(ReadInt32( (uint32)src )):0,(dest)?(ReadInt32( (uint32)dest )):0));
 
-	uint32 screenMFDBAddr = get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS;
-	uint32 videoRam = get_long( screenMFDBAddr, true );
+	uint32 screenMFDBAddr = ReadInt32( (uint32)vwk ) + VWK_SCREEN_MFDB_ADDRESS;
+	uint32 videoRam = ReadInt32( screenMFDBAddr );
 
 #if DEBUG > 0
-	uint32 screenPlanes = (uint32)get_word( screenMFDBAddr + MFDB_BITPLANES, true );
-	uint32 screenPitch = get_word( screenMFDBAddr + MFDB_WDWIDTH, true ) * screenPlanes << 1;
+	uint32 screenPlanes = (uint32)ReadInt16( screenMFDBAddr + MFDB_BITPLANES );
+	uint32 screenPitch = ReadInt16( screenMFDBAddr + MFDB_WDWIDTH ) * screenPlanes << 1;
 	D(bug("fVDI: screen args: address %x, pitch %d, planes %d", videoRam, screenPitch, screenPlanes));
 #endif
 
-	bool toMemory = ( dest != NULL && get_long( (uint32)dest, true ) != 0 && get_long( (uint32)dest, true ) != videoRam );
-	if ( src != NULL && get_long( (uint32)src, true ) != 0 && get_long( (uint32)src, true ) != videoRam ) { // fromMemory
-		uint32 planes = get_word( (uint32)src + MFDB_BITPLANES, true ); // MFDB *src->bitplanes
-		uint32 pitch  = get_word( (uint32)src + MFDB_WDWIDTH, true ) * planes << 1; // MFDB *src->pitch
-		uint16 *data  = (uint16*)(get_long( (uint32)src, true ) + sy*pitch); // MFDB *src->address host OS address
+	bool toMemory = ( dest != NULL && ReadInt32( (uint32)dest ) != 0 && ReadInt32( (uint32)dest ) != videoRam );
+	if ( src != NULL && ReadInt32( (uint32)src ) != 0 && ReadInt32( (uint32)src ) != videoRam ) { // fromMemory
+		uint32 planes = ReadInt16( (uint32)src + MFDB_BITPLANES ); // MFDB *src->bitplanes
+		uint32 pitch  = ReadInt16( (uint32)src + MFDB_WDWIDTH ) * planes << 1; // MFDB *src->pitch
+		uint16 *data  = (uint16*)(ReadInt32( (uint32)src ) + sy*pitch); // MFDB *src->address host OS address
 
 		D(bug("fVDI: blitArea M->: address %x, pitch %d, planes %d", data, pitch, planes));
 
 		if ( toMemory ) {
 			// the destPlanes is always the same?
-			planes = get_word( (uint32)dest + MFDB_BITPLANES, true ); // MFDB *dest->bitplanes
-			uint32 destPitch = get_word( (uint32)dest + MFDB_WDWIDTH, true ) * planes << 1; // MFDB *dest->pitch
-			uint32 destAddress = get_long( (uint32)dest, true );
+			planes = ReadInt16( (uint32)dest + MFDB_BITPLANES ); // MFDB *dest->bitplanes
+			uint32 destPitch = ReadInt16( (uint32)dest + MFDB_WDWIDTH ) * planes << 1; // MFDB *dest->pitch
+			uint32 destAddress = ReadInt32( (uint32)dest );
 
 			D(bug("fVDI: blitArea M->M"));
 
@@ -1195,18 +1195,18 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 				case 16:
 					for( uint16 j=0; j<h; j++ )
 						for( uint16 i=sx; i<sx+w; i++ ) {
-							srcData = get_word((uint32)data + j*pitch + ((i*planes)>>3), true);
-							destData = get_word( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, true );
+							srcData = ReadInt16((uint32)data + j*pitch + ((i*planes)>>3));
+							destData = ReadInt16( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch );
 							applyBlitLogOperation( logOp, destData, srcData );
-							put_word( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, destData );
+							WriteInt16( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, destData );
 						}
 					break;
 				case 24:
 					for( uint16 j=0; j<h; j++ )
 						for( uint16 i=sx; i<sx+w; i++ ) {
 							uint16 xoffset = ((dx+i-sx)<<1)+(dx+i-sx);
-							srcData = get_dtriplet((uint32)data + j*pitch + ((i*planes)>>3), true);
-							destData = get_dtriplet( destAddress + xoffset + (dy+j)*destPitch, true );
+							srcData = get_dtriplet((uint32)data + j*pitch + ((i*planes)>>3));
+							destData = get_dtriplet( destAddress + xoffset + (dy+j)*destPitch );
 							applyBlitLogOperation( logOp, destData, srcData );
 							put_dtriplet( destAddress + xoffset + (dy+j)*destPitch, destData );
 						}
@@ -1214,10 +1214,10 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 				case 32:
 					for( uint16 j=0; j<h; j++ )
 						for( uint16 i=sx; i<sx+w; i++ ) {
-							srcData = get_long((uint32)data + j*pitch + ((i*planes)>>3), true);
-							destData = get_long( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, true );
+							srcData = ReadInt32((uint32)data + j*pitch + ((i*planes)>>3));
+							destData = ReadInt32( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch );
 							applyBlitLogOperation( logOp, destData, srcData );
-							put_long( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, destData );
+							WriteInt32( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, destData );
 						}
 					break;
 
@@ -1244,18 +1244,18 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 			case 16:
 				for( uint16 j=0; j<h; j++ )
 					for( uint16 i=sx; i<sx+w; i++ ) {
-						srcData = get_word((uint32)data + j*pitch + ((i*planes)>>3), true);
-						//uint16 destData = get_word( videoRam + ((dx+i-sx)<<1) + (dy+j)*screenPitch, true ); // shadow?
+						srcData = ReadInt16((uint32)data + j*pitch + ((i*planes)>>3));
+						//uint16 destData = ReadInt16( videoRam + ((dx+i-sx)<<1) + (dy+j)*screenPitch ); // shadow?
 						destData = hostScreen.getPixel( dx + i - sx, dy + j );
 						applyBlitLogOperation( logOp, destData, srcData );
-						//put_word( videoRam + ((dx+i-sx)<<1) + (dy+j)*screenPitch, destData ); // shadow?
+						//WriteInt16( videoRam + ((dx+i-sx)<<1) + (dy+j)*screenPitch, destData ); // shadow?
 						hostScreen.putPixel( dx+i-sx, dy+j, destData );
 					}
 				break;
 			case 24:
 				for( uint16 j=0; j<h; j++ )
 					for( uint16 i=sx; i<sx+w; i++ ) {
-						srcData = get_dtriplet((uint32)data + j*pitch + ((i*planes)>>3), true);
+						srcData = get_dtriplet((uint32)data + j*pitch + ((i*planes)>>3));
 						destData = hostScreen.getPixel( dx + i - sx, dy + j );
 						applyBlitLogOperation( logOp, destData, srcData );
 						hostScreen.putPixel( dx+i-sx, dy+j, destData );
@@ -1264,7 +1264,7 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 			case 32:
 				for( uint16 j=0; j<h; j++ )
 					for( uint16 i=sx; i<sx+w; i++ ) {
-						srcData = get_long((uint32)data + j*pitch + ((i*planes)>>3), true);
+						srcData = ReadInt32((uint32)data + j*pitch + ((i*planes)>>3));
 						destData = hostScreen.getPixel( dx + i - sx, dy + j );
 						applyBlitLogOperation( logOp, destData, srcData );
 						hostScreen.putPixel( dx+i-sx, dy+j, destData );
@@ -1310,9 +1310,9 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 		//uint32  pitch = screenPitch;
 		//uint16* data = (uint16*)videoRam + sy*pitch;
 
-		uint32 planes = get_word( (uint32)dest + MFDB_BITPLANES, true ); // MFDB *dest->bitplanes
-		uint32 destPitch = get_word( (uint32)dest + MFDB_WDWIDTH, true ) * planes << 1; // MFDB *dest->pitch
-		uint32 destAddress = get_long( (uint32)dest, true );
+		uint32 planes = ReadInt16( (uint32)dest + MFDB_BITPLANES ); // MFDB *dest->bitplanes
+		uint32 destPitch = ReadInt16( (uint32)dest + MFDB_WDWIDTH ) * planes << 1; // MFDB *dest->pitch
+		uint32 destAddress = ReadInt32( (uint32)dest );
 
 		D(bug("fVDI: S->M: address %x, pitch %d, planes %d", destAddress, destPitch, planes));
 
@@ -1323,11 +1323,11 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 			case 16:
 				for( uint16 j=0; j<h; j++ )
 					for( uint16 i=sx; i<sx+w; i++ ) {
-						//uint16 srcData = get_word( (uint32)data + ((i*planes)>>3) + j*pitch, true ); // from the shadow?
+						//uint16 srcData = ReadInt16( (uint32)data + ((i*planes)>>3) + j*pitch ); // from the shadow?
 						srcData = hostScreen.getPixel( i, sy + j );
-						destData = get_word( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, true );
+						destData = ReadInt16( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch );
 						applyBlitLogOperation( logOp, destData, srcData );
-						put_word( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, destData );
+						WriteInt16( destAddress + ((dx+i-sx)<<1) + (dy+j)*destPitch, destData );
 					}
 				break;
 			case 24:
@@ -1335,7 +1335,7 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 					for( uint16 i=sx; i<sx+w; i++ ) {
 						uint16 xoffset = ((dx+i-sx)<<1)+(dx+i-sx);
 						srcData = hostScreen.getPixel( i, sy + j );
-						destData = get_dtriplet( destAddress + xoffset + (dy+j)*destPitch, true );
+						destData = get_dtriplet( destAddress + xoffset + (dy+j)*destPitch );
 						applyBlitLogOperation( logOp, destData, srcData );
 						put_dtriplet( destAddress + xoffset + (dy+j)*destPitch, destData );
 					}
@@ -1344,9 +1344,9 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 				for( uint16 j=0; j<h; j++ )
 					for( uint16 i=sx; i<sx+w; i++ ) {
 						srcData = hostScreen.getPixel( i, sy + j );
-						destData = get_long( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, true );
+						destData = ReadInt32( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch );
 						applyBlitLogOperation( logOp, destData, srcData );
-						put_long( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, destData );
+						WriteInt32( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, destData );
 					}
 				break;
 
@@ -1362,7 +1362,7 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 						uint32 pixelPosition = j*pitch + sx & ~0xf; // div 16
 						chunkyToBitplane( data + pixelPosition, planes, bitplanePixels );
 						for( uint16 d=0; d<planes; d++ )
-							put_word( destAddress + ((((dx>>4)*planes)+d)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
+							WriteInt16( destAddress + ((((dx>>4)*planes)+d)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
 
 						for( uint16 i=sx; i<sx+w; i++ ) {
 							uint8 bitNo = i & 0xf;
@@ -1371,7 +1371,7 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 								uint32 pixelPosition = j*pitch + i & ~0xf; // div 16
 								chunkyToBitplane( data + pixelPosition, planes, bitplanePixels );
 								for( uint16 d=0; d<planes; d++ )
-									put_word( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
+									WriteInt16( destAddress + ((wordIndex+d)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
 							}
 						}
 					}
@@ -1574,11 +1574,11 @@ int FVDIDriver::drawTableLine(int16 table[], int length, uint16 pattern,
                               uint32 fgColor, uint32 bgColor, int logOp,
                               int cliprect[], int minmax[])
 {
-	int x1 = (int16)get_word((uint32)table++, true);
-	int y1 = (int16)get_word((uint32)table++, true);
+	int x1 = (int16)ReadInt16((uint32)table++);
+	int y1 = (int16)ReadInt16((uint32)table++);
 	for(--length; length > 0; length--) {
-		int x2 = (int16)get_word((uint32)table++, true);
-		int y2 = (int16)get_word((uint32)table++, true);
+		int x2 = (int16)ReadInt16((uint32)table++);
+		int y2 = (int16)ReadInt16((uint32)table++);
 
 		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
 		               logOp, length == 1, cliprect, minmax);
@@ -1595,22 +1595,22 @@ int FVDIDriver::drawMoveLine(int16 table[], int length, uint16 index[], int move
                              uint32 fgColor, uint32 bgColor, int logOp,
                              int cliprect[], int minmax[])
 {
-	int x1 = (int16)get_word((uint32)table++, true);
-	int y1 = (int16)get_word((uint32)table++, true);
+	int x1 = (int16)ReadInt16((uint32)table++);
+	int y1 = (int16)ReadInt16((uint32)table++);
 	moves--;
-	if ((int16)get_word((uint32)&index[moves], true) == -4)
+	if ((int16)ReadInt16((uint32)&index[moves]) == -4)
 		moves--;
-	if ((int16)get_word((uint32)&index[moves], true) == -2)
+	if ((int16)ReadInt16((uint32)&index[moves]) == -2)
 		moves--;
 	int movepnt = -1;
 	if (moves >= 0)
-		movepnt = ((int16)get_word((uint32)&index[moves], true) + 4) / 2;
+		movepnt = ((int16)ReadInt16((uint32)&index[moves]) + 4) / 2;
 	for(int n = 1; n < length; n++) {
-		int x2 = (int16)get_word((uint32)table++, true);
-		int y2 = (int16)get_word((uint32)table++, true);
+		int x2 = (int16)ReadInt16((uint32)table++);
+		int y2 = (int16)ReadInt16((uint32)table++);
 		if (n == movepnt) {
 			if (--moves >= 0)
-				movepnt = ((int16)get_word((uint32)&index[moves], true) + 4) / 2;
+				movepnt = ((int16)ReadInt16((uint32)&index[moves]) + 4) / 2;
 			else
 				movepnt = -1;		/* Never again equal to n */
 			x1 = x2;
@@ -1660,20 +1660,20 @@ int FVDIDriver::drawLine(uint32 vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 			moves = x2_ & 0xffff;
 		}
 		vwk -= 1;
-		x1 = (int16)get_word((uint32)&table[0], true);
-		y1 = (int16)get_word((uint32)&table[1], true);
-		x2 = (int16)get_word((uint32)&table[2], true);
-		y2 = (int16)get_word((uint32)&table[3], true);
+		x1 = (int16)ReadInt16((uint32)&table[0]);
+		y1 = (int16)ReadInt16((uint32)&table[1]);
+		x2 = (int16)ReadInt16((uint32)&table[2]);
+		y2 = (int16)ReadInt16((uint32)&table[3]);
 	}
 
 	int cliparray[4];
 	int* cliprect = 0;
-	if (get_word(vwk + VWK_CLIP_RECT, true)) {	// Clipping is not off
+	if (ReadInt16(vwk + VWK_CLIP_RECT)) {	// Clipping is not off
 		cliprect = cliparray;
-		cliprect[0] = (int16)get_word(vwk + VWK_CLIP_RECT + 2, true);
-		cliprect[1] = (int16)get_word(vwk + VWK_CLIP_RECT + 4, true);
-		cliprect[2] = (int16)get_word(vwk + VWK_CLIP_RECT + 6, true);
-		cliprect[3] = (int16)get_word(vwk + VWK_CLIP_RECT + 8, true);
+		cliprect[0] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 2);
+		cliprect[1] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 4);
+		cliprect[2] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 6);
+		cliprect[3] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 8);
 		D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", cliprect[0], cliprect[1],
 		       cliprect[2], cliprect[3]));
 	}
@@ -1710,8 +1710,8 @@ int FVDIDriver::drawLine(uint32 vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 					}
 					x1 = x2;
 					y1 = y2;
-					x2 = (int16)get_word((uint32)table++, true);
-					y2 = (int16)get_word(uint32)table++, true);
+					x2 = (int16)ReadInt16((uint32)table++);
+					y2 = (int16)ReadInt16((uint32)table++);
 					eq_coord = (x1 == x2) + 2 * (y1 == y2);
 				}
 			}
@@ -1786,33 +1786,33 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 	uint16 pattern[16];
 	for(int i = 0; i < 16; ++i)
-		pattern[i] = get_word(pattern_addr + i * 2, true);
+		pattern[i] = ReadInt16(pattern_addr + i * 2);
 
 	int cliparray[4];
 	int* cliprect = 0;
-	if (get_word(vwk + VWK_CLIP_RECT, true)) {	// Clipping is not off
+	if (ReadInt16(vwk + VWK_CLIP_RECT)) {	// Clipping is not off
 		cliprect = cliparray;
-		cliprect[0] = (int16)get_word(vwk + VWK_CLIP_RECT + 2, true);
-		cliprect[1] = (int16)get_word(vwk + VWK_CLIP_RECT + 4, true);
-		cliprect[2] = (int16)get_word(vwk + VWK_CLIP_RECT + 6, true);
-		cliprect[3] = (int16)get_word(vwk + VWK_CLIP_RECT + 8, true);
+		cliprect[0] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 2);
+		cliprect[1] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 4);
+		cliprect[2] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 6);
+		cliprect[3] = (int16)ReadInt16(vwk + VWK_CLIP_RECT + 8);
 		D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", cliprect[0], cliprect[1],
 		       cliprect[2], cliprect[3]));
 	}
 
-	int logOp = (int16)get_word(vwk + VWK_MODE, true); // Virtual *vwk->mode // fill logOp;
+	int logOp = (int16)ReadInt16(vwk + VWK_MODE); // Virtual *vwk->mode // fill logOp;
 
 	Points p(alloc_point);
 	int16* index = alloc_index;
 	int16* crossing = alloc_crossing;
 
 	for(int i = 0; i < n; ++i) {
-		p[i][0] = (int16)get_word(points_addr + i * 4, true);
-		p[i][1] = (int16)get_word(points_addr + i * 4 + 2, true);
+		p[i][0] = (int16)ReadInt16(points_addr + i * 4);
+		p[i][1] = (int16)ReadInt16(points_addr + i * 4 + 2);
 	}
 	bool indices = moves;
 	for(int i = 0; i < moves; ++i)
-		index[i] = (int16)get_word(index_addr + i * 2, true);
+		index[i] = (int16)ReadInt16(index_addr + i * 2);
 
 
 	if (!n)
@@ -1948,6 +1948,13 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.1.1.1  2002/02/10 23:32:50  jurikm
+ * Unofficial ARAnyM
+ *
+ * Revision 1.34  2002/01/17 14:59:19  milan
+ * cleaning in HW <-> memory communication
+ * support for JIT CPU
+ *
  * Revision 1.33  2002/01/13 23:08:49  standa
  * The fVDI driver expandArea 24 and 32bit patch. 1, 2 and 4bit depth driver
  * configuration available.

@@ -1,3 +1,10 @@
+2002/02/19 - milan
+- src/ <-> CPU interaction cleaned
+
+- memory access cleaned
+
+
+
 2002/02/18 - milan
 - floating VideoRAM
 

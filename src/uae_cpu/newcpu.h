@@ -61,9 +61,9 @@ static __inline__ void unset_special (uae_u32 x)
 #define m68k_dreg(r,num) ((r).regs[(num)])
 #define m68k_areg(r,num) (((r).regs + 8)[(num)])
 
-#define get_ibyte(o) do_get_mem_byte((uae_u8 *)(do_get_real_address(regs.pcp, false, false) + (o) + 1))
-#define get_iword(o) do_get_mem_word((uae_u16 *)(do_get_real_address(regs.pcp, false, false) + (o)))
-#define get_ilong(o) do_get_mem_long((uae_u32 *)(do_get_real_address(regs.pcp, false, false) + (o)))
+#define get_ibyte(o) do_get_mem_byte((uae_u8 *)(get_real_address(regs.pcp) + (o) + 1))
+#define get_iword(o) do_get_mem_word((uae_u16 *)(get_real_address(regs.pcp) + (o)))
+#define get_ilong(o) do_get_mem_long((uae_u32 *)(get_real_address(regs.pcp) + (o)))
 
 #ifdef HAVE_GET_WORD_UNSWAPPED
 #define GET_OPCODE (do_get_mem_word_unswapped (do_get_real_address(regs.pcp, false, false)))
@@ -71,6 +71,7 @@ static __inline__ void unset_special (uae_u32 x)
 #define GET_OPCODE (get_iword (0))
 #endif
 
+#if 0
 static __inline__ uae_u32 get_ibyte_prefetch (uae_s32 o)
 {
     if (o > 3 || o < 0)
@@ -93,6 +94,7 @@ static __inline__ uae_u32 get_ilong_prefetch (uae_s32 o)
 	return do_get_mem_long(&regs.prefetch);
     return (do_get_mem_word (((uae_u16 *)&regs.prefetch) + 1) << 16) | do_get_mem_word ((uae_u16 *)(do_get_real_address(regs.pcp, false, false) + 4));
 }
+#endif
 
 #define m68k_incpc(o) (regs.pcp += (o))
 
@@ -161,22 +163,22 @@ static __inline__ uaecptr m68k_getpc (void)
 
 static __inline__ void m68k_do_rts(void)
 {
-	    m68k_setpc(get_long(m68k_areg(regs, 7), true));
-	        m68k_areg(regs, 7) += 4;
+    m68k_setpc(get_long(m68k_areg(regs, 7)));
+    m68k_areg(regs, 7) += 4;
 }
  
 static __inline__ void m68k_do_bsr(uaecptr oldpc, uae_s32 offset)
 {
-	    m68k_areg(regs, 7) -= 4;
-	        put_long(m68k_areg(regs, 7), oldpc);
-		    m68k_incpc(offset);
+    m68k_areg(regs, 7) -= 4;
+    put_long(m68k_areg(regs, 7), oldpc);
+    m68k_incpc(offset);
 }
  
 static __inline__ void m68k_do_jsr(uaecptr oldpc, uaecptr dest)
 {
-	    m68k_areg(regs, 7) -= 4;
-	        put_long(m68k_areg(regs, 7), oldpc);
-		    m68k_setpc(dest);
+    m68k_areg(regs, 7) -= 4;
+    put_long(m68k_areg(regs, 7), oldpc);
+    m68k_setpc(dest);
 }
 
 static __inline__ void m68k_setstopped (int stop)

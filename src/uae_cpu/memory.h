@@ -11,14 +11,18 @@
 #ifndef UAE_MEMORY_H
 #define UAE_MEMORY_H
 
+#include "sysdeps.h"
 #include "hardware.h"
 #include "parameters.h"
-#include "exceptions.h"
-#include "sysdeps.h"
-#include "m68k.h"
 #include "registers.h"
+//#include "cpummu.h"
+#include "readcpu.h"
 
-#define BUS_ERROR	longjmp(excep_env, 2)
+// newcpu.h
+extern void Exception (int, uaecptr);
+extern jmp_buf excep_env;
+extern int in_exception_2;
+
 #define STRAM_END	0x0e00000UL	// should be replaced by global ROMBase as soon as ROMBase will be a constant
 #define ROM_END		0x0e80000UL	// should be replaced by ROMBase + RealROMSize if we are going to work with larger TOS ROMs than 512 kilobytes
 #define FastRAM_BEGIN	0x1000000UL	// should be replaced by global FastRAMBase as soon as FastRAMBase will be a constant
@@ -37,7 +41,7 @@
 #ifdef FIXED_VIDEORAM
 extern uintptr VMEMBaseDiff;
 #else
-extern uint32 VideoRAMBase;
+extern uae_u32 VideoRAMBase;
 #endif
 
 #if ARAM_PAGE_CHECK
@@ -52,70 +56,15 @@ extern uae_u32 pc_offset, read_offset, write_offset;
 
 #if REAL_ADDRESSING
 const uintptr MEMBaseDiff = 0;
-
-#ifdef FIXED_VIDEORAM
-# define do_get_real_address_direct(a)          (((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a)) : ((uae_u8 *)(a) + VMEMBaseDiff))
-#else
-# define do_get_real_address_direct(a)          ((uae_u8 *)(a))
-#endif
-
-# ifdef FULLMMU
-#  define do_get_real_address(a,b,c)	do_get_real_address_mmu(a,b,c)
-#  define get_long(a,b)			get_long_mmu(a,b)
-#  define get_word(a,b)			get_word_mmu(a,b)
-#  define get_byte(a,b)			get_byte_mmu(a,b)
-#  define put_long(a,b)			put_long_mmu(a,b)
-#  define put_word(a,b)			put_word_mmu(a,b)
-#  define put_byte(a,b)			put_byte_mmu(a,b)
-#  define get_real_address(a,b,c)	get_real_address_mmu(a,b,c)
-# else
-#  define do_get_real_address(a,b,c)	do_get_real_address_direct(a)
-#  define get_long(a,b)			get_long_direct(a)
-#  define get_word(a,b)			get_word_direct(a)
-#  define get_byte(a,b)			get_byte_direct(a)
-#  define put_long(a,b)			put_long_direct(a,b)
-#  define put_word(a,b)			put_word_direct(a,b)
-#  define put_byte(a,b)			put_byte_direct(a,b)
-#  define get_real_address(a,b,c)	get_real_address_direct(a)
-# endif /* FULLMMU */
-
 #else
 extern uintptr MEMBaseDiff;
-
-#ifdef FIXED_VIDEORAM
-# define do_get_real_address_direct(a)          (((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff))
-#else
-# define do_get_real_address_direct(a)          ((uae_u8 *)(a) + MEMBaseDiff)
-#endif
-
-# ifdef FULLMMU
-#  define do_get_real_address(a,b,c)	do_get_real_address_mmu(a,b,c)
-#  define get_long(a,b)			get_long_mmu(a,b)
-#  define get_word(a,b)			get_word_mmu(a,b)
-#  define get_byte(a,b)			get_byte_mmu(a,b)
-#  define put_long(a,b)			put_long_mmu(a,b)
-#  define put_word(a,b)			put_word_mmu(a,b)
-#  define put_byte(a,b)			put_byte_mmu(a,b)
-#  define get_real_address(a,b,c)	get_real_address_mmu(a,b,c)
-# else
-#  define do_get_real_address(a,b,c)	do_get_real_address_direct(a)
-#  define get_long(a,b)			get_long_direct(a)
-#  define get_word(a,b)			get_word_direct(a)
-#  define get_byte(a,b)			get_byte_direct(a)
-#  define put_long(a,b)			put_long_direct(a,b)
-#  define put_word(a,b)			put_word_direct(a,b)
-#  define put_byte(a,b)			put_byte_direct(a,b)
-#  define get_real_address(a,b,c)	get_real_address_direct(a)
-# endif /* FULLMMU */
-
-# define InitMEMBaseDiff(va, ra)		(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
-
+# define InitMEMBaseDiff(va, ra)	(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 #endif /* REAL_ADDRESSING */
 
 #ifdef FIXED_VIDEORAM
 #define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 #else
-#define InitVMEMBaseDiff(va, ra)        (ra =  (uintptr)(va) - MEMBaseDiff)
+#define InitVMEMBaseDiff(va, ra)        (ra = (uintptr)(va) + MEMBaseDiff)
 #endif
 
 /*
@@ -132,7 +81,6 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 				return;
 		}
 	}
-
 #ifdef FIXED_VIDEORAM
 	if (addr >= ARANYMVRAMSTART && addr <= (ARANYMVRAMSTART + ARANYMVRAMSIZE - size))
 #else
@@ -141,10 +89,23 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 		return;
 
 	// printf("BUS ERROR %s at $%x\n", (write ? "writting" : "reading"), addr);
-	BUS_ERROR;
+//	regs.mmu_fault_addr = addr;
+//	Exception(2, regs.pcp);
+	longjmp(excep_env, 2);
 }
 
-static __inline__ uae_u32 get_long_direct(uaecptr addr)
+#ifdef FIXED_VIDEORAM
+# define do_get_real_address(a)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff))
+#else
+# define do_get_real_address(a)          ((uae_u8 *)(a))
+#endif
+
+static __inline__ uae_u8 *phys_get_real_address(uaecptr addr)
+{
+    return do_get_real_address(addr);
+}
+
+static __inline__ uae_u32 phys_get_long(uaecptr addr)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
@@ -153,7 +114,7 @@ static __inline__ uae_u32 get_long_direct(uaecptr addr)
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
     check_ram_boundary(addr, 4, false);
-    uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
+    uae_u32 * const m = (uae_u32 *)phys_get_real_address(addr);
 #if ARAM_PAGE_CHECK
     read_page = addr;
     read_offset = (uintptr)m - (uintptr)addr;
@@ -161,7 +122,7 @@ static __inline__ uae_u32 get_long_direct(uaecptr addr)
     return do_get_mem_long(m);
 }
 
-static __inline__ uae_u32 get_word_direct(uaecptr addr)
+static __inline__ uae_u32 phys_get_word(uaecptr addr)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
@@ -170,7 +131,7 @@ static __inline__ uae_u32 get_word_direct(uaecptr addr)
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_w(addr);
     check_ram_boundary(addr, 2, false);
-    uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
+    uae_u16 * const m = (uae_u16 *)phys_get_real_address(addr);
 #if ARAM_PAGE_CHECK
     read_page = addr;
     read_offset = (uintptr)m - (uintptr)addr;
@@ -178,7 +139,7 @@ static __inline__ uae_u32 get_word_direct(uaecptr addr)
     return do_get_mem_word(m);
 }
 
-static __inline__ uae_u32 get_byte_direct(uaecptr addr)
+static __inline__ uae_u32 phys_get_byte(uaecptr addr)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
@@ -187,7 +148,7 @@ static __inline__ uae_u32 get_byte_direct(uaecptr addr)
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_b(addr);
     check_ram_boundary(addr, 1, false);
-    uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
+    uae_u8 * const m = (uae_u8 *)phys_get_real_address(addr);
 #if ARAM_PAGE_CHECK
     read_page = addr;
     read_offset = (uintptr)m - (uintptr)addr;
@@ -195,7 +156,7 @@ static __inline__ uae_u32 get_byte_direct(uaecptr addr)
     return do_get_mem_byte(m);
 }
 
-static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
+static __inline__ void phys_put_long(uaecptr addr, uae_u32 l)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
@@ -209,7 +170,7 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
         return;
     } 
     check_ram_boundary(addr, 4, true);
-    uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
+    uae_u32 * const m = (uae_u32 *)phys_get_real_address(addr);
 #if ARAM_PAGE_CHECK
     write_page = addr;
     write_offset = (uintptr)m - (uintptr)addr;
@@ -217,7 +178,7 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
     do_put_mem_long(m, l);
 }
 
-static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
+static __inline__ void phys_put_word(uaecptr addr, uae_u32 w)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
@@ -231,7 +192,7 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
         return;
     }
     check_ram_boundary(addr, 2, true);
-    uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
+    uae_u16 * const m = (uae_u16 *)phys_get_real_address(addr);
 #if ARAM_PAGE_CHECK
     write_page = addr;
     write_offset = (uintptr)m - (uintptr)addr;
@@ -239,7 +200,7 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
     do_put_mem_word(m, w);
 }
 
-static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
+static __inline__ void phys_put_byte(uaecptr addr, uae_u32 b)
 {
 #if ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
@@ -253,7 +214,7 @@ static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
         return;
     }
     check_ram_boundary(addr, 1, true);
-    uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
+    uae_u8 * const m = (uae_u8 *)phys_get_real_address(addr);
 #if ARAM_PAGE_CHECK
     write_page = addr;
     write_offset = (uintptr)m - (uintptr)addr;
@@ -261,51 +222,79 @@ static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
     do_put_mem_byte(m, b);
 }
 
-static __inline__ int valid_address(uaecptr addr, uae_u32 size)
+#ifdef FULLMMU
+static __inline__ uae_u32 get_long(uaecptr addr)
 {
-    return 1;
+    return phys_get_long(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_long, 0));
 }
 
-static __inline__ uae_u8 *get_real_address_direct(uaecptr addr)
+static __inline__ uae_u16 get_word(uaecptr addr)
 {
-	return do_get_real_address_direct(addr);
+    return phys_get_word(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_word, 0));
 }
 
-uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write);
-
-inline uae_u8 *do_get_real_address_mmu(uaecptr addr, bool data, bool write)
+static __inline__ uae_u8 get_byte(uaecptr addr)
 {
-	return do_get_real_address_direct(regs.tce ? mmu_decode_addr(addr, data, write) : addr);
+    return phys_get_byte(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_byte, 0));
 }
 
-static __inline__ uae_u32 get_long_mmu(uaecptr addr, bool data)
+static __inline__ void put_long(uaecptr addr, uae_u32 l)
 {
-    return get_long_direct(regs.tce ? mmu_decode_addr(addr, data, false) : addr);
+    phys_put_long(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_long, 0),l);
 }
-static __inline__ uae_u32 get_word_mmu(uaecptr addr, bool data)
+
+static __inline__ void put_word(uaecptr addr, uae_u16 w)
 {
-    return get_word_direct(regs.tce ? mmu_decode_addr(addr, data, false) : addr);
+    phys_put_word(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_word, 0),w);
 }
-static __inline__ uae_u32 get_byte_mmu(uaecptr addr, bool data)
+
+static __inline__ void put_byte(uaecptr addr, uae_u16 b)
 {
-    return get_byte_direct(regs.tce ? mmu_decode_addr(addr, data, false) : addr);
+    phys_put_byte(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_byte, 0),b);
 }
-static __inline__ void put_long_mmu(uaecptr addr, uae_u32 l)
+
+static __inline__ uae_u8 *get_real_address(uaecptr addr, int write, uaecptr pc, wordsizes sz)
 {
-    put_long_direct((regs.tce ? mmu_decode_addr(addr, true, true) : addr), l);
+    return phys_get_real_address(mmu_translate(addr, FC_DATA, write, pc, sz, 0));
 }
-static __inline__ void put_word_mmu(uaecptr addr, uae_u32 w)
+
+static __inline__ uae_u32 sfc_get_long(uaecptr addr)
 {
-    put_word_direct((regs.tce ? mmu_decode_addr(addr, true, true) : addr), w);
+    return phys_get_long(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_long, 0));
 }
-static __inline__ void put_byte_mmu(uaecptr addr, uae_u32 b)
+static __inline__ uae_u16 sfc_get_word(uaecptr addr)
 {
-    put_byte_direct((regs.tce ? mmu_decode_addr(addr, true, true) : addr), b);
+    return phys_get_word(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_word, 0));
 }
-static __inline__ uae_u8 *get_real_address_mmu(uaecptr addr, bool data, bool write)
+static __inline__ uae_u8 sfc_get_byte(uaecptr addr)
 {
-	return do_get_real_address_mmu(addr, data, write);
+    return phys_get_byte(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_byte, 0));
 }
+
+static __inline__ void dfc_put_long(uaecptr addr, uae_u32 l)
+{
+    phys_put_long(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_long, 0), l);
+}
+static __inline__ void dfc_put_word(uaecptr addr, uae_u16 w)
+{
+    phys_put_word(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_word, 0), w);
+}
+static __inline__ void dfc_put_byte(uaecptr addr, uae_u16 b)
+{
+    phys_put_byte(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_byte, 0), b);
+}
+
+#else
+
+#  define get_long(a)			phys_get_long(a)
+#  define get_word(a)			phys_get_word(a)
+#  define get_byte(a)			phys_get_byte(a)
+#  define put_long(a,b)			phys_put_long(a,b)
+#  define put_word(a,b)			phys_put_word(a,b)
+#  define put_byte(a,b)			phys_put_byte(a,b)
+#  define get_real_address(a)		phys_get_real_address(a)
+
+#endif
 
 #endif /* MEMORY_H */
 

@@ -13,6 +13,7 @@
 #include "main.h"
 #include "memory.h"
 #include "newcpu.h"
+#include "m68k.h"
 #include "cpu_emulation.h"
 #endif
 
@@ -422,10 +423,13 @@ void ndebug::saveintofile(FILE *f, char **inl) {
 	src = readhex (inl);
 	if (!more_params (inl)) goto S_argh;
 	len = readhex (inl);
+
+#if 0
 	if (! valid_address (src, len)) {
 		bug("Invalid memory block");
 		return;
 	}
+#endif
 
 	fp = fopen (name, "w");
 	if (fp == NULL) {
@@ -540,7 +544,7 @@ setjmpagain:
                 goto setjmpagain;
         }
 	while (lines-- > 0) {
-		fprintf (f, "%08lx: %08x\n", (unsigned long)st, get_long(st, true));
+		fprintf (f, "%08lx: %08x\n", (unsigned long)st, get_long(st));
 		st += 2;
 	}
 	excep_env = excep_env_old;
@@ -1142,6 +1146,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.15  2002/02/14 16:53:45  milan
+ * new command for ndebug - 'L'
+ *
  * Revision 1.14  2002/02/01 20:19:38  milan
  * ioctl -> tcgetattr, tcsetattr
  *

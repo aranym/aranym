@@ -216,9 +216,9 @@ struct regstruct regs, lastint_regs;
 static long int m68kpc_offset;
 int lastint_no;
 
-#define get_ibyte_1(o) get_byte(regs.pcp + (o) + 1, false)
-#define get_iword_1(o) get_word(regs.pcp + (o), false)
-#define get_ilong_1(o) get_long(regs.pcp + (o), false)
+#define get_ibyte_1(o) get_byte(regs.pcp + (o) + 1)
+#define get_iword_1(o) get_word(regs.pcp + (o))
+#define get_ilong_1(o) get_long(regs.pcp + (o))
 
 uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 {
@@ -278,7 +278,7 @@ uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 	    if ((dp & 0x3) == 0x3) { outer = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
 
 	    if (!(dp & 4)) base += dispreg;
-	    if (dp & 3) base = get_long (base, true);
+	    if (dp & 3) base = get_long (base);
 	    if (dp & 4) base += dispreg;
 
 	    addr = base + outer;
@@ -325,7 +325,7 @@ uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 	    if ((dp & 0x3) == 0x3) { outer = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
 
 	    if (!(dp & 4)) base += dispreg;
-	    if (dp & 3) base = get_long (base, true);
+	    if (dp & 3) base = get_long (base);
 	    if (dp & 4) base += dispreg;
 
 	    addr = base + outer;
@@ -451,7 +451,7 @@ static int verify_ea (int reg, amodes mode, wordsizes size, uae_u32 *val)
 	    if ((dp & 0x3) == 0x3) { outer = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
 
 	    if (!(dp & 4)) base += dispreg;
-	    if (dp & 3) base = get_long (base, true);
+	    if (dp & 3) base = get_long (base);
 	    if (dp & 4) base += dispreg;
 
 	    addr = base + outer;
@@ -539,7 +539,7 @@ uae_u32 get_disp_ea_020 (uae_u32 base, uae_u32 dp)
 	if ((dp & 0x3) == 0x3) outer = next_ilong();
 
 	if ((dp & 0x4) == 0) base += regd;
-	if (dp & 0x3) base = get_long (base, true);
+	if (dp & 0x3) base = get_long (base);
 	if (dp & 0x4) base += regd;
 
 	return base + outer;
@@ -662,11 +662,11 @@ void Exception(int nr, uaecptr oldpc)
 
 	    	// instruction B prefetch
 		m68k_areg(regs, 7) -= 2;
-		put_word (m68k_areg(regs, 7), get_word(regs.pc+2, false));
+		put_word (m68k_areg(regs, 7), get_word(regs.pc+2));
 
 	    	// instruction C prefetch
 		m68k_areg(regs, 7) -= 2;
-		put_word (m68k_areg(regs, 7), get_word(regs.pc+4, false));
+		put_word (m68k_areg(regs, 7), get_word(regs.pc+4));
 
 	    	// special status register ssw
 		m68k_areg(regs, 7) -= 2;
@@ -710,7 +710,7 @@ void Exception(int nr, uaecptr oldpc)
 kludge_me_do:
     m68k_areg(regs, 7) -= 2;
     put_word (m68k_areg(regs, 7), regs.sr);
-    m68k_setpc (get_long (regs.vbr + 4*nr, false));
+    m68k_setpc (get_long (regs.vbr + 4*nr));
     fill_prefetch_0 ();
     regs.t1 = regs.t0 = regs.m = 0;
     regs.spcflags &= ~(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
@@ -1066,8 +1066,8 @@ static char* ccnames[] =
 
 void m68k_reset (void)
 {
-    m68k_areg (regs, 7) = get_long_direct(0x00000000);
-    m68k_setpc (get_long_direct(0x00000004));
+    m68k_areg (regs, 7) = phys_get_long(0x00000000);
+    m68k_setpc (phys_get_long(0x00000004));
     fill_prefetch_0 ();
     regs.kick_mask = 0xF80000;
     regs.s = 1;
@@ -2767,7 +2767,7 @@ static void do_trace (void)
        /* We can afford this to be inefficient... */
        m68k_setpc (m68k_getpc ());
        fill_prefetch_0 ();
-       opcode = get_word (regs.pc, false);
+       opcode = get_word (regs.pc);
        if (opcode == 0x4e72            /* RTE */
            || opcode == 0x4e74                 /* RTD */
            || opcode == 0x4e75                 /* RTS */
@@ -2878,7 +2878,7 @@ static void m68k_run_1 (void)
 	if (((regs.pcp ^ pc_page) > ARAM_PAGE_MASK)) {
 	    check_ram_boundary(regs.pcp, 2, false);
 //	    opcode = GET_OPCODE;
-	    uae_u16* addr = (uae_u16*)do_get_real_address(regs.pcp, false, false);
+	    uae_u16* addr = (uae_u16*)get_real_address(regs.pcp);
 	    pc_page = regs.pcp;
 	    pc_offset = (uae_u32)addr - regs.pcp;
 	}

@@ -1,3 +1,6 @@
+#ifndef READCPU_H
+#define READCPU_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -111,4 +114,6 @@ extern int nr_cpuop_funcs;
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

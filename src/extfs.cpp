@@ -105,8 +105,8 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Dfree( &ldp, (char*)pathname, &extFile,
-							 get_long( r->a[7] + 6, true ),			   // diskinfop
-							 (int16) get_word( r->a[7] + 10, true ) ); // drive
+							 ReadInt32( r->a[7] + 6 ),			   // diskinfop
+							 (int16) ReadInt16( r->a[7] + 10 ) ); // drive
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 57:	// Dcreate:
@@ -116,7 +116,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Dcreate"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 6 ) );
 				r->d[0] = Dcreate( &ldp, (char*)pathname, &extFile,
 								   (const char*)pn );			   // pathname
 				flushFILE( &extFile, r->a[5] );
@@ -129,7 +129,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Ddelete"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 6 ) );
 				r->d[0] = Ddelete( &ldp, (char*)pathname, &extFile,
 								   (const char*)pn );			   // pathname
 				flushFILE( &extFile, r->a[5] );
@@ -142,7 +142,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Dsetpath"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 6 ) );
 				r->d[0] = Dsetpath( &ldp, (char*)pathname, &extFile,
 									(const char*)pn );				// pathname
 				flushFILE( &extFile, r->a[5] );
@@ -156,10 +156,10 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Fcreate"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 6 ) );
 				r->d[0] = Fcreate( &ldp, (char*)pathname, &extFile,
 								   (const char*)pn,					   // pathname
-								   (int16) get_word( r->a[7] + 10, true ) ); // mode
+								   (int16) ReadInt16( r->a[7] + 10 ) ); // mode
 				flushFILE( &extFile, r->a[5] );
 				D(bug("%s: %d", "/Fcreate", (int32)r->d[0]));
 			}
@@ -171,10 +171,10 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Fopen"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 6 ) );
 				r->d[0] = Fopen( &ldp, (char*)pathname, &extFile,
 								 (const char*)pn,					 // pathname
-								 (int16) get_word( r->a[7] + 10, true ) ); // mode
+								 (int16) ReadInt16( r->a[7] + 10 ) ); // mode
 				flushFILE( &extFile, r->a[5] );
 				D(bug("MetaDOS: %s: %d", "/Fopen", (int32)r->d[0]));
 			}
@@ -184,7 +184,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fclose( &ldp, (char*)pathname, &extFile,
-							  (int16) get_word( r->a[7] + 6, true ) ); // handle
+							  (int16) ReadInt16( r->a[7] + 6 ) ); // handle
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 63:	// Fread:
@@ -192,9 +192,9 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fread( &ldp, (char*)pathname, &extFile,
-							 (int16) get_word( r->a[7] + 6, true ),	 // handle
-							 get_long( r->a[7] + 8, true ),			 // count
-							 (void*)get_long( r->a[7] + 12, true) ); // buffer
+							 (int16) ReadInt16( r->a[7] + 6 ),	 // handle
+							 ReadInt32( r->a[7] + 8 ),			 // count
+							 (void*)ReadInt32( r->a[7] + 12) ); // buffer
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 64:	// Fwrite:
@@ -202,9 +202,9 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fwrite( &ldp, (char*)pathname, &extFile,
-							  (int16) get_word( r->a[7] + 6, true ),  // handle
-							  get_long( r->a[7] + 8, true ),		  // count
-							  (void*)get_long( r->a[7] + 12, true ) ); // buffer
+							  (int16) ReadInt16( r->a[7] + 6 ),  // handle
+							  ReadInt32( r->a[7] + 8 ),		  // count
+							  (void*)ReadInt32( r->a[7] + 12 ) ); // buffer
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 65:	// Fdelete:
@@ -214,7 +214,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Fdelete"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 6 ) );
 				r->d[0] = Fdelete( &ldp, (char*)pathname, &extFile,
 								   (const char*)pn );				  // pathname
 				flushFILE( &extFile, r->a[5] );
@@ -226,9 +226,9 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fseek( &ldp, (char*)pathname, &extFile,
-							 get_long( r->a[7] + 6, true ),			 // offset
-							 (int16) get_word( r->a[7] + 10, true ),  // handle
-							 (int16) get_word( r->a[7] + 12, true ) );// seekmode
+							 ReadInt32( r->a[7] + 6 ),			 // offset
+							 (int16) ReadInt16( r->a[7] + 10 ),  // handle
+							 (int16) ReadInt16( r->a[7] + 12 ) );// seekmode
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 67:	// Fattrib:
@@ -238,11 +238,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Fattrib"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 6 ) );
 				r->d[0] = Fattrib( &ldp, (char*)pathname, &extFile,
 								   (const char*)pn,					 // pathname
-								   (int16) get_word( r->a[7] + 10, true ),	// wflag
-								   (int16) get_word( r->a[7] + 12, true ) );// attr
+								   (int16) ReadInt16( r->a[7] + 10 ),	// wflag
+								   (int16) ReadInt16( r->a[7] + 12 ) );// attr
 				flushFILE( &extFile, r->a[5] );
 			}
 			break;
@@ -253,10 +253,10 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Fsfirst"));
 				fetchDTA( &dta, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 6 ) );
 				r->d[0] = Fsfirst( &ldp, (char*)pathname, &dta,
 								   (const char*)pn,
-								   (int16) get_word( r->a[7] + 10, true ) );
+								   (int16) ReadInt16( r->a[7] + 10 ) );
 				flushDTA( &dta, r->a[5] );
 				D(bug("MetaDOS: %s", "/Fsfirst"));
 			}
@@ -277,10 +277,10 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Frename"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 8, true ) );
-				a2fstrcpy( (char*)npn, (uint8*)get_long( r->a[7] + 12, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 8 ) );
+				a2fstrcpy( (char*)npn, (uint8*)ReadInt32( r->a[7] + 12 ) );
 				r->d[0] = Frename( &ldp, (char*)pathname, &extFile,
-								   (int16) get_word( r->a[7] + 6, true ), // reserved
+								   (int16) ReadInt16( r->a[7] + 6 ), // reserved
 								   pn,				          // oldpathname
 								   npn );		              // newpathname
 				flushFILE( &extFile, r->a[5] );
@@ -291,9 +291,9 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fdatime( &ldp, (char*)pathname, &extFile,
-							   (uint32*)get_long( r->a[7] + 6, true ), // datetimep
-							   (int16) get_word( r->a[7] + 10, true ),	// handle
-							   (int16) get_word( r->a[7] + 12, true ) );// wflag
+							   (uint32*)ReadInt32( r->a[7] + 6 ), // datetimep
+							   (int16) ReadInt16( r->a[7] + 10 ),	// handle
+							   (int16) ReadInt16( r->a[7] + 12 ) );// wflag
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 260:	// Fcntl:
@@ -301,9 +301,9 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fcntl( &ldp, (char*)pathname, &extFile,
-							 (int16)get_word( r->a[7] + 6, true ),	  // handle
-							 (void*)get_long( r->a[7] + 8, true ),	  // arg
-							 (int16)get_word( r->a[7] + 12, true ) ); // cmd
+							 (int16)ReadInt16( r->a[7] + 6 ),	  // handle
+							 (void*)ReadInt32( r->a[7] + 8 ),	  // arg
+							 (int16)ReadInt16( r->a[7] + 12 ) ); // cmd
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 292:	// Dpathconf:
@@ -313,10 +313,10 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Dpathconf"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 6 ) );
 				r->d[0] = Dpathconf( &ldp, (char*)pathname, &extFile,
 									 (const char*)pn,					 // pathname
-									 (int16)get_word( r->a[7] + 10, true ) ); // cmd
+									 (int16)ReadInt16( r->a[7] + 10 ) ); // cmd
 				flushFILE( &extFile, r->a[5] );
 				D(bug("MetaDOS: /Dpathconf res = %#8x (%d)", r->d[0],(int32)r->d[0]));
 			}
@@ -328,10 +328,10 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Dopendir"));
 				fetchEDIR( &extDir, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 6 ) );
 				r->d[0] = Dopendir( &ldp, pathname, &extDir,
 									(const char*)pn,					// pathname
-									(int16)get_word( r->a[7] + 10, true ) ); // flag
+									(int16)ReadInt16( r->a[7] + 10 ) ); // flag
 				flushEDIR( &extDir, r->a[5] );
 				D(bug("MetaDOS: /Dopendir res = %#08x (%d)", r->d[0],(int32)r->d[0]));
 			}
@@ -341,9 +341,9 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchEDIR( &extDir, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Dreaddir( &ldp, (char*)pathname, &extDir,
-								(int16) get_word( r->a[7] + 6, true ),	 // len
-								get_long( r->a[7] + 8, true ),			 // dirhandle
-								(char*)get_long( r->a[7] + 12, true ) ); // bufferp
+								(int16) ReadInt16( r->a[7] + 6 ),	 // len
+								ReadInt32( r->a[7] + 8 ),			 // dirhandle
+								(char*)ReadInt32( r->a[7] + 12 ) ); // bufferp
 			flushEDIR( &extDir, r->a[5] );
 			break;
 		case 298:	// Drewinddir:
@@ -351,7 +351,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchEDIR( &extDir, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Drewinddir( &extDir );
-			//get_long( r->a[7] + 6, true ) );		 // dirhandle
+			//ReadInt32( r->a[7] + 6 ) );		 // dirhandle
 			flushEDIR( &extDir, r->a[5] );
 			break;
 		case 299:	// Dclosedir:
@@ -359,7 +359,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchEDIR( &extDir, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Dclosedir( &extDir );
-			//get_long( r->a[7] + 6, true ) );		// dirhandle
+			//ReadInt32( r->a[7] + 6 ) );		// dirhandle
 			flushEDIR( &extDir, r->a[5] );
 			break;
 		case 300:	// Fxattr:
@@ -369,11 +369,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				D(bug("%s", "Fxattr"));
 				fetchDTA( &dta, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 8, true ) );
+				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 8 ) );
 				r->d[0] = Fxattr( &ldp, (char*)pathname, &dta,
-								  (int16) get_word( r->a[7] + 6, true ), // flag
+								  (int16) ReadInt16( r->a[7] + 6 ), // flag
 								  (const char*)pn,				   // pathname
-								  get_long( r->a[7] + 12, true ) );		 // XATTR*
+								  ReadInt32( r->a[7] + 12 ) );		 // XATTR*
 				flushDTA( &dta, r->a[5] );
 				D(bug("MetaDOS: /Fxattr res = %#08x (%d)", r->d[0],(int32)r->d[0]));
 			}
@@ -383,11 +383,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchEDIR( &extDir, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Dxreaddir( &ldp, (char*)pathname, &extDir,
-								 (int16) get_word( r->a[7] + 6, true ),	  // len
-								 get_long( r->a[7] + 8, true ),			  // dirhandle
-								 (char*)get_long( r->a[7] + 12, true ),	  // bufferp
-								 get_long( r->a[7] + 16, true ),		  // XATTR*
-								 get_long( r->a[7] + 20, true ) );		  // xret
+								 (int16) ReadInt16( r->a[7] + 6 ),	  // len
+								 ReadInt32( r->a[7] + 8 ),			  // dirhandle
+								 (char*)ReadInt32( r->a[7] + 12 ),	  // bufferp
+								 ReadInt32( r->a[7] + 16 ),		  // XATTR*
+								 ReadInt32( r->a[7] + 20 ) );		  // xret
 			flushEDIR( &extDir, r->a[5] );
 			break;
 		case 338:	// Dreadlabel:
@@ -439,11 +439,11 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 	switch (fncode) {
 		case SBC_STX_FS:
 			D(bug("fs_init (%x)", r->a[7]));
-			mint_fs_drv    = get_long( r->a[7], true );   // filesys
-			mint_fs_devdrv = get_long( r->a[7] + 4, true );   // devdrv
+			mint_fs_drv    = ReadInt32( r->a[7] );   // filesys
+			mint_fs_devdrv = ReadInt32( r->a[7] + 4 );   // devdrv
 			// +  8 // retaddr
 			// + 12 // kerinfo
-			mint_fs_devnum = get_word( r->a[7] + 16, true );   // devnum
+			mint_fs_devnum = ReadInt16( r->a[7] + 16 );   // devnum
 			D(bug("MiNT fs:\n"
 				  " fs_drv     = %#08x\n"
 				  " fs_devdrv  = %#08x\n"
@@ -451,46 +451,46 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 				  ,mint_fs_drv
 				  ,mint_fs_devdrv
 				  ,(int)mint_fs_devnum));
+			D(bug("%s", "fs_root"));
 			break;
 		case SBC_STX_FS+0x01:
-			D(bug("%s", "fs_root"));
-			fetchXFSC( &fc, get_long(r->a[7] + 6, true) );
-			r->d[0] = xfs_root( get_word(r->a[7] + 4, true),   /* dev */
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 6) );
+			r->d[0] = xfs_root( ReadInt16(r->a[7] + 4),   /* dev */
 								&fc ); /* fcookie */
-			flushXFSC( &fc, get_long(r->a[7] + 6, true) );
+			flushXFSC( &fc, ReadInt32(r->a[7] + 6) );
 			break;
 		case SBC_STX_FS+0x02:
 			D(bug("%s", "fs_lookup"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_lookup( &fc,
-								  (char*)get_long( r->a[7] + 8, true ) /* name */,
+								  (char*)ReadInt32( r->a[7] + 8 ) /* name */,
 								  &resFc );
-			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
-			flushXFSC( &resFc, get_long(r->a[7] + 12, true) );
+			flushXFSC( &fc, ReadInt32(r->a[7] + 4) );
+			flushXFSC( &resFc, ReadInt32(r->a[7] + 12) );
 			break;
 		case SBC_STX_FS+0x03:
 			D(bug("%s", "fs_creat"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_creat( &fc,
-								 (char*)get_long( r->a[7] + 8, true ) /* name */,
-								 get_word( r->a[7] + 12, true ) /* mode */,
-								 get_word( r->a[7] + 14, true ) /* attrib */,
+								 (char*)ReadInt32( r->a[7] + 8 ) /* name */,
+								 ReadInt16( r->a[7] + 12 ) /* mode */,
+								 ReadInt16( r->a[7] + 14 ) /* attrib */,
 								  &resFc );
-			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
-			flushXFSC( &resFc, get_long(r->a[7] + 16, true) );
+			flushXFSC( &fc, ReadInt32(r->a[7] + 4) );
+			flushXFSC( &resFc, ReadInt32(r->a[7] + 16) );
 			break;
 		case SBC_STX_FS+0x04:
 			D(bug("%s", "fs_getdev"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
-			r->d[0] = xfs_getdev( &fc, (int32*)get_long( r->a[7] + 8, true ) );
-			flushXFSC( &resFc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
+			r->d[0] = xfs_getdev( &fc, (int32*)ReadInt32( r->a[7] + 8 ) );
+			flushXFSC( &resFc, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS+0x05:
 			D(bug("%s", "fs_getxattr"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_getxattr( &fc,
-									get_long( r->a[7] + 8, true ) ); // XATTR*
-			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+									ReadInt32( r->a[7] + 8 ) ); // XATTR*
+			flushXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS+0x06:
 			D(bug("%s", "fs_chattr"));
@@ -506,22 +506,22 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 			break;
 		case SBC_STX_FS+0x09:
 			D(bug("%s", "fs_mkdir"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_mkdir( &fc,
-								 (char*)get_long(r->a[7] + 8, true),  // name
-								 get_word(r->a[7] + 12, true) ); // mode
+								 (char*)ReadInt32(r->a[7] + 8),  // name
+								 ReadInt16(r->a[7] + 12) ); // mode
 			break;
 		case SBC_STX_FS+0x0a:
 			D(bug("%s", "fs_rmdir"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
-			r->d[0] = xfs_rmdir( &fc, (char*)get_long(r->a[7] + 8, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
+			r->d[0] = xfs_rmdir( &fc, (char*)ReadInt32(r->a[7] + 8) );
 			break;
 		case SBC_STX_FS+0x0b:
 			D(bug("%s", "fs_remove"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_remove( &fc,
-								  (char*)get_long( r->a[7] + 8, true ) ); // name
-			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+								  (char*)ReadInt32( r->a[7] + 8 ) ); // name
+			flushXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS+0x0c:
 			D(bug("%s", "fs_getname"));
@@ -529,54 +529,54 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 			break;
 		case SBC_STX_FS+0x0d:
 			D(bug("%s", "fs_rename"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
-			fetchXFSC( &resFc, get_long(r->a[7] + 12, true) );
-			r->d[0] = xfs_rename( &fc, (char*)get_long(r->a[7] + 8, true),
-								  &resFc, (char*)get_long(r->a[7] + 16, true) );
-			// not needed: flushXFSC( &fc, get_long(r->a[7] + 4, true) );
-			// not needed: flushXFSC( &resFc, get_long(r->a[7] + 12, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
+			fetchXFSC( &resFc, ReadInt32(r->a[7] + 12) );
+			r->d[0] = xfs_rename( &fc, (char*)ReadInt32(r->a[7] + 8),
+								  &resFc, (char*)ReadInt32(r->a[7] + 16) );
+			// not needed: flushXFSC( &fc, ReadInt32(r->a[7] + 4) );
+			// not needed: flushXFSC( &resFc, ReadInt32(r->a[7] + 12) );
 			break;
 		case SBC_STX_FS+0x0e:
 			D(bug("%s", "fs_opendir"));
-			fetchXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			fetchXFSD( &dirh, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_opendir( &dirh,
-								   get_word( r->a[7] + 8, true ) ); // flags
-			flushXFSD( &dirh, get_long(r->a[7] + 4, true) );
+								   ReadInt16( r->a[7] + 8 ) ); // flags
+			flushXFSD( &dirh, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS+0x0f:
 			D(bug("%s", "fs_readdir"));
-			fetchXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			fetchXFSD( &dirh, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_readdir( &dirh,
-								   (char*)get_long( r->a[7] +  8, true ), // buff
-								   get_word( r->a[7] + 12, true ), // bufflen
+								   (char*)ReadInt32( r->a[7] +  8 ), // buff
+								   ReadInt16( r->a[7] + 12 ), // bufflen
 								   &resFc );
-			flushXFSD( &dirh,  get_long(r->a[7] +  4, true) );
-			flushXFSC( &resFc, get_long(r->a[7] + 14, true) );
+			flushXFSD( &dirh,  ReadInt32(r->a[7] +  4) );
+			flushXFSC( &resFc, ReadInt32(r->a[7] + 14) );
 			break;
 		case SBC_STX_FS+0x10:
 			D(bug("%s", "fs_rewinddir"));
-			fetchXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			fetchXFSD( &dirh, ReadInt32(r->a[7] + 4) );
 			r->d[0] = Drewinddir( &dirh );
-			flushXFSD( &dirh,  get_long(r->a[7] +  4, true) );
+			flushXFSD( &dirh,  ReadInt32(r->a[7] +  4) );
 			break;
 		case SBC_STX_FS+0x11:
 			D(bug("%s", "fs_closedir"));
-			fetchXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			fetchXFSD( &dirh, ReadInt32(r->a[7] + 4) );
 			r->d[0] = Dclosedir( &dirh );
-			flushXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			flushXFSD( &dirh, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS+0x12:
 			D(bug("%s", "fs_pathconf"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_pathconf( &fc,
-									get_word(r->a[7] + 8, true) ); // which
-			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+									ReadInt16(r->a[7] + 8) ); // which
+			flushXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS+0x13:
 			D(bug("%s", "fs_dfree"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_dfree( &fc,
-								 get_long(r->a[7] + 8, true) ); // buff
+								 ReadInt32(r->a[7] + 8) ); // buff
 			break;
 		case SBC_STX_FS+0x14:
 			D(bug("%s", "fs_writelabel"));
@@ -592,10 +592,10 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 			break;
 		case SBC_STX_FS+0x17:
 			D(bug("%s", "fs_readlink"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_readlink( &fc,
-									(char*)get_long(r->a[7] + 8, true), // buff
-									get_word(r->a[7] + 12, true) ); // len
+									(char*)ReadInt32(r->a[7] + 8), // buff
+									ReadInt16(r->a[7] + 12) ); // len
 			break;
 		case SBC_STX_FS+0x18:
 			D(bug("%s", "fs_hardlink"));
@@ -611,17 +611,17 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 			break;
 		case SBC_STX_FS+0x1b:
 			D(bug("%s", "fs_release"));
-			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_release( &fc );
-			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+			flushXFSC( &fc, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS+0x1c:
 			D(bug("%s", "fs_dupcookie"));
-			fetchXFSC( &resFc, get_long(r->a[7] + 4, true) );
-			fetchXFSC( &fc, get_long(r->a[7] + 8, true) );
+			fetchXFSC( &resFc, ReadInt32(r->a[7] + 4) );
+			fetchXFSC( &fc, ReadInt32(r->a[7] + 8) );
 			r->d[0] = xfs_dupcookie( &resFc, &fc );
-			flushXFSC( &resFc, get_long(r->a[7] + 4, true) );
-			flushXFSC( &fc, get_long(r->a[7] + 8, true) );
+			flushXFSC( &resFc, ReadInt32(r->a[7] + 4) );
+			flushXFSC( &fc, ReadInt32(r->a[7] + 8) );
 			break;
 		case SBC_STX_FS+0x1d:
 			D(bug("%s", "fs_sync"));
@@ -638,36 +638,36 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 
 		case SBC_STX_FS_DEV+0x01:
 			D(bug("%s", "fs_dev_open"));
-			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			fetchXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_dev_open( &extFile );
-			flushXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			flushXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS_DEV+0x02:
 			D(bug("%s", "fs_dev_write"));
-			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			fetchXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			r->d[0] = Fwrite( NULL, NULL, &extFile,
 							  0, // handle
-							  get_long(r->a[7] + 12, true), // bytes
-							  (void*)get_long(r->a[7] + 8, true) ); // buffer
-			flushXFSF( &extFile, get_long(r->a[7] + 4, true) );
+							  ReadInt32(r->a[7] + 12), // bytes
+							  (void*)ReadInt32(r->a[7] + 8) ); // buffer
+			flushXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS_DEV+0x03:
 			D(bug("%s", "fs_dev_read"));
-			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			fetchXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			r->d[0] = Fread( NULL, NULL, &extFile,
 							 0, // handle
-							 get_long(r->a[7] + 12, true), // bytes
-							 (void*)get_long(r->a[7] + 8, true) ); // buffer
-			flushXFSF( &extFile, get_long(r->a[7] + 4, true) );
+							 ReadInt32(r->a[7] + 12), // bytes
+							 (void*)ReadInt32(r->a[7] + 8) ); // buffer
+			flushXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS_DEV+0x04:
 			D(bug("%s", "fs_dev_lseek"));
-			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			fetchXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			r->d[0] = Fseek( NULL, NULL, &extFile,
-							 get_long( r->a[7] + 8, true ),			 // offset
+							 ReadInt32( r->a[7] + 8 ),			 // offset
 							 0,  // handle
-							 get_word( r->a[7] + 12, true ) );       // seekmode
-			flushXFSF( &extFile, get_long(r->a[7] + 4, true) );
+							 ReadInt16( r->a[7] + 12 ) );       // seekmode
+			flushXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS_DEV+0x05:
 			D(bug("%s", "fs_dev_ioctl"));
@@ -675,15 +675,15 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 			break;
 		case SBC_STX_FS_DEV+0x06:
 			D(bug("%s", "fs_dev_datime"));
-			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			fetchXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			r->d[0] = xfs_dev_datime( &extFile,
-									  (uint32*)get_long( r->a[7] + 8, true ), // datetimep
-									  (int16) get_word( r->a[7] + 12, true ) );// wflag
-			flushXFSF( &extFile, get_long(r->a[7] + 4, true) );
+									  (uint32*)ReadInt32( r->a[7] + 8 ), // datetimep
+									  (int16) ReadInt16( r->a[7] + 12 ) );// wflag
+			flushXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			break;
 		case SBC_STX_FS_DEV+0x07:
 			D(bug("%s", "fs_dev_close"));
-			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			fetchXFSF( &extFile, ReadInt32(r->a[7] + 4) );
 			r->d[0] = Fclose( NULL, NULL, &extFile,
 							  0 ); // handle
 			break;
@@ -706,152 +706,152 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 void ExtFs::a2fmemcpy( uint8 *dest, uint8 *source, size_t count )
 {
 	while ( count-- )
-		*dest++ = get_byte( (uint32)source++, true );
+		*dest++ = ReadInt8( (uint32)source++ );
 }
 
 void ExtFs::a2fstrcpy( char *dest, uint8 *source )
 {
-	while ( (*dest++ = get_byte( (uint32)source++, true )) != 0 );
+	while ( (*dest++ = ReadInt8( (uint32)source++ )) != 0 );
 }
 
 
 void ExtFs::f2amemcpy( uint8 *dest, uint8 *source, size_t count )
 {
 	while ( count-- )
-		put_byte( (uint32)dest++, *source++ );
+		WriteInt8( (uint32)dest++, *source++ );
 }
 
 void ExtFs::f2astrcpy( uint8 *dest, uint8 *source )
 {
 	while ( *source )
-		put_byte( (uint32)dest++, *source++ );
-	put_byte( (uint32)dest++, 0 );
+		WriteInt8( (uint32)dest++, *source++ );
+	WriteInt8( (uint32)dest++, 0 );
 }
 
 
 void ExtFs::fetchDTA( ExtDta *dta, uint32 dtap )
 {
 	// Normally reserved ... used in the CookFS
-	dta->ds_dirh	 = (DIR*)get_long( dtap, true );
-	dta->ds_attrib	 = get_word( dtap + 4, true );
-	dta->ds_index	 = get_byte( dtap + 6, true );
+	dta->ds_dirh	 = (DIR*)ReadInt32( dtap );
+	dta->ds_attrib	 = ReadInt16( dtap + 4 );
+	dta->ds_index	 = ReadInt8( dtap + 6 );
 	a2fmemcpy( (uint8*)dta->ds_name, (uint8*)(dtap + 7), 14 ); // search mask
 
 	// Common FS
-	dta->d_attrib = get_byte( dtap + 21, true );
-	dta->d_time	  = get_word( dtap + 22, true );
-	dta->d_date	  = get_word( dtap + 24, true );
-	dta->d_length = get_long( dtap + 26, true );
+	dta->d_attrib = ReadInt8( dtap + 21 );
+	dta->d_time	  = ReadInt16( dtap + 22 );
+	dta->d_date	  = ReadInt16( dtap + 24 );
+	dta->d_length = ReadInt32( dtap + 26 );
 	a2fmemcpy( (uint8*)dta->d_fname, (uint8*)(dtap + 30), 14 );
 }
 void ExtFs::flushDTA( ExtDta *dta, uint32 dtap )
 {
 	// Normally reserved ... used in the CookFS
-	put_long( dtap	  , (uint32)dta->ds_dirh );
-	put_word( dtap + 4, dta->ds_attrib );
-	put_byte( dtap + 6, dta->ds_index );
+	WriteInt32( dtap	  , (uint32)dta->ds_dirh );
+	WriteInt16( dtap + 4, dta->ds_attrib );
+	WriteInt8( dtap + 6, dta->ds_index );
 	f2amemcpy( (uint8*)(dtap + 7), (uint8*)dta->ds_name, 14 );
 
 	// Common FS
-	put_byte( dtap + 21, dta->d_attrib );
-	put_word( dtap + 22, dta->d_time );
-	put_word( dtap + 24, dta->d_date );
-	put_long( dtap + 26, dta->d_length );
+	WriteInt8( dtap + 21, dta->d_attrib );
+	WriteInt16( dtap + 22, dta->d_time );
+	WriteInt16( dtap + 24, dta->d_date );
+	WriteInt32( dtap + 26, dta->d_length );
 	f2amemcpy( (uint8*)(dtap + 30), (uint8*)dta->d_fname, 14 );
 }
 
 
 void ExtFs::fetchFILE( ExtFile *extFile, uint32 filep )
 {
-	extFile->index	= get_word( filep,		 true );
-	//extFile->mode	= get_word( filep + 2,	 true );
-	extFile->flags	= get_word( filep + 4,	 true ); // never used in the code
-	extFile->hostfd = get_long( filep + 6,	 true );
-	extFile->offset = get_long( filep + 10, true );  // probably not used
-	//	extFile->device = get_word( filep + 14, true );  // never used
+	extFile->index	= ReadInt16( filep );
+	//extFile->mode	= ReadInt16( filep + 2 );
+	extFile->flags	= ReadInt16( filep + 4 ); // never used in the code
+	extFile->hostfd = ReadInt32( filep + 6 );
+	extFile->offset = ReadInt32( filep + 10 );  // probably not used
+	//	extFile->device = ReadInt16( filep + 14 );  // never used
 
 	extFile->links  = 0; // Fclose dosn't close the file when > 0
 }
 void ExtFs::flushFILE( ExtFile *extFile, uint32 filep )
 {
-	put_word( filep	   , extFile->index );
-	//put_word( filep + 2, extFile->mode	);
-	put_word( filep + 4, extFile->flags );
-	put_long( filep + 6, extFile->hostfd );
-	put_long( filep +10, extFile->offset );
-	//put_word( filep +14, extFile->device );
+	WriteInt16( filep	   , extFile->index );
+	//WriteInt16( filep + 2, extFile->mode	);
+	WriteInt16( filep + 4, extFile->flags );
+	WriteInt32( filep + 6, extFile->hostfd );
+	WriteInt32( filep +10, extFile->offset );
+	//WriteInt16( filep +14, extFile->device );
 }
 
 void ExtFs::fetchEDIR( ExtDir *extDir, uint32 dirp )
 {
 	assert( 6 + sizeof(extDir->dir) < 8 * 4 ); // MetaDOS provided space
 
-	extDir->flags      = get_word( dirp    , true );
-	extDir->fc.dev     = get_word( dirp + 2, true );
-	extDir->pathIndex  = get_word( dirp + 4, true );
+	extDir->flags      = ReadInt16( dirp     );
+	extDir->fc.dev     = ReadInt16( dirp + 2 );
+	extDir->pathIndex  = ReadInt16( dirp + 4 );
 	a2fmemcpy( (uint8*)&extDir->dir, (uint8*)(dirp + 6), sizeof(extDir->dir) );
 }
 void ExtFs::flushEDIR( ExtDir *extDir, uint32 dirp )
 {
-	put_word( dirp	  , extDir->flags );
-	put_word( dirp + 2, extDir->fc.dev );
-	put_word( dirp + 4, extDir->pathIndex );
+	WriteInt16( dirp	  , extDir->flags );
+	WriteInt16( dirp + 2, extDir->fc.dev );
+	WriteInt16( dirp + 4, extDir->pathIndex );
 	f2amemcpy( (uint8*)(dirp + 6), (uint8*)&extDir->dir, sizeof(extDir->dir) );
 }
 
 
 void ExtFs::fetchXFSC( XfsCookie *fc, uint32 filep )
 {
-	fc->xfs   = get_long( filep, true );  // fs
-	fc->dev   = get_word( filep + 4, true );  // dev
-	fc->aux   = get_word( filep + 6, true );  // aux
-	fc->index = (XfsFsFile*)get_long( filep + 8, true ); // index
+	fc->xfs   = ReadInt32( filep );  // fs
+	fc->dev   = ReadInt16( filep + 4 );  // dev
+	fc->aux   = ReadInt16( filep + 6 );  // aux
+	fc->index = (XfsFsFile*)ReadInt32( filep + 8 ); // index
 }
 void ExtFs::flushXFSC( XfsCookie *fc, uint32 filep )
 {
-	put_long( filep    , fc->xfs );
-	put_word( filep + 4, fc->dev );
-	put_word( filep + 6, fc->aux );
-	put_long( filep + 8, (uint32)fc->index );
+	WriteInt32( filep    , fc->xfs );
+	WriteInt16( filep + 4, fc->dev );
+	WriteInt16( filep + 6, fc->aux );
+	WriteInt32( filep + 8, (uint32)fc->index );
 }
 
 void ExtFs::fetchXFSF( ExtFile *extFile, uint32 filep )
 {
-	extFile->links  = get_word( filep, true );
-	extFile->flags  = get_word( filep + 2, true );
-	extFile->hostfd = get_long( filep + 4, true ); // offset not needed (replaced by the host fd)
-	extFile->devinfo= get_long( filep + 8, true );
+	extFile->links  = ReadInt16( filep );
+	extFile->flags  = ReadInt16( filep + 2 );
+	extFile->hostfd = ReadInt32( filep + 4 ); // offset not needed (replaced by the host fd)
+	extFile->devinfo= ReadInt32( filep + 8 );
 	fetchXFSC( &extFile->fc, filep + 12 ); // sizeof(12)
 	// 4bytes of the devdrvp
-	extFile->next   = get_long( filep + 28, true );
+	extFile->next   = ReadInt32( filep + 28 );
 }
 void ExtFs::flushXFSF( ExtFile *extFile, uint32 filep )
 {
-	put_word( filep, extFile->links );
-	put_word( filep + 2, extFile->flags );
-	put_long( filep + 4, extFile->hostfd ); // instead of the offset
-	put_long( filep + 8, extFile->devinfo );
+	WriteInt16( filep, extFile->links );
+	WriteInt16( filep + 2, extFile->flags );
+	WriteInt32( filep + 4, extFile->hostfd ); // instead of the offset
+	WriteInt32( filep + 8, extFile->devinfo );
 	flushXFSC( &extFile->fc, filep + 12 ); // sizeof(12)
-	put_long( filep + 28, extFile->next );
+	WriteInt32( filep + 28, extFile->next );
 }
 
 void ExtFs::fetchXFSD( XfsDir *dirh, uint32 dirp )
 {
 	fetchXFSC( (XfsCookie*)dirh, dirp ); // sizeof(12)
-	dirh->index = get_word( dirp + 12, true );
-	dirh->flags = get_word( dirp + 14, true );
-	dirh->pathIndex = get_word( dirp + 16, true );
+	dirh->index = ReadInt16( dirp + 12 );
+	dirh->flags = ReadInt16( dirp + 14 );
+	dirh->pathIndex = ReadInt16( dirp + 16 );
 	a2fmemcpy( (uint8*)&dirh->dir, (uint8*)(dirp + 18), sizeof(dirh->dir) );
-	dirh->next  = (XfsDir*)get_long( dirp + 76, true );
+	dirh->next  = (XfsDir*)ReadInt32( dirp + 76 );
 }
 void ExtFs::flushXFSD( XfsDir *dirh, uint32 dirp )
 {
 	flushXFSC( (XfsCookie*)dirh, dirp ); // sizeof(12)
-	put_word( dirp + 12, dirh->index );
-	put_word( dirp + 14, dirh->flags );
-	put_word( dirp + 16, dirh->pathIndex );
+	WriteInt16( dirp + 12, dirh->index );
+	WriteInt16( dirp + 14, dirh->flags );
+	WriteInt16( dirp + 16, dirh->pathIndex );
 	f2amemcpy( (uint8*)(dirp + 18), (uint8*)&dirh->dir, sizeof(dirh->dir) );
-	put_long( dirp + 76, (uint32)dirh->next );
+	WriteInt32( dirp + 76, (uint32)dirh->next );
 }
 
 
@@ -1194,10 +1194,10 @@ int32 ExtFs::Dfree_(char *fpathName, uint32 diskinfop )
 #endif
 		return unix2toserrno(errno,TOS_EFILNF);
 
-	/* ULONG b_free	   */  put_long( diskinfop	   , buff.f_bavail );
-	/* ULONG b_total   */  put_long( diskinfop +  4, buff.f_blocks );
-	/* ULONG b_secsize */  put_long( diskinfop +  8, buff.f_bsize /* not 512 according to stonx_fs */ );
-	/* ULONG b_clsize  */  put_long( diskinfop + 12, 1 );
+	/* ULONG b_free	   */  WriteInt32( diskinfop	   , buff.f_bavail );
+	/* ULONG b_total   */  WriteInt32( diskinfop +  4, buff.f_blocks );
+	/* ULONG b_secsize */  WriteInt32( diskinfop +  8, buff.f_bsize /* not 512 according to stonx_fs */ );
+	/* ULONG b_clsize  */  WriteInt32( diskinfop + 12, 1 );
 
 	return TOS_E_OK;
 }
@@ -1659,7 +1659,7 @@ int32 ExtFs::Fdatime_( char *fpathName, ExtFile *fp, uint32 *datetimep, int16 wf
 	if ( stat(fpathName, &statBuf) )
 		return unix2toserrno(errno,TOS_EFILNF);
 
-	uint32 datetime = get_long( (uint32)datetimep, true );
+	uint32 datetime = ReadInt32( (uint32)datetimep );
 	if (wflag != 0) {
 		struct tm ttm;
 		struct utimbuf tmb;
@@ -1683,7 +1683,7 @@ int32 ExtFs::Fdatime_( char *fpathName, ExtFile *fp, uint32 *datetimep, int16 wf
 
 	datetime =
 		( time2dos(statBuf.st_mtime) << 16 ) | date2dos(statBuf.st_mtime);
-	put_long( (uint32)datetimep, datetime );
+	WriteInt32( (uint32)datetimep, datetime );
 
 	return TOS_E_OK; //EBADRQ;
 }
@@ -1873,7 +1873,7 @@ int32 ExtFs::Dreaddir( LogicalDev *ldp, char *pathName, ExtDir *dirh,
 		if ( (uint16)len < strlen( dirEntry->d_name ) + 4 )
 			return TOS_ERANGE;
 
-		put_long( (uint32)buff, dirEntry->d_ino );
+		WriteInt32( (uint32)buff, dirEntry->d_ino );
 		f2astrcpy( (uint8*)buff + 4, (uint8*)dirEntry->d_name );
 
 		D(bug("MetaDOS: Dreaddir (%s,%s)", fs_pathName[ dirh->pathIndex ], (char*)dirEntry->d_name ));
@@ -1904,7 +1904,7 @@ int32 ExtFs::Dxreaddir_( char *fpathName, ExtDir *dirh,
 		fpathName[ length++ ] = '/';
 	a2fstrcpy( &fpathName[ length ], (uint8*)&buff[ dirh->flags == 0 ? 4 : 0 ] );
 
-	put_long( xretp, Fxattr_( NULL, fpathName, 1, xattrp ) ); // FIXME: retp should be byref!
+	WriteInt32( xretp, Fxattr_( NULL, fpathName, 1, xattrp ) ); // FIXME: retp should be byref!
 	fpathName[ length ] = '\0';
 
 	return result;
@@ -1942,7 +1942,7 @@ int32 ExtFs::xfs_readdir( ExtDir *dirh, char* buff, int16 len, XfsCookie *fc )
 		if ( (uint16)len < strlen( dirEntry->d_name ) + 4 )
 			return TOS_ERANGE;
 
-		put_long( (uint32)buff, dirEntry->d_ino );
+		WriteInt32( (uint32)buff, dirEntry->d_ino );
 		f2astrcpy( (uint8*)buff + 4, (uint8*)dirEntry->d_name );
 
 		D(bug("    XFS: readdir (%s)", (char*)dirEntry->d_name ));
@@ -1997,26 +1997,26 @@ int32 ExtFs::Fxattr_( LogicalDev *ldp, char *fpathName, int16 flag, uint32 xattr
 	}
 
 	// XATTR structure conversion (COMPEND.HYP)
-	/* UWORD mode	   */  put_word( xattrp		, statmode2xattrmode(statBuf.st_mode));
-	/* LONG	 index	   */  put_long( xattrp +  2, statBuf.st_ino );
-	/* UWORD dev	   */  put_word( xattrp +  6, statBuf.st_dev );	 // FIXME: this is Linux's one
-	/* UWORD reserved1 */  put_word( xattrp +  8, 0 );
-	/* UWORD nlink	   */  put_word( xattrp + 10, statBuf.st_nlink );
-	/* UWORD uid	   */  put_word( xattrp + 12, statBuf.st_uid );	 // FIXME: this is Linux's one
-	/* UWORD gid	   */  put_word( xattrp + 14, statBuf.st_gid );	 // FIXME: this is Linux's one
-	/* LONG	 size	   */  put_long( xattrp + 16, statBuf.st_size );
-	/* LONG	 blksize   */  put_long( xattrp + 20, statBuf.st_blksize );
-	/* LONG	 nblocks   */  put_long( xattrp + 24, statBuf.st_blocks );
-	/* UWORD mtime	   */  put_word( xattrp + 28, time2dos(statBuf.st_mtime) );
-	/* UWORD mdate	   */  put_word( xattrp + 30, date2dos(statBuf.st_mtime) );
-	/* UWORD atime	   */  put_word( xattrp + 32, time2dos(statBuf.st_atime) );
-	/* UWORD adate	   */  put_word( xattrp + 34, date2dos(statBuf.st_atime) );
-	/* UWORD ctime	   */  put_word( xattrp + 36, time2dos(statBuf.st_ctime) );
-	/* UWORD cdate	   */  put_word( xattrp + 38, date2dos(statBuf.st_ctime) );
-	/* UWORD attr	   */  put_word( xattrp + 40, statmode2attr(statBuf.st_mode) );
-	/* UWORD reserved2 */  put_word( xattrp + 42, 0 );
-	/* LONG	 reserved3 */  put_long( xattrp + 44, 0 );
-	/* LONG	 reserved4 */  put_long( xattrp + 48, 0 );
+	/* UWORD mode	   */  WriteInt16( xattrp		, statmode2xattrmode(statBuf.st_mode));
+	/* LONG	 index	   */  WriteInt32( xattrp +  2, statBuf.st_ino );
+	/* UWORD dev	   */  WriteInt16( xattrp +  6, statBuf.st_dev );	 // FIXME: this is Linux's one
+	/* UWORD reserved1 */  WriteInt16( xattrp +  8, 0 );
+	/* UWORD nlink	   */  WriteInt16( xattrp + 10, statBuf.st_nlink );
+	/* UWORD uid	   */  WriteInt16( xattrp + 12, statBuf.st_uid );	 // FIXME: this is Linux's one
+	/* UWORD gid	   */  WriteInt16( xattrp + 14, statBuf.st_gid );	 // FIXME: this is Linux's one
+	/* LONG	 size	   */  WriteInt32( xattrp + 16, statBuf.st_size );
+	/* LONG	 blksize   */  WriteInt32( xattrp + 20, statBuf.st_blksize );
+	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, statBuf.st_blocks );
+	/* UWORD mtime	   */  WriteInt16( xattrp + 28, time2dos(statBuf.st_mtime) );
+	/* UWORD mdate	   */  WriteInt16( xattrp + 30, date2dos(statBuf.st_mtime) );
+	/* UWORD atime	   */  WriteInt16( xattrp + 32, time2dos(statBuf.st_atime) );
+	/* UWORD adate	   */  WriteInt16( xattrp + 34, date2dos(statBuf.st_atime) );
+	/* UWORD ctime	   */  WriteInt16( xattrp + 36, time2dos(statBuf.st_ctime) );
+	/* UWORD cdate	   */  WriteInt16( xattrp + 38, date2dos(statBuf.st_ctime) );
+	/* UWORD attr	   */  WriteInt16( xattrp + 40, statmode2attr(statBuf.st_mode) );
+	/* UWORD reserved2 */  WriteInt16( xattrp + 42, 0 );
+	/* LONG	 reserved3 */  WriteInt32( xattrp + 44, 0 );
+	/* LONG	 reserved4 */  WriteInt32( xattrp + 48, 0 );
 
 	return TOS_E_OK;
 }
@@ -2110,7 +2110,7 @@ int32 ExtFs::xfs_root( uint16 dev, XfsCookie *fc )
 
 int32 ExtFs::xfs_getdev( XfsCookie *fc, int32 *devspecial )
 {
-    put_long((uint32)devspecial,0); /* reserved */
+    WriteInt32((uint32)devspecial,0); /* reserved */
     return (int32)mint_fs_devdrv;
 }
 
@@ -2377,6 +2377,12 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.26  2002/02/18 09:30:05  standa
+ * Olivier Landemarre <Olivier.Landemarre@utbm.fr> && STanda extfs.cpp patch.
+ * The statvfs stuff conditional compile fixed (no ifdef OS_linux, but OS_*bsd
+ * used). The SDL_filesystem is damn needed here or ... ;(
+ * XFS Debug logs made look nicer to me.
+ *
  * Revision 1.25  2002/01/31 23:51:22  standa
  * The aranym.xfs for MiNT. Preliminary version.
  *
