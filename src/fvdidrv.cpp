@@ -154,20 +154,12 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *  d3  pattern address
 			 *  d4  colour
 			 */
-			if (r->a[1] & 1)
-				r->d[0] = (uint32)-1; // we can do only the basic single mode
-			else {
-				uint16 pattern[16];
-				uint32 fPatterAddress = r->d[3];
-				for( uint16 i=0; i<=30; i+=2 )
-					pattern[i >> 1] = get_word( fPatterAddress + i, true );
-
-				r->d[0] = fillArea( (void*)r->a[1],
-									r->d[1] & 0xffff /* x */, r->d[2] & 0xffff /* y */,
-									r->d[0] & 0xffff /* w */, r->d[0] >> 16 /* h */,
-									pattern /* pattern */,
-									r->d[4] & 0xffff /* fgColor */, r->d[4] >> 16 /* bgColor */ );
-			}
+			r->d[0] = fillArea(r->a[1],		// vwk
+			                   r->d[1], r->d[2],	// x, y
+			                   r->d[0] & 0xffff,    // width
+			                   r->d[0] >> 16,	// height
+			                   r->d[3],		// pattern
+			                   r->d[4]);		// bgColor fgColor
 			break;
 
 		case 6: // blitArea
@@ -200,16 +192,31 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *  d5  pattern
 			 *  d6  colour
 			 */
-			if (r->a[1] & 1)
-				r->d[0] = (uint32)-1; // we can do only one line at once
-			else {
-				r->d[0] = drawLine( (void*)r->a[1],
-									r->d[1] /* x1 */, r->d[2] /* y1 */,
-									r->d[3] /* x2 */, r->d[4] /* y2 */,
-									r->d[5] & 0xffff /* pattern */,
-									r->d[6] & 0xffff /* fgColor */, r->d[6] >> 16 /* bgColor */,
-									r->d[0] & 0xffff /* logical operation */ );
-			}
+			r->d[0] = drawLine(r->a[1],		// vwk
+			                   r->d[1], r->d[2],	// x1, y1
+			                   r->d[3], r->d[4],	// x2, y2
+			                   r->d[5] & 0xffff,	// pattern
+			                   r->d[6],		// bgColor fgColor
+			                   r->d[0] & 0xffff);	// logical operation
+			break;
+
+		case 8: // fillPoly
+			/*
+			 * fill_polygon
+			 * In:  a1  VDI struct
+			 *  d0  number of points and indices (high and low word)
+			 *  d1  points address
+			 *  d2  index address
+			 *  d3  pattern address
+			 *  d4  colour
+			 */
+			r->d[0] = fillPoly(r->a[1],		// vwk
+			                   r->d[1],		// points address
+			                   r->d[0] >> 16,	// points
+			                   r->d[2],		// index address
+			                   r->d[0] & 0xffff,	// indices
+			                   r->d[3],		// pattern address
+			                   r->d[4]);		// bgColor fgColor
 			break;
 
 		case 9: // setColor:
@@ -281,7 +288,7 @@ FVDIDriver::MFDB* FVDIDriver::fetchMFDB( FVDIDriver::MFDB* mfdb, uint32 pmfdb )
  *
  * Since an MFDB is passed, the destination is not necessarily the screen.
  **/
-uint32 FVDIDriver::putPixel(void *vwk, MFDB *dst, int32 x, int32 y, uint32 color)
+int FVDIDriver::putPixel(void *vwk, MFDB *dst, int32 x, int32 y, uint32 color)
 {
 	if ((uint32)vwk & 1)
 		return 0;
@@ -500,7 +507,7 @@ void FVDIDriver::saveMouseBackground( int16 x, int16 y, int16 width, int16 heigh
 }
 
 
-uint32 FVDIDriver::drawMouse( void *wrk, int16 x, int16 y, uint32 mode )
+int FVDIDriver::drawMouse( void *wrk, int16 x, int16 y, uint32 mode )
 {
 	D2(bug("fVDI: mouse mode: %x", mode ));
 
@@ -647,8 +654,8 @@ extern "C" {
 	}
 }
 
-uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h,
-							  uint32 fgColor, uint32 bgColor, uint32 logOp)
+int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, int32 dx, int32 dy,
+                           int32 w, int32 h, uint32 fgColor, uint32 bgColor, uint32 logOp)
 {
 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
@@ -840,21 +847,70 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
  * A negative return will break down the special mode into separate calls,
  * with no more fallback possible.
  **/
-uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint16 *pattern, uint32 fgColor, uint32 bgColor)
+int FVDIDriver::fillArea(uint32 vwk, uint32 x_, uint32 y_, int w, int h,
+                         uint32 pattern_addr, int32 colors)
 {
-	uint16 logOp = get_word( (uint32)vwk + VWK_MODE, true ); // Virtual *vwk->mode // fill logOp;
-	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "fillArea", logOp, x, y, w, h, x+w-1, x+h-1, *pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
+	uint32 fgColor = hostScreen.getPaletteColor((int16)(colors & 0xffff));
+	uint32 bgColor = hostScreen.getPaletteColor((int16)(colors >> 16));
 
-	fgColor = hostScreen.getPaletteColor( fgColor );
-	bgColor = hostScreen.getPaletteColor( bgColor );
+	uint16 pattern[16];
+	for(int i = 0; i < 16; ++i)
+		pattern[i] = get_word(pattern_addr + i * 2, true);
+
+	int16* table = 0;
+
+	int x = x_;
+	int y = y_;
+
+	if ((long)vwk & 1) {
+		if ((y_ & 0xffff) != 0)
+			return -1;		// Don't know about this kind of table operation
+		table = (int16*)x_;
+		h = (y_ >> 16) & 0xffff;
+		vwk -= 1;
+	}
+
+	int logOp = (int16)get_word(vwk + VWK_MODE, true); // Virtual *vwk->mode // fill logOp;
+
+	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "fillArea",
+	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
+	      fgColor, hostScreen.getPaletteColor(fgColor),
+	      bgColor, hostScreen.getPaletteColor(bgColor)));
 
 	if (!hostScreen.renderBegin())
 		return 1;
 
-	hostScreen.fillArea( x, y, w, h, pattern, fgColor, bgColor, logOp );
+	int minx = 1000000;
+	int miny = 1000000;
+	int maxx = -1000000;
+	int maxy = -1000000;
+
+	/* Perform rectangle fill. */
+	if (!table) {
+		hostScreen.fillArea(x, y, w, h, pattern, fgColor, bgColor, logOp);
+		minx = x;
+		miny = y;
+		maxx = x + w - 1;
+		maxy = y + h - 1;
+	} else {
+		for(h = h - 1; h >= 0; h--) {
+			y = (int16)get_word((uint32)table++, true);
+			x = (int16)get_word((uint32)table++, true);
+			w = (int16)get_word((uint32)table++, true) - x + 1;
+			hostScreen.fillArea(x, y, w, 1, pattern, fgColor, bgColor, logOp);
+			if (x < minx)
+				minx = x;
+			if (y < miny)
+				miny = y;
+			if (x + w - 1 > maxx)
+				maxx = x + w - 1;
+			if (y > maxy)
+				maxy = y;
+		}
+	}
 
 	hostScreen.renderEnd();
-	hostScreen.update( x, y, w, h, true );
+	hostScreen.update(minx, miny, maxx - minx + 1, maxy - miny + 1, true);
 
 	return 1;
 }
@@ -958,8 +1014,8 @@ static void chunkyToBitplane( uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWo
 }
 }
 
-uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h,
-							uint32 logOp)
+int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, int32 dx, int32 dy,
+                         int32 w, int32 h, uint32 logOp)
 {
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d", "blitArea", logOp, sx, sy, dx, dy, w, h ));
 	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest, (src)?(get_long( (uint32)src, true )):0,(dest)?(get_long( (uint32)dest, true )):0));
@@ -1244,125 +1300,475 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 #define CLIP_ACCEPT(a,b) (!(a|b))
 
 
-extern "C" {
-	static inline int clipEncode (int16 x, int16 y, int16 left, int16 top, int16 right, int16 bottom)
-	{
-		int code = 0;
-		if (x < left) {
-			code |= CLIP_LEFT_EDGE;
-		} else if (x > right) {
-			code |= CLIP_RIGHT_EDGE;
-		}
-		if (y < top) {
-			code |= CLIP_TOP_EDGE;
-		} else if (y > bottom) {
-			code |= CLIP_BOTTOM_EDGE;
-		}
-		return code;
+static inline int clipEncode (int x, int y, int left, int top, int right, int bottom)
+{
+	int code = 0;
+	if (x < left) {
+		code |= CLIP_LEFT_EDGE;
+	} else if (x > right) {
+		code |= CLIP_RIGHT_EDGE;
 	}
+	if (y < top) {
+		code |= CLIP_TOP_EDGE;
+	} else if (y > bottom) {
+		code |= CLIP_BOTTOM_EDGE;
+	}
+	return code;
 }
 
-static inline int clipLine(void *vwk, int16 *x1, int16 *y1, int16 *x2, int16 *y2)
+
+static inline bool clipLine(int& x1, int& y1, int& x2, int& y2, int cliprect[])
 {
-	int16 left,right,top,bottom;
-	int code1, code2;
-	int draw = 0;
-	int16 swaptmp;
-	float m;
+	if (!cliprect)
+		return true; // Clipping is off
 
-	if ( !get_word( (uint32)vwk + VWK_CLIP_RECT, true ) )
-		return 1; // clipping is off
+	// Get clipping boundary
+	int left   = cliprect[0];
+	int top    = cliprect[1];
+	int right  = cliprect[2];
+	int bottom = cliprect[3];
 
-	/* Get clipping boundary */
-	left   = get_word( (uint32)vwk + VWK_CLIP_RECT + 2, true );
-	top    = get_word( (uint32)vwk + VWK_CLIP_RECT + 4, true );
-	right  = get_word( (uint32)vwk + VWK_CLIP_RECT + 6, true );
-	bottom = get_word( (uint32)vwk + VWK_CLIP_RECT + 8, true );
-
-	D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", left, top, right, bottom ));
-
+	bool draw = false;
 	while (1) {
-		code1 = clipEncode (*x1, *y1, left, top, right, bottom);
-		code2 = clipEncode (*x2, *y2, left, top, right, bottom);
+		int code1 = clipEncode(x1, y1, left, top, right, bottom);
+		int code2 = clipEncode(x2, y2, left, top, right, bottom);
 		if (CLIP_ACCEPT(code1, code2)) {
-			draw = 1;
+			draw = true;
 			break;
 		} else if (CLIP_REJECT(code1, code2)) {
 			break;
 		} else {
-			if(CLIP_INSIDE (code1)) {
-				int16* swapPtr;
-				swapPtr = x2; x2 = x1; x1 = swapPtr;
-				swapPtr = y2; y2 = y1; y1 = swapPtr;
+			if (CLIP_INSIDE(code1)) {
+				int swaptmp = x2; x2 = x1; x1 = swaptmp;
+				swaptmp = y2; y2 = y1; y1 = swaptmp;
 				swaptmp = code2; code2 = code1; code1 = swaptmp;
 			}
-			if (*x2 != *x1) {
-				m = (*y2 - *y1) / (float)(*x2 - *x1);
-			} else {
-				m = 1.0f;
+			float m = 1.0f;
+			if (x2 != x1) {
+				m = (y2 - y1) / (float)(x2 - x1);
 			}
 			if (code1 & CLIP_LEFT_EDGE) {
-				*y1 += (int16)((left - *x1) * m);
-				*x1 = left;
+				y1 += (int)((left - x1) * m);
+				x1 = left;
 			} else if (code1 & CLIP_RIGHT_EDGE) {
-				*y1 += (int16)((right - *x1) * m);
-				*x1 = right;
+				y1 += (int)((right - x1) * m);
+				x1 = right;
 			} else if (code1 & CLIP_BOTTOM_EDGE) {
-				if (*x2 != *x1) {
-					*x1 += (int16)((bottom - *y1) / m);
+				if (x2 != x1) {
+					x1 += (int)((bottom - y1) / m);
 				}
-				*y1 = bottom;
+				y1 = bottom;
 			} else if (code1 & CLIP_TOP_EDGE) {
-				if (*x2 != *x1) {
-					*x1 += (int16)((top - *y1) / m);
+				if (x2 != x1) {
+					x1 += (int)((top - y1) / m);
 				}
-				*y1 = top;
+				y1 = top;
 			}
 		}
 	}
 
-	D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineEND", *x1, *y1, *x2, *y2 ));
+	D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineEND", x1, y1, x2, y2));
 
 	return draw;
 }
 
 
-uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
-							uint16 pattern, uint32 fgColor, uint32 bgColor, uint32 logOp )
+// Don't forget rotation of pattern!
+int FVDIDriver::drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
+                               uint32 fgColor, uint32 bgColor, int logOp, bool last_pixel,
+                               int cliprect[], int minmax[])
 {
-	int16 sx1 = (int16)x1;
-	int16 sy1 = (int16)y1;
-	int16 sx2 = (int16)x2;
-	int16 sy2 = (int16)y2; // FIXME!!!
+	if (clipLine(x1, y1, x2, y2, cliprect)) {	// Do not draw the line when it is out
+		hostScreen.drawLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp, last_pixel);
+		if (x1 < x2) {
+			if (x1 < minmax[0])
+				minmax[0] = x1;
+			if (x2 > minmax[2])
+				minmax[2] = x2;
+		} else {
+			if (x2 < minmax[0])
+				minmax[0] = x2;
+			if (x1 > minmax[2])
+				minmax[2] = x1;
+		}
+		if (y1 < y2) {
+			if (y1 < minmax[1])
+				minmax[1] = y1;
+			if (y2 > minmax[3])
+				minmax[3] = y2;
+		} else {
+			if (y2 < minmax[1])
+				minmax[1] = y2;
+			if (y1 > minmax[3])
+				minmax[3] = y1;
+		}
+	}
+	return 1;
+}
 
-	D(bug("fVDI: %s %x %d,%d:%d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "drawLine", logOp, x1, y1, x2, y2, pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
 
-	if ( !clipLine( vwk, &sx1, &sy1, &sx2, &sy2 ) ) // do not draw the line when it is out
+// Don't forget rotation of pattern!
+int FVDIDriver::drawTableLine(int16 table[], int length, uint16 pattern,
+                              uint32 fgColor, uint32 bgColor, int logOp,
+                              int cliprect[], int minmax[])
+{
+	int x1 = (int16)get_word((uint32)table++, true);
+	int y1 = (int16)get_word((uint32)table++, true);
+	for(--length; length > 0; length--) {
+		int x2 = (int16)get_word((uint32)table++, true);
+		int y2 = (int16)get_word((uint32)table++, true);
+
+		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
+		               logOp, length == 1, cliprect, minmax);
+		x1 = x2;
+		y1 = y2;
+	}
+
+	return 1;
+}
+
+
+// Don't forget rotation of pattern!
+int FVDIDriver::drawMoveLine(int16 table[], int length, uint16 index[], int moves, uint16 pattern,
+                             uint32 fgColor, uint32 bgColor, int logOp,
+                             int cliprect[], int minmax[])
+{
+	int x1 = (int16)get_word((uint32)table++, true);
+	int y1 = (int16)get_word((uint32)table++, true);
+	moves--;
+	if ((int16)get_word((uint32)&index[moves], true) == -4)
+		moves--;
+	if ((int16)get_word((uint32)&index[moves], true) == -2)
+		moves--;
+	int movepnt = -1;
+	if (moves >= 0)
+		movepnt = ((int16)get_word((uint32)&index[moves], true) + 4) / 2;
+	for(int n = 1; n < length; n++) {
+		int x2 = (int16)get_word((uint32)table++, true);
+		int y2 = (int16)get_word((uint32)table++, true);
+		if (n == movepnt) {
+			if (--moves >= 0)
+				movepnt = ((int16)get_word((uint32)&index[moves], true) + 4) / 2;
+			else
+				movepnt = -1;		/* Never again equal to n */
+			x1 = x2;
+			y1 = y2;
+			continue;
+		}
+
+		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
+		               logOp, length == 1, cliprect, minmax);
+
+		x1 = x2;
+		y1 = y2;
+	}
+
+	return 1;
+}
+
+
+int FVDIDriver::drawLine(uint32 vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 y2_,
+                         uint16 pattern, int32 colors, int logOp)
+{
+	uint32 fgColor = hostScreen.getPaletteColor((int16)(colors & 0xffff));
+	uint32 bgColor = hostScreen.getPaletteColor((int16)(colors >> 16));
+
+	int16* table = 0;
+	uint16* index = 0;
+	int length = 0;
+	int moves = 0;
+
+	int x1 = (int16)x1_;
+	int y1 = (int16)y1_;
+	int x2 = (int16)x2_;
+	int y2 = (int16)y2_;
+
+	if (vwk & 1) {
+		if ((unsigned)(y1 & 0xffff) > 1)
+			return -1;		/* Don't know about this kind of table operation */
+		table = (int16*)x1_;
+		length = (y1_ >> 16) & 0xffff;
+		if ((y1_ & 0xffff) == 1) {
+			index = (uint16*)y2_;
+			moves = x2_ & 0xffff;
+		}
+		vwk -= 1;
+		x1 = (int16)get_word((uint32)&table[0], true);
+		y1 = (int16)get_word((uint32)&table[1], true);
+		x2 = (int16)get_word((uint32)&table[2], true);
+		y2 = (int16)get_word((uint32)&table[3], true);
+	}
+
+	int cliparray[4];
+	int* cliprect = 0;
+	if (get_word(vwk + VWK_CLIP_RECT, true)) {	// Clipping is not off
+		cliprect = cliparray;
+		cliprect[0] = (int16)get_word(vwk + VWK_CLIP_RECT + 2, true);
+		cliprect[1] = (int16)get_word(vwk + VWK_CLIP_RECT + 4, true);
+		cliprect[2] = (int16)get_word(vwk + VWK_CLIP_RECT + 6, true);
+		cliprect[3] = (int16)get_word(vwk + VWK_CLIP_RECT + 8, true);
+		D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", cliprect[0], cliprect[1],
+		       cliprect[2], cliptrect[3]));
+	}
+
+	int minmax[4] = {1000000, 1000000, -1000000, -1000000};
+
+#if TEST_STRAIGHT	// Not yet working
+	int eq_coord = (x1 == x2) + 2 * (y1 == y2);
+#endif
+
+	if (table) {
+		if (moves)
+			drawMoveLine(table, length, index, moves, pattern, fgColor, bgColor,
+			             logOp, cliprect, minmax);
+		else {
+#if TEST_STRAIGHT	// Not yet working
+			if (eq_coord && ((pattern & 0xffff) == 0xffff) && (vwk->mode < 3)) {
+				table += 4;
+				for(--length; length > 0; length--) {
+					if (eq_coord & 1) {
+						if (y1 < y2)
+							vertical(x1, y1, 1, y2 - y1 + 1);
+						else
+							vertical(x2, y2, 1, y1 - y2 + 1);
+					} else if (eq_coord & 2) {
+						if (x1 < x2)
+							horizontal(x1, y1, x2 - x1 + 1, 1);
+						else
+							horizontal(x2, y2, x1 - x2 + 1, 1);
+					} else {
+						length++;
+						table -= 4;
+						break;
+					}
+					x1 = x2;
+					y1 = y2;
+					x2 = (int16)get_word((uint32)table++, true);
+					y2 = (int16)get_word(uint32)table++, true);
+					eq_coord = (x1 == x2) + 2 * (y1 == y2);	
+				}
+			}
+#endif
+			switch (length) {
+			case 0:
+				break;
+			case 1:
+				drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
+				               logOp, true, cliprect, minmax);
+				break;
+			default:
+				drawTableLine(table, length, pattern, fgColor, bgColor,
+				              logOp, cliprect, minmax);
+ 				break;
+			}
+ 		}
+#if TEST_STRAIGHT	// Not yet working
+	} else if (eq_coord && ((pattern & 0xffff) == 0xffff)) {
+		if (eq_coord & 1) {
+			if (y1 < y2)
+				vertical(x1, y1, 1, y2 - y1 + 1);
+			else
+				vertical(x2, y2, 1, y1 - y2 + 1);
+		} else {
+			if (x1 < x2)
+				horizontal(x1, y1, x2 - x1 + 1, 1);
+			else
+				horizontal(x2, y2, x1 - x2 + 1, 1);
+		}
+#endif
+	} else
+		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
+		               logOp, true, cliprect, minmax);
+
+	if (minmax[0] != 1000000) {
+		D2(bug("fVDI: %s %d,%d:%d,%d", "drawLineUp",
+		       minmax[0], minmax[1], minmax[2], minmax[3]));
+		hostScreen.update(minmax[0], minmax[1],
+		                  minmax[2] - minmax[0] + 1, minmax[3] - minmax[1] + 1, true);
+	} else {
+		D2(bug("fVDI: drawLineUp nothing to redraw"));
+	}
+
+	return 1;
+}
+
+
+// This is supposed to be a fast 16x16/16 with 32 bit intermediate result
+#define SMUL_DIV(x,y,z)	((short)(((x)*(long)(y))/(z)))
+// Some other possible variants are
+//#define SMUL_DIV(x,y,z)	((long)(y - y1) * (x2 - x1) / (y2 - y1))
+//#define SMUL_DIV(x,y,z)	((short)(((short)(x)*(long)((short)(y)))/(short)(z)))
+
+int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr, int moves,
+                         uint32 pattern_addr, int32 colors)
+{
+        if (vwk & 1)
+		return -1;      // Don't know about any special fills
+
+	uint32 fgColor = hostScreen.getPaletteColor((int16)(colors & 0xffff));
+	uint32 bgColor = hostScreen.getPaletteColor((int16)(colors >> 16));
+
+	// Allocate arrays for data
+	if (!AllocPoints(n) || !AllocIndices(moves) || !AllocCrossings(200))
+		return -1;
+
+	uint16 pattern[16];
+	for(int i = 0; i < 16; ++i)
+		pattern[i] = get_word(pattern_addr + i * 2, true);
+
+	int cliparray[4];
+	int* cliprect = 0;
+	if (get_word(vwk + VWK_CLIP_RECT, true)) {	// Clipping is not off
+		cliprect = cliparray;
+		cliprect[0] = (int16)get_word(vwk + VWK_CLIP_RECT + 2, true);
+		cliprect[1] = (int16)get_word(vwk + VWK_CLIP_RECT + 4, true);
+		cliprect[2] = (int16)get_word(vwk + VWK_CLIP_RECT + 6, true);
+		cliprect[3] = (int16)get_word(vwk + VWK_CLIP_RECT + 8, true);
+		D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", cliprect[0], cliprect[1],
+		       cliprect[2], cliptrect[3]));
+	}
+
+	int logOp = (int16)get_word(vwk + VWK_MODE, true); // Virtual *vwk->mode // fill logOp;
+
+	Points p(alloc_point);
+	int16* index = alloc_index;
+	int16* crossing = alloc_crossing;
+
+	for(int i = 0; i < n; ++i) {
+		p[i][0] = (int16)get_word(points_addr + i * 4, true);
+		p[i][1] = (int16)get_word(points_addr + i * 4 + 2, true);
+	}
+	bool indices = moves;
+	for(int i = 0; i < moves; ++i)
+		index[i] = (int16)get_word(index_addr + i * 2, true);
+
+
+	if (!n)
 		return 1;
 
-	fgColor = hostScreen.getPaletteColor( fgColor );
-	bgColor = hostScreen.getPaletteColor( bgColor );
+	if (!hostScreen.renderBegin())
+		return 1;
 
-	hostScreen.drawLine( sx1, sy1, sx2, sy2, pattern, fgColor, bgColor, logOp );
-
-	int32 dx, dy, lx, ly;
-	if ( sx1 >= sx2 ) {
-		lx = sx2;
-		dx = sx1 - sx2 + 1;
+	if (!indices) {
+		if ((p[0][0] == p[n - 1][0]) && (p[0][1] == p[n - 1][1]))
+			n--;
 	} else {
-		lx = sx1;
-		dx = sx2 - sx1 + 1;
+		moves--;
+		if (index[moves] == -4)
+			moves--;
+		if (index[moves] == -2)
+			moves--;
 	}
-	if ( sy1 >= sy2 ) {
-		ly = sy2;
-		dy = sy1 - sy2 + 1;
-	} else {
-		ly = sy1;
-		dy = sy2 - sy1 + 1;
+		
+	int miny = p[0][1];
+	int maxy = miny;
+	for(int i = 1; i < n; ++i) {
+		int16 y = p[i][1];
+		if (y < miny) {
+			miny = y;
+		}
+		if (y > maxy) {
+			maxy = y;
+		}
+	}
+	if (cliprect) {
+		if (miny < cliprect[1])
+			miny = cliprect[1];
+		if (maxy > cliprect[3])
+			maxy = cliprect[3];
 	}
 
-	D2(bug("fVDI: %s %d,%d:%d,%d", "drawLineUp", lx, ly, dx, dy ));
-	hostScreen.update( lx, ly, dx, dy, true );
+	int minx = 1000000;
+	int maxx = -1000000;
+
+	for(int16 y = miny; y <= maxy; ++y) {
+		int ints = 0;
+		int16 x1 = 0;	// Make the compiler happy with some initializations
+		int16 y1 = 0;
+		int16 x2 = 0;
+		int16 y2 = 0;
+		int move_n = 0;
+		int movepnt = 0;
+		if (indices) {
+			move_n = moves;
+			movepnt = (index[move_n] + 4) / 2;
+			x2 = p[0][0];
+			y2 = p[0][1];
+		} else {
+			x1 = p[n - 1][0];
+			y1 = p[n - 1][1];
+		}
+
+		for(int i = indices; i < n; ++i) {
+			if (AllocCrossings(ints + 1))
+				crossing = alloc_crossing;
+			else
+				break;		// At least something will get drawn
+
+			if (indices) {
+				x1 = x2;
+				y1 = y2;
+			}
+			x2 = p[i][0];
+			y2 = p[i][1];
+			if (indices) {
+				if (i == movepnt) {
+					if (--move_n >= 0)
+						movepnt = (index[move_n] + 4) / 2;
+					else
+						movepnt = -1;		// Never again equal to n
+					continue;
+				}
+			}
+
+			if (y1 < y2) {
+				if ((y >= y1) && (y < y2)) {
+					crossing[ints++] = SMUL_DIV((y - y1), (x2 - x1), (y2 - y1)) + x1;
+				}
+			} else if (y1 > y2) {
+				if ((y >= y2) && (y < y1)) {
+					crossing[ints++] = SMUL_DIV((y - y2), (x1 - x2), (y1 - y2)) + x2;
+				}
+			}
+			if (!indices) {
+				x1 = x2;
+				y1 = y2;
+			}
+		}
+		
+		for(int i = 0; i < ints - 1; ++i) {
+			for(int j = i + 1; j < ints; ++j) {
+				if (crossing[i] > crossing[j]) {
+					int16 tmp = crossing[i];
+					crossing[i] = crossing[j];
+					crossing[j] = tmp;
+				}
+			}
+		}
+
+		x1 = cliprect[0];
+		x2 = cliprect[2];
+		for(int i = 0; i < ints - 1; i += 2) {
+			y1 = crossing[i];	// Really x-values, but...
+			y2 = crossing[i + 1];
+			if (y1 < x1)
+				y1 = x1;
+			if (y2 > x2)
+				y2 = x2;
+			if (y1 <= y2) {
+				hostScreen.fillArea(y1, y, y2 - y1 + 1, 1, pattern,
+				                    fgColor, bgColor, logOp);
+				if (y1 < minx)
+					minx = y1;
+				if (y2 > maxx)
+					maxx = y2;
+			}
+		}
+	}
+
+	hostScreen.renderEnd();
+	if (minx != 1000000)
+		hostScreen.update(minx, miny, maxx - minx + 1, maxy - miny + 1, true);
 
 	return 1;
 }
@@ -1370,6 +1776,9 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.24  2001/11/26 16:07:57  standa
+ * Olivier Landemarre found bug fixed.
+ *
  * Revision 1.23  2001/11/19 01:39:10  standa
  * The first bitplane mode version. The blit and expand M->M needs to be
  * implemented. There is some pixel shift in blitting that I can't find.

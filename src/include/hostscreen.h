@@ -38,7 +38,7 @@ class HostScreen {
 	void   gfxVLineColor( int16 x, int16 y1, int16 y2,
 						  uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 	void   gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
-						 uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	                     uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, bool last_pixel = true );
 	void   gfxBoxColorPattern( int16 x1, int16 y1, int16 x2, int16 y2,
                                uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 
@@ -78,7 +78,7 @@ class HostScreen {
 	void   putPixel( int16 x, int16 y, uint32 color );
 	void   putPixel( int16 x, int16 y, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 	void   drawLine( int16 x1, int16 y1, int16 x2, int16 y2,
-					 uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	                 uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, bool last_pixel = true);
 	// transparent background
 	void   fillArea( int16 x1, int16 y1, int16 x2, int16 y2, uint16 *pattern, uint32 color );
 	// VDI required function to fill areas
@@ -259,9 +259,9 @@ inline void HostScreen::putPixel( int16 x, int16 y, uint32 color ) {
 	gfxFastPixelColorNolock( x, y, color );
 }
 
-inline void HostScreen::drawLine( int16 x1, int16 y1, int16 x2, int16 y2, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
+inline void HostScreen::drawLine( int16 x1, int16 y1, int16 x2, int16 y2, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, bool last_pixel = true )
 {
-	gfxLineColor( x1, y1, x2, y2, pattern, fgColor, bgColor, logOp ); // SDL_gfxPrimitives
+	gfxLineColor( x1, y1, x2, y2, pattern, fgColor, bgColor, logOp, last_pixel ); // SDL_gfxPrimitives
 }
 
 
@@ -347,6 +347,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.21  2001/11/21 17:26:26  standa
+ * The BIGENDIAN bitplaneToChunky corrected.
+ *
  * Revision 1.20  2001/11/19 01:37:35  standa
  * PaletteInversIndex search. Bugfix in fillArea in 8bit depth.
  *

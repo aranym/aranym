@@ -403,34 +403,35 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 /* Originally from pygame, http://pygame.seul.org			 */
 
 void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
-							   uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
+                               uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp,
+                               bool last_pixel )
 {
 	int16 pixx, pixy;
-	int16 x,y;
-	int16 dx,dy;
-	int16 sx,sy;
+	int16 x, y;
+	int16 dx, dy;
+	int16 sx, sy;
 	int16 swaptmp;
 	uint8 *pixel;
 	uint8 ppos;
 
 	/* Test for special cases of straight lines or single point */
-	if (x1==x2) {
-		if (y1<y2) {
-			gfxVLineColor(x1, y1, y2, pattern, fgColor, bgColor, logOp);
+	if (x1 == x2) {
+		if (y1 < y2) {
+			gfxVLineColor(x1, y1, y2 - !last_pixel, pattern, fgColor, bgColor, logOp);
 			return;
-		} else if (y1>y2) {
-			gfxVLineColor(x1, y2, y1, pattern, fgColor, bgColor, logOp);
+		} else if (y1 > y2) {
+			gfxVLineColor(x1, y2 + !last_pixel, y1, pattern, fgColor, bgColor, logOp);
 			return;
-		} else {
+		} else if (last_pixel) {
 			putPixel( x1, y1, pattern & 0x8000, fgColor, bgColor, logOp );
 		}
 	}
-	if (y1==y2) {
-		if (x1<x2) {
-			gfxHLineColor(x1, x2, y1, pattern, fgColor, bgColor, logOp);
+	if (y1 == y2) {
+		if (x1 < x2) {
+			gfxHLineColor(x1, x2 - !last_pixel, y1, pattern, fgColor, bgColor, logOp);
 			return;
-		} else if (x1>x2) {
-			gfxHLineColor(x2, x1, y1, pattern, fgColor, bgColor, logOp);
+		} else if (x1 > x2) {
+			gfxHLineColor(x2 + !last_pixel, x1, y1, pattern, fgColor, bgColor, logOp);
 			return;
 		}
 	}
@@ -460,8 +461,8 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 	//	D2(bug("ln pix pixx, pixy: %d,%d : %d,%d : %x, %d", sx, sy, dx, dy, pixx, pixy));
 
 	/* Draw */
-	x=0;
-	y=0;
+	x = !last_pixel;	// 0 if last pixel should be drawn, else 1
+	y = 0;
 	switch(surf->format->BytesPerPixel) {
 		case 1:
 			switch (logOp) {
@@ -899,6 +900,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.21  2001/11/21 13:29:51  milan
+ * cleanning & portability
+ *
  * Revision 1.20  2001/11/19 01:37:35  standa
  * PaletteInversIndex search. Bugfix in fillArea in 8bit depth.
  *

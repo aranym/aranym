@@ -1,3 +1,11 @@
+2001/11/30 - Johan Klockars <rand@cd.chalmers.se> && STanda
+- fVDI: improved and made fit into fVDI CVS repository directory structure.
+  General speedup of line and polygon drawing. 
+  New copy of m68k part sources. Since now you should use the aranym.sys.bz2
+  m68k binary along with current aranym CVS sources.
+  The old m68k part source will be removed later.
+
+
 2001/11/28 - joy
 - new keyboard conversion code: now based on pure scancodes. Clocky for Aranym
   now distributed with English PC101 keyboard. With Clocky loaded you have real
