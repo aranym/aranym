@@ -23,7 +23,6 @@ void DSP::init(void)
 	int i;
 
 	memset(ram, 0,sizeof(ram));
-	memset(periph, 0,sizeof(periph));
 
 	/* Initialize Y:rom[0x0100-0x01ff] with a sin table */
 	{
@@ -42,54 +41,27 @@ void DSP::init(void)
 		}
 	}
 
-	/* FIXME: Initialize X:rom[0x0100-0x017f] with a mu-law table */
+	/* Initialize X:rom[0x0100-0x017f] with a mu-law table */
 	{
-/*		int j;*/
-			
-		for (i=0;i<128;i++) {
-			rom[SPACE_X][0x100+i]=0;
-		}
-/*
-		for (i=0;i<16;i++) {
-			rom[SPACE_X][0x100+i]=0x7c00+((0x7d-i*4)<<16);
-		}
-		for (i=0;i<16;i++) {
-			rom[SPACE_X][0x110+i]=0x7c00+((0x3e-i*2)<<16);
-		}
-		for (i=0;i<16;i++) {
-			rom[SPACE_X][0x120+i]=0xfc00+((0x1e-i)<<16);
-		}
-		for (i=0;i<16;i++) {
-			if (i & 1) {
-				j = 0xbc00;
-			} else {
-				j = 0x3c00;
-			}
-			rom[SPACE_X][0x130+i]=j;
-		}
-		for (i=0;i<16;i++) {
-			switch(i & 3) {
-				case 0:
-					j=0x5c00;
-					break;
-				case 1:
-					j=0x1c00;
-					break;
-				case 2:
-					j=0xdc00;
-					break;
-				case 3:
-					j=0x9c00;
-					break;
-			}
-			j += (7-(i>>2))<<16;
-			rom[SPACE_X][0x140+i]=j;
-		}
+		const uint16 mulaw_base[8]={
+			0x7d7c, 0x3e7c, 0x1efc, 0x0f3c, 0x075c, 0x036c, 0x0174, 0x0078
+		};
 
-		for (i=0;i<128;i++) {
-			D(bug("Dsp: 0x%02x: 0x%06x",i,rom[SPACE_X][0x100+i]));
+		uint32 value, offset, position;
+		int j;
+
+		position = 0x0100;
+		offset = 0x040000;
+		for(i=0;i<8;i++) {
+			value = mulaw_base[i]<<8;
+
+			for (j=0;j<16;j++) {
+				rom[SPACE_X][position++]=value;
+				value -= offset;
+			}
+
+			offset >>= 1;
 		}
-*/
 	}
 
 	/* Initialize X:rom[0x0180-0x01ff] with a a-law table */
@@ -131,6 +103,7 @@ void DSP::reset(void)
 {
 	int i;
 
+	memset(periph, 0,sizeof(periph));
 	memset(stack, 0,sizeof(stack));
 	memset(registers, 0,sizeof(registers));
 
@@ -311,5 +284,7 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 }
 
 /*
+	2002-07-22:PM	FIX:mu-law generator added, periph init also moved to
+						reset function
 	2002-07-19:PM	FIX:stack and registers init moved to reset function
 */
