@@ -80,37 +80,6 @@ SDL_TimerID my_timer_id;
 
 extern long maxInnerCounter;	// hack to edit newcpu.cpp's counter refresh
 
-static int keyboardTable[0x80] = {
-/* 0-7 */ 0, SDLK_ESCAPE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5,
-		SDLK_6,
-/* 8-f */ SDLK_7, SDLK_8, SDLK_9, SDLK_0, SDLK_EQUALS, SDLK_QUOTE,
-		SDLK_BACKSPACE, SDLK_TAB,
-/*10-17*/ SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u,
-		SDLK_i,
-/*18-1f*/ SDLK_o, SDLK_p, SDLK_LEFTPAREN, SDLK_RIGHTPAREN, SDLK_RETURN,
-		SDLK_LCTRL, SDLK_a, SDLK_s,
-/*20-27*/ SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k, SDLK_l,
-		SDLK_SEMICOLON,
-/*28-2f*/ SDLK_QUOTE, SDLK_HASH, SDLK_LSHIFT, SDLK_BACKQUOTE, SDLK_z,
-		SDLK_x, SDLK_c, SDLK_v,
-/*30-37*/ SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH,
-		SDLK_RSHIFT, 0,
-/*38-3f*/ SDLK_LALT, SDLK_SPACE, SDLK_CAPSLOCK, SDLK_F1, SDLK_F2,
-		SDLK_F3, SDLK_F4, SDLK_F5,
-/*40-47*/ SDLK_F6, SDLK_F7, SDLK_F8, SDLK_F9, SDLK_F10, 0, 0,
-		SDLK_HOME,
-/*48-4f*/ SDLK_UP, 0, SDLK_KP_MINUS, SDLK_LEFT, 0, SDLK_RIGHT,
-		SDLK_KP_PLUS, 0,
-/*50-57*/ SDLK_DOWN, 0, SDLK_INSERT, SDLK_DELETE, 0, 0, 0, 0,
-/*58-5f*/ 0, 0, 0, 0, 0, 0, 0, 0,
-	/*60-67*/ SDLK_LESS, SDLK_F12, SDLK_F11, 0 /* NumLock */ ,
-		SDLK_KP_MINUS, SDLK_KP_DIVIDE, SDLK_KP_MULTIPLY, SDLK_KP7,
-/*68-6f*/ SDLK_KP8, SDLK_KP9, SDLK_KP4, SDLK_KP5, SDLK_KP6, SDLK_KP1,
-		SDLK_KP2, SDLK_KP3,
-/*70-77*/ SDLK_KP0, SDLK_KP_PERIOD, SDLK_KP_ENTER, 0, 0, 0, 0, 0,
-/*78-7f*/ 0, 0, 0, 0, 0, 0, 0, 0
-};
-
 static bool grabbedMouse = false;
 static bool hiddenMouse = false;
 
@@ -142,67 +111,6 @@ bool grabMouse(bool grab)
 	return (current == SDL_GRAB_ON);
 }
 
-
-//  /* Print modifier info */
-//  void PrintModifiers( SDLMod mod ){
-//  printf( "Modifers: " );
-
-//  /* If there are none then say so and return */
-//  if( mod == KMOD_NONE ){
-//      printf( "None\n" );
-//      return;
-//  }
-
-//  /* Check for the presence of each SDLMod value */
-//  /* This looks messy, but there really isn't    */
-//  /* a clearer way.                              */
-//  if( mod & KMOD_NUM ) printf( "NUMLOCK " );
-//  if( mod & KMOD_CAPS ) printf( "CAPSLOCK " );
-//  if( mod & KMOD_LCTRL ) printf( "LCTRL " );
-//  if( mod & KMOD_RCTRL ) printf( "RCTRL " );
-//  if( mod & KMOD_RSHIFT ) printf( "RSHIFT " );
-//  if( mod & KMOD_LSHIFT ) printf( "LSHIFT " );
-//  if( mod & KMOD_RALT ) printf( "RALT " );
-//  if( mod & KMOD_LALT ) printf( "LALT " );
-//  if( mod & KMOD_CTRL ) printf( "CTRL " );
-//  if( mod & KMOD_SHIFT ) printf( "SHIFT " );
-//  if( mod & KMOD_ALT ) printf( "ALT " );
-//  printf( "\n" );
-//  }
-
-//  /* Print all information about a key event */
-//  void PrintKeyInfo( SDL_KeyboardEvent *key ){
-//  /* Is it a release or a press? */
-//  if( key->type == SDL_KEYUP )
-//      printf( "Release:- " );
-//  else
-//      printf( "Press:- " );
-
-//  /* Print the hardware scancode first */
-//  printf( "Scancode: 0x%02X", key->keysym.scancode );
-//  /* Print the name of the key */
-//  printf( ", Name: %s", SDL_GetKeyName( key->keysym.sym ) );
-//  printf( ", Sym: %d", key->keysym.sym );
-//  /* We want to print the unicode info, but we need to make */
-//  /* sure its a press event first (remember, release events */
-//  /* don't have unicode info                                */
-//  if( key->type == SDL_KEYDOWN ){
-//      /* If the Unicode value is less than 0x80 then the    */
-//      /* unicode value can be used to get a printable       */
-//      /* representation of the key, using (char)unicode.    */
-//      printf(", Unicode: " );
-//      if( key->keysym.unicode < 0x80 && key->keysym.unicode > 0 ){
-//      printf( "%c (0x%04X)", (char)key->keysym.unicode,
-//          key->keysym.unicode );
-//      }
-//      else{
-//      printf( "? (0x%04X)", key->keysym.unicode );
-//      }
-//  }
-//  printf( "\n" );
-//  /* Print modifier info */
-//  PrintModifiers( key->keysym.mod );
-//  }
 
 void grabTheMouse()
 {
@@ -236,12 +144,113 @@ void releaseTheMouse()
 	}
 }
 
-static int but = 0;
+#if ASCIICODE_BASED_KEYBOARD_TRANSLATION
+static int keyboardTable[0x80] = {
+/* 0-7 */ 0, SDLK_ESCAPE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5,
+		SDLK_6,
+/* 8-f */ SDLK_7, SDLK_8, SDLK_9, SDLK_0, SDLK_EQUALS, SDLK_QUOTE,
+		SDLK_BACKSPACE, SDLK_TAB,
+/*10-17*/ SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u,
+		SDLK_i,
+/*18-1f*/ SDLK_o, SDLK_p, SDLK_LEFTPAREN, SDLK_RIGHTPAREN, SDLK_RETURN,
+		SDLK_LCTRL, SDLK_a, SDLK_s,
+/*20-27*/ SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k, SDLK_l,
+		SDLK_SEMICOLON,
+/*28-2f*/ SDLK_QUOTE, SDLK_HASH, SDLK_LSHIFT, SDLK_BACKQUOTE, SDLK_z,
+		SDLK_x, SDLK_c, SDLK_v,
+/*30-37*/ SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH,
+		SDLK_RSHIFT, 0,
+/*38-3f*/ SDLK_LALT, SDLK_SPACE, SDLK_CAPSLOCK, SDLK_F1, SDLK_F2,
+		SDLK_F3, SDLK_F4, SDLK_F5,
+/*40-47*/ SDLK_F6, SDLK_F7, SDLK_F8, SDLK_F9, SDLK_F10, 0, 0,
+		SDLK_HOME,
+/*48-4f*/ SDLK_UP, 0, SDLK_KP_MINUS, SDLK_LEFT, 0, SDLK_RIGHT,
+		SDLK_KP_PLUS, 0,
+/*50-57*/ SDLK_DOWN, 0, SDLK_INSERT, SDLK_DELETE, 0, 0, 0, 0,
+/*58-5f*/ 0, 0, 0, 0, 0, 0, 0, 0,
+	/*60-67*/ SDLK_LESS, SDLK_F12, SDLK_F11, 0 /* NumLock */ ,
+		SDLK_KP_MINUS, SDLK_KP_DIVIDE, SDLK_KP_MULTIPLY, SDLK_KP7,
+/*68-6f*/ SDLK_KP8, SDLK_KP9, SDLK_KP4, SDLK_KP5, SDLK_KP6, SDLK_KP1,
+		SDLK_KP2, SDLK_KP3,
+/*70-77*/ SDLK_KP0, SDLK_KP_PERIOD, SDLK_KP_ENTER, 0, 0, 0, 0, 0,
+/*78-7f*/ 0, 0, 0, 0, 0, 0, 0, 0
+};
 
+int scancodePCtoAtari(int sym)
+{
+	// map right Control and Alternate keys to the left ones
+	if (sym == SDLK_RCTRL)
+		sym = SDLK_LCTRL;
+	if (sym == SDLK_RALT)
+		sym = SDLK_LALT;
+	for (int i = 0; i < 0x73; i++) {
+		if (keyboardTable[i] == sym) {
+			return i;
+		}
+	}
+
+	return 0;	/* invalid scancode */
+}
+
+#else
+
+int scancodePCtoAtari(int scanPC)
+{
+	// map right Control and Alternate keys to the left ones
+	if (scanPC == 0x6d)		/* Right Control */
+		scanPC = 0x25;
+	else if (scanPC == 0x71)	/* Right Alternate */
+		scanPC = 0x40;
+
+	/*
+	 * surprisingly, PC101 is nearly identical to Atari keyboard
+	 * with just one exception (the Asterix on the Numeric Pad)
+	 * and an offset of 8. This is true from the Escape key
+	 * up to the F10 key. Wonderful!
+	 */
+	if (scanPC >= 9 /* ESC */ && scanPC <= 0x4c /* F10 */) {
+		if (scanPC == 0x3f)	/* NumPad '*' */
+			return 0x66;	/* strict layout: 0x65 */
+		return scanPC - 8;
+	}
+	switch(scanPC) {
+		case 0x4d:	return 0x63;	/* Num Lock */
+		case 0x4f:	return 0x67;	/* NumPad 7 */
+		case 0x50:	return 0x68;	/* NumPad 8 */
+		case 0x51:	return 0x69;	/* NumPad 9 */
+		case 0x52:	return 0x4a;	/* NumPad - */
+		case 0x53:	return 0x6a;	/* NumPad 4 */
+		case 0x54:	return 0x6b;	/* NumPad 5 */
+		case 0x55:	return 0x6c;	/* NumPad 6 */
+		case 0x56:	return 0x4e;	/* NumPad + */
+		case 0x57:	return 0x6d;	/* NumPad 1 */
+		case 0x58:	return 0x6e;	/* NumPad 2 */
+		case 0x59:	return 0x6f;	/* NumPad 3 */
+		case 0x5a:	return 0x70;	/* NumPad 0 */
+		case 0x5b:	return 0x71;	/* NumPad . */
+		case 0x70:	return 0x65;	/* NumPad / */	/* strict layout: 0x64 */
+
+		case 0x5f:	return 0x62;	/* F11 => Help */
+		case 0x60:	return 0x61;	/* F12 => Undo */
+		case 0x61:	return 0x47;	/* Home */
+		case 0x67:	return 0x60;	/* End => "<>" on German Atari kbd */
+		case 0x62:	return 0x48;	/* Arrow Up */
+		case 0x64:	return 0x4b;	/* Arrow Left */
+		case 0x66:	return 0x4d;	/* Arrow Right */
+		case 0x68:	return 0x50;	/* Arrow Down */
+		case 0x6a:	return 0x52;	/* Insert */
+		case 0x6b:	return 0x53;	/* Delete */
+		case 0x6c:	return 0x72;	/* NumPad Enter */
+
+		default:	return 0;		/* invalid scancode */
+	}
+}
+#endif /* ASCIICODE_BASED_KEYBOARD_TRANSLATION */
+
+static int but = 0;
 static void check_event(void)
 {
 	bool pendingQuit = false;
-	static bool wasShiftPressed = false;		// for correct emulation of PageUp/Down
 	static bool mouseOut = false;
 	static bool canGrabMouseAgain = true;
 
@@ -261,7 +270,8 @@ static void check_event(void)
 			// D(bug(PrintKeyInfo((SDL_KeyboardEvent*)&event)));
 
 			bool pressed = (type == SDL_KEYDOWN);
-			int sym = event.key.keysym.sym;
+			SDLKey sym = event.key.keysym.sym;
+			int scancode = event.key.keysym.scancode;
 			int state = SDL_GetModState();
 			bool shifted = state & KMOD_SHIFT;
 			bool controlled = state & KMOD_CTRL;
@@ -301,51 +311,51 @@ static void check_event(void)
 							send2Atari = false;
 						}
 						break;
+
+					default: break;
 				}
 			}
 
 			// map special keys to Atari range of scancodes
-			switch(sym) {
-				case SDLK_PAGEUP:
-					if (pressed) {
-						ikbd.send(0x2a);	// press and hold LShift	// WARNING - shift might have been pressed already, in such case do not release it after user releases PAGEUP
-						ikbd.send(0x48);	// press keyUp
-					}
-					else {
-						ikbd.send(0xc8);	// release keyUp
-						ikbd.send(0xaa);	// release LShift
-					}
-					send2Atari = false;
-					break;
-				
-				case SDLK_PAGEDOWN:
-					if (pressed) {
+			if (sym == SDLK_PAGEUP) {
+				if (pressed) {
+					if (! shifted)
 						ikbd.send(0x2a);	// press and hold LShift
-						ikbd.send(0x50);	// press keyDown
-					}
-					else {
-						ikbd.send(0xd0);	// release keyDown
+					ikbd.send(0x48);	// press keyUp
+				}
+				else {
+					ikbd.send(0xc8);	// release keyUp
+					if (! shifted)
 						ikbd.send(0xaa);	// release LShift
-					}
-					send2Atari = false;
-					break;
+				}
+				send2Atari = false;
 			}
-
-			// map right Control and Alternate keys to the left ones
-			if (sym == SDLK_RCTRL)
-				sym = SDLK_LCTRL;
-			if (sym == SDLK_RALT)
-				sym = SDLK_LALT;
+			else if (sym == SDLK_PAGEDOWN) {
+				if (pressed) {
+					if (! shifted)
+						ikbd.send(0x2a);	// press and hold LShift
+					ikbd.send(0x50);	// press keyDown
+				}
+				else {
+					ikbd.send(0xd0);	// release keyDown
+					if (! shifted)
+						ikbd.send(0xaa);	// release LShift
+				}
+				send2Atari = false;
+			}
 
 			// send all pressed keys to IKBD
 			if (send2Atari) {
-				for (int i = 0; i < 0x73; i++) {
-					if (keyboardTable[i] == sym) {
-						if (!pressed)
-							i |= 0x80;
-						ikbd.send(i);
-						break;
-					}
+#if ASCIICODE_BASED_KEYBOARD_TRANSLATION
+				int scanAtari = scancodePCtoAtari(sym);
+#else
+				int scanAtari = scancodePCtoAtari(scancode);
+#endif
+				D(bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = %s ($%02x)\n", scancode, scancode, scanAtari, scanAtari, SDL_GetKeyName(sym), sym));
+				if (scanAtari > 0) {
+					if (!pressed)
+						scanAtari |= 0x80;
+					ikbd.send(scanAtari);
 				}
 			}
 		}
@@ -366,11 +376,11 @@ static void check_event(void)
 					else
 						grabTheMouse();
 				}
-				else if (event.button.button == 4) {
+				else if (event.button.button == 4) {	/* mouse wheel Up */
 					ikbd.send(0x48);	// press keyUp
 					return;
 				}
-				else if (event.button.button == 5) {
+				else if (event.button.button == 5) {	/* mouse wheel Down */
 					ikbd.send(0x50);	// press keyDown
 					return;
 				}
@@ -380,11 +390,11 @@ static void check_event(void)
 					but &= ~1;
 				else if (event.button.button == SDL_BUTTON_LEFT)
 					but &= ~2;
-				else if (event.button.button == 4) {
+				else if (event.button.button == 4) {	/* mouse wheel Up */
 					ikbd.send(0xc8);	// release keyUp
 					return;
 				}
-				else if (event.button.button == 5) {
+				else if (event.button.button == 5) {	/* mouse wheel Down */
 					ikbd.send(0xd0);	// release keyDown
 					return;
 				}
@@ -413,6 +423,7 @@ static void check_event(void)
 					(yrel < 0 && aradata.getAtariMouseY() == 0))
 					mouseOut = true;
 
+				// same check but for bottom and right side of our window
 				if ((xrel > 0 && aradata.getAtariMouseX() >= (int32)hostScreen.getWidth() - 1) ||
 					(yrel > 0 && aradata.getAtariMouseY() >= (int32)hostScreen.getHeight() - 1))
 					mouseOut = true;
@@ -691,6 +702,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.43  2001/11/21 13:29:51  milan
+ * cleanning & portability
+ *
  * Revision 1.42  2001/11/20 23:29:26  milan
  * Extfs now not needed for ARAnyM's compilation
  *
