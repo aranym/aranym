@@ -1028,7 +1028,7 @@ void Dialog_CpuDlg(void)
   DialogParams.Cpu.compatible = (cpudlg[DLGCPU_PREFETCH].state & SG_SELECTED);
 }
 
-#endif 0 // /joy
+#endif
 /*-----------------------------------------------------------------------*/
 /*
   This functions sets up the actual font and then displays the main dialog.
