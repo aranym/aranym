@@ -53,7 +53,7 @@ extern bool ChoiceAlert(const char *text, const char *pos, const char *neg);	// 
 
 // Interrupt flags
 enum {
-	INTFLAG_60HZ = 1,	// 60.15Hz VBL
+	INTFLAG_200HZ = 1,	// 200Hz VBL
 	INTFLAG_1HZ = 2,	// ~1Hz interrupt
 // MJ	INTFLAG_SERIAL = 4,	// Serial driver
 // MJ	INTFLAG_ETHER = 8,	// Ethernet driver
