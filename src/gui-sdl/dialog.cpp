@@ -37,9 +37,10 @@
 #include "sdlgui.h"
 #include "host.h"
 
-#define Screen_Save		hostScreen.save_bkg
+#define Screen_Save()		{ hostScreen.lock(); hostScreen.save_bkg(); hostScreen.unlock(); }
+		
 #define Screen_SetFullUpdate()
-#define Screen_Draw		hostScreen.restore_bkg
+#define Screen_Draw()		{ hostScreen.lock(); hostScreen.restore_bkg(); hostScreen.unlock(); }
 
 static bool bQuitProgram;
 
@@ -74,7 +75,7 @@ SGOBJ maindlg[] =
   { SGBUTTON, 0, 0, 20,10, 12,1, "Keyboard" },
   { SGBUTTON, 0, 0, 20,12, 12,1, "Devices" },
   { SGRADIOBUT, 0, 0, 2,16, 10,1, "No Reset" },
-  { SGRADIOBUT, 0, 0, 2,18, 10,1, "Reset ST" },
+  { SGRADIOBUT, 0, 0, 2,18, 10,1, "Reset" },
   { SGBUTTON, 0, 0, 14,16, 8,3, "Okay" },
   { SGBUTTON, 0, 0, 25,18, 8,1, "Cancel" },
   { SGBUTTON, 0, 0, 25,16, 8,1, "Quit" },
@@ -105,8 +106,6 @@ SGOBJ aboutdlg[] =
   { SGBUTTON, 0, 0, 16,23, 8,1, "Okay" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
-
-#if 0 // joy
 
 /* The discs dialog: */
 #define DISCDLG_DISCA       4
@@ -154,6 +153,7 @@ SGOBJ discdlg[] =
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 
+#if 0 // joy
 
 /* The TOS/GEM dialog: */
 #define DLGTOSGEM_ROMNAME    3
@@ -512,7 +512,7 @@ void Dialog_CopyDetailsFromConfiguration(bool bReset)
   File_CleanFileName(ConfigureParams.TOSGEM.szTOSImageFileName);
 }
 
-
+#endif
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -521,57 +521,69 @@ void Dialog_CopyDetailsFromConfiguration(bool bReset)
 void Dialog_DiscDlg(void)
 {
   int but;
-  char tmpname[MAX_FILENAME_LENGTH];
-  char dlgnamea[40], dlgnameb[40], dlgdiscdir[40];
-  char dlgnamegdos[40], dlgnamehdimg[40];
+  char tmpname[256/*MAX_FILENAME_LENGTH*/];
+  char dlgnamea[40]="", dlgnameb[40]="", dlgdiscdir[40]="";
+  char dlgnamegdos[40]="", dlgnamehdimg[40]="";
 
   SDLGui_CenterDlg(discdlg);
 
   /* Set up dialog to actual values: */
 
   /* Disc name A: */
+/*
   if( EmulationDrives[0].bDiscInserted )
     File_ShrinkName(dlgnamea, EmulationDrives[0].szFileName, discdlg[DISCDLG_DISCA].w);
   else
     dlgnamea[0] = 0;
+*/
   discdlg[DISCDLG_DISCA].txt = dlgnamea;
 
   /* Disc name B: */
+/*
   if( EmulationDrives[1].bDiscInserted )
     File_ShrinkName(dlgnameb, EmulationDrives[1].szFileName, discdlg[DISCDLG_DISCB].w);
   else
     dlgnameb[0] = 0;
+*/
   discdlg[DISCDLG_DISCB].txt = dlgnameb;
 
   /* Default image directory: */
-  File_ShrinkName(dlgdiscdir, DialogParams.DiscImage.szDiscImageDirectory, discdlg[DISCDLG_IMGDIR].w);
+  // File_ShrinkName(dlgdiscdir, DialogParams.DiscImage.szDiscImageDirectory, discdlg[DISCDLG_IMGDIR].w);
   discdlg[DISCDLG_IMGDIR].txt = dlgdiscdir;
 
   /* Auto insert disc B: */
+/*
   if( DialogParams.DiscImage.bAutoInsertDiscB )
     discdlg[DISCDLG_AUTOB].state |= SG_SELECTED;
    else
+*/
     discdlg[DISCDLG_AUTOB].state &= ~SG_SELECTED;
 
   /* Boot from harddisk? */
+/*
   if( DialogParams.HardDisc.bBootFromHardDisc )
     discdlg[DISCDLG_BOOTHD].state |= SG_SELECTED;
    else
+*/
     discdlg[DISCDLG_BOOTHD].state &= ~SG_SELECTED;
 
   /* GEMDOS Hard disc directory: */
+  /*
   if( strcmp(DialogParams.HardDisc.szHardDiscDirectories[0], ConfigureParams.HardDisc.szHardDiscDirectories[0])!=0
       || GEMDOS_EMU_ON )
     File_ShrinkName(dlgnamegdos, DialogParams.HardDisc.szHardDiscDirectories[0], discdlg[DISCDLG_DISCGDOS].w);
   else
     dlgnamegdos[0] = 0;
+*/
   discdlg[DISCDLG_DISCGDOS].txt = dlgnamegdos;
 
   /* Hard disc image: */
+  /*
   if( ACSI_EMU_ON )
     File_ShrinkName(dlgnamehdimg, DialogParams.HardDisc.szHardDiscImage, discdlg[DISCDLG_DISCHDIMG].w);
   else
     dlgnamehdimg[0] = 0;
+  */
   discdlg[DISCDLG_DISCHDIMG].txt = dlgnamehdimg;
 
   /* Draw and process the dialog */
@@ -581,12 +593,16 @@ void Dialog_DiscDlg(void)
     switch(but)
     {
       case DISCDLG_BROWSEA:                       /* Choose a new disc A: */
+        /*
         if( EmulationDrives[0].bDiscInserted )
           strcpy(tmpname, EmulationDrives[0].szFileName);
          else
           strcpy(tmpname, DialogParams.DiscImage.szDiscImageDirectory);
+        */
+        strcpy(tmpname, "/home/joy/");
         if( SDLGui_FileSelect(tmpname) )
         {
+#if 0
           if( !File_DoesFileNameEndWithSlash(tmpname) && File_Exists(tmpname) )
           {
             Floppy_InsertDiscIntoDrive(0, tmpname); /* FIXME: This shouldn't be done here but in Dialog_CopyDialogParamsToConfiguration */
@@ -597,8 +613,10 @@ void Dialog_DiscDlg(void)
             Floppy_EjectDiscFromDrive(0, false); /* FIXME: This shouldn't be done here but in Dialog_CopyDialogParamsToConfiguration */
             dlgnamea[0] = 0;
           }
+#endif
         }
         break;
+#if 0
       case DISCDLG_BROWSEB:                       /* Choose a new disc B: */
         if( EmulationDrives[1].bDiscInserted )
           strcpy(tmpname, EmulationDrives[1].szFileName);
@@ -663,6 +681,7 @@ void Dialog_DiscDlg(void)
           }
         }
         break;
+#endif
       case -1:
       	bQuitProgram = true;
       	break;
@@ -671,10 +690,13 @@ void Dialog_DiscDlg(void)
   while(but!=DISCDLG_EXIT && !bQuitProgram);
 
   /* Read values from dialog */
+  /*
   DialogParams.DiscImage.bAutoInsertDiscB = (discdlg[DISCDLG_AUTOB].state & SG_SELECTED);
   DialogParams.HardDisc.bBootFromHardDisc = (discdlg[DISCDLG_BOOTHD].state & SG_SELECTED);
+  */
 }
 
+#if 0
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -1010,7 +1032,9 @@ int Dialog_MainDlg(bool *bReset, bool *bQuit)
 
   SDLGui_PrepareFont();
   SDLGui_CenterDlg(maindlg);
+  hostScreen.lock();
   SDL_ShowCursor(SDL_ENABLE);
+  hostScreen.unlock();
 
   maindlg[MAINDLG_NORESET].state |= SG_SELECTED;
   maindlg[MAINDLG_RESET].state &= ~SG_SELECTED;
@@ -1025,7 +1049,7 @@ int Dialog_MainDlg(bool *bReset, bool *bQuit)
         SDLGui_DoDialog(aboutdlg);
         break;
       case MAINDLG_DISCS:
-        //Dialog_DiscDlg();
+        Dialog_DiscDlg();
         break;
       case MAINDLG_TOSGEM:
         //Dialog_TosGemDlg();
@@ -1065,7 +1089,9 @@ int Dialog_MainDlg(bool *bReset, bool *bQuit)
   }
   while(retbut!=MAINDLG_OK && retbut!=MAINDLG_CANCEL && !bQuitProgram);
 
+  hostScreen.lock();
   SDL_ShowCursor(SDL_DISABLE);
+  hostScreen.unlock();
 
   if( maindlg[MAINDLG_RESET].state & SG_SELECTED )
     *bReset = true;
