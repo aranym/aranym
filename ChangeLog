@@ -1,3 +1,8 @@
+2005/03/24 - Patrice
+- natfeats: don't switch to supervisor mode if already in supervisor mode to
+  read cookie jar pointer.
+
+
 2005/03/21 - Patrice
 - parameters.cpp: display custom enabled NatFeats.
 

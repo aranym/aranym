@@ -34,14 +34,31 @@
 
 /*--- Functions ---*/
 
+static unsigned long *read_cookie_jar_pointer(void)
+{
+	unsigned long *cookie_jar;
+	void *old_stack=NULL;
+	int super_flag;
+
+	/* Check if already in supervisor mode */
+	super_flag = (int) Super((void *)1);
+
+	if (!super_flag) {
+		old_stack=(void *)Super(NULL);
+	}
+	cookie_jar= (unsigned long *) *_p_cookies;
+	if (!super_flag) {
+		Super(old_stack);
+	}
+
+	return (cookie_jar);
+}
+
 int cookie_present(unsigned long cookie, unsigned long *value)
 {
 	unsigned long *cookie_jar;
-	void *old_stack;
 	
-	old_stack=(void *)Super(NULL);
-	cookie_jar= (unsigned long *) *_p_cookies;
-	Super(old_stack);
+	cookie_jar = read_cookie_jar_pointer();
 
 	if (cookie_jar == NULL) {
 		return 0;
@@ -62,12 +79,9 @@ int cookie_present(unsigned long cookie, unsigned long *value)
 int cookie_add(unsigned long cookie, unsigned long value)
 {
 	unsigned long *cookie_jar;
-	void *old_stack;
 	int count;
 	
-	old_stack=(void *)Super(NULL);
-	cookie_jar= (unsigned long *) *_p_cookies;
-	Super(old_stack);
+	cookie_jar = read_cookie_jar_pointer();
 
 	if (cookie_jar == NULL) {
 		return 0;
