@@ -1,3 +1,7 @@
+2002/08/26 - patrice
+- DSP emulation can be run in its own thread.
+
+
 2002/08/26 - milan
 - sigsegv_linux.cpp: CMP8 much better
 
@@ -8,7 +12,6 @@
 
 - uae_cpu/newcpu.cpp: jump table for distributed dispatcher generated
                       corretcly on little endian platforms now
-
 
 
 2002/08/13 - joy
