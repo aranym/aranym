@@ -1138,7 +1138,9 @@ void ndebug::showHistory(unsigned int count) {
 	}
 	bug("History:");
 	while (temp != lasthist) {
+#ifndef NEED_TO_DEBUG_BADLY
 		showDisasm(history[temp]);
+#endif
 		//bug("%04x", history[temp]);
 		if (++temp == MAX_HIST) temp = 0;
 	}
@@ -1149,6 +1151,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.26  2002/09/10 18:44:52  milan
+ * ISO C++ forbids assignment of arrays
+ *
  * Revision 1.25  2002/08/01 22:21:47  joy
  * compiler warning fixed
  *
