@@ -149,9 +149,11 @@ install: $(APP) $(APP_DI) $(TAPIF) installdirs
 	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
 	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.xfs.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
 	$(INSTALL_DATA) ../../atari/hostfs/bdconfig.sys $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	$(INSTALL_DATA) ../../atari/hostfs/README $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
 	$(INSTALL_DATA) ../../atari/network/ethernet/bin/aranym.xif.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/aranym.xif.bz2
 	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/nfeth-config.bz2
 	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
+	$(INSTALL_DATA) ../../atari/network/ethernet/README $(DESTDIR)$(datadir)/$(APP)/atari/network/README
 	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
 	$(INSTALL) ../../tools/createdisk/createdisk.sh $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
 	$(INSTALL_DATA) ../../tools/createdisk/mbrdata $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
@@ -195,9 +197,11 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/aranym.xif.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/nfeth-config.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
 	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
@@ -265,9 +269,11 @@ bindist: $(APP) $(APP_DI) bindistdirs
 	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
 	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.xfs.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
 	$(INSTALL_DATA) ../../atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	$(INSTALL_DATA) ../../atari/hostfs/README tmpdist$(datadir)/$(APP)/atari/hostfs/README
 	$(INSTALL_DATA) ../../atari/network/ethernet/bin/aranym.xif.bz2 tmpdist$(datadir)/$(APP)/atari/network/aranym.xif.bz2
 	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 tmpdist$(datadir)/$(APP)/atari/network/nfeth-config.bz2
 	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
+	$(INSTALL_DATA) ../../atari/network/ethernet/README tmpdist$(datadir)/$(APP)/atari/network/README
 	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README tmpdist$(datadir)/$(APP)/createdisk/createdisk.README
 	$(INSTALL) ../../tools/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/createdisk/createdisk.sh
 	$(INSTALL_DATA) ../../tools/createdisk/mbrdata tmpdist$(datadir)/$(APP)/createdisk/mbrdata
