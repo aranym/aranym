@@ -28,7 +28,7 @@
 #include "memory.h"
 #include "readcpu.h"
 #include "newcpu.h"
-#include <SDL/SDL_timer.h>
+#include <SDL.h>
 #include "main.h"
 
 

@@ -40,7 +40,7 @@
 #include "hardware.h"
 #include "parameters.h"
 #include "newcpu.h"
-#include <SDL/SDL_timer.h>
+#include <SDL.h>
 #include <signal.h>
 
 #define DEBUG 1
@@ -229,6 +229,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.53  2001/10/29 08:15:45  milan
+ * some changes around debuggers
+ *
  * Revision 1.52  2001/10/25 12:57:59  joy
  * if segmentation fault occures then release the mouse and keyboard and display last 20 instructions before the sigsegv.
  *
