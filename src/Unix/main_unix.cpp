@@ -142,14 +142,15 @@ static void allocate_all_memory()
 # endif /* EXTENDED_SIGSEGV */
 #else
 	{
-		RAMBaseHost = (uint8 *)vm_acquire(RAMSize);
-		ROMBaseHost = (uint8 *)vm_acquire(ROMSize);
-		HWBaseHost = (uint8 *)vm_acquire(HWSize);
-		if (FastRAMSize) FastRAMBaseHost = (uint8 *)vm_acquire(FastRAMSize); else FastRAMBaseHost = RAMBaseHost + 0x1000000;
-		if (RAMBaseHost == VM_MAP_FAILED || ROMBaseHost == VM_MAP_FAILED || HWBaseHost == VM_MAP_FAILED || FastRAMBaseHost == VM_MAP_FAILED) {
+		RAMBaseHost = (uint8*)vm_acquire(RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd);
+		if (RAMBaseHost == VM_MAP_FAILED) {
 			panicbug("Not enough free memory.");
 			QuitEmulator();
 		}
+
+		ROMBaseHost = RAMBaseHost + ROMBase;
+		HWBaseHost = RAMBaseHost + HWBase;
+		FastRAMBaseHost = RAMBaseHost + FastRAMBase;
 	}
 #endif
 	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));

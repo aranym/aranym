@@ -1,3 +1,9 @@
+2004/07/18 - Xavier
+- Unix/main_unix.cpp: in direct addressing mode, memory must be allocated
+  with only one call to vm_acquire(). Otherwise memory parts may not be
+  contiguous. CPU emulation rely on this.
+
+
 2004/07/14 - milan
 - small sysdeps.h reorganisation
 
