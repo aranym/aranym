@@ -1,4 +1,12 @@
-2002/07/31 - joy
+2002/08/02 - joy
+- EmuTOS loading fixed again - it can be any (>0) size now.
+- EmuTOS loading routine display the date when the EmuTOS was built.
+- XHDI support moved to separate xhdi.[ch] file and XHDIDriver class.
+  XHReadWrite() implemented. Old DMAread EmulOp is deprecated now.
+- nearly all compile time warnings removed!
+
+
+2002/08/01 - joy
 - EmuTOS image size can be either 256 or 512 kB long
 - two serious bugs in linux sigsegv handler fixed: OR and MOV. There are
   more bugs in the ia32 emulated routine, unfortunately. JIT won't work
