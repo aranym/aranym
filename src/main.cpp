@@ -223,21 +223,24 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 #endif /* USE_TIMERS */
 
 /*
- * Load, check and patch the TOS 4.04 ROM file
+ * Load, check and patch the TOS 4.04 ROM image file
  */
 bool InitTOSROM(void)
 {
+	if (strlen(rom_path) == 0)
+		return false;
+
 	// read ROM file
-	D(bug("Reading TOS file '%s'", rom_path));
+	D(bug("Reading TOS image '%s'", rom_path));
 	FILE *f = fopen(rom_path, "rb");
 	if (f == NULL) {
-		panicbug("TOS file '%s' not found.", rom_path);
+		panicbug("TOS image '%s' not found.", rom_path);
 		return false;
 	}
 
 	RealROMSize = 512 * 1024;
 	if (fread(ROMBaseHost, 1, RealROMSize, f) != (size_t)RealROMSize) {
-		panicbug("TOS file '%s' reading error.\nMake sure the TOS image file is readable and its size is 524288 bytes (512 kB).", rom_path);
+		panicbug("TOS image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", rom_path);
 		fclose(f);
 		return false;
 	}
@@ -250,10 +253,8 @@ bool InitTOSROM(void)
 	unsigned char loadedTOS[16];
 	md5.computeSum(ROMBaseHost, RealROMSize, loadedTOS);
 	if (memcmp(loadedTOS, TOS404, 16) == 0) {
-		fprintf(stderr, "Original TOS 4.04 found\n");
-
 		// patch it for 68040 compatibility
-		D(bug("Patching TOS for 68040 compatibility.."));
+		D(bug("Patching TOS 4.04 for 68040 compatibility.."));
 		int ptr, i=0;
 		while((ptr=tosdiff[i].pointer) >= 0)
 			ROMBaseHost[ptr] += tosdiff[i++].difference;
@@ -338,28 +339,50 @@ bool InitTOSROM(void)
 }
 
 /*
+ * Load EmuTOS image file
+ */
+bool InitEmuTOS(void)
+{
+	if (strlen(emutos_path) == 0)
+		return false;
+
+	// read EmuTOS file
+	D(bug("Reading EmuTOS from '%s'", emutos_path));
+	FILE *f = fopen(emutos_path, "rb");
+	if (f == NULL) {
+		panicbug("EmuTOS image '%s' not found.", emutos_path);
+		return false;
+	}
+	RealROMSize = 512 * 1024;
+	bool bEmuOK = (fread(ROMBaseHost, 1, RealROMSize, f) == (size_t)RealROMSize);
+	fclose(f);
+	if (! bEmuOK)
+		panicbug("EmuTOS image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", rom_path);
+	return bEmuOK;
+}
+
+/*
  * Initialize the Operating System - either the EmuTOS or TOS 4.04
  */
 bool InitOS(void)
 {
-	// EmuTOS is the future. That's why I give it the precedence over the TOS ROM
-	if (strlen(emutos_path) > 0) {
-		// read EmuTOS file
-		fprintf(stderr, "Reading EmuTOS from '%s': ", emutos_path);
-		FILE *f = fopen(emutos_path, "rb");
-		if (f == NULL) {
-			panicbug("EmuTOS not found at '%s'.", emutos_path);
-			return false;
-		}
-		RealROMSize = 512 * 1024;
-		bool bEmuOK = (fread(ROMBaseHost, 1, RealROMSize, f) == (size_t)RealROMSize);
-		fclose(f);
-		fprintf(stderr, "%s\n", bEmuOK ? "OK" : "failed");
-		return bEmuOK;
+	/*
+	 * first try TOS 4.04 and if it fails give the EmuTOS a try.
+	 * Note that EmuTOS will always be available so this will be
+	 * a nice fallback.
+	 */
+	if (InitTOSROM()) {
+		printf("TOS 4.04 loading... [OK]\n");
+		return true;
 	}
-	else {
-		return InitTOSROM();
+	else if (InitEmuTOS()) {
+		printf("EmuTOS loading... [OK]\n");
+		return true;
 	}
+
+	panicbug("No operating system found. ARAnyM can not boot!");
+	printf("Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.\n");
+	return false;
 }
 
 
@@ -499,6 +522,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.75  2002/07/19 23:29:56  joy
+ * don't crash when GUI font is not loaded
+ *
  * Revision 1.74  2002/07/15 18:24:15  milan
  * extended sigsegv handler upgraded
  *
