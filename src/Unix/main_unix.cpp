@@ -172,6 +172,8 @@ int main(int argc, char **argv)
 	D(bug("Starting emulation..."));
 	Start680x0();
 
+	// returning from emulation after the NMI
+
 	QuitEmulator();
 
 	return 0;
@@ -231,6 +233,10 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.61  2002/03/15 12:22:41  milan
+ * Exception() is called only one time
+ * JIT c. uses own SEGV handler
+ *
  * Revision 1.60  2002/02/23 13:44:52  joy
  * input related code separated from main.cpp
  *
