@@ -43,6 +43,7 @@ YAMAHA yamaha;
 #define BUS_ERROR	longjmp(excep_env, 2)
 
 void renderScreen() { videl.renderScreen(); }
+void updateHostScreen() { hostScreen.update(); }
 int getFloppyStats() { return yamaha.getFloppyStat(); }
 bool isIkbdBufEmpty() { return ikbd.isBufferEmpty(); }
 void MakeMFPIRQ(int no) { mfp.IRQ(no); }
@@ -232,5 +233,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.22  2001/06/18 13:21:55  standa
+ * Several template.cpp like comments were added.
+ * HostScreen SDL encapsulation class.
+ *
  *
  */
