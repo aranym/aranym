@@ -2901,38 +2901,44 @@ extern void incrementVirtualTimer(void);
 
 static void m68k_run_1 (void)
 {
-	uae_u32 opcode;
-	for (;;) {
-//		uae_u32 opcode = GET_OPCODE;
-//		(*cpufunctbl[opcode])(opcode);
+    uae_u32 opcode;
+    for (;;) {
 #ifdef FULL_HISTORY
 #ifdef NEED_TO_DEBUG_BADLY
-		history[lasthist] = regs;
-		historyf[lasthist] =  regflags;
+	history[lasthist] = regs;
+	historyf[lasthist] =  regflags;
 #else
-		history[lasthist] = m68k_getpc();
+	history[lasthist] = m68k_getpc();
 #endif
-		if (++lasthist == MAX_HIST) lasthist = 0;
-		if (lasthist == firsthist) {
-			if (++firsthist == MAX_HIST) firsthist = 0;
-		}
-#endif
-		check_ram_boundary(regs.pcp);
-		opcode = GET_OPCODE;
-		(*cpufunctbl[opcode])(opcode);
-		if (regs.spcflags) {
-			if (do_specialties())
-				return;
-		}
-#ifndef USE_TIMERS
-		{
-			if (--innerCounter == 0) {
-				innerCounter = maxInnerCounter;
-				incrementVirtualTimer();
-			}
-		}
-#endif
+	if (++lasthist == MAX_HIST) lasthist = 0;
+	if (lasthist == firsthist) {
+	    if (++firsthist == MAX_HIST) firsthist = 0;
 	}
+#endif
+	check_ram_boundary(regs.pcp);
+	opcode = GET_OPCODE;
+
+#ifdef X86_ASSEMBLY
+        __asm__ __volatile__ ("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
+                     : : "b" (cpufunctbl[opcode]), "a" (opcode)
+                     : "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
+#else
+	(*cpufunctbl[opcode])(opcode);
+#endif
+
+	if (regs.spcflags) {
+	    if (do_specialties())
+		return;
+	}
+#ifndef USE_TIMERS
+	{
+	    if (--innerCounter == 0) {
+		innerCounter = maxInnerCounter;
+		incrementVirtualTimer();
+	    }
+	}
+#endif
+    }
 }
 
 #define m68k_run1 m68k_run_1

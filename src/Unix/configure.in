@@ -754,7 +754,7 @@ dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
   if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" ]]; then
     CPUINCLUDES="-I../uae_cpu_jit"
-    CPUSRCS="../uae_cpu_jit/basilisk_glue.cpp ../uae_cpu_jit/memory.cpp ../uae_cpu_jit/newcpu.cpp ../uae_cpu_jit/readcpu.cpp $FPUSRCS cpustbl.cpp cpudefs.cpp $CPUSRCS $JITSRCS"
+    CPUSRCS="../uae_cpu_jit/basilisk_glue.cpp ../uae_cpu_jit/newcpu.cpp ../uae_cpu_jit/readcpu.cpp $FPUSRCS cpustbl.cpp cpudefs.cpp $CPUSRCS $JITSRCS"
   else
     CPUINCLUDES="-I../uae_cpu"
     CPUSRCS="../uae_cpu/basilisk_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpustbl.cpp cpudefs.cpp $CPUSRCS"
