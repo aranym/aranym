@@ -46,6 +46,8 @@ AC_ARG_ENABLE(aranymfs,        [  --enable-aranymfs       enable aranymfs suppor
 
 AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI [default=yes]], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
 
+AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL [default=no]], [WANT_OPENGL=$enableval], [WANT_OPENGL=no])
+
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
 [  --enable-fpe=FPE        specify which fpu emulator to use [default=auto]],
@@ -1307,6 +1309,12 @@ if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
   fi
 fi
 
+dnl Add OpenGL ?
+if [[ "x$WANT_OPENGL" = "xyes" ]]; then
+        AC_DEFINE([ENABLE_OPENGL], 1, [Define if using OpenGL])
+	LIBS="$LIBS -lGL -lGLU"
+fi
+
 SDL_CFLAGS=
 SDL_LIBS=
 AM_PATH_SDL(1.2.0, )
@@ -1350,5 +1358,6 @@ echo Blitter SDL blit acceleration .......... : $WANT_BLITSDLBLIT
 echo Support for aranymfs ................... : $WANT_ARANYMFS
 echo Support for ECE ........................ : $WANT_ETHERNET
 echo GUI .................................... : $WANT_SDLGUI
+echo OpenGL ................................. : $WANT_OPENGL
 echo
 echo "Configuration done. Now type \"make\" (or \"gmake\")."

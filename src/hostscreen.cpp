@@ -14,6 +14,55 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifdef ENABLE_OPENGL
+#include <SDL_opengl.h>
+#include <GL/glu.h>
+#endif
+
+HostScreen::HostScreen(void) {
+	// setting up the static palette settings
+	palette.sdl.ncolors = 256;
+	palette.sdl.colors = palette.standard;
+
+	// the counter init
+	snapCounter = 0;
+
+	screenLock = SDL_CreateMutex();
+
+	backgroundSurf = NULL;
+	GUIopened = false;
+
+	mainSurface=NULL;
+
+	// OpenGL stuff
+	SdlGlSurface=NULL;
+	SdlGlTexture=NULL;
+}
+
+HostScreen::~HostScreen(void) {
+	SDL_DestroyMutex(screenLock);
+
+	if (backgroundSurf) {
+		SDL_FreeSurface(backgroundSurf);
+		backgroundSurf=NULL;
+	}
+
+	// OpenGL stuff
+#ifdef ENABLE_OPENGL
+	if (bx_options.opengl.enabled) {
+		if (mainSurface) {
+			SDL_FreeSurface(mainSurface);
+			mainSurface=NULL;
+		}
+
+		if (SdlGlTexture) {
+			glDeleteTextures(1, &SdlGlTexObj);
+			SdlGlTexture=NULL;
+		}
+	}
+#endif
+}
+
 void HostScreen::makeSnapshot()
 {
 	char filename[15];
@@ -185,7 +234,105 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	if (bx_options.video.fullscreen)
 		sdl_videoparams |= SDL_FULLSCREEN;
 
-	mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
+#ifdef ENABLE_OPENGL
+	if (bx_options.opengl.enabled) {
+		GLint MaxTextureSize;
+
+		/* Set video mode if not already done */
+		if (SdlGlSurface==NULL) {
+			sdl_videoparams |= SDL_OPENGL;
+
+/*			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, bx_options.opengl.bpp);*/
+			SdlGlSurface = SDL_SetVideoMode(bx_options.opengl.width, bx_options.opengl.height, 0 /*bx_options.opengl.bpp*/, sdl_videoparams);
+
+			glViewport(0, 0, bx_options.opengl.width, bx_options.opengl.height);
+
+			/* Projection matrix */
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			gluOrtho2D(0.0, bx_options.opengl.width, bx_options.opengl.height, 0.0);
+
+			/* Texture matrix */
+			glMatrixMode(GL_TEXTURE);
+			glLoadIdentity();
+
+			/* Model view matrix */
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			/* Enable texturing */
+			glEnable(GL_TEXTURE_2D);
+			{
+				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+			}
+			D(bug("gl: video mode set"));
+		}
+
+		/* Create a surface for Aranym */
+		if (mainSurface) {
+			SDL_FreeSurface(mainSurface);
+		}
+		
+		this->bpp = bpp = 32;
+
+		/* Create a texture */
+		if (SdlGlTexture) {
+			glDeleteTextures(1, &SdlGlTexObj);
+		}
+
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
+
+		D(bug("gl: need at least a %dx%d texture",width,height));
+		D(bug("gl: texture is at most a %dx%d texture",MaxTextureSize,MaxTextureSize));
+
+		/* Calculate the smallest needed texture */
+		SdlGlTextureWidth = SdlGlTextureHeight = MaxTextureSize;
+		if (width<SdlGlTextureWidth) {
+			while (((SdlGlTextureWidth>>1)>width) && (SdlGlTextureWidth>64)) {
+				SdlGlTextureWidth>>=1;
+			}
+		}
+		if (height<SdlGlTextureHeight) {
+			while (((SdlGlTextureHeight>>1)>height) && (SdlGlTextureHeight>64)) {
+				SdlGlTextureHeight>>=1;
+			}
+		}
+
+		D(bug("gl: texture will be %dx%d texture",SdlGlTextureWidth,SdlGlTextureHeight));
+
+		mainSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, SdlGlTextureWidth,SdlGlTextureHeight,bpp, 255<<16,255<<8,255,255<<24);
+		SdlGlTexture = (uint8 *) (mainSurface->pixels);
+
+		glGenTextures(1, &SdlGlTexObj);
+		glBindTexture(GL_TEXTURE_2D, SdlGlTexObj);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // scale when image bigger than texture
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // scale when image smaller than texture
+
+		glTexImage2D(GL_TEXTURE_2D, 0, 4, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
+
+		D(bug("gl: texture created"));
+
+		/* Activate autozoom if texture smaller than screen */
+		if ((width>SdlGlTextureWidth) || (height>SdlGlTextureHeight)) {
+			this->width = width = SdlGlTextureWidth;
+			this->height = height = SdlGlTextureHeight;
+			bx_options.video.autozoom=1;
+			bx_options.video.autozoomint=0;
+
+			D(bug("gl: autozoom enabled"));
+		} else {
+			bx_options.video.autozoom=0;
+			bx_options.video.autozoomint=0;
+			D(bug("gl: autozoom disabled"));
+		}
+	}
+	else
+#endif /* ENABLE_OPENGL */
+	{
+		mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
+	}
+
 	if (isGUIopen()) {
 		freeBackgroundSurf();
 		allocateBackgroundSurf();
@@ -1030,6 +1177,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.31  2002/09/23 09:21:37  pmandin
+ * Select best video mode
+ *
  * Revision 1.30  2002/07/20 12:44:17  joy
  * GUI can survive even video mode change now. Just the dialog is not redrawn yet
  *

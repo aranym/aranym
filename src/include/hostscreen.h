@@ -17,6 +17,11 @@
 
 #include <SDL.h>
 #include <SDL_thread.h>
+#ifdef ENABLE_OPENGL
+#include <SDL_opengl.h>
+#endif
+
+#include "parameters.h"
 
 /**
  * This macro handles the endianity for 24 bit per item data
@@ -59,6 +64,13 @@ class HostScreen {
 
 	int selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height);
 	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
+
+	// OpenGL stuff
+	SDL_Surface *SdlGlSurface;
+	GLuint SdlGlTexObj;
+	GLuint SdlGlTextureWidth;
+	GLuint SdlGlTextureHeight;
+	uint8 *SdlGlTexture;
   public:
 	SDL_mutex   *screenLock;
 	uint32 sdl_videoparams;
@@ -89,25 +101,8 @@ class HostScreen {
                                uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 
   public:
-
-	HostScreen() {
-		// setting up the static palette settings
-		palette.sdl.ncolors = 256;
-		palette.sdl.colors = palette.standard;
-
-		// the counter init
-		snapCounter = 0;
-
-		screenLock = SDL_CreateMutex();
-
-		backgroundSurf = NULL;
-		GUIopened = false;
-	}
-	~HostScreen() {
-		SDL_DestroyMutex(screenLock);
-		if (backgroundSurf)
-			SDL_FreeSurface(backgroundSurf);
-	}
+	HostScreen(void);
+	~HostScreen(void);
 
 	inline void lock();
 	inline void unlock();
@@ -293,7 +288,33 @@ inline void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced 
 
 	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
 	// SDL_UpdateRect(surf, x, y, w, h);
-	SDL_UpdateRect(mainSurface, x, y, w, h);
+#ifdef ENABLE_OPENGL
+	if (bx_options.opengl.enabled) {
+		/* Update the texture */
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SdlGlTextureWidth, SdlGlTextureHeight, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
+
+		/* Render the textured quad */
+		glBegin(GL_QUADS);
+			glTexCoord2f( 0.0, 0.0 );
+			glVertex2i( 0, 0);
+
+			glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), 0.0 );
+			glVertex2i( bx_options.opengl.width, 0);
+
+			glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
+			glVertex2i( bx_options.opengl.width, bx_options.opengl.height);
+
+			glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
+			glVertex2i( 0, bx_options.opengl.height);
+		glEnd();
+
+		SDL_GL_SwapBuffers();
+	}
+	else
+#endif	/* ENABLE_OPENGL */
+	{
+		SDL_UpdateRect(mainSurface, x, y, w, h);
+	}
 }
 
 inline void HostScreen::update( bool forced )
@@ -410,6 +431,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.39  2002/10/15 21:26:53  milan
+ * non-cheaders support (for MipsPro C/C++ compiler)
+ *
  * Revision 1.38  2002/09/23 09:21:37  pmandin
  * Select best video mode
  *
