@@ -62,7 +62,7 @@ static SGOBJ fsdlg[] =
     { SGTEXT, SG_EXIT, 0, 2,21, 35,1, dlgfilenames[15] },
     { SGBUTTON, SG_TOUCHEXIT, 0, 38,6, 1,1, "\x01" },          /* Arrow up */
     { SGBUTTON, SG_TOUCHEXIT, 0, 38,21, 1,1, "\x02" },         /* Arrow down */
-    { SGBUTTON, 0, 0, 10,23, 8,1, "Okay" },
+    { SGBUTTON, SG_DEFAULT, 0, 10,23, 8,1, "Okay" },
     { SGBUTTON, 0, 0, 24,23, 8,1, "Cancel" },
     { -1, 0, 0, 0,0, 0,0, NULL }
   };

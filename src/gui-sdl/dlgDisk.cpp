@@ -73,13 +73,13 @@ static SGOBJ discdlg[] =
   { SGTEXT, 0, 0, 2,1, 14,1, "Floppy disk A:" },
   { SGBUTTON, 0, 0, 30,1, 8,1, NULL },
   { SGBUTTON, 0, 0, 2,3, 5,1, "Path:" },
-  { SGTEXT, 0, 0, 7,3, 31,1, NULL },
+  { SGTEXT, 0, 0, 8,3, 30,1, NULL },
   { SGBOX, 0, 0,		  1,7, 38,7, NULL },
   { SGTEXT, 0, 0,		  2,7, 5,1, "IDE0:" },
   { SGEDITFIELD, 0, 0,	  8,7, sizeof(ide0_name)-1,1, ide0_name},
   { SGBUTTON, 0, 0,		 30,7, 8,1, NULL },
   { SGBUTTON, 0, 0,		  2,9, 5,1, "Path:" },
-  { SGTEXT, 0, 0,		  7,9, 31,1, NULL },
+  { SGTEXT, 0, 0,		  8,9, 30,1, NULL },
   { SGCHECKBOX, 0, 0,	28,10, 8,1, "Present" },
   { SGCHECKBOX, SG_EXIT, 0,	28,11, 8,1, "CDROM" },
   { SGCHECKBOX, 0, 0,	28,12, 8,1, "ReadOnly" },
@@ -97,7 +97,7 @@ static SGOBJ discdlg[] =
   { SGEDITFIELD, 0, 0,	 8,15, sizeof(ide1_name)-1,1, ide1_name},
   { SGBUTTON, 0, 0,		30,15, 8,1, NULL },
   { SGBUTTON, 0, 0,		 2,17, 5,1, "Path:" },
-  { SGTEXT, 0, 0,		 7,17, 31,1, NULL },
+  { SGTEXT, 0, 0,		 8,17, 30,1, NULL },
   { SGCHECKBOX, 0, 0,	28,18, 8,1, "Present" },
   { SGCHECKBOX, SG_EXIT, 0,	28,19, 8,1, "CDROM" },
   { SGCHECKBOX, 0, 0,	28,20, 8,1, "ReadOnly" },
@@ -110,7 +110,7 @@ static SGOBJ discdlg[] =
   { SGEDITFIELD, 0, 0,	 8,21, 5,1, ide1_size},
   { SGTEXT, 0, 0,		14,21, 2,1, "MB" },
  // { SGBUTTON, 0, 0,		17,21, 10,1, "Generate" },
-  { SGBUTTON, 0, 0,		10,23, 20,1, "Back to main menu" },
+  { SGBUTTON, SG_DEFAULT, 0,	10,23, 20,1, "Back to main menu" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 

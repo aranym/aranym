@@ -154,6 +154,37 @@ static void SDLGui_ObjCoord(SGOBJ *dlg, int objnum, SDL_Rect *rect)
 
 /*-----------------------------------------------------------------------*/
 /*
+  Compute real coordinates for a given object.
+  This one takes borders into account and give coordinates as seen by user
+*/
+void SDLGui_ObjFullCoord(SGOBJ *dlg, int objnum, SDL_Rect *coord)
+{
+  SDLGui_ObjCoord(dlg, objnum, coord);
+
+  if ((dlg[objnum].type == SGBUTTON) ||
+      (dlg[objnum].type == SGBOX))
+  {
+    // Take border into account
+    if (dlg[objnum].flags & SG_DEFAULT)
+    {
+      coord->x -= 4;
+      coord->y -= 4;
+      coord->w += 8;
+      coord->h += 8;
+    }
+    else
+    {
+      coord->x -= 3;
+      coord->y -= 3;
+      coord->w += 6;
+      coord->h += 6;
+    }
+  }
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
   Draw a text string.
 */
 void SDLGui_Text(int x, int y, const char *txt)
@@ -212,49 +243,74 @@ void SDLGui_DrawEditField(SGOBJ *edlg, int objnum)
 /*
   Draw a 3D box.
 */
-void SDLGui_Draw3DBox(SDL_Rect *coord, Uint32 upleftc, Uint32 downrightc)
+void SDLGui_Draw3DBox(SDL_Rect *coord, Uint32 upleftc, Uint32 downrightc, int width3D, int borderwidth)
 {
   SDL_Rect rect;
   Uint32 grey = SDL_MapRGB(sdlscrn->format,192,192,192);
   Uint32 black = SDL_MapRGB(sdlscrn->format,0,0,0);
+  int backgroundwidth = 1;
+  int i;
 
   SCRLOCK;
 
-  rect.x = coord->x-3;          rect.y = coord->y-3;
-  rect.w = coord->w+6;          rect.h = 1;
-  SDL_FillRect(sdlscrn, &rect, black);
-
-  rect.x = coord->x-3;          rect.y = coord->y-3;
-  rect.w = 1;                   rect.h = coord->h+6;
-  SDL_FillRect(sdlscrn, &rect, black);
-
-  rect.x = coord->x+coord->w+2; rect.y = coord->y-3;
-  rect.w = 1;                   rect.h = coord->h+6;
-  SDL_FillRect(sdlscrn, &rect, black);
-
-  rect.x = coord->x-3;          rect.y = coord->y+coord->h+2;
-  rect.w = coord->w+6;          rect.h = 1;
-  SDL_FillRect(sdlscrn, &rect, black);
-
-  rect.x = coord->x-2;          rect.y = coord->y-2;
-  rect.w = coord->w+4;          rect.h = 1;
-  SDL_FillRect(sdlscrn, &rect, upleftc);
-
-  rect.x = coord->x-2;          rect.y = coord->y-2;
-  rect.w = 1;                   rect.h = coord->h+4;
-  SDL_FillRect(sdlscrn, &rect, upleftc);
-
-  rect.x = coord->x-1;          rect.y = coord->y+coord->h+1;
-  rect.w = coord->w+3;          rect.h = 1;
-  SDL_FillRect(sdlscrn, &rect, downrightc);
-
-  rect.x = coord->x+coord->w+1; rect.y = coord->y-1;
-  rect.w = 1;                   rect.h = coord->h+3;
-  SDL_FillRect(sdlscrn, &rect, downrightc);
-
-  rect.x = coord->x-1;          rect.y = coord->y-1;
-  rect.w = coord->w+2;          rect.h = coord->h+2;
+  rect.x = coord->x-backgroundwidth;
+  rect.y = coord->y-backgroundwidth;
+  rect.w = coord->w+backgroundwidth*2;
+  rect.h = coord->h+backgroundwidth*2;
   SDL_FillRect(sdlscrn, &rect, grey);
+
+  for ( i = backgroundwidth+1 ; i <= width3D+backgroundwidth ; i++)
+  {
+    rect.x = coord->x-i;
+    rect.y = coord->y-i;
+    rect.w = coord->w+i*2;
+    rect.h = 1;
+    SDL_FillRect(sdlscrn, &rect, upleftc);
+
+    rect.x = coord->x-i;
+    rect.y = coord->y-i;
+    rect.w = 1;
+    rect.h = coord->h+i*2;
+    SDL_FillRect(sdlscrn, &rect, upleftc);
+
+    rect.x = coord->x-i+1;
+    rect.y = coord->y+coord->h-1+i;
+    rect.w = coord->w+i*2-1;
+    rect.h = 1;
+    SDL_FillRect(sdlscrn, &rect, downrightc);
+
+    rect.x = coord->x+coord->w-1+i;
+    rect.y = coord->y-i+1;
+    rect.w = 1;
+    rect.h = coord->h+i*2-1;
+    SDL_FillRect(sdlscrn, &rect, downrightc);
+  }
+
+  i = borderwidth+width3D+backgroundwidth;
+
+  rect.x = coord->x-i;
+  rect.y = coord->y-i;
+  rect.w = coord->w+i*2;
+  rect.h = borderwidth;
+  SDL_FillRect(sdlscrn, &rect, black);
+
+  rect.x = coord->x-i;
+  rect.y = coord->y-i;
+  rect.w = borderwidth;
+  rect.h = coord->h+i*2;
+  SDL_FillRect(sdlscrn, &rect, black);
+
+  rect.x = coord->x+coord->w+i-borderwidth;
+  rect.y = coord->y-i;
+  rect.w = borderwidth;
+  rect.h = coord->h+i*2;
+  SDL_FillRect(sdlscrn, &rect, black);
+
+  rect.x = coord->x-i;
+  rect.y = coord->y+coord->h+i-borderwidth;
+  rect.w = coord->w+i*2;
+  rect.h = borderwidth;
+  SDL_FillRect(sdlscrn, &rect, black);
 
   SCRUNLOCK;
 }
@@ -268,21 +324,26 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
 {
   SDL_Rect coord;
   Uint32 upleftc, downrightc;
+  Uint32 darkgreyc = SDL_MapRGB(sdlscrn->format,128,128,128);
+  Uint32 whitec    = SDL_MapRGB(sdlscrn->format,255,255,255);
 
   if( bdlg[objnum].state&SG_SELECTED )
   {
-    upleftc = SDL_MapRGB(sdlscrn->format,128,128,128);
-    downrightc = SDL_MapRGB(sdlscrn->format,255,255,255);
+    upleftc    = darkgreyc;
+    downrightc = whitec;
   }
   else
   {
-    upleftc = SDL_MapRGB(sdlscrn->format,255,255,255);
-    downrightc = SDL_MapRGB(sdlscrn->format,128,128,128);
+    upleftc    = whitec;
+    downrightc = darkgreyc;
   }
 
   SDLGui_ObjCoord(bdlg, objnum, &coord);
 
-  SDLGui_Draw3DBox(&coord, upleftc, downrightc);
+  if (bdlg[objnum].flags & SG_DEFAULT)
+    SDLGui_Draw3DBox(&coord, upleftc, downrightc, 1, 2);
+  else
+    SDLGui_Draw3DBox(&coord, upleftc, downrightc, 1, 1);
 }
 
 
@@ -588,21 +649,30 @@ void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
 {
   SDL_Rect coord;
 
-  SDLGui_ObjCoord(dlg, objnum, &coord);
-
-  if ((dlg[objnum].type == SGBUTTON) ||
-      (dlg[objnum].type == SGBOX))
-  {
-    // Take border into account
-    coord.x -= 3;
-    coord.y -= 3;
-    coord.w += 6;
-    coord.h += 6;
-  }
+  SDLGui_ObjFullCoord(dlg, objnum, &coord);
 
   SCRLOCK;
   SDL_UpdateRects(sdlscrn, 1, &coord);
   SCRUNLOCK;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Search default  object in a dialog.
+*/
+int SDLGui_FindDefaultObj(SGOBJ *dlg)
+{
+  int i = 0;
+
+  while (dlg[i].type != -1)
+  {
+    if (dlg[i].flags & SG_DEFAULT)
+      return i;
+    i++;
+  }
+
+  return 0;
 }
 
 
@@ -623,17 +693,7 @@ int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy)
   /* Now search for the object: */
   for(i=len; i>0; i--)
   {
-    SDLGui_ObjCoord(dlg, i, &coord);
-
-    if ((dlg[i].type == SGBUTTON) ||
-        (dlg[i].type == SGBOX))
-    {
-      // Take border into account
-      coord.x -= 3;
-      coord.y -= 3;
-      coord.w += 6;
-      coord.h += 6;
-    }
+    SDLGui_ObjFullCoord(dlg, i, &coord);
 
     if(fx >= coord.x &&
        fy >= coord.y &&
@@ -663,35 +723,62 @@ int SDLGui_DoDialog(SGOBJ *dlg)
   int i;
   int x, y;
   int obj;
-
-  SDLGui_DrawDialog(dlg);
+  int keysym;
 
   /* Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here */
 
   // SDL_PumpEvents(); - don't call it here, it's not thread safe probably
   bool stillPressed = (SDL_GetMouseState(&x, &y) & SDL_BUTTON(1));
   obj = SDLGui_FindObj(dlg, x, y);
-  if(obj>0 && (dlg[obj].flags&SG_TOUCHEXIT) )
+  if(stillPressed && obj>0 && (dlg[obj].flags&SG_TOUCHEXIT) )
   {
-    oldbutton = obj;
-    if(stillPressed)
-    {
-      dlg[obj].state |= SG_SELECTED;
-      return obj;
-    }
+    // Mouse button is pressed over a TOUCHEXIT Button
+    // Select it before drawing anything (it has been deselected before).
+    dlg[obj].state |= SG_SELECTED;
+
+    // Refresh display.
+    SDLGui_DrawDialog(dlg);
+
+    // Deselect button, but do not redraw it.
+    dlg[obj].state &= ~SG_SELECTED;
+
+    // Exit.
+    return obj;
   }
+
+  SDLGui_DrawDialog(dlg);
 
   /* The main loop */
   do
   {
     // SDL_PumpEvents() - not necessary, the main check_event thread calls it
     SDL_Event evnt;
-    if (SDL_PeepEvents(&evnt, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT))) {
+    if (SDL_PeepEvents(&evnt, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT)))
+    {
       x = (int)evnt.user.data1;
       y = (int)evnt.user.data2;
       switch(evnt.user.code)
       {
       	case SDL_KEYDOWN:
+          keysym = (int)evnt.user.data1;
+          switch(keysym)
+          {
+            case SDLK_RETURN:
+            case SDLK_KP_ENTER:
+              obj = SDLGui_FindDefaultObj(dlg);
+              if(obj>0)
+              {
+                dlg[obj].state |= SG_SELECTED;
+                SDLGui_DrawButton(dlg, obj);
+                SDLGui_RefreshObj(dlg, obj);
+                SDL_Delay(100);
+                dlg[obj].state &= ~SG_SELECTED;
+                SDLGui_DrawButton(dlg, obj);
+                SDLGui_RefreshObj(dlg, obj);
+              }
+              retbutton = obj;
+              break;
+          }
       	  break;
 
         case SDL_USEREVENT:		// a signal that resolution has changed
@@ -707,21 +794,40 @@ int SDLGui_DoDialog(SGOBJ *dlg)
               dlg[obj].state |= SG_SELECTED;
               SDLGui_DrawButton(dlg, obj);
               SDLGui_RefreshObj(dlg, obj);
-              oldbutton=obj;
-            }
-            if( dlg[obj].flags&SG_TOUCHEXIT )
-            {
-              dlg[obj].state |= SG_SELECTED;
-              retbutton = obj;
+
+              if( dlg[obj].flags&SG_TOUCHEXIT )
+              {
+                // It's a TOUCHEXIT object.
+                // Deselect it, but do not redraw it.
+                // It will appear selected until next redraw.
+                dlg[obj].state &= ~SG_SELECTED;
+                // Exit.
+                retbutton = obj;
+              }
+              else
+              {
+                oldbutton=obj;
+              }
             }
           }
           break;
 
         case SDL_MOUSEBUTTONUP:
-          if (dlg[oldbutton].state & SG_SELECTED)
-            // User clicked on a SGBUTTON and it is still selected when
-            // he release mouse button.
-            retbutton=oldbutton;
+          if (oldbutton)
+          {
+            if (dlg[oldbutton].state & SG_SELECTED)
+            {
+              // User clicked on a SGBUTTON and it is still selected when
+              // he release mouse button.
+              retbutton = oldbutton;
+            }
+            else
+            {
+              // User clicked on a SGBUTTON and moved outside before releasing
+              // mouse button.
+              oldbutton = 0;
+            }
+          }
           else
           {
             obj = SDLGui_FindObj(dlg, x, y);

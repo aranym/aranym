@@ -54,7 +54,7 @@ SGOBJ maindlg[] =
   { SGTEXT, 0, 0, 17,18, 7,1, "Config:" },
   { SGBUTTON, 0, 0, 17,20, 7,1, "Load" },
   { SGBUTTON, 0, 0, 17,22, 7,1, "Save" },
-  { SGBUTTON, 0, 0, 30,22, 8,1, "Close" },
+  { SGBUTTON, SG_DEFAULT, 0, 30,22, 8,1, "Close" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 
@@ -121,14 +121,14 @@ void Dialog_MainDlg()
         Dialog_DiscDlg();
         break;
 
-	  case HOTKEYS:
-	  case KEYBOARD:
-	  case TOS:
-	  case VIDEO:
-	  case MEMORY:
-	  case HOSTFS:
-	  case CDROM:
-	  case INOUT:
+      case HOTKEYS:
+      case KEYBOARD:
+      case TOS:
+      case VIDEO:
+      case MEMORY:
+      case HOSTFS:
+      case CDROM:
+      case INOUT:
         Dialog_KeyboardDlg();
         break;
 

@@ -1,3 +1,30 @@
+2004/01/09 - Xavier
+- gui-sdl/dlgAbout.cpp: made "OK" button the default one.
+
+- gui-sdl/dlgDisk.cpp:
+  - made "Back to main menu" button the default one.
+  - shortened displayed pathes to better suit new button's look.
+
+- gui-sdl/dlgFileSelect.cpp: made "Okay" button the default one.
+
+- gui-sdl/dlgKeyboard.cpp: made "Back to main menu" button the default one.
+
+- gui-sdl/dlgMain.cpp:
+  - made "Close" button the default one. This may not be the better choice. I
+    think we could set "Apply changed settings" button as default once any
+    parameter is modified, and set "Close" back when user changes are applied.
+    This way pressing RETURN 2 times would apply setting, then close GUI.
+  - fixed indentation.
+
+- gui-sdl/sdlgui.*:
+  - Made SDLGui_Draw3DBox() more fexible. Allows to choose width of 3D and
+    black border now. It's a shame not to use it more : buttons are very nice
+    with a 10 pixel wide 3D effect. ;)
+  - implemented SG_DEFAULT buttons.
+  - Reviewed TOUCHEXIT objects handling (fixes fileselector arrows bug
+    introduced on 2004/01/06).
+
+
 2004/01/08 - patrice
 
 - dsp_disasm.cpp: many references to old 'dsp.' variable lying around, now
