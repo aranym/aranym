@@ -383,7 +383,7 @@ void ndebug::loadintomemory(FILE *f, char **inl) {
 	uae_u32 src;
 	char *name;
 	FILE *fp;
-	char c;
+	int c;
 
 	if (!more_params (inl)) goto S_argh;
 
@@ -402,7 +402,7 @@ void ndebug::loadintomemory(FILE *f, char **inl) {
 		return;
 	}
 
-	while ((c = fgetc(fp)) != EOF) WriteAtariInt8(src++, c)
+	while ((c = fgetc(fp)) != EOF) WriteAtariInt8(src++, (char)c)
 		;
 
 	fclose (fp);
@@ -1072,6 +1072,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.11  2002/01/18 20:37:47  milan
+ * FixedSizeFastRAM & Makefile fixed
+ *
  * Revision 1.10  2002/01/08 16:13:18  joy
  * config variables moved from global ones to bx_options struct.
  *
