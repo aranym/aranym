@@ -1,7 +1,7 @@
 /*
  * parameters.cpp - parameter init/load/save code
  *
- * Copyright (c) 2001-2004 ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2001-2005 ARAnyM developer team (see AUTHORS)
  *
  * Authors:
  *  MJ		Milan Jurik
@@ -362,6 +362,7 @@ void presave_ide() {
 /*************************************************************************/
 #define DISK_CONFIG(Disk)	struct Config_Tag Disk ## _configs[] = {	\
 	{ "Path", Path_Tag, bx_options.Disk.path, sizeof(bx_options.Disk.path), 0},	\
+	{ "Name", String_Tag, bx_options.Disk.name, sizeof(bx_options.Disk.name), 0},	\
 	{ "Present", Bool_Tag, &bx_options.Disk.present, 0, 0},	\
 	{ "PartID", String_Tag, bx_options.Disk.partID, sizeof(bx_options.Disk.partID), 0},	\
 	{ "ByteSwap", Bool_Tag, &bx_options.Disk.byteswap, 0, 0},	\
