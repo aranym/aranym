@@ -1,3 +1,9 @@
+2002/03/22 - joy
+- IEEE FPU emulation fixed: 68040 specific insn (like FSMOVE) don't throw
+  illegal opcode exception anymore.
+- IEEE FPU is now the default FPU emulation in configure phase.
+
+
 2002/03/21 - milan & joy
 - forgot to set the faulty address when invoking BUS ERROR from hardware
   registers access.
