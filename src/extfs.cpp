@@ -24,9 +24,6 @@
 #include "debug.h"
 
 
-#define MAXPATHNAMELEN 2048
-
-
 extern "C" {
 
 	char* strapply( char* str, int (*functor)(int) )
@@ -71,6 +68,7 @@ void ExtFs::install( const char driveSign, const char* rootPath, bool halfSensit
 
 	if ( rootPath != NULL ) {
 		drives[ driveNo ].rootPath = strdup( (char*)rootPath );
+		drives[ driveNo ].currPath = NULL;
 		drives[ driveNo ].halfSensitive = halfSensitive;
 
 		D(fprintf(stderr, "MetaDOS: installing %c:%s:%s\n",
@@ -91,9 +89,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 	// fix the stack (the fncode was pushed onto the stack)
 	r->a[7] += 4;
 
+	D(fprintf(stderr, "MetaDOS: %2d ", fncode));
+
 	switch (fncode) {
 		case 54:	// Dfree:
-			D(fprintf(stderr, "MetaDOS: %s\n", "DFree"));
+			D(fprintf(stderr, "%s\n", "DFree"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Dfree( &ldp, (char*)pathname, &extFile, 
@@ -107,7 +107,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			{
 				char pn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Dcreate"));
+				D(fprintf(stderr, "%s\n", "Dcreate"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
@@ -122,7 +122,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			{
 				char pn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Ddelete"));
+				D(fprintf(stderr, "%s\n", "Ddelete"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
@@ -133,11 +133,27 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				flushFILE( &extFile, r->a[5] );
 			}
 			break;
+		case 59:
+			{
+				char pn[MAXPATHNAMELEN];
+
+				D(fprintf(stderr, "%s\n", "Dsetpath"));
+				fetchFILE( &extFile, r->a[5] );
+				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
+				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
+				r->d[0] = Dsetpath( &ldp, (char*)pathname, &extFile, 
+									get_long( r->a[7], true ),
+									(int16) get_word( r->a[7] + 4, true ),
+									(const char*)pn );              // pathname
+				flushFILE( &extFile, r->a[5] );
+				D(fprintf(stderr, "MetaDOS: %s: %d\n", "/Dsetpath", (int32)r->d[0]));
+			}
+			break;
 		case 60:	// Fcreate:
 			{
 				char pn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Fcreate"));
+				D(fprintf(stderr, "%s\n", "Fcreate"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
@@ -147,14 +163,14 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 								   (const char*)pn,                    // pathname
 								   (int16) get_word( r->a[7] + 10, true ) ); // mode
 				flushFILE( &extFile, r->a[5] );
-				D(fprintf(stderr, "MetaDOS: %s: %d\n", "/Fcreate", (int32)r->d[0]));
+				D(fprintf(stderr, "%s: %d\n", "/Fcreate", (int32)r->d[0]));
 			}
 			break;
 		case 61:	// Fopen:
 			{
 				char pn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Fopen"));
+				D(fprintf(stderr, "%s\n", "Fopen"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
@@ -168,7 +184,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			}
 			break;
 		case 62:	// Fclose:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Fclose"));
+			D(fprintf(stderr, "%s\n", "Fclose"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fclose( &ldp, (char*)pathname, &extFile, 
@@ -178,7 +194,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 63:	// Fread:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Fread"));
+			D(fprintf(stderr, "%s\n", "Fread"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fread( &ldp, (char*)pathname, &extFile, 
@@ -190,7 +206,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 64:	// Fwrite:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Fwrite"));
+			D(fprintf(stderr, "%s\n", "Fwrite"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fwrite( &ldp, (char*)pathname, &extFile, 
@@ -205,7 +221,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			{
 				char pn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Fdelete"));
+				D(fprintf(stderr, "%s\n", "Fdelete"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
@@ -218,7 +234,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			}
 			break;
 		case 66:	// Fseek:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Fseek"));
+			D(fprintf(stderr, "%s\n", "Fseek"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fseek( &ldp, (char*)pathname, &extFile, 
@@ -233,7 +249,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			{
 				char pn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Fattrib"));
+				D(fprintf(stderr, "%s\n", "Fattrib"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
@@ -250,7 +266,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			{
 				char pn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Fsfirst"));
+				D(fprintf(stderr, "%s\n", "Fsfirst"));
 				fetchDTA( &dta, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
@@ -264,7 +280,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			}
 			break;
 		case 79:	// Fsnext:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Fsnext"));
+			D(fprintf(stderr, "%s\n", "Fsnext"));
 			fetchDTA( &dta, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fsnext( &ldp, (char*)pathname, &dta, 
@@ -278,7 +294,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				char pn[MAXPATHNAMELEN];
 				char npn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Frename"));
+				D(fprintf(stderr, "%s\n", "Frename"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 8, true ) );
@@ -293,7 +309,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			}
 			break;
 		case 87:	// Fdatime:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Fdatime"));
+			D(fprintf(stderr, "%s\n", "Fdatime"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fdatime( &ldp, (char*)pathname, &extFile, 
@@ -305,7 +321,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 260:	// Fcntl:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Fcntl"));
+			D(fprintf(stderr, "%s\n", "Fcntl"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fcntl( &ldp, (char*)pathname, &extFile, 
@@ -320,7 +336,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			{
 				char pn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Dpathconf"));
+				D(fprintf(stderr, "%s\n", "Dpathconf"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
@@ -337,7 +353,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			{
 				char pn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Dopendir"));
+				D(fprintf(stderr, "%s\n", "Dopendir"));
 				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
@@ -351,7 +367,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			}
 			break;
 		case 297:	// Dreaddir:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Dreaddir"));
+			D(fprintf(stderr, "%s\n", "Dreaddir"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Dreaddir( &ldp, (char*)pathname, &extFile, 
@@ -363,7 +379,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 298:	// Drewinddir:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Drewinddir"));
+			D(fprintf(stderr, "%s\n", "Drewinddir"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Drewinddir( &ldp, (char*)pathname, &extFile, 
@@ -373,7 +389,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 299:	// Dclosedir:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Dclosedir"));
+			D(fprintf(stderr, "%s\n", "Dclosedir"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Dclosedir( &ldp, (char*)pathname, &extFile, 
@@ -386,7 +402,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			{
 				char pn[MAXPATHNAMELEN];
 
-				D(fprintf(stderr, "MetaDOS: %s\n", "Fxattr"));
+				D(fprintf(stderr, "%s\n", "Fxattr"));
 				fetchDTA( &dta, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 8, true ) );
@@ -401,7 +417,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			}
 			break;
 		case 322:	// Dxreaddir:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Dxreaddir"));
+			D(fprintf(stderr, "%s\n", "Dxreaddir"));
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Dxreaddir( &ldp, (char*)pathname, &extFile, 
@@ -414,11 +430,11 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 								 get_long( r->a[7] + 20, true ) );        // xret
 			break;
 		case 338:	// Dreadlabel:
-			D(fprintf(stderr, "MetaDOS: %s\n", "Dreadlabel"));
+			D(fprintf(stderr, "%s\n", "Dreadlabel"));
 			r->d[0] = (uint32)TOS_EINVFN;
 			break;
 		default:
-			D(fprintf(stderr, "MetaDOS: Unknown %d\n", fncode));
+			D(fprintf(stderr, "Unknown\n"));
 			r->d[0] = (uint32)TOS_EINVFN;
 	}
 }
@@ -698,7 +714,9 @@ void ExtFs::transformFileName( char* dest, const char* source )
 	// set the extensi	on separator
 	dest[ dotPos ] = '.';
 
+  #ifdef DEBUG_FILENAMETRANSFORMATION
   D(fprintf(stderr, "MetaDOS: transformFileName (%s, len = %d)\n", dest, len));
+  #endif
 
   // upper case conversion
   strapply( dest, toupper );
@@ -709,7 +727,9 @@ bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, char* 
 {
   struct stat statBuf;
 
+  #ifdef DEBUG_FILENAMETRANSFORMATION
   D(fprintf(stderr, "MetaDOS: getHostFileName (%s,%s)", pathName, name));
+  #endif
 
   // if the whole thing fails then take the requested name as is
   // it also completes the path
@@ -723,7 +743,9 @@ bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, char* 
 	char *finalName = name;
 	struct dirent *dirEntry;
 
+    #ifdef DEBUG_FILENAMETRANSFORMATION
 	D(fprintf(stderr, " (stat failed)\n"));
+	#endif
 
 	// shorten the name from the pathName;
 	*result = '\0';
@@ -744,7 +766,9 @@ bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, char* 
 
 	  transformFileName( testName, dirEntry->d_name );
 	  
+	  #ifdef DEBUG_FILENAMETRANSFORMATION
 	  D(fprintf(stderr, "MetaDOS: getHostFileName (%s,%s,%s)\n", name, testName, dirEntry->d_name));
+      #endif
 	  
 	  if ( ! strcmp( testName, name ) ) {
 		// FIXME isFile test (maybe?)
@@ -756,14 +780,19 @@ bool ExtFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, char* 
 	}
 
   lbl_final:
+    #ifdef DEBUG_FILENAMETRANSFORMATION
 	D(fprintf(stderr, "MetaDOS: getHostFileName final (%s,%s)\n", name, finalName));
+	#endif
 
 	strcpy( result, finalName );
 	if ( dh != NULL )
 	  closedir( dh );
+  }
 
-  } else
-	D(fprintf(stderr, " (stat OK)\n"));
+  #ifdef DEBUG_FILENAMETRANSFORMATION
+    else
+		D(fprintf(stderr, " (stat OK)\n"));
+  #endif
 
   return true;
 }
@@ -871,13 +900,33 @@ int32 ExtFs::Ddelete(LogicalDev *ldp, char *pathName, ExtFile *fp,
 }
 
 
+int32 ExtFs::Dsetpath(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					  int32 ret, int16 opcode,
+					  const char *pn)
+{
+	char fpathName[MAXPATHNAMELEN];
+	convertPathA2F( fpathName, pathName );
+
+	D(fprintf(stderr, "MetaDOS: Dsetpath (%s,%s)\n", pathName, fpathName));
+
+	ExtDrive *drv = getDrive( pathName );
+	if ( drv->currPath != NULL )
+		free( drv->currPath );
+	drv->currPath = strdup( pathName );
+
+	struct stat statBuf;
+	if ( stat(fpathName, &statBuf) )
+		return unix2toserrno(errno,TOS_EPTHNF);
+
+	return TOS_E_OK;
+}
+
+
 int32 ExtFs::Fcreate(LogicalDev *ldp, char *pathName, ExtFile *fp,
 					 int32 ret, int16 opcode,
 					 const char *pn, int16 attr)
 {
 	char fpathName[MAXPATHNAMELEN];
-	struct stat statBuf;
-
 	convertPathA2F( fpathName, pathName );
 
 	D(fprintf(stderr, "MetaDOS: Fcreate (%s,%s,%d)\n", pathName, fpathName, attr));
@@ -897,6 +946,8 @@ int32 ExtFs::Fopen(LogicalDev *ldp, char *pathName, ExtFile *fp,
 	convertPathA2F( fpathName, pathName );
 
 	D(fprintf(stderr, "MetaDOS: Fopen (%s,%s,%d)\n", pathName, fpathName, mode));
+
+	fp->device  = toupper(pathName[0]) - 'A'; // FIXME
 
 	return fileOpen( (char*)fpathName, st2mode(mode), 0, fp );
 }
@@ -918,7 +969,6 @@ uint32 ExtFs::fileOpen( const char* pathName, int flags, int mode, ExtFile *fp )
 
 	fp->mode    = mode2st( flags );
 	fp->offset  = 0;
-	// FIXME fp->device  = drive;
 	fp->fandafh = fh;
 
 	return TOS_E_OK;
@@ -951,13 +1001,13 @@ int32 ExtFs::Fread(LogicalDev *ldp, char *pathName, ExtFile *fp,
 	ssize_t toReadNow;
 	ssize_t readCount = 0;
 
-	D(fprintf(stderr, "MetaDOS: Fread (%d,%d)\n", handle, count));
+	D(fprintf(stderr, "MetaDOS: Fread (%d,%d)", handle, count));
 
 	while ( toRead > 0 ) {
 		toReadNow = ( toRead > FRDWR_BUFFER_LENGTH ) ? FRDWR_BUFFER_LENGTH : toRead;
 		readCount = read( fp->fandafh, fBuff, toReadNow );
 
-		D(fprintf(stderr, "MetaDOS: Fread readCount (%d)\n", readCount));
+		//		D(fprintf(stderr, "MetaDOS: Fread readCount (%d)\n", readCount));
 
 		if ( readCount <= 0 )
 			break;
@@ -967,6 +1017,8 @@ int32 ExtFs::Fread(LogicalDev *ldp, char *pathName, ExtFile *fp,
 		fp->offset += readCount;
 		toRead -= readCount;
 	}
+
+	D(fprintf(stderr, " readCount (%d)\n", count - toRead));
 
 	//	D(fprintf(stderr, "MetaDOS: Fread error (%d)\n", errno));
 	if ( readCount < 0 )
@@ -1287,11 +1339,12 @@ int32 ExtFs::Dopendir( LogicalDev *ldp, char *pathName, ExtFile *fp,
 
 	D(fprintf(stderr, "MetaDOS: Dopendir (%s,%s,%d)\n", pathName, fs_pathName[ fp->index ], flag));
 
+	fp->device  = toupper(pathName[0]) - 'A'; // FIXME
 	fp->fandafh = (uint32)opendir( fs_pathName[ fp->index ] );
 	if ( ((DIR*)fp->fandafh) == NULL )
-		return unix2toserrno(errno,TOS_EFILNF);
+		return unix2toserrno(errno,TOS_EPTHNF);
 
-	return fp->fandafh & 0x00ffffffL;
+	return TOS_E_OK;
 }
 
 
@@ -1302,7 +1355,7 @@ int32 ExtFs::Dclosedir( LogicalDev *ldp, char *pathName, ExtFile *fp,
 	freeDirIndex( fp->index, fs_pathName );
 
 	if ( closedir( (DIR*)fp->fandafh ) )
-		return unix2toserrno(errno,TOS_EFILNF);
+		return unix2toserrno(errno,TOS_EPTHNF);
 }
 
 
@@ -1334,7 +1387,7 @@ int32 ExtFs::Dreaddir( LogicalDev *ldp, char *pathName, ExtFile *fp,
 		D(fprintf(stderr, "MetaDOS: Dreaddir (%s,%s)\n", fs_pathName[ fp->index ], (char*)truncFileName ));
 	}
 
-	return 0;
+	return TOS_E_OK;
 }
 
 
@@ -1377,11 +1430,11 @@ int32 ExtFs::Fxattr_( LogicalDev *ldp, char *fpathName, ExtDta *dta,
 	// XATTR structure conversion (COMPEND.HYP)
 	/* UWORD mode      */  put_word( xattrp     , statmode2xattrmode(statBuf.st_mode));
 	/* LONG  index     */  put_long( xattrp +  2, statBuf.st_ino );
-	/* UWORD dev       */  put_word( xattrp +  6, statBuf.st_dev );
+	/* UWORD dev       */  put_word( xattrp +  6, statBuf.st_dev );  // FIXME: this is Linux's one
 	/* UWORD reserved1 */  put_word( xattrp +  8, 0 );
 	/* UWORD nlink     */  put_word( xattrp + 10, statBuf.st_nlink );
-	/* UWORD uid       */  put_word( xattrp + 12, statBuf.st_uid );
-	/* UWORD gid       */  put_word( xattrp + 14, statBuf.st_gid );
+	/* UWORD uid       */  put_word( xattrp + 12, statBuf.st_uid );  // FIXME: this is Linux's one
+	/* UWORD gid       */  put_word( xattrp + 14, statBuf.st_gid );  // FIXME: this is Linux's one
 	/* LONG  size      */  put_long( xattrp + 16, statBuf.st_size );
 	/* LONG  blksize   */  put_long( xattrp + 20, statBuf.st_blksize );
 	/* LONG  nblocks   */  put_long( xattrp + 24, statBuf.st_blocks );
@@ -1396,7 +1449,7 @@ int32 ExtFs::Fxattr_( LogicalDev *ldp, char *fpathName, ExtDta *dta,
 	/* LONG  reserved3 */  put_long( xattrp + 44, 0 );
 	/* LONG  reserved4 */  put_long( xattrp + 48, 0 );
 
-	return 0;
+	return TOS_E_OK;
 }
 
 
@@ -1414,7 +1467,7 @@ int32 ExtFs::Dxreaddir( LogicalDev *ldp, char *pathName, ExtFile *fp,
 	if ( fpathName[ length++ ] != '/' )
 		fpathName[ length++ ] = '/';
 	a2fstrcpy( &fpathName[ length ], (uint8*)&buff[ fp->mode == 0 ? 4 : 0 ] );
- 
+
 	put_long( xretp, Fxattr_( ldp, fpathName, NULL, ret, opcode, 1, pathName, xattrp ) );
 	fpathName[ length ] = '\0';
 
@@ -1448,6 +1501,7 @@ bool ExtFs::filterFiles( ExtDta *dta, char *fpathName, char *mask, struct dirent
 	//FIXME  if ( stat(fpathName, &statBuf) )
 	//	return false;
 
+	// The . and .. dirs shouldn't be returned
 	if ( dirEntry->d_name[0] == '.' &&
 		 ( dirEntry->d_name[1] == '\0' ||
 		   dirEntry->d_name[1] == '.' && dirEntry->d_name[2] == '\0' ) )
@@ -1524,5 +1578,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.6  2001/06/18 13:21:55  standa
+ * Several template.cpp like comments were added.
+ * HostScreen SDL encapsulation class.
+ *
  *
  */

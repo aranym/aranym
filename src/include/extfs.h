@@ -20,6 +20,9 @@
 #endif
 
 
+#define MAXPATHNAMELEN 2048
+
+
 class ExtFs {
   private:
 
@@ -58,6 +61,7 @@ class ExtFs {
 	{
 		bool halfSensitive;
 		char *rootPath;
+		char *currPath;
     } ExtDrive;
 
     ExtDrive drives[ 'Z' - 'A' ];
@@ -138,6 +142,9 @@ class ExtFs {
 	int32 Ddelete(LogicalDev *ldp, char *pathName, ExtFile *fp,
 				  int32 ret, int16 opcode,
 				  const char *pn);
+	int32 Dsetpath(LogicalDev *ldp, char *pathName, ExtFile *fp,
+				   int32 ret, int16 opcode,
+				   const char *pn);
 	int32 Fcreate(LogicalDev *ldp, char *pathName, ExtFile *fp,
 				  int32 ret, int16 opcode,
 				  const char *pn, int16 attr);
@@ -209,5 +216,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.4  2001/06/18 13:21:55  standa
+ * Several template.cpp like comments were added.
+ * HostScreen SDL encapsulation class.
+ *
  *
  */
