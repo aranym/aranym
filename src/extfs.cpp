@@ -1510,6 +1510,11 @@ int32 ExtFs::Fopen(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *pn,
 	convertPathA2F( fpathName, pathName );
 
 	D(bug("MetaDOS: Fopen (%s,%s,%d)", pathName, fpathName, flags));
+	
+        struct stat statBuf;
+	if ( !stat(fpathName, &statBuf) )
+		if ( S_ISDIR(statBuf.st_mode) )
+			return TOS_EFILNF;
 
 	return Fopen_( (char*)fpathName, st2flags(flags), 0, fp );
 }
@@ -2529,6 +2534,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.36  2002/03/27 16:14:39  standa
+ * The JavaDoc documentation written into the extfs.cpp/transformFileName.
+ *
  * Revision 1.35  2002/03/27 15:54:27  standa
  * Debug removed.
  *

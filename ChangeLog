@@ -1,3 +1,11 @@
+2002/04/04 - STanda
+- MetaDOS Fopen implementation shoudn't be able to open a directory.
+  Fixed due to the Olivier Landemarre <Olivier.Landemarre@utbm.fr>
+  and the CharView author who provided a source of the application
+  that had this problem. The EasyGEM library tries to open directory
+  entries using Fopen. Thanks for EasyGEM beeing open-source.
+
+
 2002/04/03 - milan
 - sync with BailiskII-JIT (25.3.2002)
 
