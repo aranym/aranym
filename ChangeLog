@@ -1,3 +1,7 @@
+2004/02/02 - milan
+- cdrom.cpp: Solaris support corrected
+
+
 2004/02/02 - joy
 - acsifdc.cpp: when fixing my 0.8.5beta bug that Xavier has found I decided
   to clean the whole floppy code. FDC routines were included from fdc.cpp.

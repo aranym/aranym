@@ -1050,14 +1050,14 @@ cdrom_interface::capacity()
 	return GetNumDeviceBlocks(fd, BX_CD_FRAMESIZE);
 #elif defined(OS_solaris)
   {
-    struct stat buf = {0};
+    struct stat buf/* = {0}*/;
 
     if (fd < 0) {
       panicbug("cdrom: capacity: file not open.");
     } 
     
     if( fstat(fd, &buf) != 0 )
-      panicbug(("cdrom: capacity: stat() failed.");
+      panicbug("cdrom: capacity: stat() failed.");
   
     return(buf.st_size);
   }
