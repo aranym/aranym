@@ -647,6 +647,10 @@ void process_mouse_event(SDL_Event event)
 			return;	// if GUI is open do not pass mouse motion to Atari
 		}
 #endif
+		if (xrel < -250 || xrel > 250 || yrel < -250 || yrel > 250) {
+			bug("Reseting weird mouse packet: %d, %d, %d", xrel, yrel, but);
+			xrel = yrel = 0;	// reset the values otherwise ikbd gets crazy
+		}
 		ikbd.SendMouseMotion(xrel, yrel, but);
 	}
 
@@ -665,17 +669,30 @@ void process_mouse_event(SDL_Event event)
 
 void process_active_event(SDL_Event event)
 {
-	// if the mouse left our window we will let it be grabbed next time it comes back
-	if (event.active.state == SDL_APPMOUSEFOCUS && !event.active.gain)
-		canGrabMouseAgain = true;
-	else {
-		// if the mouse is comming back after it left our window and
-		// if we have input focus and
-		// if we can grab the mouse automatically and
-		// if the Atari mouse driver works then let's grab it!
-		if (SDL_GetAppState() & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) {
-			if (bx_options.autoMouseGrab && canGrabMouseAgain && aradata.isAtariMouseDriver())
-				grabTheMouse();
+	// if we have input focus
+	if (SDL_GetAppState() & SDL_APPINPUTFOCUS) {
+
+		// if it's mouse focus event
+		if (event.active.state == SDL_APPMOUSEFOCUS) {
+
+			// if we can grab the mouse automatically
+			// and if the Atari mouse driver works
+			if (bx_options.autoMouseGrab && aradata.isAtariMouseDriver()) {
+
+				// if the mouse has just left our window
+				if (!event.active.gain) {
+					// allow grabbing it when it will be returning
+					canGrabMouseAgain = true;
+				}
+				// if the mouse is entering our window
+				else {
+					// if grabbing the mouse is allowed
+					if (canGrabMouseAgain) {
+						// then grab it
+						grabTheMouse();
+					}
+				}
+			}
 		}
 	}
 
