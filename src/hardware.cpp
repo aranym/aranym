@@ -4,31 +4,46 @@
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
+#include "icio.h"
 #include "mfp.h"
 #include "acia.h"
 #include "acsifdc.h"
 #include "rtc.h"
 #include "blitter.h"
-#include "ata.h"
+#include "ide.h"
 #include "videl.h"
+#include "yamaha.h"
+#include "fakeio.h"
+#include "mmu.h"
+#include "exceptions.h"
 #include "uae_cpu/newcpu.h"	// for regs.pc
 
+FAKEIO faked;
+FAKEIO fakestore(false);
+MMU mmu;
 MFP mfp;
 IKBD ikbd;
 MIDI midi;
 ACSIFDC fdc;
 RTC rtc;
-bx_hard_drive_c ide;
+IDE ide;
 BLITTER blitter;
 VIDEL videl;
+YAMAHA yamaha;
+
 uae_u32 vram_addr=0;
+
+#define BUS_ERROR	longjmp(excep_env, 2)
 
 int getVideoMode() {
 	return videl.getVideoMode();
 }
 
-int snd_reg;
-extern int snd_porta;
+int getFloppyStats() {
+	return yamaha.getFloppyStat();
+}
+
+// extern jmp_buf excep_env;
 
 bool dP = false;
 
@@ -40,7 +55,7 @@ void HWInit (void) {
 	put_byte(MEM_CTL_A,MEM_CTL);
 	put_word(SYS_CTL_A,SYS_CTL);
 	*/
-	ide.init();
+	// ide.init();
 }
 
 static const int HW_IDE 	= 0xf00000;
@@ -65,49 +80,46 @@ static const int HW_TTMFP	= 0xfffa80;
 static const int HW_IKBD	= 0xfffc00;
 static const int HW_MIDI	= 0xfffc04;
 
-static char* debug_print_IO(uaecptr addr) {
-	if (addr < HW_ROM)
-		return "IDE";
-	if (addr < HW_MMU)
-		return "Cartridge";
-	else if (addr < HW_VIDEO)
-		return "MMU";
-	else if (addr < HW_FDC)
-		return "Video";
-	else if (addr < HW_SCSI)
-		return "Floppy";
-	else if (addr < HW_YAMAHA)
-		return "SCSI";
-	else if (addr < HW_SOUND)
-		return "Yamaha";
-	else if (addr < HW_DSP)
-		return "DMA Sound";
-	else if (addr < HW_RTC)
-		return "DSP DMA";
-	else if (addr < HW_BLITT)
-		return "RTC";
-	else if (addr < HW_SCC)
-		return "Blitter";
-	else if (addr < HW_SCU)
-		return "SCC";
-	else if (addr < HW_PADDLE)
-		return "SCU";
-	else if (addr < HW_VIDEL)
-		return "Paddle";
-	else if (addr < HW_DSPH)
-		return "Videl";
-	else if (addr < HW_STMFP)
-		return "DSP Host";
-	else if (addr < HW_FPU)
-		return "MFP";
-	else if (addr < HW_TTMFP)
-		return "FPU";
-	else if (addr < HW_IKBD)
-		return "TT MFP";
-	else if (addr < HW_MIDI)
-		return "IKBD ACIA";
-	else
-		return "MIDI ACIA";
+struct HARDWARE {
+	char name[32];
+	int	begin;
+	int len;
+	ICio *handle;
+};
+
+HARDWARE ICs[] = {
+	{"IDE", 0xf00000, 0x3a, &ide},
+	{"Cartridge", 0xfa0000, 0x20000, &faked},
+	{"Memory Management", 0xff8000, 8, &mmu},
+	{"VIDEL", 0xff8200, 0xc4, &videl},
+	{"DMA/FDC", 0xff8600, 0x10, &fdc},
+	{"DMA/SCSI", 0xff8700, 0x16, &faked},
+	{"SCSI", 0xff8780, 0x10, &faked},
+	{"Yamaha", 0xff8800, 4, &yamaha},
+	{"Sound", 0xff8900, 0x22, &faked},
+	// {"MicroWire", 0xff8922, 0x4},
+	{"DMA/DSP", 0xff8930, 0x14, &faked},
+	{"TT RTC", 0xff8960, 4, &rtc},
+	{"BLiTTER", 0xff8A00, 0x3e, &blitter},
+	// {"DMA/SCC", 0xff8C00, 0x16},
+	{"SCC", 0xff8C80, 0x16, &faked},
+	// {"VME", 0xff8e00, 0x0c},
+	{"Paddle", 0xff9200, 0x24, &faked},
+	{"VIDEL Pallete", 0xff9800, 0x400, &fakestore},
+	{"DSP", 0xffa200, 8, &faked},
+	{"STMFP", 0xfffa00, 0x30, &mfp},
+	// {"STFPC", 0xfffa40, 8},
+	{"IKBD", 0xfffc00, 4, &ikbd},
+	{"MIDI", 0xfffc04, 4, &midi}
+	// {"RTC", 0xfffc20, 0x20}
+};
+
+/*static*/char* debug_print_IO(uaecptr addr) {
+	int len = sizeof(ICs) / sizeof(ICs[0]);
+	for(int i=0; i<len; i++)
+		if (addr >= ICs[i].begin && addr < (ICs[i].begin + ICs[i].len))
+			return ICs[i].name;
+	return "Unknown";
 }
 
 uaecptr showPC() {
@@ -115,68 +127,28 @@ uaecptr showPC() {
 }
 
 uae_u32 handleRead(uaecptr addr) {
-	if (addr >= HW_STMFP && addr < HW_FPU)
-		return mfp.handleRead(addr);
-	else if (addr >= HW_FDC && addr < HW_SCSI)
-		return fdc.handleRead(addr);
-	else if (addr >= HW_BLITT && addr < HW_SCC)
-		return blitter.handleRead(addr);
-	else if (addr >= HW_VIDEO && addr < HW_FDC)
-		return videl.handleRead(addr);
-	else if (addr >= HW_RTC && addr < (HW_RTC+4))
-		return rtc.handleRead(addr);
-	else if (addr >= HW_IDE && addr < (HW_IDE+0x3a))
-		return ide.read_handler(&ide, addr, 1);
-	else if (addr >= HW_IKBD && addr < HW_MIDI)
-		return ikbd.handleRead(addr);
-	else if (addr >= HW_MIDI && addr < HW_MIDI + 3)
-		return midi.handleRead(addr);
-
-	else if (addr == 0xff8006)
-		return 0xa6;	// a6 = 14MB, 96 = 4MB on VGA
-		// return 0xe6;	// 14 MB on TV
-	else if (addr == 0xff8007)
-		return 0x61;
-	else if (addr == 0xffa202)
-		return 0xff;	// DSP interrupt
-	else if (addr >= HW_FPU && addr < HW_TTMFP) {
-		fprintf(stderr, "BUS ERROR!\n");
-		Exception(2, m68k_getpc());		// bus error
-		return 0;
+	int len = sizeof(ICs) / sizeof(ICs[0]);
+	for(int i=0; i<len; i++) {
+		if (addr >= ICs[i].begin && addr < (ICs[i].begin + ICs[i].len)) {
+			ICio *ptr = ICs[i].handle;
+			return ptr->handleRead(addr);
+		}
 	}
-	else if (addr == HW_YAMAHA && snd_reg == 14)
-		return snd_porta;
-	else {
-		// fprintf(stderr, "HWget_b %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
-		return 0;
-	}
+	fprintf(stderr, "HWget_b %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
+	BUS_ERROR;
 }
 
 void handleWrite(uaecptr addr, uae_u8 value) {
-	if (addr >= HW_STMFP && addr < HW_FPU)
-		mfp.handleWrite(addr, value);
-	else if (addr >= HW_FDC && addr < HW_SCSI)
-		fdc.handleWrite(addr, value);
-	else if (addr >= HW_BLITT && addr < HW_SCC)
-		blitter.handleWrite(addr, value);
-	else if (addr >= HW_VIDEO && addr < HW_FDC)
-		videl.handleWrite(addr, value);
-	else if (addr >= HW_RTC && addr < (HW_RTC+4))
-		rtc.handleWrite(addr, value);
-	else if (addr >= HW_IDE && addr < (HW_IDE+0x3a))
-		ide.write_handler(&ide, addr, value, 1);
-	else if (addr >= HW_IKBD && addr < HW_MIDI)
-		ikbd.handleWrite(addr, value);
-	else if (addr >= HW_MIDI && addr < HW_MIDI + 3)
-		midi.handleWrite(addr, value);
-
-	else if (addr == HW_YAMAHA)
-		snd_reg = value;
-	else if (addr == (HW_YAMAHA+2) && snd_reg == 14)
-		snd_porta = value;
-	else {
-		// fprintf(stderr, "HWput_b %x,%u ($%02x) -> %s at %08x\n", addr, value, value, debug_print_IO(addr), showPC());
+	int len = sizeof(ICs) / sizeof(ICs[0]);
+	for(int i=0; i<len; i++) {
+		if (addr >= ICs[i].begin && addr < (ICs[i].begin + ICs[i].len)) {
+			ICio *ptr = ICs[i].handle;
+			ptr->handleWrite(addr, value);
+			return;
+		}
 	}
+	fprintf(stderr, "HWput_b %x = %d ($%x) <- %s at %08x\n", addr, value, value, debug_print_IO(addr), showPC());
+	BUS_ERROR;
 }
 
 void MakeMFPIRQ(int no) {
@@ -212,11 +184,7 @@ uae_u32 HWget_w (uaecptr addr) {
 	if (dP)
 		fprintf(stderr, "HWget_w %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
 	if (addr == HW_IDE)
-		return ide.read_handler(&ide, addr, 2);
-	else if (addr == HW_FPU) {
-		Exception(2, 0);
-		return 0;
-	}
+		return ide.handleReadW(addr);
 	else
 		return (handleRead(addr) << 8) | handleRead(addr+1);
 }
@@ -252,7 +220,7 @@ void HWput_w (uaecptr addr, uae_u32 w) {
 	if (dP)
 		fprintf(stderr, "HWput_w %x,%d ($%04x) -> %s at %08x\n", addr, w, w, debug_print_IO(addr), showPC());
 	if (addr == HW_IDE)
-		ide.write_handler(&ide, addr, w, 2);
+		ide.handleWriteW(addr, w);
 	else {
 		handleWrite(addr, w >> 8);
 		handleWrite(addr+1, w);
