@@ -234,6 +234,7 @@ int main(int argc, char **argv)
 		QuitEmulator();
 	}
 
+#ifdef PATCHROM
 	// patch ROM
 	int offset = 0x08b92;
 	uae_u8 * patchX = ROMBaseHost + offset;
@@ -277,6 +278,7 @@ int main(int argc, char **argv)
 	patchX = ROMBaseHost + 0x8bbe;
 	*patchX++ = 0x4e;
 	*patchX++ = 0x71;
+#endif
 
 	// Initialize everything
 	if (!InitAll())
@@ -431,18 +433,22 @@ static void check_event(void)
 		else if (type == SDL_MOUSEBUTTONDOWN || type == SDL_MOUSEBUTTONUP || type == SDL_MOUSEMOTION) {
 			int xrel = 0;
 			int yrel = 0;
-			int but = 0;
+			static int but = 0;
+			int lastbut = but;
 			if (type == SDL_MOUSEMOTION) {
 				SDL_MouseMotionEvent eve = event.motion;
 				//eve.type/state/x,y/xrel,yrel
 				xrel = eve.xrel;
 				yrel = eve.yrel;
 			}
-			else if (SDL_MOUSEBUTTONDOWN) {
+			else if (type == SDL_MOUSEBUTTONDOWN) {
 			// eve.type/state/button
 				but = 1;
 			}
-			if (xrel || yrel || but) {
+			else if (type == SDL_MOUSEBUTTONUP) {
+				but = 0;
+			}
+			if (xrel || yrel || lastbut != but) {
 				ikbd_send(0xf8 | but << 1);
 				ikbd_send(xrel);
 				ikbd_send(yrel);
