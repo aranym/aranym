@@ -30,14 +30,12 @@ INSTALL_DATA = @INSTALL_DATA@
 ## Files
 SRCS = ../main.cpp \
 	main_unix.cpp \
-	../timer.cpp timer_unix.cpp \
 	../hardware.cpp \
 	../mfp.cpp \
 	../acia.cpp \
 	../acsifdc.cpp \
 	../fdc.cpp \
 	../rtc.cpp \
-	../ide.cpp \
 	../ata.cpp \
 	../emul_op.cpp \
 	../blitter.cpp \

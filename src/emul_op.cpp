@@ -24,7 +24,7 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
-#include "timer.h"
+//#include "timer.h"
 #include "emul_op.h"
 
 #define DEBUG 0
@@ -62,7 +62,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 
 		case M68K_EMUL_OP_RESET: {			// MacOS reset
 			D(bug("*** RESET ***\n"));
-			TimerReset();
+// MJ			TimerReset();
 /* MJ			EtherReset();
 			AudioReset();*/
 
@@ -204,7 +204,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 
 		case M68K_EMUL_OP_MICROSECONDS: 	// Microseconds() replacement
-			Microseconds(r->a[0], r->d[0]);
+// MJ			Microseconds(r->a[0], r->d[0]);
 			break;
 
 		case M68K_EMUL_OP_INSTALL_DRIVERS:/* {// Patch to install our own drivers during startup

@@ -30,7 +30,7 @@
 #include <sys/mman.h>
 
 #include "cpu_emulation.h"
-#include "timer.h"
+//#include "timer.h"
 #include "version.h"
 #include "main.h"
 #include "hardware.h"
@@ -110,8 +110,6 @@ static struct option const long_options[] =
 
 char *program_name;
 char *rom_path;
-
-extern "C" char *xstrdup();
 
 static int decode_switches (int argc, char **argv);
 
@@ -690,7 +688,7 @@ decode_switches (int argc, char **argv)
 	  break;
 	
 	case 'R':
-	  rom_path = xstrdup(optarg);
+	  rom_path = strdup(optarg);
 	  break;
 
 	case 'r':
