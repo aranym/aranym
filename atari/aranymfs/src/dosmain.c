@@ -41,19 +41,19 @@ typedef struct
 static int Bconws( char *str )
 {
 	int cnt = 0;
-	
+
 	while (*str)
 	{
 		cnt++;
-		
+
 		if (*str == '\n') {
 			Bconout (2, '\r');
 			cnt++;
 		}
-		
+
 		Bconout (2, *str++);
 	}
-	
+
 	return cnt;
 }
 
@@ -132,7 +132,7 @@ void* cdecl InitDevice( int deviceid )
 		Bconws ("Not enough memory for buffers\n");
 		return (void *)-1L;
 	}
-	
+
 	return ldp;
 }
 
@@ -140,5 +140,8 @@ void* cdecl InitDevice( int deviceid )
 
 /**
  * $Log$
+ * Revision 1.3  2001/10/17 17:59:44  standa
+ * The fandafs to aranymfs name change and code cleanup.
+ *
  *
  **/

@@ -150,6 +150,9 @@ fs_dreadlabel:
 
 ;
 ; $Log$
+; Revision 1.4  2001/10/17 18:03:47  standa
+; typo fix
+;
 ; Revision 1.3  2001/10/17 17:59:44  standa
 ; The fandafs to aranymfs name change and code cleanup.
 ;
