@@ -45,13 +45,13 @@
 
 class HostScreen {
   private:
- 	void *saved_background;
-  	int saved_background_size;
+ 	SDL_Surface *mainSurface;		// The main window surface
+ 	SDL_Surface *backgroundSurf;	// Background window surface
+	SDL_Surface *surf;			// pointer to actual surface for VDI
   	bool GUIopened;
 
   public:
 	SDL_mutex   *screenLock;
-	SDL_Surface *surf;	// The main window surface
 	uint32 sdl_videoparams;
 	uint32 width, height, bpp;
 	bool   doUpdate; // the HW surface is available -> the SDL need not to update the surface after ->pixel access
@@ -91,12 +91,13 @@ class HostScreen {
 
 		screenLock = SDL_CreateMutex();
 
-		saved_background = NULL;
+		backgroundSurf = NULL;
 		GUIopened = false;
 	}
 	~HostScreen() {
 		SDL_DestroyMutex(screenLock);
-		free(saved_background);
+		if (backgroundSurf)
+			SDL_FreeSurface(backgroundSurf);
 	}
 
 	inline void lock();
@@ -111,10 +112,11 @@ class HostScreen {
 	inline void	  update();
 
 	// save and restore background (cannot be nested)
-	void save_bkg();
-	void restore_bkg();
+	void saveBackground();
+	void restoreBackground();
 	bool isGUIopen()	{ return GUIopened; }
 	void setGUIopen(bool opened)	{ GUIopened = opened; }
+	SDL_Surface *getPhysicalSurface() { return mainSurface; }
 
 	uint32 getBpp();
 	uint32 getPitch();
@@ -221,7 +223,7 @@ inline uint32 HostScreen::getHeight() {
 }
 
 inline uintptr HostScreen::getVideoramAddress() {
-	return (uintptr)surf->pixels;
+	return (uintptr)surf->pixels;	/* FIXME maybe this should be mainSurface? */
 }
 
 inline void HostScreen::setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue ) {
@@ -396,6 +398,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.33  2002/06/26 21:06:27  joy
+ * bool GUIopened flag added
+ *
  * Revision 1.32  2002/06/09 20:06:07  joy
  * save_bkg/restore_bkg added (used in SDL GUI)
  *
