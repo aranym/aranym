@@ -36,7 +36,7 @@ typedef struct
 }  SGOBJ;
 
 
-int SDLGui_Init(void);
+bool SDLGui_Init(void);
 int SDLGui_UnInit(void);
 int SDLGui_DoDialog(SGOBJ *dlg);
 int SDLGui_PrepareFont(void);
