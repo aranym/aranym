@@ -70,11 +70,7 @@ static void sigint_handler(...);
 
 extern void showBackTrace(int, bool=true);
 
-#ifdef OS_irix
-void segmentationfault()
-#else
 void segmentationfault(int)
-#endif
 {
 	grabMouse(false);
 	panicbug("Gotcha! Illegal memory access. Atari PC = $%x", (unsigned)showPC());
@@ -279,6 +275,7 @@ int main(int argc, char **argv)
 
 	QuitEmulator();
 
+	delete mainBundle;
 	return 0;
 }
 

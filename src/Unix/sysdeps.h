@@ -85,8 +85,7 @@
 
 #ifdef MACOSX_support
 
-#include <CoreServices/CoreServices.h>
-#include <CoreFoundation/CoreFoundation.h>
+#include <Carbon/Carbon.h>
 
 #endif /* MACOSX_support */
 
