@@ -99,7 +99,6 @@ SRCS = ../main.cpp \
 APP = aranym
 APP_STATIC = aranym-static
 APP_LIB = libaranym.a
-APP_DI = diskimage
 APP_IFC = aratapif
 TARGET = @TARGET@
 
@@ -108,7 +107,7 @@ TARGET = @TARGET@
 .SUFFIXES:
 .SUFFIXES: .c .cpp .s .o .h
 
-all: $(TARGET) $(APP_DI) $(TAPIF)
+all: $(TARGET) $(TAPIF)
 
 OBJ_DIR = obj
 $(OBJ_DIR)::
@@ -139,12 +138,11 @@ $(APP_STATIC): $(OBJ_DIR) $(OBJS)
 $(APP_LIB): $(OBJ_DIR) $(OBJS)
 	$(LD) -r -o $(APP_LIB) $(LDFLAGS) $(OBJS) $(LIBS)
 
-install: $(APP) $(APP_DI) $(TAPIF) $(APP).1.gz installdirs
+install: $(APP) $(TAPIF) $(APP).1.gz installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then\
 	$(INSTALL_PROGRAM) $(APP_IFC) $(DESTDIR)$(bindir)/$(APP_IFC);\
 	fi
-	$(INSTALL_PROGRAM) $(APP_DI) $(DESTDIR)$(bindir)/$(APP_DI)
 	$(INSTALL_DATA) $(APP).1.gz $(DESTDIR)$(man1dir)/$(APP).1.gz
 	$(INSTALL_DATA) ../../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog
 	$(INSTALL_DATA) ../../TODO $(DESTDIR)$(docdir)/$(APP)/TODO
@@ -170,9 +168,7 @@ install: $(APP) $(APP_DI) $(TAPIF) $(APP).1.gz installdirs
 	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/nfeth-config.bz2
 	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) ../../atari/network/ethernet/README $(DESTDIR)$(datadir)/$(APP)/atari/network/README
-	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
-	$(INSTALL) ../../tools/createdisk/createdisk.sh $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
-	$(INSTALL_DATA) ../../tools/createdisk/mbrdata $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
+	$(INSTALL) ../../tools/arabridge $(DESTDIR)$(datadir)/$(APP)/arabridge
 	$(INSTALL) ../../tools/floppy.sh $(DESTDIR)$(datadir)/$(APP)/floppy.sh
 	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
 	$(INSTALL_DATA) ../../atari/fvdi/fvdi.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
@@ -186,14 +182,13 @@ install: $(APP) $(APP_DI) $(TAPIF) $(APP).1.gz installdirs
 	$(INSTALL_DATA) ../../atari/sound/README $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
 	
 installdirs:
-	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/hostfs $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom $(DESTDIR)$(datadir)/$(APP)/atari/network $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/hostfs $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom $(DESTDIR)$(datadir)/$(APP)/atari/network $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
 
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then\
 	rm -f $(DESTDIR)$(bindir)/$(APP_IFC);\
 	fi
-	rm -f $(DESTDIR)$(bindir)/$(APP_DI)
 	rm -f $(DESTDIR)$(man1dir)/$(APP).1.gz
 	rm -f $(DESTDIR)$(docdir)/$(APP)/changelog
 	rm -f $(DESTDIR)$(docdir)/$(APP)/TODO
@@ -219,9 +214,7 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/nfeth-config.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/README
-	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.README
-	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/createdisk.sh
-	rm -f $(DESTDIR)$(datadir)/$(APP)/createdisk/mbrdata
+	rm -f $(DESTDIR)$(datadir)/$(APP)/arabridge
 	rm -f $(DESTDIR)$(datadir)/$(APP)/floppy.sh
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
@@ -233,7 +226,6 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
-	rmdir $(DESTDIR)$(datadir)/$(APP)/createdisk
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/hostfs
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/network
@@ -245,7 +237,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -f $(APP) $(APP_DI) $(TAPIF) $(APP).1.gz $(OBJ_DIR)/* core* *.core *~ *.bak
+	rm -f $(APP) $(TAPIF) $(APP).1.gz $(OBJ_DIR)/* core* *.core *~ *.bak
 
 clean: mostlyclean
 	rm -f cpuemu.cpp cpudefs.cpp cputmp*.s cpufast*.s cpustbl.cpp cputbl.h newcpu.s memory.s compemu.cpp compstbl.cpp comptbl.h
@@ -261,14 +253,13 @@ mrproper: distclean
 	rm -rf aclocal.m4 configure config.h.in
 
 bindistdirs:
-	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/createdisk tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
-bindist: $(APP) $(APP_DI) $(TAPIF) $(APP).1.gz bindistdirs
+bindist: $(APP) $(TAPIF) $(APP).1.gz bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then\
 	$(INSTALL_PROGRAM) $(APP_IFC) tmpdist$(bindir)/$(APP_IFC);\
 	fi
-	$(INSTALL_PROGRAM) $(APP_DI) tmpdist$(bindir)/$(APP_DI)
 	$(INSTALL_DATA) $(APP).1.gz tmpdist$(man1dir)/$(APP).1.gz
 	$(INSTALL_DATA) ../../ChangeLog tmpdist$(docdir)/$(APP)/changelog
 	$(INSTALL_DATA) ../../TODO tmpdist$(docdir)/$(APP)/TODO
@@ -294,9 +285,7 @@ bindist: $(APP) $(APP_DI) $(TAPIF) $(APP).1.gz bindistdirs
 	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 tmpdist$(datadir)/$(APP)/atari/network/nfeth-config.bz2
 	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) ../../atari/network/ethernet/README tmpdist$(datadir)/$(APP)/atari/network/README
-	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README tmpdist$(datadir)/$(APP)/createdisk/createdisk.README
-	$(INSTALL) ../../tools/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/createdisk/createdisk.sh
-	$(INSTALL_DATA) ../../tools/createdisk/mbrdata tmpdist$(datadir)/$(APP)/createdisk/mbrdata
+	$(INSTALL) ../../tools/arabridge tmpdist$(datadir)/$(APP)/arabridge
 	$(INSTALL) ../../tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
 	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
 	$(INSTALL_DATA) ../../atari/fvdi/fvdi.prg.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
@@ -511,9 +500,6 @@ newcpu.s: ../uae_cpu/newcpu.cpp
 
 memory.s: ../uae_cpu/memory.cpp
 	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) ../uae_cpu/memory.cpp -o memory.s
-
-$(APP_DI): ../../tools/diskimage.c
-	$(CC) $(LDFLAGS) $(CFLAGS) -o $(APP_DI) ../../tools/diskimage.c
 
 $(APP_IFC): aratapif.c
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $(APP_IFC) -DHAVE_AFINET aratapif.c
