@@ -66,6 +66,7 @@ int port_number = 1234;
 #define GDBSTUB_EXECUTION_BREAKPOINT    (0xac1)
 #define GDBSTUB_TRACE                   (0xac2)
 #define GDBSTUB_USER_BREAK              (0xac3)
+#define GDBSTUB_COMMAND                 (0xacf)
 
 int gdbstub::listen_socket_fd = 0;
 int gdbstub::socket_fd = 0;
@@ -228,7 +229,7 @@ static int stub_trace_flag = 0;
 
 static int instr_count = 0;
 
-static int saved_pc = 0;
+int gdbstub::saved_pc = 0;
 
 int gdbstub::check(memptr pc)
 {
@@ -267,6 +268,11 @@ int gdbstub::check(memptr pc)
          }
      }
    
+   if (last_command != no_command)
+     {
+       last_stop_reason = GDBSTUB_COMMAND;
+       return GDBSTUB_COMMAND;
+     }
    // why is trace before breakpoints? does that mean it would never
    // hit a breakpoint during tracing?
    if (stub_trace_flag == 1)
@@ -411,32 +417,47 @@ void gdbstub::debug_loop(void)
    
    while (ne == 0)
      {
-       if (last_command == no_command) get_command(buffer);
-       D(bug("get_buffer %s", buffer));
-       
+       if (last_command == no_command) {
+         get_command(buffer);
+         D(bug("get_buffer %s", buffer));
+       } else {
+	 switch (last_command)
+	   {
+	     case continue_command:
+		 buffer[0] = 'c';
+		 break;
+	     case step_command:
+		 buffer[0] = 's';
+		 break;
+             default:
+		 D(bug("Unknown previous command"));
+		 break;
+	   }
+	 D(bug("last_command %c", buffer[0]));
+       }
        switch (buffer[0])
          {
           case 'c':
               {
-                 char buf[255];
-                 int new_pc;
+		 if (last_command == no_command) {
+                   int new_pc;
                  
-                 if (buffer[1] != 0)
-                   {
-                      new_pc = atoi(buffer + 1);
+                   if (buffer[1] != 0)
+                     {
+                        new_pc = atoi(buffer + 1);
                       
-                      D2(bug("continuing at %x", new_pc));
+                        D2(bug("continuing at %x", new_pc));
 #if 0
 		      for (int i=0; i<BX_SMP_PROCESSORS; i++) {
                         BX_CPU(i)->invalidate_prefetch_q();
 		      }
 #endif
-                      saved_pc = m68k_getpc();
+                        saved_pc = m68k_getpc();
                       
-                      m68k_setpc(new_pc);
-                   }
+                        m68k_setpc(new_pc);
+                     }
                  
-                 stub_trace_flag = 0;
+                   stub_trace_flag = 0;
 #if 0
                  bx_cpu.ispanic = 0;
                  bx_cpu.cpu_loop(-1);              
@@ -445,64 +466,71 @@ void gdbstub::debug_loop(void)
                     last_stop_reason = GDBSTUB_EXECUTION_BREAKPOINT;
                  }
 #endif
-		 SPCFLAGS_SET( SPCFLAG_BRK );
-		 ne = 1;
-//		 m68k_do_execute();
+		   SPCFLAGS_SET( SPCFLAG_BRK );
+		   ne = 1;
+		   last_command = continue_command;
+		 } else {
 #if 0
                  DEV_vga_refresh();
 #endif
-                 if (buffer[1] != 0)
-                   {
+                   char buf[255];
+		   last_command = no_command;
+                   if (buffer[1] != 0)
+                     {
 #if 0
                       bx_cpu.invalidate_prefetch_q();
 #endif
-                      m68k_setpc(saved_pc);
-                   }
+                        m68k_setpc(saved_pc);
+                     }
                  
-                 D2(bug("stopped with %x", last_stop_reason));                               
-                 buf[0] = 'S';
-                 if (last_stop_reason == GDBSTUB_EXECUTION_BREAKPOINT ||
-                     last_stop_reason == GDBSTUB_TRACE)
-                   {
-                      write_signal(&buf[1], SIGTRAP);
-                   }
-                 else
-                   {
-                      write_signal(&buf[1], 0);
-                   }
-                 put_reply(buf);
+                   D2(bug("stopped with %x", last_stop_reason));                               
+                   buf[0] = 'S';
+                   if (last_stop_reason == GDBSTUB_EXECUTION_BREAKPOINT ||
+                       last_stop_reason == GDBSTUB_TRACE)
+                     {
+                        write_signal(&buf[1], SIGTRAP);
+                     }
+                     else
+                     {
+                        write_signal(&buf[1], 0);
+                     }
+                   put_reply(buf);
+		 }
                  break;
               }
             
           case 's':
               {
-                 char buf[255];
-                 
-                 D2(bug("stepping"));
-                 stub_trace_flag = 1;
+                 if (last_command == no_command)
+		 {
+                   D2(bug("stepping"));
+                   stub_trace_flag = 1;
 #if 0
                  bx_cpu.cpu_loop(-1);
-#else
-		 SPCFLAGS_SET( SPCFLAG_BRK );
-		 ne = 1;
-//		 m68k_do_execute();
 #endif
+		   SPCFLAGS_SET( SPCFLAG_BRK );
+		   ne = 1;
+		   last_command = step_command;
+		 } else {
 #if 0
                  DEV_vga_refresh();
 #endif
-                 stub_trace_flag = 0;
-                 D2(bug("stopped with %x", last_stop_reason));
-                 buf[0] = 'S';
-                 if (last_stop_reason == GDBSTUB_EXECUTION_BREAKPOINT ||
-                     last_stop_reason == GDBSTUB_TRACE)
-                   {
-                      write_signal(&buf[1], SIGTRAP);
-                   }
-                 else
-                   {
-                      write_signal(&buf[1], SIGTRAP);
-                   }
-                 put_reply(buf);
+		   last_command = no_command;
+                   char buf[255];
+                   stub_trace_flag = 0;
+                   D2(bug("stopped with %x", last_stop_reason));
+                   buf[0] = 'S';
+                   if (last_stop_reason == GDBSTUB_EXECUTION_BREAKPOINT ||
+                       last_stop_reason == GDBSTUB_TRACE)
+                     {
+                        write_signal(&buf[1], SIGTRAP);
+                     }
+                   else
+                     {
+                        write_signal(&buf[1], SIGTRAP);
+                     }
+                   put_reply(buf);
+		 }
                  break;
               }
             

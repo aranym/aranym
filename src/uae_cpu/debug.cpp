@@ -239,7 +239,8 @@ void debug (void)
   ndebug::run();
 #else
 # ifdef GDBSTUB
-  gdbstub::check(m68k_getpc());
+  if (gdbstub::check(m68k_getpc()) != GDBSTUB_STOP_NO_REASON)
+    gdbstub::debug_loop();
 # else
     char input[80];
     uaecptr nextpc,nxdis,nxmem;
