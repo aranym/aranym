@@ -101,24 +101,223 @@ extern "C" {
 		buffer[16]='\0';
 	}
 }
-void  HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color )
+
+
+/**
+ * Derived from the SDL_gfxPrimitives::boxColor(). The colors are in the destination surface format here.
+ * The trivial cases optimalization removed.
+ *
+ * @author STanda
+ **/
+void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 fgColor, uint32 bgColor)
 {
-	areaPattern = pattern;
-	/*
-	char buffer[30];
-	for( uint16 i=0; i<=15; i++ ) {
-		getBinary( areaPattern[i], buffer );
-		D(fprintf(stderr, "fVDI: fillP:%s\n", buffer ));
+	uint8 *pixel, *pixellast;
+	int16 x, dx, dy;
+	int16 pixx, pixy;
+	int16 w,h,tmp;
+
+	/* Order coordinates */
+	if (x1>x2) {
+		tmp=x1;
+		x1=x2;
+		x2=tmp;
 	}
-	*/
-	uint8 r,g,b,a; SDL_GetRGBA( color, surf->format, &r, &g, &b, &a);
-	boxRGBA( surf, (int16)x1, (int16)y1, (int16)x2, (int16)y2, r,g,b,a ); // SDL_gfxPrimitives
-	areaPattern = NULL;
+	if (y1>y2) {
+		tmp=y1;
+		y1=y2;
+		y2=tmp;
+	}
+
+	/* Calculate width&height */
+	w=x2-x1+1; // STanda //+1
+	h=y2-y1;
+
+	/* More variable setup */
+	dx=w;
+	dy=h;
+	pixx = surf->format->BytesPerPixel;
+	pixy = surf->pitch;
+	pixel = ((uint8*)surf->pixels) + pixx * (int32)x1 + pixy * (int32)y1;
+	pixellast = pixel + pixx*dx + pixy*dy;
+
+	// STanda // FIXME here the pattern should be checked out of the loops for performance
+	          // but for now it is good enough
+	          // FIXME not tested on other then 2 BPP
+
+	/* Draw */
+	switch(surf->format->BytesPerPixel) {
+		case 1:
+			// STanda // the loop is the same as the for the 2 BPP
+			pixy -= (pixx*dx);
+			for (; pixel<=pixellast; pixel += pixy) {
+				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+				for (x=0; x<dx; x++) {
+					*(uint8*)pixel = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+					pixel += pixx;
+				}
+			}
+			break;
+
+			//for (; pixel<=pixellast; pixel += pixy) {
+			//	memset(pixel,(uint8)fgColor,dx);
+			//}
+			// STanda
+			break;
+		case 2:
+			pixy -= (pixx*dx);
+			for (; pixel<=pixellast; pixel += pixy) {
+				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+				for (x=0; x<dx; x++) {
+					*(uint16*)pixel = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+					pixel += pixx;
+				}
+			}
+			break;
+		case 3:
+			pixy -= (pixx*dx);
+			for (; pixel<=pixellast; pixel += pixy) {
+				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+				for (x=0; x<dx; x++) {
+					uint32 color = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+					if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+						pixel[0] = (color >> 16) & 0xff;
+						pixel[1] = (color >> 8) & 0xff;
+						pixel[2] = color & 0xff;
+					} else {
+						pixel[0] = color & 0xff;
+						pixel[1] = (color >> 8) & 0xff;
+						pixel[2] = (color >> 16) & 0xff;
+					}
+					pixel += pixx;
+				}
+			}
+			break;
+		default: /* case 4*/
+			pixy -= (pixx*dx);
+			for (; pixel<=pixellast; pixel += pixy) {
+				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+				for (x=0; x<dx; x++) {
+					*(uint32*)pixel = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+					pixel += pixx;
+				}
+			}
+			break;
+	}  // switch
 }
+
+
+/**
+ * Derived from the SDL_gfxPrimitives::boxColor(). The color is in the destination surface format here.
+ * The trivial cases optimalization removed.
+ *
+ * @author STanda
+ **/
+void HostScreen::gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 color)
+{
+	uint8 *pixel, *pixellast;
+	int16 x, dx, dy;
+	int16 pixx, pixy;
+	int16 w,h,tmp;
+
+	/* Order coordinates */
+	if (x1>x2) {
+		tmp=x1;
+		x1=x2;
+		x2=tmp;
+	}
+	if (y1>y2) {
+		tmp=y1;
+		y1=y2;
+		y2=tmp;
+	}
+
+	/* Calculate width&height */
+	w=x2-x1+1;
+	h=y2-y1;
+
+	/* More variable setup */
+	dx=w;
+	dy=h;
+	pixx = surf->format->BytesPerPixel;
+	pixy = surf->pitch;
+	pixel = ((uint8*)surf->pixels) + pixx * (int32)x1 + pixy * (int32)y1;
+	pixellast = pixel + pixx*dx + pixy*dy;
+
+	// STanda // FIXME here the pattern should be checked out of the loops for performance
+	          // but for now it is good enough
+	          // FIXME not tested on other then 2 BPP
+
+	/* Draw */
+	switch(surf->format->BytesPerPixel) {
+		case 1:
+			// STanda // the loop is the same as the for the 2 BPP
+			pixy -= (pixx*dx);
+			for (; pixel<=pixellast; pixel += pixy) {
+				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+				for (x=0; x<dx; x++) {
+					if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) // STanda
+						*(uint8*)pixel = color;
+					pixel += pixx;
+				}
+			}
+			break;
+
+			//for (; pixel<=pixellast; pixel += pixy) {
+			//	memset(pixel,(uint8)color,dx);
+			//}
+			// STanda
+			break;
+		case 2:
+			pixy -= (pixx*dx);
+			for (; pixel<=pixellast; pixel += pixy) {
+				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+				for (x=0; x<dx; x++) {
+					if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) // STanda
+						*(uint16*)pixel = color;
+					pixel += pixx;
+				}
+			}
+			break;
+		case 3:
+			pixy -= (pixx*dx);
+			for (; pixel<=pixellast; pixel += pixy) {
+				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+				for (x=0; x<dx; x++) {
+					if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 )
+						if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+							pixel[0] = (color >> 16) & 0xff;
+							pixel[1] = (color >> 8) & 0xff;
+							pixel[2] = color & 0xff;
+						} else {
+							pixel[0] = color & 0xff;
+							pixel[1] = (color >> 8) & 0xff;
+							pixel[2] = (color >> 16) & 0xff;
+						}
+					pixel += pixx;
+				}
+			}
+			break;
+		default: /* case 4*/
+			pixy -= (pixx*dx);
+			for (; pixel<=pixellast; pixel += pixy) {
+				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
+				for (x=0; x<dx; x++) {
+					if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) // STanda
+						*(uint32*)pixel = color;
+					pixel += pixx;
+				}
+			}
+			break;
+	}  // switch
+}
+
 
 
 /*
  * $Log$
+ * Revision 1.7  2001/09/05 15:06:41  joy
+ * SelectVideoMode() commented out.
+ *
  * Revision 1.6  2001/09/04 13:51:45  joy
  * debug disabled
  *
@@ -146,5 +345,3 @@ void  HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *patt
  *
  *
  */
-
-

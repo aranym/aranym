@@ -20,6 +20,13 @@ protected:
 	bool   doUpdate; // the HW surface is available -> the SDL need not to update the surface after ->pixel access
 	uint32 sdl_colors[256]; // TOS palette (bpp < 16) to SDL color mapping
 
+	/**
+	 * This is the SDL_gfxPrimitives derived functions.
+	 **/
+	inline void gfxFastPixelColorNolock(int16 x, int16 y, uint32 color);
+	       void gfxBoxColorPattern(int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 fgColor, uint32 bgColor);
+	       void gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 color);
+
 public:
 
 	HostScreen() {
@@ -49,11 +56,47 @@ public:
 	uint32 getPixel( int32 x, int32 y );
 	void   putPixel( int32 x, int32 y, uint32 color );
 	void   drawLine( int32 x1, int32 y1, int32 x2, int32 y2, uint16 pattern, uint32 color );
+	// transparent background
 	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color );
+	// VDI required function to fill areas
+	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor );
 };
 
 
 // inline functions
+inline void HostScreen::gfxFastPixelColorNolock(int16 x, int16 y, uint32 color)
+{
+	int bpp;
+	uint8 *p;
+
+	/* Get destination format */
+	bpp = surf->format->BytesPerPixel;
+	p = (uint8 *)surf->pixels + y * surf->pitch + x * bpp;
+	switch(bpp) {
+		case 1:
+			*p = color;
+			break;
+		case 2:
+			*(uint16 *)p = color;
+			break;
+		case 3:
+			if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+				p[0] = (color >> 16) & 0xff;
+				p[1] = (color >> 8) & 0xff;
+				p[2] = color & 0xff;
+			} else {
+				p[0] = color & 0xff;
+				p[1] = (color >> 8) & 0xff;
+				p[2] = (color >> 16) & 0xff;
+			}
+			break;
+		case 4:
+			*(uint32 *)p = color;
+			break;
+	} /* switch */
+}
+
+
 
 inline uint32 HostScreen::getBpp() {
 	return surf->format->BytesPerPixel;
@@ -128,31 +171,39 @@ inline void HostScreen::update( uint32 x, uint32 y, int32 w, int32 h, bool force
 	SDL_UpdateRect(surf, x, y, w, h);
 }
 
-
 inline uint32 HostScreen::getPixel( int32 x, int32 y ) {
-	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height || !renderBegin() )
+	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
 		return 0;
 
 	// HACK for bpp == 2 FIXME!
-	uint32 color = ((uint16*)surf->pixels)[((uint32)y*width)+(uint32)x];
-	renderEnd();
-	return color;
+	return ((uint16*)surf->pixels)[((uint32)y*width)+(uint32)x];
 }
 
 inline void HostScreen::putPixel( int32 x, int32 y, uint32 color ) {
 	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
 		return;
 
-	//	uint8 r,g,b,a; SDL_GetRGBA( color, surf->format, &r, &g, &b, &a);
-	fastPixelColorNolock( surf, x, y, color );
+	gfxFastPixelColorNolock( x, y, color );
 }
 
+inline void HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color )
+{
+	gfxBoxColorPatternBgTrans( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, color );
+}
+
+inline void HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor )
+{
+	gfxBoxColorPattern( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, fgColor, bgColor );
+}
 
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.5  2001/09/19 22:52:43  standa
+ * The putPixel is now much faster because it doesn't either update or surface locking.
+ *
  * Revision 1.4  2001/09/17 10:36:08  joy
  * color fixed by Standa at AHody 2001.
  *

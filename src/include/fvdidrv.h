@@ -46,10 +46,10 @@ class FVDIDriver {
 	uint32 getPixel( void *vwk, MFDB *src, int32 x, int32 y );
 	uint32 drawMouse( void *wrk, int32 x, int32 y, uint32 mode );
 
-	uint32 fillArea(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color);
+	uint32 fillArea(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor);
 	uint32 drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2, uint16 pattern, uint32 color, uint32 logop);
 	uint32 expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h,
-					  uint32 bgColor, uint32 fgColor, uint32 logop);
+					  uint32 fgColor, uint32 bgColor, uint32 logop);
 };
 
 #endif
@@ -57,6 +57,10 @@ class FVDIDriver {
 
 /*
  * $Log$
+ * Revision 1.4  2001/09/19 23:03:46  standa
+ * The fVDI driver update. Basic expandArea was added to display texts.
+ * Still heavy buggy code!
+ *
  * Revision 1.3  2001/08/30 14:04:59  standa
  * The fVDI driver. mouse_draw implemented. Partial pattern fill support.
  * Still buggy.
