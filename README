@@ -209,12 +209,12 @@ Page Down key  - mappped as Shift+Arrow Down (usual combo in GEM apps)
 
 Special keys:
 -------------
-Pause/Break    - opens up GUI dialog (unfinished)
+Pause/Break    - invoke GUI configuration dialog (unfinished)
 Shift+Pause    - QUIT ARAnyM
 Ctrl+Pause     - REBOOT ARAnyM
 Alt+Pause      - enter integrated debugger (only if started with "-D")
 
-Alt+PrintScreen  create a screenshot in actual directory
+PrintScreen    - create a screenshot in actual directory
 
 Alt+Ctrl+Esc   - release the input focus if ARAnyM runs in a window (so you
                  could use your keyboard and mouse in other host windows).

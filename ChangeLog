@@ -1,12 +1,14 @@
 2003/04/06 - joy
 - parameters.cpp: '-S' handling corrected. Small cleanup in getopt()..
 
-- natfeat/ethernet.cpp: back to execp(), now it works OK thanks to _exit
+- natfeat/ethernet.cpp: back to execp(), now starting of 'aratapif'
+  works OK thanks to use of _exit().
 
 - parameters.cpp: cleanup in getConf/DataFilename(). Now uses 'callbacks'
   for obtaining the folder path. These callbacks are defined for Unix
-  and for Cygwin so far (Cygwin needs a different handling). Thanks
-  to Xavier for the Win32 information/ideas.
+  and for Cygwin so far (Cygwin needs a different handling). Hacks 
+  with "--datadir=/" removed completely. Thanks to Xavier for the Win32
+  related information and ideas.
 
 - Unix/cygwin: new folder with tools_cygwin.cpp and parameters_cygwin.cpp.
   The Makefile.in was not updated yet.. Trying to find a more flexible
@@ -22,7 +24,7 @@
 
 2003/04/01 - joy & Honza/ATACK
 - main_unix.cpp: segfault on gentoo (where the argv[0] does not contain
-  the path (only filename)
+  the path (only filename)).
 
 - natfeat/ethernet.cpp: missing ethX definition in DEBUG() statement
 
