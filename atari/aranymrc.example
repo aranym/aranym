@@ -124,7 +124,7 @@ Filtered = No
 Kernel = linux.bin
 
 ; Command line to pass to the kernel
-Args = root=/dev/ram video=atafb:vga16
+Args = root=/dev/ram video=atafb:vga16 load_ramdisk=1
 
 ; Full path to a (optionnally gzipped) ramdisk file
 Ramdisk = root.bin

@@ -45,13 +45,14 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 /*--- Defines ---*/
 
 #define MAXREAD_BLOCK_SIZE	(1<<20)	/* 1 MB */
-#define KERNEL_START	PAGE_SIZE	/* Start address of kernel in Atari RAM */
+#define KERNEL_START		PAGE_SIZE	/* Start address of kernel in Atari RAM */
+#define RAMDISK_FS_START	0		/* Offset to start of fs in ramdisk file */
 
 #define MAX_BI_SIZE     (4096)
 
@@ -166,6 +167,19 @@ static void LiloFree(void)
 void LiloShutdown(void)
 {
 	D(bug("lilo: shutdown called"));
+
+#if 0
+	{
+		int i;
+
+		for (i=0; i<16; i++) {
+			unsigned long *tmp;
+
+			tmp = (unsigned long *)(((unsigned char *)FastRAMBaseHost) /*+ 0x14a000*/ + 512);
+			D(bug("lilo: ramdisk[%d]=0x%08x",i, SDL_SwapBE32(tmp[i])));
+		}
+	}
+#endif
 
 	LiloFree();
 }
@@ -339,19 +353,41 @@ int LiloCheckKernel(
 	    D(bug("lilo: Copied segment %d: 0x%08x,0x%08x at 0x%08x",i,segment_offset,segment_length,memptr+segment_ptr));
 	}
 
-	/*--- Copy the ramdisk at end of RAM ---*/
+	/*--- Copy the ramdisk after kernel (and reserved bootinfo) ---*/
 	if (ramdisk && ramdisk_length) {
 		unsigned long rd_start;
+		unsigned long rd_len;
 
-		rd_start = RAMSize - ramdisk_length;
-		rd_start &= ~PAGE_SIZE;	/* Align on page size boundary */
-		memcpy(RAMBaseHost+rd_start, ramdisk, ramdisk_length);
+		rd_len = ramdisk_length - RAMDISK_FS_START;
+		if (FastRAMSize>rd_len) {
+			/* Load in FastRAM */
+			rd_start = FastRAMBase;
+			memcpy(FastRAMBaseHost, ((unsigned char *)ramdisk) + RAMDISK_FS_START, rd_len);
+		} else {
+			/* Load in ST-RAM */
+/*			rd_start = RAMSize - rd_len;*/
+			rd_start = KERNEL_START + kernel_size + MAX_BI_SIZE;
+			rd_start |= PAGE_SIZE-1;	/* Align on page size boundary */
+			rd_start++;
+			memcpy(RAMBaseHost+rd_start, ((unsigned char *)ramdisk) + RAMDISK_FS_START, rd_len);
+		}
 
 		bi.ramdisk.addr = SDL_SwapBE32(rd_start);
-		bi.ramdisk.size = SDL_SwapBE32(ramdisk_length);
+		bi.ramdisk.size = SDL_SwapBE32(rd_len);
+	    D(bug("lilo: Ramdisk at 0x%08x in RAM, length=0x%08x", rd_start, rd_len));
+
+#if 0
+		for (i=0; i<16; i++) {
+			unsigned long *tmp;
+
+			tmp = (unsigned long *)(((unsigned char *)FastRAMBaseHost) /*+ rd_start*/ + 512);
+			D(bug("lilo: ramdisk[%d]=0x%08x",i, SDL_SwapBE32(tmp[i])));
+		}
+#endif
 	} else {
 		bi.ramdisk.addr = 0;
 		bi.ramdisk.size = 0;
+	    D(bug("lilo: No ramdisk"));
 	}
 
 	/*--- Create the bootinfo structure ---*/
