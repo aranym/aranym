@@ -16,8 +16,29 @@
 
 extern uintptr MEMBaseDiff;
 extern uintptr VMEMBaseDiff;
-//#define do_get_real_address(a)		((uae_u8 *)(a) + MEMBaseDiff)
-#define do_get_real_address(a)		(((a) < 0xff000000) ? (((a) < 0xf0000000) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff)) : ((uae_u8 *)(a & 0x00ffffff) + MEMBaseDiff))
+
+#define FALCVRAMSIZE	0x96100		/* TrueColor */
+// #define FALCVRAMSIZE	0x08000		/* Mono */
+// #define FALCVRAMSIZE	0x48000		/* 256 colors */
+
+#if 1
+#define FALCSTRAMEND	0x00400000
+#define FALCVRAMSTART	(FALCSTRAMEND - FALCVRAMSIZE)
+#else
+//#define FALCVRAMSTART	0x00a00000
+#define FALCVRAMSTART	0xf0000000
+//#define FALCVRAMSTART	0x70300000
+#endif
+#define FALCVRAMEND		(FALCVRAMSTART + FALCVRAMSIZE)
+
+#if 1
+#define ARANYMVRAMSTART	0xf0000000
+#define do_get_real_address(a)		(((a) < 0xff000000) ? (((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff)) : ((uae_u8 *)(a & 0x00ffffff) + MEMBaseDiff))
+#else
+#define ARANYMVRAMSTART	FALCVRAMSTART
+#define do_get_real_address(a)		((((a) >= FALCVRAMSTART) && ((a) < FALCVRAMEND)) ? ((uae_u8 *)(a) + VMEMBaseDiff) : (((a) < 0xff000000) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a & 0x00ffffff) + MEMBaseDiff)))
+#endif
+
 #define do_get_virtual_address(a)	((uae_u32)(a) - MEMBaseDiff)	// only for xRAM, not for VideoRAM!
 #define InitMEMBaseDiff(va, ra)		(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 #define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
