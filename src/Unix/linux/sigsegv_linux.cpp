@@ -272,7 +272,6 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			size = 1;
 			instruction = INSTR_MOVIMM8;
 			reg = (addr_instr[1] >> 3) & 7;
-			// imm = addr_instr[3];	// JOY: was 2
 			switch(addr_instr[1] & 0x07) {
 				case 0: imm = addr_instr[2]; break;
 				case 2: imm = addr_instr[2]; break;
