@@ -121,6 +121,8 @@ send_block (char *cp, short len)
 static long
 ara_open (struct netif *nif)
 {
+	DEBUG (("araeth: open (nif = %08lx)", (long)nif));
+
 	// get the HostFs NatFeat ID
 	nfEtherFsId = nfGetID(("ECE"));
 	if ( nfEtherFsId )
@@ -256,8 +258,6 @@ static long
 ara_output (struct netif *nif, BUF *buf, const char *hwaddr, short hwlen, short pktype)
 {
 	BUF *nbuf;
-	short type;
-	long r;
 
 	/*
 	 * Attach eth header. MintNet provides you with the eth_build_hdr
@@ -294,51 +294,15 @@ ara_output (struct netif *nif, BUF *buf, const char *hwaddr, short hwlen, short 
 	/*
 	 * Send packet
 	 */
-	if (0) {
+	{
 		short len = nbuf->dend - nbuf->dstart;
+		DEBUG (("araeth: send %d (%x) bytes", len));
 		len = MAX (len, 60);
 
 		send_block (nbuf->dstart, len);
 	}
 
-	/*
-	 * Before passing it to if_input pass it to the packet filter.
-	 * (but before stripping the ethernet header).
-	 *
-	 * For the loopback driver this doesn't make sense... We
-	 * would see all packets twice!
-	 *
-	 * if (nif->bpf)
-	 *	bpf_input (nif, buf);
-	 */
-
-	/*
-	 * Strip eth header and get packet type. MintNet provides you
-	 * with the function eth_remove_hdr(buf) for this purpose where
-	 * `buf' contains an ethernet frame. eth_remove_hdr strips the
-	 * ethernet header and returns the packet type.
-	 */
-	type = eth_remove_hdr (nbuf);
-
-	/*
-	 * Then you should pass the buf to MintNet for further processing,
-	 * using
-	 *	if_input (nif, buf, 0, type);
-	 *
-	 * where `nif' is the interface the packet was received on, `buf'
-	 * contains the packet and `type' is the packet type, which must
-	 * be a valid ethernet protcol identifier.
-	 *
-	 * if_input takes `buf' over, so after calling if_input() on it
-	 * you can no longer access it.
-	 */
-	r = if_input (nif, nbuf, 0, type);
-	if (r)
-		nif->in_errors++;
-	else
-		nif->in_packets++;
-
-	return r;
+	return 0;
 }
 
 /*
@@ -354,6 +318,8 @@ static long
 ara_ioctl (struct netif *nif, short cmd, long arg)
 {
 	struct ifreq *ifr;
+
+	DEBUG (("araeth: ioctl cmd = %d (%x) bytes", cmd));
 
 	switch (cmd)
 	{
@@ -559,7 +525,7 @@ driver_init (void)
 	{
 		strncpy (my_file_name, NETINFO->fname, sizeof (my_file_name));
 		my_file_name[sizeof (my_file_name) - 1] = '\0';
-# if 0
+# if 1
 		ksprintf (message, "My file name is '%s'\n\r", my_file_name);
 		c_conws (message);
 # endif
@@ -604,7 +570,7 @@ recv_packet (struct netif *nif)
 	}
 	b->dend += pktlen;
 
-	// read_block (b->dstart, pktlen);
+	read_block (b->dstart, pktlen);
 
 	/* Pass packet to upper layers */
 	if (nif->bpf)
