@@ -876,7 +876,7 @@ div_unsigned(uae_u32 src_hi, uae_u32 src_lo, uae_u32 div, uae_u32 *quot, uae_u32
 	return 0;
 }
 
-void m68k_divl (uae_u32 opcode, uae_u32 src, uae_u16 extra, uaecptr oldpc)
+void m68k_divl (uae_u32 /*opcode*/, uae_u32 src, uae_u16 extra, uaecptr oldpc)
 {
 #if defined(uae_s64)
     if (src == 0) {
@@ -1016,7 +1016,7 @@ mul_unsigned(uae_u32 src1, uae_u32 src2, uae_u32 *dst_hi, uae_u32 *dst_lo)
 	*dst_hi = r3;
 }
 
-void m68k_mull (uae_u32 opcode, uae_u32 src, uae_u16 extra)
+void m68k_mull (uae_u32 /*opcode*/, uae_u32 src, uae_u16 extra)
 {
 #if defined(uae_s64)
     if (extra & 0x800) {
@@ -1249,8 +1249,10 @@ op_illg_lab:
 #else
 void REGPARAM2 op_illg (uae_u32 opcode)
 #endif
-{		
+{
+#if DEBUG
 	uaecptr pc = m68k_getpc ();
+#endif
 
 	if ((opcode & 0xF000) == 0xA000) {
 	Exception(0xA,0);
@@ -1370,7 +1372,7 @@ static void do_trace (void)
 		}													\
 		if (SPCFLAGS_TEST( SPCFLAG_MFP )) {					\
 			if (6 > regs.intmask) {							\
-				int vector_number = mfp.doInterrupt();		\
+				int vector_number = MFPdoInterrupt();		\
 				if (vector_number) {						\
 					MFPInterrupt(vector_number);			\
 					regs.stopped = 0;						\

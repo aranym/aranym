@@ -12,16 +12,14 @@
 
 #include "acia.h"
 
-#define HW_MIDI 0xfffc04
-
 class MIDI: public ACIA {
 	private:
 		int output_to_file;
 		FILE *output_handle;
 
 	public:
-		MIDI(void);
-		~MIDI(void);
+		MIDI(memptr, uint32);
+		~MIDI();
 		void reset(void);
 
 		uae_u8 ReadStatus();

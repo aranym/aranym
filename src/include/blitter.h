@@ -1,8 +1,11 @@
 /* Joy 2001 */
 
+#ifndef _BLITTER_H
+#define _BLITTER_H
+
 #include "icio.h"
 
-class BLITTER : public ICio {
+class BLITTER : public BASE_IO {
   public:
 	uae_u16 halftone_ram[16];
 	uae_u16 end_mask_1,end_mask_2,end_mask_3;
@@ -16,7 +19,7 @@ class BLITTER : public ICio {
 	bool blit;
 
 public:
-	BLITTER(void);
+	BLITTER(memptr, uint32);
 	virtual uae_u8 handleRead(uaecptr);
 	virtual void handleWrite(uaecptr, uae_u8);
 
@@ -65,3 +68,4 @@ private:
 	void STORE_B_ff8a3d(char);
 };
 
+#endif /* _BLITTER_H */

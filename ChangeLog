@@ -1,3 +1,42 @@
+2003/11/25 - joy
+- Patrice convinced me to do a two years pending rewrite of the hardware
+  emulation dispatcher. This is a pretty fundamental change to the deepest
+  internals of ARAnyM so please take it with great care and do backup
+  all your disk drives first! It may easily destroy all your data if I made
+  a mistake somewhere.
+  All HW modules are now true dynamically created instances. This fixes
+  a number of hidden problems including the crash of DSP emulation thread
+  on OS X. It also allowed me to improve and simplify the address dispatcher
+  (as has been written in TODO for a looong time).
+  Almost all files are affected. Definitely all that emulate HW and a couple
+  more. All HW classes are based on BASE_IO now, ICio is gone (why did I
+  introduce it? I can't remember).
+  The speed impact is non-measurable (on my machine, at least) and the
+  source code now looks way better. I am glad I finally rewrote it.
+  I also know AFROS does not boot. I have yet to figure out why.
+
+- fdc.cpp: HWget/HWput replaced with much smarter FDC::[sg]etDMAaddr()
+
+- aranym_glue.cpp: REBOOT_OR_HALT is set to HALT now. Rebooting was not
+  a good choice (I ended up in an neverending loop of reboots).
+
+- main.cpp: fdc_init() moved to ACSIFDC constructor. Also the ROM->RAM
+  first two long words copying moved to InitOS(). HWExit() calling added.
+
+- hardware.cpp: the special case in reading/writing words or longs
+  for HW_IDE is finally gone. Now each class can override the handle***
+  functions if it wants to catch the word and long access. Hopefully
+  nothing breaks after this essential change.
+
+- parameters.cpp: added zero parameters to fix compiler warning about
+  missing initializers.
+
+- *.cpp: many "unused parameter" warnings resolved by enclosing unused
+  parameters in /* */
+
+
+* tagged as ARANYM_0_8_3_BETA
+
 2003/11/23 - stefanq
 - added darwin folder containing all necessary files to make a Mac OS X
   port of aranym

@@ -59,8 +59,7 @@ typedef char	B;
 
 #define ADDR(a)		(a)
 
-BLITTER::BLITTER(void) {
-}
+BLITTER::BLITTER(memptr addr, uint32 size) : BASE_IO(addr, size) {}
 
 UW BLITTER::LM_UW(uaecptr addr) {
 	return ReadAtariInt16(addr);	//??

@@ -1,8 +1,10 @@
 /* Joy 2001 */
 
+#ifndef _DSP_H
+#define _DSP_H
+
 #include "icio.h"
 
-#define HW_DSP 0xffa200
 #define DSP_RAMSIZE 32768
 
 /* Dsp State */
@@ -80,14 +82,14 @@
 class DSP : public BASE_IO {
 	
 	public:
+		DSP(memptr, uint32);
 		virtual uae_u8 handleRead(uaecptr addr);
 		virtual void handleWrite(uaecptr, uae_u8);
 
 #if DSP_EMULATION
-
 		/* Constructor, destructor */
-		DSP(void);
-		~DSP(void);
+		void init(void);
+		~DSP();
 
 		/* Setup functions */
 		void reset(void);
@@ -139,3 +141,4 @@ class DSP : public BASE_IO {
 #endif	/* DSP_EMULATION */
 };
 
+#endif /* _DSP_H */

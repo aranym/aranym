@@ -5,13 +5,13 @@
 
 #include "icio.h"
 
-class YAMAHA : public ICio {
+class YAMAHA : public BASE_IO {
 private:
 	int active_reg;
 	int yamaha_regs[16];
 
 public:
-	YAMAHA();
+	YAMAHA(memptr, uint32);
 	virtual uae_u8 handleRead(uaecptr addr);
 	virtual void handleWrite(uaecptr addr, uae_u8 value);
 	int getFloppyStat();

@@ -23,29 +23,14 @@
 
 /*--- Constructor/destructor of the IKBD class ---*/
 
-IKBD::IKBD() : ACIA(HW_IKBD)
+IKBD::IKBD(memptr addr, uint32 size) : ACIA(addr, size)
 {
 	rwLock = SDL_CreateMutex();
 
-	D(bug("ikbd: interface created at 0x%06x",HW_IKBD));
+	D(bug("ikbd: interface created at 0x%06x", getHWoffset()));
 
 	inbufferlen = DEFAULT_INBUFFERLEN;
 	outbufferlen = DEFAULT_OUTBUFFERLEN;
-
-	inbuffer = new uae_u8[inbufferlen];
-	outbuffer = new uae_u8[outbufferlen];
-
-	reset();
-};
-
-IKBD::IKBD(int inlen, int outlen) : ACIA(HW_IKBD)
-{
-	rwLock = SDL_CreateMutex();
-
-	D(bug("ikbd: interface created at 0x%06x",HW_IKBD));
-
-	inbufferlen = inlen;
-	outbufferlen = outlen;
 
 	inbuffer = new uae_u8[inbufferlen];
 	outbuffer = new uae_u8[outbufferlen];
@@ -62,7 +47,7 @@ IKBD::~IKBD()
 	delete inbuffer;
 	inbuffer = NULL;
 
-	D(bug("ikbd: interface destroyed at 0x%06x",baseaddr));
+	D(bug("ikbd: interface destroyed at 0x%06x", getHWoffset()));
 }
 
 /*--- IKBD i/o access functions ---*/
@@ -558,5 +543,5 @@ void IKBD::ThrowInterrupt(void)
 	sr |= (1<<ACIA_SR_INTERRUPT);
 
 	/* signal ACIA interrupt */
-	mfp.setGPIPbit(0x10, 0);
+	getMFP()->setGPIPbit(0x10, 0);
 }

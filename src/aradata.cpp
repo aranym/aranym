@@ -8,16 +8,14 @@
 #include "araobjs.h"
 #include "parameters.h"
 
-ARADATA::ARADATA() {
+ARADATA::ARADATA(memptr addr, uint32 size) : BASE_IO(addr, size) {
 	mouseDriver = false;
 	mouse_x = -1;
 	mouse_y = -1;
 }
 
-static const int HW = 0xf90000;
-
 uae_u8 ARADATA::handleRead(uaecptr addr) {
-	addr -= HW;
+	addr -= getHWoffset();
 	switch(addr) {
 		case 0: return '_';
 		case 1: return 'A';
@@ -41,7 +39,7 @@ uae_u8 ARADATA::handleRead(uaecptr addr) {
 }
 
 void ARADATA::handleWrite(uaecptr addr, uae_u8 value) {
-	addr -= HW;
+	addr -= getHWoffset();
 	switch(addr) {
 		case 14: mouse_x = (mouse_x & 0xff) | (value << 8); break;
 		case 15: mouse_x = (mouse_x & 0xff00) | value; break;

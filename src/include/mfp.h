@@ -55,7 +55,7 @@ public:
 
 /*****************************************************************/
 
-class MFP : public ICio {
+class MFP : public BASE_IO {
 private:
 	uint8 GPIP_data;
 	uint8 active_edge;
@@ -76,7 +76,7 @@ private:
 	enum FLAGS {F_ACIA=(1<<6),F_TIMERC=(1<<5)};
 
 public:
-	MFP();
+	MFP(memptr addr, uint32 size);
 	virtual uint8 handleRead(uaecptr);
 	virtual void handleWrite(uaecptr, uint8);
 	void IRQ(int, int count);

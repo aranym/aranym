@@ -43,18 +43,16 @@
 #define ACIA_SR_INTERRUPT	0x07	/* Interrupt source */
 
 /*--- ACIA class ---*/
-class ACIA : public ICio {
+class ACIA : public BASE_IO {
 	protected:
-		uaecptr baseaddr;
-
 		uae_u8 sr;		/* Status register */
 		uae_u8 cr;		/* Control register */
 		uae_u8 rxdr;	/* Reception data register */
 		uae_u8 txdr;	/* Transmit data register */
 
 	public:
-		ACIA(uaecptr);
-		~ACIA(void);
+		ACIA(memptr, uint32);
+		~ACIA();
 		virtual void reset(void);
 
 		virtual uae_u8 handleRead(uaecptr addr);

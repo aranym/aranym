@@ -1,12 +1,10 @@
 /* Joy 2001 */
 /* Patrice Mandin */
 
+#ifndef _ACSIFDC_H
+#define _ACSIFDC_H
+
 #include "icio.h"
-
-/* Defines */
-
-#define HW_DISKDMA	0xff8600
-#define HW_DISKDMA_LEN	0x10
 
 enum {
 	DISKDMA_BIT0=0,	/* for scsi: bits 2-0 are ncr5380 register */
@@ -22,7 +20,7 @@ enum {
 
 /* The DMA disk class */
 
-class ACSIFDC : public ICio {
+class ACSIFDC : public BASE_IO {
 private:
 	uae_u16 DMAfifo;	/* write to $8606.w */
 	uae_u16 DMAstatus;	/* read from $8606.w */
@@ -35,9 +33,11 @@ private:
 	bool floppy_changed;
 
 public:
-	ACSIFDC();
+	ACSIFDC(memptr, uint32);
 	virtual uae_u8 handleRead(uaecptr);
 	virtual void handleWrite(uaecptr, uae_u8);
+	memptr getDMAaddr() { return DMAaddr; }
+	void setDMAaddr(memptr addr) { DMAaddr = addr; }
 	void changeFloppy();
 
 private:
@@ -50,3 +50,5 @@ private:
 	void STORE_B_ff8606(uae_u8);
 	void STORE_B_ff8607(uae_u8);
 };
+
+#endif /* _ACSIFDC_H */

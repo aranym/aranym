@@ -65,7 +65,7 @@ static const int HW = 0xfffa00;
 
 	/*************************************************************************/
 
-	MFP::MFP()
+	MFP::MFP(memptr addr, uint32 size) : BASE_IO(addr, size)
 	{
 		GPIP_data = 0xff;
 		vr = 0x0100;
@@ -185,8 +185,9 @@ static const int HW = 0xfffa00;
 
 			case 0x0d:
 	#if DEBUG_IPR
-						if ((irq_pending ^ value) & 0x20)
+						if ((irq_pending ^ value) & 0x20) {
 							D(bug("Write: TimerC IRQ %s pending", (value & 20) ? "" : "NOT"));
+						}
 	#endif /* DEBUG */
 						irq_pending = (irq_pending & 0xff00) | value;
 						break;
@@ -196,8 +197,9 @@ static const int HW = 0xfffa00;
 
 			case 0x11:
 	#if DEBUG_ISR
-						if ((irq_inservice ^ value) & 0x20)
+						if ((irq_inservice ^ value) & 0x20) {
 							D(bug("Write: TimerC IRQ %s in-service at %08x", (value & 20) ? "" : "NOT", showPC()));
+						}
 	#endif /* DEBUG */
 						irq_inservice = (irq_inservice & 0xff00) | (irq_inservice & value);
 						break;
@@ -207,8 +209,9 @@ static const int HW = 0xfffa00;
 						
 			case 0x15:
 	#if DEBUG_IMR
-						if ((irq_mask ^ value) & 0x20)
+						if ((irq_mask ^ value) & 0x20) {
 							D(bug("Write: TimerC IRQ %s masked", (value & 20) ? "" : "NOT"));
+						}
 	#endif /* DEBUG */
 						irq_mask = (irq_mask & 0xff00) | value;
 						break;
@@ -321,8 +324,9 @@ int MFP::doInterrupt() {
 	}
 	/* TIMER C */
 	else if ((flags & F_TIMERC) && ! (irq_inservice & (1<<5))) {
-		if (automaticServiceEnd)
+		if (automaticServiceEnd) {
 			irq_inservice |= (1<<5);
+		}
 		if (--timerCounter <= 0) {
 			TriggerMFP(false);
 			flags &= ~F_TIMERC;

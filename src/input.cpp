@@ -120,9 +120,9 @@ void releaseTheMouse()
 {
 	grabMouse(false);	// release mouse
 	hideMouse(false);	// show it
-	if (aradata.isAtariMouseDriver()) {
-		int x = aradata.getAtariMouseX(); 
-		int y = aradata.getAtariMouseY();
+	if (getARADATA()->isAtariMouseDriver()) {
+		int x = getARADATA()->getAtariMouseX(); 
+		int y = getARADATA()->getAtariMouseY();
 		SDL_WarpMouse(x, y);
 		D(bug("Mouse left our window at [%d,%d]", x, y));
 	}
@@ -475,8 +475,8 @@ void process_keyboard_event(SDL_Event event)
 					canGrabMouseAgain = false;	// let it leave our window
 					send2Atari = false;
 					// release the Control and Alt keys
-					ikbd.SendKey(0x1d|0x80);	// Control released
-					ikbd.SendKey(0x38|0x80);	// Alternate released
+					getIKBD()->SendKey(0x1d|0x80);	// Control released
+					getIKBD()->SendKey(0x38|0x80);	// Alternate released
 				}
 #ifdef SDL_GUI
 				else {
@@ -544,26 +544,26 @@ void process_keyboard_event(SDL_Event event)
 	if (sym == SDLK_PAGEUP) {
 		if (pressed) {
 			if (! shifted)
-				ikbd.SendKey(0x2a);	// press and hold LShift
-			ikbd.SendKey(0x48);	// press keyUp
+				getIKBD()->SendKey(0x2a);	// press and hold LShift
+			getIKBD()->SendKey(0x48);	// press keyUp
 		}
 		else {
-			ikbd.SendKey(0xc8);	// release keyUp
+			getIKBD()->SendKey(0xc8);	// release keyUp
 			if (! shifted)
-				ikbd.SendKey(0xaa);	// release LShift
+				getIKBD()->SendKey(0xaa);	// release LShift
 		}
 		send2Atari = false;
 	}
 	else if (sym == SDLK_PAGEDOWN) {
 		if (pressed) {
 			if (! shifted)
-				ikbd.SendKey(0x2a);	// press and hold LShift
-			ikbd.SendKey(0x50);	// press keyDown
+				getIKBD()->SendKey(0x2a);	// press and hold LShift
+			getIKBD()->SendKey(0x50);	// press keyDown
 		}
 		else {
-			ikbd.SendKey(0xd0);	// release keyDown
+			getIKBD()->SendKey(0xd0);	// release keyDown
 			if (! shifted)
-				ikbd.SendKey(0xaa);	// release LShift
+				getIKBD()->SendKey(0xaa);	// release LShift
 		}
 		send2Atari = false;
 	}
@@ -575,7 +575,7 @@ void process_keyboard_event(SDL_Event event)
 		if (scanAtari > 0) {
 			if (!pressed)
 				scanAtari |= 0x80;
-			ikbd.SendKey(scanAtari);
+			getIKBD()->SendKey(scanAtari);
 		}
 	}
 }
@@ -609,11 +609,11 @@ void process_mouse_event(SDL_Event event)
 				grabTheMouse();
 		}
 		else if (event.button.button == 4) {	/* mouse wheel Up */
-			ikbd.SendKey(0x48);	// press keyUp
+			getIKBD()->SendKey(0x48);	// press keyUp
 			return;
 		}
 		else if (event.button.button == 5) {	/* mouse wheel Down */
-			ikbd.SendKey(0x50);	// press keyDown
+			getIKBD()->SendKey(0x50);	// press keyDown
 			return;
 		}
 	}
@@ -633,11 +633,11 @@ void process_mouse_event(SDL_Event event)
 		else if (event.button.button == SDL_BUTTON_LEFT)
 			but &= ~2;
 		else if (event.button.button == 4) {	/* mouse wheel Up */
-			ikbd.SendKey(0xc8);	// release keyUp
+			getIKBD()->SendKey(0xc8);	// release keyUp
 			return;
 		}
 		else if (event.button.button == 5) {	/* mouse wheel Down */
-			ikbd.SendKey(0xd0);	// release keyDown
+			getIKBD()->SendKey(0xd0);	// release keyDown
 			return;
 		}
 	}
@@ -658,18 +658,18 @@ void process_mouse_event(SDL_Event event)
 			bug("Reseting weird mouse packet: %d, %d, %d", xrel, yrel, but);
 			xrel = yrel = 0;	// reset the values otherwise ikbd gets crazy
 		}
-		ikbd.SendMouseMotion(xrel, yrel, but);
+		getIKBD()->SendMouseMotion(xrel, yrel, but);
 	}
 
-	if (! bx_options.video.fullscreen && aradata.isAtariMouseDriver()) {
+	if (! bx_options.video.fullscreen && getARADATA()->isAtariMouseDriver()) {
 		// check whether user doesn't try to go out of window (top or left)
-		if ((xrel < 0 && aradata.getAtariMouseX() == 0) ||
-			(yrel < 0 && aradata.getAtariMouseY() == 0))
+		if ((xrel < 0 && getARADATA()->getAtariMouseX() == 0) ||
+			(yrel < 0 && getARADATA()->getAtariMouseY() == 0))
 			mouseOut = true;
 
 		// same check but for bottom and right side of our window
-		if ((xrel > 0 && aradata.getAtariMouseX() >= (int32)hostScreen.getWidth() - 1) ||
-			(yrel > 0 && aradata.getAtariMouseY() >= (int32)hostScreen.getHeight() - 1))
+		if ((xrel > 0 && getARADATA()->getAtariMouseX() >= (int32)hostScreen.getWidth() - 1) ||
+			(yrel > 0 && getARADATA()->getAtariMouseY() >= (int32)hostScreen.getHeight() - 1))
 			mouseOut = true;
 	}
 }
@@ -684,7 +684,7 @@ void process_active_event(SDL_Event event)
 
 			// if we can grab the mouse automatically
 			// and if the Atari mouse driver works
-			if (bx_options.autoMouseGrab && aradata.isAtariMouseDriver()) {
+			if (bx_options.autoMouseGrab && getARADATA()->isAtariMouseDriver()) {
 
 				// if the mouse has just left our window
 				if (!event.active.gain) {
@@ -721,13 +721,13 @@ void process_joystick_event(SDL_Event event)
 {
 	switch(event.type) {
 		case SDL_JOYAXISMOTION:
-			ikbd.SendJoystickAxis(1, event.jaxis.axis,event.jaxis.value);
+			getIKBD()->SendJoystickAxis(1, event.jaxis.axis,event.jaxis.value);
 			break;		
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYBUTTONUP:
 			/* Only button 0 */
 			if (event.jbutton.button==0) {
-				ikbd.SendJoystickButton(1, event.jbutton.state==SDL_PRESSED);
+				getIKBD()->SendJoystickButton(1, event.jbutton.state==SDL_PRESSED);
 			}
 			break;		
 	}

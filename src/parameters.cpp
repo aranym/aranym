@@ -101,16 +101,16 @@ static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
 // configuration file 
 /*************************************************************************/
 struct Config_Tag global_conf[]={
-	{ "FastRAM", Int_Tag, &FastRAMSizeMB},
-	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path)},
-	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
-	{ "EmuTOS", String_Tag, emutos_path, sizeof(emutos_path)},
-	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab},
+	{ "FastRAM", Int_Tag, &FastRAMSizeMB, 0, 0},
+	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path), 0},
+	{ "TOS", String_Tag, rom_path, sizeof(rom_path), 0},
+	{ "EmuTOS", String_Tag, emutos_path, sizeof(emutos_path), 0},
+	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab, 0, 0},
 #ifdef ENABLE_EPSLIMITER
-	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled},
-	{ "EpsMax", Int_Tag, &bx_options.cpu.eps_max},
+	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
+	{ "EpsMax", Int_Tag, &bx_options.cpu.eps_max, 0, 0},
 #endif
-	{ NULL , Error_Tag, NULL }
+	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_global() {
@@ -140,11 +140,11 @@ void presave_global() {
 
 /*************************************************************************/
 struct Config_Tag startup_conf[]={
-	{ "GrabMouse", Bool_Tag, &bx_options.startup.grabMouseAllowed},
+	{ "GrabMouse", Bool_Tag, &bx_options.startup.grabMouseAllowed, 0, 0},
 #ifdef DEBUGGER
-	{ "Debugger", Bool_Tag, &bx_options.startup.debugger},
+	{ "Debugger", Bool_Tag, &bx_options.startup.debugger, 0, 0},
 #endif
-	{ NULL , Error_Tag, NULL }
+	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_startup() {
@@ -160,13 +160,13 @@ void presave_startup() {
 
 /*************************************************************************/
 struct Config_Tag jit_conf[]={
-	{ "JIT", Bool_Tag, &bx_options.jit.jit},
-	{ "JITFPU", Bool_Tag, &bx_options.jit.jitfpu},
-	{ "TuneAlignment", Bool_Tag, &bx_options.jit.tunealign},
-	{ "TuneNOPfill", Bool_Tag, &bx_options.jit.tunenop},
-	{ "JITCacheSize", Int_Tag, &bx_options.jit.jitcachesize},
-	{ "JITLazyFlush", Int_Tag, &bx_options.jit.jitlazyflush},
-	{ NULL , Error_Tag, NULL }
+	{ "JIT", Bool_Tag, &bx_options.jit.jit, 0, 0},
+	{ "JITFPU", Bool_Tag, &bx_options.jit.jitfpu, 0, 0},
+	{ "TuneAlignment", Bool_Tag, &bx_options.jit.tunealign, 0, 0},
+	{ "TuneNOPfill", Bool_Tag, &bx_options.jit.tunenop, 0, 0},
+	{ "JITCacheSize", Int_Tag, &bx_options.jit.jitcachesize, 0, 0},
+	{ "JITLazyFlush", Int_Tag, &bx_options.jit.jitlazyflush, 0, 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_jit() {
@@ -186,10 +186,10 @@ void presave_jit() {
 
 /*************************************************************************/
 struct Config_Tag tos_conf[]={
-	{ "Cookie_MCH", HexLong_Tag, &bx_options.tos.cookie_mch},
-	{ "RedirConsole", Bool_Tag, &bx_options.tos.redirect_CON},
-	{ "RedirPrinter", Bool_Tag, &bx_options.tos.redirect_PRT},
-	{ NULL , Error_Tag, NULL }
+	{ "Cookie_MCH", HexLong_Tag, &bx_options.tos.cookie_mch, 0, 0},
+	{ "RedirConsole", Bool_Tag, &bx_options.tos.redirect_CON, 0, 0},
+	{ "RedirPrinter", Bool_Tag, &bx_options.tos.redirect_PRT, 0, 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_tos() {
@@ -206,16 +206,16 @@ void presave_tos() {
 
 /*************************************************************************/
 struct Config_Tag video_conf[]={
-	{ "FullScreen", Bool_Tag, &bx_options.video.fullscreen},
-	{ "BootColorDepth", Byte_Tag, &bx_options.video.boot_color_depth},
-	{ "VidelRefresh", Byte_Tag, &bx_options.video.refresh},
-	{ "VidelMonitor", Byte_Tag, &bx_options.video.monitor},
+	{ "FullScreen", Bool_Tag, &bx_options.video.fullscreen, 0, 0},
+	{ "BootColorDepth", Byte_Tag, &bx_options.video.boot_color_depth, 0, 0},
+	{ "VidelRefresh", Byte_Tag, &bx_options.video.refresh, 0, 0},
+	{ "VidelMonitor", Byte_Tag, &bx_options.video.monitor, 0, 0},
 #ifdef DIRECT_TRUECOLOR
-	{ "DirectTruecolor", Bool_Tag, &bx_options.video.direct_truecolor},
+	{ "DirectTruecolor", Bool_Tag, &bx_options.video.direct_truecolor, 0, 0},
 #endif
-	{ "AutoZoom", Bool_Tag, &bx_options.video.autozoom},
-	{ "AutoZoomInteger", Bool_Tag, &bx_options.video.autozoomint},
-	{ NULL , Error_Tag, NULL }
+	{ "AutoZoom", Bool_Tag, &bx_options.video.autozoom, 0, 0},
+	{ "AutoZoomInteger", Bool_Tag, &bx_options.video.autozoomint, 0, 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_video() {
@@ -246,12 +246,12 @@ void presave_video() {
 
 /*************************************************************************/
 struct Config_Tag opengl_conf[]={
-	{ "Enabled", Bool_Tag, &bx_options.opengl.enabled},
-	{ "Width", Int_Tag, &bx_options.opengl.width},
-	{ "Height", Int_Tag, &bx_options.opengl.height},
-	{ "Bpp", Int_Tag, &bx_options.opengl.bpp},
-	{ "Filtered", Bool_Tag, &bx_options.opengl.filtered},
-	{ NULL , Error_Tag, NULL }
+	{ "Enabled", Bool_Tag, &bx_options.opengl.enabled, 0, 0},
+	{ "Width", Int_Tag, &bx_options.opengl.width, 0, 0},
+	{ "Height", Int_Tag, &bx_options.opengl.height, 0, 0},
+	{ "Bpp", Int_Tag, &bx_options.opengl.bpp, 0, 0},
+	{ "Filtered", Bool_Tag, &bx_options.opengl.filtered, 0, 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_opengl() {
@@ -270,16 +270,16 @@ void presave_opengl() {
 
 /*************************************************************************/
 #define BX_DISK_CONFIG(Disk)	struct Config_Tag Disk ## _configs[] = {	\
-	{ "Present", Bool_Tag, &Disk->present},	\
-	{ "IsCDROM", Bool_Tag, &Disk->isCDROM},	\
-	{ "ByteSwap", Bool_Tag, &Disk->byteswap},	\
-	{ "ReadOnly", Bool_Tag, &Disk->readonly},	\
-	{ "Path", String_Tag, Disk->path, sizeof(Disk->path)},	\
-	{ "Cylinders", Int_Tag, &Disk->cylinders},	\
-	{ "Heads", Int_Tag, &Disk->heads},	\
-	{ "SectorsPerTrack", Int_Tag, &Disk->spt},	\
-	{ "ModelName", String_Tag, Disk->model, sizeof(Disk->model)},	\
-	{ NULL , Error_Tag, NULL }	\
+	{ "Present", Bool_Tag, &Disk->present, 0, 0},	\
+	{ "IsCDROM", Bool_Tag, &Disk->isCDROM, 0, 0},	\
+	{ "ByteSwap", Bool_Tag, &Disk->byteswap, 0, 0},	\
+	{ "ReadOnly", Bool_Tag, &Disk->readonly, 0, 0},	\
+	{ "Path", String_Tag, Disk->path, sizeof(Disk->path), 0},	\
+	{ "Cylinders", Int_Tag, &Disk->cylinders, 0, 0},	\
+	{ "Heads", Int_Tag, &Disk->heads, 0, 0},	\
+	{ "SectorsPerTrack", Int_Tag, &Disk->spt, 0, 0},	\
+	{ "ModelName", String_Tag, Disk->model, sizeof(Disk->model), 0},	\
+	{ NULL , Error_Tag, NULL, 0, 0 }	\
 }
 
 BX_DISK_CONFIG(diskc);
@@ -360,12 +360,12 @@ void presave_ide() {
 
 /*************************************************************************/
 #define DISK_CONFIG(Disk)	struct Config_Tag Disk ## _configs[] = {	\
-	{ "Path", String_Tag, bx_options.Disk.path, sizeof(bx_options.Disk.path)},	\
-	{ "Present", Bool_Tag, &bx_options.Disk.present},	\
-	{ "PartID", String_Tag, bx_options.Disk.partID, sizeof(bx_options.Disk.partID)},	\
-	{ "ByteSwap", Bool_Tag, &bx_options.Disk.byteswap},	\
-	{ "ReadOnly", Bool_Tag, &bx_options.Disk.readonly},	\
-	{ NULL , Error_Tag, NULL }	\
+	{ "Path", String_Tag, bx_options.Disk.path, sizeof(bx_options.Disk.path), 0},	\
+	{ "Present", Bool_Tag, &bx_options.Disk.present, 0, 0},	\
+	{ "PartID", String_Tag, bx_options.Disk.partID, sizeof(bx_options.Disk.partID), 0},	\
+	{ "ByteSwap", Bool_Tag, &bx_options.Disk.byteswap, 0, 0},	\
+	{ "ReadOnly", Bool_Tag, &bx_options.Disk.readonly, 0, 0},	\
+	{ NULL , Error_Tag, NULL, 0, 0 }	\
 }
 
 DISK_CONFIG(disk0);
@@ -388,33 +388,33 @@ void presave_disk() {
 
 /*************************************************************************/
 struct Config_Tag arafs_conf[]={
-	{ "A", String_Tag, &bx_options.aranymfs[0].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "B", String_Tag, &bx_options.aranymfs[1].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "C", String_Tag, &bx_options.aranymfs[2].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "D", String_Tag, &bx_options.aranymfs[3].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "E", String_Tag, &bx_options.aranymfs[4].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "F", String_Tag, &bx_options.aranymfs[5].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "G", String_Tag, &bx_options.aranymfs[6].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "H", String_Tag, &bx_options.aranymfs[7].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "I", String_Tag, &bx_options.aranymfs[8].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "J", String_Tag, &bx_options.aranymfs[9].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "K", String_Tag, &bx_options.aranymfs[10].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "L", String_Tag, &bx_options.aranymfs[11].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "M", String_Tag, &bx_options.aranymfs[12].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "N", String_Tag, &bx_options.aranymfs[13].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "O", String_Tag, &bx_options.aranymfs[14].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "P", String_Tag, &bx_options.aranymfs[15].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "Q", String_Tag, &bx_options.aranymfs[16].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "R", String_Tag, &bx_options.aranymfs[17].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "S", String_Tag, &bx_options.aranymfs[18].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "T", String_Tag, &bx_options.aranymfs[19].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "U", String_Tag, &bx_options.aranymfs[20].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "V", String_Tag, &bx_options.aranymfs[21].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "W", String_Tag, &bx_options.aranymfs[22].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "X", String_Tag, &bx_options.aranymfs[23].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "Y", String_Tag, &bx_options.aranymfs[24].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ "Z", String_Tag, &bx_options.aranymfs[25].rootPath, sizeof(bx_options.aranymfs[0].rootPath)},
-	{ NULL , Error_Tag, NULL }
+	{ "A", String_Tag, &bx_options.aranymfs[0].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "B", String_Tag, &bx_options.aranymfs[1].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "C", String_Tag, &bx_options.aranymfs[2].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "D", String_Tag, &bx_options.aranymfs[3].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "E", String_Tag, &bx_options.aranymfs[4].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "F", String_Tag, &bx_options.aranymfs[5].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "G", String_Tag, &bx_options.aranymfs[6].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "H", String_Tag, &bx_options.aranymfs[7].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "I", String_Tag, &bx_options.aranymfs[8].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "J", String_Tag, &bx_options.aranymfs[9].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "K", String_Tag, &bx_options.aranymfs[10].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "L", String_Tag, &bx_options.aranymfs[11].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "M", String_Tag, &bx_options.aranymfs[12].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "N", String_Tag, &bx_options.aranymfs[13].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "O", String_Tag, &bx_options.aranymfs[14].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "P", String_Tag, &bx_options.aranymfs[15].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "Q", String_Tag, &bx_options.aranymfs[16].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "R", String_Tag, &bx_options.aranymfs[17].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "S", String_Tag, &bx_options.aranymfs[18].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "T", String_Tag, &bx_options.aranymfs[19].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "U", String_Tag, &bx_options.aranymfs[20].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "V", String_Tag, &bx_options.aranymfs[21].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "W", String_Tag, &bx_options.aranymfs[22].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "X", String_Tag, &bx_options.aranymfs[23].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "Y", String_Tag, &bx_options.aranymfs[24].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "Z", String_Tag, &bx_options.aranymfs[25].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ NULL , Error_Tag, NULL, 0, 0}
 };
 
 void preset_arafs() {
@@ -452,10 +452,10 @@ void presave_arafs() {
 /*************************************************************************/
 #define ETH(x) bx_options.ethernet.x
 struct Config_Tag ethernet_conf[]={
-	{ "HostIP", String_Tag, &ETH(ip_host), sizeof(ETH(ip_host))},
-	{ "AtariIP", String_Tag, &ETH(ip_atari), sizeof(ETH(ip_atari))},
-	{ "Netmask", String_Tag, &ETH(netmask), sizeof(ETH(netmask))},
-	{ NULL , Error_Tag, NULL }
+	{ "HostIP", String_Tag, &ETH(ip_host), sizeof(ETH(ip_host)), 0},
+	{ "AtariIP", String_Tag, &ETH(ip_atari), sizeof(ETH(ip_atari)), 0},
+	{ "Netmask", String_Tag, &ETH(netmask), sizeof(ETH(netmask)), 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_ethernet() {
@@ -474,10 +474,10 @@ void presave_ethernet() {
 #define LILO(x) bx_options.lilo.x
 
 struct Config_Tag lilo_conf[]={
-	{ "Kernel", String_Tag, &LILO(kernel), sizeof(LILO(kernel))},
-	{ "Args", String_Tag, &LILO(args), sizeof(LILO(args))},
-	{ "Ramdisk", String_Tag, &LILO(ramdisk), sizeof(LILO(ramdisk))},
-	{ NULL , Error_Tag, NULL }
+	{ "Kernel", String_Tag, &LILO(kernel), sizeof(LILO(kernel)), 0},
+	{ "Args", String_Tag, &LILO(args), sizeof(LILO(args)), 0},
+	{ "Ramdisk", String_Tag, &LILO(ramdisk), sizeof(LILO(ramdisk)), 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_lilo() {
@@ -496,9 +496,9 @@ void presave_lilo() {
 #define MIDI(x) bx_options.midi.x
 
 struct Config_Tag midi_conf[]={
-	{ "Enabled", Bool_Tag, &MIDI(enabled)},
-	{ "Output", String_Tag, &MIDI(output), sizeof(MIDI(output))},
-	{ NULL , Error_Tag, NULL }
+	{ "Enabled", Bool_Tag, &MIDI(enabled), 0, 0},
+	{ "Output", String_Tag, &MIDI(output), sizeof(MIDI(output)), 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_midi() {
@@ -514,7 +514,7 @@ void presave_midi() {
 
 /*************************************************************************/
 #define NFCDROM_ENTRY(c,n) \
-	{ c, Int_Tag, &bx_options.nfcdroms[n].physdevtohostdev, sizeof(bx_options.nfcdroms[n].physdevtohostdev)}
+	{ c, Int_Tag, &bx_options.nfcdroms[n].physdevtohostdev, sizeof(bx_options.nfcdroms[n].physdevtohostdev), 0}
 
 struct Config_Tag nfcdroms_conf[]={
 	NFCDROM_ENTRY("A", 0),
@@ -543,7 +543,7 @@ struct Config_Tag nfcdroms_conf[]={
 	NFCDROM_ENTRY("X", 23),
 	NFCDROM_ENTRY("Y", 24),
 	NFCDROM_ENTRY("Z", 25),
-	{ NULL , Error_Tag, NULL }
+	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_nfcdroms() {

@@ -178,7 +178,7 @@ void FVDIDriver::dispatch(M68kRegisters *r)
 	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
 	hostScreen.lock();
 
-	videl.setRendering(false);
+	getVIDEL()->setRendering(false);
 
 	uint32 fncode = ReadInt32(r->a[7] + 4);
 	switch (fncode) {
@@ -320,7 +320,7 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
 	hostScreen.lock();
 
-	videl.setRendering(false);
+	getVIDEL()->setRendering(false);
 
 	uint32 result = 0;
 	switch (fncode) {
@@ -2131,6 +2131,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.51  2003/04/22 21:22:14  johan
+ * Reverse transparent mode for vrt_cpyfm corrected.
+ *
  * Revision 1.50  2003/02/19 20:02:35  standa
  * Small bugfix in nonbitplane modes.
  *

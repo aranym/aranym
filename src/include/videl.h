@@ -27,8 +27,10 @@ protected:
 	int zoomheight;
 	int *zoomxtable;
 	int *zoomytable;
+
 public:
-	VIDEL();
+	VIDEL(memptr, uint32);
+	bool isMyHWRegister(memptr addr);
 	void init();
 
 	virtual void handleWrite(uint32 addr, uint8 value);
@@ -60,6 +62,9 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.21  2003/06/01 08:35:39  milan
+ * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
+ *
  * Revision 1.20  2003/04/16 19:35:49  pmandin
  * Correct inclusion of SDL headers
  *

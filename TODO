@@ -1,4 +1,4 @@
-TODO before 0.8.2final:
+TODO before 0.8.4final:
 - the floppy exchange detection emulation (almost done)
 - Load/Save buttons in GUI (at least)
 - keyboard layout configurable. This is a must.
@@ -60,15 +60,6 @@ that particular programmer but rather who is the author of the idea :-)
        booting and exit gracefully with a loud warning (e.g. on NetBSD).
 
 - joy: emulating a serial port compatible with MiNT/HSMODEM
-
-- joy: rewrite all HW modules to make use of BASE_IO::handle_read/write()
-
-- joy: in fdc.cpp: replace HWget_b() and HWput_b() with something more
-       appropriate for inter-module communication
-
-- joy: in hardware.cpp: HWget_l/HWput_l should not have the special case
-       for HW_IDE. Best would be to implement word and longword HW access
-       emulation directly for all modules.
 
 - joy: document the way hardware emulation works
 

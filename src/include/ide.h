@@ -2,9 +2,9 @@
 
 #include "icio.h"
 
-class IDE : public ICio {
+class IDE : public BASE_IO {
 public:
-	void init();
+	IDE(memptr, uint32);
 	virtual uae_u8 handleRead(uaecptr addr);
 	virtual void handleWrite(uaecptr addr, uae_u8 value);
 	virtual uae_u16 handleReadW(uaecptr addr);

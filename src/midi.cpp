@@ -18,18 +18,18 @@
 #define DEBUG 0
 #include "debug.h"
 
-MIDI::MIDI(void) : ACIA(HW_MIDI)
+MIDI::MIDI(memptr addr, uint32 size) : ACIA(addr, size)
 {
 	output_to_file=0;
 
-	D(bug("midi: interface created at 0x%06x",HW_MIDI));
+	D(bug("midi: interface created at 0x%06x", getHWoffset()));
 
 	reset();
 }
 
 MIDI::~MIDI(void)
 {
-	D(bug("midi: interface destroyed at 0x%06x",baseaddr));
+	D(bug("midi: interface destroyed at 0x%06x", getHWoffset()));
 
 	if (output_to_file) {
 		fclose(output_handle);

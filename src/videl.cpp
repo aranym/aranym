@@ -22,10 +22,11 @@
 // from host.cpp
 extern HostScreen hostScreen;
 
-static const uint32 HW = 0xff8200UL;
+#define HW	getHWoffset()
+#define VIDEL_COLOR_REGS_BEGIN	0xff9800
+#define VIDEL_COLOR_REGS_END	0xffa200
 
-
-VIDEL::VIDEL()
+VIDEL::VIDEL(memptr addr, uint32 size) : BASE_IO(addr, size)
 {
 	// default resolution to boot with
 	width = 640;
@@ -42,6 +43,17 @@ VIDEL::VIDEL()
 	zoomheight=0;
 	zoomxtable=NULL;
 	zoomytable=NULL;
+
+	init();
+}
+
+bool VIDEL::isMyHWRegister(memptr addr)
+{
+	// FALCON VIDEL COLOR REGISTERS
+	if (addr >= VIDEL_COLOR_REGS_BEGIN && addr < VIDEL_COLOR_REGS_END)
+		return true;
+
+	return BASE_IO::isMyHWRegister(addr);
 }
 
 void VIDEL::init()
@@ -54,7 +66,8 @@ void VIDEL::handleWrite(uint32 addr, uint8 value)
 {
 	BASE_IO::handleWrite(addr, value);
 
-	if ((addr >= 0xff9800 && addr < 0xffa200) || (addr >= 0xff8240 && addr < 0xff8260)) {
+	if ((addr >= VIDEL_COLOR_REGS_BEGIN && addr < VIDEL_COLOR_REGS_END) ||
+		(addr >= 0xff8240 && addr < 0xff8260)) {
 		hostColorsSync = false;
 		return;
 	}
@@ -166,7 +179,7 @@ void VIDEL::updateColors()
 
 	// map the colortable into the correct pixel format
 
-#define F_COLORS(i) handleRead(0xff9800 + (i))
+#define F_COLORS(i) handleRead(VIDEL_COLOR_REGS_BEGIN + (i))
 #define STE_COLORS(i)	handleRead(0xff8240 + (i))
 
 	if (!stCompatibleColorPalette) {
@@ -915,6 +928,9 @@ void VIDEL::renderScreenZoom()
 
 /*
  * $Log$
+ * Revision 1.51  2003/04/08 10:28:13  joy
+ * merging changes from 0_8_0 branch
+ *
  * Revision 1.50.2.1  2003/03/28 20:15:26  joy
  * typo errors fixed
  *

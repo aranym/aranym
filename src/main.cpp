@@ -87,8 +87,6 @@ void setactvdebug(int)
 #endif
 }
 
-void init_fdc();
-
 // CPU and FPU type, addressing mode
 int CPUType;
 bool CPUIs68060;
@@ -182,7 +180,7 @@ void invoke200HzInterrupt()
 #ifdef DEBUGGER
 	if (!debugging || irqindebug)
 #endif
-		mfp.IRQ(5, count);
+		getMFP()->IRQ(5, count);
 
 	lastTicks += (count * 5);
 
@@ -200,7 +198,7 @@ void invoke200HzInterrupt()
 
 		if (++refreshCounter == VIDEL_REFRESH) {// divided by 2 again ==> 25 Hz screen update
 			if (! hostScreen.isGUIopen())
-				videl.renderScreen();
+				getVIDEL()->renderScreen();
 			refreshCounter = 0;
 		}
 
@@ -212,7 +210,7 @@ void invoke200HzInterrupt()
 /*
  * my_callback_function() is called every 10 miliseconds (~ 100 Hz)
  */
-Uint32 my_callback_function(Uint32 interval, void *param)
+Uint32 my_callback_function(Uint32 /*interval*/, void * /*param*/)
 {
 	TriggerInternalIRQ();
 	return 10;					// come back in 10 milliseconds
@@ -384,12 +382,20 @@ bool InitOS(void)
 #ifdef ENABLE_LILO
 	if (boot_lilo && LiloInit())
 		return true;
-	else
 #endif
+
+	bool isOS = false;
 	if (!boot_emutos && InitTOSROM())
-		return true;
+		isOS = true;
 	else if (InitEmuTOS())
+		isOS = true;
+
+	if (isOS) {
+		// Setting "SP & PC" for TOS and EmuTOS
+		for (int i = 0; i < 8; i++)
+			RAMBaseHost[i] = ROMBaseHost[i];
 		return true;
+	}
 
 	panicbug("No operating system found. ARAnyM can not boot!");
 	panicbug("Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.");
@@ -452,16 +458,6 @@ bool InitAll(void)
 
 	CPUType = 4;
 	FPUType = 1;
-
-	// Setting "SP & PC" for TOS and EmuTOS
-#ifdef ENABLE_LILO
-	if (!(boot_lilo && lilo_ready))
-#endif
-	{
-		for (int i = 0; i < 8; i++) RAMBaseHost[i] = ROMBaseHost[i];
-	}
-
-	init_fdc();
 
 #ifdef EXTFS_SUPPORT
 	// install the drives
@@ -555,6 +551,9 @@ void ExitAll(void)
 	SDLGui_UnInit();
 #endif
 
+	// hardware
+	HWExit();
+
 #if ENABLE_MON
 	// Deinitialize mon
 	mon_exit();
@@ -562,260 +561,3 @@ void ExitAll(void)
 
 	SDL_VideoQuit();
 }
-
-
-/*
- * $Log$
- * Revision 1.100  2003/09/30 08:47:11  pmandin
- * Natfeat CD-ROM driver split
- *
- * Revision 1.99  2003/08/15 19:24:04  milan
- * md5.h -> aramd5.h (Guy Harrison)
- *
- * Revision 1.98  2003/06/01 08:35:39  milan
- * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
- *
- * Revision 1.97  2003/04/25 07:39:31  pmandin
- * Fix broken compilation when lilo disabled
- *
- * Revision 1.96  2003/04/24 22:32:18  pmandin
- * Linux kernel loader added
- *
- * Revision 1.95  2003/04/16 19:35:49  pmandin
- * Correct inclusion of SDL headers
- *
- * Revision 1.94  2003/03/29 08:45:38  milan
- * capabilities output
- * manpage
- * infoprint
- *
- * Revision 1.93  2003/03/28 13:32:57  milan
- * Joy's version capabilities implemented
- *
- * Revision 1.92  2003/02/27 22:59:52  joy
- * ethernet reworked
- *
- * Revision 1.91  2003/01/10 00:00:28  joy
- * correct _SND cookie
- *
- * Revision 1.90  2002/12/19 10:18:46  standa
- * Ethernet initialization and termination
- *
- * Revision 1.89  2002/12/16 11:25:04  standa
- * METADOS_DRV removed ... was duplicating the EXTFS_SUPPORT
- *
- * Revision 1.88  2002/10/28 21:05:47  joy
- * boot emutos
- *
- * Revision 1.87  2002/10/25 07:37:08  joy
- * SDL Timer check
- *
- * Revision 1.86  2002/10/19 09:16:58  joy
- * cosmetics
- *
- * Revision 1.85  2002/10/16 22:21:43  milan
- * cleanup
- *
- * Revision 1.84  2002/10/15 21:26:52  milan
- * non-cheaders support (for MipsPro C/C++ compiler)
- *
- * Revision 1.83  2002/10/07 23:00:42  joy
- * CPU back in the main thread
- *
- * Revision 1.82  2002/09/27 21:01:17  pmandin
- * Acia, Ikbd, Midi update
- *
- * Revision 1.81  2002/09/15 15:17:15  joy
- * CPU to separate thread
- *
- * Revision 1.80  2002/09/12 21:18:09  joy
- * romdiff -> romset
- *
- * Revision 1.79  2002/08/01 22:26:19  joy
- * fixed EmuTOS loading. Prints version of EmuTOS now
- *
- * Revision 1.78  2002/08/01 15:33:19  joy
- * EmuTOS image can be just 256 kB long now
- *
- * Revision 1.77  2002/07/20 12:42:04  joy
- * hint for invoking the GUI displayed in the window
- *
- * Revision 1.76  2002/07/20 11:33:27  joy
- * OS loading revamped. Now it first tries TOS, then EmuTOS and if both fail a warning and an advice how to obtain EmuTOS is displayed.
- *
- * Revision 1.75  2002/07/19 23:29:56  joy
- * don't crash when GUI font is not loaded
- *
- * Revision 1.74  2002/07/15 18:24:15  milan
- * extended sigsegv handler upgraded
- *
- * Revision 1.73  2002/06/26 22:09:22  joy
- * don't try to init extern variables
- * do not support patched TOS 4.04 files
- *
- * Revision 1.72  2002/06/26 20:59:43  joy
- * render VIDEL only if SDL GUI is not open
- *
- * Revision 1.71  2002/06/24 19:29:33  joy
- * give it a time to finish timer thread
- *
- * Revision 1.70  2002/06/24 19:10:35  joy
- * It should be safe now to call ExitAll() anytime (even if InitAll() was not called yet)
- *
- * Revision 1.69  2002/06/07 20:58:06  joy
- * heart beat added
- *
- * Revision 1.68  2002/05/14 19:09:50  milan
- * Better structure of vm_alloc, not own OS dependent includes
- * Some debug outputs added for JIT compiler
- * A small reform in memory allocation, one stupid bug (of course, I'm the author) found in QuitEmulator (vm_release(nil))
- *
- * Revision 1.67  2002/04/29 11:44:35  joy
- * "ROM" => "TOS"
- * ErrorAlert() -> panicbug()
- * always display filename when reporting a file error
- * suggest to check readability of the TOS file image since Unix unzip does not set the rw- flags correctly
- *
- * Revision 1.66  2002/04/22 18:30:50  milan
- * header files reform
- *
- * Revision 1.65  2002/04/21 20:45:29  joy
- * SDL GUI support added.
- * EmuTOS loading: file length checked, must be 512 kB.
- *
- * Revision 1.63  2002/04/13 21:55:50  joy
- * TOS patch for redirecting printer output added
- *
- * Revision 1.62  2002/02/23 13:40:41  joy
- * input related code separated from main.cpp
- *
- * Revision 1.61  2002/01/18 20:37:47  milan
- * FixedSizeFastRAM & Makefile fixed
- *
- * Revision 1.60  2002/01/15 21:27:07  joy
- * gettimeofday() for platforms where SDL_GetTicks() returns wrong values
- *
- * Revision 1.59  2002/01/11 11:55:41  joy
- * SDL_GetTicks() returns unsigned value! Thanks to Olivier for the fix. This could lead to stop after 23 days of aranym run :-(
- *
- * Revision 1.58  2002/01/09 19:14:12  milan
- * Preliminary support for SGI/Irix
- *
- * Revision 1.57  2002/01/08 16:13:18  joy
- * config variables moved from global ones to bx_options struct.
- *
- * Revision 1.56  2002/01/03 23:10:41  joy
- * redirect xconout to host console
- *
- * Revision 1.55  2001/12/29 17:11:40  joy
- * cleaned up
- *
- * Revision 1.54  2001/12/27 22:31:49  joy
- * TOS patch to enable FastRAM visual check
- *
- * Revision 1.53  2001/12/22 18:13:24  joy
- * most video related parameters moved to bx_options.video struct.
- * --refresh <x> added
- *
- * Revision 1.52  2001/12/17 09:56:56  joy
- * VBL is at precise 50 Hz now. And screen refresh at 25 Hz.
- *
- * Revision 1.51  2001/12/17 08:33:00  standa
- * Thread synchronization added. The check_event and fvdidriver actions are
- * synchronized each to other.
- *
- * Revision 1.50  2001/12/17 00:26:13  joy
- * SDL Timer is back! Use --enable-sdltimer to emulate TimerC (200 Hz interrupt) using a separate timer thread.
- *
- * Revision 1.49  2001/12/11 21:08:25  standa
- * The SDL_WarpMouse() was causing Floating Point error on fbcon.
- * It was moved behind the HWInit() to be called after SDL_SetVideoMode (correct
- * place to call it).
- * The fullscreen detection was added for "fb" drivers to not to cause mouse cursor
- * redraw problems when using Clocky(TM) and touching the screen edges.
- *
- * Revision 1.48  2001/12/07 17:29:13  milan
- * e00000 -> 0 back in InitAll
- *
- * Revision 1.47  2001/12/06 01:06:54  joy
- * disable mouse grabbing at start
- *
- * Revision 1.46  2001/12/06 00:25:22  milan
- * ndebug corrected, sync
- *
- * Revision 1.45  2001/12/02 01:31:20  joy
- * keyboard conversion rewritten again, this time with heuristic analysis to detect the scancode2scancode conversion offset of SDL automatically.
- *
- * Revision 1.44  2001/11/28 22:52:17  joy
- * keyboard conversion based on scancodes now.
- * page up/down takes care of previously held Shift
- *
- * Revision 1.43  2001/11/21 13:29:51  milan
- * cleanning & portability
- *
- * Revision 1.42  2001/11/20 23:29:26  milan
- * Extfs now not needed for ARAnyM's compilation
- *
- * Revision 1.41  2001/11/19 17:50:28  joy
- * second MD5 check removed
- *
- * Revision 1.40  2001/11/11 22:03:55  joy
- * direct truecolor is optional (compile time configurable)
- *
- * Revision 1.39  2001/11/07 21:18:25  milan
- * SDL_CFLAGS in CXXFLAGS now.
- *
- * Revision 1.38  2001/11/06 20:36:54  milan
- * MMU's corrections
- *
- * Revision 1.37  2001/11/06 13:35:51  joy
- * now recognizes TOS from CVS 2001-05-02 and also the new one (WinX free).
- *
- * Revision 1.36  2001/11/06 11:45:14  joy
- * updated MD5 checksum for new romdiff.cpp
- * optional saving of patched TOS ROM
- *
- * Revision 1.35  2001/11/01 16:03:54  joy
- * mouse behavior fixed:
- * 1) you can release mouse grab by pressing Alt+Ctrl+Esc (VMware compatible)
- * 2) you can grab mouse by click the left mouse button (VMware compatible)
- * 3) if the Atari mouse driver is active, you can release mouse by moving the mouse off the window and by moving back you grab it again. This can be disabled by AutoGrabMouse=false.
- *
- * Revision 1.34  2001/10/29 20:00:05  standa
- * The button 4 and 5 mapped to KeyUp and KeyDown.
- *
- * Revision 1.33  2001/10/29 11:16:07  joy
- * emutos gets a special care
- *
- * Revision 1.32  2001/10/29 08:15:45  milan
- * some changes around debuggers
- *
- * Revision 1.31  2001/10/25 19:56:01  standa
- * The Log and Header CVS tags in the Log removed. Was recursing.
- *
- * Revision 1.30  2001/10/25 15:03:20  joy
- * move floppy stuff from main to fdc
- *
- * Revision 1.29  2001/10/25 12:25:28  joy
- * request the ROM to be 512 kB long. On the web there are just 256 kB long images...
- *
- * Revision 1.28  2001/10/23 21:26:15  standa
- * The hostScreen size is used to handle the mouseOut flag.
- *
- * Revision 1.27  2001/10/18 14:27:24  joy
- * TOS 4.04 is patched in runtime
- *
- * Revision 1.26  2001/10/18 13:46:34  joy
- * detect the ROM version. Knows both our 68040 friendly ABTOS and the original TOS 4.04.
- *
- * Revision 1.25  2001/10/16 19:38:44  milan
- * Integration of BasiliskII' cxmon, FastRAM in aranymrc etc.
- *
- * Revision 1.24  2001/10/12 07:56:14  standa
- * Pacal to C conversion ;( sorry for that.
- *
- * Revision 1.23  2001/10/09 19:25:19  milan
- * MemAlloc's rewriting
- *
- *
- */

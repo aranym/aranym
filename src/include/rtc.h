@@ -2,13 +2,13 @@
 
 #include "icio.h"
 
-class RTC : public ICio {
+class RTC : public BASE_IO {
 private:
 	uint8 addr;
 	char nvram_filename[512];
 
 public:
-	RTC();
+	RTC(memptr, uint32);
 	virtual ~RTC();
 	void init(void);
 	bool load(void);

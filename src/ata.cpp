@@ -158,7 +158,7 @@ fcha2io(Bit32u address)
 }
 
   Bit32u
-nila2io(Bit32u address)
+nila2io(Bit32u /*address*/)
 {
   return 0xffffffff;
 }
@@ -297,7 +297,7 @@ bx_hard_drive_c::init(void)
 }
 
   void
-bx_hard_drive_c::reset(unsigned type)
+bx_hard_drive_c::reset(unsigned /*type*/)
 {
 }
 
@@ -719,7 +719,7 @@ if ( quantumsMax == 0)
 //BX_CONTROLLER(channel,0).lba_mode
 
     case 0x07: // Hard Disk Status (f0001d)
-		mfp.setGPIPbit(0x20, 0x20);		// lower the interrupt
+		getMFP()->setGPIPbit(0x20, 0x20);		// lower the interrupt
 
     case 0x16: // Hard Disk Alternate Status (f00039)
       if (!BX_ANY_IS_PRESENT(channel)) {
@@ -2641,7 +2641,7 @@ bx_hard_drive_c::raise_interrupt(Bit8u channel)
 	D(bug("raise_interrupt called, disable_irq = %02x", BX_SELECTED_CONTROLLER(channel).control.disable_irq));
 	if (!BX_SELECTED_CONTROLLER(channel).control.disable_irq) { D(bug("raising interrupt")); } else { D(bug("Not raising interrupt")); }
       if (!BX_SELECTED_CONTROLLER(channel).control.disable_irq) {
-		mfp.setGPIPbit(0x20, 0);
+		getMFP()->setGPIPbit(0x20, 0);
       }
 }
 

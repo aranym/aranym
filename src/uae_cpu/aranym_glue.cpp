@@ -25,6 +25,7 @@
 
 #include "cpu_emulation.h"
 #include "newcpu.h"
+#include "hardware.h"
 #ifdef USE_JIT
 # include "compiler/compemu.h"
 #endif
@@ -192,6 +193,11 @@ void Quit680x0(void)
 }
 
 
+int MFPdoInterrupt(void)
+{
+	return getMFP()->doInterrupt();
+}
+
 /*
  *  Trigger interrupts
  */
@@ -229,7 +235,7 @@ void TriggerNMI(void)
 }
 
 #ifndef REBOOT_OR_HALT
-#define REBOOT_OR_HALT	1	// reboot by default
+#define REBOOT_OR_HALT	0	// halt by default
 #endif
 
 #if REBOOT_OR_HALT == 1
@@ -237,7 +243,7 @@ void TriggerNMI(void)
 #  define CPU_ACTION	Restart680x0()
 #else
 #  define CPU_MSG		"CPU: Halting"
-#  define CPU_ACTION	QuitEmulator()
+#  define CPU_ACTION	Quit680x0()
 #endif
 
 #ifdef ENABLE_EPSLIMITER

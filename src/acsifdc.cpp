@@ -26,19 +26,22 @@ enum {
 extern int dma_mode, dma_scr, dma_car, fdc_command, fdc_track, fdc_sector,
 	fdc_data, fdc_status, dma_sr;
 extern void fdc_exec_command(void);
+extern void init_fdc(void);
 
 static int fdc_busy = 0, hdc_busy = 0;	// from STonC
 
 static NCR5380 ncr5380;
 
-ACSIFDC::ACSIFDC() {
+ACSIFDC::ACSIFDC(memptr addr, uint32 size) : BASE_IO(addr, size) {
 	DMAfifo = DMAstatus = DMAxor = 0;
 	DMAdiskctl = FDC_T = FDC_S = FDC_D = HDC_T = HDC_S = HDC_D = 0;
 	floppy_changed = false;
+
+	init_fdc();
 }
 
 uae_u8 ACSIFDC::handleRead(uaecptr addr) {
-	addr -= HW_DISKDMA;
+	addr -= getHWoffset();
 	if (addr > 0x0d)
 		return 0;
 
@@ -58,7 +61,7 @@ uae_u8 ACSIFDC::handleRead(uaecptr addr) {
 }
 
 void ACSIFDC::handleWrite(uaecptr addr, uae_u8 value) {
-	addr -= HW_DISKDMA;
+	addr -= getHWoffset();
 	if (addr > 0x0d)
 		return;
 
@@ -92,7 +95,7 @@ uae_u8 ACSIFDC::LOAD_B_ff8605(void)
 			dma_car = ncr5380.ReadData(dma_mode);
 
         	if (! hdc_busy)
-				mfp.setGPIPbit(0x20, 0x20);
+				getMFP()->setGPIPbit(0x20, 0x20);
 			return dma_car&0xff;
 		}
 		else
@@ -105,7 +108,7 @@ uae_u8 ACSIFDC::LOAD_B_ff8605(void)
 			{
 				case WD1772_REG_STATUS:
           			if (! fdc_busy)
-						mfp.setGPIPbit(0x20, 0x20);
+						getMFP()->setGPIPbit(0x20, 0x20);
 					if (floppy_changed) {
 						floppy_changed = false;
 						return fdc_status | 0x40;
@@ -192,7 +195,7 @@ void ACSIFDC::STORE_B_ff8605(uae_u8 vv)
 	{
 		if (dma_mode & (1<<DISKDMA_CS))
 		{
-			mfp.setGPIPbit(0x20, 0x20);
+			getMFP()->setGPIPbit(0x20, 0x20);
 			dma_car &= 0xff00;
 			dma_car |= vv;
 

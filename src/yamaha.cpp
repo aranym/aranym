@@ -16,16 +16,14 @@ extern DSP dsp;
 #define DEBUG 1
 #include "debug.h"
 
-YAMAHA::YAMAHA() {
+YAMAHA::YAMAHA(memptr addr, uint32 size) : BASE_IO(addr, size) {
 	active_reg = 0;
 }
-
-static const int HW = 0xff8800;
 
 uae_u8 YAMAHA::handleRead(uaecptr addr) {
 	uae_u8 value=0;
 
-	addr -= HW;
+	addr -= getHWoffset();
 	if (addr == 0) {
 		switch(active_reg) {
 			case 15:
@@ -42,7 +40,7 @@ uae_u8 YAMAHA::handleRead(uaecptr addr) {
 }
 
 void YAMAHA::handleWrite(uaecptr addr, uae_u8 value) {
-	addr -= HW;
+	addr -= getHWoffset();
 	switch(addr) {
 		case 0:
 			active_reg = value & 0x0f;
@@ -58,7 +56,7 @@ void YAMAHA::handleWrite(uaecptr addr, uae_u8 value) {
 					parallel.setStrobe((value >> 5) & 0x01);
 #ifdef DSP_EMULATION
 					if (value & (1<<4)) {
-						dsp.reset();
+						getDSP()->reset();
 					}
 #endif
 					break;

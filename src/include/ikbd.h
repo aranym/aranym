@@ -15,8 +15,6 @@
 
 /*--- Defines ---*/
 
-#define HW_IKBD 0xfffc00
-
 enum ikbd_packet_t {
 	IKBD_PACKET_UNKNOWN=0,
 	IKBD_PACKET_KEYBOARD,
@@ -67,9 +65,9 @@ class IKBD: public ACIA {
 		void send(uae_u8 value);
 
 	public:
-		IKBD(void);
-		IKBD(int inlen, int outlen);	/* Params are length (2^x) of in/out buffers */
-		~IKBD(void);
+		IKBD(memptr addr, uint32 size);
+		// IKBD(int inlen, int outlen);	/* Params are length (2^x) of in/out buffers */
+		~IKBD();
 		void reset(void);
 
 		uae_u8 ReadStatus(void);

@@ -29,6 +29,13 @@
 #define M_PI	3.141592653589793238462643383279502
 #endif
 
+DSP::DSP(memptr address, uint32 size) : BASE_IO(address, size)
+{
+#if DSP_EMULATION
+	init();
+#endif
+}
+
 #if DSP_EMULATION
 
 /* More disasm infos, if wanted */
@@ -40,7 +47,7 @@
 #define DSP_HOST_FORCEEXEC 0
 
 /* Constructor and  destructor for DSP class */
-DSP::DSP(void)
+void DSP::init(void)
 {
 	int i;
 
@@ -130,11 +137,7 @@ DSP::DSP(void)
 
 DSP::~DSP(void)
 {
-#ifndef OS_darwin
-	//	in Mac OS X a call of shutdown during ending of aranym
-	//	leads to a hanging application which will not end
 	shutdown();
-#endif
 }
 
 /* Other functions to init/shutdown dsp emulation */
@@ -226,12 +229,12 @@ inline void DSP::force_exec(void)
  *	Hardware address read/write by CPU
  **********************************/
 
-uae_u8 DSP::handleRead(uaecptr addr)
+uae_u8 DSP::handleRead(memptr addr)
 {
 #if DSP_EMULATION
 	uae_u8 value=0;
 
-	addr -= HW_DSP;
+	addr -= getHWoffset();
 
 /*	D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr+HW_DSP, value, showPC()));*/
 
@@ -297,10 +300,10 @@ uae_u8 DSP::handleRead(uaecptr addr)
 #endif	/* DSP_EMULATION */
 }
 
-void DSP::handleWrite(uaecptr addr, uae_u8 value)
+void DSP::handleWrite(memptr addr, uae_u8 value)
 {
 #if DSP_EMULATION
-	addr -= HW_DSP;
+	addr -= getHWoffset();
 
 /*	D(bug("HWput_b(0x%08x,0x%02x) at 0x%08x", addr+HW_DSP, value, showPC()));*/
 

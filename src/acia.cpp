@@ -16,18 +16,16 @@
 
 #define ACIA_DEV_NAME "acia"
 
-ACIA::ACIA(uaecptr addr)
+ACIA::ACIA(memptr addr, uint32 size) : BASE_IO(addr, size)
 {
-	baseaddr = addr;
-
-	D(bug("acia: interface created at 0x%06x",baseaddr));
+	D(bug("acia: interface created at 0x%06x", getHWoffset()));
 
 	reset();
 }
 
 ACIA::~ACIA(void)
 {
-	D(bug("acia: interface destroyed at 0x%06x",baseaddr));
+	D(bug("acia: interface destroyed at 0x%06x", getHWoffset()));
 }
 
 void ACIA::reset(void)
@@ -42,7 +40,7 @@ uae_u8 ACIA::handleRead(uaecptr addr)
 {
 	uae_u8 value;
 
-	switch(addr-baseaddr) {
+	switch(addr-getHWoffset()) {
 		case 0:
 			value = ReadStatus();
 			break;
@@ -62,7 +60,7 @@ void ACIA::handleWrite(uaecptr addr, uae_u8 value)
 {
 	D(bug("acia: Write 0x%02x to 0x%08x",value,addr));
 
-	switch(addr-baseaddr) {
+	switch(addr-getHWoffset()) {
 		case 0:
 			if ((value & ACIA_CR_PREDIV_MASK)==ACIA_CR_RESET) {
 				ACIA::reset();

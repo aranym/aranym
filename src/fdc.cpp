@@ -149,10 +149,9 @@ void fdc_exec_command (void)
 	long count;
 	uint8 *buffer;
 
-	address = (HWget_b(0xff8609)<<16)|(HWget_b(0xff860b)<<8)
-			|HWget_b(0xff860d);
+	address = getFDC()->getDMAaddr();
 	buffer = Atari2HostAddr(address);
-	int snd_porta = yamaha.getFloppyStat();
+	int snd_porta = getYAMAHA()->getFloppyStat();
 	D(bug("FDC DMA virtual address = %06x, physical = %08x, snd = %d", address, buffer, snd_porta));
 	sides=(~snd_porta)&1;
 	d=(~snd_porta)&6;
@@ -221,9 +220,9 @@ void fdc_exec_command (void)
 	else if ((fdc_command & 0xf0) == 0xd0)
 	{
 		if (fdc_command == 0xd8)
-			mfp.setGPIPbit(0x20, 0);
+			getMFP()->setGPIPbit(0x20, 0);
 		else if (fdc_command == 0xd0)
-			mfp.setGPIPbit(0x20, 0x20);
+			getMFP()->setGPIPbit(0x20, 0x20);
 	}
 	else
 	{
@@ -248,9 +247,7 @@ void fdc_exec_command (void)
 						if (count==read(drive_fd[d], buffer, count))
 						{
 							address += count;
-							HWput_b(0xff8609, address>>16);
-							HWput_b(0xff860b, address>>8);
-							HWput_b(0xff860d, address);
+							getFDC()->setDMAaddr(address);
 							dma_scr=0;
 							dma_sr=1;
 							break;
@@ -270,9 +267,7 @@ void fdc_exec_command (void)
 						if (count==read(drive_fd[d], buffer, count))
 						{
 							address += count;
-							HWput_b(0xff8609, address>>16);
-							HWput_b(0xff860b, address>>8);
-							HWput_b(0xff860d, address);
+							getFDC()->setDMAaddr(address);
 							dma_scr=0;
 							dma_sr=1;
 							fdc_sector += dma_scr; /* *(512/disk[d].secsize);*/
@@ -289,9 +284,7 @@ void fdc_exec_command (void)
 						if (count==write(drive_fd[d], buffer, count))
 						{
 							address += count;
-							HWput_b(0xff8609, address>>16);
-							HWput_b(0xff860b, address>>8);
-							HWput_b(0xff860d, address);
+							getFDC()->setDMAaddr(address);
 							dma_scr=0;
 							dma_sr=1;
 							break;
@@ -307,9 +300,7 @@ void fdc_exec_command (void)
 						if (count==write(drive_fd[d], buffer, count))
 						{
 							address += count;
-							HWput_b(0xff8609, address>>16);
-							HWput_b(0xff860b, address>>8);
-							HWput_b(0xff860d, address);
+							getFDC()->setDMAaddr(address);
 							dma_scr=0;
 							dma_sr=1;
 							fdc_sector += dma_scr; /* *(512/disk[d].secsize);*/
@@ -336,7 +327,5 @@ void fdc_exec_command (void)
 	if (motor)
 		fdc_status |= 0x80;
 	if (!(fdc_status & 1))
-		mfp.setGPIPbit(0x20, 0);
+		getMFP()->setGPIPbit(0x20, 0);
 }
-
-

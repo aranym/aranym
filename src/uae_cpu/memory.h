@@ -12,6 +12,7 @@
 #define UAE_MEMORY_H
 
 #include "sysdeps.h"
+#include "string.h"
 #include "hardware.h"
 #include "parameters.h"
 #include "registers.h"
