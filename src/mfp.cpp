@@ -6,7 +6,6 @@
 #include "memory.h"
 #include "mfp.h"
 
-uaecptr showPC();
 static bool dP = false;		/* debug print */
 
 static const int HW = 0xfffa00;
@@ -50,7 +49,7 @@ static const int HW = 0xfffa00;
 			else {
 				state = true;
 				// Trigger 200Hz interrupt
-				TriggerMFP();
+				TriggerMFP(5);
 				if (dP)
 					fprintf(stderr, "TriggerMFP($4BA) = %ld\n", ReadMacInt32(0x4ba));
 				current_data = start_data;
@@ -231,6 +230,15 @@ static const int HW = 0xfffa00;
 		};
 	}
 
-	void MFP::tick() {
-		C.tick();
+void MFP::IRQ(int no) {
+	switch(no) {
+		case 0:	break;	// BUSY
+		case 5: C.tick(); break;	// TimerC 200 Hz
+		case 6: {
+					GPIP_data &= ~0x10;
+					// irq_inservice |= 0x40;
+					TriggerMFP(6);
+				}
+				break;
 	}
+}
