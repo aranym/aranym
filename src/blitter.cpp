@@ -506,12 +506,12 @@ void BLITTER::handleWriteL(uaecptr addr, uint32 value) {
 	addr -= getHWoffset();
 	switch(addr) {
 		case 0x24:
-			D(bug("Blitter sets source to $%08lx at $%08lx", value, showPC());
+			D(bug("Blitter sets source to $%08lx at $%08lx", value, showPC()));
 			source_addr = value & 0xfffffffe;
 			source_addr_backup = source_addr;
 			break;
 		case 0x32:
-			D(bug("Blitter sets dest to $%08lx at $%08lx", value, showPC());
+			D(bug("Blitter sets dest to $%08lx at $%08lx", value, showPC()));
 			dest_addr = value & 0xfffffffe;
 			dest_addr_backup = dest_addr;
 			break;
