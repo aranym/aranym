@@ -39,6 +39,14 @@ int getVideoMode() {
 	return videl.getVideoMode();
 }
 
+int getVidelScreenWidth() {
+	return videl.getScreenWidth();
+}
+
+int getVidelScreenHeight() {
+	return videl.getScreenHeight();
+}
+
 int getFloppyStats() {
 	return yamaha.getFloppyStat();
 }
