@@ -1844,6 +1844,9 @@ static int do_specialties (void)
     return 0;
 }
 
+static long innerCounter = 0;
+extern void incrementVirtualTimer(void);
+
 static void m68k_run_1 (void)
 {
 	for (;;) {
@@ -1866,6 +1869,14 @@ static void m68k_run_1 (void)
 			if (do_specialties())
 				return;
 		}
+#ifndef USE_TIMERS
+		{
+			if (++innerCounter > 100) {
+				innerCounter = 0;
+				incrementVirtualTimer();
+			}
+		}
+#endif
 	}
 }
 
