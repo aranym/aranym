@@ -1,22 +1,26 @@
 /*
- *  input.cpp - keyboard/mouse input code
+ * input.cpp - handling of keyboard/mouse input
  *
- *  ARAnyM (C) 2001-2002 Petr Stehlik of ARAnyM Team
+ * Copyright (c) 2001-2003 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 
 #include "sysdeps.h"
 #include "input.h"
@@ -43,14 +47,23 @@
  *
  */
 #define KEYSYM_SYMTABLE	0
-#define KEYSYM_FRAMEBUFFER	1
-#define KEYSYM_X11	2
 #define KEYSYM_SCANCODE	3
+#define UNDEFINED_OFFSET	-1
 
 #ifdef OS_darwin
 #define KEYBOARD_TRANSLATION KEYSYM_SYMTABLE
+#define HOTKEY_OPENGUI		SDLK_PRINT	// F13
+#define	HOTKEY_REBOOT		0
+#define	HOTKEY_SHUTDOWN		0
+#define	HOTKEY_FULLSCREEN	SDLK_NUMLOCK
+#define	HOTKEY_PRINT		0
 #else
 #define KEYBOARD_TRANSLATION	KEYSYM_SCANCODE
+#define HOTKEY_OPENGUI		SDLK_PAUSE
+#define	HOTKEY_REBOOT		0
+#define	HOTKEY_SHUTDOWN		0
+#define	HOTKEY_FULLSCREEN	SDLK_SCROLLOCK
+#define	HOTKEY_PRINT		0
 #endif
 
 /*********************************************************************
@@ -185,116 +198,81 @@ int keysymToAtari(SDL_keysym keysym)
 }
 #endif /* KEYSYM_SYMTABLE */
 
-#if KEYBOARD_TRANSLATION == KEYSYM_FRAMEBUFFER
-int keysymToAtari(SDL_keysym keysym)
-{
-	int scanPC = keysym.scancode;
-	// map right Control and Alternate keys to the left ones
-	if (scanPC == 0x61)		/* Right Control */
-		scanPC = 0x1d;
-	else if (scanPC == 0x64)	/* Right Alternate */
-		scanPC = 0x38;
-
-	/*
-	 * surprisingly, PC101 is identical to Atari keyboard,
-	 * at least in the range <ESC, F10> (and NumPad '*'
-	 * is the single exception that confirms the rule)
-	 */
-	if (scanPC >= 1 /* ESC */ && scanPC <= 0x44 /* F10 */) {
-		if (scanPC == 0x37)	/* NumPad '*' */
-			return 0x66;	/* strict layout: 0x65 */
-		return scanPC;
-	}
-	switch(scanPC) {
-		case 0x47:	return 0x67;	/* NumPad 7 */
-		case 0x48:	return 0x68;	/* NumPad 8 */
-		case 0x49:	return 0x69;	/* NumPad 9 */
-		case 0x4a:	return 0x4a;	/* NumPad - */
-		case 0x4b:	return 0x6a;	/* NumPad 4 */
-		case 0x4c:	return 0x6b;	/* NumPad 5 */
-		case 0x4d:	return 0x6c;	/* NumPad 6 */
-		case 0x4e:	return 0x4e;	/* NumPad + */
-		case 0x4f:	return 0x6d;	/* NumPad 1 */
-		case 0x50:	return 0x6e;	/* NumPad 2 */
-		case 0x51:	return 0x6f;	/* NumPad 3 */
-		case 0x52:	return 0x70;	/* NumPad 0 */
-		case 0x53:	return 0x71;	/* NumPad . */
-		case 0x62:	return 0x65;	/* NumPad / */	/* strict layout: 0x64 */
-
-		case 0x57:	return 0x62;	/* F11 => Help */
-		case 0x58:	return 0x61;	/* F12 => Undo */
-		case 0x66:	return 0x47;	/* Home */
-		case 0x6b:	return 0x60;	/* End => "<>" on German Atari kbd */
-		case 0x67:	return 0x48;	/* Arrow Up */
-		case 0x6c:	return 0x4b;	/* Arrow Left */
-		case 0x69:	return 0x4d;	/* Arrow Right */
-		case 0x6a:	return 0x50;	/* Arrow Down */
-		case 0x6e:	return 0x52;	/* Insert */
-		case 0x6f:	return 0x53;	/* Delete */
-		case 0x60:	return 0x72;	/* NumPad Enter */
-
-		default:	return 0;		/* invalid scancode */
-	}
-}
-#endif /* KEYSYM_FRAMEBUFFER */
-
-#if KEYBOARD_TRANSLATION == KEYSYM_X11
-int keysymToAtari(SDL_keysym keysym)
-{
-	int scanPC = keysym.scancode;
-	// map right Control and Alternate keys to the left ones
-	if (scanPC == 0x6d)		/* Right Control */
-		scanPC = 0x25;
-	else if (scanPC == 0x71)	/* Right Alternate */
-		scanPC = 0x40;
-
-	/*
-	 * unfortunately SDL on X11 doesn't return physical scancodes.
-	 * For the basic range <ESC,F10> there's an offset = 8.
-	 * The rest of keys have rather random offsets.
-	 */
-	if (scanPC >= 9 /* ESC */ && scanPC <= 0x4c /* F10 */) {
-		if (scanPC == 0x3f)	/* NumPad '*' */
-			return 0x66;	/* strict layout: 0x65 */
-		return scanPC - 8;		/* remove the offset */
-	}
-	switch(scanPC) {
-		case 0x4f:	return 0x67;	/* NumPad 7 */
-		case 0x50:	return 0x68;	/* NumPad 8 */
-		case 0x51:	return 0x69;	/* NumPad 9 */
-		case 0x52:	return 0x4a;	/* NumPad - */
-		case 0x53:	return 0x6a;	/* NumPad 4 */
-		case 0x54:	return 0x6b;	/* NumPad 5 */
-		case 0x55:	return 0x6c;	/* NumPad 6 */
-		case 0x56:	return 0x4e;	/* NumPad + */
-		case 0x57:	return 0x6d;	/* NumPad 1 */
-		case 0x58:	return 0x6e;	/* NumPad 2 */
-		case 0x59:	return 0x6f;	/* NumPad 3 */
-		case 0x5a:	return 0x70;	/* NumPad 0 */
-		case 0x5b:	return 0x71;	/* NumPad . */
-		case 0x70:	return 0x65;	/* NumPad / */	/* strict layout: 0x64 */
-
-		case 0x5f:	return 0x62;	/* F11 => Help */
-		case 0x60:	return 0x61;	/* F12 => Undo */
-		case 0x61:	return 0x47;	/* Home */
-		case 0x67:	return 0x60;	/* End => "<>" on German Atari kbd */
-		case 0x62:	return 0x48;	/* Arrow Up */
-		case 0x64:	return 0x4b;	/* Arrow Left */
-		case 0x66:	return 0x4d;	/* Arrow Right */
-		case 0x68:	return 0x50;	/* Arrow Down */
-		case 0x6a:	return 0x52;	/* Insert */
-		case 0x6b:	return 0x53;	/* Delete */
-		case 0x6c:	return 0x72;	/* NumPad Enter */
-
-		default:	return 0;		/* invalid scancode */
-	}
-}
-#endif /* KEYSYM_X11 */
-
 #if KEYBOARD_TRANSLATION == KEYSYM_SCANCODE
+// Heuristic analysis to find out the obscure scancode offset
+int findScanCodeOffset(SDL_keysym keysym)
+{
+	int scanPC = keysym.scancode;
+	int offset = UNDEFINED_OFFSET;
+
+	switch(keysym.sym) {
+		case SDLK_ESCAPE:	offset = scanPC - 0x01; break;
+		case SDLK_1:	offset = scanPC - 0x02; break;
+		case SDLK_2:	offset = scanPC - 0x03; break;
+		case SDLK_3:	offset = scanPC - 0x04; break;
+		case SDLK_4:	offset = scanPC - 0x05; break;
+		case SDLK_5:	offset = scanPC - 0x06; break;
+		case SDLK_6:	offset = scanPC - 0x07; break;
+		case SDLK_7:	offset = scanPC - 0x08; break;
+		case SDLK_8:	offset = scanPC - 0x09; break;
+		case SDLK_9:	offset = scanPC - 0x0a; break;
+		case SDLK_0:	offset = scanPC - 0x0b; break;
+		case SDLK_BACKSPACE:	offset = scanPC - 0x0e; break;
+		case SDLK_TAB:	offset = scanPC - 0x0f; break;
+		case SDLK_RETURN:	offset = scanPC - 0x1c; break;
+		case SDLK_SPACE:	offset = scanPC - 0x39; break;
+		case SDLK_q:	offset = scanPC - 0x10; break;
+		case SDLK_w:	offset = scanPC - 0x11; break;
+		case SDLK_e:	offset = scanPC - 0x12; break;
+		case SDLK_r:	offset = scanPC - 0x13; break;
+		case SDLK_t:	offset = scanPC - 0x14; break;
+		case SDLK_y:	offset = scanPC - 0x15; break;
+		case SDLK_u:	offset = scanPC - 0x16; break;
+		case SDLK_i:	offset = scanPC - 0x17; break;
+		case SDLK_o:	offset = scanPC - 0x18; break;
+		case SDLK_p:	offset = scanPC - 0x19; break;
+		case SDLK_a:	offset = scanPC - 0x1e; break;
+		case SDLK_s:	offset = scanPC - 0x1f; break;
+		case SDLK_d:	offset = scanPC - 0x20; break;
+		case SDLK_f:	offset = scanPC - 0x21; break;
+		case SDLK_g:	offset = scanPC - 0x22; break;
+		case SDLK_h:	offset = scanPC - 0x23; break;
+		case SDLK_j:	offset = scanPC - 0x24; break;
+		case SDLK_k:	offset = scanPC - 0x25; break;
+		case SDLK_l:	offset = scanPC - 0x26; break;
+		case SDLK_z:	offset = scanPC - 0x2c; break;
+		case SDLK_x:	offset = scanPC - 0x2d; break;
+		case SDLK_c:	offset = scanPC - 0x2e; break;
+		case SDLK_v:	offset = scanPC - 0x2f; break;
+		case SDLK_b:	offset = scanPC - 0x30; break;
+		case SDLK_n:	offset = scanPC - 0x31; break;
+		case SDLK_m:	offset = scanPC - 0x32; break;
+		case SDLK_CAPSLOCK:	offset = scanPC - 0x3a; break;
+		case SDLK_LSHIFT:	offset = scanPC - 0x2a; break;
+		case SDLK_LCTRL:	offset = scanPC - 0x1d; break;
+		case SDLK_LALT:	offset = scanPC - 0x38; break;
+		case SDLK_F1:	offset = scanPC - 0x3b; break;
+		case SDLK_F2:	offset = scanPC - 0x3c; break;
+		case SDLK_F3:	offset = scanPC - 0x3d; break;
+		case SDLK_F4:	offset = scanPC - 0x3e; break;
+		case SDLK_F5:	offset = scanPC - 0x3f; break;
+		case SDLK_F6:	offset = scanPC - 0x40; break;
+		case SDLK_F7:	offset = scanPC - 0x41; break;
+		case SDLK_F8:	offset = scanPC - 0x42; break;
+		case SDLK_F9:	offset = scanPC - 0x43; break;
+		case SDLK_F10:	offset = scanPC - 0x44; break;
+		default:	break;
+	}
+	if (offset != UNDEFINED_OFFSET) {
+		printf("Detected scancode offset = %d (key: '%s' with scancode $%02x)\n", offset, SDL_GetKeyName(keysym.sym), scanPC);
+	}
+
+	return offset;
+}
+
 int keysymToAtari(SDL_keysym keysym)
 {
-	static int offset = -1;		// uninitialized scancode offset
+	static int offset = UNDEFINED_OFFSET;
 
 	switch(keysym.sym) {
 		// Numeric Pad
@@ -341,79 +319,16 @@ int keysymToAtari(SDL_keysym keysym)
 			// Try to detect the offset using a little bit of black magic.
 			// If offset is known then simply pass the scancode.
 			int scanPC = keysym.scancode;
-			if (offset == -1) {
-				// Heuristic analysis to find out the obscure scancode offset
-				switch(keysym.sym) {
-					case SDLK_ESCAPE:	offset = scanPC - 0x01; break;
-					case SDLK_1:	offset = scanPC - 0x02; break;
-					case SDLK_2:	offset = scanPC - 0x03; break;
-					case SDLK_3:	offset = scanPC - 0x04; break;
-					case SDLK_4:	offset = scanPC - 0x05; break;
-					case SDLK_5:	offset = scanPC - 0x06; break;
-					case SDLK_6:	offset = scanPC - 0x07; break;
-					case SDLK_7:	offset = scanPC - 0x08; break;
-					case SDLK_8:	offset = scanPC - 0x09; break;
-					case SDLK_9:	offset = scanPC - 0x0a; break;
-					case SDLK_0:	offset = scanPC - 0x0b; break;
-					case SDLK_BACKSPACE:	offset = scanPC - 0x0e; break;
-					case SDLK_TAB:	offset = scanPC - 0x0f; break;
-					case SDLK_RETURN:	offset = scanPC - 0x1c; break;
-					case SDLK_SPACE:	offset = scanPC - 0x39; break;
-					case SDLK_q:	offset = scanPC - 0x10; break;
-					case SDLK_w:	offset = scanPC - 0x11; break;
-					case SDLK_e:	offset = scanPC - 0x12; break;
-					case SDLK_r:	offset = scanPC - 0x13; break;
-					case SDLK_t:	offset = scanPC - 0x14; break;
-					case SDLK_y:	offset = scanPC - 0x15; break;
-					case SDLK_u:	offset = scanPC - 0x16; break;
-					case SDLK_i:	offset = scanPC - 0x17; break;
-					case SDLK_o:	offset = scanPC - 0x18; break;
-					case SDLK_p:	offset = scanPC - 0x19; break;
-					case SDLK_a:	offset = scanPC - 0x1e; break;
-					case SDLK_s:	offset = scanPC - 0x1f; break;
-					case SDLK_d:	offset = scanPC - 0x20; break;
-					case SDLK_f:	offset = scanPC - 0x21; break;
-					case SDLK_g:	offset = scanPC - 0x22; break;
-					case SDLK_h:	offset = scanPC - 0x23; break;
-					case SDLK_j:	offset = scanPC - 0x24; break;
-					case SDLK_k:	offset = scanPC - 0x25; break;
-					case SDLK_l:	offset = scanPC - 0x26; break;
-					case SDLK_z:	offset = scanPC - 0x2c; break;
-					case SDLK_x:	offset = scanPC - 0x2d; break;
-					case SDLK_c:	offset = scanPC - 0x2e; break;
-					case SDLK_v:	offset = scanPC - 0x2f; break;
-					case SDLK_b:	offset = scanPC - 0x30; break;
-					case SDLK_n:	offset = scanPC - 0x31; break;
-					case SDLK_m:	offset = scanPC - 0x32; break;
-					case SDLK_CAPSLOCK:	offset = scanPC - 0x3a; break;
-					case SDLK_LSHIFT:	offset = scanPC - 0x2a; break;
-					case SDLK_LCTRL:	offset = scanPC - 0x1d; break;
-					case SDLK_LALT:	offset = scanPC - 0x38; break;
-					case SDLK_F1:	offset = scanPC - 0x3b; break;
-					case SDLK_F2:	offset = scanPC - 0x3c; break;
-					case SDLK_F3:	offset = scanPC - 0x3d; break;
-					case SDLK_F4:	offset = scanPC - 0x3e; break;
-					case SDLK_F5:	offset = scanPC - 0x3f; break;
-					case SDLK_F6:	offset = scanPC - 0x40; break;
-					case SDLK_F7:	offset = scanPC - 0x41; break;
-					case SDLK_F8:	offset = scanPC - 0x42; break;
-					case SDLK_F9:	offset = scanPC - 0x43; break;
-					case SDLK_F10:	offset = scanPC - 0x44; break;
-					default:	break;
-				}
-				if (offset != -1) {
-					printf("Detected scancode offset = %d (key: '%s' with scancode $%02x)\n", offset, SDL_GetKeyName(keysym.sym), scanPC);
+			if (offset == UNDEFINED_OFFSET) {
+				offset = findScanCodeOffset(keysym);
+				if (offset == UNDEFINED_OFFSET) {
+					panicbug("Unknown key: scancode = %d ($%02x), keycode = '%s' ($%02x)", scanPC, scanPC, SDL_GetKeyName(keysym.sym), keysym.sym);
+					return 0;	// unknown scancode
 				}
 			}
 
-			if (offset >= 0) {
-				// offset is defined so pass the scancode directly
-				return scanPC - offset;
-			}
-			else {
-				fprintf(stderr, "Unknown key: scancode = %d ($%02x), keycode = '%s' ($%02x)\n", scanPC, scanPC, SDL_GetKeyName(keysym.sym), keysym.sym);
-				return 0;	// unknown scancode
-			}
+			// offset is defined so pass the scancode directly
+			return scanPC - offset;
 		}
 	}
 }
@@ -468,69 +383,53 @@ void process_keyboard_event(SDL_Event event)
 
 	// process special hotkeys
 	if (pressed) {
-		switch(sym) {
-			case SDLK_ESCAPE:
-				if (controlled && alternated) {
-					releaseTheMouse();
-					canGrabMouseAgain = false;	// let it leave our window
-					send2Atari = false;
-					// release the Control and Alt keys
-					getIKBD()->SendKey(0x1d|0x80);	// Control released
-					getIKBD()->SendKey(0x38|0x80);	// Alternate released
-				}
+		if (sym == SDLK_ESCAPE) {
+			if (controlled && alternated) {
+				releaseTheMouse();
+				canGrabMouseAgain = false;	// let it leave our window
+				send2Atari = false;
+				// release the Control and Alt keys
+				getIKBD()->SendKey(0x1d|0x80);	// Control released
+				getIKBD()->SendKey(0x38|0x80);	// Alternate released
+			}
 #ifdef SDL_GUI
-				else {
-					eventTyp = 0x12345678;
-				}
+			else {
+				eventTyp = 0x12345678;
+			}
 #endif
-				break;
-
-			case SDLK_PAUSE:
-#ifdef OS_darwin
-			case SDLK_PRINT:	//	F13
-#endif
-				if (shifted) {
-					pendingQuit = true;
-					send2Atari = false;
-				}
-				else if (controlled) {
-					send2Atari = false;
-					Restart680x0();	// force Cold Reboot
-				}
+		}
+		else if (sym == HOTKEY_OPENGUI) {
+			if (shifted) {
+				pendingQuit = true;
+				send2Atari = false;
+			}
+			else if (controlled) {
+				send2Atari = false;
+				Restart680x0();	// force Cold Reboot
+			}
 #ifdef DEBUGGER
-				else if (bx_options.startup.debugger && alternated) {
-					releaseTheMouse();
-					canGrabMouseAgain = false;	// let it leave our window
-					// activate debugger
-					activate_debugger();
-					send2Atari = false;
-				}
+			else if (bx_options.startup.debugger && alternated) {
+				releaseTheMouse();
+				canGrabMouseAgain = false;	// let it leave our window
+				// activate debugger
+				activate_debugger();
+				send2Atari = false;
+			}
 #endif
 #ifdef SDL_GUI
-				else {
-					if (isGuiAvailable && !hostScreen.isGUIopen())
-						GUIthread = SDL_CreateThread(open_gui, NULL);
-				}
+			else {
+				if (isGuiAvailable && !hostScreen.isGUIopen())
+					GUIthread = SDL_CreateThread(open_gui, NULL);
+			}
 #endif
-				break;
-
-#ifdef OS_darwin
-#else
-			case SDLK_PRINT:
-				hostScreen.makeSnapshot();
-				send2Atari = false;
-				break;
-#endif
-
-			case SDLK_SCROLLOCK:
-#ifdef OS_darwin
-			case SDLK_NUMLOCK:
-#endif
-				hostScreen.toggleFullScreen();
-				send2Atari = false;
-				break;
-
-			default: break;
+		}
+		else if (sym == HOTKEY_PRINT) {
+			hostScreen.makeSnapshot();
+			send2Atari = false;
+		}
+		else if (sym == HOTKEY_FULLSCREEN) {
+			hostScreen.toggleFullScreen();
+			send2Atari = false;
 		}
 	}
 
