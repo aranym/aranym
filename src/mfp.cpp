@@ -5,6 +5,8 @@
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "mfp.h"
+
+#define DEBUG 0
 #include "debug.h"
 #include <SDL/SDL.h>
 
@@ -62,7 +64,7 @@ static const int HW = 0xfffa00;
 	}
 
 	uae_u8 MFP_Timer::getData() {
-		// D(bug("get MFP Timer%c data = %d\n", name, current_data));
+		// D(bug("get MFP Timer%c data = %d", name, current_data));
 
 		if (isRunning() && current_data > 2)
 			current_data--;		// hack to overcome microseconds delays in TOS (e.g. at $E02570)
