@@ -54,17 +54,13 @@
 #ifdef OS_darwin
 #define KEYBOARD_TRANSLATION KEYSYM_MACSCANCODE
 #define HOTKEY_OPENGUI		SDLK_PRINT	// F13
-#define	HOTKEY_REBOOT		0
-#define	HOTKEY_SHUTDOWN		0
 #define	HOTKEY_FULLSCREEN	SDLK_NUMLOCK
-#define	HOTKEY_PRINT		SDLK_F15
+#define	HOTKEY_SCREENSHOT	SDLK_F15
 #else
 #define KEYBOARD_TRANSLATION	KEYSYM_SCANCODE
 #define HOTKEY_OPENGUI		SDLK_PAUSE
-#define	HOTKEY_REBOOT		0
-#define	HOTKEY_SHUTDOWN		0
 #define	HOTKEY_FULLSCREEN	SDLK_SCROLLOCK
-#define	HOTKEY_PRINT		SDLK_PRINT
+#define	HOTKEY_SCREENSHOT	SDLK_PRINT
 #endif
 
 /*********************************************************************
@@ -97,6 +93,19 @@ void InputInit()
 	hideMouse(true);
 	// capslockState (yes, 'false' is correct)
 	capslockState = false;
+
+	bx_options.hotkeys.setup.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.setup.mod = KMOD_NONE;
+	bx_options.hotkeys.quit.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.quit.mod = KMOD_LSHIFT;
+	bx_options.hotkeys.reboot.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.reboot.mod = KMOD_LCTRL;
+	bx_options.hotkeys.debug.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.debug.mod = KMOD_LALT;
+	bx_options.hotkeys.screenshot.sym = HOTKEY_SCREENSHOT;
+	bx_options.hotkeys.screenshot.mod = KMOD_NONE;
+	bx_options.hotkeys.fullscreen.sym = HOTKEY_FULLSCREEN;
+	bx_options.hotkeys.fullscreen.mod = KMOD_NONE;
 }
 
 void InputReset()
@@ -451,12 +460,26 @@ void kill_GUI_thread()
 }
 #endif /* SDL_GUI */
 
+#define CHECK_HOTKEY(Hotkey) (sym == bx_options.hotkeys.Hotkey.sym && masked_mod == bx_options.hotkeys.Hotkey.mod)
 static void process_keyboard_event(SDL_Event &event)
 {
-	bool pressed = (event.type == SDL_KEYDOWN);
 	SDL_keysym keysym = event.key.keysym;
 	SDLKey sym = keysym.sym;
 	int state = keysym.mod;	// SDL_GetModState();
+
+#ifdef SDL_GUI
+	if (hostScreen.isGUIopen()) {
+		SDL_Event ev;
+		ev.type = SDL_USEREVENT;	// map key down/up event to user event
+		ev.user.code = event.type;
+		ev.user.data1 = (void *)sym;
+		ev.user.data2 = (void *)state;
+		SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
+		return;	// don't pass the key events to emulation
+	}
+#endif /* SDL_GUI */
+
+	bool pressed = (event.type == SDL_KEYDOWN);
 	bool shifted = state & KMOD_SHIFT;
 	bool controlled = state & KMOD_CTRL;
 	bool alternated = state & KMOD_ALT;
@@ -475,6 +498,44 @@ static void process_keyboard_event(SDL_Event &event)
 
 	// process special hotkeys
 	if (pressed) {
+		int masked_mod = state & (KMOD_SHIFT | KMOD_CTRL | KMOD_ALT);
+
+		if (CHECK_HOTKEY(quit)) {
+			pendingQuit = true;
+			send2Atari = false;
+		}
+		else if (CHECK_HOTKEY(reboot)) {
+			RestartAll();	// force Cold Reboot
+			send2Atari = false;
+		}
+#ifdef SDL_GUI
+		else if (CHECK_HOTKEY(setup)) {
+			start_GUI_thread();
+			send2Atari = false;
+		}
+#endif
+#ifdef DEBUGGER
+		else if (CHECK_HOTKEY(debug)) {
+			if (bx_options.startup.debugger) {
+				releaseTheMouse();
+				canGrabMouseAgain = false;	// let it leave our window
+				// activate debugger
+				activate_debugger();
+				send2Atari = false;
+			}
+		}
+#endif
+		else if (CHECK_HOTKEY(screenshot)) {
+			hostScreen.makeSnapshot();
+			send2Atari = false;
+		}
+		else if (CHECK_HOTKEY(fullscreen)) {
+			hostScreen.toggleFullScreen();
+			if (bx_options.video.fullscreen && !grabbedMouse)
+				grabTheMouse();
+			send2Atari = false;
+		}
+
 		if (sym == SDLK_ESCAPE) {
 			if (controlled && alternated) {
 				if ( bx_options.video.fullscreen )
@@ -487,53 +548,7 @@ static void process_keyboard_event(SDL_Event &event)
 				getIKBD()->SendKey(0x38|0x80);	// Alternate released
 			}
 		}
-		else if (sym == HOTKEY_OPENGUI) {
-			if (shifted) {
-				pendingQuit = true;
-				send2Atari = false;
-			}
-			else if (controlled) {
-				send2Atari = false;
-				RestartAll();	// force Cold Reboot
-			}
-#ifdef DEBUGGER
-			else if (bx_options.startup.debugger && alternated) {
-				releaseTheMouse();
-				canGrabMouseAgain = false;	// let it leave our window
-				// activate debugger
-				activate_debugger();
-				send2Atari = false;
-			}
-#endif
-#ifdef SDL_GUI
-			else {
-				start_GUI_thread();
-			}
-#endif
-		}
-		else if (sym == HOTKEY_PRINT) {
-			hostScreen.makeSnapshot();
-			send2Atari = false;
-		}
-		else if (sym == HOTKEY_FULLSCREEN) {
-			hostScreen.toggleFullScreen();
-			if (bx_options.video.fullscreen && !grabbedMouse)
-				grabTheMouse();
-			send2Atari = false;
-		}
 	}
-
-#ifdef SDL_GUI
-	if (hostScreen.isGUIopen()) {
-		SDL_Event ev;
-		ev.type = SDL_USEREVENT;	// map key down/up event to user event
-		ev.user.code = event.type;
-		ev.user.data1 = (void *)(uintptr)sym;
-		ev.user.data2 = (void *)(uintptr)state;
-		SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
-		return;	// don't pass the key events to emulation
-	}
-#endif /* SDL_GUI */
 
 	// map special keys to Atari range of scancodes
 	if (sym == SDLK_PAGEUP) {
