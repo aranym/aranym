@@ -23,6 +23,11 @@ static long _NF_call  = 0x73014e75L;
 #define nf_getVersion()	\
 	(((long CDECL (*)(long, ...))&_NF_call)(nfGetID(("NF_VERSION"))))
 
+#define nf_stderr(text)	\
+	(((long CDECL (*)(long, const char *))&_NF_call)(nfGetID(("NF_STDERR")), (text)))
+
+#define nf_stderrprintf(text, par1)	\
+	(((long CDECL (*)(long, const char *, ...))&_NF_call)(nfGetID(("NF_STDERR"))+1, text, par1))
 
 /* Example code */
 int main()
@@ -31,11 +36,16 @@ int main()
 	long version;
 
 	nf_getFullName(buf, sizeof(buf));
-	printf("NF_NAME=%s\n", buf);
+	printf("Machine name and version: '%s'\n", buf);
 
 	version = nf_getVersion();
 
-	printf("NF_VERSION=%d.%d\n", (int)(version >> 16), (int)(version & 0xffff));
+	printf("NatFeat API version = %d.%d\n", (int)(version >> 16), (int)(version & 0xffff));
+	
+	nf_stderr("Debug output\n");
+
+	nf_stderrprintf("Debug output with one decimal parameter: %d\n", (unsigned long)105);
+	nf_stderrprintf("Debug output with one string parameter: '%s'\n", "Hello world!");
 
 	getchar();
 	return 0;
