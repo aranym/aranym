@@ -66,11 +66,13 @@ class HostScreen {
 	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
 
 	// OpenGL stuff
+#ifdef ENABLE_OPENGL
 	SDL_Surface *SdlGlSurface;
 	GLuint SdlGlTexObj;
 	GLuint SdlGlTextureWidth;
 	GLuint SdlGlTextureHeight;
 	uint8 *SdlGlTexture;
+#endif /* ENABLE_OPENGL */
   public:
 	SDL_mutex   *screenLock;
 	uint32 sdl_videoparams;
@@ -431,6 +433,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.40  2002/12/01 10:28:29  pmandin
+ * OpenGL rendering
+ *
  * Revision 1.39  2002/10/15 21:26:53  milan
  * non-cheaders support (for MipsPro C/C++ compiler)
  *

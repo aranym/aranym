@@ -34,9 +34,11 @@ HostScreen::HostScreen(void) {
 
 	mainSurface=NULL;
 
+#ifdef ENABLE_OPENGL
 	// OpenGL stuff
 	SdlGlSurface=NULL;
 	SdlGlTexture=NULL;
+#endif /* ENABLE_OPENGL */
 }
 
 HostScreen::~HostScreen(void) {
@@ -1177,6 +1179,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.32  2002/12/01 10:28:29  pmandin
+ * OpenGL rendering
+ *
  * Revision 1.31  2002/09/23 09:21:37  pmandin
  * Select best video mode
  *
