@@ -9,7 +9,7 @@
 #include "natfeats.h"
 #include "nf_objs.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #define ID_SHIFT	20
@@ -45,7 +45,7 @@ int32 nf_call(memptr stack, bool inSuper)
 	unsigned int idx = MASTERID2IDX(fncode);
 	if (idx >= nf_objs_cnt) {
 		D(bug("nf_call: wrong ID %d", idx));
-		return -32L;	/* EINVFN - invalid function */
+		return 0;	/* returning an undefined value */
 	}
 
 	fncode = MASKOUTMASTERID(fncode);
