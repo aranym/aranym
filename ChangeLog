@@ -1,3 +1,8 @@
+2003/03/17 - STanda
+- hostfs.cpp: the chattr/chmod functions ported from STonX. Not tested.
+  It just compiles ATM.
+
+
 2003/03/16 - joy
 - natfeat/doc/native.txt updated (used Laurent's latest version without
   the NF_CONTROL stuff and with corrected unsigned long ID).

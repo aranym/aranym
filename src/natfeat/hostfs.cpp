@@ -84,7 +84,7 @@ extern "C" {
 
     1 D(bug("%s", "fs_chattr"));
     1 D(bug("%s", "fs_chown"));
-    1 D(bug("%s", "fs_chmode"));
+      D(bug("%s", "fs_chmod"));
       D(bug("%s", "fs_writelabel"));
       D(bug("%s", "fs_readlabel"));
     1 D(bug("%s", "fs_hardlink"));
@@ -101,7 +101,7 @@ extern "C" {
 #if 0
   FS:
       ara_fs_root, ara_fs_lookup, ara_fs_creat, ara_fs_getdev, ara_fs_getxattr,
-      ara_fs_chattr, ara_fs_chown, ara_fs_chmode, ara_fs_mkdir, ara_fs_rmdir,
+      ara_fs_chattr, ara_fs_chown, ara_fs_chmod, ara_fs_mkdir, ara_fs_rmdir,
       ara_fs_remove, ara_fs_getname, ara_fs_rename, ara_fs_opendir,
       ara_fs_readdir, ara_fs_rewinddir, ara_fs_closedir, ara_fs_pathconf,
       ara_fs_dfree, ara_fs_writelabel, ara_fs_readlabel, ara_fs_symlink,
@@ -151,7 +151,7 @@ int32 HostFs::dispatch(uint32 fncode)
 							&fc ); /* fcookie */
 			flushXFSC( &fc, getParameter(1) );
 			break;
-			
+
 		case XFS_LOOKUP:
 			D(bug("%s", "fs_lookup"));
 			fetchXFSC( &fc, getParameter(0) );
@@ -161,7 +161,7 @@ int32 HostFs::dispatch(uint32 fncode)
 			flushXFSC( &fc, getParameter(0) );
 			flushXFSC( &resFc, getParameter(2) );
 			break;
-			
+
 		case XFS_CREATE:
 			D(bug("%s", "fs_creat"));
 			fetchXFSC( &fc, getParameter(0) );
@@ -173,14 +173,14 @@ int32 HostFs::dispatch(uint32 fncode)
 			flushXFSC( &fc, getParameter(0) );
 			flushXFSC( &resFc, getParameter(4) );
 			break;
-			
+
 		case XFS_GETDEV:
 			D(bug("%s", "fs_getdev"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_getdev( &fc,
 							  getParameter(1) /* *devspecial */ );
 			break;
-			
+
 		case XFS_GETXATTR:
 			D(bug("%s", "fs_getxattr"));
 			fetchXFSC( &fc, getParameter(0) );
@@ -188,25 +188,27 @@ int32 HostFs::dispatch(uint32 fncode)
 								getParameter(1) /* XATTR* */ );
 			flushXFSC( &fc, getParameter(0) );
 			break;
-			
+
 		case XFS_CHATTR:
 			D(bug("%s", "fs_chattr"));
-			D(bug("fs_chattr - NOT IMPLEMENTED!"));
-			ret = TOS_E_OK;
+			fetchXFSC( &fc, getParameter(0) );
+			ret = xfs_chattr( &fc,
+							  getParameter(1) /* mode */ );
 			break;
-			
+
 		case XFS_CHOWN:
 			D(bug("%s", "fs_chown"));
 			D(bug("fs_chown - NOT IMPLEMENTED!"));
 			ret = TOS_E_OK;
 			break;
-			
+
 		case XFS_CHMOD:
-			D(bug("%s", "fs_chmode"));
-			D(bug("fs_chmode - NOT IMPLEMENTED!"));
-			ret = TOS_E_OK;
+			D(bug("%s", "fs_chmod"));
+			fetchXFSC( &fc, getParameter(0) );
+			ret = xfs_chmod( &fc,
+							 getParameter(1) /* mode */ );
 			break;
-			
+
 		case XFS_MKDIR:
 			D(bug("%s", "fs_mkdir"));
 			fetchXFSC( &fc, getParameter(0) );
@@ -214,14 +216,14 @@ int32 HostFs::dispatch(uint32 fncode)
 							 (memptr)getParameter(1) /* name */,
 							 getParameter(2) /* mode */ );
 			break;
-			
+
 		case XFS_RMDIR:
 			D(bug("%s", "fs_rmdir"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_rmdir( &fc,
 							 (memptr)getParameter(1) /* name */ );
 			break;
-			
+
 		case XFS_REMOVE:
 			D(bug("%s", "fs_remove"));
 			fetchXFSC( &fc, getParameter(0) );
@@ -229,7 +231,7 @@ int32 HostFs::dispatch(uint32 fncode)
 							  (memptr)getParameter(1) /* name */ );
 			flushXFSC( &fc, getParameter(0) );
 			break;
-			
+
 		case XFS_GETNAME:
 			D(bug("%s", "fs_getname"));
 			fetchXFSC( &fc, getParameter(0) );
@@ -241,7 +243,7 @@ int32 HostFs::dispatch(uint32 fncode)
 			// not needed: flushXFSC( &fc, getParameter(0) );
 			// not needed: flushXFSC( &resFc, getParameter(1) );
 			break;
-			
+
 		case XFS_RENAME:
 			D(bug("%s", "fs_rename"));
 			fetchXFSC( &fc, getParameter(0) );
@@ -253,7 +255,7 @@ int32 HostFs::dispatch(uint32 fncode)
 			// not needed: flushXFSC( &fc, getParameter(0) );
 			// not needed: flushXFSC( &resFc, getParameter(1) );
 			break;
-			
+
 		case XFS_OPENDIR:
 			D(bug("%s", "fs_opendir"));
 			fetchXFSD( &dirh, getParameter(0) );
@@ -261,7 +263,7 @@ int32 HostFs::dispatch(uint32 fncode)
 							   getParameter(1) /* flags */ );
 			flushXFSD( &dirh, getParameter(0) );
 			break;
-			
+
 		case XFS_READDIR:
 			D(bug("%s", "fs_readdir"));
 			fetchXFSD( &dirh, getParameter(0) );
@@ -272,21 +274,21 @@ int32 HostFs::dispatch(uint32 fncode)
 			flushXFSD( &dirh, getParameter(0) );
 			flushXFSC( &resFc, getParameter(3) );
 			break;
-			
+
 		case XFS_REWINDDIR:
 			D(bug("%s", "fs_rewinddir"));
 			fetchXFSD( &dirh, getParameter(0) );
 			ret = xfs_rewinddir( &dirh );
 			flushXFSD( &dirh, getParameter(0) );
 			break;
-			
+
 		case XFS_CLOSEDIR:
 			D(bug("%s", "fs_closedir"));
 			fetchXFSD( &dirh, getParameter(0) );
 			ret = xfs_closedir( &dirh );
 			flushXFSD( &dirh, getParameter(0) );
 			break;
-			
+
 		case XFS_PATHCONF:
 			D(bug("%s", "fs_pathconf"));
 			fetchXFSC( &fc, getParameter(0) );
@@ -294,24 +296,24 @@ int32 HostFs::dispatch(uint32 fncode)
 								getParameter(1) /* which */ );
 			flushXFSC( &fc, getParameter(0) );
 			break;
-			
+
 		case XFS_DFREE:
 			D(bug("%s", "fs_dfree"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_dfree( &fc,
 							 (memptr)getParameter(1) /* buff */ );
 			break;
-			
+
 		case XFS_WRITELABEL:
 			D(bug("%s", "fs_writelabel"));
 			ret = TOS_EINVFN;
 			break;
-			
+
 		case XFS_READLABEL:
 			D(bug("%s", "fs_readlabel"));
 			ret = TOS_EINVFN;
 			break;
-			
+
 		case XFS_SYMLINK:
 			D(bug("%s", "fs_symlink"));
 			fetchXFSC( &fc, getParameter(0) );
@@ -319,7 +321,7 @@ int32 HostFs::dispatch(uint32 fncode)
 							   (memptr)getParameter(1), /* fromName */
 							   (memptr)getParameter(2)  /* toName */ );
 			break;
-			
+
 		case XFS_READLINK:
 			D(bug("%s", "fs_readlink"));
 			fetchXFSC( &fc, getParameter(0) );
@@ -327,32 +329,32 @@ int32 HostFs::dispatch(uint32 fncode)
 								(memptr)getParameter(1) /* buff */,
 								getParameter(2) /* len */ );
 			break;
-			
+
 		case XFS_HARDLINK:
 			D(bug("%s", "fs_hardlink"));
 			D(bug("fs_hardlink - NOT IMPLEMENTED!"));
 			ret = TOS_E_OK;
 			break;
-			
+
 		case XFS_FSCNTL:
 			D(bug("%s", "fs_fscntl"));
 			D(bug("fs_fscntl - NOT IMPLEMENTED!"));
 			ret = TOS_E_OK;
 			break;
-			
+
 		case XFS_DSKCHNG:
 			D(bug("%s", "fs_dskchng"));
 			D(bug("fs_dskchng - NOT IMPLEMENTED!"));
 			ret = TOS_E_OK;
 			break;
-			
+
 		case XFS_RELEASE:
 			D(bug("%s", "fs_release"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_release( &fc );
 			flushXFSC( &fc, getParameter(0) );
 			break;
-			
+
 		case XFS_DUPCOOKIE:
 			D(bug("%s", "fs_dupcookie"));
 			fetchXFSC( &resFc, getParameter(0) );
@@ -374,14 +376,14 @@ int32 HostFs::dispatch(uint32 fncode)
 			D(bug("%s", "fs_unmount"));
 			ret = TOS_EINVFN;
 			break;
-		
+
 		case DEV_OPEN:
 			D(bug("%s", "fs_dev_open"));
 			fetchXFSF( &extFile, getParameter(0) );
 			ret = xfs_dev_open( &extFile );
 			flushXFSF( &extFile, getParameter(0) );
 			break;
-		
+
 		case DEV_WRITE:
 			D(bug("%s", "fs_dev_write"));
 			fetchXFSF( &extFile, getParameter(0) );
@@ -390,7 +392,7 @@ int32 HostFs::dispatch(uint32 fncode)
 								 getParameter(2) /* bytes */ );
 			flushXFSF( &extFile, getParameter(0) );
 			break;
-		
+
 		case DEV_READ:
 			D(bug("%s", "fs_dev_read"));
 			fetchXFSF( &extFile, getParameter(0) );
@@ -399,7 +401,7 @@ int32 HostFs::dispatch(uint32 fncode)
 								getParameter(2) /* bytes */ );
 			flushXFSF( &extFile, getParameter(0) );
 			break;
-		
+
 		case DEV_LSEEK:
 			D(bug("%s", "fs_dev_lseek"));
 			fetchXFSF( &extFile, getParameter(0) );
@@ -408,13 +410,13 @@ int32 HostFs::dispatch(uint32 fncode)
 								 getParameter(2) );		  // seekmode
 			//			flushXFSF( &extFile, getParameter(0) );
 			break;
-		
+
 		case DEV_IOCTL:
 			D(bug("%s", "fs_dev_ioctl"));
 			D(bug("fs_dev_ioctl - NOT IMPLEMENTED!"));
 			ret = TOS_E_OK;
 			break;
-		
+
 		case DEV_DATIME:
 			D(bug("%s", "fs_dev_datime"));
 			fetchXFSF( &extFile, getParameter(0) );
@@ -423,14 +425,14 @@ int32 HostFs::dispatch(uint32 fncode)
 								  getParameter(2) );// wflag
 			flushXFSF( &extFile, getParameter(0) );
 			break;
-		
+
 		case DEV_CLOSE:
 			D(bug("%s", "fs_dev_close"));
 			fetchXFSF( &extFile, getParameter(0) );
 			ret = xfs_dev_close( &extFile,
 								 0 ); // pid
 			break;
-		
+
 		case DEV_SELECT:
 			D(bug("%s", "fs_dev_select"));
 			D(bug("fs_dev_select - NOT IMPLEMENTED!"));
@@ -1575,6 +1577,48 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
 }
 
 
+int32 HostFs::xfs_chattr( XfsCookie *fc, int16 attr )
+{
+	char fpathName[MAXPATHNAMELEN];
+	cookie2Pathname(fc->index, NULL, fpathName);
+
+	D(bug("HOSTFS: fs_chattr (%s)", fpathName));
+
+	// perform the link stat itself
+	struct stat statBuf;
+    mode_t newmode;
+    if ( lstat( fpathName, &statBuf ) )
+		return unix2toserrno( errno, TOS_EACCDN );
+
+    if ( attr & 0x01 ) /* FA_RDONLY */
+		newmode = statBuf.st_mode & ~( S_IWUSR | S_IWGRP | S_IWOTH );
+    else
+		newmode = statBuf.st_mode | ( S_IWUSR | S_IWGRP | S_IWOTH );
+    if ( newmode != statBuf.st_mode &&
+		 chmod( fpathName, newmode ) )
+		return unix2toserrno( errno, TOS_EACCDN );
+
+	return TOS_E_OK;
+}
+
+
+int32 HostFs::xfs_chmod( XfsCookie *fc, uint16 mode )
+{
+	char fpathName[MAXPATHNAMELEN];
+	cookie2Pathname(fc->index, NULL, fpathName);
+
+    /* FIXME: ARAnyM has to run at root and uid and gid have to */
+    /* FIXME: be same at unix and MiNT! */
+    D(bug( "HOSTFS: fs_chmod (NOT TESTED)\n"
+		   "  CANNOT WORK CORRECTLY UNTIL uid AND gid AT MiNT ARE SAME LIKE AT UNIX!)\n" ));
+
+    if ( chmod( fpathName, mode ) )
+		return unix2toserrno( errno, TOS_EACCDN );
+
+	return TOS_E_OK;
+}
+
+
 int32 HostFs::xfs_root( uint16 dev, XfsCookie *fc )
 {
 	MountMap::iterator it = mounts.find(dev);
@@ -1887,6 +1931,9 @@ void HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, 
 
 /*
  * $Log$
+ * Revision 1.8  2003/03/12 21:10:49  standa
+ * Several methods changed from EINVFN -> E_OK (only fake /empty/ implementation)
+ *
  * Revision 1.7  2003/03/11 18:53:29  standa
  * Ethernet initialization fixed to work also in nondebug mode.
  *

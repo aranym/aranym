@@ -145,6 +145,8 @@ class HostFs : public NF_Base {
 	int32 xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook );
 	int32 xfs_release( XfsCookie *fc );
 	int32 xfs_getxattr( XfsCookie *fc, memptr xattrp );
+	int32 xfs_chattr( XfsCookie *fc, int16 attr );
+	int32 xfs_chmod( XfsCookie *fc, uint16 mode );
 	int32 xfs_getdev( XfsCookie *fc, memptr devspecial );
 	int32 xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc );
 	int32 xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, int16 size );
@@ -178,6 +180,9 @@ class HostFs : public NF_Base {
 
 /*
  * $Log$
+ * Revision 1.4  2003/03/01 11:57:37  joy
+ * major HOSTFS NF API cleanup
+ *
  * Revision 1.3  2002/12/17 14:20:48  standa
  * Better STL suppor
  *
