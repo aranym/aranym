@@ -221,6 +221,7 @@ dnl    WANT_ARANYMFS="no"
   darwin*)
     AC_DEFINE(HAVE_O_FSYNC)
     EXTRASYSSRCS=parameters_unix.cpp darwin/cdrom_osx.cc
+    DEFINES="$DEFINES -DDONTUSEUNIXCDROM"
     ;;
   *)
     EXTRASYSSRCS=parameters_unix.cpp

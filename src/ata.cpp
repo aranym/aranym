@@ -391,7 +391,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
   Bit16u value16;
   Bit32u value32;
 
-  if (io_len==2 && address!=0xf00000) {
+  if (io_len>1 && address!=0x1f0) {
     panicbug("non-byte IO read to %04x", (unsigned) address);
     }
 
@@ -400,6 +400,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
       if (BX_SELECTED_CONTROLLER.status.drq == 0) {
 	    panicbug("IO read(f00000h) with drq == 0: last command was %02xh",
 		     (unsigned) BX_SELECTED_CONTROLLER.current_command);
+	    return 0;
       }
       D(bug("IO read(f00000h): current command is %02xh",
             (unsigned) BX_SELECTED_CONTROLLER.current_command));
@@ -824,7 +825,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
   Bit32u logical_sector;
   int ret;
 
-  if (io_len==2 && address!=0xf00000) {
+  if (io_len>1 && address!=0x1f0) {
     panicbug("non-byte IO write to %04x", (unsigned) address);
     }
 
@@ -1072,6 +1073,9 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 						      case 0x3f: // all
 							    panicbug("cdrom: MODE SENSE (curr), code=%x",
 								     PageCode);
+							    atapi_cmd_error(SENSE_ILLEGAL_REQUEST,
+									    ASC_INV_FIELD_IN_CMD_PACKET);
+							    raise_interrupt();
 							    break;
 
 						      default:
@@ -2089,7 +2093,7 @@ bx_hard_drive_c::identify_ATAPI_drive(unsigned drive)
   assert((27+i) == 47);
 
   BX_SELECTED_HD.id_drive[47] = 0;
-  BX_SELECTED_HD.id_drive[48] = 0;
+  BX_SELECTED_HD.id_drive[48] = 1; // 32 bits access
 
   BX_SELECTED_HD.id_drive[49] = (1 << 9); // LBA supported
 
@@ -2509,9 +2513,12 @@ bx_hard_drive_c::init_send_atapi_command(Bit8u command, int req_length, int allo
       if (BX_SELECTED_CONTROLLER.byte_count == 0)
 	    panicbug("ATAPI command with zero byte count");
 
+      if (BX_SELECTED_CONTROLLER.byte_count == 0xffff)
+        BX_SELECTED_CONTROLLER.byte_count = 0xfffe;
+
       if ((BX_SELECTED_CONTROLLER.byte_count & 1)
           && !(alloc_length <= BX_SELECTED_CONTROLLER.byte_count)) {
-        panicbug("Odd byte count to ATAPI command");
+        panicbug("Odd byte count to ATAPI command 0x%02x", command);
       }
       if (alloc_length <= 0)
 	    panicbug("Allocation length <= 0");

@@ -31,6 +31,8 @@
 // ioctl() calls and such.  Should be fairly easy to add support
 // for your OS if it is not supported yet.
 
+#ifndef DONTUSEUNIXCDROM
+
 #include "sysdeps.h"
 #include "emu_bochs.h"
 #include "cdrom.h"
@@ -636,7 +638,8 @@ cdrom_interface::capacity()
   // non-ATAPI drives.  This is based on Keith Jones code below.
   // <splite@purdue.edu> 21 June 2001
 
-  int i, dtrk, dtrk_lba, num_sectors;
+  int i, dtrk_lba, num_sectors;
+  int dtrk = 0;
   struct cdrom_tochdr td;
   struct cdrom_tocentry te;
 
@@ -771,3 +774,4 @@ cdrom_interface::read_block(uint8* buf, int lba)
   }
 }
 
+#endif /* DONTUSEUNIXCDROM */

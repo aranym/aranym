@@ -1,3 +1,9 @@
+2002/07/23 - milan
+- support for cdrom under MacOS X ported from Bochs, not tested yet
+
+- updated IDE emulation, some error states detected more correctly now
+
+
 2002/07/20 - joy
 - saving/restoring screen background under SDL GUI fixed
 

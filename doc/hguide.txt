@@ -164,7 +164,7 @@ MMU patch 2 against 0.8.20
 
 IDE:
 
-Bochs (CVS 11.5.2002)
+Bochs (CVS 23.7.2002)
 
 
 8) debuggers
