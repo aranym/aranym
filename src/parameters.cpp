@@ -53,6 +53,7 @@ struct Config_Tag global_conf[]={
 
 #define BX_DISK_CONFIG(a)	struct Config_Tag a ## _configs[] = {	\
 	{ "Present", Bool_Tag, &bx_options. ## a ## .present},	\
+	{ "IsCDROM", Bool_Tag, &bx_options. ## a ## .isCDROM},	\
 	{ "ByteSwap", Bool_Tag, &bx_options. ## a ## .byteswap},	\
 	{ "Path", String_Tag, bx_options. ## a ## .path, sizeof(bx_options. ## a ## .path)},	\
 	{ "Cylinders", Int_Tag, &bx_options. ## a ## .cylinders},	\
@@ -138,16 +139,26 @@ void preset_ide() {
   set_ide(1, "", 0, 0, 0, false);
 
   bx_options.newHardDriveSupport = 1;
-  bx_options.cdromd.present = 0;
 }
 
 void preset_cfg() {
   preset_ide();
 }
 
+/* this is more or less a hack but it makes sense to put CDROM under IDEx config option */
+void update_cdrom1() {
+	if (bx_options.diskd.isCDROM) {
+		bx_options.cdromd.present = bx_options.diskd.present;
+		bx_options.diskd.present = false;
+		strcpy(bx_options.cdromd.path, bx_options.diskd.path);
+		bx_options.cdromd.inserted = true;	// this is auto insert of a CD
+	}
+}
+
 int decode_switches (FILE *f, int argc, char **argv) {
 	preset_cfg();
 	decode_ini_file(f);
+	update_cdrom1();
 
 #ifndef CONFGUI
 	int c;
