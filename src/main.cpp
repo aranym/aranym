@@ -380,8 +380,8 @@ bool InitOS(void)
 	/*
 	 * First try to boot a linux kernel if enabled,
 	 * then try TOS 4.04 if EmuTOS is disabled,
-	 * then finally try emuTOS
-	 * Note that EmuTOS will always be available so this will be
+	 * then finally try EmuTOS.
+	 * Note that EmuTOS should always be available so this will be
 	 * a nice fallback.
 	 */
 #ifdef ENABLE_LILO
@@ -510,6 +510,12 @@ bool InitAll(void)
 	mon_write_byte = mon_write_byte_b2;
 #endif
 
+#ifdef SDL_GUI
+	if (false /* --config */) {
+extern int open_gui(void *);
+		open_gui(NULL);
+	}
+#endif
 	return true;
 }
 
