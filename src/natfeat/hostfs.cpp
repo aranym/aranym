@@ -1331,8 +1331,12 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 
 	// no dir->drv? should never happen!
 	if ( !drv ) {
-		if ( it == mounts.end() )
+		if ( it == mounts.end() ) {
 			panicbug( "HOSTFS: fs_symlink: \"%s\"-->\"%s\" dir->drv == NULL && mounts.size() == 0!", ffromname, ftoname );
+			return TOS_EINTRN; // FIXME?
+		}
+
+		// get the first mount
 		drv = it->second;
 		it++;
 		bug( "HOSTFS: ERROR: fs_symlink: \"%s\"-->\"%s\" dir->drv == NULL???", ffromname, ftoname );
@@ -1340,12 +1344,10 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 
 	// compare the beginning of the link path with the current
 	// mountPoint path (if matches then use the current drive)
-	size_t mpLen = 0; // Petr: this has to be initialized to something..
+	size_t mpLen = 0;
 	while ( drv ) {
 		mpLen = strlen( drv->mountPoint );
-		if (mpLen < toNmLen)
-			break;
-		if ( !strncmp( drv->mountPoint, ftoname, mpLen ) )
+		if (mpLen < toNmLen && !strncmp( drv->mountPoint, ftoname, mpLen ) )
 			break;
 
 		// no more mountpoints available
