@@ -4,6 +4,8 @@
 
 - GUI Reset option works.
 
+- if GUI font8.bmp is not loaded the GUI is not accessible
+
 
 2002/07/18 - joy
 - DSP host code is disabled when DSP_EMULATION is not defined. This was
