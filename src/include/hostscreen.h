@@ -23,10 +23,16 @@ protected:
 	/**
 	 * This is the SDL_gfxPrimitives derived functions.
 	 **/
-	inline void gfxFastPixelColorNolock(int16 x, int16 y, uint32 color);
-	       void gfxBoxColorPattern(int16 x1, int16 y1, int16 x2, int16 y2,
-								   uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp);
-	       void gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 color);
+	inline void gfxFastPixelColorNolock( int16 x, int16 y, uint32 color );
+	       void gfxHLineColor ( int16 x1, int16 x2, int16 y,
+								uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+		   void gfxVLineColor( int16 x, int16 y1, int16 y2,
+							   uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	       void gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
+							  uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	       void gfxBoxColorPattern( int16 x1, int16 y1, int16 x2, int16 y2,
+								    uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	       void gfxBoxColorPatternBgTrans( int16 x1, int16 y1, int16 x2, int16 y2, uint16 *areaPattern, uint32 color );
 
 public:
 
@@ -56,11 +62,13 @@ public:
 	// gfx Primitives draw functions
 	uint32 getPixel( int32 x, int32 y );
 	void   putPixel( int32 x, int32 y, uint32 color );
-	void   drawLine( int32 x1, int32 y1, int32 x2, int32 y2, uint16 pattern, uint32 color );
+	void   drawLine( int32 x1, int32 y1, int32 x2, int32 y2,
+					 uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 	// transparent background
 	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color );
 	// VDI required function to fill areas
 	void   fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+	void   blitArea( int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h );
 };
 
 
@@ -81,15 +89,7 @@ inline void HostScreen::gfxFastPixelColorNolock(int16 x, int16 y, uint32 color)
 			*(uint16 *)p = color;
 			break;
 		case 3:
-			if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-				p[0] = (color >> 16) & 0xff;
-				p[1] = (color >> 8) & 0xff;
-				p[2] = color & 0xff;
-			} else {
-				p[0] = color & 0xff;
-				p[1] = (color >> 8) & 0xff;
-				p[2] = (color >> 16) & 0xff;
-			}
+			putBpp24Pixel( p, color );
 			break;
 		case 4:
 			*(uint32 *)p = color;
@@ -187,6 +187,12 @@ inline void HostScreen::putPixel( int32 x, int32 y, uint32 color ) {
 	gfxFastPixelColorNolock( x, y, color );
 }
 
+inline void HostScreen::drawLine( int32 x1, int32 y1, int32 x2, int32 y2, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
+{
+	gfxLineColor( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, fgColor, bgColor, logOp ); // SDL_gfxPrimitives
+}
+
+
 inline void HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *pattern, uint32 color )
 {
 	gfxBoxColorPatternBgTrans( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, color );
@@ -198,11 +204,30 @@ inline void HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2,
 	gfxBoxColorPattern( (int16)x1, (int16)y1, (int16)x2, (int16)y2, pattern, fgColor, bgColor, logOp );
 }
 
+inline void HostScreen::blitArea( int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h )
+{
+	SDL_Rect srcrect;
+	SDL_Rect dstrect;
+
+	srcrect.x = sx;
+	srcrect.y = sy;
+	dstrect.x = dx;
+	dstrect.y = dy;
+	srcrect.w = dstrect.w = w;
+	srcrect.h = dstrect.h = h;
+
+	SDL_BlitSurface(surf, &srcrect, surf, &dstrect);
+}
+
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.7  2001/09/24 23:16:28  standa
+ * Another minor changes. some logical operation now works.
+ * fvdidrv/fillArea and fvdidrv/expandArea got the first logOp handling.
+ *
  * Revision 1.6  2001/09/20 18:12:09  standa
  * Off by one bug fixed in fillArea.
  * Separate functions for transparent and opaque background.

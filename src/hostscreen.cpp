@@ -84,14 +84,6 @@ void HostScreen::setWindowSize(	uint32 width, uint32 height )
 }
 
 
-void  HostScreen::drawLine( int32 x1, int32 y1, int32 x2, int32 y2, uint16 pattern, uint32 color )
-{
-	//	linePattern( pattern );
-	uint8 r,g,b,a; SDL_GetRGBA( color, surf->format, &r, &g, &b, &a);
-	lineRGBA( surf, (int16)x1, (int16)y1, (int16)x2, (int16)y2, r,g,b,a ); // SDL_gfxPrimitives
-}
-
-
 extern "C" {
 	static void getBinary( uint16 data, char *buffer ) {
 		for( uint16 i=0; i<=15; i++ ) {
@@ -101,6 +93,276 @@ extern "C" {
 		buffer[16]='\0';
 	}
 }
+
+
+
+
+void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
+{
+	uint8 *pixel,*pixellast;
+	int dx;
+	int pixx, pixy;
+	int16 w;
+	int16 xtmp;
+	uint8 ppos;
+
+	/* Swap x1, x2 if required */
+	if (x1>x2) {
+		xtmp=x1; x1=x2; x2=xtmp;
+	}
+
+	/* Calculate width */
+	w=x2-x1;
+
+	/* Sanity check on width */
+	if (w<0)
+		return;
+
+	/* More variable setup */
+	dx=w;
+	pixx = surf->format->BytesPerPixel;
+	pixy = surf->pitch;
+	pixel = ((uint8*)surf->pixels) + pixx * (int)x1 + pixy * (int)y;
+	ppos = 0;
+
+	/* Draw */
+	switch(surf->format->BytesPerPixel) {
+		case 1:
+			memset (pixel, fgColor, dx);
+			break;
+		case 2:
+			pixellast = pixel + dx + dx;
+			for (; pixel<=pixellast; pixel += pixx) {
+				switch (logOp) {
+					case 1:
+						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						break;
+					case 2:
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint16*)pixel = fgColor; // STanda
+						break;
+					case 3:
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint16*)pixel = ~(*(uint16*)pixel);
+						break;
+					case 4:
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							*(uint16*)pixel = fgColor; // STanda
+						break;
+				}
+			}
+			break;
+		case 3:
+			pixellast = pixel + dx + dx + dx;
+			for (; pixel<=pixellast; pixel += pixx)
+				putBpp24Pixel( pixel, fgColor );
+			break;
+		default: /* case 4*/
+			dx = dx + dx;
+			pixellast = pixel + dx + dx;
+			for (; pixel<=pixellast; pixel += pixx) {
+				*(uint32*)pixel = fgColor;
+			}
+			break;
+	}
+}
+
+
+void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
+								uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
+{
+	uint8 *pixel, *pixellast;
+	int dy;
+	int pixx, pixy;
+	int16 h;
+	int16 ytmp;
+	uint8 ppos;
+
+	/* Swap y1, y2 if required */
+	if (y1>y2) {
+		ytmp=y1; y1=y2; y2=ytmp;
+	}
+
+	/* Calculate height */
+	h=y2-y1;
+
+	/* Sanity check on height */
+	if (h<0)
+		return;
+
+	ppos = 0;
+
+	/* More variable setup */
+	dy=h;
+	pixx = surf->format->BytesPerPixel;
+	pixy = surf->pitch;
+	pixel = ((uint8*)surf->pixels) + pixx * (int)x + pixy * (int)y1;
+	pixellast = pixel + pixy*dy;
+
+	/* Draw */
+	switch(surf->format->BytesPerPixel) {
+		case 1:
+			for (; pixel<=pixellast; pixel += pixy) {
+				*(uint8*)pixel = fgColor;
+			}
+			break;
+		case 2:
+			for (; pixel<=pixellast; pixel += pixy) {
+				switch (logOp) {
+					case 1:
+						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						break;
+					case 2:
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint16*)pixel = fgColor; // STanda
+						break;
+					case 3:
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint16*)pixel = ~(*(uint16*)pixel);
+						break;
+					case 4:
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							*(uint16*)pixel = fgColor; // STanda
+						break;
+				}
+			}
+			break;
+		case 3:
+			for (; pixel<=pixellast; pixel += pixy) {
+				putBpp24Pixel( pixel, fgColor );
+			}
+			break;
+		default: /* case 4*/
+			for (; pixel<=pixellast; pixel += pixy) {
+				*(uint32*)pixel = fgColor;
+			}
+			break;
+	}
+}
+
+
+/* ----- Line */
+
+/* Non-alpha line drawing code adapted from routine          */
+/* by Pete Shinners, pete@shinners.org                       */
+/* Originally from pygame, http://pygame.seul.org            */
+
+void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
+							   uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
+{
+	uint32 pixx, pixy;
+	uint32 x,y;
+	uint32 dx,dy;
+	uint32 sx,sy;
+	uint32 swaptmp;
+	uint8 *pixel;
+	uint8 ppos;
+
+	/* Test for special cases of straight lines or single point */
+	if (x1==x2) {
+		if (y1<y2) {
+			gfxVLineColor(x1, y1, y2, pattern, fgColor, bgColor, logOp);
+			return;
+		} else if (y1>y2) {
+			gfxVLineColor(x1, y2, y1, pattern, fgColor, bgColor, logOp);
+			return;
+		} else {
+			//			return(pixelColor(dst, x1, y1, pattern, fgColor, bgColor, logOp));
+		}
+	}
+	if (y1==y2) {
+		if (x1<x2) {
+			gfxHLineColor(x1, x2, y1, pattern, fgColor, bgColor, logOp);
+			return;
+		} else if (x1>x2) {
+			gfxHLineColor(x2, x1, y1, pattern, fgColor, bgColor, logOp);
+			return;
+		}
+	}
+
+	/* Variable setup */
+	dx = x2 - x1;
+	dy = y2 - y1;
+	sx = (dx >= 0) ? 1 : -1;
+	sy = (dy >= 0) ? 1 : -1;
+	ppos = 0;
+
+	/* More variable setup */
+	dx = sx * dx + 1;
+	dy = sy * dy + 1;
+	pixx = surf->format->BytesPerPixel;
+	pixy = surf->pitch;
+	pixel = ((uint8*)surf->pixels) + pixx * (uint32)x1 + pixy * (uint32)y1;
+	pixx *= sx;
+	pixy *= sy;
+	if (dx < dy) {
+		swaptmp = dx; dx = dy; dy = swaptmp;
+		swaptmp = pixx; pixx = pixy; pixy = swaptmp;
+	}
+
+	/* Draw */
+	x=0;
+	y=0;
+	switch(surf->format->BytesPerPixel) {
+		case 1:
+			for(; x < dx; x++, pixel += pixx) {
+				*pixel = fgColor;
+				y += dy;
+				if (y >= dx) {
+					y -= dx; pixel += pixy;
+				}
+			}
+			break;
+		case 2:
+			for (; x < dx; x++, pixel += pixx) {
+				switch (logOp) {
+					case 1:
+						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						break;
+					case 2:
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint16*)pixel = fgColor; // STanda
+						break;
+					case 3:
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint16*)pixel = ~(*(uint16*)pixel);
+						break;
+					case 4:
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							*(uint16*)pixel = fgColor; // STanda
+						break;
+				}
+				y += dy;
+				if (y >= dx) {
+					y -= dx;
+					pixel += pixy;
+				}
+			}
+			break;
+		case 3:
+			for(; x < dx; x++, pixel += pixx) {
+				putBpp24Pixel( pixel, fgColor );
+				y += dy;
+				if (y >= dx) {
+					y -= dx;
+					pixel += pixy;
+				}
+			}
+			break;
+		default: /* case 4 */
+			for(; x < dx; x++, pixel += pixx) {
+				*(uint32*)pixel = fgColor;
+				y += dy;
+				if (y >= dx) {
+					y -= dx;
+					pixel += pixy;
+				}
+			}
+			break;
+	}
+}
+
+
 
 
 /**
@@ -337,6 +599,10 @@ void HostScreen::gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y
 
 /*
  * $Log$
+ * Revision 1.9  2001/09/24 23:16:28  standa
+ * Another minor changes. some logical operation now works.
+ * fvdidrv/fillArea and fvdidrv/expandArea got the first logOp handling.
+ *
  * Revision 1.8  2001/09/20 18:12:09  standa
  * Off by one bug fixed in fillArea.
  * Separate functions for transparent and opaque background.
