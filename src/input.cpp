@@ -423,6 +423,24 @@ static bool canGrabMouseAgain = true;
 static int but = 0;
 static bool mouseOut = false;
 
+#ifdef SDL_GUI
+// TODO:
+// the following 3 vars should be in a struct passed by a pointer from input
+// Actually it should be a small FIFO buffer for mouse events
+int eventTyp = 0;
+int eventX = 0;
+int eventY = 0;
+SDL_Thread *GUIthread = NULL;
+
+int open_gui(void *ptr)
+{
+	hostScreen.setGUIopen(true);
+	pendingQuit = Dialog_DoProperty();
+	hostScreen.setGUIopen(false);
+	return 0;
+}
+#endif
+
 void process_keyboard_event(SDL_Event event)
 {
 	bool pressed = (event.type == SDL_KEYDOWN);
@@ -443,6 +461,11 @@ void process_keyboard_event(SDL_Event event)
 					canGrabMouseAgain = false;	// let it leave our window
 					send2Atari = false;
 				}
+#ifdef SDL_GUI
+				else {
+					eventTyp = SDL_QUIT;
+				}
+#endif
 				break;
 
 			case SDLK_PAUSE:
@@ -464,8 +487,10 @@ void process_keyboard_event(SDL_Event event)
 				}
 #endif
 #ifdef SDL_GUI
-				else
-					pendingQuit = Dialog_DoProperty();
+				else {
+					if (!hostScreen.isGUIopen())
+						GUIthread = SDL_CreateThread(open_gui, NULL);
+				}
 #endif
 				break;
 
@@ -488,6 +513,12 @@ void process_keyboard_event(SDL_Event event)
 			default: break;
 		}
 	}
+
+#ifdef SDL_GUI
+	if (hostScreen.isGUIopen()) {
+		return;	// if GUI is open do not pass keys to Atari
+	}
+#endif
 
 	// map special keys to Atari range of scancodes
 	if (sym == SDLK_PAGEUP) {
@@ -535,6 +566,17 @@ void process_mouse_event(SDL_Event event)
 	int yrel = 0;
 	int lastbut = but;
 	if (event.type == SDL_MOUSEBUTTONDOWN) {
+#ifdef SDL_GUI
+		if (hostScreen.isGUIopen()) {
+			if (event.button.button == SDL_BUTTON_LEFT) {
+				eventX = event.button.x;
+				eventY = event.button.y;
+				eventTyp = SDL_MOUSEBUTTONDOWN;
+			}
+			return;	// if GUI is open do not pass mouse click to Atari
+		}
+#endif
+
 		// eve.type/state/button
 		if (event.button.button == SDL_BUTTON_RIGHT) {
 			if (grabbedMouse)
@@ -556,6 +598,16 @@ void process_mouse_event(SDL_Event event)
 		}
 	}
 	else if (event.type == SDL_MOUSEBUTTONUP) {
+#ifdef SDL_GUI
+		if (hostScreen.isGUIopen()) {
+			if (event.button.button == SDL_BUTTON_LEFT) {
+				eventX = event.button.x;
+				eventY = event.button.y;
+				eventTyp = SDL_MOUSEBUTTONUP;
+			}
+			return;	// if GUI is open do not pass mouse click to Atari
+		}
+#endif
 		if (event.button.button == SDL_BUTTON_RIGHT)
 			but &= ~1;
 		else if (event.button.button == SDL_BUTTON_LEFT)
@@ -582,6 +634,11 @@ void process_mouse_event(SDL_Event event)
 
 	// send the mouse data packet
 	if (xrel || yrel || lastbut != but) {
+#ifdef SDL_GUI
+		if (hostScreen.isGUIopen()) {
+			return;	// if GUI is open do not pass mouse motion to Atari
+		}
+#endif
 		ikbd.send(0xf8 | but);
 		ikbd.send(xrel);
 		ikbd.send(yrel);
