@@ -4989,7 +4989,7 @@ bool compiler_use_jit(void)
 	
 	// Don't use JIT if translation cache size is less then MIN_CACHE_SIZE KB
 	if (bx_options.jit.jitcachesize < MIN_CACHE_SIZE) {
-		D(panicbug("<JIT compiler> : translation cache size is less than %d KB. Disabling JIT.\n", MIN_CACHE_SIZE));
+		panicbug("<JIT compiler> : translation cache size is less than %d KB. Disabling JIT.\n", MIN_CACHE_SIZE);
 		return false;
 	}
 	

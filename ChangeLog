@@ -6,6 +6,9 @@
 - ata.cpp: small sync with Bochs (set transfer mode and better controller
   init)
 
+- compemu_support.cpp: warning "JIT disabled if you have small cache size"
+  enabled
+
 
 2004/01/29 - joy
 - src/MacOSX/*: suddenly Carlo Baiocco appeared and sent me a complete
