@@ -411,7 +411,7 @@ bool XHDIDriver::setDiskSizeInBlocks(disk_t *disk)
 		}
 		blocks = lseek64(fd, 0, SEEK_END) / XHDI_BLOCK_SIZE;
 		close(fd);
-		panicbug("%ld blocks on %s", blocks, disk->path);
+		D(bug("%ld blocks on %s", blocks, disk->path));
 	}
 	else {
 		blocks = buf.st_size / XHDI_BLOCK_SIZE;
