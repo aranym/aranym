@@ -6,7 +6,7 @@
   or 'Cancel' the dialog we can compare and makes the necessary changes.
 */
 
-#include <unistd.h>
+#include "sysdeps.h"
 /*
 #include "main.h"
 #include "configuration.h"

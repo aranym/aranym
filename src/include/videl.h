@@ -8,8 +8,9 @@
 #define _VIDEL_H
 
 #include "icio.h"
-#include <SDL.h>
 #include "hostscreen.h"
+
+#include <SDL.h>
 
 class VIDEL : public BASE_IO {
 protected:
@@ -52,6 +53,9 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.16  2002/02/28 20:44:22  joy
+ * uae_ vars replaced with uint's
+ *
  * Revision 1.15  2001/12/17 08:33:00  standa
  * Thread synchronization added. The check_event and fvdidriver actions are
  * synchronized each to other.

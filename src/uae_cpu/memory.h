@@ -18,6 +18,8 @@
 #include "cpummu.h"
 #include "readcpu.h"
 
+#include <csetjmp>
+
 // newcpu.h
 extern void Exception (int, uaecptr);
 extern jmp_buf excep_env;

@@ -24,11 +24,11 @@
  * Still in the public domain.
  */
 
-#include <string.h>		/* for memcpy() */
-#include <sys/types.h>		/* for stupid systems */
-#include <netinet/in.h>		/* for ntohl() */
-
+#include "sysdeps.h"
 #include "md5.h"
+
+#include <cstring>
+#include <netinet/in.h>
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 void

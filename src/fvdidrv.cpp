@@ -13,11 +13,12 @@
 
 #include "fvdidrv.h"
 #include "hardware.h"
-#include <new>     // Johan Klockars
-#include <cstring> // Johan Klockars
 
 #define DEBUG 0
 #include "debug.h"
+
+#include <new>     // Johan Klockars
+#include <cstring> // Johan Klockars
 
 // this serves for debugging the color palette code
 #undef DEBUG_DRAW_PALETTE
@@ -1957,6 +1958,13 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.36  2002/03/27 20:01:47  standa
+ * fVDI work also without the --fixedvideoram option. There is a new
+ * getVideoramAddress native function. This might be reqested to be removed
+ * in the future due to its missuse. The solution would be to make a
+ * very special fVDI structure aware function that would set the address
+ * to the required places.
+ *
  * Revision 1.35  2002/02/19 20:04:05  milan
  * src/ <-> CPU interaction cleaned
  * memory access cleaned

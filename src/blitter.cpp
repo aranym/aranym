@@ -24,9 +24,11 @@
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "blitter.h"
-#include <SDL.h>
+
 #define DEBUG 0
 #include "debug.h"
+
+#include <SDL.h>
 
 #if DEBUG
 #define SHOWPARAMS												\

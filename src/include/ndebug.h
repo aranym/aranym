@@ -5,13 +5,10 @@
 
 #include "sysdeps.h"
 #include "identify.h"
-
-#ifndef CONFGUI
 #include "memory.h"
 #include "cpu_emulation.h"
-#else
-#undef NEWDEBUG
-#endif
+
+#include <cctype>
 
 #ifdef NEWDEBUG
 

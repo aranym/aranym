@@ -23,8 +23,6 @@
  */
 
 #include "sysdeps.h"
-#include <SDL.h>
-
 #include "cpu_emulation.h"
 #include "main.h"
 #include "input.h"
@@ -42,6 +40,10 @@
 
 #define DEBUG 0
 #include "debug.h"
+
+#include <csignal>
+#include <cstdlib>
+#include <SDL.h>
 
 #ifdef ENABLE_MON
 #include "mon.h"
@@ -93,6 +95,34 @@ static uint32 lastTicks;
 SDL_TimerID my_timer_id;
 #endif
 
+uint32 InterruptFlags = 0;
+SDL_mutex *InterruptFlagLock;
+
+void SetInterruptFlag(uint32 flag)
+{
+	if (SDL_LockMutex(InterruptFlagLock) == -1) {
+		panicbug("Internal error! LockMutex returns -1.\n");
+		abort();
+	}
+        InterruptFlags |= flag;
+	if (SDL_UnlockMutex(InterruptFlagLock) == -1) {
+		panicbug("Internal error! UnlockMutex returns -1.\n");
+		abort();
+	}
+}
+
+void ClearInterruptFlag(uint32 flag)
+{
+	if (SDL_LockMutex(InterruptFlagLock) == -1) {
+		panicbug("Internal error! LockMutex returns -1.\n");
+		abort();
+	}
+	InterruptFlags &= ~flag;
+	if (SDL_UnlockMutex(InterruptFlagLock) == -1) {
+		panicbug("Internal error! UnlockMutex returns -1.\n");
+		abort();
+	}
+}
 
 /*
  * the following function is called from the CPU emulation anytime
@@ -360,6 +390,9 @@ bool InitAll(void)
 	// thus I changed the SDL_Quit to ExitAll & removed the ExitAll from QuitEmulator
 	atexit(ExitAll);
 
+	// For InterruptFlag controling
+	InterruptFlagLock = SDL_CreateMutex();
+
 	CPUType = 4;
 	FPUType = 1;
 
@@ -446,6 +479,10 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.65  2002/04/21 20:45:29  joy
+ * SDL GUI support added.
+ * EmuTOS loading: file length checked, must be 512 kB.
+ *
  * Revision 1.63  2002/04/13 21:55:50  joy
  * TOS patch for redirecting printer output added
  *

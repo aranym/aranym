@@ -54,28 +54,29 @@ extern void setactvdebug(int);
 // Platform-specific functions
 extern void QuitEmulator(void);				// Quit emulator
 
-/*
 // Interrupt flags
 enum {
-	INTFLAG_200HZ = 1,	// 200Hz VBL
-	INTFLAG_1HZ = 2,	// ~1Hz interrupt
+// MJ	INTFLAG_200HZ = 1,	// 200Hz VBL
+// MJ	INTFLAG_1HZ = 2,	// ~1Hz interrupt
 // MJ	INTFLAG_SERIAL = 4,	// Serial driver
-// MJ	INTFLAG_ETHER = 8,	// Ethernet driver
+	INTFLAG_ETHER = 8,	// Ethernet driver
 // MJ	INTFLAG_AUDIO = 16,	// Audio block read
-	INTFLAG_TIMER = 32,	// Time Manager
-	INTFLAG_NMI = 64	// NMI
+// MJ	INTFLAG_TIMER = 32,	// Time Manager
+// MJ	INTFLAG_NMI = 64	// NMI
 };
 
 extern uint32 InterruptFlags;			// Currently pending interrupts
 extern void SetInterruptFlag(uint32 flag);	// Set/clear interrupt flags
 extern void ClearInterruptFlag(uint32 flag);
-*/
 
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.13  2002/02/23 13:43:11  joy
+ * input related code separated from main.cpp
+ *
  * Revision 1.12  2002/01/09 19:14:12  milan
  * Preliminary support for SGI/Irix
  *

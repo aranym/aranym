@@ -7,6 +7,9 @@
 #include "version.h"
 #include "cfgopts.h"
 
+#include <cassert>
+#include <cstdio>
+
 #ifndef ARANYMHOME
 # define ARANYMHOME		".aranym"
 #endif

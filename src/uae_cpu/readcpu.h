@@ -6,12 +6,12 @@
 extern "C" {
 #endif
 
-ENUMDECL {
+typedef enum {
   Dreg, Areg, Aind, Aipi, Apdi, Ad16, Ad8r,
   absw, absl, PC16, PC8r, imm, imm0, imm1, imm2, immi, am_unknown, am_illg
-} ENUMNAME (amodes);
+} amodes;
 
-ENUMDECL {
+typedef enum {
     i_ILLG,
 
     i_OR, i_AND, i_EOR, i_ORSR, i_ANDSR, i_EORSR,
@@ -37,27 +37,27 @@ ENUMDECL {
     i_FPP, i_FDBcc, i_FScc, i_FTRAPcc, i_FBcc, i_FSAVE, i_FRESTORE,
     i_CINVL, i_CINVP, i_CINVA, i_CPUSHL, i_CPUSHP, i_CPUSHA, i_MOVE16,
     i_MMUOP, i_EMULOP_RETURN, i_EMULOP, i_NATFEA
-} ENUMNAME (instrmnem);
+} instrmnem;
 
 extern struct mnemolookup {
     instrmnem mnemo;
     const char *name;
 } lookuptab[];
 
-ENUMDECL {
+typedef enum {
     sz_byte, sz_word, sz_long
-} ENUMNAME (wordsizes);
+} wordsizes;
 
-ENUMDECL {
+typedef enum {
     fa_set, fa_unset, fa_zero, fa_one, fa_dontcare, fa_unknown, fa_isjmp,
     fa_isbranch
-} ENUMNAME (flagaffect);
+} flagaffect;
 
-ENUMDECL {
+typedef enum {
     fu_used, fu_unused, fu_maybecc, fu_unknown, fu_isjmp
-} ENUMNAME (flaguse);
+} flaguse;
 
-ENUMDECL {
+typedef enum {
     fl_normal		= 0,
     fl_branch		= 1,
     fl_jump		= 2,
@@ -66,12 +66,12 @@ ENUMDECL {
     fl_compiled		= 8,
     /* Instructions that can trap don't mark the end of a block */
     fl_end_block	= 3
-} ENUMNAME (cflow_t);
+} cflow_t;
 
-ENUMDECL {
+typedef enum {
     bit0, bit1, bitc, bitC, bitf, biti, bitI, bitj, bitJ, bitk, bitK,
     bits, bitS, bitd, bitD, bitr, bitR, bitz, bitE, bitp, lastbit
-} ENUMNAME (bitvals);
+} bitvals;
 
 struct instr_def {
     unsigned int bits;

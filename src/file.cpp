@@ -4,10 +4,7 @@
   common file access
 */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
+#include "sysdeps.h"
 #include "main.h"
 #include "dialog.h"
 #include "file.h"
@@ -16,12 +13,14 @@
 //#include "memAlloc.h"
 //#include "misc.h"
 
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 
-
-#ifdef __BEOS__
+#if defined(__BEOS__) || defined(OS_solaris)
 /* The scandir() and alphasort() functions aren't available on BeOS, */
 /* so let's declare them here... */
-#include <dirent.h>
+#include <strings.h>
 
 #undef DIRSIZ
 
@@ -44,7 +43,7 @@ int alphasort(const void *d1, const void *d2)
 /*
   Scan a directory for all its entries
 */
-int scandir(const char *dirname,struct dirent ***namelist, int(*select) __P((struct dirent *)), int (*dcomp) __P((const void *, const void *)))
+int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const struct dirent *), int (*dcomp) (const void *, const void *))
 {
   register struct dirent *d, *p, **names;
   register size_t nitems;
@@ -55,7 +54,11 @@ int scandir(const char *dirname,struct dirent ***namelist, int(*select) __P((str
   if ((dirp = opendir(dirname)) == NULL)
     return(-1);
 
+#ifdef OS_solaris
+  if (fstat(dirp->d_fd, &stb) < 0)
+#else
   if (fstat(dirp->fd, &stb) < 0)
+#endif
     return(-1);
 
   /*
@@ -95,7 +98,11 @@ int scandir(const char *dirname,struct dirent ***namelist, int(*select) __P((str
 
      if (++nitems >= arraysz) {
 
+#ifdef OS_solaris
+       if (fstat(dirp->d_fd, &stb) < 0)
+#else
        if (fstat(dirp->fd, &stb) < 0)
+#endif
          return(-1);     /* just might have grown */
 
        arraysz = stb.st_size / 12;

@@ -6,8 +6,10 @@
  * Copyright 1995,1996 Bernd Schmidt
  */
 
-#include "sysdeps.h"
 #include "readcpu.h"
+
+#include <stdio.h>
+#include <ctype.h>
 
 static FILE *tablef;
 static int nextch = 0;

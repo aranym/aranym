@@ -6,6 +6,8 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include <cstdlib>
+
 static struct option const long_options[] =
 {
 #ifndef FixedSizeFastRAM

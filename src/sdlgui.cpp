@@ -4,16 +4,14 @@
   A tiny graphical user interface for Hatari.
 */
 
-#include <SDL.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <dirent.h>
-
+#include "sysdeps.h"
 #include "main.h"
 #include "host.h"
 #include "sdlgui.h"
 #include "file.h"
 
+#include <cstdlib>
+#include <SDL.h>
 
 #define SGRADIOBUTTON_NORMAL    12
 #define SGRADIOBUTTON_SELECTED  13

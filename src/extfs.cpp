@@ -23,6 +23,10 @@
 # include <sys/vfs.h>
 #endif
 
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
+
 #ifdef OS_mint
 #include <mint/osbind.h>
 #include <mint/mintbind.h>
@@ -2606,6 +2610,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.49  2002/04/21 19:28:02  joy
+ * Dpathconf(DP_XATTR) disabled. It's been causing neverending problems in Thing (last one: thing does not refresh the source window of move operation).
+ *
  * Revision 1.48  2002/04/20 10:03:23  standa
  * General code clean up.
  *

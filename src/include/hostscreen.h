@@ -7,7 +7,7 @@
 #ifndef _HOSTSCREEN_H
 #define _HOSTSCREEN_H
 
-
+#include <cstring>
 #include <SDL.h>
 #include <SDL_thread.h>
 
@@ -377,6 +377,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.29  2002/02/27 12:08:01  milan
+ * uae_u32 -> uintptr where it is necessary
+ *
  * Revision 1.28  2002/01/09 19:37:33  standa
  * The fVDI driver patched to not to pollute the HostScreen class getPaletteColor().
  *

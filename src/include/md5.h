@@ -23,7 +23,7 @@
 #ifndef MD5_H
 #define MD5_H
 
-#include <stdio.h>
+#include <cstdio>
 
 #define md5byte unsigned char
 #define UWORD32	unsigned long

@@ -30,6 +30,11 @@
 # include <sys/mman.h>
 #endif
 
+#include <cerrno>
+#include <csignal>
+#include <cstdlib>
+#include <SDL.h>
+
 #include "cpu_emulation.h"
 #include "main.h"
 #include "input.h"
@@ -37,7 +42,6 @@
 #include "hardware.h"
 #include "parameters.h"
 #include "newcpu.h"
-#include <SDL.h>
 
 #define DEBUG 1
 #include "debug.h"
@@ -152,10 +156,8 @@ int main(int argc, char **argv)
 		QuitEmulator();
 	D(bug("Initialization complete"));
 
-	// register segmentation fault handler only if you don't start with debugging enabled
-	// if (! start_debug)
 #ifndef USE_JIT
-		signal(SIGSEGV, segmentationfault);
+	signal(SIGSEGV, segmentationfault);
 #endif
 
 #ifdef ENABLE_MON
@@ -168,6 +170,18 @@ int main(int argc, char **argv)
 	if (bx_options.startup.debugger) signal(SIGINT, setactvdebug);
 # endif
 #endif
+
+#ifdef NATMEM_OFFSET
+	if (mprotect(ROMBaseHost, 0x100000, PROT_READ) == -1) {
+		perror("Couldn't protect ROM");
+		exit(-1);
+	}
+
+	if (mprotect(ROMBaseHost + 0x100000, 0x100000, PROT_NONE) == -1) {
+		perror("Couldn't set HW address space");
+		exit(-1);
+	}	
+#endif /* NATMEM_OFFESET */
 
 	// Start 68k and jump to ROM boot routine
 	D(bug("Starting emulation..."));
@@ -234,6 +248,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.63  2002/04/22 08:55:08  milan
+ * better segfault handling with fullhistory
+ *
  * Revision 1.62  2002/04/10 21:05:33  joy
  * just comment added
  *

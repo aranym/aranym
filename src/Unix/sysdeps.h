@@ -41,15 +41,6 @@
 #error "You don't have ANSI C header files."
 #endif
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <errno.h>
-#include <stdarg.h>
-#include <setjmp.h>
-
 #ifdef OS_irix
 #define OS_INCLUDES_DEFINED
 
@@ -61,7 +52,6 @@
 #include <termios.h>
 #include <dirent.h>
 #include <time.h>
-#include <signal.h>
 
 #endif
 
@@ -76,10 +66,22 @@
 #include <time.h>
 #include <utime.h>
 #include <dirent.h>
-#include <signal.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
+
+#endif
+
+#ifdef OS_solaris
+#define OS_INCLUDES_DEFINED
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <termios.h>
+#include <utime.h>
 
 #endif
 
@@ -154,10 +156,6 @@
 
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
-#endif
-
-#ifdef HAVE_SIGNAL_H
-# include <signal.h>
 #endif
 
 #endif /* OS_INCLUDES_DEFINE */
@@ -354,8 +352,6 @@ static inline uae_u32 do_byteswap_16(uae_u32 v)
 #define CPU_EMU_SIZE 0
 #undef NO_INLINE_MEMORY_ACCESS
 #undef MD_HAVE_MEM_1_FUNCS
-#define ENUMDECL typedef enum
-#define ENUMNAME(name) name
 #define write_log printf
 
 #ifndef ASM_VOLATILE

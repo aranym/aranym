@@ -17,6 +17,9 @@
 #define DEBUG 1
 #include "debug.h"
 
+#include <cstdarg>
+#include <cstdlib>
+
 #ifndef HAVE_GNU_SOURCE
 
 /* NDEBUG needs vasprintf, implementation in GNU binutils (libiberty) */
@@ -1146,6 +1149,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.22  2002/02/26 21:08:13  milan
+ * address validation in CPU interface
+ *
  * Revision 1.21  2002/02/25 23:52:13  milan
  * PC, stack, table68k - synchronized with MMU (Furlong) and JIT (Gwenole)
  *

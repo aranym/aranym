@@ -37,11 +37,10 @@
 #define DEBUG 0
 #include "debug.h"
 
-#define LOG_THIS /* no SMF tricks here, not needed */
+#include <cstdlib>
+#include <cerrno>
 
-extern "C" {
-#include <errno.h>
-}
+#define LOG_THIS /* no SMF tricks here, not needed */
 
 #ifdef OS_linux
 extern "C" {

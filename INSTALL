@@ -9,6 +9,10 @@ automake, libtool and autoconf (http://www.gnu.org/ or your OS vendor).
 
 Supported platforms:
 
+All Debian GNU/Linux platforms
+
+and
+
 x86          GNU/Linux
 x86          MS Windows + Cygwin
 x86          NetBSD

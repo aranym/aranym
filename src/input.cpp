@@ -19,7 +19,6 @@
  */
 
 #include "sysdeps.h"
-#include <SDL.h>
 #include "input.h"
 #include "aradata.h"		// for getAtariMouseXY
 #include "host.h"			// for the HostScreen
@@ -29,6 +28,8 @@
 
 #define DEBUG 0
 #include "debug.h"
+
+#include <SDL.h>
 
 /*
  * Four different types of keyboard translation:

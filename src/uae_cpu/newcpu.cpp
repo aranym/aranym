@@ -20,12 +20,14 @@
 # include "compiler/compemu.h"
 #endif
 #include "fpu/fpu.h"
+
+#include <cstdlib>
+
 #define DEBUG 1
 #include "debug.h"
 
-#if defined(ENABLE_EXCLUSIVE_SPCFLAGS) && !defined(HAVE_HARDWARE_LOCKS) && defined(HAVE_PTHREADS)
-#include <pthread.h>
-pthread_mutex_t spcflags_lock = PTHREAD_MUTEX_INITIALIZER;
+#if defined(ENABLE_EXCLUSIVE_SPCFLAGS) && !defined(HAVE_HARDWARE_LOCKS)
+SDL_mutex *spcflags_lock;
 #endif
 
 #define SANITY_CHECK_ATC 1
@@ -1121,7 +1123,9 @@ static char* ccnames[] =
 // If value is greater than zero, this means we are still processing an EmulOp
 // because the counter is incremented only in m68k_execute(), i.e. interpretive
 // execution only
+#ifdef USE_JIT
 static int m68k_execute_depth = 0;
+#endif
 
 void m68k_reset (void)
 {
@@ -1462,7 +1466,10 @@ void m68k_compile_execute (void)
 
 void m68k_execute (void)
 {
+#if USE_JIT
     m68k_execute_depth++;
+#endif
+
 setjmpagain:
     int prb = setjmp(excep_env);
     if (prb != 0) {
@@ -1485,7 +1492,10 @@ setjmpagain:
 	m68k_do_execute();
 #endif
     }
+
+#if USE_JIT
     m68k_execute_depth--;
+#endif
 }
 
 #if 0

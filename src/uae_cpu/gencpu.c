@@ -17,13 +17,14 @@
  * Copyright 1995, 1996 Bernd Schmidt
  */
 
+#include "sysdeps.h"
+#include "readcpu.h"
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "sysdeps.h"
-#include "readcpu.h"
+#include <assert.h>
 
 #if defined(SPARC_V8_ASSEMBLY) || defined(SPARC_V9_ASSEMBLY)
 #define SPARC_ASSEMBLY 0

@@ -5,6 +5,8 @@
 #ifndef HATARI_FILE_H
 #define HATARI_FILE_H
 
+#include "sysdeps.h"
+
 /* File types */
 enum {
   FILEFILTER_DISCFILES,
@@ -15,10 +17,10 @@ enum {
   FILEFILTER_MEMORYFILE,
 };
 
-#ifdef __BEOS__
+#if defined(__BEOS__) || defined(OS_solaris)
 #include <dirent.h>
 extern int alphasort(const void *d1, const void *d2);
-extern int scandir(const char *dirname,struct dirent ***namelist, int(*select) __P((struct dirent *)), int (*dcomp) __P((const void *, const void *)));
+extern int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const struct dirent *), int (*dcomp) (const void *, const void *));
 #endif  /* __BEOS__ */
 
 extern void File_CleanFileName(char *pszFileName);

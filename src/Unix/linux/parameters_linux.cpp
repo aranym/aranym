@@ -1,8 +1,10 @@
 /* MJ 2001 */
 
 #include "sysdeps.h"
-#include <linux/hdreg.h>
 #include "parameters.h"
+
+#include <linux/hdreg.h>
+#include <cstring>
 
 int get_geometry(char *dev_path, geo_type geo) {
   int fd;
