@@ -45,17 +45,12 @@ void XHDIDriver::reset()
 {
 	// setup disks array with copied disks and partitions values so that
 	// user's changes in SETUP GUI don't affect the pending disk operations
-	copy_scsidevice_settings(&bx_options.disk0, disks+SCSI_START+0);
-	copy_scsidevice_settings(&bx_options.disk1, disks+SCSI_START+1);
-	copy_scsidevice_settings(&bx_options.disk2, disks+SCSI_START+2);
-	copy_scsidevice_settings(&bx_options.disk3, disks+SCSI_START+3);
-	copy_scsidevice_settings(&bx_options.disk4, disks+SCSI_START+4);
-	copy_scsidevice_settings(&bx_options.disk5, disks+SCSI_START+5);
-	copy_scsidevice_settings(&bx_options.disk6, disks+SCSI_START+6);
-	copy_scsidevice_settings(&bx_options.disk7, disks+SCSI_START+7);
-
-	copy_atadevice_settings(&bx_options.atadevice[0][0], disks+IDE_START+0);
-	copy_atadevice_settings(&bx_options.atadevice[0][1], disks+IDE_START+1);
+	for(int i=0; i<DISKS; i++) {
+		copy_scsidevice_settings(i, &bx_options.disks[i], disks+SCSI_START+i);
+	}
+	for(int i=0; i<2; i++) {
+		copy_atadevice_settings(&bx_options.atadevice[0][i], disks+IDE_START+i);
+	}
 }
 
 void XHDIDriver::copy_atadevice_settings(bx_atadevice_options_t *src, disk_t *dest)
@@ -71,10 +66,10 @@ void XHDIDriver::copy_atadevice_settings(bx_atadevice_options_t *src, disk_t *de
 	setDiskSizeInBlocks(dest);
 }
 
-void XHDIDriver::copy_scsidevice_settings(bx_scsidevice_options_t *src, disk_t *dest)
+void XHDIDriver::copy_scsidevice_settings(int index, bx_scsidevice_options_t *src, disk_t *dest)
 {
 	safe_strncpy(dest->path, src->path, sizeof(dest->path));
-	sprintf(dest->name, "DISK%d", 0);
+	sprintf(dest->name, "DISK%d", index);
 	dest->present = src->present;
 	dest->readonly = src->readonly;
 	dest->byteswap = src->byteswap;

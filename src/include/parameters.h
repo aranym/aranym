@@ -233,14 +233,7 @@ typedef struct {
 typedef struct {
   bx_floppy_options_t	floppy;
   bx_atadevice_options_t atadevice[BX_MAX_ATA_CHANNEL][2];
-  bx_scsidevice_options_t	disk0;
-  bx_scsidevice_options_t	disk1;
-  bx_scsidevice_options_t	disk2;
-  bx_scsidevice_options_t	disk3;
-  bx_scsidevice_options_t	disk4;
-  bx_scsidevice_options_t	disk5;
-  bx_scsidevice_options_t	disk6;
-  bx_scsidevice_options_t	disk7;	// last idx+1 = DISKS
+  bx_scsidevice_options_t	disks[DISKS];
   bx_aranymfs_options_t	aranymfs[ 'Z'-'A'+1 ];
   bx_video_options_t	video;
   bx_tos_options_t	tos;
