@@ -181,7 +181,7 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 				case 3:
 					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint8*)pixel = ~(*(uint8*)pixel);
+							*(uint8*)pixel = getPaletteInversIndex( (*(uint8*)pixel) );
 					break;
 				case 4:
 					for (; pixel<pixellast; pixel += pixx)
@@ -316,7 +316,7 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 				case 3:
 					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint8*)pixel = ~(*(uint8*)pixel);
+							*(uint8*)pixel = getPaletteInversIndex( (*(uint8*)pixel) );
 					break;
 				case 4:
 					for (; pixel<pixellast; pixel += pixy)
@@ -469,7 +469,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 			switch (logOp) {
 				case 1:
 					for (; x < dx; x++, pixel += pixx) {
-						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
 
 						y += dy;
 						if (y >= dx) {
@@ -481,7 +481,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 				case 2:
 					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint32*)pixel = fgColor; // STanda
+							*(uint8*)pixel = fgColor; // STanda
 
 						y += dy;
 						if (y >= dx) {
@@ -493,7 +493,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 				case 3:
 					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint32*)pixel = ~(*(uint32*)pixel);
+							*(uint8*)pixel = getPaletteInversIndex( (*(uint8*)pixel) );
 
 						y += dy;
 						if (y >= dx) {
@@ -505,7 +505,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 				case 4:
 					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
-							*(uint32*)pixel = fgColor; // STanda
+							*(uint8*)pixel = fgColor; // STanda
 
 						y += dy;
 						if (y >= dx) {
@@ -697,13 +697,11 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 	pixellast = pixel + pixy*dy;
 
 	// STanda // FIXME here the pattern should be checked out of the loops for performance
-			  // but for now it is good enough
-			  // FIXME not tested on other then 2 BPP
+			  // but for now it is good enough (if there is no pattern -> another switch?)
 
 	/* Draw */
 	switch(surf->format->BytesPerPixel) {
 		case 1:
-			// STanda // the loop is the same as the for the 2 BPP
 			pixy -= (pixx*dx);
 			switch (logOp) {
 				case 1:
@@ -733,7 +731,7 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint8*)pixel = ~(*(uint8*)pixel);
+								*(uint8*)pixel = getPaletteInversIndex( (*(uint8*)pixel) );
 							pixel += pixx;
 						};
 					}
@@ -903,6 +901,10 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.19  2001/11/04 23:17:08  standa
+ * 8bit destination surface support in VIDEL. Blit routine optimalization.
+ * Bugfix in compatibility modes palette copying.
+ *
  * Revision 1.18  2001/10/30 22:59:34  standa
  * The resolution change is now possible through the fVDI driver.
  *

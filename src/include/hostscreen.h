@@ -59,13 +59,15 @@ class HostScreen {
 	inline void	  update();
 
 	uint32 getBpp();
+	uint32 getPitch();
 	uint32 getWidth();
 	uint32 getHeight();
 	uint32 getVideoramAddress();
 
-	void   setPaletteColor( uint32 index, uint32 red, uint32 green, uint32 blue );
-	uint32 getPaletteColor( uint32 index );
-	void   updatePalette( uint32 colorCount );
+	void   setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue );
+	uint32 getPaletteColor( uint8 index );
+	uint8  getPaletteInversIndex( uint8 index );
+	void   updatePalette( uint16 colorCount );
 	uint32 getColor( uint32 red, uint32 green, uint32 blue );
 
 	void   setWindowSize( uint32 width, uint32 height, uint32 bpp );
@@ -146,6 +148,10 @@ inline uint32 HostScreen::getBpp() {
 	return surf->format->BytesPerPixel;
 }
 
+inline uint32 HostScreen::getPitch() {
+	return surf->pitch;
+}
+
 inline uint32 HostScreen::getWidth() {
 	return width;
 }
@@ -158,20 +164,42 @@ inline uint32 HostScreen::getVideoramAddress() {
 	return (uint32)surf->pixels;
 }
 
-inline void HostScreen::setPaletteColor( uint32 index, uint32 red, uint32 green, uint32 blue ) {
-	// no palette size bound cross
-	assert( index >= 0 && index <= 255 );
-
+inline void HostScreen::setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue ) {
 	SDL_Color& color = palette.standard[index];
 	color.r = red; color.g = green; color.b = blue; // set the SDL standard RGB palette settings
 	palette.native[index] = SDL_MapRGB( surf->format, red, green, blue ); // convert the color to native
 }
 
-inline uint32 HostScreen::getPaletteColor( uint32 index ) {
+inline uint32 HostScreen::getPaletteColor( uint8 index ) {
 	return palette.native[index];
 }
 
-inline void HostScreen::updatePalette( uint32 colorCount ) {
+inline uint8 HostScreen::getPaletteInversIndex( uint8 index ) {
+	return ~index;
+#ifdef FIXME
+	SDL_Color& color = palette.standard[index];
+	//	return SDL_MapRGB( surf->format, ~color.r, ~color.g, ~color.b );
+
+	uint8 red   = ~color.r;
+	uint8 green = ~color.g;
+	uint8 blue  = ~color.b;
+	int8 result = ~index;
+
+	// search for the inverse color
+	uint16 diff, minDiff = ~0;
+	for( int i=0; i<256; i++ ) {
+		color = palette.standard[i];
+		diff = abs(color.r - red) + abs(color.g - green) + abs(color.b - blue);
+		if ( diff < minDiff ) {
+			result = i;
+			minDiff = diff;
+		}
+	}
+	return result;
+#endif
+}
+
+inline void HostScreen::updatePalette( uint16 colorCount ) {
 	SDL_SetColors( surf, palette.standard, 0, colorCount );
 }
 
@@ -308,7 +336,7 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 		colorValues[14] <<= 1;	colorValues[ 6] |= (data >>  1) & 1;
 		colorValues[15] <<= 1;	colorValues[ 7] |= (data >>  0) & 1;
 
-#endif 
+#endif
 	}
 }
 
@@ -319,6 +347,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.19  2001/11/18 21:04:59  standa
+ * The BIG endiam chunky to bitplane conversion fix.
+ *
  * Revision 1.18  2001/11/11 22:09:17  joy
  * gcc warning fix
  *
