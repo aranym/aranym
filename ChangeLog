@@ -1,3 +1,8 @@
+2005/03/05 - Xavier
+- doc/build-cygwin.sh: added SDL_image support. Allows to compile nfjpeg on
+  Windows.
+
+
 2005/03/03 - STanda
 - doc/documentation.txt: update on networking. Clean that up someone.
 - Blaine Brysh's suggection to remove the 'tapdev' check done.

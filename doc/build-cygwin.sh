@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Easy ARAnyM compilation under Cygwin
-# (c) october 2003 Xavier Joubert for the ARAnyM team
+# (c) 2003-2005 Xavier Joubert for the ARAnyM team
 #
 #
 # This script allows to easily build ARAnyM under Cygwin. The problem
@@ -18,10 +18,19 @@
 # Copy this script in this directory (please check it has the executable
 # flag set - if not, "chmod +x build-cygwin.sh").
 #
-# Untar SDL sources in this directory. I used SDL 1.2.8, but it should
+# Untar SDL sources in this directory (They are avaible at :
+# http://www.libsdl.org/download-1.2.php ). I used SDL 1.2.8, but it should
 # work with newer releases as they will be available (CVS won't work !).
 # Please edit the SDL_SOURCES variable below to reflect the path where
 # SDL sources lie.
+#
+# If you want to compile ARAnyM with --enable-nfjpeg (NatFeat jpeg
+# decoder), untar SDL_image sources next to SDL sources (They are available
+# at : http://www.libsdl.org/projects/SDL_image/ ). I used SDL_image 1.2.4,
+# but it should work with newer releases as they will be available (CVS
+# won't work !). Please edit SDL_IMAGE_SOURCES variable to reflect the path
+# where SDL_image sources lie. Set this variable to blank if you don't want
+# SDL_image.
 #
 # Untar ARAnyM sources at the same place. You can also pull sources from
 # CVS (see http://aranym.sourceforge.net/development.html for details on
@@ -66,8 +75,9 @@
 #
 
 #----------------------------------------------
-# EDIT this to suit your configuration !
+# Edit this to suit your configuration !
 SDL_SOURCES=${PWD}/SDL-1.2.8
+SDL_IMAGE_SOURCES=${PWD}/SDL_image-1.2.4
 ARANYM_SOURCES=${PWD}/aranym
 #----------------------------------------------
 
@@ -93,6 +103,7 @@ fi
 cd `dirname $0`
 
 SDL_BUILD=${PWD}/SDL-build
+SDL_IMAGE_BUILD=${PWD}/SDL_image-build
 SDL_PREFIX=${PWD}/SDL-prefix
 
 ARANYM_BUILD=${PWD}/aranym-build
@@ -112,12 +123,13 @@ if [ ! -x ${SDL_PREFIX}/bin/sdl-config -o \
     rm -r ${SDL_BUILD}
     check_return "Unable to remove ${SDL_BUILD}."
   fi
+  mkdir -p ${SDL_BUILD}
+  check_return "Unable to create ${SDL_BUILD}."
+
   if [ -d ${SDL_PREFIX} ] ; then
     rm -r ${SDL_PREFIX}
     check_return "Unable to remove ${SDL_PREFIX}."
   fi
-  mkdir -p ${SDL_BUILD}
-  check_return "Unable to create ${SDL_BUILD}."
   mkdir -p ${SDL_PREFIX}
   check_return "Unable to create ${SDL_PREFIX}."
 
@@ -158,6 +170,34 @@ EOF
   # Just in case. GNU sed keeps exec flag, but who knows...
   chmod u+x sdl-config
   check_return "Unable to make ${SDL_PREFIX}/bin/sdl-config executable."
+
+  echo "done."
+fi
+
+# Now, SDL_image
+if [ ! -z ${SDL_IMAGE_SOURCES} -a \
+     ! -f ${SDL_PREFIX}/include/SDL/SDL_image.h ] ; then
+  # Let SDL_IMAGE_SOURCES blank if you don't want to compile SDL_image
+  # library. SDL_image is needed to use --enable-nfjpeg.
+  echo ${LINE2}
+  echo "Building SDL_image... "
+  if [ -d ${SDL_IMAGE_BUILD} ] ; then
+    rm -r ${SDL_IMAGE_BUILD}
+    check_return "Unable to remove ${SDL_IMAGE_BUILD}."
+  fi
+  mkdir -p ${SDL_IMAGE_BUILD}
+  check_return "Unable to create ${SDL_IMAGE_BUILD}."
+
+  cd ${SDL_IMAGE_BUILD}
+  ${SDL_IMAGE_SOURCES}/configure --prefix=${SDL_PREFIX} && \
+  make && \
+  make install
+  check_return "Unable to compile SDL_image from ${SDL_IMAGE_SOURCES}."
+
+  # To save disk space
+  cd ${SDL_PREFIX}
+  rm -r ${SDL_IMAGE_BUILD}
+  check_return "Unable to remove ${SDL_IMAGE_BUILD}."
 
   echo "done."
 fi
