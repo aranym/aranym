@@ -5934,6 +5934,11 @@ void build_comp(void)
 #endif
     struct cputbl *nfctbl = op_smalltbl_0_nf;
 
+#ifdef NATMEM_OFFSET
+    signal(SIGSEGV, (sighandler_t)segfault_vec);
+    D(panicbug("<JIT compiler> : NATMEM OFFSET handler installed"));
+#endif
+
     D(panicbug("<JIT compiler> : building compiler function tables"));
 	
 	for (opcode = 0; opcode < 65536; opcode++) {

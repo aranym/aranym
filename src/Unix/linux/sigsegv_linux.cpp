@@ -6,6 +6,8 @@
 
 int in_handler = 0;
 
+extern void compiler_status();
+
 #define DEBUG 1 
 #include "debug.h"
 
@@ -84,6 +86,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 
 	in_handler = 1;
 
+	D(compiler_status());
 	D(panicbug("BUS ERROR fault address is %08x at %08x", addr, ainstr));
 	D(panicbug("instruction is %08x", instr));
 

@@ -2077,7 +2077,7 @@ static __inline__ void raw_inc_sp(int off)
 #define SIG_READ 1
 #define SIG_WRITE 2
 
-static int in_handler=0;
+int in_handler = 0;
 static uae_u8 veccode[256];
 
 #ifdef _WIN32
@@ -2362,9 +2362,9 @@ static void segfault_vec(int x, struct sigcontext sc)
 	panicbug("Argh --- Am already in a handler. Shouldn't happen!");
 
     if (canbang && eip>=compiled_code && eip<=current_compile_p) {
-/*	if (*eip++ != 0x65)
+	if (*eip++ != 0x65)
 	    goto oh_dear;
-*/
+
 	if (*eip == 0x66) {
 	    eip++;
 	    size=2;
@@ -2462,7 +2462,6 @@ static void segfault_vec(int x, struct sigcontext sc)
     if (r!=-1) { 
 	void* pr=NULL;
 	D(panicbug("register was %d, direction was %d, size was %d",r,dir,size));
-	
 	switch(r) {
 	 case 0: pr=&(sc.eax); break;
 	 case 1: pr=&(sc.ecx); break;
@@ -2480,6 +2479,7 @@ static void segfault_vec(int x, struct sigcontext sc)
 			 (void*)(((uae_u8*)&(sc.ebx))+1); break;
 	 default: abort();
 	}
+
 	if (pr) {
 	    blockinfo* bi;
 #if 0
@@ -2518,14 +2518,20 @@ static void segfault_vec(int x, struct sigcontext sc)
 		int i;
 		uae_u8 vecbuf[5];
 		
-//		addr-=NATMEM_OFFSET;
-		addr-=MEMBaseDiff;
+		fprintf(stderr, "%08x", NATMEM_OFFSET);
+		abort();
+		addr-=NATMEM_OFFSET;
 		
 #if 0
 		if ((addr>=0x10000000 && addr<0x40000000) ||
 		    (addr>=0x50000000)) {
 		    write_log("Suspicious address in %x SEGV handler.\n",addr);
 		}
+#else 
+		if ((addr < 0x00f00000) || ((addr > 0x00ffffff) && (addr < 0xfff00000))) goto buserr;
+
+		if (addr >= 0xfff00000)
+		    addr -= 0xfff00000;
 #endif
 		
 		target=(uae_u8*)sc.eip;
@@ -2543,17 +2549,17 @@ static void segfault_vec(int x, struct sigcontext sc)
 
 		if (dir==SIG_READ) {
 		    switch(size) {
-		     case 1: raw_mov_b_ri(r,get_byte(addr)); break;
-		     case 2: raw_mov_w_ri(r,get_byte(addr)); break;
-		     case 4: raw_mov_l_ri(r,get_byte(addr)); break;
+		     case 1: raw_mov_b_ri(r,HWget_b(addr)); break;
+		     case 2: raw_mov_w_ri(r,HWget_w(addr)); break;
+		     case 4: raw_mov_l_ri(r,HWget_l(addr)); break;
 		     default: abort();
 		    }
 		}
 		else { /* write */
 		    switch(size) {
-		     case 1: put_byte(addr,*((uae_u8*)pr)); break;
-		     case 2: put_word(addr,*((uae_u16*)pr)); break;
-		     case 4: put_long(addr,*((uae_u32*)pr)); break;
+		     case 1: HWput_b(addr,*((uae_u8*)pr)); break;
+		     case 2: HWput_w(addr,*((uae_u16*)pr)); break;
+		     case 4: HWput_l(addr,*((uae_u32*)pr)); break;
 		     default: abort();
 		    }
 		}
@@ -2609,6 +2615,12 @@ static void segfault_vec(int x, struct sigcontext sc)
 	    return;
 	}
     }
+    goto oh_dear;
+buserr:
+    D(panicbug("Atari Bus Error %08x", addr));
+    regs.mmu_fault_addr = addr;
+    in_handler = 0;
+    longjmp(excep_env, 2);
 oh_dear:
     panicbug("Can't handle access!");
     if (sc.eip >= (int)compiled_code && sc.eip + 12 <= (int)current_compile_p)
@@ -2619,6 +2631,10 @@ oh_dear:
     signal(SIGSEGV,SIG_DFL);  /* returning here will cause a "real" SEGV */
 }
 #endif
+#else
+void compiler_status() {
+  panicbug("compiled code starts at %08x, current at %08x", compiled_code, current_compile_p);
+}
 #endif
 
 /*************************************************************************
