@@ -101,12 +101,12 @@ SDL_mutex *InterruptFlagLock;
 void SetInterruptFlag(uint32 flag)
 {
 	if (SDL_LockMutex(InterruptFlagLock) == -1) {
-		panicbug("Internal error! LockMutex returns -1.\n");
+		panicbug("Internal error! LockMutex returns -1.");
 		abort();
 	}
         InterruptFlags |= flag;
 	if (SDL_UnlockMutex(InterruptFlagLock) == -1) {
-		panicbug("Internal error! UnlockMutex returns -1.\n");
+		panicbug("Internal error! UnlockMutex returns -1.");
 		abort();
 	}
 }
@@ -114,12 +114,12 @@ void SetInterruptFlag(uint32 flag)
 void ClearInterruptFlag(uint32 flag)
 {
 	if (SDL_LockMutex(InterruptFlagLock) == -1) {
-		panicbug("Internal error! LockMutex returns -1.\n");
+		panicbug("Internal error! LockMutex returns -1.");
 		abort();
 	}
 	InterruptFlags &= ~flag;
 	if (SDL_UnlockMutex(InterruptFlagLock) == -1) {
-		panicbug("Internal error! UnlockMutex returns -1.\n");
+		panicbug("Internal error! UnlockMutex returns -1.");
 		abort();
 	}
 }
@@ -196,23 +196,23 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 bool InitTOSROM(void)
 {
 	// read ROM file
-	D(bug("Reading ROM file..."));
+	D(bug("Reading TOS file '%s'", rom_path));
 	FILE *f = fopen(rom_path, "rb");
 	if (f == NULL) {
-		ErrorAlert("ROM file not found\n");
+		panicbug("TOS file '%s' not found.", rom_path);
 		return false;
 	}
 
 	RealROMSize = 512 * 1024;
 	if (fread(ROMBaseHost, 1, RealROMSize, f) != (size_t)RealROMSize) {
-		ErrorAlert("ROM file reading error. Make sure the ROM image file size is 524288 bytes (512 kB).\n");
+		panicbug("TOS file '%s' reading error.\nMake sure the TOS image file is readable and its size is 524288 bytes (512 kB).", rom_path);
 		fclose(f);
 		return false;
 	}
 	fclose(f);
 
 	// check if this is the correct 68040 aware TOS ROM version
-	D(bug("Checking ROM version.."));
+	D(bug("Checking TOS version.."));
 	unsigned char TOS68040WinX[16] = {0xd6,0x4b,0x00,0x16,0x01,0xf6,0xc6,0xd7,0x47,0x51,0xde,0x63,0xbb,0x35,0xed,0xe3};
 
 	unsigned char TOS68040[16] = {0x6b,0x9f,0x43,0x5e,0xdc,0x46,0xdc,0x26,0x6f,0x2c,0x87,0xc2,0x6c,0x63,0xf9,0xd8};
@@ -230,7 +230,7 @@ bool InitTOSROM(void)
 		fprintf(stderr, "Original TOS 4.04 found\n");
 
 		// patch it for 68040 compatibility
-		D(bug("Patching ROM for 68040 compatibility.."));
+		D(bug("Patching TOS for 68040 compatibility.."));
 		int ptr, i=0;
 		while((ptr=tosdiff[i].pointer) >= 0)
 			ROMBaseHost[ptr] += tosdiff[i++].difference;
@@ -245,15 +245,18 @@ bool InitTOSROM(void)
 #endif
 	}
 	else {
-		ErrorAlert("Wrong TOS version. You need the original TOS 4.04\n");
+		panicbug("Wrong TOS version. You need the original TOS 4.04.");
 		return false;
 	}
 
 	// patch cookies
+	// _MCH
 	ROMBaseHost[0x00416] = bx_options.tos.cookie_mch >> 24;
 	ROMBaseHost[0x00417] = (bx_options.tos.cookie_mch >> 16) & 0xff;
 	ROMBaseHost[0x00418] = (bx_options.tos.cookie_mch >> 8) & 0xff;
 	ROMBaseHost[0x00419] = (bx_options.tos.cookie_mch) & 0xff;
+	// _SND (disable DSP and DMA)
+	// TODO
 
 	// patch TOS 4.04 to show FastRAM memory test
 	if (FastRAMSize > 0) {
@@ -331,7 +334,7 @@ bool InitOS(void)
 		fprintf(stderr, "Reading EmuTOS from '%s': ", emutos_path);
 		FILE *f = fopen(emutos_path, "rb");
 		if (f == NULL) {
-			ErrorAlert("EmuTOS not found\n");
+			panicbug("EmuTOS not found at '%s'.", emutos_path);
 			return false;
 		}
 		RealROMSize = 512 * 1024;
@@ -355,7 +358,7 @@ bool InitAll(void)
 #ifndef NOT_MALLOC
 	if (ROMBaseHost == NULL) {
 		if ((RAMBaseHost = (uint8 *)malloc(RAMSize + ROMSize + FastRAMSize)) == NULL) {
-			ErrorAlert("Not enough free memory.\n");
+			panicbug("Not enough free memory.");
 			return false;
 		}
 		ROMBaseHost = (uint8 *)(RAMBaseHost + ROMBase);
@@ -374,7 +377,7 @@ bool InitAll(void)
 	sdlInitParams |= SDL_INIT_TIMER;
 #endif
 	if (SDL_Init(sdlInitParams) != 0) {
-		ErrorAlert("SDL initialization failed.");
+		panicbug("SDL initialization failed.");
 		return false;
 	}
 
@@ -479,6 +482,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.66  2002/04/22 18:30:50  milan
+ * header files reform
+ *
  * Revision 1.65  2002/04/21 20:45:29  joy
  * SDL GUI support added.
  * EmuTOS loading: file length checked, must be 512 kB.
