@@ -189,6 +189,24 @@ void DSP::shutdown(void)
 #endif
 }
 
+/**********************************
+ *	Force execution of DSP, till something
+ *  to read from/write to host port
+ **********************************/
+
+inline void DSP::force_exec(void)
+{
+#if DSP_HOST_FORCEEXEC && (!DSP_THREADED)
+	while (state == DSP_RUNNING) {
+		dsp56k_do_execute();
+	}
+#endif
+}
+
+/**********************************
+ *	Hardware address read/write by CPU
+ **********************************/
+
 uae_u8 DSP::handleRead(uaecptr addr)
 {
 #if DSP_EMULATION
@@ -197,6 +215,12 @@ uae_u8 DSP::handleRead(uaecptr addr)
 	addr -= HW_DSP;
 
 /*	D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr+HW_DSP, value, showPC()));*/
+
+#if DSP_THREADED
+	/* Whenever the host want to read something on host port, we test if a
+	   transfer is needed */
+	dsp2host();
+#endif
 
 	switch(addr) {
 		case CPU_HOST_ICR:
@@ -212,35 +236,19 @@ uae_u8 DSP::handleRead(uaecptr addr)
 			value = hostport[CPU_HOST_IVR];
 			break;
 		case CPU_HOST_RX0:
-#if DSP_HOST_FORCEEXEC && (!DSP_THREADED)
-			while (state == DSP_RUNNING) {
-				dsp56k_do_execute();
-			}
-#endif
+			force_exec();
 			value = 0;
 			break;
 		case CPU_HOST_RXH:
-#if DSP_HOST_FORCEEXEC && (!DSP_THREADED)
-			while (state == DSP_RUNNING) {
-				dsp56k_do_execute();
-			}
-#endif
+			force_exec();
 			value = hostport[CPU_HOST_RXH];
 			break;
 		case CPU_HOST_RXM:
-#if DSP_HOST_FORCEEXEC && (!DSP_THREADED)
-			while (state == DSP_RUNNING) {
-				dsp56k_do_execute();
-			}
-#endif
+			force_exec();
 			value = hostport[CPU_HOST_RXM];
 			break;
 		case CPU_HOST_RXL:
-#if DSP_HOST_FORCEEXEC && (!DSP_THREADED)
-			while (state == DSP_RUNNING) {
-				dsp56k_do_execute();
-			}
-#endif
+			force_exec();
 			value = hostport[CPU_HOST_RXL];
 
 			if (state!=DSP_BOOTING) {
@@ -250,10 +258,6 @@ uae_u8 DSP::handleRead(uaecptr addr)
 				D(bug("Dsp: (D->H): Host RXDF cleared"));
 #endif
 			}
-
-#if DSP_THREADED
-			dsp2host();
-#endif
 
 			/* Wake up DSP if it was waiting our read */
 			if (state==DSP_WAITHOSTREAD) {
@@ -307,22 +311,16 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 			hostport[CPU_HOST_IVR]=value;
 			break;
 		case CPU_HOST_TX0:
-#if DSP_HOST_FORCEEXEC && (!DSP_THREADED)
-			while (state == DSP_RUNNING) {
-				dsp56k_do_execute();
-			}
-#endif
+			force_exec();
+
 			if (first_host_write) {
 				first_host_write = 0;
 				bootstrap_accum = 0;
 			}
 			break;
 		case CPU_HOST_TXH:
-#if DSP_HOST_FORCEEXEC && (!DSP_THREADED)
-			while (state == DSP_RUNNING) {
-				dsp56k_do_execute();
-			}
-#endif
+			force_exec();
+
 			if (first_host_write) {
 				first_host_write = 0;
 				bootstrap_accum = 0;
@@ -331,11 +329,8 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 			bootstrap_accum |= value<<16;
 			break;
 		case CPU_HOST_TXM:
-#if DSP_HOST_FORCEEXEC && (!DSP_THREADED)
-			while (state == DSP_RUNNING) {
-				dsp56k_do_execute();
-			}
-#endif
+			force_exec();
+
 			if (first_host_write) {
 				first_host_write = 0;
 				hostport[CPU_HOST_TXH]=value;	/* FIXME: is it correct ? */
@@ -345,11 +340,8 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 			bootstrap_accum |= value<<8;
 			break;
 		case CPU_HOST_TXL:
-#if DSP_HOST_FORCEEXEC && (!DSP_THREADED)
-			while (state == DSP_RUNNING) {
-				dsp56k_do_execute();
-			}
-#endif
+			force_exec();
+
 			if (first_host_write) {
 				first_host_write = 0;
 				hostport[CPU_HOST_TXH]=value;	/* FIXME: is it correct ? */
@@ -487,6 +479,8 @@ void DSP::dsp2host(void)
 }
 
 /*
+	2002-08-28:PM
+		BUG:host port read not working with thread
 	2002-08-27:PM
 		BUG: Fixes in thread support
 		Host port transfer routines moved in dsp.cpp

@@ -127,6 +127,9 @@ class DSP : public BASE_IO {
 		uint16	bootstrap_pos;
 		uint32	bootstrap_accum;
 
+		/* Force execution of DSP if needed */
+		void	force_exec(void);
+
 #if DSP_THREADED
 		SDL_Thread	*dsp56k_thread;
 #endif
