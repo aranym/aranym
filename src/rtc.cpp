@@ -71,6 +71,10 @@ bool RTC::load() {
 			ret = true;
 		}
 		fclose(f);
+		infoprint("NVRAM loaded from '%s'", nvram_filename);
+	}
+	else {
+		panicbug("NVRAM not found at '%s'", nvram_filename);
 	}
 
 	return ret;
@@ -84,6 +88,9 @@ bool RTC::save() {
 			ret = true;
 		}
 		fclose(f);
+	}
+	else {
+		panicbug("ERROR: cannot store NVRAM to '%s'", nvram_filename);
 	}
 
 	return ret;
