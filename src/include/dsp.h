@@ -83,6 +83,8 @@ class DSP : public BASE_IO {
 		virtual uae_u8 handleRead(uaecptr addr);
 		virtual void handleWrite(uaecptr, uae_u8);
 
+#if DSP_EMULATION
+
 		/* Constructor, destructor */
 		DSP(void);
 		~DSP(void);
@@ -133,5 +135,7 @@ class DSP : public BASE_IO {
 		void	force_exec(void);
 
 		SDL_Thread	*dsp56k_thread;
+
+#endif	/* DSP_EMULATION */
 };
 

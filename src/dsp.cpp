@@ -25,6 +25,8 @@
 #define DEBUG 0
 #include "debug.h"
 
+#if DSP_EMULATION
+
 /* More disasm infos, if wanted */
 #define DSP_DISASM_HOSTREAD 0	/* Dsp->Host transfer */
 #define DSP_DISASM_HOSTWRITE 0	/* Host->Dsp transfer */
@@ -36,7 +38,6 @@
 /* Constructor and  destructor for DSP class */
 DSP::DSP(void)
 {
-#if DSP_EMULATION
 	int i;
 
 	memset(ram, 0,sizeof(ram));
@@ -121,15 +122,11 @@ DSP::DSP(void)
 #if DSP_DISASM_STATE
 	D(bug("Dsp: state = HALT"));
 #endif
-
-#endif /* DSP_EMULATION */
 }
 
 DSP::~DSP(void)
 {
-#if DSP_EMULATION
 	shutdown();
-#endif
 }
 
 /* Other functions to init/shutdown dsp emulation */
@@ -214,6 +211,8 @@ inline void DSP::force_exec(void)
 	}
 #endif
 }
+
+#endif /* DSP_EMULATION */
 
 /**********************************
  *	Hardware address read/write by CPU
@@ -405,6 +404,8 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 #endif	/* DSP_EMULATION */
 }
 
+#if DSP_EMULATION
+
 /**********************************
  *	Host transfer
  **********************************/
@@ -476,6 +477,8 @@ void DSP::dsp2host(void)
 #endif
 	}
 }
+
+#endif	/* DSP_EMULATION */
 
 /*
 	2002-09-20:PM
