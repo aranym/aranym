@@ -3,10 +3,14 @@ Before 0.8.0 final release:
 - man page from deb package to standard archive
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
-- make sure the '-d' command line option works as documented in the README
-- enable OpenGL and DSP in default builds, provide also MMU build
+- fix '-d' command line (set case sensitivity)
+- correct path to font8.bmp (use native dir separator)
+- develop relative path to data files support (global files: TOS/EmuTOS
+  and font8.bmp, user files: config and nvram)
+- enable OpenGL in default builds
+- provide also MMU build
 - change the hotkey for screenshot - Alt+PrintScreen = SysRq!
-- disable the old ARANYMFS EmulOp API
+- make sure DOS drives are handled in HostFS paths correctly
 
 Roadmap:
 --------
@@ -26,7 +30,7 @@ Some hot ideas (before they get forgotten)
 Note that the name before a TODO item doesn't mean the item is assigned to
 that particular programmer but rather who is the author of the idea :-)
 
-- joy: hostfs.xfs sometime crash here? Isn't there a memory leak on host?
+- joy: hostfs.xfs sometime crash here - isn't there a memory leak on host?
 
 - joy: make.sh magic: "nfeth-config.c" build by ./make.sh of the xif.
 
@@ -40,6 +44,8 @@ that particular programmer but rather who is the author of the idea :-)
 - joy: put all ARAnyM patches and drivers together to a nice package
 
 - joy: diskimage updating config file automatically
+
+- joy: diskimage embedded into ARAnyM directly, available from SDL GUI
 
 - joy: fix the mouse jumping in fVDI with STOP#$2000 enabled FreeMiNT kernel
 
