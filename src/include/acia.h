@@ -29,6 +29,7 @@ private:
 
 public:
 	IKBD();
+	bool isBufferEmpty();
 	virtual uae_u8 getStatus();
 	virtual void setMode(uae_u8 value);
 	virtual uae_u8 getData();
