@@ -5,8 +5,11 @@
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "mfp.h"
+#include <SDL/SDL.h>
 
 static bool dP = false;		/* debug print */
+
+static long lastTicks = SDL_GetTicks();
 
 static const int HW = 0xfffa00;
 
@@ -45,11 +48,16 @@ static const int HW = 0xfffa00;
 		if (isRunning()) {
 			state = true;
 			// Trigger 200Hz interrupt
-			TriggerMFP(5);
+			long newTicks = SDL_GetTicks();
+			int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
+			TriggerMFP(5, count);
+			lastTicks = newTicks;
 			if (dP)
 				fprintf(stderr, "TriggerMFP($4BA) = %ld\n", get_long_direct(0x4ba));
 			current_data = start_data;
 		}
+		else
+			lastTicks = SDL_GetTicks();
 	}
 
 	uae_u8 MFP_Timer::getData() {
@@ -83,8 +91,7 @@ static const int HW = 0xfffa00;
 			case 0x07:	return irq_enable >> 8;
 						break;
 
-			case 0x09:	if (dP) fprintf(stderr, "Read: TimerC IRQ %sabled\n", (irq_enable & 0x20) ? "en" : "dis");
-						return irq_enable;
+			case 0x09:	return irq_enable;
 						break;
 
 			case 0x0b:	return 0x20; //(irq_pending >> 8) | (tA->getControl() & 0x10);	// finish
@@ -162,6 +169,8 @@ static const int HW = 0xfffa00;
 
 			case 0x09:	if ((irq_enable ^ value) & 0x20)
 							fprintf(stderr, "Write: TimerC IRQ %sabled\n", (value & 20) ? "en" : "dis");
+						if ((irq_enable ^ value) & 0x40)
+							fprintf(stderr, "Write: IKBD IRQ %sabled\n", (value & 40) ? "en" : "dis");
 						irq_enable = (irq_enable & 0xff00) | value;
 						break;
 
@@ -231,8 +240,7 @@ void MFP::IRQ(int no) {
 		case 5: C.tick(); break;	// TimerC 200 Hz
 		case 6: {
 					GPIP_data &= ~0x10;
-					// irq_inservice |= 0x40;
-					TriggerMFP(6);
+					TriggerMFP(6, 0);
 				}
 				break;
 	}
