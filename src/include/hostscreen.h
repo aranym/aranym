@@ -137,6 +137,7 @@ inline uint32 HostScreen::gfxGetPixel( int16 x, int16 y )
 		case 4:
 			return *(uint32 *)p;
 	} /* switch */
+	return 0;	// should never happen
 }
 
 
@@ -297,6 +298,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.17  2001/11/07 21:18:25  milan
+ * SDL_CFLAGS in CXXFLAGS now.
+ *
  * Revision 1.16  2001/11/04 23:17:08  standa
  * 8bit destination surface support in VIDEL. Blit routine optimalization.
  * Bugfix in compatibility modes palette copying.
