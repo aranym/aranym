@@ -1,0 +1,75 @@
+# 
+# 
+# cross compiling
+CROSS = yes
+#CROSS = no
+
+#
+# target and host compiler
+# 
+ifeq ($(CROSS),yes)
+
+CROSSPREFIX=m68k-atari-mint-
+
+NATIVECC = gcc
+NATIVECFLAGS = -O -Wall
+CRLF = echo crlf -s
+
+else
+
+CROSSPREFIX=
+
+NATIVECC = gcc
+NATIVECFLAGS = -O -Wall
+CRLF  = crlf -s
+
+endif
+
+CC = $(CROSSPREFIX)gcc
+AS = $(CC)
+AR = $(CROSSPREFIX)ar
+RANLIB = $(CROSSPREFIX)ranlib
+STRIP = $(CROSSPREFIX)strip
+FLAGS = $(CROSSPREFIX)flags
+
+# 
+# some tools
+# 
+YACC  = bison -dk
+LEX   = flex
+MV    = mv
+CP    = cp
+RM    = rm -f
+TOUCH = touch
+MKDIR = mkdir
+SED   = sed
+
+
+#
+# optimizations
+# 
+OPTS = -O2 -finline-functions -fomit-frame-pointer
+
+
+#
+# warning options
+#
+WARN = \
+	-Wall \
+	-Wmissing-prototypes \
+	-Wshadow \
+	-Wpointer-arith \
+	-Wcast-qual \
+	-Waggregate-return
+
+#	-Winline \
+#
+# default definitions
+#
+DEFINITIONS = 
+
+
+#
+# model type
+#
+MODEL = 

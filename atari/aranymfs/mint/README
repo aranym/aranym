@@ -1,0 +1,15 @@
+aranym.xfs
+==========
+
+This is the Atari-/MiNT-part of ARAnyM-fs.
+The xfs consists of three parts:
+    - file system to access the linux host file system (u:\nativefs)
+    - device driver to access the linux modem device (u:\dev\serial2)
+    - device driver for communication MiNT <-> ARAnyM (u:\dev\ara_com)
+
+If you got aranym.xfs sources with ARAnyM note:
+   - To compile the xfs you need the source tree of FreeMiNT (at least
+     version 1.15.10b). Copy (symbolic link does not work!) all files
+     of this directory to sys/xfs/aranymfs (last subdirectory should be
+     new) at the FreeMiNT source tree. Call "make" after coping the
+     files will make aranym.xfs.
