@@ -318,23 +318,23 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 		colorValues[14] <<= 1;	colorValues[14] |= (data >>  9) & 1;
 		colorValues[15] <<= 1;	colorValues[15] |= (data >>  8) & 1;
 #else
-		colorValues[ 0] <<= 1;	colorValues[ 8] |= (data >> 15) & 1;
-		colorValues[ 1] <<= 1;	colorValues[ 9] |= (data >> 14) & 1;
-		colorValues[ 2] <<= 1;	colorValues[10] |= (data >> 13) & 1;
-		colorValues[ 3] <<= 1;	colorValues[11] |= (data >> 12) & 1;
-		colorValues[ 4] <<= 1;	colorValues[12] |= (data >> 11) & 1;
-		colorValues[ 5] <<= 1;	colorValues[13] |= (data >> 10) & 1;
-		colorValues[ 6] <<= 1;	colorValues[14] |= (data >>  9) & 1;
-		colorValues[ 7] <<= 1;	colorValues[15] |= (data >>  8) & 1;
+		colorValues[ 0] <<= 1;	colorValues[ 0] |= (data >> 15) & 1;
+		colorValues[ 1] <<= 1;	colorValues[ 1] |= (data >> 14) & 1;
+		colorValues[ 2] <<= 1;	colorValues[ 2] |= (data >> 13) & 1;
+		colorValues[ 3] <<= 1;	colorValues[ 3] |= (data >> 12) & 1;
+		colorValues[ 4] <<= 1;	colorValues[ 4] |= (data >> 11) & 1;
+		colorValues[ 5] <<= 1;	colorValues[ 5] |= (data >> 10) & 1;
+		colorValues[ 6] <<= 1;	colorValues[ 6] |= (data >>  9) & 1;
+		colorValues[ 7] <<= 1;	colorValues[ 7] |= (data >>  8) & 1;
 
-		colorValues[ 8] <<= 1;	colorValues[ 0] |= (data >>  7) & 1;
-		colorValues[ 9] <<= 1;	colorValues[ 1] |= (data >>  6) & 1;
-		colorValues[10] <<= 1;	colorValues[ 2] |= (data >>  5) & 1;
-		colorValues[11] <<= 1;	colorValues[ 3] |= (data >>  4) & 1;
-		colorValues[12] <<= 1;	colorValues[ 4] |= (data >>  3) & 1;
-		colorValues[13] <<= 1;	colorValues[ 5] |= (data >>  2) & 1;
-		colorValues[14] <<= 1;	colorValues[ 6] |= (data >>  1) & 1;
-		colorValues[15] <<= 1;	colorValues[ 7] |= (data >>  0) & 1;
+		colorValues[ 8] <<= 1;	colorValues[ 8] |= (data >>  7) & 1;
+		colorValues[ 9] <<= 1;	colorValues[ 9] |= (data >>  6) & 1;
+		colorValues[10] <<= 1;	colorValues[10] |= (data >>  5) & 1;
+		colorValues[11] <<= 1;	colorValues[11] |= (data >>  4) & 1;
+		colorValues[12] <<= 1;	colorValues[12] |= (data >>  3) & 1;
+		colorValues[13] <<= 1;	colorValues[13] |= (data >>  2) & 1;
+		colorValues[14] <<= 1;	colorValues[14] |= (data >>  1) & 1;
+		colorValues[15] <<= 1;	colorValues[15] |= (data >>  0) & 1;
 
 #endif
 	}
@@ -347,6 +347,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.20  2001/11/19 01:37:35  standa
+ * PaletteInversIndex search. Bugfix in fillArea in 8bit depth.
+ *
  * Revision 1.19  2001/11/18 21:04:59  standa
  * The BIG endiam chunky to bitplane conversion fix.
  *
