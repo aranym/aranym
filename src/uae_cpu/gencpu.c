@@ -2358,15 +2358,20 @@ static void generate_one_opcode (int rp)
     fprintf (headerfile, "extern cpuop_func op_%lx_%d_nf;\n", opcode, postfix);
     fprintf (headerfile, "extern cpuop_func op_%lx_%d_ff;\n", opcode, postfix);
     
-    printf ("cpuop_rettype REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
 #ifdef DISDIP
+    printf ("cpuop_rettype REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opc) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
     printf ("\tuae_u32 pc;\n");
-    printf ("\tif (initial) goto op_%lx_%d_lab;\n", opcode, postfix);
-    printf ("\top_smalltbl_0_lab[opcode] = &&op_%lx_%d_lab;\n", opcode, postfix);
+    printf ("\tif (initial) {\n");
+    printf ("\t\topcode = opc;\n");
+    printf ("\t\tgoto op_%lx_%d_lab;\n", opcode, postfix);
+    printf ("\t}\n");
+    printf ("\top_smalltbl_0_lab[opc] = &&op_%lx_%d_lab;\n", opcode, postfix);
     printf ("\treturn;\n");
     printf ("op_%lx_%d_lab: /* %s */\n", opcode, postfix, lookuptab[i].name);
+    printf ("\t{\n");
     printf ("\tprintf(\"%%08x: %lx -> %%lx\\n\", m68k_getpc(), opcode);\n", opcode);
 #else
+    printf ("cpuop_rettype REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
 	printf ("\tcpuop_begin();\n");
 #endif
 	/* gb-- The "nf" variant for an instruction that doesn't set the condition
@@ -2500,7 +2505,7 @@ static void generate_one_opcode (int rp)
 #ifdef DISDIP
     printf ("\tif (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {\n");
     printf ("\t\tif (m68k_do_specialties())\n");
-    printf ("\t\t\treturn;\n");
+    printf ("\t\t\tlongjmp(loop_env, 1);\n");
     printf ("\t}\n");
 #ifndef USE_TIMERS
     printf ("\tif (--innerCounter == 0) {\n");
@@ -2518,7 +2523,7 @@ static void generate_one_opcode (int rp)
 #else
     printf ("\tcheck_ram_boundary(pc, 2, false);\n");
 #endif
-    printf ("\topcode = GET_OPCODE;\n");
+    printf ("\topcode = GET_OPCODE;}\n");
     printf ("\tprintf(\"%%lx\\n\",opcode);\n");
     printf ("\tgoto *op_smalltbl_0_lab[opcode];\n\n");
     previous_gener_opcode = opcode;
@@ -2564,6 +2569,9 @@ static void generate_func (void)
 	        "#define PART_7 1\n"
 	        "#define PART_8 1\n"
 	        "#endif\n\n");
+#ifdef DISDIP
+	printf ("uae_u32 opcode;\n\n");
+#endif
 	rp = 0;
 	for(j=1;j<=8;++j) {
 		int k = (j*nr_cpuop_funcs)/8;

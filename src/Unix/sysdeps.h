@@ -29,14 +29,6 @@
 
 #include "config.h"
 
-#ifdef HAVE_FEATURES_H
-# include <features.h>
-#endif
-
-#ifdef HAVE_SYS_FEATURE_TESTS_H
-# include <sys/feature_tests.h>
-#endif
-
 #ifndef STDC_HEADERS
 #error "You don't have ANSI C header files."
 #endif
@@ -44,11 +36,11 @@
 #ifdef OS_irix
 #define OS_INCLUDES_DEFINED
 
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <termios.h>
 #include <dirent.h>
 #include <time.h>
@@ -58,6 +50,7 @@
 #ifdef OS_openbsd
 #define OS_INCLUDES_DEFINED
 
+#include <unistd.h>
 #include <sys/param.h>
 #include <sys/mount.h>
 #include <sys/types.h>
@@ -67,7 +60,6 @@
 #include <utime.h>
 #include <dirent.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <termios.h>
 
 #endif
@@ -75,17 +67,21 @@
 #ifdef OS_solaris
 #define OS_INCLUDES_DEFINED
 
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
-#include <unistd.h>
 #include <termios.h>
 #include <utime.h>
 
 #endif
 
 #ifndef OS_INCLUDES_DEFINED
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
@@ -129,10 +125,6 @@
 
 #ifdef HAVE_TERMIO_H
 # include <termio.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
 #endif
 
 #ifdef HAVE_ALLOCA_H

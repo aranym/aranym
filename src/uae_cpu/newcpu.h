@@ -15,6 +15,8 @@
 #include "spcflags.h"
 #include "m68k.h"
 
+#include <csetjmp>
+
 extern int areg_byteinc[];
 extern int imm8_table[];
 
@@ -252,6 +254,12 @@ extern int m68k_do_specialties(void);
 extern void m68k_instr_set(void);
 
 extern void mmu_op (uae_u32, uae_u16);
+
+#ifdef DISDIP
+extern jmp_buf loop_env;
+
+extern uae_u32 opcode;
+#endif
 
 /* Opcode of faulting instruction */
 extern uae_u16 last_op_for_exception_3;

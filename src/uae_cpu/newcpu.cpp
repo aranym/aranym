@@ -42,8 +42,11 @@ extern void ivoke200HzInterrupt(void);	// in main.cpp
 
 struct flag_struct regflags;
 
-/* LongJump buffer */
+/* LongJump buffers */
 jmp_buf excep_env;
+#ifdef DISDIP
+jmp_buf loop_env;
+#endif
 /* Opcode of faulting instruction */
 uae_u16 last_op_for_exception_3;
 /* PC at fault time */
@@ -1221,13 +1224,19 @@ void m68k_natfea(uae_u32 opcode)
 	MakeFromSR();
 }
 
-cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
-{
 #ifdef DISDIP
-	if (initial) goto op_illg_lab;
-	op_smalltbl_0_lab[opcode] = &&op_illg_lab;
+cpuop_rettype REGPARAM2 op_illg (uae_u32 opc)
+{
+	if (initial) {
+		opcode = opc;
+		goto op_illg_lab;
+	}
+	op_smalltbl_0_lab[opc] = &&op_illg_lab;
 	return;
 op_illg_lab:
+#else
+cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
+{		
 #endif
 	uaecptr pc = m68k_getpc ();
 
@@ -1248,6 +1257,9 @@ op_illg_lab:
 
 	Exception (4,0);
 	cpuop_return(CFLOW_TRAP);
+#ifdef DISDIP
+	longjmp(loop_env, 0);
+#endif
 }
 
 #ifndef FULLMMU
@@ -1398,6 +1410,9 @@ void m68k_do_execute (void)
 {
     uae_u32 pc;
     uae_u32 opcode;
+#ifdef DISDIP
+    if (setjmp(loop_env)) return;
+#endif	    
     for (;;) {
 	pc = m68k_getpc();
 #ifdef FULL_HISTORY
@@ -1451,10 +1466,13 @@ void m68k_do_execute (void)
 	(*cpufunctbl[opcode])(opcode);
 #endif
 
+#ifndef DISDIP
 	if (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {
 	    if (m68k_do_specialties())
 		return;
 	}
+#endif
+
 #ifndef USE_TIMERS
 	{
 	    if (--innerCounter == 0) {
