@@ -4,6 +4,5 @@
 
 class DSP : public BASE_IO {
 public:
-	DSP();
 	virtual uae_u8 handleRead(uaecptr addr);
 };
