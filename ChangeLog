@@ -2,6 +2,7 @@
 
 - dsp_disasm.cpp: many references to old 'dsp.' variable lying around, now
   replaced by 'GetDSP()->'.
+- hostscreen.h: forget to include config.h for ENABLE_OPENGL value.
 
 
 2004/01/07 - Xavier

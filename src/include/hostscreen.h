@@ -7,6 +7,10 @@
 #ifndef _HOSTSCREEN_H
 #define _HOSTSCREEN_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
 # include <cstring>
@@ -436,6 +440,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.46  2004/01/05 10:05:20  standa
+ * Palette handling reworked. Old non-NF dispatch removed.
+ *
  * Revision 1.45  2003/12/24 23:30:54  joy
  * when GUI is open the background is being updated with running ARAnyM
  *
