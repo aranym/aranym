@@ -57,14 +57,14 @@ void HostScreen::makeSnapshot()
 }
 
 
-void HostScreen::setWindowSize(	uint32 width, uint32 height, uint32 bpp )
+void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 {
-	this->width  = width;
+	this->width	 = width;
 	this->height = height;
 	this->bpp = bpp;
 
 	// SelectVideoMode();
-	sdl_videoparams = SDL_HWSURFACE;
+	sdl_videoparams = SDL_HWSURFACE | SDL_HWPALETTE;
 	if (fullscreen)
 		sdl_videoparams |= SDL_FULLSCREEN;
 
@@ -89,7 +89,7 @@ void HostScreen::setWindowSize(	uint32 width, uint32 height, uint32 bpp )
 	D(bug("Pixel format:bitspp=%d, tmasks r=%04x g=%04x b=%04x"
 			", tshifts r=%d g=%d b=%d"
 			", tlosses r=%d g=%d b=%d",
-		    surf->format->BitsPerPixel,
+			surf->format->BitsPerPixel,
 			surf->format->Rmask, surf->format->Gmask, surf->format->Bmask,
 			surf->format->Rshift, surf->format->Gshift, surf->format->Bshift,
 			surf->format->Rloss, surf->format->Gloss, surf->format->Bloss));
@@ -400,9 +400,9 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 
 /* ----- Line */
 
-/* Non-alpha line drawing code adapted from routine          */
-/* by Pete Shinners, pete@shinners.org                       */
-/* Originally from pygame, http://pygame.seul.org            */
+/* Non-alpha line drawing code adapted from routine			 */
+/* by Pete Shinners, pete@shinners.org						 */
+/* Originally from pygame, http://pygame.seul.org			 */
 
 void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 							   uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
@@ -697,8 +697,8 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 	pixellast = pixel + pixy*dy;
 
 	// STanda // FIXME here the pattern should be checked out of the loops for performance
-	          // but for now it is good enough
-	          // FIXME not tested on other then 2 BPP
+			  // but for now it is good enough
+			  // FIXME not tested on other then 2 BPP
 
 	/* Draw */
 	switch(surf->format->BytesPerPixel) {
@@ -903,6 +903,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.18  2001/10/30 22:59:34  standa
+ * The resolution change is now possible through the fVDI driver.
+ *
  * Revision 1.17  2001/10/29 23:14:17  standa
  * The HostScreen support for arbitrary destination BPP (8,16,24,32bit).
  *

@@ -12,7 +12,7 @@
 
 class VIDEL : public BASE_IO {
 protected:
-	int width, height, od_posledni_zmeny;
+	int width, height, bpp, od_posledni_zmeny;
 	bool hostColorsSync;
 	bool doRender; // the HW surface is available -> videl writes directly into the Host videoram
 
@@ -51,6 +51,14 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.11  2001/08/28 23:26:09  standa
+ * The fVDI driver update.
+ * VIDEL got the doRender flag with setter setRendering().
+ *       The host_colors_uptodate variable name was changed to hostColorsSync.
+ * HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
+ *       was created.
+ * fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
+ *
  * Revision 1.10  2001/06/18 13:21:55  standa
  * Several template.cpp like comments were added.
  * HostScreen SDL encapsulation class.

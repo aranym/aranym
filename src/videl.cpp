@@ -23,7 +23,7 @@
 extern HostScreen hostScreen;
 
 // Support for other than 2 byte hostscreen bpp is disabled by default
-#undef SUPPORT_MULTIPLEDESTBPP
+#define SUPPORT_MULTIPLEDESTBPP
 
 
 static const uae_u32 HW = 0xff8200UL;
@@ -60,7 +60,7 @@ void VIDEL::handleWrite(uaecptr addr, uint8 value)
 
 long VIDEL::getVideoramAddress()
 {
-	return (handleRead(HW + 1) << 16) | (handleRead(HW + 3) << 8) |	handleRead(HW + 0x0d);
+	return (handleRead(HW + 1) << 16) | (handleRead(HW + 3) << 8) | handleRead(HW + 0x0d);
 }
 
 int VIDEL::getScreenBpp()
@@ -118,50 +118,53 @@ int VIDEL::getScreenHeight()
 
 void VIDEL::updateColors()
 {
-	if (!hostColorsSync) {
-		D(bug("ColorUpdate in progress"));
+	if (hostColorsSync)
+		return;
 
-		// Test the ST compatible set or not.
-		bool stCompatibleColorPalette = false;
+	D(bug("ColorUpdate in progress"));
 
-		int st_shift = handleReadW(HW + 0x60);
-		if (st_shift == 0) {		   // bpp == 4
-			int hreg = handleReadW(HW + 0x82); // Too lame!
-			if (hreg == 0x10 | hreg == 0x17 | hreg == 0x3e)   // Better way how to make out ST LOW mode wanted
-				stCompatibleColorPalette = true;
+	// Test the ST compatible set or not.
+	bool stCompatibleColorPalette = false;
 
-			D(bug("ColorUpdate %x", hreg));
-		}
-		else if (st_shift == 0x100)	   // bpp == 2
-			stCompatibleColorPalette = true;
-		else						   // bpp == 1	// if (st_shift == 0x200)
+	int st_shift = handleReadW(HW + 0x60);
+	if (st_shift == 0) {		   // bpp == 4
+		int hreg = handleReadW(HW + 0x82); // Too lame!
+		if (hreg == 0x10 | hreg == 0x17 | hreg == 0x3e)	  // Better way how to make out ST LOW mode wanted
 			stCompatibleColorPalette = true;
 
-		// map the colortable into the correct pixel format
+		D(bug("ColorUpdate %x", hreg));
+	}
+	else if (st_shift == 0x100)	   // bpp == 2
+		stCompatibleColorPalette = true;
+	else						   // bpp == 1	// if (st_shift == 0x200)
+		stCompatibleColorPalette = true;
+
+	// map the colortable into the correct pixel format
 
 #define F_COLORS(i) handleRead(0xff9800 + (i))
 #define STE_COLORS(i)	handleRead(0xff8240 + (i))
 
-		if (!stCompatibleColorPalette) {
-			for (int i = 0; i < 256; i++) {
-				int offset = i << 2;
-				hostScreen.setPaletteColor( i,
-					F_COLORS(offset),
-					F_COLORS(offset + 1),
-					F_COLORS(offset + 3) );
-			}
-		} else {
-			for (int i = 0; i < 15; i++) {
-				int offset = i << 1;
-
-				// fprintf(stderr,"HS: setColor: %03d,%6x - %x,%x,%x\n", index, sdl_colors[index], red, green, blue );
-
-				hostScreen.setPaletteColor( i,
-					(STE_COLORS(offset) << 5) | ((STE_COLORS(offset) << 1 ) & 0x8),
-					((STE_COLORS(offset + 1) << 1) & 0xE0) | ((STE_COLORS(offset + 1) >> 3) & 0x8),
-					((STE_COLORS(offset + 1) << 5) & 0xE0) | ((STE_COLORS(offset + 1) << 1) & 0x8));
-			}
+	if (!stCompatibleColorPalette) {
+		for (int i = 0; i < 256; i++) {
+			int offset = i << 2;
+			hostScreen.setPaletteColor( i,
+										F_COLORS(offset),
+										F_COLORS(offset + 1),
+										F_COLORS(offset + 3) );
 		}
+		hostScreen.updatePalette( 256 );
+	} else {
+		for (int i = 0; i < 16; i++) {
+			int offset = i << 1;
+
+			// fprintf(stderr,"HS: setColor: %03d,%6x - %x,%x,%x\n", index, sdl_colors[index], red, green, blue );
+
+			hostScreen.setPaletteColor( i,
+										(STE_COLORS(offset) << 5) | ((STE_COLORS(offset) << 1 ) & 0x8),
+										((STE_COLORS(offset + 1) << 1) & 0xE0) | ((STE_COLORS(offset + 1) >> 3) & 0x8),
+										((STE_COLORS(offset + 1) << 5) & 0xE0) | ((STE_COLORS(offset + 1) << 1) & 0x8));
+		}
+		hostScreen.updatePalette( 16 );
 	}
 
 	hostColorsSync = true;
@@ -169,21 +172,33 @@ void VIDEL::updateColors()
 
 void VIDEL::renderScreenNoFlag()
 {
-	int vw = getScreenWidth();
-	int vh = getScreenHeight();
+	int vw	 = getScreenWidth();
+	int vh	 = getScreenHeight();
+	int vbpp = getScreenBpp();
 
 	if (od_posledni_zmeny > 2) {
 		if (vw > 0 && vw != width) {
+			D(bug("CH width %d", width));
 			width = vw;
 			od_posledni_zmeny = 0;
 		}
 		if (vh > 0 && vh != height) {
+			D(bug("CH height %d", width));
 			height = vh;
+			od_posledni_zmeny = 0;
+		}
+		if (vbpp != bpp) {
+			D(bug("CH bpp %d", vbpp));
+			bpp = vbpp;
 			od_posledni_zmeny = 0;
 		}
 	}
 	if (od_posledni_zmeny == 3) {
+#ifdef SUPPORT_MULTIPLEDESTBPP
+		hostScreen.setWindowSize( width, height, bpp >= 8 ? bpp : 8 );
+#else
 		hostScreen.setWindowSize( width, height, 16 );
+#endif // SUPPORT_MULTIPLEDESTBPP
 	}
 	if (od_posledni_zmeny < 4) {
 		od_posledni_zmeny++;
@@ -197,69 +212,86 @@ void VIDEL::renderScreenNoFlag()
 	uint16 *fvram = (uint16 *) get_real_address_direct(atariVideoRAM);
 	VideoRAMBaseHost = (uint8 *) hostScreen.getVideoramAddress();
 	uint16 *hvram = (uint16 *) VideoRAMBaseHost;
-	int bpp = getScreenBpp();
-
-#ifdef SUPPORT_MULTIPLEDESTBPP
-	uint8 destBPP = hostScreen.getBpp();
-#endif // SUPPORT_MULTIPLEDESTBPP
 
 	if (bpp < 16) {
 		updateColors();
 
 		// The SDL colors blitting...
 		// FIXME!!! The SDL hvram need not to be line aligned (see the surface->format->pitch!!!)
-		// FIXME: The destBPP tests should probably not
-		//		  be inside the loop... (reorganise?)
-		int   planeWordCount = ((vw+15)>>4) * vh;
+		int	  planeWordCount = ((vw+15)>>4) * vh;
 		uint8 color[16];
 
+#ifndef SUPPORT_MULTIPLEDESTBPP
 		for (int32 w = 0; w < planeWordCount; w++) {
 			hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
 
-			// To support other formats see
-			// the SDL video examples (docs 1.1.7)
-			//
-			// FIXME: The byte swap could be done here by enrolling the loop into 2 each by 8 pixels
+			// note: by enroling this loop into 16 getPaletteColor calls we lost 500 dryhstones ;(
+			//		 so we should leave it as is.
+			int startBitIndex = w * 16;
+			int colIdx = 0;
+			for (int j = startBitIndex; j < startBitIndex + 16; j++)
+				((uint16 *)hvram)[ j ] = (uint16) hostScreen.getPaletteColor( color[ colIdx++ ] );
+		}
+#else
+		// To support other formats see
+		// the SDL video examples (docs 1.1.7)
+		//
+		// FIXME: The byte swap could be done here by enrolling the loop into 2 each by 8 pixels
+		switch ( hostScreen.getBpp() ) {
+			case 1:
+				for (int32 w = 0; w < planeWordCount; w++) {
+					hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
 
-#ifdef SUPPORT_MULTIPLEDESTBPP
-			if (destBPP == 2) {
-#endif // SUPPORT_MULTIPLEDESTBPP
-
-				// note: by enroling this loop into 16 getPaletteColor calls we lost 500 dryhstones ;(
-				//		 so we should leave it as is.
-				int startBitIndex = w * 16;
-				int colIdx = 0;
-				for (int j = startBitIndex; j < startBitIndex + 16; j++) {
-					((uint16 *)hvram)[ j ] = (uint16) hostScreen.getPaletteColor( color[ colIdx++ ] );
+					int startBitIndex = w * 16;
+					int colIdx = 0;
+					for (int j = startBitIndex; j < startBitIndex + 16; j++)
+						((uint8 *)hvram)[ j ] = color[ colIdx++ ];
 				}
+				break;
+			case 2:
+				for (int32 w = 0; w < planeWordCount; w++) {
+					hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
 
-#ifdef SUPPORT_MULTIPLEDESTBPP
-			}
-			else if (destBPP == 3) {
-				int startBitIndex = w * 16;
-				int colIdx = 0;
-				for (int j = startBitIndex; j < startBitIndex + 16; j++) {
-					uint32 tmpColor = hostScreen.getPaletteColor( color[ colIdx++ ] );
-					putBpp24Pixel( (uint32)hvram + j*3, tmpColor );
+					// note: by enroling this loop into 16 getPaletteColor calls we lost 500 dryhstones ;(
+					//		 so we should leave it as is.
+					int startBitIndex = w * 16;
+					int colIdx = 0;
+					for (int j = startBitIndex; j < startBitIndex + 16; j++)
+						((uint16 *)hvram)[ j ] = (uint16) hostScreen.getPaletteColor( color[ colIdx++ ] );
 				}
-			}
-			else if (destBPP == 4) {
-				int startBitIndex = w * 16;
-				int colIdx = 0;
-				for (int j = startBitIndex; j < startBitIndex + 16; j++)
-					((uint32 *)hvram)[ j ] = (uint32) hostScreen.getPaletteColor( color[ colIdx++ ] );
-			}
-			// FIXME: support for destBPP other than 2 or 4 BPP is missing
+				break;
+			case 3:
+				for (int32 w = 0; w < planeWordCount; w++) {
+					hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
 
+					int startBitIndex = w * 16;
+					int colIdx = 0;
+					for (int j = startBitIndex; j < startBitIndex + 16; j++) {
+						// use the variable due to the putBpp24Pixel macro usage
+						uint32 tmpColor = hostScreen.getPaletteColor( color[ colIdx++ ] );
+						putBpp24Pixel( (uint32)hvram + j*3, tmpColor );
+					}
+				}
+				break;
+			case 4:
+				for (int32 w = 0; w < planeWordCount; w++) {
+					hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
+
+					int startBitIndex = w * 16;
+					int colIdx = 0;
+					for (int j = startBitIndex; j < startBitIndex + 16; j++)
+						((uint32 *)hvram)[ j ] = (uint32) hostScreen.getPaletteColor( color[ colIdx++ ] );
+				}
+				break;
+		}
 #endif // SUPPORT_MULTIPLEDESTBPP
-
-		}  // for( int i; ...
 
 	} else {
 		// Falcon TC (High Color)
 		int planeWordCount = vw * vh;
 
 #ifdef SUPPORT_MULTIPLEDESTBPP
+		uint8 destBPP = hostScreen.getBpp();
 		if (destBPP == 2) {
 #endif // SUPPORT_MULTIPLEDESTBPP
 
@@ -286,11 +318,11 @@ void VIDEL::renderScreenNoFlag()
 				// The byteswap is done by correct shifts (not so obvious)
 				int data = fvram[w];
 				uint32 tmpColor =
-					hostScreen.getColor(
-										(uint8) (data & 0xf8),
-										(uint8) ( ((data & 0x07) << 5) |
-												  ((data >> 11) & 0x3c)),
-										(uint8) ((data >> 5) & 0xf8));
+				hostScreen.getColor(
+									(uint8) (data & 0xf8),
+									(uint8) ( ((data & 0x07) << 5) |
+											  ((data >> 11) & 0x3c)),
+									(uint8) ((data >> 5) & 0xf8));
 				putBpp24Pixel( (uint32)hvram + w*3, tmpColor );
 			}
 		}
@@ -300,11 +332,11 @@ void VIDEL::renderScreenNoFlag()
 				// The byteswap is done by correct shifts (not so obvious)
 				int data = fvram[w];
 				((uint32 *) hvram)[w] =
-					hostScreen.getColor(
-										(uint8) (data & 0xf8),
-										(uint8) ( ((data & 0x07) << 5) |
-												  ((data >> 11) & 0x3c)),
-										(uint8) ((data >> 5) & 0xf8));
+				hostScreen.getColor(
+									(uint8) (data & 0xf8),
+									(uint8) ( ((data & 0x07) << 5) |
+											  ((data >> 11) & 0x3c)),
+									(uint8) ((data >> 5) & 0xf8));
 			}
 		}
 		// FIXME: support for destBPP other than 2 or 4 BPP is missing
@@ -321,6 +353,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.28  2001/10/30 22:59:34  standa
+ * The resolution change is now possible through the fVDI driver.
+ *
  * Revision 1.27  2001/10/25 19:56:01  standa
  * The Log and Header CVS tags in the Log removed. Was recursing.
  *
@@ -352,9 +387,9 @@ void VIDEL::renderScreenNoFlag()
  * Revision 1.19  2001/08/28 23:26:09  standa
  * The fVDI driver update.
  * VIDEL got the doRender flag with setter setRendering().
- *       The host_colors_uptodate variable name was changed to hostColorsSync.
+ *		 The host_colors_uptodate variable name was changed to hostColorsSync.
  * HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
- *       was created.
+ *		 was created.
  * fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
  *
  * Revision 1.18  2001/08/15 06:48:57  standa

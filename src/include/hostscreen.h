@@ -13,19 +13,24 @@
 
 
 class HostScreen {
-protected:
-	SDL_Surface *surf;  // The main window surface
+  protected:
+	SDL_Surface *surf;	// The main window surface
 	uint32 sdl_videoparams;
 	uint32 width, height, bpp;
 	bool   doUpdate; // the HW surface is available -> the SDL need not to update the surface after ->pixel access
-	uint32 sdl_colors[256]; // TOS palette (bpp < 16) to SDL color mapping
+
+	struct { // TOS palette (bpp < 16) to SDL color mapping
+		SDL_Palette sdl;
+		SDL_Color	standard[256];
+		uint32		native[256];
+	} palette;
 
 	uint16 snapCounter; // ALT+PrintScreen to make a snap?
 
 	/**
 	 * This is the SDL_gfxPrimitives derived functions.
 	 **/
-	inline void   gfxFastPixelColorNolock( int16 x, int16 y, uint32 color );
+	inline void	  gfxFastPixelColorNolock( int16 x, int16 y, uint32 color );
 	inline uint32 gfxGetPixel( int16 x, int16 y );
 
 	void   gfxHLineColor ( int16 x1, int16 x2, int16 y,
@@ -35,20 +40,23 @@ protected:
 	void   gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 						 uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 	void   gfxBoxColorPattern( int16 x1, int16 y1, int16 x2, int16 y2,
-									  uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+                               uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 
-public:
+  public:
 
 	HostScreen() {
+		// setting up the static palette settings
+		palette.sdl.ncolors = 256;
+		palette.sdl.colors = palette.standard;
 	}
 
-	inline bool   renderBegin();
-	inline void   renderEnd();
+	inline bool	  renderBegin();
+	inline void	  renderEnd();
 
 	// the w, h should be width & height (but C++ complains -> 'if's in the implementation)
-	inline void   update( int32 x, int32 y, int32 w, int32 h, bool forced = false );
-	inline void   update( bool forced );
-	inline void   update();
+	inline void	  update( int32 x, int32 y, int32 w, int32 h, bool forced = false );
+	inline void	  update( bool forced );
+	inline void	  update();
 
 	uint32 getBpp();
 	uint32 getWidth();
@@ -56,8 +64,8 @@ public:
 	uint32 getVideoramAddress();
 
 	void   setPaletteColor( uint32 index, uint32 red, uint32 green, uint32 blue );
-	void   mapPaletteColor( uint32 destIndex, uint32 sourceIndex );
 	uint32 getPaletteColor( uint32 index );
+	void   updatePalette( uint32 colorCount );
 	uint32 getColor( uint32 red, uint32 green, uint32 blue );
 
 	void   setWindowSize( uint32 width, uint32 height, uint32 bpp );
@@ -153,15 +161,17 @@ inline void HostScreen::setPaletteColor( uint32 index, uint32 red, uint32 green,
 	// no palette size bound cross
 	assert( index >= 0 && index <= 255 );
 
-	sdl_colors[index] = SDL_MapRGB( surf->format, red, green, blue );
-}
-
-inline void HostScreen::mapPaletteColor( uint32 destIndex, uint32 sourceIndex ) {
-	sdl_colors[destIndex] = sdl_colors[sourceIndex];
+	SDL_Color& color = palette.standard[index];
+	color.r = red; color.g = green; color.b = blue; // set the SDL standard RGB palette settings
+	palette.native[index] = SDL_MapRGB( surf->format, red, green, blue ); // convert the color to native
 }
 
 inline uint32 HostScreen::getPaletteColor( uint32 index ) {
-	return sdl_colors[index];
+	return palette.native[index];
+}
+
+inline void HostScreen::updatePalette( uint32 colorCount ) {
+	SDL_SetColors( surf, palette.standard, 0, colorCount );
 }
 
 inline uint32 HostScreen::getColor( uint32 red, uint32 green, uint32 blue ) {
@@ -260,23 +270,23 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 	for (int l = bpp - 1; l >= 0; l--) {
 		uint16 data = atariBitplaneData[l]; // note: this is about 2000 dryhstones sppedup (the local variable)
 
-		colorValues[ 0] <<= 1;  colorValues[ 0] |= (data >>	 7) & 1;
-		colorValues[ 1] <<= 1;  colorValues[ 1] |= (data >>	 6) & 1;
-		colorValues[ 2] <<= 1;  colorValues[ 2] |= (data >>	 5) & 1;
-		colorValues[ 3] <<= 1;  colorValues[ 3] |= (data >>	 4) & 1;
-		colorValues[ 4] <<= 1;  colorValues[ 4] |= (data >>	 3) & 1;
-		colorValues[ 5] <<= 1;  colorValues[ 5] |= (data >>	 2) & 1;
-		colorValues[ 6] <<= 1;  colorValues[ 6] |= (data >>	 1) & 1;
-		colorValues[ 7] <<= 1;  colorValues[ 7] |= (data >>	 0) & 1;
+		colorValues[ 0] <<= 1;	colorValues[ 0] |= (data >>	 7) & 1;
+		colorValues[ 1] <<= 1;	colorValues[ 1] |= (data >>	 6) & 1;
+		colorValues[ 2] <<= 1;	colorValues[ 2] |= (data >>	 5) & 1;
+		colorValues[ 3] <<= 1;	colorValues[ 3] |= (data >>	 4) & 1;
+		colorValues[ 4] <<= 1;	colorValues[ 4] |= (data >>	 3) & 1;
+		colorValues[ 5] <<= 1;	colorValues[ 5] |= (data >>	 2) & 1;
+		colorValues[ 6] <<= 1;	colorValues[ 6] |= (data >>	 1) & 1;
+		colorValues[ 7] <<= 1;	colorValues[ 7] |= (data >>	 0) & 1;
 
-		colorValues[ 8] <<= 1;  colorValues[ 8] |= (data >> 15) & 1;
-		colorValues[ 9] <<= 1;  colorValues[ 9] |= (data >> 14) & 1;
-		colorValues[10] <<= 1;  colorValues[10] |= (data >> 13) & 1;
-		colorValues[11] <<= 1;  colorValues[11] |= (data >> 12) & 1;
-		colorValues[12] <<= 1;  colorValues[12] |= (data >> 11) & 1;
-		colorValues[13] <<= 1;  colorValues[13] |= (data >> 10) & 1;
-		colorValues[14] <<= 1;  colorValues[14] |= (data >>	 9) & 1;
-		colorValues[15] <<= 1;  colorValues[15] |= (data >>	 8) & 1;
+		colorValues[ 8] <<= 1;	colorValues[ 8] |= (data >> 15) & 1;
+		colorValues[ 9] <<= 1;	colorValues[ 9] |= (data >> 14) & 1;
+		colorValues[10] <<= 1;	colorValues[10] |= (data >> 13) & 1;
+		colorValues[11] <<= 1;	colorValues[11] |= (data >> 12) & 1;
+		colorValues[12] <<= 1;	colorValues[12] |= (data >> 11) & 1;
+		colorValues[13] <<= 1;	colorValues[13] |= (data >> 10) & 1;
+		colorValues[14] <<= 1;	colorValues[14] |= (data >>	 9) & 1;
+		colorValues[15] <<= 1;	colorValues[15] |= (data >>	 8) & 1;
 	}
 }
 
@@ -287,6 +297,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.15  2001/10/30 22:59:34  standa
+ * The resolution change is now possible through the fVDI driver.
+ *
  * Revision 1.14  2001/10/29 23:14:17  standa
  * The HostScreen support for arbitrary destination BPP (8,16,24,32bit).
  *
