@@ -5,28 +5,15 @@
 	};
 	objectVersion = 39;
 	objects = {
-		F8243A8D05C462AB00F043B6 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = SDL.framework;
-			path = /Users/stefan/Library/Frameworks/SDL.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F8243A8E05C462AB00F043B6 = {
-			fileRef = F8243A8D05C462AB00F043B6;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F8243B4A05C46D2500F043B6 = {
 			children = (
 				F86B528005C47A540089468F,
 			);
 			isa = PBXGroup;
 			name = Libraries;
-			refType = 4;
-			sourceTree = "<group>";
+			path = "";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F83AFFC005C09F8200F1E83F = {
 			containerPortal = F87BDEF00488FB4800F69266;
@@ -42,50 +29,64 @@
 			remoteGlobalIDString = F87BDEF60488FB6400F69266;
 			remoteInfo = ARAnyM.app;
 		};
+		F853CC1205C70845005B6F8D = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = SDL.framework;
+			path = /Users/stefan/Library/Frameworks/SDL.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F853CC1305C70845005B6F8D = {
+			fileRef = F853CC1205C70845005B6F8D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F86B50B205C476E20089468F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			name = TODO;
-			path = /Users/stefan/Developer/aranym/TODO;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../TODO;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B50B305C476E20089468F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			name = aranym.spec;
-			path = /Users/stefan/Developer/aranym/aranym.spec;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../aranym.spec;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B50B405C476E20089468F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			name = AUTHORS;
-			path = /Users/stefan/Developer/aranym/AUTHORS;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../AUTHORS;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B50B505C476E20089468F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			name = INSTALL;
-			path = /Users/stefan/Developer/aranym/INSTALL;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../INSTALL;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B50B605C476E20089468F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			name = NEWS;
-			path = /Users/stefan/Developer/aranym/NEWS;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../NEWS;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B50B705C476E20089468F = {
 			children = (
@@ -135,9 +136,9 @@
 			);
 			isa = PBXGroup;
 			name = src;
-			path = /Users/stefan/Developer/aranym/src;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../..;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B50B805C476E20089468F = {
 			fileEncoding = 30;
@@ -2087,9 +2088,9 @@
 			);
 			isa = PBXGroup;
 			name = tools;
-			path = /Users/stefan/Developer/aranym/tools;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../tools;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B519D05C476E30089468F = {
 			children = (
@@ -2162,36 +2163,36 @@
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			name = FAQ;
-			path = /Users/stefan/Developer/aranym/FAQ;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../FAQ;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B51A605C476E30089468F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			name = COPYING;
-			path = /Users/stefan/Developer/aranym/COPYING;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../COPYING;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B51A705C476E30089468F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			name = README;
-			path = /Users/stefan/Developer/aranym/README;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../README;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B51A805C476E30089468F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			name = BUGS;
-			path = /Users/stefan/Developer/aranym/BUGS;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../BUGS;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B51A905C476E30089468F = {
 			children = (
@@ -2210,9 +2211,9 @@
 			);
 			isa = PBXGroup;
 			name = atari;
-			path = /Users/stefan/Developer/aranym/atari;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../atari;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B51AA05C476E30089468F = {
 			children = (
@@ -2813,7 +2814,6 @@
 		};
 		F86B51ED05C476E30089468F = {
 			children = (
-				F86B51EE05C476E30089468F,
 				F86B51EF05C476E30089468F,
 				F86B51F005C476E30089468F,
 				F86B51F105C476E30089468F,
@@ -2825,14 +2825,6 @@
 			);
 			isa = PBXGroup;
 			path = fvdicout;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		F86B51EE05C476E30089468F = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = .cvsignore;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -3704,9 +3696,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = text;
 			name = ChangeLog;
-			path = /Users/stefan/Developer/aranym/ChangeLog;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../ChangeLog;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B525305C476E30089468F = {
 			children = (
@@ -3719,9 +3711,9 @@
 			);
 			isa = PBXGroup;
 			name = doc;
-			path = /Users/stefan/Developer/aranym/doc;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../../doc;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B525405C476E30089468F = {
 			fileEncoding = 30;
@@ -3826,9 +3818,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = archive.ar;
 			name = libaranym.a;
-			path = /Users/stefan/Developer/aranym/src/Unix/libaranym.a;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../libaranym.a;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F86B528105C47A540089468F = {
 			fileRef = F86B528005C47A540089468F;
@@ -3934,8 +3926,8 @@
 				F87BE13A0488FCE000F69266,
 				F87BE13B0488FCE000F69266,
 				F87BE13C0488FCE000F69266,
-				F8243A8E05C462AB00F043B6,
 				F86B528105C47A540089468F,
+				F853CC1305C70845005B6F8D,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3956,10 +3948,10 @@
 				F87BDEF50488FB6400F69266,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = /Users/stefan/Library/Frameworks;
-				HEADER_SEARCH_PATHS = "\"~/Library/Frameworks/SDL.framework/Headers\"";
+				FRAMEWORK_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "\"$(HOME)/Library/Frameworks/SDL.framework/Versions/A/Headers\"";
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
-				LIBRARY_SEARCH_PATHS = ".. /Users/stefan/Developer/aranym0.8.2/src/Unix /Users/stefan/Developer/aranym/src/Unix";
+				LIBRARY_SEARCH_PATHS = ..;
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lz -lm";
@@ -3985,7 +3977,7 @@
 	<key>CFBundleExecutable</key>
 	<string>ARAnyM</string>
 	<key>CFBundleGetInfoString</key>
-	<string>0.8.0 beta 3</string>
+	<string>0.8.3</string>
 	<key>CFBundleIconFile</key>
 	<string>aranym2</string>
 	<key>CFBundleIdentifier</key>
@@ -3997,11 +3989,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>Version 0.8.0</string>
+	<string>Version 0.8.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.0b3</string>
+	<string>0.8.3</string>
 	<key>NSMainNibFile</key>
 	<string>SDLMain</string>
 	<key>NSPrincipalClass</key>
@@ -4024,12 +4016,13 @@
 			);
 			isa = PBXGroup;
 			name = Products;
-			refType = 4;
-			sourceTree = "<group>";
+			path = "";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F87BE1340488FC4700F69266 = {
 			children = (
-				F8243A8D05C462AB00F043B6,
+				F853CC1205C70845005B6F8D,
 				F87BE1350488FC7E00F69266,
 				F87BE1370488FCE000F69266,
 				F87BE1380488FCE000F69266,
@@ -4037,8 +4030,9 @@
 			);
 			isa = PBXGroup;
 			name = Frameworks;
-			refType = 4;
-			sourceTree = "<group>";
+			path = "";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F87BE1350488FC7E00F69266 = {
 			fallbackIsa = PBXFileReference;
