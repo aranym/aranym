@@ -36,7 +36,7 @@
 #include "acsifdc.h"
 #include "ide.h"
 
-extern Parallel parallel;
+extern Parallel *parallel;
 
 extern uae_u32 vram_addr;
 
