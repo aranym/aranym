@@ -23,7 +23,7 @@
 #include "sysdeps.h"
 
 #include "cpu_emulation.h"
-#include "timer.h"
+// #include "timer.h"
 #include "main.h"
 #include "hardware.h"
 
@@ -47,14 +47,14 @@ bool InitAll(void)
 	HWInit();
 
 	// Init Time Manager
-	TimerInit();
+	// TimerInit();
 
 	// Init 680x0 emulation (this also activates the memory system which is needed for PatchROM())
 	if (!Init680x0())
 		return false;
 
 	printf("Activate debugger...\n");
-	activate_debugger();
+	// activate_debugger();
 
 	return true;
 }
@@ -67,6 +67,6 @@ bool InitAll(void)
 void ExitAll(void)
 {
 	// Exit Time Manager
-	TimerExit();
+	// TimerExit();
 }
 
