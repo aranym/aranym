@@ -1,14 +1,30 @@
 /*
- * $Header$
+ * hostfs.h - HostFS routines - declaration
  *
- * STanda 3.5.2001
+ * Copyright (c) 2001-2004 STanda of ARAnyM development team (see AUTHORS)
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef _HOSTFS_H
 #define _HOSTFS_H
 
 #ifdef HOSTFS_SUPPORT
-
 
 #include "nf_base.h"
 #include "tools.h"
@@ -17,9 +33,6 @@
 #else
 # include <map.h>
 #endif
-
-
-
 
 class HostFs : public NF_Base
 {
@@ -100,16 +113,18 @@ class HostFs : public NF_Base
 	void xfs_debugCookie( XfsCookie *fc );
 
   public:
+	HostFs();
+	virtual ~HostFs();
+
+	bool init();
+	void exit();
+
 	/**
 	 * Installs the drive.
 	 **/
-	// bool init();
 	void install( const char driveSign, const char* rootPath, bool halfSensitive );
 
 	uint32 getDrvBits();
-
-	HostFs() {}
-	virtual ~HostFs() {}
 
 	/**
 	 * MetaDos DOS driver dispatch functions.
@@ -190,55 +205,3 @@ class HostFs : public NF_Base
 #endif // HOSTFS_SUPPORT
 
 #endif // _HOSTFS_H
-
-
-/*
- * $Log$
- * Revision 1.11  2003/10/02 18:13:42  standa
- * Large HOSTFS cleanup (see the ChangeLog for more)
- *
- * Revision 1.10  2003/07/17 13:52:34  joy
- * hostfs fixes by Xavier
- *
- * Revision 1.9  2003/06/26 21:27:14  joy
- * xfs_creat()/xfs_dev_open() fixed (gunzip problem)
- * xfs_native_init() fixed to handle the FreeMiNT requirements correctly
- * general cleanup
- *
- * Revision 1.6.2.4  2003/04/15 19:09:26  standa
- * xfs_creat()/xfs_dev_open() fixed (gunzip problem).
- * xfs_native_init() fixed to handle the FreeMiNT requirements correctly.
- * general cleanup
- *
- * Revision 1.6.2.3  2003/04/10 21:49:34  joy
- * cygwin mapping fixed - compiler bug found
- *
- * Revision 1.6.2.2  2003/04/08 00:42:14  standa
- * The st2flags() and flags2st() methods fixed (a need for open()).
- * The isPathValid() method removed (was only useful for aranymfs.dos).
- * Dpathconf(8-9) added and 7 fixed (Thing has a bug in 1.27 here IIRC).
- * General debug messages cleanup.
- *
- * Revision 1.6.2.1  2003/04/03 12:11:29  standa
- * 32bit <-> host mapping + general hostfs cleanup.
- *
- * Revision 1.6  2003/03/20 01:08:17  standa
- * HOSTFS mapping update.
- *
- * Revision 1.5  2003/03/17 09:42:39  standa
- * The chattr,chmod implementation ported from stonx.
- *
- * Revision 1.4  2003/03/01 11:57:37  joy
- * major HOSTFS NF API cleanup
- *
- * Revision 1.3  2002/12/17 14:20:48  standa
- * Better STL suppor
- *
- * Revision 1.2  2002/12/16 15:39:18  standa
- * The map -> std::map
- *
- * Revision 1.1  2002/12/10 20:47:21  standa
- * The HostFS (the host OS filesystem access via NatFeats) implementation.
- *
- *
- */
