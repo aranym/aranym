@@ -21,6 +21,8 @@ extern "C" {
 }
 #endif /* __sun__ */
 
+#ifdef EXTFS_SUPPORT
+
 #include "parameters.h"
 #include "toserror.h"
 #include "extfs.h"
@@ -1592,9 +1594,13 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 	return TOS_E_OK;
 }
 
+#endif /* EXTFS_SUPPORT */
 
 /*
  * $Log$
+ * Revision 1.14  2001/11/13 18:26:32  milan
+ * portability
+ *
  * Revision 1.13  2001/11/12 15:11:37  milan
  * Small upgrade to multiplatform compatibility
  *

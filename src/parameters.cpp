@@ -12,7 +12,11 @@
 #define DEBUG 1
 #include "debug.h"
 
+#ifdef __CYGWIN__
+#define ARANYMRC        "aranymrc"
+#else
 #define ARANYMRC	"/.aranymrc"
+#endif
 
 static struct option const long_options[] =
 {

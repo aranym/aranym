@@ -127,9 +127,11 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			fVDIDrv.dispatch( get_long(r->a[7], true), r );  // SO
 			break;
 
+#ifdef EXTFS_SUPPORT
 		case M68K_EMUL_OP_EXTFS_COMM:		// External file system routines
 			extFS.dispatch( get_long(r->a[7], true), r );  // SO
 			break;
+#endif
 
 		case M68K_EMUL_OP_DEBUGUTIL:
 //			printf("DebugUtil d0=%08lx  a5=%08lx\n", r->d[0], r->a[5]);

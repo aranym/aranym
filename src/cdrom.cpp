@@ -74,6 +74,10 @@ extern "C" {
 #define CD_FRAMESIZE	2048
 #endif
 
+#ifdef __CYGWIN__
+#define WIN32
+#endif
+
 #ifdef WIN32
 #include <windows.h>
 #include <winioctl.h>

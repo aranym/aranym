@@ -50,7 +50,6 @@ SRCS = ../main.cpp \
 	../cfgopts.c \
 	../dsp.cpp \
 	../emul_op.cpp \
-	../extfs.cpp \
 	../fakeio.cpp \
 	../fdc.cpp \
 	../fvdidrv.cpp \

@@ -1,3 +1,15 @@
+2001/11/20 - milan
+- small correction in ATCs (MMU), not enough, grr
+
+
+2001/11/20 - Francois LE COAT & milan
+- better support for Solaris
+
+
+2001/11/20 - Olivier Landemarre & milan
+- the 2nd step for Cygwin
+
+
 2001/11/19 - joy
 - MD5 should be OK on big endian machines (Sparc)
 

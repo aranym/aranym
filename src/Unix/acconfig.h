@@ -65,6 +65,9 @@
 /* Define if you want to use full history */
 #undef FULL_HISTORY
 
+/* Define if you want to use direct access to host's fs */
+#undef EXTFS_SUPPORT
+
 
 /* Leave that blank line there!!  Autoheader needs it.
    If you're adding to this file, keep in mind:
