@@ -1,3 +1,10 @@
+2001/06/13 - STanda
+- some VIDEL public routins adjusted to provide fVDI driver needed methods.
+  (lockScreen(), unlockScreen(), getHostVideoramAddress())
+
+- updateScreen() semantics was updated to SDL_UpdateRect... (only). The
+  original method functionality was captured in new renderScreen() method
+
 2001/06/08 - PS
 - highly unfinished, very preliminary, often crashing support for extended
   VIDEL resolutions. I know how to fix it, just give me some time.
