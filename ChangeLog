@@ -1,3 +1,12 @@
+2004/12/13 - Patrice
+- nfosmesa: many bugfixes. The hardest/longest part to do: converting all arrays
+  (const TYPE *) to a temporary array for the host CPU. Disabled building of
+  OpenGL extensions (much longer to compile and test). What is working: SDL tests
+  programs, many NeHe tutorials using SDL (not all, due to disabled extensions);
+  for pure Atari software: kronos, tinygl test programs. Added the osmesa.ldg for
+  testers.
+  
+
 2004/12/11 - Patrice
 - hostscreen.cpp: move one update function using OpenGL from .h to .cpp, necessary
   for compiling OSMesa.

@@ -9,7 +9,7 @@ void OSMesaDriver::glClearIndex(Uint32 ctx, GLfloat c )
 
 void OSMesaDriver::glClearColor(Uint32 ctx, GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha )
 {
-	D(bug("nfosmesa: glClearColor"));
+	D(bug("nfosmesa: glClearColor(%.3f,%.3f,%.3f,%.3f)",red,green,blue,alpha));
 	SelectContext(ctx);
 	fn.glClearColor(  red,  green,  blue,  alpha );
 }
@@ -297,6 +297,9 @@ void OSMesaDriver::glFinish(Uint32 ctx)
 	D(bug("nfosmesa: glFinish"));
 	SelectContext(ctx);
 	fn.glFinish(  );
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	ConvertContext(ctx);
+#endif
 }
 
 void OSMesaDriver::glFlush(Uint32 ctx)
@@ -304,6 +307,9 @@ void OSMesaDriver::glFlush(Uint32 ctx)
 	D(bug("nfosmesa: glFlush"));
 	SelectContext(ctx);
 	fn.glFlush(  );
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	ConvertContext(ctx);
+#endif
 }
 
 void OSMesaDriver::glHint(Uint32 ctx, GLenum target, GLenum mode )
@@ -416,9 +422,12 @@ void OSMesaDriver::glLoadMatrixd(Uint32 ctx, const GLdouble *m )
 
 void OSMesaDriver::glLoadMatrixf(Uint32 ctx, const GLfloat *m )
 {
+	GLfloat tmp[16];
+
 	D(bug("nfosmesa: glLoadMatrixf"));
 	SelectContext(ctx);
-	fn.glLoadMatrixf(  m );
+	Atari2HostFloatPtr(16, (Uint32 *)m, tmp);
+	fn.glLoadMatrixf(tmp);
 }
 
 void OSMesaDriver::glMultMatrixd(Uint32 ctx, const GLdouble *m )
@@ -428,14 +437,17 @@ void OSMesaDriver::glMultMatrixd(Uint32 ctx, const GLdouble *m )
 	D(bug("nfosmesa: glMultMatrixd"));
 	SelectContext(ctx);
 	Atari2HostDoublePtr(16, (Uint32 *)m, tmp);
-	fn.glMultMatrixd(  m );
+	fn.glMultMatrixd( tmp );
 }
 
 void OSMesaDriver::glMultMatrixf(Uint32 ctx, const GLfloat *m )
 {
+	GLfloat tmp[16];
+
 	D(bug("nfosmesa: glMultMatrixf"));
 	SelectContext(ctx);
-	fn.glMultMatrixf(  m );
+	Atari2HostFloatPtr(16, (Uint32 *)m, tmp);
+	fn.glMultMatrixf(tmp);
 }
 
 void OSMesaDriver::glRotated(Uint32 ctx, GLdouble angle, GLdouble x, GLdouble y, GLdouble z )
@@ -646,9 +658,12 @@ void OSMesaDriver::glVertex2dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glVertex2fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[2];
+
 	D(bug("nfosmesa: glVertex2fv"));
 	SelectContext(ctx);
-	fn.glVertex2fv(  v );
+	Atari2HostFloatPtr(2, (Uint32 *)v, tmp);
+	fn.glVertex2fv(  tmp);
 }
 
 void OSMesaDriver::glVertex2iv(Uint32 ctx, const GLint *v )
@@ -677,9 +692,12 @@ void OSMesaDriver::glVertex3dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glVertex3fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[3];
+
 	D(bug("nfosmesa: glVertex3fv"));
 	SelectContext(ctx);
-	fn.glVertex3fv(  v );
+	Atari2HostFloatPtr(3, (Uint32 *)v, tmp);
+	fn.glVertex3fv(tmp);
 }
 
 void OSMesaDriver::glVertex3iv(Uint32 ctx, const GLint *v )
@@ -708,9 +726,12 @@ void OSMesaDriver::glVertex4dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glVertex4fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[4];
+
 	D(bug("nfosmesa: glVertex4fv"));
 	SelectContext(ctx);
-	fn.glVertex4fv(  v );
+	Atari2HostFloatPtr(4, (Uint32 *)v, tmp);
+	fn.glVertex4fv(tmp );
 }
 
 void OSMesaDriver::glVertex4iv(Uint32 ctx, const GLint *v )
@@ -781,9 +802,12 @@ void OSMesaDriver::glNormal3dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glNormal3fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[3];
+
 	D(bug("nfosmesa: glNormal3fv"));
 	SelectContext(ctx);
-	fn.glNormal3fv(  v );
+	Atari2HostFloatPtr(3, (Uint32 *)v, tmp);
+	fn.glNormal3fv( tmp);
 }
 
 void OSMesaDriver::glNormal3iv(Uint32 ctx, const GLint *v )
@@ -847,9 +871,12 @@ void OSMesaDriver::glIndexdv(Uint32 ctx, const GLdouble *c )
 
 void OSMesaDriver::glIndexfv(Uint32 ctx, const GLfloat *c )
 {
+	GLfloat tmp[1];
+
 	D(bug("nfosmesa: glIndexfv"));
 	SelectContext(ctx);
-	fn.glIndexfv(  c );
+	Atari2HostFloatPtr(1, (Uint32 *)c, tmp);
+	fn.glIndexfv( tmp );
 }
 
 void OSMesaDriver::glIndexiv(Uint32 ctx, const GLint *c )
@@ -1004,9 +1031,12 @@ void OSMesaDriver::glColor3dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glColor3fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[3];
+
 	D(bug("nfosmesa: glColor3fv"));
 	SelectContext(ctx);
-	fn.glColor3fv(  v );
+	Atari2HostFloatPtr(3, (Uint32 *)v, tmp);
+	fn.glColor3fv( tmp );
 }
 
 void OSMesaDriver::glColor3iv(Uint32 ctx, const GLint *v )
@@ -1063,9 +1093,12 @@ void OSMesaDriver::glColor4dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glColor4fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[4];
+
 	D(bug("nfosmesa: glColor4fv"));
 	SelectContext(ctx);
-	fn.glColor4fv(  v );
+	Atari2HostFloatPtr(4, (Uint32 *)v, tmp);
+	fn.glColor4fv(tmp);
 }
 
 void OSMesaDriver::glColor4iv(Uint32 ctx, const GLint *v )
@@ -1227,9 +1260,12 @@ void OSMesaDriver::glTexCoord1dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glTexCoord1fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[1];
+
 	D(bug("nfosmesa: glTexCoord1fv"));
 	SelectContext(ctx);
-	fn.glTexCoord1fv(  v );
+	Atari2HostFloatPtr(1, (Uint32 *)v, tmp);
+	fn.glTexCoord1fv(tmp);
 }
 
 void OSMesaDriver::glTexCoord1iv(Uint32 ctx, const GLint *v )
@@ -1258,9 +1294,12 @@ void OSMesaDriver::glTexCoord2dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glTexCoord2fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[2];
+
 	D(bug("nfosmesa: glTexCoord2fv"));
 	SelectContext(ctx);
-	fn.glTexCoord2fv(  v );
+	Atari2HostFloatPtr(2, (Uint32 *)v, tmp);
+	fn.glTexCoord2fv( tmp );
 }
 
 void OSMesaDriver::glTexCoord2iv(Uint32 ctx, const GLint *v )
@@ -1289,9 +1328,12 @@ void OSMesaDriver::glTexCoord3dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glTexCoord3fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[3];
+
 	D(bug("nfosmesa: glTexCoord3fv"));
 	SelectContext(ctx);
-	fn.glTexCoord3fv(  v );
+	Atari2HostFloatPtr(3, (Uint32 *)v, tmp);
+	fn.glTexCoord3fv( tmp );
 }
 
 void OSMesaDriver::glTexCoord3iv(Uint32 ctx, const GLint *v )
@@ -1320,9 +1362,12 @@ void OSMesaDriver::glTexCoord4dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glTexCoord4fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[4];
+
 	D(bug("nfosmesa: glTexCoord4fv"));
 	SelectContext(ctx);
-	fn.glTexCoord4fv(  v );
+	Atari2HostFloatPtr(4, (Uint32 *)v, tmp);
+	fn.glTexCoord4fv( tmp );
 }
 
 void OSMesaDriver::glTexCoord4iv(Uint32 ctx, const GLint *v )
@@ -1435,9 +1480,12 @@ void OSMesaDriver::glRasterPos2dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glRasterPos2fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[2];
+
 	D(bug("nfosmesa: glRasterPos2fv"));
 	SelectContext(ctx);
-	fn.glRasterPos2fv(  v );
+	Atari2HostFloatPtr(2, (Uint32 *)v, tmp);
+	fn.glRasterPos2fv( tmp );
 }
 
 void OSMesaDriver::glRasterPos2iv(Uint32 ctx, const GLint *v )
@@ -1466,9 +1514,12 @@ void OSMesaDriver::glRasterPos3dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glRasterPos3fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[3];
+
 	D(bug("nfosmesa: glRasterPos3fv"));
 	SelectContext(ctx);
-	fn.glRasterPos3fv(  v );
+	Atari2HostFloatPtr(3, (Uint32 *)v, tmp);
+	fn.glRasterPos3fv(tmp);
 }
 
 void OSMesaDriver::glRasterPos3iv(Uint32 ctx, const GLint *v )
@@ -1497,9 +1548,12 @@ void OSMesaDriver::glRasterPos4dv(Uint32 ctx, const GLdouble *v )
 
 void OSMesaDriver::glRasterPos4fv(Uint32 ctx, const GLfloat *v )
 {
+	GLfloat tmp[4];
+
 	D(bug("nfosmesa: glRasterPos4fv"));
 	SelectContext(ctx);
-	fn.glRasterPos4fv(  v );
+	Atari2HostFloatPtr(4, (Uint32 *)v, tmp);
+	fn.glRasterPos4fv( tmp );
 }
 
 void OSMesaDriver::glRasterPos4iv(Uint32 ctx, const GLint *v )
@@ -1557,9 +1611,13 @@ void OSMesaDriver::glRectdv(Uint32 ctx, const GLdouble *v1, const GLdouble *v2 )
 
 void OSMesaDriver::glRectfv(Uint32 ctx, const GLfloat *v1, const GLfloat *v2 )
 {
+	GLfloat tmp1[4],tmp2[4];
+
 	D(bug("nfosmesa: glRectfv"));
 	SelectContext(ctx);
-	fn.glRectfv(  v1,  v2 );
+	Atari2HostFloatPtr(4, (Uint32 *)v1, tmp1);
+	Atari2HostFloatPtr(4, (Uint32 *)v2, tmp2);
+	fn.glRectfv( tmp1, tmp2 );
 }
 
 void OSMesaDriver::glRectiv(Uint32 ctx, const GLint *v1, const GLint *v2 )
@@ -1676,9 +1734,12 @@ void OSMesaDriver::glLighti(Uint32 ctx, GLenum light, GLenum pname, GLint param 
 
 void OSMesaDriver::glLightfv(Uint32 ctx, GLenum light, GLenum pname, const GLfloat *params )
 {
+	GLfloat tmp[4];
+
 	D(bug("nfosmesa: glLightfv"));
 	SelectContext(ctx);
-	fn.glLightfv(  light,  pname,  params );
+	Atari2HostFloatPtr(4, (Uint32 *)params,tmp);
+	fn.glLightfv(  light,  pname,  tmp );
 }
 
 void OSMesaDriver::glLightiv(Uint32 ctx, GLenum light, GLenum pname, const GLint *params )
@@ -1718,9 +1779,21 @@ void OSMesaDriver::glLightModeli(Uint32 ctx, GLenum pname, GLint param )
 
 void OSMesaDriver::glLightModelfv(Uint32 ctx, GLenum pname, const GLfloat *params )
 {
+	GLfloat tmp[4];
+	int size;
+
 	D(bug("nfosmesa: glLightModelfv"));
 	SelectContext(ctx);
-	fn.glLightModelfv(  pname,  params );
+	switch(pname) {
+		case GL_LIGHT_MODEL_AMBIENT:
+			size=4;
+			break;
+		default:
+			size=1;
+			break;
+	}
+	Atari2HostFloatPtr(size, (Uint32 *)params,tmp);
+	fn.glLightModelfv(  pname, tmp );
 }
 
 void OSMesaDriver::glLightModeliv(Uint32 ctx, GLenum pname, const GLint *params )
@@ -1746,9 +1819,24 @@ void OSMesaDriver::glMateriali(Uint32 ctx, GLenum face, GLenum pname, GLint para
 
 void OSMesaDriver::glMaterialfv(Uint32 ctx, GLenum face, GLenum pname, const GLfloat *params )
 {
+	GLfloat tmp[4];
+	int size;
+
 	D(bug("nfosmesa: glMaterialfv"));
 	SelectContext(ctx);
-	fn.glMaterialfv(  face,  pname,  params );
+	switch(pname) {
+		case GL_SHININESS:
+			size=1;
+			break;
+		case GL_COLOR_INDEXES:
+			size=3;
+			break;
+		default:
+			size=4;
+			break;
+	}
+	Atari2HostFloatPtr(size, (Uint32 *)params,tmp);
+	fn.glMaterialfv(  face,  pname,  tmp );
 }
 
 void OSMesaDriver::glMaterialiv(Uint32 ctx, GLenum face, GLenum pname, const GLint *params )
@@ -1816,9 +1904,16 @@ void OSMesaDriver::glPixelTransferi(Uint32 ctx, GLenum pname, GLint param )
 
 void OSMesaDriver::glPixelMapfv(Uint32 ctx, GLenum map, GLsizei mapsize, const GLfloat *values )
 {
+	GLfloat *tmp;
+
 	D(bug("nfosmesa: glPixelMapfv"));
-	SelectContext(ctx);
-	fn.glPixelMapfv(  map,  mapsize,  values );
+	tmp=(GLfloat *)malloc(mapsize*sizeof(GLfloat));
+	if (tmp) {
+		SelectContext(ctx);
+		Atari2HostFloatPtr(mapsize, (Uint32 *)values, tmp);
+		fn.glPixelMapfv(  map,  mapsize,  tmp );
+		free(tmp);
+	}
 }
 
 void OSMesaDriver::glPixelMapuiv(Uint32 ctx, GLenum map, GLsizei mapsize, const GLuint *values )
@@ -1945,9 +2040,12 @@ void OSMesaDriver::glTexGendv(Uint32 ctx, GLenum coord, GLenum pname, const GLdo
 
 void OSMesaDriver::glTexGenfv(Uint32 ctx, GLenum coord, GLenum pname, const GLfloat *params )
 {
+	GLfloat tmp[4];
+	
 	D(bug("nfosmesa: glTexGenfv"));
 	SelectContext(ctx);
-	fn.glTexGenfv(  coord,  pname,  params );
+	Atari2HostFloatPtr(4, (Uint32 *)params, tmp);
+	fn.glTexGenfv(  coord,  pname,  tmp );
 }
 
 void OSMesaDriver::glTexGeniv(Uint32 ctx, GLenum coord, GLenum pname, const GLint *params )
@@ -1994,9 +2092,14 @@ void OSMesaDriver::glTexEnvi(Uint32 ctx, GLenum target, GLenum pname, GLint para
 
 void OSMesaDriver::glTexEnvfv(Uint32 ctx, GLenum target, GLenum pname, const GLfloat *params )
 {
+	GLfloat tmp[4];
+
 	D(bug("nfosmesa: glTexEnvfv"));
 	SelectContext(ctx);
-	fn.glTexEnvfv(  target,  pname,  params );
+	if (pname==GL_BLEND) {
+		Atari2HostFloatPtr(4, (Uint32 *)params, tmp);
+	}
+	fn.glTexEnvfv(  target,  pname,  tmp );
 }
 
 void OSMesaDriver::glTexEnviv(Uint32 ctx, GLenum target, GLenum pname, const GLint *params )
@@ -2036,9 +2139,17 @@ void OSMesaDriver::glTexParameteri(Uint32 ctx, GLenum target, GLenum pname, GLin
 
 void OSMesaDriver::glTexParameterfv(Uint32 ctx, GLenum target, GLenum pname, const GLfloat *params )
 {
+	GLfloat tmp[4];
+	int size;
+
 	D(bug("nfosmesa: glTexParameterfv"));
 	SelectContext(ctx);
-	fn.glTexParameterfv(  target,  pname,  params );
+	size=1;
+	if (pname==GL_TEXTURE_BORDER_COLOR) {
+		size=4;
+	}	
+	Atari2HostFloatPtr(size, (Uint32 *)params, tmp);
+	fn.glTexParameterfv(  target,  pname, tmp );
 }
 
 void OSMesaDriver::glTexParameteriv(Uint32 ctx, GLenum target, GLenum pname, const GLint *params )

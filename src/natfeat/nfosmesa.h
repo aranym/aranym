@@ -31,6 +31,8 @@
 
 /*--- Defines ---*/
 
+#define NFOSMESA_GLEXT	0	/* 1 If you want to compile with extensions */
+
 #define MAX_OSMESA_CONTEXTS	16
 
 /*--- Types ---*/
@@ -40,7 +42,8 @@ typedef struct {
 	void *buffer;
 	GLenum type;
 	GLsizei width, height;
-	SDL_bool conversion;
+	SDL_bool conversion;	/* conversion needed from srcformat to dstformat ? */
+	GLenum srcformat, dstformat;
 } context_t;
 
 /*--- Class ---*/
@@ -62,6 +65,8 @@ class OSMesaDriver : public NF_Base
 		GLdouble Atari2HostDouble(Uint32 high, Uint32 low);
 		void Atari2HostDoublePtr(Uint32 size, Uint32 *src, GLdouble *dest);
 		GLfloat Atari2HostFloat(Uint32 high, Uint32 low);
+		void Atari2HostFloatPtr(Uint32 size, Uint32 *src, GLfloat *dest);
+		void ConvertContext(Uint32 ctx);
 
 		Uint32 OSMesaCreateContext( GLenum format, Uint32 sharelist );
 		Uint32 OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, Uint32 sharelist);
@@ -76,7 +81,9 @@ class OSMesaDriver : public NF_Base
 
 
 #include "nfosmesa/proto-gl.h"
-#include "nfosmesa/proto-glext.h"
+#if NFOSMESA_GLEXT
+# include "nfosmesa/proto-glext.h"
+#endif
 
 	public:
 		char *name();
