@@ -65,6 +65,7 @@ void Parallel::setData(uint8 value)
 {
 #if CONSOLE
 	putchar(value);
+	fflush(stdout);
 #else
 	outportb(port, value);
 #endif
