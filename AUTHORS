@@ -116,6 +116,7 @@ Thanks go to :-
 Francois LE COAT
 - for the Solaris port
 - for work on MacOSX port
+- sinh/tanh debugged and fixed
 
 Olivier Landemarre
 - for the Windows/cygwin binaries
