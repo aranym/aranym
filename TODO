@@ -4,6 +4,8 @@ Some hot ideas (before we'll forget them :-)
 Note that the name before a TODO item doesn't mean the item is assigned to
 that particular programmer but rather who is the author of the idea :-)
 
+- joy: fix the mouse jumping in fVDI with STOP#$2000 enabled FreeMiNT kernel
+
 - joy: Clipboard sharing between host and atari. Some URLs for inspiration:
   http://www.idata.sk/~robo/mpcb/
   http://www.freedesktop.org/standards/clipboards.txt
