@@ -1560,9 +1560,8 @@ if test "x$WANT_NFOSMESA" = "xyes"; then
 		AC_MSG_ERROR([*** OpenGL rendering is not compatible with nfosmesa ***])
 		WANT_NFOSMESA="no"
 	else
-		AC_CHECK_HEADER(SDL/SDL_loadso.h, have_sdlloadso_hdr=yes)
 		AC_CHECK_LIB(SDL, SDL_LoadObject, have_sdlloadso=yes, have_sdlloadso=no)
-		if test "x$have_sdlloadso_hdr" = "xyes" -a "x$have_sdlloadso" = "xyes"; then
+		if test "x$have_sdlloadso" = "xyes"; then
 			AC_DEFINE([NFOSMESA_SUPPORT], 1, [Define if you want to use host OSMesa driver])
 			NFOSMESASRCS="../natfeat/nfosmesa.cpp"
 		else
@@ -1577,12 +1576,13 @@ dnl Natfeat JPEG decoder
 NFJPEGSRCS=""
 if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
 	dnl Check for SDL_Image
-	AC_CHECK_HEADER(SDL/SDL_image.h, have_sdlimage_hdr=yes)
 	AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
-	if test "x$have_sdlimage_hdr"="xyes" -a "x$have_sdlimage_lib"="xyes"; then
+	if test "x$have_sdlimage_lib"="xyes"; then
 		AC_DEFINE([NFJPEG_SUPPORT], 1, [Define if you want to use host JPEG decoder])
 		NFJPEGSRCS="../natfeat/nfjpeg.cpp"
 		LIBS="$LIBS -lSDL_image"
+	else
+		WANT_NFJPEG="no"
 	fi
 fi
 

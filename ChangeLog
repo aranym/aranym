@@ -1,3 +1,7 @@
+2005/01/22 - Patrice
+- configure on MacOSX does not like using AC_CHECK_HEADER.
+
+
 2005/01/22 - Petr
 - input.{cpp,h}: little cleanup, private things declared static
 - main.cpp: little cleanup, removed unused function
