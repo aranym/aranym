@@ -158,7 +158,7 @@ void preset_ide() {
 
 void preset_cfg() {
   preset_ide();
-  bx_options.cookies._mch = 0x00003000; // Falcon030
+  bx_options.cookies._mch = 0x00030000; // Falcon030
   bx_options.autoMouseGrab = true;
 }
 
