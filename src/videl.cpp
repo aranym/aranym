@@ -576,7 +576,7 @@ void VIDEL::renderScreenZoom()
 	uint8 *hvram = (uint8 *) hostScreen.getVideoramAddress();
 
 	/* Integer zoom coef ? */
-	if ((bx_options.autozoom.integercoefs) && (scrwidth>vw) && (scrheight>vh)) {
+	if ((bx_options.autozoom.integercoefs) && (scrwidth>=vw) && (scrheight>=vh)) {
 		int coefx = scrwidth/vw;
 		int coefy = scrheight/vh;
 
