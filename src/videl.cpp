@@ -304,17 +304,21 @@ void VIDEL::renderScreenNoFlag()
 			if (! bx_options.video.direct_truecolor)
 #endif
 			{
-				if ( /* videocard memory in Motorola endian format */ false) {
-					memcpy(hvram, fvram, planeWordCount << 1);
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+				//FIXME: here might be a runtime little/big video endian switch like:
+				//      if ( /* videocard memory in Motorola endian format */ false) {
+				memcpy(hvram, fvram, planeWordCount << 1);
+#else
+				for (int w = 0; w < planeWordCount; w++) {
+					// byteswap
+					int data = fvram[w];
+					((uint16 *) hvram)[w] = (data >> 8) | ((data & 0xff) << 8);
 				}
-				else {
-					for (int w = 0; w < planeWordCount; w++) {
-						// byteswap
-						int data = fvram[w];
-						((uint16 *) hvram)[w] = (data >> 8) | ((data & 0xff) << 8);
-					}
-				}
+#endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
+
 			}
+
 
 #ifdef SUPPORT_MULTIPLEDESTBPP
 
@@ -360,6 +364,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.30  2001/11/11 22:03:09  joy
+ * direct truecolor is optional (compile time configurable)
+ *
  * Revision 1.29  2001/11/04 23:17:08  standa
  * 8bit destination surface support in VIDEL. Blit routine optimalization.
  * Bugfix in compatibility modes palette copying.
