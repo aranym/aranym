@@ -233,9 +233,9 @@ int lastint_no;
 #define get_iword_1(o) get_word(regs.pcp + (o), false)
 #define get_ilong_1(o) get_long(regs.pcp + (o), false)
 #else
-#define get_ibyte_1(o) get_byte(regs.pc + (regs.pc_p - regs.pc_oldp) + (o) + 1, false)
-#define get_iword_1(o) get_word(regs.pc + (regs.pc_p - regs.pc_oldp) + (o), false)
-#define get_ilong_1(o) get_long(regs.pc + (regs.pc_p - regs.pc_oldp) + (o), false)
+#define get_ibyte_1(o) get_byte(regs.pc + (regs.pcp - regs.pcoldp) + (o) + 1, false)
+#define get_iword_1(o) get_word(regs.pc + (regs.pcp - regs.pcoldp) + (o), false)
+#define get_ilong_1(o) get_long(regs.pc + (regs.pcp - regs.pcoldp) + (o), false)
 #endif
 
 uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
@@ -1799,6 +1799,7 @@ static void m68k_run_1 (void)
 {
 	for (;;) {
 		uae_u32 opcode = GET_OPCODE;
+//fprintf(stderr, "%08lx", opcode);
 		(*cpufunctbl[opcode])(opcode);
 		if (regs.spcflags) {
 			if (do_specialties())
@@ -1927,9 +1928,12 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 	*nextpc = m68k_getpc () + m68kpc_offset;
 }
 
+#ifdef NEWDEBUG
 void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, unsigned int cnt)
 {
     char *buffer = (char *)malloc(80 * sizeof(char));
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
     strcpy(buffer,"");
     uaecptr newpc = 0;
     m68kpc_offset = addr - m68k_getpc ();
@@ -1941,6 +1945,12 @@ void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, unsigned int cnt)
 	get_iword_1 (m68kpc_offset);
 	m68kpc_offset += 2;
     } else {
+setjmpagain:
+        int prb = setjmp(excep_env);
+        if (prb != 0) {
+		fprintf (f, " unknown address\n");
+                goto setjmpagain;
+        }
 	while (cnt-- > 0) {
 		char instrname[20],*ccpt;
 		int opwords;
@@ -1998,7 +2008,9 @@ void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, unsigned int cnt)
     if (nextpc)
 	*nextpc = m68k_getpc () + m68kpc_offset;
     free(buffer);
+    excep_env = excep_env_old;
 }
+#endif
 
 void m68k_dumpstate (uaecptr *nextpc)
 {

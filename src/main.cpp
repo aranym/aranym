@@ -208,8 +208,8 @@ static void check_event(void)
             if (pressed) {
                 // process some hotkeys
                 if (sym == SDLK_PAUSE) {
-		  if (shifted) pendingQuit = true;
-                } else if (start_debug && alternated) {
+		  if (shifted)  pendingQuit = true;
+                  else if (start_debug && alternated) {
                     // release mouse
                     grabMouse(false);
                     // show it
@@ -218,6 +218,7 @@ static void check_event(void)
                     canGrabAgain = false;
                     // activate debugger
                     activate_debugger();
+		  }
                 }
                 
                 else if (sym == SDLK_F11)

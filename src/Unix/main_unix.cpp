@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 	TTRAMSize = 32*1024*1024;
 
 	program_name = argv[0];
-	decode_switches(argc, argv);
+	(void)decode_switches(stderr, argc, argv);
 
 #ifdef NEWDEBUG
 	if (start_debug) ndebug::init();
@@ -262,6 +262,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.38  2001/08/21 18:19:16  milan
+ * CPU update, disk's geometry autodetection - the 1st step
+ *
  * Revision 1.37  2001/08/10 18:41:24  milan
  * Some patches, see ChangeLog (CPU API etc.), debianized
  *

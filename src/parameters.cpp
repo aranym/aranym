@@ -47,7 +47,7 @@ bx_options_t bx_options;
 // configuration file 
 struct Config_Tag global_conf[]={
 	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
-	{ "DebugOnStart", Long_Tag, &start_debug},
+	{ "DebugOnStart", Bool_Tag, &start_debug},
 	{ NULL , Error_Tag, NULL }
 };
 
@@ -64,7 +64,7 @@ struct Config_Tag global_conf[]={
 BX_DISK_CONFIG(diskc);
 BX_DISK_CONFIG(diskd);
 
-static void decode_ini_file(void);
+static void decode_ini_file(FILE *);
 
 void usage (int status) {
   printf ("ARAnyM\n");
@@ -145,12 +145,12 @@ void preset_cfg() {
   preset_ide();
 }
 
-int decode_switches (int argc, char **argv) {
-	int c;
-
+int decode_switches (FILE *f, int argc, char **argv) {
 	preset_cfg();
-	decode_ini_file();
-  
+	decode_ini_file(f);
+
+#ifndef CONFGUI
+	int c;
 	while ((c = getopt_long (argc, argv,
 							 "R:" /* ROM file */
 							 "D"  /* debugger */
@@ -247,19 +247,22 @@ int decode_switches (int argc, char **argv) {
 		}
 	}
 	return optind;
+#else /* CONFGUI */
+	return 0;
+#endif
 }
 
-static void process_config(const char *filename, struct Config_Tag *conf, char *title, bool verbose) {
+static void process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose) {
 	int status = input_config(filename, conf, title);
 	if (verbose) {
 		if (status >= 0)
-			printf("%s configuration: found %d valid directives.\n", title, status);
+			fprintf(f, "%s configuration: found %d valid directives.\n", title, status);
 		else
-			printf("Error while reading/processing the '%s' config file.\n", filename);
+			fprintf(f, "Error while reading/processing the '%s' config file.\n", filename);
 	}
 }
 
-static void decode_ini_file(void) {
+static void decode_ini_file(FILE *f) {
 	char *home;
 	char *rcfile;
 
@@ -272,9 +275,16 @@ static void decode_ini_file(void) {
 	}
 	strcpy(rcfile, home);
 	strcat(rcfile, ARANYMRC);
-	printf("Using config file: '%s'\n", rcfile);
+	fprintf(f, "Using config file: '%s'\n", rcfile);
 
-	process_config(rcfile, global_conf, "[GLOBAL]", true);
-	process_config(rcfile, diskc_configs, "[IDE0]", true);
-	process_config(rcfile, diskd_configs, "[IDE1]", true);
+	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
+	process_config(f, rcfile, diskc_configs, "[IDE0]", true);
+	process_config(f, rcfile, diskd_configs, "[IDE1]", true);
+}
+
+int save_settings(const char *fs) {
+	update_config(fs,global_conf,"[GLOBAL]");
+	update_config(fs,diskc_configs,"[IDE0]");
+	update_config(fs,diskd_configs,"[IDE1]");
+	return 0;
 }

@@ -29,6 +29,9 @@
 /* Define if using full MMU */
 #undef FULLMMU
 
+/* Define if you want TV conf GUI and have TV lib */
+#undef HAVE_TVISION
+
 /* Define if your system has a working vm_allocate()-based memory allocator */
 #undef HAVE_MACH_VM
 

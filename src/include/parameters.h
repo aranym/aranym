@@ -93,7 +93,8 @@ extern ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 extern char *program_name;
 extern char rom_path[512];
 
-void usage(int status);
-int decode_switches(int argc, char **argv);
+void usage(int);
+extern int decode_switches(FILE *, int, char **);
+extern int save_settings(const char *);
 
 #endif

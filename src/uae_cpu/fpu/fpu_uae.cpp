@@ -782,7 +782,7 @@ static __inline__ int get_fp_value (uae_u32 opcode, uae_u16 extra, double *src)
   static int sz2[8] = {4, 4, 12, 12, 2, 8, 2, 0};
 
 	// D(bug("get_fp_value(%X,%X)\r\n",(int)opcode,(int)extra));
-	// dump_first_bytes( regs.pc_p-4, 16 );
+	// dump_first_bytes( regs.pcp-4, 16 );
 
   if ((extra & 0x4000) == 0) {
 		*src = regs.fp[(extra >> 10) & 7];

@@ -1,3 +1,19 @@
+2001/08/29 - milan
+- stupid buggy preversion of TV conf. GUI aranymrc, needs to rewrite in
+  better form, something as powertweak's text mode conf. Output in
+  aranymtest.rc file. Also needed to find problem with size of strings
+  (buffer overflow).
+
+- directive DebugOnStart from ARANYMRC changed to Bool_Tag
+
+- patched stupid mistake by entry of debugger (Alt x Alt+Break)
+
+- some small corrections for MMU
+
+- newm68k_disasm hasn't any problem with memory addressing now
+  (set/longjmp problem)
+
+
 2001/08/29 STanda
 
 - VIDEL got the doRender flag with setter setRendering(). 
@@ -9,7 +25,7 @@
 - fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
 
 
-2001/08/20
+2001/08/20 - milan
 
 - support for autodetection of a real disk's geometry in Linux, also for
   createdisk.sh's disks, but new version of parameters.cpp needs reorganization

@@ -55,7 +55,12 @@ extern void deactivate_debugger(void);
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef NDEBUG
+#ifdef CONFGUI
+#undef NEWDEBUG
+#undef DEBUG
+#endif
+
+#ifdef NEWDEBUG
 #define bug ndebug::dbprintf
 #else
 #define bug dbprintf

@@ -2,7 +2,7 @@
 
 [GLOBAL]
 ; If you want debugger to start automatically, uncomment the next line
-; DebugOnStart = 1
+; DebugOnStart = Yes
 
 ; ROM file path:
 ; TOS = /usr/local/share/aranym/ROM

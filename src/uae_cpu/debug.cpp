@@ -163,7 +163,7 @@ void debug (void)
     if (do_skip && skipaddr == 0xC0DEDBAD) {
 #if 0
 	if (trace_same_insn_count > 0) {
-	    if (memcmp (trace_insn_copy, regs.pc_p, 10) == 0
+	    if (memcmp (trace_insn_copy, regs.pcp, 10) == 0
 		&& memcmp (trace_prev_regs.regs, regs.regs, sizeof regs.regs) == 0)
 	    {
 		trace_same_insn_count++;

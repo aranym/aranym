@@ -25,6 +25,9 @@ LIBS = @LIBS@
 SDL_LIBS = @SDL_LIBS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_CFLAGS = @SDL_CFLAGS@
+TV_LIBS = @TV_LIBS@
+TV_CONFIG = @TV_CONFIG@
+TV_CFLAGS = @TV_CFLAGS@
 SYSSRCS = @SYSSRCS@
 CPUSRCS = @CPUSRCS@
 INSTALL = @INSTALL@
@@ -54,6 +57,7 @@ SRCS = ../main.cpp \
 	../gfxprimitives.cpp \
 	../hostscreen.cpp \
 	../ide.cpp \
+	../identify.cpp \
 	../mfp.cpp \
 	../mmu.cpp \
 	../ndebug.cpp \
@@ -64,6 +68,7 @@ SRCS = ../main.cpp \
 	$(SYSSRCS) \
 	$(CPUSRCS)
 APP = aranym
+APPCONFTV = aranymrc
 
 ## Rules
 .PHONY: install installdirs uninstall mostlyclean clean distclean depend dep
@@ -124,7 +129,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -f $(APP) $(OBJ_DIR)/* core* *.core *~ *.bak
+	rm -f $(APP) $(OBJ_DIR)/* core* *.core *~ *.bak $(APPCONFTV)
 
 clean: mostlyclean
 	rm -f cpuemu.cpp cpudefs.cpp cputmp*.s cpufast*.s cpustbl.cpp cputbl.h
@@ -239,6 +244,22 @@ cpufast8.s: cpuemu.cpp $(OBJ_DIR)/cpuopti
 	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 -S $(CXXFLAGS) $< -o cputmp8.s
 	$(OBJ_DIR)/cpuopti <cputmp8.s >$@ || mv cputmp8.s $@
 	rm -f cputmp8.s
+
+# ARAnyMrc
+#
+$(APPCONFTV): $(OBJ_DIR)/aranymrc.o $(OBJ_DIR)/cfgoptsrc.o $(OBJ_DIR)/parametersrc.o $(OBJ_DIR)/parameters_unixrc.o $(OBJ_DIR)/ndebugrc.o
+	$(CXX) -o $(APPCONFTV) $(LDFLAGS) $(OBJ_DIR)/aranymrc.o $(OBJ_DIR)/cfgoptsrc.o $(OBJ_DIR)/parametersrc.o $(OBJ_DIR)/parameters_unixrc.o $(OBJ_DIR)/ndebugrc.o $(LIBS) $(TV_LIBS)
+	
+$(OBJ_DIR)/aranymrc.o: ../aranymrc.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) $(TV_CFLAGS) -DCONFGUI -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c ../aranymrc.cpp -o $@
+$(OBJ_DIR)/cfgoptsrc.o: ../cfgopts.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DCONFGUI -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c ../cfgopts.cpp -o $@
+$(OBJ_DIR)/parametersrc.o: ../parameters.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DCONFGUI -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c ../parameters.cpp -o $@
+$(OBJ_DIR)/parameters_unixrc.o: parameters_unix.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DCONFGUI -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c parameters_unix.cpp -o $@
+$(OBJ_DIR)/ndebugrc.o: ../ndebug.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DCONFGUI -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c ../ndebug.cpp -o $@
 
 #-------------------------------------------------------------------------
 # DO NOT DELETE THIS LINE -- make depend depends on it.

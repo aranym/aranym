@@ -832,7 +832,7 @@ static void gen_opcode (unsigned long int opcode)
 
     start_brace ();
 #if 0
-    printf ("uae_u8 *m68k_pc = regs.pc_p;\n");
+    printf ("uae_u8 *m68k_pc = regs.pcp;\n");
 #endif
     m68k_pc_offset = 2;
     switch (curi->plev) {

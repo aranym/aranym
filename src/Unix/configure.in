@@ -7,8 +7,7 @@ AC_CONFIG_HEADER(config.h)
 
 dnl Options.
 AC_ARG_ENABLE(ndebug,          [  --enable-ndebug         enable new debugger [default=no]], [WANT_NDEBUG=$enableval], [WANT_NDEBUG=no])
-AC_ARG_ENABLE(fullmmu,          [  --enable-fullmmu        enable full 68040 MMU [default=no]], [WANT_MMU=$enableval], [WANT_MMU=no])
-
+AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU [default=no]], [WANT_MMU=$enableval], [WANT_MMU=no])
 
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
@@ -36,6 +35,8 @@ AC_ARG_ENABLE(addressing,
 ],
 [ ADDRESSING_TEST_ORDER="real direct banks"
 ])
+
+AC_ARG_WITH(tvconfgui,         [  --with-tvconfgui        with TurboVision configuration GUI [default=no]], [WANT_TVCONFGUI=$withval], [WANT_TVCONFGUI=no])
 
 dnl Canonical system information.
 AC_CANONICAL_HOST
@@ -128,6 +129,54 @@ AC_DEFUN(AC_TRANSLATE_DEFINE, [
     if [[ "x$2" = "xyes" -o "x$2" = "xguessing yes" ]]; then
         AC_DEFINE($1)
     fi
+])
+
+dnl Written by Laurynas Biveinis
+dnl GNU Autoconf macro AC_CXX_OPT(option)
+dnl Checks if C++ compiler supports specified option.
+dnl If yes - adds that option to CXXFLAGS.
+
+AC_DEFUN(AC_CXX_OPT,
+[
+   AC_REQUIRE([AC_PROG_CXX])
+   AC_REQUIRE([AC_LANG_CPLUSPLUS])
+   AC_MSG_CHECKING([if C++ compiler supports $1 option])
+   old_cxxflags=$CXXFLAGS
+   CXXFLAGS="$1 $CXXFLAGS"
+   AC_TRY_COMPILE([ ], [ ], test_opt=yes)
+   if test -z test_opt; then
+      CXXFLAGS=$old_cxxflags
+      AC_MSG_RESULT(no)
+   else
+      AC_MSG_RESULT(yes)
+fi
+])
+
+dnl GNU Autoconf macro AC_LIB_TVISION
+dnl Checks for Turbo Vision library. If it is available - adds it
+dnl to LIBS variable and defines HAVE_TVISION.
+
+AC_DEFUN(AC_LIB_TVISION, 
+[
+   AC_REQUIRE([AC_PROG_CXX])
+   AC_REQUIRE([AC_LANG_CPLUSPLUS])
+   AC_MSG_CHECKING([for Turbo Vision library])
+   ac_lb_save_LIBS="$LIBS"
+   LIBS="-lrhtv $LIBS"
+   AC_TRY_LINK([void win_ver(void);], [win_ver();], AC_DEFINE(HAVE_TVISION) tvlib=RHTV)
+   if test -z $tvlib; then
+      LIBS=$ac_lb_save_LIBS
+      LIBS="-ltv $LIBS"
+      AC_TRY_LINK([void win_ver(void);], [win_ver();], AC_DEFINE(HAVE_TVISION) tvlib=TV)
+      if test -z $tvlib; then
+         LIBS=$ac_lb_save_LIBS
+         AC_MSG_ERROR(not found)
+      else
+         AC_MSG_RESULT([old version 1.0.3- found])
+      fi
+   else
+      AC_MSG_RESULT(v1.0.4+ found)
+   fi
 ])
 
 dnl Various checks if the system supports vm_allocate() and the like functions.
@@ -316,16 +365,18 @@ AC_CACHE_CHECK("whether we can map Low Memory area 0x0000-0x2000",
   ]
 )
 
-
 dnl New debugger
 if [[ "x$WANT_NDEBUG" = "xyes" ]]; then
-    AC_CHECK_LIB(ncurses, waddch, HAVE_NCURSES_LIB=yes, HAVE_NCURSES_LIB=no)
     AC_DEFINE(NEWDEBUG)
-    if [[ "x$HAVE_NCURSES_LIB" = "xyes" ]]; then
-        LIBS="$LIBS -lncurses"
-    else
-        AC_MSG_ERROR([For newdebugger libncurses needed!])
-    fi
+fi
+
+dnl TurboVision conf GUI
+if [[ "x$WANT_TVCONFGUI" = "xyes" ]]; then
+dnl     AC_LIB_TVISION need another func than win_ver
+    AC_CHECK_HEADERS(rhtvision/tv/applictn.h)
+    AC_DEFINE(HAVE_TVISION)
+    TV_CFLAGS="-I/usr/include/rhtvision"
+    TV_LIBS="-lrhtv"
 fi
 
 dnl Full MMU
@@ -525,6 +576,8 @@ AC_SUBST(DEFINES)
 AC_SUBST(SYSSRCS)
 AC_SUBST(CPUINCLUDES)
 AC_SUBST(CPUSRCS)
+AC_SUBST(TV_CFLAGS)
+AC_SUBST(TV_LIBS)
 AC_OUTPUT(Makefile)
 
 dnl Print summary.
@@ -535,5 +588,7 @@ echo Running m68k code natively ....... : $WANT_NATIVE_M68K
 echo Floating-Point emulation core .... : $FPE_CORE_STR
 echo Assembly optimizations ........... : $ASM_OPTIMIZATIONS
 echo Addressing mode .................. : $ADDRESSING_MODE
+echo Aranymrc confgui ................. : $WANT_TVCONFGUI
+
 echo
 echo "Configuration done. Now type \"make\" (or \"gmake\")."
