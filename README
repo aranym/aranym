@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.0.21 dated 2002/02/12
+      version 0.1.5 dated 2002/04/11
 
 
  1) License
@@ -190,12 +190,13 @@ Example for bash: export SDL_MOUSEDEV_IMPS2=1; aranym
  Read ChangeLog for internal changes.
  Look at TODO if you want to help us.
 
- Write us at aranym@sophics.cz.
+ Join our mailing list for ARAnyM users - the WEB interface for the list
+ is at http://nightmare.sh.cvut.cz/cgi-bin/mailman/listinfo/aranym-user/
 
  Visit http://aranym.atari.org/ for latest information and source code.
 
- For developers we have a mailing list and a CVS server. For details
- go to http://aranym.atari.org/
+ For developers we have a developer mailing list and a CVS server.
+ For details go to http://aranym.atari.org/
 
 
 May the Power Without The Price be with you again!
