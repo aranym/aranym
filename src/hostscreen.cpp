@@ -1,7 +1,7 @@
 /*
  * hostscreen.cpp - host video routines
  *
- * Copyright (c) 2001-2003 Standa of ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2001-2003 STanda of ARAnyM developer team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -511,12 +511,12 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixx)
-						*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 					break;
 				case 2:
 					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint8*)pixel = fgColor; // STanda
+							*(uint8*)pixel = fgColor;
 					break;
 				case 3:
 					for (; pixel<pixellast; pixel += pixx)
@@ -526,7 +526,7 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 				case 4:
 					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
-							*(uint8*)pixel = fgColor; // STanda
+							*(uint8*)pixel = fgColor;
 					break;
 			}
 			break;
@@ -535,12 +535,12 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixx)
-						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 					break;
 				case 2:
 					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint16*)pixel = fgColor; // STanda
+							*(uint16*)pixel = fgColor;
 					break;
 				case 3:
 					for (; pixel<pixellast; pixel += pixx)
@@ -550,7 +550,7 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 				case 4:
 					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
-							*(uint16*)pixel = fgColor; // STanda
+							*(uint16*)pixel = fgColor;
 					break;
 			}
 			break;
@@ -584,12 +584,12 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixx)
-						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 					break;
 				case 2:
 					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint32*)pixel = fgColor; // STanda
+							*(uint32*)pixel = fgColor;
 					break;
 				case 3:
 					for (; pixel<pixellast; pixel += pixx)
@@ -599,7 +599,7 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 				case 4:
 					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
-							*(uint32*)pixel = fgColor; // STanda
+							*(uint32*)pixel = fgColor;
 					break;
 			}
 			break;
@@ -646,12 +646,12 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixy)
-						*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 					break;
 				case 2:
 					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint8*)pixel = fgColor; // STanda
+							*(uint8*)pixel = fgColor;
 					break;
 				case 3:
 					for (; pixel<pixellast; pixel += pixy)
@@ -661,7 +661,7 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 				case 4:
 					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
-							*(uint8*)pixel = fgColor; // STanda
+							*(uint8*)pixel = fgColor;
 					break;
 			}
 			break;
@@ -669,12 +669,12 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixy)
-						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 					break;
 				case 2:
 					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint16*)pixel = fgColor; // STanda
+							*(uint16*)pixel = fgColor;
 					break;
 				case 3:
 					for (; pixel<pixellast; pixel += pixy)
@@ -684,7 +684,7 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 				case 4:
 					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
-							*(uint16*)pixel = fgColor; // STanda
+							*(uint16*)pixel = fgColor;
 					break;
 			}
 			break;
@@ -715,12 +715,12 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixy)
-						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 					break;
 				case 2:
 					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint32*)pixel = fgColor; // STanda
+							*(uint32*)pixel = fgColor;
 					break;
 				case 3:
 					for (; pixel<pixellast; pixel += pixy)
@@ -730,7 +730,7 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 				case 4:
 					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
-							*(uint32*)pixel = fgColor; // STanda
+							*(uint32*)pixel = fgColor;
 					break;
 			}
 			break;
@@ -810,7 +810,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 			switch (logOp) {
 				case 1:
 					for (; x < dx; x++, pixel += pixx) {
-						*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 
 						y += dy;
 						if (y >= dx) {
@@ -822,7 +822,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 				case 2:
 					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint8*)pixel = fgColor; // STanda
+							*(uint8*)pixel = fgColor;
 
 						y += dy;
 						if (y >= dx) {
@@ -846,7 +846,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 				case 4:
 					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
-							*(uint8*)pixel = fgColor; // STanda
+							*(uint8*)pixel = fgColor;
 
 						y += dy;
 						if (y >= dx) {
@@ -861,7 +861,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 			switch (logOp) {
 				case 1:
 					for (; x < dx; x++, pixel += pixx) {
-						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 
 						y += dy;
 						if (y >= dx) {
@@ -873,7 +873,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 				case 2:
 					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint16*)pixel = fgColor; // STanda
+							*(uint16*)pixel = fgColor;
 
 						y += dy;
 						if (y >= dx) {
@@ -897,7 +897,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 				case 4:
 					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
-							*(uint16*)pixel = fgColor; // STanda
+							*(uint16*)pixel = fgColor;
 
 						y += dy;
 						if (y >= dx) {
@@ -912,7 +912,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 			switch (logOp) {
 				case 1:
 					for (; x < dx; x++, pixel += pixx) {
-						putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor) ); // STanda
+						putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor) );
 
 						y += dy;
 						if (y >= dx) {
@@ -963,7 +963,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 			switch (logOp) {
 				case 1:
 					for (; x < dx; x++, pixel += pixx) {
-						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 
 						y += dy;
 						if (y >= dx) {
@@ -975,7 +975,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 				case 2:
 					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint32*)pixel = fgColor; // STanda
+							*(uint32*)pixel = fgColor;
 
 						y += dy;
 						if (y >= dx) {
@@ -999,7 +999,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 				case 4:
 					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
-							*(uint32*)pixel = fgColor; // STanda
+							*(uint32*)pixel = fgColor;
 
 						y += dy;
 						if (y >= dx) {
@@ -1017,7 +1017,8 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 
 
 /**
- * Derived from the SDL_gfxPrimitives::boxColor(). The colors are in the destination surface format here.
+ * Derived from the SDL_gfxPrimitives::boxColor().
+ * The colors are in the destination surface format here.
  * The trivial cases optimalization removed.
  *
  * @author STanda
@@ -1047,28 +1048,28 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
-							*(uint8*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+							*(uint8*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 							pixel += pixx;
 						}
 					}
 					break;
 				case 2:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint8*)pixel = fgColor; // STanda
+								*(uint8*)pixel = fgColor;
 							pixel += pixx;
 						}
 					}
 					break;
 				case 3:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
@@ -1079,11 +1080,11 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 					break;
 				case 4:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
-								*(uint8*)pixel = fgColor; // STanda
+								*(uint8*)pixel = fgColor;
 							pixel += pixx;
 						}
 					}
@@ -1097,28 +1098,28 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
-							*(uint16*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+							*(uint16*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 							pixel += pixx;
 						}
 					}
 					break;
 				case 2:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint16*)pixel = fgColor; // STanda
+								*(uint16*)pixel = fgColor;
 							pixel += pixx;
 						}
 					}
 					break;
 				case 3:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
@@ -1129,11 +1130,11 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 					break;
 				case 4:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
-								*(uint16*)pixel = fgColor; // STanda
+								*(uint16*)pixel = fgColor;
 							pixel += pixx;
 						}
 					}
@@ -1145,17 +1146,17 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
-							putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor) ); // STanda
+							putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor) );
 							pixel += pixx;
 						}
 					}
 					break;
 				case 2:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
@@ -1166,7 +1167,7 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 					break;
 				case 3:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
@@ -1177,7 +1178,7 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 					break;
 				case 4:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
@@ -1193,28 +1194,28 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
-							*(uint32*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+							*(uint32*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 							pixel += pixx;
 						}
 					}
 					break;
 				case 2:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint32*)pixel = fgColor; // STanda
+								*(uint32*)pixel = fgColor;
 							pixel += pixx;
 						}
 					}
 					break;
 				case 3:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
@@ -1225,11 +1226,11 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 					break;
 				case 4:
 					for (; pixel<pixellast; pixel += pixy) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
-								*(uint32*)pixel = fgColor; // STanda
+								*(uint32*)pixel = fgColor;
 							pixel += pixx;
 						}
 					}
@@ -1242,6 +1243,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.45  2004/02/07 13:20:42  joy
+ * explanation for some unclear trick
+ *
  * Revision 1.44  2004/01/25 15:13:04  xavier
  * More work on SDL GUI
  *
