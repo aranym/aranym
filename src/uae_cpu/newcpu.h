@@ -91,8 +91,6 @@ extern void REGPARAM2 op_illg (uae_u32) REGPARAM;
 
 #define m68k_dreg(r,num) ((r).regs[(num)])
 #define m68k_areg(r,num) (((r).regs + 8)[(num)])
-#define m68k_areg_autoinc(r,num,incdec) \
-    ((r).autoinc[num] += (incdec), (r).regs[(num) + 8] += (incdec))
 
 #ifdef FULLMMU
 static inline uae_u8 get_ibyte(uae_u32 o)
@@ -142,7 +140,11 @@ static inline uae_u32 get_ilong_prefetch (uae_s32 o)
 }
 #endif
 
+#ifdef FULLMMU
+#define m68k_incpc(o) (regs.pc += (o))
+#else
 #define m68k_incpc(o) (regs.pc_p += (o))
+#endif
 
 static inline void fill_prefetch_0 (void)
 {
@@ -195,8 +197,10 @@ static inline uae_u32 next_ilong (void)
 
 static inline void m68k_setpc (uaecptr newpc)
 {
+#ifndef FULLMMU
     regs.pc_p = regs.pc_oldp = get_real_address(newpc, 0, sz_word);
-    regs.pc = newpc;
+#endif
+    regs.fault_pc = regs.pc = newpc;
 }
 
 #define m68k_setpc_fast m68k_setpc
@@ -206,20 +210,20 @@ static inline void m68k_setpc (uaecptr newpc)
 static inline void m68k_do_rts(void)
 {
     m68k_setpc(get_long(m68k_areg(regs, 7)));
-    m68k_areg_autoinc(regs, 7, 4);
+    m68k_areg(regs, 7) += 4;
 }
  
 static inline void m68k_do_bsr(uaecptr oldpc, uae_s32 offset)
 {
-    m68k_areg_autoinc(regs, 7, -4);
-    put_long(m68k_areg(regs, 7), oldpc);
+    put_long(m68k_areg(regs, 7) - 4, oldpc);
+    m68k_areg(regs, 7) -= 4;
     m68k_incpc(offset);
 }
  
 static inline void m68k_do_jsr(uaecptr oldpc, uaecptr dest)
 {
-    m68k_areg_autoinc(regs, 7, -4);
-    put_long(m68k_areg(regs, 7), oldpc);
+    put_long(m68k_areg(regs, 7) - 4, oldpc);
+    m68k_areg(regs, 7) -= 4;
     m68k_setpc(dest);
 }
 
@@ -232,7 +236,9 @@ static inline void m68k_setstopped (int stop)
 	SPCFLAGS_SET( SPCFLAG_STOP );
 }
 
-#ifdef ARAM_PAGE_CHECK
+#ifdef FULLMMU
+# define GET_OPCODE (get_iword (0))
+#elif defined ARAM_PAGE_CHECK
 # ifdef HAVE_GET_WORD_UNSWAPPED
 #  define GET_OPCODE (do_get_mem_word_unswapped((uae_u16*)(pc + pc_offset)));
 # else
