@@ -116,8 +116,8 @@ struct M68kRegisters;
 extern void Start680x0(void);	// Reset and start 680x0
 
 // Interrupt functions
-extern void TriggerInterrupt(void);	// Trigger interrupt level 1
 extern void TriggerVBL(void);		// Trigger interrupt level 4
+extern void TriggerInterrupt(void);	// Trigger interrupt level 5
 extern void TriggerMFP(bool);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
 extern void TriggerQUIT(void);		// Trigger quit

@@ -133,16 +133,16 @@ void Start680x0(void)
 
 
 /*
- *  Trigger interrupt
+ *  Trigger interrupts
  */
-void TriggerInterrupt(void)
-{
-	SPCFLAGS_SET( SPCFLAG_INT );
-}
-
 void TriggerVBL(void)
 {
 	SPCFLAGS_SET( SPCFLAG_VBL );
+}
+
+void TriggerInterrupt(void)
+{
+	SPCFLAGS_SET( SPCFLAG_INT5 );
 }
 
 void TriggerMFP(bool enable)
