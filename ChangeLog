@@ -1,3 +1,13 @@
+2001/10/02 - joy
+- ROM file reading back in main.cpp
+- TTRAM renamed to FastRAM everywhere
+- --ttram renamed to --fastram, -T renamed to -F
+- --grab_mouse switch removed
+- added 'cookie_MCH' config option, it holds hex long value
+- maxInnerCounter in main.cpp should be tuned to your CPU speed.
+  The lower your CPU is the lower the value should be.
+
+
 2001/10/02 - STanda
 - fVDI: blitArea screen2screen & mem2screen (TC) works now.
 
