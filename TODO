@@ -1,47 +1,44 @@
-Things for 1.0 release:
-=======================
+Some hot ideas (before we'll forget them :-)
+============================================
 
-- fix known BUGS
+Note that the name before a TODO item doesn't mean the item is assigned to
+that particular programmer but rather who is the author of the idea :-)
 
-- [50%] implement native interface for accessing host parameters. Use it for
-  Clocky (mouse wrap at window border), aranymfs (auto editor of config.sys)
-  and EmuTOS (harddrives and more).
+- joy: Clipboard sharing between host and atari. Some URLs for inspiration:
+  http://www.idata.sk/~robo/mpcb/
+  http://www.freedesktop.org/standards/clipboards.txt
 
-- printing to file (/dev/lp)
+  Basic idea: C:\CLIPBRD\SCRAP.TXT is copied to CLIPBOARD on X11 host
+  and vice-versa (during input focus changes).
 
-- rewrite all HW modules to make use of BASE_IO::handle_read/write()
+  Extra cool idea: PRIMARY selection on X11 could be stored to IKBD buffer
+  directly so it would simulate typing.
 
-- in fdc.cpp: replace HWget_b() and HWput_b() with something more appropriate
-              for inter-module communication
+- joy: [ I just forget it. Oh no. I bet it was something brilliant :-( ]
 
-- in hardware.cpp: HWget_l/HWput_l should not have the special case for HW_IDE
+- joy: printing to file (/dev/lp)
 
-- full revision of CPU/FPU instr. set
+- joy: emulating a serial port compatible with MiNT/HSMODEM
 
-- Networking for MiNTNet (Ethernet Card Emulation or direct socket mapping)
+- joy: rewrite all HW modules to make use of BASE_IO::handle_read/write()
 
-- aranymfs  filesystem
-    - the Host OS part should be rewritten nearly from scratch, I have 
-      ideas to use some platform independent library and later either VFS lib.
-    - m68k code cleanup... the .c file can be easily rewritten to .s.
-      This would be useful, not to need the C compiler for this, woudn't be?
-    - .xfs filesystem modules for MagiC and MiNT.
+- joy: in fdc.cpp: replace HWget_b() and HWput_b() with something more
+       appropriate for inter-module communication
 
-- [90%] document the way the aranym works - especially the hardware emulation
-  (ARAnyM Hackers Guide)
+- joy: in hardware.cpp: HWget_l/HWput_l should not have the special case
+       for HW_IDE. Best would be to implement word and longword HW access
+       emulation directly for all modules.
 
-- document the command line switches, keyboard combos and write Users Guide.
+- joy: document the way the aranym works - especially the hardware
+       emulation (ARAnyM Hackers Guide).
 
-- distributed dispatcher for JIT compiler sigsegv handler
+- joy: document the command line switches, keyboard combos and write Users
+       Guide.
 
-- gdb as debugger for ARAnyM
+- Milan: full revision of CPU/FPU instr. set
 
-- SIGINT ndebug problem solution
+- Milan: distributed dispatcher for JIT compiler sigsegv handler
 
-The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
-all Atari power users/MiNTers. Key elements are TCP/IP networking, large
-screen resolution in high color/true color, fast CPU/FPU and plenty of RAM.
+- Milan: gdb as debugger for ARAnyM
 
-Estimated time for 1.0 release: depends on number of attracted and helpful
-programmers. Ideally before end of 2002 but possible only if enough people
-will be interested.
+- Milan: SIGINT ndebug problem solution
