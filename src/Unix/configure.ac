@@ -741,12 +741,19 @@ if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
   AC_DEFINE([BLITTER_MEMMOVE], 1, [Define if you want accelerated blitter output])	dnl required for the SDLBLIT
 fi
 
+HAVE_ETHERNET=no
 dnl Ethernet card emulation
 if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
-  AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
-  AC_CHECK_HEADERS(linux/if_tun.h)
-  SYSSRCS="$SYSSRCS ../natfeat/ethernet.cpp"
-  TAPIF="aratapif"
+  case "$target_os" in
+      linux*) AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
+              AC_CHECK_HEADERS(linux/if_tun.h)
+	      SYSSRCS="$SYSSRCS ../natfeat/ethernet.cpp"
+	      TAPIF="aratapif"
+	      HAVE_ETHERNET="yes"
+	      ;;
+	   *) AC_MSG_WARN([Ethernet interface not supported on your system])
+	      ;;
+  esac
 else
   TAPIF=""
 fi
@@ -1492,6 +1499,7 @@ APP=aranym
 case "$target_os" in
 	darwin*)
 		TARGET="\$(APP_LIB)"
+		ARANYM_DATADIR="\"\\\"\${datadir}/\${APP}\\\"\""
 		;;
 	mingw*) TARGET="\$(APP)"
 		ARANYM_DATADIR="\"\\\"./\${APP}\\\"\""
@@ -1542,7 +1550,7 @@ echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
 echo Blitter SDL blit acceleration .......... : $WANT_BLITSDLBLIT
 echo Support for aranymfs ................... : $WANT_ARANYMFS
 echo Support for hostfs ..................... : $WANT_HOSTFS
-echo Support for ethernet ................... : $WANT_ETHERNET
+echo Support for ethernet ................... : $HAVE_ETHERNET
 echo GUI .................................... : $WANT_SDLGUI
 echo OpenGL ................................. : $WANT_OPENGL
 echo Linux loader ........................... : $WANT_LILO

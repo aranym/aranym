@@ -1,3 +1,7 @@
+2003/06/12 - milan
+- configure.ac: ECE support corrected
+
+
 2003/06/11 - milan
 - emul_op.cpp: better OP_MONX
 
