@@ -34,6 +34,16 @@
 
 extern "C" {
 
+#ifdef OS_darwin  // Stupid hack
+	char* strapply( char* str, __wchar_t (*functor)(__wchar_t) )
+	{
+		char* pos = str;
+		while ( (*pos = (char)functor( (__wchar_t)*pos )) != 0 )
+			pos++;
+
+		return str;
+	}
+#else
 	char* strapply( char* str, int (*functor)(int) )
 	{
 		char* pos = str;
@@ -42,6 +52,7 @@ extern "C" {
 
 		return str;
 	}
+#endif
 
 	char* strd2upath( char* dest, char* src )
 	{
@@ -1968,7 +1979,7 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 #ifdef HAVE_SYS_STATVFS_H
 			return buf.f_namemax;
 #else
-# if (defined(OS_openbsd) || defined(OS_freebsd) || defined(OS_netbsd))
+# if (defined(OS_openbsd) || defined(OS_freebsd) || defined(OS_netbsd) || defined(OS_darwin)
 			return MFSNAMELEN;
 # else
 #if defined(OS_mint)
@@ -2623,6 +2634,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.54  2002/07/01 16:57:35  standa
+ * transformFileName() handles filename ending with a dot (.).
+ *
  * Revision 1.53  2002/06/25 08:37:40  standa
  * DEBUG #if added to let it compile warn free.
  *

@@ -214,10 +214,14 @@ dnl    WANT_ARANYMFS="no"
   irix*)
     EXTRASYSSRCS="parameters_unix.cpp irix/unaligned.c"
     ;;
-  freebsd)
+  freebsd*)
     AC_DEFINE(HAVE_O_FSYNC)
     EXTRASYSSRCS=parameters_unix.cpp
     ;;	      
+  darwin*)
+    AC_DEFINE(HAVE_O_FSYNC)
+    EXTRASYSSRCS=parameters_unix.cpp darwin/cdrom_osx.cc
+    ;;
   *)
     EXTRASYSSRCS=parameters_unix.cpp
     ;;
