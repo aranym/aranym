@@ -173,7 +173,7 @@ static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
 static __inline__ void check_ram_boundary(uaecptr addr, bool write = false)
 {
 	if (write) {
-		if (addr >= 8 && addr < STRAM_END)	// first two longwords are ROM
+		if (/*addr >= 8 &&*/ addr < STRAM_END)	// first two longwords are ROM
 			return;
 	}
 	else {
