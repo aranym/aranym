@@ -13,6 +13,12 @@
 
 - main.cpp: prepare for the initial GUI popup
 
+- ndebug.cpp: "char" -> "int" to get rid of a compiler warning
+
+- sdl-gui.cpp: font init moved from dlgMain to SDLGui_Init().
+
+- include/version.h: we are at 0.8.5alpha now
+
 
 2003/12/26 - joy
 - input.cpp: cleaned up.
