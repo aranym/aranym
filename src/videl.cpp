@@ -16,14 +16,8 @@
 #define DEBUG 0
 #include "debug.h"
 
-
-
 // from host.cpp
 extern HostScreen hostScreen;
-
-// Support for other than 2 byte hostscreen bpp is disabled by default
-#define SUPPORT_MULTIPLEDESTBPP
-
 
 static const uint32 HW = 0xff8200UL;
 
@@ -57,7 +51,7 @@ void VIDEL::init()
 	handleWriteW(HW+0xaa, 0x03ff);
 	handleWriteW(HW+0xc2, 0x0008);
 
-	hostScreen.setWindowSize( width, height, 16 );
+	hostScreen.setWindowSize( width, height, bx_options.video.bpp );
 }
 
 // monitor writting to Falcon and ST/E color palette registers
@@ -191,6 +185,8 @@ void VIDEL::renderScreenNoFlag()
 	int vh	 = getScreenHeight();
 	int vbpp = getScreenBpp();
 
+	int scrpitch = hostScreen.getPitch();
+
 	if (od_posledni_zmeny > 2) {
 		if (vw > 0 && vw != width) {
 			D(bug("CH width %d", width));
@@ -209,11 +205,7 @@ void VIDEL::renderScreenNoFlag()
 		}
 	}
 	if (od_posledni_zmeny == 3) {
-#ifdef SUPPORT_MULTIPLEDESTBPP
 		hostScreen.setWindowSize( width, height, bpp >= 8 ? bpp : 8 );
-#else
-		hostScreen.setWindowSize( width, height, 16 );
-#endif // SUPPORT_MULTIPLEDESTBPP
 	}
 	if (od_posledni_zmeny < 4) {
 		od_posledni_zmeny++;
@@ -233,143 +225,236 @@ void VIDEL::renderScreenNoFlag()
 	uint16 *hvram = (uint16 *) VideoRAMBaseHost;
 
 	if (bpp < 16) {
+		/* Bitplanes modes */
 		if (!hostColorsSync)
 			updateColors();
 
 		// The SDL colors blitting...
-		// FIXME!!! The SDL hvram need not to be line aligned (see the surface->format->pitch!!!)
-		int	  planeWordCount = ((vw+15)>>4) * vh;
 		uint8 color[16];
 
-#ifndef SUPPORT_MULTIPLEDESTBPP
-		for (int32 w = 0; w < planeWordCount; w++) {
-			hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
-
-			// note: by enroling this loop into 16 getPaletteColor calls we lost 500 dryhstones ;(
-			//		 so we should leave it as is.
-			int startBitIndex = w * 16;
-			int colIdx = 0;
-			for (int j = startBitIndex; j < startBitIndex + 16; j++)
-				((uint16 *)hvram)[ j ] = (uint16) hostScreen.getPaletteColor( color[ colIdx++ ] );
-		}
-#else
-		// To support other formats see
-		// the SDL video examples (docs 1.1.7)
-		//
 		// FIXME: The byte swap could be done here by enrolling the loop into 2 each by 8 pixels
 		switch ( hostScreen.getBpp() ) {
 			case 1:
-				for (int32 w = 0; w < planeWordCount; w++) {
-					hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
+				{
+					uint16 *fvram_line = fvram;
+					uint8 *hvram_line = (uint8 *)hvram;
 
-					int startBitIndex = w * 16;
-					int colIdx = 0;
-					for (int j = startBitIndex; j < startBitIndex + 16; j++)
-						((uint8 *)hvram)[ j ] = color[ colIdx++ ];
+					for (int h = 0; h < vh; h++) {
+						uint16 *fvram_column = fvram_line;
+						uint8 *hvram_column = hvram_line;
+
+						for (int w = 0; w < (vw+15)>>4; w++) {
+							hostScreen.bitplaneToChunky( fvram_column, bpp, color );
+
+							memcpy(hvram_column, color, 16);
+
+							hvram_column += 16;
+							fvram_column += bpp;
+						}
+
+						hvram_line += scrpitch;
+						fvram_line += ((vw+15)>>4)*bpp;
+					}
 				}
 				break;
 			case 2:
-				for (int32 w = 0; w < planeWordCount; w++) {
-					hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
+				{
+					uint16 *fvram_line = fvram;
+					uint16 *hvram_line = (uint16 *)hvram;
 
-					// note: by enroling this loop into 16 getPaletteColor calls we lost 500 dryhstones ;(
-					//		 so we should leave it as is.
-					int startBitIndex = w * 16;
-					int colIdx = 0;
-					for (int j = startBitIndex; j < startBitIndex + 16; j++)
-						((uint16 *)hvram)[ j ] = (uint16) hostScreen.getPaletteColor( color[ colIdx++ ] );
+					for (int h = 0; h < vh; h++) {
+						uint16 *fvram_column = fvram_line;
+						uint16 *hvram_column = hvram_line;
+
+						for (int w = 0; w < (vw+15)>>4; w++) {
+							hostScreen.bitplaneToChunky( fvram_column, bpp, color );
+
+							for (int j=0; j<16; j++) {
+								*hvram_column++ = hostScreen.getPaletteColor( color[j++] );
+							}
+
+							fvram_column += bpp;
+						}
+
+						hvram_line += scrpitch>>1;
+						fvram_line += ((vw+15)>>4)*bpp;
+					}
 				}
 				break;
 			case 3:
-				for (int32 w = 0; w < planeWordCount; w++) {
-					hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
+				{
+					uint16 *fvram_line = fvram;
+					uint8 *hvram_line = (uint8 *)hvram;
 
-					int startBitIndex = w * 16;
-					int colIdx = 0;
-					for (int j = startBitIndex; j < startBitIndex + 16; j++) {
-						// use the variable due to the putBpp24Pixel macro usage
-						uint32 tmpColor = hostScreen.getPaletteColor( color[ colIdx++ ] );
-						putBpp24Pixel( (uint8 *)hvram + j*3, tmpColor );
+					for (int h = 0; h < vh; h++) {
+						uint16 *fvram_column = fvram_line;
+						uint8 *hvram_column = hvram_line;
+
+						for (int w = 0; w < (vw+15)>>4; w++) {
+							hostScreen.bitplaneToChunky( fvram_column, bpp, color );
+
+							for (int j=0; j<16; j++) {
+								uint32 tmpColor = hostScreen.getPaletteColor( color[j++] );
+								putBpp24Pixel( hvram_column, tmpColor );
+								hvram_column += 3;
+							}
+
+							fvram_column += bpp;
+						}
+
+						hvram_line += scrpitch;
+						fvram_line += ((vw+15)>>4)*bpp;
 					}
 				}
 				break;
 			case 4:
-				for (int32 w = 0; w < planeWordCount; w++) {
-					hostScreen.bitplaneToChunky( &fvram[ w*bpp ], bpp, color );
+				{
+					uint16 *fvram_line = fvram;
+					uint32 *hvram_line = (uint32 *)hvram;
 
-					int startBitIndex = w * 16;
-					int colIdx = 0;
-					for (int j = startBitIndex; j < startBitIndex + 16; j++)
-						((uint32 *)hvram)[ j ] = (uint32) hostScreen.getPaletteColor( color[ colIdx++ ] );
+					for (int h = 0; h < vh; h++) {
+						uint16 *fvram_column = fvram_line;
+						uint32 *hvram_column = hvram_line;
+
+						for (int w = 0; w < (vw+15)>>4; w++) {
+							hostScreen.bitplaneToChunky( fvram_column, bpp, color );
+
+							for (int j=0; j<16; j++) {
+								*hvram_column++ = hostScreen.getPaletteColor( color[j++] );
+							}
+
+							fvram_column += bpp;
+						}
+
+						hvram_line += scrpitch>>2;
+						fvram_line += ((vw+15)>>4)*bpp;
+					}
 				}
 				break;
 		}
-#endif // SUPPORT_MULTIPLEDESTBPP
 
 	} else {
+
 		// Falcon TC (High Color)
-		int planeWordCount = vw * vh;
+		switch ( hostScreen.getBpp() )  {
+			case 1:
+				{
+					/* FIXME: when Videl switches to 16bpp, set the palette to 3:3:2 */
+					uint16 *fvram_line = fvram;
+					uint8 *hvram_line = (uint8 *)hvram;
 
-#ifdef SUPPORT_MULTIPLEDESTBPP
-		uint8 destBPP = hostScreen.getBpp();
-		if (destBPP == 2) {
-#endif // SUPPORT_MULTIPLEDESTBPP
+					for (int h = 0; h < vh; h++) {
+						uint16 *fvram_column = fvram_line;
+						uint8 *hvram_column = hvram_line;
 
-			// in direct_truecolor mode we set the Videl VIDEORAM directly to the host vram
-#ifdef DIRECT_TRUECOLOR
-			if (! bx_options.video.direct_truecolor)
-#endif
-			{
-
+						for (int w = 0; w < vw; w++) {
+							int tmp;
+							
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-				//FIXME: here might be a runtime little/big video endian switch like:
-				//      if ( /* videocard memory in Motorola endian format */ false) {
-				memcpy(hvram, fvram, planeWordCount << 1);
+							tmp = *fvram_column;
 #else
-				for (int w = 0; w < planeWordCount; w++) {
-					// byteswap
-					int data = fvram[w];
-					((uint16 *) hvram)[w] = (data >> 8) | ((data & 0xff) << 8);
+							tmp = ((*fvram_column) >> 8) | ((*fvram_column) << 8);
+#endif
+							*hvram_column = ((tmp>>13) & 7) << 5;
+							*hvram_column |= ((tmp>>8) & 7) << 2;
+							*hvram_column |= ((tmp>>2) & 3);
+
+							hvram_column++;
+							fvram_column++;
+						}
+
+						hvram_line += scrpitch;
+						fvram_line += vw*bpp;
+					}
 				}
+				break;
+			case 2:
+				{
+					// in direct_truecolor mode we set the Videl VIDEORAM directly to the host vram
+#ifdef DIRECT_TRUECOLOR
+					if (! bx_options.video.direct_truecolor)
+#endif
+					{
+						uint16 *fvram_line = fvram;
+						uint16 *hvram_line = (uint16 *)hvram;
+
+						for (int h = 0; h < vh; h++) {
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+							//FIXME: here might be a runtime little/big video endian switch like:
+							//      if ( /* videocard memory in Motorola endian format */ false) {
+							memcpy(hvram_line, fvram_line, vw<<1);
+#else
+							uint16 *fvram_column = fvram_line;
+							uint16 *hvram_column = hvram_line;
+
+							for (int w = 0; w < vw; w++) {
+								// byteswap
+								int data = *fvram_column++;
+								*hvram_column++ = (data >> 8) | (data << 8);
+							}
 #endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
 
-			}
+							hvram_line += scrpitch>>1;
+							fvram_line += vw;
+						}
+					}
+				}
+				break;
+			case 3:
+				{
+					uint16 *fvram_line = fvram;
+					uint8 *hvram_line = (uint8 *)hvram;
 
+					for (int h = 0; h < vh; h++) {
+						uint16 *fvram_column = fvram_line;
+						uint8 *hvram_column = hvram_line;
 
-#ifdef SUPPORT_MULTIPLEDESTBPP
+						for (int w = 0; w < vw; w++) {
+							int data = *fvram_column++;
 
-		}
-		else if (destBPP == 3) {
-			// THIS is the only correct way to do the Falcon TC to SDL conversion!!! (for little endian machines)
-			for (int w = 0; w < planeWordCount; w++) {
-				// The byteswap is done by correct shifts (not so obvious)
-				int data = fvram[w];
-				uint32 tmpColor =
-				hostScreen.getColor(
+							uint32 tmpColor =
+								hostScreen.getColor(
 									(uint8) (data & 0xf8),
 									(uint8) ( ((data & 0x07) << 5) |
 											  ((data >> 11) & 0x3c)),
 									(uint8) ((data >> 5) & 0xf8));
-				putBpp24Pixel( (uint8 *)hvram + w*3, tmpColor );
-			}
-		}
-		else if (destBPP == 4) {
-			// THIS is the only correct way to do the Falcon TC to SDL conversion!!! (for little endian machines)
-			for (int w = 0; w < planeWordCount; w++) {
-				// The byteswap is done by correct shifts (not so obvious)
-				int data = fvram[w];
-				((uint32 *) hvram)[w] =
-				hostScreen.getColor(
+							
+							putBpp24Pixel( hvram_column, tmpColor );
+
+							hvram_column += 3;
+						}
+
+						hvram_line += scrpitch;
+						fvram_line += vw;
+					}
+				}
+				break;
+			case 4:
+				{
+					uint16 *fvram_line = fvram;
+					uint32 *hvram_line = (uint32 *)hvram;
+
+					for (int h = 0; h < vh; h++) {
+						uint16 *fvram_column = fvram_line;
+						uint32 *hvram_column = hvram_line;
+
+						for (int w = 0; w < vw; w++) {
+							int data = *fvram_column++;
+
+							*hvram_column++ =
+								hostScreen.getColor(
 									(uint8) (data & 0xf8),
 									(uint8) ( ((data & 0x07) << 5) |
 											  ((data >> 11) & 0x3c)),
 									(uint8) ((data >> 5) & 0xf8));
-			}
+						}
+
+						hvram_line += scrpitch>>2;
+						fvram_line += vw;
+					}
+				}
+				break;
 		}
-		// FIXME: support for destBPP other than 2 or 4 BPP is missing
-
-#endif // SUPPORT_MULTIPLEDESTBPP
-
 	}
 
 	hostScreen.renderEnd();
@@ -380,6 +465,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.38  2002/06/24 17:08:48  standa
+ * The pointer arithmetics fixed. The memptr usage introduced in my code.
+ *
  * Revision 1.37  2002/02/28 20:43:33  joy
  * uae_ vars replaced with uint's
  *
