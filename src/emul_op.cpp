@@ -78,72 +78,23 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		}
 
 		case M68K_EMUL_OP_SHUTDOWN:			// Quit emulator
-			QuitEmulator();
 			break;
 
-		case M68K_EMUL_OP_RESET: {			// MacOS reset
-			D(bug("*** RESET ***\n"));
-			if (FPUType)
-				r->d[2] |= 0x10000000;									// Set FPU flag if FPU present
-			else
-				r->d[2] &= 0xefffffff;									// Clear FPU flag if no FPU present
+		case M68K_EMUL_OP_RESET: 			// MacOS reset
 			break;
-		}
 
 		case M68K_EMUL_OP_VIDEO_OPEN:		// Video driver functions
-// MJ			r->d[0] = VideoDriverOpen(r->a[0], r->a[1]);
-			{
-				static bool Esc = false;
-				static bool inverse = false;
-				static int params = 0;
-
-				uae_u8 value = r->d[1];
-				fprintf(stderr, "XConOut printing '%c' (%d/$%x)\n", value, value, value);
-				if (Esc) {
-					if (value == 'p')
-						inverse = true;
-					if (value == 'q')
-						inverse = false;
-					else if (value == 'K')
-						; /* delete to end of line (I guess) */
-					else if (value == 'Y')
-						params = 2;
-					Esc = false;
-				}
-				else {
-					if (params > 0)
-						params--;
-					else {
-						if (value == 27)
-							Esc = true;
-						else {
-							fprintf(stdout, "%c", (value == 32 && inverse) ? '_' : value);
-							fflush(stdout);
-						}
-					}
-				}
-			}
-			break;
+			panicbug("Obsolete VIDEO driver! Use NatFeat driver instead!\n");
+			QuitEmulator();
 
 		case M68K_EMUL_OP_VIDEO_CONTROL:	// DEPRECATED
-			D(bug("Old fVDI native driver API(opcode=%d)", ReadInt32(r->a[7])));
-			panicbug("Old fVDI native driver API - Not implemented!");
-#ifdef ENABLE_MON
-			char *arg[4] = {"mon", "-m", "-r", NULL};
-			mon(3, arg);
-#endif
+			panicbug("Obsolete VIDEO driver! Use NatFeat driver instead!\n");
 			QuitEmulator();
 			break;
 
 		case M68K_EMUL_OP_VIDEO_DRIVER:
-			{
-				static bool first = true;
-				if (first) {
-					first = false;
-					panicbug("Obsolescent fVDI native driver API - Upgrade to NatFeat driver!");
-				}
-			}
-			fVDIDrv.dispatch(r);
+			panicbug("Obsolete VIDEO driver! Use NatFeat driver instead!\n");
+			QuitEmulator();
 			break;
 
 #ifdef EXTFS_SUPPORT
@@ -206,17 +157,18 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 
 		case M68K_EMUL_OP_DMAREAD:	// DEPRECATED (for EmuTOS - code 0x7136)
-			panicbug("Deprecated! Use proper NatFea instead!\n");
-			r->d[0] = (uint32)-32L;
+			panicbug("Obsolete DMA driver! Use NatFeat driver instead!\n");
+			QuitEmulator();
 			break;
 
 		case M68K_EMUL_OP_XHDI:	// for EmuTOS - code 0x7137
-			panicbug("Deprecated! Use proper NatFea instead!\n");
-			r->d[0] = (uint32)-32L;
+			panicbug("Obsolete XHDI driver! Use NatFeat driver instead!\n");
+			QuitEmulator();
 			break;
 
 		case M68K_EMUL_OP_AUDIO:
-			AudioDrv.dispatch( ReadInt32(r->a[7]), r );  // DM
+			panicbug("Obsolete AUDIO driver! Use NatFeat driver instead!\n");
+			QuitEmulator();
 			break;
 
 

@@ -1,41 +1,42 @@
-
 #include "sysdeps.h"
 #include "cpu_emulation.h"
-#include "main.h"
 #include "audio.h"
-#include "hardware.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 static void audio_callback(void *userdata, Uint8 * stream, int len);
 
-void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
+int32 AUDIODriver::dispatch(uint32 fncode)
 {
 	static SDL_AudioSpec spec_desired;
 	static SDL_AudioSpec spec_obtained;
 	static AUDIOPAR AudioParameters = { 0, 0, SDL_MIX_MAXVOLUME };
-	// fix the stack (the fncode was pushed onto the stack)
-	r->a[7] += 4;
+        int32 ret=1;
 
 	switch (fncode) {
 	// NEEDED functions
+        
+        case  0: 				// version
+		D(bug("Audio: Version"));
+                ret = 0x0061;
+		break;
 
 	case 1:					// OpenAudio:
-		spec_desired.freq = ReadInt32(r->a[7]);
-		spec_desired.format = ReadInt16(r->a[7] + 4);
-		spec_desired.channels = (uint8) ReadInt16(r->a[7] + 6);
-		spec_desired.samples = ReadInt16(r->a[7] + 8);
+		spec_desired.freq = getParameter(0);
+		spec_desired.format = (uint16)getParameter(1);
+		spec_desired.channels = (uint8)getParameter(2);
+		spec_desired.samples = (uint16)getParameter(3);
 		spec_desired.userdata = (void *) &AudioParameters;
-		AudioParameters.buffer = ReadInt32(r->a[7] + 10);
+		AudioParameters.buffer = getParameter(4);
 		AudioParameters.len = 0;
 		D(bug
 		  ("Audio: OpenAudio %x Fr:%d Ch:%d S:%d", spec_desired.format,
 		   spec_desired.freq, spec_desired.channels,
 		   spec_desired.samples));
 		spec_desired.callback = audio_callback;
-		r->d[0] = SDL_OpenAudio(&spec_desired, &spec_obtained);
-		if (r->d[0] < 0) {
+		ret = SDL_OpenAudio(&spec_desired, &spec_obtained);
+		if (ret < 0) {
 			D(bug("Audio: OpenAudio error: %s", SDL_GetError()));
 		}
 		else {
@@ -48,7 +49,7 @@ void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
 				uint8 *buffer = Atari2HostAddr(par->buffer);
 				memset(buffer, 0, spec_obtained.size);
 			}
-			r->d[0] = (uint32) spec_obtained.format;
+			ret = (uint32) spec_obtained.format;
 		}
 		break;
 
@@ -58,45 +59,45 @@ void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
 		break;
 
 	case 3:					// PauseAudio
-		D(bug("Audio: PauseAudio %d", ReadInt16(r->a[7])));
-		SDL_PauseAudio(ReadInt16(r->a[7]));
+		D(bug("Audio: PauseAudio %d", getParameter(0)));
+		SDL_PauseAudio(getParameter(0));
 		break;
 
 	case 4:					// AudioStatus
-		r->d[0] = (uint32) SDL_GetAudioStatus();
-//		D(bug("Audio: AudioStatus %d", r->d[0]));
+		ret = (uint32) SDL_GetAudioStatus();
+		D(bug("Audio: AudioStatus %d", ret));
 		break;
 
 	case 5:					// AudioVolume
-		AudioParameters.volume = ReadInt16(r->a[7]);
+		AudioParameters.volume = (uint16)getParameter(0);
 		D(bug("Audio: AudioVolume %d", AudioParameters.volume));
 		break;
 
 	case 6:					// LockAudio         
-//		D(bug("Audio: LockAudio"));
+		D(bug("Audio: LockAudio"));
 		SDL_LockAudio();
 		break;
 
 	case 7:					// UnlockAudio    
-//		D(bug("Audio: UnlockAudio"));
+		D(bug("Audio: UnlockAudio"));
 		SDL_UnlockAudio();
 		break;
 
 	case 8:					// GetAudioFreq
 		D(bug("Audio: GetAudioFreq %d", spec_obtained.freq));
-		r->d[0] = spec_obtained.freq;
+		ret = spec_obtained.freq;
 		break;
 
 	case 9:					// GetAudioLen
-//		D(bug("Audio: GetAudioLen %d", AudioParameters.len));
-		r->d[0] = AudioParameters.len;
+		D(bug("Audio: GetAudioLen %d", AudioParameters.len));
+		ret = AudioParameters.len;
 		break;
 
 	// not implemented functions
 	default:
 		D(bug("Audio: Unknown %d", fncode));
-		r->d[0] = 1;
 	}
+        return(ret);
 }
 
 static void audio_callback(void *userdata, uint8 * stream, int len)

@@ -28,41 +28,32 @@
  */
 
 #include "cpu_emulation.h"
-#include "nf_stderr.h"
+#include "debugprintf.h"
 
 #define DEBUG 0
 #include "debug.h"
 
-int32 NF_StdErr::dispatch(uint32 fncode)
+int32 DebugPrintf::dispatch(uint32 fncode)
 {
 	memptr str_ptr = getParameter(0);
-	D(bug("NF_StdErr(%d, %p)", fncode, str_ptr));
+	D(bug("DebugPrintf(%d, %p)", fncode, str_ptr));
 
 	if (! ValidAddr(str_ptr, false, 1))
 		BUS_ERROR(str_ptr);
 
 	char *str = (char *)Atari2HostAddr(str_ptr);	// use A2Hstrcpy
 
-	uint32 ret = 0;
-	switch(fncode) {
-		default:
-			ret = fprintf(stderr, "%s", str);
-			fflush(stdout);
-			break;
+	int ret = debugprintf(stderr, str, 1);
+	fflush(stderr);
 
-		case 1:
-			ret = nf_fprintf(stderr, str, 1);
-			fflush(stderr);
-			break;
-	}
 	return ret;
 }
 
 # define TIMESTEN(x)	((((x) << 2) + (x)) << 1)
 
-uint32 NF_StdErr::nf_fprintf(FILE *f, const char *fmt, uint32 param)
+uint32 DebugPrintf::debugprintf(FILE *f, const char *fmt, uint32 param)
 {
-	D(bug("NF_StdErrPrintf(%p)", fmt));
+	D(bug("DebugPrintfPrintf(%p)", fmt));
 
 	char c;
 	char fill_char;
@@ -191,7 +182,7 @@ uint32 NF_StdErr::nf_fprintf(FILE *f, const char *fmt, uint32 param)
 	return len;
 }
 
-uint32 NF_StdErr::PUTC(FILE *f, int c, int width)
+uint32 DebugPrintf::PUTC(FILE *f, int c, int width)
 {
 	long put = 1;
 	
@@ -205,7 +196,7 @@ uint32 NF_StdErr::PUTC(FILE *f, int c, int width)
 	return put;
 }
 
-uint32 NF_StdErr::PUTS(FILE *f, const char *s, int width)
+uint32 DebugPrintf::PUTS(FILE *f, const char *s, int width)
 {
 	long put = 0;
 	
@@ -227,7 +218,7 @@ uint32 NF_StdErr::PUTS(FILE *f, const char *s, int width)
 	return put;
 }
 
-uint32 NF_StdErr::PUTL(FILE *f, uint32 u, int base, int width, int fill_char)
+uint32 DebugPrintf::PUTL(FILE *f, uint32 u, int base, int width, int fill_char)
 {
 	char obuf[32];
 	char *t = obuf;

@@ -1,3 +1,10 @@
+2003/02/16 - joy
+- cleanup in src/natfeat - fundamental NF functions grouped in 'basicset'
+- cleanup in emulop.cpp - removed everything that has a NF replacement
+- cleanup in araobjs.cpp - removed everything that is in src/natfeat as well
+- NF_SHUTDOWN added
+
+
 2003/02/09 - patrice
 - ikbd.cpp: corrected SendMouseMotion() which don't modify the buttons variable
   anymore.

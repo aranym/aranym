@@ -13,17 +13,11 @@
 ExtFs      extFS;
 #endif
 
-// The HostScreen custom fVDI driver implementation
-//FVDIDriver fVDIDrv;
-
-//The Audio driver
-AudioDriver AudioDrv;
-
-// XHDI driver
-// XHDIDriver Xhdi;
-
 /*
  * $Log$
+ * Revision 1.8  2002/10/21 22:52:03  johan
+ * fVDI driver NatFeat support added.
+ *
  * Revision 1.7  2002/08/11 08:31:07  joy
  * new revision of natfeats
  *

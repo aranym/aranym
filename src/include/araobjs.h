@@ -8,29 +8,20 @@
 #define ARANYM_H
 
 #include "extfs.h"
-#include "fvdidrv.h"
-#include "audio.h"
-#include "xhdi.h"
 
 #ifdef EXTFS_SUPPORT
 // External filesystem access object.
 extern ExtFs      extFS;
 #endif
 
-// The HostScreen custom fVDI driver implementation
-extern FVDIDriver fVDIDrv;
-
-// The Audio Driver
-extern AudioDriver AudioDrv;
-
-// The XHDI Driver
-extern XHDIDriver Xhdi;
-
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.5  2002/08/01 22:21:13  joy
+ * xhdi class added
+ *
  * Revision 1.4  2002/04/19 22:14:03  joy
  * sound driver support
  *

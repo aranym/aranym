@@ -13,7 +13,7 @@
 #include "hardware.h"
 #include "parameters.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 // from host.cpp
@@ -908,6 +908,9 @@ void VIDEL::renderScreenZoom()
 
 /*
  * $Log$
+ * Revision 1.47  2003/01/02 19:39:13  joy
+ * emulation of width registers improved
+ *
  * Revision 1.46  2002/12/29 20:23:11  joy
  * patch completed
  *

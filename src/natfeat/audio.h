@@ -1,5 +1,5 @@
-#ifndef _NF_AUDIO_H
-#define _NF_AUDIO_H
+#ifndef _AUDIO_H
+#define _AUDIO_H
 #include "nf_base.h"
 
 typedef struct nf_audio_parameters
@@ -17,4 +17,4 @@ public:
 	int32 dispatch(uint32 fncode);
 };
 
-#endif /* _NF_AUDIO_H */
+#endif /* _AUDIO_H */
