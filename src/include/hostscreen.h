@@ -141,7 +141,7 @@ class HostScreen {
 	void   putPixel( int16 x, int16 y, uint32 color );
 	void   putPixel( int16 x, int16 y, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 	void   drawLine( int16 x1, int16 y1, int16 x2, int16 y2,
-	                 uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, bool last_pixel = true);
+	                 uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, bool last_pixel /*= true*/);
 	// transparent background
 	void   fillArea( int16 x1, int16 y1, int16 x2, int16 y2, uint16 *pattern, uint32 color );
 	// VDI required function to fill areas
@@ -403,6 +403,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.36  2002/07/20 12:41:19  joy
+ * always update() the physical video surface
+ *
  * Revision 1.35  2002/07/20 08:10:55  joy
  * GUI background saving/restoring fixed
  *
