@@ -261,7 +261,7 @@ case "$target_os" in
     DEFINES="$DEFINES -fpermissive"
     LIBS="$LIBS -lSDL -lSDLmain -liberty"
     EXTRASYSSRCS=parameters_unix.cpp
-    DIRSEPARATOR='\"\\\"'
+    DIRSEPARATOR='\"\\\\\"'
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
