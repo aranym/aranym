@@ -7,6 +7,14 @@
 - NatFeats main dispatcher does not copy parameters to local array. NatFeats
   themselves fetch the parameters with getParameter() call.
 
+- final renaming: "natfea" -> "natfeat", "_rcall" -> "_call"
+
+- various doc bits found in mailing list stored in src/natfeat/doc folder.
+  It's partially obsolete but I tried to update at least the native.txt.
+
+- example of running some basic NatFeats for (not only) PureC stored
+  in src/natfeat/atari_example.c
+
 
 2002/08/08 - patrice
 - DSP: CCR-related stuff written, some bugfixes.
