@@ -959,3 +959,6 @@ bool decode_switches(FILE *f, int argc, char **argv)
 
 	return check_cfg();
 }
+
+bool loadSettings() { return false; }
+bool saveSettings() { return saveSettings(config_file); }

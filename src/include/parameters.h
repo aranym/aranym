@@ -230,4 +230,7 @@ char *addFilename(char *buffer, const char *file, unsigned int bufsize);
 char *getConfFolder(char *buffer, unsigned int bufsize);
 char *getDataFolder(char *buffer, unsigned int bufsize);
 
+extern bool loadSettings();
+extern bool saveSettings();
+
 #endif
