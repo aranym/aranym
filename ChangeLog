@@ -1,3 +1,7 @@
+2002/08/26 - joy
+- JIT (actually sigsegv handler) fixed again, better this time.
+
+
 2002/08/26 - patrice
 - DSP emulation can be run in its own thread.
 
