@@ -69,5 +69,5 @@ char *getDataFolder(char *buffer, unsigned int bufsize)
 	else
 		buffer[0] = '\0';	// last resort - complete filename out
 
-	return addFilename(buffer, ARADATA);
+	return addFilename(buffer, ARADATA, bufsize);
 }

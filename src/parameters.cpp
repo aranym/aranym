@@ -641,7 +641,7 @@ int process_cmdline(int argc, char **argv)
 }
 
 // append a filename to a path
-static char *addFilename(char *buffer, const char *file, unsigned int bufsize)
+char *addFilename(char *buffer, const char *file, unsigned int bufsize)
 {
 	int dirlen = strlen(buffer);
 	if ((dirlen + 1 + strlen(file) + 1) < bufsize) {

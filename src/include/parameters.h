@@ -191,6 +191,7 @@ extern bool decode_switches(FILE *, int, char **);
 extern int saveSettings(const char *);
 extern char *getConfFilename(const char *file, char *buffer, unsigned int bufsize);
 extern char *getDataFilename(const char *file, char *buffer, unsigned int bufsize);
+char *addFilename(char *buffer, const char *file, unsigned int bufsize);
 
 // following functions implemented in parameters_[unix|linux|cygwin].cpp
 char *getConfFolder(char *buffer, unsigned int bufsize);
