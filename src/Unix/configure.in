@@ -23,9 +23,11 @@ AC_ARG_WITH(mon,             [  --with-mon              use mon as debugger [def
 
 AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history for debugger (slower) [default=no]], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
 
-AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU [default=yes]], [WANT_MMU=$enableval], [WANT_MMU=yes])
+AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU [default=no]], [WANT_MMU=$enableval], [WANT_MMU=no])
 
 AC_ARG_ENABLE(sdltimer,        [  --enable-sdltimer       use SDL Timer for Timer C [default=no]], [WANT_SDLTIMER=$enableval], [WANT_SDLTIMER=no])
+
+AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB [default=no]], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
 AC_ARG_ENABLE(directcolor,     [  --enable-directcolor    enable TOS direct truecolor [default=no]], [WANT_DIRECTCOLOR=$enableval], [WANT_DIRECTCOLOR=no])
 
@@ -477,6 +479,11 @@ if [[ "x$WANT_SDLTIMER" = "xyes" ]]; then
     AC_DEFINE(USE_TIMERS)
 fi
 
+dnl fixed size FastRAM
+if [[ "x$WANT_FIXEDFASTRAM" != "xno" ]]; then
+    AC_DEFINE(FixedSizeFastRAM, $WANT_FIXEDFASTRAM)
+fi
+
 dnl Direct Truecolor
 if [[ "x$WANT_DIRECTCOLOR" = "xyes" ]]; then
     AC_DEFINE(DIRECT_TRUECOLOR)
@@ -832,6 +839,7 @@ echo Debugger ............................... : $WHICH_DEBUG
 echo Monitor ................................ : $WANT_MON
 echo Aranymrc confgui ....................... : $WANT_TVCONFGUI
 echo Timer C using SDL Timer ................ : $WANT_SDLTIMER
+echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM
 echo TOS Direct Truecolor.................... : $WANT_DIRECTCOLOR
 echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
 echo Blitter SDL blit acceleration .......... : $WANT_BLITSDLBLIT
