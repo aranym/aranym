@@ -4,27 +4,33 @@
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
-#include "fakeio.h"
+#include "icio.h"
 #include "parameters.h"
 
-extern bool dP;
+//extern bool dP;
+static bool dP = false;
 
-FAKEIO::FAKEIO(bool bRAM) {
-	use_RAM = bRAM;
-}
-
-uae_u8 FAKEIO::handleRead(uaecptr addr) {
+uae_u8 BASE_IO::handleRead(uaecptr addr) {
 	if (dP)
 		fprintf(stderr, "HWget_b %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
-	if (use_RAM)
-		return *((uae_u8 *)(addr) + MEMBaseDiff);	// fetch from underlying RAM
-	else
-		return 0xff;
+	return *((uae_u8 *)(addr) + MEMBaseDiff);	// fetch from underlying RAM
 }
 
-void FAKEIO::handleWrite(uaecptr addr, uae_u8 value) {
+uae_u16 BASE_IO::handleReadW(uaecptr addr) {
+	if (dP)
+		fprintf(stderr, "HWget_w %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
+	return *((uae_u8 *)(addr) + MEMBaseDiff) << 8 | *((uae_u8 *)(addr+1) + MEMBaseDiff);
+}
+
+uae_u32 BASE_IO::handleReadL(uaecptr addr) {
+	if (dP)
+		fprintf(stderr, "HWget_l %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
+	return *((uae_u8 *)(addr) + MEMBaseDiff) << 24 | *((uae_u8 *)(addr+1) + MEMBaseDiff) << 16 |
+		 *((uae_u8 *)(addr+2) + MEMBaseDiff) << 8 | *((uae_u8 *)(addr+3) + MEMBaseDiff);
+}
+
+void BASE_IO::handleWrite(uaecptr addr, uae_u8 value) {
 	if (dP)
 		fprintf(stderr, "HWput_b %x = %d ($%x) <- %s at %08x\n", addr, value, value, debug_print_IO(addr), showPC());
-	if (use_RAM)
-		*((uae_u8 *)(addr) + MEMBaseDiff) = value;	// store to underlying RAM
+	*((uae_u8 *)(addr) + MEMBaseDiff) = value;	// store to underlying RAM
 }
