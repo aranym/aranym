@@ -35,6 +35,7 @@
 #include "romdiff.h"
 #include "parameters.h"
 #include "version.h"		// for heartBeat
+#include "ata.h"			// for init()
 #ifdef ENABLE_LILO
 #include "lilo.h"
 #endif
@@ -588,7 +589,13 @@ void ExitAll(void)
 void RestartAll()
 {
 	// memory init
+
 	// HW init
+	getIDE()->init();
+
+	// OS init
 	InitOS();
+
+	// CPU init
 	Restart680x0();
 }
