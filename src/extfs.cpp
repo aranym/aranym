@@ -982,12 +982,13 @@ int16 ExtFs::flags2st(int flags)
 	return res;
 }
 
-void ExtFs::transformFileName( char* dest, const char* source )
+void ExtFs::transformFileName( char* dest_, const char* source )
 {
 	ssize_t len = strlen( source );
 	ssize_t dotPos = 0;
 	bool	doConversion = true;
 	char	*dot;
+	char *dest = (char *)alloca(len);
 
 	// Get extension & convert other dots into underscores
 	if ( ( dot = strrchr( source, '.' ) ) != NULL ) {
@@ -1062,6 +1063,7 @@ void ExtFs::transformFileName( char* dest, const char* source )
 
 	// upper case conversion
 	strapply( dest, toupper );
+	strcpy( dest_, dest);
 }
 
 
@@ -2485,6 +2487,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.30  2002/03/14 12:00:06  standa
+ * ExtFs flags2st bugfix. Some Fcreate modifications (optional).
+ *
  * Revision 1.29  2002/03/06 10:04:21  standa
  * xfs_getname implemented. cookie2PathName uses getHostFileName since now
  * -> case insensitive fs should work.
