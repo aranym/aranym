@@ -32,6 +32,7 @@ TODO in TOS patches and utilities:
 - finish and publish TOS XHDI disk driver
 
 TODO in documentation:
+- update the man page (and fix two manpages in RPM)
 - README and doc/documentation.txt largely overlap. Must be fixed ASAP
   by stripping down the README to a few basic instructions and
   extending/revising and rewriting the documentation.txt into an useful
