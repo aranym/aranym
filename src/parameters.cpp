@@ -103,6 +103,8 @@ uint32 FastRAMSize;
 static char config_file[512];
 
 #if !defined(XIF_HOST_IP) && !defined(XIF_ATARI_IP) && !defined(XIF_NETMASK)
+# define XIF_TYPE	"ppp"
+# define XIF_TUNNEL	"tap0"
 # define XIF_HOST_IP	"192.168.0.1"
 # define XIF_ATARI_IP	"192.168.0.2"
 # define XIF_NETMASK	"255.255.255.0"
@@ -458,6 +460,8 @@ struct Config_Tag ethernet_conf[]={
 };
 
 void preset_ethernet() {
+  safe_strncpy(ETH(type), XIF_TYPE, sizeof(ETH(type)));
+  safe_strncpy(ETH(tunnel), XIF_TUNNEL, sizeof(ETH(tunnel)));
   safe_strncpy(ETH(ip_host), XIF_HOST_IP, sizeof(ETH(ip_host)));
   safe_strncpy(ETH(ip_atari ), XIF_ATARI_IP, sizeof(ETH(ip_atari)));
   safe_strncpy(ETH(netmask), XIF_NETMASK, sizeof(ETH(netmask)));
