@@ -1,3 +1,9 @@
+2002/01/27 - joy
+- XHDI dispatch added to emul_op
+- XHGetCapacity() implemented
+- DMAread() improved
+
+
 2002/01/26 - STanda
 - extfs.[ch]* cleanup from non needed arguments
 
