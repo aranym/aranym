@@ -1,6 +1,7 @@
 2002/01/03 - STanda
 - fVDI driver: the resolution is changed during the virtual workstation
   creation. Copyright notes updated (synchronized with Johan's).
+- src/Unix/configure added to CVS again to help Francois Le_Coat temporarily
 
 
 2001/12/30 - joy
