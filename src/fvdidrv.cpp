@@ -921,26 +921,25 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 					D2(fprintf(stderr, "fVDI: bmp:"));
 
 					uint32 address = destAddress + ((((dx >> 4) * destPlanes) << 1) + (dy + j) * destPitch);
-					hostScreen.bitplaneToChunky((uint16*)address, destPlanes, color);
-					uint32 oldAddress = address;
+					hostScreen.bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
 
 					uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
 					for(uint16 i = sx; i < sx + w; i++) {
 						if (i % 16 == 0) {
 							uint32 wordIndex = ((dx + i - sx) >> 4) * destPlanes;
-							address = destAddress + ((wordIndex << 1) + (dy + j) * destPitch);
 
-							// convert the 16pixels (VDI->TOS colors - within the chunkyToBitplane function)
-							// into the bitplane and write it to the destination
-							// note: we can't do the conversion directly into the oldAddress
+							// convert the 16pixels (VDI->TOS colors - within the chunkyToBitplane
+							// function) into the bitplane and write it to the destination
+							//
+							// note: we can't do the conversion directly
 							//       because it needs the little->bigendian conversion
 							chunkyToBitplane(color, destPlanes, bitplanePixels);
 							for(uint32 d = 0; d < destPlanes; d++)
-								WriteInt16(oldAddress + (d<<1), bitplanePixels[d]);
+								WriteInt16(address + (d<<1), bitplanePixels[d]);
 
 							// convert next 16pixels to chunky
-							hostScreen.bitplaneToChunky((uint16*)address, destPlanes, color);
-							oldAddress = address;
+							address = destAddress + ((wordIndex << 1) + (dy + j) * destPitch);
+							hostScreen.bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
 							theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 						}
 
@@ -965,7 +964,7 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 					}
 					chunkyToBitplane(color, destPlanes, bitplanePixels);
 					for(uint32 d = 0; d < destPlanes; d++)
-						WriteInt16(oldAddress + (d<<1), bitplanePixels[d]);
+						WriteInt16(address + (d<<1), bitplanePixels[d]);
 
 					D2(bug("")); //newline
 				}
@@ -2019,6 +2018,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.59  2005/01/11 19:02:52  standa
+ * 64bit cleanup revisited.
+ *
  * Revision 1.58  2005/01/11 15:28:14  standa
  * 64bit cleanup
  *
