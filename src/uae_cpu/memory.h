@@ -102,9 +102,9 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write) { 
 
 
 #ifdef FIXED_VIDEORAM
-# define do_get_real_address(a)		(((uintptr)(a) < (uintptr)ARANYMVRAMSTART) ? ((uae_u8 *)((uintptr)(a) + MEMBaseDiff)) : ((uae_u8 *)((uintptr)(a) + VMEMBaseDiff)))
+# define do_get_real_address(a)		(((uaecptr)(a) < (uaecptr)ARANYMVRAMSTART) ? ((uae_u8 *)((uaecptr)(a) + MEMBaseDiff)) : ((uae_u8 *)((uaecptr)(a) + VMEMBaseDiff)))
 #else
-# define do_get_real_address(a)          ((uae_u8 *)((uintptr)(a) + MEMBaseDiff))
+# define do_get_real_address(a)          ((uae_u8 *)((uaecptr)(a) + MEMBaseDiff))
 #endif
 
 static __inline__ uae_u8 *phys_get_real_address(uaecptr addr)

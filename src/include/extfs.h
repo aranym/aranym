@@ -120,20 +120,20 @@ class ExtFs {
 	 **/
 	void dispatch( uint32 fncode, M68kRegisters *r );
 
-	void fetchDTA( ExtDta *dta, uint32 dtap );
-	void flushDTA( ExtDta *dta, uint32 dtap );
-	void fetchFILE( ExtFile *extFile, uint32 filep );
-	void flushFILE( ExtFile *extFile, uint32 filep );
-	void fetchEDIR( ExtDir *extDir, uint32 dirp );
-	void flushEDIR( ExtDir *extDir, uint32 dirp );
+	void fetchDTA( ExtDta *dta, memptr dtap );
+	void flushDTA( ExtDta *dta, memptr dtap );
+	void fetchFILE( ExtFile *extFile, memptr filep );
+	void flushFILE( ExtFile *extFile, memptr filep );
+	void fetchEDIR( ExtDir *extDir, memptr dirp );
+	void flushEDIR( ExtDir *extDir, memptr dirp );
 
 	/**
 	 * Some crossplatform mem & str functions to use in GEMDOS replacement.
 	 **/
-	void a2fmemcpy( uint8 *dest, uint8 *source, size_t count );
-	void a2fstrcpy( char *dest, uint8 *source );
-	void f2amemcpy( uint8 *dest, uint8 *source, size_t count );
-	void f2astrcpy( uint8 *dest, uint8 *source );
+	void a2fmemcpy( char *dest, memptr source, size_t count );
+	void a2fstrcpy( char *dest, memptr source );
+	void f2amemcpy( memptr dest, char *source, size_t count );
+	void f2astrcpy( memptr dest, char *source );
 
 	/**
 	 * Unix to ARAnyM structure conversion routines.
@@ -163,9 +163,9 @@ class ExtFs {
 	int32  findFirst( ExtDta *dta, char *fpathName );
 
 	// GEMDOS functions
-	int32 Dfree_(char *fpathName, uint32 diskinfop );
+	int32 Dfree_(char *fpathName, memptr diskinfop );
 	int32 DfreeExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
-					 uint32 diskinfop, int16 drive );
+					 memptr diskinfop, int16 drive );
 	int32 DcreateExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
 					   const char *pn);
 	int32 DdeleteExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
@@ -180,9 +180,9 @@ class ExtFs {
 	int32 FcloseExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
 					  int16 handle);
 	int32 FreadExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
-					 int16 handle, uint32 count, void *buffer);
+					 int16 handle, uint32 count, memptr buffer);
 	int32 FwriteExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
-					  int16 handle, uint32 count, void *buffer);
+					  int16 handle, uint32 count, memptr buffer);
 	int32 FdeleteExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
 					   const char *pn);
 	int32 FseekExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
@@ -196,11 +196,11 @@ class ExtFs {
 	int32 FsnextExtFs ( LogicalDev *ldp, char *pathName, ExtDta *dta );
 	int32 FrenameExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
 					   int16 reserved, char *oldpath, char *newPathName);
-	int32 Fdatime_( char *fpathName, ExtFile *fp, uint32 *datetimep, int16 wflag);
+	int32 Fdatime_( char *fpathName, ExtFile *fp, uint32 datetimep, int16 wflag);
 	int32 FdatimeExtFs( LogicalDev *ldp, char *pathName, ExtFile *fp,
-						uint32 *datetimep, int16 handle, int16 wflag);
+						uint32 datetimep, int16 handle, int16 wflag);
 	int32 FcntlExtFs( LogicalDev *ldp, char *pathName, ExtFile *fp,
-					  int16 handle, void *arg, int16 cmd );
+					  int16 handle, memptr arg, int16 cmd );
 	int32 DpathconfExtFs( LogicalDev *ldp, char *pathName, ExtFile *fp,
 						  const char* pn, int16 which );
 	int32 Dpathconf_( char *fpathName, int16 which, ExtDrive *drv );
@@ -210,16 +210,16 @@ class ExtFs {
 	int32 DclosedirExtFs( ExtDir *dirh );
 
 	int32 DreaddirExtFs( LogicalDev *ldp, char *pathName, ExtDir *dirh,
-						 int16 len, int32 dirhandle, char* buff );
+						 int16 len, int32 dirhandle, memptr buff );
 
 	int32 DxreaddirExtFs( LogicalDev *ldp, char *pathName, ExtDir *dirh,
-						  int16 len, int32 dirhandle, char* buff, uint32 xattrp, uint32 xretp );
-	int32 Dxreaddir_( char *fpathName, ExtDir *dirh, int16 len, char* buff, uint32 xattrp, uint32 xretp );
+						  int16 len, int32 dirhandle, memptr buff, memptr xattrp, memptr xretp );
+	int32 Dxreaddir_( char *fpathName, ExtDir *dirh, int16 len, memptr buff, memptr xattrp, memptr xretp );
 	int32 DrewinddirExtFs( ExtDir *dirh );
 
 	int32 FxattrExtFs( LogicalDev *ldp, char *pathName, ExtFile *fp,
-					   int16 flag, const char* pn, uint32 xattrp );
-	int32 Fxattr_( LogicalDev *ldp, char *fpathName, int16 flag, uint32 xattrp );   // Taking host pathName instead of Atari one.
+					   int16 flag, const char* pn, memptr xattrp );
+	int32 Fxattr_( LogicalDev *ldp, char *fpathName, int16 flag, memptr xattrp );   // Taking host pathName instead of Atari one.
 
 	// these variables are another plain hack.
 	// They should be in each mounted instance just like basePath and caseSensitive flag (which are not either now)
@@ -229,12 +229,12 @@ class ExtFs {
 
 	void dispatchXFS( uint32 fncode, M68kRegisters *r );
 
-	void fetchXFSC( XfsCookie *fc, uint32 filep );
-	void flushXFSC( XfsCookie *fc, uint32 filep );
-	void fetchXFSF( ExtFile *extFile, uint32 filep );
-	void flushXFSF( ExtFile *extFile, uint32 filep );
-	void fetchXFSD( XfsDir *dirh, uint32 dirp );
-	void flushXFSD( XfsDir *dirh, uint32 dirp );
+	void fetchXFSC( XfsCookie *fc, memptr filep );
+	void flushXFSC( XfsCookie *fc, memptr filep );
+	void fetchXFSF( ExtFile *extFile, memptr filep );
+	void flushXFSF( ExtFile *extFile, memptr filep );
+	void fetchXFSD( XfsDir *dirh, memptr dirp );
+	void flushXFSD( XfsDir *dirh, memptr dirp );
 
 	char *cookie2Pathname( XfsFsFile *fs, const char *name, char *buf );
 	void xfs_freefs( XfsFsFile *fs );
@@ -242,23 +242,23 @@ class ExtFs {
 	int32 xfs_root( uint16 dev, XfsCookie *fc );
 	int32 xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook );
 	int32 xfs_release( XfsCookie *fc );
-	int32 xfs_getxattr( XfsCookie *fc, uint32 xattrp );
+	int32 xfs_getxattr( XfsCookie *fc, memptr xattrp );
 	int32 xfs_getdev( XfsCookie *fc, int32 *devspecial );
-	int32 xfs_lookup( XfsCookie *dir, char *name, XfsCookie *fc );
-	int32 xfs_getname( XfsCookie *relto, XfsCookie *dir, char *pathName, int16 size );
-	int32 xfs_creat( XfsCookie *dir, char *name, uint16 mode, int16 flags, XfsCookie *fc );
-	int32 xfs_rename( XfsCookie *olddir, char *oldname, XfsCookie *newdir, char *newname );
-	int32 xfs_remove( XfsCookie *dir, char *name );
+	int32 xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc );
+	int32 xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, int16 size );
+	int32 xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, XfsCookie *fc );
+	int32 xfs_rename( XfsCookie *olddir, memptr oldname, XfsCookie *newdir, memptr newname );
+	int32 xfs_remove( XfsCookie *dir, memptr name );
 	int32 xfs_pathconf( XfsCookie *fc, int16 which );
 	int32 xfs_opendir( XfsDir *dirh, uint16 flags );
-	int32 xfs_readdir( XfsDir *dirh, char* buff, int16 len, XfsCookie *fc );
-	int32 xfs_mkdir( XfsCookie *dir, char *name, uint16 mode );
-	int32 xfs_rmdir( XfsCookie *dir, char *name );
-	int32 xfs_readlink( XfsCookie *dir, char *buf, int16 len );
-	int32 xfs_dfree( XfsCookie *dir, uint32 buf );
+	int32 xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc );
+	int32 xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode );
+	int32 xfs_rmdir( XfsCookie *dir, memptr name );
+	int32 xfs_readlink( XfsCookie *dir, memptr buf, int16 len );
+	int32 xfs_dfree( XfsCookie *dir, memptr buf );
 
 	int32 xfs_dev_open(ExtFile *fp);
-	int32 xfs_dev_datime( ExtFile *fp, uint32 *datetimep, int16 wflag);
+	int32 xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag);
 
 };
 
@@ -269,6 +269,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.19  2002/04/20 10:03:23  standa
+ * General code clean up.
+ *
  * Revision 1.18  2002/04/19 16:23:24  standa
  * The Fxattr bug fixed. QED works, Thing can refresh without the JOY's ugly
  * patch in Dpathconf.

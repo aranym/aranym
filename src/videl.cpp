@@ -289,7 +289,7 @@ void VIDEL::renderScreenNoFlag()
 					for (int j = startBitIndex; j < startBitIndex + 16; j++) {
 						// use the variable due to the putBpp24Pixel macro usage
 						uint32 tmpColor = hostScreen.getPaletteColor( color[ colIdx++ ] );
-						putBpp24Pixel( (uint32)hvram + j*3, tmpColor );
+						putBpp24Pixel( (uint8 *)hvram + j*3, tmpColor );
 					}
 				}
 				break;
@@ -350,7 +350,7 @@ void VIDEL::renderScreenNoFlag()
 									(uint8) ( ((data & 0x07) << 5) |
 											  ((data >> 11) & 0x3c)),
 									(uint8) ((data >> 5) & 0xf8));
-				putBpp24Pixel( (uint32)hvram + w*3, tmpColor );
+				putBpp24Pixel( (uint8 *)hvram + w*3, tmpColor );
 			}
 		}
 		else if (destBPP == 4) {
@@ -380,6 +380,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.37  2002/02/28 20:43:33  joy
+ * uae_ vars replaced with uint's
+ *
  * Revision 1.36  2002/01/17 14:59:19  milan
  * cleaning in HW <-> memory communication
  * support for JIT CPU

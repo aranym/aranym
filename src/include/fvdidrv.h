@@ -12,16 +12,6 @@
 class FVDIDriver {
   private:
 
-	struct MFDB {
-		uint32 address; // uint16* before
-		uint16 width;
-		uint16 height;
-		uint16 wdwidth;
-		uint16 standard;
-		uint16 bitplanes;
-		uint16 reserved[3];
-	};
-
 	struct _Mouse {
 		struct {
 			uint16 x, y;
@@ -85,21 +75,19 @@ class FVDIDriver {
 	void setColor( uint32 paletteIndex, uint32 red, uint32 green, uint32 blue );
 	void setResolution( int32 width, int32 height, int32 depth, int32 freq );
 
-	MFDB* FVDIDriver::fetchMFDB( MFDB* mfdb, uint32 pmfdb );
+	int putPixel( memptr vwk, memptr dst, int32 x, int32 y, uint32 colour );
+	uint32 getPixel( memptr vwk, memptr src, int32 x, int32 y );
+	int drawMouse( memptr wrk, int16 x, int16 y, uint32 mode );
 
-	int putPixel( void *vwk, MFDB *dst, int32 x, int32 y, uint32 colour );
-	uint32 getPixel( void *vwk, MFDB *src, int32 x, int32 y );
-	int drawMouse( void *wrk, int16 x, int16 y, uint32 mode );
-
-	int fillArea(uint32 vwk, uint32 x_, uint32 y_, int w, int h,
-	             uint32 pattern_address, int32 colors);
-	int drawLine(uint32 vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 y2_,
+	int fillArea(memptr vwk, uint32 x_, uint32 y_, int w, int h,
+	             memptr pattern_address, int32 colors);
+	int drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 y2_,
 	             uint16 pattern, int32 colors, int logOp);
-	int fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr, int moves,
-	             uint32 pattern_addr, int32 colors);
-	int expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, int32 dx, int32 dy,
+	int fillPoly(memptr vwk, int32 points_addr, int n, memptr index_addr, int moves,
+	             memptr pattern_addr, int32 colors);
+	int expandArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 sy, int32 dx, int32 dy,
 	               int32 w, int32 h, uint32 fgColor, uint32 bgColor, uint32 logOp);
-	int blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, int32 dx, int32 dy,
+	int blitArea(memptr vwk, memptr src, memptr dest, int32 sx, int32 sy, int32 dx, int32 dy,
 	             int32 w, int32 h, uint32 logOp);
 };
 
@@ -108,6 +96,10 @@ class FVDIDriver {
 
 /*
  * $Log$
+ * Revision 1.13  2001/12/11 21:03:57  standa
+ * Johan's patch caused DEBUG directive to fail e.g. in main.cpp.
+ * The inline functions were put into the .cpp file.
+ *
  * Revision 1.12  2001/11/29 23:51:56  standa
  * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
  *

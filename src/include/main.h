@@ -37,7 +37,7 @@ extern int FPUType;
 // 68k register structure (for Execute68k())
 struct M68kRegisters {
 	uint32 d[8];
-	uint32 a[8];
+	memptr a[8];
 	uint16 sr;
 };
 
@@ -74,6 +74,9 @@ extern void ClearInterruptFlag(uint32 flag);
 
 /*
  * $Log$
+ * Revision 1.14  2002/04/22 18:30:50  milan
+ * header files reform
+ *
  * Revision 1.13  2002/02/23 13:43:11  joy
  * input related code separated from main.cpp
  *
