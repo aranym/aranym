@@ -553,7 +553,7 @@ void ndebug::log2phys(FILE *f, uaecptr addr) {
 	if (regs.mmu_enabled) {
 setjmpagain:
 		jmp_buf excep_env_old;
-		excep_env_old = excep_env;
+		memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
 	        int prb = setjmp(excep_env);
         	if (prb == 2) {
 			bug("Bus error");
@@ -567,7 +567,7 @@ setjmpagain:
 		}
 		bug("MMU enabled: %08lx -> %08lx",	(unsigned long)addr,
 			(unsigned long)mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_long, 0));
-		excep_env = excep_env_old;
+		memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 	} else {
 #endif /* FULLMMU */
 		bug("MMU disabled: %08lx", (unsigned long)addr);
@@ -1149,6 +1149,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.23  2002/04/22 18:30:50  milan
+ * header files reform
+ *
  * Revision 1.22  2002/02/26 21:08:13  milan
  * address validation in CPU interface
  *
