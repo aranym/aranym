@@ -1,3 +1,43 @@
+2004/01/25 - Xavier
+- gui-sdl/sdlgui.*:
+  - aligned SGBUTTONs handling on other objects. They now need to have SG_EXIT
+    or SG_TOUCHEXIT flag set to end dialog processing. Dialog definitions needs
+    to be updated accordingly. This simplify code (and allows to use SGBUTTONs
+    like SGCHECKBOXes). SG_EXIT and SG_TOUCHEXIT buttons are still deselected
+    before dialog exit however. This should be removed and caller code should be
+    responsible of deselecting buttons.
+  - created a secondary loop to hande mouse clicks (SDLGui_MouseClick()
+    function). Now, once an object is clicked, we ignore any keypress until
+    mouse button is released. This fixes some underlying bugs (clicked buttons
+    not deselected when user press RETURN, or when resolution change).
+  - created a new function to handle keypress. First step to the full rewriting
+    of SGEDITFIELD objects handling.
+  - implemented SDLGui_Get[First|Next]BackgroundRect() functions. They allow
+    main thread (hostscreen.cpp) to get a list of rectangles to update the
+    background without erasing the opened dialog. We are ready to implement
+    "flying dialogs". :) This code will need updating if we implement SG_POPUP
+    handled by sdlgui, since popup menu can be higher than root box.
+  - SDLGui_ObjFullCoord() now returns correct coordinates for SGEDITFIELD
+    objects.
+  - factorized some code ; simplified loops. This allows central loops to be
+    far more readable.
+  - commented a bit.
+  - corrected some returns values and tests. Object #0 should be handled the
+    same way as the others. Functions should return -1 when no objects found,
+    and calling functions should test for ">= 0" and not "> 0".
+
+- src/hostscreen.cpp: rewritten HostScreen::blendBackgrounds(). It now uses
+  SDLGui_Get[First|Next]BackgroundRect() functions and is a bit shorter than
+  before.
+
+- gui-sdl/dlg*.cpp: added SG_EXIT flag on all SGBUTTONs object (unless they were
+  already SG_TOUCHEXIT).
+
+- gui-sdl/dlgDisk.cpp: uncommented IDE0_GENERATE and IDE1_GENERATE buttons.
+  Added SG_HIDDEN flag on them for now (until SG_DISABLED flag is implemented or
+  the code behind is written).
+
+
 2004/01/24 - milan
 - CPU: small cleanup
 

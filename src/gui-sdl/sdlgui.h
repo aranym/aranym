@@ -27,7 +27,7 @@ enum
 
 /* Object flags: */
 #define SG_TOUCHEXIT    1
-#define SG_EXIT         2  /* Not yet tested */
+#define SG_EXIT         2
 #define SG_BUTTON_RIGHT 4
 #define SG_DEFAULT      8
 
@@ -64,6 +64,8 @@ int SDLGui_DoDialog(SGOBJ *dlg);
 int SDLGui_PrepareFont(void);
 void SDLGui_FreeFont(void);
 int SDLGui_FileSelect(char *path_and_name, bool bAllowNew);
+SDL_Rect *SDLGui_GetFirstBackgroundRect(void);
+SDL_Rect *SDLGui_GetNextBackgroundRect(void);
 
 #define STATUS_REBOOT	1
 #define STATUS_SHUTDOWN	2

@@ -30,7 +30,7 @@ SGOBJ aboutdlg[] =
   { SGTEXT, 0, 0, 1,18, 38,1, "hope that it will be useful, but" },
   { SGTEXT, 0, 0, 1,19, 38,1, "WITHOUT ANY WARRANTY. See the GNU Ge-" },
   { SGTEXT, 0, 0, 1,20, 38,1, "neral Public License for more details." },
-  { SGBUTTON, SG_DEFAULT, 0, 16,23, 8,1, "OK" },
+  { SGBUTTON, SG_EXIT|SG_DEFAULT, 0, 16,23, 8,1, "OK" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 

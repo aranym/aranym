@@ -40,8 +40,8 @@ static SGOBJ fsdlg[] =
     { SGTEXT, 0, 0, 1,3, 38,1, dlgpath },
     { SGTEXT, 0, 0, 1,4, 6,1, "File:" },
     { SGTEXT, 0, 0, 7,4, 31,1, dlgfname },
-    { SGBUTTON, 0, 0, 31,1, 4,1, ".." },
-    { SGBUTTON, 0, 0, 36,1, 3,1, "/" },
+    { SGBUTTON, SG_EXIT, 0, 31,1, 4,1, ".." },
+    { SGBUTTON, SG_EXIT, 0, 36,1, 3,1, "/" },
     { SGBOX, 0, 0, 1,6, 38,16, NULL },
     { SGBOX, 0, 0, 38,7, 1,14, NULL },
     { SGTEXT, SG_EXIT, 0, 2,6, 35,1, dlgfilenames[0] },
@@ -60,10 +60,10 @@ static SGOBJ fsdlg[] =
     { SGTEXT, SG_EXIT, 0, 2,19, 35,1, dlgfilenames[13] },
     { SGTEXT, SG_EXIT, 0, 2,20, 35,1, dlgfilenames[14] },
     { SGTEXT, SG_EXIT, 0, 2,21, 35,1, dlgfilenames[15] },
-    { SGBUTTON, SG_TOUCHEXIT, 0, 38,6, 1,1, "\x01" },          /* Arrow up */
-    { SGBUTTON, SG_TOUCHEXIT, 0, 38,21, 1,1, "\x02" },         /* Arrow down */
-    { SGBUTTON, SG_DEFAULT, 0, 10,23, 8,1, "Okay" },
-    { SGBUTTON, 0, 0, 24,23, 8,1, "Cancel" },
+    { SGBUTTON, SG_TOUCHEXIT      , 0, 38,6, 1,1, "\x01" },  /* Arrow up */
+    { SGBUTTON, SG_TOUCHEXIT      , 0, 38,21, 1,1, "\x02" }, /* Arrow down */
+    { SGBUTTON, SG_EXIT|SG_DEFAULT, 0, 10,23, 8,1, "Okay" },
+    { SGBUTTON, SG_EXIT           , 0, 24,23, 8,1, "Cancel" },
     { -1, 0, 0, 0,0, 0,0, NULL }
   };
 

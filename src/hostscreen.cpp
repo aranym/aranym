@@ -28,6 +28,7 @@
 #include "memory.h"
 #include "hostscreen.h"
 #include "parameters.h"
+#include "gui-sdl/sdlgui.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -188,39 +189,13 @@ void HostScreen::restoreBackground()
 void HostScreen::blendBackgrounds()
 {
 	if (backgroundSurf != NULL) {
-		int dialogWidth = 326;	// FIXME should be fetched from the dialog.c
-		int dialogHeight = 206;	// should be the current dialog dimensions
-		int halfRemWidth = (getWidth() - dialogWidth)/2;
-		int halfRemHeight = (getHeight() - dialogHeight)/2;
-		int xx = halfRemWidth + dialogWidth;
-		int yy = halfRemHeight + dialogHeight;
-		SDL_Rect topRect, leftRect, rightRect, bottomRect;
+		SDL_Rect *Rect;
 
-		topRect.x = 0;
-		topRect.y = 0;
-		topRect.w = getWidth();
-		topRect.h = halfRemHeight;
-
-		leftRect.x = 0;
-		leftRect.y = halfRemHeight;
-		leftRect.w = halfRemWidth;
-		leftRect.h = dialogHeight;
-
-		rightRect.x = xx;
-		rightRect.y = halfRemHeight;
-		rightRect.w = halfRemWidth;
-		rightRect.h = dialogHeight;
-
-		bottomRect.x = 0;
-		bottomRect.y = yy;
-		bottomRect.w = getWidth();
-		bottomRect.h = halfRemHeight;
-
-		SDL_BlitSurface(backgroundSurf, &topRect, mainSurface, &topRect);
-		SDL_BlitSurface(backgroundSurf, &leftRect, mainSurface, &leftRect);
-		SDL_BlitSurface(backgroundSurf, &rightRect, mainSurface, &rightRect);
-		SDL_BlitSurface(backgroundSurf, &bottomRect, mainSurface, &bottomRect);
-
+		Rect = SDLGui_GetFirstBackgroundRect();
+		while (Rect != NULL) {
+			SDL_BlitSurface(backgroundSurf, Rect, mainSurface, Rect);
+			Rect = SDLGui_GetNextBackgroundRect();
+		}
 		update(true);
 	}
 }
@@ -1267,6 +1242,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.43  2004/01/06 22:36:22  xavier
+ * Improved SDL Gui maintainability and "look'n'feel".
+ *
  * Revision 1.42  2004/01/05 10:05:20  standa
  * Palette handling reworked. Old non-NF dispatch removed.
  *

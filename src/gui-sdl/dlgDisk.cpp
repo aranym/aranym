@@ -44,7 +44,7 @@ enum DISCDLG {
 	text_size0,
 	IDE0_SIZE,
 	text_size0mb,
-//	IDE0_GENERATE,
+	IDE0_GENERATE,
 	box_ide1,
 	text_ide1,
 	IDE1_NAME,
@@ -62,7 +62,7 @@ enum DISCDLG {
 	text_size1,
 	IDE1_SIZE,
 	text_size1mb,
-//	IDE1_GENERATE,
+	IDE1_GENERATE,
 	EXIT
 };
 
@@ -71,14 +71,14 @@ static SGOBJ discdlg[] =
   { SGBOX, 0, 0, 0,0, 40,25, NULL },
   { SGBOX, 0, 0, 1,1, 38,4, NULL },
   { SGTEXT, 0, 0, 2,1, 14,1, "Floppy disk A:" },
-  { SGBUTTON, 0, 0, 30,1, 8,1, NULL },
-  { SGBUTTON, 0, 0, 2,3, 5,1, "Path:" },
+  { SGBUTTON, SG_EXIT, 0, 30,1, 8,1, NULL },
+  { SGBUTTON, SG_EXIT, 0, 2,3, 5,1, "Path:" },
   { SGTEXT, 0, 0, 8,3, 30,1, NULL },
   { SGBOX, 0, 0,		  1,7, 38,7, NULL },
   { SGTEXT, 0, 0,		  2,7, 5,1, "IDE0:" },
   { SGEDITFIELD, 0, 0,	  8,7, sizeof(ide0_name)-1,1, ide0_name},
-  { SGBUTTON, 0, 0,		 30,7, 8,1, NULL },
-  { SGBUTTON, 0, 0,		  2,9, 5,1, "Path:" },
+  { SGBUTTON, SG_EXIT, 0,	 30,7, 8,1, NULL },
+  { SGBUTTON, SG_EXIT, 0,	  2,9, 5,1, "Path:" },
   { SGTEXT, 0, 0,		  8,9, 30,1, NULL },
   { SGCHECKBOX, 0, 0,	28,10, 8,1, "Present" },
   { SGCHECKBOX, SG_EXIT, 0,	28,11, 8,1, "CDROM" },
@@ -91,12 +91,13 @@ static SGOBJ discdlg[] =
   { SGTEXT, 0, 0,		 2,13, 5,1, "Size:" },
   { SGEDITFIELD, 0, 0,	 8,13, 5,1, ide0_size},
   { SGTEXT, 0, 0,		14,13, 2,1, "MB" },
- // { SGBUTTON, 0, 0,		17,13, 10,1, "Generate" },
+// Hidden for now...
+  { SGBUTTON, SG_EXIT, SG_HIDDEN,	17,13, 10,1, "Generate" },
   { SGBOX, 0, 0,		 1,15, 38,7, NULL },
   { SGTEXT, 0, 0,		 2,15, 5,1, "IDE1:" },
   { SGEDITFIELD, 0, 0,	 8,15, sizeof(ide1_name)-1,1, ide1_name},
-  { SGBUTTON, 0, 0,		30,15, 8,1, NULL },
-  { SGBUTTON, 0, 0,		 2,17, 5,1, "Path:" },
+  { SGBUTTON, SG_EXIT, 0,	30,15, 8,1, NULL },
+  { SGBUTTON, SG_EXIT, 0,	 2,17, 5,1, "Path:" },
   { SGTEXT, 0, 0,		 8,17, 30,1, NULL },
   { SGCHECKBOX, 0, 0,	28,18, 8,1, "Present" },
   { SGCHECKBOX, SG_EXIT, 0,	28,19, 8,1, "CDROM" },
@@ -109,8 +110,9 @@ static SGOBJ discdlg[] =
   { SGTEXT, 0, 0,		 2,21, 5,1, "Size:" },
   { SGEDITFIELD, 0, 0,	 8,21, 5,1, ide1_size},
   { SGTEXT, 0, 0,		14,21, 2,1, "MB" },
- // { SGBUTTON, 0, 0,		17,21, 10,1, "Generate" },
-  { SGBUTTON, SG_DEFAULT, 0,	10,23, 20,1, "Back to main menu" },
+// Hidden for now...
+  { SGBUTTON, SG_EXIT, SG_HIDDEN,	17,21, 10,1, "Generate" },
+  { SGBUTTON, SG_EXIT|SG_DEFAULT, 0,	10,23, 20,1, "Back to main menu" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 

@@ -17,12 +17,34 @@
 
 #include "font8.h"
 
-#define sdlscrn	hostScreen.getPhysicalSurface()
+#define sdlscrn		hostScreen.getPhysicalSurface()
+#define scrwidth	hostScreen.getWidth()
+#define scrheight	hostScreen.getHeight()
 
 static SDL_Surface *stdfontgfx=NULL;
 static SDL_Surface *fontgfx=NULL;   /* The actual font graphics */
 static int fontwidth, fontheight;   /* Height and width of the actual font */
 
+// Stores current dialog coordinates
+static SDL_Rect DialogRect = {0, 0, 0, 0};
+
+// Used by SDLGui_Get[First|Next]BackgroundRect()
+static SDL_Rect BackgroundRect = {0, 0, 0, 0};
+static int BackgroundRectCounter;
+enum
+{
+  SG_BCKGND_RECT_BEGIN,
+  SG_BCKGND_RECT_TOP,
+  SG_BCKGND_RECT_LEFT,
+  SG_BCKGND_RECT_RIGHT,
+  SG_BCKGND_RECT_BOTTOM,
+  SG_BCKGND_RECT_END
+};
+
+/*-----------------------------------------------------------------------*/
+/*
+  Load an XBM into a SDL_Surface.
+*/
 static SDL_Surface *SDLGui_LoadXBM(int w, int h, uint8 *bits)
 {
 	SDL_Surface *bitmap;
@@ -126,12 +148,20 @@ int SDLGui_PrepareFont()
   return 0;
 }
 
+/*-----------------------------------------------------------------------*/
+/*
+  Free the font.
+*/
 void SDLGui_FreeFont()
 {
   if(fontgfx) {
     SDL_FreeSurface(fontgfx);
     fontgfx = NULL;
   }
+
+  // No dialog on screen anymore -> update stored coordinates
+  DialogRect.w = 0;
+  DialogRect.y = 0;
 }
 
 
@@ -161,24 +191,31 @@ void SDLGui_ObjFullCoord(SGOBJ *dlg, int objnum, SDL_Rect *coord)
 {
   SDLGui_ObjCoord(dlg, objnum, coord);
 
-  if ((dlg[objnum].type == SGBUTTON) ||
-      (dlg[objnum].type == SGBOX))
+  switch( dlg[objnum].type )
   {
-    // Take border into account
-    if (dlg[objnum].flags & SG_DEFAULT)
-    {
-      coord->x -= 4;
-      coord->y -= 4;
-      coord->w += 8;
-      coord->h += 8;
-    }
-    else
-    {
-      coord->x -= 3;
-      coord->y -= 3;
-      coord->w += 6;
-      coord->h += 6;
-    }
+    case SGBOX:
+    case SGBUTTON:
+      // Take border into account
+      if (dlg[objnum].flags & SG_DEFAULT)
+      {
+        // Wider border if default
+        coord->x -= 4;
+        coord->y -= 4;
+        coord->w += 8;
+        coord->h += 8;
+      }
+      else
+      {
+        coord->x -= 3;
+        coord->y -= 3;
+        coord->w += 6;
+        coord->h += 6;
+      }
+      break;
+    case SGEDITFIELD:
+      // There is a line below
+      coord->h += 1;
+      break;
   }
 }
 
@@ -194,13 +231,19 @@ void SDLGui_Text(int x, int y, const char *txt)
   SDL_Rect sr, dr;
 
   SCRLOCK;
-  for(i=0; txt[i]!=0; i++)
+  for (i = 0 ; txt[i] != 0 ; i++)
   {
     c = txt[i];
-    sr.x=fontwidth*(c%16);  sr.y=fontheight*(c/16);
-    sr.w=fontwidth;         sr.h=fontheight;
-    dr.x=x+i*fontwidth;     dr.y=y;
-    dr.w=fontwidth;         dr.h=fontheight;
+    sr.x = fontwidth * (c % 16);
+    sr.y = fontheight * (c / 16);
+    sr.w = fontwidth;
+    sr.h = fontheight;
+
+    dr.x = x + (fontwidth * i);
+    dr.y = y;
+    dr.w = fontwidth;
+    dr.h = fontheight;
+
     SDL_BlitSurface(fontgfx, &sr, sdlscrn, &dr);
   }
   SCRUNLOCK;
@@ -235,7 +278,7 @@ void SDLGui_DrawEditField(SGOBJ *edlg, int objnum)
   // Draw a line below.
   coord.y = coord.y + coord.h;
   coord.h = 1;
-  SDL_FillRect(sdlscrn, &coord, SDL_MapRGB(sdlscrn->format,160,160,160));
+  SDL_FillRect(sdlscrn, &coord, SDL_MapRGB(sdlscrn->format,128,128,128));
 }
 
 
@@ -602,42 +645,34 @@ void SDLGui_EditField(SGOBJ *dlg, int objnum)
 
 /*-----------------------------------------------------------------------*/
 /*
-  Draw a whole dialog.
+  Draw an object.
 */
-void SDLGui_DrawDialog(SGOBJ *dlg)
+void SDLGui_DrawObject(SGOBJ *dlg, int objnum)
 {
-  for(int i=0; dlg[i].type!=-1; i++ )
+  switch( dlg[objnum].type )
   {
-    if (dlg[i].state & SG_HIDDEN) continue;
-
-    switch( dlg[i].type )
-    {
-      case SGBOX:
-        SDLGui_DrawBox(dlg, i);
-        break;
-      case SGTEXT:
-        SDLGui_DrawText(dlg, i);
-        break;
-      case SGEDITFIELD:
-        SDLGui_DrawEditField(dlg, i);
-        break;
-      case SGBUTTON:
-        SDLGui_DrawButton(dlg, i);
-        break;
-      case SGRADIOBUT:
-        SDLGui_DrawRadioButton(dlg, i);
-        break;
-      case SGCHECKBOX:
-        SDLGui_DrawCheckBox(dlg, i);
-        break;
-      case SGPOPUP:
-        SDLGui_DrawPopupButton(dlg, i);
-        break;
-    }
+    case SGBOX:
+      SDLGui_DrawBox(dlg, objnum);
+      break;
+    case SGTEXT:
+      SDLGui_DrawText(dlg, objnum);
+      break;
+    case SGEDITFIELD:
+      SDLGui_DrawEditField(dlg, objnum);
+      break;
+    case SGBUTTON:
+      SDLGui_DrawButton(dlg, objnum);
+      break;
+    case SGRADIOBUT:
+      SDLGui_DrawRadioButton(dlg, objnum);
+      break;
+    case SGCHECKBOX:
+      SDLGui_DrawCheckBox(dlg, objnum);
+      break;
+    case SGPOPUP:
+      SDLGui_DrawPopupButton(dlg, objnum);
+      break;
   }
-  SCRLOCK;
-  SDL_UpdateRect(sdlscrn, 0,0,0,0);
-  SCRUNLOCK;
 }
 
 
@@ -659,7 +694,27 @@ void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
 
 /*-----------------------------------------------------------------------*/
 /*
-  Search default  object in a dialog.
+  Draw a whole dialog.
+*/
+void SDLGui_DrawDialog(SGOBJ *dlg)
+{
+  int i;
+
+  // Store dialog coordinates
+  SDLGui_ObjFullCoord(dlg, 0, &DialogRect);
+
+  for (i = 0 ; dlg[i].type != -1 ; i++)
+  {
+    if (dlg[i].state & SG_HIDDEN) continue;
+    SDLGui_DrawObject(dlg, i);
+  }
+  SDLGui_RefreshObj(dlg, 0);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Search default object in a dialog.
 */
 int SDLGui_FindDefaultObj(SGOBJ *dlg)
 {
@@ -672,26 +727,27 @@ int SDLGui_FindDefaultObj(SGOBJ *dlg)
     i++;
   }
 
-  return 0;
+  return -1;
 }
 
 
 /*-----------------------------------------------------------------------*/
 /*
-  Search an object at a certain position.
+  Search an object at given coordinates.
 */
 int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy)
 {
   SDL_Rect coord;
-
-  int len, i;
+  int end, i;
   int ob = -1;
   
-  len = 0;
-  while( dlg[len].type!=-1)   len++;
+  // Search end object in dialog
+  i = 0;
+  while (dlg[i++].type != -1);
+  end = i;
 
-  /* Now search for the object: */
-  for(i=len; i>0; i--)
+  // Now check each object
+  for (i = end-1 ; i >= 0 ; i--)
   {
     SDLGui_ObjFullCoord(dlg, i, &coord);
 
@@ -712,17 +768,329 @@ int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy)
 
 /*-----------------------------------------------------------------------*/
 /*
+  A radio button has been selected. Let's deselect any other in his group.
+*/
+void SDLGui_SelectRadioButton(SGOBJ *dlg, int clicked_obj)
+{
+  int obj;
+
+  // Find first radio button in this group
+  obj = clicked_obj;
+  while (dlg[--obj].type == SGRADIOBUT);
+
+  // Update state
+  while (dlg[++obj].type == SGRADIOBUT)
+  {
+    // This code scan every object in the group. This allows to solve cases
+    // where multiple radio-buttons where selected in the group by clicking
+    // one.
+    if ((obj != clicked_obj) && (dlg[obj].state & SG_SELECTED))
+    {
+      // Deselect this radio button
+      dlg[obj].state &= ~SG_SELECTED;
+      SDLGui_DrawRadioButtonState(dlg, obj);
+      SDLGui_RefreshObj(dlg, obj);
+    }
+  }
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Update clicked object state depending on given mouse coordinates.
+  Returns true if the mouse is over the object, false otherwise.
+*/
+bool SDLGui_UpdateObjState(SGOBJ *dlg, int clicked_obj, int original_state,
+                           int x, int y)
+{
+  int obj;
+
+  obj = SDLGui_FindObj(dlg, x, y);
+
+  // Special case : user clicked on an already selected radio button
+  // do not modify its state.
+  // We handle it here because it allows to exit if the object is SG_EXIT or
+  // SG_TOUCHEXIT without any additional test.
+  if ((dlg[clicked_obj].type == SGRADIOBUT) && (original_state & SG_SELECTED))
+    return (obj == clicked_obj);
+
+  if (((obj != clicked_obj) &&
+       (dlg[clicked_obj].state != original_state)) ||
+      ((obj == clicked_obj) &&
+       (dlg[clicked_obj].state == original_state)))
+  {
+    switch (dlg[clicked_obj].type)
+    {
+      case SGBUTTON:
+      case SGCHECKBOX:
+      case SGPOPUP:
+      case SGRADIOBUT:
+        dlg[clicked_obj].state ^= SG_SELECTED;
+        SDLGui_DrawObject(dlg, clicked_obj);
+        SDLGui_RefreshObj(dlg, clicked_obj);
+        break;
+    }
+  }
+
+  return (obj == clicked_obj);
+}
+
+/*-----------------------------------------------------------------------*/
+/*
+  Handle mouse clicks.
+*/
+int SDLGui_MouseClick(SGOBJ *dlg, int fx, int fy)
+{
+  int clicked_obj;
+  int return_obj = -1;
+  int original_state = 0;
+  int x, y;
+
+  clicked_obj = SDLGui_FindObj(dlg, fx, fy);
+
+  if (clicked_obj >= 0)
+  {
+    original_state = dlg[clicked_obj].state;
+    SDLGui_UpdateObjState(dlg, clicked_obj, original_state, fx, fy);
+
+    if (dlg[clicked_obj].flags & SG_TOUCHEXIT)
+    {
+      return_obj = clicked_obj;
+      clicked_obj = -1;
+    }
+  }
+
+  while (clicked_obj >= 0)
+  {
+    SDL_Event evnt;
+    // SDL_PumpEvents() - not necessary, the main check_event thread calls it
+    if (SDL_PeepEvents(&evnt, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT)))
+    {
+      switch (evnt.user.code)
+      {
+        case SDL_USEREVENT:
+          // a signal that resolution has changed
+          // Restore clicked object original state
+          dlg[clicked_obj].state = original_state;
+
+          // re-draw dialog
+          SDLGui_DrawDialog(dlg);
+
+          // Were done. Exit from mouse click handling.
+          clicked_obj = -1;
+          break;
+
+        case SDL_MOUSEBUTTONUP:
+          x = (int)evnt.user.data1;
+          y = (int)evnt.user.data2;
+          if (SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y))
+          {
+            // true if mouse button is released over clicked object.
+            // If applicable, the object has been selected by
+            // SDLGui_UpdateObjState(). Let's do additional handling here.
+
+            // Exit if object is an SG_EXIT one.
+            if (dlg[clicked_obj].flags & SG_EXIT)
+              return_obj = clicked_obj;
+
+            switch (dlg[clicked_obj].type)
+            {
+              case SGEDITFIELD:
+                SDLGui_EditField(dlg, clicked_obj);
+                break;
+
+              case SGRADIOBUT:
+                SDLGui_SelectRadioButton(dlg, clicked_obj);
+                break;
+            }
+          }
+
+          // Were done. Exit from mouse click handling.
+          clicked_obj = -1;
+
+          break;
+      }
+    }
+    else
+    {
+      // No special event occured.
+      // Update object state according to mouse coordinates.
+      SDL_GetMouseState(&x, &y);
+      SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y);
+
+      // Wait a little to avoid eating CPU.
+      SDL_Delay(100);
+    }
+  }
+
+  return return_obj;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Handle key press.
+*/
+int SDLGui_KeyPress(SGOBJ *dlg, int keysym)
+{
+  int return_obj = -1;
+  int obj;
+
+  switch(keysym)
+  {
+    case SDLK_RETURN:
+    case SDLK_KP_ENTER:
+      obj = SDLGui_FindDefaultObj(dlg);
+      if (obj >= 0)
+      {
+        dlg[obj].state ^= SG_SELECTED;
+        SDLGui_DrawObject(dlg, obj);
+        SDLGui_RefreshObj(dlg, obj);
+        if (dlg[obj].flags & (SG_EXIT | SG_TOUCHEXIT))
+        {
+          return_obj = obj;
+          SDL_Delay(300);
+        }
+      }
+      break;
+  }
+
+  return return_obj;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Used to update screen while GUI is opened. Return a list of rectangles that
+  covers the screen without overlaping the current dialog.
+*/
+SDL_Rect *SDLGui_GetFirstBackgroundRect(void)
+{
+  // Reset counter...
+  BackgroundRectCounter = SG_BCKGND_RECT_BEGIN;
+  // And returns first rectangle
+  return SDLGui_GetNextBackgroundRect();
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Returns next rectangle to be redrawn to update screen or NULL if we reached
+  the end of the list.
+  This code is "flying dialog" ready :)
+  It will need some updating if we implement popup buttons handled by sdlgui,
+  as the popup could be higher than the root box...
+  I used some recursivity here to simplify the code.
+*/
+SDL_Rect *SDLGui_GetNextBackgroundRect(void)
+{
+  SDL_Rect *return_rect = NULL;
+
+  switch (BackgroundRectCounter)
+  {
+    case SG_BCKGND_RECT_END:
+      // Nothing to do : return_rect is already initialized to NULL.
+      break;
+
+    case SG_BCKGND_RECT_BEGIN:
+      if (DialogRect.w == 0)
+      {
+        // The dialog is not drawn yet...
+        // Let's redraw the full screen.
+      	BackgroundRect.x = 0;
+      	BackgroundRect.y = 0;
+      	BackgroundRect.w = scrwidth;
+      	BackgroundRect.h = scrheight;
+        return_rect = &BackgroundRect;
+        // We reached the end of the list.
+        BackgroundRectCounter = SG_BCKGND_RECT_END;
+      }
+      else
+      {
+        BackgroundRectCounter = SG_BCKGND_RECT_TOP;
+        return_rect = SDLGui_GetNextBackgroundRect();
+      }
+      break;
+
+    case SG_BCKGND_RECT_TOP:
+      BackgroundRectCounter = SG_BCKGND_RECT_LEFT;
+      if (DialogRect.y > 0)
+      {
+      	BackgroundRect.x = 0;
+      	BackgroundRect.y = 0;
+      	BackgroundRect.w = scrwidth;
+      	BackgroundRect.h = DialogRect.y;
+        return_rect = &BackgroundRect;
+      }
+      else
+        return_rect = SDLGui_GetNextBackgroundRect();
+      break;
+
+    case SG_BCKGND_RECT_LEFT:
+      BackgroundRectCounter = SG_BCKGND_RECT_RIGHT;
+      if (DialogRect.x > 0)
+      {
+        BackgroundRect.x = 0;
+        BackgroundRect.y = (DialogRect.y > 0) ? DialogRect.y : 0;
+        BackgroundRect.w = DialogRect.x;
+        BackgroundRect.h =
+          ((DialogRect.y + DialogRect.h) < (int)scrheight) ?
+          (DialogRect.h + DialogRect.y - BackgroundRect.y) :
+          (scrheight - DialogRect.y);
+        return_rect = &BackgroundRect;
+      }
+      else
+        return_rect = SDLGui_GetNextBackgroundRect();
+      break;
+
+    case SG_BCKGND_RECT_RIGHT:
+      BackgroundRectCounter = SG_BCKGND_RECT_BOTTOM;
+      if ((DialogRect.x + DialogRect.w) < (int)scrwidth)
+      {
+        BackgroundRect.x = DialogRect.x + DialogRect.w;
+        BackgroundRect.y = (DialogRect.y > 0) ? DialogRect.y : 0;
+        BackgroundRect.w = scrwidth - (DialogRect.x + DialogRect.w);
+        BackgroundRect.h =
+          ((DialogRect.y + DialogRect.h) < (int)scrheight) ?
+          (DialogRect.h + DialogRect.y - BackgroundRect.y) :
+          (scrheight - DialogRect.y);
+        return_rect = &BackgroundRect;
+      }
+      else
+        return_rect = SDLGui_GetNextBackgroundRect();
+      break;
+
+    case SG_BCKGND_RECT_BOTTOM:
+      BackgroundRectCounter = SG_BCKGND_RECT_END;
+      if ((DialogRect.y + DialogRect.h) < (int)scrheight)
+      {
+        // Bottom
+        BackgroundRect.x = 0;
+        BackgroundRect.y = DialogRect.y + DialogRect.h;
+        BackgroundRect.w = scrwidth;
+        BackgroundRect.h = scrheight - (DialogRect.y + DialogRect.h);
+        return_rect = &BackgroundRect;
+      }
+      else
+        return_rect = SDLGui_GetNextBackgroundRect();
+      break;
+  }
+
+  return return_rect;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
   Show and process a dialog. Returns the button number that has been
   pressed. Does NOT handle SDL_QUIT - you must handle it before you
   pass the input event to the SDL GUI.
 */
 int SDLGui_DoDialog(SGOBJ *dlg)
 {
-  int oldbutton=0;
-  int retbutton=0;
-  int i;
-  int x, y;
+  int return_obj = -1;
   int obj;
+  int x, y;
   int keysym;
 
   /* Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here */
@@ -730,209 +1098,57 @@ int SDLGui_DoDialog(SGOBJ *dlg)
   // SDL_PumpEvents(); - don't call it here, it's not thread safe probably
   bool stillPressed = (SDL_GetMouseState(&x, &y) & SDL_BUTTON(1));
   obj = SDLGui_FindObj(dlg, x, y);
-  if(stillPressed && obj>0 && (dlg[obj].flags&SG_TOUCHEXIT) )
+  if (stillPressed && (obj >= 0) && (dlg[obj].flags & SG_TOUCHEXIT))
   {
     // Mouse button is pressed over a TOUCHEXIT Button
-    // Select it before drawing anything (it has been deselected before).
-    dlg[obj].state |= SG_SELECTED;
+    // Toogle its state before drawing anything (it has been deselected before).
+    dlg[obj].state ^= SG_SELECTED;
 
-    // Refresh display.
-    SDLGui_DrawDialog(dlg);
-
-    // Deselect button, but do not redraw it.
-    dlg[obj].state &= ~SG_SELECTED;
-
-    // Exit.
-    return obj;
+    return_obj = obj;
   }
 
   SDLGui_DrawDialog(dlg);
 
   /* The main loop */
-  do
+  while (return_obj < 0)
   {
-    // SDL_PumpEvents() - not necessary, the main check_event thread calls it
     SDL_Event evnt;
+    // SDL_PumpEvents() - not necessary, the main check_event thread calls it
     if (SDL_PeepEvents(&evnt, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT)))
     {
-      x = (int)evnt.user.data1;
-      y = (int)evnt.user.data2;
       switch(evnt.user.code)
       {
       	case SDL_KEYDOWN:
           keysym = (int)evnt.user.data1;
-          switch(keysym)
-          {
-            case SDLK_RETURN:
-            case SDLK_KP_ENTER:
-              obj = SDLGui_FindDefaultObj(dlg);
-              if(obj>0)
-              {
-                dlg[obj].state |= SG_SELECTED;
-                SDLGui_DrawButton(dlg, obj);
-                SDLGui_RefreshObj(dlg, obj);
-                SDL_Delay(100);
-                dlg[obj].state &= ~SG_SELECTED;
-                SDLGui_DrawButton(dlg, obj);
-                SDLGui_RefreshObj(dlg, obj);
-              }
-              retbutton = obj;
-              break;
-          }
+          return_obj = SDLGui_KeyPress(dlg, keysym);
       	  break;
 
-        case SDL_USEREVENT:		// a signal that resolution has changed
+        case SDL_USEREVENT:
+          // a signal that resolution has changed
           SDLGui_DrawDialog(dlg);	// re-draw dialog
           break;
 
         case SDL_MOUSEBUTTONDOWN:
-          obj = SDLGui_FindObj(dlg, x, y);
-          if(obj>0)
-          {
-            if(dlg[obj].type==SGBUTTON)
-            {
-              dlg[obj].state |= SG_SELECTED;
-              SDLGui_DrawButton(dlg, obj);
-              SDLGui_RefreshObj(dlg, obj);
-
-              if( dlg[obj].flags&SG_TOUCHEXIT )
-              {
-                // It's a TOUCHEXIT object.
-                // Deselect it, but do not redraw it.
-                // It will appear selected until next redraw.
-                dlg[obj].state &= ~SG_SELECTED;
-                // Exit.
-                retbutton = obj;
-              }
-              else
-              {
-                oldbutton=obj;
-              }
-            }
-          }
-          break;
-
-        case SDL_MOUSEBUTTONUP:
-          if (oldbutton)
-          {
-            if (dlg[oldbutton].state & SG_SELECTED)
-            {
-              // User clicked on a SGBUTTON and it is still selected when
-              // he release mouse button.
-              retbutton = oldbutton;
-            }
-            else
-            {
-              // User clicked on a SGBUTTON and moved outside before releasing
-              // mouse button.
-              oldbutton = 0;
-            }
-          }
-          else
-          {
-            obj = SDLGui_FindObj(dlg, x, y);
-            if(obj>0)
-            {
-              switch(dlg[obj].type)
-              {
-                case SGBUTTON:
-                  break;
-                case SGEDITFIELD:
-                  SDLGui_EditField(dlg, obj);
-                  break;
-                case SGRADIOBUT:
-                  // Find first radio button in this group
-                  i = obj-1;
-                  while (dlg[i].type==SGRADIOBUT)
-                    i--;
-                  i+=1;
-                  // Update state
-                  while (dlg[i].type==SGRADIOBUT)
-                  {
-                    bool updated = false;
-                    if ((i == obj) && (~dlg[i].state & SG_SELECTED))
-                    {
-                      // Select this radio button
-                      dlg[obj].state |= SG_SELECTED;
-                      updated = true;
-                    }
-                    else if ((i != obj) && (dlg[i].state & SG_SELECTED))
-                    {
-                      // Deselect this radio button
-                      dlg[obj].state &= ~SG_SELECTED;
-                      updated = true;
-                    }
-
-                    if (updated)
-                    {
-                      SDLGui_DrawRadioButtonState(dlg, obj);
-                      SDLGui_RefreshObj(dlg, obj);
-
-                      updated = false;
-                    }
-
-                    i++;
-                  }
-                  break;
-                case SGCHECKBOX:
-                  dlg[obj].state ^= SG_SELECTED;
-                  SDLGui_DrawCheckBoxState(dlg, obj);
-                  SDLGui_RefreshObj(dlg, obj);
-                  break;
-                case SGPOPUP:
-                  dlg[obj].state |= SG_SELECTED;
-                  SDLGui_DrawPopupButton(dlg, obj);
-                  SDLGui_RefreshObj(dlg, obj);
-                  retbutton=obj;
-                  break;
-              }
-            }
-          }
-          if(oldbutton>0)
-          {
-            dlg[oldbutton].state &= ~SG_SELECTED;
-            SDLGui_DrawButton(dlg, oldbutton);
-            SDLGui_RefreshObj(dlg, oldbutton);
-            oldbutton = 0;
-          }
-          if( dlg[obj].flags&SG_EXIT )
-          {
-            retbutton = obj;
-          }
+          x = (int)evnt.user.data1;
+          y = (int)evnt.user.data2;
+          return_obj = SDLGui_MouseClick(dlg, x, y);
           break;
       }
     }
     else
     {
-      // No special event occured
-      if(oldbutton>0)
-      {
-        // User clicked on a SGBUTTON but did not release mouse button yet.
-        // Let's update button state according to mouse position
-        SDL_GetMouseState(&x, &y) & SDL_BUTTON(1);
-        obj = SDLGui_FindObj(dlg, x, y);
-
-        if ((obj != oldbutton) && (dlg[oldbutton].state & SG_SELECTED))
-        {
-          // The button is selected but the mouse is not on it anymore.
-          // Deselect it.
-          dlg[oldbutton].state &= ~SG_SELECTED;
-          SDLGui_DrawButton(dlg, oldbutton);
-          SDLGui_RefreshObj(dlg, oldbutton);
-        }
-        else if ((obj == oldbutton) && (~dlg[oldbutton].state & SG_SELECTED))
-        {
-          // The button is deselected but the mouse moved back on it.
-          // Reselect it.
-          dlg[oldbutton].state |= SG_SELECTED;
-          SDLGui_DrawButton(dlg, oldbutton);
-          SDLGui_RefreshObj(dlg, oldbutton);
-        }
-      }
+      // No special event occured.
+      // Wait a little to avoid eating CPU.
+      SDL_Delay(100);
     }
-    SDL_Delay(100);
   }
-  while(retbutton==0);
 
-  return retbutton;
+  if (dlg[return_obj].type == SGBUTTON)
+  {
+    // Deselect button...
+    // BUG: This should be caller responsibility
+    dlg[return_obj].state ^= SG_SELECTED;
+  }
+
+  return return_obj;
 }
