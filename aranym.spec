@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.6.8
+%define ver	0.7.0
 %define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -57,28 +57,34 @@ rm -rf $RPM_BUILD_ROOT
 %doc ../../doc ../../AUTHORS ../../BUGS ../../COPYING ../../FAQ ../../INSTALL ../../NEWS ../../ChangeLog ../../README ../../TODO
 /usr/bin/aranym
 /usr/bin/aranym-jit
-/usr/share/aranym/atari/newdesk.inf
-/usr/share/aranym/atari/aranymrc.example
-/usr/share/aranym/atari/mmusetup.cnf
 /usr/share/aranym/atari/aranymfs/aranymfs.dos.bz2
 /usr/share/aranym/atari/aranymfs/aranym.xfs.bz2
 /usr/share/aranym/atari/aranymfs/config.sys
-/usr/share/aranym/createdisk/createdisk.README
-/usr/share/aranym/createdisk/createdisk.sh
-/usr/share/aranym/createdisk/mbrdata
-/usr/share/aranym/atari/fvdi/aranym.sys.bz2
+/usr/share/aranym/atari/fvdi/drivers/aranym.sys.bz2
 /usr/share/aranym/atari/fvdi/fvdi.prg.bz2
 /usr/share/aranym/atari/fvdi/fvdi.sys
+/usr/share/aranym/atari/sound/README
+/usr/share/aranym/atari/sound/zmagxsnd.prg.bz2
 /usr/share/aranym/atari/tools/README
 /usr/share/aranym/atari/tools/clocky.prg.bz2
 /usr/share/aranym/atari/tools/fastram.prg.bz2
 /usr/share/aranym/atari/tools/pc101us.kbd.bz2
 /usr/share/aranym/atari/tools/pcpatch.prg.bz2
-/usr/share/aranym/atari/sound/zmagxsnd.prg.bz2
+/usr/share/aranym/atari/newdesk.inf
+/usr/share/aranym/atari/aranymrc.example
+/usr/share/aranym/atari/mmusetup.cnf
+/usr/share/aranym/tools/createdisk/createdisk.README
+/usr/share/aranym/tools/createdisk/createdisk.sh
+/usr/share/aranym/tools/createdisk/mbrdata
+/usr/share/aranym/tools/diskimage.c
+/usr/share/aranym/tools/floppy.sh
 /usr/share/aranym/font8.bmp
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Wed Jan 29 2003 Petr Stehlik <pstehlik@sophics.cz>
+New release. Updated list of provided files.
+
 * Tue Oct 22 2002 Petr Stehlik <pstehlik@sophics.cz>
 aranym-jit (JIT compiler for m68k CPU) generated.
 
