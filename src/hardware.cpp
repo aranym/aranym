@@ -6,9 +6,6 @@
 #include "memory.h"
 
 void HWInit (void) {
-	put_long(MEM_VALID_1_A,MEM_VALID_1);
-	put_long(MEM_VALID_2_A,MEM_VALID_2);
-	put_long(MEM_VALID_3_A,MEM_VALID_3);
 	put_byte(MEM_CTL_A,MEM_CTL);
 	put_word(SYS_CTL_A,SYS_CTL);
 }

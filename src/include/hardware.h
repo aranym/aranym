@@ -3,19 +3,6 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#define MEM_VALID_1_A	0x00000420
-#define MEM_VALID_1	0x752019f3	// 0x00000420 - memvalid
-#define MEM_VALID_2_A	0x0000043a
-#define MEM_VALID_2	0x237698aa	// 0x0000043a - memvalid2
-#define MEM_VALID_3_A	0x0000051a
-#define MEM_VALID_3	0x5555aaaa	// 0x0000051a - memvalid3
-
-#define SEEK_RATE_A	0x00000440
-#define SEEK_RATE	0x0003		// 0x00000440 - seek rate
-
-#define A_MEM_VALID_A	0x000005a8
-#define A_MEM_VALID	0x1357bd13	// 0x000005a8 - if 0x000005a4 == TT-RAM
-
 #define MEM_CTL_A	0xffff8000
 #define MEM_CTL		0x0a		// 0xffff8000 - 2MB banks
 #define SYS_CTL_A	0xffff8006
