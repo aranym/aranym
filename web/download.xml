@@ -12,9 +12,14 @@
       Most up-to-date source code is available in the <a href="cvs.html">CVS</a>.
       <p/>
       The <a href="ftp://ftp.sophics.cz/pub/aranym/">ARAnyM FTP archive</a> contains
-      first source code snapshot (dated 2001/10/19) and the ARAnyM tools.
-      You may want to download the tools to get FastRAM support, enhanced mouse 
-      support and more.
+      <a href="ftp://ftp.sophics.cz/pub/aranym/src/">source code snapshots</a>,
+      various <a href="ftp://ftp.sophics.cz/pub/aranym/tools/">tools</a>
+      and also <a href="ftp://ftp.sophics.cz/pub/aranym/disk/">disk images</a>.
+      <p/>
+      If you are working with your original harddisk then just download the Aratools
+      to get FastRAM support and enhanced mouse sharing between host and Atari.
+      However if you don't have any harddisk then better start with the prepared disk image,
+      it will save you a lot of troubles.
       <p/>
       For running ARAnyM you will also need TOS 4.04 from Falcon, available <a href="http://www.atariroms.fsnet.co.uk/">here</a>.
     </text>

@@ -30,7 +30,7 @@
           <td>ST-RAM</td><td>100%</td>
         </tr>
         <tr valign="top">
-          <td>FastRAM</td><td>100% (theoretically up to 4GB of RAM)</td>
+          <td>FastRAM</td><td>100% (unlimited size up to 4GB)</td>
         </tr>
         <tr valign="top"><td colspan="2">&nbsp;</td></tr>
         <tr valign="top">
@@ -46,7 +46,7 @@
           <td>VGA/RGB/TV modes</td><td>100%</td>
         </tr>
         <tr valign="top">
-          <td>Extended modes</td><td>working (using BlowUP030 or Videl Inside)</td>
+          <td>Extended modes</td><td>working (using BlowUP030, Videlity or Videl Inside)</td>
         </tr>
         <tr valign="top">
           <td>Native fVDI driver</td><td>90%</td>
@@ -112,10 +112,10 @@
           <td>MIDI</td><td>0%</td>
         </tr>
         <tr valign="top">
-          <td>mouse</td><td>mapped to PC mouse</td>
+          <td>mouse</td><td>mapped to PC mouse (including the mouse wheel)</td>
         </tr>
         <tr valign="top">
-          <td>keyboard</td><td>mapped to PC keyboard (TODO: configurable map table)</td>
+          <td>keyboard</td><td>mapped to PC keyboard + extensions (PageUp/Down) (TODO: configurable map table)</td>
         </tr>
         <tr valign="top"><td colspan="2">&nbsp;</td></tr>
         <tr valign="top">

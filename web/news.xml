@@ -7,11 +7,16 @@
     <text>
       <table>
 
+        <tr><td valign="top">2001/11/14</td>
+            <td>
+              I added first harddisk disk image to the <a href="download.html">Download</a> area.
+            </td>
+        </tr>
+
         <tr><td valign="top">2001/11/13</td>
             <td>
-              <a href="download.html">Download</a> contains second source code snapshot.<br/>
-              fVDI is nearly perfect.<br/>
-              Aranym TOS is no longer WinX patched.<br/>
+              <a href="download.html">Download</a> contains new source code snapshot with
+              a ton of changes: fVDI is nearly perfect, Aranym TOS is no longer WinX patched,
               Floppy, EmuTOS and more things can be configured in the .aranymrc.<br/>
             </td>
         </tr>
