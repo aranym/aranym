@@ -39,7 +39,7 @@ Things for 1.0 release:
 
 - Bus error handling
 
-- instr. STOP x trace mode
+- OS-depend include files, not so redundant includes
 
 The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
 all Atari power users/MiNTers. Key elements are TCP/IP networking, large
