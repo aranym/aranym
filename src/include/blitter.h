@@ -46,13 +46,17 @@ public:
 	void reset();
 	virtual uint8 handleRead(memptr);
 	virtual void handleWrite(memptr, uint8);
+	virtual uae_u16 handleReadW(uaecptr addr);
+	virtual void handleWriteW(uaecptr addr, uae_u16 value);
+	virtual uae_u32 handleReadL(uaecptr addr);
+	virtual void handleWriteL(uaecptr addr, uae_u32 value);
 
 	uint16 LM_UW(memptr);
 	void SM_UW(memptr, uint16);
 
 private:
 	void Do_Blit(void);
-
+/*
 	char LOAD_B_ff8a28();
 	char LOAD_B_ff8a29();
 	char LOAD_B_ff8a2a();
@@ -69,9 +73,10 @@ private:
 	char LOAD_B_ff8a39();
 	char LOAD_B_ff8a3a();
 	char LOAD_B_ff8a3b();
-	char LOAD_B_ff8a3c();
 	char LOAD_B_ff8a3d();
-
+*/
+	char LOAD_B_ff8a3c();
+/*
 	void STORE_B_ff8a28(char);
 	void STORE_B_ff8a29(char);
 	void STORE_B_ff8a2a(char);
@@ -86,6 +91,7 @@ private:
 	void STORE_B_ff8a37(char);
 	void STORE_B_ff8a38(char);
 	void STORE_B_ff8a39(char);
+*/
 	void STORE_B_ff8a3a(char);
 	void STORE_B_ff8a3b(char);
 	void STORE_B_ff8a3c(char);
