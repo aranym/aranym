@@ -29,6 +29,10 @@ that particular programmer but rather who is the author of the idea :-)
 
 - joy: make.sh magic: "nfeth-config.c" build by ./make.sh of the xif.
 
+- joy: write some doc about bridging the tuntap - perhaps the following
+       URL could help?
+       http://tldp.org/HOWTO/Ethernet-Bridge-netfilter-HOWTO-3.html#ss3.1
+
 - joy: detect loop lockups (e.g. "Illegal instruction: 00e0 at 00000030"
        repeated endlessly) and allow restarting ARAnyM gracefully
 
