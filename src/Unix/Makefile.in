@@ -296,8 +296,7 @@ devdist: mrproper
 	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz aranym
 
 dist: distclean
-	rm -r ../../web/
-	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=aranym/web/build/saxon.jar --exclude=autogen.sh --exclude=CVS aranym
+	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS aranym
 
 depend dep:
 	makedepend $(CPPFLAGS) $(DEFS) -Y. $(SRCS) -p$(OBJ_DIR)/ 2>/dev/null
