@@ -145,7 +145,8 @@ struct mnemolookup lookuptab[] = {
 
     { i_MMUOP, "MMUOP" },
 
-    {i_NATFEA, "NATFEA" },
+    {i_NATFEA_ID, "NATFEA_ID" },
+    {i_NATFEA_RCALL, "NATFEA_RCALL" },
 
     { i_ILLG, "" },
 };

@@ -1213,30 +1213,46 @@ void m68k_emulop(uae_u32 opcode)
 	MakeFromSR();
 }
 
-
-void NatFea(uae_u32 opcode, M68kRegisters *r)
-{
-	// fprintf(stderr, "NatFea at PC=$%x", regs.pc);
-	memptr stack = r->a[7] + 4;	/* skip return address */
-	switch(opcode & 0xff) {
-		case 1: r->d[0] = nf_get_id(stack); break;
-		case 2: r->d[0] = nf_rcall(stack); break;
-		default: /* throw illegal instruction error */; break;
-	}
-}
-
-void m68k_natfea(uae_u32 opcode)
+void m68k_natfea_id(void)
 {
 	struct M68kRegisters r;
 	int i;
 
+	/* is it really necessary to save all registers? */
 	for (i=0; i<8; i++) {
 		r.d[i] = m68k_dreg(regs, i);
 		r.a[i] = m68k_areg(regs, i);
 	}
 	MakeSR();
 	r.sr = regs.sr;
-	NatFea(opcode, &r);
+
+	memptr stack = r.a[7] + 4;	/* skip return address */
+	r.d[0] = nf_get_id(stack);
+
+	for (i=0; i<8; i++) {
+		m68k_dreg(regs, i) = r.d[i];
+		m68k_areg(regs, i) = r.a[i];
+	}
+	regs.sr = r.sr;
+	MakeFromSR();
+}
+
+void m68k_natfea_rcall(void)
+{
+	struct M68kRegisters r;
+	int i;
+
+	/* is it really necessary to save all registers? */
+	for (i=0; i<8; i++) {
+		r.d[i] = m68k_dreg(regs, i);
+		r.a[i] = m68k_areg(regs, i);
+	}
+	MakeSR();
+	r.sr = regs.sr;
+
+	memptr stack = r.a[7] + 4;	/* skip return address */
+	r.d[0] = nf_rcall(stack);
+
 	for (i=0; i<8; i++) {
 		m68k_dreg(regs, i) = r.d[i];
 		m68k_areg(regs, i) = r.a[i];
