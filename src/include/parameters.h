@@ -24,8 +24,8 @@ typedef struct {
 
 typedef struct {
   char path[512];
-  unsigned type;
-  unsigned initial_status;
+  // bool inserted;
+  // bool enforceRemount;
   } bx_floppy_options;
 
 typedef struct {
@@ -69,8 +69,8 @@ typedef struct {
   } bx_cmos_options;
  
 typedef struct {
-  bx_floppy_options floppya;
-  bx_floppy_options floppyb;
+  bx_floppy_options floppy;
+  // bx_floppy_options floppyb;
   bx_disk_options   diskc;
   bx_disk_options   diskd;
   bx_cdrom_options  cdromd;
