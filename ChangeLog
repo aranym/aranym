@@ -1,3 +1,5 @@
+** Version 0.1.5
+
 2002/04/10 - joy
 - fixed bug in Reset insn emulation that caused EmuTOS crash
 
@@ -12,7 +14,6 @@
 2002/04/10 - milan
 - IDE: synced with Bochs CVS (concat_image_t(), not used in ARAnyM now, but
        who knows)
-
 - CPU: instr. Reset calls now AtariReset()
        cleaning in JIT integration
        synced with BasiliskII CVS (DOTRACE x STOP)
@@ -31,13 +32,16 @@
   and the CharView author who provided a source of the application
   that had this problem. The EasyGEM library tries to open directory
   entries using Fopen. Thanks for EasyGEM beeing open-source.
+
 - Newly created files specified with all letters in upper case will
   be automatically converted to lowercase ones. This follows a small
   limitation that there is no way to create e.g. PC.PRG on halfsensitive
   fs (it will be pc.prg... but the Pc.prg and any other combination
   would work). This can be made optional.
+
 - m68k part of the MetaDOS driver was pretty printed and converted
   to correct (DOS mode newlines). No need to update the binary here.
+
 - PureC (PC.PRG) patch to let it working on MetaDOS driven filesystem
   (src/atari/tools/pcpatch.*).
 
@@ -66,7 +70,6 @@
 
 2002/03/26 - milan
 - MMU returns logical address during bus error
-
 - IEEE FPU is default only for i386
 
 
@@ -122,12 +125,10 @@
 
 2002/03/05 - milan
 - memptr for addressing in Atari memory out of uae_cpu
-
 - sync with Bochs CVS 2002/03/02 11:31:18 GMT
-  - ReadCDSector() (for win32 ASPI) returns 1 if target status is okay
-  - win32 ASPI version of insert_cdrom() checks media status using
+  o ReadCDSector() (for win32 ASPI) returns 1 if target status is okay
+  o win32 ASPI version of insert_cdrom() checks media status using
     ReadCDSector()
-
 - gencpu.c patched for MMU (based on Wez Furlong's MMU patch 0.8.20.2 for UAE)
 
 
@@ -137,7 +138,6 @@
 
 2002/02/28 - milan
 - get_i*_1 moved to newcpu.cpp
-
 - probably last sync with aranym2 (unofficial CVS) before MMU and pre-JIT
   support (new gencpu.c and subdirectory compiler)
 
@@ -149,27 +149,19 @@
 
 2002/02/26 - milan
 - Native Feature instruction framework added
-
 - address validation in CPU interface
-
 - exceptions.h removed, interface moved to CPU interface, include file in
   sysdeps.h
-
 - error handling of CD-ROM eject on Linux
 
 
 2002/02/25 - milan
 - fp_extended, fp_single, fp_double -> fpu_extended, fpu_single, fpu_double
-
 - spcflags handling rewritten
-
 - original PC handling, must be converted to ARAnyM's after stabilisation
   (slower)
-
 - exception stack handling is for 68040 now
-
 - table68k based on JIT BasiliskII
-
 - EmulOp (0x71XX) is handled as usual instruction
 
 
@@ -185,13 +177,14 @@
   binaries won't mess CRLF in files (cdrom.cpp, extfs.cpp, fdc.cpp)
 
 
+** Version 0.0.22 so you can see new IDE code is there.
+
 2002/02/21 - milan & joy
 - cdrom.cpp sync with Bochs (CD-ROM eject supported)
 - ata.cpp sync with Bochs (32-bit data access supported)
 - CD-ROM eject in Linux added
 - hardware.cpp + ide.cpp updated for 32-bit IDE data access.
   It did not work so it is disabled in ide.cpp for now.
-- version increased to 0.0.22 so you can see new IDE code is there.
 
 
 2002/02/20 - joy
@@ -219,8 +212,7 @@
   was added due to the BSD systems so I've changed it to if OS_*bsd then...
 
 
-ARAnyM 0.0.21 released
-----------------------
+** ARAnyM 0.0.21 released
 
 2002/02/12 - joy
 - IDE emulation adapted for Falcon: $f00039 is recognized but ignored.
@@ -238,11 +230,8 @@ ARAnyM 0.0.21 released
 2002/02/01 - Frank Naumann & joy & milan
 - PAGE_MASK renamed on ARAM_PAGE_MASK (ARAnym Memory PAGE_MASK), PAGE_MASK is
   defined in /usr/include/machine/param.h on OpenBSD
-
 - PAGE_CHECK renamed on ARAM_PAGE_CHECK
-
 - ndebug doesn't use ioctl() now for any switching tty's setting
-
 - support for statfs on [Net|Open]BSD
 
 
@@ -282,8 +271,7 @@ ARAnyM 0.0.21 released
 - unsupported Windows binary available in download section
 
 
-ARAnyM 0.0.20 released
-----------------------
+** ARAnyM 0.0.20 released
 
 2002/01/28 - joy
 - tools/clocky.prg.bz2 updated - the hotkey combo is back at LShift+RShift
@@ -311,9 +299,7 @@ ARAnyM 0.0.20 released
 
 2002/01/18 - milan
 - FixedSizeFastRAM fixed
-
 - no debugger fixed
-
 - install part of Makefile fixed
 
 
@@ -351,9 +337,7 @@ ARAnyM 0.0.20 released
 
 2002/01/09 - Rodolphe Pineau & milan
 - 1st step for SGI/Irix
-
 - aranymfs more portable (Solaris supported now also)
-
 - corrections in configure script, memory allocation, memory access
 
 
@@ -434,7 +418,6 @@ ARAnyM 0.0.20 released
 - ACIA IRQs are not buffered (like TimerC IRQs are) - it was causing bad
   keyboard&mouse lockups. Apparently TOS can read several scancodes from IKBD
   in one IRQ and our poor implementation fits that feature :-)
-
 - TimerC interrupt fired only if enabled in MFP IRQ enable reg.
 
 
@@ -461,7 +444,6 @@ ARAnyM 0.0.20 released
 - check_ram_boundary() cleaner now - no default value for 'write' parameter
   and the 'size' parameter contains the natural value - 1 for byte access,
   2 for a word access and 4 for a long (doubleword) access.
-
 - you can define NO_MEMORY_CHECK in memory.h to see the original
   speed of old unsafe, often crashing ARAnyM (Dhry: 27k -> 31k)
 
@@ -505,9 +487,7 @@ ARAnyM 0.0.20 released
   Thanks to Patrice for forcing us to fix it :-)
 
 
-ARAnyM 0.0.11 released
-----------------------
-
+** ARAnyM 0.0.11 released
 
 2001/12/05 - joy
 - "-N" or "--nomouse" added to cmdline options. It basically disables
