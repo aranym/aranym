@@ -1,3 +1,7 @@
+2004/10/04 - joy
+- natfeat/nf_basicset: added OS_TYPE and CPU_TYPE to NF_NAME(1)
+
+
 2004/10/02 - STanda
 - Harddisk usage related documentation made up-to-date.
 - HOSTFS: cleanup + some new features.
