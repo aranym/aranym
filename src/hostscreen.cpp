@@ -143,8 +143,8 @@ void HostScreen::restoreBackground()
 void HostScreen::blendBackgrounds()
 {
 	if (backgroundSurf != NULL) {
-		int dialogWidth = 320;	// should be fetched from the dialog.c
-		int dialogHeight = 200;
+		int dialogWidth = 320;	// FIXME should be fetched from the dialog.c
+		int dialogHeight = 200;	// should be the current dialog dimensions
 		int halfRemWidth = (getWidth() - dialogWidth)/2;
 		int halfRemHeight = (getHeight() - dialogHeight)/2;
 		int xx = halfRemWidth + dialogWidth;
@@ -385,6 +385,8 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		allocateBackgroundSurf();
 		saveBackground();
 		// TODO force SDL GUI to redraw the dialog
+extern int eventTyp;
+		eventTyp = 0x87654321; // maximal interthread communication HACK
 	}
 	else
 		surf = mainSurface;
@@ -1224,6 +1226,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.38  2003/12/24 23:31:15  joy
+ * when GUI is open the background is being updated with running ARAnyM
+ *
  * Revision 1.37  2003/06/01 08:35:39  milan
  * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
  *
