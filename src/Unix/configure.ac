@@ -130,6 +130,7 @@ case "$target_os" in
   cygwin*)	OS_TYPE=cygwin;;
   irix*)	OS_TYPE=irix;;
   mint*)	OS_TYPE=mint;;
+  beos*)	OS_TYPE=beos;;
   *)		OS_TYPE=`echo $target_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
 esac
 DEFINES="$DEFINES -DOS_$OS_TYPE"
@@ -274,9 +275,12 @@ dnl    WANT_ARANYMFS="no"
     ;;	      
   darwin*)
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
-    EXTRASYSSRCS="parameters_unix.cpp darwin/cdrom_osx.cpp"
-    DEFINES="$DEFINES -DDONTUSEUNIXCDROM"
+    EXTRASYSSRCS="parameters_unix.cpp"
     LIBS="$LIBS -lIOKit"
+    ;;
+  beos*)
+    EXTRASYSSRCS="parameters_unix.cpp beos/cdrom_beos.cpp"
+    DEFINES="$DEFINES -I./beos"
     ;;
   *)
     EXTRASYSSRCS=parameters_unix.cpp

@@ -78,6 +78,7 @@ static unsigned curr_multiple_sectors = 0; // was 0x3f
 
 #define BX_MASTER_IS_PRESENT(c) BX_DRIVE_IS_PRESENT((c),0)
 #define BX_SLAVE_IS_PRESENT(c) BX_DRIVE_IS_PRESENT((c),1)
+#define BX_ANY_IS_PRESENT(c) (BX_DRIVE_IS_PRESENT((c),0) || BX_DRIVE_IS_PRESENT((c),1))
 
 #define BX_SELECTED_CONTROLLER(c) (BX_CONTROLLER((c),BX_HD_THIS channels[(c)].drive_select))
 #define BX_SELECTED_DRIVE(c) (BX_DRIVE((c),BX_HD_THIS channels[(c)].drive_select))
@@ -189,7 +190,7 @@ nila2io(Bit32u address)
 }
 
   void
-bx_hard_drive_c::init(/* MJ bx_devices_c *d, bx_cmos_c *cmos */)
+bx_hard_drive_c::init(void)
 {
   Bit8u channel;
   Bit8u device;
@@ -718,10 +719,16 @@ if ( quantumsMax == 0)
       value8 = (!BX_SELECTED_IS_PRESENT(channel)) ? 0 : BX_SELECTED_CONTROLLER(channel).sector_no;
       goto return_value8;
     case 0x04: // cylinder low (f00011)
-      value8 = (!BX_SELECTED_IS_PRESENT(channel)) ? 0 : (BX_SELECTED_CONTROLLER(channel).cylinder_no & 0x00ff);
+               // -- WARNING : On real hardware the controller registers are shared between drives. 
+               // So we must respond even if the select device is not present. Some OS uses this fact 
+               // to detect the disks.... minix2 for example
+      value8 = (!BX_ANY_IS_PRESENT(channel)) ? 0 : (BX_SELECTED_CONTROLLER(channel).cylinder_no & 0x00ff);
       goto return_value8;
     case 0x05: // cylinder high (f00015)
-      value8 = (!BX_SELECTED_IS_PRESENT(channel)) ? 0 : BX_SELECTED_CONTROLLER(channel).cylinder_no >> 8;
+               // -- WARNING : On real hardware the controller registers are shared between drives. 
+               // So we must respond even if the select device is not present. Some OS uses this fact 
+               // to detect the disks.... minix2 for example
+      value8 = (!BX_ANY_IS_PRESENT(channel)) ? 0 : BX_SELECTED_CONTROLLER(channel).cylinder_no >> 8;
       goto return_value8;
 
     case 0x06: // hard disk drive and head register (f00019)
@@ -745,7 +752,7 @@ if ( quantumsMax == 0)
 		mfp.setGPIPbit(0x20, 0x20);		// lower the interrupt
 
     case 0x16: // Hard Disk Alternate Status (f00039)
-      if (!BX_SELECTED_IS_PRESENT(channel)) {
+      if (!BX_ANY_IS_PRESENT(channel)) {
 	    // (mch) Just return zero for these registers
 	    value8 = 0;
       } else {
@@ -1012,6 +1019,8 @@ if ( quantumsMax == 0)
 
 				    if (!LoEj && !Start) { // stop the disc
 					  panicbug("Stop disc not implemented");
+					  atapi_cmd_nop(channel);
+					  raise_interrupt(channel);
 				    } else if (!LoEj && Start) { // start the disc and read the TOC
 					  panicbug("FIXME: ATAPI start disc not reading TOC");
 					  atapi_cmd_nop(channel);
@@ -1082,7 +1091,8 @@ if ( quantumsMax == 0)
 							      BX_SELECTED_CONTROLLER(channel).buffer[9] = 0x12;
 							      BX_SELECTED_CONTROLLER(channel).buffer[10] = 0x00;
 							      BX_SELECTED_CONTROLLER(channel).buffer[11] = 0x00;
-							      BX_SELECTED_CONTROLLER(channel).buffer[12] = 0x00;
+							      // Multisession, Mode 2 Form 2, Mode 2 Form 1
+							      BX_SELECTED_CONTROLLER(channel).buffer[12] = 0x70; 
 							      BX_SELECTED_CONTROLLER(channel).buffer[13] = (3 << 5);
 							      BX_SELECTED_CONTROLLER(channel).buffer[14] = (unsigned char)
 (1 |
@@ -1310,8 +1320,16 @@ if ( quantumsMax == 0)
 			      }
 			      break;
 
-			      case 0x28: { // read (10)
-				    uint32 transfer_length = read_16bit(BX_SELECTED_CONTROLLER(channel).buffer + 7);
+			      case 0x28: // read (10)
+			      case 0xa8: // read (12)
+			                 { 
+
+				    uint32 transfer_length;
+				    if (atapi_command == 0x28)
+				          transfer_length = read_16bit(BX_SELECTED_CONTROLLER(channel).buffer + 7);
+				    else
+				          transfer_length = read_32bit(BX_SELECTED_CONTROLLER(channel).buffer + 6);
+
 				    uint32 lba = read_32bit(BX_SELECTED_CONTROLLER(channel).buffer + 2);
 
 				    if (!BX_SELECTED_DRIVE(channel).cdrom.ready) {
@@ -1413,7 +1431,6 @@ if ( quantumsMax == 0)
 			      }
 			      break;
 
-			      case 0xa8: // read (12)
 			      case 0x55: // mode select
 			      case 0xa6: // load/unload cd
 			      case 0x4b: // pause/resume
@@ -1720,6 +1737,7 @@ if ( quantumsMax == 0)
 
 	    default:
 	      panicbug("SET FEATURES with unknown subcommand: 0x%02x", (unsigned) BX_SELECTED_CONTROLLER(channel).features );
+	      command_aborted(channel, value);
 	  }
 	  break;
 
@@ -2791,12 +2809,12 @@ off_t default_image_t::lseek (off_t offset, int whence)
 
 ssize_t default_image_t::read (void* buf, size_t count)
 {
-      return ::read(fd, buf, count);
+      return ::read(fd, (char*) buf, count);
 }
 
 ssize_t default_image_t::write (const void* buf, size_t count)
 {
-      return ::write(fd, buf, count);
+      return ::write(fd, (char*) buf, count);
 }
 
 #if BX_SPLIT_HD_SUPPORT
@@ -2929,7 +2947,7 @@ ssize_t concat_image_t::write (const void* buf, size_t count)
   // end of a partial image.
   if (!seek_was_last_op) 
     panicbug("no seek before write");
-  return ::write(fd, buf, count);
+  return ::write(fd, (char*) buf, count);
 }
 #endif   /* BX_SPLIT_HD_SUPPORT */
 
