@@ -415,7 +415,7 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 	// fix the stack (the fncode was pushed onto the stack)
 	r->a[7] += 4;
 
-	D(bug("XFS: %4x ", fncode&0xffff));
+	D(fprintf(stderr, "    XFS: %4x ", fncode&0xffff));
 
 #if 0 // toto??? 1 - yes
 	1 D(bug("%s", "fs_chattr"));
@@ -453,6 +453,7 @@ void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
 				  ,(int)mint_fs_devnum));
 			break;
 		case SBC_STX_FS+0x01:
+			D(bug("%s", "fs_root"));
 			fetchXFSC( &fc, get_long(r->a[7] + 6, true) );
 			r->d[0] = xfs_root( get_word(r->a[7] + 4, true),   /* dev */
 								&fc ); /* fcookie */
@@ -942,7 +943,7 @@ uint16 ExtFs::statmode2xattrmode(mode_t m)
 	if ( m & S_ISGID ) result |= 0x0400;
 	if ( m & S_ISUID ) result |= 0x0800;
 
-	D(bug("statmode: %04x)", result));
+	D2(bug("                    (statmode: %04x)", result));
 
 	return result;
 }
@@ -1216,7 +1217,7 @@ int32 ExtFs::xfs_dfree( XfsCookie *dir, uint32 buf )
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname( dir->index, NULL, fpathName );
 
-	D(bug("XFS: xfs_dfree (%s)", fpathName));
+	D(bug("    XFS: xfs_dfree (%s)", fpathName));
 
 	return Dfree_( fpathName, buf );
 }
@@ -1378,7 +1379,7 @@ int32 ExtFs::xfs_dev_open(ExtFile *fp)
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname(fp->fc.index, NULL, fpathName);
 
-	D(bug("XFS: dev_open (%s,%d)", fpathName, fp->flags));
+	D(bug("    XFS: dev_open (%s,%d)", fpathName, fp->flags));
 
 	return Fopen_( (char*)fpathName, st2flags(fp->flags), 0, fp );
 }
@@ -1750,10 +1751,10 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 #ifdef HAVE_SYS_STATVFS_H
 			return buf.f_namemax;
 #else
-# ifdef OS_linux
-			return buf.f_namelen;
-# else
+# if (defined(OS_openbsd) || defined(OS_freebsd) || defined(OS_netbsd))
 			return MFSNAMELEN;
+# else
+			return buf.f_namelen;
 # endif
 #endif
 
@@ -1840,7 +1841,7 @@ int32 ExtFs::xfs_opendir( XfsDir *dirh, uint16 flags )
 
 	cookie2Pathname(dirh->fc.index, NULL, fs_pathName[ dirh->pathIndex ]);
 
-	D(bug("XFS: opendir (%s,%d)", fs_pathName[ dirh->pathIndex ], flags));
+	D(bug("    XFS: opendir (%s,%d)", fs_pathName[ dirh->pathIndex ], flags));
 
 	dirh->flags = flags;
 	dirh->index = 0;
@@ -1944,7 +1945,7 @@ int32 ExtFs::xfs_readdir( ExtDir *dirh, char* buff, int16 len, XfsCookie *fc )
 		put_long( (uint32)buff, dirEntry->d_ino );
 		f2astrcpy( (uint8*)buff + 4, (uint8*)dirEntry->d_name );
 
-		D(bug("XFS: readdir (%s)", (char*)dirEntry->d_name ));
+		D(bug("    XFS: readdir (%s)", (char*)dirEntry->d_name ));
 	} else {
 		char truncFileName[MAXPATHNAMELEN];
 		transformFileName( truncFileName, (char*)dirEntry->d_name );
@@ -1953,7 +1954,7 @@ int32 ExtFs::xfs_readdir( ExtDir *dirh, char* buff, int16 len, XfsCookie *fc )
 			return TOS_ERANGE;
 
 		f2astrcpy( (uint8*)buff, (uint8*)truncFileName );
-		D(bug("XFS: readdir (%s)", (char*)truncFileName ));
+		D(bug("    XFS: readdir (%s)", (char*)truncFileName ));
 	}
 
 	dirh->index++;
@@ -2078,7 +2079,7 @@ char *ExtFs::cookie2Pathname( ExtFs::XfsFsFile *fs, const char *name, char *buf 
 
 int32 ExtFs::xfs_root( uint16 dev, XfsCookie *fc )
 {
-	D(bug( "root:\n"
+	D2(bug( "root:\n"
 		   "  dev    = %#04x\n"
 		   "  devnum = %#04x\n",
 		   dev, mint_fs_devnum));
@@ -2096,7 +2097,7 @@ int32 ExtFs::xfs_root( uint16 dev, XfsCookie *fc )
 	fc->index->refCount = 1;
 	fc->index->childCount = 0;
 
-	D(bug( "root result:\n"
+	D2(bug( "root result:\n"
 		   "  fs    = %08lx\n"
 		   "  dev   = %04x\n"
 		   "  aux   = %04x\n"
@@ -2134,7 +2135,7 @@ int32 ExtFs::xfs_readlink( XfsCookie *dir, char *buf, int16 len )
 
 void ExtFs::xfs_freefs( XfsFsFile *fs )
 {
-    D(bug( "freefs:\n"
+    D2(bug( "freefs:\n"
 		 "  fs = %08lx\n"
 		 "    parent   = %08lx\n"
 		 "    name     = \"%s\"\n"
@@ -2147,7 +2148,7 @@ void ExtFs::xfs_freefs( XfsFsFile *fs )
 		 fs->childCount ));
 
     if ( !fs->refCount && !fs->childCount )	{
-		D(bug( "freefs: realfree\n" ));
+		D2(bug( "freefs: realfree\n" ));
 		if ( fs->parent ) {
 			fs->parent->childCount--;
 			xfs_freefs( fs->parent );
@@ -2165,7 +2166,7 @@ int32 ExtFs::xfs_lookup( XfsCookie *dir, char *name, XfsCookie *fc )
 	char fname[2048];
 	a2fstrcpy( fname, (uint8*)name );
 
-	D(bug( "XFS: lookup: %s", fname ));
+	D(bug( "    XFS: lookup: %s", fname ));
 
     XfsFsFile *newFsFile;
 
@@ -2195,7 +2196,7 @@ int32 ExtFs::xfs_lookup( XfsCookie *dir, char *name, XfsCookie *fc )
 
 		struct stat statBuf;
 
-		D(bug( "XFS: lookup stat: %s", fpathName ));
+		D(bug( "    XFS: lookup stat: %s", fpathName ));
 
 		if ( lstat( fpathName, &statBuf ) )
 			return unix2toserrno( errno, TOS_EFILNF );
@@ -2238,7 +2239,7 @@ int32 ExtFs::xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook )
 
 int32 ExtFs::xfs_release( XfsCookie *fc )
 {
-    D(bug( "release():\n"
+    D2(bug( "release():\n"
 		 "  fc = %08lx\n"
 		 "    fs    = %08lx\n"
 		 "    dev   = %04x\n"
@@ -2376,6 +2377,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.25  2002/01/31 23:51:22  standa
+ * The aranym.xfs for MiNT. Preliminary version.
+ *
  * Revision 1.24  2002/01/31 19:37:47  milan
  * panicbug, cleaning
  *
