@@ -68,6 +68,13 @@ extern HostScreen hostScreen;
 #endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
 
 
+static const uint8 vdi_colours[] = { 0,2,3,6,4,7,5,8,9,10,11,14,12,15,13,255 };
+static const uint8 tos_colours[] = { 0,15,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
+#define toTosColors( color ) \
+    ( (color)<(sizeof(tos_colours)/sizeof(*tos_colours)) ? tos_colours[color] : ((color) == 255 ? 15 : (color)) )
+
+
+
 
 // The polygon code needs some arrays of unknown size
 // These routines and members are used so that no unnecessary allocations are done
@@ -746,6 +753,7 @@ int FVDIDriver::drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data
 		break;
 
 	default: // change pointer shape
+		D(bug("fVDI: mouse : %08x, %08x, %08x", hot_x, hot_y, color));
 		memptr fPatterAddress = (memptr)mode;
 		for(uint16 i = 0; i < 32; i += 2)
 			Mouse.mask[i >> 1] = reverse_bits(ReadInt16(fPatterAddress + i));
@@ -755,8 +763,8 @@ int FVDIDriver::drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data
 
 		Mouse.hotspot.x = hot_x & 0xf;
 		Mouse.hotspot.y = hot_y & 0xf;
-		Mouse.storage.color.foreground = (int16)(color >> 16);
-		Mouse.storage.color.background = (int16)(color & 0xffff);
+		Mouse.storage.color.foreground = (int16)(color & 0xffff);
+		Mouse.storage.color.background = (int16)(color >> 16);
 		if (hostScreen.getBpp() > 1) {
 			Mouse.storage.color.foreground = hostScreen.getPaletteColor(Mouse.storage.color.foreground);
 			Mouse.storage.color.background = hostScreen.getPaletteColor(Mouse.storage.color.background);
@@ -879,6 +887,24 @@ extern "C" {
 			}
 		}
 	}
+}
+
+extern "C" {
+static inline void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8])
+{
+	for (int l=0; l<16; l++) {
+		uint8 data = toTosColors( sdlPixelData[l] ); // note: this is about 2000 dryhstones speedup (the local variable)
+
+		bitplaneWords[0] <<= 1; bitplaneWords[0] |= (data >> 0) & 1;
+		bitplaneWords[1] <<= 1; bitplaneWords[1] |= (data >> 1) & 1;
+		bitplaneWords[2] <<= 1; bitplaneWords[2] |= (data >> 2) & 1;
+		bitplaneWords[3] <<= 1; bitplaneWords[3] |= (data >> 3) & 1;
+		bitplaneWords[4] <<= 1; bitplaneWords[4] |= (data >> 4) & 1;
+		bitplaneWords[5] <<= 1; bitplaneWords[5] |= (data >> 5) & 1;
+		bitplaneWords[6] <<= 1; bitplaneWords[6] |= (data >> 6) & 1;
+		bitplaneWords[7] <<= 1; bitplaneWords[7] |= (data >> 7) & 1;
+	}
+}
 }
 
 int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
@@ -1007,37 +1033,83 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 			}
 			break;
 		default:
-			for(uint16 j = 0; j < h; j++) {
-				D2(fprintf(stderr, "fVDI: bmp:"));
+			if ( destPlanes < 8 ) {
+				for(uint16 j = 0; j < h; j++) {
+					D2(fprintf(stderr, "fVDI: bmp:"));
 
-				uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
-				for(uint16 i = sx; i < sx + w; i++) {
-					uint32 wordIndex = ((dx + i - sx) >> 4) * destPlanes;
-					uint32 offset = wordIndex * 2 + (dy + j) * destPitch;
-					if (i % 16 == 0)
-						theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
+					uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
+					for(uint16 i = sx; i < sx + w; i++) {
+						uint32 wordIndex = ((dx + i - sx) >> 4) * destPlanes;
+						uint32 offset = wordIndex * 2 + (dy + j) * destPitch;
+						if (i % 16 == 0)
+							theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 
-					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
-					switch(logOp) {
-					case 1:
-						for(uint16 d = 0; d < destPlanes; d++)
-							WriteInt16(destAddress + offset + d * 2, (fgColor ? theWord : ~theWord));
-						break;
-					case 2:
-						for(uint16 d = 0; d < destPlanes; d++)
-							WriteInt16(destAddress + offset + d * 2, ReadInt16(destAddress + offset + d * 2) | (fgColor ? theWord : ~theWord));
-						break;
-					case 3:
-						for(uint16 d = 0; d < destPlanes; d++)
-							WriteInt16(destAddress + offset + d * 2, ~ReadInt16(destAddress + offset + d * 2));
-						break;
-					case 4:
-						for(uint16 d = 0; d < destPlanes; d++)
-							WriteInt16(destAddress + offset + d * 2, ReadInt16(destAddress + offset + d * 2) | (fgColor ? theWord : ~theWord));
-						break;
+						D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
+						switch(logOp) {
+							case 1:
+								for(uint16 d = 0; d < destPlanes; d++)
+									WriteInt16(destAddress + offset + d * 2, (fgColor ? theWord : ~theWord));
+								break;
+							case 2:
+								for(uint16 d = 0; d < destPlanes; d++)
+									WriteInt16(destAddress + offset + d * 2, ReadInt16(destAddress + offset + d * 2) | (fgColor ? theWord : ~theWord));
+								break;
+							case 3:
+								for(uint16 d = 0; d < destPlanes; d++)
+									WriteInt16(destAddress + offset + d * 2, ~ReadInt16(destAddress + offset + d * 2));
+								break;
+							case 4:
+								for(uint16 d = 0; d < destPlanes; d++)
+									WriteInt16(destAddress + offset + d * 2, ReadInt16(destAddress + offset + d * 2) | (fgColor ? theWord : ~theWord));
+								break;
+						}
 					}
+					D2(bug("")); //newline
 				}
-				D2(bug("")); //newline
+			} else {
+				uint8 color[16];
+
+				for(uint16 j = 0; j < h; j++) {
+					D2(fprintf(stderr, "fVDI: bmp:"));
+
+					uint32 address = destAddress + ((((dx >> 4) * destPlanes) << 1) + (dy + j) * destPitch);
+					hostScreen.bitplaneToChunky((uint16*)address, destPlanes, color);
+					uint32 oldAddress = address;
+
+					uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
+					for(uint16 i = sx; i < sx + w; i++) {
+						uint32 wordIndex = ((dx + i - sx) >> 4) * destPlanes;
+						address = destAddress + ((wordIndex << 1) + (dy + j) * destPitch);
+						if (i % 16 == 0) {
+							chunkyToBitplane(color, destPlanes, (uint16*)oldAddress);
+							hostScreen.bitplaneToChunky((uint16*)address, destPlanes, color);
+							oldAddress = address;
+
+							theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
+						}
+
+						D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
+						switch(logOp) {
+							case 1:
+								color[i&0xf] = ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor;
+								break;
+							case 2:
+								if ((theWord >> (15-(i&0xf))) & 1)
+									color[i&0xf] = fgColor;
+								break;
+							case 3:
+								if ((theWord >> (15 - (i & 0xf))) & 1)
+									color[i&0xf] = ~color[i&0xf];
+								break;
+							case 4:
+								if (!((theWord >> (15 - (i & 0xf))) & 1))
+									color[i&0xf] = fgColor;
+								break;
+						}
+					}
+					chunkyToBitplane(color, destPlanes, (uint16*)oldAddress);
+					D2(bug("")); //newline
+				}
 			}
 			break;
 		}
@@ -1048,7 +1120,7 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 	if (!hostScreen.renderBegin())
 		return 1;
 
-	D2(bug("fVDI: expandArea M->S"));
+	D(bug("fVDI: expandArea M->S"));
 	for(uint16 j = 0; j < h; j++) {
 		D2(fprintf(stderr, "fVDI: bmp:"));
 
@@ -1059,21 +1131,21 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 
 			D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
 			switch(logOp) {
-			case 1:
-				hostScreen.putPixel(dx + i - sx, dy + j, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
-				break;
-			case 2:
-				if ((theWord >> (15 - (i & 0xf))) & 1)
-					hostScreen.putPixel(dx + i - sx, dy + j, fgColor);
-				break;
-			case 3:
-				if ((theWord >> (15 - (i & 0xf))) & 1)
-					hostScreen.putPixel(dx + i - sx, dy + j, ~hostScreen.getPixel(dx + i - sx, dy + j));
-				break;
-			case 4:
-				if (!((theWord >> (15 - (i & 0xf))) & 1))
-					hostScreen.putPixel(dx + i - sx, dy + j, fgColor);
-				break;
+				case 1:
+					hostScreen.putPixel(dx + i - sx, dy + j, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
+					break;
+				case 2:
+					if ((theWord >> (15 - (i & 0xf))) & 1)
+						hostScreen.putPixel(dx + i - sx, dy + j, fgColor);
+					break;
+				case 3:
+					if ((theWord >> (15 - (i & 0xf))) & 1)
+						hostScreen.putPixel(dx + i - sx, dy + j, ~hostScreen.getPixel(dx + i - sx, dy + j));
+					break;
+				case 4:
+					if (!((theWord >> (15 - (i & 0xf))) & 1))
+						hostScreen.putPixel(dx + i - sx, dy + j, fgColor);
+					break;
 			}
 		}
 		D2(bug("")); //newline
@@ -1261,26 +1333,6 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
 	}
 
 
-extern "C" {
-static void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8])
-{
-	memset(bitplaneWords, 0, sizeof(bitplaneWords)); // clear the color values for the 16 pixels (max 8bit depth)
-
-	for (int l=0; l<16; l++) {
-		uint8 data = sdlPixelData[l]; // note: this is about 2000 dryhstones speedup (the local variable)
-
-		bitplaneWords[0] <<= 1; bitplaneWords[0] |= (data >> 0) & 1;
-		bitplaneWords[1] <<= 1; bitplaneWords[1] |= (data >> 1) & 1;
-		bitplaneWords[2] <<= 1; bitplaneWords[2] |= (data >> 2) & 1;
-		bitplaneWords[3] <<= 1; bitplaneWords[3] |= (data >> 3) & 1;
-		bitplaneWords[4] <<= 1; bitplaneWords[4] |= (data >> 4) & 1;
-		bitplaneWords[5] <<= 1; bitplaneWords[5] |= (data >> 5) & 1;
-		bitplaneWords[6] <<= 1; bitplaneWords[6] |= (data >> 6) & 1;
-		bitplaneWords[7] <<= 1; bitplaneWords[7] |= (data >> 7) & 1;
-	}
-}
-}
-
 int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest, int32 dx, int32 dy,
                          int32 w, int32 h, uint32 logOp)
 {
@@ -1440,7 +1492,11 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 							uint32 wordIndex = (j * pitch >> 1) + (i >> 4) * planes;
 							hostScreen.bitplaneToChunky(&dataHost[wordIndex], planes, color);
 						}
-						hostScreen.putPixel(dx + i - sx, dy + j, color[bitNo]);
+
+						destData = hostScreen.getPixel(dx + i - sx, dy + j);
+						destData = toTosColors( destData );
+						applyBlitLogOperation(logOp, destData, color[bitNo]);
+						hostScreen.putPixel(dx + i - sx, dy + j, destData<(sizeof(vdi_colours)/sizeof(*vdi_colours)) ? vdi_colours[destData] : destData);
 					}
 				}
 			}
@@ -2114,6 +2170,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.46  2003/01/15 08:35:08  standa
+ * The drawMouse hotspot coordinates are not stripped to 4bits (0..15).
+ *
  * Revision 1.45  2003/01/14 20:49:16  standa
  * Natfeat dispatch for fVDI::drawMouse() fixed.
  *
