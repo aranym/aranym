@@ -1,3 +1,12 @@
+2004/01/02 - joy
+- gui-sdl/dlgDisk.cpp: Disk geometry added (C/H/S).
+  Also, there is Insert/Eject button in each IDE set so it now supports
+  mounting of two IDE CD-ROMs simultaneously :)
+
+- gui-sdl/sdlgui.cpp,h: CHECKBOX can be placed on right side of the text.
+  Same thing could/should be done for RADIO button.
+
+
 2004/01/01 PM - joy
 - fdc.cpp: added is_floppy_inserted() (used in the config GUI). Also
   changeFloppy() called on insert_floppy() - this fixes the old reported
