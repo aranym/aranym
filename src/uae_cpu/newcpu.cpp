@@ -1522,7 +1522,7 @@ void m68k_do_execute (void)
     }
 }
 
-#ifdef USE_JIT
+#ifdef USE_JIT && !defined(X86_ASSEMBLY_disable)
 void m68k_compile_execute (void)
 {
 setjmpagain:

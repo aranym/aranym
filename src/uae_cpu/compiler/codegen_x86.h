@@ -42,10 +42,8 @@
  * TODO
  *
  *	o Fix FIXMEs
- *	o Conditional moves
  *	o i387 FPU instructions
  *	o SSE instructions
- *	o Add notes about RIP addressing mode for x86-64
  *	o Optimize for cases where register numbers are not integral constants
  */
 
@@ -92,10 +90,13 @@
  *	x86_emit_failure(MSG)
  */
 
+#define x86_emit_failure0(MSG) (x86_emit_failure(MSG),0)
+
 
 /* --- Register set -------------------------------------------------------- */
 
 enum {
+  X86_RIP         = -2,
 #if X86_FLAT_REGISTERS
   X86_NOREG       = 0,
   X86_Reg8L_Base  = 0x10,
@@ -168,6 +169,7 @@ enum {
 /* Register control and access
  *
  *	_r0P(R)	Null register?
+ *	_rIP(R)	RIP register?
  *	_rXP(R)	Extended register?
  *
  *	_rC(R)	Class of register (only valid if X86_FLAT_REGISTERS)
@@ -183,7 +185,8 @@ enum {
  *	_rA(R)	Address register ID used for EA calculation
  */
 
-#define _r0P(R)		((R) == X86_NOREG)
+#define _r0P(R)		((int)(R) == (int)X86_NOREG)
+#define _rIP(R)		((int)(R) == (int)X86_RIP)
 
 #define _rC(R)		((R) & 0xf0)
 #define _rR(R)		((R) & 0x0f)
@@ -199,18 +202,18 @@ enum {
 #define _rM(R)		_rN(R)
 #define _rX(R)		_rN(R)
 #else
-#define _r1(R)		( ((_rC(R) & (X86_Reg8L_Base | X86_Reg8H_Base)) != 0)	? _rN(R) : x86_emit_failure( "8-bit register required"))
-#define _r2(R)		( (_rC(R) == X86_Reg16_Base)				? _rN(R) : x86_emit_failure("16-bit register required"))
-#define _r4(R)		( (_rC(R) == X86_Reg32_Base)				? _rN(R) : x86_emit_failure("32-bit register required"))
-#define _r8(R)		( (_rC(R) == X86_Reg64_Base)				? _rN(R) : x86_emit_failure("64-bit register required"))
+#define _r1(R)		( ((_rC(R) & (X86_Reg8L_Base | X86_Reg8H_Base)) != 0)	? _rN(R) : x86_emit_failure0( "8-bit register required"))
+#define _r2(R)		( (_rC(R) == X86_Reg16_Base)				? _rN(R) : x86_emit_failure0("16-bit register required"))
+#define _r4(R)		( (_rC(R) == X86_Reg32_Base)				? _rN(R) : x86_emit_failure0("32-bit register required"))
+#define _r8(R)		( (_rC(R) == X86_Reg64_Base)				? _rN(R) : x86_emit_failure0("64-bit register required"))
 #define _rA(R)		( X86_TARGET_64BIT ? \
-			( (_rC(R) == X86_Reg64_Base)				? _rN(R) : x86_emit_failure("not a valid 64-bit base/index expression")) : \
-			( (_rC(R) == X86_Reg32_Base)				? _rN(R) : x86_emit_failure("not a valid 32-bit base/index expression")) )
-#define _rM(R)		( (_rC(R) == X86_RegMMX_Base)				? _rN(R) : x86_emit_failure("MMX register required"))
-#define _rX(R)		( (_rC(R) == X86_RegXMM_Base)				? _rN(R) : x86_emit_failure("SSE register required"))
+			( (_rC(R) == X86_Reg64_Base)				? _rN(R) : x86_emit_failure0("not a valid 64-bit base/index expression")) : \
+			( (_rC(R) == X86_Reg32_Base)				? _rN(R) : x86_emit_failure0("not a valid 32-bit base/index expression")) )
+#define _rM(R)		( (_rC(R) == X86_RegMMX_Base)				? _rN(R) : x86_emit_failure0("MMX register required"))
+#define _rX(R)		( (_rC(R) == X86_RegXMM_Base)				? _rN(R) : x86_emit_failure0("SSE register required"))
 #endif
 
-#define _rSP()		(X86_TARGET_64BIT ? X86_RSP : X86_ESP)
+#define _rSP()		(X86_TARGET_64BIT ? (int)X86_RSP : (int)X86_ESP)
 #define _rbpP(R)	(_rR(R) == _rR(X86_RBP))
 #define _rspP(R)	(_rR(R) == _rR(X86_RSP))
 #define _rsp12P(R)	(_rN(R) == _rN(X86_RSP))
@@ -220,10 +223,11 @@ enum {
 /* --- UTILITY ------------------------------------------------------------- */
 /* ========================================================================= */
 
-typedef char		_sc;
+typedef signed char	_sc;
 typedef unsigned char	_uc;
+typedef signed short	_ss;
 typedef unsigned short	_us;
-typedef int		_sl;
+typedef signed int	_sl;
 typedef unsigned int	_ul;
 
 #define _UC(X)		((_uc  )(X))
@@ -251,10 +255,10 @@ typedef unsigned int	_ul;
 #define _ck_su(W,I)    	(_UL(I) & _MASK(W))
 #define _ck_d(W,I)    	(_UL(I) & _MASK(W))
 #else
-#define _ck_s(W,I)	(_siP(W,I) ? (_UL(I) & _MASK(W)) : x86_emit_failure(  "signed integer `"#I"' too large for "#W"-bit field"))
-#define _ck_u(W,I)    	(_uiP(W,I) ? (_UL(I) & _MASK(W)) : x86_emit_failure("unsigned integer `"#I"' too large for "#W"-bit field"))
-#define _ck_su(W,I)    	(_suiP(W,I) ? (_UL(I) & _MASK(W)) : x86_emit_failure(        "integer `"#I"' too large for "#W"-bit field"))
-#define _ck_d(W,I)    	(_siP(W,I) ? (_UL(I) & _MASK(W)) : x86_emit_failure(    "displacement `"#I"' too large for "#W"-bit field"))
+#define _ck_s(W,I)	(_siP(W,I) ? (_UL(I) & _MASK(W)) : x86_emit_failure0(  "signed integer `"#I"' too large for "#W"-bit field"))
+#define _ck_u(W,I)    	(_uiP(W,I) ? (_UL(I) & _MASK(W)) : x86_emit_failure0("unsigned integer `"#I"' too large for "#W"-bit field"))
+#define _ck_su(W,I)    	(_suiP(W,I) ? (_UL(I) & _MASK(W)) : x86_emit_failure0(        "integer `"#I"' too large for "#W"-bit field"))
+#define _ck_d(W,I)    	(_siP(W,I) ? (_UL(I) & _MASK(W)) : x86_emit_failure0(    "displacement `"#I"' too large for "#W"-bit field"))
 #endif
 
 #define _s0P(I)		((I)==0)
@@ -361,12 +365,12 @@ typedef unsigned int	_ul;
 # define _i(I)		(I)
 # define _b(B)		(B)
 #else
-# define _M(M)		(((M)>3) ? x86_emit_failure("internal error: mod = " #M) : (M))
-# define _r(R)		(((R)>7) ? x86_emit_failure("internal error: reg = " #R) : (R))
-# define _m(M)		(((M)>7) ? x86_emit_failure("internal error: r/m = " #M) : (M))
-# define _s(S)		(((S)>3) ? x86_emit_failure("internal error: memory scale = " #S) : (S))
-# define _i(I)		(((I)>7) ? x86_emit_failure("internal error: memory index = " #I) : (I))
-# define _b(B)		(((B)>7) ? x86_emit_failure("internal error: memory base = "  #B) : (B))
+# define _M(M)		(((M)>3) ? x86_emit_failure0("internal error: mod = " #M) : (M))
+# define _r(R)		(((R)>7) ? x86_emit_failure0("internal error: reg = " #R) : (R))
+# define _m(M)		(((M)>7) ? x86_emit_failure0("internal error: r/m = " #M) : (M))
+# define _s(S)		(((S)>3) ? x86_emit_failure0("internal error: memory scale = " #S) : (S))
+# define _i(I)		(((I)>7) ? x86_emit_failure0("internal error: memory index = " #I) : (I))
+# define _b(B)		(((B)>7) ? x86_emit_failure0("internal error: memory base = "  #B) : (B))
 #endif
 
 #define _Mrm(Md,R,M)	_B((_M(Md)<<6)|(_r(R)<<3)|_m(M))
@@ -375,12 +379,14 @@ typedef unsigned int	_ul;
 #define _SCL(S)		((((S)==1) ? _b00 : \
 			 (((S)==2) ? _b01 : \
 			 (((S)==4) ? _b10 : \
-			 (((S)==8) ? _b11 : x86_emit_failure("illegal scale: " #S))))))
+			 (((S)==8) ? _b11 : x86_emit_failure0("illegal scale: " #S))))))
 
 
 /* --- Memory subformats - urgh! ------------------------------------------- */
 
+/* _r_D() is RIP addressing mode if X86_TARGET_64BIT, use _r_DSIB() instead */
 #define _r_D(	R, D	  )	(_Mrm(_b00,_rN(R),_b101 )		             ,_L((long)(D)))
+#define _r_DSIB(R, D      )	(_Mrm(_b00,_rN(R),_b100 ),_SIB(_SCL(1),_b100 ,_b101 ),_L((long)(D)))
 #define _r_0B(	R,   B    )	(_Mrm(_b00,_rN(R),_rA(B))			                   )
 #define _r_0BIS(R,   B,I,S)	(_Mrm(_b00,_rN(R),_b100 ),_SIB(_SCL(S),_rA(I),_rA(B))              )
 #define _r_1B(	R, D,B    )	(_Mrm(_b01,_rN(R),_rA(B))		             ,_B((long)(D)))
@@ -390,11 +396,12 @@ typedef unsigned int	_ul;
 #define _r_4BIS(R, D,B,I,S)	(_Mrm(_b10,_rN(R),_b100 ),_SIB(_SCL(S),_rA(I),_rA(B)),_L((long)(D)))
 
 #define _r_DB(  R, D,B    )	((_s0P(D) && (!_rbpP(B)) ? _r_0B  (R,  B    ) : (_s8P(D) ? _r_1B(  R,D,B    ) : _r_4B(  R,D,B    ))))
-#define _r_DBIS(R, D,B,I,S)	((_s0P(D)		 ? _r_0BIS(R,  B,I,S) : (_s8P(D) ? _r_1BIS(R,D,B,I,S) : _r_4BIS(R,D,B,I,S))))
+#define _r_DBIS(R, D,B,I,S)	((_s0P(D) && (!_rbpP(B)) ? _r_0BIS(R,  B,I,S) : (_s8P(D) ? _r_1BIS(R,D,B,I,S) : _r_4BIS(R,D,B,I,S))))
 
 #define _r_X(   R, D,B,I,S)	(_r0P(I) ? (_r0P(B)    ? _r_D   (R,D                )   : \
+				           (_rIP(B)    ? _r_DSIB(R,D                )   : \
 				           (_rsp12P(B) ? _r_DBIS(R,D,_rSP(),_rSP(),1)   : \
-						         _r_DB  (R,D,     B       ))) : \
+						         _r_DB  (R,D,     B       ))))  : \
 				 (_r0P(B)	       ? _r_4IS (R,D,	         I,S)   : \
 				 (!_rspP(I)            ? _r_DBIS(R,D,     B,     I,S)   : \
 						         x86_emit_failure("illegal index register: %esp"))))
@@ -456,12 +463,12 @@ typedef unsigned int	_ul;
 #define _d64(W,R,X,B)		(_B(0x40|(W)<<3|(R)<<2|(X)<<1|(B)))
 
 #define __REXwrxb(L,W,R,X,B)	((W|R|X|B) || (L) ? _d64(W,R,X,B) : _VOID())
-#define __REXwrx_(L,W,R,X,MR)	(__REXwrxb(L,W,R,X,_BIT(_rXP(MR))))
+#define __REXwrx_(L,W,R,X,MR)	(__REXwrxb(L,W,R,X,_BIT(_rIP(MR)?0:_rXP(MR))))
 #define __REXw_x_(L,W,R,X,MR)	(__REXwrx_(L,W,_BIT(_rXP(R)),X,MR))
 
 // FIXME: can't mix new (SPL,BPL,SIL,DIL) with (AH,BH,CH,DH)
 #define _REXBrr(RR,MR)		_m64(__REXw_x_(((RR)|(MR))>=X86_SPL,0,RR,0,MR))
-#define _REXBmr(MB,MI,RD)	_m64(__REXw_x_(((RR)|(MR))>=X86_SPL,0,RD,_BIT(_rXP(MI)),MB))
+#define _REXBmr(MB,MI,RD)	_m64(__REXw_x_(((RD)|(MB))>=X86_SPL,0,RD,_BIT(_rXP(MI)),MB))
 #define _REXBrm(RS,MB,MI)	_REXBmr(MB,MI,RS)
 
 #define _REXLrr(RR,MR)		_m64(__REXw_x_(0,0,RR,0,MR))
@@ -482,6 +489,11 @@ typedef unsigned int	_ul;
  *		+ m	= memory operand (disp,base,index,scale)
  *		+ sr/sm	= a star preceding a register or memory
  *		+ 0	= top of stack register (for FPU instructions)
+ *
+ *	NOTE in x86-64 mode: a memory operand with only a valid
+ *	displacement value will lead to the expect absolute mode. If
+ *	RIP addressing is necessary, X86_RIP shall be used as the base
+ *	register argument.
  */
 
 /* --- ALU instructions ---------------------------------------------------- */
@@ -1042,7 +1054,7 @@ enum {
 
 /*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
 
-#define MOVBrr(RS, RD)			(_REXBrr(RS, RD),		_O_Mrm		(0x80		,_b11,_r1(RS),_r1(RD)				))
+#define MOVBrr(RS, RD)			(_REXBrr(RS, RD),		_O_Mrm		(0x88		,_b11,_r1(RS),_r1(RD)				))
 #define MOVBmr(MD, MB, MI, MS, RD)	(_REXBmr(MB, MI, RD),		_O_r_X		(0x8a		     ,_r1(RD)		,MD,MB,MI,MS		))
 #define MOVBrm(RS, MD, MB, MI, MS)	(_REXBrm(RS, MB, MI),		_O_r_X		(0x88		     ,_r1(RS)		,MD,MB,MI,MS		))
 #define MOVBir(IM,  R)			(_REXBrr(0, R),			_Or_B		(0xb0,_r1(R)						,_su8(IM)))
@@ -1168,6 +1180,39 @@ enum {
 
 /* --- Control Flow related instructions ----------------------------------- */
 
+enum {
+  X86_CC_O   = 0x0,
+  X86_CC_NO  = 0x1,
+  X86_CC_NAE = 0x2,
+  X86_CC_B   = 0x2,
+  X86_CC_C   = 0x2,
+  X86_CC_AE  = 0x3,
+  X86_CC_NB  = 0x3,
+  X86_CC_NC  = 0x3,
+  X86_CC_E   = 0x4,
+  X86_CC_Z   = 0x4,
+  X86_CC_NE  = 0x5,
+  X86_CC_NZ  = 0x5,
+  X86_CC_BE  = 0x6,
+  X86_CC_NA  = 0x6,
+  X86_CC_A   = 0x7,
+  X86_CC_NBE = 0x7,
+  X86_CC_S   = 0x8,
+  X86_CC_NS  = 0x9,
+  X86_CC_P   = 0xa,
+  X86_CC_PE  = 0xa,
+  X86_CC_NP  = 0xb,
+  X86_CC_PO  = 0xb,
+  X86_CC_L   = 0xc,
+  X86_CC_NGE = 0xc,
+  X86_CC_GE  = 0xd,
+  X86_CC_NL  = 0xd,
+  X86_CC_LE  = 0xe,
+  X86_CC_NG  = 0xe,
+  X86_CC_G   = 0xf,
+  X86_CC_NLE = 0xf,
+};
+
 /*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
 
 // FIXME: no prefix is availble to encode a 32-bit operand size in 64-bit mode
@@ -1184,6 +1229,7 @@ enum {
 #define JMPsm(D,B,I,S)			(_REXLrm(0, B, I),		_O_r_X		(0xff		     ,_b100		,(int)(D),B,I,S		))
 
 /*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
+#define JCCSii(CC, D)							_O_B		(0x70|(CC)				,(_sc)(int)(D)		)
 #define JCCSim(CC, D)							_O_D8		(0x70|(CC)				,(int)(D)		)
 #define JOSm(D)				JCCSim(0x0, D)
 #define JNOSm(D)			JCCSim(0x1, D)
@@ -1215,6 +1261,7 @@ enum {
 #define JGSm(D)				JCCSim(0xf, D)
 
 /*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
+#define JCCii(CC, D)							_OO_L		(0x0f80|(CC)				,(int)(D)		)
 #define JCCim(CC, D)							_OO_D32		(0x0f80|(CC)				,(int)(D)		)
 #define JOm(D)				JCCim(0x0, D)
 #define JNOm(D)				JCCim(0x1, D)
@@ -1307,6 +1354,14 @@ enum {
 #define SETNLEm(D, B, I, S)		SETCCim(0xf, D, B, I, S)
 #define SETGm(D, B, I, S)		SETCCim(0xf, D, B, I, S)
 
+/*									_format		Opcd		,Mod ,r	     ,m		,mem=dsp+sib	,imm... */
+#define CMOVWrr(CC,RS,RD)		(_d16(), _REXLrr(RD, RS),	_OO_Mrm		(0x0f40|(CC)	,_b11,_r2(RD),_r2(RS)				))
+#define CMOVWmr(CC,MD,MB,MI,MS,RD)	(_d16(), _REXLmr(MB, MI, RD),	_OO_r_X		(0x0f40|(CC)	     ,_r2(RD)		,MD,MB,MI,MS		))
+#define CMOVLrr(CC,RS,RD)		(_REXLrr(RD, RS),		_OO_Mrm		(0x0f40|(CC)	,_b11,_r4(RD),_r4(RS)				))
+#define CMOVLmr(CC,MD,MB,MI,MS,RD)	(_REXLmr(MB, MI, RD),		_OO_r_X		(0x0f40|(CC)	     ,_r4(RD)		,MD,MB,MI,MS		))
+#define CMOVQrr(CC,RS,RD)		(_REXQrr(RD, RS),		_OO_Mrm		(0x0f40|(CC)	,_b11,_r8(RD),_r8(RS)				))
+#define CMOVQmr(CC,MD,MB,MI,MS,RD)	(_REXQmr(MB, MI, RD),		_OO_r_X		(0x0f40|(CC)	     ,_r8(RD)		,MD,MB,MI,MS		))
+
 
 /* --- Push/Pop instructions ----------------------------------------------- */
 
@@ -1352,22 +1407,30 @@ enum {
 
 #define TESTBrr(RS, RD)			(_REXBrr(RS, RD),		_O_Mrm		(0x84		,_b11,_r1(RS),_r1(RD)				))
 #define TESTBrm(RS, MD, MB, MI, MS)	(_REXBrm(RS, MB, MI),		_O_r_X		(0x84		     ,_r1(RS)		,MD,MB,MI,MS		))
-#define TESTBir(IM, RD)			(_REXBrr(0, RD),		_O_Mrm_B	(0xf6		,_b11,_b000  ,_r1(RD)			,_u8(IM)))
+#define TESTBir(IM, RD)			(X86_OPTIMIZE_ALU && ((RD) == X86_AL) ? \
+					(_REXBrr(0, RD),		_O_B		(0xa8							,_u8(IM))) : \
+					(_REXBrr(0, RD),		_O_Mrm_B	(0xf6		,_b11,_b000  ,_r1(RD)			,_u8(IM))) )
 #define TESTBim(IM, MD, MB, MI, MS)	(_REXBrm(0, MB, MI),		_O_r_X_B	(0xf6		     ,_b000		,MD,MB,MI,MS	,_u8(IM)))
 
 #define TESTWrr(RS, RD)			(_d16(), _REXLrr(RS, RD),	_O_Mrm		(0x85		,_b11,_r2(RS),_r2(RD)				))
 #define TESTWrm(RS, MD, MB, MI, MS)	(_d16(), _REXLrm(RS, MD, MI),	_O_r_X		(0x85		     ,_r2(RS)		,MD,MB,MI,MS		))
-#define TESTWir(IM, RD)			(_d16(), _REXLrr(0, RD),	_O_Mrm_W	(0xf7		,_b11,_b000  ,_r2(RD)			,_u16(IM)))
+#define TESTWir(IM, RD)			(X86_OPTIMIZE_ALU && ((RD) == X86_AX) ? \
+					(_d16(), _REXLrr(0, RD),	_O_W		(0xa9							,_u16(IM))) : \
+					(_d16(), _REXLrr(0, RD),	_O_Mrm_W	(0xf7		,_b11,_b000  ,_r2(RD)			,_u16(IM))) )
 #define TESTWim(IM, MD, MB, MI, MS)	(_d16(), _REXLrm(0, MD, MI),	_O_r_X_W	(0xf7		     ,_b000		,MD,MB,MI,MS	,_u16(IM)))
 
 #define TESTLrr(RS, RD)			(_REXLrr(RS, RD),		_O_Mrm		(0x85		,_b11,_r4(RS),_r4(RD)				))
 #define TESTLrm(RS, MD, MB, MI, MS)	(_REXLrm(RS, MB, MI),		_O_r_X		(0x85		     ,_r4(RS)		,MD,MB,MI,MS		))
-#define TESTLir(IM, RD)			(_REXLrr(0, RD),		_O_Mrm_L	(0xf7		,_b11,_b000  ,_r4(RD)			,IM	))
+#define TESTLir(IM, RD)			(X86_OPTIMIZE_ALU && ((RD) == X86_EAX) ? \
+					(_REXLrr(0, RD),		_O_L		(0xa9							,IM	)) : \
+					(_REXLrr(0, RD),		_O_Mrm_L	(0xf7		,_b11,_b000  ,_r4(RD)			,IM	)) )
 #define TESTLim(IM, MD, MB, MI, MS)	(_REXLrm(0, MB, MI),		_O_r_X_L	(0xf7		     ,_b000		,MD,MB,MI,MS	,IM	))
 
 #define TESTQrr(RS, RD)			(_REXQrr(RS, RD),		_O_Mrm		(0x85		,_b11,_r8(RS),_r8(RD)				))
 #define TESTQrm(RS, MD, MB, MI, MS)	(_REXQrm(RS, MB, MI),		_O_r_X		(0x85		     ,_r8(RS)		,MD,MB,MI,MS		))
-#define TESTQir(IM, RD)			(_REXQrr(0, RD),		_O_Mrm_L	(0xf7		,_b11,_b000  ,_r8(RD)			,IM	))
+#define TESTQir(IM, RD)			(X86_OPTIMIZE_ALU && ((RD) == X86_RAX) ? \
+					(_REXQrr(0, RD),		_O_L		(0xa9							,IM	)) : \
+					(_REXQrr(0, RD),		_O_Mrm_L	(0xf7		,_b11,_b000  ,_r8(RD)			,IM	)) )
 #define TESTQim(IM, MD, MB, MI, MS)	(_REXQrm(0, MB, MI),		_O_r_X_L	(0xf7		     ,_b000		,MD,MB,MI,MS	,IM	))
 
 
@@ -1445,7 +1508,54 @@ enum {
 #define INCQr(RD)			(_REXQrr(0, RD),		_O_Mrm		(0xff		,_b11,_b000  ,_r8(RD)				))
 
 
-/* --- Misc/Garbage instructions ------------------------------------------- */
+/* --- Misc instructions --------------------------------------------------- */
+
+/*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
+
+#define BSFWrr(RS, RD)			(_d16(), _REXLrr(RD, RS),	_OO_Mrm		(0x0fbc		,_b11,_r2(RD),_r2(RS)				))
+#define BSFWmr(MD, MB, MI, MS, RD)	(_d16(), _REXLmr(MB, MI, RD),	_OO_r_X		(0x0fbc		     ,_r2(RD)		,MD,MB,MI,MS		))
+#define BSRWrr(RS, RD)			(_d16(), _REXLrr(RD, RS),	_OO_Mrm		(0x0fbd		,_b11,_r2(RD),_r2(RS)				))
+#define BSRWmr(MD, MB, MI, MS, RD)	(_d16(), _REXLmr(MB, MI, RD),	_OO_r_X		(0x0fbd		     ,_r2(RD)		,MD,MB,MI,MS		))
+
+#define BSFLrr(RS, RD)			(_REXLrr(RD, RS),		_OO_Mrm		(0x0fbc		,_b11,_r4(RD),_r4(RS)				))
+#define BSFLmr(MD, MB, MI, MS, RD)	(_REXLmr(MB, MI, RD),		_OO_r_X		(0x0fbc		     ,_r4(RD)		,MD,MB,MI,MS		))
+#define BSRLrr(RS, RD)			(_REXLrr(RD, RS),		_OO_Mrm		(0x0fbd		,_b11,_r4(RD),_r4(RS)				))
+#define BSRLmr(MD, MB, MI, MS, RD)	(_REXLmr(MB, MI, RD),		_OO_r_X		(0x0fbd		     ,_r4(RD)		,MD,MB,MI,MS		))
+
+#define BSFQrr(RS, RD)			(_REXQrr(RD, RS),		_OO_Mrm		(0x0fbc		,_b11,_r8(RD),_r8(RS)				))
+#define BSFQmr(MD, MB, MI, MS, RD)	(_REXQmr(MB, MI, RD),		_OO_r_X		(0x0fbc		     ,_r8(RD)		,MD,MB,MI,MS		))
+#define BSRQrr(RS, RD)			(_REXQrr(RD, RS),		_OO_Mrm		(0x0fbd		,_b11,_r8(RD),_r8(RS)				))
+#define BSRQmr(MD, MB, MI, MS, RD)	(_REXQmr(MB, MI, RD),		_OO_r_X		(0x0fbd		     ,_r8(RD)		,MD,MB,MI,MS		))
+
+/*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
+
+#define MOVSBWrr(RS, RD)		(_d16(), _REXLrr(RD, RS),	_OO_Mrm		(0x0fbe		,_b11,_r2(RD),_r1(RS)				))
+#define MOVSBWmr(MD, MB, MI, MS, RD)	(_d16(), _REXLmr(MB, MI, RD),	_OO_r_X		(0x0fbe		     ,_r2(RD)		,MD,MB,MI,MS		))
+#define MOVZBWrr(RS, RD)		(_d16(), _REXLrr(RD, RS),	_OO_Mrm		(0x0fb6		,_b11,_r2(RD),_r1(RS)				))
+#define MOVZBWmr(MD, MB, MI, MS, RD)	(_d16(), _REXLmr(MB, MI, RD),	_OO_r_X		(0x0fb6		     ,_r2(RD)		,MD,MB,MI,MS		))
+
+#define MOVSBLrr(RS, RD)		(_REXLrr(RD, RS),		_OO_Mrm		(0x0fbe		,_b11,_r4(RD),_r1(RS)				))
+#define MOVSBLmr(MD, MB, MI, MS, RD)	(_REXLmr(MB, MI, RD),		_OO_r_X		(0x0fbe		     ,_r4(RD)		,MD,MB,MI,MS		))
+#define MOVZBLrr(RS, RD)		(_REXLrr(RD, RS),		_OO_Mrm		(0x0fb6		,_b11,_r4(RD),_r1(RS)				))
+#define MOVZBLmr(MD, MB, MI, MS, RD)	(_REXLmr(MB, MI, RD),		_OO_r_X		(0x0fb6		     ,_r4(RD)		,MD,MB,MI,MS		))
+
+#define MOVSBQrr(RS, RD)		(_REXQrr(RD, RS),		_OO_Mrm		(0x0fbe		,_b11,_r8(RD),_r1(RS)				))
+#define MOVSBQmr(MD, MB, MI, MS, RD)	(_REXQmr(MB, MI, RD),		_OO_r_X		(0x0fbe		     ,_r8(RD)		,MD,MB,MI,MS		))
+#define MOVZBQrr(RS, RD)		(_REXQrr(RD, RS),		_OO_Mrm		(0x0fb6		,_b11,_r8(RD),_r1(RS)				))
+#define MOVZBQmr(MD, MB, MI, MS, RD)	(_REXQmr(MB, MI, RD),		_OO_r_X		(0x0fb6		     ,_r8(RD)		,MD,MB,MI,MS		))
+
+#define MOVSWLrr(RS, RD)		(_REXLrr(RD, RS),		_OO_Mrm		(0x0fbf		,_b11,_r4(RD),_r2(RS)				))
+#define MOVSWLmr(MD, MB, MI, MS, RD)	(_REXLmr(MB, MI, RD),		_OO_r_X		(0x0fbf		     ,_r4(RD)		,MD,MB,MI,MS		))
+#define MOVZWLrr(RS, RD)		(_REXLrr(RD, RS),		_OO_Mrm		(0x0fb7		,_b11,_r4(RD),_r2(RS)				))
+#define MOVZWLmr(MD, MB, MI, MS, RD)	(_REXLmr(MB, MI, RD),		_OO_r_X		(0x0fb7		     ,_r4(RD)		,MD,MB,MI,MS		))
+
+#define MOVSWQrr(RS, RD)		(_REXQrr(RD, RS),		_OO_Mrm		(0x0fbf		,_b11,_r8(RD),_r2(RS)				))
+#define MOVSWQmr(MD, MB, MI, MS, RD)	(_REXQmr(MB, MI, RD),		_OO_r_X		(0x0fbf		     ,_r8(RD)		,MD,MB,MI,MS		))
+#define MOVZWQrr(RS, RD)		(_REXQrr(RD, RS),		_OO_Mrm		(0x0fb7		,_b11,_r8(RD),_r2(RS)				))
+#define MOVZWQmr(MD, MB, MI, MS, RD)	(_REXQmr(MB, MI, RD),		_OO_r_X		(0x0fb7		     ,_r8(RD)		,MD,MB,MI,MS		))
+
+#define MOVSLQrr(RS, RD)		_m64only((_REXQrr(RD, RS),	_O_Mrm		(0x63		,_b11,_r8(RD),_r4(RS)				)))
+#define MOVSLQmr(MD, MB, MI, MS, RD)	_m64only((_REXQmr(MB, MI, RD),	_O_r_X		(0x63		     ,_r8(RD)		,MD,MB,MI,MS		)))
 
 /*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
 
@@ -1482,6 +1592,7 @@ enum {
 
 /*									_format		Opcd		,Mod ,r	    ,m		,mem=dsp+sib	,imm... */
 
+#define CPUID()								_OO		(0x0fa2								)
 #define RDTSC()								_OO		(0xff31								)
 
 #define ENTERii(W, B)							_O_W_B		(0xc8						  ,_su16(W),_su8(B))
