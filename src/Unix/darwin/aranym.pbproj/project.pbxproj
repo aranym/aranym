@@ -3,54 +3,3873 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 39;
 	objects = {
-		F82190BE0494263900E23722 = {
+		F8243A8D05C462AB00F043B6 = {
 			isa = PBXFileReference;
-			path = aranym2.icns;
-			refType = 4;
+			lastKnownFileType = wrapper.framework;
+			name = SDL.framework;
+			path = /Users/stefan/Library/Frameworks/SDL.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
 		};
-		F82190BF0494263900E23722 = {
-			fileRef = F82190BE0494263900E23722;
+		F8243A8E05C462AB00F043B6 = {
+			fileRef = F8243A8D05C462AB00F043B6;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		F8752DAF048A3A140026D05A = {
+		F8243B4A05C46D2500F043B6 = {
+			children = (
+				F86B528005C47A540089468F,
+			);
+			isa = PBXGroup;
+			name = Libraries;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F83AFFC005C09F8200F1E83F = {
+			containerPortal = F87BDEF00488FB4800F69266;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = F87BE158048901B400F69266;
+			remoteInfo = libaranym;
+		};
+		F83AFFC105C09F8200F1E83F = {
+			containerPortal = F87BDEF00488FB4800F69266;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = F87BDEF60488FB6400F69266;
+			remoteInfo = ARAnyM.app;
+		};
+		F86B50B205C476E20089468F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = TODO;
+			path = /Users/stefan/Developer/aranym/TODO;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B50B305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = aranym.spec;
+			path = /Users/stefan/Developer/aranym/aranym.spec;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B50B405C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = AUTHORS;
+			path = /Users/stefan/Developer/aranym/AUTHORS;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B50B505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = INSTALL;
+			path = /Users/stefan/Developer/aranym/INSTALL;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B50B605C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = NEWS;
+			path = /Users/stefan/Developer/aranym/NEWS;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B50B705C476E20089468F = {
+			children = (
+				F86B50B805C476E20089468F,
+				F86B50B905C476E20089468F,
+				F86B50BA05C476E20089468F,
+				F86B50BB05C476E20089468F,
+				F86B50BC05C476E20089468F,
+				F86B50BD05C476E20089468F,
+				F86B50BE05C476E20089468F,
+				F86B50BF05C476E20089468F,
+				F86B50C005C476E20089468F,
+				F86B50C105C476E20089468F,
+				F86B50C205C476E20089468F,
+				F86B50C305C476E20089468F,
+				F86B50C405C476E20089468F,
+				F86B50C505C476E20089468F,
+				F86B50C605C476E20089468F,
+				F86B50D105C476E20089468F,
+				F86B50D205C476E20089468F,
+				F86B50D305C476E20089468F,
+				F86B50D405C476E20089468F,
+				F86B50D505C476E20089468F,
+				F86B50D605C476E20089468F,
+				F86B50D705C476E20089468F,
+				F86B510205C476E20089468F,
+				F86B510305C476E20089468F,
+				F86B510405C476E20089468F,
+				F86B510505C476E20089468F,
+				F86B510605C476E20089468F,
+				F86B510705C476E20089468F,
+				F86B510805C476E20089468F,
+				F86B510905C476E20089468F,
+				F86B512805C476E20089468F,
+				F86B512905C476E20089468F,
+				F86B512A05C476E20089468F,
+				F86B512B05C476E20089468F,
+				F86B512C05C476E20089468F,
+				F86B512D05C476E20089468F,
+				F86B512E05C476E20089468F,
+				F86B512F05C476E20089468F,
+				F86B513005C476E20089468F,
+				F86B513105C476E20089468F,
+				F86B516105C476E30089468F,
+				F86B519A05C476E30089468F,
+				F86B519B05C476E30089468F,
+			);
+			isa = PBXGroup;
+			name = src;
+			path = /Users/stefan/Developer/aranym/src;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B50B805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = acia.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50B905C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = acsifdc.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50BA05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = aradata.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50BB05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = ata.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50BC05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = blitter.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50BD05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = cdrom.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50BE05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = cfgopts.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50BF05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dsp.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50C005C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dsp_cpu.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50C105C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dsp_disasm.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50C205C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = emul_op.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50C305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = fakeio.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50C405C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = fdc.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50C505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = fvdidrv.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50C605C476E20089468F = {
+			children = (
+				F86B50C705C476E20089468F,
+				F86B50C805C476E20089468F,
+				F86B50C905C476E20089468F,
+				F86B50CA05C476E20089468F,
+				F86B50CB05C476E20089468F,
+				F86B50CC05C476E20089468F,
+				F86B50CD05C476E20089468F,
+				F86B50CE05C476E20089468F,
+				F86B50CF05C476E20089468F,
+				F86B50D005C476E20089468F,
+			);
+			isa = PBXGroup;
+			path = "gui-sdl";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50C705C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dlgAbout.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50C805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dlgDisk.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50C905C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dlgFileSelect.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50CA05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dlgKeyboard.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50CB05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dlgMain.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50CC05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = file.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50CD05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = file.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50CE05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = font8.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50CF05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = sdlgui.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50D005C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = sdlgui.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50D105C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = hardware.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50D205C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = host.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50D305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = hostscreen.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50D405C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = ide.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50D505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = identify.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50D605C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = ikbd.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50D705C476E20089468F = {
+			children = (
+				F86B50D805C476E20089468F,
+				F86B50D905C476E20089468F,
+				F86B50DA05C476E20089468F,
+				F86B50DB05C476E20089468F,
+				F86B50DC05C476E20089468F,
+				F86B50DD05C476E20089468F,
+				F86B50DE05C476E20089468F,
+				F86B50DF05C476E20089468F,
+				F86B50E005C476E20089468F,
+				F86B50E105C476E20089468F,
+				F86B50E205C476E20089468F,
+				F86B50E305C476E20089468F,
+				F86B50E405C476E20089468F,
+				F86B50E505C476E20089468F,
+				F86B50E605C476E20089468F,
+				F86B50E705C476E20089468F,
+				F86B50E805C476E20089468F,
+				F86B50E905C476E20089468F,
+				F86B50EA05C476E20089468F,
+				F86B50EB05C476E20089468F,
+				F86B50EC05C476E20089468F,
+				F86B50ED05C476E20089468F,
+				F86B50EE05C476E20089468F,
+				F86B50EF05C476E20089468F,
+				F86B50F005C476E20089468F,
+				F86B50F105C476E20089468F,
+				F86B50F205C476E20089468F,
+				F86B50F305C476E20089468F,
+				F86B50F405C476E20089468F,
+				F86B50F505C476E20089468F,
+				F86B50F605C476E20089468F,
+				F86B50F705C476E20089468F,
+				F86B50F805C476E20089468F,
+				F86B50F905C476E20089468F,
+				F86B50FA05C476E20089468F,
+				F86B50FB05C476E20089468F,
+				F86B50FC05C476E20089468F,
+				F86B50FD05C476E20089468F,
+				F86B50FE05C476E20089468F,
+				F86B50FF05C476E20089468F,
+				F86B510005C476E20089468F,
+				F86B510105C476E20089468F,
+			);
+			isa = PBXGroup;
+			path = include;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50D805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = acia.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50D905C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = acsifdc.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50DA05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = aradata.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50DB05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = aramd5.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50DC05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = "aspi-win32.h";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50DD05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = ata.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50DE05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = blitter.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50DF05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = cdrom.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50E005C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = cfgopts.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50E105C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = debug.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50E205C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dsp.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50E305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dsp_cpu.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50E405C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dsp_disasm.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50E505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = emu_bochs.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50E605C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = emul_op.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50E705C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = fvdidrv.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50E805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = hardware.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50E905C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = host.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50EA05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = hostscreen.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50EB05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = icio.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50EC05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = ide.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50ED05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = identify.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50EE05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = ikbd.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50EF05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = input.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50F005C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = lilo.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50F105C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = main.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50F205C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mfp.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50F305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = midi.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50F405C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mmu.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50F505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = natfeats.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50F605C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = ncr5380.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50F705C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = ndebug.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50F805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = parallel.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50F905C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = parameters.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50FA05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = romdiff.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50FB05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = rtc.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50FC05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = scsidefs.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50FD05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = tools.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50FE05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = toserror.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B50FF05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = version.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510005C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = videl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510105C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = yamaha.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510205C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = input.cpp;
 			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = lilo.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510405C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = main.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = md5.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510605C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = mfp.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510705C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = midi.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = mmu.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510905C476E20089468F = {
+			children = (
+				F86B510A05C476E20089468F,
+				F86B510B05C476E20089468F,
+				F86B510C05C476E20089468F,
+				F86B510D05C476E20089468F,
+				F86B510E05C476E20089468F,
+				F86B510F05C476E20089468F,
+				F86B511005C476E20089468F,
+				F86B511605C476E20089468F,
+				F86B511705C476E20089468F,
+				F86B511805C476E20089468F,
+				F86B511905C476E20089468F,
+				F86B511A05C476E20089468F,
+				F86B511B05C476E20089468F,
+				F86B511C05C476E20089468F,
+				F86B511D05C476E20089468F,
+				F86B511E05C476E20089468F,
+				F86B511F05C476E20089468F,
+				F86B512005C476E20089468F,
+				F86B512105C476E20089468F,
+				F86B512205C476E20089468F,
+				F86B512305C476E20089468F,
+				F86B512405C476E20089468F,
+				F86B512505C476E20089468F,
+				F86B512605C476E20089468F,
+				F86B512705C476E20089468F,
+			);
+			isa = PBXGroup;
+			path = natfeat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510A05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = atari_example.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510B05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = atari_example_gfa.lst;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510C05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = audio.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510D05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = audio.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510E05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = debugprintf.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B510F05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = debugprintf.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511005C476E20089468F = {
+			children = (
+				F86B511105C476E20089468F,
+				F86B511205C476E20089468F,
+				F86B511305C476E20089468F,
+				F86B511405C476E20089468F,
+				F86B511505C476E20089468F,
+			);
+			isa = PBXGroup;
+			path = doc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511105C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = attic.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511205C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = call68k.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = native.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511405C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = nf.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = sample.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511605C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = ethernet.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511705C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = ethernet.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = hostfs.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511905C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = hostfs.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511A05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = nf_base.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511B05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = nf_base.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511C05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = nf_basicset.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511D05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = nf_basicset.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511E05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = nf_objs.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B511F05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = nf_objs.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512005C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = nfcdrom.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512105C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = nfcdrom.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512205C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = nfcdrom_linux.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = nfcdrom_linux.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512405C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = nfcdrom_sdl.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = nfcdrom_sdl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512605C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = xhdi.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512705C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = xhdi.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = natfeats.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512905C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = ncr5380.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512A05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = ndebug.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512B05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = parallel.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512C05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = parameters.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512D05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = romdiff.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512E05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = rtc.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B512F05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = template.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513005C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = tools.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513105C476E20089468F = {
+			children = (
+				F86B513205C476E20089468F,
+				F86B513305C476E20089468F,
+				F86B513405C476E20089468F,
+				F86B513C05C476E20089468F,
+				F86B513D05C476E20089468F,
+				F86B513E05C476E20089468F,
+				F86B513F05C476E20089468F,
+				F86B514005C476E20089468F,
+				F86B514105C476E20089468F,
+				F86B515505C476E20089468F,
+				F86B515605C476E20089468F,
+				F86B515705C476E20089468F,
+				F86B515805C476E20089468F,
+				F86B515905C476E20089468F,
+				F86B515A05C476E20089468F,
+				F86B515B05C476E20089468F,
+				F86B515C05C476E20089468F,
+				F86B515D05C476E20089468F,
+				F86B515E05C476E20089468F,
+				F86B515F05C476E20089468F,
+				F86B516005C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = uae_cpu;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513205C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = aranym_glue.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = build68k.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513405C476E20089468F = {
+			children = (
+				F86B513505C476E20089468F,
+				F86B513605C476E20089468F,
+				F86B513705C476E20089468F,
+				F86B513805C476E20089468F,
+				F86B513905C476E20089468F,
+				F86B513A05C476E20089468F,
+				F86B513B05C476E20089468F,
+			);
+			isa = PBXGroup;
+			path = compiler;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = codegen_x86.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513605C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = codegen_x86.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513705C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = compemu.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = compemu_fpp.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513905C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = compemu_support.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513A05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = flags_x86.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513B05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = gencomp.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513C05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = cpu_emulation.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513D05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = cpummu.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513E05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = cpummu.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B513F05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = cpuopti.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514005C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = debug.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514105C476E20089468F = {
+			children = (
+				F86B514205C476E20089468F,
+				F86B514305C476E20089468F,
+				F86B514405C476E20089468F,
+				F86B514505C476E20089468F,
+				F86B514605C476E20089468F,
+				F86B514705C476E20089468F,
+				F86B514805C476E20089468F,
+				F86B514905C476E20089468F,
+				F86B514A05C476E20089468F,
+				F86B514B05C476E20089468F,
+				F86B514C05C476E20089468F,
+				F86B514D05C476E20089468F,
+				F86B514E05C476E20089468F,
+				F86B514F05C476E20089468F,
+				F86B515005C476E20089468F,
+				F86B515105C476E20089468F,
+				F86B515205C476E20089468F,
+				F86B515305C476E20089468F,
+				F86B515405C476E20089468F,
+			);
+			isa = PBXGroup;
+			path = fpu;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514205C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = core.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = exceptions.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514405C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = exceptions.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = flags.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514605C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = flags.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514705C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = fpu.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = fpu_ieee.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514905C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = fpu_ieee.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514A05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = fpu_uae.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514B05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = fpu_uae.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514C05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = fpu_x86.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514D05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = fpu_x86.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514E05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = fpu_x86_asm.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B514F05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = impl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515005C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = mathlib.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515105C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mathlib.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515205C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = rounding.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515305C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = rounding.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515405C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = types.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515505C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = gencpu.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515605C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = m68k.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515705C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = memory.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515805C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = memory.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515905C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = newcpu.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515A05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = newcpu.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515B05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = noflags.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515C05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = readcpu.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515D05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = readcpu.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515E05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = registers.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B515F05C476E20089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = spcflags.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = table68k;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516105C476E30089468F = {
+			children = (
+				F86B516205C476E30089468F,
+				F86B516305C476E30089468F,
+				F86B516405C476E30089468F,
+				F86B516505C476E30089468F,
+				F86B516905C476E30089468F,
+				F86B516C05C476E30089468F,
+				F86B516D05C476E30089468F,
+				F86B516E05C476E30089468F,
+				F86B516F05C476E30089468F,
+				F86B517005C476E30089468F,
+				F86B517105C476E30089468F,
+				F86B517205C476E30089468F,
+				F86B517305C476E30089468F,
+				F86B517405C476E30089468F,
+				F86B517705C476E30089468F,
+				F86B518205C476E30089468F,
+				F86B518305C476E30089468F,
+				F86B518405C476E30089468F,
+				F86B518505C476E30089468F,
+				F86B518605C476E30089468F,
+				F86B518705C476E30089468F,
+				F86B518905C476E30089468F,
+				F86B518C05C476E30089468F,
+				F86B518D05C476E30089468F,
+				F86B518E05C476E30089468F,
+				F86B518F05C476E30089468F,
+				F86B519005C476E30089468F,
+				F86B519105C476E30089468F,
+				F86B519205C476E30089468F,
+				F86B519405C476E30089468F,
+				F86B519505C476E30089468F,
+				F86B519605C476E30089468F,
+				F86B519705C476E30089468F,
+				F86B519805C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = Unix;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = ansidecl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = aratapif.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = autogen.sh;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516505C476E30089468F = {
+			children = (
+				F86B516605C476E30089468F,
+				F86B516705C476E30089468F,
+				F86B516805C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = autom4te.cache;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = output.0;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = requests;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = traces.0;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516905C476E30089468F = {
+			children = (
+				F86B516A05C476E30089468F,
+				F86B516B05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = beos;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516A05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = cdrom_beos.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516B05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = cdrom_beos.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516C05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = config.guess;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516D05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = config.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516E05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = config.h.in;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B516F05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = config.log;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B517005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = config.status;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B517105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = config.sub;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B517205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = configure;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B517305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = configure.ac;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B517405C476E30089468F = {
+			children = (
+				F86B517505C476E30089468F,
+				F86B517605C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = cygwin;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B517505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = parameters_cygwin.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B517605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = tools_cygwin.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B517705C476E30089468F = {
+			children = (
+				F86B517805C476E30089468F,
+				F86B517B05C476E30089468F,
+				F86B527005C477E40089468F,
+				F86B526205C477500089468F,
+				F86B526305C477500089468F,
+			);
+			isa = PBXGroup;
+			path = darwin;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B517805C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			path = aranym.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B517B05C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			path = aranym2.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = getopt.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = getopt.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = getopt1.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = getopt_init.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = "install-sh";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518705C476E30089468F = {
+			children = (
+				F86B518805C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = irix;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = unaligned.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518905C476E30089468F = {
+			children = (
+				F86B518A05C476E30089468F,
+				F86B518B05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = linux;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518A05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = parameters_linux.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518B05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = sigsegv_linux.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518C05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = main_unix.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518D05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
+			path = Makefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518E05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = Makefile.in;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B518F05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = missing;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = mkinstalldirs;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = parameters_unix.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519205C476E30089468F = {
+			children = (
+				F86B519305C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = solaris;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = which_sparc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = sysdeps.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = vasprintf.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = vm_alloc.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = vm_alloc.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519805C476E30089468F = {
+			children = (
+				F86B519905C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = xbsd;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519905C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = sigsegv_xbsd.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519A05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = videl.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519B05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = yamaha.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519C05C476E30089468F = {
+			children = (
+				F86B519D05C476E30089468F,
+				F86B51A105C476E30089468F,
+				F86B51A205C476E30089468F,
+				F86B51A305C476E30089468F,
+				F86B51A405C476E30089468F,
+			);
+			isa = PBXGroup;
+			name = tools;
+			path = /Users/stefan/Developer/aranym/tools;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B519D05C476E30089468F = {
+			children = (
+				F86B519E05C476E30089468F,
+				F86B519F05C476E30089468F,
+				F86B51A005C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = createdisk;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519E05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = createdisk.README;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B519F05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = createdisk.sh;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51A005C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = mbrdata;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51A105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = diskimage.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51A205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = floppy.sh;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51A305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = memory.h.patch;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51A405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = romdiff.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51A505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = FAQ;
+			path = /Users/stefan/Developer/aranym/FAQ;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B51A605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = COPYING;
+			path = /Users/stefan/Developer/aranym/COPYING;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B51A705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = README;
+			path = /Users/stefan/Developer/aranym/README;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B51A805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = BUGS;
+			path = /Users/stefan/Developer/aranym/BUGS;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B51A905C476E30089468F = {
+			children = (
+				F86B51AA05C476E30089468F,
+				F86B51C505C476E30089468F,
+				F86B51C605C476E30089468F,
+				F86B51C705C476E30089468F,
+				F86B51F805C476E30089468F,
+				F86B522205C476E30089468F,
+				F86B522305C476E30089468F,
+				F86B522B05C476E30089468F,
+				F86B523D05C476E30089468F,
+				F86B523E05C476E30089468F,
+				F86B524605C476E30089468F,
+				F86B524A05C476E30089468F,
+			);
+			isa = PBXGroup;
+			name = atari;
+			path = /Users/stefan/Developer/aranym/atari;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B51AA05C476E30089468F = {
+			children = (
+				F86B51AB05C476E30089468F,
+				F86B51AC05C476E30089468F,
+				F86B51AD05C476E30089468F,
+				F86B51AE05C476E30089468F,
+				F86B51B205C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = aranymfs;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51AB05C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = aranym.xfs.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51AC05C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = aranymfs.dos.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51AD05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = config.sys;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51AE05C476E30089468F = {
+			children = (
+				F86B51AF05C476E30089468F,
+				F86B51B005C476E30089468F,
+				F86B51B105C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = metados;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51AF05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = dinter.S;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51B005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = dosmain.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51B105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
+			path = Makefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51B205C476E30089468F = {
+			children = (
+				F86B51B305C476E30089468F,
+				F86B51B405C476E30089468F,
+				F86B51B505C476E30089468F,
+				F86B51B605C476E30089468F,
+				F86B51B705C476E30089468F,
+				F86B51B805C476E30089468F,
+				F86B51B905C476E30089468F,
+				F86B51BA05C476E30089468F,
+				F86B51BB05C476E30089468F,
+				F86B51BC05C476E30089468F,
+				F86B51BD05C476E30089468F,
+				F86B51BE05C476E30089468F,
+				F86B51BF05C476E30089468F,
+				F86B51C005C476E30089468F,
+				F86B51C105C476E30089468F,
+				F86B51C205C476E30089468F,
+				F86B51C305C476E30089468F,
+				F86B51C405C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = mint;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51B305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = aranym_dev.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51B405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = aranym_dev.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51B505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = aranym_xfs.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51B605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = aranym_xfs.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51B705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = aranymfsv.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51B805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = BINFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51B905C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = call_native.s;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51BA05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = com_dev.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51BB05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = com_dev.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51BC05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = EXTRAFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51BD05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = global.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51BE05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = main.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51BF05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
+			path = Makefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51C005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = MISCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51C105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = README;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51C205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = serial_dev.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51C305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = serial_dev.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51C405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = SRCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51C505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = aranymrc.example;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51C605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = CONFIGVARS;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51C705C476E30089468F = {
+			children = (
+				F86B51C805C476E30089468F,
+				F86B51E205C476E30089468F,
+				F86B51E305C476E30089468F,
+				F86B51E405C476E30089468F,
+				F86B51EC05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = fvdi;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51C805C476E30089468F = {
+			children = (
+				F86B51C905C476E30089468F,
+				F86B51D305C476E30089468F,
+				F86B51D405C476E30089468F,
+				F86B51DD05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = drivers;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51C905C476E30089468F = {
+			children = (
+				F86B51CA05C476E30089468F,
+				F86B51CB05C476E30089468F,
+				F86B51CC05C476E30089468F,
+				F86B51CD05C476E30089468F,
+				F86B51CE05C476E30089468F,
+				F86B51CF05C476E30089468F,
+				F86B51D005C476E30089468F,
+				F86B51D105C476E30089468F,
+				F86B51D205C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = aranym;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51CA05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = 16b_pal.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51CB05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = 32b_pal.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51CC05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = 8b_pal.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51CD05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = ara_lc.prj;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51CE05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = ara_pc.prj;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51CF05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = dispatch.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51D005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = fvdidrv_nfapi.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51D105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = palette.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51D205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = spec.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51D305C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = aranym.sys.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51D405C476E30089468F = {
+			children = (
+				F86B51D505C476E30089468F,
+				F86B51D605C476E30089468F,
+				F86B51D705C476E30089468F,
+				F86B51D805C476E30089468F,
+				F86B51D905C476E30089468F,
+				F86B51DA05C476E30089468F,
+				F86B51DB05C476E30089468F,
+				F86B51DC05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = common;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51D505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = c_common.s;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51D605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = clip.s;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51D705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = colours.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51D805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = common.s;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51D905C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = falc_pal.s;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51DA05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = init.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51DB05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = lineachk.s;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51DC05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = purec.s;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51DD05C476E30089468F = {
+			children = (
+				F86B51DE05C476E30089468F,
+				F86B51DF05C476E30089468F,
+				F86B51E005C476E30089468F,
+				F86B51E105C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = include;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51DE05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = driver.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51DF05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = linea.inc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51E005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = pixelmac.dev;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51E105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = pixelmac.tas;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51E205C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = fvdi.prg.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51E305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = fvdi.sys;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51E405C476E30089468F = {
+			children = (
+				F86B51E505C476E30089468F,
+				F86B51E605C476E30089468F,
+				F86B51E705C476E30089468F,
+				F86B51E805C476E30089468F,
+				F86B51E905C476E30089468F,
+				F86B51EA05C476E30089468F,
+				F86B51EB05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = include;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51E505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = compiler.inc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51E605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = fvdi.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51E705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = macros.dev;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51E805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = macros.tas;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51E905C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = relocate.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51EA05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = types.inc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51EB05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = vdi.inc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51EC05C476E30089468F = {
+			children = (
+				F86B51ED05C476E30089468F,
+				F86B51F705C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = utility;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51ED05C476E30089468F = {
+			children = (
+				F86B51EE05C476E30089468F,
+				F86B51EF05C476E30089468F,
+				F86B51F005C476E30089468F,
+				F86B51F105C476E30089468F,
+				F86B51F205C476E30089468F,
+				F86B51F305C476E30089468F,
+				F86B51F405C476E30089468F,
+				F86B51F505C476E30089468F,
+				F86B51F605C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = fvdicout;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51EE05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = .cvsignore;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51EF05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = bconstub.S;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51F005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = BINFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51F105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = EXTRAFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51F205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = main.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51F305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
+			path = Makefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51F405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = MISCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51F505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = SRCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51F605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = window.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51F705C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = fvdicout.app.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51F805C476E30089468F = {
+			children = (
+				F86B51F905C476E30089468F,
+				F86B51FA05C476E30089468F,
+				F86B51FD05C476E30089468F,
+				F86B51FE05C476E30089468F,
+				F86B51FF05C476E30089468F,
+				F86B520005C476E30089468F,
+				F86B520105C476E30089468F,
+				F86B520205C476E30089468F,
+				F86B520305C476E30089468F,
+				F86B520405C476E30089468F,
+				F86B520505C476E30089468F,
+				F86B520605C476E30089468F,
+				F86B520705C476E30089468F,
+				F86B520805C476E30089468F,
+				F86B521F05C476E30089468F,
+				F86B522005C476E30089468F,
+				F86B522105C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = hostfs;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51F905C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = bdconfig.sys;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51FA05C476E30089468F = {
+			children = (
+				F86B51FB05C476E30089468F,
+				F86B51FC05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = bin;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51FB05C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = hostfs.dos.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51FC05C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = hostfs.xfs.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51FD05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = BINFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51FE05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = EXTRAFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B51FF05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = global.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = hostfs_dev.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = hostfs_dev.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = hostfs_nfapi.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = hostfs_xfs.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = hostfs_xfs.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = main.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = make.sh;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
+			path = Makefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520805C476E30089468F = {
+			children = (
+				F86B520905C476E30089468F,
+				F86B520A05C476E30089468F,
+				F86B520B05C476E30089468F,
+				F86B520C05C476E30089468F,
+				F86B520D05C476E30089468F,
+				F86B520E05C476E30089468F,
+				F86B520F05C476E30089468F,
+				F86B521005C476E30089468F,
+				F86B521105C476E30089468F,
+				F86B521205C476E30089468F,
+				F86B521305C476E30089468F,
+				F86B521405C476E30089468F,
+				F86B521505C476E30089468F,
+				F86B521605C476E30089468F,
+				F86B521705C476E30089468F,
+				F86B521805C476E30089468F,
+				F86B521905C476E30089468F,
+				F86B521A05C476E30089468F,
+				F86B521B05C476E30089468F,
+				F86B521C05C476E30089468F,
+				F86B521D05C476E30089468F,
+				F86B521E05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = metados;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520905C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = BINFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520A05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = debug.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520B05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = debug.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520C05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = dosdir.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520D05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dosdir.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520E05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = dosfile.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B520F05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dosfile.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = EXTRAFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = filesys.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = filesys.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = k_fds.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = k_fds.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = kerinfo.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = main.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
+			path = Makefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = Makefile.xfso;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521905C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = mdglue.S;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521A05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mintfake.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521B05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mintproc.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521C05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mintproc.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521D05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = MISCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521E05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = SRCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B521F05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = MISCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = README;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = SRCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = mmusetup.cnf;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522305C476E30089468F = {
+			children = (
+				F86B522405C476E30089468F,
+				F86B522505C476E30089468F,
+				F86B522605C476E30089468F,
+				F86B522705C476E30089468F,
+				F86B522805C476E30089468F,
+				F86B522905C476E30089468F,
+				F86B522A05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = natfeat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = BINFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = EXTRAFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
+			path = Makefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = MISCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = natfeat.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522905C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = natfeat.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522A05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = SRCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522B05C476E30089468F = {
+			children = (
+				F86B522C05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = network;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522C05C476E30089468F = {
+			children = (
+				F86B522D05C476E30089468F,
+				F86B522E05C476E30089468F,
+				F86B523005C476E30089468F,
+				F86B523105C476E30089468F,
+				F86B523205C476E30089468F,
+				F86B523305C476E30089468F,
+				F86B523405C476E30089468F,
+				F86B523505C476E30089468F,
+				F86B523605C476E30089468F,
+				F86B523705C476E30089468F,
+				F86B523B05C476E30089468F,
+				F86B523C05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = ethernet;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522D05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = aratie.s;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522E05C476E30089468F = {
+			children = (
+				F86B522F05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = bin;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B522F05C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = aranym.xif.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = BINFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = ethernet.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = ethernet_nfapi.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523305C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = EXTRAFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = make.sh;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
+			path = Makefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = MISCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523705C476E30089468F = {
+			children = (
+				F86B523805C476E30089468F,
+				F86B523905C476E30089468F,
+				F86B523A05C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = "nfeth-config";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = "eth0-config.sh";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523905C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = "nfeth-config.bz2";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523A05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = "nfeth-config.c";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523B05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = README;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523C05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = SRCFILES;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523D05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = newdesk.inf;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523E05C476E30089468F = {
+			children = (
+				F86B523F05C476E30089468F,
+				F86B524005C476E30089468F,
+				F86B524105C476E30089468F,
+				F86B524205C476E30089468F,
+				F86B524305C476E30089468F,
+				F86B524405C476E30089468F,
+				F86B524505C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = nfcdrom;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B523F05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = entry.S;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524005C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
+			path = Makefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = metados.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = metados_bos.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524305C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = nfcdrom.bos.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = nfcdrom.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = nfcdrom_nfapi.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524605C476E30089468F = {
+			children = (
+				F86B524705C476E30089468F,
+				F86B524805C476E30089468F,
+				F86B524905C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = sound;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = README;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.lex;
+			path = zmagxsnd.l;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524905C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = zmagxsnd.prg.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524A05C476E30089468F = {
+			children = (
+				F86B524B05C476E30089468F,
+				F86B524C05C476E30089468F,
+				F86B524D05C476E30089468F,
+				F86B524E05C476E30089468F,
+				F86B524F05C476E30089468F,
+				F86B525005C476E30089468F,
+				F86B525105C476E30089468F,
+			);
+			isa = PBXGroup;
+			path = tools;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524B05C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = clocky.prg.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524C05C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = fastram.prg.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524D05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.asm;
+			path = fastram.s;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524E05C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = pc101us.kbd.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B524F05C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = pcpatch.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B525005C476E30089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = pcpatch.prg.bz2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B525105C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = README;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B525205C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = ChangeLog;
+			path = /Users/stefan/Developer/aranym/ChangeLog;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B525305C476E30089468F = {
+			children = (
+				F86B525405C476E30089468F,
+				F86B525505C476E30089468F,
+				F86B525605C476E30089468F,
+				F86B525705C476E30089468F,
+				F86B525805C476E30089468F,
+				F86B525905C476E30089468F,
+			);
+			isa = PBXGroup;
+			name = doc;
+			path = /Users/stefan/Developer/aranym/doc;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B525405C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = "aranym-lilo.txt";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B525505C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.man;
+			path = aranym.1;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B525605C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = "build-cygwin.sh";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B525705C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = documentation.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B525805C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = emulop.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B525905C476E30089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = hguide.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B526205C477500089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = SDLMain.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B526305C477500089468F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = SDLMain.M;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B526405C477500089468F = {
+			fileRef = F86B526205C477500089468F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F86B526505C477500089468F = {
+			fileRef = F86B526305C477500089468F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F86B526A05C4779F0089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = English.lproj/SDLMain.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B527005C477E40089468F = {
+			children = (
+				F86B526A05C4779F0089468F,
+			);
+			isa = PBXVariantGroup;
+			name = SDLMain.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F86B527105C477E40089468F = {
+			fileRef = F86B527005C477E40089468F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F86B528005C47A540089468F = {
+			isa = PBXFileReference;
+			lastKnownFileType = archive.ar;
+			name = libaranym.a;
+			path = /Users/stefan/Developer/aranym/src/Unix/libaranym.a;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F86B528105C47A540089468F = {
+			fileRef = F86B528005C47A540089468F;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		F87BDEEC0488FB4800F69266 = {
 			children = (
-				F87BDEFF0488FBA200F69266,
-				F87BDF000488FBA200F69266,
-				F87BDF010488FBA200F69266,
-				F87BDF0A0488FBA200F69266,
-				F87BDF260488FBA200F69266,
-				F87BDF270488FBA200F69266,
-				F87BDF280488FBA200F69266,
-				F87BDF2B0488FBA200F69266,
-				F87BDFCE0488FBA300F69266,
-				F87BDFD40488FBA300F69266,
-				F87BDFD80488FBA300F69266,
-				F87BDFD90488FBA300F69266,
-				F87BDFDB0488FBA300F69266,
-				F87BE12C0488FBA400F69266,
-				F87BE12D0488FBA400F69266,
-				F87BE12E0488FBA400F69266,
+				F86B50B205C476E20089468F,
+				F86B50B305C476E20089468F,
+				F86B50B405C476E20089468F,
+				F86B50B505C476E20089468F,
+				F86B50B605C476E20089468F,
+				F86B50B705C476E20089468F,
+				F86B519C05C476E30089468F,
+				F86B51A505C476E30089468F,
+				F86B51A605C476E30089468F,
+				F86B51A705C476E30089468F,
+				F86B51A805C476E30089468F,
+				F86B51A905C476E30089468F,
+				F86B525205C476E30089468F,
+				F86B525305C476E30089468F,
+				F8243B4A05C46D2500F043B6,
 				F87BE1340488FC4700F69266,
 				F87BDEF80488FB6400F69266,
 			);
 			isa = PBXGroup;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F87BDEEE0488FB4800F69266 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -60,11 +3879,15 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
 		};
 		F87BDEF00488FB4800F69266 = {
+			buildSettings = {
+			};
 			buildStyles = (
 				F87BDEEE0488FB4800F69266,
 				F87BDEEF0488FB4800F69266,
@@ -83,7 +3906,7 @@
 		F87BDEF10488FB6400F69266 = {
 			buildActionMask = 2147483647;
 			files = (
-				F87BE1300488FBC600F69266,
+				F86B526405C477500089468F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,9 +3914,7 @@
 		F87BDEF20488FB6400F69266 = {
 			buildActionMask = 2147483647;
 			files = (
-				F87BE32F04894C5E00F69266,
-				F87BE33304894FC800F69266,
-				F82190BF0494263900E23722,
+				F86B527105C477E40089468F,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,7 +3922,7 @@
 		F87BDEF30488FB6400F69266 = {
 			buildActionMask = 2147483647;
 			files = (
-				F87BE1310488FBC800F69266,
+				F86B526505C477500089468F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -113,7 +3934,8 @@
 				F87BE13A0488FCE000F69266,
 				F87BE13B0488FCE000F69266,
 				F87BE13C0488FCE000F69266,
-				F87BE13E0488FD0D00F69266,
+				F8243A8E05C462AB00F043B6,
+				F86B528105C47A540089468F,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -134,10 +3956,10 @@
 				F87BDEF50488FB6400F69266,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = /Users/stefan/Library/Frameworks;
 				HEADER_SEARCH_PATHS = "\"~/Library/Frameworks/SDL.framework/Headers\"";
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
-				LIBRARY_SEARCH_PATHS = ..;
+				LIBRARY_SEARCH_PATHS = ".. /Users/stefan/Developer/aranym0.8.2/src/Unix /Users/stefan/Developer/aranym/src/Unix";
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lz -lm";
@@ -181,7 +4003,7 @@
 	<key>CFBundleVersion</key>
 	<string>0.8.0b3</string>
 	<key>NSMainNibFile</key>
-	<string>SDLMain.nib</string>
+	<string>SDLMain</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
@@ -189,9 +4011,12 @@
 ";
 		};
 		F87BDEF70488FB6400F69266 = {
+			explicitFileType = wrapper.application;
+			fallbackIsa = PBXFileReference;
 			isa = PBXApplicationReference;
 			path = ARAnyM.app;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F87BDEF80488FB6400F69266 = {
 			children = (
@@ -200,2903 +4025,29 @@
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
-		};
-		F87BDEFF0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = BUGS;
-			path = ../../../BUGS;
-			refType = 2;
-		};
-		F87BDF000488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = COPYING;
-			path = ../../../COPYING;
-			refType = 2;
-		};
-		F87BDF010488FBA200F69266 = {
-			children = (
-				F87BDF020488FBA200F69266,
-				F87BDF060488FBA200F69266,
-				F87BDF070488FBA200F69266,
-				F87BDF080488FBA200F69266,
-				F87BDF090488FBA200F69266,
-			);
-			isa = PBXGroup;
-			name = tools;
-			path = ../../../tools;
-			refType = 2;
-		};
-		F87BDF020488FBA200F69266 = {
-			children = (
-				F87BDF030488FBA200F69266,
-				F87BDF040488FBA200F69266,
-				F87BDF050488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = createdisk;
-			refType = 4;
-		};
-		F87BDF030488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = createdisk.README;
-			refType = 4;
-		};
-		F87BDF040488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
-			path = createdisk.sh;
-			refType = 4;
-		};
-		F87BDF050488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = mbrdata;
-			refType = 4;
-		};
-		F87BDF060488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = diskimage.c;
-			refType = 4;
-		};
-		F87BDF070488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
-			path = floppy.sh;
-			refType = 4;
-		};
-		F87BDF080488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = memory.h.patch;
-			refType = 4;
-		};
-		F87BDF090488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = romdiff.c;
-			refType = 4;
-		};
-		F87BDF0A0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = aranym.spec;
-			path = ../../../aranym.spec;
-			refType = 2;
-		};
-		F87BDF260488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = FAQ;
-			path = ../../../FAQ;
-			refType = 2;
-		};
-		F87BDF270488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = INSTALL;
-			path = ../../../INSTALL;
-			refType = 2;
-		};
-		F87BDF280488FBA200F69266 = {
-			children = (
-				F87BDF290488FBA200F69266,
-			);
-			isa = PBXGroup;
-			name = data;
-			path = ../../../data;
-			refType = 2;
-		};
-		F87BDF290488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = font8.bmp;
-			refType = 4;
-		};
-		F87BDF2B0488FBA200F69266 = {
-			children = (
-				F87BDF2C0488FBA200F69266,
-				F87BDF2D0488FBA200F69266,
-				F87BDF490488FBA200F69266,
-				F87BDF4A0488FBA200F69266,
-				F87BDF4B0488FBA200F69266,
-				F87BDF7A0488FBA200F69266,
-				F87BDFA50488FBA300F69266,
-				F87BDFA60488FBA300F69266,
-				F87BDFAE0488FBA300F69266,
-				F87BDFC10488FBA300F69266,
-				F87BDFC20488FBA300F69266,
-				F87BDFC60488FBA300F69266,
-			);
-			isa = PBXGroup;
-			name = atari;
-			path = ../../../atari;
-			refType = 2;
-		};
-		F87BDF2C0488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = .DS_Store;
-			refType = 4;
-		};
-		F87BDF2D0488FBA200F69266 = {
-			children = (
-				F87BDF2E0488FBA200F69266,
-				F87BDF2F0488FBA200F69266,
-				F87BDF300488FBA200F69266,
-				F87BDF310488FBA200F69266,
-				F87BDF320488FBA200F69266,
-				F87BDF360488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = aranymfs;
-			refType = 4;
-		};
-		F87BDF2E0488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = .DS_Store;
-			refType = 4;
-		};
-		F87BDF2F0488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = aranym.xfs.bz2;
-			refType = 4;
-		};
-		F87BDF300488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = aranymfs.dos.bz2;
-			refType = 4;
-		};
-		F87BDF310488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = config.sys;
-			refType = 4;
-		};
-		F87BDF320488FBA200F69266 = {
-			children = (
-				F87BDF330488FBA200F69266,
-				F87BDF340488FBA200F69266,
-				F87BDF350488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = metados;
-			refType = 4;
-		};
-		F87BDF330488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dinter.S;
-			refType = 4;
-		};
-		F87BDF340488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dosmain.c;
-			refType = 4;
-		};
-		F87BDF350488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		F87BDF360488FBA200F69266 = {
-			children = (
-				F87BDF370488FBA200F69266,
-				F87BDF380488FBA200F69266,
-				F87BDF390488FBA200F69266,
-				F87BDF3A0488FBA200F69266,
-				F87BDF3B0488FBA200F69266,
-				F87BDF3C0488FBA200F69266,
-				F87BDF3D0488FBA200F69266,
-				F87BDF3E0488FBA200F69266,
-				F87BDF3F0488FBA200F69266,
-				F87BDF400488FBA200F69266,
-				F87BDF410488FBA200F69266,
-				F87BDF420488FBA200F69266,
-				F87BDF430488FBA200F69266,
-				F87BDF440488FBA200F69266,
-				F87BDF450488FBA200F69266,
-				F87BDF460488FBA200F69266,
-				F87BDF470488FBA200F69266,
-				F87BDF480488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = mint;
-			refType = 4;
-		};
-		F87BDF370488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aranym_dev.c;
-			refType = 4;
-		};
-		F87BDF380488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aranym_dev.h;
-			refType = 4;
-		};
-		F87BDF390488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aranym_xfs.c;
-			refType = 4;
-		};
-		F87BDF3A0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aranym_xfs.h;
-			refType = 4;
-		};
-		F87BDF3B0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aranymfsv.h;
-			refType = 4;
-		};
-		F87BDF3C0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = BINFILES;
-			refType = 4;
-		};
-		F87BDF3D0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = call_native.s;
-			refType = 4;
-		};
-		F87BDF3E0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = com_dev.c;
-			refType = 4;
-		};
-		F87BDF3F0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = com_dev.h;
-			refType = 4;
-		};
-		F87BDF400488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = EXTRAFILES;
-			refType = 4;
-		};
-		F87BDF410488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = global.h;
-			refType = 4;
-		};
-		F87BDF420488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = main.c;
-			refType = 4;
-		};
-		F87BDF430488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		F87BDF440488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = MISCFILES;
-			refType = 4;
-		};
-		F87BDF450488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = README;
-			refType = 4;
-		};
-		F87BDF460488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = serial_dev.c;
-			refType = 4;
-		};
-		F87BDF470488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = serial_dev.h;
-			refType = 4;
-		};
-		F87BDF480488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SRCFILES;
-			refType = 4;
-		};
-		F87BDF490488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aranymrc.example;
-			refType = 4;
-		};
-		F87BDF4A0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = CONFIGVARS;
-			refType = 4;
-		};
-		F87BDF4B0488FBA200F69266 = {
-			children = (
-				F87BDF4C0488FBA200F69266,
-				F87BDF640488FBA200F69266,
-				F87BDF650488FBA200F69266,
-				F87BDF660488FBA200F69266,
-				F87BDF6E0488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = fvdi;
-			refType = 4;
-		};
-		F87BDF4C0488FBA200F69266 = {
-			children = (
-				F87BDF4D0488FBA200F69266,
-				F87BDF550488FBA200F69266,
-				F87BDF560488FBA200F69266,
-				F87BDF5F0488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = drivers;
-			refType = 4;
-		};
-		F87BDF4D0488FBA200F69266 = {
-			children = (
-				F87BDF4E0488FBA200F69266,
-				F87BDF4F0488FBA200F69266,
-				F87BDF500488FBA200F69266,
-				F87BDF510488FBA200F69266,
-				F87BDF520488FBA200F69266,
-				F87BDF530488FBA200F69266,
-				F87BDF540488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = aranym;
-			refType = 4;
-		};
-		F87BDF4E0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = 32b_pal.c;
-			refType = 4;
-		};
-		F87BDF4F0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = 8b_pal.c;
-			refType = 4;
-		};
-		F87BDF500488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ara_lc.prj;
-			refType = 4;
-		};
-		F87BDF510488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ara_pc.prj;
-			refType = 4;
-		};
-		F87BDF520488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dispatch.c;
-			refType = 4;
-		};
-		F87BDF530488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = palette.c;
-			refType = 4;
-		};
-		F87BDF540488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = spec.c;
-			refType = 4;
-		};
-		F87BDF550488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = aranym.sys.bz2;
-			refType = 4;
-		};
-		F87BDF560488FBA200F69266 = {
-			children = (
-				F87BDF570488FBA200F69266,
-				F87BDF580488FBA200F69266,
-				F87BDF590488FBA200F69266,
-				F87BDF5A0488FBA200F69266,
-				F87BDF5B0488FBA200F69266,
-				F87BDF5C0488FBA200F69266,
-				F87BDF5D0488FBA200F69266,
-				F87BDF5E0488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = common;
-			refType = 4;
-		};
-		F87BDF570488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = c_common.s;
-			refType = 4;
-		};
-		F87BDF580488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = clip.s;
-			refType = 4;
-		};
-		F87BDF590488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = colours.c;
-			refType = 4;
-		};
-		F87BDF5A0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = common.s;
-			refType = 4;
-		};
-		F87BDF5B0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = falc_pal.s;
-			refType = 4;
-		};
-		F87BDF5C0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = init.c;
-			refType = 4;
-		};
-		F87BDF5D0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = lineachk.s;
-			refType = 4;
-		};
-		F87BDF5E0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = purec.s;
-			refType = 4;
-		};
-		F87BDF5F0488FBA200F69266 = {
-			children = (
-				F87BDF600488FBA200F69266,
-				F87BDF610488FBA200F69266,
-				F87BDF620488FBA200F69266,
-				F87BDF630488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = include;
-			refType = 4;
-		};
-		F87BDF600488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = driver.h;
-			refType = 4;
-		};
-		F87BDF610488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = linea.inc;
-			refType = 4;
-		};
-		F87BDF620488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = pixelmac.dev;
-			refType = 4;
-		};
-		F87BDF630488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = pixelmac.tas;
-			refType = 4;
-		};
-		F87BDF640488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = fvdi.prg.bz2;
-			refType = 4;
-		};
-		F87BDF650488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fvdi.sys;
-			refType = 4;
-		};
-		F87BDF660488FBA200F69266 = {
-			children = (
-				F87BDF670488FBA200F69266,
-				F87BDF680488FBA200F69266,
-				F87BDF690488FBA200F69266,
-				F87BDF6A0488FBA200F69266,
-				F87BDF6B0488FBA200F69266,
-				F87BDF6C0488FBA200F69266,
-				F87BDF6D0488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = include;
-			refType = 4;
-		};
-		F87BDF670488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = compiler.inc;
-			refType = 4;
-		};
-		F87BDF680488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fvdi.h;
-			refType = 4;
-		};
-		F87BDF690488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = macros.dev;
-			refType = 4;
-		};
-		F87BDF6A0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = macros.tas;
-			refType = 4;
-		};
-		F87BDF6B0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = relocate.h;
-			refType = 4;
-		};
-		F87BDF6C0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = types.inc;
-			refType = 4;
-		};
-		F87BDF6D0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = vdi.inc;
-			refType = 4;
-		};
-		F87BDF6E0488FBA200F69266 = {
-			children = (
-				F87BDF6F0488FBA200F69266,
-				F87BDF790488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = utility;
-			refType = 4;
-		};
-		F87BDF6F0488FBA200F69266 = {
-			children = (
-				F87BDF700488FBA200F69266,
-				F87BDF710488FBA200F69266,
-				F87BDF720488FBA200F69266,
-				F87BDF730488FBA200F69266,
-				F87BDF740488FBA200F69266,
-				F87BDF750488FBA200F69266,
-				F87BDF760488FBA200F69266,
-				F87BDF770488FBA200F69266,
-				F87BDF780488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = fvdicout;
-			refType = 4;
-		};
-		F87BDF700488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = .cvsignore;
-			refType = 4;
-		};
-		F87BDF710488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = bconstub.S;
-			refType = 4;
-		};
-		F87BDF720488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = BINFILES;
-			refType = 4;
-		};
-		F87BDF730488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = EXTRAFILES;
-			refType = 4;
-		};
-		F87BDF740488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = main.c;
-			refType = 4;
-		};
-		F87BDF750488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		F87BDF760488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = MISCFILES;
-			refType = 4;
-		};
-		F87BDF770488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SRCFILES;
-			refType = 4;
-		};
-		F87BDF780488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = window.c;
-			refType = 4;
-		};
-		F87BDF790488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = fvdicout.app.bz2;
-			refType = 4;
-		};
-		F87BDF7A0488FBA200F69266 = {
-			children = (
-				F87BDF7B0488FBA200F69266,
-				F87BDF7C0488FBA200F69266,
-				F87BDF7D0488FBA200F69266,
-				F87BDF800488FBA200F69266,
-				F87BDF810488FBA200F69266,
-				F87BDF820488FBA200F69266,
-				F87BDF830488FBA200F69266,
-				F87BDF840488FBA200F69266,
-				F87BDF850488FBA200F69266,
-				F87BDF860488FBA200F69266,
-				F87BDF870488FBA200F69266,
-				F87BDF880488FBA200F69266,
-				F87BDF890488FBA200F69266,
-				F87BDF8A0488FBA200F69266,
-				F87BDF8B0488FBA200F69266,
-				F87BDFA20488FBA300F69266,
-				F87BDFA30488FBA300F69266,
-				F87BDFA40488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = hostfs;
-			refType = 4;
-		};
-		F87BDF7B0488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = .DS_Store;
-			refType = 4;
-		};
-		F87BDF7C0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = bdconfig.sys;
-			refType = 4;
-		};
-		F87BDF7D0488FBA200F69266 = {
-			children = (
-				F87BDF7E0488FBA200F69266,
-				F87BDF7F0488FBA200F69266,
-			);
-			isa = PBXGroup;
-			path = bin;
-			refType = 4;
-		};
-		F87BDF7E0488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = hostfs.dos.bz2;
-			refType = 4;
-		};
-		F87BDF7F0488FBA200F69266 = {
-			isa = PBXFileReference;
-			path = hostfs.xfs.bz2;
-			refType = 4;
-		};
-		F87BDF800488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = BINFILES;
-			refType = 4;
-		};
-		F87BDF810488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = EXTRAFILES;
-			refType = 4;
-		};
-		F87BDF820488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = global.h;
-			refType = 4;
-		};
-		F87BDF830488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hostfs_dev.c;
-			refType = 4;
-		};
-		F87BDF840488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hostfs_dev.h;
-			refType = 4;
-		};
-		F87BDF850488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hostfs_nfapi.h;
-			refType = 4;
-		};
-		F87BDF860488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hostfs_xfs.c;
-			refType = 4;
-		};
-		F87BDF870488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hostfs_xfs.h;
-			refType = 4;
-		};
-		F87BDF880488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = main.c;
-			refType = 4;
-		};
-		F87BDF890488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = make.sh;
-			refType = 4;
-		};
-		F87BDF8A0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		F87BDF8B0488FBA200F69266 = {
-			children = (
-				F87BDF8C0488FBA200F69266,
-				F87BDF8D0488FBA200F69266,
-				F87BDF8E0488FBA200F69266,
-				F87BDF8F0488FBA200F69266,
-				F87BDF900488FBA200F69266,
-				F87BDF910488FBA200F69266,
-				F87BDF920488FBA200F69266,
-				F87BDF930488FBA200F69266,
-				F87BDF940488FBA300F69266,
-				F87BDF950488FBA300F69266,
-				F87BDF960488FBA300F69266,
-				F87BDF970488FBA300F69266,
-				F87BDF980488FBA300F69266,
-				F87BDF990488FBA300F69266,
-				F87BDF9A0488FBA300F69266,
-				F87BDF9B0488FBA300F69266,
-				F87BDF9C0488FBA300F69266,
-				F87BDF9D0488FBA300F69266,
-				F87BDF9E0488FBA300F69266,
-				F87BDF9F0488FBA300F69266,
-				F87BDFA00488FBA300F69266,
-				F87BDFA10488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = metados;
-			refType = 4;
-		};
-		F87BDF8C0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = BINFILES;
-			refType = 4;
-		};
-		F87BDF8D0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = debug.c;
-			refType = 4;
-		};
-		F87BDF8E0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = debug.h;
-			refType = 4;
-		};
-		F87BDF8F0488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dosdir.c;
-			refType = 4;
-		};
-		F87BDF900488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dosdir.h;
-			refType = 4;
-		};
-		F87BDF910488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dosfile.c;
-			refType = 4;
-		};
-		F87BDF920488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dosfile.h;
-			refType = 4;
-		};
-		F87BDF930488FBA200F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = EXTRAFILES;
-			refType = 4;
-		};
-		F87BDF940488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = filesys.c;
-			refType = 4;
-		};
-		F87BDF950488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = filesys.h;
-			refType = 4;
-		};
-		F87BDF960488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = k_fds.c;
-			refType = 4;
-		};
-		F87BDF970488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = k_fds.h;
-			refType = 4;
-		};
-		F87BDF980488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = kerinfo.h;
-			refType = 4;
-		};
-		F87BDF990488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = main.c;
-			refType = 4;
-		};
-		F87BDF9A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		F87BDF9B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Makefile.xfso;
-			refType = 4;
-		};
-		F87BDF9C0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = mdglue.S;
-			refType = 4;
-		};
-		F87BDF9D0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = mintfake.h;
-			refType = 4;
-		};
-		F87BDF9E0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = mintproc.c;
-			refType = 4;
-		};
-		F87BDF9F0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = mintproc.h;
-			refType = 4;
-		};
-		F87BDFA00488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = MISCFILES;
-			refType = 4;
-		};
-		F87BDFA10488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SRCFILES;
-			refType = 4;
-		};
-		F87BDFA20488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = MISCFILES;
-			refType = 4;
-		};
-		F87BDFA30488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = README;
-			refType = 4;
-		};
-		F87BDFA40488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SRCFILES;
-			refType = 4;
-		};
-		F87BDFA50488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = mmusetup.cnf;
-			refType = 4;
-		};
-		F87BDFA60488FBA300F69266 = {
-			children = (
-				F87BDFA70488FBA300F69266,
-				F87BDFA80488FBA300F69266,
-				F87BDFA90488FBA300F69266,
-				F87BDFAA0488FBA300F69266,
-				F87BDFAB0488FBA300F69266,
-				F87BDFAC0488FBA300F69266,
-				F87BDFAD0488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = natfeat;
-			refType = 4;
-		};
-		F87BDFA70488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = BINFILES;
-			refType = 4;
-		};
-		F87BDFA80488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = EXTRAFILES;
-			refType = 4;
-		};
-		F87BDFA90488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		F87BDFAA0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = MISCFILES;
-			refType = 4;
-		};
-		F87BDFAB0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = natfeat.c;
-			refType = 4;
-		};
-		F87BDFAC0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = natfeat.h;
-			refType = 4;
-		};
-		F87BDFAD0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SRCFILES;
-			refType = 4;
-		};
-		F87BDFAE0488FBA300F69266 = {
-			children = (
-				F87BDFAF0488FBA300F69266,
-				F87BDFB00488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = network;
-			refType = 4;
-		};
-		F87BDFAF0488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = .DS_Store;
-			refType = 4;
-		};
-		F87BDFB00488FBA300F69266 = {
-			children = (
-				F87BDFB10488FBA300F69266,
-				F87BDFB20488FBA300F69266,
-				F87BDFB40488FBA300F69266,
-				F87BDFB50488FBA300F69266,
-				F87BDFB60488FBA300F69266,
-				F87BDFB70488FBA300F69266,
-				F87BDFB80488FBA300F69266,
-				F87BDFB90488FBA300F69266,
-				F87BDFBA0488FBA300F69266,
-				F87BDFBB0488FBA300F69266,
-				F87BDFBF0488FBA300F69266,
-				F87BDFC00488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = ethernet;
-			refType = 4;
-		};
-		F87BDFB10488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aratie.s;
-			refType = 4;
-		};
-		F87BDFB20488FBA300F69266 = {
-			children = (
-				F87BDFB30488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = bin;
-			refType = 4;
-		};
-		F87BDFB30488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = aranym.xif.bz2;
-			refType = 4;
-		};
-		F87BDFB40488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = BINFILES;
-			refType = 4;
-		};
-		F87BDFB50488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ethernet.c;
-			refType = 4;
-		};
-		F87BDFB60488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ethernet_nfapi.h;
-			refType = 4;
-		};
-		F87BDFB70488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = EXTRAFILES;
-			refType = 4;
-		};
-		F87BDFB80488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = make.sh;
-			refType = 4;
-		};
-		F87BDFB90488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		F87BDFBA0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = MISCFILES;
-			refType = 4;
-		};
-		F87BDFBB0488FBA300F69266 = {
-			children = (
-				F87BDFBC0488FBA300F69266,
-				F87BDFBD0488FBA300F69266,
-				F87BDFBE0488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = "nfeth-config";
-			refType = 4;
-		};
-		F87BDFBC0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = "eth0-config.sh";
-			refType = 4;
-		};
-		F87BDFBD0488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = "nfeth-config.bz2";
-			refType = 4;
-		};
-		F87BDFBE0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = "nfeth-config.c";
-			refType = 4;
-		};
-		F87BDFBF0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = README;
-			refType = 4;
-		};
-		F87BDFC00488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SRCFILES;
-			refType = 4;
-		};
-		F87BDFC10488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = newdesk.inf;
-			refType = 4;
-		};
-		F87BDFC20488FBA300F69266 = {
-			children = (
-				F87BDFC30488FBA300F69266,
-				F87BDFC40488FBA300F69266,
-				F87BDFC50488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = sound;
-			refType = 4;
-		};
-		F87BDFC30488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = README;
-			refType = 4;
-		};
-		F87BDFC40488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = zmagxsnd.l;
-			refType = 4;
-		};
-		F87BDFC50488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = zmagxsnd.prg.bz2;
-			refType = 4;
-		};
-		F87BDFC60488FBA300F69266 = {
-			children = (
-				F87BDFC70488FBA300F69266,
-				F87BDFC80488FBA300F69266,
-				F87BDFC90488FBA300F69266,
-				F87BDFCA0488FBA300F69266,
-				F87BDFCB0488FBA300F69266,
-				F87BDFCC0488FBA300F69266,
-				F87BDFCD0488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = tools;
-			refType = 4;
-		};
-		F87BDFC70488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = clocky.prg.bz2;
-			refType = 4;
-		};
-		F87BDFC80488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = fastram.prg.bz2;
-			refType = 4;
-		};
-		F87BDFC90488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fastram.s;
-			refType = 4;
-		};
-		F87BDFCA0488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = pc101us.kbd.bz2;
-			refType = 4;
-		};
-		F87BDFCB0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = pcpatch.c;
-			refType = 4;
-		};
-		F87BDFCC0488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = pcpatch.prg.bz2;
-			refType = 4;
-		};
-		F87BDFCD0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = README;
-			refType = 4;
-		};
-		F87BDFCE0488FBA300F69266 = {
-			children = (
-				F87BDFCF0488FBA300F69266,
-				F87BDFD00488FBA300F69266,
-				F87BDFD10488FBA300F69266,
-				F87BDFD20488FBA300F69266,
-			);
-			isa = PBXGroup;
-			name = CVS;
-			path = ../../../CVS;
-			refType = 2;
-		};
-		F87BDFCF0488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = .DS_Store;
-			refType = 4;
-		};
-		F87BDFD00488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Entries;
-			refType = 4;
-		};
-		F87BDFD10488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Repository;
-			refType = 4;
-		};
-		F87BDFD20488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Root;
-			refType = 4;
-		};
-		F87BDFD40488FBA300F69266 = {
-			children = (
-				F87BDFD50488FBA300F69266,
-				F87BDFD60488FBA300F69266,
-				F87BDFD70488FBA300F69266,
-			);
-			isa = PBXGroup;
-			name = doc;
-			path = ../../../doc;
-			refType = 2;
-		};
-		F87BDFD50488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aranym.1;
-			refType = 4;
-		};
-		F87BDFD60488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = documentation.txt;
-			refType = 4;
-		};
-		F87BDFD70488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hguide.txt;
-			refType = 4;
-		};
-		F87BDFD80488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = AUTHORS;
-			path = ../../../AUTHORS;
-			refType = 2;
-		};
-		F87BDFD90488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ChangeLog;
-			path = ../../../ChangeLog;
-			refType = 2;
-		};
-		F87BDFDB0488FBA300F69266 = {
-			children = (
-				F87BDFDD0488FBA300F69266,
-				F87BDFDE0488FBA300F69266,
-				F87BDFDF0488FBA300F69266,
-				F87BDFE00488FBA300F69266,
-				F87BDFE10488FBA300F69266,
-				F87BDFE20488FBA300F69266,
-				F87BDFE30488FBA300F69266,
-				F87BDFE40488FBA300F69266,
-				F87BDFE50488FBA300F69266,
-				F87BDFE60488FBA300F69266,
-				F87BDFE70488FBA300F69266,
-				F87BDFE80488FBA300F69266,
-				F87BDFE90488FBA300F69266,
-				F87BDFEA0488FBA300F69266,
-				F87BDFEB0488FBA300F69266,
-				F87BDFEC0488FBA300F69266,
-				F87BDFED0488FBA300F69266,
-				F87BDFEE0488FBA300F69266,
-				F87BDFEF0488FBA300F69266,
-				F87BDFF00488FBA300F69266,
-				F87BDFF10488FBA300F69266,
-				F87BDFF20488FBA300F69266,
-				F87BDFF30488FBA300F69266,
-				F87BDFF40488FBA300F69266,
-				F87BDFF50488FBA300F69266,
-				F8752DAF048A3A140026D05A,
-				F87BE0260488FBA300F69266,
-				F87BE0270488FBA300F69266,
-				F87BE0280488FBA300F69266,
-				F87BE0290488FBA300F69266,
-				F87BE02A0488FBA300F69266,
-				F87BE02B0488FBA300F69266,
-				F87BE02C0488FBA300F69266,
-				F87BE0460488FBA300F69266,
-				F87BE0470488FBA300F69266,
-				F87BE0480488FBA300F69266,
-				F87BE0490488FBA300F69266,
-				F87BE04A0488FBA300F69266,
-				F87BE04B0488FBA300F69266,
-				F87BE04C0488FBA300F69266,
-				F87BE04D0488FBA300F69266,
-				F87BE04E0488FBA300F69266,
-				F87BE04F0488FBA300F69266,
-				F87BE0500488FBA300F69266,
-				F87BE0810488FBA300F69266,
-				F87BE12A0488FBA400F69266,
-				F87BE12B0488FBA400F69266,
-			);
-			isa = PBXGroup;
-			name = src;
-			path = ../..;
-			refType = 2;
-		};
-		F87BDFDD0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = acia.cpp;
-			refType = 4;
-		};
-		F87BDFDE0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = acsifdc.cpp;
-			refType = 4;
-		};
-		F87BDFDF0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aradata.cpp;
-			refType = 4;
-		};
-		F87BDFE00488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = araobjs.cpp;
-			refType = 4;
-		};
-		F87BDFE10488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ata.cpp;
-			refType = 4;
-		};
-		F87BDFE20488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = blitter.cpp;
-			refType = 4;
-		};
-		F87BDFE30488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cdrom.cpp;
-			refType = 4;
-		};
-		F87BDFE40488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cfgopts.cpp;
-			refType = 4;
-		};
-		F87BDFE50488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dialog.cpp;
-			refType = 4;
-		};
-		F87BDFE60488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dsp.cpp;
-			refType = 4;
-		};
-		F87BDFE70488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dsp_cpu.cpp;
-			refType = 4;
-		};
-		F87BDFE80488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dsp_disasm.cpp;
-			refType = 4;
-		};
-		F87BDFE90488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = emul_op.cpp;
-			refType = 4;
-		};
-		F87BDFEA0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = extfs.cpp;
-			refType = 4;
-		};
-		F87BDFEB0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fakeio.cpp;
-			refType = 4;
-		};
-		F87BDFEC0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fdc.cpp;
-			refType = 4;
-		};
-		F87BDFED0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = file.cpp;
-			refType = 4;
-		};
-		F87BDFEE0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fvdidrv.cpp;
-			refType = 4;
-		};
-		F87BDFEF0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hardware.cpp;
-			refType = 4;
-		};
-		F87BDFF00488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = host.cpp;
-			refType = 4;
-		};
-		F87BDFF10488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hostscreen.cpp;
-			refType = 4;
-		};
-		F87BDFF20488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ide.cpp;
-			refType = 4;
-		};
-		F87BDFF30488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = identify.cpp;
-			refType = 4;
-		};
-		F87BDFF40488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ikbd.cpp;
-			refType = 4;
-		};
-		F87BDFF50488FBA300F69266 = {
-			children = (
-				F87BDFF60488FBA300F69266,
-				F87BDFF70488FBA300F69266,
-				F87BDFF80488FBA300F69266,
-				F87BDFF90488FBA300F69266,
-				F87BDFFA0488FBA300F69266,
-				F87BDFFB0488FBA300F69266,
-				F87BDFFC0488FBA300F69266,
-				F87BDFFD0488FBA300F69266,
-				F87BDFFE0488FBA300F69266,
-				F87BDFFF0488FBA300F69266,
-				F87BE0000488FBA300F69266,
-				F87BE0010488FBA300F69266,
-				F87BE0020488FBA300F69266,
-				F87BE0030488FBA300F69266,
-				F87BE0040488FBA300F69266,
-				F87BE0050488FBA300F69266,
-				F87BE0060488FBA300F69266,
-				F87BE0070488FBA300F69266,
-				F87BE0080488FBA300F69266,
-				F87BE0090488FBA300F69266,
-				F87BE00A0488FBA300F69266,
-				F87BE00B0488FBA300F69266,
-				F87BE00C0488FBA300F69266,
-				F87BE00D0488FBA300F69266,
-				F87BE00E0488FBA300F69266,
-				F87BE00F0488FBA300F69266,
-				F87BE0100488FBA300F69266,
-				F87BE0110488FBA300F69266,
-				F87BE0120488FBA300F69266,
-				F87BE0140488FBA300F69266,
-				F87BE0150488FBA300F69266,
-				F87BE0160488FBA300F69266,
-				F87BE0170488FBA300F69266,
-				F87BE0180488FBA300F69266,
-				F87BE0190488FBA300F69266,
-				F87BE01A0488FBA300F69266,
-				F87BE01B0488FBA300F69266,
-				F87BE01C0488FBA300F69266,
-				F87BE01D0488FBA300F69266,
-				F87BE01E0488FBA300F69266,
-				F87BE01F0488FBA300F69266,
-				F87BE0200488FBA300F69266,
-				F87BE0210488FBA300F69266,
-				F87BE0220488FBA300F69266,
-				F87BE0230488FBA300F69266,
-				F87BE0240488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = include;
-			refType = 4;
-		};
-		F87BDFF60488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = acia.h;
-			refType = 4;
-		};
-		F87BDFF70488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = acsifdc.h;
-			refType = 4;
-		};
-		F87BDFF80488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aradata.h;
-			refType = 4;
-		};
-		F87BDFF90488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = araobjs.h;
-			refType = 4;
-		};
-		F87BDFFA0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = "aspi-win32.h";
-			refType = 4;
-		};
-		F87BDFFB0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ata.h;
-			refType = 4;
-		};
-		F87BDFFC0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = blitter.h;
-			refType = 4;
-		};
-		F87BDFFD0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cdrom.h;
-			refType = 4;
-		};
-		F87BDFFE0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cfgopts.h;
-			refType = 4;
-		};
-		F87BDFFF0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = debug.h;
-			refType = 4;
-		};
-		F87BE0000488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dialog.h;
-			refType = 4;
-		};
-		F87BE0010488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dsp.h;
-			refType = 4;
-		};
-		F87BE0020488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dsp_cpu.h;
-			refType = 4;
-		};
-		F87BE0030488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = dsp_disasm.h;
-			refType = 4;
-		};
-		F87BE0040488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = emu_bochs.h;
-			refType = 4;
-		};
-		F87BE0050488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = emul_op.h;
-			refType = 4;
-		};
-		F87BE0060488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = extfs.h;
-			refType = 4;
-		};
-		F87BE0070488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = file.h;
-			refType = 4;
-		};
-		F87BE0080488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fvdidrv.h;
-			refType = 4;
-		};
-		F87BE0090488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hardware.h;
-			refType = 4;
-		};
-		F87BE00A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = host.h;
-			refType = 4;
-		};
-		F87BE00B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hostscreen.h;
-			refType = 4;
-		};
-		F87BE00C0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = icio.h;
-			refType = 4;
-		};
-		F87BE00D0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ide.h;
-			refType = 4;
-		};
-		F87BE00E0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = identify.h;
-			refType = 4;
-		};
-		F87BE00F0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ikbd.h;
-			refType = 4;
-		};
-		F87BE0100488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = input.h;
-			refType = 4;
-		};
-		F87BE0110488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = lilo.h;
-			refType = 4;
-		};
-		F87BE0120488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = main.h;
-			refType = 4;
-		};
-		F87BE0140488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = mfp.h;
-			refType = 4;
-		};
-		F87BE0150488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = midi.h;
-			refType = 4;
-		};
-		F87BE0160488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = mmu.h;
-			refType = 4;
-		};
-		F87BE0170488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = natfeats.h;
-			refType = 4;
-		};
-		F87BE0180488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ncr5380.h;
-			refType = 4;
-		};
-		F87BE0190488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ndebug.h;
-			refType = 4;
-		};
-		F87BE01A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = parallel.h;
-			refType = 4;
-		};
-		F87BE01B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = parameters.h;
-			refType = 4;
-		};
-		F87BE01C0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = romdiff.h;
-			refType = 4;
-		};
-		F87BE01D0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = rtc.h;
-			refType = 4;
-		};
-		F87BE01E0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = scsidefs.h;
-			refType = 4;
-		};
-		F87BE01F0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = sdlgui.h;
-			refType = 4;
-		};
-		F87BE0200488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = tools.h;
-			refType = 4;
-		};
-		F87BE0210488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = toserror.h;
-			refType = 4;
-		};
-		F87BE0220488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = version.h;
-			refType = 4;
-		};
-		F87BE0230488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = videl.h;
-			refType = 4;
-		};
-		F87BE0240488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = yamaha.h;
-			refType = 4;
-		};
-		F87BE0260488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = lilo.cpp;
-			refType = 4;
-		};
-		F87BE0270488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = main.cpp;
-			refType = 4;
-		};
-		F87BE0280488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = md5.cpp;
-			refType = 4;
-		};
-		F87BE0290488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = mfp.cpp;
-			refType = 4;
-		};
-		F87BE02A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = midi.cpp;
-			refType = 4;
-		};
-		F87BE02B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = mmu.cpp;
-			refType = 4;
-		};
-		F87BE02C0488FBA300F69266 = {
-			children = (
-				F87BE02E0488FBA300F69266,
-				F87BE02F0488FBA300F69266,
-				F87BE0300488FBA300F69266,
-				F87BE0310488FBA300F69266,
-				F87BE0320488FBA300F69266,
-				F87BE0330488FBA300F69266,
-				F87BE0340488FBA300F69266,
-				F87BE03A0488FBA300F69266,
-				F87BE03B0488FBA300F69266,
-				F87BE03C0488FBA300F69266,
-				F87BE03D0488FBA300F69266,
-				F87BE03E0488FBA300F69266,
-				F87BE03F0488FBA300F69266,
-				F87BE0400488FBA300F69266,
-				F87BE0410488FBA300F69266,
-				F87BE0420488FBA300F69266,
-				F87BE0430488FBA300F69266,
-				F87BE0440488FBA300F69266,
-				F87BE0450488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = natfeat;
-			refType = 4;
-		};
-		F87BE02E0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = atari_example.c;
-			refType = 4;
-		};
-		F87BE02F0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = atari_example_gfa.lst;
-			refType = 4;
-		};
-		F87BE0300488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = audio.cpp;
-			refType = 4;
-		};
-		F87BE0310488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = audio.h;
-			refType = 4;
-		};
-		F87BE0320488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = debugprintf.cpp;
-			refType = 4;
-		};
-		F87BE0330488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = debugprintf.h;
-			refType = 4;
-		};
-		F87BE0340488FBA300F69266 = {
-			children = (
-				F87BE0350488FBA300F69266,
-				F87BE0360488FBA300F69266,
-				F87BE0370488FBA300F69266,
-				F87BE0380488FBA300F69266,
-				F87BE0390488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = doc;
-			refType = 4;
-		};
-		F87BE0350488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = attic.txt;
-			refType = 4;
-		};
-		F87BE0360488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = call68k.txt;
-			refType = 4;
-		};
-		F87BE0370488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = native.txt;
-			refType = 4;
-		};
-		F87BE0380488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = nf.h;
-			refType = 4;
-		};
-		F87BE0390488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = sample.c;
-			refType = 4;
-		};
-		F87BE03A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ethernet.cpp;
-			refType = 4;
-		};
-		F87BE03B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ethernet.h;
-			refType = 4;
-		};
-		F87BE03C0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hostfs.cpp;
-			refType = 4;
-		};
-		F87BE03D0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = hostfs.h;
-			refType = 4;
-		};
-		F87BE03E0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = nf_base.cpp;
-			refType = 4;
-		};
-		F87BE03F0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = nf_base.h;
-			refType = 4;
-		};
-		F87BE0400488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = nf_basicset.cpp;
-			refType = 4;
-		};
-		F87BE0410488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = nf_basicset.h;
-			refType = 4;
-		};
-		F87BE0420488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = nf_objs.cpp;
-			refType = 4;
-		};
-		F87BE0430488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = nf_objs.h;
-			refType = 4;
-		};
-		F87BE0440488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = xhdi.cpp;
-			refType = 4;
-		};
-		F87BE0450488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = xhdi.h;
-			refType = 4;
-		};
-		F87BE0460488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = natfeats.cpp;
-			refType = 4;
-		};
-		F87BE0470488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ncr5380.cpp;
-			refType = 4;
-		};
-		F87BE0480488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ndebug.cpp;
-			refType = 4;
-		};
-		F87BE0490488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = parallel.cpp;
-			refType = 4;
-		};
-		F87BE04A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = parameters.cpp;
-			refType = 4;
-		};
-		F87BE04B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = romdiff.cpp;
-			refType = 4;
-		};
-		F87BE04C0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = rtc.cpp;
-			refType = 4;
-		};
-		F87BE04D0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = sdlgui.cpp;
-			refType = 4;
-		};
-		F87BE04E0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = template.cpp;
-			refType = 4;
-		};
-		F87BE04F0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = tools.cpp;
-			refType = 4;
-		};
-		F87BE0500488FBA300F69266 = {
-			children = (
-				F87BE0520488FBA300F69266,
-				F87BE0530488FBA300F69266,
-				F87BE0540488FBA300F69266,
-				F87BE05C0488FBA300F69266,
-				F87BE05D0488FBA300F69266,
-				F87BE05E0488FBA300F69266,
-				F87BE05F0488FBA300F69266,
-				F87BE0600488FBA300F69266,
-				F87BE0610488FBA300F69266,
-				F87BE0750488FBA300F69266,
-				F87BE0760488FBA300F69266,
-				F87BE0770488FBA300F69266,
-				F87BE0780488FBA300F69266,
-				F87BE0790488FBA300F69266,
-				F87BE07A0488FBA300F69266,
-				F87BE07B0488FBA300F69266,
-				F87BE07C0488FBA300F69266,
-				F87BE07D0488FBA300F69266,
-				F87BE07E0488FBA300F69266,
-				F87BE07F0488FBA300F69266,
-				F87BE0800488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = uae_cpu;
-			refType = 4;
-		};
-		F87BE0520488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aranym_glue.cpp;
-			refType = 4;
-		};
-		F87BE0530488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = build68k.c;
-			refType = 4;
-		};
-		F87BE0540488FBA300F69266 = {
-			children = (
-				F87BE0550488FBA300F69266,
-				F87BE0560488FBA300F69266,
-				F87BE0570488FBA300F69266,
-				F87BE0580488FBA300F69266,
-				F87BE0590488FBA300F69266,
-				F87BE05A0488FBA300F69266,
-				F87BE05B0488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = compiler;
-			refType = 4;
-		};
-		F87BE0550488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = codegen_x86.cpp;
-			refType = 4;
-		};
-		F87BE0560488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = codegen_x86.h;
-			refType = 4;
-		};
-		F87BE0570488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = compemu.h;
-			refType = 4;
-		};
-		F87BE0580488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = compemu_fpp.cpp;
-			refType = 4;
-		};
-		F87BE0590488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = compemu_support.cpp;
-			refType = 4;
-		};
-		F87BE05A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = flags_x86.h;
-			refType = 4;
-		};
-		F87BE05B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = gencomp.c;
-			refType = 4;
-		};
-		F87BE05C0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cpu_emulation.h;
-			refType = 4;
-		};
-		F87BE05D0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cpummu.cpp;
-			refType = 4;
-		};
-		F87BE05E0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cpummu.h;
-			refType = 4;
-		};
-		F87BE05F0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cpuopti.c;
-			refType = 4;
-		};
-		F87BE0600488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = debug.cpp;
-			refType = 4;
-		};
-		F87BE0610488FBA300F69266 = {
-			children = (
-				F87BE0620488FBA300F69266,
-				F87BE0630488FBA300F69266,
-				F87BE0640488FBA300F69266,
-				F87BE0650488FBA300F69266,
-				F87BE0660488FBA300F69266,
-				F87BE0670488FBA300F69266,
-				F87BE0680488FBA300F69266,
-				F87BE0690488FBA300F69266,
-				F87BE06A0488FBA300F69266,
-				F87BE06B0488FBA300F69266,
-				F87BE06C0488FBA300F69266,
-				F87BE06D0488FBA300F69266,
-				F87BE06E0488FBA300F69266,
-				F87BE06F0488FBA300F69266,
-				F87BE0700488FBA300F69266,
-				F87BE0710488FBA300F69266,
-				F87BE0720488FBA300F69266,
-				F87BE0730488FBA300F69266,
-				F87BE0740488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = fpu;
-			refType = 4;
-		};
-		F87BE0620488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = core.h;
-			refType = 4;
-		};
-		F87BE0630488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = exceptions.cpp;
-			refType = 4;
-		};
-		F87BE0640488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = exceptions.h;
-			refType = 4;
-		};
-		F87BE0650488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = flags.cpp;
-			refType = 4;
-		};
-		F87BE0660488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = flags.h;
-			refType = 4;
-		};
-		F87BE0670488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fpu.h;
-			refType = 4;
-		};
-		F87BE0680488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fpu_ieee.cpp;
-			refType = 4;
-		};
-		F87BE0690488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fpu_ieee.h;
-			refType = 4;
-		};
-		F87BE06A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fpu_uae.cpp;
-			refType = 4;
-		};
-		F87BE06B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fpu_uae.h;
-			refType = 4;
-		};
-		F87BE06C0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fpu_x86.cpp;
-			refType = 4;
-		};
-		F87BE06D0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fpu_x86.h;
-			refType = 4;
-		};
-		F87BE06E0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = fpu_x86_asm.h;
-			refType = 4;
-		};
-		F87BE06F0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = impl.h;
-			refType = 4;
-		};
-		F87BE0700488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = mathlib.cpp;
-			refType = 4;
-		};
-		F87BE0710488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = mathlib.h;
-			refType = 4;
-		};
-		F87BE0720488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = rounding.cpp;
-			refType = 4;
-		};
-		F87BE0730488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = rounding.h;
-			refType = 4;
-		};
-		F87BE0740488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = types.h;
-			refType = 4;
-		};
-		F87BE0750488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = gencpu.c;
-			refType = 4;
-		};
-		F87BE0760488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = m68k.h;
-			refType = 4;
-		};
-		F87BE0770488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = memory.cpp;
-			refType = 4;
-		};
-		F87BE0780488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = memory.h;
-			refType = 4;
-		};
-		F87BE0790488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = newcpu.cpp;
-			refType = 4;
-		};
-		F87BE07A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = newcpu.h;
-			refType = 4;
-		};
-		F87BE07B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = noflags.h;
-			refType = 4;
-		};
-		F87BE07C0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = readcpu.cpp;
-			refType = 4;
-		};
-		F87BE07D0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = readcpu.h;
-			refType = 4;
-		};
-		F87BE07E0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = registers.h;
-			refType = 4;
-		};
-		F87BE07F0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = spcflags.h;
-			refType = 4;
-		};
-		F87BE0800488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = table68k;
-			refType = 4;
-		};
-		F87BE0810488FBA300F69266 = {
-			children = (
-				F87BE0840488FBA300F69266,
-				F87BE0870488FBA300F69266,
-				F87BE0880488FBA300F69266,
-				F87BE0890488FBA300F69266,
-				F87BE08C0488FBA300F69266,
-				F87BE08D0488FBA300F69266,
-				F87BE08E0488FBA300F69266,
-				F87BE08F0488FBA300F69266,
-				F87BE0900488FBA300F69266,
-				F87BE0910488FBA300F69266,
-				F87BE0920488FBA300F69266,
-				F87BE0930488FBA300F69266,
-				F87BE0950488FBA300F69266,
-				F87BE0960488FBA300F69266,
-				F87BE0970488FBA300F69266,
-				F87BE0980488FBA300F69266,
-				F87BE0990488FBA300F69266,
-				F87BE09C0488FBA300F69266,
-				F87BE0C50488FBA400F69266,
-				F87BE0C60488FBA400F69266,
-				F87BE0C70488FBA400F69266,
-				F87BE0C80488FBA400F69266,
-				F87BE0C90488FBA400F69266,
-				F87BE0CA0488FBA400F69266,
-				F87BE0CC0488FBA400F69266,
-				F87BE0CD0488FBA400F69266,
-				F87BE0D00488FBA400F69266,
-				F87BE0D10488FBA400F69266,
-				F87BE0D30488FBA400F69266,
-				F87BE0D40488FBA400F69266,
-				F87BE0D50488FBA400F69266,
-				F87BE1210488FBA400F69266,
-				F87BE1220488FBA400F69266,
-				F87BE1240488FBA400F69266,
-				F87BE1250488FBA400F69266,
-				F87BE1260488FBA400F69266,
-				F87BE1270488FBA400F69266,
-				F87BE1280488FBA400F69266,
-			);
-			isa = PBXGroup;
-			path = Unix;
-			refType = 4;
-		};
-		F87BE0840488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ansidecl.h;
-			refType = 4;
-		};
-		F87BE0870488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = aratapif.c;
-			refType = 4;
-		};
-		F87BE0880488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
-			path = autogen.sh;
-			refType = 4;
-		};
-		F87BE0890488FBA300F69266 = {
-			children = (
-				F87BE08A0488FBA300F69266,
-				F87BE08B0488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = beos;
-			refType = 4;
-		};
-		F87BE08A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cdrom_beos.cpp;
-			refType = 4;
-		};
-		F87BE08B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cdrom_beos.h;
-			refType = 4;
-		};
-		F87BE08C0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
-			path = config.guess;
-			refType = 4;
-		};
-		F87BE08D0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = config.h;
-			refType = 4;
-		};
-		F87BE08E0488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = config.h.in;
-			refType = 4;
-		};
-		F87BE08F0488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = config.log;
-			refType = 4;
-		};
-		F87BE0900488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
-			path = config.status;
-			refType = 4;
-		};
-		F87BE0910488FBA300F69266 = {
-			isa = PBXExecutableFileReference;
-			path = config.sub;
-			refType = 4;
-		};
-		F87BE0920488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
-			path = configure;
-			refType = 4;
-		};
-		F87BE0930488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = configure.ac;
-			refType = 4;
-		};
-		F87BE0950488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cpudefs.cpp;
-			refType = 4;
-		};
-		F87BE0960488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cpuemu.cpp;
-			refType = 4;
-		};
-		F87BE0970488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cpustbl.cpp;
-			refType = 4;
-		};
-		F87BE0980488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = cputbl.h;
-			refType = 4;
-		};
-		F87BE0990488FBA300F69266 = {
-			children = (
-				F87BE09A0488FBA300F69266,
-				F87BE09B0488FBA300F69266,
-			);
-			isa = PBXGroup;
-			path = cygwin;
-			refType = 4;
-		};
-		F87BE09A0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = parameters_cygwin.cpp;
-			refType = 4;
-		};
-		F87BE09B0488FBA300F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = tools_cygwin.cpp;
-			refType = 4;
-		};
-		F87BE09C0488FBA300F69266 = {
-			children = (
-				F87BE14E0488FEAA00F69266,
-				F87BE09E0488FBA300F69266,
-				F82190BE0494263900E23722,
-				F87BE0C10488FBA400F69266,
-				F87BE0C20488FBA400F69266,
-			);
-			isa = PBXGroup;
-			path = darwin;
-			refType = 4;
-		};
-		F87BE09E0488FBA300F69266 = {
-			isa = PBXFileReference;
-			path = aranym.icns;
-			refType = 4;
-		};
-		F87BE0C10488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SDLMain.h;
-			refType = 4;
-		};
-		F87BE0C20488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SDLMain.M;
-			refType = 4;
-		};
-		F87BE0C50488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = getopt.c;
-			refType = 4;
-		};
-		F87BE0C60488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = getopt.h;
-			refType = 4;
-		};
-		F87BE0C70488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = getopt1.c;
-			refType = 4;
-		};
-		F87BE0C80488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = getopt_init.c;
-			refType = 4;
-		};
-		F87BE0C90488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
-			path = "install-sh";
-			refType = 4;
-		};
-		F87BE0CA0488FBA400F69266 = {
-			children = (
-				F87BE0CB0488FBA400F69266,
-			);
-			isa = PBXGroup;
-			path = irix;
-			refType = 4;
-		};
-		F87BE0CB0488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = unaligned.c;
-			refType = 4;
-		};
-		F87BE0CC0488FBA400F69266 = {
-			isa = PBXFileReference;
-			path = libaranym.a;
-			refType = 4;
-		};
-		F87BE0CD0488FBA400F69266 = {
-			children = (
-				F87BE0CE0488FBA400F69266,
-				F87BE0CF0488FBA400F69266,
-			);
-			isa = PBXGroup;
-			path = linux;
-			refType = 4;
-		};
-		F87BE0CE0488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = parameters_linux.cpp;
-			refType = 4;
-		};
-		F87BE0CF0488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = sigsegv_linux.cpp;
-			refType = 4;
-		};
-		F87BE0D00488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = main_unix.cpp;
-			refType = 4;
-		};
-		F87BE0D10488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		F87BE0D30488FBA400F69266 = {
-			isa = PBXFileReference;
-			path = Makefile.in;
-			refType = 4;
-		};
-		F87BE0D40488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = missing;
-			refType = 4;
-		};
-		F87BE0D50488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
-			path = mkinstalldirs;
-			refType = 4;
-		};
-		F87BE1210488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = parameters_unix.cpp;
-			refType = 4;
-		};
-		F87BE1220488FBA400F69266 = {
-			children = (
-				F87BE1230488FBA400F69266,
-			);
-			isa = PBXGroup;
-			path = solaris;
-			refType = 4;
-		};
-		F87BE1230488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
-			path = which_sparc;
-			refType = 4;
-		};
-		F87BE1240488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = sysdeps.h;
-			refType = 4;
-		};
-		F87BE1250488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = vasprintf.c;
-			refType = 4;
-		};
-		F87BE1260488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = vm_alloc.cpp;
-			refType = 4;
-		};
-		F87BE1270488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = vm_alloc.h;
-			refType = 4;
-		};
-		F87BE1280488FBA400F69266 = {
-			children = (
-				F87BE1290488FBA400F69266,
-			);
-			isa = PBXGroup;
-			path = xbsd;
-			refType = 4;
-		};
-		F87BE1290488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = sigsegv_xbsd.cpp;
-			refType = 4;
-		};
-		F87BE12A0488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = videl.cpp;
-			refType = 4;
-		};
-		F87BE12B0488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = yamaha.cpp;
-			refType = 4;
-		};
-		F87BE12C0488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = NEWS;
-			path = ../../../NEWS;
-			refType = 2;
-		};
-		F87BE12D0488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = README;
-			path = ../../../README;
-			refType = 2;
-		};
-		F87BE12E0488FBA400F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = TODO;
-			path = ../../../TODO;
-			refType = 2;
-		};
-		F87BE1300488FBC600F69266 = {
-			fileRef = F87BE0C10488FBA400F69266;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-				);
-			};
-		};
-		F87BE1310488FBC800F69266 = {
-			fileRef = F87BE0C20488FBA400F69266;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			sourceTree = "<group>";
 		};
 		F87BE1340488FC4700F69266 = {
 			children = (
+				F8243A8D05C462AB00F043B6,
 				F87BE1350488FC7E00F69266,
 				F87BE1370488FCE000F69266,
 				F87BE1380488FCE000F69266,
 				F87BE1390488FCE000F69266,
-				F87BE13D0488FD0D00F69266,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F87BE1350488FC7E00F69266 = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = OpenGL.framework;
 			path = /System/Library/Frameworks/OpenGL.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F87BE1360488FC7E00F69266 = {
 			fileRef = F87BE1350488FC7E00F69266;
@@ -3105,22 +4056,31 @@
 			};
 		};
 		F87BE1370488FCE000F69266 = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = AppKit.framework;
 			path = /System/Library/Frameworks/AppKit.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F87BE1380488FCE000F69266 = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = CoreFoundation.framework;
 			path = /System/Library/Frameworks/CoreFoundation.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F87BE1390488FCE000F69266 = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = IOKit.framework;
 			path = /System/Library/Frameworks/IOKit.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F87BE13A0488FCE000F69266 = {
 			fileRef = F87BE1370488FCE000F69266;
@@ -3139,27 +4099,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		F87BE13D0488FD0D00F69266 = {
-			isa = PBXFrameworkReference;
-			name = SDL.framework;
-			path = /Library/Frameworks/SDL.framework;
-			refType = 0;
-		};
-		F87BE13E0488FD0D00F69266 = {
-			fileRef = F87BE13D0488FD0D00F69266;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F87BE14E0488FEAA00F69266 = {
-			children = (
-				F87BE33104894FC800F69266,
-				F87BE32D04894C5E00F69266,
-			);
-			isa = PBXGroup;
-			name = English.lproj;
-			refType = 4;
 		};
 		F87BE158048901B400F69266 = {
 			buildArgumentsString = $ACTION;
@@ -3181,9 +4120,6 @@
 			name = libaranym;
 			passBuildSettingsInEnvironment = 1;
 			productName = libaranym;
-			settingsToExpand = 6;
-			settingsToPassInEnvironment = 287;
-			settingsToPassOnCommandLine = 280;
 		};
 		F87BE159048901F800F69266 = {
 			buildPhases = (
@@ -3207,53 +4143,12 @@
 		F87BE15A0489020300F69266 = {
 			isa = PBXTargetDependency;
 			target = F87BDEF60488FB6400F69266;
+			targetProxy = F83AFFC105C09F8200F1E83F;
 		};
 		F87BE15B0489020600F69266 = {
 			isa = PBXTargetDependency;
 			target = F87BE158048901B400F69266;
-		};
-		F87BE32D04894C5E00F69266 = {
-			children = (
-				F87BE32E04894C5E00F69266,
-			);
-			isa = PBXVariantGroup;
-			name = SDLMain.nib;
-			path = "";
-			refType = 4;
-		};
-		F87BE32E04894C5E00F69266 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/SDLMain.nib;
-			refType = 4;
-		};
-		F87BE32F04894C5E00F69266 = {
-			fileRef = F87BE32D04894C5E00F69266;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F87BE33104894FC800F69266 = {
-			children = (
-				F87BE33204894FC800F69266,
-			);
-			isa = PBXVariantGroup;
-			name = InfoPlist.strings;
-			path = "";
-			refType = 4;
-		};
-		F87BE33204894FC800F69266 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/InfoPlist.strings;
-			refType = 4;
-		};
-		F87BE33304894FC800F69266 = {
-			fileRef = F87BE33104894FC800F69266;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			targetProxy = F83AFFC005C09F8200F1E83F;
 		};
 	};
 	rootObject = F87BDEF00488FB4800F69266;
