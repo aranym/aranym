@@ -35,7 +35,7 @@ where TOS/GEM applications could continue to live forever.
  ---------
    o 68040 CPU (including MMU040)
    o 68040 and 68881/2 FPU
-   o 14 MB ST-RAM and up to 3840 MB (configurable) of FastRAM
+   o 14 MB ST-RAM and up to 3824 MB (configurable) of FastRAM
    o VIDEL, Blitter, MFP, ACIA, IKBD for highest possible compatibility
    o Sound (compatible with Atari XBIOS Sound subsystem, incl. TimerA DMA IRQ)
    o Atari floppy DD/HD for connecting floppy image or real floppy drive
@@ -196,6 +196,8 @@ Alt+PrintScreen  create a screenshot in actual directory
 
 Alt+Ctrl+Esc   - release the input focus if ARAnyM runs in a window (so you
                  could use your keyboard and mouse in other host windows).
+
+Scroll Lock    - switch between windowed and fullscreen mode
 
 
  8) Troubleshooting
