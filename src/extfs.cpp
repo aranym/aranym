@@ -34,7 +34,7 @@
 
 extern "C" {
 
-#ifdef OS_darwin  // Stupid hack
+#if (0 && defined(OS_darwin))  // Stupid hack
 	char* strapply( char* str, __wchar_t (*functor)(__wchar_t) )
 	{
 		char* pos = str;
@@ -2634,6 +2634,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.56  2002/09/10 13:07:22  pmandin
+ * Missing ')'
+ *
  * Revision 1.55  2002/07/23 17:34:25  milan
  * pre-support for cdrom under Mac OS X
  *

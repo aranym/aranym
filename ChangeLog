@@ -3,6 +3,8 @@
 
 - JIT compiler: NOP filler based on binutils
 
+- Mac OS X: some small corrections
+
 
 2002/10/12 - milan
 - sync with BasiliskII CVS
