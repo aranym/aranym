@@ -1,3 +1,17 @@
+2001/12/11 - STanda
+- fVDI driver patch to not disable the DEBUG. There was the debug.h included
+  from another .h file which wasn't correct. Some Johan's methods were moved
+  to the .cpp file.
+
+- framebuffer driver detection to force the fullscreen mode and therefore
+  no mouse pointer redraw problems when using Clocky(TM). The mouse cursor
+  was trying to leave the window (actualy the screen surface in fb, which
+  was causing troubles)
+
+- The SDL_WarpMouse is now called after the HWInit() (actualy SDL_SetVideoMode)
+  where doesn't cause floating point exceptions and aranym crashes in fbcon.
+ 
+
 2001/12/07 - joy
 - first two long words (addresses 0..7) are readonly now like on real Atari.
   Thanks to Patrice for forcing us to fix it :-)
