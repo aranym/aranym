@@ -102,6 +102,7 @@ int main(int argc, char **argv)
 	HWBaseHost = NULL;
 	FastRAMBaseHost = NULL;
 
+	fprintf(stderr, VERSION_STRING " compiled on "__DATE__ " starting\n");
 	program_name = argv[0];
 	if (!decode_switches(stderr, argc, argv))
 		exit(-1);
@@ -313,6 +314,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.78  2002/10/16 22:21:43  milan
+ * cleanup
+ *
  * Revision 1.77  2002/10/15 22:42:17  milan
  * cleanups
  *

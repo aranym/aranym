@@ -3,7 +3,9 @@
   packet in an endless loop. So we are sending a joy packet now.
 
 - NatFeat instruction codes changed to unused LineF ones: $fe00 and $fe01.
-  Hope that this will make all virtual future ColdFire CPU users happy.
+  Hope that this will make all future ColdFire CPU users happy ;-)
+
+- cosmetic changes (aranym prints its version and compile date on startup)
 
 
 2002/10/15 - milan

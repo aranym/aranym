@@ -351,7 +351,7 @@ bool InitEmuTOS(void)
 	bool bEmuOK = (fread(ROMBaseHost, 1, RealROMSize, f) > 0);
 	fclose(f);
 	if (bEmuOK) {
-		printf("EmuTOS %02x.%02x.%04x loading... [OK]\n",
+		printf("EmuTOS %02x/%02x/%04x loading... [OK]\n",
 			ROMBaseHost[0x18],
 			ROMBaseHost[0x19],
 			(ROMBaseHost[0x1a] << 8) | ROMBaseHost[0x1b]);
@@ -526,6 +526,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.85  2002/10/16 22:21:43  milan
+ * cleanup
+ *
  * Revision 1.84  2002/10/15 21:26:52  milan
  * non-cheaders support (for MipsPro C/C++ compiler)
  *
