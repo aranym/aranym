@@ -5,10 +5,13 @@
 #define DEBUG 0
 #include "debug.h"
 
-#define SECTORSIZE	512
+#define XHDI_BLOCK_SIZE	512
 
 /* XHDI error codes */
+#define EDRVNR	-2	/* device not responding */
+#define EUNDEV	-15 /* unknown device */
 #define EINVFN	-32	/* invalid function number = unimplemented function */
+#define EACCDN	-36	/* access denied, device is reserved */
 #define E_OK	0
 
 bx_atadevice_options_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
@@ -64,17 +67,17 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 
 	bx_atadevice_options_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
-		return -15L;	// EUNDEV (unknown device)
+		return EUNDEV;
 
 	bool writing = (rwflag & 1);
 	if (writing && disk->readonly)
-		return -36L;	// EACCDN (access denied)
+		return EACCDN;
 
 	FILE *f = fopen(disk->path, writing ? "r+b" : "rb");
 	if (f != NULL) {
-		int size = SECTORSIZE*count;
+		int size = XHDI_BLOCK_SIZE*count;
 		uint8 *hostbuf = Atari2HostAddr(buf);
-		off_t offset = (off_t)recno * SECTORSIZE;
+		off_t offset = (off_t)recno * XHDI_BLOCK_SIZE;
 		fseek(f, offset, SEEK_SET);
 		if (writing) {
 			if (! disk->byteswap)
@@ -97,9 +100,26 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
 					lmemptr device_flags, memptr product_name, uint16 stringlen)
 {
-	D(bug("ARAnyM XHInqTarget2(major=%u, minor=%u)", major, minor));
-	
-	return EINVFN;
+	D(bug("ARAnyM XHInqTarget2(major=%u, minor=%u, product_name_len=%u)", major, minor, stringlen));
+
+	bx_atadevice_options_t *disk = dev2disk(major, minor);
+	if (disk == NULL)
+		return EUNDEV;
+
+	if (blocksize) {
+		WriteInt32(blocksize, XHDI_BLOCK_SIZE);
+	}
+
+	if (device_flags) {
+		WriteInt32(device_flags, 0);	// for CD-ROM could set REMOVABLE and EJECTABLE flags
+	}
+
+	if (product_name && stringlen) {
+		f2amemcpy(product_name, disk->model, stringlen);	// strncpy would be better
+		WriteInt8(product_name + stringlen-1, '\0');
+	}
+
+	return E_OK;
 }
 
 int32 XHDIDriver::XHInqDev2(uint16 bios_device, wmemptr major, wmemptr minor,
@@ -118,20 +138,20 @@ int32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
 
 	bx_atadevice_options_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
-		return -15L;	// EUNDEV (unknown device)
+		return EUNDEV;
 
 	struct stat buf;
 	if (! stat(disk->path, &buf)) {
-		long t_blocks = buf.st_size / SECTORSIZE;
+		long t_blocks = buf.st_size / XHDI_BLOCK_SIZE;
 		D(bug("t_blocks = %ld\n", t_blocks));
 		if (blocks != 0)
 			WriteAtariInt32(blocks, t_blocks);
 		if (blocksize != 0)
-			WriteAtariInt32(blocksize, SECTORSIZE);
-		return 0;
+			WriteAtariInt32(blocksize, XHDI_BLOCK_SIZE);
+		return E_OK;
 	}
 	else {
-		return -2L;		// EDRVNR (device not responding)
+		return EDRVNR;
 	}
 }
 
