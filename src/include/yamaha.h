@@ -33,10 +33,13 @@ private:
 
 public:
 	YAMAHA(memptr, uint32);
+	~YAMAHA();
 	void reset();
 	virtual uint8 handleRead(memptr addr);
 	virtual void handleWrite(memptr addr, uint8 value);
 	int getFloppyStat();
+
+	Parallel *parallel;
 };
 
 #endif /* _YAMAHA_H */

@@ -1,3 +1,9 @@
+2005/01/26 - Patrice
+- Move all parallel port implementation stuff in yamaha. Don't flush on output
+  to a real file.
+- Remove useless FAQ item about CD-ROM configuration.
+
+
 2005/01/25 - Andreas
 - uae_cpu/cpummu.cpp: Fix wrong address in mmu_get_unaligned, thanks to
   milan for tracking this down.

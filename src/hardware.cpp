@@ -33,18 +33,11 @@
 #include "ide.h"
 #include "mmu.h"
 #include "hostscreen.h"
-#include "parallel.h"
-#include "parallel_file.h"
-#ifdef ENABLE_PARALLELX86
-#include "parallel_x86.h"
-#endif
 
 #define DEBUG 0
 #include "debug.h"
 
 #define debug_print_IO(a) "unknown"
-
-Parallel *parallel;
 
 MFP *mfp;
 MMU *mmu;
@@ -68,15 +61,6 @@ BASE_IO *arhw[iITEMS];
 
 void HWInit()
 {
-	{
-#ifdef ENABLE_PARALLELX86
-		if (strcmp("x86", bx_options.parallel.type)==0)
-			parallel = new ParallelX86;
-		else
-#endif
-			parallel = new ParallelFile;
-	}
-
 	arhw[iMFP] = mfp = new MFP(0xfffa00, 0x30);
 	arhw[iMMU] = mmu = new MMU(0xff8000, 8);
 	arhw[iIKBD] = ikbd = new IKBD(0xfffc00, 4);
@@ -109,8 +93,6 @@ void HWExit()
 	for(int i=0; i<iITEMS; i++) {
 		delete arhw[i];
 	}
-
-	delete parallel;
 }
 
 void HWReset()

@@ -21,11 +21,6 @@
 #ifndef _PARALLEL_FILE_H
 #define _PARALLEL_FILE_H
 
-#include <stdio.h>
-
-#include "sysdeps.h"
-#include "parallel.h"
-
 class ParallelFile: public Parallel
 {
 	private:

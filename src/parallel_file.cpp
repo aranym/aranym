@@ -80,8 +80,10 @@ void ParallelFile::setData(uint8 value)
 			close_handle=1;
 		}
 	}
-	fprintf(handle,"%c",value);	
-	fflush(handle);	/* useful if you want to see the output before EOLN */
+	fputc(value,handle);	
+	if (!close_handle) {
+		fflush(handle);	/* useful if you want to see the output before EOLN */
+	}
 }
 
 uint8 ParallelFile::getBusy()

@@ -2,8 +2,7 @@ Contents:
   1) CVS read only
   2) AES Error (WinX)
   3) disk from Atari in ARAnyM
-  4) CD-ROM
-  5) GEMBench blitter test crashes
+  4) GEMBench blitter test crashes
 
 ---
 
@@ -87,51 +86,6 @@ Answer:
    Centurbo or NOVA/Rage gfx card drivers, you want to disable them.
    So try the first boot with Ctrl held down (AUTO folder programs are
    not executed then).
-
-
----
-
-Question:
-  Is it possible to have CDRom under ARAnyM, how can I do?
-
-Answer 1:
-  Use Natfeat CD-ROM bos driver. The SDL driver will only allow you audio CD
-  playing. The Linux driver can also access data CD-ROM.
-
-  1) See section [CDROMS] in your config file. Each drive letter is a physical
-     device for MetaDOS, and you can give it any host CD-ROM (if you have
-     multiple CD-ROM drives on your host machine) drive number.
-
-  Example:
-  [CDROMS]
-  A = 1
-  ..
-  W = 2
-  ..
-  Z = 0
-
-  2) Atari side: Copy the file nfcdrom.bos to your auto folder, and edit your
-     config.sys file, and add a line like this:
-  *BOS, \auto\nfcdrom.bos, A, W, Z
-     You can now use audio CDs with your favorite CD player.
-
-  3) If you also want access to CD-ROM, you need an iso9660 filesystem driver.
-     You can easily find some with MetaDOS, and add the lines:
-  *DOS, \auto\iso9660.dos, G:A, H:W, I:Z
-     To have gemdos drives G, H, I (on your desktop) use the respective A, W, Z
-     MetaDOS devices.
-
-
-Answer 2:
-  Edit your .aranym/config file:
-
-    [IDE1]
-    Present = Yes
-    IsCDROM = Yes
-    Path = /dev/cdrom
-
-  And then set up your Atari environment like you would did on a real Atari
-  with IDE CD-ROM attached. E.g. I used CD-Tools' driver and MetaDOS.
 
 
 ---

@@ -27,6 +27,11 @@
 #include "memory.h"
 #include "yamaha.h"
 #include "parameters.h"
+#include "parallel.h"
+#include "parallel_file.h"
+#ifdef ENABLE_PARALLELX86
+#include "parallel_x86.h"
+#endif
 
 #ifdef DSP_EMULATION
 #include "dsp.h"
@@ -36,7 +41,19 @@
 #include "debug.h"
 
 YAMAHA::YAMAHA(memptr addr, uint32 size) : BASE_IO(addr, size) {
+#ifdef ENABLE_PARALLELX86
+	if (strcmp("x86", bx_options.parallel.type)==0)
+		parallel = new ParallelX86;
+	else
+#endif
+		parallel = new ParallelFile;
+
 	reset();
+}
+
+YAMAHA::~YAMAHA()
+{
+	delete parallel;
 }
 
 void YAMAHA::reset()

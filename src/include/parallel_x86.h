@@ -21,9 +21,6 @@
 #ifndef _PARALLEL_X86_H
 #define _PARALLEL_X86_H
 
-#include "sysdeps.h"
-#include "parallel.h"
-
 class ParallelX86: public Parallel
 {
 	private:
