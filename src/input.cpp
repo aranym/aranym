@@ -479,7 +479,7 @@ void check_event()
 #endif
 #ifdef SDL_GUI
 						else
-							Dialog_DoProperty();
+							pendingQuit = Dialog_DoProperty();
 #endif
 						break;
 
