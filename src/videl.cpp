@@ -25,7 +25,7 @@ extern HostScreen hostScreen;
 #define SUPPORT_MULTIPLEDESTBPP
 
 
-static const uae_u32 HW = 0xff8200UL;
+static const uint32 HW = 0xff8200UL;
 
 
 VIDEL::VIDEL()
@@ -61,7 +61,7 @@ void VIDEL::init()
 }
 
 // monitor writting to Falcon and ST/E color palette registers
-void VIDEL::handleWrite(uaecptr addr, uint8 value)
+void VIDEL::handleWrite(uint32 addr, uint8 value)
 {
 	BASE_IO::handleWrite(addr, value);
 
@@ -380,6 +380,10 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.36  2002/01/17 14:59:19  milan
+ * cleaning in HW <-> memory communication
+ * support for JIT CPU
+ *
  * Revision 1.35  2001/12/17 08:33:00  standa
  * Thread synchronization added. The check_event and fvdidriver actions are
  * synchronized each to other.

@@ -23,7 +23,7 @@ public:
 	VIDEL();
 	void init();
 
-	virtual void handleWrite(uaecptr addr, uint8 value);
+	virtual void handleWrite(uint32 addr, uint8 value);
 
 	void updateColors();
 	void renderScreen();
@@ -52,6 +52,10 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.15  2001/12/17 08:33:00  standa
+ * Thread synchronization added. The check_event and fvdidriver actions are
+ * synchronized each to other.
+ *
  * Revision 1.14  2001/12/17 07:09:44  standa
  * SDL_delay() added to setRendering to avoid SDL access the graphics from
  * both VIDEL and fVDIDriver threads....
