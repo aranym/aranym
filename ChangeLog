@@ -1,10 +1,18 @@
+2003/03/14 - joy
+- dsp_cpu.cpp, araifc/inet.c: small fixes to remove GCC warnings
+
+
 2003/03/13 - milan
 - IDE: sync with bochs, BeOS, Cygwin, Darwin
+
+- araifc integration
 
 
 2003/03/12 - STanda
 - hostfs.cpp: fake methods for chattr, chmode, chown and some more.
   The report the fakeness to the host OS console in debug mode ATM.
+
+- araifc (ARAnyM ifconfig implementation for tuntap)
 
 
 2003/03/12 - milan

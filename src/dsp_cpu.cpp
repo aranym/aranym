@@ -84,7 +84,7 @@ static void dsp_ccr_zero(uint32 *reg0, uint32 *reg1, uint32 *reg2);
 static uint32 read_memory_disasm(int space, uint16 address);
 #endif
 static uint32 read_memory(int space, uint16 address);
-static void write_memory(int space, uint16 address, uint32 value);
+static void write_memory(int space, uint32 address, uint32 value);
 
 static void dsp_stack_push(uint32 curpc, uint32 cursr);
 static void dsp_stack_pop(uint32 *curpc, uint32 *cursr);
@@ -168,7 +168,7 @@ static void dsp_pm_2(void);
 static void dsp_pm_2_2(void);
 static void dsp_pm_3(void);
 static void dsp_pm_4(void);
-static void dsp_pm_4x(int immediat, uint16 l_addr);
+static void dsp_pm_4x(int immediat, uint32 l_addr);
 static void dsp_pm_5(void);
 static void dsp_pm_8(void);
 
@@ -962,7 +962,7 @@ static uint32 read_memory(int space, uint16 address)
 	return 0xdead;
 }
 
-static void write_memory(int space, uint16 address, uint32 value)
+static void write_memory(int space, uint32 address, uint32 value)
 {
 #ifdef DSP_DISASM
 #if DSP_DISASM_MEM
@@ -2701,7 +2701,7 @@ static void dsp_parmove_write(void)
 			dest=tmp_parmove_dest[i][j];
 			if (tmp_parmove_type[i]) {
 				/* Write to memory */
-				write_memory(tmp_parmove_space[i], (uint16) dest, tmp_parmove_src[i][j]);
+				write_memory(tmp_parmove_space[i], (uint32) dest, tmp_parmove_src[i][j]);
 			} else {
 				/* Write to register */
 				*dest = tmp_parmove_src[i][j];
@@ -3046,7 +3046,7 @@ static void dsp_pm_4(void)
 	dsp_pm_5();
 }
 
-static void dsp_pm_4x(int immediat, uint16 l_addr)
+static void dsp_pm_4x(int immediat, uint32 l_addr)
 {
 	uint32 value, numreg, numreg2;
 /*
@@ -3055,6 +3055,7 @@ static void dsp_pm_4x(int immediat, uint16 l_addr)
 	0100 l0ll w1mm mrrr l:ea,D
 						S,l:ea
 */
+	l_addr &= BITMASK(16);
 	numreg = (cur_inst>>16) & BITMASK(2);
 	numreg |= (cur_inst>>17) & (1<<2);
 

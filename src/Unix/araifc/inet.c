@@ -158,7 +158,7 @@ static int INET_rresolve(char *name, size_t len, struct sockaddr_in *sin,
     if (ad == INADDR_ANY) {
 	if ((numeric & 0x0FFF) == 0) {
 	    if (numeric & 0x8000)
-		safe_strncpy(name, "default", len);
+			safe_strncpy(name, "default", len);
 	    else
 	        safe_strncpy(name, "*", len);
 	    return (0);
@@ -237,7 +237,7 @@ static char *INET_sprint(struct sockaddr *sap, int numeric)
     static char buff[128];
 
     if (sap->sa_family == 0xFFFF || sap->sa_family == 0)
-	return safe_strncpy(buff, _("[NONE SET]"), sizeof(buff));
+	return (char *)safe_strncpy(buff, _("[NONE SET]"), sizeof(buff));
 
     if (INET_rresolve(buff, sizeof(buff), (struct sockaddr_in *) sap, 
 		      numeric, 0xffffff00) != 0)
@@ -252,7 +252,7 @@ char *INET_sprintmask(struct sockaddr *sap, int numeric,
     static char buff[128];
 
     if (sap->sa_family == 0xFFFF || sap->sa_family == 0)
-	return safe_strncpy(buff, _("[NONE SET]"), sizeof(buff));
+	return (char *)safe_strncpy(buff, _("[NONE SET]"), sizeof(buff));
     if (INET_rresolve(buff, sizeof(buff), (struct sockaddr_in *) sap, 
 		      numeric, netmask) != 0)
 	return (NULL);
