@@ -55,6 +55,7 @@ struct log_addr8 {
 extern struct regstruct
 {
     uae_u32 regs[16];
+    signed char autoinc[8];
     uaecptr  usp,isp,msp;
     uae_u16 sr;
     flagtype t1;

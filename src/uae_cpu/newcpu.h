@@ -91,6 +91,8 @@ extern void REGPARAM2 op_illg (uae_u32) REGPARAM;
 
 #define m68k_dreg(r,num) ((r).regs[(num)])
 #define m68k_areg(r,num) (((r).regs + 8)[(num)])
+#define m68k_areg_autoinc(r,num,incdec) \
+    ((r).autoinc[num] += (incdec), (r).regs[(num) + 8] += (incdec))
 
 #ifdef FULLMMU
 static inline uae_u8 get_ibyte(uae_u32 o)
@@ -204,19 +206,19 @@ static inline void m68k_setpc (uaecptr newpc)
 static inline void m68k_do_rts(void)
 {
     m68k_setpc(get_long(m68k_areg(regs, 7)));
-    m68k_areg(regs, 7) += 4;
+    m68k_areg_autoinc(regs, 7, 4);
 }
  
 static inline void m68k_do_bsr(uaecptr oldpc, uae_s32 offset)
 {
-    m68k_areg(regs, 7) -= 4;
+    m68k_areg_autoinc(regs, 7, -4);
     put_long(m68k_areg(regs, 7), oldpc);
     m68k_incpc(offset);
 }
  
 static inline void m68k_do_jsr(uaecptr oldpc, uaecptr dest)
 {
-    m68k_areg(regs, 7) -= 4;
+    m68k_areg_autoinc(regs, 7, -4);
     put_long(m68k_areg(regs, 7), oldpc);
     m68k_setpc(dest);
 }

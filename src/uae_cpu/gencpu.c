@@ -320,13 +320,19 @@ static void genamode (amodes mode, char *reg, wordsizes size, char *name, int ge
 	    if (movem)
 		printf ("\tuaecptr %sa = m68k_areg(regs, %s);\n", name, reg);
 	    else
-		printf ("\tuaecptr %sa = m68k_areg(regs, %s) - areg_byteinc[%s];\n", name, reg, reg);
+		printf ("\tuaecptr %sa = m68k_areg_autoinc(regs, %s, -areg_byteinc[%s]);\n", name, reg, reg);
 	    break;
 	 case sz_word:
-	    printf ("\tuaecptr %sa = m68k_areg(regs, %s) - %d;\n", name, reg, movem ? 0 : 2);
+	    if (movem)
+		printf ("\tuaecptr %sa = m68k_areg(regs, %s);\n", name, reg);
+	    else
+		printf ("\tuaecptr %sa = m68k_areg_autoinc(regs, %s, -2);\n", name, reg);
 	    break;
 	 case sz_long:
-	    printf ("\tuaecptr %sa = m68k_areg(regs, %s) - %d;\n", name, reg, movem ? 0 : 4);
+	    if (movem)
+		printf ("\tuaecptr %sa = m68k_areg(regs, %s);\n", name, reg);
+	    else
+		printf ("\tuaecptr %sa = m68k_areg_autoinc(regs, %s, -4);\n", name, reg);
 	    break;
 	 default:
 	    abort ();
@@ -449,20 +455,17 @@ static void genamode (amodes mode, char *reg, wordsizes size, char *name, int ge
 	 case Aipi:
 	    switch (size) {
 	     case sz_byte:
-		printf ("\tm68k_areg(regs, %s) += areg_byteinc[%s];\n", reg, reg);
+		printf ("\tm68k_areg_autoinc(regs, %s, areg_byteinc[%s]);\n", reg, reg);
 		break;
 	     case sz_word:
-		printf ("\tm68k_areg(regs, %s) += 2;\n", reg);
+		printf ("\tm68k_areg_autoinc(regs, %s, 2);\n", reg);
 		break;
 	     case sz_long:
-		printf ("\tm68k_areg(regs, %s) += 4;\n", reg);
+		printf ("\tm68k_areg_autoinc(regs, %s, 4);\n", reg);
 		break;
 	     default:
 		abort ();
 	    }
-	    break;
-	 case Apdi:
-	    printf ("\tm68k_areg (regs, %s) = %sa;\n", reg, name);
 	    break;
 	 default:
 	    break;
@@ -2119,11 +2122,11 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\tm68k_dreg(regs, dstreg) = (m68k_dreg(regs, dstreg) & 0xffffff00) | ((val >> 4) & 0xf0) | (val & 0xf);\n");
 	} else {
 	    printf ("\tuae_u16 val;\n");
-	    printf ("\tm68k_areg(regs, srcreg) -= areg_byteinc[srcreg];\n");
+	    printf ("\tm68k_areg_autoinc(regs, srcreg, -areg_byteinc[srcreg]);\n");
 	    printf ("\tval = (uae_u16)get_byte(m68k_areg(regs, srcreg));\n");
-	    printf ("\tm68k_areg(regs, srcreg) -= areg_byteinc[srcreg];\n");
+	    printf ("\tm68k_areg_autoinc(regs, srcreg, -areg_byteinc[srcreg]);\n");
 	    printf ("\tval = (val | ((uae_u16)get_byte(m68k_areg(regs, srcreg)) << 8)) + %s;\n", gen_nextiword ());
-	    printf ("\tm68k_areg(regs, dstreg) -= areg_byteinc[dstreg];\n");
+	    printf ("\tm68k_areg_autoinc(regs, dstreg, -areg_byteinc[dstreg]);\n");
 	    printf ("\tput_byte(m68k_areg(regs, dstreg),((val >> 4) & 0xf0) | (val & 0xf));\n");
 	}
 	break;
@@ -2134,12 +2137,12 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\tm68k_dreg(regs, dstreg) = (m68k_dreg(regs, dstreg) & 0xffff0000) | (val & 0xffff);\n");
 	} else {
 	    printf ("\tuae_u16 val;\n");
-	    printf ("\tm68k_areg(regs, srcreg) -= areg_byteinc[srcreg];\n");
+	    printf ("\tm68k_areg_autoinc(regs, srcreg, -areg_byteinc[srcreg]);\n");
 	    printf ("\tval = (uae_u16)get_byte(m68k_areg(regs, srcreg));\n");
 	    printf ("\tval = (((val << 4) & 0xf00) | (val & 0xf)) + %s;\n", gen_nextiword ());
-	    printf ("\tm68k_areg(regs, dstreg) -= areg_byteinc[dstreg];\n");
+	    printf ("\tm68k_areg_autoinc(regs, dstreg, -areg_byteinc[dstreg]);\n");
 	    printf ("\tput_byte(m68k_areg(regs, dstreg),val);\n");
-	    printf ("\tm68k_areg(regs, dstreg) -= areg_byteinc[dstreg];\n");
+	    printf ("\tm68k_areg_autoinc(regs, dstreg, -areg_byteinc[dstreg]);\n");
 	    printf ("\tput_byte(m68k_areg(regs, dstreg),val >> 8);\n");
 	}
 	break;

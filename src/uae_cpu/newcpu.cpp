@@ -714,6 +714,7 @@ static int building_bus_fault_stack_frame=0;
 void Exception(int nr, uaecptr oldpc)
 {
     uae_u32 currpc = m68k_getpc ();
+    int i;
     MakeSR();
     if (!regs.s) {
 	regs.usp = m68k_areg(regs, 7);
@@ -727,6 +728,9 @@ void Exception(int nr, uaecptr oldpc)
         check_eps_limit(currpc);
 #endif
         // panicbug("Exception Nr. %d CPC: %08lx NPC: %08lx SP=%08lx Addr: %08lx", nr, currpc, get_long (regs.vbr + 4*nr), m68k_areg(regs, 7), regs.mmu_fault_addr);
+	/* Undo auto increments/decrements */
+	for (i = 0; i < 8; i++)
+	    m68k_areg(regs, i) -= regs.autoinc[i];
 
         if (building_bus_fault_stack_frame) {
             report_double_bus_error();
@@ -1491,6 +1495,7 @@ void m68k_do_execute (void)
 #if FLIGHT_RECORDER
 	                m68k_record_step(m68k_getpc());
 #endif
+	memset(regs.autoinc, 0, sizeof(regs.autoinc));
 	(*cpufunctbl[opcode])(opcode);
 
 #ifndef DISDIP
