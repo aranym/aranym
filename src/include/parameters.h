@@ -16,6 +16,7 @@ extern uint8 start_debug;		// starts debugger
 extern uint8 fullscreen;		// boot in fullscreen
 extern uint16 boot_color_depth;		// boot color depth
 extern bool direct_truecolor;	// patch TOS to enable direct true color
+extern bool grab_mouse;
 extern uint8 monitor;				// VGA or TV
 extern ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 
