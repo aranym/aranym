@@ -6,7 +6,9 @@
     <title>CVS Repository</title>
     <text>
       The current development is kept in CVS. The CVS has read-only access for all
-      users. Get a CVS client from <A HREF="http://www.cvshome.org/">cvshome.org</A> and type:
+      users. For browsing you can use the <a href="http://www.sophics.cz/cgi-bin/cvsweb/aranym/">CVSWEB</a>.
+      For real work with the source code go get a CVS client from
+      <A HREF="http://www.cvshome.org/">cvshome.org</A> and type:
       <pre>
   CVSROOT=:pserver:anoncvs@cvs.sophics.cz:/var/repos
   export CVSROOT
