@@ -14,6 +14,7 @@
  **/
 
 #include <mintbind.h>
+#include <mint/basepage.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -33,6 +34,9 @@ char DriverName[] = DEVNAME" "VERSION;
 long ldp;
 
 
+void _cdecl ShowBanner( void );
+void* _cdecl InitDevice( long bosDevID, long dosDevID );
+
 /* Diverse Utility-Funktionen */
 
 static int Bconws( char *str )
@@ -51,6 +55,7 @@ static int Bconws( char *str )
     return cnt;
 }
 
+	extern char init;
 
 void _cdecl ShowBanner( void )
 {
@@ -68,32 +73,41 @@ extern FILESYS aranym_fs;
 extern DEVDRV  aranym_fs_devdrv;
 
 
-void* _cdecl InitDevice( short bosDevID, short dosDevID )
+void* _cdecl InitDevice( long bosDevID, long dosDevID )
 {
+	static fcookie root;
 	char mountPoint[2] = "a:";
-	mountPoint[0]+=dosDevID;
+	mountPoint[0] += (bosDevID = (bosDevID-'A')&0x1f); // mask out bad values of the bosDevID
 
-    DEBUG(("InitDevice: %c:%c", 'A'+dosDevID, bosDevID ));
+	/*
+	 * We _must_ use the bosDevID to define the drive letter here
+	 * because MetaDOS (in contrary to BetaDOS) does not provide
+	 * the dosDevID
+	 */
+	DEBUG(("InitDevice: %s [%ld - %lx]: [%ld]", mountPoint, dosDevID, dosDevID, bosDevID ));
 
-    aranym_fs_init();
-	aranym_fs_native_init(dosDevID, mountPoint, "/tmp", 1,
+	aranym_fs_init();
+	aranym_fs_native_init(bosDevID, mountPoint, "/tmp", 1,
 						  &aranym_fs, &aranym_fs_devdrv );
 
 
-    aranym_fs.root( dosDevID, &curproc->p_cwd->root[dosDevID] );
+	aranym_fs.root( bosDevID, &curproc->p_cwd->root[bosDevID] );
 
-    {
-        fcookie *relto = &curproc->p_cwd->root[dosDevID];
-        DEBUG (("InitDevice: root (%lx, %li, %i)", relto->fs, relto->index, relto->dev));
-    }
+	{
+		fcookie *relto = &curproc->p_cwd->root[bosDevID];
+		DEBUG (("InitDevice: root (%lx, %li, %i)", relto->fs, relto->index, relto->dev));
+	}
 
-    return &ldp;
+	return &ldp;
 }
 
 
 
 /**
  * $Log$
+ * Revision 1.2  2002/12/11 08:05:54  standa
+ * The /tmp/calam host fs mount point changed to /tmp one.
+ *
  * Revision 1.1  2002/12/10 20:47:21  standa
  * The HostFS (the host OS filesystem access via NatFeats) implementation.
  *

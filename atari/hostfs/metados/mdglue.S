@@ -82,10 +82,11 @@ _init:
 
 initfun:
 	movem.l	a0-a6/d1-d7,-(sp)
-	move.w	d1,-(sp)
-	move.w	d0,-(sp)
+	move.l	d1,-(sp)		// BetaDOS's dosDevID + some wird word / MetaDOS pure crap
+	move.w	d0,-(sp)		// bosDevID 16bit
+	move.w	#0,-(sp)		// pad for gcc (long)
 	bsr	_InitDevice
-	addq	#4,sp
+	addq	#8,sp
 	movem.l	(sp)+,a0-a6/d1-d7
 // d1: filename conversion
 // Bit 0: 0 = force upper case
@@ -512,6 +513,9 @@ stack:
 	
 //
 // $Log$
+// Revision 1.1  2002/12/10 20:47:21  standa
+// The HostFS (the host OS filesystem access via NatFeats) implementation.
+//
 // Revision 1.1  2002/05/22 07:53:22  standa
 // The PureC -> gcc conversion (see the CONFIGVARS).
 // MiNT .XFS sources added.
