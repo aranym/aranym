@@ -34,6 +34,7 @@
 #endif
 
 #include "cpu_emulation.h"
+#include "emul_op.h"
 #include "main.h"
 #include "ether.h"
 #include "ether_defs.h"
@@ -45,15 +46,17 @@ using std::map;
 #define DEBUG 0
 #include "debug.h"
 
+#include <SDL.h>
+#include <SDL_thread.h>
+
+
 #define MONITOR 0
 
 
 // Global variables
 static int fd = -1;							// fd of sheep_net device
-static pthread_t ether_thread;				// Packet reception thread
-static pthread_attr_t ether_thread_attr;	// Packet reception thread attributes
-static bool thread_active = false;			// Flag: Packet reception thread installed
-static sem_t int_ack;						// Interrupt acknowledge semaphore
+static SDL_Thread *ether_thread;			// Packet reception thread
+static SDL_sem *int_ack;					// Interrupt acknowledge semaphore
 static bool is_ethertap;					// Flag: Ethernet device is ethertap
 static bool udp_tunnel;						// Flag: UDP tunnelling active, fd is the socket descriptor
 
@@ -61,7 +64,7 @@ static bool udp_tunnel;						// Flag: UDP tunnelling active, fd is the socket de
 static map<uint16, uint32> net_protocols;
 
 // Prototypes
-static void *receive_func(void *arg);
+static int receive_func(void *arg);
 
 
 /*
@@ -70,14 +73,13 @@ static void *receive_func(void *arg);
 
 static bool start_thread(void)
 {
-	if (sem_init(&int_ack, 0, 0) < 0) {
+	if ((int_ack = SDL_CreateSemaphore(0)) == NULL) {
 		printf("WARNING: Cannot init semaphore");
 		return false;
 	}
 
-	Set_pthread_attr(&ether_thread_attr, 1);
-	thread_active = (pthread_create(&ether_thread, &ether_thread_attr, receive_func, NULL) == 0);
-	if (!thread_active) {
+	ether_thread = SDL_CreateThread( receive_func, NULL );
+	if (!ether_thread) {
 		printf("WARNING: Cannot start Ethernet thread");
 		return false;
 	}
@@ -92,11 +94,11 @@ static bool start_thread(void)
 
 static void stop_thread(void)
 {
-	if (thread_active) {
-		pthread_cancel(ether_thread);
-		pthread_join(ether_thread, NULL);
-		sem_destroy(&int_ack);
-		thread_active = false;
+	if (ether_thread) {
+		// pthread_cancel(ether_thread); // FIXME: set the cancel flag.
+		SDL_WaitThread(ether_thread, NULL);
+		SDL_DestroySemaphore(int_ack);
+		ether_thread = NULL;
 	}
 }
 
@@ -108,10 +110,9 @@ static void stop_thread(void)
 bool ether_init(void)
 {
 	int nonblock = 1;
-	char str[256];
 
 	// Do nothing if no Ethernet device specified
-	const char *name = PrefsFindString("ether");
+	const char *name = "tap0"; // FIXME: configuration? PrefsFindString("ether");
 	if (name == NULL)
 		return false;
 
@@ -126,16 +127,14 @@ bool ether_init(void)
 		strcpy(dev_name, "/dev/sheep_net");
 	fd = open(dev_name, O_RDWR);
 	if (fd < 0) {
-		sprintf(str, GetString(STR_NO_SHEEP_NET_DRIVER_WARN), dev_name, strerror(errno));
-		WarningAlert(str);
+		panicbug("STR_NO_SHEEP_NET_DRIVER_WARN '%s': %s", dev_name, strerror(errno));
 		goto open_error;
 	}
 
 #if defined(__linux__)
 	// Attach sheep_net to selected Ethernet card
 	if (!is_ethertap && ioctl(fd, SIOCSIFLINK, name) < 0) {
-		sprintf(str, GetString(STR_SHEEP_NET_ATTACH_WARN), strerror(errno));
-		WarningAlert(str);
+		panicbug("STR_SHEEP_NET_ATTACH_WARN: %s", strerror(errno));
 		goto open_error;
 	}
 #endif
@@ -181,11 +180,11 @@ open_error:
 void ether_exit(void)
 {
 	// Stop reception thread
-	if (thread_active) {
-		pthread_cancel(ether_thread);
-		pthread_join(ether_thread, NULL);
-		sem_destroy(&int_ack);
-		thread_active = false;
+	if (ether_thread) {
+		// pthread_cancel(ether_thread);
+		SDL_WaitThread(ether_thread, NULL);
+		SDL_DestroySemaphore(int_ack);
+		ether_thread = NULL;
 	}
 
 	// Close sheep_net device
@@ -209,7 +208,7 @@ void ether_reset(void)
 
 int16 ether_add_multicast(uint32 pb)
 {
-	if (ioctl(fd, SIOCADDMULTI, Mac2HostAddr(pb + eMultiAddr)) < 0) {
+	if (ioctl(fd, SIOCADDMULTI, Atari2HostAddr(pb + eMultiAddr)) < 0) {
 		D(bug("WARNING: Couldn't enable multicast address\n"));
 		if (is_ethertap)
 			return noErr;
@@ -226,7 +225,7 @@ int16 ether_add_multicast(uint32 pb)
 
 int16 ether_del_multicast(uint32 pb)
 {
-	if (ioctl(fd, SIOCDELMULTI, Mac2HostAddr(pb + eMultiAddr)) < 0) {
+	if (ioctl(fd, SIOCDELMULTI, Atari2HostAddr(pb + eMultiAddr)) < 0) {
 		D(bug("WARNING: Couldn't disable multicast address\n"));
 		return eMultiErr;
 	} else
@@ -271,7 +270,7 @@ int16 ether_write(uint32 wds)
  *  Packet reception thread
  */
 
-static void *receive_func(void *arg)
+static int receive_func(void *arg)
 {
 	for (;;) {
 
@@ -287,9 +286,57 @@ static void *receive_func(void *arg)
 		TriggerInterrupt();
 
 		// Wait for interrupt acknowledge by EtherInterrupt()
-		sem_wait(&int_ack);
+		SDL_SemWait(int_ack);
 	}
-	return NULL;
+	return 0;
+}
+
+
+
+/*
+ *  Read packet from UDP socket
+ */
+
+void ether_udp_read(uint8 *packet, int length, struct sockaddr_in *from)
+{
+        // Drop packets sent by us
+        if (memcmp(packet + 6, ether_addr, 6) == 0)
+                return;
+
+#if MONITOR
+        bug("Receiving Ethernet packet:\n");
+        for (int i=0; i<length; i++) {
+                bug("%02x ", packet[i]);
+        }
+        bug("\n");
+#endif
+
+        // Get packet type
+        uint16 type = (packet[12] << 8) | packet[13];
+
+#if 0
+        // Look for protocol
+        uint16 search_type = (type <= 1500 ? 0 : type);
+        if (udp_protocols.find(search_type) == udp_protocols.end())
+                return;
+        uint32 handler = udp_protocols[search_type];
+        if (handler == 0)
+                return;
+#endif
+
+        // Copy header to RHA
+        Host2Atari_memcpy(ether_data + ed_RHA, packet, 14);
+        D(bug(" header %08x%04x %08x%04x %04x\n", ReadInt32(ether_data + ed_RHA), ReadInt16(ether_data + ed_RHA + 4), ReadInt32(ether_data + ed_RHA + 6), ReadInt16(ether_data + ed_RHA + 10), ReadInt16(ether_data + ed_RHA + 12)));
+
+        // Call protocol handler
+        M68kRegisters r;
+        r.d[0] = type;                                                                  // Packet type
+        r.d[1] = length - 14;                                                   // Remaining packet length (without header, for ReadPacket)
+        r.a[0] = (uint32)packet + 14;                                   // Pointer to packet (host address, for ReadPacket)
+        r.a[3] = ether_data + ed_RHA + 14;                              // Pointer behind header in RHA
+        r.a[4] = ether_data + ed_ReadPacket;                    // Pointer to ReadPacket/ReadRest routines
+        D(bug(" calling protocol handler %08x, type %08x, length %08x, data %08x, rha %08x, read_packet %08x\n", handler, r.d[0], r.d[1], r.a[0], r.a[3], r.a[4]));
+        EmulOp(0 /*handler*/, &r);
 }
 
 
@@ -347,6 +394,7 @@ void EtherInterrupt(void)
 			// Get packet type
 			uint16 type = (p[12] << 8) | p[13];
 
+#if 0
 			// Look for protocol
 			uint16 search_type = (type <= 1500 ? 0 : type);
 			if (net_protocols.find(search_type) == net_protocols.end())
@@ -356,10 +404,10 @@ void EtherInterrupt(void)
 			// No default handler
 			if (handler == 0)
 				continue;
-
+#endif
 			// Copy header to RHA
-			Host2Mac_memcpy(ether_data + ed_RHA, p, 14);
-			D(bug(" header %08x%04x %08x%04x %04x\n", ReadMacInt32(ether_data + ed_RHA), ReadMacInt16(ether_data + ed_RHA + 4), ReadMacInt32(ether_data + ed_RHA + 6), ReadMacInt16(ether_data + ed_RHA + 10), ReadMacInt16(ether_data + ed_RHA + 12)));
+			Host2Atari_memcpy(ether_data + ed_RHA, p, 14);
+			D(bug(" header %08x%04x %08x%04x %04x\n", ReadInt32(ether_data + ed_RHA), ReadInt16(ether_data + ed_RHA + 4), ReadInt32(ether_data + ed_RHA + 6), ReadInt16(ether_data + ed_RHA + 10), ReadInt16(ether_data + ed_RHA + 12)));
 
 			// Call protocol handler
 			M68kRegisters r;
@@ -369,11 +417,11 @@ void EtherInterrupt(void)
 			r.a[3] = ether_data + ed_RHA + 14;				// Pointer behind header in RHA
 			r.a[4] = ether_data + ed_ReadPacket;			// Pointer to ReadPacket/ReadRest routines
 			D(bug(" calling protocol handler %08x, type %08x, length %08x, data %08x, rha %08x, read_packet %08x\n", handler, r.d[0], r.d[1], r.a[0], r.a[3], r.a[4]));
-			Execute68k(handler, &r);
+			EmulOp(0 /*handler*/, &r);
 		}
 	}
 
 	// Acknowledge interrupt to reception thread
 	D(bug(" EtherIRQ done\n"));
-	sem_post(&int_ack);
+	SDL_SemPost(int_ack);
 }

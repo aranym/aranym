@@ -47,12 +47,12 @@ uint8 ether_addr[6];			// Ethernet address (set by ether_init())
 static bool net_open = false;	// Flag: initialization succeeded, network device open (set by EtherInit())
 
 // Atari address of driver data in Atari RAM
-memptr ether_data; 
+memptr ether_data;
+
 
 /*
  *  Initialization
  */
-
 void EtherInit(void)
 {
 	net_open = false;
@@ -64,7 +64,6 @@ void EtherInit(void)
 /*
  *  Deinitialization
  */
-
 void EtherExit(void)
 {
 	if (net_open) {
@@ -76,7 +75,6 @@ void EtherExit(void)
 /*
  *  Reset
  */
-
 void EtherReset(void)
 {
 	ether_reset();
@@ -85,7 +83,6 @@ void EtherReset(void)
 /*
  *  Driver Open() routine
  */
-
 int16 EtherOpen(uint32 pb, uint32 dce)
 {
 	D(bug("EtherOpen"));
@@ -97,59 +94,57 @@ int16 EtherOpen(uint32 pb, uint32 dce)
 /*
  *  Driver Close() routine
  */
-
 int16 EtherClose(uint32 pb, uint32 dce)
 {
 	D(bug("EtherClose"));
 
-        // DODO - shodit zarizeni (down)
+	// DODO - shodit zarizeni (down)
 	return 0;
 }
 
 /*
  *  Driver Control() routine
  */
-
 int16 EtherControl(uint32 pb, uint32 dce)
 {
 	// Dodelat Config a IOctl z dummy.xif
-	uint16 code = ReadAtariInt16(pb + csCode);
+	uint16 code = ReadInt16(pb + csCode);
 	D(bug("EtherControl %d", code));
 	switch (code) {
 		case 1:					// KillIO
 			return -1;
 #if 0
 		case kENetAddMulti:		// Add multicast address
-			D(bug(" AddMulti %08x%04x", ReadAtariInt32(pb + eMultiAddr), ReadMacInt16(pb + eMultiAddr + 4)));
+			D(bug(" AddMulti %08x%04x", ReadInt32(pb + eMultiAddr), ReadInt16(pb + eMultiAddr + 4)));
 			if (net_open && !udp_tunnel)
 				return ether_add_multicast(pb);
 			return noErr;
 
 		case kENetDelMulti:		// Delete multicast address
-			D(bug(" DelMulti %08x%04x\n", ReadMacInt32(pb + eMultiAddr), ReadMacInt16(pb + eMultiAddr + 4)));
+			D(bug(" DelMulti %08x%04x\n", ReadInt32(pb + eMultiAddr), ReadInt16(pb + eMultiAddr + 4)));
 			if (net_open && !udp_tunnel)
 				return ether_del_multicast(pb);
 			return noErr;
 #endif
 		case kENetWrite: {		// Transmit raw Ethernet packet
-			uint32 wds = ReadMacInt32(pb + ePointer);
+			uint32 wds = ReadInt32(pb + ePointer);
 			D(bug(" EtherWrite "));
-			if (ReadMacInt16(wds) < 14)
+			if (ReadInt16(wds) < 14)
 				return eLenErr;	// Header incomplete
 
 			// Set source address
-			uint32 hdr = ReadMacInt32(wds + 2);
-			Host2Mac_memcpy(hdr + 6, ether_addr, 6);
-			D(bug("to %08x%04x, type %04x", ReadAtariInt32(hdr), ReadAtariInt16(hdr + 4), ReadAtariInt16(hdr + 12)));
+			uint32 hdr = ReadInt32(wds + 2);
+			Host2Atari_memcpy(hdr + 6, ether_addr, 6);
+			D(bug("to %08x%04x, type %04x", ReadInt32(hdr), ReadInt16(hdr + 4), ReadInt16(hdr + 12)));
 
 			if (net_open) {
-					return ether_write(wds);
+				return ether_write(wds);
 			}
 			return noErr;
 		}
 
 		case kENetGetInfo: {	// Get device information/statistics
-			D(bug(" GetInfo buf %08x, size %d", ReadAtariInt32(pb + ePointer), ReadAtariInt16(pb + eBuffSize)));
+			D(bug(" GetInfo buf %08x, size %d", ReadInt32(pb + ePointer), ReadInt16(pb + eBuffSize)));
 
 			// Collect info (only ethernet address)
 			uint8 buf[18];
@@ -157,11 +152,11 @@ int16 EtherControl(uint32 pb, uint32 dce)
 			memcpy(buf, ether_addr, 6);
 
 			// Transfer info to supplied buffer
-			int16 size = ReadAtariInt16(pb + eBuffSize);
+			int16 size = ReadInt16(pb + eBuffSize);
 			if (size > 18)
 				size = 18;
-			WriteatariInt16(pb + eDataSize, size);	// Number of bytes actually written
-			Host2Mac_memcpy(ReadMacInt32(pb + ePointer), buf, size);
+			WriteInt16(pb + eDataSize, size);	// Number of bytes actually written
+			Host2Atari_memcpy(ReadInt32(pb + ePointer), buf, size);
 			return noErr;
 		}
 #if 0
@@ -175,16 +170,14 @@ int16 EtherControl(uint32 pb, uint32 dce)
 	}
 }
 
-
 /*
  *  Ethernet ReadPacket routine
  */
-
 void EtherReadPacket(uint8 **src, uint32 &dest, uint32 &len, uint32 &remaining)
 {
 	D(bug("EtherReadPacket src %p, dest %08x, len %08x, remaining %08x", *src, dest, len, remaining));
 	uint32 todo = len > remaining ? remaining : len;
-	Host2iAtari_memcpy(dest, *src, todo);
+	Host2Atari_memcpy(dest, *src, todo);
 	*src += todo;
 	dest += todo;
 	len -= todo;

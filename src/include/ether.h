@@ -68,10 +68,10 @@ static inline int ether_wds_to_buffer(uint32 wds, uint8 *p)
 {
 	int len = 0;
 	while (len < 1514) {
-		int w = ReadMacInt16(wds);
+		int w = ReadInt16(wds);
 		if (w == 0)
 			break;
-		Mac2Host_memcpy(p, ReadMacInt32(wds + 2), w);
+		Atari2Host_memcpy(p, ReadInt32(wds + 2), w);
 		len += w;
 		p += w;
 		wds += 6;

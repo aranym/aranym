@@ -9,6 +9,7 @@
   Using this I don't have problems here with TOS applications here.
   It needs to be started after the VDI initialization (e.g. from the
   desktop). There might be some code to initialize the VDI later in it.
+- AraEther made compilable. nearly no code chceck or test done.
 
  
 2002/04/21 - milan

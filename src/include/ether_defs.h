@@ -50,4 +50,17 @@ enum {	// EParamBlock struct
 	eMultiAddr = 28
 };
 
+
+enum {  // CntrlParam struct
+        csCode = 26,
+        csParam = 28
+};
+
+// Error codes
+enum {
+        noErr                   = 0,
+        controlErr              = -17,
+};
+
+
 #endif
