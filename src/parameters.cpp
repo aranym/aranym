@@ -300,6 +300,7 @@ void presave_ide() {
 #define DISK_CONFIG(Disk)	struct Config_Tag Disk ## _configs[] = {	\
 	{ "Path", String_Tag, bx_options.Disk.path, sizeof(bx_options.Disk.path)},	\
 	{ "Present", Bool_Tag, &bx_options.Disk.present},	\
+	{ "PartID", String_Tag, bx_options.Disk.partID, sizeof(bx_options.Disk.partID)},	\
 	{ "ByteSwap", Bool_Tag, &bx_options.Disk.byteswap},	\
 	{ "ReadOnly", Bool_Tag, &bx_options.Disk.readonly},	\
 	{ NULL , Error_Tag, NULL }	\
