@@ -1,0 +1,53 @@
+<HOW-TO>
+
+Compiling ARAnyM 0.8.0 beta 3 under Cygwin
+------------------------------------------
+
+You first need a working Cygwin env with gcc installed ( 
+http://www.cygwin.com ).
+
+You need a working libSDL before compiling ARAnyM
+
+SDL 1.2.5
+---------
+Download, and decompress SDL 1.2.5 sources ( http://www.libsdl.org ). 
+You can optionnaly also use opengl and directx headers provided there 
+and/or install nasm.
+$ ./configure --prefix=/usr && make && make install
+$ mv /usr/bin/sdl-config /usr/bin/sdl-config.bak
+To allow compiling ARAnyM using Cygwin and not Mingw.
+$ cp /usr/include/SDL/* /usr/include
+To workaround the fact that sdl-config is disabled.
+
+
+Now we can compile ARAnyM itself.
+
+ARAnyM 0.8.0 beta 3
+-------------------
+Download and decompress ARAnyM 0.8.0 beta 3 sources.
+$ cd src/Unix
+$ ./configure --disable-ethernet && make
+
+Replace the previous line by "$ ./autogen.sh --disable-ethernet && make" 
+if you pulled sources from CVS. You will need autoconf and automake for 
+this.
+
+If you wants to use ARAnyM as an unix app.
+$ make install
+$ cp /usr/lib/SDL.dll /usr/local/bin/SDL.dll
+
+Otherwise, just put
+- aranym.exe
+- SDL.dll
+- cygwin1.dll
+- aranym/font8.bmp
+in one location. You will also need an EmuTOS or TOS 4.04 image and a 
+config file. The easy way is to use aranym-0.8.0beta3-win.zip as a 
+template. Petr already did the hard work ;) .
+
+</HOW-TO>
+
+Hope this helps. Comments and bug-reports welcome.
+
+
+Xavier Joubert
