@@ -38,6 +38,7 @@ bool fullscreen = false;			// Boot in Fullscreen
 int8 boot_color_depth = -1;	// Boot in color depth
 int8 monitor = -1;				// VGA
 extern uint32 TTRAMSize;		// TTRAM size
+int TTRAMSizeMB;
 bool direct_truecolor = false;
 bool grab_mouse = false;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
@@ -47,6 +48,7 @@ bx_options_t bx_options;
 // configuration file 
 struct Config_Tag global_conf[]={
 	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
+	{ "FastRAM", Int_Tag, &TTRAMSizeMB},
 	{ "DebugOnStart", Bool_Tag, &start_debug},
 	{ NULL , Error_Tag, NULL }
 };
@@ -73,7 +75,7 @@ void usage (int status) {
   printf ("\
 Options:
   -R, --rom NAME			 ROM file NAME\n\
-  -T, --ttram SIZE			 TT-RAM size\n\
+  -T, --ttram SIZE			 TT-RAM size (in MB)\n\
   -D, --debug				 start debugger\n\
   -f, --fullscreen			 start in fullscreen\n\
   -t, --direct_truecolor	 patch TOS to enable direct true color, implies -f -r 16\n\
@@ -252,7 +254,8 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				break;
 
 			case 'T':
-				TTRAMSize = atoi(optarg);
+				TTRAMSizeMB = atoi(optarg);
+				TTRAMSize = TTRAMSizeMB * 1024 * 1024;
 				break;
 
 			default:
@@ -291,11 +294,13 @@ static void decode_ini_file(FILE *f) {
 	fprintf(f, "Using config file: '%s'\n", rcfile);
 
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
+	TTRAMSize = TTRAMSizeMB * 1024 * 1024;
 	process_config(f, rcfile, diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, diskd_configs, "[IDE1]", true);
 }
 
 int save_settings(const char *fs) {
+	TTRAMSizeMB = TTRAMSize / 1024 / 1024;
 	update_config(fs,global_conf,"[GLOBAL]");
 	update_config(fs,diskc_configs,"[IDE0]");
 	update_config(fs,diskd_configs,"[IDE1]");
