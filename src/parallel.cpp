@@ -1,19 +1,25 @@
 /*
  * Parallel port emulation
  */
+#define LINUXia32	0
 
 #include "parallel.h"
+#if LINUXia32
 #include <asm/io.h>
 #include <sys/perm.h>
+#endif
+
 #define DEBUG 0
 #include "debug.h"
 
-#if 0
+#if LINUXia32
 #define outportb(a,b)	outb(b,a)
 #define inportb(a)	 inb(a)
+#define permission(a,b,c)	ioperm(a,b,c)
 #else
 #define outportb(a,b)	
 #define inportb(a)	 0
+#define permission(a,b,c)
 #endif
 
 Parallel::Parallel() 
@@ -23,7 +29,7 @@ Parallel::Parallel()
 	old_strobe = -1;
 	old_busy = -1;
 	// get the permission
-	/// ioperm(port,4,1);
+	permission(port,4,1);
 }
 
 inline void Parallel::set_ctrl(int x)
