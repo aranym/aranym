@@ -1837,10 +1837,10 @@ extern void incrementVirtualTimer(void);
 
 static void m68k_run_1 (void)
 {
+	uae_u32 opcode;
 	for (;;) {
-		uae_u32 opcode = GET_OPCODE;
-//fprintf(stderr, "%08lx", opcode);
-		(*cpufunctbl[opcode])(opcode);
+//		uae_u32 opcode = GET_OPCODE;
+//		(*cpufunctbl[opcode])(opcode);
 #ifdef FULL_HISTORY
 #ifdef NEED_TO_DEBUG_BADLY
 		history[lasthist] = regs;
@@ -1853,6 +1853,8 @@ static void m68k_run_1 (void)
 			if (++firsthist == MAX_HIST) firsthist = 0;
 		}
 #endif
+		opcode = GET_OPCODE;
+		(*cpufunctbl[opcode])(opcode);
 		if (regs.spcflags) {
 			if (do_specialties())
 				return;
@@ -2070,6 +2072,88 @@ setjmpagain:
     free(buffer);
     excep_env = excep_env_old;
 }
+
+#ifdef FULL_HISTORY
+void showDisasm(uaecptr addr) {
+	char *buffer = (char *)malloc(80 * sizeof(char));
+	strcpy(buffer, "");
+	char *sbuffer[7];
+	for (int i = 0; i < 7; i++) {
+		sbuffer[i] = (char *)malloc(80 * sizeof(char));
+		strcpy(sbuffer[i], "");
+	}
+	char *buff[5];
+	for (int i = 0; i < 5; i++) {
+		buff[i] = (char *)malloc(80 * sizeof(char));
+		strcpy(buff[i],"");
+	}
+	jmp_buf excep_env_old;
+	excep_env_old = excep_env;
+	uaecptr newpc = 0;
+	m68kpc_offset = addr - m68k_getpc ();
+	int prb = setjmp(excep_env);
+	if (prb != 0) {
+		bug("%s%s%s%s%s%s%s%s%s%s%s%s unknown address", sbuffer[0], buff[0],  buff[1],  buff[2], buff[3], buff[4], sbuffer[1], sbuffer[2], sbuffer[3], sbuffer[4], sbuffer[5], sbuffer[6]);
+		free(buffer);
+		for (int i = 0; i < 7; i++) free(sbuffer[i]);
+		for (int i = 0; i < 5; i++) free(buff[i]);
+		return;
+	}
+	char instrname[20],*ccpt;
+	int opwords;
+	uae_u32 opcode;
+	struct mnemolookup *lookup;
+	struct instr *dp;
+	sprintf(sbuffer[0], "%08lx: ", m68k_getpc () + m68kpc_offset);
+	for (opwords = 0; opwords < 5; opwords++) {
+		sprintf (buff[opwords], "%04x ", get_iword_1 (m68kpc_offset + opwords*2));
+	}
+	opcode = get_iword_1 (m68kpc_offset);
+	m68kpc_offset += 2;
+	if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
+		opcode = 0x4AFC;
+	}
+	dp = table68k + opcode;
+	for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
+		    ;
+	strcpy (instrname, lookup->name);
+	ccpt = strstr (instrname, "cc");
+	if (ccpt != 0) {
+		strncpy (ccpt, ccnames[dp->cc], 2);
+	}
+	sprintf (sbuffer[1], "%s", instrname);
+	switch (dp->size){
+		 case sz_byte: sprintf (sbuffer[2], ".B "); break;
+		 case sz_word: sprintf (sbuffer[2], ".W "); break;
+		 case sz_long: sprintf (sbuffer[2], ".L "); break;
+		 default: sprintf (sbuffer[2], "   "); break;
+	}
+
+	if (dp->suse) {
+		newpc = m68k_getpc () + m68kpc_offset;
+		newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, buffer);
+		sprintf(sbuffer[3], "%s", buffer);
+		strcpy(buffer,"");
+	}
+	if (dp->suse && dp->duse) sprintf (sbuffer[4], ",");
+	if (dp->duse) {
+		newpc = m68k_getpc () + m68kpc_offset;
+		newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
+		sprintf(sbuffer[5], "%s", buffer);
+	}
+	if (ccpt != 0) {
+		if (cctrue(dp->cc)) sprintf (sbuffer[6], " == %08lx (TRUE)", (unsigned long)newpc);
+			else sprintf (sbuffer[6], " == %08lx (FALSE)", (unsigned long)newpc);
+	} else if ((opcode & 0xff00) == 0x6100) /* BSR */
+		sprintf (sbuffer[6], " == %08lx", (unsigned long)newpc);
+	
+	bug("%s%s%s%s%s%s%s%s%s%s%s%s", sbuffer[0], buff[0], buff[1], buff[2], buff[3],  buff[4], sbuffer[1], sbuffer[2], sbuffer[3], sbuffer[4], sbuffer[5], sbuffer[6]);
+	free(buffer);
+	for (int i = 0; i < 7; i++) free(sbuffer[i]);
+	for (int i = 0; i < 5; i++) free(buff[i]);
+	excep_env = excep_env_old;
+}
+#endif
 #endif
 
 void m68k_dumpstate (uaecptr *nextpc)

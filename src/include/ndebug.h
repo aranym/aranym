@@ -135,6 +135,9 @@ public:
   static void run();
   static void init();
   static void nexit();
+#ifdef FULL_HISTORY
+  static void showHistory(unsigned int);
+#endif
 };
 #endif
 

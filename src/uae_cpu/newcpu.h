@@ -204,6 +204,7 @@ extern void m68k_go (int);
 extern void m68k_dumpstate (uaecptr *);
 extern void m68k_disasm (uaecptr, uaecptr *, int);
 extern void newm68k_disasm(FILE *, uaecptr, uaecptr *, unsigned int);
+extern void showDisasm(uaecptr);
 extern void m68k_reset (void);
 extern void m68k_enter_debugger(void);
 

@@ -1,3 +1,9 @@
+2001/10/26 - milan
+- support for instruction history now also in ndebug
+
+- small change in m68k_run_1
+
+
 2001/10/25 - joy
 - when the aranym catches segmentation fault it releases mouse and keyboard
   and shows last 20 instructions prior the segfaulting instruction (only

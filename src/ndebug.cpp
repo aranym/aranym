@@ -86,6 +86,9 @@ static char *strhelp[] = {"Help:\n",
 	" j | J                browse up\n",
 	" k | K                browse down\n",
 	" r                    refresh D(bug()) | reset aktual row\n",
+#ifdef FULL_HISTORY
+	" H <lines>            show history of PC",
+#endif
 	NULL
 };
 
@@ -679,6 +682,13 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr &nextpc, uaecptr &nxdis, uae
 			set_special(SPCFLAG_BRK);
 			if (wasGrabbed) grabMouse(true);
 			return 0;
+#ifdef FULL_HISTORY
+		case 'H':
+			if (!more_params(&inptr)) count = 10;
+				else count = readhex(&inptr);
+			showHistory(count);
+			break;
+#endif
 		case 'q':
 			tp = 0;
 			break;
@@ -1043,10 +1053,29 @@ void ndebug::convertNo(char **s) {
 	bug("%d 0x%X 0%o %s", val, val, val, dectobin(val));
 }
 
+#ifdef FULL_HISTORY
+void ndebug::showHistory(unsigned int count) {
+	unsigned int temp = lasthist;
+	
+	while (count-- > 0 && temp != firsthist) {
+	    if (temp == 0) temp = MAX_HIST-1; else temp--;
+	}
+	bug("History:");
+	while (temp != lasthist) {
+		showDisasm(history[temp]);
+		//bug("%04x", history[temp]);
+		if (++temp == MAX_HIST) temp = 0;
+	}
+}
+#endif
+
 #endif
 
 /*
  * $Log$
+ * Revision 1.3  2001/10/03 11:10:03  milan
+ * Px supports now P5 <addr>, PC=<addr>
+ *
  * Revision 1.2  2001/10/02 19:13:28  milan
  * ndebug, malloc
  *
