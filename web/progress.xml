@@ -15,10 +15,10 @@
           <td>68882 FPU</td><td>100%</td>
         </tr>
         <tr valign="top">
-          <td>68040 MMU</td><td>85%</td>
+          <td>68040 MMU</td><td>95%</td>
         </tr>
         <tr valign="top">
-          <td>68040 JIT</td><td>40%</td>
+          <td>68040 JIT</td><td>70%</td>
         </tr>
 
         <tr valign="top"><td colspan="2">&nbsp;</td></tr>
@@ -75,7 +75,7 @@
           <td>CD-ROM</td><td>80% (data CD works 100%, music CD currently unsupported)</td>
         </tr>
         <tr valign="top">
-          <td>HostOS filepath to TOS partition assignment</td><td>93% (MetaDOS driver)</td>
+          <td>HostOS filepath to TOS partition assignment</td><td>97% (MetaDOS driver)</td>
         </tr>
         <tr valign="top">
           <td>HostOS fileaccess under MiNT </td><td>50% (XFS driver)</td>
@@ -89,7 +89,7 @@
           <td>Serial</td><td>0%</td>
         </tr>
         <tr valign="top">
-          <td>Parallel</td><td>60%</td>
+          <td>Parallel</td><td>70%</td>
         </tr>
         <tr valign="top">
           <td>MIDI</td><td>0%</td>

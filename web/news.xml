@@ -7,6 +7,14 @@
     <text>
       <table>
 
+        <tr><td valign="top">2002/04/11</td>
+            <td>
+              ARAnyM v0.1.5 has been released and is <a href="download.html">
+              available</a>. The list of changes is too long to be put here so
+              you may want to visit the CVS and read the
+              <a href="http://www.sophics.cz/cgi-bin/cvsweb/aranym/NEWS?rev=1&amp;content-type=text/x-cvsweb-markup">NEWS file</a> there.
+            </td>
+        </tr>
         <tr><td valign="top">2002/02/12</td>
             <td>
               Current ARAnyM (in CVS) runs FreeMiNT with <a href="snapshots.html">Memory Protection</a>.<br/>

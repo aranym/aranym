@@ -5,9 +5,10 @@
   <chapter>
     <title>Download</title>
     <text>
-      Please note that ARAnyM is not finished yet. It's a work in progress and the current
-      status is somewhere between alpha and beta. It may work but we can't guarantee 
-      anything. Better backup your data first.
+      Please note that ARAnyM is not finished yet. It's a work-in-progress and
+      the current status is about beta quality software. It may work (it does
+      work for us) but we can't guarantee anything. Better backup your
+      valuable data first.
       <p/>
       Regular releases (source, binary and disk images) are located
       <a href="http://sourceforge.net/project/showfiles.php?group_id=41106">here</a>.
@@ -15,7 +16,7 @@
       supported as the main development runs on Linux. The Windows version has some severe
       limitations so do not judge the Aranym by looking at the Windows port, please.
       <p/>
-      Debian users can fetch ARAnyM with apt from Debian Sid distribution. See 
+      Debian users can fetch ARAnyM with apt from Debian distribution. See 
       <a href="http://packages.debian.org/unstable/otherosfs/aranym.html">ARAnyM page in Debian</a>.
       <p/>
       Most up-to-date source code is available in the <a href="cvs.html">CVS</a>. You need
