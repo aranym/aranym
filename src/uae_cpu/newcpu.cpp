@@ -1212,7 +1212,7 @@ void m68k_emulop(uae_u32 opcode)
 	MakeFromSR();
 }
 
-void m68k_natfea_id(void)
+void m68k_natfeat_id(void)
 {
 	struct M68kRegisters r;
 	int i;
@@ -1236,7 +1236,7 @@ void m68k_natfea_id(void)
 	MakeFromSR();
 }
 
-void m68k_natfea_rcall(void)
+void m68k_natfeat_call(void)
 {
 	struct M68kRegisters r;
 	int i;
@@ -1251,7 +1251,7 @@ void m68k_natfea_rcall(void)
 
 	memptr stack = r.a[7] + 4;	/* skip return address */
 	bool isSupervisorMode = ((r.sr & 0x2000) == 0x2000);
-	r.d[0] = nf_rcall(stack, isSupervisorMode);
+	r.d[0] = nf_call(stack, isSupervisorMode);
 
 	for (i=0; i<8; i++) {
 		m68k_dreg(regs, i) = r.d[i];

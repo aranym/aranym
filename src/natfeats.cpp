@@ -39,12 +39,12 @@ uint32 nf_get_id(memptr stack)
 	return 0;		/* ID with given name not found */
 }
 
-uint32 nf_rcall(memptr stack, bool inSuper)
+uint32 nf_call(memptr stack, bool inSuper)
 {
 	uint32 fncode = ReadInt32(stack);
 	unsigned int idx = MASTERID2IDX(fncode);
 	if (idx >= nf_objs_cnt) {
-		D(bug("rcall: wrong ID %d", idx));
+		D(bug("nf_call: wrong ID %d", idx));
 		return 0;	/* FIXME: is this a good answer for wrong ID call? */
 	}
 
@@ -52,7 +52,7 @@ uint32 nf_rcall(memptr stack, bool inSuper)
 	context = stack + 4;	/* parameters follow on the stack */
 
 	pNatFeat obj = nf_objects[idx];
-	D(bug("nf_rcall(%s, %d)", obj->name(), fncode));
+	D(bug("nf_call(%s, %d)", obj->name(), fncode));
 
 	if (obj->isSuperOnly() && !inSuper) {
 		longjmp(excep_env, 8);	// privilege exception

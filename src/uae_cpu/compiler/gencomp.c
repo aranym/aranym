@@ -2828,8 +2828,8 @@ gen_opcode (unsigned long int opcode)
 	failure;
 	break;
      
-     case i_NATFEA_ID:
-     case i_NATFEA_RCALL:
+     case i_NATFEAT_ID:
+     case i_NATFEAT_CALL:
 	failure;
 	break;
 
