@@ -29,10 +29,6 @@
 #include "mon.h"
 #endif
 
-#ifdef ETHERNET_SUPPORT_OLD
-#include "ether.h"
-#endif
-
 #define DEBUG 0
 #include "debug.h"
 
@@ -76,12 +72,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			QuitEmulator();
 			break;
 		}
-
-		case M68K_EMUL_OP_SHUTDOWN:			// Quit emulator
-			break;
-
-		case M68K_EMUL_OP_RESET: 			// MacOS reset
-			break;
 
 		case M68K_EMUL_OP_VIDEO_OPEN:		// Video driver functions
 			panicbug("Obsolete VIDEO driver! Use NatFeat driver instead!\n");
@@ -170,29 +160,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			panicbug("Obsolete AUDIO driver! Use NatFeat driver instead!\n");
 			QuitEmulator();
 			break;
-
-
-#ifdef ETHERNET_SUPPORT_OLD
-		case M68K_EMUL_OP_ETHER_OPEN:           // Ethernet driver functions
-			r->d[0] = EtherOpen(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_ETHER_CONTROL:
-			r->d[0] = EtherControl(r->a[0], r->a[1]);
-			break;
-
-		case M68K_EMUL_OP_ETHER_READ_PACKET:
-			EtherReadPacket((uint8 **)&r->a[0], r->a[3], r->d[3], r->d[1]);
-			break;
-
-		case M68K_EMUL_OP_IRQ:                  // Level 1 interrupt
-			r->d[0] = 0;
-			if (InterruptFlags & INTFLAG_ETHER) {
-				ClearInterruptFlag(INTFLAG_ETHER);
-				EtherInterrupt();
-			}
-			break;
-#endif
 
 		default:
 			printf("FATAL: EMUL_OP called with bogus opcode %08x\n", opcode);

@@ -2,7 +2,11 @@
 - natfeat/ece.cpp: after removing hostScreen.lock and one unfortunate D(bug)
   it started working. Wonderful. TODO: change interrupt (probably to INT3).
   Also would be good if root privileges for tuntap weren't necessary.
-- araeth -> eth conversion done
+
+- "araeth" -> "eth" rename
+
+- ETHERNET_OLD (the one from Basilisk) removed completely
+
 
 
 2003/02/20 - joy
