@@ -236,6 +236,28 @@ during boot process. Valid values are:
 Note: Remember that VIDEL emulation is not usable for serious work 
       in GEM and you can never reach full Aranym power when using it!
 
+- Autozoom:
+
+In the aranym config file, you can also choose to enable the 'autozoom'
+feature. It allows Aranym to zoom/strech the atari screen to fit the size
+of the host screen. This is specially useful on Linux with vesafb, which is
+not resizable.
+
+Examples for a 320x200 atari screen on a 1024x768 host screen:
+  autozoom=no:
+    The atari screen is centered on the host screen.
+    (zoomcoefx=320/320=1, zoomcoefy=200/200=1)
+  autozoom=yes,autozoominteger=no:
+    The atari screen is zoomed to 1024x768. Not all atari pixels look
+    the same, due to the non-integer zooming coefficients. (Some are 3
+    pixels wide, others are 4 pixels wide).
+    (zoomcoefx=1024/320=3.2, zoomcoefy=768/200=3.84)
+  autozoom=yes,autozoominteger=yes:
+    The atari screen is zoomed to 960x600, centered on the host screen.
+    All atari pixels look the same, due to integer zooming coefficients.
+    (zoomcoefx=int(1024/320)=3, zoomcoefy=int(768/200)=3)
+    Note: autozoominteger is automatically disabled if the atari screen
+    is bigger than the host screen.
 
 4.2.2. Direct Truecolor (experimental, obsolete)
 ------------------------------------------------
@@ -312,7 +334,8 @@ more informations.
 
   It is now possible to render the Atari screen using OpenGL. In the [OPENGL]
 section of the config file, you can choose width, height and bpp of the OpenGL
-screen. The Atari screen will be zoomed/stretched accordingly.
+screen. The Atari screen will be zoomed/stretched accordingly. You can also
+disable/enable linear filtering for the atari screen.
 
 
 5. Sound

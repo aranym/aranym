@@ -38,10 +38,10 @@ VidelRefresh = 2
 ; set the connected monitor (-1 = don't change NVRAM setting)
 VidelMonitor = -1
 
-; Undocumented
+; Automatically resize the atari screen to the host screen size
 AutoZoom = No
 
-; Undocumented
+; Use integer coefficients to resize the atari screen
 AutoZoomInteger = No
 
 
@@ -101,3 +101,20 @@ TuneAlignment = Yes
 
 ; enable better version of NOP alignment (if NOP alignment is enabled)
 TuneNOPfill = Yes
+
+[OPENGL]
+; Enable OpenGL rendering for the atari screen
+;  (Aranym must be compiled with OpenGL support)
+Enabled = No
+
+; Width of the host OpenGL screen
+Width = 640
+
+; Height of the host OpenGL screen
+Height = 480
+
+; Bpp of the host OpenGL screen
+Bpp = 16
+
+; Use linear filtering on the atari screen
+Filtered = No

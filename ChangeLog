@@ -1,3 +1,8 @@
+2003/04/08 - patrice
+- Document autozoom in the [VIDEL] section, and [OPENGL] section, in
+  documentation.txt and aranymrc.example
+
+
 2003/04/08 - joy
 - cfgopts: Thomas correctly suggested to use memmove() for overlapping
   blocks of memory.
