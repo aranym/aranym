@@ -42,7 +42,16 @@ inline void VIDEL::renderScreen() {
 }
 
 inline void VIDEL::setRendering( bool render ) {
+	bool tempRender = doRender; // FIXME
+
 	doRender = render;
+
+	// STanda: FIXME!!! HACK.... the SDL thread safety problem: VIDEL runs in different thread than fVDIDrv.
+	// Either needs to be synchronized or all SDL calls should go from a single thread!!!
+	if (doRender == tempRender)
+		return;
+	SDL_Delay(250);
+	// FIXME: HACK
 }
 
 
@@ -51,6 +60,9 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.13  2001/11/07 21:18:25  milan
+ * SDL_CFLAGS in CXXFLAGS now.
+ *
  * Revision 1.12  2001/11/04 23:17:08  standa
  * 8bit destination surface support in VIDEL. Blit routine optimalization.
  * Bugfix in compatibility modes palette copying.
