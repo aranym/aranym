@@ -97,7 +97,7 @@ using namespace std;
 // Taken from glibc 2.2.x: ieee754.h
 
 // IEEE-754 float format
-union fpu_single_shape {
+union fp_single_shape {
 	
 	fpu_single value;
 
@@ -133,7 +133,7 @@ union fpu_single_shape {
 };
 
 // IEEE-754 double format
-union fpu_double_shape {
+union fp_double_shape {
 	fpu_double value;
 	
 	/* This is the IEEE 754 double-precision format.  */
@@ -199,7 +199,7 @@ union fpu_double_shape {
 
 #ifndef USE_QUAD_DOUBLE
 // IEEE-854 long double format
-union fpu_extended_shape {
+union fp_extended_shape {
 	fpu_extended value;
 	
 	/* This is the IEEE 854 double-extended-precision format.  */
@@ -277,7 +277,7 @@ union fpu_extended_shape {
 };
 #else
 // IEEE-854 quad double format
-union fpu_extended_shape {
+union fp_extended_shape {
 	fpu_extended value;
 	
 	/* This is the IEEE 854 quad-precision format.  */
