@@ -76,7 +76,7 @@ CdromDriverSdl::~CdromDriverSdl()
 
 void CdromDriverSdl::ScanDrives()
 {
-	int i, first_char;
+	int i;
 
 	D(bug(NFCD_NAME "ScanDrives()"));
 
@@ -138,12 +138,17 @@ void CdromDriverSdl::CloseDrive(int drive)
 
 int32 CdromDriverSdl::cd_read(memptr device, memptr buffer, uint32 first, uint32 length)
 {
+	DUNUSED(device);
+	DUNUSED(buffer);
+	DUNUSED(first);
+	DUNUSED(length);
 	/* No CD-ROM support using SDL functions */
 	return EINVFN;
 }
 
 int32 CdromDriverSdl::cd_status(memptr device, memptr ext_status)
 {
+	DUNUSED(ext_status);
 	int drive, mediachanged;
 	CDstatus status;
 
@@ -353,6 +358,7 @@ int32 CdromDriverSdl::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 
 int32 CdromDriverSdl::cd_startaudio(memptr device, uint32 dummy, memptr buffer)
 {
+	DUNUSED(dummy);
 	int drive, errorcode;
 	metados_bos_tracks_t	*atari_track_index;
 
@@ -394,6 +400,7 @@ int32 CdromDriverSdl::cd_stopaudio(memptr device)
 
 int32 CdromDriverSdl::cd_setsongtime(memptr device, uint32 dummy, uint32 start_msf, uint32 end_msf)
 {
+	DUNUSED(dummy);
 	int drive, errorcode, start, length;
 
 	D(bug(NFCD_NAME "SetSongTime()"));
@@ -417,6 +424,7 @@ int32 CdromDriverSdl::cd_setsongtime(memptr device, uint32 dummy, uint32 start_m
 
 int32 CdromDriverSdl::cd_gettoc(memptr device, uint32 dummy, memptr buffer)
 {
+	DUNUSED(dummy);
 	int drive, i;
 	SDL_CD	*cur_cd;
 	atari_tocentry_t *atari_tocentry;
