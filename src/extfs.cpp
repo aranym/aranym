@@ -1792,6 +1792,10 @@ int32 ExtFs::Fsnext_emu( LogicalDev *ldp, char *pathName, ExtDta *dta )
 {
 	D(bug("MetaDOS: Fsnext (%s,%s)", pathName, fs_pathName[ dta->ds_index ]));
 
+	if ( ! fs_pathName[ dta->ds_index ] )
+       		// if the mask didn't contain wildcads then the path is NULL
+		return TOS_ENMFIL;
+	
 	int32 result = findFirst( dta, fs_pathName[ dta->ds_index ] );
 	if ( result != TOS_E_OK ) {
 		closedir( dta->ds_dirh );
@@ -2598,6 +2602,12 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.43  2002/04/17 15:48:02  standa
+ * The DP_* constant definitions for MiNTLib removed. These are really to be
+ * placed into the mintlib header files. For ARAnyM there should exist some
+ * copy of these defines and probably prefixed by e.g. TOS_ prefix?
+ * This is planned to be done in the future.
+ *
  * Revision 1.42  2002/04/17 15:44:17  standa
  * Patrice Mandin <pmandin@caramail.com> & STanda FreeMiNT compilation support
  * patch.

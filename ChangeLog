@@ -1,3 +1,15 @@
+2002/04/18 - STanda
+- ExtFs bug in Fsnext fixed. If the path for Fsfirst doesn't contain
+  wildcards then many applications don't call the Fsnext. We need an
+  array of paths for mutiple Fsfirst/Fsnext called with a different
+  DTA buffer pointer. We also need to free the paths if they are not
+  used any more (Fsnext with -49 or Fsfirst without wildcards and 0).
+  If the path was freed from the array then we return -49 from Fsnext
+  now.
+  This fix causes LZHSHELL.APP be able to extract an archive to the
+  MetaDOS driven filesystem.
+
+
 2002/04/13 - joy
 - AranymFS: we can't rely on error codes returned by hostfs functions.
   For example TOS Fcreate() returns -34 if the path to file does not exist.
