@@ -374,6 +374,9 @@ check_atc:
 		atc_index = -1;
 	}
 
+	if (test)
+		goto table_search;
+
 	if (atc_index != -1)	{
 atc_matched:
 
@@ -476,8 +479,10 @@ table_search:
 	root_des_addr = (root_ptr & MMU_ROOT_PTR_ADDR_MASK) | (ri << 2);
 
 #if DBG_MMU_SANITY
-	if (!phys_valid_address(root_des_addr, false, 4))
+	if (!phys_valid_address(root_des_addr, false, 4)) {
+		regs.mmusr = MMU_MMUSR_B;
 		goto bus_err;
+	}
 #endif
 	
 	root_des = phys_get_long(root_des_addr);
@@ -507,8 +512,10 @@ table_search:
 	
 	ptr_des_addr = (root_des & MMU_ROOT_PTR_ADDR_MASK) | (pi << 2);
 #if DBG_MMU_SANITY
-	if (!phys_valid_address(ptr_des_addr, false, 4))
+	if (!phys_valid_address(ptr_des_addr, false, 4)) {
+		regs.mmusr = MMU_MMUSR_B;
 		goto bus_err;
+	}
 #endif
 	
 	ptr_des = phys_get_long(ptr_des_addr);
@@ -539,8 +546,10 @@ table_search:
 	
 get_page_descriptor:
 #if DBG_MMU_SANITY
-	if (!phys_valid_address(page_des_addr, false, 4))
+	if (!phys_valid_address(page_des_addr, false, 4)) {
+		regs.mmusr = MMU_MMUSR_B;
 		goto bus_err;
+	}
 #endif
 	
 	page_des = phys_get_long(page_des_addr);
@@ -639,15 +648,12 @@ bus_err:
 	regs.mmu_ssw = ssw;
 
 	if (test)
-		regs.mmusr |= MMU_MMUSR_B;
+		return 0;
 	
 	D(bug("BUS ERROR: fc=%d w=%d log=%08x ssw=%04x fslw=%08x", fc, write, theaddr, ssw, fslw));
 
-	if ((test & MMU_TEST_NO_BUSERR) == 0)	{
-//		Exception(2, pc);
-		LONGJMP(excep_env, 2);
-	}
-	return 0;
+//	Exception(2, pc);
+	LONGJMP(excep_env, 2);
 
 make_non_resident_atc:
 #if DBG_MMU_VERBOSE
