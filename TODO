@@ -77,9 +77,12 @@ Things for 1.0 release:
 
 + mouse pointer shared between X-Windows and aranym (like in vmware)
 
-+ [75%] fVDI working (TOS+aranym drivers)
++ [50%] fVDI working (TOS+aranym drivers)
     - reorganize the loop nesting (performance) in HostScreen::gfxXXX methods.
     - add support for other than 16bit host color depth surfaces
+        - this requires quite large hacks with blitting and expanding
+          (only 2 bytes per pixel works now and moreover no shadow buffer is used
+          which probably will be needed in the future)
 
 - .xfs filesystem modules for MagiC and MiNT that uses the VFS (virtual
   filesystem portable library) to access any disc (or network drive).

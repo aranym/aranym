@@ -376,6 +376,7 @@ void FVDIDriver::setColor( uint32 paletteIndex, uint32 color ) {
  * } Mouse;
  **/
 extern "C" {
+#if 0
 	static void flushVideo( uint32 videoRam ) {
 		if (!hostScreen.renderBegin())
 			return;
@@ -387,7 +388,7 @@ extern "C" {
 				put_word( videoRam + j*2 + i*hostScreen.getWidth()*2 , dataWord );
 			}
 		hostScreen.renderEnd();
-//		videl.renderScreenNoFlag();
+		//videl.renderScreenNoFlag();
 	}
 	static void unflushVideo( uint32 videoRam ) {
 		if (!hostScreen.renderBegin())
@@ -400,8 +401,10 @@ extern "C" {
 				hostScreen.putPixel(j,i,dataWord);
 			}
 		hostScreen.renderEnd();
-//		videl.renderScreenNoFlag();
+		//videl.renderScreenNoFlag();
 	}
+#endif
+#if DEBUG > 0
 	static void getBinary( uint16 data, char *buffer ) {
 		for( uint16 i=0; i<=15; i++ ) {
 			buffer[i] = (data & 1)?'1':' ';
@@ -409,6 +412,7 @@ extern "C" {
 		}
 		buffer[16]='\0';
 	}
+#endif
 	static uint16 reverse_bits( uint16 data ) {
 		uint16 res = 0;
 		for( uint16 i=0; i<=15; i++ )
@@ -568,19 +572,58 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
 	uint32 data  = get_long( (uint32)src, true ) + sy*pitch; // MFDB *src->address;
 
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, get_word( (uint32)src + MFDB_BITPLANES, true )));
-
-	if ( dest != NULL && // no MFDB structure
-		 get_long( (uint32)dest, true ) != 0 && // mfdb->address == 0 => screen
-		 get_long( (uint32)dest, true ) != get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true ) )
-		// mfdb->address = videoramstart
-		return 1; // FIXME this is the blitToMemory NOT IMPLEMENTED YET!
+	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", get_long( (uint32)dest, true ), get_word( (uint32)dest + MFDB_WDWIDTH, true ) * (get_word( (uint32)dest + MFDB_BITPLANES, true )>>2), get_word( (uint32)dest + MFDB_BITPLANES, true )));
 
 	fgColor = hostScreen.getPaletteColor( fgColor );
 	bgColor = hostScreen.getPaletteColor( bgColor );
 
+	if ( dest != NULL && // no MFDB structure
+		 get_long( (uint32)dest, true ) != 0 && // mfdb->address == 0 => screen
+		 get_long( (uint32)dest, true ) != get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true ) ) {
+		// mfdb->address = videoramstart
+
+		D2(bug("fVDI: expandArea M->M NOT TESTED!!!"));
+
+		uint16 destPitch = get_word( (uint32)dest + MFDB_WDWIDTH, true ) * get_word( (uint32)dest + MFDB_BITPLANES, true ) << 1; // MFDB *dest->pitch
+		uint32 destAddress = get_long( (uint32)dest, true );
+
+		for( uint16 j=0; j<h; j++ ) {
+			D2(fprintf(stderr,"fVDI: bmp:"));
+
+			uint16 theWord = get_word(data + j*pitch + ((sx>>3)&0xfffe), true);
+			for( uint16 i=sx; i<sx+w; i++ ) {
+				if ( i % 16 == 0 )
+					theWord = get_word(data + j*pitch + ((i>>3)&0xfffe), true);
+
+				D2(fprintf(stderr,"%s", ((theWord >> (15-(i&0xf))) & 1) ? "1" : " " ));
+				switch( logOp ) {
+					case 1:
+						put_word(destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, ((theWord >> (15-(i&0xf))) & 1) ? fgColor : bgColor );
+						break;
+					case 2:
+						if ((theWord >> (15-(i&0xf))) & 1)
+							put_word(destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, fgColor );
+						break;
+					case 3:
+						if ((theWord >> (15-(i&0xf))) & 1)
+							put_word(destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, ~ get_word(destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, true ) );
+						break;
+					case 4:
+						if ( !((theWord >> (15-(i&0xf))) & 1) )
+							put_word(destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, fgColor );
+						break;
+				}
+			}
+			D2(bug("")); //newline
+		}
+
+		return 1;
+	}
+
 	if (!hostScreen.renderBegin())
 		return 1;
 
+	D2(bug("fVDI: expandArea M->S"));
 	for( uint16 j=0; j<h; j++ ) {
 		D2(fprintf(stderr,"fVDI: bmp:"));
 
@@ -702,17 +745,96 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 
 	uint32 screenMFDBAddr = get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS;
 	uint16 screenBpp = get_word( screenMFDBAddr + MFDB_BITPLANES, true );
-	uint16 screenPitch = get_word( screenMFDBAddr + MFDB_WDWIDTH, true ) * screenBpp << 1;
 	uint32 videoRam = get_long( screenMFDBAddr, true );
 
+	#if DEBUG > 0
+		uint16 screenPitch = get_word( screenMFDBAddr + MFDB_WDWIDTH, true ) * screenBpp << 1;
+	#endif
 	D(bug("fVDI: screen args: address %x, pitch %d, bpp %d", videoRam, screenPitch, screenBpp));
 
-	if ( src != NULL && get_long( (uint32)src, true ) != 0 && get_long( (uint32)src, true ) != videoRam ) {
+	bool toMemory = ( dest != NULL && get_long( (uint32)dest, true ) != 0 && get_long( (uint32)dest, true ) != videoRam );
+
+	if ( src != NULL && get_long( (uint32)src, true ) != 0 && get_long( (uint32)src, true ) != videoRam ) { // fromMemory
 
 		uint16 bpp   = get_word( (uint32)src + MFDB_BITPLANES, true ); // MFDB *src->bitplanes
 		uint16 pitch = get_word( (uint32)src + MFDB_WDWIDTH, true ) * bpp << 1; // MFDB *src->pitch
-		uint16 *data = (uint16*)get_real_address_direct( get_long( (uint32)src, true ) + sy*pitch ); // MFDB *src->address host OS address
-		D(bug("fVDI: blitArea from memory: address %x, pitch %d, bpp %d", data, pitch, bpp));
+		uint16 *data = (uint16*)(get_long( (uint32)src, true ) + sy*pitch); // MFDB *src->address host OS address
+		D(bug("fVDI: blitArea M->: address %x, pitch %d, bpp %d", data, pitch, bpp));
+
+		if ( toMemory ) {
+			// the destBpp is always the same?
+			uint16 destPitch = get_word( (uint32)dest + MFDB_WDWIDTH, true ) * bpp << 1; // MFDB *dest->pitch
+			uint32 destAddress = get_long( (uint32)dest, true );
+
+			if ( bpp < 16 ) {
+				D(bug("fVDI: blitArea M->M: NOT TESTED bitplaneToCunky conversion"));
+				return 1;
+			}
+
+			D(bug("fVDI: blitArea M->M"));
+
+			for( uint16 j=0; j<h; j++ )
+				for( uint16 i=sx; i<sx+w; i++ ) {
+					uint16 dataWord = get_word((uint32)data + j*pitch + ((i*bpp)>>2), true);
+					//uint16 dataWord = *(uint16*)((uint32)data + j*pitch + ((i*bpp)>>3));
+					//dataWord = (dataWord >> 8) | ((dataWord & 0xff) << 8); // byte swap
+
+					uint16 destData = get_word( destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, true );
+					switch(logOp) {
+						case 0:
+							destData = 0;
+							break;
+						case 1:
+							destData = dataWord & destData;
+							break;
+						case 2:
+							destData = dataWord & ~destData;
+							break;
+						case 3:
+							destData = dataWord;
+							break;
+						case 4:
+							destData = ~dataWord & destData;
+							break;
+						case 5:
+							destData = destData;
+							break;
+						case 6:
+							destData = dataWord ^ destData;
+							break;
+						case 7:
+							destData = dataWord | destData;
+							break;
+						case 8:
+							destData = ~(dataWord | destData);
+							break;
+						case 9:
+							destData = ~(dataWord ^ destData);
+							break;
+						case 10:
+							destData = ~destData;
+							break;
+						case 11:
+							destData = dataWord | ~destData;
+							break;
+						case 12:
+							destData = ~dataWord;
+							break;
+						case 13:
+							destData = ~dataWord | destData;
+							break;
+						case 14:
+							destData = ~(dataWord & destData);
+							break;
+						case 15:
+							destData = 0xffff;
+							break;
+					}
+					put_word( destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, destData );
+				}
+
+			return 1;
+		}
 
 		if (!hostScreen.renderBegin())
 			return 1;
@@ -721,7 +843,7 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 			uint8 color[16];
 
 			/// FIXME FIXME FIXME !!!
-			D(bug("fVDI: blitArea from memory NOT TESTED bitplaneToCunky conversion"));
+			D(bug("fVDI: blitArea M->S: NOT TESTED bitplaneToCunky conversion"));
 
 			for( uint16 j=0; j<h; j++ ) {
 				uint32 wordIndex = j*pitch + ((sx>>3)&0xfffe);
@@ -738,10 +860,13 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 				}
 			}
 		} else {
+			D(bug("fVDI: blitArea M->S"));
+
 			for( uint16 j=0; j<h; j++ )
 				for( uint16 i=sx; i<sx+w; i++ ) {
-					uint16 dataWord = *(uint16*)((uint32)data + j*pitch + ((i*bpp)>>3));
-					dataWord = (dataWord >> 8) | ((dataWord & 0xff) << 8); // byte swap
+					uint16 dataWord = get_word((uint32)data + j*pitch + ((i*bpp)>>3), true);
+					// uint16 dataWord = *(uint16*)((uint32)data + j*pitch + ((i*bpp)>>3));
+					// dataWord = (dataWord >> 8) | ((dataWord & 0xff) << 8); // byte swap
 
 					//uint16 destData = get_word( videoRam + (dx+i-sx)*2 + (dy+j)*screenPitch, true );
 					uint32 destData = hostScreen.getPixel( dx + i - sx, dy + j );
@@ -806,18 +931,18 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 		return 1;
 	}
 
-	if ( dest != NULL && get_long( (uint32)dest, true ) != 0 && get_long( (uint32)dest, true ) != videoRam ) {
-		D(bug("fVDI: blitArea screen to memory NOT IMPLEMENTED"));
+	if ( toMemory ) {
+		D(bug("fVDI: blitArea S->M"));
 
 		uint16  bpp = screenBpp;
-		uint16  pitch = screenPitch;
-		uint16* data = (uint16*)videoRam + sy*pitch;
+		//uint16  pitch = screenPitch;
+		//uint16* data = (uint16*)videoRam + sy*pitch;
 
 		uint16 destPitch = get_word( (uint32)dest + MFDB_WDWIDTH, true ) * bpp << 1; // MFDB *dest->pitch
 		uint32 destAddress = get_long( (uint32)dest, true );
 
 		if ( bpp < 16 ) {
-			D(bug("fVDI: blitArea to memory bitplane conversion NOT IMPLEMENTED"));
+			D(bug("fVDI: blitArea ->M: bitplane conversion NOT IMPLEMENTED"));
 		} else {
 			for( uint16 j=0; j<h; j++ )
 				for( uint16 i=sx; i<sx+w; i++ ) {
@@ -881,7 +1006,7 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 		return 1;
 	}
 
-	D(bug("fVDI: %s ", "blitArea - screen blit!" ));
+	D(bug("fVDI: %s ", "blitArea - S->S!" ));
 
 	// if (!hostScreen.renderBegin()) // the surface must _not_ be locked for blitArea (SDL_BlitSurface)
 	//		return 1;
@@ -957,6 +1082,9 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.15  2001/10/14 16:11:54  standa
+ * Syntax fix. STanda's calls to videl.renderNoFlag commented out.
+ *
  * Revision 1.14  2001/10/12 08:25:38  standa
  * The fVDI blitting fixed and extended. Now only the expandToMemory and
  * blit mem2mem is to be done.
