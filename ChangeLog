@@ -1,8 +1,15 @@
+2001/11/06 - joy
+- TOS was patched with WinX by a mistake. Fixed. GEMRAM 1.0 from Aratools
+  does not work correctly as the ROM area is not writeable. Use real GEMRAM
+  instead.
+
+
 2001/11/05 - STanda
 - VIDEL: Since now we are using 8bit SDL surface for all VIDEL depths
   less than 16. The blitting routines were optimalized (the destBPP checks are
   done outside the main blit loop). The #define SUPPORT_MULTIPLEDESTBPP enabled
   to let support VIDEL definitely 8, 16, 24 and 32 bit destination depths.
+
 
 2001/11/02 - STanda
 - fVDI: The driver now normally initializes to 16bit when no mode option

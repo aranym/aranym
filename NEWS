@@ -1,3 +1,12 @@
+2001/11/06
+==========
+ TOS was patched with WinX by a mistake. Fixed. Now you'll need to install
+ real WinX 2.3 to your auto folder if you want to have the same functions.
+ GEMRAM 1.0 from the Aratools does not work. It actually didn't work for
+ a long time. Use the real GEMRAM (that copies ROM to RAM) instead if you
+ want to use WinX.
+
+
 2001/11/01
 ==========
 
