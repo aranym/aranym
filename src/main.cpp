@@ -1,7 +1,7 @@
 /*
  * main.cpp - startup/shutdown code
  *
- * Copyright (c) 2001-2003 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -583,4 +583,12 @@ void ExitAll(void)
 #endif
 
 	SDL_VideoQuit();
+}
+
+void RestartAll()
+{
+	// memory init
+	// HW init
+	InitOS();
+	Restart680x0();
 }

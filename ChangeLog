@@ -1,5 +1,10 @@
 2004/01/01 - joy
-- sdlgui/*: slowly making the GUI useful
+- sdlgui/dlgMain: adding more options
+
+- input.cpp, main.cpp,h: RestartAll() now reinitializes the OS (in future
+  it has to reinitialize also the memory and all hardware). Visible result
+  of this change is the possibility of loading another config file from GUI
+  in run-time and reboot with different OS (from TOS to AFROS, for example).
 
 
 2003/12/31 - joy

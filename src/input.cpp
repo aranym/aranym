@@ -26,6 +26,7 @@
 #include "input.h"
 #include "aradata.h"		// for getAtariMouseXY
 #include "host.h"			// for the HostScreen
+#include "main.h"			// for RestartAll()
 #include "ata.h"
 #ifdef SDL_GUI
 #  include "sdlgui.h"
@@ -353,7 +354,7 @@ int open_gui(void * /*ptr*/)
 	if (status == STATUS_SHUTDOWN)
 		pendingQuit = true;
 	else if (status == STATUS_REBOOT)
-		Restart680x0();
+		RestartAll();
 
 	hostScreen.closeGUI();
 	return 0;
@@ -406,7 +407,7 @@ void process_keyboard_event(SDL_Event event)
 			}
 			else if (controlled) {
 				send2Atari = false;
-				Restart680x0();	// force Cold Reboot
+				RestartAll();	// force Cold Reboot
 			}
 #ifdef DEBUGGER
 			else if (bx_options.startup.debugger && alternated) {
