@@ -25,6 +25,10 @@ AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history fo
 
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU [default=yes]], [WANT_MMU=$enableval], [WANT_MMU=yes])
 
+AC_ARG_ENABLE(directcolor,     [  --enable-directcolor    enable TOS direct truecolor [default=no]], [WANT_DIRECTCOLOR=$enableval], [WANT_DIRECTCOLOR=no])
+
+AC_ARG_ENABLE(boundaryarray,   [  --enable-boundaryarray  enable different memory boundary check [default=no]], [WANT_BOUNDARYBYARRAY=$enableval], [WANT_BOUNDARYBYARRAY=no])
+
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
 [  --enable-fpe=which      specify which fpu emulator to use [default=opt]],
@@ -446,6 +450,16 @@ if [[ "x$WANT_MMU" = "xyes" ]]; then
     AC_DEFINE(FULLMMU)
 fi
 
+dnl Direct Truecolor
+if [[ "x$WANT_DIRECTCOLOR" = "xyes" ]]; then
+    AC_DEFINE(DIRECT_TRUECOLOR)
+fi
+
+dnl Boundary by Array check
+if [[ "x$WANT_BOUNDARYBYARRAY" = "xyes" ]]; then
+    AC_DEFINE(CHECK_BOUNDARY_BY_ARRAY)
+fi
+
 dnl Determine the addressing mode to use
 if [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
   ADDRESSING_MODE="real"
@@ -672,6 +686,8 @@ echo Full MMU support ................. : $WANT_MMU
 echo Debugger ......................... : $WHICH_DEBUG
 echo Monitor .......................... : $WANT_MON
 echo Aranymrc confgui ................. : $WANT_TVCONFGUI
+echo TOS Direct Truecolor.............. : $WANT_DIRECTCOLOR
+echo Memory boundary by array check ... : $WANT_BOUNDARYBYARRAY
 
 echo
 echo "Configuration done. Now type \"make\" (or \"gmake\")."

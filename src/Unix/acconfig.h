@@ -41,6 +41,12 @@
 /* Define if using full MMU */
 #undef FULLMMU
 
+/* Define if you want direct truecolor output */
+#undef DIRECT_TRUECOLOR
+
+/* Define if you want to try out a different memory boundary check (maybe faster) */
+#undef CHECK_BOUNDARY_BY_ARRAY
+
 /* Define if you want TV conf GUI and have TV lib */
 #undef HAVE_TVISION
 
