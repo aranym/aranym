@@ -35,10 +35,10 @@ SDL_Timer works properly on Linux only, it seems. So for most other
 platforms (including Windows) you have to configure the build with
 --disable-sdltimer. Without SDL_Timer the keyboard does not have
 full control over the CPU run (sometimes you might not be able
-to e.g. quit). Also, the STOP instruction is not emulated propely
+to e.g. quit). Also, the STOP instruction is not emulated properly
 in such case, IMHO.
 
-There are three different FPU emulators in ARAnyM, and only the IEEEE
+There are three different FPU emulators in ARAnyM, and only the IEEE
 version has full 68040 FPU instruction set. On non-Linux-i386 platforms
 the uae FPU emulation is used and so some 68040 specific FPU instructions
 are missing. This will be fixed eventually.
