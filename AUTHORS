@@ -38,6 +38,12 @@ Didier MEQUIGNON <didier.mequignon@wanadoo.fr>
 - audio support in ARAnyM
 - Atari XBIOS sound driver (atari/sound/*)
 
+Patrice Mandin
+- DSP M56001 emulation
+- the SDL-MiNT port of ARAnyM
+- close examination of our code and finding obvious and not-so-obvious
+  bugs (IDE, parameters handling, TOS patches)
+
 
 ARAnyM source code consists of several parts. Some were taken from other
 projects (in alphabetical order):
@@ -90,11 +96,6 @@ Gwenole Beauchesne (BasiliskII[-JIT])
 This is the list of people who have contributed to project
 
 Thanks go to :-
-
-Patrice Mandin
-- for close examination of our code and finding obvious and not-so-obvious
-  bugs (IDE, parameters handling, TOS patches)
-- for the MiNT port
 
 Francois LE COAT
 - for the Solaris port
