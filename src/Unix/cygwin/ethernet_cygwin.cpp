@@ -192,8 +192,7 @@ bool is_tap_win32_dev(const char *guid)
 
 				if (status == ERROR_SUCCESS && data_type == REG_SZ)
 				{
-					if (!strcmp (component_id, "tapdev")
-					    && !strcmp (net_cfg_instance_id, guid))
+					if (!strcmp (net_cfg_instance_id, guid))
 					{
 						RegCloseKey (unit_key);
 						RegCloseKey (netcard_key);
