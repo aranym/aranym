@@ -82,9 +82,9 @@ static const uint8 tos_colours[] = { 0,255,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
 inline uint32 FVDIDriver::getTosColor( uint16 colorIndex )
 {
 	if (hostScreen.getBpp() > 1) {
-		return hostScreen.getPaletteColor(colorIndex);
+		return hostScreen.getPaletteColor( toTosColors(colorIndex) );
 	} else {
-		return (uint8)toTosColors( colorIndex );
+		return (uint8)toTosColors(colorIndex);
 	}
 }
 
@@ -607,24 +607,18 @@ void FVDIDriver::setColor(uint32 paletteIndex, uint32 red, uint32 green, uint32 
 {
 	D(bug("fVDI: setColor: %03d (%03d) - %04d,%04d,%04d - %02x,%02x,%02x", paletteIndex, toTosColors(paletteIndex) & 0xff, red, green, blue, (uint8)((red * ((1L << 8) - 1) + 500L) / 1000), (uint8)((green * ((1L << 8) - 1) + 500L) / 1000), (uint8)((blue * ((1L << 8) - 1) + 500L) / 1000) ));
 
-	if (hostScreen.getBpp() > 2)
-		// 24 and 32bit graphics
-		hostScreen.setPaletteColor(paletteIndex,
-		                           (red * ((1L << 8) - 1) + 500L) / 1000,
-		                           (green * ((1L << 8) - 1) + 500L) / 1000,
-		                           (blue * ((1L << 8) - 1) + 500L) / 1000);
-	else if ( hostScreen.getBpp() > 1 )
-		// 5+6+5 rounding needed
-		hostScreen.setPaletteColor(paletteIndex,
-		                           ((red * ((1L << 5) - 1) + 500L) / 1000) << 3,
-		                           ((green * ((1L << 6) - 1) + 500L) / 1000) << 2,
-		                           ((blue * ((1L << 5) - 1) + 500L) / 1000) << 3);
-	else
-		// 8bit graphics
+	if (hostScreen.getBpp() != 2)
+		// <16bit, 24 and 32bit graphics
 		hostScreen.setPaletteColor(toTosColors(paletteIndex),
 		                           (red * ((1L << 8) - 1) + 500L) / 1000,
 		                           (green * ((1L << 8) - 1) + 500L) / 1000,
 		                           (blue * ((1L << 8) - 1) + 500L) / 1000);
+	else
+		// 5+6+5 rounding needed
+		hostScreen.setPaletteColor(toTosColors(paletteIndex),
+		                           ((red * ((1L << 5) - 1) + 500L) / 1000) << 3,
+		                           ((green * ((1L << 6) - 1) + 500L) / 1000) << 2,
+		                           ((blue * ((1L << 5) - 1) + 500L) / 1000) << 3);
 }
 
 
@@ -2137,6 +2131,10 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.49  2003/02/19 19:39:38  standa
+ * SDL surface is now in TOS colors internally for bitplane modes. This
+ * allows much simpler blits and expands.
+ *
  * Revision 1.48  2003/02/19 09:02:56  standa
  * The bitplane modes expandArea fix.
  *
