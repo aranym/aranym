@@ -1,5 +1,9 @@
+2002/07/20 - joy
+- saving/restoring screen background under SDL GUI fixed
+
 2002/07/20 - Patrice
 - Dsp: more bugfixes, see end of dsp_[cpu|disasm].cpp file for complete changelog
+
 
 2002/07/19 - joy
 - SDL GUI now stores background to another (cloned) surface. Also fVDI
