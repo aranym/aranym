@@ -2128,6 +2128,7 @@ static inline void raw_emit_nop_filler(int nbytes)
 	emit_block(f32_patt[nbytes - 1], nbytes);
 }
 
+
 /*************************************************************************
  * Flag handling, to and fro UAE flag register                           *
  *************************************************************************/
@@ -2215,6 +2216,21 @@ static inline void raw_load_flagx(uae_u32 target, uae_u32 r)
 	raw_mov_l_rm(target,(uae_u32)live.state[r].mem);
 }
 
+#define NATIVE_FLAG_Z 0x40
+static __inline__ void raw_flags_set_zero(int f, int r, int t)
+{
+	// FIXME: this is really suboptimal
+	raw_pushfl();
+	raw_pop_l_r(f);
+	raw_and_l_ri(f,~NATIVE_FLAG_Z);
+	raw_test_l_rr(r,r);
+	raw_mov_l_ri(r,0);
+	raw_mov_l_ri(t,NATIVE_FLAG_Z);
+	raw_cmov_l_rr(r,t,NATIVE_CC_EQ);
+	raw_or_l(f,r);
+	raw_push_l_r(f);
+	raw_popfl();
+}
 
 static inline void raw_inc_sp(int off)
 {
@@ -3018,11 +3034,36 @@ raw_init_cpu(void)
 	align_jumps = x86_alignments[c->x86_processor].align_jump;
   }
 
-  write_log("Max CPUID level=%d Processor is %s [%s]\n",
+  panicbug("<JIT compiler> : Max CPUID level=%d Processor is %s [%s]",
 			c->cpuid_level, c->x86_vendor_id,
 			x86_processor_string_table[c->x86_processor]);
 }
 
+static bool target_check_bsf(void)
+{
+	bool mismatch = false;
+	for (int g_ZF = 0; g_ZF <= 1; g_ZF++) {
+	for (int g_CF = 0; g_CF <= 1; g_CF++) {
+	for (int g_OF = 0; g_OF <= 1; g_OF++) {
+	for (int g_SF = 0; g_SF <= 1; g_SF++) {
+		for (int value = -1; value <= 1; value++) {
+			int flags = (g_SF << 7) | (g_OF << 11) | (g_ZF << 6) | g_CF;
+			int tmp = value;
+			__asm__ __volatile__ ("push %0; popf; bsf %1,%1; pushf; pop %0"
+								  : "+r" (flags), "+r" (tmp) : : "cc");
+			int OF = (flags >> 11) & 1;
+			int SF = (flags >>  7) & 1;
+			int ZF = (flags >>  6) & 1;
+			int CF = flags & 1;
+			tmp = (value == 0);
+			if (ZF != tmp || SF != g_SF || OF != g_OF || CF != g_CF)
+				mismatch = true;
+		}
+	}}}}
+	if (mismatch)
+		panicbug("<JIT compiler> : Target CPU defines all flags on BSF instruction");
+	return !mismatch;
+}
 
 /*************************************************************************
  * FPU stuff                                                             *

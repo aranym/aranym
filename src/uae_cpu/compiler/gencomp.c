@@ -97,15 +97,6 @@ static int noflags;
  * are done with that opcode.  */
 static int next_cpu_level;
 
-/* gb-- write_log already defined in sysdeps.h */
-#if 0
-void 
-write_log (const char *s,...)
-{
-    fprintf (stderr, "%s", s);
-}
-#endif
-
 static int *opcode_map;
 static int *opcode_next_clev;
 static int *opcode_last_postfix;
@@ -1132,11 +1123,12 @@ genflags (flagtypes type, wordsizes size, char *value, char *src, char *dst)
 			  "\t%s_l(%s,%s);\n",op,dst,src);
 		break;
 	    }
+	    comprintf("\tlive_flags();\n");
 	    comprintf("\tif (needed_flags&FLAG_Z) {\n"
 		      "\tcmov_l_rr(zero,one,5);\n"
-		      "\tbsf_l_rr(zero,zero);\n"
+		      "\tsetzflg_l(zero);\n"
+		      "\tlive_flags();\n"
 		      "\t}\n");
-	    comprintf("\tlive_flags();\n");
 	    comprintf("\tend_needflags();\n");
 	    duplicate_carry();
 	    comprintf("if (!(needed_flags & FLAG_CZNV)) dont_care_flags();\n");
@@ -1392,14 +1384,15 @@ gen_opcode (unsigned long int opcode)
 	     case i_BTST: op="bt"; need_write=0; break;
 	    }
 	    comprintf("\t%s_l_rr(dst,s);\n"  /* Answer now in C */
-		      "\tsbb_l(s,s);\n" /* s is 0 if bit was 0, 
-					   -1 otherwise */
-		      "\tmake_flags_live();\n" /* Get the flags back */
-		      "\tdont_care_flags();\n" 
-		      "\tstart_needflags();\n"
-		      "\tbsf_l_rr(s,s);\n"
-		      "\tlive_flags();\n"
-		      "\tend_needflags();\n",op);
+				  "\tsbb_l(s,s);\n" /* s is 0 if bit was 0, -1 otherwise */
+				  "\tmake_flags_live();\n" /* Get the flags back */
+				  "\tdont_care_flags();\n",op);
+		if (!noflags) {
+		  comprintf("\tstart_needflags();\n"
+					"\tsetzflg_l(s);\n"
+					"\tlive_flags();\n"
+					"\tend_needflags();\n");
+		}
 	    if (need_write) 
 		genastore ("dst", curi->dmode, "dstreg", curi->size, "dst");
 	}

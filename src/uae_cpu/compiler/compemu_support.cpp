@@ -133,6 +133,7 @@ static bool		avoid_fpu			= true;		// Flag: compile FPU instructions ?
 static bool		have_cmov			= false;	// target has CMOV instructions ?
 static bool		have_rat_stall		= true;		// target has partial register stalls ?
 static bool		tune_alignment		= true;		// Tune code alignments for running CPU ?
+static bool		setzflg_uses_bsf	= false;	// setzflg virtual instruction can use native BSF instruction correctly?
 static bool             tune_nop_fillers        = true;         // Tune no-op fillers for architecture
 static int		align_loops			= 32;		// Align the start of loops
 static int		align_jumps			= 32;		// Align the start of jumps
@@ -2680,16 +2681,30 @@ MIDFUNC(3,cmov_l_rm,(RW4 d, IMM s, IMM cc))
 }
 MENDFUNC(3,cmov_l_rm,(RW4 d, IMM s, IMM cc))
 
-MIDFUNC(2,bsf_l_rr,(W4 d, R4 s))
+MIDFUNC(1,setzflg_l,(RW4 r))
 {
-    CLOBBER_BSF;
-    s=readreg(s,4);
-    d=writereg(d,4);
-    raw_bsf_l_rr(d,s);
-    unlock2(s);
-    unlock2(d);
+	if (setzflg_uses_bsf) {
+		CLOBBER_BSF;
+		r=rmw(r,4,4);
+		raw_bsf_l_rr(r,r);
+		unlock2(r);
+	}
+	else {
+		Dif (live.flags_in_flags!=VALID) {
+			panicbug("setzflg() wanted flags in native flags, they are %d\n",
+					  live.flags_in_flags);
+			abort();
+		}
+		r=readreg(r,4);
+		int f=writereg(S11,4);
+		int t=writereg(S12,4);
+		raw_flags_set_zero(f,r,t);
+		unlock2(f);
+		unlock2(r);
+		unlock2(t);
+	}
 }
-MENDFUNC(2,bsf_l_rr,(W4 d, R4 s))
+MENDFUNC(1,setzflg_l,(RW4 r))
 
 MIDFUNC(2,imul_32_32,(RW4 d, R4 s))
 {
@@ -4671,6 +4686,7 @@ void compiler_init(void)
 	
 	// Initialize target CPU (check for features, e.g. CMOV, rat stalls)
 	raw_init_cpu();
+	setzflg_uses_bsf = target_check_bsf();
 	panicbug("<JIT compiler> : target processor has CMOV instructions : %s", have_cmov ? "yes" : "no");
 	panicbug("<JIT compiler> : target processor can suffer from partial register stalls : %s", have_rat_stall ? "yes" : "no");
 	panicbug("<JIT compiler> : alignment for loops, jumps are %d, %d", align_loops, align_jumps);
@@ -4986,6 +5002,9 @@ void freescratch(void)
 
 static void align_target(uae_u32 a)
 {
+	if (!a)
+		return;
+
 	if (tune_nop_fillers)
 		raw_emit_nop_filler(a - (((uae_u32)target) & (a - 1)));
 	else {

@@ -1064,7 +1064,7 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		ad=get_fp_ad (opcode, &ad);
 		if (ad<0) {
 		    m68k_setpc (m68k_getpc () - 4);
-			write_log("no ad\n");
+			D(bug("no ad\n"));
 		    fpuop_illg (opcode,extra);
 		    return;
 		}
