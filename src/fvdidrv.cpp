@@ -14,7 +14,7 @@
 #include "fvdidrv.h"
 #include "hardware.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #ifdef HAVE_NEW_HEADERS
@@ -69,12 +69,24 @@ extern HostScreen hostScreen;
 
 
 static const uint8 vdi_colours[] = { 0,2,3,6,4,7,5,8,9,10,11,14,12,15,13,255 };
-static const uint8 tos_colours[] = { 0,15,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
+static const uint8 tos_colours[] = { 0,255,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
 #define toTosColors( color ) \
     ( (color)<(sizeof(tos_colours)/sizeof(*tos_colours)) ? tos_colours[color] : ((color) == 255 ? 15 : (color)) )
 
-
-
+/**
+ * The SDL surface uses the TOS colors (if bpp==1) and therefore
+ * the VDI pen index needs to be converted to this. If bpp>1
+ * then this method returns the actual surface dependent pixel
+ * color value to be set to surface->pixels.
+ */
+inline uint32 FVDIDriver::getTosColor( uint16 colorIndex )
+{
+	if (hostScreen.getBpp() > 1) {
+		return hostScreen.getPaletteColor(colorIndex);
+	} else {
+		return (uint8)toTosColors( colorIndex );
+	}
+}
 
 // The polygon code needs some arrays of unknown size
 // These routines and members are used so that no unnecessary allocations are done
@@ -295,8 +307,7 @@ void FVDIDriver::dispatch(M68kRegisters *r)
 		0xffff, 0xffff, 0xffff, 0xffff
 	};
 	for(int i = 0; i < 16; i++)
-		hostScreen.fillArea(i << 4, hostScreen.getHeight() - 16, 15, 16, ptrn,
-		                    hostScreen.getBpp() > 1 ? hostScreen.getPaletteColor(i) : i);
+		hostScreen.fillArea(i << 4, hostScreen.getHeight() - 16, 15, 16, ptrn, getTosColor(i) );
 #endif  // DEBUG_DRAW_PALETTE
 
 
@@ -452,8 +463,7 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 		0xffff, 0xffff, 0xffff, 0xffff
 	};
 	for(int i = 0; i < 16; i++)
-		hostScreen.fillArea(i << 4, hostScreen.getHeight() - 16, 15, 16, ptrn,
-		                    hostScreen.getBpp() > 1 ? hostScreen.getPaletteColor(i) : i);
+		hostScreen.fillArea(i << 4, hostScreen.getHeight() - 16, 15, 16, ptrn, getTosColor(i));
 #endif  // DEBUG_DRAW_PALETTE
 
 
@@ -595,24 +605,26 @@ uint32 FVDIDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
  **/
 void FVDIDriver::setColor(uint32 paletteIndex, uint32 red, uint32 green, uint32 blue)
 {
-	D(bug("fVDI: setColor: %03d - %3d,%3d,%3d - %02x,%02x,%02x", paletteIndex, red, green, blue, (uint8)(((red << 8) - 1) / 1000), (uint8)(((green << 8) - 1) / 1000), (uint8)(((blue << 8) - 1) / 1000)));
+	D(bug("fVDI: setColor: %03d (%03d) - %04d,%04d,%04d - %02x,%02x,%02x", paletteIndex, toTosColors(paletteIndex) & 0xff, red, green, blue, (uint8)((red * ((1L << 8) - 1) + 500L) / 1000), (uint8)((green * ((1L << 8) - 1) + 500L) / 1000), (uint8)((blue * ((1L << 8) - 1) + 500L) / 1000) ));
 
-	if (hostScreen.getBpp() == 2) // 5+6+5 rounding needed
+	if (hostScreen.getBpp() > 2)
+		// 24 and 32bit graphics
+		hostScreen.setPaletteColor(paletteIndex,
+		                           (red * ((1L << 8) - 1) + 500L) / 1000,
+		                           (green * ((1L << 8) - 1) + 500L) / 1000,
+		                           (blue * ((1L << 8) - 1) + 500L) / 1000);
+	else if ( hostScreen.getBpp() > 1 )
+		// 5+6+5 rounding needed
 		hostScreen.setPaletteColor(paletteIndex,
 		                           ((red * ((1L << 5) - 1) + 500L) / 1000) << 3,
 		                           ((green * ((1L << 6) - 1) + 500L) / 1000) << 2,
 		                           ((blue * ((1L << 5) - 1) + 500L) / 1000) << 3);
-	else // 8+8+8 graphics
-		hostScreen.setPaletteColor(paletteIndex,
-		                           ((red * ((1L << 8) - 1) + 500L) / 1000),
-		                           ((green * ((1L << 8) - 1) + 500L) / 1000),
-		                           ((blue * ((1L << 8) - 1) + 500L) / 1000));
-
-	/*
-	  (uint8)((color >> 8) & 0xf8),
-	  (uint8)((color >> 3) & 0xfc),
-	  (uint8)(color & 0x1f) << 3);
-	*/
+	else
+		// 8bit graphics
+		hostScreen.setPaletteColor(toTosColors(paletteIndex),
+		                           (red * ((1L << 8) - 1) + 500L) / 1000,
+		                           (green * ((1L << 8) - 1) + 500L) / 1000,
+		                           (blue * ((1L << 8) - 1) + 500L) / 1000);
 }
 
 
@@ -763,12 +775,8 @@ int FVDIDriver::drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data
 
 		Mouse.hotspot.x = hot_x & 0xf;
 		Mouse.hotspot.y = hot_y & 0xf;
-		Mouse.storage.color.foreground = (int16)(color & 0xffff);
-		Mouse.storage.color.background = (int16)(color >> 16);
-		if (hostScreen.getBpp() > 1) {
-			Mouse.storage.color.foreground = hostScreen.getPaletteColor(Mouse.storage.color.foreground);
-			Mouse.storage.color.background = hostScreen.getPaletteColor(Mouse.storage.color.background);
-		}
+		Mouse.storage.color.foreground = getTosColor(color & 0xffff);
+		Mouse.storage.color.background = getTosColor(color >> 16);
 
 #if DEBUG > 1
 		char buffer[30];
@@ -893,7 +901,7 @@ extern "C" {
 static inline void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8])
 {
 	for (int l=0; l<16; l++) {
-		uint8 data = toTosColors( sdlPixelData[l] ); // note: this is about 2000 dryhstones speedup (the local variable)
+		uint8 data = sdlPixelData[l]; // note: this is about 2000 dryhstones speedup (the local variable)
 
 		bitplaneWords[0] <<= 1; bitplaneWords[0] |= (data >> 0) & 1;
 		bitplaneWords[1] <<= 1; bitplaneWords[1] |= (data >> 1) & 1;
@@ -913,18 +921,13 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 	uint16 pitch = ReadInt16(src + MFDB_WDWIDTH) * 2; // the byte width (always monochrom);
 	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
 
-	uint32 fgColor = (int16)(colors & 0xffff);
-	uint32 bgColor = (int16)(colors >> 16);
+	uint32 fgColor = getTosColor(colors & 0xffff);
+	uint32 bgColor = getTosColor(colors >> 16);
 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
 	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32( src ),ReadInt32( dest )));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
-
-	if (hostScreen.getBpp() > 1) {
-		fgColor = hostScreen.getPaletteColor(fgColor);
-		bgColor = hostScreen.getPaletteColor(bgColor);
-	}
 
 	if (dest) {
 		// mfdb->address = videoramstart
@@ -1042,9 +1045,6 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 
 					uint32 address = destAddress + ((((dx >> 4) * destPlanes) << 1) + (dy + j) * destPitch);
 					hostScreen.bitplaneToChunky((uint16*)address, destPlanes, color);
-					for(uint32 c = 0; c < 16; c++)
-						color[c] = color[c]<(sizeof(vdi_colours)/sizeof(*vdi_colours)) ? vdi_colours[color[c]] : color[c];
-
 					uint32 oldAddress = address;
 
 					uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
@@ -1064,10 +1064,6 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 							// convert next 16pixels to chunky
 							hostScreen.bitplaneToChunky((uint16*)address, destPlanes, color);
 							oldAddress = address;
-							// convert into VDI colors
-							for(uint32 c = 0; c < 16; c++)
-								color[c] = color[c]<(sizeof(vdi_colours)/sizeof(*vdi_colours)) ? vdi_colours[color[c]] : color[c];
-
 							theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 						}
 
@@ -1172,8 +1168,8 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
                          memptr pattern_addr, uint32 colors, uint32 logOp, uint32 interior_style)
 {
-	uint32 fgColor = (int16)(colors & 0xffff);
-	uint32 bgColor = (int16)(colors >> 16);
+	uint32 fgColor = getTosColor(colors & 0xffff);
+	uint32 bgColor = getTosColor(colors >> 16);
 
 	uint16 pattern[16];
 	for(int i = 0; i < 16; ++i)
@@ -1196,11 +1192,6 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
 	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
 	      fgColor, hostScreen.getPaletteColor(fgColor),
 	      bgColor, hostScreen.getPaletteColor(bgColor)));
-
-	if (hostScreen.getBpp() > 1) {
-		fgColor = hostScreen.getPaletteColor(fgColor);
-		bgColor = hostScreen.getPaletteColor(bgColor);
-	}
 
 	if (!hostScreen.renderBegin())
 		return 1;
@@ -1480,9 +1471,8 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 						}
 
 						destData = hostScreen.getPixel(dx + i - sx, dy + j);
-						destData = toTosColors( destData );
 						applyBlitLogOperation(logOp, destData, color[bitNo]);
-						hostScreen.putPixel(dx + i - sx, dy + j, destData<(sizeof(vdi_colours)/sizeof(*vdi_colours)) ? vdi_colours[destData] : destData);
+						hostScreen.putPixel(dx + i - sx, dy + j, destData);
 					}
 				}
 			}
@@ -1843,12 +1833,8 @@ int FVDIDriver::drawMoveLine(int16 table[], int length, uint16 index[], int move
 int FVDIDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 y2_,
                          uint32 pattern, uint32 colors, uint32 logOp, memptr clip)
 {
-	uint32 fgColor = (int16)(colors & 0xffff);
-	uint32 bgColor = (int16)(colors >> 16);
-	if (hostScreen.getBpp() > 1) {
-		fgColor = hostScreen.getPaletteColor(fgColor);
-		bgColor = hostScreen.getPaletteColor(bgColor);
-	}
+	uint32 fgColor = getTosColor(colors & 0xffff);
+	uint32 bgColor = getTosColor(colors >> 16);
 
 	int16* table = 0;
 	uint16* index = 0;
@@ -1982,13 +1968,8 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
 
-	uint32 fgColor = (int16)(colors & 0xffff);
-	uint32 bgColor = (int16)(colors >> 16);
-
-	if (hostScreen.getBpp() > 1) {
-		fgColor = hostScreen.getPaletteColor(fgColor);
-		bgColor = hostScreen.getPaletteColor(bgColor);
-	}
+	uint32 fgColor = getTosColor(colors & 0xffff);
+	uint32 bgColor = getTosColor(colors >> 16);
 
 	// Allocate arrays for data
 	if (!AllocPoints(n) || !AllocIndices(moves) || !AllocCrossings(200))
@@ -2156,6 +2137,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.48  2003/02/19 09:02:56  standa
+ * The bitplane modes expandArea fix.
+ *
  * Revision 1.47  2003/02/18 22:05:07  standa
  * The bitplane fVDI modes improved.
  *

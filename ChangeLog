@@ -2,6 +2,8 @@
 - fvdidrv.cpp: the expandArea M->M for bitplanes fixed
   The only TODO for full bitplane support is to support non-word
   aligned blits and expands.
+  ... next shift (evening) ... the VDI pen -> TOS colors reduced
+  only to proper setting of the palette (see getTosColor() method).
 
 
 2003/02/18 - STanda

@@ -12,7 +12,6 @@
 
 class FVDIDriver : public NF_Base {
   private:
-
 	struct _Mouse {
 		struct {
 			uint16 x, y;
@@ -43,6 +42,8 @@ class FVDIDriver : public NF_Base {
 	                  uint32 fgColor, uint32 bgColor, int logOp, int cliprect[], int minmax[]);
 	int drawMoveLine(int16 table[], int length, uint16 index[], int moves, uint16 pattern,
 	                 uint32 fgColor, uint32 bgColor, int logOp, int cliprect[], int minmax[]);
+
+	uint32 getTosColor( uint16 colorIndex );
 
 	// fillPoly helpers
 	bool AllocIndices(int n);
@@ -107,6 +108,9 @@ class FVDIDriver : public NF_Base {
 
 /*
  * $Log$
+ * Revision 1.16  2002/10/21 22:50:33  johan
+ * NatFeat support added.
+ *
  * Revision 1.15  2002/08/03 12:25:08  johan
  * API change to remove dependencies on internal fVDI structures.
  *
