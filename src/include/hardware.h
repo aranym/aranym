@@ -20,8 +20,11 @@ extern char* debug_print_IO(uaecptr addr);	// for debugging only
 
 extern void MakeMFPIRQ(int);
 extern void ikbd_send(int);
+
+extern long getVideoramAddress();
 extern int getVideoMode();
 extern int getVidelScreenWidth();
 extern int getVidelScreenHeight();
+
 extern int getFloppyStats();
 #endif 
