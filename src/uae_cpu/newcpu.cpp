@@ -1880,7 +1880,7 @@ void m68k_dumpstate (uaecptr *nextpc)
 	    (unsigned long)regs.msp, (unsigned long)regs.vbr);
     printf ("T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%d C=%d IMASK=%d TCE=%d TCP=%d\n",
 	    regs.t1, regs.t0, regs.s, regs.m,
-	    GET_XFLG, GET_NFLG, GET_ZFLG, GET_VFLG, GET_CFLG, regs.intmask,
+	    (int)GET_XFLG, (int)GET_NFLG, (int)GET_ZFLG, (int)GET_VFLG, (int)GET_CFLG, regs.intmask,
 	    regs.mmu_enabled, regs.mmu_pagesize);
     printf ("CACR=%08lx CAAR=%08lx  URP=%08lx  SRP=%08lx\n",
             (unsigned long)regs.cacr,

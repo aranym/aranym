@@ -53,7 +53,7 @@ struct atari_cdrom_audioctrl
 typedef struct {
     unsigned char	audiostatus;
     unsigned char	mcn[23];
-} atari_mcn_t __attribute__((packed));
+} __attribute__((packed)) atari_mcn_t;
 
 /*--- Public functions ---*/
 

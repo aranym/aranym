@@ -47,7 +47,7 @@ typedef struct {
 	unsigned short status;
 	unsigned long reserved[2];
 	char name[32];
-} metados_bos_header_t __attribute__((packed));
+} __attribute__((packed)) metados_bos_header_t;
 
 /*--- Public functions ---*/
 
