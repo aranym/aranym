@@ -1,0 +1,93 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH ARANYM 1 "January 18, 2002"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+ARanyM \- Atari Running on Any Machine
+.SH SYNOPSIS
+.B aranym
+.RI [ options ] " files" ...
+.br
+.SH DESCRIPTION
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
+.\" respectively.
+The main goal of the \fBARanyM\fP project is to create a virtual machine that would allow everyone to install, use and also develop new 32bit Atari ST/TT/Falcon applications on their computer regardless if it's an IBM clone, an Apple, an Unix server, a graphics workstation or even a portable computer. We modeled the virtual machine after the most advanced Atari computer equipped with the latest hardware extensions - that is Falcon030 with Afterburner040 (upgrading the CPU to MC68040) and a graphics card.
+.SH OPTIONS
+These programs follow the usual GNU command line syntax, with long
+options starting with two dashes (`-').
+A summary of options is included below.
+For more information see project documentation.
+.TP
+.B \-a, \-\-floppy NAME
+floppy image file NAME
+.TP
+.B \-N, \-\-nomouse
+don't grab mouse at startup
+.TP
+.B \-f, \-\-fullscreen
+start in fullscreen
+.TP
+.B \-v, \-\-refresh <X>
+VIDEL refresh rate in VBL (default 2)
+.TP
+.B \-r, \-\-resolution <X>
+boot in X color depth [1,2,4,8,16]
+.TP
+.B \-m, \-\-monitor <X>
+attached monitor: 0 = VGA, 1 = TV
+.TP
+.B \-d, \-\-disk CHAR:ROOTPATH
+METADOS filesystem assignment e.g. d:/atari/d_drive
+.TP
+.B \-c, \-\-config FILE
+read different configuration file
+.TP
+.B \-s, \-\-save
+save configuration file
+.TP
+.B \-h, \-\-help
+display this help and exit
+.TP
+.B \-V, \-\-version
+output version information and exit
+.TP
+.B \-F, \-\-fastram SIZE
+FastRAM size (in MB)
+.TP
+.B \-D, \-\-debug
+start debugger
+.TP
+.SH SEE ALSO
+.BR /usr/share/doc/aranym
+.br
+Directory with further reading.
+.br
+.BR /usr/share/aranym
+.br
+Directory with some useful tools and utilities.
+.BR http://aranym.atari.org
+.br
+Project web page.
+.SH NOTE
+.br
+For propper use of this package you will need image of Atari Falcon ROM 
+or you can use open source ROM image from EmuTOS project 
+at http://emutos.sf.net
+.SH AUTHOR
+This manual page was written by Antonín Král <A.Kral@sh.cvut.cz>,
+for the Debian GNU/Linux system (but may be used by others).
