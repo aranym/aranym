@@ -1,17 +1,24 @@
 aranym.xif
 ==========
 
-The xif interface for the eth0 interface for FreeMiNTnet.
-Copy the .xif into your mint folder, install FreeMiNTnet and...
-Usage:
-     ifconfig eth0 addr u.v.w.x up
-     route add u.v.w.x eth0
-Then you can do ping u.v.w.x and somesuch and see what eg. ARP
-does...
+The xif interface for the eth0 interface for MiNT-Net.
+
+Installation and usage
+----------------------
+Install MiNT-Net and copy the aranym.xif into your mint folder.
+Then configure the eth0 interface - please note that the IP addresses are
+currently hardcoded in the ARAnyM source code (XIF_ATARI_IP and XIF_HOST_IP
+in aranym/src/natfeat/ece.cpp):
+
+mint:~# ifconfig eth0 addr 192.168.0.2 up
+mint:~# route add default eth0 gw 192.168.0.1
+
+Then in MiNT-Net you can e.g. ping to 192.168.0.1 (which is a host side
+of the TAP tunnel).
 
 IMPORTANT: ATM aranym need to be run as a root to get the TAP
           interface else some error messages will be printed like these:
---- end --
+--- begin --
 ECE: init
 ECE: if opened tap0
 
@@ -29,27 +36,23 @@ How it works
 
 The ARAnyM establishes the TAP interface (using tuntap driver).
 tuntap linux driver: /usr/src/linux/Documentation/networking/tuntap.txt
-It's all hacked up to get it do at least something... study:
+Some related info can be found at the following URLs:
 	VTUN (virtual tunnel)
 		http://vtun.sourceforge.net/tun
 	Hercules (s390 emulator)
 		http://www.conmicro.cx/hercules/
-	Basilisk II Homepage:
-		http://www.uni-mainz.de/~bauec002/B2Main.html
-
-After that the xif should trigger an interrupt on received packet from
-the tap interface tunnel from the host OS.
 
 
 Compilation
 -----------
- * to compile the xfs you need the source tree of FreeMiNT (I used the
-   uptodate 1.16 CVS branch), set up so that it compiles. Point the
+ * to compile the xif you need the source tree of FreeMiNT 1.16 (use
+   CVS head branch) and if compiling on host, don't forget to edit
+   the CONFIGVARS and enable the CROSS=yes there. Point the
    FREEMINT_SRC_HOME environment variable to its home (the
    COPYING.MiNT file is there).
  * use make.sh to compile
  * the binaries are placed into the .bin subfolder
 
  ARAnyM binary:
- * put --enable-ethernet to the configure
+ * run configure with --enable-ethernet
 

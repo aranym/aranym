@@ -28,6 +28,12 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
+#if !defined(XIF_HOST_IP) && !defined(XIF_ATARI_IP) && !defined(XIF_NETMASK)
+# define XIF_HOST_IP	"192.168.0.1"
+# define XIF_ATARI_IP	"192.168.0.2"
+# define XIF_NETMASK	"255.255.255.0"
+#endif
+
 
 static ssize_t packet_length;
 static uint8 packet[1516];
@@ -127,16 +133,16 @@ bool ECE::init(void)
 /* argv[0]      Name of this program                                 */
 /* argv[1]      Name of the TUN network device (tun0)                */
 /* argv[2]      The maximum transmission unit size                   */
-/* argv[3]      The IP address of the Hercules side of the link      */
-/* argv[4]      The IP address of the driving system side of the link*/
+/* argv[3]      The IP address of the Atari side of the link         */
+/* argv[4]      The IP address of the host system side of the link   */
 /* argv[5]      The netmask                                          */
 	char *argv[] = {
 		"aranym",
 		"tap0",
 		"1500",
-		"192.168.0.5",
-		"192.168.0.1",
-		"255.255.255.0"
+		XIF_ATARI_IP,
+		XIF_HOST_IP,
+		XIF_NETMASK
 	};
 
 	fd = tapOpen( devName );

@@ -1,3 +1,9 @@
+2003/02/27 - joy
+- Ethernet: README of aranym.xif made clearer, IP addresses in ece.cpp
+  configurable by #define and the default ATARI IP address changed to
+  192.168.0.2 (to prevent users from asking a question why it was .5).
+
+
 2003/02/26 - joy
 - ETHERNET_OLD (the one from Basilisk) removed completely
 
