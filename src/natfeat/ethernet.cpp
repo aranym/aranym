@@ -10,7 +10,7 @@
 
 #include "host.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #include <sys/poll.h>
@@ -39,7 +39,7 @@ static SDL_sem *intAck;					// Interrupt acknowledge semaphore
 
 int32 ECE::dispatch(uint32 fncode)
 {
-	D(bug("ECE: Dispatch %d\n", fncode));
+	D(bug("ECE: Dispatch %d", fncode));
 
 	int32 ret = 0;
 	switch(fncode) {
@@ -49,10 +49,10 @@ int32 ECE::dispatch(uint32 fncode)
 			}
 
 			if ( !getParameter(0) ) {
-				D(bug("/ECE: IRQ\n"));
+				D(bug("/ECE: IRQ"));
 				finishInterupt();
 			} else
-				D(bug("ECE: IRQ\n"));
+				D(bug("ECE: IRQ"));
 
 			break;
 		case 0x01:
@@ -86,7 +86,7 @@ int32 ECE::readPacketLength(memptr nif)
 
 void ECE::readPacket(memptr buffer, uint32 len)
 {
-	D(bug("ECE: ReadPacket dest %08lx, len %08lx\n", buffer, len));
+	D(bug("ECE: ReadPacket dest %08lx, len %08lx", buffer, len));
 	Host2Atari_memcpy(buffer, packet, packet_length > 1514 ? 1514 : packet_length );
 }
 
@@ -104,7 +104,7 @@ void ECE::sendPacket(memptr buffer, uint32 len)
 
 	// Transmit packet
 	if (write(fd, packetToWrite, len) < 0) {
-		D(bug("WARNING: Couldn't transmit packet\n"));
+		D(bug("WARNING: Couldn't transmit packet"));
 	}
 }
 
@@ -112,7 +112,7 @@ void ECE::sendPacket(memptr buffer, uint32 len)
 void ECE::finishInterupt()
 {
 	// Acknowledge interrupt to reception thread
-	D(bug(" ECEIRQ done\n"));
+	D(bug(" ECEIRQ done"));
 	SDL_SemPost(intAck);
 }
 
@@ -250,7 +250,7 @@ int ECE::receiveFunc(void *arg)
 			// D(bug(" header %08x%04x %08x%04x %04x\n", ReadInt32(p), ReadInt16(p + 4), ReadInt32(p + 6), ReadInt16(p + 10), ReadInt16(p + 12)));
 
 			// Trigger ECEnet interrupt
-			D(bug(" packet received, triggering ECEnet interrupt\n"));
+			D(bug(" packet received, triggering ECEnet interrupt"));
 			TriggerInterrupt();
 
 			D(bug(" waiting for int acknowledge"));
@@ -277,7 +277,7 @@ int ECE::tapOpenOld(char *dev)
 
     if( *dev ) {
 		sprintf(tapname, "/dev/%s", dev);
-		D(bug(" tapOpenOld %s\n", tapname));
+		D(bug(" tapOpenOld %s", tapname));
 		return open(tapname, O_RDWR);
     }
 
@@ -286,7 +286,7 @@ int ECE::tapOpenOld(char *dev)
 		/* Open device */
 		if( (fd=open(tapname, O_RDWR)) > 0 ) {
 			sprintf(dev, "tap%d",i);
-			D(bug(" tapOpenOld %s\n", dev));
+			D(bug(" tapOpenOld %s", dev));
 			return fd;
 		}
     }
@@ -323,7 +323,7 @@ int ECE::tapOpen(char *dev)
     }
 
     strcpy(dev, ifr.ifr_name);
-	D(bug("ECE: if opened %s\n", dev));
+	D(bug("ECE: if opened %s", dev));
     return fd;
 
   failed:
