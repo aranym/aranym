@@ -1,4 +1,4 @@
-2002/04/11 - version 0.1.5 released
+2002/04/11 - version 0.1.5 released (please update your fVDI driver!)
 ==========
 
  Since the previous public release we made a lot of changes. Probably the most
@@ -30,11 +30,21 @@
  to be ill-designed (such as PureC IDE - it is unable to cope with files
  on MetaDOS drives due to misusing certain range of GEMDOS handles. We
  developed a patch for it so now you can enjoy compiling with PureC on
- host filesystem).
+ host filesystem). Besides that, there is a beta version of AranymFS.XFS
+ driver for MiNT!
 
  The other improvements include new IDE emulation (including ATAPI CD-ROM,
  try e.g. ejecting the CD from within Thing desktop), new config file
  is created with correct default values, and many other fixes.
+
+ Note that due to changes in fVDI host driver you need to update your
+ fVDI Atari driver - there is a precompiled fvdi.sys in "atari/fvdi/drivers".
+ Also you might want to update the AranymFS driver for MetaDOS/BetaDOS:
+ it's also available as a precompiled binary in "atari/aranymfs/" folder.
+
+ Last note: printing to Atari parallel port is now redirected to the console
+ where you started ARAnyM from... This is not the final solution but rather
+ a little hack that can be used for debug prints.
 
 
 2002/02/12 - version 0.0.21 released
