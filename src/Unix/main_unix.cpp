@@ -307,12 +307,15 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 
 	if ((VBL_counter % 2) == 1) {
 		if (!debugging || irqindebug) {
-			TriggerVBL();
 			check_event();	// check keyboard/mouse 100 times per second
 		}
 	}
 	if (++VBL_counter == 4) {
 		VBL_counter = 0;
+
+		if (!debugging || irqindebug) {
+			TriggerVBL();
+		}
 
 		if (direct_truecolor) {
 			// SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, 640, 480);
@@ -371,8 +374,7 @@ int main(int argc, char **argv)
 
 #ifdef METADOS_DRV
 	// install the drives
-	extFS.install( 'M', "/home/atari", true );
-	extFS.install( 'N', "/home/standa", false );
+	extFS.install( 'T', "/tmp", false );
 #endif // METADOS_DRV
 
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0) {
@@ -460,7 +462,7 @@ int main(int argc, char **argv)
 #endif
 	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
 
-	drive_fd[0] = open("/dev/fd0", O_RDWR);
+	drive_fd[0] = open("/dev/fd0", O_RDONLY);
 	if (drive_fd[0] >= 0)
     	init_fdc();
 
@@ -554,10 +556,10 @@ void QuitEmulator(void)
 {
 	D(bug("QuitEmulator\n"));
 
+	SDL_RemoveTimer(my_timer_id);
+
 	// Exit 680x0 emulation
 	Exit680x0();
-
-	SDL_RemoveTimer(my_timer_id);
 
 	// Deinitialize everything
 	ExitAll();
