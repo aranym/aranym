@@ -24,7 +24,6 @@
 
 #define DEBUG 0
 #include "debug.h"
-bool dP = false;
 
 // host OS dependent objects
 HostScreen hostScreen;
@@ -156,8 +155,7 @@ void handleWrite(uaecptr addr, uae_u8 value) {
 uae_u32 HWget_l (uaecptr addr) {
 //	uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
 //	return do_get_mem_long(m);
-	if (dP)
-		D(bug("HWget_l %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
+	D(bug("HWget_l %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	// return (handleRead(addr) << 24) | (handleRead(addr+1) << 16) | (handleRead(addr+2) << 8) | handleRead(addr+3);
 /*
 	if (addr >= 0xf00000 && addr < 0xf0003a)
@@ -175,8 +173,7 @@ uae_u32 HWget_l (uaecptr addr) {
 uae_u32 HWget_w (uaecptr addr) {
 //	uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
 //	return do_get_mem_word(m);
-	if (dP)
-		D(bug("HWget_w %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
+	D(bug("HWget_w %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE)
 		return ide.handleReadW(addr);
 	else
@@ -186,16 +183,14 @@ uae_u32 HWget_w (uaecptr addr) {
 uae_u32 HWget_b (uaecptr addr) {
 //	uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
 //	return do_get_mem_byte(m);
-	if (dP)
-		D(bug("HWget_b %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
+	D(bug("HWget_b %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	return handleRead(addr);
 }
 
 void HWput_l (uaecptr addr, uae_u32 l) {
 //	uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
 //	do_put_mem_long(m, l);
-	if (dP)
-		D(bug("HWput_l %x,%d ($%08x) -> %s at %08x", addr, l, l, debug_print_IO(addr), showPC()));
+	D(bug("HWput_l %x,%d ($%08x) -> %s at %08x", addr, l, l, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE) {
 		HWput_w(addr, l >> 16);
 		HWput_w(addr, l & 0x0000ffff);
@@ -211,8 +206,7 @@ void HWput_l (uaecptr addr, uae_u32 l) {
 void HWput_w (uaecptr addr, uae_u32 w) {
 //	uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
 //	do_put_mem_word(m, w);
-	if (dP)
-		D(bug("HWput_w %x,%d ($%04x) -> %s at %08x", addr, w, w, debug_print_IO(addr), showPC()));
+	D(bug("HWput_w %x,%d ($%04x) -> %s at %08x", addr, w, w, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE)
 		ide.handleWriteW(addr, w);
 	else {
@@ -224,14 +218,16 @@ void HWput_w (uaecptr addr, uae_u32 w) {
 void HWput_b (uaecptr addr, uae_u32 b) {
 //	uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
 //	do_put_mem_byte(m, b);
-	if (dP)
-		D(bug("HWput_b %x,%u ($%02x) -> %s at %08x", addr, b & 0xff, b & 0xff, debug_print_IO(addr), showPC()));
+	D(bug("HWput_b %x,%u ($%02x) -> %s at %08x", addr, b & 0xff, b & 0xff, debug_print_IO(addr), showPC()));
 	handleWrite(addr, b);
 }
 
 
 /*
  * $Log$
+ * Revision 1.27  2001/08/21 18:19:16  milan
+ * CPU update, disk's geometry autodetection - the 1st step
+ *
  * Revision 1.26  2001/08/13 22:29:06  milan
  * IDE's params from aranymrc file etc.
  *

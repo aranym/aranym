@@ -17,8 +17,7 @@
 #include "memory.h"
 #include <stdio.h>
 #include <unistd.h>
-
-#define FDC_DEBUG 0
+#include "debug.h"
 
 struct disk_geom
 {
@@ -77,9 +76,7 @@ void fdc_exec_command (void)
 			|HWget_b(0xff860d);
 	buffer=do_get_real_address(address, true, false);	//?? Je to OK?
 	int snd_porta = getFloppyStats();
-#if FDC_DEBUG
-	fprintf(stderr, "FDC DMA virtual address = %06x, physical = %08x, snd = %d\n", address, buffer, snd_porta);
-#endif
+	D(bug("FDC DMA virtual address = %06x, physical = %08x, snd = %d", address, buffer, snd_porta));
 	sides=(~snd_porta)&1;
 	d=(~snd_porta)&6;
 	switch(d)
@@ -95,9 +92,7 @@ void fdc_exec_command (void)
 			d=-1;
 			break;
 	}
-#if FDC_DEBUG
-	fprintf(stderr,"FDC command 0x%04x drive=%d\n",fdc_command,d);
-#endif
+	D(bug("FDC command 0x%04x drive=%d",fdc_command,d));
 	fdc_status=0;
 	if (fdc_command < 0x80)
 	{
@@ -106,16 +101,12 @@ void fdc_exec_command (void)
 			switch(fdc_command&0xf0)
 			{
 				case 0x00:
-#if FDC_DEBUG
-					fprintf(stderr,"\tFDC RESTORE\n");
-#endif
+					D(bug("\tFDC RESTORE"));
 					disk[d].head=0;
 					fdc_track=0;
 					break;
 				case 0x10:
-#if FDC_DEBUG
-					fprintf(stderr,"\tFDC SEEK to %d\n",fdc_data);
-#endif
+					D(bug("\tFDC SEEK to %d",fdc_data));
 					disk[d].head += fdc_data-fdc_track;
 					fdc_track=fdc_data;
 					if (disk[d].head<0 || disk[d].head>=disk[d].tracks)
@@ -165,10 +156,7 @@ void fdc_exec_command (void)
 			switch(fdc_command & 0xf0)
 			{
 				case 0x80:
-#if FDC_DEBUG
-					fprintf(stderr,"\tFDC READ SECTOR %d to 0x%06lx\n",
-						dma_scr,address);
-#endif
+					D(bug("\tFDC READ SECTOR %d to 0x%06lx", dma_scr,address));
 					count=dma_scr*disk[d].secsize;
 					if (lseek(drive_fd[d], offset, SEEK_SET)>=0)
 					{
@@ -187,10 +175,7 @@ void fdc_exec_command (void)
 					dma_sr=1;
 					break;
 				case 0x90:
-#if FDC_DEBUG
-					fprintf(stderr,"\tFDC READ SECTOR M. %d to 0x%06lx\n",
-						dma_scr,address);
-#endif
+					D(bug("\tFDC READ SECTOR M. %d to 0x%06lx", dma_scr,address));
 					count=dma_scr*disk[d].secsize;
 					if (lseek(drive_fd[d], offset, SEEK_SET)>=0)
 					{

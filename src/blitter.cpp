@@ -15,8 +15,8 @@
  */
 
 /*
-#define SWACCELL
-#define HWBLITS
+#define SWACCEL		// this replaces complicated logic of word-by-word copying by simple and fast memmove()
+#define HWBLITS		// this accelerates screen to screen blits with host VGA hardware accelerated routines (using SDL_BlitSurface)
 */
 
 #include "sysdeps.h"
@@ -25,9 +25,9 @@
 #include "memory.h"
 #include "blitter.h"
 #include <SDL/SDL.h>
+#include "debug.h"
 
-static const bool dP = false;
-
+#if DEBUG
 #define SHOWPARAMS												\
 {       fprintf(stderr,"Source Address:%X\n",source_addr);		\
         fprintf(stderr,"  Dest Address:%X\n",dest_addr);		\
@@ -48,31 +48,25 @@ static const bool dP = false;
         if (NFSR) fprintf(stderr,"NFSR is Set!\n");			\
         if (FXSR) fprintf(stderr,"FXSR is Set!\n");			\
 }
+#endif
 
 typedef uae_u16	UW;
 typedef uae_u8	UB;
 typedef char	B;
 
-//#define ADDR(a)	(((a) >= FALCVRAMSTART) && ((a) < FALCVRAMEND)) ? ((a) + (ARANYMVRAMSTART - FALCVRAMSTART)) : (a)
 #define ADDR(a)		(a)
 
 BLITTER::BLITTER(void) {
 }
 
 UW BLITTER::LM_UW(uaecptr addr) {
-	// fprintf(stderr, "Blitter cte data z %06x\n", addr);
 	return get_word_direct(addr);	//??
 }
 
 void BLITTER::SM_UW(uaecptr addr, UW value) {
-	// fprintf(stderr, "Blitter zapisuje data do %06x = %04x\n", addr, value);
 	put_word_direct(addr, value);	//??
 }
 
-
-
-//void BLITTER::_fn_name (void)
-//class _fn_name : public BLITTER::HopOpFunctor { void operator()( BLITTER& b )
 
 #define HOP_OPS(_fn_name,_op,_do_source_shift,_get_source_data,_shifted_hopd_data, _do_halftone_inc) \
 void _fn_name ( BLITTER& b ) \
@@ -270,7 +264,7 @@ HOP_OPS(_HOP_3_OP_15_P,(0xffff) ,source_buffer <<=16,source_buffer |= ((unsigned
 
 void hop2op3p( BLITTER& b )
 {
-#ifndef SWACCELL
+#ifndef SWACCEL
 	_HOP_2_OP_03_P( b );
 #else
 #ifdef HWBLITS
@@ -278,33 +272,32 @@ void hop2op3p( BLITTER& b )
 		SDL_Rect src, dest;
 		int src_offset = b.source_addr - ARANYMVRAMSTART;
 		int dest_offset = b.dest_addr - ARANYMVRAMSTART;
-		src.x = (src_offset % (2*640))/2;
-		src.y = (src_offset / (2*640));
+		src.x = (src_offset % (2*VidelScreenWidth))/2;
+		src.y = (src_offset / (2*VidelScreenWidth));
 		src.w = dest.w = b.x_count;
 		src.h = dest.h = b.y_count;
-		dest.x = (dest_offset % (2*640))/2;
-		dest.y = (dest_offset / (2*640));
+		dest.x = (dest_offset % (2*VidelScreenWidth))/2;
+		dest.y = (dest_offset / (2*VidelScreenWidth));
 		SDL_Surface *surf = SDL_GetVideoSurface();
-		//int result =
 		SDL_BlitSurface(surf, &src, surf, &dest);
 		b.source_addr += (((b.x_count-1)*b.source_x_inc)+b.source_y_inc)*b.y_count;
 		b.dest_addr += (((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc)*b.y_count;
 		b.y_count = 0;
 		return;
 	}
-#endif
+#endif /* HWBLITS */
 	do
 	{
-		memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2); // ??
+		memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2);
 		b.source_addr += ((b.x_count-1)*b.source_x_inc)+b.source_y_inc;
 		b.dest_addr += ((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc;
 	} while (--b.y_count > 0);
-#endif
+#endif /* SWACCEL */
 }
 
 void hop2op3n( BLITTER& b )
 {
-#ifndef SWACCELL
+#ifndef SWACCEL
 	_HOP_2_OP_03_N( b );
 #else
 	b.source_addr += ((b.x_count-1)*b.source_x_inc);
@@ -316,26 +309,25 @@ void hop2op3n( BLITTER& b )
 		SDL_Rect src, dest;
 		int src_offset = b.source_addr - ARANYMVRAMSTART;
 		int dest_offset = b.dest_addr - ARANYMVRAMSTART;
-		src.x = (src_offset % (2*640))/2;
-		src.y = (src_offset / (2*640));
+		src.x = (src_offset % (2*VidelScreenWidth))/2;
+		src.y = (src_offset / (2*VidelScreenWidth));
 		src.w = dest.w = b.x_count;
 		src.h = dest.h = b.y_count;
-		dest.x = (dest_offset % (2*640))/2;
-		dest.y = (dest_offset / (2*640));
+		dest.x = (dest_offset % (2*VidelScreenWidth))/2;
+		dest.y = (dest_offset / (2*VidelScreenWidth));
 		SDL_Surface *surf = SDL_GetVideoSurface();
-		//		int result =
 		SDL_BlitSurface(surf, &src, surf, &dest);
 		b.y_count = 0;
 		return;
 	}
-#endif
+#endif /* HWBLITS */
 	do
 	{
-		memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2); // tu to chce revizi taky
+		memmove(get_real_address_direct(b.dest_addr), get_real_address_direct(b.source_addr), b.x_count*2);
 		b.source_addr += ((b.x_count)*b.source_x_inc)+b.source_y_inc;
 		b.dest_addr += ((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc;
 	} while (--b.y_count > 0);
-#endif
+#endif /* SWACCEL */
 }
 
 
@@ -375,8 +367,7 @@ uae_u8 BLITTER::handleRead(uaecptr addr) {
 			return hfr >> 8;
 	}
 
-	if (dP)
-		fprintf(stderr, "Blitter reads %x at %06x\n", addr+HW, showPC());
+	D(bug("Blitter reads %x at %06x", addr+HW, showPC()));
 
 	switch(addr) {
 		case 0x20: return source_x_inc >> 8;
@@ -429,8 +420,7 @@ void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
 		return;
 	}
 
-	if (dP)
-		fprintf(stderr, "Blitter writes: %x = %d ($%x) at %06x\n", addr+HW, value, value, showPC());
+	D(bug(stderr, "Blitter writes: %x = %d ($%x) at %06x\n", addr+HW, value, value, showPC()));
 
 	switch(addr) {
 		case 0x20: source_x_inc = (source_x_inc & 0x00ff) | (value << 8); break;
@@ -548,33 +538,25 @@ B BLITTER::LOAD_B_ff8a3d(void)
 void BLITTER::STORE_B_ff8a32(B v)
 {	dest_addr &= 0x00ffffff;
 	dest_addr |= (v&0xff) << 24;
-#ifdef DEBUG
-	fprintf(stderr,"write : ff8a32 : %X\n",v);
-#endif
+	D(bug("write : ff8a32 : %X", v));
 }
 
 void BLITTER::STORE_B_ff8a33(B v)
 {	dest_addr &= 0xff00ffff;
 	dest_addr |= (v&0xff) << 16;
-#ifdef DEBUG
-	fprintf(stderr,"write : ff8a33 : %X\n",v);
-#endif
+	D(bug("write : ff8a33 : %X", v));
 }
 
 void BLITTER::STORE_B_ff8a34(B v)
 {	dest_addr &= 0xffff00ff;
 	dest_addr |= (v&0xff) << 8;
-#ifdef DEBUG
-	fprintf(stderr,"write : ff8a34: %X\n",v);
-#endif
+	D(bug("write : ff8a34: %X", v));
 }
 
 void BLITTER::STORE_B_ff8a35(B v)
 {	dest_addr &= 0xffffff00;
 	dest_addr |= (v & 0xfe);	// ignore LSB
-#ifdef DEBUG
-	fprintf(stderr,"write : ff8a35 : %X\n",v);
-#endif
+	D(bug("write : ff8a35 : %X", v));
 }
 
 void BLITTER::STORE_B_ff8a28(B v)
@@ -653,16 +635,11 @@ void BLITTER::STORE_B_ff8a3d(B v)
 
 void BLITTER::Do_Blit(void)
 { 	
-	if (dP) {
-		fprintf(stderr, "Blitter started at %06x\n", showPC());
-		SHOWPARAMS;
-	}
-/*
-	if ((dest_addr > FALCVRAMEND && dest_addr < ARANYMVRAMSTART)) {
-		fprintf(stderr, "Blitter - dest address out of range - exitting\n");
-		return;
-	}
-*/
+	D(bug("Blitter started at %06x", showPC()));
+#if DEBUG
+	SHOWPARAMS;
+#endif
+
 	if (source_x_inc < 0) {
 		do_hop_op_N[hop][op]( *this );
 	}
