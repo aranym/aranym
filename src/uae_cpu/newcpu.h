@@ -1,3 +1,5 @@
+/* 2001 MJ */
+
  /*
   * UAE - The Un*x Amiga Emulator
   *
@@ -9,7 +11,7 @@
 #ifndef NEWCPU_H
 #define NEWCPU_H
 
-#define ATCSIZE	256
+#include "registers.h"
 
 #define SPCFLAG_STOP 2
 #define SPCFLAG_DISK 4
@@ -70,77 +72,6 @@ struct cputbl {
 };
 
 extern void REGPARAM2 op_illg (uae_u32) REGPARAM;
-
-#ifndef REGS
-typedef char flagtype;
-
-extern struct regstruct
-{
-    uae_u32 regs[16];
-    uaecptr  usp,isp,msp;
-    uae_u16 sr;
-    flagtype t1;
-    flagtype t0;
-    flagtype s;
-    flagtype m;
-    flagtype x;
-    flagtype stopped;
-    int intmask;
-
-    uae_u32 pc;
-    uae_u32 pcp;	//    uae_u8 *pc_p;
-    uae_u32 pcoldp;	//    uae_u8 *pc_oldp;
-
-    uae_u32 vbr,sfc,dfc;
-
-    double fp[8];
-    uae_u32 fpcr,fpsr,fpiar;
-
-    uae_u32 spcflags;
-    uae_u32 kick_mask;
-
-    /* Fellow sources say this is 4 longwords. That's impossible. It needs
-     * to be at least a longword. The HRM has some cryptic comment about two
-     * instructions being on the same longword boundary.
-     * The way this is implemented now seems like a good compromise.
-     */
-    uae_u32 prefetch;
-
-    /* MMU reg*/
-    uae_u32 urp,srp;
-    flagtype tce;
-    flagtype tcp;
-    uae_u32 dtt0,dtt1,itt0,itt1,mmusr;
-
-    flagtype atcvali[ATCSIZE];
-    flagtype atcvald[ATCSIZE];
-    flagtype atcu0d[ATCSIZE];
-    flagtype atcu0i[ATCSIZE];
-    flagtype atcu1d[ATCSIZE];
-    flagtype atcu1i[ATCSIZE];
-    flagtype atcsuperd[ATCSIZE];
-    flagtype atcsuperi[ATCSIZE];
-    int atccmd[ATCSIZE];
-    int atccmi[ATCSIZE];
-    flagtype atcmodifd[ATCSIZE];
-    flagtype atcmodifi[ATCSIZE];
-    flagtype atcwritepd[ATCSIZE];
-    flagtype atcwritepi[ATCSIZE];
-    flagtype atcresidd[ATCSIZE];
-    flagtype atcresidi[ATCSIZE];
-    flagtype atcglobald[ATCSIZE];
-    flagtype atcglobali[ATCSIZE];
-    flagtype atcfc2d[ATCSIZE];
-    flagtype atcfc2i[ATCSIZE];
-    uaecptr atcind[ATCSIZE];
-    uaecptr atcini[ATCSIZE];
-    uaecptr atcoutd[ATCSIZE];
-    uaecptr atcouti[ATCSIZE];
-
-    /* Cache reg*/
-    int cacr,caar;
-} regs, lastint_regs;
-#endif
 
 static __inline__ void set_special (uae_u32 x)
 {
@@ -255,7 +186,11 @@ extern void m68k_setpc (uaecptr newpc);
 
 static __inline__ uaecptr m68k_getpc (void)
 {
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
     return regs.pcp;
+#else
+    return regs.pc + ((char *)regs.pcp - (char *)regs.pcoldp);
+#endif
 }
 
 #ifdef USE_COMPILER
@@ -268,6 +203,26 @@ extern void m68k_setpc_rte (uaecptr newpc);
 #define m68k_setpc_rte  m68k_setpc
 #endif
 
+static __inline__ void m68k_do_rts(void)
+{
+	    m68k_setpc(get_long(m68k_areg(regs, 7), true));
+	        m68k_areg(regs, 7) += 4;
+}
+ 
+static __inline__ void m68k_do_bsr(uaecptr oldpc, uae_s32 offset)
+{
+	    m68k_areg(regs, 7) -= 4;
+	        put_long(m68k_areg(regs, 7), oldpc);
+		    m68k_incpc(offset);
+}
+ 
+static __inline__ void m68k_do_jsr(uaecptr oldpc, uaecptr dest)
+{
+	    m68k_areg(regs, 7) -= 4;
+	        put_long(m68k_areg(regs, 7), oldpc);
+		    m68k_setpc(dest);
+}
+
 static __inline__ void m68k_setstopped (int stop)
 {
     regs.stopped = stop;
@@ -278,14 +233,12 @@ static __inline__ void m68k_setstopped (int stop)
 extern uae_u32 get_disp_ea_020 (uae_u32 base, uae_u32 dp);
 extern uae_u32 get_disp_ea_000 (uae_u32 base, uae_u32 dp);
 
-// MJ extern uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf);
-
 extern void MakeSR (void);
 extern void MakeFromSR (void);
 extern void Exception (int, uaecptr);
 extern void dump_counts (void);
-extern int m68k_move2c (int, uae_u32 *);
-extern int m68k_movec2 (int, uae_u32 *);
+extern uae_u32 m68k_move2c (int, uae_u32 *);
+extern uae_u32 m68k_movec2 (int, uae_u32 *);
 extern void m68k_divl (uae_u32, uae_u32, uae_u16, uaecptr);
 extern void m68k_mull (uae_u32, uae_u32, uae_u16);
 extern void init_m68k (void);

@@ -1,4 +1,4 @@
-/* 2001 MJ */
+/* 2001 Mj */
 
  /*
   * UAE - The Un*x Amiga Emulator
@@ -25,9 +25,7 @@ extern int timerCinterrupts;
 #include "memory.h"
 #include "readcpu.h"
 #include "newcpu.h"
-#include "compiler.h"
 #include "exceptions.h"
-
 #include "debug.h"
 
 int quit_program = 0;
@@ -231,9 +229,15 @@ static int backup_pointer = 0;
 static long int m68kpc_offset;
 int lastint_no;
 
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
 #define get_ibyte_1(o) get_byte(regs.pcp + (o) + 1, false)
 #define get_iword_1(o) get_word(regs.pcp + (o), false)
 #define get_ilong_1(o) get_long(regs.pcp + (o), false)
+#else
+#define get_ibyte_1(o) get_byte(regs.pc + (regs.pc_p - regs.pc_oldp) + (o) + 1, false)
+#define get_iword_1(o) get_word(regs.pc + (regs.pc_p - regs.pc_oldp) + (o), false)
+#define get_ilong_1(o) get_long(regs.pc + (regs.pc_p - regs.pc_oldp) + (o), false)
+#endif
 
 uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
 {
@@ -661,7 +665,6 @@ void MakeFromSR (void)
 
 void Exception(int nr, uaecptr oldpc)
 {
-    compiler_flush_jsr_stack();
     MakeSR();
     if (!regs.s) {
 	regs.usp = m68k_areg(regs, 7);
@@ -752,11 +755,6 @@ void Exception(int nr, uaecptr oldpc)
 kludge_me_do:
     m68k_areg(regs, 7) -= 2;
     put_word (m68k_areg(regs, 7), regs.sr);
-    ////
-    // fprintf(stderr, "VBR = %x, interrupt %d, vectaddr = %x, vector = %x\n", regs.vbr, nr, regs.vbr + 4*nr, get_long(regs.vbr + 4*nr, false));
-    if (nr <= 8)
-    	fprintf(stderr, "Exception #%d (%s) at %x, vector = %x\n", nr, nr == 2 ? "BUS ERROR" : (nr == 3 ? "ADDRESS ERROR" : (nr == 4 ? "ILLEGAL INSN" : (nr == 5 ? "DIVIDE ERROR" : (nr == 6 ? "CHK INSN" : (nr == 7 ? "TRAPV INSN" : (nr == 8 ? "PRIVILEGE VIOLATION" : "")))))), m68k_getpc(), get_long(regs.vbr + 4*nr, false));
-    ////
     m68k_setpc (get_long (regs.vbr + 4*nr, false));
     fill_prefetch_0 ();
     regs.t1 = regs.t0 = regs.m = 0;
@@ -765,7 +763,6 @@ kludge_me_do:
 
 static void Interrupt(int nr)
 {
-    // fprintf(stderr, "CPU: jsem v Interruptu(%d)\n", nr);
     assert(nr < 8 && nr >= 0);
     lastint_regs = regs;
     lastint_no = nr;
@@ -787,9 +784,7 @@ static void MFPInterrupt(int nr)
     regs.intmask = 6;//7;	// used to be 6 but STonX sets it to 7
 }
 
-//static int caar, cacr, tc, itt0, itt1, dtt0, dtt1;
-
-int m68k_move2c (int regno, uae_u32 *regp)
+uae_u32 m68k_move2c (int regno, uae_u32 *regp)
 {
     if ((CPUType == 1 && (regno & 0x7FF) > 1)
 	|| (CPUType < 4 && (regno & 0x7FF) > 2)
@@ -825,7 +820,7 @@ int m68k_move2c (int regno, uae_u32 *regp)
     return 1;
 }
 
-int m68k_movec2 (int regno, uae_u32 *regp)
+uae_u32 m68k_movec2 (int regno, uae_u32 *regp)
 {
     if ((CPUType == 1 && (regno & 0x7FF) > 1)
 	|| (CPUType < 4 && (regno & 0x7FF) > 2)
@@ -1157,8 +1152,6 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 {
     uaecptr pc = m68k_getpc ();
 
-    compiler_flush_jsr_stack ();
-
 	if ((opcode & 0xFF00) == 0x7100) {
 		struct M68kRegisters r;
 		int i;
@@ -1211,7 +1204,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
     uae_u16 i;
     uaecptr addr = m68k_areg(regs, extra);
     if ((opcode & 0xFF8) == 0x0500) { /* PFLUSHN instruction (An) */
-#ifdef MMU
+#ifdef FULLMMU
         for (i = 0; i < ATCSIZE; i++) {
             if (!regs.atcglobald[i]
                 && (addr == regs.atcind[i]))
@@ -1223,7 +1216,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x0508) { /* PFLUSH instruction (An) */
-#ifdef MMU
+#ifdef FULLMMU
         for (i = 0; i < ATCSIZE; i++) {
             if (addr == regs.atcind[i])
                 regs.atcvald[i] = 0;
@@ -1233,7 +1226,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x0510) { /* PFLUSHAN instruction */
-#ifdef MMU
+#ifdef FULLMMU
         for (i = 0; i < ATCSIZE; i++) {
             if (!regs.atcglobald[i]) regs.atcvald[i] = 0;
             if (!regs.atcglobali[i]) regs.atcvali[i] = 0;
@@ -1241,7 +1234,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x0518) { /* PFLUSHA instruction */
-#ifdef MMU
+#ifdef FULLMMU
         for (i = 0; i < ATCSIZE; i++) {
             regs.atcvald[i] = 0;
             regs.atcvali[i] = 0;
@@ -1249,7 +1242,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
         regs.mmusr = 0;
 #endif
     } else if ((opcode & 0xFF8) == 0x548) { /* PTESTW instruction */
-#ifdef MMU
+#ifdef FULLMMU
 	uaecptr mask;
         if (regs.dtt0 & 0x8000) {
 	    if ((regs.dtt0 & 0x4) != 0) throw access_error(addr);
@@ -1463,7 +1456,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 	}
 #endif
     } else if ((opcode & 0xFF8) == 0x568) { /* PTESTR instruction */
-#ifdef MMU
+#ifdef FULLMMU
 	uaecptr mask;
         if (regs.dtt0 & 0x8000) {
             mask = ((~regs.dtt0) & 0xff0000) << 8;
@@ -1709,7 +1702,6 @@ static void do_trace (void)
 static int do_specialties (void)
 {
     /*n_spcinsns++;*/
-    run_compiled_code();
     if (regs.spcflags & SPCFLAG_DOTRACE) {
 	Exception (9,last_trace_ad);
     }
@@ -1767,13 +1759,12 @@ static int do_specialties (void)
 			regs.spcflags &= ~SPCFLAG_MFP_TIMERC;
 	}
     }
-
-/*
+    
+/*  
     if (regs.spcflags & SPCFLAG_INT) {
 	regs.spcflags &= ~SPCFLAG_INT;
 	regs.spcflags |= SPCFLAG_DOINT;
-    }
-*/
+    }*/
     if (regs.spcflags & (SPCFLAG_BRK | SPCFLAG_MODE_CHANGE)) {
 	regs.spcflags &= ~(SPCFLAG_BRK | SPCFLAG_MODE_CHANGE);
 	return 1;
@@ -1820,9 +1811,7 @@ setjmpagain:
 	    quit_program = 0;
 	    m68k_reset ();
 	}
-	if (debugging) {
-		debug();
-	}
+	if (debugging) debug();
 	m68k_run1();
     }
     in_m68k_go--;
@@ -1943,10 +1932,7 @@ void m68k_dumpstate (uaecptr *nextpc)
 		(regs.fpsr & 0x4000000) != 0,
 		(regs.fpsr & 0x2000000) != 0,
 		(regs.fpsr & 0x1000000) != 0);
-    printf ("CACR=%08lx CAAR=%08lx URP=%08lx SRP=%08lx TCE=%d TCP=%d\n",
-                regs.cacr,regs.caar,regs.urp,regs.srp,regs.tce,regs.tcp);
-    printf ("DTT0=%08lx DTT1=%08lx ITT0=%08lx ITT1=%08lx\n",
-                regs.dtt0,regs.dtt1,regs.itt0,regs.itt1);
+
     m68k_disasm(m68k_getpc (), nextpc, 1);
     if (nextpc)
 	printf ("next PC: %08lx\n", *nextpc);

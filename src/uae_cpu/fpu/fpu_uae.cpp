@@ -76,7 +76,7 @@
 #include "newcpu.h"
 #include "main.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 
@@ -864,51 +864,51 @@ static __inline__ int get_fp_value (uae_u32 opcode, uae_u16 extra, double *src)
 
 	D(bug("get_fp_value m68k_getpc()=%X\r\n",m68k_getpc()));
 	D(bug("get_fp_value ad=%X\r\n",ad));
-	D(bug("get_fp_value get_long (ad)=%X\r\n",get_long (ad)));
-	dump_first_bytes( get_real_address(ad)-64, 64 );
-	dump_first_bytes( get_real_address(ad), 64 );
+	D(bug("get_fp_value get_long (ad, true)=%X\r\n",get_long (ad, true)));
+	dump_first_bytes( get_real_address(ad, true, false)-64, 64 );
+	dump_first_bytes( get_real_address(ad, true, false), 64 );
 
   switch (size) {
     case 0:
-			*src = (double) (uae_s32) get_long (ad);
+			*src = (double) (uae_s32) get_long (ad, true);
 			break;
     case 1:
-			*src = to_single(get_long (ad));
+			*src = to_single(get_long (ad, true));
 			break;
 
     case 2:{
 	    uae_u32 wrd1, wrd2, wrd3;
-	    wrd1 = get_long (ad);
+	    wrd1 = get_long (ad, true);
 	    ad += 4;
-	    wrd2 = get_long (ad);
+	    wrd2 = get_long (ad, true);
 	    ad += 4;
-	    wrd3 = get_long (ad);
+	    wrd3 = get_long (ad, true);
 	    *src = to_exten(wrd1, wrd2, wrd3);
 			}
 			break;
     case 3:{
 	    uae_u32 wrd1, wrd2, wrd3;
-	    wrd1 = get_long (ad);
+	    wrd1 = get_long (ad, true);
 	    ad += 4;
-	    wrd2 = get_long (ad);
+	    wrd2 = get_long (ad, true);
 	    ad += 4;
-	    wrd3 = get_long (ad);
+	    wrd3 = get_long (ad, true);
 	    *src = to_pack(wrd1, wrd2, wrd3);
 			}
 			break;
     case 4:
-			*src = (double) (uae_s16) get_word(ad);
+			*src = (double) (uae_s16) get_word(ad, true);
 			break;
     case 5:{
 	    uae_u32 wrd1, wrd2;
-	    wrd1 = get_long (ad);
+	    wrd1 = get_long (ad, true);
 	    ad += 4;
-	    wrd2 = get_long (ad);
+	    wrd2 = get_long (ad, true);
 	    *src = to_double(wrd1, wrd2);
 			}
 			break;
     case 6:
-			*src = (double) (uae_s8) get_byte(ad);
+			*src = (double) (uae_s8) get_byte(ad, true);
 			break;
     default:
 			return 0;
@@ -1358,7 +1358,7 @@ void REGPARAM2 frestore_opp(uae_u32 opcode)
 		  D(bug("PROBLEM: frestore_opp incr < 0\r\n"));
 			// this may be wrong, but it's never called.
 			ad -= 4;
-			d = get_long (ad);
+			d = get_long (ad, true);
 			if ((d & 0xff000000) != 0) { // Not a NULL frame?
 				if ((d & 0x00ff0000) == 0) { // IDLE
 				  D(bug("frestore_opp found IDLE frame at %X\r\n",ad-4));
@@ -1371,7 +1371,7 @@ void REGPARAM2 frestore_opp(uae_u32 opcode)
 				}
 			}
 		} else {
-			d = get_long (ad);
+			d = get_long (ad, true);
 		  D(bug("frestore_opp frame at %X = %X\r\n",ad,d));
 			ad += 4;
 			if ((d & 0xff000000) != 0) { // Not a NULL frame?
@@ -1392,7 +1392,7 @@ void REGPARAM2 frestore_opp(uae_u32 opcode)
 		  D(bug("PROBLEM: frestore_opp incr < 0\r\n"));
 			// this may be wrong, but it's never called.
 			ad -= 4;
-			d = get_long (ad);
+			d = get_long (ad, true);
 			if ((d & 0xff000000) != 0) {
 		    if ((d & 0x00ff0000) == 0x00180000)
 					ad -= 6 * 4;
@@ -1402,7 +1402,7 @@ void REGPARAM2 frestore_opp(uae_u32 opcode)
 					ad -= 45 * 4;
 			}
 	  } else {
-			d = get_long (ad);
+			d = get_long (ad, true);
 		  D(bug("frestore_opp frame at %X = %X\r\n",ad,d));
 			ad += 4;
 			if ((d & 0xff000000) != 0) { // Not a NULL frame?
@@ -1591,17 +1591,17 @@ void fpp_opp(uae_u32 opcode, uae_u16 extra)
 				}
 
 				if (extra & 0x1000) {
-					regs.fpcr = get_long (ad);
+					regs.fpcr = get_long (ad, true);
 					D(bug("FMOVEM mem %X (%X) -> regs.fpcr\r\n", ad, regs.fpcr ));
 					ad += 4;
 				}
 				if (extra & 0x0800) {
-					regs.fpsr = get_long (ad);
+					regs.fpsr = get_long (ad, true);
 					D(bug("FMOVEM mem %X (%X) -> regs.fpsr\r\n", ad, regs.fpsr ));
 					ad += 4;
 				}
 				if (extra & 0x0400) {
-					regs.fpiar = get_long (ad);
+					regs.fpiar = get_long (ad, true);
 					D(bug("FMOVEM mem %X (%X) -> regs.fpiar\r\n", ad, regs.fpiar ));
 					ad += 4;
 				}
@@ -1721,11 +1721,11 @@ void fpp_opp(uae_u32 opcode, uae_u16 extra)
 						uae_u32 wrd1, wrd2, wrd3;
 						if( list & 0x80 ) {
 							ad -= 4;
-							wrd3 = get_long (ad);
+							wrd3 = get_long (ad, true);
 							ad -= 4;
-							wrd2 = get_long (ad);
+							wrd2 = get_long (ad, true);
 							ad -= 4;
-							wrd1 = get_long (ad);
+							wrd1 = get_long (ad, true);
 							// regs.fp[reg] = to_exten (wrd1, wrd2, wrd3);
 							to_exten_no_normalize (wrd1, wrd2, wrd3, (uae_u32 *)&regs.fp[reg]);
 						}
@@ -1735,11 +1735,11 @@ void fpp_opp(uae_u32 opcode, uae_u16 extra)
 					for(reg=0; reg<8; reg++) {
 						uae_u32 wrd1, wrd2, wrd3;
 						if( list & 0x80 ) {
-							wrd1 = get_long (ad);
+							wrd1 = get_long (ad, true);
 							ad += 4;
-							wrd2 = get_long (ad);
+							wrd2 = get_long (ad, true);
 							ad += 4;
-							wrd3 = get_long (ad);
+							wrd3 = get_long (ad, true);
 							ad += 4;
 							// regs.fp[reg] = to_exten (wrd1, wrd2, wrd3);
 							to_exten_no_normalize (wrd1, wrd2, wrd3, (uae_u32 *)&regs.fp[reg]);

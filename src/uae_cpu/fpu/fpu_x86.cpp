@@ -1,7 +1,9 @@
+/* 2001 MJ */
+
 /*
  *  fpu_x86.cpp - 68881/68040 fpu code for x86/Windows an Linux/x86.
  *
- *  Basilisk II (C) 1997-1999 Christian Bauer
+ *  Basilisk II (C) 1997-2001 Christian Bauer
  *
  *  MC68881/68040 fpu emulation
  *
@@ -129,13 +131,14 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "sysdeps.h"
 #include "memory.h"
 #include "readcpu.h"
 #include "newcpu.h"
-#include "fpu_x86.h"
-#include "fpu_x86_asm.h"
+#include "fpu/fpu_x86.h"
+#include "fpu/fpu_x86_asm.h"
 
 /* ---------------------------- Compatibility ---------------------------- */
 
@@ -595,8 +598,8 @@ static uae_s32 extended_to_signed_32( float80 f ) REGPARAM;
 static uae_s32 extended_to_signed_32( float80 f )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	uae_s32 tmp;
-	WORD sw_temp;
+	volatile uae_s32 tmp;
+	volatile WORD sw_temp;
 	
 /*	_asm {
 		MOV			EDI, [f]
@@ -637,8 +640,8 @@ static uae_s16 extended_to_signed_16( float80 f ) REGPARAM;
 static uae_s16 extended_to_signed_16( float80 f )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	uae_s16 tmp;
-	WORD sw_temp;
+	volatile uae_s16 tmp;
+	volatile WORD sw_temp;
 
 /*	_asm {
 		MOV			EDI, [f]
@@ -677,8 +680,8 @@ static uae_s8 extended_to_signed_8( float80 f ) REGPARAM;
 static uae_s8 extended_to_signed_8( float80 f )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	uae_s16 tmp;
-	WORD sw_temp;
+	volatile uae_s16 tmp;
+	volatile WORD sw_temp;
 	
 /*	_asm {
 		MOV			EDI, [f]
@@ -742,7 +745,7 @@ static double extended_to_double( float80 f ) REGPARAM;
 static double extended_to_double( float80 f )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	double result;
+	volatile double result;
 
 /*	_asm {
 		MOV			ESI, [f]
@@ -880,8 +883,8 @@ static uae_u32 from_single( float80 f ) REGPARAM;
 static uae_u32 from_single( float80 f )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	uae_u32 dest;
-	WORD sw_temp;
+	volatile uae_u32 dest;
+	volatile WORD sw_temp;
 
 /*	_asm {
 		MOV			EDI, [f]
@@ -928,8 +931,8 @@ static void from_double( float80 f, uae_u32 *wrd1, uae_u32 *wrd2 ) REGPARAM;
 static void from_double( float80 f, uae_u32 *wrd1, uae_u32 *wrd2 )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	uae_u32 dest[2];
-	WORD sw_temp;
+	volatile uae_u32 dest[2];
+	volatile WORD sw_temp;
 
 /*	_asm {
 		MOV			EDI, [f]
@@ -1037,7 +1040,7 @@ static void do_fintrz( float80 dest, float80 src ) REGPARAM;
 static void do_fintrz( float80 dest, float80 src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	WORD cw_temp;
+	volatile WORD cw_temp;
 
 /*	_asm {
 		MOV			ESI, [src]
@@ -1657,7 +1660,7 @@ partial_loop:
 	
 #else
 	
-	_ASM(	"fldt	%4\n"
+	_ASM(	"fldt	%3\n"
 			"fldt	%2\n"
 			"0:\n"					// partial_loop
 			"fprem	\n"
@@ -1979,7 +1982,7 @@ static void do_fsgldiv( float80 dest, float80 src ) REGPARAM;
 static void do_fsgldiv( float80 dest, float80 src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	WORD cw_temp;
+	volatile WORD cw_temp;
 /*	_asm {
 		FSTCW   cw_temp
 		and			cw_temp, ~X86_PRECISION_CONTROL_MASK
@@ -2058,7 +2061,7 @@ static void do_fsglmul( float80 dest, float80 src ) REGPARAM;
 static void do_fsglmul( float80 dest, float80 src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	WORD cw_temp;
+	volatile WORD cw_temp;
 
 /*	_asm {
 		FSTCW   cw_temp
@@ -2307,7 +2310,7 @@ static void from_pack(double src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3
 
 	D(bug("from_pack(%.04f) = %X,%X,%X\r\n",(float)src,*wrd1,*wrd2,*wrd3));
 
-	WORD sw_temp;
+	volatile WORD sw_temp;
 //	_asm FNSTSW sw_temp
 	_ASM("fnstsw %0" : "=m" (sw_temp));
 	if(sw_temp & SW_EXCEPTION_MASK) {

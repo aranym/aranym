@@ -15,9 +15,9 @@ DESTDIR =
 
 CC = @CC@
 CXX = @CXX@
-CFLAGS = @CFLAGS@
-CXXFLAGS = @CXXFLAGS@
-CPPFLAGS = @CPPFLAGS@ -I../include -I. @CPUINCLUDES@
+CFLAGS = @CFLAGS@ -Wall
+CXXFLAGS = @CXXFLAGS@ -Wall
+CPPFLAGS = @CPPFLAGS@ -I../include -I. @CPUINCLUDES@ -Wall
 DEFS = @DEFS@ @DEFINES@ -D_REENTRANT -DDATADIR=\"$(datadir)/$(APP)\"
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -104,11 +104,11 @@ depend dep:
 	makedepend $(CPPFLAGS) -Y. $(SRCS) 2>/dev/null
 
 $(OBJ_DIR)/%.o : %.c
-	$(CC) -O3 $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
-	$(CXX) -ggdb $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) -O3 $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.s
-	$(CC) -ggdb $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/cpuopti: $(OBJ_DIR)/cpuopti.o
 	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/cpuopti $(OBJ_DIR)/cpuopti.o

@@ -36,6 +36,28 @@
 #include <sys/mman.h>
 #include <dirent.h>				// for extFS
 
+#ifdef HAVE_PTHREADS
+# include <pthread.h>
+#endif
+
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
+# include <sys/mman.h>
+#endif
+
+#if !EMULATED_68K && defined(__NetBSD__)
+# include <m68k/sync_icache.h> 
+# include <m68k/frame.h>
+# include <sys/param.h>
+# include <sys/sysctl.h>
+struct sigstate {
+	int ss_flags;
+	struct frame ss_frame;
+	struct fpframe ss_fpstate;
+};
+# define SS_FPSTATE  0x02
+# define SS_USERREGS 0x04
+#endif
+
 #include "cpu_emulation.h"
 #include "main.h"
 #include "hardware.h"
@@ -55,11 +77,28 @@ const int SIG_STACK_SIZE = SIGSTKSZ;	// Size of signal stack
 
 // CPU and FPU type, addressing mode
 int CPUType;
+bool CPUIs68060;
 int FPUType;
 
 SDL_TimerID my_timer_id;
 
+#if REAL_ADDRESSING
+static bool lm_area_mapped = false;	// Flag: Low Memory area mmap()ped
+static bool memory_mapped_from_zero = false; // Flag: Could allocate RAM area from 0
+#endif
+
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
 static uint32 mapped_ram_rom_size;	// Total size of mmap()ed RAM/ROM area
+#endif
+
+#ifndef HAVE_STRDUP
+extern "C" char *strdup(const char *s)
+{
+	char *n = (char *)malloc(strlen(s) + 1);
+	strcpy(n, s);
+	return n;
+}
+#endif
 
 void init_fdc();				// fdc.cpp
 
@@ -553,6 +592,12 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.28  2001/06/21 20:20:01  standa
+ * XMOUSEHACK define removed. This problem was solved directly within the
+ * SDL x11 driver. SDL_GrabInput() function was patched to put the
+ * pointer_mode argument to XGrabInput() call as synchronous instead of
+ * asynchronous. So we are waiting for SDL authors opinion.
+ *
  * Revision 1.27  2001/06/18 20:02:50  standa
  * XMOUSEHACK define... just a test.
  *

@@ -1,3 +1,4 @@
+/* 2001 MJ */
 /*
  * UAE - The Un*x Amiga Emulator
  *
@@ -221,7 +222,8 @@ static void sync_m68k_pc (void)
 }
 
 /* getv == 1: fetch data; getv != 0: check for odd address. If movem != 0,
- * the calling routine handles Apdi and Aipi modes. */
+ * the calling routine handles Apdi and Aipi modes.
+ * gb-- movem == 2 means the same thing but for a MOVE16 instruction */
 static void genamode (amodes mode, char *reg, wordsizes size, char *name, int getv, int movem)
 {
     start_brace ();
@@ -1535,7 +1537,6 @@ static void gen_opcode (unsigned long int opcode)
 	m68k_pc_offset = 0;
 	break;
      case i_RTD:
-	printf ("\tcompiler_flush_jsr_stack();\n");
 	genamode (Aipi, "7", sz_long, "pc", 1, 0);
 	genamode (curi->smode, "srcreg", curi->size, "offs", 1, 0);
 	printf ("\tm68k_areg(regs, 7) += offs;\n");
@@ -1569,7 +1570,6 @@ static void gen_opcode (unsigned long int opcode)
 	need_endlabel = 1;
 	break;
      case i_RTR:
-	printf ("\tcompiler_flush_jsr_stack();\n");
 	printf ("\tMakeSR();\n");
 	genamode (Aipi, "7", sz_word, "sr", 1, 0);
 	genamode (Aipi, "7", sz_long, "pc", 1, 0);
@@ -2156,14 +2156,14 @@ static void gen_opcode (unsigned long int opcode)
 	start_brace ();
 	printf ("\tint regno = (src >> 12) & 15;\n");
 	printf ("\tuae_u32 *regp = regs.regs + regno;\n");
-	printf ("\tif (! m68k_movec2(src & 0xFFF, regp)) goto %s;\n", endlabelstr);
+	printf ("\tm68k_movec2(src & 0xFFF, regp);\n");
 	break;
      case i_MOVE2C:
 	genamode (curi->smode, "srcreg", curi->size, "src", 1, 0);
 	start_brace ();
 	printf ("\tint regno = (src >> 12) & 15;\n");
 	printf ("\tuae_u32 *regp = regs.regs + regno;\n");
-	printf ("\tif (! m68k_move2c(src & 0xFFF, regp)) goto %s;\n", endlabelstr);
+	printf ("\tm68k_move2c(src & 0xFFF, regp);\n");
 	break;
      case i_CAS:
 	{
@@ -2452,17 +2452,36 @@ static void gen_opcode (unsigned long int opcode)
      case i_CPUSHA:
 	break;
      case i_MOVE16:
-	printf ("\tuaecptr mems = m68k_areg(regs, srcreg) & ~15, memd;\n");
-	printf ("\tdstreg = (%s >> 12) & 7;\n", gen_nextiword());
-	printf ("\tmemd = m68k_areg(regs, dstreg) & ~15;\n");
-	printf ("\tput_long(memd, get_long(mems, true));\n");
-	printf ("\tput_long(memd+4, get_long(mems+4, true));\n");
-	printf ("\tput_long(memd+8, get_long(mems+8, true));\n");
-	printf ("\tput_long(memd+12, get_long(mems+12, true));\n");
-	printf ("\tm68k_areg(regs, srcreg) += 16;\n");
-	printf ("\tm68k_areg(regs, dstreg) += 16;\n");
+	if ((opcode & 0xfff8) == 0xf620) {
+		/* MOVE16 (Ax)+,(Ay)+ */
+		printf ("\tuaecptr mems = m68k_areg(regs, srcreg) & ~15, memd;\n");
+		printf ("\tdstreg = (%s >> 12) & 7;\n", gen_nextiword());
+		printf ("\tmemd = m68k_areg(regs, dstreg) & ~15;\n");
+		printf ("\tput_long(memd, get_long(mems, true));\n");
+		printf ("\tput_long(memd+4, get_long(mems+4, true));\n");
+		printf ("\tput_long(memd+8, get_long(mems+8, true));\n");
+		printf ("\tput_long(memd+12, get_long(mems+12, true));\n");
+		printf ("\tif (srcreg != dstreg)\n");
+		printf ("\tm68k_areg(regs, srcreg) += 16;\n");
+		printf ("\tm68k_areg(regs, dstreg) += 16;\n");
+	}
+	else {
+		/* Other variants */
+		genamode (curi->smode, "srcreg", curi->size, "mems", 0, 2);
+		genamode (curi->dmode, "dstreg", curi->size, "memd", 0, 2);
+		printf ("\tmemsa &= ~15;\n");
+		printf ("\tmemda &= ~15;\n");
+		printf ("\tput_long(memda, get_long(memsa, true));\n");
+		printf ("\tput_long(memda+4, get_long(memsa+4, true));\n");
+		printf ("\tput_long(memda+8, get_long(memsa+8, true));\n");
+		printf ("\tput_long(memda+12, get_long(memsa+12, true));\n");
+		if ((opcode & 0xfff8) == 0xf600)
+		printf ("\tm68k_areg(regs, srcreg) += 16;\n");
+		else if ((opcode & 0xfff8) == 0xf608)
+		printf ("\tm68k_areg(regs, dstreg) += 16;\n");
+	}
 	break;
-    case i_MMUOP:
+     case i_MMUOP:
 	genamode (curi->smode, "srcreg", curi->size, "extra", 1, 0);
 	sync_m68k_pc ();
 	swap_opcode ();
@@ -2483,7 +2502,6 @@ static void generate_includes (FILE * f)
     fprintf (f, "#include \"memory.h\"\n");
     fprintf (f, "#include \"readcpu.h\"\n");
     fprintf (f, "#include \"newcpu.h\"\n");
-    fprintf (f, "#include \"compiler.h\"\n");
     fprintf (f, "#include \"cputbl.h\"\n");
 }
 
@@ -2523,6 +2541,7 @@ static void generate_one_opcode (int rp)
      case 3: smsk = 7; break;
      case 4: smsk = 7; break;
      case 5: smsk = 63; break;
+	 case 7: smsk = 3; break;
      default: abort ();
     }
     dmsk = 7;

@@ -1,3 +1,8 @@
+2001/07/02 - milan
+- new UAE CPU port from BasiliskII (CVS 25.6.2001)
+
+- more portable
+
 2001/06/18 - STanda - version increased to 0.0.5
 - the SDL dependent parts of the code were moved to the HostScreen class.
   The HostScreen hostScreen; object is created statically in the hardware.cpp.

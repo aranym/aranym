@@ -3,7 +3,7 @@
 /*
  *  cpu_emulation.h - Definitions for Basilisk II CPU emulation module (UAE 0.8.10 version)
  *
- *  Basilisk II (C) 1997-2000 Christian Bauer
+ *  Basilisk II (C) 1997-2001 Christian Bauer
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -49,20 +49,6 @@ extern uint8 *VideoRAMBaseHost;	// VideoRAM base (host address space)
 
 // Mac memory access functions
 #include "memory.h"
-//static inline uint32 ReadMacInt32(uint32 addr) {return get_long(addr);}
-//static inline uint32 ReadMacInt16(uint32 addr) {return get_word(addr);}
-//static inline uint32 ReadMacInt8(uint32 addr) {return get_byte(addr);}
-//static inline void WriteMacInt32(uint32 addr, uint32 l) {put_long(addr, l);}
-//static inline void WriteMacInt16(uint32 addr, uint32 w) {put_word(addr, w);}
-//static inline void WriteMacInt8(uint32 addr, uint32 b) {put_byte(addr, b);}
-//static inline uint8 *Mac2HostAddr(uint32 addr) {return get_real_address(addr);}
-//static inline uint32 Host2MacAddr(uint8 *addr) {return get_virtual_address(addr);}
-
-//static inline void *Mac_memset(uint32 addr, int c, size_t n) {return memset(Mac2HostAddr(addr), c, n);}
-//static inline void *Mac2Host_memcpy(void *dest, uint32 src, size_t n) {return memcpy(dest, Mac2HostAddr(src), n);}
-//static inline void *Host2Mac_memcpy(uint32 dest, const void *src, size_t n) {return memcpy(Mac2HostAddr(dest), src, n);}
-//static inline void *Mac2Mac_memcpy(uint32 dest, uint32 src, size_t n) {return memcpy(Mac2HostAddr(dest), Mac2HostAddr(src), n);}
-
 
 /*
  *  680x0 emulation
@@ -74,7 +60,7 @@ extern void Exit680x0(void);
 
 // 680x0 emulation functions
 struct M68kRegisters;
-extern void Start680x0(void);	// Reset and start 680x0
+extern void Start680x0(void);					// Reset and start 680x0
 extern "C" void Execute68k(uint32 addr, M68kRegisters *r);	// Execute 68k code from EMUL_OP routine
 extern "C" void Execute68kTrap(uint16 trap, M68kRegisters *r);	// Execute MacOS 68k trap from EMUL_OP routine
 

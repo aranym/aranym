@@ -1,9 +1,8 @@
 /* 2001 MJ */
-
 /*
  *  basilisk_glue.cpp - Glue UAE CPU to Basilisk II CPU engine interface
  *
- *  Basilisk II (C) 1997-2000 Christian Bauer
+ *  Basilisk II (C) 1997-2001 Christian Bauer
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,7 +28,6 @@
 #include "memory.h"
 #include "readcpu.h"
 #include "newcpu.h"
-#include "compiler.h"
 
 
 // RAM and ROM pointers
@@ -47,8 +45,10 @@ uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)
 //uint32 VideoRAMSize;	// Size of VideoRAM
 uint32 InterruptFlags;
 
+#if DIRECT_ADDRESSING
 uintptr MEMBaseDiff;	// Global offset between a Atari address and its Host equivalent
 uintptr VMEMBaseDiff;	// Global offset between a Atari VideoRAM address and /dev/fb0 mmap
+#endif
 
 // From newcpu.cpp
 extern int quit_program;
@@ -59,12 +59,21 @@ extern int quit_program;
 
 bool Init680x0(void)
 {
+#if REAL_ADDRESSING
+	// Mac address space = host address space
+	RAMBase = (uint32)RAMBaseHost;
+	ROMBase = (uint32)ROMBaseHost;
+#elif DIRECT_ADDRESSING
 	InitMEMBaseDiff(RAMBaseHost, RAMBase);
 	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
-	init_m68k();
-#ifdef USE_COMPILER
-	compiler_init();
+#else
+	// Initialize UAE memory banks
+	RAMBase = 0;
+	ROMBase = 0x00e00000;
+	memory_init();
 #endif
+
+	init_m68k();
 	return true;
 }
 
