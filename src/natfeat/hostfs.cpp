@@ -34,7 +34,7 @@
 #include "tools.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #if 0
@@ -894,7 +894,7 @@ bool HostFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const
 		// shorten the name from the pathName;
 		*result = '\0';
 
-		DIR *dh = opendir( pathName );
+		DIR *dh = host_opendir( pathName );
 		if ( dh == NULL ) {
 			DFNAME(bug("HOSTFS: getHostFileName dopendir(%s) failed.", pathName));
 			goto lbl_final;	 // should never happen
@@ -1307,7 +1307,6 @@ int32 HostFs::xfs_rename( XfsCookie *olddir, memptr oldname, XfsCookie *newdir, 
 	return TOS_E_OK;
 }
 
-
 int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 {
 	char ffromname[MAXPATHNAMELEN];
@@ -1502,6 +1501,80 @@ int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 }
 
 
+char *HostFs::host_readlink(const char *pathname, char *target, int len )
+{
+	int rv;
+	target[0] = '\0';
+	if ((rv=readlink(pathname,target,len))<0)
+		return NULL;
+
+	// put the trailing \0
+	target[rv] = '\0';
+
+	// relative host fs symlinks
+	if ( target[0] != '/' && target[0] != '\\' && target[1] != ':' ) {
+		// find the last dirseparator
+		const char *slash = &pathname[strlen(pathname)];
+		while ( --slash >= pathname &&
+				*slash != '/' &&
+				*slash != '\\' );
+
+		// get the path part (in front of the slash)
+		// and prepend it to the link taget (if fits)
+		int plen = slash - pathname + 1;
+		if ( plen && plen + (int)strlen(target) <= len ) {
+			memmove( target + plen, target, strlen(target)+1 );	
+			memmove( target, pathname, plen );
+		} else {
+			panicbug( "HOSTFS: fs_readlink: relative link doesn't fit the len '%s'\n", target );
+			errno = ENOMEM;
+			return NULL;
+		}
+
+		// find the last dirseparator
+		slash = &target[strlen(target)];
+		while ( --slash >= target &&
+				*slash != '/' &&
+				*slash != '\\' );
+		slash++;
+
+		if ( slash > target ) {
+			// if relative then we need an absolute path here
+			char currdir[MAXPATHNAMELEN];
+			getcwd(currdir, sizeof(currdir));
+
+			char abspath[MAXPATHNAMELEN];
+			strncpy(abspath, target, slash-target);
+			abspath[slash-target] = '\0';
+			chdir(abspath);
+			getcwd(abspath, sizeof(abspath));
+
+			chdir(currdir);
+
+			strncat(abspath, slash-1, MAXPATHNAMELEN-strlen(abspath));
+			strncpy(target, abspath, len);
+		}
+	}
+
+	return target;
+}
+
+DIR *HostFs::host_opendir( const char *fpathName ) {
+	DIR *result = opendir( fpathName );
+	if ( result || errno != ENOTDIR )
+		return result;
+
+	// follow symlink when needed
+	struct stat statBuf;
+	if ( !lstat(fpathName, &statBuf) && S_ISLNK(statBuf.st_mode) ) {
+		char temp[MAXPATHNAMELEN];
+		if (host_readlink(fpathName,temp,MAXPATHNAMELEN-1))
+			return host_opendir( temp );
+	}
+
+	return NULL;
+}
+
 int32 HostFs::xfs_opendir( XfsDir *dirh, uint16 flags )
 {
 	char fpathName[MAXPATHNAMELEN];
@@ -1512,7 +1585,7 @@ int32 HostFs::xfs_opendir( XfsDir *dirh, uint16 flags )
 	dirh->flags = flags;
 	dirh->index = 0;
 
-	dirh->hostDir = opendir( fpathName );
+	dirh->hostDir = host_opendir( fpathName );
 	if ( dirh->hostDir == NULL )
 		return errnoHost2Mint(errno,TOS_EPTHNF);
 
@@ -1604,6 +1677,22 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
 	if ( lstat(fpathName, &statBuf) )
 		return errnoHost2Mint(errno,TOS_EFILNF);
 
+	// symlink
+	if ( S_ISLNK(statBuf.st_mode) ) {
+		char target[MAXPATHNAMELEN];
+		if (!host_readlink(fpathName,target,MAXPATHNAMELEN-1))
+			return errnoHost2Mint(errno,TOS_EFILNF);
+
+		// doesn't point to a mapped drive
+		if (!findDrive(fc, target)) {
+			D(bug( "HOSTFS: fs_getxattr: follow symlink -> %s", target ));
+
+			// get the information from the link target
+			if ( stat(target, &statBuf) )
+				return errnoHost2Mint(errno,TOS_EFILNF);
+		}
+	}
+
 	// XATTR structure conversion (COMPEND.HYP)
 	/* UWORD mode	   */  WriteInt16( xattrp	  , modeHost2Mint(statBuf.st_mode) );
 	/* LONG	 index	   */  WriteInt32( xattrp +	 2, statBuf.st_ino ); // FIXME: this is Linux's one
@@ -1632,7 +1721,7 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
 	/* LONG	 reserved3 */  WriteInt32( xattrp + 44, 0 );
 	/* LONG	 reserved4 */  WriteInt32( xattrp + 48, 0 );
 
-	D(bug("HOSTFS: fs_getxattr mtime %#04x, mdate %#04x", ReadInt16(xattrp + 28), ReadInt16(xattrp + 30)));
+	D(bug("HOSTFS: fs_getxattr mode %#02x, mtime %#04x, mdate %#04x", modeHost2Mint(statBuf.st_mode), ReadInt16(xattrp + 28), ReadInt16(xattrp + 30)));
 
 	return TOS_E_OK;
 }
@@ -1647,10 +1736,10 @@ int32 HostFs::xfs_chattr( XfsCookie *fc, int16 attr )
 
 	// perform the link stat itself
 	struct stat statBuf;
-    mode_t newmode;
     if ( lstat( fpathName, &statBuf ) )
 		return errnoHost2Mint( errno, TOS_EACCDN );
 
+    mode_t newmode;
     if ( attr & 0x01 ) /* FA_RDONLY */
 		newmode = statBuf.st_mode & ~( S_IWUSR | S_IWGRP | S_IWOTH );
     else
@@ -1723,35 +1812,64 @@ int32 HostFs::xfs_getdev( XfsCookie *fc, memptr devspecial )
 }
 
 
+HostFs::ExtDrive *HostFs::findDrive( XfsCookie *dir, char *pathname )
+{
+	// absolute FreeMiNT's link stored in the HOSTFS
+	if ( pathname[0] && pathname[1] == ':' )
+		return NULL;
+
+	// search among the mount points to find suitable link...
+	size_t toNmLen = strlen( pathname );
+	size_t hrLen = 0;
+
+	// prefer the current device
+	MountMap::iterator it = mounts.find(dir->dev);
+	if ( ! ( ( hrLen = strlen( it->second->hostRoot ) ) <= toNmLen &&
+			 !strncmp( it->second->hostRoot, pathname, hrLen ) ) )
+	{
+		// preference failed -> search all
+		it = mounts.begin();
+		while (it != mounts.end()) {
+			hrLen = strlen( it->second->hostRoot );
+			if ( hrLen <= toNmLen &&
+				 !strncmp( it->second->hostRoot, pathname, hrLen ) )
+				break;
+			it++;
+		}
+	}
+
+	if ( it != mounts.end() )
+		return it->second;
+	return NULL;
+}
+
+#if 0
 int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 {
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname(dir,NULL,fpathName); // get the cookie filename
 
+	D(bug( "HOSTFS: fs_readlink: %s", fpathName ));
+
 	char fbuf[MAXPATHNAMELEN];
-	int rv;
-	if ((rv=readlink(fpathName,fbuf,len-1)) < 0)
+	if (!host_readlink(fpathName,fbuf,len-1))
 		return errnoHost2Mint( errno, TOS_EFILNF );
 
-	// put the trailing \0
-	fbuf[rv] = '\0';
-
-	// FIXME: what about relative host fs symlinks???
-	//        this works for absolute ones
+	D(bug( "HOSTFS: fs_readlink: -> %s", fbuf ));
 
 	// search among the mount points to find suitable link...
 	size_t toNmLen = strlen( fbuf );
 	size_t hrLen = 0;
 	// prefer the current device
 	MountMap::iterator it = mounts.find(dir->dev);
-	if ( ! ( ( hrLen = strlen( it->second->hostRoot ) ) < toNmLen &&
+	if ( ! ( ( hrLen = strlen( it->second->hostRoot ) ) <= toNmLen &&
 			 !strncmp( it->second->hostRoot, fbuf, hrLen ) ) )
 	{
 		// preference failed -> search all
 		it = mounts.begin();
 		while (it != mounts.end()) {
 			hrLen = strlen( it->second->hostRoot );
-			if ( hrLen < toNmLen &&
+			if ( hrLen <= toNmLen &&
 				 !strncmp( it->second->hostRoot, fbuf, hrLen ) )
 				break;
 			it++;
@@ -1760,10 +1878,45 @@ int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 
 	if ( it != mounts.end() ) {
 		strcpy( fpathName, it->second->mountPoint );
+		if ( fbuf[ hrLen ] != '/' )
+			strcat( fpathName, "/" );
 		strcat( fpathName, &fbuf[ hrLen ] );
 	} else {
 		strcpy( fpathName, fbuf );
 	}
+
+	D(bug( "HOSTFS: /fs_readlink: %s", fpathName ));
+
+	host2AtariSafeStrncpy( buf, fpathName, len );
+	return TOS_E_OK;
+}
+#endif
+
+int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
+{
+	char fpathName[MAXPATHNAMELEN];
+	cookie2Pathname(dir,NULL,fpathName); // get the cookie filename
+
+	D(bug( "HOSTFS: fs_readlink: %s", fpathName ));
+
+	char target[MAXPATHNAMELEN];
+	if (!host_readlink(fpathName,target,len-1))
+		return errnoHost2Mint( errno, TOS_EFILNF );
+
+	D(bug( "HOSTFS: fs_readlink: -> %s", target ));
+
+	ExtDrive *drv = findDrive(dir, target);
+	if ( drv ) {
+		int len = strlen( drv->hostRoot );
+		strcpy( fpathName, drv->mountPoint );
+		if ( target[ len ] != '/' )
+			strcat( fpathName, "/" );
+		strcat( fpathName, &target[ len ] );
+	} else {
+		strcpy( fpathName, target );
+	}
+
+	D(bug( "HOSTFS: /fs_readlink: %s", fpathName ));
 
 	host2AtariSafeStrncpy( buf, fpathName, len );
 	return TOS_E_OK;
@@ -1829,10 +1982,9 @@ int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 		char fpathName[MAXPATHNAMELEN];
 		cookie2Pathname(dir,fname,fpathName); // get the cookie filename
 
-		struct stat statBuf;
-
 		D(bug( "HOSTFS: fs_lookup stat: %s", fpathName ));
 
+		struct stat statBuf;
 		if ( lstat( fpathName, &statBuf ) )
 			return errnoHost2Mint( errno, TOS_EFILNF );
 
@@ -1922,7 +2074,7 @@ int32 HostFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, in
 # define FS_HOSTFS   (15L << 16)
 
 
-int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
+int32 HostFs::xfs_fscntl ( XfsCookie * /*dir*/, memptr /*name*/, int16 cmd, int32 arg)
 {
 	switch ((uint16)cmd)
 	{
@@ -2011,7 +2163,6 @@ int32 HostFs::xfs_release( XfsCookie *fc )
 }
 
 
-
 HostFs::ExtDrive::ExtDrive( HostFs::ExtDrive *old ) {
 	if ( old ) {
 		driveNumber = old->driveNumber;
@@ -2024,107 +2175,26 @@ HostFs::ExtDrive::ExtDrive( HostFs::ExtDrive *old ) {
 }
 
 
-int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
-							   memptr filesys, memptr filesys_devdrv )
-{
-	// Some magic to workaround a bug in GCC 3.2 on Cygwin.
-	// This allows to set MAXPATHNAMELEN back to something higher than 255
-	char temp[MAXPATHNAMELEN];
-	char *fmountpoint=temp;
-
-	a2fstrcpy( fmountpoint, mountpoint );
-	int dnum = -1;
-
-	ExtDrive *drv = new ExtDrive();
-	drv->fsDrv = filesys;
-	drv->fsDevDrv = filesys_devdrv;
-
-	// The mountPoint is of a "A:" format:
-	//    MetaDOS mapping the devnum is <MAXDRIVES
-	if ( strlen( fmountpoint ) == 2 && fmountpoint[1] == ':' ) {
-		dnum = tolower(fmountpoint[0])-'a';
-
-		// -> use the [HOSTFS] of config file here
-		drv->mountPoint = strdup( fmountpoint );
-		drv->hostRoot = strdup( bx_options.aranymfs[dnum].rootPath );
-		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
-	} else {
-		drv->mountPoint = strdup( fmountpoint );
-
-		// the aranym.xfs tries to map drives to u:\\xx
-		// in this case we use the [HOSTFS] of config file here
-		if ( !strncasecmp( fmountpoint, "u:\\", 3 ) &&
-			 (unsigned int)(dnum = tolower(fmountpoint[3])-'a') < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) )
-		{
-			drv->hostRoot = strdup( bx_options.aranymfs[fmountpoint[3]-'a'].rootPath );
-			drv->halfSensitive = bx_options.aranymfs[fmountpoint[3]-'a'].halfSensitive;
-		} else {
-			// no [aranymfs] match -> map to the passed mountpoint
-			//  - future extension to map from m68k side
-			char fhostroot[MAXPATHNAMELEN];
-			a2fstrcpy( fhostroot, hostroot );
-
-			drv->hostRoot = strdup( fhostroot );
-			drv->halfSensitive = halfSensitive;
-		}
-	}
-
-	drv->driveNumber = devnum;
-	mounts.insert(std::make_pair( devnum, drv ));
-
-	// if the drive mount was mounted to some FreeMiNT mountpoint
-	// which devnum is higher that MAXDRIVES then serve also as the
-	// GEMDOS drive equivalent. This is a need for the current
-    // FreeMiNT kernel which requires the driver for u:\[a-z0-6] to react
-	// to 0-31 devno's
-	if ( dnum != devnum &&
-		 dnum != -1 &&
-		 (unsigned int)dnum < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) ) {
-		drv = new ExtDrive( drv );
-		drv->driveNumber = dnum;
-		mounts.insert(std::make_pair( dnum, drv ));
-	}
-
-
-	D(bug("HOSTFS: fs_native_init:\n"
-		  "\t\t fs_drv	   = %#08x\n"
-		  "\t\t fs_devdrv  = %#08x\n"
-		  "\t\t fs_devnum  = %#04x\n"
-		  "\t\t fs_mountPoint = %s\n"
-		  "\t\t fs_hostRoot   = %s\n"
-		  ,drv->fsDrv
-		  ,drv->fsDevDrv
-		  ,(int)devnum
-		  ,drv->mountPoint
-		  ,drv->hostRoot
-		  ));
-
-	return TOS_E_OK;
-}
-/*
 int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 				bool halfSensitive, memptr filesys, memptr filesys_devdrv )
 {
-	// Some magic to workaround a bug in GCC 3.2 on Cygwin.
-	// This allows to set MAXPATHNAMELEN back to something higher than 255
-	char temp[MAXPATHNAMELEN];
-	char *fmountpoint=temp;
-
-	atari2HostSafeStrncpy( fmountpoint, mountpoint, sizeof(fmountpoint) );
+	char fmountPoint[MAXPATHNAMELEN];
+	atari2HostSafeStrncpy( fmountPoint, mountpoint, sizeof(fmountPoint) );
 
 	ExtDrive *drv = new ExtDrive();
 	drv->fsDrv = filesys;
 	drv->fsDevDrv = filesys_devdrv;
-	drv->mountPoint = strdup( fmountpoint );
+	drv->mountPoint = strdup( fmountPoint );
 
 	int dnum = -1;
-	if ( strlen( fmountpoint ) == 2 && fmountpoint[1] == ':' ) {
-		// The mountPoint is of a "A:" format: (BetaDOS mapping)
-		dnum = tolower(fmountpoint[0])-'a';
+	if ( strlen( fmountPoint ) == 2 && fmountPoint[1] == ':' ) {
+		// The mountPoint is of a "X:" format: (BetaDOS mapping)
+		dnum = tolower(fmountPoint[0])-'a';
 	}
-	else if (strlen(fmountpoint) >= 4 && !strncasecmp(fmountpoint, "u:\\", 3)) {
+	else if (strlen(fmountPoint) >= 4 && !strncasecmp(fmountPoint, "u:\\", 3)) {
 		// the hostfs.xfs tries to map drives to u:\\X
-		dnum = tolower(fmountpoint[3])-'a';
+		// in this case we use the [HOSTFS] of config file here
+		dnum = tolower(fmountPoint[3])-'a';
 	}
 
 	int maxdnum = sizeof(bx_options.aranymfs) / sizeof(bx_options.aranymfs[0]);
@@ -2132,9 +2202,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		drv->hostRoot = strdup( bx_options.aranymfs[dnum].rootPath );
 		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
 	} else {
-		dnum = -1;	// invalidate dnum
+		dnum = -1; // invalidate dnum
 
-		// no [aranymfs] match -> map to the passed mountpoint
+		// no [HOSTFS] match -> map to the passed mountpoint
 		//  - future extension to map from m68k side
 		char fhostroot[MAXPATHNAMELEN];
 		atari2HostSafeStrncpy( fhostroot, hostroot, sizeof(fhostroot) );
@@ -2143,13 +2213,29 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		drv->halfSensitive = halfSensitive;
 	}
 
+	// if hostRoot is a symlink then follow it
+	struct stat statBuf;
+	while ( !lstat(drv->hostRoot, &statBuf) && S_ISLNK(statBuf.st_mode) ) {
+		char target[MAXPATHNAMELEN];
+		if (host_readlink(drv->hostRoot,target,MAXPATHNAMELEN-1)) {
+			free( drv->hostRoot );
+			drv->hostRoot = strdup( target );
+		}
+	}
+
+	// no rootPath -> do not map the drive
+	if ( !strlen(drv->hostRoot) ) {
+		delete drv;
+		return TOS_EPTHNF;
+	}
+
 	drv->driveNumber = devnum;
 	mounts.insert(std::make_pair( devnum, drv ));
 
 	// if the drive mount was mounted to some FreeMiNT mountpoint
 	// which devnum is higher that MAXDRIVES then serve also as the
 	// GEMDOS drive equivalent. This is a need for the current
-    // FreeMiNT kernel which requires the driver for u:\[a-z0-6] to react
+	// FreeMiNT kernel which requires the driver for u:\[a-z0-6] to react
 	// to 0-31 devno's
 	if (dnum != -1 && dnum != devnum) {
 		drv = new ExtDrive( drv );
@@ -2158,22 +2244,23 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	}
 
 
-	panicbug("HOSTFS: fs_native_init:\n"
-		  "\t\t fs_drv	   = %#08x\n"
-		  "\t\t fs_devdrv  = %#08x\n"
+	bug("HOSTFS: fs_native_init:\n"
+	    "\t\t fs_drv	   = %#08x\n"
+		"\t\t fs_devdrv  = %#08x\n"
 		  "\t\t fs_devnum  = %#04x\n"
 		  "\t\t fs_mountPoint = %s\n"
-		  "\t\t fs_hostRoot   = %s\n"
+		  "\t\t fs_hostRoot   = %s [%d]\n"
 		  ,drv->fsDrv
 		  ,drv->fsDevDrv
 		  ,(int)devnum
 		  ,drv->mountPoint
 		  ,drv->hostRoot
+		  ,strlen(drv->hostRoot)
 		  );
 
 	return TOS_E_OK;
 }
-*/
+
 void HostFs::freeMounts()
 {
 	for(MountMap::iterator it = mounts.begin(); it != mounts.end(); it++) {

@@ -165,6 +165,10 @@ class HostFs : public NF_Base
 
 	char *cookie2Pathname( ExtDrive *drv, XfsFsFile *fs, const char *name, char *buf );
 	char *cookie2Pathname( XfsCookie *fc, const char *name, char *buf );
+	char *host_readlink(const char *pathname, char *target, int len );
+	DIR  *host_opendir( const char *name );
+	ExtDrive *findDrive( XfsCookie *dir, char *pathname );
+
 	void xfs_freefs( XfsFsFile *fs );
 
 	int32 xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
