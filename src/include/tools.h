@@ -107,9 +107,10 @@ class NativeTypeMapper
 		if ( n2a.find( value ) != n2a.end() )
 			return;
 
-		// generate 32bit value for this
-		// WARNING: this must be true: sizeof(nativeType) >= sizeof(uint32)
-		uint32 aValue = *(uint32*)&value;
+		// cast to the number (not a pointer) type
+		// of the same size as the void*. Than cut the lowest
+		// 32bits as the default hash value
+		uint32 aValue = (uintptr)value & 0xffffffffUL;
 
 #if DEBUG_FORCE_NON32BIT
 		// easier NativeTypeMapper functionality debugging
