@@ -22,6 +22,9 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 #define BX_USE_HD_SMF	0
+// muj trick
+#define LOWLEVEL_CDROM cdrom_interface
+// end of muj trick
 
 typedef enum _sense {
       SENSE_NONE = 0, SENSE_NOT_READY = 2, SENSE_ILLEGAL_REQUEST = 5
