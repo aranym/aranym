@@ -41,6 +41,7 @@ Didier MEQUIGNON <didier.mequignon@wanadoo.fr>
 - Atari XBIOS sound driver (atari/sound/*)
 
 Patrice Mandin <pmandin@caramail.com>
+- Minimal NCR5380 scsi emulation
 - Linux kernel loader
 - DSP M56001 emulation
 - IKBD/ACIA rewrite, joystick support

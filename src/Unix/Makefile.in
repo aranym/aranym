@@ -49,9 +49,10 @@ host_triplet = @host@
 SRCS = ../main.cpp \
 	main_unix.cpp \
 	vm_alloc.cpp \
-	../input.cpp \
 	../acia.cpp \
 	../acsifdc.cpp \
+	../aradata.cpp \
+	../araobjs.cpp \
 	../ata.cpp \
 	../blitter.cpp \
 	../cdrom.cpp \
@@ -63,25 +64,25 @@ SRCS = ../main.cpp \
 	../fdc.cpp \
 	../fvdidrv.cpp \
 	../hardware.cpp \
+	../host.cpp \
 	../hostscreen.cpp \
 	../ide.cpp \
 	../identify.cpp \
+	../ikbd.cpp \
+	../input.cpp \
+	../md5.cpp \
 	../mfp.cpp \
+	../midi.cpp \
 	../mmu.cpp \
 	../ndebug.cpp \
+	../ncr5380.cpp \
+	../parallel.cpp \
 	../parameters.cpp \
+	../romdiff.cpp \
 	../rtc.cpp \
+	../tools.cpp \
 	../videl.cpp \
 	../yamaha.cpp \
-	../host.cpp \
-	../araobjs.cpp \
-	../aradata.cpp \
-	../md5.cpp \
-	../parallel.cpp \
-	../romdiff.cpp \
-	../midi.cpp \
-	../ikbd.cpp \
-	../tools.cpp \
 	../natfeat/nf_base.cpp \
 	../natfeat/nf_objs.cpp \
 	../natfeat/xhdi.cpp \

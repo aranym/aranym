@@ -1,15 +1,27 @@
 /* Joy 2001 */
+/* Patrice Mandin */
 
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "acsifdc.h"
+#include "ncr5380.h"
 
 #define DEBUG 0
 #include "debug.h"
 
-static const int HW = 0xff8600;
+/* Defines */
+
+enum {
+	WD1772_REG_COMMAND=0,
+	WD1772_REG_STATUS=WD1772_REG_COMMAND,
+	WD1772_REG_TRACK,
+	WD1772_REG_SECTOR,
+	WD1772_REG_DATA
+};
+
+/* Variables */
 
 extern int dma_mode, dma_scr, dma_car, fdc_command, fdc_track, fdc_sector,
 	fdc_data, fdc_status, dma_sr;
@@ -17,14 +29,16 @@ extern void fdc_exec_command(void);
 
 static int fdc_busy = 0, hdc_busy = 0;	// from STonC
 
+static NCR5380 ncr5380;
+
 ACSIFDC::ACSIFDC() {
 	DMAfifo = DMAstatus = DMAxor = 0;
 	DMAdiskctl = FDC_T = FDC_S = FDC_D = HDC_T = HDC_S = HDC_D = 0;
 }
 
 uae_u8 ACSIFDC::handleRead(uaecptr addr) {
-	addr -= HW;
-	if (addr < 0 || addr > 0x0d)
+	addr -= HW_DISKDMA;
+	if (addr > 0x0d)
 		return 0;
 
 	int value = 0;
@@ -43,8 +57,8 @@ uae_u8 ACSIFDC::handleRead(uaecptr addr) {
 }
 
 void ACSIFDC::handleWrite(uaecptr addr, uae_u8 value) {
-	addr -= HW;
-	if (addr < 0 || addr > 0x0d)
+	addr -= HW_DISKDMA;
+	if (addr > 0x0d)
 		return;
 
 	D(bug("Writing ACSIFDC data to %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
@@ -72,25 +86,31 @@ uae_u8 ACSIFDC::LOAD_B_ff8605(void)
 	}
 	else
 	{
-		if (dma_mode & 8)
+		if (dma_mode & (1<<DISKDMA_CS))
 		{
+			dma_car = ncr5380.ReadData(dma_mode);
+
         	if (! hdc_busy)
 				mfp.setGPIPbit(0x20, 0x20);
 			return dma_car&0xff;
 		}
 		else
 		{
-			switch(dma_mode & 6)
+			int wd1772_reg;
+
+			wd1772_reg = (dma_mode>>DISKDMA_A0) & 3;
+
+			switch (wd1772_reg)
 			{
-				case 0:
+				case WD1772_REG_STATUS:
           			if (! fdc_busy)
 						mfp.setGPIPbit(0x20, 0x20);
 					return fdc_status&0xff;
-				case 2:
+				case WD1772_REG_TRACK:
 					return fdc_track&0xff;
-				case 4:
+				case WD1772_REG_SECTOR:
 					return fdc_sector&0xff;
-				case 6:
+				case WD1772_REG_DATA:
 					return fdc_data&0xff;
 				default:
 					return 0;
@@ -119,28 +139,34 @@ void ACSIFDC::STORE_B_ff8604(uae_u8 vv)
 	}
 	else
 	{
-		if (dma_mode&8)
+		if (dma_mode & (1<<DISKDMA_CS))
 		{
 			dma_car &= 0xff;
 			dma_car |= vv<<8;
+
+			ncr5380.WriteData(dma_mode, dma_car);
 		}
 		else
 		{
-			switch (dma_mode&6)
+			int wd1772_reg;
+
+			wd1772_reg = (dma_mode>>DISKDMA_A0) & 3;
+
+			switch (wd1772_reg)
 			{
-				case 0:
+				case WD1772_REG_COMMAND:
 					fdc_command &= 0xff;
 					fdc_command |= vv<<8;
 					break;
-				case 2:
+				case WD1772_REG_TRACK:
 					fdc_track &= 0xff;
 					fdc_track |= vv<<8;
 					break;
-				case 4:
+				case WD1772_REG_SECTOR:
 					fdc_sector &= 0xff;
 					fdc_sector |= vv<<8;
 					break;
-				case 6:
+				case WD1772_REG_DATA:
 					fdc_data &= 0xff;
 					fdc_data |= vv<<8;
 					break;
@@ -159,30 +185,36 @@ void ACSIFDC::STORE_B_ff8605(uae_u8 vv)
 	}
 	else
 	{
-		if (dma_mode&8)
+		if (dma_mode & (1<<DISKDMA_CS))
 		{
 			mfp.setGPIPbit(0x20, 0x20);
 			dma_car &= 0xff00;
 			dma_car |= vv;
+
+			ncr5380.WriteData(dma_mode, dma_car);
 		}
 		else
 		{
-			switch (dma_mode&6)
+			int wd1772_reg;
+
+			wd1772_reg = (dma_mode>>DISKDMA_A0) & 3;
+
+			switch (wd1772_reg)
 			{
-				case 0:
+				case WD1772_REG_COMMAND:
 					fdc_command &= 0xff00;
 					fdc_command |= vv;
 					fdc_exec_command();
 					break;
-				case 2:
+				case WD1772_REG_TRACK:
 					fdc_track &= 0xff00;
 					fdc_track |= vv;
 					break;
-				case 4:
+				case WD1772_REG_SECTOR:
 					fdc_sector &= 0xff00;
 					fdc_sector |= vv;
 					break;
-				case 6:
+				case WD1772_REG_DATA:
 					fdc_data &= 0xff00;
 					fdc_data |= vv;
 					break;
