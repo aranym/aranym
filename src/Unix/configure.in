@@ -100,6 +100,7 @@ case "$target_os" in
   darwin*)	OS_TYPE=darwin;;
   cygwin*)	OS_TYPE=cygwin;;
   irix*)	OS_TYPE=irix;;
+  mint*)	OS_TYPE=mint;;
   *)		OS_TYPE=`echo $target_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
 esac
 DEFINES="$DEFINES -DOS_$OS_TYPE"
@@ -515,6 +516,9 @@ else
   for am in $ADDRESSING_TEST_ORDER; do
     case $am in
     real)
+      if [[ "x$HAVE_MMAP" = "xno" ]]; then
+        continue
+      fi
       dnl Requires ability to mmap() Low Memory globals
       if [[ "x$ac_cv_can_map_lm" = "xno" ]]; then
         continue
@@ -537,6 +541,9 @@ else
       break
       ;;
     direct)
+      if [[ "x$HAVE_MMAP" = "xno" ]]; then
+        continue
+      fi
       dnl Problems with Cygwin
       if [[ "x$OS_TYPE" = "xcygwin" ]]; then
         continue

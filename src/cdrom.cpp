@@ -80,6 +80,11 @@ extern "C" {
 #define CD_FRAMESIZE    2048
 #endif
 
+#ifdef OS_mint
+#define BX_CD_FRAMESIZE 2048
+#define CD_FRAMESIZE    2048
+#endif
+
 #if (defined(WIN32) || defined(OS_cygwin))
 #include <windows.h>
 #include <winioctl.h>

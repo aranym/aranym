@@ -81,6 +81,7 @@ Thanks go to :-
 Patrice Mandin
 - for close examination of our code and finding obvious and not-so-obvious
   bugs (IDE, parameters handling, TOS patches)
+- for the MiNT port
 
 Francois LE COAT
 - for the Solaris port
