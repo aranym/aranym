@@ -16,6 +16,12 @@ EmuTOS =
 ; grab mouse to ARAnyM window when the mouse enters the window rectangle
 AutoGrabMouse = Yes
 
+; Enable exception per second counter ?
+EpsEnabled = No
+
+; Maximum exceptions per second allowed
+EpsMax = 20
+
 
 [STARTUP]
 ; grab mouse at startup
@@ -102,6 +108,7 @@ TuneAlignment = Yes
 ; enable better version of NOP alignment (if NOP alignment is enabled)
 TuneNOPfill = Yes
 
+
 [OPENGL]
 ; Enable OpenGL rendering for the atari screen
 ;  (Aranym must be compiled with OpenGL support)
@@ -119,6 +126,7 @@ Bpp = 16
 ; Use linear filtering on the atari screen
 Filtered = No
 
+
 [LILO]
 ; Full path to a (optionnally gzipped) kernel image
 Kernel = linux.bin
@@ -129,12 +137,14 @@ Args = root=/dev/ram video=atafb:vga16 load_ramdisk=1
 ; Full path to a (optionnally gzipped) ramdisk file
 Ramdisk = root.bin
 
+
 [MIDI]
 ; Enable MIDI output to file
 Enabled = No
 
 ; Full path to the midi output file
 Output = /tmp/aranym-midi.txt
+
 
 [CDROMS]
 ; MetaDOS physical device letter = SDL CD-ROM drive number

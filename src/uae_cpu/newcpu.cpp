@@ -684,6 +684,11 @@ static inline void exc_make_frame(
 
 extern void showBackTrace(int, bool=true);
 
+#ifdef ENABLE_EPSLIMITER
+static long last_exception_time=-1;
+static long exception_per_sec=0;
+#endif
+
 void Exception(int nr, uaecptr oldpc)
 {
     uae_u32 currpc = m68k_getpc ();
@@ -725,6 +730,23 @@ void Exception(int nr, uaecptr oldpc)
 		// sleep(1);
 #else
 		panicbug("If the Full History was enabled you would see the last 20 instructions here.");
+#endif
+
+#ifdef ENABLE_EPSLIMITER
+		if (bx_options.cpu.eps_enabled) {
+			if (last_exception_time == -1) {
+				last_exception_time = SDL_GetTicks();
+			}
+			exception_per_sec++;
+			if (SDL_GetTicks() - last_exception_time > 1000) {
+				last_exception_time = SDL_GetTicks();
+				if (exception_per_sec > bx_options.cpu.eps_max) {
+					panicbug("HALT: Exception per second limit reached.");
+					QuitEmulator();
+				}
+				exception_per_sec = 0;
+			}
+		}				
 #endif
 	}
 	prevpc = currpc;

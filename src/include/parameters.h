@@ -153,6 +153,14 @@ typedef struct {
 	int32 physdevtohostdev;
 } bx_nfcdrom_options_t;
 
+// Misc CPU emulation options
+#ifdef ENABLE_EPSLIMITER
+typedef struct {
+	bool	eps_enabled;	/* Exception per second limiter enabled ? */
+	int32	eps_max;		/* Maximum tolerated eps before shutdown */
+} bx_cpu_options_t;
+#endif
+
 /*
 typedef struct {
   char      *path;
@@ -184,6 +192,9 @@ typedef struct {
   bx_lilo_options_t		lilo;
   bx_midi_options_t		midi;
   bx_nfcdrom_options_t	nfcdroms[ 'Z'-'A'+1 ];
+#ifdef ENABLE_EPSLIMITER
+  bx_cpu_options_t  cpu;
+#endif
   bool			autoMouseGrab;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;

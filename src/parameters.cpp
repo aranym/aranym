@@ -106,6 +106,10 @@ struct Config_Tag global_conf[]={
 	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
 	{ "EmuTOS", String_Tag, emutos_path, sizeof(emutos_path)},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab},
+#ifdef ENABLE_EPSLIMITER
+	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled},
+	{ "EpsMax", Int_Tag, &bx_options.cpu.eps_max},
+#endif
 	{ NULL , Error_Tag, NULL }
 };
 
@@ -116,6 +120,10 @@ void preset_global() {
   FastRAMSize = FixedSizeFastRAM * 1024 * 1024;
 #else
   FastRAMSize = 0;
+#endif
+#ifdef ENABLE_EPSLIMITER
+	bx_options.cpu.eps_enabled = false;
+	bx_options.cpu.eps_max = 20;
 #endif
 }
 

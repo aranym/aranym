@@ -62,6 +62,8 @@ AC_ARG_ENABLE(nfcdrom,         [  --enable-nfcdrom        enable NatFeat CD-ROM 
 
 AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emulation (default=yes)], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
+AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per second limiter (default=no)], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
+
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
 [  --enable-fpe=FPE        specify which fpu emulator to use (default=auto)],
@@ -1606,6 +1608,12 @@ if [[ "x$WANT_NFCDROM" = "xyes" ]]; then
 	esac
 fi
 
+dnl Exception per second limiter
+
+if [[ "x$WANT_EPSLIMITER" = "xyes" ]]; then
+	AC_DEFINE([ENABLE_EPSLIMITER], 1, [Define if you want to use EPS limiter])
+fi
+
 dnl Data directory
 
 APP=aranym
@@ -1673,5 +1681,6 @@ echo Linux loader ........................... : $WANT_LILO
 echo Zlib ................................... : $have_zlib
 echo Linux kernel includes .................. : $LINUXKERNEL_INCDIR
 echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
+echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo
 echo "Configuration done. Now type \"make\" (or \"gmake\")."

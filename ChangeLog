@@ -1,3 +1,7 @@
+2003/10/14 - patrice
+- newcpu.cpp: added exception per second limiter, configurable in .aranymrc
+
+
 2003/10/06 - milan
 - nfcdrom: another cleanup (destructors) 
 
