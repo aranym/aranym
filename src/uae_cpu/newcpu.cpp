@@ -665,7 +665,6 @@ void Exception(int nr, uaecptr oldpc)
 	exc_push_word(0);	/* WB1S */
 	exc_push_word(0);	/* WB2S */
 	exc_push_word(0);	/* WB3S */
-	exc_push_word(0);	/* WB3S */
 	exc_push_word(regs.mmu_ssw);
 	exc_push_long(regs.mmu_fault_addr);	/* EA */
 	exc_make_frame(7, regs.sr, currpc, 2, 0, 0);

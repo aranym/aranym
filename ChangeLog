@@ -2,6 +2,7 @@
 - forgot to set the faulty address when invoking BUS ERROR from hardware
   registers access.
 - Exception 2 panicbug displays the faulty address now.
+- wrong bus error stack frame format 7 fixed.
 
 
 2002/03/20 - joy
