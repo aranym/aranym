@@ -199,23 +199,13 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 
 		case M68K_EMUL_OP_DMAREAD:	// DEPRECATED (for EmuTOS - code 0x7136)
-			{
-				uint16 dev = ReadInt16(r->a[7]+14);
-				memptr buf = ReadInt32(r->a[7]+10);
-				uint16 cnt = ReadInt16(r->a[7]+8);
-				uint32 recnr = ReadInt32(r->a[7]+4);
-				D(bug("ARAnyM DMAread(start=%ld, count=%d, buffer=%ld, device=%d)", recnr, cnt, buf, dev));
-				panicbug("ARAnym DMAread - deprecated call");
-				r->d[0] = Xhdi.XHReadWrite(dev, 0, 0, recnr, cnt, buf);
-			}
+			panicbug("Deprecated! Use proper NatFea instead!\n");
+			r->d[0] = (uint32)-32L;
 			break;
 
 		case M68K_EMUL_OP_XHDI:	// for EmuTOS - code 0x7137
-			{
-				memptr stack = r->a[7] + 4;
-				uint16 fncode = ReadInt16(stack); stack += 2;
-				r->d[0] = Xhdi.dispatch(fncode, stack);
-			}
+			panicbug("Deprecated! Use proper NatFea instead!\n");
+			r->d[0] = (uint32)-32L;
 			break;
 
         case M68K_EMUL_OP_AUDIO:

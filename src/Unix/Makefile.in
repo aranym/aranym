@@ -19,7 +19,7 @@ CC = @CC@
 CXX = @CXX@
 CFLAGS = @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
-CPPFLAGS = @CPPFLAGS@ -I../include -I. @CPUINCLUDES@
+CPPFLAGS = @CPPFLAGS@ -I../include -I. -I../natfeat @CPUINCLUDES@
 DEFS = @DEFS@ @DEFINES@ -DDATADIR=\"$(datadir)/$(APP)\"
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -75,7 +75,9 @@ SRCS = ../main.cpp \
 	../parallel.cpp \
 	../romdiff.cpp \
 	../audio.cpp \
-	../xhdi.cpp \
+	../natfeat/nf_objs.cpp \
+	../natfeat/xhdi.cpp \
+	../natfeat/nf_name.cpp \
 	$(SYSSRCS) \
 	$(CPUSRCS)
 APP = aranym

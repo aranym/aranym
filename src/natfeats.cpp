@@ -1,57 +1,38 @@
 /**
- * NatFeats (Native Features)
+ * NatFeats (Native Features main dispatcher)
  *
  * Petr Stehlik (c) 2002
  *
  * GPL
  */
 
-#include "sysdeps.h"
-#include "cpu_emulation.h"
 #include "natfeats.h"
-#include "araobjs.h"
+#include "nf_objs.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
-#ifdef USE_JIT
-extern int in_handler;
-# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); in_handler = 0; longjmp(excep_env, 2); }
-#else
-# define BUS_ERROR(a)	{ regs.mmu_fault_addr=(a); longjmp(excep_env, 2); }
-#endif
-
 #define ID_SHIFT	20
+#define IDX2MASTERID(idx)	(((idx)+1) << ID_SHIFT)
+#define MASTERID2IDX(id)	(((id) >> ID_SHIFT)-1)
+#define MASKOUTMASTERID(id)	((id) & ((1L << ID_SHIFT)-1))
 
-enum { NF_NAME = 1, NF_VERSION, NF_XHDI, NF_FVDI };
-
-/* forward declaration until these functions find a new home in
-   a separate file */
-uint32 nf_name(uint32 *params);
-uint32 nf_version(uint32 *params);
+static memptr context = 0;
 
 uint32 nf_get_id(memptr stack)
 {
-	D(bug("nf_get_id"));
-
-	typedef struct NATFEATS { const char *name; int id; bool supervisor; };
-	NATFEATS nat_feats[] = {
-		{"NF_NAME", NF_NAME, false},
-		{"NF_VERSION", NF_VERSION, false},
-		{"XHDI", NF_XHDI, true},
-		{"fVDI", NF_FVDI, false}
-	};
-
 	memptr name_ptr = ReadInt32(stack);
 	if (! ValidAddr(name_ptr, false, 1))
 		BUS_ERROR(name_ptr);
 
-	char *name = (char *)Atari2HostAddr(name_ptr);
+	char *name = (char *)Atari2HostAddr(name_ptr);	// FIXME replace with special strcpy
+	D(bug("nf_get_id '%s'", name));
 
-	for(unsigned int i=0; i < sizeof(nat_feats) / sizeof(nat_feats[0]); i++) {
-		if (strcasecmp(name, nat_feats[i].name) == 0) {
-			D(bug("Found NatFeat %d", nat_feats[i].id));
-			return nat_feats[i].id << ID_SHIFT;
+
+	for(unsigned int i=0; i < nf_objs_cnt; i++) {
+		if (strcasecmp(name, nf_objects[i]->name()) == 0) {
+			D(bug("Found the NatFeat at %d", i));
+			return IDX2MASTERID(i);
 		}
 	}
 
@@ -60,57 +41,30 @@ uint32 nf_get_id(memptr stack)
 
 uint32 nf_rcall(memptr stack, bool inSuper)
 {
-	D(bug("nf_rcall"));
-
 	uint32 fncode = ReadInt32(stack);
-	uint32 parameters[32];
-
-	parameters[0] = fncode & ((1 << ID_SHIFT)-1); /* mask out master ID */
-
-	// copy parameters from stack to a local array
-	for(unsigned int i = 1; i < sizeof(parameters) / sizeof(parameters[0]); i++)
-		parameters[i] = ReadInt32(stack + i * 4);
-
-	switch(fncode >> ID_SHIFT) {
-		case NF_NAME: return nf_name(parameters); break;
-		case NF_VERSION: return nf_version(parameters); break;
-
-		case NF_XHDI: return Xhdi.dispatch(parameters); break;
-
-		// case NF_FVDI: return fVDI.dispatch_params(parameters); break;
-
-		default: return 0;	/* FIXME: is this a good answer for wrong ID call? */
+	unsigned int idx = MASTERID2IDX(fncode);
+	if (idx >= nf_objs_cnt) {
+		D(bug("rcall: wrong ID %d", idx));
+		return 0;	/* FIXME: is this a good answer for wrong ID call? */
 	}
+
+	fncode = MASKOUTMASTERID(fncode);
+	context = stack + 4;	/* parameters follow on the stack */
+
+	pNatFeat obj = nf_objects[idx];
+	D(bug("nf_rcall(%s, %d)", obj->name(), fncode));
+
+	if (obj->isSuperOnly() && !inSuper) {
+		longjmp(excep_env, 8);	// privilege exception
+	}
+
+	return obj->dispatch(fncode);
 }
 
-/* Basic NF */
-uint32 nf_name(uint32 *params)
+uint32 nf_getparameter(int i)
 {
-	uint32 fncode = params[0];
-	memptr name_ptr = params[1];
-	uint32 name_maxlen = params[2];
+	if (i < 0)
+		return 0;
 
-	if (! ValidAddr(name_ptr, true, name_maxlen))
-		BUS_ERROR(name_ptr);
-
-	char *name = (char *)Atari2HostAddr(name_ptr);
-
-	uint32 ret = 0;
-	switch(fncode) {
-		default:/* get_pure_name(char *name, uint32 max_len) */
-			strncpy(name, "ARAnyM", name_maxlen-1);
-			name[name_maxlen-1] = '\0';
-			break;
-
-		case 1:	/* get_complete_name(char *name, uint32 max_len) */
-			strncpy(name, VERSION_STRING, name_maxlen-1);
-			name[name_maxlen-1] = '\0';
-			break;
-	}
-	return ret;
-}
-
-uint32 nf_version(uint32 *params)
-{
-	return VERSION_MAJOR << 16 | VERSION_MINOR;
+	return ReadInt32(context + i*4);
 }

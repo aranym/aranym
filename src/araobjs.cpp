@@ -20,10 +20,13 @@ FVDIDriver fVDIDrv;
 AudioDriver AudioDrv;
 
 // XHDI driver
-XHDIDriver Xhdi;
+// XHDIDriver Xhdi;
 
 /*
  * $Log$
+ * Revision 1.6  2002/08/01 22:21:13  joy
+ * xhdi class added
+ *
  * Revision 1.5  2002/04/19 21:58:04  joy
  * audio driver by Didier MEQUIGNON
  *
