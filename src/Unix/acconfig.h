@@ -101,6 +101,9 @@
 /* Define if you want to use extended segafault handler */
 #undef EXTENDED_SIGSEGV
 
+/* Define if you want to use extended segfault handler also for HW space */
+#undef HW_SIGSEGV
+
 /* Define if you don't want to use check memory boundary */
 #undef NOCHECKBOUNDARY
 

@@ -75,6 +75,8 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	D(panicbug("BUS ERROR fault address is %08x at %08x", addr, ainstr));
 	D(panicbug("instruction is %08x", instr));
 
+#ifdef HW_SIGSEGV
+
 	if (in_handler) {
 		D(panicbug("In handler sigsegv!"));
 		abort();
@@ -200,6 +202,9 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	return;
 buserr:
 	D(panicbug("Atari bus error"));
+
+#endif /* HW_SIGSEGV */
+
 	regs.mmu_fault_addr = addr;
 	in_handler = 0;
 	longjmp(excep_env, 2);

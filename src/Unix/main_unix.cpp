@@ -143,10 +143,14 @@ int main(int argc, char **argv)
 		QuitEmulator();
 	}
 
+#  ifdef HW_SIGSEGV
+
 	if ((FakeIOBaseHost = (uint8 *)vm_acquire(0x00100000)) == VM_MAP_FAILED) {
 		panicbug("Not enough free memory.");
 		QuitEmulator();
 	}
+
+#  endif /* HW_SISEGV */
 # endif /* EXTENDED_SIGSEGV */
 #else
 	{
@@ -164,12 +168,14 @@ int main(int argc, char **argv)
 	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
 	D(bug("HW space starts at %p (%08x)", HWBaseHost, HWBase));
 	D(bug("TT-RAM starts at %p (%08x)", FastRAMBaseHost, FastRAMBase));
-#ifdef EXTENDED_SIGSEGV
+# ifdef EXTENDED_SIGSEGV
+#  ifdef HW_SIGSEGV
 	D(panicbug("FakeIOspace %p", FakeIOBaseHost));
-#endif
-#ifdef RAMENDNEEDED
+#  endif
+#  ifdef RAMENDNEEDED
 	D(bug("RAMEnd needed"));
-#endif
+#  endif
+# endif /* EXTENDED_SIGSEGV */
 #endif /* REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING */
 
 	// Initialize everything
@@ -208,7 +214,7 @@ int main(int argc, char **argv)
 	D(panicbug("Protected RAMEnd (%08lx - %08lx)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
 # endif
 
-# ifdef EXTENDED_SIGSEGV
+# ifdef HW_SIGSEGV
 	if (vm_protect(HWBaseHost, HWSize, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't set HW address space");
 		exit(-1);
@@ -222,7 +228,7 @@ int main(int argc, char **argv)
 	}
 
 	D(panicbug("Protected mirror space (%08lx - %08lx)", RAMBaseHost + 0xff000000, RAMBaseHost + 0xff000000 + RAMSize + ROMSize + HWSize));
-# endif /* EXTENDED_SIGSEGV */
+# endif /* HW_SIGSEGV */
 #endif /* EXTENDED_SIGSEGV */
 
 	// Start 68k and jump to ROM boot routine
@@ -299,6 +305,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.71  2002/07/15 19:04:06  milan
+ * sigsegv.h never commited
+ *
  * Revision 1.70  2002/07/15 18:24:15  milan
  * extended sigsegv handler upgraded
  *

@@ -129,7 +129,7 @@ static __inline__ uae_u32 phys_get_long(uaecptr addr)
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
         return do_get_mem_long((uae_u32*)(addr + read_offset));
 #endif
-#ifndef EXTENDED_SIGSEGV
+#ifndef HW_SIGSEGV
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
 #endif
@@ -148,7 +148,7 @@ static __inline__ uae_u32 phys_get_word(uaecptr addr)
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
         return do_get_mem_word((uae_u16*)(addr + read_offset));
 #endif
-#ifndef EXTENDED_SIGSEGV
+#ifndef HW_SIGSEGV
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_w(addr);
 #endif
@@ -167,7 +167,7 @@ static __inline__ uae_u32 phys_get_byte(uaecptr addr)
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
         return do_get_mem_byte((uae_u8*)(addr + read_offset));
 #endif
-#ifndef EXTENDED_SIGSEGV
+#ifndef HW_SIGSEGV
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_b(addr);
 #endif
@@ -188,7 +188,7 @@ static __inline__ void phys_put_long(uaecptr addr, uae_u32 l)
         return;
     }
 #endif
-#ifndef EXTENDED_SIGSEGV
+#ifndef HW_SIGSEGV
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) {
         HWput_l(addr, l);
@@ -212,7 +212,7 @@ static __inline__ void phys_put_word(uaecptr addr, uae_u32 w)
         return;
     }
 #endif
-#ifndef EXTENDED_SIGSEGV
+#ifndef HW_SIGSEGV
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) {
         HWput_w(addr, w);
@@ -236,7 +236,7 @@ static __inline__ void phys_put_byte(uaecptr addr, uae_u32 b)
         return;
     }
 #endif
-#ifndef EXTENDED_SIGSEGV
+#ifndef HW_SIGSEGV
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) {
         HWput_b(addr, b);

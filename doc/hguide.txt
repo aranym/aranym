@@ -11,6 +11,7 @@
 6) Native features
 7) Sources
 8) debuggers
+9) Checking memory boundary
 
 
 
@@ -179,4 +180,15 @@ c) mon     - based on BasiliskII's monitor, it isn't included in ARAnyM's
 
 You can select a debugger with ./configure script.
 There are some functions and macros defined in debug.h for debugger output.
+
+
+9) Checking memory boundary
+---------------------------
+
+  There are many possibilities in ARAnyM how it checks memory boundary. You can choose one before a compilation process (configure script, parameter --enable-addr-check). The most stupid solution is no check memory boundary. It removes all checks of memory boundary, also ROM space can be rewritten.
+  The second possibility is full checking. Before every access to Atari memory it is used an inlined function check_ram_boundary() (uae_cpu/memory.h). This function checks if desired address and operation (R/W) is correct. If not then Bus error is generated.
+  The third, default, is page check. It is inspired (I think, Johan?) ATC (Motorola's TLB). If desired address is in the same memory page as previous used one then check_ram_boundary() isn't needed and the operation is correct. There are three page buffers - for PC, read and write operation.
+  The fourth can be used only on some platforms (today x86 Linux only). check_ram_boundary() is removed and host's segmentation fault signal is used for checking memory boundary. On some processor it can be quicker than the previous possibility.
+  The fifth is combination of the third and the fourth possibility.
+  The sixth is special possibility, there is sigsegv handler used also for handling access to HW pace. It isn't completely committed today. It is used for JIT compiler mainly.
 

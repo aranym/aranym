@@ -1,3 +1,9 @@
+2002/07/16 - milan
+- hguide.txt: updated, added section 9 (Checking memory boundary)
+
+- hwsp possibility of checking memory boundary corrected
+
+
 2002/07/16 - Patrice
 - Host port reworked. More bugfixes and completion of the emulator.
   DspDebug can be run, it finds the DSP.

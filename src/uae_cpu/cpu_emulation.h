@@ -50,7 +50,7 @@ extern uint8 *FastRAMBaseHost;	// Fast-RAM base (host address space)
 extern memptr VideoRAMBase;	// VideoRAM base (Atari address space)
 extern uint8 *VideoRAMBaseHost;	// VideoRAM base (host address space)
 
-#ifdef EXTENDED_SIGSEGV
+#ifdef HW_SIGSEGV
 extern uint8 *FakeIOBaseHost;
 #endif
 
