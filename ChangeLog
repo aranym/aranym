@@ -1,3 +1,7 @@
+2003/08/06 - milan
+- mingw support cleaned (added to sysdeps.h)
+
+
 2003/08/05 - milan
 - autogen.sh, configure.ac: cleaning, free patch from Guy Harrison for MAKE,
                             xeys problem solved
