@@ -122,9 +122,8 @@ class DSP : public BASE_IO {
 		uint32 last_loop_inst;	/* executing the last instruction in DO ? */
 		uint32 first_host_write;	/* first byte written to host port */
 
-#if DSP_THREADED
 		SDL_sem		*dsp56k_sem;
-#endif
+
 	private:
 		/* For bootstrap routine */
 		uint16	bootstrap_pos;
@@ -133,8 +132,6 @@ class DSP : public BASE_IO {
 		/* Force execution of DSP if needed */
 		void	force_exec(void);
 
-#if DSP_THREADED
 		SDL_Thread	*dsp56k_thread;
-#endif
 };
 

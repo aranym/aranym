@@ -18,7 +18,7 @@
 #include "dsp_disasm.h"
 #endif
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /* More disasm infos, if wanted */
@@ -599,31 +599,12 @@ static int registers_mask[64]={
 
 int dsp56k_do_execute(void *)
 {
-#if DSP_THREADED
 	/* Wait upload of bootstrap code */
 	SDL_SemWait(dsp.dsp56k_sem);
 
 	for(;;) {
 		dsp_execute_instruction();
 	}
-
-#else /* DSP_THREADED */
-
-	/* Execute some instructions, how many ? */
-	for (int i=0;i<2;i++) {
-
-		/* Read available data from host for the DSP */
-		dsp.host2dsp();
-
-		if (dsp.state == DSP_RUNNING) {
-			dsp_execute_instruction();
-		}
-
-		/* Write available data from DSP for the host */
-		dsp.dsp2host();
-	}
-
-#endif /* DSP_THREADED */
 
 	return 0;
 }
@@ -938,10 +919,9 @@ static uint32 read_memory(int space, uint16 address)
 				if ((space==SPACE_X) && (address==0xffc0+DSP_HOST_HRX)) {
 					int trdy;
 
-#if DSP_THREADED
 					/* Read available data from host for the DSP */
 					dsp.host2dsp();
-#endif
+
 					/* Clear HRDF bit to say that DSP has read */
 					dsp.periph[SPACE_X][DSP_HOST_HSR] &= BITMASK(8)-(1<<DSP_HOST_HSR_HRDF);
 #if DSP_DISASM_HOSTREAD
@@ -970,9 +950,9 @@ static uint32 read_memory(int space, uint16 address)
 				D(bug("Dsp: state = DSP_HALT"));
 #endif
 				dsp.state = DSP_HALT;
-#if DSP_THREADED
+
 				SDL_SemWait(dsp.dsp56k_sem);
-#endif
+
 				return 0xdead;
 #endif /* DSP_CHECK_MEM_ACCESS */
 			}
@@ -1019,11 +999,8 @@ static void write_memory(int space, uint16 address, uint32 value)
 #if DSP_DISASM_HOSTWRITE
 						D(bug("Dsp: (D->H): Dsp HTDE cleared"));
 #endif
-
-#if DSP_THREADED
 						/* Write available data from DSP for the host */
 						dsp.dsp2host();
-#endif
 						break;
 					case DSP_HOST_HCR:
 						dsp.periph[space][DSP_HOST_HCR] = value;
@@ -1053,9 +1030,7 @@ static void write_memory(int space, uint16 address, uint32 value)
 				D(bug("Dsp: state = DSP_HALT"));
 #endif
 				dsp.state = DSP_HALT;
-#if DSP_THREADED
 				SDL_SemWait(dsp.dsp56k_sem);
-#endif
 				return;
 #endif
 			}
@@ -1088,9 +1063,7 @@ static void write_memory(int space, uint16 address, uint32 value)
 				D(bug("Dsp: state = DSP_HALT"));
 #endif
 				dsp.state = DSP_HALT;
-#if DSP_THREADED
 				SDL_SemWait(dsp.dsp56k_sem);
-#endif
 				return;
 #endif
 			}
@@ -1109,9 +1082,7 @@ static void write_memory(int space, uint16 address, uint32 value)
 				D(bug("Dsp: state = DSP_HALT"));
 #endif
 				dsp.state = DSP_HALT;
-#if DSP_THREADED
 				SDL_SemWait(dsp.dsp56k_sem);
-#endif
 				return;
 			}
 #endif
@@ -1156,9 +1127,7 @@ static void dsp_stack_push(uint32 curpc, uint32 cursr)
 		D(bug("Dsp: state = DSP_HALT"));
 #endif
 		dsp.state = DSP_HALT;
-#if DSP_THREADED
 		SDL_SemWait(dsp.dsp56k_sem);
-#endif
 		return;
 	}
 
@@ -1179,9 +1148,7 @@ static void dsp_stack_pop(uint32 *newpc, uint32 *newsr)
 		D(bug("Dsp: state = DSP_HALT"));
 #endif
 		dsp.state = DSP_HALT;
-#if DSP_THREADED
 		SDL_SemWait(dsp.dsp56k_sem);
-#endif
 		return;
 	}
 
@@ -1980,9 +1947,7 @@ static void dsp_jclr(void)
 					D(bug("Dsp: state = DSP_WAITHOSTWRITE"));
 #endif
 					dsp.state = DSP_WAITHOSTWRITE;
-#if DSP_THREADED
 					SDL_SemWait(dsp.dsp56k_sem);
-#endif
 				}
 
 				/* Wait for host to read */
@@ -1991,9 +1956,7 @@ static void dsp_jclr(void)
 					D(bug("Dsp: state = DSP_WAITHOSTREAD"));
 #endif
 					dsp.state = DSP_WAITHOSTREAD;
-#if DSP_THREADED
 					SDL_SemWait(dsp.dsp56k_sem);
-#endif
 				}
 			}
 		}
@@ -2025,9 +1988,7 @@ static void dsp_jmp(void)
 		D(bug("Dsp: state = DSP_HALT"));
 #endif
 		dsp.state = DSP_HALT;
-#if DSP_THREADED
 		SDL_SemWait(dsp.dsp56k_sem);
-#endif
 		return;
 	}
 
@@ -2646,9 +2607,7 @@ static void dsp_rts(void)
 static void dsp_stop(void)
 {
 	dsp.state = DSP_HALT;
-#if DSP_THREADED
 	SDL_SemWait(dsp.dsp56k_sem);
-#endif
 }
 
 static void dsp_swi(void)
@@ -2703,9 +2662,7 @@ static void dsp_tcc(void)
 static void dsp_wait(void)
 {
 	dsp.state = DSP_HALT;
-#if DSP_THREADED
 	SDL_SemWait(dsp.dsp56k_sem);
-#endif
 }
 
 /**********************************

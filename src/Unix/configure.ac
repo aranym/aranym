@@ -28,9 +28,7 @@ AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history fo
 
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU [default=no]], [WANT_MMU=$enableval], [WANT_MMU=no])
 
-AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 [default=no]], [WANT_DSP=$enableval], [WANT_DSP=no])
-
-AC_ARG_ENABLE(dsp-thread,      [  --enable-dsp-thread     enable DSP 56001 thread [default=no]], [WANT_DSP_THREAD=$enableval], [WANT_DSP_THREAD=no])
+AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 [default=yes]], [WANT_DSP=$enableval], [WANT_DSP=yes])
 
 AC_ARG_ENABLE(dsp-disasm,      [  --enable-dsp-disasm     enable DSP 56001 disassembler [default=no]], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
 
@@ -624,11 +622,6 @@ if [[ "x$WANT_DSP" = "xyes" ]]; then
     DSPSRCS="../dsp_cpu.cpp"
 else
     DSPSRCS=""
-fi
-
-dnl DSP thread
-if [[ "x$WANT_DSP_THREAD" = "xyes" ]]; then
-    AC_DEFINE([DSP_THREADED], 1, [Define if using DSP thread])
 fi
 
 dnl DSP disassembler
@@ -1253,7 +1246,6 @@ echo Assembly optimizations ................. : $ASM_OPTIMIZATIONS
 echo Addressing mode ........................ : $ADDRESSING_MODE
 echo Full MMU support ....................... : $WANT_MMU
 echo DSP 56001 support ...................... : $WANT_DSP
-echo DSP 56001 thread ....................... : $WANT_DSP_THREAD
 echo DSP 56001 disassembly support .......... : $WANT_DSP_DISASM
 echo Distributed dispatcher ................. : $WANT_DIS_DIP
 echo Debugger ............................... : $WHICH_DEBUG

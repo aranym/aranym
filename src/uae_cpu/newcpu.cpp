@@ -20,9 +20,6 @@
 # include "compiler/compemu.h"
 #endif
 #include "fpu/fpu.h"
-#if DSP_EMULATION && (!DSP_THREADED)
-#include "../include/dsp_cpu.h"
-#endif
 
 #include <cstdlib>
 
@@ -1480,9 +1477,6 @@ void m68k_do_execute (void)
     if (setjmp(loop_env)) return;
 #endif	    
     for (;;) {
-#if DSP_EMULATION && (!DSP_THREADED)
-	dsp56k_do_execute(NULL);
-#endif
 	pc = m68k_getpc();
 #ifdef FULL_HISTORY
 #ifdef NEED_TO_DEBUG_BADLY
