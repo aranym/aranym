@@ -28,7 +28,7 @@
 #include "cpummu.h"
 #include "memory.h"
 #include "newcpu.h"
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #define DBG_MMU_VERBOSE	1
