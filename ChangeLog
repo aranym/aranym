@@ -1,3 +1,8 @@
+2004/08/30 - patrice
+- videl.cpp: with JIT, Atari video screen size was 0 for both height and width,
+  hence the crash.
+
+
 2004/08/28 - Xavier
 - gui-sdl/sdlgui.cpp, input.cpp: rewrote edit field handling.
 

@@ -561,6 +561,7 @@ void VIDEL::renderScreenZoom()
 	int vw	 = getScreenWidth();
 	int vh	 = getScreenHeight();
 	uint16 *fvram = (uint16 *) Atari2HostAddr(this->getVideoramAddress());
+	if ((vw<32) || (vh<32)) return;
 
 	int lineoffset = handleReadW(HW + 0x0e) & 0x01ff; // 9 bits
 	int linewidth = handleReadW(HW + 0x10) & 0x03ff; // 10 bits
