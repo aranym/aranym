@@ -1,0 +1,232 @@
+# example of ARAnyM config file (by default stored in $HOME/.aranym/config)
+
+[GLOBAL]
+# FastRAM size in megabytes.
+FastRAM = 0
+
+# Atari floppy device (GEMDOS A:) is mapped to host floppy block device
+Floppy = /dev/fd0
+
+# location of TOS 4.04 ROM image (full path)
+TOS = /usr/local/share/aranym/ROM
+
+# location of EmuTOS (full path)
+EmuTOS = 
+
+# grab mouse to ARAnyM window when the mouse enters the window rectangle
+AutoGrabMouse = Yes
+
+
+# Hotkeys: invoke certain ARAnyM functions by pressing a key combination
+# Format: function = key code : modifiers combination
+[HOTKEYS]
+# open up the SETUP GUI
+Setup = 19:
+
+# quit ARAnyM immediately
+Quit = 19:
+
+# reboot ARAnyM (like pressing the Reset button on a real machine)
+Reboot = 19:
+
+# free mouse and keyboard focus - mouse can leave the ARAnyM window
+Ungrab = 27:
+
+# call the internal debugger (if compiled in)
+Debug = 19:
+
+# make a copy of the screen to file in BMP format in current directory
+Screenshot = 316
+
+# switch ARAnyM to fullscreen (or back to a window mode)
+Fullscreen = 302
+
+
+[STARTUP]
+# grab mouse at ARAnyM startup
+GrabMouse = Yes
+
+# start ARAnyM with debugger
+Debugger = No
+
+
+[JIT]
+# enable JIT compiler
+JIT = No
+
+# enable JIT compiler for FPU (if JIT compiler is enabled)
+JITFPU = Yes
+
+# enable NOP alignment
+TuneAlignment = Yes
+
+# enable better version of NOP alignment (if NOP alignment is enabled)
+TuneNOPfill = Yes
+
+# size of cache for compiled code
+JITCacheSize = 8192
+
+# enable lazy flush (invalidation) of JIT cache
+JITLazyFlush = 1
+
+# disable compiling of certain instructions (16-bit mask)
+JITBlackList = 
+
+[VIDEO]
+# start ARAnyM in fullscreen
+FullScreen = No
+
+# set the booting color depth (-1 = follow NVRAM setting)
+BootColorDepth = -1
+
+# VIDEL generated screen copied to host screen at 50/VidelRefresh (50/2 = 25 Hz)
+VidelRefresh = 2
+
+# set the connected monitor (-1 = follow NVRAM setting)
+VidelMonitor = -1
+
+
+[TOS]
+# patch TOS _MCH cookie value (50000 means ARAnyM - 30000 would mean Falcon)
+Cookie_MCH = 50000
+
+# redirect TOS bconout characters to the host console window
+RedirConsole = No
+
+# Undocumented
+RedirPrinter = No
+
+
+# IDE Devices configuration
+# update the Cylinders/Heads/SectorsPerTrack according to your drive geometry!
+# Range: IDE0-IDE1
+[IDE0]
+Present = Yes
+IsCDROM = No
+ByteSwap = No
+ReadOnly = No
+Path = /home/user/.aranym/diskImageC
+Cylinders = 2100
+Heads = 16
+SectorsPerTrack = 63
+ModelName = Master
+
+
+# Direct partitions configuration
+# Range: DISK0-DISK7
+[DISK0]
+Path = 
+Present = No
+PartID = BGM
+ByteSwap = No
+ReadOnly = No
+
+
+# HostFS access with hostfs.xfs
+# Format: GEMDOS drive = host path
+# Range: A-Z
+[HOSTFS]
+A = 
+B = 
+C = 
+D = 
+E = 
+F = 
+G = 
+
+
+[OPENGL]
+# Enable OpenGL rendering for the atari screen
+#  (ARAnyM must be compiled with OpenGL support)
+Enabled = No
+
+# Width of the host OpenGL screen
+Width = 640
+
+# Height of the host OpenGL screen
+Height = 480
+
+# Bpp of the host OpenGL screen
+Bpp = 16
+
+# Use linear filtering on the atari screen
+Filtered = No
+
+
+# Networking (FreeMiNT with aranym.xif)
+# Range: ETH0 only for now
+[ETH0]
+# Type: ppp or bridge
+Type = ppp
+# host tunnel device name
+Tunnel = tap0
+HostIP = 192.168.0.1
+AtariIP = 192.168.0.2
+Netmask = 255.255.255.0
+
+
+[LILO]
+# Full path to a (optionally gzipped) kernel image
+Kernel = linux.bin
+
+# Command line to pass to the kernel
+Args = root=/dev/ram video=atafb:vga16 load_ramdisk=1
+
+# Full path to a (optionally gzipped) ramdisk file
+Ramdisk = root.bin
+
+
+[MIDI]
+# Enable MIDI output to file
+Enabled = No
+
+# Full path to the midi output file
+Output = /tmp/aranym-midi.txt
+
+
+[CDROMS]
+# MetaDOS physical device letter = SDL CD-ROM drive number
+# Range: A-Z
+A = 2
+W = 1
+Z = 0
+
+
+[AUTOZOOM]
+# Automatically resize the atari screen to the host screen size
+Enabled = No
+
+# Use integer coefficients to resize the atari screen
+IntegerCoefs = No
+
+# Use a fixed host screen size whenever the Atari screen size changes
+FixedSize = No
+
+# Width of host screen if fixed size
+Width = 800
+
+# Height of host sceren if fixed size
+Height = 600
+
+
+[NFOSMESA]
+# Channel size (16 if you are using libOSMesa16, or 32 for libOSMesa32)
+ChannelSize = 0
+# Library to load for standard OpenGL functions (not needed for libOSMesa[16,32])
+LibGL = libGL.so
+# Library to load for OSMesa rendering functions
+LibOSMesa = libOSMesa.so
+
+
+[PARALLEL]
+# Type of parallel port emulation:
+#  file -> Output to file
+#  x86 -> Hardware access under Linux/X86
+#  parport -> Use /dev/parport device under Linux
+Type = file
+# Output to file: filename, stdout, or stderr
+File = /tmp/aranym-parallel.txt
+#  File = stdout
+#  File = stderr
+# Linux parport device for Type=parport
+Parport = /dev/parport0
