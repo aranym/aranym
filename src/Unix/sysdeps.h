@@ -83,6 +83,13 @@
 
 #endif
 
+#ifdef MACOSX_support
+
+#include <CoreServices/CoreServices.h>
+#include <CoreFoundation/CoreFoundation.h>
+
+#endif /* MACOSX_support */
+
 #ifndef OS_INCLUDES_DEFINED
 
 #ifdef HAVE_UNISTD_H
@@ -448,3 +455,9 @@ extern "C" char *strdup(const char *s);
 #endif /* OS_mingw */
 
 #endif
+
+#ifdef MACOSX_support
+
+extern CFBundleRef mainBundle;
+
+#endif /* MACOSX_support */
