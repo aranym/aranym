@@ -1,3 +1,7 @@
+2005/04/05 - Petr (actually Carlo)
+- src/MacOSX/*: Carlo has updated the project (added MMU target)
+
+
 2005/04/01 - Thomas Huth
 - uae_cpu/newcpu.cpp: free table68k memory
 
