@@ -788,6 +788,61 @@ uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint1
  * A return with 0 gives a fallback (normally pixel by pixel drawing by the
  * fVDI engine).
  **/
+
+#define applyBlitLogOperation( logicalOperation, destinationData, sourceData ) \
+    switch(logicalOperation) { \
+		case 0: \
+			destinationData = 0; \
+			break; \
+		case 1: \
+			destinationData = sourceData & destinationData; \
+			break; \
+		case 2: \
+			destinationData = sourceData & ~destinationData; \
+			break; \
+		case 3: \
+			destinationData = sourceData; \
+			break; \
+		case 4: \
+			destinationData = ~sourceData & destinationData; \
+			break; \
+		case 5: \
+			destinationData = destinationData; \
+			break; \
+		case 6: \
+			destinationData = sourceData ^ destinationData; \
+			break; \
+		case 7: \
+			destinationData = sourceData | destinationData; \
+			break; \
+		case 8: \
+			destinationData = ~(sourceData | destinationData); \
+			break; \
+		case 9: \
+			destinationData = ~(sourceData ^ destinationData); \
+			break; \
+		case 10: \
+			destinationData = ~destinationData; \
+			break; \
+		case 11: \
+			destinationData = sourceData | ~destinationData; \
+			break; \
+		case 12: \
+			destinationData = ~sourceData; \
+			break; \
+		case 13: \
+			destinationData = ~sourceData | destinationData; \
+			break; \
+		case 14: \
+			destinationData = ~(sourceData & destinationData); \
+			break; \
+		case 15: \
+			destinationData = 0xffff; \
+			break; \
+    }
+
+
+
 uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h,
 							uint32 logOp)
 {
@@ -824,63 +879,17 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 
 			D(bug("fVDI: blitArea M->M"));
 
+			uint32 srcData;
+			uint32 destData;
+
 			for( uint16 j=0; j<h; j++ )
 				for( uint16 i=sx; i<sx+w; i++ ) {
-					uint16 dataWord = get_word((uint32)data + j*pitch + ((i*bpp)>>2), true);
-					//uint16 dataWord = *(uint16*)((uint32)data + j*pitch + ((i*bpp)>>3));
-					//dataWord = (dataWord >> 8) | ((dataWord & 0xff) << 8); // byte swap
+					srcData = get_word((uint32)data + j*pitch + ((i*bpp)>>2), true);
+					//uint16 srcData = *(uint16*)((uint32)data + j*pitch + ((i*bpp)>>3));
+					//srcData = (srcData >> 8) | ((srcData & 0xff) << 8); // byte swap
 
-					uint16 destData = get_word( destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, true );
-					switch(logOp) {
-						case 0:
-							destData = 0;
-							break;
-						case 1:
-							destData = dataWord & destData;
-							break;
-						case 2:
-							destData = dataWord & ~destData;
-							break;
-						case 3:
-							destData = dataWord;
-							break;
-						case 4:
-							destData = ~dataWord & destData;
-							break;
-						case 5:
-							destData = destData;
-							break;
-						case 6:
-							destData = dataWord ^ destData;
-							break;
-						case 7:
-							destData = dataWord | destData;
-							break;
-						case 8:
-							destData = ~(dataWord | destData);
-							break;
-						case 9:
-							destData = ~(dataWord ^ destData);
-							break;
-						case 10:
-							destData = ~destData;
-							break;
-						case 11:
-							destData = dataWord | ~destData;
-							break;
-						case 12:
-							destData = ~dataWord;
-							break;
-						case 13:
-							destData = ~dataWord | destData;
-							break;
-						case 14:
-							destData = ~(dataWord & destData);
-							break;
-						case 15:
-							destData = 0xffff;
-							break;
-					}
+					destData = get_word( destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, true );
+					applyBlitLogOperation( logOp, destData, srcData );
 					put_word( destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, destData );
 				}
 
@@ -913,64 +922,18 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 		} else {
 			D(bug("fVDI: blitArea M->S"));
 
+			uint32 srcData;
+			uint32 destData;
+
 			for( uint16 j=0; j<h; j++ )
 				for( uint16 i=sx; i<sx+w; i++ ) {
-					uint16 dataWord = get_word((uint32)data + j*pitch + ((i*bpp)>>3), true);
-					// uint16 dataWord = *(uint16*)((uint32)data + j*pitch + ((i*bpp)>>3));
-					// dataWord = (dataWord >> 8) | ((dataWord & 0xff) << 8); // byte swap
+					srcData = get_word((uint32)data + j*pitch + ((i*bpp)>>3), true);
+					// uint16 srcData = *(uint16*)((uint32)data + j*pitch + ((i*bpp)>>3));
+					// srcData = (srcData >> 8) | ((srcData & 0xff) << 8); // byte swap
 
 					//uint16 destData = get_word( videoRam + (dx+i-sx)*2 + (dy+j)*screenPitch, true );
-					uint32 destData = hostScreen.getPixel( dx + i - sx, dy + j );
-					switch(logOp) {
-						case 0:
-							destData = 0;
-							break;
-						case 1:
-							destData = dataWord & destData;
-							break;
-						case 2:
-							destData = dataWord & ~destData;
-							break;
-						case 3:
-							destData = dataWord;
-							break;
-						case 4:
-							destData = ~dataWord & destData;
-							break;
-						case 5:
-							destData = destData;
-							break;
-						case 6:
-							destData = dataWord ^ destData;
-							break;
-						case 7:
-							destData = dataWord | destData;
-							break;
-						case 8:
-							destData = ~(dataWord | destData);
-							break;
-						case 9:
-							destData = ~(dataWord ^ destData);
-							break;
-						case 10:
-							destData = ~destData;
-							break;
-						case 11:
-							destData = dataWord | ~destData;
-							break;
-						case 12:
-							destData = ~dataWord;
-							break;
-						case 13:
-							destData = ~dataWord | destData;
-							break;
-						case 14:
-							destData = ~(dataWord & destData);
-							break;
-						case 15:
-							destData = 0xffff;
-							break;
-					}
+					destData = hostScreen.getPixel( dx + i - sx, dy + j );
+					applyBlitLogOperation( logOp, destData, srcData );
 					//					put_word( videoRam + (dx+i-sx)*2 + (dy+j)*screenPitch, destData );
 					hostScreen.putPixel( dx+i-sx, dy+j, destData );
 				}
@@ -995,61 +958,15 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 		if ( bpp < 16 ) {
 			D(bug("fVDI: blitArea ->M: bitplane conversion NOT IMPLEMENTED"));
 		} else {
+			uint32 srcData;
+			uint32 destData;
+
 			for( uint16 j=0; j<h; j++ )
 				for( uint16 i=sx; i<sx+w; i++ ) {
-					//uint16 dataWord = get_word( (uint32)data + ((i*bpp)>>3) + j*pitch, true );
-					uint32 dataWord = hostScreen.getPixel( i, sy + j );
-					uint16 destData = get_word( destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, true );
-					switch(logOp) {
-						case 0:
-							destData = 0;
-							break;
-						case 1:
-							destData = dataWord & destData;
-							break;
-						case 2:
-							destData = dataWord & ~destData;
-							break;
-						case 3:
-							destData = dataWord;
-							break;
-						case 4:
-							destData = ~dataWord & destData;
-							break;
-						case 5:
-							destData = destData;
-							break;
-						case 6:
-							destData = dataWord ^ destData;
-							break;
-						case 7:
-							destData = dataWord | destData;
-							break;
-						case 8:
-							destData = ~(dataWord | destData);
-							break;
-						case 9:
-							destData = ~(dataWord ^ destData);
-							break;
-						case 10:
-							destData = ~destData;
-							break;
-						case 11:
-							destData = dataWord | ~destData;
-							break;
-						case 12:
-							destData = ~dataWord;
-							break;
-						case 13:
-							destData = ~dataWord | destData;
-							break;
-						case 14:
-							destData = ~(dataWord & destData);
-							break;
-						case 15:
-							destData = 0xffff;
-							break;
-					}
+					//uint16 srcData = get_word( (uint32)data + ((i*bpp)>>3) + j*pitch, true );
+					srcData = hostScreen.getPixel( i, sy + j );
+					destData = get_word( destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, true );
+					applyBlitLogOperation( logOp, destData, srcData );
 					put_word( destAddress + (dx+i-sx)*2 + (dy+j)*destPitch, destData );
 				}
 		}
@@ -1062,6 +979,8 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 	// if (!hostScreen.renderBegin()) // the surface must _not_ be locked for blitArea (SDL_BlitSurface)
 	//		return 1;
 
+	// FIXME: There are no logical operation implementation ATM
+	// for S->S blits... -> SDL does the whole thing at once
 	hostScreen.blitArea( sx, sy, dx, dy, w, h );
 	hostScreen.update( sx, sy, w, h, true );
 	hostScreen.update( dx, dy, w, h, true );
@@ -1241,6 +1160,9 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.19  2001/10/24 17:55:01  standa
+ * The fVDI driver fixes. Finishing the functionality tuning.
+ *
  * Revision 1.18  2001/10/23 21:28:49  standa
  * Several changes, fixes and clean up. Shouldn't crash on high resolutions.
  * hostscreen/gfx... methods have fixed the loop upper boundary. The interface
