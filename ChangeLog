@@ -1,3 +1,9 @@
+2004/02/19 - Xavier
+- gui-sdl/sdlgui.cpp : SG_DISABLED state now ready for use.
+
+- gui-sdl/dlgDisk.cpp: "Generate" buttons visible (but disabled).
+
+
 2004/02/16 - Xavier
 - gui-sdl/sdlgui* :
   - added SG_RADIO flag.

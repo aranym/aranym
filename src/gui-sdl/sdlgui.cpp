@@ -41,7 +41,6 @@ enum
 SDL_Color blackc[]     = {{0, 0, 0, 0}};
 SDL_Color darkgreyc[]  = {{128, 128, 128, 0}};
 SDL_Color greyc[]      = {{192, 192, 192, 0}};
-SDL_Color lightgreyc[] = {{224, 224, 224, 0}};
 SDL_Color whitec[]     = {{255, 255, 255, 0}};
 
 /*-----------------------------------------------------------------------*/
@@ -503,11 +502,17 @@ void SDLGui_Draw3DBox(SDL_Rect *coord,
 void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
 {
   SDL_Rect coord;
+  SDL_Color *my_blackc;
   SDL_Color *upleftc, *downrightc;
 
   SDLGui_ObjCoord(bdlg, objnum, &coord);
 
   // Modify box drawing according to object state
+  if (bdlg[objnum].state & SG_DISABLED)
+    my_blackc = darkgreyc;
+  else
+    my_blackc = blackc;
+
   if (bdlg[objnum].state & SG_SELECTED)
   {
     upleftc    = darkgreyc;
@@ -525,19 +530,19 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
     case (SG_SELECTABLE | SG_DEFAULT | SG_BACKGROUND):
     case (SG_SELECTABLE | SG_DEFAULT):
       SDLGui_Draw3DBox(&coord,
-                       greyc, NULL, upleftc, downrightc, blackc,
+                       greyc, NULL, upleftc, downrightc, my_blackc,
                        1, 0, 1, 0, 2);
       break;
     case (SG_SELECTABLE | SG_BACKGROUND):
     case SG_SELECTABLE:
       SDLGui_Draw3DBox(&coord,
-                       greyc, NULL, upleftc, downrightc, blackc,
+                       greyc, NULL, upleftc, downrightc, my_blackc,
                        1, 0, 1, 0, 1);
       break;
     case (SG_DEFAULT | SG_BACKGROUND):
     case SG_BACKGROUND:
       SDLGui_Draw3DBox(&coord,
-                       greyc, blackc, upleftc, downrightc, darkgreyc,
+                       greyc, my_blackc, upleftc, downrightc, darkgreyc,
                        0, 2, 3, 0, 1);
       break;
     case SG_DEFAULT:
@@ -557,7 +562,8 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
 void SDLGui_DrawButton(SGOBJ *bdlg, int objnum)
 {
   SDL_Rect coord;
-  int x,y;
+  int x, y;
+  SDL_Color *textc;
 
   SDLGui_ObjCoord(bdlg, objnum, &coord);
 
@@ -570,8 +576,13 @@ void SDLGui_DrawButton(SGOBJ *bdlg, int objnum)
     y += 1;
   }
 
+  if (bdlg[objnum].state & SG_DISABLED)
+    textc = darkgreyc;
+  else
+    textc = blackc;
+
   SDLGui_DrawBox(bdlg, objnum);
-  SDLGui_Text(x, y, bdlg[objnum].txt, blackc);
+  SDLGui_Text(x, y, bdlg[objnum].txt, textc);
 }
 
 
@@ -584,7 +595,7 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
   Uint32 grey = SDLGui_MapColor(greyc);
   SDL_Rect coord;
   char str[2];
-  SDL_Color textc = {0, 0, 0, 0};
+  SDL_Color *textc;
 
   SDLGui_ObjCoord(cdlg, objnum, &coord);
 
@@ -603,6 +614,11 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
       str[0]=SGCHECKBOX_NORMAL;
   }
 
+  if (cdlg[objnum].state & SG_DISABLED)
+    textc = darkgreyc;
+  else
+    textc = blackc;
+
   str[1]='\0';
 
   coord.w = fontwidth;
@@ -612,7 +628,7 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
     coord.x += ((strlen(cdlg[objnum].txt) + 1) * fontwidth);
 
   SDL_FillRect(sdlscrn, &coord, grey);
-  SDLGui_Text(coord.x, coord.y, str, &textc);
+  SDLGui_Text(coord.x, coord.y, str, textc);
 }
 
 
@@ -623,14 +639,19 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
 void SDLGui_DrawCheckBox(SGOBJ *cdlg, int objnum)
 {
   SDL_Rect coord;
-  SDL_Color textc = {0, 0, 0, 0};
+  SDL_Color *textc;
 
   SDLGui_ObjCoord(cdlg, objnum, &coord);
 
   if (!(cdlg[objnum].flags&SG_BUTTON_RIGHT))
     coord.x += (fontwidth * 2);
 
-  SDLGui_Text(coord.x, coord.y, cdlg[objnum].txt, &textc);
+  if (cdlg[objnum].state & SG_DISABLED)
+    textc = darkgreyc;
+  else
+    textc = blackc;
+
+  SDLGui_Text(coord.x, coord.y, cdlg[objnum].txt, textc);
   SDLGui_DrawCheckBoxState(cdlg, objnum);
 }
 
@@ -643,14 +664,19 @@ void SDLGui_DrawPopupButton(SGOBJ *pdlg, int objnum)
 {
   SDL_Rect coord;
   const char *downstr = "\x02";
-  SDL_Color textc = {0, 0, 0, 0};
+  SDL_Color *textc;
+
+  if (pdlg[objnum].state & SG_DISABLED)
+    textc = darkgreyc;
+  else
+    textc = blackc;
 
   SDLGui_DrawBox(pdlg, objnum);
 
   SDLGui_ObjCoord(pdlg, objnum, &coord);
 
-  SDLGui_Text(coord.x, coord.y, pdlg[objnum].txt, &textc);
-  SDLGui_Text(coord.x+coord.w-fontwidth, coord.y, downstr, &textc);
+  SDLGui_Text(coord.x, coord.y, pdlg[objnum].txt, textc);
+  SDLGui_Text(coord.x+coord.w-fontwidth, coord.y, downstr, textc);
 }
 
 
@@ -669,7 +695,7 @@ void SDLGui_EditField(SGOBJ *dlg, int objnum)
   SDL_Rect rect;
   Uint32 grey, cursorCol;
   SDL_Event event;
-  SDL_Color textc = {0, 0, 0, 0};
+  SDL_Color *textc = blackc;
 
   grey = SDLGui_MapColor(greyc);
   cursorCol = SDLGui_MapColor(darkgreyc);
@@ -761,7 +787,7 @@ void SDLGui_EditField(SGOBJ *dlg, int objnum)
       cursorrect.w = fontwidth;  cursorrect.h = rect.h;
       SDL_FillRect(sdlscrn, &cursorrect, cursorCol);
     }
-    SDLGui_Text(rect.x, rect.y, dlg[objnum].txt, &textc);  /* Draw text */
+    SDLGui_Text(rect.x, rect.y, dlg[objnum].txt, textc);  /* Draw text */
     SDLGui_RefreshObj(dlg, objnum);
   }
   while(!bStopEditing);

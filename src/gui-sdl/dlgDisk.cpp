@@ -88,8 +88,7 @@ static SGOBJ discdlg[] =
   { SGTEXT, 0, 0,		 2,12, 5,1, "Size:" },
   { SGEDITFIELD, 0, 0,	 8,12, 5,1, ide0_size},
   { SGTEXT, 0, 0,		14,12, 2,1, "MB" },
-// Hidden for now...
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, SG_HIDDEN,	17,12, 10,1, "Generate" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT, SG_DISABLED,	17,12, 10,1, "Generate" },
   { SGBOX, 0, 0,		 1,15, 38,6, NULL },
   { SGTEXT, 0, 0,		 2,14, 6,1, "IDE1:" },
   { SGEDITFIELD, 0, 0,	 8,14, sizeof(ide1_name)-1,1, ide1_name},
@@ -107,8 +106,7 @@ static SGOBJ discdlg[] =
   { SGTEXT, 0, 0,		 2,20, 5,1, "Size:" },
   { SGEDITFIELD, 0, 0,	 8,20, 5,1, ide1_size},
   { SGTEXT, 0, 0,		14,20, 2,1, "MB" },
-// Hidden for now...
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, SG_HIDDEN,	17,20, 10,1, "Generate" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT, SG_DISABLED,	17,20, 10,1, "Generate" },
   { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0,	10,23, 20,1, "Back to main menu" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
@@ -139,7 +137,7 @@ static void UpdateFloppyStatus(void)
 static void HideDiskSettings(int handle, bool state)
 {
 	int start = (handle == 0) ? IDE0_READONLY : IDE1_READONLY;
-	int end = (handle == 0) ? text_size0mb : text_size1mb;
+	int end = (handle == 0) ? IDE0_GENERATE : IDE1_GENERATE;
 	// READONLY, BYTESWAP, chs, CYL, HEAD, SEC, size, SIZE, sizemb
 	for(int i=start; i<=end; i++) {
 		setState(i, SG_HIDDEN, state);
