@@ -1,3 +1,28 @@
+2002/01/26 - version 0.0.19 released
+==========
+
+ ARAnyM is at least 33% faster than the last release (v0.0.11).
+
+ ARAnyM supports STOP instruction that put the CPU to sleep. This works
+ perfectly in latest EmuTOS (CVS version). ARAnyM does not eat CPU
+ cycles when there is nothing to do in EmuTOS.
+
+ ARAnyM configuration file changed its location and got more options:
+ all ARAnyM user files are now located in $HOME/.aranym/ folder.
+ The configuration file is named "config" (thus the complete path is
+ $HOME/.aranym/config). The configuration file is created automatically
+ if it is not found. The old $HOME/.aranymrc is not read, you have to
+ update your new config file by hand.
+
+ New noteworthy command line options include "--refresh <x>" where you
+ can specify the VIDEL refresh.
+
+ Many many fixes - in floppy (formatting works), fVDI (colors after
+ resolution change), NVRAM (year 2002 not 2001) and many more.
+
+ Look into ChangeLog for more details.
+
+
 2001/12/06 - version 0.0.11 released
 ==========
  The keyboard emulation in aranym has been rewritten and is based on pure

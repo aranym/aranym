@@ -7,7 +7,7 @@
     <text>
       ARAnyM is an acronym. It means "Atari Running on Any Machine".
       The main goal of the project is to create a virtual machine
-      that would allow anyone to install, use and also <B>develop new</B> TOS
+      that would allow anyone to install, use and also develop new TOS
       applications on their computer regardless of its architecture. 
       The final product should be an modern portable TOS compatible operating 	
       system which would be capable to run HOST CPU native applications together
@@ -24,7 +24,7 @@
       to play games and (or) launch demos made for ST/Falcon then just forget
       ARAnyM and install some existing emulator created for this purpose
       (STonX, WinSTon, Steem, etc..) Or better, make a TOS version of those 
-      ST emulator, run it under Aranym and you will have all ST/TOS software 
+      ST emulators, run it under Aranym and you will have all ST/TOS software 
       in one box!  
     </text>
   </chapter>
@@ -64,8 +64,8 @@
       HostOS booted up (we use Linux for now but ARAnyM can be ported to
       any OS) and started the ARAnyM, which now emulates MC68040 CPU, 68882 FPU
       and a couple of other Falcon030 chips so that a slightly patched TOS 4.04 
-      boots and runs your favourite Atari software. This is the ideal state (see
-      also the <A HREF="#distribution">Distribution</A>)
+      boots and runs your favourite Atari software. This would be the ideal state
+      (see also the <A HREF="#distribution">Distribution</A>)
       for the 'ARAnyM only' mode of operation. We, while developing ARAnyM, 
       use it in so called application mode when the Atari runs in a window on 	
       regular X11 Host desktop.
@@ -86,8 +86,8 @@
       The MMU and some patches were added to it. The other emulated chips are
       mainly ACIA, BLITTER, Falcon VIDEL and IDE and basic input peripherals
       handled by MFP (respective IKBD) like keyboard and mouse.
-      The whole system runs on Host OS (primarily Linux, in future
-      maybe Windows, Mac, etc.). Linux system (we call it more generally "Host 	OS") 
+      The whole system runs on Host OS (primarily Linux, but a Windows port exists
+      and there is more to come). Linux system (we call it more generally "Host OS") 
       is installed before ARAnyM and after that it is "invisible" to the user. 
       That means that ARAnyM user wouldn't nearly notice its presence. 
       Itis also possible to install ARAnyM in so called "application mode" 
@@ -105,24 +105,24 @@
 	Definitely not. There are two main problems with the real 68040. One is
 	the cache, which must be turned off for some programs. Second is the
 	different FPU unit. Both these problems don't exist on Aranym because it
-	doesn't emulate the cache and in the FPU part the full 68882 instruction
+	doesn't emulate the write-back cache and in the FPU part the full 68882 instruction
 	set is emulated. In fact our 68040 is much better than a real one, because
-	there are only features of the 68040 emulated, not incompatibilities.     
+	there are only the positive features of the 68040 emulated, not those that
+	causes the incompatibilities with older software.
     </text>
   </chapter>
   <chapter>
-    <title>You talking emulation, but emulation is allways very slow ! How fast 
-    	   is Aranym ?</title>
+    <title>You talking emulation, but emulation is always very slow ! How fast is Aranym ?</title>
     <text>
 	First, I have to say, that Aranym is currently mostly unoptimized and it
 	uses no advanced techniques as JIT, yet. Nevertheles, Aranym is quite fast
 	compared to real TOS machines. The raw CPU/FPU power is somewhere between 	
-	68040 and 68060 on 1Ghz PIII/Duron/Athlon, measured in real applications
-	like mp3 encoding, video replay, GNU C compiling etc..
+	68040 and 68060 on 1GHz PIII/Duron/Athlon host machine, measured in real applications
+	like MP3 encoding, video replay, GNU C compiling etc..
 	The graphics performance is even higher, because big part of VDI runs
-	natively and uses hardware acceleration when available.
+	natively and uses host hardware acceleration when available.
 	In the near future the JIT will be implemented, which should speedup
-	current CPU/FPU about 10 times or even more. 
+	current CPU/FPU emulation several times. 
     </text>
    </chapter>
 
@@ -132,9 +132,9 @@
        Step by step should the missing features be added. These are sound
        support, I/O ports, JIT, etc. The copyright free system should be ideally
        reached. The main licencing problem is the TOS ROM copyright (TOS4.04 is
-       used), but we have already a replacement called EmuTOS. It will be able to
+       used), but we already have a free replacement called EmuTOS. It will be able to
        replace TOS ROM completely very soon. After that we would get a multitasking, 
-       multiuser, GEM compatible ARAnyM system free of all copyright issues, 
+       multiuser, TOS/GEM compatible ARAnyM system free of all copyright issues, 
        licensed under the GPL! The next steps should be	a deeper integration of 
        other OS parts (FreeMiNT, fVDI, XaAES, Desktop). In future some parts
        of these might run natively in Host OS platform machine code. 

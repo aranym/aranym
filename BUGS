@@ -2,10 +2,8 @@ Bug:
   Desktop viewer crashes and kills whole ARAnyM.
 
 Reason:
-  Unknown.
-
-Workaround:
-  Install GUCK. Or a Desktop replacement (Thing).
+  Something regarding the blitter emulation
+  as NVDI fixes that.
 
 ---
 
@@ -14,7 +12,4 @@ Bug:
   PureC cannot open project file.
 
 Reason:
-  A bug in ARAfs.
-
-Workaround:
-  Work with real disks or disk images.
+  A bug in ARAfs. Help with fixing it.

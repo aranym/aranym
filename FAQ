@@ -15,28 +15,9 @@ Answer:
 
   Create a diff file using the following command:
 
-    "diff -u original_archive/file.c my_changes/file.c >file.c.diff"
+    "cvs diff -u >cvsdiff.txt"
 
-    or if you changed more files and want to diff them at once:
-
-    "diff -u -r original_archive my_changes >my_changes.diff
-
-  Then mail the *.diff to pstehlik@sophics.cz.
-
----
-
-Question:
-  With some programs like Eureka and Inshape, AES put a a form_error
-  with this informations
-  
-  AES ERROR
-  Application : Eureka
-  Function id : 104
-  wrong call
-
-Answer:
-  This is WinX. Please get ARAnyM 0.0.10 or newer and also use the original
-  Falcon TOS 4.04 (link for download on our WWW pages).
+  Then mail the cvsdiff.txt to pstehlik@sophics.cz.
 
 ---
 Question:

@@ -1,59 +1,20 @@
-Things that must be done before first beta release:
-===================================================
+Things for 1.0 release:
+=======================
 
-+ fix system timer (200 Hz) - the system time slows down under heavy load now.
+- fix known BUGS
 
-+ fix Makefile (dependencies fooled due to "obj/" folder)
+- implement native interface for accessing host parameters. Use it for Clocky
+  (mouse wrap at window border), aranymfs (auto editor of config.sys) and
+  EmuTOS (harddrives and more).
 
-+ system wide object with user settings that will include bx_options from ata.cpp.
-
-+ CMOS (NVRAM) settings stored on disk
-
-+ mouse pointer must be sync'ed with the host mouse (in X-Windows)
-
-+ [35%]
-  aranym HW registers - define a structure, use it for FastRAM.PRG (to find out
-  the correct size of FastRAM) and for AranymFsEditor.PRG (will edit CONFIG.SYS
-  automagically and will add there the GEMDOS drives that were attached in aranym)
-  The structure address will be obtained by calling an undefined instruction.
-  TOS will hold it in a CookieJar ARAx.
-
-- MetaDOS filesystem debugging (e.g. PureC don't want to compile a .prj file 8-().
-
-+ [60%]
-  printing - definitely a must. Either by YAMAHA emulation or directly
-  by hooking into TOS xconout. Anyone having a copy of TOS ROM that was able
-  to print chars on console?
+- printing to file (/dev/lp)
 
 - rewrite all HW modules to make use of BASE_IO::handle_read/write()
 
 - in fdc.cpp: replace HWget_b() and HWput_b() with something more appropriate
               for inter-module communication
 
-+ in acia.cpp: get_byte_direct() and put_byte_direct() are another example of code
-               that should be replaced by something better (more descriptive)
-
 - in hardware.cpp: HWget_l/HWput_l should not have the special case for HW_IDE
-
-+ replace timer thread with SDL_getTimerMilis() in uae_cpu inner loop. The advantages
-  are mainly exact 200 Hz (instead of approx 100 Hz we have currently) and
-  screen updating in main thread (thus no inter-thread collisions)
-
-- enable SWACCEL and HWBLITS of Blitter - compile time configuration is enough.
-
-+ [100%]
-  move ROM file reading back to main.cpp, perhaps even with 040 patching routine so 
-  aranym could use pure TOS 4.04
-
-+ improve the keyboard emulation - make the keyboard layout editable (for national keyboards),
-  well define and DOCUMENT keyboard combos for quitting, mounting floppy/cdrom, screen shot
-  grabbing, debugger invoking, GUI config entering and others.
-
-- document the way the aranym works - especially the hardware emulation (Hackers Guide)
-
-- document the command line switches, keyboard combos and write Users Guide.
-
-+ create several disk images with preinstalled _free_ software:
 
 - full support of instr. MOVES
 
@@ -61,50 +22,28 @@ Things that must be done before first beta release:
 
 - support for Just-In-Time compilation
 
-The goal for the first beta is to get functional Atari/TOS machine replacement
-fully usable for regular GEM users.
-
-Estimated amount of work for first beta release: two weeks
-
-Things for 1.0 release:
-=======================
+- MMU040 (MiNT with memory protection, Linux)
 
 - Networking for MiNTNet (like in vmware)
 
-+ mouse pointer shared between X-Windows and aranym (like in vmware)
-
 - aranymfs  filesystem
+    - fixes (e.g. PureC don't want to compile a .prj file 8-().
     - the Host OS part should be rewritten nearly from scratch, I have 
       ideas to use some platform independent library and later either VFS lib.
     - m68k code cleanup... the .c file can be easily rewritten to .s.
-      This would be usefull, not to need the C compiler for this, woudn't be?
+      This would be useful, not to need the C compiler for this, woudn't be?
     - .xfs filesystem modules for MagiC and MiNT.
 
-+ [97%] fVDI working (TOS+aranym drivers)
+- sound using GSXB library
 
-- sound output using GSXB library
+- document the way the aranym works - especially the hardware emulation
+  (ARAnyM Hackers Guide)
+
+- document the command line switches, keyboard combos and write Users Guide.
 
 The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
 all Atari power users/MiNTers. Key elements are TCP/IP networking, large
 screen resolution in high color/true color, fast CPU/FPU and plenty of RAM.
 
-Estimated time for 1.0 release: spring 2002.
-
-Things for 2.0 release:
-=======================
-
-- [50%] MMU040 (MiNT with memory protection, Linux)
-
-- configuration in GUI for X-Windows (GNOME/KDE)
-
-- [80%] perhaps port of aranym to Windows
-
-- Yamaha and DMA sound, DSP emulation etc.
-
-- [30%] serial port, parallel port, joysticks etc.
-
-The goal for 2.0 is total Atari machine replacement usable by every Atari BFU.
-It should be able to boot Linux-m68k to prove 100% hardware compatibility.
-
-Estimated time for 2.0 release: depends on number of attracted programmers.
-Either never (due to lack of interest) or rather soon after 1.0 release.
+Estimated time for 1.0 release: depends on number of attracted and helpful
+programmers. Ideally before summer 2002 but only if you help us...

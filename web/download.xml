@@ -11,7 +11,7 @@
       <p/>
       Most up-to-date source code is available in the <a href="cvs.html">CVS</a>.
       <p/>
-      Nightly CVS snapshot (generated at 02:00 CET) is <a href="http://atari.sh.cvut.cz/ftp/other/snapshot.tar.gz">here</a>. The configure script is pre-generated in this tar file so you don't have to run ./autogen.sh - ./configure && make is enough.
+      Nightly CVS snapshot (generated at 02:00 CET) is <a href="http://atari.sh.cvut.cz/ftp/other/snapshot.tar.gz">here</a>. The configure script is pre-generated in this tar file so you don't have to run "./autogen.sh" - "./configure" and "make" is enough.
       <p/>
       Regular releases (source, binary and disk images) happen to be at
       <a href="http://sourceforge.net/project/showfiles.php?group_id=41106">Sourceforge.net</a>.
