@@ -1,3 +1,20 @@
+2001/11/01
+==========
+
+ Mouse behavior fixed:
+  1) you can release mouse grab by pressing Alt+Ctrl+Esc (VMware compatible)
+  2) you can grab mouse by click the left mouse button (VMware compatible)
+  3) if the Atari mouse driver is active, you can release mouse by moving
+     the mouse off the window and by moving back you grab it again. This
+     can be disabled by setting "AutoGrabMouse=No" in the config file.
+
+ You can save the config file by 'aranym -s' (or --save). This is useful
+ if you want to see newly added options. You can also choose a different
+ config file by 'aranym -c /path/to/different/aranymrc'. This even works
+ together: 'aranym -c /tmp/aranymrc.example -s' will create a fresh config
+ file in /tmp with all default values.
+
+
 2001/10/29
 ==========
 --rom removed
