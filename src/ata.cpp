@@ -698,7 +698,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 #endif  // !BX_USE_HD_SMF
   unsigned long logical_sector;
   int ret;
-  Boolean prev_control_reset;
+  // Boolean prev_control_reset;
 
   if (io_len==2 && address!=0xf00000) {
     D(bug("non-byte IO write to %04x", (unsigned) address));
@@ -813,7 +813,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 		  if (BX_SELECTED_CONTROLLER.buffer_index >= PACKET_SIZE) {
 			// complete command received
 			Bit8u atapi_command = BX_SELECTED_CONTROLLER.buffer[0];
-			int alloc_length;
+			// int alloc_length;
 
 			if (bx_dbg.cdrom)
 				D(bug("cdrom: ATAPI command 0x%x started", atapi_command));
