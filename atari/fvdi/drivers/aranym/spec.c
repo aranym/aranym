@@ -89,6 +89,10 @@ struct {
 	short freq;
 } resolution = {0, 640, 480, 16, 85};
 
+struct {
+	short width;
+	short height;
+} pixel;
 
 extern Driver *me;
 extern Access *access;
@@ -340,29 +344,31 @@ static void setup_wk(Virtual *vwk)
 	/* update the settings */
 	wk->screen.mfdb.width = resolution.width;
 	wk->screen.mfdb.height = resolution.height;
+	wk->screen.mfdb.bitplanes = resolution.bpp;
 
 	/*
 	 * Some things need to be changed from the
 	 * default workstation settings.
 	 */
 	wk->screen.mfdb.address = (void *)c_get_videoramaddress();
-	wk->screen.mfdb.wdwidth = ((long)wk->screen.mfdb.width * resolution.bpp) / 16;
-	wk->screen.mfdb.bitplanes = resolution.bpp;
-	wk->screen.wrap = wk->screen.mfdb.width * (resolution.bpp / 8);
+	wk->screen.mfdb.wdwidth = ((long)wk->screen.mfdb.width * wk->screen.mfdb.bitplanes) / 16;
+	wk->screen.wrap = wk->screen.mfdb.width * (wk->screen.mfdb.bitplanes / 8);
 
 	wk->screen.coordinates.max_x = wk->screen.mfdb.width - 1;
 	wk->screen.coordinates.max_y = (wk->screen.mfdb.height & 0xfff0) - 1;	/* Desktop can't deal with non-16N heights */
 
 	wk->screen.look_up_table = 0;			/* Was 1 (???)	Shouldn't be needed (graphics_mode) */
 	wk->screen.mfdb.standard = 0;
-	if (wk->screen.pixel.width > 0)			/* Starts out as screen width */
-		wk->screen.pixel.width = (wk->screen.pixel.width * 1000L) / wk->screen.mfdb.width;
+
+	if (pixel.width > 0)			/* Starts out as screen width */
+		wk->screen.pixel.width = (pixel.width * 1000L) / wk->screen.mfdb.width;
 	else								   /*	or fixed DPI (negative) */
-		wk->screen.pixel.width = 25400 / -wk->screen.pixel.width;
-	if (wk->screen.pixel.height > 0)		/* Starts out as screen height */
-		wk->screen.pixel.height = (wk->screen.pixel.height * 1000L) / wk->screen.mfdb.height;
+		wk->screen.pixel.width = 25400 / -pixel.width;
+
+	if (pixel.height > 0)		/* Starts out as screen height */
+		wk->screen.pixel.height = (pixel.height * 1000L) / wk->screen.mfdb.height;
 	else									/*	 or fixed DPI (negative) */
-		wk->screen.pixel.height = 25400 / -wk->screen.pixel.height;
+		wk->screen.pixel.height = 25400 / -pixel.height;
 	
 	device.address		= wk->screen.mfdb.address;
 	device.byte_width	= wk->screen.wrap;
@@ -376,7 +382,7 @@ static void setup_wk(Virtual *vwk)
 }
 
 
-static void initialize_wk_palette(Virtual *vwk)
+static void initialize_wk(Virtual *vwk)
 {
 	Workstation *wk = vwk->real_address;
 
@@ -398,6 +404,10 @@ static void initialize_wk_palette(Virtual *vwk)
 		} else
 			wk->screen.palette.colours = old_palette_colours;
 	}
+
+
+	pixel.width = wk->screen.pixel.width;
+	pixel.height = wk->screen.pixel.height;
 }
 
 
@@ -416,7 +426,7 @@ void CDECL initialize(Virtual *vwk)
 		return;
 	}
 
-	initialize_wk_palette(vwk);
+	initialize_wk(vwk);
 
 	setup_wk(vwk);
 
