@@ -8,9 +8,6 @@
 #define _FVDIDRV_H
 
 #include "cpu_emulation.h"
-#include "debug.h"
-#include <new>
-#include <cstring>
 
 class FVDIDriver {
   private:
@@ -54,72 +51,10 @@ class FVDIDriver {
 	int drawMoveLine(int16 table[], int length, uint16 index[], int moves, uint16 pattern,
 	                 uint32 fgColor, uint32 bgColor, int logOp, int cliprect[], int minmax[]);
 
-	// The polygon code needs some arrays of unknown size
-	// These routines and members are used so that no unnecessary allocations are done
-	bool AllocIndices(int n)
-	{
-		if (n > index_count) {
-			D2(bug("More indices %d->%d\n", index_count, n));
-			int count = n * 2;	// Take a few extra right away
-			int16* tmp = new(nothrow) int16[count];
-			if (!tmp) {
-				count = n;
-				tmp = new(nothrow) int16[count];
-			}
-			if (tmp) {
-				delete[] alloc_index;
-				alloc_index = tmp;
-				index_count = count;
-			}
-		}
-
-		return index_count >= n;
-	}
-
-	bool AllocCrossings(int n)
-	{
-		if (n > crossing_count) {
-			D2(bug("More crossings %d->%d\n", crossing_count, n));
-			int count = n * 2;		// Take a few extra right away
-			int16* tmp = new(nothrow) int16[count];
-			if (!tmp) {
-				count = (n * 3) / 2;	// Try not so many extra
-				tmp = new(nothrow) int16[count];
-			}
-			if (!tmp) {
-				count = n;		// This is going to be slow if it goes on...
-				tmp = new(nothrow) int16[count];
-			}
-			if (tmp) {
-				std::memcpy(tmp, alloc_crossing, crossing_count * sizeof(*alloc_crossing));
-				delete[] alloc_crossing;
-				alloc_crossing = tmp;
-				crossing_count = count;
-			}
-		}
-
-		return crossing_count >= n;
-	}
-
-	bool AllocPoints(int n)
-	{
-		if (n > point_count) {
-			D2(bug("More points %d->%d", point_count, n));
-			int count = n * 2;	// Take a few extra right away
-			int16* tmp = new(nothrow) int16[count * 2];
-			if (!tmp) {
-				count = n;
-				tmp = new(nothrow) int16[count * 2];
-			}
-			if (tmp) {
-				delete[] alloc_point;
-				alloc_point = tmp;
-				point_count = count;
-			}
-		}
-
-		return point_count >= n;
-	}
+	// fillPoly helpers
+	bool AllocIndices(int n);
+	bool AllocCrossings(int n);
+	bool AllocPoints(int n);
 
 	int16* alloc_index;
 	int index_count;
@@ -128,16 +63,6 @@ class FVDIDriver {
 	int16* alloc_point;
 	int point_count;
 
-	// A helper class to make it possible to access
-	// points in a nicer way in fillPoly.
-	class Points {
-	public:
-		explicit Points(int16* vector_) : vector(vector_) { }
-		~Points() { }
-		int16* operator[](int n) { return &vector[n * 2]; }
-	private:
-		int16* vector;
-	};
 
   public:
 	FVDIDriver()
@@ -183,6 +108,9 @@ class FVDIDriver {
 
 /*
  * $Log$
+ * Revision 1.12  2001/11/29 23:51:56  standa
+ * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
+ *
  * Revision 1.11  2001/11/21 13:29:51  milan
  * cleanning & portability
  *

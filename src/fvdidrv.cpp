@@ -12,6 +12,8 @@
 #include "hostscreen.h"
 
 #include "fvdidrv.h"
+#include <new>     // Johan Klockars
+#include <cstring> // Johan Klockars
 
 #define DEBUG 0
 #include "debug.h"
@@ -62,6 +64,86 @@ extern VIDEL videl;
 	( (get_byte((address)+2,dataFlag) << 16) | (get_byte((address)+1,dataFlag) << 8) | get_byte((address),dataFlag) )
 
 #endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
+
+
+
+// The polygon code needs some arrays of unknown size
+// These routines and members are used so that no unnecessary allocations are done
+bool FVDIDriver::AllocIndices(int n)
+{
+	if (n > index_count) {
+		D2(bug("More indices %d->%d\n", index_count, n));
+		int count = n * 2;	// Take a few extra right away
+		int16* tmp = new(nothrow) int16[count];
+		if (!tmp) {
+			count = n;
+			tmp = new(nothrow) int16[count];
+		}
+		if (tmp) {
+			delete[] alloc_index;
+			alloc_index = tmp;
+			index_count = count;
+		}
+	}
+
+	return index_count >= n;
+}
+
+bool FVDIDriver::AllocCrossings(int n)
+{
+	if (n > crossing_count) {
+		D2(bug("More crossings %d->%d\n", crossing_count, n));
+		int count = n * 2;		// Take a few extra right away
+		int16* tmp = new(nothrow) int16[count];
+		if (!tmp) {
+			count = (n * 3) / 2;	// Try not so many extra
+			tmp = new(nothrow) int16[count];
+		}
+		if (!tmp) {
+			count = n;		// This is going to be slow if it goes on...
+			tmp = new(nothrow) int16[count];
+		}
+		if (tmp) {
+			std::memcpy(tmp, alloc_crossing, crossing_count * sizeof(*alloc_crossing));
+			delete[] alloc_crossing;
+			alloc_crossing = tmp;
+			crossing_count = count;
+		}
+	}
+
+	return crossing_count >= n;
+}
+
+bool FVDIDriver::AllocPoints(int n)
+{
+	if (n > point_count) {
+		D2(bug("More points %d->%d", point_count, n));
+		int count = n * 2;	// Take a few extra right away
+		int16* tmp = new(nothrow) int16[count * 2];
+		if (!tmp) {
+			count = n;
+			tmp = new(nothrow) int16[count * 2];
+		}
+		if (tmp) {
+			delete[] alloc_point;
+			alloc_point = tmp;
+			point_count = count;
+		}
+	}
+
+	return point_count >= n;
+}
+
+// A helper class to make it possible to access
+// points in a nicer way in fillPoly.
+class Points {
+  public:
+	explicit Points(int16* vector_) : vector(vector_) { }
+	~Points() { }
+	int16* operator[](int n) { return &vector[n * 2]; }
+  private:
+	int16* vector;
+};
 
 
 
@@ -1021,11 +1103,13 @@ int FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, i
 	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest, (src)?(get_long( (uint32)src, true )):0,(dest)?(get_long( (uint32)dest, true )):0));
 
 	uint32 screenMFDBAddr = get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS;
-	uint32 screenPlanes = (uint32)get_word( screenMFDBAddr + MFDB_BITPLANES, true );
 	uint32 videoRam = get_long( screenMFDBAddr, true );
 
-	//uint32 screenPitch = get_word( screenMFDBAddr + MFDB_WDWIDTH, true ) * screenPlanes << 1;
+#if DEBUG > 0
+	uint32 screenPlanes = (uint32)get_word( screenMFDBAddr + MFDB_BITPLANES, true );
+	uint32 screenPitch = get_word( screenMFDBAddr + MFDB_WDWIDTH, true ) * screenPlanes << 1;
 	D(bug("fVDI: screen args: address %x, pitch %d, planes %d", videoRam, screenPitch, screenPlanes));
+#endif
 
 	bool toMemory = ( dest != NULL && get_long( (uint32)dest, true ) != 0 && get_long( (uint32)dest, true ) != videoRam );
 	if ( src != NULL && get_long( (uint32)src, true ) != 0 && get_long( (uint32)src, true ) != videoRam ) { // fromMemory
@@ -1659,7 +1743,7 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 		if (index[moves] == -2)
 			moves--;
 	}
-		
+
 	int miny = p[0][1];
 	int maxy = miny;
 	for(int i = 1; i < n; ++i) {
@@ -1776,6 +1860,9 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.25  2001/11/29 23:51:56  standa
+ * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
+ *
  * Revision 1.24  2001/11/26 16:07:57  standa
  * Olivier Landemarre found bug fixed.
  *
