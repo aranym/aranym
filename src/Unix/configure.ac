@@ -68,7 +68,9 @@ AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emul
 
 AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per second limiter (default=no)], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
 
-AC_ARG_ENABLE(lilo, [  --enable-lilo           enable Linux loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
+AC_ARG_ENABLE(lilo,            [  --enable-lilo           enable Linux loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
+
+AC_ARG_WITH(fink,              [  --with-fink             Use Fink suite to build Aranym on MacOSX (default=no)], [WITH_FINK=$withval], [WITH_FINK=no])
 
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
@@ -280,10 +282,12 @@ case "$target_os" in
     DEFINES="$DEFINES -DARANYMHOME=\\\"aranym\\\""
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS="parameters_unix.cpp"
-    CXXFLAGS="$CXXFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
-    CFLAGS="$CFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
-    LDFLAGS="$LDFLAGS -F$HOME/Library/Frameworks"
-    LIBS="$LIBS -framework AppKit -framework IOKit -framework CoreFoundation -framework SDL"
+    if test "x$with_fink" = "xno"; then
+        CXXFLAGS="$CXXFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
+        CFLAGS="$CFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
+        LDFLAGS="$LDFLAGS -F$HOME/Library/Frameworks"
+        LIBS="$LIBS -framework AppKit -framework IOKit -framework CoreFoundation -framework SDL"
+    fi
     ;;
   beos*)
     EXTRASYSSRCS="parameters_unix.cpp beos/cdrom_beos.cpp"
@@ -1483,14 +1487,9 @@ dnl SDL
 
 SDL_CFLAGS=
 SDL_LIBS=
-
-case $target_os in
-  darwin*)
-  	;;
-  *)	AM_PATH_SDL(1.2.0, )
-  	;;
-esac
-
+if test "$OS_TYPE" != "darwin" -o "x$with_fink" = "xyes"; then
+	AM_PATH_SDL(1.2.6, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found! ***]))
+fi
 LIBS="$LIBS $SDL_LIBS"
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
@@ -1588,7 +1587,11 @@ dnl Data directory
 APP=aranym
 case "$target_os" in
 	darwin*)
-		TARGET="\$(APP_LIB)"
+		if test "x$with_fink" = "xno"; then
+			TARGET="\$(APP_LIB)"
+		else
+			TARGET="\$(APP)"
+		fi
 		ARANYM_DATADIR="\"\\\"\${datadir}/\${APP}\\\"\""
 		;;
 	mingw*) TARGET="\$(APP)"

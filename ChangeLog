@@ -1,3 +1,8 @@
+2005/01/16 - Patrice
+- Enable compiling ARAnyM using the Fink suite on MacOSX.
+  (configure --with-fink)
+
+
 2005/01/16 - milan
 - cdrom.cpp: new fix for *BSD (thanks, Konrad)
 
