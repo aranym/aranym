@@ -1,3 +1,7 @@
+2002/10/09 - milan
+- sigsegv_linux.cpp: x86 F6 instructions was badly decoded. NOT8, NEG8, IDIV8,
+                     MUL8, IMUL8 implemented, TEST8 corrected
+
 2002/10/08 - joy (version 0.6.5-beta)
 - the major arch change in version 0.6.0 has been reverted. CPU is running
   in the main thread again. SDL_Timer thread is back on all platforms but
