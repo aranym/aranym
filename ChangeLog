@@ -1,3 +1,6 @@
+2002/03/20 - joy
+- MFP and RTC tweaking to get Linux-m68k running
+
 2002/03/15 - milan
 - Exception() is called only from main loop, not from trans. function.
 
