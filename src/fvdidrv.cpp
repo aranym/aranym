@@ -1393,13 +1393,30 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 				}
 			break;
 		case 32:
-			for(int32 j = 0; j < h; j++)
-				for(int32 i = sx; i < sx + w; i++) {
-					srcData = ReadInt32(data + j * pitch + i * 4);
-					destData = hostScreen.getPixel(dx + i - sx, dy + j);
-					applyBlitLogOperation(logOp, destData, srcData);
-					hostScreen.putPixel(dx + i - sx, dy + j, destData);
+			if (logOp != 3) {
+				for(int32 j = 0; j < h; j++)
+					for(int32 i = sx; i < sx + w; i++) {
+						srcData = ReadInt32(data + j * pitch + i * 4);
+						destData = hostScreen.getPixel(dx + i - sx, dy + j);
+						applyBlitLogOperation(logOp, destData, srcData);
+						hostScreen.putPixel(dx + i - sx, dy + j, destData);
+					}
+			} else {
+				uint32* daddr_base = (uint32*)((long)hostScreen.getVideoramAddress() +
+				                          dy * hostScreen.getPitch() + dx * 4);
+				memptr saddr_base = data + sx * 4;
+				for(int32 j = 0; j < h; j++) {
+					uint32* daddr = daddr_base;
+					memptr saddr = saddr_base;
+					daddr_base += hostScreen.getPitch() / 4;
+					saddr_base += pitch;
+					for(int32 i = 0; i < w; i++) {
+						destData = ReadInt32(saddr);
+						saddr += 4;
+						*daddr++ = destData;
+					}
 				}
+			}
 			break;
 
 		default: // bitplane modes...
@@ -1524,8 +1541,18 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 	// for S->S blits... -> SDL does the whole thing at once
 	if (logOp == 3)
 		hostScreen.blitArea(sx, sy, dx, dy, w, h);
-	else
-		D(bug("fVDI: %s %d", "blitArea - S->S! mode NOT IMPLEMENTED!!!", logOp));
+	else {
+		memptr srcData;
+		memptr destData;
+
+		for(int32 j = 0; j < h; j++)
+			for(int32 i = 0; i < w; i++) {
+				srcData = hostScreen.getPixel(i + sx, sy + j);
+				destData = hostScreen.getPixel(i + dx, dy + j);
+				applyBlitLogOperation(logOp, destData, srcData);
+				hostScreen.putPixel(dx + i, dy + j, destData);
+			}
+	}
 
 	hostScreen.update(sx, sy, w, h, true);
 	hostScreen.update(dx, dy, w, h, true);
@@ -2078,6 +2105,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.43  2002/10/21 22:50:08  johan
+ * NatFeat support added.
+ *
  * Revision 1.42  2002/10/15 21:26:52  milan
  * non-cheaders support (for MipsPro C/C++ compiler)
  *
