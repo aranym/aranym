@@ -1550,7 +1550,7 @@ void m68k_execute (void)
     m68k_execute_depth++;
 #endif
 #ifdef DEBUGGER
-    bool after_exception = false;
+    volatile bool after_exception = false;
 #endif
 
 setjmpagain:
