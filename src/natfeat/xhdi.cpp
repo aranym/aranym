@@ -2,7 +2,7 @@
 #include "cpu_emulation.h"
 #include "xhdi.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #define SECTORSIZE	512
@@ -117,5 +117,6 @@ uint32 XHDIDriver::dispatch(uint32 fncode)
 		default: ret = (uint32)-32L; // EINVFN
 				break;
 	}
+	D(bug("ARAnyM XHDI function returning with %d", ret));
 	return ret;
 }
