@@ -75,14 +75,14 @@ typedef struct {
   bx_disk_options   diskd;
   bx_cdrom_options  cdromd;
   bx_cookies_options cookies;
-  char              bootdrive[2];
-  unsigned long     vga_update_interval;
-  unsigned long     keyboard_serial_delay;
-  unsigned long     floppy_command_delay;
-  unsigned long     ips;
-  bool           mouse_enabled;
-  bool           private_colormap;
-  bx_cmos_options   cmos;
+  // char              bootdrive[2];
+  // unsigned long     vga_update_interval;
+  // unsigned long     keyboard_serial_delay;
+  // unsigned long     floppy_command_delay;
+  // unsigned long     ips;
+  bool           autoMouseGrab;
+  // bool           private_colormap;
+  // bx_cmos_options   cmos;
   bool           newHardDriveSupport;
   } bx_options_t;
 
