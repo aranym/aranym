@@ -28,6 +28,11 @@ SDL_CONFIG = @SDL_CONFIG@
 SDL_CFLAGS = @SDL_CFLAGS@
 SYSSRCS = @SYSSRCS@
 CPUSRCS = @CPUSRCS@
+
+ACLOCAL = aclocal
+AUTOCONF = autoconf
+AUTOHEADER = autoheader
+
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@ -s
 INSTALL_DATA = @INSTALL_DATA@
@@ -104,6 +109,21 @@ $(APP): $(OBJ_DIR) $(OBJS)
 
 $(APP_STATIC): $(OBJ_DIR) $(OBJS)
 	$(CXX) -o $(APP_STATIC) -static $(LDFLAGS) $(OBJS) $(LIBS)
+
+Makefile: configure Makefile.in config.h
+	./configure
+
+configure: configure.in aclocal.m4
+	$(AUTOCONF)
+
+aclocal.m4:
+	$(ACLOCAL)
+
+config.h: config.h.in configure Makefile.in
+	./configure
+
+config.h.in: acconfig.h
+	$(AUTOHEADER)
 
 install: $(APP) installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
@@ -226,40 +246,40 @@ depend dep:
 	sed 's/\/..\//\//' < Makefile.wrk >> Makefile
 	rm -f Makefile.wrk
 
-$(OBJ_DIR)/%.o : %.c
+$(OBJ_DIR)/%.o : %.c Makefile
 	$(CC) $(CPPFLAGS) $(DEFS) -Wall $(CFLAGS) -c $< -o $@
-$(OBJ_DIR)/%.o : %.cpp
+$(OBJ_DIR)/%.o : %.cpp Makefile
 	$(CXX) $(CPPFLAGS) $(DEFS) -g -Wall -Wtraditional -Winline $(CXXFLAGS) -c $< -o $@
-$(OBJ_DIR)/%.o : %.s
+$(OBJ_DIR)/%.o : %.s Makefile
 	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/cpuopti: $(OBJ_DIR)/cpuopti.o
+$(OBJ_DIR)/cpuopti: $(OBJ_DIR)/cpuopti.o Makefile
 	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/cpuopti $(OBJ_DIR)/cpuopti.o
-$(OBJ_DIR)/build68k: $(OBJ_DIR)/build68k.o
+$(OBJ_DIR)/build68k: $(OBJ_DIR)/build68k.o Makefile
 	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/build68k $(OBJ_DIR)/build68k.o
-$(OBJ_DIR)/gencpu: $(OBJ_DIR)/gencpu.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
+$(OBJ_DIR)/gencpu: $(OBJ_DIR)/gencpu.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o Makefile
 	$(CXX) $(LDFLAGS) -o $(OBJ_DIR)/gencpu $(OBJ_DIR)/gencpu.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
-$(OBJ_DIR)/gencomp: $(OBJ_DIR)/gencomp.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
+$(OBJ_DIR)/gencomp: $(OBJ_DIR)/gencomp.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o Makefile
 	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/gencomp $(OBJ_DIR)/gencomp.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
 
-cpudefs.cpp: $(OBJ_DIR)/build68k ../uae_cpu/table68k
+cpudefs.cpp: $(OBJ_DIR)/build68k ../uae_cpu/table68k Makefile
 	$(OBJ_DIR)/build68k <../uae_cpu/table68k >cpudefs.cpp
-cpustbl.cpp: cpuemu.cpp
+cpustbl.cpp: cpuemu.cpp 
 cpustbl_nf.cpp: cpustbl.cpp
 compstbl.cpp: compemu.cpp
 cputbl.h: cpuemu.cpp
 comptbl.h: compemu.cpp
 
-cpuemu.cpp: $(OBJ_DIR)/gencpu
+cpuemu.cpp: $(OBJ_DIR)/gencpu Makefile
 	$(OBJ_DIR)/gencpu
 
-compemu.cpp: $(OBJ_DIR)/gencomp
+compemu.cpp: $(OBJ_DIR)/gencomp Makefile
 	$(OBJ_DIR)/gencomp
 
-$(OBJ_DIR)/cpustbl_nf.o: cpustbl.cpp
+$(OBJ_DIR)/cpustbl_nf.o: cpustbl.cpp Makefile
 	$(CXX) $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -DNOFLAGS -c $< -o $@
 
-$(OBJ_DIR)/compemu_support.o: compemu_support.cpp comptbl.h
+$(OBJ_DIR)/compemu_support.o: compemu_support.cpp comptbl.h Makefile
 	$(CXX) $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/cpuemu1.o: cpuemu.cpp
