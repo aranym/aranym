@@ -6,3 +6,15 @@ Reason:
 
 Workaround:
   Install GUCK. Or a Desktop replacement (Thing).
+
+---
+
+Bug:
+  Unzip doesn't write to MetaDOS' mapped host filesystem.
+  PureC cannot open project file.
+
+Reason:
+  A bug in ARAfs.
+
+Workaround:
+  Work with real disks or disk images.
