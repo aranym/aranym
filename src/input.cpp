@@ -28,7 +28,7 @@
 #include "host.h"			// for the HostScreen
 #include "ata.h"
 #ifdef SDL_GUI
-#include "dialog.h"
+#  include "sdlgui.h"
 #endif
 #include "host.h"			// for fullscreen switch
 
@@ -354,17 +354,14 @@ SDL_Thread *GUIthread = NULL;
 
 int open_gui(void * /*ptr*/)
 {
-	bool reboot = false;
-	bool quit = false;
-
 	hostScreen.openGUI();
-	Dialog_DoProperty(&reboot, &quit);
+	int status = GUImainDlg();
 	hostScreen.closeGUI();
 
-	if (quit)
+	if (status == STATUS_SHUTDOWN)
 		pendingQuit = true;
-	else if (reboot)
-		Restart680x0();	// force Cold Reboot
+	else if (status == STATUS_REBOOT)
+		Restart680x0();
 
 	return 0;
 }

@@ -60,12 +60,13 @@ extern void Dialog_KeyboardDlg();
 int Dialog_MainDlg()
 {
   int retbut;
-  bReboot = false;
-  bShutdown = false;
 
   Screen_Save();
 
-  SDLGui_PrepareFont();
+  /*
+  if (SDLGui_PrepareFont() == -1)
+  	return false;
+  */
   hostScreen.lock();
   SDL_ShowCursor(SDL_ENABLE);
   hostScreen.unlock();
@@ -116,14 +117,14 @@ int Dialog_MainDlg()
 }
 
 /*-----------------------------------------------------------------------*/
-/*
-  Open Property sheet Options dialog
-  Return true if user choses OK, or false if cancel!
-*/
-void Dialog_DoProperty(bool *bForceReset, bool *bForceQuit)
+
+int GUImainDlg()
 {
   Dialog_MainDlg();
-  *bForceQuit = bShutdown;
-  *bForceReset = bReboot;
-}
+  if (bReboot)
+    return STATUS_REBOOT;
+  else if (bShutdown)
+    return STATUS_SHUTDOWN;
 
+  return 0;
+}

@@ -61,4 +61,8 @@ int SDLGui_DoDialog(SGOBJ *dlg);
 int SDLGui_PrepareFont(void);
 int SDLGui_FileSelect(char *path_and_name, bool bAllowNew);
 
+#define STATUS_REBOOT	1
+#define STATUS_SHUTDOWN	2
+int GUImainDlg();
+
 #endif /* _SDLGUI_H */
