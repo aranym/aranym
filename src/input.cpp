@@ -72,6 +72,7 @@
 
 static bool grabbedMouse = false;
 static bool hiddenMouse = false;
+static bool capslockState = false;
 
 void InputInit()
 {
@@ -81,7 +82,16 @@ void InputInit()
 	grabMouse(true);
 	// hide mouse unconditionally
 	hideMouse(true);
+	// capslockState (yes, 'false' is correct)
+	capslockState = false;
 }
+
+void InputReset()
+{
+	// FIXME: how??? capslockState (detect)
+	capslockState = (SDL_GetModState() & KMOD_CAPS) != 0;
+}
+
 
 void hideMouse(bool hide)
 {
@@ -380,7 +390,7 @@ void kill_GUI_thread()
 }
 #endif
 
-void process_keyboard_event(SDL_Event event)
+void process_keyboard_event(SDL_Event &event)
 {
 	bool pressed = (event.type == SDL_KEYDOWN);
 	SDL_keysym keysym = event.key.keysym;
@@ -389,12 +399,25 @@ void process_keyboard_event(SDL_Event event)
 	bool shifted = state & KMOD_SHIFT;
 	bool controlled = state & KMOD_CTRL;
 	bool alternated = state & KMOD_ALT;
+	bool capslocked = state & KMOD_CAPS;
 	bool send2Atari = true;
+
+	if (sym == SDLK_CAPSLOCK) send2Atari = false;
+	if (capslockState != capslocked) {
+		// SDL sends SDLK_CAPSLOCK keydown to turn it on and keyup to off.
+		// TOS handles it just like any other keypress (down&up)
+		//  ->	we handle this differently here
+		getIKBD()->SendKey(0x3a);	// press CapsLock
+		getIKBD()->SendKey(0xba);	// release CapsLock
+		capslockState = capslocked;
+	}
 
 	// process special hotkeys
 	if (pressed) {
 		if (sym == SDLK_ESCAPE) {
 			if (controlled && alternated) {
+				if ( bx_options.video.fullscreen )
+					hostScreen.toggleFullScreen();
 				releaseTheMouse();
 				canGrabMouseAgain = false;	// let it leave our window
 				send2Atari = false;
@@ -436,6 +459,8 @@ void process_keyboard_event(SDL_Event event)
 		}
 		else if (sym == HOTKEY_FULLSCREEN) {
 			hostScreen.toggleFullScreen();
+			if (bx_options.video.fullscreen && !grabbedMouse)
+				grabTheMouse();
 			send2Atari = false;
 		}
 	}
