@@ -145,7 +145,7 @@ int broken_in;
 
 static inline unsigned int cft_map (unsigned int f)
 {
-#ifndef HAVE_GET_WORD_UNSWAPPED
+#if ((!defined(HAVE_GET_WORD_UNSWAPPED)) || (defined(FULLMMU)))
     return f;
 #else
     return do_byteswap_16(f);

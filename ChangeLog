@@ -1,3 +1,7 @@
+2005/01/10 - milan
+- uae_cpu/gencpu.c, uae_cpu/newcpu.cpp: unswapped opcodes disabled in full MMU
+
+
 2005/01/10 - Andreas
 - uae_cpu/cpummu.cpp: Many MMU emulation fixes.
 - uea_cpu/gencpu.c: Make sure that memory stores are performed after all

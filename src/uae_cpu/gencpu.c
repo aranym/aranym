@@ -231,7 +231,7 @@ static void fill_prefetch_2 (void)
 
 static void swap_opcode (void)
 {
-#ifdef HAVE_GET_WORD_UNSWAPPED
+#if ((defined(HAVE_GET_WORD_UNSWAPPED)) && (!defined(FULLMMU)))
   printf ("\topcode = do_byteswap_16(opcode);\n");
 #endif
 }
@@ -2436,7 +2436,7 @@ static void generate_one_opcode (int rp)
 	    if (pos < 8 && (smsk >> (8 - pos)) != 0)
 		abort ();
 #endif
-#ifdef HAVE_GET_WORD_UNSWAPPED
+#if ((defined(HAVE_GET_WORD_UNSWAPPED)) && (!defined(FULLMMU)))
 
 	    if (pos < 8 && (smsk >> (8 - pos)) != 0)
 		sprintf (source, "(((opcode >> %d) | (opcode << %d)) & %d)",
@@ -2487,8 +2487,8 @@ static void generate_one_opcode (int rp)
 	    /* Check that we can do the little endian optimization safely.  */
 	    if (pos < 8 && (dmsk >> (8 - pos)) != 0)
 		abort ();
-#endif	    
-#ifdef HAVE_GET_WORD_UNSWAPPED
+#endif
+#if ((defined(HAVE_GET_WORD_UNSWAPPED)) && (!defined(FULLMMU)))
 
 	    if (pos < 8 && (dmsk >> (8 - pos)) != 0)
 		printf ("\tuae_u32 dstreg = ((opcode >> %d) | (opcode << %d)) & %d;\n",
