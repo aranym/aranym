@@ -49,7 +49,7 @@
           <td>Extended modes</td><td>working (using BlowUP030 or Videl Inside)</td>
         </tr>
         <tr>
-          <td>Native fVDI driver</td><td>50%</td>
+          <td>Native fVDI driver</td><td>90%</td>
         </tr>
         <tr>
           <td>TODO</td><td>finish fVDI driver</td>
@@ -65,7 +65,7 @@
           <td>STE DMA Sound</td><td>0%</td>
         </tr>
         <tr>
-          <td>DSP</td><td>0% (use of Deese card?)</td>
+          <td>DSP</td><td>0% (use of Deesse card?)</td>
         </tr>
         <tr>
           <td>YAMAHA PSG</td><td>0%</td>

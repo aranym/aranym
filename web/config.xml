@@ -38,18 +38,26 @@
       <title>CVS</title>
       <link>cvs.html</link>
     </item>
+    <item name="mlist">
+      <title>Mailing list</title>
+      <link>mlist.html</link>
+    </item>
   </section>
 
   <!-- related links -->
   <section name="links">
     <title>Links</title>
+    <item name="emutos">
+      <title>EmuTOS</title>
+      <link>http://emutos.sf.net/</link>
+    </item>
     <item name="mint">
       <title>FreeMiNT</title>
-      <link>http://www.freemint.de</link>
+      <link>http://www.freemint.de/</link>
     </item>
     <item name="distro">
       <title>SpareMiNT</title>
-      <link>http://sparemint.atari.org</link>
+      <link>http://sparemint.atari.org/</link>
     </item>
     <item name="sdl">
       <title>SDL</title>

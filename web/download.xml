@@ -5,8 +5,9 @@
   <chapter>
     <title>Download</title>
     <text>
-      Sorry, there is nothing to download yet. You'll find the source and binary packages here soon.<br/>
-      Stay tuned, please.
+      You can fetch an unfinished alpha version of aranym from <a href="download/aranym20011017.tgz">here</a>. Please note that this source snapshot does not contain documentation and is generally not intented for regular use (note the alpha status). We provide it here mainly for other developers.
+      <p/>
+      More up-to-date source code is available in <a href="cvs.html">CVS</a>.
     </text>
   </chapter>
 </document>

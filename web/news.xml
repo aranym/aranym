@@ -10,11 +10,21 @@
           <!-- Benchmarks added.<br/-->
           <!-- Snapshots added.<br/-->
 
+        <tr><td valign="top">2001/10/17</td>
+            <td>
+              <a href="cvs.html">CVS</a> opened for anonymous access.<br/>
+              <a href="download.html">Download</a> contains first source code snapshot.<br/>
+              <a href="progress.html">Progress</a> updated due to fVDI improvements.<br/>
+              Link to <a href="http://emutos.sf.net/">EmuTOS</a> project added.<br/>
+            </td>
+        </tr>
+
         <tr><td valign="top">2001/10/09</td>
             <td>
               News page moved from Home to the News one.<br/>
             </td>
         </tr>
+
         <tr><td valign="top"></td>
             <td>
               Several design improvements.<br/>
