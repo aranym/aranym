@@ -22,23 +22,27 @@ find in doc/src/atari/aranymrc.example.
 2) Harddisk emulation
 ---------------------
 
-Since using diskfiles is awkward, it is necessary to emulate harddisks. There
-are two ways how you can use large amounts of data with ARAnyM: harddisk files
-and mounted directories.
+Since using floppy images is awkward, it is necessary to emulate harddisks.
+There are two ways how you can use large amounts of data with ARAnyM:
+harddisk images and mounted directories.
 
 
-1. Harddisk files
+1. Harddisk images
 
-Harddisk files are large files that contain the image of an atari harddisk.
-They work much the same way as a disk file. You can simply create a large
-file and tell ARAnyM to use it as a hardfile, but you will need to format
+Harddisk images are large files that contain the image of an atari harddisk.
+They work much the same way as a floppy image. You can simply create a large
+file and tell ARAnyM to use it as a harddisk, but you will need to format
 it from the emulation before you can actually use it.
 
-Under Unix, You can create a harddisk image file this way:
+ARAnyM comes with a utility called "createdisk.sh" to create an empty harddisk
+image file. If you would like to create an image of a real Atari harddisk then
+you have two options: either create the image on the Atari (using some disk
+tool like Diamong Edge or Diskus) or connect your harddrive to the ARAnyM
+machine (say as a slave on the primary channel, so it's /dev/hdb under Linux).
 
-[root@linuxHost /root]# hdparm /dev/hda
+[root@linuxHost /root]# hdparm /dev/hdb
 
-/dev/hda:
+/dev/hdb:
  multcount    = 16 (on)
  I/O support  =  1 (32-bit)
  unmaskirq    =  1 (on)
@@ -49,30 +53,27 @@ Under Unix, You can create a harddisk image file this way:
  readahead    =  8 (on)
  geometry     = 1871/255/63, sectors = 30064608, start = 0
 
-[root@linuxHost /root]# dd if=/dev/hda of=hardfile bs=512 count=30064608
+[root@linuxHost /root]# dd if=/dev/hdb of=/path/to/my/AtariDrive
 
-That will create an image file of the whole disk (carefuly this example would
-create a file of 14GB size. Note that the count parameter is the same as
-it is told by the hdparm command.
-CAUTION: Be _very_ carefull using the dd command as long you are root now and
+That will create an image file of the whole disk.
+CAUTION: Be _very_ careful using the dd command as long you are root now and
 you can destroy your system by a simple typo mistake.
 After this you must setup the image file geometry in the ~/.aranymrc file like
 the following:
 
 [IDE0]
 Present = Yes
-Path = /the/path/to/the/hardfile
+Path = /path/to/my/AtariDrive
 Cylinders = 1871
 Heads = 255
 SectorsPerTrack = 63
 ByteSwap = No
 
-The values set coresponds to the geomery returned by the hdparm again.
+Note: The Cylinders/Heads/SectorPerTrack values must corespond to the geometry
+returned by the hdparm command (see above, the line begining with "geometry").
 
-ARAnyM comes with a utility called "createdisk.sh" to create an empty harddisk
-image file.
-
-After this process you must install some TOS harddisk driver on it. You must have
+If the harddisk was not bootable (or is created as empty) you will want to install
+a harddisk driver on it so you could boot from the harddrive. You must have
 a floppy (or floppy image) with the driver and install it from that. If you are an
 atarian you know how to handle this. 
 
