@@ -8,7 +8,11 @@
 #define _HOSTFS_H
 
 #include "nf_base.h"
-#include <map>
+#ifdef HAVE_NEW_HEADERS
+# include <map>
+#else
+# include <map.h>
+#endif
 
 
 // FIXME: it is stupid to place these here,
@@ -182,6 +186,9 @@ class HostFs : public NF_Base {
 
 /*
  * $Log$
+ * Revision 1.2  2002/12/16 15:39:18  standa
+ * The map -> std::map
+ *
  * Revision 1.1  2002/12/10 20:47:21  standa
  * The HostFS (the host OS filesystem access via NatFeats) implementation.
  *
