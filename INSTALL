@@ -7,6 +7,18 @@ You can get it from http://www.libsdl.org/ or from your OS distribution vendor.
 If you want to compile source fetched from CVS you also need
 automake, libtool and autoconf (http://www.gnu.org/ or your OS vendor).
 
+Supported platforms:
+
+x86          GNU/Linux
+x86          MS Windows + Cygwin
+Sun Sparc    Solaris
+
+In progress (in alphabetical order!!!):
+SGI xxx      Irix
+x86          NetBSD
+x86          OpenBSD
+
+
 2) Compilation
 --------------
 If you run a flavour of Unix or Linux, go to src/Unix folder.
