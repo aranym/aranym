@@ -9,8 +9,8 @@
 #include "acsifdc.h"
 #include "rtc.h"
 #include "blitter.h"
-#include "videl.h"
 #include "ata.h"
+#include "videl.h"
 #include "uae_cpu/newcpu.h"	// for regs.pc
 
 MFP mfp;
@@ -18,10 +18,14 @@ IKBD ikbd;
 MIDI midi;
 ACSIFDC fdc;
 RTC rtc;
-//IDE ide;
 bx_hard_drive_c ide;
 BLITTER blitter;
 VIDEL videl;
+uae_u32 vram_addr=0;
+
+int getVideoMode() {
+	return videl.getVideoMode();
+}
 
 int snd_reg;
 extern int snd_porta;
@@ -134,8 +138,11 @@ uae_u32 handleRead(uaecptr addr) {
 		return 0x61;
 	else if (addr == 0xffa202)
 		return 0xff;	// DSP interrupt
-	else if (addr == HW_FPU)
-		return 0xff;
+	else if (addr >= HW_FPU && addr < HW_TTMFP) {
+		fprintf(stderr, "BUS ERROR!\n");
+		Exception(2, m68k_getpc());		// bus error
+		return 0;
+	}
 	else if (addr == HW_YAMAHA && snd_reg == 14)
 		return snd_porta;
 	else {
@@ -205,6 +212,10 @@ uae_u32 HWget_w (uaecptr addr) {
 		fprintf(stderr, "HWget_w %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
 	if (addr == HW_IDE)
 		return ide.read_handler(&ide, addr, 2);
+	else if (addr == HW_FPU) {
+		Exception(2, 0);
+		return 0;
+	}
 	else
 		return (handleRead(addr) << 8) | handleRead(addr+1);
 }
