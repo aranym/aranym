@@ -2878,10 +2878,28 @@ static void m68k_run_1 (void)
 	    if (++firsthist == MAX_HIST) firsthist = 0;
 	}
 #endif
+
+#if PAGE_CHECK
+	if (((regs.pcp ^ pc_page) >> 12)) {
+	    check_ram_boundary(regs.pcp, 2, false);
+//	    opcode = GET_OPCODE;
+	    uae_u16* addr = (uae_u16*)do_get_real_address(regs.pcp, false, false);
+	    pc_page = regs.pcp;
+	    pc_offset = (uintptr)addr - (uintptr)regs.pcp;
+	}
+# ifdef HAVE_GET_WORD_UNSWAPPED
+	opcode = do_get_mem_word_unswapped(regs.pcp + pc_offset);
+# else
+	opcode = do_get_mem_word(regs.pcp + pc_offset);
+# endif
+#else
 	check_ram_boundary(regs.pcp, 2, false);
 	opcode = GET_OPCODE;
+#endif
 
-#ifdef X86_ASSEMBLY
+// Seems to be faster without the assembly...
+//#ifdef X86_ASSEMBLY
+#if 0
         __asm__ __volatile__ ("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
                      : : "b" (cpufunctbl[opcode]), "a" (opcode)
                      : "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
