@@ -18,6 +18,7 @@ static struct option const long_options[] =
   {"debug", no_argument, 0, 'D'},
   {"fullscreen", no_argument, 0, 'f'},
   {"direct_truecolor", no_argument, 0, 't'},
+  {"grab_mouse", no_argument, 0, 'g'},
   {"monitor", required_argument, 0, 'm'},
   {"disk", required_argument, 0, 'd'},
   {"help", no_argument, 0, 'h'},
@@ -34,6 +35,7 @@ uint8 fullscreen = 0;			// Boot in Fullscreen
 uint16 boot_color_depth = 1;		// Boot in color depth
 extern uint32 TTRAMSize;		// TTRAM size
 bool direct_truecolor = false;
+bool grab_mouse = false;
 uint8 monitor = 0;				// VGA
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 
@@ -50,6 +52,7 @@ Options:
   -D, --debug                start debugger\n\
   -f, --fullscreen           start in fullscreen\n\
   -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n\
+  -g, --grab_mouse           ARAnyM grabs mouse and keyboard control in X-Windows\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
   -d, --disk CHAR:ROOTPATH   filesystem assignment e.g. d:/atari/d_drive
@@ -70,6 +73,7 @@ int decode_switches (int argc, char **argv) {
 							 "T:" /* TT-RAM */
 							 "f"  /* fullscreen */
 							 "t"  /* direct truecolor */
+							 "g"  /* grab mouse */
 							 "r:" /* resolution */
 							 "m:" /* attached monitor */
 							 "d:" /* filesystem assignment */
@@ -96,6 +100,10 @@ int decode_switches (int argc, char **argv) {
 				direct_truecolor = true;
 				fullscreen = 1;
 				boot_color_depth = 16;
+				break;
+
+			case 'g':
+				grab_mouse = true;
 				break;
 
 			case 'm':
