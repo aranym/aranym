@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.8.10beta released on 2004/08/07
+      version 0.8.11beta released on 2004/11/07
 
 
  1) License
@@ -193,7 +193,8 @@ Note: We are planning on writing a tool for BDCONFIG.SYS auto-configuration.
  -------------
 
 Make sure your host OS is Linux and your Atari OS is FreeMiNT. Then follow
-instructions in the atari/network/ethernet/README file.
+instructions in the atari/network/ethernet/README file and also in the main
+documentation.txt.
 
 
  9) Keyboard shortcuts

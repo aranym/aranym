@@ -1,3 +1,41 @@
+2004/11/07 - version 0.8.11beta released
+
+ We've been slow and quiet lately but nevertheless a progress has been
+ made. Some important changes for users include:
+
+ o FASTRAM.PRG is no longer needed. Xavier patched TOS 4.04 so it now
+   finds out the correct FastRAM size automagically.
+
+ o Bridged networking works and is easy to set up thanks to the updated
+   'arabridge' script and slightly improved documentation.txt.
+   You must update your 'aranym.xif' FreeMiNT driver (now requires
+   FreeMiNT 1.16.0 or newer) and also the nfeth-config tool.
+
+ o JIT compiler in Windows binary works better than in previous release.
+
+ o integrated LILO fixed (though ARAnyM does not boot Linux-m68k yet).
+
+ o various little SETUP GUI improvements (edit fields are much better now,
+   CHS values are updated correctly after creating new empty disk image,
+   repeated saving of config file from the SETUP GUI fixed).
+
+ o AutoZoom screen fixed and improved. You can now choose a constant host
+   screen size for whatever the Atari screen size is. Might be very useful
+   for LCD/DFP owners. This improvements required change in the API and so
+   new version of 'aranym.sys' fVDI ARAnyM screen driver must be installed
+   in your setup.
+
+ o Mac users might enjoy new keyboard translation tables. All keys should
+   be mapped correctly.
+
+ o new EmuTOS included in this release fixes XaAES/FreeMiNT 1.16.1beta
+   keyboard problems.
+
+ All beta testers (i.e. YOU :-) are encouraged to report all bugs
+ and problems either into aranym user mailing list or directly into
+ the bug tracker (available on ARAnyM webpages under the 'Contact' link).
+
+
 2004/08/07 - version 0.8.10beta released
 
  Great news for MS Windows users: ARAnyM runs with JIT CPU compiler now

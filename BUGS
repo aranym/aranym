@@ -43,4 +43,4 @@ gives some chance to Windows users as well.
 Only Linux-ia32 (x86) and MS-Windows currently support JIT compiler
 for the CPU emulator. This is not a design limitation or a bug
 in other operating systems, it's just lack of manpower willing to work
-on JIT support on the other systems.
+on JIT support for the other systems.
