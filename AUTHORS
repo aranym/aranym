@@ -20,10 +20,11 @@ Stanislav Opichal <opichals@seznam.cz>
 - general hostscreen and SDL work
 
 Petr Stehlik <pstehlik@sophics.cz>
-- hardware emulation (VIDEL,MFP,YAMAHA,ACIA,FDC,IDE,Blitter,NVRAM,..)
+- hardware emulation
 - 68040 friendly TOS
 - keyboard and mouse
 - parallel port (in progress)
+- XHDI interface (in progress)
 
 
 ARAnyM source code consists of several parts. Some were taken from other
@@ -97,6 +98,6 @@ Frank Naumann
 - termio -> termios conversion
 
 Johan Klockars
-- PAGE_MASK addressing
+- fVDI author, helps with ARAnyM fVDI driver
+- PAGE_MASK addressing speedup
 - info about ISO C++ norm (for MJ)
--

@@ -1,3 +1,16 @@
+2002/02/12 - version 0.0.21 released
+==========
+
+ ARAnyM has a new version of IDE emulation. It should work on more
+ platforms (*BSD, for example).
+
+ Generally the portability is better (fixes also in ndebug and aranymfs).
+
+ There is a new untested alpha version of aranym.xfs for MiNT.
+
+ And we have a new long detailed users guide in documentation.txt file.
+
+
 2002/01/28 - version 0.0.20 released
 ==========
 
