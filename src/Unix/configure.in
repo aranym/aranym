@@ -596,6 +596,25 @@ if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   CXXFLAGS="$CXXFLAGS -fomit-frame-pointer -fno-strength-reduce"
 fi
 
+dnl (gb) Do not merge constants since it breaks fpu/fpu_x86.cpp.
+dnl As of 2001/08/02, this affects the following compilers:
+dnl Official: probably gcc-3.1 (mainline CVS)
+dnl Mandrake: gcc-2.96 >= 0.59mdk, gcc-3.0.1 >= 0.1mdk
+dnl Red Hat : gcc-2.96 >= 89, gcc-3.0 >= 1
+if [[ "x$HAVE_GCC27" = "xyes" ]]; then
+  SAVED_CXXFLAGS="$CXXFLAGS"
+  CXXFLAGS="$CXXFLAGS -fno-merge-constants"
+  AC_CACHE_CHECK([whether GCC supports constants merging], ac_cv_gcc_constants_merging, [
+    AC_LANG_SAVE
+    AC_LANG_CPLUSPLUS
+    AC_TRY_COMPILE([],[],[ac_cv_gcc_constants_merging=yes],[ac_cv_gcc_constants_merging=no])
+    AC_LANG_RESTORE
+  ])
+  if [[ "x$ac_cv_gcc_constants_merging" != "xyes" ]]; then
+    CXXFLAGS="$SAVED_CXXFLAGS"
+  fi
+fi
+				
 dnl Select appropriate CPU source and REGPARAM define.
 ASM_OPTIMIZATIONS=none
 CPUSRCS="cpuemu1.cpp cpuemu2.cpp cpuemu3.cpp cpuemu4.cpp cpuemu5.cpp cpuemu6.cpp cpuemu7.cpp cpuemu8.cpp"
