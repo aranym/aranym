@@ -282,6 +282,7 @@ extern bx_hard_drive_c bx_hard_drive;
 #  define UNUSED(x) ((void)x)
 #endif
 
+#if 0
 typedef struct {
   Boolean present;
   Boolean byteswap;
@@ -312,10 +313,10 @@ typedef struct {
   bx_cmos_options   cmos;
   Boolean           newHardDriveSupport;
   } bx_options_t;
-
+#endif
 #define bx_ptr_t void *
 
-extern bx_options_t bx_options;
+// extern bx_options_t bx_options;
 // extern bx_devices_c bx_devices;
 
 #define bx_panic	printf
