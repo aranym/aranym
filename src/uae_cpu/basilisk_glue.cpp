@@ -74,16 +74,22 @@ bool InitMEM() {
 #ifdef CHECK_BOUNDARY_BY_ARRAY
 	// setup memory map
 	for(int i=0; i<4096; i++) {
-		if (i < 14)
+		if (i < 14)			// ST-RAM 14 MB
 			isRMemory[i] = isWMemory[i] = true;
-		else if (i == 14) {
-			isRMemory[i] = true;
-			isWMemory[i] = false;
+		else if (i == 14) {	// TOS ROM area (whole megabyte, which is wrong but I don't care)
+			isRMemory[i] = true;	// you can read TOS
+			isWMemory[i] = false;	// but you can't write to it
 		}
 		else if (i >=16 && i < ((FastRAMSize >> 20)+16))
-			isRMemory[i] = isWMemory[i] = true;
+			isRMemory[i] = isWMemory[i] = true;		// FastRAM both readable and writeable
+#ifdef DIRECT_TRUECOLOR
+		else if (bx_options.video.direct_truecolor) {		// VideoRAM
+			if (i >= (ARANYMVRAMSTART >> 20) && i < ((ARANYMVRAMSTART + ARANYMVRAMSIZE) >> 20))
+				isRMemory[i] = isWMemory[i] = true;	// host videoram readable and writeable
+		}
+#endif /* DIRECT_TRUECOLOR */
 		else
-			isRMemory[i] = isWMemory[i] = false;
+			isRMemory[i] = isWMemory[i] = false;	// everything else throws a bus error!
 	}
 #endif /* CHECK_BOUNDARY_BY_ARRAY */
 
