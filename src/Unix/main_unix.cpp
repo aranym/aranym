@@ -178,101 +178,7 @@ void grabMouse(bool grab) {
 	}
 }
 
-static int sdl_mousex, sdl_mousey;
 static int but = 0;
-/* mouse from STonX's ikbd.c */
-/*
-static int ox=0, oy=0, px=0,py=0;
-
-void ikbd_send_relmouse (void)
-{
-	// ikbd_send (0xf8 | (btn[0]<<1) | btn[1]);
-	ikbd_send (0xf8 | but);
-	ikbd_send (px-ox);
-	ikbd_send (py-oy);
-	ox = px;
-	oy = py;
-}
-
-void ikbd_adjust (int dx, int dy)
-{
-	int tx=dx,ty=dy;
-
-	while (dx < -128 || dx > 127 || dy < -128 || dy > 127)
-	{
-		if (dx < -128) tx=-128;
-		else if (dx > 127) tx=127;
-		if (dy < -128) ty=-128;
-		else if (dy > 127) ty=127;
-		// ikbd_send (0xf8 | (btn[0]<<1) | btn[1]);
-		ikbd_send (0xf8 | but);
-		ikbd_send (tx);
-		ikbd_send (ty);
-		dx -= tx;
-		dy -= ty;
-	}
-	if (dy != 0 || dx != 0)
-	{
-		// ikbd_send (0xf8 | (btn[0]<<1) | btn[1]);
-		ikbd_send (0xf8 | but);
-		ikbd_send (dx);
-		ikbd_send (dy);
-	}
-	ox=px;
-	oy=py;
-}
-
-void ikbd_button (int button, int pressed)
-{
-    // handle two buton mice
-    if(button == 3) button = 2;
-
-	btn[button-1] = pressed;
-#if KB_DEBUG
-	fprintf (stderr, "IKBD sends button %d press (%d)\n",button,pressed);
-#endif
-	ikbd_send_relmouse();
-}
-
-void ikbd_pointer (int x, int y)
-{
-	px = x;
-	py = y;
-#if !NO_FLOODING
-	ikbd_send_relmouse();
-#endif
-}
-
-void updateXMouse(int xmouse_x, int xmouse_y) {
-	// frequently check the TOS mouse position and
-	// update it if the x mouse has moved and the ikbd
-	// buffer is empty, this is done here, because the
-	// buffer might have been full when the event occured
-      
-	  // get TOS mouse position
-	  int tx = HWget_w(0xf90002); // LM_W(MEM(abase-GCURX));
-	  int ty = HWget_w(0xf90000); // LM_W(MEM(abase-GCURY));
-
-	  int old_shiftmod = 0;
-	  int ikbd_inbuf = isIkbdBufEmpty() ? 0 : 1;
-
-	  // compensate zoom in st mid
-	  if(old_shiftmod == 1) ty *= 2;
-	  
-	  // match X and TOS mouse 
-	  if((ikbd_inbuf == 0)&&
-	     ((xmouse_x != tx)||(xmouse_y != ty))&&
-	     (xmouse_x != -1)) {
-	    // fprintf(stderr, "Adjusting %dx%d -> %dx%d\n", xmouse_x, xmouse_y, tx, ty);
-	    
-	    if(old_shiftmod == 1) 
-	      ikbd_adjust (xmouse_x-tx, (xmouse_y-ty)/2);
-	    else
-	      ikbd_adjust (xmouse_x-tx, xmouse_y-ty);
-	  }
-}
-end of STonX's borrowed code */
-
 
 static void check_event(void)
 {
@@ -352,16 +258,7 @@ static void check_event(void)
 				SDL_MouseMotionEvent eve = event.motion;
 				xrel = eve.xrel;
 				yrel = eve.yrel;
-/*
-				//eve.type/state/x,y/xrel,yrel
-				int x, y;
-				SDL_GetMouseState(&x, &y);
-				xrel = x - sdl_mousex;
-				yrel = y - sdl_mousey;
-				// fprintf(stderr, "Mouse abs %dx%d, rel %dx%d nebo %dx%d\n", x, y, eve.xrel, eve.yrel, xrel, yrel);
-				sdl_mousex = x;
-				sdl_mousey = y;
-*/
+
 				if (xrel < -127 || xrel > 127)
 					xrel = 0;
 				if (yrel < -127 || yrel > 127)
@@ -425,7 +322,7 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 
 		if (++refreshCounter == 2) {	// divided by 2 again ==> 25 Hz screen update
 			if (direct_truecolor) {
-				// SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, getSDLScreenWidth(), getSDLScreenHeight());
+				updateHostScreen();
 			}
 			else {
 				if ( updateScreen )
@@ -594,6 +491,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.31  2001/07/09 19:41:13  standa
+ * grab_mouse is compulsory to get it functioning in fullscreen
+ *
  * Revision 1.30  2001/07/03 23:02:41  milan
  * cleaning
  *
