@@ -12,9 +12,6 @@
 #include "main.h"
 #include "emul_op.h"
 #include "ndebug.h"
-
-extern int mfpCounter5;		// From basilisk_glue.cpp
-
 #include "m68k.h"
 #include "memory.h"
 #include "readcpu.h"
@@ -2801,47 +2798,32 @@ static void do_trace (void)
     }
 }
 
-#define SERVE_VBL(resetStop)							\
-{														\
-	if (regs.spcflags & SPCFLAG_VBL) {					\
-		regs.spcflags &= ~SPCFLAG_VBL;					\
-		if (4 > regs.intmask) {							\
-			Interrupt(4);								\
-			regs.stopped = 0;							\
-			if (resetStop)								\
-				regs.spcflags &= ~SPCFLAG_STOP;			\
-		}												\
-	}													\
-}
-
-#define SERVE_MFP(resetStop)										\
-{																	\
-	if (regs.spcflags & (SPCFLAG_MFP_ACIA | SPCFLAG_MFP_TIMERC)) {	\
-		if (6 > regs.intmask) {										\
-			int value = get_byte_direct(0xfffa11);					\
-			/* ACIA */												\
-			if ((regs.spcflags & SPCFLAG_MFP_ACIA)					\
-				&& !(value & (1<<6))) {								\
-				put_byte_direct(0xfffa11, value | (1<<6));			\
-   				MFPInterrupt(6);									\
-				regs.stopped = 0;									\
-				if (resetStop)										\
-					regs.spcflags &= ~SPCFLAG_STOP;					\
-				regs.spcflags &= ~SPCFLAG_MFP_ACIA;					\
-			}														\
-			/* TIMER C */											\
-			else if ((regs.spcflags & SPCFLAG_MFP_TIMERC)			\
-					&& ! (value & (1<<5))) {						\
-				put_byte_direct(0xfffa11, value | (1<<5));			\
-   				MFPInterrupt(5);									\
-				regs.stopped = 0;									\
-				if (resetStop)										\
-					regs.spcflags &= ~SPCFLAG_STOP;					\
-				if (--mfpCounter5 <= 0)								\
-					regs.spcflags &= ~SPCFLAG_MFP_TIMERC;			\
-			}														\
-		}															\
-	}																\
+#define SERVE_VBL_MFP(resetStop)							\
+{															\
+	if (regs.spcflags & (SPCFLAG_VBL|SPCFLAG_MFP)) {		\
+		if (regs.spcflags & SPCFLAG_VBL) {					\
+			if (4 > regs.intmask) {							\
+				Interrupt(4);								\
+				regs.stopped = 0;							\
+				regs.spcflags &= ~SPCFLAG_VBL;				\
+				if (resetStop)								\
+					regs.spcflags &= ~SPCFLAG_STOP;			\
+			}												\
+		}													\
+		if (regs.spcflags & SPCFLAG_MFP) {					\
+			if (6 > regs.intmask) {							\
+				int vector_number = mfp.doInterrupt();		\
+				if (vector_number) {						\
+					MFPInterrupt(vector_number);			\
+					regs.stopped = 0;						\
+					if (resetStop)							\
+						regs.spcflags &= ~SPCFLAG_STOP;		\
+				}											\
+				else										\
+					regs.spcflags &= ~SPCFLAG_MFP;			\
+			}												\
+		}													\
+	}														\
 }
 
 static int do_specialties(void)
@@ -2852,21 +2834,20 @@ static int do_specialties(void)
 	}
 	while (regs.spcflags & SPCFLAG_STOP) {
 		usleep(1000);	// give unused time slices back to OS
-		SERVE_VBL(true);
-		SERVE_MFP(true);
+		SERVE_VBL_MFP(true);
 	}
 	if (regs.spcflags & SPCFLAG_TRACE)
 		do_trace ();
 
-	SERVE_VBL(false);
-	SERVE_MFP(false);
+	SERVE_VBL_MFP(false);
 
 /*  
 // do not understand the INT vs DOINT stuff so I disabled it (joy)
 	if (regs.spcflags & SPCFLAG_INT) {
 		regs.spcflags &= ~SPCFLAG_INT;
 		regs.spcflags |= SPCFLAG_DOINT;
-	}*/
+	}
+*/
 	if (regs.spcflags & (SPCFLAG_BRK | SPCFLAG_MODE_CHANGE)) {
 		regs.spcflags &= ~(SPCFLAG_BRK | SPCFLAG_MODE_CHANGE);
 		return 1;
