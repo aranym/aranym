@@ -65,19 +65,36 @@ Options:
 
 void init_ide() {
 	// init options and debug first
+	/*
 	bx_options.diskc.present = 1;
 	bx_options.diskc.byteswap = false;
 	bx_options.diskc.cylinders = 2100;
 	bx_options.diskc.heads = 16;
 	bx_options.diskc.spt = 63;
 	strcpy(bx_options.diskc.path, "/home/joy/aranym/src/Unix/diskImage");
+	*/
+
+        bx_options.diskc.present = 1;
+        bx_options.diskc.byteswap = false;
+        bx_options.diskc.cylinders = 1015;
+        bx_options.diskc.heads = 16;
+        bx_options.diskc.spt = 63;
+        strcpy(bx_options.diskc.path, "/opt/home/atari/diskImage");
+
 
 	bx_options.diskd.present = 1;
 	bx_options.diskd.byteswap = false;
+        bx_options.diskd.cylinders = 568;
+        bx_options.diskd.heads = 16;
+        bx_options.diskd.spt = 63;
+        strcpy(bx_options.diskd.path, "/opt/home/atari/secondDisk");
+
+	/*
 	bx_options.diskd.cylinders = 2100;
 	bx_options.diskd.heads = 16;
 	bx_options.diskd.spt = 63;
 	strcpy(bx_options.diskd.path, "/dev/hdd");
+	*/
 
 	bx_options.newHardDriveSupport = 1;
 	bx_options.cdromd.present = 0;

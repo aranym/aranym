@@ -45,16 +45,16 @@
 #include "debug.h"
 
 #if REAL_ADDRESSING
-static bool lm_area_mapped = false;	// Flag: Low Memory area mmap()ped
+static bool lm_area_mapped = false; // Flag: Low Memory area mmap()ped
 static bool memory_mapped_from_zero = false; // Flag: Could allocate RAM area from 0
 #endif
 
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
 {
-	char *n = (char *)malloc(strlen(s) + 1);
-	strcpy(n, s);
-	return n;
+    char *n = (char *)malloc(strlen(s) + 1);
+    strcpy(n, s);
+    return n;
 }
 #endif
 
@@ -67,24 +67,24 @@ extern "C"
 #endif
 int main(int argc, char **argv)
 {
-	srand(time(NULL));
-	tzset();
+    srand(time(NULL));
+    tzset();
 
-	program_name = argv[0];
-	decode_switches(argc, argv);
+    program_name = argv[0];
+    decode_switches(argc, argv);
 
-	// Initialize everything
-	if (!InitAll())
-		QuitEmulator();
-	D(bug("Initialization complete"));
+    // Initialize everything
+    if (!InitAll())
+        QuitEmulator();
+    D(bug("Initialization complete"));
 
-	// Start 68k and jump to ROM boot routine
-	D(bug("Starting emulation..."));
-	Start680x0();
+    // Start 68k and jump to ROM boot routine
+    D(bug("Starting emulation..."));
+    Start680x0();
 
-	QuitEmulator();
+    QuitEmulator();
 
-	return 0;
+    return 0;
 }
 
 
@@ -94,15 +94,13 @@ int main(int argc, char **argv)
 
 void QuitEmulator(void)
 {
-	D(bug("QuitEmulator"));
+    D(bug("QuitEmulator"));
 
-	// Exit 680x0 emulation
-	Exit680x0();
+    // Exit 680x0 emulation
+    Exit680x0();
 
-	// Deinitialize everything
-	ExitAll();
-
-	exit(0);
+    // Deinitialize all initialized things & threads and exit the emulator
+    exit(0);  // now the main.cpp/atexit() resp. ExitAll is called!
 }
 
 
@@ -118,6 +116,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.35  2001/07/24 07:10:46  joy
+ * cleaned up a bit. Portable things moved to main.cpp.
+ *
  * Revision 1.34  2001/07/21 18:13:29  milan
  * sclerosis, sorry, ndebug added
  *

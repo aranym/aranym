@@ -1,3 +1,12 @@
+2001/08/08 - STanda
+
+- no atexit crash (atexit(ExitAll) called)
+
+- numblock key mapping fixed. (/,*,-,+ keys fixed)
+
+- bitplane to chunky conversion speedup (enrolling the conversion loop etc.)
+
+
 2001/07/24 - joy
 - portable stuff moved from Unix folder up to the main.cpp (should be cleaned up)
 
