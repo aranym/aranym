@@ -51,3 +51,6 @@ Rodolphe Pineau
 - for the SGI/Irix port
 - corrections in configure script and memory allocation
 - better portability of aranymfs
+
+Antonin Kral
+- Debian maintainer
