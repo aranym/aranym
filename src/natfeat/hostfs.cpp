@@ -2067,7 +2067,6 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 	drv->driveNumber = devnum;
 	mounts.insert(std::make_pair( devnum, drv ));
-	panicbug("inserting %d", devnum);
 
 	// if the drive mount was mounted to some FreeMiNT mountpoint
 	// which devnum is higher that MAXDRIVES then serve also as the
