@@ -633,7 +633,7 @@ dnl Distributed dispatcher eliminates pipeline stall
 dnl It needs computed gotos (supported by GNU C++)
 dnl DODO - test for computed gotos
 if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
-  DEFINE="$DEFINE -DDISDIP"
+  DEFINES="$DEFINES -DDISDIP"
 else
   WANT_DIS_DIP = no
 fi			
@@ -834,7 +834,10 @@ fi
 dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
   CPUINCLUDES="-I../uae_cpu"
-  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpustbl.cpp cpudefs.cpp $CPUSRCS $JITSRCS $MMUSRCS"
+  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp $CPUSRCS $JITSRCS $MMUSRCS"
+  if [[ "x$WANT_DIS_DIP" = "xno" ]]; then
+    CPUSRCS="$CPUSRCS cpustbl.cpp"
+  fi
 fi
 
 dnl Remove the "-g" option if set for GCC.

@@ -78,6 +78,7 @@ cpuop_rettype REGPARAM2 op_illg_1 (uae_u32 opcode)
 
 static void build_cpufunctbl (void)
 {
+#ifndef DISDIP
     int i;
     unsigned long opcode;
     int cpu_level = 4;
@@ -106,6 +107,7 @@ static void build_cpufunctbl (void)
 	if (tbl[i].specific)
 	    cpufunctbl[cft_map (tbl[i].opcode)] = tbl[i].handler;
     }
+#endif
 }
 
 void init_m68k (void)
@@ -1470,7 +1472,11 @@ setjmpagain:
 #ifdef DEBUGGER
 	if (debugging) debug();
 #endif
+#ifdef DISDIP
+	m68k_instr_set();
+#else
 	m68k_do_execute();
+#endif
     }
     m68k_execute_depth--;
 }

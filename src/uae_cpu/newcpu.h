@@ -249,6 +249,7 @@ extern void showDisasm(uaecptr);
 extern void m68k_reset (void);
 extern void m68k_enter_debugger(void);
 extern int m68k_do_specialties(void);
+extern void m68k_instr_set(void);
 
 extern void mmu_op (uae_u32, uae_u16);
 
