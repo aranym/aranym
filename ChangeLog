@@ -1,3 +1,12 @@
+2001/07/20 - milan
+- signals & pthread removed, now only SDL needs pthread
+
+- mmu_op patched, setjmp/longjmp only, no exceptions
+
+- some warnings "killed"
+
+- "ndebug" integrated (only dbprintf), now D(bug()) without \n
+
 2001/07/13 - STanda
 - BLITTER function table restored. (the only - bad - thing is that all
   BLITTER member data must be public to be able to work like this)

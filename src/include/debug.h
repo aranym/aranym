@@ -9,6 +9,12 @@
   *
   */
 
+#include <stdio.h>
+#include "ndebug.h"
+
+#ifndef DEBUG_H
+#define DEBUG_H
+
 #define	MAX_HIST	10000
 
 extern int firsthist;
@@ -45,11 +51,11 @@ extern void activate_debugger(void);
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef DEBUG_H
-#define DEBUG_H
-
-#include <stdio.h>
-#define bug printf
+#ifdef NDEBUG
+#define bug ndebug::dbprintf
+#else
+#define bug dbprintf
+#endif
 
 #if DEBUG
 #define D(x) (x);

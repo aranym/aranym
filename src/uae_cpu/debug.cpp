@@ -12,7 +12,6 @@
 #include "sysdeps.h"
 
 #include <ctype.h>
-#include <signal.h>
 
 #include "config.h"
 #include "memory.h"
@@ -41,6 +40,12 @@ void activate_debugger (void)
     set_special (SPCFLAG_BRK);
     debugging = 1;
     /* use_debugger = 1; */
+}
+
+void deactivate_debugger(void)
+{
+   debugging = 0;
+   debugger_active = 0;
 }
 
 int firsthist = 0;
@@ -146,6 +151,9 @@ static uae_u8 trace_insn_copy[10];
 static struct regstruct trace_prev_regs;
 void debug (void)
 {
+#ifdef NDEBUG
+  ndebug::run();
+#else
     char input[80];
     uaecptr nextpc,nxdis,nxmem;
 
@@ -400,4 +408,5 @@ void debug (void)
 
 	}
     }
+#endif
 }

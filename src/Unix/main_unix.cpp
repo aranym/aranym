@@ -28,17 +28,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
 #include <getopt.h>
 #include <errno.h>
 
 #include <SDL/SDL.h>
-#include <sys/mman.h>
 #include <dirent.h>				// for extFS
-
-#ifdef HAVE_PTHREADS
-# include <pthread.h>
-#endif
 
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
 # include <sys/mman.h>
@@ -73,7 +67,6 @@ struct sigstate {
 
 // Constants
 const char ROM_FILE_NAME[] = DATADIR "/ROM";
-const int SIG_STACK_SIZE = SIGSTKSZ;	// Size of signal stack
 
 // CPU and FPU type, addressing mode
 int CPUType;
@@ -85,10 +78,6 @@ SDL_TimerID my_timer_id;
 #if REAL_ADDRESSING
 static bool lm_area_mapped = false;	// Flag: Low Memory area mmap()ped
 static bool memory_mapped_from_zero = false; // Flag: Could allocate RAM area from 0
-#endif
-
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
-static uint32 mapped_ram_rom_size;	// Total size of mmap()ed RAM/ROM area
 #endif
 
 #ifndef HAVE_STRDUP
@@ -132,7 +121,7 @@ void remove_floppy()
 	if (drive_fd[0] >= 0) {
 		close(drive_fd[0]);
 		drive_fd[0] = -1;
-		fprintf(stderr, "Floppy removed\n");
+		D(bug("Floppy removed"));
 	}
 }
 
@@ -142,11 +131,10 @@ void insert_floppy(bool rw = false)
 	drive_fd[0] = open("/dev/fd0", rw ? (O_RDWR | O_SYNC) : O_RDONLY);
 	if (drive_fd[0] >= 0) {
 		init_fdc();
-		fprintf(stderr, "Floppy inserted %s\n",
-				rw ? "read-write" : "read-only");
+		D(bug("Floppy inserted %s", rw ? "read-write" : "read-only"));
 	}
 	else {
-		fprintf(stderr, "Inserting of floppy failed.\n");
+		D(bug("Inserting of floppy failed."));
 	}
 }
 
@@ -276,7 +264,7 @@ static void check_event(void)
 			if (event.active.state == SDL_APPMOUSEFOCUS) {
 				if (event.active.gain) {
 					if ((SDL_GetAppState() & SDL_APPINPUTFOCUS) && canGrabAgain) {
-						fprintf(stderr, "Mouse entered our window\n");
+						D(bug("Mouse entered our window"));
 						hideMouse(true);
 						if (false /* are we able to sync TOS and host mice? */) {
 							// sync the position of ST mouse with the X mouse cursor (or vice-versa?)
@@ -288,7 +276,7 @@ static void check_event(void)
 					}
 				}
 				else {
-					fprintf(stderr, "Mouse left our window\n");
+					D(bug("Mouse left our window"));
 					canGrabAgain = true;
 					hideMouse(false);
 				}
@@ -345,10 +333,10 @@ extern "C"
 int main(int argc, char **argv)
 {
 	program_name = argv[0];
-	int i = decode_switches(argc, argv);
+	decode_switches(argc, argv);
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
-		fprintf(stderr, "SDL initialization failed.\n");
+		ErrorAlert("SDL initialization failed.\n");
 		return 1;
 	}
 	atexit(SDL_Quit);
@@ -373,6 +361,10 @@ int main(int argc, char **argv)
 	srand(time(NULL));
 	tzset();
 
+#ifdef NDEBUG
+	if (start_debug) ndebug::init();
+#endif
+
 	// Create areas for Atari ST-RAM, ROM, HW registers and TT-RAM
 	int MB = (1 << 20);
 	RAMBaseHost = (uint8 *) malloc((16 + 32) * MB);
@@ -388,9 +380,9 @@ int main(int argc, char **argv)
 	// ROMBase = RAMBase + 0xe00000;
 
 	InitMEMBaseDiff(RAMBaseHost, RAMBase);
-	D(bug("ST-RAM starts at %p (%08x)\n", RAMBaseHost, RAMBase));
-	D(bug("TOS ROM starts at %p (%08x)\n", ROMBaseHost, ROMBase));
-	//D(bug("TT-RAM starts at %p (%08x)\n", TTRAMBaseHost, TTRAMBase));
+	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
+	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
+	//D(bug("TT-RAM starts at %p (%08x)", TTRAMBaseHost, TTRAMBase));
 
 	// Load TOS ROM
 	int rom_fd = open(rom_path ? rom_path : ROM_FILE_NAME, O_RDONLY);
@@ -398,7 +390,7 @@ int main(int argc, char **argv)
 		ErrorAlert("ROM file not found\n");
 		QuitEmulator();
 	}
-	printf("Reading ROM file...\n");
+	D(bug("Reading ROM file..."));
 	ROMSize = lseek(rom_fd, 0, SEEK_END);
 	if (ROMSize != 512 * 1024) {
 		ErrorAlert("Invalid ROM size\n");
@@ -414,7 +406,7 @@ int main(int argc, char **argv)
 
 	if (direct_truecolor) {
 		// Patch TOS (enforce VideoRAM at 0xf0000000)
-		printf("Patching TOS for direct VIDEL output...\n");
+		D(bug("Patching TOS for direct VIDEL output..."));
 		ROMBaseHost[35752] = 0x2e;
 		ROMBaseHost[35753] = 0x3c;
 		ROMBaseHost[35754] = 0xf0;
@@ -435,7 +427,7 @@ int main(int argc, char **argv)
 	// Initialize everything
 	if (!InitAll())
 		QuitEmulator();
-	D(bug("Initialization complete\n"));
+	D(bug("Initialization complete"));
 
 	// hide mouse unconditionally
 	hideMouse(true);
@@ -443,7 +435,7 @@ int main(int argc, char **argv)
 	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
 
 	// Start 68k and jump to ROM boot routine
-	D(bug("Starting emulation...\n"));
+	D(bug("Starting emulation..."));
 	Start680x0();
 
 	QuitEmulator();
@@ -458,7 +450,7 @@ int main(int argc, char **argv)
 
 void QuitEmulator(void)
 {
-	D(bug("QuitEmulator\n"));
+	D(bug("QuitEmulator"));
 
 	SDL_RemoveTimer(my_timer_id);
 
@@ -491,6 +483,10 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.32  2001/07/12 22:11:22  standa
+ * The updateHostScreen() call when in direct_truecolor mode.
+ * Commmented STonX mouse code removed.
+ *
  * Revision 1.31  2001/07/09 19:41:13  standa
  * grab_mouse is compulsory to get it functioning in fullscreen
  *

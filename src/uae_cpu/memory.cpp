@@ -623,6 +623,8 @@ void map_banks(addrbank *bank, int start, int size)
 
 #endif /* !REAL_ADDRESSING && !DIRECT_ADDRESSING */
 
+#ifdef FULL_MMU
+
 uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
 {
     uae_u32 rp;
@@ -1171,3 +1173,5 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
     }
   return addr;
 }
+
+#endif /* FULL_MMU */

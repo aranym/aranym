@@ -34,3 +34,9 @@ do
 done
 
 ./configure "$@"
+
+echo
+echo -n Creating dependencies...
+make depend >/dev/null
+
+echo \ all done

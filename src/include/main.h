@@ -1,7 +1,6 @@
 /*
  * $Header$
  *
- * 2001 MJ
  */
 
 /*
@@ -26,6 +25,8 @@
 
 #ifndef MAIN_H
 #define MAIN_H
+
+#include "sysdeps.h"
 
 // CPU type (0 = 68000, 1 = 68010, 2 = 68020, 3 = 68030, 4 = 68040/060)
 extern int CPUType;
@@ -75,5 +76,9 @@ extern void ClearInterruptFlag(uint32 flag);
 
 /*
  * $Log$
+ * Revision 1.3  2001/06/18 13:21:55  standa
+ * Several template.cpp like comments were added.
+ * HostScreen SDL encapsulation class.
+ *
  *
  */

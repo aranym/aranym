@@ -7,7 +7,51 @@
 #define REGS
 typedef char flagtype;
 
-extern struct regstruct         // MJ tuhle ptakovinu uz musim konecne odstranit
+struct ttr {
+    uae_u32 log_addr_base : 8;
+    uae_u32 log_addr_mask : 8;
+    uae_u32 enable : 1;
+    uae_u32 s_field : 2;
+    uae_u32 : 3;
+    uae_u32 user1 : 1;
+    uae_u32 user0 : 1;
+    uae_u32 : 1;
+    uae_u32 cmode : 2;
+    uae_u32 : 2;
+    uae_u32 write : 1;
+    uae_u32 : 2;
+};
+
+struct mmusr_t {
+   uae_u32 phys_addr : 20;
+   uae_u32 bus_err : 1;
+   uae_u32 global : 1;
+   uae_u32 user1 : 1;
+   uae_u32 user0 : 1;
+   uae_u32 super : 1;
+   uae_u32 cmode : 2;
+   uae_u32 modif : 1;
+   uae_u32 : 1;
+   uae_u32 write : 1;
+   uae_u32 ttrhit : 1;
+   uae_u32 resident : 1;
+};
+
+struct log_addr4 {
+   uae_u32 rif : 7;
+   uae_u32 pif : 7;
+   uae_u32 paif : 6;
+   uae_u32 poff : 12;
+};
+
+struct log_addr8 {
+  uae_u32 rif : 7;
+  uae_u32 pif : 7;
+  uae_u32 paif : 5;
+  uae_u32 poff : 13;
+};
+
+extern struct regstruct
 {
     uae_u32 regs[16];
     uaecptr  usp,isp,msp;
@@ -43,7 +87,8 @@ extern struct regstruct         // MJ tuhle ptakovinu uz musim konecne odstranit
     uae_u32 urp,srp;
     flagtype tce;
     flagtype tcp;
-    uae_u32 dtt0,dtt1,itt0,itt1,mmusr;
+    uae_u32 dtt0,dtt1,itt0,itt1;
+    uae_u32 mmusr;
 
     flagtype atcvali[ATCSIZE];
     flagtype atcvald[ATCSIZE];
@@ -71,7 +116,7 @@ extern struct regstruct         // MJ tuhle ptakovinu uz musim konecne odstranit
     uaecptr atcouti[ATCSIZE];
 
     /* Cache reg*/
-    int cacr,caar;
+    uae_u32 cacr,caar;
 } regs, lastint_regs;
 
 #endif

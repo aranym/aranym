@@ -1,4 +1,8 @@
-/* 2001 MJ */
+/*
+ * $Header$
+ *
+ * 2001 MJ
+ */
 
 /*
  *  main.cpp - Startup/shutdown code
@@ -46,15 +50,12 @@ bool InitAll(void)
 	// Init HW
 	HWInit();
 
-	// Init Time Manager
-	// TimerInit();
-
 	// Init 680x0 emulation (this also activates the memory system which is needed for PatchROM())
 	if (!Init680x0())
 		return false;
 
 	if (start_debug) {
-		printf("Activate debugger...\n");
+		D(bug("Activate debugger..."));
 		activate_debugger();
 	}
 

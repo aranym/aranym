@@ -15,9 +15,9 @@ DESTDIR =
 
 CC = @CC@
 CXX = @CXX@
-CFLAGS = @CFLAGS@ -Wall
-CXXFLAGS = @CXXFLAGS@ -Wall
-CPPFLAGS = @CPPFLAGS@ -I../include -I. @CPUINCLUDES@ -Wall
+CFLAGS = @CFLAGS@ -g -O3 -m486
+CXXFLAGS = @CXXFLAGS@ -g -O3 -m486
+CPPFLAGS = @CPPFLAGS@ -I../include -I. @CPUINCLUDES@
 DEFS = @DEFS@ @DEFINES@ -D_REENTRANT -DDATADIR=\"$(datadir)/$(APP)\"
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -29,6 +29,9 @@ CPUSRCS = @CPUSRCS@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@ -s
 INSTALL_DATA = @INSTALL_DATA@
+
+host_alias = @host_alias@
+host_triplet = @host@
 
 ## Files
 SRCS = ../main.cpp \
@@ -52,6 +55,7 @@ SRCS = ../main.cpp \
 	../fvdidrv.cpp \
 	../hostscreen.cpp \
 	../parameters.cpp \
+	../ndebug.cpp \
 	$(CPUSRCS)
 APP = aranym
 
@@ -70,6 +74,12 @@ define SRCS_LIST_TO_OBJS
 	$(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(foreach file, $(SRCS), \
 	$(basename $(notdir $(file))))))
 endef
+
+define DEPSRCS
+	$(addsuffix .o, $(foreach file, $(SRCS), \
+	$(basename $(notdir $(file)))))
+endef
+
 OBJS = $(SRCS_LIST_TO_OBJS)
 
 SRC_PATHS += $(sort $(foreach file, $(SRCS), $(dir $(file))))
@@ -101,12 +111,18 @@ distclean: clean
 	rm -f config.cache config.log config.status config.h
 
 depend dep:
-	makedepend $(CPPFLAGS) -Y. $(SRCS) 2>/dev/null
+	makedepend $(CPPFLAGS) $(DEFS) -Y. $(SRCS) -p$(OBJ_DIR)/ 2>/dev/null
+	sed 's/\/..\/uae_cpu\/fpu\//\//' < Makefile > Makefile.new
+	mv Makefile.new Makefile
+	sed 's/\/..\/uae_cpu\//\//' < Makefile > Makefile.new
+	mv Makefile.new Makefile
+	sed 's/\/..\//\//' < Makefile > Makefile.new
+	mv Makefile.new Makefile
 
 $(OBJ_DIR)/%.o : %.c
-	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) -Wall $(DEFS) $(CFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
-	$(CXX) -O3 $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) -Wall $(DEFS) $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.s
 	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 
