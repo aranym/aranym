@@ -1,3 +1,8 @@
+2005/03/20 - STanda
+- fvdidrv: fixed outstanding bug in the aranym.sys driver. The pixel sizes were
+  updated recursively twice which made them wrong.
+
+
 2005/03/15 - Petr
 - gui-sdl/file.cpp: current dir is no longer presented as "./" but it's simply
   an empty string (fileselector had to be adapted to this change, see below).
