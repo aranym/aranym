@@ -1,3 +1,6 @@
+2002/07/20 - Patrice
+- Dsp: more bugfixes, see end of dsp_[cpu|disasm].cpp file for complete changelog
+
 2002/07/19 - joy
 - SDL GUI now stores background to another (cloned) surface. Also fVDI
   does not draw into the physical video surface when GUI is visible.
