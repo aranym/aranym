@@ -74,7 +74,8 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 	if (f != NULL) {
 		int size = SECTORSIZE*count;
 		uint8 *hostbuf = Atari2HostAddr(buf);
-		fseek(f, recno*SECTORSIZE, SEEK_SET);
+		off_t offset = (off_t)recno * SECTORSIZE;
+		fseek(f, offset, SEEK_SET);
 		if (writing) {
 			if (! disk->byteswap)
 				byteSwapBuf(hostbuf, size);
