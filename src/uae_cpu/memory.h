@@ -24,26 +24,26 @@ extern uintptr VMEMBaseDiff;
 
 static __inline__ uae_u32 get_long(uaecptr addr)
 {
-    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_l(addr & 0xf00000);
+    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_l(addr & 0x00ffffff);
     uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
     return do_get_mem_long(m);
 }
 static __inline__ uae_u32 get_word(uaecptr addr)
 {
-    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_w(addr & 0xf00000);
+    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_w(addr & 0x00ffffff);
     uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
     return do_get_mem_word(m);
 }
 static __inline__ uae_u32 get_byte(uaecptr addr)
 {
-    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_b(addr & 0xf00000);
+    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_b(addr & 0x00ffffff);
     uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
     return do_get_mem_byte(m);
 }
 static __inline__ void put_long(uaecptr addr, uae_u32 l)
 {
-    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) {
-        HWput_l(addr & 0xf00000, l);
+    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) {
+        HWput_l(addr & 0x00ffffff, l);
         return;
     } 
     uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
@@ -51,8 +51,8 @@ static __inline__ void put_long(uaecptr addr, uae_u32 l)
 }
 static __inline__ void put_word(uaecptr addr, uae_u32 w)
 {
-    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) {
-        HWput_w(addr & 0xf00000, w);
+    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) {
+        HWput_w(addr & 0x00ffffff, w);
         return;
     }
     uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
@@ -60,8 +60,8 @@ static __inline__ void put_word(uaecptr addr, uae_u32 w)
 }
 static __inline__ void put_byte(uaecptr addr, uae_u32 b)
 {
-    if (((addr & 0xf00000) == 0xf00000) || ((addr & 0xfff00000) == 0xfff00000)) {
-        HWput_b(addr & 0xf00000, b);
+    if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) {
+        HWput_b(addr & 0x00ffffff, b);
         return;
     }
     uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
