@@ -1,3 +1,10 @@
+2002/07/19 - joy
+- SDL GUI now stores background to another (cloned) surface. Also fVDI
+  does not draw into the physical video surface when GUI is visible.
+
+- GUI Reset option works.
+
+
 2002/07/18 - joy
 - DSP host code is disabled when DSP_EMULATION is not defined. This was
   required to get Alt+Ctrl+Del warm boot working again (there must be a bug
