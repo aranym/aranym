@@ -7,8 +7,14 @@
     <text>
       <table>
 
-          <!-- Benchmarks added.<br/-->
-          <!-- Snapshots added.<br/-->
+        <tr><td valign="top">2001/11/13</td>
+            <td>
+              <a href="download.html">Download</a> contains second source code snapshot.<br/>
+              fVDI is nearly perfect.<br/>
+              Aranym TOS is no longer WinX patched.<br/>
+              Floppy, EmuTOS and more things can be configured in the .aranymrc.<br/>
+            </td>
+        </tr>
 
         <tr><td valign="top">2001/10/25</td>
             <td>
