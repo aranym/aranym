@@ -65,6 +65,24 @@
 
 #endif
 
+#ifdef OS_openbsd
+#define OS_INCLUDES_DEFINED
+
+#include <sys/param.h>
+#include <sys/mount.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <time.h>
+#include <utime.h>
+#include <dirent.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <termios.h>
+
+#endif
+
 #ifndef OS_INCLUDES_DEFINED
 
 #ifdef HAVE_SYS_STAT_H
