@@ -6,11 +6,6 @@
 #define DEBUG 1
 #include "debug.h"
 
-#define ARANYMHOME		"/.aranym"
-#define ARANYMCONFIG	ARANYMHOME"/config"
-#define ARANYMNVRAM		ARANYMHOME"/nvram"
-#define ARANYMKEYMAP	ARANYMHOME"/keymap"
-
 static struct option const long_options[] =
 {
 #ifndef FixedSizeFastRAM
@@ -37,11 +32,12 @@ static struct option const long_options[] =
 char *program_name;
 char rom_path[512] = DATADIR "/ROM";
 char emutos_path[512] = "";
-char *config_file = NULL;
-
-static uint32 FastRAMSizeMB;
 uint32 FastRAMSize;
 
+static char config_folder[512] = ARANYMHOME;
+static char config_file[512] = "";	// empty by default - can be set by --config <fname>
+
+static uint32 FastRAMSizeMB;
 static bool saveConfigFile = false;
 
 bx_options_t bx_options;
@@ -272,20 +268,26 @@ void preset_arafs() {
 
 void postload_arafs() {
 	for(int i=0; i < 'Z'-'A'+1; i++) {
-		char* colonPos = strrchr( bx_options.aranymfs[i].rootPath, ':' );
-		bx_options.aranymfs[i].halfSensitive = (colonPos == NULL);
-		if ( colonPos )
-			colonPos = '\0';
+		int len = strlen(bx_options.aranymfs[i].rootPath);
+		bx_options.aranymfs[i].halfSensitive = true;
+		if (len > 0) {
+			char *ptrLast = bx_options.aranymfs[i].rootPath + len-1;
+			if (*ptrLast == ':') {
+				*ptrLast = '\0';
+				bx_options.aranymfs[i].halfSensitive = false;
+			}
+		}
 	}
 }
 
 void presave_arafs() {
 	for(int i=0; i < 'Z'-'A'+1; i++) {
-		if ( bx_options.aranymfs[i].rootPath != '\0' &&
-			 bx_options.aranymfs[i].halfSensitive )
+		if ( strlen(bx_options.aranymfs[i].rootPath) > 0 &&
+			 bx_options.aranymfs[i].halfSensitive ) {
 			// set the halfSensitive indicator
 			// NOTE: I can't add more chars here due to the fixed char[] width
 			strcat( bx_options.aranymfs[i].rootPath, ":" );
+		}
 	}
 }
 
@@ -351,7 +353,8 @@ void check_for_help_version_configfile(int argc, char **argv) {
 	for (int c = 0; c < argc; c++) {
 		if ((strcmp(argv[c], "-c") == 0) || (strcmp(argv[c], "--config") == 0)) {
 			if ((c + 1) < argc) {
-				config_file = argv[c + 1];
+				strncpy(config_file, argv[c + 1], sizeof(config_file)-1);
+				config_file[sizeof(config_file)-1] = '\0';
 			} else {
 				fprintf(stderr, "config switch requires one parameter\n");
 				exit(EXIT_FAILURE);
@@ -448,31 +451,13 @@ int process_cmdline(int argc, char **argv)
 					break;
 				}
 				{
-					char path[2048];
-
-					// add the drive
+					// set the drive
 					int8  driveNo = toupper(optarg[0]) - 'A';
 					char* colonPos = strchr( optarg, ':' );
 					if ( colonPos == NULL )
 						break;
-
 					colonPos++;
-					char* colonPos2 = strchr( colonPos, ':' );
-
-					bx_options.aranymfs[ driveNo ].halfSensitive = (colonPos2 == NULL); //halfSensitive if the third part is NOT set;
-
-					// copy the path only
-					if ( colonPos2 == NULL )
-						colonPos2 = colonPos + strlen( colonPos );
-					strncpy( path, colonPos, colonPos2 - colonPos );
-					path[ colonPos2 - colonPos ] = '\0';
-
-					strncpy( bx_options.aranymfs[ driveNo ].rootPath, path, sizeof(bx_options.aranymfs[ driveNo ].rootPath) - 1 );
-
-					D(bug("parameters: installing drive %c:%s:%d",
-							driveNo + 'A',
-							bx_options.aranymfs[ driveNo ].rootPath,
-							bx_options.aranymfs[ driveNo ].halfSensitive));
+					strncpy( bx_options.aranymfs[ driveNo ].rootPath, colonPos, sizeof(bx_options.aranymfs[ driveNo ].rootPath) - 1 );
 				}
 				break;
 
@@ -496,7 +481,40 @@ int process_cmdline(int argc, char **argv)
 #endif
 }
 
-static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose) {
+char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
+{
+	unsigned int len = strlen(config_folder)+1 + strlen(file)+1;
+	if (len < bufsize) {
+		strcpy(buffer, config_folder);
+		strcat(buffer, DIRSEPARATOR);
+		strcat(buffer, file);
+	}
+	else
+		strcpy(buffer, file);	// at least something
+}
+
+void build_cfgfilename()
+{
+	char *home = getenv("HOME");
+	if (home != NULL) {
+		int homelen = strlen(home);
+		unsigned int len = strlen(ARANYMHOME);
+		if ((homelen+1 + len+1) < sizeof(config_folder)) {
+			strcpy(config_folder, home);
+			strcat(config_folder, DIRSEPARATOR);
+			strcat(config_folder, ARANYMHOME);
+		}
+	}
+	// make sure the folder exists
+	D(bug("Creating config folder '%s'", config_folder));
+	mkdir(config_folder, 0755);
+
+	if (strlen(config_file) == 0)
+		getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
+}
+
+static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose)
+{
 	int status = input_config(filename, conf, title);
 	if (verbose) {
 		if (status >= 0)
@@ -507,24 +525,8 @@ static int process_config(FILE *f, const char *filename, struct Config_Tag *conf
 	return status;
 }
 
-static void decode_ini_file(FILE *f) {
-	char *home;
-	char *rcfile;
-
-	if (config_file == NULL) {
-		// compose ini file name
-		if ((home = getenv("HOME")) == NULL)
-			home = "";
-		if ((rcfile = (char *)alloca((strlen(home) + strlen(ARANYMCONFIG) + 1) * sizeof(char))) == NULL) {
-			fprintf(stderr, "Not enough memory\n");
-			exit(-1);
-		}
-		strcpy(rcfile, home);
-		strcat(rcfile, ARANYMCONFIG);
-	} else {
-		rcfile = config_file;
-	}
-
+static void decode_ini_file(FILE *f, const char *rcfile)
+{
 	fprintf(f, "Using config file: '%s'\n", rcfile);
 
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
@@ -540,7 +542,8 @@ int saveSettings(const char *fs)
 {
 	presave_cfg();
 
-	update_config(fs, global_conf, "[GLOBAL]");
+	if (update_config(fs, global_conf, "[GLOBAL]") < 0)
+		fprintf(stderr, "Error while writting the '%s' config file.\n", fs);
 	update_config(fs, startup_conf, "[STARTUP]");
 	update_config(fs, video_conf, "[VIDEO]");
 	update_config(fs, tos_conf, "[TOS]");
@@ -553,14 +556,17 @@ int saveSettings(const char *fs)
 
 int decode_switches (FILE *f, int argc, char **argv)
 {
+	build_cfgfilename();
 	check_for_help_version_configfile(argc, argv);
 	preset_cfg();
-	decode_ini_file(f);
+	decode_ini_file(f, config_file);
 	process_cmdline(argc, argv);
 	postload_cfg();
 
-	if (saveConfigFile)
+	if (saveConfigFile) {
+		D(bug("Storing configuration to file '%s'", config_file));
 		saveSettings(config_file);
+	}
 
 	return 0;
 }
