@@ -13,7 +13,7 @@
 
 #include "fvdidrv.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 // this serves for debugging the color palette code
@@ -138,7 +138,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *	d5	logic operation
 			 */
 			D(fprintf(stderr, "fVDI: blitArea %d NOT IMPLEMENTED\n", fncode));
-			r->d[0] = 0;
+			r->d[0] = 1;
 			break;
 
 		case 7: // drawLine:
@@ -527,13 +527,16 @@ uint32 FVDIDriver::drawMouse( void *wrk, int32 x, int32 y, uint32 mode ) {
 uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h,
 							  uint32 fgColor, uint32 bgColor, uint32 logop) {
 
-	D(fprintf(stderr, "fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)\n", "expandArea", logop, sx, sy, dx, dy, w, h, bgColor, fgColor ));
+	D(fprintf(stderr, "fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)\n", "expandArea", logop, sx, sy, dx, dy, w, h, fgColor, bgColor ));
 	D(fprintf(stderr, "fVDI: %s %x,%x : %x,%x\n", "expandArea - MFDB addresses", src, dest, get_long( (uint32)src, true ),get_long( (uint32)dest, true )));
 
 	uint16 pitch = get_word( (uint32)src + 8, true ) << 1; // MFDB *src->wdwidth << 1 // the byte width (always monochrom);
 	uint32 data  = get_long( (uint32)src, true ) + sy*pitch; // MFDB *src->address;
 
-	D(fprintf(stderr, "fVDI: %s %x, %d, %d\n", "expandArea - src MFDB wdwidth << 1, bitplanes", data, pitch,get_word( (uint32)src + 12, true )));
+	D(fprintf(stderr, "fVDI: %s %x, %d, %d\n", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch,get_word( (uint32)src + 12, true )));
+
+	if ( dest != NULL && get_long( (uint32)dest, true ) != 0 )
+		return 1; // FIXME this is the blitToMemory NOT IMPLEMENTED YET!
 
 	fgColor = hostScreen.getPaletteColor( 1-fgColor );
 	bgColor = hostScreen.getPaletteColor( 1-bgColor );
@@ -692,6 +695,11 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2, u
 
 /*
  * $Log$
+ * Revision 1.7  2001/09/20 18:12:09  standa
+ * Off by one bug fixed in fillArea.
+ * Separate functions for transparent and opaque background.
+ * gfxPrimitives methods moved to the HostScreen
+ *
  * Revision 1.6  2001/09/19 23:03:46  standa
  * The fVDI driver update. Basic expandArea was added to display texts.
  * Still heavy buggy code!
