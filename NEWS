@@ -1,3 +1,27 @@
+2001/11/28 - version 0.0.11 released
+==========
+ The keyboard in aranym should now work properly after loading the updated
+ Clocky.prg (with hardwired PC101 English keyboard layout). You can use any
+ Atari tool to remap the keyboard to suit your needs.
+
+ Previously there were errors when reading floppies with FastRAM enabled.
+ Use the latest FastRAM v2.0 and everything should be OK. Well, apart from
+ really large floppies (4 MB and more) from STonX. These are not valid
+ floppies but rather single partitions of a harddrive. We will handle them
+ when we implement XHDI emulation.
+
+ IKBD emulation was fixed so that Videlity config program works now. Videlity
+ is a Falcon screen enhancer (freeware). Get it and enjoy Videl at 1024x768 :)
+
+ fVDI was greatly improved so you might not need to play with Videlity at all.
+
+ The patches for TOS 4.04 were cleaned up a lot. If you were using a prepatched
+ TOS version please stop using it and get the original TOS 4.04.
+
+ IDE emulation was fixed so that formatting and partitioning of ext2 by
+ MiNT installers work now properly.
+
+
 2001/11/06
 ==========
  The TOS patch we used included WinX by a mistake. That's been removed.
