@@ -3,6 +3,8 @@
   Weird that these bugs didn't appear under Linux for so long. Sorry guys :)
   Now Windows boot in correct resolution and without double bus errors!
 
+- include/version.h: version 0.8.6alpha
+
 
 2004/02/03 - joy
 - gui-sdl/*: dimensions made smaller (39x24) to fix the crashes in ST-Low
