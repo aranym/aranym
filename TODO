@@ -3,9 +3,11 @@ Before 0.8.0 final release:
 - man page from deb package to standard archive (merge also with main trunk /STan/)
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
-- provide also MMU build
-- make sure DOS drives are handled in HostFS paths correctly
-- AFROS: new FreeMiNT, bconout.prg and older fVDI (new one is buggy)
+- provide also MMU build (aranym-mmu for RedHat)
+- fix the bug with mapping of / (root) (example: D=/). Might be related to
+  EmuTOS/AFROS somehow.
+- self-compiled libSDL for cygwin package (to fix a problem with fullscreen)
+- make --ethernet enabled by default in configure phase
 
 Roadmap:
 --------

@@ -34,7 +34,7 @@ Otherwise ARAnyM started by regular user could not access this device.
 Install MiNT-Net and copy the aranym.xif into your mint folder.
 Then configure the eth0 interface, best by calling the 'eth0-config.sh'
 script.
-If you wanted to configure the IP addresses of netmask, you could do that
+If you wanted to configure the IP addresses or netmask, you could do that
 in the ARAnyM config file.
 
 Then in MiNT-Net you can e.g. ping to 192.168.0.1 (which is the default IP
@@ -64,7 +64,7 @@ Compilation
  * the binaries are placed into the bin subfolder
 
  nfeth-config:
- * regular MiNT setup is able to compile with simple 'make nfeth-config'.
+ * regular MiNT setup is able to compile it with simple 'make nfeth-config'
 
  ARAnyM itself:
  * run configure with --enable-ethernet
