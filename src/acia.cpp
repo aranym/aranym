@@ -72,8 +72,6 @@ uae_u8 IKBD::getData() {
 
 void IKBD::send(int value)
 {
-	int pos;
-	uae_u8 x;
 	value &= 0xff;
 	if (ikbd_inbuf <= MAXBUF) {
 		buffer[ikbd_bufpos] = value;
