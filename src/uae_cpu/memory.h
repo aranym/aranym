@@ -17,6 +17,8 @@
 #include "sysdeps.h"
 #include "m68k.h"
 
+#define CHECK_RAM_END	0
+
 #define ATCSIZE	256
 
 #define REGS
@@ -123,31 +125,39 @@ extern uintptr VMEMBaseDiff;
 #define InitMEMBaseDiff(va, ra)		(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 #define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 
+#if CHECK_RAM_END
 #define READ_RAM_END		0x1000000
 #define WRITE_RAM_END		0x0e00000
 #define BUS_ERROR	longjmp(excep_env, 2)
+#endif
 
 static __inline__ uae_u32 get_long_direct(uaecptr addr)
 {
     if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_l(addr & 0x00ffffff);
+#if CHECK_RAM_END
     if (addr >= READ_RAM_END)
     	BUS_ERROR;
+#endif
     uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
     return do_get_mem_long(m);
 }
 static __inline__ uae_u32 get_word_direct(uaecptr addr)
 {
     if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_w(addr & 0x00ffffff);
+#if CHECK_RAM_END
     if (addr >= READ_RAM_END)
     	BUS_ERROR;
+#endif
     uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
     return do_get_mem_word(m);
 }
 static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 {
     if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_b(addr & 0x00ffffff);
+#if CHECK_RAM_END
     if (addr >= READ_RAM_END)
     	BUS_ERROR;
+#endif
     uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
     return do_get_mem_byte(m);
 }
@@ -157,8 +167,10 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
         HWput_l(addr & 0x00ffffff, l);
         return;
     } 
+#if CHECK_RAM_END
     if (addr >= WRITE_RAM_END)
     	BUS_ERROR;
+#endif
     uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
     do_put_mem_long(m, l);
 }
@@ -168,8 +180,10 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
         HWput_w(addr & 0x00ffffff, w);
         return;
     }
+#if CHECK_RAM_END
     if (addr >= WRITE_RAM_END)
     	BUS_ERROR;
+#endif
     uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
     do_put_mem_word(m, w);
 }
@@ -179,8 +193,10 @@ static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
         HWput_b(addr & 0x00ffffff, b);
         return;
     }
+#if CHECK_RAM_END
     if (addr >= WRITE_RAM_END)
     	BUS_ERROR;
+#endif
     uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
     do_put_mem_byte(m, b);
 }
