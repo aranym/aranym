@@ -6,10 +6,20 @@
 #include "memory.h"
 #include "mfp.h"
 #include "acia.h"
+#include "acsifdc.h"
+#include "rtc.h"
+#include "uae_cpu/newcpu.h"	// for regs.pc
 
 MFP mfp;
 IKBD ikbd;
 MIDI midi;
+ACSIFDC fdc;
+RTC rtc;
+
+int snd_reg;
+extern int snd_porta;
+
+bool dP = false;
 
 void HWInit (void) {
 	/*
@@ -88,9 +98,15 @@ static char* debug_print_IO(uaecptr addr) {
 		return "MIDI ACIA";
 }
 
+uaecptr showPC() {
+	return do_get_virtual_address(regs.pc_p);
+}
+
 uae_u32 handleRead(uaecptr addr) {
 	if (addr >= HW_STMFP && addr < HW_FPU)
 		return mfp.handleRead(addr);
+	else if (addr >= HW_FDC && addr < HW_SCSI)
+		return fdc.handleRead(addr);
 	else if (addr == HW_IKBD)
 		return ikbd.getStatus();
 	else if (addr == HW_IKBD+1)
@@ -99,10 +115,16 @@ uae_u32 handleRead(uaecptr addr) {
 		return midi.getStatus();
 	else if (addr == HW_MIDI+1)
 		return midi.getData();
+	else if (addr == HW_RTC+3)
+		return rtc.getData();
 	else if (addr == 0xff8006)
 		return 0x96;
 	else if (addr == 0xff8007)
 		return 0x61;
+	else if (addr == 0xffa202)
+		return 0xff;	// DSP interrupt
+	else if (addr == HW_YAMAHA && snd_reg == 14)
+		return snd_porta;
 	else
 		return 0;
 }
@@ -110,43 +132,57 @@ uae_u32 handleRead(uaecptr addr) {
 void handleWrite(uaecptr addr, uae_u8 value) {
 	if (addr >= HW_STMFP && addr < HW_FPU)
 		mfp.handleWrite(addr, value);
+	else if (addr >= HW_FDC && addr < HW_SCSI)
+		fdc.handleWrite(addr, value);
 	else if (addr == HW_IKBD)
 		ikbd.setMode(value);
 	else if (addr == HW_IKBD+1)
-		return ikbd.setData(value);
+		ikbd.setData(value);
 	else if (addr == HW_MIDI)
-		return midi.setMode(value);
+		midi.setMode(value);
 	else if (addr == HW_MIDI+1)
-		return midi.setData(value);
-	else
-		return;
+		midi.setData(value);
+	else if (addr == HW_RTC+1)
+		rtc.setAddr(value);
+	else if (addr == HW_YAMAHA)
+		snd_reg = value;
+	else if (addr == (HW_YAMAHA+2) && snd_reg == 14)
+		snd_porta = value;
+}
+
+void MakeIRQ() {
+	mfp.tick();
 }
 
 uae_u32 HWget_l (uaecptr addr) {
 //	uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
 //	return do_get_mem_long(m);
-	fprintf(stderr, "HWget_l %x <- %s\n", addr, debug_print_IO(addr));
+	if (dP)
+		fprintf(stderr, "HWget_l %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
 	return (handleRead(addr) << 24) | (handleRead(addr+1) << 16) | (handleRead(addr+2) << 8) | handleRead(addr+3);
 }
 
 uae_u32 HWget_w (uaecptr addr) {
 //	uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
 //	return do_get_mem_word(m);
-	fprintf(stderr, "HWget_w %x <- %s\n", addr, debug_print_IO(addr));
+	if (dP)
+		fprintf(stderr, "HWget_w %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
 	return (handleRead(addr) << 8) | handleRead(addr+1);
 }
 
 uae_u32 HWget_b (uaecptr addr) {
 //	uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
 //	return do_get_mem_byte(m);
-	fprintf(stderr, "HWget_b %x <- %s\n", addr, debug_print_IO(addr));
+	if (dP)
+		fprintf(stderr, "HWget_b %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
 	return handleRead(addr);
 }
 
 void HWput_l (uaecptr addr, uae_u32 l) {
 //	uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
 //	do_put_mem_long(m, l);
-	fprintf(stderr, "HWput_l %x,%d ($%08x) -> %s\n", addr, l, l, debug_print_IO(addr));
+	if (dP)
+		fprintf(stderr, "HWput_l %x,%d ($%08x) -> %s at %08x\n", addr, l, l, debug_print_IO(addr), showPC());
 	handleWrite(addr, l >> 24);
 	handleWrite(addr+1, l >> 16);
 	handleWrite(addr+2, l >> 8);
@@ -156,7 +192,8 @@ void HWput_l (uaecptr addr, uae_u32 l) {
 void HWput_w (uaecptr addr, uae_u32 w) {
 //	uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
 //	do_put_mem_word(m, w);
-	fprintf(stderr, "HWput_w %x,%d ($%04x) -> %s\n", addr, w, w, debug_print_IO(addr));
+	if (dP)
+		fprintf(stderr, "HWput_w %x,%d ($%04x) -> %s at %08x\n", addr, w, w, debug_print_IO(addr), showPC());
 	handleWrite(addr, w >> 8);
 	handleWrite(addr+1, w);
 }
@@ -165,6 +202,7 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 //	uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
 //	do_put_mem_byte(m, b);
 	unsigned int bb = b & 0x000000ff;
-	fprintf(stderr, "HWput_b %x,%u ($%02x) -> %s\n", addr, bb, bb, debug_print_IO(addr));
+	if (dP)
+		fprintf(stderr, "HWput_b %x,%u ($%02x) -> %s at %08x\n", addr, bb, bb, debug_print_IO(addr), showPC());
 	handleWrite(addr, b);
 }
