@@ -1,3 +1,9 @@
+2005/01/19 - STanda
+- atari/fvdi/../spec.c: bitplane modes are marked as bitplane in v_scrninfo(),
+  unnecessary noshadow and assumenf options removed
+- 8b_pal.c: palette setting is system wide (not per virtual workstation)
+
+
 2005/01/19 - Patrice
 - dsp_cpu.cpp: 64 bit fixes.
 - nfjpeg: Fixed problems due to endianness and packed structure of JPEG decoder.
