@@ -7,15 +7,15 @@
 #include "version.h"
 #include "cfgopts.h"
 
-#ifdef OS_cygwin
-# define ARANYMHOME		"aranym"
-#else
+#ifndef ARANYMHOME
 # define ARANYMHOME		".aranym"
 #endif
 #define ARANYMCONFIG	"config"
 #define ARANYMNVRAM		"nvram"
 #define ARANYMKEYMAP	"keymap"
-#define DIRSEPARATOR	"/"
+#ifndef DIRSEPARATOR
+# define DIRSEPARATOR	"/"
+#endif
 
 enum geo_type {
 	geoCylinders,
