@@ -445,7 +445,7 @@ Options:\n\
   -v, --refresh <X>          VIDEL refresh rate in VBL (default 2)\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
-  -d, --disk CHAR:ROOTPATH   METADOS filesystem assignment e.g. d:/atari/d_drive\n\
+  -d, --disk CHAR:PATH[:]    HostFS mapping, e.g. d:/atari/d_drive\n\
   -c, --config FILE          read different configuration file\n\
   -s, --save                 save configuration file\n\
   -S, --swap-ide             swap IDE drives\n\
@@ -605,19 +605,22 @@ int process_cmdline(int argc, char **argv)
 				break;
 
 			case 'd':
-				if ( strlen(optarg) < 4 ) {
+				if ( strlen(optarg) < 4 || optarg[1] != ':') {
 					fprintf(stderr, "Not enough parameters for -d\n");
 					break;
 				}
-				{
-					// set the drive
-					int8  driveNo = toupper(optarg[0]) - 'A';
-					char* colonPos = strchr( optarg, ':' );
-					if ( colonPos == NULL )
-						break;
-					colonPos++;
-					safe_strncpy( bx_options.aranymfs[ driveNo ].rootPath, colonPos, sizeof(bx_options.aranymfs[ driveNo ].rootPath) );
+				// set the drive
+				int8 i = toupper(optarg[0]) - 'A';
+				if (i <= 0 || i>('Z'-'A')) {
+					fprintf(stderr, "Drive out of [A-Z] range for -d\n");
+					break;
 				}
+
+				safe_strncpy( bx_options.aranymfs[i].rootPath, optarg+2,
+								sizeof(bx_options.aranymfs[i].rootPath) );
+				// Note: tail colon processing (case sensitivity flag) is 
+				// done later by calling postload_cfg.
+				// Just make sure postload_cfg is called after this.
 				break;
 
 			case 's':

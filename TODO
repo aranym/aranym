@@ -3,13 +3,10 @@ Before 0.8.0 final release:
 - man page from deb package to standard archive
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
-- fix '-d' command line (set case sensitivity)
 - correct path to font8.bmp (use native dir separator)
 - develop relative path to data files support (global files: TOS/EmuTOS
   and font8.bmp, user files: config and nvram)
-- enable OpenGL in default builds
 - provide also MMU build
-- change the hotkey for screenshot - Alt+PrintScreen = SysRq!
 - make sure DOS drives are handled in HostFS paths correctly
 
 Roadmap:
@@ -74,6 +71,8 @@ that particular programmer but rather who is the author of the idea :-)
 - joy: in hardware.cpp: HWget_l/HWput_l should not have the special case
        for HW_IDE. Best would be to implement word and longword HW access
        emulation directly for all modules.
+
+- joy: keyboard mapping editable in a config file
 
 - joy: document the way the aranym works - especially the hardware
        emulation (ARAnyM Hackers Guide).

@@ -1,3 +1,14 @@
+2003/03/27 - joy
+- parameters.cpp: correction and clarification of "-d" command line switch
+
+- input.cpp: a key for generating screenshots changed to "PrintScreen"
+  (the Alt+PrintScreen collided with Linux kernel hacking SysRq combination)
+
+
+2003/03/27 - milan
+- configure.ac: DIR_SEPARATOR added. Also cygwin now automatically changes
+  the ARANYMHOME from default ".aranym" to "aranym".
+
 2003/03/26 - milan
 - JIT games, sync with BailiskII
 
