@@ -24,7 +24,7 @@ int get_home_dir(char *path, int len)
 	r = RegOpenKeyEx
 		(
 			HKEY_CURRENT_USER,
-			"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders\\Personal",
+			"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
 			(DWORD)0,
 			KEY_READ,
 			&hkResult
@@ -37,7 +37,7 @@ int get_home_dir(char *path, int len)
 	r = RegQueryValueEx
 		(
 			hkResult,
-			"AppData", 
+			"Personal", 
 			NULL,
 			NULL,
 			(LPBYTE)path,

@@ -698,8 +698,8 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 {
 	// Does the config exist?
 	struct stat buf;
-	if (stat(config_file, &buf) == -1) {
-		fprintf(f, "Config file '%s' not found.\nThe config file is created with default values. Edit it to suit your needs.\n", config_file);
+	if (stat(rcfile, &buf) == -1) {
+		fprintf(f, "Config file '%s' not found.\nThe config file is created with default values. Edit it to suit your needs.\n", rcfile);
 		saveConfigFile = true;
 		return;
 	}
