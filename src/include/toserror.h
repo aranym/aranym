@@ -19,7 +19,7 @@
 #define TOS_EWRITF  -10 /* Write fault */
 #define TOS_EREADF  -11 /* Read fault */
 #define TOS_EGENRL  -12 /* General error: reserved for future catastrophes */
-#define TOS_EWRPRO  -13 /* Write on write-protected media */
+#define TOS_EROFS   -13 /* Write on write-protected media */
 #define TOS_E_CHNG  -14 /* Media change detected */
 #define TOS_EUNDEV  -15 /* Unkown device */
 #define TOS_EBADSF  -16 /* Bad sectors on format */

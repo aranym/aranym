@@ -20,8 +20,15 @@
 #include "araobjs.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
+
+#if 0
+# define DEBUG_FILENAMETRANSFORMATION
+# define DFNAME(x) D2(x)
+#else
+# define DFNAME(x)
+#endif
 
 #ifdef HAVE_SYS_VFS_H
 # include <sys/vfs.h>
@@ -51,7 +58,11 @@
 # define O_BINARY 0
 #endif
 
-
+#ifndef S_ISSOCK
+# define S_ISSOCK(m) 0
+# undef  S_IFSOCK
+# define S_IFSOCK 0
+#endif
 
 #if 0
     // todo??? 1 - yes
@@ -321,13 +332,15 @@ int32 HostFs::dispatch(uint32 fncode)
 		case XFS_FSCNTL:
 			fetchXFSC( &fc, getParameter(0) );
 			D(bug("fs_fscntl '%c'<<8|%d", (getParameter(2)>>8)&0xff ? (char)(getParameter(2)>>8)&0xff : 0x20, (char)(getParameter(2)&0xff)));
-			D(bug("fs_fscntl - NOT IMPLEMENTED!"));
-			ret = TOS_E_OK;
+			ret = xfs_fscntl( &fc,
+							  (memptr)getParameter(1) /* name */,
+							  getParameter(2) /* cmd */,
+							  getParameter(3) /* arg */ );
+			flushXFSC( &fc, getParameter(0) );
 			break;
 
 		case XFS_DSKCHNG:
-			D(bug("%s", "fs_dskchng"));
-			D(bug("fs_dskchng - NOT IMPLEMENTED!"));
+			D(bug("%s", "fs_dskchng (dummy - not needed)"));
 			ret = TOS_E_OK;
 			break;
 
@@ -339,9 +352,9 @@ int32 HostFs::dispatch(uint32 fncode)
 			break;
 
 		case XFS_DUPCOOKIE:
-			D(bug("%s", "fs_dupcookie"));
 			fetchXFSC( &resFc, getParameter(0) );
 			fetchXFSC( &fc, getParameter(1) );
+			D(bug("fs_dupcookie( %s )", cookie2Pathname( fc.drv, fc.index, NULL, NULL )));
 			ret = xfs_dupcookie( &resFc, &fc );
 			flushXFSC( &resFc, getParameter(0) );
 			flushXFSC( &fc, getParameter(1) );
@@ -443,6 +456,9 @@ void HostFs::fetchXFSC( XfsCookie *fc, memptr filep )
 	fc->dev	  = ReadInt16( filep + 4 );	 // dev
 	fc->aux	  = ReadInt16( filep + 6 );	 // aux
 	fc->index = (XfsFsFile*)MAP32TOVOIDP( ReadInt32( filep + 8 ) ); // index
+
+	MountMap::iterator it = mounts.find(fc->dev);
+	fc->drv   = ( it != mounts.end() ? it->second : NULL );
 }
 void HostFs::flushXFSC( XfsCookie *fc, memptr filep )
 {
@@ -491,7 +507,7 @@ void HostFs::flushXFSD( XfsDir *dirh, memptr dirp )
 }
 
 
-uint32 HostFs::unix2toserrno(int unixerrno,int defaulttoserrno)
+uint32 HostFs::errnoHost2Mint(int unixerrno,int defaulttoserrno)
 {
 	int retval = defaulttoserrno;
 
@@ -501,6 +517,7 @@ uint32 HostFs::unix2toserrno(int unixerrno,int defaulttoserrno)
 		case ENFILE:  retval = TOS_EACCDN;break;
 		case EBADF:	  retval = TOS_EIHNDL;break;
 		case ENOTDIR: retval = TOS_EPTHNF;break;
+		case EROFS:   retval = TOS_EROFS;break;
 		case ENOENT: /* GEMDOS most time means it should be a file */
 		case ECHILD:  retval = TOS_EFILNF;break;
 		case ENXIO:	  retval = TOS_EDRIVE;break;
@@ -517,7 +534,7 @@ uint32 HostFs::unix2toserrno(int unixerrno,int defaulttoserrno)
 		case ENAMETOOLONG: retval = TOS_ERANGE; break;
 	}
 
-	D(bug("HOSTFS: unix2toserrno (%d,%d->%d)", unixerrno, defaulttoserrno, retval));
+	D(bug("HOSTFS: errnoHost2Mint (%d,%d->%d)", unixerrno, defaulttoserrno, retval));
 
 	return retval;
 }
@@ -550,43 +567,110 @@ void HostFs::datetime2tm(uint32 dtm, struct tm* ttm)
 }
 
 
-uint16 HostFs::statmode2attr(mode_t m)
+uint16 HostFs::modeHost2TOS(mode_t m)
 {
 	return ( S_ISDIR(m) ) ? 0x10 : 0;	/* FIXME */
 	//	  if (!(da == 0 || ((da != 0) && (attribs != 8)) || ((attribs | 0x21) & da)))
 }
 
 
-uint16 HostFs::statmode2xattrmode(mode_t m)
+/**
+ * Convert the unix file stat.st_mode value into a FreeMiNT's one.
+ *
+ * File permissions and mode bitmask according
+ * to the FreeMiNT 1.16.x stat.h header file.
+ *
+ *  Name     Mask     Permission
+ * S_IXOTH  0000001  Execute permission for all others.
+ * S_IWOTH  0000002  Write permission for all others.
+ * S_IROTH  0000004  Read permission for all others.
+ * S_IXGRP  0000010  Execute permission for processes with same group ID.
+ * S_IWGRP  0000020  Write permission for processes with same group ID.
+ * S_IRGRP  0000040  Read permission for processes with same group ID.
+ * S_IXUSR  0000100  Execute permission for processes with same user ID.
+ * S_IWUSR  0000200  Write permission for processes with same user ID.
+ * S_IRUSR  0000400  Read permission for processes with same user ID.
+
+ * S_ISVTX  0001000  Sticky bit
+ * S_ISGID  0002000  Alter effective group ID when executing this file.
+ * S_ISUID  0004000  Alter effective user ID when executing this file.
+ *
+ * S_IFSOCK 0010000  File is a FreeMiNTNet socket file.
+ * S_IFCHR  0020000  File is a BIOS (character) special file.
+ * S_IFDIR  0040000  File is a directory.
+ * S_IFBLK  0060000  File is a block special file.
+ * S_IFREG  0100000  File is a regular file.
+ * S_IFIFO  0120000  File is a FIFO (named pipe).
+ * S_IMEM   0140000  File is a memory region.
+ * S_IFLNK  0160000  File is a symbolic link.
+ */
+uint16 HostFs::modeHost2Mint(mode_t m)
 {
 	uint16 result = 0;
 
-	if ( S_ISREG(m) ) result = 0x8000;
-	if ( S_ISDIR(m) ) result = 0x4000;
-	if ( S_ISCHR(m) ) result = 0x2000;
-	if ( S_ISFIFO(m)) result = 0xa000;
-	if ( S_ISBLK(m) ) result = 0xc000;	// S_IMEM in COMPEND.HYP ... FIXME!!
-	if ( S_ISLNK(m) ) result = 0xe000;
-
 	// permissions
-	result |= (int16)(m & 0x0007); // other permissions
-	if ( m & S_IXGRP ) result |= 0x0008;
-	if ( m & S_IWGRP ) result |= 0x0010;
-	if ( m & S_IRGRP ) result |= 0x0020;
-	if ( m & S_IXUSR ) result |= 0x0040;
-	if ( m & S_IWUSR ) result |= 0x0080;
-	if ( m & S_IRUSR ) result |= 0x0100;
-	if ( m & S_ISVTX ) result |= 0x0200;
-	if ( m & S_ISGID ) result |= 0x0400;
-	if ( m & S_ISUID ) result |= 0x0800;
+	if ( m & S_IXOTH ) result |= 00001;
+	if ( m & S_IWOTH ) result |= 00002;
+	if ( m & S_IROTH ) result |= 00004;
+	if ( m & S_IXGRP ) result |= 00010;
+	if ( m & S_IWGRP ) result |= 00020;
+	if ( m & S_IRGRP ) result |= 00040;
+	if ( m & S_IXUSR ) result |= 00100;
+	if ( m & S_IWUSR ) result |= 00200;
+	if ( m & S_IRUSR ) result |= 00400;
+	if ( m & S_ISVTX ) result |= 01000;
+	if ( m & S_ISGID ) result |= 02000;
+	if ( m & S_ISUID ) result |= 03000;
 
-	D2(bug("					(statmode: %04x)", result));
+	if ( S_ISSOCK(m) ) result |= 0010000;
+	if ( S_ISCHR(m)  ) result |= 0020000;
+	if ( S_ISDIR(m)  ) result |= 0040000;
+	if ( S_ISBLK(m)  ) result |= 0060000;
+	if ( S_ISREG(m)  ) result |= 0100000;
+	if ( S_ISFIFO(m) ) result |= 0120000;
+	// Linux doesn't have this! if ( S_ISMEM(m)  ) result |= 0140000;
+	if ( S_ISLNK(m)  ) result |= 0160000;
+
+	D2(bug("					(statmode: %#4o)", result));
 
 	return result;
 }
 
 
-int HostFs::st2flags(uint16 flags)
+mode_t HostFs::modeMint2Host(uint16 m)
+{
+	mode_t result = 0;
+
+	// permissions
+	if ( m & 00001 ) result |= S_IXOTH;
+	if ( m & 00002 ) result |= S_IWOTH;
+	if ( m & 00004 ) result |= S_IROTH;
+	if ( m & 00010 ) result |= S_IXGRP;
+	if ( m & 00020 ) result |= S_IWGRP;
+	if ( m & 00040 ) result |= S_IRGRP;
+	if ( m & 00100 ) result |= S_IXUSR;
+	if ( m & 00200 ) result |= S_IWUSR;
+	if ( m & 00400 ) result |= S_IRUSR;
+	if ( m & 01000 ) result |= S_ISVTX;
+	if ( m & 02000 ) result |= S_ISGID;
+	if ( m & 03000 ) result |= S_ISUID;
+
+	if ( m & 0010000 ) result |= S_IFSOCK;
+	if ( m & 0020000 ) result |= S_IFCHR;
+	if ( m & 0040000 ) result |= S_IFDIR;
+	if ( m & 0060000 ) result |= S_IFBLK;
+	if ( m & 0100000 ) result |= S_IFREG;
+	if ( m & 0120000 ) result |= S_IFIFO;
+	// Linux doesn't have this!	if ( m & 0140000 ) result |= S_IFMEM;
+	if ( m & 0160000 ) result |= S_IFLNK;
+
+	D2(bug("					(statmode: %#04o)", result));
+
+	return result;
+}
+
+
+int HostFs::flagsMint2Host(uint16 flags)
 {
 	int res = O_RDONLY;
 
@@ -615,7 +699,7 @@ int HostFs::st2flags(uint16 flags)
 }
 
 
-int16 HostFs::flags2st(int flags)
+int16 HostFs::flagsHost2Mint(int flags)
 {
 	int16 res = 0; /* default read only */
 
@@ -675,9 +759,7 @@ int16 HostFs::flags2st(int flags)
  **/
 void HostFs::transformFileName( char* dest, const char* source )
 {
-#ifdef DEBUG_FILENAMETRANSFORMATION
-	D(bug("HOSTFS: transformFileName(\"%s\")...", source));
-#endif
+	DFNAME(bug("HOSTFS: transformFileName(\"%s\")...", source));
 
 	// . and .. system folders
 	if ( strcmp(source, ".") == 0 || strcmp(source, "..") == 0) {
@@ -700,9 +782,7 @@ void HostFs::transformFileName( char* dest, const char* source )
 	strncpy(dest, source, 12);
 	dest[12] = '\0';
 
-#ifdef DEBUG_FILENAMETRANSFORMATION
-	D(bug("HOSTFS: transformFileName:... nameLen = %i, extLen = %i", nameLen, extLen));
-#endif
+	DFNAME(bug("HOSTFS: transformFileName:... nameLen = %i, extLen = %i", nameLen, extLen));
 
 	if (	nameLen > 8 || extLen > 3 ||  // the filename is longer than the 8+3 standard
 		( nameLen <= 8 && extLen == 0 && dot != NULL ) )  // there is a dot at the end of the filename
@@ -772,9 +852,7 @@ void HostFs::transformFileName( char* dest, const char* source )
 	// upper case conversion
 	strapply( dest, toupper );
 
-#ifdef DEBUG_FILENAMETRANSFORMATION
-	D(bug("HOSTFS: /transformFileName(\"%s\") -> \"%s\"", source, dest));
-#endif
+	DFNAME(bug("HOSTFS: /transformFileName(\"%s\") -> \"%s\"", source, dest));
 }
 
 
@@ -782,9 +860,7 @@ bool HostFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const
 {
 	struct stat statBuf;
 
-#ifdef DEBUG_FILENAMETRANSFORMATION
-	D(bug("HOSTFS: getHostFileName (%s,%s)", pathName, name));
-#endif
+	DFNAME(bug("HOSTFS: getHostFileName (%s,%s)", pathName, name));
 
 	// if the whole thing fails then take the requested name as is
 	// it also completes the path
@@ -792,129 +868,80 @@ bool HostFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const
 
 	if ( ! strpbrk( name, "*?" ) && // if is it NOT a mask
 		 stat(pathName, &statBuf) ) // and if such file NOT really exists
-		{
-			// the TOS filename was adjusted (lettercase, length, ..)
-			char testName[MAXPATHNAMELEN];
-			const char *finalName = name;
-			struct dirent *dirEntry;
-			bool nonexisting = false;
+	{
+		// the TOS filename was adjusted (lettercase, length, ..)
+		char testName[MAXPATHNAMELEN];
+		const char *finalName = name;
+		struct dirent *dirEntry;
+		bool nonexisting = false;
 
-#ifdef DEBUG_FILENAMETRANSFORMATION
-			D(bug(" (stat failed)"));
-#endif
+		DFNAME(bug(" (stat failed)"));
 
-			// shorten the name from the pathName;
-			*result = '\0';
+		// shorten the name from the pathName;
+		*result = '\0';
 
-			DIR *dh = opendir( pathName );
-			if ( dh == NULL ) {
-#ifdef DEBUG_FILENAMETRANSFORMATION
-				D(bug("HOSTFS: getHostFileName dopendir(%s) failed.", pathName));
-#endif
-				goto lbl_final;	 // should never happen
-			}
-
-			while ( true ) {
-				if ((dirEntry = readdir( dh )) == NULL) {
-#ifdef DEBUG_FILENAMETRANSFORMATION
-					D(bug("HOSTFS: getHostFileName dreaddir: no more files."));
-#endif
-					nonexisting = true;
-					goto lbl_final;
-				}
-
-				if ( !drv || drv->halfSensitive )
-					if ( ! strcasecmp( name, dirEntry->d_name ) ) {
-						finalName = dirEntry->d_name;
-#ifdef DEBUG_FILENAMETRANSFORMATION
-						D(bug("HOSTFS: getHostFileName found final file."));
-#endif
-						goto lbl_final;
-					}
-
-				transformFileName( testName, dirEntry->d_name );
-
-#ifdef DEBUG_FILENAMETRANSFORMATION
-				D(bug("HOSTFS: getHostFileName (%s,%s,%s)", name, testName, dirEntry->d_name));
-#endif
-
-				if ( ! strcmp( testName, name ) ) {
-					// FIXME isFile test (maybe?)
-					// this follows one more argument to be passed (from the convertPathA2F)
-
-					finalName = dirEntry->d_name;
-					goto lbl_final;
-				}
-			}
-
-		  lbl_final:
-#ifdef DEBUG_FILENAMETRANSFORMATION
-			D(bug("HOSTFS: getHostFileName final (%s,%s)", name, finalName));
-#endif
-
-			strcpy( result, finalName );
-
-			// in case of halfsensitive filesystem,
-			// an upper case filename should be lowecase?
-			if ( nonexisting && (!drv || drv->halfSensitive) ) {
-				bool isUpper = true;
-				for( char *curr = result; *curr; curr++ ) {
-					if ( *curr != toupper( *curr ) ) {
-						isUpper = false;
-						break;
-					}
-				}
-				if ( isUpper ) {
-					// lower case conversion
-					strapply( result, tolower );
-				}
-			}
-			if ( dh != NULL )
-				closedir( dh );
+		DIR *dh = opendir( pathName );
+		if ( dh == NULL ) {
+			DFNAME(bug("HOSTFS: getHostFileName dopendir(%s) failed.", pathName));
+			goto lbl_final;	 // should never happen
 		}
 
+		while ( true ) {
+			if ((dirEntry = readdir( dh )) == NULL) {
+				DFNAME(bug("HOSTFS: getHostFileName dreaddir: no more files."));
+				nonexisting = true;
+				goto lbl_final;
+			}
+
+			if ( !drv || drv->halfSensitive )
+				if ( ! strcasecmp( name, dirEntry->d_name ) ) {
+					finalName = dirEntry->d_name;
+					DFNAME(bug("HOSTFS: getHostFileName found final file."));
+					goto lbl_final;
+				}
+
+			transformFileName( testName, dirEntry->d_name );
+
+			DFNAME(bug("HOSTFS: getHostFileName (%s,%s,%s)", name, testName, dirEntry->d_name));
+
+			if ( ! strcmp( testName, name ) ) {
+				// FIXME isFile test (maybe?)
+				// this follows one more argument to be passed
+
+				finalName = dirEntry->d_name;
+				goto lbl_final;
+			}
+		}
+
+	lbl_final:
+		DFNAME(bug("HOSTFS: getHostFileName final (%s,%s)", name, finalName));
+
+		strcpy( result, finalName );
+
+		// in case of halfsensitive filesystem,
+		// an upper case filename should be lowecase?
+		if ( nonexisting && (!drv || drv->halfSensitive) ) {
+			bool isUpper = true;
+			for( char *curr = result; *curr; curr++ ) {
+				if ( *curr != toupper( *curr ) ) {
+					isUpper = false;
+					break;
+				}
+			}
+			if ( isUpper ) {
+				// lower case conversion
+				strapply( result, tolower );
+			}
+		}
+		if ( dh != NULL )
+			closedir( dh );
+	}
 #ifdef DEBUG_FILENAMETRANSFORMATION
 	else
-		D(bug(" (stat OK)"));
+		DFNAME(bug(" (stat OK)"));
 #endif
 
 	return true;
-}
-
-
-// FIXME: remove the convertPathA2F() the check should be done some other way.
-void HostFs::convertPathA2F( ExtDrive *drv, char* fpathName, char* pathName, const char* basePath )
-{
-	char *n, *tp, *ffileName;
-	struct stat statBuf;
-
-	// the default is the drive root dir
-	if ( basePath == NULL )
-		basePath = drv ? drv->hostRoot : "";
-
-	strcpy( fpathName, basePath );
-	ffileName = fpathName + strlen( fpathName );
-
-	n = pathName;
-
-	strd2upath( ffileName, n );
-	if ( ! stat(fpathName, &statBuf) )
-		return; // the path is ok except the backslashes
-
-	// construct the pathName to get stat() from
-	while ( (tp = strpbrk( n, "\\/" )) != NULL ) {
-		char sep = *tp;
-		*tp = '\0';
-
-		getHostFileName( ffileName, drv, fpathName, n );
-		ffileName += strlen( ffileName );
-		*ffileName++ = DIRSEPARATOR[0];
-
-		*tp = sep;
-		n = tp+1;
-	}
-
-	getHostFileName( ffileName, drv, fpathName, n );
 }
 
 
@@ -926,43 +953,54 @@ void HostFs::convertPathA2F( ExtDrive *drv, char* fpathName, char* pathName, con
  *			 should be used.
  * <-- complete filepath or NULL if error
  */
-char *HostFs::cookie2Pathname( HostFs::XfsFsFile *fs, const char *name, char *buf )
+char *HostFs::cookie2Pathname( ExtDrive *drv, HostFs::XfsFsFile *fs, const char *name, char *buf )
 {
 	static char sbuf[MAXPATHNAMELEN]; /* FIXME: size should told by unix */
 
 	if (!buf)
+		// use static buffer
 		buf = sbuf;
-	if (!fs)
-	{
+
+	if (!fs) {
+		// we are at root
 		D2(bug("HOSTFS: cookie2pathname root? '%s'", name));
-		/* we are at root */
 		if (!name)
 			return NULL;
-		else
-			strcpy(buf, name);
+
+		// in the root cookie there is the host path that
+		// needs no modification (drv->hostRoot)
+		//  -> copy it to the buffer and return
+		strcpy(buf, name);
+		return buf;
 	}
-	else
+
+	// recurse to deep
+	if (!cookie2Pathname(drv, fs->parent, fs->name, buf))
+		return NULL;
+
+	// returning from the recursion -> append the appropriate filename
+	if (name && *name)
 	{
-		if (!cookie2Pathname(fs->parent, fs->name, buf))
-			return NULL;
-		if (name && *name)
-		{
-			// make sure there's the right trailing dir separator
-			int len = strlen(buf);
-			if (len > 0) {
-				char *last = buf + len-1;
-				if (*last == '\\' || *last == '/') {
-					*last = '\0';
-				}
-				strcat(buf, DIRSEPARATOR);
+		// make sure there's the right trailing dir separator
+		int len = strlen(buf);
+		if (len > 0) {
+			char *last = buf + len-1;
+			if (*last == '\\' || *last == '/') {
+				*last = '\0';
 			}
-			getHostFileName( buf + strlen(buf), NULL, buf, name );
+			strcat(buf, DIRSEPARATOR);
 		}
+		getHostFileName( buf + strlen(buf), drv, buf, name );
 	}
+
 	D2(bug("HOSTFS: cookie2pathname '%s'", buf));
 	return buf;
 }
 
+char *HostFs::cookie2Pathname( HostFs::XfsCookie *fc, const char *name, char *buf )
+{
+	return cookie2Pathname( fc->drv, fc->index, name, buf );
+}
 
 void HostFs::xfs_debugCookie( XfsCookie *fc )
 {
@@ -991,7 +1029,7 @@ void HostFs::xfs_debugCookie( XfsCookie *fc )
 int32 HostFs::xfs_dfree( XfsCookie *dir, uint32 diskinfop )
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname( dir->index, NULL, fpathName );
+	cookie2Pathname( dir, NULL, fpathName );
 
 	D(bug("HOSTFS: fs_dfree (%s)", fpathName));
 
@@ -1010,7 +1048,7 @@ int32 HostFs::xfs_dfree( XfsCookie *dir, uint32 diskinfop )
 #else
 	if ( statfs(fpathName, &buff) )
 #endif
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	/* ULONG b_free	   */  WriteInt32( diskinfop	   , buff.f_bavail );
 	/* ULONG b_total   */  WriteInt32( diskinfop +	4, buff.f_blocks );
@@ -1027,10 +1065,10 @@ int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 	a2fstrcpy( fname, name );
 
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname( dir->index, fname, fpathName );
+	cookie2Pathname( dir, fname, fpathName );
 
 	if ( mkdir( (char*)fpathName, mode ) )
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	return TOS_E_OK;
 }
@@ -1041,15 +1079,11 @@ int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 	char fname[MAXPATHNAMELEN];
 	a2fstrcpy( fname, name );
 
-	char pathName[MAXPATHNAMELEN];
-	cookie2Pathname( dir->index, fname, pathName );
-
-	// FIXME: remove the convertPathA2F() the check should be done some other way.
 	char fpathName[MAXPATHNAMELEN];
-	convertPathA2F( mounts.find(dir->dev)->second, fpathName, pathName, "" ); // convert the fname into the hostfs form
+	cookie2Pathname( dir, fname, fpathName );
 
 	if ( rmdir( fpathName ) )
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	return TOS_E_OK;
 }
@@ -1060,18 +1094,17 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 	char fname[MAXPATHNAMELEN];
 	a2fstrcpy( fname, name );
 
-	D(bug("HOSTFS:  dev_creat (%s,%x)", fname, flags));
+	// convert and mask out the file type bits for unix open()
+	mode = modeMint2Host( mode ) & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO);
 
-	char pathName[MAXPATHNAMELEN];
-	cookie2Pathname(dir->index,fname,pathName); // get the cookie filename
+	D(bug("HOSTFS:  dev_creat (%s, flags: %#x, mode: %#o)", fname, flags, mode));
 
-	// FIXME: remove the convertPathA2F() the check should be done some other way.
 	char fpathName[MAXPATHNAMELEN];
-	convertPathA2F( mounts.find(dir->dev)->second, fpathName, pathName, "" ); // convert the fname into the hostfs form (check the 8+3 file existence)
+	cookie2Pathname(dir,fname,fpathName); // get the cookie filename
 
 	int fd = open( fpathName, O_CREAT|O_EXCL|O_WRONLY|O_BINARY, mode );
 	if (fd < 0)
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 	close( fd );
 
 	XfsFsFile *newFsFile = new XfsFsFile();	MAPNEWVOIDP( newFsFile );
@@ -1092,11 +1125,11 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 int32 HostFs::xfs_dev_open(ExtFile *fp)
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname(fp->fc.index, NULL, fpathName);
+	cookie2Pathname(&fp->fc, NULL, fpathName);
 
-	int flags = st2flags(fp->flags);
+	int flags = flagsMint2Host(fp->flags);
 
-	D(bug("HOSTFS:  dev_open (%s, %x->%x)", fpathName, fp->flags, flags));
+	D(bug("HOSTFS:  dev_open (%s, flags: %#x->%#x)", fpathName, fp->flags, flags));
 
 	// the xfs_creat() does create the host fs file although
 	// it should not according to the FreeMiNT .XFS design
@@ -1111,7 +1144,7 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 
 	int fd = open( fpathName, flags|O_BINARY, 0 );
 	if (fd < 0)
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 	fp->hostFd = fd;
 
     #if SIZEOF_INT != 4 || DEBUG_NON32BIT
@@ -1130,7 +1163,7 @@ int32 HostFs::xfs_dev_close(ExtFile *fp, int16 pid)
 
 	if ( fp->links <= 0 ) {
 		if ( close( fp->hostFd ) )
-			return unix2toserrno(errno,TOS_EIO);
+			return errnoHost2Mint(errno,TOS_EIO);
 
         #if SIZEOF_INT != 4 || DEBUG_NON32BIT
 			fdMapper.removeNative( fp->hostFd );
@@ -1168,7 +1201,7 @@ int32 HostFs::xfs_dev_read(ExtFile *fp, memptr buffer, uint32 count)
 
 	D(bug("HOSTFS: /dev_read readCount (%d)", count - toRead));
 	if ( readCount < 0 )
-		return unix2toserrno(errno,TOS_EINTRN);
+		return errnoHost2Mint(errno,TOS_EINTRN);
 
 	return count - toRead;
 }
@@ -1197,7 +1230,7 @@ int32 HostFs::xfs_dev_write(ExtFile *fp, memptr buffer, uint32 count)
 
 	D(bug("HOSTFS: /dev_write writeCount (%d)", count - toWrite));
 	if ( writeCount < 0 )
-		return unix2toserrno(errno,TOS_EINTRN);
+		return errnoHost2Mint(errno,TOS_EINTRN);
 
 	return count - toWrite;
 }
@@ -1221,7 +1254,7 @@ int32 HostFs::xfs_dev_lseek(ExtFile *fp, int32 offset, int16 seekmode)
 	D(bug("HOSTFS: /dev_lseek (offset = %d,mode = %d,resoffset = %d)", offset, seekmode, (int32)newoff));
 
 	if ( newoff == -1 )
-		return unix2toserrno(errno,TOS_EIO);
+		return errnoHost2Mint(errno,TOS_EIO);
 
 	return newoff;
 }
@@ -1232,15 +1265,11 @@ int32 HostFs::xfs_remove( XfsCookie *dir, memptr name )
 	char fname[MAXPATHNAMELEN];
 	a2fstrcpy( fname, name );
 
-	char pathName[MAXPATHNAMELEN];
-	cookie2Pathname(dir->index,fname,pathName); // get the cookie filename
-
-	// FIXME: remove the convertPathA2F() the check should be done some other way.
 	char fpathName[MAXPATHNAMELEN];
-	convertPathA2F( mounts.find(dir->dev)->second, fpathName, pathName, "" ); // convert the fname into the hostfs form (check the 8+3 file existence)
+	cookie2Pathname(dir,fname,fpathName); // get the cookie filename
 
 	if ( unlink( fpathName ) )
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	return TOS_E_OK;
 }
@@ -1255,11 +1284,11 @@ int32 HostFs::xfs_rename( XfsCookie *olddir, memptr oldname, XfsCookie *newdir, 
 
 	char fpathName[MAXPATHNAMELEN];
 	char fnewPathName[MAXPATHNAMELEN];
-	cookie2Pathname( olddir->index, foldname, fpathName );
-	cookie2Pathname( newdir->index, fnewname, fnewPathName );
+	cookie2Pathname( olddir, foldname, fpathName );
+	cookie2Pathname( newdir, fnewname, fnewPathName );
 
 	if ( rename( fpathName, fnewPathName ) )
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	return TOS_E_OK;
 }
@@ -1273,31 +1302,47 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 	a2fstrcpy( ftoname, toname );
 
 	char ffromName[MAXPATHNAMELEN];
-	cookie2Pathname( dir->index, ffromname, ffromName );
+	cookie2Pathname( dir, ffromname, ffromName );
 
 	// search among the mount points to find suitable link...
 	size_t toNmLen = strlen( ftoname );
-	size_t mpLen = 0;
+	size_t mpLen;
 
 	// prefer the current device
-	MountMap::iterator it = mounts.find(dir->dev);
-	if ( ! ( ( mpLen = strlen( it->second->mountPoint ) ) < toNmLen &&
-			 !strncmp( it->second->mountPoint, ftoname, mpLen ) ) )
-	{
-		// preference failed -> search all
-		it = mounts.begin();
-		while (it != mounts.end()) {
-			mpLen = strlen( it->second->mountPoint );
-			if ( mpLen < toNmLen &&
-				 !strncmp( it->second->mountPoint, ftoname, mpLen ) )
-				break;
-			it++;
+	ExtDrive *drv = dir->drv;
+
+	MountMap::iterator it = mounts.begin();
+
+	// no dir->drv? should never happen!
+	if ( !drv ) {
+		if ( it == mounts.end() )
+			panicbug( "HOSTFS: fs_symlink: \"%s\"-->\"%s\" dir->drv == NULL && mounts.size() == 0!", ffromname, ftoname );
+		drv = it->second;
+		it++;
+		bug( "HOSTFS: ERROR: fs_symlink: \"%s\"-->\"%s\" dir->drv == NULL???", ffromname, ftoname );
+	}
+
+	// compare the beginning of the link path with the current
+	// mountPoint path (if matches then use the current drive)
+	while ( drv && 
+			! ( ( mpLen = strlen( drv->mountPoint ) ) < toNmLen &&
+				!strncmp( drv->mountPoint, ftoname, mpLen ) ) ) {
+
+		// no more mountpoints available
+		if (it == mounts.end()) {
+			drv = NULL;
+			break;
 		}
+
+		// get the ExtDrive from the mountpoint
+		drv = it->second;
+		// move the iterator to the next one
+		it++;
 	}
 
 	char ftoName[MAXPATHNAMELEN];
-	if ( it != mounts.end() ) {
-		strcpy( ftoName, it->second->hostRoot );
+	if ( drv ) {
+		strcpy( ftoName, drv->hostRoot );
 		strcat( ftoName, &ftoname[ mpLen ] );
 	} else {
 		strcpy( ftoName, ftoname );
@@ -1306,7 +1351,7 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 	D(bug( "HOSTFS: fs_symlink: \"%s\" --> \"%s\"", ffromName, ftoName ));
 
 	if ( symlink( ftoName, ffromName ) )
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	return TOS_E_OK;
 }
@@ -1315,13 +1360,13 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname( fp->fc.index, NULL, fpathName );
+	cookie2Pathname( &fp->fc, NULL, fpathName );
 
 	D(bug("HOSTFS:  dev_datime (%s)", fpathName));
 	struct stat statBuf;
 
 	if ( stat(fpathName, &statBuf) )
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	uint32 datetime = ReadInt32( datetimep );
 	if (wflag != 0) {
@@ -1355,7 +1400,7 @@ int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname(fc->index, NULL, fpathName);
+	cookie2Pathname(fc, NULL, fpathName);
 
 	int	 oldErrno = errno;
 #ifdef HAVE_SYS_STATVFS_H
@@ -1376,7 +1421,7 @@ int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 #else
 	if ( statfs(fpathName, &buf) )
 #endif
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	switch (which) {
 		case -1:
@@ -1388,7 +1433,7 @@ int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 		case 1: { // DP_MAXLINKS
 			long result = pathconf(fpathName, _PC_LINK_MAX);
 			if ( result == -1 && oldErrno != errno )
-				return unix2toserrno(errno,TOS_EFILNF);
+				return errnoHost2Mint(errno,TOS_EFILNF);
 
 			return result;
 		}
@@ -1446,7 +1491,7 @@ int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 int32 HostFs::xfs_opendir( XfsDir *dirh, uint16 flags )
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname(dirh->fc.index, NULL, fpathName);
+	cookie2Pathname(&dirh->fc, NULL, fpathName);
 
 	D(bug("HOSTFS: fs_opendir (%s,%d)", fpathName, flags));
 
@@ -1455,7 +1500,7 @@ int32 HostFs::xfs_opendir( XfsDir *dirh, uint16 flags )
 
 	dirh->hostDir = opendir( fpathName );
 	if ( dirh->hostDir == NULL )
-		return unix2toserrno(errno,TOS_EPTHNF);
+		return errnoHost2Mint(errno,TOS_EPTHNF);
 
 	return TOS_E_OK;
 }
@@ -1465,7 +1510,7 @@ int32 HostFs::xfs_opendir( XfsDir *dirh, uint16 flags )
 int32 HostFs::xfs_closedir( XfsDir *dirh )
 {
 	if ( closedir( dirh->hostDir ) )
-		return unix2toserrno(errno,TOS_EPTHNF);
+		return errnoHost2Mint(errno,TOS_EPTHNF);
 
 	return TOS_E_OK;
 }
@@ -1515,7 +1560,8 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 	newFsFile->refCount = 1;
 	newFsFile->childCount = 0;
 
-	fc->xfs = mounts.find(dirh->fc.dev)->second->fsDrv;
+	fc->drv = dirh->fc.drv;
+	fc->xfs = fc->drv->fsDrv;
 	fc->dev = dirh->fc.dev;
 	fc->aux = 0;
 	fc->index = newFsFile;
@@ -1535,19 +1581,19 @@ int32 HostFs::xfs_rewinddir( XfsDir *dirh )
 int32 HostFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname(fc->index, NULL, fpathName);
+	cookie2Pathname(fc, NULL, fpathName);
 
 	D(bug("HOSTFS: fs_getxattr (%s)", fpathName));
 
 	// perform the link stat itself
 	struct stat statBuf;
 	if ( lstat(fpathName, &statBuf) )
-		return unix2toserrno(errno,TOS_EFILNF);
+		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	// XATTR structure conversion (COMPEND.HYP)
-	/* UWORD mode	   */  WriteInt16( xattrp	  , statmode2xattrmode(statBuf.st_mode));
-	/* LONG	 index	   */  WriteInt32( xattrp +	 2, statBuf.st_ino );
-	/* UWORD dev	   */  WriteInt16( xattrp +	 6, statBuf.st_dev );	 // FIXME: this is Linux's one
+	/* UWORD mode	   */  WriteInt16( xattrp	  , modeHost2Mint(statBuf.st_mode) );
+	/* LONG	 index	   */  WriteInt32( xattrp +	 2, (uint32)MAPVOIDPTO32( fc->index ) /* statBuf.st_ino */ );
+	/* UWORD dev	   */  WriteInt16( xattrp +	 6, fc->dev /* statBuf.st_dev */ );
 	/* UWORD reserved1 */  WriteInt16( xattrp +	 8, 0 );
 	/* UWORD nlink	   */  WriteInt16( xattrp + 10, statBuf.st_nlink );
 	/* UWORD uid	   */  WriteInt16( xattrp + 12, statBuf.st_uid );	 // FIXME: this is Linux's one
@@ -1565,7 +1611,7 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
 	/* UWORD adate	   */  WriteInt16( xattrp + 34, date2dos(statBuf.st_atime) );
 	/* UWORD ctime	   */  WriteInt16( xattrp + 36, time2dos(statBuf.st_ctime) );
 	/* UWORD cdate	   */  WriteInt16( xattrp + 38, date2dos(statBuf.st_ctime) );
-	/* UWORD attr	   */  WriteInt16( xattrp + 40, statmode2attr(statBuf.st_mode) );
+	/* UWORD attr	   */  WriteInt16( xattrp + 40, modeHost2TOS(statBuf.st_mode) );
 	/* UWORD reserved2 */  WriteInt16( xattrp + 42, 0 );
 	/* LONG	 reserved3 */  WriteInt32( xattrp + 44, 0 );
 	/* LONG	 reserved4 */  WriteInt32( xattrp + 48, 0 );
@@ -1579,7 +1625,7 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
 int32 HostFs::xfs_chattr( XfsCookie *fc, int16 attr )
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname(fc->index, NULL, fpathName);
+	cookie2Pathname(fc, NULL, fpathName);
 
 	D(bug("HOSTFS: fs_chattr (%s)", fpathName));
 
@@ -1587,7 +1633,7 @@ int32 HostFs::xfs_chattr( XfsCookie *fc, int16 attr )
 	struct stat statBuf;
     mode_t newmode;
     if ( lstat( fpathName, &statBuf ) )
-		return unix2toserrno( errno, TOS_EACCDN );
+		return errnoHost2Mint( errno, TOS_EACCDN );
 
     if ( attr & 0x01 ) /* FA_RDONLY */
 		newmode = statBuf.st_mode & ~( S_IWUSR | S_IWGRP | S_IWOTH );
@@ -1595,7 +1641,7 @@ int32 HostFs::xfs_chattr( XfsCookie *fc, int16 attr )
 		newmode = statBuf.st_mode | ( S_IWUSR | S_IWGRP | S_IWOTH );
     if ( newmode != statBuf.st_mode &&
 		 chmod( fpathName, newmode ) )
-		return unix2toserrno( errno, TOS_EACCDN );
+		return errnoHost2Mint( errno, TOS_EACCDN );
 
 	return TOS_E_OK;
 }
@@ -1604,7 +1650,7 @@ int32 HostFs::xfs_chattr( XfsCookie *fc, int16 attr )
 int32 HostFs::xfs_chmod( XfsCookie *fc, uint16 mode )
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname(fc->index, NULL, fpathName);
+	cookie2Pathname(fc, NULL, fpathName);
 
     /* FIXME: ARAnyM has to run at root and uid and gid have to */
     /* FIXME: be same at unix and MiNT! */
@@ -1612,7 +1658,7 @@ int32 HostFs::xfs_chmod( XfsCookie *fc, uint16 mode )
 		   "  CANNOT WORK CORRECTLY UNTIL uid AND gid AT MiNT ARE SAME LIKE AT UNIX!)\n" ));
 
     if ( chmod( fpathName, mode ) )
-		return unix2toserrno( errno, TOS_EACCDN );
+		return errnoHost2Mint( errno, TOS_EACCDN );
 
 	return TOS_E_OK;
 }
@@ -1631,13 +1677,14 @@ int32 HostFs::xfs_root( uint16 dev, XfsCookie *fc )
 		   "  devdrv = %#08lx\n",
 		   dev, it->second->fsDrv));
 
-	fc->xfs = it->second->fsDrv;
+	fc->drv = it->second;
+	fc->xfs = fc->drv->fsDrv;
 	fc->dev = dev;
 	fc->aux = 0;
 	fc->index = new XfsFsFile(); MAPNEWVOIDP( fc->index );
 
 	fc->index->parent = NULL;
-	fc->index->name = it->second->hostRoot;
+	fc->index->name = fc->drv->hostRoot;
 	fc->index->refCount = 1;
 	fc->index->childCount = 0;
 
@@ -1656,19 +1703,19 @@ int32 HostFs::xfs_root( uint16 dev, XfsCookie *fc )
 int32 HostFs::xfs_getdev( XfsCookie *fc, memptr devspecial )
 {
 	WriteInt32(devspecial,0); /* reserved */
-	return (int32)mounts.find(fc->dev)->second->fsDevDrv;
+	return (int32)fc->drv->fsDevDrv;
 }
 
 
 int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname(dir->index,NULL,fpathName); // get the cookie filename
+	cookie2Pathname(dir,NULL,fpathName); // get the cookie filename
 
 	char fbuf[MAXPATHNAMELEN];
 	int rv;
 	if ((rv=readlink(fpathName,fbuf,len-1)) < 0)
-		return unix2toserrno( errno, TOS_EFILNF );
+		return errnoHost2Mint( errno, TOS_EFILNF );
 
 	// put the trailing \0
 	fbuf[rv] = '\0';
@@ -1763,19 +1810,15 @@ int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 
 		newFsFile->parent = dir->index;
 
-		char pathName[MAXPATHNAMELEN];
-		cookie2Pathname(dir->index,fname,pathName); // get the cookie filename
-
-		// FIXME: remove the convertPathA2F() the check should be done some other way.
 		char fpathName[MAXPATHNAMELEN];
-		convertPathA2F( mounts.find(dir->dev)->second, fpathName, pathName, "" ); // convert the fname into the hostfs form
+		cookie2Pathname(dir,fname,fpathName); // get the cookie filename
 
 		struct stat statBuf;
 
 		D(bug( "HOSTFS: fs_lookup stat: %s", fpathName ));
 
 		if ( lstat( fpathName, &statBuf ) )
-			return unix2toserrno( errno, TOS_EFILNF );
+			return errnoHost2Mint( errno, TOS_EFILNF );
 
 		MAPNEWVOIDP( newFsFile );
 		newFsFile->name = strdup(fname);
@@ -1794,11 +1837,11 @@ int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 int32 HostFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, int16 size )
 {
     char base[MAXPATHNAMELEN];
-    cookie2Pathname(relto->index,NULL,base); // get the cookie filename
+    cookie2Pathname(relto,NULL,base); // get the cookie filename
 
     char dirBuff[MAXPATHNAMELEN];
     char *dirPath = dirBuff;
-    cookie2Pathname(dir->index,NULL,dirBuff); // get the cookie filename
+    cookie2Pathname(dir,NULL,dirBuff); // get the cookie filename
 
     char fpathName[MAXPATHNAMELEN];
 
@@ -1844,6 +1887,55 @@ int32 HostFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, in
 }
 
 
+/*
+ * MagiC opcodes (all group 'm' opcodes are reserved for MagiC)
+ */
+
+# define MX_KER_GETINFO         (('m'<< 8) | 0)         /* mgx_dos.txt */
+# define MX_KER_DOSLIMITS       (('m'<< 8) | 1)         /* mgx_dos.txt */
+# define MX_KER_INSTXFS         (('m'<< 8) | 2)         /* mgx_dos.txt */
+# define MX_KER_DRVSTAT         (('m'<< 8) | 4)         /* mgx_dos.txt */
+# define MX_KER_XFSNAME         (('m'<< 8) | 5)         /* mgx_dos.txt */
+# define MX_DEV_INSTALL         (('m'<< 8) | 0x20)      /* mgx_dos.txt */
+# define MX_DFS_GETINFO         (('m'<< 8) | 0x40)      /* mgx_dos.txt */
+# define MX_DFS_INSTDFS         (('m'<< 8) | 0x41)      /* mgx_dos.txt */
+
+# define FS_INFO        0xf100
+# define FS_USAGE       0xf101
+
+# define FS_HOSTFS   (15L << 16)
+
+
+int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
+{
+	switch ((uint16)cmd)
+	{
+		case MX_KER_XFSNAME:
+		{
+			D(bug( "HOSTFS: fs_fscntl: MX_KER_XFSNAME: arg = %08lx", arg ));
+			f2astrcpy (arg, "HostFS Filesystem");
+			return TOS_E_OK;
+		}
+		case FS_INFO:
+		{
+			D(bug( "HOSTFS: fs_fscntl: FS_INFO: arg = %08lx", arg ));
+			if (arg)
+			{
+				f2astrcpy (arg   , "HostFS XFS");
+				WriteInt32(arg+32, ((int32)HOSTFS_XFS_VERSION << 16) | HOSTFS_NFAPI_VERSION );
+				WriteInt32(arg+36, FS_HOSTFS );
+				f2astrcpy (arg+40, "host fs");
+			}
+			return TOS_E_OK;
+		}
+		// FIXME: TODO other cases like:
+		// FS_USAGE, V_CNTR_WP, FUTIME*, FTRUNCATE
+	}
+
+	return TOS_ENOSYS;
+}
+
+
 int32 HostFs::xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook )
 {
     XfsFsFile *fs = new XfsFsFile();
@@ -1856,7 +1948,7 @@ int32 HostFs::xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook )
         }
         fs->parent->childCount++;
     } else
-        fs->name = mounts.find(oldCook->dev)->second->hostRoot;
+        fs->name = oldCook->drv->hostRoot;
 
 	MAPNEWVOIDP( fs );
     fs->refCount = 1;
@@ -1951,7 +2043,8 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 			drv->hostRoot = strdup( bx_options.aranymfs[fmountpoint[3]-'a'].rootPath );
 			drv->halfSensitive = bx_options.aranymfs[fmountpoint[3]-'a'].halfSensitive;
 		} else {
-			// no [aranymfs] match -> map to the passed mountpoint (future extension to map from m68k side)
+			// no [aranymfs] match -> map to the passed mountpoint
+			//  - future extension to map from m68k side
 			char fhostroot[MAXPATHNAMELEN];
 			a2fstrcpy( fhostroot, hostroot );
 
@@ -1964,9 +2057,10 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	mounts.insert(std::make_pair( devnum, drv ));
 
 	// if the drive mount was mounted to some FreeMiNT mountpoint
-	// which devnum is higher that MAXDRIVES then serve also for the
+	// which devnum is higher that MAXDRIVES then serve also as the
 	// GEMDOS drive equivalent. This is a need for the current
-    // FreeMiNT kernel which requires to react to 0-31 devno's
+    // FreeMiNT kernel which requires the driver for u:\[a-z0-6] to react
+	// to 0-31 devno's
 	if ( dnum != devnum &&
 		 dnum != -1 &&
 		 (unsigned int)dnum < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) ) {
@@ -1997,6 +2091,10 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.17  2003/09/25 09:08:10  milan
+ * OS_TYPE and CPU_TYPE for future natfeat exported to sources
+ * debuginfo for hostfs blocked for CVS
+ *
  * Revision 1.16  2003/07/17 13:52:33  joy
  * hostfs fixes by Xavier
  *

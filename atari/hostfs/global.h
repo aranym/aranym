@@ -35,6 +35,9 @@
 #include "mint/stat.h"
 #include "libkern/libkern.h"
 
+/* get the version number */
+#include "hostfs_nfapi.h"
+
 /*
  * debugging stuff
  */
@@ -46,12 +49,6 @@
 #  define TRACE(x)      KERNEL_TRACE x
 #endif
 
-/*
- * version
- */
-#define VER_MAJOR	    0
-#define VER_MINOR	    2
-#define BETA
 
 #ifdef ALPHA
 # define VER_ALPHABETA   "\0340"
@@ -61,16 +58,16 @@
 # define VER_ALPHABETA
 #endif
 
-#define MSG_VERSION	str (VER_MAJOR) "." str (VER_MINOR) VER_ALPHABETA
+#define MSG_VERSION	str (HOSTFS_XFS_VERSION) "." str (HOSTFS_NFAPI_VERSION) VER_ALPHABETA
 #define MSG_BUILDDATE	__DATE__
 
 #define MSG_BOOT       \
-    "\033p ARAnyM host filesystem driver version " MSG_VERSION " \033q\r\n"
+    "\033p HostFS Filesystem driver version " MSG_VERSION " \033q\r\n"
 
 #define MSG_GREET	\
     "½ 1998, 1999, 2001 by Markus Kohm <Markus.Kohm@gmx.de>.\r\n" \
     "½ 2000 by Chris Felsch <C.Felsch@gmx.de>\r\n"\
-    "½ " MSG_BUILDDATE " by STanda/JAY Software\r\n\r\n"
+    "½ " MSG_BUILDDATE " by ARAnyM Team\r\n\r\n"
 
 # define MSG_ALPHA      \
     "\033p WARNING: This is an unstable version - ALPHA! \033q\7\r\n"
@@ -100,6 +97,9 @@ extern struct kerinfo *KERNEL;
 
 /*
  * $Log$
+ * Revision 1.3  2003/03/24 08:58:53  joy
+ * aranymfs.xfs renamed to hostfs.xfs
+ *
  * Revision 1.2  2003/03/01 11:57:37  joy
  * major HOSTFS NF API cleanup
  *

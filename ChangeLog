@@ -1,3 +1,20 @@
+2004/10/02 - STanda
+- HOSTFS: cleanup + some new features.
+  * Fxattr() now returns the (uint32)MAPVOIDPTO32( fc->index ) instead
+    of the host OS' statBuf.st_ino. This is a problem IMO due to that
+    the fc->index might change on releaseCookie()/dupCookie(). Proposals?
+  * The first fscntl() implementation added.
+  * The convertPathA2F() method was removed. This was a legacy code from
+    the times when the native implementation had the BetaDOS driver API.
+    Now it has the FreeMiNT's XFS API and the BetaDOS' driver API (GEMDOS)
+    emulation was stolen from FreeMiNT.
+  * The ExtDrive * was added to the XfsCookie and is filled within the
+    fetchXFSC() method. This was needed for the cookie2Pathname().
+  * xfs_symlink() improved - still not perfect
+  * open() modeMint2Host conversion introduced (for the case the stat.h
+    is incompatible - not very likely)
+
+
 2003/09/30 - patrice
 - Natfeat CD-ROM driver splitted to ease port to other OS.
 

@@ -28,39 +28,6 @@ class HostFs : public NF_Base
 	//       the std::string to become unlimited
 	static const int MAXPATHNAMELEN = 2048;
 
-	struct XfsFsFile {
-		XfsFsFile *parent;
-		uint32	  refCount;
-		uint32	  childCount;
-		bool      created;      // only xfs_creat() was issued (no dev_open yet)
-
-		char	  *name;
-	};
-
-	struct XfsCookie {
-		memptr    xfs;          // m68k filesystem pointer
-		uint16    dev;          // device number
-		uint16    aux;          // used by FreeMiNT (custom filsystem field)
-		XfsFsFile *index;       // the filesystem implementation specific structure (host one)
-	};
-
-	struct ExtFile {
-		XfsCookie fc;           // file cookie like in FreeMiNT
-		int16	  flags;        // open flags
-		int16	  links;        // number of MetaDOS's pointers that points to this
-
-		int       hostFd;       // host filedescriptor of the file
-	};
-
-	struct XfsDir {
-		XfsCookie fc;			// cookie for this directory
-		uint16    index;		// index of the current entry
-		uint16    flags;		// flags (e. g. tos or not)
-
-		DIR       *hostDir;		// used DIR (host one)
-	};
-
-
 	struct ExtDrive	{
 		int16     driveNumber;
 		memptr    fsDrv;
@@ -85,6 +52,41 @@ class HostFs : public NF_Base
 			free( mountPoint );
 		}
 	};
+
+	struct XfsFsFile {
+		XfsFsFile *parent;
+		uint32	  refCount;
+		uint32	  childCount;
+		bool      created;      // only xfs_creat() was issued (no dev_open yet)
+
+		char	  *name;
+	};
+
+	struct XfsCookie {
+		memptr    xfs;          // m68k filesystem pointer
+		uint16    dev;          // device number
+		uint16    aux;          // used by FreeMiNT (custom filsystem field)
+		XfsFsFile *index;       // the filesystem implementation specific structure (host one)
+
+		ExtDrive  *drv;         // dev->drv mapping is found during the cookie fetch
+	};
+
+	struct ExtFile {
+		XfsCookie fc;           // file cookie like in FreeMiNT
+		int16	  flags;        // open flags
+		int16	  links;        // number of MetaDOS's pointers that points to this
+
+		int       hostFd;       // host filedescriptor of the file
+	};
+
+	struct XfsDir {
+		XfsCookie fc;			// cookie for this directory
+		uint16    index;		// index of the current entry
+		uint16    flags;		// flags (e. g. tos or not)
+
+		DIR       *hostDir;		// used DIR (host one)
+	};
+
 
 	// mountpoints map
 	typedef std::map<int16,ExtDrive*> MountMap;
@@ -117,16 +119,17 @@ class HostFs : public NF_Base
 	int32 dispatch( uint32 emulop );
 
 	/**
-	 * Unix to ARAnyM structure conversion routines.
+	 * Host to ARAnyM structure conversion routines.
 	 **/
-	uint32 unix2toserrno( int unixerrno,int defaulttoserrno );
-	uint16 statmode2xattrmode( mode_t m );
-	uint16 statmode2attr( mode_t m );
+	uint32 errnoHost2Mint( int unixerrno,int defaulttoserrno );
+	mode_t modeMint2Host( uint16 m );
+	uint16 modeHost2Mint( mode_t m );
+	uint16 modeHost2TOS( mode_t m );
+	int    flagsMint2Host( uint16 flags );
+	int16  flagsHost2Mint( int flags );
 	uint16 time2dos( time_t t );
 	uint16 date2dos( time_t t );
 	void   datetime2tm( uint32 dtm, struct tm* ttm );
-	int    st2flags( uint16 flags );
-	int16  flags2st( int flags );
 
 	/**
 	 * Path conversions.
@@ -144,13 +147,15 @@ class HostFs : public NF_Base
 	void fetchXFSD( XfsDir *dirh, memptr dirp );
 	void flushXFSD( XfsDir *dirh, memptr dirp );
 
-	char *cookie2Pathname( XfsFsFile *fs, const char *name, char *buf );
+	char *cookie2Pathname( ExtDrive *drv, XfsFsFile *fs, const char *name, char *buf );
+	char *cookie2Pathname( XfsCookie *fc, const char *name, char *buf );
 	void xfs_freefs( XfsFsFile *fs );
 
 	int32 xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
 						   memptr filesys, memptr filesys_devdrv );
 
 	int32 xfs_root( uint16 dev, XfsCookie *fc );
+	int32 xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg );
 	int32 xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook );
 	int32 xfs_release( XfsCookie *fc );
 	int32 xfs_getxattr( XfsCookie *fc, memptr xattrp );
@@ -189,6 +194,9 @@ class HostFs : public NF_Base
 
 /*
  * $Log$
+ * Revision 1.10  2003/07/17 13:52:34  joy
+ * hostfs fixes by Xavier
+ *
  * Revision 1.9  2003/06/26 21:27:14  joy
  * xfs_creat()/xfs_dev_open() fixed (gunzip problem)
  * xfs_native_init() fixed to handle the FreeMiNT requirements correctly
