@@ -77,6 +77,18 @@ static inline int get_instr_size_add(unsigned char *p)
 	return offset;
 }
 
+static inline void set_eflags(int i, struct sigcontext *sc) {
+	if (i < 0) sc->eflags |= 0x1;
+		else sc->eflags &= 0xfffffffe;
+	if ((i % 2) == 0) sc->eflags |= 0x4;
+		else sc->eflags &= 0xfffffffb;
+	if (i == 0) sc->eflags |= 0x40;
+		else sc->eflags &= 0xffffffbf;
+	if (i > 127) sc->eflags |= 0x80;
+		else sc->eflags &= 0xffffff7f;
+	if ((i > 255) || (i < 0)) sc->eflags |= 0x1;
+		else sc->eflags &= 0xfffffffe;
+}
 
 static void segfault_vec(int x, struct sigcontext sc) {
 	memptr addr = sc.cr2;
@@ -260,19 +272,19 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			if (size == 4) len += 2;
 			break;
 		case 0xf6:
+			reg = (addr_instr[1] >> 3) & 7;
+			size = 1;
 			switch (addr_instr[1] & 0x07) {
 				case 6:
 					D(panicbug("DIV m8"));
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_DIV8;
-					reg = (addr_instr[1] >> 3) & 7;
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
 				case 0:
 					D(panicbug("TEST m8, imm8"));
 					transfer_type = TYPE_STORE;
 					instruction = INSTR_TESTIMM8;
-					reg = (addr_instr[1] >> 3) & 7;
 					imm = addr_instr[2];
 					len += 3 + get_instr_size_add(addr_instr + 1);
 					break;
@@ -280,7 +292,6 @@ static void segfault_vec(int x, struct sigcontext sc) {
 					D(panicbug("TEST m8, imm8"));
 					transfer_type = TYPE_STORE;
 					instruction = INSTR_TESTIMM8;
-					reg = (addr_instr[1] >> 3) & 7;
 					imm = addr_instr[3];
 					len += 3 + get_instr_size_add(addr_instr + 1);
 					break;
@@ -341,31 +352,12 @@ static void segfault_vec(int x, struct sigcontext sc) {
 				break;
 			case INSTR_OR8:
 				*((uae_u8 *)preg) |= HWget_b(addr);
-				imm = *((uae_u8 *)preg);
-				if (imm < 0) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
-				if ((imm % 2) == 0) sc.eflags |= 0x4;
-					else sc.eflags &= 0xfffffffb;
-				if (imm == 0) sc.eflags |= 0x40;
-					else sc.eflags &= 0xffffffbf;
-				if (imm > 127) sc.eflags |= 0x80;
-					else sc.eflags &= 0xffffff7f;
-				if ((imm > 255) || (imm < 0)) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
+				set_eflags(*((uae_u8 *)preg), &sc);
 				break;
 			case INSTR_AND8:
 				*((uae_u8 *)preg) &= HWget_b(addr);
 				imm = *((uae_u8 *)preg);
-				if (imm < 0) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
-				if ((imm % 2) == 0) sc.eflags |= 0x4;
-					else sc.eflags &= 0xfffffffb;
-				if (imm == 0) sc.eflags |= 0x40;
-					else sc.eflags &= 0xffffffbf;
-				if (imm > 127) sc.eflags |= 0x80;
-					else sc.eflags &= 0xffffff7f;
-				if ((imm > 255) || (imm < 0)) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
+				set_eflags(*((uae_u8 *)preg), &sc);
 				break;
 			case INSTR_MOVZX8:
 				if (size == 4) {
@@ -387,16 +379,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			case INSTR_CMP8:
 				imm = *((uae_u8 *)preg);
 				imm -= HWget_b(addr);
-				if (imm < 0) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
-				if ((imm % 2) == 0) sc.eflags |= 0x4;
-					else sc.eflags &= 0xfffffffb;
-				if (imm == 0) sc.eflags |= 0x40;
-					else sc.eflags &= 0xffffffbf;
-				if (imm > 127) sc.eflags |= 0x80;
-					else sc.eflags &= 0xffffff7f;
-				if ((imm > 255) || (imm < 0)) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
+				set_eflags(imm, &sc);
 				break;
 			case INSTR_DIV8:
 				pom1 = sc.eax & 0xffff;
@@ -408,7 +391,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	} else {
 		switch (instruction) {
 			case INSTR_MOV8:
-//				D(bug("MOV value = $%x\n", *((uae_u8 *)preg)));
+				D2(panicbug("MOV value = $%x\n", *((uae_u8 *)preg)));
 				HWput_b(addr, *((uae_u8 *)preg));
 				break;
 			case INSTR_MOV32:
@@ -420,32 +403,14 @@ static void segfault_vec(int x, struct sigcontext sc) {
 				break;
 			case INSTR_OR8:
 				imm = HWget_b(addr);
-				HWput_b(addr, *((uae_u8 *)preg) | imm);
 				imm |= *((uae_u8 *)preg);
-				if (imm < 0) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
-				if ((imm % 2) == 0) sc.eflags |= 0x4;
-					else sc.eflags &= 0xfffffffb;
-				if (imm == 0) sc.eflags |= 0x40;
-					else sc.eflags &= 0xffffffbf;
-				if (imm > 127) sc.eflags |= 0x80;
-					else sc.eflags &= 0xffffff7f;
-				if ((imm > 255) || (imm < 0)) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
+				HWput_b(addr, imm);
+				set_eflags(imm, &sc);
 				break;
 			case INSTR_ORIMM8:
 				imm |= HWget_b(addr);
-				HWput_b(addr, (uae_u8)imm);
-				if (imm < 0) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
-				if ((imm % 2) == 0) sc.eflags |= 0x4;
-					else sc.eflags &= 0xfffffffb;
-				if (imm == 0) sc.eflags |= 0x40;
-					else sc.eflags &= 0xffffffbf;
-				if (imm > 127) sc.eflags |= 0x80;
-					else sc.eflags &= 0xffffff7f;
-				if ((imm > 255) || (imm < 0)) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
+				HWput_b(addr, imm);
+				set_eflags(imm, &sc);
 				break;
 			case INSTR_MOVIMM8:
 				HWput_b(addr, (uae_u8)imm);
@@ -459,16 +424,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 				break;
 			case INSTR_TESTIMM8:
 				imm &= HWget_b(addr);
-				if (imm < 0) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
-				if ((imm % 2) == 0) sc.eflags |= 0x4;
-					else sc.eflags &= 0xfffffffb;
-				if (imm == 0) sc.eflags |= 0x40;
-					else sc.eflags &= 0xffffffbf;
-				if (imm > 127) sc.eflags |= 0x80;
-					else sc.eflags &= 0xffffff7f;
-				if ((imm > 255) || (imm < 0)) sc.eflags |= 0x1;
-					else sc.eflags &= 0xfffffffe;
+				set_eflags(imm, &sc);
 				break;
 			default: abort();
 		}

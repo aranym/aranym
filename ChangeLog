@@ -1,3 +1,12 @@
+2002/12/07 - milan
+- sigsegv_linux.cpp: set_eflags()
+
+- cpuopti.c, compemu_support.cpp: workaround for gcc 3.x
+
+- memory.h.patch: for a bit better access to HW space for JIT compiler,
+                  unoffical!
+
+
 2002/10/07 - milan
 - autoconf 2.53+ needed now
 

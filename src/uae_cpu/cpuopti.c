@@ -209,7 +209,7 @@ reordered:
 
     while (in_pop_area) {
 	char *popm, *pushm;
-#if 1 && (((__GNUC__ == 2) && (__GNUC_MINOR__ >= 95)) || (__GNUC__ >= 3))
+#if 0 && (((__GNUC__ == 2) && (__GNUC_MINOR__ >= 95)) || (__GNUC__ >= 3))
 	/* gb-- This hack seems to work only for GCC versions greater or equal
 	 * to 2.95.2. The problem lays in newcpu.cpp/m68k_do_execute(), older
 	 * GCC wouldn't mind to save then restore registers.

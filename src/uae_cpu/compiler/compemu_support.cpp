@@ -6660,7 +6660,7 @@ void exec_nostats(void)
 {
 	for (;;)  { 
 		uae_u32 opcode = GET_OPCODE;
-#ifdef X86_ASSEMBLY
+#ifdef X86_ASSEMBLY__disable
 		ASM_VOLATILE("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
 			: : "b" (cpufunctbl[opcode]), "a" (opcode)
 			: "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
@@ -6691,7 +6691,7 @@ void execute_normal(void)
 #if FLIGHT_RECORDER
 			m68k_record_step(m68k_getpc());
 #endif
-#ifdef X86_ASSEMBLY
+#ifdef X86_ASSEMBLY__disable
 			ASM_VOLATILE("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
 				: : "b" (cpufunctbl[opcode]), "a" (opcode)
 				: "%edx", "%ecx", "%esi", "%edi", "%ebp", "memory", "cc");
@@ -6713,7 +6713,7 @@ typedef void (*compiled_handler)(void);
 void m68k_do_compile_execute(void)
 {
 	for (;;) {
-#ifdef X86_ASSEMBLY 
+#ifdef X86_ASSEMBLY__disable
 		ASM_VOLATILE("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
 			: : "b" (cache_tags[cacheline(regs.pc_p)].handler)
 			: "%edx", "%ecx", "%eax", "%esi", "%edi", "%ebp", "memory", "cc");
