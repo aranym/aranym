@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.8.11beta
+%define ver	0.9.0beta
 %define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -96,6 +96,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Sun Feb 20 2005 Petr Stehlik <pstehlik@sophics.cz>
+Version increased.
+
 * Sun Nov 07 2004 Petr Stehlik <pstehlik@sophics.cz>
 Version increased.
 

@@ -1,8 +1,6 @@
 /*
  *  version.h - Version information
  *
- *  Basilisk II (C) 1997-2000 Christian Bauer
- *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -22,12 +20,12 @@
 #define VERSION_H
 
 #define VER_MAJOR	0
-#define VER_MINOR	8
-#define VER_MICRO	12
+#define VER_MINOR	9
+#define VER_MICRO	0
 
 #ifndef VER_STATUS
-#define VER_STATUS	"alpha"
-//#define VER_STATUS	"beta"
+//#define VER_STATUS	"alpha"
+#define VER_STATUS	"beta"
 #endif
 
 #define str(x)		_stringify (x)
