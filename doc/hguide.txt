@@ -223,8 +223,7 @@ model:
   emulation loop) and when the CPU emulation ends it calls
   main.cpp:ExitAll() and quits. So not only MC68040 emulation runs
   in the main thread but also all the EmulOp and Native Features,
-  hardware emulation and fVDI screen output (VIDEL screen output 
-  is different, see below).
+  hardware emulation and VIDEL/fVDI screen output.
 
 - Then there is a SDL timer thread that runs with 10 ms resolution (wish it
   was 5 ms but unfortunately SDL is internally locked to 10 ms resolution).
