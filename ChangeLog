@@ -4,6 +4,8 @@
 
 - rtc.cpp: few more debug messages
 
+- main.cpp: DEBUG disabled
+
 
 2004/02/02 - milan
 - cdrom.cpp: Solaris support corrected
