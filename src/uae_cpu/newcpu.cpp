@@ -35,8 +35,6 @@ struct flag_struct regflags;
 
 /* LongJump buffer */
 jmp_buf excep_env;
-/* Exception number */
-uint32  excep_no;
 /* Opcode of faulting instruction */
 uae_u16 last_op_for_exception_3;
 /* PC at fault time */
@@ -1287,10 +1285,11 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 	if (regs.tcp) {
             uaecptr atcindex = ((addr << 11) >> 24);
 	    uint16 *rootp;
-	    if (setjmp(excep_env) == 0) {
+	    uint16 excep_nono;
+	    if ((excep_nono = setjmp(excep_env)) == 0) {
 	        rootp = (uint16 *)do_get_real_address_direct(regs.srp & ((addr >> 25) << 2));
 	    } else {
-		switch (excep_no) {
+		switch (excep_nono) {
 		    case 2: regs.mmusr = 0x800;
 		            return;
 		}
@@ -1302,10 +1301,10 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 	    if ((root & 0x3) > 1) {
 	        wr = (root & 0x4) >> 2;
 	        *rootp = root | 0x8;
-		if (setjmp(excep_env) == 0) {
+		if ((excep_nono = setjmp(excep_env)) == 0) {
 		    apdt = (uint16 *)do_get_real_address_direct((root & 0xfffffe00) | ((addr & 0x01fc0000) >> 16));
 		} else {
-		    switch (excep_no) {
+		    switch (excep_nono) {
 		        case 2: regs.mmusr = 0x800;
 		                return;
 		    }
@@ -1314,10 +1313,10 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 	        if ((pdt & 0x3) > 1) {
 	            wr += (pdt & 0x4) >> 2;
 		    *apdt = pdt | 0x8;
-		    if (setjmp(excep_env) == 0) {
+		    if ((excep_nono = setjmp(excep_env)) == 0) {
 		       	apd = (uint16 *)do_get_real_address_direct((pdt & 0xffffff80) | ((addr & 0x0003e000) >> 11));
 		    } else {
-			switch (excep_no) {
+			switch (excep_nono) {
 			    case 2: regs.mmusr = 0x800;
 			            return;
 			}
@@ -1783,23 +1782,8 @@ static int do_specialties (void)
 static void m68k_run_1 (void)
 {
 	for (;;) {
-		int prb;
-		if ((prb = setjmp(excep_env)) == 0) {
-			uae_u32 opcode = GET_OPCODE;
-			(*cpufunctbl[opcode])(opcode);
-		} else {
-			switch (excep_no) {
-			    case 2: fprintf(stderr, "BUS ERROR catched\n");
-			            Exception(2, 0);
-				    break;
-			    case 3: fprintf(stderr, "ACCESS ERROR\n");
-			            Exception(3, 0);
-				    break;
-			 	default:
-			 		// fprintf(stderr, "Exception #%d catched\n", prb);
-			        Exception(prb, 0);
-			}
-		}
+		uae_u32 opcode = GET_OPCODE;
+		(*cpufunctbl[opcode])(opcode);
 		if (regs.spcflags) {
 			if (do_specialties())
 				return;
@@ -1821,6 +1805,12 @@ void m68k_go (int may_quit)
     }
 */
     in_m68k_go++;
+setjmpagain:
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+        Exception(prb, 0);
+    	goto setjmpagain;
+    }
     for (;;) {
 	if (quit_program > 0) {
 	    if (quit_program == 1)
