@@ -1,8 +1,14 @@
-if you run a flavor of Unix or Linux, go to src/Unix folder and type
+You have to have SDL 1.2.x, get it from http://www.libsdl.org/
+or from your distribution vendor.
 
-./configure && make
+If you run a flavor of Unix or Linux, go to src/Unix folder.
 
-not sure about make install but you can start aranym directly by
+If you got the source code from CVS then start with ./autogen.sh
+
+Then type ./configure && make
+
+Not sure about make install but you can start aranym directly by
 typing ./aranym.
 
-It's a good idea to edit the config file ~/.aranymrc
+It's a good idea to edit the config file ~/.aranymrc, an example you'll
+find in doc/src/atari/aranymrc.example.
