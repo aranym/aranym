@@ -355,11 +355,11 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 				inet_aton(buffer, &s->sin_addr);
 			}
 			return 0;
-#else
-		case SIOCGIFADDR:
-		case SIOCGIFNETMASK:
 #endif /* AUTO_IP_CONFIGURE */
-		case SIOCGIFFLAGS:
+
+		case SIOCSIFNETMASK:
+		case SIOCSIFFLAGS:
+		case SIOCSIFADDR:
 			return 0;
 
 		case SIOCSIFMTU:
