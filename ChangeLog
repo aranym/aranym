@@ -1,3 +1,12 @@
+2002/02/21 - milan & joy
+- cdrom.cpp sync with Bochs (CD-ROM eject supported)
+- ata.cpp sync with Bochs (32-bit data access supported)
+- CD-ROM eject in Linux added
+- hardware.cpp + ide.cpp updated for 32-bit IDE data access.
+  It did not work so it is disabled in ide.cpp for now.
+- version increased to 0.0.22 so you can see new IDE code is there.
+
+
 2002/02/20 - joy
 - config file is created with proper default values
 - IDE devices are disabled by default
