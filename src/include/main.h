@@ -54,26 +54,14 @@ extern void setactvdebug(int);
 // Platform-specific functions
 extern void QuitEmulator(void);				// Quit emulator
 
-// Interrupt flags
-enum {
-// MJ	INTFLAG_200HZ = 1,	// 200Hz VBL
-// MJ	INTFLAG_1HZ = 2,	// ~1Hz interrupt
-// MJ	INTFLAG_SERIAL = 4,	// Serial driver
-	INTFLAG_ETHER = 8,	// Ethernet driver
-// MJ	INTFLAG_AUDIO = 16,	// Audio block read
-// MJ	INTFLAG_TIMER = 32,	// Time Manager
-// MJ	INTFLAG_NMI = 64	// NMI
-};
-
-extern uint32 InterruptFlags;			// Currently pending interrupts
-extern void SetInterruptFlag(uint32 flag);	// Set/clear interrupt flags
-extern void ClearInterruptFlag(uint32 flag);
-
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.17  2002/10/07 23:00:42  joy
+ * CPU back in the main thread
+ *
  * Revision 1.15  2002/06/24 17:08:48  standa
  * The pointer arithmetics fixed. The memptr usage introduced in my code.
  *

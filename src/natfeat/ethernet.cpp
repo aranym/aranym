@@ -44,10 +44,6 @@ int32 ECE::dispatch(uint32 fncode)
 	int32 ret = 0;
 	switch(fncode) {
 		case 0x00: // interrupt raised by native side thread polling tap0 interface
-			if (InterruptFlags & INTFLAG_ETHER) {
-				ClearInterruptFlag(INTFLAG_ETHER);
-			}
-
 			if ( !getParameter(0) ) {
 				D(bug("/ECE: IRQ"));
 				finishInterupt();
@@ -233,7 +229,6 @@ int ECE::receiveFunc(void *arg)
 		if (res <= 0)
 			break;
 
-		// hostScreen.lock();
 		D(bug("ECE: going to read?"));
 
 		// Call protocol handler for received packets
@@ -253,8 +248,6 @@ int ECE::receiveFunc(void *arg)
 			SDL_SemWait(intAck);
 			D(bug(" int acknowledged"));
 		}
-
-		// hostScreen.unlock();
 	}
 	return 0;
 }
