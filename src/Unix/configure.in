@@ -810,12 +810,12 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" ]]; then
   DEFINES="$DEFINES -DUSE_JIT"
 
   if [[ "x$WANT_JIT_DEBUG" = "xyes" ]]; then
-    if [[ "x$WANT_MON" = "xyes" ]]; then
+#    if [[ "x$WANT_MON" = "xyes" ]]; then
       DEFINES="$DEFINES -DJIT_DEBUG=1"
-    else
-      AC_MSG_WARN([cxmon not found, ignoring --enable-jit-debug])
-      WANT_JIT_DEBUG=no
-    fi
+#    else
+#      AC_MSG_WARN([cxmon not found, ignoring --enable-jit-debug])
+#      WANT_JIT_DEBUG=no
+#    fi
   fi
 
   if [[ "x$WANT_JIT_FPU" = "xyes" ]]; then

@@ -31,7 +31,7 @@
 #include "fpu/flags.h"
 #include "parameters.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #ifdef ENABLE_MON
@@ -5087,12 +5087,13 @@ static void writemem_real(int address, int source, int offset, int size, int tmp
 {
     int f=tmp;
 
-    // DODO
-    D(panicbug("Writing from %08lx to %08lx", source, address));
+    D2(panicbug("Writing from %08lx to %08lx", source, address));
+#if 0
     if ((address - MEMBaseDiff) > 0xffefffff) {
 	    D(panicbug("HW Mirror"));
-	    address -= 0xfff00000;
+	    address -= 0xff000000;
     }
+#endif
 
 #if FIXED_ADDRESSING
 	if (clobber)
@@ -5239,12 +5240,13 @@ static void readmem_real(int address, int dest, int offset, int size, int tmp)
     if (size==4 && address!=dest)
 	f=dest;
 
-// DODO
-    D(panicbug("Reading from %08lx to %08lx", address, dest));
+    D2(panicbug("Reading from %08lx to %08lx", address, dest));
+#if 0
     if ((address - MEMBaseDiff) > 0xffefffff) {
 	    D(panicbug("HW Mirror"));
-	    address -= 0xfff00000;
+	    address -= 0xff000000;
     }
+#endif
 
 #if FIXED_ADDRESSING
 	switch(size) {
@@ -5372,7 +5374,7 @@ static __inline__ void get_n_addr_real(int address, int dest, int tmp)
 	f=dest;
 	}
 
-	D(panicbug("Get real address for %08lx to %08lx", address, dest));
+	D2(panicbug("Get real address for %08lx to %08lx", address, dest));
 	if ((address - MEMBaseDiff) > 0xffefffff) {
 		D(panicbug("HW Mirror"));
 		address -= 0xfff00000;
@@ -6213,8 +6215,10 @@ static uae_u8 *last_compiled_block_addr = 0;
 
 void compiler_dumpstate(void)
 {
+#if 0
 	if (!JITDebug)
 		return;
+#endif
 	
 	panicbug("### Host addresses");
 	panicbug("MEM_BASE    : %x", MEMBaseDiff);
