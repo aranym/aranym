@@ -43,7 +43,7 @@
 
 
 class HostScreen {
-  protected:
+  public:
 	SDL_mutex   *screenLock;
 	SDL_Surface *surf;	// The main window surface
 	uint32 sdl_videoparams;
@@ -80,6 +80,9 @@ class HostScreen {
 		palette.sdl.ncolors = 256;
 		palette.sdl.colors = palette.standard;
 
+		// the counter init
+		snapCounter = 0;
+
 		screenLock = SDL_CreateMutex();
 	}
 	~HostScreen() {
@@ -105,7 +108,6 @@ class HostScreen {
 
 	void   setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue );
 	uint32 getPaletteColor( uint8 index );
-	uint8  getPaletteInversIndex( uint8 index );
 	void   updatePalette( uint16 colorCount );
 	uint32 getColor( uint32 red, uint32 green, uint32 blue );
 
@@ -211,31 +213,6 @@ inline void HostScreen::setPaletteColor( uint8 index, uint32 red, uint32 green, 
 
 inline uint32 HostScreen::getPaletteColor( uint8 index ) {
 	return palette.native[index];
-}
-
-inline uint8 HostScreen::getPaletteInversIndex( uint8 index ) {
-	return ~index;
-#ifdef FIXME
-	SDL_Color& color = palette.standard[index];
-	//	return SDL_MapRGB( surf->format, ~color.r, ~color.g, ~color.b );
-
-	uint8 red   = ~color.r;
-	uint8 green = ~color.g;
-	uint8 blue  = ~color.b;
-	int8 result = ~index;
-
-	// search for the inverse color
-	uint16 diff, minDiff = ~0;
-	for( int i=0; i<256; i++ ) {
-		color = palette.standard[i];
-		diff = abs(color.r - red) + abs(color.g - green) + abs(color.b - blue);
-		if ( diff < minDiff ) {
-			result = i;
-			minDiff = diff;
-		}
-	}
-	return result;
-#endif
 }
 
 inline void HostScreen::updatePalette( uint16 colorCount ) {
@@ -400,6 +377,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.25  2001/12/17 09:38:09  standa
+ * The inline update() function order change to not to cause warnings.
+ *
  * Revision 1.24  2001/12/17 08:33:00  standa
  * Thread synchronization added. The check_event and fvdidriver actions are
  * synchronized each to other.

@@ -60,6 +60,11 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	this->height = height;
 	this->bpp = bpp;
 
+	// backup the pallete settings
+	SDL_Color paletteBackup[256];
+	for (int i = 0; i < 256; i++)
+		paletteBackup[i] = palette.standard[i];
+
 	// SelectVideoMode();
 	sdl_videoparams = SDL_HWSURFACE | SDL_HWPALETTE;
 	if (bx_options.video.fullscreen)
@@ -67,6 +72,12 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 
 	surf = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
+
+	// restore the pallete settings
+	for (int i = 0; i < 256; i++)
+		setPaletteColor( i, paletteBackup[i].r, paletteBackup[i].g, paletteBackup[i].b );
+	updatePalette( 256 );
+
 	D(bug("Surface Pitch = %d, width = %d, height = %d", surf->pitch, surf->w, surf->h));
 	D(bug("Must Lock? %s", SDL_MUSTLOCK(surf) ? "YES" : "NO"));
 
@@ -90,10 +101,6 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			surf->format->Rmask, surf->format->Gmask, surf->format->Bmask,
 			surf->format->Rshift, surf->format->Gshift, surf->format->Bshift,
 			surf->format->Rloss, surf->format->Gloss, surf->format->Bloss));
-
-
-	// the counter init (should probably be placed in the constructor) FIXME
-	snapCounter = 0;
 }
 
 
@@ -178,7 +185,7 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 				case 3:
 					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint8*)pixel = getPaletteInversIndex( (*(uint8*)pixel) );
+							*(uint8*)pixel = ~(*(uint8*)pixel);
 					break;
 				case 4:
 					for (; pixel<pixellast; pixel += pixx)
@@ -313,7 +320,7 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 				case 3:
 					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint8*)pixel = getPaletteInversIndex( (*(uint8*)pixel) );
+							*(uint8*)pixel = ~(*(uint8*)pixel);
 					break;
 				case 4:
 					for (; pixel<pixellast; pixel += pixy)
@@ -491,7 +498,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 				case 3:
 					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
-							*(uint8*)pixel = getPaletteInversIndex( (*(uint8*)pixel) );
+							*(uint8*)pixel = ~(*(uint8*)pixel);
 
 						y += dy;
 						if (y >= dx) {
@@ -729,7 +736,7 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint8*)pixel = getPaletteInversIndex( (*(uint8*)pixel) );
+								*(uint8*)pixel = ~(*(uint8*)pixel);
 							pixel += pixx;
 						};
 					}
@@ -899,6 +906,10 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.24  2001/12/22 18:13:24  joy
+ * most video related parameters moved to bx_options.video struct.
+ * --refresh <x> added
+ *
  * Revision 1.23  2001/12/03 20:56:07  standa
  * The gfsprimitives library files removed. All the staff was moved and
  * adjusted directly into the HostScreen class.

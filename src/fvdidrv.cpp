@@ -482,7 +482,7 @@ void FVDIDriver::setColor( uint32 paletteIndex, uint32 red, uint32 green, uint32
 void FVDIDriver::setResolution( int32 width, int32 height, int32 depth, int32 freq )
 {
 	D(bug("fVDI: setResolution: %dx%dx%d@%d", width, height, depth, freq ));
-	hostScreen.setWindowSize( width, height, depth );
+	hostScreen.setWindowSize( width, height, depth > 8 ? depth : 8 );
 }
 
 
@@ -944,8 +944,8 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 int FVDIDriver::fillArea(uint32 vwk, uint32 x_, uint32 y_, int w, int h,
                          uint32 pattern_addr, int32 colors)
 {
-	uint32 fgColor = hostScreen.getPaletteColor((int16)(colors & 0xffff));
-	uint32 bgColor = hostScreen.getPaletteColor((int16)(colors >> 16));
+	uint32 fgColor = (int16)(colors & 0xffff);
+	uint32 bgColor = (int16)(colors >> 16);
 
 	uint16 pattern[16];
 	for(int i = 0; i < 16; ++i)
@@ -970,6 +970,9 @@ int FVDIDriver::fillArea(uint32 vwk, uint32 x_, uint32 y_, int w, int h,
 	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
 	      fgColor, hostScreen.getPaletteColor(fgColor),
 	      bgColor, hostScreen.getPaletteColor(bgColor)));
+
+	fgColor = hostScreen.getPaletteColor(fgColor);
+	bgColor = hostScreen.getPaletteColor(bgColor);
 
 	if (!hostScreen.renderBegin())
 		return 1;
@@ -1889,6 +1892,9 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.29  2001/12/29 17:03:23  joy
+ * Johan: new(nothrow) => new(std:nothrow)
+ *
  * Revision 1.28  2001/12/17 08:33:00  standa
  * Thread synchronization added. The check_event and fvdidriver actions are
  * synchronized each to other.

@@ -1,5 +1,8 @@
 2002/01/08 - STanda
 - The aranymfs config file setting finished (thanks to JOY)
+- fVDI driver doesn't destroy palette setting on resolution change
+  The SDL_SetVideoMode clears the palette setting -> the palette is stored
+  and restored after change (hostscreen.cpp/setWindowSize()) 
 - up and running
 
 2002/01/08 - joy
