@@ -1,4 +1,10 @@
 #!/bin/bash
 
-DIR=pwd
-java -classpath $PWD/saxon.jar Main
+ps a | grep java | grep saxon\.jar > /dev/null
+if [ $? -ne 0 ]
+then
+	echo "Starting saxon.jar..."
+	java -classpath $PWD/saxon.jar Main
+else
+	echo "saxon.jar is already running..."
+fi
