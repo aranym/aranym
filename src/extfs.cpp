@@ -12,7 +12,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/vfs.h>
-#include <sys/statfs.h>
 #include <utime.h>
 #include <dirent.h>
 #include <ctype.h>
@@ -1596,6 +1595,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.13  2001/11/12 15:11:37  milan
+ * Small upgrade to multiplatform compatibility
+ *
  * Revision 1.12  2001/10/17 18:07:00  standa
  * the . and .. directories are returned by the Fsfirst and Fsnext (according to Julian Reschke)
  *

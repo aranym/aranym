@@ -1,3 +1,15 @@
+2001/11/13 - milan
+- web/Makefile corrected
+
+- saxon.jar not in CVS now (downloaded with wget from    )
+
+- gemram removed from Makefile.in
+
+
+2001/11/13 - Olivier Landemarre & milan
+- support for Cygwin
+
+
 2001/11/11 - joy
 - during configure you can "--enable-directcolor" which is the infamous TOS
   and Aranym patch for direct truecolor with VIDEL. I made it configurable

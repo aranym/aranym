@@ -127,7 +127,6 @@ install: $(APP) installdirs
 	$(INSTALL_DATA) ../atari/createdisk/mbrdata $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/mbrdata
 	$(INSTALL_DATA) ../atari/fvdi/drivers/16bit_pc.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/16bit_pc.sys.bz2
 	$(INSTALL_DATA) ../atari/tools/fastram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
-	$(INSTALL_DATA) ../atari/tools/gemram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/gemram.prg.bz2
 
 installdirs:
 	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(docdir)/$(APP)
@@ -149,7 +148,6 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/createdisk/mbrdata
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/16bit_pc.sys.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/gemram.prg.bz2
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/createdisk
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/aranymfs
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/fvdi
@@ -193,7 +191,6 @@ bindist: $(APP) bindistdirs
 	($INSTALL_DATA) ../atari/createdisk/mbrdata tmpdist$(datadir)/$(APP)/atari/createdisk/mbrdata
 	$(INSTALL_DATA) ../atari/fvdi/drivers/16bit_pc.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/16bit_pc.sys.bz2
 	$(INSTALL_DATA) ../atari/tools/fastram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
-	$(INSTALL_DATA) ../atari/tools/gemram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/gemram.prg.bz2
 	chmod -R a+r tmpdist
 	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
 	rm -rf tmpdist

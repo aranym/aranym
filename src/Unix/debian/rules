@@ -12,7 +12,7 @@ build: build-stamp
 build-stamp:
 	dh_testdir
 
-	./configure --prefix=/usr
+	./configure --prefix=/usr --enable-addressing=direct
 
 	touch build-stamp
 
@@ -60,8 +60,6 @@ binary-arch: build install
 	dh_strip
 	dh_compress
 	dh_fixperms
-	# You may want to make some executables suid here.
-	dh_suidregister
 #	dh_makeshlibs
 	dh_installdeb
 #	dh_perl

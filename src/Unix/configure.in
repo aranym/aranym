@@ -68,6 +68,7 @@ case "$target_os" in
   freebsd*)	OS_TYPE=freebsd;;
   solaris*)	OS_TYPE=solaris;;
   darwin*)	OS_TYPE=darwin;;
+  cygwin*)	OS_TYPE=cygwin;;
   *)		OS_TYPE=`echo $target_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
 esac
 DEFINES="$DEFINES -DOS_$OS_TYPE"
@@ -464,37 +465,44 @@ dnl Determine the addressing mode to use
 if [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
   ADDRESSING_MODE="real"
 else
-  ADDRESSING_MODE=""
-  AC_MSG_CHECKING([for the addressing mode to use])
-  for am in $ADDRESSING_TEST_ORDER; do
-    case $am in
-    real)
-      dnl Requires ability to mmap() Low Memory globals
-      if [[ "x$ac_cv_can_map_lm" = "xno" ]]; then
-        continue
-      fi
-      dnl Real addressing will probably work.
-      ADDRESSING_MODE="real"
-      DEFINES="$DEFINES -DREAL_ADDRESSING"
-      break
-      ;;
-    direct)
-      ADDRESSING_MODE="direct"
-      DEFINES="$DEFINES -DDIRECT_ADDRESSING"
-      break
-      ;;
-    normal)
-      ADDRESSING_MODE="normal"
-      DEFINES="$DEFINES -DNORMAL_ADDRESSING"
-      break
-      ;;
-    *)
-      AC_MSG_ERROR([Internal configure.in script error for $am addressing mode])
-    esac
-  done
-  AC_MSG_RESULT($ADDRESSING_MODE)
-  if [[ "x$ADDRESSING_MODE" = "x" ]]; then
-    AC_MSG_ERROR([Sorry, no suitable addressing mode in $ADDRESSING_TEST_ORDER])
+  if [[ "x$OS_TYPE" = "xcygwin" ]]; then
+    AC_MSG_CHECKING([for the addressing mode to use])
+    ADDRESSING_MODE="normal"
+    DEFINES="$DEFINES -DNORMAL_ADDRESSING"
+    AC_MSG_RESULT([normal (cygwin)])
+  else
+    ADDRESSING_MODE=""
+    AC_MSG_CHECKING([for the addressing mode to use])
+    for am in $ADDRESSING_TEST_ORDER; do
+      case $am in
+      real)
+        dnl Requires ability to mmap() Low Memory globals
+        if [[ "x$ac_cv_can_map_lm" = "xno" ]]; then
+          continue
+        fi
+        dnl Real addressing will probably work.
+        ADDRESSING_MODE="real"
+        DEFINES="$DEFINES -DREAL_ADDRESSING"
+        break
+        ;;
+      direct)
+        ADDRESSING_MODE="direct"
+        DEFINES="$DEFINES -DDIRECT_ADDRESSING"
+        break
+        ;;
+      normal)
+        ADDRESSING_MODE="normal"
+        DEFINES="$DEFINES -DNORMAL_ADDRESSING"
+        break
+        ;;
+      *)
+        AC_MSG_ERROR([Internal configure.in script error for $am addressing mode])
+      esac
+    done
+    AC_MSG_RESULT($ADDRESSING_MODE)
+    if [[ "x$ADDRESSING_MODE" = "x" ]]; then
+      AC_MSG_ERROR([Sorry, no suitable addressing mode in $ADDRESSING_TEST_ORDER])
+    fi
   fi
 fi
 
