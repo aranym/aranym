@@ -1,3 +1,27 @@
+2001/11/11 - joy
+- during configure you can "--enable-directcolor" which is the infamous TOS
+  and Aranym patch for direct truecolor with VIDEL. I made it configurable
+  in compile time to simplify the memory boundary checks in uae-cpu/memory.h.
+  The default is no direct truecolor (it's a hack, after all).
+
+- during configure you can "--enable-boundaryarray" which is a different
+  method for checking the memory boundaries. It's based on an array of bool
+  flags - each bool represents 1 MB of memory. There are separate tables
+  for reading and writting because you can't write to the ROM area.
+  Advantages:
+    o FastRAM is finally no slower than ST-RAM
+    o ST-RAM and FastRAM size can be configured in runtime very easily
+    o you can even simulate memory windows (FastRAM SIMM banks, e.g.)
+    o regular memory access gets a higher priority over HW reg access
+    o the code might be faster than the original 5 comparisons
+  Disadvantages:
+    o the whole megabyte of ROM area is readable (so including 0xe8-0xefffff)
+    o the code might be slower than the original due to indexing in 4 kB array
+
+- a change in IKBD emulation that fixes the problem with slow mouse motion
+  in Videlity Config prg.
+
+
 2001/11/07 - milan
 - new correction in mmu_decode_addr, I suppose still not enough
 
