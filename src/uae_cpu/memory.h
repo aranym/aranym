@@ -295,8 +295,16 @@ static inline void phys_put_byte(uaecptr addr, uae_u32 b)
 }
 
 #ifdef FULLMMU
+static inline bool is_unaligned(uaecptr addr, int size)
+{
+    uae_u32 page_mask = (regs.mmu_pagesize == MMU_PAGE_4KB ? 0xfffff000 : 0xffffe000);
+    return ((addr & (size - 1)) && (addr ^ (addr + size - 1)) & page_mask);
+}
+
 static inline uae_u32 get_long(uaecptr addr)
 {
+    if (is_unaligned(addr, 4))
+	return mmu_get_unaligned(addr, FC_DATA, 4);
     JMP_BUF excep_env_old;
     memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
     uae_u32 l;
@@ -313,6 +321,8 @@ static inline uae_u32 get_long(uaecptr addr)
 
 static inline uae_u16 get_word(uaecptr addr)
 {
+    if (is_unaligned(addr, 2))
+	return mmu_get_unaligned(addr, FC_DATA, 2);
     JMP_BUF excep_env_old;
     memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
     uae_u16 w;
@@ -345,6 +355,8 @@ static inline uae_u8 get_byte(uaecptr addr)
 
 static inline void put_long(uaecptr addr, uae_u32 l)
 {
+    if (is_unaligned(addr, 4))
+	return mmu_put_unaligned(addr, l, FC_DATA, 4);
     JMP_BUF excep_env_old;
     memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
     int prb = SETJMP(excep_env);
@@ -361,6 +373,8 @@ static inline void put_long(uaecptr addr, uae_u32 l)
 
 static inline void put_word(uaecptr addr, uae_u16 w)
 {
+    if (is_unaligned(addr, 2))
+	return mmu_put_unaligned(addr, w, FC_DATA, 2);
     JMP_BUF excep_env_old;
     memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
     int prb = SETJMP(excep_env);
@@ -403,6 +417,8 @@ static inline uae_u8 *get_real_address(uaecptr addr, int write, int sz)
 
 static inline uae_u32 sfc_get_long(uaecptr addr)
 {
+    if (is_unaligned(addr, 4))
+	return mmu_get_unaligned(addr, regs.sfc, 4);
     JMP_BUF excep_env_old;
     memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
     uae_u32 l;
@@ -418,6 +434,8 @@ static inline uae_u32 sfc_get_long(uaecptr addr)
 }
 static inline uae_u16 sfc_get_word(uaecptr addr)
 {
+    if (is_unaligned(addr, 1))
+	return mmu_get_unaligned(addr, regs.dfc, 2);
     JMP_BUF excep_env_old;
     memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
     uae_u16 w;
@@ -449,12 +467,16 @@ static inline uae_u8 sfc_get_byte(uaecptr addr)
 
 static inline void dfc_put_long(uaecptr addr, uae_u32 l)
 {
+    if (is_unaligned(addr, 4))
+	return mmu_put_unaligned(addr, l, regs.dfc, 4);
     JMP_BUF excep_env_old;
     memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
     int prb = SETJMP(excep_env);
     if (prb != 0) {
 	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 	regs.mmu_fault_addr = addr;
+	regs.wb3_data = l;
+	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
 	LONGJMP(excep_env, prb);
     }
     phys_put_long(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_long, 0), l);
@@ -462,12 +484,16 @@ static inline void dfc_put_long(uaecptr addr, uae_u32 l)
 }
 static inline void dfc_put_word(uaecptr addr, uae_u16 w)
 {
+    if (is_unaligned(addr, 1))
+	return mmu_put_unaligned(addr, w, regs.dfc, 2);
     JMP_BUF excep_env_old;
     memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
     int prb = SETJMP(excep_env);
     if (prb != 0) {
 	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 	regs.mmu_fault_addr = addr;
+	regs.wb3_data = w;
+	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
 	LONGJMP(excep_env, prb);
     }
     phys_put_word(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_word, 0), w);
@@ -481,6 +507,8 @@ static inline void dfc_put_byte(uaecptr addr, uae_u16 b)
     if (prb != 0) {
 	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 	regs.mmu_fault_addr = addr;
+	regs.wb3_data = b;
+	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
 	LONGJMP(excep_env, prb);
     }
     phys_put_byte(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_byte, 0), b);
