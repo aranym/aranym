@@ -1,131 +1,126 @@
-#include <stdio.h>
-#include <tos.h>
+/*
+ * Example of NatFeat usage - detecting ARAnyM presence
+ * Written by Petr Stehlik in 2003 and placed into Public Domain
+ */
+#include <stdio.h>				/* for printf */
+#include <tos.h>				/* for gemdos and Super */
+#include <string.h>				/* for strcmp */
 
-/* NatFeat common defines */
+/* compiler and library compatibility defines */
 #if __PUREC__
 #define CDECL cdecl
+#define compare_strings strcmpi
 #else
 #define CDECL
+#define compare_strings strcasecmp
 #endif
 
-typedef struct
-{
-	long magic;
-	long CDECL (* nfGetID)(const char *);
-	long CDECL (* nfCall)(long ID, ...);
-} NatFeatCookie;
+#ifndef TRUE
+#define TRUE	(1==1)
+#define FALSE	(!TRUE)
+#endif
 
-NatFeatCookie *nf_ptr;	/* must point to the NatFeat cookie */
-
-long nfidGetName(void)
-{
-	static long id = 0;
-	if (id == 0)
-		id = nf_ptr->nfGetID("NF_NAME");
-	return id;
-}
-
-long nfGetName(char *buffer, long size)
-{
-	return nf_ptr->nfCall(nfidGetName(), buffer, size);
-}
-
-long nfGetFullName(char *buffer, long size)
-{
-	return nf_ptr->nfCall(nfidGetName() | 0x0001, buffer, size);
-}
-
-long nfGetVersion(void)
-{
-	static long id = 0;
-	if (id == 0)
-		id = nf_ptr->nfGetID("NF_VERSION");
-
-	return nf_ptr->nfCall(id);
-}	
-
-long nfidStdErr(void)
-{
-	static long id = 0;
-	if (id == 0)
-		id = nf_ptr->nfGetID("NF_STDERR");
-	return id;
-}
-
-long nfStdErr(char *text)
-{
-	return nf_ptr->nfCall(nfidStdErr(), text);
-}
-
-#define nfStdErrPrintf1(format, a)	nf_ptr->nfCall(nfidStdErr() | 0x0001, format, a)
-#define nfStdErrPrintf2(format, a, b)	nf_ptr->nfCall(nfidStdErr() | 0x0001, format, a, b)
-#define nfStdErrPrintf3(format, a, b, c)	nf_ptr->nfCall(nfidStdErr() | 0x0001, format, a, b, c)
-#define nfStdErrPrintf4(format, a, b, c, d)	nf_ptr->nfCall(nfidStdErr() | 0x0001, format, a, b, c, d)
-
-typedef struct
-{
-    long cookie;
-    long value;
+/* TOS Cookie Jar */
+typedef struct {
+	long cookie;
+	long value;
 } COOKIE;
 
-int getcookie( long target, long *p_value )
+int getcookie(long target, long *p_value)
 {
-    char *oldssp;
-    COOKIE *cookie_ptr;
+	if (gemdos(340, -1, 0L, 0L) == 0) {
+		/* Ssystem is available */
+		long result = gemdos(340, 8, target, NULL);
+		if (result != -1L) {
+			*p_value = result;
+			return TRUE;
+		}
+		return FALSE;
+	}
+	else {
+		char *oldssp;
+		COOKIE *cookie_ptr;
 
-    oldssp = (char *)Super(0L);
+		oldssp = (char *) Super(0L);
 
-    cookie_ptr = *(COOKIE **)0x5A0;
+		cookie_ptr = *(COOKIE **) 0x5A0;
 
-    if(oldssp)
-        Super( oldssp );
+		if (oldssp)
+			Super(oldssp);
 
-    if(cookie_ptr != NULL)
-    {
-        do
-        {
-            if(cookie_ptr->cookie == target)
-            {
-                if(p_value != NULL)
-                    *p_value = cookie_ptr->value;
+		if (cookie_ptr != NULL) {
+			do {
+				if (cookie_ptr->cookie == target) {
+					if (p_value != NULL)
+						*p_value = cookie_ptr->value;
 
-                return 1;
-            }
-        } while((cookie_ptr++)->cookie != 0L);
-    }
+					return TRUE;
+				}
+			} while ((cookie_ptr++)->cookie != 0L);
+		}
+	}
 
-    return 0;
+	return FALSE;
 }
 
+/* NatFeat code */
+typedef struct {
+	long magic;
+	long CDECL(*nfGetID) (const char *);
+	long CDECL(*nfCall) (long ID, ...);
+} NatFeatCookie;
 
-/* Example code */
+/* return NatFeat pointer if NatFeat initialization was successful,
+ * otherwise NULL
+ */
+NatFeatCookie *initNatFeats(void)
+{
+	NatFeatCookie *nf_ptr = NULL;
+
+	if (getcookie(0x5f5f4e46L, &(long) nf_ptr) == 0) {	/* "__NF" */
+		puts("NatFeat cookie not found");
+		return NULL;
+	}
+
+	if (nf_ptr->magic != 0x20021021L) {		/* NatFeat magic constant */
+		puts("NatFeat cookie magic value does not match");
+		return NULL;
+	}
+
+	return nf_ptr;
+}
+
+/* get name (fill 'buffer' with the `NF_NAME` value, up to 'size' chars) */
+long nfGetName(NatFeatCookie * nf_ptr, char *buffer, long size)
+{
+	static unsigned long nf_name_id = 0;
+	if (nf_name_id == 0)
+		nf_name_id = nf_ptr->nfGetID("NF_NAME");
+	return nf_ptr->nfCall(nf_name_id, buffer, size);
+}
+
+/* return TRUE if ARAnyM was detected, FALSE otherwise */
+int isARAnyM(void)
+{
+	NatFeatCookie *nf_ptr = NULL;
+	char buf[80] = "";
+
+	nf_ptr = initNatFeats();
+	if (nf_ptr == NULL)
+		return FALSE;
+
+	nfGetName(nf_ptr, buf, sizeof(buf));
+
+	return !compare_strings(buf, "ARAnyM");
+}
+
+/* example of use */
 int main()
 {
-	char buf[80]="";
-	long version;
-	
-	if (getcookie(0x5f5f4e46L, &(long)nf_ptr) == 0) {
-		puts("NatFeat cookie not found");
-		return 0;
-	}
-	
-	if (nf_ptr->magic != 0x20021021L) {
-		puts("NatFeat cookie magic value does not match");
-		return 0;
+	if (isARAnyM()) {
+		printf("This is ARAnyM\n");
+		return 1;
 	}
 
-	nfGetFullName(buf, sizeof(buf));
-	printf("Machine name and version: '%s'\n", buf);
-
-	version = nfGetVersion();
-
-	printf("NatFeat API version = %d.%d\n", (int)(version >> 16), (int)(version & 0xffff));
-	
-	nfStdErr("Plain debug output\n");
-
-	nfStdErrPrintf1("Debug output with one decimal parameter: %d\n", (unsigned long)105);
-	nfStdErrPrintf2("Debug output with string and number: '%s' is %d bytes long\n", "Hello world!", (long)sizeof("Hello world!"));
-
-	getchar();
 	return 0;
 }

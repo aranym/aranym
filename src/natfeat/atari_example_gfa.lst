@@ -1,0 +1,79 @@
+' Example of NatFeat usage - detecting ARAnyM presence
+' Written by Petr Stehlik in 2003 and placed into Public Domain
+'
+IF @is_aranym
+  PRINT "This is ARAnyM"
+ENDIF
+END
+'
+FUNCTION get_cookie(target%,VAR value%)
+  ' try Ssystem, be FreeMiNT friendly
+  IF GEMDOS(340,-1,L:0,L:0)=0
+    value%=GEMDOS(340,8,L:target%,L:0)
+    RETURN value%<>-1
+  ELSE
+    cookie_ptr%=LPEEK(&H5A0)
+    IF cookie_ptr%<>0
+      REPEAT
+        IF {cookie_ptr%}=target%
+          value%={cookie_ptr%+4}
+          RETURN TRUE
+        ENDIF
+        ADD cookie_ptr%,8
+      UNTIL {cookie_ptr%}=0
+    ENDIF
+  ENDIF
+  RETURN FALSE
+ENDFUNC
+'
+FUNCTION init_natfeats
+  IF NOT @get_cookie(&H5F5F4E46,nf_cookie%)
+    PRINT "NF COOKIE NOT FOUND!"
+    RETURN 0
+  ENDIF
+  '
+  IF {nf_cookie%}<>&H20021021
+    PRINT "NF COOKIE WITH BAD MAGIC"
+    RETURN 0
+  ENDIF
+  '
+  RETURN nf_cookie%
+ENDFUNC
+'
+PROCEDURE nf_get_name(nf_ptr%,VAR nf_name$)
+  nf_id%={nf_ptr%+4}
+  nf_call%={nf_ptr%+8}
+  '
+  nfstr$=SPACE$(80)
+  CHAR{V:nfstr$}="NF_NAME"
+  nid%=C:nf_id%(L:V:nfstr$)
+  '
+  size%=80
+  nf_name_ptr%=MALLOC(size%)
+  IF nf_name_ptr%<>0
+    ~C:nf_call%(L:nid%,L:nf_name_ptr%,L:size%)
+    nf_name$=CHAR{nf_name_ptr%}
+    ~MFREE(nf_name_ptr%)
+  ELSE
+    nf_name$=""
+    PRINT "Memory allocation error!"
+  ENDIF
+  '
+  PRINT "Debug info: NatFeat(NF_NAME)=";nf_name$
+RETURN
+'
+FUNCTION is_aranym
+  nf_cookie%=@init_natfeats
+  '
+  IF nf_cookie%=0
+    RETURN FALSE
+  ENDIF
+  '
+  nf_get_name(nf_cookie%,nf_name$)
+  '
+  IF UPPER$(nf_name$)="ARANYM"
+    RETURN TRUE
+  ELSE
+    RETURN FALSE
+  ENDIF
+ENDFUNC
