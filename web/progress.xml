@@ -6,7 +6,7 @@
     <text>
       <table>
         <tr>
-          <th bgcolor="#999999" colspan="2" align="left">m68k emulation</th>
+          <th bgcolor="#eeeeee" colspan="2" align="left">m68k emulation</th>
         </tr>
         <tr>
           <td>68040 CPU</td><td>100%</td>
@@ -21,7 +21,7 @@
           <td>TODO</td><td>speed optimalization, JIT</td>
         </tr>
         <tr>
-          <th bgcolor="#999999" colspan="2" align="left">RAM</th>
+          <th bgcolor="#eeeeee" colspan="2" align="left">RAM</th>
         </tr>
         <tr>
           <td>ST-RAM</td><td>100%</td>
@@ -30,7 +30,7 @@
           <td>FastRAM</td><td>100% (theoretically up to 4GB of RAM)</td>
         </tr>
         <tr>
-          <th bgcolor="#999999" colspan="2" align="left">VIDEO</th>
+          <th bgcolor="#eeeeee" colspan="2" align="left">VIDEO</th>
         </tr>
         <tr>
           <td>BLITTER</td><td>100%</td>
@@ -51,7 +51,7 @@
           <td>TODO</td><td>finish fVDI driver</td>
         </tr>
         <tr>
-          <th bgcolor="#999999" colspan="2" align="left">SOUND</th>
+          <th bgcolor="#eeeeee" colspan="2" align="left">SOUND</th>
         </tr>
         <tr>
           <td>Falcon 030 DMA Sound</td><td>0%</td>
@@ -66,7 +66,7 @@
           <td>YAMAHA PSG</td><td>0%</td>
         </tr>
         <tr>
-          <th bgcolor="#999999" colspan="2" align="left">Discs</th>
+          <th bgcolor="#eeeeee" colspan="2" align="left">Discs</th>
         </tr>
         <tr>
           <td></td><td>You need HDDriver or another Falcon IDE compatible driver</td>
@@ -93,7 +93,7 @@
           <td>TODO</td><td>debug the MetaDOS driver (.xfs for MiNT &amp; MagiC)</td>
         </tr>
         <tr>
-          <th bgcolor="#999999" colspan="2" align="left">I/O Ports</th>
+          <th bgcolor="#eeeeee" colspan="2" align="left">I/O Ports</th>
         </tr>
         <tr>
           <td>Serial</td><td>0%</td>
@@ -111,7 +111,7 @@
           <td>keyboard</td><td>mapped to PC keyboard (TODO: configurable map table)</td>
         </tr>
         <tr>
-          <th bgcolor="#999999" colspan="2" align="left">Operating System</th>
+          <th bgcolor="#eeeeee" colspan="2" align="left">Operating System</th>
         </tr>
         <tr>
           <td>TOS</td><td>required original v4.04 only</td>

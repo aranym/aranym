@@ -23,9 +23,9 @@
         <title>ARAnyM Home Page - <!--xsl:value-of select="$config/menu/item[@name=$page]/title"/--></title>
       </head>
       <body>
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <table width="100%" border="1" cellspacing="0" cellpadding="0">
           <tr>
-            <td colspan="4" align="center"><xsl:call-template name="nbsp"/> <h1>ARAnyM Homepage</h1> </td>
+            <td colspan="4" align="center"><xsl:call-template name="nbsp"/> <h1>ARAnyM Homepage</h1><br/> </td>
           </tr>
           <tr>
             <td valign="top">
@@ -37,8 +37,11 @@
               <xsl:call-template name="nbsp"/>
               <xsl:call-template name="nbsp"/>
             </td>
-            <td>
-              <xsl:apply-templates/>
+            <td width="100%" valign="top">
+              <p><br/><dl>
+                <xsl:apply-templates/>
+              </dl>
+              </p>
             </td>
           </tr>
         </table>
@@ -60,7 +63,7 @@
       <xsl:call-template name="nbsp"/>
       <xsl:call-template name="nbsp"/>
 
-      <xsl:value-of select="title"/>
+      <xsl:value-of select="title"/><br/>
     </strong></dt>
     <xsl:apply-templates select="item" mode="menu"/>
     </p>
@@ -71,21 +74,37 @@
   </xsl:template>
 
   <xsl:template match="item">
-    <p>
-      <dt><strong><xsl:value-of select="question"/></strong></dt>
-      <dd><xsl:value-of select="answer"/></dd>
-    </p>
+    <tr>
+      <th colspan="2" align="left">
+        <strong><xsl:value-of select="question"/></strong>
+      </th>
+    </tr>
+    <tr>
+      <td>
+        <xsl:value-of select="answer"/>
+      </td>
+    </tr>
   </xsl:template>
 
   <xsl:template match="document">
-    <dl>
+    <table align="left" valign="top">
       <xsl:apply-templates/>
-    </dl>
+    </table>
   </xsl:template>
 
   <xsl:template match="chapter">
-    <dt><strong><xsl:value-of select="title"/></strong></dt>
-    <dd><xsl:apply-templates select="text"/></dd>
+    <tr align="left">
+      <th colspan="2">
+        <xsl:value-of select="title"/>
+      </th>
+    </tr>
+    <tr align="left">
+      <td valign="top">
+        <blockquote>
+          <xsl:apply-templates select="text"/>
+        </blockquote><br/>
+      </td>
+    </tr>
   </xsl:template>
 
   <xsl:template match="text">
