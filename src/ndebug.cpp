@@ -427,7 +427,7 @@ void ndebug::saveintofile(FILE *f, char **inl) {
 	if (!more_params (inl)) goto S_argh;
 	len = readhex (inl);
 
-	if (!valid_address(src, 0, 0, sz_byte)) {
+	if (!ValidAtariAddr(src, false, len)) {
 		bug("Invalid memory address\n");
 		return;
 	}
@@ -1146,6 +1146,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.21  2002/02/25 23:52:13  milan
+ * PC, stack, table68k - synchronized with MMU (Furlong) and JIT (Gwenole)
+ *
  * Revision 1.17  2002/02/20 13:04:07  milan
  * Makefile's dependencies disabled - problems with make depend
  * valid_address

@@ -1,6 +1,8 @@
 2002/02/26 - milan
 - Native Feature instruction framework added
 
+- address validation in CPU interface
+
 
 2002/02/25 - milan
 - fp_extended, fp_single, fp_double -> fpu_extended, fpu_single, fpu_double

@@ -110,6 +110,21 @@ static __inline__ uae_u8 *phys_get_real_address(uaecptr addr)
     return do_get_real_address(addr);
 }
 
+static __inline__ bool phys_valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
+{
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+        excep_env = excep_env_old;
+        return false;
+    }
+    check_ram_boundary(addr, sz, write);
+    excep_env = excep_env_old;
+    return true;
+}
+
+
 static __inline__ uae_u32 phys_get_long(uaecptr addr)
 {
 #if ARAM_PAGE_CHECK
@@ -289,16 +304,21 @@ static __inline__ void dfc_put_byte(uaecptr addr, uae_u16 b)
     phys_put_byte(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_byte, 0), b);
 }
 
-static __inline__ bool valid_address(uaecptr addr, int write, uaecptr pc, wordsizes sz)
+static __inline__ bool valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
 {
     jmp_buf excep_env_old;
     excep_env_old = excep_env;
     int prb = setjmp(excep_env);
+    wordsize i = sz_long;
+    switch (sz) {
+        case 1: i = sz_byte; break;
+        case 2: i = sz_word; break;
+    }
     if (prb != 0) {
 	excep_env = excep_env_old;
 	return false;
     } 
-    check_ram_boundary(mmu_translate(addr, FC_DATA, write, pc, sz, 0), ((sz == sz_byte) ?  1 : ((sz == sz_word) ? 2 : 4)), (write == 0 ? false : true));
+    check_ram_boundary(mmu_translate(addr, FC_DATA, (write ? 1 : 0), pc, i, 0), sz, write);
     excep_env = excep_env_old;
     return true;
 }
@@ -313,20 +333,7 @@ static __inline__ bool valid_address(uaecptr addr, int write, uaecptr pc, wordsi
 #  define put_byte(a,b)			phys_put_byte(a,b)
 #  define get_real_address(a,w,s)	phys_get_real_address(a)
 
-static __inline__ bool valid_address(uaecptr addr, int write, uaecptr pc, wordsizes sz)
-{
-    jmp_buf excep_env_old;
-    excep_env_old = excep_env;
-    int prb = setjmp(excep_env);
-    if (prb != 0) {
-        excep_env = excep_env_old;
-        return false;
-    }
-    check_ram_boundary(addr, ((sz == sz_byte) ?  1 : ((sz == sz_word) ? 2 : 4)), (write == 0 ? false : true));
-    excep_env = excep_env_old;
-    return true;
-}
-
+#define valid_address(a,w,p,s)		phys_valid_address(a,w,p,s)
 #endif
 
 #endif /* MEMORY_H */

@@ -15,7 +15,6 @@
 #include "memory.h"
 #include "readcpu.h"
 #include "newcpu.h"
-#include "exceptions.h"
 #include "fpu/fpu.h"
 #define DEBUG 1
 #include "debug.h"

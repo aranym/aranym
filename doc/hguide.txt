@@ -87,6 +87,21 @@ void WriteHWMemInt32(uint32 addr, uint32 l)
 void WriteHWMemInt16(uint32 addr, uint16 w)
 void WriteHWMemInt8(uint32 addr, uint8 b)
 
+  If you want make some large operations in ST-RAM or FastRAM, you can use two functions for address validation:
+
+The 1st is for non-MMU access:
+
+bool ValidAtariAddr(uint32 addr, bool write, uint32 len)
+
+  You can use ReadHWMemIntXX and WriteHWMemIntXX after this function for ST-RAM and FastRAM with no problems. It doesn't check HW registers!
+
+The 2nd is for MMU access:
+
+bool ValidAddr(uint32 addr, bool write, uint32 len) 
+  
+  This function is secure only for len = 1, 2 or 4!
+
+
 3) Exceptions
 -------------
 

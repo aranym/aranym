@@ -16,7 +16,6 @@
 #include "mmu.h"
 #include "hostscreen.h"
 #include "parallel.h"
-#include "exceptions.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -184,6 +183,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.35  2002/02/21 17:48:45  joy
+ * prepared for 32-bit access to IDE interface
+ *
  * Revision 1.34  2001/11/19 17:45:56  joy
  * parallel port emulation
  *

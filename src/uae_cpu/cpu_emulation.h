@@ -81,6 +81,12 @@ static inline void WriteInt32(uint32 addr, uint32 l) {put_long(addr, l);}
 static inline void WriteInt16(uint32 addr, uint32 w) {put_word(addr, w);}
 static inline void WriteInt8(uint32 addr, uint32 b) {put_byte(addr, b);}
 
+// For Exception longjmp
+extern jmp_buf excep_env;
+
+// For address validation
+static inline bool ValidAtariAddr(uint32 addr, bool write, uint32 len) { return phys_valid_address(addr, write, 0, len); }
+static inline bool ValidAddr(uint32 addr, bool write, uint32 len) { return valid_address(addr, write, 0, len); }
 
 // These functions will be removed
 static inline uint8 *Atari2HostAddr(uint32 addr) {return phys_get_real_address(addr);}

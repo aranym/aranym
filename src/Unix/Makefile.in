@@ -277,8 +277,6 @@ compstbl.cpp: compemu.cpp
 cputbl.h: cpuemu.cpp
 comptbl.h: compemu.cpp
 
-sysdeps.h: config.h
-
 cpuemu.cpp: $(OBJ_DIR)/gencpu
 	$(OBJ_DIR)/gencpu
 
