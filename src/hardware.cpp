@@ -10,7 +10,7 @@
 #include "rtc.h"
 #include "blitter.h"
 #include "videl.h"
-#include "ide.h"
+#include "ata.h"
 #include "uae_cpu/newcpu.h"	// for regs.pc
 
 MFP mfp;
@@ -18,7 +18,8 @@ IKBD ikbd;
 MIDI midi;
 ACSIFDC fdc;
 RTC rtc;
-IDE ide;
+//IDE ide;
+bx_hard_drive_c ide;
 BLITTER blitter;
 VIDEL videl;
 
@@ -35,6 +36,7 @@ void HWInit (void) {
 	put_byte(MEM_CTL_A,MEM_CTL);
 	put_word(SYS_CTL_A,SYS_CTL);
 	*/
+	ide.init();
 }
 
 static const int HW_IDE 	= 0xf00000;
@@ -120,7 +122,7 @@ uae_u32 handleRead(uaecptr addr) {
 	else if (addr >= HW_RTC && addr < (HW_RTC+4))
 		return rtc.handleRead(addr);
 	else if (addr >= HW_IDE && addr < (HW_IDE+0x3a))
-		return ide.handleRead(addr);
+		return ide.read_handler(&ide, addr, 1);
 	else if (addr >= HW_IKBD && addr < HW_MIDI)
 		return ikbd.handleRead(addr);
 	else if (addr >= HW_MIDI && addr < HW_MIDI + 3)
@@ -135,7 +137,7 @@ uae_u32 handleRead(uaecptr addr) {
 	else if (addr == HW_YAMAHA && snd_reg == 14)
 		return snd_porta;
 	else {
-		fprintf(stderr, "HWget_b %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
+		// fprintf(stderr, "HWget_b %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
 		return 0;
 	}
 }
@@ -152,7 +154,7 @@ void handleWrite(uaecptr addr, uae_u8 value) {
 	else if (addr >= HW_RTC && addr < (HW_RTC+4))
 		rtc.handleWrite(addr, value);
 	else if (addr >= HW_IDE && addr < (HW_IDE+0x3a))
-		ide.handleWrite(addr, value);
+		ide.write_handler(&ide, addr, value, 1);
 	else if (addr >= HW_IKBD && addr < HW_MIDI)
 		ikbd.handleWrite(addr, value);
 	else if (addr >= HW_MIDI && addr < HW_MIDI + 3)
@@ -162,8 +164,9 @@ void handleWrite(uaecptr addr, uae_u8 value) {
 		snd_reg = value;
 	else if (addr == (HW_YAMAHA+2) && snd_reg == 14)
 		snd_porta = value;
-	else
-		fprintf(stderr, "HWput_b %x,%u ($%02x) -> %s at %08x\n", addr, value, value, debug_print_IO(addr), showPC());
+	else {
+		// fprintf(stderr, "HWput_b %x,%u ($%02x) -> %s at %08x\n", addr, value, value, debug_print_IO(addr), showPC());
+	}
 }
 
 void MakeMFPIRQ(int no) {
@@ -179,7 +182,18 @@ uae_u32 HWget_l (uaecptr addr) {
 //	return do_get_mem_long(m);
 	if (dP)
 		fprintf(stderr, "HWget_l %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
-	return (handleRead(addr) << 24) | (handleRead(addr+1) << 16) | (handleRead(addr+2) << 8) | handleRead(addr+3);
+	// return (handleRead(addr) << 24) | (handleRead(addr+1) << 16) | (handleRead(addr+2) << 8) | handleRead(addr+3);
+/*
+	if (addr >= 0xf00000 && addr < 0xf0003a)
+		return ide.read_handler(&ide, addr, 4);
+*/
+	if (addr == HW_IDE) {
+		uae_u16 x = HWget_w(addr);
+		uae_u16 y = HWget_w(addr);
+		return (x << 16)| y;
+	}
+	else
+		return (HWget_w(addr) << 16) | HWget_w(addr+2);
 }
 
 uae_u32 HWget_w (uaecptr addr) {
@@ -187,7 +201,10 @@ uae_u32 HWget_w (uaecptr addr) {
 //	return do_get_mem_word(m);
 	if (dP)
 		fprintf(stderr, "HWget_w %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
-	return (handleRead(addr) << 8) | handleRead(addr+1);
+	if (addr >= 0xf00000 && addr < 0xf0003a)
+		return ide.read_handler(&ide, addr, 2);
+	else
+		return (handleRead(addr) << 8) | handleRead(addr+1);
 }
 
 uae_u32 HWget_b (uaecptr addr) {
@@ -203,10 +220,18 @@ void HWput_l (uaecptr addr, uae_u32 l) {
 //	do_put_mem_long(m, l);
 	if (dP)
 		fprintf(stderr, "HWput_l %x,%d ($%08x) -> %s at %08x\n", addr, l, l, debug_print_IO(addr), showPC());
+/*
 	handleWrite(addr, l >> 24);
 	handleWrite(addr+1, l >> 16);
 	handleWrite(addr+2, l >> 8);
 	handleWrite(addr+3, l);
+*/
+	if (addr >= 0xf00000 && addr < 0xf0003a)
+		ide.write_handler(&ide, addr, l, 4);
+	else {
+		handleWrite(addr, l >> 16);
+		handleWrite(addr+2, l & 0xffff);
+	}
 }
 
 void HWput_w (uaecptr addr, uae_u32 w) {
@@ -214,8 +239,12 @@ void HWput_w (uaecptr addr, uae_u32 w) {
 //	do_put_mem_word(m, w);
 	if (dP)
 		fprintf(stderr, "HWput_w %x,%d ($%04x) -> %s at %08x\n", addr, w, w, debug_print_IO(addr), showPC());
-	handleWrite(addr, w >> 8);
-	handleWrite(addr+1, w);
+	if (addr >= 0xf00000 && addr < 0xf0003a)
+		ide.write_handler(&ide, addr, w, 2);
+	else {
+		handleWrite(addr, w >> 8);
+		handleWrite(addr+1, w);
+	}
 }
 
 void HWput_b (uaecptr addr, uae_u32 b) {
