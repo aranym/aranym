@@ -279,11 +279,9 @@ void HostScreen::searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp )
 
 void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 {
-	if (bx_options.autozoom.enabled)  {
-		if (bx_options.autozoom.fixedsize) {
-			width = bx_options.autozoom.width;
-			height = bx_options.autozoom.height;
-		}
+	if (bx_options.autozoom.fixedsize) {
+		width = bx_options.autozoom.width;
+		height = bx_options.autozoom.height;
 	}
 
 	// Select a correct video mode
@@ -1250,6 +1248,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.47  2004/09/10 17:07:25  pmandin
+ * Autozoom: now you can choose a specific host screen size that will remain constant accross Atari screen size changes
+ *
  * Revision 1.46  2004/04/26 07:24:50  standa
  * Just comment adjustments.
  *
