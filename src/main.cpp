@@ -250,7 +250,7 @@ static void check_event(void)
 					}
 				}
 
-				if (alternated and sym == SDLK_PRINT) {
+				if (alternated && sym == SDLK_PRINT) {
 					hostScreen.makeSnapshot();
 				}
 
@@ -569,8 +569,14 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.23  2001/10/09 19:25:19  milan
+ * MemAlloc's rewriting
+ *
  * Revision 1.22  2001/10/08 21:46:05  standa
- * The $Header$ and $Log$ CVS tags added.
+ * The $Header$ and $Log$
+ * The $Header$ and Revision 1.23  2001/10/09 19:25:19  milan
+ * The $Header$ and MemAlloc's rewriting
+ * The $Header$ and CVS tags added.
  *
  *
  *
