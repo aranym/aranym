@@ -2880,7 +2880,7 @@ static void m68k_run_1 (void)
 #endif
 
 #if PAGE_CHECK
-	if (((regs.pcp ^ pc_page) >> 12)) {
+	if (((regs.pcp ^ pc_page) > PAGE_MASK)) {
 	    check_ram_boundary(regs.pcp, 2, false);
 //	    opcode = GET_OPCODE;
 	    uae_u16* addr = (uae_u16*)do_get_real_address(regs.pcp, false, false);

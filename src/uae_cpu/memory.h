@@ -36,6 +36,11 @@ extern uintptr VMEMBaseDiff;
 #if PAGE_CHECK
 extern uaecptr pc_page, read_page, write_page;
 extern uintptr pc_offset, read_offset, write_offset;
+# ifdef FULLMMU
+#  define PAGE_MASK 0xfff
+# else
+#  define PAGE_MASK 0xfffff
+# endif
 #endif
 
 #if REAL_ADDRESSING
@@ -119,7 +124,7 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 static __inline__ uae_u32 get_long_direct(uaecptr addr)
 {
 #if PAGE_CHECK
-    if (!((addr ^ read_page) >> 12))
+    if (((addr ^ read_page) <= PAGE_MASK))
         return do_get_mem_long((uae_u32*)((uae_u8*)addr + read_offset));
 #endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
@@ -136,7 +141,7 @@ static __inline__ uae_u32 get_long_direct(uaecptr addr)
 static __inline__ uae_u32 get_word_direct(uaecptr addr)
 {
 #if PAGE_CHECK
-    if (!((addr ^ read_page) >> 12))
+    if (((addr ^ read_page) <= PAGE_MASK))
         return do_get_mem_word((uae_u16*)((uae_u8*)addr + read_offset));
 #endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
@@ -153,7 +158,7 @@ static __inline__ uae_u32 get_word_direct(uaecptr addr)
 static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 {
 #if PAGE_CHECK
-    if (!((addr ^ read_page) >> 12))
+    if (((addr ^ read_page) <= PAGE_MASK))
         return do_get_mem_byte((uae_u32*)((uae_u8*)addr + read_offset));
 #endif
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
@@ -170,7 +175,7 @@ static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
 {
 #if PAGE_CHECK
-    if (!((addr ^ write_page) >> 12)) {
+    if (((addr ^ write_page) <= PAGE_MASK)) {
         do_put_mem_long((uae_u32*)((uae_u8*)addr + write_offset), l);
         return;
     }
@@ -192,7 +197,7 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
 static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
 {
 #if PAGE_CHECK
-    if (!((addr ^ write_page) >> 12)) {
+    if (((addr ^ write_page) <= PAGE_MASK)) {
         do_put_mem_word((uae_u16*)((uae_u8*)addr + write_offset), w);
         return;
     }
@@ -214,7 +219,7 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
 static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
 {
 #if PAGE_CHECK
-    if (!((addr ^ write_page) >> 12)) {
+    if (((addr ^ write_page) <= PAGE_MASK)) {
         do_put_mem_byte((uae_u8*)((uae_u8*)addr + write_offset), b);
         return;
     }
