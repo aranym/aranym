@@ -60,10 +60,16 @@ void IDE::handleWrite(uaecptr addr, uae_u8 value) {
 }
 
 uae_u16 IDE::handleReadW(uaecptr addr) {
+	if (addr == 0xf00002) {
+		addr = 0xf00000; // according to Xavier $f00002 is mapped to the same IDE register as $f00000
+	}
 	return bx_hard_drive.read_handler(&bx_hard_drive, addr, 2);
 }
 
 void IDE::handleWriteW(uaecptr addr, uae_u16 value) {
+	if (addr == 0xf00002) {
+		addr = 0xf00000; // according to Xavier $f00002 is mapped to the same IDE register as $f00000
+	}
 	bx_hard_drive.write_handler(&bx_hard_drive, addr, value, 2);
 }
 
