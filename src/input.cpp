@@ -424,9 +424,6 @@ void process_keyboard_event(SDL_Event &event)
 				// release the Control and Alt keys
 				getIKBD()->SendKey(0x1d|0x80);	// Control released
 				getIKBD()->SendKey(0x38|0x80);	// Alternate released
-				// try something handy: iconify fullscreen window
-				if (bx_options.video.fullscreen)
-					SDL_WM_IconifyWindow();
 			}
 		}
 		else if (sym == HOTKEY_OPENGUI) {
