@@ -458,10 +458,10 @@ void BLITTER::handleWrite(memptr addr, uint8 value) {
 	addr -= getHWoffset();
 
 	switch(addr) {
-		case 0x3a: STORE_B_ff8a3a(value);
-		case 0x3b: STORE_B_ff8a3b(value);
-		case 0x3c: STORE_B_ff8a3c(value);
-		case 0x3d: STORE_B_ff8a3d(value);
+		case 0x3a: STORE_B_ff8a3a(value); break;
+		case 0x3b: STORE_B_ff8a3b(value); break;
+		case 0x3c: STORE_B_ff8a3c(value); break;
+		case 0x3d: STORE_B_ff8a3d(value); break;
 		default:
 			panicbug("Blitter tried to write byte %d to register %x at %06x", value, addr+getHWoffset(), showPC());
 	}
