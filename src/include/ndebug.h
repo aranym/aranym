@@ -14,6 +14,8 @@
 
 typedef enum {EQUAL_value_test_8, EQUAL_value_test_16, EQUAL_value_test_32, CHANGE_value_test_8, CHANGE_value_test_16, CHANGE_value_test_32 } value_test_t;
 
+const unsigned int max_breakpoints = 256;
+
 class ndebug {
   static unsigned int rowlen;
   static const unsigned int dbsize = 1000;
@@ -29,6 +31,9 @@ class ndebug {
   static uaecptr value_addr;
   static uint32 value;
   static value_test_t value_test;
+  static unsigned int ndebug::do_breakpoints;
+  static bool breakpoint[max_breakpoints];
+  static uaecptr breakpoint_address[max_breakpoints];
   
   static char old_debug_cmd[80];
  

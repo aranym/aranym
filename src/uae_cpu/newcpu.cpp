@@ -1536,11 +1536,15 @@ void m68k_execute (void)
 #if USE_JIT
     m68k_execute_depth++;
 #endif
+#ifdef DEBUGGER
+    bool after_exception = false;
+#endif
 
 setjmpagain:
     int prb = setjmp(excep_env);
     if (prb != 0) {
         Exception(prb, 0);
+	after_exception = true;
     	goto setjmpagain;
     }
     for (;;) {
@@ -1551,7 +1555,8 @@ setjmpagain:
 	    m68k_reset ();
 	}
 #ifdef DEBUGGER
-	if (debugging) debug();
+	if (debugging && !after_exception) debug();
+	after_exception = false;
 #endif
 	m68k_do_execute();
     }

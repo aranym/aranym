@@ -57,6 +57,10 @@ bool ndebug::do_skip_value = false;
 uaecptr ndebug::value_addr = 0;
 uint32 ndebug::value;
 value_test_t  ndebug::value_test;
+
+uint32 ndebug::do_breakpoints = 0;
+bool ndebug::breakpoint[max_breakpoints];
+uaecptr ndebug::breakpoint_address[max_breakpoints];
   
 char ndebug::old_debug_cmd[80] = "                                                                               ";
 static char *strhelp[] = {"Help:\n",
@@ -93,6 +97,7 @@ static char *strhelp[] = {"Help:\n",
 	" L <file>             save debugger's info to <file>\n",
 	" v X <addr> <value>   step forward until (<address>) = <value> (X=b,w,l)\n",
 	" V X <address>        step forward until (<address>) changed (X=b,w,l)\n",
+	" B <address>          toggle breakpoint on <address>\n",
 #ifdef FULL_HISTORY
 	" H <lines>            show history of PC\n",
 #endif
@@ -672,7 +677,9 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			if (more_params(&inptr)) m68k_setpc(readhex(&inptr));
 			fill_prefetch_0();
 			grabMouse(true);
-			deactivate_debugger();
+		//	deactivate_debugger();
+			if (do_breakpoints)
+				SPCFLAGS_SET( SPCFLAG_BRK );
 			return 0;
 		case 't':
 			if (more_params(&inptr)) m68k_setpc(readhex(&inptr));
@@ -757,7 +764,37 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			SPCFLAGS_SET( SPCFLAG_BRK );
 			if (wasGrabbed) grabMouse(true);
 			return 0;
-
+		case 'B':
+			{
+				unsigned int i;
+				uaecptr address;
+				if (!more_params(&inptr)) {
+					bug("f command needs one parameter!");
+					break;
+				}
+				address = readhex(&inptr);
+				for (i = 0; i < max_breakpoints; i++)
+					if ((breakpoint[i]) && (address == breakpoint_address[i]))
+						break;
+				if (i < max_breakpoints) {
+					breakpoint[i] = false;
+					do_breakpoints--;
+					bug("Breakpoint on %08x removed", address);
+					break;
+				}
+				for (i = 0; i <max_breakpoints; i++)
+					if (!breakpoint[i])
+						break;
+				if (i == max_breakpoints) {
+					bug("Maximum breakpoints reached - %d", max_breakpoints);
+					break;
+				}
+				breakpoint_address[i] = address;
+				breakpoint[i] = true;
+				do_breakpoints++;
+				bug("Breakpoint on %08x added", address);
+			}
+			break;
 		case 'v':
 			if (!more_params(&inptr)) {
 				bug("v command needs one parameter!");
@@ -859,6 +896,8 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			tp = 0;
 			break;
 	}
+	if (do_breakpoints)
+		SPCFLAGS_SET( SPCFLAG_BRK );
 	return 1;
 }
 
@@ -1020,55 +1059,71 @@ void ndebug::run() {
 	nxdis = nextpc;
 	nxmem = 0;
 
-	if (do_skip && (m68k_getpc() != skipaddr)) {
-		SPCFLAGS_SET( SPCFLAG_BRK );
-		return;
-	}
+	if (do_skip || do_skip_value || do_breakpoints) {
+		bool success = false;
 
-	if (do_skip_value) {
-		switch (value_test) {
-			case EQUAL_value_test_8:
-				if (ReadAtariInt8(value_addr) != value) {
-					SPCFLAGS_SET( SPCFLAG_BRK );
-					return;
-				}
-				break;
-			case EQUAL_value_test_16:
-				if (ReadAtariInt16(value_addr) != value) {
-					SPCFLAGS_SET( SPCFLAG_BRK );
-					return;
-				}
-				break;
-			case EQUAL_value_test_32:
-				if (ReadAtariInt32(value_addr) != value) {
-					SPCFLAGS_SET( SPCFLAG_BRK );
-					return;
-				}
-				break;
-			case CHANGE_value_test_8:
-				if (ReadAtariInt8(value_addr) == value) {
-					SPCFLAGS_SET( SPCFLAG_BRK );
-					return;
-				}
-				break;
-			case CHANGE_value_test_16:
-				if (ReadAtariInt16(value_addr) == value) {
-					SPCFLAGS_SET( SPCFLAG_BRK );
-					return;
-				}
-				break;
-			case CHANGE_value_test_32:
-				if (ReadAtariInt32(value_addr) == value) {
-					SPCFLAGS_SET( SPCFLAG_BRK );
-					return;
-				}
-				break;
+		if (do_skip && (m68k_getpc() == skipaddr)) {
+			do_skip = false;
+			success = true;
+		}
+
+		if (do_skip_value) {
+			switch (value_test) {
+				case EQUAL_value_test_8:
+					if (ReadAtariInt8(value_addr) == value) {
+						do_skip_value = false;
+						success = true;
+					}
+					break;
+				case EQUAL_value_test_16:
+					if (ReadAtariInt16(value_addr) == value){
+						do_skip_value = false;
+						success = true;
+					}
+					break;
+				case EQUAL_value_test_32:
+					if (ReadAtariInt32(value_addr) == value){
+						do_skip_value = false;
+						success = true;
+					}
+					break;
+				case CHANGE_value_test_8:
+					if (ReadAtariInt8(value_addr) != value) {
+						do_skip_value = false;
+						success = true;
+					}
+					break;
+				case CHANGE_value_test_16:
+					if (ReadAtariInt16(value_addr) != value){
+						do_skip_value = false;
+						success = true;
+					}
+					break;
+				case CHANGE_value_test_32:
+					if (ReadAtariInt32(value_addr) != value){
+						do_skip_value = false;
+						success = true;
+					}
+					break;
+			}
+		}
+
+		if (do_breakpoints) {
+			unsigned int i;
+			for (i = 0; i < max_breakpoints; i++)
+				if ((breakpoint[i]) && (breakpoint_address[i] == m68k_getpc()))
+					break;
+			if (i < max_breakpoints)
+				success = true;
+		}
+
+		if (!success) {
+			SPCFLAGS_SET( SPCFLAG_BRK );
+			return;
 		}
 	}
 
 	irqindebug = false;
-	do_skip = false;
-	do_skip_value = false;
 	// release keyboard and mouse control
 	bool wasGrabbed = grabMouse(false);
 
@@ -1096,6 +1151,8 @@ void ndebug::init()
 	}
 	for (unsigned int i = 0; i < dbsize; i++)
 		dbbuffer[i] = NULL;
+	for (unsigned int i = 0; i < max_breakpoints; i++)
+		breakpoint[i] = false;
 	if (tcgetattr(0, &savetty) == -1) {
 		fprintf(stderr, "tcgetattr error!\n");
 		exit(-1);
@@ -1283,6 +1340,10 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.28  2002/09/30 21:57:33  milan
+ * v&V commands added to ndebug, (<address>) vs. <value> operations
+ * typo fix in configure.ac script
+ *
  * Revision 1.27  2002/09/28 13:03:45  joy
  * ndebug::showHistory does not work if NEED_TO_DEBUG_BADLY is enabled
  *

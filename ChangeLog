@@ -1,7 +1,11 @@
+2002/10/03 - milan
+- ndebug supports breakpoints
+
+
 2002/10/02 - milan
 - add raw_cmp_b_mi() and raw_call_m_indexed() for generated, not used now,
   BasiliskII used translated main loop now, ARAnyM not - it's main loop is
-  more compilicated
+  more complicated
 
 - x86 calls in loops removed as in BasiliskII but for another reason, not
   enough stable for newer versions of compilers, in some cases slower
