@@ -1979,7 +1979,7 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 #ifdef HAVE_SYS_STATVFS_H
 			return buf.f_namemax;
 #else
-# if (defined(OS_openbsd) || defined(OS_freebsd) || defined(OS_netbsd) || defined(OS_darwin)
+# if (defined(OS_openbsd) || defined(OS_freebsd) || defined(OS_netbsd) || defined(OS_darwin))
 			return MFSNAMELEN;
 # else
 #if defined(OS_mint)
@@ -2634,6 +2634,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.55  2002/07/23 17:34:25  milan
+ * pre-support for cdrom under Mac OS X
+ *
  * Revision 1.54  2002/07/01 16:57:35  standa
  * transformFileName() handles filename ending with a dot (.).
  *
