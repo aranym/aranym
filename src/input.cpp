@@ -47,16 +47,17 @@
  *
  */
 #define KEYSYM_SYMTABLE	0
+#define KEYSYM_MACSCANCODE 1
 #define KEYSYM_SCANCODE	3
 #define UNDEFINED_OFFSET	-1
 
 #ifdef OS_darwin
-#define KEYBOARD_TRANSLATION KEYSYM_SYMTABLE
+#define KEYBOARD_TRANSLATION KEYSYM_MACSCANCODE
 #define HOTKEY_OPENGUI		SDLK_PRINT	// F13
 #define	HOTKEY_REBOOT		0
 #define	HOTKEY_SHUTDOWN		0
 #define	HOTKEY_FULLSCREEN	SDLK_NUMLOCK
-#define	HOTKEY_PRINT		0
+#define	HOTKEY_PRINT		SDLK_F15
 #else
 #define KEYBOARD_TRANSLATION	KEYSYM_SCANCODE
 #define HOTKEY_OPENGUI		SDLK_PAUSE
@@ -157,6 +158,64 @@ void releaseTheMouse()
 /*********************************************************************
  * Keyboard handling
  *********************************************************************/
+#if KEYBOARD_TRANSLATION == KEYSYM_MACSCANCODE
+static int keyboardTable[0x80] = {
+/* 0-7 */ -1, 0x35, 0x12, 0x13, 0x14, 0x15, 0x17, 0x16,
+/* 8-f */ 0x1A, 0x1C, 0x19, 0x1D, 0x1B, 0x18, 0x33, 0x30,
+/*10-17*/ 0xC, 0xD, 0xE, 0xF, 0x11, 0x10, 0x20, 0x22,
+/*18-1f*/ 0x1F, 0x23, 0x21, 0x1E, 0x24,	-1 /*LCTRL*/, 0x00, 0x01,
+/*20-27*/ 0x02, 0x03, 0x05, 0x04, 0x26, 0x28, 0x25,	0x29,
+/*28-2f*/ 0x27, 0x2A, -1 /*LSHIFT*/, 0x0A, 0x06, 0x07, 0x08, 0x09,
+/*30-37*/ 0x0B, 0x2D, 0x2E, 0x2B, 0x2F, 0x2C, -1 /*RSHIFT*/, -1,
+/*38-3f*/ -1 /*LALT*/, 0x31, -1 /*CAPSLOCK*/, 0x7A, 0x78, 0x63, 0x76, 0x60,
+/*40-47*/ 0x61, 0x62, 0x64, 0x65, 0x6D, -1, -1,	0x73,
+/*48-4f*/ 0x7E, -1, 0x4E, 0x7B, -1, 0x7C, 0x45, -1,
+/*50-57*/ 0x7D, -1, 0x77, 0x75, -1, -1, -1, -1,
+/*58-5f*/ -1, -1, -1, -1, -1, -1, -1, -1,
+/*60-67*/ 0x32, 0x6F, 0x72, -1 /* NumLock */ , 0x51, 0x4B, 0x43, 0x59,
+/*68-6f*/ 0x5B, 0x5C, 0x56, 0x57, 0x58, 0x53, 0x54, 0x55,
+/*70-77*/ 0x52, 0x41, 0x4C, -1, -1, -1, -1, -1,
+/*78-7f*/ -1, -1, -1, -1, -1, -1, -1, -1
+};
+
+int keysymToAtari(SDL_keysym keysym)
+{
+ 
+// fprintf (stdout, "scancode: %x - sym: %x - char: %s\n", keysym.scancode, keysym.sym, SDL_GetKeyName (keysym.sym));
+
+	int sym = keysym.scancode;
+
+	switch (keysym.sym) {
+	  case SDLK_RCTRL:
+	  case SDLK_LCTRL:
+	    return 0x1D;
+		break;
+	  case SDLK_LALT:
+	  case SDLK_RALT:
+	    return 0x38;
+		break;
+	  case SDLK_LSHIFT:
+	    return 0x2A;
+		break;
+	  case SDLK_RSHIFT:
+	    return 0x36;
+		break;
+	  case SDLK_LMETA:
+	  case SDLK_RMETA:
+	    return 0;
+	  default:
+	    break;
+	}
+	for (int i = 0; i < 0x73; i++) {
+		if (keyboardTable[i] == sym) {
+//		fprintf (stdout, "scancode mac:%x - scancode atari: %x\n", keysym.scancode, i);
+			return i;
+		}
+	}
+
+	return 0;	/* invalid scancode */
+}
+#endif /* KEYSYM_MACSCANCODE */
 
 #if KEYBOARD_TRANSLATION == KEYSYM_SYMTABLE
 static int keyboardTable[0x80] = {
@@ -182,7 +241,7 @@ static int keyboardTable[0x80] = {
 		SDLK_KP_PLUS, 0,
 /*50-57*/ SDLK_DOWN, 0, SDLK_INSERT, SDLK_DELETE, 0, 0, 0, 0,
 /*58-5f*/ 0, 0, 0, 0, 0, 0, 0, 0,
-	/*60-67*/ SDLK_LESS, SDLK_F12, SDLK_F11, 0 /* NumLock */ ,
+	/*60-67*/ SDLK_BACKQUOTE, SDLK_F12, SDLK_F11, 0 /* NumLock */ ,
 		SDLK_KP_MINUS, SDLK_KP_DIVIDE, SDLK_KP_MULTIPLY, SDLK_KP7,
 /*68-6f*/ SDLK_KP8, SDLK_KP9, SDLK_KP4, SDLK_KP5, SDLK_KP6, SDLK_KP1,
 		SDLK_KP2, SDLK_KP3,
@@ -192,6 +251,7 @@ static int keyboardTable[0x80] = {
 
 int keysymToAtari(SDL_keysym keysym)
 {
+ 
 	int sym = keysym.sym;
 	// map right Control and Alternate keys to the left ones
 	if (sym == SDLK_RCTRL)
