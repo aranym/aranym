@@ -1,3 +1,10 @@
+2001/09/09 - joy
+- direct TrueColor works again
+- clicking in fullscreen X11 works again (generally mouse grabbing works again)
+- disabled the shit in main_unix.cpp (the memory management)
+- fixed a few little bugs
+
+
 2001/09/04 - joy
 - milan's port of ata.cpp and cdrom.cpp from Bochs v1.2 now enables direct
   access to CD-ROM! Use "IsCDROM = Yes" in your [IDE1] section of aranym

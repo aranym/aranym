@@ -11,6 +11,12 @@ Things that must be done before first beta release:
 
 + mouse pointer must be sync'ed with the host mouse (in X-Windows)
 
+- aranym HW registers - define a structure, use it for FastRAM.PRG (to find out
+  the correct size of FastRAM) and for StandaFsEditor.PRG (will edit CONFIG.SYS
+  automagically and will add there the GEMDOS drives that were attached in aranym)
+  The structure address will be obtained by calling an undefined instruction.
+  TOS will hold it in a CookieJar ARAx.
+
 - printing - definitely a must. Either by YAMAHA emulation or directly
   by hooking into TOS xconout. Anyone having a copy of TOS ROM that was able
   to print chars on console?
