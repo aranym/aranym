@@ -1,7 +1,7 @@
 /*
  * main.cpp - startup/shutdown code
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -217,16 +217,6 @@ Uint32 my_callback_function(Uint32 /*interval*/, void * /*param*/)
 {
 	TriggerInternalIRQ();
 	return 10;					// come back in 10 milliseconds
-}
-
-/*
- * input_callback() is called every 20 ms and processes the input events
- * for the initial SDL GUI popup.
- */
-Uint32 input_callback(Uint32 /*interval*/, void * /*param*/)
-{
-	check_event();	// process keyboard and mouse events
-	return 20;		// 50 Hz
 }
 
 /*
@@ -684,3 +674,7 @@ void RestartAll()
 	// CPU init
 	Restart680x0();
 }
+
+/*
+vim:ts=4:sw=4:
+*/
