@@ -1,3 +1,7 @@
+2002/02/12 - joy
+- IDE emulation adapted for Falcon: $f00039 is recognized but ignored.
+
+
 2002/02/12 - milan & Thomas Huth
 - ARAnyM support only 68040 only. Other CPUs aren't generated
 
