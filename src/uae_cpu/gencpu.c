@@ -40,7 +40,6 @@ static int using_prefetch;
 static int using_exception_3;
 static int using_mmu;
 static int cpu_level;
-static int previous_gener_opcode;
 
 /* For the current opcode, the next lower level that will have different code.
  * Initialized to -1 for each opcode. If it remains unchanged, indicates we
@@ -839,7 +838,7 @@ static const char *cmask (wordsizes size)
      case sz_byte: return "0x80";
      case sz_word: return "0x8000";
      case sz_long: return "0x80000000";
-     default: abort ();
+     default: abort (); return NULL;
     }
 }
 
@@ -2526,7 +2525,6 @@ static void generate_one_opcode (int rp)
     printf ("\topcode = GET_OPCODE;}\n");
     printf ("\tprintf(\"%%lx\\n\",opcode);\n");
     printf ("\tgoto *op_smalltbl_0_lab[opcode];\n\n");
-    previous_gener_opcode = opcode;
 #else
     printf ("\tcpuop_end(%s);\n", cflow_string_of(opcode));
 #endif
