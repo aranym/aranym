@@ -1,3 +1,8 @@
+2002/01/11 - Olivier Landemarre & joy
+- fixed bug in time sync (signed long is bad for GetTicks())
+- fixed bug in TimerC disabling (wrong bit mask for &)
+
+
 2002/01/10 - Rodolphe Pineau & milan
 - vm_acquire_fixed corrected, configure script also
 
