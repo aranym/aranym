@@ -61,6 +61,15 @@ void ExtFs::init()
 	}
 }
 
+uint32 ExtFs::getDrvBits() {
+	uint32 drvBits = 0;
+	for(int i='B'-'A'; i<'Z'-'A'; i++)
+		if (extdrives[i].rootPath != NULL)
+			drvBits |= (1 << i);
+
+	return drvBits;
+}
+
 
 void ExtFs::install( const char driveSign, const char* rootPath, bool halfSensitive )
 {
@@ -1579,6 +1588,10 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.9  2001/08/30 13:01:16  standa
+ * The cast warnings removed.
+ * missing return statements added.
+ *
  * Revision 1.8  2001/08/30 12:42:25  standa
  * Indentation fixed.
  *

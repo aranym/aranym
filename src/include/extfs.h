@@ -87,6 +87,8 @@ class ExtFs {
 	void init();
 	void install( const char driveSign, const char* rootPath, bool halfSensitive );
 
+	uint32 getDrvBits();
+
 	/**
 	 * MetaDos DOS driver dispatch functions.
 	 **/
@@ -216,6 +218,11 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.5  2001/06/21 20:16:53  standa
+ * Dgetdrv(), Dsetdrv(), Dgetpath(), Dsetpath() propagation added.
+ * Only Dsetpath() ever noticed to be propagated by MetaDOS.
+ * BetaDOS tested -> the same story.
+ *
  * Revision 1.4  2001/06/18 13:21:55  standa
  * Several template.cpp like comments were added.
  * HostScreen SDL encapsulation class.
