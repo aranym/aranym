@@ -733,7 +733,8 @@ fi
 dnl Ethernet card emulation
 if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
   AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
-  SYSSRCS="$SYSSRCS ../ether.cpp ether_unix.cpp"
+  AC_CHECK_HEADERS(linux/if_tun.h)
+  SYSSRCS="$SYSSRCS ../natfeat/ece.cpp"
 fi
 
 dnl Support for direct access to host's fs
