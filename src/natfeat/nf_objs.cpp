@@ -3,17 +3,20 @@
 #include "nf_name.h"
 #include "nf_version.h"
 #include "xhdi.h"
+#include "fvdidrv.h"
 /* add your NatFeat class definition here */
 
 NF_Name nf_name;
 NF_Version nf_version;
 XHDIDriver Xhdi;
+FVDIDriver fVDIDrv;
 /* add your NatFeat object declaration here */
 
 pNatFeat nf_objects[] = {
 	&nf_name,
 	&nf_version,
-	&Xhdi
+	&Xhdi,
+	&fVDIDrv
 	/* add your NatFeat object here */
 };
 

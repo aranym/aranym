@@ -14,7 +14,7 @@ ExtFs      extFS;
 #endif
 
 // The HostScreen custom fVDI driver implementation
-FVDIDriver fVDIDrv;
+//FVDIDriver fVDIDrv;
 
 //The Audio driver
 AudioDriver AudioDrv;
@@ -24,6 +24,9 @@ AudioDriver AudioDrv;
 
 /*
  * $Log$
+ * Revision 1.7  2002/08/11 08:31:07  joy
+ * new revision of natfeats
+ *
  * Revision 1.6  2002/08/01 22:21:13  joy
  * xhdi class added
  *

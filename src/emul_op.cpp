@@ -44,27 +44,27 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		case M68K_EMUL_BREAK: {				// Breakpoint
 			printf("*** Breakpoint\n");
 			printf("d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"
-				   "d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
-				   "a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
-				   "a4 %08lx a5 %08lx a6 %08lx a7 %08lx\n"
-				   "sr %04x\n",
-				   (unsigned long)r->d[0],
-				   (unsigned long)r->d[1],
-				   (unsigned long)r->d[2],
-				   (unsigned long)r->d[3],
-				   (unsigned long)r->d[4],
-				   (unsigned long)r->d[5],
-				   (unsigned long)r->d[6],
-				   (unsigned long)r->d[7],
-				   (unsigned long)r->a[0],
-				   (unsigned long)r->a[1],
-				   (unsigned long)r->a[2],
-				   (unsigned long)r->a[3],
-				   (unsigned long)r->a[4],
-				   (unsigned long)r->a[5],
-				   (unsigned long)r->a[6],
-				   (unsigned long)r->a[7],
-				   r->sr);
+			       "d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
+			       "a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
+			       "a4 %08lx a5 %08lx a6 %08lx a7 %08lx\n"
+			       "sr %04x\n",
+			       (unsigned long)r->d[0],
+			       (unsigned long)r->d[1],
+			       (unsigned long)r->d[2],
+			       (unsigned long)r->d[3],
+			       (unsigned long)r->d[4],
+			       (unsigned long)r->d[5],
+			       (unsigned long)r->d[6],
+			       (unsigned long)r->d[7],
+			       (unsigned long)r->a[0],
+			       (unsigned long)r->a[1],
+			       (unsigned long)r->a[2],
+			       (unsigned long)r->a[3],
+			       (unsigned long)r->a[4],
+			       (unsigned long)r->a[5],
+			       (unsigned long)r->a[6],
+			       (unsigned long)r->a[7],
+			       r->sr);
 #ifdef ENABLE_MON
 			char *arg[4] = {"mon", "-m", "-r", NULL};
 			mon(3, arg);
@@ -85,6 +85,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 				r->d[2] &= 0xefffffff;									// Clear FPU flag if no FPU present
 			break;
 		}
+
 		case M68K_EMUL_OP_VIDEO_OPEN:		// Video driver functions
 // MJ			r->d[0] = VideoDriverOpen(r->a[0], r->a[1]);
 			{
@@ -121,13 +122,24 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 
 		case M68K_EMUL_OP_VIDEO_CONTROL:	// DEPRECATED
-				D(bug("old fVDI native driver API(opcode=%d)", ReadInt32(r->a[7])));
-				panicbug("old fVDI native driver API - deprecated call");
-				r->d[0] = 0xbadc0de;
+			D(bug("Old fVDI native driver API(opcode=%d)", ReadInt32(r->a[7])));
+			panicbug("Old fVDI native driver API - Not implemented!");
+#ifdef ENABLE_MON
+			char *arg[4] = {"mon", "-m", "-r", NULL};
+			mon(3, arg);
+#endif
+			QuitEmulator();
 			break;
 
 		case M68K_EMUL_OP_VIDEO_DRIVER:
-		    fVDIDrv.dispatch(r);
+			{
+				static bool first = true;
+				if (first) {
+					first = false;
+					panicbug("Obsolescent fVDI native driver API - Upgrade to NatFeat driver!");
+				}
+			}
+			fVDIDrv.dispatch(r);
 			break;
 
 #ifdef EXTFS_SUPPORT
@@ -199,57 +211,57 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			r->d[0] = (uint32)-32L;
 			break;
 
-        case M68K_EMUL_OP_AUDIO:
-            AudioDrv.dispatch( ReadInt32(r->a[7]), r );  // DM
-            break;
+		case M68K_EMUL_OP_AUDIO:
+			AudioDrv.dispatch( ReadInt32(r->a[7]), r );  // DM
+			break;
 
 
 #ifdef ETHERNET_SUPPORT
-        case M68K_EMUL_OP_ETHER_OPEN:           // Ethernet driver functions
-            r->d[0] = EtherOpen(r->a[0], r->a[1]);
-            break;
+		case M68K_EMUL_OP_ETHER_OPEN:           // Ethernet driver functions
+			r->d[0] = EtherOpen(r->a[0], r->a[1]);
+			break;
 
-        case M68K_EMUL_OP_ETHER_CONTROL:
-            r->d[0] = EtherControl(r->a[0], r->a[1]);
-            break;
+		case M68K_EMUL_OP_ETHER_CONTROL:
+			r->d[0] = EtherControl(r->a[0], r->a[1]);
+			break;
 
-        case M68K_EMUL_OP_ETHER_READ_PACKET:
-            EtherReadPacket((uint8 **)&r->a[0], r->a[3], r->d[3], r->d[1]);
-            break;
+		case M68K_EMUL_OP_ETHER_READ_PACKET:
+			EtherReadPacket((uint8 **)&r->a[0], r->a[3], r->d[3], r->d[1]);
+			break;
 
-        case M68K_EMUL_OP_IRQ:                  // Level 1 interrupt
-            r->d[0] = 0;
-            if (InterruptFlags & INTFLAG_ETHER) {
-                ClearInterruptFlag(INTFLAG_ETHER);
-                EtherInterrupt();
-            }
+		case M68K_EMUL_OP_IRQ:                  // Level 1 interrupt
+			r->d[0] = 0;
+			if (InterruptFlags & INTFLAG_ETHER) {
+				ClearInterruptFlag(INTFLAG_ETHER);
+				EtherInterrupt();
+			}
 			break;
 #endif
 
 		default:
 			printf("FATAL: EMUL_OP called with bogus opcode %08x\n", opcode);
 			printf("d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"
-				   "d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
-				   "a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
-				   "a4 %08lx a5 %08lx a6 %08lx a7 %08lx\n"
-				   "sr %04x\n",
-				   (unsigned long)r->d[0],
-				   (unsigned long)r->d[1],
-				   (unsigned long)r->d[2],
-				   (unsigned long)r->d[3],
-				   (unsigned long)r->d[4],
-				   (unsigned long)r->d[5],
-				   (unsigned long)r->d[6],
-				   (unsigned long)r->d[7],
-				   (unsigned long)r->a[0],
-				   (unsigned long)r->a[1],
-				   (unsigned long)r->a[2],
-				   (unsigned long)r->a[3],
-				   (unsigned long)r->a[4],
-				   (unsigned long)r->a[5],
-				   (unsigned long)r->a[6],
-				   (unsigned long)r->a[7],
-				   r->sr);
+			       "d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
+			       "a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
+			       "a4 %08lx a5 %08lx a6 %08lx a7 %08lx\n"
+			       "sr %04x\n",
+			       (unsigned long)r->d[0],
+			       (unsigned long)r->d[1],
+			       (unsigned long)r->d[2],
+			       (unsigned long)r->d[3],
+			       (unsigned long)r->d[4],
+			       (unsigned long)r->d[5],
+			       (unsigned long)r->d[6],
+			       (unsigned long)r->d[7],
+			       (unsigned long)r->a[0],
+			       (unsigned long)r->a[1],
+			       (unsigned long)r->a[2],
+			       (unsigned long)r->a[3],
+			       (unsigned long)r->a[4],
+			       (unsigned long)r->a[5],
+			       (unsigned long)r->a[6],
+			       (unsigned long)r->a[7],
+			       r->sr);
 #ifdef ENABLE_MON
 			char *arg[4] = {"mon", "-m", "-r", NULL};
 			mon(3, arg);
