@@ -256,7 +256,7 @@ bool ETHERNETDriver::init(void)
 			TAP_MTU, NULL
 		};
 		int result;
-		result = execvp( "./" TAP_INIT, args );
+		result = execvp( TAP_INIT, args );
 		_exit(result);
 	}
 
