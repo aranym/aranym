@@ -8,54 +8,59 @@
 #define CDECL
 #endif
 
-long *nf_ptr;	/* must point to the NatFeat cookie */
-#define nfGetID(n)	(((long CDECL (*)(const char *))(nf_ptr[1]))n)
-#define nfCall(n)	(((long CDECL (*)(long, ...))(nf_ptr[2]))n)
+typedef struct
+{
+	long magic;
+	long CDECL (* nfGetID)(const char *);
+	long CDECL (* nfCall)(long ID, ...);
+} NatFeatCookie;
+
+NatFeatCookie *nf_ptr;	/* must point to the NatFeat cookie */
 
 long nfidGetName(void)
 {
 	static long id = 0;
 	if (id == 0)
-		id = nfGetID(("NF_NAME"));
+		id = nf_ptr->nfGetID("NF_NAME");
 	return id;
 }
 
 long nfGetName(char *buffer, long size)
 {
-	return nfCall((nfidGetName(), buffer, size));
+	return nf_ptr->nfCall(nfidGetName(), buffer, size);
 }
 
 long nfGetFullName(char *buffer, long size)
 {
-	return nfCall((nfidGetName() | 0x0001, buffer, size));
+	return nf_ptr->nfCall(nfidGetName() | 0x0001, buffer, size);
 }
 
 long nfGetVersion(void)
 {
 	static long id = 0;
 	if (id == 0)
-		id = nfGetID(("NF_VERSION"));
+		id = nf_ptr->nfGetID("NF_VERSION");
 
-	return nfCall((id));
+	return nf_ptr->nfCall(id);
 }	
 
 long nfidStdErr(void)
 {
 	static long id = 0;
 	if (id == 0)
-		id = nfGetID(("NF_STDERR"));
+		id = nf_ptr->nfGetID("NF_STDERR");
 	return id;
 }
 
 long nfStdErr(char *text)
 {
-	return nfCall((nfidStdErr(), text));
+	return nf_ptr->nfCall(nfidStdErr(), text);
 }
 
-#define nfStdErrPrintf1(format, a)	nfCall((nfidStdErr() | 0x0001, format, a))
-#define nfStdErrPrintf2(format, a, b)	nfCall((nfidStdErr() | 0x0001, format, a, b))
-#define nfStdErrPrintf3(format, a, b, c)	nfCall((nfidStdErr() | 0x0001, format, a, b, c))
-#define nfStdErrPrintf4(format, a, b, c, d)	nfCall((nfidStdErr() | 0x0001, format, a, b, c, d))
+#define nfStdErrPrintf1(format, a)	nf_ptr->nfCall(nfidStdErr() | 0x0001, format, a)
+#define nfStdErrPrintf2(format, a, b)	nf_ptr->nfCall(nfidStdErr() | 0x0001, format, a, b)
+#define nfStdErrPrintf3(format, a, b, c)	nf_ptr->nfCall(nfidStdErr() | 0x0001, format, a, b, c)
+#define nfStdErrPrintf4(format, a, b, c, d)	nf_ptr->nfCall(nfidStdErr() | 0x0001, format, a, b, c, d)
 
 typedef struct
 {
@@ -104,7 +109,7 @@ int main()
 		return 0;
 	}
 	
-	if (nf_ptr[0] != 0x20021021L) {
+	if (nf_ptr->magic != 0x20021021L) {
 		puts("NatFeat cookie magic value does not match");
 		return 0;
 	}
