@@ -140,7 +140,9 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 int ETHERNETDriver::get_params(GET_PAR which)
 {
+	DUNUSED(which);
 	int ethX = getParameter(0);
+	DUNUSED(ethX);
 	memptr name_ptr = getParameter(1);
 	uint32 name_maxlen = getParameter(2);
 	char *text = NULL;
@@ -165,6 +167,7 @@ int ETHERNETDriver::get_params(GET_PAR which)
 
 int32 ETHERNETDriver::readPacketLength(int ethX)
 {
+	DUNUSED(ethX);
 	return packet_length; /* packet_length[ethX] */
 }
 
@@ -174,8 +177,13 @@ int32 ETHERNETDriver::readPacketLength(int ethX)
 
 void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 {
+	DUNUSED(ethX);
 	D(bug("Ethernet: ReadPacket dest %08lx, len %lx", buffer, len));
-	Host2Atari_memcpy(buffer, packet, packet_length > 1514 ? 1514 : packet_length );
+	// Host2Atari_memcpy(buffer, packet, packet_length > 1514 ? 1514 : packet_length );
+	Host2Atari_memcpy(buffer, packet, len > 1514 ? 1514 : len );
+	if (len > 1514) {
+		panicbug("ETHERNETDriver::readPacket() - length %d > 1514", len);
+	}
 }
 
 
@@ -185,6 +193,7 @@ void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 
 void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
 {
+	DUNUSED(ethX);
 	uint8 packetToWrite[1516];
 
 	D(bug("Ethernet: SendPacket src %08lx, len %lx", buffer, len));
@@ -260,6 +269,7 @@ ETHERNETDriver::~ETHERNETDriver()
  */
 bool ETHERNETDriver::startThread(int ethX)
 {
+	DUNUSED(ethX);
 	if (!handlingThread) {
 		D(bug("Ethernet: Start thread"));
 
@@ -283,6 +293,7 @@ bool ETHERNETDriver::startThread(int ethX)
  */
 void ETHERNETDriver::stopThread(int ethX)
 {
+	DUNUSED(ethX);
 	if (handlingThread) {
 		D(bug("Ethernet: Stop thread"));
 
