@@ -84,6 +84,7 @@ int main(int argc, char **argv)
 	if (start_debug) ndebug::init();
 #endif
 
+/* sracka begins here
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
 	TTRAMSize = TTRAMSize & -getpagesize();					// Round down to page boundary
 #endif
@@ -163,6 +164,15 @@ int main(int argc, char **argv)
 	ROMBase = (uint32)ROMBaseHost;
 	TTRAMBase = (uint32)TTRAMBaseHost;
 #endif
+sracka ends here */
+	RAMBaseHost = (uint8 *)malloc((14+2+32)*1024*1024);
+	MEMBaseDiff = (uintptr)RAMBaseHost;
+	RAMBase = 0;
+	ROMBase = 0xe00000;
+	ROMBaseHost = ROMBase + RAMBaseHost;
+	TTRAMBase = 0x1000000;
+	TTRAMBaseHost = TTRAMBase + RAMBaseHost;
+
 	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
 	D(bug("TT-RAM starts at %p (%08x)", TTRAMBaseHost, TTRAMBase));
@@ -216,6 +226,7 @@ void QuitEmulator(void)
 #endif
 
 	// Free ROM/RAM areas
+/* sracka begins here
 	if (RAMBaseHost != VM_MAP_FAILED) {
 		vm_release(RAMBaseHost, RAMSize);
 		RAMBaseHost = NULL;
@@ -245,6 +256,8 @@ void QuitEmulator(void)
 	
 	// Exit VM wrappers
 	vm_exit();
+sracka ends here */
+	free(RAMBaseHost);
 
 	exit(0);
 }
@@ -262,6 +275,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.39  2001/08/29 18:36:25  milan
+ * Integration of TV conf. GUI, small patches of MMU and debugger
+ *
  * Revision 1.38  2001/08/21 18:19:16  milan
  * CPU update, disk's geometry autodetection - the 1st step
  *
