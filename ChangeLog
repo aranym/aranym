@@ -5,6 +5,17 @@
 - NF_SHUTDOWN added
 
 
+2003/02/12 - STanda
+- tools/createdisk: rewritten into 'sh' syntax and tested on
+  Solaris/HPUX/FreeBSD (all due to the clarity of the FreeBSD distribution
+  requested) 
+  * you can create image of whatever size and pretty fast (we are using
+    lseek() there now and so on ext2 you can create and image file bigger
+    than your available space ;))
+  * You need not to use the mbrdata file if you don't need it. See the usage
+    notes for more.
+  
+
 2003/02/09 - patrice
 - ikbd.cpp: corrected SendMouseMotion() which don't modify the buttons variable
   anymore.

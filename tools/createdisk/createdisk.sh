@@ -24,9 +24,10 @@ MAX_SIZE=`expr \( $MAX_C \* $MAX_H \* $MAX_S \* $B_PER_S \) / 1024`
 if [ -z "$1" ] || [ -z "$2" ] || [ `echo $2 | grep [\^0-9] | wc -l` -gt 0 ]
 then
   echo "Usage:"
-  echo "$0 file size"
-  echo "  file : File name"
-  echo "  size : Requested size (MB)"
+  echo "$0 file size [mbrdata]"
+  echo "  file    : File name"
+  echo "  size    : Requested size (MB)"
+  echo "  mbrdata : MBR contents to be used or some invalid value to force not writing it"
   exit 1
 fi
 
@@ -42,7 +43,8 @@ REQ_SIZE=`expr $2 \* 1024`
 if [ $REQ_SIZE -gt $MAX_SIZE ] && [ -f "$MBR_DATA" ]
 then
   echo "Requested size is too big!"
-  echo "You might want to create an empty image file without MBR (see the README)."
+  echo "You might want to create an empty image file without MBR:"
+  echo "by using: \"$0 $1 $2 dummy\""
   exit -2
 fi
 
