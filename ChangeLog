@@ -1,3 +1,12 @@
+2003/01/11 - joy
+
+- "__NF" cookie fixed - now the structure contains pointers to nfID and
+  nfCall.
+
+- src/natfeat/atari_example.c updated - it's now based on the __NF cookie
+  only.
+
+
 2003/01/10 - joy
 - tools/diskimage.c: a tool for creating disk images up to 32 GB large.
   Note that our IDE emulation is limited to 2 GB disks for now. Will be
