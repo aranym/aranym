@@ -3,6 +3,7 @@ Contents:
   2) AES Error (WinX)
   3) disk from Atari in Aranym
   4) CD-ROM
+  5) GEMBench blitter test crashes
 
 ---
 
@@ -19,7 +20,9 @@ Answer:
 
   Then mail the cvsdiff.txt to pstehlik@sophics.cz.
 
+
 ---
+
 Question:
   I copied my mint setup on Aranym. It may works if I can use
   long file names and access rights. Should I use a new disk
@@ -91,6 +94,7 @@ Answer:
 5) don't forget to reconfigure your harddisk driver on the original
    Atari (see the point 1) back to your favorite values.
 
+
 ---
 
 Question:
@@ -106,3 +110,17 @@ Answer:
 
   And then set up your Atari environment like you would did on a real Atari
   with IDE CD-ROM attached. E.g. I used CD-Tools' driver and MetaDOS.
+
+
+---
+
+Question:
+  The GEMBench Blitting test crashes/hangs every time I run it using fVDI.
+
+Answer:
+  Put the following line into your FVDI.SYS:
+
+    xbiosfix
+
+  GEMBench is not really good benchmark programm for ARAnyM anyway.
+
