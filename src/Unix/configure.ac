@@ -13,6 +13,8 @@ AC_CANONICAL_SYSTEM
 dnl Options.
 AC_ARG_ENABLE(nat-debug,     [  --enable-nat-debug      enable native debugger support (default=yes)], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
 
+AC_ARG_ENABLE(full-debug,    [  --enable-full-debug     enable full debug outputs (default=no)], [WANT_FULLDEBUG=$enableval], [WANT_FULLDEBUG=no])
+
 AC_ARG_ENABLE(debug,
 [  --enable-debug=which    specify which debugger to use (default=ndebug)],
 [ case "$enableval" in
@@ -30,7 +32,7 @@ AC_ARG_WITH(mon,               [  --with-mon              use mon as debugger (d
 
 AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history for debugger (default=no)], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
 
-AC_ARG_ENABLE(flightrecorder,     [  --enable-flightrecorder  enable CPU flight recorder (default=no)], [WANT_FLIGHTRECORDER=$enableval], [WANT_FLIGHTRECORDER=no])
+AC_ARG_ENABLE(flightrecorder,  [  --enable-flightrecorder enable CPU flight recorder (default=no)], [WANT_FLIGHTRECORDER=$enableval], [WANT_FLIGHTRECORDER=no])
 
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU (default=no)], [WANT_MMU=$enableval], [WANT_MMU=no])
 
@@ -1421,6 +1423,11 @@ if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
 else
   DBGSP=""
   WFLAGS=""
+fi
+
+if [[ "x$WANT_FULLDEBUG" = "xyes" ]]; then
+  CFLAGS="$CFLAGS -DWHOLEDEBUG"
+  CXXFLAGS="$CXXFLAGS -DWHOLEDEBUG"
 fi
 
 dnl Remove the "-O2" option if set for GCC and set the "-O3" option.

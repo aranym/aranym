@@ -1,3 +1,8 @@
+2005/01/12 - milan
+- all files: "unused varible" GCC warnings can be viewed with
+             --enable-full-debug
+
+
 2005/01/12 - Andreas
 - natfeat/nfcdrom.cpp: Include <SDL_endian.h> for SDL_SwapBE16.
 
