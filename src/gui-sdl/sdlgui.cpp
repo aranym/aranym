@@ -9,6 +9,7 @@
 #include "host.h"
 #include "sdlgui.h"
 #include "file.h"
+#include "debug.h"
 
 #include <cstdlib>
 #include <SDL.h>
@@ -44,7 +45,7 @@ extern int eventY;
 /*
   Initialize the GUI.
 */
-int SDLGui_Init()
+bool SDLGui_Init()
 {
   char fontname[256];
   sprintf(fontname, "%s/font8.bmp", DATADIR);
@@ -53,11 +54,12 @@ int SDLGui_Init()
   stdfontgfx = SDL_LoadBMP(fontname);
   if( stdfontgfx==NULL )
   {
-    fprintf(stderr, "Could not load image %s:\n %s\n", fontname, SDL_GetError() );
-    return -1;
+    panicbug("Could not load font %s", fontname);
+    panicbug("ARAnyM GUI will not be available");
+    return false;
   }
 
-  return 0;
+  return true;
 }
 
 
@@ -533,8 +535,14 @@ int SDLGui_DoDialog(SGOBJ *dlg)
  //   if( SDL_WaitEvent(&evnt)==1 )  /* could be replaced with Semaphore! */
       switch(eventTyp)
       {
-        case SDL_QUIT:
+        case SDL_QUIT:		/* TODO should pass this event from input loop */
           bQuitProgram = true;
+          break;
+        case 0x12345678:	/* user pressed the Esc key */
+          retbutton = 0;	/* TODO should be the number of the Cancel button */
+          break;
+        case 0x87654321:	/* TODO a signal that resolution has changed */
+          SDLGui_DrawDialog(dlg);
           break;
         case SDL_MOUSEBUTTONDOWN:
           retbutton = mousedown(dlg, eventX, eventY, &oldbutton);
