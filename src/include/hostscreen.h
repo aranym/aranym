@@ -10,6 +10,7 @@
 #include <cstring>
 #include <SDL.h>
 #include <SDL_thread.h>
+#include <stdlib.h>		/* for free() */
 
 
 /**
@@ -43,6 +44,10 @@
 
 
 class HostScreen {
+  private:
+ 	void *saved_background;
+  	int saved_background_size;
+
   public:
 	SDL_mutex   *screenLock;
 	SDL_Surface *surf;	// The main window surface
@@ -84,9 +89,12 @@ class HostScreen {
 		snapCounter = 0;
 
 		screenLock = SDL_CreateMutex();
+
+		saved_background = NULL;
 	}
 	~HostScreen() {
 		SDL_DestroyMutex(screenLock);
+		free(saved_background);
 	}
 
 	inline void lock();
@@ -99,6 +107,10 @@ class HostScreen {
 	inline void	  update( int32 x, int32 y, int32 w, int32 h, bool forced = false );
 	inline void	  update( bool forced );
 	inline void	  update();
+
+	// save and restore background (cannot be nested)
+	void save_bkg();
+	void restore_bkg();
 
 	uint32 getBpp();
 	uint32 getPitch();
@@ -380,6 +392,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.31  2002/06/07 20:55:35  joy
+ * added toggle window/fullscreen mode switch
+ *
  * Revision 1.30  2002/04/22 18:30:50  milan
  * header files reform
  *
