@@ -353,6 +353,8 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 		DSTADDR = XIF_GET_IPHOST,
 		NETMASK = XIF_GET_NETMASK
 	} gif = NONE;
+	struct ifreq *ifr = (struct ifreq *)arg;
+
 
 	DEBUG (("araeth: ioctl cmd = %d \"('%c'<<8)|%d\" bytes", cmd, cmd>>8, cmd&0xff));
 
@@ -368,7 +370,7 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 			if (gif == NONE) gif = NETMASK;
 
 			nfCall((ETH(gif), 0 /* ethX */, buffer, sizeof(buffer)));
-			return (inet_aton(buffer, (long *)arg)) ? 0 : -1;
+			return (inet_aton(buffer, ifr->ifru.data)) ? 0 : -1;
 
 		case SIOCSIFNETMASK:
 		case SIOCSIFFLAGS:
@@ -388,10 +390,7 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 			/*
 			 * Interface configuration, handled by ara_config()
 			 */
-			{
-				struct ifreq *ifr = (struct ifreq *) arg;
-				return ara_config (nif, ifr->ifru.data);
-			}
+			return ara_config (nif, ifr->ifru.data);
 	}
 
 	return ENOSYS;
