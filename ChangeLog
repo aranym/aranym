@@ -1,3 +1,12 @@
+2002/08/05 - joy
+- NATFEA_ID and NATFEA_RCALL can now be used in User mode as well. Supervisor
+  mode is not required. NatFeats themselves have to throw illegal instruction
+  exception if they require Supervisor mode and are called from User mode.
+
+- little clean up in the NatFeats dispatcher. It now detects wrong address
+  and throws proper BUS ERROR.
+
+
 2002/08/04 - joy (version 0.3.0b1)
 - Native Features implemented. The CPU recognizes two new instructions:
   NATFEA_ID (opcode $7300) and
