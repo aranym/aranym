@@ -1,7 +1,7 @@
 2002/10/13 - milan
 - sync with BasiliskII CVS
 
-- JIT compiler: NOP filler based on binutils
+- JIT compiler: NOP filler based on binutils (default)
                 Gwenole added some checks
 
 - Mac OS X: some small corrections
