@@ -29,13 +29,13 @@ uae_u8 ACSIFDC::handleRead(uaecptr addr) {
 
 	int value = 0;
 	switch(addr) {
-		case 4:	value = LOAD_B_ff8604();
-		case 5: value = LOAD_B_ff8605();
-		case 6: value = LOAD_B_ff8606();
-		case 7: value = LOAD_B_ff8607();
-		case 9: value = DMAaddr >> 16;
-		case 0x0b: value = DMAaddr >> 8;
-		case 0x0d: value = DMAaddr;
+		case 4:	value = LOAD_B_ff8604(); break;
+		case 5: value = LOAD_B_ff8605(); break;
+		case 6: value = LOAD_B_ff8606(); break;
+		case 7: value = LOAD_B_ff8607(); break;
+		case 9: value = DMAaddr >> 16; break;
+		case 0x0b: value = DMAaddr >> 8; break;
+		case 0x0d: value = DMAaddr; break;
 	}
 
 	D(bug("Reading ACSIFDC data from %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
