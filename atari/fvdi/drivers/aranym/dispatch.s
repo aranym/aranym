@@ -13,6 +13,7 @@
 	xdef		_fill_polygon
 	xdef		_set_colour_hook
 	xdef		_set_resolution
+	xdef		_get_videoramaddress
 	xdef		_debug_aranym
 
 
@@ -68,6 +69,10 @@ _set_colour_hook:
 
 _set_resolution:
 	FVDI_DISPATCH	10
+	rts
+
+_get_videoramaddress:
+	FVDI_DISPATCH	15
 	rts
 
 _debug_aranym:

@@ -3,7 +3,7 @@
   more readable source than before.
   A simple findFirst function fix: no error on the stat() failure. E.g.
   an invalid symbolic link on the host fs.
-
+- fVDI driver: floatingvideoram bug fixed.
 
 2002/03/26 - milan
 - MMU returns logical address during bus error

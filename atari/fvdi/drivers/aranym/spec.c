@@ -5,7 +5,7 @@
 #define ARANYM
 
 #ifdef ARANYM
-#define ARANYMVRAMSTART 0xf0000000UL
+extern long CDECL get_videoramaddress(void); /* STanda */
 extern void CDECL set_resolution(long width, long height, long depth, long freq); /* STanda */
 extern void CDECL debug_aranym(long freq); /* STanda */
 #endif
@@ -385,7 +385,7 @@ void CDECL initialize(Virtual *vwk)
 	int fast_w_bytes;
 #endif
 #ifdef ARANYM
-	long fb_base = ARANYMVRAMSTART;
+	long fb_base = get_videoramaddress();
 #endif
 #if 0
 	int i;
@@ -541,8 +541,12 @@ long CDECL setup(long type, long value)
  */
 Virtual* CDECL opnwk(Virtual *vwk)
 {
-	if (resolution.used)
+	if (resolution.used) {
 		set_resolution( resolution.width, resolution.height, resolution.bpp, resolution.freq );
+		device.address = (void*)get_videoramaddress();
+		me->default_vwk->real_address->screen.mfdb.address = device.address;
+		vwk->real_address->screen.mfdb.address = device.address;
+	}
 
 	return 0;
 }

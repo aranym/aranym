@@ -319,6 +319,15 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 						   ReadInt32( (uint32)r->a[7] + 12 ), ReadInt32( (uint32)r->a[7] + 16 ) );
 			break;
 
+		case 15: // getVideoramAddress:
+#ifdef FIXED_VIDEORAM
+			r->d[0] = ARANYMVRAMSTART;
+#else
+			r->d[0] = VideoRAMBase;
+#endif
+			D(bug("fVDI: getVideoramAddress: %#lx", r->d[0] ));
+			break;
+
 		case 20: // debug_aranym:
 			bug("fVDI: DEBUG %d", ReadInt32( (uint32)r->a[7] + 4 ) );
 			break;
@@ -1948,6 +1957,10 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.35  2002/02/19 20:04:05  milan
+ * src/ <-> CPU interaction cleaned
+ * memory access cleaned
+ *
  * Revision 1.1.1.1  2002/02/10 23:32:50  jurikm
  * Unofficial ARAnyM
  *
