@@ -216,6 +216,8 @@ void DSP::shutdown(void)
 		while (state != DSP_STOPPEDTHREAD) {
 			SDL_Delay(1);
 		}
+
+		dsp56k_thread = NULL;
 	}
 
 	/* Destroy the semaphore */
