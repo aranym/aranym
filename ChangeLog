@@ -1,3 +1,8 @@
+2004/08/19 - milan
+- Unix/cygwin/sigsegv_cygwin.cpp, Unix/linux/sigsegv_linux.cpp:
+      cleaning, merging
+
+
 2004/08/19 - Xavier
 - uae_cpu/cpu_emulation.h, Unix/cygwin/sigsegv_cygwin.cpp: hwsp and pagehwsp
   address checking modes support on Cygwin.

@@ -1,25 +1,19 @@
 
 #include "sysdeps.h"
-#include "memory.h"
+#include "cpu_emulation.h"
 #include <SDL_endian.h>
-
-#include <csignal>
-
-#ifndef HAVE_SIGHANDLER_T
-typedef void (*sighandler_t)(int);
-#endif
-
-#define SIGSEGV_HANDLER_GOTO 0
-
-int in_handler = 0;
-
-extern void compiler_status();
-#if JIT_DEBUG
-extern void compiler_dumpstate();
-#endif
-
 #define DEBUG 0
 #include "debug.h"
+
+#define SIGSEGV_HANDLER_GOTO 0
+#define FULL_SIGSEGV_HANDLER_GOTO 0
+
+#ifdef USE_JIT
+extern void compiler_status();
+# ifdef JIT_DEBUG
+extern void compiler_dumpstate();
+# endif
+#endif
 
 enum transfer_type_t {
 	TYPE_UNKNOWN,
@@ -33,10 +27,43 @@ enum type_size_t {
 	TYPE_INT
 };
 
+#include <csignal>
+
+#ifndef HAVE_SIGHANDLER_T
+typedef void (*sighandler_t)(int);
+#endif
+
+#define CONTEXT_NAME	sc
+#define CONTEXT_TYPE	struct sigcontext
+#define CONTEXT_ADDR	& CONTEXT_NAME
+#define CONTEXT_ATYPE	CONTEXT_TYPE *
+#define CONTEXT_EIP	CONTEXT_NAME.eip
+#define CONTEXT_EFLAGS	CONTEXT_NAME.eflags
+#define CONTEXT_EAX	CONTEXT_NAME.eax
+#define CONTEXT_EBX	CONTEXT_NAME.ebx
+#define CONTEXT_ECX	CONTEXT_NAME.ecx
+#define CONTEXT_EDX	CONTEXT_NAME.edx
+#define CONTEXT_EBP	CONTEXT_NAME.ebp
+#define CONTEXT_ESI	CONTEXT_NAME.esi
+#define CONTEXT_EDI	CONTEXT_NAME.edi
+#define CONTEXT_CR2	CONTEXT_NAME.cr2
+#define CONTEXT_AEIP	CONTEXT_NAME->eip
+#define CONTEXT_AEFLAGS	CONTEXT_NAME->eflags
+#define CONTEXT_AEAX	CONTEXT_NAME->eax
+#define CONTEXT_AEBX	CONTEXT_NAME->ebx
+#define CONTEXT_AECX	CONTEXT_NAME->ecx
+#define CONTEXT_AEDX	CONTEXT_NAME->edx
+#define CONTEXT_AEBP	CONTEXT_NAME->ebp
+#define CONTEXT_AESI	CONTEXT_NAME->esi
+#define CONTEXT_AEDI	CONTEXT_NAME->edi
+#define CONTEXT_ACR2	CONTEXT_NAME->cr2
+
+int in_handler = 0;
+
 #if (__i386__)
 
 /* instruction jump table */
-#if 0 && SIGSEGV_HANDLER_GOTO
+#if FULL_SIGSEGV_HANDLER_GOTO
 static void *sigsegvjmptbl[256];
 static bool sigsegvjmptbl_set = false;
 #endif
@@ -107,60 +134,60 @@ static inline int get_instr_size_add(unsigned char *p)
 	return offset;
 }
 
-static inline void set_eflags(int i, struct sigcontext *sc, type_size_t t) {
+static inline void set_eflags(int i, CONTEXT_ATYPE CONTEXT_NAME, type_size_t t) {
 /* MJ - AF and OF not tested, also CF for 32 bit */
 	switch (t) {
 		case TYPE_BYTE:
-			if ((i > 255) || (i < 0)) sc->eflags |= 0x1;	// CF
-				else sc->eflags &= 0xfffffffe;
-			if (i > 127) sc->eflags |= 0x80;		// SF
-				else sc->eflags &= 0xffffff7f;
+			if ((i > 255) || (i < 0)) CONTEXT_AEFLAGS |= 0x1;	// CF
+				else CONTEXT_AEFLAGS &= 0xfffffffe;
+			if (i > 127) CONTEXT_AEFLAGS |= 0x80;			// SF
+				else CONTEXT_AEFLAGS &= 0xffffff7f;
 		case TYPE_WORD:
-			if ((i > 65535) || (i < 0)) sc->eflags |= 0x1;	// CF
-				else sc->eflags &= 0xfffffffe;
-			if (i > 32767) sc->eflags |= 0x80;		// SF
-				else sc->eflags &= 0xffffff7f;
+			if ((i > 65535) || (i < 0)) CONTEXT_AEFLAGS |= 0x1;	// CF
+				else CONTEXT_AEFLAGS &= 0xfffffffe;
+			if (i > 32767) CONTEXT_AEFLAGS |= 0x80;			// SF
+				else CONTEXT_AEFLAGS &= 0xffffff7f;
 		case TYPE_INT:
-			if (i > 2147483647) sc->eflags |= 0x80;		// SF
-				else sc->eflags &= 0xffffff7f;
+			if (i > 2147483647) CONTEXT_AEFLAGS |= 0x80;		// SF
+				else CONTEXT_AEFLAGS &= 0xffffff7f;
 
 	}
-	if ((i % 2) == 0) sc->eflags |= 0x4;		// PF
-		else sc->eflags &= 0xfffffffb;
-	if (i == 0) sc->eflags |= 0x40;			// ZF
-		else sc->eflags &= 0xffffffbf;
+	if ((i % 2) == 0) CONTEXT_AEFLAGS |= 0x4;				// PF
+		else CONTEXT_AEFLAGS &= 0xfffffffb;
+	if (i == 0) CONTEXT_AEFLAGS |= 0x40;					// ZF
+		else CONTEXT_AEFLAGS &= 0xffffffbf;
 }
 
-static inline void *get_preg(int reg, struct sigcontext *sc, int size) {
+static inline void *get_preg(int reg, CONTEXT_ATYPE CONTEXT_NAME, int size) {
 	switch (reg) {
-		case 0: return &(sc->eax);
-		case 1: return &(sc->ecx);
-		case 2: return &(sc->edx);
-		case 3: return &(sc->ebx);
-		case 4: return (((uae_u8*)&(sc->eax)) + 1);
-		case 5: return (size > 1) ? (void *)(&(sc->ebp)) : (void*)(((uae_u8*)&(sc->ecx)) + 1);
-		case 6: return (size > 1) ? (void*)(&(sc->esi)) : (void*)(((uae_u8*)&(sc->edx)) + 1);
-		case 7: return (size > 1) ? (void*)(&(sc->edi)) : (void*)(((uae_u8*)&(sc->ebx)) + 1);
+		case 0: return &(CONTEXT_AEAX);
+		case 1: return &(CONTEXT_AECX);
+		case 2: return &(CONTEXT_AEDX);
+		case 3: return &(CONTEXT_AEBX);
+		case 4: return (((uae_u8*)&(CONTEXT_AEAX)) + 1);
+		case 5: return (size > 1) ? (void*)(&(CONTEXT_AEBP)) : (void*)(((uae_u8*)&(CONTEXT_AECX)) + 1);
+		case 6: return (size > 1) ? (void*)(&(CONTEXT_AESI)) : (void*)(((uae_u8*)&(CONTEXT_AEDX)) + 1);
+		case 7: return (size > 1) ? (void*)(&(CONTEXT_AEDI)) : (void*)(((uae_u8*)&(CONTEXT_AEBX)) + 1);
 		default: abort();
 	}
 }
 
 static inline void unknown_instruction(uint32 instr) {
 		panicbug("Unknown instruction %08x!", instr);
-#if USE_JIT
+#ifdef USE_JIT
 		compiler_status();
-# if JIT_DEBUG
+# ifdef JIT_DEBUG
 		compiler_dumpstate();
 # endif
 #endif
 		abort();
 }
 
-static void segfault_vec(int x, struct sigcontext sc) {
-	memptr addr = sc.cr2;
-	memptr ainstr = sc.eip;
+static void segfault_vec(int, CONTEXT_TYPE CONTEXT_NAME) {
+	memptr addr = CONTEXT_CR2;
+	memptr ainstr = CONTEXT_EIP;
 	uint32 instr = (uint32)*(uint32 *)ainstr;
-	uint8 *addr_instr = (uint8 *)sc.eip;
+	uint8 *addr_instr = (uint8 *)ainstr;
 	int reg = -1;
 	int len = 0;
 	transfer_type_t transfer_type = TYPE_UNKNOWN;
@@ -181,7 +208,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 #endif
 	in_handler += 1;
 
-#if 0 && SIGSEGV_HANDLER_GOTO
+#if FULL_SIGSEGV_HANDLER_GOTO
 	if (!sigsegvjmptbl_set) {
 		for (int i = 0; i < 256; i++)
 			sigsegvjmptbl[i] = &&label_INSTR_UNKNOWN;
@@ -539,19 +566,21 @@ label_INSTR_UNKNOWN:
 			abort();
 	}
 
-	if ((addr < 0x00f00000) || ((addr > 0x00ffffff) && (addr < 0xfff00000))) goto buserr;
+	if (addr >= 0xff000000)
+		addr &= 0x00ffffff;
 
-	preg = get_preg(reg, &sc, size);
+	if ((addr < 0x00f00000) || (addr > 0x00ffffff))
+		goto buserr;
+
+	preg = get_preg(reg, CONTEXT_ADDR, size);
 
 	D2(panicbug("Register %d, place %08x, address %08x", reg, preg, addr));
-
-	if (addr >= 0xff000000)
-		addr -= 0xff000000;
 
 #if SIGSEGV_HANDLER_GOTO
 	goto *ssvjmp;
 #endif
 	if (transfer_type == TYPE_LOAD) {
+		D2(panicbug("LOAD instruction %X", instruction));
 		switch (instruction) {
 			case INSTR_MOVZX16:
 #if SIGSEGV_HANDLER_GOTO
@@ -587,7 +616,7 @@ label_INSTR_MOV32_2_L:
 label_INSTR_OR8_L:
 #endif
 				*((uae_u8 *)preg) |= HWget_b(addr);
-				set_eflags(*((uae_u8 *)preg), &sc, TYPE_BYTE);
+				set_eflags(*((uae_u8 *)preg), CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_AND8:
 #if SIGSEGV_HANDLER_GOTO
@@ -595,7 +624,7 @@ label_INSTR_AND8_L:
 #endif
 				*((uae_u8 *)preg) &= HWget_b(addr);
 				imm = *((uae_u8 *)preg);
-				set_eflags(*((uae_u8 *)preg), &sc, TYPE_BYTE);
+				set_eflags(*((uae_u8 *)preg), CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_MOVZX8:
 #if SIGSEGV_HANDLER_GOTO
@@ -641,47 +670,48 @@ label_INSTR_CMP8_L:
 #endif
 				imm = *((uae_u8 *)preg);
 				imm -= HWget_b(addr);
-				set_eflags(imm, &sc, TYPE_BYTE);
+				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_DIV8:
 #if SIGSEGV_HANDLER_GOTO
 label_INSTR_DIV8_L:
 #endif
-				pom1 = sc.eax & 0xffff;
+				pom1 = CONTEXT_EAX & 0xffff;
 				pom2 = HWget_b(addr);
-				sc.eax = sc.eax & 0xffff0000 + ((pom1 / pom2) << 8) + (pom1 / pom2);
+				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + ((pom1 / pom2) << 8) + (pom1 / pom2);
 				break;
 			case INSTR_IDIV8:
 #if SIGSEGV_HANDLER_GOTO
 label_INSTR_IDIV8_L:
 #endif
-				pom1 = sc.eax & 0xffff;
+				pom1 = CONTEXT_EAX & 0xffff;
 				pom2 = HWget_b(addr);
-				sc.eax = sc.eax & 0xffff0000 + (((uae_s8)pom1 / (uae_s8)pom2) << 8) + ((uae_s8)pom1 / (uae_s8)pom2);
+				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + (((uae_s8)pom1 / (uae_s8)pom2) << 8) + ((uae_s8)pom1 / (uae_s8)pom2);
 				break;
 			case INSTR_MUL8:
 #if SIGSEGV_HANDLER_GOTO
 label_INSTR_MUL8_L:
 #endif
-				pom1 = sc.eax & 0xff;
+				pom1 = CONTEXT_EAX & 0xff;
 				pom2 = HWget_b(addr);
-				sc.eax = sc.eax & 0xffff0000 + pom1 * pom2;
-				if ((sc.eax & 0xff00) == 0) sc.eflags &= 0xfffffbfe;	// CF + OF
-					else sc.eflags |= 0x401;
+				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + pom1 * pom2;
+				if ((CONTEXT_EAX & 0xff00) == 0) CONTEXT_EFLAGS &= 0xfffffbfe;	// CF + OF
+					else CONTEXT_EFLAGS |= 0x401;
 				break;
 			case INSTR_IMUL8:
 #if SIGSEGV_HANDLER_GOTO
 label_INSTR_IMUL8_L:
 #endif
-				pom1 = sc.eax & 0xff;
+				pom1 = CONTEXT_EAX & 0xff;
 				pom2 = HWget_b(addr);
-				sc.eax = sc.eax & 0xffff0000 + (uae_s8)pom1 * (uae_s8)pom2;
-				if ((sc.eax & 0xff00) == 0) sc.eflags &= 0xfffffbfe;	// CF + OF
-					else sc.eflags |= 0x401;
+				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + (uae_s8)pom1 * (uae_s8)pom2;
+				if ((CONTEXT_EAX & 0xff00) == 0) CONTEXT_EFLAGS &= 0xfffffbfe;	// CF + OF
+					else CONTEXT_EFLAGS |= 0x401;
 				break;
 			default: abort();
 		}
 	} else {
+		D2(panicbug("WRITE instruction %X", instruction));
 		switch (instruction) {
 			case INSTR_MOV8:
 #if SIGSEGV_HANDLER_GOTO
@@ -713,7 +743,7 @@ label_INSTR_AND8_S:
 				imm = HWget_b(addr);
 				imm &= *((uae_u8 *)preg);
 				HWput_b(addr, imm);
-				set_eflags(imm, &sc, TYPE_BYTE);
+				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_ADD8:
 #if SIGSEGV_HANDLER_GOTO
@@ -722,7 +752,7 @@ label_INSTR_ADD8_S:
 				imm = HWget_b(addr);
 				imm += *((uae_u8 *)preg);
 				HWput_b(addr, imm);
-				set_eflags(imm, &sc, TYPE_BYTE);
+				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_OR8:
 #if SIGSEGV_HANDLER_GOTO
@@ -731,7 +761,7 @@ label_INSTR_OR8_S:
 				imm = HWget_b(addr);
 				imm |= *((uae_u8 *)preg);
 				HWput_b(addr, imm);
-				set_eflags(imm, &sc, TYPE_BYTE);
+				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_ORIMM8:
 #if SIGSEGV_HANDLER_GOTO
@@ -739,7 +769,7 @@ label_INSTR_ORIMM8_S:
 #endif
 				imm |= HWget_b(addr);
 				HWput_b(addr, imm);
-				set_eflags(imm, &sc, TYPE_BYTE);
+				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_MOVIMM8:
 #if SIGSEGV_HANDLER_GOTO
@@ -768,7 +798,7 @@ label_INSTR_MOVIMM32_2_S:
 label_INSTR_TESTIMM8_S:
 #endif
 				imm &= HWget_b(addr);
-				set_eflags(imm, &sc, TYPE_BYTE);
+				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_NOT8:
 #if SIGSEGV_HANDLER_GOTO
@@ -782,19 +812,19 @@ label_INSTR_NEG8_S:
 #endif
 				imm = ~(uae_u8)HWget_b(addr) + 1;
 				HWput_b(addr, imm);
-				set_eflags(imm, &sc, TYPE_BYTE);
+				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				if (imm == 0)
-					sc.eflags &= 0xfffffffe;
+					CONTEXT_EFLAGS &= 0xfffffffe;
 				else
-					sc.eflags |= 0x1;
+					CONTEXT_EFLAGS |= 0x1;
 				break;
 			default: abort();
 		}
 	}
 
 	D2(panicbug("Access handled"));
-	D2(panicbug("Next instruction on %08x", sc.eip + len));
-	sc.eip += len;
+	D2(panicbug("Next instruction on %08x", CONTEXT_EIP + len));
+	CONTEXT_EIP += len;
 
 	in_handler -= 1;
 	return;
@@ -803,16 +833,14 @@ buserr:
 
 #endif /* HW_SIGSEGV */
 
-	regs.mmu_fault_addr = addr;
-	in_handler = 0;
-	LONGJMP(excep_env, 2);
+	BUS_ERROR(addr);
 }
 
 #endif
 
 void install_sigsegv() {
 	signal(SIGSEGV, (sighandler_t)segfault_vec);
-#if 0 && SIGSEGV_HANDLER_GOTO
+#if FULL_SIGSEGV_HANDLER_GOTO
 	struct sigcontext sc;
 	segfault_vec(0, sc);
 	sigsegvjmptbl_set = true;
