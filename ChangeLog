@@ -1,3 +1,8 @@
+2003/03/12 - STanda
+- hostfs.cpp: fake methods for chattr, chmode, chown and some more.
+  The report the fakeness to the host OS console in debug mode ATM.
+
+
 2003/03/12 - milan
 - list of supported OS updated
 

@@ -191,17 +191,20 @@ int32 HostFs::dispatch(uint32 fncode)
 			
 		case XFS_CHATTR:
 			D(bug("%s", "fs_chattr"));
-			ret = TOS_EINVFN;
+			D(bug("fs_chattr - NOT IMPLEMENTED!"));
+			ret = TOS_E_OK;
 			break;
 			
 		case XFS_CHOWN:
 			D(bug("%s", "fs_chown"));
-			ret = TOS_EINVFN;
+			D(bug("fs_chown - NOT IMPLEMENTED!"));
+			ret = TOS_E_OK;
 			break;
 			
 		case XFS_CHMOD:
 			D(bug("%s", "fs_chmode"));
-			ret = TOS_EINVFN;
+			D(bug("fs_chmode - NOT IMPLEMENTED!"));
+			ret = TOS_E_OK;
 			break;
 			
 		case XFS_MKDIR:
@@ -327,17 +330,20 @@ int32 HostFs::dispatch(uint32 fncode)
 			
 		case XFS_HARDLINK:
 			D(bug("%s", "fs_hardlink"));
-			ret = TOS_EINVFN;
+			D(bug("fs_hardlink - NOT IMPLEMENTED!"));
+			ret = TOS_E_OK;
 			break;
 			
 		case XFS_FSCNTL:
 			D(bug("%s", "fs_fscntl"));
-			ret = TOS_EINVFN;
+			D(bug("fs_fscntl - NOT IMPLEMENTED!"));
+			ret = TOS_E_OK;
 			break;
 			
 		case XFS_DSKCHNG:
 			D(bug("%s", "fs_dskchng"));
-			ret = TOS_EINVFN;
+			D(bug("fs_dskchng - NOT IMPLEMENTED!"));
+			ret = TOS_E_OK;
 			break;
 			
 		case XFS_RELEASE:
@@ -405,7 +411,8 @@ int32 HostFs::dispatch(uint32 fncode)
 		
 		case DEV_IOCTL:
 			D(bug("%s", "fs_dev_ioctl"));
-			ret = TOS_EINVFN;
+			D(bug("fs_dev_ioctl - NOT IMPLEMENTED!"));
+			ret = TOS_E_OK;
 			break;
 		
 		case DEV_DATIME:
@@ -426,11 +433,13 @@ int32 HostFs::dispatch(uint32 fncode)
 		
 		case DEV_SELECT:
 			D(bug("%s", "fs_dev_select"));
+			D(bug("fs_dev_select - NOT IMPLEMENTED!"));
 			ret = TOS_E_OK;
 			break;
 
 		case DEV_UNSELECT:
 			D(bug("%s", "fs_dev_unselect"));
+			D(bug("fs_dev_unselect - NOT IMPLEMENTED!"));
 			ret = TOS_E_OK;
 			break;
 
@@ -1878,6 +1887,9 @@ void HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, 
 
 /*
  * $Log$
+ * Revision 1.7  2003/03/11 18:53:29  standa
+ * Ethernet initialization fixed to work also in nondebug mode.
+ *
  * Revision 1.6  2003/03/08 08:51:51  joy
  * disable DEBUG
  *
