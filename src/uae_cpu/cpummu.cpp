@@ -136,7 +136,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 				root_des & 3
 			  ));
 
-		root_log = root_idx << 25;
+		root_log = root_idx << ROOT_INDEX_SHIFT;
 		
 		ptr_des_addr = root_des & MMU_ROOT_PTR_ADDR_MASK;
 		
@@ -149,7 +149,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 			int n_pages_used;
 
 			ptr_des = phys_get_long(ptr_des_addr + ptr_idx);
-			ptr_log = root_log | (ptr_idx << 18);
+			ptr_log = root_log | (ptr_idx << PTR_INDEX_SHIFT);
 
 			if ((ptr_des & 2) == 0)
 				continue; /* invalid */
@@ -160,7 +160,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 			for (page_idx = 0; page_idx < PAGE_TABLE_SIZE; page_idx++)	{
 				
 				page_des = phys_get_long(page_addr + page_idx);
-				page_log = ptr_log | (page_idx << 2);
+				page_log = ptr_log | (page_idx << 2);		// ??? PAGE_INDEX_SHIFT
 
 				switch (page_des & 3)	{
 					case 0: /* invalid */

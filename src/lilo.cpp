@@ -24,29 +24,26 @@
 
 /*--- Includes ---*/
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "sysdeps.h"
+#include "cpu_emulation.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#define DEBUG 1
+#include "debug.h"
+
+#include <cstdio>
+#include <cstdlib>
 #include <SDL_endian.h>
 #ifdef HAVE_LIBZ
 #include <zlib.h>
 #endif
 
 /* linux specific include files */
-#include <linux/elf.h>
+#include <elf.h>
 #include <asm-m68k/bootinfo.h>
+#include <asm-m68k/page.h>
 #define __KERNEL__
 #include <asm-m68k/setup.h>
 #undef __KERNEL__
-
-#include "sysdeps.h"
-#include "cpu_emulation.h"
-
-#define DEBUG 1
-#include "debug.h"
 
 /*--- Defines ---*/
 
@@ -459,7 +456,7 @@ int LiloCheckKernel(
 
 static int create_bootinfo(void)
 {
-	int i;
+	unsigned int i;
 	struct bi_record *record;
 
 	/* Initialization */

@@ -686,6 +686,7 @@ else
   if [[ "x$WANT_MMU" = "xyes" ]]; then
     AC_MSG_WARN([MMU needs fixed position of VideoRAM])
     AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
+    WANT_FIXEDVIDEORAM="yes"
   fi
 fi
 
