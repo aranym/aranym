@@ -2,18 +2,6 @@ General (all platforms) known bugs:
 -----------------------------------
 
 Bug:
-  Disk images (and probably also physical disk drives) larger than 2 GB
-  do not work.
-
-Reason:
-  Our IDE emulation code is facing 32-bit barrier in lseek.
-
-Solution:
-  Wait for a fix.
-
---
-
-Bug:
   PureC cannot open project file on host filesystem.
 
 Reason:

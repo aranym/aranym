@@ -1,6 +1,14 @@
+** ARAnyM 0.7.0 released
+
+2003/01/29 - joy
+- xhdi.cpp: used off_t in fseek hoping that this would make it LFS compatible
+
+- Makefile.in, aranym.spec: three more contrib files added for installation
+
+
 2003/01/16 - milan
 - configure.ac: support for large files (>2GB)
-                correctd support for OpenGL
+                corrected support for OpenGL
 
 
 2003/01/15 - STanda

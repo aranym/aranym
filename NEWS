@@ -1,3 +1,36 @@
+2003/01/29 - version 0.7.0 released
+==========
+
+What is new?
+
+ NatFeats seem to finally stabilize. "__NF" cookie has been hardwired
+ both to TOS 4.04 and to EmuTOS so it can be used by user applications
+ to test for extended host capabilities. See the example code in
+ src/natfeat/atari_example.c.
+
+ Improved VIDEL emulation (virtual screens work now). Improved VIDEL
+ rendering including auto zooming and OpenGL render.
+
+ fVDI fixed. You must update your floppy/disk images with new fVDI driver.
+
+ New experimental hostfs access drivers - instead of using MetaDOS driver
+ under FreeMiNT Standa created a proper FreeMiNT XFS driver and then wrote
+ a FreeMiNT API emulation layer for singleTOS' MetaDOS! This is untested
+ so beware and backup your data first.
+
+ Also more work has been done on ECE (Ethernet Card Emulation). It's
+ unfinished, though - currently the MiNT driver throws bombs. We would
+ need some Atari hackers to debug some of the Atari driver peculiarities.
+
+ Large disks (disk images) supported now. There is also a new tool
+ for creating real large disk images (up to 32 GB!)
+
+ And as always, many bugfixes.
+
+ I also put together a first snapshot of the "afros" (ARAnyM FRee OS" :-)
+ Just download it, unpack it and run aranym with the provided config file.
+
+
 2002/10/20 - version 0.6.8 released
 ==========
 
