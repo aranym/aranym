@@ -1,3 +1,12 @@
+2001/09/20 - STanda
+
+- Off by one bug fixed in fillArea.
+
+- Separate functions for transparent and opaque background. gfxPrimitives methods
+  moved to the HostScreen. Several methods made inline.
+  fVDI driver Shouldn't cause BUS ERROR now.
+
+
 2001/09/20 - joy
 - fixed very annoying bug in direct_tc mode (no more segfaults at $e08ba8 I hope!)
 
