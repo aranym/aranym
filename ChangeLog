@@ -1,3 +1,10 @@
+2002/06/07 - joy
+- ScrollLock switches between fullscreen and windowed mode
+- in window mode you'll get a 'heart beat' - an activity indicator
+- SDL GUI is enabled by default now (can be disabled with --disable-gui)
+  press Pause key to invoke it.
+
+
 2002/05/27 - milan
 - vm_alloc.*: the lastest changes discarded, problems during configure
 
