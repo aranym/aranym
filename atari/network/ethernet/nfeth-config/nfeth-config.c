@@ -69,21 +69,20 @@ int main(int argc, char **argv)
 
 	{
 		int sockfd;
-		struct ifreq ifreq_ioctl;
+		struct ifreq ifr;
 		long addr = 0;
-		int ret;
 
 		sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 		if (sockfd < 0) {
 			perror("socket could not be open");
 			return 1;
 		}
-		strcpy(ifreq_ioctl.ifr_name, "eth0");
-		ret = ioctl(sockfd, which, &addr);
-		if (ret != 0) {
-			printf("ioctl returns %d\n", ret);
+		strcpy(ifr.ifr_name, "eth0");
+		if (ioctl(sockfd, which, &ifr) != 0) {
+			perror("ioctl failed");
 			return 1;
 		}
+		addr = (long)ifr.ifr_ifru.ifru_data;
 		printf("%ld.%ld.%ld.%ld\n", (addr >> 24) & 0xff, (addr >> 16) & 0xff,
 							  (addr >> 8) & 0xff, addr & 0xff);
 	}
