@@ -499,8 +499,8 @@ if ( quantumsMax == 0)
               BX_SELECTED_CONTROLLER(channel).status.drq = 0;
               }
             else { /* read next one into controller buffer */
-              Bit32u logical_sector;
-              int ret;
+              off_t logical_sector;
+              off_t ret;
 
               BX_SELECTED_CONTROLLER(channel).status.drq = 1;
               BX_SELECTED_CONTROLLER(channel).status.seek_complete = 1;
@@ -857,8 +857,8 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 #else
   UNUSED(this_ptr);
 #endif  // !BX_USE_HD_SMF
-  Bit32u logical_sector;
-  int ret;
+  off_t logical_sector;
+  off_t ret;
   bool prev_control_reset;
 
   Bit8u  channel = BX_MAX_ATA_CHANNEL;
@@ -928,8 +928,8 @@ if ( quantumsMax == 0)
 
           /* if buffer completely writtten */
           if (BX_SELECTED_CONTROLLER(channel).buffer_index >= 512) {
-            Bit32u logical_sector;
-            int ret;
+            off_t logical_sector;
+            off_t ret;
 
 #if TEST_WRITE_BEYOND_END==1
 	    BX_SELECTED_CONTROLLER(channel).cylinder_no += 100000;
@@ -2071,9 +2071,9 @@ bx_hard_drive_c::close_harddrive(void)
 
 
   bool
-bx_hard_drive_c::calculate_logical_address(Bit8u channel, Bit32u *sector)
+bx_hard_drive_c::calculate_logical_address(Bit8u channel, off_t *sector)
 {
-      Bit32u logical_sector;
+      off_t logical_sector;
 
       if (BX_SELECTED_CONTROLLER(channel).lba_mode) {
             //bx_printf ("disk: calculate: %d %d %d\n", ((Bit32u)BX_SELECTED_CONTROLLER(channel).head_no), ((Bit32u)BX_SELECTED_CONTROLLER(channel).cylinder_no), (Bit32u)BX_SELECTED_CONTROLLER(channel).sector_no);
@@ -2102,7 +2102,7 @@ bx_hard_drive_c::increment_address(Bit8u channel)
       BX_SELECTED_CONTROLLER(channel).sector_count--;
 
       if (BX_SELECTED_CONTROLLER(channel).lba_mode) {
-	    Bit32u current_address;
+	    off_t current_address;
 	    calculate_logical_address(channel, &current_address);
 	    current_address++;
 	    BX_SELECTED_CONTROLLER(channel).head_no = (current_address >> 24) & 0xf;
@@ -2854,7 +2854,7 @@ int concat_image_t::open (const char* pathname0)
 {
   char *pathname = strdup (pathname0);
   D(bug("concat_image_t.open"));
-  ssize_t start_offset = 0;
+  off_t start_offset = 0;
   for (int i=0; i<BX_CONCAT_MAX_IMAGES; i++) {
     fd_table[i] = ::open(pathname, O_RDWR
 #ifdef O_BINARY

@@ -1,3 +1,11 @@
+2002/10/01 - milan
+- use off_t for file offsets in IDE emulation (from Bochs), sync with Bochs
+
+- for SGI/Irix SystemV opendir used
+
+- for Solaris dirent.h again in sysdeps.h
+
+
 2002/09/30 - milan
 - v&V commands added to ndebug, (<address>) vs. <value> operations
 
