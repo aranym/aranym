@@ -115,7 +115,7 @@ void Exit680x0(void)
 
 
 /*
- *  Reset and start 680x0 emulation (doesn't return)
+ *  Reset and start 680x0 emulation
  */
 
 void Start680x0(void)
@@ -153,7 +153,7 @@ void TriggerMFP(bool enable)
 
 void TriggerNMI(void)
 {
-	//!! not implemented yet
+	SPCFLAGS_SET( SPCFLAG_NMI );
 }
 
 
