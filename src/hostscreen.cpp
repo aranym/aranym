@@ -54,6 +54,13 @@ void HostScreen::makeSnapshot()
 }
 
 
+void HostScreen::toggleFullScreen()
+{
+	bx_options.video.fullscreen = !bx_options.video.fullscreen;
+	SDL_WM_ToggleFullScreen(surf);
+}
+
+
 void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 {
 	this->width	 = width;
@@ -906,6 +913,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.25  2002/01/08 21:20:57  standa
+ * fVDI driver palette store on res change implemented.
+ *
  * Revision 1.24  2001/12/22 18:13:24  joy
  * most video related parameters moved to bx_options.video struct.
  * --refresh <x> added
