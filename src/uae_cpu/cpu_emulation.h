@@ -139,6 +139,10 @@ extern void TriggerInt5(void);		// Trigger interrupt level 5
 extern void TriggerMFP(bool);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
 
+// CPU looping handlers
+void check_eps_limit(uaecptr);
+void report_double_bus_error(void);
+
 // This function will be removed
 static inline uaecptr showPC(void) { return m68k_getpc(); }	// for debugging only
 

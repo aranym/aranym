@@ -682,11 +682,6 @@ static inline void exc_make_frame(
 
 extern void showBackTrace(int, bool=true);
 
-#ifdef ENABLE_EPSLIMITER
-static long last_exception_time=-1;
-static long exception_per_sec=0;
-#endif
-
 static int building_bus_fault_stack_frame=0;
 
 void Exception(int nr, uaecptr oldpc)
@@ -700,61 +695,17 @@ void Exception(int nr, uaecptr oldpc)
     }
 
     if (nr == 2) {
-    	static uaecptr prevpc = 0;
-#if 0
-			if (currprefs.cpu_level == 5)	{
-				/* 68060 */
-				exc_make_frame(4,
-						regs.sr,
-						currpc,
-						nr,
-						regs.mmu_fault_addr, /* fault address */
-						regs.mmu_fslw /* fault status long-word */
-						);
-			}
-			else if (currprefs.cpu_level == 4)	{
-#endif
-	 panicbug("Exception Nr. %d CPC: %08lx NPC: %08lx SP=%08lx Addr: %08lx", nr, currpc, get_long (regs.vbr + 4*nr), m68k_areg(regs, 7), regs.mmu_fault_addr);
-	/* try to display more debug info - last instruction history */
-	if (currpc == prevpc) {
-#ifdef FULL_HISTORY
-		showBackTrace(20, false);
-		m68k_dumpstate (NULL);
-		// sleep(1);
-#else
-		panicbug("If the Full History was enabled you would see the last 20 instructions here.");
-#endif
-
+    	/* BUS ERROR handler begins */
 #ifdef ENABLE_EPSLIMITER
-		if (bx_options.cpu.eps_enabled) {
-			if (last_exception_time == -1) {
-				last_exception_time = SDL_GetTicks();
-			}
-			exception_per_sec++;
-			if (SDL_GetTicks() - last_exception_time > 1000) {
-				last_exception_time = SDL_GetTicks();
-				if (exception_per_sec > bx_options.cpu.eps_max) {
-					panicbug("HALT: Exception per second limit reached.");
-					QuitEmulator();
-				}
-				exception_per_sec = 0;
-			}
-		}				
+        check_eps_limit(currpc);
 #endif
-	}
-	prevpc = currpc;
+        // panicbug("Exception Nr. %d CPC: %08lx NPC: %08lx SP=%08lx Addr: %08lx", nr, currpc, get_long (regs.vbr + 4*nr), m68k_areg(regs, 7), regs.mmu_fault_addr);
 
-	if (building_bus_fault_stack_frame) {
-#if 0
-		panicbug("HALT: Double bus fault detected !");
-		QuitEmulator();
-#else
-		panicbug("RESET: Double bus fault detected !");
-		building_bus_fault_stack_frame=0;
-		Restart680x0();
-		return;
-#endif
-	}
+        if (building_bus_fault_stack_frame) {
+            report_double_bus_error();
+            building_bus_fault_stack_frame=0;
+            return;
+        }
 
 	building_bus_fault_stack_frame=1;
 
@@ -777,6 +728,7 @@ void Exception(int nr, uaecptr oldpc)
 	exc_make_frame(7, regs.sr, currpc, 2, 0, 0);
 
 	building_bus_fault_stack_frame=0;
+        /* end of BUS ERROR handler */
     } else if (nr == 3) {
 	exc_make_frame(2, regs.sr, last_addr_for_exception_3, nr,
 			last_fault_for_exception_3 & 0xfffffffe, 0);

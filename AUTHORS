@@ -22,14 +22,14 @@ Stanislav Opichal <opichals@seznam.cz>
 - general hostscreen and SDL work
 
 Petr Stehlik <pstehlik@sophics.cz>
-- hardware emulation
-- interrupt system
-- 68040 friendly TOS
+- some hardware emulation (Falcon-specific HW)
+- interrupt system (inspired by STonX)
+- 68040 friendly TOS (based on old information from Douglas Little of BSS)
 - host input/output (keyboard and mouse, parallel port)
 - XHDI interface
-- SDL GUI
+- SDL GUI (based on Hatari)
 - NatFeats
-- release manager and webmaster
+- ARAnyM Release Manager and Webmaster
 
 Johan Klockars <rand@cd.chalmers.se>
 - fVDI author, helps with ARAnyM fVDI driver
@@ -48,6 +48,7 @@ Patrice Mandin <pmandin@caramail.com>
 - IKBD/ACIA rewrite, joystick support
 - the SDL-MiNT port of ARAnyM
 - Videl autozoom
+- EPS limiter
 - close examination of our code and finding obvious and not-so-obvious
   bugs (IDE, parameters handling, TOS patches)
 
@@ -146,6 +147,7 @@ Matti Levänen
 Xavier Joubert
 - for Windows/cygwin improvements
 - HostFS fixes
+- CPU Double Bus Fault handling
 
 Stefan Kuhr
 - for Mac OS X port improvements

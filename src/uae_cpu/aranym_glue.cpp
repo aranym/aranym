@@ -228,3 +228,76 @@ void TriggerNMI(void)
 	SPCFLAGS_SET( SPCFLAG_NMI );
 }
 
+#ifndef REBOOT_OR_HALT
+#define REBOOT_OR_HALT	1	// reboot by default
+#endif
+
+#if REBOOT_OR_HALT == 1
+#  define CPU_MSG		"CPU: Rebooting"
+#  define CPU_ACTION	Restart680x0()
+#else
+#  define CPU_MSG		"CPU: Halting"
+#  define CPU_ACTION	QuitEmulator()
+#endif
+
+#ifdef ENABLE_EPSLIMITER
+
+#ifndef EPS_LIMIT
+#  define EPS_LIMIT		10000	/* this might be too high if ARAnyM is slowed down by printing the bus errors on console */
+#endif
+
+void check_eps_limit(uaecptr pc)
+{
+	static long last_exception_time=-1;
+	static long exception_per_sec=0;
+	static long exception_per_sec_pc=0;
+	static uaecptr prevpc = 0;
+
+	if (bx_options.cpu.eps_enabled) {
+		if (last_exception_time == -1) {
+			last_exception_time = SDL_GetTicks();
+		}
+
+		exception_per_sec++;
+
+		if (pc == prevpc) {
+			/* BUS ERRORs occur at the same PC - watch out! */
+			exception_per_sec_pc++;
+		}
+		else {
+			exception_per_sec_pc = 0;
+			prevpc = pc;
+		}
+
+		if (SDL_GetTicks() - last_exception_time > 1000) {
+			last_exception_time = SDL_GetTicks();
+			if (exception_per_sec_pc > bx_options.cpu.eps_max ||
+				exception_per_sec > EPS_LIMIT /* make it configurable */) {
+				panicbug("CPU: Exception per second limit reached: %ld/%ld",
+					exception_per_sec_pc, exception_per_sec);
+				/* would be cool to open SDL dialog here: */
+				/* [Exception per seconds limit reached. XXXXX exception
+				    occured in the last second. The limit is set to YYYYY
+				    in your config file. Do you want to continue emulation,
+				    reset ARAnyM or quit ?][Continue] [Reset] [Quit]
+				*/
+				panicbug(CPU_MSG);
+				CPU_ACTION;
+			}
+			exception_per_sec = 0;
+			exception_per_sec_pc = 0;
+		}
+	}
+}
+#endif
+
+void report_double_bus_error()
+{
+	panicbug("CPU: Double bus fault detected !");
+	/* would be cool to open SDL dialog here: */
+	/* [Double bus fault detected. The emulated system crashed badly.
+	    Do you want to reset ARAnyM or quit ?] [Reset] [Quit]"
+	*/
+	panicbug(CPU_MSG);
+	CPU_ACTION;
+}

@@ -20,22 +20,17 @@ that particular programmer but rather who is the author of the idea :-)
 
 - joy: automagically updated BDCONFIG.SYS
 
-- joy: continue fixing the JIT (we got a demo app already)
-
 - joy: runtime configuration of keyboard input method (symtable/scan)
 
 - joy: runtime on-the-fly reconfiguration of the keyboard layout
+
+- joy: keyboard mapping editable in a config file
 
 - joy: make.sh magic: "nfeth-config.c" build by ./make.sh of the xif.
 
 - joy: write some doc about bridging the tuntap - perhaps the following
        URL could help?
        http://tldp.org/HOWTO/Ethernet-Bridge-netfilter-HOWTO-3.html#ss3.1
-
-- joy: detect loop lockups (e.g. "Illegal instruction: 00e0 at 00000030"
-       repeated endlessly) and allow restarting ARAnyM gracefully
-
-- joy: patch for fixing MetaDOS Pexec bug (maybe not needed as BetaDOS is OK)
 
 - joy: make the PureC patch more error-proof
 
@@ -45,10 +40,7 @@ that particular programmer but rather who is the author of the idea :-)
 
 - joy: diskimage embedded into ARAnyM directly, available from SDL GUI
 
-- joy: rename panicbug() to something that not evoke panic.
-
-- joy: correct copyright headers in ALL files (do it together with 
-       the panicbug renaming above)
+- joy: correct copyright headers in ALL files
 
 - joy: remove the RCS keywords that only make file comparing a nightmare
 
@@ -78,10 +70,8 @@ that particular programmer but rather who is the author of the idea :-)
        for HW_IDE. Best would be to implement word and longword HW access
        emulation directly for all modules.
 
-- joy: keyboard mapping editable in a config file
-
 - joy: document the way the aranym works - especially the hardware
-       emulation (ARAnyM Hackers Guide).
+       emulation (ARAnyM Hackers Guide), use of threads etc.
 
 - joy: document the command line switches, keyboard combos and write Users
        Guide.

@@ -1,3 +1,38 @@
+2003/10/25 - joy
+- newcpu.cpp, aranym_glue.cpp: bus error handling code rearranged a bit:
+  SDL related code should not pollute the newcpu.cpp. Also tried to fix
+  the indentation (in the BUS ERROR handler of the Exception function
+  at least, since Milan does not want me to reformat the whole file).
+
+  In case of problems the ARAnyM reaction (reboot or halt) is now common
+  for both EPS (exception per second) and DBF (double bus fault) and is
+  configurable by defining REBOOT_OR_HALT at compile time.
+  If REBOOT_OR_HALT == 1 ARAnyM reboots in case of double bus error or
+  bus error loop. Else it halts CPU and quits. By default it reboots.
+
+  EPS code now counts both EPS at same PC and also general EPS (regardless
+  of the current PC). Runtime configurable limit is for EPS_PC only, so far.
+  The general EPS' limit is configurable at compile time by defining
+  EPS_LIMIT to a number. Should be made runtime configurable as well.
+
+  The only missing thing is SDL dialog informing about the situation
+  and offering more options. See the /* remarks */ in code.
+
+  Bus errors are not printed on console now. The EPS and DBF patches
+  should take care of problems and we are not interested in "normal"
+  bus errors.
+
+- TODO: updated (some items removed since they were done already)
+- AUTHORS: slight update
+
+
+2003/10/25 - Xavier
+- newcpu.cpp: better fix for double bus errors - CPU restarts now
+- main.cpp: display correct EmuTOS build date
+- configure.ac: caddr_t final solution
+- vm_alloc.cpp: caddr_t cleans the #ifdefs out
+
+
 2003/10/17 - Xavier
 - newcpu.cpp: real trap for double bus errors
 
