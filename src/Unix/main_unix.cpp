@@ -63,9 +63,11 @@ extern "C" char *strdup(const char *s)
 }
 #endif
 
-#ifdef ENABLE_MON
+#if defined(ENABLE_MON) || defined(NEWDEBUG)
 static struct sigaction sigint_sa;
+# ifdef ENABLE_MON
 static void sigint_handler(...);
+# endif
 #endif
 
 extern void showBackTrace(int, bool=true);
@@ -185,7 +187,12 @@ static void install_signal_handler()
 	sigaction(SIGINT, &sigint_sa, NULL);
 #else
 # ifdef NEWDEBUG
-	if (bx_options.startup.debugger) signal(SIGINT, setactvdebug);
+	if (bx_options.startup.debugger) {
+		sigemptyset(&sigint_sa.sa_mask);
+		sigint_sa.sa_handler = (void (*)(int))setactvdebug;
+		sigint_sa.sa_flags = 0;
+		sigaction(SIGINT, &sigint_sa, NULL);
+	}
 # endif
 #endif
 

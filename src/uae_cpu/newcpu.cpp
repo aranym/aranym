@@ -1620,7 +1620,7 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 	    opcode = 0x4AFC;
 	}
 	dp = table68k + opcode;
-	for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
+	for (lookup = lookuptab; (unsigned int)lookup->mnemo != dp->mnemo; lookup++)
 	    ;
 
 	strcpy (instrname, lookup->name);
@@ -1788,7 +1788,7 @@ void showDisasm(uaecptr addr) {
 		strcpy(buff[i],"");
 	}
 	jmp_buf excep_env_old;
-	excep_env_old = excep_env;
+	memcpy(excep_env_old, excep_env, sizeof(jmp_buf));
 	uaecptr newpc = 0;
 	m68kpc_offset = addr - m68k_getpc ();
 	int prb = setjmp(excep_env);
@@ -1852,7 +1852,7 @@ void showDisasm(uaecptr addr) {
 	free(buffer);
 	for (int i = 0; i < 7; i++) free(sbuffer[i]);
 	for (int i = 0; i < 5; i++) free(buff[i]);
-	excep_env = excep_env_old;
+	memcpy(excep_env, excep_env_old, sizeof(jmp_buf));
 }
 #endif
 #endif
