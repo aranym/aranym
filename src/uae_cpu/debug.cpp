@@ -20,11 +20,11 @@
 #include "cpu_emulation.h"
 
 static int debugger_active = 0;
-static int do_skip;
 int debugging = 0;
 int irqindebug = false;
 
 #ifndef NEWDEBUG
+static int do_skip;
 static uaecptr skipaddr;
 static char old_debug_cmd[80];
 #endif
@@ -33,7 +33,11 @@ static char old_debug_cmd[80];
 
 void activate_debugger (void)
 {
+#ifdef NEWDEBUG
+    ndebug::do_skip = false;
+#else
     do_skip = 0;
+#endif
     if (debugger_active)
 	return;
     debugger_active = 1;

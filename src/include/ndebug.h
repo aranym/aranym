@@ -25,7 +25,6 @@ class ndebug {
   static unsigned int dbfull;
   static unsigned int aktualrow;
   static unsigned int tp;
-  static bool do_skip;
   static uaecptr skipaddr;
   static char old_debug_cmd[80];
  
@@ -129,6 +128,7 @@ public:
   int dbprintf(char *, ...);
 
 #ifdef NEWDEBUG
+  static bool do_skip;
   static void run();
   static void init();
   static void nexit();
