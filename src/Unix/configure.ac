@@ -549,7 +549,7 @@ AC_TRANSLATE_DEFINE(HAVE_SIGHANDLER_T, "$ac_cv_have_sighandler_t",
   [Define if <signal.h> doesn't define sighandler_t])	
 
 dnl Check if we have getopt_long
-AC_CACHE_CHECK("for getopt_long",
+AC_CACHE_CHECK([for getopt_long],
   ac_cv_have_getopt_long, [
   AC_LANG_SAVE
   AC_LANG_CPLUSPLUS

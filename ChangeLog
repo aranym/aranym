@@ -1,3 +1,9 @@
+2002/09/30 - milan
+- v&V commands added to ndebug, (<address>) vs. <value> operations
+
+- typo fix in configure.ac script
+
+
 2002/09/28 - joy (version 0.6.4-beta)
 - XHDI writing to disk fixed. Previously it was appending the new records
   at the end of the disk image file so it did not destroy any data but

@@ -53,6 +53,11 @@ unsigned int ndebug::aktualrow = 0;
 unsigned int ndebug::tp = 0;
 bool ndebug::do_skip = false;
 uaecptr ndebug::skipaddr = 0;
+bool ndebug::do_skip_value = false;
+uaecptr ndebug::value_addr = 0;
+uint32 ndebug::value;
+value_test_t  ndebug::value_test;
+  
 char ndebug::old_debug_cmd[80] = "                                                                               ";
 static char *strhelp[] = {"Help:\n",
 	" h, ?                 show this help\n",
@@ -86,6 +91,8 @@ static char *strhelp[] = {"Help:\n",
 	" k | K                browse down\n",
 	" r                    refresh D(bug()) | reset aktual row\n",
 	" L <file>             save debugger's info to <file>\n",
+	" v X <addr> <value>   step forward until (<address>) = <value> (X=b,w,l)\n",
+	" V X <address>        step forward until (<address>) changed (X=b,w,l)\n",
 #ifdef FULL_HISTORY
 	" H <lines>            show history of PC\n",
 #endif
@@ -750,6 +757,89 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			SPCFLAGS_SET( SPCFLAG_BRK );
 			if (wasGrabbed) grabMouse(true);
 			return 0;
+
+		case 'v':
+			if (!more_params(&inptr)) {
+				bug("v command needs one parameter!");
+				break;
+			}
+			switch (inptr[0]) {
+				case 'b':
+					inptr += 2;
+					value_test = EQUAL_value_test_8;
+					value_addr = readhex(&inptr);
+					value = (uint8)readhex(&inptr);
+					do_skip_value = true;
+					irqindebug = true;
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					if (wasGrabbed) grabMouse(true);
+					return 0;
+				case 'w':
+					inptr += 2;
+					value_test = EQUAL_value_test_16;
+					value_addr = readhex(&inptr);
+					value = (uint16)readhex(&inptr);
+					do_skip_value = true;
+					irqindebug = true;
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					if (wasGrabbed) grabMouse(true);
+					return 0;
+				case 'l':
+					inptr += 2;
+					value_test = EQUAL_value_test_32;
+					value_addr = readhex(&inptr);
+					value = readhex(&inptr);
+					do_skip_value = true;
+					irqindebug = true;
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					if (wasGrabbed) grabMouse(true);
+					return 0;
+				default:
+					bug("v command needs for the 1st parameter b, w or l!");
+					break;
+			}
+			break;
+		case 'V':
+			if (!more_params(&inptr)) {
+				bug("V command needs one parameter!");
+				break;
+			}
+			switch (inptr[0]) {
+				case 'b':
+					inptr += 2;
+					value_test = CHANGE_value_test_8;
+					value_addr = readhex(&inptr);
+					value = ReadAtariInt8(value_addr);
+					do_skip_value = true;
+					irqindebug = true;
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					if (wasGrabbed) grabMouse(true);
+					return 0;
+				case 'w':
+					inptr += 2;
+					value_test = CHANGE_value_test_16;
+					value_addr = readhex(&inptr);
+					value = ReadAtariInt16(value_addr);
+					do_skip_value = true;
+					irqindebug = true;
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					if (wasGrabbed) grabMouse(true);
+					return 0;
+				case 'l':
+					inptr += 2;
+					value_test = CHANGE_value_test_32;
+					value_addr = readhex(&inptr);
+					value = ReadAtariInt32(value_addr);
+					do_skip_value = true;
+					irqindebug = true;
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					if (wasGrabbed) grabMouse(true);
+					return 0;
+				default:
+					bug("V command needs for the 1st parameter b, w or l!");
+					break;
+			}
+			break;
 		case 'L':
 			errorintofile(f, &inptr);
 			break;
@@ -935,8 +1025,50 @@ void ndebug::run() {
 		return;
 	}
 
+	if (do_skip_value) {
+		switch (value_test) {
+			case EQUAL_value_test_8:
+				if (ReadAtariInt8(value_addr) != value) {
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					return;
+				}
+				break;
+			case EQUAL_value_test_16:
+				if (ReadAtariInt16(value_addr) != value) {
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					return;
+				}
+				break;
+			case EQUAL_value_test_32:
+				if (ReadAtariInt32(value_addr) != value) {
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					return;
+				}
+				break;
+			case CHANGE_value_test_8:
+				if (ReadAtariInt8(value_addr) == value) {
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					return;
+				}
+				break;
+			case CHANGE_value_test_16:
+				if (ReadAtariInt16(value_addr) == value) {
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					return;
+				}
+				break;
+			case CHANGE_value_test_32:
+				if (ReadAtariInt32(value_addr) == value) {
+					SPCFLAGS_SET( SPCFLAG_BRK );
+					return;
+				}
+				break;
+		}
+	}
+
 	irqindebug = false;
 	do_skip = false;
+	do_skip_value = false;
 	// release keyboard and mouse control
 	bool wasGrabbed = grabMouse(false);
 
@@ -1151,6 +1283,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.27  2002/09/28 13:03:45  joy
+ * ndebug::showHistory does not work if NEED_TO_DEBUG_BADLY is enabled
+ *
  * Revision 1.26  2002/09/10 18:44:52  milan
  * ISO C++ forbids assignment of arrays
  *

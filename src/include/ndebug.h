@@ -12,6 +12,8 @@
 
 #ifdef NEWDEBUG
 
+typedef enum {EQUAL_value_test_8, EQUAL_value_test_16, EQUAL_value_test_32, CHANGE_value_test_8, CHANGE_value_test_16, CHANGE_value_test_32 } value_test_t;
+
 class ndebug {
   static unsigned int rowlen;
   static const unsigned int dbsize = 1000;
@@ -23,6 +25,11 @@ class ndebug {
   static unsigned int aktualrow;
   static unsigned int tp;
   static uaecptr skipaddr;
+  static bool do_skip_value;
+  static uaecptr value_addr;
+  static uint32 value;
+  static value_test_t value_test;
+  
   static char old_debug_cmd[80];
  
   static void reset_aktualrow();
