@@ -1,3 +1,7 @@
+2001/12/17 - joy
+- SDL Timers are back! --enable-sdltimer
+
+
 2001/12/16 - joy
 - check_ram_boundary() takes an additional parameter that sets the size 
   of memory access. Now finally all memory accesses are checked and nothing
