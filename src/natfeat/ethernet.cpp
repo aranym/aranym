@@ -251,7 +251,7 @@ int ECE::receiveFunc(void *arg)
 
 			// Trigger ECEnet interrupt
 			D(bug(" packet received, triggering ECEnet interrupt"));
-			TriggerInterrupt();
+			TriggerInt3();		// Networking is at interrupt level 3
 
 			D(bug(" waiting for int acknowledge"));
 			// Wait for interrupt acknowledge by ECE::handleInteruptIf()

@@ -23,22 +23,23 @@
 
 # include <osbind.h>
 
+#define INTERRUPT_LEVEL	3
 
 
 /* old handler */
-extern void (*old_vbl_int)(void);
+extern void (*old_interrupt)(void);
 
 /* interrupt wrapper routine */
-void vbl_interrupt (void);
+void my_interrupt (void);
 
 /* the C routine handling the interrupt */
-void _cdecl aranym_int (void);
+void _cdecl aranym_interrupt(void);
 
 static void
 aranym_install_int (void)
 {
 # define vector(x)      (x / 4)
-	old_vbl_int = Setexc (vector (0x74), (long) vbl_interrupt);
+	old_interrupt = Setexc(vector(0x60) + INTERRUPT_LEVEL, (long) my_interrupt);
 }
 
 long driver_init (void);
@@ -585,10 +586,10 @@ recv_packet (struct netif *nif)
 
 
 /*
- * Busy (vbl for now) interrupt routine
+ * interrupt routine
  */
 void _cdecl
-aranym_int (void)
+aranym_interrupt (void)
 {
 	static int in_use = 0;
 	if (in_use)

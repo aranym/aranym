@@ -107,6 +107,6 @@ static void audio_callback(void *userdata, uint8 * stream, int len)
 		uint8 *buffer = Atari2HostAddr(par->buffer);
 		SDL_MixAudio(stream, buffer, len, par->volume);
 		par->len = len;
-		TriggerInterrupt();		// Interrupt level 5
+		TriggerInt5();		// Audio is at interrupt level 5
 	}
 }

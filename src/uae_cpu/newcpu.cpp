@@ -1378,7 +1378,16 @@ static void do_trace (void)
 
 #define SERVE_VBL_MFP(resetStop)							\
 {															\
-	if (SPCFLAGS_TEST( SPCFLAG_VBL|SPCFLAG_INT5|SPCFLAG_MFP )) {		\
+	if (SPCFLAGS_TEST( SPCFLAG_INT3|SPCFLAG_VBL|SPCFLAG_INT5|SPCFLAG_MFP )) {		\
+		if (SPCFLAGS_TEST( SPCFLAG_INT3 )) {					\
+			if (3 > regs.intmask) {							\
+				Interrupt(3);								\
+				regs.stopped = 0;							\
+				SPCFLAGS_CLEAR( SPCFLAG_INT3 );				\
+				if (resetStop)								\
+					SPCFLAGS_CLEAR( SPCFLAG_STOP );			\
+			}												\
+		}													\
 		if (SPCFLAGS_TEST( SPCFLAG_VBL )) {					\
 			if (4 > regs.intmask) {							\
 				Interrupt(4);								\

@@ -7,6 +7,7 @@
 
 - ETHERNET_OLD (the one from Basilisk) removed completely
 
+- Networking now at interrupt level 3 (Audio stays at int level 5)
 
 
 2003/02/20 - joy

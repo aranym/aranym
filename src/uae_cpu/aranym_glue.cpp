@@ -166,12 +166,17 @@ void TriggerInternalIRQ(void)
 	SPCFLAGS_SET( SPCFLAG_INTERNAL_IRQ );
 }
 
+void TriggerInt3(void)
+{
+	SPCFLAGS_SET( SPCFLAG_INT3 );
+}
+
 void TriggerVBL(void)
 {
 	SPCFLAGS_SET( SPCFLAG_VBL );
 }
 
-void TriggerInterrupt(void)
+void TriggerInt5(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INT5 );
 }
