@@ -1,15 +1,20 @@
-2001/05/28 - PS
-- implemented proper Bus Error (hardware.cpp and others). This helps
-  in a number of places, namely in FPU detection routines.
+2001/06/05 - STanda
+- extfs: the drives are assignable from commandline option -disk (-d)
+  The AUTO/CONFIG.SYS must still contain the conresponding drive-letter
+  assignment with the -d options on the commandline.
 
-- fixed floppy emulation (fdc.cpp). STonX code contained wrong HW register
-  addresses. I found it when I enabled FastRAM - the FDC was crashing
-  the virtual machine.
+- the paramenters.cpp contains the drive assignment which is read by
+  ExtFs.init() method (called from main_unix.cpp)
 
-- added memory bounds checking (memory.h). Ill behaving programs (and bad FDC
-  emulation, as mentioned above :) won't crash the virtual machine anymore!
+- the short -debug option was redesigned to -D
 
-- new memory allocation (main_unix.cpp), enables 32 MB of FastRAM.
+2001/05/29 - PS - version increased to 0.0.3
+- major speed up (22 -> 27 thousand dhrystones) thanks to moving setjmp()
+  out of main CPU loop
+
+- excep_no var removed from memory.cpp and newcpu.cpp
+
+- fixed VBL invocation (main_unix.cpp)
 
 2001/05/29 - PS - version increased to 0.0.2
 - uae_cpu/memory.h - you can enable or disable CHECK_MEMORY_END.
@@ -28,10 +33,15 @@
   is set directly to host's VideoRAM. Thus VIDEL writes directly to host's
   VGA card video memory (if framebuffer is used as the SDL_VIDEODRIVER).
 
-2001/05/29 - PS - version increased to 0.0.3
-- major speed up (22 -> 27 thousand dhrystones) thanks to moving setjmp()
-  out of main CPU loop
+2001/05/28 - PS
+- implemented proper Bus Error (hardware.cpp and others). This helps
+  in a number of places, namely in FPU detection routines.
 
-- excep_no var removed from memory.cpp and newcpu.cpp
+- fixed floppy emulation (fdc.cpp). STonX code contained wrong HW register
+  addresses. I found it when I enabled FastRAM - the FDC was crashing
+  the virtual machine.
 
-- fixed VBL invocation (main_unix.cpp)
+- added memory bounds checking (memory.h). Ill behaving programs (and bad FDC
+  emulation, as mentioned above :) won't crash the virtual machine anymore!
+
+- new memory allocation (main_unix.cpp), enables 32 MB of FastRAM.
