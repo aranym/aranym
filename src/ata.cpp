@@ -975,7 +975,9 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 				    if (!LoEj && !Start) { // stop the disc
 					  panicbug("Stop disc not implemented");
 				    } else if (!LoEj && Start) { // start the disc and read the TOC
-					  panicbug("Start disc not implemented");
+					  panicbug("FIXME: ATAPI start disc not reading TOC");
+					  atapi_cmd_nop();
+					  raise_interrupt();
 				    } else if (LoEj && !Start) { // Eject the disc
 					  atapi_cmd_nop();
 					  if (BX_HD_THIS s[1].cdrom.ready) {
@@ -1745,6 +1747,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 		    BX_SELECTED_CONTROLLER.status.busy = 0;
 
 	      } else {
+		D(bug("ATAPI Device Reset on non-cd device"));
 		command_aborted(0x08);
 	      }
 	      break;
@@ -1792,6 +1795,33 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  raise_interrupt();
 	  break;
 
+	case 0x70:  // SEEK (cgs)
+	  if (BX_SELECTED_HD.device_type == IDE_DISK) {
+	    D(bug("write cmd 0x70 (SEEK) executing"));
+	    if (!calculate_logical_address(&logical_sector)) {
+	      panicbug("initial seek to sector %u out of bounds, aborting", logical_sector);
+	      command_aborted(value);
+	      break;
+	    }
+	    BX_SELECTED_CONTROLLER.error_register = 0;
+	    BX_SELECTED_CONTROLLER.status.busy  = 0;
+	    BX_SELECTED_CONTROLLER.status.drive_ready = 1;
+	    BX_SELECTED_CONTROLLER.status.seek_complete = 1;
+	    BX_SELECTED_CONTROLLER.status.drq   = 1;
+	    BX_SELECTED_CONTROLLER.status.corrected_data = 0;
+	    BX_SELECTED_CONTROLLER.status.err   = 0;
+	    BX_SELECTED_CONTROLLER.buffer_index = 0;
+	    D(bug("s[0].controller.control.disable_irq = %02x", (BX_HD_THIS s[0]).controller.control.disable_irq));
+	    D(bug("s[1].controller.control.disable_irq = %02x", (BX_HD_THIS s[1]).controller.control.disable_irq));
+	    D(bug("SEEK completed.  error_register = %02x", BX_SELECTED_CONTROLLER.error_register));
+	    raise_interrupt();
+	    D(bug("SEEK interrupt completed"));
+	  } else {
+	    panicbug("write cmd 0x70 (SEEK) not supported for non-disk");
+	    command_aborted(0x70);
+	  }
+	break;
+
 	// List all the write operations that are defined in the ATA/ATAPI spec
 	// that we don't support.  Commands that are listed here will cause a
 	// BX_ERROR, which is non-fatal, and the command will be aborted.
@@ -1821,7 +1851,6 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	case 0x42: bug("write cmd 0x42 (READ VERIFY SECTORS EXT) not supported");command_aborted(0x42); break;
 	case 0x50: bug("write cmd 0x50 (FORMAT TRACK) not supported"); command_aborted(0x50); break;
 	case 0x51: bug("write cmd 0x51 (CONFIGURE STREAM) not supported");command_aborted(0x51); break;
-	case 0x70: bug("write cmd 0x70 (SEEK) not supported");command_aborted(0x70); break;
 	case 0x87: bug("write cmd 0x87 (CFA TRANSLATE SECTOR) not supported");command_aborted(0x87); break;
 	case 0x92: bug("write cmd 0x92 (DOWNLOAD MICROCODE) not supported");command_aborted(0x92); break;
 	case 0x94: bug("write cmd 0x94 (STANDBY IMMEDIATE) not supported"); command_aborted(0x94); break;
@@ -1879,7 +1908,9 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  bool prev_control_reset = BX_SELECTED_CONTROLLER.control.reset;
 	  BX_HD_THIS s[0].controller.control.reset         = value & 0x04;
 	  BX_HD_THIS s[1].controller.control.reset         = value & 0x04;
-	  BX_SELECTED_CONTROLLER.control.disable_irq    = value & 0x02;
+	  // CGS: was: BX_SELECTED_CONTROLLER.control.disable_irq    = value & 0x02;
+	  BX_HD_THIS s[0].controller.control.disable_irq = value & 0x02;
+	  BX_HD_THIS s[1].controller.control.disable_irq = value & 0x02;
       //BX_DEBUG(( "adpater control reg: reset controller = %d",
       //  (unsigned) (BX_SELECTED_CONTROLLER.control.reset) ? 1 : 0 ));
       //BX_DEBUG(( "adpater control reg: disable_irq(14) = %d",
@@ -1933,6 +1964,8 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 		      }
 		}
 	  }
+	  BX_DEBUG(("s[0].controller.control.disable_irq = %02x", (BX_HD_THIS s[0]).controller.control.disable_irq));
+	  BX_DEBUG(("s[1].controller.control.disable_irq = %02x", (BX_HD_THIS s[1]).controller.control.disable_irq));
 	  break;
 #endif
 #if 0
@@ -2343,7 +2376,7 @@ bx_hard_drive_c::identify_drive(unsigned drive)
   //       9: 1 = LBA supported
   //       8: 1 = DMA supported
   //     7-0: Vendor unique
-  BX_SELECTED_HD.id_drive[49] = 0;
+  BX_SELECTED_HD.id_drive[49] = 1<<9;
 
   // Word 50: Reserved
   BX_SELECTED_HD.id_drive[50] = 0;
@@ -2568,6 +2601,8 @@ bx_hard_drive_c::ready_to_send_atapi()
 void
 bx_hard_drive_c::raise_interrupt()
 {
+      D(bug("raise_interrupt called, disable_irq = %02x", BX_SELECTED_CONTROLLER.control.disable_irq));
+      if (!BX_SELECTED_CONTROLLER.control.disable_irq) { D(bug("raising interrupt")); } else { D(bug("Not raising interrupt")); }
       if (!BX_SELECTED_CONTROLLER.control.disable_irq) {
 #if 0
 	    Bit32u irq = 14;  // always 1st IDE controller
