@@ -1,5 +1,17 @@
+2001/10/02 - STanda
+- fVDI: blitArea screen2screen & mem2screen (TC) works now.
+
+- fVDI, VIDEL: bitplane to chunky conversion is move into the HostScreen
+  inline - should cause no performace penalty
+
+2001/10/01 - STanda
+
+- fVDI: drawLine supports the logical operations now.
+
+
 2001/09/25 - milan
 - cleaning of memory allocation
+
 
 2001/09/21 [ARAnyM 0.0.8] - joy
 - in a fVDI session (when VIDEL rendering is disabled) if VIDEL VideoRAM address
@@ -14,11 +26,10 @@
 
 
 2001/09/20 - STanda
+- fVDI: Off by one bug fixed in fillArea.
 
-- Off by one bug fixed in fillArea.
-
-- Separate functions for transparent and opaque background. gfxPrimitives methods
-  moved to the HostScreen. Several methods made inline.
+- fVDI: Separate functions for transparent and opaque background. gfxPrimitives
+  methods moved to the HostScreen. Several methods made inline.
   fVDI driver Shouldn't cause BUS ERROR now.
 
 
@@ -30,7 +41,6 @@
 
 
 2001/09/20 - STanda
-
 - The fVDI driver update: colors work correctly, expandArea implemented
   to display icons and texts, putPixel speedup. Now it seems pretty fast
   when DEBUG is 0 ;)
