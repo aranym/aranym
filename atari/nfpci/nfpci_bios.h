@@ -35,8 +35,8 @@ long pcibios_write_config_long(unsigned long device_handle, unsigned char num_re
 long pcibios_hook_interrupt(unsigned long device_handle, void (*data)(), unsigned long parameter); 
 long pcibios_unhook_interrupt(unsigned long device_handle); 
 long pcibios_special_cycle(unsigned char num_bus, unsigned long data); 
-/* pcibios_get_routing */
-/* pcibios_set_interrupt */
+long pcibios_get_routing(void);	/* unimplemented */
+long pcibios_set_interrupt(void); /* unimplemented */
 long pcibios_get_resource(unsigned long device_handle); 
 long pcibios_get_card_used(unsigned long device_handle, unsigned long *callback);
 long pcibios_set_card_used(unsigned long device_handle, unsigned long callback);

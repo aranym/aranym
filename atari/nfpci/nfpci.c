@@ -30,6 +30,7 @@
 #include "nfpci_nfapi.h"
 #include "nfpci.h"
 #include "nfpci_bios.h"
+#include "nfpci_cookie.h"
 
 /*--- Defines ---*/
 
@@ -86,8 +87,8 @@ static pcibios_cookie_t pcibios_cookie={
 	(pcibios_routine_t) pcibios_hook_interrupt,
 	(pcibios_routine_t) pcibios_unhook_interrupt,
 	(pcibios_routine_t) pcibios_special_cycle,
-	NULL,
-	NULL,
+	(pcibios_routine_t) pcibios_get_routing,	/* unimplemented */
+	(pcibios_routine_t) pcibios_set_interrupt,	/* unimplemented */
 	(pcibios_routine_t) pcibios_get_resource,
 	(pcibios_routine_t) pcibios_get_card_used,
 	(pcibios_routine_t) pcibios_set_card_used,
@@ -124,8 +125,8 @@ static const char *nf_not_present="NatFeats not present on this system";
 
 /*--- External variables ---*/
 
-extern long *pcixbios_newtrap;
-extern long *pcixbios_oldtrap;
+extern void pcixbios_newtrap(void);
+extern void (*pcixbios_oldtrap)(void);
 
 /*--- Functions prototypes ---*/
 
@@ -137,7 +138,7 @@ static void press_any_key(void);
 
 void install_driver(unsigned long resident_length)
 {
-	unsigned long cookie_pci, cookie_nf;
+	unsigned long cookie_nf;
 
 	Cconws(
 		"\033p " DRIVER_NAME " " VERSION " \033q\r\n"
@@ -145,20 +146,20 @@ void install_driver(unsigned long resident_length)
 	);
 
 	/* Check if a PCI driver is not already installed */
-	if (Getcookie(C_XPCI, &cookie_pci) == C_FOUND) {
+	if (cookie_present(C_XPCI, NULL)) {
 		Cconws(xpci_already_installed);
 		press_any_key();
 		return;
 	}	
 
-	if (Getcookie(C__PCI, &cookie_pci) == C_FOUND) {
+	if (cookie_present(C__PCI, NULL)) {
 		Cconws(pci_already_installed);
 		press_any_key();
 		return;
 	}	
 
 	/* Check if NF is present for PCI */
-	if (Getcookie(C___NF, &cookie_nf) != C_FOUND) {
+	if (!cookie_present(C___NF, &cookie_nf)) {
 		Cconws(nf_not_present);
 		press_any_key();
 		return;
@@ -190,12 +191,15 @@ static void press_any_key(void)
 static void install_pci_bios(void)
 {
 	/* Add our cookie */
+	cookie_add(C__PCI, (unsigned long)&pcibios_cookie);
 }
 
 static void install_pci_xbios(void)
 {
 	/* Read old XBIOS trap handler, and install ours */
 	pcixbios_oldtrap = Setexc(VEC_XBIOS, pcixbios_newtrap);
+
+	cookie_add(C_XPCI, 0);
 }
 
 /* NF PCI functions */

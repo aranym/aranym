@@ -58,129 +58,144 @@ _pcixbios_newtrap:
 supervisor_mode:
 	movw	a0@,d0
 	subw	#300,d0
-	bpls	old_xbios
+	bmis	old_xbios
 	cmpw	#42,d0
 	bhis	old_xbios
-	jsr		@(pcixbios_function_table,d0:w:4)
+	addql	#2,a0
+	jsr		@(pcixbios_function_table,d0:w:4)@(0)
 	rte
 old_xbios:
-	jmp		@(_pcixbios_oldtrap)
+	jmp		@(_pcixbios_oldtrap)@(0)
 
 /* XBIOS functions */
 
 _pcixbios_find_device:
-	andl	#0xffff,d1
-	movl	d1,sp@-
+	moveql	#0,d0
+	movw	a0@(4),d0
 	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_find_device
 	addql	#8,sp
 	rts
 
 _pcixbios_find_classcode:
-	andl	#0xffff,d1
-	movl	d1,sp@-
+	moveql	#0,d0
+	movw	a0@(4),d0
 	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_find_classcode
 	addql	#8,sp
 	rts
 
 _pcixbios_read_config_byte:
-	andl	#0xff,d1
-	movl	d1,sp@-
-	movl	a0,sp@-
+	moveql	#0,d0
+	movl	a0@(6),sp@-
+	movw	a0@(4),d0
 	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_read_config_byte
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_read_config_word:
-	andl	#0xff,d1
-	movl	d1,sp@-
-	movl	a0,sp@-
+	moveql	#0,d0
+	movl	a0@(6),sp@-
+	movw	a0@(4),d0
 	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_read_config_word
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_read_config_long:
-	andl	#0xff,d1
-	movl	d1,sp@-
-	movl	a0,sp@-
+	moveql	#0,d0
+	movl	a0@(6),sp@-
+	movw	a0@(4),d0
 	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_read_config_long
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_read_config_byte_fast:
-	andl	#0xff,d1
-	movl	d1,sp@-
+	moveql	#0,d0
+	movw	a0@(4),d0
 	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_read_config_byte_fast
 	addql	#8,sp
 	rts
 
 _pcixbios_read_config_word_fast:
-	andl	#0xff,d1
-	movl	d1,sp@-
+	moveql	#0,d0
+	movw	a0@(4),d0
 	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_read_config_word_fast
 	addql	#8,sp
 	rts
 
 _pcixbios_read_config_long_fast:
-	andl	#0xff,d1
-	movl	d1,sp@-
+	moveql	#0,d0
+	movw	a0@(4),d0
 	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_read_config_long_fast
 	addql	#8,sp
 	rts
 
 _pcixbios_write_config_byte:
-	andl	#0xff,d2
-	movl	d2,sp@-
-	andl	#0xff,d1
-	movl	d1,sp@-
+	moveql	#0,d0
+	movw	a0@(6),d0
 	movl	d0,sp@-
+	moveql	#0,d0
+	movw	a0@(4),d0
+	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_write_config_byte
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_write_config_word:
-	andl	#0xffff,d2
-	movl	d2,sp@-
-	andl	#0xff,d1
-	movl	d1,sp@-
+	moveql	#0,d0
+	movw	a0@(6),d0
 	movl	d0,sp@-
+	moveql	#0,d0
+	movw	a0@(4),d0
+	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_write_config_word
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_write_config_long:
-	movl	d2,sp@-
-	andl	#0xff,d1
-	movl	d1,sp@-
+	movl	a0@(6),sp@-
+	moveql	#0,d0
+	movw	a0@(4),d0
 	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_write_config_long
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_hook_interrupt:
-	movl	a1,sp@-
-	movl	a0,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_hook_interrupt
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_unhook_interrupt:
-	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_unhook_interrupt
 	addql	#4,sp
 	rts
 
 _pcixbios_special_cycle:
-	movl	d1,sp@-
-	andl	#0xff,d0
+	movl	a0@(4),sp@-
+	moveql	#0,d0
+	movw	a0@,d0
 	movl	d0,sp@-
 	bsr		_special_cycle
 	addql	#8,sp
@@ -195,163 +210,167 @@ _pcixbios_set_interrupt:
 	rts
 
 _pcixbios_get_resource:
-	movl	d0,sp@-
+	movl	a0@,sp@-
 	bsr		_get_resource
 	addql	#4,sp
 	rts
 
 _pcixbios_get_card_used:
-	movl	a0,sp@-
-	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_get_card_used
 	addql	#8,sp
 	rts
 
 _pcixbios_set_card_used:
-	movl	a0,sp@-
-	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_set_card_used
 	addql	#8,sp
 	rts
 
 _pcixbios_read_mem_byte:
-	movl	a0,sp@-
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_mem_byte
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_read_mem_word:
-	movl	a0,sp@-
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_mem_word
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_read_mem_long:
-	movl	a0,sp@-
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_mem_long
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_read_mem_byte_fast:
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_mem_byte_fast
 	addql	#8,sp
 	rts
 
 _pcixbios_read_mem_word_fast:
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_mem_word_fast
 	addql	#8,sp
 	rts
 
 _pcixbios_read_mem_long_fast:
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_mem_long_fast
 	addql	#8,sp
 	rts
 
 _pcixbios_write_mem_byte:
-	andl	#0xff,d2
-	movl	d2,sp@-
-	movl	d1,sp@-
+	movw	a0@(8),d0
+	andl	#0xff,d0
 	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_write_mem_byte
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_write_mem_word:
-	andl	#0xffff,d2
-	movl	d2,sp@-
-	movl	d1,sp@-
+	moveql	#0,d0
+	movw	a0@(8),d0
 	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_write_mem_word
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_write_mem_long:
-	movl	d2,sp@-
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_write_mem_long
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_read_io_byte:
-	movl	a0,sp@-
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_io_byte
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_read_io_word:
-	movl	a0,sp@-
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_io_word
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_read_io_long:
-	movl	a0,sp@-
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_io_long
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_read_io_byte_fast:
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_io_byte_fast
 	addql	#8,sp
 	rts
 
 _pcixbios_read_io_word_fast:
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_io_word_fast
 	addql	#8,sp
 	rts
 
 _pcixbios_read_io_long_fast:
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_read_io_long_fast
 	addql	#8,sp
 	rts
 
 _pcixbios_write_io_byte:
-	andl	#0xff,d2
-	movl	d2,sp@-
-	movl	d1,sp@-
+	movw	a0@(8),d0
+	andl	#0xff,d0
 	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_write_io_byte
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_write_io_word:
-	andl	#0xffff,d2
-	movl	d2,sp@-
-	movl	d1,sp@-
+	moveql	#0,d0
+	movw	a0@(8),d0
 	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_write_io_word
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_write_io_long:
-	movl	d2,sp@-
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_write_io_long
 	lea		sp@(12),sp
 	rts
@@ -365,31 +384,31 @@ _pcixbios_get_pagesize:
 	rts
 
 _pcixbios_virt_to_bus:
-	movl	a0,sp@-
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_virt_to_bus
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_bus_to_virt:
-	movl	a0,sp@-
-	movl	d1,sp@-
-	movl	d0,sp@-
+	movl	a0@(8),sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_bus_to_virt
 	lea		sp@(12),sp
 	rts
 
 _pcixbios_virt_to_phys:
-	movl	a0,sp@-
-	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_bus_to_virt
 	addql	#8,sp
 	rts
 
 _pcixbios_phys_to_virt:
-	movl	a0,sp@-
-	movl	d0,sp@-
+	movl	a0@(4),sp@-
+	movl	a0@,sp@-
 	bsr		_bus_to_virt
 	addql	#8,sp
 	rts
