@@ -6,8 +6,8 @@
       <link>index.html</link>
     </item>
     <item name="licence">
-      <title>Licencing</title>
-      <link>licencing.html</link>
+      <title>Licensing</title>
+      <link>licensing.html</link>
     </item>
     <item name="faq">
       <title>FAQ</title>
@@ -15,18 +15,18 @@
     </item>
   </section>
 
-  <!-- develelopment -->
+  <!-- development -->
   <section name="dev">
     <title>Development</title>
     <item name="faq">
       <title>Download</title>
       <link>download.html</link>
     </item>
-    <item name="faq">
+    <item name="progres">
       <title>Progress</title>
       <link>progress.html</link>
     </item>
-    <item name="faq">
+    <item name="cvs">
       <title>CVS</title>
       <link>cvs.html</link>
     </item>
@@ -36,12 +36,28 @@
   <section name="links">
     <title>Links</title>
     <item name="mint">
-      <title>FreeMiNT</title>
+      <title>FreeMiNT (our favourite operating system)</title>
       <link>http://www.freemint.de</link>
     </item>
-    <item name="mint">
+    <item name="distro">
       <title>SpareMiNT</title>
       <link>http://sparemint.atari.org</link>
+    </item>
+    <item name="sdl">
+      <title>SDL (the library we use)</title>
+      <link>http://www.libsdl.org</link>
+    </item>
+    <item name="UAE">
+      <title>UAE (the CPU/FPU donor)</title>
+      <link>http://www.freiburg.linux.de/~uae/</link>
+    </item>
+    <item name="basilisk">
+      <title>Basilisk II (the framework donor)</title>
+      <link>http://www.uni-mainz.de/~bauec002/B2Main.html</link>
+    </item>
+    <item name="bochs">
+      <title>Bochs (ATA donor)</title>
+      <link>http://bochs.sourceforge.net/</link>
     </item>
   </section>
 </menu>
