@@ -1,6 +1,10 @@
 2004/07/03 - joy
 - uae_cpu/fpu/mathlib.h: fixed tan() error Martin Tarenskeen reported.
 
+- uea_cpu/newcpu.cpp, hardware.cpp: if HW_SIGSEGV is used (mainly for
+  JIT compiler) then use sigsetjmp/siglongjmp to restore signal mask
+  when generating BUS ERROR.
+
 
 2004/07/01 - joy
 - BUGS: FPU problems documented. We need fix even for Pentium host based

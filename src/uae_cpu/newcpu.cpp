@@ -49,6 +49,12 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifdef HW_SIGSEGV
+#define SETJMP(a)	sigsetjmp(a, 1)
+#else
+#define SETJMP(a)	setjmp(a)
+#endif
+
 #define SANITY_CHECK_ATC 1
 
 int quit_program = 0;
@@ -1501,7 +1507,7 @@ void m68k_do_execute (void)
 void m68k_compile_execute (void)
 {
 setjmpagain:
-    int prb = setjmp(excep_env);
+    int prb = SETJMP(excep_env);
     if (prb != 0) {
 	flush_icache(0);
         Exception(prb, 0);
@@ -1533,7 +1539,7 @@ void m68k_execute (void)
 #endif
 
 setjmpagain:
-    int prb = setjmp(excep_env);
+    int prb = SETJMP(excep_env);
     if (prb != 0) {
         Exception(prb, 0);
 #ifdef DEBUGGER
