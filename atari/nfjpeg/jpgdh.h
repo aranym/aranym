@@ -59,7 +59,7 @@ typedef struct _JPGD_STRUCT {
 	/* Official structure stop here, what follows is decoder-dependant */
 
 	unsigned long handle;	/* ARAnyM image handle */
-} JPGD_STRUCT __attribute__((packed));
+} __attribute__((packed)) JPGD_STRUCT;
 typedef JPGD_STRUCT	*JPGD_PTR;
 
 #define	JPGD_MAGIC	'_JPD'
@@ -120,7 +120,7 @@ typedef struct {
 	JPGD_ENUM	(*JPGDGetImageInfo)(JPGD_PTR);
 	JPGD_ENUM	(*JPGDGetImageSize)(JPGD_PTR);
 	JPGD_ENUM	(*JPGDDecodeImage)(JPGD_PTR);
-} JPGDDRV_STRUCT __attribute__((packed));
+} __attribute__((packed)) JPGDDRV_STRUCT;
 typedef JPGDDRV_STRUCT	*JPGDDRV_PTR;
 
 #define	JPGDOpenDriver(x,y)		(x->JPGDOpenDriver)(y)

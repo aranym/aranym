@@ -1,5 +1,8 @@
 2005/01/19 - Patrice
 - dsp_cpu.cpp: 64 bit fixes.
+- nfjpeg: Fixed problems due to endianness and packed structure of JPEG decoder.
+  Decoding works in Zview (except for images with width not multiple of 16), but
+  not in Brainstorm's demo program.
 
 
 2005/01/18 - milan

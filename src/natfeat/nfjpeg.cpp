@@ -31,7 +31,7 @@
 #include <SDL/SDL_endian.h>
 #include <SDL/SDL_image.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /*--- Defines ---*/
@@ -113,7 +113,7 @@ int32 JpegDriver::open_driver(memptr jpeg_ptr)
 	struct _JPGD_STRUCT *tmp;
 	int i,j;
 
-	D(bug("nfjpeg: open_driver()"));
+	D(bug("nfjpeg: open_driver(0x%08x)",jpeg_ptr));
 
 	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
@@ -139,7 +139,7 @@ int32 JpegDriver::close_driver(memptr jpeg_ptr)
 {
 	struct _JPGD_STRUCT *tmp;
 
-	D(bug("nfjpeg: close_driver()"));
+	D(bug("nfjpeg: close_driver(0x%08x)",jpeg_ptr));
 
 	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
@@ -155,7 +155,7 @@ int32 JpegDriver::get_image_info(memptr jpeg_ptr)
 {
 	struct _JPGD_STRUCT *tmp;
 
-	D(bug("nfjpeg: get_image_info()"));
+	D(bug("nfjpeg: get_image_info(0x%08x)",jpeg_ptr));
 
 	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
@@ -174,7 +174,7 @@ int32 JpegDriver::get_image_size(memptr jpeg_ptr)
 	int image_size;
 	SDL_Surface *surface;
 
-	D(bug("nfjpeg: get_image_size()"));
+	D(bug("nfjpeg: get_image_size(0x%08x)",jpeg_ptr));
 
 	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
@@ -210,7 +210,7 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 	SDL_Surface *surface;
 	SDL_PixelFormat *format;
 
-	D(bug("nfjpeg: decode_image()"));
+	D(bug("nfjpeg: decode_image(0x%08x,%d)",jpeg_ptr,row));
 
 	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
@@ -234,6 +234,7 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 
 	D(bug("nfjpeg: decode_image(), rows %d to %d", row*16, row*16+height-1));
 	D(bug("nfjpeg: decode_image(), %d outpixelsize", SDL_SwapBE16(tmp->OutPixelSize)));
+
 	switch(SDL_SwapBE16(tmp->OutPixelSize)) {
 		case 1:	/* Luminance */
 			for (y=0; y<height; y++) {
@@ -325,7 +326,11 @@ SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, ui
 		return SDL_FALSE;
 	}
 
-	D(bug("nfjpeg: %dx%d image", surface->w, surface->h));
+	D(bug("nfjpeg: %dx%dx%d,%d image", surface->w, surface->h, surface->format->BitsPerPixel,surface->format->BytesPerPixel));
+	D(bug("nfjpeg: A=0x%08x, R=0x%08x, G=0x%08x, B=0x%08x",
+		surface->format->Amask, surface->format->Rmask,
+		surface->format->Gmask, surface->format->Bmask
+	));
 
 	images[jpgd_ptr->handle].src = surface;
 
@@ -395,7 +400,11 @@ void JpegDriver::read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, in
 				unsigned char *tmp;
 				
 				tmp = (unsigned char *)src;
-				color = (tmp[0]<<8)|(tmp[1]<<8)|tmp[2];
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+				color = (tmp[2]<<16)|(tmp[1]<<8)|tmp[0];
+#else
+				color = (tmp[0]<<16)|(tmp[1]<<8)|tmp[2];
+#endif
 			}
 			break;
 		case 4:
