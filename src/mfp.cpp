@@ -240,13 +240,37 @@ void MFP::IRQ(int no, int count = 1) {
 
 		// TimerC 200 Hz interrupt
 		case 5: C.reset();
-				if (irq_enable & 0x0020)
-					TriggerMFP(5, count);
+				if (irq_enable & 0x0020) {
+					flags |= F_TIMERC;
+					timerCounter += count;
+					TriggerMFP(true);
+				}
 				break;
 
 		// ACIA received data interrupt
 		case 6: GPIP_data &= ~0x10;
-				TriggerMFP(6);
+				flags |= F_ACIA;
+				TriggerMFP(true);
 				break;
 	}
+}
+
+int MFP::doInterrupt() {
+	/* ACIA */
+	if ((flags & F_ACIA) && !(irq_inservice & (1<<6))) {
+		irq_inservice |= (1<<6);
+		TriggerMFP(false);
+		flags &= ~F_ACIA;
+		return 6;
+	}
+	/* TIMER C */
+	else if ((flags & F_TIMERC) && ! (irq_inservice & (1<<5))) {
+		irq_inservice |= (1<<5);
+		if (--timerCounter <= 0) {
+			TriggerMFP(false);
+			flags &= ~F_TIMERC;
+		}
+		return 5;
+	}
+	return 0;
 }

@@ -70,12 +70,16 @@ private:
 	MFP_TimerC C;
 	MFP_TimerD D;
 	USART usart;
+	int flags;
+	int timerCounter;
+	enum FLAGS {F_ACIA=(1<<6),F_TIMERC=(1<<5)};
 
 public:
 	MFP();
 	virtual uae_u8 handleRead(uaecptr);
 	virtual void handleWrite(uaecptr, uae_u8);
 	void IRQ(int, int count = 1);
+	int doInterrupt(void);
 };
 
 #endif /* _MFP_H */
