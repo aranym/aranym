@@ -520,12 +520,6 @@ bool InitTOSROM(void)
 		while((ptr=tosdiff[i].pointer) >= 0)
 			ROMBaseHost[ptr] += tosdiff[i++].difference;
 
-		// check again if it's true TOS68040
-		if (! md5.compareSum(ROMBaseHost, RealROMSize, TOS68040)) {
-			ErrorAlert("romdiff.cpp is wrong. Weird but fatal.\n");
-			return false;
-		}
-
 #if 0
 		// optional saving of patched TOS ROM
 		FILE *f = fopen("TOS68040", "wb");
@@ -696,6 +690,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.40  2001/11/11 22:03:55  joy
+ * direct truecolor is optional (compile time configurable)
+ *
  * Revision 1.39  2001/11/07 21:18:25  milan
  * SDL_CFLAGS in CXXFLAGS now.
  *
