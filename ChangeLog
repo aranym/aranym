@@ -3,6 +3,8 @@
 
 - fvdidrv.cpp: forgot some break instructions.
 
+- FVDI aranym.sys modified, for the host resolution to be read.
+
 
 2004/10/31 - joy
 - Carlo provided a new keyboard translation routine that translate directly 

@@ -410,6 +410,9 @@ void CDECL initialize(Virtual *vwk)
 
 	if (resolution.used) {
 		resolution.bpp = graphics_mode->bpp; /* Table value (like rounded down) --- e.g. no 23bit but 16 etc */
+		c_set_resolution(resolution.width, resolution.height, resolution.bpp, resolution.freq);
+		resolution.width = c_get_width();
+		resolution.height = c_get_height();
 
 		wk->screen.mfdb.width = resolution.width;
 		wk->screen.mfdb.height = resolution.height;
@@ -474,7 +477,8 @@ void CDECL initialize(Virtual *vwk)
 		initialize_palette(vwk, 0, wk->screen.palette.size, colours, wk->screen.palette.colours);
 
 	device.byte_width = wk->screen.wrap;
-	device.address = wk->screen.mfdb.address;
+	device.address = (void*)c_get_videoramaddress();
+	vwk->real_address->screen.mfdb.address = device.address;
 
 	if (!wk->screen.shadow.address) {
 		driver_name[33] = ')';
@@ -509,24 +513,6 @@ long CDECL setup(long type, long value)
  */
 Virtual* CDECL opnwk(Virtual *vwk)
 {
-	Workstation *wk;
-	vwk = me->default_vwk;	/* This is what we're interested in */
-	wk = vwk->real_address;
-
-	if (resolution.used) {
-		c_set_resolution(resolution.width, resolution.height, resolution.bpp, resolution.freq);
-		resolution.width = c_get_width();
-		resolution.height = c_get_height();
-
-		/* The following should be here due to bpp > 8 modes */
-		/* the palette needs the appropriate surf->format to be set prior use */
-		/* i.e. _after_ the resolution change */
-		c_initialize_palette(vwk, 0, wk->screen.palette.size, colours, wk->screen.palette.colours);
-
-		device.address = (void*)c_get_videoramaddress();
-		vwk->real_address->screen.mfdb.address = device.address;
-	}
-
 	return 0;
 }
 
