@@ -1,168 +1,63 @@
 /*
  * Get IP addresses of the networking tunnel
  *
- * Written by Petr Stehlik (c) 2003
+ * Written by Petr Stehlik (c) 2003,2004
  *
  * GPL
  */
 #include <stdio.h>				/* for printf */
-#if 0
-#include <tos.h>				/* for gemdos and Super */
-#else
-#include <mintbind.h>
-#endif
+#include <stdlib.h>				/* for atoi */
 #include <string.h>				/* for strcmp */
-#include "../ethernet_nfapi.h"
+#include <sys/ioctl.h>			/* for ioctl */
+#include <net/if.h>				/* for ifreq */
 
-/* compiler and library compatibility defines */
-#if __PUREC__
-#define CDECL cdecl
-#else
-#define CDECL
-#endif
-
-#ifndef TRUE
-#define TRUE	(1==1)
-#define FALSE	(!TRUE)
-#endif
-
-/* TOS Cookie Jar */
-typedef struct {
-	long cookie;
-	long value;
-} COOKIE;
-
-int getcookie(long target, long *p_value)
-{
-	if (Ssystem(-1, 0L, 0L) == 0) {
-		/* Ssystem is available */
-		long result = Ssystem(8, target, NULL);
-		if (result != -1L) {
-			*p_value = result;
-			return TRUE;
-		}
-		return FALSE;
-	}
-	else {
-		char *oldssp;
-		COOKIE *cookie_ptr;
-
-		oldssp = (char *) Super(0L);
-
-		cookie_ptr = *(COOKIE **) 0x5A0;
-
-		if (oldssp)
-			Super(oldssp);
-
-		if (cookie_ptr != NULL) {
-			do {
-				if (cookie_ptr->cookie == target) {
-					if (p_value != NULL)
-						*p_value = cookie_ptr->value;
-
-					return TRUE;
-				}
-			} while ((cookie_ptr++)->cookie != 0L);
-		}
-	}
-
-	return FALSE;
-}
-
-/* NatFeat code */
-typedef struct {
-	long magic;
-	unsigned long CDECL(*nfGetID) (const char *);
-	long CDECL(*nfCall) (unsigned long ID, ...);
-} NatFeatCookie;
-
-/* return NatFeat pointer if NatFeat initialization was successful,
- * otherwise NULL
- */
-NatFeatCookie *initNatFeats(void)
-{
-	NatFeatCookie *nf_ptr = NULL;
-
-	if (getcookie(0x5f5f4e46L, (long *)&nf_ptr) == 0) {	/* "__NF" */
-		puts("NatFeat cookie not found");
-		return NULL;
-	}
-
-	if (nf_ptr->magic != 0x20021021L) {		/* NatFeat magic constant */
-		puts("NatFeat cookie magic value does not match");
-		return NULL;
-	}
-
-	return nf_ptr;
-}
-
-unsigned long nfEthernetID(const NatFeatCookie *nf_ptr)
-{
-	static unsigned long nf_ethernet_id = 0;
-	if (nf_ethernet_id == 0 && nf_ptr != NULL)
-		nf_ethernet_id = nf_ptr->nfGetID("ETHERNET");
-	return nf_ethernet_id;
-}
-
-void printEthX(const NatFeatCookie *nf_ptr, int ethX, unsigned long ID)
-{
-	char *oldssp;
-	static char buf[80];
-	buf[0] = '\0';
-	
-	oldssp = (char *)Super((void *)0L);
-	nf_ptr->nfCall(ID, (long)ethX, buf, (long)sizeof(buf));
-	Super(oldssp);
-	
-	puts(buf);
-}
+/* the following constants are defined in freemint/sys/mint/sockio.h */
+# define SIOCGIFADDRFH	(('S' << 8) | 53)	/* get iface address */
+# define SIOCGIFDSTADDRFH (('S' << 8) | 54)	/* get iface remote address */
+# define SIOCGIFNETMASKFH (('S' << 8) | 55)	/* get iface network mask */
 
 int main(int argc, char **argv)
 {
-	NatFeatCookie *nf_ptr = initNatFeats();
-	unsigned long nfEtherFsId = nfEthernetID(nf_ptr);
-	int usage = FALSE;
-	enum { NONE, HOST, ATARI, NETMASK } which;
+	int usage = 0;
+	enum {
+		NONE = 0,
+		ADDR = SIOCGIFADDRFH,
+		DSTADDR = SIOCGIFDSTADDRFH,
+		NETMASK = SIOCGIFNETMASKFH
+	} which = NONE;
 	int ethX = 0;
-	unsigned long xifID = 0;
-
-	if (nfEtherFsId == 0) {
-		fprintf(stderr, "ERROR: NatFeat `ETHERNET' not found!\n");
-		return 1;
-	}
 
 	if (argc <= 1) {
-		usage = TRUE;
+		usage = 1;
 	}
 	else {
 		int i;
-		which = NONE;
 		for(i=1; i<argc && !usage; i++) {
 			char *p = argv[i];
 			#define PETH "eth"
 			if (strcmp(p, "--get-host-ip") == 0) {
 				if (which == NONE)
-					which = HOST;
+					which = DSTADDR;
 				else
-					usage = TRUE;
+					usage = 1;
 			}
 			else if (strcmp(p, "--get-atari-ip") == 0) {
 				if (which == NONE)
-					which = ATARI;
+					which = ADDR;
 				else
-					usage = TRUE;
+					usage = 1;
 			}
 			else if (strcmp(p, "--get-netmask") == 0) {
 				if (which == NONE)
 					which = NETMASK;
 				else
-					usage = TRUE;
+					usage = 1;
 			}
 			else if (strncmp(p, PETH, strlen(PETH)) == 0) {
 				ethX = atoi(p+strlen(PETH));
 			}
 			else {
-				usage = TRUE;
+				usage = 1;
 			}
 		}
 	}
@@ -172,12 +67,26 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	switch(which) {
-		case HOST:	xifID = ETH(XIF_GET_IPHOST); break;
-		case ATARI: xifID = ETH(XIF_GET_IPATARI); break;
-		case NETMASK: xifID = ETH(XIF_GET_NETMASK); break;
+	{
+		int sockfd;
+		struct ifreq ifreq_ioctl;
+		long addr = 0;
+		int ret;
+
+		sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+		if (sockfd < 0) {
+			perror("socket could not be open");
+			return 1;
+		}
+		strcpy(ifreq_ioctl.ifr_name, "eth0");
+		ret = ioctl(sockfd, which, &addr);
+		if (ret != 0) {
+			printf("ioctl returns %d\n", ret);
+			return 1;
+		}
+		printf("%ld.%ld.%ld.%ld\n", (addr >> 24) & 0xff, (addr >> 16) & 0xff,
+							  (addr >> 8) & 0xff, addr & 0xff);
 	}
-	printEthX(nf_ptr, ethX, xifID);
 
 	return 0;
 }
