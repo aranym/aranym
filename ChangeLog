@@ -1,3 +1,9 @@
+2002/08/13 - joy
+- NF_Name() now returns the number of characters (excluding the trailing '\0')
+  which would have been written to the final string if enough space had been
+  available.
+
+
 2002/08/12 - joy
 - nf_call changed to return a signed 32-bit number (type 'long' in C lang.)
 - nf_call for invalid NatFeat ID returns an undefined value now.
