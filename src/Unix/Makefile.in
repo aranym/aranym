@@ -274,7 +274,7 @@ $(OBJ_DIR)/%.o : %.c
 $(OBJ_DIR)/%.o : %.cpp
 	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -Wall -Wtraditional -Winline $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.s
-	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/cpuopti: $(OBJ_DIR)/cpuopti.o
 	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/cpuopti $(OBJ_DIR)/cpuopti.o
