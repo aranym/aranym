@@ -1905,8 +1905,10 @@ bx_panic("disk: init drive params: sector count doesnt match\n");
 		break;
 */
 	default:
+		/*
 		bx_panic("hard drive: io write to address %x = %02x TOS %x\n",
 				 (unsigned) address, (unsigned) value, showPC());
+		*/; // disabled as it prints a lot of 0xf00039,2
 	}
 }
 
