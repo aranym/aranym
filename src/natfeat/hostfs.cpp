@@ -19,7 +19,7 @@
 #include "araobjs.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #ifdef HAVE_SYS_VFS_H
@@ -1877,6 +1877,9 @@ void HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, 
 
 /*
  * $Log$
+ * Revision 1.5  2003/03/01 11:57:37  joy
+ * major HOSTFS NF API cleanup
+ *
  * Revision 1.4  2003/02/17 14:20:20  standa
  * #if defined(OS_beos) used.
  *
