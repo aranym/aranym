@@ -6,7 +6,7 @@
 # to use it.
 
 # Split RAM into ST and TT RAM
-split_ram=yes
+split_ram=no
 
 # "pagesize" can be either 4k for 4k pages or 8k for ..eh.. 8k pages.
 pagesize=8k
@@ -58,7 +58,7 @@ dtt1=$0
 # pdt_r1    - ------- "" --------  = Resident ( %01 ) This is the pdt value set
 #                                                     by SET_MMU.
 # pdt_r2    - ------- "" --------  = Resident ( %11 )
-# pdt_id    - ------- "" --------  = Indirect ( %10 ) 
+# pdt_id    - ------- "" --------  = Indirect ( %10 )
 #
 # - The following flags can all be set at will, but dont do that unless you know
 # - why you do it ;-)
@@ -108,14 +108,14 @@ pd_flags=c_p
 # This is the only thing you need to change in this file.
 logical=$01000000
 physical=$01000000
-size=24*1024*1024
+size=64*1024*1024
 pd_flags=c_wt
 
 # VideoRAM (10 MB)
-logical=$f0000000
-physical=$f000000
-size=10*1024*1024
-pd_flags=c_p
+#logical=$f0000000
+#physical=$f000000
+#size=10*1024*1024
+#pd_flags=c_p
 
 # mirror
 logical=$ff000000
