@@ -50,7 +50,6 @@ uint32 FastRAMSize = 0;	// Size of Fast-RAM
 uint32 VideoRAMBase = ARANYMVRAMSTART;	// VideoRAM base (Atari address space)
 uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)
 //uint32 VideoRAMSize;	// Size of VideoRAM
-uint32 InterruptFlags;
 
 #ifndef NOT_MALLOC
 uintptr MEMBaseDiff;	// Global offset between a Atari address and its Host equivalent
@@ -115,11 +114,9 @@ void TriggerInterrupt(void)
 }
 */
 
-const unsigned int VBL = 0x777;	// vymyslena hodnota, kruty hack
 void TriggerVBL(void)
 {
-	InterruptFlags = VBL;
-	regs.spcflags |= SPCFLAG_DOINT;
+	regs.spcflags |= SPCFLAG_VBL;
 }
 
 int mfpCounter6 = 0;
@@ -146,15 +143,6 @@ void TriggerNMI(void)
 	//!! not implemented yet
 }
 
-
-/*
- *  Get 68k interrupt level
- */
-
-int intlev(void)
-{
-	return (InterruptFlags == VBL) ? 4 : 0;
-}
 
 /*
  *  Execute MacOS 68k trap
