@@ -7,7 +7,7 @@
 #define Screen_SetFullUpdate()
 #define Screen_Draw()		{ hostScreen.lock(); hostScreen.restoreBackground(); hostScreen.unlock(); }
 
-bx_options_t gui_options;
+extern int Dialog_AlertDlg(const char *);
 
 /* The main dialog: */
 enum MAINDLG {
@@ -24,8 +24,6 @@ enum MAINDLG {
 	HOSTFS,
 	CDROM,
 	INOUT,
-	text_apply,
-	APPLY,
 	text_conffile,
 	LOAD,
 	SAVE,
@@ -42,24 +40,22 @@ enum MAINDLG {
 SGOBJ maindlg[] = {
 	{SGBOX, SG_BACKGROUND, 0, 0, 0, 40, 25, NULL},
 	{SGBOX, 0, 0, 1, 2, 38, 15, NULL},
-	{SGTEXT, 0, 0, 14, 1, 12, 1, "ARAnyM SETUP"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 4, 3, 14, 1, "About"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 4, 5, 14, 1, "Disks"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 4, 7, 14, 1, "Hotkeys"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 4, 9, 14, 1, "Keyboard"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 4, 11, 14, 1, "TOS"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 3, 14, 1, "Video"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 5, 14, 1, "JIT CPU"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 7, 14, 1, "Host FS"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 9, 14, 1, "Host CD/DVD"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 11, 14, 1, "Input/Output"},
-	{SGTEXT, 0, 0, 4, 13, 26, 1, "To activate changes click"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 30, 13, 6, 1, "Apply"},
+	{SGTEXT, 0, 0, 14, 1, 14, 1, " ARAnyM SETUP "},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 3, 15, 1, "About"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 5, 15, 1, "Disks"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 7, 15, 1, "Hotkeys"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 9, 15, 1, "Keyboard&mouse"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 11, 15, 1, "TOS"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 3, 15, 1, "Video"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 5, 15, 1, "JIT CPU"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 7, 15, 1, "Host FS"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 9, 15, 1, "Host CD/DVD"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 11, 15, 1, "Input/Output"},
 	{SGTEXT, 0, 0, 4, 15, 12, 1, "Config file:"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 17, 15, 6, 1, "Load"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 25, 15, 6, 1, "Save"},
 	{SGBOX, 0, 0, 1, 19, 38, 5, NULL},
-	{SGTEXT, 0, 0, 10, 18, 20, 1, "Quick Access Buttons"},
+	{SGTEXT, 0, 0, 9, 18, 22, 1, " Quick Access Buttons "},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 20, 10, 1, "Reboot"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 22, 10, 1, "Shutdown"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 15, 20, 12, 1, "Fullscreen"},
@@ -107,9 +103,6 @@ void Dialog_MainDlg()
 
 	bReboot = bShutdown = false;
 
-	// preload bx settings
-	gui_options = bx_options;
-
 	Screen_Save();
 
 	hostScreen.lock();
@@ -128,20 +121,22 @@ void Dialog_MainDlg()
 			Dialog_DiscDlg();
 			break;
 
-		case HOTKEYS:
 		case KEYBOARD:
+			Dialog_KeyboardDlg();
+			break;
+
+		case HOTKEYS:
 		case TOS:
 		case VIDEO:
 		case MEMORY:
 		case HOSTFS:
 		case CDROM:
 		case INOUT:
-			Dialog_KeyboardDlg();
+			Dialog_AlertDlg("Unimplemented yet.");
 			break;
 
 		case LOAD:
 			LoadSettings();
-			gui_options = bx_options;	// preload bx settings
 			break;
 
 		case SAVE:
@@ -168,10 +163,6 @@ void Dialog_MainDlg()
 		case SCREENSHOT:
 			hostScreen.makeSnapshot();
 			closeDialog = true;
-			break;
-
-		case APPLY:
-			bx_options = gui_options;	// apply bx settings
 			break;
 
 		case HELP:
