@@ -1,7 +1,10 @@
 2002/10/28 - joy
 - NF_STDERR added to NatFeats
+
 - NF_VERSION corrected (should display version of NatFeat API, not version
   of aranym)
+
+- new cmdline option "-e" (--emutos) enforces EmuTOS boot.
 
 
 2002/10/22 - johan
