@@ -16,7 +16,7 @@ uae_u8 MMU::handleRead(uaecptr addr) {
 	addr -= HW;
 	switch(addr) {
 		case 1: return addr;
-		case 6: return monitor == 0 ? 0xa6 : 0xe6;	// a6 = 14MB, 96 = 4MB on VGA
+		case 6: return monitor == 1 ? 0xe6 : 0xa6;	// a6 = 14MB, 96 = 4MB on VGA
 		case 7: return 0x61;
 	}
 
