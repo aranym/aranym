@@ -27,7 +27,7 @@
 #include "timer.h"
 #include "emul_op.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /*
@@ -301,6 +301,37 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 
 		case M68K_EMUL_OP_VIDEO_OPEN:		// Video driver functions
 // MJ			r->d[0] = VideoDriverOpen(r->a[0], r->a[1]);
+			{
+				static bool Esc = false;
+				static bool inverse = false;
+				static int params = 0;
+				
+				uae_u8 value = r->d[1];
+				fprintf(stderr, "XConOut printing '%c' (%d/$%x)\n", value, value, value);
+				if (Esc) {
+					if (value == 'p')
+						inverse = true;
+					if (value == 'q')
+						inverse = false;
+					else if (value == 'K')
+						; /* delete to end of line (I guess) */
+					else if (value == 'Y')
+						params = 2;
+					Esc = false;
+				}
+				else {
+					if (params > 0)
+						params--;
+					else {
+						if (value == 27)
+							Esc = true;
+						else {
+							fprintf(stdout, "%c", (value == 32 && inverse) ? '_' : value);
+							fflush(stdout);
+						}
+					}
+				}
+			}
 			break;
 
 		case M68K_EMUL_OP_VIDEO_CONTROL:
