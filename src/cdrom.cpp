@@ -45,7 +45,6 @@ extern "C" {
 
 #ifdef OS_linux
 extern "C" {
-#include <linux/fs.h>
 #include <linux/cdrom.h>
 // I use the framesize in non OS specific code too
 #define BX_CD_FRAMESIZE CD_FRAMESIZE
