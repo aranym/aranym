@@ -34,9 +34,6 @@
 #include "md5.h"
 #include "romdiff.h"
 #include "parameters.h"
-#ifdef SDL_GUI
-#include "sdlgui.h"
-#endif
 #include "version.h"		// for heartBeat
 
 #define DEBUG 0
@@ -45,6 +42,11 @@
 #include <csignal>
 #include <cstdlib>
 #include <SDL.h>
+
+#ifdef SDL_GUI
+#include "sdlgui.h"
+extern SDL_Thread *GUIthread = NULL;
+#endif
 
 #ifdef ENABLE_MON
 #include "mon.h"
@@ -195,7 +197,8 @@ void invoke200HzInterrupt()
 		TriggerVBL();		// generate VBL
 
 		if (++refreshCounter == VIDEL_REFRESH) {// divided by 2 again ==> 25 Hz screen update
-			videl.renderScreen();
+			if (! hostScreen.isGUIopen())
+				videl.renderScreen();
 			refreshCounter = 0;
 		}
 
@@ -495,13 +498,15 @@ void ExitAll(void)
 	}
 #endif
 
+#ifdef SDL_GUI
+	if (GUIthread != NULL)
+		SDL_KillThread(GUIthread);
+	SDLGui_UnInit();
+#endif
+
 #if ENABLE_MON
 	// Deinitialize mon
 	mon_exit();
-#endif
-
-#ifdef SDL_GUI
-	SDLGui_UnInit();
 #endif
 
 	SDL_VideoQuit();
@@ -510,6 +515,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.71  2002/06/24 19:29:33  joy
+ * give it a time to finish timer thread
+ *
  * Revision 1.70  2002/06/24 19:10:35  joy
  * It should be safe now to call ExitAll() anytime (even if InitAll() was not called yet)
  *
