@@ -27,7 +27,7 @@
 static bool bQuitProgram;
 #define MAX_FILENAME_LENGTH 260
 
-static SDL_Surface *stdfontgfx;
+static SDL_Surface *stdfontgfx=NULL;
 static SDL_Surface *fontgfx=NULL;   /* The actual font graphics */
 static int fontwidth, fontheight;   /* Height and width of the actual font */
 
@@ -60,10 +60,14 @@ int SDLGui_Init()
 */
 int SDLGui_UnInit()
 {
-  if(stdfontgfx)
+  if(stdfontgfx) {
     SDL_FreeSurface(stdfontgfx);
-  if(fontgfx)
+    stdfontgfx = NULL;
+  }
+  if(fontgfx) {
     SDL_FreeSurface(fontgfx);
+    fontgfx = NULL;
+  }
 
   return 0;
 }
