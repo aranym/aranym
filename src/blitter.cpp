@@ -271,7 +271,7 @@ HOP_OPS(_HOP_3_OP_15_P,(0xffff) ,source_buffer <<=16,source_buffer |= ((unsigned
 void hop2op3p( BLITTER& b )
 {
 #ifndef SWACCELL
-	_HOP_2_OP_03_P( *this );
+	_HOP_2_OP_03_P( b );
 #else
 #ifdef HWBLITS
 	if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
@@ -305,7 +305,7 @@ void hop2op3p( BLITTER& b )
 void hop2op3n( BLITTER& b )
 {
 #ifndef SWACCELL
-	_HOP_2_OP_03_N( *this );
+	_HOP_2_OP_03_N( b );
 #else
 	b.source_addr += ((b.x_count-1)*b.source_x_inc);
 	b.dest_addr += ((b.x_count-1)*b.dest_x_inc);
@@ -354,21 +354,6 @@ static void (*do_hop_op_P[4][16])( BLITTER& ) =
 	_HOP_3_OP_00_P, _HOP_3_OP_01_P, _HOP_3_OP_02_P, _HOP_3_OP_03_P, _HOP_3_OP_04_P, _HOP_3_OP_05_P, _HOP_3_OP_06_P, _HOP_3_OP_07_P, _HOP_3_OP_08_P, _HOP_3_OP_09_P, _HOP_3_OP_10_P, _HOP_3_OP_11_P, _HOP_3_OP_12_P, _HOP_3_OP_13_P, _HOP_3_OP_14_P, _HOP_3_OP_15_P,},
 };
 
-/*
-BLITTER::HopOpFunctor BLITTER::do_hop_op_N[4][16] =
-{{ 	_HOP_0_OP_00_N(), _HOP_0_OP_01_N(), _HOP_0_OP_02_N(), _HOP_0_OP_03_N(), _HOP_0_OP_04_N(), _HOP_0_OP_05_N(), _HOP_0_OP_06_N(), _HOP_0_OP_07_N(), _HOP_0_OP_08_N(), _HOP_0_OP_09_N(), _HOP_0_OP_10_N(), _HOP_0_OP_11_N(), _HOP_0_OP_12_N(), _HOP_0_OP_13_N(), _HOP_0_OP_14_N(), _HOP_0_OP_15_N(),},{
-	_HOP_1_OP_00_N(), _HOP_1_OP_01_N(), _HOP_1_OP_02_N(), _HOP_1_OP_03_N(), _HOP_1_OP_04_N(), _HOP_1_OP_05_N(), _HOP_1_OP_06_N(), _HOP_1_OP_07_N(), _HOP_1_OP_08_N(), _HOP_1_OP_09_N(), _HOP_1_OP_10_N(), _HOP_1_OP_11_N(), _HOP_1_OP_12_N(), _HOP_1_OP_13_N(), _HOP_1_OP_14_N(), _HOP_1_OP_15_N(),},{
-	_HOP_2_OP_00_N(), _HOP_2_OP_01_N(), _HOP_2_OP_02_N(), _HOP_2_OP_03_N(), _HOP_2_OP_04_N(), _HOP_2_OP_05_N(), _HOP_2_OP_06_N(), _HOP_2_OP_07_N(), _HOP_2_OP_08_N(), _HOP_2_OP_09_N(), _HOP_2_OP_10_N(), _HOP_2_OP_11_N(), _HOP_2_OP_12_N(), _HOP_2_OP_13_N(), _HOP_2_OP_14_N(), _HOP_2_OP_15_N(),},{
-	_HOP_3_OP_00_N(), _HOP_3_OP_01_N(), _HOP_3_OP_02_N(), _HOP_3_OP_03_N(), _HOP_3_OP_04_N(), _HOP_3_OP_05_N(), _HOP_3_OP_06_N(), _HOP_3_OP_07_N(), _HOP_3_OP_08_N(), _HOP_3_OP_09_N(), _HOP_3_OP_10_N(), _HOP_3_OP_11_N(), _HOP_3_OP_12_N(), _HOP_3_OP_13_N(), _HOP_3_OP_14_N(), _HOP_3_OP_15_N(),}
-};
-
-BLITTER::HopOpFunctor BLITTER::do_hop_op_P[4][16] =
-{{ 	_HOP_0_OP_00_P(), _HOP_0_OP_01_P(), _HOP_0_OP_02_P(), _HOP_0_OP_03_P(), _HOP_0_OP_04_P(), _HOP_0_OP_05_P(), _HOP_0_OP_06_P(), _HOP_0_OP_07_P(), _HOP_0_OP_08_P(), _HOP_0_OP_09_P(), _HOP_0_OP_10_P(), _HOP_0_OP_11_P(), _HOP_0_OP_12_P(), _HOP_0_OP_13_P(), _HOP_0_OP_14_P(), _HOP_0_OP_15_P(),},{
-	_HOP_1_OP_00_P(), _HOP_1_OP_01_P(), _HOP_1_OP_02_P(), _HOP_1_OP_03_P(), _HOP_1_OP_04_P(), _HOP_1_OP_05_P(), _HOP_1_OP_06_P(), _HOP_1_OP_07_P(), _HOP_1_OP_08_P(), _HOP_1_OP_09_P(), _HOP_1_OP_10_P(), _HOP_1_OP_11_P(), _HOP_1_OP_12_P(), _HOP_1_OP_13_P(), _HOP_1_OP_14_P(), _HOP_1_OP_15_P(),},{
-	_HOP_2_OP_00_P(), _HOP_2_OP_01_P(), _HOP_2_OP_02_P(), _HOP_2_OP_03_P(), _HOP_2_OP_04_P(), _HOP_2_OP_05_P(), _HOP_2_OP_06_P(), _HOP_2_OP_07_P(), _HOP_2_OP_08_P(), _HOP_2_OP_09_P(), _HOP_2_OP_10_P(), _HOP_2_OP_11_P(), _HOP_2_OP_12_P(), _HOP_2_OP_13_P(), _HOP_2_OP_14_P(), _HOP_2_OP_15_P(),},{
-	_HOP_3_OP_00_P(), _HOP_3_OP_01_P(), _HOP_3_OP_02_P(), _HOP_3_OP_03_P(), _HOP_3_OP_04_P(), _HOP_3_OP_05_P(), _HOP_3_OP_06_P(), _HOP_3_OP_07_P(), _HOP_3_OP_08_P(), _HOP_3_OP_09_P(), _HOP_3_OP_10_P(), _HOP_3_OP_11_P(), _HOP_3_OP_12_P(), _HOP_3_OP_13_P(), _HOP_3_OP_14_P(), _HOP_3_OP_15_P(),},
-};
-*/
 
 static const int HW = 0xff8a00;
 

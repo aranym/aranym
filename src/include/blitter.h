@@ -16,21 +16,14 @@ class BLITTER : public ICio {
 	bool blit;
 
 public:
-	class HopOpFunctor {
-	  public:
-		virtual void operator()( BLITTER& b );
-	};
-
-
 	BLITTER(void);
 	virtual uae_u8 handleRead(uaecptr);
 	virtual void handleWrite(uaecptr, uae_u8);
 
 	uae_u16 LM_UW(uaecptr);
 	void SM_UW(uaecptr, uae_u16);
+
 private:
-
-
 	void Do_Blit(void);
 
 	char LOAD_B_ff8a28();
@@ -70,14 +63,5 @@ private:
 	void STORE_B_ff8a3b(char);
 	void STORE_B_ff8a3c(char);
 	void STORE_B_ff8a3d(char);
-
-	/*
-	static HopOpFunctor do_hop_op_N[4][16];
-	static HopOpFunctor do_hop_op_P[4][16];
-	*/
-	/*
-	void hop2op3p(void);
-	void hop2op3n(void);
-	*/
 };
 
