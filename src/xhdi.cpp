@@ -120,7 +120,7 @@ uint32 XHDIDriver::dispatch(uint16 fncode, memptr stack)
 	return ret;
 }
 
-uint32 XHDIDriver::dispatch_params(uint32 *params)
+uint32 XHDIDriver::dispatch(uint32 *params)
 {
 	uint32 fncode = params[0];
 	D(bug("ARAnyM XHDI(%u)\n", fncode));
