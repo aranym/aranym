@@ -7,8 +7,8 @@
 
 class MFP_Timer {
 private:
-	uae_u8 control;
-	uae_u8 start_data, current_data;
+	uint8 control;
+	uint8 start_data, current_data;
 	bool state;
 	char name;
 
@@ -17,10 +17,10 @@ protected:
 
 public:
 	MFP_Timer(int);
-	void setControl(uae_u8);
-	uae_u8 getControl();
-	void setData(uae_u8);
-	uae_u8 getData();
+	void setControl(uint8);
+	uint8 getControl();
+	void setData(uint8);
+	uint8 getData();
 	void reset();
 };
 
@@ -46,24 +46,24 @@ public:
 
 class USART {
 public:
-	uae_u8 synchar;
-	uae_u8 control;
-	uae_u8 rxstat;
-	uae_u8 txstat;
-	uae_u8 data;
+	uint8 synchar;
+	uint8 control;
+	uint8 rxstat;
+	uint8 txstat;
+	uint8 data;
 };
 
 /*****************************************************************/
 
 class MFP : public ICio {
 private:
-	uae_u8 GPIP_data;
-	uae_u8 active_edge;
-	uae_u8 data_direction;
-	uae_u16 irq_enable;
-	uae_u16 irq_pending;
-	uae_u16 irq_inservice;
-	uae_u16 irq_mask;
+	uint8 GPIP_data;
+	uint8 active_edge;
+	uint8 data_direction;
+	uint8 irq_enable;
+	uint8 irq_pending;
+	uint16 irq_inservice;
+	uint16 irq_mask;
 	bool automaticServiceEnd;
 	MFP_TimerA A;
 	MFP_TimerB B;
@@ -76,8 +76,8 @@ private:
 
 public:
 	MFP();
-	virtual uae_u8 handleRead(uaecptr);
-	virtual void handleWrite(uaecptr, uae_u8);
+	virtual uint8 handleRead(uaecptr);
+	virtual void handleWrite(uaecptr, uint8);
 	void IRQ(int, int count);
 	int doInterrupt(void);
 };
