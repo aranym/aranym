@@ -15,6 +15,7 @@
 #include "dsp.h"
 #include "mmu.h"
 #include "hostscreen.h"
+#include "parallel.h"
 #include "exceptions.h"
 
 #define DEBUG 0
@@ -36,6 +37,8 @@ YAMAHA yamaha;
 ARADATA aradata;
 
 #define BUS_ERROR	longjmp(excep_env, 2)
+
+Parallel parallel;
 
 void HWInit (void) {
 	rtc.init();
@@ -186,6 +189,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.33  2001/11/15 13:46:01  joy
+ * don't use uint, it's undefined on Solaris
+ *
  * Revision 1.32  2001/10/25 19:56:01  standa
  * The Log and Header CVS tags in the Log removed. Was recursing.
  *

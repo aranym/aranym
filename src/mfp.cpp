@@ -66,7 +66,7 @@ static const int HW = 0xfffa00;
 			return 0;	// unhandled
 
 		switch(addr) {
-			case 0x01:	return GPIP_data & ~ 0x20;
+			case 0x01:	return (GPIP_data & ~ 0x21) | parallel.getBusy();
 						break;
 
 			case 0x03:	return active_edge;
