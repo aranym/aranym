@@ -20,6 +20,7 @@
     $Id$
 */
 
+#include "cpu_emulation.h"
 #include "main.h"
 #include "ethernet_cygwin.h"
 
