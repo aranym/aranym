@@ -1,3 +1,17 @@
+2003/02/04 - joy
+- input.cpp: fixed a long-standing bug with automatic mouse grab upon
+  entering the ARAnyM window. This didn't work correctly when the ARAnyM
+  window didn't have input focus.
+
+- ikbd.cpp: there is a bug in the algorithm of compressing the mouse
+  packets. I added a simple workaround but in the future this should be
+  fixed properly.
+
+- input.cpp: added a warning when the SDL reports weird mouse relative
+  motion event. Such event is reset otherwise our mouse would get mad.
+  I am wondering why SDL reports such scary values for relative motion..
+
+
 2003/01/29 - milan
 - Makefile.in: corrected, floppy.sh is executable
 
