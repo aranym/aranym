@@ -1,3 +1,8 @@
+2005/03/03 - STanda
+- doc/documentation.txt: update on networking. Clean that up someone.
+- Blaine Brysh's suggection to remove the 'tapdev' check done.
+
+
 2005/02/28 - Patrice
 - nfjpeg, nfpci, nfosmesa, nfcdrom: Use the correct fonction to read current
   cookie value, not a mix between internal function and mintlib's one.
