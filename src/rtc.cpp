@@ -127,6 +127,7 @@ uae_u8 RTC::getData() {
 			case 4: return curtim->tm_hour;
 			case 7: return curtim->tm_mday;
 			case 8: return curtim->tm_mon+1;
+			case 9: return curtim->tm_year + 80 - 68;
 			default:return cmos[addr];
 		}
 	}
