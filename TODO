@@ -1,7 +1,6 @@
 Before 0.8.0 release:
 ---------------------
-- get_network_settings --host-ip --atari-ip --netmask --mtu (done)
-- host-ip, atari-ip, netmask, mtu in config file
+- host-ip, atari-ip, netmask, mtu in config file ([ETH0])
 - supermount point of hostfs in config file
 - diskimage updating config file automatically
 - P4 JIT fix from Basilisk
@@ -25,7 +24,8 @@ that particular programmer but rather who is the author of the idea :-)
   Extra cool idea: PRIMARY selection on X11 could be stored to IKBD buffer
   directly so it would simulate typing.
 
-- joy: [ I just forget it. Oh no. I bet it was something brilliant :-( ]
+- joy: aranym --version should display 'Capabilities' - a list of the
+  features it was built with (ETHERNET, DSP, JIT, OpenGL, HOSTFS, ..)
 
 - joy: printing to file (/dev/lp)
 
