@@ -59,9 +59,9 @@ Answer:
 
    The Cylinders/Heads/SectorsPerTrack values maybe either written on
    the disk label or in your hard drive utility (e.g. HDDRUTIL) - but
-   only if it's an IDE drive. Aranym also tries to guess the values
-   (Milan?). Anyway, these values are used during partitioning only, so
-   you may not need them at all (is this true?).
+   only if it's an IDE drive. Aranym also tries to guess the values,
+   if you set one from these values to -1 (supported only for real
+   devices, only under Linux today).
 
 3) if you want to leave your original disk in your original Atari and
    use just a copy of that disk then create a disk image:
