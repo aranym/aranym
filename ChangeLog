@@ -1,3 +1,9 @@
+2002/03/26 - milan
+- MMU returns logical address during bus error
+
+- IEEE FPU is default only for i386
+
+
 2002/03/26 - joy
 - transformFileName in extfs.cpp fixed three times. ARAnyM will not crash
   when it encounters a long filename. ST-Zip will not crash when browsing

@@ -7,7 +7,7 @@
 #include "debug.h"
 
 #define DBG_MMU_VERBOSE	1
-#define DBG_MMU_SANITY	0
+#define DBG_MMU_SANITY	1
 
 static void mmu_dump_ttr(const char * label, uae_u32 ttr)
 {
@@ -451,7 +451,7 @@ table_search:
 	root_des_addr = (root_ptr & MMU_ROOT_PTR_ADDR_MASK) | (ri << 2);
 
 #if DBG_MMU_SANITY
-	if (!phys_valid_address(root_des_addr, sz_long))
+	if (!phys_valid_address(root_des_addr, false, 0, 4))
 		goto bus_err;
 #endif
 	
@@ -482,7 +482,7 @@ table_search:
 	
 	ptr_des_addr = (root_des & MMU_ROOT_PTR_ADDR_MASK) | (pi << 2);
 #if DBG_MMU_SANITY
-	if (!phys_valid_address(ptr_des_addr, sz_long))
+	if (!phys_valid_address(ptr_des_addr, false, 0, 4))
 		goto bus_err;
 #endif
 	
@@ -514,7 +514,7 @@ table_search:
 	
 get_page_descriptor:
 #if DBG_MMU_SANITY
-	if (!phys_valid_address(page_des_addr, sz_long))
+	if (!phys_valid_address(page_des_addr, false, 0, 4))
 		goto bus_err;
 #endif
 	

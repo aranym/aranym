@@ -245,32 +245,92 @@ static __inline__ void phys_put_byte(uaecptr addr, uae_u32 b)
 #ifdef FULLMMU
 static __inline__ uae_u32 get_long(uaecptr addr)
 {
-    return phys_get_long(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_long, 0));
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    uae_u32 l;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
+    l = phys_get_long(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_long, 0));
+    excep_env = excep_env_old;
+    return l;
 }
 
 static __inline__ uae_u16 get_word(uaecptr addr)
 {
-    return phys_get_word(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_word, 0));
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    uae_u16 w;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
+    w = phys_get_word(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_word, 0));
+    excep_env = excep_env_old;
+    return w;
 }
 
 static __inline__ uae_u8 get_byte(uaecptr addr)
 {
-    return phys_get_byte(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_byte, 0));
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    uae_u8 b;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
+    b = phys_get_byte(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_byte, 0));
+    excep_env = excep_env_old;
+    return b;
 }
 
 static __inline__ void put_long(uaecptr addr, uae_u32 l)
 {
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
     phys_put_long(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_long, 0),l);
+    excep_env = excep_env_old;
 }
 
 static __inline__ void put_word(uaecptr addr, uae_u16 w)
 {
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
     phys_put_word(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_word, 0),w);
+    excep_env = excep_env_old;
 }
 
 static __inline__ void put_byte(uaecptr addr, uae_u16 b)
 {
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
     phys_put_byte(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_byte, 0),b);
+    excep_env = excep_env_old;
 }
 
 static __inline__ uae_u8 *get_real_address(uaecptr addr, int write, int sz)
@@ -285,28 +345,88 @@ static __inline__ uae_u8 *get_real_address(uaecptr addr, int write, int sz)
 
 static __inline__ uae_u32 sfc_get_long(uaecptr addr)
 {
-    return phys_get_long(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_long, 0));
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    uae_u32 l;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
+    l = phys_get_long(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_long, 0));
+    excep_env = excep_env_old;
+    return l;
 }
 static __inline__ uae_u16 sfc_get_word(uaecptr addr)
 {
-    return phys_get_word(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_word, 0));
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    uae_u16 w;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
+    w = phys_get_word(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_word, 0));
+    excep_env = excep_env_old;
+    return w;
 }
 static __inline__ uae_u8 sfc_get_byte(uaecptr addr)
 {
-    return phys_get_byte(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_byte, 0));
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    uae_u8 b;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
+    b = phys_get_byte(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_byte, 0));
+    excep_env = excep_env_old;
+    return b;
 }
 
 static __inline__ void dfc_put_long(uaecptr addr, uae_u32 l)
 {
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
     phys_put_long(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_long, 0), l);
+    excep_env = excep_env_old;
 }
 static __inline__ void dfc_put_word(uaecptr addr, uae_u16 w)
 {
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
     phys_put_word(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_word, 0), w);
+    excep_env = excep_env_old;
 }
 static __inline__ void dfc_put_byte(uaecptr addr, uae_u16 b)
 {
+    jmp_buf excep_env_old;
+    excep_env_old = excep_env;
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	excep_env = excep_env_old;
+	regs.mmu_fault_addr = addr;
+	longjmp(excep_env, prb);
+    }
     phys_put_byte(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_byte, 0), b);
+    excep_env = excep_env_old;
 }
 
 static __inline__ bool valid_address(uaecptr addr, bool write, uaecptr pc, int sz)

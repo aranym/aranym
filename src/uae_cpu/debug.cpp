@@ -16,7 +16,7 @@
 #include "newcpu.h"
 #include "debug.h"
 
-#include "main.h"
+#include "input.h"
 #include "cpu_emulation.h"
 
 static int debugger_active = 0;
@@ -319,11 +319,11 @@ void debug (void)
 		if (!more_params (&inptr))
 		    goto S_argh;
 		len = readhex (&inptr);
-		if (! valid_address (src, len)) {
+		if (! valid_address (src, false, 0, len)) {
 		    printf ("Invalid memory block\n");
 		    break;
 		}
-		memp = phys_get_real_address (src, true, false);
+		memp = phys_get_real_address (src);
 		fp = fopen (name, "w");
 		if (fp == NULL) {
 		    printf ("Couldn't open file\n");

@@ -22,14 +22,8 @@
 #include "sysdeps.h"
 
 #include "cpu_emulation.h"
-#include "main.h"
-#include "emul_op.h"
-#include "m68k.h"
-#include "memory.h"
-#include "readcpu.h"
 #include "newcpu.h"
-#include <SDL.h>
-#include "main.h"
+//#include "compiler/compemu.h"
 
 // RAM and ROM pointers
 memptr RAMBase = 0;	// RAM base (Atari address space) gb-- init is important

@@ -713,7 +713,11 @@ if [[ "x$FPE_CORE" = "xi386" ]]; then
 fi
 
 if [[ "x$FPE_CORE" = "xdefault" ]]; then
-  FPE_CORE="ieee"
+  if [[ "x$HAVE_I386" = "xyes" ]];  then
+    FPE_CORE="ieee"
+  else
+    FPE_CORE="uae"
+  fi
 fi
 
 dnl 2. JIT-FPU only supports IEEE-based implementation.
@@ -808,7 +812,7 @@ fi
 dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
   CPUINCLUDES="-I../uae_cpu"
-  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpustbl.cpp cpudefs.cpp $CPUSRCS $MMUSRCS"
+  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpustbl.cpp cpudefs.cpp $CPUSRCS $JITSRCS $MMUSRCS"
 fi
 
 dnl Remove the "-g" option if set for GCC.

@@ -15,6 +15,7 @@
 #include "memory.h"
 #include "readcpu.h"
 #include "newcpu.h"
+//#include "compiler/compemu.h"
 #include "fpu/fpu.h"
 #define DEBUG 1
 #include "debug.h"
@@ -342,6 +343,7 @@ uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
     return offset;
 }
 
+#if 0
 /* The plan is that this will take over the job of exception 3 handling -
  * the CPU emulation functions will just do a longjmp to m68k_go whenever
  * they hit an odd address. */
@@ -465,6 +467,7 @@ static int verify_ea (int reg, amodes mode, wordsizes size, uae_u32 *val)
     last_fault_for_exception_3 = addr;
     return 0;
 }
+#endif
 
 uae_u32 get_disp_ea_020 (uae_u32 base, uae_u32 dp)
 {
@@ -669,8 +672,6 @@ void Exception(int nr, uaecptr oldpc)
 	exc_push_long(regs.mmu_fault_addr);	/* EA */
 	exc_make_frame(7, regs.sr, currpc, 2, 0, 0);
     } else if (nr == 3) {
-	int i;
-
 	exc_make_frame(2, regs.sr, last_addr_for_exception_3, nr,
 			last_fault_for_exception_3 & 0xfffffffe, 0);
     } else if (nr ==5 || nr == 6 || nr == 7 || nr == 9) {
@@ -805,7 +806,7 @@ int m68k_move2c (int regno, uae_u32 *regp)
 	 case 1: regs.dfc = *regp & 7; break;
 	 case 2: regs.cacr = *regp & 0x80008000;
 #ifdef USE_JIT
-		 set_cache_state((cacr & 0x8000) || 0);
+		 set_cache_state((regs.cacr & 0x8000) || 0);
 		 if (*regp & 0x08) {	/* Just to be on the safe side */
 			flush_icache(2);
 		 }
@@ -1223,7 +1224,7 @@ cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
 	cpuop_return(CFLOW_TRAP);
 	}
 
-	write_log ("Illegal instruction: %04x at %08lx\n", opcode, pc);
+	D(bug("Illegal instruction: %04x at %08lx", opcode, pc));
 #if USE_JIT && JIT_DEBUG
 	compiler_dumpstate();
 #endif
@@ -1470,6 +1471,7 @@ setjmpagain:
     m68k_execute_depth--;
 }
 
+#if 0
 static void m68k_verify (uaecptr addr, uaecptr *nextpc)
 {
     uae_u32 opcode, val;
@@ -1497,6 +1499,7 @@ static void m68k_verify (uaecptr addr, uaecptr *nextpc)
 	}
     }
 }
+#endif
 
 void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 {
