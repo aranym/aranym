@@ -17,27 +17,11 @@
 
 #include <SDL.h>
 
-#define SGRADIOBUTTON_NORMAL    12
-#define SGRADIOBUTTON_SELECTED  13
-#define SGCHECKBOX_NORMAL    14
-#define SGCHECKBOX_SELECTED  15
-#define SGARROWUP    1
-#define SGARROWDOWN  2
-#define SGFOLDER     5
-
-// static SDL_Surface *sdlscrn;
 #define sdlscrn	hostScreen.getPhysicalSurface()
 
 static SDL_Surface *stdfontgfx=NULL;
 static SDL_Surface *fontgfx=NULL;   /* The actual font graphics */
 static int fontwidth, fontheight;   /* Height and width of the actual font */
-
-// TODO:
-// the following 3 vars should be in a struct passed by a pointer from input
-// Actually it should be a small FIFO buffer for mouse events
-extern int eventTyp;
-extern int eventX;
-extern int eventY;
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -340,7 +324,7 @@ void SDLGui_DrawPopupButton(SGOBJ *pdlg, int objnum)
 */
 void SDLGui_EditField(SGOBJ *dlg, int objnum)
 {
-  unsigned int cursorPos;                        /* Position of the cursor in the edit field */
+  unsigned int cursorPos;               /* Position of the cursor in the edit field */
   int blinkState = 0;                   /* Used for cursor blinking */
   bool bStopEditing = false;            /* true if user wants to exit the edit field */
   char *txt;                            /* Shortcut for dlg[objnum].txt */
@@ -362,7 +346,7 @@ void SDLGui_EditField(SGOBJ *dlg, int objnum)
   do
   {
     /* Look for events */
-    if(/*SDL_PollEvent(&event) == FIXME*/0)
+    if (SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT)) == 0)
     {
       /* No event: Wait some time for cursor blinking */
       SDL_Delay(250);
@@ -370,18 +354,16 @@ void SDLGui_EditField(SGOBJ *dlg, int objnum)
     }
     else
     {
-      int keysym;
-
       /* Handle events */
       do
       {
-        switch(event.type)
+        switch(event.user.code)
         {
           case SDL_MOUSEBUTTONDOWN:             /* Mouse pressed -> stop editing */
             bStopEditing = true;
             break;
           case SDL_KEYDOWN:                     /* Key pressed */
-            keysym = event.key.keysym.sym;
+            int keysym = (int)event.user.data1;
             switch(keysym)
             {
               case SDLK_RETURN:
@@ -426,7 +408,7 @@ void SDLGui_EditField(SGOBJ *dlg, int objnum)
             break;
         }
       }
-      while(SDL_PollEvent(&event));
+      while(SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT))>0);
 
       blinkState = 1;
     }
@@ -508,8 +490,8 @@ int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy)
   {
     if(xpos>=dlg[0].x+dlg[i].x &&
        ypos>=dlg[0].y+dlg[i].y &&
-       xpos<dlg[0].x+dlg[i].x+dlg[i].w &&
-       ypos<dlg[0].y+dlg[i].y+dlg[i].h)
+       xpos<(int)(dlg[0].x+dlg[i].x+dlg[i].w) &&
+       ypos<(int)(dlg[0].y+dlg[i].y+dlg[i].h))
     {
       ob = i;
       break;
@@ -531,9 +513,10 @@ int SDLGui_DoDialog(SGOBJ *dlg)
   int oldbutton=0;
   int retbutton=0;
   int i;
+  int x, y;
+  int obj;
   SDL_Rect rct;
   Uint32 grey;
-  static bool stillPressed = false;
 
   grey = SDL_MapRGB(sdlscrn->format,192,192,192);
 
@@ -541,33 +524,34 @@ int SDLGui_DoDialog(SGOBJ *dlg)
 
   /* Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here */
 
-  int obj = SDLGui_FindObj(dlg, eventX, eventY);
+  // SDL_PumpEvents(); - don't call it here, it's not thread safe probably
+  bool stillPressed = (SDL_GetMouseState(&x, &y) & SDL_BUTTON(1));
+  obj = SDLGui_FindObj(dlg, x, y);
   if(obj>0 && (dlg[obj].flags&SG_TOUCHEXIT) )
   {
     oldbutton = obj;
-    if( stillPressed && eventTyp == 0)
+    if(stillPressed)
     {
       dlg[obj].state |= SG_SELECTED;
       return obj;
     }
   }
+
   /* The main loop */
   do
   {
- //   if( SDL_WaitEvent(&evnt)==1 )  /* could be replaced with Semaphore! */
- 	  int x = eventX;
- 	  int y = eventY;
-      switch(eventTyp)
+    // SDL_PumpEvents() - not necessary, the main check_event thread calls it
+    SDL_Event evnt;
+    if (SDL_PeepEvents(&evnt, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT))) {
+      x = (int)evnt.user.data1;
+      y = (int)evnt.user.data2;
+      switch(evnt.user.code)
       {
       	case SDL_KEYDOWN:
       	  break;
-/*
-        case 0x12345678:	// user pressed the Esc key
-          retbutton = 0;	// TODO should be the number of the Cancel button
-          break;
-*/
-        case 0x87654321:	// a signal that resolution has changed
-          SDLGui_DrawDialog(dlg);	// re-draw dialog (screen contents changed)
+
+        case SDL_USEREVENT:			// a signal that resolution has changed
+          SDLGui_DrawDialog(dlg);	// re-draw dialog (re-center it)
           break;
 
         case SDL_MOUSEBUTTONDOWN:
@@ -590,7 +574,6 @@ int SDLGui_DoDialog(SGOBJ *dlg)
               retbutton = obj;
             }
           }
-          stillPressed = true;
           break;
 
         case SDL_MOUSEBUTTONUP:
@@ -685,11 +668,10 @@ int SDLGui_DoDialog(SGOBJ *dlg)
           {
             retbutton = obj;
           }
-          stillPressed = false;
           break;
       }
-      eventTyp = 0;
-      SDL_Delay(10);
+    }
+    SDL_Delay(100);
   }
   while(retbutton==0);
 

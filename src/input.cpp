@@ -344,12 +344,6 @@ static bool mouseOut = false;
 
 #ifdef SDL_GUI
 extern bool isGuiAvailable;	// from main.cpp
-// TODO:
-// the following 3 vars should be in a struct passed by a pointer from input
-// Actually it should be a small FIFO buffer for mouse events
-int eventTyp = 0;
-int eventX = 0;
-int eventY = 0;
 SDL_Thread *GUIthread = NULL;
 
 int open_gui(void * /*ptr*/)
@@ -364,6 +358,12 @@ int open_gui(void * /*ptr*/)
 		Restart680x0();
 
 	return 0;
+}
+
+void start_GUI_thread()
+{
+	if (isGuiAvailable && !hostScreen.isGUIopen())
+		GUIthread = SDL_CreateThread(open_gui, NULL);
 }
 #endif
 
@@ -389,11 +389,6 @@ void process_keyboard_event(SDL_Event event)
 				getIKBD()->SendKey(0x1d|0x80);	// Control released
 				getIKBD()->SendKey(0x38|0x80);	// Alternate released
 			}
-#ifdef SDL_GUI
-			else {
-				eventTyp = 0x12345678;
-			}
-#endif
 		}
 		else if (sym == HOTKEY_OPENGUI) {
 			if (shifted) {
@@ -415,8 +410,7 @@ void process_keyboard_event(SDL_Event event)
 #endif
 #ifdef SDL_GUI
 			else {
-				if (isGuiAvailable && !hostScreen.isGUIopen())
-					GUIthread = SDL_CreateThread(open_gui, NULL);
+				start_GUI_thread();
 			}
 #endif
 		}
@@ -432,7 +426,12 @@ void process_keyboard_event(SDL_Event event)
 
 #ifdef SDL_GUI
 	if (hostScreen.isGUIopen()) {
-		return;	// if GUI is open do not pass keys to Atari
+		SDL_Event ev;
+		ev.type = SDL_USEREVENT;	// map key down/up event to user event
+		ev.user.code = event.type;
+		ev.user.data1 = (void *)(uintptr)sym;
+		SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
+		return;	// don't pass the key events to emulation
 	}
 #endif
 
@@ -478,21 +477,25 @@ void process_keyboard_event(SDL_Event event)
 
 void process_mouse_event(SDL_Event event)
 {
+#ifdef SDL_GUI
+	if (hostScreen.isGUIopen()) {
+		int typ = event.type;
+		if (typ == SDL_MOUSEBUTTONDOWN || typ == SDL_MOUSEBUTTONUP) {
+			SDL_Event ev;
+			ev.type = SDL_USEREVENT;	// map button down/up to user event
+			ev.user.code = typ;
+			ev.user.data1 = (void *)(uintptr)event.button.x;
+			ev.user.data2 = (void *)(uintptr)event.button.y;
+			SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
+		}
+		return;	// don't pass the mouse events to emulation
+	}
+#endif
+
 	int xrel = 0;
 	int yrel = 0;
 	int lastbut = but;
 	if (event.type == SDL_MOUSEBUTTONDOWN) {
-#ifdef SDL_GUI
-		if (hostScreen.isGUIopen()) {
-			if (event.button.button == SDL_BUTTON_LEFT) {
-				eventX = event.button.x;
-				eventY = event.button.y;
-				eventTyp = SDL_MOUSEBUTTONDOWN;
-			}
-			return;	// if GUI is open do not pass mouse click to Atari
-		}
-#endif
-
 		// eve.type/state/button
 		if (event.button.button == SDL_BUTTON_RIGHT) {
 			if (grabbedMouse)
@@ -514,16 +517,6 @@ void process_mouse_event(SDL_Event event)
 		}
 	}
 	else if (event.type == SDL_MOUSEBUTTONUP) {
-#ifdef SDL_GUI
-		if (hostScreen.isGUIopen()) {
-			if (event.button.button == SDL_BUTTON_LEFT) {
-				eventX = event.button.x;
-				eventY = event.button.y;
-				eventTyp = SDL_MOUSEBUTTONUP;
-			}
-			return;	// if GUI is open do not pass mouse click to Atari
-		}
-#endif
 		if (event.button.button == SDL_BUTTON_RIGHT)
 			but &= ~1;
 		else if (event.button.button == SDL_BUTTON_LEFT)
@@ -545,11 +538,6 @@ void process_mouse_event(SDL_Event event)
 
 	// send the mouse data packet
 	if (xrel || yrel || lastbut != but) {
-#ifdef SDL_GUI
-		if (hostScreen.isGUIopen()) {
-			return;	// if GUI is open do not pass mouse motion to Atari
-		}
-#endif
 		if (xrel < -250 || xrel > 250 || yrel < -250 || yrel > 250) {
 			bug("Reseting weird mouse packet: %d, %d, %d", xrel, yrel, but);
 			xrel = yrel = 0;	// reset the values otherwise ikbd gets crazy
@@ -640,25 +628,37 @@ void check_event()
 	}
 
 	SDL_Event event;
-	while (SDL_PollEvent(&event)) {
+	int eventmask = SDL_EVENTMASK(SDL_KEYDOWN)
+					| SDL_EVENTMASK(SDL_KEYUP)
+					| SDL_EVENTMASK(SDL_MOUSEBUTTONDOWN)
+					| SDL_EVENTMASK(SDL_MOUSEBUTTONUP)
+					| SDL_EVENTMASK(SDL_MOUSEMOTION)
+					| SDL_EVENTMASK(SDL_JOYAXISMOTION)
+					| SDL_EVENTMASK(SDL_JOYBUTTONDOWN)
+					| SDL_EVENTMASK(SDL_JOYBUTTONUP)
+					| SDL_EVENTMASK(SDL_ACTIVEEVENT)
+					| SDL_EVENTMASK(SDL_QUIT);
+
+	SDL_PumpEvents();
+	while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, eventmask)) {
 		int type = event.type;
 
 		if (type == SDL_KEYDOWN || type == SDL_KEYUP) {
 			process_keyboard_event(event);
 		}
 		else if (type == SDL_MOUSEBUTTONDOWN || type == SDL_MOUSEBUTTONUP
-				 || type == SDL_MOUSEMOTION && grabbedMouse) {
+				 || (type == SDL_MOUSEMOTION && grabbedMouse)) {
 			process_mouse_event(event);
 		}
 		else if (type == SDL_JOYAXISMOTION || type == SDL_JOYBUTTONDOWN
 			|| type == SDL_JOYBUTTONUP) {
 			process_joystick_event(event);
 		}
-		else if (event.type == SDL_ACTIVEEVENT) {
+		else if (type == SDL_ACTIVEEVENT) {
 			process_active_event(event);
 		}
 
-		else if (event.type == SDL_QUIT) {
+		else if (type == SDL_QUIT) {
 			pendingQuit = true;
 		}
 	}

@@ -432,9 +432,11 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		freeBackgroundSurf();
 		allocateBackgroundSurf();
 		saveBackground();
-		// TODO force SDL GUI to redraw the dialog
-extern int eventTyp;
-		eventTyp = 0x87654321; // maximal interthread communication HACK
+		// force SDL GUI to redraw the dialog
+		SDL_Event event;
+		event.type = SDL_USEREVENT;
+		event.user.code = SDL_USEREVENT;
+		SDL_PeepEvents(&event, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
 	}
 	else {
 		surf = mainSurface;
@@ -1275,6 +1277,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.40  2003/12/27 23:26:56  joy
+ * color palette initialized to default TOS colors
+ *
  * Revision 1.39  2003/12/25 22:51:05  joy
  * dirty hack for redrawing SDL GUI if screen size changed
  *

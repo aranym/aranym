@@ -1,4 +1,17 @@
-2003/12/28 - joy
+2003/12/28 PM - joy
+- hostscreen.cpp: removed the scary IPC hack and switched to user SDL events
+
+- input.cpp: same IPC hack fix, SDL keyboard and mouse events mapped to
+  the user event. The event processing (in check_event()) changed from
+  PollEvent to threadsafe PeepEvents().
+
+- gui-sdl/sdlgui.cpp: IPC fix: keyboard and mouse events decoded from user
+  events.
+
+- gui-sdl/dlgMain.cpp: missing initialization of reboot/shutdown flags
+
+
+2003/12/28 AM - joy
 - sdl-gui.cpp, dlgMain.cpp: font init moved back to the main dialog,
   freeing of font surface added.
 
