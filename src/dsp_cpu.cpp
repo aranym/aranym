@@ -4646,6 +4646,8 @@ static void dsp_tfr(void)
 				source[0] = 0x0000ff;
 			}
 			break;
+		default:
+			return;
 	}
 
 	getDSP()->registers[REG_A2+destreg] = source[0];
