@@ -276,7 +276,7 @@ case "$target_os" in
     ;;
   cygwin*)
     DEFINES="$DEFINES -DARANYMHOME=\"\\\"aranym\\\"\""
-    LIBS="$LIBS -lSDL -lSDLmain -liberty"
+    LIBS="$LIBS -liberty"
     EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp"
     ;;
   solaris*)
