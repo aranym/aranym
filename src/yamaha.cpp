@@ -34,8 +34,10 @@ uae_u8 YAMAHA::handleRead(uaecptr addr) {
 		switch(active_reg) {
 			case 15:
 				value=parallel.getData();
+				break;
 			default:
 				value=yamaha_regs[active_reg];
+				break;
 		}
 	}
 
