@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <getopt.h>
 #include <errno.h>
 
 #include <SDL/SDL.h>
@@ -36,6 +37,17 @@
 
 #define DEBUG 1
 #include "debug.h"
+
+#define CONVPLANES
+#ifdef CONVPLANES
+// Temporary color palette table...
+#include "../colorpalette.cpp"
+
+char   tos_colors[] = {0, 255, 1, 2, 4, 6, 3, 5, 7,  8,  9, 10, 12, 14, 11, 13};
+char   vdi_colors[] = {0,   2, 3, 6, 4, 7, 5, 8, 9, 10, 11, 14, 12, 15, 13, 1};
+uint32 sdl_colors[256];
+
+#endif // CONVPLANES
 
 // Constants
 const char ROM_FILE_NAME[] = "ROM";
@@ -55,10 +67,15 @@ void init_fdc();	// fdc.cpp
 
 extern int irqindebug;
 
+bool grab_mouse = true;
+
+SDL_Surface *surf = NULL;
+
 #define UPDATERECT
 #ifdef UPDATERECT
 bool UpdateScreen = true;
 #define REFRESH_FREQ	1
+#define COPYVRAM
 #endif // UPDATERECT
 
 static int keyboardTable[0x80] = {
@@ -79,6 +96,28 @@ static int keyboardTable[0x80] = {
 /*70-72*/SDLK_KP0, SDLK_KP_PERIOD, SDLK_KP_ENTER};
 
 static int buttons[3]={0,0,0};
+
+static struct option const long_options[] =
+{
+  {"rom", required_argument, 0, 'R'},
+  {"resolution", required_argument, 0, 'r'},
+  {"debug", no_argument, 0, 'd'},
+  {"fullscreen", no_argument, 0, 'f'},
+  {"help", no_argument, 0, 'h'},
+  {"version", no_argument, 0, 'V'},
+  {NULL, 0, NULL, 0}
+};
+
+char *program_name;
+char *rom_path;
+
+extern "C" char *xstrdup();
+
+static int decode_switches (int argc, char **argv);
+
+int start_debug = 0;	// Automaticky start debuggeru
+int fullscreen = 0;		// Boot in Fullscreen
+int boot_color_depth = 1;		// Boot in Fullscreen
 
 static void check_event(void)
 {
@@ -112,21 +151,42 @@ static void check_event(void)
 				SDL_MouseMotionEvent eve = event.motion;
 				//eve.type/state/x,y/xrel,yrel
 				xrel = eve.xrel;
+				if (xrel < -127 || xrel > 127)
+					xrel = 0;
 				yrel = eve.yrel;
+				if (yrel < -127 || yrel > 127)
+					yrel = 0;
 			}
 			else if (type == SDL_MOUSEBUTTONDOWN) {
 			// eve.type/state/button
-				but = 1;
+				if (event.button.button == SDL_BUTTON_RIGHT)
+					but |= 1;
+				else if (event.button.button == SDL_BUTTON_LEFT)
+					but |= 2;
 			}
 			else if (type == SDL_MOUSEBUTTONUP) {
-				but = 0;
+				if (event.button.button == SDL_BUTTON_RIGHT)
+					but &= ~1;
+				else if (event.button.button == SDL_BUTTON_LEFT)
+					but &= ~2;
 			}
 			if (xrel || yrel || lastbut != but) {
-				ikbd_send(0xf8 | but << 1);
+				ikbd_send(0xf8 | but);
 				ikbd_send(xrel);
 				ikbd_send(yrel);
+				// fprintf(stderr, "Mouse: %dx%d\t", xrel, yrel);
 			}
 		}
+/*
+		else if (event.type == SDL_ACTIVEEVENT) {
+			if (event.state == SDL_APPMOUSEFOCUS) {
+				if (event.gain) {
+					// mouse entered our window -> update the Atari mouse position
+
+				}
+			}
+		}
+*/
 		else if (event.type == SDL_QUIT)
 			QuitEmulator();
 	}
@@ -151,9 +211,137 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 		if (UpdateScreen && ++Refresh_counter == REFRESH_FREQ)
 		{
 			Refresh_counter = 0;
+#ifdef COPYVRAM
+			if (SDL_MUSTLOCK(surf))
+				if (SDL_LockSurface(surf)<0) {
+					printf("Couldn't lock surface to refresh!\n");
+					return 5;
+			}
+
+			VideoRAMBaseHost = (uint8 *)surf->pixels;
 			uint16 *fvram = (uint16*)get_real_address(vram_addr/*ReadMacInt32(0x44e)*/);
 			uint16 *hvram = (uint16 *)VideoRAMBaseHost;
 			int mode = getVideoMode();
+#ifdef CONVPLANES
+			uint8 destBPP  = surf->format->BytesPerPixel;
+			if (mode < 16) {
+			    //BEGIN
+			    //
+			    // FIXME:
+			    // This should be done ONLY when the screen mode
+			    // changes... e.g. in the videl emulation
+			    uint8  col1st = 1;
+			    uint8  col3rd = 3;
+
+			    if (mode == 1) // set the black in 1 plane mode to the index 1
+				col1st = 15;
+			    else if (mode == 2) // set the black to the index 3 in 2 plane mode (4 colors)
+			        col3rd = 15;
+
+			    sdl_colors[1] = SDL_MapRGB(surf->format,
+						       (uint8)colors[vdi_colors[col1st]*3],
+						       (uint8)colors[vdi_colors[col1st]*3+1],
+						       (uint8)colors[vdi_colors[col1st]*3+2]);
+			    sdl_colors[3] = SDL_MapRGB(surf->format,
+						       (uint8)colors[vdi_colors[col3rd]*3],
+						       (uint8)colors[vdi_colors[col3rd]*3+1],
+						       (uint8)colors[vdi_colors[col3rd]*3+2]);
+			    //
+			    //END
+
+			    // The SDL colors blitting...
+			    // FIXME: The destBPP tests should probably not
+			    //        be inside the loop... (reorganise?)
+			    uint16 words[mode];
+			    for(int i=0; i < (80*480/2); i++) {
+			            // perform byteswap (prior to plane to chunky conversion)
+			            for(int l=0; l<mode; l++) {
+				        uint16 b = fvram[i*mode+l];
+					words[l] = (b >> 8) | ((b & 0xff) << 8);	// byteswap
+				    }
+
+				    // To support other formats see
+				    // the SDL video examples (docs 1.1.7)
+				    if (destBPP==4) {
+				      // bitplane to chunky conversion
+				      for(int j=0; j<16; j++) {
+					uint8 color = 0;
+					for(int l=mode-1; l>=0; l--) {
+					  color <<= 1;
+					  color |= (words[l] >> (15-j)) & 1;
+					}
+					((uint32*)hvram)[(i*16+j)] = (uint32)sdl_colors[color];
+				      }
+				    } else if (destBPP==2) {
+				      // bitplane to chunky conversion
+				      for(int j=0; j<16; j++) {
+					uint8 color = 0;
+					for(int l=mode-1; l>=0; l--) {
+					  color <<= 1;
+					  color |= (words[l] >> (15-j)) & 1;
+					}
+					((uint16*)hvram)[(i*16+j)] = (uint16)sdl_colors[color];
+				      }
+				    } // FIXME: support for othe than 2 or 4 BPP is missing
+			    }
+
+
+			    /*
+			    for(int i=0; i < (80*480/2); i++) {
+				    for(int j=0; j<16; j++) {
+				        uint8 color;
+					color = 0;
+				        for(int l=mode-1; l>=0; l--) {
+					  uint16 b = fvram[i*mode+l];
+					  b = (b >> 8) | ((b & 0xff) << 8);	// byteswap
+					  color <<= 1;
+					  color |= (b >> (15-j)) & 1;
+					}
+					hvram[(i*16+j)] = (uint16)sdl_colors[color];
+				    }
+			    }
+			    */
+
+			} else {
+			  // Falcon TC (High Color)
+			    if (destBPP==2) {
+				// This is not enough (memcpy)
+			        // memcpy(hvram, fvram, 640*480*2);
+
+			        for(int i=0; i < 640*480; i++)
+				      // byteswap
+				    ((uint16*)hvram)[i] = 
+				      (((uint16*)fvram)[i] >> 8) | ((((uint16*)fvram)[i] & 0xff) << 8);
+
+			    } else if (destBPP==4) {
+			        for(int i=0; i < 640*480; i++)
+				    // The byteswap is done by correct shifts (not so obvious) 
+			            ((uint32*)hvram)[i] = SDL_MapRGB(
+						 surf->format,
+						 (uint8)((fvram[i]>>5) & 0xf8),
+						 (uint8)(((fvram[i] & 0x07) << 5) | ((fvram[i]>>11) & 0x3c)),
+						 (uint8)(fvram[i] & 0xf8) );
+			    } // FIXME: support for othe than 2 or 4 BPP is missing
+
+#if 0
+			  SDL_Rect fvrect = { 0, 0, 640, 480 };
+			  //			  fvrect.x = fvrect.y = 0;
+			  //			  fvrect.w = 640;
+			  //			  fvrect.h = 480;
+
+			  SDL_Surface *fvsurf = SDL_CreateRGBSurfaceFrom(
+				 (void*)fvram, 640, 480, 16, 640*2, 0xf800, 0x07e0, 0x001f, 0x0000 );
+			  SDL_SetColorKey(fvsurf, 0, 0);
+			  SDL_SetAlpha(fvsurf, 0, 0);
+			
+			  SDL_BlitSurface(fvsurf, &fvrect, surf, &fvrect);
+			  SDL_FreeSurface(fvsurf);
+#endif
+			}
+			        //for(int i=0; i < 640*480*2; i++) hvram[i] = 0xffff - fvram[i];
+				
+#else // CONVPLANES
+			// take just the first plane
 			if (mode < 16) {
 				// convert bitplanes
 				for(int i=0; i < (80*480/2); i++) {
@@ -166,12 +354,13 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 						hvram[(i*16+j)] = v;
 					}
 				}
-			}
-			else
-				memcpy(hvram, fvram, 640*480*2);
+			} else
+			  memcpy(hvram, fvram, 640*480*2);
+#endif // CONVPLANES
+#endif	// COPYVRAM
 			SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, 640, 480);
 		}
-#endif
+#endif	// UPDATERECT
 	}
 	return 5;
 }
@@ -211,17 +400,24 @@ int SelectVideoMode() {
 #define ErrorAlert(a)	fprintf(stderr, a)
 #define MAXDRIVES	32
 int drive_fd[MAXDRIVES];
-SDL_Surface *surf = NULL;
 
 int main(int argc, char **argv)
 {
 	char str[256];
 
-	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0)
+	program_name = argv[0];
+	int i = decode_switches (argc, argv);
+
+	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0) {
+		fprintf(stderr, "SDL initialization failed.\n");
 		return 1;
+	}
 	atexit(SDL_Quit);
 	SelectVideoMode();
-	surf = SDL_SetVideoMode(640, 480, 16, /*SDL_FULLSCREEN|*/SDL_HWSURFACE);
+	int sdl_videoparams = SDL_HWSURFACE;
+	if (fullscreen)
+		sdl_videoparams |= SDL_FULLSCREEN;
+	surf = SDL_SetVideoMode(640, 480, 16, sdl_videoparams);
 	SDL_WM_SetCaption("aranym pre-alpha", "ARAnyM");
 	fprintf(stderr, "Line Length = %d\n", surf->pitch);
 	fprintf(stderr, "Must Lock? %s\n", SDL_MUSTLOCK(surf) ? "YES" : "NO");
@@ -231,11 +427,72 @@ int main(int argc, char **argv)
 		UpdateScreen = true;
 #endif // UPDATERECT
 	}
+	// grab mouse
+	if (grab_mouse) {
+		SDL_ShowCursor(SDL_DISABLE);
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+	}
+
 	VideoRAMBaseHost = (uint8 *)surf->pixels;
 	fprintf(stderr, "surf->pixels = %x, getVideoSurface() = %x\n", VideoRAMBaseHost, SDL_GetVideoSurface()->pixels);
 	if (SDL_MUSTLOCK(surf))
 		SDL_UnlockSurface(surf);
 
+	fprintf(stderr,
+		"Pixel format: \tmasks  r %04x, g %04x, b %04x\n"
+		"\t\tshifts r %d, g %d, b %d\n"
+		"\t\tlosses r %d, g %d, b %d\n",
+		surf->format->Rmask,
+		surf->format->Gmask,
+		surf->format->Bmask,
+		surf->format->Rshift,
+		surf->format->Gshift,
+		surf->format->Bshift,
+		surf->format->Rloss,
+		surf->format->Gloss,
+		surf->format->Bloss );
+
+#ifdef CONVPLANES
+	// Convert the table from 0..1000 RGB to 0..255 RBG format
+	for(int i=0; i < sizeof(colors)/sizeof(*colors); i++)
+	  colors[i] = ((( (uint16)colors[i] << 6 ) - 63) / 250) & 0xff;
+
+	// Prepare the native format color values
+	//
+	// FIXME: This should be done on every VDI palette change
+	//        and this pass should work with TOS built in palette
+	//        (I don't know where to get the TOS palette, so I've stolen it from fVDI)
+	{
+	  uint16 vdi2pix[256];
+	  int  i = 0;
+
+	  for(i = 0; i < 16; i++)
+	      vdi2pix[i] = vdi_colors[i];
+	  for(; i < 256; i++)
+	      vdi2pix[i] = i;
+
+	  // map the colortable into the correct pixel format
+	  for(int i=0; i < 256; i++) {
+	      fprintf(stderr, "map color %03d -> %03d (#%02x%02x%02x)\n",
+		      (uint8)i, (uint8)vdi2pix[i],
+		      (uint8)colors[vdi2pix[i]*3],
+		      (uint8)colors[vdi2pix[i]*3+1],
+		      (uint8)colors[vdi2pix[i]*3+2] );
+
+	      sdl_colors[i] = SDL_MapRGB(surf->format,
+					 (uint8)colors[vdi2pix[i]*3],
+					 (uint8)colors[vdi2pix[i]*3+1],
+					 (uint8)colors[vdi2pix[i]*3+2]);
+	  }
+	}
+
+#if 0
+	// These are really needed values for 32bit
+	// (to not to scan for transparent pixels & alpha chanelling)
+	SDL_SetColorKey(surf, 0, 0);
+	SDL_SetAlpha(surf, 0, 0);
+#endif
+#endif
 	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
 
 	drive_fd[0] = open("/dev/fd0", O_RDONLY);
@@ -292,7 +549,7 @@ int main(int argc, char **argv)
 	fprintf(stderr, "Physical VRAM = %x\n", VideoRAMBaseHost);
 	
 	// Get rom file path from preferences
-	const char *rom_path = "ROM";
+//	const char *rom_path = "ROM";
 
 	// Load TOS ROM
 	int rom_fd = open(rom_path ? rom_path : ROM_FILE_NAME, O_RDONLY);
@@ -314,19 +571,19 @@ int main(int argc, char **argv)
 		QuitEmulator();
 	}
 
+#ifndef COPYVRAM
 	// Patch TOS (enforce VideoRAM at 0xf0000000)
-	if (false) {
-		ROMBaseHost[35753]=0x3c;
-    	ROMBaseHost[35754]=0xf0;
-    	ROMBaseHost[35755]=0;
-    	ROMBaseHost[35756]=0;
-    	ROMBaseHost[35757]=0;
-    	ROMBaseHost[35758]=0x60;
-    	ROMBaseHost[35759]=6;
-    	ROMBaseHost[35760]=0x4e;
-    	ROMBaseHost[35761]=0x71;
-    }
-
+	ROMBaseHost[35752]=0x2e;
+	ROMBaseHost[35753]=0x3c;
+   	ROMBaseHost[35754]=0xf0;
+   	ROMBaseHost[35755]=0;
+   	ROMBaseHost[35756]=0;
+   	ROMBaseHost[35757]=0;
+   	ROMBaseHost[35758]=0x60;
+   	ROMBaseHost[35759]=6;
+   	ROMBaseHost[35760]=0x4e;
+   	ROMBaseHost[35761]=0x71;
+#endif
 
 	// Initialize everything
 	if (!InitAll())
@@ -383,3 +640,68 @@ void QuitEmulator(void)
 void FlushCodeCache(void *start, uint32 size)
 {
 }
+
+static void
+usage (int status)
+{
+  printf ("ARAnyM\n");
+  printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
+  printf ("\
+Options:
+  -R, --rom NAME             ROM file NAME\n\
+  -d, --debug                start debugger\n\
+  -f, --fullscreen           start in fullscreen\n\
+  -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
+  -h, --help                 display this help and exit\n\
+  -V, --version              output version information and exit\n\
+");
+  exit (status);
+}
+
+static int
+decode_switches (int argc, char **argv)
+{
+  int c;
+
+  while ((c = getopt_long (argc, argv,
+                           "R:" /* ROM file */
+                           "d"  /* debugger */
+                           "f"  /* fullscreen */
+                           "r:"  /* resolution */
+			   "h"	/* help */
+			   "V"	/* version */,
+			   long_options, (int *) 0)) != EOF)
+    {
+      switch (c)
+	{
+	case 'V':
+	  printf ("%s\n", VERSION_STRING);
+	  exit (0);
+
+	case 'h':
+	  usage (0);
+	
+	case 'd':
+	  start_debug = 1;
+	  break;
+	
+	case 'f':
+	  fullscreen = 1;
+	  break;
+	
+	case 'R':
+	  rom_path = xstrdup(optarg);
+	  break;
+
+	case 'r':
+	  boot_color_depth = atoi(optarg);
+	  break;
+
+	default:
+	  usage (EXIT_FAILURE);
+	}
+    }
+
+  return optind;
+}
+
