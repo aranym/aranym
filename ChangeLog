@@ -1,6 +1,11 @@
+2002/09/23 - patrice
+- hostscreen: modified to select the nearest best video mode.
+- videl: modifier to render from any bpp to any bpp, using any screen pitch.
+
+
 2002/09/20 - patrice
 - DSP: bit-reversed addressing fixed, host port transfer when threaded fixed
-       use of C++ constructor/destructor for the DSP class
+       use of C++ constructor/destructor for the DSP class.
 
 
 2002/09/15 - joy (version 0.6.0-alpha)
