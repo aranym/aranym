@@ -2700,7 +2700,12 @@ bx_hard_drive_c::set_cd_media_status(unsigned status)
 
 int default_image_t::open (const char* pathname)
 {
-      fd = ::open(pathname, O_RDWR
+      fd = ::open(pathname,
+#if 1
+      		O_RDWR
+#else
+			O_RDONLY
+#endif
 #ifdef O_BINARY
 		  | O_BINARY
 #endif
