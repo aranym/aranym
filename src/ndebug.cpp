@@ -327,7 +327,7 @@ void ndebug::set_Ax(char **inl) {
 }
 
 void ndebug::set_Dx(char **inl) {
-	char reg;
+	int reg;
 	if (more_params(inl)) if ((reg = readhex(inl)) < 8)
 		if (more_params(inl)) m68k_dreg(regs, reg) = readhex(inl);
 }
@@ -1343,6 +1343,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.32  2003/09/03 20:15:55  milan
+ * ndebug compilation warnings fixed
+ *
  * Revision 1.31  2003/07/11 18:51:03  milan
  * some JIT bugs corrected
  * CD-ROM product ID corrected for little endian
