@@ -207,4 +207,4 @@ extern DLG_PARAMS ConfigureParams, DialogParams;
 
 extern void Dialog_DefaultConfigurationDetails(void);
 extern void Dialog_CopyDetailsFromConfiguration(bool bReset);
-extern bool Dialog_DoProperty(void);
+extern bool Dialog_DoProperty(bool *bReset, bool *bQuit);
