@@ -4,7 +4,8 @@
 
 2005/01/16 - Petr
 - natfeat/xhdi: fixed scary off-by-one bug. Direct partition access works
-  for virtual disk images (detection of real devices size doesn't work yet).
+  OK. Also implemented proper way for finding out size of block device
+  (such as /dev/hda1) so we can access host disk partitions directly now!
 
 
 2005/01/14 - Patrice
