@@ -1,3 +1,9 @@
+2001/10/30 - STanda
+- The HostScreen support for 8,16,24 and 32 BPP finished. Many optimalizations
+  done in getting the switches out from loops. There should be some speedup, but
+  this I can't see on my computer and I didn't even try to make any benchmarks.
+
+
 2001/10/29 - joy
 - --floppy <path> added to the command line options
 
