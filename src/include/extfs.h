@@ -168,61 +168,61 @@ class ExtFs {
 
 	// GEMDOS functions
 	int32 Dfree_(char *fpathName, uint32 diskinfop );
-	int32 Dfree(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				uint32 diskinfop, int16 drive );
-	int32 Dcreate(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  const char *pn);
-	int32 Ddelete(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  const char *pn);
-	int32 Dsetpath(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				   const char *pn);
-	int32 Fcreate(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  const char *pn, int16 attr);
-	int32 Fopen(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				const char *pn, int16 mode);
+	int32 DfreeExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					 uint32 diskinfop, int16 drive );
+	int32 DcreateExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					   const char *pn);
+	int32 DdeleteExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					   const char *pn);
+	int32 DsetpathExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+						const char *pn);
+	int32 FcreateExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					   const char *pn, int16 attr);
+	int32 FopenExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					 const char *pn, int16 mode);
 	int32 Fopen_( const char* fpathName, int flags, int mode, ExtFile *fp );
-	int32 Fclose(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				 int16 handle);
-	int32 Fread(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				int16 handle, uint32 count, void *buffer);
-	int32 Fwrite(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				 int16 handle, uint32 count, void *buffer);
-	int32 Fdelete(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  const char *pn);
-	int32 Fseek(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				int32 offset, int16 handle, int16 seekmode);
+	int32 FcloseExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					  int16 handle);
+	int32 FreadExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					 int16 handle, uint32 count, void *buffer);
+	int32 FwriteExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					  int16 handle, uint32 count, void *buffer);
+	int32 FdeleteExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					   const char *pn);
+	int32 FseekExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					 int32 offset, int16 handle, int16 seekmode);
 
-	int32 Fattrib(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  const char* pn, int16 wflag, int16 attr);
+	int32 FattribExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					   const char* pn, int16 wflag, int16 attr);
 
-	int32 Fsfirst( LogicalDev *ldp, char *pathname, ExtDta *dta,
-				   const char *pn, int16 attribs );
-	int32 Fsnext ( LogicalDev *ldp, char *pathName, ExtDta *dta );
-	int32 Frename(LogicalDev *ldp, char *pathName, ExtFile *fp,
-				  int16 reserved, char *oldpath, char *newPathName);
+	int32 FsfirstExtFs( LogicalDev *ldp, char *pathname, ExtDta *dta,
+						const char *pn, int16 attribs );
+	int32 FsnextExtFs ( LogicalDev *ldp, char *pathName, ExtDta *dta );
+	int32 FrenameExtFs(LogicalDev *ldp, char *pathName, ExtFile *fp,
+					   int16 reserved, char *oldpath, char *newPathName);
 	int32 Fdatime_( char *fpathName, ExtFile *fp, uint32 *datetimep, int16 wflag);
-	int32 Fdatime( LogicalDev *ldp, char *pathName, ExtFile *fp,
-				   uint32 *datetimep, int16 handle, int16 wflag);
-	int32 Fcntl( LogicalDev *ldp, char *pathName, ExtFile *fp,
-				 int16 handle, void *arg, int16 cmd );
-	int32 Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp,
-					 const char* pn, int16 which );
+	int32 FdatimeExtFs( LogicalDev *ldp, char *pathName, ExtFile *fp,
+						uint32 *datetimep, int16 handle, int16 wflag);
+	int32 FcntlExtFs( LogicalDev *ldp, char *pathName, ExtFile *fp,
+					  int16 handle, void *arg, int16 cmd );
+	int32 DpathconfExtFs( LogicalDev *ldp, char *pathName, ExtFile *fp,
+						  const char* pn, int16 which );
 	int32 Dpathconf_( char *fpathName, int16 which, ExtDrive *drv );
 
-	int32 Dopendir( LogicalDev *ldp, char *pathName, ExtDir *dirh, const char* pn, int16 flag);
+	int32 DopendirExtFs( LogicalDev *ldp, char *pathName, ExtDir *dirh, const char* pn, int16 flag);
 	int32 Dopendir_( char *fpathName, ExtDir *dirh, int16 flag);
-	int32 Dclosedir( ExtDir *dirh );
+	int32 DclosedirExtFs( ExtDir *dirh );
 
-	int32 Dreaddir( LogicalDev *ldp, char *pathName, ExtDir *dirh,
-					int16 len, int32 dirhandle, char* buff );
+	int32 DreaddirExtFs( LogicalDev *ldp, char *pathName, ExtDir *dirh,
+						 int16 len, int32 dirhandle, char* buff );
 
-	int32 Dxreaddir( LogicalDev *ldp, char *pathName, ExtDir *dirh,
-					 int16 len, int32 dirhandle, char* buff, uint32 xattrp, uint32 xretp );
+	int32 DxreaddirExtFs( LogicalDev *ldp, char *pathName, ExtDir *dirh,
+						  int16 len, int32 dirhandle, char* buff, uint32 xattrp, uint32 xretp );
 	int32 Dxreaddir_( char *fpathName, ExtDir *dirh, int16 len, char* buff, uint32 xattrp, uint32 xretp );
-	int32 Drewinddir( ExtDir *dirh );
+	int32 DrewinddirExtFs( ExtDir *dirh );
 
-	int32 Fxattr( LogicalDev *ldp, char *pathName, ExtDta *dta,
-				  int16 flag, const char* pn, uint32 xattrp );
+	int32 FxattrExtFs( LogicalDev *ldp, char *pathName, ExtDta *dta,
+					   int16 flag, const char* pn, uint32 xattrp );
 	int32 Fxattr_( LogicalDev *ldp, char *fpathName, int16 flag, uint32 xattrp );   // Taking host pathName instead of Atari one.
 
 	// these variables are another plain hack.

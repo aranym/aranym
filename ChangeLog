@@ -1,3 +1,8 @@
+2002/04/19 - STanda
+- Namespaces doesn't work under FreeMiNT because mintbind.h are
+  only macros..... The names were changed to have the ExtFs suffix.
+
+
 2002/04/18 - STanda
 - ExtFs bug in Fsnext fixed. If the path for Fsfirst doesn't contain
   wildcards then many applications don't call the Fsnext. We need an
