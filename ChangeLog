@@ -1,3 +1,13 @@
+2001/09/10 [ARAnyM 0.0.6] - joy
+- proper check_ram_boundary in memory.h. Has to be always enabled, otherwise
+  programs like e.g. Aniplayer can kill the whole aranym..
+  FastRAM works again (still fixed to 32 MB).
+
+- SDL_Timer is not used anymore. CPU now checks once in a while (currently
+  each 100 m68k instructions) whether it's time to emulate an interrupt.
+  The original behavior with timers may be enabled with -DUSE_TIMERS.
+
+
 2001/09/09 - joy
 - direct TrueColor works again
 - clicking in fullscreen X11 works again (generally mouse grabbing works again)
@@ -9,6 +19,7 @@
 - milan's port of ata.cpp and cdrom.cpp from Bochs v1.2 now enables direct
   access to CD-ROM! Use "IsCDROM = Yes" in your [IDE1] section of aranym
   conf file.
+
 
 2001/09/01 - milan
 - switch for enabling full opcode's history for debugger
