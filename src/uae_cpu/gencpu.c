@@ -2295,6 +2295,7 @@ static void generate_includes (FILE * f)
     fprintf (f, "#include \"fpu/fpu.h\"\n");
     fprintf (f, "#include \"cputbl.h\"\n");
     fprintf (f, "#include \"cpu_emulation.h\"\n");
+    fprintf (f, "#include \"debug.h\"\n");
 
     fprintf (f, "#define SET_CFLG_ALWAYS(x) SET_CFLG(x)\n");
     fprintf (f, "#define SET_NFLG_ALWAYS(x) SET_NFLG(x)\n");

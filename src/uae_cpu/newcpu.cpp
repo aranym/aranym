@@ -30,6 +30,9 @@
 
 int quit_program = 0;
 
+// For instruction $7139
+bool cpu_debugging = false;
+
 struct flag_struct regflags;
 
 /* LongJump buffers */

@@ -511,7 +511,7 @@ genamode (amodes mode, char *reg, wordsizes size, char *name, int getv, int move
     /* We now might have to fix up the register for pre-dec or post-inc
      * addressing modes. */
     if (!movem) {
-	char x[160];
+// MJ	char x[160];
 	switch (mode)
 	{
 	 case Aipi:
@@ -1374,7 +1374,7 @@ gen_opcode (unsigned long int opcode)
 	    comprintf("\tand_l_ri(s,31);\n");
 
 	{
-	    char* op;
+	    char* op = "";
 	    int need_write=1;
 
 	    switch(curi->mnemo) {
@@ -2755,6 +2755,7 @@ generate_includes (FILE * f)
     fprintf (f, "#include \"readcpu.h\"\n");
     fprintf (f, "#include \"newcpu.h\"\n");
     fprintf (f, "#include \"comptbl.h\"\n");
+    fprintf (f, "#include \"debug.h\"\n");
 }
 
 static int postfix;
@@ -2983,7 +2984,7 @@ generate_func (int noflags)
 
 
 	/* sam: this is for people with low memory (eg. me :)) */
-	!printf ("\n"
+	printf ("\n"
 		 "#if !defined(PART_1) && !defined(PART_2) && "
 		 "!defined(PART_3) && !defined(PART_4) && "
 		 "!defined(PART_5) && !defined(PART_6) && "

@@ -1,3 +1,12 @@
+2003/08/15 - milan
+- new CPUDEBUG emulops, switches for new internal variable cpu_debugging,
+  for CPU debugging
+
+- make dependencies corrected
+
+- gencomp.c: compilation warning cleaned
+
+
 2003/08/06 - milan
 - mingw support cleaned (added to sysdeps.h)
 

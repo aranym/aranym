@@ -165,6 +165,14 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			QuitEmulator();
 			break;
 
+		case M68K_EMUL_OP_CPUDEBUG_ON:
+			cpu_debugging = true;
+			break;
+
+		case M68K_EMUL_OP_CPUDEBUG_OFF:
+			cpu_debugging = false;
+			break;
+
 		case M68K_EMUL_OP_MON0:
 		case M68K_EMUL_OP_MON1:
 		case M68K_EMUL_OP_MON2:
