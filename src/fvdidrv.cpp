@@ -1056,7 +1056,7 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
 	for(int i = 0; i < 16; ++i)
 		pattern[i] = ReadInt16(pattern_addr + i * 2);
 
-	int16* table = 0;
+	memptr table = 0;
 
 	int x = x_;
 	int y = y_;
@@ -1064,7 +1064,7 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
 	if ((long)vwk & 1) {
 		if ((y_ & 0xffff) != 0)
 			return -1;		// Don't know about this kind of table operation
-		table = (int16*)x_;
+		table = (memptr)x_;
 		h = (y_ >> 16) & 0xffff;
 		vwk -= 1;
 	}
@@ -1090,9 +1090,9 @@ int FVDIDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w, int32 h,
 		maxy = y + h - 1;
 	} else {
 		for(h = h - 1; h >= 0; h--) {
-			y = (int16)ReadInt16((memptr)table++);
-			x = (int16)ReadInt16((memptr)table++);
-			w = (int16)ReadInt16((memptr)table++) - x + 1;
+			y = (int16)ReadInt16(table); table+=2;
+			x = (int16)ReadInt16(table); table+=2;
+			w = (int16)ReadInt16(table) - x + 1; table+=2;
 			hostScreen.fillArea(x, y, w, 1, pattern, fgColor, bgColor, logOp);
 			if (x < minx)
 				minx = x;
@@ -2019,6 +2019,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.58  2005/01/11 15:28:14  standa
+ * 64bit cleanup
+ *
  * Revision 1.57  2004/10/31 23:17:09  pmandin
  * Forgot some break instructions
  *
