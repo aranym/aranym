@@ -124,6 +124,7 @@ static inline void check_ram_boundary(uaecptr addr, int size, bool write)
 
 	// D(bug("BUS ERROR %s at $%x\n", (write ? "writing" : "reading"), addr));
 	regs.mmu_fault_addr = addr;
+	regs.mmu_ssw = ((size - 1) << 5) | (write ? 0 : (1 << 8));
 	LONGJMP(excep_env, 2);
 }
 
@@ -350,6 +351,8 @@ static inline void put_long(uaecptr addr, uae_u32 l)
     if (prb != 0) {
 	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 	regs.mmu_fault_addr = addr;
+	regs.wb3_data = l;
+	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
 	LONGJMP(excep_env, prb);
     }
     phys_put_long(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_long, 0),l);
@@ -364,6 +367,8 @@ static inline void put_word(uaecptr addr, uae_u16 w)
     if (prb != 0) {
 	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 	regs.mmu_fault_addr = addr;
+	regs.wb3_data = w;
+	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
 	LONGJMP(excep_env, prb);
     }
     phys_put_word(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_word, 0),w);
@@ -378,6 +383,8 @@ static inline void put_byte(uaecptr addr, uae_u16 b)
     if (prb != 0) {
 	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 	regs.mmu_fault_addr = addr;
+	regs.wb3_data = b;
+	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
 	LONGJMP(excep_env, prb);
     }
     phys_put_byte(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_byte, 0),b);
