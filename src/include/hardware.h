@@ -3,10 +3,7 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
-#define MEM_CTL_A	0xffff8000
-#define MEM_CTL		0x0a		// 0xffff8000 - 2MB banks
-#define SYS_CTL_A	0xffff8006
-#define SYS_CTL		0x8001		// 0xffff8006 - VGA monitor, CPU speed full
+extern uae_u32 vram_addr;
 
 extern void HWInit(void);
 
@@ -22,4 +19,5 @@ extern uaecptr showPC(void);	// for debugging only
 
 extern void MakeMFPIRQ(int);
 extern void ikbd_send(int);
+extern int getVideoMode();
 #endif 
