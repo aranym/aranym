@@ -45,6 +45,10 @@ int SelectVideoMode()
 
 void VIDEL::setHostWindow()
 {
+	sdl_videoparams = SDL_HWSURFACE;
+	if (fullscreen)
+		sdl_videoparams |= SDL_FULLSCREEN;
+
 	surf = SDL_SetVideoMode(width, height, 16, sdl_videoparams);
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 	fprintf(stderr, "Line Length = %d\n", surf->pitch);
@@ -80,18 +84,16 @@ void VIDEL::setHostWindow()
 VIDEL::VIDEL()
 {
 	// SelectVideoMode();
-	sdl_videoparams = SDL_HWSURFACE;
-	if (fullscreen)
-		sdl_videoparams |= SDL_FULLSCREEN;
-
 	// reasonable default values
 	width = 640;
 	height = 480;
 	od_posledni_zmeny = 0;
 
-	setHostWindow();
-
 	sdl_colors_uptodate = false;
+}
+
+void VIDEL::init() {
+	setHostWindow();
 }
 
 // monitor writting to Falcon color palette registers
@@ -196,7 +198,7 @@ void VIDEL::updateColors()
 		// map the colortable into the correct pixel format
 #define TOS_COLORS(i)	handleRead(0xff9800 + (i))
 		for (int i = 0; i < 256; i++) {
-			int offset = vdi2pix[i] << 2;
+			int offset = i /*vdi2pix[i]*/ << 2;
 			sdl_colors[i] = SDL_MapRGB(surf->format,
 									   TOS_COLORS(offset),
 									   TOS_COLORS(offset + 1),
@@ -341,6 +343,9 @@ void VIDEL::updateScreen(int x, int y, int w, int h)
 
 /*
  * $Log$
+ * Revision 1.12  2001/06/15 14:14:46  joy
+ * VIDEL palette registers are now processed by the VIDEL object.
+ *
  * Revision 1.11  2001/06/13 07:12:39  standa
  * Various methods renamed to conform the sementics.
  * Added videl fuctions needed for VDI driver.
