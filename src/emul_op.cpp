@@ -129,9 +129,10 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 #endif
 
-		case M68K_EMUL_OP_DEBUGUTIL:
+		case M68K_EMUL_OP_DEBUGUTIL:	// for EmuTOS - code 0x7135
 //			printf("DebugUtil d0=%08lx  a5=%08lx\n", r->d[0], r->a[5]);
 //			r->d[0] = DebugUtil(r->d[0]);
+			printf("%s", get_long(r->a[7]+4, true));
 			break;
 
 		default:
