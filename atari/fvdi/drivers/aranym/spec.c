@@ -55,19 +55,56 @@ char b_32f[] = {8, 24, 25, 26, 27, 28, 29, 30, 31};
 #endif
 char none[] = {0};
 
+/**
+ * Mode *graphics_mode
+ *
+ * bpp     The number of bits per pixel
+ *
+ * flags   Various information (OR together the appropriate ones)
+ *           CHECK_PREVIOUS - Ask fVDI to look at the previous graphics mode
+ *                            set by the ROM VDI (I suppose.. *standa*)
+ *           CHUNKY         - Pixels are chunky
+ *           TRUE_COLOUR    - Pixel value is colour value (no palette)
+ *
+ * bits    Poperly set up MBits structure:
+ *           red, green, blue,  - Pointers to arrays containing the number of
+ *           alpa, genlock,       of bits and the corresponding bit numbers
+ *           unused               (the latter only for true colour modes)
+ *
+ * code    Driver dependent value
+ *
+ * format  Type of graphics mode
+ *           0 - interleaved
+ *           2 - packed pixels
+ *
+ * clut    Type of colour look up table
+ *           1 - hardware
+ *           2 - software
+ *
+ * org     Pixel bit organization (OR together the appropriate ones)
+ *           0x01 - usual bit order
+ *           0x80 - Intel byte order
+ **/
 Mode mode[7] = /* FIXME: big and little endian differences. */
-	{
-	 { 1, CHUNKY | CHECK_PREVIOUS,               {r_8,   g_8,   b_8,   none, none, none}, 0, 2, 2, 1},
-	 { 2, CHUNKY | CHECK_PREVIOUS,               {r_8,   g_8,   b_8,   none, none, none}, 0, 2, 2, 1},
-	 { 4, CHUNKY | CHECK_PREVIOUS,               {r_8,   g_8,   b_8,   none, none, none}, 0, 2, 2, 1},
-	 { 8, CHUNKY | CHECK_PREVIOUS,               {r_8,   g_8,   b_8,   none, none, none}, 0, 2, 2, 1},
-	 {16, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_16f, g_16f, b_16f, none, none, none}, 0, 2, 2, 1},
-	 {24, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_32f, g_32f, b_32f, none, none, none}, 0, 2, 2, 1},
-	 {32, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_32,  g_32,  b_32,  none, none, none}, 0, 2, 2, 1}};
+{
+	                   /* ... 0, interleaved, hardware clut, usual bit order */
+	{ 1, CHECK_PREVIOUS, {r_8,   g_8,   b_8,    none, none, none}, 0, 0, 1, 1},
+	{ 2, CHECK_PREVIOUS, {r_8,   g_8,   b_8,    none, none, none}, 0, 0, 1, 1},
+	{ 4, CHECK_PREVIOUS, {r_8,   g_8,   b_8,    none, none, none}, 0, 0, 1, 1},
+	{ 8, CHECK_PREVIOUS, {r_8,   g_8,   b_8,    none, none, none}, 0, 0, 1, 1},
+
+	          /* ... 0, packed pixels, software clut (none), usual bit order */
+	{16, CHECK_PREVIOUS | CHUNKY | TRUE_COLOUR,
+                              {r_16f, g_16f, b_16f, none, none, none}, 0, 2, 2, 1},
+	{24, CHECK_PREVIOUS | CHUNKY | TRUE_COLOUR,
+                              {r_32f, g_32f, b_32f, none, none, none}, 0, 2, 2, 1},
+	{32, CHECK_PREVIOUS | CHUNKY | TRUE_COLOUR,
+                              {r_32,  g_32,  b_32,  none, none, none}, 0, 2, 2, 1}
+};
 
 extern Device device;
 
-char driver_name[] = "NatFeat/ARAnyM 2003-12-22 (xx bit, shadow)";
+char driver_name[] = "NatFeat/ARAnyM 2004-02-22 (xx bit)";
 
 struct {
 	short used; /* Whether the mode option was used or not. */
@@ -96,9 +133,7 @@ short accel_c = A_SET_PIX | A_GET_PIX | A_MOUSE | A_LINE | A_BLIT | A_FILL | A_E
 Mode *graphics_mode = &mode[1];
 
 short debug = 0;
-
-short shadow = 1;
-short nf_check = 1;
+short shadow = 0;
 
 extern void *c_write_pixel;
 extern void *c_read_pixel;
@@ -124,7 +159,6 @@ void *mouse_draw_r  = &c_mouse_draw;
 void *set_colours_r = &c_set_colours_16;
 void *get_colours_r = &c_get_colours_16;
 void *get_colour_r  = &c_get_colour_16;
-/* void CDECL (*get_colours_r)(Virtual *vwk, long colour, long *foreground, long *background) = &c_get_colours_16; */
 
 #if 0
 short cache_img = 0;
@@ -141,10 +175,9 @@ Option options[] = {
 	{"screen",     set_screen,        -1},  /* screen address, set old screen address */
 	{"imgcache",   &cache_img,         1},  /* imgcache, turn on caching of images blitted to the screen */
 	{"screencache",&cache_from_screen, 1},  /* screencache, turn on caching of images blitted from the screen */
+	{"noshadow",   &shadow,            0},  /* noshadow, do not use a RAM buffer */
 #endif
 	{"mode",       set_mode,          -1},  /* mode WIDTHxHEIGHTxDEPTH@FREQ */
-	{"noshadow",   &shadow,            0},  /* noshadow, do not use a RAM buffer */
-	{"assumenf",   &nf_check,          0},  /* assumenf, do not look for __NF cookie */
 	{"scrninfo",   set_scrninfo,      -1},  /* scrninfo fb, make vq_scrninfo return values regarding actual fb layout */
 	{"debug",      &debug,             2}   /* debug, turn on debugging aids */
 };
@@ -375,15 +408,6 @@ void CDECL initialize(Virtual *vwk)
 	Colour *old_palette_colours;
 	long fb_base;
 
-	if (nf_check) {
-		long nf_value;
-		nf_value = access->funcs.get_cookie("__NF", 0);
-		if (nf_value == -1) {
-			access->funcs.puts("  Could not find NatFeat cookie!");
-			access->funcs.puts("\x0d\x0a");
-			return;
-		}
-	}
 	if (!nf_initialize()) {
 		access->funcs.puts("  No or incompatible NatFeat fVDI!");
 		access->funcs.puts("\x0d\x0a");
