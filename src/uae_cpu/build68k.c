@@ -9,7 +9,9 @@
 #include "readcpu.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 static FILE *tablef;
 static int nextch = 0;
