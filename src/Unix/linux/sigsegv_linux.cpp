@@ -1,6 +1,7 @@
 
 #include "sysdeps.h"
 #include "memory.h"
+#include "SDL_endian.h"
 
 #include <csignal>
 
@@ -8,7 +9,7 @@ int in_handler = 0;
 
 extern void compiler_status();
 
-#define DEBUG 1 
+#define DEBUG 1
 #include "debug.h"
 
 enum transfer_type_t {
@@ -235,16 +236,16 @@ static void segfault_vec(int x, struct sigcontext sc) {
 		switch (instruction) {
 			case INSTR_MOVZX16:
 				*((uae_u32 *)preg) = 0;
-				*((uae_u16 *)preg) = (uae_u16)HWget_w(addr);
+				*((uae_u16 *)preg) = SDL_SwapBE16((uae_u16)HWget_w(addr));
 				break;
 			case INSTR_MOV8:
 				*((uae_u8 *)preg) = HWget_b(addr);
 				break;
 			case INSTR_MOV32:
 				if (size == 4) {
-					*((uae_u32 *)preg) = HWget_l(addr);
+					*((uae_u32 *)preg) = SDL_SwapBE32(HWget_l(addr));
 				} else {
-					*((uae_u16 *)preg) = HWget_w(addr);
+					*((uae_u16 *)preg) = SDL_SwapBE16(HWget_w(addr));
 				}
 				break;
 			case INSTR_OR8:
@@ -284,9 +285,9 @@ static void segfault_vec(int x, struct sigcontext sc) {
 				break;
 			case INSTR_MOV32:
 				if (size == 4) {
-					HWput_l(addr, *((uae_u32 *)preg));
+					HWput_l(addr, SDL_SwapBE32(*((uae_u32 *)preg)));
 				} else {
-					HWput_w(addr, *((uae_u16 *)preg));
+					HWput_w(addr, SDL_SwapBE16(*((uae_u16 *)preg)));
 				}
 				break;
 			case INSTR_OR8:
