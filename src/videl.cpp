@@ -395,7 +395,7 @@ void VIDEL::renderScreenNoZoom()
 						}
 
 						hvram_line += scrpitch;
-						fvram_line += vw*bpp;
+						fvram_line += vw;
 					}
 				}
 				break;
@@ -735,6 +735,9 @@ void VIDEL::renderScreenZoom()
 
 /*
  * $Log$
+ * Revision 1.41  2002/09/24 16:08:24  pmandin
+ * Bugfixes+preliminary autozoom support
+ *
  * Revision 1.39  2002/09/23 09:23:15  pmandin
  * Render to/from any bpp, using screen pitch
  *
