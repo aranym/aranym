@@ -144,6 +144,13 @@ void init_m68k (void)
 
     build_cpufunctbl ();
     fpu_init (CPUType == 4);
+
+#if (ENABLE_EXCLUSIVE_SPCFLAGS && !(HAVE_HARDWARE_LOCKS))
+    if ((spcflags_lock = SDL_CreateMutex()) ==  NULL) {
+	panicbug("Error by SDL_CreateMutex()");
+	exit(EXIT_FAILURE);
+    }
+#endif
 }
 
 void exit_m68k (void)

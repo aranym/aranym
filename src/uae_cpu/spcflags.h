@@ -73,7 +73,7 @@ enum {
 
 #elif defined(CPU_i386) && defined(X86_ASSEMBLY)
 
-#define HAVE_HARDWARE_LOCKS
+#define HAVE_HARDWARE_LOCKS 1
 
 #define SPCFLAGS_SET(m) do { \
 	ASM_VOLATILE("lock\n\torl %1,%0" : "=m" (regs.spcflags) : "i" ((m))); \

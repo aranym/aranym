@@ -1,3 +1,9 @@
+2002/05/27 - milan
+- vm_alloc.*: the lastest changes discarded, problems during configure
+
+- newcpu.cpp: SDL_mutex for exclusive spcflags handling initialised
+
+
 2002/05/24 - joy
 - as suggested by Heiko I added a complete locking to the virtual IKBD queue.
   Let's see if it works OK or if the mouse/keyboard is not working properly.
