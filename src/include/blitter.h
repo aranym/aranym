@@ -37,8 +37,8 @@ class BLITTER : public BASE_IO {
 	uint8 hop,op,line_num,skewreg;
 	short int halftone_curroffset,halftone_direction;
 	short int source_x_inc, source_y_inc, dest_x_inc, dest_y_inc;
-	uint32 source_addr;
-	uint32 dest_addr;
+	uint32 source_addr, source_addr_backup;
+	uint32 dest_addr, dest_addr_backup;
 	bool blit;
 
 public:
@@ -56,42 +56,7 @@ public:
 
 private:
 	void Do_Blit(void);
-/*
-	char LOAD_B_ff8a28();
-	char LOAD_B_ff8a29();
-	char LOAD_B_ff8a2a();
-	char LOAD_B_ff8a2b();
-	char LOAD_B_ff8a2c();
-	char LOAD_B_ff8a2d();
-	char LOAD_B_ff8a32();
-	char LOAD_B_ff8a33();
-	char LOAD_B_ff8a34();
-	char LOAD_B_ff8a35();
-	char LOAD_B_ff8a36();
-	char LOAD_B_ff8a37();
-	char LOAD_B_ff8a38();
-	char LOAD_B_ff8a39();
-	char LOAD_B_ff8a3a();
-	char LOAD_B_ff8a3b();
-	char LOAD_B_ff8a3d();
-*/
 	char LOAD_B_ff8a3c();
-/*
-	void STORE_B_ff8a28(char);
-	void STORE_B_ff8a29(char);
-	void STORE_B_ff8a2a(char);
-	void STORE_B_ff8a2b(char);
-	void STORE_B_ff8a2c(char);
-	void STORE_B_ff8a2d(char);
-	void STORE_B_ff8a32(char);
-	void STORE_B_ff8a33(char);
-	void STORE_B_ff8a34(char);
-	void STORE_B_ff8a35(char);
-	void STORE_B_ff8a36(char);
-	void STORE_B_ff8a37(char);
-	void STORE_B_ff8a38(char);
-	void STORE_B_ff8a39(char);
-*/
 	void STORE_B_ff8a3a(char);
 	void STORE_B_ff8a3b(char);
 	void STORE_B_ff8a3c(char);
