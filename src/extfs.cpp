@@ -74,11 +74,29 @@ extern "C" {
 }
 
 
+ExtFs::ExtFs()
+{
+	// first initialize the drive array to NULLs
+	for( char i='A'; i<='Z'; i++ )
+		install( i, NULL, false );
+}
+
+ExtFs::~ExtFs()
+{
+	for(int i=0; i<'Z'-'A'+1; i++) {
+		if (drives[i].rootPath != NULL)
+			free(drives[i].rootPath);
+	}
+}
 
 void ExtFs::init()
 {
+	// This is the default drv (shouldn't be used)
+	// note: This is the secure drive when some error occures.
+	install( 'A', ".", true );
+
 	// go through the drive table and assign drives their rootPaths
-	for( char i = 'B'-'A'; i < 'Z'-'A'+1; i++ ) {
+	for( int i = 'B'-'A'; i < 'Z'-'A'+1; i++ ) {
 		// D(bug("MetaDOS: init %c:%s", i + 'A', bx_options.aranymfs[i].rootPath ? bx_options.aranymfs[i].rootPath : "null"));
 
 		if ( bx_options.aranymfs[i].rootPath[0] != '\0' )
@@ -109,6 +127,11 @@ void ExtFs::install( const char driveSign, const char* rootPath, bool halfSensit
 				  driveNo + 'A',
 				  rootPath ? rootPath : "null",
 				  halfSensitive ? "halfSensitive" : "full"));
+	}
+	else {
+		// do initialize to NULL (better than an undefined value like before)
+		drives[driveNo].rootPath = NULL;
+		drives[driveNo].currPath = NULL;
 	}
 }
 
@@ -2657,6 +2680,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.64  2003/04/08 10:26:42  joy
+ * merging changes from 0_8_0 branch
+ *
  * Revision 1.62.2.1  2003/03/26 18:18:15  milan
  * stolen from head
  *

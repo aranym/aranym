@@ -1,3 +1,10 @@
+2003/11/28 - joy
+- extfs.cpp: made sure the drives[].rootPaths are really initialized to
+  a defined value. Also, I don't like functions in header files so moved
+  constructor/destructor to the CPP. And it seems to fix the problem
+  with freezing EmuTOS due to a MFP problem.
+
+
 2003/11/27 - joy
 - forgotten "extern DSP" declarations removed
 

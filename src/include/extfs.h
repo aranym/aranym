@@ -95,19 +95,8 @@ class ExtFs {
 
 
   public:
-	ExtFs()
-	{
-		// This is the default drv (shouldn't be used)
-		// note: This is the secure drive when some error occures.
-		install( 'A', ".", true );
-
-		// initialize the drive array to NULLs
-		for( char i='B'; i<='Z'; i++ )
-			install( i, NULL, false );
-	}
-	~ExtFs() {
-		// FIXME: here the ExtDrive.rootPaths should be freed
-	}
+	ExtFs();
+	~ExtFs();
 
 	/**
 	 * Installs the drive.
@@ -271,6 +260,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.21  2002/12/10 20:38:21  standa
+ * interface & debug cleanup
+ *
  * Revision 1.20  2002/06/24 17:08:48  standa
  * The pointer arithmetics fixed. The memptr usage introduced in my code.
  *
