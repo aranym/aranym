@@ -123,7 +123,7 @@ int initTap (int argc, char **argv);
  */
 bool ECE::init(void)
 {
-	int nonblock = 1;
+	// int nonblock = 1;
 	char devName[128];
 
 	D(bug("ECE: init"));
@@ -243,11 +243,6 @@ int ECE::receiveFunc(void *arg)
 			packet_length = read(fd, packet, 1514);
 			if (packet_length < 14)
 				break;
-
-			//// break; // commentThis
-			// Pointer to packet data (ECEnet header)
-			uint32 p = (uint32)packet;
-			// D(bug(" header %08x%04x %08x%04x %04x\n", ReadInt32(p), ReadInt16(p + 4), ReadInt32(p + 6), ReadInt16(p + 10), ReadInt16(p + 12)));
 
 			// Trigger ECEnet interrupt
 			D(bug(" packet received, triggering ECEnet interrupt"));
