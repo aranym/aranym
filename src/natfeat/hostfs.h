@@ -117,10 +117,8 @@ class HostFs : public NF_Base
 
   public:
 	HostFs();
-	virtual ~HostFs();
-
-	bool init();
-	void exit();
+	~HostFs();
+	void reset();
 
 	/**
 	 * Installs the drive.

@@ -31,6 +31,8 @@
 #ifdef USE_JIT
 # include "compiler/compemu.h"
 #endif
+#include "nf_objs.h"
+
 #include "debug.h"
 
 // RAM and ROM pointers
@@ -128,6 +130,8 @@ void AtariReset(void)
 {
 	// reset Atari hardware here
 	HWReset();
+	// reset NatFeats here
+	NFReset();
 }
 
 /*

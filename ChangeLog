@@ -1,12 +1,18 @@
 2004/02/14 - joy
 - all HW chips' classes: made sure they contain function reset() that
   initializes internal variables of the objects. This will be called
-  when RESET instruction is emulated to emulate CPU peripherals reset.
+  when RESET instruction is executed to provide complete hardware reset.
 
 - hardware.cpp: added HWReset(), calls reset functions of all HW chips.
 
+- most NatFeat classes: added reset() function (same reason as above).
+
+- nf_basicset.cpp, debugprintf.cpp: make use of SafeStrncpy
+
+- nf_objs.*: added NFReset(), calls reset functions of all NatFeats.
+
 - uae_cpu/aranym_glue.cpp: RESET instruction emulation now resets all
-  emulated HW chips.
+  emulated hardware and native features.
 
 
 2004/02/13 - Xavier

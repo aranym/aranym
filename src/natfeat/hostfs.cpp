@@ -2109,13 +2109,7 @@ HostFs::HostFs()
 	mounts.clear();
 }
 
-bool HostFs::init()
-{
-	freeMounts();
-	return true;
-}
-
-void HostFs::exit()
+void HostFs::reset()
 {
 	freeMounts();
 }

@@ -35,8 +35,6 @@
 #include "romdiff.h"
 #include "parameters.h"
 #include "version.h"		// for heartBeat
-#include "ata.h"			// for init()
-#include "nf_objs.h"
 #ifdef ENABLE_LILO
 #include "lilo.h"
 #endif
@@ -456,7 +454,7 @@ bool InitAll(void)
 	FPUType = 1;
 
 	// Init NF
-	initNatFeats();
+	// initNatFeats(); enable when the NatFeats are created dynamically
 
 	// Init HW
 	HWInit();
@@ -547,9 +545,6 @@ void ExitAll(void)
 	SDLGui_UnInit();
 #endif
 
-	// cleanup NF
-	exitNatFeats();
-
 	// hardware
 	HWExit();
 
@@ -565,11 +560,8 @@ void RestartAll()
 {
 	// memory init
 
-	// NF re-init
-	exitNatFeats();
-	initNatFeats();
-
-	// HW init provided by the RESET instruction hook
+	// NF reset provided by the RESET instruction hook
+	// HW reset provided by the RESET instruction hook
 
 	// OS init
 	InitOS();

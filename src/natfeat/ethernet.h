@@ -17,6 +17,9 @@ class ETHERNETDriver : public NF_Base
 	// interrupt handling
 	void finishInterupt();
 
+	bool init();
+	void exit();
+
 	// emulators handling the TAP device
 	static bool startThread(int ethX);
 	static void stopThread(int ethX);
@@ -31,10 +34,10 @@ protected:
 	int get_params(GET_PAR which);
 
 public:
+	ETHERNETDriver();
+	~ETHERNETDriver();
+	void reset();
 	char *name() { return "ETHERNET"; }
 	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);
-
-	bool init();
-	void exit();
 };

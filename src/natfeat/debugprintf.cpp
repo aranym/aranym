@@ -1,5 +1,5 @@
 /*
- * Copyright 2002 The Aranym Team
+ * Copyright 2002-2004 Petr Stehlik of the Aranym dev team
  *
  * printf routines Copyright 2000 Frank Naumann <fnaumann@freemint.de>
  * All rights reserved.
@@ -17,14 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * 
- * 
- * Author:	Petr Stehlik <pstehlik@sophics.cz>
- * Printf routines author:	Frank Naumann <fnaumann@freemint.de>
- * 
- * Please send suggestions, patches or bug reports to me or
- * the ARAnyM mailing list.
- * 
  */
 
 #include "cpu_emulation.h"
@@ -35,16 +27,21 @@
 
 int32 DebugPrintf::dispatch(uint32 /*fncode*/)
 {
+	char buffer[2048];
+	FILE *output = stderr;
+
 	memptr str_ptr = getParameter(0);
 	D(bug("DebugPrintf(%d, %p)", fncode, str_ptr));
 
+	// maybe the ValidAddr check is no longer necessary
+	// hopefully the atari2HostSafeStrncpy would throw the bus error?
 	if (! ValidAddr(str_ptr, false, 1))
 		BUS_ERROR(str_ptr);
 
-	char *str = (char *)Atari2HostAddr(str_ptr);	// use A2Hstrcpy
+	atari2HostSafeStrncpy(buffer, str_ptr, sizeof(buffer));
 
-	int ret = debugprintf(stderr, str, 1);
-	fflush(stderr);
+	int ret = debugprintf(output, buffer, 1);
+	fflush(output);
 
 	return ret;
 }

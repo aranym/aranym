@@ -285,7 +285,7 @@ bool ETHERNETDriver::init(void)
 /*
  *  Deinitialization
  */
-void ETHERNETDriver::exit(void)
+void ETHERNETDriver::exit()
 {
 	D(bug("Ethernet: exit"));
 
@@ -299,7 +299,25 @@ void ETHERNETDriver::exit(void)
 	}
 }
 
+// ctor
+ETHERNETDriver::ETHERNETDriver()
+{
+	init();
+}
 
+// reset, called upon OS reboot
+void ETHERNETDriver::reset()
+{
+	// TODO needs something smarter than exit&init
+	exit();
+	init();
+}
+
+// destructor, called on exit automatically
+ETHERNETDriver::~ETHERNETDriver()
+{
+	exit();
+}
 
 /*
  *  Start packet reception thread
