@@ -61,7 +61,7 @@ static char *strhelp[] = {"Help:\n",
 	" R                    reset CPU\n",
 	" A <number> <value>   set Ax\n",
 	" D <number> <value>   set Dx\n",
-	" P <number> <value>   set USP(0), ISP(1), MSP(2), VBR(3), IMASK(4)\n",
+	" P <number> <value>   set USP(0), ISP(1), MSP(2), VBR(3), IMASK(4), PC(5)\n",
 	" S <number> <value>   set TC(0), SRP(1), URP(2), DTT0(3), DTT1(4),\n",
 	"                      ITT0(5), ITT1(6), CACR(7), CAAR(8)\n",
 	" i                    enable IRQ\n",
@@ -277,7 +277,7 @@ void ndebug::set_Dx(char **inl) {
 
 void ndebug::set_Px(char **inl) {
 	char reg;
-	if (more_params(inl)) if ((reg = readhex(inl)) < 5)
+	if (more_params(inl)) if ((reg = readhex(inl)) < 6)
 		if (more_params(inl)) switch (reg) {
 			case 0:
 				regs.usp = readhex(inl);
@@ -293,6 +293,8 @@ void ndebug::set_Px(char **inl) {
 				break;
 			case 4:
 				regs.intmask = readhex(inl);
+				break;
+			case 5: m68k_setpc((uaecptr)readhex(inl));
 				break;
 		}
 }
@@ -1045,6 +1047,9 @@ void ndebug::convertNo(char **s) {
 
 /*
  * $Log$
+ * Revision 1.2  2001/10/02 19:13:28  milan
+ * ndebug, malloc
+ *
  * Revision 1.1  2001/07/21 18:13:29  milan
  * sclerosis, sorry, ndebug added
  *
