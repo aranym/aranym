@@ -1,4 +1,8 @@
-//  Copyright (C) 2001  MandrakeSoft S.A.
+/////////////////////////////////////////////////////////////////////////
+// $Id$
+/////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (C) 2002  MandrakeSoft S.A.
 //
 //    MandrakeSoft S.A.
 //    43, rue d'Aboukir
@@ -20,6 +24,10 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
+// Useful docs:
+// AT Attachment with Packet Interface
+// working draft by T13 at www.t13.org
+
 #include "sysdeps.h"
 #include "emu_bochs.h"
 #include "parameters.h"
@@ -28,22 +36,31 @@
 #define DEBUG 0
 #include "debug.h"
 
+// WARNING: dangerous options!
+// These options provoke certain kinds of errors for testing purposes when they
+// are set to a nonzero value.  DO NOT ENABLE THEM when using any disk image
+// you care about.
+#define TEST_READ_BEYOND_END 0
+#define TEST_WRITE_BEYOND_END 0
+#if TEST_READ_BEYOND_END || TEST_WRITE_BEYOND_END
+#warning BEWARE: Dangerous options are enabled in ata.cpp
+#warning If you are not trying to provoke hard drive errors you should disable them right now.
+#endif
+// end of dangerous options.
+
+
 #define INDEX_PULSE_CYCLE 10
 
 #define PACKET_SIZE 12
 
 bx_hard_drive_c bx_hard_drive;
-bx_debug_t bx_dbg;
-
 #if BX_USE_HD_SMF
 #define this (&bx_hard_drive)
 #endif
 
 
 static unsigned char model_no[41] =
-  "Generic Master                          ";
-static unsigned char model_noB[41] =
-  "Generic Slave                           ";
+  "Generic 1234                            ";
 
 static unsigned max_multiple_sectors  = 0; // was 0x3f
 static unsigned curr_multiple_sectors = 0; // was 0x3f
@@ -71,6 +88,8 @@ static unsigned curr_multiple_sectors = 0; // was 0x3f
 
 bx_hard_drive_c::bx_hard_drive_c(void)
 {
+      s[0].hard_drive =  NULL;
+      s[1].hard_drive =  NULL;
 #if EXTERNAL_DISK_SIMULATOR
       s[0].hard_drive = new EXTERNAL_DISK_SIMULATOR_CLASS();
       s[1].hard_drive = new EXTERNAL_DISK_SIMULATOR_CLASS();
@@ -90,22 +109,29 @@ bx_hard_drive_c::bx_hard_drive_c(void)
 
 bx_hard_drive_c::~bx_hard_drive_c(void)
 {
-  // nothing for now
+  if ( s[0].hard_drive != NULL )      /* DT 17.12.2001 21:55 */
+  {
+    delete s[0].hard_drive;
+    s[0].hard_drive =  NULL;
+  }
+  if ( s[1].hard_drive != NULL )
+  {
+    delete s[1].hard_drive;
+    s[1].hard_drive =  NULL;        /* DT 17.12.2001 21:56 */
+  }
 }
 
 
 
+
   void
-bx_hard_drive_c::init(/*bx_devices_c *d, bx_cmos_c *cmos*/)
+bx_hard_drive_c::init(/* MJ bx_devices_c *d, bx_cmos_c *cmos */)
 {
-#if DEBUG
-	bx_dbg.cdrom = true;
-	bx_dbg.disk = true;
-#endif
-//  BX_HD_THIS devices = d;
+#if 0
+  BX_HD_THIS devices = d;
 
   /* HARD DRIVE 0 */
-/*
+
   BX_HD_THIS devices->register_irq(14, "Hard Drive 0");
   for (unsigned addr=0x01F0; addr<=0x01F7; addr++) {
     BX_HD_THIS devices->register_io_read_handler(this, read_handler,
@@ -113,7 +139,7 @@ bx_hard_drive_c::init(/*bx_devices_c *d, bx_cmos_c *cmos*/)
     BX_HD_THIS devices->register_io_write_handler(this, write_handler,
                                         addr, "Hard Drive 0");
     }
-*/
+#endif
 #if 0
   // this would be necessary to make the second HD master on the
   // second controller, using 0x170-0x177 and irq15.  But it currently
@@ -138,7 +164,7 @@ bx_hard_drive_c::init(/*bx_devices_c *d, bx_cmos_c *cmos*/)
   BX_HD_THIS s[1].hard_drive->cylinders = bx_options.diskd.cylinders;
   BX_HD_THIS s[1].hard_drive->heads     = bx_options.diskd.heads;
   BX_HD_THIS s[1].hard_drive->sectors   = bx_options.diskd.spt;
-  BX_HD_THIS s[1].hard_drive->byteswap  = bx_options.diskc.byteswap;
+  BX_HD_THIS s[1].hard_drive->byteswap  = bx_options.diskd.byteswap;
   BX_HD_THIS s[1].device_type           = IDE_DISK;
 
   if (bx_options.cdromd.present) {
@@ -153,22 +179,22 @@ bx_hard_drive_c::init(/*bx_devices_c *d, bx_cmos_c *cmos*/)
 	BX_CONTROLLER(1).sector_count = 0;
 	BX_CONTROLLER(1).interrupt_reason.c_d = 1;
 	if (BX_CONTROLLER(1).sector_count != 0x01)
-	      D(bug("interrupt reason bit field error"));
+	      panicbug("interrupt reason bit field error");
 
 	BX_CONTROLLER(1).sector_count = 0;
 	BX_CONTROLLER(1).interrupt_reason.i_o = 1;
 	if (BX_CONTROLLER(1).sector_count != 0x02)
-	      D(bug("interrupt reason bit field error"));
+	      panicbug("interrupt reason bit field error");
 
 	BX_CONTROLLER(1).sector_count = 0;
 	BX_CONTROLLER(1).interrupt_reason.rel = 1;
 	if (BX_CONTROLLER(1).sector_count != 0x04)
-	      D(bug("interrupt reason bit field error"));
+	      panicbug("interrupt reason bit field error");
 
 	BX_CONTROLLER(1).sector_count = 0;
 	BX_CONTROLLER(1).interrupt_reason.tag = 3;
 	if (BX_CONTROLLER(1).sector_count != 0x18)
-	      D(bug("interrupt reason bit field error"));
+	      panicbug("interrupt reason bit field error");
 	BX_CONTROLLER(1).sector_count = 0;
 
 	// allocate low level driver
@@ -177,14 +203,14 @@ bx_hard_drive_c::init(/*bx_devices_c *d, bx_cmos_c *cmos*/)
 #endif
 
 #ifdef LOWLEVEL_CDROM
-	if (bx_options.cdromd.inserted) {
+	if (bx_options.cdromd.inserted == BX_INSERTED) {
 	      if (BX_HD_THIS s[1].cdrom.cd->insert_cdrom()) {
-		    D(bug( "Media present in CD-ROM drive"));
 		    BX_HD_THIS s[1].cdrom.ready = 1;
 		    BX_HD_THIS s[1].cdrom.capacity = BX_HD_THIS s[1].cdrom.cd->capacity();
 	      } else {		    
 		    D(bug( "Could not locate CD-ROM, continuing with media not present"));
 		    BX_HD_THIS s[1].cdrom.ready = 0;
+		    bx_options.cdromd.inserted = BX_EJECTED;
 	      }
 	} else {
 #endif
@@ -197,76 +223,78 @@ bx_hard_drive_c::init(/*bx_devices_c *d, bx_cmos_c *cmos*/)
 
   /* open hard drive image file */
   if (bx_options.diskc.present) {
-	D(bug("Opening image for device 0"));
 	if ((BX_HD_THIS s[0].hard_drive->open(bx_options.diskc.path)) < 0) {
-	      D(bug("could not open hard drive image file '%s'",
-		       bx_options.diskc.path));
+	      panicbug("could not open hard drive image file '%s'",
+		       bx_options.diskc.path);
 	}
+	D(bug("hd0: '%s'",bx_options.diskc.path));
   }
   if (bx_options.diskd.present && !bx_options.cdromd.present) {
-	D(bug("Opening image for device 1"));
 	if ((BX_HD_THIS s[1].hard_drive->open(bx_options.diskd.path)) < 0) {
-	      D(bug("could not open hard drive image file '%s'",
-		       bx_options.diskd.path));
+	      panicbug("could not open hard drive image file '%s'",
+		       bx_options.diskd.path);
 	}
+	D(bug("hd1: '%s'",bx_options.diskd.path));
   }
 
-/*  // generate CMOS values for hard drive if not using a CMOS image
-  if (!bx_options.cmos.cmosImage) {
+#if 0
+  // generate CMOS values for hard drive if not using a CMOS image
+  if (!bx_options.cmos.OcmosImage->get ()) {
     cmos->s.reg[0x12] = 0x00; // start out with: no drive 0, no drive 1
 
-    if (bx_options.diskc.present) {
+    if (bx_options.diskc.Opresent->get ()) {
       // Flag drive type as Fh, use extended CMOS location as real type
       cmos->s.reg[0x12] = (cmos->s.reg[0x12] & 0x0f) | 0xf0;
       cmos->s.reg[0x19] = 47; // user definable type
       // AMI BIOS: 1st hard disk #cyl low byte
-      cmos->s.reg[0x1b] = (bx_options.diskc.cylinders & 0x00ff);
+      cmos->s.reg[0x1b] = (bx_options.diskc.Ocylinders->get () & 0x00ff);
       // AMI BIOS: 1st hard disk #cyl high byte
-      cmos->s.reg[0x1c] = (bx_options.diskc.cylinders & 0xff00) >> 8;
+      cmos->s.reg[0x1c] = (bx_options.diskc.Ocylinders->get () & 0xff00) >> 8;
       // AMI BIOS: 1st hard disk #heads
-      cmos->s.reg[0x1d] = (bx_options.diskc.heads);
+      cmos->s.reg[0x1d] = (bx_options.diskc.Oheads->get ());
       // AMI BIOS: 1st hard disk write precompensation cylinder, low byte
       cmos->s.reg[0x1e] = 0xff; // -1
       // AMI BIOS: 1st hard disk write precompensation cylinder, high byte
       cmos->s.reg[0x1f] = 0xff; // -1
       // AMI BIOS: 1st hard disk control byte
-      cmos->s.reg[0x20] = 0xc0 | ((bx_options.diskc.heads > 8) << 3);
+      cmos->s.reg[0x20] = 0xc0 | ((bx_options.diskc.Oheads->get () > 8) << 3);
       // AMI BIOS: 1st hard disk landing zone, low byte
       cmos->s.reg[0x21] = cmos->s.reg[0x1b];
       // AMI BIOS: 1st hard disk landing zone, high byte
       cmos->s.reg[0x22] = cmos->s.reg[0x1c];
       // AMI BIOS: 1st hard disk sectors/track
-      cmos->s.reg[0x23] = bx_options.diskc.spt;
+      cmos->s.reg[0x23] = bx_options.diskc.Ospt->get ();
     }
 
     //set up cmos for second hard drive
-    if (bx_options.diskd.present) {
-      BX_DEBUG(("1: I will put 0xf into the second hard disk field\n"));
+    if (bx_options.diskd.Opresent->get () && !bx_options.cdromd.Opresent->get ()) {
+      BX_DEBUG(("1: I will put 0xf into the second hard disk field"));
       // fill in lower 4 bits of 0x12 for second HD
       cmos->s.reg[0x12] = (cmos->s.reg[0x12] & 0xf0) | 0x0f;
       cmos->s.reg[0x1a] = 47; // user definable type
       // AMI BIOS: 2nd hard disk #cyl low byte
-      cmos->s.reg[0x24] = (bx_options.diskd.cylinders & 0x00ff);
+      cmos->s.reg[0x24] = (bx_options.diskd.Ocylinders->get () & 0x00ff);
       // AMI BIOS: 2nd hard disk #cyl high byte
-      cmos->s.reg[0x25] = (bx_options.diskd.cylinders & 0xff00) >> 8;
+      cmos->s.reg[0x25] = (bx_options.diskd.Ocylinders->get () & 0xff00) >> 8;
       // AMI BIOS: 2nd hard disk #heads
-      cmos->s.reg[0x26] = (bx_options.diskd.heads);
+      cmos->s.reg[0x26] = (bx_options.diskd.Oheads->get ());
       // AMI BIOS: 2nd hard disk write precompensation cylinder, low byte
       cmos->s.reg[0x27] = 0xff; // -1
       // AMI BIOS: 2nd hard disk write precompensation cylinder, high byte
       cmos->s.reg[0x28] = 0xff; // -1
       // AMI BIOS: 2nd hard disk, 0x80 if heads>8
-      cmos->s.reg[0x29] = (bx_options.diskd.heads > 8) ? 0x80 : 0x00;
+      cmos->s.reg[0x29] = (bx_options.diskd.Oheads->get () > 8) ? 0x80 : 0x00;
       // AMI BIOS: 2nd hard disk landing zone, low byte
       cmos->s.reg[0x2a] = cmos->s.reg[0x1b];
       // AMI BIOS: 2nd hard disk landing zone, high byte
       cmos->s.reg[0x2b] = cmos->s.reg[0x1c];
       // AMI BIOS: 2nd hard disk sectors/track
-      cmos->s.reg[0x2c] = bx_options.diskd.spt;
+      cmos->s.reg[0x2c] = bx_options.diskd.Ospt->get ();
     }
 
 
-    if ( bx_options.bootdrive[0] == 'c' ) {
+    // Set the "non-extended" boot device. This will default to DISKC if cdrom
+    if ( bx_options.Obootdrive->get () != BX_BOOT_FLOPPYA) {
       // system boot sequence C:, A:
       cmos->s.reg[0x2d] &= 0xdf;
       }
@@ -274,8 +302,22 @@ bx_hard_drive_c::init(/*bx_devices_c *d, bx_cmos_c *cmos*/)
       // system boot sequence A:, C:
       cmos->s.reg[0x2d] |= 0x20;
       }
+
+    // Set the "extended" boot device, byte 0x3D (needed for cdrom booting)
+    if ( bx_options.Obootdrive->get () == BX_BOOT_FLOPPYA) {
+      // system boot sequence A:
+      cmos->s.reg[0x3d] = 0x01;
+      }
+    else if ( bx_options.Obootdrive->get () == BX_BOOT_DISKC) { 
+      // system boot sequence C:
+      cmos->s.reg[0x3d] = 0x02;
+      }
+    else if ( bx_options.Obootdrive->get () == BX_BOOT_CDROM) { 
+      // system boot sequence cdrom
+      cmos->s.reg[0x3d] = 0x03;
+      }
     }
-*/
+#endif
   //switch (stat_buf.st_size) {
   //  }
 
@@ -336,40 +378,33 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
   Bit32u value32;
 
   if (io_len==2 && address!=0xf00000) {
-    D(bug("non-byte IO read to %04x", (unsigned) address));
+    panicbug("non-byte IO read to %04x", (unsigned) address);
     }
 
   switch (address) {
     case 0xf00000: // hard disk data (16bit)
       if (BX_SELECTED_CONTROLLER.status.drq == 0) {
-	    D(bug("IO read(f00000h) with drq == 0: last command was %02xh",
-		     (unsigned) BX_SELECTED_CONTROLLER.current_command));
+	    panicbug("IO read(f00000h) with drq == 0: last command was %02xh",
+		     (unsigned) BX_SELECTED_CONTROLLER.current_command);
       }
+      D(bug("IO read(f00000h): current command is %02xh",
+            (unsigned) BX_SELECTED_CONTROLLER.current_command));
       switch (BX_SELECTED_CONTROLLER.current_command) {
-        case 0x20: // read sectors, with retries
-        case 0x21: // read sectors, without retries
+        case 0x20: // READ SECTORS, with retries
+        case 0x21: // READ SECTORS, without retries
           if (io_len != 2) {
-            D(bug("non-word IO read from %04x",
-                     (unsigned) address));
+            panicbug("non-word IO read from %04x",
+                     (unsigned) address);
             }
           if (BX_SELECTED_CONTROLLER.buffer_index >= 512)
-            D(bug("IO read(f00000h): buffer_index >= 512"));
-			if (BX_SELECTED_HD.hard_drive->byteswap) {	/* FALCON disk image (byte swap) */
-				value16 =
-					BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
-											  	buffer_index + 1];
-				value16 |=
-					(BX_SELECTED_CONTROLLER.
-				 	buffer[BX_SELECTED_CONTROLLER.buffer_index] << 8);
-			}
-			else {
-				value16 =
-					BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
-											  	buffer_index];
-				value16 |=
-					(BX_SELECTED_CONTROLLER.
-				 	buffer[BX_SELECTED_CONTROLLER.buffer_index + 1] << 8);
-			}
+            panicbug("IO read(f00000): buffer_index >= 512");
+          if (BX_SELECTED_HD.hard_drive->byteswap) {	/* FALCON disk image (byte swap) */
+            value16  = BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index + 1];
+            value16 |=(BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index] << 8);
+          } else {
+            value16  = BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index];
+            value16 |= (BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index + 1] << 8);
+          }
           BX_SELECTED_CONTROLLER.buffer_index += 2;
 
           // if buffer completely read
@@ -396,23 +431,33 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
               BX_SELECTED_CONTROLLER.status.drq = 0;
               }
             else { /* read next one into controller buffer */
-              unsigned long logical_sector;
+              Bit32u logical_sector;
               int ret;
 
               BX_SELECTED_CONTROLLER.status.drq = 1;
               BX_SELECTED_CONTROLLER.status.seek_complete = 1;
 
-	      logical_sector = calculate_logical_address();
-
+#if TEST_READ_BEYOND_END==1
+	      BX_SELECTED_CONTROLLER.cylinder_no += 100000;
+#endif
+	      if (!calculate_logical_address(&logical_sector)) {
+	        bug("multi-sector read reached invalid sector %u, aborting", logical_sector);
+		command_aborted (BX_SELECTED_CONTROLLER.current_command);
+	        goto return_value16;
+	      }
 	      ret = BX_SELECTED_HD.hard_drive->lseek(logical_sector * 512, SEEK_SET);
-
-              if (ret < 0)
-                D(bug("could lseek() hard drive image file"));
-	      ret = BX_SELECTED_HD.hard_drive->read((bx_ptr_t) BX_SELECTED_CONTROLLER.buffer, 512);
+              if (ret < 0) {
+                bug("could not lseek() hard drive image file");
+		command_aborted (BX_SELECTED_CONTROLLER.current_command);
+	        goto return_value16;
+	      }
+	      ret = BX_SELECTED_HD.hard_drive->read((void *) BX_SELECTED_CONTROLLER.buffer, 512);
               if (ret < 512) {
-                D(bug("logical sector was %u", (unsigned) logical_sector));
-                D(bug("could not read() hard drive image file at byte %ld", logical_sector*512));
-                }
+                bug("logical sector was %u", (unsigned) logical_sector);
+                bug("could not read() hard drive image file at byte %d", logical_sector*512);
+		command_aborted (BX_SELECTED_CONTROLLER.current_command);
+	        goto return_value16;
+	      }
 
               BX_SELECTED_CONTROLLER.buffer_index = 0;
 	      raise_interrupt();
@@ -421,7 +466,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
 	  goto return_value16;
           break;
 
-        case 0xec:    // Drive ID Command
+        case 0xec:    // IDENTIFY DEVICE
 	case 0xa1:
           if (bx_options.newHardDriveSupport) {
             unsigned index;
@@ -450,9 +495,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
 
             if (BX_SELECTED_CONTROLLER.buffer_index >= 512) {
               BX_SELECTED_CONTROLLER.status.drq = 0;
-	      if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-		    D(bug("Read all drive ID Bytes ..."));
-              }
+            }
 	    if (io_len == 1) {
 		  value8 = (Bit8u)value32;
 		  goto return_value8;
@@ -464,8 +507,8 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
             }
 	  }
           else
-            D(bug("IO read(f00000h): current command is %02xh",
-              (unsigned) BX_SELECTED_CONTROLLER.current_command));
+            panicbug("IO read(f00000h): current command is %02xh",
+              (unsigned) BX_SELECTED_CONTROLLER.current_command);
 
 	    case 0xa0: {
 		  unsigned index = BX_SELECTED_CONTROLLER.buffer_index;
@@ -473,7 +516,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
 		  // Load block if necessary
 		  if (index >= 2048) {
 			if (index > 2048)
-			      D(bug("index > 2048"));
+			      panicbug("index > 2048");
 			switch (BX_SELECTED_HD.atapi.command) {
 			      case 0x28: // read (10)
 			      case 0xa8: // read (12)
@@ -483,19 +526,12 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
 				    BX_SELECTED_HD.cdrom.next_lba++;
 				    BX_SELECTED_HD.cdrom.remaining_blocks--;
 
-				    if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-					  if (!BX_SELECTED_HD.cdrom.remaining_blocks) {
-						D(bug("Last READ block loaded {CDROM}"));
-					  } else
-						D(bug("READ block loaded (%d remaining) {CDROM}",
-							  BX_SELECTED_HD.cdrom.remaining_blocks));
-
 				    // one block transfered
 				    BX_SELECTED_HD.atapi.drq_bytes -= 2048;
 				    BX_SELECTED_HD.atapi.total_bytes_remaining -= 2048;
 				    index = 0;
 #else
-				    D(bug("Read with no LOWLEVEL_CDROM"));
+				    panicbug("Read with no LOWLEVEL_CDROM");
 #endif
 				    break;
 
@@ -513,7 +549,6 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
 		  if (io_len == 4) {
 			value32 |= (BX_SELECTED_CONTROLLER.buffer[index] << 16);
 			value32 |= (BX_SELECTED_CONTROLLER.buffer[index+1] << 24);
-//        		value32 = ((value32 >> 16) & 0x0000ffff) | ((value32 & 0x0000ffff) << 16); /* FALCON (word swap for long access to data register) */
 			index += 2;
 		  }
 		  BX_SELECTED_CONTROLLER.buffer_index = index;
@@ -525,8 +560,6 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
 
 			if (BX_SELECTED_HD.atapi.total_bytes_remaining > 0) {
 			      // one or more blocks remaining (works only for single block commands)
-			      if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-				    D(bug("PACKET drq bytes read"));
 			      BX_SELECTED_CONTROLLER.interrupt_reason.i_o = 1;
 			      BX_SELECTED_CONTROLLER.status.busy = 0;
 			      BX_SELECTED_CONTROLLER.status.drq = 1;
@@ -541,8 +574,6 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
 			      raise_interrupt();
 			} else {
 			      // all bytes read
-			      if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-				    D(bug("PACKET all bytes read"));
 			      BX_SELECTED_CONTROLLER.interrupt_reason.i_o = 1;
 			      BX_SELECTED_CONTROLLER.interrupt_reason.c_d = 1;
 			      BX_SELECTED_CONTROLLER.status.drive_ready = 1;
@@ -566,9 +597,91 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
 		  break;
 	    }
 
+	// List all the read operations that are defined in the ATA/ATAPI spec
+	// that we don't support.  Commands that are listed here will cause a
+	// BX_ERROR, which is non-fatal, and the command will be aborted.
+	case 0x08: bug("read cmd 0x08 (DEVICE RESET) not supported"); command_aborted(0x08); break;
+	case 0x10: bug("read cmd 0x10 (RECALIBRATE) not supported"); command_aborted(0x10); break;
+	case 0x22: bug("read cmd 0x22 (READ LONG) not supported"); command_aborted(0x22); break;
+	case 0x23: bug("read cmd 0x23 (READ LONG NO RETRY) not supported"); command_aborted(0x23); break;
+	case 0x24: bug("read cmd 0x24 (READ SECTORS EXT) not supported"); command_aborted(0x24); break;
+	case 0x25: bug("read cmd 0x25 (READ DMA EXT) not supported"); command_aborted(0x25); break;
+	case 0x26: bug("read cmd 0x26 (READ DMA QUEUED EXT) not supported"); command_aborted(0x26); break;
+	case 0x27: bug("read cmd 0x27 (READ NATIVE MAX ADDRESS EXT) not supported"); command_aborted(0x27); break;
+	case 0x29: bug("read cmd 0x29 (READ MULTIPLE EXT) not supported"); command_aborted(0x29); break;
+	case 0x2A: bug("read cmd 0x2A (READ STREAM DMA) not supported"); command_aborted(0x2A); break;
+	case 0x2B: bug("read cmd 0x2B (READ STREAM PIO) not supported"); command_aborted(0x2B); break;
+	case 0x2F: bug("read cmd 0x2F (READ LOG EXT) not supported"); command_aborted(0x2F); break;
+	case 0x30: bug("read cmd 0x30 (WRITE SECTORS) not supported"); command_aborted(0x30); break;
+	case 0x31: bug("read cmd 0x31 (WRITE SECTORS NO RETRY) not supported"); command_aborted(0x31); break;
+	case 0x32: bug("read cmd 0x32 (WRITE LONG) not supported"); command_aborted(0x32); break;
+	case 0x33: bug("read cmd 0x33 (WRITE LONG NO RETRY) not supported"); command_aborted(0x33); break;
+	case 0x34: bug("read cmd 0x34 (WRITE SECTORS EXT) not supported"); command_aborted(0x34); break;
+	case 0x35: bug("read cmd 0x35 (WRITE DMA EXT) not supported"); command_aborted(0x35); break;
+	case 0x36: bug("read cmd 0x36 (WRITE DMA QUEUED EXT) not supported"); command_aborted(0x36); break;
+	case 0x37: bug("read cmd 0x37 (SET MAX ADDRESS EXT) not supported"); command_aborted(0x37); break;
+	case 0x38: bug("read cmd 0x38 (CFA WRITE SECTORS W/OUT ERASE) not supported"); command_aborted(0x38); break;
+	case 0x39: bug("read cmd 0x39 (WRITE MULTIPLE EXT) not supported"); command_aborted(0x39); break;
+	case 0x3A: bug("read cmd 0x3A (WRITE STREAM DMA) not supported"); command_aborted(0x3A); break;
+	case 0x3B: bug("read cmd 0x3B (WRITE STREAM PIO) not supported"); command_aborted(0x3B); break;
+	case 0x3F: bug("read cmd 0x3F (WRITE LOG EXT) not supported"); command_aborted(0x3F); break;
+	case 0x40: bug("read cmd 0x40 (READ VERIFY SECTORS) not supported"); command_aborted(0x40); break;
+	case 0x41: bug("read cmd 0x41 (READ VERIFY SECTORS NO RETRY) not supported"); command_aborted(0x41); break;
+	case 0x42: bug("read cmd 0x42 (READ VERIFY SECTORS EXT) not supported"); command_aborted(0x42); break;
+	case 0x50: bug("read cmd 0x50 (FORMAT TRACK) not supported"); command_aborted(0x50); break;
+	case 0x51: bug("read cmd 0x51 (CONFIGURE STREAM) not supported"); command_aborted(0x51); break;
+	case 0x70: bug("read cmd 0x70 (SEEK) not supported"); command_aborted(0x70); break;
+	case 0x87: bug("read cmd 0x87 (CFA TRANSLATE SECTOR) not supported"); command_aborted(0x87); break;
+	case 0x90: bug("read cmd 0x90 (EXECUTE DEVICE DIAGNOSTIC) not supported"); command_aborted(0x90); break;
+	case 0x91: bug("read cmd 0x91 (INITIALIZE DEVICE PARAMETERS) not supported"); command_aborted(0x91); break;
+	case 0x92: bug("read cmd 0x92 (DOWNLOAD MICROCODE) not supported"); command_aborted(0x92); break;
+	case 0x94: bug("read cmd 0x94 (STANDBY IMMEDIATE) not supported"); command_aborted(0x94); break;
+	case 0x95: bug("read cmd 0x95 (IDLE IMMEDIATE) not supported"); command_aborted(0x95); break;
+	case 0x96: bug("read cmd 0x96 (STANDBY) not supported"); command_aborted(0x96); break;
+	case 0x97: bug("read cmd 0x97 (IDLE) not supported"); command_aborted(0x97); break;
+	case 0x98: bug("read cmd 0x98 (CHECK POWER MODE) not supported"); command_aborted(0x98); break;
+	case 0x99: bug("read cmd 0x99 (SLEEP) not supported"); command_aborted(0x99); break;
+	case 0xA2: bug("read cmd 0xA2 (SERVICE) not supported"); command_aborted(0xA2); break;
+	case 0xB0: bug("read cmd 0xB0 (SMART DISABLE OPERATIONS) not supported"); command_aborted(0xB0); break;
+	case 0xB1: bug("read cmd 0xB1 (DEVICE CONFIGURATION FREEZE LOCK) not supported"); command_aborted(0xB1); break;
+	case 0xC0: bug("read cmd 0xC0 (CFA ERASE SECTORS) not supported"); command_aborted(0xC0); break;
+	case 0xC4: bug("read cmd 0xC4 (READ MULTIPLE) not supported"); command_aborted(0xC4); break;
+	case 0xC5: bug("read cmd 0xC5 (WRITE MULTIPLE) not supported"); command_aborted(0xC5); break;
+	case 0xC6: bug("read cmd 0xC6 (SET MULTIPLE MODE) not supported"); command_aborted(0xC6); break;
+	case 0xC7: bug("read cmd 0xC7 (READ DMA QUEUED) not supported"); command_aborted(0xC7); break;
+	case 0xC8: bug("read cmd 0xC8 (READ DMA) not supported"); command_aborted(0xC8); break;
+	case 0xC9: bug("read cmd 0xC9 (READ DMA NO RETRY) not supported"); command_aborted(0xC9); break;
+	case 0xCA: bug("read cmd 0xCA (WRITE DMA) not supported"); command_aborted(0xCA); break;
+	case 0xCC: bug("read cmd 0xCC (WRITE DMA QUEUED) not supported"); command_aborted(0xCC); break;
+	case 0xCD: bug("read cmd 0xCD (CFA WRITE MULTIPLE W/OUT ERASE) not supported"); command_aborted(0xCD); break;
+	case 0xD1: bug("read cmd 0xD1 (CHECK MEDIA CARD TYPE) not supported"); command_aborted(0xD1); break;
+	case 0xDA: bug("read cmd 0xDA (GET MEDIA STATUS) not supported"); command_aborted(0xDA); break;
+	case 0xDE: bug("read cmd 0xDE (MEDIA LOCK) not supported"); command_aborted(0xDE); break;
+	case 0xDF: bug("read cmd 0xDF (MEDIA UNLOCK) not supported"); command_aborted(0xDF); break;
+	case 0xE0: bug("read cmd 0xE0 (STANDBY IMMEDIATE) not supported"); command_aborted(0xE0); break;
+	case 0xE1: bug("read cmd 0xE1 (IDLE IMMEDIATE) not supported"); command_aborted(0xE1); break;
+	case 0xE2: bug("read cmd 0xE2 (STANDBY) not supported"); command_aborted(0xE2); break;
+	case 0xE3: bug("read cmd 0xE3 (IDLE) not supported"); command_aborted(0xE3); break;
+	case 0xE4: bug("read cmd 0xE4 (READ BUFFER) not supported"); command_aborted(0xE4); break;
+	case 0xE5: bug("read cmd 0xE5 (CHECK POWER MODE) not supported"); command_aborted(0xE5); break;
+	case 0xE6: bug("read cmd 0xE6 (SLEEP) not supported"); command_aborted(0xE6); break;
+	case 0xE7: bug("read cmd 0xE7 (FLUSH CACHE) not supported"); command_aborted(0xE7); break;
+	case 0xE8: bug("read cmd 0xE8 (WRITE BUFFER) not supported"); command_aborted(0xE8); break;
+	case 0xEA: bug("read cmd 0xEA (FLUSH CACHE EXT) not supported"); command_aborted(0xEA); break;
+	case 0xED: bug("read cmd 0xED (MEDIA EJECT) not supported"); command_aborted(0xED); break;
+	case 0xEF: bug("read cmd 0xEF (SET FEATURES) not supported"); command_aborted(0xEF); break;
+	case 0xF1: bug("read cmd 0xF1 (SECURITY SET PASSWORD) not supported"); command_aborted(0xF1); break;
+	case 0xF2: bug("read cmd 0xF2 (SECURITY UNLOCK) not supported"); command_aborted(0xF2); break;
+	case 0xF3: bug("read cmd 0xF3 (SECURITY ERASE PREPARE) not supported"); command_aborted(0xF3); break;
+	case 0xF4: bug("read cmd 0xF4 (SECURITY ERASE UNIT) not supported"); command_aborted(0xF4); break;
+	case 0xF5: bug("read cmd 0xF5 (SECURITY FREEZE LOCK) not supported"); command_aborted(0xF5); break;
+	case 0xF6: bug("read cmd 0xF6 (SECURITY DISABLE PASSWORD) not supported"); command_aborted(0xF6); break;
+	case 0xF8: bug("read cmd 0xF8 (READ NATIVE MAX ADDRESS) not supported"); command_aborted(0xF8); break;
+	case 0xF9: bug("read cmd 0xF9 (SET MAX ADDRESS) not supported"); command_aborted(0xF9); break;
+
         default:
-          D(bug("IO read(f00000h): current command is %02xh",
-            (unsigned) BX_SELECTED_CONTROLLER.current_command));
+          panicbug("IO read(f00000h): current command is %02xh",
+            (unsigned) BX_SELECTED_CONTROLLER.current_command);
         }
       break;
 
@@ -592,18 +705,26 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
       goto return_value8;
 
     case 0xf00019: // hard disk drive and head register
-      value8 = (1 << 7) | // extended data field for ECC
-               (0 << 7) | // 1=LBA mode, 0=CHSmode
+      // b7 Extended data field for ECC
+      // b6/b5: Used to be sector size.  00=256,01=512,10=1024,11=128
+      //   Since 512 was always used, bit 6 was taken to mean LBA mode:
+      //     b6 1=LBA mode, 0=CHS mode
+      //     b5 1
+      // b4: DRV
+      // b3..0 HD3..HD0
+      value8 = (1 << 7) |
+               ((BX_SELECTED_CONTROLLER.lba_mode>0) << 6) |
                (1 << 5) | // 01b = 512 sector size
                (BX_HD_THIS drive_select << 4) |
                (BX_SELECTED_CONTROLLER.head_no << 0);
       goto return_value8;
       break;
+//BX_CONTROLLER(0).lba_mode
 
     case 0xf0001d: // Hard Disk Status
     case 0xf00039: // Hard Disk Alternate Status
-//    case 0xf0001f: // Hard Disk Alternate Status
-      if (BX_HD_THIS drive_select && !bx_options.diskd.present) {
+      if ((!BX_HD_THIS drive_select && !bx_options.diskc.present) ||
+          (BX_HD_THIS drive_select && !bx_options.diskd.present)) {
 	    // (mch) Just return zero for these registers
 	    value8 = 0;
       } else {
@@ -623,11 +744,12 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
         BX_SELECTED_CONTROLLER.status.index_pulse_count = 0;
         }
       }
+// MJ      if (address == 0x1f7) BX_HD_THIS devices->pic->lower_irq(14);
       goto return_value8;
       break;
 
-/*
-    case 0xf0001d: // Hard Disk Address Register
+#if 0
+    case 0x3f7: // Hard Disk Address Register
       // Obsolete and unsupported register.  Not driven by hard
       // disk controller.  Report all 1's.  If floppy controller
       // is handling this address, it will call this function
@@ -636,7 +758,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
       value8 = 0xff;
       goto return_value8;
       break;
-*/
+#endif
 #if 0
       // you'll need these to support second IDE controller, not needed yet.
       case 0x170:
@@ -647,33 +769,30 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
       case 0x175:
       case 0x176:
       case 0x177:
-	    BX_INFO(("[disk] ignoring read from 0x%04x\n", address));
+	    BX_INFO(("[disk] ignoring read from 0x%04x", address));
        break;
 #endif
     default:
-      D(bug("hard drive: io read to address %x unsupported",
-        (unsigned) address));
+      panicbug("hard drive: io read to address %x unsupported",
+        (unsigned) address);
     }
 
-  D(bug("hard drive: shouldnt get here!"));
+  panicbug("hard drive: shouldnt get here!");
   return(0);
 
   return_value32:
-  if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-    D(bug("32-bit read from %04x = %08x {%s}",
-	      (unsigned) address, value32, DEVICE_TYPE_STRING));
+  D(bug("32-bit read from %04x = %08x {%s}",
+	    (unsigned) address, value32, DEVICE_TYPE_STRING));
   return value32;
 
   return_value16:
-  if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-    D(bug("16-bit read from %04x = %04x {%s}",
-	      (unsigned) address, value16, DEVICE_TYPE_STRING));
+  D(bug("16-bit read from %04x = %04x {%s}",
+	    (unsigned) address, value16, DEVICE_TYPE_STRING));
   return value16;
 
   return_value8:
-  if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-    D(bug("8-bit read from %04x = %02x {%s}",
-	      (unsigned) address, value8, DEVICE_TYPE_STRING));
+  D(bug("8-bit read from %04x = %02x {%s}",
+	    (unsigned) address, value8, DEVICE_TYPE_STRING));
   return value8;
 }
 
@@ -696,78 +815,63 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 #else
   UNUSED(this_ptr);
 #endif  // !BX_USE_HD_SMF
-  unsigned long logical_sector;
+  Bit32u logical_sector;
   int ret;
-  // Boolean prev_control_reset;
+  bool prev_control_reset;
 
   if (io_len==2 && address!=0xf00000) {
-    D(bug("non-byte IO write to %04x", (unsigned) address));
+    panicbug("non-byte IO write to %04x", (unsigned) address);
     }
 
-  if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom)) {
-	switch (io_len) {
-	      case 1:
-		    D(bug("8-bit write to %04x = %02x {%s}",
-			      (unsigned) address, (unsigned) value, DEVICE_TYPE_STRING));
-		    break;
-		    
-	      case 2:
-		    D(bug("16-bit write to %04x = %04x {%s}",
-			      (unsigned) address, (unsigned) value, DEVICE_TYPE_STRING));
-		    break;
-
-	      case 4:
-		    D(bug("32-bit write to %04x = %08x {%s}",
-			      (unsigned) address, (unsigned) value, DEVICE_TYPE_STRING));
-		    break;
-
-	      default:
-		    D(bug("unknown-size write to %04x = %08x {%s}",
-			      (unsigned) address, (unsigned) value, DEVICE_TYPE_STRING));
-		    break;
-	}
-  }
-
-//BX_INFO(("IO write to %04x = %02x\n",
-//      (unsigned) address, (unsigned) value));
+  D(bug("IO write to %04x = %02x", (unsigned) address, (unsigned) value));
 
   switch (address) {
     case 0xf00000:
       if (io_len != 2) {
-        D(bug("non-word IO read from %04x", (unsigned) address));
-        }
+        panicbug("non-word IO read from %04x", (unsigned) address);
+      }
       switch (BX_SELECTED_CONTROLLER.current_command) {
-        case 0x30:
+        case 0x30: // WRITE SECTORS
           if (BX_SELECTED_CONTROLLER.buffer_index >= 512)
-            D(bug("IO write(f00000h): buffer_index >= 512"));
- 		if (BX_SELECTED_HD.hard_drive->byteswap) {	/* FALCON disk image (byte swap) */
-			BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
-										  buffer_index + 1] = value;
-			BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
-										  buffer_index] = (value >> 8);
-		}
-		else {
-			BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
-										  buffer_index] = value;
-			BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.
-										  buffer_index + 1] = (value >> 8);
-		}
+            panicbug("IO write(1f0): buffer_index >= 512");
+            if (BX_SELECTED_HD.hard_drive->byteswap) {	/* FALCON disk image (byte swap) */
+              BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index + 1] = value;
+              BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index] = (value >> 8);
+            } else {
+              BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index] = value;
+              BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index + 1] = (value >> 8);
+            }
+
           BX_SELECTED_CONTROLLER.buffer_index += 2;
 
           /* if buffer completely writtten */
           if (BX_SELECTED_CONTROLLER.buffer_index >= 512) {
-            unsigned long logical_sector;
+            Bit32u logical_sector;
             int ret;
 
-	    logical_sector = calculate_logical_address();
-
+#if TEST_WRITE_BEYOND_END==1
+	    BX_SELECTED_CONTROLLER.cylinder_no += 100000;
+#endif
+	    if (!calculate_logical_address(&logical_sector)) {
+	      bug("write reached invalid sector %u, aborting", logical_sector);
+	      command_aborted (BX_SELECTED_CONTROLLER.current_command);
+	      return;
+            }
+#if TEST_WRITE_BEYOND_END==2
+	    logical_sector += 100000;
+#endif
 	    ret = BX_SELECTED_HD.hard_drive->lseek(logical_sector * 512, SEEK_SET);
-            if (ret < 0)
-              D(bug("could lseek() hard drive image file"));
-
-	    ret = BX_SELECTED_HD.hard_drive->write((bx_ptr_t) BX_SELECTED_CONTROLLER.buffer, 512);
-            if (ret < 512)
-              D(bug("could not write() hard drive image file at byte %ld", logical_sector*512));
+            if (ret < 0) {
+              bug("could not lseek() hard drive image file at byte %u", logical_sector * 512);
+	      command_aborted (BX_SELECTED_CONTROLLER.current_command);
+	      return;
+	    }
+	    ret = BX_SELECTED_HD.hard_drive->write((void *) BX_SELECTED_CONTROLLER.buffer, 512);
+            if (ret < 512) {
+              bug("could not write() hard drive image file at byte %d", logical_sector*512);
+	      command_aborted (BX_SELECTED_CONTROLLER.current_command);
+	      return;
+	    }
 
             BX_SELECTED_CONTROLLER.buffer_index = 0;
 
@@ -804,7 +908,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 
 	    case 0xa0: // PACKET
 		  if (BX_SELECTED_CONTROLLER.buffer_index >= PACKET_SIZE)
-			D(bug("IO write(f00000h): buffer_index >= PACKET_SIZE"));
+			panicbug("IO write(1f0): buffer_index >= PACKET_SIZE");
 		  BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index] = value;
 		  BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index+1] = (value >> 8);
 		  BX_SELECTED_CONTROLLER.buffer_index += 2;
@@ -813,10 +917,6 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 		  if (BX_SELECTED_CONTROLLER.buffer_index >= PACKET_SIZE) {
 			// complete command received
 			Bit8u atapi_command = BX_SELECTED_CONTROLLER.buffer[0];
-			// int alloc_length;
-
-			if (bx_dbg.cdrom)
-				D(bug("cdrom: ATAPI command 0x%x started", atapi_command));
 
 			switch (atapi_command) {
 			      case 0x00: // test unit ready
@@ -857,16 +957,16 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 			      break;
 			      
 			      case 0x1b: { // start stop unit
-				    //Boolean Immed = (BX_SELECTED_CONTROLLER.buffer[1] >> 0) & 1;
-				    Boolean LoEj = (BX_SELECTED_CONTROLLER.buffer[4] >> 1) & 1;
-				    Boolean Start = (BX_SELECTED_CONTROLLER.buffer[4] >> 0) & 1;
+				    //bool Immed = (BX_SELECTED_CONTROLLER.buffer[1] >> 0) & 1;
+				    bool LoEj = (BX_SELECTED_CONTROLLER.buffer[4] >> 1) & 1;
+				    bool Start = (BX_SELECTED_CONTROLLER.buffer[4] >> 0) & 1;
 
 				    if (!LoEj && !Start) { // stop the disc
-					  D(bug("Stop disc not implemented"));
+					  panicbug("Stop disc not implemented");
 				    } else if (!LoEj && Start) { // start the disc and read the TOC
-					  D(bug("Start disc not implemented"));
+					  panicbug("Start disc not implemented");
 				    } else if (LoEj && !Start) { // Eject the disc
-					  D(bug("Eject the disc not implemented"));
+					  panicbug("Eject the disc not implemented");
 				    } else { // Load the disc
 					  // My guess is that this command only closes the tray, that's a no-op for us
 					  atapi_cmd_nop();
@@ -879,7 +979,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 				    uint16 alloc_length = read_16bit(BX_SELECTED_CONTROLLER.buffer + 8);
 
 				    if (alloc_length == 0)
-					  D(bug("Zero allocation length to MECHANISM STATUS not impl."));
+					  panicbug("Zero allocation length to MECHANISM STATUS not impl.");
 
 				    init_send_atapi_command(atapi_command, 8, alloc_length);
 
@@ -949,15 +1049,15 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 						      case 0x0d: // CD-ROM
 						      case 0x0e: // CD-ROM audio control
 						      case 0x3f: // all
-							    D(bug("cdrom: MODE SENSE (curr), code=%x",
-								     PageCode));
+							    panicbug("cdrom: MODE SENSE (curr), code=%x",
+								     PageCode);
 							    break;
 
 						      default:
 							    // not implemeted by this device
-							    D(bug("cdrom: MODE SENSE PC=%x, PageCode=%x,"
+							    bug("cdrom: MODE SENSE PC=%x, PageCode=%x,"
 								      " not implemented by device",
-								      PC, PageCode));
+								      PC, PageCode);
 							    atapi_cmd_error(SENSE_ILLEGAL_REQUEST,
 									    ASC_INV_FIELD_IN_CMD_PACKET);
 							    raise_interrupt();
@@ -972,15 +1072,15 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 						      case 0x0e: // CD-ROM audio control
 						      case 0x2a: // CD-ROM capabilities & mech. status
 						      case 0x3f: // all
-							    D(bug("cdrom: MODE SENSE (chg), code=%x",
-								     PageCode));
+							    panicbug("cdrom: MODE SENSE (chg), code=%x",
+								     PageCode);
 							    break;
 
 						      default:
 							    // not implemeted by this device
-							    D(bug("cdrom: MODE SENSE PC=%x, PageCode=%x,"
+							    bug("cdrom: MODE SENSE PC=%x, PageCode=%x,"
 								      " not implemented by device",
-								      PC, PageCode));
+								      PC, PageCode);
 							    atapi_cmd_error(SENSE_ILLEGAL_REQUEST,
 									    ASC_INV_FIELD_IN_CMD_PACKET);
 							    raise_interrupt();
@@ -995,15 +1095,15 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 						      case 0x0e: // CD-ROM audio control
 						      case 0x2a: // CD-ROM capabilities & mech. status
 						      case 0x3f: // all
-							    D(bug("cdrom: MODE SENSE (dflt), code=%x",
-								     PageCode));
+							    panicbug("cdrom: MODE SENSE (dflt), code=%x",
+								     PageCode);
 							    break;
 
 						      default:
 							    // not implemeted by this device
-							    D(bug("cdrom: MODE SENSE PC=%x, PageCode=%x,"
+							    bug("cdrom: MODE SENSE PC=%x, PageCode=%x,"
 								      " not implemented by device",
-								      PC, PageCode));
+								      PC, PageCode);
 							    atapi_cmd_error(SENSE_ILLEGAL_REQUEST,
 									    ASC_INV_FIELD_IN_CMD_PACKET);
 							    raise_interrupt();
@@ -1017,7 +1117,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 						break;
 
 					  default:
-						D(bug("Should not get here!"));
+						panicbug("Should not get here!");
 						break;
 				    }
 			      }
@@ -1063,7 +1163,6 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 
 				    if (BX_SELECTED_HD.cdrom.ready) {
 					  uint32 capacity = BX_SELECTED_HD.cdrom.capacity;
-					  D(bug("Capacity is %d sectors (%d bytes)", capacity, capacity * 2048));
 					  BX_SELECTED_CONTROLLER.buffer[0] = (capacity >> 24) & 0xff;
 					  BX_SELECTED_CONTROLLER.buffer[1] = (capacity >> 16) & 0xff;
 					  BX_SELECTED_CONTROLLER.buffer[2] = (capacity >> 8) & 0xff;
@@ -1082,7 +1181,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 
 			      case 0xbe: { // read cd
 				    if (BX_SELECTED_HD.cdrom.ready) {
-					  D(bug("Read CD with CD present not implemented"));
+					  panicbug("Read CD with CD present not implemented");
 				    } else {
 					  atapi_cmd_error(SENSE_NOT_READY, ASC_MEDIUM_NOT_PRESENT);
 					  raise_interrupt();
@@ -1114,7 +1213,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 							    ready_to_send_atapi();
 						      }
 #else
-						      D(bug("LOWLEVEL_CDROM not defined"));
+						      panicbug("LOWLEVEL_CDROM not defined");
 #endif
 						      break;
 
@@ -1134,7 +1233,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 
 						case 2:
 						default:
-						      D(bug("(READ TOC) Format %d not supported", format));
+						      panicbug("(READ TOC) Format %d not supported", format);
 						      break;
 					  }
 				    } else {
@@ -1157,7 +1256,6 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 				    if (transfer_length == 0) {
 					  atapi_cmd_nop();
 					  raise_interrupt();
-					  D(bug("READ(10) with transfer length 0, ok"));
 					  break;
 				    }
 
@@ -1167,7 +1265,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 					  break;
 				    }
 
-				    //BX_INFO(("cdrom: READ LBA=%d LEN=%d\n", lba, transfer_length));
+				    //BX_INFO(("cdrom: READ LBA=%d LEN=%d", lba, transfer_length));
 
 				    // handle command
 				    init_send_atapi_command(atapi_command, transfer_length * 2048,
@@ -1191,7 +1289,6 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 						raise_interrupt();
 						break;
 					}
-					D(bug("cdrom: SEEK (ignored)"));
 					atapi_cmd_nop();
 					raise_interrupt();
 				}
@@ -1230,12 +1327,19 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 					  int ret_len = 4; // header size
 
 					  if (sub_q) { // !sub_q == header only
-						D(bug("Read sub-channel with SubQ not implemented"));
+						panicbug("Read sub-channel with SubQ not implemented");
 					  }
 
 					  init_send_atapi_command(atapi_command, ret_len, alloc_length);
 					  ready_to_send_atapi();
 				    }
+			      }
+			      break;
+
+			      case 0x51: { // read disc info
+                                // no-op to keep the Linux CD-ROM driver happy
+			        atapi_cmd_error(SENSE_ILLEGAL_REQUEST, ASC_INV_FIELD_IN_CMD_PACKET);
+			        raise_interrupt();
 			      }
 			      break;
 
@@ -1252,8 +1356,8 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 			      case 0xbb: // set cd speed
 			      case 0x4e: // stop play/scan
 			      default:
-				    D(bug("Unknown ATAPI command 0x%x (%d)",
-					     atapi_command, atapi_command));
+				    panicbug("Unknown ATAPI command 0x%x (%d)",
+					     atapi_command, atapi_command);
 				    break;
 			}
 		  }
@@ -1261,77 +1365,78 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 		  break;
 
         default:
-          D(bug("IO write(f00000h): current command is %02xh",
-            (unsigned) BX_SELECTED_CONTROLLER.current_command));
+          panicbug("IO write(f00000h): current command is %02xh",
+            (unsigned) BX_SELECTED_CONTROLLER.current_command);
         }
       break;
 
-/*    case 0x1f1: // hard disk write precompensation
+#if 0
+    case 0x1f1: /* hard disk write precompensation */
 	  WRITE_FEATURES(value);
-	  if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom)) {
-		if (value == 0xff)
-		      BX_INFO(("no precompensation {%s}\n", DEVICE_TYPE_STRING));
-		else
-		      BX_INFO(("precompensation value %02x {%s}\n", (unsigned) value, DEVICE_TYPE_STRING));
-	  }
       break;
-*/
+#endif
+
     case 0xf00009: /* hard disk sector count */
 	  WRITE_SECTOR_COUNT(value);
-	  if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-		D(bug("sector count = %u {%s}", (unsigned) value, DEVICE_TYPE_STRING));
 	  break;
 
     case 0xf0000d: /* hard disk sector number */
 	  WRITE_SECTOR_NUMBER(value);
-	  if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-		D(bug("sector number = %u {%s}", (unsigned) value, DEVICE_TYPE_STRING));
       break;
 
     case 0xf00011: /* hard disk cylinder low */
 	  WRITE_CYLINDER_LOW(value);
-	  if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-		D(bug("cylinder low = %02xh {%s}", (unsigned) value, DEVICE_TYPE_STRING));
 	  break;
 
     case 0xf00015: /* hard disk cylinder high */
 	  WRITE_CYLINDER_HIGH(value);
-	  if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-		D(bug("cylinder high = %02xh {%s}", (unsigned) value, DEVICE_TYPE_STRING));
 	  break;
 
     case 0xf00019: // hard disk drive and head register
-      // b7 1
-      // b6 1=LBA mode, 0=CHS mode (LBA not supported)
-      // b5 1
+      // b7 Extended data field for ECC
+      // b6/b5: Used to be sector size.  00=256,01=512,10=1024,11=128
+      //   Since 512 was always used, bit 6 was taken to mean LBA mode:
+      //     b6 1=LBA mode, 0=CHS mode
+      //     b5 1
       // b4: DRV
       // b3..0 HD3..HD0
+      {
       if ( (value & 0xa0) != 0xa0 ) // 1x1xxxxx
         D(bug("IO write f00019 (%02x): not 1x1xxxxxb", (unsigned) value));
-      BX_HD_THIS drive_select = (value >> 4) & 0x01;
+      Bit32u drvsel = BX_HD_THIS drive_select = (value >> 4) & 0x01;
       WRITE_HEAD_NO(value & 0xf);
       if (BX_SELECTED_CONTROLLER.lba_mode == 0 && ((value >> 6) & 1) == 1)
-	    D(bug("enabling LBA mode"));
+        D(bug("enabling LBA mode"));
       WRITE_LBA_MODE((value >> 6) & 1);
+      if (!drvsel && !bx_options.diskc.present) {
+        bug("device set to 0 which does not exist");
+        BX_SELECTED_CONTROLLER.error_register = 0x04; // aborted
+        BX_SELECTED_CONTROLLER.status.err = 1;
+      } else if (drvsel && !bx_options.diskd.present) {
+        bug("device set to 1 which does not exist");
+        BX_SELECTED_CONTROLLER.error_register = 0x04; // aborted
+        BX_SELECTED_CONTROLLER.status.err = 1;
+      }
       break;
+      }
 
-    case 0xf0001d:
-//    case 0xf0001f: // hard disk command
+    case 0xf0001d: // hard disk command
 	  // (mch) Writes to the command register with drive_select != 0
 	  // are ignored if no secondary device is present
       if (BX_HD_THIS drive_select != 0 && value != 0x90 && !bx_options.diskd.present)
 	    break;
 
       if (BX_SELECTED_CONTROLLER.status.busy)
-        D(bug("hard disk: command sent, controller BUSY"));
+        panicbug("hard disk: command sent, controller BUSY");
       if ( (value & 0xf0) == 0x10 )
         value = 0x10;
       switch (value) {
 
-        case 0x10: // calibrate drive
+        case 0x10: // CALIBRATE DRIVE
 	  if (BX_SELECTED_HD.device_type != IDE_DISK)
-		D(bug("calibrate drive issued to non-disk"));
-          if (BX_HD_THIS drive_select != 0 && !bx_options.diskd.present) {
+		panicbug("calibrate drive issued to non-disk");
+          if ((BX_HD_THIS drive_select == 0 && !bx_options.diskc.present) ||
+              (BX_HD_THIS drive_select != 0 && !bx_options.diskd.present)) {
             BX_SELECTED_CONTROLLER.error_register = 0x02; // Track 0 not found
             BX_SELECTED_CONTROLLER.status.busy = 0;
             BX_SELECTED_CONTROLLER.status.drive_ready = 1;
@@ -1339,7 +1444,6 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
             BX_SELECTED_CONTROLLER.status.drq = 0;
             BX_SELECTED_CONTROLLER.status.err = 1;
 	    raise_interrupt();
-            D(bug("calibrate drive != 0, with diskd not present"));
             break;
             }
 
@@ -1354,8 +1458,8 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  raise_interrupt();
           break;
 
-        case 0x20: // read multiple sectors, with retries
-        case 0x21: // read multiple sectors, without retries
+        case 0x20: // READ MULTIPLE SECTORS, with retries
+        case 0x21: // READ MULTIPLE SECTORS, without retries
           /* update sector_no, always points to current sector
            * after each sector is read to buffer, DRQ bit set and issue IRQ 14
            * if interrupt handler transfers all data words into main memory,
@@ -1365,7 +1469,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
            */
 
 	  if (BX_SELECTED_HD.device_type != IDE_DISK)
-		D(bug("read multiple issued to non-disk"));
+		panicbug("read multiple issued to non-disk");
 
           BX_SELECTED_CONTROLLER.current_command = value;
 
@@ -1374,25 +1478,34 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	      !BX_SELECTED_CONTROLLER.head_no &&
 	      !BX_SELECTED_CONTROLLER.cylinder_no &&
 	      !BX_SELECTED_CONTROLLER.sector_no) {
-		D(bug("Read from 0/0/0, aborting command"));
 		command_aborted(value);
 		break;
 	  }
 
-	  logical_sector = calculate_logical_address();
-
-	  ret = BX_SELECTED_HD.hard_drive->lseek(logical_sector * 512, SEEK_SET);
-
+#if TEST_READ_BEYOND_END==2
+	  BX_SELECTED_CONTROLLER.cylinder_no += 100000;
+#endif
+	  if (!calculate_logical_address(&logical_sector)) {
+	    bug("initial read from sector %u out of bounds, aborting", logical_sector);
+	    command_aborted(value);
+	    break;
+	  }
+#if TEST_READ_BEYOND_END==3
+	  logical_sector += 100000;
+#endif
+	  ret=BX_SELECTED_HD.hard_drive->lseek(logical_sector * 512, SEEK_SET);
           if (ret < 0) {
-            D(bug("could not lseek() hard drive image file"));
-          }
-          else {
-	    ret = BX_SELECTED_HD.hard_drive->read((bx_ptr_t) BX_SELECTED_CONTROLLER.buffer, 512);
-            if (ret < 512) {
-              D(bug("logical sector was %u", (unsigned) logical_sector));
-              D(bug("could not read() hard drive image file at byte %ld", logical_sector*512));
-            }
-          }
+            bug("could not lseek() hard drive image file, aborting");
+	    command_aborted(value);
+	    break;
+	  }
+	  ret = BX_SELECTED_HD.hard_drive->read((void *) BX_SELECTED_CONTROLLER.buffer, 512);
+          if (ret < 512) {
+            bug("logical sector was %u", (unsigned) logical_sector);
+            bug("could not read() hard drive image file at byte %d", logical_sector*512);
+	    command_aborted(value);
+	    break;
+	  }
 
           BX_SELECTED_CONTROLLER.error_register = 0;
           BX_SELECTED_CONTROLLER.status.busy  = 0;
@@ -1405,7 +1518,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  raise_interrupt();
           break;
 
-        case 0x30: /* write multiple sectors, with retries */
+        case 0x30: /* WRITE SECTORS, with retries */
           /* update sector_no, always points to current sector
            * after each sector is read to buffer, DRQ bit set and issue IRQ 14
            * if interrupt handler transfers all data words into main memory,
@@ -1415,11 +1528,11 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
            */
 
 	  if (BX_SELECTED_HD.device_type != IDE_DISK)
-		D(bug("write multiple issued to non-disk"));
+		panicbug("write multiple issued to non-disk");
 
           if (BX_SELECTED_CONTROLLER.status.busy) {
-            D(bug("write command: BSY bit set"));
-            }
+            panicbug("write command: BSY bit set");
+          }
           BX_SELECTED_CONTROLLER.current_command = value;
 
           // implicit seek done :^)
@@ -1432,34 +1545,32 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
           BX_SELECTED_CONTROLLER.buffer_index = 0;
           break;
 
-        case 0x90: // Drive Diagnostic
+        case 0x90: // EXECUTE DEVICE DIAGNOSTIC
           if (BX_SELECTED_CONTROLLER.status.busy) {
-            D(bug("diagnostic command: BSY bit set"));
+            panicbug("diagnostic command: BSY bit set");
             }
 	  if (BX_SELECTED_HD.device_type != IDE_DISK)
-		D(bug("drive diagnostics issued to non-disk"));
+		panicbug("drive diagnostics issued to non-disk");
           BX_SELECTED_CONTROLLER.error_register = 0x81; // Drive 1 failed, no error on drive 0
           // BX_SELECTED_CONTROLLER.status.busy = 0; // not needed
           BX_SELECTED_CONTROLLER.status.drq = 0;
           BX_SELECTED_CONTROLLER.status.err = 0;
           break;
 
-        case 0x91: // initialize drive parameters
+        case 0x91: // INITIALIZE DRIVE PARAMETERS
           if (BX_SELECTED_CONTROLLER.status.busy) {
-            D(bug("init drive parameters command: BSY bit set"));
+            panicbug("init drive parameters command: BSY bit set");
             }
 	  if (BX_SELECTED_HD.device_type != IDE_DISK)
-		D(bug("initialize drive parameters issued to non-disk"));
+		panicbug("initialize drive parameters issued to non-disk");
           // sets logical geometry of specified drive
-          D(bug("initialize drive params"));
-          D(bug("  sector count = %u",
-            (unsigned) BX_SELECTED_CONTROLLER.sector_count));
-          D(bug("  drive select = %u",
-            (unsigned) BX_HD_THIS drive_select));
-          D(bug("  head number = %u",
+          D(bug("init drive params: sec=%u, drive sel=%u, head=%u",
+            (unsigned) BX_SELECTED_CONTROLLER.sector_count,
+            (unsigned) BX_HD_THIS drive_select,
             (unsigned) BX_SELECTED_CONTROLLER.head_no));
-          if (BX_HD_THIS drive_select != 0 && !bx_options.diskd.present) {
-            D(bug("init drive params: drive != 0"));
+          if ((BX_HD_THIS drive_select == 0 && !bx_options.diskc.present) ||
+              (BX_HD_THIS drive_select != 0 && !bx_options.diskd.present)) {
+            panicbug("init drive params: disk%c not present", BX_HD_THIS drive_select+67);
             //BX_SELECTED_CONTROLLER.error_register = 0x12;
             BX_SELECTED_CONTROLLER.status.busy = 0;
             BX_SELECTED_CONTROLLER.status.drive_ready = 1;
@@ -1469,9 +1580,9 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
             break;
 	  }
           if (BX_SELECTED_CONTROLLER.sector_count != BX_SELECTED_HD.hard_drive->sectors)
-            D(bug("init drive params: sector count doesnt match"));
+            panicbug("init drive params: sector count doesnt match");
           if ( BX_SELECTED_CONTROLLER.head_no != (BX_SELECTED_HD.hard_drive->heads-1) )
-            D(bug("init drive params: head number doesn't match"));
+            panicbug("init drive params: head number doesn't match");
           BX_SELECTED_CONTROLLER.status.busy = 0;
           BX_SELECTED_CONTROLLER.status.drive_ready = 1;
           BX_SELECTED_CONTROLLER.status.drq = 0;
@@ -1479,11 +1590,13 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  raise_interrupt();
           break;
 
-        case 0xec: // Get Drive Info
+        case 0xec: // IDENTIFY DEVICE
           if (bx_options.newHardDriveSupport) {
-	    if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-		  D(bug("Drive ID Command issued : 0xec "));
-
+            if (!BX_HD_THIS drive_select && !bx_options.diskc.present) {
+              D(bug("1st drive not present, aborting"));
+              command_aborted(value);
+              break;
+              }
             if (BX_HD_THIS drive_select && !bx_options.diskd.present) {
               D(bug("2nd drive not present, aborting"));
               command_aborted(value);
@@ -1515,12 +1628,12 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	    }
 	  }
           else {
-	    D(bug("old hard drive"));
+	    D(bug("sent IDENTIFY DEVICE (0xec) to old hard drive"));
             command_aborted(value);
 	  }
           break;
 
-        case 0xef: // set features
+        case 0xef: // SET FEATURES
 	  switch(BX_SELECTED_CONTROLLER.features) {
 	    case 0x02: // Enable and
 	    case 0x82: //  Disable write cache.
@@ -1531,15 +1644,14 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	    break;
 
 	    default:
-	      D(bug("SET FEATURES with unknown subcommand: 0x%02x", (unsigned) BX_SELECTED_CONTROLLER.features ));
+	      panicbug("SET FEATURES with unknown subcommand: 0x%02x", (unsigned) BX_SELECTED_CONTROLLER.features );
 	  }
 	  break;
 
-        case 0x40: //
+        case 0x40: // READ VERIFY SECTORS
           if (bx_options.newHardDriveSupport) {
 	    if (BX_SELECTED_HD.device_type != IDE_DISK)
-		D(bug("read verify issued to non-disk"));
-            D(bug("Verify Command : 0x40 !"));
+		panicbug("read verify issued to non-disk");
             BX_SELECTED_CONTROLLER.status.busy = 0;
             BX_SELECTED_CONTROLLER.status.drive_ready = 1;
             BX_SELECTED_CONTROLLER.status.drq = 0;
@@ -1547,11 +1659,11 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	    raise_interrupt();
             }
           else {
-	    D(bug("old hard drive"));
             command_aborted(value);
 	  }
           break;
-	case 0xc6: // (mch) set multiple mode
+
+	case 0xc6: // SET MULTIPLE MODE (mch)
 	      if (BX_SELECTED_CONTROLLER.sector_count != 128 &&
 		  BX_SELECTED_CONTROLLER.sector_count != 64 &&
 		  BX_SELECTED_CONTROLLER.sector_count != 32 &&
@@ -1562,7 +1674,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 		    command_aborted(value);
 
 	      if (BX_SELECTED_HD.device_type != IDE_DISK)
-		D(bug("set multiple mode issued to non-disk"));
+		panicbug("set multiple mode issued to non-disk");
 
 	      BX_SELECTED_CONTROLLER.sectors_per_block = BX_SELECTED_CONTROLLER.sector_count;
 	      BX_SELECTED_CONTROLLER.status.busy = 0;
@@ -1573,7 +1685,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	      break;
 
         // ATAPI commands
-        case 0xa1: // identify ATAPI device
+        case 0xa1: // IDENTIFY PACKET DEVICE
 	      if (BX_SELECTED_HD.device_type == IDE_CDROM) {
 		    BX_SELECTED_CONTROLLER.current_command = value;
 		    BX_SELECTED_CONTROLLER.error_register = 0;
@@ -1595,7 +1707,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	      }
 	      break;
 
-        case 0x08: // ATAPI soft reset command
+        case 0x08: // DEVICE RESET (atapi)
 	      if (BX_SELECTED_HD.device_type == IDE_CDROM) {
 		    BX_SELECTED_CONTROLLER.status.busy = 1;
 		    BX_SELECTED_CONTROLLER.error_register &= ~(1 << 7);
@@ -1613,15 +1725,18 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 
 		    BX_SELECTED_CONTROLLER.status.busy = 0;
 
-		    break;
+	      } else {
+		command_aborted(0x08);
 	      }
-        case 0xa0: // send a packet command
+	      break;
+
+        case 0xa0: // SEND PACKET (atapi)
 	      if (BX_SELECTED_HD.device_type == IDE_CDROM) {
 		    // PACKET
 		    if (BX_SELECTED_CONTROLLER.features & (1 << 0))
-			  D(bug("PACKET-DMA not supported"));
+			  panicbug("PACKET-DMA not supported");
 		    if (BX_SELECTED_CONTROLLER.features & (1 << 1))
-			  D(bug("PACKET-overlapped not supported"));
+			  panicbug("PACKET-overlapped not supported");
 
 		    // We're already ready!
 		    BX_SELECTED_CONTROLLER.sector_count = 1;
@@ -1634,21 +1749,21 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 		    // NOTE: no interrupt here
 		    BX_SELECTED_CONTROLLER.current_command = value;
 		    BX_SELECTED_CONTROLLER.buffer_index = 0;
+	      } else {
+		command_aborted (0xa0);
+	      }
+	      break;
 
-		    break;
-	      }
-        case 0xa2: // ATAPI service (optional)
+        case 0xa2: // SERVICE (atapi), optional
 	      if (BX_SELECTED_HD.device_type == IDE_CDROM) {
-		    D(bug("ATAPI SERVICE not implemented"));
+		    panicbug("ATAPI SERVICE not implemented");
+	      } else {
+		command_aborted (0xa2);
 	      }
-        // non-standard commands
-        case 0xf0: // Exabyte enable nest command
-	  D(bug("Not implemented command"));
-          command_aborted(value);
-          break;
+	      break;
 
         // power management
-	case 0xe5: // Check power mode
+	case 0xe5: // CHECK POWER MODE
 	  BX_SELECTED_CONTROLLER.status.busy = 0;
 	  BX_SELECTED_CONTROLLER.status.drive_ready = 1;
 	  BX_SELECTED_CONTROLLER.status.write_fault = 0;
@@ -1658,11 +1773,86 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  raise_interrupt();
 	  break;
 
-        default:
-          D(bug("IO write(f0001fh): command 0x%02x", (unsigned) value));
+	// List all the write operations that are defined in the ATA/ATAPI spec
+	// that we don't support.  Commands that are listed here will cause a
+	// BX_ERROR, which is non-fatal, and the command will be aborted.
+	case 0x22: bug("write cmd 0x22 (READ LONG) not supported"); command_aborted(0x22); break;
+	case 0x23: bug("write cmd 0x23 (READ LONG NO RETRY) not supported"); command_aborted(0x23); break;
+	case 0x24: bug("write cmd 0x24 (READ SECTORS EXT) not supported");command_aborted(0x24); break;
+	case 0x25: bug("write cmd 0x25 (READ DMA EXT) not supported");command_aborted(0x25); break;
+	case 0x26: bug("write cmd 0x26 (READ DMA QUEUED EXT) not supported");command_aborted(0x26); break;
+	case 0x27: bug("write cmd 0x27 (READ NATIVE MAX ADDRESS EXT) not supported");command_aborted(0x27); break;
+	case 0x29: bug("write cmd 0x29 (READ MULTIPLE EXT) not supported");command_aborted(0x29); break;
+	case 0x2A: bug("write cmd 0x2A (READ STREAM DMA) not supported");command_aborted(0x2A); break;
+	case 0x2B: bug("write cmd 0x2B (READ STREAM PIO) not supported");command_aborted(0x2B); break;
+	case 0x2F: bug("write cmd 0x2F (READ LOG EXT) not supported");command_aborted(0x2F); break;
+	case 0x31: bug("write cmd 0x31 (WRITE SECTORS NO RETRY) not supported"); command_aborted(0x31); break;
+	case 0x32: bug("write cmd 0x32 (WRITE LONG) not supported"); command_aborted(0x32); break;
+	case 0x33: bug("write cmd 0x33 (WRITE LONG NO RETRY) not supported"); command_aborted(0x33); break;
+	case 0x34: bug("write cmd 0x34 (WRITE SECTORS EXT) not supported");command_aborted(0x34); break;
+	case 0x35: bug("write cmd 0x35 (WRITE DMA EXT) not supported");command_aborted(0x35); break;
+	case 0x36: bug("write cmd 0x36 (WRITE DMA QUEUED EXT) not supported");command_aborted(0x36); break;
+	case 0x37: bug("write cmd 0x37 (SET MAX ADDRESS EXT) not supported");command_aborted(0x37); break;
+	case 0x38: bug("write cmd 0x38 (CFA WRITE SECTORS W/OUT ERASE) not supported");command_aborted(0x38); break;
+	case 0x39: bug("write cmd 0x39 (WRITE MULTIPLE EXT) not supported");command_aborted(0x39); break;
+	case 0x3A: bug("write cmd 0x3A (WRITE STREAM DMA) not supported");command_aborted(0x3A); break;
+	case 0x3B: bug("write cmd 0x3B (WRITE STREAM PIO) not supported");command_aborted(0x3B); break;
+	case 0x3F: bug("write cmd 0x3F (WRITE LOG EXT) not supported");command_aborted(0x3F); break;
+	case 0x41: bug("write cmd 0x41 (READ VERIFY SECTORS NO RETRY) not supported"); command_aborted(0x41); break;
+	case 0x42: bug("write cmd 0x42 (READ VERIFY SECTORS EXT) not supported");command_aborted(0x42); break;
+	case 0x50: bug("write cmd 0x50 (FORMAT TRACK) not supported"); command_aborted(0x50); break;
+	case 0x51: bug("write cmd 0x51 (CONFIGURE STREAM) not supported");command_aborted(0x51); break;
+	case 0x70: bug("write cmd 0x70 (SEEK) not supported");command_aborted(0x70); break;
+	case 0x87: bug("write cmd 0x87 (CFA TRANSLATE SECTOR) not supported");command_aborted(0x87); break;
+	case 0x92: bug("write cmd 0x92 (DOWNLOAD MICROCODE) not supported");command_aborted(0x92); break;
+	case 0x94: bug("write cmd 0x94 (STANDBY IMMEDIATE) not supported"); command_aborted(0x94); break;
+	case 0x95: bug("write cmd 0x95 (IDLE IMMEDIATE) not supported"); command_aborted(0x95); break;
+	case 0x96: bug("write cmd 0x96 (STANDBY) not supported"); command_aborted(0x96); break;
+	case 0x97: bug("write cmd 0x97 (IDLE) not supported"); command_aborted(0x97); break;
+	case 0x98: bug("write cmd 0x98 (CHECK POWER MODE) not supported"); command_aborted(0x98); break;
+	case 0x99: bug("write cmd 0x99 (SLEEP) not supported"); command_aborted(0x99); break;
+	case 0xB0: bug("write cmd 0xB0 (SMART commands) not supported");command_aborted(0xB0); break;
+	case 0xB1: bug("write cmd 0xB1 (DEVICE CONFIGURATION commands) not supported");command_aborted(0xB1); break;
+	case 0xC0: bug("write cmd 0xC0 (CFA ERASE SECTORS) not supported");command_aborted(0xC0); break;
+	case 0xC4: bug("write cmd 0xC4 (READ MULTIPLE) not supported");command_aborted(0xC4); break;
+	case 0xC5: bug("write cmd 0xC5 (WRITE MULTIPLE) not supported");command_aborted(0xC5); break;
+	case 0xC7: bug("write cmd 0xC7 (READ DMA QUEUED) not supported");command_aborted(0xC7); break;
+	case 0xC8: bug("write cmd 0xC8 (READ DMA) not supported");command_aborted(0xC8); break;
+	case 0xC9: bug("write cmd 0xC9 (READ DMA NO RETRY) not supported"); command_aborted(0xC9); break;
+	case 0xCA: bug("write cmd 0xCA (WRITE DMA) not supported");command_aborted(0xCA); break;
+	case 0xCC: bug("write cmd 0xCC (WRITE DMA QUEUED) not supported");command_aborted(0xCC); break;
+	case 0xCD: bug("write cmd 0xCD (CFA WRITE MULTIPLE W/OUT ERASE) not supported");command_aborted(0xCD); break;
+	case 0xD1: bug("write cmd 0xD1 (CHECK MEDIA CARD TYPE) not supported");command_aborted(0xD1); break;
+	case 0xDA: bug("write cmd 0xDA (GET MEDIA STATUS) not supported");command_aborted(0xDA); break;
+	case 0xDE: bug("write cmd 0xDE (MEDIA LOCK) not supported");command_aborted(0xDE); break;
+	case 0xDF: bug("write cmd 0xDF (MEDIA UNLOCK) not supported");command_aborted(0xDF); break;
+	case 0xE0: bug("write cmd 0xE0 (STANDBY IMMEDIATE) not supported");command_aborted(0xE0); break;
+	case 0xE1: bug("write cmd 0xE1 (IDLE IMMEDIATE) not supported");command_aborted(0xE1); break;
+	case 0xE2: bug("write cmd 0xE2 (STANDBY) not supported");command_aborted(0xE2); break;
+	case 0xE3: bug("write cmd 0xE3 (IDLE) not supported");command_aborted(0xE3); break;
+	case 0xE4: bug("write cmd 0xE4 (READ BUFFER) not supported");command_aborted(0xE4); break;
+	case 0xE6: bug("write cmd 0xE6 (SLEEP) not supported");command_aborted(0xE6); break;
+        case 0xE7: bug("write cmd 0xE7 (FLUSH CACHE) not supported");command_aborted(0xE7); break;
+	case 0xE8: bug("write cmd 0xE8 (WRITE BUFFER) not supported");command_aborted(0xE8); break;
+	case 0xEA: bug("write cmd 0xEA (FLUSH CACHE EXT) not supported");command_aborted(0xEA); break;
+	case 0xED: bug("write cmd 0xED (MEDIA EJECT) not supported");command_aborted(0xED); break;
+	case 0xF1: bug("write cmd 0xF1 (SECURITY SET PASSWORD) not supported");command_aborted(0xF1); break;
+	case 0xF2: bug("write cmd 0xF2 (SECURITY UNLOCK) not supported");command_aborted(0xF2); break;
+	case 0xF3: bug("write cmd 0xF3 (SECURITY ERASE PREPARE) not supported");command_aborted(0xF3); break;
+	case 0xF4: bug("write cmd 0xF4 (SECURITY ERASE UNIT) not supported");command_aborted(0xF4); break;
+	case 0xF5: bug("write cmd 0xF5 (SECURITY FREEZE LOCK) not supported");command_aborted(0xF5); break;
+	case 0xF6: bug("write cmd 0xF6 (SECURITY DISABLE PASSWORD) not supported");command_aborted(0xF6); break;
+	case 0xF8: bug("write cmd 0xF8 (READ NATIVE MAX ADDRESS) not supported");command_aborted(0xF8); break;
+	case 0xF9: bug("write cmd 0xF9 (SET MAX ADDRESS) not supported");command_aborted(0xF9); break;
+
+	default:
+          panicbug("IO write(1f7h): command 0x%02x", (unsigned) value);
+	  // if user foolishly decides to continue, abort the command
+	  // so that the software knows the drive didn't understand it.
+          command_aborted(value);
         }
       break;
-/*
+#if 0
     case 0x3f6: // hard disk adapter control
 	  // (mch) Even if device 1 was selected, a write to this register
 	  // goes to device 0 (if device 1 is absent)
@@ -1671,13 +1861,13 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  BX_HD_THIS s[0].controller.control.reset         = value & 0x04;
 	  BX_HD_THIS s[1].controller.control.reset         = value & 0x04;
 	  BX_SELECTED_CONTROLLER.control.disable_irq    = value & 0x02;
-      //BX_DEBUG(( "adpater control reg: reset controller = %d\n",
+      //BX_DEBUG(( "adpater control reg: reset controller = %d",
       //  (unsigned) (BX_SELECTED_CONTROLLER.control.reset) ? 1 : 0 ));
-      //BX_DEBUG(( "adpater control reg: disable_irq(14) = %d\n",
+      //BX_DEBUG(( "adpater control reg: disable_irq(14) = %d",
       //  (unsigned) (BX_SELECTED_CONTROLLER.control.disable_irq) ? 1 : 0 ));
 	  if (!prev_control_reset && BX_SELECTED_CONTROLLER.control.reset) {
 		// transition from 0 to 1 causes all drives to reset
-		BX_DEBUG(("hard drive: RESET\n"));
+		BX_DEBUG(("hard drive: RESET"));
 
 		// (mch) Set BSY, drive not ready
 		for (int id = 0; id < 2; id++) {
@@ -1704,7 +1894,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  } else if (BX_SELECTED_CONTROLLER.reset_in_progress &&
 		     !BX_SELECTED_CONTROLLER.control.reset) {
 		// Clear BSY and DRDY
-		BX_DEBUG(("Reset complete {%s}\n", DEVICE_TYPE_STRING));
+		BX_DEBUG(("Reset complete {%s}", DEVICE_TYPE_STRING));
 		for (int id = 0; id < 2; id++) {
 		      BX_CONTROLLER(id).status.busy           = 0;
 		      BX_CONTROLLER(id).status.drive_ready    = 1;
@@ -1725,6 +1915,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 		}
 	  }
 	  break;
+#endif
 #if 0
       // you'll need these to support second IDE controller, not needed yet.
     case 0x170:
@@ -1735,13 +1926,13 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
     case 0x175:
     case 0x176:
     case 0x177:
-	  BX_DEBUG(("ignoring write to 0x%04x\n", address));
+	  BX_DEBUG(("ignoring write to 0x%04x", address));
        break;
 #endif
-*/
+
     default:
-      D(bug("hard drive: io write to address %x = %02x",
-        (unsigned) address, (unsigned) value));
+      panicbug("hard drive: io write to address %x = %02x",
+        (unsigned) address, (unsigned) value);
     }
 }
 
@@ -1752,16 +1943,19 @@ bx_hard_drive_c::close_harddrive(void)
   BX_HD_THIS s[1].hard_drive->close();
 }
 
-  Bit32u
-bx_hard_drive_c::calculate_logical_address()
+
+  bool
+bx_hard_drive_c::calculate_logical_address(Bit32u *sector)
 {
       Bit32u logical_sector;
 
-      if (BX_SELECTED_CONTROLLER.lba_mode)
+      if (BX_SELECTED_CONTROLLER.lba_mode) {
+            //bx_printf ("disk: calculate: %d %d %d\n", ((Bit32u)BX_SELECTED_CONTROLLER.head_no), ((Bit32u)BX_SELECTED_CONTROLLER.cylinder_no), (Bit32u)BX_SELECTED_CONTROLLER.sector_no);
 	    logical_sector = ((Bit32u)BX_SELECTED_CONTROLLER.head_no) << 24 |
 		  ((Bit32u)BX_SELECTED_CONTROLLER.cylinder_no) << 8 |
 		  (Bit32u)BX_SELECTED_CONTROLLER.sector_no;
-      else
+            //bx_printf ("disk: result: %u\n", logical_sector);
+      } else
 	    logical_sector = (BX_SELECTED_CONTROLLER.cylinder_no * BX_SELECTED_HD.hard_drive->heads *
 			      BX_SELECTED_HD.hard_drive->sectors) +
 		  (BX_SELECTED_CONTROLLER.head_no * BX_SELECTED_HD.hard_drive->sectors) +
@@ -1769,9 +1963,11 @@ bx_hard_drive_c::calculate_logical_address()
 
       if (logical_sector >=
 	  (BX_SELECTED_HD.hard_drive->cylinders * BX_SELECTED_HD.hard_drive->heads * BX_SELECTED_HD.hard_drive->sectors)) {
-            D(bug("read sectors: out of bounds"));
+            bug("calc_log_addr: out of bounds");
+	    return false;
       }
-      return logical_sector;
+      *sector = logical_sector;
+      return true;
 }
 
   void
@@ -1780,7 +1976,8 @@ bx_hard_drive_c::increment_address()
       BX_SELECTED_CONTROLLER.sector_count--;
 
       if (BX_SELECTED_CONTROLLER.lba_mode) {
-	    Bit32u current_address = calculate_logical_address();
+	    Bit32u current_address;
+	    calculate_logical_address(&current_address);
 	    current_address++;
 	    BX_SELECTED_CONTROLLER.head_no = (current_address >> 24) & 0xf;
 	    BX_SELECTED_CONTROLLER.cylinder_no = (current_address >> 8) & 0xffff;
@@ -1806,7 +2003,7 @@ bx_hard_drive_c::identify_ATAPI_drive(unsigned drive)
   unsigned i;
 
   if (drive != (unsigned)BX_HD_THIS drive_select) {
-	D(bug("identify_drive panic (drive != drive_select)"));
+	panicbug("identify_drive panic (drive != drive_select)");
   }
 
   BX_SELECTED_HD.id_drive[0] = (2 << 14) | (5 << 8) | (1 << 7) | (2 << 5) | (0 << 0); // Removable CDROM, 50us response, 12 byte packets
@@ -1814,7 +2011,7 @@ bx_hard_drive_c::identify_ATAPI_drive(unsigned drive)
   for (i = 1; i <= 9; i++)
 	BX_SELECTED_HD.id_drive[i] = 0;
 
-  char* serial_number = " VT00001\0\0\0\0\0\0\0\0\0\0\0\0";
+  const char* serial_number = " VT00001\0\0\0\0\0\0\0\0\0\0\0\0";
   for (i = 0; i < 10; i++) {
 	BX_SELECTED_HD.id_drive[10+i] = (serial_number[i*2] << 8) |
 	      serial_number[i*2 + 1];
@@ -1823,7 +2020,7 @@ bx_hard_drive_c::identify_ATAPI_drive(unsigned drive)
   for (i = 20; i <= 22; i++)
 	BX_SELECTED_HD.id_drive[i] = 0;
 
-  char* firmware = "ALPHA1  ";
+  const char* firmware = "ALPHA1  ";
   for (i = 0; i < strlen(firmware)/2; i++) {
 	BX_SELECTED_HD.id_drive[23+i] = (firmware[i*2] << 8) |
 	      firmware[i*2 + 1];
@@ -1910,7 +2107,7 @@ bx_hard_drive_c::identify_drive(unsigned drive)
   Bit16u temp16;
 
   if (drive != BX_HD_THIS drive_select) {
-	D(bug("identify_drive panic (drive != drive_select)"));
+	panicbug("identify_drive panic (drive != drive_select)");
   }
 
 #if defined(CONNER_CFA540A)
@@ -2103,10 +2300,9 @@ bx_hard_drive_c::identify_drive(unsigned drive)
   // This field is left justified and padded with spaces (20h)
 //  for (i=27; i<=46; i++)
 //    BX_SELECTED_HD.id_drive[i] = 0;
-  unsigned char *model_name = BX_HD_THIS drive_select ? model_noB : model_no;
   for (i=0; i<20; i++) {
-    BX_SELECTED_HD.id_drive[27+i] = (model_name[i*2] << 8) |
-                                  model_name[i*2 + 1];
+    BX_SELECTED_HD.id_drive[27+i] = (model_no[i*2] << 8) |
+                                  model_no[i*2 + 1];
     }
 
   // Word 47: 15-8 Vendor unique
@@ -2255,13 +2451,14 @@ bx_hard_drive_c::identify_drive(unsigned drive)
 bx_hard_drive_c::init_send_atapi_command(Bit8u command, int req_length, int alloc_length, bool lazy)
 {
       if (BX_SELECTED_CONTROLLER.byte_count == 0)
-	    D(bug("ATAPI command with zero byte count"));
+	    panicbug("ATAPI command with zero byte count");
 
-      if (BX_SELECTED_CONTROLLER.byte_count & 1)
-	    D(bug("Odd byte count to ATAPI command"));
-
+      if ((BX_SELECTED_CONTROLLER.byte_count & 1)
+          && !(alloc_length <= BX_SELECTED_CONTROLLER.byte_count)) {
+        panicbug("Odd byte count to ATAPI command");
+      }
       if (alloc_length <= 0)
-	    D(bug("Allocation length <= 0"));
+	    panicbug("Allocation length <= 0");
 
       BX_SELECTED_CONTROLLER.interrupt_reason.i_o = 1;
       BX_SELECTED_CONTROLLER.interrupt_reason.c_d = 0;
@@ -2349,15 +2546,14 @@ void
 bx_hard_drive_c::raise_interrupt()
 {
       if (!BX_SELECTED_CONTROLLER.control.disable_irq) {
-//	    Bit32u irq = 14;  // always 1st IDE controller
+#if 0
+	    Bit32u irq = 14;  // always 1st IDE controller
 	    // for second controller, you would want irq 15
-		D(bug("Raising interrupt {%s}", DEVICE_TYPE_STRING));
-//	    BX_HD_THIS devices->pic->trigger_irq(irq);
+		BX_DEBUG(("Raising interrupt %d {%s}", irq, DEVICE_TYPE_STRING));
+	    BX_HD_THIS devices->pic->raise_irq(irq);
+#endif
 		HWput_b(0xfffa0d, HWget_b(0xfffa0d) | (0x80 & HWget_b(0xfffa09)));
 		HWput_b(0xfffa01, HWget_b(0xfffa01) & ~0x20);
-      } else {
-	    if (bx_dbg.disk || (CDROM_SELECTED && bx_dbg.cdrom))
-		  D(bug("Interrupt masked {%s}", DEVICE_TYPE_STRING));
       }
 }
 
@@ -2375,6 +2571,51 @@ bx_hard_drive_c::command_aborted(unsigned value)
   BX_SELECTED_CONTROLLER.status.corrected_data = 0;
   BX_SELECTED_CONTROLLER.buffer_index = 0;
   raise_interrupt();
+}
+
+  unsigned
+bx_hard_drive_c::get_cd_media_status(void)
+{
+  return( BX_HD_THIS s[1].cdrom.ready );
+}
+
+  unsigned
+bx_hard_drive_c::set_cd_media_status(unsigned status)
+{
+  // if setting to the current value, nothing to do
+  if (status == BX_HD_THIS s[1].cdrom.ready)
+    return(status);
+  // return 0 if no cdromd is present
+  if (!bx_options.cdromd.present)
+    return(0);
+
+  if (status == 0) {
+    // eject cdrom if not locked by guest OS
+    if (BX_HD_THIS s[1].cdrom.locked) return(1);
+    else {
+#ifdef LOWLEVEL_CDROM
+      BX_HD_THIS s[1].cdrom.cd->eject_cdrom();
+#endif
+      BX_HD_THIS s[1].cdrom.ready = 0;
+      bx_options.cdromd.inserted = BX_EJECTED;
+      }
+    }
+  else {
+    // insert cdrom
+#ifdef LOWLEVEL_CDROM
+    if (BX_HD_THIS s[1].cdrom.cd->insert_cdrom(bx_options.cdromd.path)) {
+      BX_HD_THIS s[1].cdrom.ready = 1;
+      BX_HD_THIS s[1].cdrom.capacity = BX_HD_THIS s[1].cdrom.cd->capacity();
+      bx_options.cdromd.inserted = BX_INSERTED;
+      }
+    else {		    
+      D(bug( "Could not locate CD-ROM, continuing with media not present"));
+      BX_HD_THIS s[1].cdrom.ready = 0;
+      bx_options.cdromd.inserted = BX_EJECTED;
+      }
+#endif
+    }
+  return( BX_HD_THIS s[1].cdrom.ready );
 }
 
 
@@ -2396,7 +2637,7 @@ int default_image_t::open (const char* pathname)
       struct stat stat_buf;
       int ret = fstat(fd, &stat_buf);
       if (ret) {
-	    D(bug("fstat() returns error!"));
+	    panicbug("fstat() returns error!");
       }
 
       return fd;
@@ -2409,11 +2650,7 @@ void default_image_t::close ()
       }
 }
 
-#if (defined(OS_irix) || defined(OS_openbsd) || defined(OS_freebsd) || defined(OS_netbsd))
-loff_t default_image_t::lseek (loff_t offset, int whence)
-#else
 off_t default_image_t::lseek (off_t offset, int whence)
-#endif
 {
       return ::lseek(fd, offset, whence);
 }
@@ -2436,7 +2673,7 @@ void concat_image_t::increment_string (char *str)
   // find the last character of the string, and increment it.
   char *p = str;
   while (*p != 0) p++;
-  assert (p>str);  // choke on zero length strings
+  assert(p>str);  // choke on zero length strings
   p--;  // point to last character of the string
   ++(*p);  // increment to next ascii code.
   D(bug("concat_image.increment string returning '%s'", str));
@@ -2467,10 +2704,10 @@ int concat_image_t::open (const char* pathname0)
     struct stat stat_buf;
     int ret = fstat(fd_table[i], &stat_buf);
     if (ret) {
-	  D(bug("fstat() returns error!"));
+	  panicbug("fstat() returns error!");
     }
     if ((stat_buf.st_size % 512) != 0) {
-      D(bug("size of disk image must be multiple of 512 bytes"));
+      panicbug("size of disk image must be multiple of 512 bytes");
     }
     length_table[i] = stat_buf.st_size;
     start_offset_table[i] = start_offset;
@@ -2497,7 +2734,7 @@ void concat_image_t::close ()
 off_t concat_image_t::lseek (off_t offset, int whence)
 {
   if ((offset % 512) != 0) 
-    D(bug("lseek HD with offset not multiple of 512"));
+    panicbug("lseek HD with offset not multiple of 512");
   D(bug("concat_image_t.lseek(%d)", whence));
   // is this offset in this disk image?
   if (offset < thismin) {
@@ -2527,8 +2764,10 @@ off_t concat_image_t::lseek (off_t offset, int whence)
   }
   // now offset should be within the current image.
   offset -= start_offset_table[index];
-  if (offset < 0 || offset >= length_table[index])
-    D(bug("concat_image_t.lseek to byte %ld failed", (long)offset));
+  if (offset < 0 || offset >= length_table[index]) {
+    panicbug("concat_image_t.lseek to byte %ld failed", (long)offset);
+    return -1;
+  }
 
   seek_was_last_op = 1;
   return ::lseek(fd, offset, whence);
@@ -2536,24 +2775,21 @@ off_t concat_image_t::lseek (off_t offset, int whence)
 
 ssize_t concat_image_t::read (void* buf, size_t count)
 {
-  if (bx_dbg.disk)
-    D(bug("concat_image_t.read %ld bytes", (long)count));
   // notice if anyone does sequential read or write without seek in between.
   // This can be supported pretty easily, but needs additional checks for
   // end of a partial image.
   if (!seek_was_last_op) 
-    D(bug("no seek before read"));
+    panicbug("no seek before read");
   return ::read(fd, buf, count);
 }
 
 ssize_t concat_image_t::write (const void* buf, size_t count)
 {
-  D(bug("concat_image_t.write %ld bytes", (long)count));
   // notice if anyone does sequential read or write without seek in between.
   // This can be supported pretty easily, but needs additional checks for
   // end of a partial image.
   if (!seek_was_last_op) 
-    D(bug("no seek before write"));
+    panicbug("no seek before write");
   return ::write(fd, buf, count);
 }
 #endif   /* BX_SPLIT_HD_SUPPORT */
@@ -2561,7 +2797,7 @@ ssize_t concat_image_t::write (const void* buf, size_t count)
 error_recovery_t::error_recovery_t ()
 {
       if (sizeof(error_recovery_t) != 8) {
-	    D(bug("error_recovery_t has size != 8"));
+	    panicbug("error_recovery_t has size != 8");
       }
 
       data[0] = 0x01;
@@ -2569,9 +2805,7 @@ error_recovery_t::error_recovery_t ()
       data[2] = 0x00;
       data[3] = 0x05; // Try to recover 5 times
       data[4] = 0x00;
-      	bx_dbg.cdrom = true;
-	bx_dbg.disk = true;
-data[5] = 0x00;
+      data[5] = 0x00;
       data[6] = 0x00;
       data[7] = 0x00;
 }

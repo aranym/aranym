@@ -1,4 +1,8 @@
-//  Copyright (C) 2001  MandrakeSoft S.A.
+/////////////////////////////////////////////////////////////////////////
+// $Id$
+/////////////////////////////////////////////////////////////////////////
+//
+//  Copyright (C) 2002  MandrakeSoft S.A.
 //
 //    MandrakeSoft S.A.
 //    43, rue d'Aboukir
@@ -20,7 +24,6 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
-
 #ifndef ATA_H
 #define ATA_H
 
@@ -39,23 +42,6 @@ typedef enum _asc {
 
 class LOWLEVEL_CDROM;
 
-#ifdef loff_t
-#undef loff_t
-#endif
-#define loff_t long
-#ifdef ssize_t
-#undef ssize_t
-#endif
-#define ssize_t long
-#ifdef size_t
-#undef size_t
-#endif
-#define size_t long
-#define Boolean bool
-#define Bit8u unsigned char
-#define Bit16u unsigned short
-#define Bit32u unsigned int
-
 class device_image_t
 {
   public:
@@ -67,7 +53,7 @@ class device_image_t
 
       // Position ourselves. Return the resulting offset from the
       // beginning of the file.
-      virtual loff_t lseek (loff_t offset, int whence) = 0;
+      virtual off_t lseek (off_t offset, int whence) = 0;
 
       // Read count bytes to the buffer buf. Return the number of
       // bytes read (count).
@@ -94,7 +80,7 @@ class default_image_t : public device_image_t
 
       // Position ourselves. Return the resulting offset from the
       // beginning of the file.
-      loff_t lseek (loff_t offset, int whence);
+      off_t lseek (off_t offset, int whence);
 
       // Read count bytes to the buffer buf. Return the number of
       // bytes read (count).
@@ -159,15 +145,15 @@ class concat_image_t : public device_image_t
 
 typedef struct {
   struct {
-    Boolean busy;
-    Boolean drive_ready;
-    Boolean write_fault;
-    Boolean seek_complete;
-    Boolean drq;
-    Boolean corrected_data;
-    Boolean index_pulse;
+    bool busy;
+    bool drive_ready;
+    bool write_fault;
+    bool seek_complete;
+    bool drq;
+    bool corrected_data;
+    bool index_pulse;
     unsigned index_pulse_count;
-    Boolean err;
+    bool err;
     } status;
   Bit8u    error_register;
   // Bit8u    drive_select; this field was moved :^(
@@ -175,10 +161,17 @@ typedef struct {
   union {
     Bit8u    sector_count;
     struct {
+#ifdef WORDS_BIGENDIAN
+      unsigned tag : 5;
+      unsigned rel : 1;
+      unsigned i_o : 1;
+      unsigned c_d : 1;
+#else	    
       unsigned c_d : 1;
       unsigned i_o : 1;
       unsigned rel : 1;
       unsigned tag : 5;
+#endif
     } interrupt_reason;
   };
   Bit8u    sector_no;
@@ -192,8 +185,8 @@ typedef struct {
   Bit8u    sectors_per_block;
   Bit8u    lba_mode;
   struct {
-    Boolean reset;       // 0=normal, 1=reset controller
-    Boolean disable_irq; // 0=allow irq, 1=disable irq
+    bool reset;       // 0=normal, 1=reset controller
+    bool disable_irq; // 0=allow irq, 1=disable irq
     } control;
   Bit8u    reset_in_progress;
   Bit8u    features;
@@ -232,8 +225,8 @@ uint32 read_32bit(const uint8* buf);
 
 struct cdrom_t
 {
-  Boolean ready;
-  Boolean locked;
+  bool ready;
+  bool locked;
 #ifdef LOWLEVEL_CDROM
   LOWLEVEL_CDROM* cd;
 #endif
@@ -274,7 +267,9 @@ public:
   bx_hard_drive_c(void);
   ~bx_hard_drive_c(void);
   BX_HD_SMF void   close_harddrive(void);
-  BX_HD_SMF void   init(/*bx_devices_c *d, bx_cmos_c *cmos*/);
+  BX_HD_SMF void   init(/* MJ bx_devices_c *d, bx_cmos_c *cmos */);
+  BX_HD_SMF unsigned get_cd_media_status(void);
+  BX_HD_SMF unsigned set_cd_media_status(unsigned status);
 
 #if !BX_USE_HD_SMF
   Bit32u read(Bit32u address, unsigned io_len);
@@ -286,7 +281,7 @@ public:
 
 private:
 
-  BX_HD_SMF Bit32u calculate_logical_address();
+  BX_HD_SMF bool calculate_logical_address(Bit32u *sector);
   BX_HD_SMF void increment_address();
   BX_HD_SMF void identify_drive(unsigned drive);
   BX_HD_SMF void identify_ATAPI_drive(unsigned drive);
@@ -317,7 +312,7 @@ private:
 
   unsigned drive_select;
 
-//  bx_devices_c *devices;
+// MJ  bx_devices_c *devices;
   };
 
 extern bx_hard_drive_c bx_hard_drive;
@@ -325,42 +320,5 @@ extern bx_hard_drive_c bx_hard_drive;
 #ifndef UNUSED
 #  define UNUSED(x) ((void)x)
 #endif
-
-#define bx_ptr_t void *
-
-typedef struct {
-  Boolean floppy;
-  Boolean keyboard;
-  Boolean video;
-  Boolean disk;
-  Boolean pit;
-  Boolean pic;
-  Boolean bios;
-  Boolean cmos;
-  Boolean a20;
-  Boolean interrupts;
-  Boolean exceptions;
-  Boolean unsupported;
-  Boolean temp;
-  Boolean reset;
-  Boolean debugger;
-  Boolean mouse;
-  Boolean io;
-  Boolean xms;
-  Boolean v8086;
-  Boolean paging;
-  Boolean creg;
-  Boolean dreg;
-  Boolean dma;
-  Boolean unsupported_io;
-  Boolean serial;
-  Boolean cdrom;
-#ifdef MAGIC_BREAKPOINT
-  Boolean magic_break_enabled;
-#endif /* MAGIC_BREAKPOINT */
-  void* record_io;
-  } bx_debug_t;
-
-extern bx_debug_t bx_dbg;
 
 #endif /* ATA_H */

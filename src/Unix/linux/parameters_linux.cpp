@@ -1,10 +1,6 @@
 /* MJ 2001 */
 
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+#include "sysdeps.h"
 #include <linux/hdreg.h>
 #include "parameters.h"
 

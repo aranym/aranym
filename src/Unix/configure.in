@@ -128,11 +128,11 @@ AC_PROG_INSTALL
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/mman.h sys/ioctl.h)
+AC_CHECK_HEADERS(unistd.h fcntl.h sys/mman.h sys/ioctl.h)
 AC_CHECK_HEADERS(features.h sys/feature_tests.h dirent.h signal.h getopt.h)
 AC_CHECK_HEADERS(termios.h termio.h alloca.h sys/statfs.h sys/statvfs.h)
 AC_CHECK_HEADERS(sys/types.h sys/stat.h sys/vfs.h utime.h sys/param.h)
-AC_CHECK_HEADERS(sys/mount.h)
+AC_CHECK_HEADERS(sys/mount.h types.h stat.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN

@@ -1,3 +1,9 @@
+2002/02/11 - milan
+- synced with Bochs IDE
+
+- new version of CPU interface
+
+
 2002/02/01 - Frank Naumann & joy & milan
 - PAGE_MASK renamed on ARAM_PAGE_MASK (ARAnym Memory PAGE_MASK), PAGE_MASK is
   defined in /usr/include/machine/param.h on OpenBSD

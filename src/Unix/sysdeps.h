@@ -53,8 +53,16 @@
 # include <sys/stat.h>
 #endif
 
+#ifdef HAVE_STAT_H
+# include <stat.h>
+#endif
+
 #ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>
+#endif
+
+#ifdef HAVE_TYPES_H
+# include <types.h>
 #endif
 
 #ifdef HAVE_SYS_PARAM_H
@@ -187,6 +195,11 @@ typedef int64 intptr;
 #define uae_s64 int64
 #define uae_u64 uint64
 typedef uae_u32 uaecptr;
+
+/* Bochs data types */
+#define Bit8u uint8
+#define Bit16u uint16
+#define Bit32u uint32
 
 /* Alignment restrictions */
 #if defined(__i386__) || defined(__powerpc__) || defined(__m68k__)

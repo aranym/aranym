@@ -112,7 +112,6 @@ extern "C" void Execute68kTrap(uint16 trap, M68kRegisters *r);	// Execute Atari 
 
 // Interrupt functions
 // extern void TriggerInterrupt(void);	// Trigger interrupt level 1 (InterruptFlag must be set first)
-// These functions will be removed
 extern void TriggerVBL(void);		// Trigger interrupt level 4
 extern void TriggerMFP(bool);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
