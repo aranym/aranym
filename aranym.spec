@@ -39,7 +39,6 @@ make clean
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/local/bin
-mkdir -p $RPM_BUILD_ROOT/usr/local/man/man1
 make install PREFIX=$RPM_BUILD_ROOT/usr/local
 install aranym $RPM_BUILD_ROOT/usr/local/bin
 
@@ -51,7 +50,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc ../../doc ../../README ../../COPYING
 /usr/local/bin/aranym
-/usr/local/man/man1/aranym.1
 
 %changelog
 * Sun Apr 14 2002 Petr Stehlik <pstehlik@sophics.cz>
