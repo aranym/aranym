@@ -751,7 +751,7 @@ void VIDEL::renderScreenZoom()
 					uint8 *hvram_line = hvram;
 
 					for (int h = 0; h < scrheight; h++) {
-						fvram_line = fvram + (zoomytable[h] * vw);
+						fvram_line = fvram + (zoomytable[h] * nextline);
 
 						uint16 *fvram_column = fvram_line;
 						uint8 *hvram_column = hvram_line;
@@ -788,7 +788,7 @@ void VIDEL::renderScreenZoom()
 					uint16 *hvram_line = (uint16 *)hvram;
 
 					for (int h = 0; h < scrheight; h++) {
-						fvram_line = fvram + (zoomytable[h] * vw);
+						fvram_line = fvram + (zoomytable[h] * nextline);
 
 						uint16 *fvram_column = fvram_line;
 						uint16 *hvram_column = hvram_line;
@@ -820,7 +820,7 @@ void VIDEL::renderScreenZoom()
 					uint8 *hvram_line = hvram;
 
 					for (int h = 0; h < scrheight; h++) {
-						fvram_line = fvram + (zoomytable[h] * vw);
+						fvram_line = fvram + (zoomytable[h] * nextline);
 
 						uint16 *fvram_column = fvram_line;
 						uint8 *hvram_column = hvram_line;
@@ -857,7 +857,7 @@ void VIDEL::renderScreenZoom()
 					uint32 *hvram_line = (uint32 *)hvram;
 
 					for (int h = 0; h < scrheight; h++) {
-						fvram_line = fvram + (zoomytable[h] * vw);
+						fvram_line = fvram + (zoomytable[h] * nextline);
 
 						uint16 *fvram_column = fvram_line;
 						uint32 *hvram_column = hvram_line;
@@ -891,6 +891,9 @@ void VIDEL::renderScreenZoom()
 
 /*
  * $Log$
+ * Revision 1.45  2002/12/29 13:54:46  joy
+ * linewidth and lineoffset registers emulated
+ *
  * Revision 1.44  2002/12/01 10:26:12  pmandin
  * Autozoom bugfix
  *
