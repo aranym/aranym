@@ -5,6 +5,7 @@
 class RTC : public ICio {
 private:
 	uae_u8 addr;
+	char nvram_filename[512];
 
 public:
 	RTC();
