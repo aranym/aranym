@@ -39,13 +39,13 @@ extern uint32 ROMBase;		// ROM base (Atari address space)
 extern uint8 *ROMBaseHost;	// ROM base (host address space)
 extern uint32 ROMSize;		// Size of ROM
 
-extern uint32 TTRAMBase;	// TT-RAM base (Atari address space)
-extern uint8 *TTRAMBaseHost;	// TT-RAM base (host address space)
+//extern uint32 TTRAMBase;	// TT-RAM base (Atari address space)
+//extern uint8 *TTRAMBaseHost;	// TT-RAM base (host address space)
 extern uint32 TTRAMSize;	// Size of TT-RAM
 
 extern uint32 VideoRAMBase;	// VideoRAM base (Atari address space)
 extern uint8 *VideoRAMBaseHost;	// VideoRAM base (host address space)
-extern uint32 VideoRAMSize;	// Size of VideoRAM
+//extern uint32 VideoRAMSize;	// Size of VideoRAM
 
 // Mac memory access functions
 #include "memory.h"

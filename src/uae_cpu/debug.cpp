@@ -22,8 +22,6 @@
 
 #include "main.h"
 #include "cpu_emulation.h"
-extern uint32 RAMSize;
-
 
 static int debugger_active = 0;
 static uaecptr skipaddr;
