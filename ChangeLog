@@ -1,3 +1,7 @@
+2004/09/04 - milan
+- src/parameters.cpp: don't show parameters, which aren't compiled in
+
+
 2004/09/03 - joy
 - atari/network/ethernet/ethernet.c, nfeth-config.c: the idea of new IOCTLs
   was not working because inet4.xdd blocks the IOCTLs and does not pass them

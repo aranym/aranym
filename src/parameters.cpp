@@ -71,12 +71,16 @@ static struct option const long_options[] =
 #endif
   {"floppy", required_argument, 0, 'a'},
   {"resolution", required_argument, 0, 'r'},
+#ifdef DEBUGGER
   {"debug", no_argument, 0, 'D'},
+#endif
   {"fullscreen", no_argument, 0, 'f'},
   {"nomouse", no_argument, 0, 'N'},
   {"refresh", required_argument, 0, 'v'},
   {"monitor", required_argument, 0, 'm'},
+#if HOSTFS_SUPPORT
   {"disk", required_argument, 0, 'd'},
+#endif
   {"help", no_argument, 0, 'h'},
   {"version", no_argument, 0, 'V'},
   {"config", required_argument, 0, 'c'},
@@ -84,7 +88,9 @@ static struct option const long_options[] =
   {"gui", no_argument, 0, 'G'},
   {"swap-ide", no_argument, 0, 'S'},
   {"emutos", no_argument, 0, 'e'},
+#ifdef ENABLE_LILO
   {"lilo", no_argument, 0, 'l'},
+#endif
   {NULL, 0, NULL, 0}
 };
 
@@ -568,13 +574,11 @@ void usage (int status) {
 Options:\n\
   -a, --floppy NAME          floppy image file NAME\n\
   -e, --emutos               boot EmuTOS\n\
-  -l, --lilo                 boot a linux kernel\n\
   -N, --nomouse              don't grab mouse at startup\n\
   -f, --fullscreen           start in fullscreen\n\
   -v, --refresh <X>          VIDEL refresh rate in VBL (default 2)\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
-  -d, --disk CHAR:PATH[:]    HostFS mapping, e.g. d:/atari/d_drive\n\
   -c, --config FILE          read different configuration file\n\
   -s, --save                 save configuration file\n\
   -G, --gui                  open GUI at startup\n\
@@ -582,6 +586,12 @@ Options:\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
+#if HOSTFS_SUPPORT
+  printf("  -d, --disk CHAR:PATH[:]    HostFS mapping, e.g. d:/atari/d_drive\n");
+#endif
+#ifdef ENABLE_LILO
+  printf("  -l, --lilo                 boot a linux kernel\n");
+#endif
 #ifndef FixedSizeFastRAM
   printf("  -F, --fastram SIZE         FastRAM size (in MB)\n");
 #endif
@@ -676,7 +686,9 @@ int process_cmdline(int argc, char **argv)
 	while ((c = getopt_long (argc, argv,
 							 "a:" /* floppy image file */
 							 "e"  /* boot emutos */
+#ifdef ENABLE_LILO
 							 "l"  /* boot lilo */
+#endif
 #ifdef DEBUGGER
 							 "D"  /* debugger */
 #endif
@@ -688,7 +700,9 @@ int process_cmdline(int argc, char **argv)
 							 "v:" /* VIDEL refresh */
 							 "r:" /* resolution */
 							 "m:" /* attached monitor */
+#if HOSTFS_SUPPORT
 							 "d:" /* filesystem assignment */
+#endif
 							 "s"  /* save config file */
 
 							 "c:" /* path to config file */
@@ -723,9 +737,11 @@ int process_cmdline(int argc, char **argv)
 				bx_options.video.fullscreen = true;
 				break;
 
+#ifdef ENABLE_LILO
 			case 'l':
 				boot_lilo = true;
 				break;
+#endif
 
 			case 'v':
 				bx_options.video.refresh = atoi(optarg);
@@ -749,6 +765,7 @@ int process_cmdline(int argc, char **argv)
 				bx_options.video.boot_color_depth = atoi(optarg);
 				break;
 
+#if HOSTFS_SUPPORT
 			case 'd':
 				if ( strlen(optarg) < 4 || optarg[1] != ':') {
 					fprintf(stderr, "Not enough parameters for -d\n");
@@ -769,6 +786,7 @@ int process_cmdline(int argc, char **argv)
 					// Just make sure postload_cfg is called after this.
 				}
 				break;
+#endif
 
 			case 's':
 				saveConfigFile = true;
@@ -903,9 +921,7 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
 	process_config(f, rcfile, startup_conf, "[STARTUP]", true);
-#ifdef USE_JIT
 	process_config(f, rcfile, jit_conf, "[JIT]", true);
-#endif
 	process_config(f, rcfile, video_conf, "[VIDEO]", true);
 	process_config(f, rcfile, tos_conf, "[TOS]", true);
 	process_config(f, rcfile, ide_swap ? diskd_configs : diskc_configs, "[IDE0]", true);
@@ -952,9 +968,7 @@ bool saveSettings(const char *fs)
 		return false;
 	}
 	update_config(fs, startup_conf, "[STARTUP]");
-#ifdef USE_JIT
 	update_config(fs, jit_conf, "[JIT]");
-#endif
 	update_config(fs, video_conf, "[VIDEO]");
 	update_config(fs, tos_conf, "[TOS]");
 	update_config(fs, ide_swap ? diskd_configs : diskc_configs, "[IDE0]");
