@@ -1,3 +1,7 @@
+2004/09/08 - Xavier
+- src/gui-sdl/sdlgui.cpp: edit field handling cleaned.
+
+
 2004/09/07 - joy
 - src/parameters.[cpp,h]: configPath added to aranymfs struct. Fixes problem
   with adding more colons on repeated saving of config file.
