@@ -1,3 +1,8 @@
+2002/02/01 - joy
+- fixed long-standing bug in ATA.cpp that made ARAnyM stuck when no IDE disk
+  drive was found (or defined in config).
+
+
 2002/02/01 - milan
 - the 1st step of rewriting CPU/Memory <-> HW interface, look at
   cpu_emulation.h
