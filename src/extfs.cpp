@@ -1461,10 +1461,15 @@ bool ExtFs::isPathValid(const char *fileName)
 	D(bug("Checking folder validity of path '%s'", path));
 	if (*path) {
 		struct stat statBuf;
+#if DEBUG
 		if (int staterr = stat(path, &statBuf) < 0) {
 			D(bug("stat(%s) returns %d, errno=%d", path, staterr, errno));
 			return false;	// path invalid
 		}
+#else
+		if (stat(path, &statBuf) < 0)
+			return false;	// path invalid
+#endif
 	}
 	return true;
 }
@@ -2611,6 +2616,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.52  2002/06/24 17:08:48  standa
+ * The pointer arithmetics fixed. The memptr usage introduced in my code.
+ *
  * Revision 1.51  2002/05/13 18:53:24  standa
  * Minor debug changes.
  *
