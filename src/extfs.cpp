@@ -988,7 +988,7 @@ void ExtFs::transformFileName( char* dest_, const char* source )
 	ssize_t dotPos = 0;
 	bool	doConversion = true;
 	char	*dot;
-	char *dest = (char *)alloca(len);
+	char	*dest = (char *)alloca(MAX(len, 13));	// convert here
 
 	// Get extension & convert other dots into underscores
 	if ( ( dot = strrchr( source, '.' ) ) != NULL ) {
@@ -1054,7 +1054,7 @@ void ExtFs::transformFileName( char* dest_, const char* source )
 		temp = brkPos + 1;
 	}
 	if ( dot != NULL )
-		// set the extensi	on separator
+		// set the extension separator
 		dest[ dotPos ] = '.';
 
 #ifdef DEBUG_FILENAMETRANSFORMATION
@@ -1063,7 +1063,7 @@ void ExtFs::transformFileName( char* dest_, const char* source )
 
 	// upper case conversion
 	strapply( dest, toupper );
-	strcpy( dest_, dest);
+	strcpy(dest_, dest);	// copy to final 8+3 buffer
 }
 
 
@@ -2487,6 +2487,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.31  2002/03/26 09:29:06  joy
+ * transformFileName was writing long filenames to 8+3 TOS filename buffer. This is way wrong - you need to do all filename manipulation on a separate buffer and copy only the resulting 8+3 filename to the TOS fn buffer.
+ *
  * Revision 1.30  2002/03/14 12:00:06  standa
  * ExtFs flags2st bugfix. Some Fcreate modifications (optional).
  *
