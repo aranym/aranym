@@ -10,6 +10,7 @@
 #include "extfs.h"
 #include "fvdidrv.h"
 #include "audio.h"
+#include "xhdi.h"
 
 #ifdef EXTFS_SUPPORT
 // External filesystem access object.
@@ -22,11 +23,17 @@ extern FVDIDriver fVDIDrv;
 // The Audio Driver
 extern AudioDriver AudioDrv;
 
+// The XHDI Driver
+extern XHDIDriver Xhdi;
+
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.4  2002/04/19 22:14:03  joy
+ * sound driver support
+ *
  * Revision 1.3  2001/11/21 08:20:00  milan
  * Compilation without extfs corrected
  *

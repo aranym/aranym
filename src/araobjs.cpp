@@ -19,8 +19,14 @@ FVDIDriver fVDIDrv;
 //The Audio driver
 AudioDriver AudioDrv;
 
+// XHDI driver
+XHDIDriver Xhdi;
+
 /*
  * $Log$
+ * Revision 1.5  2002/04/19 21:58:04  joy
+ * audio driver by Didier MEQUIGNON
+ *
  * Revision 1.4  2001/11/21 13:29:51  milan
  * cleanning & portability
  *
