@@ -46,6 +46,12 @@ static bool bQuitProgram;
 
 /* The main dialog: */
 #define MAINDLG_ABOUT    2
+#define MAINDLG_NORESET  3
+#define MAINDLG_RESET    4
+#define MAINDLG_OK       5
+#define MAINDLG_CANCEL   6
+#define MAINDLG_QUIT     7
+/*
 #define MAINDLG_DISCS    3
 #define MAINDLG_TOSGEM   4
 #define MAINDLG_SCREEN   5
@@ -60,11 +66,13 @@ static bool bQuitProgram;
 #define MAINDLG_OK       14
 #define MAINDLG_CANCEL   15
 #define MAINDLG_QUIT     16
+*/
 SGOBJ maindlg[] =
 {
   { SGBOX, 0, 0, 0,0, 36,20, NULL },
   { SGTEXT, 0, 0, 10,1, 16,1, "ARAnyM main menu" },
   { SGBUTTON, 0, 0, 4,4, 12,1, "About" },
+/*
   { SGBUTTON, 0, 0, 4,6, 12,1, "Discs" },
   { SGBUTTON, 0, 0, 4,8, 12,1, "TOS/GEM" },
   { SGBUTTON, 0, 0, 4,10, 12,1, "Screen" },
@@ -74,6 +82,7 @@ SGOBJ maindlg[] =
   { SGBUTTON, 0, 0, 20,8, 12,1, "Joysticks" },
   { SGBUTTON, 0, 0, 20,10, 12,1, "Keyboard" },
   { SGBUTTON, 0, 0, 20,12, 12,1, "Devices" },
+*/
   { SGRADIOBUT, 0, 0, 2,16, 10,1, "No Reset" },
   { SGRADIOBUT, 0, 0, 2,18, 10,1, "Reset" },
   { SGBUTTON, 0, 0, 14,16, 8,3, "Okay" },
@@ -1048,35 +1057,37 @@ int Dialog_MainDlg(bool *bReset)
         SDLGui_CenterDlg(aboutdlg);
         SDLGui_DoDialog(aboutdlg);
         break;
+/*
       case MAINDLG_DISCS:
         Dialog_DiscDlg();
         break;
       case MAINDLG_TOSGEM:
-        //Dialog_TosGemDlg();
+        Dialog_TosGemDlg();
         break;
       case MAINDLG_SCREEN:
-        //Dialog_ScreenDlg();
+        Dialog_ScreenDlg();
         break;
       case MAINDLG_SOUND:
-        //Dialog_SoundDlg();
+        Dialog_SoundDlg();
         break;
       case MAINDLG_CPU:
-        //Dialog_CpuDlg();
+        Dialog_CpuDlg();
         break;
       case MAINDLG_MEMORY:
-        //Dialog_MemDlg();
+        Dialog_MemDlg();
         break;
       case MAINDLG_JOY:
-        //Dialog_JoyDlg();
+        Dialog_JoyDlg();
         break;
       case MAINDLG_KEYBD:
-        // SDLGui_CenterDlg(keyboarddlg);
-        // SDLGui_DoDialog(keyboarddlg);
+        SDLGui_CenterDlg(keyboarddlg);
+        SDLGui_DoDialog(keyboarddlg);
         break;
       case MAINDLG_DEVICES:
-        // SDLGui_CenterDlg(devicedlg);
-        // SDLGui_DoDialog(devicedlg);
+        SDLGui_CenterDlg(devicedlg);
+        SDLGui_DoDialog(devicedlg);
         break;
+*/
       case MAINDLG_QUIT:
         bQuitProgram = true;
         break;
