@@ -53,7 +53,7 @@ static void mon_write_byte_b2(uint32 adr, uint32 b)
 {
 	WriteAtariInt8(adr, b);
 }
-#endif
+#endif	/* ENABLE_MON */
 
 //For starting debugger
 void setactvdebug(int) {
@@ -546,8 +546,9 @@ bool InitTOSROM(void)
 	ROMBaseHost[0x00418] = (bx_options.cookies._mch >> 8) & 0xff;
 	ROMBaseHost[0x00419] = (bx_options.cookies._mch) & 0xff;
 
+#ifdef DIRECT_TRUECOLOR
 	// patch it for direct TC mode
-	if (direct_truecolor) {
+	if (bx_options.video.direct_truecolor) {
 		// Patch TOS (enforce VIDEL VideoRAM at ARANYMVRAMSTART)
 		D(bug("Patching TOS for direct VIDEL output..."));
 
@@ -562,6 +563,7 @@ bool InitTOSROM(void)
 		ROMBaseHost[35760] = 0x4e;
 		ROMBaseHost[35761] = 0x71;
 	}
+#endif
 
 	return true;
 }
@@ -694,6 +696,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.39  2001/11/07 21:18:25  milan
+ * SDL_CFLAGS in CXXFLAGS now.
+ *
  * Revision 1.38  2001/11/06 20:36:54  milan
  * MMU's corrections
  *

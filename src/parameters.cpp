@@ -21,7 +21,9 @@ static struct option const long_options[] =
   {"resolution", required_argument, 0, 'r'},
   {"debug", no_argument, 0, 'D'},
   {"fullscreen", no_argument, 0, 'f'},
+#ifdef DIRECT_TRUECOLOR
   {"direct_truecolor", no_argument, 0, 't'},
+#endif
   {"monitor", required_argument, 0, 'm'},
   {"disk", required_argument, 0, 'd'},
   {"help", no_argument, 0, 'h'},
@@ -42,7 +44,6 @@ int8 boot_color_depth = -1;	// Boot in color depth
 int8 monitor = -1;				// VGA
 extern uint32 FastRAMSize;		// FastRAM size
 uint32 FastRAMSizeMB;
-bool direct_truecolor = false;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 
 static bool saveConfigFile = false;
@@ -87,7 +88,6 @@ Options:
   -a, --floppy NAME          floppy image file NAME\n\
   -F, --fastram SIZE         FastRAM size (in MB)\n\
   -f, --fullscreen           start in fullscreen\n\
-  -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
   -d, --disk CHAR:ROOTPATH   METADOS filesystem assignment e.g. d:/atari/d_drive\n\
@@ -96,6 +96,9 @@ Options:
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
+#ifdef DIRECT_TRUECOLOR
+  printf("  -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n");
+#endif
 #ifdef DEBUGGER
   printf("  -D, --debug                start debugger\n");
 #endif
@@ -160,6 +163,9 @@ void preset_cfg() {
   preset_ide();
   bx_options.cookies._mch = 0x00030000; // Falcon030
   bx_options.autoMouseGrab = true;
+#ifdef DIRECT_TRUECOLOR
+  bx_options.video.direct_truecolor = false;
+#endif
 }
 
 /* this is more or less a hack but it makes sense to put CDROM under IDEx config option */
@@ -246,11 +252,13 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				fullscreen = true;
 				break;
 	
+#ifdef DIRECT_TRUECOLOR
 			case 't':
-				direct_truecolor = true;
+				bx_options.video.direct_truecolor = true;
 				fullscreen = true;
 				boot_color_depth = 16;
 				break;
+#endif
 
 			case 'm':
 				monitor = atoi(optarg);

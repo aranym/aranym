@@ -208,7 +208,11 @@ void VIDEL::renderScreenNoFlag()
 	if (!hostScreen.renderBegin())
 		return;
 
-	long atariVideoRAM = direct_truecolor ? ARANYMVRAMSTART : this->getVideoramAddress();
+	long atariVideoRAM = this->getVideoramAddress();
+#ifdef DIRECT_TRUECOLOR
+	if (bx_options.video.direct_truecolor)
+		atariVideoRAM = ARANYMVRAMSTART;
+#endif
 	uint16 *fvram = (uint16 *) get_real_address_direct(atariVideoRAM);
 	VideoRAMBaseHost = (uint8 *) hostScreen.getVideoramAddress();
 	uint16 *hvram = (uint16 *) VideoRAMBaseHost;
@@ -296,7 +300,10 @@ void VIDEL::renderScreenNoFlag()
 #endif // SUPPORT_MULTIPLEDESTBPP
 
 			// in direct_truecolor mode we set the Videl VIDEORAM directly to the host vram
-			if (! direct_truecolor) {
+#ifdef DIRECT_TRUECOLOR
+			if (! bx_options.video.direct_truecolor)
+#endif
+			{
 				if ( /* videocard memory in Motorola endian format */ false) {
 					memcpy(hvram, fvram, planeWordCount << 1);
 				}
@@ -353,6 +360,10 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.29  2001/11/04 23:17:08  standa
+ * 8bit destination surface support in VIDEL. Blit routine optimalization.
+ * Bugfix in compatibility modes palette copying.
+ *
  * Revision 1.28  2001/10/30 22:59:34  standa
  * The resolution change is now possible through the fVDI driver.
  *
