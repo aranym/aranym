@@ -106,10 +106,10 @@ static void dsp_undefined(void);
 /* Instructions without parallel moves */
 							/* CCR stuff to do */
 static void dsp_andi(void);		/* done */
-static void dsp_bchg(void);		/* L */
-static void dsp_bclr(void);		/* L */
-static void dsp_bset(void);		/* L */
-static void dsp_btst(void);		/* L */
+static void dsp_bchg(void);		/* done */
+static void dsp_bclr(void);		/* done */
+static void dsp_bset(void);		/* done */
+static void dsp_btst(void);		/* done */
 static void dsp_div(void);		/* LV */
 static void dsp_do(void);		/* done */
 static void dsp_enddo(void);	/* done */
@@ -911,12 +911,9 @@ static uint32 read_memory(int space, uint16 address)
 		case SPACE_X:
 		case SPACE_Y:
 			/* Internal RAM or ROM ? */
-			if (address < 0x200) {
-				if (dsp.registers[REG_OMR] & (1<<OMR_DE)) {
-					return dsp.rom[space][address] & BITMASK(24);
-				} else {
-					return dsp.ram[space][address] & BITMASK(24);
-				}
+			if ((dsp.registers[REG_OMR] & (1<<OMR_DE)) &&
+				(address>=0x100) && (address<0x200)) {
+				return dsp.rom[space][address] & BITMASK(24);
 			}
 			
 			/* Peripheral address ? */
@@ -931,19 +928,7 @@ static uint32 read_memory(int space, uint16 address)
 				return dsp.periph[space][address-0xffc0] & BITMASK(24);
 			}
 
-#if DSP_CHECK_MEM_ACCESS
-			if (address<0x8000) {
-#endif
-				return dsp.ram[space][address] & BITMASK(24);
-#if DSP_CHECK_MEM_ACCESS
-			} else {
-				D(bug("Dsp: Read at 0x%04x without mapped memory",address));
-				D(bug("Dsp: state = DSP_HALT"));
-				dsp.state = DSP_HALT;
-				return 0xdead;
-#endif
-			}
-			break;
+			/* Now continue with common code, no break here */
 		case SPACE_P:
 #if DSP_CHECK_MEM_ACCESS
 			if (address<0x8000) {
@@ -955,8 +940,8 @@ static uint32 read_memory(int space, uint16 address)
 				D(bug("Dsp: state = DSP_HALT"));
 				dsp.state = DSP_HALT;
 				return 0xdead;
-			}
 #endif
+			}
 			break;
 	}
 
@@ -1089,13 +1074,13 @@ static void write_memory(int space, uint16 address, uint32 value)
 #if DSP_DISASM_MEM
 	switch(space) {
 		case SPACE_P:
-			D(bug("Dsp: Mem: p:0x%04x:0x%06x -> 0x%06x", address, curvalue, read_memory(space, address)));
+			fprintf(stderr,"Dsp: Mem: p:0x%04x:0x%06x -> 0x%06x\n", address, curvalue, read_memory(space, address));
 			break;
 		case SPACE_X:
-			D(bug("Dsp: Mem: x:0x%04x:0x%06x -> 0x%06x", address, curvalue, read_memory(space, address)));
+			fprintf(stderr,"Dsp: Mem: x:0x%04x:0x%06x -> 0x%06x\n", address, curvalue, read_memory(space, address));
 			break;
 		case SPACE_Y:
-			D(bug("Dsp: Mem: y:0x%04x:0x%06x -> 0x%06x", address, curvalue, read_memory(space, address)));
+			fprintf(stderr,"Dsp: Mem: y:0x%04x:0x%06x -> 0x%06x\n", address, curvalue, read_memory(space, address));
 			break;
 	}
 #endif
@@ -1528,7 +1513,7 @@ static void dsp_bchg(void)
 	}
 
 	/* Set carry */
-	dsp.registers[REG_SR] &= 0xfffe;
+	dsp.registers[REG_SR] &= BITMASK(16)-(1<<SR_C);
 	dsp.registers[REG_SR] |= newcarry<<SR_C;
 }
 
@@ -1586,7 +1571,7 @@ static void dsp_bclr(void)
 	}
 
 	/* Set carry */
-	dsp.registers[REG_SR] &= 0xfffe;
+	dsp.registers[REG_SR] &= BITMASK(16)-(1<<SR_C);
 	dsp.registers[REG_SR] |= newcarry<<SR_C;
 }
 
@@ -1644,7 +1629,7 @@ static void dsp_bset(void)
 	}
 
 	/* Set carry */
-	dsp.registers[REG_SR] &= 0xfffe;
+	dsp.registers[REG_SR] &= BITMASK(16)-(1<<SR_C);
 	dsp.registers[REG_SR] |= newcarry<<SR_C;
 }
 
@@ -1691,7 +1676,7 @@ static void dsp_btst(void)
 	}
 
 	/* Set carry */
-	dsp.registers[REG_SR] &= 0xfffe;
+	dsp.registers[REG_SR] &= BITMASK(16)-(1<<SR_C);
 	dsp.registers[REG_SR] |= newcarry<<SR_C;
 }
 
@@ -2111,15 +2096,16 @@ static void dsp_jsset(void)
 
 static void dsp_lua(void)
 {
-	uint32 value, numreg;
+	uint32 value, srcreg, dstreg;
 	
 	dsp_calc_ea((cur_inst>>8) & BITMASK(5), &value);
-
-	numreg = cur_inst & BITMASK(3);
+	srcreg = (cur_inst>>8) & BITMASK(3);
+	dstreg = cur_inst & BITMASK(3);
+	
 	if (cur_inst & (1<<3)) {
-		dsp.registers[REG_N0+numreg]=value;
+		dsp.registers[REG_N0+dstreg] = dsp.registers[REG_N0+srcreg];
 	} else {
-		dsp.registers[REG_R0+numreg]=value;
+		dsp.registers[REG_R0+dstreg] = dsp.registers[REG_R0+srcreg];
 	}
 }
 
@@ -4432,6 +4418,10 @@ static void dsp_tst(void)
 }
 
 /*
+	2002-07-26:PM	BUG:bad detection of rom space in read_memory
+					BUG:lua updated register with previous value, not the new one
+					BUG:added missing '\n' in disasm output
+	2002-07-25:PM	FIX:replaced D(bug()) by fprintf() for disasm
 	2002-07-22:PM	FIX:removed sub56 operation in tst()
 	2002-07-19:PM	BUG:movec_b and movec_d operations permuted
 					BUG:pm_5: wrong bit number used for write flag
