@@ -1,3 +1,10 @@
+2002/03/27 - STanda
+- extfs.cpp/transformFileName rewriten nearly from scratch. Now it should be
+  more readable source than before.
+  A simple findFirst function fix: no error on the stat() failure. E.g.
+  an invalid symbolic link on the host fs.
+
+
 2002/03/26 - milan
 - MMU returns logical address during bus error
 

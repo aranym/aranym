@@ -15,8 +15,8 @@
 #include "extfs.h"
 #include "araobjs.h"
 
-#undef DEBUG_FILENAMETRANSFORMATION
-#define DEBUG 0
+#define DEBUG_FILENAMETRANSFORMATION
+#define DEBUG 1
 #include "debug.h"
 
 #ifdef HAVE_SYS_VFS_H
@@ -982,70 +982,82 @@ int16 ExtFs::flags2st(int flags)
 	return res;
 }
 
-void ExtFs::transformFileName( char* dest_, const char* source )
+
+void ExtFs::transformFileName( char* dest, const char* source )
 {
 #ifdef DEBUG_FILENAMETRANSFORMATION
-	// D(bug("MetaDOS: transformFileName(\"%s\")...", source));
+	D(bug("MetaDOS: transformFileName(\"%s\")...", source));
 #endif
 
 	// . and .. system folders
 	if ( strcmp(source, ".") == 0 || strcmp(source, "..") == 0) {
-		strcpy(dest_, source);	// copy to final 8+3 buffer
+		strcpy(dest, source);	// copy to final 8+3 buffer
 		return;
 	}
 
-	ssize_t len = strlen( source );
-
 	// Get file name (strip off file extension)
 	char *dot = strrchr( source, '.' );
-
 	// ignore leading dot
 	if (dot == source)
 		dot = NULL;
 
 	// find out dot position
-	ssize_t dotPos = (dot == NULL) ? len : dot - source;
+	ssize_t len = strlen( source );
+	ssize_t nameLen = ( dot == NULL ) ? len : dot - source;
+	ssize_t extLen  = ( nameLen == len ) ? 0 : len - nameLen - 1;
 
-	// source is const so do the conversion in local buffer
-	char *dest = (char *)alloca(MAX(len, 13));
-	strcpy(dest, source);
+	// copy the name... (max 12 chars due to the buffer length limitation)
+	strncpy(dest, source, 12);
+	dest[12] = '\0';
 
-	// strip off file extension
-	dest[dotPos] = '\0';
+#ifdef DEBUG_FILENAMETRANSFORMATION
+	D(bug("MetaDOS: transformFileName:... nameLen = %i, extLen = %i", nameLen, extLen));
+#endif
 
-	// if the file name is longer than 8 or if the extension is longer than 3
-	if ( strlen(dest) > 8 || (len - dotPos - 1) > 3 ) {
+	if ( nameLen > 8 || extLen > 3 )
+	{
 		// calculate a hash value from the long name
 		uint32 hashValue = 0;
-		for( int i=0; source[i] != '\0'; i++ )
+		for( int i=0; source[i]; i++ )
 			hashValue += (hashValue << 3) + source[i];
 
 		// hash value hex string as the unique shortenning
-		char   tmpStr[10];
-		char   destIdx;
-		sprintf( tmpStr, "%08x", hashValue );
+		char hashString[10];
+		sprintf( hashString, "%08x", hashValue );
+		hashString[5] = '~';
+		char *hashStr = &hashString[5];
 
-		// put the value into the name or into extension
-		if ( dot == NULL )
-			destIdx = 8;	// this is buggy, IMHO (joy)
-		else
-			destIdx = MIN(5,dotPos);
+		if ( extLen == 0 ) {
+			if ( nameLen < 12 ) {
+				// filename is max 11 chars long and no extension
+				// -> insert the . char into the name after the 8th char
+				nameLen = 8;
+				extLen = 3;
+				dot = (char*)source + nameLen;
+			} else {
+				// filename is longer than 8+3 and has no extension
+				// -> put the hash string as the file extension
+				nameLen = 8;
+				extLen = 3;
+				dot = hashStr;
+			}
+		} else {
+			// shorten the name part to max 5
+			nameLen = MIN(5,nameLen);
+			// add the hash string
+			memcpy( &dest[nameLen], hashStr, 4 ); // including the trailing \0!
+			nameLen+=3;
+			dot++;
+		}
 
-		dest[destIdx] = '~';
-		memcpy( &dest[destIdx+1], &tmpStr[6], 3 ); // including the trailing \0!
+		if ( extLen > 0 ) {
+			// and the extension
+			extLen = MIN(3,extLen);
+			dest[nameLen] = '.';
+			strncpy(&dest[nameLen+1], dot, extLen);
+		}
 
-		dotPos = destIdx + 3;	// this is buggy for dot=NULL, IMHO (joy)
-	}
-
-	// if the file have no . and is 12 char long than shorten it and add the .
-	if ( dot != NULL ) {
-		strncpy( dest+dotPos, dot, 4 );
-		dest[dotPos+4] = '\0';
-	} else if ( len > 8 ) {
-		// this hack fixes the buggy things above, it seems (joy)
-		memmove( dest+9, dest+8, 4 );
-		dotPos = 8;
-		dot = dest+dotPos;	// real hack to allow setting the extension separator below (joy)
+		dest[ nameLen+extLen+1 ] = '\0';
 	}
 
 	// replace spaces and dots in the filename with the _
@@ -1055,19 +1067,17 @@ void ExtFs::transformFileName( char* dest_, const char* source )
 		*brkPos = '_';
 		temp = brkPos + 1;
 	}
+
+	// set the extension separator
 	if ( dot != NULL )
-		// set the extension separator
-		dest[ dotPos ] = '.';
+		dest[ nameLen ] = '.';
 
 	// upper case conversion
 	strapply( dest, toupper );
 
 #ifdef DEBUG_FILENAMETRANSFORMATION
-	D(bug("MetaDOS: transformFileName(\"%s\") -> \"%s\"", source, dest));
+	D(bug("MetaDOS: /transformFileName(\"%s\") -> \"%s\"", source, dest));
 #endif
-
-	// copy to real destination buffer
-	strcpy(dest_, dest);
 }
 
 
@@ -2468,10 +2478,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 	D(bug("MetaDOS: Fs..... (%s)", fpathName ));
 
-	if ( stat(fpathName, &statBuf) )
-		return unix2toserrno(errno,TOS_EFILNF);
-
-	// TODO Here might be a section for Dreaddir function...
+	// note: here it doesn't matter whether the stat() succeeds or not
+	//       ... maybe some defaults when fails, but no real need.
+	stat(fpathName, &statBuf);
 
 	// chop fileName to path only
 	// for use in Fsnext
@@ -2491,6 +2500,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.33  2002/03/26 12:22:09  joy
+ * filename conversion in transformFileName() partially rewritten. Now ST-Zip does not crash when browsing MetaDOS drive.
+ *
  * Revision 1.32  2002/03/26 09:43:19  joy
  * the dest buf size must be at least 8+1+3+1=13 bytes long!
  *
