@@ -12,7 +12,6 @@ TODO in keyboard support:
 
 TODO in GUI-SDL:
 - create AlertBox() for the GUI-SDL
-- automagic detector of C/H/S geometry for loaded disk images [0.8.5+]
 - open up GUI whenever the config file is not found (so that users can edit
   the default values before saving them). [0.8.6]
 - Apply changes automatically before Save Config and perhaps also before Reboot

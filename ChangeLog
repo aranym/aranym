@@ -9,6 +9,7 @@
 
 - gui-sdl/dlgDisk.cpp: no more confused users as all CD-ROM unrelated
   settings are hidden now when CD-ROM is selected.
+  An automagic detection of C/H/S geometry for loaded disk images added.
 
 
 2004/01/02 - joy

@@ -66,7 +66,7 @@ enum DISCDLG {
 	EXIT
 };
 
-SGOBJ discdlg[] =
+static SGOBJ discdlg[] =
 {
   { SGBOX, 0, 0, 0,0, 40,25, NULL },
   { SGBOX, 0, 0, 1,1, 38,4, NULL },
@@ -132,7 +132,7 @@ bool getSelected(int index)
 	return (discdlg[index].state & SG_SELECTED);
 }
 
-void UpdateFloppyStatus(void)
+static void UpdateFloppyStatus(void)
 {
 	discdlg[FLOPPY_MOUNT].txt = is_floppy_inserted() ? eject : insert;
 }
@@ -147,7 +147,7 @@ static void HideDiskSettings(int handle, bool state)
 	}
 }
 
-void UpdateCDROMstatus(int handle)
+static void UpdateCDROMstatus(int handle)
 {
 	int index = (handle == 0) ? IDE0_MOUNT : IDE1_MOUNT;
   	bool isCDROM = gui_options.atadevice[0][handle].isCDROM;
@@ -158,7 +158,7 @@ void UpdateCDROMstatus(int handle)
 	setState(index, SG_HIDDEN, !isCDROM);
 }
 
-void RemountCDROM(int handle)
+static void RemountCDROM(int handle)
 {
   	if (gui_options.atadevice[0][handle].isCDROM) {
 		bool status = bx_hard_drive.get_cd_media_status(handle);
@@ -166,6 +166,44 @@ void RemountCDROM(int handle)
 		bx_hard_drive.set_cd_media_status(handle, ! status);
 		UpdateCDROMstatus(handle);
 	}
+}
+
+static off_t DiskImageSize(const char *fname)
+{
+	struct stat buf;
+	if (stat(fname, &buf) != 0) {
+		// error reading file
+		return 0;
+	}
+	if (! S_ISREG(buf.st_mode)) {
+		// not regular file (perhaps block device?)
+		return 0;
+	}
+	return buf.st_size;
+}
+
+static void UpdateDiskParameters(const char *fname, char *bufsize, int cyl, char *bufcyl, int head, char *bufhead, int spt, char *bufspt)
+{
+	off_t size = DiskImageSize(fname);
+	int sizeMB = ((size / 1024) + 512) / 1024;
+	if (size > 0 && cyl <= 0 && head <= 0 && spt <= 0) {
+		head = 16;
+		spt = 63;
+		int divisor = 512 * head * spt;	// 512 is sector size
+		cyl = size / divisor;
+		if (size % divisor)
+			cyl++;
+	}
+
+	// output
+	if (bufsize)
+		sprintf(bufsize, "%5d", sizeMB);
+	if (bufcyl)
+		sprintf(bufcyl, "%5d", cyl);
+	if (bufhead)
+		sprintf(bufhead, "%3d", head);
+	if (bufspt)
+		sprintf(bufspt, "%2d", spt);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -189,16 +227,10 @@ void Dialog_DiscDlg(void)
   File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path, discdlg[IDE0_PATH].w);
   discdlg[IDE0_PATH].txt = ide0_path;
   safe_strncpy(ide0_name, gui_options.atadevice[0][0].model, sizeof(ide0_name));
-  int cyl = gui_options.atadevice[0][0].cylinders;
-  int head = gui_options.atadevice[0][0].heads;
-  int spt = gui_options.atadevice[0][0].spt;
-  long size = (((long)cyl * head * spt / 1024)+1)/2;	// round up to MB
-  if (size < 0)
-  	size = 0;
-  sprintf(ide0_size, "%5ld", size);
-  sprintf(ide0_cyl, "%5d", cyl);
-  sprintf(ide0_head, "%3d", head);
-  sprintf(ide0_spt, "%2d", spt);
+  UpdateDiskParameters(	gui_options.atadevice[0][0].path, ide0_size,
+  						gui_options.atadevice[0][0].cylinders, ide0_cyl,
+  						gui_options.atadevice[0][0].heads, ide0_head,
+  						gui_options.atadevice[0][0].spt, ide0_spt);
   setSelected(IDE0_PRESENT, gui_options.atadevice[0][0].present);
   setSelected(IDE0_CDROM, gui_options.atadevice[0][0].isCDROM);
   setSelected(IDE0_READONLY, gui_options.atadevice[0][0].readonly);
@@ -209,14 +241,10 @@ void Dialog_DiscDlg(void)
   File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path, discdlg[IDE1_PATH].w);
   discdlg[IDE1_PATH].txt = ide1_path;
   safe_strncpy(ide1_name, gui_options.atadevice[0][1].model, sizeof(ide1_name));
-  cyl = gui_options.atadevice[0][1].cylinders;
-  head = gui_options.atadevice[0][1].heads;
-  spt = gui_options.atadevice[0][1].spt;
-  size = (((long)cyl * head * spt / 1024)+1)/2;	// round up to MB
-  sprintf(ide1_size, "%5ld", size);
-  sprintf(ide1_cyl, "%5d", cyl);
-  sprintf(ide1_head, "%3d", head);
-  sprintf(ide1_spt, "%2d", spt);
+  UpdateDiskParameters(	gui_options.atadevice[0][1].path, ide1_size,
+  						gui_options.atadevice[0][1].cylinders, ide1_cyl,
+  						gui_options.atadevice[0][1].heads, ide1_head,
+  						gui_options.atadevice[0][1].spt, ide1_spt);
   setSelected(IDE1_PRESENT, gui_options.atadevice[0][1].present);
   setSelected(IDE1_READONLY, gui_options.atadevice[0][1].readonly);
   setSelected(IDE1_CDROM, gui_options.atadevice[0][1].isCDROM);
@@ -258,6 +286,10 @@ void Dialog_DiscDlg(void)
           if( !File_DoesFileNameEndWithSlash(tmpname)/*&& File_Exists(tmpname)*/) {
             strcpy(gui_options.atadevice[0][0].path, tmpname);
             File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
+  UpdateDiskParameters(	gui_options.atadevice[0][0].path, ide0_size,
+  						gui_options.atadevice[0][0].cylinders, ide0_cyl,
+  						gui_options.atadevice[0][0].heads, ide0_head,
+  						gui_options.atadevice[0][0].spt, ide0_spt);
           }
           else {
           	ide0_path[0] = 0;
@@ -272,6 +304,10 @@ void Dialog_DiscDlg(void)
           if( !File_DoesFileNameEndWithSlash(tmpname)/*&& File_Exists(tmpname)*/) {
             strcpy(gui_options.atadevice[0][1].path, tmpname);
             File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
+  UpdateDiskParameters(	gui_options.atadevice[0][1].path, ide1_size,
+  						gui_options.atadevice[0][1].cylinders, ide1_cyl,
+  						gui_options.atadevice[0][1].heads, ide1_head,
+  						gui_options.atadevice[0][1].spt, ide1_spt);
           }
           else {
           	ide1_path[0] = 0;
@@ -311,6 +347,7 @@ void Dialog_DiscDlg(void)
   while(but!=EXIT);
 
   /* Read values from dialog */
+  int cyl, head, spt;
   safe_strncpy(gui_options.atadevice[0][0].model, ide0_name, sizeof(gui_options.atadevice[0][0].model));
   sscanf(ide0_cyl, "%d", &cyl);
   sscanf(ide0_head, "%d", &head);
