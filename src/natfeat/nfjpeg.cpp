@@ -161,12 +161,11 @@ int32 JpegDriver::get_image_info(memptr jpeg_ptr)
 
 	if (images[tmp->handle].src == NULL) {
 		/* Damn, we need to decode it with SDL_image */
-		if (load_image(tmp, Atari2HostAddr(tmp->InPointer),SDL_SwapBE32(tmp->InSize))) {
-			return 0;
+		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize))) {
+			return EINVFN;
 		}
 	}
-
-	return EINVFN;
+	return 0;
 }
 
 int32 JpegDriver::get_image_size(memptr jpeg_ptr)
@@ -179,18 +178,18 @@ int32 JpegDriver::get_image_size(memptr jpeg_ptr)
 
 	if (images[tmp->handle].src == NULL) {
 		/* Damn, we need to decode it with SDL_image */
-		if (load_image(tmp, Atari2HostAddr(tmp->InPointer),SDL_SwapBE32(tmp->InSize))) {
-			return 0;
+		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize))) {
+			return EINVFN;
 		}
 	}
-	return EINVFN;
+	return 0;
 }
 
 int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 {
 	struct _JPGD_STRUCT *tmp;
 	unsigned char *dest,*src, *src_line;
-	int width,height,r,g,b,x,y;
+	int width, height, r,g,b,x,y;
 	SDL_Surface *surface;
 	SDL_PixelFormat *format;
 
@@ -200,19 +199,24 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 
 	if (images[tmp->handle].src == NULL) {
 		/* Damn, we need to decode it with SDL_image */
-		if (!load_image(tmp, Atari2HostAddr(tmp->InPointer),SDL_SwapBE32(tmp->InSize))) {
+		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize))) {
 			return EINVFN;
 		}
 	}
 
-	dest = (unsigned char *)Atari2HostAddr(tmp->OutTmpPointer);
+	dest = (unsigned char *)Atari2HostAddr(SDL_SwapBE32(tmp->OutTmpPointer));
 	surface = images[tmp->handle].src;
 	src = (unsigned char *)surface->pixels;
 	src += surface->pitch * row * 16;
 	width = SDL_SwapBE16(tmp->MFDBPixelWidth);
 	height = 16;
+	if ((surface->h /16) == (int) row) {	/* last row ? */
+		height = surface->h - (row*16);
+	}
 	format = surface->format;
 
+	D(bug("nfjpeg: decode_image(), rows %d to %d", row*16, row*16+height-1));
+	D(bug("nfjpeg: decode_image(), %d outpixelsize", SDL_SwapBE16(tmp->OutPixelSize)));
 	switch(SDL_SwapBE16(tmp->OutPixelSize)) {
 		case 1:	/* Luminance */
 			for (y=0; y<height; y++) {
@@ -299,19 +303,13 @@ SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, ui
 		return SDL_FALSE;
 	}
 	surface = IMG_Load_RW(src, 0);
-#if DEBUG
-	if (surface) {
-		D(bug("nfjpeg: %dx%d image", surface->w, surface->h));
-		D(bug("nfjpeg: R=0x%08x,G=0x%08x,B=0x%08x,A=0x%08x",
-			surface->format->Rmask, surface->format->Gmask,
-			surface->format->Bmask, surface->format->Amask
-		));
-	}
-#endif
 	SDL_FreeRW(src);
 	if (surface==NULL) {
 		return SDL_FALSE;
 	}
+
+	D(bug("nfjpeg: %dx%d image", surface->w, surface->h));
+
 	images[jpgd_ptr->handle].src = surface;
 
 	/* Fill values */

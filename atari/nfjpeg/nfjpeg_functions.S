@@ -40,7 +40,7 @@ _OpenDriver:
 	
 _CloseDriver:
 	movel	a0,sp@-
-	bsr		_JpegDecOpenDriver
+	bsr		_JpegDecCloseDriver
 	addql	#4,sp
 	rts
 
