@@ -32,3 +32,19 @@ uae_u16 IDE::handleReadW(uaecptr addr) {
 void IDE::handleWriteW(uaecptr addr, uae_u16 value) {
 	ata.write_handler(&ata, addr, value, 2);
 }
+
+uae_u32 IDE::handleReadL(uaecptr addr) {
+	uint32 a = 0;
+	a = ata.read_handler(&ata, addr, 2) << 16;
+	a |= ata.read_handler(&ata, addr, 2);
+	return a;
+	// return ata.read_handler(&ata, addr, 4);
+}
+
+void IDE::handleWriteL(uaecptr addr, uae_u32 value) {
+    uint16 a = value >> 16;
+    uint16 b = value;
+	ata.write_handler(&ata, addr, a, 2);
+	ata.write_handler(&ata, addr, b, 2);
+	// ata.write_handler(&ata, addr, value, 4);
+}
