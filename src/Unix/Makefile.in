@@ -29,6 +29,7 @@ SDL_CFLAGS = @SDL_CFLAGS@
 SYSSRCS = @SYSSRCS@
 CPUSRCS = @CPUSRCS@
 DBGSP = @DBGSP@
+ARAPIF = @ARAPIF@
 
 ACLOCAL = aclocal
 AUTOCONF = autoconf
@@ -88,13 +89,14 @@ SRCS = ../main.cpp \
 APP = aranym
 APP_STATIC = aranym-static
 APP_DI = diskimage
+APP_PIF = aratapif
 
 ## Rules
 .PHONY: install installdirs uninstall mostlyclean clean distclean depend dep
 .SUFFIXES:
 .SUFFIXES: .c .cpp .s .o .h
 
-all: $(APP)
+all: $(APP) $(APP_DI) $(ARAPIF)
 
 OBJ_DIR = obj
 $(OBJ_DIR)::
@@ -122,8 +124,11 @@ $(APP): $(OBJ_DIR) $(OBJS)
 $(APP_STATIC): $(OBJ_DIR) $(OBJS)
 	$(CXX) -o $(APP_STATIC) -static $(LDFLAGS) $(OBJS) $(LIBS)
 
-install: $(APP) $(APP_DI) installdirs
+install: $(APP) $(APP_DI) $(ARAPIF) installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
+	if [ "x$(APP_PIF)" = "x$(ARAPIF)" ]; then\
+	$(INSTALL_PROGRAM) $(APP_PIF) $(DESTDIR)$(bindir)/$(APP_PIF);\
+	fi
 	$(INSTALL_PROGRAM) $(APP_DI) $(DESTDIR)$(bindir)/$(APP_DI)
 	$(INSTALL_DATA) ../../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog
 	$(INSTALL_DATA) ../../TODO $(DESTDIR)$(docdir)/$(APP)/TODO
@@ -164,6 +169,9 @@ installdirs:
 
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
+	if [ "x$(APP_PIF)" = "x$(ARAPIF)" ]; then\
+	rm -f $(DESTDIR)$(bindir)/$(APP_PIF);\
+	fi
 	rm -f $(DESTDIR)$(bindir)/$(APP_DI)
 	rm -f $(DESTDIR)$(docdir)/$(APP)/changelog
 	rm -f $(DESTDIR)$(docdir)/$(APP)/TODO
@@ -208,7 +216,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -f $(APP) $(APP_DI) $(OBJ_DIR)/* core* *.core *~ *.bak
+	rm -f $(APP) $(APP_DI) $(ARAPIF) $(OBJ_DIR)/* core* *.core *~ *.bak
 
 clean: mostlyclean
 	rm -f cpuemu.cpp cpudefs.cpp cputmp*.s cpufast*.s cpustbl.cpp cputbl.h newcpu.s memory.s compemu.cpp compstbl.cpp comptbl.h
@@ -223,10 +231,13 @@ mrproper: distclean
 	rm -rf aclocal.m4 configure config.h.in autom4te.cache
 
 bindistdirs:
-	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/createdisk tmpdist$(datadir)/$(APP)/atari/aranymfs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
+	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/createdisk tmpdist$(datadir)/$(APP)/atari/aranymfs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
 bindist: $(APP) $(APP_DI) bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
+	if [ "x$(APP_PIF)" = "x$(ARAPIF)" ]; then\
+	$(INSTALL_PROGRAM) $(APP_PIF) tmpdist$(bindir)/$(APP_PIF);\
+	fi
 	$(INSTALL_PROGRAM) $(APP_DI) tmpdist$(bindir)/$(APP_DI)
 	$(INSTALL_DATA) ../../ChangeLog tmpdist$(docdir)/$(APP)/changelog
 	$(INSTALL_DATA) ../../TODO tmpdist$(docdir)/$(APP)/TODO
@@ -249,7 +260,7 @@ bindist: $(APP) $(APP_DI) bindistdirs
 	$(INSTALL_DATA) ../../atari/aranymfs/config.sys tmpdist$(datadir)/$(APP)/atari/aranymfs/config.sys
 	$(INSTALL_DATA) ../../tools/createdisk/createdisk.README tmpdist$(datadir)/$(APP)/createdisk/createdisk.README
 	$(INSTALL) ../../tools/createdisk/createdisk.sh tmpdist$(datadir)/$(APP)/createdisk/createdisk.sh
-	($INSTALL_DATA) ../../tools/createdisk/mbrdata tmpdist$(datadir)/$(APP)/createdisk/mbrdata
+	$(INSTALL_DATA) ../../tools/createdisk/mbrdata tmpdist$(datadir)/$(APP)/createdisk/mbrdata
 	$(INSTALL) ../../tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
 	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
 	$(INSTALL_DATA) ../../atari/fvdi/fvdi.prg.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
@@ -458,6 +469,9 @@ memory.s: ../uae_cpu/memory.cpp
 
 $(APP_DI): ../../tools/diskimage.c
 	$(CC) $(LDFLAGS) -o $(APP_DI) ../../tools/diskimage.c
+
+$(APP_PIF): araifc/araifc.c araifc/config.h araifc/inet.c araifc/interface.h araifc/net-support.h
+	$(CC) $(LDFLAGS) -o $(APP_PIF) -DHAVE_AFINET -I./araifc araifc/araifc.c araifc/inet.c
 
 #-------------------------------------------------------------------------
 # DO NOT DELETE THIS LINE -- make depend depends on it.
