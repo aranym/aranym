@@ -99,4 +99,7 @@ extern  SDL_mutex *spcflags_lock;
 
 #endif
 
+/// Sleep on STOP insn
+void SleepAndWait(void);
+
 #endif /* SPCFLAGS_H */

@@ -186,6 +186,30 @@ void Quit680x0(void)
 
 
 /*
+ * Handle the STOP insn CPU thread sleep.
+ */
+void SleepAndWait(void)
+{
+	SDL_mutexP(stopCondLock);
+	SDL_CondWait(stopCondition, stopCondLock);
+	SDL_mutexV(stopCondLock);
+}
+
+static inline void AwakeFromSleep(void)
+{
+	// avoid locking when not in STOP state
+	if (SPCFLAGS_TEST(SPCFLAG_STOP)) {
+		SDL_mutexP(stopCondLock);
+		// are we really in the STOP state?
+		//  * the another thread might have changed the flag
+		//    in the if -> mutexP moment
+		if (SPCFLAGS_TEST(SPCFLAG_STOP))
+			SDL_CondSignal(stopCondition);
+		SDL_mutexV(stopCondLock);
+	}
+}
+
+/*
  *  Trigger interrupts
  */
 void TriggerInternalIRQ(void)
@@ -228,16 +252,3 @@ void TriggerNMI(void)
 	AwakeFromSleep();
 }
 
-void SleepAndWait(void)
-{
-	SDL_mutexP(stopCondLock);
-	SDL_CondWait(stopCondition, stopCondLock);
-	SDL_mutexV(stopCondLock);
-}
-
-void AwakeFromSleep(void)
-{
-	SDL_mutexP(stopCondLock);
-	SDL_CondSignal(stopCondition);
-	SDL_mutexV(stopCondLock);
-}
