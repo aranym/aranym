@@ -1,3 +1,10 @@
+2003/01/14 - STanda
+
+- fVDI: The drawMouse() calling fixed for the natfeat dispatch.
+  The mouse color should be OK again. And... EmuTOS works with
+  fVDI since now.
+
+ 
 2003/01/12 - joy
 
 - natfeat/atari_example.c improved (using function pointers now)
