@@ -1,3 +1,7 @@
+2002/09/07 - joy (commiting for milan)
+- newcpu.cpp - flush_icache(0) is required otherwise JIT does not work
+
+
 2002/09/05 - milan
 - DIV8, TEST8 implemented (not tested)
 - AND8, OR8, ORIMM8 now handle flags
