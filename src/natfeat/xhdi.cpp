@@ -7,6 +7,10 @@
 
 #define SECTORSIZE	512
 
+/* XHDI error codes */
+#define EINVFN	-32	/* invalid function number = unimplemented function */
+#define E_OK	0
+
 bx_disk_options_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
 {
 	if (minor != 0)
@@ -15,7 +19,7 @@ bx_disk_options_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
 	bx_disk_options_t *disk;
 	switch(major) {
 		case 16:	disk = &bx_options.diskc; break;
-		case 17:	disk = &bx_options.diskd; break;
+		case 17:	disk = &bx_options.diskd.isCDROM ? NULL : &bx_options.diskd; break;
 		default:	disk = NULL; break;
 	}
 
@@ -43,7 +47,7 @@ int32 XHDIDriver::XHInqDriver(uint16 bios_device, memptr name, memptr version,
 {
 	D(bug("ARAnyM XHInqDriver(bios_device=%u)", bios_device));
 
-	return 0;	// 0 = no error
+	return EINVFN;
 }
 
 
@@ -82,7 +86,7 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 		}
 		fclose(f);
 	}
-	return 0;	// 0 = no error
+	return E_OK;
 }
 
 int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
@@ -90,7 +94,7 @@ int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
 {
 	D(bug("ARAnyM XHInqTarget2(major=%u, minor=%u)", major, minor));
 	
-	return 0;	// 0 = no error
+	return EINVFN;
 }
 
 int32 XHDIDriver::XHInqDev2(uint16 bios_device, wmemptr major, wmemptr minor,
@@ -99,7 +103,7 @@ int32 XHDIDriver::XHInqDev2(uint16 bios_device, wmemptr major, wmemptr minor,
 {
 	D(bug("ARAnyM XHInqDev2(bios_device=%u)", bios_device));
 
-	return 0;	// 0 = no error
+	return EINVFN;
 }
 
 int32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
@@ -207,7 +211,7 @@ int32 XHDIDriver::dispatch(uint32 fncode)
 						);
 				break;
 				
-		default: ret = -32L; // EINVFN
+		default: ret = EINVFN;
 				D(bug("Unimplemented ARAnyM XHDI function #%d", fncode));
 				break;
 	}
