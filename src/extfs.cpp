@@ -29,7 +29,7 @@ extern "C" {
 	char* strapply( char* str, int (*functor)(int) )
 	{
 		char* pos = str;
-		while ( *pos = (char)functor( (int)*pos ) )
+		while ( (*pos = (char)functor( (int)*pos )) != 0 )
 			pos++;
 
 		return str;
@@ -449,7 +449,7 @@ void ExtFs::a2fmemcpy( uint8 *dest, uint8 *source, size_t count )
 
 void ExtFs::a2fstrcpy( char *dest, uint8 *source )
 {
-	while ( *dest++ = get_byte( (uint32)source++, true ) );
+	while ( (*dest++ = get_byte( (uint32)source++, true )) != 0 );
 }
 
 
@@ -643,12 +643,12 @@ int16 ExtFs::mode2st(int flags)
 void ExtFs::transformFileName( char* dest, const char* source )
 {
 	ssize_t len = strlen( source );
-	ssize_t dotPos;
-	bool	  doConversion = true;
-	char	  *dot;
+	ssize_t dotPos = 0;
+	bool	doConversion = true;
+	char	*dot;
 
 	// Get extension & convert other dots into underscores
-	if ( dot = strrchr( source, '.' ) ) {
+	if ( ( dot = strrchr( source, '.' ) ) != NULL ) {
 		dotPos = dot - source;
 
 		if ( *source == '.' )
@@ -706,7 +706,7 @@ void ExtFs::transformFileName( char* dest, const char* source )
 	// replace spaces and dots in the filename with the _
 	char *temp = dest;
 	char *brkPos;
-	while ( brkPos = strpbrk( temp, " ." ) ) {
+	while ( (brkPos = strpbrk( temp, " ." )) != NULL ) {
 		*brkPos = '_';
 		temp = brkPos + 1;
 	}
@@ -835,7 +835,7 @@ void ExtFs::convertPathA2F( char* fpathName, char* pathName, char* basePath )
 		return; // the path is ok except the backslashes
 
 	// construct the pathName to get stat() from
-	while ( tp = strchr( n, '\\' ) ) {
+	while ( (tp = strchr( n, '\\' )) != NULL ) {
 		*tp = '\0';
 		getHostFileName( ffileName, drv, fpathName, n );
 		ffileName += strlen( ffileName );
@@ -865,6 +865,8 @@ int32 ExtFs::Dfree(LogicalDev *ldp, char *pathName, ExtFile *fp,
 	/* ULONG b_total   */  put_long( diskinfop +  4, buff.f_blocks );
 	/* ULONG b_secsize */  put_long( diskinfop +  8, 512 );
 	/* ULONG b_clsize  */  put_long( diskinfop + 12, buff.f_bsize / 512 );
+
+	return TOS_E_OK;
 }
 
 
@@ -1094,7 +1096,7 @@ int32 ExtFs::Fseek(LogicalDev *ldp, char *pathName, ExtFile *fp,
 
 	off_t newoff = lseek( fp->fandafh, offset, whence);
 
-	D(fprintf(stderr, "MetaDOS: Fseek (%d,%d,%d,%d)\n", offset, handle, seekmode, newoff));
+	D(fprintf(stderr, "MetaDOS: Fseek (%d,%d,%d,%d)\n", offset, handle, seekmode, (int32)newoff));
 
 	if ( newoff == -1 )
 		return unix2toserrno(errno,TOS_EIO);
@@ -1353,6 +1355,8 @@ int32 ExtFs::Dclosedir( LogicalDev *ldp, char *pathName, ExtFile *fp,
 
 	if ( closedir( (DIR*)fp->fandafh ) )
 		return unix2toserrno(errno,TOS_EPTHNF);
+
+	return TOS_E_OK;
 }
 
 
@@ -1362,11 +1366,11 @@ int32 ExtFs::Dreaddir( LogicalDev *ldp, char *pathName, ExtFile *fp,
 {
 	struct dirent *dirEntry;
 
-	if ((dirEntry = readdir( (DIR*)fp->fandafh )) == NULL)
+	if ((void*)(dirEntry = readdir( (DIR*)fp->fandafh )) == NULL)
 		return unix2toserrno(errno,TOS_ENMFIL);
 
 	if ( fp->mode == 0 ) {
-		if ( len < strlen( dirEntry->d_name ) )
+		if ( (uint16)len < strlen( dirEntry->d_name ) )
 			return TOS_ERANGE;
 
 		put_long( (uint32)buff, dirEntry->d_ino );
@@ -1377,7 +1381,7 @@ int32 ExtFs::Dreaddir( LogicalDev *ldp, char *pathName, ExtFile *fp,
 		char truncFileName[MAXPATHNAMELEN];
 		transformFileName( truncFileName, (char*)dirEntry->d_name );
 
-		if ( len < strlen( truncFileName ) )
+		if ( (uint16)len < strlen( truncFileName ) )
 			return TOS_ERANGE;
 
 		f2astrcpy( (uint8*)buff, (uint8*)truncFileName );
@@ -1575,6 +1579,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.8  2001/08/30 12:42:25  standa
+ * Indentation fixed.
+ *
  * Revision 1.7	 2001/06/21 20:16:53  standa
  * Dgetdrv(), Dsetdrv(), Dgetpath(), Dsetpath() propagation added.
  * Only Dsetpath() ever noticed to be propagated by MetaDOS.
