@@ -1592,8 +1592,10 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
 
 	// XATTR structure conversion (COMPEND.HYP)
 	/* UWORD mode	   */  WriteInt16( xattrp	  , modeHost2Mint(statBuf.st_mode) );
-	/* LONG	 index	   */  WriteInt32( xattrp +	 2, (uint32)MAPVOIDPTO32( fc->index ) /* statBuf.st_ino */ );
-	/* UWORD dev	   */  WriteInt16( xattrp +	 6, fc->dev /* statBuf.st_dev */ );
+	/* LONG	 index	   */  WriteInt32( xattrp +	 2, statBuf.st_ino ); // FIXME: this is Linux's one
+
+	/* UWORD dev	   */  WriteInt16( xattrp +	 6, statBuf.st_dev ); // FIXME: this is Linux's one
+
 	/* UWORD reserved1 */  WriteInt16( xattrp +	 8, 0 );
 	/* UWORD nlink	   */  WriteInt16( xattrp + 10, statBuf.st_nlink );
 	/* UWORD uid	   */  WriteInt16( xattrp + 12, statBuf.st_uid );	 // FIXME: this is Linux's one
@@ -2091,6 +2093,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.18  2003/10/02 18:13:42  standa
+ * Large HOSTFS cleanup (see the ChangeLog for more)
+ *
  * Revision 1.17  2003/09/25 09:08:10  milan
  * OS_TYPE and CPU_TYPE for future natfeat exported to sources
  * debuginfo for hostfs blocked for CVS
