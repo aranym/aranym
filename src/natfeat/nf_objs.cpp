@@ -64,7 +64,7 @@ PciDriverLinux Pci;
 #ifdef NFOSMESA_SUPPORT
 OSMesaDriver OSMesa;
 #endif
-#ifdef NFOSMESA_SUPPORT
+#ifdef NFJPEG_SUPPORT
 JpegDriver Jpeg;
 #endif
 /* add your NatFeat object declaration here */
