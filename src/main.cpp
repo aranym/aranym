@@ -51,6 +51,10 @@
 #include "sdlgui.h"
 extern SDL_Thread *GUIthread;
 #endif
+#ifdef ETHERNET_SUPPORT
+#include "natfeat/ece.h"
+extern ECE ECe;
+#endif
 
 #ifdef ENABLE_MON
 #include "mon.h"
@@ -441,6 +445,9 @@ bool InitAll(void)
 	// install the drives
 	extFS.init();
 #endif
+#ifdef ETHERNET_SUPPORT
+	ECe.init();
+#endif
 
 	// Init HW
 	HWInit();
@@ -494,13 +501,17 @@ bool InitAll(void)
 
 void ExitAll(void)
 {
+#ifdef ETHERNET_SUPPORT
+	ECe.exit();
+#endif
+
  	/* Close opened joystick */
  	if (SDL_NumJoysticks()>0) {
  		if (SDL_JoystickOpened(0)) {
  			SDL_JoystickClose(sdl_joystick);
  		}
  	}
- 
+
 	// Exit Time Manager
 	if (my_timer_id) {
 		SDL_RemoveTimer(my_timer_id);
@@ -527,6 +538,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.89  2002/12/16 11:25:04  standa
+ * METADOS_DRV removed ... was duplicating the EXTFS_SUPPORT
+ *
  * Revision 1.88  2002/10/28 21:05:47  joy
  * boot emutos
  *
