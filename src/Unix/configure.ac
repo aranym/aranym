@@ -281,7 +281,10 @@ dnl    WANT_ARANYMFS="no"
   darwin*)
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS="parameters_unix.cpp"
-    LIBS="$LIBS -lIOKit"
+    CXXFLAGS="$CXXFLAGS -I\$(HOME)/Library/Frameworks/SDL.framework/Headers"
+    CFLAGS="$CFLAGS -I\$(HOME)/Library/Frameworks/SDL.framework/Headers"
+    LDFLAGS="$LDFLAGS -F\$(HOME)/Library/Frameworks"
+    LIBS="$LIBS -framework AppKit -framework IOKit -framework CoreFoundation -framework SDL"
     ;;
   beos*)
     EXTRASYSSRCS="parameters_unix.cpp beos/cdrom_beos.cpp"
@@ -1435,7 +1438,15 @@ dnl SDL
 
 SDL_CFLAGS=
 SDL_LIBS=
-AM_PATH_SDL(1.2.0, )
+SDL_CONFIG=
+
+case $target_os in
+  darwin*)
+  	;;
+  *)	AM_PATH_SDL(1.2.0, )
+  	;;
+esac
+
 LIBS="$LIBS $SDL_LIBS"
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
