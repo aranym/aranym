@@ -80,6 +80,9 @@ void HostScreen::setWindowSize(	int width, int height )
 
 /*
  * $Log$
+ * Revision 1.2  2001/07/24 09:36:51  joy
+ * D(bug) macro replaces fprintf
+ *
  * Revision 1.1  2001/06/18 13:21:55  standa
  * Several template.cpp like comments were added.
  * HostScreen SDL encapsulation class.

@@ -131,6 +131,21 @@ distclean: clean
 	rm -f Makefile
 	rm -f config.cache config.log config.status config.h
 
+bindistdirs:
+	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/createdisk tmpdist$(datadir)/$(APP)/atari/fandafs tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(docdir)/$(APP)
+
+bindist: $(APP) bindistdirs
+	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
+	$(INSTALL_DATA) ../ChangeLog tmpdist$(docdir)/$(APP)/changelog
+	$(INSTALL_DATA) ../TODO tmpdist$(docdir)/$(APP)/TODO
+	$(INSTALL_DATA) ../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
+	$(INSTALL_DATA) ../atari/fandafs/fandafs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/fandafs/fandafs.dos.bz2
+	$(INSTALL_DATA) ../atari/tools/fastram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
+	$(INSTALL_DATA) ../atari/tools/gemram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/gemram.prg.bz2
+	chmod -R a+r tmpdist
+	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
+	rm -rf tmpdist
+
 depend dep:
 	makedepend $(CPPFLAGS) $(DEFS) -Y. $(SRCS) -p$(OBJ_DIR)/ 2>/dev/null
 	sed -n '/^# DO NOT DELETE THIS LINE -- make depend depends on it./,$$p' < Makefile > Makefile.wrk
@@ -146,7 +161,7 @@ depend dep:
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) -Wall $(CFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) -g -Wall $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(DEFS) -g -Wall -Wtraditional $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.s
 	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 
@@ -155,7 +170,7 @@ $(OBJ_DIR)/cpuopti: $(OBJ_DIR)/cpuopti.o
 $(OBJ_DIR)/build68k: $(OBJ_DIR)/build68k.o
 	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/build68k $(OBJ_DIR)/build68k.o
 $(OBJ_DIR)/gencpu: $(OBJ_DIR)/gencpu.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
-	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/gencpu $(OBJ_DIR)/gencpu.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
+	$(CXX) $(LDFLAGS) -o $(OBJ_DIR)/gencpu $(OBJ_DIR)/gencpu.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
 cpudefs.cpp: $(OBJ_DIR)/build68k ../uae_cpu/table68k
 	$(OBJ_DIR)/build68k <../uae_cpu/table68k >cpudefs.cpp
 cpustbl.cpp: cpuemu.cpp

@@ -9,6 +9,6 @@ Package: aranym
 Architecture: any
 Depends: ${shlibs:Depends}
 Description: Atari Running ANY Machine
- aranym is an Atari emulator.
+ aranym is a 32bit Atari ST/TT/Falcon software layer for Atari applications.
  .
- NOTE:
+ NOTE: You need also TOS ROM 4.04 from AfterBurner040 

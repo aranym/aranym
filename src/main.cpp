@@ -357,8 +357,6 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 
 bool InitAll(void)
 {
-    init_ide(); // fix this
-
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
         ErrorAlert("SDL initialization failed.");
         return true; //FIXME?
@@ -369,6 +367,10 @@ bool InitAll(void)
 
     CPUType = 4;
     FPUType = 1;
+
+    // Setting "SP & PC"
+    WriteAtariInt32(0x00000000,ReadAtariInt32(ROMBase));
+    WriteAtariInt32(0x00000004,ReadAtariInt32(ROMBase+4));
 
     //  SDL_EnableUNICODE(1);
 
@@ -385,10 +387,6 @@ bool InitAll(void)
 
     // do not insert floppy automatically
     // insert_floppy();
-
-    // Setting "SP & PC"
-    put_long_direct(0x00000000,get_long_direct(ROMBase));
-    put_long_direct(0x00000004,get_long_direct(ROMBase+4));
 
     if (direct_truecolor) {
         // Patch TOS (enforce VideoRAM at 0xf0000000)

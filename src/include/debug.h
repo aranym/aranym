@@ -20,6 +20,8 @@
 extern int firsthist;
 extern int lasthist;
 extern int debugging;
+extern int irqindebug;
+
 #ifdef NEED_TO_DEBUG_BADLY
 extern struct regstruct history[MAX_HIST];
 extern union flagu historyf[MAX_HIST];
@@ -29,6 +31,7 @@ extern uaecptr history[MAX_HIST];
 
 extern void debug(void);
 extern void activate_debugger(void);
+extern void deactivate_debugger(void);
 
 #define ErrorAlert(a)	fprintf(stderr, a)
 

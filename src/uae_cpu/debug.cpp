@@ -99,7 +99,7 @@ static void dumpmem (uaecptr addr, uaecptr *nxmem, int lines)
     broken_in = 0;
     for (;lines-- && !broken_in;) {
 	int i;
-	printf ("%08lx ", addr);
+	printf ("%08lx ", (unsigned long)addr);
 	for (i = 0; i < 16; i++) {
 	    printf ("%04x ", get_word(addr, true)); addr += 2;
 	}

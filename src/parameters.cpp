@@ -8,6 +8,9 @@
 
 #include "parameters.h"
 
+#define DEBUG 1
+#include "debug.h"
+
 #define ARANYMRC	"/.aranymrc"
 
 static struct option const long_options[] =
@@ -63,29 +66,48 @@ Options:
   exit (status);
 }
 
-void init_ide() {
-	// init options and debug first
-	bx_options.diskc.present = 1;
-	bx_options.diskc.byteswap = false;
-	bx_options.diskc.cylinders = 2100;
-	bx_options.diskc.heads = 16;
-	bx_options.diskc.spt = 63;
-	strcpy(bx_options.diskc.path, "/home/joy/aranym/src/Unix/diskImage");
+void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap) {
+  // Autodetect ???
+  if (cylinders == -1) ;
+  if (heads == -1) ;
+  if (spt == -1) ;
+  if (byteswap == -1) ;
 
-	bx_options.diskd.present = 0;
-	bx_options.diskd.byteswap = false;
-	bx_options.diskd.cylinders = 2100;
-	bx_options.diskd.heads = 16;
-	bx_options.diskd.spt = 63;
-	strcpy(bx_options.diskd.path, "/dev/hdd");
+  switch (number) {
+    case 0: bx_options.diskc.present = 1;
+            bx_options.diskc.byteswap = byteswap;
+            bx_options.diskc.cylinders = cylinders;
+            bx_options.diskc.heads = heads;
+            bx_options.diskc.spt = spt;
+            strcpy(bx_options.diskc.path, dev_path);
+	    break;
 
-	bx_options.newHardDriveSupport = 1;
-	bx_options.cdromd.present = 1;
+    case 1: bx_options.diskd.present = 1;
+            bx_options.diskd.byteswap = byteswap;
+            bx_options.diskd.cylinders = cylinders;
+            bx_options.diskd.heads = heads;
+            bx_options.diskd.spt = spt;
+            strcpy(bx_options.diskd.path, dev_path);
+	    break;
+    }
+}
+
+void preset_ide() {
+  set_ide(0, "", 0, 0, 0, false);
+  set_ide(1, "", 0, 0, 0, false);
+
+  bx_options.newHardDriveSupport = 1;
+  bx_options.cdromd.present = 1;
+}
+
+void preset_cfg() {
+  preset_ide();
 }
 
 int decode_switches (int argc, char **argv) {
 	int c;
 
+        preset_cfg();
 	decode_ini_file();
   
 	while ((c = getopt_long (argc, argv,
@@ -189,6 +211,10 @@ static void decode_ini_file(void) {
   char *s;
   char *rcfile;
   char *home;
+  char *dsk;
+  unsigned int number = 0;
+  char *dev_path;
+  int cylinders = -1, heads = -1, spt = -1, byteswap = 0;
   if ((home = getenv("HOME")) != NULL) {
     if ((rcfile = (char *)malloc((strlen(home) + strlen(ARANYMRC) + 1) * sizeof(char))) == NULL) {
       fprintf(stderr, "Not enough memory\n");
@@ -200,6 +226,12 @@ static void decode_ini_file(void) {
       fprintf(stderr, ARANYMRC" found\n");
       for (;;) {
         switch(getc(f)) {
+	  case ';':
+            while ((c = getc(f)) != '\n' && (c != EOF))
+              ;
+          case '\n':
+	    break;
+
           case 'd':
             start_debug = 1;
             while ((c = getc(f)) != '\n' && (c != EOF))
@@ -212,6 +244,7 @@ static void decode_ini_file(void) {
 	      fprintf(stderr, "Not enough memory\n");
 	      exit(-1);
 	    }
+	    strcpy(rom_path, "");
 
             while ((c = getc(f)) != '\n' && (c != EOF)) {
               s = rom_path;
@@ -224,6 +257,53 @@ static void decode_ini_file(void) {
 	      rom_path[strlen(s)+1] = '\0';
 	      free((void *)s);
 	    }
+	    D(bug("ROM file: %s",rom_path));
+            break;
+
+          case 'i':
+            if ((dsk = (char *)malloc(sizeof(char))) == NULL) {
+	      fprintf(stderr, "Not enough memory\n");
+	      exit(-1);
+	    }
+	    strcpy(dsk, "");
+
+            if ((dev_path = (char *)malloc(1024 * sizeof(char))) == NULL) {
+	      fprintf(stderr, "Not enough memory\n");
+	      exit(-1);
+	    }
+	    strcpy(dev_path, "");
+
+
+            while ((c = getc(f)) != '\n' && (c != EOF)) {
+              s = dsk;
+	      if ((dsk = (char *)malloc((strlen(s)+3) * sizeof(char))) == NULL) {
+	        fprintf(stderr, "Not enough memory\n");
+		exit(-1);
+	      }
+	      strcpy(dsk, s);
+	      dsk[strlen(s)] = c;
+	      dsk[strlen(s)+1] = '\0';
+	      free((void *)s);
+	    }
+            dsk[strlen(dsk)+1] = '\0';
+            dsk[strlen(dsk)] = '\n';
+
+            if (sscanf(dsk, "%u %1023s %d %d %d %d", &number, dev_path, &cylinders, &heads, &spt, &byteswap) > 1) {
+	      if (number > 1) {
+                fprintf(stderr, "Unknown IDE number: %d in " ARANYMRC "\n", number);
+	        exit(-1);
+              }
+	      set_ide(number, dev_path, cylinders, heads, spt, byteswap == 0 ? false : true);
+              D(bug("IDE %d: %s",number, dev_path));
+            } else {
+              fprintf(stderr, "Unknown in " ARANYMRC ": ");
+              fprintf(stderr, "i%s", dsk);
+	      fprintf(stderr, "\n");
+              exit(-1);
+            }
+	    
+	    free((void *)dsk);
+	    free((void *)dev_path);
             break;
 
           case EOF:
@@ -231,7 +311,7 @@ static void decode_ini_file(void) {
 	    return;
 
           default:
-            fprintf(stderr, "Unknown in ~/.aranym: ");
+            fprintf(stderr, "Unknown in " ARANYMRC ": ");
             while ((c = getc(f)) != '\n' && (c != EOF))
               fprintf(stderr, "%c", c);
 	    fprintf(stderr, "\n");

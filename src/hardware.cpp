@@ -233,6 +233,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.25  2001/07/24 13:54:11  joy
+ * #define DEBUG before #include "debug"
+ *
  * Revision 1.24  2001/07/24 06:40:33  joy
  * SCSI disabled
  * D(bug()) replaces printf

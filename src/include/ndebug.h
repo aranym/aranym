@@ -22,12 +22,13 @@ class ndebug {
  
   static void reset_aktualrow();
   static void set_aktualrow(signed int);
-  static unsigned int get_warnlen() { return warnlen; }
+  static unsigned int get_warnlen() { return warnlen = tigetnum("lines") - 13; }
   static unsigned int get_rowlen() { return rowlen; }
   static void warn_print(FILE *);
   static void m68k_print(FILE *);
-  static void show();
-  static void showHelp();
+  static void instr_print(FILE *);
+  static void show(FILE *);
+  static void showHelp(FILE *);
 
   static char next_char( char **c) {
     ignore_ws (c);
@@ -36,13 +37,11 @@ class ndebug {
   static void ignore_ws (char **c) {
     while (**c && isspace(**c)) (*c)++;
   }
-  static int more_params (char **c)
-  {
+  static int more_params (char **c) {
     ignore_ws (c);
     return (**c) != 0;
   }
-  static uae_u32 readhex (char **c)
-  {
+  static uae_u32 readhex (char **c) {
     uae_u32 val = 0;
     char nc;
 
@@ -60,7 +59,7 @@ class ndebug {
     }
     return val;
   }
-
+static void dumpmem (FILE *, uaecptr, uaecptr *, unsigned int);
   
 #endif
 

@@ -1,4 +1,4 @@
-/* 2001 Mj */
+/* 2001 MJ */
 
  /*
   * UAE - The Un*x Amiga Emulator
@@ -17,6 +17,7 @@
 #include "cpu_emulation.h"
 #include "main.h"
 #include "emul_op.h"
+#include "ndebug.h"
 
 extern int intlev(void);	// From baisilisk_glue.cpp
 extern int timerCinterrupts;
@@ -79,7 +80,7 @@ void dump_counts (void)
     unsigned long int total;
     int i;
 
-    write_log ("Writing instruction count file...\n");
+    D(bug("Writing instruction count file..."));
     for (i = 0; i < 65536; i++) {
 	opcodenums[i] = i;
 	total += instrcount[i];
@@ -200,7 +201,7 @@ void init_m68k (void)
 	if (f) {
 	    uae_u32 opcode, count, total;
 	    char name[20];
-	    write_log ("Reading instruction count file...\n");
+	    D(bug("Reading instruction count file..."));
 	    fscanf (f, "Total: %lu\n", &total);
 	    while (fscanf (f, "%lx: %lu %s\n", &opcode, &count, name) == 3) {
 		instrcount[opcode] = count;
@@ -747,7 +748,7 @@ void Exception(int nr, uaecptr oldpc)
 		put_word (m68k_areg(regs, 7)+4, last_op_for_exception_3);
 		put_long (m68k_areg(regs, 7)+8, last_addr_for_exception_3);
 	    }
-	    write_log ("Exception!\n");
+	    D(bug("Exception!"));
 	    goto kludge_me_do;
 	}
     }
@@ -1186,14 +1187,14 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 	return;
     }
 
-//    write_log ("Illegal instruction: %04x at %08lx\n", opcode, pc);
+//    D(bug("Illegal instruction: %04x at %08lx", opcode, pc));
 
     if ((opcode & 0xF000) == 0xF000) {
 	Exception(0xB,0);
 	return;
     }
 
-    write_log ("Illegal instruction: %04x at %08lx\n", opcode, (unsigned long)pc);
+    D(bug("Illegal instruction: %04x at %08lx", opcode, (unsigned long)pc));
 
     Exception (4,0);
 }
@@ -1817,7 +1818,7 @@ void m68k_go (int may_quit)
 // m68k_go() must be reentrant for Execute68k() and Execute68kTrap() to work
 /*
     if (in_m68k_go || !may_quit) {
-	write_log("Bug! m68k_go is not reentrant.\n");
+	D(bug("Bug! m68k_go is not reentrant."));
 	abort();
     }
 */
@@ -1926,6 +1927,79 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
     }
     if (nextpc)
 	*nextpc = m68k_getpc () + m68kpc_offset;
+}
+
+void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, unsigned int cnt)
+{
+    char *buffer = (char *)malloc(80 * sizeof(char));
+    strcpy(buffer,"");
+    uaecptr newpc = 0;
+    m68kpc_offset = addr - m68k_getpc ();
+    if (cnt == 0) {
+	int opwords;
+	for (opwords = 0; opwords < 5; opwords++) {
+		get_iword_1 (m68kpc_offset + opwords*2);
+	}
+	get_iword_1 (m68kpc_offset);
+	m68kpc_offset += 2;
+    } else {
+	while (cnt-- > 0) {
+		char instrname[20],*ccpt;
+		int opwords;
+		uae_u32 opcode;
+		struct mnemolookup *lookup;
+		struct instr *dp;
+		fprintf (f, "%08lx: ", m68k_getpc () + m68kpc_offset);
+		for (opwords = 0; opwords < 5; opwords++) {
+		    fprintf (f, "%04x ", get_iword_1 (m68kpc_offset + opwords*2));
+		}
+		opcode = get_iword_1 (m68kpc_offset);
+		m68kpc_offset += 2;
+		if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
+			opcode = 0x4AFC;
+		}
+		dp = table68k + opcode;
+		for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
+		    ;
+		strcpy (instrname, lookup->name);
+		ccpt = strstr (instrname, "cc");
+		if (ccpt != 0) {
+		    strncpy (ccpt, ccnames[dp->cc], 2);
+		}
+		fprintf (f, "%s", instrname);
+		switch (dp->size){
+		 case sz_byte: fprintf (f, ".B "); break;
+		 case sz_word: fprintf (f, ".W "); break;
+		 case sz_long: fprintf (f, ".L "); break;
+		 default: fprintf (f, "   "); break;
+		}
+
+		if (dp->suse) {
+		    newpc = m68k_getpc () + m68kpc_offset;
+		    newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, buffer);
+		    fprintf(f, "%s", buffer);
+		    strcpy(buffer,"");
+		}
+		if (dp->suse && dp->duse)
+		    fprintf (f, ",");
+		if (dp->duse) {
+		    newpc = m68k_getpc () + m68kpc_offset;
+		    newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
+		    fprintf(f, "%s", buffer);
+		}
+		if (ccpt != 0) {
+		    if (cctrue(dp->cc))
+			fprintf (f, " == %08lx (TRUE)", (unsigned long)newpc);
+		    else
+			fprintf (f, " == %08lx (FALSE)", (unsigned long)newpc);
+		} else if ((opcode & 0xff00) == 0x6100) /* BSR */
+		    fprintf (f, " == %08lx", (unsigned long)newpc);
+		fprintf (f, "\n");
+	    }
+    }
+    if (nextpc)
+	*nextpc = m68k_getpc () + m68kpc_offset;
+    free(buffer);
 }
 
 void m68k_dumpstate (uaecptr *nextpc)

@@ -1,0 +1,16 @@
+; This is example of ~/.aranymrc file
+;
+; At the first - ; as the first char of line means comment
+;
+; If you want start debugger automaticly, uncomment next line
+;debugger
+;
+; ROM file path:
+;R /usr/local/share/aranym/ROM
+;
+; Device IDE X:
+;iX file cylinders heads sectors byteswap(0/1)
+;
+;e.g:
+;i0 /home/user/.aranym/diskImageC 940 14 40 0
+;i1 /dev/hdd 2100 16 63 0

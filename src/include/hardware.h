@@ -35,6 +35,9 @@ extern bool isIkbdBufEmpty();
 
 /*
  * $Log$
+ * Revision 1.13  2001/07/12 22:12:15  standa
+ * updateHostScreen() added.
+ *
  * Revision 1.12  2001/06/18 13:21:55  standa
  * Several template.cpp like comments were added.
  * HostScreen SDL encapsulation class.

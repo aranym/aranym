@@ -7,7 +7,8 @@
 #define REGS
 typedef char flagtype;
 
-struct ttr {
+
+struct xttrx {
     uae_u32 log_addr_base : 8;
     uae_u32 log_addr_mask : 8;
     uae_u32 enable : 1;

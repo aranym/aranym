@@ -26,30 +26,6 @@
 #define SPCFLAG_MFP_ACIA 2048
 #define SPCFLAG_MODE_CHANGE 8192
 
-#ifndef SET_CFLG
-
-#define SET_CFLG(x) (CFLG = (x))
-#define SET_NFLG(x) (NFLG = (x))
-#define SET_VFLG(x) (VFLG = (x))
-#define SET_ZFLG(x) (ZFLG = (x))
-#define SET_XFLG(x) (XFLG = (x))
-
-#define GET_CFLG CFLG
-#define GET_NFLG NFLG
-#define GET_VFLG VFLG
-#define GET_ZFLG ZFLG
-#define GET_XFLG XFLG
-
-#define CLEAR_CZNV do { \
- SET_CFLG (0); \
- SET_ZFLG (0); \
- SET_NFLG (0); \
- SET_VFLG (0); \
-} while (0)
-
-#define COPY_CARRY (SET_XFLG (GET_CFLG))
-#endif
-
 extern int areg_byteinc[];
 extern int imm8_table[];
 
@@ -246,6 +222,7 @@ extern void exit_m68k (void);
 extern void m68k_go (int);
 extern void m68k_dumpstate (uaecptr *);
 extern void m68k_disasm (uaecptr, uaecptr *, int);
+extern void newm68k_disasm(FILE *, uaecptr, uaecptr *, unsigned int);
 extern void m68k_reset (void);
 extern void m68k_enter_debugger(void);
 
