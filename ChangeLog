@@ -1,3 +1,8 @@
+2002/02/25 - joy
+- web updated (Ctirad wrote new About)
+- simplified most of the presentation.xlst but it's still not good enough.
+
+
 2002/02/23 - joy
 - separated input related code from main.cpp into input.cpp
 - all open() functions have "O_BINARY" flag appended so that Cygwin
