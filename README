@@ -163,17 +163,36 @@ BetaDOS also needs to know what disk drives you wish to map. Edit the
 *DOS, c:\auto\hostfs.dos, M:M
 
 The M:M stands for that you want to have the M: drive mapped to some Host FS
-directory. The directory must be put to aranym by the command line argument -d
+directory.
+
+MiNT does not need any configuration - just put HOSTFS.XFS to your MINT
+folder (\MINT or \MULTITOS) and you're done.
+
+The directory must be put to aranym by the command line argument -d
 like:
 
   "aranym -dm:/opt/home/atari/"
 
 This would map the /opt/home/atari/ to the TOS drive M:\.
 
+For permanent mapping edit the aranym config file, the [ARANYMFS] block
+and add the desired path, as follows:
+
+M=/opt/home/atari
+
+More info you'll find in atari/hostfs/README file.
+
 Note: We are planning on writing a tool for BDCONFIG.SYS auto-configuration.
 
 
- 7) Keyboard shortcuts
+ 7) Networking
+ -------------
+
+Make sure your host OS is Linux and your Atari OS is FreeMiNT. Then follow
+instructions in the atari/network/ethernet/README file.
+
+
+ 8) Keyboard shortcuts
  ---------------------
 
 Keys not found on a PC keyboard:
@@ -203,7 +222,7 @@ Alt+Ctrl+Esc   - release the input focus if ARAnyM runs in a window (so you
 Scroll Lock    - switch between windowed and fullscreen mode
 
 
- 8) Troubleshooting
+ 9) Troubleshooting
  ------------------
 
 If your Microsoft IntelliMouse doesn't work correctly on Linux framebuffer
@@ -212,8 +231,8 @@ console you may want to set the SDL_MOUSEDEV_IMPS2 environment variable to 1.
 Example for bash: export SDL_MOUSEDEV_IMPS2=1; aranym
 
 
- 9) More information
- -------------------
+ 10) More information
+ --------------------
 
  Read the NEWS file for user visible changes.
 

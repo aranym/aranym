@@ -46,6 +46,6 @@ MacOS X does not like floating videoram. Compile with --enable-fixedvideoram.
 
 Windows 95/98/99/00 do not support direct disk access (Windows NT/2K/XP do).
 
-Only Linux-ia32 (x86) currently supports JIT compiler for the CPU emulator.
+Only Linux currently supports TUNTAP based Ethernet emulation (AFAIK).
 
-Only Linux-ia32 (x86) currently supports TUNTAP based Ethernet emulation.
+Only Linux-ia32 (x86) currently supports JIT compiler for the CPU emulator.

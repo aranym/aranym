@@ -1,9 +1,12 @@
 Before 0.8.0 final release:
 ---------------------------
-- automagically updated CONFIG.SYS/BDCONFIG.SYS
+- rename ".bin" to "bin" and update Makefile.in with hostfs/ethernet
+- automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
 - make sure the '-d' command line option works as documented in the README
 - enable OpenGL and DSP in default builds, provide also MMU build
+- change the hotkey for screenshot - Alt+PrintScreen = SysRq!
+- disable the old ARANYMFS EmulOp API
 
 Roadmap:
 --------
@@ -16,11 +19,14 @@ of host filesystem access.
 1.0.0 should be distributed as a CD ISO image, installable on wide range
   of wintel hardware.
 
+
 Some hot ideas (before they get forgotten)
-============================================
+------------------------------------------
 
 Note that the name before a TODO item doesn't mean the item is assigned to
 that particular programmer but rather who is the author of the idea :-)
+
+- joy: hostfs.xfs sometime crash here? Isn't there a memory leak on host?
 
 - joy: make.sh magic: "nfeth-config.c" build by ./make.sh of the xif.
 
