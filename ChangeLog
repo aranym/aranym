@@ -1,3 +1,12 @@
+2002/10/12 - milan
+- sync with BasiliskII CVS
+
+- JIT compiler: tune_alignment as configuration feature (TuneAlignment)
+                new management of blockinfos
+
+- cpuotpi "disabled" - not used now, needs reimplementig
+
+
 2002/10/10 - patrice (version 0.6.6-beta)
 - dsp: dsp nothread code removed.
 - configure: DSP is enabled by default now

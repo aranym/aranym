@@ -117,6 +117,7 @@ typedef struct {
 typedef struct {
   bool jit;
   bool jitfpu;
+  bool tunealign;
   uint32 jitcachesize;
   uint32 jitlazyflush;
 } bx_jit_options_t;

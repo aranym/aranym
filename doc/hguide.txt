@@ -154,10 +154,10 @@ features. In progress.
 --------------
 CPU:
 
-BasiliskII (CVS 24.9.2002)
+BasiliskII (CVS 11.10.2002)
 AmigaXL (Amithlon, AmigaOSXL) (12.6.2001)
 hatari (CVS 2.2.2002)
-UAE 0.8.21
+UAE 0.8.22
 MMU patch 2 against 0.8.20 
 
 

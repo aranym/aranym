@@ -1,3 +1,28 @@
+/*
+ *  compiler/compemu.h - Public interface and definitions
+ *
+ *  Original 68040 JIT compiler for UAE, copyright 2000-2002 Bernd Meyer
+ *
+ *  Adaptation for Basilisk II and improvements, copyright 2000-2002
+ *    Gwenole Beauchesne
+ *
+ *  Basilisk II (C) 1997-2002 Christian Bauer
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #ifndef COMPEMU_H
 #define COMPEMU_H
 
@@ -38,7 +63,16 @@ union cacheline {
 #define USE_SEPARATE_BIA 1
 
 /* Use chain of checksum_info_t to compute the block checksum */
-#define USE_CHECKSUM_INFO 0
+#define USE_CHECKSUM_INFO 1
+
+/* Use code inlining, aka follow-up of constant jumps */
+#define USE_INLINING 1
+
+/* Inlining requires the chained checksuming information */
+#if USE_INLINING
+#undef  USE_CHECKSUM_INFO
+#define USE_CHECKSUM_INFO 1
+#endif
 
 #define USE_F_ALIAS 1
 #define USE_OFFSET 1
@@ -491,8 +525,6 @@ typedef struct dep_t {
 typedef struct checksum_info_t {
   uae_u8 *start_p;
   uae_u32 length;
-  uae_u32 c1;
-  uae_u32 c2;
   struct checksum_info_t *next;
 } checksum_info;
 
@@ -510,19 +542,13 @@ typedef struct blockinfo_t {
 
     uae_u8* pc_p;
     
+    uae_u32 c1;
+    uae_u32 c2;
 #if USE_CHECKSUM_INFO
     checksum_info *csi;
-#   define CSI_TYPE         checksum_info
-#   define CSI_START_P(csi) (csi)->start_p
-#   define CSI_LENGTH(csi)  (csi)->length
 #else
-    uae_u32 c1;     
-    uae_u32 c2;
     uae_u32 len;
     uae_u32 min_pcp;
-#   define CSI_TYPE         blockinfo
-#   define CSI_START_P(csi) (csi)->min_pcp
-#   define CSI_LENGTH(csi)  (csi)->len
 #endif
 
     struct blockinfo_t* next_same_cl;
