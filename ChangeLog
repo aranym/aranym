@@ -1,6 +1,14 @@
+2002/06/24 - joy
+- do_get_real_addr() replaced with Atari2HostAddr() in fdc.cpp and audio.cpp
+- ExitAll()/QuitEmulator() reworked to allow clean exit from debugger even on
+  slow machines (the timer thread must be stopped first before the Atari
+  memory is released).
+
+
 2002/06/09 - joy
 - SDL GUI restores original background (see hostScreen.save_bkg/restore_bkg)
 - SDL GUI "Quit" works
+
 
 2002/06/07 - joy
 - ScrollLock switches between fullscreen and windowed mode
