@@ -18,6 +18,9 @@
 #define DEBUG 1
 #include "debug.h"
 
+/* Execute DSP instructions till the DSP waits for a read/write */
+#define DSP_HOST_FORCEEXEC 0
+
 void DSP::init(void)
 {
 	int i;
@@ -158,15 +161,35 @@ uae_u8 DSP::handleRead(uaecptr addr)
 			value = hostport[CPU_HOST_IVR];
 			break;
 		case CPU_HOST_RX0:
+#if DSP_HOST_FORCEEXEC
+			while (state == DSP_RUNNING) {
+				dsp56k_do_execute();
+			}
+#endif
 			value = 0;
 			break;
 		case CPU_HOST_RXH:
+#if DSP_HOST_FORCEEXEC
+			while (state == DSP_RUNNING) {
+				dsp56k_do_execute();
+			}
+#endif
 			value = hostport[CPU_HOST_RXH];
 			break;
 		case CPU_HOST_RXM:
+#if DSP_HOST_FORCEEXEC
+			while (state == DSP_RUNNING) {
+				dsp56k_do_execute();
+			}
+#endif
 			value = hostport[CPU_HOST_RXM];
 			break;
 		case CPU_HOST_RXL:
+#if DSP_HOST_FORCEEXEC
+			while (state == DSP_RUNNING) {
+				dsp56k_do_execute();
+			}
+#endif
 			value = hostport[CPU_HOST_RXL];
 
 			/* Wake up DSP if it was waiting our read */
@@ -219,12 +242,22 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 			hostport[CPU_HOST_IVR]=value;
 			break;
 		case CPU_HOST_TX0:
+#if DSP_HOST_FORCEEXEC
+			while (state == DSP_RUNNING) {
+				dsp56k_do_execute();
+			}
+#endif
 			if (first_host_write) {
 				first_host_write = 0;
 				bootstrap_accum = 0;
 			}
 			break;
 		case CPU_HOST_TXH:
+#if DSP_HOST_FORCEEXEC
+			while (state == DSP_RUNNING) {
+				dsp56k_do_execute();
+			}
+#endif
 			if (first_host_write) {
 				first_host_write = 0;
 				bootstrap_accum = 0;
@@ -233,6 +266,11 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 			bootstrap_accum |= value<<16;
 			break;
 		case CPU_HOST_TXM:
+#if DSP_HOST_FORCEEXEC
+			while (state == DSP_RUNNING) {
+				dsp56k_do_execute();
+			}
+#endif
 			if (first_host_write) {
 				first_host_write = 0;
 				hostport[CPU_HOST_TXH]=value;	/* FIXME: is it correct ? */
@@ -242,6 +280,11 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 			bootstrap_accum |= value<<8;
 			break;
 		case CPU_HOST_TXL:
+#if DSP_HOST_FORCEEXEC
+			while (state == DSP_RUNNING) {
+				dsp56k_do_execute();
+			}
+#endif
 			if (first_host_write) {
 				first_host_write = 0;
 				hostport[CPU_HOST_TXH]=value;	/* FIXME: is it correct ? */
@@ -254,9 +297,17 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 			first_host_write = 1;
 
 			if (state!=DSP_BOOTING) {
+				int trdy;				
+
 				/* Clear TXDE to say that host has written */
 				hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TXDE);
 /*				D(bug("Dsp: (H->D): Host TXDE cleared"));*/
+
+				/* Clear/set TRDY bit */
+				hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TRDY);
+				trdy = (hostport[CPU_HOST_ISR]>>CPU_HOST_ISR_TXDE) & 1;
+				trdy &= !((periph[SPACE_X][DSP_HOST_HSR]>>DSP_HOST_HSR_HRDF) & 1);
+				hostport[CPU_HOST_ISR] |= (trdy & 1)<< CPU_HOST_ISR_TRDY;
 			}
 
 			switch(state) {
@@ -284,7 +335,10 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 }
 
 /*
-	2002-07-22:PM	FIX:mu-law generator added, periph init also moved to
-						reset function
-	2002-07-19:PM	FIX:stack and registers init moved to reset function
+	2002-07-31:PM
+		FIX:host port TRDY bit now correctly set
+	2002-07-22:PM
+		FIX:mu-law generator added, periph init also moved to reset function
+	2002-07-19:PM
+		FIX:stack and registers init moved to reset function
 */
