@@ -13,13 +13,12 @@
 #include "ide.h"
 #include "videl.h"
 #include "yamaha.h"
-#include "fakeio.h"
+#include "dsp.h"
 #include "mmu.h"
 #include "exceptions.h"
 #include "uae_cpu/newcpu.h"	// for regs.pc
 
-FAKEIO faked;
-FAKEIO fakestore(false);
+BASE_IO fake_io;
 MMU mmu;
 MFP mfp;
 IKBD ikbd;
@@ -27,42 +26,22 @@ MIDI midi;
 ACSIFDC fdc;
 RTC rtc;
 IDE ide;
+DSP dsp;
 BLITTER blitter;
 VIDEL videl;
 YAMAHA yamaha;
 
-uae_u32 vram_addr=0;
-
 #define BUS_ERROR	longjmp(excep_env, 2)
 
-int getVideoMode() {
-	return videl.getVideoMode();
-}
-
-int getVidelScreenWidth() {
-	return videl.getScreenWidth();
-}
-
-int getVidelScreenHeight() {
-	return videl.getScreenHeight();
-}
-
-int getFloppyStats() {
-	return yamaha.getFloppyStat();
-}
-
-// extern jmp_buf excep_env;
+long getVideoramAddress() { return videl.getVideoramAddress(); }
+int getVideoMode() { return videl.getVideoMode(); }
+int getVidelScreenWidth() { return videl.getScreenWidth(); }
+int getVidelScreenHeight() { return videl.getScreenHeight(); }
+int getFloppyStats() { return yamaha.getFloppyStat(); }
 
 bool dP = false;
 
 void HWInit (void) {
-	/*
-	put_long(MEM_VALID_1_A,MEM_VALID_1);
-	put_long(MEM_VALID_2_A,MEM_VALID_2);
-	put_long(MEM_VALID_3_A,MEM_VALID_3);
-	put_byte(MEM_CTL_A,MEM_CTL);
-	put_word(SYS_CTL_A,SYS_CTL);
-	*/
 	// ide.init();
 	rtc.init();
 }
@@ -98,24 +77,24 @@ struct HARDWARE {
 
 HARDWARE ICs[] = {
 	{"IDE", 0xf00000, 0x3a, &ide},
-	{"Cartridge", 0xfa0000, 0x20000, &faked},
+	{"Cartridge", 0xfa0000, 0x20000, &fake_io},
 	{"Memory Management", 0xff8000, 8, &mmu},
 	{"VIDEL", 0xff8200, 0xc4, &videl},
 	{"DMA/FDC", 0xff8600, 0x10, &fdc},
-	{"DMA/SCSI", 0xff8700, 0x16, &faked},
-	{"SCSI", 0xff8780, 0x10, &faked},
+	{"DMA/SCSI", 0xff8700, 0x16, &fake_io},
+	{"SCSI", 0xff8780, 0x10, &fake_io},
 	{"Yamaha", 0xff8800, 4, &yamaha},
-	{"Sound", 0xff8900, 0x22, &faked},
+	{"Sound", 0xff8900, 0x22, &fake_io},
 	// {"MicroWire", 0xff8922, 0x4},
-	{"DMA/DSP", 0xff8930, 0x14, &faked},
+	{"DMA/DSP", 0xff8930, 0x14, &fake_io},
 	{"TT RTC", 0xff8960, 4, &rtc},
 	{"BLiTTER", 0xff8A00, 0x3e, &blitter},
 	// {"DMA/SCC", 0xff8C00, 0x16},
-	{"SCC", 0xff8C80, 0x16, &faked},
+	{"SCC", 0xff8C80, 0x16, &fake_io},
 	// {"VME", 0xff8e00, 0x0c},
-	{"Paddle", 0xff9200, 0x24, &faked},
-	{"VIDEL Pallete", 0xff9800, 0x400, &fakestore},
-	{"DSP", 0xffa200, 8, &faked},
+	{"Paddle", 0xff9200, 0x24, &fake_io},
+	{"VIDEL Pallete", 0xff9800, 0x400, &fake_io},
+	{"DSP", 0xffa200, 8, &dsp},
 	{"STMFP", 0xfffa00, 0x30, &mfp},
 	// {"STFPC", 0xfffa40, 8},
 	{"IKBD", 0xfffc00, 4, &ikbd},
