@@ -1,6 +1,8 @@
 2004/11/01 - Patrice
 - hostscreen.cpp: don't need to have autozoom enabled to force a screen size
 
+- fvdidrv.cpp: forgot some break instructions.
+
 
 2004/10/31 - joy
 - Carlo provided a new keyboard translation routine that translate directly 

@@ -299,9 +299,11 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 
 		case FVDI_GET_WIDTH:
 			result = hostScreen.getWidth();
+			break;
 			
 		case FVDI_GET_HEIGHT:
 			result = hostScreen.getHeight();
+			break;
 
 		default:
 			// not implemented functions
@@ -2016,6 +2018,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.56  2004/09/29 20:45:57  xavier
+ * Fixed typo.
+ *
  * Revision 1.55  2004/09/24 13:50:14  pmandin
  * FVDI: add functions to read screen size really set by the host
  *
