@@ -1,14 +1,14 @@
 /**
- * BasicNatFeats (Basic set of Native Features)
+ * Ethernet driver
  *
- * Petr Stehlik (c) 2002
+ * Stan (c) 2002
  *
  * GPL
  */
 
 #include "nf_base.h"
 
-class ECE : public NF_Base
+class ETHERNETDriver : public NF_Base
 {
 	int32 readPacketLength(memptr nif);
 	void readPacket(memptr buffer, uint32 len);
@@ -27,8 +27,8 @@ class ECE : public NF_Base
 	static int tapOpen(char *dev);
 
 public:
-	char *name() { return "ECE"; }
-	bool isSuperOnly() { return false; }
+	char *name() { return "ETHERNET"; }
+	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);
 
 	static bool init(void);

@@ -1,14 +1,11 @@
 /*
- *	Dummy loopback eth driver for testing purposes. Also sceleton
- *	for ethernet packet drivers.
+ *	ARAnyM ethernet driver.
  *
- *	Usage:
- *		ifconfig eth0 addr u.v.w.x
- *		route add u.v.w.x eth0
- *	Then you can do ping u.v.w.x and somesuch and see what eg. ARP
- *	does...
+ *	based on dummy.xif skeleton 12/14/94, Kay Roemer.
  *
- *	12/14/94, Kay Roemer.
+ *  written by Standa @ ARAnyM team
+ *
+ *  GPL
  */
 
 # include "global.h"
@@ -23,8 +20,8 @@
 
 # include <osbind.h>
 
-#define INTERRUPT_LEVEL	3
-
+/* this is the version of NatFeat ETHERNET API */
+#define XIF_VERSION	0x00000001
 
 /* old handler */
 extern void (*old_interrupt)(void);
@@ -34,13 +31,6 @@ void my_interrupt (void);
 
 /* the C routine handling the interrupt */
 void _cdecl aranym_interrupt(void);
-
-static void
-aranym_install_int (void)
-{
-# define vector(x)      (x / 4)
-	old_interrupt = Setexc(vector(0x60) + INTERRUPT_LEVEL, (long) my_interrupt);
-}
 
 long driver_init (void);
 
@@ -91,27 +81,41 @@ static long _NF_call  = 0x73014e75L;
 
 
 static inline void
+nfGetHWAddress( char *buffer, int len )
+{
+	nfCall((nfEtherFsId + 0x02, buffer, (unsigned long)len));
+}
+
+static inline void
 nfInterrupt ( short in_use )
 {
-	nfCall((nfEtherFsId + 0x00, (long)in_use));
+	nfCall((nfEtherFsId + 0x03, (unsigned long)in_use));
 }
 
 static inline short
 read_packet_len ()
 {
-	return nfCall((nfEtherFsId + 0x03));
+	return nfCall((nfEtherFsId + 0x06));
 }
 
 static inline void
 read_block (char *cp, short len)
 {
-	nfCall((nfEtherFsId + 0x04, cp, (long)len));
+	nfCall((nfEtherFsId + 0x07, cp, (unsigned long)len));
 }
 
 static inline void
 send_block (char *cp, short len)
 {
-	nfCall((nfEtherFsId + 0x05, cp, (long)len));
+	nfCall((nfEtherFsId + 0x08, cp, (unsigned long)len));
+}
+
+static void
+aranym_install_int (void)
+{
+	int int_level = nfCall((nfEtherFsId+1));
+# define vector(x)      (x / 4)
+	old_interrupt = Setexc(vector(0x60) + int_level, (long) my_interrupt);
 }
 
 
@@ -123,12 +127,7 @@ static long
 ara_open (struct netif *nif)
 {
 	DEBUG (("araeth: open (nif = %08lx)", (long)nif));
-
-	// get the HostFs NatFeat ID
-	nfEtherFsId = nfGetID(("ECE"));
-	if ( nfEtherFsId )
-		return nfCall((nfEtherFsId + 0x01, nif));
-	return 0;
+	return nfCall((nfEtherFsId + 0x04, nif));
 }
 
 /*
@@ -138,7 +137,7 @@ ara_open (struct netif *nif)
 static long
 ara_close (struct netif *nif)
 {
-	return nfCall((nfEtherFsId + 0x02, nif));
+	return nfCall((nfEtherFsId + 0x05, nif));
 }
 
 /*
@@ -433,6 +432,20 @@ driver_init (void)
 	static char message[100];
 	static char my_file_name[128];
 
+
+	/* get the HostFs NatFeat ID */
+	nfEtherFsId = nfGetID(("ETHERNET"));
+	if ( nfEtherFsId == 0 ) {
+		c_conws("ARAnyM Eth driver v0.1 not installed - NatFeat not found\n\r");
+		return 1;
+	}
+
+	/* compare the version */
+	if ( nfCall((0)) != XIF_VERSION ) {
+		c_conws("ARAnyM Eth driver v0.1 not installed - version mismatch\n\r");
+		return 1;
+	}
+
 	/*
 	 * Set interface name
 	 */
@@ -468,14 +481,19 @@ driver_init (void)
 	/*
 	 * Hardware address length, 6 bytes for Ethernet
 	 */
-	if_ara.hwlocal.len =
+	if_ara.hwlocal.len = ETH_ALEN;
 	if_ara.hwbrcst.len = ETH_ALEN;
 
 	/*
 	 * Set interface hardware and broadcast addresses. For real ethernet
 	 * drivers you must get them from the hardware of course!
 	 */
+#if 0
 	memcpy (if_ara.hwlocal.addr, "\001\002\003\004\005\006", ETH_ALEN);
+#else
+	/* ask host for the hardware address */
+	nfGetHWAddress(if_ara.hwlocal.addr, ETH_ALEN);
+#endif
 	memcpy (if_ara.hwbrcst.addr, "\377\377\377\377\377\377", ETH_ALEN);
 
 	/*

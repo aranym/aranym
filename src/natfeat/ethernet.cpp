@@ -6,7 +6,7 @@
 
 #include "cpu_emulation.h"
 #include "main.h"
-#include "ece.h"
+#include "ethernet.h"
 
 #include "host.h"
 
@@ -28,12 +28,34 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
+/****************************
+ * Configuration zone begins
+ */
+
 #if !defined(XIF_HOST_IP) && !defined(XIF_ATARI_IP) && !defined(XIF_NETMASK)
 # define XIF_HOST_IP	"192.168.0.1"
 # define XIF_ATARI_IP	"192.168.0.2"
 # define XIF_NETMASK	"255.255.255.0"
 #endif
 
+// the ETHERNET NatFeat API version number (change it if you change NF subIDs)
+#define XIF_VERSION	0x00000001
+
+// the emulated network card HW address
+#define MAC_ADDRESS "\001\002\003\004\005\006"
+
+// Ethernet runs at interrupt level 3 by default but can be reconfigured
+#if 1
+# define INTLEVEL	3
+# define TRIGGER_INTERRUPT	TriggerInt3()
+#else
+# define INTLEVEL	5
+# define TRIGGER_INTERRUPT	TriggerInt5()
+#endif
+
+/*
+ * Configuration zone ends
+ **************************/
 
 static ssize_t packet_length;
 static uint8 packet[1516];
@@ -43,33 +65,58 @@ static int fd = -1;							// fd of /dev/net/tun device
 static SDL_Thread *handlingThread;			// Packet reception thread
 static SDL_sem *intAck;					// Interrupt acknowledge semaphore
 
-int32 ECE::dispatch(uint32 fncode)
+int32 ETHERNETDriver::dispatch(uint32 fncode)
 {
-	D(bug("ECE: Dispatch %d", fncode));
+	D(bug("Ethernet: Dispatch %d", fncode));
 
 	int32 ret = 0;
 	switch(fncode) {
-		case 0x00: // interrupt raised by native side thread polling tap0 interface
+		case 0:	// what version?
+			ret = XIF_VERSION;
+			break;
+
+		case 1:	// what interrupt level is used?
+			ret = INTLEVEL;
+			break;
+
+		case 2:	// what is the MAC address?
+			{
+				/* store MAC address to provided buffer */
+				char *text = MAC_ADDRESS;				// source
+				memptr name_ptr = getParameter(0);		// destination
+				uint32 name_maxlen = getParameter(1);	// max length
+
+				if (! ValidAddr(name_ptr, true, name_maxlen))
+					BUS_ERROR(name_ptr);
+
+				char *name = (char *)Atari2HostAddr(name_ptr);	// use A2Hstrcpy
+				strncpy(name, text, name_maxlen-1);
+				name[name_maxlen-1] = '\0';
+				return strlen(text);
+			}
+			break;
+
+		case 3: // interrupt raised by native side thread polling tap0 interface
 			if ( !getParameter(0) ) {
-				D(bug("/ECE: IRQ"));
+				D(bug("Ethernet: /IRQ"));
 				finishInterupt();
 			} else
-				D(bug("ECE: IRQ"));
+				D(bug("Ethernet: IRQ"));
 
 			break;
-		case 0x01:
+		case 4:
 			startThread();
 			break;
-		case 0x02:
+		case 5:
 			stopThread();
 			break;
-		case 0x03:
+		case 6:
 			ret = readPacketLength( 0/* getParameter(0) *//* nif */ );
 			break;
-		case 0x04:
+		case 7:
 			readPacket( getParameter(0) /* buff */, getParameter(1) /* len */ );
 			break;
-		case 0x05:
+		case 8:
 			sendPacket( getParameter(0) /* buff */, getParameter(1) /* len */ );
 			break;
 	}
@@ -77,27 +124,27 @@ int32 ECE::dispatch(uint32 fncode)
 }
 
 
-int32 ECE::readPacketLength(memptr nif)
+int32 ETHERNETDriver::readPacketLength(memptr nif)
 {
 	return packet_length;
 }
 
 /*
- *  ECEnet ReadPacket routine
+ *  ETHERNETDriver ReadPacket routine
  */
 
-void ECE::readPacket(memptr buffer, uint32 len)
+void ETHERNETDriver::readPacket(memptr buffer, uint32 len)
 {
-	D(bug("ECE: ReadPacket dest %08lx, len %08lx", buffer, len));
+	D(bug("Ethernet: ReadPacket dest %08lx, len %08lx", buffer, len));
 	Host2Atari_memcpy(buffer, packet, packet_length > 1514 ? 1514 : packet_length );
 }
 
 
 /*
- *  ECEnet writePacket routine
+ *  ETHERNETDriver writePacket routine
  */
 
-void ECE::sendPacket(memptr buffer, uint32 len)
+void ETHERNETDriver::sendPacket(memptr buffer, uint32 len)
 {
 	uint8 packetToWrite[1516];
 
@@ -111,10 +158,10 @@ void ECE::sendPacket(memptr buffer, uint32 len)
 }
 
 
-void ECE::finishInterupt()
+void ETHERNETDriver::finishInterupt()
 {
 	// Acknowledge interrupt to reception thread
-	D(bug(" ECEIRQ done"));
+	D(bug(" Ethernet IRQ done"));
 	SDL_SemPost(intAck);
 }
 
@@ -123,12 +170,12 @@ int initTap (int argc, char **argv);
 /*
  *  Initialization
  */
-bool ECE::init(void)
+bool ETHERNETDriver::init(void)
 {
 	// int nonblock = 1;
 	char devName[128];
 
-	D(bug("ECE: init"));
+	D(bug("Ethernet: init"));
 
 /* argv[0]      Name of this program                                 */
 /* argv[1]      Name of the TUN network device (tun0)                */
@@ -166,9 +213,9 @@ bool ECE::init(void)
 /*
  *  Deinitialization
  */
-void ECE::exit(void)
+void ETHERNETDriver::exit(void)
 {
-	D(bug("ECE: exit"));
+	D(bug("Ethernet: exit"));
 
 	// Stop reception thread
 	stopThread();
@@ -183,10 +230,10 @@ void ECE::exit(void)
 /*
  *  Start packet reception thread
  */
-bool ECE::startThread(void)
+bool ETHERNETDriver::startThread(void)
 {
 	if (!handlingThread) {
-		D(bug("ECE: Start thread"));
+		D(bug("Ethernet: Start thread"));
 
 		if ((intAck = SDL_CreateSemaphore(0)) == NULL) {
 			D(bug("WARNING: Cannot init semaphore"));
@@ -195,7 +242,7 @@ bool ECE::startThread(void)
 
 		handlingThread = SDL_CreateThread( receiveFunc, NULL );
 		if (!handlingThread) {
-			D(bug("WARNING: Cannot start ECEnet thread"));
+			D(bug("WARNING: Cannot start ETHERNETDriver thread"));
 			return false;
 		}
 	}
@@ -206,10 +253,10 @@ bool ECE::startThread(void)
 /*
  *  Stop packet reception thread
  */
-void ECE::stopThread(void)
+void ETHERNETDriver::stopThread(void)
 {
 	if (handlingThread) {
-		D(bug("ECE: Stop thread"));
+		D(bug("Ethernet: Stop thread"));
 
 #if FIXME
 		// pthread_cancel(handlingThread); // FIXME: set the cancel flag.
@@ -224,10 +271,10 @@ void ECE::stopThread(void)
 /*
  *  Packet reception thread
  */
-int ECE::receiveFunc(void *arg)
+int ETHERNETDriver::receiveFunc(void *arg)
 {
 	for (;;) {
-		D(bug("ECE: receive function"));
+		D(bug("Ethernet: receive function"));
 
 		// Wait for packets to arrive
 		struct pollfd pf = {fd, POLLIN, 0};
@@ -235,7 +282,7 @@ int ECE::receiveFunc(void *arg)
 		if (res <= 0)
 			break;
 
-		D(bug("ECE: going to read?"));
+		D(bug("Ethernet: going to read?"));
 
 		// Call protocol handler for received packets
 		// ssize_t length;
@@ -245,12 +292,13 @@ int ECE::receiveFunc(void *arg)
 			if (packet_length < 14)
 				break;
 
-			// Trigger ECEnet interrupt
-			D(bug(" packet received, triggering ECEnet interrupt"));
-			TriggerInt3();		// Networking is at interrupt level 3
+			// Trigger ETHERNETDriver interrupt
+			D(bug(" packet received, triggering ETHERNETDriver interrupt"));
+
+			TRIGGER_INTERRUPT;
 
 			D(bug(" waiting for int acknowledge"));
-			// Wait for interrupt acknowledge by ECE::handleInteruptIf()
+			// Wait for interrupt acknowledge by ETHERNETDriver::handleInteruptIf()
 			SDL_SemWait(intAck);
 			D(bug(" int acknowledged"));
 		}
@@ -261,10 +309,10 @@ int ECE::receiveFunc(void *arg)
 
 
 /*
- * Allocate ECE TAP device, returns opened fd.
+ * Allocate ETHERNETDriver TAP device, returns opened fd.
  * Stores dev name in the first arg(must be large enough).
  */
-int ECE::tapOpenOld(char *dev)
+int ETHERNETDriver::tapOpenOld(char *dev)
 {
     char tapname[14];
     int i, fd;
@@ -297,7 +345,7 @@ int ECE::tapOpenOld(char *dev)
 #define OTUNSETPERSIST (('T'<< 8) | 203)
 #define OTUNSETOWNER   (('T'<< 8) | 204)
 
-int ECE::tapOpen(char *dev)
+int ETHERNETDriver::tapOpen(char *dev)
 {
     struct ifreq ifr;
 
@@ -317,7 +365,7 @@ int ECE::tapOpen(char *dev)
     }
 
     strcpy(dev, ifr.ifr_name);
-	D(bug("ECE: if opened %s", dev));
+	D(bug("Ethernet: if opened %s", dev));
     return fd;
 
   failed:
@@ -327,7 +375,7 @@ int ECE::tapOpen(char *dev)
 
 #else
 
-int ECE::tapOpen(char *dev)
+int ETHERNETDriver::tapOpen(char *dev)
 {
     return tapOpenOld(dev);
 }

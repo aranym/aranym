@@ -4,7 +4,7 @@
 #include "xhdi.h"
 #include "audio.h"
 #include "hostfs.h"
-#include "ece.h"
+#include "ethernet.h"
 #include "fvdidrv.h"
 #include "debugprintf.h"
 /* add your NatFeat class definition here */
@@ -25,13 +25,12 @@ FVDIDriver fVDIDrv;
 HostFs hostFs;
 #endif
 #ifdef ETHERNET_SUPPORT
-ECE ECe;
+ETHERNETDriver Ethernet;
 #endif
 /* add your NatFeat object declaration here */
 
 pNatFeat nf_objects[] = {
 	&nf_name, &nf_version, &nf_shutdown, &nf_stderr,	/* NF basic set */
-	&dbgprintf,
 	&fVDIDrv,
 	&Xhdi,
 	&Audio,
@@ -39,10 +38,12 @@ pNatFeat nf_objects[] = {
 	&hostFs,
 #endif
 #ifdef ETHERNET_SUPPORT
-	&ECe
+	&Ethernet,
 #endif
-	/* add your NatFeat object here */
+	/* add your NatFeat object below */
 
+	/* */
+	&dbgprintf
 };
 
 unsigned int nf_objs_cnt = sizeof(nf_objects) / sizeof(nf_objects[0]);

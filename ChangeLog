@@ -3,6 +3,12 @@
   configurable by #define and the default ATARI IP address changed to
   192.168.0.2 (to prevent users from asking a question why it was .5).
 
+- natfeat/ece.cpp renamed to ethernet.cpp
+
+- NatFeat "ECE" dropped, new NatFeat "ETHERNET" with different API supporting
+  also versioning and allows passing the interrupt level and MAC address
+  from the host side. Also the ETHERNET NF is Supervisor only (naturally).
+
 
 2003/02/26 - joy
 - ETHERNET_OLD (the one from Basilisk) removed completely

@@ -52,8 +52,8 @@
 extern SDL_Thread *GUIthread;
 #endif
 #ifdef ETHERNET_SUPPORT
-#include "natfeat/ece.h"
-extern ECE ECe;
+#include "natfeat/ethernet.h"
+extern ETHERNETDriver Ethernet;
 #endif
 
 #ifdef ENABLE_MON
@@ -450,7 +450,7 @@ bool InitAll(void)
 	extFS.init();
 #endif
 #ifdef ETHERNET_SUPPORT
-	ECe.init();
+	Ethernet.init();
 #endif
 
 	// Init HW
@@ -506,7 +506,7 @@ bool InitAll(void)
 void ExitAll(void)
 {
 #ifdef ETHERNET_SUPPORT
-	ECe.exit();
+	Ethernet.exit();
 #endif
 
  	/* Close opened joystick */
@@ -542,8 +542,11 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.91  2003/01/10 00:00:28  joy
+ * correct _SND cookie
+ *
  * Revision 1.90  2002/12/19 10:18:46  standa
- * ECE initialization and termination
+ * Ethernet initialization and termination
  *
  * Revision 1.89  2002/12/16 11:25:04  standa
  * METADOS_DRV removed ... was duplicating the EXTFS_SUPPORT
