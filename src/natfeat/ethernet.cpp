@@ -8,6 +8,7 @@
 
 #include "cpu_emulation.h"
 #include "main.h"
+#include "parameters.h"
 #include "ethernet.h"
 
 #define DEBUG 0
@@ -38,15 +39,6 @@
 #define TAP_INIT	"aratapif"
 #define TAP_DEVICE	"tap0"
 #define TAP_MTU		"1500"
-
-#if !defined(XIF_HOST_IP) && !defined(XIF_ATARI_IP) && !defined(XIF_NETMASK)
-# define XIF_HOST_IP	"192.168.0.1"
-# define XIF_ATARI_IP	"192.168.0.2"
-# define XIF_NETMASK	"255.255.255.0"
-#endif
-
-// the emulated network card HW address
-#define MAC_ADDRESS "\001\002\003\004\005\006"
 
 // Ethernet runs at interrupt level 3 by default but can be reconfigured
 #if 1
@@ -89,18 +81,16 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			D(bug("Ethernet: getHWddr"));
 			/* store MAC address to provided buffer */
 			{
-				/* int ethX = getParameter(0); */
+				int ethX = getParameter(0);
 				memptr buf_ptr = getParameter(1);	// destination buffer
 				uint32 buf_size = getParameter(2);	// buffer size
 
 				if (! ValidAddr(buf_ptr, true, buf_size))
 					BUS_ERROR(buf_ptr);
 
-				if (strlen(MAC_ADDRESS) == buf_size)
-					memcpy(Atari2HostAddr(buf_ptr), MAC_ADDRESS, buf_size);	// use H2Amemcpy
-				else {
-					panicbug("Ethernet: getHWddr() with illegal buffer size");
-				}
+				// generate the MAC as 'ARETH0' for eth0
+				uint8 mac_addr[6] = {'A','R','E','T','H', ' '+ethX };
+				memcpy(Atari2HostAddr(buf_ptr), mac_addr, buf_size);	// use H2Amemcpy
 			}
 			break;
 
@@ -134,28 +124,37 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 		case XIF_GET_IPHOST:
 			D(bug("XIF_GET_IPHOST\n"));
-			ret = get_params(XIF_HOST_IP);
+			ret = get_params(HOST_IP);
 			break;
 		case XIF_GET_IPATARI:
-			D(bug("XIF_GET_IPHOST\n"));
-			ret = get_params(XIF_ATARI_IP);
+			D(bug("XIF_GET_IPATARI\n"));
+			ret = get_params(ATARI_IP);
 			break;
 		case XIF_GET_NETMASK:
-			D(bug("XIF_GET_IPHOST\n"));
-			ret = get_params(XIF_NETMASK);
+			D(bug("XIF_GET_NETMASK\n"));
+			ret = get_params(NETMASK);
 			break;
 	}
 	return ret;
 }
 
 
-int ETHERNETDriver::get_params(const char *text)
+int ETHERNETDriver::get_params(GET_PAR which)
 {
+	int ethX = getParameter(0);
 	memptr name_ptr = getParameter(1);
 	uint32 name_maxlen = getParameter(2);
+	char *text = NULL;
 
 	if (! ValidAddr(name_ptr, true, name_maxlen))
 		BUS_ERROR(name_ptr);
+
+	switch(which) {
+		case HOST_IP: text = bx_options.ethernet.ip_host; break;
+		case ATARI_IP:text = bx_options.ethernet.ip_atari; break;
+		case NETMASK: text = bx_options.ethernet.netmask; break;
+		default: text = "";
+	}
 
 	char *name = (char *)Atari2HostAddr(name_ptr);	// use A2Hstrcpy
 	strncpy(name, text, name_maxlen-1);
@@ -234,8 +233,10 @@ bool ETHERNETDriver::init(void)
 		// memory (otherwise this does not work here)
 		char *args[] = {
 			TAP_INIT, TAP_DEVICE,
-			XIF_HOST_IP, XIF_ATARI_IP, XIF_NETMASK, TAP_MTU,
-			NULL
+			bx_options.ethernet.ip_host,
+			bx_options.ethernet.ip_atari,
+			bx_options.ethernet.netmask,
+			TAP_MTU, NULL
 		};
 		int result;
 		result = execvp( TAP_INIT, args );

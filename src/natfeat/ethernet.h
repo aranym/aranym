@@ -27,7 +27,8 @@ class ETHERNETDriver : public NF_Base
 	static int tapOpen(char *dev);
 
 protected:
-	int get_params(const char *text);
+	typedef enum {HOST_IP, ATARI_IP, NETMASK} GET_PAR;
+	int get_params(GET_PAR which);
 
 public:
 	char *name() { return "ETHERNET"; }
