@@ -1,3 +1,14 @@
+2004/09/03 - joy
+- atari/network/ethernet/ethernet.c, nfeth-config.c: the idea of new IOCTLs
+  was not working because inet4.xdd blocks the IOCTLs and does not pass them
+  to the XIF driver. So now I am using SIOCGLNKSTATS and it works!
+  Fixed more scary bugs (word alignment in parameters to nfCall can be a
+  killer). nfeth-config even respects the NIF parameter (try eth1 :-)
+  The XIF driver has yet to be updated to handle more NIFs at once.
+
+- src/natfeat/ethernet.cpp: better debug message. Make use of safe strncpy.
+
+
 2004/09/02 - joy
 - atari/network/ethernet/ethernet.c, nfeth-config.c: corrected some scary
   bugs, now it should work but doesn't yet. Seems like the new IOCTLs are
