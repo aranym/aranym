@@ -28,7 +28,7 @@
 
 #include "newcpu.h"
 
-#if USE_JIT
+#ifdef USE_JIT
 
 #if JIT_DEBUG
 /* dump some information (m68k block, x86 block addresses) about the compiler state */

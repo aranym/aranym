@@ -3,6 +3,11 @@
 
 - non-cheaders support (for MipsPro C/C++ compiler)
 
+- cleanups in classes MFP_timer, ndebug, in macros around ADDRESSING modes
+  etc.
+
+- FAQ: changes around disks
+
 
 2002/10/14 - milan
 - configure & etc.: generic bool, volatile and inline handling

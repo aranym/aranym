@@ -1309,7 +1309,7 @@ cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
 	}
 
 	D(bug("Illegal instruction: %04x at %08lx", opcode, pc));
-#if USE_JIT && JIT_DEBUG
+#if defined(USE_JIT) && defined(JIT_DEBUG)
 	compiler_dumpstate();
 #endif
 
@@ -1424,7 +1424,7 @@ static void do_trace (void)
 int m68k_do_specialties(void)
 {
 	SERVE_INTERNAL_IRQ();
-#if USE_JIT
+#ifdef USE_JIT
 	// Block was compiled
 	SPCFLAGS_CLEAR( SPCFLAG_JIT_END_COMPILE );
 	
@@ -1513,7 +1513,7 @@ void m68k_do_execute (void)
     }
 }
 
-#if USE_JIT
+#ifdef USE_JIT
 void m68k_compile_execute (void)
 {
 setjmpagain:
@@ -1537,7 +1537,7 @@ setjmpagain:
 
 void m68k_execute (void)
 {
-#if USE_JIT
+#ifdef USE_JIT
     m68k_execute_depth++;
 #endif
 #ifdef DEBUGGER
@@ -1567,7 +1567,7 @@ setjmpagain:
 	m68k_do_execute();
     }
 
-#if USE_JIT
+#ifdef USE_JIT
     m68k_execute_depth--;
 #endif
 }

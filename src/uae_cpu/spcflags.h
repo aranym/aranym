@@ -18,7 +18,7 @@ enum {
 	SPCFLAG_TRACE			= 0x08,
 	SPCFLAG_DOTRACE			= 0x10,
 //	SPCFLAG_DOINT			= 0x20,
-#if USE_JIT
+#ifdef USE_JIT
 	SPCFLAG_JIT_END_COMPILE		= 0x40,
 	SPCFLAG_JIT_EXEC_RETURN		= 0x80,
 #else
@@ -56,7 +56,7 @@ enum {
 	regs.spcflags = (m); \
 } while (0)
 
-#if !(ENABLE_EXCLUSIVE_SPCFLAGS)
+#ifndef ENABLE_EXCLUSIVE_SPCFLAGS
 
 #define SPCFLAGS_SET(m) do { \
 	regs.spcflags |= (m); \

@@ -13,7 +13,7 @@ private:
 	char name;
 
 protected:
-	bool MFP_Timer::isRunning();
+	bool isRunning();
 
 public:
 	MFP_Timer(int);

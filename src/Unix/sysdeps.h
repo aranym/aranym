@@ -185,6 +185,14 @@
 #define REAL_ADDRESSING 0
 #endif
 
+#ifndef DIRECT_ADDRESSING
+#define DIRECT_ADDRESSING 0
+#endif
+
+#ifndef FIXED_ADDRESSING
+#define FIXED_ADDRESSING 0
+#endif
+
 /* Using 68k emulator */
 #define EMULATED_68K 1
 

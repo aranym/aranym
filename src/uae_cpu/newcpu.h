@@ -65,7 +65,7 @@ struct cputbl {
 
 extern cpuop_func *cpufunctbl[65536] ASM_SYM_FOR_FUNC ("cpufunctbl");
 
-#if USE_JIT
+#ifdef USE_JIT
 typedef void compop_func (uae_u32) REGPARAM;
 
 struct comptbl {
@@ -285,7 +285,7 @@ extern void *op_smalltbl_0_lab[];
 
 extern void m68k_do_execute(void);
 extern void m68k_execute(void);
-#if USE_JIT
+#ifdef USE_JIT
 extern void m68k_do_compile_execute(void);
 extern void m68k_compile_execute(void);
 #endif

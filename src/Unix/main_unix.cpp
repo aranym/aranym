@@ -129,7 +129,7 @@ int main(int argc, char **argv)
 	}
 	else
 #endif
-#ifdef FIXED_ADDRESSING
+#if FIXED_ADDRESSING
 	if (vm_acquire_fixed((void *)FMEMORY, RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd) == false) {
 		panicbug("Not enough free memory.");
 		QuitEmulator();
@@ -306,6 +306,11 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.76  2002/10/13 13:33:49  milan
+ * byte checks for some JITed instruction (for debugging)
+ * Mac OS X small patch for configure.ac
+ * real addressing 128 MB check
+ *
  * Revision 1.75  2002/10/07 23:00:42  joy
  * CPU back in the main thread
  *

@@ -35,7 +35,7 @@ class ndebug {
   static uaecptr value_addr;
   static uint32 value;
   static value_test_t value_test;
-  static unsigned int ndebug::do_breakpoints;
+  static unsigned int do_breakpoints;
   static bool breakpoint[max_breakpoints];
   static uaecptr breakpoint_address[max_breakpoints];
   
