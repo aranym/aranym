@@ -20,7 +20,8 @@ Things that must be done before first beta release:
 
 - MetaDOS filesystem debugging (e.g. PureC don't want to compile a .prj file 8-().
 
-- printing - definitely a must. Either by YAMAHA emulation or directly
++ [60%]
+  printing - definitely a must. Either by YAMAHA emulation or directly
   by hooking into TOS xconout. Anyone having a copy of TOS ROM that was able
   to print chars on console?
 
@@ -44,7 +45,7 @@ Things that must be done before first beta release:
   move ROM file reading back to main.cpp, perhaps even with 040 patching routine so 
   aranym could use pure TOS 4.04
 
-- improve the keyboard emulation - make the keyboard layout editable (for national keyboards),
++ improve the keyboard emulation - make the keyboard layout editable (for national keyboards),
   well define and DOCUMENT keyboard combos for quitting, mounting floppy/cdrom, screen shot
   grabbing, debugger invoking, GUI config entering and others.
 
@@ -52,17 +53,7 @@ Things that must be done before first beta release:
 
 - document the command line switches, keyboard combos and write Users Guide.
 
-- create several disk images with preinstalled _free_ software:
-  16 MB - just harddisk driver (AHDI or CBHD) and a few AUTO/ACC/CPX tools
-          (WinX, Clocky, calculator as ACC, perhaps screen saver etc).
-          Free desktop replacement would be nice.
-          Include also free screen resolution enhancer (is BlowUP free already?)
-
-  128 MB - proper setup including some basic applications. XBOOT-like selection
-           would be great. Try to include some basic FreeMiNT setup.
-
-  1 GB - basically a copy of the 128 MB disk image but with more free space for
-         people to start working with it immediately.
++ create several disk images with preinstalled _free_ software:
 
 The goal for the first beta is to get functional Atari/TOS machine replacement
 fully usable for regular GEM users.
@@ -83,7 +74,7 @@ Things for 1.0 release:
       This would be usefull, not to need the C compiler for this, woudn't be?
     - .xfs filesystem modules for MagiC and MiNT.
 
-+ [90%] fVDI working (TOS+aranym drivers)
++ [97%] fVDI working (TOS+aranym drivers)
 
 - sound output using GSXB library
 
@@ -96,15 +87,15 @@ Estimated time for 1.0 release: spring 2002.
 Things for 2.0 release:
 =======================
 
-- [33%] MMU040 (MiNT with memory protection, Linux)
+- [50%] MMU040 (MiNT with memory protection, Linux)
 
 - configuration in GUI for X-Windows (GNOME/KDE)
 
-- [1%] perhaps port of aranym to Windows
+- [80%] perhaps port of aranym to Windows
 
 - Yamaha and DMA sound, DSP emulation etc.
 
-- serial port, parallel port, joysticks etc.
+- [30%] serial port, parallel port, joysticks etc.
 
 The goal for 2.0 is total Atari machine replacement usable by every Atari BFU.
 It should be able to boot Linux-m68k to prove 100% hardware compatibility.
