@@ -83,6 +83,9 @@
 /* Define if you want to use direct access to host's fs */
 #undef EXTFS_SUPPORT
 
+/* Define if you want to build SDL GUI */
+#undef SDL_GUI
+
 /* Define if <getopt.h> knows getopt_long */
 #undef HAVE_GETOPT_H
 
