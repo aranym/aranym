@@ -26,30 +26,6 @@
 #ifdef OS_mint
 #include <mint/osbind.h>
 #include <mint/mintbind.h>
-
-/* Dpathconf values, should be in a MiNTlib include */
-enum {
-	DP_INQUIRE=-1,
-	DP_IOPEN,
-	DP_MAXLINKS,
-	DP_PATHMAX,
-	DP_NAMEMAX,
-	DP_ATOMIC,
-	DP_TRUNC,
-	DP_CASE
-};
-
-enum {
-	DP_NOTRUNC=0,
-	DP_AUTOTRUNC,
-	DP_DOSTRUNC
-};
-
-enum {
-	DP_SENSITIVE=0,
-	DP_NOSENSITIVE,
-	DP_SAVEONLY
-};
 #endif /* OS_mint */
 
 extern "C" {
@@ -1974,7 +1950,7 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 			return MFSNAMELEN;
 # else
 #if defined(OS_mint)
-			return Dpathconf(fpathName,DP_NAMEMAX);
+			return Dpathconf(fpathName,3 /* DP_NAMEMAX */);
 #else
 			return buf.f_namelen;
 #endif /* OS_mint */
@@ -2622,6 +2598,10 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.42  2002/04/17 15:44:17  standa
+ * Patrice Mandin <pmandin@caramail.com> & STanda FreeMiNT compilation support
+ * patch.
+ *
  * Revision 1.41  2002/04/17 15:42:03  standa
  * JOYs fix modified a bit.
  *
