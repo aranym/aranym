@@ -134,6 +134,9 @@ case "$target_os" in
   linux*)
     EXTRASYSSRCS=linux/parameters_linux.cpp
     ;;
+  solaris*)
+    DEFINES="$DEFINES -DBSD_COMP -D_POSIX_PTHREAD_SEMANTICS -D_POSIX_C_SOURCE=199506L"
+    ;;
   *)
     EXTRASYSSRCS=parameters.cpp
     ;;
@@ -523,7 +526,7 @@ elif [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xy
   case "$target_os" in
   solaris*)
     AC_MSG_CHECKING(SPARC CPU architecture)
-    SPARC_TYPE=`Solaris/which_sparc`
+    SPARC_TYPE=`solaris/which_sparc`
     AC_MSG_RESULT($SPARC_TYPE)
     case "$SPARC_TYPE" in
     SPARC_V8)

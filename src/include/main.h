@@ -46,9 +46,7 @@ extern bool InitAll(void);
 extern void ExitAll(void);
 extern bool grabMouse(bool grab);
 extern void invoke200HzInterrupt(void);
-extern void hideMouse(bool);
 extern void setactvdebug(int);
-
 
 // Platform-specific functions
 extern void QuitEmulator(void);				// Quit emulator
@@ -75,6 +73,9 @@ extern void ClearInterruptFlag(uint32 flag);
 
 /*
  * $Log$
+ * Revision 1.10  2001/10/29 08:15:45  milan
+ * some changes around debuggers
+ *
  * Revision 1.9  2001/09/25 00:04:17  milan
  * cleaning of memory managment
  *

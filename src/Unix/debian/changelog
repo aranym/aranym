@@ -1,3 +1,9 @@
+aranym (0.0.9-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Milan Jurik <M.Jurik@sh.cvut.cz>  Tue,  6 Nov 2001 15:00:32 +0200
+
 aranym (0.0.5-1) unstable; urgency=low
 
   * Initial Release.

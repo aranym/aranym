@@ -221,12 +221,16 @@ void ndebug::m68k_print(FILE * f)
 	    		   (unsigned int) ((((int) regs.tce) << 15) |
 				(((int) regs.tcp) << 14)));
 
-	fprintf(f, "CACR=%08lx DTT0=%08lx ITT0=%08lx SRP=%08lx\n",
+	fprintf(f, "CACR=%08lx DTT0=%08lx ITT0=%08lx SRP=%08lx  SFC=%d%d%d\n",
 		   (unsigned long) regs.cacr, (unsigned long) regs.dtt0,
-		   (unsigned long) regs.itt0, (unsigned long) regs.srp);
-	fprintf(f, "CAAR=%08lx DTT1=%08lx ITT1=%08lx URP=%08lx\n",
+		   (unsigned long) regs.itt0, (unsigned long) regs.srp,
+		   (int) (regs.sfc / 4), (int) ((regs.sfc & 2) / 2),
+		   (int) (regs.sfc % 2));
+	fprintf(f, "CAAR=%08lx DTT1=%08lx ITT1=%08lx URP=%08lx  DFC=%d%d%d\n",
 		   (unsigned long) regs.caar, (unsigned long) regs.dtt1,
-		   (unsigned long) regs.itt1, (unsigned long) regs.urp);
+		   (unsigned long) regs.itt1, (unsigned long) regs.urp,
+		   (int) (regs.dfc / 4), (int) ((regs.dfc & 2) / 2),
+		   (int) (regs.dfc % 2));
 
     for (unsigned int i = 0; i < 8; i++) {
 	fprintf(f, "FP%d: %g ", i, regs.fp[i]);
@@ -596,6 +600,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr &nextpc, uaecptr &nxdis, uae
 		case 'g':
 			if (more_params(&inptr)) m68k_setpc(readhex(&inptr));
 			fill_prefetch_0();
+			grabMouse(true);
 			deactivate_debugger();
 			return 0;
 		case 't':
@@ -1072,6 +1077,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.5  2001/10/29 08:15:45  milan
+ * some changes around debuggers
+ *
  * Revision 1.4  2001/10/25 22:33:18  milan
  * fullhistory's support in ndebug
  *

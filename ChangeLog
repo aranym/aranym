@@ -1,3 +1,18 @@
+2001/11/06 - milan
+- corrections of PFLUSH, PTEST (I found my old corrections on hd, grr, 2 months
+  old, grr)
+
+- MMU address decoding works now (after set_mmu Desktop runs, sometimes),
+  but still MiNT (and not only MiNT) gives Bus error/illegal instruction, I
+  know about one bug, I'll correct.
+
+- mmusetup.cnf example added to reposity
+
+- make install and Debian package corrected
+
+- the 1st step for Solaris
+
+
 2001/11/06 - joy
 - TOS was patched with WinX by a mistake. Fixed. GEMRAM 1.0 from Aratools
   does not work correctly as the ROM area is not writeable. Use real GEMRAM

@@ -58,7 +58,6 @@ static void mon_write_byte_b2(uint32 adr, uint32 b)
 //For starting debugger
 void setactvdebug(int) {
 	grabMouse(false);
-	hideMouse(false);
 	activate_debugger();
 #ifdef NEWDEBUG
 	signal(SIGINT, setactvdebug);
@@ -695,6 +694,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.37  2001/11/06 13:35:51  joy
+ * now recognizes TOS from CVS 2001-05-02 and also the new one (WinX free).
+ *
  * Revision 1.36  2001/11/06 11:45:14  joy
  * updated MD5 checksum for new romdiff.cpp
  * optional saving of patched TOS ROM
