@@ -41,8 +41,8 @@
 // Scott Brumbaugh <scott@openosx.com>  Dec 5, 2001
 //
 
+#include "sysdeps.h"
 #include "emu_bochs.h"
-#include "cdrom.h"
 #include "ata.h"
 
 #define LOG_THIS 
