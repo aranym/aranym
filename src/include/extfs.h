@@ -122,7 +122,7 @@ class ExtFs {
 	/**
 	 * Path conversions.
 	 *
-	 * Note: This is the most sophisticated thing in this object. 
+	 * Note: This is the most sophisticated thing in this object.
 	 **/
 	ExtDrive* getDrive( const char* pathName );
 	void transformFileName( char* dest, const char* source );
@@ -181,7 +181,7 @@ class ExtFs {
 				   int32 ret, int16 opcode );
 	int32 Frename(LogicalDev *ldp, char *pathName, ExtFile *fp,
 				  int32 ret, int16 opcode,
-				  int16 reserved, const char *oldpath, const char *newPathName);
+				  int16 reserved, char *oldpath, char *newPathName);
 	int32 Fdatime( LogicalDev *ldp, char *pathName, ExtFile *fp,
 				   int32 ret, int16 opcode,
 				   uint32 *datetimep, int16 handle, int16 wflag);
@@ -221,6 +221,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.8  2001/11/21 13:29:51  milan
+ * cleanning & portability
+ *
  * Revision 1.7  2001/11/20 23:29:26  milan
  * Extfs now not needed for ARAnyM's compilation
  *
