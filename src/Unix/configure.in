@@ -87,7 +87,9 @@ AC_ARG_ENABLE(jit-fpu,
 AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code disassemblers [default=no]], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
 
 AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distrubuted dispatcher [default=no]], [WANT_DIS_DIP=$enableval], [WANT_DIS_DIP=no])
-		    
+
+AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation [default=no]], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=no])
+
 dnl Canonical system information.
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
@@ -513,6 +515,12 @@ if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
     AC_DEFINE(BLITTER_MEMMOVE)	dnl required for the SDLBLIT
 fi
 
+dnl Ethernet card emulation
+if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
+    AC_DEFINE(ETHERNETSUPPORT)
+    SYSSRCS="$SYSSRCS ../ether.cpp ether_unix.cpp"
+fi
+
 dnl Determine the addressing mode to use
 if [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
   ADDRESSING_MODE="real"
@@ -642,7 +650,11 @@ fi
 				
 dnl Select appropriate CPU source and REGPARAM define.
 ASM_OPTIMIZATIONS=none
-CPUSRCS="cpuemu1.cpp cpuemu2.cpp cpuemu3.cpp cpuemu4.cpp cpuemu5.cpp cpuemu6.cpp cpuemu7.cpp cpuemu8.cpp"
+if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
+  CPUSRCS="cpuemu.cpp"
+else
+  CPUSRCS="cpuemu1.cpp cpuemu2.cpp cpuemu3.cpp cpuemu4.cpp cpuemu5.cpp cpuemu6.cpp cpuemu7.cpp cpuemu8.cpp"
+fi
 
 dnl gb-- JITSRCS will be emptied later if the JIT is not available
 dnl gb-- Other platforms should define their own set of noflags file variants
@@ -697,7 +709,7 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" ]]; then
       AC_MSG_WARN([!!!!! MMU&JIT in progress, dangerous !!!!!])
   fi
   JITSRCS="$JITSRCS ../uae_cpu/compiler/compemu_support.cpp"
-  DEFINES="$DEFINES -DUSE_JIT"
+  DEFINES="$DEFINES -DUSE_JIT -DNATMEM_OFFSET"
 
   if [[ "x$WANT_JIT_DEBUG" = "xyes" ]]; then
     if [[ "x$WANT_MON" = "xyes" ]]; then
