@@ -1075,8 +1075,6 @@ static char* ccnames[] =
 
 void m68k_reset (void)
 {
-    put_long_direct(0x00000000, get_long_direct(ROMBase));
-    put_long_direct(0x00000004, get_long_direct(ROMBase + 4));
     m68k_areg (regs, 7) = get_long_direct(0x00000000);
     m68k_setpc (get_long_direct(0x00000004));
     fill_prefetch_0 ();
@@ -3068,13 +3066,6 @@ void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, volatile unsigned in
     volatile uaecptr newpc = 0;
     m68kpc_offset = addr - m68k_getpc ();
     if (cnt == 0) {
-/*	int opwords;
-	for (opwords = 0; opwords < 5; opwords++) {
-		get_iword_1 (m68kpc_offset + opwords*2);
-	}
-	get_iword_1 (m68kpc_offset);
-	m68kpc_offset += 2;*/
-setjmpagainx:
         int prb = setjmp(excep_env);
         if (prb != 0) {
             goto setjmpagainx;
@@ -3172,6 +3163,7 @@ setjmpagain:
 		fprintf (f, "\n");
 	    }
     }
+setjmpagainx:
     if (nextpc)
 	*nextpc = m68k_getpc () + m68kpc_offset;
     free(buffer);

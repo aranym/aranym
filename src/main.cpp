@@ -828,6 +828,9 @@ bool InitAll(void)
 
 	maxInnerCounter = 10000;	// finetune this! Slower machines require lower number
 
+        // Setting "SP & PC"
+	for (int i = 0; i < 8; i++) RAMBaseHost[i] = ROMBaseHost[i];
+
 	//  SDL_EnableUNICODE(1);
 
 	// warp mouse to center of Atari 640x480 screen and grab it
@@ -892,6 +895,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.47  2001/12/06 01:06:54  joy
+ * disable mouse grabbing at start
+ *
  * Revision 1.46  2001/12/06 00:25:22  milan
  * ndebug corrected, sync
  *
