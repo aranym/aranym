@@ -20,11 +20,15 @@
 #include "memory.h"
 #include "blitter.h"
 
+static const bool dP = false;
+
 #define SHOWPARAMS												\
-{        fprintf(stderr,"Source Address:%X\n",source_addr);		\
+{       fprintf(stderr,"Source Address:%X\n",source_addr);		\
         fprintf(stderr,"  Dest Address:%X\n",dest_addr);		\
         fprintf(stderr,"       X count:%X\n",x_count);			\
         fprintf(stderr,"       Y count:%X\n",y_count);			\
+        fprintf(stderr,"Words per line:%X\n",x_count ? x_count : 65536);		\
+        fprintf(stderr,"Lines per blok:%X\n",y_count ? y_count : 65536);		\
         fprintf(stderr,"  Source X inc:%X\n",source_x_inc);		\
         fprintf(stderr,"    Dest X inc:%X\n",dest_x_inc);		\
         fprintf(stderr,"  Source Y inc:%X\n",source_y_inc);		\
@@ -54,7 +58,7 @@ UW BLITTER::LM_UW(uaecptr addr) {
 }
 
 void BLITTER::SM_UW(uaecptr addr, UW value) {
-	fprintf(stderr, "Blitter zapisuje data do %06x = %04x\n", addr, value);
+	// fprintf(stderr, "Blitter zapisuje data do %06x = %04x\n", addr, value);
 	put_word(addr, value);
 }
 
@@ -271,6 +275,11 @@ uae_u8 BLITTER::handleRead(uaecptr addr) {
 	if (addr < 0 || addr > 0x3d)
 		return 0;
 
+	if (blit) {
+		Do_Blit();
+		blit = false;
+	}
+
 	if (addr < 0x20) {
 		uae_u16 hfr = halftone_ram[addr / 2];
 		if (addr % 1)
@@ -278,6 +287,9 @@ uae_u8 BLITTER::handleRead(uaecptr addr) {
 		else
 			return hfr >> 8;
 	}
+
+	if (dP)
+		fprintf(stderr, "Blitter reads %x at %06x\n", addr+HW, showPC());
 
 	switch(addr) {
 		case 0x20: return source_x_inc >> 8;
@@ -328,6 +340,9 @@ void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
 		return;
 	}
 
+	if (dP)
+		fprintf(stderr, "Blitter writes: %x = %d ($%x) at %06x\n", addr+HW, value, value, showPC());
+
 	switch(addr) {
 		case 0x20: source_x_inc = (source_x_inc & 0x00ff) | (value << 8); break;
 		case 0x21: source_x_inc = (source_x_inc & 0xff00) | value; break;
@@ -360,6 +375,11 @@ void BLITTER::handleWrite(uaecptr addr, uae_u8 value) {
 		case 0x3c: STORE_B_ff8a3c(value); break;
 		case 0x3d: STORE_B_ff8a3d(value); break;
 	}
+	if (blit && addr != 0x3c) {
+		Do_Blit();
+		blit = false;
+	}
+
 }
 
 B BLITTER::LOAD_B_ff8a28(void)
@@ -428,10 +448,6 @@ B BLITTER::LOAD_B_ff8a3b(void)
 
 B BLITTER::LOAD_B_ff8a3c(void)
 {
-	if (blit) {
-		Do_Blit();
-		blit = false;
-	}
 	return (B) line_num & 0x3f;
 }
 
@@ -449,7 +465,7 @@ void BLITTER::STORE_B_ff8a32(B v)
 }
 
 void BLITTER::STORE_B_ff8a33(B v)
-{	dest_addr &= 0x00ffff;
+{	dest_addr &= 0xff00ffff;
 	dest_addr |= (v&0xff) << 16;
 #ifdef DEBUG
 	fprintf(stderr,"write : ff8a33 : %X\n",v);
@@ -457,7 +473,7 @@ void BLITTER::STORE_B_ff8a33(B v)
 }
 
 void BLITTER::STORE_B_ff8a34(B v)
-{	dest_addr &= 0xff00ff;
+{	dest_addr &= 0xffff00ff;
 	dest_addr |= (v&0xff) << 8;
 #ifdef DEBUG
 	fprintf(stderr,"write : ff8a34: %X\n",v);
@@ -465,7 +481,7 @@ void BLITTER::STORE_B_ff8a34(B v)
 }
 
 void BLITTER::STORE_B_ff8a35(B v)
-{	dest_addr &= 0xffff00;
+{	dest_addr &= 0xffffff00;
 	dest_addr |= (v & 0xfe);
 #ifdef DEBUG
 	fprintf(stderr,"write : ff8a35 : %X\n",v);
@@ -535,6 +551,7 @@ void BLITTER::STORE_B_ff8a3c(B v)
 	line_num   = (UB) v & 0x3f;
 	if ((y_count !=0) && (v & 0x80)) /* Busy bit set and lines to blit? */
 		blit = true;
+		// Do_Blit();
 }
 
 void BLITTER::STORE_B_ff8a3d(B v)
@@ -546,10 +563,10 @@ void BLITTER::STORE_B_ff8a3d(B v)
 
 void BLITTER::Do_Blit(void)
 { 	
-	fprintf(stderr, "Blitter started at %06x\n", showPC());
+	if (dP)
+		fprintf(stderr, "Blitter started at %06x\n", showPC());
 	SHOWPARAMS;
-	if (dest_addr < FALCVRAMSTART || (dest_addr > FALCVRAMEND && dest_addr < ARANYMVRAMSTART)) {
-		dest_addr |= 0xf0000000;
+	if ((dest_addr > FALCVRAMEND && dest_addr < ARANYMVRAMSTART)) {
 		fprintf(stderr, "Blitter - dest address out of range - exitting\n");
 		return;
 	}
