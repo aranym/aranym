@@ -90,9 +90,10 @@ void init_fdc(void)
 				disk[i].sides=(int)buf[26];
 				disk[i].sectors=(int)buf[24];
 				disk[i].secsize=(int)(buf[12]<<8)|buf[11];
-				int delitel = (disk[i].sides*disk[i].sectors);
-				if (delitel != 0)
-					disk[i].tracks=((int)(buf[20]<<8)|buf[19])/
+				int denom = (disk[i].sides*disk[i].sectors);
+				if (denom != 0)
+					disk[i].tracks=((int)(buf[20]<<8)|buf[19]);
+
 				D(bug("FDC %c: %d/%d/%d %d bytes/sector",
 					'A'+i,disk[i].sides,disk[i].tracks,disk[i].sectors,
 					disk[i].secsize));
