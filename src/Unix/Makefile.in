@@ -104,10 +104,10 @@ SRC_PATHS += $(sort $(foreach file, $(SRCS), $(dir $(file))))
 VPATH :=
 VPATH += $(addprefix :, $(subst  ,:, $(filter-out $($(subst, :, ,$(VPATH))), $(SRC_PATHS))))
 
-$(APP): $(OBJ_DIR) $(OBJS) Makefile
+$(APP): $(OBJ_DIR) $(OBJS)
 	$(CXX) -o $(APP) $(LDFLAGS) $(OBJS) $(LIBS)
 
-$(APP_STATIC): $(OBJ_DIR) $(OBJS) Makefile
+$(APP_STATIC): $(OBJ_DIR) $(OBJS)
 	$(CXX) -o $(APP_STATIC) -static $(LDFLAGS) $(OBJS) $(LIBS)
 
 Makefile: configure Makefile.in
@@ -238,7 +238,7 @@ dist: distclean
 	rm -r ../../web/
 	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=aranym/web/build/saxon.jar --exclude=autogen.sh --exclude=CVS aranym
 
-depend dep: Makefile
+depend dep:
 	makedepend $(CPPFLAGS) $(DEFS) -Y. $(SRCS) -p$(OBJ_DIR)/ 2>/dev/null
 	sed -n '/^# DO NOT DELETE THIS LINE -- make depend depends on it./,$$p' < Makefile > Makefile.wrk
 	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' < Makefile > Makefile.new
@@ -259,16 +259,16 @@ $(OBJ_DIR)/%.o : %.cpp
 $(OBJ_DIR)/%.o : %.s
 	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/cpuopti: $(OBJ_DIR)/cpuopti.o Makefile
+$(OBJ_DIR)/cpuopti: $(OBJ_DIR)/cpuopti.o
 	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/cpuopti $(OBJ_DIR)/cpuopti.o
-$(OBJ_DIR)/build68k: $(OBJ_DIR)/build68k.o Makefile
+$(OBJ_DIR)/build68k: $(OBJ_DIR)/build68k.o
 	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/build68k $(OBJ_DIR)/build68k.o
-$(OBJ_DIR)/gencpu: $(OBJ_DIR)/gencpu.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o Makefile
+$(OBJ_DIR)/gencpu: $(OBJ_DIR)/gencpu.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
 	$(CXX) $(LDFLAGS) -o $(OBJ_DIR)/gencpu $(OBJ_DIR)/gencpu.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
-$(OBJ_DIR)/gencomp: $(OBJ_DIR)/gencomp.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o Makefile
+$(OBJ_DIR)/gencomp: $(OBJ_DIR)/gencomp.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
 	$(CC) $(LDFLAGS) -o $(OBJ_DIR)/gencomp $(OBJ_DIR)/gencomp.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
 
-cpudefs.cpp: $(OBJ_DIR)/build68k ../uae_cpu/table68k Makefile
+cpudefs.cpp: $(OBJ_DIR)/build68k ../uae_cpu/table68k
 	$(OBJ_DIR)/build68k <../uae_cpu/table68k >cpudefs.cpp
 cpustbl.cpp: cpuemu.cpp 
 cpustbl_nf.cpp: cpustbl.cpp
@@ -278,16 +278,16 @@ comptbl.h: compemu.cpp
 
 sysdeps.h: config.h
 
-cpuemu.cpp: $(OBJ_DIR)/gencpu Makefile
+cpuemu.cpp: $(OBJ_DIR)/gencpu
 	$(OBJ_DIR)/gencpu
 
-compemu.cpp: $(OBJ_DIR)/gencomp Makefile
+compemu.cpp: $(OBJ_DIR)/gencomp
 	$(OBJ_DIR)/gencomp
 
-$(OBJ_DIR)/cpustbl_nf.o: cpustbl.cpp Makefile
+$(OBJ_DIR)/cpustbl_nf.o: cpustbl.cpp
 	$(CXX) $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -DNOFLAGS -c $< -o $@
 
-$(OBJ_DIR)/compemu_support.o: compemu_support.cpp comptbl.h Makefile
+$(OBJ_DIR)/compemu_support.o: compemu_support.cpp comptbl.h
 	$(CXX) $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/cpuemu1.o: cpuemu.cpp
