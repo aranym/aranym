@@ -45,6 +45,7 @@ void Parallel::reset(void)
 
 void Parallel::setDirection(bool out)
 {
+	DUNUSED(out);
 	D(bug("parallel: setDirection"));
 }
 
@@ -56,6 +57,7 @@ uint8 Parallel::getData()
 
 void Parallel::setData(uint8 value)
 {
+	DUNUSED(value);
 	D(bug("parallel: setData"));
 }
 
@@ -67,5 +69,10 @@ uint8 Parallel::getBusy()
 
 void Parallel::setStrobe(bool high)
 {
+	DUNUSED(high);
 	D(bug("parallel: setStrobe"));
 }
+
+/*
+vim:ts=4:sw=4:
+*/

@@ -1,5 +1,5 @@
 /*
-	Parallel port emulation, base class
+	Parallel port emulation, output to file
 
 	ARAnyM (C) 2005 Patrice Mandin
 
@@ -54,6 +54,7 @@ void ParallelFile::reset(void)
 
 void ParallelFile::setDirection(bool out)
 {
+	DUNUSED(out);
 	D(bug("parallel_file: setDirection"));
 }
 
@@ -94,5 +95,10 @@ uint8 ParallelFile::getBusy()
 
 void ParallelFile::setStrobe(bool high)
 {
+	DUNUSED(high);
 	D(bug("parallel_file: setStrobe"));
 }
+
+/*
+vim:ts=4:sw=4:
+*/
