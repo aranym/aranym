@@ -83,4 +83,7 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void);
 int GUImainDlg();
 SDL_Event getEvent(SGOBJ *dlg, cursor_state *cursor);
 
+typedef enum { ALERT_OK, ALERT_OKCANCEL } alert_type;
+extern bool SDLGui_Alert(const char *, alert_type type);
+
 #endif /* _SDLGUI_H */
