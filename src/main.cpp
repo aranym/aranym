@@ -778,6 +778,29 @@ bool InitTOSROM(void)
 	ROMBaseHost[0x00418] = (bx_options.cookies._mch >> 8) & 0xff;
 	ROMBaseHost[0x00419] = (bx_options.cookies._mch) & 0xff;
 
+	// patch FastRAM
+	int ramtop = (FastRAMBase + FastRAMSize);
+	ROMBaseHost[0x001CC] = 0x4E;
+	ROMBaseHost[0x001CD] = 0xF9;	// JMP <abs.addr>
+	ROMBaseHost[0x001CE] = 0x00;
+	ROMBaseHost[0x001CF] = 0xE7;
+	ROMBaseHost[0x001D0] = 0xFF;
+	ROMBaseHost[0x001D1] = 0x00;	// abs.addr = $E7FF00
+	ROMBaseHost[0x7FF00] = 0x21;
+	ROMBaseHost[0x7FF01] = 0xFC;	// MOVE.L #imm, abs.addr.w
+	ROMBaseHost[0x7FF02] = ramtop >> 24;
+	ROMBaseHost[0x7FF03] = ramtop >> 16;
+	ROMBaseHost[0x7FF04] = ramtop >> 8;
+	ROMBaseHost[0x7FF05] = ramtop;
+	ROMBaseHost[0x7FF06] = 0x05;
+	ROMBaseHost[0x7FF07] = 0xA4;	// abs.addr.w = $5A4
+	ROMBaseHost[0x7FF08] = 0x4E;
+	ROMBaseHost[0x7FF09] = 0xF9;	// JMP <abs.addr>
+	ROMBaseHost[0x7FF0A] = 0x00;
+	ROMBaseHost[0x7FF0B] = 0xE0;
+	ROMBaseHost[0x7FF0C] = 0x01;
+	ROMBaseHost[0x7FF0D] = 0xD2;	// abs.addr = $E001D2
+
 #ifdef DIRECT_TRUECOLOR
 	// patch it for direct TC mode
 	if (bx_options.video.direct_truecolor) {
@@ -946,6 +969,10 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.53  2001/12/22 18:13:24  joy
+ * most video related parameters moved to bx_options.video struct.
+ * --refresh <x> added
+ *
  * Revision 1.52  2001/12/17 09:56:56  joy
  * VBL is at precise 50 Hz now. And screen refresh at 25 Hz.
  *
