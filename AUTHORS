@@ -54,6 +54,10 @@ STonX
   http://stonx.sf.net/
   Blitter, FDC, .xfs
 
+SDL_gfxPrimitves (LGPL)
+  http://www.ferzkopp.net/Software/SDL_gfx-2.0/index.html
+  Base for the fVDI driver drawing functions
+
 UAE
   http://www.freiburg.linux.de/~uae/
   Parts of CPU
