@@ -16,6 +16,12 @@
 #  include "nfcdrom_sdl.h"
 # endif
 #endif
+#ifdef NFPCI_SUPPORT
+# include "nfpci.h"
+# ifdef NFPCI_LINUX_SUPPORT
+#  include "nfpci_linux.h"
+# endif
+#endif
 /* add your NatFeat class definition here */
 
 
@@ -44,6 +50,11 @@ CdromDriverLinux CdRom;
 CdromDriverSdl CdRom;
 # endif
 #endif
+#ifdef NFPCI_SUPPORT
+# ifdef NFPCI_LINUX_SUPPORT
+PciDriverLinux Pci;
+# endif
+#endif
 /* add your NatFeat object declaration here */
 
 pNatFeat nf_objects[] = {
@@ -59,6 +70,9 @@ pNatFeat nf_objects[] = {
 #endif
 #ifdef NFCDROM_SUPPORT
 	&CdRom,
+#endif
+#ifdef NFPCI_SUPPORT
+	&Pci,
 #endif
 	/* add your NatFeat object below */
 

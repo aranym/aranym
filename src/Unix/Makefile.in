@@ -90,6 +90,7 @@ SRCS = ../main.cpp \
 	../natfeat/nf_basicset.cpp \
 	../natfeat/debugprintf.cpp \
 	$(NFCDROMSRCS) \
+	$(NFPCISRCS) \
 	$(SYSSRCS) \
 	$(CPUSRCS) \
 	$(DSPSRCS) \

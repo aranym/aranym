@@ -56,6 +56,8 @@ AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default
 
 AC_ARG_ENABLE(nfcdrom,         [  --enable-nfcdrom        enable NatFeat CD-ROM (default=yes)], [WANT_NFCDROM=$enableval], [WANT_NFCDROM=yes])
 
+AC_ARG_ENABLE(nfpci,           [  --enable-nfpci          enable NatFeat PCI (default=no)], [WANT_NFPCI=$enableval], [WANT_NFPCI=no])
+
 AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emulation (default=yes)], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
 AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per second limiter (default=no)], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
@@ -1255,6 +1257,23 @@ if [[ "x$WANT_NFCDROM" = "xyes" ]]; then
 	esac
 fi
 
+dnl Natfeat PCI driver
+
+NFPCISRCS=""
+if [[ "x$WANT_NFPCI" = "xyes" ]]; then
+	case "$target_os" in
+		linux*)
+			AC_DEFINE([NFPCI_SUPPORT], 1, [Define if you want to use host PCI driver])
+			NFPCISRCS="../natfeat/nfpci.cpp"
+			AC_DEFINE([NFPCI_LINUX_SUPPORT], 1, [Define if you want to use Linux PCI driver])
+			NFPCISRCS="$NFPCISRCS ../natfeat/nfpci_linux.cpp"
+			;;
+		*)
+			AC_MSG_ERROR([*** NatFeats PCI not supported by this OS ***])
+			;;
+	esac
+fi
+
 dnl Exception per second limiter
 
 if [[ "x$WANT_EPSLIMITER" = "xyes" ]]; then
@@ -1290,6 +1309,7 @@ AC_SUBST(CPUSRCS)
 AC_SUBST(DSPSRCS)
 AC_SUBST(LILOSRCS)
 AC_SUBST(NFCDROMSRCS)
+AC_SUBST(NFPCISRCS)
 AC_SUBST(GUISDLSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
@@ -1327,6 +1347,7 @@ echo Linux loader ........................... : $WANT_LILO
 echo Zlib ................................... : $have_zlib
 echo Linux kernel includes .................. : $LINUXKERNEL_INCDIR
 echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
+echo NatFeat PCI driver ..................... : $WANT_NFPCI
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo
 echo "Configuration done. Now type \"make depend\" (or \"gmake depend\") then
