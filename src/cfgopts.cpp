@@ -249,7 +249,8 @@ int	input_config(const char *filename, struct Config_Tag configs[], char *header
 				for ( ptr = configs; ptr->buf; ++ptr )	 /* scan for token */ {
 					if ( !strcasecmp( tok , ptr->code ) )  /* got a match? */ {
 						if (next == NULL) {
-							if ( ptr->type == String_Tag ) {/* string may be empty */
+							if ( ptr->type == Path_Tag ||
+							     ptr->type == String_Tag ) {/* path or string may be empty */
 								*(char *)ptr->buf = 0;
 								++count;
 							}
@@ -320,6 +321,7 @@ int	input_config(const char *filename, struct Config_Tag configs[], char *header
 							++count;
 							break;
 
+						case Path_Tag:
 						case String_Tag:
 							if (ptr->buf_size > 0) {
 								char *cptr = (char *)ptr->buf;
@@ -406,6 +408,7 @@ bool write_token(FILE *outfile, struct Config_Tag *ptr)
 		fprintf(outfile, "%c\n", *(char *)ptr->buf);
 		break;
 
+	case Path_Tag:
 	case String_Tag:
 		fprintf(outfile, "%s\n", (char *)ptr->buf);
 		break;

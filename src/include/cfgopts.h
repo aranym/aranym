@@ -22,6 +22,7 @@ typedef enum {
 	Double_Tag,
 	Char_Tag,
 	String_Tag,
+	Path_Tag,
 	Function_Tag
 } TAG_TYPE;
 
