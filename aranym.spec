@@ -1,6 +1,6 @@
 %define name	aranym
 %define ver	0.6.8
-%define rel	0
+%define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
 %define group	Console/Emulators
@@ -33,17 +33,20 @@ rm -rf %{realname}
 #%patch -p1
 
 %build
+./configure --prefix=/usr --enable-jit-compiler
+make
+mv aranym aranym-jit
+make clean
 ./configure --prefix=/usr
 make
-make clean
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/bin
-mkdir -p $RPM_BUILD_ROOT/usr/share
 mkdir -p $RPM_BUILD_ROOT/usr/share/aranym
 make install DESTDIR=$RPM_BUILD_ROOT
 install aranym $RPM_BUILD_ROOT/usr/bin
+install aranym-jit $RPM_BUILD_ROOT/usr/bin
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -53,6 +56,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc ../../doc ../../AUTHORS ../../BUGS ../../COPYING ../../FAQ ../../INSTALL ../../NEWS ../../ChangeLog ../../README ../../TODO
 /usr/bin/aranym
+/usr/bin/aranym-jit
 /usr/share/aranym/atari/newdesk.inf
 /usr/share/aranym/atari/aranymrc.example
 /usr/share/aranym/atari/mmusetup.cnf
@@ -75,6 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Tue Oct 22 2002 Petr Stehlik <pstehlik@sophics.cz>
+aranym-jit (JIT compiler for m68k CPU) generated.
+
 * Sun Oct 20 2002 Petr Stehlik <pstehlik@sophics.cz>
 EmuTOS image file renamed back.
 
