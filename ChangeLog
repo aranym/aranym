@@ -1,3 +1,20 @@
+2004/04/06 - joy on behalf of Carlo
+- MacOSX/: obsolete aranym_for_library and pkg_support were removed.
+  main_OSX.cpp added, with modified memory allocation routines.
+  The installation package is no longer required. Now there is only a folder
+  to drag to the hard-disk.
+
+- configure.ac: added MACOSX_support define, corrected bug in vm_allocate
+  test.
+
+- uae_cpu/memory.h: scary typo error fixed
+
+- main.cpp, parameters.cpp: these patches were not accepted as I don't like
+  unnecessary polluting of main source code with #ifdef MACOSX_support.
+  We need something like Unix/cygwin/cygwin_parameters.cpp for MacOSX
+  to keep the main source clean.
+
+
 2004/03/29 - milan
 - Makefile.in: .cvsingnore not in dists
 
