@@ -545,7 +545,6 @@ Virtual* CDECL opnwk(Virtual *vwk)
 		set_resolution( resolution.width, resolution.height, resolution.bpp, resolution.freq );
 		device.address = (void*)get_videoramaddress();
 		me->default_vwk->real_address->screen.mfdb.address = device.address;
-		vwk->real_address->screen.mfdb.address = device.address;
 	}
 
 	return 0;
