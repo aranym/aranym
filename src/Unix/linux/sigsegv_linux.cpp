@@ -316,6 +316,23 @@ static void segfault_vec(int x, struct sigcontext sc) {
 					instruction = INSTR_NEG8;
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
+#if 1
+				case 4:
+					D(panicbug("TEST m8, imm8"));
+					transfer_type = TYPE_STORE;
+					instruction = INSTR_TESTIMM8;
+					imm = addr_instr[3];
+					len += 3 + get_instr_size_add(addr_instr + 1);
+					break;
+				case 5:
+					D(panicbug("TEST m8, imm8"));
+					transfer_type = TYPE_STORE;
+					instruction = INSTR_TESTIMM8;
+					reg = (addr_instr[1] >> 3) & 7;
+					imm = addr_instr[6];
+					len += 3 + get_instr_size_add(addr_instr + 1);
+					break;
+#else
 				case 4:
 					D(panicbug("MUL m8"));
 					transfer_type = TYPE_LOAD;
@@ -328,6 +345,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 					instruction = INSTR_IMUL8;
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
+#endif
 				case 6:
 					D(panicbug("DIV m8"));
 					transfer_type = TYPE_LOAD;
