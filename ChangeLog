@@ -10,3 +10,20 @@
   emulation, as mentioned above :) won't crash the virtual machine anymore!
 
 - new memory allocation (main_unix.cpp), enables 32 MB of FastRAM.
+
+2001/05/29 - PS - version increased to 0.0.2
+- uae_cpu/memory.h - you can enable or disable CHECK_MEMORY_END.
+  When enabled, direct_truecolor bombs out in early stage of TOS boot (because
+  TOS cannot write to videoram).
+  When disabled, FastRAM works (just run FASTRAM.PRG from the desktop and
+  you'll get 32 MB of additional fast ram).
+
+- 'boot_color_depth' switch works now thanks to late initializing of RTC module
+  in HWInit().
+
+- 'monitor' switch allows you to choose between VGA and TV connected on Videl
+  output.
+
+- 'direct_truecolor' switch allows you to patch TOS so that Videl VideoRAM
+  is set directly to host's VideoRAM. Thus VIDEL writes directly to host's
+  VGA card video memory (if framebuffer is used as the SDL_VIDEODRIVER).
