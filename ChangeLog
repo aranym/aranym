@@ -1,3 +1,7 @@
+2002/04/20 - joy
+- audio.cpp - wrong memset() addr fixed. No more crashes, sound works
+  like a charm.
+
 2002/04/20 - STanda
 - PurePascal and its debugger snapshot added.
 - ExtFs: Small general code cleanup

@@ -20,7 +20,7 @@ void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
 	r->a[7] += 4;
 
 	switch (fncode) {
-		// NEEDED functions
+	// NEEDED functions
 
 	case 1:					// OpenAudio:
 		spec_desired.freq = ReadInt32(r->a[7]);
@@ -44,10 +44,11 @@ void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
 			  ("Audio: OpenAudio return %x Fr:%d Ch:%d S:%d",
 			   spec_obtained.format, spec_obtained.freq,
 			   spec_obtained.channels, spec_obtained.samples));
-			if (spec_desired.userdata && spec_obtained.size)
-				memset((void *)
-					   do_get_real_address((uint32) spec_desired.userdata),
-					   0, spec_obtained.size);
+			if (spec_desired.userdata && spec_obtained.size) {
+				AUDIOPAR *par = (AUDIOPAR *)(spec_desired.userdata);
+				void *buffer = do_get_real_address(par->buffer);
+				memset(buffer, 0, spec_obtained.size);
+			}
 			r->d[0] = (uint32) spec_obtained.format;
 		}
 		break;
@@ -64,7 +65,7 @@ void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
 
 	case 4:					// AudioStatus
 		r->d[0] = (uint32) SDL_GetAudioStatus();
-//          D(bug("Audio: AudioStatus %d", r->d[0]));
+//		D(bug("Audio: AudioStatus %d", r->d[0]));
 		break;
 
 	case 5:					// AudioVolume
@@ -73,12 +74,12 @@ void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
 		break;
 
 	case 6:					// LockAudio         
-//          D(bug("Audio: LockAudio"));
+//		D(bug("Audio: LockAudio"));
 		SDL_LockAudio();
 		break;
 
 	case 7:					// UnlockAudio    
-//          D(bug("Audio: UnlockAudio"));
+//		D(bug("Audio: UnlockAudio"));
 		SDL_UnlockAudio();
 		break;
 
@@ -88,11 +89,11 @@ void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
 		break;
 
 	case 9:					// GetAudioLen
-//          D(bug("Audio: GetAudioLen %d", AudioParameters.len));
+//		D(bug("Audio: GetAudioLen %d", AudioParameters.len));
 		r->d[0] = AudioParameters.len;
 		break;
 
-		// not implemented functions
+	// not implemented functions
 	default:
 		D(bug("Audio: Unknown %d", fncode));
 		r->d[0] = 1;
@@ -101,15 +102,11 @@ void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
 
 static void audio_callback(void *userdata, uint8 * stream, int len)
 {
-	AUDIOPAR *AudioParameters;
-	AudioParameters = (AUDIOPAR *) userdata;
+	AUDIOPAR *par = (AUDIOPAR *)userdata;
 	if (userdata) {
-		SDL_MixAudio(stream,
-					 (uint8 *) do_get_real_address((uint32)
-												   AudioParameters->
-												   buffer), len,
-					 AudioParameters->volume);
-		AudioParameters->len = len;
+		uint8 *buffer = do_get_real_address(par->buffer);
+		SDL_MixAudio(stream, buffer, len, par->volume);
+		par->len = len;
 		TriggerInterrupt();		// Interrupt level 5
 	}
 }
