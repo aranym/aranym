@@ -1,3 +1,14 @@
+2001/07/24 - joy
+- portable stuff moved from Unix folder up to the main.cpp (should be cleaned up)
+
+- bx_options moved from ata.cpp to parameters and should become global structure
+  for aranym options
+
+- floppy is not inserted automatically upon start - this is because my machine does not
+  have a floppy connected and it caused aranym to hang. Should be a command line parameter
+  like -floppy or something.
+  
+
 2001/07/20 - milan
 - signals & pthread removed, now only SDL needs pthread
 
@@ -6,6 +17,7 @@
 - some warnings "killed"
 
 - "ndebug" integrated (only dbprintf), now D(bug()) without \n
+  
 
 2001/07/13 - STanda
 - BLITTER function table restored. (the only - bad - thing is that all
@@ -17,17 +29,20 @@
 - note: the original fVDI driver sources compiled as they are and got
   corrupted (parachute) one. fVDI author notified and requested the
   whole source tree again.
+  
 
 2001/07/09 - STanda 
 - SDL comunity solved our mouse problem in Xs! Get the newest SDL cvs,
   make & install
 
 - the grab_mouse is set by default when in fullscreen
+  
 
 2001/07/02 - milan
 - new UAE CPU port from BasiliskII (CVS 25.6.2001)
 
 - more portable
+  
 
 2001/06/18 - STanda - version increased to 0.0.5
 - the SDL dependent parts of the code were moved to the HostScreen class.
@@ -40,16 +55,18 @@
 - some copyright (and CVS) comments added. Please - authors - put the CVS
   comments to the beginning and to the bottom of each source file conforming
   the template provided in the projects root directory (template.cpp).
+  
 
 2001/06/18 - STanda
 - videl renderScreen() fix (lock & unlock screen added - again)
 
 - the shift-break combination is now used to exit the emulator immediately
-  (this was PS code change, but forgotten to tell us ;))... anyway thanks
+  (this was joy's code change, but forgotten to tell us ;))... anyway thanks
   for really good working videl now. I seem not to have any problems with
   color palette here :).
 
-2001/06/17 - PS
+
+2001/06/17 - joy
 - System Timer (200 Hz Timer C) should be precise even under heavy load now.
   The MFP stuff needs to be rewritten from scratch. My C++ OOP knowledge sucks.
 
@@ -77,7 +94,7 @@
   as they are invoked before main(). Fix the ExtFs stuff (install "A" ???)
 
 
-2001/06/15 - PS
+2001/06/15 - joy
 - VIDEL finished. Hardware color palette registers are used properly now.
 
 
@@ -89,7 +106,7 @@
   original method functionality was captured in new renderScreen() method
 
 
-2001/06/12 - PS
+2001/06/12 - joy
 - VIDEL rewritten using the new BASE_IO class. Got proper getVideoMode()
   and getWidth/Height (all stolen from Linux-m68k source code).
   Extended resolutions (using BlowUP030) work now perfectly (e.g. 1024x768).
@@ -98,12 +115,12 @@
   HW emulation stuff now.
 
 
-2001/06/08 - PS
+2001/06/08 - joy
 - highly unfinished, very preliminary, often crashing support for extended
   VIDEL resolutions. I know how to fix it, just give me some time.
 
 
-2001/06/06 - PS
+2001/06/06 - joy
 - '--grab_mouse' command line switch for X-Windows
 
 - floppy can be inserted and removed in run-time. Press F11 to insert
@@ -127,7 +144,7 @@
 - the short -debug option was redesigned to -D
   
 
-2001/05/29 - PS - version increased to 0.0.3
+2001/05/29 - joy - version increased to 0.0.3
 - major speed up (22 -> 27 thousand dhrystones) thanks to moving setjmp()
   out of main CPU loop
 
@@ -136,7 +153,7 @@
 - fixed VBL invocation (main_unix.cpp)
   
 
-2001/05/29 - PS - version increased to 0.0.2
+2001/05/29 - joy - version increased to 0.0.2
 - uae_cpu/memory.h - you can enable or disable CHECK_MEMORY_END.
   When enabled, direct_truecolor bombs out in early stage of TOS boot (because
   TOS cannot write to videoram).
@@ -154,7 +171,7 @@
   VGA card video memory (if framebuffer is used as the SDL_VIDEODRIVER).
   
 
-2001/05/28 - PS
+2001/05/28 - joy
 - implemented proper Bus Error (hardware.cpp and others). This helps
   in a number of places, namely in FPU detection routines.
 
