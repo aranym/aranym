@@ -1,3 +1,9 @@
+2004/01/08 - patrice
+
+- dsp_disasm.cpp: many references to old 'dsp.' variable lying around, now
+  replaced by 'GetDSP()->'.
+
+
 2004/01/07 - Xavier
 - doc/build-cygwin.sh: Corrected a minor bug in error handling.
 
