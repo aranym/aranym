@@ -1,0 +1,10 @@
+--- gencomp.c	2002-10-14 00:17:44.000000000 +0200
++++ gencomp.p4.c	2002-11-05 20:39:50.000000000 +0100
+@@ -1098,6 +1098,7 @@
+       
+      case flag_addx:
+      case flag_subx:
++	failure;	/* P4 problem */
+ 	uses_cmov;
+ 	comprintf("\tdont_care_flags();\n");
+ 	{

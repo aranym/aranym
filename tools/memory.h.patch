@@ -1,24 +1,77 @@
-132d131
-< #ifndef HW_SIGSEGV
-135d133
-< #endif
-151d148
-< #ifndef HW_SIGSEGV
-154d150
-< #endif
-170d165
-< #ifndef HW_SIGSEGV
-173d167
-< #endif
-191d184
-< #ifndef HW_SIGSEGV
-197d189
-< #endif
-215d206
-< #ifndef HW_SIGSEGV
-221d211
-< #endif
-239d228
-< #ifndef HW_SIGSEGV
-245d233
-< #endif
+--- memory.h	2002-11-05 20:42:10.000000000 +0100
++++ memory.nssv.h	2002-11-05 20:42:35.000000000 +0100
+@@ -133,10 +133,8 @@
+     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
+         return do_get_mem_long((uae_u32*)(addr + read_offset));
+ #endif
+-#ifndef HW_SIGSEGV
+     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+     if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
+-#endif
+     check_ram_boundary(addr, 4, false);
+     uae_u32 * const m = (uae_u32 *)phys_get_real_address(addr);
+ #if ARAM_PAGE_CHECK
+@@ -152,10 +150,8 @@
+     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
+         return do_get_mem_word((uae_u16*)(addr + read_offset));
+ #endif
+-#ifndef HW_SIGSEGV
+     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+     if ((addr & 0xfff00000) == 0x00f00000) return HWget_w(addr);
+-#endif
+     check_ram_boundary(addr, 2, false);
+     uae_u16 * const m = (uae_u16 *)phys_get_real_address(addr);
+ #if ARAM_PAGE_CHECK
+@@ -171,10 +167,8 @@
+     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
+         return do_get_mem_byte((uae_u8*)(addr + read_offset));
+ #endif
+-#ifndef HW_SIGSEGV
+     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+     if ((addr & 0xfff00000) == 0x00f00000) return HWget_b(addr);
+-#endif
+     check_ram_boundary(addr, 1, false);
+     uae_u8 * const m = (uae_u8 *)phys_get_real_address(addr);
+ #if ARAM_PAGE_CHECK
+@@ -192,13 +186,11 @@
+         return;
+     }
+ #endif
+-#ifndef HW_SIGSEGV
+     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+     if ((addr & 0xfff00000) == 0x00f00000) {
+         HWput_l(addr, l);
+         return;
+     } 
+-#endif
+     check_ram_boundary(addr, 4, true);
+     uae_u32 * const m = (uae_u32 *)phys_get_real_address(addr);
+ #if ARAM_PAGE_CHECK
+@@ -216,13 +208,11 @@
+         return;
+     }
+ #endif
+-#ifndef HW_SIGSEGV
+     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+     if ((addr & 0xfff00000) == 0x00f00000) {
+         HWput_w(addr, w);
+         return;
+     }
+-#endif
+     check_ram_boundary(addr, 2, true);
+     uae_u16 * const m = (uae_u16 *)phys_get_real_address(addr);
+ #if ARAM_PAGE_CHECK
+@@ -240,13 +230,11 @@
+         return;
+     }
+ #endif
+-#ifndef HW_SIGSEGV
+     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+     if ((addr & 0xfff00000) == 0x00f00000) {
+         HWput_b(addr, b);
+         return;
+     }
+-#endif
+     check_ram_boundary(addr, 1, true);
+     uae_u8 * const m = (uae_u8 *)phys_get_real_address(addr);
+ #if ARAM_PAGE_CHECK
