@@ -20,6 +20,10 @@
 
 # include <osbind.h>
 
+#define MY_DEBUG 0
+
+#define AUTO_IP_CONFIGURE 0
+
 #if AUTO_IP_CONFIGURE
 #include "inet4/in.h"
 unsigned long inet_aton(const char *cp, struct in_addr *addr);
@@ -333,24 +337,34 @@ ara_output (struct netif *nif, BUF *buf, const char *hwaddr, short hwlen, short 
 static long
 ara_ioctl (struct netif *nif, short cmd, long arg)
 {
+#if AUTO_IP_CONFIGURE
+	enum {NONE, ADDR, NETMASK} gif = NONE;
+#endif
+#if MY_DEBUG
+	char a[255];
+	ksprintf(a, "Ethernet ioctl %d\n", cmd - ('S'<<8));
+	nf_stderr(a);
+#endif
 	DEBUG (("araeth: ioctl cmd = %d (%x) bytes", cmd));
+
+
 
 	switch (cmd)
 	{
 #if AUTO_IP_CONFIGURE
-		int gif = -1;
 		case SIOCGIFADDR:
-			if (gif == -1) gif = 0;
+			if (gif == NONE) gif = ADDR;
 			/* fall through */
 		case SIOCGIFNETMASK:
-			if (gif == -1) gif = 1;
-			if (gif == 0 || gif == 1) {
+			if (gif == NONE) gif = NETMASK;
+
+			if (gif == NETMASK || gif == ADDR) {
 				char buffer[128];
 				struct ifreq *ifr = (struct ifreq *) arg;
 				struct sockaddr_in *s = (struct sockaddr_in *)&(
 					gif ? ifr->ifru.netmask : ifr->ifru.addr
 				);
-				nfCall((ETH(gif ? XIF_GET_NETMASK : XIF_GET_IPATARI),
+				nfCall((ETH(gif == NETMASK ? XIF_GET_NETMASK : XIF_GET_IPATARI),
 					0 /* ethX */, buffer, sizeof(buffer)));
 				inet_aton(buffer, &s->sin_addr);
 			}
