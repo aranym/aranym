@@ -22,6 +22,7 @@
 
 
 #include <stdio.h>
+#include <string.h>			// for RH gcc 2.96 (memcpy etc.)
 #include <fcntl.h>				// for O_RDWR
 #include <sys/stat.h>			// for stat
 #include <unistd.h>				// for close
