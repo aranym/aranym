@@ -47,7 +47,6 @@
 #include <cerrno>
 #include <csignal>
 #include <cstdlib>
-#include <SDL.h>
 
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
@@ -88,16 +87,6 @@ void segmentationfault(int x)
  */
 int main(int argc, char **argv)
 {
-/*
-	long i = 0;
-	long x = SDL_GetTicks();
-	while(x == SDL_GetTicks())
-		;
-	x = SDL_GetTicks();
-	while(x == SDL_GetTicks())
-		i++;
-	printf("SDL_GetTicks = 1 / %d\n", i);
-*/
 	// Initialize variables
 	RAMBaseHost = NULL;
 	ROMBaseHost = NULL;
@@ -222,6 +211,8 @@ void QuitEmulator(void)
 	Exit680x0();
 #endif
 
+	ExitAll();
+
 	// Free ROM/RAM areas
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
 	if (RAMBaseHost != VM_MAP_FAILED) {
@@ -266,6 +257,11 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.67  2002/05/14 19:09:50  milan
+ * Better structure of vm_alloc, not own OS dependent includes
+ * Some debug outputs added for JIT compiler
+ * A small reform in memory allocation, one stupid bug (of course, I'm the author) found in QuitEmulator (vm_release(nil))
+ *
  * Revision 1.66  2002/04/29 11:45:18  joy
  * ErrorAlert() -> panicbug()
  *
