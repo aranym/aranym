@@ -76,6 +76,8 @@ Things for 1.0 release:
 + mouse pointer shared between X-Windows and aranym (like in vmware)
 
 + [75%] fVDI working (TOS+aranym drivers)
+    - reorganize the loop nesting (performance) in HostScreen::gfxXXX methods.
+    - add support for other than 16bit host color depth surfaces
 
 - sound output using GSXB library
 
