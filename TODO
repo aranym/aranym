@@ -9,8 +9,6 @@ TODO in keyboard support:
 - editable keyboard layout (need WYSIWYG - impossible in 320x200)
 
 TODO in GUI-SDL:
-- open up GUI whenever the config file is not found (so that users can edit
-  the default values before saving them).
 - change GUI font loading routine - load standard TOS font (2048/4096 bytes)
   directly (instead of some MS Windows bitmap)
 - fileselector: sorting by file type (folders first) and then by file .ext
@@ -35,8 +33,6 @@ TODO in ARAnyM source code itself:
 
 ARAnyM Roadmap:
 ---------------
-
-0.9.0 should come with direct partition access and free XHDI disk driver
 
 1.0.0 should be complete and ready for a CD ISO image distribution
       (installable on a wide range of PC-like hardware).
@@ -64,12 +60,18 @@ that particular programmer but rather who is author of the idea :-)
   Extra cool idea: PRIMARY selection on X11 could be stored to IKBD buffer
   directly so it would simulate typing.
 
-- Petr: printing to configurable file (/dev/lp)
-
 - Petr: ARAnyM should test if SDL timers work OK at startup and if not, stop
        booting and exit gracefully with a loud warning (e.g. on NetBSD).
 
 - Petr: emulating a serial port compatible with MiNT/HSMODEM
+
+- Petr: extend the config file routines to save also some comments above
+  each head section. Example:
+
+  # the following section defines hotkeys. Format is 
+  # hotkey = keycode : modifiers
+  # where keycode and modifiers are defined in SDL_keysym.h
+  [HOTKEYS]
 
 - Milan: distributed dispatcher for JIT compiler sigsegv handler
   UPDATE: partially done, slower :-(

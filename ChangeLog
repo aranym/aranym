@@ -1,3 +1,17 @@
+2005/02/17 - Petr
+- parameters.cpp: open up SETUP if no config file found and new one is to be
+  created so that users can edit the default values before saving.
+
+- dlgAlert: flexible formatting of text to any number of lines (up to 20).
+  Two types of alerts - info "OK" and confirm "OK/Cancel".
+
+- dlgMain: dlgAbout and dlgHelp replaced with info alert.
+
+- dlgDisk, dlgHotkeys: HELP button and page added
+
+- TODO: updated (at last I could remove some long standing issues :)
+
+
 2005/02/14 - Petr
 - main.cpp: display the right key for invoking SETUP GUI in the window
   caption bar.
