@@ -1963,8 +1963,10 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 		case 7:	  // D_XATTRMODE
 			return 0x0ff0001fL;	 // only the archive bit is not recognised in the Fxattr
 
+		/*
 		case 8:	  // DP_XATTR
 			return 0x00000ffbL;	 // rdev is not used
+		*/
 
 		default:
 			return TOS_EINVFN;
@@ -2583,6 +2585,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.39  2002/04/12 22:52:27  joy
+ * AranymFS bug fixed - ST-Zip can unpack onto host fs now
+ *
  * Revision 1.38  2002/04/04 19:13:51  standa
  * PureC patch for MetaDOS usage.
  * Upper case filenames to lower case conversion for new files on halfsensitive fs.
