@@ -401,13 +401,22 @@ void presave_ide()
 
 /*************************************************************************/
 #define DISK_CONFIG(Disk)	struct Config_Tag Disk ## _configs[] = {	\
-	{ "Path", Path_Tag, bx_options.Disk.path, sizeof(bx_options.Disk.path), 0},	\
-	{ "Present", Bool_Tag, &bx_options.Disk.present, 0, 0},	\
-	{ "PartID", String_Tag, bx_options.Disk.partID, sizeof(bx_options.Disk.partID), 0},	\
-	{ "ByteSwap", Bool_Tag, &bx_options.Disk.byteswap, 0, 0},	\
-	{ "ReadOnly", Bool_Tag, &bx_options.Disk.readonly, 0, 0},	\
+	{ "Path", Path_Tag, Disk->path, sizeof(Disk->path), 0},	\
+	{ "Present", Bool_Tag, &Disk->present, 0, 0},	\
+	{ "PartID", String_Tag, Disk->partID, sizeof(Disk->partID), 0},	\
+	{ "ByteSwap", Bool_Tag, &Disk->byteswap, 0, 0},	\
+	{ "ReadOnly", Bool_Tag, &Disk->readonly, 0, 0},	\
 	{ NULL , Error_Tag, NULL, 0, 0 }	\
 }
+
+static bx_scsidevice_options_t *disk0 = &bx_options.disks[0];
+static bx_scsidevice_options_t *disk1 = &bx_options.disks[1];
+static bx_scsidevice_options_t *disk2 = &bx_options.disks[2];
+static bx_scsidevice_options_t *disk3 = &bx_options.disks[3];
+static bx_scsidevice_options_t *disk4 = &bx_options.disks[4];
+static bx_scsidevice_options_t *disk5 = &bx_options.disks[5];
+static bx_scsidevice_options_t *disk6 = &bx_options.disks[6];
+static bx_scsidevice_options_t *disk7 = &bx_options.disks[7];
 
 DISK_CONFIG(disk0);
 DISK_CONFIG(disk1);
@@ -420,6 +429,13 @@ DISK_CONFIG(disk7);
 
 void preset_disk()
 {
+	for(int i=0; i<DISKS; i++) {
+		*bx_options.disks[i].path = '\0';
+		bx_options.disks[i].present = false;
+		strcpy(bx_options.disks[i].partID, "BGM");
+		bx_options.disks[i].byteswap = false;
+		bx_options.disks[i].readonly = false;
+	}
 }
 
 void postload_disk()
