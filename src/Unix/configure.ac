@@ -30,6 +30,8 @@ AC_ARG_WITH(mon,               [  --with-mon              use mon as debugger (d
 
 AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history for debugger (default=no)], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
 
+AC_ARG_ENABLE(flightrecorder,     [  --enable-flightrecoder  enable CPU flight recorder (default=no)], [WANT_FLIGHTRECORDER=$enableval], [WANT_FLIGHTRECORDER=no])
+
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU (default=no)], [WANT_MMU=$enableval], [WANT_MMU=no])
 
 AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 (default=yes)], [WANT_DSP=$enableval], [WANT_DSP=yes])
@@ -684,6 +686,11 @@ esac
 dnl Full opcode's history
 if [[ "x$WANT_HISTORY" = "xyes" ]]; then
     AC_DEFINE([FULL_HISTORY], 1, [Define if you want to use full history])
+fi
+
+dnl CPU flight recorder
+if [[ "x$WANT_FLIGHTRECORDER" = "xyes" ]]; then
+     AC_DEFINE([FLIGHT_RECORDER], 1, [Define if you want to use CPU flight recorder])
 fi
 
 dnl Full MMU

@@ -6726,6 +6726,9 @@ void exec_nostats(void)
 {
 	for (;;)  { 
 		uae_u32 opcode = GET_OPCODE;
+#if FLIGHT_RECORDER
+		m68k_record_step(m68k_getpc());
+#endif
 		(*cpufunctbl[opcode])(opcode);
 		if (end_block(opcode) || SPCFLAGS_TEST(SPCFLAG_ALL)) {
 			return; /* We will deal with the spcflags in the caller */
