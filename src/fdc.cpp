@@ -69,8 +69,10 @@ void fdc_exec_command (void)
 	long offset;
 	long count;
 	uae_u8 *buffer;
-	extern void linea_init(void);
-	extern int linea_ok;
+	// STanda: commented out
+	//extern void linea_init(void);
+	//extern int linea_ok;
+	// STanda
 
 	address = (HWget_b(0xff8609)<<16)|(HWget_b(0xff860b)<<8)
 			|HWget_b(0xff860d);
