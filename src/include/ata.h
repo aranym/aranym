@@ -100,6 +100,9 @@ class default_image_t : public device_image_t
 class concat_image_t : public device_image_t
 {
   public:
+      // Default constructor
+      concat_image_t();
+  
       // Open a image. Returns non-negative if successful.
       int open (const char* pathname);
 

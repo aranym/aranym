@@ -26,7 +26,7 @@
 %
 % Arp: --> -(Ar)
 % ArP: --> (Ar)+
-% Al : --> (xxx).L
+% L: --> (xxx.L)
 %
 % Fields on a line:
 % 16 chars bitpattern :

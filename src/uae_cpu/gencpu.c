@@ -1214,6 +1214,7 @@ static void gen_opcode (unsigned long int opcode)
 	genastore ("regs.usp", curi->smode, "srcreg", curi->size, "src", xlateflag);
 	break;
      case i_RESET:
+	printf ("\tAtariReset();\n");
 	break;
      case i_NOP:
 	break;
@@ -2288,8 +2289,12 @@ static void generate_includes (FILE * f)
     fprintf (f, "#include \"memory.h\"\n");
     fprintf (f, "#include \"readcpu.h\"\n");
     fprintf (f, "#include \"newcpu.h\"\n");
+#ifdef USE_JIT
+    fprintf (f, "#include \"compiler/compemu.h\"\n");
+#endif
     fprintf (f, "#include \"fpu/fpu.h\"\n");
     fprintf (f, "#include \"cputbl.h\"\n");
+    fprintf (f, "#include \"cpu_emulation.h\"\n");
 
     fprintf (f, "#define SET_CFLG_ALWAYS(x) SET_CFLG(x)\n");
     fprintf (f, "#define SET_NFLG_ALWAYS(x) SET_NFLG(x)\n");

@@ -2694,6 +2694,11 @@ ssize_t default_image_t::write (const void* buf, size_t count)
 #if BX_SPLIT_HD_SUPPORT
 /*** concat_image_t function definitions ***/
 
+concat_image_t::concat_image_t ()
+{
+  fd = -1;
+}
+
 void concat_image_t::increment_string (char *str)
 {
   // find the last character of the string, and increment it.

@@ -23,7 +23,9 @@
 
 #include "cpu_emulation.h"
 #include "newcpu.h"
-//#include "compiler/compemu.h"
+#ifdef USE_JIT
+# include "compiler/compemu.h"
+#endif
 
 // RAM and ROM pointers
 memptr RAMBase = 0;	// RAM base (Atari address space) gb-- init is important
@@ -87,6 +89,7 @@ bool Init680x0(void)
 
 void AtariReset(void)
 {
+	m68k_reset();
 }
 
 /*

@@ -15,7 +15,9 @@
 #include "memory.h"
 #include "readcpu.h"
 #include "newcpu.h"
-//#include "compiler/compemu.h"
+#ifdef USE_JIT
+# include "compiler/compemu.h"
+#endif
 #include "fpu/fpu.h"
 #define DEBUG 1
 #include "debug.h"
@@ -580,7 +582,7 @@ void MakeFromSR (void)
     if (regs.t1 || regs.t0)
 	SPCFLAGS_SET( SPCFLAG_TRACE );
     else
-	SPCFLAGS_CLEAR( SPCFLAG_TRACE/* | SPCFLAG_DOTRACE */);
+	SPCFLAGS_CLEAR( SPCFLAG_TRACE );
 }
 
 /* for building exception frames */

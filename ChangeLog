@@ -1,3 +1,12 @@
+2002/04/10 - milan
+- IDE: synced with Bochs CVS (concat_image_t(), not used in ARAnyM now, but
+       who knows)
+
+- CPU: instr. Reset calls now AtariReset()
+       cleaning in JIT integration
+       synced with BasiliskII CVS (DOTRACE x STOP)
+
+
 ** Version 0.1.4
 
 2002/04/09 - joy
