@@ -93,6 +93,7 @@ extern uintptr MEMBaseDiff;
  */
 static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 {
+#ifdef ORIGINAL_CHECK_THAT_MADE_STRAM_FASTER_THAN_FASTRAM
 	if (write) {
 		if (addr >= 8 && addr <= (STRAM_END - size))	// first two longwords are ROM
 			return;
@@ -104,13 +105,21 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 
 	if (addr >= FastRAM_BEGIN && addr <= (FastRAM_BEGIN + FastRAMSize - size))	// FastRAM
 		return;
-
-#ifdef DIRECT_TRUECOLOR
-	if (bx_options.video.direct_truecolor) {		// VideoRAM
-		if (addr >= ARANYMVRAMSTART && addr <= (ARANYMVRAMSTART + ARANYMVRAMSIZE - size))
+#else
+	if (addr <= (FastRAM_BEGIN + FastRAMSize - size)) {
+		if (!write)
 			return;
+		else {
+			// first two longwords of ST-RAM are ROM
+			if ((addr >= FastRAM_BEGIN) || (addr >= 8 && addr <= (STRAM_END - size)))
+				return;
+		}
 	}
 #endif
+
+	if (addr >= ARANYMVRAMSTART && addr <= (ARANYMVRAMSTART + ARANYMVRAMSIZE - size))
+		return;
+
 	// printf("BUS ERROR %s at $%x\n", (write ? "writting" : "reading"), addr);
 	BUS_ERROR;
 }
