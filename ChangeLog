@@ -1,3 +1,11 @@
+2004/09/07 - joy
+- src/parameters.[cpp,h]: configPath added to aranymfs struct. Fixes problem
+  with adding more colons on repeated saving of config file.
+
+- src/gui-sdl/dlgDisk.cpp: fixed a problem with updating the CHS values
+  when new disk image was selected.
+
+
 2004/09/04 - milan
 - src/parameters.cpp: don't show parameters, which aren't compiled in
 
