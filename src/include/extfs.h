@@ -1,8 +1,25 @@
 /*
- * $Header$
+ * extfs.h - HostFS routines
  *
- * STanda 3.5.2001
- */
+ * Copyright (c) 2001-2003 STanda of ARAnyM development team (see AUTHORS)
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Atari800; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #ifndef _EXTFS_H
 #define _EXTFS_H
@@ -255,66 +272,4 @@ class ExtFs {
 
 #endif /* EXTFS_SUPPORT */
 
-#endif
-
-
-/*
- * $Log$
- * Revision 1.21  2002/12/10 20:38:21  standa
- * interface & debug cleanup
- *
- * Revision 1.20  2002/06/24 17:08:48  standa
- * The pointer arithmetics fixed. The memptr usage introduced in my code.
- *
- * Revision 1.19  2002/04/20 10:03:23  standa
- * General code clean up.
- *
- * Revision 1.18  2002/04/19 16:23:24  standa
- * The Fxattr bug fixed. QED works, Thing can refresh without the JOY's ugly
- * patch in Dpathconf.
- *
- * Revision 1.17  2002/04/19 14:21:04  standa
- * Patrice's FreeMiNT compilation patch adjusted by ExtFs suffixes.
- *
- * Revision 1.15  2002/04/17 15:44:17  standa
- * Patrice Mandin <pmandin@caramail.com> & STanda FreeMiNT compilation support
- * patch.
- *
- * Revision 1.14  2002/04/12 22:52:27  joy
- * AranymFS bug fixed - ST-Zip can unpack onto host fs now
- *
- * Revision 1.13  2002/03/07 08:06:08  standa
- * Addition to the last commit of extfs.cpp
- *
- * Revision 1.12  2002/01/31 23:51:22  standa
- * The aranym.xfs for MiNT. Preliminary version.
- *
- * Revision 1.11  2002/01/26 21:22:24  standa
- * Cleanup from no needed method arguments.
- *
- * Revision 1.10  2002/01/08 18:33:49  standa
- * The size of the bx_options.aranymfs[] and ExtFs::drives[] fixed.
- *
- * Revision 1.9  2001/12/04 09:32:18  standa
- * Olivier Landemarre <Olivier.Landemarre@utbm.fr>: Frename patch.
- *
- * Revision 1.8  2001/11/21 13:29:51  milan
- * cleanning & portability
- *
- * Revision 1.7  2001/11/20 23:29:26  milan
- * Extfs now not needed for ARAnyM's compilation
- *
- * Revision 1.6  2001/09/18 12:37:16  joy
- * getDrvBits() added
- *
- * Revision 1.5  2001/06/21 20:16:53  standa
- * Dgetdrv(), Dsetdrv(), Dgetpath(), Dsetpath() propagation added.
- * Only Dsetpath() ever noticed to be propagated by MetaDOS.
- * BetaDOS tested -> the same story.
- *
- * Revision 1.4  2001/06/18 13:21:55  standa
- * Several template.cpp like comments were added.
- * HostScreen SDL encapsulation class.
- *
- *
- */
+#endif /* _EXTFS_H */

@@ -1,8 +1,25 @@
 /*
- * $Header$
+ * extfs.cpp - HostFS routines
  *
- * STanda 2001
- */
+ * Copyright (c) 2001-2003 STanda of ARAnyM development team (see AUTHORS)
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Atari800; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
@@ -18,6 +35,8 @@
 #undef  DEBUG_FILENAMETRANSFORMATION
 #define DEBUG 0
 #include "debug.h"
+
+#define DEMO_WEIRD_PROBLEM	0
 
 #ifdef HAVE_SYS_VFS_H
 # include <sys/vfs.h>
@@ -77,10 +96,16 @@ extern "C" {
 ExtFs::ExtFs()
 {
 	// first initialize the drive array to NULLs
-	for(char i=0; i<'Z'-'A'+1; i++) {
+	for(int i=0; i<'Z'-'A'+1; i++) {
 		drives[i].rootPath = NULL;
 		drives[i].currPath = NULL;
 	}
+
+#if DEMO_WEIRD_PROBLEM
+	// This is the default drv (shouldn't be used)
+	// note: This is the secure drive when some error occures.
+	install( 'A', ".", true );
+#endif
 }
 
 ExtFs::~ExtFs()
@@ -93,9 +118,11 @@ ExtFs::~ExtFs()
 
 void ExtFs::init()
 {
+#if !DEMO_WEIRD_PROBLEM
 	// This is the default drv (shouldn't be used)
 	// note: This is the secure drive when some error occures.
 	install( 'A', ".", true );
+#endif
 
 	// go through the drive table and assign drives their rootPaths
 	for( int i = 'B'-'A'; i < 'Z'-'A'+1; i++ ) {
@@ -2674,203 +2701,3 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 }
 
 #endif /* EXTFS_SUPPORT */
-
-/*
- * $Log$
- * Revision 1.65  2003/11/29 00:30:20  joy
- * extfs drives initialized
- *
- * Revision 1.64  2003/04/08 10:26:42  joy
- * merging changes from 0_8_0 branch
- *
- * Revision 1.62.2.1  2003/03/26 18:18:15  milan
- * stolen from head
- *
- * Revision 1.63  2003/03/24 19:11:00  milan
- * Solaris support updated
- *
- * Revision 1.62  2003/02/17 14:20:20  standa
- * #if defined(OS_beos) used.
- *
- * Revision 1.61  2003/02/17 14:16:16  standa
- * BeOS patch for aranymfs and hostfs
- *
- * Revision 1.60  2002/12/10 20:38:21  standa
- * interface & debug cleanup
- *
- * Revision 1.59  2002/10/24 20:35:02  milan
- * wchar_t hack for Mac OS X
- *
- * Revision 1.58  2002/10/15 21:26:52  milan
- * non-cheaders support (for MipsPro C/C++ compiler)
- *
- * Revision 1.57  2002/10/13 11:28:08  milan
- * small corrections for Mac OS X
- *
- * Revision 1.56  2002/09/10 13:07:22  pmandin
- * Missing ')'
- *
- * Revision 1.55  2002/07/23 17:34:25  milan
- * pre-support for cdrom under Mac OS X
- *
- * Revision 1.54  2002/07/01 16:57:35  standa
- * transformFileName() handles filename ending with a dot (.).
- *
- * Revision 1.53  2002/06/25 08:37:40  standa
- * DEBUG #if added to let it compile warn free.
- *
- * Revision 1.52  2002/06/24 17:08:48  standa
- * The pointer arithmetics fixed. The memptr usage introduced in my code.
- *
- * Revision 1.51  2002/05/13 18:53:24  standa
- * Minor debug changes.
- *
- * Revision 1.50  2002/04/22 18:30:50  milan
- * header files reform
- *
- * Revision 1.49  2002/04/21 19:28:02  joy
- * Dpathconf(DP_XATTR) disabled. It's been causing neverending problems in Thing (last one: thing does not refresh the source window of move operation).
- *
- * Revision 1.48  2002/04/20 10:03:23  standa
- * General code clean up.
- *
- * Revision 1.47  2002/04/19 16:23:24  standa
- * The Fxattr bug fixed. QED works, Thing can refresh without the JOY's ugly
- * patch in Dpathconf.
- *
- * Revision 1.46  2002/04/19 14:21:04  standa
- * Patrice's FreeMiNT compilation patch adjusted by ExtFs suffixes.
- *
- * Revision 1.44  2002/04/18 20:57:01  standa
- * Fsnext bug fix for LZHSHELL to be able to extract files to MetaDOS fs.
- *
- * Revision 1.43  2002/04/17 15:48:02  standa
- * The DP_* constant definitions for MiNTLib removed. These are really to be
- * placed into the mintlib header files. For ARAnyM there should exist some
- * copy of these defines and probably prefixed by e.g. TOS_ prefix?
- * This is planned to be done in the future.
- *
- * Revision 1.42  2002/04/17 15:44:17  standa
- * Patrice Mandin <pmandin@caramail.com> & STanda FreeMiNT compilation support
- * patch.
- *
- * Revision 1.41  2002/04/17 15:42:03  standa
- * JOYs fix modified a bit.
- *
- * Revision 1.40  2002/04/13 12:32:03  joy
- * Dpathconf(DP_XATTR) disabled - Thing is happy now
- *
- * Revision 1.39  2002/04/12 22:52:27  joy
- * AranymFS bug fixed - ST-Zip can unpack onto host fs now
- *
- * Revision 1.38  2002/04/04 19:13:51  standa
- * PureC patch for MetaDOS usage.
- * Upper case filenames to lower case conversion for new files on halfsensitive fs.
- *
- * Revision 1.37  2002/04/04 09:00:19  standa
- * The Fopen( dir ) fix.
- *
- * Revision 1.36  2002/03/27 16:14:39  standa
- * The JavaDoc documentation written into the extfs.cpp/transformFileName.
- *
- * Revision 1.35  2002/03/27 15:54:27  standa
- * Debug removed.
- *
- * Revision 1.34  2002/03/27 15:53:29  standa
- * The transformFileName() has been rewriten.
- *
- * Revision 1.33  2002/03/26 12:22:09  joy
- * filename conversion in transformFileName() partially rewritten. Now ST-Zip does not crash when browsing MetaDOS drive.
- *
- * Revision 1.32  2002/03/26 09:43:19  joy
- * the dest buf size must be at least 8+1+3+1=13 bytes long!
- *
- * Revision 1.31  2002/03/26 09:29:06  joy
- * transformFileName was writing long filenames to 8+3 TOS filename buffer. This is way wrong - you need to do all filename manipulation on a separate buffer and copy only the resulting 8+3 filename to the TOS fn buffer.
- *
- * Revision 1.30  2002/03/14 12:00:06  standa
- * ExtFs flags2st bugfix. Some Fcreate modifications (optional).
- *
- * Revision 1.29  2002/03/06 10:04:21  standa
- * xfs_getname implemented. cookie2PathName uses getHostFileName since now
- * -> case insensitive fs should work.
- *
- * Revision 1.28  2002/02/23 13:47:07  joy
- * open() needs O_BINARY to not mess with CR/LF conversion (OSes from Microsoft)
- *
- * Revision 1.27  2002/02/19 20:04:05  milan
- * src/ <-> CPU interaction cleaned
- * memory access cleaned
- *
- * Revision 1.26  2002/02/18 09:30:05  standa
- * Olivier Landemarre <Olivier.Landemarre@utbm.fr> && STanda extfs.cpp patch.
- * The statvfs stuff conditional compile fixed (no ifdef OS_linux, but OS_*bsd
- * used). The SDL_filesystem is damn needed here or ... ;(
- * XFS Debug logs made look nicer to me.
- *
- * Revision 1.25  2002/01/31 23:51:22  standa
- * The aranym.xfs for MiNT. Preliminary version.
- *
- * Revision 1.24  2002/01/31 19:37:47  milan
- * panicbug, cleaning
- *
- * Revision 1.23  2002/01/26 21:22:24  standa
- * Cleanup from no needed method arguments.
- *
- * Revision 1.22  2002/01/09 19:14:12  milan
- * Preliminary support for SGI/Irix
- *
- * Revision 1.21  2002/01/08 18:33:49  standa
- * The size of the bx_options.aranymfs[] and ExtFs::drives[] fixed.
- *
- * Revision 1.20  2002/01/08 17:51:07  standa
- * The aranymfs config file settings finished. Thanks to JOY.
- *
- * Revision 1.19  2001/12/11 21:04:32  standa
- * Debug set to 0
- *
- * Revision 1.18  2001/12/04 09:37:04  standa
- * One more Frename condition optimalization.
- *
- * Revision 1.17  2001/12/04 09:32:18  standa
- * Olivier Landemarre <Olivier.Landemarre@utbm.fr>: Frename patch.
- *
- * Revision 1.16  2001/11/21 13:29:51  milan
- * cleanning & portability
- *
- * Revision 1.15  2001/11/20 21:25:19  milan
- * Portability. And small correction in ATCs.
- *
- * Revision 1.14  2001/11/13 18:26:32  milan
- * portability
- *
- * Revision 1.13  2001/11/12 15:11:37  milan
- * Small upgrade to multiplatform compatibility
- *
- * Revision 1.12  2001/10/17 18:07:00  standa
- * the . and .. directories are returned by the Fsfirst and Fsnext (according to Julian Reschke)
- *
- * Revision 1.11  2001/10/16 19:06:01  standa
- * The debug changed to 0.
- *
- * Revision 1.10  2001/09/18 12:35:12  joy
- * getDrvBits() added
- *
- * Revision 1.9  2001/08/30 13:01:16  standa
- * The cast warnings removed.
- * missing return statements added.
- *
- * Revision 1.8  2001/08/30 12:42:25  standa
- * Indentation fixed.
- *
- * Revision 1.7	 2001/06/21 20:16:53  standa
- * Dgetdrv(), Dsetdrv(), Dgetpath(), Dsetpath() propagation added.
- * Only Dsetpath() ever noticed to be propagated by MetaDOS.
- * BetaDOS tested -> the same story.
- *
- * Revision 1.6	 2001/06/18 13:21:55  standa
- * Several template.cpp like comments were added.
- * HostScreen SDL encapsulation class.
- *
- *
- */

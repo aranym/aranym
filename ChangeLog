@@ -1,3 +1,14 @@
+2003/12/09 - joy
+- extfs.cpp: rewritten the initialization of rootPath a bit. And added
+  #define DEMO_WEIRD_PROBLEM. That is the "AFROS does not boot" problem
+  that is still there and can be easily exhibited just by allocating the
+  'A' rootPath earlier in the start process. Note that it somehow affects
+  the MFP interrupts which later causes EmuTOS to hang during boot. Very
+  weird.
+
+- extfs.{cpp|h}: proper GPL header (this one should be added to ALL files)
+
+
 2003/12/09 - STanda
   the change from (2003/10/02):
   " Fxattr() now returns the (uint32)MAPVOIDPTO32( fc->index ) instead
