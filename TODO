@@ -11,6 +11,10 @@ Things that must be done before first beta release:
 
 + mouse pointer must be sync'ed with the host mouse (in X-Windows)
 
+- printing - definitely a must. Either by YAMAHA emulation or directly
+  by hooking into TOS xconout. Anyone having a copy of TOS ROM that was able
+  to print chars on console?
+
 - rewrite all HW modules to make use of BASE_IO::handle_read/write()
 
 - in fdc.cpp: replace HWget_b() and HWput_b() with something more appropriate
@@ -22,13 +26,13 @@ Things that must be done before first beta release:
 - in hardware.cpp: HWget_l/HWput_l should not have the special case for HW_IDE
 
 - replace timer thread with SDL_getTimerMilis() in uae_cpu inner loop. The advantages
-  are as follows: exact 200 Hz (instead of approx 100 Hz we have currently) and
+  are mainly exact 200 Hz (instead of approx 100 Hz we have currently) and
   screen updating in main thread (thus no inter-thread collisions)
 
 - enable SWACCEL and HWBLITS of Blitter - either in ./configure or make it
-  configurable in runtime
+  configurable in runtime (depends on runtime config GUI stuff Milan made)
 
-- move ROM reading back to main.cpp, perhaps even with 040 patching routine so 
+- move ROM file reading back to main.cpp, perhaps even with 040 patching routine so 
   aranym could use pure TOS 4.04
 
 - find out how the GUI config stuff by Milan works
@@ -39,9 +43,21 @@ Things that must be done before first beta release:
   well define and DOCUMENT keyboard combos for quitting, mounting floppy/cdrom, screen shot
   grabbing, debugger invoking, GUI config entering and others.
 
-- document the way the aranym works - especially the hardware emulation
+- document the way the aranym works - especially the hardware emulation (Hackers Guide)
 
 - document the command line switches, keyboard combos and write Users Guide.
+
+- create several disk images with preinstalled _free_ software:
+  16 MB - just harddisk driver (AHDI or CBHD) and a few AUTO/ACC/CPX tools
+          (WinX, Clocky, calculator as ACC, perhaps screen saver etc).
+          Free desktop replacement would be nice.
+          Include also free screen resolution enhancer (is BlowUP free already?)
+
+  128 MB - proper setup including some basic applications. XBOOT-like selection
+           would be great. Try to include some basic FreeMiNT setup.
+
+  1 GB - basically a copy of the 128 MB disk image but with more free space for
+         people to start working with it immediately.
 
 The goal for the first beta is to get functional Atari/TOS machine replacement
 fully usable for regular GEM users.
@@ -57,7 +73,7 @@ Things for 1.0 release:
 
 + fVDI working (TOS+aranym drivers)
 
-- probably some sort of printing support (capture the printer output to file?)
+- sound output using GSXB library
 
 The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
 all Atari power users/MiNTers. Key elements are TCP/IP networking, large
