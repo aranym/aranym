@@ -1842,7 +1842,7 @@ void HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, 
 	drv->mountPoint = strdup( fmountpoint );
 	drv->hostRoot = strdup( fhostroot );
 	drv->halfSensitive = halfSensitive;
-	mounts.insert(make_pair( devnum, drv ));
+	mounts.insert(std::make_pair( devnum, drv ));
 
 	D(bug("HOSTFS: fs_native_init:\n"
 		  "\t\t fs_drv	   = %#08x\n"
@@ -1858,5 +1858,8 @@ void HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, 
 
 /*
  * $Log$
+ * Revision 1.1  2002/12/10 20:47:21  standa
+ * The HostFS (the host OS filesystem access via NatFeats) implementation.
+ *
  *
  */
