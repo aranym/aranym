@@ -17,20 +17,21 @@ int byte14th = VGA:TV ? line doubling : half screen;
 #endif
 
 RTC::RTC() {
+	init();
+}
+
+void RTC::init() {
 	addr = 0;
 	cmos[24] = 32;	// boot delay
+	int res = monitor == 0 ? 56 : 24;
 	switch(boot_color_depth) {
-		case 2: cmos[29] = 57; break;
-		case 4: cmos[29] = 58; break;
-		case 8: cmos[29] = 59; break;
-		case 16: cmos[29] = 60; break;
-		default: cmos[29] = 56; break;
+		case 2: res += 1; break;
+		case 4: res += 2; break;
+		case 8: res += 3; break;
+		case 16: res += 4; break;
 	}
-//	cmos[29] = 56;	// 2 colors with 80 columns on PAL VGA
-//	cmos[29] = 59;	// 256 colors with 80 columns on PAL VGA
-//	cmos[29] = 60;	// TC colors on PAL VGA
-//	cmos[29] = 44;	// TC colors on PAL TV
-	setChecksum();	// in case somebody edited the cmos array manually
+	cmos[29] = res;
+	setChecksum();
 }
 
 static const int HW = 0xff8960;
