@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.9.0beta
+%define ver	0.9.0beta2
 %define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -95,8 +95,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Tue Feb 22 2005 Petr Stehlik <pstehlik@sophics.cz>
+Version increased. aranymrc.example removed.
+
 * Sun Feb 20 2005 Petr Stehlik <pstehlik@sophics.cz>
-Version increased. LILO enabled in the MMU version. aranymrc.example removed.
+Version increased. LILO enabled in the MMU version.
 
 * Sun Nov 07 2004 Petr Stehlik <pstehlik@sophics.cz>
 Version increased.
