@@ -11,7 +11,7 @@
 
 bx_hard_drive_c ata;
 
-IDE::IDE() {
+void IDE::init() {
 	ata.init();
 }
 
