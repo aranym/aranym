@@ -30,7 +30,7 @@ static struct option const long_options[] =
 };
 
 char *program_name;
-char rom_path[512];
+char rom_path[512]="/usr/local/share/aranym/ROM";
 
 uint8 start_debug = 0;			// Start debugger
 bool fullscreen = false;			// Boot in Fullscreen
@@ -43,14 +43,25 @@ ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 
 bx_options_t bx_options;
 
-BX_DISK_CONFIG(diskc);
-BX_DISK_CONFIG(diskd);
-
+// configuration file 
 struct Config_Tag global_conf[]={
 	{ "TOS", String_Tag, rom_path, sizeof(rom_path)},
 	{ "DebugOnStart", Long_Tag, &start_debug},
 	{ NULL , Error_Tag, NULL }
 };
+
+#define BX_DISK_CONFIG(a)	struct Config_Tag a ## _configs[] = {	\
+	{ "Present", Bool_Tag, &bx_options. ## a ## .present},	\
+	{ "ByteSwap", Bool_Tag, &bx_options. ## a ## .byteswap},	\
+	{ "Path", String_Tag, bx_options. ## a ## .path, sizeof(bx_options. ## a ## .path)},	\
+	{ "Cylinders", Int_Tag, &bx_options. ## a ## .cylinders},	\
+	{ "Heads", Int_Tag, &bx_options. ## a ## .heads},	\
+	{ "SectorsPerTrack", Int_Tag, &bx_options. ## a ## .spt},	\
+	{ NULL , Error_Tag, NULL }	\
+}	\
+
+BX_DISK_CONFIG(diskc);
+BX_DISK_CONFIG(diskd);
 
 static void decode_ini_file(void);
 
@@ -220,7 +231,7 @@ static void process_config(const char *filename, struct Config_Tag *conf, char *
 	int status = input_config(filename, conf, title);
 	if (verbose) {
 		if (status >= 0)
-			printf("(valid directives found: %d)\n", status);
+			printf("%s configuration: found %d valid directives.\n", title, status);
 		else
 			printf("Error while reading/processing the '%s' config file.\n", filename);
 	}
@@ -239,8 +250,9 @@ static void decode_ini_file(void) {
 	}
 	strcpy(rcfile, home);
 	strcat(rcfile, ARANYMRC);
+	printf("Using config file: '%s'\n", rcfile);
 
-	process_config(rcfile, global_conf, "GLOBAL", true);
-	process_config(rcfile, diskc_configs, "IDE0", true);
-	process_config(rcfile, diskd_configs, "IDE1", true);
+	process_config(rcfile, global_conf, "[GLOBAL]", true);
+	process_config(rcfile, diskc_configs, "[IDE0]", true);
+	process_config(rcfile, diskd_configs, "[IDE1]", true);
 }
