@@ -27,3 +27,11 @@
 - 'direct_truecolor' switch allows you to patch TOS so that Videl VideoRAM
   is set directly to host's VideoRAM. Thus VIDEL writes directly to host's
   VGA card video memory (if framebuffer is used as the SDL_VIDEODRIVER).
+
+2001/05/29 - PS - version increased to 0.0.3
+- major speed up (22 -> 27 thousand dhrystones) thanks to moving setjmp()
+  out of main CPU loop
+
+- excep_no var removed from memory.cpp and newcpu.cpp
+
+- fixed VBL invocation (main_unix.cpp)
