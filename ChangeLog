@@ -6,6 +6,8 @@
   - win32 ASPI version of insert_cdrom() checks media status using
     ReadCDSector()
 
+- gencpu.c patched for MMU (based on Wez Furlong's MMU patch 0.8.20.2 for UAE)
+
 
 2002/03/03 - Gwenole Beauchesne & milan
 - fpu_x86 debug mode corrected
