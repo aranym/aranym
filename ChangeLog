@@ -1,3 +1,9 @@
+2003/01/10 - joy
+- tools/diskimage.c: a tool for creating disk images up to 32 GB large.
+  Note that our IDE emulation is limited to 2 GB disks for now. Will be
+  fixed soon, hopefully.
+
+
 2003/01/09 - joy
 - fixed _SND cookie value: now it contains just '4' to indicate that no
   hardware is available except of XBIOS functions. If DSP emulation is
