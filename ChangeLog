@@ -1,3 +1,15 @@
+2004/07/20 - Xavier
+- Unix/configure.ac: 
+  - checks for direct, real and fixed addressing availability made more
+    accurate.
+  - direct, real and fixed addressing allowed on Cygwin.
+    Real addressing won't work since Cygwin can't mmap() low memory.
+    Direct and fixed addressings need a cygwin1.dll from 2004/07/16 or
+    later on W2K and WXP (Available at http://www.cygwin.com/snapshots/
+    until next Cygwin release - current DLL version is 1.5.10-3 at the
+    time of writing).
+
+
 2004/07/18 - Xavier
 - Unix/main_unix.cpp: in direct addressing mode, memory must be allocated
   with only one call to vm_acquire(). Otherwise memory parts may not be

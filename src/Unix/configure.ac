@@ -786,15 +786,11 @@ else
   for am in $ADDRESSING_TEST_ORDER; do
     case $am in
     real)
-      if [[ "x$HAVE_MMAP" = "xno" ]]; then
+      if [[ "x$HAVE_MMAP_VM" = "xno" -a "x$HAVE_MACH_VM" = "xno" ]]; then
         continue
       fi
       dnl Requires ability to mmap() Low Memory globals
       if [[ "x$ac_cv_can_map_lm" = "xno" ]]; then
-        continue
-      fi
-      dnl Problems with Cygwin
-      if [[ "x$OS_TYPE" = "xcygwin" ]]; then
         continue
       fi
       dnl Problems with Solaris
@@ -811,11 +807,7 @@ else
       break
       ;;
     direct)
-      if [[ "x$HAVE_MMAP" = "xno" ]]; then
-        continue
-      fi
-      dnl Problems with Cygwin
-      if [[ "x$OS_TYPE" = "xcygwin" ]]; then
+      if [[ "x$HAVE_MMAP_VM" = "xno" -a "x$HAVE_MACH_VM" = "xno" ]]; then
         continue
       fi
       dnl Problems with Solaris
@@ -827,12 +819,20 @@ else
       break
       ;;
     fixed)
+      if [[ "x$HAVE_MMAP_VM" = "xno" -a "x$HAVE_MACH_VM" = "xno" ]]; then
+        continue
+      fi
       if [[ "x$OS_TYPE" = "xlinux" -a "x$HAVE_I386" ]]; then
         ADDRESSING_MODE="fixed (0x51000000)"
         DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
         break
       fi
       if [[ "x$OS_TYPE" = "xopenbsd" -a "x$HAVE_I386" ]]; then
+        ADDRESSING_MODE="fixed (0x51000000)"
+        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
+        break
+      fi
+      if [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
         ADDRESSING_MODE="fixed (0x51000000)"
         DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
         break
