@@ -1,3 +1,7 @@
+2002/08/08 - patrice
+- DSP: CCR-related stuff written, some bugfixes.
+
+
 2002/08/05 - joy
 - NATFEA_ID and NATFEA_RCALL can now be used in User mode as well. Supervisor
   mode is not required. NatFeats themselves have to throw illegal instruction
@@ -45,7 +49,7 @@
   until all of them get fixed.
 
 
-2002/07/31 - Patrice
+2002/07/31 - patrice
 - DSP emulator: Many bugs fixed (end of dsp_*.cpp files for complete changes)
 
 
@@ -53,12 +57,12 @@
 - bug in fresh IDE emulation code fixed (thanks Johan and Standa)
 
 
-2002/07/26 - Patrice
+2002/07/26 - patrice
 - dsp_cpu.cpp: lua operation and read_memory fixed
 - dsp_disasm.cpp: Added missing '\n' in disasm output
 
 
-2002/07/23 - Patrice
+2002/07/23 - patrice
 - ndebug.cpp: Make it gcc-3 friendly.
 - dsp.cpp: Added mu-law table generator
 - dsp_disasm.cpp: Changed all output from D(bug()) to fprintf()
@@ -90,7 +94,7 @@
   for opening the GUI.
 
 
-2002/07/20 - Patrice
+2002/07/20 - patrice
 - Dsp: more bugfixes, see end of dsp_[cpu|disasm].cpp file for complete
   changelog
 
@@ -126,7 +130,7 @@
 - linux_sigsegv.cpp: Added support for MOVSX8, MOVZX8, OR8, MOV8
 
 
-2002/07/16 - Patrice
+2002/07/16 - patrice
 - Host port reworked. More bugfixes and completion of the emulator.
   DspDebug can be started, it finds the DSP.
 
@@ -137,7 +141,7 @@
 - sigsegv_linux.cpp, memory.h, fakeio.cpp: extended sigsegv handler upgraded
 
 
-2002/07/10 - Patrice
+2002/07/10 - patrice
 - I finished nearly all intructions. I also added a disassembler
   (disabled by default but you can enable it with --enable-dspdisasm)
 
@@ -147,7 +151,7 @@
   but you can enable it with --enable-dsp in configure phase.
 
 
-2002/07/08 - Patrice
+2002/07/08 - patrice
 - DSP 56001 emulation started. It is not finished, but I think it has
   a good shape. I wanted to do this because I would like to be able
   to run DSP development tools under Aranym, to assemble DSP programs.
