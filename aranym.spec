@@ -1,6 +1,6 @@
 %define name	aranym
 %define ver	0.7.0
-%define rel	1
+%define rel	2
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
 %define group	Console/Emulators
@@ -60,7 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/atari/aranymfs/aranymfs.dos.bz2
 /usr/share/aranym/atari/aranymfs/aranym.xfs.bz2
 /usr/share/aranym/atari/aranymfs/config.sys
-/usr/share/aranym/atari/fvdi/drivers/aranym.sys.bz2
+/usr/share/aranym/atari/fvdi/aranym.sys.bz2
 /usr/share/aranym/atari/fvdi/fvdi.prg.bz2
 /usr/share/aranym/atari/fvdi/fvdi.sys
 /usr/share/aranym/atari/sound/README
@@ -73,15 +73,18 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/atari/newdesk.inf
 /usr/share/aranym/atari/aranymrc.example
 /usr/share/aranym/atari/mmusetup.cnf
-/usr/share/aranym/tools/createdisk/createdisk.README
-/usr/share/aranym/tools/createdisk/createdisk.sh
-/usr/share/aranym/tools/createdisk/mbrdata
-/usr/share/aranym/tools/diskimage.c
-/usr/share/aranym/tools/floppy.sh
+/usr/share/aranym/createdisk/createdisk.README
+/usr/share/aranym/createdisk/createdisk.sh
+/usr/share/aranym/createdisk/mbrdata
+/usr/share/aranym/diskimage.c
+/usr/share/aranym/floppy.sh
 /usr/share/aranym/font8.bmp
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Fri Mar 07 2003 Petr Stehlik <pstehlik@sophics.cz>
+Fixed paths to share/aranym folder.
+
 * Wed Jan 29 2003 Petr Stehlik <pstehlik@sophics.cz>
 New release. Updated list of provided files.
 

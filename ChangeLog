@@ -1,3 +1,8 @@
+2003/03/07 - joy
+- aranym.spec: paths to share/aranym had to be corrected (though I'd say
+  they were OK previously and that our Makefile install: is wrong)
+
+
 2003/03/06 - joy
 - external configuration tool for the setting up the tap0 device
 
