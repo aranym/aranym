@@ -1403,14 +1403,30 @@ static inline int clipEncode (int x, int y, int left, int top, int right, int bo
 
 static inline bool clipLine(int& x1, int& y1, int& x2, int& y2, int cliprect[])
 {
-	if (!cliprect)
+#if OLD_CODE // check what is bad!
+	if (!cliprect) {
 		return true; // Clipping is off
-
 	// Get clipping boundary
-	int left   = cliprect[0];
-	int top    = cliprect[1];
-	int right  = cliprect[2];
-	int bottom = cliprect[3];
+ 	int left   = cliprect[0];
+ 	int top    = cliprect[1];
+ 	int right  = cliprect[2];
+ 	int bottom = cliprect[3];
+#else
+	// Get clipping boundary
+	int left, top, right, bottom;
+
+	if (!cliprect) {
+		left   = 0;
+		top    = 0;
+		right  = hostScreen.getWidth() -1;
+		bottom = hostScreen.getHeight()-1;
+	} else {
+		left   = cliprect[0];
+		top    = cliprect[1];
+		right  = cliprect[2];
+		bottom = cliprect[3];
+	}
+#endif
 
 	bool draw = false;
 	while (1) {
@@ -1463,6 +1479,7 @@ int FVDIDriver::drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
                                int cliprect[], int minmax[])
 {
 	if (clipLine(x1, y1, x2, y2, cliprect)) {	// Do not draw the line when it is out
+		D(bug("fVDI: %s %d,%d:%d,%d", "drawSingleLine", x1, y1, x2, y2));
 		hostScreen.drawLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp, last_pixel);
 		if (x1 < x2) {
 			if (x1 < minmax[0])
@@ -1592,7 +1609,7 @@ int FVDIDriver::drawLine(uint32 vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 		cliprect[2] = (int16)get_word(vwk + VWK_CLIP_RECT + 6, true);
 		cliprect[3] = (int16)get_word(vwk + VWK_CLIP_RECT + 8, true);
 		D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", cliprect[0], cliprect[1],
-		       cliprect[2], cliptrect[3]));
+		       cliprect[2], cliprect[3]));
 	}
 
 	int minmax[4] = {1000000, 1000000, -1000000, -1000000};
@@ -1629,7 +1646,7 @@ int FVDIDriver::drawLine(uint32 vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 					y1 = y2;
 					x2 = (int16)get_word((uint32)table++, true);
 					y2 = (int16)get_word(uint32)table++, true);
-					eq_coord = (x1 == x2) + 2 * (y1 == y2);	
+					eq_coord = (x1 == x2) + 2 * (y1 == y2);
 				}
 			}
 #endif
@@ -1665,7 +1682,7 @@ int FVDIDriver::drawLine(uint32 vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 		               logOp, true, cliprect, minmax);
 
 	if (minmax[0] != 1000000) {
-		D2(bug("fVDI: %s %d,%d:%d,%d", "drawLineUp",
+		D(bug("fVDI: %s %d,%d:%d,%d", "drawLineUp",
 		       minmax[0], minmax[1], minmax[2], minmax[3]));
 		hostScreen.update(minmax[0], minmax[1],
 		                  minmax[2] - minmax[0] + 1, minmax[3] - minmax[1] + 1, true);
@@ -1709,7 +1726,7 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 		cliprect[2] = (int16)get_word(vwk + VWK_CLIP_RECT + 6, true);
 		cliprect[3] = (int16)get_word(vwk + VWK_CLIP_RECT + 8, true);
 		D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", cliprect[0], cliprect[1],
-		       cliprect[2], cliptrect[3]));
+		       cliprect[2], cliprect[3]));
 	}
 
 	int logOp = (int16)get_word(vwk + VWK_MODE, true); // Virtual *vwk->mode // fill logOp;
@@ -1819,7 +1836,7 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 				y1 = y2;
 			}
 		}
-		
+
 		for(int i = 0; i < ints - 1; ++i) {
 			for(int j = i + 1; j < ints; ++j) {
 				if (crossing[i] > crossing[j]) {
@@ -1860,6 +1877,10 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.26  2001/12/11 21:03:57  standa
+ * Johan's patch caused DEBUG directive to fail e.g. in main.cpp.
+ * The inline functions were put into the .cpp file.
+ *
  * Revision 1.25  2001/11/29 23:51:56  standa
  * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
  *
