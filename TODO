@@ -95,3 +95,7 @@ that particular programmer but rather who is author of the idea :-)
 
 - STanda: hostfs.cpp: enable debug and implement all NOT IMPLEMENTED needed
          methods.
+
+- patrice: rework dsp thread synchronization. It seems it may hang sometimes.
+
+- patrice: full automake/autoconf support.
