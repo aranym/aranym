@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 		ROMBaseHost = (uint8 *)vm_acquire(ROMSize);
 		if (FastRAMSize) FastRAMBaseHost = (uint8 *)vm_acquire(FastRAMSize); else FastRAMBaseHost = RAMBaseHost + 0x1000000;
 		if (RAMBaseHost == VM_MAP_FAILED || ROMBaseHost == VM_MAP_FAILED || FastRAMBaseHost == VM_MAP_FAILED) {
-			ErrorAlert("Not enough free memory.\n");
+			panicbug("Not enough free memory.");
 			QuitEmulator();
 		}
 	}
@@ -181,7 +181,7 @@ int main(int argc, char **argv)
 		exit(-1);
 	}
 	if ((FakeIOBaseHost = (uint8 *)vm_acquire(0x00100000)) == VM_MAP_FAILED) {
-		ErrorAlert("Not enough free memory.\n");
+		panicbug("Not enough free memory.");
 		QuitEmulator();
 	}
 #endif /* NATMEM_OFFESET */
@@ -251,6 +251,10 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.65  2002/04/22 21:20:32  milan
+ * distributed dispatcher rewroted
+ * JIT compiler integrated
+ *
  * Revision 1.64  2002/04/22 18:30:50  milan
  * header files reform
  *

@@ -33,8 +33,6 @@ extern void debug(void);
 extern void activate_debugger(void);
 extern void deactivate_debugger(void);
 
-#define ErrorAlert(a)	fprintf(stderr, a)
-
 /*
  *  debug.h - Debugging utilities
  *
