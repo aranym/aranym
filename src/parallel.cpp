@@ -2,6 +2,7 @@
  * Parallel port emulation
  */
 #define LINUXia32	0
+#define CONSOLE		1
 
 #include "parallel.h"
 #if LINUXia32
@@ -62,17 +63,25 @@ uint8 Parallel::getData()
 
 void Parallel::setData(uint8 value)
 {
+#if CONSOLE
+	putchar(value);
+#else
 	outportb(port, value);
+#endif
 	D(bug("Parallel:setData($%x)", value));
 }
 
 uint8 Parallel::getBusy()
 {
+#if CONSOLE
+	return 0;
+#else
 	uint8 busy = !(inportb(port+1) & 0x80);
 	if (old_busy != busy)
 		D(bug("Parallel:Busy = %s", busy == 1 ? "YES" : "NO"));
 	old_busy = busy;
 	return busy;
+#endif
 }
 
 void Parallel::setStrobe(bool high)
