@@ -1,3 +1,7 @@
+2003/04/23 - milan
+- configure.ac: Sparc gcc 3.x bug workaround taken from HEAD
+
+
 2003/04/15 - STanda
 - hostfs:
   * constant usage cleanup.
