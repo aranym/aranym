@@ -20,7 +20,11 @@
 	xdef		fill_area
 	xdef		_set_colour_hook
 	xdef		set_colour_hook
-		
+	xdef		_set_resolution
+	xdef		set_resolution
+	xdef		_debug_aranym
+	xdef		debug_aranym
+
 	text
 
 MACRO	FVDI_DISPATCH.w	opcode
@@ -84,6 +88,16 @@ line_draw:
 _set_colour_hook:
 set_colour_hook:
 	FVDI_DISPATCH	9
+	rts
+
+_set_resolution:
+set_resolution:
+	FVDI_DISPATCH	10
+	rts
+
+_debug_aranym:
+debug_aranym:
+	FVDI_DISPATCH	20
 	rts
 
 

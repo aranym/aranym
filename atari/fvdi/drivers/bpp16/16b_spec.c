@@ -3,6 +3,11 @@
 
 #include "driver.h"
 
+#define ARANYMVRAMSTART 0xf0000000UL
+extern void CDECL set_resolution( long width, long height, long depth, long freq ); /* STanda */
+extern void CDECL debug_aranym( long freq ); /* STanda */
+
+
 #if 1
 #define FAST		/* Write in FastRAM buffer */
 #define BOTH		/* Write in both FastRAM and on screen */
@@ -11,11 +16,12 @@
 #undef BOTH
 #endif
 
+#if 0
 char r_16[] = {5, 15, 14, 13, 12, 11};
 char g_16[] = {6, 10, 9, 8, 7, 6, 5};
 char b_16[] = {5, 4, 3, 2, 1, 0};
 char none[] = {0};
-#if 0
+
 char red[] = {5, 11, 12, 13, 14, 15};
 char green[] = {5, 6, 7, 8, 9, 10};
 char blue[] = {5, 0, 1, 2, 3, 4};
@@ -24,12 +30,40 @@ char genlock[] = {0};
 char unused[] = {1, 5};
 #endif
 
-Mode mode[1] =
-	{{16, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_16, g_16, b_16, none, none, none}, 0,  2, 2, 1}};
+char r_8[]   = {8};
+char g_8[]   = {8};
+char b_8[]   = {8};
+char r_16[]  = {5, 7, 6, 5, 4, 3};
+char g_16[]  = {6, 2, 1, 0, 15, 14, 13};
+char b_16[]  = {5, 12, 11, 10, 9, 8};
+char r_16f[] = {5, 15, 14, 13, 12, 11};
+char g_16f[] = {6, 10, 9, 8, 7, 6, 5};
+char b_16f[] = {5, 4, 3, 2, 1, 0};
+char r_32[]  = {8, 15, 14, 13, 12, 11, 10,  9,  8};
+char g_32[]  = {8, 23, 22, 21, 20, 19, 18, 17, 16};
+char b_32[]  = {8, 31, 30, 29, 28, 27, 26, 25, 24};
+char r_32f[] = {8, 23, 22, 21, 20, 19, 18, 17, 16};
+char g_32f[] = {8, 15, 14, 13, 12, 11, 10,  9,  8};
+char b_32f[] = {8,  7,  6,  5,  4,  3,  2,  1,  0};
+char none[] = {0};
+
+Mode mode[4] = /* FIXME: big ans little endian differences. */
+	{{ 8, CHUNKY | CHECK_PREVIOUS,               {r_8,  g_8,  b_8,  none, none, none}, 0,  2, 1, 1},
+	 {16, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_16, g_16, b_16, none, none, none}, 0,  2, 2, 1}, /*DEPTH_SUPPORT_565*/
+	 {24, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_32, g_32, b_32, none, none, none}, 0,  2, 2, 1}, /*DEPTH_SUPPORT_RGB*/
+	 {32, CHUNKY | CHECK_PREVIOUS | TRUE_COLOUR, {r_32, g_32, b_32, none, none, none}, 0, 2, 2, 1}}; /*DEPTH_SUPPORT_ARGB*/
 
 extern Device device;
 
-char driver_name[] = "ARAnyM Falcon TC 2001-06-11 (shadow)";
+char driver_name[] = "ARAnyM 2001-10-30 (|| bit)";
+
+struct {
+	short width;
+	short height;
+	short bpp;
+	short freq;
+} resolution = { 640, 480, 16, 85 };
+
 
 extern Driver *me;
 extern Access *access;
@@ -39,7 +73,8 @@ extern short *loaded_palette;
 extern short colours[][3];
 extern void CDECL initialize_palette(Virtual *vwk, long start, long entries, short requested[][3], Colour palette[]);
 extern void CDECL c_initialize_palette(Virtual *vwk, long start, long entries, short requested[][3], Colour palette[]);
-extern void *c_set_colours;		/* Just to check if the routine is available */
+/*extern void *c_set_colours;	*/	/* Just to check if the routine is available */
+extern long tokenize( char* value );
 
 long wk_extend = 0;
 
@@ -52,6 +87,12 @@ short debug = 0;
 
 short shadow = 0;
 
+extern void *c_set_colours_8, *c_set_colours_16, *c_set_colours_32;
+extern void *c_get_colours_8, *c_get_colours_16, *c_get_colours_32;
+extern void *c_get_colour_8, *c_get_colour_16, *c_get_colour_32;
+
+void *set_colours_r = &c_set_colours_16;void *get_colours_r = &c_get_colours_16;void *get_colour_r  = &c_get_colour_16;
+
 #if 0
 short cache_img = 0;
 short cache_from_screen = 0;
@@ -63,26 +104,27 @@ extern short max_mode;
 extern Modes mode_tab[];
 
 char *preset[] = {"640x480x8@60    ", "800x600x8@70    ", "1024x768x8@70   ", "1152x864x8@70   ",
-                  "800x600x16@70   ", "1024x768x16@70  ", "1152x864x16@70  ", "1280x1024x16@70 ",
-                  "800x600x32@70   ", "1024x768x32@70  "};
+		  "800x600x16@70   ", "1024x768x16@70  ", "1152x864x16@70  ", "1280x1024x16@70 ",
+		  "800x600x32@70   ", "1024x768x32@70  "};
+
+#endif
 
 long set_mode(const char **ptr);
-#endif
+
 
 Option options[] = {
 #if 0
-   {"mode",       set_mode,       -1},  /* mode key/<n>/WIDTHxHEIGHTxDEPTH@FREQ */
    {"aesbuf",     set_aesbuf,     -1},  /* aesbuf address, set AES background buffer address */
    {"screen",     set_screen,     -1},  /* screen address, set old screen address */
    {"imgcache",   &cache_img,      1},  /* imgcache, turn on caching of images blitted to the screen */
    {"screencache",&cache_from_screen, 1},  /* screencache, turn on caching of images blitted from the screen */
 #endif
+   {"mode",       set_mode,       -1},  /* mode key/<n>/WIDTHxHEIGHTxDEPTH@FREQ */
    {"shadow",     &shadow,         1},  /* shadow, use a FastRAM buffer */
    {"debug",      &debug,          2}   /* debug, turn on debugging aids */
 };
 
 
-#if 0
 char *get_num(char *token, short *num)
 {
 	char buf[10], c;
@@ -105,6 +147,7 @@ char *get_num(char *token, short *num)
 }
 
 
+#if RAGE
 int search_mode(char *token)
 {
 	short width, height, bpp, freq;
@@ -114,6 +157,7 @@ int search_mode(char *token)
 	token = get_num(token, &height);
 	token = get_num(token, &bpp);
 	token = get_num(token, &freq);
+
 
 	b = 0;
 	while ((mode_tab[b].bpp != -1) &&
@@ -130,33 +174,83 @@ int search_mode(char *token)
 
 	return &mode_tab[b].res_freq[w].freqs[f] - res_info;
 }
+#endif
 
 
 long set_mode(const char **ptr)
 {
 	char token[80], *tokenptr;
-
+	short depth;
+	
 	if (!(*ptr = access->funcs.skip_space(*ptr)))
 		;		/* *********** Error, somehow */
 	*ptr = access->funcs.get_token(*ptr, token, 80);
 
-	mode_no = -1;
+
+#ifndef RAGE
+	tokenptr = token;
+	tokenptr = get_num(tokenptr, &resolution.width);
+	tokenptr = get_num(tokenptr, &resolution.height);
+	tokenptr = get_num(tokenptr, &resolution.bpp);
+	tokenptr = get_num(tokenptr, &resolution.freq);
+
+	depth = (resolution.bpp / 8) - 1;
+#else
+	rage_mode = -1;
 	if (access->funcs.equal(token, "key"))
-		mode_no = access->funcs.misc(0, 0, 0) - '0';		/* Fetch key value */
+		rage_mode = access->funcs.misc(0, 0, 0) - '0';		/* Fetch key value */
 	else if (!token[1])
-		mode_no = access->funcs.atol(token);		/* Single character mode */
-	if (mode_no != -1)
-		tokenptr = preset[mode_no];
+		rage_mode = access->funcs.atol(token);		/* Single character mode */
+	if (rage_mode != -1)
+		tokenptr = preset[rage_mode];
 	else
 		tokenptr = token;
-	mode_no = search_mode(tokenptr);
+	rage_mode = search_mode(tokenptr);
 
-	if ((mode_no < 0) || (mode_no > max_mode))
-		mode_no = 0;
+	if ((rage_mode < 0) || (rage_mode > max_mode))
+		rage_mode = 0;
+
+	depth = (res_info[rage_mode].pll[3] & 3) - 1;
+#endif
+
+	graphics_mode = &mode[depth];
+
+	switch (depth) {
+	case 0:
+		set_colours_r = &c_set_colours_8;
+		get_colours_r = &c_get_colours_8;
+		get_colour_r  = &c_get_colour_8;
+		/*
+		driver_name[27] = '8';
+		driver_name[28] = ' ';
+		*/
+		break;
+	case 1:
+		set_colours_r = &c_set_colours_16;
+		get_colours_r = &c_get_colours_16;
+		get_colour_r  = &c_get_colour_16;
+		/*
+		driver_name[27] = '1';
+		driver_name[28] = '6';
+		*/
+		break;
+	case 2:
+	case 3:
+		set_colours_r = &c_set_colours_32;
+		get_colours_r = &c_get_colours_32;
+		get_colour_r  = &c_get_colour_32;
+		/*
+		driver_name[27] = '3';
+		driver_name[28] = '2';
+		*/
+		break;
+	}
 
 	return 1;
 }
 
+
+#if 0
 long set_aesbuf(const char **ptr)
 {
 	char token[80];
@@ -208,25 +302,25 @@ long check_token(char *token, const char **ptr)
    }
    for(i = 0; i < sizeof(options) / sizeof(Option); i++) {
       if (access->funcs.equal(xtoken, options[i].name)) {
-         switch (options[i].type) {
-         case -1:     /* Function call */
-            return ((long (*)(const char **))options[i].varfunc)(ptr);
-         case 0:      /* Default 1, set to 0 */
-            *(short *)options[i].varfunc = 1 - normal;
-            return 1;
-         case 1:     /* Default 0, set to 1 */
-            *(short *)options[i].varfunc = normal;
-            return 1;
-         case 2:     /* Increase */
-            *(short *)options[i].varfunc += -1 + 2 * normal;
-            return 1;
-         case 3:
-           if (!(*ptr = access->funcs.skip_space(*ptr)))
-              ;  /* *********** Error, somehow */
-            *ptr = access->funcs.get_token(*ptr, token, 80);
-           *(short *)options[i].varfunc = token[0];
-           return 1;
-         }
+	 switch (options[i].type) {
+	 case -1:     /* Function call */
+	    return ((long (*)(const char **))options[i].varfunc)(ptr);
+	 case 0:      /* Default 1, set to 0 */
+	    *(short *)options[i].varfunc = 1 - normal;
+	    return 1;
+	 case 1:     /* Default 0, set to 1 */
+	    *(short *)options[i].varfunc = normal;
+	    return 1;
+	 case 2:     /* Increase */
+	    *(short *)options[i].varfunc += -1 + 2 * normal;
+	    return 1;
+	 case 3:
+	   if (!(*ptr = access->funcs.skip_space(*ptr)))
+	      ;  /* *********** Error, somehow */
+	    *ptr = access->funcs.get_token(*ptr, token, 80);
+	   *(short *)options[i].varfunc = token[0];
+	   return 1;
+	 }
       }
    }
 
@@ -255,6 +349,7 @@ void CDECL initialize(Virtual *vwk)
 	int old_palette_size;
 	Colour *old_palette_colours;
 	int fast_w_bytes;
+	long fb_base = ARANYMVRAMSTART;
 #if 0
 	int i;
 #endif
@@ -262,23 +357,45 @@ void CDECL initialize(Virtual *vwk)
 #if 0
 	debug = access->funcs.misc(0, 1, 0);
 #endif
-	
-	vwk = me->default_vwk;	/* This is what we're interested in */	
+
+	if (debug > 2) {
+		char buf[10];
+		access->funcs.puts("  fb_base  = $");
+		access->funcs.ltoa(buf, fb_base, 16);
+		access->funcs.puts(buf);
+		access->funcs.puts("\x0d\x0a");
+	}
+
+	vwk = me->default_vwk;	/* This is what we're interested in */
 	wk = vwk->real_address;
 
+	set_resolution( resolution.width, resolution.height, resolution.bpp, resolution.freq ); /* STanda */
+
+	/*
+	 * Some things need to be changed from the
+	 * default workstation settings.
+	 */
+
 	wk->screen.look_up_table = 0;			/* Was 1 (???)  Shouldn't be needed (graphics_mode) */
+	wk->screen.mfdb.address = (void *)fb_base;
+	wk->screen.mfdb.width = resolution.width;
+	wk->screen.mfdb.height = resolution.height;
+	wk->screen.mfdb.wdwidth = ((long)resolution.width * graphics_mode->bpp) / 16;
 	wk->screen.mfdb.standard = 0;
+	wk->screen.mfdb.bitplanes = graphics_mode->bpp;
+	wk->screen.wrap = resolution.width * (graphics_mode->bpp / 8);
 	if (wk->screen.pixel.width > 0)        /* Starts out as screen width */
-		wk->screen.pixel.width = (wk->screen.pixel.width * 1000L) / wk->screen.mfdb.width;
+		wk->screen.pixel.width = (wk->screen.pixel.width * 1000L) / resolution.width;
 	else                                   /*   or fixed DPI (negative) */
 		wk->screen.pixel.width = 25400 / -wk->screen.pixel.width;
 	if (wk->screen.pixel.height > 0)        /* Starts out as screen height */
-		wk->screen.pixel.height = (wk->screen.pixel.height * 1000L) / wk->screen.mfdb.height;
+		wk->screen.pixel.height = (wk->screen.pixel.height * 1000L) / resolution.height;
 	else                                    /*   or fixed DPI (negative) */
 		wk->screen.pixel.height = 25400 / -wk->screen.pixel.height;
+	wk->screen.coordinates.max_x = resolution.width - 1;
+	wk->screen.coordinates.max_y = (resolution.height & 0xfff0) - 1;    /* Desktop can't deal with non-16N heights */
 
-
-	/*	
+	/*
 	 * This code needs more work.
 	 * Especially if there was no VDI started since before.
 	 */
@@ -295,43 +412,22 @@ void CDECL initialize(Virtual *vwk)
 		} else
 			wk->screen.palette.colours = old_palette_colours;
 	}
-	if (*(short *)&c_set_colours != 0x4e75)		/* Look for C... */
+
+	if (debug > 1) {
+		access->funcs.puts("  Setting up palette");
+		access->funcs.puts("\x0d\x0a");
+	}
+
+	if (accel_c & A_SET_PAL)
 		c_initialize_palette(vwk, 0, wk->screen.palette.size, colours, wk->screen.palette.colours);
 	else
 		initialize_palette(vwk, 0, wk->screen.palette.size, colours, wk->screen.palette.colours);
 
-#if 0
-	if ((old_palette_size = wk->screen.palette.size) != 256) {	/* Started from different graphics mode? */
-		wk->screen.palette.size = 256;
-		old_palette_colours = wk->screen.palette.colours;
-		wk->screen.palette.colours = (Colour *)access->funcs.malloc(256 * sizeof(Colour), 3);	/* Assume malloc won't fail. */
-		if (wk->screen.palette.colours) {
-#if 0
-			for(i = 0; i < 256; i += old_palette_size)	/* Fill out entire palette with the old colours */
-				access->funcs.copymem(old_palette_colours, &wk->screen.palette.colours[i], old_palette_size * sizeof(Colour));
-#else
-			if (*(short *)&c_set_colours != 0x4e75)		/* Look for C... */
-				c_initialize_palette(vwk, 0, 256, colours, wk->screen.palette.colours);
-			else
-				initialize_palette(vwk, 0, 256, colours, wk->screen.palette.colours);
-#endif
-			access->funcs.free(old_palette_colours);		/* Release old (small) palette (a workaround) */
-		}
-	}
-#endif
-
-#if 0
-	device.format = 2;	/* Packed pixels */
-	device.clut = 2;	/* Software CLUT */
-	device.bit_depth = 16;
-	device.dummy1 = 0;
-	device.colours = 32768;
-#endif
 	device.byte_width = wk->screen.wrap;
 	device.address = wk->screen.mfdb.address;
+
 #if 0
-	device.bits.organization = 2;	/* Falcon bit order */
-	device.dummy2 = 0;
+	debug_aranym( wk->screen.mfdb.width ); /* STanda: ARAnyM emul_op debug call (20) */
 #endif
 
 #ifdef FAST
@@ -358,6 +454,11 @@ void CDECL initialize(Virtual *vwk)
 #endif
 	if (!wk->screen.shadow.address)
 		driver_name[20] = 0;
+
+	if (debug > 1) {
+		access->funcs.puts("  RageII initialization completed!");
+		access->funcs.puts("\x0d\x0a");
+	}
 }
 
 /*

@@ -1,6 +1,6 @@
 16BIT_PC.SYS
-.C	[-X -Y -P -I=\lc\c\fvdi\ -I=\lc\c\fvdi\drivers\]
-.S	[-S -Y -I=\lc\c\fvdi]
+.C	[-X -Y -P -I=\aranym\fvdi\ -I=\aranym\fvdi\drivers\]
+.S	[-S -Y -I=\aranym\fvdi]
 .L
 =
 ..\PUREC.S
@@ -17,5 +17,8 @@
 ;16B_LINE.C	(..\..\fvdi.h)
 16B_PIX.S	(..\..\vdi.inc,..\..\types.inc)
 16B_NOT.C
-16B_PAL.C	(..\..\vdi.inc,..\..\types.inc)
+;16B_PAL.C	(..\..\vdi.inc,..\..\types.inc)
+8B_CPAL.C	(..\..\vdi.inc,..\..\types.inc)
+16B_CPAL.C	(..\..\vdi.inc,..\..\types.inc)
+32B_CPAL.C	(..\..\vdi.inc,..\..\types.inc)
 PCSTDLIB.LIB       ; standard library
