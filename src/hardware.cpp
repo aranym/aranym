@@ -34,13 +34,15 @@
 #include "mmu.h"
 #include "hostscreen.h"
 #include "parallel.h"
+#include "parallel_file.h"
+#include "parallel_x86.h"
 
 #define DEBUG 0
 #include "debug.h"
 
 #define debug_print_IO(a) "unknown"
 
-Parallel parallel;
+Parallel *parallel;
 
 MFP *mfp;
 MMU *mmu;
@@ -82,6 +84,16 @@ void HWInit()
 	arhw[iSCC] = new BASE_IO(0xff8c80, 0x16);
 	arhw[iPADDLE] = new BASE_IO(0xff9200, 0x24);
 	arhw[iCARTRIDGE] = new BASE_IO(0xfa0000, 0x20000);
+
+#ifdef ENABLE_PARALLELX86
+	if (strcmp("x86", bx_options.parallel.type)==0) {
+		parallel = new ParallelX86;
+	}
+	else
+#endif
+	{
+		parallel = new ParallelFile;
+	}
 }
 //	{"DMA/SCSI", 0xff8700, 0x16, &fake_io},
 // 	{"SCSI", 0xff8780, 0x10, &fake_io},
@@ -96,6 +108,8 @@ void HWExit()
 	for(int i=0; i<iITEMS; i++) {
 		delete arhw[i];
 	}
+
+	delete parallel;
 }
 
 void HWReset()

@@ -35,6 +35,7 @@ NFCDROMSRCS = @NFCDROMSRCS@
 NFPCISRCS = @NFPCISRCS@
 NFOSMESASRCS = @NFOSMESASRCS@
 NFJPEGSRCS = @NFJPEGSRCS@
+PARALLELX86SRCS = @PARALLELX86SRCS@
 GUISDLSRCS = @GUISDLSRCS@
 DBGSP = @DBGSP@
 TAPIF = @TAPIF@
@@ -80,6 +81,7 @@ SRCS = ../main.cpp \
 	../ndebug.cpp \
 	../ncr5380.cpp \
 	../parallel.cpp \
+	../parallel_file.cpp \
 	../parameters.cpp \
 	../romdiff.cpp \
 	../rtc.cpp \
@@ -96,6 +98,7 @@ SRCS = ../main.cpp \
 	$(NFPCISRCS) \
 	$(NFOSMESASRCS) \
 	$(NFJPEGSRCS) \
+	$(PARALLELX86SRCS) \
 	$(SYSSRCS) \
 	$(CPUSRCS) \
 	$(DSPSRCS) \

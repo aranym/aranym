@@ -53,7 +53,7 @@ uint8 YAMAHA::handleRead(memptr addr) {
 	if (addr == 0) {
 		switch(active_reg) {
 			case 15:
-				value=parallel.getData();
+				value=parallel->getData();
 				break;
 			default:
 				value=yamaha_regs[active_reg];
@@ -76,10 +76,10 @@ void YAMAHA::handleWrite(memptr addr, uint8 value) {
 			yamaha_regs[active_reg] = value;
 			switch(active_reg) {
 				case 7:
-					parallel.setDirection(value >> 7);
+					parallel->setDirection(value >> 7);
 					break;
 				case 14:
-					parallel.setStrobe((value >> 5) & 0x01);
+					parallel->setStrobe((value >> 5) & 0x01);
 #ifdef DSP_EMULATION
 					if (value & (1<<4)) {
 						getDSP()->reset();
@@ -87,7 +87,7 @@ void YAMAHA::handleWrite(memptr addr, uint8 value) {
 #endif
 					break;
 				case 15:
-					parallel.setData(value);
+					parallel->setData(value);
 					break;
 			}
 			break;

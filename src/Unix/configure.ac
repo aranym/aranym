@@ -70,6 +70,8 @@ AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per s
 
 AC_ARG_ENABLE(lilo,            [  --enable-lilo           enable Linux loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
 
+AC_ARG_ENABLE(parallelx86,     [  --enable-parallelx86    enable Linux X86 hw access for parallel port (default=no)], [WANT_PARALLELX86=$enableval], [WANT_PARALLELX86=no])
+
 AC_ARG_WITH(fink,              [  --with-fink             Use Fink suite to build Aranym on MacOSX (default=no)], [WITH_FINK=$withval], [WITH_FINK=no])
 
 dnl FPU emulation core.
@@ -1592,6 +1594,18 @@ if [[ "x$WANT_EPSLIMITER" = "xyes" ]]; then
 	AC_DEFINE([ENABLE_EPSLIMITER], 1, [Define if you want to use EPS limiter])
 fi
 
+dnl Linux/X86 hardware access for parallel port
+
+PARALLELX86SRCS=""
+if test "x$WANT_PARALLELX86" = "xyes" ; then
+	if test "$OS_TYPE" = "linux" -a "x$HAVE_I386" = "xyes"; then
+		AC_DEFINE([ENABLE_PARALLELX86], 1, [Define if you want to use Linux/X86 hardware access for parallel port])
+		PARALLELX86SRCS="../parallel_x86.cpp"
+	else
+		WANT_PARALLELX86="no"
+	fi
+fi
+
 dnl Data directory
 
 APP=aranym
@@ -1628,6 +1642,7 @@ AC_SUBST(NFCDROMSRCS)
 AC_SUBST(NFPCISRCS)
 AC_SUBST(NFOSMESASRCS)
 AC_SUBST(NFJPEGSRCS)
+AC_SUBST(PARALLELX86SRCS)
 AC_SUBST(GUISDLSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
@@ -1668,6 +1683,7 @@ echo NatFeat PCI driver ..................... : $WANT_NFPCI
 echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA
 echo NatFeat JPEG decoder ................... : $WANT_NFJPEG
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
+echo Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86
 echo
 echo "Configuration done. Now type \"make depend\" (or \"gmake depend\") then
 \"make\" (or \"gmake\")."

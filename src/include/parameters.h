@@ -201,6 +201,12 @@ typedef struct {
 	char libosmesa[256];
 } bx_nfosmesa_options_t;
 
+// Parallel port options
+typedef struct {
+	char type[256];
+	char file[256];
+} bx_parallel_options_t;
+
 // Keyboard and mouse
 typedef struct {
   bool wheel_eiffel;		// eiffel compatible scancodes for mouse wheel
@@ -251,6 +257,7 @@ typedef struct {
 #endif
   bx_autozoom_options_t	autozoom;
   bx_nfosmesa_options_t	osmesa;
+  bx_parallel_options_t parallel;
 #ifdef GDBSTUB
   bx_gdbstub_t		gdbstub;
 #endif

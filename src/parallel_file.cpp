@@ -18,54 +18,71 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <stdio.h>
+
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "parameters.h"
 #include "parallel.h"
+#include "parallel_file.h"
 
 #define DEBUG 0
 #include "debug.h"
 
 /*--- Public functions ---*/
 
-Parallel::Parallel(void)
+ParallelFile::ParallelFile(void)
 {
-	D(bug("parallel: created"));
+	D(bug("parallel_file: created"));
+	handle = NULL;
 }
 
-Parallel::~Parallel(void)
+ParallelFile::~ParallelFile(void)
 {
-	D(bug("parallel: destroyed"));
+	D(bug("parallel_file: destroyed"));
+	if (handle) {
+		fclose(handle);
+		handle=NULL;
+	}
 }
 
-void Parallel::reset(void)
+void ParallelFile::reset(void)
 {
-	D(bug("parallel: reset"));
+	D(bug("parallel_file: reset"));
 }
 
-void Parallel::setDirection(bool out)
+void ParallelFile::setDirection(bool out)
 {
-	D(bug("parallel: setDirection"));
+	D(bug("parallel_file: setDirection"));
 }
 
-uint8 Parallel::getData()
+uint8 ParallelFile::getData()
 {
-	D(bug("parallel: getData"));
+	D(bug("parallel_file: getData"));
 	return 0;
 }
 
-void Parallel::setData(uint8 value)
+void ParallelFile::setData(uint8 value)
 {
-	D(bug("parallel: setData"));
+	D(bug("parallel_file: setData"));
+	if (!handle) {
+		handle = fopen("/tmp/aranym-parallel.txt", "w");
+		if (!handle) {
+			fprintf(stderr,"Can not open file for parallel port\n");
+			return;
+		}
+	}
+	fprintf(handle,"%c",value);	
+	fflush(handle);	/* FIXME: really mandatory ? */
 }
 
-uint8 Parallel::getBusy()
+uint8 ParallelFile::getBusy()
 {
-	D(bug("parallel: getBusy"));
+	D(bug("parallel_file: getBusy"));
 	return 0;
 }
 
-void Parallel::setStrobe(bool high)
+void ParallelFile::setStrobe(bool high)
 {
-	D(bug("parallel: setStrobe"));
+	D(bug("parallel_file: setStrobe"));
 }

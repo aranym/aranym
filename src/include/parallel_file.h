@@ -1,5 +1,5 @@
 /*
-	Parallel port emulation, base class
+	Parallel port emulation, output to file
 
 	ARAnyM (C) 2005 Patrice Mandin
 
@@ -18,22 +18,29 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _PARALLEL_H
-#define _PARALLEL_H
+#ifndef _PARALLEL_FILE_H
+#define _PARALLEL_FILE_H
+
+#include <stdio.h>
 
 #include "sysdeps.h"
+#include "parallel.h"
 
-class Parallel {
+class ParallelFile: public Parallel
+{
+	private:
+		FILE *handle;
+
 	public:
-		Parallel(void);
-		virtual ~Parallel(void);
-		virtual void reset(void);
-		
-		virtual void setDirection(bool out);
-		virtual uint8 getData();
-		virtual void setData(uint8 value);
-		virtual uint8 getBusy();
-		virtual void setStrobe(bool high);
+		ParallelFile(void);
+		~ParallelFile(void);
+		void reset(void);
+
+		void setDirection(bool out);
+		uint8 getData();
+		void setData(uint8 value);
+		uint8 getBusy();
+		void setStrobe(bool high);
 };
 
-#endif /* _PARALLEL_H */
+#endif /* _PARALLEL_FILE_H */

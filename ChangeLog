@@ -1,3 +1,7 @@
+2005/01/23 - Patrice
+- Reorganized parallel port emulation. Time to write drivers for all OS.
+
+
 2005/01/22 - Patrice
 - configure on MacOSX does not like using AC_CHECK_HEADER.
 

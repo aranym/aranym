@@ -625,6 +625,26 @@ void presave_osmesa() {
 }
 
 /*************************************************************************/
+#define PARALLEL_CONF(x) bx_options.parallel.x
+
+struct Config_Tag parallel_conf[]={
+	{ "Type", String_Tag, &PARALLEL_CONF(type), sizeof(PARALLEL_CONF(type)), 0},
+	{ "File", String_Tag, &PARALLEL_CONF(file), sizeof(PARALLEL_CONF(file)), 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+void preset_parallel() {
+  safe_strncpy(PARALLEL_CONF(type), "file", sizeof(PARALLEL_CONF(type)));
+  safe_strncpy(PARALLEL_CONF(file), "/tmp/aranym-parallel.txt", sizeof(PARALLEL_CONF(type)));
+}
+
+void postload_parallel() {
+}
+
+void presave_parallel() {
+}
+
+/*************************************************************************/
 void usage (int status) {
   printf ("Usage: %s [OPTIONS]\n", program_name);
   printf ("\
@@ -680,6 +700,7 @@ void preset_cfg() {
   preset_nfcdroms();
   preset_autozoom();
   preset_osmesa();
+  preset_parallel();
 }
 
 void postload_cfg() {
@@ -698,6 +719,7 @@ void postload_cfg() {
   postload_nfcdroms();
   postload_autozoom();
   postload_osmesa();
+  postload_parallel();
 }
 
 void presave_cfg() {
@@ -716,6 +738,7 @@ void presave_cfg() {
   presave_nfcdroms();
   presave_autozoom();
   presave_osmesa();
+  presave_parallel();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -1035,6 +1058,7 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, nfcdroms_conf, "[CDROMS]", true);
 	process_config(f, rcfile, autozoom_conf, "[AUTOZOOM]", true);
 	process_config(f, rcfile, osmesa_conf, "[NFOSMESA]", true);
+	process_config(f, rcfile, parallel_conf, "[PARALLEL]", true);
 
 	return true;
 }
@@ -1079,6 +1103,7 @@ bool saveSettings(const char *fs)
 	update_config(fs, nfcdroms_conf, "[CDROMS]");
 	update_config(fs, autozoom_conf, "[AUTOZOOM]");
 	update_config(fs, osmesa_conf, "[NFOSMESA]");
+	update_config(fs, parallel_conf, "[PARALLEL]");
 
 	return true;
 }

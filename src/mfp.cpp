@@ -128,7 +128,7 @@ uint8 MFP::handleRead(memptr addr)
 
 	uint8 value;
 	switch(addr) {
-		case 0x01:	value = (GPIP_data & ~ 0x21) | parallel.getBusy();
+		case 0x01:	value = (GPIP_data & ~ 0x21) | parallel->getBusy();
 					break;
 
 		case 0x03:	value = active_edge;

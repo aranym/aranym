@@ -169,3 +169,12 @@ Z = 0
 LibGL = libGL.so
 ; Library to load for OSMesa rendering functions
 LibOSMesa = libOSMesa.so
+
+
+[PARALLEL]
+; Type of parallel port emulation:
+;  file -> Output to file
+;  x86 -> Hardware access under Linux/X86
+Type = file
+; Filename in case of file output
+File = /tmp/aranym-parallel.txt
