@@ -221,7 +221,7 @@ class ExtFs {
 	int32 Dxreaddir_( char *fpathName, ExtDir *dirh, int16 len, char* buff, uint32 xattrp, uint32 xretp );
 	int32 DrewinddirExtFs( ExtDir *dirh );
 
-	int32 FxattrExtFs( LogicalDev *ldp, char *pathName, ExtDta *dta,
+	int32 FxattrExtFs( LogicalDev *ldp, char *pathName, ExtFile *fp,
 					   int16 flag, const char* pn, uint32 xattrp );
 	int32 Fxattr_( LogicalDev *ldp, char *fpathName, int16 flag, uint32 xattrp );   // Taking host pathName instead of Atari one.
 
@@ -273,6 +273,9 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.17  2002/04/19 14:21:04  standa
+ * Patrice's FreeMiNT compilation patch adjusted by ExtFs suffixes.
+ *
  * Revision 1.15  2002/04/17 15:44:17  standa
  * Patrice Mandin <pmandin@caramail.com> & STanda FreeMiNT compilation support
  * patch.

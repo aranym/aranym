@@ -373,14 +373,14 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				char pn[MAXPATHNAMELEN];
 
 				D(bug("%s", "Fxattr"));
-				fetchDTA( &dta, r->a[5] );
+				fetchFILE( &extFile, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)ReadInt32( r->a[7] + 8 ) );
-				r->d[0] = FxattrExtFs( &ldp, (char*)pathname, &dta,
+				r->d[0] = FxattrExtFs( &ldp, (char*)pathname, &extFile,
 								  (int16) ReadInt16( r->a[7] + 6 ), // flag
 								  (const char*)pn,				   // pathname
 								  ReadInt32( r->a[7] + 12 ) );		 // XATTR*
-				flushDTA( &dta, r->a[5] );
+				flushFILE( &extFile, r->a[5] );
 				D(bug("MetaDOS: /Fxattr res = %#08x (%d)", r->d[0],(int32)r->d[0]));
 			}
 			break;
@@ -1920,6 +1920,7 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 	struct statfs buf;
 #endif
 
+	// FIXME: Has to be different for .XFS and for MetaDOS.
 	D(bug("MetaDOS: Dpathconf (%s,%d)", fpathName, which));
 
 #ifdef HAVE_SYS_STATVFS_H
@@ -1931,7 +1932,7 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 
 	switch (which) {
 		case -1:
-			return 7;  // maximal which value
+			return 9;  // maximal which value
 
 		case 0:	  // DP_IOPEN
 			return 0x7fffffffL; // unlimited
@@ -1968,19 +1969,21 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 			return 0;  // files are NOT truncated... (hope correct)
 
 		case 6:	{ // DP_CASE
+		// FIXME: Has to be different for .XFS and for MetaDOS.
 			if ( drv )
 				return drv->halfSensitive ? 2 : 0; // full case sensitive
 			else
 				return 0;
 		}
 		case 7:	  // D_XATTRMODE
+		// FIXME: Has to be different for .XFS and for MetaDOS.
 			return 0x0ff0001fL;	 // only the archive bit is not recognised in the Fxattr
 
-#if FIXME
-// need to find MetaDOS working values for this (Thing refresh window)
 		case 8:	  // DP_XATTR
-			return 0x00000ffbL;	 // rdev is not used
-#endif
+		// This argument should be set accordingly to the filesystem type mounted
+		// to the particular path.
+		// FIXME: Has to be different for .XFS and for MetaDOS.
+			return 0x000009fbL;	 // rdev is not used
 
 		case 9:	  // DP_VOLNAMEMAX
 			return 0;
@@ -2232,7 +2235,7 @@ int32 ExtFs::Fxattr_( LogicalDev *ldp, char *fpathName, int16 flag, uint32 xattr
 	return TOS_E_OK;
 }
 
-int32 ExtFs::FxattrExtFs( LogicalDev *ldp, char *pathName, ExtDta *dta,
+int32 ExtFs::FxattrExtFs( LogicalDev *ldp, char *pathName, ExtFile *fp,
 					 int16 flag, const char* pn, uint32 xattrp )
 {
 	char fpathName[MAXPATHNAMELEN];
@@ -2602,6 +2605,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.46  2002/04/19 14:21:04  standa
+ * Patrice's FreeMiNT compilation patch adjusted by ExtFs suffixes.
+ *
  * Revision 1.44  2002/04/18 20:57:01  standa
  * Fsnext bug fix for LZHSHELL to be able to extract files to MetaDOS fs.
  *

@@ -1,6 +1,18 @@
-2002/04/19 - STanda
-- Namespaces doesn't work under FreeMiNT because mintbind.h are
-  only macros..... The names were changed to have the ExtFs suffix.
+2002/04/19 - STanda & JOY
+- ExtFs: JOY have discovered that Fxattr should probably take the DTA
+  structure. This bug was originating in the Julian Reschke's
+  cookfs01 driver sources that I started to program from.
+  Now the Fxattr works properly. Which means:
+  * The Dpathconf() DP_XATTR return value works also good for Thing
+    to refresh the destination window. The access time and originating
+    time was masked out here to let it work for more hostfs filesystem
+    types properly. It is subject to change. The hostfs mounted to the
+    particular hostfs path is to be investigated whether it supports
+    the features and the flags should be set appropriately.
+  * QED save and load problems fixed.
+- ExtFs namespace method/function recognition doesn't work under
+  FreeMiNT because mintbind.h are only macros..... The names were
+  changed to have the ExtFs suffix.
 
 
 2002/04/18 - STanda
