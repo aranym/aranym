@@ -52,9 +52,9 @@ void VIDEL::init()
 	handleWriteW(HW+0x82, 0x00c6);
 	// for width (default 640)
 	handleWriteW(HW+0x10, 0x0028);
-	// lineoffset is zero
+	// lineoffset is zero: on 9 bits
 	handleWriteW(HW+0x0e, 0x0000);
-	// linewidth in words
+	// linewidth in words: on 10 bits
 	handleWriteW(HW+0x10, 0x0028);
 	// for height
 	handleWriteW(HW+0xa8, 0x003f);
@@ -240,8 +240,24 @@ void VIDEL::renderScreenNoZoom()
 	int vw	 = getScreenWidth();
 	int vh	 = getScreenHeight();
 
-	int lineoffset = handleReadW(HW + 0x0e);
-	int linewidth = handleReadW(HW + 0x10);
+	int lineoffset = handleReadW(HW + 0x0e) & 0x01ff; // 9 bits
+	int linewidth = handleReadW(HW + 0x10) & 0x03ff; // 10 bits
+	/* 
+	   I think this implementation is naive: 
+	   indeed, I suspect that we should instead skip lineoffset
+	   words each time we have read "more" than linewidth words
+	   (possibly "more" because of the number of bit planes).
+	   Moreover, the 1 bit plane mode is particular;
+	   while doing some experiments on my Falcon, it seems to
+	   behave like the 4 bit planes mode.
+	   At last, we have also to take into account the 4 bits register
+	   located at the word $ffff8264 (bit offset). This register makes
+	   the semantics of the lineoffset register change a little.
+	   int bitoffset = handleReadW(HW + 0x64) & 0x000f;
+	   The meaning of this register in True Color mode is not clear
+	   for me at the moment (and my experiments on the Falcon don't help
+	   me).
+	*/
 	int nextline = linewidth + lineoffset;
 
 	int scrpitch = hostScreen.getPitch();
@@ -512,8 +528,9 @@ void VIDEL::renderScreenZoom()
 	int vh	 = getScreenHeight();
 	uint16 *fvram = (uint16 *) Atari2HostAddr(this->getVideoramAddress());
 
-	int lineoffset = handleReadW(HW + 0x0e);
-	int linewidth = handleReadW(HW + 0x10);
+	int lineoffset = handleReadW(HW + 0x0e) & 0x01ff; // 9 bits
+	int linewidth = handleReadW(HW + 0x10) & 0x03ff; // 10 bits
+	/* same remark as before: too naive */
 	int nextline = linewidth + lineoffset;
 
 	/* Host screen infos */
@@ -891,6 +908,9 @@ void VIDEL::renderScreenZoom()
 
 /*
  * $Log$
+ * Revision 1.46  2002/12/29 20:23:11  joy
+ * patch completed
+ *
  * Revision 1.45  2002/12/29 13:54:46  joy
  * linewidth and lineoffset registers emulated
  *
