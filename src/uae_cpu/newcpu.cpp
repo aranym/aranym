@@ -728,9 +728,6 @@ void Exception(int nr, uaecptr oldpc)
         check_eps_limit(currpc);
 #endif
         // panicbug("Exception Nr. %d CPC: %08lx NPC: %08lx SP=%08lx Addr: %08lx", nr, currpc, get_long (regs.vbr + 4*nr), m68k_areg(regs, 7), regs.mmu_fault_addr);
-	/* Undo auto increments/decrements */
-	for (i = 0; i < 8; i++)
-	    m68k_areg(regs, i) -= regs.autoinc[i];
 
         if (building_bus_fault_stack_frame) {
             report_double_bus_error();
@@ -748,19 +745,20 @@ void Exception(int nr, uaecptr oldpc)
 	exc_push_long(0);	/* WB1A */
 	exc_push_long(0);	/* WB2D */
 	exc_push_long(0);	/* WB2A */
-	exc_push_long(0);	/* WB3D */
-	exc_push_long(0);	/* WB3A */
+	exc_push_long(regs.wb3_data);	/* WB3D */
+	exc_push_long(regs.mmu_fault_addr);	/* WB3A */
 	exc_push_long(regs.mmu_fault_addr);
 	exc_push_word(0);	/* WB1S */
 	exc_push_word(0);	/* WB2S */
-	exc_push_word(0);	/* WB3S */
+	exc_push_word(regs.wb3_status);	/* WB3S */
+	regs.wb3_status = 0;
 	exc_push_word(regs.mmu_ssw);
 #ifdef PUREC
 	exc_push_long(0 /* was regs.mmu_fault_addr */);	/* EA *//* bullshit here, took 10 hours to debug with PureC $12345678 test. It should be an internal register, keep 0 to preserve MSP in PureC */
 #else
 	exc_push_long(regs.mmu_fault_addr); /* EA *//* ARAnyM has 040, so stack format 7, not 000 stack format */
 #endif
-	exc_make_frame(7, regs.sr, currpc, 2, 0, 0);
+	exc_make_frame(7, regs.sr, regs.fault_pc, 2, 0, 0);
 
 	building_bus_fault_stack_frame=0;
         /* end of BUS ERROR handler */
@@ -1468,7 +1466,7 @@ void m68k_do_execute (void)
     if (SETJMP(loop_env)) return;
 #endif	    
     for (;;) {
-	pc = m68k_getpc();
+	regs.fault_pc = pc = m68k_getpc();
 #ifdef FULL_HISTORY
 #ifdef NEED_TO_DEBUG_BADLY
 	history[lasthist] = regs;
@@ -1482,6 +1480,7 @@ void m68k_do_execute (void)
 	}
 #endif
 
+#ifndef FULLMMU
 #if ARAM_PAGE_CHECK
 	if (((pc ^ pc_page) > ARAM_PAGE_MASK)) {
 	    check_ram_boundary(pc, 2, false);
@@ -1491,12 +1490,14 @@ void m68k_do_execute (void)
 #else
 	check_ram_boundary(pc, 2, false);
 #endif
+#endif
 	opcode = GET_OPCODE;
 #if FLIGHT_RECORDER
 	                m68k_record_step(m68k_getpc());
 #endif
-	memset(regs.autoinc, 0, sizeof(regs.autoinc));
 	(*cpufunctbl[opcode])(opcode);
+
+	regs.fault_pc = m68k_getpc();
 
 #ifndef DISDIP
 	if (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {
