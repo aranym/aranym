@@ -140,6 +140,6 @@ extern void TriggerMFP(bool);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
 
 // This function will be removed
-static uaecptr showPC(void) { return m68k_getpc(); }	// for debugging only
+static inline uaecptr showPC(void) { return m68k_getpc(); }	// for debugging only
 
 #endif

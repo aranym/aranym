@@ -330,7 +330,7 @@ depend dep:
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) -Wall $(CFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -Wall -Wtraditional -Winline $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -Wall -Winline $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.s
 	$(CXX) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 

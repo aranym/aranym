@@ -1,3 +1,7 @@
+2003/06/11 - milan
+- emul_op.cpp: better OP_MONX
+
+
 2003/06/10 - milan
 - emul_op: new instruction 0x71ff (OP_DEBUGGER) starts debugger if available
            new instructions 0x71fX (OP_MONX) display CPU registers
