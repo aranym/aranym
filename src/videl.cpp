@@ -16,6 +16,9 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "gfxprimitives.h"
+
+
 // from host.cpp
 extern HostScreen hostScreen;
 
@@ -150,6 +153,9 @@ void VIDEL::updateColors()
 		} else {
 			for (int i = 0; i < 15; i++) {
 				int offset = i << 1;
+
+				// fprintf(stderr,"HS: setColor: %03d,%6x - %x,%x,%x\n", index, sdl_colors[index], red, green, blue );
+
 				hostScreen.setPaletteColor( i,
 					(STE_COLORS(offset) << 5) | ((STE_COLORS(offset) << 1 ) & 0x8),
 					((STE_COLORS(offset + 1) << 1) & 0xE0) | ((STE_COLORS(offset + 1) >> 3) & 0x8),
@@ -224,16 +230,24 @@ void VIDEL::renderScreenNoFlag()
 				int startBitIndex = w * 16;
 				int colIdx = 0;
 				for (int j = startBitIndex; j < startBitIndex + 16; j++) {
-					((uint16 *) hvram)[ j ] = (uint16) hostScreen.getPaletteColor( color[ colIdx++ ] );
+					((uint16 *)hvram)[ j ] = (uint16) hostScreen.getPaletteColor( color[ colIdx++ ] );
 				}
 
 #ifdef SUPPORT_MULTIPLEDESTBPP
+			}
+			else if (destBPP == 3) {
+				int startBitIndex = w * 16;
+				int colIdx = 0;
+				for (int j = startBitIndex; j < startBitIndex + 16; j++) {
+					uint32 tmpColor = hostScreen.getPaletteColor( color[ colIdx++ ] );
+					putBpp24Pixel( (uint32)hvram + j*3, tmpColor );
+				}
 			}
 			else if (destBPP == 4) {
 				int startBitIndex = w * 16;
 				int colIdx = 0;
 				for (int j = startBitIndex; j < startBitIndex + 16; j++)
-					((uint32 *) hvram)[ j ] = (uint32) hostScreen.getPaletteColor( color[ colIdx++ ] );
+					((uint32 *)hvram)[ j ] = (uint32) hostScreen.getPaletteColor( color[ colIdx++ ] );
 			}
 			// FIXME: support for destBPP other than 2 or 4 BPP is missing
 
@@ -266,6 +280,20 @@ void VIDEL::renderScreenNoFlag()
 #ifdef SUPPORT_MULTIPLEDESTBPP
 
 		}
+		else if (destBPP == 3) {
+			// THIS is the only correct way to do the Falcon TC to SDL conversion!!! (for little endian machines)
+			for (int w = 0; w < planeWordCount; w++) {
+				// The byteswap is done by correct shifts (not so obvious)
+				int data = fvram[w];
+				uint32 tmpColor =
+					hostScreen.getColor(
+										(uint8) (data & 0xf8),
+										(uint8) ( ((data & 0x07) << 5) |
+												  ((data >> 11) & 0x3c)),
+										(uint8) ((data >> 5) & 0xf8));
+				putBpp24Pixel( (uint32)hvram + w*3, tmpColor );
+			}
+		}
 		else if (destBPP == 4) {
 			// THIS is the only correct way to do the Falcon TC to SDL conversion!!! (for little endian machines)
 			for (int w = 0; w < planeWordCount; w++) {
@@ -273,10 +301,10 @@ void VIDEL::renderScreenNoFlag()
 				int data = fvram[w];
 				((uint32 *) hvram)[w] =
 					hostScreen.getColor(
-										(uint8) ((data >> 5) & 0xf8),
+										(uint8) (data & 0xf8),
 										(uint8) ( ((data & 0x07) << 5) |
 												  ((data >> 11) & 0x3c)),
-										(uint8) (data & 0xf8));
+										(uint8) ((data >> 5) & 0xf8));
 			}
 		}
 		// FIXME: support for destBPP other than 2 or 4 BPP is missing
@@ -293,6 +321,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.25  2001/10/08 21:46:05  standa
+ * The $Header$ and $Log$ CVS tags added.
+ *
  * Revision 1.24  2001/10/01 22:22:41  standa
  * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).
  * fvdidrv/blitArea form memory works in TC.

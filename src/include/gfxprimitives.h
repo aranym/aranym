@@ -39,18 +39,25 @@ extern "C" {
 /**
  * This macro handles the endianity for 24 bit per item data
  **/
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+
 #define putBpp24Pixel( address, color ) \
 { \
-	if(SDL_BYTEORDER == SDL_BIG_ENDIAN) { \
-		((Uint8*)(address))[0] = ((color) >> 16) & 0xff; \
-		((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
-		((Uint8*)(address))[2] = (color) & 0xff; \
-	} else { \
-		((Uint8*)(address))[0] = (color) & 0xff; \
-		((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
-		((Uint8*)(address))[2] = ((color) >> 16) & 0xff; \
-    } \
+	((Uint8*)(address))[0] = ((color) >> 16) & 0xff; \
+	((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
+	((Uint8*)(address))[2] = (color) & 0xff; \
 }
+
+#else
+
+#define putBpp24Pixel( address, color ) \
+{ \
+    ((Uint8*)(address))[0] = (color) & 0xff; \
+	((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
+	((Uint8*)(address))[2] = ((color) >> 16) & 0xff; \
+}
+
+#endif
 
 /* Note: all ___Color routines expect the color to be in format 0xRRGGBBAA */
 
