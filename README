@@ -46,8 +46,8 @@ where TOS/GEM applications could continue to live forever.
    o TOS 4.04, EmuTOS or Linux as the booting operating system
    o runs with FreeMiNT, MagiC, and any other operating system that runs
      also on real Atari computer.
-   o Native CD-ROM access (under Linux), without scsi/ide/whatsoever
-     emulation
+   o Native CD-ROM access (under Linux, audio CD only on other OS), without
+     scsi/ide/whatsoever emulation
 
 Important: ARAnyM is not finished. Consider this to be a beta version
 and a work-in-progress. Sorry for incomplete and confusing documentation.
@@ -162,17 +162,17 @@ drives (physical devices A to Z for MetaDOS). It is only supported under
 Linux at the moment.
 
 First, See section [CDROMS] in your config file. Each drive letter is a
-physical device for MetaDOS, and you can give it any host device (if you have
-multiple CD-ROM drives on your host machine).
+physical device for MetaDOS, and you can give it any host CD-ROM drive number
+(if you have multiple CD-ROM drives on your host machine).
 
 Example:
 
 [CDROMS]
-A = /dev/cdrom2
+A = 0
 ..
-W = /dev/cdrom1
+W = 1
 ..
-Z = /dev/cdrom
+Z = 2
 
 Then, on the Atari side, copy the file nfcdrom.bos to your auto folder, and
 edit your config.sys file, and add a line like this:

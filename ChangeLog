@@ -1,3 +1,7 @@
+2003/09/30 - patrice
+- Natfeat CD-ROM driver splitted to ease port to other OS.
+
+
 2003/09/29 - milan
 - Makefile.in: APP_LIB added (hmmm, sorry, diploma thesis, thanks Francois and
   Stefan :-)
