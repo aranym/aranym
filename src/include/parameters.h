@@ -112,6 +112,7 @@ typedef struct {
   bool tunenop;
   uint32 jitcachesize;
   uint32 jitlazyflush;
+  char jitblacklist[512];
 } bx_jit_options_t;
 
 // OpenGL options

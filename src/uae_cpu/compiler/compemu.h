@@ -1,26 +1,32 @@
 /*
- *  compiler/compemu.h - Public interface and definitions
+ * compiler/compemu.h - Public interface and definitions
  *
- *  Original 68040 JIT compiler for UAE, copyright 2000-2002 Bernd Meyer
+ * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * 
+ * Inspired by Christian Bauer's Basilisk II
  *
- *  Adaptation for Basilisk II and improvements, copyright 2000-2002
- *    Gwenole Beauchesne
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
- *  Basilisk II (C) 1997-2002 Christian Bauer
+ * JIT compiler m68k -> IA-32 and AMD64
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * Original 68040 JIT compiler for UAE, copyright 2000-2002 Bernd Meyer
+ * Adaptation for Basilisk II and improvements, copyright 2000-2004 Gwenole Beauchesne
+ * Portions related to CPU detection come from linux/arch/i386/kernel/setup.c
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #ifndef COMPEMU_H
@@ -79,6 +85,9 @@ union cacheline {
 #undef  USE_CHECKSUM_INFO
 #define USE_CHECKSUM_INFO 1
 #endif
+
+/* Does flush_icache_range() only check for blocks falling in the requested range? */
+#define LAZY_FLUSH_ICACHE_RANGE 0
 
 #define USE_F_ALIAS 1
 #define USE_OFFSET 1

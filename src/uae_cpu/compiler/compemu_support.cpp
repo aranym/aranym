@@ -1,26 +1,32 @@
 /*
- *  compiler/compemu_support.cpp - Core dynamic translation engine
+ * compiler/compemu_support.cpp - Core dynamic translation engine
  *
- *  Original 68040 JIT compiler for UAE, copyright 2000-2002 Bernd Meyer
+ * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * 
+ * Inspired by Christian Bauer's Basilisk II
  *
- *  Adaptation for Basilisk II and improvements, copyright 2000-2002
- *    Gwenole Beauchesne
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
- *  Basilisk II (C) 1997-2002 Christian Bauer
+ * JIT compiler m68k -> IA-32 and AMD64
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * Original 68040 JIT compiler for UAE, copyright 2000-2002 Bernd Meyer
+ * Adaptation for Basilisk II and improvements, copyright 2000-2004 Gwenole Beauchesne
+ * Portions related to CPU detection come from linux/arch/i386/kernel/setup.c
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #if !FIXED_ADDRESSING
@@ -5977,6 +5983,77 @@ static void prepare_block(blockinfo* bi)
     //bi->env=empty_ss;
 }
 
+// OPCODE is in big endian format, use cft_map() beforehand, if needed.
+static inline void reset_compop(int opcode)
+{
+	compfunctbl[opcode] = NULL;
+	nfcompfunctbl[opcode] = NULL;
+}
+
+static int read_opcode(const char *p)
+{
+	int opcode = 0;
+	for (int i = 0; i < 4; i++) {
+		int op = p[i];
+		switch (op) {
+		case '0': case '1': case '2': case '3': case '4':
+		case '5': case '6': case '7': case '8': case '9':
+			opcode = (opcode << 4) | (op - '0');
+			break;
+		case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
+			opcode = (opcode << 4) | ((op - 'a') + 10);
+			break;
+		case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
+			opcode = (opcode << 4) | ((op - 'A') + 10);
+			break;
+		default:
+			return -1;
+		}
+	}
+	return opcode;
+}
+
+static bool merge_blacklist()
+{
+	const char *blacklist = bx_options.jit.jitblacklist;
+	if (blacklist[0] != '\0') {
+		const char *p = blacklist;
+		for (;;) {
+			if (*p == 0)
+				return true;
+
+			int opcode1 = read_opcode(p);
+			if (opcode1 < 0)
+				return false;
+			p += 4;
+
+			int opcode2 = opcode1;
+			if (*p == '-') {
+				p++;
+				opcode2 = read_opcode(p);
+				if (opcode2 < 0)
+					return false;
+				p += 4;
+			}
+
+			if (*p == 0 || *p == ';') {
+				panicbug("<JIT compiler> : blacklist opcodes : %04x-%04x\n", opcode1, opcode2);
+				for (int opcode = opcode1; opcode <= opcode2; opcode++)
+					reset_compop(cft_map(opcode));
+
+				if (*p++ == ';')
+					continue;
+
+				return true;
+			}
+
+			return false;
+		}
+	}
+	return true;
+}
+
+/* MJ
 static bool avoid_opcode(uae_u32 opcode)
 {
 #if JIT_DEBUG
@@ -5984,7 +6061,7 @@ static bool avoid_opcode(uae_u32 opcode)
 	// filter opcodes per type, integral value, or whatever
 #endif
 	return false;
-}
+} */
 
 void build_comp(void) 
 {
@@ -6005,9 +6082,8 @@ void build_comp(void)
     D(panicbug("<JIT compiler> : building compiler function tables"));
 	
 	for (opcode = 0; opcode < 65536; opcode++) {
+		reset_compop(opcode);
 		nfcpufunctbl[opcode] = op_illg_1;
-		compfunctbl[opcode] = NULL;
-		nfcompfunctbl[opcode] = NULL;
 		prop[opcode].use_flags = 0x1f;
 		prop[opcode].set_flags = 0x1f;
 		prop[opcode].cflow = fl_trap; // ILLEGAL instructions do trap
@@ -6022,7 +6098,7 @@ void build_comp(void)
 		prop[cft_map(tbl[i].opcode)].cflow = cflow;
 
 		int uses_fpu = tbl[i].specific & 32;
-		if ((uses_fpu && avoid_fpu) || avoid_opcode(tbl[i].opcode))
+		if (uses_fpu && avoid_fpu)
 			compfunctbl[cft_map(tbl[i].opcode)] = NULL;
 		else
 			compfunctbl[cft_map(tbl[i].opcode)] = tbl[i].handler;
@@ -6030,7 +6106,7 @@ void build_comp(void)
 
     for (i = 0; nftbl[i].opcode < 65536; i++) {
 		int uses_fpu = tbl[i].specific & 32;
-		if ((uses_fpu && avoid_fpu) || avoid_opcode(nftbl[i].opcode))
+		if (uses_fpu && avoid_fpu)
 			nfcompfunctbl[cft_map(nftbl[i].opcode)] = NULL;
 		else
 			nfcompfunctbl[cft_map(nftbl[i].opcode)] = nftbl[i].handler;
@@ -6072,6 +6148,10 @@ void build_comp(void)
 		if (nfctbl[i].specific)
 			nfcpufunctbl[cft_map(tbl[i].opcode)] = nfctbl[i].handler;
 	}
+
+    /* Merge in blacklist */
+    if (!merge_blacklist())
+	panicbug("<JIT compiler> : blacklist merge failure!\n");
 
     count=0;
     for (opcode = 0; opcode < 65536; opcode++) {
@@ -6189,6 +6269,39 @@ static inline void flush_icache_lazy(int n)
 	dormant=active;
 	active->prev_p=&dormant;
 	active=NULL;
+}
+
+void flush_icache_range(uae_u32 start, uae_u32 length)
+{
+	if (!active)
+		return;
+
+#if LAZY_FLUSH_ICACHE_RANGE
+	uae_u8 *start_p = get_real_address(start);
+	blockinfo *bi = active;
+	while (bi) {
+#if USE_CHECKSUM_INFO
+		bool invalidate = false;
+		for (checksum_info *csi = bi->csi; csi && !invalidate; csi = csi->next)
+			invalidate = (((start_p - csi->start_p) < csi->length) ||
+						  ((csi->start_p - start_p) < length));
+#else
+		// Assume system is consistent and would invalidate the right range
+		const bool invalidate = (bi->pc_p - start_p) < length;
+#endif
+		if (invalidate) {
+			uae_u32 cl = cacheline(bi->pc_p);
+			if (bi == cache_tags[cl + 1].bi)
+					cache_tags[cl].handler = (cpuop_func *)popall_execute_normal;
+			bi->handler_to_use = (cpuop_func *)popall_execute_normal;
+			set_dhtu(bi, bi->direct_pen);
+			bi->status = BI_NEED_RECOMP;
+		}
+		bi = bi->next;
+	}
+	return;
+#endif
+	flush_icache(-1);
 }
 
 static void catastrophe(void)

@@ -1,36 +1,34 @@
-/******************** -*- mode: C; tab-width: 8 -*- ********************
+/*
+ * compiler/codegen_x86.h - IA-32 and AMD64 code generator
  *
- *	Run-time assembler for IA-32 and AMD64
+ * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * 
+ * Inspired by Christian Bauer's Basilisk II
  *
- ***********************************************************************/
-
-
-/***********************************************************************
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
- *  This file is derived from CCG.
+ * JIT compiler m68k -> IA-32 and AMD64
  *
- *  Copyright 1999, 2000, 2001, 2002, 2003 Ian Piumarta
+ * Original 68040 JIT compiler for UAE, copyright 2000-2002 Bernd Meyer
+ * This file is derived from CCG, copyright 1999-2003 Ian Piumarta
+ * Adaptation for Basilisk II and improvements, copyright 2000-2004 Gwenole Beauchesne
+ * Portions related to CPU detection come from linux/arch/i386/kernel/setup.c
  *
- *  Adaptations and enhancements for AMD64 support, Copyright 2003
- *    Gwenole Beauchesne
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  Basilisk II (C) 1997-2003 Christian Bauer
- *  
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- ***********************************************************************/
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #ifndef X86_RTASM_H
 #define X86_RTASM_H

@@ -1,3 +1,11 @@
+2004/01/24 - milan
+- CPU: small cleanup
+
+- JIT: blacklist opcode for debugging
+
+- sync with BasiliskII
+
+
 2004/01/23 - joy
 - gui-sdl/dlgDisk.cpp: changed floppy path was not applied to the bx_options
 

@@ -1,27 +1,33 @@
 /*
- *  fpu_x86.cpp - 68881/68040 fpu code for x86/Windows an Linux/x86.
+ * fpu/fpu_x86.cpp - 68881/68040 fpu code for x86/Windows an Linux/x86.
  *
- *  Basilisk II (C) 1997-1999 Christian Bauer
+ * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * 
+ * Inspired by Christian Bauer's Basilisk II
  *
- *  MC68881/68040 fpu emulation
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
- *  Based on UAE FPU, original copyright 1996 Herman ten Brugge,
- *  rewritten for x86 by Lauri Pesonen 1999-2000,
- *  accomodated to GCC's Extended Asm syntax by Gwenole Beauchesne 2000.
+ * MC68881/68040 fpu emulation
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * Original UAE FPU, copyright 1996 Herman ten Brugge
+ * Rewrite for x86, copyright 1999-2001 Lauri Pesonen
+ * New framework, copyright 2000-2001 Gwenole Beauchesne
+ * Adapted for JIT compilation (c) Bernd Meyer, 2000-2001
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  *
  *	Interface
@@ -6664,16 +6670,37 @@ PRIVATE void FFPU do_fld1 ( fpu_register & dest )
 
 /* ---------------------------- MAIN INIT ---------------------------- */
 
+#ifdef HAVE_SIGACTION
+// Mega hackaround-that-happens-to-work: the following way to handle
+// SIGFPE just happens to make the "fsave" below in fpu_init() *NOT*
+// to abort with a floating point exception. However, we never
+// actually reach sigfpe_handler().
+static void sigfpe_handler(int code, siginfo_t *sip, void *)
+{
+	if (code == SIGFPE && sip->si_code == FPE_FLTINV) {
+		fprintf(stderr, "Invalid floating point operation\n");
+		abort();
+	}
+}
+#endif
+
 PUBLIC void FFPU fpu_init( bool integral_68040 )
 {
-	static bool initialized_lookup_tables = false;
-	if (!initialized_lookup_tables) {
+	static bool done_first_time_initialization = false;
+	if (!done_first_time_initialization) {
 		fpu_init_native_fflags();
 		fpu_init_native_exceptions();
 		fpu_init_native_accrued_exceptions();
-		initialized_lookup_tables = true;
+#ifdef HAVE_SIGACTION
+		struct sigaction fpe_sa;
+		sigemptyset(&fpe_sa.sa_mask);
+		fpe_sa.sa_sigaction = sigfpe_handler;
+		fpe_sa.sa_flags = SA_SIGINFO;
+		sigaction(SIGFPE, &fpe_sa, 0);
+#endif
+		done_first_time_initialization = true;
 	}
-	
+
 	__asm__ __volatile__("fsave %0" : "=m" (m_fpu_state_original));
 	
 	FPU is_integral = integral_68040;

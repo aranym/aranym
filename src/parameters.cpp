@@ -183,6 +183,7 @@ struct Config_Tag jit_conf[]={
 	{ "TuneNOPfill", Bool_Tag, &bx_options.jit.tunenop, 0, 0},
 	{ "JITCacheSize", Int_Tag, &bx_options.jit.jitcachesize, 0, 0},
 	{ "JITLazyFlush", Int_Tag, &bx_options.jit.jitlazyflush, 0, 0},
+        { "JITBlackList", String_Tag, &bx_options.jit.jitblacklist, sizeof(bx_options.jit.jitblacklist), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -193,6 +194,7 @@ void preset_jit() {
 	bx_options.jit.jitlazyflush = 1;
 	bx_options.jit.tunealign = true;
 	bx_options.jit.tunenop = true;
+	strcpy(bx_options.jit.jitblacklist, "");
 }
 
 void postload_jit() {

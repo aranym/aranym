@@ -1,4 +1,27 @@
-/* 2002 MJ */
+/*
+ * newcpu.cpp - CPU emulation
+ *
+ * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * 
+ * Inspired by Christian Bauer's Basilisk II
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
  /*
   * UAE - The Un*x Amiga Emulator
   *
@@ -778,13 +801,6 @@ static void MFPInterrupt(int nr)
 
 int m68k_move2c (int regno, uae_u32 *regp)
 {
-/* MJ   if ((CPUType == 1 && (regno & 0x7FF) > 1)
-	|| (CPUType < 4 && (regno & 0x7FF) > 2)
-	|| (CPUType == 4 && regno == 0x802))
-    {
-	op_illg (0x4E7B);
-	return 0;
-    } else {*/
 	switch (regno) {
 	 case 0: regs.sfc = *regp & 7; break;
 	 case 1: regs.dfc = *regp & 7; break;
@@ -813,19 +829,11 @@ int m68k_move2c (int regno, uae_u32 *regp)
 	    op_illg (0x4E7B);
 	    return 0;
 	}
-// MJ    }
     return 1;
 }
 
 int m68k_movec2 (int regno, uae_u32 *regp)
 {
-/* MJ    if ((CPUType == 1 && (regno & 0x7FF) > 1)
-	|| (CPUType < 4 && (regno & 0x7FF) > 2)
-	|| (CPUType == 4 && regno == 0x802))
-    {
-	op_illg (0x4E7A);
-	return 0;
-    } else {*/
 	switch (regno) {
 	 case 0: *regp = regs.sfc; break;
 	 case 1: *regp = regs.dfc; break;
@@ -847,7 +855,6 @@ int m68k_movec2 (int regno, uae_u32 *regp)
 	    op_illg (0x4E7A);
 	    return 0;
 	}
-// MJ    }
     return 1;
 }
 
@@ -1287,7 +1294,7 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 }
 
 #ifndef FULLMMU
-void mmu_op(uae_u32 opcode, uae_u16 extra)
+void mmu_op(uae_u32 opcode, uae_u16 /*extra*/)
 {
     if ((opcode & 0xFF8) == 0x0500) { /* PFLUSHN instruction (An) */
 	flush_internals();
