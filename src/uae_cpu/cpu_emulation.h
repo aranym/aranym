@@ -79,7 +79,9 @@ extern "C" void Execute68k(uint32 addr, M68kRegisters *r);	// Execute 68k code f
 extern "C" void Execute68kTrap(uint16 trap, M68kRegisters *r);	// Execute MacOS 68k trap from EMUL_OP routine
 
 // Interrupt functions
-extern void TriggerInterrupt(void);	// Trigger interrupt level 1 (InterruptFlag must be set first)
+// extern void TriggerInterrupt(void);	// Trigger interrupt level 1 (InterruptFlag must be set first)
+extern void TriggerVBL(void);		// Trigger interrupt level 4
+extern void TriggerMFP(void);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
 
 #endif
