@@ -44,6 +44,7 @@ void RTC::init() {
 	if (boot_color_depth != -1) {
 		int res = cmos[29] & 0x07;
 		switch(boot_color_depth) {
+			case 1: res = 0; break;
 			case 2: res = 1; break;
 			case 4: res = 2; break;
 			case 8: res = 3; break;
