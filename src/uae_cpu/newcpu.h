@@ -32,10 +32,6 @@ extern int movem_index1[256];
 extern int movem_index2[256];
 extern int movem_next[256];
 
-extern int fpp_movem_index1[256];
-extern int fpp_movem_index2[256];
-extern int fpp_movem_next[256];
-
 extern int broken_in;
 
 typedef void REGPARAM2 cpuop_func (uae_u32) REGPARAM;
@@ -210,19 +206,6 @@ extern void m68k_reset (void);
 extern void m68k_enter_debugger(void);
 
 extern void mmu_op (uae_u32, uae_u16);
-
-extern void fpp_opp (uae_u32, uae_u16);
-extern void fdbcc_opp (uae_u32, uae_u16);
-extern void fscc_opp (uae_u32, uae_u16);
-extern void ftrapcc_opp (uae_u32,uaecptr);
-extern void fbcc_opp (uae_u32, uaecptr, uae_u32);
-extern void fsave_opp (uae_u32);
-extern void frestore_opp (uae_u32);
-
-extern void fpu_set_integral_fpu (bool is_integral);
-extern void fpu_init (void);
-extern void fpu_exit (void);
-extern void fpu_reset (void);
 
 /* Opcode of faulting instruction */
 extern uae_u16 last_op_for_exception_3;

@@ -81,6 +81,9 @@ bool InitMEM() {
 bool Init680x0(void)
 {
 	init_m68k();
+#ifdef USE_JIT
+	if (bx_options.jit.jit) compiler_init();
+#endif
 	return true;
 }
 
@@ -98,6 +101,9 @@ void AtariReset(void)
 
 void Exit680x0(void)
 {
+#ifdef USE_JIT
+	if (bx_options.jit.jit) compiler_exit();
+#endif
 	exit_m68k();
 }
 
@@ -109,7 +115,12 @@ void Exit680x0(void)
 void Start680x0(void)
 {
 	m68k_reset();
-	m68k_go(true);
+#ifdef USE_JIT
+	if (bx_options.jit.jit)
+		m68k_compile_execute();
+	else
+#endif
+		m68k_go(true);
 }
 
 

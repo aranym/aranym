@@ -2,7 +2,7 @@
 static void fpu_emit_macro_definitions()
 {
 #   define DEFINE_MACRO(name, value) \
-    __asm__ __volatile__ (#name " = " #value)
+    ASM_VOLATILE (#name " = " #value)
     DEFINE_MACRO(BSUN, 0x00008000);
     DEFINE_MACRO(SNAN, 0x00004000);
     DEFINE_MACRO(OPERR, 0x00002000);
@@ -68,8 +68,8 @@ static void fpu_emit_macro_definitions()
     DEFINE_MACRO(SW_ZE, 0x0004);
     DEFINE_MACRO(SW_DE, 0x0002);
     DEFINE_MACRO(SW_IE, 0x0001);
-    DEFINE_MACRO(X86_ROUND_CONTROL_MASK, 0x0C00);
-    DEFINE_MACRO(X86_PRECISION_CONTROL_MASK, 0x0300);
+    DEFINE_MACRO(X86_ROUNDING_MODE, 0x0C00);
+    DEFINE_MACRO(X86_ROUNDING_PRECISION, 0x0300);
 #   undef DEFINE_MACRO
 }
 /*
@@ -96,7 +96,7 @@ cat > $ofile << EOF
 static void fpu_emit_macro_definitions()
 {
 #   define DEFINE_MACRO(name, value) \\
-    __asm__ __volatile__ (#name " = " #value)
+    ASM_VOLATILE (#name " = " #value)
 EOF
 
 # processing with awk

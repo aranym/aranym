@@ -17,6 +17,7 @@
 #include "readcpu.h"
 #include "newcpu.h"
 #include "exceptions.h"
+#include "fpu/fpu.h"
 #define DEBUG 1
 #include "debug.h"
 
@@ -39,10 +40,6 @@ int imm8_table[] = { 8,1,2,3,4,5,6,7 };
 int movem_index1[256];
 int movem_index2[256];
 int movem_next[256];
-
-int fpp_movem_index1[256];
-int fpp_movem_index2[256];
-int fpp_movem_next[256];
 
 cpuop_func *cpufunctbl[65536];
 
@@ -171,15 +168,6 @@ void init_m68k (void)
 	movem_index2[i] = 7-j;
 	movem_next[i] = i & (~(1 << j));
     }
-    for (i = 0 ; i < 256 ; i++) {
-	int j;
-	for (j = 7 ; j >= 0 ; j--) {
-		if (i & (1 << j)) break;
-	}
-	fpp_movem_index1[i] = 7-j;
-	fpp_movem_index2[i] = j;
-	fpp_movem_next[i] = i & (~(1 << j));
-    }
 #if COUNT_INSTRS
     {
 	FILE *f = fopen (icountfilename (), "r");
@@ -200,9 +188,7 @@ void init_m68k (void)
     do_merges ();
 
     build_cpufunctbl ();
-    
-    fpu_init ();
-    fpu_set_integral_fpu (CPUType == 4);
+    fpu_init (CPUType == 4);
 }
 
 void exit_m68k (void)
