@@ -1,4 +1,3 @@
-<<<<<<< ChangeLog
 2001/10/09 - milan
 - some changes in memory allocation, now support for malloc on dummy platforms
 
