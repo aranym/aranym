@@ -245,7 +245,7 @@ int	input_config(const char *filename, struct Config_Tag configs[], char *header
 
 			tok = trim(strtok(line, "=\n\r"));	 /* get first token */
 			if ( tok != NULL ) {
-				next = trim(strtok(NULL, "=\n\r")); /* get actual config information */
+				next = trim(strtok(NULL, "\n\r")); /* get actual config information */
 				for ( ptr = configs; ptr->buf; ++ptr )	 /* scan for token */ {
 					if ( !strcasecmp( tok , ptr->code ) )  /* got a match? */ {
 						if (next == NULL) {

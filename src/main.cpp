@@ -35,8 +35,9 @@
 #include "romdiff.h"
 #include "parameters.h"
 #include "version.h"		// for heartBeat
+#include "lilo.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #ifdef HAVE_NEW_HEADERS
@@ -367,16 +368,20 @@ bool InitEmuTOS(void)
 }
 
 /*
- * Initialize the Operating System - either the EmuTOS or TOS 4.04
+ * Initialize the Operating System - Linux, TOS 4.04 or EmuTOS
  */
 bool InitOS(void)
 {
 	/*
-	 * first try TOS 4.04 and if it fails give the EmuTOS a try.
+	 * First try to boot a linux kernel if enabled,
+	 * then try TOS 4.04 if EmuTOS is disabled,
+	 * then finally try emuTOS
 	 * Note that EmuTOS will always be available so this will be
 	 * a nice fallback.
 	 */
-	if (!boot_emutos && InitTOSROM())
+	if (boot_lilo && LiloInit())
+		return true;
+	else if (!boot_emutos && InitTOSROM())
 		return true;
 	else if (InitEmuTOS())
 		return true;
@@ -440,8 +445,10 @@ bool InitAll(void)
 	CPUType = 4;
 	FPUType = 1;
 
-	// Setting "SP & PC"
-	for (int i = 0; i < 8; i++) RAMBaseHost[i] = ROMBaseHost[i];
+	// Setting "SP & PC" for TOS and EmuTOS
+	if (!(boot_lilo && lilo_ready)) {
+		for (int i = 0; i < 8; i++) RAMBaseHost[i] = ROMBaseHost[i];
+	}
 
 	init_fdc();
 
@@ -505,6 +512,10 @@ bool InitAll(void)
 
 void ExitAll(void)
 {
+	if (boot_lilo) {
+		LiloShutdown();
+	}
+
 #ifdef ETHERNET_SUPPORT
 	Ethernet.exit();
 #endif
@@ -542,6 +553,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.95  2003/04/16 19:35:49  pmandin
+ * Correct inclusion of SDL headers
+ *
  * Revision 1.94  2003/03/29 08:45:38  milan
  * capabilities output
  * manpage

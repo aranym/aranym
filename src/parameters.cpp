@@ -65,6 +65,7 @@ static struct option const long_options[] =
   {"save", no_argument, 0, 's'},
   {"swap-ide", no_argument, 0, 'S'},
   {"emutos", no_argument, 0, 'e'},
+  {"lilo", no_argument, 0, 'l'},
   {NULL, 0, NULL, 0}
 };
 
@@ -76,6 +77,7 @@ char rom_path[512];		// set by build_datafilenames()
 char emutos_path[512];	// set by build_datafilenames()
 
 bool boot_emutos = false;
+bool boot_lilo = false;
 bool ide_swap = false;
 uint32 FastRAMSize;
 
@@ -459,6 +461,28 @@ void presave_ethernet() {
 }
 
 /*************************************************************************/
+#define LILO(x) bx_options.lilo.x
+
+struct Config_Tag lilo_conf[]={
+	{ "Kernel", String_Tag, &LILO(kernel), sizeof(LILO(kernel))},
+	{ "Args", String_Tag, &LILO(args), sizeof(LILO(args))},
+	{ "Ramdisk", String_Tag, &LILO(ramdisk), sizeof(LILO(ramdisk))},
+	{ NULL , Error_Tag, NULL }
+};
+
+void preset_lilo() {
+  safe_strncpy(LILO(kernel), "linux.bin", sizeof(LILO(kernel)));
+  safe_strncpy(LILO(args), "root=/dev/ram video=atafb:vga16", sizeof(LILO(args)));
+  safe_strncpy(LILO(ramdisk), "root.bin", sizeof(LILO(ramdisk)));
+}
+
+void postload_lilo() {
+}
+
+void presave_lilo() {
+}
+
+/*************************************************************************/
 void usage (int status) {
   printf ("%s\n", VERSION_STRING);
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
@@ -466,6 +490,7 @@ void usage (int status) {
 Options:\n\
   -a, --floppy NAME          floppy image file NAME\n\
   -e, --emutos               boot EmuTOS\n\
+  -l, --lilo                 boot a linux kernel\n\
   -N, --nomouse              don't grab mouse at startup\n\
   -f, --fullscreen           start in fullscreen\n\
   -v, --refresh <X>          VIDEL refresh rate in VBL (default 2)\n\
@@ -501,6 +526,7 @@ void preset_cfg() {
   preset_jit();
   preset_opengl();
   preset_ethernet();
+  preset_lilo();
 }
 
 void postload_cfg() {
@@ -514,6 +540,7 @@ void postload_cfg() {
   postload_jit();
   postload_opengl();
   postload_ethernet();
+  postload_lilo();
 }
 
 void presave_cfg() {
@@ -527,6 +554,7 @@ void presave_cfg() {
   presave_jit();
   presave_opengl();
   presave_ethernet();
+  presave_lilo();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -567,6 +595,7 @@ int process_cmdline(int argc, char **argv)
 	while ((c = getopt_long (argc, argv,
 							 "a:" /* floppy image file */
 							 "e"  /* boot emutos */
+							 "l"  /* boot lilo */
 #ifdef DEBUGGER
 							 "D"  /* debugger */
 #endif
@@ -608,6 +637,10 @@ int process_cmdline(int argc, char **argv)
 	
 			case 'f':
 				bx_options.video.fullscreen = true;
+				break;
+
+			case 'l':
+				boot_lilo = true;
 				break;
 
 			case 'v':
@@ -770,6 +803,7 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	}
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
 	process_config(f, rcfile, ethernet_conf, "[ETH0]", true);
+	process_config(f, rcfile, lilo_conf, "[LILO]", true);
 }
 
 int saveSettings(const char *fs)
@@ -800,6 +834,7 @@ int saveSettings(const char *fs)
 	update_config(fs, arafs_conf, "[HOSTFS]");
 	update_config(fs, opengl_conf, "[OPENGL]");
 	update_config(fs, ethernet_conf, "[ETH0]");
+	update_config(fs, lilo_conf, "[LILO]");
 
 	return 0;
 }

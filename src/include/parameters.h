@@ -135,6 +135,13 @@ typedef struct {
   char netmask[16];
 } bx_ethernet_options_t;
 
+// Lilo options
+typedef struct {
+	char kernel[512];	/* /path/to/vmlinux[.gz] */
+	char args[512];		/* command line arguments for kernel */
+	char ramdisk[512];	/* /path/to/ramdisk[.gz] */
+} bx_lilo_options_t;
+
 /*
 typedef struct {
   char      *path;
@@ -164,6 +171,7 @@ typedef struct {
   bx_jit_options_t	jit;
   bx_opengl_options_t	opengl;
   bx_ethernet_options_t ethernet;
+  bx_lilo_options_t		lilo;
   bool			autoMouseGrab;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;
@@ -184,6 +192,7 @@ extern char *program_name;
 extern char rom_path[512];
 extern char emutos_path[512];
 extern bool boot_emutos;
+extern bool boot_lilo;
 
 void usage(int);
 extern bool check_cfg();

@@ -44,9 +44,15 @@ a higher priority over the config file. You can use it for temporary change
 of Aranym parameters or you can even store the command line options setting
 to the config file using "aranym --save".
 
-  You also need the operating system - either ATARI original TOS 4.04
-(found in Falcon030) or the free TOS replacement called EmuTOS (get
-the latest version from CVS at http://emutos.sf.net/).
+
+1.1 Operating systems
+---------------------
+
+  You also need an operating system:
+- either ATARI original TOS 4.04 (found in Falcon030)
+- the free TOS replacement called EmuTOS (get the latest version from CVS
+  at http://emutos.sf.net/).
+- and finally Linux/m68k.
 
   Aranym expects to find the TOS 4.04 ROM image in $PREFIX/share/aranym/ROM
 (if not specified otherwise in the ./configure phase). If you want to keep
@@ -56,6 +62,11 @@ edit the "TOS" line and set the right path to the file ("TOS=/path/to/TOS").
   Aranym also runs with latest EmuTOS. Simply set the "EmuTOS=" config
 option to point to your EmuTOS ROM image file. The TOS= is ignored in such
 case.
+
+  Aranym can directly load and a boot a Linux kernel from your host drive.
+You just need to fill the [LILO] sections with the correct parameters, and
+then to run aranym with '-l' or '--lilo' to use it instead of TOS/EmuTOS.
+This is currently not usable, due to missing/bugged MMU/hardware emulation.
 
 
 2. CPU and FPU

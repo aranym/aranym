@@ -29,6 +29,8 @@ SDL_CONFIG = @SDL_CONFIG@
 SDL_CFLAGS = @SDL_CFLAGS@
 SYSSRCS = @SYSSRCS@
 CPUSRCS = @CPUSRCS@
+DSPSRCS = @DSPSRCS@
+LILOSRCS = @LILOSRCS@
 DBGSP = @DBGSP@
 TAPIF = @TAPIF@
 
@@ -87,7 +89,9 @@ SRCS = ../main.cpp \
 	../natfeat/nf_basicset.cpp \
 	../natfeat/debugprintf.cpp \
 	$(SYSSRCS) \
-	$(CPUSRCS)
+	$(CPUSRCS) \
+	$(DSPSRCS) \
+	$(LILOSRCS)
 APP = aranym
 APP_STATIC = aranym-static
 APP_DI = diskimage

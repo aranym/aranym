@@ -692,19 +692,15 @@ else
 fi
 
 dnl DSP
+DSPSRCS=""
 if [[ "x$WANT_DSP" = "xyes" ]]; then
     AC_DEFINE([DSP_EMULATION], 1, [Define if using DSP])
     DSPSRCS="../dsp_cpu.cpp"
-else
-    DSPSRCS=""
-fi
-
-dnl DSP disassembler
-if [[ "x$WANT_DSP_DISASM" = "xyes" ]]; then
-    AC_DEFINE([DSP_DISASM], 1, [Define if DSP disassembly])
-	DSPDISSRCS="../dsp_disasm.cpp"
-else
-	DSPDISSRCS=""
+    dnl DSP disassembler
+    if [[ "x$WANT_DSP_DISASM" = "xyes" ]]; then
+        AC_DEFINE([DSP_DISASM], 1, [Define if DSP disassembly])
+        DSPSRCS="$DSPSRCS ../dsp_disasm.cpp"
+    fi
 fi
 
 dnl fixed size FastRAM
@@ -1301,7 +1297,7 @@ fi
 dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
   CPUINCLUDES="-I../uae_cpu"
-  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp cpustbl.cpp $CPUSRCS $JITSRCS $MMUSRCS $DSPSRCS $DSPDISSRCS"
+  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp cpustbl.cpp $CPUSRCS $JITSRCS $MMUSRCS"
 fi
 
 dnl Remove the "-g" option if set for GCC.
@@ -1449,6 +1445,40 @@ LIBS="$LIBS $SDL_LIBS"
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
 
+dnl Linux loader
+
+LILOSRCS=""
+AC_ARG_ENABLE(lilo, [  --enable-lilo           enable Linux loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
+if test x$WANT_LILO = xyes; then
+	if test x$WANT_MMU = xyes; then
+		LILOSRCS="../lilo.cpp"
+	else
+		AC_MSG_ERROR([Linux kernel requires fonctionnal MMU emulation])
+	fi
+fi
+
+dnl Zlib (for lilo)
+
+AC_CHECK_HEADER(zlib.h, have_zlib_header=yes)
+AC_CHECK_LIB(z, zlibVersion, have_zlib_lib=yes)
+if test x$have_zlib_header = xyes -a x$have_zlib_lib = xyes; then
+	have_zlib="yes"
+	AC_DEFINE([ENABLE_ZLIB], 1, [Define if Zlib present])
+	if test x$WANT_LILO = xyes; then
+		LIBS="$LIBS -lz"
+	fi
+fi
+
+dnl Linux kernel includes (for lilo)
+
+AC_ARG_WITH(kernel-includes,
+	[  --with-kernel-includes=DIR Specify where to find Linux kernel headers],
+	LINUXKERNEL_INCDIR=$withval, LINUXKERNEL_INCDIR="/usr/src/linux/include")
+if test x$WANT_LILO = xyes; then
+	CFLAGS="$CFLAGS -I$LINUXKERNEL_INCDIR"
+	CXXFLAGS="$CXXFLAGS -I$LINUXKERNEL_INCDIR"
+fi
+
 dnl Data directory
 
 APP=aranym
@@ -1470,6 +1500,8 @@ AC_SUBST(DEFINES)
 AC_SUBST(SYSSRCS)
 AC_SUBST(CPUINCLUDES)
 AC_SUBST(CPUSRCS)
+AC_SUBST(DSPSRCS)
+AC_SUBST(LILOSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
 AC_OUTPUT(Makefile)
@@ -1502,5 +1534,8 @@ echo Support for hostfs ..................... : $WANT_HOSTFS
 echo Support for ethernet ................... : $WANT_ETHERNET
 echo GUI .................................... : $WANT_SDLGUI
 echo OpenGL ................................. : $WANT_OPENGL
+echo Linux loader ........................... : $WANT_LILO
+echo Zlib ................................... : $have_zlib
+echo Linux kernel includes .................. : $LINUXKERNEL_INCDIR
 echo
 echo "Configuration done. Now type \"make\" (or \"gmake\")."

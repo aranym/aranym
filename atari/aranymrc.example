@@ -118,3 +118,13 @@ Bpp = 16
 
 ; Use linear filtering on the atari screen
 Filtered = No
+
+[LILO]
+; Full path to a (optionnally gzipped) kernel image
+Kernel = linux.bin
+
+; Command line to pass to the kernel
+Args = root=/dev/ram video=atafb:vga16
+
+; Full path to a (optionnally gzipped) ramdisk file
+Ramdisk = root.bin

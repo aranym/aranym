@@ -41,6 +41,7 @@ Didier MEQUIGNON <didier.mequignon@wanadoo.fr>
 - Atari XBIOS sound driver (atari/sound/*)
 
 Patrice Mandin <pmandin@caramail.com>
+- Linux kernel loader
 - DSP M56001 emulation
 - IKBD/ACIA rewrite, joystick support
 - the SDL-MiNT port of ARAnyM
