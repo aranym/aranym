@@ -7,8 +7,8 @@ private:
 	uae_u8 NFSR,FXSR; 
 	uae_u16 x_count,y_count;
 	uae_u8 hop,op,line_num,skewreg;
-	int halftone_curroffset,halftone_direction;
-	int source_x_inc, source_y_inc, dest_x_inc, dest_y_inc;
+	short int halftone_curroffset,halftone_direction;
+	short int source_x_inc, source_y_inc, dest_x_inc, dest_y_inc;
 	int source_addr;
 	int dest_addr;
 	bool blit;
@@ -199,4 +199,7 @@ private:
 	void _HOP_3_OP_13_P(void);
 	void _HOP_3_OP_14_P(void);
 	void _HOP_3_OP_15_P(void);
+
+	void hop2op3p(void);
+	void hop2op3n(void);
 };
