@@ -31,6 +31,7 @@
 
 #include "sysdeps.h"
 #include "memory.h"
+#include "natfeats.h"
 
 // RAM and ROM pointers (allocated and set by main_*.cpp)
 // This part will be moved to another include, only mains use it.
@@ -135,8 +136,6 @@ extern void TriggerVBL(void);		// Trigger interrupt level 4
 extern void TriggerInterrupt(void);	// Trigger interrupt level 5
 extern void TriggerMFP(bool);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
-
-
 
 // This function will be removed
 static uaecptr showPC(void) { return m68k_getpc(); }	// for debugging only

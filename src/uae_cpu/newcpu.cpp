@@ -12,7 +12,6 @@
 #include "cpu_emulation.h"
 #include "main.h"
 #include "emul_op.h"
-#include "natfeats.h"
 #include "m68k.h"
 #include "memory.h"
 #include "readcpu.h"
