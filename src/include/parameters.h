@@ -7,7 +7,11 @@
 #include "version.h"
 #include "cfgopts.h"
 
-#define ARANYMHOME		".aranym"
+#ifdef OS_cygwin
+# define ARANYMHOME		"aranym"
+#else
+# define ARANYMHOME		".aranym"
+#endif
 #define ARANYMCONFIG	"config"
 #define ARANYMNVRAM		"nvram"
 #define ARANYMKEYMAP	"keymap"

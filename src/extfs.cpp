@@ -10,6 +10,7 @@
 
 #include <sys/stat.h>
 #include <sys/vfs.h>
+
 #include <utime.h>
 
 #ifdef EXTFS_SUPPORT
@@ -860,13 +861,21 @@ int32 ExtFs::Dfree(LogicalDev *ldp, char *pathName, ExtFile *fp,
 				   uint32 diskinfop, int16 drive )
 {
 	char fpathName[MAXPATHNAMELEN];
+#ifdef HAVE_SYS_STATVFS_H
+	struct statvfs buff;
+#else
 	struct statfs buff;
+#endif
 
 	convertPathA2F( fpathName, pathName );
 
 	D(bug("MetaDOS: Dfree (drive = %d,%s,%s)", 'A' + drive, pathName, fpathName));
 
+#ifdef HAVE_SYS_STATVFS_H
+	if ( statvfs(fpathName, &buff) )
+#else
 	if ( statfs(fpathName, &buff) )
+#endif
 		return unix2toserrno(errno,TOS_EFILNF);
 
 	/* ULONG b_free	   */  put_long( diskinfop	   , buff.f_bavail );
@@ -1293,12 +1302,20 @@ int32 ExtFs::Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp,
 
 	int	 oldErrno = errno;
 	char fpathName[MAXPATHNAMELEN];
+#ifdef HAVE_SYS_STATVFS_H 
+	struct statvfs buf;
+#else
 	struct statfs buf;
+#endif
 	convertPathA2F( fpathName, pathName );
 
 	D(bug("MetaDOS: Dpathconf (%s,%s,%d)", pathName, fpathName, cmd));
 
+#ifdef HAVE_SYS_STATVFS_H 
+	if ( statvfs(fpathName, &buf) )
+#else
 	if ( statfs(fpathName, &buf) )
+#endif
 		return unix2toserrno(errno,TOS_EFILNF);
 
 	switch (cmd) {
@@ -1319,7 +1336,11 @@ int32 ExtFs::Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp,
 			return MAXPATHNAMELEN; // FIXME: This is the limitation of this implementation (Fanda specific)
 
 		case 3:	  // DP_NAMEMAX
+#ifdef HAVE_SYS_STATVFS_H 
+                        return buf.f_namemax;
+#else
 			return buf.f_namelen;
+#endif
 
 		case 4:	  // DP_ATOMIC
 			return buf.f_bsize;	 // ST max vs Linux optimal
@@ -1340,6 +1361,7 @@ int32 ExtFs::Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp,
 		default:
 			return TOS_EINVFN;
 	}
+	return TOS_EINVFN;
 }
 
 
@@ -1600,6 +1622,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.21  2002/01/08 18:33:49  standa
+ * The size of the bx_options.aranymfs[] and ExtFs::drives[] fixed.
+ *
  * Revision 1.20  2002/01/08 17:51:07  standa
  * The aranymfs config file settings finished. Thanks to JOY.
  *

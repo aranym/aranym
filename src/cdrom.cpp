@@ -85,8 +85,10 @@ extern "C" {
 HANDLE hFile = NULL;
 #endif
 
-
-
+#ifdef OS_irix
+#define BX_CD_FRAMESIZE 2048
+#define CD_FRAMESIZE    2048
+#endif
 
 cdrom_interface::cdrom_interface(char *dev)
 {

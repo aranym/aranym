@@ -1,3 +1,11 @@
+2002/01/09 - Rodolphe Pineau & milan
+- 1st step for SGI/Irix
+
+- aranymfs more portable (Solaris supported now also)
+
+- corrections in configure script, memory allocation, memory access
+
+
 2002/01/08 - STanda
 - The aranymfs config file setting finished (thanks to JOY)
 - fVDI driver doesn't destroy palette setting on resolution change

@@ -2408,7 +2408,11 @@ void default_image_t::close ()
       }
 }
 
+#ifdef OS_irix
+loff_t default_image_t::lseek (loff_t offset, int whence)
+#else
 off_t default_image_t::lseek (off_t offset, int whence)
+#endif
 {
       return ::lseek(fd, offset, whence);
 }

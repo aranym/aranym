@@ -14,7 +14,7 @@ Milan Jurik <M.Jurik@sh.cvut.cz>
 - main framework from Basilisk and building system (autoconf stuff)
 - continuous updates and syncing with UAE CPU core
 - memory management (direct, real addressing modes)
-- portability generally, Solaris and Windows
+- portability generally, Solaris, Irix and Windows
 - 68040 MMU (Memory Management Unit) emulation (in progress)
 - 68040 JIT (in progress)
 - ndebug (New Debug)
@@ -44,5 +44,10 @@ Patrice Mandin
 Francois LE COAT
 - for the Solaris port
 
-Olivier Landemarre)
+Olivier Landemarre
 - for the Windows/cygwin port
+
+Rodolphe Pineau
+- for the SGI/Irix port
+- corrections in configure script and memory allocation
+- better portability of aranymfs

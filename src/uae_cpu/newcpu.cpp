@@ -2888,9 +2888,9 @@ static void m68k_run_1 (void)
 	    pc_offset = (uintptr)addr - (uintptr)regs.pcp;
 	}
 # ifdef HAVE_GET_WORD_UNSWAPPED
-	opcode = do_get_mem_word_unswapped(regs.pcp + pc_offset);
+	opcode = do_get_mem_word_unswapped((uint16 *)regs.pcp + pc_offset);
 # else
-	opcode = do_get_mem_word(regs.pcp + pc_offset);
+	opcode = do_get_mem_word((uint16 *)regs.pcp + pc_offset);
 # endif
 #else
 	check_ram_boundary(regs.pcp, 2, false);

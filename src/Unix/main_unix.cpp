@@ -61,7 +61,11 @@ static void sigint_handler(...);
 
 extern void showBackTrace(int, bool=true);
 
+#ifdef OS_irix
+void segmentationfault()
+#else
 void segmentationfault(int x)
+#endif
 {
 	grabMouse(false);
 	printf("Gotcha! Illegal memory access. Atari PC = $%x\n", (unsigned)showPC());
@@ -113,7 +117,7 @@ int main(int argc, char **argv)
 	// when trying to map a too big chunk of memory starting at address 0
 	
 	// Try to allocate all memory from 0x0000, if it is not known to crash
-	if (vm_acquire_fixed(0, RAMSize + ROMSize + FastRAMSize) == 0) {
+	if (vm_acquire_fixed(0, RAMSize + ROMSize + FastRAMSize) == false) {
 		D(bug("Could allocate RAM and ROM from 0x0000"));
 		memory_mapped_from_zero = true;
 	}
@@ -128,7 +132,7 @@ int main(int argc, char **argv)
 	{
 		RAMBaseHost = (uint8 *)vm_acquire(RAMSize);
 		ROMBaseHost = (uint8 *)vm_acquire(ROMSize);
-		FastRAMBaseHost = (uint8 *)vm_acquire(FastRAMSize);
+		if (FastRAMSize) FastRAMBaseHost = (uint8 *)vm_acquire(FastRAMSize); else FastRAMBaseHost = RAMBaseHost + 0x1000000;
 		if (RAMBaseHost == VM_MAP_FAILED || ROMBaseHost == VM_MAP_FAILED || FastRAMBaseHost == VM_MAP_FAILED) {
 			ErrorAlert("Not enough free memory.\n");
 			QuitEmulator();
@@ -224,6 +228,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.56  2002/01/08 16:21:45  joy
+ * config variables moved from global ones to bx_options struct.
+ *
  * Revision 1.55  2001/11/21 13:29:51  milan
  * cleanning & portability
  *

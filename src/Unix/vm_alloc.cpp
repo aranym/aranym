@@ -124,32 +124,32 @@ void * vm_acquire(size_t size)
 /* Allocate zero-filled memory at exactly ADDR (which must be page-aligned).
    Retuns 0 if successful, -1 on errors.  */
 
-int vm_acquire_fixed(void * addr, size_t size)
+bool vm_acquire_fixed(void * addr, size_t size)
 {
 #ifdef HAVE_MACH_VM
 	// vm_allocate() returns a zero-filled memory region
 	if (vm_allocate(mach_task_self(), (vm_address_t *)&addr, size, 0) != KERN_SUCCESS)
-		return -1;
+		return false;
 #else
 #ifdef HAVE_MMAP_VM
 	if (mmap(addr, size, VM_PAGE_DEFAULT, map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
-		return -1;
+		return false;
 	
 	// Since I don't know the standard behavior of mmap(), zero-fill here
 	if (memset(0, 0, size) != 0)
-		return -1;
+		return false;
 #else
 	// Unsupported
-	return -1;
+	return false;
 #endif
 #endif
 	
 	// Explicitely protect the newly mapped region here because on some systems,
 	// say MacOS X, mmap() doesn't honour the requested protection flags.
 	if (vm_protect(0, size, VM_PAGE_DEFAULT) != 0)
-		return -1;
+		return false;
 	
-	return 0;
+	return true;
 }
 
 /* Deallocate any mapping for the region starting at ADDR and extending

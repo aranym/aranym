@@ -78,10 +78,9 @@ extern void vm_exit(void);
 
 extern void * vm_acquire(size_t size);
 
-/* Allocate zero-filled memory at exactly ADDR (which must be page-aligned).
-   Returns 0 if successful, -1 on errors.  */
+/* Allocate zero-filled memory at exactly ADDR (which must be page-aligned). */
 
-extern int vm_acquire_fixed(void * addr, size_t size);
+extern bool vm_acquire_fixed(void * addr, size_t size);
 
 /* Deallocate any mapping for the region starting at ADDR and extending
    LEN bytes. Returns 0 if successful, -1 on errors.  */

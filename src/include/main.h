@@ -46,7 +46,11 @@ extern bool InitAll(void);
 extern void ExitAll(void);
 extern bool grabMouse(bool grab);
 extern void invoke200HzInterrupt(void);
+#ifdef OS_irix
+extern void setactvdebug();
+#else
 extern void setactvdebug(int);
+#endif
 
 // Platform-specific functions
 extern void QuitEmulator(void);				// Quit emulator
@@ -73,6 +77,9 @@ extern void ClearInterruptFlag(uint32 flag);
 
 /*
  * $Log$
+ * Revision 1.11  2001/11/06 20:36:54  milan
+ * MMU's corrections
+ *
  * Revision 1.10  2001/10/29 08:15:45  milan
  * some changes around debuggers
  *

@@ -55,7 +55,12 @@ static void mon_write_byte_b2(uint32 adr, uint32 b)
 #endif	/* ENABLE_MON */
 
 //For starting debugger
-void setactvdebug(int) {
+#ifdef OS_irix
+void setactvdebug()
+#else
+void setactvdebug(int)
+#endif
+{
 	grabMouse(false);
 	activate_debugger();
 #ifdef NEWDEBUG
@@ -978,6 +983,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.57  2002/01/08 16:13:18  joy
+ * config variables moved from global ones to bx_options struct.
+ *
  * Revision 1.56  2002/01/03 23:10:41  joy
  * redirect xconout to host console
  *

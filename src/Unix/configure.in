@@ -88,6 +88,7 @@ case "$target_os" in
   solaris*)	OS_TYPE=solaris;;
   darwin*)	OS_TYPE=darwin;;
   cygwin*)	OS_TYPE=cygwin;;
+  irix*)	OS_TYPE=irix;;
   *)		OS_TYPE=`echo $target_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
 esac
 DEFINES="$DEFINES -DOS_$OS_TYPE"
@@ -118,7 +119,8 @@ dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/mman.h term.h sys/ioctl.h)
 AC_CHECK_HEADERS(features.h sys/feature_tests.h dirent.h signal.h getopt.h)
-AC_CHECK_HEADERS(termios.h termio.h)
+AC_CHECK_HEADERS(termios.h termio.h alloca.h sys/statfs.h sys/statvfs.h)
+AC_CHECK_HEADERS(sys/types.h sys/stat.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
@@ -167,9 +169,12 @@ case "$target_os" in
     ;;
   solaris*)
     AC_DEFINE(_XOPEN_SOURCE, 500)
-    DEFINES="$DEFINES -DBSD_COMP -fpermissive"
+    DEFINES="$DEFINES -DBSD_COMP -fpermissive -D__EXTENSIONS__"
     EXTRASYSSRCS=parameters_unix.cpp
-    WANT_ARANYMFS="no"
+dnl    WANT_ARANYMFS="no"
+    ;;
+  irix*)
+    EXTRASYSSRCS=parameters_unix.cpp
     ;;
   *)
     EXTRASYSSRCS=parameters_unix.cpp
@@ -405,8 +410,8 @@ AC_CACHE_CHECK("for vasprintf",
 AC_TRANSLATE_DEFINE(HAVE_GNU_SOURCE, "$ac_cv_have_vasprintf")
 if [[ "x$ac_cv_have_vasprintf" = "xyes" ]]; then
   DEFINES="$DEFINES -D_GNU_SOURCE"
+else SYSSRCS="$SYSSRCS vasprintf.c"
 fi
-dnl else SYSSRCS="$SYSSRCS vasprintf.c"
 
 dnl Check if we have getopt_long
 AC_CACHE_CHECK("for getopt_long",
@@ -428,9 +433,9 @@ AC_CACHE_CHECK("for getopt_long",
 )
 AC_TRANSLATE_DEFINE(HAVE_GETOPT_H, "$ac_cv_have_getopt_long")
 
-dnl if [[ "x$ac_cv_have_getopt_long" = "xno" ]]; then
-dnl   SYSSRCS="$SYSSRCS getopt.c"
-dnl fi
+if [[ "x$ac_cv_have_getopt_long" = "xno" ]]; then
+  SYSSRCS="$SYSSRCS getopt_init.c getopt1.c getopt.c"
+fi
 
 dnl Check if we can mmap 0x2000 bytes from 0x0000
 AC_CACHE_CHECK("whether we can map Low Memory area 0x0000-0x2000",
@@ -442,7 +447,7 @@ AC_CACHE_CHECK("whether we can map Low Memory area 0x0000-0x2000",
     int main(void) { /* returns 0 if we could map the lowmem globals */
       volatile char * lm;
       if (vm_init() < 0) exit(1);
-      if ((lm = (volatile char *)vm_acquire_fixed(0, 0x2000)) == VM_MAP_FAILED) exit(1);
+      if ((lm = (volatile char *)vm_acquire_fixed(0, 0x2000)) == false) exit(1);
       lm[0] = 'z';
       if (vm_release((char *)lm, 0x2000) < 0) exit(1);
       vm_exit(); exit(0);
@@ -504,7 +509,7 @@ fi
 dnl Blitter SDL surface blitting
 if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
     AC_DEFINE(BLITTER_SDLBLIT)
-    AC_DEFINE(BLITTER_MEMMOVE)	/* required for the SDLBLIT */
+    AC_DEFINE(BLITTER_MEMMOVE)	dnl required for the SDLBLIT
 fi
 
 dnl The JIT Compiler needs JIT_ADDRESING

@@ -41,8 +41,15 @@
 #error "You don't have ANSI C header files."
 #endif
 
-#ifdef HAVE_UNISTD_H
+#ifdef HAVE_SYS_STAT_H
+# include <sys/stat.h>
+#endif
+
+#ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 
@@ -54,12 +61,16 @@
 #include <errno.h>
 #include <stdarg.h>
 
+#ifdef HAVE_ALLOCA_H
+# include <alloca.h>
+#endif
+
 #ifdef HAVE_TERMIOS_H
 # include <termios.h>
-#else
-# ifdef HAVE_TERMIO_H
-#  include <termio.h>
-# endif
+#endif
+
+#ifdef HAVE_TERMIO_H
+# include <termio.h>
 #endif
 
 #ifdef HAVE_FCNTL_H
@@ -93,6 +104,10 @@
 
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
+#endif
+
+#ifdef HAVE_SYS_STATVFS_H
+# include <sys/statvfs.h>
 #endif
 
 /* Atari and host address space are distinct */
@@ -180,6 +195,9 @@ static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {*a = v;}
 #else /* CPU_CAN_ACCESS_UNALIGNED */
 
 #ifdef sgi
+
+#ifndef __GNUC__
+
 /* The SGI MIPSPro compilers can do unaligned accesses given enough hints.
  * They will automatically inline these routines. */
 #ifdef __cplusplus
@@ -192,6 +210,13 @@ extern void do_put_mem_word(uae_u16 *a, uae_u32 v);
 #ifdef __cplusplus
 }
 #endif
+
+#else /* __GNUC__ */
+static inline uae_u32 do_get_mem_long(uae_u32 *a) {return *a;}
+static inline uae_u32 do_get_mem_word(uae_u16 *a) {return *a;}
+static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {*a = v;}
+static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {*a = v;}
+#endif /* __GNUC__ */
 
 #else /* sgi */
 
