@@ -58,14 +58,6 @@ unsigned short  linePattern = 0xffff;
 
 int fastPixelColorNolockWclip (SDL_Surface *dst, Sint16 x, Sint16 y, Uint32 color)
 {
-	// STanda BEG
-	if ( areaPattern != NULL ) {
-		// if the pixel is off within the pattern
-		if ( areaPattern[ y & 0xf ] & ( 1 << ( x & 0xf ) ) == 0 )
-			return(0);
-	}
-	// STanda END
-
 	int bpp;
 	Uint8 *p;
 
@@ -113,15 +105,6 @@ int fastPixelColorNolockWclip (SDL_Surface *dst, Sint16 x, Sint16 y, Uint32 colo
 
 int fastPixelColorNolock (SDL_Surface *dst, Sint16 x, Sint16 y, Uint32 color)
 {
-	// STanda BEG
-	if ( areaPattern != NULL ) {
-		// if the pixel is off within the pattern
-		fprintf(stderr, "gfx: %d\n", areaPattern[ y & 0xf ] );
-		if ( areaPattern[ y & 0xf ] & ( 1 << ( x & 0xf ) ) == 0 )
-			return(0);
-	}
-	// STanda END
-
 	int bpp;
 	Uint8 *p;
 

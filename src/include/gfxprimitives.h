@@ -39,6 +39,10 @@ extern unsigned short  linePattern;
 
 /* ----- Prototypes */
 
+/* STanda's internal published functions */
+
+DLLINTERFACE int fastPixelColorNolock (SDL_Surface *dst, Sint16 x, Sint16 y, Uint32 color);
+
 /* Note: all ___Color routines expect the color to be in format 0xRRGGBBAA */
 
 /* Pixel */
