@@ -43,10 +43,3 @@ gives some chance to Windows users as well.
 Only Linux-ia32 (x86) currently supports JIT compiler for the CPU emulator.
 This is not a design limitation or a bug in other operating systems, it's 
 just lack of manpower willing to work on JIT support on the other systems.
-
-Linux kernel 2.6.x: SIGSEGV handler doesn't work correctly. Problems have
-been identified, solution is to use sigsetjmp/siglongjmp. Fixing in progress.
-
-On PPC the "IEEE" FPU core doesn't compile (non-portable?). The UAE FPU
-emulation works flawlessly, as reported by Francois LE COAT.
-

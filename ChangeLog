@@ -1,6 +1,27 @@
+* tagged as ARANYM_0_8_9_BETA
+
 2004/07/05 - joy
-- ikbd.cpp: write to MFP directly, don't throw nested SIGSEGV (fixes crashes
-  in JIT CPU emulation)
+- ikbd.cpp: write to MFP directly, don't throw nested SIGSEGV. This not only
+  fixes the JIT CPU crash on keypress in linux 2.6.x but also seems to help
+  booting linux-m68k (it doesn't freeze now when you press a key)
+
+- blitter.cpp: this is probably a breaking news after years of blitter
+  crashing and countless hours spent on debugging it: the source and
+  destination address registers must be restored to original values upon
+  finishing the job, since TOS does not always set the source and dest
+  address for a new blitter job - it clearly relies on the original values
+  set in previous job. This is very unexpected behaviour since Blitter
+  documentation says the source and dest addr registers show increasing
+  values when you read them.
+  Also, now Blitter starts blitting as soon as the BUSY line (0x3c & 0x80)
+  was set - this was possible after implementing the word and long wide
+  register accesses and thanks to idea and support from Thomas.
+
+- gui-sdl/dlgAlert.cpp: strdupa() is not defined in neither cygwin nor macosx
+  so there is a quick workaround.
+
+- lilo.cpp: fixed reading of gzipped files. Simply the macro is HAVE_LIBZ,
+  not HAVE_ZLIB :-)
 
 
 * tagged as ARANYM_0_8_8_BETA

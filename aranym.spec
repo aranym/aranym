@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.8.8beta
+%define ver	0.8.9beta
 %define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -94,6 +94,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Tue Jul 06 2004 Petr Stehlik <pstehlik@sophics.cz>
+Version increased.
+
 * Mon Jul 05 2004 Petr Stehlik <pstehlik@sophics.cz>
 Version increased. tools/createdisk/ removed. tools/arabridge added.
 For other changes see the NEWS file.
