@@ -1067,8 +1067,8 @@ int SDLGui_MouseClick(SGOBJ *dlg, int fx, int fy, cursor_state *cursor)
           break;
 
         case SDL_MOUSEBUTTONUP:
-          x = (int)evnt.user.data1;
-          y = (int)evnt.user.data2;
+          x = (uintptr)evnt.user.data1;
+          y = (uintptr)evnt.user.data2;
           if (SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y))
           {
             // true if mouse button is released over clicked object.
@@ -1407,8 +1407,8 @@ int SDLGui_DoDialog(SGOBJ *dlg)
       switch(evnt.user.code)
       {
       	case SDL_KEYDOWN:
-          keysym = (int)evnt.user.data1;
-          mod = (int)evnt.user.data2;
+          keysym = (uintptr)evnt.user.data1;
+          mod = (uintptr)evnt.user.data2;
           return_obj = SDLGui_KeyPress(dlg, keysym, mod, &cursor);
       	  break;
 
@@ -1418,8 +1418,8 @@ int SDLGui_DoDialog(SGOBJ *dlg)
           break;
 
         case SDL_MOUSEBUTTONDOWN:
-          x = (int)evnt.user.data1;
-          y = (int)evnt.user.data2;
+          x = (uintptr)evnt.user.data1;
+          y = (uintptr)evnt.user.data2;
           return_obj = SDLGui_MouseClick(dlg, x, y, &cursor);
           break;
       }
