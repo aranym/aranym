@@ -61,6 +61,8 @@ int Dialog_MainDlg()
 {
   int retbut;
 
+  bReboot = bShutdown = false;
+
   Screen_Save();
 
   if (SDLGui_PrepareFont() == -1)
