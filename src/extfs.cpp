@@ -1351,7 +1351,11 @@ int32 ExtFs::Dfree_(char *fpathName, uint32 diskinfop )
 {
 
 #ifdef HAVE_SYS_STATVFS_H
+# ifdef OS_solaris
+	statvfs_t buff;
+# else
 	struct statvfs buff;
+# endif
 #else
 	struct statfs buff;
 #endif
@@ -1953,7 +1957,11 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 {
 	int	 oldErrno = errno;
 #ifdef HAVE_SYS_STATVFS_H
+# ifdef OS_solaris
+	statvfs_t buf;
+# else
 	struct statvfs buf;
+# endif
 #else
 	struct statfs buf;
 #endif
@@ -2649,6 +2657,12 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.63  2003/03/24 19:11:00  milan
+ * Solaris support updated
+ *
+ * Revision 1.62  2003/02/17 14:20:20  standa
+ * #if defined(OS_beos) used.
+ *
  * Revision 1.61  2003/02/17 14:16:16  standa
  * BeOS patch for aranymfs and hostfs
  *

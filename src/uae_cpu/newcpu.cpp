@@ -1522,7 +1522,7 @@ void m68k_do_execute (void)
     }
 }
 
-#ifdef USE_JIT
+#if defined(USE_JIT) && !defined(X86_ASSEMBLY_disable)
 void m68k_compile_execute (void)
 {
 setjmpagain:
@@ -1550,7 +1550,7 @@ void m68k_execute (void)
     m68k_execute_depth++;
 #endif
 #ifdef DEBUGGER
-    bool after_exception = false;
+    volatile bool after_exception = false;
 #endif
 
 setjmpagain:

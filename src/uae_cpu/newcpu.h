@@ -274,8 +274,13 @@ extern void *op_smalltbl_0_lab[];
 extern void m68k_do_execute(void);
 extern void m68k_execute(void);
 #ifdef USE_JIT
+#ifdef X86_ASSEMBLY_disable
+/* This is generated code */
+extern void (*m68k_compile_execute)(void);
+#else
 extern void m68k_do_compile_execute(void);
 extern void m68k_compile_execute(void);
+#endif
 #endif
 
 #endif /* NEWCPU_H */

@@ -965,7 +965,11 @@ int32 HostFs::xfs_dfree( XfsCookie *dir, uint32 diskinfop )
 	D(bug("HOSTFS: fs_dfree (%s)", fpathName));
 
 #ifdef HAVE_SYS_STATVFS_H
+# ifdef OS_solaris
+	statvfs_t buff;
+# else
 	struct statvfs buff;
+# endif
 #else
 	struct statfs buff;
 #endif
@@ -1366,7 +1370,11 @@ int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 
 	int	 oldErrno = errno;
 #ifdef HAVE_SYS_STATVFS_H
+# ifdef OS_solaris
+	statvfs_t buf;
+# else
 	struct statvfs buf;
+# endif
 #else
 	struct statfs buf;
 #endif
@@ -1972,6 +1980,12 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.12  2003/03/24 19:11:00  milan
+ * Solaris support updated
+ *
+ * Revision 1.11  2003/03/20 21:27:22  standa
+ * The .xfs mapping to the U:\G mountpouints (single letter) implemented.
+ *
  * Revision 1.10  2003/03/20 01:08:17  standa
  * HOSTFS mapping update.
  *
