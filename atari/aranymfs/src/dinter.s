@@ -1,13 +1,12 @@
-; @(#)cookiefs.dos/dinter.s
-; Copyright (c) Julian F. Reschke, 28. November 1995
-; All rights reserved
+;
+; $Header$ 
+;
+; 2001 STanda
+;
+; The basic file lazout was taken from Julian Reschke's Cookies
+;
 	
-	.globl	FunctionTable, DriverName, ShowBanner
-	.globl	InitDevice, DiskFree, SearchFirst, SearchNext
-	.globl	OpenFile, CloseFile, DateAndTime, WriteFile
-	.globl	ReadFile, FileAttributes, CreateFile, SeekFile, FCntl
-	.globl	DPathConf, FXAttr, DOpenDir, DReadDir, DXReadDir
-	.globl	DCloseDir, DRewindDir, DReadLabel, FDelete
+	.globl	FunctionTable, DriverName, ShowBanner, InitDevice
 
 	.globl	initfun, fs_dfree, fs_fsfirst, fs_fsnext, fs_fopen
 	.globl	fs_fclose, fs_fdatime, fs_fwrite, fs_fread
@@ -46,7 +45,6 @@ initfun:
 
 fs_dfree:
 	METADOS_DISPATCH 54
-;	bsr		DiskFree
 	rts
 
 fs_dcreate:
@@ -63,42 +61,34 @@ fs_dsetpath:
 
 fs_fcreate:
 	METADOS_DISPATCH 60
-;	bsr		CreateFile
 	rts
 
 fs_fopen:
 	METADOS_DISPATCH 61
-;	bsr		OpenFile
 	rts
 
 fs_fclose:
 	METADOS_DISPATCH 62
-;	bsr		CloseFile
 	rts
 
 fs_fread:
 	METADOS_DISPATCH 63
-;	bsr		ReadFile
 	rts
 
 fs_fwrite:
 	METADOS_DISPATCH 64
-;	bsr		WriteFile
 	rts
 
 fs_fdelete:
 	METADOS_DISPATCH 65
-;	bsr		FDelete
 	rts
 
 fs_fseek:
 	METADOS_DISPATCH 66
-;	bsr		SeekFile
 	rts
 
 fs_fattrib:
 	METADOS_DISPATCH 67
-;	bsr		FileAttributes
 	rts
 
 fs_dgetpath:
@@ -107,12 +97,10 @@ fs_dgetpath:
 
 fs_fsfirst:
 	METADOS_DISPATCH 78
-;	bsr		SearchFirst
 	rts
 
 fs_fsnext:
 	METADOS_DISPATCH 79
-;	bsr		SearchNext
 	rts
 
 fs_frename:
@@ -121,52 +109,46 @@ fs_frename:
 
 fs_fdatime:
 	METADOS_DISPATCH 87
-;	bsr		DateAndTime
 	rts
 
 fs_fcntl:
 	METADOS_DISPATCH 260
-;	bsr		FCntl
 	rts
 
 fs_dpathconf:
 	METADOS_DISPATCH 292
-;	bsr		DPathConf
 	rts
 
 fs_dopendir:
 	METADOS_DISPATCH 296
-;	bsr		DOpenDir
 	rts
 
 fs_dreaddir:
 	METADOS_DISPATCH 297
-;	bsr		DReadDir
 	rts
 
 fs_drewinddir:
 	METADOS_DISPATCH 298
-;	bsr		DRewindDir
 	rts
 
 fs_dclosedir:
 	METADOS_DISPATCH 299
-;	bsr		DCloseDir
 	rts
 
 fs_fxattr:
 	METADOS_DISPATCH 300
-;	bsr		FXAttr
 	rts
 
 fs_dxreaddir:
 	METADOS_DISPATCH 322
-;	bsr		DXReadDir
 	rts
 
 fs_dreadlabel:
 	METADOS_DISPATCH 338
-;	bsr		DReadLabel
 	rts
 
 
+;
+; $Log$
+;
+;

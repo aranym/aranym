@@ -1,14 +1,11 @@
-; Fanda040 MetaDOS driver...
+; ARAnyM MetaDOS driver...
 ; 2001 JAY
 ;
 ; Put this into the CONFIG.SYS of MetaDOS or BDCONFIG.SYS of BetaDOS.
 ;
-*DOS, c:\auto\fandafs.dos, E:1
-*DOS, c:\auto\fandafs.dos, N:1
-*DOS, c:\auto\fandafs.dos, M:1
+*DOS, c:\auto\aranymfs.dos, E:1
+*DOS, c:\auto\aranymfs.dos, N:1
+*DOS, c:\auto\aranymfs.dos, M:1
 ;
 ; You need to put the root paths of the drives to aranym as a paramenter.
-;
-; Note: At the time this is hardcoded in the main_unix.cpp file.
-; extFs.install( DriveChar, DriveRootPath, HalfSensitive )
 ;

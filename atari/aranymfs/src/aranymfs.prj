@@ -1,11 +1,10 @@
 ; Copyright (c) Julian F. Reschke, 28. November 1995
 ; All rights reserved
 
-fandafs.dos
+aranymfs.dos
 .C
 .L[-S=100]
 =
 dinter.s
 dosmain.c
-pcstdlib.lib
 pctoslib.lib
