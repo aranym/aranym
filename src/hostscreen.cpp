@@ -58,33 +58,45 @@ void HostScreen::toggleFullScreen()
 	SDL_WM_ToggleFullScreen(mainSurface);
 }
 
-void HostScreen::openGUI()
+void HostScreen::allocateBackgroundSurf()
 {
-	if (isGUIopen()) {
-		panicbug("GUI is already open!");
-		return;
-	}
-
 	// allocate new background video surface
 	if (backgroundSurf != NULL)
 		panicbug("Memory leak? The background video surface should not be allocated.");
 
 	backgroundSurf = SDL_ConvertSurface(mainSurface, mainSurface->format, mainSurface->flags & ~SDL_HWSURFACE);
-	GUIopened = true;
+	D(bug("Allocating background video surface"));
 }
 
-void HostScreen::closeGUI()
+void HostScreen::freeBackgroundSurf()
 {
-	// update the main surface and then redirect VDI to it
-	restoreBackground();
-	surf = mainSurface;			// redirect VDI to main surface
-
 	// free background video surface
 	if (backgroundSurf != NULL) {
 		D(bug("Freeing background video surface"));
 		SDL_FreeSurface(backgroundSurf);
 		backgroundSurf = NULL;
 	}
+}
+
+void HostScreen::openGUI()
+{
+	D(bug("open GUI"));
+	if (isGUIopen()) {
+		panicbug("GUI is already open!");
+		return;
+	}
+	allocateBackgroundSurf();
+	GUIopened = true;
+}
+
+void HostScreen::closeGUI()
+{
+	D(bug("close GUI"));
+	// update the main surface and then redirect VDI to it
+	restoreBackground();
+	surf = mainSurface;			// redirect VDI to main surface
+	D(bug("VDI redirected back to main video surface"));
+	freeBackgroundSurf();
 	GUIopened = false;
 }
 
@@ -93,6 +105,7 @@ void HostScreen::saveBackground()
 	if (backgroundSurf != NULL) {
 		SDL_BlitSurface(mainSurface, NULL, backgroundSurf, NULL);
 		surf = backgroundSurf;	// redirect VDI to background surface
+		D(bug("video surface saved to background, VDI redirected"));
 	}
 }
 
@@ -101,6 +114,7 @@ void HostScreen::restoreBackground()
 	if (backgroundSurf != NULL) {
 		SDL_BlitSurface(backgroundSurf, NULL, mainSurface, NULL);
 		update(true);
+		D(bug("video surface restored"));
 	}
 }
 
@@ -121,7 +135,15 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		sdl_videoparams |= SDL_FULLSCREEN;
 
 	mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
-	surf = mainSurface;
+	if (isGUIopen()) {
+		freeBackgroundSurf();
+		allocateBackgroundSurf();
+		saveBackground();
+		// TODO force SDL GUI to redraw the dialog
+	}
+	else
+		surf = mainSurface;
+
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 
 	// restore the pallete settings
@@ -957,6 +979,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.29  2002/07/20 08:10:55  joy
+ * GUI background saving/restoring fixed
+ *
  * Revision 1.28  2002/07/19 12:27:40  joy
  * main and background video surfaces. 'surf' is just pointer to either of them depending on whether SDL GUI is active and has stored the background or not.
  *
