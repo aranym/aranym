@@ -73,13 +73,6 @@ bool grab_mouse = false;
 
 SDL_Surface *surf = NULL;
 
-#define UPDATERECT
-#ifdef UPDATERECT
-bool UpdateScreen = true;
-#define REFRESH_FREQ	1
-#define COPYVRAM
-#endif // UPDATERECT
-
 static int keyboardTable[0x80] = {
 /* 0-7 */0, SDLK_ESCAPE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5, SDLK_6,
 /* 8-f */SDLK_7, SDLK_8, SDLK_9, SDLK_0, SDLK_EQUALS, SDLK_QUOTE, SDLK_BACKSPACE, SDLK_TAB,
@@ -174,7 +167,6 @@ static void check_event(void)
 }
 
 void update_screen() {
-#ifdef COPYVRAM
 			if (SDL_MUSTLOCK(surf))
 				if (SDL_LockSurface(surf)<0) {
 					printf("Couldn't lock surface to refresh!\n");
@@ -302,7 +294,6 @@ void update_screen() {
 #endif
 			}
 			        //for(int i=0; i < 640*480*2; i++) hvram[i] = 0xffff - fvram[i];
-#endif	// COPYVRAM
 
 			SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, 640, 480);
 }
@@ -310,7 +301,6 @@ void update_screen() {
 Uint32 my_callback_function(Uint32 interval, void *param)
 {
 	static int VBL_counter = 0;
-	static int Refresh_counter = 0;
 
 	if (!debugging || irqindebug)
 		MakeMFPIRQ(5);
@@ -324,13 +314,12 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 	if (++VBL_counter == 4) {
 		VBL_counter = 0;
 
-#ifdef UPDATERECT
-		if (UpdateScreen && ++Refresh_counter == REFRESH_FREQ)
-		{
-			Refresh_counter = 0;
+		if (direct_truecolor) {
+			// SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, 640, 480);
+		}
+		else {
 			update_screen();
 		}
-#endif	// UPDATERECT
 	}
 	return 5;	// come back in 5 miliseconds, if possible
 }
@@ -396,14 +385,11 @@ int main(int argc, char **argv)
 	if (fullscreen)
 		sdl_videoparams |= SDL_FULLSCREEN;
 	surf = SDL_SetVideoMode(640, 480, 16, sdl_videoparams);
-	SDL_WM_SetCaption("aranym pre-alpha", "ARAnyM");
+	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 	fprintf(stderr, "Line Length = %d\n", surf->pitch);
 	fprintf(stderr, "Must Lock? %s\n", SDL_MUSTLOCK(surf) ? "YES" : "NO");
 	if (SDL_MUSTLOCK(surf)) {
 		SDL_LockSurface(surf);
-#ifdef UPDATERECT
-		UpdateScreen = true;
-#endif // UPDATERECT
 	}
 
 	// grab mouse
@@ -474,7 +460,7 @@ int main(int argc, char **argv)
 #endif
 	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
 
-	drive_fd[0] = open("/dev/fd0", O_RDONLY);
+	drive_fd[0] = open("/dev/fd0", O_RDWR);
 	if (drive_fd[0] >= 0)
     	init_fdc();
 
@@ -528,19 +514,20 @@ int main(int argc, char **argv)
 		QuitEmulator();
 	}
 
-#ifndef COPYVRAM
-	// Patch TOS (enforce VideoRAM at 0xf0000000)
-	ROMBaseHost[35752]=0x2e;
-	ROMBaseHost[35753]=0x3c;
-   	ROMBaseHost[35754]=0xf0;
-   	ROMBaseHost[35755]=0;
-   	ROMBaseHost[35756]=0;
-   	ROMBaseHost[35757]=0;
-   	ROMBaseHost[35758]=0x60;
-   	ROMBaseHost[35759]=6;
-   	ROMBaseHost[35760]=0x4e;
-   	ROMBaseHost[35761]=0x71;
-#endif
+	if (direct_truecolor) {
+		// Patch TOS (enforce VideoRAM at 0xf0000000)
+		printf("Patching TOS for direct VIDEL output...\n");
+		ROMBaseHost[35752]=0x2e;
+		ROMBaseHost[35753]=0x3c;
+   		ROMBaseHost[35754]=0xf0;
+   		ROMBaseHost[35755]=0;
+   		ROMBaseHost[35756]=0;
+   		ROMBaseHost[35757]=0;
+   		ROMBaseHost[35758]=0x60;
+   		ROMBaseHost[35759]=6;
+   		ROMBaseHost[35760]=0x4e;
+   		ROMBaseHost[35761]=0x71;
+   	}
 
 	// Initialize everything
 	if (!InitAll())
