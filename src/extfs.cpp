@@ -19,7 +19,7 @@
 #include "extfs.h"
 #include "araobjs.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 
@@ -1600,6 +1600,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.18  2001/12/04 09:37:04  standa
+ * One more Frename condition optimalization.
+ *
  * Revision 1.17  2001/12/04 09:32:18  standa
  * Olivier Landemarre <Olivier.Landemarre@utbm.fr>: Frename patch.
  *
