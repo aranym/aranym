@@ -1650,15 +1650,15 @@ int FVDIDriver::drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 
 
 // Don't forget rotation of pattern!
-int FVDIDriver::drawTableLine(int16 table[], int length, uint16 pattern,
+int FVDIDriver::drawTableLine(memptr table, int length, uint16 pattern,
                               uint32 fgColor, uint32 bgColor, int logOp,
                               int cliprect[], int minmax[])
 {
-	int x1 = (int16)ReadInt16((memptr)table++);
-	int y1 = (int16)ReadInt16((memptr)table++);
+	int x1 = (int16)ReadInt16(table); table+=2;
+	int y1 = (int16)ReadInt16(table); table+=2;
 	for(--length; length > 0; length--) {
-		int x2 = (int16)ReadInt16((memptr)table++);
-		int y2 = (int16)ReadInt16((memptr)table++);
+		int x2 = (int16)ReadInt16(table); table+=2;
+		int y2 = (int16)ReadInt16(table); table+=2;
 
 		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
 		               logOp, length == 1, cliprect, minmax);
@@ -1671,26 +1671,27 @@ int FVDIDriver::drawTableLine(int16 table[], int length, uint16 pattern,
 
 
 // Don't forget rotation of pattern!
-int FVDIDriver::drawMoveLine(int16 table[], int length, uint16 index[], int moves, uint16 pattern,
+int FVDIDriver::drawMoveLine(memptr table, int length, memptr index, int moves, uint16 pattern,
                              uint32 fgColor, uint32 bgColor, int logOp,
                              int cliprect[], int minmax[])
 {
-	int x1 = (int16)ReadInt16((memptr)table++);
-	int y1 = (int16)ReadInt16((memptr)table++);
-	moves--;
-	if ((int16)ReadInt16((memptr)&index[moves]) == -4)
-		moves--;
-	if ((int16)ReadInt16((memptr)&index[moves]) == -2)
-		moves--;
+	int x1 = (int16)ReadInt16(table); table+=2;
+	int y1 = (int16)ReadInt16(table); table+=2;
+	moves-=2;
+	if ((int16)ReadInt16(index + moves) == -4)
+		moves-=2;
+	if ((int16)ReadInt16(index + moves) == -2)
+		moves-=2;
 	int movepnt = -1;
 	if (moves >= 0)
-		movepnt = ((int16)ReadInt16((memptr)&index[moves]) + 4) / 2;
+		movepnt = ((int16)ReadInt16(index + moves) + 4) / 2;
 	for(int n = 1; n < length; n++) {
-		int x2 = (int16)ReadInt16((memptr)table++);
-		int y2 = (int16)ReadInt16((memptr)table++);
+		int x2 = (int16)ReadInt16(table); table+=2;
+		int y2 = (int16)ReadInt16(table); table+=2;
 		if (n == movepnt) {
-			if (--moves >= 0)
-				movepnt = ((int16)ReadInt16((memptr)&index[moves]) + 4) / 2;
+			moves-=2;
+			if (moves >= 0)
+				movepnt = ((int16)ReadInt16(index + moves) + 4) / 2;
 			else
 				movepnt = -1;		/* Never again equal to n */
 			x1 = x2;
@@ -1719,30 +1720,30 @@ int FVDIDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 		bgColor &= 0xff;
 	}
 
-	int16* table = 0;
-	uint16* index = 0;
+	memptr table = 0;
+	memptr index = 0;
 	int length = 0;
 	int moves = 0;
 
-	int x1 = (int16)x1_;
-	int y1 = (int16)y1_;
-	int x2 = (int16)x2_;
-	int y2 = (int16)y2_;
+	int16 x1 = x1_;
+	int16 y1 = y1_;
+	int16 x2 = x2_;
+	int16 y2 = y2_;
 
 	if (vwk & 1) {
 		if ((unsigned)(y1 & 0xffff) > 1)
 			return -1;		/* Don't know about this kind of table operation */
-		table = (int16*)x1_;
+		table = (memptr)x1_;
 		length = (y1_ >> 16) & 0xffff;
 		if ((y1_ & 0xffff) == 1) {
-			index = (uint16*)y2_;
+			index = (memptr)y2_;
 			moves = x2_ & 0xffff;
 		}
 		vwk -= 1;
-		x1 = (int16)ReadInt16((memptr)&table[0]);
-		y1 = (int16)ReadInt16((memptr)&table[1]);
-		x2 = (int16)ReadInt16((memptr)&table[2]);
-		y2 = (int16)ReadInt16((memptr)&table[3]);
+		x1 = (int16)ReadInt16(table);
+		y1 = (int16)ReadInt16(table + 2);
+		x2 = (int16)ReadInt16(table + 4);
+		y2 = (int16)ReadInt16(table + 6);
 	}
 
 	int cliparray[4];
@@ -1770,7 +1771,7 @@ int FVDIDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 		else {
 #if TEST_STRAIGHT	// Not yet working
 			if (eq_coord && ((pattern & 0xffff) == 0xffff) && (logOp < 3)) {
-				table += 4;
+				table += 8;
 				for(--length; length > 0; length--) {
 					if (eq_coord & 1) {
 						if (y1 < y2)
@@ -1784,13 +1785,13 @@ int FVDIDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 							horizontal(x2, y2, x1 - x2 + 1, 1);
 					} else {
 						length++;
-						table -= 4;
+						table -= 8;
 						break;
 					}
 					x1 = x2;
 					y1 = y2;
-					x2 = (int16)ReadInt16((memptr)table++);
-					y2 = (int16)ReadInt16((memptr)table++);
+					x2 = (int16)ReadInt16(table); table+=2;
+					y2 = (int16)ReadInt16(table); table+=2;
 					eq_coord = (x1 == x2) + 2 * (y1 == y2);
 				}
 			}
@@ -2018,6 +2019,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.57  2004/10/31 23:17:09  pmandin
+ * Forgot some break instructions
+ *
  * Revision 1.56  2004/09/29 20:45:57  xavier
  * Fixed typo.
  *

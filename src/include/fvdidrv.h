@@ -37,9 +37,9 @@ class FVDIDriver : public NF_Base {
 	int drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 	                   uint32 fgColor, uint32 bgColor, int logOp, bool last_pixel,
 	                   int cliprect[], int minmax[]);
-	int drawTableLine(int16 table[], int length, uint16 pattern,
+	int drawTableLine(memptr table, int length, uint16 pattern,
 	                  uint32 fgColor, uint32 bgColor, int logOp, int cliprect[], int minmax[]);
-	int drawMoveLine(int16 table[], int length, uint16 index[], int moves, uint16 pattern,
+	int drawMoveLine(memptr table, int length, memptr index, int moves, uint16 pattern,
 	                 uint32 fgColor, uint32 bgColor, int logOp, int cliprect[], int minmax[]);
 
 	// fillPoly helpers
@@ -115,6 +115,9 @@ class FVDIDriver : public NF_Base {
 
 /*
  * $Log$
+ * Revision 1.18  2004/01/05 10:05:20  standa
+ * Palette handling reworked. Old non-NF dispatch removed.
+ *
  * Revision 1.17  2003/02/19 19:39:38  standa
  * SDL surface is now in TOS colors internally for bitplane modes. This
  * allows much simpler blits and expands.
