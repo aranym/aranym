@@ -60,7 +60,9 @@ bx_hard_drive_c bx_hard_drive;
 
 
 static unsigned char model_no[41] =
-  "Generic 1234                            ";
+  "Generic Master                          ";
+static unsigned char model_noB[41] =
+  "Generic Slave                           ";
 
 static unsigned max_multiple_sectors  = 0; // was 0x3f
 static unsigned curr_multiple_sectors = 0; // was 0x3f
@@ -817,7 +819,6 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 #endif  // !BX_USE_HD_SMF
   Bit32u logical_sector;
   int ret;
-  bool prev_control_reset;
 
   if (io_len==2 && address!=0xf00000) {
     panicbug("non-byte IO write to %04x", (unsigned) address);
@@ -833,7 +834,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
       switch (BX_SELECTED_CONTROLLER.current_command) {
         case 0x30: // WRITE SECTORS
           if (BX_SELECTED_CONTROLLER.buffer_index >= 512)
-            panicbug("IO write(1f0): buffer_index >= 512");
+            panicbug("IO write(f00000): buffer_index >= 512");
             if (BX_SELECTED_HD.hard_drive->byteswap) {	/* FALCON disk image (byte swap) */
               BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index + 1] = value;
               BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index] = (value >> 8);
@@ -908,7 +909,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 
 	    case 0xa0: // PACKET
 		  if (BX_SELECTED_CONTROLLER.buffer_index >= PACKET_SIZE)
-			panicbug("IO write(1f0): buffer_index >= PACKET_SIZE");
+			panicbug("IO write(f00000): buffer_index >= PACKET_SIZE");
 		  BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index] = value;
 		  BX_SELECTED_CONTROLLER.buffer[BX_SELECTED_CONTROLLER.buffer_index+1] = (value >> 8);
 		  BX_SELECTED_CONTROLLER.buffer_index += 2;
@@ -1857,7 +1858,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  // (mch) Even if device 1 was selected, a write to this register
 	  // goes to device 0 (if device 1 is absent)
 		
-	  prev_control_reset = BX_SELECTED_CONTROLLER.control.reset;
+	  bool prev_control_reset = BX_SELECTED_CONTROLLER.control.reset;
 	  BX_HD_THIS s[0].controller.control.reset         = value & 0x04;
 	  BX_HD_THIS s[1].controller.control.reset         = value & 0x04;
 	  BX_SELECTED_CONTROLLER.control.disable_irq    = value & 0x02;
@@ -1929,6 +1930,8 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 	  BX_DEBUG(("ignoring write to 0x%04x", address));
        break;
 #endif
+	case 0xf00039:	/* Falcon data out register ??? */
+		break;		/* ignore until we find out for what it's used */
 
     default:
       panicbug("hard drive: io write to address %x = %02x",
@@ -2026,10 +2029,11 @@ bx_hard_drive_c::identify_ATAPI_drive(unsigned drive)
 	      firmware[i*2 + 1];
   }
   assert((23+i) == 27);
-  
-  for (i = 0; i < strlen((char *) model_no)/2; i++) {
-	BX_SELECTED_HD.id_drive[27+i] = (model_no[i*2] << 8) |
-	      model_no[i*2 + 1];
+
+  unsigned char *model_name = BX_HD_THIS drive_select ? model_noB : model_no;
+  for (i = 0; i < strlen((char *) model_name)/2; i++) {
+	BX_SELECTED_HD.id_drive[27+i] = (model_name[i*2] << 8) |
+	      model_name[i*2 + 1];
   }
   assert((27+i) == 47);
 
@@ -2300,9 +2304,10 @@ bx_hard_drive_c::identify_drive(unsigned drive)
   // This field is left justified and padded with spaces (20h)
 //  for (i=27; i<=46; i++)
 //    BX_SELECTED_HD.id_drive[i] = 0;
+  unsigned char *model_name = BX_HD_THIS drive_select ? model_noB : model_no;
   for (i=0; i<20; i++) {
-    BX_SELECTED_HD.id_drive[27+i] = (model_no[i*2] << 8) |
-                                  model_no[i*2 + 1];
+    BX_SELECTED_HD.id_drive[27+i] = (model_name[i*2] << 8) |
+                                  model_name[i*2 + 1];
     }
 
   // Word 47: 15-8 Vendor unique
