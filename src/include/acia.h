@@ -29,6 +29,7 @@ private:
 	int buffer[MAXBUF];
 	int ikbd_inbuf;
 	int ikbd_bufpos;
+	bool inTransmit;
 
 public:
 	IKBD();
@@ -38,6 +39,7 @@ public:
 	virtual uae_u8 getData();
 	virtual void setData(uae_u8);
 	void send(int value);
+	void doTransmit(void);
 };
 
 class MIDI: public ACIA {
