@@ -27,6 +27,7 @@ static struct option const long_options[] =
   {"help", no_argument, 0, 'h'},
   {"version", no_argument, 0, 'V'},
   {"config", required_argument, 0, 'c'},
+  {"save", no_argument, 0, 's'},
   {NULL, 0, NULL, 0}
 };
 
@@ -44,6 +45,8 @@ uint32 FastRAMSizeMB;
 bool direct_truecolor = false;
 ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
 
+static bool saveConfigFile = false;
+
 bx_options_t bx_options;
 
 // configuration file 
@@ -53,6 +56,7 @@ struct Config_Tag global_conf[]={
 	{ "FastRAM", Int_Tag, &FastRAMSizeMB},
 	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path)},
 	{ "Cookie_MCH", HexLong_Tag, &bx_options.cookies._mch},
+	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab},
 #ifdef DEBUGGER
 	{ "DebugOnStart", Bool_Tag, &start_debug},
 #endif
@@ -87,12 +91,13 @@ Options:
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
   -d, --disk CHAR:ROOTPATH   METADOS filesystem assignment e.g. d:/atari/d_drive\n\
-  -c, --config FILE          configuration file\n\
+  -c, --config FILE          read different configuration file\n\
+  -s, --save                 save configuration file\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
 #ifdef DEBUGGER
-  printf("  -D, --debug                start debugger (if compiled in)\n");
+  printf("  -D, --debug                start debugger\n");
 #endif
   exit (status);
 }
@@ -154,6 +159,7 @@ void preset_ide() {
 void preset_cfg() {
   preset_ide();
   bx_options.cookies._mch = 0x00003000; // Falcon030
+  bx_options.autoMouseGrab = true;
 }
 
 /* this is more or less a hack but it makes sense to put CDROM under IDEx config option */
@@ -164,6 +170,14 @@ void update_cdrom1() {
 		strcpy(bx_options.cdromd.path, bx_options.diskd.path);
 		bx_options.cdromd.inserted = true;	// this is auto insert of a CD
 	}
+}
+
+int saveSettings(const char *fs) {
+	FastRAMSizeMB = FastRAMSize / 1024 / 1024;
+	update_config(fs,global_conf,"[GLOBAL]");
+	update_config(fs,diskc_configs,"[IDE0]");
+	update_config(fs,diskd_configs,"[IDE1]");
+	return 0;
 }
 
 int decode_switches (FILE *f, int argc, char **argv) {
@@ -206,6 +220,7 @@ int decode_switches (FILE *f, int argc, char **argv) {
 							 "m:" /* attached monitor */
 							 "d:" /* filesystem assignment */
 							 "c:" /* small hack*/
+							 "s"  /* save config file */
 							 "h"  /* help */
 							 "V"  /* version */,
 							 long_options, (int *) 0)) != EOF) {
@@ -286,6 +301,10 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				}
 				break;
 
+			case 's':
+				saveConfigFile = true;
+				break;
+
 			case 'F':
 				FastRAMSizeMB = atoi(optarg);
 				FastRAMSize = FastRAMSizeMB * 1024 * 1024;
@@ -295,6 +314,10 @@ int decode_switches (FILE *f, int argc, char **argv) {
 				usage (EXIT_FAILURE);
 		}
 	}
+
+	if (saveConfigFile)
+		saveSettings(config_file);
+
 	return optind;
 #else /* CONFGUI */
 	return 0;
@@ -335,12 +358,4 @@ static void decode_ini_file(FILE *f) {
 	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
 	process_config(f, rcfile, diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, diskd_configs, "[IDE1]", true);
-}
-
-int save_settings(const char *fs) {
-	FastRAMSizeMB = FastRAMSize / 1024 / 1024;
-	update_config(fs,global_conf,"[GLOBAL]");
-	update_config(fs,diskc_configs,"[IDE0]");
-	update_config(fs,diskd_configs,"[IDE1]");
-	return 0;
 }
