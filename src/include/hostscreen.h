@@ -49,6 +49,8 @@ class HostScreen {
  	SDL_Surface *backgroundSurf;	// Background window surface
 	SDL_Surface *surf;			// pointer to actual surface for VDI
   	bool GUIopened;
+  	void allocateBackgroundSurf();
+  	void freeBackgroundSurf();
 
   public:
 	SDL_mutex   *screenLock;
@@ -283,7 +285,8 @@ inline void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced 
 		return;
 
 	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
-	SDL_UpdateRect(surf, x, y, w, h);
+	// SDL_UpdateRect(surf, x, y, w, h);
+	SDL_UpdateRect(mainSurface, x, y, w, h);
 }
 
 inline void HostScreen::update( bool forced )
@@ -400,6 +403,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.35  2002/07/20 08:10:55  joy
+ * GUI background saving/restoring fixed
+ *
  * Revision 1.34  2002/07/19 12:25:00  joy
  * main and background video surfaces
  *
