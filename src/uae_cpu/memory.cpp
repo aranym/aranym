@@ -69,7 +69,7 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
       }
       if (regs.tcp) {
         uaecptr atcindex = ((addr << 11) >> 24);
-        if (regs.atcvald[atcindex] && (regs.atcind[atcindex] = addr)) {
+        if (regs.atcvald[atcindex] && (regs.atcind[atcindex] == addr)) {
           if (!regs.s || !regs.atcsuperd[atcindex]) {
             if (!write || !regs.atcwritepd[atcindex]) {
               // Resident?
@@ -191,7 +191,7 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
         }
       } else {
         uaecptr atcindex = ((addr << 12) >> 24);
-        if (regs.atcvald[atcindex] && (regs.atcind[atcindex] = addr)) {
+        if (regs.atcvald[atcindex] && (regs.atcind[atcindex] == addr)) {
           if (!regs.s || !regs.atcsuperd[atcindex]) {
             if (!write || !regs.atcwritepd[atcindex]) {
               // Resident?
@@ -343,7 +343,7 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
       }
       if (regs.tcp) {
         uaecptr atcindex = ((addr << 11) >> 24);
-        if (regs.atcvali[atcindex] && (regs.atcini[atcindex] = addr)) {
+        if (regs.atcvali[atcindex] && (regs.atcini[atcindex] == addr)) {
           if (!regs.s || !regs.atcsuperi[atcindex]) {
             if (!write || !regs.atcwritepi[atcindex]) {
               // Resident?
@@ -465,7 +465,7 @@ uaecptr mmu_decode_addr(uaecptr addr, bool data, bool write)
         }
       } else {
         uaecptr atcindex = ((addr << 12) >> 24);
-        if (regs.atcvali[atcindex] && (regs.atcini[atcindex] = addr)) {
+        if (regs.atcvali[atcindex] && (regs.atcini[atcindex] == addr)) {
           if (!regs.s || !regs.atcsuperi[atcindex]) {
             if (!write || !regs.atcwritepi[atcindex]) {
               // Resident?

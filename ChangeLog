@@ -1,3 +1,7 @@
+2001/11/07 - milan
+- new correction in mmu_decode_addr, I suppose still not enough
+
+
 2001/11/06 - milan
 - corrections of PFLUSH, PTEST (I found my old corrections on hd, grr, 2 months
   old, grr)
