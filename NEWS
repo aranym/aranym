@@ -20,7 +20,7 @@
  to GCC compilable form. Please beware and test the host filesystem access
  carefully.
 
- Cool new keyboard hotkeys:
+ Brand new keyboard hotkeys:
 
  - Scroll Lock (the largely unused key on PC keyboards) now switches
    between windowed and fullscreen mode!
@@ -51,7 +51,7 @@
 
  I know that after releasing the input focus with Alt+Ctrl+Esc combo
  sometimes the Alt+Ctrl stay held down. I added a special code for 
- removing the stale Alt+Ctrl state. We'll see if it helps.
+ removing the stale Alt+Ctrl state. Please let us know if this helped.
 
  Hackers Guide (hguide.txt) was updated. If you want to hack on ARAnyM
  you should read it first.
@@ -60,9 +60,17 @@
  emulation for ARAnyM. He's actually nearly finished it so it may be
  available in the next version of ARAnyM already!
 
- Also if there is a developer that would be willing to finish the nearly
- working ECE (Ethernet Card Emulation) then please join as in ARAnyM
- development mailing list.
+ Johan Klockars also started rewriting some pretty core things in the
+ fVDI ARAnyM driver and fVDI itself so expect the next major release
+ to be a real killer (in both good and bad sense ;-)
+
+ Milan Jurik is still working on finishing the JIT CPU compiler so you
+ never know when to expect a major speed increase of ARAnyM.
+
+ BTW, if there is a developer that would be willing to finish the nearly
+ working ECE (Ethernet Card Emulation) then please join us in ARAnyM
+ development mailing list. There is a lot of cool things to hack on
+ so if you want to help then write to us.
 
 
 2002/04/22 - version 0.1.7 released
