@@ -48,6 +48,7 @@
 		};
 		1058C7A2FEA54F0111CA2CBB = {
 			children = (
+				202FAC9E062BB45B002E6D3B,
 				29B97325FDCFA39411CA2CEA,
 				29B97324FDCFA39411CA2CEA,
 				20761D910619426A00684BA9,
@@ -90,6 +91,90 @@
 //202
 //203
 //204
+		2013886C0625BCD40023D98B = {
+			fileRef = F580C28205A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2013886D0625BCF80023D98B = {
+			fileRef = F580C28105A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2013886E0625BD050023D98B = {
+			fileRef = F580C27A05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2013886F0625BD120023D98B = {
+			fileRef = F580C27E05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		201388700625BD2A0023D98B = {
+			fileRef = F580C2A105A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		201388710625BD370023D98B = {
+			fileRef = F580C29605A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		201388720625BD980023D98B = {
+			fileRef = F580C28005A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		201388730625BDAF0023D98B = {
+			fileRef = F580C29105A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		201388740625BDEE0023D98B = {
+			fileRef = F580C2A005A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		201388750625BDFB0023D98B = {
+			fileRef = F580C29705A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		201388760625BDFF0023D98B = {
+			fileRef = F580C2A405A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		201388770625BE070023D98B = {
+			fileRef = F580C28305A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		201388780625BE150023D98B = {
+			fileRef = F580C29005A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		201388790625BE340023D98B = {
+			fileRef = F580C29505A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		201C30AB05F758B100804E00 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -130,22 +215,387 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		2030CDB806181C9900ECF64D = {
+		202FAA46062BB157002E6D3B = {
+			children = (
+				202FAB10062BB159002E6D3B,
+				202FAB1B062BB159002E6D3B,
+				202FAEE5062BC37E002E6D3B,
+				202FAB24062BB159002E6D3B,
+				202FAB25062BB159002E6D3B,
+			);
+			isa = PBXGroup;
+			path = MacOSX;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB10062BB159002E6D3B = {
+			children = (
+				202FAB11062BB159002E6D3B,
+				202FAB1A062BB159002E6D3B,
+			);
+			isa = PBXGroup;
+			path = "Disc image files";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB11062BB159002E6D3B = {
+			children = (
+				202FAB12062BB159002E6D3B,
+				202FAB13062BB159002E6D3B,
+				202FAB14062BB159002E6D3B,
+				202FAB15062BB159002E6D3B,
+				202FAB16062BB159002E6D3B,
+				202FAB17062BB159002E6D3B,
+				202FAB18062BB159002E6D3B,
+				202FAB19062BB159002E6D3B,
+			);
+			isa = PBXGroup;
+			path = doc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB12062BB159002E6D3B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = AUTHORS.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB13062BB159002E6D3B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = BUGS.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB14062BB159002E6D3B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = documentation.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB15062BB159002E6D3B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = FAQ.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB16062BB159002E6D3B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = INSTALL.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB17062BB159002E6D3B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = NEWS.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB18062BB159002E6D3B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = README.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB19062BB159002E6D3B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = TODO.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB1A062BB159002E6D3B = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.rtf;
+			path = "Install and setup.rtf";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB1B062BB159002E6D3B = {
+			children = (
+				202FAB1C062BB159002E6D3B,
+			);
+			isa = PBXVariantGroup;
+			name = InfoPlist.strings;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB1C062BB159002E6D3B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = English;
+			path = English.lproj/InfoPlist.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAB24062BB159002E6D3B = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			path = main_OSX.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
+			refType = 4;
+			sourceTree = "<group>";
 		};
-		2030CDB906181C9900ECF64D = {
-			fileRef = 2030CDB806181C9900ECF64D;
+		202FAB25062BB159002E6D3B = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.rtf;
+			path = README.rtf;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAC9E062BB45B002E6D3B = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = Carbon.framework;
+			path = /System/Library/Frameworks/Carbon.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		202FAC9F062BB45B002E6D3B = {
+			fileRef = 202FAC9E062BB45B002E6D3B;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		2030CDCA06181F5E00ECF64D = {
+		202FAED6062BC004002E6D3B = {
+			buildActionMask = 2147483647;
+			files = (
+				202FAEF3062BC66B002E6D3B,
+				202FAEF4062BC66D002E6D3B,
+				202FAEDA062BC031002E6D3B,
+				202FAED8062BC023002E6D3B,
+				202FAED7062BC01D002E6D3B,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		202FAED7062BC01D002E6D3B = {
+			fileRef = F580C37A05A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		202FAED8062BC023002E6D3B = {
 			fileRef = 2087E58A05EE9F3100F9ACA1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		202FAEDA062BC031002E6D3B = {
+			fileRef = F580C35605A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		202FAEE5062BC37E002E6D3B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = parameters_MACOSX.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		202FAEF3062BC66B002E6D3B = {
+			fileRef = 20335B2506163D850050859A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		202FAEF4062BC66D002E6D3B = {
+			fileRef = 2030D3730618750100ECF64D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		202FAF1D062BCAAB002E6D3B = {
+			fileRef = 202FAEE5062BC37E002E6D3B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2030D3730618750100ECF64D = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = TOS404.img;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		20310A100648CC27005C8BC1 = {
+			fileRef = F580C2F105A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		20310A110648CC4E005C8BC1 = {
+			fileRef = F580C2F205A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203122C90649109100ED24E4 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = configure;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2031C3B60635383100F1108C = {
+			fileRef = 202FAB24062BB159002E6D3B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249170634E0A2006D9FE9 = {
+			fileRef = F580C28605A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249180634E0C2006D9FE9 = {
+			fileRef = F580C28D05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249190634E0F4006D9FE9 = {
+			fileRef = F580C2A505A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2032491A0634E113006D9FE9 = {
+			fileRef = F580C28805A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2032491B0634E120006D9FE9 = {
+			fileRef = F580C28905A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2032491C0634E135006D9FE9 = {
+			fileRef = F580C29D05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2032491D0634E14C006D9FE9 = {
+			fileRef = F580C2A205A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2032491E0634E17E006D9FE9 = {
+			fileRef = F580C24005A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2032491F0634E19A006D9FE9 = {
+			fileRef = F580C22505A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249200634E1A9006D9FE9 = {
+			fileRef = F580C23405A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249210634E1B1006D9FE9 = {
+			fileRef = F580C23605A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249220634E1C2006D9FE9 = {
+			fileRef = F580C23805A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249230634E1DC006D9FE9 = {
+			fileRef = F580C23A05A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249260634E235006D9FE9 = {
+			fileRef = F580C34C05A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249270634E246006D9FE9 = {
+			fileRef = F580C2FD05A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249280634E25F006D9FE9 = {
+			fileRef = F580C2E405A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249290634E36F006D9FE9 = {
+			fileRef = F580C30405A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2032492A0634E37B006D9FE9 = {
+			fileRef = F580C30505A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2032492B0634E384006D9FE9 = {
+			fileRef = F580C30605A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2032492C0634E3A6006D9FE9 = {
+			fileRef = F580C2E905A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2032492D0634E3BA006D9FE9 = {
+			fileRef = F580C2EE05A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249300634E423006D9FE9 = {
+			fileRef = F580C3E005A7166801DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		203249310634E436006D9FE9 = {
+			fileRef = F580C3DD05A7166801DAC342;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -153,6 +603,7 @@
 		20335B2406163D850050859A = {
 			children = (
 				20335B2506163D850050859A,
+				2030D3730618750100ECF64D,
 			);
 			isa = PBXGroup;
 			path = data;
@@ -165,153 +616,6 @@
 			path = etos512k.img;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		20335B2706163D850050859A = {
-			fileRef = 20335B2506163D850050859A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2050E8110622831E00E1B6D5 = {
-			children = (
-				2050E8120622831E00E1B6D5,
-				2050E8130622831E00E1B6D5,
-				2050E8140622831E00E1B6D5,
-				2050E8150622831E00E1B6D5,
-				2050E8160622831E00E1B6D5,
-				2050E8170622831E00E1B6D5,
-				2050E8180622831E00E1B6D5,
-				2050E8190622831E00E1B6D5,
-			);
-			isa = PBXGroup;
-			path = doc;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		2050E8120622831E00E1B6D5 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = AUTHORS.txt;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		2050E8130622831E00E1B6D5 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = BUGS.txt;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		2050E8140622831E00E1B6D5 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = documentation.txt;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		2050E8150622831E00E1B6D5 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = FAQ.txt;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		2050E8160622831E00E1B6D5 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = INSTALL.txt;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		2050E8170622831E00E1B6D5 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = NEWS.txt;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		2050E8180622831E00E1B6D5 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = README.txt;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		2050E8190622831E00E1B6D5 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = TODO.txt;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		2050E81A0622831F00E1B6D5 = {
-			fileRef = 2050E8120622831E00E1B6D5;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2050E81B0622831F00E1B6D5 = {
-			fileRef = 2050E8130622831E00E1B6D5;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2050E81C0622831F00E1B6D5 = {
-			fileRef = 2050E8140622831E00E1B6D5;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2050E81D0622831F00E1B6D5 = {
-			fileRef = 2050E8150622831E00E1B6D5;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2050E81E0622831F00E1B6D5 = {
-			fileRef = 2050E8160622831E00E1B6D5;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2050E81F0622831F00E1B6D5 = {
-			fileRef = 2050E8170622831E00E1B6D5;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2050E8200622831F00E1B6D5 = {
-			fileRef = 2050E8180622831E00E1B6D5;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2050E8210622831F00E1B6D5 = {
-			fileRef = 2050E8190622831E00E1B6D5;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2050E8220622833300E1B6D5 = {
-			isa = PBXFileReference;
-			lastKnownFileType = text.rtf;
-			path = "Install and setup.rtf";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		2050E8230622833300E1B6D5 = {
-			fileRef = 2050E8220622833300E1B6D5;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		20761D910619426A00684BA9 = {
 			isa = PBXFileReference;
@@ -336,7 +640,7 @@
 		2087E52505EE9F3100F9ACA1 = {
 			buildPhases = (
 				2087E52605EE9F3100F9ACA1,
-				2087E53905EE9F3100F9ACA1,
+				202FAED6062BC004002E6D3B,
 				2087E53E05EE9F3100F9ACA1,
 				2087E58205EE9F3100F9ACA1,
 			);
@@ -346,20 +650,26 @@
 				CURRENT_PROJECT_VERSION = 0.8.7;
 				DYLIB_CURRENT_VERSION = 0.8.7;
 				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/Frameworks";
+				GCC_ALTIVEC_EXTENSIONS = NO;
+				GCC_DEBUGGING_SYMBOLS = default;
+				GCC_ENABLE_TRIGRAPHS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_CPU = "";
+				GCC_MODEL_PPC64 = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = "ARANYM_DATADIR=\\\"data\\\" MACOSX_support HAVE_CONFIG_H OS_darwin CPU_powerpc _GNU_SOURCE DIRECT_ADDRESSING FPU_IEEE ARANYMHOME=\\\"Documents/Aranym_files\\\" DIRSEPARATOR=\\\"/\\\" ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
+				GCC_PREPROCESSOR_DEFINITIONS = "ARANYM_DATADIR=\\\"data\\\" MACOSX_support HAVE_CONFIG_H OS_darwin CPU_powerpc _GNU_SOURCE DIRECT_ADDRESSING FPU_UAE ARANYMHOME=\\\"Documents/Aranym_files\\\" DIRSEPARATOR=\\\"/\\\" ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				GENERATE_PKGINFO = YES;
 				HEADER_SEARCH_PATHS = "../gui-sdl ../Unix ../uae_cpu ../natfeat ../include $(HOME)/Library/Frameworks/SDL.framework/Headers";
 				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = ../Unix;
+				LIBRARY_SEARCH_PATHS = "../Unix /Users/carlobaiocco/Documents/aranym/src/MacOSX/build/MacAranym.build/MacAranym.build/Objects-normal/ppc /Users/carlobaiocco/Documents/aranym/src/MacOSX/build/MacAranym.build/MakeCpu.build/Objects-normal/ppc";
 				LIBRARY_STYLE = BUNDLE;
-				OTHER_CFLAGS = "-no-cpp-precomp -flat_namespace -Wall -W";
+				OTHER_CFLAGS = "-no-cpp-precomp -flat_namespace -ggdb3";
 				OTHER_LDFLAGS = "-lm -framework SDL";
 				PRODUCT_NAME = MacAranym;
 				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
+				WARNING_CFLAGS = "-Wall -W -Wmost";
 				WRAPPER_EXTENSION = app;
 			};
 			dependencies = (
@@ -374,24 +684,62 @@
 			buildActionMask = 2147483647;
 			files = (
 				20761E940619462F00684BA9,
-				2087E52705EE9F3100F9ACA1,
+				201388700625BD2A0023D98B,
+				201388780625BE150023D98B,
+				2032491F0634E19A006D9FE9,
+				201388740625BDEE0023D98B,
 				2087E52905EE9F3100F9ACA1,
 				2087E52A05EE9F3100F9ACA1,
-				2087E52B05EE9F3100F9ACA1,
-				2087E52805EE9F3100F9ACA1,
+				203249280634E25F006D9FE9,
+				203249260634E235006D9FE9,
+				203249170634E0A2006D9FE9,
+				2032492C0634E3A6006D9FE9,
 				2087E52C05EE9F3100F9ACA1,
-				2087E52D05EE9F3100F9ACA1,
-				2087E52E05EE9F3100F9ACA1,
-				2087E52F05EE9F3100F9ACA1,
-				2087E53005EE9F3100F9ACA1,
-				2087E53105EE9F3100F9ACA1,
 				2087E53205EE9F3100F9ACA1,
-				2087E53305EE9F3100F9ACA1,
+				2087E52D05EE9F3100F9ACA1,
 				2087E53405EE9F3100F9ACA1,
+				2087E52E05EE9F3100F9ACA1,
+				201388730625BDAF0023D98B,
+				20310A110648CC4E005C8BC1,
+				2032492D0634E3BA006D9FE9,
+				201388720625BD980023D98B,
+				203249180634E0C2006D9FE9,
 				2087E53505EE9F3100F9ACA1,
-				2087E53605EE9F3100F9ACA1,
+				201388710625BD370023D98B,
+				2087E52F05EE9F3100F9ACA1,
+				201388750625BDFB0023D98B,
+				203249190634E0F4006D9FE9,
 				2087E53705EE9F3100F9ACA1,
+				201388790625BE340023D98B,
 				2087E53805EE9F3100F9ACA1,
+				203249270634E246006D9FE9,
+				201388770625BE070023D98B,
+				201388760625BDFF0023D98B,
+				2032491A0634E113006D9FE9,
+				2032491B0634E120006D9FE9,
+				2032491C0634E135006D9FE9,
+				2087E52B05EE9F3100F9ACA1,
+				2032491D0634E14C006D9FE9,
+				2087E53305EE9F3100F9ACA1,
+				203249200634E1A9006D9FE9,
+				203249210634E1B1006D9FE9,
+				203249230634E1DC006D9FE9,
+				203249220634E1C2006D9FE9,
+				2087E53105EE9F3100F9ACA1,
+				2087E53005EE9F3100F9ACA1,
+				2087E52805EE9F3100F9ACA1,
+				203249290634E36F006D9FE9,
+				2032492A0634E37B006D9FE9,
+				2013886F0625BD120023D98B,
+				2087E52705EE9F3100F9ACA1,
+				2032492B0634E384006D9FE9,
+				203249310634E436006D9FE9,
+				2013886E0625BD050023D98B,
+				2013886D0625BCF80023D98B,
+				2013886C0625BCD40023D98B,
+				203249300634E423006D9FE9,
+				2087E53605EE9F3100F9ACA1,
+				2032491E0634E17E006D9FE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -506,122 +854,76 @@
 			settings = {
 			};
 		};
-		2087E53905EE9F3100F9ACA1 = {
-			buildActionMask = 2147483647;
-			files = (
-				2030CDCA06181F5E00ECF64D,
-				2087E53A05EE9F3100F9ACA1,
-				2087E53B05EE9F3100F9ACA1,
-				2087E53C05EE9F3100F9ACA1,
-				2087E53D05EE9F3100F9ACA1,
-				20335B2706163D850050859A,
-				2050E81A0622831F00E1B6D5,
-				2050E81B0622831F00E1B6D5,
-				2050E81C0622831F00E1B6D5,
-				2050E81D0622831F00E1B6D5,
-				2050E81E0622831F00E1B6D5,
-				2050E81F0622831F00E1B6D5,
-				2050E8200622831F00E1B6D5,
-				2050E8210622831F00E1B6D5,
-				2050E8230622833300E1B6D5,
-			);
-			isa = PBXResourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2087E53A05EE9F3100F9ACA1 = {
-			fileRef = F580C35605A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2087E53B05EE9F3100F9ACA1 = {
-			fileRef = F580C37805A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2087E53C05EE9F3100F9ACA1 = {
-			fileRef = F580C37A05A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2087E53D05EE9F3100F9ACA1 = {
-			fileRef = F59621C605DF84C00187A6B8;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		2087E53E05EE9F3100F9ACA1 = {
 			buildActionMask = 2147483647;
 			files = (
-				2087E53F05EE9F3100F9ACA1,
-				2087E54005EE9F3100F9ACA1,
 				2087E54205EE9F3100F9ACA1,
 				2087E54305EE9F3100F9ACA1,
+				2087E56505EE9F3100F9ACA1,
 				2087E54405EE9F3100F9ACA1,
+				2087E56C05EE9F3100F9ACA1,
 				2087E54505EE9F3100F9ACA1,
 				2087E54605EE9F3100F9ACA1,
+				2087E57105EE9F3100F9ACA1,
+				2087E57005EE9F3100F9ACA1,
+				2087E56B05EE9F3100F9ACA1,
 				2087E54705EE9F3100F9ACA1,
 				2087E54805EE9F3100F9ACA1,
-				2087E54905EE9F3100F9ACA1,
-				2087E54A05EE9F3100F9ACA1,
-				2087E54B05EE9F3100F9ACA1,
-				2087E54C05EE9F3100F9ACA1,
-				2087E54D05EE9F3100F9ACA1,
-				2087E54E05EE9F3100F9ACA1,
-				2087E54F05EE9F3100F9ACA1,
-				2087E55005EE9F3100F9ACA1,
-				2087E55105EE9F3100F9ACA1,
-				2087E55205EE9F3100F9ACA1,
-				2087E55305EE9F3100F9ACA1,
-				2087E55405EE9F3100F9ACA1,
-				2087E55505EE9F3100F9ACA1,
-				2087E55605EE9F3100F9ACA1,
-				2087E55705EE9F3100F9ACA1,
-				2087E55805EE9F3100F9ACA1,
-				2087E55905EE9F3100F9ACA1,
-				2087E55A05EE9F3100F9ACA1,
-				2087E55B05EE9F3100F9ACA1,
-				2087E55C05EE9F3100F9ACA1,
-				2087E55D05EE9F3100F9ACA1,
-				2087E55E05EE9F3100F9ACA1,
-				2087E55F05EE9F3100F9ACA1,
-				2087E56005EE9F3100F9ACA1,
-				2087E56105EE9F3100F9ACA1,
-				2087E56205EE9F3100F9ACA1,
-				2087E56305EE9F3100F9ACA1,
-				2087E56405EE9F3100F9ACA1,
-				2087E56505EE9F3100F9ACA1,
-				2087E56605EE9F3100F9ACA1,
+				2087E57E05EE9F3100F9ACA1,
+				2087E57B05EE9F3100F9ACA1,
 				2087E56705EE9F3100F9ACA1,
-				2087E56805EE9F3100F9ACA1,
-				2087E56905EE9F3100F9ACA1,
+				2087E54905EE9F3100F9ACA1,
 				2087E56A05EE9F3100F9ACA1,
-				2087E56B05EE9F3100F9ACA1,
-				2087E56C05EE9F3100F9ACA1,
-				2087E56D05EE9F3100F9ACA1,
-				2087E56E05EE9F3100F9ACA1,
-				2087E56F05EE9F3100F9ACA1,
-				2087E57005EE9F3100F9ACA1,
-				2087E57105EE9F3100F9ACA1,
 				2087E57205EE9F3100F9ACA1,
-				2087E57305EE9F3100F9ACA1,
+				2087E57905EE9F3100F9ACA1,
+				2087E57A05EE9F3100F9ACA1,
+				2087E58105EE9F3100F9ACA1,
+				2087E57C05EE9F3100F9ACA1,
+				2087E54A05EE9F3100F9ACA1,
+				2087E54C05EE9F3100F9ACA1,
+				2087E57D05EE9F3100F9ACA1,
+				20310A100648CC27005C8BC1,
+				2087E54D05EE9F3100F9ACA1,
 				2087E57405EE9F3100F9ACA1,
 				2087E57505EE9F3100F9ACA1,
 				2087E57605EE9F3100F9ACA1,
+				2087E54E05EE9F3100F9ACA1,
+				2087E54F05EE9F3100F9ACA1,
+				2087E55005EE9F3100F9ACA1,
 				2087E57705EE9F3100F9ACA1,
-				2087E57805EE9F3100F9ACA1,
-				2087E57905EE9F3100F9ACA1,
-				2087E57A05EE9F3100F9ACA1,
-				2087E57B05EE9F3100F9ACA1,
-				2087E57C05EE9F3100F9ACA1,
-				2087E57D05EE9F3100F9ACA1,
-				2087E57E05EE9F3100F9ACA1,
-				2087E57F05EE9F3100F9ACA1,
+				2087E55105EE9F3100F9ACA1,
+				2087E55205EE9F3100F9ACA1,
+				2087E55405EE9F3100F9ACA1,
+				2087E55305EE9F3100F9ACA1,
+				2087E53F05EE9F3100F9ACA1,
+				2031C3B60635383100F1108C,
+				2087E55505EE9F3100F9ACA1,
+				2087E56D05EE9F3100F9ACA1,
+				2087E55605EE9F3100F9ACA1,
+				2087E55705EE9F3100F9ACA1,
+				2087E55805EE9F3100F9ACA1,
+				2087E54B05EE9F3100F9ACA1,
+				2087E55A05EE9F3100F9ACA1,
+				2087E55905EE9F3100F9ACA1,
+				2087E56E05EE9F3100F9ACA1,
+				2087E56905EE9F3100F9ACA1,
+				2087E56205EE9F3100F9ACA1,
+				2087E56605EE9F3100F9ACA1,
+				2087E56805EE9F3100F9ACA1,
+				2087E56305EE9F3100F9ACA1,
+				2087E55B05EE9F3100F9ACA1,
+				2087E55C05EE9F3100F9ACA1,
+				202FAF1D062BCAAB002E6D3B,
 				2087E58005EE9F3100F9ACA1,
-				2087E58105EE9F3100F9ACA1,
-				2030CDB906181C9900ECF64D,
+				2087E55D05EE9F3100F9ACA1,
+				2087E55E05EE9F3100F9ACA1,
+				2087E57F05EE9F3100F9ACA1,
+				2087E57805EE9F3100F9ACA1,
+				2087E55F05EE9F3100F9ACA1,
+				2087E56005EE9F3100F9ACA1,
+				2087E54005EE9F3100F9ACA1,
+				2087E56405EE9F3100F9ACA1,
+				2087E56105EE9F3100F9ACA1,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -888,6 +1190,7 @@
 			fileRef = F580C34A05A7166701DAC342;
 			isa = PBXBuildFile;
 			settings = {
+				COMPILER_FLAGS = "-Wno-unused-variable -Wno-unused-parameter -Wno-unused-label";
 			};
 		};
 		2087E56C05EE9F3100F9ACA1 = {
@@ -908,12 +1211,6 @@
 			settings = {
 			};
 		};
-		2087E56F05EE9F3100F9ACA1 = {
-			fileRef = F580C2EF05A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		2087E57005EE9F3100F9ACA1 = {
 			fileRef = F580C34905A7166701DAC342;
 			isa = PBXBuildFile;
@@ -928,12 +1225,6 @@
 		};
 		2087E57205EE9F3100F9ACA1 = {
 			fileRef = F580C2E605A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2087E57305EE9F3100F9ACA1 = {
-			fileRef = F580C3DA05A7166801DAC342;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1032,6 +1323,7 @@
 				2087E58705EE9F3100F9ACA1,
 				2087E58805EE9F3100F9ACA1,
 				20761D920619426A00684BA9,
+				202FAC9F062BB45B002E6D3B,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1223,7 +1515,7 @@
 			isa = PBXShellScriptBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $PWD\ncd ../Unix\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nif test -f autogen.sh\nthen\n./autogen.sh --prefix=$HOME --enable-fullhistory\nelse\n./configure --prefix=$HOME\nfi";
+			shellScript = "cd $PWD\ncd ../Unix\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nif test -f autogen.sh\nthen\n./autogen.sh --prefix=$HOME --enable-fpe=uae --disable-debug\nelse\n./configure --prefix=$HOME --enable-fpe=uae\nfi";
 		};
 		2087E5A005EE9F8C00F9ACA1 = {
 			buildActionMask = 2147483647;
@@ -1387,10 +1679,9 @@
 			children = (
 				080E96DDFE201D6D7F000001,
 				29B97315FDCFA39411CA2CEA,
+				29B97323FDCFA39411CA2CEA,
 				F580C27805A715C901DAC342,
 				29B97317FDCFA39411CA2CEA,
-				29B97323FDCFA39411CA2CEA,
-				F596213005DF6C680187A6B8,
 				19C28FACFE9D520D11CA2CBB,
 			);
 			isa = PBXGroup;
@@ -1401,6 +1692,7 @@
 		};
 		29B97315FDCFA39411CA2CEA = {
 			children = (
+				202FAA46062BB157002E6D3B,
 				F58CD59105B804E301EE9378,
 				F580C33805A7166701DAC342,
 				F580C2D505A7163D01DAC342,
@@ -1456,7 +1748,6 @@
 				20335B2406163D850050859A,
 				F59621C605DF84C00187A6B8,
 				F580C35605A7166701DAC342,
-				F580C37805A7166701DAC342,
 				F580C37A05A7166701DAC342,
 			);
 			isa = PBXGroup;
@@ -2956,6 +3247,7 @@
 				201DD8CC05F70B7B0090F5B7,
 				201DD8BB05F707260090F5B7,
 				F5B5AED505E6B89301436688,
+				203122C90649109100ED24E4,
 				201DD8C005F707970090F5B7,
 				F580C34305A7166701DAC342,
 				F580C34405A7166701DAC342,
@@ -2966,8 +3258,6 @@
 				F580C38005A7166701DAC342,
 				F580C38205A7166701DAC342,
 				F580C38305A7166701DAC342,
-				2030CDB806181C9900ECF64D,
-				F580C3DA05A7166801DAC342,
 				F580C3DE05A7166801DAC342,
 				F580C3DF05A7166801DAC342,
 				F580C33B05A7166701DAC342,
@@ -3066,23 +3356,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		F580C37805A7166701DAC342 = {
-			children = (
-				F580C37905A7166701DAC342,
-			);
-			isa = PBXVariantGroup;
-			path = English.lproj;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		F580C37905A7166701DAC342 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text.plist.strings;
-			path = InfoPlist.strings;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		F580C37A05A7166701DAC342 = {
 			children = (
 				F580C37B05A7166701DAC342,
@@ -3162,14 +3435,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		F580C3DA05A7166801DAC342 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = parameters_unix.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		F580C3DD05A7166801DAC342 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3220,9 +3485,9 @@
 			sourceTree = "<group>";
 		};
 		F580C4DF05A71D4201DAC342 = {
+			explicitFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
-			lastKnownFileType = wrapper.framework;
 			name = SDL.framework;
 			path = /Library/Frameworks/SDL.framework;
 			refType = 0;
@@ -3362,16 +3627,6 @@
 			path = ../../tools/diskimage.c;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		F596213005DF6C680187A6B8 = {
-			children = (
-				2050E8220622833300E1B6D5,
-				2050E8110622831E00E1B6D5,
-			);
-			isa = PBXGroup;
-			path = "Disc image files";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
 		};
 		F59621C605DF84C00187A6B8 = {
 			isa = PBXFileReference;
