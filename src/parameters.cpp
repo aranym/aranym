@@ -491,6 +491,8 @@ char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 	}
 	else
 		strcpy(buffer, file);	// at least something
+
+	return buffer;
 }
 
 void build_cfgfilename()
