@@ -4,7 +4,7 @@
 
 - MMU address decoding works now (after set_mmu Desktop runs, sometimes),
   but still MiNT (and not only MiNT) gives Bus error/illegal instruction, I
-  know about one bug, I'll correct.
+  know about one bug, I'll correct it later.
 
 - mmusetup.cnf example added to reposity
 
