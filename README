@@ -1,25 +1,75 @@
-  ARAnyM
-  ------
 
-This is an unifinished alpha version (work-in-progress) of our Falcon040
-virtual machine. There is no documentation yet, sorry.
+      *****************
+      * ARAnyM        *
+      * Version 0.09a *
+      *****************
 
-Just a couple of hints:
 
-You will need an image of 68040 compatible TOS 4.04 for running ARAnyM.
+ 1) License
+ ----------
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Soft-
+ware Foundation; either version 2 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the 
+ Free Software Foundation, Inc.,
+ 59 Temple Place, Suite 330, Boston,
+ MA  02111-1307  USA
+
+
+ 2) What is this?
+ ----------------
+
+ARAnyM is a multiplatform Virtual Machine of an enhanced Atari Falcon040.
+The reason for writing ARAnyM is to provide Atari power users with a faster
+and better machines ever.
+
+Important: ARAnyM is far from being finished. Consider this to be an alpha
+version and a work-in-progress. Sorry for total lack of documentation.
+And beware - ARAnyM is not yet very usable - some of its features are
+unstable and the runtime configuration is not done yet.
+
+
+ 3) Compiling and running
+ ------------------------
+
+First, you need the SDL library, you can get it at:
+ http://www.libsdl.org
+Of course, you need GNU-C++ and (GNU) Make, too!
+
+Change to the src/Unix directory and run ./configure.
+If you got the source archive from cvs then run ./autogen.sh instead.
+Then compile it by typing "make".  If all works fine, you'll get the
+executable "aranym".
+
+Then you'll have to copy a 68040 friendly TOS 4.04 ROM image to the
+following path: "/usr/local/share/aranym/ROM".
+You can change this path either before compiling (try ./configure --help)
+or in the ARAnyM configuration file located in ~/.aranymrc
+(~/ is your home folder).
 
 You may also need a harddisk - either an image of it or a real thing
 from your Atari computer. We are working on providing a couple of 
 disk images. Stay tuned.
 
-For compiling and running you may check the INSTALL document.
+Try starting ARAnyM with the option "--help" to find out more about its
+command line parameters. Also look at src/atari/aranymrc.example file
+for inspiration.
 
-For latest changes see ChangeLog.
+The file INSTALL might provide more information in the future.
 
-For future changes see TODO file.
+Just a couple of hints:
 
-If you want to run in window under X11, start aranym without any parameter.
-Otherwise start aranym with "-f" for fullscreen (even on console).
+If you want to run ARAnyM in window under X11, start it without any parameter.
+Otherwise start aranym with "-f" for fullscreen (even on console). This is 
+to work around a bug in SDL.
 
 If your mouse doesn't work correctly on console you may want to set the
 SDL_MOUSEDEV_IMPS2 environment variable to 1 (this is if you have IMPS2 mouse).
@@ -27,3 +77,39 @@ SDL_MOUSEDEV_IMPS2 environment variable to 1 (this is if you have IMPS2 mouse).
 export SDL_MOUSEDEV_IMPS2=1; ./aranym
 
 
+
+ 4) Keyboard shortcuts
+ ---------------------
+
+While the emulator is running, you can quit it by pressing Shift+Break.
+And if you started ARAnyM with the debugger option, you can enter
+the debugger by pressing Alt+Break.
+
+F11 is the Help key while F12 is the Undo key.
+PageUp/PageDown are mapped to Shift+ArrowUp/ArrowDown which is the
+most used combination in GEM programs.
+
+Alt+PrintScreen grabs a screenshot.
+
+ScrollLock inserts/removes (mounts/unmounts) a floppy.
+For read-write mount press Shift+ScrollLock.
+
+ 5) More information
+ -------------------
+
+ Read the NEWS file for user visible changes.
+
+ Read ChangeLog for internal changes.
+ Look at TODO if you want to help us.
+
+ Write us at aranym@sophics.cz.
+
+ Visit http://aranym.sophics.cz/ for latest information and source code.
+
+ For developers we have a mailing list and a CVS server. For details
+ go to http://aranym.sophics.cz/
+
+
+May the power without the price be with you again!
+
+P.S. Thanks to Thothy for this readme file format inspiration.

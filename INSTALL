@@ -3,12 +3,16 @@ or from your distribution vendor.
 
 If you run a flavor of Unix or Linux, go to src/Unix folder.
 
-If you got the source code from CVS then start with ./autogen.sh
+If you got the source code from CVS then type
+./autogen.sh && make
 
-Then type ./configure && make
+otherwise type ./configure && make
 
-Not sure about make install but you can start aranym directly by
-typing ./aranym.
+If everything went OK you got an executable file named "aranym".
+Either install it with 'make install' (root privileges expected)
+or run it directly by typing ./aranym.
 
 It's a good idea to edit the config file ~/.aranymrc, an example you'll
 find in doc/src/atari/aranymrc.example.
+
+More information will follow soon.
