@@ -52,15 +52,9 @@
 #define UNDEFINED_OFFSET	-1
 
 #ifdef OS_darwin
-#define KEYBOARD_TRANSLATION KEYSYM_MACSCANCODE
-#define HOTKEY_OPENGUI		SDLK_PRINT	// F13
-#define	HOTKEY_FULLSCREEN	SDLK_NUMLOCK
-#define	HOTKEY_SCREENSHOT	SDLK_F15
+#define KEYBOARD_TRANSLATION	KEYSYM_MACSCANCODE
 #else
 #define KEYBOARD_TRANSLATION	KEYSYM_SCANCODE
-#define HOTKEY_OPENGUI		SDLK_PAUSE
-#define	HOTKEY_FULLSCREEN	SDLK_SCROLLOCK
-#define	HOTKEY_SCREENSHOT	SDLK_PRINT
 #endif
 
 /*********************************************************************
@@ -93,19 +87,6 @@ void InputInit()
 	hideMouse(true);
 	// capslockState (yes, 'false' is correct)
 	capslockState = false;
-
-	bx_options.hotkeys.setup.sym = HOTKEY_OPENGUI;
-	bx_options.hotkeys.setup.mod = KMOD_NONE;
-	bx_options.hotkeys.quit.sym = HOTKEY_OPENGUI;
-	bx_options.hotkeys.quit.mod = KMOD_LSHIFT;
-	bx_options.hotkeys.reboot.sym = HOTKEY_OPENGUI;
-	bx_options.hotkeys.reboot.mod = KMOD_LCTRL;
-	bx_options.hotkeys.debug.sym = HOTKEY_OPENGUI;
-	bx_options.hotkeys.debug.mod = KMOD_LALT;
-	bx_options.hotkeys.screenshot.sym = HOTKEY_SCREENSHOT;
-	bx_options.hotkeys.screenshot.mod = KMOD_NONE;
-	bx_options.hotkeys.fullscreen.sym = HOTKEY_FULLSCREEN;
-	bx_options.hotkeys.fullscreen.mod = KMOD_NONE;
 }
 
 void InputReset()
@@ -481,8 +462,8 @@ static void process_keyboard_event(SDL_Event &event)
 
 	bool pressed = (event.type == SDL_KEYDOWN);
 	bool shifted = state & KMOD_SHIFT;
-	bool controlled = state & KMOD_CTRL;
-	bool alternated = state & KMOD_ALT;
+	// bool controlled = state & KMOD_CTRL;
+	// bool alternated = state & KMOD_ALT;
 	bool capslocked = state & KMOD_CAPS;
 	bool send2Atari = true;
 
@@ -498,7 +479,7 @@ static void process_keyboard_event(SDL_Event &event)
 
 	// process special hotkeys
 	if (pressed) {
-		int masked_mod = state & (KMOD_SHIFT | KMOD_CTRL | KMOD_ALT);
+		int masked_mod = state & HOTKEYS_MOD_MASK;
 
 		if (CHECK_HOTKEY(quit)) {
 			pendingQuit = true;
@@ -521,10 +502,17 @@ static void process_keyboard_event(SDL_Event &event)
 				canGrabMouseAgain = false;	// let it leave our window
 				// activate debugger
 				activate_debugger();
-				send2Atari = false;
 			}
+			send2Atari = false;
 		}
 #endif
+		else if (CHECK_HOTKEY(ungrab)) {
+			if ( bx_options.video.fullscreen )
+				hostScreen.toggleFullScreen();
+			releaseTheMouse();
+			canGrabMouseAgain = false;	// let it leave our window
+			send2Atari = false;
+		}
 		else if (CHECK_HOTKEY(screenshot)) {
 			hostScreen.makeSnapshot();
 			send2Atari = false;
@@ -534,19 +522,6 @@ static void process_keyboard_event(SDL_Event &event)
 			if (bx_options.video.fullscreen && !grabbedMouse)
 				grabTheMouse();
 			send2Atari = false;
-		}
-
-		if (sym == SDLK_ESCAPE) {
-			if (controlled && alternated) {
-				if ( bx_options.video.fullscreen )
-					hostScreen.toggleFullScreen();
-				releaseTheMouse();
-				canGrabMouseAgain = false;	// let it leave our window
-				send2Atari = false;
-				// release the Control and Alt keys
-				getIKBD()->SendKey(0x1d|0x80);	// Control released
-				getIKBD()->SendKey(0x38|0x80);	// Alternate released
-			}
 		}
 	}
 
