@@ -347,30 +347,21 @@ static long
 ara_ioctl (struct netif *nif, short cmd, long arg)
 {
 	char buffer[128];
-	enum {
-		NONE = 0,
-		ADDR = XIF_GET_IPATARI,
-		DSTADDR = XIF_GET_IPHOST,
-		NETMASK = XIF_GET_NETMASK
-	} gif = NONE;
 	struct ifreq *ifr = (struct ifreq *)arg;
-
+	long *data = ifr->ifru.data;
 
 	DEBUG (("araeth: ioctl cmd = %d \"('%c'<<8)|%d\" bytes", cmd, cmd>>8, cmd&0xff));
 
 	switch (cmd)
 	{
-		case SIOCGIFADDRFH:
-			if (gif == NONE) gif = ADDR;
-			/* fall through */
-		case SIOCGIFDSTADDRFH:
-			if (gif == NONE) gif = DSTADDR;
-			/* fall through */
-		case SIOCGIFNETMASKFH:
-			if (gif == NONE) gif = NETMASK;
-
-			nfCall((ETH(gif), 0 /* ethX */, buffer, sizeof(buffer)));
-			return (inet_aton(buffer, &(ifr->ifru.data))) ? 0 : -1;
+		case SIOCGLNKSTATS:
+			nfCall((ETH(XIF_GET_IPATARI), 0L /*ethX*/, buffer, sizeof(buffer)));
+			inet_aton(buffer, data++);
+			nfCall((ETH(XIF_GET_IPHOST), 0L /*ethX*/, buffer, sizeof(buffer)));
+			inet_aton(buffer, data++);
+			nfCall((ETH(XIF_GET_NETMASK), 0L /*ethX*/, buffer, sizeof(buffer)));
+			inet_aton(buffer, data++);
+			return 0;
 
 		case SIOCSIFNETMASK:
 		case SIOCSIFFLAGS:
@@ -482,9 +473,11 @@ driver_init (void)
 
 	nfEtherID = 0;
 	/* get the Ethernet NatFeat ID */
+/*
 	if (MINT_KVERSION >= 2 && KERNEL->nf_ops != NULL)
 		nfEtherID = KERNEL->nf_ops->get_id("ETHERNET");
 	else
+*/
 		nfEtherID = nfGetID(("ETHERNET"));
 	if ( nfEtherID == 0 ) {
 		c_conws(XIF_NAME " not installed - NatFeat not found\n\r");
