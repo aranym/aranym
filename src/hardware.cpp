@@ -8,6 +8,9 @@
 #include "acia.h"
 #include "acsifdc.h"
 #include "rtc.h"
+#include "blitter.h"
+#include "videl.h"
+#include "ide.h"
 #include "uae_cpu/newcpu.h"	// for regs.pc
 
 MFP mfp;
@@ -15,6 +18,9 @@ IKBD ikbd;
 MIDI midi;
 ACSIFDC fdc;
 RTC rtc;
+IDE ide;
+BLITTER blitter;
+VIDEL videl;
 
 int snd_reg;
 extern int snd_porta;
@@ -107,16 +113,19 @@ uae_u32 handleRead(uaecptr addr) {
 		return mfp.handleRead(addr);
 	else if (addr >= HW_FDC && addr < HW_SCSI)
 		return fdc.handleRead(addr);
-	else if (addr == HW_IKBD)
-		return ikbd.getStatus();
-	else if (addr == HW_IKBD+1)
-		return ikbd.getData();
-	else if (addr == HW_MIDI)
-		return midi.getStatus();
-	else if (addr == HW_MIDI+1)
-		return midi.getData();
-	else if (addr == HW_RTC+3)
-		return rtc.getData();
+	else if (addr >= HW_BLITT && addr < HW_SCC)
+		return blitter.handleRead(addr);
+	else if (addr >= HW_VIDEO && addr < HW_FDC)
+		return videl.handleRead(addr);
+	else if (addr >= HW_RTC && addr < (HW_RTC+4))
+		return rtc.handleRead(addr);
+	else if (addr >= HW_IDE && addr < (HW_IDE+0x3a))
+		return ide.handleRead(addr);
+	else if (addr >= HW_IKBD && addr < HW_MIDI)
+		return ikbd.handleRead(addr);
+	else if (addr >= HW_MIDI && addr < HW_MIDI + 3)
+		return midi.handleRead(addr);
+
 	else if (addr == 0xff8006)
 		return 0x96;
 	else if (addr == 0xff8007)
@@ -125,8 +134,10 @@ uae_u32 handleRead(uaecptr addr) {
 		return 0xff;	// DSP interrupt
 	else if (addr == HW_YAMAHA && snd_reg == 14)
 		return snd_porta;
-	else
+	else {
+		fprintf(stderr, "HWget_b %x <- %s at %08x\n", addr, debug_print_IO(addr), showPC());
 		return 0;
+	}
 }
 
 void handleWrite(uaecptr addr, uae_u8 value) {
@@ -134,24 +145,33 @@ void handleWrite(uaecptr addr, uae_u8 value) {
 		mfp.handleWrite(addr, value);
 	else if (addr >= HW_FDC && addr < HW_SCSI)
 		fdc.handleWrite(addr, value);
-	else if (addr == HW_IKBD)
-		ikbd.setMode(value);
-	else if (addr == HW_IKBD+1)
-		ikbd.setData(value);
-	else if (addr == HW_MIDI)
-		midi.setMode(value);
-	else if (addr == HW_MIDI+1)
-		midi.setData(value);
-	else if (addr == HW_RTC+1)
-		rtc.setAddr(value);
+	else if (addr > HW_BLITT && addr < HW_SCC)
+		blitter.handleWrite(addr, value);
+	else if (addr >= HW_VIDEO && addr < HW_FDC)
+		videl.handleWrite(addr, value);
+	else if (addr >= HW_RTC && addr < (HW_RTC+4))
+		rtc.handleWrite(addr, value);
+	else if (addr >= HW_IDE && addr < (HW_IDE+0x3a))
+		ide.handleWrite(addr, value);
+	else if (addr >= HW_IKBD && addr < HW_MIDI)
+		ikbd.handleWrite(addr, value);
+	else if (addr >= HW_MIDI && addr < HW_MIDI + 3)
+		midi.handleWrite(addr, value);
+
 	else if (addr == HW_YAMAHA)
 		snd_reg = value;
 	else if (addr == (HW_YAMAHA+2) && snd_reg == 14)
 		snd_porta = value;
+	else
+		fprintf(stderr, "HWput_b %x,%u ($%02x) -> %s at %08x\n", addr, value, value, debug_print_IO(addr), showPC());
 }
 
-void MakeIRQ() {
-	mfp.tick();
+void MakeMFPIRQ(int no) {
+	mfp.IRQ(no);
+}
+
+void ikbd_send(int code) {
+	ikbd.ikbd_send(code);
 }
 
 uae_u32 HWget_l (uaecptr addr) {
