@@ -1,3 +1,7 @@
+2002/01/05 - joy
+- floppy geometry detection fixed. It could never work before!
+
+
 2002/01/03 - joy
 - Blitter now calls Do_Blit() on reading status register only. Doesn't seem
   to fix the errors during Bconout, though.
