@@ -11,6 +11,7 @@ Content:
   5. Sound
   6. Floppy
   7. Disk devices
+  8. Networking
 
 
 This document will explain you all Aranym features and configuration 
@@ -505,3 +506,46 @@ Note: These drives aren't bootable. They are also not designed as
 
   This is Mint version of ARAnyM HostFS driver. Place it into your MINT 
 directory; it will map the host fs to logical disks automatically.
+
+
+8. Networking
+-------------
+
+  Standa developed a XIF module for FreeMiNT TCP/IP networking. You have to
+  put it into your MINT folder and reboot to load it into the FreeMiNT.
+
+  Apart from configuring the necessary IP addresses in the ARAnyM config file
+  you also have to configure the Host OS (Linux) to share its single IP
+  address with the ARAnyM (which is basically another computer running in
+  parallel with the Host). There are several possibilities how to do that,
+  for example by Masquerading (special kind of Network Address Translation)
+  or by Proxy-ARP.
+
+  Bjoern Spruck has contributed a piece of shell script that should set up
+  the Linux Host OS' networking for ARAnyM:
+
+#/bin/bash
+#
+# All this should be done as root
+#
+# Load tun/tap module
+modprobe tun
+#
+# change rights to suid for cause aranym is calling it
+chmod +s /usr/local/bin/aratapif
+#
+# init ip-masquerating
+#
+/usr/sbin/iptables -D POSTROUTING -t nat -s 192.168.0.0/24 -d ! 192.168.0.0/24 -j MASQUERADE >& /dev/null
+/usr/sbin/iptables -t nat -s 192.168.0.0/24 -d ! 192.168.0.0/24 -A POSTROUTING -j MASQUERADE
+#
+# enable ip-masq
+#
+echo 1 > /proc/sys/net/ipv4/ip_forward
+#
+#
+
+  This script needs to be started as one of the last things in your Host OS
+  boot. Obviously the chmod is not necessary to call each time, it's there
+  just as a reminder I guess. And the last "echo 1 >" is superseded in modern
+  Linux distributions by other methods. But using it doesn't hurt.
