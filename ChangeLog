@@ -1,3 +1,7 @@
+2002/02/18 - milan
+- floating VideoRAM
+
+
 2002/02/18 - Olivier Landemarre <Olivier.Landemarre@utbm.fr> & STanda
 - Compilation problem under Cygwin fixed. In extfs.c for Cygwin
   MFSNAMELEN is undefined should replace by buf.f_namelen. The condition

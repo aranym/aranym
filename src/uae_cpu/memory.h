@@ -28,10 +28,17 @@
 #define FastRAM_SIZE	FastRAMSize
 #endif
 
+#ifdef FIXED_VIDEORAM
 #define ARANYMVRAMSTART 0xf0000000UL
+#endif
+
 #define ARANYMVRAMSIZE	0x00100000	// should be a variable to protect VGA card offscreen memory
 
+#ifdef FIXED_VIDEORAM
 extern uintptr VMEMBaseDiff;
+#else
+extern uint32 VideoRAMBase;
+#endif
 
 #if ARAM_PAGE_CHECK
 extern uaecptr pc_page, read_page, write_page;
@@ -46,6 +53,12 @@ extern uae_u32 pc_offset, read_offset, write_offset;
 #if REAL_ADDRESSING
 const uintptr MEMBaseDiff = 0;
 
+#ifdef FIXED_VIDEORAM
+# define do_get_real_address_direct(a)          (((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a)) : ((uae_u8 *)(a) + VMEMBaseDiff))
+#else
+# define do_get_real_address_direct(a)          ((uae_u8 *)(a))
+#endif
+
 # ifdef FULLMMU
 #  define do_get_real_address(a,b,c)	do_get_real_address_mmu(a,b,c)
 #  define get_long(a,b)			get_long_mmu(a,b)
@@ -56,7 +69,7 @@ const uintptr MEMBaseDiff = 0;
 #  define put_byte(a,b)			put_byte_mmu(a,b)
 #  define get_real_address(a,b,c)	get_real_address_mmu(a,b,c)
 # else
-#  define do_get_real_address(a,b,c)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a)) : ((uae_u8*)(a) + VMEMBaseDiff))
+#  define do_get_real_address(a,b,c)	do_get_real_address_direct(a)
 #  define get_long(a,b)			get_long_direct(a)
 #  define get_word(a,b)			get_word_direct(a)
 #  define get_byte(a,b)			get_byte_direct(a)
@@ -65,12 +78,16 @@ const uintptr MEMBaseDiff = 0;
 #  define put_byte(a,b)			put_byte_direct(a,b)
 #  define get_real_address(a,b,c)	get_real_address_direct(a)
 # endif /* FULLMMU */
-
-# define do_get_real_address_direct(a)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a)) : ((uae_u8 *)(a) + VMEMBaseDiff))
 
 #else
 extern uintptr MEMBaseDiff;
 
+#ifdef FIXED_VIDEORAM
+# define do_get_real_address_direct(a)          (((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff))
+#else
+# define do_get_real_address_direct(a)          ((uae_u8 *)(a) + MEMBaseDiff)
+#endif
+
 # ifdef FULLMMU
 #  define do_get_real_address(a,b,c)	do_get_real_address_mmu(a,b,c)
 #  define get_long(a,b)			get_long_mmu(a,b)
@@ -81,7 +98,7 @@ extern uintptr MEMBaseDiff;
 #  define put_byte(a,b)			put_byte_mmu(a,b)
 #  define get_real_address(a,b,c)	get_real_address_mmu(a,b,c)
 # else
-#  define do_get_real_address(a,b,c)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8*)(a) + VMEMBaseDiff))
+#  define do_get_real_address(a,b,c)	do_get_real_address_direct(a)
 #  define get_long(a,b)			get_long_direct(a)
 #  define get_word(a,b)			get_word_direct(a)
 #  define get_byte(a,b)			get_byte_direct(a)
@@ -90,14 +107,16 @@ extern uintptr MEMBaseDiff;
 #  define put_byte(a,b)			put_byte_direct(a,b)
 #  define get_real_address(a,b,c)	get_real_address_direct(a)
 # endif /* FULLMMU */
-
-# define do_get_real_address_direct(a)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff))
 
 # define InitMEMBaseDiff(va, ra)		(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 
 #endif /* REAL_ADDRESSING */
 
+#ifdef FIXED_VIDEORAM
 #define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
+#else
+#define InitVMEMBaseDiff(va, ra)        (ra =  (uintptr)(va) - MEMBaseDiff)
+#endif
 
 /*
  * "size" is the size of the memory access (byte = 1, word = 2, long = 4)
@@ -114,7 +133,11 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 		}
 	}
 
+#ifdef FIXED_VIDEORAM
 	if (addr >= ARANYMVRAMSTART && addr <= (ARANYMVRAMSTART + ARANYMVRAMSIZE - size))
+#else
+	if (addr >= VideoRAMBase && addr <= (VideoRAMBase + ARANYMVRAMSIZE - size))
+#endif
 		return;
 
 	// printf("BUS ERROR %s at $%x\n", (write ? "writting" : "reading"), addr);

@@ -93,6 +93,28 @@ void presave_startup() {
 }
 
 /*************************************************************************/
+struct Config_Tag jit_conf[]={
+	{ "JIT", Bool_Tag, &bx_options.jit.jit},
+	{ "JITFPU", Bool_Tag, &bx_options.jit.jitfpu},
+	{ "JITCacheSize", Int_Tag, &bx_options.jit.jitcachesize},
+	{ "JITLazyFlush", Int_Tag, &bx_options.jit.jitlazyflush},
+	{ NULL , Error_Tag, NULL }
+};
+
+void preset_jit() {
+	bx_options.jit.jit = false;
+	bx_options.jit.jitfpu = true;
+	bx_options.jit.jitcachesize = 8192;
+	bx_options.jit.jitlazyflush = 1;
+}
+
+void postload_jit() {
+}
+
+void presave_jit() {
+}
+
+/*************************************************************************/
 struct Config_Tag tos_conf[]={
 	{ "Cookie_MCH", HexLong_Tag, &bx_options.tos.cookie_mch},
 	{ "Console", Bool_Tag, &bx_options.tos.console_redirect},
@@ -328,6 +350,7 @@ void preset_cfg() {
   preset_video();
   preset_tos();
   preset_startup();
+  preset_jit();
 }
 
 void postload_cfg() {
@@ -337,6 +360,7 @@ void postload_cfg() {
   postload_video();
   postload_tos();
   postload_startup();
+  postload_jit();
 }
 
 void presave_cfg() {
@@ -346,6 +370,7 @@ void presave_cfg() {
   presave_video();
   presave_tos();
   presave_startup();
+  presave_jit();
 }
 
 void check_for_help_version_configfile(int argc, char **argv) {
@@ -543,6 +568,9 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
 	process_config(f, rcfile, startup_conf, "[STARTUP]", true);
+#ifdef USE_JIT
+	process_config(f, rcfile, jit_conf, "[JIT]", true);
+#endif
 	process_config(f, rcfile, video_conf, "[VIDEO]", true);
 	process_config(f, rcfile, tos_conf, "[TOS]", true);
 	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
@@ -557,6 +585,9 @@ int saveSettings(const char *fs)
 	if (update_config(fs, global_conf, "[GLOBAL]") < 0)
 		fprintf(stderr, "Error while writting the '%s' config file.\n", fs);
 	update_config(fs, startup_conf, "[STARTUP]");
+#ifdef USE_JIT
+	update_config(fs, jit_conf, "[JIT]");
+#endif
 	update_config(fs, video_conf, "[VIDEO]");
 	update_config(fs, tos_conf, "[TOS]");
 	update_config(fs, arafs_conf, "[ARANYMFS]");

@@ -87,6 +87,14 @@ typedef struct {
   bool debugger;
 } bx_startup_options_t;
 
+// JIT compiler options
+typedef struct {
+  bool jit;
+  bool jitfpu;
+  uint32 jitcachesize;
+  uint32 jitlazyflush;
+} bx_jit_options_t;
+
 /*
 typedef struct {
   char      *path;
@@ -107,6 +115,7 @@ typedef struct {
   bx_video_options_t	video;
   bx_tos_options_t	tos;
   bx_startup_options_t	startup;
+  bx_jit_options_t	jit;
   bool			autoMouseGrab;
   // char              bootdrive[2];
   // unsigned long     vga_update_interval;
@@ -116,7 +125,7 @@ typedef struct {
   // bool           private_colormap;
   // bx_cmos_options_t	cmos;
   bool			newHardDriveSupport;
-  } bx_options_t;
+} bx_options_t;
 
 extern bx_options_t bx_options;
 

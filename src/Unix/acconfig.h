@@ -50,6 +50,9 @@
 /* Define if you want FastRAM of fixed size */
 #undef FixedSizeFastRAM
 
+/* Define if you want fixed position of VideoRAM */
+#undef FIXED_VIDEORAM
+
 /* Define if you want direct truecolor output */
 #undef DIRECT_TRUECOLOR
 

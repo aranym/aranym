@@ -31,7 +31,6 @@
 #include <SDL.h>
 #include "main.h"
 
-
 // RAM and ROM pointers
 uint32 RAMBase = 0;	// RAM base (Atari address space) gb-- init is important
 uint8 *RAMBaseHost;	// RAM base (host address space)
@@ -46,7 +45,11 @@ uint32 RealROMSize;	// Real size of ROM
 uint32 FastRAMBase = 0x01000000;		// Fast-RAM base (Atari address space)
 uint8 *FastRAMBaseHost;	// Fast-RAM base (host address space)
 
-uint32 VideoRAMBase = ARANYMVRAMSTART;	// VideoRAM base (Atari address space)
+#ifdef FIXED_VIDEORAM
+uint32 VideoRAMBase = ARANYMVRAMSTART;  // VideoRAM base (Atari address space)
+#else
+uint32 VideoRAMBase;                    // VideoRAM base (Atari address space)
+#endif
 uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)
 //uint32 VideoRAMSize;	// Size of VideoRAM
 
@@ -81,6 +84,13 @@ bool Init680x0(void)
 	return true;
 }
 
+/*
+ * Instr. RESET
+ */
+
+void AtariReset(void)
+{
+}
 
 /*
  *  Deinitialize 680x0 emulation
@@ -106,12 +116,10 @@ void Start680x0(void)
 /*
  *  Trigger interrupt
  */
-/*
 void TriggerInterrupt(void)
 {
 	regs.spcflags |= SPCFLAG_INT;
 }
-*/
 
 void TriggerVBL(void)
 {
