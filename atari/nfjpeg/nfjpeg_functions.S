@@ -35,24 +35,29 @@
 _OpenDriver:
 	movel	a0,sp@-
 	bsr		_JpegDecOpenDriver
+	addql	#4,sp
 	rts
 	
 _CloseDriver:
 	movel	a0,sp@-
 	bsr		_JpegDecOpenDriver
+	addql	#4,sp
 	rts
 
 _GetImageInfo:
 	movel	a0,sp@-
 	bsr		_JpegDecGetImageInfo
+	addql	#4,sp
 	rts
 
 _GetImageSize:
 	movel	a0,sp@-
 	bsr		_JpegDecGetImageSize
+	addql	#4,sp
 	rts
 
 _DecodeImage:
 	movel	a0,sp@-
 	bsr		_JpegDecDecodeImage
+	addql	#4,sp
 	rts
