@@ -35,12 +35,16 @@ YAMAHA yamaha;
 
 void renderScreen() { videl.renderScreen(); }
 int getFloppyStats() { return yamaha.getFloppyStat(); }
+bool isIkbdBufEmpty() { return ikbd.isBufferEmpty(); }
+void MakeMFPIRQ(int no) { mfp.IRQ(no); }
+void ikbd_send(int code) { ikbd.ikbd_send(code); }
 
 bool dP = false;
 
 void HWInit (void) {
-	// ide.init();
 	rtc.init();
+	videl.init();
+	ide.init();
 }
 
 /* obsolete */
@@ -76,6 +80,7 @@ struct HARDWARE {
 
 HARDWARE ICs[] = {
 	{"IDE", 0xf00000, 0x3a, &ide},
+	{"Aranym", 0xf90000, 0x04, &fake_io},
 	{"Cartridge", 0xfa0000, 0x20000, &fake_io},
 	{"Memory Management", 0xff8000, 8, &mmu},
 	{"VIDEL", 0xff8200, 0xc4, &videl},
@@ -136,14 +141,6 @@ void handleWrite(uaecptr addr, uae_u8 value) {
 	}
 	fprintf(stderr, "HWput_b %x = %d ($%x) <- %s at %08x\n", addr, value, value, debug_print_IO(addr), showPC());
 	BUS_ERROR;
-}
-
-void MakeMFPIRQ(int no) {
-	mfp.IRQ(no);
-}
-
-void ikbd_send(int code) {
-	ikbd.ikbd_send(code);
 }
 
 uae_u32 HWget_l (uaecptr addr) {
