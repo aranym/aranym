@@ -1,7 +1,13 @@
 	.globl	_bconout_stub
+	.globl	_old_bconout
 	.globl	_handle_char
 
 	.text
+	
+	dc.l    0x58425241              | XBRA
+        dc.l    0x505a4950              | fCon 
+_old_bconout:
+        ds.l    1
 
 _bconout_stub:
 	movem.l	d0-d2/a0-a2,-(sp)

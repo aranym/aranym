@@ -47,7 +47,7 @@ extern void *bconout_stub(void);
 static long super_func(void);
 void _cdecl handle_char (long c);
 
-static long old_bconout;
+extern long old_bconout;
 
 long super_func(void)
 {
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 	// HOOK in!!!
 	Supexec(super_func);
 
-	Ptermres(20000, 0);
+	Ptermres(250*1024, 0);
 #endif
 
 	// dummy when Ptermres fails
