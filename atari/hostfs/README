@@ -2,7 +2,7 @@ aranym.xfs
 ==========
 
 The xfs contains only the HOSTFS (NatFeat) driven .XFS interface
-implementation stub mounted to u:\nativefs.
+implementation stub mounted to U:\hostfs.
 Later there might be some more devices so that we would only need
 single FreeMiNT kernel module (aranym.xfs).
 
@@ -31,7 +31,7 @@ FreeMiNT .XFS driver:
    bootdrive:\MINT folder
  * configure your paths - not implemented yet
 
- You'll find "U:\HOSTFS" folder which maps the root of your host filesystem.
+ You'll find "U:\hostfs" folder which maps the root of your host filesystem.
 
 
 BUGS
