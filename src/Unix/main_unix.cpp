@@ -103,7 +103,11 @@ int main(int argc, char **argv)
 	FastRAMBaseHost = NULL;
 
 	fprintf(stderr, VERSION_STRING " (compiled on "__DATE__ ") starting\n");
+
+	// remember program name
 	program_name = argv[0];
+
+	// parse command line switches
 	if (!decode_switches(stderr, argc, argv))
 		exit(-1);
 
@@ -314,6 +318,15 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.80.2.3  2003/04/07 21:58:05  joy
+ * parameters spliting finished
+ *
+ * Revision 1.80.2.2  2003/04/01 21:44:23  joy
+ * little fixes for ATACK
+ *
+ * Revision 1.80.2.1  2003/03/27 21:23:59  joy
+ * handling paths to aranym files improved
+ *
  * Revision 1.80  2002/10/20 08:44:04  joy
  * NatFeat opcodes changed back to good old ones
  *

@@ -116,7 +116,7 @@ AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code d
 
 AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distrubuted dispatcher [default=no]], [WANT_DIS_DIP=$enableval], [WANT_DIS_DIP=no])
 
-AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation [default=no]], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=no])
+AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation [default=yes]], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
 
 dnl Target OS type (target is host if not cross-compiling).
 case "$target_os" in
@@ -252,7 +252,7 @@ if [[ "x$HAVE_M68K" = "xyes" -a "x$CAN_NATIVE_M68K" = "xyes" ]]; then
   WANT_NATIVE_M68K=yes
 fi
 
-DIR_SEPARATOR="\"/\""
+DIRSEPARATOR='\"\/\"'
 
 case "$target_os" in
   linux*)
@@ -261,8 +261,7 @@ case "$target_os" in
   cygwin*)
     DEFINES="$DEFINES -fpermissive -DARANYMHOME=\"aranym\""
     LIBS="$LIBS -lSDL -lSDLmain -liberty"
-    EXTRASYSSRCS=parameters_unix.cpp
-    DIR_SEPARATOR="\"\\\""
+    EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp"
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
@@ -294,7 +293,7 @@ esac
 
 SYSSRCS="$SYSSRCS $EXTRASYSSRCS"
 
-DEFINES="$DEFINES -DDIR_SEPARATOR=$DIR_SEPARATOR"
+DEFINES="$DEFINES -DDIRSEPARATOR=$DIRSEPARATOR"
 
 dnl Define a macro that translates a yesno-variable into a C macro definition
 dnl to be put into the config.h file
@@ -1453,7 +1452,7 @@ dnl Data directory
 
 APP=aranym
 case "$target_os" in
-	mingw* | cygwin*)
+	mingw*)
 		ARANYM_DATADIR="\"\\\"./\${APP}\\\"\""
 		;;
 	*)
