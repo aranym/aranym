@@ -6,6 +6,19 @@
   Still needs to fix the screen double buffering...
   A whole set of dialogs should be designed for ARAnyM now (see dialog.cpp).
 
+- TOS loading routine now requires the original TOS 4.04 only - the other
+  patched flavors of TOS 4.04 are not accepted since now on. The prepatched
+  versions made it harder for us to add or remove various patches. Thus
+  we won't support them.
+
+- romdiff.cpp does not patch out the RESET instruction anymore. It was patched
+  out on Afterburner040 because that machine didn't really like the RESET.
+  ARAnyM handles reset gracefully so there's no reason to patch it out.
+
+- aranym_glue.cpp: added hardware initialization on the RESET instruction.
+  So far only IKBD is initialized (as there were problems with IKBD after
+  reset).
+
 
 2002/06/24 - joy
 - do_get_real_addr() replaced with Atari2HostAddr() in fdc.cpp and audio.cpp
