@@ -1,0 +1,14 @@
+# This file gets included by the Makefile in this directory to determine
+# the files that should go only into source distributions.
+
+HEADER = \
+	global.h \
+	aranym_xfs.h \
+	aranym_dev.h
+
+COBJS = \
+	main.c \
+	aranym_xfs.c \
+	aranym_dev.c
+
+SRCFILES = $(HEADER) $(COBJS)

@@ -42,6 +42,8 @@ AC_ARG_ENABLE(blitmemmove,     [  --enable-blitmemmove    enable Blitter memmove
 
 AC_ARG_ENABLE(blitsdlblit,     [  --enable-blitsdlblit    enable SDL blitting routine [default=no]], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
 
+AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support [default=yes]], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
+
 AC_ARG_ENABLE(aranymfs,        [  --enable-aranymfs       enable aranymfs support [default=yes]], [WANT_ARANYMFS=$enableval], [WANT_ARANYMFS=yes])
 
 AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI [default=yes]], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
@@ -735,6 +737,12 @@ if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
 fi
 
 dnl Support for direct access to host's fs
+if [[ "x$WANT_HOSTFS" = "xyes" ]]; then
+  SYSSRCS="$SYSSRCS ../natfeat/hostfs.cpp"
+  AC_DEFINE([HOSTFS_SUPPORT], 1, [Define if you want to use direct access to host's fs])
+fi
+
+dnl Support for direct access to host's fs
 if [[ "x$WANT_ARANYMFS" = "xyes" ]]; then
   SYSSRCS="$SYSSRCS ../extfs.cpp"
   AC_DEFINE([EXTFS_SUPPORT], 1, [Define if you want to use direct access to host's fs])
@@ -1356,6 +1364,7 @@ echo TOS Direct Truecolor.................... : $WANT_DIRECTCOLOR
 echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
 echo Blitter SDL blit acceleration .......... : $WANT_BLITSDLBLIT
 echo Support for aranymfs ................... : $WANT_ARANYMFS
+echo Support for hostfs ..................... : $WANT_HOSTFS
 echo Support for ECE ........................ : $WANT_ETHERNET
 echo GUI .................................... : $WANT_SDLGUI
 echo OpenGL ................................. : $WANT_OPENGL

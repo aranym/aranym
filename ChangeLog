@@ -1,3 +1,10 @@
+2002/12/10 - STanda
+- extfs: interface & debug cleanup
+- hostfs: completely new NatFeat driven implementation of the host OS
+  filesystem access. The m68k implementation in in atari/hostfs folder.
+  Read the README placed there.
+
+
 2002/11/30 - patrice
 - videl: autozoom does not work correctly if target is smaller than source.
 - hostscreen: added OpenGL rendering for the Atari screen.
