@@ -19,6 +19,7 @@
     <html>
       <head>
         <title>ARAnyM - <xsl:value-of select="/document/header"/></title>
+        <meta http-equiv="Cache-control" content="no-cache"/>
       </head>
       <body>
         <table width="100%" border="0" cellspacing="0" cellpadding="2">

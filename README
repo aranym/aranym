@@ -77,7 +77,6 @@ SDL_MOUSEDEV_IMPS2 environment variable to 1 (this is if you have IMPS2 mouse).
 export SDL_MOUSEDEV_IMPS2=1; ./aranym
 
 
-
  4) Keyboard shortcuts
  ---------------------
 
@@ -93,6 +92,7 @@ Alt+PrintScreen grabs a screenshot.
 
 ScrollLock inserts/removes (mounts/unmounts) a floppy.
 For read-write mount press Shift+ScrollLock.
+
 
  5) More information
  -------------------
