@@ -1,3 +1,7 @@
+2004/01/01 - joy
+- sdlgui/*: slowly making the GUI useful
+
+
 2003/12/31 - joy
 - main.cpp: startup GUI now uses the same thread schema as the normal GUI.
   Windows SDL couldn't read mouse events in timer thread :-(

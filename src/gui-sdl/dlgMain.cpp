@@ -7,47 +7,54 @@
 #define Screen_SetFullUpdate()
 #define Screen_Draw()		{ hostScreen.lock(); hostScreen.restoreBackground(); hostScreen.unlock(); }
 
+bx_options_t gui_options;
+
 /* The main dialog: */
-enum {
-	maindlg_border,
-	maindlg_text_main,
-	MAINDLG_ABOUT,
-	MAINDLG_DISCS,
-	MAINDLG_KEYBD,
-	maindlg_text_aranym,
-	MAINDLG_REBOOT,
-	MAINDLG_SHUTDOWN,
-	maindlg_text_config,
-	MAINDLG_LOAD,
-	MAINDLG_SAVE,
-	MAINDLG_OK,
-	MAINDLG_CANCEL
+enum MAINDLG {
+	box_main,
+	text_main,
+	ABOUT,
+	DISCS,
+	HOTKEYS,
+	KEYBOARD,
+	TOS,
+	VIDEO,
+	MEMORY,
+	HOSTFS,
+	CDROM,
+	DEVICES,
+	text_aranym,
+	REBOOT,
+	SHUTDOWN,
+	text_config,
+	LOAD,
+	SAVE,
+	APPLY,
+	CLOSE
 };
 
 SGOBJ maindlg[] =
 {
-  { SGBOX, 0, 0, 0,0, 36,20, NULL },
-  { SGTEXT, 0, 0, 10,1, 16,1, "ARAnyM main menu" },
+  { SGBOX, 0, 0, 0,0, 40,25, NULL },
+  { SGTEXT, 0, 0, 12,1, 16,1, "ARAnyM main menu" },
   { SGBUTTON, 0, 0, 4,4, 12,1, "About" },
   { SGBUTTON, 0, 0, 4,6, 12,1, "Disks" },
-  { SGBUTTON, 0, 0, 4,8, 12,1, "Keyboard" },
-/*
-  { SGBUTTON, 0, 0, 4,10, 12,1, "Screen" },
-  { SGBUTTON, 0, 0, 4,12, 12,1, "Sound" },
-  { SGBUTTON, 0, 0, 20,4, 12,1, "CPU" },
-  { SGBUTTON, 0, 0, 20,6, 12,1, "Memory" },
-  { SGBUTTON, 0, 0, 20,8, 12,1, "Joysticks" },
-  { SGBUTTON, 0, 0, 20,10, 12,1, "Keyboard" },
-  { SGBUTTON, 0, 0, 20,12, 12,1, "Devices" },
-*/
-  { SGTEXT, 0, 0, 4,14, 10,1, "ARAnyM:" },
-  { SGBUTTON, 0, 0, 2,16, 10,1, "Reboot" },
-  { SGBUTTON, 0, 0, 2,18, 10,1, "Shutdown" },
-  { SGTEXT, 0, 0, 15,14, 7,1, "Config:" },
-  { SGBUTTON, 0, 0, 15,16, 7,1, "Load" },
-  { SGBUTTON, 0, 0, 15,18, 7,1, "Save" },
-  { SGBUTTON, 0, 0, 26,16, 8,1, "OK" },
-  { SGBUTTON, 0, 0, 26,18, 8,1, "Cancel" },
+  { SGBUTTON, 0, 0, 4,8, 12,1, "Hotkeys" },
+  { SGBUTTON, 0, 0, 4,10, 12,1, "Keyboard" },
+  { SGBUTTON, 0, 0, 4,12, 12,1, "TOS" },
+  { SGBUTTON, 0, 0, 24,4, 12,1, "Video" },
+  { SGBUTTON, 0, 0, 24,6, 12,1, "JIT CPU" },
+  { SGBUTTON, 0, 0, 24,8, 12,1, "Host FS" },
+  { SGBUTTON, 0, 0, 24,10, 12,1, "CD-ROM" },
+  { SGBUTTON, 0, 0, 24,12, 12,1, "Devices" },
+  { SGTEXT, 0, 0, 4,18, 10,1, "ARAnyM:" },
+  { SGBUTTON, 0, 0, 2,20, 10,1, "Reboot" },
+  { SGBUTTON, 0, 0, 2,22, 10,1, "Shutdown" },
+  { SGTEXT, 0, 0, 17,18, 7,1, "Config:" },
+  { SGBUTTON, 0, 0, 17,20, 7,1, "Load" },
+  { SGBUTTON, 0, 0, 17,22, 7,1, "Save" },
+  { SGBUTTON, 0, 0, 30,20, 8,1, "Apply" },
+  { SGBUTTON, 0, 0, 30,22, 8,1, "Close" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 
@@ -82,66 +89,81 @@ void SaveSettings()
 	}
 }
 
-int Dialog_MainDlg()
+void Dialog_MainDlg()
 {
   int retbut;
 
   bReboot = bShutdown = false;
 
+  // preload bx settings
+  gui_options = bx_options;
+
   Screen_Save();
 
   if (SDLGui_PrepareFont() == -1)
-  	return 0;
+  	return;
 
   hostScreen.lock();
   SDL_ShowCursor(SDL_ENABLE);
   hostScreen.unlock();
 
+  bool closeDialog = false;
   do
   {
     retbut = SDLGui_DoDialog(maindlg);
     switch(retbut)
     {
-      case MAINDLG_ABOUT:
+      case ABOUT:
       	Dialog_AboutDlg();
         break;
 
-      case MAINDLG_DISCS:
+      case DISCS:
         Dialog_DiscDlg();
         break;
 
-      case MAINDLG_KEYBD:
+      case KEYBOARD:
         Dialog_KeyboardDlg();
         break;
 
-      case MAINDLG_LOAD:
+      case LOAD:
         LoadSettings();
       	break;
 
-      case MAINDLG_SAVE:
+      case SAVE:
+        // make sure users understand which setting they're saving
+        // best by allowing this Save button only after the "Apply" was used.
         SaveSettings();
       	break;
 
-      case MAINDLG_REBOOT:
+      case REBOOT:
         bReboot = true;
+        closeDialog = true;
         break;
 
-      case MAINDLG_SHUTDOWN:
+      case SHUTDOWN:
         bShutdown = true;
+        closeDialog = true;
         break;
+
+      case APPLY:
+        // apply bx settings
+        bx_options = gui_options;
+        break;
+
+	  case CLOSE:
+        closeDialog = true;
+	  	break;
     }
     Screen_SetFullUpdate();
     Screen_Draw();
   }
-  while(retbut!=MAINDLG_OK && retbut!=MAINDLG_CANCEL && !bShutdown && !bReboot);
+  while(!closeDialog);
 
   hostScreen.lock();
   SDL_ShowCursor(SDL_DISABLE);
   hostScreen.unlock();
 
   SDLGui_FreeFont();
-
-  return(retbut==MAINDLG_OK);
 }
 
 /*-----------------------------------------------------------------------*/

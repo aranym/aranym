@@ -2,21 +2,40 @@
 #include "file.h"
 #include "ata.h"
 
+extern bx_options_t gui_options;
+
 /* The disks dialog: */
-#define DISCDLG_FLP_BROWSE	3
-#define DISCDLG_FLP_PATH	4
-#define DISCDLG_FLP_ACTIVE	5
-#define DISCDLG_IDE0_BROWSE	8
-#define DISCDLG_IDE0_PATH	9
-#define DISCDLG_IDE0_RDONLY	10
-#define DISCDLG_IDE0_ACTIVE	11
-#define DISCDLG_IDE1_BROWSE	19
-#define DISCDLG_IDE1_PATH	20
-#define DISCDLG_IDE1_RDONLY	21
-#define DISCDLG_IDE1_ACTIVE	23
-#define DISCDLG_IDE1_ISCD	24
-#define DISCDLG_CDROMUM     27
-#define DISCDLG_EXIT        28
+enum DISCDLG {
+	box_main,
+	box_floppy,
+	text_floppy,
+	FLP_BROWSE,
+	FLP_PATH,
+	FLP_ACTIVE,
+	box_ide0,
+	text_ide0,
+	IDE0_BROWSE,
+	IDE0_PATH,
+	text_type0,
+	IDE0_HDD,
+	IDE0_CDROM,
+	IDE0_MOUNT,
+	text_state0,
+	IDE0_RDONLY,
+	IDE0_ACTIVE,
+	box_ide1,
+	text_ide1,
+	IDE1_BROWSE,
+	IDE1_PATH,
+	text_type1,
+	IDE1_HDD,
+	IDE1_CDROM,
+	text_state1,
+	IDE1_RDONLY,
+	IDE1_ACTIVE,
+	IDE1_MOUNT,
+	EXIT
+};
 
 SGOBJ discdlg[] =
 {
@@ -57,7 +76,7 @@ void UpdateFloppyStatus(void)
 {
 	static char *eject = "Eject";
 	static char *insert = "Insert";
-	discdlg[DISCDLG_FLP_MOUNT].txt = bx_options.floppy.inserted ? eject : insert;
+	discdlg[FLP_MOUNT].txt = gui_options.floppy.inserted ? eject : insert;
 }
 */
 void UpdateCDROMstatus(void)
@@ -65,7 +84,7 @@ void UpdateCDROMstatus(void)
 	static char *eject = "Eject";
 	static char *insert = "Insert";
 	int handle = bx_hard_drive.get_first_cd_handle();
-	discdlg[DISCDLG_CDROMUM].txt = bx_hard_drive.get_cd_media_status(handle) ? eject : insert;
+	// discdlg[CDROMUM].txt = bx_hard_drive.get_cd_media_status(handle) ? eject : insert;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -83,14 +102,14 @@ void Dialog_DiscDlg(void)
   UpdateCDROMstatus();
 
   /* Set up dialog to actual values: */
-  File_ShrinkName(floppy_path, bx_options.floppy.path, discdlg[DISCDLG_FLP_PATH].w);
-  discdlg[DISCDLG_FLP_PATH].txt = floppy_path;
+  File_ShrinkName(floppy_path, gui_options.floppy.path, discdlg[FLP_PATH].w);
+  discdlg[FLP_PATH].txt = floppy_path;
 
-  File_ShrinkName(ide0_path, bx_options.atadevice[0][0].path, discdlg[DISCDLG_IDE0_PATH].w);
-  discdlg[DISCDLG_IDE0_PATH].txt = ide0_path;
+  File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path, discdlg[IDE0_PATH].w);
+  discdlg[IDE0_PATH].txt = ide0_path;
 
-  File_ShrinkName(ide1_path, bx_options.atadevice[0][1].path, discdlg[DISCDLG_IDE1_PATH].w);
-  discdlg[DISCDLG_IDE1_PATH].txt = ide1_path;
+  File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path, discdlg[IDE1_PATH].w);
+  discdlg[IDE1_PATH].txt = ide1_path;
 
   /* Draw and process the dialog */
   do
@@ -98,7 +117,8 @@ void Dialog_DiscDlg(void)
     but = SDLGui_DoDialog(discdlg);
     switch(but)
     {
-      case DISCDLG_CDROMUM:
+/*
+      case CDROMUM:
         {
 		int handle = bx_hard_drive.get_first_cd_handle();
 		bool status = bx_hard_drive.get_cd_media_status(handle);
@@ -107,14 +127,14 @@ void Dialog_DiscDlg(void)
 		}
 
         break;
-
-      case DISCDLG_FLP_BROWSE:   /* Choose a new disc A: */
-        strcpy(tmpname, bx_options.floppy.path);
+*/
+      case FLP_BROWSE:   /* Choose a new disc A: */
+        strcpy(tmpname, gui_options.floppy.path);
         if( SDLGui_FileSelect(tmpname, false) )
         {
           if( !File_DoesFileNameEndWithSlash(tmpname) && File_Exists(tmpname) )
           {
-            File_ShrinkName(floppy_path, tmpname, discdlg[DISCDLG_FLP_PATH].w);
+            File_ShrinkName(floppy_path, tmpname, discdlg[FLP_PATH].w);
           }
           else
           {
@@ -123,13 +143,13 @@ void Dialog_DiscDlg(void)
         }
         break;
 
-      case DISCDLG_IDE0_BROWSE:
-        strcpy(tmpname, bx_options.atadevice[0][0].path);
+      case IDE0_BROWSE:
+        strcpy(tmpname, gui_options.atadevice[0][0].path);
         if( SDLGui_FileSelect(tmpname, false) )
         {
           if( !File_DoesFileNameEndWithSlash(tmpname) && File_Exists(tmpname) ) {
-          // strcpy(bx_options.atadevice[0][0].path, tmpname);
-            File_ShrinkName(ide0_path, tmpname, discdlg[DISCDLG_IDE0_PATH].w);
+            strcpy(gui_options.atadevice[0][0].path, tmpname);
+            File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
           }
           else {
           	ide0_path[0] = 0;
@@ -137,13 +157,13 @@ void Dialog_DiscDlg(void)
         }
         break;
 
-      case DISCDLG_IDE1_BROWSE:
-        strcpy(tmpname, bx_options.atadevice[0][1].path);
+      case IDE1_BROWSE:
+        strcpy(tmpname, gui_options.atadevice[0][1].path);
         if( SDLGui_FileSelect(tmpname, false) )
         {
           if( !File_DoesFileNameEndWithSlash(tmpname) && File_Exists(tmpname) ) {
-          // strcpy(bx_options.atadevice[0][1].path, tmpname);
-            File_ShrinkName(ide1_path, tmpname, discdlg[DISCDLG_IDE1_PATH].w);
+            strcpy(gui_options.atadevice[0][1].path, tmpname);
+            File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
           }
           else {
           	ide1_path[0] = 0;
@@ -151,15 +171,15 @@ void Dialog_DiscDlg(void)
         }
         break;
 #if 0
-      case DISCDLG_CREATEIMG:
+      case CREATEIMG:
         fprintf(stderr,"Sorry, creating disc images not yet supported\n");
         break;
-      case DISCDLG_UNMOUNTGDOS:
+      case UNMOUNTGDOS:
         GemDOS_UnInitDrives();   /* FIXME: This shouldn't be done here but it's the only quick solution I could think of */
         strcpy(DialogParams.HardDisc.szHardDiscDirectories[0], ConfigureParams.HardDisc.szHardDiscDirectories[0]);
         dlgnamegdos[0] = 0;
         break;
-      case DISCDLG_BROWSEGDOS:
+      case BROWSEGDOS:
         strcpy(tmpname, DialogParams.HardDisc.szHardDiscDirectories[0]);
         if( SDLGui_FileSelect(tmpname) )
         {
@@ -167,17 +187,17 @@ void Dialog_DiscDlg(void)
           ptr = strrchr(tmpname, '/');
           if( ptr!=NULL )  ptr[1]=0;        /* Remove file name from path */
           strcpy(DialogParams.HardDisc.szHardDiscDirectories[0], tmpname);
-          File_ShrinkName(dlgnamegdos, DialogParams.HardDisc.szHardDiscDirectories[0], discdlg[DISCDLG_DISCGDOS].w);
+          File_ShrinkName(dlgnamegdos, DialogParams.HardDisc.szHardDiscDirectories[0], discdlg[DISCGDOS].w);
         }
         break;
-      case DISCDLG_BROWSEHDIMG:
+      case BROWSEHDIMG:
         strcpy(tmpname, DialogParams.HardDisc.szHardDiscImage);
         if( SDLGui_FileSelect(tmpname) )
         {
           strcpy(DialogParams.HardDisc.szHardDiscImage, tmpname);
           if( !File_DoesFileNameEndWithSlash(tmpname) && File_Exists(tmpname) )
           {
-            File_ShrinkName(dlgnamehdimg, tmpname, discdlg[DISCDLG_DISCHDIMG].w);
+            File_ShrinkName(dlgnamehdimg, tmpname, discdlg[DISCHDIMG].w);
           }
           else
           {
@@ -188,11 +208,11 @@ void Dialog_DiscDlg(void)
 #endif
     }
   }
-  while(but!=DISCDLG_EXIT);
+  while(but!=EXIT);
 
   /* Read values from dialog */
   /*
-  DialogParams.DiscImage.bAutoInsertDiscB = (discdlg[DISCDLG_AUTOB].state & SG_SELECTED);
-  DialogParams.HardDisc.bBootFromHardDisc = (discdlg[DISCDLG_BOOTHD].state & SG_SELECTED);
+  DialogParams.DiscImage.bAutoInsertDiscB = (discdlg[AUTOB].state & SG_SELECTED);
+  DialogParams.HardDisc.bBootFromHardDisc = (discdlg[BOOTHD].state & SG_SELECTED);
   */
 }
