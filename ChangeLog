@@ -1,3 +1,11 @@
+2001/09/19 - joy
+- TT-RAM (or FastRAM) size entered on command line (--ttram) is in MB now. 
+- new .aranymrc option named "FastRAM", acts as the --tram switch.
+- first release of aratools.tgz, available at ftp.sophics.cz/pub/aranym.
+  FastRAM (or TT-RAM?) can be anything from 0 to about 112 MB (then it 
+  crashes, I suspect it's due to the weird Milan's virtual memory management).
+
+
 2001/09/18 - joy
 - keys remapped: Atari Help is on the F11 host key, Atari Undo is on F12 key.
   Keys PageUp/PageDown are mapped to Atari combo Shift+ArrowUp/Down which
