@@ -2,6 +2,8 @@
 - atari/aranymrc.example moved to doc/config and updated with all current
   config options
 
+- parameters.cpp: fixed wrong sizeof() for [HOTKEYS]
+
 
 2005/02/18 - Patrice
 - nfosmesa: Can not autodetect which libOSMesa is loaded, so ChannelSize in
