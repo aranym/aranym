@@ -27,6 +27,7 @@
 
 #include <pthread.h>
 
+#include <linux/fb.h>
 #include <sys/mman.h>
 
 #include "cpu_emulation.h"
@@ -129,9 +130,31 @@ int main(int argc, char **argv)
 	// will return correct results
 	RAMBase = 0;
 	ROMBase = RAMBase + aligned_ram_size;
+
+/*
+	char *fbname;
+	fbname = getenv("FRAMEBUFFER");
+	if (!fbname) fbname = "/dev/fb0";
+	int fb;
+	if ((fb = open(fbname,O_RDONLY | O_NONBLOCK)) == -1) {
+		ErrorAlert("Open failed on FB\n");
+		QuitEmulator();
+	}
+	// Nacist info
+	(void)close(fb);
+	if ((fb = open(fbname, O_RDWR)) == -1) {
+		ErrorAlert("Open failed on FB\n");
+		QuitEmulator();
+	}
+	if ((VideoRAMBaseHost = (uint8 *)mmap((void *)0,VideoRAMSize, PROT_READ | PROT_WRITE, MAP_SHARED, fb, 0)) == (void *)-1) {
+		ErrorAlert("mmap failed\n");
+	}
+*/
 	InitMEMBaseDiff(RAMBaseHost, RAMBase);
+	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
 	D(bug("ST-RAM starts at %p (%08x)\n", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)\n", ROMBaseHost, ROMBase));
+	D(bug("VideoRAM starts at %p (%08x)\n", VideoRAMBaseHost, VideoRAMBase));
 	
 	// Get rom file path from preferences
 	const char *rom_path = "ROM";

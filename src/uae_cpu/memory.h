@@ -13,10 +13,12 @@
 #define UAE_MEMORY_H
 
 extern uintptr MEMBaseDiff;
+extern uintptr VMEMBaseDiff;
 //#define do_get_real_address(a)		((uae_u8 *)(a) + MEMBaseDiff)
-#define do_get_real_address(a)		(((a) < 0xff000000) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a & 0x00ffffff) + MEMBaseDiff))
-#define do_get_virtual_address(a)	((uae_u32)(a) - MEMBaseDiff)
+#define do_get_real_address(a)		(((a) < 0xff000000) ? (((a) < 0xf0000000) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff)) : ((uae_u8 *)(a & 0x00ffffff) + MEMBaseDiff))
+#define do_get_virtual_address(a)	((uae_u32)(a) - MEMBaseDiff)	// only for xRAM, not for VideoRAM!
 #define InitMEMBaseDiff(va, ra)		(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
+#define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 
 static __inline__ uae_u32 get_long(uaecptr addr)
 {

@@ -39,8 +39,15 @@ uint32 RAMSize;		// Size of RAM
 uint32 ROMBase;		// ROM base (Atari address space)
 uint8 *ROMBaseHost;	// ROM base (host address space)
 uint32 ROMSize;		// Size of ROM
+uint32 TTRAMBase = 0x01000000;		// TT-RAM base (Atari address space)
+uint8 *TTRAMBaseHost;	// TT-RAM base (host address space)
+uint32 TTRAMSize = 0;	// Size of TT-RAM
+uint32 VideoRAMBase = 0xf0000000;	// VideoRAM base (Atari address space)
+uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)
+uint32 VideoRAMSize;	// Size of VideoRAM
 
 uintptr MEMBaseDiff;	// Global offset between a Atari address and its Host equivalent
+uintptr VMEMBaseDiff;	// Global offset between a Atari VideoRAM address and /dev/fb0 mmap
 
 // From newcpu.cpp
 extern int quit_program;
@@ -52,6 +59,7 @@ extern int quit_program;
 bool Init680x0(void)
 {
 	InitMEMBaseDiff(RAMBaseHost, RAMBase);
+	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
 	init_m68k();
 #ifdef USE_COMPILER
 	compiler_init();
