@@ -1,15 +1,34 @@
 Before 0.8.0 release:
 ---------------------
+- prepare ethernet emulation for several cards at once (eth0, eth1, ..)
 - host-ip, atari-ip, netmask, mtu in config file ([ETH0])
-- supermount point of hostfs in config file
-- diskimage updating config file automatically
-- major doc update (networking, disk image, afros)
+- automagically configured ethernet device (araethip would not be needed)
+- automagically updated CONFIG.SYS/BDCONFIG.SYS
+- patch for fixing MetaDOS Pexec bug
+- some doc update (networking, disk image, afros)
 
-Some hot ideas (before we'll forget them :-)
+Roadmap:
+--------
+
+0.8.0 should bring long-awaited networking support and next level
+of host filesystem access.
+
+0.9.0 should come with direct partition access and free XHDI disk driver
+
+1.0.0 should be distributed as a CD ISO image, installable on wide range
+  of wintel hardware.
+
+Some hot ideas (before they get forgotten)
 ============================================
 
 Note that the name before a TODO item doesn't mean the item is assigned to
 that particular programmer but rather who is the author of the idea :-)
+
+- joy: make the PureC patch more error-proof
+
+- joy: put all ARAnyM patches and drivers together to a nice package
+
+- joy: diskimage updating config file automatically
 
 - joy: fix the mouse jumping in fVDI with STOP#$2000 enabled FreeMiNT kernel
 
