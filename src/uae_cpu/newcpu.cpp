@@ -643,6 +643,8 @@ static __inline__ void exc_make_frame(
 
 // MJ int in_exception_2 = 0;
 
+extern void showBackTrace(int, bool=true);
+
 void Exception(int nr, uaecptr oldpc)
 {
     uae_u32 currpc = m68k_getpc ();
@@ -661,6 +663,7 @@ void Exception(int nr, uaecptr oldpc)
 #endif
 
     if (nr == 2) {
+    	static long prevpc = 0;
 #if 0
 			if (currprefs.cpu_level == 5)	{
 				/* 68060 */
@@ -674,7 +677,19 @@ void Exception(int nr, uaecptr oldpc)
 			}
 			else if (currprefs.cpu_level == 4)	{
 #endif
-	panicbug("Exception Nr. %d CPC: %08lx RPC: %08lx Addr: %08lx", nr, currpc, oldpc, regs.mmu_fault_addr);
+	 panicbug("Exception Nr. %d CPC: %08lx NPC: %08lx SP=%08lx Addr: %08lx", nr, currpc, get_long (regs.vbr + 4*nr), m68k_areg(regs, 7), regs.mmu_fault_addr);
+	/* try to display more debug info - last instruction history */
+	if (currpc == prevpc) {
+#ifdef FULL_HISTORY
+		showBackTrace(20, false);
+		m68k_dumpstate (NULL);
+		// sleep(1);
+#else
+		printf("If the Full History was enabled you would see the last 20 instructions here.\n");
+#endif
+	}
+	prevpc = currpc;
+
 	/* 68040 */
 	exc_push_long(0);	/* PD3 */
 	exc_push_long(0);	/* PD2 */
