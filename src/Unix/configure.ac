@@ -1561,10 +1561,14 @@ fi
 
 ])
 
-CHECK_ZLIB()
+if [[ "x$WANT_LILO" = "xyes" ]]; then
+	CHECK_ZLIB()
 
-if [[ "x$have_zlib" = "xyes" ]]; then
-  LIBS="$LIBS -lz"
+	if [[ "x$have_zlib" = "xyes" ]]; then
+		LIBS="$LIBS -lz"
+	fi
+else
+	have_zlib="not required"
 fi
 
 dnl Linux kernel includes (for lilo)

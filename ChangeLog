@@ -15,6 +15,10 @@
 
 - hostfs.cpp: debugging disabled. Proper GPL header added.
 
+- Unix/configure.ac: ZLIB is required only if LILO is enabled so the check
+  for ZLIB is not performed when LILO is not enabled (Patrice's idea
+  but he was too lazy to do it :)
+
 
 2003/12/09 - joy
 - extfs.cpp: rewritten the initialization of rootPath a bit. And added
