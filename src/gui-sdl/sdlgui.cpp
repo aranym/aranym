@@ -527,25 +527,10 @@ int SDLGui_DoDialog(SGOBJ *dlg)
       return obj;
     }
   }
-/*
-  SDL_PumpEvents();
-  int i, j;
-  int b = SDL_GetMouseState(&i, &j);
-  int obj = SDLGui_FindObj(dlg, i, j);
-  if(obj>0 && (dlg[obj].flags&SG_TOUCHEXIT) )
-  {
-    oldbutton = obj;
-    if( b&SDL_BUTTON(1) )
-    {
-      dlg[obj].state |= SG_SELECTED;
-      return obj;
-    }
-  }
-*/
   /* The main loop */
   do
   {
- //   if( SDL_WaitEvent(&evnt)==1 )  /* Wait for events */
+ //   if( SDL_WaitEvent(&evnt)==1 )  /* could be replaced with Semaphore! */
       switch(eventTyp)
       {
         case SDL_QUIT:
@@ -644,11 +629,11 @@ int SDLGui_FileSelect(char *path_and_name)
   File_ShrinkName(dlgfname, fname, 32);
 
   /* Save old mouse cursor state and enable cursor anyway */
-  /*
+  SCRLOCK;
   oldcursorstate = SDL_ShowCursor(SDL_QUERY);
   if( oldcursorstate==SDL_DISABLE )
     SDL_ShowCursor(SDL_ENABLE);
-  */
+  SCRUNLOCK;
 
   do
   {
@@ -808,10 +793,10 @@ int SDLGui_FileSelect(char *path_and_name)
   }
   while(retbut!=SGFSDLG_OKAY && retbut!=SGFSDLG_CANCEL && !bQuitProgram);
 
-  /*
+  SCRLOCK;
   if( oldcursorstate==SDL_DISABLE )
     SDL_ShowCursor(SDL_DISABLE);
-  */
+  SCRUNLOCK;
   File_makepath(path_and_name, path, fname, NULL);
 
   /* Free old allocated memory: */
