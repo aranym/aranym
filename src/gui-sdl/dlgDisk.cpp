@@ -188,6 +188,8 @@ void Dialog_DiscDlg(void)
   int head = gui_options.atadevice[0][0].heads;
   int spt = gui_options.atadevice[0][0].spt;
   long size = (((long)cyl * head * spt / 1024)+1)/2;	// round up to MB
+  if (size < 0)
+  	size = 0;
   sprintf(ide0_size, "%5ld", size);
   sprintf(ide0_cyl, "%5d", cyl);
   sprintf(ide0_head, "%3d", head);
