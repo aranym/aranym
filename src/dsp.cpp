@@ -378,6 +378,8 @@ void DSP::handleWrite(uaecptr addr, uae_u8 value)
 #if DSP_THREADED
 				host2dsp();
 #else
+				int trdy;
+
 				/* Clear/set TRDY bit */
 				hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TRDY);
 				trdy = (hostport[CPU_HOST_ISR]>>CPU_HOST_ISR_TXDE) & 1;
