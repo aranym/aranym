@@ -5,6 +5,7 @@
 #include "nf_stderr.h"
 #include "xhdi.h"
 #include "hostfs.h"
+#include "ece.h"
 #include "fvdidrv.h"
 /* add your NatFeat class definition here */
 
@@ -13,8 +14,11 @@ NF_Version nf_version;
 NF_StdErr nf_stderr;
 XHDIDriver Xhdi;
 FVDIDriver fVDIDrv;
-#ifdef ARANYM_HOSTFS
+#ifdef HOSTFS_SUPPORT
 HostFs hostFs;
+#endif
+#ifdef ETHERNET_SUPPORT
+ECE ECe;
 #endif
 /* add your NatFeat object declaration here */
 
@@ -22,8 +26,11 @@ pNatFeat nf_objects[] = {
 	&fVDIDrv,
 	&Xhdi,
 
-#ifdef ARANYM_HOSTFS
+#ifdef HOSTFS_SUPPORT
 	&hostFs,
+#endif
+#ifdef ETHERNET_SUPPORT
+	&ECe,
 #endif
 	/* add your NatFeat object here */
 
