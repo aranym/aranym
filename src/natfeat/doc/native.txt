@@ -53,7 +53,10 @@ The mandatory specifications is the 68k interface, i.e. the behaviour
 that can be observed from 68k side regardless of how it is implemented in
 the native side.
 
-One optional specification is the implementation interface, i.e. the 
+An optional set of specification is a basic set of native features,
+that can be supplied or not supplied by the emulator.
+
+Another optional specification is the implementation interface, i.e. the 
 services provided by the emulator to implementations of particular native 
 features. This specification is optional because it is perfectly valid to
 implement native features without using this interface (for example for 
@@ -88,7 +91,7 @@ here is a short list of terms that have a special meaning in this document:
   function - a native function
   68k side - a virtual machine based on a supported processor
   supported processor - 68008, 680[012346]0, and compatibles
-  illegal opcode - 68k opcodes used by the native feature framework
+  special opcodes - 68k opcodes used by the native feature framework
   emulator - the container of both the 68k side and the native side
   basic set - the mandatory set of features
 
@@ -100,9 +103,9 @@ compatible to the instruction set of the supported 68k processors, are
 not taken into account by this document. In the event where some 68k
 code were to be designed to support both the current specification 
 (when running on a supported 68k processor) and unsupported processors,
-that code should not use the native feature opcodes if it can be
-determined that the processor is unsupported, either by first checking 
-the processor type, or by determining in an operating-system-dependant
+that code should not use the special opcodes if it can be determined 
+that the processor is unsupported, either by first checking the 
+processor type, or by determining in an operating-system-dependant
 way that native features are not available.
 
 This document does not support emulators emulating a multi-processor 
@@ -154,89 +157,95 @@ See Annex G for a full example of how to call the basic set.
 
 
 This document describes
-- a small number of 'opcodes' (m68k illegal instructions) used to manage
-  native features
-- a 'basic set' of native features that any compliant emulator must
-  provide
-- guidance for defining other native features.
+- a small number of special opcodes (m68k illegal instructions) used 
+  to manage native features;
+- guidance for defining native features;
+- a proposed basic set of native features that may be implemented by
+  emulators.
 
 
 Compliant emulator
 
 Any emulator has the choice of providing the full interface described in
 this document, or nothing.
+
 If the emulator does not provide the interface, then all illegal
-opcodes defined below must provoke the normal m68k behaviour (i.e. raise
-an illegal exception).
+opcodes defined below must provoke the normal m68k behaviour 
+(i.e. raise an illegal exception).
+
 If the emulator provides one illegal opcode defined below, then it must
-also provide the complete set of opcodes, and the features of the
-'basic set'. Such an emulator is called a compliant emulator.
+also provide the complete set of opcodes, with the behaviour defined in
+this document. Such an emulator is called a compliant emulator.
 In the rest of the document, 'emulator' means 'compliant emulator'.
+
 
 C calling convention
 
 Native functions do the job of C functions, using the C calling convention
 described here:
 - values are represented in memory as big endian (the byte with
-  lowest address is the most significant byte).
+  lowest address is the most significant byte);
 - 'char' are 8bit values, either signed or unsigned (unspecified);
-- 'short' are 16bit values
-- 'int', 'long' and pointers are 32 bit values
+- 'short' are 16bit values;
+- 'int', 'long' and pointers are 32 bit values;
 - the return type of a function is either void (no return type),
-  or a 32bit value. Functions cannot return 8bit or 16bit values,
-  and functions cannot return structs.
-- parameters are passed on the stack. the last parameter is pushed
+  or a 32bit value; functions cannot return 8bit or 16bit values,
+  and functions cannot return structs;
+- parameters are passed on the stack; the last parameter is pushed
   first, then any parameters until the first parameter which is pushed
-  last. when pushing parameters, if the size of the parameter is less 
+  last; when pushing parameters, if the size of the parameter is less 
   than 32 bit, the parameter is converted to a 32bit value by padding
-  to the left with unspecified bytes.
+  to the left with unspecified bytes;
 - struct members are set in memory in growing addresses, with padding
   using the smallest number of unspecified bytes needed so that any member 
   not of type char, signed char, unsigned char, or an array of these 
   three types, has an even address.
 
-string encoding are not specified in this document. Generally speaking
+String encoding is not specified in this document. Generally speaking
 native functions should document this. When a string is to be displayed
 to the user (as opposed as written in a file) it can be assumed that 
 chars in the range 0x20 to 0x7e are ASCII (ISO-646).
 
-Native functions may not alter registers other than d0. 
+Native functions should not alter any registers other than d0, unless 
+properly justified and documented.
+
 
 Naming
 
 Feature names beginning with 'NF_' or 'nf_' are reserved.
 
-Opcodes
 
-opcodes are taken in the range 0x73nn (illegal moveq instructions).
+Special opcodes
+
+Special opcodes are taken in the range 0x73nn (illegal moveq instructions).
 The following opcodes are defined:
 
   mnemonic nf_getid (in ARAnyM debugger it's NATFEAT_ID)
   value 0x7300
-  prototype  long nf_get_id(const char * feature_name);
+  prototype  unsigned long nf_get_id(const char * feature_name);
   ignore the first long word on the stack; let feature_name be the
-  second long word on the stack. if the null-ended string pointed to
+  second long word on the stack; if the null-ended string pointed to
   by feature_name is the name of an implemented native feature, then 
   return its ID in register D0, else return zero.
 
   mnemonic nf_call (in ARAnyM debugger it's NATFEAT_CALL)
   value 0x7301
-  prototype   long nf_call(long id, ...);
-  ignore the first long word on the stack; let us call id the
-  second long word on the stack; if id is not a valid native function
-  id then the result is unspecified; else, call the function defined 
-  by the id (optionnally containing a non-null sub-id), passing the 
+  prototype   long nf_call(long feature_id, ...);
+  ignore the first long word on the stack; let feature_id be the second 
+  long word on the stack; if feature_id is not a valid native function
+  ID then the result is unspecified; else, call the function defined 
+  by the ID (optionnally containing a non-null sub-ID), passing the 
   rest of the stack arguments (i.e. starting at address stack+8) as 
   parameters. 
-  returns in D0 the 32bit value returned by the fonction. If the 
-  function is documented as not returning any meaningful value,
+  returns in register D0 the 32bit value returned by the fonction. 
+  If the function is documented as not returning any meaningful value,
   (i.e. declared as void function(...)) then the value in D0 is 
   unspecified.
 
-Note: both these opcodes ignore the first long word on the stack. This
-is done so that these opcodes can be encapsulated into small assembler 
-routines that are declared with the same prototype as indicated
-above for each opcode. For instance, here is an actual declaration
+Note: both these special opcodes ignore the first long word on the stack. 
+This is done so that these special opcodes can be encapsulated into small 
+assembler routines that are declared with the same prototype as indicated
+above for each special opcode. For instance, here is an actual declaration
 and code for nf_get_id:
 
   extern long nf_get_id(const char * feature_name);
@@ -256,20 +265,16 @@ These opcodes are defined both for supervisor mode (Interrupt or
 Master modes on 680x0) and normal user mode. Each NatFeat has a bool
 flag "isSupervisorModeRequired" and if set to true then calling such
 opcode from user mode will result in a priviledge exception.
+
 The stack used for passing arguments will be the current stack
 (SSP/ISP for Supervisor/Interrupt mode, MSP for Master mode).
-
-DISCUSSION:
-  Allowing also user mode makes it harder to implement functions that
-  check for bus error.
 
 
 Feature documentation
 
-feature documentation shall provide the following information:
+Feature documentation shall provide the following information:
 - the feature name, a case-insensitive string of printable ASCII
   characters.
-- date, version, status ???
 - the features that are required for this one to work
 - the list of functions provided by this feature, and for each function:
   - its sub-id
@@ -286,39 +291,46 @@ is written in one of the proposed implementation interfaces.
 
 Basic set features
 
-- "NF_NAME" :
-    unsigned long getName(char *buffer, unsigned long size)
-      subID = 0
-      fills 'buffer' with a null-terminated string representing the
-      emulator name. At most 'size' bytes will be written in the
-      buffer (which means that the string will be truncated if it
-      contains more than size - 1 characters).
-      the string should contain only printable ASCII characters
-      (ASCII 32 to 126 inclusive).
-      Returns the length of the string before truncation.
+"NF_NAME"
+  sub-ID 0 - user allowed
+  unsigned long getName(char *buffer, unsigned long size)
+    fills 'buffer' with a null-terminated string representing the
+    emulator name. At most 'size' bytes will be written in the
+    buffer (which means that the string will be truncated if it
+    contains more than size - 1 characters).
+    the string should contain only printable ASCII characters
+    (ASCII 32 to 126 inclusive).
+    Returns the length of the string before truncation. 
 
-    unsigned long getFullName(char *buffer, unsigned long size)
-      subID = 1
-      similar to getName, but the string is the emulator name plus 
-      its version (and anything else that might be printed together 
-      with the emulator name)
-      Returns the length of the string before truncation.
+  sub-ID 1 - user allowed
+  unsigned long getFullName(char *buffer, unsigned long size)
+    similar to getName, but the string is the emulator name plus 
+    its version (and anything else that might be printed together 
+    with the emulator name)
+    Returns the length of the string before truncation.
 
-- "NF_VERSION"
-    long getVersion(void)
-      returns the version of the native feature framework, hex encoded
-      (upper word = major number, lower word = minor number). This document
-      describes native features version 1.0 (hex encoding 0x00010000).
+"NF_VERSION"
+  sub-ID 0 - user allowed
+  long getVersion(void);
+    returns the version of the native feature framework, hex encoded
+    (upper word = major number, lower word = minor number). This document
+    describes native features version 1.0 (hex encoding 0x00010000).
 
-- "NF_STDERR"
-  sub-id 0:
-    unsigned long output(const char *string);
-      emits a null-terminated string of printable ASCII chars on a
-      particular output stream, intended for use to display debug 
-      messages. Returns the number of chars printed. Characters
-      not among the set of ASCII chars 9 (horizontal tabulation '\t'), 
-      10, 13, (both meaning '\n' newline), 32-126 will have 
-      implementation defined representations.
+"NF_STDERR"
+  sub-ID 0 - user allowed
+  unsigned long output(const char *string);
+    emit a null-terminated string of printable ASCII chars on a
+    particular output stream, intended for use to display debug 
+    messages. Returns the number of chars printed. Characters
+    not among the set of ASCII chars 9 (horizontal tabulation '\t'), 
+    10, 13, (both meaning '\n' newline), 32-126 will have 
+    implementation defined representations.
+
+"NF_SHUTDOWN"
+  sub-id 0 - supervisor mode only
+  void shutdown(void);
+    immediately terminate the execution of the emulator, with no 
+    user interaction.
 
 
 Error cases
@@ -343,11 +355,12 @@ is, exactly the same memory than that seen by the CPU).
 This does not prevent special features to have special
 behaviour.
 
-If the feature was asked to access memory that
-does not exist, or to write to ROM, then the feature should
-directly provoke a bus error. The exact address used in the
-bus error stack frame can be any address within the range
-of addresses that cause the problem.
+If the feature was asked to access memory that does not exist, or whose
+access is not allowed by the current MMU policy, or to write to ROM, 
+then the feature should directly provoke a bus error. The exact address 
+used in the bus error stack frame can be any address within the range
+of offending addresses.
+
 
 TODO: remove the need for reporting the offending address?
 DISCUSSION:
@@ -386,26 +399,24 @@ on the 68k side, by calls to the required subroutines.
 
 Appendix A - TODO list
 
-- sample implementation for some features
-
 - add a paragraph encouraging feature designers to think!
 
 - add a paragraph encouraging native features using interrupts
   to be as independent from other features as possible, to
   avoid deadlock
 
-- also for direct call it could help to add a binding in
-  appendix B.
+- rework appendix B completely.
 
 
 
 Appendix B - implementation interface
 
-see file nf.h
+see file nf.h (to be rewritten following experience gained)
+
 
 Appendix C - sample implementation
 
-see attached source files.
+(to be rewritten following experience gained)
 
 
 Appendix D - Contributors
@@ -413,8 +424,9 @@ Appendix D - Contributors
 Thanks to all who did contribute to this document, including:
 
 Milan Jurik 
-Petr Stehlik (AKA joy)
-Martin Doering
+Petr Stehlik
+Martin Döring
+Johan Klockars
 ...
 
 TODO: complete this list.
@@ -490,3 +502,6 @@ Appendix G - modifications to this document
 
 2002-10-29
 - a note about valid m68k physical memory added
+
+2003-06-03
+- NF_SHUTDOWN added
