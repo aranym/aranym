@@ -93,7 +93,7 @@ static uint32 lastTicks;
 #define USE_GETTICKS 1		// undefine this if your ARAnyM time goes slower
 
 #ifdef USE_TIMERS
-SDL_TimerID my_timer_id;
+SDL_TimerID my_timer_id = 0;
 #endif
 
 uint32 InterruptFlags = 0;
@@ -408,6 +408,7 @@ bool InitAll(void)
 		panicbug("SDL initialization failed.");
 		return false;
 	}
+	atexit(SDL_Quit);
 
 	// check video output device and if it's a framebuffer
 	// then enforce full screen
@@ -417,9 +418,6 @@ bool InitAll(void)
 	if ( strstr( driverName, "fb" ) )		// fullscreen on framebuffer
 		bx_options.video.fullscreen = true;
 
-	// Be sure that the atexit function do not double any cleanup already done
-	// thus I changed the SDL_Quit to ExitAll & removed the ExitAll from QuitEmulator
-	atexit(ExitAll);
 
 	// For InterruptFlag controling
 	InterruptFlagLock = SDL_CreateMutex();
@@ -490,7 +488,10 @@ void ExitAll(void)
 {
 	// Exit Time Manager
 #if USE_TIMERS
-	SDL_RemoveTimer(my_timer_id);
+	if (my_timer_id) {
+		SDL_RemoveTimer(my_timer_id);
+		my_timer_id = 0;
+	}
 #endif
 
 #if ENABLE_MON
@@ -503,13 +504,14 @@ void ExitAll(void)
 #endif
 
 	SDL_VideoQuit();
-
-	SDL_Quit();
 }
 
 
 /*
  * $Log$
+ * Revision 1.69  2002/06/07 20:58:06  joy
+ * heart beat added
+ *
  * Revision 1.68  2002/05/14 19:09:50  milan
  * Better structure of vm_alloc, not own OS dependent includes
  * Some debug outputs added for JIT compiler
