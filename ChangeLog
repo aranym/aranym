@@ -1,3 +1,7 @@
+2002/02/25 - milan
+- fp_extended, fp_single, fp_double -> fpu_extended, fpu_single, fpu_double
+
+
 2002/02/25 - joy
 - web updated (Ctirad wrote new About)
 - simplified most of the presentation.xlst but it's still not good enough.
