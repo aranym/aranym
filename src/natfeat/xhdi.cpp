@@ -209,14 +209,15 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 			sector.part[3].siz = 0;
 
 			memcpy(hostbuf, &sector, sizeof(sector));
+
+			count--;
+			hostbuf+=XHDI_BLOCK_SIZE;
+			if (count == 0) {
+				return E_OK;
+			}
 		}
 		// correct the offset and count to the partition
 		recno--;
-		count--;
-		hostbuf+=XHDI_BLOCK_SIZE;
-		if (count == 0) {
-			return E_OK;
-		}
 	}
 
 	int size = XHDI_BLOCK_SIZE*count;
