@@ -95,7 +95,7 @@ private:
 	int flags;
 	int timerCounter;
 	int vr;
-	enum FLAGS {F_ACIA=(1<<6),F_TIMERC=(1<<5)};
+	enum FLAGS {F_SDMA=(1<<7),F_ACIA=(1<<6),F_TIMERC=(1<<5)};
 
 public:
 	MFP(memptr addr, uint32 size);
