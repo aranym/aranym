@@ -1,4 +1,12 @@
-2001/11/1 - STanda
+2001/11/01 - joy
+- mouse behaviour much improved. Automatic grab is configurable now. You can
+  ungrab the mouse by Alt+Ctrl+Esc and grab it back by left mouse click.
+
+- new command line option "--save" will save the config file with actual
+  values.
+
+
+2001/11/01 - STanda
 - fVDI: The 16,24 and 32bit modes works now.
 
 
