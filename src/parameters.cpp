@@ -331,29 +331,33 @@ BX_DISK_CONFIG(diskd);
 static void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap, bool readonly, const char *model_name)
 {
   // Autodetect ???
-  if (cylinders == -1)
+  if (cylinders == -1) {
     if ((cylinders = get_geometry(dev_path, geoCylinders)) == -1) {
       fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
       exit(-1);
     }
+  }
 
-  if (heads == -1)
+  if (heads == -1) {
     if ((heads = get_geometry(dev_path, geoHeads)) == -1) {
       fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
       exit(-1);
     }
+  }
 
-  if (spt == -1)
+  if (spt == -1) {
     if ((spt = get_geometry(dev_path, geoSpt)) == -1) {
       fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
       exit(-1);
     }
+  }
 
-  if (byteswap == -1)
+  if (byteswap == -1) {
     if ((byteswap = get_geometry(dev_path, geoByteswap)) == -1) {
       fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
       exit(-1);
     }
+  }
 
 	bx_atadevice_options_t *disk;
 	switch(number) {
@@ -427,33 +431,36 @@ void presave_disk()
 }
 
 /*************************************************************************/
+#define HOSTFS_ENTRY(c,n) \
+	{ c, Path_Tag, &bx_options.aranymfs[n].configPath, sizeof(bx_options.aranymfs[n].configPath), 0}
+
 struct Config_Tag arafs_conf[]={
-	{ "A", Path_Tag, bx_options.aranymfs[0].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "B", Path_Tag, bx_options.aranymfs[1].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "C", Path_Tag, bx_options.aranymfs[2].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "D", Path_Tag, bx_options.aranymfs[3].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "E", Path_Tag, bx_options.aranymfs[4].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "F", Path_Tag, bx_options.aranymfs[5].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "G", Path_Tag, bx_options.aranymfs[6].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "H", Path_Tag, bx_options.aranymfs[7].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "I", Path_Tag, bx_options.aranymfs[8].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "J", Path_Tag, bx_options.aranymfs[9].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "K", Path_Tag, bx_options.aranymfs[10].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "L", Path_Tag, bx_options.aranymfs[11].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "M", Path_Tag, bx_options.aranymfs[12].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "N", Path_Tag, bx_options.aranymfs[13].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "O", Path_Tag, bx_options.aranymfs[14].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "P", Path_Tag, bx_options.aranymfs[15].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "Q", Path_Tag, bx_options.aranymfs[16].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "R", Path_Tag, bx_options.aranymfs[17].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "S", Path_Tag, bx_options.aranymfs[18].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "T", Path_Tag, bx_options.aranymfs[19].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "U", Path_Tag, bx_options.aranymfs[20].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "V", Path_Tag, bx_options.aranymfs[21].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "W", Path_Tag, bx_options.aranymfs[22].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "X", Path_Tag, bx_options.aranymfs[23].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "Y", Path_Tag, bx_options.aranymfs[24].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
-	{ "Z", Path_Tag, bx_options.aranymfs[25].configPath, sizeof(bx_options.aranymfs[0].configPath), 0},
+	HOSTFS_ENTRY("A", 0),
+	HOSTFS_ENTRY("B", 1),
+	HOSTFS_ENTRY("C", 2),
+	HOSTFS_ENTRY("D", 3),
+	HOSTFS_ENTRY("E", 4),
+	HOSTFS_ENTRY("F", 5),
+	HOSTFS_ENTRY("G", 6),
+	HOSTFS_ENTRY("H", 7),
+	HOSTFS_ENTRY("I", 8),
+	HOSTFS_ENTRY("J", 9),
+	HOSTFS_ENTRY("K", 10),
+	HOSTFS_ENTRY("L", 11),
+	HOSTFS_ENTRY("M", 12),
+	HOSTFS_ENTRY("N", 13),
+	HOSTFS_ENTRY("O", 14),
+	HOSTFS_ENTRY("P", 15),
+	HOSTFS_ENTRY("Q", 16),
+	HOSTFS_ENTRY("R", 17),
+	HOSTFS_ENTRY("S", 18),
+	HOSTFS_ENTRY("T", 19),
+	HOSTFS_ENTRY("U", 20),
+	HOSTFS_ENTRY("V", 21),
+	HOSTFS_ENTRY("W", 22),
+	HOSTFS_ENTRY("X", 23),
+	HOSTFS_ENTRY("Y", 24),
+	HOSTFS_ENTRY("Z", 25),
 	{ NULL , Error_Tag, NULL, 0, 0}
 };
 
@@ -743,7 +750,7 @@ void postload_hotkeys() {
 void presave_hotkeys() {
 	// convert from pair of ints to string
 	for(uint i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
-		sprintf(hotkeys_rel[i].string, "%d:%d", hotkeys_rel[i].keysym->sym, hotkeys_rel[i].keysym->mod);
+		snprintf(hotkeys_rel[i].string, sizeof(hotkeys_rel[i].string), "%d:%d", hotkeys_rel[i].keysym->sym, hotkeys_rel[i].keysym->mod);
 	}
 }
 
@@ -1152,12 +1159,7 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, disk6_configs, "[DISK6]", true);
 	process_config(f, rcfile, disk7_configs, "[DISK7]", true);
 
-	if (process_config(f, rcfile, arafs_conf, "[HOSTFS]", true) == 0) {
-		// fallback to obsolete [ARANYMFS]
-		fprintf(stderr, "[HOSTFS] section in config file not found.\n"
-						"falling back to obsolete [ARANYMFS]\n");
-		process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
-	}
+	process_config(f, rcfile, arafs_conf, "[HOSTFS]", true);
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
 	process_config(f, rcfile, ethernet_conf, "[ETH0]", true);
 	process_config(f, rcfile, lilo_conf, "[LILO]", true);
@@ -1202,7 +1204,6 @@ bool saveSettings(const char *fs)
 	update_config(fs, disk6_configs, "[DISK6]");
 	update_config(fs, disk7_configs, "[DISK7]");
 
-	/// update_config(fs, arafs_conf, "[ARANYMFS]");
 	update_config(fs, arafs_conf, "[HOSTFS]");
 	update_config(fs, opengl_conf, "[OPENGL]");
 	update_config(fs, ethernet_conf, "[ETH0]");
