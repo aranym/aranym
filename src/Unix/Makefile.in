@@ -213,6 +213,8 @@ depend dep:
 	mv Makefile.new Makefile
 	tail +2 Makefile.wrk | sed 's/\/..\/uae_cpu\/fpu\//\//' > Makefile.new
 	mv Makefile.new Makefile.wrk
+	sed 's/\/linux\//\//' < Makefile.wrk > Makefile.new
+	mv Makefile.new Makefile.wrk
 	sed 's/\/..\/uae_cpu\//\//' < Makefile.wrk > Makefile.new
 	mv Makefile.new Makefile.wrk
 	sed 's/\/..\//\//' < Makefile.wrk >> Makefile
