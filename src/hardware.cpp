@@ -146,7 +146,9 @@ uae_u16 HWget_w (uaecptr addr) {
 
 uae_u8 HWget_b (uaecptr addr) {
 	D(bug("HWget_b %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
-	return handleRead(addr);
+	uint8 result = handleRead(addr);
+	D(bug("Above HWget_b returned %d ($%x)", result, result));
+	return result;
 }
 
 void HWput_l (uaecptr addr, uae_u32 l) {
@@ -179,6 +181,9 @@ void HWput_b (uaecptr addr, uae_u8 b) {
 
 /*
  * $Log$
+ * Revision 1.42  2002/07/24 18:34:18  joy
+ * parameter size fixed
+ *
  * Revision 1.41  2002/07/21 15:22:57  milan
  * mon readded
  *
