@@ -1514,7 +1514,10 @@ if ( quantumsMax == 0)
       {
       if ( (value & 0xa0) != 0xa0 ) // 1x1xxxxx
         D(bug("IO write f00019 (%02x): not 1x1xxxxxb", (unsigned) value));
-      Bit32u drvsel = BX_HD_THIS channels[channel].drive_select = (value >> 4) & 0x01;
+      BX_HD_THIS channels[channel].drive_select = (value >> 4) & 0x01;
+#if DEBUG
+      Bit32u drvsel = (value >> 4) & 0x01;
+#endif
       WRITE_HEAD_NO(channel,value & 0xf);
       if (BX_SELECTED_CONTROLLER(channel).lba_mode == 0 && ((value >> 6) & 1) == 1)
         D(bug("enabling LBA mode"));
@@ -2088,7 +2091,7 @@ bx_hard_drive_c::calculate_logical_address(Bit8u channel, off_t *sector)
 		  (BX_SELECTED_CONTROLLER(channel).sector_no - 1);
 
       if (logical_sector >=
-	  (BX_SELECTED_DRIVE(channel).hard_drive->cylinders * BX_SELECTED_DRIVE(channel).hard_drive->heads * BX_SELECTED_DRIVE(channel).hard_drive->sectors)) {
+	  (off_t)(BX_SELECTED_DRIVE(channel).hard_drive->cylinders * BX_SELECTED_DRIVE(channel).hard_drive->heads * BX_SELECTED_DRIVE(channel).hard_drive->sectors)) {
             bug("calc_log_addr: out of bounds");
 	    return false;
       }
