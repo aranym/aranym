@@ -92,10 +92,23 @@ void Start680x0(void)
 /*
  *  Trigger interrupt
  */
-
+/*
 void TriggerInterrupt(void)
 {
 	regs.spcflags |= SPCFLAG_INT;
+}
+*/
+
+const int VBL = 0x777;	// vymyslena hodnota, kruty hack
+void TriggerVBL(void)
+{
+	InterruptFlags = VBL;
+	regs.spcflags |= SPCFLAG_DOINT;
+}
+
+void TriggerMFP(void)
+{
+	regs.spcflags |= SPCFLAG_MFPINT;
 }
 
 void TriggerNMI(void)
@@ -110,7 +123,7 @@ void TriggerNMI(void)
 
 int intlev(void)
 {
-	return InterruptFlags ? 1 : 0;
+	return (InterruptFlags == VBL) ? 4 : 0;
 }
 
 
