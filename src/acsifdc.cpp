@@ -51,8 +51,6 @@ void ACSIFDC::handleWrite(uaecptr addr, uae_u8 value) {
 		case 0x0b: DMAaddr = (DMAaddr & 0xff00ff) | (value << 8); break;
 		case 0x0d: DMAaddr = (DMAaddr & 0xffff00) | value; break;
 	}
-	if (addr >= 9)
-		fprintf(stderr, "ACSIFDC: DMA = %06x\n", DMAaddr);
 }
 
 uae_u8 ACSIFDC::LOAD_B_ff8604(void)
@@ -241,12 +239,4 @@ void ACSIFDC::STORE_B_ff8607(uae_u8 vv)
 	fprintf(stderr,"DMA mode <- %04x\n",dma_mode);
 #endif
 	return;
-#if BOOTSECTOR
-	if ((vv&0xff) == 0x88 && DMAdiskctl == 1)
-	{
-		UL x = (LM_UB(MEM(0xff8609))<<16)|(LM_UB(MEM(0xff860b))<<8)
-				|LM_UB(MEM(0xff860d));
-		bcopy(bootsec, MEM(x), 512);
-	}
-#endif
 }
