@@ -159,6 +159,7 @@ void preset_video() {
   bx_options.video.direct_truecolor = false;
 #endif
   bx_options.video.autozoom = false;
+  bx_options.video.autozoomint = false;
 }
 
 void postload_video() {
