@@ -26,15 +26,15 @@
 #include <fcntl.h>				// for O_RDWR
 #include <sys/stat.h>			// for stat
 #include <unistd.h>				// for close
+#include "parameters.h"
 #include "ata.h"
-//#include "parameters.h"
 
 extern Bit32u showPC(void);	// for debugging only
 extern uint32 HWget_b(Bit32u addr);
 extern void HWput_b(Bit32u addr, uint32 b);
 
 //////////////////////////////
-bx_options_t bx_options;
+extern bx_options_t bx_options;
 bx_debug_t bx_dbg;
 #define DEBUGDISK	false
 //////////////////////////////
@@ -96,26 +96,7 @@ bx_hard_drive_c::~bx_hard_drive_c(void)
 
 void bx_hard_drive_c::init( /*bx_devices_c *d, bx_cmos_c *cmos */ )
 {
-	// init options and debug first
-	bx_options.diskc.present = 1;
-	bx_options.diskc.byteswap = false;
-	bx_options.diskc.cylinders = 2100;
-	bx_options.diskc.heads = 16;
-	bx_options.diskc.spt = 63;
-	strcpy(bx_options.diskc.path, "/home/joy/aranym/src/Unix/diskImage");
-
-	bx_options.diskd.present = 0;
-	bx_options.diskd.byteswap = false;
-	bx_options.diskd.cylinders = 2100;
-	bx_options.diskd.heads = 16;
-	bx_options.diskd.spt = 63;
-	strcpy(bx_options.diskd.path, "/dose/falcon.dsk");
-
-	bx_options.newHardDriveSupport = 1;
-	bx_options.cdromd.present = 0;
-
 	bx_dbg.disk = DEBUGDISK;
-	// end of init options and debug
 
 	// BX_HD_THIS devices = d;
 
