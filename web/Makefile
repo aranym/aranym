@@ -1,4 +1,4 @@
-# Unix makefile for ARAnyM's WWW
+# GNU makefile for ARAnyM's WWW
 
 ## System specific configuration
 

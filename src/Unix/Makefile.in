@@ -181,7 +181,8 @@ devdist: mrproper
 	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz aranym
 
 dist: distclean
-	cd ../../web/ && make
+	cd ../../web/build/ && ./saxonserver &
+	cd ../../web/ && $(MAKE)
 	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=aranym/web/build/saxon.jar --exclude=autogen.sh --exclude=CVS aranym
 
 depend dep:

@@ -9,7 +9,7 @@ dnl Options.
 AC_ARG_ENABLE(debug,
 [  --enable-debug=which    specify which debugger to use [default=uae]],
 [ case "$enableval" in
-    default)  WHICH_DEBUG="uae";;
+    default)  WHICH_DEBUG="ndebug";;
         uae)  WHICH_DEBUG="uae";;
      ndebug)  WHICH_DEBUG="ndebug";;
      gdebug)  WHICH_DEBUG="gdebug";;
@@ -17,7 +17,7 @@ AC_ARG_ENABLE(debug,
 	  *)  AC_MSG_ERROR([--enable-debug takes only one of the following values: default, uae, ndebug, no]);;
   esac
 ],
-[WHICH_DEBUG="uae"
+[WHICH_DEBUG="ndebug"
 ])
 AC_ARG_WITH(mon,             [  --with-mon              use mon as debugger [default=no]], [WANT_MON=$withval], [WANT_MON=no])
 
@@ -646,6 +646,7 @@ LIBS="$LIBS $SDL_LIBS"
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 
 dnl Generate Makefile.
+AC_SUBST(SET_MAKE)
 AC_SUBST(DEFINES)
 AC_SUBST(SYSSRCS)
 AC_SUBST(CPUINCLUDES)
