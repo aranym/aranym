@@ -67,7 +67,7 @@ uae_u8 IKBD::getData() {
 	}
 }
 
-void IKBD::ikbd_send(int value)
+void IKBD::send(int value)
 {
 	int pos;
 	uae_u8 x;
@@ -83,7 +83,7 @@ void IKBD::ikbd_send(int value)
 	/* set Interrupt Request */
 	status |= 0x81;
 	/* signal ACIA interrupt */
-	MakeMFPIRQ(6);
+	mfp.IRQ(6);
 }
 
 void IKBD::setData(uae_u8 value) {
