@@ -1,0 +1,186 @@
+
+call68k.txt - calling 68k code from native side.
+
+Proposal:
+
+the 68k code calls a native feature f1.
+f1 needs to call some 68k-side routine r1.
+As it is troublesome to return from r1 inside f1 (would 
+require some heavy setjmp/longjmp magic, and would not work
+if a context change occurs in the 68k-side in between), a
+native function f2 is called when r1 is done. f2 can in turn
+call another routine r2, giving the control back to the native 
+side by returning in function f3, ... or restore the 68k
+stack and return to continues the initial 68k code.
+
+To enable this, f1 must record enough information in memory 
+to be used by f2 later, especially if routine r1, or a routine
+r11 called by r1 itself calls function f1.
+
+The detailed proposal is:
+
+f1 creates a context, that is, allocates memory to hold:
+(public visibility)
+- the native address of function f2,
+(private visibility)
+- the saved 68k SP and PC,
+- any needed context information, to be shared within the 
+  "session" between f1 and f2.
+
+the actual structure is:
+
+  struct return_info {
+    void (*func)();  /* the native address of function f2 */
+    ... /* private data shared between f1 and f2 */
+  };
+
+f1 encapsulates this context in a token; the token is then 
+pushed on the stack as a piece of 68k code calling a native
+feature nf_return with this token as parameter. the code is:
+  
+  2f3c aaaa aaaa    move.l #token_value, -(sp)
+  2f3c bbbb bbbb    move.l #nf_return_id, -(sp)
+  7301              dc.w   nf_call
+
+where nf_return_id is the ID of the following utility native
+function:
+
+  /* retrieves the struct return_info held in the token,
+   * and calls member func of this structure using a pointer
+   * to this structure as parameter
+   */
+  void nf_return(long token)
+  {
+    struct return_info *info = nf_from_token(token);
+    nf_free_token(token);
+    info->func(info);
+  }
+
+f1 then pushes parameters to routine r1 on the stack, and
+finally pushes the addresss of the piece of code. At his point 
+the stack contains:
+
+     |  ...
+     |_ stack when calling f1
+     |
+  ..>|_ 14 bytes, piece of code
+  :  |
+  :  |_ arguments to r1, if any
+  :..|
+     |_ address of the start of the piece of code. 
+
+f1 then sets the pc to the 68k address of r1, and returns 
+(goes back to the CPU core, which then starts to execute
+routine r1)
+
+The stack is setup so that a simple rts in r1 will eventually 
+call native function f2.
+
+f2 then goes on doing the job of the native feature. Eventually
+it returns to the calling 68k code by setting back 68k SP and PC
+to their values saved by f1.
+
+
+details
+-------
+
+from the implementation point of view in f1, the call can be done
+like this:
+
+  struct f1_context {
+    void (*func)();
+    nf_addr_t sp, pc;
+    /* ... */
+  }
+  
+  extern nf_addr_t r2;
+  
+  void f1(nf_addr_t addr)
+  {
+    struct f1_context *context;
+    ...
+    
+    context = malloc(sizeof(*context));
+    if(context == NULL) {
+      nf_error("memory");
+      ... /* no need to call f2, fail directly */
+    }
+    context->func = f2;
+    context->pc = nf_get_pc();
+    context->sp = nf_get_sp();
+    ... /* fill in other context fields */
+    nf_call_68k_begin(context);
+    ... /* push args to routine r2 */
+    nf_call_68k_end(r2);
+  }
+  
+  void f2(struct f1_context *context)
+  {
+    ... /* do something with the value of d0 and the context */
+ 
+    /* restore sp and pc */
+    nf_set_pc(context->pc);
+    nf_set_sp(context->sp);
+    /* frees the the context */
+    free(context);
+    /* optionnally, returns a value */
+    nf_set_d0l(...);
+  }
+
+Note: in this scheme, the utility functions
+nf_call_68k_begin and nf_call_68k_end take care of 
+implementing this calling mechanism (including the potential
+need for cache control due to modified code on the stack).
+
+
+variants
+--------
+
+instead of calling an ordinary nf_return native function, a
+dedicated illegal opcode can be specified for this.
+
+the token creation and deallocation can be handled by utility
+functions provided in the native feature services. 
+
+To simplify implementations, a never-failing memory allocation 
+routine can be supplied by the NF emulator-specific glue.
+
+The utility functions can be made simpler to use if they take
+care of setting/restoring PC and SP themselves. the structure
+would then be
+
+  struct return_info {
+    void (*func)(void *);
+    nf_addr_t sp, pc;
+    void *context_ptr;
+  }
+
+with context_ptr being handled by the functions f1, f2? ... 
+entirely, and struct return_info being handled only by the
+utility functions.
+
+
+discussion
+----------
+
+This scheme supports various combinations with respect to the
+control flow and the way functions and routines call each other:
+- recursion is supported (because each context is allocated by f1
+  for unique use by f2)
+- it is possible to support multi-tasking in the 68k side: it
+  does not matter if a context change occurs during execution of
+  routine r1; whenever r1 resumes and eventually returns, the
+  context implicitely pushed on the stack (via a token) contains
+  enough information for f2 to finish the job.
+- 68k routines called by native code need not be programmed in any
+  special way. they end with rts like any normal 68k code.
+
+  
+points to consider:
+- this token allocation needs, for simplicity, a non-failing
+  memory allocation. 
+- this scheme generates code dynamically on the stack, and this
+  might cause performance loss if the only way to allow this 
+  is to invalidate the whole instruction cache.
+  
+

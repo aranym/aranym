@@ -1,0 +1,70 @@
+Feature groups
+
+when a bunch of native features are closely tied together, such
+as the group of functions to manage an external filesystem, it
+makes no sense to create individual feature names for those.
+In this case, a 'feature group' should be created. the ID for
+this group should correspond to a function 'returning' the
+IDs of all individual functions of the group.
+
+Options to 'return' a list of IDs include
+- the group function fills a structure in memory whose address
+  was passed to it. this structure contains the individual
+  IDs of individual features
+- same, but the structure only contains a basic set of IDs,
+  and some other functions are used to get extensions
+
+TODO: make it informational. put this in a discussion about the uses.
+
+
+
+Calling 68k code from native side.
+
+[section removed to the attic until it is better understood]
+
+there are two different ways by which 68k code is called
+by the native side. alarm callback (after an event has occurred)
+and direct call.
+
+Direct call
+
+It is possible to design for specific native features an
+interface by which 68k code will be executed as a routine
+by the native feature. This document makes no recommendation.
+
+A solution can be, that the native feature will remember its
+internal state (that is, in the state 'calling outside'), will
+create, on the stack, code to call another feature with, as
+parameter, enough information, then will push on the stack,
+as return address, the address of this little code on the
+stack, and finally jump to execute the 68k code. this way
+an rts from the 68k code will eventually return to the
+native world.
+
+An example of the need for direct calls could be, to
+allocate memory in 68k address space, to be used by native
+features. Direct calls are needed in this case, because
+only the 68k Operating System can manage the memory.
+
+Callback on events
+
+A native feature can signal that some event has occurred
+using an interrupt mechanism. The native feature must first
+have been initialised from the 68k side, and be provided a
+vector number. When the native feature wants to signal
+an event, a interrupt is asked on IPL 6 on this vector
+number.
+The interrupt may not happen if the native feature has not
+been inited from the 68k side; the interrupt is not taken
+if interrupts are disabled at the time; it is unspecified
+whether this interrupt has higher or lower priority over
+other interrupts of same level 6 (either from the MFP or
+from other native features); the interrupt will happen
+in any case (there is no way to clear it).
+In this case it is mandatory that the feature provide a way
+to disable itself.
+
+for native features to effectively use interrupts, an
+interrupt manager has to be developped, to insert between
+the native feature code and the emulator internals. the
+API for this interrupt manager might look like:

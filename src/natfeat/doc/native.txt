@@ -1,0 +1,351 @@
+
+Native features proposal
+
+Laurent Vogel, 8 december 2001
+
+TODO: replace 'feature' by 'function'. 
+
+Introduction
+
+This document describes a general technique to allow interaction between
+software running on a m68k processor inside an emulator, and native
+software.
+
+Definitions
+
+In this document, the emulator is some software running on a native 
+platform, to run software in a 68k platform. This document specifies
+a general technique by which 68k software can interact with special
+native software to achieve special effects not allowed directly on
+the 68k platform.
+
+These special effects are obtained by calling native 'features'. 
+A feature is 
+- a C function
+- a value ???
+in the rest of this document the term 'function' ???
+
+
+To this end two interfaces are specified
+- the 68k interface, describing special illegal opcodes by which the 68k
+  code can call the native feature services.
+- the implementation interface, describing how native features can be
+  implemented in a partable way independently of the specific emulator.
+- the 'id' is a meaning-less number used to denote a particular
+'feature'
+
+The following diagram illustrates this.
+
+
+                    native side                              68k side
+   ______________________/\______________________           ____/\____
+  /                                              \         /          \
+            implementation                           68k 
+              interface                           interface
+   __________  (nf.h)   _________________________           __________
+  |          |         |          | g |          |         |          |
+  | feature  |<------->| native   | l | CPU and  |<------->| 68k code |
+  | implemen-|         | feature  | u | memory   |         |__________|
+  | tation   |         | services | e | core     |
+  |__________|         |__________|___|__________|
+                                  
+                                  \______  ______/
+                                         \/
+                                    specific to  
+                                    each particular  
+                                    emulator
+
+
+Scope and contents
+
+The Native feature proposal comprises of mandatory specifications, optional
+specifications, and optional implementations.
+
+The mandatory specifications is the 68k interface, i.e. the behaviour 
+that can be observed from 68k side regardless of how it is implemented in
+the native side.
+
+The optional specifications is the implementation interface, i.e. the 
+services provided by the emulator to implementations of particular native 
+features. THis specification is optional because it is perfectly valid to
+implement native features without using this interface (for example for 
+native features very tied to particular emulators).
+
+Optional implementations are
+- a supplied implementation of the generic native feature services;
+- supplied implementation of some particular native features;
+- supplied glue to particular emulators
+These are optional, because it is perfectly valid to provide the same
+functionality using a different implementation.
+
+
+Limitations
+
+This document does not support emulators emulating a multi-processor 
+68k machine (several 68k processors running in parallel).
+
+The implementation interface, and the proposed implementation of native
+feature services do not fully support multi-thread native environments
+in which the 68k memory can be modified during the execution of one
+native feature call.
+
+Some of these limitations might be solved by changing the implementation of
+native feature services. 
+
+
+Principle
+
+This document describes
+- a small number of 'opcodes' (m68k illegal instructions) used to manage
+  native features
+- a 'basic set' of native features that any compliant emulator must
+  provide
+- guidance for defining other native features.
+
+Compliant emulator
+
+Any emulator has the choice of providing the full interface described in
+this document, or nothing.
+If the emulator does not provide the interface, then all illegal
+opcodes defined below must provoke the normal m68k behaviour (i.e. raise
+an illegal exception).
+If the emulator provides one illegal opcode defined below, then it must
+also provide the complete set of opcodes, and the features of the
+'basic set'. Such an emulator is called a compliant emulator.
+In the rest of the document, 'emulator' means 'compliant emulator'.
+
+C calling convention
+
+Native functions do the job of C functions, using the C calling convention
+described here:
+- values are represented in memory as big endian (the byte with
+  lowest address is the most significant byte).
+- 'char' are 8bit values, either signed or unsigned (unspecified);
+- 'short' are 16bit values
+- 'int', 'long' and pointers are 32 bit values
+- the return type of a function is either void (no return type),
+  or a 32bit value. Functions cannot return 8bit or 16bit values,
+  and functions cannot return structs.
+- parameters are passed on the stack. the last parameter is pushed
+  first, then any parameters until the first parameter which is pushed
+  last. when pushing parameters, if the size of the parameter is less 
+  than 32 bit, the parameter is converted to a 32bit value by padding
+  to the left with unspecified bytes.
+- struct members are set in memory in growing addresses, with padding
+  using the smallest number of unspecified bytes needed so that any member 
+  not of type char, signed char, unsigned char, or an array of these 
+  three types, has an even address.
+
+string encoding are not specified in this document. Generally speaking
+native functions should document this. When a string is to be displayed
+to the user (as opposed as written in a file) tt can be assumed that 
+chars in the range 0x20 to 0x7e are ASCII (ISO-646).
+
+TODO : find a solution for this?
+
+Native functions should not alter registers other than d0. 
+(exception: registers SP and PC may be temporarily modified when 
+calling 68k code directly, but they should be restored at the end, 
+see 'direct call' below)
+
+Naming
+
+Feature names beginning with 'NF_' or 'nf_' are reserved.
+
+Opcodes
+
+opcodes are taken in the range 0x73nn (illegal moveq instructions).
+The following opcodes are defined:
+
+  mnemonic nf_getid (in ARAnyM debugger it's NATFEAT_ID)
+  value 0x7300
+  prototype  long nf_get_id(long ret_addr, const char * feature_name);
+  if the feature name passed as argument is an implemented
+  native feature, then return its ID in register D0, else
+  return zero.
+
+  mnemonic nf_call (in ARAnyM debugger it's NATFEAT_CALL)
+  value 0x7301
+  prototype   long nf_call(long ret_addr, long id, ...);
+  calls the feature defined by the id, passing the rest of the
+  stack arguments as parameters. returns in D0 the value returned by
+  the feature. If the feature returns a 32bit value, then D0 
+  contains this value; else the value in D0 is unspecified (? (joy))
+
+These opcodes are defined both for supervisor mode (Interrupt or
+Master modes on 680x0) and normal user mode. Each NatFeat has a bool
+flag "isSupervisorModeRequired" and if set to true then calling such
+opcode from user mode will result in a priviledge exception.
+The stack used for passing arguments will be the current stack
+(SSP/ISP for Supervisor/Interrupt mode, MSP for Master mode).
+
+DISCUSSION:
+  Allowing also user mode makes it harder to implement functions that
+  check for bus error.
+
+
+Feature documentation
+
+feature definitions shall include a text containing
+- the feature name
+- date, version, status ??
+- the features that are required for this one to work
+- a description of the way the feature works, including
+  a description of return values and error cases
+
+Optionally the feature text can include an implementation,
+that is, source code running inside the emulator. In this case
+it is recommended that it be given with a licence allowing it to
+be included in most emulators, including closed-source ones
+(licence like LGPL); also it is best if such sample implementation
+is written in C, using a the implementation interface specified in
+this document.
+
+
+- "FN_NAME" :
+    void getName(char *buffer, unsigned long size)
+      subID = 0
+      fills buffer with emulator name with max 'size' bytes
+
+    void getFullName(char *buffer, unsigned long size)
+      subID = 1
+      fills buffer with emulator name plus version (or anything else
+      that might be printed together with the emu name)
+
+- "FN_VERSION"
+    long getVersion(void)
+      returns hex encoded version - upper word = major number, lower
+      word = minor number. Example: version 1.12 = $0001000C
+
+
+
+Error cases
+
+features should be developed in a way that allow them to be
+called from multitasking host systems. To achieve this, there
+should not be a single 'errno' feature collecting the status
+of multiple distinct features, but rather each feature or
+feature group should provide an independent way of reporting
+errors.
+
+In any case calling a feature with incorrect parameters should
+not crash the emulator.
+
+
+Memory
+
+On emulators implementing MMU and where physical addresses
+differ from logical addresses, the memory that will be
+accessed by native features uses the logical addresses (that
+is, exactly the same memory than that seen by the CPU).
+This does not prevent special features to have special
+behaviour.
+
+If the feature was asked to access memory that
+does not exist, or to write to ROM, then the feature should
+directly provoke a bus error. The exact address used in the
+bus error stack frame can be any address within the range
+of addresses that cause the problem.
+
+TODO: remove the need for reporting the offending address?
+DISCUSSION:
+  almost no emulator keeps track of the offending address,
+  and even less 68k software cares for it. relaxing the need for
+  reporting an offending address would simplify native feature 
+  implementations
+
+for instance, if a bzero native feature is asked to clear
+from memory 0x2000 to 0x3fff, and only memory 0 to 0x2fff
+is writeable, then
+- there should be a bus error,
+- the value of memory from 0x2000 to 0x2fff is 'unspecified'
+- the address reported in the bus error can be any address
+  between 0x3000 and 0x3fff
+
+for features running on a 68000-only emulator, asking for
+unaligned memory accesses will NOT provoke address errors.
+However, such aligned memory accesses may be much slower.
+
+DISCUSSION:
+  We don't want to impose the emulator to implement unaligned 
+  memory access; however we don't want to impose to the native 
+  function implementation to check whether they are running
+  on 68000-only emulators.
+
+
+Calling 68k code from native side.
+
+[section removed to the attic until it is better understood]
+
+
+
+Appendix A - TODO list
+
+- character set of feature names restricted to 7bit printable ASCII,
+  or even C-like identifiers.
+- OS support for this. the _EMU cookie? ...
+- sample implementation for some features
+- add notes explaining the rationale, and the use of opcodes. 
+- define precisely the 'basic set'.
+
+- add a paragraph encouraging feature designers to think!
+
+- add a paragraph encouraging native features using interrupts
+  to be as independent from other features as possible, to
+  avoid deadlock
+
+- perhaps for direct call it could be best to add a fifth
+  opcode to do 'native rts', instead of handcrafting the
+  return code on the stack. this opcode would pop a 'context
+  identifier' from the stack. Problem is, how does the
+  'context identifier' pushed by the first native feature
+  indicate to the 'native rts' opcode how to call another
+  native feature to get the result ?
+
+- also for direct call it could help to add a binding in
+  appendix B.
+
+
+
+Appendix B - implementation interface
+
+see file nf.h
+
+Appendix C - sample implementation
+
+see attached source files.
+
+
+Appendix D - Contributors
+
+Thanks to all who did contribute to this document, including:
+
+Milan Jurik 
+Petr Stehlik (AKA joy)
+Martin Doering
+...
+
+TODO: complete this list.
+
+
+Appendix E - modifications to this document
+
+
+2001-12-08 
+  'native feature proposal' posted to aranym mailing list.
+2001-12-09
+  erratum about an interrupt manager (not integrated in this document)
+2001-12
+  discussions on the aranym mailing list; moving from 16 to 32bit ints,
+  question about string charsets, replaced 'host side' by '68k side'.
+2002-03-02
+  rewriting of the document, put some things in attic.txt,
+  rewrote the beginning of the document, added an overall diagram.
+  put the implementation interface in a separate nf.h
+
+2002-08-11 (joy)
+  corrected the actual nf calls according to what is implemented in ARAnyM.
+  NatFeats are usermode callable now.
+  Value-only features removed.
+  Basic set of features replaced with list of current basic NF implemented
+  in ARAnyM.
