@@ -1,13 +1,19 @@
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
-- check the JIT - when enabled XControl on FreeMiNT crashes on my machine.
-  Or is it 68040 copyback issue under FreeMiNT 1.16alpha?
+- continue fixing the JIT (we got a demo app already)
+- update DOC with the following items:
+  + hdparm returns logical geometry but we need the physical one from
+    /proc/ide/hdx/geometry
+  + all the messing with disk drivers in order to skip the SCSI initialization
+    is not needed anymore thanks to Patrice
+
 
 Roadmap:
 --------
 
-0.8.0 should bring long-awaited networking support and next generation
-of host filesystem access.
+0.8.1 should bring long-awaited networking support, bugfixed next generation
+  of host filesystem access and primitive SCSI emulation (just enough
+  to forget those boring problems with SCSI initialization in disk drivers)
 
 0.9.0 should come with direct partition access and free XHDI disk driver
 
@@ -20,6 +26,8 @@ Some hot ideas (before they get forgotten)
 
 Note that the name before a TODO item doesn't mean the item is assigned to
 that particular programmer but rather who is the author of the idea :-)
+
+- joy: runtime configuration of keyboard input method (symtable/scan)
 
 - joy: hostfs.xfs sometime crash here - isn't there a memory leak on host?
 
@@ -48,6 +56,8 @@ that particular programmer but rather who is the author of the idea :-)
 
 - joy: correct copyright headers in ALL files (do it together with 
        the panicbug renaming above)
+
+- joy: remove the RCS keywords that only make file comparing a nightmare
 
 - joy: Clipboard sharing between host and atari. Some URLs for inspiration:
   http://www.idata.sk/~robo/mpcb/
