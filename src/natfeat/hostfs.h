@@ -26,10 +26,7 @@ class HostFs : public NF_Base
 	// the maximum pathname length allowed
 	// note: this would be nice to be rewriten using
 	//       the std::string to become unlimited
-	//
-	// after long debugging night joy found out that
-	// gcc 3.2 cannot handle 2048 chars on stack.
-	static const int MAXPATHNAMELEN = 255;		// was 2048
+	static const int MAXPATHNAMELEN = 2048;
 
 	struct XfsFsFile {
 		XfsFsFile *parent;
@@ -192,6 +189,11 @@ class HostFs : public NF_Base
 
 /*
  * $Log$
+ * Revision 1.9  2003/06/26 21:27:14  joy
+ * xfs_creat()/xfs_dev_open() fixed (gunzip problem)
+ * xfs_native_init() fixed to handle the FreeMiNT requirements correctly
+ * general cleanup
+ *
  * Revision 1.6.2.4  2003/04/15 19:09:26  standa
  * xfs_creat()/xfs_dev_open() fixed (gunzip problem).
  * xfs_native_init() fixed to handle the FreeMiNT requirements correctly.

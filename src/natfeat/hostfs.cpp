@@ -895,10 +895,7 @@ void HostFs::convertPathA2F( ExtDrive *drv, char* fpathName, char* pathName, con
 	strcpy( fpathName, basePath );
 	ffileName = fpathName + strlen( fpathName );
 
-	if (pathName[1]==':') {
-		n = pathName+2;
-	} else
-		n = pathName;
+	n = pathName;
 
 	strd2upath( ffileName, n );
 	if ( ! stat(fpathName, &statBuf) )
@@ -1922,7 +1919,11 @@ HostFs::ExtDrive::ExtDrive( HostFs::ExtDrive *old ) {
 int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, bool halfSensitive,
 							   memptr filesys, memptr filesys_devdrv )
 {
-	char fmountpoint[MAXPATHNAMELEN];
+	// Some magic to workaround a bug in GCC 3.2 on Cygwin.
+	// This allows to set MAXPATHNAMELEN back to something higher than 255
+	char temp[MAXPATHNAMELEN];
+	char *fmountpoint=temp;
+
 	a2fstrcpy( fmountpoint, mountpoint );
 	int dnum = -1;
 
@@ -1996,6 +1997,11 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.15  2003/06/26 21:27:14  joy
+ * xfs_creat()/xfs_dev_open() fixed (gunzip problem)
+ * xfs_native_init() fixed to handle the FreeMiNT requirements correctly
+ * general cleanup
+ *
  * Revision 1.11.2.10  2003/04/15 19:09:26  standa
  * xfs_creat()/xfs_dev_open() fixed (gunzip problem).
  * xfs_native_init() fixed to handle the FreeMiNT requirements correctly.

@@ -144,6 +144,7 @@ Matti Levänen
 
 Xavier Joubert
 - for Windows/cygwin improvements
+- HostFS fixes
 
 Stefan Kuhr
 - for Mac OS X port improvements
