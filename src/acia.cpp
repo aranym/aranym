@@ -8,28 +8,94 @@
 
 static const int HW = 0xfffc00;
 
-ACIA::ACIA(bool value) {
-	midi = value;
-
-	status = 0x02;
-	mode = 0x00;
-	rxdata = 0x00;
-	txdata = 0x00;
+ACIA::ACIA(uaecptr addr) {
+	baseaddr = addr;
 }
 
-uae_u8 ACIA::getStatus() {
-	return status;
+uae_u8 ACIA::handleRead(uaecptr addr) {
+	addr -= baseaddr;
+	if (addr == 0)
+		return getStatus();
+	else if (addr == 2)
+		return getData();
+	else
+		return 0;
 }
 
-void ACIA::setMode(uae_u8 value) {
+void ACIA::handleWrite(uaecptr addr, uae_u8 value) {
+	addr -= baseaddr;
+	if (addr == 0)
+		setMode(value);
+	else if (addr == 2)
+		setData(value);
 }
 
-uae_u8 ACIA::getData() {
-	return 0xa2;	/* taken from Stonx:ikbd.c */
+/*******************************/
+IKBD::IKBD() : ACIA(0xfffc00) {
+	status = 0x0e;
+	ikbd_inbuf = ikbd_bufpos = 0;
+};
+
+uae_u8 IKBD::getStatus() {
+	return status | 0x02;
 }
 
-void ACIA::setData(uae_u8 value) {
+void IKBD::setMode(uae_u8 value) {
+}
+
+uae_u8 IKBD::getData() {
+	int pos = (ikbd_bufpos - ikbd_inbuf)&MAXBUF;
+	if (ikbd_inbuf-- > 0)
+	{
+		if (ikbd_inbuf ==0) {
+			/* Clear GPIP/I4 */
+			status = 0;
+			uae_u8 x = get_byte(0xfffa01);
+			x |= 0x10;
+			put_byte(0xfffa01,x);
+		}
+		fprintf(stderr, "IKBD read code %2x (%d left)\n", buffer[pos], ikbd_inbuf);
+		return buffer[pos];
+	}
+	else {
+		ikbd_inbuf = 0;
+		return 0xa2;
+	}
+}
+
+void IKBD::ikbd_send(int value)
+{
+	int pos;
+	uae_u8 x;
+	value &= 0xff;
+	if (ikbd_inbuf <= MAXBUF)
+	{
+		buffer[ikbd_bufpos] = value;
+		ikbd_bufpos++;
+		ikbd_bufpos &= MAXBUF;
+		ikbd_inbuf++;
+	}
+//	if ((LM_UB(MEM(0xfffa09)) & 0x40) == 0) return;
+	fprintf(stderr, "IKBD sends %2x (->buffer pos %d)\n", value, ikbd_bufpos-1);
+	/* set Interrupt Request */
+	status |= 0x81;
+	/* signal ACIA interrupt */
+	MakeMFPIRQ(6);
+#if 0
+	flags |= F_ACIA;
+	/* IPRB/I4 is not set at all */
+	/* GPIP/I4 */
+	x = LM_UB(MEM(0xfffa01));
+	x &= ~0x10;
+	SM_UB(MEM(0xfffa01),x);
+	/* ISRB/I4 */
+	x = LM_UB(MEM(0xfffa11));
+	x |= 0x40;
+	SM_UB(MEM(0xfffa11),x);
+#endif
+}
+
+void IKBD::setData(uae_u8 value) {
 	/* send data */
 	fprintf(stderr, "IKBD data = %02x\n", value);
-	status |= 2;
 }
