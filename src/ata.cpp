@@ -2679,8 +2679,13 @@ bx_hard_drive_c::raise_interrupt(Bit8u channel)
       }
 }
 
+#if DEBUG
   void
 bx_hard_drive_c::command_aborted(Bit8u channel, unsigned value)
+#else
+  void
+bx_hard_drive_c::command_aborted(Bit8u channel, unsigned)
+#endif
 {
   D(bug("aborting on command 0x%02x {%s}", value, BX_SELECTED_TYPE_STRING(channel)));
   BX_SELECTED_CONTROLLER(channel).current_command = 0;
