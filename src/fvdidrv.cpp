@@ -47,43 +47,43 @@ extern VIDEL videl;
 }
 
 #define get_dtriplet( address, dataFlag ) \
-    ( (get_byte((address),dataFlag) << 16) | (get_byte((address)+1,dataFlag) << 8) | get_byte((address)+2,dataFlag) )
+	( (get_byte((address),dataFlag) << 16) | (get_byte((address)+1,dataFlag) << 8) | get_byte((address)+2,dataFlag) )
 
 #else
 
 #define put_dtriplet( address, data ) \
 { \
-    put_byte((address)  , (data) & 0xff ); \
+	put_byte((address)  , (data) & 0xff ); \
 	put_byte((address)+1, ((data) >> 8) & 0xff ); \
 	put_byte((address)+2, ((data) >> 16) & 0xff ); \
 }
 
 #define get_dtriplet( address, dataFlag ) \
-    ( (get_byte((address)+2,dataFlag) << 16) | (get_byte((address)+1,dataFlag) << 8) | get_byte((address),dataFlag) )
+	( (get_byte((address)+2,dataFlag) << 16) | (get_byte((address)+1,dataFlag) << 8) | get_byte((address),dataFlag) )
 
-#endif
+#endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
 
 
 
 void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 {
-    MFDB dst;
-    MFDB src;
+	MFDB dst;
+	MFDB src;
 
-    // fix the stack (the fncode was pushed onto the stack)
-    r->a[7] += 4;
+	// fix the stack (the fncode was pushed onto the stack)
+	r->a[7] += 4;
 
 	videl.setRendering( false );
 
-    switch (fncode) {
+	switch (fncode) {
 		// NEEDED functions
 
 		case 1: // getPixel:
 			/*
 			 * read_pixel
-			 * In:	a1	VDI struct, source MFDB
-			 *	d1	x
-			 *	d2	y
+			 * In:  a1  VDI struct, source MFDB
+			 *  d1  x
+			 *  d2  y
 			 */
 			D(bug("fVDI: %s %d,%d", "readPixel", (uint16)r->d[1], (uint16)r->d[2] ));
 			r->d[0] = getPixel( (void*)r->a[1],
@@ -94,11 +94,11 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 		case 2: // putPixel:
 			/*
 			 * write_pixel
-			 * In:	a1	VDI struct, destination MFDB
-			 *	d0	colour
-			 *	d1	x or table address
-			 *	d2	y or table length (high) and type (low)
-			 * XXX:	?
+			 * In:  a1  VDI struct, destination MFDB
+			 *  d0  colour
+			 *  d1  x or table address
+			 *  d2  y or table length (high) and type (low)
+			 * XXX: ?
 			 */
 			D(bug("fVDI: %s %d,%d (%x)", "writePixel", (uint16)r->d[1], (uint16)r->d[2], (uint32)r->d[0] ));
 			r->d[0] = putPixel( (void*)r->a[1],
@@ -110,9 +110,9 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 		case 3: // drawMouse:
 			/*
 			 * mouse_draw
-			 * In:	a1	Pointer to Workstation struct
-			 *	d0/d1	x,y
-			 *  d2	0 - move shown  1 - move hidden  2 - hide  3 - show  >3 - change shape (pointer to mouse struct)
+			 * In:  a1  Pointer to Workstation struct
+			 *  d0/d1   x,y
+			 *  d2  0 - move shown  1 - move hidden  2 - hide  3 - show  >3 - change shape (pointer to mouse struct)
 			 */
 			r->d[0] = drawMouse( (void*)r->a[1],
 								 (int16)r->d[0] /* x */, (int16)r->d[1] /* y */, r->d[2] /* mode/Mouse* */ );
@@ -123,12 +123,12 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 		case 4: // expandArea:
 			/*
 			 * expand_area
-			 * In:	a1	VDI struct, destination MFDB, VDI struct, source MFDB
-			 *	d0	height and width to move (high and low word)
-			 *	d1-d2	source coordinates
-			 *	d3-d4	destination coordinates
-			 *	d6	background and foreground colour
-			 *	d7	logic operation
+			 * In:  a1  VDI struct, destination MFDB, VDI struct, source MFDB
+			 *  d0  height and width to move (high and low word)
+			 *  d1-d2   source coordinates
+			 *  d3-d4   destination coordinates
+			 *  d6  background and foreground colour
+			 *  d7  logic operation
 			 */
 
 			if (r->a[1] & 1)
@@ -147,12 +147,12 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 		case 5: // fillArea
 			/*
 			 * fill_area
-			 * In:	a1	VDI struct
-			 *	d0	height and width to fill (high and low word)
-			 *	d1	x or table address
-			 *	d2	y or table length (high) and type (low)
-			 *	d3	pattern address
-			 *	d4	colour
+			 * In:  a1  VDI struct
+			 *  d0  height and width to fill (high and low word)
+			 *  d1  x or table address
+			 *  d2  y or table length (high) and type (low)
+			 *  d3  pattern address
+			 *  d4  colour
 			 */
 			if (r->a[1] & 1)
 				r->d[0] = (uint32)-1; // we can do only the basic single mode
@@ -166,18 +166,18 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 									r->d[1] & 0xffff /* x */, r->d[2] & 0xffff /* y */,
 									r->d[0] & 0xffff /* w */, r->d[0] >> 16 /* h */,
 									pattern /* pattern */,
-									r->d[4] & 0xffff /* fgColor */,	r->d[4] >> 16 /* bgColor */ );
+									r->d[4] & 0xffff /* fgColor */, r->d[4] >> 16 /* bgColor */ );
 			}
 			break;
 
 		case 6: // blitArea
 			/*
 			 * blit_area
-			 * In:	a1	VDI struct, destination MFDB, VDI struct, source MFDB
-			 *	d0	height and width to move (high and low word)
-			 *	d1-d2	source coordinates
-			 *	d3-d4	destination coordinates
-			 *	d7	logic operation
+			 * In:  a1  VDI struct, destination MFDB, VDI struct, source MFDB
+			 *  d0  height and width to move (high and low word)
+			 *  d1-d2   source coordinates
+			 *  d3-d4   destination coordinates
+			 *  d7  logic operation
 			 */
 			r->d[0] = blitArea( (void*)get_long( (uint32)r->a[1], true),
 								(MFDB*)get_long( (uint32)r->a[1] + 12, true ) /* src MFDB* */,
@@ -191,14 +191,14 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 		case 7: // drawLine:
 			/*
 			 * draw_line
-			 * In:	a1	VDI struct
-			 *	d0	logic operation
-			 *	d1	x1 or table address
-			 *	d2	y1 or table length (high) and type (low)
-			 *	d3	x2 or move point count
-			 *	d4	y2 or move index address
-			 *	d5	pattern
-			 *	d6	colour
+			 * In:  a1  VDI struct
+			 *  d0  logic operation
+			 *  d1  x1 or table address
+			 *  d2  y1 or table length (high) and type (low)
+			 *  d3  x2 or move point count
+			 *  d4  y2 or move index address
+			 *  d5  pattern
+			 *  d6  colour
 			 */
 			if (r->a[1] & 1)
 				r->d[0] = (uint32)-1; // we can do only one line at once
@@ -207,7 +207,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 									r->d[1] /* x1 */, r->d[2] /* y1 */,
 									r->d[3] /* x2 */, r->d[4] /* y2 */,
 									r->d[5] & 0xffff /* pattern */,
-									r->d[6] & 0xffff /* fgColor */,	r->d[6] >> 16 /* bgColor */,
+									r->d[6] & 0xffff /* fgColor */, r->d[6] >> 16 /* bgColor */,
 									r->d[0] & 0xffff /* logical operation */ );
 			}
 			break;
@@ -223,14 +223,14 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			break;
 
 		case 20: // debug_aranym:
-			D(bug("fVDI: DEBUG %d", get_long( (uint32)r->a[7] + 4, true ) ));
+			bug("fVDI: DEBUG %d", get_long( (uint32)r->a[7] + 4, true ) );
 			break;
 
-		// not implemented functions
+			// not implemented functions
 		default:
 			D(bug("fVDI: Unknown %d", fncode));
 			r->d[0] = 1;
-    }
+	}
 
 #ifdef DEBUG_DRAW_PALETTE
 	uint16 ptrn[16] = {
@@ -248,29 +248,29 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 
 FVDIDriver::MFDB* FVDIDriver::fetchMFDB( FVDIDriver::MFDB* mfdb, uint32 pmfdb )
 {
-    if ( pmfdb != 0 ) {
+	if ( pmfdb != 0 ) {
 		mfdb->address = get_long( pmfdb, true );
 		return mfdb;
-    }
+	}
 
-    return NULL;
+	return NULL;
 }
 
 
 /**
  * Set a coloured pixel.
-
+ *
  * c_write_pixel(Virtual *vwk, MFDB *mfdb, long x, long y, long colour)
  * write_pixel
- * In:	a1	VDI struct, destination MFDB
- *	d0	colour
- *	d1	x or table address
- *	d2	y or table length (high) and type (low)
- * XXX:	?
+ * In:   a1  VDI struct, destination MFDB
+ *   d0  colour
+ *   d1  x or table address
+ *   d2  y or table length (high) and type (low)
+ * XXX: ?
  *
  * This function has two modes:
- *  - single pixel
- *  - table based multi pixel (special mode 0 (low word of 'y'))
+ *   - single pixel
+ *   - table based multi pixel (special mode 0 (low word of 'y'))
  *
  * Note that a1 does not point to the VDI struct, but to a place in memory
  * where the VDI struct pointer can be found. Four bytes beyond that address
@@ -283,27 +283,27 @@ FVDIDriver::MFDB* FVDIDriver::fetchMFDB( FVDIDriver::MFDB* mfdb, uint32 pmfdb )
  **/
 uint32 FVDIDriver::putPixel(void *vwk, MFDB *dst, int32 x, int32 y, uint32 color)
 {
-    if ((uint32)vwk & 1)
+	if ((uint32)vwk & 1)
 		return 0;
 
-    if (!dst || !dst->address || dst->address==get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true )) {
+	if (!dst || !dst->address || dst->address==get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true )) {
 		// To screen
 		if (!hostScreen.renderBegin())
 			return 1;
 		hostScreen.putPixel( x, y, color );
 		hostScreen.renderEnd();
 		hostScreen.update( (int16)x, (int16)y, 1, 1, true );
-    } else {
+	} else {
 		D(bug("fVDI: %s %d,%d (%d)", "write_pixel no screen", (uint16)x, (uint16)y, (uint32)color));
 		//    uint32 offset;
 
 		/* WRONG CODE!!!
-		offset = (dst->wdwidth * 2 * dst->bitplanes) * y + x * sizeof(uint16);
-		put_word( (uint32)dst->address + offset, color );
+		   offset = (dst->wdwidth * 2 * dst->bitplanes) * y + x * sizeof(uint16);
+		   put_word( (uint32)dst->address + offset, color );
 		*/
-    }
+	}
 
-    return 1;
+	return 1;
 }
 
 /**
@@ -311,9 +311,9 @@ uint32 FVDIDriver::putPixel(void *vwk, MFDB *dst, int32 x, int32 y, uint32 color
  *
  * c_read_pixel(Virtual *vwk, MFDB *mfdb, long x, long y)
  * read_pixel
- * In:	a1	VDI struct, source MFDB
- *	d1	x
- *	d2	y
+ * In:  a1  VDI struct, source MFDB
+ *  d1  x
+ *  d2  y
  *
  * Only one mode here.
  *
@@ -325,24 +325,24 @@ uint32 FVDIDriver::putPixel(void *vwk, MFDB *dst, int32 x, int32 y, uint32 color
  **/
 uint32 FVDIDriver::getPixel(void *vwk, MFDB *src, int32 x, int32 y)
 {
-    uint32 color = 0;
+	uint32 color = 0;
 
-    if (!src || !src->address || src->address==get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true )) {
+	if (!src || !src->address || src->address==get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true )) {
 		if (!hostScreen.renderBegin())
 			return 0;
 		color = hostScreen.getPixel( x, y );
 		hostScreen.renderEnd();
-    } else {
+	} else {
 		D(bug("fVDI: %s %d,%d (%d)", "read_pixel no screen", (uint16)x, (uint16)y, (uint32)color));
 		//    uint32 offset;
 
 		/* WRONG CODE!!!
-		offset = (src->wdwidth * 2 * src->bitplanes) * y + x * sizeof(uint16);
-		color = get_word((uint32)src->address + offset, true);
+		   offset = (src->wdwidth * 2 * src->bitplanes) * y + x * sizeof(uint16);
+		   color = get_word((uint32)src->address + offset, true);
 		*/
-    }
+	}
 
-    return color;
+	return color;
 }
 
 
@@ -350,8 +350,10 @@ uint32 FVDIDriver::getPixel(void *vwk, MFDB *src, int32 x, int32 y)
  * Set palette colour (hooked into the c_set_colors driver function by STanda)
  *
  * set_color_hook
- *	4(a7)	paletteIndex
- *	8(a7)   5+6+5 FalconTC RGB color value
+ *  4(a7)   paletteIndex
+ *  8(a7)   red component byte value
+ *  10(a7)  green component byte value
+ *  12(a7)  blue component byte value
  **/
 void FVDIDriver::setColor( uint32 paletteIndex, uint32 red, uint32 green, uint32 blue )
 {
@@ -369,9 +371,9 @@ void FVDIDriver::setColor( uint32 paletteIndex, uint32 red, uint32 green, uint32
 									((blue * ((1L << 8) - 1) + 500L) / 1000) );
 
 	/*
-								(uint8)((color >> 8) & 0xf8),
-								(uint8)((color >> 3) & 0xfc),
-								(uint8)(color & 0x1f) << 3);
+	  (uint8)((color >> 8) & 0xf8),
+	  (uint8)((color >> 3) & 0xfc),
+	  (uint8)(color & 0x1f) << 3);
 	*/
 }
 
@@ -402,9 +404,9 @@ void FVDIDriver::setResolution( int32 width, int32 height, int32 depth, int32 fr
  *
  * c_mouse_draw(Workstation *wk, long x, long y, Mouse *mouse)
  * mouse_draw
- * In:	a1	Pointer to Workstation struct
- *	d0/d1	x,y
- *  d2	0 - move shown  1 - move hidden  2 - hide  3 - show  >3 - change shape (pointer to mouse struct)
+ * In:  a1  Pointer to Workstation struct
+ *  d0/d1   x,y
+ *  d2  0 - move shown  1 - move hidden  2 - hide  3 - show  >3 - change shape (pointer to mouse struct)
  *
  * Unlike all the other functions, this does not receive a pointer to a VDI
  * struct, but rather one to the screen's workstation struct. This is
@@ -442,34 +444,6 @@ void FVDIDriver::setResolution( int32 width, int32 height, int32 depth, int32 fr
  * } Mouse;
  **/
 extern "C" {
-#if 0
-	static void flushVideo( uint32 videoRam ) {
-		if (!hostScreen.renderBegin())
-			return;
-
-		for( uint16 i=0; i<hostScreen.getHeight(); i++ )
-			for( uint16 j=0; j<hostScreen.getWidth(); j++ ) {
-				uint16 dataWord = hostScreen.getPixel(j,i);
-				//dataWord = (dataWord >> 8) | ((dataWord & 0xff) << 8); // byte swap
-				put_word( videoRam + j*2 + i*hostScreen.getWidth()*2 , dataWord );
-			}
-		hostScreen.renderEnd();
-		//videl.renderScreenNoFlag();
-	}
-	static void unflushVideo( uint32 videoRam ) {
-		if (!hostScreen.renderBegin())
-			return;
-
-		for( uint16 i=0; i<hostScreen.getHeight(); i++ )
-			for( uint16 j=0; j<hostScreen.getWidth(); j++ ) {
-				uint16 dataWord = get_word( videoRam + j*2 + i*hostScreen.getWidth()*2 , true );
-				//dataWord = (dataWord >> 8) | ((dataWord & 0xff) << 8); // byte swap
-				hostScreen.putPixel(j,i,dataWord);
-			}
-		hostScreen.renderEnd();
-		//videl.renderScreenNoFlag();
-	}
-#endif
 #if DEBUG > 0
 	static void getBinary( uint16 data, char *buffer ) {
 		for( uint16 i=0; i<=15; i++ ) {
@@ -588,7 +562,7 @@ uint32 FVDIDriver::drawMouse( void *wrk, int16 x, int16 y, uint32 mode )
 
 	if ( x < 0 ) {
 		w = 16 + x;
-	    x = 0;
+		x = 0;
 	} else {
 		w = 16;
 		if ( (int16)x + 16 >= (int32)hostScreen.getWidth() )
@@ -596,7 +570,7 @@ uint32 FVDIDriver::drawMouse( void *wrk, int16 x, int16 y, uint32 mode )
 	}
 	if ( y < 0 ) {
 		h = 16 + y;
-	    y = 0;
+		y = 0;
 	} else {
 		h = 16;
 		if ( (int16)y + 16 >= (int32)hostScreen.getHeight() )
@@ -629,12 +603,12 @@ uint32 FVDIDriver::drawMouse( void *wrk, int16 x, int16 y, uint32 mode )
  *                             MFDB *dst, long dst_x, long dst_y,
  *                             long w, long h, long operation, long colour)
  * expand_area
- * In:	a1	VDI struct, destination MFDB, VDI struct, source MFDB
- *	d0	height and width to move (high and low word)
- *	d1-d2	source coordinates
- *	d3-d4	destination coordinates
- *	d6	background and foreground colour
- *	d7	logic operation
+ * In:  a1  VDI struct, destination MFDB, VDI struct, source MFDB
+ *  d0  height and width to move (high and low word)
+ *  d1-d2   source coordinates
+ *  d3-d4   destination coordinates
+ *  d6  background and foreground colour
+ *  d7  logic operation
  *
  * Only one mode here.
  *
@@ -688,7 +662,7 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
 
 	fgColor = hostScreen.getPaletteColor( fgColor );
 	bgColor = hostScreen.getPaletteColor( bgColor );
-
+	
 	if ( dest != NULL && // no MFDB structure
 		 get_long( (uint32)dest, true ) != 0 && // mfdb->address == 0 => screen
 		 get_long( (uint32)dest, true ) != get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true ) ) {
@@ -847,12 +821,12 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
  * c_fill_area(Virtual *vwk, long x, long y, long w, long h,
  *                           short *pattern, long colour)
  * fill_area
- * In:	a1	VDI struct
- *	d0	height and width to fill (high and low word)
- *	d1	x or table address
- *	d2	y or table length (high) and type (low)
- *	d3	pattern address
- *	d4	colour
+ * In:  a1  VDI struct
+ *  d0  height and width to fill (high and low word)
+ *  d1  x or table address
+ *  d2  y or table length (high) and type (low)
+ *  d3  pattern address
+ *  d4  colour
  *
  * This function has two modes:
  * - single block to fill
@@ -868,11 +842,11 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
  **/
 uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint16 *pattern, uint32 fgColor, uint32 bgColor)
 {
-	D(bug("fVDI: %s %d,%d:%d,%d : %d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "fillArea", x, y, w, h, x+w-1, x+h-1, *pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
+	uint16 logOp = get_word( (uint32)vwk + VWK_MODE, true ); // Virtual *vwk->mode // fill logOp;
+	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "fillArea", logOp, x, y, w, h, x+w-1, x+h-1, *pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
 
 	fgColor = hostScreen.getPaletteColor( fgColor );
 	bgColor = hostScreen.getPaletteColor( bgColor );
-	uint16 logOp = get_word( (uint32)vwk + VWK_MODE, true ); // Virtual *vwk->mode // fill logOp;
 
 	if (!hostScreen.renderBegin())
 		return 1;
@@ -893,11 +867,11 @@ uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint1
  *                        MFDB *dst, long dst_x, long dst_y,
  *                        long w, long h, long operation)
  * blit_area
- * In:	a1	VDI struct, destination MFDB, VDI struct, source MFDB
- *	d0	height and width to move (high and low word)
- *	d1-d2	source coordinates
- *	d3-d4	destination coordinates
- *	d7	logic operation
+ * In:  a1  VDI struct, destination MFDB, VDI struct, source MFDB
+ *  d0  height and width to move (high and low word)
+ *  d1-d2   source coordinates
+ *  d3-d4   destination coordinates
+ *  d7  logic operation
  *
  * Only one mode here.
  *
@@ -911,9 +885,8 @@ uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint1
  * A return with 0 gives a fallback (normally pixel by pixel drawing by the
  * fVDI engine).
  **/
-
 #define applyBlitLogOperation( logicalOperation, destinationData, sourceData ) \
-    switch(logicalOperation) { \
+	switch(logicalOperation) { \
 		case 0: \
 			destinationData = 0; \
 			break; \
@@ -962,43 +935,55 @@ uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint1
 		case 15: \
 			destinationData = 0xffff; \
 			break; \
-    }
+	}
 
 
+extern "C" {
+static void chunkyToBitplane( uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8] )
+{
+	memset( bitplaneWords, 0, sizeof(bitplaneWords) ); // clear the color values for the 8 pixels (word length)
+
+	for (int l = 0; l < 16; l++) {
+		uint8 data = sdlPixelData[l]; // note: this is about 2000 dryhstones sppedup (the local variable)
+
+		bitplaneWords[0] <<= 1; bitplaneWords[0] |= (data >> 7) & 1;
+		bitplaneWords[1] <<= 1; bitplaneWords[1] |= (data >> 6) & 1;
+		bitplaneWords[2] <<= 1; bitplaneWords[2] |= (data >> 5) & 1;
+		bitplaneWords[3] <<= 1; bitplaneWords[3] |= (data >> 4) & 1;
+		bitplaneWords[4] <<= 1; bitplaneWords[4] |= (data >> 3) & 1;
+		bitplaneWords[5] <<= 1; bitplaneWords[5] |= (data >> 2) & 1;
+		bitplaneWords[6] <<= 1; bitplaneWords[6] |= (data >> 1) & 1;
+		bitplaneWords[7] <<= 1; bitplaneWords[7] |= (data >> 0) & 1;
+	}
+}
+}
 
 uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy, int32 dx, int32 dy, int32 w, int32 h,
 							uint32 logOp)
 {
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d", "blitArea", logOp, sx, sy, dx, dy, w, h ));
-	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest, get_long( (uint32)src, true ),get_long( (uint32)dest, true )));
+	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest, (src)?(get_long( (uint32)src, true )):0,(dest)?(get_long( (uint32)dest, true )):0));
 
 	uint32 screenMFDBAddr = get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS;
 	uint32 screenPlanes = (uint32)get_word( screenMFDBAddr + MFDB_BITPLANES, true );
 	uint32 videoRam = get_long( screenMFDBAddr, true );
 
-	#if DEBUG > 0
-		uint32 screenPitch = get_word( screenMFDBAddr + MFDB_WDWIDTH, true ) * screenPlanes << 1;
-	#endif
+	//uint32 screenPitch = get_word( screenMFDBAddr + MFDB_WDWIDTH, true ) * screenPlanes << 1;
 	D(bug("fVDI: screen args: address %x, pitch %d, planes %d", videoRam, screenPitch, screenPlanes));
 
 	bool toMemory = ( dest != NULL && get_long( (uint32)dest, true ) != 0 && get_long( (uint32)dest, true ) != videoRam );
-
 	if ( src != NULL && get_long( (uint32)src, true ) != 0 && get_long( (uint32)src, true ) != videoRam ) { // fromMemory
-
 		uint32 planes = get_word( (uint32)src + MFDB_BITPLANES, true ); // MFDB *src->bitplanes
 		uint32 pitch  = get_word( (uint32)src + MFDB_WDWIDTH, true ) * planes << 1; // MFDB *src->pitch
 		uint16 *data  = (uint16*)(get_long( (uint32)src, true ) + sy*pitch); // MFDB *src->address host OS address
+
 		D(bug("fVDI: blitArea M->: address %x, pitch %d, planes %d", data, pitch, planes));
 
 		if ( toMemory ) {
 			// the destPlanes is always the same?
+			planes = get_word( (uint32)dest + MFDB_BITPLANES, true ); // MFDB *dest->bitplanes
 			uint32 destPitch = get_word( (uint32)dest + MFDB_WDWIDTH, true ) * planes << 1; // MFDB *dest->pitch
 			uint32 destAddress = get_long( (uint32)dest, true );
-
-			if ( planes < 16 ) {
-				D(bug("fVDI: blitArea M->M: NOT TESTED bitplaneToCunky conversion"));
-				return 1;
-			}
 
 			D(bug("fVDI: blitArea M->M"));
 
@@ -1034,70 +1019,78 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 							put_long( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, destData );
 						}
 					break;
+
+				default:
+					if ( planes < 16 ) {
+						D(bug("fVDI: blitArea M->M: NOT TESTED bitplaneToCunky conversion"));
+					}
 			}
 			return 1;
 		}
 
+
+		D(bug("fVDI: blitArea M->S"));
+
 		if (!hostScreen.renderBegin())
 			return 1;
 
-		if ( planes < 16 ) {
-			uint8 color[16];
+		D(bug("fVDI: M->S: address %x, pitch %d, planes %d", data, pitch, planes));
 
-			/// FIXME !!!
-			D(bug("fVDI: blitArea M->S: NOT TESTED bitplaneToCunky conversion"));
+		uint32 srcData;
+		uint32 destData;
 
-			for( uint16 j=0; j<h; j++ ) {
-				uint32 wordIndex = j*pitch + ((sx>>3)&0xfffe);
-				hostScreen.bitplaneToChunky( &data[ wordIndex * planes ], planes, color );
-
-				for( uint16 i=sx; i<sx+w; i++ ) {
-					uint8 bitNo = i % 16;
-					if ( bitNo == 0 ) {
-						uint32 wordIndex = j*pitch + ((sx>>3)&0xfffe);
-						hostScreen.bitplaneToChunky( &data[ wordIndex * planes ], planes, color );
+		switch( planes ) {
+			case 16:
+				for( uint16 j=0; j<h; j++ )
+					for( uint16 i=sx; i<sx+w; i++ ) {
+						srcData = get_word((uint32)data + j*pitch + ((i*planes)>>3), true);
+						//uint16 destData = get_word( videoRam + ((dx+i-sx)<<1) + (dy+j)*screenPitch, true ); // shadow?
+						destData = hostScreen.getPixel( dx + i - sx, dy + j );
+						applyBlitLogOperation( logOp, destData, srcData );
+						//put_word( videoRam + ((dx+i-sx)<<1) + (dy+j)*screenPitch, destData ); // shadow?
+						hostScreen.putPixel( dx+i-sx, dy+j, destData );
 					}
+				break;
+			case 24:
+				for( uint16 j=0; j<h; j++ )
+					for( uint16 i=sx; i<sx+w; i++ ) {
+						srcData = get_dtriplet((uint32)data + j*pitch + ((i*planes)>>3), true);
+						destData = hostScreen.getPixel( dx + i - sx, dy + j );
+						applyBlitLogOperation( logOp, destData, srcData );
+						hostScreen.putPixel( dx+i-sx, dy+j, destData );
+					}
+				break;
+			case 32:
+				for( uint16 j=0; j<h; j++ )
+					for( uint16 i=sx; i<sx+w; i++ ) {
+						srcData = get_long((uint32)data + j*pitch + ((i*planes)>>3), true);
+						destData = hostScreen.getPixel( dx + i - sx, dy + j );
+						applyBlitLogOperation( logOp, destData, srcData );
+						hostScreen.putPixel( dx+i-sx, dy+j, destData );
+					}
+				break;
 
-					hostScreen.putPixel(dx + i - sx, dy + j, hostScreen.getPaletteColor( color[ bitNo ] ) );
+			default: // bitplane modes...
+				if ( planes < 16 ) {
+					uint8 color[16];
+
+					D(bug("fVDI: blitArea M->S: bitplaneToCunky conversion"));
+					data = (uint16*)get_real_address_direct((uint32)data); // FIXME: Hack! Should use the get_X() methods
+
+					for( uint16 j=0; j<h; j++ ) {
+						uint32 wordIndex = (j*pitch>>1) + (sx>>4)*planes;
+						hostScreen.bitplaneToChunky( &data[ wordIndex ], planes, color );
+
+						for( uint16 i=sx; i<sx+w; i++ ) {
+							uint8 bitNo = i & 0xf;
+							if ( bitNo == 0 ) {
+								uint32 wordIndex = (j*pitch>>1) + (i>>4)*planes;
+								hostScreen.bitplaneToChunky( &data[ wordIndex ], planes, color );
+							}
+							hostScreen.putPixel(dx+i-sx, dy+j, color[ bitNo ] );
+						}
+					}
 				}
-			}
-		} else {
-			D(bug("fVDI: blitArea M->S"));
-
-			uint32 srcData;
-			uint32 destData;
-
-			switch( planes ) {
-				case 16:
-					for( uint16 j=0; j<h; j++ )
-						for( uint16 i=sx; i<sx+w; i++ ) {
-							srcData = get_word((uint32)data + j*pitch + ((i*planes)>>3), true);
-							//uint16 destData = get_word( videoRam + ((dx+i-sx)<<1) + (dy+j)*screenPitch, true ); // shadow?
-							destData = hostScreen.getPixel( dx + i - sx, dy + j );
-							applyBlitLogOperation( logOp, destData, srcData );
-							//put_word( videoRam + ((dx+i-sx)<<1) + (dy+j)*screenPitch, destData ); // shadow?
-							hostScreen.putPixel( dx+i-sx, dy+j, destData );
-						}
-					break;
-				case 24:
-					for( uint16 j=0; j<h; j++ )
-						for( uint16 i=sx; i<sx+w; i++ ) {
-							srcData = get_dtriplet((uint32)data + j*pitch + ((i*planes)>>3), true);
-							destData = hostScreen.getPixel( dx + i - sx, dy + j );
-							applyBlitLogOperation( logOp, destData, srcData );
-							hostScreen.putPixel( dx+i-sx, dy+j, destData );
-						}
-					break;
-				case 32:
-					for( uint16 j=0; j<h; j++ )
-						for( uint16 i=sx; i<sx+w; i++ ) {
-							srcData = get_long((uint32)data + j*pitch + ((i*planes)>>3), true);
-							destData = hostScreen.getPixel( dx + i - sx, dy + j );
-							applyBlitLogOperation( logOp, destData, srcData );
-							hostScreen.putPixel( dx+i-sx, dy+j, destData );
-						}
-					break;
-			}
 		}
 
 		hostScreen.renderEnd();
@@ -1109,12 +1102,18 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 	if ( toMemory ) {
 		D(bug("fVDI: blitArea S->M"));
 
-		uint32 planes = screenPlanes;
+		if (!hostScreen.renderBegin())
+			return 1;
+
+		//uint32 planes = screenPlanes;
 		//uint32  pitch = screenPitch;
 		//uint16* data = (uint16*)videoRam + sy*pitch;
 
+		uint32 planes = get_word( (uint32)dest + MFDB_BITPLANES, true ); // MFDB *dest->bitplanes
 		uint32 destPitch = get_word( (uint32)dest + MFDB_WDWIDTH, true ) * planes << 1; // MFDB *dest->pitch
 		uint32 destAddress = get_long( (uint32)dest, true );
+
+		D(bug("fVDI: S->M: address %x, pitch %d, planes %d", destAddress, destPitch, planes));
 
 		uint32 srcData;
 		uint32 destData;
@@ -1149,22 +1148,51 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 						put_long( destAddress + ((dx+i-sx)<<2) + (dy+j)*destPitch, destData );
 					}
 				break;
+
 			default:
-				if ( planes < 16 )
-					D(bug("fVDI: blitArea ->M: bitplane conversion NOT IMPLEMENTED"));
+				if ( planes < 16 ) {
+					D(bug("fVDI: blitArea S->M: bitplane conversion"));
+
+					uint16 bitplanePixels[8];
+					uint32 pitch = hostScreen.getPitch();
+					uint8* data = (uint8*)hostScreen.getVideoramAddress() + sy*pitch;
+
+					for( int32 j=0; j<h; j++ ) {
+						uint32 pixelPosition = j*pitch + sx & ~0xf; // div 16
+						chunkyToBitplane( data + pixelPosition, planes, bitplanePixels );
+						for( uint16 d=0; d<planes; d++ )
+							put_word( destAddress + ((((dx>>4)*planes)+planes-d-1)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
+
+						for( uint16 i=sx; i<sx+w; i++ ) {
+							uint8 bitNo = i & 0xf;
+							if ( bitNo == 0 ) {
+								uint32 wordIndex = ((dx+i-sx)>>4)*planes;
+								uint32 pixelPosition = j*pitch + i & ~0xf; // div 16
+								chunkyToBitplane( data + pixelPosition, planes, bitplanePixels );
+								for( uint16 d=0; d<planes; d++ )
+									put_word( destAddress + ((wordIndex+planes-d-1)<<1) + (dy+j)*destPitch, bitplanePixels[d] );
+							}
+						}
+					}
+				}
 		}
 
+		hostScreen.renderEnd();
 		return 1;
 	}
 
 	D(bug("fVDI: %s ", "blitArea - S->S!" ));
 
 	// if (!hostScreen.renderBegin()) // the surface must _not_ be locked for blitArea (SDL_BlitSurface)
-	//		return 1;
+	//      return 1;
 
 	// FIXME: There are no logical operation implementation ATM
 	// for S->S blits... -> SDL does the whole thing at once
-	hostScreen.blitArea( sx, sy, dx, dy, w, h );
+	if ( logOp == 3 )
+		hostScreen.blitArea( sx, sy, dx, dy, w, h );
+	else
+		D(bug("fVDI: %s %d", "blitArea - S->S! mode NOT IMPLEMENTED!!!", logOp ));
+
 	hostScreen.update( sx, sy, w, h, true );
 	hostScreen.update( dx, dy, w, h, true );
 
@@ -1178,14 +1206,14 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
  * c_draw_line(Virtual *vwk, long x1, long y1, long x2, long y2,
  *                          long pattern, long colour)
  * draw_line
- * In:	a1	VDI struct
- *	d0	logic operation
- *	d1	x1 or table address
- *	d2	y1 or table length (high) and type (low)
- *	d3	x2 or move point count
- *	d4	y2 or move index address
- *	d5	pattern
- *	d6	colour
+ * In:  a1  VDI struct
+ *  d0  logic operation
+ *  d1  x1 or table address
+ *  d2  y1 or table length (high) and type (low)
+ *  d3  x2 or move point count
+ *  d4  y2 or move index address
+ *  d5  pattern
+ *  d6  colour
  *
  * This function has three modes:
  * - single line
@@ -1200,7 +1228,6 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
  * A negative return will break down the special modes into separate calls,
  * with no more fallback possible.
  **/
-
 
 
 /* --------- Clipping routines for box/line */
@@ -1218,21 +1245,21 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 
 
 extern "C" {
-static inline int clipEncode (int16 x, int16 y, int16 left, int16 top, int16 right, int16 bottom)
-{
-	int code = 0;
-	if (x < left) {
-		code |= CLIP_LEFT_EDGE;
-	} else if (x > right) {
-		code |= CLIP_RIGHT_EDGE;
+	static inline int clipEncode (int16 x, int16 y, int16 left, int16 top, int16 right, int16 bottom)
+	{
+		int code = 0;
+		if (x < left) {
+			code |= CLIP_LEFT_EDGE;
+		} else if (x > right) {
+			code |= CLIP_RIGHT_EDGE;
+		}
+		if (y < top) {
+			code |= CLIP_TOP_EDGE;
+		} else if (y > bottom) {
+			code |= CLIP_BOTTOM_EDGE;
+		}
+		return code;
 	}
-	if (y < top) {
-		code |= CLIP_TOP_EDGE;
-	} else if (y > bottom) {
-		code |= CLIP_BOTTOM_EDGE;
-	}
-	return code;
-}
 }
 
 static inline int clipLine(void *vwk, int16 *x1, int16 *y1, int16 *x2, int16 *y2)
@@ -1343,6 +1370,9 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.22  2001/10/31 23:17:38  standa
+ * fVDI driver update The 16,24 and 32bit mode should work.
+ *
  * Revision 1.21  2001/10/30 22:59:34  standa
  * The resolution change is now possible through the fVDI driver.
  *
@@ -1411,8 +1441,7 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
  *
  * Revision 1.4  2001/08/28 23:26:09  standa
  * The fVDI driver update.
- * VIDEL got the doRender flag with set
-ter setRendering().
+ * VIDEL got the doRender flag with setter setRendering().
  *       The host_colors_uptodate variable name was changed to hostColorsSync.
  * HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
  *       was created.
