@@ -34,7 +34,7 @@ static char dlgfilenames[16][36];
 /* The dialog data: */
 static SGOBJ fsdlg[] =
 {
-    { SGBOX, 0, 0, 0,0, 40,25, NULL },
+    { SGBOX, 0, 0, 0,0, 39,24, NULL },
     { SGTEXT, 0, 0, 13,1, 13,1, "Choose a file" },
     { SGTEXT, 0, 0, 1,2, 7,1, "Folder:" },
     { SGTEXT, 0, 0, 1,3, 38,1, dlgpath },

@@ -35,7 +35,7 @@ enum MAINDLG {
 
 SGOBJ maindlg[] =
 {
-  { SGBOX, 0, 0, 0,0, 40,25, NULL },
+  { SGBOX, 0, 0, 0,0, 39,24, NULL },
   { SGTEXT, 0, 0, 12,1, 16,1, "ARAnyM main menu" },
   { SGBUTTON, SG_EXIT, 0, 4,4, 14,1, "About" },
   { SGBUTTON, SG_EXIT, 0, 4,6, 14,1, "Disks" },
