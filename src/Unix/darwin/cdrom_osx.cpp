@@ -41,7 +41,7 @@
 // Scott Brumbaugh <scott@openosx.com>  Dec 5, 2001
 //
 
-#include "bochs.h"
+#include "emu_bochs.h"
 
 #define LOG_THIS 
 
