@@ -8,6 +8,14 @@
 	xdef		write_pixel
 	xdef		_read_pixel
 	xdef		read_pixel
+	xdef		_line_draw
+	xdef		line_draw
+	xdef		_expand_area
+	xdef		expand_area
+	xdef		_blit_area
+	xdef		blit_area
+	xdef		_fill_area
+	xdef		fill_area
 
 
 		
@@ -45,6 +53,27 @@ read_pixel:
 ;begin // STanda
 	FVDI_DISPATCH	1
 	rts
+
+_expand_area:
+expand_area:
+	FVDI_DISPATCH	4
+	rts
+
+_fill_area:
+fill_area:
+	FVDI_DISPATCH	5
+	rts
+
+_blit_area:
+blit_area:
+	FVDI_DISPATCH	6
+	rts
+
+_line_draw:
+line_draw:
+	FVDI_DISPATCH	7
+	rts
+
 ;end //STanda
 
 		
