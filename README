@@ -163,6 +163,8 @@ While the emulator is running, you can quit it by pressing Shift+Break.
 And if you started ARAnyM with the debugger option, you can enter
 the debugger by pressing Alt+Break.
 
+Press Alt+Ctrl+Esc keys to release the input focus.
+
 F11 is the Help key while F12 is the Undo key.
 
 PageUp/PageDown are mapped to Shift+ArrowUp/ArrowDown which is the
