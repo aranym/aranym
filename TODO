@@ -84,12 +84,8 @@ Things for 1.0 release:
       This would be usefull, not to need the C compiler for this, woudn't be?
     - .xfs filesystem modules for MagiC and MiNT.
 
-+ [50%] fVDI working (TOS+aranym drivers)
-    - add support for other than 16bit host color depth surfaces
-        - this requires quite large hacks with blitting and expanding
-          (only 2 bytes per pixel works now and moreover no shadow buffer is used
-          which probably will be needed in the future)
-    - reorganize the loop nesting (performance) in HostScreen::gfxXXX methods.
++ [80%] fVDI working (TOS+aranym drivers)
+    - add support for less than 16bit graphics
 
 - sound output using GSXB library
 
