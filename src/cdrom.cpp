@@ -137,7 +137,7 @@ int ReadCDSector(unsigned int hid, unsigned int tid, unsigned int lun, unsigned 
 		WaitForSingleObject(hEventSRB, 100000);
 	}
 	CloseHandle(hEventSRB);
-	return 0;
+	return (srb.SRB_TargStat == STATUS_GOOD);
 }
 
 int GetCDCapacity(unsigned int hid, unsigned int tid, unsigned int lun)
@@ -311,7 +311,9 @@ cdrom_interface::insert_cdrom(char *dev)
   // I just see if I can read a sector to verify that a
   // CD is in the drive and readable.
 #if (defined(WIN32) || defined(OS_cygwin))
-	if(!bUseASPI) {
+    if(bUseASPI) {
+      return ReadCDSector(hid, tid, lun, 0, buffer, BX_CD_FRAMESIZE);
+    } else {
       ReadFile(hFile, (void *) buffer, BX_CD_FRAMESIZE, (unsigned long *) &ret, NULL);
       if (ret < 0) {
          CloseHandle(hFile);

@@ -1,6 +1,11 @@
 2002/03/05 - milan
 - memptr for addressing in Atari memory out of uae_cpu
 
+- sync with Bochs CVS 2002/03/02 11:31:18 GMT
+  - ReadCDSector() (for win32 ASPI) returns 1 if target status is okay
+  - win32 ASPI version of insert_cdrom() checks media status using
+    ReadCDSector()
+
 
 2002/03/03 - Gwenole Beauchesne & milan
 - fpu_x86 debug mode corrected
