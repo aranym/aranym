@@ -26,8 +26,7 @@ enum {
 	XIF_GET_MAC,		/* (ethX, buffer, size), return MAC HW addr in buffer */
 	XIF_GET_IPHOST,		/* (ethX, buffer, size), return IP address of host */
 	XIF_GET_IPATARI,	/* (ethX, buffer, size), return IP address of atari */
-	XIF_GET_NETMASK,	/* (ethX, buffer, size), return IP netmask */
-	XIF_GET_MTU			/* (ethX), return MTU size in bytes in d0 */
+	XIF_GET_NETMASK		/* (ethX, buffer, size), return IP netmask */
 };
 
 #define ETH(a)	(nfEtherFsId + a)
