@@ -11,7 +11,7 @@
 #include "hostscreen.h"
 #include "parameters.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #include "gfxprimitives.h"
@@ -121,6 +121,10 @@ void  HostScreen::fillArea( int32 x1, int32 y1, int32 x2, int32 y2, uint16 *patt
 
 /*
  * $Log$
+ * Revision 1.5  2001/08/30 14:04:59  standa
+ * The fVDI driver. mouse_draw implemented. Partial pattern fill support.
+ * Still buggy.
+ *
  * Revision 1.4  2001/08/28 23:26:09  standa
  * The fVDI driver update.
  * VIDEL got the doRender flag with setter setRendering().
