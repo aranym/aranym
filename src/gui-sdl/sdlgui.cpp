@@ -222,6 +222,59 @@ void SDLGui_ObjFullCoord(SGOBJ *dlg, int objnum, SDL_Rect *coord)
 
 /*-----------------------------------------------------------------------*/
 /*
+  Refresh display at given coordinates.
+  Unlike SDL_UpdateRect() this function can eat coords that goes beyond screen
+  boundaries.
+  "rect" will be modified to represent the area actually refreshed.
+*/
+void SDLGui_UpdateRect(SDL_Rect *rect)
+{
+  if (rect->x < 0)
+  {
+    rect->w += rect->x;
+    rect->x = 0;
+  }
+  if ((rect->x + rect->w) > sdlscrn->w)
+    rect->w = (sdlscrn->w - rect->x);
+
+  if (rect->y < 0)
+  {
+    rect->h += rect->y;
+    rect->y = 0;
+  }
+  if ((rect->y + rect->h) > sdlscrn->h)
+    rect->h = (sdlscrn->h - rect->y);
+
+  if ((rect->w > 0) && (rect->h > 0))
+    SDL_UpdateRects(sdlscrn, 1, rect);
+  else
+  {
+    rect->x = 0;
+    rect->y = 0;
+    rect->w = 0;
+    rect->h = 0;
+  }
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
+  Refresh display to reflect an object change.
+*/
+void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
+{
+  SDL_Rect coord;
+
+  SDLGui_ObjFullCoord(dlg, objnum, &coord);
+
+  SCRLOCK;
+  SDLGui_UpdateRect(&coord);
+  SCRUNLOCK;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/*
   Draw a text string.
 */
 void SDLGui_Text(int x, int y, const char *txt)
@@ -637,7 +690,7 @@ void SDLGui_EditField(SGOBJ *dlg, int objnum)
       SDL_FillRect(sdlscrn, &cursorrect, cursorCol);
     }
     SDLGui_Text(rect.x, rect.y, dlg[objnum].txt);  /* Draw text */
-    SDL_UpdateRects(sdlscrn, 1, &rect);
+    SDLGui_RefreshObj(dlg, objnum);
   }
   while(!bStopEditing);
 }
@@ -673,22 +726,6 @@ void SDLGui_DrawObject(SGOBJ *dlg, int objnum)
       SDLGui_DrawPopupButton(dlg, objnum);
       break;
   }
-}
-
-
-/*-----------------------------------------------------------------------*/
-/*
-  Refresh display to reflect an object change.
-*/
-void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
-{
-  SDL_Rect coord;
-
-  SDLGui_ObjFullCoord(dlg, objnum, &coord);
-
-  SCRLOCK;
-  SDL_UpdateRects(sdlscrn, 1, &coord);
-  SCRUNLOCK;
 }
 
 

@@ -12,7 +12,7 @@
 /* The "About"-dialog: */
 SGOBJ aboutdlg[] =
 {
-  { SGBOX, 0, 0, 0,0, 39,24, NULL },
+  { SGBOX, 0, 0, 0,0, 40,25, NULL },
   { SGTEXT, 0, 0, 14,1, 12,1, "ARAnyM" },
   { SGTEXT, 0, 0, 14,2, 12,1, "======" },
   { SGTEXT, 0, 0, 1,4, 38,1, "ARAnyM has been written by:  C. Fertr," },

@@ -65,7 +65,7 @@ enum DISCDLG {
 
 static SGOBJ discdlg[] =
 {
-  { SGBOX, 0, 0, 0,0, 39,24, NULL },
+  { SGBOX, 0, 0, 0,0, 40,25, NULL },
   { SGBOX, 0, 0, 1,1, 38,4, NULL },
   { SGTEXT, 0, 0, 2,1, 14,1, "Floppy disk A:" },
   { SGBUTTON, SG_EXIT, 0, 30,1, 8,1, NULL },

@@ -1,3 +1,8 @@
+2004/02/06 - Xavier
+- gui-sdl/sdlgui.cpp: fix for resolutions smaller than the dialog size.
+  Dialogs dimensions back to 40x25.
+
+
 2004/02/05 - patrice
 - New DSP thread killing when shutdown.
 
