@@ -1555,11 +1555,14 @@ fi
 dnl Natfeat OSMesa driver
 
 NFOSMESASRCS=""
-if [[ "x$WANT_NFOSMESA" = "xyes" -a "x$WANT_OPENGL" = "xyes" ]]; then
-	AC_DEFINE([NFOSMESA_SUPPORT], 1, [Define if you want to use host OSMesa driver])
-	NFOSMESASRCS="../natfeat/nfosmesa.cpp"
-else
-	WANT_NFOSMESA="no"
+if test "x$WANT_NFOSMESA" = "xyes"; then
+	if test "x$WANT_OPENGL" = "xyes"; then
+		AC_MSG_ERROR([*** OpenGL rendering is not compatible with nfosmesa ***])
+		WANT_NFOSMESA="no"
+	else
+		AC_DEFINE([NFOSMESA_SUPPORT], 1, [Define if you want to use host OSMesa driver])
+		NFOSMESASRCS="../natfeat/nfosmesa.cpp"
+	fi
 fi
 
 dnl Natfeat JPEG decoder

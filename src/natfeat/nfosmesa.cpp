@@ -22,7 +22,7 @@
 #include <SDL_endian.h>
 #include <GL/osmesa.h>
 
-#define NFOSMESA_GLEXT	1
+#define NFOSMESA_GLEXT	0
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
@@ -62,7 +62,7 @@ OSMesaDriver::OSMesaDriver()
 	memset(contexts, 0, sizeof(contexts));
 	num_contexts = 0;
 	cur_context = -1;
-	library_handle = NULL;
+	libgl_handle = libosmesa_handle = NULL;
 }
 
 OSMesaDriver::~OSMesaDriver()
@@ -79,10 +79,7 @@ OSMesaDriver::~OSMesaDriver()
 	num_contexts=0;
 	cur_context = -1;
 
-	if (library_handle) {
-		SDL_UnloadObject(library_handle);
-		library_handle = NULL;
-	}
+	CloseLibrary();
 }
 
 /*--- Public functions ---*/
@@ -132,57 +129,65 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 int OSMesaDriver::OpenLibrary(void)
 {
 	D(bug("nfosmesa: OpenLibrary"));
-	if (!bx_options.osmesa.enabled) {
-		D(bug("nfosmesa: NFOSMesa is disabled"));
-		return -1;
-	}
 
-	if (library_handle) {
-		return 0;
-	}
-
-	library_handle=SDL_LoadObject(bx_options.osmesa.library);
-	if (library_handle==NULL) {
-		D(bug("nfosmesa: Can not load '%s' library\n", bx_options.osmesa.library));
-		fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
-		return -1;
-	}
-
-	fn.OSMesaCreateContext =
-		(OSMesaContext (*)(GLenum,OSMesaContext))
-		SDL_LoadFunction(library_handle,"OSMesaCreateContext");
-	fn.OSMesaCreateContextExt =
-		(OSMesaContext (*)(GLenum,GLint,GLint,GLint,OSMesaContext))
-		SDL_LoadFunction(library_handle,"OSMesaCreateContextExt");
-	fn.OSMesaDestroyContext =
-		(void (*)(OSMesaContext))
-		SDL_LoadFunction(library_handle,"OSMesaDestroyContext");
-	fn.OSMesaMakeCurrent =
-		(GLboolean (*)(OSMesaContext,void *,GLenum,GLsizei,GLsizei))
-		SDL_LoadFunction(library_handle,"OSMesaMakeCurrent");
-	fn.OSMesaGetCurrentContext =
-		(OSMesaContext (*)(void))
-		SDL_LoadFunction(library_handle,"OSMesaGetCurrentContext");
-	fn.OSMesaPixelStore =
-		(void (*)(GLint,GLint))
-		SDL_LoadFunction(library_handle,"OSMesaPixelStore");
-	fn.OSMesaGetIntegerv =
-		(void (*)(GLint,GLint *))
-		SDL_LoadFunction(library_handle,"OSMesaGetIntegerv");
-	fn.OSMesaGetDepthBuffer =
-		(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
-		SDL_LoadFunction(library_handle,"OSMesaGetDepthBuffer");
-	fn.OSMesaGetColorBuffer =
-		(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
-		SDL_LoadFunction(library_handle,"OSMesaGetColorBuffer");
-	fn.OSMesaGetProcAddress =
-		(void *(*)(const char *))
-		SDL_LoadFunction(library_handle,"OSMesaGetProcAddress");
+	if (libgl_handle==NULL) {
+		libgl_handle=SDL_LoadObject(bx_options.osmesa.libgl);
+		if (libgl_handle==NULL) {
+			D(bug("nfosmesa: Can not load '%s' library\n", bx_options.osmesa.libgl));
+			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
+			return -1;
+		}
 
 #include "nfosmesa/load-gl.c"
 #if NFOSMESA_GLEXT
 # include "nfosmesa/load-glext.c"
 #endif
+
+	}
+
+	D(bug("nfosmesa: OpenLibrary(): libGL loaded"));
+
+	if (libosmesa_handle==NULL) {
+		libosmesa_handle=SDL_LoadObject(bx_options.osmesa.libosmesa);
+		if (libosmesa_handle==NULL) {
+			D(bug("nfosmesa: Can not load '%s' library\n", bx_options.osmesa.libosmesa));
+			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
+			return -1;
+		}
+
+		fn.OSMesaCreateContext =
+			(OSMesaContext (*)(GLenum,OSMesaContext))
+			SDL_LoadFunction(libosmesa_handle,"OSMesaCreateContext");
+		fn.OSMesaCreateContextExt =
+			(OSMesaContext (*)(GLenum,GLint,GLint,GLint,OSMesaContext))
+			SDL_LoadFunction(libosmesa_handle,"OSMesaCreateContextExt");
+		fn.OSMesaDestroyContext =
+			(void (*)(OSMesaContext))
+			SDL_LoadFunction(libosmesa_handle,"OSMesaDestroyContext");
+		fn.OSMesaMakeCurrent =
+			(GLboolean (*)(OSMesaContext,void *,GLenum,GLsizei,GLsizei))
+			SDL_LoadFunction(libosmesa_handle,"OSMesaMakeCurrent");
+		fn.OSMesaGetCurrentContext =
+			(OSMesaContext (*)(void))
+			SDL_LoadFunction(libosmesa_handle,"OSMesaGetCurrentContext");
+		fn.OSMesaPixelStore =
+			(void (*)(GLint,GLint))
+			SDL_LoadFunction(libosmesa_handle,"OSMesaPixelStore");
+		fn.OSMesaGetIntegerv =
+			(void (*)(GLint,GLint *))
+			SDL_LoadFunction(libosmesa_handle,"OSMesaGetIntegerv");
+		fn.OSMesaGetDepthBuffer =
+			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
+			SDL_LoadFunction(libosmesa_handle,"OSMesaGetDepthBuffer");
+		fn.OSMesaGetColorBuffer =
+			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
+			SDL_LoadFunction(libosmesa_handle,"OSMesaGetColorBuffer");
+		fn.OSMesaGetProcAddress =
+			(void *(*)(const char *))
+			SDL_LoadFunction(libosmesa_handle,"OSMesaGetProcAddress");
+	}
+
+	D(bug("nfosmesa: OpenLibrary(): libOSMesa loaded"));
 
 	return 0;
 }
@@ -190,47 +195,57 @@ int OSMesaDriver::OpenLibrary(void)
 int OSMesaDriver::CloseLibrary(void)
 {
 	D(bug("nfosmesa: CloseLibrary"));
-	if (!library_handle) {
-		return -1;
+
+	if (libosmesa_handle) {
+		SDL_UnloadObject(libosmesa_handle);
+		libosmesa_handle=NULL;
+
+		fn.OSMesaCreateContext =
+			(OSMesaContext (*)(GLenum,OSMesaContext))
+			NULL;
+		fn.OSMesaCreateContextExt =
+			(OSMesaContext (*)(GLenum,GLint,GLint,GLint,OSMesaContext))
+			NULL;
+		fn.OSMesaDestroyContext =
+			(void (*)(OSMesaContext))
+			NULL;
+		fn.OSMesaMakeCurrent =
+			(GLboolean (*)(OSMesaContext,void *,GLenum,GLsizei,GLsizei))
+			NULL;
+		fn.OSMesaGetCurrentContext =
+			(OSMesaContext (*)(void))
+			NULL;
+		fn.OSMesaPixelStore =
+			(void (*)(GLint,GLint))
+			NULL;
+		fn.OSMesaGetIntegerv =
+			(void (*)(GLint,GLint *))
+			NULL;
+		fn.OSMesaGetDepthBuffer =
+			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
+			NULL;
+		fn.OSMesaGetColorBuffer =
+			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
+			NULL;
+		fn.OSMesaGetProcAddress =
+			(void *(*)(const char *))
+			NULL;
 	}
 
-	SDL_UnloadObject(library_handle);
+	D(bug("nfosmesa: CloseLibrary(): libOSMesa unloaded"));
 
-	fn.OSMesaCreateContext =
-		(OSMesaContext (*)(GLenum,OSMesaContext))
-		NULL;
-	fn.OSMesaCreateContextExt =
-		(OSMesaContext (*)(GLenum,GLint,GLint,GLint,OSMesaContext))
-		NULL;
-	fn.OSMesaDestroyContext =
-		(void (*)(OSMesaContext))
-		NULL;
-	fn.OSMesaMakeCurrent =
-		(GLboolean (*)(OSMesaContext,void *,GLenum,GLsizei,GLsizei))
-		NULL;
-	fn.OSMesaGetCurrentContext =
-		(OSMesaContext (*)(void))
-		NULL;
-	fn.OSMesaPixelStore =
-		(void (*)(GLint,GLint))
-		NULL;
-	fn.OSMesaGetIntegerv =
-		(void (*)(GLint,GLint *))
-		NULL;
-	fn.OSMesaGetDepthBuffer =
-		(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
-		NULL;
-	fn.OSMesaGetColorBuffer =
-		(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
-		NULL;
-	fn.OSMesaGetProcAddress =
-		(void *(*)(const char *))
-		NULL;
+	if (libgl_handle) {
+		SDL_UnloadObject(libgl_handle);
+		libgl_handle=NULL;
 
 #include "nfosmesa/unload-gl.c"
 #if NFOSMESA_GLEXT
 # include "nfosmesa/unload-glext.c"
 #endif
+
+	}
+
+	D(bug("nfosmesa: CloseLibrary(): libGL unloaded"));
 
 	return 0;
 }

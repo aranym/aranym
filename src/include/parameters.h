@@ -197,8 +197,8 @@ typedef struct {
 
 // NfOSMesa options
 typedef struct {
-	bool enabled;
-	char library[256];
+	char libgl[256];
+	char libosmesa[256];
 } bx_nfosmesa_options_t;
 
 // Keyboard and mouse

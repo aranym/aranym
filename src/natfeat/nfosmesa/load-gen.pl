@@ -33,7 +33,7 @@ while ($ligne = <FILE>) {
 
 		print "\tfn.$function_name =\n";
 		print "\t\t($function_type)\n";
-		print "\t\tSDL_LoadFunction(library_handle,\"$function_name\");\n";
+		print "\t\tSDL_LoadFunction(libgl_handle,\"$function_name\");\n";
 		$linecount++;
 	}
 }

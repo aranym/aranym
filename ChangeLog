@@ -1,3 +1,8 @@
+2005/01/17 - Patrice
+- nfosmesa: libGL is also dynamically loaded now. It is easier to control which
+libGL library ARAnyM will use.
+
+
 2005/01/16 - Patrice
 - Enable compiling ARAnyM using the Fink suite on MacOSX.
   (configure --with-fink)

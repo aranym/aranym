@@ -165,7 +165,7 @@ Z = 0
 
 
 [NFOSMESA]
-; Enable Natfeat OSMesa rendering
-Enabled = Yes
+; Library to load for standard OpenGL functions
+LibGL = libGL.so
 ; Library to load for OSMesa rendering functions
-Library = libOSMesa.so
+LibOSMesa = libOSMesa.so

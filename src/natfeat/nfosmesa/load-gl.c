@@ -2,1043 +2,1043 @@
 
 	fn.glClearIndex =
 		( void (*)(GLfloat c ))
-		SDL_LoadFunction(library_handle,"glClearIndex");
+		SDL_LoadFunction(libgl_handle,"glClearIndex");
 	fn.glClearColor =
 		( void (*)(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha ))
-		SDL_LoadFunction(library_handle,"glClearColor");
+		SDL_LoadFunction(libgl_handle,"glClearColor");
 	fn.glClear =
 		( void (*)(GLbitfield mask ))
-		SDL_LoadFunction(library_handle,"glClear");
+		SDL_LoadFunction(libgl_handle,"glClear");
 	fn.glIndexMask =
 		( void (*)(GLuint mask ))
-		SDL_LoadFunction(library_handle,"glIndexMask");
+		SDL_LoadFunction(libgl_handle,"glIndexMask");
 	fn.glColorMask =
 		( void (*)(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha ))
-		SDL_LoadFunction(library_handle,"glColorMask");
+		SDL_LoadFunction(libgl_handle,"glColorMask");
 	fn.glAlphaFunc =
 		( void (*)(GLenum func, GLclampf ref ))
-		SDL_LoadFunction(library_handle,"glAlphaFunc");
+		SDL_LoadFunction(libgl_handle,"glAlphaFunc");
 	fn.glBlendFunc =
 		( void (*)(GLenum sfactor, GLenum dfactor ))
-		SDL_LoadFunction(library_handle,"glBlendFunc");
+		SDL_LoadFunction(libgl_handle,"glBlendFunc");
 	fn.glLogicOp =
 		( void (*)(GLenum opcode ))
-		SDL_LoadFunction(library_handle,"glLogicOp");
+		SDL_LoadFunction(libgl_handle,"glLogicOp");
 	fn.glCullFace =
 		( void (*)(GLenum mode ))
-		SDL_LoadFunction(library_handle,"glCullFace");
+		SDL_LoadFunction(libgl_handle,"glCullFace");
 	fn.glFrontFace =
 		( void (*)(GLenum mode ))
-		SDL_LoadFunction(library_handle,"glFrontFace");
+		SDL_LoadFunction(libgl_handle,"glFrontFace");
 	fn.glPointSize =
 		( void (*)(GLfloat size ))
-		SDL_LoadFunction(library_handle,"glPointSize");
+		SDL_LoadFunction(libgl_handle,"glPointSize");
 	fn.glLineWidth =
 		( void (*)(GLfloat width ))
-		SDL_LoadFunction(library_handle,"glLineWidth");
+		SDL_LoadFunction(libgl_handle,"glLineWidth");
 	fn.glLineStipple =
 		( void (*)(GLint factor, GLushort pattern ))
-		SDL_LoadFunction(library_handle,"glLineStipple");
+		SDL_LoadFunction(libgl_handle,"glLineStipple");
 	fn.glPolygonMode =
 		( void (*)(GLenum face, GLenum mode ))
-		SDL_LoadFunction(library_handle,"glPolygonMode");
+		SDL_LoadFunction(libgl_handle,"glPolygonMode");
 	fn.glPolygonOffset =
 		( void (*)(GLfloat factor, GLfloat units ))
-		SDL_LoadFunction(library_handle,"glPolygonOffset");
+		SDL_LoadFunction(libgl_handle,"glPolygonOffset");
 	fn.glPolygonStipple =
 		( void (*)(const GLubyte *mask ))
-		SDL_LoadFunction(library_handle,"glPolygonStipple");
+		SDL_LoadFunction(libgl_handle,"glPolygonStipple");
 	fn.glGetPolygonStipple =
 		( void (*)(GLubyte *mask ))
-		SDL_LoadFunction(library_handle,"glGetPolygonStipple");
+		SDL_LoadFunction(libgl_handle,"glGetPolygonStipple");
 	fn.glEdgeFlag =
 		( void (*)(GLboolean flag ))
-		SDL_LoadFunction(library_handle,"glEdgeFlag");
+		SDL_LoadFunction(libgl_handle,"glEdgeFlag");
 	fn.glEdgeFlagv =
 		( void (*)(const GLboolean *flag ))
-		SDL_LoadFunction(library_handle,"glEdgeFlagv");
+		SDL_LoadFunction(libgl_handle,"glEdgeFlagv");
 	fn.glScissor =
 		( void (*)(GLint x, GLint y, GLsizei width, GLsizei height))
-		SDL_LoadFunction(library_handle,"glScissor");
+		SDL_LoadFunction(libgl_handle,"glScissor");
 	fn.glClipPlane =
 		( void (*)(GLenum plane, const GLdouble *equation ))
-		SDL_LoadFunction(library_handle,"glClipPlane");
+		SDL_LoadFunction(libgl_handle,"glClipPlane");
 	fn.glGetClipPlane =
 		( void (*)(GLenum plane, GLdouble *equation ))
-		SDL_LoadFunction(library_handle,"glGetClipPlane");
+		SDL_LoadFunction(libgl_handle,"glGetClipPlane");
 	fn.glDrawBuffer =
 		( void (*)(GLenum mode ))
-		SDL_LoadFunction(library_handle,"glDrawBuffer");
+		SDL_LoadFunction(libgl_handle,"glDrawBuffer");
 	fn.glReadBuffer =
 		( void (*)(GLenum mode ))
-		SDL_LoadFunction(library_handle,"glReadBuffer");
+		SDL_LoadFunction(libgl_handle,"glReadBuffer");
 	fn.glEnable =
 		( void (*)(GLenum cap ))
-		SDL_LoadFunction(library_handle,"glEnable");
+		SDL_LoadFunction(libgl_handle,"glEnable");
 	fn.glDisable =
 		( void (*)(GLenum cap ))
-		SDL_LoadFunction(library_handle,"glDisable");
+		SDL_LoadFunction(libgl_handle,"glDisable");
 	fn.glIsEnabled =
 		( GLboolean (*)(GLenum cap ))
-		SDL_LoadFunction(library_handle,"glIsEnabled");
+		SDL_LoadFunction(libgl_handle,"glIsEnabled");
 	fn.glEnableClientState =
 		( void (*)(GLenum cap ))
-		SDL_LoadFunction(library_handle,"glEnableClientState");
+		SDL_LoadFunction(libgl_handle,"glEnableClientState");
 	fn.glDisableClientState =
 		( void (*)(GLenum cap ))
-		SDL_LoadFunction(library_handle,"glDisableClientState");
+		SDL_LoadFunction(libgl_handle,"glDisableClientState");
 	fn.glGetBooleanv =
 		( void (*)(GLenum pname, GLboolean *params ))
-		SDL_LoadFunction(library_handle,"glGetBooleanv");
+		SDL_LoadFunction(libgl_handle,"glGetBooleanv");
 	fn.glGetDoublev =
 		( void (*)(GLenum pname, GLdouble *params ))
-		SDL_LoadFunction(library_handle,"glGetDoublev");
+		SDL_LoadFunction(libgl_handle,"glGetDoublev");
 	fn.glGetFloatv =
 		( void (*)(GLenum pname, GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glGetFloatv");
+		SDL_LoadFunction(libgl_handle,"glGetFloatv");
 	fn.glGetIntegerv =
 		( void (*)(GLenum pname, GLint *params ))
-		SDL_LoadFunction(library_handle,"glGetIntegerv");
+		SDL_LoadFunction(libgl_handle,"glGetIntegerv");
 	fn.glPushAttrib =
 		( void (*)(GLbitfield mask ))
-		SDL_LoadFunction(library_handle,"glPushAttrib");
+		SDL_LoadFunction(libgl_handle,"glPushAttrib");
 	fn.glPopAttrib =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glPopAttrib");
+		SDL_LoadFunction(libgl_handle,"glPopAttrib");
 	fn.glPushClientAttrib =
 		( void (*)(GLbitfield mask ))
-		SDL_LoadFunction(library_handle,"glPushClientAttrib");
+		SDL_LoadFunction(libgl_handle,"glPushClientAttrib");
 	fn.glPopClientAttrib =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glPopClientAttrib");
+		SDL_LoadFunction(libgl_handle,"glPopClientAttrib");
 	fn.glRenderMode =
 		( GLint (*)(GLenum mode ))
-		SDL_LoadFunction(library_handle,"glRenderMode");
+		SDL_LoadFunction(libgl_handle,"glRenderMode");
 	fn.glGetError =
 		( GLenum (*)(void))
-		SDL_LoadFunction(library_handle,"glGetError");
+		SDL_LoadFunction(libgl_handle,"glGetError");
 	fn.glGetString =
 		( const GLubyte* (*)(GLenum name ))
-		SDL_LoadFunction(library_handle,"glGetString");
+		SDL_LoadFunction(libgl_handle,"glGetString");
 	fn.glFinish =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glFinish");
+		SDL_LoadFunction(libgl_handle,"glFinish");
 	fn.glFlush =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glFlush");
+		SDL_LoadFunction(libgl_handle,"glFlush");
 	fn.glHint =
 		( void (*)(GLenum target, GLenum mode ))
-		SDL_LoadFunction(library_handle,"glHint");
+		SDL_LoadFunction(libgl_handle,"glHint");
 	fn.glClearDepth =
 		( void (*)(GLclampd depth ))
-		SDL_LoadFunction(library_handle,"glClearDepth");
+		SDL_LoadFunction(libgl_handle,"glClearDepth");
 	fn.glDepthFunc =
 		( void (*)(GLenum func ))
-		SDL_LoadFunction(library_handle,"glDepthFunc");
+		SDL_LoadFunction(libgl_handle,"glDepthFunc");
 	fn.glDepthMask =
 		( void (*)(GLboolean flag ))
-		SDL_LoadFunction(library_handle,"glDepthMask");
+		SDL_LoadFunction(libgl_handle,"glDepthMask");
 	fn.glDepthRange =
 		( void (*)(GLclampd near_val, GLclampd far_val ))
-		SDL_LoadFunction(library_handle,"glDepthRange");
+		SDL_LoadFunction(libgl_handle,"glDepthRange");
 	fn.glClearAccum =
 		( void (*)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha ))
-		SDL_LoadFunction(library_handle,"glClearAccum");
+		SDL_LoadFunction(libgl_handle,"glClearAccum");
 	fn.glAccum =
 		( void (*)(GLenum op, GLfloat value ))
-		SDL_LoadFunction(library_handle,"glAccum");
+		SDL_LoadFunction(libgl_handle,"glAccum");
 	fn.glMatrixMode =
 		( void (*)(GLenum mode ))
-		SDL_LoadFunction(library_handle,"glMatrixMode");
+		SDL_LoadFunction(libgl_handle,"glMatrixMode");
 	fn.glOrtho =
 		( void (*)(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val ))
-		SDL_LoadFunction(library_handle,"glOrtho");
+		SDL_LoadFunction(libgl_handle,"glOrtho");
 	fn.glFrustum =
 		( void (*)(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val ))
-		SDL_LoadFunction(library_handle,"glFrustum");
+		SDL_LoadFunction(libgl_handle,"glFrustum");
 	fn.glViewport =
 		( void (*)(GLint x, GLint y, GLsizei width, GLsizei height ))
-		SDL_LoadFunction(library_handle,"glViewport");
+		SDL_LoadFunction(libgl_handle,"glViewport");
 	fn.glPushMatrix =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glPushMatrix");
+		SDL_LoadFunction(libgl_handle,"glPushMatrix");
 	fn.glPopMatrix =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glPopMatrix");
+		SDL_LoadFunction(libgl_handle,"glPopMatrix");
 	fn.glLoadIdentity =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glLoadIdentity");
+		SDL_LoadFunction(libgl_handle,"glLoadIdentity");
 	fn.glLoadMatrixd =
 		( void (*)(const GLdouble *m ))
-		SDL_LoadFunction(library_handle,"glLoadMatrixd");
+		SDL_LoadFunction(libgl_handle,"glLoadMatrixd");
 	fn.glLoadMatrixf =
 		( void (*)(const GLfloat *m ))
-		SDL_LoadFunction(library_handle,"glLoadMatrixf");
+		SDL_LoadFunction(libgl_handle,"glLoadMatrixf");
 	fn.glMultMatrixd =
 		( void (*)(const GLdouble *m ))
-		SDL_LoadFunction(library_handle,"glMultMatrixd");
+		SDL_LoadFunction(libgl_handle,"glMultMatrixd");
 	fn.glMultMatrixf =
 		( void (*)(const GLfloat *m ))
-		SDL_LoadFunction(library_handle,"glMultMatrixf");
+		SDL_LoadFunction(libgl_handle,"glMultMatrixf");
 	fn.glRotated =
 		( void (*)(GLdouble an, GLdouble x, GLdouble y, GLdouble z ))
-		SDL_LoadFunction(library_handle,"glRotated");
+		SDL_LoadFunction(libgl_handle,"glRotated");
 	fn.glRotatef =
 		( void (*)(GLfloat an, GLfloat x, GLfloat y, GLfloat z ))
-		SDL_LoadFunction(library_handle,"glRotatef");
+		SDL_LoadFunction(libgl_handle,"glRotatef");
 	fn.glScaled =
 		( void (*)(GLdouble x, GLdouble y, GLdouble z ))
-		SDL_LoadFunction(library_handle,"glScaled");
+		SDL_LoadFunction(libgl_handle,"glScaled");
 	fn.glScalef =
 		( void (*)(GLfloat x, GLfloat y, GLfloat z ))
-		SDL_LoadFunction(library_handle,"glScalef");
+		SDL_LoadFunction(libgl_handle,"glScalef");
 	fn.glTranslated =
 		( void (*)(GLdouble x, GLdouble y, GLdouble z ))
-		SDL_LoadFunction(library_handle,"glTranslated");
+		SDL_LoadFunction(libgl_handle,"glTranslated");
 	fn.glTranslatef =
 		( void (*)(GLfloat x, GLfloat y, GLfloat z ))
-		SDL_LoadFunction(library_handle,"glTranslatef");
+		SDL_LoadFunction(libgl_handle,"glTranslatef");
 	fn.glIsList =
 		( GLboolean (*)(GLuint list ))
-		SDL_LoadFunction(library_handle,"glIsList");
+		SDL_LoadFunction(libgl_handle,"glIsList");
 	fn.glDeleteLists =
 		( void (*)(GLuint list, GLsizei range ))
-		SDL_LoadFunction(library_handle,"glDeleteLists");
+		SDL_LoadFunction(libgl_handle,"glDeleteLists");
 	fn.glGenLists =
 		( GLuint (*)(GLsizei range ))
-		SDL_LoadFunction(library_handle,"glGenLists");
+		SDL_LoadFunction(libgl_handle,"glGenLists");
 	fn.glNewList =
 		( void (*)(GLuint list, GLenum mode ))
-		SDL_LoadFunction(library_handle,"glNewList");
+		SDL_LoadFunction(libgl_handle,"glNewList");
 	fn.glEndList =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glEndList");
+		SDL_LoadFunction(libgl_handle,"glEndList");
 	fn.glCallList =
 		( void (*)(GLuint list ))
-		SDL_LoadFunction(library_handle,"glCallList");
+		SDL_LoadFunction(libgl_handle,"glCallList");
 	fn.glCallLists =
 		( void (*)(GLsizei n, GLenum type, const GLvoid *lists ))
-		SDL_LoadFunction(library_handle,"glCallLists");
+		SDL_LoadFunction(libgl_handle,"glCallLists");
 	fn.glListBase =
 		( void (*)(GLuint base ))
-		SDL_LoadFunction(library_handle,"glListBase");
+		SDL_LoadFunction(libgl_handle,"glListBase");
 	fn.glBegin =
 		( void (*)(GLenum mode ))
-		SDL_LoadFunction(library_handle,"glBegin");
+		SDL_LoadFunction(libgl_handle,"glBegin");
 	fn.glEnd =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glEnd");
+		SDL_LoadFunction(libgl_handle,"glEnd");
 	fn.glVertex2d =
 		( void (*)(GLdouble x, GLdouble y ))
-		SDL_LoadFunction(library_handle,"glVertex2d");
+		SDL_LoadFunction(libgl_handle,"glVertex2d");
 	fn.glVertex2f =
 		( void (*)(GLfloat x, GLfloat y ))
-		SDL_LoadFunction(library_handle,"glVertex2f");
+		SDL_LoadFunction(libgl_handle,"glVertex2f");
 	fn.glVertex2i =
 		( void (*)(GLint x, GLint y ))
-		SDL_LoadFunction(library_handle,"glVertex2i");
+		SDL_LoadFunction(libgl_handle,"glVertex2i");
 	fn.glVertex2s =
 		( void (*)(GLshort x, GLshort y ))
-		SDL_LoadFunction(library_handle,"glVertex2s");
+		SDL_LoadFunction(libgl_handle,"glVertex2s");
 	fn.glVertex3d =
 		( void (*)(GLdouble x, GLdouble y, GLdouble z ))
-		SDL_LoadFunction(library_handle,"glVertex3d");
+		SDL_LoadFunction(libgl_handle,"glVertex3d");
 	fn.glVertex3f =
 		( void (*)(GLfloat x, GLfloat y, GLfloat z ))
-		SDL_LoadFunction(library_handle,"glVertex3f");
+		SDL_LoadFunction(libgl_handle,"glVertex3f");
 	fn.glVertex3i =
 		( void (*)(GLint x, GLint y, GLint z ))
-		SDL_LoadFunction(library_handle,"glVertex3i");
+		SDL_LoadFunction(libgl_handle,"glVertex3i");
 	fn.glVertex3s =
 		( void (*)(GLshort x, GLshort y, GLshort z ))
-		SDL_LoadFunction(library_handle,"glVertex3s");
+		SDL_LoadFunction(libgl_handle,"glVertex3s");
 	fn.glVertex4d =
 		( void (*)(GLdouble x, GLdouble y, GLdouble z, GLdouble w ))
-		SDL_LoadFunction(library_handle,"glVertex4d");
+		SDL_LoadFunction(libgl_handle,"glVertex4d");
 	fn.glVertex4f =
 		( void (*)(GLfloat x, GLfloat y, GLfloat z, GLfloat w ))
-		SDL_LoadFunction(library_handle,"glVertex4f");
+		SDL_LoadFunction(libgl_handle,"glVertex4f");
 	fn.glVertex4i =
 		( void (*)(GLint x, GLint y, GLint z, GLint w ))
-		SDL_LoadFunction(library_handle,"glVertex4i");
+		SDL_LoadFunction(libgl_handle,"glVertex4i");
 	fn.glVertex4s =
 		( void (*)(GLshort x, GLshort y, GLshort z, GLshort w ))
-		SDL_LoadFunction(library_handle,"glVertex4s");
+		SDL_LoadFunction(libgl_handle,"glVertex4s");
 	fn.glVertex2dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glVertex2dv");
+		SDL_LoadFunction(libgl_handle,"glVertex2dv");
 	fn.glVertex2fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glVertex2fv");
+		SDL_LoadFunction(libgl_handle,"glVertex2fv");
 	fn.glVertex2iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glVertex2iv");
+		SDL_LoadFunction(libgl_handle,"glVertex2iv");
 	fn.glVertex2sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glVertex2sv");
+		SDL_LoadFunction(libgl_handle,"glVertex2sv");
 	fn.glVertex3dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glVertex3dv");
+		SDL_LoadFunction(libgl_handle,"glVertex3dv");
 	fn.glVertex3fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glVertex3fv");
+		SDL_LoadFunction(libgl_handle,"glVertex3fv");
 	fn.glVertex3iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glVertex3iv");
+		SDL_LoadFunction(libgl_handle,"glVertex3iv");
 	fn.glVertex3sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glVertex3sv");
+		SDL_LoadFunction(libgl_handle,"glVertex3sv");
 	fn.glVertex4dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glVertex4dv");
+		SDL_LoadFunction(libgl_handle,"glVertex4dv");
 	fn.glVertex4fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glVertex4fv");
+		SDL_LoadFunction(libgl_handle,"glVertex4fv");
 	fn.glVertex4iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glVertex4iv");
+		SDL_LoadFunction(libgl_handle,"glVertex4iv");
 	fn.glVertex4sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glVertex4sv");
+		SDL_LoadFunction(libgl_handle,"glVertex4sv");
 	fn.glNormal3b =
 		( void (*)(GLbyte nx, GLbyte ny, GLbyte nz ))
-		SDL_LoadFunction(library_handle,"glNormal3b");
+		SDL_LoadFunction(libgl_handle,"glNormal3b");
 	fn.glNormal3d =
 		( void (*)(GLdouble nx, GLdouble ny, GLdouble nz ))
-		SDL_LoadFunction(library_handle,"glNormal3d");
+		SDL_LoadFunction(libgl_handle,"glNormal3d");
 	fn.glNormal3f =
 		( void (*)(GLfloat nx, GLfloat ny, GLfloat nz ))
-		SDL_LoadFunction(library_handle,"glNormal3f");
+		SDL_LoadFunction(libgl_handle,"glNormal3f");
 	fn.glNormal3i =
 		( void (*)(GLint nx, GLint ny, GLint nz ))
-		SDL_LoadFunction(library_handle,"glNormal3i");
+		SDL_LoadFunction(libgl_handle,"glNormal3i");
 	fn.glNormal3s =
 		( void (*)(GLshort nx, GLshort ny, GLshort nz ))
-		SDL_LoadFunction(library_handle,"glNormal3s");
+		SDL_LoadFunction(libgl_handle,"glNormal3s");
 	fn.glNormal3bv =
 		( void (*)(const GLbyte *v ))
-		SDL_LoadFunction(library_handle,"glNormal3bv");
+		SDL_LoadFunction(libgl_handle,"glNormal3bv");
 	fn.glNormal3dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glNormal3dv");
+		SDL_LoadFunction(libgl_handle,"glNormal3dv");
 	fn.glNormal3fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glNormal3fv");
+		SDL_LoadFunction(libgl_handle,"glNormal3fv");
 	fn.glNormal3iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glNormal3iv");
+		SDL_LoadFunction(libgl_handle,"glNormal3iv");
 	fn.glNormal3sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glNormal3sv");
+		SDL_LoadFunction(libgl_handle,"glNormal3sv");
 	fn.glIndexd =
 		( void (*)(GLdouble c ))
-		SDL_LoadFunction(library_handle,"glIndexd");
+		SDL_LoadFunction(libgl_handle,"glIndexd");
 	fn.glIndexf =
 		( void (*)(GLfloat c ))
-		SDL_LoadFunction(library_handle,"glIndexf");
+		SDL_LoadFunction(libgl_handle,"glIndexf");
 	fn.glIndexi =
 		( void (*)(GLint c ))
-		SDL_LoadFunction(library_handle,"glIndexi");
+		SDL_LoadFunction(libgl_handle,"glIndexi");
 	fn.glIndexs =
 		( void (*)(GLshort c ))
-		SDL_LoadFunction(library_handle,"glIndexs");
+		SDL_LoadFunction(libgl_handle,"glIndexs");
 	fn.glIndexub =
 		( void (*)(GLubyte c ))
-		SDL_LoadFunction(library_handle,"glIndexub");
+		SDL_LoadFunction(libgl_handle,"glIndexub");
 	fn.glIndexdv =
 		( void (*)(const GLdouble *c ))
-		SDL_LoadFunction(library_handle,"glIndexdv");
+		SDL_LoadFunction(libgl_handle,"glIndexdv");
 	fn.glIndexfv =
 		( void (*)(const GLfloat *c ))
-		SDL_LoadFunction(library_handle,"glIndexfv");
+		SDL_LoadFunction(libgl_handle,"glIndexfv");
 	fn.glIndexiv =
 		( void (*)(const GLint *c ))
-		SDL_LoadFunction(library_handle,"glIndexiv");
+		SDL_LoadFunction(libgl_handle,"glIndexiv");
 	fn.glIndexsv =
 		( void (*)(const GLshort *c ))
-		SDL_LoadFunction(library_handle,"glIndexsv");
+		SDL_LoadFunction(libgl_handle,"glIndexsv");
 	fn.glIndexubv =
 		( void (*)(const GLubyte *c ))
-		SDL_LoadFunction(library_handle,"glIndexubv");
+		SDL_LoadFunction(libgl_handle,"glIndexubv");
 	fn.glColor3b =
 		( void (*)(GLbyte red, GLbyte green, GLbyte blue ))
-		SDL_LoadFunction(library_handle,"glColor3b");
+		SDL_LoadFunction(libgl_handle,"glColor3b");
 	fn.glColor3d =
 		( void (*)(GLdouble red, GLdouble green, GLdouble blue ))
-		SDL_LoadFunction(library_handle,"glColor3d");
+		SDL_LoadFunction(libgl_handle,"glColor3d");
 	fn.glColor3f =
 		( void (*)(GLfloat red, GLfloat green, GLfloat blue ))
-		SDL_LoadFunction(library_handle,"glColor3f");
+		SDL_LoadFunction(libgl_handle,"glColor3f");
 	fn.glColor3i =
 		( void (*)(GLint red, GLint green, GLint blue ))
-		SDL_LoadFunction(library_handle,"glColor3i");
+		SDL_LoadFunction(libgl_handle,"glColor3i");
 	fn.glColor3s =
 		( void (*)(GLshort red, GLshort green, GLshort blue ))
-		SDL_LoadFunction(library_handle,"glColor3s");
+		SDL_LoadFunction(libgl_handle,"glColor3s");
 	fn.glColor3ub =
 		( void (*)(GLubyte red, GLubyte green, GLubyte blue ))
-		SDL_LoadFunction(library_handle,"glColor3ub");
+		SDL_LoadFunction(libgl_handle,"glColor3ub");
 	fn.glColor3ui =
 		( void (*)(GLuint red, GLuint green, GLuint blue ))
-		SDL_LoadFunction(library_handle,"glColor3ui");
+		SDL_LoadFunction(libgl_handle,"glColor3ui");
 	fn.glColor3us =
 		( void (*)(GLushort red, GLushort green, GLushort blue ))
-		SDL_LoadFunction(library_handle,"glColor3us");
+		SDL_LoadFunction(libgl_handle,"glColor3us");
 	fn.glColor4b =
 		( void (*)(GLbyte red, GLbyte green, GLbyte blue, GLbyte alpha ))
-		SDL_LoadFunction(library_handle,"glColor4b");
+		SDL_LoadFunction(libgl_handle,"glColor4b");
 	fn.glColor4d =
 		( void (*)(GLdouble red, GLdouble green, GLdouble blue, GLdouble alpha ))
-		SDL_LoadFunction(library_handle,"glColor4d");
+		SDL_LoadFunction(libgl_handle,"glColor4d");
 	fn.glColor4f =
 		( void (*)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha ))
-		SDL_LoadFunction(library_handle,"glColor4f");
+		SDL_LoadFunction(libgl_handle,"glColor4f");
 	fn.glColor4i =
 		( void (*)(GLint red, GLint green, GLint blue, GLint alpha ))
-		SDL_LoadFunction(library_handle,"glColor4i");
+		SDL_LoadFunction(libgl_handle,"glColor4i");
 	fn.glColor4s =
 		( void (*)(GLshort red, GLshort green, GLshort blue, GLshort alpha ))
-		SDL_LoadFunction(library_handle,"glColor4s");
+		SDL_LoadFunction(libgl_handle,"glColor4s");
 	fn.glColor4ub =
 		( void (*)(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha ))
-		SDL_LoadFunction(library_handle,"glColor4ub");
+		SDL_LoadFunction(libgl_handle,"glColor4ub");
 	fn.glColor4ui =
 		( void (*)(GLuint red, GLuint green, GLuint blue, GLuint alpha ))
-		SDL_LoadFunction(library_handle,"glColor4ui");
+		SDL_LoadFunction(libgl_handle,"glColor4ui");
 	fn.glColor4us =
 		( void (*)(GLushort red, GLushort green, GLushort blue, GLushort alpha ))
-		SDL_LoadFunction(library_handle,"glColor4us");
+		SDL_LoadFunction(libgl_handle,"glColor4us");
 	fn.glColor3bv =
 		( void (*)(const GLbyte *v ))
-		SDL_LoadFunction(library_handle,"glColor3bv");
+		SDL_LoadFunction(libgl_handle,"glColor3bv");
 	fn.glColor3dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glColor3dv");
+		SDL_LoadFunction(libgl_handle,"glColor3dv");
 	fn.glColor3fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glColor3fv");
+		SDL_LoadFunction(libgl_handle,"glColor3fv");
 	fn.glColor3iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glColor3iv");
+		SDL_LoadFunction(libgl_handle,"glColor3iv");
 	fn.glColor3sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glColor3sv");
+		SDL_LoadFunction(libgl_handle,"glColor3sv");
 	fn.glColor3ubv =
 		( void (*)(const GLubyte *v ))
-		SDL_LoadFunction(library_handle,"glColor3ubv");
+		SDL_LoadFunction(libgl_handle,"glColor3ubv");
 	fn.glColor3uiv =
 		( void (*)(const GLuint *v ))
-		SDL_LoadFunction(library_handle,"glColor3uiv");
+		SDL_LoadFunction(libgl_handle,"glColor3uiv");
 	fn.glColor3usv =
 		( void (*)(const GLushort *v ))
-		SDL_LoadFunction(library_handle,"glColor3usv");
+		SDL_LoadFunction(libgl_handle,"glColor3usv");
 	fn.glColor4bv =
 		( void (*)(const GLbyte *v ))
-		SDL_LoadFunction(library_handle,"glColor4bv");
+		SDL_LoadFunction(libgl_handle,"glColor4bv");
 	fn.glColor4dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glColor4dv");
+		SDL_LoadFunction(libgl_handle,"glColor4dv");
 	fn.glColor4fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glColor4fv");
+		SDL_LoadFunction(libgl_handle,"glColor4fv");
 	fn.glColor4iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glColor4iv");
+		SDL_LoadFunction(libgl_handle,"glColor4iv");
 	fn.glColor4sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glColor4sv");
+		SDL_LoadFunction(libgl_handle,"glColor4sv");
 	fn.glColor4ubv =
 		( void (*)(const GLubyte *v ))
-		SDL_LoadFunction(library_handle,"glColor4ubv");
+		SDL_LoadFunction(libgl_handle,"glColor4ubv");
 	fn.glColor4uiv =
 		( void (*)(const GLuint *v ))
-		SDL_LoadFunction(library_handle,"glColor4uiv");
+		SDL_LoadFunction(libgl_handle,"glColor4uiv");
 	fn.glColor4usv =
 		( void (*)(const GLushort *v ))
-		SDL_LoadFunction(library_handle,"glColor4usv");
+		SDL_LoadFunction(libgl_handle,"glColor4usv");
 	fn.glTexCoord1d =
 		( void (*)(GLdouble s ))
-		SDL_LoadFunction(library_handle,"glTexCoord1d");
+		SDL_LoadFunction(libgl_handle,"glTexCoord1d");
 	fn.glTexCoord1f =
 		( void (*)(GLfloat s ))
-		SDL_LoadFunction(library_handle,"glTexCoord1f");
+		SDL_LoadFunction(libgl_handle,"glTexCoord1f");
 	fn.glTexCoord1i =
 		( void (*)(GLint s ))
-		SDL_LoadFunction(library_handle,"glTexCoord1i");
+		SDL_LoadFunction(libgl_handle,"glTexCoord1i");
 	fn.glTexCoord1s =
 		( void (*)(GLshort s ))
-		SDL_LoadFunction(library_handle,"glTexCoord1s");
+		SDL_LoadFunction(libgl_handle,"glTexCoord1s");
 	fn.glTexCoord2d =
 		( void (*)(GLdouble s, GLdouble t ))
-		SDL_LoadFunction(library_handle,"glTexCoord2d");
+		SDL_LoadFunction(libgl_handle,"glTexCoord2d");
 	fn.glTexCoord2f =
 		( void (*)(GLfloat s, GLfloat t ))
-		SDL_LoadFunction(library_handle,"glTexCoord2f");
+		SDL_LoadFunction(libgl_handle,"glTexCoord2f");
 	fn.glTexCoord2i =
 		( void (*)(GLint s, GLint t ))
-		SDL_LoadFunction(library_handle,"glTexCoord2i");
+		SDL_LoadFunction(libgl_handle,"glTexCoord2i");
 	fn.glTexCoord2s =
 		( void (*)(GLshort s, GLshort t ))
-		SDL_LoadFunction(library_handle,"glTexCoord2s");
+		SDL_LoadFunction(libgl_handle,"glTexCoord2s");
 	fn.glTexCoord3d =
 		( void (*)(GLdouble s, GLdouble t, GLdouble r ))
-		SDL_LoadFunction(library_handle,"glTexCoord3d");
+		SDL_LoadFunction(libgl_handle,"glTexCoord3d");
 	fn.glTexCoord3f =
 		( void (*)(GLfloat s, GLfloat t, GLfloat r ))
-		SDL_LoadFunction(library_handle,"glTexCoord3f");
+		SDL_LoadFunction(libgl_handle,"glTexCoord3f");
 	fn.glTexCoord3i =
 		( void (*)(GLint s, GLint t, GLint r ))
-		SDL_LoadFunction(library_handle,"glTexCoord3i");
+		SDL_LoadFunction(libgl_handle,"glTexCoord3i");
 	fn.glTexCoord3s =
 		( void (*)(GLshort s, GLshort t, GLshort r ))
-		SDL_LoadFunction(library_handle,"glTexCoord3s");
+		SDL_LoadFunction(libgl_handle,"glTexCoord3s");
 	fn.glTexCoord4d =
 		( void (*)(GLdouble s, GLdouble t, GLdouble r, GLdouble q ))
-		SDL_LoadFunction(library_handle,"glTexCoord4d");
+		SDL_LoadFunction(libgl_handle,"glTexCoord4d");
 	fn.glTexCoord4f =
 		( void (*)(GLfloat s, GLfloat t, GLfloat r, GLfloat q ))
-		SDL_LoadFunction(library_handle,"glTexCoord4f");
+		SDL_LoadFunction(libgl_handle,"glTexCoord4f");
 	fn.glTexCoord4i =
 		( void (*)(GLint s, GLint t, GLint r, GLint q ))
-		SDL_LoadFunction(library_handle,"glTexCoord4i");
+		SDL_LoadFunction(libgl_handle,"glTexCoord4i");
 	fn.glTexCoord4s =
 		( void (*)(GLshort s, GLshort t, GLshort r, GLshort q ))
-		SDL_LoadFunction(library_handle,"glTexCoord4s");
+		SDL_LoadFunction(libgl_handle,"glTexCoord4s");
 	fn.glTexCoord1dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord1dv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord1dv");
 	fn.glTexCoord1fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord1fv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord1fv");
 	fn.glTexCoord1iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord1iv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord1iv");
 	fn.glTexCoord1sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord1sv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord1sv");
 	fn.glTexCoord2dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord2dv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord2dv");
 	fn.glTexCoord2fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord2fv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord2fv");
 	fn.glTexCoord2iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord2iv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord2iv");
 	fn.glTexCoord2sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord2sv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord2sv");
 	fn.glTexCoord3dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord3dv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord3dv");
 	fn.glTexCoord3fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord3fv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord3fv");
 	fn.glTexCoord3iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord3iv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord3iv");
 	fn.glTexCoord3sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord3sv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord3sv");
 	fn.glTexCoord4dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord4dv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord4dv");
 	fn.glTexCoord4fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord4fv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord4fv");
 	fn.glTexCoord4iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord4iv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord4iv");
 	fn.glTexCoord4sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glTexCoord4sv");
+		SDL_LoadFunction(libgl_handle,"glTexCoord4sv");
 	fn.glRasterPos2d =
 		( void (*)(GLdouble x, GLdouble y ))
-		SDL_LoadFunction(library_handle,"glRasterPos2d");
+		SDL_LoadFunction(libgl_handle,"glRasterPos2d");
 	fn.glRasterPos2f =
 		( void (*)(GLfloat x, GLfloat y ))
-		SDL_LoadFunction(library_handle,"glRasterPos2f");
+		SDL_LoadFunction(libgl_handle,"glRasterPos2f");
 	fn.glRasterPos2i =
 		( void (*)(GLint x, GLint y ))
-		SDL_LoadFunction(library_handle,"glRasterPos2i");
+		SDL_LoadFunction(libgl_handle,"glRasterPos2i");
 	fn.glRasterPos2s =
 		( void (*)(GLshort x, GLshort y ))
-		SDL_LoadFunction(library_handle,"glRasterPos2s");
+		SDL_LoadFunction(libgl_handle,"glRasterPos2s");
 	fn.glRasterPos3d =
 		( void (*)(GLdouble x, GLdouble y, GLdouble z ))
-		SDL_LoadFunction(library_handle,"glRasterPos3d");
+		SDL_LoadFunction(libgl_handle,"glRasterPos3d");
 	fn.glRasterPos3f =
 		( void (*)(GLfloat x, GLfloat y, GLfloat z ))
-		SDL_LoadFunction(library_handle,"glRasterPos3f");
+		SDL_LoadFunction(libgl_handle,"glRasterPos3f");
 	fn.glRasterPos3i =
 		( void (*)(GLint x, GLint y, GLint z ))
-		SDL_LoadFunction(library_handle,"glRasterPos3i");
+		SDL_LoadFunction(libgl_handle,"glRasterPos3i");
 	fn.glRasterPos3s =
 		( void (*)(GLshort x, GLshort y, GLshort z ))
-		SDL_LoadFunction(library_handle,"glRasterPos3s");
+		SDL_LoadFunction(libgl_handle,"glRasterPos3s");
 	fn.glRasterPos4d =
 		( void (*)(GLdouble x, GLdouble y, GLdouble z, GLdouble w ))
-		SDL_LoadFunction(library_handle,"glRasterPos4d");
+		SDL_LoadFunction(libgl_handle,"glRasterPos4d");
 	fn.glRasterPos4f =
 		( void (*)(GLfloat x, GLfloat y, GLfloat z, GLfloat w ))
-		SDL_LoadFunction(library_handle,"glRasterPos4f");
+		SDL_LoadFunction(libgl_handle,"glRasterPos4f");
 	fn.glRasterPos4i =
 		( void (*)(GLint x, GLint y, GLint z, GLint w ))
-		SDL_LoadFunction(library_handle,"glRasterPos4i");
+		SDL_LoadFunction(libgl_handle,"glRasterPos4i");
 	fn.glRasterPos4s =
 		( void (*)(GLshort x, GLshort y, GLshort z, GLshort w ))
-		SDL_LoadFunction(library_handle,"glRasterPos4s");
+		SDL_LoadFunction(libgl_handle,"glRasterPos4s");
 	fn.glRasterPos2dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos2dv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos2dv");
 	fn.glRasterPos2fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos2fv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos2fv");
 	fn.glRasterPos2iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos2iv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos2iv");
 	fn.glRasterPos2sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos2sv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos2sv");
 	fn.glRasterPos3dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos3dv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos3dv");
 	fn.glRasterPos3fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos3fv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos3fv");
 	fn.glRasterPos3iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos3iv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos3iv");
 	fn.glRasterPos3sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos3sv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos3sv");
 	fn.glRasterPos4dv =
 		( void (*)(const GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos4dv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos4dv");
 	fn.glRasterPos4fv =
 		( void (*)(const GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos4fv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos4fv");
 	fn.glRasterPos4iv =
 		( void (*)(const GLint *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos4iv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos4iv");
 	fn.glRasterPos4sv =
 		( void (*)(const GLshort *v ))
-		SDL_LoadFunction(library_handle,"glRasterPos4sv");
+		SDL_LoadFunction(libgl_handle,"glRasterPos4sv");
 	fn.glRectd =
 		( void (*)(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2 ))
-		SDL_LoadFunction(library_handle,"glRectd");
+		SDL_LoadFunction(libgl_handle,"glRectd");
 	fn.glRectf =
 		( void (*)(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2 ))
-		SDL_LoadFunction(library_handle,"glRectf");
+		SDL_LoadFunction(libgl_handle,"glRectf");
 	fn.glRecti =
 		( void (*)(GLint x1, GLint y1, GLint x2, GLint y2 ))
-		SDL_LoadFunction(library_handle,"glRecti");
+		SDL_LoadFunction(libgl_handle,"glRecti");
 	fn.glRects =
 		( void (*)(GLshort x1, GLshort y1, GLshort x2, GLshort y2 ))
-		SDL_LoadFunction(library_handle,"glRects");
+		SDL_LoadFunction(libgl_handle,"glRects");
 	fn.glRectdv =
 		( void (*)(const GLdouble *v1, const GLdouble *v2 ))
-		SDL_LoadFunction(library_handle,"glRectdv");
+		SDL_LoadFunction(libgl_handle,"glRectdv");
 	fn.glRectfv =
 		( void (*)(const GLfloat *v1, const GLfloat *v2 ))
-		SDL_LoadFunction(library_handle,"glRectfv");
+		SDL_LoadFunction(libgl_handle,"glRectfv");
 	fn.glRectiv =
 		( void (*)(const GLint *v1, const GLint *v2 ))
-		SDL_LoadFunction(library_handle,"glRectiv");
+		SDL_LoadFunction(libgl_handle,"glRectiv");
 	fn.glRectsv =
 		( void (*)(const GLshort *v1, const GLshort *v2 ))
-		SDL_LoadFunction(library_handle,"glRectsv");
+		SDL_LoadFunction(libgl_handle,"glRectsv");
 	fn.glVertexPointer =
 		( void (*)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr ))
-		SDL_LoadFunction(library_handle,"glVertexPointer");
+		SDL_LoadFunction(libgl_handle,"glVertexPointer");
 	fn.glNormalPointer =
 		( void (*)(GLenum type, GLsizei stride, const GLvoid *ptr ))
-		SDL_LoadFunction(library_handle,"glNormalPointer");
+		SDL_LoadFunction(libgl_handle,"glNormalPointer");
 	fn.glColorPointer =
 		( void (*)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr ))
-		SDL_LoadFunction(library_handle,"glColorPointer");
+		SDL_LoadFunction(libgl_handle,"glColorPointer");
 	fn.glIndexPointer =
 		( void (*)(GLenum type, GLsizei stride, const GLvoid *ptr ))
-		SDL_LoadFunction(library_handle,"glIndexPointer");
+		SDL_LoadFunction(libgl_handle,"glIndexPointer");
 	fn.glTexCoordPointer =
 		( void (*)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr ))
-		SDL_LoadFunction(library_handle,"glTexCoordPointer");
+		SDL_LoadFunction(libgl_handle,"glTexCoordPointer");
 	fn.glEdgeFlagPointer =
 		( void (*)(GLsizei stride, const GLvoid *ptr ))
-		SDL_LoadFunction(library_handle,"glEdgeFlagPointer");
+		SDL_LoadFunction(libgl_handle,"glEdgeFlagPointer");
 	fn.glGetPointerv =
 		( void (*)(GLenum pname, GLvoid **params ))
-		SDL_LoadFunction(library_handle,"glGetPointerv");
+		SDL_LoadFunction(libgl_handle,"glGetPointerv");
 	fn.glArrayElement =
 		( void (*)(GLint i ))
-		SDL_LoadFunction(library_handle,"glArrayElement");
+		SDL_LoadFunction(libgl_handle,"glArrayElement");
 	fn.glDrawArrays =
 		( void (*)(GLenum mode, GLint first, GLsizei count ))
-		SDL_LoadFunction(library_handle,"glDrawArrays");
+		SDL_LoadFunction(libgl_handle,"glDrawArrays");
 	fn.glDrawElements =
 		( void (*)(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices ))
-		SDL_LoadFunction(library_handle,"glDrawElements");
+		SDL_LoadFunction(libgl_handle,"glDrawElements");
 	fn.glInterleavedArrays =
 		( void (*)(GLenum format, GLsizei stride, const GLvoid *pointer ))
-		SDL_LoadFunction(library_handle,"glInterleavedArrays");
+		SDL_LoadFunction(libgl_handle,"glInterleavedArrays");
 	fn.glShadeModel =
 		( void (*)(GLenum mode ))
-		SDL_LoadFunction(library_handle,"glShadeModel");
+		SDL_LoadFunction(libgl_handle,"glShadeModel");
 	fn.glLightf =
 		( void (*)(GLenum light, GLenum pname, GLfloat param ))
-		SDL_LoadFunction(library_handle,"glLightf");
+		SDL_LoadFunction(libgl_handle,"glLightf");
 	fn.glLighti =
 		( void (*)(GLenum light, GLenum pname, GLint param ))
-		SDL_LoadFunction(library_handle,"glLighti");
+		SDL_LoadFunction(libgl_handle,"glLighti");
 	fn.glLightfv =
 		( void (*)(GLenum light, GLenum pname, const GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glLightfv");
+		SDL_LoadFunction(libgl_handle,"glLightfv");
 	fn.glLightiv =
 		( void (*)(GLenum light, GLenum pname, const GLint *params ))
-		SDL_LoadFunction(library_handle,"glLightiv");
+		SDL_LoadFunction(libgl_handle,"glLightiv");
 	fn.glGetLightfv =
 		( void (*)(GLenum light, GLenum pname, GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glGetLightfv");
+		SDL_LoadFunction(libgl_handle,"glGetLightfv");
 	fn.glGetLightiv =
 		( void (*)(GLenum light, GLenum pname, GLint *params ))
-		SDL_LoadFunction(library_handle,"glGetLightiv");
+		SDL_LoadFunction(libgl_handle,"glGetLightiv");
 	fn.glLightModelf =
 		( void (*)(GLenum pname, GLfloat param ))
-		SDL_LoadFunction(library_handle,"glLightModelf");
+		SDL_LoadFunction(libgl_handle,"glLightModelf");
 	fn.glLightModeli =
 		( void (*)(GLenum pname, GLint param ))
-		SDL_LoadFunction(library_handle,"glLightModeli");
+		SDL_LoadFunction(libgl_handle,"glLightModeli");
 	fn.glLightModelfv =
 		( void (*)(GLenum pname, const GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glLightModelfv");
+		SDL_LoadFunction(libgl_handle,"glLightModelfv");
 	fn.glLightModeliv =
 		( void (*)(GLenum pname, const GLint *params ))
-		SDL_LoadFunction(library_handle,"glLightModeliv");
+		SDL_LoadFunction(libgl_handle,"glLightModeliv");
 	fn.glMaterialf =
 		( void (*)(GLenum face, GLenum pname, GLfloat param ))
-		SDL_LoadFunction(library_handle,"glMaterialf");
+		SDL_LoadFunction(libgl_handle,"glMaterialf");
 	fn.glMateriali =
 		( void (*)(GLenum face, GLenum pname, GLint param ))
-		SDL_LoadFunction(library_handle,"glMateriali");
+		SDL_LoadFunction(libgl_handle,"glMateriali");
 	fn.glMaterialfv =
 		( void (*)(GLenum face, GLenum pname, const GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glMaterialfv");
+		SDL_LoadFunction(libgl_handle,"glMaterialfv");
 	fn.glMaterialiv =
 		( void (*)(GLenum face, GLenum pname, const GLint *params ))
-		SDL_LoadFunction(library_handle,"glMaterialiv");
+		SDL_LoadFunction(libgl_handle,"glMaterialiv");
 	fn.glGetMaterialfv =
 		( void (*)(GLenum face, GLenum pname, GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glGetMaterialfv");
+		SDL_LoadFunction(libgl_handle,"glGetMaterialfv");
 	fn.glGetMaterialiv =
 		( void (*)(GLenum face, GLenum pname, GLint *params ))
-		SDL_LoadFunction(library_handle,"glGetMaterialiv");
+		SDL_LoadFunction(libgl_handle,"glGetMaterialiv");
 	fn.glColorMaterial =
 		( void (*)(GLenum face, GLenum mode ))
-		SDL_LoadFunction(library_handle,"glColorMaterial");
+		SDL_LoadFunction(libgl_handle,"glColorMaterial");
 	fn.glPixelZoom =
 		( void (*)(GLfloat xfactor, GLfloat yfactor ))
-		SDL_LoadFunction(library_handle,"glPixelZoom");
+		SDL_LoadFunction(libgl_handle,"glPixelZoom");
 	fn.glPixelStoref =
 		( void (*)(GLenum pname, GLfloat param ))
-		SDL_LoadFunction(library_handle,"glPixelStoref");
+		SDL_LoadFunction(libgl_handle,"glPixelStoref");
 	fn.glPixelStorei =
 		( void (*)(GLenum pname, GLint param ))
-		SDL_LoadFunction(library_handle,"glPixelStorei");
+		SDL_LoadFunction(libgl_handle,"glPixelStorei");
 	fn.glPixelTransferf =
 		( void (*)(GLenum pname, GLfloat param ))
-		SDL_LoadFunction(library_handle,"glPixelTransferf");
+		SDL_LoadFunction(libgl_handle,"glPixelTransferf");
 	fn.glPixelTransferi =
 		( void (*)(GLenum pname, GLint param ))
-		SDL_LoadFunction(library_handle,"glPixelTransferi");
+		SDL_LoadFunction(libgl_handle,"glPixelTransferi");
 	fn.glPixelMapfv =
 		( void (*)(GLenum map, GLsizei mapsize, const GLfloat *values ))
-		SDL_LoadFunction(library_handle,"glPixelMapfv");
+		SDL_LoadFunction(libgl_handle,"glPixelMapfv");
 	fn.glPixelMapuiv =
 		( void (*)(GLenum map, GLsizei mapsize, const GLuint *values ))
-		SDL_LoadFunction(library_handle,"glPixelMapuiv");
+		SDL_LoadFunction(libgl_handle,"glPixelMapuiv");
 	fn.glPixelMapusv =
 		( void (*)(GLenum map, GLsizei mapsize, const GLushort *values ))
-		SDL_LoadFunction(library_handle,"glPixelMapusv");
+		SDL_LoadFunction(libgl_handle,"glPixelMapusv");
 	fn.glGetPixelMapfv =
 		( void (*)(GLenum map, GLfloat *values ))
-		SDL_LoadFunction(library_handle,"glGetPixelMapfv");
+		SDL_LoadFunction(libgl_handle,"glGetPixelMapfv");
 	fn.glGetPixelMapuiv =
 		( void (*)(GLenum map, GLuint *values ))
-		SDL_LoadFunction(library_handle,"glGetPixelMapuiv");
+		SDL_LoadFunction(libgl_handle,"glGetPixelMapuiv");
 	fn.glGetPixelMapusv =
 		( void (*)(GLenum map, GLushort *values ))
-		SDL_LoadFunction(library_handle,"glGetPixelMapusv");
+		SDL_LoadFunction(libgl_handle,"glGetPixelMapusv");
 	fn.glBitmap =
 		( void (*)(GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap ))
-		SDL_LoadFunction(library_handle,"glBitmap");
+		SDL_LoadFunction(libgl_handle,"glBitmap");
 	fn.glReadPixels =
 		( void (*)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels ))
-		SDL_LoadFunction(library_handle,"glReadPixels");
+		SDL_LoadFunction(libgl_handle,"glReadPixels");
 	fn.glDrawPixels =
 		( void (*)(GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels ))
-		SDL_LoadFunction(library_handle,"glDrawPixels");
+		SDL_LoadFunction(libgl_handle,"glDrawPixels");
 	fn.glCopyPixels =
 		( void (*)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum type ))
-		SDL_LoadFunction(library_handle,"glCopyPixels");
+		SDL_LoadFunction(libgl_handle,"glCopyPixels");
 	fn.glStencilFunc =
 		( void (*)(GLenum func, GLint ref, GLuint mask ))
-		SDL_LoadFunction(library_handle,"glStencilFunc");
+		SDL_LoadFunction(libgl_handle,"glStencilFunc");
 	fn.glStencilMask =
 		( void (*)(GLuint mask ))
-		SDL_LoadFunction(library_handle,"glStencilMask");
+		SDL_LoadFunction(libgl_handle,"glStencilMask");
 	fn.glStencilOp =
 		( void (*)(GLenum fail, GLenum zfail, GLenum zpass ))
-		SDL_LoadFunction(library_handle,"glStencilOp");
+		SDL_LoadFunction(libgl_handle,"glStencilOp");
 	fn.glClearStencil =
 		( void (*)(GLint s ))
-		SDL_LoadFunction(library_handle,"glClearStencil");
+		SDL_LoadFunction(libgl_handle,"glClearStencil");
 	fn.glTexGend =
 		( void (*)(GLenum coord, GLenum pname, GLdouble param ))
-		SDL_LoadFunction(library_handle,"glTexGend");
+		SDL_LoadFunction(libgl_handle,"glTexGend");
 	fn.glTexGenf =
 		( void (*)(GLenum coord, GLenum pname, GLfloat param ))
-		SDL_LoadFunction(library_handle,"glTexGenf");
+		SDL_LoadFunction(libgl_handle,"glTexGenf");
 	fn.glTexGeni =
 		( void (*)(GLenum coord, GLenum pname, GLint param ))
-		SDL_LoadFunction(library_handle,"glTexGeni");
+		SDL_LoadFunction(libgl_handle,"glTexGeni");
 	fn.glTexGendv =
 		( void (*)(GLenum coord, GLenum pname, const GLdouble *params ))
-		SDL_LoadFunction(library_handle,"glTexGendv");
+		SDL_LoadFunction(libgl_handle,"glTexGendv");
 	fn.glTexGenfv =
 		( void (*)(GLenum coord, GLenum pname, const GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glTexGenfv");
+		SDL_LoadFunction(libgl_handle,"glTexGenfv");
 	fn.glTexGeniv =
 		( void (*)(GLenum coord, GLenum pname, const GLint *params ))
-		SDL_LoadFunction(library_handle,"glTexGeniv");
+		SDL_LoadFunction(libgl_handle,"glTexGeniv");
 	fn.glGetTexGendv =
 		( void (*)(GLenum coord, GLenum pname, GLdouble *params ))
-		SDL_LoadFunction(library_handle,"glGetTexGendv");
+		SDL_LoadFunction(libgl_handle,"glGetTexGendv");
 	fn.glGetTexGenfv =
 		( void (*)(GLenum coord, GLenum pname, GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glGetTexGenfv");
+		SDL_LoadFunction(libgl_handle,"glGetTexGenfv");
 	fn.glGetTexGeniv =
 		( void (*)(GLenum coord, GLenum pname, GLint *params ))
-		SDL_LoadFunction(library_handle,"glGetTexGeniv");
+		SDL_LoadFunction(libgl_handle,"glGetTexGeniv");
 	fn.glTexEnvf =
 		( void (*)(GLenum target, GLenum pname, GLfloat param ))
-		SDL_LoadFunction(library_handle,"glTexEnvf");
+		SDL_LoadFunction(libgl_handle,"glTexEnvf");
 	fn.glTexEnvi =
 		( void (*)(GLenum target, GLenum pname, GLint param ))
-		SDL_LoadFunction(library_handle,"glTexEnvi");
+		SDL_LoadFunction(libgl_handle,"glTexEnvi");
 	fn.glTexEnvfv =
 		( void (*)(GLenum target, GLenum pname, const GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glTexEnvfv");
+		SDL_LoadFunction(libgl_handle,"glTexEnvfv");
 	fn.glTexEnviv =
 		( void (*)(GLenum target, GLenum pname, const GLint *params ))
-		SDL_LoadFunction(library_handle,"glTexEnviv");
+		SDL_LoadFunction(libgl_handle,"glTexEnviv");
 	fn.glGetTexEnvfv =
 		( void (*)(GLenum target, GLenum pname, GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glGetTexEnvfv");
+		SDL_LoadFunction(libgl_handle,"glGetTexEnvfv");
 	fn.glGetTexEnviv =
 		( void (*)(GLenum target, GLenum pname, GLint *params ))
-		SDL_LoadFunction(library_handle,"glGetTexEnviv");
+		SDL_LoadFunction(libgl_handle,"glGetTexEnviv");
 	fn.glTexParameterf =
 		( void (*)(GLenum target, GLenum pname, GLfloat param ))
-		SDL_LoadFunction(library_handle,"glTexParameterf");
+		SDL_LoadFunction(libgl_handle,"glTexParameterf");
 	fn.glTexParameteri =
 		( void (*)(GLenum target, GLenum pname, GLint param ))
-		SDL_LoadFunction(library_handle,"glTexParameteri");
+		SDL_LoadFunction(libgl_handle,"glTexParameteri");
 	fn.glTexParameterfv =
 		( void (*)(GLenum target, GLenum pname, const GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glTexParameterfv");
+		SDL_LoadFunction(libgl_handle,"glTexParameterfv");
 	fn.glTexParameteriv =
 		( void (*)(GLenum target, GLenum pname, const GLint *params ))
-		SDL_LoadFunction(library_handle,"glTexParameteriv");
+		SDL_LoadFunction(libgl_handle,"glTexParameteriv");
 	fn.glGetTexParameterfv =
 		( void (*)(GLenum target, GLenum pname, GLfloat *params))
-		SDL_LoadFunction(library_handle,"glGetTexParameterfv");
+		SDL_LoadFunction(libgl_handle,"glGetTexParameterfv");
 	fn.glGetTexParameteriv =
 		( void (*)(GLenum target, GLenum pname, GLint *params ))
-		SDL_LoadFunction(library_handle,"glGetTexParameteriv");
+		SDL_LoadFunction(libgl_handle,"glGetTexParameteriv");
 	fn.glGetTexLevelParameterfv =
 		( void (*)(GLenum target, GLint level, GLenum pname, GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glGetTexLevelParameterfv");
+		SDL_LoadFunction(libgl_handle,"glGetTexLevelParameterfv");
 	fn.glGetTexLevelParameteriv =
 		( void (*)(GLenum target, GLint level, GLenum pname, GLint *params ))
-		SDL_LoadFunction(library_handle,"glGetTexLevelParameteriv");
+		SDL_LoadFunction(libgl_handle,"glGetTexLevelParameteriv");
 	fn.glTexImage1D =
 		( void (*)(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels ))
-		SDL_LoadFunction(library_handle,"glTexImage1D");
+		SDL_LoadFunction(libgl_handle,"glTexImage1D");
 	fn.glTexImage2D =
 		( void (*)(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels ))
-		SDL_LoadFunction(library_handle,"glTexImage2D");
+		SDL_LoadFunction(libgl_handle,"glTexImage2D");
 	fn.glGetTexImage =
 		( void (*)(GLenum target, GLint level, GLenum format, GLenum type, GLvoid *pixels ))
-		SDL_LoadFunction(library_handle,"glGetTexImage");
+		SDL_LoadFunction(libgl_handle,"glGetTexImage");
 	fn.glGenTextures =
 		( void (*)(GLsizei n, GLuint *textures ))
-		SDL_LoadFunction(library_handle,"glGenTextures");
+		SDL_LoadFunction(libgl_handle,"glGenTextures");
 	fn.glDeleteTextures =
 		( void (*)(GLsizei n, const GLuint *textures))
-		SDL_LoadFunction(library_handle,"glDeleteTextures");
+		SDL_LoadFunction(libgl_handle,"glDeleteTextures");
 	fn.glBindTexture =
 		( void (*)(GLenum target, GLuint texture ))
-		SDL_LoadFunction(library_handle,"glBindTexture");
+		SDL_LoadFunction(libgl_handle,"glBindTexture");
 	fn.glPrioritizeTextures =
 		( void (*)(GLsizei n, const GLuint *textures, const GLclampf *priorities ))
-		SDL_LoadFunction(library_handle,"glPrioritizeTextures");
+		SDL_LoadFunction(libgl_handle,"glPrioritizeTextures");
 	fn.glAreTexturesResident =
 		( GLboolean (*)(GLsizei n, const GLuint *textures, GLboolean *residences ))
-		SDL_LoadFunction(library_handle,"glAreTexturesResident");
+		SDL_LoadFunction(libgl_handle,"glAreTexturesResident");
 	fn.glIsTexture =
 		( GLboolean (*)(GLuint texture ))
-		SDL_LoadFunction(library_handle,"glIsTexture");
+		SDL_LoadFunction(libgl_handle,"glIsTexture");
 	fn.glTexSubImage1D =
 		( void (*)(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels ))
-		SDL_LoadFunction(library_handle,"glTexSubImage1D");
+		SDL_LoadFunction(libgl_handle,"glTexSubImage1D");
 	fn.glTexSubImage2D =
 		( void (*)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels ))
-		SDL_LoadFunction(library_handle,"glTexSubImage2D");
+		SDL_LoadFunction(libgl_handle,"glTexSubImage2D");
 	fn.glCopyTexImage1D =
 		( void (*)(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border ))
-		SDL_LoadFunction(library_handle,"glCopyTexImage1D");
+		SDL_LoadFunction(libgl_handle,"glCopyTexImage1D");
 	fn.glCopyTexImage2D =
 		( void (*)(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border ))
-		SDL_LoadFunction(library_handle,"glCopyTexImage2D");
+		SDL_LoadFunction(libgl_handle,"glCopyTexImage2D");
 	fn.glCopyTexSubImage1D =
 		( void (*)(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width ))
-		SDL_LoadFunction(library_handle,"glCopyTexSubImage1D");
+		SDL_LoadFunction(libgl_handle,"glCopyTexSubImage1D");
 	fn.glCopyTexSubImage2D =
 		( void (*)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height ))
-		SDL_LoadFunction(library_handle,"glCopyTexSubImage2D");
+		SDL_LoadFunction(libgl_handle,"glCopyTexSubImage2D");
 	fn.glMap1d =
 		( void (*)(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble *points ))
-		SDL_LoadFunction(library_handle,"glMap1d");
+		SDL_LoadFunction(libgl_handle,"glMap1d");
 	fn.glMap1f =
 		( void (*)(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat *points ))
-		SDL_LoadFunction(library_handle,"glMap1f");
+		SDL_LoadFunction(libgl_handle,"glMap1f");
 	fn.glMap2d =
 		( void (*)(GLenum target, GLdouble u1, GLdouble u2, GLint ustride, GLint uorder, GLdouble v1, GLdouble v2, GLint vstride, GLint vorder, const GLdouble *points ))
-		SDL_LoadFunction(library_handle,"glMap2d");
+		SDL_LoadFunction(libgl_handle,"glMap2d");
 	fn.glMap2f =
 		( void (*)(GLenum target, GLfloat u1, GLfloat u2, GLint ustride, GLint uorder, GLfloat v1, GLfloat v2, GLint vstride, GLint vorder, const GLfloat *points ))
-		SDL_LoadFunction(library_handle,"glMap2f");
+		SDL_LoadFunction(libgl_handle,"glMap2f");
 	fn.glGetMapdv =
 		( void (*)(GLenum target, GLenum query, GLdouble *v ))
-		SDL_LoadFunction(library_handle,"glGetMapdv");
+		SDL_LoadFunction(libgl_handle,"glGetMapdv");
 	fn.glGetMapfv =
 		( void (*)(GLenum target, GLenum query, GLfloat *v ))
-		SDL_LoadFunction(library_handle,"glGetMapfv");
+		SDL_LoadFunction(libgl_handle,"glGetMapfv");
 	fn.glGetMapiv =
 		( void (*)(GLenum target, GLenum query, GLint *v ))
-		SDL_LoadFunction(library_handle,"glGetMapiv");
+		SDL_LoadFunction(libgl_handle,"glGetMapiv");
 	fn.glEvalCoord1d =
 		( void (*)(GLdouble u ))
-		SDL_LoadFunction(library_handle,"glEvalCoord1d");
+		SDL_LoadFunction(libgl_handle,"glEvalCoord1d");
 	fn.glEvalCoord1f =
 		( void (*)(GLfloat u ))
-		SDL_LoadFunction(library_handle,"glEvalCoord1f");
+		SDL_LoadFunction(libgl_handle,"glEvalCoord1f");
 	fn.glEvalCoord1dv =
 		( void (*)(const GLdouble *u ))
-		SDL_LoadFunction(library_handle,"glEvalCoord1dv");
+		SDL_LoadFunction(libgl_handle,"glEvalCoord1dv");
 	fn.glEvalCoord1fv =
 		( void (*)(const GLfloat *u ))
-		SDL_LoadFunction(library_handle,"glEvalCoord1fv");
+		SDL_LoadFunction(libgl_handle,"glEvalCoord1fv");
 	fn.glEvalCoord2d =
 		( void (*)(GLdouble u, GLdouble v ))
-		SDL_LoadFunction(library_handle,"glEvalCoord2d");
+		SDL_LoadFunction(libgl_handle,"glEvalCoord2d");
 	fn.glEvalCoord2f =
 		( void (*)(GLfloat u, GLfloat v ))
-		SDL_LoadFunction(library_handle,"glEvalCoord2f");
+		SDL_LoadFunction(libgl_handle,"glEvalCoord2f");
 	fn.glEvalCoord2dv =
 		( void (*)(const GLdouble *u ))
-		SDL_LoadFunction(library_handle,"glEvalCoord2dv");
+		SDL_LoadFunction(libgl_handle,"glEvalCoord2dv");
 	fn.glEvalCoord2fv =
 		( void (*)(const GLfloat *u ))
-		SDL_LoadFunction(library_handle,"glEvalCoord2fv");
+		SDL_LoadFunction(libgl_handle,"glEvalCoord2fv");
 	fn.glMapGrid1d =
 		( void (*)(GLint un, GLdouble u1, GLdouble u2 ))
-		SDL_LoadFunction(library_handle,"glMapGrid1d");
+		SDL_LoadFunction(libgl_handle,"glMapGrid1d");
 	fn.glMapGrid1f =
 		( void (*)(GLint un, GLfloat u1, GLfloat u2 ))
-		SDL_LoadFunction(library_handle,"glMapGrid1f");
+		SDL_LoadFunction(libgl_handle,"glMapGrid1f");
 	fn.glMapGrid2d =
 		( void (*)(GLint un, GLdouble u1, GLdouble u2, GLint vn, GLdouble v1, GLdouble v2 ))
-		SDL_LoadFunction(library_handle,"glMapGrid2d");
+		SDL_LoadFunction(libgl_handle,"glMapGrid2d");
 	fn.glMapGrid2f =
 		( void (*)(GLint un, GLfloat u1, GLfloat u2, GLint vn, GLfloat v1, GLfloat v2 ))
-		SDL_LoadFunction(library_handle,"glMapGrid2f");
+		SDL_LoadFunction(libgl_handle,"glMapGrid2f");
 	fn.glEvalPoint1 =
 		( void (*)(GLint i ))
-		SDL_LoadFunction(library_handle,"glEvalPoint1");
+		SDL_LoadFunction(libgl_handle,"glEvalPoint1");
 	fn.glEvalPoint2 =
 		( void (*)(GLint i, GLint j ))
-		SDL_LoadFunction(library_handle,"glEvalPoint2");
+		SDL_LoadFunction(libgl_handle,"glEvalPoint2");
 	fn.glEvalMesh1 =
 		( void (*)(GLenum mode, GLint i1, GLint i2 ))
-		SDL_LoadFunction(library_handle,"glEvalMesh1");
+		SDL_LoadFunction(libgl_handle,"glEvalMesh1");
 	fn.glEvalMesh2 =
 		( void (*)(GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2 ))
-		SDL_LoadFunction(library_handle,"glEvalMesh2");
+		SDL_LoadFunction(libgl_handle,"glEvalMesh2");
 	fn.glFogf =
 		( void (*)(GLenum pname, GLfloat param ))
-		SDL_LoadFunction(library_handle,"glFogf");
+		SDL_LoadFunction(libgl_handle,"glFogf");
 	fn.glFogi =
 		( void (*)(GLenum pname, GLint param ))
-		SDL_LoadFunction(library_handle,"glFogi");
+		SDL_LoadFunction(libgl_handle,"glFogi");
 	fn.glFogfv =
 		( void (*)(GLenum pname, const GLfloat *params ))
-		SDL_LoadFunction(library_handle,"glFogfv");
+		SDL_LoadFunction(libgl_handle,"glFogfv");
 	fn.glFogiv =
 		( void (*)(GLenum pname, const GLint *params ))
-		SDL_LoadFunction(library_handle,"glFogiv");
+		SDL_LoadFunction(libgl_handle,"glFogiv");
 	fn.glFeedbackBuffer =
 		( void (*)(GLsizei size, GLenum type, GLfloat *buffer ))
-		SDL_LoadFunction(library_handle,"glFeedbackBuffer");
+		SDL_LoadFunction(libgl_handle,"glFeedbackBuffer");
 	fn.glPassThrough =
 		( void (*)(GLfloat token ))
-		SDL_LoadFunction(library_handle,"glPassThrough");
+		SDL_LoadFunction(libgl_handle,"glPassThrough");
 	fn.glSelectBuffer =
 		( void (*)(GLsizei size, GLuint *buffer ))
-		SDL_LoadFunction(library_handle,"glSelectBuffer");
+		SDL_LoadFunction(libgl_handle,"glSelectBuffer");
 	fn.glInitNames =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glInitNames");
+		SDL_LoadFunction(libgl_handle,"glInitNames");
 	fn.glLoadName =
 		( void (*)(GLuint name ))
-		SDL_LoadFunction(library_handle,"glLoadName");
+		SDL_LoadFunction(libgl_handle,"glLoadName");
 	fn.glPushName =
 		( void (*)(GLuint name ))
-		SDL_LoadFunction(library_handle,"glPushName");
+		SDL_LoadFunction(libgl_handle,"glPushName");
 	fn.glPopName =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glPopName");
+		SDL_LoadFunction(libgl_handle,"glPopName");
 	fn.glEnableTraceMESA =
 		( void (*)(GLbitfield mask ))
-		SDL_LoadFunction(library_handle,"glEnableTraceMESA");
+		SDL_LoadFunction(libgl_handle,"glEnableTraceMESA");
 	fn.glDisableTraceMESA =
 		( void (*)(GLbitfield mask ))
-		SDL_LoadFunction(library_handle,"glDisableTraceMESA");
+		SDL_LoadFunction(libgl_handle,"glDisableTraceMESA");
 	fn.glNewTraceMESA =
 		( void (*)(GLbitfield mask, const GLubyte * traceName ))
-		SDL_LoadFunction(library_handle,"glNewTraceMESA");
+		SDL_LoadFunction(libgl_handle,"glNewTraceMESA");
 	fn.glEndTraceMESA =
 		( void (*)(void))
-		SDL_LoadFunction(library_handle,"glEndTraceMESA");
+		SDL_LoadFunction(libgl_handle,"glEndTraceMESA");
 	fn.glTraceAssertAttribMESA =
 		( void (*)(GLbitfield attribMask ))
-		SDL_LoadFunction(library_handle,"glTraceAssertAttribMESA");
+		SDL_LoadFunction(libgl_handle,"glTraceAssertAttribMESA");
 	fn.glTraceCommentMESA =
 		( void (*)(const GLubyte * comment ))
-		SDL_LoadFunction(library_handle,"glTraceCommentMESA");
+		SDL_LoadFunction(libgl_handle,"glTraceCommentMESA");
 	fn.glTraceTextureMESA =
 		( void (*)(GLuint name, const GLubyte* comment ))
-		SDL_LoadFunction(library_handle,"glTraceTextureMESA");
+		SDL_LoadFunction(libgl_handle,"glTraceTextureMESA");
 	fn.glTraceListMESA =
 		( void (*)(GLuint name, const GLubyte* comment ))
-		SDL_LoadFunction(library_handle,"glTraceListMESA");
+		SDL_LoadFunction(libgl_handle,"glTraceListMESA");
 	fn.glTracePointerMESA =
 		( void (*)(GLvoid* pointer, const GLubyte* comment ))
-		SDL_LoadFunction(library_handle,"glTracePointerMESA");
+		SDL_LoadFunction(libgl_handle,"glTracePointerMESA");
 	fn.glTracePointerRangeMESA =
 		( void (*)(const GLvoid* first, const GLvoid* last, const GLubyte* comment ))
-		SDL_LoadFunction(library_handle,"glTracePointerRangeMESA");
+		SDL_LoadFunction(libgl_handle,"glTracePointerRangeMESA");
 	fn.glBlendEquationSeparateATI =
 		( void (*)(GLenum modeRGB, GLenum modeA ))
-		SDL_LoadFunction(library_handle,"glBlendEquationSeparateATI");
+		SDL_LoadFunction(libgl_handle,"glBlendEquationSeparateATI");
 /* Functions generated : 347 */

@@ -77,21 +77,23 @@ class OSMesaDriver : public NF_Base
 		/* contexts[0] unused */
 		context_t	contexts[MAX_OSMESA_CONTEXTS+1];
 		int num_contexts, cur_context;
-		void *library_handle;
+		void *libosmesa_handle, *libgl_handle;
 
 		/* Some special functions, which need a bit more work */
 		int OpenLibrary(void);
 		int CloseLibrary(void);
 		void SelectContext(Uint32 ctx);
+		void ConvertContext(Uint32 ctx);
+
 		Uint32 LenglGetString(Uint32 ctx, GLenum name);
 		void PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer);
+
 		GLdouble Atari2HostDouble(Uint32 high, Uint32 low);
 		void Atari2HostDoublePtr(Uint32 size, Uint32 *src, GLdouble *dest);
 		GLfloat Atari2HostFloat(Uint32 high, Uint32 low);
 		void Atari2HostFloatPtr(Uint32 size, Uint32 *src, GLfloat *dest);
 		void Atari2HostIntPtr(Uint32 size, Uint32 *src, GLint *dest);
 		void Atari2HostShortPtr(Uint32 size, Uint16 *src, GLshort *dest);
-		void ConvertContext(Uint32 ctx);
 
 		Uint32 OSMesaCreateContext( GLenum format, Uint32 sharelist );
 		Uint32 OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, Uint32 sharelist);
@@ -103,7 +105,6 @@ class OSMesaDriver : public NF_Base
 		GLboolean OSMesaGetDepthBuffer( Uint32 c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer );
 		GLboolean OSMesaGetColorBuffer( Uint32 c, GLint *width, GLint *height, GLint *format, void **buffer );
 		void *OSMesaGetProcAddress( const char *funcName );
-
 
 #include "nfosmesa/proto-gl.h"
 #if NFOSMESA_GLEXT
