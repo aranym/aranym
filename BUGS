@@ -22,6 +22,17 @@ Solution:
   General solution is to get a more precise host timer interrupt (at least
   200 Hz). Specific (and suggested) solution is to stop using Videlity and
   replace it with BlowUP030 or something similar.
+--
+
+FPU issues:
+
+on Pentium III laptop the tan() and asin() functions return wrong results,
+Martin Tarenskeen reports. Interestingly the sin()/cos() returns correct
+values so if there wasn't other fix we could simulate tan() with sin()/cos()
+internally.
+
+On PPC the "IEEE" FPU core doesn't compile (non-portable?). The UAE FPU
+emulation works flawlessly, as reported by Francois LE COAT.
 
 
 Platform dependent known bugs and limitations:
@@ -44,7 +55,6 @@ Only Linux-ia32 (x86) currently supports JIT compiler for the CPU emulator.
 This is not a design limitation or a bug in other operating systems, it's 
 just lack of manpower willing to work on JIT support on the other systems.
 
-Linux 2.6.x is not ARAnyM friendly (or vice-versa). Not only JIT mode but
-also regular AFROS boot gets stuck, users report. Main developers don't
-run 2.6.x yet so this has to wait.
-
+Linux kernel 2.6.x: SIGSEGV handler doesn't work correctly. Problems have
+been identified, solution is unknown yet. ARAnyM with sigsegv handler (JIT)
+doesn't work there.

@@ -1,3 +1,8 @@
+2004/07/01 - joy
+- BUGS: FPU problems documented. We need fix even for Pentium host based
+  systems!
+
+
 2004/06/21 - milan
 - diskimage supports images lager than 2GB (large file support)
 
