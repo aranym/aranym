@@ -2917,6 +2917,7 @@ static void m68k_run_1 (void)
 			if (++firsthist == MAX_HIST) firsthist = 0;
 		}
 #endif
+		check_ram_boundary(regs.pcp);
 		opcode = GET_OPCODE;
 		(*cpufunctbl[opcode])(opcode);
 		if (regs.spcflags) {
