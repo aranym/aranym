@@ -8,7 +8,11 @@
 #include "memory.h"
 #include "cpu_emulation.h"
 
-#include <cctype>
+#ifdef HAVE_NEW_HEADERS
+# include <cctype>
+#else
+# include <ctype.h>
+#endif
 
 #ifdef NEWDEBUG
 

@@ -13,9 +13,15 @@
 //#include "memAlloc.h"
 //#include "misc.h"
 
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdlib>
+# include <cstdio>
+# include <cstring>
+#else
+# include <stdlib.h>
+# include <stdio.h>
+# include <string.h>
+#endif
 
 #if defined(__BEOS__) || defined(OS_solaris)
 /* The scandir() and alphasort() functions aren't available on BeOS, */

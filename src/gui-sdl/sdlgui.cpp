@@ -11,7 +11,12 @@
 #include "file.h"
 #include "debug.h"
 
-#include <cstdlib>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdlib>
+#else
+# include <stdlib.h>
+#endif
+
 #include <SDL.h>
 
 #define SGRADIOBUTTON_NORMAL    12

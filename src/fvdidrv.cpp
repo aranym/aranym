@@ -17,8 +17,13 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <new>     // Johan Klockars
-#include <cstring> // Johan Klockars
+#ifdef HAVE_NEW_HEADERS
+# include <new>     // Johan Klockars
+# include <cstring> // Johan Klockars
+#else
+# include <new.h>
+# include <string.h>
+#endif
 
 // this serves for debugging the color palette code
 #undef DEBUG_DRAW_PALETTE
@@ -1924,6 +1929,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.41  2002/09/28 00:07:37  johan
+ * Special handling of vro_cpyfm D=S mode. 16 bit only.
+ *
  * Revision 1.40  2002/09/15 15:17:15  joy
  * CPU to separate thread
  *

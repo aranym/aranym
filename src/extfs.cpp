@@ -23,9 +23,15 @@
 # include <sys/vfs.h>
 #endif
 
-#include <cerrno>
-#include <cstdlib>
-#include <cstring>
+#ifdef HAVE_NEW_HEADERS
+# include <cerrno>
+# include <cstdlib>
+# include <cstring>
+#else
+# include <errno.h>
+# include <stdlib.h>
+# include <stdio.h>
+#endif
 
 #ifdef OS_mint
 #include <mint/osbind.h>
@@ -2634,6 +2640,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.57  2002/10/13 11:28:08  milan
+ * small corrections for Mac OS X
+ *
  * Revision 1.56  2002/09/10 13:07:22  pmandin
  * Missing ')'
  *

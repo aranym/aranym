@@ -25,9 +25,16 @@
 #include <netinet/in.h>
 #include <pthread.h>
 #include <semaphore.h>
-#include <cerrno>
-#include <cstdio>
-#include <map>
+
+#ifdef HAVE_NEW_HEADERS
+# include <cerrno>
+# include <cstdio>
+# include <map>
+#else
+# include <errno.h>
+# include <stdio.h>
+# include <map.h>
+#endif
 
 #if defined(__FreeBSD__) || defined(sgi)
 #include <net/if.h>

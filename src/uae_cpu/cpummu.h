@@ -3,7 +3,12 @@
 #define CPUMMU_H
 
 #include "registers.h"
-#include <cstdlib>
+
+#ifdef HAVE_NEW_HEADERS
+# include <cstdlib>
+#else
+# include <stdlib.h>
+#endif
 
 #define MMU_TEST_PTEST		1
 #define MMU_TEST_VERBOSE	2

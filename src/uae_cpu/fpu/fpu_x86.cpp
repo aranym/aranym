@@ -134,8 +134,13 @@
  *			
  */
 
-#include <math.h>
-#include <stdio.h>
+#ifdef HAVE_NEW_HEADERS
+# include <cmath>
+# include <cstdio>
+#else
+# include <math.h>
+# include <stdio.h>
+#endif
 
 #include "sysdeps.h"
 #include "memory.h"

@@ -18,7 +18,11 @@
 #include "cpummu.h"
 #include "readcpu.h"
 
-#include <csetjmp>
+#ifdef HAVE_NEW_HEADERS
+# include <csetjmp>
+#else
+# include <setjmp.h>
+#endif
 
 // newcpu.h
 extern void Exception (int, uaecptr);

@@ -1,6 +1,8 @@
 2002/10/15 - milan
 - Mac OS X: keyboard scancode workaround
 
+- non-cheaders support (for MipsPro C/C++ compiler)
+
 
 2002/10/14 - milan
 - configure & etc.: generic bool, volatile and inline handling

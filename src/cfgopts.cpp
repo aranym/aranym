@@ -77,9 +77,15 @@ extern "C" {
 
 #include "cfgopts.h"
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdio>
+# include <cstdlib>
+# include <cstring>
+#else
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+#endif
 
 char	*trim(char *buffer)
 {

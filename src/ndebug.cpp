@@ -17,8 +17,13 @@
 #define DEBUG 1
 #include "debug.h"
 
-#include <cstdarg>
-#include <cstdlib>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdarg>
+# include <cstdlib>
+#else
+# include <stdarg.h>
+# include <stdlib.h>
+#endif
 
 #ifndef HAVE_GNU_SOURCE
 
@@ -1340,6 +1345,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.29  2002/10/02 22:04:32  milan
+ * ndebug supports breakpoints
+ *
  * Revision 1.28  2002/09/30 21:57:33  milan
  * v&V commands added to ndebug, (<address>) vs. <value> operations
  * typo fix in configure.ac script

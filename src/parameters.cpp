@@ -6,7 +6,11 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <cstdlib>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdlib>
+#else
+# include <stdlib.h>
+#endif
 
 static struct option const long_options[] =
 {

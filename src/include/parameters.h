@@ -7,8 +7,13 @@
 #include "version.h"
 #include "cfgopts.h"
 
-#include <cassert>
-#include <cstdio>
+#ifdef HAVE_NEW_HEADERS
+# include <cassert>
+# include <cstdio>
+#else
+# include <assert.h>
+# include <stdio.h>
+#endif
 
 #ifndef ARANYMHOME
 # define ARANYMHOME		".aranym"

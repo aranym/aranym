@@ -39,8 +39,14 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <csignal>
-#include <cstdlib>
+#ifdef HAVE_NEW_HEADERS
+# include <csignal>
+# include <cstdlib>
+#else
+# include <signal.h>
+# include <stdlib.h>
+#endif
+
 #include <SDL.h>
 
 #ifdef SDL_GUI
@@ -525,6 +531,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.83  2002/10/07 23:00:42  joy
+ * CPU back in the main thread
+ *
  * Revision 1.82  2002/09/27 21:01:17  pmandin
  * Acia, Ikbd, Midi update
  *

@@ -70,9 +70,15 @@
 #define PROFILE_UNTRANSLATED_INSNS	1
 #endif
 
-#include <csignal>
-#include <cstdlib>
-#include <cerrno>
+#ifdef HAVE_NEW_HEADERS
+# include <csignal>
+# include <cstdlib>
+# include <cerrno>
+#else
+# include <signal.h>
+# include <stdlib.h>
+# include <errno.h>
+#endif
 
 #ifdef WIN32
 #undef write_log

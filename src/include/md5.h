@@ -23,7 +23,11 @@
 #ifndef MD5_H
 #define MD5_H
 
-#include <cstdio>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdio>
+#else
+# include <stdio.h>
+#endif
 
 #define md5byte unsigned char
 #define UWORD32	unsigned long

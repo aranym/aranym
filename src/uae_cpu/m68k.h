@@ -9,7 +9,11 @@
 #ifndef M68K_FLAGS_H
 #define M68K_FLAGS_H
 
-#include <cstdlib>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdlib>
+#else
+# include <stdlib.h>
+#endif
 
 #ifdef OPTIMIZED_FLAGS
 

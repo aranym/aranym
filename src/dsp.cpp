@@ -6,7 +6,12 @@
  * Patrice Mandin
  */
 
-#include <math.h>
+#ifdef HAVE_NEW_HEADERS
+# include <cmath>
+#else
+# include <math.h>
+#endif
+
 #include <SDL.h>
 #include <SDL_thread.h>
 

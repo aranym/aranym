@@ -7,11 +7,16 @@
 #ifndef _HOSTSCREEN_H
 #define _HOSTSCREEN_H
 
-#include <cstring>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdlib>
+# include <cstring>
+#else
+# include <stdlib.h>
+# include <string.h>
+#endif
+
 #include <SDL.h>
 #include <SDL_thread.h>
-#include <stdlib.h>		/* for free() */
-
 
 /**
  * This macro handles the endianity for 24 bit per item data
@@ -405,6 +410,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.38  2002/09/23 09:21:37  pmandin
+ * Select best video mode
+ *
  * Revision 1.37  2002/07/25 13:44:29  pmandin
  * gcc-3.1 does not like a parameter to be set both in the definition and the method (drawline)
  *

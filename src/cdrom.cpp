@@ -39,9 +39,15 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <cstdlib>
-#include <cstdio>
-#include <cerrno>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdlib>
+# include <cstdio>
+# include <cerrno>
+#else
+# include <stdlib.h>
+# include <stdio.h>
+# include <errno.h>
+#endif
 
 #define LOG_THIS /* no SMF tricks here, not needed */
 

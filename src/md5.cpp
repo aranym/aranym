@@ -27,7 +27,12 @@
 #include "sysdeps.h"
 #include "md5.h"
 
-#include <cstring>
+#ifdef HAVE_NEW_HEADERS
+# include <cstring>
+#else
+# include <string.h>
+#endif
+
 #include <netinet/in.h>
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN

@@ -22,8 +22,13 @@
 #include "vm_alloc.h"
 
 // TODO: Win32 VMs ?
-#include <cstdlib>
-#include <cstring>
+#ifdef HAVE_NEW_HEADERS
+# include <cstdlib>
+# include <cstring>
+#else
+# include <stdlib.h>
+# include <string.h>
+#endif
 
 #ifdef HAVE_MACH_VM
 #ifndef HAVE_MACH_TASK_SELF
