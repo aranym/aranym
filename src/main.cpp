@@ -110,14 +110,14 @@ void hideMouse(bool hide) {
 bool grabMouse(bool grab) {
     int current = SDL_WM_GrabInput(SDL_GRAB_QUERY);
     if (grab && current != SDL_GRAB_ON) {
-		//        SDL_WM_GrabInput(SDL_GRAB_ON);
+		SDL_WM_GrabInput(SDL_GRAB_ON);
 		grabbedMouse = true;
-		//        hideMouse(true);
+		hideMouse(true);
     }
     else if (!grab && current != SDL_GRAB_OFF) {
-		//        SDL_WM_GrabInput(SDL_GRAB_OFF);
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
         grabbedMouse = false;
-		//        hideMouse(false);
+		hideMouse(false);
     }
     return (current == SDL_GRAB_ON);
 }
@@ -342,7 +342,8 @@ Uint32 my_callback_function(Uint32 interval, void *param)
         }
 
         if (++refreshCounter == 2) {    // divided by 2 again ==> 25 Hz screen update
-            if (! direct_truecolor) {
+            if (! direct_truecolor)
+            {
                 renderScreen();
             }
             refreshCounter = 0;
@@ -390,18 +391,25 @@ bool InitAll(void)
     // insert_floppy();
 
     if (direct_truecolor) {
-        // Patch TOS (enforce VideoRAM at 0xf0000000)
+        // Patch TOS (enforce VIDEL VideoRAM at ARANYMVRAMSTART)
         D(bug("Patching TOS for direct VIDEL output..."));
-        ROMBaseHost[35752] = 0x2e;
-        ROMBaseHost[35753] = 0x3c;
-        ROMBaseHost[35754] = 0xf0;
-        ROMBaseHost[35755] = 0;
-        ROMBaseHost[35756] = 0;
-        ROMBaseHost[35757] = 0;
-        ROMBaseHost[35758] = 0x60;
-        ROMBaseHost[35759] = 6;
-        ROMBaseHost[35760] = 0x4e;
-        ROMBaseHost[35761] = 0x71;
+#if 0
+		ROMBaseHost[35752] = 0x2e;
+		ROMBaseHost[35753] = 0x3c;
+		ROMBaseHost[35754] = ARANYMVRAMSTART >> 24;
+		ROMBaseHost[35755] = ARANYMVRAMSTART >> 16;
+		ROMBaseHost[35756] = ARANYMVRAMSTART >> 8;
+		ROMBaseHost[35757] = ARANYMVRAMSTART;
+		ROMBaseHost[35758] = 0x60;
+		ROMBaseHost[35759] = 6;
+		ROMBaseHost[35760] = 0x4e;
+		ROMBaseHost[35761] = 0x71;
+#else
+        WriteAtariInt16(ROMBase+35752, 0x2e3c);
+        WriteAtariInt32(ROMBase+35754, ARANYMVRAMSTART);
+        WriteAtariInt16(ROMBase+35758, 0x6006);
+        WriteAtariInt16(ROMBase+35760, 0x4e71);
+#endif
     }
 
 #ifdef METADOS_DRV
