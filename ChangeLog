@@ -1,5 +1,14 @@
-2002/07/03 - Patrice (record in ChangeLog by joy)
-- DSP preliminary support!!
+2002/07/09 - joy
+- DSP integrated properly in the autoconfig system. By default it's disabled
+  but you can enable it with --enable-dsp in configure phase.
+
+
+2002/07/08 - Patrice (record in ChangeLog by joy)
+- DSP 56001 emulation started. It is not finished, but I think it has
+  a good shape. I wanted to do this because I would like to be able
+  to run DSP development tools under Aranym, to assemble DSP programs.
+  I used the Motorola DSP56000UM/AD book as documentation.
+  Consider this as v0.000000001 stuff (unstable, bugged, incomplete).
 
 
 2002/07/03 - milan
