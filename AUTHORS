@@ -70,6 +70,7 @@ Andreas Schwab
 - damn important fix of MOVES instruction (for Linux-m68k boot)
 - fix of PTESTR/PTESTW and more MMU fixes
 - LILO fixes, no longer needs /usr/src/linux/include for compiling
+- complete PMMU revision and fixing, got Linux/m68k working
 
 ---
 

@@ -1,4 +1,4 @@
-2005/02/20 - version 0.9.0beta pre-release
+2005/02/22 - version 0.9.0beta2 release
 
  We've been providing 68040 PMMU (a memory management unit emulation,
  required for running FreeMiNT with MMU protection, and Linux/m68k)
