@@ -10,8 +10,9 @@
 extern ExtFs extFS;
 
 ARADATA::ARADATA() {
-	mouse_x = 640/2;	// center of screen
-	mouse_y = 480/2;	// center of screen
+	mouseDriver = false;
+	mouse_x = -1;
+	mouse_y = -1;
 }
 
 static const int HW = 0xf90000;
@@ -46,4 +47,5 @@ void ARADATA::handleWrite(uaecptr addr, uae_u8 value) {
 		case 16: mouse_y = (mouse_y & 0xff) | (value << 8); break;
 		case 17: mouse_y = (mouse_y & 0xff00) | value; break;
 	}
+	mouseDriver = true;
 }
