@@ -115,13 +115,16 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 	 * instances loaded by BetaDOS into memory.
          *
 	 * Note: This is definitely not MP friendly, but FreeMiNT
-	 *       doesn't support B(M)etaDOS anyway.
+	 *       doesn't support B(M)etaDOS anyway, so: Do not do
+	 *       this when using 'MiNT' or 'MagX' it crashes then.
 	 */	
+	if (!get_cookie(0x4D694E54L /*'MiNT'*/) &&
+	    !get_cookie(0x4D616758L /*'MagX'*/))
 	{
- 		/* 'BDhf'... BetaDOS Host Filesystem cookie */
-		ulong p = get_cookie(0x42446866);
+ 		/* BetaDOS Host Filesystem cookie */
+		ulong p = get_cookie(0x42446866L /*'BDfh'*/);
 		if ( p ) curproc = (void*)p;
-		else set_cookie(0x42446866, (ulong)curproc);
+		else set_cookie(0x42446866L /*'BDfh'*/, (ulong)curproc);
 	}
 
 	/*
@@ -152,6 +155,17 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 /**
  * $Log$
+ * Revision 1.7  2004/04/26 07:14:04  standa
+ * Adjusted to the recent FreeMiNT CVS state to compile and also made
+ * BetaDOS only. No more MetaDOS compatibility attempts.
+ *
+ * Dfree() fix - for Calamus to be able to save its documents.
+ *
+ * Some minor bugfix backports from the current FreeMiNTs CVS version.
+ *
+ * The mountpoint entries are now shared among several hostfs.dos instances
+ * using a 'BDhf' cookie entry (atari/hostfs/metados/main.c).
+ *
  * Revision 1.6  2003/03/24 08:58:53  joy
  * aranymfs.xfs renamed to hostfs.xfs
  *
