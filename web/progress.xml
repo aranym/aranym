@@ -5,8 +5,6 @@
 
 <document>
   <header>Project Progress</header>
-    <title>What is done?</title>
-      <table>
         <tr valign="top">
           <th bgcolor="#eeeeee" colspan="2" align="left">m68k emulation</th>
         </tr>
@@ -136,5 +134,4 @@
         <tr valign="top">
           <td>Distribution</td><td>Linux distribution with integrated ARAnyM, EmuTOS and FreeMiNT OS</td>
         </tr>
-      </table>
 </document>

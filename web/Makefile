@@ -22,7 +22,7 @@ saxon:
 
 clean:
 	rm -rf $(OUT)
-	rm -rf build/saxon.jar
+#	rm -rf build/saxon.jar
 
 %.html:	%.xml
 	@echo $@ ; $(SAXON) $< $(STYLE) >$(OUT)/$@

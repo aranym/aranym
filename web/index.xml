@@ -21,19 +21,17 @@
       In some three weeks we have been booting to desktop and since then we work
       on configuration, new drivers and ports to other operating systems etc.
       <p/>
-      There are several people working on the project - the file <a href=
-      "http://www.sophics.cz/cgi-bin/cvsweb/aranym/AUTHORS?rev=1&amp;content-type=text/x-cvsweb-markup">
-      AUTHORS</a> lists them. And we are seeking for new developers so if
-      you are willing to help us then send a mail to <contact>aranym@sophics.cz</contact>.
+      We are seeking for new developers so if you are willing to help us then send a mail to <a href="mlist.html">Users mailing list</a>.
       <p/>
       See the <a href="progress.html">Progress</a> and the <a href="news.html">News</a> sections for the
       most current information.
       <p/>
-      Feel free to send comments or questions to <contact>aranym@sophics.cz</contact>.
+      <p/>
+      Feel free to send comments or questions to mail
+      <a href="mlist.html">Users mailing list</a>.
 
       <br/><br/>
       <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=41106" width="88" height="31" border="0" alt="SourceForge Logo" align="right"/></a>
-      <counter/>
     </text>
   </chapter>
 </document>

@@ -1,11 +1,24 @@
 <?xml version="1.0"?>
 
 <document>
-  <header>Mailing list</header>
+  <header>ARAnyM mailing lists</header>
   <chapter>
     <title>ARAnyM developers mailing list</title>
     <text>
-      The WWW interface for subscribing to the mailing list or browsing through the mail archive is available <a href="http://nightmare.sh.cvut.cz/cgi-bin/mailman/listinfo/aranym">here</a>.
+      This list is intended for developers of ARAnyM. User questions or problems should NOT be posted here.
+      <p/>
+      The WWW interface for subscribing to the developer mailing list or browsing through the mail archive is available
+      <a href="http://nightmare.sh.cvut.cz/cgi-bin/mailman/listinfo/aranym/">here</a>.
+    </text>
+  </chapter>
+
+  <chapter>
+    <title>ARAnyM users mailing list</title>
+    <text>
+      This list is open to all ARAnyM users. Questions, problems, bug reports or ARAnyM success stories should be posted here.
+      <p/>
+      The WWW interface for subscribing to the user mailing list or browsing through the mail archive is available
+      <a href="http://nightmare.sh.cvut.cz/cgi-bin/mailman/listinfo/aranym-user/">here</a>.
     </text>
   </chapter>
 </document>

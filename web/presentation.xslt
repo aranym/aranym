@@ -19,7 +19,8 @@
     <html>
       <head>
         <title>ARAnyM - <xsl:value-of select="/document/header"/></title>
-        <meta http-equiv="Cache-control" content="no-cache"/>
+<!--        <meta http-equiv="Cache-control" content="no-cache"/>
+-->
       </head>
       <body>
         <table width="100%" border="0" cellspacing="0" cellpadding="2">
@@ -29,25 +30,24 @@
                 ARAnyM
               </h2>
             </td>
-            <td></td>
-            <td colspan="2" align="center"> 
+            <td align="center"> 
               <h2>
                 <xsl:value-of select="/document/header"/>
               </h2>
             </td>
           </tr>
+
           <tr>
-            <td valign="top" colspan="4">
+            <td colspan="2" valign="top">
               <hr size="5"/>
             </td>
           </tr>
-          <tr><td colspan="4"></td></tr>
+
           <tr>
             <td valign="top">
               <xsl:apply-templates select="$config/menu" mode="menu"/>
             </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td valign="top" width="100%">
+            <td align="left" valign="top" width="100%">
               <xsl:apply-templates/>
             </td>
           </tr>
@@ -65,24 +65,32 @@
   <xsl:template match="section" mode="menu">
     <tr align="left">
       <th>
-        &nbsp;&nbsp;
         <xsl:value-of select="title"/>
       </th>
     </tr>
     <xsl:apply-templates select="item" mode="menu"/>
+    <xsl:apply-templates select="cvsitem" mode="menu"/>
   </xsl:template>
 
   <xsl:template match="item" mode="menu">
     <tr>
       <td>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{link}"><strong><xsl:value-of select="title"/></strong></a>
+        <a href="{link}"><strong><xsl:value-of select="title"/></strong></a>
+      </td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="cvsitem" mode="menu">
+    <tr>
+      <td>
+        <a href="{link}" target="cvsweb"><strong><xsl:value-of select="title"/></strong></a>
       </td>
     </tr>
   </xsl:template>
 
   <xsl:template match="item">
     <tr>
-      <th colspan="2" align="left">
+      <th align="left">
         <strong><xsl:value-of select="question"/></strong>
       </th>
     </tr>
@@ -103,7 +111,7 @@
 
   <xsl:template match="chapter">
     <tr align="left">
-      <th colspan="2">
+      <th align="left">
         <xsl:value-of select="title"/>
       </th>
     </tr>
@@ -120,33 +128,11 @@
       <xsl:apply-templates select="* | text()"/>
   </xsl:template>
 
-  <xsl:template match="contact">
-      <a href="mailto:aranym@sophics.cz"><xsl:value-of select="text()"/></a>
-  </xsl:template>
-
-
   <xsl:template match="*">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates select="* | text()"/>
     </xsl:copy>
-  </xsl:template>
-
-  <xsl:template match="counter">
-    <xsl:comment> Begin RealHomepageTools </xsl:comment><script type="text/javascript"><xsl:comment>
-    var id=132650
-    var ua=navigator.userAgent;if(ua.indexOf('MSIE 3')&gt;0){
-    document.write('&lt;img src="http://11.rtcode.com/netpoll/ifree')
-    document.write('v3.asp?id='+id+'&amp;js=1&amp;to=0&amp;ref='
-    +escape(document.referrer)+'" /&gt;')}
-    // </xsl:comment></script><script type="text/javascript"
-    src="http://11.rtcode.com/netpoll/ifreev3i.asp?id=132650&amp;to=0">
-    </script><script type="text/javascript"><xsl:comment>
-    if(ua.indexOf('MSIE ')>0)document.write('&lt;!-' + '-')
-    // </xsl:comment></script><noscript><p><img
-    src="http://11.rtcode.com/netpoll/ifreev3.asp?id=132650&amp;to=0"
-    alt="RealTracker" /></p></noscript>
-    <xsl:comment> End RealHomepageTools </xsl:comment>
   </xsl:template>
 
 </xsl:stylesheet>

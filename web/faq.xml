@@ -51,7 +51,7 @@
       Yes, ARAnyM was primarily created to allow users run MiNT (even with
       memory protection). ARAnyM virtualizes the HW the way that MagiC works as 
       well. Basically every application cleanly programmed to be TOS compliant 
-      should work. Please <contact>let us know</contact> if your application
+      should work. Please let us know in the ARAnyM users mailing list if your application
       does not run under ARAnyM.
     </text>
   </chapter>
