@@ -164,6 +164,10 @@ long VIDEL::getVideoramAddress() {
 	return (handleRead(HW+1) << 16) | (handleRead(HW+3) << 8) | handleRead(HW+0x0d);
 }
 
+long VIDEL::getHostVideoramAddress() {
+	return (long)surf->pixels;
+}
+
 int VIDEL::getVideoMode() {
 	int f_shift = handleReadW(HW+0x66);
 	int st_shift = handleReadW(HW+0x60);
@@ -214,7 +218,26 @@ int VIDEL::getScreenHeight() {
 	return yres;
 }
 
-void VIDEL::update_screen()
+
+bool VIDEL::lockScreen()
+{
+	if (SDL_MUSTLOCK(surf))
+		if (SDL_LockSurface(surf) < 0) {
+			printf("Couldn't lock surface to refresh!\n");
+			return false;
+		}
+
+	return true;
+}
+
+void VIDEL::unlockScreen()
+{
+	if (SDL_MUSTLOCK(surf))
+		SDL_UnlockSurface(surf);
+}
+
+
+void VIDEL::renderScreen()
 {
 	int vw = getScreenWidth();
 	int vh = getScreenHeight();
@@ -235,11 +258,9 @@ void VIDEL::update_screen()
 		od_posledni_zmeny++;
 		return;
 	}
-	if (SDL_MUSTLOCK(surf))
-		if (SDL_LockSurface(surf) < 0) {
-			printf("Couldn't lock surface to refresh!\n");
-			return;
-		}
+
+	if (!lockScreen())
+		return;
 
 	VideoRAMBaseHost = (uint8 *) surf->pixels;
 	uint16 *fvram =
@@ -343,14 +364,28 @@ void VIDEL::update_screen()
 		// FIXME: support for destBPP other than 2 or 4 BPP is missing
 	}
 
-	if (SDL_MUSTLOCK(surf))
-		SDL_UnlockSurface(surf);
 
-	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
+	updateScreen();
 }
 
+
+void VIDEL::updateScreen( int x, int y, int w, int h )
+{
+	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
+
+	// the object variable could not be the default one for the method's w value
+	if ( w == -1 )
+		w = width;
+	if ( h == -1 )
+		h = height;
+
+	SDL_UpdateRect(surf, x, y, w, h);
+}
 
 
 /*
  * $Log$
+ * Revision 1.10  2001/06/13 06:22:21  standa
+ * Another comment fixed.
+ *
  */

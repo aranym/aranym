@@ -21,7 +21,7 @@ extern char* debug_print_IO(uaecptr addr);	// for debugging only
 extern void MakeMFPIRQ(int);
 extern void ikbd_send(int);
 
-extern void update_screen();
+extern void renderScreen();
 
 extern int getFloppyStats();
 #endif 

@@ -1,4 +1,9 @@
-/* Joy 2001 */
+/*
+ * $Header$
+ *
+ * Joy 2001
+ */
+
 #ifndef _VIDEL_H
 #define _VIDEL_H
 
@@ -13,14 +18,30 @@ protected:
 
 public:
 	VIDEL();
-	void update_screen();
+	void renderScreen();
 
-protected:
-	void setHostWindow();
-	long getVideoramAddress();
+	bool lockScreen();
+	void unlockScreen();
+
+	// the w, h should be width & height (but C++ complains -> 'if's in the implementation)
+	void updateScreen( int x = 0, int y = 0, int w = -1, int h = -1 );
+
 	int getVideoMode();
 	int getScreenWidth();
 	int getScreenHeight();
+
+	long getVideoramAddress();
+	long getHostVideoramAddress();
+
+protected:
+	void setHostWindow();
 };
 
 #endif
+
+
+/*
+ * $Log$
+ *
+ */
+

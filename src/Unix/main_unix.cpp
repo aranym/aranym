@@ -90,6 +90,7 @@ static int keyboardTable[0x80] = {
 };
 
 static int buttons[3] = { 0, 0, 0 };
+bool updateScreen = true;
 #define MAXDRIVES	32
 int drive_fd[MAXDRIVES];
 
@@ -201,6 +202,7 @@ static void check_event(void)
 	}
 }
 
+
 Uint32 my_callback_function(Uint32 interval, void *param)
 {
 	static int VBL_counter = 0;
@@ -224,7 +226,8 @@ Uint32 my_callback_function(Uint32 interval, void *param)
 			// SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, getSDLScreenWidth(), getSDLScreenHeight());
 		}
 		else {
-			update_screen();
+			if ( updateScreen )
+				renderScreen();
 		}
 	}
 	return 5;					// come back in 5 miliseconds, if possible
