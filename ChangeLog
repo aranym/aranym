@@ -1,8 +1,12 @@
 2002/04/10 - joy
 - fixed bug in Reset insn emulation that caused EmuTOS crash
+
 - uae_cpu/spcflags.h cleaned up. NMI flag introduced.
   I also added the MFP|VBL|NMI into periodic flags check (wondering
   how it could work before).
+
+- clean Quit implemented. No more killed SDL or X threads. Using NMI
+  like on real machine :-)
 
 
 2002/04/10 - milan
