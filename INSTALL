@@ -17,13 +17,14 @@ x86          GNU/Linux
 x86          MS Windows + Cygwin
 x86          NetBSD
 x86          OpenBSD
+PPC          MacOS X
 SGI          Irix
 Sun Sparc    Solaris
 
-In progress (in alphabetical order!!!):
-
-PPC          MacOS X
+In progress (in alphabetical order):
+m68k         FreeMiNT
 x86          FreeBSD
+
 
 2) Compilation
 --------------
@@ -39,6 +40,7 @@ If you have a source snapshot or proper ARAnyM source code release then type
 
 If everything went OK you got an executable file named "aranym".
 
+
 3) Installation
 ---------------
 You may install ARAnyM by typing 'make install' (root privileges expected)
@@ -46,6 +48,7 @@ or you may run the binary directly by typing ./aranym.
 
 Next step is to obtain the operating system (TOS 4.04 or EmuTOS) and install
 a harddrive. More on this in the README file.
+
 
 4) Troubleshooting
 ------------------
