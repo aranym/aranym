@@ -33,7 +33,7 @@ static struct option const long_options[] =
 
 char *program_name;
 char rom_path[512] = DATADIR "/ROM";
-char emutos_path[512] = "";
+char emutos_path[512] = DATADIR "/etos512k.img";
 uint32 FastRAMSize;
 
 static char config_folder[512] = ARANYMHOME;
