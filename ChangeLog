@@ -1,4 +1,16 @@
-2004/12/17 - Andreas Schwab
+2005/01/05 - Andreas Schwab
+- uae_cpu/cpummu.cpp:
+  ptestr/ptestw must never generate an exception, and always to a full
+  table search, an existing ATC entry must be removed but otherwise
+  ignored.
+
+- uae_cpu/gencpu.c, uae_cpu/newcpu.*, uae_cpu/registers.h:
+  when an mmu-generated access error occurs we must undo all auto-inc/dec
+  adjustments to address registers, because after returning from the
+  exception handler the instruction is restarted.
+
+
+2005/01/04 - Andreas Schwab
 - uae_cpu/gencpu.c - emulation of the moves insn fixed. It is one step further
   into being able to boot Linux/m68k on ARAnyM.
 
