@@ -14,5 +14,5 @@ class NF_Version : public NF_Base
 public:
 	char *name() { return "NF_VERSION"; }
 	bool isSuperOnly() { return false; }
-	int32 dispatch(uint32 fncode) { return VERSION_MAJOR << 16 | VERSION_MINOR; }
+	int32 dispatch(uint32 fncode) { return 0x00010000UL; }
 };
