@@ -227,7 +227,7 @@ uint32 NF_StdErr::PUTS(FILE *f, const char *s, int width)
 	return put;
 }
 
-uint32 NF_StdErr::PUTL(FILE *f, ulong u, int base, int width, int fill_char)
+uint32 NF_StdErr::PUTL(FILE *f, uint32 u, int base, int width, int fill_char)
 {
 	char obuf[32];
 	char *t = obuf;

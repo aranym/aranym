@@ -20,5 +20,5 @@ private:
 	uint32 nf_fprintf(FILE *, const char *, uint32);
 	uint32 PUTC(FILE *f, int c, int width);
 	uint32 PUTS(FILE *f, const char *s, int width);
-	uint32 PUTL(FILE *f, ulong u, int base, int width, int fill_char);
+	uint32 PUTL(FILE *f, uint32 u, int base, int width, int fill_char);
 };
