@@ -10,7 +10,7 @@
 #include "main.h"
 #include "ethernet.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #include <sys/poll.h>
