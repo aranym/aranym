@@ -12,7 +12,7 @@ class FVDIDriver {
   private:
 
 	struct MFDB {
-		uint16 *address;
+		uint32 address; // uint16* before
 		uint16 width;
 		uint16 height;
 		uint16 wdwidth;
@@ -60,6 +60,10 @@ class FVDIDriver {
 
 /*
  * $Log$
+ * Revision 1.6  2001/09/30 23:09:23  standa
+ * The line logical operation added.
+ * The first version of blitArea (screen to screen only).
+ *
  * Revision 1.5  2001/09/20 18:12:09  standa
  * Off by one bug fixed in fillArea.
  * Separate functions for transparent and opaque background.

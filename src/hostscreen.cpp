@@ -267,7 +267,8 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 			gfxVLineColor(x1, y2, y1, pattern, fgColor, bgColor, logOp);
 			return;
 		} else {
-			//			return(pixelColor(dst, x1, y1, pattern, fgColor, bgColor, logOp));
+			if ( pattern & 0x8000 != 0 ) // FIXME: The logOp is _not_ handled here
+				gfxFastPixelColorNolock( x1, y1, fgColor );
 		}
 	}
 	if (y1==y2) {
@@ -463,15 +464,7 @@ void HostScreen::gfxBoxColorPattern (int16 x1, int16 y1, int16 x2, int16 y2,
 				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
 				for (x=0; x<dx; x++) {
 					uint32 color = (( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
-					if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-						pixel[0] = (color >> 16) & 0xff;
-						pixel[1] = (color >> 8) & 0xff;
-						pixel[2] = color & 0xff;
-					} else {
-						pixel[0] = color & 0xff;
-						pixel[1] = (color >> 8) & 0xff;
-						pixel[2] = (color >> 16) & 0xff;
-					}
+					putBpp24Pixel( pixel, color );
 					pixel += pixx;
 				}
 			}
@@ -568,15 +561,7 @@ void HostScreen::gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y
 				uint16 pattern = areaPattern ? areaPattern[ y1++ & 0xf ] : 0xffff; // STanda
 				for (x=0; x<dx; x++) {
 					if ( ( pattern & ( 1 << ( (x1+x) & 0xf ) )) != 0 )
-						if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-							pixel[0] = (color >> 16) & 0xff;
-							pixel[1] = (color >> 8) & 0xff;
-							pixel[2] = color & 0xff;
-						} else {
-							pixel[0] = color & 0xff;
-							pixel[1] = (color >> 8) & 0xff;
-							pixel[2] = (color >> 16) & 0xff;
-						}
+						putBpp24Pixel( pixel, color );
 					pixel += pixx;
 				}
 			}
@@ -599,6 +584,10 @@ void HostScreen::gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y
 
 /*
  * $Log$
+ * Revision 1.10  2001/09/30 23:09:23  standa
+ * The line logical operation added.
+ * The first version of blitArea (screen to screen only).
+ *
  * Revision 1.9  2001/09/24 23:16:28  standa
  * Another minor changes. some logical operation now works.
  * fvdidrv/fillArea and fvdidrv/expandArea got the first logOp handling.

@@ -13,7 +13,7 @@
 
 #include "fvdidrv.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 // this serves for debugging the color palette code
@@ -22,85 +22,18 @@
 extern HostScreen hostScreen;
 extern VIDEL videl;
 
-/**
-    typedef struct vwk_ {
-0		struct wk_ *real_address;
-4		short standard_handle;
-		struct text_ {
-6			short font;
-8			Fgbg colour;
-12			short rotation;
-			struct alignment_ {
-14				short horizontal;
-16				short vertical;
-			} alignment;
-			struct character_ {
-18				short width;
-20				short height;
-			} character;
-			struct cell_ {
-22				short width;
-24				short height;
-			} cell;
-26			short effects;
-28			Fontheader *current_font;	// Not in standard VDI
-		} text;
-		struct line_ {
-32			short type;
-34			Fgbg colour;
-			struct ends_ {
-38				short beginning;
-40				short end;
-			} ends;
-42			short width;
-44			short user_mask;
-		} line;
-		struct bezier_ {
-46			short on;		// Should these really be per vwk?
-48			short depth_scale;
-		} bezier;
-		struct marker_ {
-50			short type;
-52			Fgbg colour;
-			struct size_ {
-56				short width;
-58				short height;
-			} size;
-		} marker;
-		struct fill_ {
-60			short interior;
-62			Fgbg colour;
-66			short style;
-68			short perimeter;
-			struct user_ {
-				struct pattern_ {
-70					short *in_use;
-74					short *extra;
-				} pattern;
-78				short multiplane;
-			} user;
-		} fill;
-		struct clip_ {
-80			short on;
-			struct rectangle_ {
-82				short x1;
-84				short y1;
-86				short x2;
-88				short y2;
-			} rectangle;
-		} clip;
-90		short mode;
-92		Colour *palette;		// Odd when only negative (fg/bg)
-	} Virtual;
-**/
+
+// The Atari structures offsets
+#define MFDB_WDWIDTH                8
+#define MFDB_BITPLANES             12
+#define VWK_SCREEN_MFDB_ADDRESS    24
+#define VWK_MODE                   90
 
 
 void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 {
     MFDB dst;
     MFDB src;
-    MFDB *pSrc = NULL;
-    MFDB *pDst = NULL;
 
     // fix the stack (the fncode was pushed onto the stack)
     r->a[7] += 4;
@@ -163,7 +96,6 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *	d6	background and foreground colour
 			 *	d7	logic operation
 			 */
-			//			D(bug("fVDI: %s %x %d,%d:%d,%d (%d,%d)", "expandArea", r->d[7], r->d[1], r->d[2], r->d[3], r->d[4], r->d[6] & 0xffff, r->d[6] >> 16 ));
 			r->d[0] = expandArea( (void*)get_long( (uint32)r->a[1], true),
 								  (MFDB*)get_long( (uint32)r->a[1] + 12, true ) /* src MFDB* */,
 								  (MFDB*)get_long( (uint32)r->a[1] + 4, true ) /* dest MFDB* */,
@@ -269,7 +201,7 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 FVDIDriver::MFDB* FVDIDriver::fetchMFDB( FVDIDriver::MFDB* mfdb, uint32 pmfdb )
 {
     if ( pmfdb != 0 ) {
-		mfdb->address = (uint16*)get_long( pmfdb, true );
+		mfdb->address = get_long( pmfdb, true );
 		return mfdb;
     }
 
@@ -306,18 +238,13 @@ uint32 FVDIDriver::putPixel(void *vwk, MFDB *dst, int32 x, int32 y, uint32 color
     if ((uint32)vwk & 1)
 		return 0;
 
-    if (!dst || !dst->address) {
-		//  Workstation *wk;
-		//wk = vwk->real_address;
-		//|| (dst->address == wk->screen.mfdb.address)) {
-
-		//D(bug("\nfVDI: %s %d,%d (%d %08x)", "write_pixel", (uint16)x, (uint16)y, (uint32)color, (uint32)color));
+    if (!dst || !dst->address || dst->address==get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true )) {
+		// To screen
 		if (!hostScreen.renderBegin())
 			return 1;
 		hostScreen.putPixel( x, y, color );
 		hostScreen.renderEnd();
 		hostScreen.update( (int16)x, (int16)y, 1, 1, true );
-
     } else {
 		D(bug("fVDI: %s %d,%d (%d)", "write_pixel no screen", (uint16)x, (uint16)y, (uint32)color));
 		//    uint32 offset;
@@ -352,9 +279,7 @@ uint32 FVDIDriver::getPixel(void *vwk, MFDB *src, int32 x, int32 y)
 {
     uint32 color = 0;
 
-    if (!src || !src->address) {
-		//|| (src->address == wk->screen.mfdb.address)) {
-
+    if (!src || !src->address || src->address==get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true )) {
 		if (!hostScreen.renderBegin())
 			return 0;
 		color = hostScreen.getPixel( x, y );
@@ -614,12 +539,15 @@ uint32 FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%d, %d)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
 	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, get_long( (uint32)src, true ),get_long( (uint32)dest, true )));
 
-	uint16 pitch = get_word( (uint32)src + 8, true ) << 1; // MFDB *src->wdwidth << 1 // the byte width (always monochrom);
+	uint16 pitch = get_word( (uint32)src + MFDB_WDWIDTH, true ) << 1; // the byte width (always monochrom);
 	uint32 data  = get_long( (uint32)src, true ) + sy*pitch; // MFDB *src->address;
 
-	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, get_word( (uint32)src + 12, true )));
+	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, get_word( (uint32)src + MFDB_BITPLANES, true )));
 
-	if ( dest != NULL && get_long( (uint32)dest, true ) != 0 )
+	if ( dest != NULL && // no MFDB structure
+		 get_long( (uint32)dest, true ) != 0 && // mfdb->address == 0 => screen
+		 get_long( (uint32)dest, true ) != get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true ) )
+		// mfdb->address = videoramstart
 		return 1; // FIXME this is the blitToMemory NOT IMPLEMENTED YET!
 
 	fgColor = hostScreen.getPaletteColor( fgColor );
@@ -696,7 +624,7 @@ uint32 FVDIDriver::fillArea(void *vwk, int32 x, int32 y, int32 w, int32 h, uint1
 
 	fgColor = hostScreen.getPaletteColor( fgColor );
 	bgColor = hostScreen.getPaletteColor( bgColor );
-	uint16 logOp = get_word( (uint32)vwk + 90, true ); // Virtual *vwk->mode // fill logOp;
+	uint16 logOp = get_word( (uint32)vwk + VWK_MODE, true ); // Virtual *vwk->mode // fill logOp;
 
 	if (!hostScreen.renderBegin())
 		return 1;
@@ -743,14 +671,17 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d", "blitArea", logOp, sx, sy, dx, dy, w, h ));
 	D2(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest, get_long( (uint32)src, true ),get_long( (uint32)dest, true )));
 
-	if ( dest != NULL && get_long( (uint32)dest, true ) != 0 ) {
+	uint32 videoRam = get_long( get_long( (uint32)vwk, true ) + VWK_SCREEN_MFDB_ADDRESS, true );
+
+	if ( dest != NULL && get_long( (uint32)dest, true ) != 0 && get_long( (uint32)dest, true ) != videoRam ) {
 		D(bug("fVDI: blitArea to memory NOT IMPLEMENTED"));
 		return 1; // FIXME this is the blitToMemory NOT IMPLEMENTED YET!
 	}
-	if ( src != NULL && get_long( (uint32)src, true ) != 0 ) {
-		uint16 bpp   = get_word( (uint32)src + 12, true ); // MFDB *src->bitplanes
-		uint16 pitch = get_word( (uint32)src + 8, true ) * bpp << 1; // MFDB *src->pitch
-		uint16 *data = (uint16*)get_real_address_direct(get_long( (uint32)src, true ) + sy*pitch); // MFDB *src->address host OS address
+	if ( src != NULL && get_long( (uint32)src, true ) != 0 && get_long( (uint32)src, true ) != videoRam ) {
+
+		uint16 bpp   = get_word( (uint32)src + MFDB_BITPLANES, true ); // MFDB *src->bitplanes
+		uint16 pitch = get_word( (uint32)src + MFDB_WDWIDTH, true ) * bpp << 1; // MFDB *src->pitch
+		uint16 *data = (uint16*)get_real_address_direct( get_long( (uint32)src, true ) + sy*pitch ); // MFDB *src->address host OS address
 		D2(bug("fVDI: blitArea from memory: address %x, pitch %d, bpp %d", data, pitch, bpp));
 
 		if (!hostScreen.renderBegin())
@@ -916,6 +847,10 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.12  2001/10/01 22:22:41  standa
+ * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).
+ * fvdidrv/blitArea form memory works in TC.
+ *
  * Revision 1.11  2001/09/30 23:09:23  standa
  * The line logical operation added.
  * The first version of blitArea (screen to screen only).
