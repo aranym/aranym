@@ -10,7 +10,7 @@
 #include "debug.h"
 
 #ifndef CONFGUI
-#include "main.h"
+#include "input.h"
 #include "memory.h"
 #include "newcpu.h"
 #include "m68k.h"
@@ -1138,6 +1138,10 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.17  2002/02/20 13:04:07  milan
+ * Makefile's dependencies disabled - problems with make depend
+ * valid_address
+ *
  * Revision 1.16  2002/02/19 20:04:05  milan
  * src/ <-> CPU interaction cleaned
  * memory access cleaned

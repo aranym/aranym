@@ -32,6 +32,7 @@
 
 #include "cpu_emulation.h"
 #include "main.h"
+#include "input.h"
 #include "vm_alloc.h"
 #include "hardware.h"
 #include "parameters.h"
@@ -228,6 +229,10 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.59  2002/01/17 14:59:19  milan
+ * cleaning in HW <-> memory communication
+ * support for JIT CPU
+ *
  * Revision 1.58  2002/01/10 00:09:11  milan
  * vm_acquire_fixed corrected
  *

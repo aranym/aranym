@@ -44,7 +44,6 @@ struct M68kRegisters {
 // General functions
 extern bool InitAll(void);
 extern void ExitAll(void);
-extern bool grabMouse(bool grab);
 extern void invoke200HzInterrupt(void);
 #ifdef OS_irix
 extern void setactvdebug();
@@ -77,6 +76,9 @@ extern void ClearInterruptFlag(uint32 flag);
 
 /*
  * $Log$
+ * Revision 1.12  2002/01/09 19:14:12  milan
+ * Preliminary support for SGI/Irix
+ *
  * Revision 1.11  2001/11/06 20:36:54  milan
  * MMU's corrections
  *
