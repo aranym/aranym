@@ -1465,6 +1465,8 @@ SDL_LIBS=
 case $target_os in
   darwin*)
   	;;
+  cygwin*)
+  	;;
   *)	AM_PATH_SDL(1.2.0, )
   	;;
 esac
