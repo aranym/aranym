@@ -125,7 +125,7 @@ inline uint32 HostScreen::gfxGetPixel( int16 x, int16 y )
 			return (uint32)(*(uint16 *)p);
 		case 3:
 			// FIXME maybe some & problems? and endian
-			return ((uint32)p[0] << 16) | ((uint32)p[1] << 8) | (uint32)p[2];
+			return getBpp24Pixel( p );
 		case 4:
 			return *(uint32 *)p;
 	} /* switch */
@@ -287,6 +287,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.13  2001/10/25 19:56:01  standa
+ * The Log and Header CVS tags in the Log removed. Was recursing.
+ *
  * Revision 1.12  2001/10/24 17:55:01  standa
  * The fVDI driver fixes. Finishing the functionality tuning.
  *

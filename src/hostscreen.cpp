@@ -166,40 +166,100 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 	/* Draw */
 	switch(surf->format->BytesPerPixel) {
 		case 1:
-			memset (pixel, fgColor, dx);
+			pixellast = pixel + dx;
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixx)
+						*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixx)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint8*)pixel = fgColor; // STanda
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixx)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint8*)pixel = ~(*(uint8*)pixel);
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixx)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							*(uint8*)pixel = fgColor; // STanda
+					break;
+			}
 			break;
 		case 2:
 			pixellast = pixel + dx + dx;
-			for (; pixel<pixellast; pixel += pixx) {
-				switch (logOp) {
-					case 1:
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixx)
 						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
-						break;
-					case 2:
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
 							*(uint16*)pixel = fgColor; // STanda
-						break;
-					case 3:
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
 							*(uint16*)pixel = ~(*(uint16*)pixel);
-						break;
-					case 4:
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixx)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
 							*(uint16*)pixel = fgColor; // STanda
-						break;
-				}
+					break;
 			}
 			break;
 		case 3:
 			pixellast = pixel + dx + dx + dx;
-			for (; pixel<pixellast; pixel += pixx)
-				putBpp24Pixel( pixel, fgColor );
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixx)
+						putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor ) );
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixx)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							putBpp24Pixel( pixel, fgColor );
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixx)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixx)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							putBpp24Pixel( pixel, fgColor );
+					break;
+			}
 			break;
 		default: /* case 4*/
 			dx = dx + dx;
 			pixellast = pixel + dx + dx;
-			for (; pixel<pixellast; pixel += pixx) {
-				*(uint32*)pixel = fgColor;
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixx)
+						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixx)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint32*)pixel = fgColor; // STanda
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixx)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint32*)pixel = ~(*(uint32*)pixel);
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixx)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							*(uint32*)pixel = fgColor; // STanda
+					break;
 			}
 			break;
 	}
@@ -242,39 +302,95 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 	/* Draw */
 	switch(surf->format->BytesPerPixel) {
 		case 1:
-			for (; pixel<pixellast; pixel += pixy) {
-				*(uint8*)pixel = fgColor;
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixy)
+						*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixy)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint8*)pixel = fgColor; // STanda
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixy)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint8*)pixel = ~(*(uint8*)pixel);
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixy)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							*(uint8*)pixel = fgColor; // STanda
+					break;
 			}
 			break;
 		case 2:
-			for (; pixel<pixellast; pixel += pixy) {
-				switch (logOp) {
-					case 1:
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixy)
 						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
-						break;
-					case 2:
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
 							*(uint16*)pixel = fgColor; // STanda
-						break;
-					case 3:
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
 							*(uint16*)pixel = ~(*(uint16*)pixel);
-						break;
-					case 4:
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixy)
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
 							*(uint16*)pixel = fgColor; // STanda
-						break;
-				}
+					break;
 			}
 			break;
 		case 3:
-			for (; pixel<pixellast; pixel += pixy) {
-				putBpp24Pixel( pixel, fgColor );
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixy)
+						putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor ) );
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixy)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							putBpp24Pixel( pixel, fgColor );
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixy)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixy)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							putBpp24Pixel( pixel, fgColor );
+					break;
 			}
 			break;
 		default: /* case 4*/
-			for (; pixel<pixellast; pixel += pixy) {
-				*(uint32*)pixel = fgColor;
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixy)
+						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixy)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint32*)pixel = fgColor; // STanda
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixy)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint32*)pixel = ~(*(uint32*)pixel);
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixy)
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							*(uint32*)pixel = fgColor; // STanda
+					break;
 			}
 			break;
 	}
@@ -349,60 +465,207 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 	y=0;
 	switch(surf->format->BytesPerPixel) {
 		case 1:
-			for(; x < dx; x++, pixel += pixx) {
-				*pixel = fgColor;
-				y += dy;
-				if (y >= dx) {
-					y -= dx; pixel += pixy;
-				}
+			switch (logOp) {
+				case 1:
+					for (; x < dx; x++, pixel += pixx) {
+						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 2:
+					for (; x < dx; x++, pixel += pixx) {
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint32*)pixel = fgColor; // STanda
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 3:
+					for (; x < dx; x++, pixel += pixx) {
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint32*)pixel = ~(*(uint32*)pixel);
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 4:
+					for (; x < dx; x++, pixel += pixx) {
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							*(uint32*)pixel = fgColor; // STanda
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
 			}
 			break;
 		case 2:
-			for (; x < dx; x++, pixel += pixx) {
-				//				D2(bug("ln pix: %x, %d", pixel, x));
-
-				switch (logOp) {
-					case 1:
+			switch (logOp) {
+				case 1:
+					for (; x < dx; x++, pixel += pixx) {
 						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
-						break;
-					case 2:
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 2:
+					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
 							*(uint16*)pixel = fgColor; // STanda
-						break;
-					case 3:
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 3:
+					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
 							*(uint16*)pixel = ~(*(uint16*)pixel);
-						break;
-					case 4:
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 4:
+					for (; x < dx; x++, pixel += pixx) {
 						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
 							*(uint16*)pixel = fgColor; // STanda
-						break;
-				}
-				y += dy;
-				if (y >= dx) {
-					y -= dx;
-					pixel += pixy;
-				}
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
 			}
 			break;
 		case 3:
-			for(; x < dx; x++, pixel += pixx) {
-				putBpp24Pixel( pixel, fgColor );
-				y += dy;
-				if (y >= dx) {
-					y -= dx;
-					pixel += pixy;
-				}
+			switch (logOp) {
+				case 1:
+					for (; x < dx; x++, pixel += pixx) {
+						putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor) ); // STanda
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 2:
+					for (; x < dx; x++, pixel += pixx) {
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							putBpp24Pixel( pixel, fgColor );
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 3:
+					for (; x < dx; x++, pixel += pixx) {
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 4:
+					for (; x < dx; x++, pixel += pixx) {
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							putBpp24Pixel( pixel, fgColor );
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
 			}
 			break;
 		default: /* case 4 */
-			for(; x < dx; x++, pixel += pixx) {
-				*(uint32*)pixel = fgColor;
-				y += dy;
-				if (y >= dx) {
-					y -= dx;
-					pixel += pixy;
-				}
+			switch (logOp) {
+				case 1:
+					for (; x < dx; x++, pixel += pixx) {
+						*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 2:
+					for (; x < dx; x++, pixel += pixx) {
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint32*)pixel = fgColor; // STanda
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 3:
+					for (; x < dx; x++, pixel += pixx) {
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 )
+							*(uint32*)pixel = ~(*(uint32*)pixel);
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
+				case 4:
+					for (; x < dx; x++, pixel += pixx) {
+						if ( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) == 0 )
+							*(uint32*)pixel = fgColor; // STanda
+
+						y += dy;
+						if (y >= dx) {
+							y -= dx;
+							pixel += pixy;
+						}
+					}
+					break;
 			}
 			break;
 	}
@@ -441,73 +704,196 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 		case 1:
 			// STanda // the loop is the same as the for the 2 BPP
 			pixy -= (pixx*dx);
-			for (; pixel<pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
-				for (x=0; x<dx; x++) {
-					*(uint8*)pixel = (( ( pattern & ( 1 << ( (x+x) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
-					pixel += pixx;
-				}
-			}
-			break;
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
 
-			//for (; pixel<=pixellast; pixel += pixy) {
-			//	memset(pixel,(uint8)fgColor,dx);
-			//}
-			// STanda
+						for (i=0; i<dx; i++) {
+							*(uint8*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+							pixel += pixx;
+						}
+					}
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								*(uint8*)pixel = fgColor; // STanda
+							pixel += pixx;
+						}
+					}
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								*(uint8*)pixel = ~(*(uint8*)pixel);
+							pixel += pixx;
+						};
+					}
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+								*(uint8*)pixel = fgColor; // STanda
+							pixel += pixx;
+						}
+					}
+					break;
+			}
 			break;
 		case 2:
 			pixy -= (pixx*dx);
-			for (; pixel<pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+			//				D2(bug("bix pix: %d, %x, %d", y, pixel, pixy));
 
-				//				D2(bug("bix pix: %d, %x, %d", y, pixel, pixy));
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
 
-				switch (logOp) {
-					case 1:
 						for (i=0; i<dx; i++) {
 							*(uint16*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
 							pixel += pixx;
-						}; break;
-					case 2:
+						}
+					}
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
 								*(uint16*)pixel = fgColor; // STanda
 							pixel += pixx;
-						}; break;
-					case 3:
+						}
+					}
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
 								*(uint16*)pixel = ~(*(uint16*)pixel);
 							pixel += pixx;
-						}; break;
-					case 4:
+						};
+					}
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
 								*(uint16*)pixel = fgColor; // STanda
 							pixel += pixx;
-						}; break;
-				}
+						}
+					}
+					break;
 			}
 			break;
 		case 3:
 			pixy -= (pixx*dx);
-			for (; pixel<pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
-				for (i=0; i<dx; i++) {
-					uint32 color = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
-					putBpp24Pixel( pixel, color );
-					pixel += pixx;
-				}
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor) ); // STanda
+							pixel += pixx;
+						}
+					}
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								putBpp24Pixel( pixel, fgColor );
+							pixel += pixx;
+						}
+					}
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
+							pixel += pixx;
+						};
+					}
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+								putBpp24Pixel( pixel, fgColor );
+							pixel += pixx;
+						}
+					}
+					break;
 			}
 			break;
 		default: /* case 4*/
 			pixy -= (pixx*dx);
-			for (; pixel<pixellast; pixel += pixy) {
-				uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
-				for (i=0; i<dx; i++) {
-					*(uint32*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
-					pixel += pixx;
-				}
+			switch (logOp) {
+				case 1:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							*(uint32*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
+							pixel += pixx;
+						}
+					}
+					break;
+				case 2:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								*(uint32*)pixel = fgColor; // STanda
+							pixel += pixx;
+						}
+					}
+					break;
+				case 3:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								*(uint32*)pixel = ~(*(uint32*)pixel);
+							pixel += pixx;
+						};
+					}
+					break;
+				case 4:
+					for (; pixel<pixellast; pixel += pixy) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff; // STanda
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+								*(uint32*)pixel = fgColor; // STanda
+							pixel += pixx;
+						}
+					}
+					break;
 			}
 			break;
 	}  // switch
@@ -516,6 +902,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.16  2001/10/25 19:56:01  standa
+ * The Log and Header CVS tags in the Log removed. Was recursing.
+ *
  * Revision 1.15  2001/10/24 17:55:01  standa
  * The fVDI driver fixes. Finishing the functionality tuning.
  *

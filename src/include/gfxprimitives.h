@@ -48,6 +48,9 @@ extern "C" {
 	((Uint8*)(address))[2] = (color) & 0xff; \
 }
 
+#define getBpp24Pixel( address ) \
+    ( ((uint32)address[0] << 16) | ((uint32)address[1] << 8) | (uint32)address[2] )
+
 #else
 
 #define putBpp24Pixel( address, color ) \
@@ -56,6 +59,9 @@ extern "C" {
 	((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
 	((Uint8*)(address))[2] = ((color) >> 16) & 0xff; \
 }
+
+#define getBpp24Pixel( address ) \
+    ( ((uint32)address[2] << 16) | ((uint32)address[1] << 8) | (uint32)address[0] )
 
 #endif
 
