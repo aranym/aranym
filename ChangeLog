@@ -1,3 +1,9 @@
+2004/03/29 - milan
+- Makefile.in: .cvsingnore not in dists
+
+- configure.ac: flightrecorder option corrected
+
+
 2004/03/04 - Carlo & milan (thank you, Carlo, for your great job)
 - macro do_get_real_address() for OS_darwin corrected
 

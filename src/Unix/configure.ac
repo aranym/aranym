@@ -30,7 +30,7 @@ AC_ARG_WITH(mon,               [  --with-mon              use mon as debugger (d
 
 AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history for debugger (default=no)], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
 
-AC_ARG_ENABLE(flightrecorder,     [  --enable-flightrecoder  enable CPU flight recorder (default=no)], [WANT_FLIGHTRECORDER=$enableval], [WANT_FLIGHTRECORDER=no])
+AC_ARG_ENABLE(flightrecorder,     [  --enable-flightrecorder  enable CPU flight recorder (default=no)], [WANT_FLIGHTRECORDER=$enableval], [WANT_FLIGHTRECORDER=no])
 
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU (default=no)], [WANT_MMU=$enableval], [WANT_MMU=no])
 
