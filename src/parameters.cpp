@@ -745,7 +745,7 @@ int process_cmdline(int argc, char **argv)
 	
 			case 'a':
 				if ((strlen(optarg)-1) > sizeof(bx_options.floppy.path))
-					fprintf(stderr, "Floppy image filename longer that %d chars.\n", sizeof(bx_options.floppy.path));
+					fprintf(stderr, "Floppy image filename longer than %lu chars.\n", sizeof(bx_options.floppy.path));
 				safe_strncpy(bx_options.floppy.path, optarg, sizeof(bx_options.floppy.path));
 				break;
 
