@@ -19,6 +19,7 @@
 #include "emul_op.h"
 
 extern int intlev(void);	// From baisilisk_glue.cpp
+extern int timerCinterrupts;
 
 #include "m68k.h"
 #include "memory.h"
@@ -1713,7 +1714,7 @@ static int do_specialties (void)
 	Exception (9,last_trace_ad);
     }
     while (regs.spcflags & SPCFLAG_STOP) {
-    	int mask = (SPCFLAG_INT | SPCFLAG_DOINT | SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_TIMERC2 | SPCFLAG_MFP_ACIA);
+    	int mask = (SPCFLAG_INT | SPCFLAG_DOINT | SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_ACIA);
 	if (regs.spcflags & mask){
 	    int intr = intlev ();
 	    regs.spcflags &= ~mask;
@@ -1740,29 +1741,30 @@ static int do_specialties (void)
     uae_u8 MFPintr = 6;	// MFP interrupt 6 = ACIA
     uae_u8 mask = 1 << MFPintr;
     if ((regs.spcflags & SPCFLAG_MFP_ACIA) && (6 > regs.intmask)) {
-        MFPInterrupt(MFPintr);
-	regs.stopped = 0;
-    	regs.spcflags &= ~SPCFLAG_MFP_ACIA;
+    	uae_u8 value = get_byte_direct(0xfffa11);
+    	if ((value & mask) == 0) {
+    		// fprintf(stderr, "Spoustim IRQ\n");
+    		put_byte_direct(0xfffa11, value | mask);
+        	MFPInterrupt(MFPintr);
+		regs.stopped = 0;
+    		regs.spcflags &= ~SPCFLAG_MFP_ACIA;
+    	}
     }
 
     // Timer C (200 Hz system timer, simulated using two 100 Hz timers)
     MFPintr = 5;	// MFP interrupt 5 = Timer C
     mask = 1 << MFPintr;
-    if ((regs.spcflags & (SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_TIMERC2))
+    if ((regs.spcflags & (SPCFLAG_MFP_TIMERC))
     	&& (6 > regs.intmask)) {
     	// fprintf(stderr, "uvnitr MFP_TIMERC\n");
     	uae_u8 value = get_byte_direct(0xfffa11);
-    	if ((value & 0x20) == 0) {
+    	if ((value & mask) == 0) {
     		// fprintf(stderr, "Spoustim IRQ\n");
     		put_byte_direct(0xfffa11, value | mask);
         	MFPInterrupt(MFPintr);
 		regs.stopped = 0;
-		if (regs.spcflags & SPCFLAG_MFP_TIMERC) {
+		if (--timerCinterrupts <= 0)
 			regs.spcflags &= ~SPCFLAG_MFP_TIMERC;
-			regs.spcflags |= SPCFLAG_MFP_TIMERC2;
-		}
-		else
-			regs.spcflags &= ~SPCFLAG_MFP_TIMERC2;
 	}
     }
 
