@@ -87,7 +87,11 @@ extern uintptr pc_offset, read_offset, write_offset;
 const uintptr MEMBaseDiff = 0;
 #else
 extern uintptr MEMBaseDiff;
+extern uintptr ROMBaseDiff;
+extern uintptr FastRAMBaseDiff;
 # define InitMEMBaseDiff(va, ra)	(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
+# define InitROMBaseDiff(va, ra)        (ROMBaseDiff = (uintptr)(va) - (uintptr)(ra))
+# define InitFastRAMBaseDiff(va, ra)        (FastRAMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 #endif /* REAL_ADDRESSING */
 
 #ifdef FIXED_VIDEORAM
@@ -130,7 +134,11 @@ static inline void check_ram_boundary(uaecptr, int, bool) { }
 #ifdef FIXED_VIDEORAM
 # define do_get_real_address(a)		((uae_u8 *)(((uaecptr)(a) < ARANYMVRAMSTART) ? ((uaecptr)(a) + MEMBaseDiff) : ((uaecptr)(a) + VMEMBaseDiff)))
 #else
-# define do_get_real_address(a)		((uae_u8 *)((uintptr)(a) + MEMBaseDiff))
+# ifdef OS_darwin // not correct fixed position of allocations
+#  define do_get_real_address(a)         ((uae_u8 *)(((uintptr)(a) < STRAM_END) ? ((uaecptr)(a) + MEMBaseDiff) : (((uae_u8 *)(((uintptr)(a) => FastRAM_BEGIN) ? ((uaecptr)(a) + FastRAMBaseDiff) : ((uaecptr)(a) + ROMBaseDiff))))
+# else
+#  define do_get_real_address(a)		((uae_u8 *)((uintptr)(a) + MEMBaseDiff))
+# endif
 #endif
 
 static inline uae_u8 *phys_get_real_address(uaecptr addr)

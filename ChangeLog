@@ -1,3 +1,8 @@
+2004/03/03 - Carlo & milan
+- MacOS X doesn't support fixed allocation in ARAnyM, so special workaround
+  needed
+
+
 2004/02/28 - milan
 - sigsegv handler for Linux as computed gotos (partially), disabled, slower
 

@@ -67,6 +67,8 @@ uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)
 
 #ifndef NOT_MALLOC
 uintptr MEMBaseDiff;	// Global offset between a Atari address and its Host equivalent
+uintptr ROMBaseDiff;
+uintptr FastRAMBaseDiff;
 #endif
 
 uintptr VMEMBaseDiff;	// Global offset between a Atari VideoRAM address and /dev/fb0 mmap
@@ -93,6 +95,8 @@ bool InitMEM() {
 	ROMBase = (uint32)ROMBaseHost;
 #else
 	InitMEMBaseDiff(RAMBaseHost, RAMBase);
+	InitROMBaseDiff(ROMBaseHost, ROMBase);
+	InitFastRAMBaseDiff(FastRAMBaseHost, FastRAMBase);
 #endif
 	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
 	return true;
