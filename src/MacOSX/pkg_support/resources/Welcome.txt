@@ -1,1 +1,0 @@
-This package install Aranym in the Application folder, Aranym_files in the Documents folder

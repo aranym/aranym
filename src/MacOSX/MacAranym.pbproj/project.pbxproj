@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 39;
 	objects = {
 		080E96DDFE201D6D7F000001 = {
 			children = (
@@ -13,6 +13,7 @@
 			isa = PBXGroup;
 			name = Classes;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //080
 //081
@@ -28,55 +29,40 @@
 			children = (
 				F580C4DF05A71D4201DAC342,
 				1058C7A1FEA54F0111CA2CBB,
+				F580503605A73CE9014C3AB3,
 				F5A145AF05A7EA78017C0BEF,
 			);
 			isa = PBXGroup;
 			name = "Linked Frameworks";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		1058C7A1FEA54F0111CA2CBB = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
 			path = /System/Library/Frameworks/Cocoa.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		1058C7A2FEA54F0111CA2CBB = {
 			children = (
 				29B97325FDCFA39411CA2CEA,
 				29B97324FDCFA39411CA2CEA,
+				20761D910619426A00684BA9,
 				F580C4E205A71FBF01DAC342,
-				F580503605A73CE9014C3AB3,
 			);
 			isa = PBXGroup;
 			name = "Other Frameworks";
 			refType = 4;
-		};
-		1058C7A3FEA54F0111CA2CBB = {
-			fileRef = 1058C7A1FEA54F0111CA2CBB;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			sourceTree = "<group>";
 		};
 //100
 //101
 //102
 //103
 //104
-//170
-//171
-//172
-//173
-//174
-		17587328FF379C6511CA2CBB = {
-			isa = PBXApplicationReference;
-			path = Aranym.app;
-			refType = 3;
-		};
-//170
-//171
-//172
-//173
-//174
 //190
 //191
 //192
@@ -84,38 +70,1317 @@
 //194
 		19C28FACFE9D520D11CA2CBB = {
 			children = (
-				17587328FF379C6511CA2CBB,
-				F58C108205B7B8120154426E,
-				F587863705B7C555011F64EC,
-				F58CD58F05B8049B01EE9378,
+				2087E58B05EE9F3100F9ACA1,
+				2087E59A05EE9F8500F9ACA1,
+				2087E5A605EE9F8C00F9ACA1,
+				2087E5B105EE9F9500F9ACA1,
 			);
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //190
 //191
 //192
 //193
 //194
+//200
+//201
+//202
+//203
+//204
+		201C30AB05F758B100804E00 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = acinclude.m4;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		201DD8BB05F707260090F5B7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = autogen.sh;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		201DD8BC05F707500090F5B7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = config.sub;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		201DD8C005F707970090F5B7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			path = config.guess;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		201DD8CC05F70B7B0090F5B7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = aclocal.m4;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2030CDB806181C9900ECF64D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = main_OSX.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		2030CDB906181C9900ECF64D = {
+			fileRef = 2030CDB806181C9900ECF64D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2030CDCA06181F5E00ECF64D = {
+			fileRef = 2087E58A05EE9F3100F9ACA1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		20335B2406163D850050859A = {
+			children = (
+				20335B2506163D850050859A,
+			);
+			isa = PBXGroup;
+			path = data;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		20335B2506163D850050859A = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			path = etos512k.img;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		20335B2706163D850050859A = {
+			fileRef = 20335B2506163D850050859A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2050E8110622831E00E1B6D5 = {
+			children = (
+				2050E8120622831E00E1B6D5,
+				2050E8130622831E00E1B6D5,
+				2050E8140622831E00E1B6D5,
+				2050E8150622831E00E1B6D5,
+				2050E8160622831E00E1B6D5,
+				2050E8170622831E00E1B6D5,
+				2050E8180622831E00E1B6D5,
+				2050E8190622831E00E1B6D5,
+			);
+			isa = PBXGroup;
+			path = doc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2050E8120622831E00E1B6D5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = AUTHORS.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2050E8130622831E00E1B6D5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = BUGS.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2050E8140622831E00E1B6D5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = documentation.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2050E8150622831E00E1B6D5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = FAQ.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2050E8160622831E00E1B6D5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = INSTALL.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2050E8170622831E00E1B6D5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = NEWS.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2050E8180622831E00E1B6D5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = README.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2050E8190622831E00E1B6D5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = TODO.txt;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2050E81A0622831F00E1B6D5 = {
+			fileRef = 2050E8120622831E00E1B6D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2050E81B0622831F00E1B6D5 = {
+			fileRef = 2050E8130622831E00E1B6D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2050E81C0622831F00E1B6D5 = {
+			fileRef = 2050E8140622831E00E1B6D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2050E81D0622831F00E1B6D5 = {
+			fileRef = 2050E8150622831E00E1B6D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2050E81E0622831F00E1B6D5 = {
+			fileRef = 2050E8160622831E00E1B6D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2050E81F0622831F00E1B6D5 = {
+			fileRef = 2050E8170622831E00E1B6D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2050E8200622831F00E1B6D5 = {
+			fileRef = 2050E8180622831E00E1B6D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2050E8210622831F00E1B6D5 = {
+			fileRef = 2050E8190622831E00E1B6D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2050E8220622833300E1B6D5 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.rtf;
+			path = "Install and setup.rtf";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2050E8230622833300E1B6D5 = {
+			fileRef = 2050E8220622833300E1B6D5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		20761D910619426A00684BA9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = CoreServices.framework;
+			path = /System/Library/Frameworks/CoreServices.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		20761D920619426A00684BA9 = {
+			fileRef = 20761D910619426A00684BA9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		20761E940619462F00684BA9 = {
+			fileRef = F580C29305A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E52505EE9F3100F9ACA1 = {
+			buildPhases = (
+				2087E52605EE9F3100F9ACA1,
+				2087E53905EE9F3100F9ACA1,
+				2087E53E05EE9F3100F9ACA1,
+				2087E58205EE9F3100F9ACA1,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 0.8.7;
+				DYLIB_CURRENT_VERSION = 0.8.7;
+				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/Frameworks";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "ARANYM_DATADIR=\\\"data\\\" MACOSX_support HAVE_CONFIG_H OS_darwin CPU_powerpc _GNU_SOURCE DIRECT_ADDRESSING FPU_IEEE ARANYMHOME=\\\"Documents/Aranym_files\\\" DIRSEPARATOR=\\\"/\\\" ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				HEADER_SEARCH_PATHS = "../gui-sdl ../Unix ../uae_cpu ../natfeat ../include $(HOME)/Library/Frameworks/SDL.framework/Headers";
+				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = ../Unix;
+				LIBRARY_STYLE = BUNDLE;
+				OTHER_CFLAGS = "-no-cpp-precomp -flat_namespace -Wall -W";
+				OTHER_LDFLAGS = "-lm -framework SDL";
+				PRODUCT_NAME = MacAranym;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				WRAPPER_EXTENSION = app;
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = MacAranym;
+			productName = macaranym;
+			productReference = 2087E58B05EE9F3100F9ACA1;
+			productType = "com.apple.product-type.application";
+		};
+		2087E52605EE9F3100F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+				20761E940619462F00684BA9,
+				2087E52705EE9F3100F9ACA1,
+				2087E52905EE9F3100F9ACA1,
+				2087E52A05EE9F3100F9ACA1,
+				2087E52B05EE9F3100F9ACA1,
+				2087E52805EE9F3100F9ACA1,
+				2087E52C05EE9F3100F9ACA1,
+				2087E52D05EE9F3100F9ACA1,
+				2087E52E05EE9F3100F9ACA1,
+				2087E52F05EE9F3100F9ACA1,
+				2087E53005EE9F3100F9ACA1,
+				2087E53105EE9F3100F9ACA1,
+				2087E53205EE9F3100F9ACA1,
+				2087E53305EE9F3100F9ACA1,
+				2087E53405EE9F3100F9ACA1,
+				2087E53505EE9F3100F9ACA1,
+				2087E53605EE9F3100F9ACA1,
+				2087E53705EE9F3100F9ACA1,
+				2087E53805EE9F3100F9ACA1,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E52705EE9F3100F9ACA1 = {
+			fileRef = F580C37C05A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E52805EE9F3100F9ACA1 = {
+			fileRef = F580C28B05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E52905EE9F3100F9ACA1 = {
+			fileRef = F580C34205A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		2087E52A05EE9F3100F9ACA1 = {
+			fileRef = F580C2E205A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E52B05EE9F3100F9ACA1 = {
+			fileRef = F580C2FF05A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E52C05EE9F3100F9ACA1 = {
+			fileRef = F580C28705A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E52D05EE9F3100F9ACA1 = {
+			fileRef = F580C29E05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E52E05EE9F3100F9ACA1 = {
+			fileRef = F580C28E05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E52F05EE9F3100F9ACA1 = {
+			fileRef = F580C29C05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53005EE9F3100F9ACA1 = {
+			fileRef = F580C28405A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53105EE9F3100F9ACA1 = {
+			fileRef = F580C28505A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53205EE9F3100F9ACA1 = {
+			fileRef = F580C2A605A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53305EE9F3100F9ACA1 = {
+			fileRef = F580C30105A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53405EE9F3100F9ACA1 = {
+			fileRef = F580C22705A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53505EE9F3100F9ACA1 = {
+			fileRef = F580C23205A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53605EE9F3100F9ACA1 = {
+			fileRef = F580C27B05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53705EE9F3100F9ACA1 = {
+			fileRef = F580C29905A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53805EE9F3100F9ACA1 = {
+			fileRef = F580C29A05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53905EE9F3100F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+				2030CDCA06181F5E00ECF64D,
+				2087E53A05EE9F3100F9ACA1,
+				2087E53B05EE9F3100F9ACA1,
+				2087E53C05EE9F3100F9ACA1,
+				2087E53D05EE9F3100F9ACA1,
+				20335B2706163D850050859A,
+				2050E81A0622831F00E1B6D5,
+				2050E81B0622831F00E1B6D5,
+				2050E81C0622831F00E1B6D5,
+				2050E81D0622831F00E1B6D5,
+				2050E81E0622831F00E1B6D5,
+				2050E81F0622831F00E1B6D5,
+				2050E8200622831F00E1B6D5,
+				2050E8210622831F00E1B6D5,
+				2050E8230622833300E1B6D5,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E53A05EE9F3100F9ACA1 = {
+			fileRef = F580C35605A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53B05EE9F3100F9ACA1 = {
+			fileRef = F580C37805A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53C05EE9F3100F9ACA1 = {
+			fileRef = F580C37A05A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53D05EE9F3100F9ACA1 = {
+			fileRef = F59621C605DF84C00187A6B8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E53E05EE9F3100F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+				2087E53F05EE9F3100F9ACA1,
+				2087E54005EE9F3100F9ACA1,
+				2087E54205EE9F3100F9ACA1,
+				2087E54305EE9F3100F9ACA1,
+				2087E54405EE9F3100F9ACA1,
+				2087E54505EE9F3100F9ACA1,
+				2087E54605EE9F3100F9ACA1,
+				2087E54705EE9F3100F9ACA1,
+				2087E54805EE9F3100F9ACA1,
+				2087E54905EE9F3100F9ACA1,
+				2087E54A05EE9F3100F9ACA1,
+				2087E54B05EE9F3100F9ACA1,
+				2087E54C05EE9F3100F9ACA1,
+				2087E54D05EE9F3100F9ACA1,
+				2087E54E05EE9F3100F9ACA1,
+				2087E54F05EE9F3100F9ACA1,
+				2087E55005EE9F3100F9ACA1,
+				2087E55105EE9F3100F9ACA1,
+				2087E55205EE9F3100F9ACA1,
+				2087E55305EE9F3100F9ACA1,
+				2087E55405EE9F3100F9ACA1,
+				2087E55505EE9F3100F9ACA1,
+				2087E55605EE9F3100F9ACA1,
+				2087E55705EE9F3100F9ACA1,
+				2087E55805EE9F3100F9ACA1,
+				2087E55905EE9F3100F9ACA1,
+				2087E55A05EE9F3100F9ACA1,
+				2087E55B05EE9F3100F9ACA1,
+				2087E55C05EE9F3100F9ACA1,
+				2087E55D05EE9F3100F9ACA1,
+				2087E55E05EE9F3100F9ACA1,
+				2087E55F05EE9F3100F9ACA1,
+				2087E56005EE9F3100F9ACA1,
+				2087E56105EE9F3100F9ACA1,
+				2087E56205EE9F3100F9ACA1,
+				2087E56305EE9F3100F9ACA1,
+				2087E56405EE9F3100F9ACA1,
+				2087E56505EE9F3100F9ACA1,
+				2087E56605EE9F3100F9ACA1,
+				2087E56705EE9F3100F9ACA1,
+				2087E56805EE9F3100F9ACA1,
+				2087E56905EE9F3100F9ACA1,
+				2087E56A05EE9F3100F9ACA1,
+				2087E56B05EE9F3100F9ACA1,
+				2087E56C05EE9F3100F9ACA1,
+				2087E56D05EE9F3100F9ACA1,
+				2087E56E05EE9F3100F9ACA1,
+				2087E56F05EE9F3100F9ACA1,
+				2087E57005EE9F3100F9ACA1,
+				2087E57105EE9F3100F9ACA1,
+				2087E57205EE9F3100F9ACA1,
+				2087E57305EE9F3100F9ACA1,
+				2087E57405EE9F3100F9ACA1,
+				2087E57505EE9F3100F9ACA1,
+				2087E57605EE9F3100F9ACA1,
+				2087E57705EE9F3100F9ACA1,
+				2087E57805EE9F3100F9ACA1,
+				2087E57905EE9F3100F9ACA1,
+				2087E57A05EE9F3100F9ACA1,
+				2087E57B05EE9F3100F9ACA1,
+				2087E57C05EE9F3100F9ACA1,
+				2087E57D05EE9F3100F9ACA1,
+				2087E57E05EE9F3100F9ACA1,
+				2087E57F05EE9F3100F9ACA1,
+				2087E58005EE9F3100F9ACA1,
+				2087E58105EE9F3100F9ACA1,
+				2030CDB906181C9900ECF64D,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E53F05EE9F3100F9ACA1 = {
+			fileRef = F580C21705A7150401DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54005EE9F3100F9ACA1 = {
+			fileRef = F580C3DF05A7166801DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54205EE9F3100F9ACA1 = {
+			fileRef = F580C1E905A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54305EE9F3100F9ACA1 = {
+			fileRef = F580C1F405A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54405EE9F3100F9ACA1 = {
+			fileRef = F580C1F305A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54505EE9F3100F9ACA1 = {
+			fileRef = F580C1EC05A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54605EE9F3100F9ACA1 = {
+			fileRef = F580C1EB05A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54705EE9F3100F9ACA1 = {
+			fileRef = F580C1EE05A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54805EE9F3100F9ACA1 = {
+			fileRef = F580C1ED05A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54905EE9F3100F9ACA1 = {
+			fileRef = F580C1E705A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54A05EE9F3100F9ACA1 = {
+			fileRef = F580C1E805A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54B05EE9F3100F9ACA1 = {
+			fileRef = F580C26405A7155201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54C05EE9F3100F9ACA1 = {
+			fileRef = F580C1E605A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54D05EE9F3100F9ACA1 = {
+			fileRef = F580C20505A714AF01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54E05EE9F3100F9ACA1 = {
+			fileRef = F580C20405A714AF01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E54F05EE9F3100F9ACA1 = {
+			fileRef = F580C20705A714AF01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55005EE9F3100F9ACA1 = {
+			fileRef = F580C20605A714AF01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55105EE9F3100F9ACA1 = {
+			fileRef = F580C20905A714AF01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55205EE9F3100F9ACA1 = {
+			fileRef = F580C20805A714AF01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55305EE9F3100F9ACA1 = {
+			fileRef = F580C20A05A714AF01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55405EE9F3100F9ACA1 = {
+			fileRef = F580C21505A7150401DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55505EE9F3100F9ACA1 = {
+			fileRef = F580C21605A7150401DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55605EE9F3100F9ACA1 = {
+			fileRef = F580C21305A7150401DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55705EE9F3100F9ACA1 = {
+			fileRef = F580C21205A7150401DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55805EE9F3100F9ACA1 = {
+			fileRef = F580C21805A7150401DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55905EE9F3100F9ACA1 = {
+			fileRef = F580C26205A7155201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55A05EE9F3100F9ACA1 = {
+			fileRef = F580C26305A7155201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55B05EE9F3100F9ACA1 = {
+			fileRef = F580C26105A7155201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55C05EE9F3100F9ACA1 = {
+			fileRef = F580C26605A7155201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55D05EE9F3100F9ACA1 = {
+			fileRef = F580C26505A7155201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55E05EE9F3100F9ACA1 = {
+			fileRef = F580C26005A7155201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E55F05EE9F3100F9ACA1 = {
+			fileRef = F580C26F05A7156A01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56005EE9F3100F9ACA1 = {
+			fileRef = F580C27505A7157901DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56105EE9F3100F9ACA1 = {
+			fileRef = F580C27405A7157901DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56205EE9F3100F9ACA1 = {
+			fileRef = F580C23305A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56305EE9F3100F9ACA1 = {
+			fileRef = F580C23705A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56405EE9F3100F9ACA1 = {
+			fileRef = F580C23F05A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56505EE9F3100F9ACA1 = {
+			fileRef = F580C22405A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56605EE9F3100F9ACA1 = {
+			fileRef = F580C23505A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56705EE9F3100F9ACA1 = {
+			fileRef = F580C22605A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56805EE9F3100F9ACA1 = {
+			fileRef = F580C23905A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56905EE9F3100F9ACA1 = {
+			fileRef = F580C23D05A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56A05EE9F3100F9ACA1 = {
+			fileRef = F580C1EA05A7148B01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56B05EE9F3100F9ACA1 = {
+			fileRef = F580C34A05A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56C05EE9F3100F9ACA1 = {
+			fileRef = F580C2D705A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56D05EE9F3100F9ACA1 = {
+			fileRef = F580C2FE05A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56E05EE9F3100F9ACA1 = {
+			fileRef = F580C30005A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E56F05EE9F3100F9ACA1 = {
+			fileRef = F580C2EF05A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57005EE9F3100F9ACA1 = {
+			fileRef = F580C34905A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57105EE9F3100F9ACA1 = {
+			fileRef = F580C34B05A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57205EE9F3100F9ACA1 = {
+			fileRef = F580C2E605A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57305EE9F3100F9ACA1 = {
+			fileRef = F580C3DA05A7166801DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57405EE9F3100F9ACA1 = {
+			fileRef = F580C38305A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57505EE9F3100F9ACA1 = {
+			fileRef = F580C38205A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57605EE9F3100F9ACA1 = {
+			fileRef = F580C38005A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57705EE9F3100F9ACA1 = {
+			fileRef = F580C23105A7151301DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57805EE9F3100F9ACA1 = {
+			fileRef = F5A47A9E01A0483001D3D55B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57905EE9F3100F9ACA1 = {
+			fileRef = F588044205A9FBA9013D8677;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57A05EE9F3100F9ACA1 = {
+			fileRef = F588044305A9FBA9013D8677;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57B05EE9F3100F9ACA1 = {
+			fileRef = F588044405A9FBA9013D8677;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57C05EE9F3100F9ACA1 = {
+			fileRef = F588044605A9FBA9013D8677;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57D05EE9F3100F9ACA1 = {
+			fileRef = F588044705A9FBA9013D8677;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57E05EE9F3100F9ACA1 = {
+			fileRef = F588044505A9FBA9013D8677;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E57F05EE9F3100F9ACA1 = {
+			fileRef = F588044A05A9FBA9013D8677;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E58005EE9F3100F9ACA1 = {
+			fileRef = F580C30305A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E58105EE9F3100F9ACA1 = {
+			fileRef = F583CC8605DAA79B01C71CA6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E58205EE9F3100F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+				2087E58305EE9F3100F9ACA1,
+				2087E58405EE9F3100F9ACA1,
+				2087E58505EE9F3100F9ACA1,
+				2087E58605EE9F3100F9ACA1,
+				2087E58705EE9F3100F9ACA1,
+				2087E58805EE9F3100F9ACA1,
+				20761D920619426A00684BA9,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E58305EE9F3100F9ACA1 = {
+			fileRef = 1058C7A1FEA54F0111CA2CBB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E58405EE9F3100F9ACA1 = {
+			fileRef = 29B97325FDCFA39411CA2CEA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E58505EE9F3100F9ACA1 = {
+			fileRef = 29B97324FDCFA39411CA2CEA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E58605EE9F3100F9ACA1 = {
+			fileRef = F580C4DF05A71D4201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E58705EE9F3100F9ACA1 = {
+			fileRef = F580C4E205A71FBF01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E58805EE9F3100F9ACA1 = {
+			fileRef = F580503605A73CE9014C3AB3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E58A05EE9F3100F9ACA1 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.xml;
+			path = Info.plist;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		2087E58B05EE9F3100F9ACA1 = {
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = MacAranym.app;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2087E58F05EE9F8500F9ACA1 = {
+			buildPhases = (
+				2087E59105EE9F8500F9ACA1,
+				2087E59305EE9F8500F9ACA1,
+				2087E59705EE9F8500F9ACA1,
+				2087E59805EE9F8500F9ACA1,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_CONFIG_H OS_darwin CPU_powerpc _GNU_SOURCE DIRECT_ADDRESSING FPU_IEEE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				HEADER_SEARCH_PATHS = ../../uae_cpu;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = gencpu;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+			};
+			dependencies = (
+				20EB70FA05EEBB65008CCEA1,
+			);
+			isa = PBXNativeTarget;
+			name = MakeCpu;
+			productName = MakeCpu;
+			productReference = 2087E59A05EE9F8500F9ACA1;
+			productType = "com.apple.product-type.tool";
+		};
+		2087E59105EE9F8500F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+				2087E59205EE9F8500F9ACA1,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E59205EE9F8500F9ACA1 = {
+			fileRef = F580C28B05A7161201DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E59305EE9F8500F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+				2087E59405EE9F8500F9ACA1,
+				2087E59505EE9F8500F9ACA1,
+				2087E59605EE9F8500F9ACA1,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E59405EE9F8500F9ACA1 = {
+			fileRef = F580C30305A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E59505EE9F8500F9ACA1 = {
+			fileRef = F580C2FC05A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E59605EE9F8500F9ACA1 = {
+			fileRef = F580C34905A7166701DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E59705EE9F8500F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E59805EE9F8500F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $PWD/build\n./gencpu";
+		};
+		2087E59A05EE9F8500F9ACA1 = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = gencpu;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2087E59E05EE9F8C00F9ACA1 = {
+			buildPhases = (
+				2087E59F05EE9F8C00F9ACA1,
+				2087E5A005EE9F8C00F9ACA1,
+				2087E5A105EE9F8C00F9ACA1,
+				2087E5A305EE9F8C00F9ACA1,
+				2087E5A405EE9F8C00F9ACA1,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				HEADER_SEARCH_PATHS = ../../uae_cpu;
+				MACOSX_DEPLOYMENT_TARGET = 10.3;
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Build68k;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = Build68k;
+			productName = Build68k;
+			productReference = 2087E5A605EE9F8C00F9ACA1;
+			productType = "com.apple.product-type.tool";
+		};
+		2087E59F05EE9F8C00F9ACA1 = {
+			buildActionMask = 12;
+			files = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $PWD\ncd ../Unix\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nif test -f autogen.sh\nthen\n./autogen.sh --prefix=$HOME --enable-fullhistory\nelse\n./configure --prefix=$HOME\nfi";
+		};
+		2087E5A005EE9F8C00F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E5A105EE9F8C00F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+				2087E5A205EE9F8C00F9ACA1,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E5A205EE9F8C00F9ACA1 = {
+			fileRef = F580C2D805A7163D01DAC342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E5A305EE9F8C00F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E5A405EE9F8C00F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $PWD/build\n./Build68K <../../uae_cpu/table68k >cpudefs.cpp";
+		};
+		2087E5A605EE9F8C00F9ACA1 = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = Build68k;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2087E5AA05EE9F9500F9ACA1 = {
+			buildPhases = (
+				2087E5AB05EE9F9500F9ACA1,
+				2087E5AC05EE9F9500F9ACA1,
+				2087E5AE05EE9F9500F9ACA1,
+				2087E5AF05EE9F9500F9ACA1,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "/Users/carlobaiocco/Documents/aranym-0.8.6beta/src/MacOSX/pkg_support/aranym.pkg_temp/Library/Frameworks";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = DiskImage;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = DiskImage;
+			productInstallPath = /usr/local/bin;
+			productName = DiskImage;
+			productReference = 2087E5B105EE9F9500F9ACA1;
+			productType = "com.apple.product-type.tool";
+		};
+		2087E5AB05EE9F9500F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E5AC05EE9F9500F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+				2087E5AD05EE9F9500F9ACA1,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E5AD05EE9F9500F9ACA1 = {
+			fileRef = F58CD59205B804FB01EE9378;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2087E5AE05EE9F9500F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E5AF05EE9F9500F9ACA1 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2087E5B105EE9F9500F9ACA1 = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = DiskImage;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		20EB70F905EEBB65008CCEA1 = {
+			containerPortal = 29B97313FDCFA39411CA2CEA;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = 2087E59E05EE9F8C00F9ACA1;
+			remoteInfo = "Build68k (Upgraded)";
+		};
+		20EB70FA05EEBB65008CCEA1 = {
+			isa = PBXTargetDependency;
+			target = 2087E59E05EE9F8C00F9ACA1;
+			targetProxy = 20EB70F905EEBB65008CCEA1;
+		};
+//200
+//201
+//202
+//203
+//204
 //290
 //291
 //292
 //293
 //294
 		29B97313FDCFA39411CA2CEA = {
+			buildSettings = {
+			};
 			buildStyles = (
 				4A9504CCFFE6A4B311CA0CBA,
 				4A9504CDFFE6A4B311CA0CBA,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 29B97314FDCFA39411CA2CEA;
 			projectDirPath = "";
 			targets = (
-				29B97326FDCFA39411CA2CEA,
-				F58C108105B7B8120154426E,
-				F587863605B7C555011F64EC,
-				F58CD58E05B8049B01EE9378,
+				2087E52505EE9F3100F9ACA1,
+				2087E58F05EE9F8500F9ACA1,
+				2087E59E05EE9F8C00F9ACA1,
+				2087E5AA05EE9F9500F9ACA1,
 			);
 		};
 		29B97314FDCFA39411CA2CEA = {
@@ -132,6 +1397,7 @@
 			name = Aranym;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97315FDCFA39411CA2CEA = {
 			children = (
@@ -182,9 +1448,12 @@
 			name = "Other sources";
 			path = ..;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				2087E58A05EE9F3100F9ACA1,
+				20335B2406163D850050859A,
 				F59621C605DF84C00187A6B8,
 				F580C35605A7166701DAC342,
 				F580C37805A7166701DAC342,
@@ -194,6 +1463,7 @@
 			name = Resources;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97323FDCFA39411CA2CEA = {
 			children = (
@@ -204,197 +1474,25 @@
 			name = Frameworks;
 			path = "";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		29B97324FDCFA39411CA2CEA = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = AppKit.framework;
 			path = /System/Library/Frameworks/AppKit.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		29B97325FDCFA39411CA2CEA = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
-		};
-		29B97326FDCFA39411CA2CEA = {
-			buildPhases = (
-				29B97327FDCFA39411CA2CEA,
-				29B97328FDCFA39411CA2CEA,
-				29B9732BFDCFA39411CA2CEA,
-				29B9732DFDCFA39411CA2CEA,
-			);
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\"$(HOME)/Library/Frameworks\" /Users/carlobaiocco/Documents/pkg_support/aranym.pkg_temp/Library/Frameworks /Users/carlobaiocco/Documents/aranym-0.8.6beta/src/MacOSX/pkg_support/aranym.pkg_temp/Library/Frameworks";
-				HEADER_SEARCH_PATHS = "../gui-sdl ../Unix ../uae_cpu ../natfeat ../include \"$(HOME)/Library/Frameworks/SDL.framework/Headers\"";
-				LIBRARY_SEARCH_PATHS = ../Unix;
-				OPTIMIZATION_CFLAGS = "-O3";
-				OTHER_CFLAGS = "-no-cpp-precomp -flat_namespace -DHAVE_CONFIG_H  -DOS_darwin -DCPU_powerpc -D_GNU_SOURCE -DDIRECT_ADDRESSING -DFPU_IEEE -DARANYMHOME=\\\\\\\"Documents\\/Aranym_files\\\\\\\" -DDIRSEPARATOR=\\\\\\\"\\/\\\\\\\" -DARANYM_DATADIR=\\\\\\\"Documents\\/Aranym_files\\/data\\\\\\\" -DENABLE_EXCLUSIVE_SPCFLAGS -D_REENTRANT -D_THREAD_SAFE -Wall -W\n";
-				OTHER_LDFLAGS = "-lm -framework SDL";
-				PRODUCT_NAME = Aranym;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
-				WRAPPER_EXTENSION = app;
-			};
-			dependencies = (
-			);
-			isa = PBXApplicationTarget;
-			name = MacAranym;
-			productName = macaranym;
-			productReference = 17587328FF379C6511CA2CBB;
-			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
-<plist version=\"1.0\">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
-	<key>CFBundleExecutable</key>
-	<string>Aranym</string>
-	<key>CFBundleIconFile</key>
-	<string>aranym2.icns</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>Aranym macOSX version</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>aranym beta</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>0.8.6 beta</string>
-	<key>NSMainNibFile</key>
-	<string>SDLMain.nib</string>
-	<key>NSPrincipalClass</key>
-	<string>SDLApplication</string>
-	<key>macaranym</key>
-	<string>SDL Cocoa App</string>
-</dict>
-</plist>
-";
-			shouldUseHeadermap = 0;
-		};
-		29B97327FDCFA39411CA2CEA = {
-			buildActionMask = 2147483647;
-			files = (
-				F580C42705A7166801DAC342,
-				F5A4EB1005AD4A9B013BD142,
-				F5826A4505D124440197DD2A,
-				F5826A4605D124B90197DD2A,
-				F5826A4705D124BB0197DD2A,
-				F58019DB05D1868F014E74AC,
-				F58022EB05D1A4A3014E74AC,
-				F58022EC05D1A4B7014E74AC,
-				F58022ED05D1A4C9014E74AC,
-				F58022EE05D1A4CE014E74AC,
-				F58022EF05D1A4CE014E74AC,
-				F58022F005D1A4DE014E74AC,
-				F58022F105D1A504014E74AC,
-				F58022F205D1A52F014E74AC,
-				F58022F305D1A532014E74AC,
-				F5DA8D7B05DAE9A6013A9B3A,
-			);
-			isa = PBXHeadersBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		29B97328FDCFA39411CA2CEA = {
-			buildActionMask = 2147483647;
-			files = (
-				F580C40B05A7166801DAC342,
-				F580C42505A7166801DAC342,
-				F580C42605A7166801DAC342,
-				F59621C705DF84C20187A6B8,
-			);
-			isa = PBXResourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		29B9732BFDCFA39411CA2CEA = {
-			buildActionMask = 2147483647;
-			files = (
-				F580532605A7D0E0014C3AB3,
-				F580532705A7D0EA014C3AB3,
-				F580532805A7D0EB014C3AB3,
-				F580532905A7D0F1014C3AB3,
-				F580532A05A7D0F3014C3AB3,
-				F580532B05A7D0F6014C3AB3,
-				F580532C05A7D0F8014C3AB3,
-				F580532D05A7D0FA014C3AB3,
-				F580532E05A7D0FC014C3AB3,
-				F580532F05A7D12F014C3AB3,
-				F580533005A7D133014C3AB3,
-				F580533105A7D136014C3AB3,
-				F580533205A7D13F014C3AB3,
-				F580533305A7D144014C3AB3,
-				F580533505A7D14A014C3AB3,
-				F580533605A7D14E014C3AB3,
-				F580533705A7D152014C3AB3,
-				F580533805A7D156014C3AB3,
-				F580533905A7D159014C3AB3,
-				F580533A05A7D15C014C3AB3,
-				F580533B05A7D15F014C3AB3,
-				F580533C05A7D160014C3AB3,
-				F580533D05A7D165014C3AB3,
-				F580533E05A7D168014C3AB3,
-				F580533F05A7D169014C3AB3,
-				F580534005A7D16B014C3AB3,
-				F580534105A7D16E014C3AB3,
-				F580534205A7D171014C3AB3,
-				F580534305A7D173014C3AB3,
-				F580534405A7D176014C3AB3,
-				F580534505A7D178014C3AB3,
-				F580534605A7D17A014C3AB3,
-				F580534705A7D193014C3AB3,
-				F580534805A7D196014C3AB3,
-				F580534905A7D197014C3AB3,
-				F580534A05A7D1A8014C3AB3,
-				F580534B05A7D1A9014C3AB3,
-				F580534C05A7D1AC014C3AB3,
-				F580534D05A7D1AF014C3AB3,
-				F580534E05A7D1B8014C3AB3,
-				F580534F05A7D1BF014C3AB3,
-				F580535005A7D1D0014C3AB3,
-				F580535105A7D1D1014C3AB3,
-				F580535205A7D1E1014C3AB3,
-				F580535305A7D1F2014C3AB3,
-				F580535405A7D203014C3AB3,
-				F580535505A7D209014C3AB3,
-				F580535605A7D20F014C3AB3,
-				F580535805A7D222014C3AB3,
-				F580535905A7D243014C3AB3,
-				F580535A05A7D248014C3AB3,
-				F580535B05A7D254014C3AB3,
-				F580535D05A7D265014C3AB3,
-				F580535E05A7D269014C3AB3,
-				F580535F05A7D26D014C3AB3,
-				F580536005A7D26E014C3AB3,
-				F580536105A7D27C014C3AB3,
-				F58013AD05A87DA70142E13B,
-				F588044C05A9FBB1013D8677,
-				F588044D05A9FBB2013D8677,
-				F588044E05A9FBB2013D8677,
-				F588044F05A9FBB3013D8677,
-				F588045005A9FBB4013D8677,
-				F588045105A9FBB5013D8677,
-				F588045205A9FBBA013D8677,
-				F539E4E805B961B301C87F7F,
-				F583CC8705DAA79B01C71CA6,
-			);
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		29B9732DFDCFA39411CA2CEA = {
-			buildActionMask = 2147483647;
-			files = (
-				1058C7A3FEA54F0111CA2CBB,
-				F580C48D05A71C7F01DAC342,
-				F580C48E05A71C8101DAC342,
-				F580C4E105A71D4201DAC342,
-				F580C78105A71FC001DAC342,
-				F580532005A73CEA014C3AB3,
-			);
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
+			sourceTree = "<absolute>";
 		};
 //290
 //291
@@ -411,7 +1509,11 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				OPTIMIZATION_CFLAGS = "-O0";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -421,6 +1523,14 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				CURRENT_PROJECT_VERSION = 0.8.7;
+				DYLIB_CURRENT_VERSION = 0.8.7;
+				GCC_ALTIVEC_EXTENSIONS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				SKIP_INSTALL = NO;
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -435,574 +1545,222 @@
 //F52
 //F53
 //F54
-		F539E4E805B961B301C87F7F = {
-			fileRef = F580C30305A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F55FE00505BB250F01209CD2 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			generatedFileNames = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd $PWD/build\n./Build68K <../../uae_cpu/table68k >cpudefs.cpp";
-		};
-		F58013AD05A87DA70142E13B = {
-			fileRef = F5A47A9E01A0483001D3D55B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58019DB05D1868F014E74AC = {
-			fileRef = F580C28705A7161201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58022EB05D1A4A3014E74AC = {
-			fileRef = F580C29E05A7161201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58022EC05D1A4B7014E74AC = {
-			fileRef = F580C28E05A7161201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58022ED05D1A4C9014E74AC = {
-			fileRef = F580C29C05A7161201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58022EE05D1A4CE014E74AC = {
-			fileRef = F580C28405A7161201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58022EF05D1A4CE014E74AC = {
-			fileRef = F580C28505A7161201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58022F005D1A4DE014E74AC = {
-			fileRef = F580C2A605A7161201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58022F105D1A504014E74AC = {
-			fileRef = F580C30105A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58022F205D1A52F014E74AC = {
-			fileRef = F580C22705A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58022F305D1A532014E74AC = {
-			fileRef = F580C23205A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F580503605A73CE9014C3AB3 = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = CoreFoundation.framework;
 			path = /System/Library/Frameworks/CoreFoundation.framework;
 			refType = 0;
-		};
-		F580532005A73CEA014C3AB3 = {
-			fileRef = F580503605A73CE9014C3AB3;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580532605A7D0E0014C3AB3 = {
-			fileRef = F580C21705A7150401DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580532705A7D0EA014C3AB3 = {
-			fileRef = F580C3DF05A7166801DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580532805A7D0EB014C3AB3 = {
-			fileRef = F580C38B05A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580532905A7D0F1014C3AB3 = {
-			fileRef = F580C1E905A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580532A05A7D0F3014C3AB3 = {
-			fileRef = F580C1F405A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580532B05A7D0F6014C3AB3 = {
-			fileRef = F580C1F305A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580532C05A7D0F8014C3AB3 = {
-			fileRef = F580C1EC05A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580532D05A7D0FA014C3AB3 = {
-			fileRef = F580C1EB05A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580532E05A7D0FC014C3AB3 = {
-			fileRef = F580C1EE05A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580532F05A7D12F014C3AB3 = {
-			fileRef = F580C1ED05A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533005A7D133014C3AB3 = {
-			fileRef = F580C1E705A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533105A7D136014C3AB3 = {
-			fileRef = F580C1E805A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533205A7D13F014C3AB3 = {
-			fileRef = F580C26405A7155201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533305A7D144014C3AB3 = {
-			fileRef = F580C1E605A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533505A7D14A014C3AB3 = {
-			fileRef = F580C20505A714AF01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533605A7D14E014C3AB3 = {
-			fileRef = F580C20405A714AF01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533705A7D152014C3AB3 = {
-			fileRef = F580C20705A714AF01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533805A7D156014C3AB3 = {
-			fileRef = F580C20605A714AF01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533905A7D159014C3AB3 = {
-			fileRef = F580C20905A714AF01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533A05A7D15C014C3AB3 = {
-			fileRef = F580C20805A714AF01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533B05A7D15F014C3AB3 = {
-			fileRef = F580C20A05A714AF01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533C05A7D160014C3AB3 = {
-			fileRef = F580C21505A7150401DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533D05A7D165014C3AB3 = {
-			fileRef = F580C21605A7150401DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533E05A7D168014C3AB3 = {
-			fileRef = F580C21305A7150401DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580533F05A7D169014C3AB3 = {
-			fileRef = F580C21205A7150401DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534005A7D16B014C3AB3 = {
-			fileRef = F580C21805A7150401DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534105A7D16E014C3AB3 = {
-			fileRef = F580C26205A7155201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534205A7D171014C3AB3 = {
-			fileRef = F580C26305A7155201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534305A7D173014C3AB3 = {
-			fileRef = F580C26105A7155201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534405A7D176014C3AB3 = {
-			fileRef = F580C26605A7155201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534505A7D178014C3AB3 = {
-			fileRef = F580C26505A7155201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534605A7D17A014C3AB3 = {
-			fileRef = F580C26005A7155201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534705A7D193014C3AB3 = {
-			fileRef = F580C26F05A7156A01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534805A7D196014C3AB3 = {
-			fileRef = F580C27505A7157901DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534905A7D197014C3AB3 = {
-			fileRef = F580C27405A7157901DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534A05A7D1A8014C3AB3 = {
-			fileRef = F580C23305A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534B05A7D1A9014C3AB3 = {
-			fileRef = F580C23705A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534C05A7D1AC014C3AB3 = {
-			fileRef = F580C23F05A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534D05A7D1AF014C3AB3 = {
-			fileRef = F580C22405A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534E05A7D1B8014C3AB3 = {
-			fileRef = F580C23505A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580534F05A7D1BF014C3AB3 = {
-			fileRef = F580C22605A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535005A7D1D0014C3AB3 = {
-			fileRef = F580C23905A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535105A7D1D1014C3AB3 = {
-			fileRef = F580C23D05A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535205A7D1E1014C3AB3 = {
-			fileRef = F580C1EA05A7148B01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535305A7D1F2014C3AB3 = {
-			fileRef = F580C34A05A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535405A7D203014C3AB3 = {
-			fileRef = F580C2D705A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535505A7D209014C3AB3 = {
-			fileRef = F580C2FE05A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535605A7D20F014C3AB3 = {
-			fileRef = F580C30005A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535805A7D222014C3AB3 = {
-			fileRef = F580C2EF05A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535905A7D243014C3AB3 = {
-			fileRef = F580C34905A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535A05A7D248014C3AB3 = {
-			fileRef = F580C34B05A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535B05A7D254014C3AB3 = {
-			fileRef = F580C2E605A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535D05A7D265014C3AB3 = {
-			fileRef = F580C3DA05A7166801DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535E05A7D269014C3AB3 = {
-			fileRef = F580C38305A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580535F05A7D26D014C3AB3 = {
-			fileRef = F580C38205A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580536005A7D26E014C3AB3 = {
-			fileRef = F580C38005A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580536105A7D27C014C3AB3 = {
-			fileRef = F580C23105A7151301DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			sourceTree = "<absolute>";
 		};
 		F580C1E605A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = fakeio.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1E705A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dsp.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1E805A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = emul_op.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1E905A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = acia.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1EA05A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dsp_cpu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1EB05A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = blitter.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1EC05A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = ata.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1ED05A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = cfgopts.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1EE05A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = cdrom.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1EF05A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dsp_disasm.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1F305A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = aradata.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C1F405A7148B01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = acsifdc.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C20405A714AF01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = hardware.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C20505A714AF01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = fvdidrv.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C20605A714AF01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = hostscreen.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C20705A714AF01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = host.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C20805A714AF01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = identify.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C20905A714AF01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = ide.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C20A05A714AF01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = ikbd.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C21205A7150401DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = midi.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C21305A7150401DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = mfp.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C21405A7150401DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = lilo.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C21505A7150401DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = input.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C21605A7150401DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = md5.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C21705A7150401DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = main.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C21805A7150401DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = mmu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22005A7151301DAC342 = {
 			children = (
@@ -1035,36 +1793,55 @@
 			isa = PBXGroup;
 			path = natfeat;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22205A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = atari_example.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22305A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = atari_example_gfa.lst;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22405A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = audio.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22505A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = audio.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22605A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = debugprintf.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22705A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = debugprintf.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22805A7151301DAC342 = {
 			children = (
@@ -1077,176 +1854,279 @@
 			isa = PBXGroup;
 			path = doc;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22A05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = attic.txt;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22B05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = call68k.txt;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22C05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = native.txt;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22D05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = nf.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22E05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = sample.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C22F05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = ethernet.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23005A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = ethernet.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23105A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = hostfs.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23205A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = hostfs.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23305A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = nf_base.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23405A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = nf_base.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23505A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = nf_basicset.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23605A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = nf_basicset.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23705A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = nf_objs.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23805A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = nf_objs.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23905A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = nfcdrom.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23A05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = nfcdrom.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23B05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = nfcdrom_linux.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23C05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = nfcdrom_linux.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23D05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = nfcdrom_sdl.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23E05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = nfcdrom_sdl.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C23F05A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = xhdi.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C24005A7151301DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = xhdi.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C26005A7155201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = rtc.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C26105A7155201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = parallel.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C26205A7155201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = ndebug.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C26305A7155201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = ncr5380.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C26405A7155201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = natfeats.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C26505A7155201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = romdiff.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C26605A7155201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = parameters.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C26F05A7156A01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = tools.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C27005A7156A01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = template.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C27405A7157901DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = yamaha.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C27505A7157901DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = videl.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C27805A715C901DAC342 = {
 			children = (
@@ -1297,224 +2177,353 @@
 			name = include;
 			path = ../include;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F580C27905A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = version.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C27A05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = toserror.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C27B05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = tools.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C27D05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = scsidefs.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C27E05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = rtc.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C27F05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = aramd5.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28005A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = host.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28105A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = yamaha.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28205A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = videl.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28305A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = main.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28405A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = parallel.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28505A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = ndebug.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28605A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = cdrom.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28705A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dsp.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28805A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = midi.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28905A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = mmu.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28A05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = romdiff.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28B05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = parameters.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28C05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = "aspi-win32.h";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28D05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = fvdidrv.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C28E05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = emu_bochs.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29005A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = ata.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29105A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = emul_op.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29205A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = aradata.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29305A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = acia.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29405A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = lilo.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29505A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = ikbd.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29605A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = hostscreen.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29705A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = icio.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29805A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = cfgopts.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29905A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = identify.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29A05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = input.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29C05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = hardware.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29D05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = natfeats.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C29E05A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dsp_cpu.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2A005A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = blitter.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2A105A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = acsifdc.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2A205A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = ncr5380.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2A305A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = dsp_disasm.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2A405A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = mfp.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2A505A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = ide.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2A605A7161201DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = debug.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2D505A7163D01DAC342 = {
 			children = (
 				F580C2D705A7163D01DAC342,
 				F580C2D805A7163D01DAC342,
 				F580C34905A7166701DAC342,
+				F580C34A05A7166701DAC342,
 				F580C2E305A7163D01DAC342,
 				F580C2E505A7163D01DAC342,
+				F580C34B05A7166701DAC342,
 				F580C2E605A7163D01DAC342,
 				F580C2FC05A7163D01DAC342,
 				F580C2FE05A7163D01DAC342,
@@ -1522,6 +2531,7 @@
 				F580C30305A7163D01DAC342,
 				F580C2D905A7163D01DAC342,
 				F580C2E705A7163D01DAC342,
+				F580C34C05A7166701DAC342,
 				F580C2E205A7163D01DAC342,
 				F580C2E405A7163D01DAC342,
 				F580C2FD05A7163D01DAC342,
@@ -1536,16 +2546,23 @@
 			isa = PBXGroup;
 			path = uae_cpu;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2D705A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = aranym_glue.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2D805A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = build68k.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2D905A7163D01DAC342 = {
 			children = (
@@ -1560,66 +2577,103 @@
 			isa = PBXGroup;
 			path = compiler;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2DB05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = codegen_x86.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2DC05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = codegen_x86.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2DD05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = compemu.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2DE05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = compemu_fpp.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2DF05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = compemu_support.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2E005A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = flags_x86.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2E105A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = gencomp.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2E205A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = cpu_emulation.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2E305A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = cpummu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2E405A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = cpummu.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2E505A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = cpuopti.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2E605A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = debug.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2E705A7163D01DAC342 = {
 			children = (
@@ -1646,244 +2700,371 @@
 			isa = PBXGroup;
 			path = fpu;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2E905A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = core.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2EA05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = exceptions.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2EB05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = exceptions.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2EC05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = flags.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2ED05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = flags.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2EE05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = fpu.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2EF05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = fpu_ieee.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2F005A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = fpu_ieee.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2F105A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = fpu_uae.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2F205A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = fpu_uae.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2F305A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = fpu_x86.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2F405A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = fpu_x86.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2F505A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = fpu_x86_asm.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2F605A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = impl.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2F705A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = mathlib.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2F805A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = mathlib.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2F905A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = rounding.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2FA05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = rounding.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2FB05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = types.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2FC05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = gencpu.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2FD05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = m68k.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2FE05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = memory.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C2FF05A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = memory.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C30005A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = newcpu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C30105A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = newcpu.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C30205A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = noflags.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C30305A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = readcpu.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C30405A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = readcpu.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C30505A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = registers.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C30605A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = spcflags.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C30705A7163D01DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = table68k;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C33805A7166701DAC342 = {
 			children = (
+				201C30AB05F758B100804E00,
+				201DD8CC05F70B7B0090F5B7,
+				201DD8BB05F707260090F5B7,
+				F5B5AED505E6B89301436688,
+				201DD8C005F707970090F5B7,
+				F580C34305A7166701DAC342,
+				F580C34405A7166701DAC342,
+				201DD8BC05F707500090F5B7,
+				F580C38C05A7166701DAC342,
+				F580C38D05A7166701DAC342,
 				F580C33C05A7166701DAC342,
-				F580C34A05A7166701DAC342,
-				F580C34B05A7166701DAC342,
 				F580C38005A7166701DAC342,
 				F580C38205A7166701DAC342,
 				F580C38305A7166701DAC342,
-				F580C38B05A7166701DAC342,
+				2030CDB806181C9900ECF64D,
 				F580C3DA05A7166801DAC342,
 				F580C3DE05A7166801DAC342,
 				F580C3DF05A7166801DAC342,
 				F580C33B05A7166701DAC342,
 				F580C34205A7166701DAC342,
-				F580C34C05A7166701DAC342,
 				F580C38105A7166701DAC342,
 				F580C3DD05A7166801DAC342,
 				F580C3E005A7166801DAC342,
-				F580C34305A7166701DAC342,
-				F580C34405A7166701DAC342,
 				F580C38705A7166701DAC342,
-				F580C38C05A7166701DAC342,
-				F580C38D05A7166701DAC342,
 				F580C3E105A7166801DAC342,
 			);
 			isa = PBXGroup;
 			path = Unix;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C33B05A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = ansidecl.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C33C05A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = aratapif.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C34205A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = config.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C34305A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = config.h.in;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C34405A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = config.log;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C34905A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			name = cpudefs.cpp;
 			path = build/cpudefs.cpp;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F580C34A05A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			name = cpuemu.cpp;
 			path = build/cpuemu.cpp;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F580C34B05A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			name = cpustbl.cpp;
 			path = build/cpustbl.cpp;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F580C34C05A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = cputbl.h;
 			path = build/cputbl.h;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F580C35605A7166701DAC342 = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
 			path = aranym2.icns;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C37805A7166701DAC342 = {
 			children = (
@@ -1892,11 +3073,15 @@
 			isa = PBXVariantGroup;
 			path = English.lproj;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C37905A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			path = InfoPlist.strings;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C37A05A7166701DAC342 = {
 			children = (
@@ -1905,81 +3090,117 @@
 			isa = PBXVariantGroup;
 			path = English.lproj;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C37B05A7166701DAC342 = {
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			path = SDLMain.nib;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C37C05A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = SDLMain.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C38005A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = getopt.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C38105A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = getopt.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C38205A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = getopt1.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C38305A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = getopt_init.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C38705A7166701DAC342 = {
 			isa = PBXFileReference;
+			lastKnownFileType = archive.ar;
 			path = libaranym.a;
 			refType = 4;
-		};
-		F580C38B05A7166701DAC342 = {
-			isa = PBXFileReference;
-			path = main_unix.cpp;
-			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C38C05A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
 			path = Makefile;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C38D05A7166701DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = Makefile.in;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C3DA05A7166801DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = parameters_unix.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C3DD05A7166801DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = sysdeps.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C3DE05A7166801DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = vasprintf.c;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C3DF05A7166801DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = vm_alloc.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C3E005A7166801DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = vm_alloc.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C3E105A7166801DAC342 = {
 			children = (
@@ -1988,181 +3209,41 @@
 			isa = PBXGroup;
 			path = xbsd;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F580C3E205A7166801DAC342 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = sigsegv_xbsd.cpp;
 			refType = 4;
-		};
-		F580C40B05A7166801DAC342 = {
-			fileRef = F580C35605A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580C42505A7166801DAC342 = {
-			fileRef = F580C37805A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580C42605A7166801DAC342 = {
-			fileRef = F580C37A05A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580C42705A7166801DAC342 = {
-			fileRef = F580C37C05A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580C48D05A71C7F01DAC342 = {
-			fileRef = 29B97325FDCFA39411CA2CEA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F580C48E05A71C8101DAC342 = {
-			fileRef = 29B97324FDCFA39411CA2CEA;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			sourceTree = "<group>";
 		};
 		F580C4DF05A71D4201DAC342 = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = SDL.framework;
 			path = /Library/Frameworks/SDL.framework;
 			refType = 0;
-		};
-		F580C4E105A71D4201DAC342 = {
-			fileRef = F580C4DF05A71D4201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			sourceTree = "<absolute>";
 		};
 		F580C4E205A71FBF01DAC342 = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = IOKit.framework;
 			path = /System/Library/Frameworks/IOKit.framework;
 			refType = 0;
-		};
-		F580C78105A71FC001DAC342 = {
-			fileRef = F580C4E205A71FBF01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5826A4505D124440197DD2A = {
-			fileRef = F580C34205A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5826A4605D124B90197DD2A = {
-			fileRef = F580C2E205A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5826A4705D124BB0197DD2A = {
-			fileRef = F580C2FF05A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			sourceTree = "<absolute>";
 		};
 		F583CC8605DAA79B01C71CA6 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dlgHelp.cpp;
 			refType = 4;
-		};
-		F583CC8705DAA79B01C71CA6 = {
-			fileRef = F583CC8605DAA79B01C71CA6;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587863205B7C555011F64EC = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXHeadersBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F587863305B7C555011F64EC = {
-			buildActionMask = 2147483647;
-			files = (
-				F587863905B7C56C011F64EC,
-			);
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F587863605B7C555011F64EC = {
-			buildPhases = (
-				F5F07EA405B9698B012DB10D,
-				F587863205B7C555011F64EC,
-				F587863305B7C555011F64EC,
-				F587864105B7CC43011F64EC,
-				F55FE00505BB250F01209CD2,
-			);
-			buildSettings = {
-				HEADER_SEARCH_PATHS = ../../uae_cpu;
-				OPTIMIZATION_CFLAGS = "-O3";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Build68k;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
-			};
-			dependencies = (
-			);
-			isa = PBXToolTarget;
-			name = Build68k;
-			productName = Build68k;
-			productReference = F587863705B7C555011F64EC;
-			shouldUseHeadermap = 0;
-		};
-		F587863705B7C555011F64EC = {
-			isa = PBXExecutableFileReference;
-			path = Build68k;
-			refType = 3;
-		};
-		F587863905B7C56C011F64EC = {
-			fileRef = F580C2D805A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587863D05B7CA53011F64EC = {
-			fileRef = F580C30305A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587863E05B7CA54011F64EC = {
-			fileRef = F580C2FC05A7163D01DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587864105B7CC43011F64EC = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F587864205B7CD71011F64EC = {
-			isa = PBXTargetDependency;
-			target = F587863605B7C555011F64EC;
-		};
-		F587864305B7CE3B011F64EC = {
-			fileRef = F580C34905A7166701DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			sourceTree = "<group>";
 		};
 		F588044105A9FBA9013D8677 = {
 			children = (
@@ -2181,229 +3262,87 @@
 			isa = PBXGroup;
 			path = "gui-sdl";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F588044205A9FBA9013D8677 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dlgAbout.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F588044305A9FBA9013D8677 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dlgDisk.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F588044405A9FBA9013D8677 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dlgFileSelect.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F588044505A9FBA9013D8677 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dlgKeyboard.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F588044605A9FBA9013D8677 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = dlgMain.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F588044705A9FBA9013D8677 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = file.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F588044805A9FBA9013D8677 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = file.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F588044905A9FBA9013D8677 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = font8.h;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F588044A05A9FBA9013D8677 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
 			path = sdlgui.cpp;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F588044B05A9FBA9013D8677 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = sdlgui.h;
 			refType = 4;
-		};
-		F588044C05A9FBB1013D8677 = {
-			fileRef = F588044205A9FBA9013D8677;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F588044D05A9FBB2013D8677 = {
-			fileRef = F588044305A9FBA9013D8677;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F588044E05A9FBB2013D8677 = {
-			fileRef = F588044405A9FBA9013D8677;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F588044F05A9FBB3013D8677 = {
-			fileRef = F588044605A9FBA9013D8677;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F588045005A9FBB4013D8677 = {
-			fileRef = F588044705A9FBA9013D8677;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F588045105A9FBB5013D8677 = {
-			fileRef = F588044505A9FBA9013D8677;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F588045205A9FBBA013D8677 = {
-			fileRef = F588044A05A9FBA9013D8677;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58C107D05B7B8120154426E = {
-			buildActionMask = 2147483647;
-			files = (
-				F5A5241A05CC4EE901B3881A,
-			);
-			isa = PBXHeadersBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F58C107E05B7B8120154426E = {
-			buildActionMask = 2147483647;
-			files = (
-				F587863D05B7CA53011F64EC,
-				F587863E05B7CA54011F64EC,
-				F587864305B7CE3B011F64EC,
-			);
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F58C107F05B7B8120154426E = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F58C108105B7B8120154426E = {
-			buildPhases = (
-				F58C107D05B7B8120154426E,
-				F58C107E05B7B8120154426E,
-				F58C107F05B7B8120154426E,
-				F58C108605B7BD410154426E,
-			);
-			buildSettings = {
-				HEADER_SEARCH_PATHS = ../../uae_cpu;
-				OPTIMIZATION_CFLAGS = "-O3";
-				OTHER_CFLAGS = "-DHAVE_CONFIG_H  -DOS_darwin -DCPU_powerpc -D_GNU_SOURCE -DDIRECT_ADDRESSING -DFPU_IEEE -DENABLE_EXCLUSIVE_SPCFLAGS -D_REENTRANT -D_THREAD_SAFE";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gencpu;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
-			};
-			dependencies = (
-				F587864205B7CD71011F64EC,
-			);
-			isa = PBXToolTarget;
-			name = MakeCpu;
-			productName = MakeCpu;
-			productReference = F58C108205B7B8120154426E;
-			shouldUseHeadermap = 0;
-		};
-		F58C108205B7B8120154426E = {
-			isa = PBXExecutableFileReference;
-			path = gencpu;
-			refType = 3;
-		};
-		F58C108605B7BD410154426E = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			generatedFileNames = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd $PWD/build\n./gencpu";
-		};
-		F58CD58A05B8049B01EE9378 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXHeadersBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F58CD58B05B8049B01EE9378 = {
-			buildActionMask = 2147483647;
-			files = (
-				F58CD59305B804FB01EE9378,
-			);
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F58CD58C05B8049B01EE9378 = {
-			buildActionMask = 2147483647;
-			files = (
-				F59621A205DF6FBE0187A6B8,
-			);
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F58CD58D05B8049B01EE9378 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXRezBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F58CD58E05B8049B01EE9378 = {
-			buildPhases = (
-				F58CD58A05B8049B01EE9378,
-				F58CD58B05B8049B01EE9378,
-				F58CD58C05B8049B01EE9378,
-				F58CD58D05B8049B01EE9378,
-			);
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "/Users/carlobaiocco/Documents/aranym-0.8.6beta/src/MacOSX/pkg_support/aranym.pkg_temp/Library/Frameworks";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = DiskImage;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
-			};
-			dependencies = (
-			);
-			isa = PBXToolTarget;
-			name = DiskImage;
-			productInstallPath = /usr/local/bin;
-			productName = DiskImage;
-			productReference = F58CD58F05B8049B01EE9378;
-			shouldUseHeadermap = 0;
-		};
-		F58CD58F05B8049B01EE9378 = {
-			isa = PBXExecutableFileReference;
-			path = DiskImage;
-			refType = 3;
+			sourceTree = "<group>";
 		};
 		F58CD59105B804E301EE9378 = {
 			children = (
@@ -2413,271 +3352,58 @@
 			name = Tools;
 			path = Unix;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F58CD59205B804FB01EE9378 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			name = diskimage.c;
 			path = ../../tools/diskimage.c;
 			refType = 4;
-		};
-		F58CD59305B804FB01EE9378 = {
-			fileRef = F58CD59205B804FB01EE9378;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			sourceTree = "<group>";
 		};
 		F596213005DF6C680187A6B8 = {
 			children = (
-				F59621C405DF82590187A6B8,
-				F596214105DF6C680187A6B8,
-				F596216005DF6C680187A6B8,
+				2050E8220622833300E1B6D5,
+				2050E8110622831E00E1B6D5,
 			);
 			isa = PBXGroup;
-			path = pkg_support;
+			path = "Disc image files";
 			refType = 2;
-		};
-		F596214105DF6C680187A6B8 = {
-			children = (
-				F596214305DF6C680187A6B8,
-				F596215405DF6C680187A6B8,
-				F596215B05DF6C680187A6B8,
-			);
-			isa = PBXGroup;
-			path = aranym.pkg_temp;
-			refType = 4;
-		};
-		F596214305DF6C680187A6B8 = {
-			children = (
-				F596214505DF6C680187A6B8,
-			);
-			isa = PBXGroup;
-			path = Applications;
-			refType = 4;
-		};
-		F596214505DF6C680187A6B8 = {
-			children = (
-				F596214805DF6C680187A6B8,
-				F596214905DF6C680187A6B8,
-				F596215305DF6C680187A6B8,
-			);
-			isa = PBXGroup;
-			path = MacAranym;
-			refType = 4;
-		};
-		F596214805DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = COPYING.txt;
-			refType = 4;
-		};
-		F596214905DF6C680187A6B8 = {
-			children = (
-				F596214B05DF6C680187A6B8,
-				F596214C05DF6C680187A6B8,
-				F596214D05DF6C680187A6B8,
-				F596214E05DF6C680187A6B8,
-				F596214F05DF6C680187A6B8,
-				F596215005DF6C680187A6B8,
-				F596215105DF6C680187A6B8,
-				F596215205DF6C680187A6B8,
-			);
-			isa = PBXGroup;
-			path = doc;
-			refType = 4;
-		};
-		F596214B05DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = AUTHORS.txt;
-			refType = 4;
-		};
-		F596214C05DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = BUGS.txt;
-			refType = 4;
-		};
-		F596214D05DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = documentation.txt;
-			refType = 4;
-		};
-		F596214E05DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = FAQ.txt;
-			refType = 4;
-		};
-		F596214F05DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = INSTALL.txt;
-			refType = 4;
-		};
-		F596215005DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = NEWS.txt;
-			refType = 4;
-		};
-		F596215105DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = README.txt;
-			refType = 4;
-		};
-		F596215205DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = TODO.txt;
-			refType = 4;
-		};
-		F596215305DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = ReadMe.txt;
-			refType = 4;
-		};
-		F596215405DF6C680187A6B8 = {
-			children = (
-				F596215605DF6C680187A6B8,
-				F596215705DF6C680187A6B8,
-			);
-			isa = PBXGroup;
-			path = Aranym_files;
-			refType = 4;
-		};
-		F596215605DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = config;
-			refType = 4;
-		};
-		F596215705DF6C680187A6B8 = {
-			children = (
-				F596215905DF6C680187A6B8,
-			);
-			isa = PBXGroup;
-			path = data;
-			refType = 4;
-		};
-		F596215905DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = etos512k.img;
-			refType = 4;
-		};
-		F596215B05DF6C680187A6B8 = {
-			children = (
-				F596215D05DF6C680187A6B8,
-			);
-			isa = PBXGroup;
-			path = Library;
-			refType = 4;
-		};
-		F596215D05DF6C680187A6B8 = {
-			children = (
-				F59621A005DF6FBE0187A6B8,
-			);
-			isa = PBXGroup;
-			path = Frameworks;
-			refType = 4;
-		};
-		F596216005DF6C680187A6B8 = {
-			children = (
-				F596216205DF6C680187A6B8,
-				F596216305DF6C680187A6B8,
-				F596216405DF6C680187A6B8,
-				F596216505DF6C680187A6B8,
-				F596216605DF6C680187A6B8,
-			);
-			isa = PBXGroup;
-			path = resources;
-			refType = 4;
-		};
-		F596216205DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = License.txt;
-			refType = 4;
-		};
-		F596216305DF6C680187A6B8 = {
-			isa = PBXExecutableFileReference;
-			path = postinstall;
-			refType = 4;
-		};
-		F596216405DF6C680187A6B8 = {
-			isa = PBXExecutableFileReference;
-			path = postupgrade;
-			refType = 4;
-		};
-		F596216505DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = ReadMe.txt;
-			refType = 4;
-		};
-		F596216605DF6C680187A6B8 = {
-			isa = PBXFileReference;
-			path = Welcome.txt;
-			refType = 4;
-		};
-		F59621A005DF6FBE0187A6B8 = {
-			isa = PBXFrameworkReference;
-			path = SDL.framework;
-			refType = 4;
-		};
-		F59621A205DF6FBE0187A6B8 = {
-			fileRef = F59621A005DF6FBE0187A6B8;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F59621C405DF82590187A6B8 = {
-			isa = PBXFileReference;
-			path = readme.rtf;
-			refType = 4;
+			sourceTree = SOURCE_ROOT;
 		};
 		F59621C605DF84C00187A6B8 = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
 			path = aranym.icns;
 			refType = 4;
-		};
-		F59621C705DF84C20187A6B8 = {
-			fileRef = F59621C605DF84C00187A6B8;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			sourceTree = "<group>";
 		};
 		F5A145AF05A7EA78017C0BEF = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = OpenGL.framework;
 			path = /System/Library/Frameworks/OpenGL.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F5A47A9E01A0483001D3D55B = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = SDLMain.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
-		F5A4EB1005AD4A9B013BD142 = {
-			fileRef = F580C28B05A7161201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5A5241A05CC4EE901B3881A = {
-			fileRef = F580C28B05A7161201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5DA8D7B05DAE9A6013A9B3A = {
-			fileRef = F580C27B05A7161201DAC342;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5F07EA405B9698B012DB10D = {
-			buildActionMask = 12;
-			files = (
-			);
-			generatedFileNames = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd $PWD\ncd ../Unix\nexport ACLOCAL_FLAGS=\"-I /usr/local/share/aclocal\"\nif test -f autogen.sh\nthen\n./autogen.sh --prefix=$HOME\nelse\n./configure --prefix=$HOME\nfi";
+		F5B5AED505E6B89301436688 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = configure.ac;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA;
