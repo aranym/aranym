@@ -1922,7 +1922,7 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 
 	switch (which) {
 		case -1:
-			return 8;  // maximal which value
+			return 7;  // maximal which value
 
 		case 0:	  // DP_IOPEN
 			return 0x7fffffffL; // unlimited
@@ -1963,11 +1963,15 @@ int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 		case 7:	  // D_XATTRMODE
 			return 0x0ff0001fL;	 // only the archive bit is not recognised in the Fxattr
 
-		/*
+#if FIXME
+// need to find MetaDOS working values for this (Thing refresh window)
 		case 8:	  // DP_XATTR
 			return 0x00000ffbL;	 // rdev is not used
-		*/
+#endif
 
+		case 9:	  // DP_VOLNAMEMAX
+			return 0;
+			
 		default:
 			return TOS_EINVFN;
 	}
@@ -2585,6 +2589,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.40  2002/04/13 12:32:03  joy
+ * Dpathconf(DP_XATTR) disabled - Thing is happy now
+ *
  * Revision 1.39  2002/04/12 22:52:27  joy
  * AranymFS bug fixed - ST-Zip can unpack onto host fs now
  *
