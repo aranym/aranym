@@ -7,6 +7,7 @@
 #include "ethernet.h"
 #include "fvdidrv.h"
 #include "debugprintf.h"
+#include "nfcdrom.h"
 /* add your NatFeat class definition here */
 
 

@@ -518,17 +518,18 @@ int32 CdromDriver::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 				if (errorcode>=0) {
 					atari_tocentry[0] = tocentry.cdte_track;
 					atari_tocentry[1] = tocentry.cdte_format;
-					atari_tocentry[2] = (tocentry.cdte_adr & 0x0f)<<4;
-					atari_tocentry[2] |= tocentry.cdte_ctrl & 0x0f;
-					atari_tocentry[3] = tocentry.cdte_datamode;
+					atari_tocentry[2] = 0;
+					atari_tocentry[3] = (tocentry.cdte_adr & 0x0f)<<4;
+					atari_tocentry[3] |= tocentry.cdte_ctrl & 0x0f;
+					atari_tocentry[4] = tocentry.cdte_datamode;
 
 					if (tocentry.cdte_format == CDROM_LBA) {
-						*((unsigned long *) &atari_tocentry[4]) = SDL_SwapBE32(tocentry.cdte_addr.lba);
+						*((unsigned long *) &atari_tocentry[5]) = SDL_SwapBE32(tocentry.cdte_addr.lba);
 					} else {
-						atari_tocentry[4] = 0;
-						atari_tocentry[5] = tocentry.cdte_addr.msf.minute;
-						atari_tocentry[6] = tocentry.cdte_addr.msf.second;
-						atari_tocentry[7] = tocentry.cdte_addr.msf.frame;
+						atari_tocentry[5] = 0;
+						atari_tocentry[6] = tocentry.cdte_addr.msf.minute;
+						atari_tocentry[7] = tocentry.cdte_addr.msf.second;
+						atari_tocentry[8] = tocentry.cdte_addr.msf.frame;
 					}
 				}
 				return errorcode;

@@ -135,3 +135,7 @@ Enabled = No
 
 ; Full path to the midi output file
 Output = /tmp/aranym-midi.txt
+
+[CDROMS]
+; MetaDOS Physical device letter = host device
+Z = /dev/cdrom
