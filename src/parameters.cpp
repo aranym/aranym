@@ -3,6 +3,7 @@
 #include "config.h"
 #include "parameters.h"
 #include "emu_bochs.h"	// for BX_INSERTED define
+#include "tools.h"		// for safe_strncpy()
 
 #define DEBUG 0
 #include "debug.h"
@@ -66,15 +67,18 @@ static struct option const long_options[] =
   {NULL, 0, NULL, 0}
 };
 
-char *program_name;
-char rom_path[512] = DATADIR "/rom";
-char emutos_path[512] = DATADIR "/etos512k.img";
+#define TOS_FILENAME	"ROM"
+#define EMUTOS_FILENAME	"etos512k.img"
+
+char *program_name;		// set by main()
+char rom_path[512];		// set by build_datafilenames()
+char emutos_path[512];	// set by build_datafilenames()
+
 bool boot_emutos = false;
 bool ide_swap = false;
 uint32 FastRAMSize;
 
-static char config_folder[512] = ARANYMHOME;
-static char config_file[512] = "";	// empty by default - can be set by --config <fname>
+static char config_file[512];
 
 #if !defined(XIF_HOST_IP) && !defined(XIF_ATARI_IP) && !defined(XIF_NETMASK)
 # define XIF_HOST_IP	"192.168.0.1"
@@ -89,13 +93,6 @@ bx_options_t bx_options;
 
 static bx_atadevice_options_t *diskc = &bx_options.atadevice[0][0];
 static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
-
-static char *safe_strncpy(char *dest, const char *src, size_t size)
-{
-	strncpy(dest, src, size);
-	dest[size-1] = '\0';
-	return dest;
-}
 
 
 // configuration file 
@@ -473,7 +470,7 @@ Options:\n\
   -v, --refresh <X>          VIDEL refresh rate in VBL (default 2)\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
-  -d, --disk CHAR:ROOTPATH   METADOS filesystem assignment e.g. d:/atari/d_drive\n\
+  -d, --disk CHAR:PATH[:]    HostFS mapping, e.g. d:/atari/d_drive\n\
   -c, --config FILE          read different configuration file\n\
   -s, --save                 save configuration file\n\
   -S, --swap-ide             swap IDE drives\n\
@@ -533,20 +530,22 @@ void presave_cfg() {
 
 void early_cmdline_check(int argc, char **argv) {
 	for (int c = 0; c < argc; c++) {
-		if (strcmp(argv[c], "--swap-ide") == 0)
+		char *p = argv[c];
+		if (strcmp(p, "-S") == 0  || strcmp(p, "--swap-ide") == 0)
 			ide_swap = true;
 
-		else if ((strcmp(argv[c], "-c") == 0) || (strcmp(argv[c], "--config") == 0)) {
+		else if ((strcmp(p, "-c") == 0) || (strcmp(p, "--config") == 0)) {
 			if ((c + 1) < argc) {
 				safe_strncpy(config_file, argv[c + 1], sizeof(config_file));
 			} else {
 				fprintf(stderr, "config switch requires one parameter\n");
 				exit(EXIT_FAILURE);
 			}
-		} else if ((strcmp(argv[c], "-h") == 0) || (strcmp(argv[c], "--help") == 0)) {
+		} else if ((strcmp(p, "-h") == 0) || (strcmp(p, "--help") == 0)) {
 			usage(0);
 			exit(0);
-		} else if ((strcmp(argv[c], "-V") == 0) || (strcmp(argv[c], "--version") == 0)) {
+		} else if ((strcmp(p, "-V") == 0) || (strcmp(p, "--version") == 0)) {
+			infoprint("%s\n", VERSION_STRING);
 			infoprint("Capabilities:");
 			infoprint("JIT compiler     : %s", (USE_JIT == 1) ? "enabled" : "disabled");
 			infoprint("Full MMU         : %s", (FULLMMU == 1) ? "enabled" : "disabled");
@@ -555,6 +554,7 @@ void early_cmdline_check(int argc, char **argv) {
 			infoprint("OpenGL support   : %s", (ENABLE_OPENGL == 1) ? "enabled" : "disabled");
 			infoprint("HOSTFS support   : %s", (HOSTFS_SUPPORT == 1) ? "enabled" : "disabled");
 			infoprint("ARANYMFS support : %s", (EXTFS_SUPPORT == 1) ? "enabled (obsolete)" : "disabled");
+
 			exit (0);
 		}
 	}
@@ -579,29 +579,27 @@ int process_cmdline(int argc, char **argv)
 							 "r:" /* resolution */
 							 "m:" /* attached monitor */
 							 "d:" /* filesystem assignment */
-							 "c:" /* small hack*/
 							 "s"  /* save config file */
-							 "S"  /* IDE swap */
+
+							 "c:" /* path to config file */
+							 "S"  /* swap IDE drives */
 							 "h"  /* help */
 							 "V"  /* version */,
 							 long_options, (int *) 0)) != EOF) {
 		switch (c) {
 			case 'V':
-				printf ("%s\n", VERSION_STRING);
-				exit (0);
-
 			case 'h':
-				usage (0);
-				exit(0);
+			case 'c':
+			case 'S':
+				/* processed in early_cmdline_check already */
+				break;
+
 	
 #ifdef DEBUGGER
 			case 'D':
 				bx_options.startup.debugger = true;
 				break;
 #endif
-
-			case 'c':
-				break;
 
 			case 'e':
 				boot_emutos = true;
@@ -640,27 +638,28 @@ int process_cmdline(int argc, char **argv)
 				break;
 
 			case 'd':
-				if ( strlen(optarg) < 4 ) {
+				if ( strlen(optarg) < 4 || optarg[1] != ':') {
 					fprintf(stderr, "Not enough parameters for -d\n");
 					break;
 				}
+				// set the drive
 				{
-					// set the drive
-					int8  driveNo = toupper(optarg[0]) - 'A';
-					char* colonPos = strchr( optarg, ':' );
-					if ( colonPos == NULL )
+					int8 i = toupper(optarg[0]) - 'A';
+					if (i <= 0 || i>('Z'-'A')) {
+						fprintf(stderr, "Drive out of [A-Z] range for -d\n");
 						break;
-					colonPos++;
-					safe_strncpy( bx_options.aranymfs[ driveNo ].rootPath, colonPos, sizeof(bx_options.aranymfs[ driveNo ].rootPath) );
+					}
+
+					safe_strncpy( bx_options.aranymfs[i].rootPath, optarg+2,
+								sizeof(bx_options.aranymfs[i].rootPath) );
+					// Note: tail colon processing (case sensitivity flag) is 
+					// done later by calling postload_cfg.
+					// Just make sure postload_cfg is called after this.
 				}
 				break;
 
 			case 's':
 				saveConfigFile = true;
-				break;
-
-			case 'S':
-				ide_swap = true;	/* this is just a cosmetic code to make get_opt() happy - in fact it's pre-set in the early_cmdline_check */
 				break;
 
 #ifndef FixedSizeFastRAM
@@ -676,48 +675,41 @@ int process_cmdline(int argc, char **argv)
 	return optind;
 }
 
-char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
+// append a filename to a path
+static char *addFilename(const char *file, char *buffer, unsigned int bufsize)
 {
-	unsigned int len = strlen(config_folder)+1 + strlen(file)+1;
-	if (len < bufsize) {
-		strcpy(buffer, config_folder);
+	if ((strlen(buffer) + 1 + strlen(file) + 1) < bufsize) {
 		strcat(buffer, DIRSEPARATOR);
 		strcat(buffer, file);
 	}
-	else
-		strcpy(buffer, file);	// at least the filename
+	else {
+		panicbug("addFilename(\"%s\") - buffer too small!", file);
+		safe_strncpy(buffer, file, bufsize);	// at least the filename
+	}
 
 	return buffer;
 }
 
-void build_cfgfilename()
+// build a complete path to an user-specific file
+char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 {
-	char *home = getenv("HOME");
-	if (home != NULL) {
-		int homelen = strlen(home);
-		if (homelen > 0) {
-			unsigned int len = strlen(ARANYMHOME);
-			if ((homelen+1 + len+1) < sizeof(config_folder)) {
-				strcpy(config_folder, home);
-				strcat(config_folder, DIRSEPARATOR);
-				strcat(config_folder, ARANYMHOME);
-			}
-		}
-	}
+	getConfFolder(buffer, bufsize);
 
 	// Does the folder exist?
 	struct stat buf;
-	if (stat(config_folder, &buf) == -1) {
-		D(bug("Creating config folder '%s'", config_folder));
-		mkdir(config_folder
-#ifndef OS_mingw
-			, 0755
-#endif
-		);
+	if (stat(buffer, &buf) == -1) {
+		D(bug("Creating config folder '%s'", buffer));
+		mkdir(buffer, 0755);
 	}
 
-	if (strlen(config_file) == 0)
-		getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
+	return addFilename(file, buffer, bufsize);
+}
+
+// build a complete path to system wide data file
+char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
+{
+	getDataFolder(buffer, bufsize);
+	return addFilename(file, buffer, bufsize);
 }
 
 static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose)
@@ -764,8 +756,12 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, disk6_configs, "[DISK6]", true);
 	process_config(f, rcfile, disk7_configs, "[DISK7]", true);
 */
-
-	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
+	if (process_config(f, rcfile, arafs_conf, "[HOSTFS]", true) == 0) {
+		// fallback to obsolete [ARANYMFS]
+		fprintf(stderr, "[HOSTFS] section in config file not found.\n"
+						"falling back to obsolete [ARANYMFS]\n");
+		process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
+	}
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
 	process_config(f, rcfile, ethernet_conf, "[ETH0]", true);
 }
@@ -775,7 +771,7 @@ int saveSettings(const char *fs)
 	presave_cfg();
 
 	if (update_config(fs, global_conf, "[GLOBAL]") < 0)
-		fprintf(stderr, "Error while writting the '%s' config file.\n", fs);
+		fprintf(stderr, "Error while writing the '%s' config file.\n", fs);
 	update_config(fs, startup_conf, "[STARTUP]");
 #ifdef USE_JIT
 	update_config(fs, jit_conf, "[JIT]");
@@ -794,7 +790,8 @@ int saveSettings(const char *fs)
 	update_config(fs, disk6_configs, "[DISK6]");
 	update_config(fs, disk7_configs, "[DISK7]");
 */
-	update_config(fs, arafs_conf, "[ARANYMFS]");
+	/// update_config(fs, arafs_conf, "[ARANYMFS]");
+	update_config(fs, arafs_conf, "[HOSTFS]");
 	update_config(fs, opengl_conf, "[OPENGL]");
 	update_config(fs, ethernet_conf, "[ETH0]");
 
@@ -819,7 +816,10 @@ bool check_cfg()
 
 bool decode_switches(FILE *f, int argc, char **argv)
 {
-	build_cfgfilename();
+	getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
+	getDataFilename(TOS_FILENAME, rom_path, sizeof(rom_path));
+	getDataFilename(EMUTOS_FILENAME, emutos_path, sizeof(emutos_path));
+
 	early_cmdline_check(argc, argv);
 	preset_cfg();
 	decode_ini_file(f, config_file);
