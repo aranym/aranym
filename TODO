@@ -41,7 +41,7 @@ Things that must be done before first beta release:
 - enable SWACCEL and HWBLITS of Blitter - either in ./configure or make it
   configurable in runtime (depends on runtime config GUI stuff Milan made)
 
-+ [67%]
++ [100%]
   move ROM file reading back to main.cpp, perhaps even with 040 patching routine so 
   aranym could use pure TOS 4.04
 
