@@ -118,7 +118,7 @@ void RTC::setAddr(uae_u8 value) {
 
 uae_u8 RTC::getData() {
 //	fprintf(stderr, "Reading NVRAM data at %d = %d ($%02x) at %06x\n", addr, cmos[addr], cmos[addr], showPC());
-	if (addr <= 8) {
+	if (addr <= 9) {
 		time_t tim = time(NULL);
 		struct tm *curtim = localtime(&tim);	// current time
 		switch(addr) {
@@ -127,7 +127,7 @@ uae_u8 RTC::getData() {
 			case 4: return curtim->tm_hour;
 			case 7: return curtim->tm_mday;
 			case 8: return curtim->tm_mon+1;
-			case 9: return curtim->tm_year + 80 - 68;
+			case 9: return curtim->tm_year - 68;
 			default:return cmos[addr];
 		}
 	}

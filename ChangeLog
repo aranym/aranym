@@ -1,3 +1,6 @@
+2002/01/07 - joy
+- NVRAM RTC getting current year fixed.
+
 2002/01/07 - Patrice Mandin <pmandin@caramail.com> & STanda
 - Patrice: I did a simple patch for the vdi color mapping.
   The following ugly piece of code removed.
