@@ -23,7 +23,7 @@
         <title>ARAnyM Home Page - <!--xsl:value-of select="$config/menu/item[@name=$page]/title"/--></title>
       </head>
       <body>
-        <table width="100%" border="1" cellspacing="0" cellpadding="0">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td colspan="4" align="center"><xsl:call-template name="nbsp"/> <h1>ARAnyM Homepage</h1><br/> </td>
           </tr>
@@ -38,9 +38,9 @@
               <xsl:call-template name="nbsp"/>
             </td>
             <td width="100%" valign="top">
-              <p><br/><dl>
+              <br/>
+              <p>
                 <xsl:apply-templates/>
-              </dl>
               </p>
             </td>
           </tr>
