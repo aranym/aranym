@@ -7,7 +7,8 @@
 #include "videl.h"
 
 static const int HW = 0xff8200;
-
+#if 0
+/*
 static bool dP = true;
 
 extern uae_u32 vram_addr;
@@ -89,6 +90,8 @@ void VIDEL::handleWrite(uaecptr addr, uae_u8 value) {
 		default: break;
 	}
 }
+*/
+#endif
 
 // mode 60    66   c0   c2
 // 1     0  0400 0082 0008
@@ -111,7 +114,13 @@ void VIDEL::handleWrite(uaecptr addr, uae_u8 value) {
 // 08: pixel clock = 1
 // 09: pixel clock = 1 + double scan
 
+uaecptr VIDEL::getVideoramAddress() {
+	return (handleRead(HW+1) << 16) | (handleRead(HW+3) << 8) | handleRead(HW+0x0d);
+}
+
 int VIDEL::getVideoMode() {
+	int videl = handleReadW(HW+0x66);
+	int shifter = handleRead(HW+0x60);
 	if (videl & 0x0100)
 		return 16;
 	else if (videl & 0x0010)
@@ -126,13 +135,12 @@ int VIDEL::getVideoMode() {
 }
 
 int VIDEL::getScreenWidth() {
-	if (linewide != 0)
-		return linewide * 16 / getVideoMode();
-	else
-		return 640;
+	return handleReadW(HW+0x10) * 16 / getVideoMode();
 }
 
 int VIDEL::getScreenHeight() {
+	int vdb = handleReadW(HW+0xa8);
+	int vde = handleReadW(HW+0xaa);
 	if (vdb != 0 && vde - vdb > 0)
 		return (vde - vdb) >> 1;
 	else
