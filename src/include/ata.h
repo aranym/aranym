@@ -49,7 +49,7 @@ class device_image_t
 {
   public:
       // Open a image. Returns non-negative if successful.
-      virtual int open (const char* pathname) = 0;
+      virtual int open (const char* pathname, bool readonly) = 0;
 
       // Close the image.
       virtual void close () = 0;
@@ -76,7 +76,7 @@ class default_image_t : public device_image_t
 {
   public:
       // Open a image. Returns non-negative if successful.
-      int open (const char* pathname);
+      int open (const char* pathname, bool readonly);
 
       // Close the image.
       void close ();
@@ -106,7 +106,7 @@ class concat_image_t : public device_image_t
       concat_image_t();
   
       // Open a image. Returns non-negative if successful.
-      int open (const char* pathname);
+      int open (const char* pathname, bool readonly);
 
       // Close the image.
       void close ();
@@ -154,7 +154,7 @@ class dll_image_t : public device_image_t
 {
   public:
       // Open a image. Returns non-negative if successful.
-      int open (const char* pathname);
+      int open (const char* pathname, bool readonly);
 
       // Close the image.
       void close ();

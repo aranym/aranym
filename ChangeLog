@@ -7,6 +7,10 @@
 
 - cosmetic changes (aranym prints its version and compile date on startup)
 
+- new "readonly" parameter to [IDE] config replaces the "xhdiWrite" but works
+  generally - i.e. allows opening disk images on CD-ROMs (suitable for our
+  aranym CD)
+
 
 2002/10/15 - milan
 - Mac OS X: keyboard scancode workaround

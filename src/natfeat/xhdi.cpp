@@ -59,7 +59,7 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 		return -15L;	// EUNDEV (unknown device)
 
 	bool writing = (rwflag & 1);
-	if (writing && !disk->xhdiWrite)
+	if (writing && disk->readonly)
 		return -36L;	// EACCDN (access denied)
 
 	FILE *f = fopen(disk->path, writing ? "r+b" : "rb");

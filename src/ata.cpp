@@ -227,6 +227,7 @@ bx_hard_drive_c::init(/* MJ bx_devices_c *d, bx_cmos_c *cmos */)
     bx_options.atadevice[channel][device].heads = bx_options.diskc.heads;
     bx_options.atadevice[channel][device].spt = bx_options.diskc.spt;
     bx_options.atadevice[channel][device].byteswap = bx_options.diskc.byteswap;
+    bx_options.atadevice[channel][device].readonly = bx_options.diskc.readonly;
     bx_options.atadevice[channel][device].status = BX_INSERTED;
     strncpy(bx_options.atadevice[channel][device].model, model_noA, 512);
   }
@@ -241,6 +242,7 @@ bx_hard_drive_c::init(/* MJ bx_devices_c *d, bx_cmos_c *cmos */)
     bx_options.atadevice[channel][device].heads = bx_options.diskd.heads;
     bx_options.atadevice[channel][device].spt = bx_options.diskd.spt;
     bx_options.atadevice[channel][device].byteswap = bx_options.diskd.byteswap;
+    bx_options.atadevice[channel][device].readonly = bx_options.diskd.readonly;
     bx_options.atadevice[channel][device].status = BX_INSERTED;
     strncpy(bx_options.atadevice[channel][device].model, model_noB, 512);
   }
@@ -268,9 +270,10 @@ bx_hard_drive_c::init(/* MJ bx_devices_c *d, bx_cmos_c *cmos */)
         BX_HD_THIS channels[channel].drives[device].hard_drive->heads     = bx_options.atadevice[channel][device].heads;
         BX_HD_THIS channels[channel].drives[device].hard_drive->sectors   = bx_options.atadevice[channel][device].spt;
         BX_HD_THIS channels[channel].drives[device].hard_drive->byteswap   = bx_options.atadevice[channel][device].byteswap;
+        // BX_HD_THIS channels[channel].drives[device].hard_drive->readonly   = bx_options.atadevice[channel][device].readonly;
 
         /* open hard drive image file */
-        if ((BX_HD_THIS channels[channel].drives[device].hard_drive->open(bx_options.atadevice[channel][device].path)) < 0) {
+        if ((BX_HD_THIS channels[channel].drives[device].hard_drive->open(bx_options.atadevice[channel][device].path, bx_options.atadevice[channel][device].readonly)) < 0) {
           panicbug("could not open hard drive image file '%s'", bx_options.atadevice[channel][device].path);
           }
         D2(bug("HD on ata%d-%d: '%s'",channel, device, bx_options.atadevice[channel][device].path));
@@ -2790,19 +2793,14 @@ bx_hard_drive_c::set_cd_media_status(Bit32u handle, unsigned status)
 
 /*** default_image_t function definitions ***/
 
-int default_image_t::open (const char* pathname)
+int default_image_t::open (const char* pathname, bool readonly)
 {
-      fd = ::open(pathname,
-#if 1
-      		O_RDWR
-#else
-			O_RDONLY
-#endif
+      int open_flags = readonly ? O_RDONLY : O_RDWR;
 #ifdef O_BINARY
-		  | O_BINARY
+      open_flags |= O_BINARY;
 #endif
-	    );
 
+      fd = ::open(pathname, open_flags);
       if (fd < 0) {
 	    return fd;
       }
@@ -2858,17 +2856,17 @@ void concat_image_t::increment_string (char *str)
   D(bug("concat_image.increment string returning '%s'", str));
 }
 
-int concat_image_t::open (const char* pathname0)
+int concat_image_t::open (const char* pathname0, bool readonly)
 {
+  int open_flags = readonly ? O_RDONLY : O_RDWR;
+#ifdef O_BINARY
+  open_flags |= O_BINARY;
+#endif
   char *pathname = strdup (pathname0);
   D(bug("concat_image_t.open"));
   off_t start_offset = 0;
   for (int i=0; i<BX_CONCAT_MAX_IMAGES; i++) {
-    fd_table[i] = ::open(pathname, O_RDWR
-#ifdef O_BINARY
-		| O_BINARY
-#endif
-	  );
+    fd_table[i] = ::open(pathname, open_flags);
     if (fd_table[i] < 0) {
       // open failed.
       // if no FD was opened successfully, return -1 (fail).
@@ -2990,7 +2988,7 @@ void (*vdisk_read)   (int vunit,int blk,void *buf);
 void (*vdisk_write)  (int vunit,int blk,const void *buf);
 void (*vdisk_close) (int vunit);
 
-int dll_image_t::open (const char* pathname)
+int dll_image_t::open (const char* pathname, bool readonly)
 {
     if (hlib_vdisk == 0) {
       hlib_vdisk = LoadLibrary("vdisk.dll");

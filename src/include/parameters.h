@@ -54,7 +54,7 @@ typedef struct {
   bool present;
   bool isCDROM;
   bool byteswap;
-  bool xhdiWrite;
+  bool readonly;
   char path[512];
   unsigned int cylinders;
   unsigned int heads;
@@ -81,6 +81,7 @@ typedef struct {
   unsigned int heads;
   unsigned int spt;
   bool byteswap;
+  bool readonly;
   bool status;
   char model[41];
 } bx_atadevice_options_t;

@@ -189,7 +189,7 @@ void presave_video() {
 	{ "Present", Bool_Tag, &bx_options. ## a ## .present},	\
 	{ "IsCDROM", Bool_Tag, &bx_options. ## a ## .isCDROM},	\
 	{ "ByteSwap", Bool_Tag, &bx_options. ## a ## .byteswap},	\
-	{ "XhdiWrite", Bool_Tag, &bx_options. ## a ## .xhdiWrite},	\
+	{ "ReadOnly", Bool_Tag, &bx_options. ## a ## .readonly},	\
 	{ "Path", String_Tag, bx_options. ## a ## .path, sizeof(bx_options. ## a ## .path)},	\
 	{ "Cylinders", Int_Tag, &bx_options. ## a ## .cylinders},	\
 	{ "Heads", Int_Tag, &bx_options. ## a ## .heads},	\
@@ -200,7 +200,7 @@ void presave_video() {
 BX_DISK_CONFIG(diskc);
 BX_DISK_CONFIG(diskd);
 
-void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap) {
+void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap, bool readonly) {
   // Autodetect ???
   if (cylinders == -1)
     if ((cylinders = get_geometry(dev_path, geoCylinders)) == -1) {
@@ -237,6 +237,7 @@ void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int 
     disk->present = strlen(dev_path) > 0;
     disk->isCDROM = false;
     disk->byteswap = byteswap;
+    disk->readonly = readonly;
     disk->cylinders = cylinders;
     disk->heads = heads;
     disk->spt = spt;
@@ -248,10 +249,8 @@ void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int 
 }
 
 void preset_ide() {
-  set_ide(0, "", 0, 0, 0, false);
-  set_ide(1, "", 0, 0, 0, false);
-  bx_options.diskc.xhdiWrite = false;
-  bx_options.diskd.xhdiWrite = false;
+  set_ide(0, "", 0, 0, 0, false, false);
+  set_ide(1, "", 0, 0, 0, false, false);
 
   bx_options.newHardDriveSupport = true;
 }
