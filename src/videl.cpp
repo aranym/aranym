@@ -67,6 +67,8 @@ void VIDEL::handleWrite(uaecptr addr, uint8 value)
 
 	if ((addr >= 0xff9800 && addr < 0xffa200) || (addr >= 0xff8240 && addr < 0xff8260))
 		hostColorsSync = false;
+	else
+		D(bug("VIDEL write: %06x = %d ($%02x)", addr, value, value));
 
 	if ((addr & ~3) == HW)	// Atari tries to change the VideoRAM address (after a RESET?)
 		doRender = true;	// that's a sign that Videl should render the screen
@@ -124,7 +126,7 @@ int VIDEL::getScreenHeight()
 	int yres = vde - vdb;
 	if (!(vmode & 0x02))		// interlace
 		yres >>= 1;
-	else if (vmode & 0x01)		// double (mutually exclusive with interlace)
+	if (vmode & 0x01)			// double
 		yres >>= 1;
 
 	return yres;
@@ -378,6 +380,9 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.33  2001/12/07 15:46:47  joy
+ * VIDEL registers are preinitialized partially to allow VIDEL unaware EmuTOS to display something.
+ *
  * Revision 1.32  2001/12/03 20:56:07  standa
  * The gfsprimitives library files removed. All the staff was moved and
  * adjusted directly into the HostScreen class.
