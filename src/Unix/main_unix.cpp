@@ -372,11 +372,6 @@ int main(int argc, char **argv)
 	program_name = argv[0];
 	int i = decode_switches (argc, argv);
 
-#ifdef METADOS_DRV
-	// install the drives
-	extFS.install( 'T', "/tmp", false );
-#endif // METADOS_DRV
-
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) != 0) {
 		fprintf(stderr, "SDL initialization failed.\n");
 		return 1;
@@ -440,11 +435,13 @@ int main(int argc, char **argv)
 
 	  // map the colortable into the correct pixel format
 	  for(int i=0; i < 256; i++) {
-	      fprintf(stderr, "map color %03d -> %03d (#%02x%02x%02x)\n",
-		      (uint8)i, (uint8)vdi2pix[i],
-		      (uint8)colors[vdi2pix[i]*3],
-		      (uint8)colors[vdi2pix[i]*3+1],
-		      (uint8)colors[vdi2pix[i]*3+2] );
+		  /*
+	      D(fprintf(stderr, "map color %03d -> %03d (#%02x%02x%02x)\n",
+					(uint8)i, (uint8)vdi2pix[i],
+					(uint8)colors[vdi2pix[i]*3],
+					(uint8)colors[vdi2pix[i]*3+1],
+					(uint8)colors[vdi2pix[i]*3+2] ));
+		  */
 
 	      sdl_colors[i] = SDL_MapRGB(surf->format,
 					 (uint8)colors[vdi2pix[i]*3],
@@ -462,7 +459,8 @@ int main(int argc, char **argv)
 #endif
 	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
 
-	drive_fd[0] = open("/dev/fd0", O_RDONLY);
+	//	drive_fd[0] = open("/dev/fd0", O_RDONLY);
+	drive_fd[0] = open("/opt/home/atari/floppy4mb", O_RDWR);
 	if (drive_fd[0] >= 0)
     	init_fdc();
 
@@ -530,6 +528,11 @@ int main(int argc, char **argv)
    		ROMBaseHost[35760]=0x4e;
    		ROMBaseHost[35761]=0x71;
    	}
+
+#ifdef METADOS_DRV
+	// install the drives
+	extFS.init();
+#endif // METADOS_DRV
 
 	// Initialize everything
 	if (!InitAll())

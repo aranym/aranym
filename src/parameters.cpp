@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <ctype.h>  // for toupper
 
 #include "parameters.h"
 
@@ -14,14 +15,16 @@ static struct option const long_options[] =
   {"ttram", required_argument, 0, 'T'},
   {"rom", required_argument, 0, 'R'},
   {"resolution", required_argument, 0, 'r'},
-  {"debug", no_argument, 0, 'd'},
+  {"debug", no_argument, 0, 'D'},
   {"fullscreen", no_argument, 0, 'f'},
   {"direct_truecolor", no_argument, 0, 't'},
   {"monitor", required_argument, 0, 'm'},
+  {"disk", required_argument, 0, 'd'},
   {"help", no_argument, 0, 'h'},
   {"version", no_argument, 0, 'V'},
   {NULL, 0, NULL, 0}
 };
+
 
 char *program_name;
 char *rom_path;
@@ -32,6 +35,8 @@ uint16 boot_color_depth = 1;		// Boot in color depth
 extern uint32 TTRAMSize;		// TTRAM size
 bool direct_truecolor = false;
 uint8 monitor = 0;				// VGA
+ExtDrive extdrives[ 'Z' - 'A' ];// External filesystem drives
+
 
 static void decode_ini_file(void);
 
@@ -42,11 +47,12 @@ void usage (int status) {
 Options:
   -R, --rom NAME             ROM file NAME\n\
   -T, --ttram SIZE           TT-RAM size\n\
-  -d, --debug                start debugger\n\
+  -D, --debug                start debugger\n\
   -f, --fullscreen           start in fullscreen\n\
   -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n\
   -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
   -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
+  -d, --disk CHAR:ROOTPATH   filesystem assignment e.g. d:/atari/d_drive
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
@@ -54,64 +60,97 @@ Options:
 }
 
 int decode_switches (int argc, char **argv) {
-  int c;
+	int c;
 
-  decode_ini_file();
+	decode_ini_file();
   
-  while ((c = getopt_long (argc, argv,
-                           "R:" /* ROM file */
-                           "d"  /* debugger */
-							"T:" /* TT-RAM */
-                           "f"  /* fullscreen */
-                           "t"  /* direct truecolor */
-                           "m:"  /* attached monitor */
-                           "r:"  /* resolution */
-			   "h"	/* help */
-			   "V"	/* version */,
-			   long_options, (int *) 0)) != EOF) {
-    switch (c) {
-      case 'V':
-        printf ("%s\n", VERSION_STRING);
-        exit (0);
+	while ((c = getopt_long (argc, argv,
+							 "R:" /* ROM file */
+							 "D"  /* debugger */
+							 "T:" /* TT-RAM */
+							 "f"  /* fullscreen */
+							 "t"  /* direct truecolor */
+							 "r:" /* resolution */
+							 "m:" /* attached monitor */
+							 "d:" /* filesystem assignment */
+							 "h"  /* help */
+							 "V"  /* version */,
+							 long_options, (int *) 0)) != EOF) {
+		switch (c) {
+			case 'V':
+				printf ("%s\n", VERSION_STRING);
+				exit (0);
 
-      case 'h':
-        usage (0);
+			case 'h':
+				usage (0);
 	
-      case 'd':
-        start_debug = 1;
-        break;
+			case 'D':
+				start_debug = 1;
+				break;
 	
-      case 'f':
-        fullscreen = 1;
-        break;
+			case 'f':
+				fullscreen = 1;
+				break;
 	
-      case 't':
-        direct_truecolor = true;
-        fullscreen = 1;
-        boot_color_depth = 16;
-        break;
+			case 't':
+				direct_truecolor = true;
+				fullscreen = 1;
+				boot_color_depth = 16;
+				break;
 
-      case 'm':
-        monitor = atoi(optarg);
-        break;
+			case 'm':
+				monitor = atoi(optarg);
+				break;
 	
-      case 'R':
-        rom_path = strdup(optarg);
-        break;
+			case 'R':
+				rom_path = strdup(optarg);
+				break;
 
-      case 'r':
-        boot_color_depth = atoi(optarg);
-        break;
+			case 'r':
+				boot_color_depth = atoi(optarg);
+				break;
 
-      case 'T':
-        TTRAMSize = atoi(optarg);
-        break;
+			case 'd':
+				if ( strlen(optarg) < 4 )
+					break;
+				{
+					char path[2048];
 
-      default:
-        usage (EXIT_FAILURE);
-    }
-  }
-  return optind;
+					// add the drive
+					int8  driveNo = toupper(optarg[0]) - 'A';
+					char* colonPos = strchr( optarg, ':' );
+					if ( colonPos == NULL )
+						break;
+
+					colonPos++;
+					char* colonPos2 = strchr( colonPos, ':' );
+
+					extdrives[ driveNo ].halfSensitive = (colonPos2 == NULL); //halfSensitive if the third part is NOT set;
+
+					// copy the path only
+					if ( colonPos2 == NULL )
+						colonPos2 = colonPos + strlen( colonPos );
+					strncpy( path, colonPos, colonPos2 - colonPos );
+					path[ colonPos2 - colonPos ] = '\0';
+
+					extdrives[ driveNo ].rootPath = strdup( path );
+
+					fprintf(stderr, "parameters: installing drive %c:%s:%d\n",
+							driveNo + 'A',
+							extdrives[ driveNo ].rootPath,
+							extdrives[ driveNo ].halfSensitive);
+				}
+				break;
+
+			case 'T':
+				TTRAMSize = atoi(optarg);
+				break;
+
+			default:
+				usage (EXIT_FAILURE);
+		}
+	}
+	return optind;
 }
 
 static void decode_ini_file(void) {
