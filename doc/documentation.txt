@@ -12,6 +12,7 @@ Content:
   6. Floppy
   7. Disk devices
   8. Networking
+  9. CD-ROM drives
 
 
 This document will explain you all Aranym features and configuration 
@@ -348,11 +349,21 @@ Floppy = /dev/fd0 (or /path/floppy.img)
 7. Disk devices 
 ---------------
 
-  There are several ways how to manage harddrives. You can connect harddisk
+There are several ways how to manage harddrives. You can connect harddisk
 from real Atari or clone computer directly into your HOST machine and
 Aranym will be able to use it and even boot from it! 
-  Another way is to use harddisk images and finally there is also
+
+Another way is to use harddisk images and finally there is also
 the possibility of linking HOST fs directories as a logical disk.
+Also note that we prepared several disk images for you - visit our download
+area at http://aranym.atari.org/
+
+Harddisk images are large files that contain all sectors of an atari harddisk.
+They work much the same way as a floppy image. You can simply create a large
+file and tell ARAnyM to use it as a harddisk, but you will need to format
+it just like a real harddisk before you can actually use it.
+
+Look into FAQ for more details.
 
 
 7.1. Using IDE emulation
@@ -461,8 +472,8 @@ you want to disable them. So try the first boot with Ctrl held down (AUTO
 folder programs are not executed then).
 
 
-7.1.4. CD-ROM
--------------
+7.1.4. CD-ROM (IDE ATAPI emulation)
+-----------------------------------
 
   There is also a possibility of attaching real CD-ROM on emulated IDE
 channel:
@@ -477,15 +488,21 @@ the Aranym side.
 
 
 7.2. Host Fs driver
----------------------
+-------------------
 
-  This driver allows you to map any HOST directory as a logical disk drive.
-This is done using BetaDOS (=bugfixed MetaDOS). Aranym driver
-for BetaDOS is available in atari/hostfs/hostfs.dos.bz2. You can
-unpack it and add to the BetaDOS configuration file (bdconfig.sys).
+For accessing data on a host filesystem you can map the host fs to a logical
+drive in TOS or MiNT. We have created HostFS BetaDOS driver for use in TOS
+and also native MiNT HostFS.XFS driver. BetaDOS is a free and improved
+replacement of MetaDOS which in turn was Atari designed AUTO folder patch
+that extended the TOS ROM GEMDOS with support for loadable drivers. 
+
+Aranym driver for BetaDOS is available in atari/hostfs/hostfs.dos.bz2.
+You can unpack it and add to the BetaDOS configuration file (bdconfig.sys).
 The example of config.sys you will find in the same directory as the driver.
-The problem is how to put it on the harddisk image you possibly created.
-There is no other way than using the floppy (or its image file).
+
+The problem is how to put it on a new harddisk. One way is to use floppy.
+Another possibility is to boot the AFROS (Aranym FRee OS) and attach your
+disk drive as Slave ([IDE1]).
 
   As you setup the bdconfig.sys (e.g.):
 
@@ -505,6 +522,15 @@ Note: These drives aren't bootable. They are also not designed as
       alternative to the harddisk images but rather as a way to 
       transfer files between HOST fs and Aranym.
 
+For permanent mapping edit the aranym config file, the [ARANYMFS] block
+and add the desired path, as follows:
+
+M=/opt/home/atari
+
+More info you'll find in atari/hostfs/README file.
+
+Note: We are planning on writing a tool for BDCONFIG.SYS auto-configuration.
+
 
 7.3. Hostfs.xfs driver for Mint
 -------------------------------
@@ -516,13 +542,16 @@ directory; it will map the host fs to logical disks automatically.
 8. Networking
 -------------
 
+  Make sure your host OS is Linux and your Atari OS is FreeMiNT. Then follow
+instructions in the atari/network/ethernet/README file.
+
   Standa developed a XIF module for FreeMiNT TCP/IP networking. You have to
-  put it into your MINT folder and reboot to load it into the FreeMiNT.
-  As of ARAnyM 0.8.10+ the XIF driver requires FreeMiNT 1.16.0 or newer.
+put it into your MINT folder and reboot to load it into the FreeMiNT.
+As of ARAnyM 0.8.10+ the XIF driver requires FreeMiNT 1.16.0 or newer.
 
-  Apart from configuring the necessary IP addresses in the ARAnyM config file
+Apart from configuring the necessary IP addresses in the ARAnyM config file
 
-    for Point-to-Point setup enter this in the ARAnyM config file:
+  for Point-to-Point setup enter this in the ARAnyM config file:
       [ETH0]
       type = ppp
       HostIP = 192.168.1.3
@@ -608,3 +637,39 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
   I have updated the arabridge script, it now works well in Debian. Make
   sure you edit the USER, NIF and maybe also the TAPS and BRIDGE variables.
 
+
+9) CD-ROM drives
+----------------
+
+You can use IDE emulation (see section 7.1.4), but you can have only 2 IDE
+devices. So a better way is to use Natfeat CD-ROM driver, where you can have
+up to 26 CD-ROM drives (physical devices A to Z for BetaDOS). The SDL driver
+allows only audio CD playing, whereas the Linux driver allows you also data
+CD-ROM access.
+
+First, See section [CDROMS] in your config file. Each drive letter is a
+physical device for BetaDOS, and you can give it any host CD-ROM drive number
+(if you have multiple CD-ROM drives on your host machine).
+
+Example:
+
+[CDROMS]
+A = 0
+..
+W = 1
+..
+Z = 2
+
+Then, on the Atari side, copy the file nfcdrom.bos to your auto folder, and
+edit your config.sys file, and add a line like this:
+
+*BOS, \auto\nfcdrom.bos, A, W, Z
+
+You can now use audio CDs with your favorite CD player. If you also want access
+to data CD-ROMs, you need an iso9660 filesystem driver. You can find some with
+BetaDOS, and add the lines:
+
+*DOS, \auto\iso9660.dos, G:A, H:W, I:Z
+
+To have gemdos drives G, H, I (on your desktop) use the respective A, W, Z
+BetaDOS devices.
