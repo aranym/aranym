@@ -38,19 +38,6 @@
 # include <sys/mman.h>
 #endif
 
-#if !EMULATED_68K && defined(__NetBSD__)
-# include <m68k/sync_icache.h> 
-# include <m68k/frame.h>
-# include <sys/param.h>
-# include <sys/sysctl.h>
-struct sigstate {
-	int ss_flags;
-	struct frame ss_frame;
-	struct fpframe ss_fpstate;
-};
-# define SS_FPSTATE  0x02
-# define SS_USERREGS 0x04
-#endif
 
 #include "cpu_emulation.h"
 #include "main.h"
@@ -483,6 +470,10 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.33  2001/07/20 22:48:19  milan
+ * mmu_op use only set/longjmp now, first step for ndebug integration, signals
+ * and pthread checks removed, cleaning etc.
+ *
  * Revision 1.32  2001/07/12 22:11:22  standa
  * The updateHostScreen() call when in direct_truecolor mode.
  * Commmented STonX mouse code removed.
