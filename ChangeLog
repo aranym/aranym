@@ -5,6 +5,10 @@
 
 - configure.ac, TODO: linux kernel headers no longer necessary
 
+- ikbd.cpp: when IKBD is reset it should send out the code 0xF1. Linux-m68k
+  kernel checks for it. Fixed. Kernel no longer reports "WARNING: keyboard
+  self test failed!" :-)
+
 
 2005/01/08  Andreas Schwab
 - lilo.cpp: Load ramdisk at end of ST ram.  64-bit fixes.  Copy needed

@@ -124,9 +124,6 @@ uint8 IKBD::ReadData()
 			/* Queue empty */
 
 			/* Update MFP GPIP */
-			// uint8 x = getMFP()->handleRead(0xfffa01);
-			// x |= 0x10;
-			// getMFP()->handleWrite(0xfffa01, x);
 			getMFP()->setGPIPbit(0x10, 0x10);
 
 			sr &= ~((1<<ACIA_SR_INTERRUPT)|(1<<ACIA_SR_RXFULL));
@@ -267,6 +264,7 @@ void IKBD::WriteData(uint8 value)
 					if (outbuffer[1]==0x01) {
 						reset();
 						outwrite = 0;
+						send(0xf1); // if all's well code 0xF1 is returned, else the break codes of all keys making contact 
 					}
 					break;
 			}
@@ -549,7 +547,6 @@ void IKBD::send(uint8 value)
 void IKBD::ThrowInterrupt(void)
 {
 	/* Check MFP IER */
-	// if ((HWget_b(0xfffa09) & 0x40)==0)
 	if ((getMFP()->handleRead(0xfffa09) & 0x40)==0)
 		return;
 
