@@ -91,7 +91,7 @@ extern void *c_set_colours_8, *c_set_colours_16, *c_set_colours_32;
 extern void *c_get_colours_8, *c_get_colours_16, *c_get_colours_32;
 extern void *c_get_colour_8, *c_get_colour_16, *c_get_colour_32;
 
-void *set_colours_r = &c_set_colours_16;void *get_colours_r = &c_get_colours_16;void *get_colour_r  = &c_get_colour_16;
+void *set_colours_r = &c_set_colours_16;void *get_colours_r = &c_get_colours_16;void *get_colour_r  = &c_get_colour_16;
 
 #if 0
 short cache_img = 0;
