@@ -1,0 +1,53 @@
+Things that must be done before first beta release:
+===================================================
+
+Critical:
+- fix system timer (200 Hz) - the system time slows down under heavy load now.
+
+Technical:
+- system wide object with user settings that will include bx_options from ata.cpp.
+  Actually bx_options was such object - look into Plex86 for inspiration.
+
+- CMOS (NVRAM) settings stored on disk
+
+Cosmetical:
+- mouse pointer must be sync'ed with the host mouse (in X-Windows)
+
+- cleaned up source code
+
+The goal for the first beta is to get functional Atari/TOS machine replacement
+fully usable for regular GEM users.
+
+Estimated amount of work for first beta release: 40 clovekohodin
+
+Things for 1.0 release:
+=======================
+
+- Networking for MiNTNet (like in vmware)
+
+- mouse pointer shared between X-Windows and aranym (like in vmware)
+
+- fVDI integrated
+
+The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
+all Atari power users/MiNTers. Key elements are TCP/IP networking, large
+screen resolution in high color/true color, fast CPU/FPU and plenty of RAM.
+
+Estimated time for 1.0 release: summer/fall 2001.
+
+Things for 2.0 release:
+=======================
+
+- configuration in GUI for X-Windows (GNOME/KDE)
+
+- perhaps port of aranym to Windows
+
+- Yamaha sound, DSP emulation, MMU040
+
+- serial port, parallel port, joysticks etc.
+
+The goal for 2.0 is total Atari machine replacement usable by every Atari BFU.
+It should be able to boot Linux-m68k to prove 100% hardware compatibility.
+
+Estimated time for 2.0 release: depends on number of attracted programmers.
+Either never (due to lack of interest) or rather soon after 1.0 release.
