@@ -1,7 +1,7 @@
 aranym.xif
 ==========
 
-The xif interface for the eth0 interface for MiNT-Net.
+The MiNT-Net xif driver for the ARAnyM ethernet interface.
 
 Installation and usage
 ----------------------
@@ -32,15 +32,13 @@ Otherwise ARAnyM started by regular user could not access this device.
  --------------
 
 Install MiNT-Net and copy the aranym.xif into your mint folder.
-Then configure the eth0 interface - please note that the IP addresses are
-currently hardcoded in the ARAnyM source code (XIF_ATARI_IP and XIF_HOST_IP
-in aranym/src/natfeat/ece.cpp):
+Then configure the eth0 interface, best by calling the 'eth0-config.sh'
+script.
+If you wanted to configure the IP addresses of netmask, you could do that
+in the ARAnyM config file.
 
-mint:~# ifconfig eth0 addr 192.168.0.2 up
-mint:~# route add default eth0 gw 192.168.0.1
-
-Then in MiNT-Net you can e.g. ping to 192.168.0.1 (which is a host side
-of the TAP tunnel).
+Then in MiNT-Net you can e.g. ping to 192.168.0.1 (which is the default IP
+of the TAP tunnel's host side).
 
 How it works
 ------------
@@ -56,14 +54,18 @@ Some related info can be found at the following URLs:
 
 Compilation
 -----------
- * to compile the xif you need the source tree of FreeMiNT 1.16 (use
+ aranym.xif:
+ * you need the source tree of FreeMiNT 1.16 (use
    CVS head branch) and if compiling on host, don't forget to edit
-   the CONFIGVARS and enable the CROSS=yes there. Point the
+   freemint's CONFIGVARS and enable the CROSS=yes there. Point the
    FREEMINT_SRC_HOME environment variable to its home (the
    COPYING.MiNT file is there).
  * use make.sh to compile
  * the binaries are placed into the .bin subfolder
 
- ARAnyM binary:
+ nfeth-config:
+ * regular MiNT setup is able to compile with simple 'make nfeth-config'.
+
+ ARAnyM itself:
  * run configure with --enable-ethernet
 

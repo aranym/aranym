@@ -3,7 +3,7 @@
  *
  *	based on dummy.xif skeleton 12/14/94, Kay Roemer.
  *
- *  written by Standa @ ARAnyM team
+ *  written by Standa & Joy @ ARAnyM team
  *
  *  GPL
  */
@@ -29,7 +29,7 @@
 unsigned long inet_aton(const char *cp, struct in_addr *addr);
 #endif
 
-#include "araether_nfapi.h"
+#include "ethernet_nfapi.h"
 
 #define XIF_NAME	"ARAnyM Eth driver v0.4"
 
