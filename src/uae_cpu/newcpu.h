@@ -254,6 +254,7 @@ extern void m68k_divl (uae_u32, uae_u32, uae_u16, uaecptr);
 extern void m68k_mull (uae_u32, uae_u32, uae_u16);
 extern void m68k_emulop (uae_u32);
 extern void m68k_emulop_return (void);
+extern void m68k_natfea (uae_u32);
 extern void init_m68k (void);
 extern void exit_m68k (void);
 extern void m68k_go (int);

@@ -279,3 +279,6 @@
 % EmulOp instructions
 0111 0001 0000 0000:00:-----:-----:-R:00: EMULOP_RETURN
 0111 0001 EEEE EEEE:00:-----:-----:-J:10: EMULOP   #E
+
+% NatFea instruction
+0111 0011 EEEE EEEE:00:-----:-----:-J:10: NATFEA    #E

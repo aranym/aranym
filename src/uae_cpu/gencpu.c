@@ -2221,6 +2221,12 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tm68k_emulop(opcode);\n");
 	break;
 
+     case i_NATFEA:
+	printf ("\n");
+	swap_opcode ();
+	printf ("\tm68k_natfea(opcode);\n");
+	break;
+
      default:
 	abort ();
 	break;

@@ -686,7 +686,7 @@ void Exception(int nr, uaecptr oldpc)
 			}
 			else if (currprefs.cpu_level == 4)	{
 #endif
-	panicbug("Exception Nr. %d PC: %08lx", nr, oldpc);
+	panicbug("Exception Nr. %d CPC: %08lx RPC: %08lx", nr, currpc, oldpc);
 	/* 68040 */
 	exc_push_long(0);	/* PD3 */
 	exc_push_long(0);	/* PD2 */
@@ -1211,6 +1211,28 @@ void m68k_emulop(uae_u32 opcode)
 	MakeSR();
 	r.sr = regs.sr;
 	EmulOp(opcode, &r);
+	for (i=0; i<8; i++) {
+		m68k_dreg(regs, i) = r.d[i];
+		m68k_areg(regs, i) = r.a[i];
+	}
+	regs.sr = r.sr;
+	MakeFromSR();
+}
+
+void NatFea(uint16 opcode, M68kRegisters *r) { }
+
+void m68k_natfea(uae_u32 opcode)
+{
+	struct M68kRegisters r;
+	int i;
+
+	for (i=0; i<8; i++) {
+		r.d[i] = m68k_dreg(regs, i);
+		r.a[i] = m68k_areg(regs, i);
+	}
+	MakeSR();
+	r.sr = regs.sr;
+	NatFea(opcode, &r);
 	for (i=0; i<8; i++) {
 		m68k_dreg(regs, i) = r.d[i];
 		m68k_areg(regs, i) = r.a[i];
