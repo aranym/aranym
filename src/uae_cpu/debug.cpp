@@ -31,6 +31,8 @@ static int do_skip;
 int debugging = 0;
 int irqindebug = false;
 
+static char old_debug_cmd[80];
+
 // MJ static FILE *logfile;
 
 void activate_debugger (void)
@@ -132,11 +134,14 @@ static void writeintomem (char **c)
 	}
     }
 
+    if (addr < RAMSize) {
       p[addr] = val>>24 & 0xff;
       p[addr+1] = val>>16 & 0xff;
       p[addr+2] = val>>8 & 0xff;
       p[addr+3] = val & 0xff;
       printf("Wrote %d at %08x\n",val,addr);
+    } else
+      printf("Invalid address %08x\n",addr);
 }
 
 static int trace_same_insn_count;
@@ -147,6 +152,9 @@ void debug (void)
     char input[80];
     uaecptr nextpc,nxdis,nxmem;
 
+    input[0] = '\n';
+    input[1] = '0';
+    
     if (do_skip && skipaddr == 0xC0DEDBAD) {
 #if 0
 	if (trace_same_insn_count > 0) {
@@ -195,7 +203,9 @@ void debug (void)
 	fflush (stdout);
 	if (fgets (input, 80, stdin) == 0)
 	    return;
+	if (input[0] == '\n') memcpy(input, old_debug_cmd, 80);
 	inptr = input;
+	memcpy (old_debug_cmd, input, 80);
 	cmd = next_char (&inptr);
 	switch (cmd) {
 	 case 'i': irqindebug = true; break;
