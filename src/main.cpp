@@ -319,12 +319,28 @@ static void check_event(void)
 					if (grabbedMouse)
 						but |= 2;
 				}
+				else if (event.button.button == 4) {
+					ikbd.send(0x48);	// press keyUp
+					return;
+				}
+				else if (event.button.button == 5) {
+					ikbd.send(0x50);	// press keyDown
+					return;
+				}
 			}
 			else if (type == SDL_MOUSEBUTTONUP) {
 				if (event.button.button == SDL_BUTTON_RIGHT)
 					but &= ~1;
 				else if (event.button.button == SDL_BUTTON_LEFT)
 					but &= ~2;
+				else if (event.button.button == 4) {
+					ikbd.send(0xc8);	// release keyUp
+					return;
+				}
+				else if (event.button.button == 5) {
+					ikbd.send(0xd0);	// release keyDown
+					return;
+				}
 			}
 			else if (type == SDL_MOUSEMOTION) {
 				SDL_MouseMotionEvent eve = event.motion;
@@ -615,6 +631,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.33  2001/10/29 11:16:07  joy
+ * emutos gets a special care
+ *
  * Revision 1.32  2001/10/29 08:15:45  milan
  * some changes around debuggers
  *
