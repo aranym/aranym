@@ -208,6 +208,7 @@ int32 CdromDriverLinux::cd_read(memptr device, memptr buffer, uint32 first, uint
 
 int32 CdromDriverLinux::cd_status(memptr device, memptr ext_status)
 {
+	DUNUSED(ext_status);
 	int drive, errorcode, mediachanged;
 	unsigned long status;
 
@@ -441,6 +442,7 @@ int32 CdromDriverLinux::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 
 int32 CdromDriverLinux::cd_startaudio(memptr device, uint32 dummy, memptr buffer)
 {
+	DUNUSED(dummy);
 	int drive, errorcode;
 	struct cdrom_ti	track_index;
 	metados_bos_tracks_t	*atari_track_index;
@@ -477,6 +479,7 @@ int32 CdromDriverLinux::cd_stopaudio(memptr device)
 
 int32 CdromDriverLinux::cd_setsongtime(memptr device, uint32 dummy, uint32 start_msf, uint32 end_msf)
 {
+	DUNUSED(dummy);
 	int drive, errorcode;
 	struct cdrom_msf audio_bloc;
 
@@ -502,6 +505,7 @@ int32 CdromDriverLinux::cd_setsongtime(memptr device, uint32 dummy, uint32 start
 
 int32 CdromDriverLinux::cd_gettoc(memptr device, uint32 dummy, memptr buffer)
 {
+	DUNUSED(dummy);
 	int drive, i, numtracks, errorcode;
 	struct cdrom_tochdr tochdr;
 	struct cdrom_tocentry tocentry;

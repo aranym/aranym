@@ -144,24 +144,33 @@ unsigned char CdromDriver::BinaryToBcd(unsigned char value)
 
 int32 CdromDriver::cd_open(memptr device, memptr buffer)
 {
+	DUNUSED(device);
+	DUNUSED(buffer);
 	D(bug(NFCD_NAME "cd_open()"));
 	return 0;
 }
 
 int32 CdromDriver::cd_close(memptr device)
 {
+	DUNUSED(device);
 	D(bug(NFCD_NAME "cd_close()"));
 	return 0;
 }
 
 int32 CdromDriver::cd_write(memptr device, memptr buffer, uint32 first, uint32 length)
 {
+	DUNUSED(device);
+	DUNUSED(buffer);
+	DUNUSED(first);
+	DUNUSED(length);
 	D(bug(NFCD_NAME "cd_write()"));
 	return EINVFN;
 }
 
 int32 CdromDriver::cd_seek(memptr device, uint32 offset)
 {
+	DUNUSED(device);
+	DUNUSED(offset);
 	D(bug(NFCD_NAME "cd_seek()"));
 	return EINVFN;
 }

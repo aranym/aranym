@@ -779,6 +779,7 @@ extern "C" {
 extern "C" {
 static inline void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8])
 {
+	DUNUSED(bpp);
 	for (int l=0; l<16; l++) {
 		uint8 data = sdlPixelData[l]; // note: this is about 2000 dryhstones speedup (the local variable)
 
@@ -2027,6 +2028,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.61  2005/01/12 10:56:02  joy
+ * compiler warnings about unused variables fixed
+ *
  * Revision 1.60  2005/01/11 20:32:13  standa
  * One more bugfix regarding the pointers and 64bit clean.
  *

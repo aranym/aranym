@@ -830,6 +830,7 @@ static void dsp_ccr_extension(uint32 *reg0, uint32 *reg1, uint32 * /*reg2*/)
 
 static void dsp_ccr_unnormalized(uint32 *reg0, uint32 *reg1, uint32 *reg2)
 {
+	DUNUSED(reg2);
 	uint32 scaling, value;
 
 	scaling = (getDSP()->registers[REG_SR]>>SR_S0) & BITMASK(2);
@@ -856,6 +857,8 @@ static void dsp_ccr_unnormalized(uint32 *reg0, uint32 *reg1, uint32 *reg2)
 
 static void dsp_ccr_negative(uint32 *reg0, uint32 *reg1, uint32 *reg2)
 {
+	DUNUSED(reg1);
+	DUNUSED(reg2);
 	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_N);
 	getDSP()->registers[REG_SR] |= (((*reg0)>>7) & 1)<<SR_N;
 }

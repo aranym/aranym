@@ -444,7 +444,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			surf->format->Rloss, surf->format->Gloss, surf->format->Bloss));
 }
 
-
+/*
 extern "C" {
 	static void getBinary( uint16 data, char *buffer ) {
 		for( uint16 i=0; i<=15; i++ ) {
@@ -454,7 +454,7 @@ extern "C" {
 		buffer[16]='\0';
 	}
 }
-
+*/
 
 
 inline void HostScreen::putPixel( int16 x, int16 y, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
@@ -1293,6 +1293,9 @@ void HostScreen::update()
 
 /*
  * $Log$
+ * Revision 1.49  2004/12/11 09:55:52  pmandin
+ * Move update function from .h to .cpp, mandatory for NFOSMesa
+ *
  * Revision 1.48  2004/10/31 23:15:56  pmandin
  * Do not need to enable autozoom to force screen size
  *

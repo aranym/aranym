@@ -3,7 +3,7 @@
 
 
 2005/01/12 - Petr
-- ata.cpp: fixed scary hack for hiding an unused variable
+- ata.cpp: removed a scary hack for hiding an unused variable
 - all files: "unused variable" GCC warnings are gone thanks to DUNUSED macro
 - natfeat/ethernet.cpp: possibly fixed buffer overflow bug in readPacket()
 
