@@ -894,6 +894,13 @@ void early_cmdline_check(int argc, char **argv) {
 			infoprint("DSP disassembler : %s", (DSP_DISASM == 1) ? "enabled" : "disabled");
 			infoprint("OpenGL support   : %s", (ENABLE_OPENGL == 1) ? "enabled" : "disabled");
 			infoprint("HOSTFS support   : %s", (HOSTFS_SUPPORT == 1) ? "enabled" : "disabled");
+			infoprint("Native features:");
+			infoprint(" CD-ROM driver   : %s, %s driver",
+				(NFCDROM_SUPPORT == 1) ? "enabled" : "disabled",
+				(NFCDROM_LINUX_SUPPORT == 1) ? "linux" : "sdl"
+			);
+			infoprint(" OSMesa rendering: %s", (NFOSMESA_SUPPORT == 1) ? "enabled" : "disabled");
+			infoprint(" JPEG decoder    : %s", (NFJPEG_SUPPORT == 1) ? "enabled" : "disabled");
 
 			exit (0);
 		}

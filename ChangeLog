@@ -1,3 +1,7 @@
+2005/03/21 - Patrice
+- parameters.cpp: display custom enabled NatFeats.
+
+
 2005/03/20 - STanda
 - fvdidrv: fixed outstanding bug in the aranym.sys driver. The pixel sizes were
   updated recursively twice which made them wrong.
