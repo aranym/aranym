@@ -1,3 +1,7 @@
+2001/12/03 - Olivier Landemarre <Olivier.Landemarre@utbm.fr> & STanda
+- ExtFs: Frename fix.
+
+
 2001/12/02 - joy
 - keyboard conversion code rewritten again. As the SDL returns different
   scancodes for same keys under different OSes I created a heuristic
