@@ -715,15 +715,16 @@ void presave_parallel() {
 #define	HOTKEY_SCREENSHOT	SDLK_PRINT
 #endif
 
-static char hotkeys[10][20];
+#define HOTKEYS_STRING_SIZE		20
+static char hotkeys[10][HOTKEYS_STRING_SIZE];
 struct Config_Tag hotkeys_conf[]={
-	{ "Setup", String_Tag, hotkeys[0], sizeof(hotkeys[0]), 0},
-	{ "Quit", String_Tag, hotkeys[1], sizeof(hotkeys[1]), 0},
-	{ "Reboot", String_Tag, hotkeys[2], sizeof(hotkeys[2]), 0},
-	{ "Ungrab", String_Tag, hotkeys[3], sizeof(hotkeys[3]), 0},
-	{ "Debug", String_Tag, hotkeys[4], sizeof(hotkeys[4]), 0},
-	{ "Screenshot", String_Tag, hotkeys[5], sizeof(hotkeys[5]), 0},
-	{ "Fullscreen", String_Tag, hotkeys[6], sizeof(hotkeys[6]), 0},
+	{ "Setup", String_Tag, hotkeys[0], HOTKEYS_STRING_SIZE, 0},
+	{ "Quit", String_Tag, hotkeys[1], HOTKEYS_STRING_SIZE, 0},
+	{ "Reboot", String_Tag, hotkeys[2], HOTKEYS_STRING_SIZE, 0},
+	{ "Ungrab", String_Tag, hotkeys[3], HOTKEYS_STRING_SIZE, 0},
+	{ "Debug", String_Tag, hotkeys[4], HOTKEYS_STRING_SIZE, 0},
+	{ "Screenshot", String_Tag, hotkeys[5], HOTKEYS_STRING_SIZE, 0},
+	{ "Fullscreen", String_Tag, hotkeys[6], HOTKEYS_STRING_SIZE, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -759,14 +760,14 @@ void preset_hotkeys()
 void postload_hotkeys() {
 	// convert from string to pair of ints
 	for(uint i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
-		sscanf(hotkeys_rel[i].string, "%d:%d", (int *)&hotkeys_rel[i].keysym->sym, (int *)&hotkeys_rel[i].keysym->mod);
+		sscanf(hotkeys_rel[i].string, "%i:%i", (int *)&hotkeys_rel[i].keysym->sym, (int *)&hotkeys_rel[i].keysym->mod);
 	}
 }
 
 void presave_hotkeys() {
 	// convert from pair of ints to string
 	for(uint i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
-		snprintf(hotkeys_rel[i].string, sizeof(hotkeys_rel[i].string), "%d:%d", hotkeys_rel[i].keysym->sym, hotkeys_rel[i].keysym->mod);
+		snprintf(hotkeys_rel[i].string, HOTKEYS_STRING_SIZE, "%d:%#x", hotkeys_rel[i].keysym->sym, hotkeys_rel[i].keysym->mod);
 	}
 }
 

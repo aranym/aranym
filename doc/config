@@ -21,25 +21,25 @@ AutoGrabMouse = Yes
 # Format: function = key code : modifiers combination
 [HOTKEYS]
 # open up the SETUP GUI
-Setup = 19:
+Setup = 19:0
 
 # quit ARAnyM immediately
-Quit = 19:
+Quit = 19:0x1
 
 # reboot ARAnyM (like pressing the Reset button on a real machine)
-Reboot = 19:
+Reboot = 19:0x40
 
 # free mouse and keyboard focus - mouse can leave the ARAnyM window
-Ungrab = 27:
+Ungrab = 27:0x140
 
 # call the internal debugger (if compiled in)
-Debug = 19:
+Debug = 19:0x100
 
 # make a copy of the screen to file in BMP format in current directory
-Screenshot = 316
+Screenshot = 316:0
 
 # switch ARAnyM to fullscreen (or back to a window mode)
-Fullscreen = 302
+Fullscreen = 302:0
 
 
 [STARTUP]
