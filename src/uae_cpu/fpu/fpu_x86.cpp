@@ -275,7 +275,7 @@ PRIVATE char * FFPU etos(fp_register const & e)
 			"fldt	%1\n"
 			"fstp	%0\n"
 		:	"=m" (f)
-		:	"f" (e)
+		:	"m" (e)
 		);
 	
 	if(++_ix >= 10) _ix = 0;

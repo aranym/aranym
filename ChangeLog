@@ -1,3 +1,7 @@
+2002/03/03 - Gwenole Beauchesne & milan
+- fpu_x86 debug mode corrected
+
+
 2002/02/28 - milan
 - get_i*_1 moved to newcpu.cpp
 

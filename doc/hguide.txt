@@ -42,9 +42,11 @@ uae_u32  ~ uint32
 uae_s64  ~ int64
 uae_u64  ~ uint64
 
-uaecptr  ~ uint32   - this type represents Atari's pointer
-
   These types are only for interaction with CPU core. It is better to use uintXX/intXX types than uae_XXX types.
+
+uaecptr  - this type represents Atari's pointer
+
+  This type is for addressing in Atari address space.
 
   For compatibility between ARAnyM and Bochs IDE emulation there are declared also these types:
 Bit8u   ~ uint8
