@@ -1,3 +1,13 @@
+2004/07/04 - joy
+- input.cpp: iconification of fullscreen window on releasing the grabbed
+  input disabled since Standa added there switching from fullscreen
+  to window.
+
+- gui-sdl/file.[cpp,h]: File_Exists() and File_Read() take const char
+  parameter. Disabled the (IMHO) useless feature of File_Read - trying
+  several different file extensions automagically.
+
+
 2004/07/03 - joy
 - uae_cpu/fpu/mathlib.h: fixed tan() error Martin Tarenskeen reported.
 
