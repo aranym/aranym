@@ -1,3 +1,8 @@
+2005/02/24 - Petr
+- lilo.cpp: <elf.h> required defines copied to lilo.cpp to allow compiling
+  under non-linux systems.
+
+
 2005/02/23 - Patrice
 - nfjpeg, nfpci, nfosmesa: Display a message when __NF cookie is missing, or
   when NF functions needed are missing in ARAnyM.
