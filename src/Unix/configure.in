@@ -135,7 +135,8 @@ case "$target_os" in
     EXTRASYSSRCS=linux/parameters_linux.cpp
     ;;
   solaris*)
-    DEFINES="$DEFINES -DBSD_COMP -D_POSIX_PTHREAD_SEMANTICS -D_POSIX_C_SOURCE=199506L"
+    AC_DEFINE(_XOPEN_SOURCE, 500)
+    DEFINES="$DEFINES -DBSD_COMP"
     ;;
   *)
     EXTRASYSSRCS=parameters.cpp

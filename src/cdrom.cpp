@@ -48,10 +48,12 @@ extern "C" {
 
 #ifdef __sun
 extern "C" {
+#include "sys/feature_tests.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <sys/cdio.h>
+#include <stropts.h>
 #define BX_CD_FRAMESIZE CDROM_BLK_2048
 }
 #endif /* __sun */
