@@ -43,17 +43,12 @@ static const int HW = 0xfffa00;
 	void MFP_Timer::tick() {
 	// fprintf(stderr, "tick for Timer%c\n", name);
 		if (isRunning()) {
-			// if (current_data > 1)
-			if (current_data == start_data && current_data > 1)
-				current_data--;
-			else {
-				state = true;
-				// Trigger 200Hz interrupt
-				TriggerMFP(5);
-				if (dP)
-					fprintf(stderr, "TriggerMFP($4BA) = %ld\n", ReadMacInt32(0x4ba));
-				current_data = start_data;
-			}
+			state = true;
+			// Trigger 200Hz interrupt
+			TriggerMFP(5);
+			if (dP)
+				fprintf(stderr, "TriggerMFP($4BA) = %ld\n", ReadMacInt32(0x4ba));
+			current_data = start_data;
 		}
 	}
 
