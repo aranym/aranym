@@ -550,7 +550,8 @@ void BLITTER::Do_Blit(void)
 	SHOWPARAMS;
 	if (dest_addr < FALCVRAMSTART || (dest_addr > FALCVRAMEND && dest_addr < ARANYMVRAMSTART)) {
 		dest_addr |= 0xf0000000;
-		fprintf(stderr, "Blitter - possible error in dest address - fixing to %08x\n", dest_addr);
+		fprintf(stderr, "Blitter - dest address out of range - exitting\n");
+		return;
 	}
 	if (source_x_inc < 0) {
 		// do_hop_op_N[hop][op]();
