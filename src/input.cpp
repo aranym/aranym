@@ -607,11 +607,35 @@ void process_mouse_event(SDL_Event event)
 				grabTheMouse();
 		}
 		else if (event.button.button == 4) {	/* mouse wheel Up */
-			getIKBD()->SendKey(0x48);	// press keyUp
+			if (bx_options.ikbd.wheel_eiffel) {
+				getIKBD()->SendKey(0xF6);
+				getIKBD()->SendKey(0x05);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x59);
+			}
+			else {
+				getIKBD()->SendKey(0x48);	// press keyUp
+			}
 			return;
 		}
 		else if (event.button.button == 5) {	/* mouse wheel Down */
-			getIKBD()->SendKey(0x50);	// press keyDown
+			if (bx_options.ikbd.wheel_eiffel) {
+				getIKBD()->SendKey(0xF6);
+				getIKBD()->SendKey(0x05);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x5A);
+			}
+			else {
+				getIKBD()->SendKey(0x50);	// press keyDown
+			}
 			return;
 		}
 	}
