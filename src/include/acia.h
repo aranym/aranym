@@ -23,13 +23,16 @@ public:
 	virtual void setData(uae_u8) {};
 };
 
-#define MAXBUF 		16383
+#define MAXBUF 		((1<<12)-1) // has to be a number with all bits set
+
 class IKBD: public ACIA {
 private:
-	int buffer[MAXBUF];
+	int buffer[MAXBUF+1];
 	int ikbd_inbuf;
 	int ikbd_bufpos;
 	bool inTransmit;
+	bool inGet;  //FIXME:has to be a semaphore
+	void compressMouseMove( int &pos );
 
 public:
 	IKBD();

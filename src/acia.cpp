@@ -38,6 +38,7 @@ IKBD::IKBD() : ACIA(0xfffc00) {
 	status = 0x0e;
 	ikbd_inbuf = ikbd_bufpos = 0;
 	inTransmit = false;
+	inGet = false;
 };
 
 bool IKBD::isBufferEmpty() {
@@ -51,11 +52,44 @@ uae_u8 IKBD::getStatus() {
 void IKBD::setMode(uae_u8 value) {
 }
 
+#define SC_MOUSEMOVE 0xf8
+
+void IKBD::compressMouseMove( int &pos ) {
+	if( ikbd_inbuf < 6 )
+		return;
+
+	int currpack = buffer[pos];
+	int x = (int) (char) buffer[pos+1];
+	int y = (int) (char) buffer[pos+2];
+	char currx, curry;
+	
+	while (ikbd_inbuf >= 6
+	       && pos+6 < MAXBUF
+	       && buffer[pos+3] == currpack) {
+		currx = (char) buffer[pos+4];
+		curry = (char) buffer[pos+5];
+		if (abs(x + (int) currx) > 63
+		    || abs(y + (int) curry > 63))
+			break;
+		x += (int) currx;
+		y += (int) curry;
+		ikbd_inbuf -= 3;
+		pos += 3;
+	}
+
+	buffer[pos+1] = (unsigned char) x;
+	buffer[pos+2] = (unsigned char) y;
+
+}
+
 uae_u8 IKBD::getData() {
 	inTransmit = false;
 	int pos = (ikbd_bufpos - ikbd_inbuf) & MAXBUF;
+	if( (buffer[pos] & 0xfc) == SC_MOUSEMOVE )
+		compressMouseMove( pos );
 	if (ikbd_inbuf-- > 0) {
 		if (ikbd_inbuf ==0) {
+			inGet = true;    // FIXME: this has to be a semaphore!!
 			/* Clear GPIP/I4 */
 			status = 0;
 			uae_u8 x = ReadAtariInt8(0xfffa01);
@@ -64,23 +98,28 @@ uae_u8 IKBD::getData() {
 		}
 		D(bug("IKBD read code %2x (%d left)", buffer[pos], ikbd_inbuf));
 		doTransmit();
+		inGet=false;
 		return buffer[pos];
 	}
 	else {
 		ikbd_inbuf = 0;
+		inGet=false;
 		return 0xa2;
 	}
 }
 
 void IKBD::send(int value)
 {
+	while( inGet )    // FIXME: this has to be a semaphore!!
+		;
+
 	value &= 0xff;
 	if (ikbd_inbuf <= MAXBUF) {
 		buffer[ikbd_bufpos] = value;
 		ikbd_bufpos++;
 		ikbd_bufpos &= MAXBUF;
 		ikbd_inbuf++;
-		D(bug("IKBD sends %2x (->buffer pos %d)\n", value, ikbd_bufpos-1));
+		D(bug("IKBD sends %2x (->buffer pos %d)", value, ikbd_bufpos-1));
 	}
 	doTransmit();
 }

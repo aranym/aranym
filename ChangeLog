@@ -1,3 +1,11 @@
+2002/05/20 - Heiko Achilles
+- when a mouse movement package is fetched from the ACIA/IKBD buffer this
+  patch puts all movements of the same type, which are currently in the
+  buffer, into one. So the fetching is quicker and there's no noticeable
+  mouse delay anymore.
+  TODO: replace bool inGet with proper semaphores
+
+
 2002/05/14 - milan
 - vm_alloc.cpp: better structure, not own OS dependent includes
 

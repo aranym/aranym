@@ -120,3 +120,6 @@ Thomas Huth
 - SDL GUI (from hatari project)
 - suggestion to remove 680[023]0 CPU core generation
 - original README skeleton (from hatari)
+
+Heiko Achilles
+- mouse packets compression in ACIA
