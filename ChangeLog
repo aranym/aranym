@@ -1,3 +1,10 @@
+2001/09/20 - joy
+- fixed very annoying bug in direct_tc mode (no more segfaults at $e08ba8 I hope!)
+
+- mouse code for host-client transformation is now conditional (only when not running
+  in fullscreen).
+
+
 2001/09/20 - STanda
 
 - The fVDI driver update: colors work correctly, expandArea implemented
