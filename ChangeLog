@@ -1,3 +1,10 @@
+2004/01/03 - joy
+- videl.cpp, parameters.*, main.cpp, configure.ac, documentation.txt:
+  DIRECT_TRUECOLOR hack removed. I don't think it was ever used.
+
+- main_unix.cpp: slightly better readability.
+
+
 2004/01/02 - joy
 - gui-sdl/dlgDisk.cpp: Disk geometry added (C/H/S).
   Also, there is Insert/Eject button in each IDE set so it now supports

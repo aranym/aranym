@@ -1,11 +1,33 @@
 /*
- * $Header$
+ * videl.cpp - Falcon VIDEL emulation
  *
- * (c) Joy 2001-2003
+ * Copyright (c) 2001-2004 ARAnyM developer team (see AUTHORS)
  *
- * greatly inspired by linux/drivers/video/atafb.c - thanks to those guys!
+ * Authors:
+ *  joy		Petr Stehlik
+ *	standa	Standa Opichal
+ *	pmandin	Patrice Mandin
+ * 
+ * VIDEL HW regs inspired by Linux-m68k kernel (linux/drivers/video/atafb.c)
  *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 
 #include "sysdeps.h"
 #include "hardware.h"
@@ -283,10 +305,7 @@ void VIDEL::renderScreenNoZoom()
 	int scrpitch = hostScreen.getPitch();
 
 	long atariVideoRAM = this->getVideoramAddress();
-#ifdef DIRECT_TRUECOLOR
-	if (bx_options.video.direct_truecolor)
-		atariVideoRAM = ARANYMVRAMSTART;
-#endif
+
 	uint16 *fvram = (uint16 *) Atari2HostAddr(atariVideoRAM);
 	VideoRAMBaseHost = (uint8 *) hostScreen.getVideoramAddress();
 	uint8 *hvram = VideoRAMBaseHost;
@@ -450,33 +469,27 @@ void VIDEL::renderScreenNoZoom()
 				break;
 			case 2:
 				{
-					// in direct_truecolor mode we set the Videl VIDEORAM directly to the host vram
-#ifdef DIRECT_TRUECOLOR
-					if (! bx_options.video.direct_truecolor)
-#endif
-					{
-						uint16 *fvram_line = fvram;
-						uint16 *hvram_line = (uint16 *)hvram;
+					uint16 *fvram_line = fvram;
+					uint16 *hvram_line = (uint16 *)hvram;
 
-						for (int h = 0; h < vh_clip; h++) {
+					for (int h = 0; h < vh_clip; h++) {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-							//FIXME: here might be a runtime little/big video endian switch like:
-							//      if ( /* videocard memory in Motorola endian format */ false) {
-							memcpy(hvram_line, fvram_line, vw_clip<<1);
+						//FIXME: here might be a runtime little/big video endian switch like:
+						//      if ( /* videocard memory in Motorola endian format */ false)
+						memcpy(hvram_line, fvram_line, vw_clip<<1);
 #else
-							uint16 *fvram_column = fvram_line;
-							uint16 *hvram_column = hvram_line;
+						uint16 *fvram_column = fvram_line;
+						uint16 *hvram_column = hvram_line;
 
-							for (int w = 0; w < vw_clip; w++) {
-								// byteswap
-								int data = *fvram_column++;
-								*hvram_column++ = (data >> 8) | (data << 8);
-							}
+						for (int w = 0; w < vw_clip; w++) {
+							// byteswap
+							int data = *fvram_column++;
+							*hvram_column++ = (data >> 8) | (data << 8);
+						}
 #endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
 
-							hvram_line += scrpitch>>1;
-							fvram_line += nextline;
-						}
+						hvram_line += scrpitch>>1;
+						fvram_line += nextline;
 					}
 				}
 				break;
@@ -925,152 +938,3 @@ void VIDEL::renderScreenZoom()
 		}
 	}
 }
-
-/*
- * $Log$
- * Revision 1.51  2003/04/08 10:28:13  joy
- * merging changes from 0_8_0 branch
- *
- * Revision 1.50.2.1  2003/03/28 20:15:26  joy
- * typo errors fixed
- *
- * Revision 1.50  2003/02/19 23:28:41  joy
- * st_shift reset fixed, preinit of videl regs removed, startup bpp window is 8bit
- *
- * Revision 1.49  2003/02/18 17:10:09  joy
- * ChangeLog
- *
- * Revision 1.48  2003/02/16 21:07:45  joy
- * cleanup in NatFeats
- *
- * Revision 1.47  2003/01/02 19:39:13  joy
- * emulation of width registers improved
- *
- * Revision 1.46  2002/12/29 20:23:11  joy
- * patch completed
- *
- * Revision 1.45  2002/12/29 13:54:46  joy
- * linewidth and lineoffset registers emulated
- *
- * Revision 1.44  2002/12/01 10:26:12  pmandin
- * Autozoom bugfix
- *
- * Revision 1.43  2002/09/24 18:59:50  pmandin
- * Autozoom done
- *
- * Revision 1.42  2002/09/24 16:27:07  pmandin
- * Small bugfix
- *
- * Revision 1.41  2002/09/24 16:08:24  pmandin
- * Bugfixes+preliminary autozoom support
- *
- * Revision 1.39  2002/09/23 09:23:15  pmandin
- * Render to/from any bpp, using screen pitch
- *
- * Revision 1.38  2002/06/24 17:08:48  standa
- * The pointer arithmetics fixed. The memptr usage introduced in my code.
- *
- * Revision 1.37  2002/02/28 20:43:33  joy
- * uae_ vars replaced with uint's
- *
- * Revision 1.36  2002/01/17 14:59:19  milan
- * cleaning in HW <-> memory communication
- * support for JIT CPU
- *
- * Revision 1.35  2001/12/17 08:33:00  standa
- * Thread synchronization added. The check_event and fvdidriver actions are
- * synchronized each to other.
- *
- * Revision 1.34  2001/12/14 12:15:18  joy
- * double line didn't work due to my stupid idea. Fixed.
- * Debugginng of write access to VIDEL registers added.
- *
- * Revision 1.33  2001/12/07 15:46:47  joy
- * VIDEL registers are preinitialized partially to allow VIDEL unaware EmuTOS to display something.
- *
- * Revision 1.32  2001/12/03 20:56:07  standa
- * The gfsprimitives library files removed. All the staff was moved and
- * adjusted directly into the HostScreen class.
- *
- * Revision 1.31  2001/11/18 21:23:20  standa
- * The little/big endian compiletime check. No runtime for big endian graphic
- * cards on little enddian machines, but I think there is no such case.
- *
- * Revision 1.30  2001/11/11 22:03:09  joy
- * direct truecolor is optional (compile time configurable)
- *
- * Revision 1.29  2001/11/04 23:17:08  standa
- * 8bit destination surface support in VIDEL. Blit routine optimalization.
- * Bugfix in compatibility modes palette copying.
- *
- * Revision 1.28  2001/10/30 22:59:34  standa
- * The resolution change is now possible through the fVDI driver.
- *
- * Revision 1.27  2001/10/25 19:56:01  standa
- * The Log and Header CVS tags in the Log removed. Was recursing.
- *
- * Revision 1.26  2001/10/16 20:28:43  standa
- * The #define SUPPORT_MULTIPLEDESTBPP support extended to 16, 24 and 32 destBpp.
- * Fixed RGB vs BRG bug in videl rendering.
- * SDL_BYTEORDER handling improved in put24BitPixel macro.
- *
- * Revision 1.25  2001/10/08 21:46:05  standa
- * The Header and Log CVS tags added.
- *
- * Revision 1.24  2001/10/01 22:22:41  standa
- * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).
- * fvdidrv/blitArea form memory works in TC.
- *
- * Revision 1.23  2001/09/30 23:07:39  standa
- * Just the loop variables renamed from i to w.
- *
- * Revision 1.22  2001/09/21 14:15:05  joy
- * detect VideoRAM change and turn on Videl rendering again (after a fVDI session during the reset sequence, for example).
- * do not render on 16-bit host screen the Falcon TC mode if the direct_truecolor is set.
- *
- * Revision 1.21  2001/09/19 22:59:44  standa
- * Some debug stuff; st_compatible_mode variable name changed to stCompatibleColorPalette.
- *
- * Revision 1.20  2001/09/08 23:33:47  joy
- * atariVideoRAM is at ARANYMVRAMSTART if direct_truecolor is enabled.
- *
- * Revision 1.19  2001/08/28 23:26:09  standa
- * The fVDI driver update.
- * VIDEL got the doRender flag with setter setRendering().
- *		 The host_colors_uptodate variable name was changed to hostColorsSync.
- * HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
- *		 was created.
- * fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
- *
- * Revision 1.18  2001/08/15 06:48:57  standa
- * ST compatible modes VIDEL patch by Ctirad.
- *
- * Revision 1.17  2001/08/09 12:35:43  standa
- * Forced commit to sync the CVS. ChangeLog should contain all details.
- *
- * Revision 1.16  2001/06/18 20:04:34  standa
- * vdi2fix removed. comments should take the cvs care of ;)
- *
- * Revision 1.15  2001/06/18 13:21:55  standa
- * Several template.cpp like comments were added.
- * HostScreen SDL encapsulation class.
- *
- * Revision 1.14  2001/06/18 08:15:23  standa
- * lockScreen() moved to the very begining of the renderScreen() method.
- * unlockScreen() call added before updateScreen() call (again ;()
- *
- * Revision 1.13  2001/06/17 21:23:35  joy
- * late init() added
- * tried to fix colors in 2,4 bit color depth - didn't help
- *
- * Revision 1.12  2001/06/15 14:14:46  joy
- * VIDEL palette registers are now processed by the VIDEL object.
- *
- * Revision 1.11  2001/06/13 07:12:39  standa
- * Various methods renamed to conform the sementics.
- * Added videl fuctions needed for VDI driver.
- *
- * Revision 1.10  2001/06/13 06:22:21  standa
- * Another comment fixed.
- *
- */

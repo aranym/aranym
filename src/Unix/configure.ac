@@ -44,8 +44,6 @@ AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM
 
 AC_ARG_ENABLE(fixedvideoram,   [  --enable-fixedvideoram  use fixed start of VideoRAM (default=no)], [WANT_FIXEDVIDEORAM=$enableval], [WANT_FIXEDVIDEORAM=no])
 
-AC_ARG_ENABLE(directcolor,     [  --enable-directcolor    enable TOS direct truecolor (default=no)], [WANT_DIRECTCOLOR=$enableval], [WANT_DIRECTCOLOR=no])
-
 AC_ARG_ENABLE(blitmemmove,     [  --enable-blitmemmove    enable Blitter memmove rout (default=no)], [WANT_BLITMEMMOVE=$enableval], [WANT_BLITMEMMOVE=no])
 
 AC_ARG_ENABLE(blitsdlblit,     [  --enable-blitsdlblit    enable SDL blitting routine (default=no)], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
@@ -751,15 +749,6 @@ dnl Full STOP instruction
 if [[ "x$WANT_REALSTOP" = "xyes" ]]; then
   AC_DEFINE([ENABLE_REALSTOP], 1, [Define if you want real STOP instruction implementation])
   WANT_SPCFLAGS_EXCL=yes
-fi
-
-dnl Direct Truecolor
-if [[ "x$WANT_DIRECTCOLOR" = "xyes" ]]; then
-  if [[ "x$WANT_FIXEDVIDEORAM" = "xno" ]]; then
-    AC_MSG_WARN([Direct truecolor needs fixed position of VideoRAM, ignored])
-  else
-    AC_DEFINE([DIRECT_TRUECOLOR], 1, [Define if you want direct truecolor output])
-  fi
 fi
 
 dnl Blitter memmove acceleration
@@ -1674,7 +1663,6 @@ echo Monitor ................................ : $WANT_MON
 echo Check memory ........................... : $MEMORY_CHECK
 echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM
 echo Fixed position of VideoRAM ............. : $WANT_FIXEDVIDEORAM
-echo TOS Direct Truecolor.................... : $WANT_DIRECTCOLOR
 echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
 echo Blitter SDL blit acceleration .......... : $WANT_BLITSDLBLIT
 echo Support for hostfs ..................... : $WANT_HOSTFS

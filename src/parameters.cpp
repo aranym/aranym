@@ -75,9 +75,6 @@ static struct option const long_options[] =
   {"fullscreen", no_argument, 0, 'f'},
   {"nomouse", no_argument, 0, 'N'},
   {"refresh", required_argument, 0, 'v'},
-#ifdef DIRECT_TRUECOLOR
-  {"direct_truecolor", no_argument, 0, 't'},
-#endif
   {"monitor", required_argument, 0, 'm'},
   {"disk", required_argument, 0, 'd'},
   {"help", no_argument, 0, 'h'},
@@ -233,9 +230,6 @@ struct Config_Tag video_conf[]={
 	{ "BootColorDepth", Byte_Tag, &bx_options.video.boot_color_depth, 0, 0},
 	{ "VidelRefresh", Byte_Tag, &bx_options.video.refresh, 0, 0},
 	{ "VidelMonitor", Byte_Tag, &bx_options.video.monitor, 0, 0},
-#ifdef DIRECT_TRUECOLOR
-	{ "DirectTruecolor", Bool_Tag, &bx_options.video.direct_truecolor, 0, 0},
-#endif
 	{ "AutoZoom", Bool_Tag, &bx_options.video.autozoom, 0, 0},
 	{ "AutoZoomInteger", Bool_Tag, &bx_options.video.autozoomint, 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
@@ -246,9 +240,6 @@ void preset_video() {
   bx_options.video.boot_color_depth = -1;	// Boot in color depth
   bx_options.video.monitor = -1;			// preserve default NVRAM monitor
   bx_options.video.refresh = 2;			// 25 Hz update
-#ifdef DIRECT_TRUECOLOR
-  bx_options.video.direct_truecolor = false;
-#endif
   bx_options.video.autozoom = false;
   bx_options.video.autozoomint = false;
 }
@@ -256,12 +247,6 @@ void preset_video() {
 void postload_video() {
 	if (bx_options.video.refresh < 1 || bx_options.video.refresh > 200)
 		bx_options.video.refresh = 2;	// default if input parameter is insane
-#ifdef DIRECT_TRUECOLOR
-	if (bx_options.video.direct_truecolor) {
-		bx_options.video.fullscreen = true;
-		bx_options.video.boot_color_depth = 16;
-	}
-#endif
 }
 
 void presave_video() {
@@ -596,9 +581,6 @@ Options:\n\
 #ifndef FixedSizeFastRAM
   printf("  -F, --fastram SIZE         FastRAM size (in MB)\n");
 #endif
-#ifdef DIRECT_TRUECOLOR
-  printf("  -t, --direct_truecolor     patch TOS to enable direct true color, implies -f -r 16\n");
-#endif
 #ifdef DEBUGGER
   printf("  -D, --debug                start debugger\n");
 #endif
@@ -700,7 +682,6 @@ int process_cmdline(int argc, char **argv)
 							 "N"  /* no mouse */
 							 "f"  /* fullscreen */
 							 "v:" /* VIDEL refresh */
-							 "t"  /* direct truecolor */
 							 "r:" /* resolution */
 							 "m:" /* attached monitor */
 							 "d:" /* filesystem assignment */
@@ -750,12 +731,6 @@ int process_cmdline(int argc, char **argv)
 				bx_options.startup.grabMouseAllowed = false;
 				break;
 	
-#ifdef DIRECT_TRUECOLOR
-			case 't':
-				bx_options.video.direct_truecolor = true;
-				break;
-#endif
-
 			case 'm':
 				bx_options.video.monitor = atoi(optarg);
 				break;

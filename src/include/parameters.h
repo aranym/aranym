@@ -94,9 +94,6 @@ typedef struct {
   int8 boot_color_depth;		// boot color depth
   uint8 refresh;
   int8 monitor;				// VGA or TV
-#ifdef DIRECT_TRUECOLOR
-  bool direct_truecolor;	// patch TOS to enable direct true color
-#endif /* DIRECT_TRUECOLOR */
   bool autozoom;	// Autozoom enabled
   bool autozoomint;	// Autozoom with integer coefficients
 } bx_video_options_t;

@@ -269,38 +269,6 @@ Examples for a 320x200 atari screen on a 1024x768 host screen:
     Note: autozoominteger is automatically disabled if the atari screen
     is bigger than the host screen.
 
-4.2.2. Direct Truecolor (experimental, obsolete)
-------------------------------------------------
-
-  This was first working Aranym mode. Thanks to special patch of TOS
-the Blitter can draw directly into HOST graphics card memory without any
-overhead otherwise caused by converting the TOS bitplanes to HOST graphics
-mode. This mode has severe limitations, though. Only Falcon truecolor
-(16bit) can be used, you must use HOST framebuffer output and big endian
-capable graphics device is required for correct colors.
-
-  This mode is obsolete and is no more a part of Aranym. If you want to 
-test it you must reconfigure and recompile your Aranym binary:
-
-./configure --enable-directcolor
-
-  Optionally you may enable hardware acceleration:
-
-./configure --enable-blitmemmove
-  or
-./configure --enable-blitsdlblit
-
-
-  After recompiling you need to run Aranym with -t parameter to enable 
-Direct truecolor mode. In this case boot color depth (see above) will 
-be forced to 16 bpp.
-
-  Remember that in Direct TC mode only truecolor mode is displayed
-properly; all other modes will be messed! So make sure you have set
-truecolor mode in your NEWDESK.INF before you try to use direct TC
-mode. But once again, there is really no reason to use this obsolete
-mode.
-
 
 4.2.3. fVDI + Aranym driver           
 ---------------------------

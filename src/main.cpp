@@ -333,25 +333,6 @@ bool InitTOSROM(void)
 		ROMBaseHost[0x23f3] = 0x75;
 	}
 
-#ifdef DIRECT_TRUECOLOR
-	// patch it for direct TC mode
-	if (bx_options.video.direct_truecolor) {
-		// Patch TOS (enforce VIDEL VideoRAM at ARANYMVRAMSTART)
-		D(bug("Patching TOS for direct VIDEL output..."));
-
-		ROMBaseHost[35752] = 0x2e;
-		ROMBaseHost[35753] = 0x3c;
-		ROMBaseHost[35754] = ARANYMVRAMSTART >> 24;
-		ROMBaseHost[35755] = (ARANYMVRAMSTART >> 16) & 0xff;
-		ROMBaseHost[35756] = (ARANYMVRAMSTART >> 8) & 0xff;
-		ROMBaseHost[35757] = (ARANYMVRAMSTART) & 0xff;
-		ROMBaseHost[35758] = 0x60;
-		ROMBaseHost[35759] = 6;
-		ROMBaseHost[35760] = 0x4e;
-		ROMBaseHost[35761] = 0x71;
-	}
-#endif
-
 	infoprint("TOS 4.04 loading... [OK]");
 	return true;
 }
