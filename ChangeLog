@@ -1,3 +1,7 @@
+2005/01/08  Andreas Schwab
+- lilo.cpp: Load ramdisk at end of ST ram.  64-bit fixes.
+
+
 2005/01/08 - Petr Stehlik
 - mfp.cpp: irq handling (enable/pending/masked) copied bit-by-bit from STonC.
   And it seems to work! At last... Thanks, Laurent, for your great MFP
