@@ -1,4 +1,15 @@
-2001/07/09 - STanda - version increased to 0.0.5
+2001/07/13 - STanda
+- BLITTER function table restored. (the only - bad - thing is that all
+  BLITTER member data must be public to be able to work like this)
+
+- direct_truecolor mode made working again (was not probably since the
+  HostScreen creation)
+
+- note: the original fVDI driver sources compiled as they are and got
+  corrupted (parachute) one. fVDI author notified and requested the
+  whole source tree again.
+
+2001/07/09 - STanda 
 - SDL comunity solved our mouse problem in Xs! Get the newest SDL cvs,
   make & install
 
