@@ -63,7 +63,7 @@ Try starting ARAnyM with the option "--help" to find out more about its
 command line parameters. Also look at src/atari/aranymrc.example file
 for inspiration.
 
-The file INSTALL might provide more information in the future.
+The file INSTALL already provides more information on this topic.
 
 Just a couple of hints:
 
