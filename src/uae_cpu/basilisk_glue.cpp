@@ -125,17 +125,10 @@ void TriggerVBL(void)
 	regs.spcflags |= SPCFLAG_DOINT;
 }
 
-int timerCinterrupts = 0;
-void TriggerMFP(int no, int count)
+void TriggerMFP(int no)
 {
-	if (no == 5) {
+	if (no == 5)
 		regs.spcflags |= SPCFLAG_MFP_TIMERC;
-		/*
-		if (timerCinterrupts > 0)
-			fprintf(stderr, "TimerC clash!\n");
-		*/
-		timerCinterrupts += count;
-	}
 	else if (no == 6)
 		regs.spcflags |= SPCFLAG_MFP_ACIA;
 	else
@@ -249,17 +242,19 @@ void Execute68k(uint32 addr, struct M68kRegisters *r)
 	quit_program = 0;
 }
 
-static long lastMilisecond = 0;
+static long lastMillisecond = 0;
 
 void setVirtualTimer() {
-	lastMilisecond = SDL_GetTicks();
+	lastMillisecond = SDL_GetTicks();
 }
 
+/*
+ * called from the inner loop of CPU emulation
+ */ 
 void incrementVirtualTimer() {
-	long newMilisecond = SDL_GetTicks();
-	if (newMilisecond > lastMilisecond + 10) {
-		lastMilisecond = newMilisecond;
-		// 200 Hz interrupt
-		virtualInterrupt();
+	long newMillisecond = SDL_GetTicks();
+	if (newMillisecond >= lastMillisecond + 5) {// 5 ticks = 5 milliseconds
+		lastMillisecond += 5;					// 5 milliseconds = 200 Hz
+		invoke200HzInterrupt();					// 200 Hz interrupt
 	}
 }
