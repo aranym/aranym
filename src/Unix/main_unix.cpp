@@ -33,7 +33,7 @@
 #include "parameters.h"
 #include "newcpu.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #ifdef ENABLE_MON
@@ -305,6 +305,10 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.72  2002/07/16 18:06:42  milan
+ * hguide.txt updated, added section 9 (Checking memory boundary)
+ * hwsp possibility of checking memory boundary corrected
+ *
  * Revision 1.71  2002/07/15 19:04:06  milan
  * sigsegv.h never commited
  *
