@@ -317,8 +317,9 @@ int keysymToAtari(SDL_keysym keysym)
 		case SDLK_INSERT:	return 0x52;	/* Insert */
 		case SDLK_DELETE:	return 0x53;	/* Delete */
 
-		// Map Right Alt/Control to the Atari keys
+		// Map Right Alt/Alt Gr/Control to the Atari keys
 		case SDLK_RCTRL:	return 0x1d;	/* Control */
+		case SDLK_MODE:
 		case SDLK_RALT:		return 0x38;	/* Alternate */
 
 		default:
