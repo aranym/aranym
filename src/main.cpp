@@ -98,6 +98,8 @@ static uint32 lastTicks;
 SDL_TimerID my_timer_id = 0;
 #endif
 
+bool isGuiAvailable;
+
 uint32 InterruptFlags = 0;
 SDL_mutex *InterruptFlagLock;
 
@@ -426,7 +428,7 @@ bool InitAll(void)
 	InputInit();
 
 #ifdef SDL_GUI
-	SDLGui_Init();
+	isGuiAvailable = SDLGui_Init();
 #endif
 
 	// Init 680x0 emulation
@@ -497,6 +499,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.74  2002/07/15 18:24:15  milan
+ * extended sigsegv handler upgraded
+ *
  * Revision 1.73  2002/06/26 22:09:22  joy
  * don't try to init extern variables
  * do not support patched TOS 4.04 files

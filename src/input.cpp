@@ -424,6 +424,7 @@ static int but = 0;
 static bool mouseOut = false;
 
 #ifdef SDL_GUI
+extern bool isGuiAvailable;	// from main.cpp
 // TODO:
 // the following 3 vars should be in a struct passed by a pointer from input
 // Actually it should be a small FIFO buffer for mouse events
@@ -475,7 +476,7 @@ void process_keyboard_event(SDL_Event event)
 				}
 #ifdef SDL_GUI
 				else {
-					eventTyp = SDL_QUIT;
+					eventTyp = 0x12345678;
 				}
 #endif
 				break;
@@ -500,7 +501,7 @@ void process_keyboard_event(SDL_Event event)
 #endif
 #ifdef SDL_GUI
 				else {
-					if (!hostScreen.isGUIopen())
+					if (isGuiAvailable && !hostScreen.isGUIopen())
 						GUIthread = SDL_CreateThread(open_gui, NULL);
 				}
 #endif
