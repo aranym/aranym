@@ -27,7 +27,7 @@
 
 #ifndef VER_STATUS
 //#define VER_STATUS	"+CVS " __DATE__
-#define VER_STATUS	"beta1"
+#define VER_STATUS	"beta2"
 #endif
 
 #define str(x)		_stringify (x)

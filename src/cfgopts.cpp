@@ -33,9 +33,11 @@
 /					fcopy checks for incomplete write (disk full)	Joy/
 /          1.8.0  : C++ version, Boolean tag replaced with C++ bool,   /
 /                   Int_Tag added                                   Joy/
+/          1.8.1  : trim() - memmove() for overlapping memory. Thanks  /
+/                   to Thothy                                       Joy/
 /------------------------------------------------------------------->>*/
 /*	Please keep revision number current.							  */
-#define		  REVISION_NO "1.8.0"
+#define		  REVISION_NO "1.8.1"
 
 extern "C" {
 
@@ -101,7 +103,7 @@ char	*trim(char *buffer)
 
 		if (i > 0 && i < linelen) {
 			linelen -= i;
-			memcpy(buffer, buffer + i, linelen);	/* mezery zleva pryc */
+			memmove(buffer, buffer + i, linelen);	/* trim spaces on left */
 		}
 
 		for (i = linelen; i > 0; i--) {
@@ -110,7 +112,7 @@ char	*trim(char *buffer)
 				break;
 		}
 
-		buffer[i] = '\0';						/* mezery zprava pryc */
+		buffer[i] = '\0';						/* trim spaces on right */
 	}
 
 	return buffer;

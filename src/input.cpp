@@ -512,10 +512,8 @@ void process_keyboard_event(SDL_Event event)
 				break;
 
 			case SDLK_PRINT:
-				if (alternated) {
-					hostScreen.makeSnapshot();
-					send2Atari = false;
-				}
+				hostScreen.makeSnapshot();
+				send2Atari = false;
 				break;
 
 			case SDLK_SCROLLOCK:

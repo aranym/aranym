@@ -16,6 +16,7 @@
 #include "parameters.h"
 #include "toserror.h"
 #include "hostfs.h"
+#include "tools.h"
 #include "araobjs.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
@@ -43,40 +44,13 @@
 
 #include "../../atari/hostfs/hostfs_nfapi.h"	/* XFS_xx and DEV_xx enum */
 
-extern "C" {
 
-#if (defined(HAVE_WCHAR_T) && defined(OS_darwin))  // Stupid hack
-	static char* strapply( char* str, __wchar_t (*functor)(__wchar_t) )
-	{
-		char* pos = str;
-		while ( (*pos = (char)functor( (__wchar_t)*pos )) != 0 )
-			pos++;
-
-		return str;
-	}
-#else
-	static char* strapply( char* str, int (*functor)(int) )
-	{
-		char* pos = str;
-		while ( (*pos = (char)functor( (int)*pos )) != 0 )
-			pos++;
-
-		return str;
-	}
+// please remember to leave this define _after_ the reqired system headers!!!
+// some systems does define this to some important value for them....
+#ifndef O_BINARY
+# define O_BINARY 0
 #endif
 
-	static char* strd2upath( char* dest, char* src )
-	{
-		char* result = dest;
-		while( *src ) {
-			*dest++ = (*src == '\\' ? '/' : *src);
-			src++;
-		}
-		*dest=0;
-
-		return result;
-	}
-}
 
 
 #if 0
@@ -345,7 +319,8 @@ int32 HostFs::dispatch(uint32 fncode)
 			break;
 
 		case XFS_FSCNTL:
-			D(bug("%s", "fs_fscntl"));
+			fetchXFSC( &fc, getParameter(0) );
+			D(bug("fs_fscntl '%c'<<8|%d", (getParameter(2)>>8)&0xff ? (char)(getParameter(2)>>8)&0xff : 0x20, (char)(getParameter(2)&0xff)));
 			D(bug("fs_fscntl - NOT IMPLEMENTED!"));
 			ret = TOS_E_OK;
 			break;
@@ -420,9 +395,10 @@ int32 HostFs::dispatch(uint32 fncode)
 			break;
 
 		case DEV_IOCTL:
-			D(bug("%s", "fs_dev_ioctl"));
+			fetchXFSF( &extFile, getParameter(0) );
+			D(bug("fs_dev_ioctl '%c'<<8|%d", (getParameter(1)>>8)&0xff ? (char)(getParameter(1)>>8)&0xff : 0x20, (char)(getParameter(1)&0xff)));
 			D(bug("fs_dev_ioctl - NOT IMPLEMENTED!"));
-			ret = TOS_E_OK;
+			ret = TOS_EINVFN;
 			break;
 
 		case DEV_DATIME:
@@ -439,6 +415,7 @@ int32 HostFs::dispatch(uint32 fncode)
 			fetchXFSF( &extFile, getParameter(0) );
 			ret = xfs_dev_close( &extFile,
 								 0 ); // pid
+			flushXFSF( &extFile, getParameter(0) );
 			break;
 
 		case DEV_SELECT:
@@ -465,34 +442,37 @@ void HostFs::fetchXFSC( XfsCookie *fc, memptr filep )
 	fc->xfs	  = ReadInt32( filep );	 // fs
 	fc->dev	  = ReadInt16( filep + 4 );	 // dev
 	fc->aux	  = ReadInt16( filep + 6 );	 // aux
-	fc->index = (XfsFsFile*)ReadInt32( filep + 8 ); // index
+	fc->index = (XfsFsFile*)MAP32TOVOIDP( ReadInt32( filep + 8 ) ); // index
 }
 void HostFs::flushXFSC( XfsCookie *fc, memptr filep )
 {
 	WriteInt32( filep	 , fc->xfs );
 	WriteInt16( filep + 4, fc->dev );
 	WriteInt16( filep + 6, fc->aux );
-	WriteInt32( filep + 8, (uint32)fc->index );
+	WriteInt32( filep + 8, (uint32)MAPVOIDPTO32( fc->index ) );
 }
 
 void HostFs::fetchXFSF( ExtFile *extFile, memptr filep )
 {
 	extFile->links	= ReadInt16( filep );
 	extFile->flags	= ReadInt16( filep + 2 );
-	extFile->hostfd = ReadInt32( filep + 4 ); // offset not needed (replaced by the host fd)
-	extFile->devinfo= ReadInt32( filep + 8 );
+#if SIZEOF_INT != 4 || DEBUG_NON32BIT
+	extFile->hostFd = fdMapper.getNative( ReadInt32( filep + 4 ) ); // offset not needed (replaced by the host fd)
+#else
+	extFile->hostFd = (int)ReadInt32( filep + 4 ); // offset not needed (replaced by the host fd)
+#endif
 	fetchXFSC( &extFile->fc, filep + 12 ); // sizeof(12)
-	// 4bytes of the devdrvp
-	extFile->next	= ReadInt32( filep + 28 );
 }
 void HostFs::flushXFSF( ExtFile *extFile, memptr filep )
 {
 	WriteInt16( filep, extFile->links );
 	WriteInt16( filep + 2, extFile->flags );
-	WriteInt32( filep + 4, extFile->hostfd ); // instead of the offset
-	WriteInt32( filep + 8, extFile->devinfo );
+#if SIZEOF_INT != 4 || DEBUG_NON32BIT
+	WriteInt32( filep + 4, fdMapper.get32bit( extFile->hostFd ) ); // instead of the offset
+#else
+	WriteInt32( filep + 4, (uint32)extFile->hostFd ); // instead of the offset
+#endif
 	flushXFSC( &extFile->fc, filep + 12 ); // sizeof(12)
-	WriteInt32( filep + 28, extFile->next );
 }
 
 void HostFs::fetchXFSD( XfsDir *dirh, memptr dirp )
@@ -500,18 +480,14 @@ void HostFs::fetchXFSD( XfsDir *dirh, memptr dirp )
 	fetchXFSC( (XfsCookie*)dirh, dirp ); // sizeof(12)
 	dirh->index = ReadInt16( dirp + 12 );
 	dirh->flags = ReadInt16( dirp + 14 );
-	dirh->pathIndex = ReadInt16( dirp + 16 );
-	a2fmemcpy( (char*)&dirh->dir, dirp + 18, sizeof(dirh->dir) );
-	dirh->next	= (XfsDir*)ReadInt32( dirp + 76 );
+	a2fmemcpy( (char*)&dirh->hostDir, dirp + 18, sizeof(dirh->hostDir) );
 }
 void HostFs::flushXFSD( XfsDir *dirh, memptr dirp )
 {
 	flushXFSC( (XfsCookie*)dirh, dirp ); // sizeof(12)
 	WriteInt16( dirp + 12, dirh->index );
 	WriteInt16( dirp + 14, dirh->flags );
-	WriteInt16( dirp + 16, dirh->pathIndex );
-	f2amemcpy( dirp + 18, (char*)&dirh->dir, sizeof(dirh->dir) );
-	WriteInt32( dirp + 76, (uint32)dirh->next );
+	f2amemcpy( dirp + 18, (char*)&dirh->hostDir, sizeof(dirh->hostDir) );
 }
 
 
@@ -612,26 +588,57 @@ uint16 HostFs::statmode2xattrmode(mode_t m)
 
 int HostFs::st2flags(uint16 flags)
 {
-	switch(flags & 0x3)
-	{
-		case 0:
-			return O_RDONLY;
-		case 1:
-			return O_WRONLY;	/* kludge to avoid files being created */
-		case 2:
-			return O_RDWR;
-		default:
-			return O_RDWR;		/* this should never happen (the O_WRONLY|O_RDWR simultaneously) */
-	}
+	int res = O_RDONLY;
+
+	/* exclusive */
+	if (!(flags & 0x3))
+		res = O_RDONLY;
+	if (flags & 0x1)
+		res = O_WRONLY;
+	if (flags & 0x2)
+		res = O_RDWR;
+
+	if (flags & 0x200)
+		res |= O_CREAT;
+	if (flags & 0x400)
+		res |= O_TRUNC;
+	if (flags & 0x800)
+		res |= O_EXCL;
+	if (flags & 0x1000)
+		res |= O_APPEND;
+	if (flags & 0x100)
+		res |= O_NONBLOCK;
+	if (flags & 0x4000)
+		res |= O_NOCTTY;
+
+	return res;
 }
 
 
 int16 HostFs::flags2st(int flags)
 {
-	int16 res = 0;
+	int16 res = 0; /* default read only */
 
-	if (flags & O_WRONLY) res |= 1;
-	if (flags & O_RDWR) res |= 2;
+	/* exclusive */
+	if (!(flags & O_WRONLY|O_RDWR))
+		res = 0;
+	if (flags & O_WRONLY)
+		res = 1; /* write only/ kludge to avoid files being created */
+	if (flags & O_RDWR)
+		res = 2;
+
+	if (flags & O_CREAT)
+		res |= 0x200;
+	if (flags & O_TRUNC)
+		res |= 0x400;
+	if (flags & O_EXCL)
+		res |= 0x800;
+	if (flags & O_APPEND)
+		res |= 0x1000;
+	if (flags & O_NONBLOCK)
+		res |= 0x100;
+	if (flags & O_NOCTTY)
+		res |= 0x4000;
 
 	return res;
 }
@@ -904,7 +911,7 @@ void HostFs::convertPathA2F( ExtDrive *drv, char* fpathName, char* pathName, con
 
 		getHostFileName( ffileName, drv, fpathName, n );
 		ffileName += strlen( ffileName );
-		*ffileName++ = '/';
+		*ffileName++ = DIRSEPARATOR[0];
 
 		*tp = sep;
 		n = tp+1;
@@ -939,16 +946,20 @@ char *HostFs::cookie2Pathname( HostFs::XfsFsFile *fs, const char *name, char *bu
 	}
 	else
 	{
-		char *h;
 		if (!cookie2Pathname(fs->parent, fs->name, buf))
 			return NULL;
 		if (name && *name)
 		{
-			if ((h = strchr(buf, '\0'))[-1] != '/')
-				*h++ = '/';
-
-			*h = '\0';
-			getHostFileName( h, NULL, buf, name );
+			// make sure there's the right trailing dir separator
+			int len = strlen(buf);
+			if (len > 0) {
+				char *last = buf + len-1;
+				if (*last == '\\' || *last == '/') {
+					*last = '\0';
+				}
+				strcat(buf, DIRSEPARATOR);
+			}
+			getHostFileName( buf + strlen(buf), NULL, buf, name );
 		}
 	}
 	D2(bug("HOSTFS: cookie2pathname '%s'", buf));
@@ -1024,33 +1035,6 @@ int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 }
 
 
-/*
- * Check if the path is valid (if folders of the filename exist)
- * return true if stat(folders) was OK, else otherwise
- */
-bool HostFs::isPathValid(const char *fileName)
-{
-	char *path = strdup(fileName);
-	char *end = strrchr(path, '/');
-	if (end != NULL)
-		*end = '\0';
-	D(bug("Checking folder validity of path '%s'", path));
-	if (*path) {
-		struct stat statBuf;
-#if DEBUG
-		if (int staterr = stat(path, &statBuf) < 0) {
-			D(bug("stat(%s) returns %d, errno=%d", path, staterr, errno));
-			return false;	// path invalid
-		}
-#else
-		if (stat(path, &statBuf) < 0)
-			return false;	// path invalid
-#endif
-	}
-	return true;
-}
-
-
 int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, XfsCookie *fc )
 {
 	char fname[2048];
@@ -1063,16 +1047,14 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 	char fpathName[MAXPATHNAMELEN];
 	convertPathA2F( mounts.find(dir->dev)->second, fpathName, pathName, "" ); // convert the fname into the hostfs form (check the 8+3 file existence)
 
-	int fd = open( fpathName, O_CREAT|O_WRONLY|O_TRUNC
-#ifdef O_BINARY
-					| O_BINARY
-#endif
-					, mode );
+	D(bug("HOSTFS:  dev_creat (%s,%x)", fpathName, flags));
+
+	int fd = open( fpathName, O_CREAT|O_WRONLY|O_TRUNC|O_BINARY, mode );
 	if (fd < 0)
 		return unix2toserrno(errno,TOS_EFILNF);
 	close( fd );
 
-	XfsFsFile *newFsFile = new XfsFsFile();
+	XfsFsFile *newFsFile = new XfsFsFile();	MAPNEWVOIDP( newFsFile );
 	newFsFile->name = strdup( fname );
 	newFsFile->refCount = 1;
 	newFsFile->childCount = 0;
@@ -1082,6 +1064,7 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 	*fc = *dir;
 	fc->index = newFsFile;
 
+	D(bug("HOSTFS: /dev_creat (%s,%d)", fpathName, flags));
 	return TOS_E_OK;
 }
 
@@ -1115,25 +1098,18 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname(fp->fc.index, NULL, fpathName);
 
-	D(bug("HOSTFS: dev_open (%s,%d)", fpathName, fp->flags));
+	D(bug("HOSTFS:  dev_open (%s, %d)", fpathName, fp->flags));
 
-	int fd = open( fpathName, st2flags(fp->flags)
-#ifdef O_BINARY
-					| O_BINARY
-#endif
-					, 0 );
-	if (fd < 0) {
-		if (! isPathValid( fpathName ))
-			return TOS_EPTHNF;
-		else
-			return unix2toserrno(errno,TOS_EFILNF);
-	}
+	int fd = open( fpathName, st2flags(fp->flags)|O_BINARY, 0 );
+	if (fd < 0)
+		return unix2toserrno(errno,TOS_EFILNF);
+	fp->hostFd = fd;
 
-	fp->offset = 0;
-	fp->hostfd = fd;
+    #if SIZEOF_INT != 4 || DEBUG_NON32BIT
+		fdMapper.putNative( fp->hostFd );
+    #endif
 
-	D(bug("HOSTFS: dev_open (fd = %ld)", fp->hostfd));
-
+	D(bug("HOSTFS: /dev_open (fd = %ld)", fp->hostFd));
 	return TOS_E_OK;
 
 }
@@ -1141,11 +1117,18 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 
 int32 HostFs::xfs_dev_close(ExtFile *fp, int16 pid)
 {
-	D(bug("HOSTFS: dev_close (%ld, %d)", fp->hostfd, pid));
+	D(bug("HOSTFS:  dev_close (fd = %d, links = %d, pid = %d)", fp->hostFd, fp->links, pid));
 
-	if ( fp->links <= 0 )
-		if ( close( fp->hostfd ) )
+	if ( fp->links <= 0 ) {
+		if ( close( fp->hostFd ) )
 			return unix2toserrno(errno,TOS_EIO);
+
+        #if SIZEOF_INT != 4 || DEBUG_NON32BIT
+			fdMapper.removeNative( fp->hostFd );
+	    #endif
+
+	    D(bug("HOSTFS: /dev_close (fd = %d, %d)", fp->hostFd, pid));
+	}
 
 	return TOS_E_OK;
 }
@@ -1161,21 +1144,20 @@ int32 HostFs::xfs_dev_read(ExtFile *fp, memptr buffer, uint32 count)
 	ssize_t toRead = count;
 	ssize_t toReadNow;
 
-	D(bug("HOSTFS: dev_read (%d)", count));
+	D(bug("HOSTFS:  dev_read (fd = %d, %d)", fp->hostFd, count));
 
 	while ( toRead > 0 ) {
 		toReadNow = ( toRead > FRDWR_BUFFER_LENGTH ) ? FRDWR_BUFFER_LENGTH : toRead;
-		readCount = read( fp->hostfd, fBuff, toReadNow );
+		readCount = read( fp->hostFd, fBuff, toReadNow );
 		if ( readCount <= 0 )
 			break;
 
-		fp->offset += readCount;
 		f2amemcpy( destBuff, (char*)fBuff, readCount );
 		destBuff += readCount;
 		toRead -= readCount;
 	}
 
-	D(bug("HOSTFS: dev_read readCount (%d)", count - toRead));
+	D(bug("HOSTFS: /dev_read readCount (%d)", count - toRead));
 	if ( readCount < 0 )
 		return unix2toserrno(errno,TOS_EINTRN);
 
@@ -1191,21 +1173,20 @@ int32 HostFs::xfs_dev_write(ExtFile *fp, memptr buffer, uint32 count)
 	ssize_t toWriteNow;
 	ssize_t writeCount = 0;
 
-	D(bug("HOSTFS: dev_write (%d)", count));
+	D(bug("HOSTFS:  dev_write (fd = %d, %d)", fp->hostFd, count));
 
 	while ( toWrite > 0 ) {
 		toWriteNow = ( toWrite > FRDWR_BUFFER_LENGTH ) ? FRDWR_BUFFER_LENGTH : toWrite;
 		a2fmemcpy( (char*)fBuff, sourceBuff, toWriteNow );
-		writeCount = write( fp->hostfd, fBuff, toWriteNow );
+		writeCount = write( fp->hostFd, fBuff, toWriteNow );
 		if ( writeCount <= 0 )
 			break;
 
-		fp->offset += writeCount;
 		sourceBuff += writeCount;
 		toWrite -= writeCount;
 	}
 
-	D(bug("HOSTFS: dev_write writeCount (%d)", count - toWrite));
+	D(bug("HOSTFS: /dev_write writeCount (%d)", count - toWrite));
 	if ( writeCount < 0 )
 		return unix2toserrno(errno,TOS_EINTRN);
 
@@ -1217,7 +1198,7 @@ int32 HostFs::xfs_dev_lseek(ExtFile *fp, int32 offset, int16 seekmode)
 {
 	int whence;
 
-	D(bug("HOSTFS: dev_lseek (%d,%d)", offset, seekmode));
+	D(bug("HOSTFS:  dev_lseek (fd = %d,offset = %d,mode = %d)", fp->hostFd, offset, seekmode));
 
 	switch (seekmode) {
 		case 0:	 whence = SEEK_SET; break;
@@ -1226,14 +1207,13 @@ int32 HostFs::xfs_dev_lseek(ExtFile *fp, int32 offset, int16 seekmode)
 		default: return TOS_EINVFN;
 	}
 
-	off_t newoff = lseek( fp->hostfd, offset, whence);
+	off_t newoff = lseek( fp->hostFd, offset, whence);
 
-	D(bug("HOSTFS: dev_lseek (%d,%d,%d)", offset, seekmode, (int32)newoff));
+	D(bug("HOSTFS: /dev_lseek (offset = %d,mode = %d,resoffset = %d)", offset, seekmode, (int32)newoff));
 
 	if ( newoff == -1 )
 		return unix2toserrno(errno,TOS_EIO);
 
-	fp->offset = (int32)newoff;
 	return newoff;
 }
 
@@ -1328,7 +1308,7 @@ int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname( fp->fc.index, NULL, fpathName );
 
-	D(bug("HOSTFS: dev_datime (%s)", fpathName));
+	D(bug("HOSTFS:  dev_datime (%s)", fpathName));
 	struct stat statBuf;
 
 	if ( stat(fpathName, &statBuf) )
@@ -1345,7 +1325,7 @@ int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 
 		utime( fpathName, &tmb );
 
-		D(bug("HOSTFS: dev_datime: setting to: %d.%d.%d %d:%d.%d",
+		D(bug("HOSTFS: /dev_datime: setting to: %d.%d.%d %d:%d.%d",
 				  ttm.tm_mday,
 				  ttm.tm_mon,
 				  ttm.tm_year + 1900,
@@ -1391,7 +1371,7 @@ int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 
 	switch (which) {
 		case -1:
-			return 7;  // maximal which value
+			return 9;  // maximal which value
 
 		case 0:	  // DP_IOPEN
 			return 0x7fffffffL; // unlimited
@@ -1428,7 +1408,6 @@ int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 			return 0;  // files are NOT truncated... (hope correct)
 
 		case 6: { // DP_CASE
-		// FIXME: Has to be different for .XFS and for HOSTFS.
 #if FIXME
 			if ( drv )
 				return drv->halfSensitive ? 2 : 0; // full case sensitive
@@ -1437,15 +1416,13 @@ int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 				return 0;
 		}
 		case 7:	  // D_XATTRMODE
-		// FIXME: Has to be different for .XFS and for HOSTFS.
-			return 0x0ff0001fL;	 // only the archive bit is not recognised in the fs_getxattr
+			return 0x0fffffdfL;	 // only the archive bit is not recognised in the fs_getxattr
 
-#if 0 // Not supported now
+#if 1 // supported now ;)
 		case 8:	  // DP_XATTR
-		// This argument should be set accordingly to the filesystem type mounted
-		// to the particular path.
-		// FIXME: Has to be different for .XFS and for HOSTFS.
-			return 0x000009fbL;	 // rdev is not used
+			// FIXME: This argument should be set accordingly to the filesystem type mounted
+			// to the particular path.
+			return 0x00000ffbL;	 // rdev is not used
 
 		case 9:	  // DP_VOLNAMEMAX
 			return 0;
@@ -1467,8 +1444,8 @@ int32 HostFs::xfs_opendir( XfsDir *dirh, uint16 flags )
 	dirh->flags = flags;
 	dirh->index = 0;
 
-	dirh->dir = opendir( fpathName );
-	if ( dirh->dir == NULL )
+	dirh->hostDir = opendir( fpathName );
+	if ( dirh->hostDir == NULL )
 		return unix2toserrno(errno,TOS_EPTHNF);
 
 	return TOS_E_OK;
@@ -1478,7 +1455,7 @@ int32 HostFs::xfs_opendir( XfsDir *dirh, uint16 flags )
 
 int32 HostFs::xfs_closedir( XfsDir *dirh )
 {
-	if ( closedir( dirh->dir ) )
+	if ( closedir( dirh->hostDir ) )
 		return unix2toserrno(errno,TOS_EPTHNF);
 
 	return TOS_E_OK;
@@ -1490,18 +1467,13 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 	struct dirent *dirEntry;
 
 
-#if 0
-	if ((void*)(dirEntry = readdir( dirh->dir )) == NULL)
-		return unix2toserrno(errno,TOS_ENMFIL);
-#else
 	do {
-		if ((void*)(dirEntry = readdir( dirh->dir )) == NULL)
+		if ((void*)(dirEntry = readdir( dirh->hostDir )) == NULL)
 			return TOS_ENMFIL;
 	} while ( !dirh->fc.index->parent &&
 			  ( dirEntry->d_name[0] == '.' &&
 				( !dirEntry->d_name[1] ||
 				  ( dirEntry->d_name[1] == '.' && !dirEntry->d_name[2] ) ) ) );
-#endif
 
 	XfsFsFile *newFsFile = new XfsFsFile();
 	newFsFile->name = strdup( dirEntry->d_name );
@@ -1528,6 +1500,8 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 
 	dirh->index++;
 	dirh->fc.index->childCount++;
+
+	MAPNEWVOIDP( newFsFile );
 	newFsFile->parent = dirh->fc.index;
 	newFsFile->refCount = 1;
 	newFsFile->childCount = 0;
@@ -1543,7 +1517,7 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 
 int32 HostFs::xfs_rewinddir( XfsDir *dirh )
 {
-	rewinddir( dirh->dir );
+	rewinddir( dirh->hostDir );
 	dirh->index = 0;
 	return TOS_E_OK;
 }
@@ -1651,7 +1625,7 @@ int32 HostFs::xfs_root( uint16 dev, XfsCookie *fc )
 	fc->xfs = it->second->fsDrv;
 	fc->dev = dev;
 	fc->aux = 0;
-	fc->index = new XfsFsFile();
+	fc->index = new XfsFsFile(); MAPNEWVOIDP( fc->index );
 
 	fc->index->parent = NULL;
 	fc->index->name = it->second->hostRoot;
@@ -1745,6 +1719,7 @@ void HostFs::xfs_freefs( XfsFsFile *fs )
 			xfs_freefs( fs->parent );
 			free( fs->name );
 		}
+		MAPDELVOIDP( fs );
 		delete fs;
 	} else {
 		D2(bug( "freefs: notfree" ));
@@ -1793,6 +1768,7 @@ int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 		if ( lstat( fpathName, &statBuf ) )
 			return unix2toserrno( errno, TOS_EFILNF );
 
+		MAPNEWVOIDP( newFsFile );
 		newFsFile->name = strdup(fname);
         newFsFile->refCount = 1;
         newFsFile->childCount = 0;
@@ -1819,7 +1795,7 @@ int32 HostFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, in
 
     D2(bug( "HOSTFS: fs_getname: relto = \"%s\"", base ));
     size_t baselength = strlen(base);
-    if ( baselength && base[baselength-1] == '/' ) {
+    if ( baselength && base[baselength-1] == DIRSEPARATOR[0] ) {
         baselength--;
         base[baselength] = '\0';
         D2(bug( "HOSTFS: fs_getname: fixed relto = \"%s\"", base ));
@@ -1873,6 +1849,7 @@ int32 HostFs::xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook )
     } else
         fs->name = mounts.find(oldCook->dev)->second->hostRoot;
 
+	MAPNEWVOIDP( fs );
     fs->refCount = 1;
     fs->childCount = 0; /* don't heritate childs! */
 
@@ -1980,6 +1957,33 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.11.2.7  2003/04/08 00:42:14  standa
+ * The st2flags() and flags2st() methods fixed (a need for open()).
+ * The isPathValid() method removed (was only useful for aranymfs.dos).
+ * Dpathconf(8-9) added and 7 fixed (Thing has a bug in 1.27 here IIRC).
+ * General debug messages cleanup.
+ *
+ * Revision 1.11.2.6  2003/04/03 12:11:29  standa
+ * 32bit <-> host mapping + general hostfs cleanup.
+ *
+ * Revision 1.11.2.5  2003/03/28 13:19:58  joy
+ * little compile fixes
+ *
+ * Revision 1.11.2.4  2003/03/28 12:59:07  joy
+ * little fix 2nd
+ *
+ * Revision 1.11.2.3  2003/03/28 12:57:38  joy
+ * little fix
+ *
+ * Revision 1.11.2.2  2003/03/28 11:45:30  joy
+ * DIRSEP in hostfs
+ *
+ * Revision 1.11.2.1  2003/03/26 18:18:15  milan
+ * stolen from head
+ *
+ * Revision 1.12  2003/03/24 19:11:00  milan
+ * Solaris support updated
+ *
  * Revision 1.11  2003/03/20 21:27:22  standa
  * The .xfs mapping to the U:\G mountpouints (single letter) implemented.
  *

@@ -2657,6 +2657,12 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.62.2.1  2003/03/26 18:18:15  milan
+ * stolen from head
+ *
+ * Revision 1.63  2003/03/24 19:11:00  milan
+ * Solaris support updated
+ *
  * Revision 1.62  2003/02/17 14:20:20  standa
  * #if defined(OS_beos) used.
  *

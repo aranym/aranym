@@ -49,7 +49,7 @@ void VIDEL::init()
 	hostScreen.setWindowSize( width, height, 8 );
 }
 
-// monitor writting to Falcon and ST/E color palette registers
+// monitor writing to Falcon and ST/E color palette registers
 void VIDEL::handleWrite(uint32 addr, uint8 value)
 {
 	BASE_IO::handleWrite(addr, value);
@@ -915,6 +915,12 @@ void VIDEL::renderScreenZoom()
 
 /*
  * $Log$
+ * Revision 1.50.2.1  2003/03/28 20:15:26  joy
+ * typo errors fixed
+ *
+ * Revision 1.50  2003/02/19 23:28:41  joy
+ * st_shift reset fixed, preinit of videl regs removed, startup bpp window is 8bit
+ *
  * Revision 1.49  2003/02/18 17:10:09  joy
  * ChangeLog
  *

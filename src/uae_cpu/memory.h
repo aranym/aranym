@@ -95,7 +95,7 @@ static inline void check_ram_boundary(uaecptr addr, int size, bool write)
 #endif
 		return;
 
-	// D(bug("BUS ERROR %s at $%x\n", (write ? "writting" : "reading"), addr));
+	// D(bug("BUS ERROR %s at $%x\n", (write ? "writing" : "reading"), addr));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, 2);
 #endif

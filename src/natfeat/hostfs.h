@@ -7,7 +7,11 @@
 #ifndef _HOSTFS_H
 #define _HOSTFS_H
 
+#ifdef HOSTFS_SUPPORT
+
+
 #include "nf_base.h"
+#include "tools.h"
 #ifdef HAVE_NEW_HEADERS
 # include <map>
 #else
@@ -15,56 +19,46 @@
 #endif
 
 
-// FIXME: it is stupid to place these here,
-//        but I didn't want to touch many files in CVS ;(
-//	      Feel free to move it anywhere
-#ifndef MIN
-#define MIN(_a,_b) ((_a)<(_b)?(_a):(_b))
-#endif
-#ifndef MAX
-#define MAX(_a,_b) ((_a)>(_b)?(_a):(_b))
-#endif
 
 
-#define MAXPATHNAMELEN 2048
-
-#ifdef HOSTFS_SUPPORT
-class HostFs : public NF_Base {
-  private:
+class HostFs : public NF_Base
+{
+	// the maximum pathname length allowed
+	// note: this would be nice to be rewriten using
+	//       the std::string to become unlimited
+	static const int MAXPATHNAMELEN = 2048;
 
 	struct XfsFsFile {
 		XfsFsFile *parent;
 		uint32	  refCount;
 		uint32	  childCount;
+
 		char	  *name;
 	};
 
 	struct XfsCookie {
-		uint32    xfs;
-		uint16    dev;
-		uint16    aux;
-		XfsFsFile *index;
+		memptr    xfs;          // m68k filesystem pointer
+		uint16    dev;          // device number
+		uint16    aux;          // used by FreeMiNT (custom filsystem field)
+		XfsFsFile *index;       // the filesystem implementation specific structure (host one)
 	};
 
 	struct ExtFile {
-		XfsCookie fc;
-		int16	  index;
-		int16	  flags;
-		int16	  links;
-		int32	  hostfd;
-		int32	  offset;
-		int32	  devinfo;
-		uint32	  next;
-	} ;				// See MYFILE in Julian's COOK_FS
+		XfsCookie fc;           // file cookie like in FreeMiNT
+		int16	  flags;        // open flags
+		int16	  links;        // number of MetaDOS's pointers that points to this
+
+		int       hostFd;       // host filedescriptor of the file
+	};
 
 	struct XfsDir {
 		XfsCookie fc;			// cookie for this directory
 		uint16    index;		// index of the current entry
 		uint16    flags;		// flags (e. g. tos or not)
-		DIR       *dir;			// used DIR
-		int16	  pathIndex;	// index of the pathName in the internal pool FIXME?
-		XfsDir	  *next;		// linked together so we can close them to process term
+
+		DIR       *hostDir;		// used DIR (host one)
 	};
+
 
 	struct ExtDrive	{
 		int16     driveNumber;
@@ -81,10 +75,15 @@ class HostFs : public NF_Base {
 		}
 	};
 
+	// mountpoints map
 	typedef std::map<int16,ExtDrive*> MountMap;
 	MountMap mounts;
 
-	bool isPathValid(const char *fileName);
+	#if SIZEOF_INT != 4 || DEBUG_NON32BIT
+		// host filedescriptor mapper
+		NativeTypeMapper<int> fdMapper;
+	#endif
+
 	void xfs_debugCookie( XfsCookie *fc );
 
   public:
@@ -97,8 +96,7 @@ class HostFs : public NF_Base {
 	uint32 getDrvBits();
 
 	HostFs() {}
-	virtual ~HostFs() {
-	}
+	virtual ~HostFs() {}
 
 	/**
 	 * MetaDos DOS driver dispatch functions.
@@ -173,13 +171,25 @@ class HostFs : public NF_Base {
 
 };
 
-#endif /* HOSTFS_SUPPORT */
+#endif // HOSTFS_SUPPORT
 
 #endif // _HOSTFS_H
 
 
 /*
  * $Log$
+ * Revision 1.6.2.2  2003/04/08 00:42:14  standa
+ * The st2flags() and flags2st() methods fixed (a need for open()).
+ * The isPathValid() method removed (was only useful for aranymfs.dos).
+ * Dpathconf(8-9) added and 7 fixed (Thing has a bug in 1.27 here IIRC).
+ * General debug messages cleanup.
+ *
+ * Revision 1.6.2.1  2003/04/03 12:11:29  standa
+ * 32bit <-> host mapping + general hostfs cleanup.
+ *
+ * Revision 1.6  2003/03/20 01:08:17  standa
+ * HOSTFS mapping update.
+ *
  * Revision 1.5  2003/03/17 09:42:39  standa
  * The chattr,chmod implementation ported from stonx.
  *

@@ -79,6 +79,7 @@ SRCS = ../main.cpp \
 	../romdiff.cpp \
 	../midi.cpp \
 	../ikbd.cpp \
+	../tools.cpp \
 	../natfeat/nf_base.cpp \
 	../natfeat/nf_objs.cpp \
 	../natfeat/xhdi.cpp \

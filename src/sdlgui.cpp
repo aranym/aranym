@@ -9,6 +9,7 @@
 #include "host.h"
 #include "sdlgui.h"
 #include "file.h"
+#include "tools.h"
 #include "debug.h"
 
 #ifdef HAVE_NEW_HEADERS
@@ -52,8 +53,16 @@ extern int eventY;
 */
 bool SDLGui_Init()
 {
-  char fontname[256];
-  sprintf(fontname, "%s/font8.bmp", DATADIR);
+  char fontname[512];
+
+  getDataFilename("font8.bmp", fontname, sizeof(fontname));
+
+#ifdef OS_cygwin
+  // SDL for Cygwin is compiled with -mno-cygwin, unfortunately.
+  // SDL_LoadBMP() is thus unable to handle Unix-like paths.
+  // We must convert the fontname to Win32 explicitly.
+  cygwin_path_to_win32(fontname, sizeof(fontname));
+#endif
 
   /* Load the font graphics: */
   stdfontgfx = SDL_LoadBMP(fontname);

@@ -8,7 +8,6 @@
 
 #include "cpu_emulation.h"
 #include "main.h"
-#include "parameters.h"
 #include "ethernet.h"
 
 #define DEBUG 0
@@ -148,7 +147,7 @@ int ETHERNETDriver::get_params(GET_PAR which)
 	uint32 name_maxlen = getParameter(2);
 	char *text = NULL;
 
-	D(bug("Ethernet: getPAR(%d) to (%d, %p, %d)", which, ethX, name_ptr, name_maxlen));
+	D(bug("Ethernet: getPAR(%d) to (%p, %d)", which, name_ptr, name_maxlen));
 
 	if (! ValidAddr(name_ptr, true, name_maxlen))
 		BUS_ERROR(name_ptr);
@@ -226,31 +225,6 @@ bool ETHERNETDriver::init(void)
 		return false;
 	}
 
-	// prepare exec path to aratapif
-	char tapifPath[500];
-	strcpy(tapifPath, program_name);
-	char *ptr = strrchr(tapifPath, '/');
-	if (ptr != NULL)
-		ptr[1] = '\0';	// strip out filename from the path
-	else
-		ptr[0] = '\0';
-	strcat(tapifPath, TAP_INIT);
-
-	// make sure aratapif is available and suid root
-	struct stat buf;
-	if (stat(tapifPath, &buf)) {
-		panicbug("Ethernet ERROR: '%s' not found. Ethernet disabled!", tapifPath);
-		close(fd);
-		fd = -1;
-		return false;
-	}
-	if (buf.st_uid != 0) {
-		panicbug("Ethernet warning: '%s' is not owned by root", tapifPath);
-	}
-	if ((buf.st_mode & S_ISUID) == 0) {
-		panicbug("Ethernet warning: '%s' is not setuid", tapifPath);
-	}
-
 	int pid = fork();
 	if (pid < 0) {
 		panicbug("Ethernet ERROR: fork() failed. Ethernet disabled!");
@@ -270,8 +244,8 @@ bool ETHERNETDriver::init(void)
 			TAP_MTU, NULL
 		};
 		int result;
-		result = execv( tapifPath, args );
-		::exit(result);
+		result = execvp( TAP_INIT, args );
+		_exit(result);
 	}
 
 	D(bug("waiting for "TAP_INIT" at pid %d", pid));
@@ -279,8 +253,12 @@ bool ETHERNETDriver::init(void)
 	waitpid(pid, &status, 0);
 	bool failed = true;
 	if (WIFEXITED(status)) {
-		if (WEXITSTATUS(status)) {
-			panicbug("Ethernet ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", WEXITSTATUS(status));
+		int err = WEXITSTATUS(status);
+		if (err == 255) {
+			panicbug("Ethernet ERROR: "TAP_INIT" not found. Ethernet disabled!");
+		}
+		else if (err != 0) {
+			panicbug("Ethernet ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", err);
 		}
 		else {
 			failed = false;
