@@ -27,39 +27,62 @@ extern uint32 FastRAMSize;
 #define ARANYMVRAMSTART 0xf0000000UL
 #define ARANYMVRAMSIZE	0x00100000	// should be a variable to protect VGA card offscreen memory
 
+extern uintptr VMEMBaseDiff;
+
 #if REAL_ADDRESSING
 const uintptr MEMBaseDiff = 0;
-#endif
 
-#if DIRECT_ADDRESSING
-extern uintptr MEMBaseDiff;
-#endif
+# ifdef FULLMMU
+#  define do_get_real_address(a,b,c)	do_get_real_address_mmu(a,b,c)
+#  define get_long(a,b)			get_long_mmu(a,b)
+#  define get_word(a,b)			get_word_mmu(a,b)
+#  define get_byte(a,b)			get_byte_mmu(a,b)
+#  define put_long(a,b)			put_long_mmu(a,b)
+#  define put_word(a,b)			put_word_mmu(a,b)
+#  define put_byte(a,b)			put_byte_mmu(a,b)
+#  define get_real_address(a,b,c)	get_real_address_mmu(a,b,c)
+# else
+#  define do_get_real_address(a,b,c)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a)) : ((uae_u8*)(a) + VMEMBaseDiff))
+#  define get_long(a,b)			get_long_direct(a)
+#  define get_word(a,b)			get_word_direct(a)
+#  define get_byte(a,b)			get_byte_direct(a)
+#  define put_long(a,b)			put_long_direct(a,b)
+#  define put_word(a,b)			put_word_direct(a,b)
+#  define put_byte(a,b)			put_byte_direct(a,b)
+#  define get_real_address(a,b,c)	get_real_address_direct(a)
+# endif /* FULLMMU */
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
-extern uintptr VMEMBaseDiff;
-#ifdef FULLMMU
-# define do_get_real_address(a,b,c)	do_get_real_address_mmu(a,b,c)
-# define get_long(a,b)			get_long_mmu(a,b)
-# define get_word(a,b)			get_word_mmu(a,b)
-# define get_byte(a,b)			get_byte_mmu(a,b)
-# define put_long(a,b)			put_long_mmu(a,b)
-# define put_word(a,b)			put_word_mmu(a,b)
-# define put_byte(a,b)			put_byte_mmu(a,b)
-# define get_real_address(a,b,c)	get_real_address_mmu(a,b,c)
+# define do_get_real_address_direct(a)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a)) : ((uae_u8 *)(a) + VMEMBaseDiff))
+
 #else
-# define do_get_real_address(a,b,c)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8*)(a) + VMEMBaseDiff))
-# define get_long(a,b)			get_long_direct(a)
-# define get_word(a,b)			get_word_direct(a)
-# define get_byte(a,b)			get_byte_direct(a)
-# define put_long(a,b)			put_long_direct(a,b)
-# define put_word(a,b)			put_word_direct(a,b)
-# define put_byte(a,b)			put_byte_direct(a,b)
-# define get_real_address(a,b,c)	get_real_address_direct(a)
-#endif /* FULLMMU */
+extern uintptr MEMBaseDiff;
 
-#define do_get_real_address_direct(a)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff))
+# ifdef FULLMMU
+#  define do_get_real_address(a,b,c)	do_get_real_address_mmu(a,b,c)
+#  define get_long(a,b)			get_long_mmu(a,b)
+#  define get_word(a,b)			get_word_mmu(a,b)
+#  define get_byte(a,b)			get_byte_mmu(a,b)
+#  define put_long(a,b)			put_long_mmu(a,b)
+#  define put_word(a,b)			put_word_mmu(a,b)
+#  define put_byte(a,b)			put_byte_mmu(a,b)
+#  define get_real_address(a,b,c)	get_real_address_mmu(a,b,c)
+# else
+#  define do_get_real_address(a,b,c)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8*)(a) + VMEMBaseDiff))
+#  define get_long(a,b)			get_long_direct(a)
+#  define get_word(a,b)			get_word_direct(a)
+#  define get_byte(a,b)			get_byte_direct(a)
+#  define put_long(a,b)			put_long_direct(a,b)
+#  define put_word(a,b)			put_word_direct(a,b)
+#  define put_byte(a,b)			put_byte_direct(a,b)
+#  define get_real_address(a,b,c)	get_real_address_direct(a)
+# endif /* FULLMMU */
 
-#define InitMEMBaseDiff(va, ra)		(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
+# define do_get_real_address_direct(a)		(((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff))
+
+# define InitMEMBaseDiff(va, ra)		(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
+
+#endif /* REAL_ADDRESSING */
+
 #define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 
 static __inline__ void check_ram_boundary(uaecptr addr, bool write = false)
@@ -143,8 +166,6 @@ static __inline__ int valid_address(uaecptr addr, uae_u32 size)
 {
     return 1;
 }
-
-#endif /* DIRECT_ADDRESSING || REAL_ADDRESSING */
 
 static __inline__ uae_u8 *get_real_address_direct(uaecptr addr)
 {

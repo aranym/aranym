@@ -479,15 +479,19 @@ bool InitROM(void) {
 
 bool InitAll(void)
 {
+#ifndef NOT_MALLOC
 	if (ROMBaseHost == NULL) {
 		if ((RAMBaseHost = (uint8 *)malloc(RAMSize + ROMSize + FastRAMSize)) == NULL) {
 			ErrorAlert("Not enough free memory.\n");
 			return false;
 		}
-		MEMBaseDiff = (uintptr)RAMBaseHost;
 		ROMBaseHost = (uint8 *)(RAMBaseHost + ROMBase);
 		FastRAMBaseHost = (uint8 *)(RAMBaseHost + FastRAMBase);
 	}
+#endif
+
+	if (!InitMEM())
+		return false;
 
 	if (! InitROM())
 		return false;
@@ -565,6 +569,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.22  2001/10/08 21:46:05  standa
+ * The $Header$ and $Log$ CVS tags added.
+ *
  *
  *
  */

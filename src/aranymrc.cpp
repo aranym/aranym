@@ -56,7 +56,7 @@
 const int cmOpenRc	= 200;
 const int cmSaveRc	= 202;
 
-uint32 TTRAMSize;	// Size of TT-RAM
+uint32 FastRAMSize;	// Size of FastRAM
 char IDE0cyl[11];
 char IDE0hea[11];
 char IDE0spt[11];
@@ -377,6 +377,9 @@ int main(int argc, char **argv)
 
 /*
  * $Log$
+ * Revision 1.2  2001/09/25 00:04:17  milan
+ * cleaning of memory managment
+ *
  * Revision 1.1  2001/08/29 18:36:25  milan
  * Integration of TV conf. GUI, small patches of MMU and debugger
  *

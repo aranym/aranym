@@ -52,36 +52,33 @@ uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)
 //uint32 VideoRAMSize;	// Size of VideoRAM
 uint32 InterruptFlags;
 
-#if DIRECT_ADDRESSING
+#ifndef NOT_MALLOC
 uintptr MEMBaseDiff;	// Global offset between a Atari address and its Host equivalent
 #endif
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+
 uintptr VMEMBaseDiff;	// Global offset between a Atari VideoRAM address and /dev/fb0 mmap
-#endif
 
 // From newcpu.cpp
 extern int quit_program;
 
 /*
- *  Initialize 680x0 emulation, CheckROM() must have been called first
+ *  Initialize 680x0 emulation
  */
 
-bool Init680x0(void)
-{
+bool InitMEM() {
 #if REAL_ADDRESSING
 	// Mac address space = host address space
 	RAMBase = (uint32)RAMBaseHost;
 	ROMBase = (uint32)ROMBaseHost;
-#elif DIRECT_ADDRESSING
-	InitMEMBaseDiff(RAMBaseHost, RAMBase);
-	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
 #else
-	// Initialize UAE memory banks
-	RAMBase = 0;
-	ROMBase = 0x00e00000;
-	memory_init();
+	InitMEMBaseDiff(RAMBaseHost, RAMBase);
 #endif
+	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
+	return true;
+}
 
+bool Init680x0(void)
+{
 	init_m68k();
 	return true;
 }

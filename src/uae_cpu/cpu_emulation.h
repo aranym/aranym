@@ -70,6 +70,7 @@ static inline void *Atari2Atari_memcpy(uint32 dest, uint32 src, size_t n) {retur
  */
 
 // Initialization
+extern bool InitMEM();
 extern bool Init680x0(void);	// This routine may want to look at CPUType/FPUType to set up the apropriate emulation
 extern void Exit680x0(void);
 

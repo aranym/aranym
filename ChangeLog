@@ -1,3 +1,8 @@
+<<<<<<< ChangeLog
+2001/10/09 - milan
+- some changes in memory allocation, now support for malloc on dummy platforms
+
+
 2001/10/08 - STanda
 - ALT+PrintScreen generates a snapshot file using the SDL_SaveBMP.
 

@@ -281,4 +281,18 @@ static inline uae_u32 do_byteswap_16(uae_u32 v)
 #endif
 #define REGPARAM2
 
+#undef NOT_MALLOC
+
+#if REAL_ADDRESSING
+# define NOT_MALLOC
+#endif
+
+#undef KNOWN_ALLOC
+
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
+# define KNOWN_ALLOC	1
+#else
+# define KNOWN_ALLOC	0
+#endif
+
 #endif

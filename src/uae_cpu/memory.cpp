@@ -22,13 +22,13 @@
 #include "main.h"
 #include "exceptions.h"
 
-#if !REAL_ADDRESSING && !DIRECT_ADDRESSING
+#if !KNOWN_ALLOC && !NORMAL_ADDRESSING
 // This part need rewrite for ARAnyM !!
 // It can be taken from hatari.
 
 #error Not prepared for your platform, maybe you need memory banks from UAE 
 
-#endif /* !REAL_ADDRESSING && !DIRECT_ADDRESSING */
+#endif /* !KNOWN_ALLOC && !NORMAL_ADDRESSING */
 
 #ifdef FULLMMU
 

@@ -34,7 +34,6 @@
 # include <sys/mman.h>
 #endif
 
-
 #include "cpu_emulation.h"
 #include "main.h"
 #include "vm_alloc.h"
@@ -43,7 +42,7 @@
 #include <SDL/SDL_timer.h>
 #include <signal.h>
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #ifndef HAVE_STRDUP
@@ -89,6 +88,7 @@ int main(int argc, char **argv)
 	if (start_debug) ndebug::init();
 #endif
 
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
 	// Initialize VM system
 	vm_init();
 
@@ -122,14 +122,10 @@ int main(int argc, char **argv)
 		}
 	}
 
-#if DIRECT_ADDRESSING
-	// RAMBase shall always be zero
-	MEMBaseDiff = (uintptr)RAMBaseHost;
-#endif
-
 	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
 	D(bug("TT-RAM starts at %p (%08x)", FastRAMBaseHost, FastRAMBase));
+#endif /* REAL_ADDRESSING || DIRECT_ADDRESSING */
 
 	// Initialize everything
 	D(bug("Initializing All Modules..."));
@@ -190,6 +186,9 @@ void QuitEmulator(void)
 
 /*
  * $Log$
+ * Revision 1.49  2001/10/02 19:13:28  milan
+ * ndebug, malloc
+ *
  * Revision 1.48  2001/10/02 12:13:50  joy
  * ROM file reading moved to main.cpp
  * SIGSEGV handler not installed if you start aranym with internal debugger enabled. This is to allow gdb to catch any problem. So under gdb start aranym with -D.
