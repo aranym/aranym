@@ -8,6 +8,10 @@
   externally via the 0xfffa01 address but rather use the setGPIPbit()
   only. Fixed.
 
+- mfp.cpp again: added floppy/SCSI/IDE IRQ and modified the ACIA IRQ
+  to follow the automaticServiceEnd flag. This lets Linux-m68k detect
+  the IDE devices without "hda: lost interrupt" messages.
+
 
 2005/01/05 - Andreas Schwab
 - uae_cpu/cpummu.cpp:
