@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.1.5 dated 2002/04/11
+      version 0.1.7 dated 2002/04/22
 
 
  1) License
@@ -31,10 +31,22 @@ system. The reason for writing ARAnyM is to provide Atari power users with
 faster and better machines. The ultimate goal is to create a new platform
 where TOS/GEM applications could continue to live forever.
 
-Important: ARAnyM is far from being finished. Consider this to be an alpha
-version and a work-in-progress. Sorry for total lack of documentation.
-And beware - ARAnyM is not yet very usable - some of its features are
-unstable and the runtime configuration is not done yet.
+ Features:
+ ---------
+   o 68040 CPU (including MMU040)
+   o 68040 and 68881/2 FPU
+   o 14 MB ST-RAM and unlimited (configurable) amount of FastRAM
+   o VIDEL, Blitter, MFP, ACIA, IKBD for highest possible compatibility
+   o Sound (compatible with Falcon XBIOS Sound subsystem)
+   o Atari floppy DD/HD for connecting floppy image or real floppy drive
+   o two IDE channels for connecting disk images, harddrives or CD-ROMs
+   o extended keyboard and mouse support (including mouse wheel)
+   o direct access to host file system via MetaDOS and MiNT fs drivers
+   o TOS 4.04 or EmuTOS as the booting operating system
+
+Important: ARAnyM is not finished. Consider this to be a beta version
+and a work-in-progress. Sorry for incomplete and confusing documentation.
+Any help with programming/documentation/porting is very welcome!
 
 
  3) Installing
@@ -159,11 +171,12 @@ Note: The config.sys edit tool and the aranym config configuration will come
  7) Keyboard shortcuts
  ---------------------
 
-While the emulator is running, you can quit it by pressing Shift+Break.
-And if you started ARAnyM with the debugger option, you can enter
-the debugger by pressing Alt+Break.
+While the emulator is running, you can quit it by pressing Shift+Break
+or reboot it with Ctrl+Break. And if you started ARAnyM with the debug
+option, you can enter the debugger by pressing Alt+Break.
 
-Press Alt+Ctrl+Esc keys to release the input focus.
+Press Alt+Ctrl+Esc keys to release the input focus (so you can use your
+keyboard/mouse in other applications).
 
 F11 is the Help key while F12 is the Undo key.
 

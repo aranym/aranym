@@ -1,3 +1,5 @@
+** Version 0.1.7
+
 2002/04/21 - milan
 - pre-support of FreeBSD
 
@@ -22,7 +24,7 @@
 
 
 2002/04/19 - Didier MEQUIGNON & joy
-- simple audio driver. Atari side uses ZMAGXSND.PRG, a slightly modified
+- audio driver: Atari side uses ZMAGXSND.PRG, a slightly modified
   MagiCMac sound driver. The communication is based on illegal instruction
   $712c and IRQ 5 used as a callback from host to Atari. Aniplayer is
   supposed to play sound nicely but so far it's crashing on me (joy).

@@ -1,6 +1,18 @@
- Several bad bugs in aranymfs fixed.
- It's possible to Reboot the machine by pressing Ctrl+Pause/Break
+2002/04/22 - version 0.1.7 released
+==========
+
+ Sound is working! Put the atari/sound/zmagxsnd.prg to your AUTO
+ folder and Aniplayer should play all sounds nicely!
+
+ Several very bad or annoying bugs in aranymfs fixed. Now it should
+ be real usable.
+
+ It's possible to Reboot the machine by pressing Ctrl+Pause/Break.
+ IKBD problems after reboot will be fixed in next release.
+
  Two new config file options: "Redir_Console" and "Redit_Printer".
+ If set to "yes" the BIOS console (2 and 5) or printer (0) output
+ is redirected to the host console.
 
 
 2002/04/12 - version 0.1.6 released

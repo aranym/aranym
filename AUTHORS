@@ -12,6 +12,8 @@ Milan Jurik <M.Jurik@sh.cvut.cz>
 - memory management
 - portability
 - ndebug (New Debug)
+- MMU040 (memory protection unit)
+- JIT
 
 Stanislav Opichal <opichals@seznam.cz>
 - aranymfs: host filesystem access based on MetaDOS driver
@@ -21,10 +23,11 @@ Stanislav Opichal <opichals@seznam.cz>
 
 Petr Stehlik <pstehlik@sophics.cz>
 - hardware emulation
+- interrupt system
 - 68040 friendly TOS
-- keyboard and mouse
-- parallel port (in progress)
-- XHDI interface (in progress)
+- host input/output (keyboard and mouse, parallel port)
+- XHDI interface
+- release management
 
 
 ARAnyM source code consists of several parts. Some were taken from other
@@ -48,7 +51,7 @@ JIT Basilisk II
 
 Hatari
   http://hatari.sf.net/
-  Parts of CPU
+  Parts of CPU, complete SDL GUI
 
 STonX
   http://stonx.sf.net/
@@ -108,3 +111,12 @@ Johan Klockars
 - fVDI driver polyline implementation
 - PAGE_MASK addressing speedup
 - info about ISO C++ norm (for MJ)
+
+Didier MEQUIGNON
+- audio support in ARAnyM
+- Atari XBIOS sound driver (atari/sound/*)
+
+Thomas Huth
+- SDL GUI (from hatari project)
+- suggestion to remove 680[023]0 CPU core generation
+- original README skeleton (from hatari)

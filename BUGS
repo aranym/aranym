@@ -9,13 +9,30 @@ Reason:
   Something regarding the blitter emulation
   as with NVDI/fVDI installed it does not happen.
 
+Solution:
+  Install NVDI or fVDI. And help us debug this issue.
+
 ---
 
 Bug:
   PureC cannot open project file on host filesystem.
 
 Reason:
-  A MetaDOS related bug in PureC. Patch your PureC with supplied patch.
+  A MetaDOS related bug in PureC.
+
+Solution:
+  Patch your PureC with supplied patch.
+
+---
+
+Bug:
+  After hard reboot (Ctrl+Break) keyboard/mouse does not work.
+
+Reason:
+  Probably unitialized IKBD.
+
+Solution:
+  Wait for next release, it should be fixed then.
 
 ---
 
@@ -25,7 +42,9 @@ Bug:
 
 Reason:
   A bug in sdltimer (maybe in lib, maybe in ARAnyM, who knows)
-  Configure ARAnyM with --disable-sdltimer if you have this problem
+
+Solution:
+  Configure ARAnyM with --disable-sdltimer and recompile.
 
 
 Platform dependent known bugs and limitations:
@@ -39,3 +58,5 @@ There are three different FPU emulators in ARAnyM, and only the IEEE
 version has full 68040 FPU instruction set. On non-Linux-i386 platforms
 the uae FPU emulation is used and so some 68040 specific FPU instructions
 are missing. This will be fixed eventually.
+
+MacOS X does not like floating videoram. Compile with --enable-fixedvideoram.
