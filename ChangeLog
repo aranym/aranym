@@ -1,3 +1,20 @@
+2003/12/27 - joy
+- SDL GUI cleanup: first, all SDL GUI related files are in gui-sdl/ folder
+  now. Then, each dialog is in its own file. At last, SDL GUI now supports
+  EDIT field (have yet to add passing the keyboard info) and the FileSelect
+  now supports editing the filename ("save as..."). We are basically in sync
+  with hatari 0.45 now.
+
+- sdl-gui.cpp: dialogs are now centered automagically by DrawDialog().
+  May seem unnecessary at first but helps when the screen resolution is
+  changed and dialogs need to be redrawn at different positions.
+
+2003/12/26 - joy
+- input.cpp: cleaned up.
+
+
+* tagged as ARANYM_0_8_4_ALPHA
+
 2003/12/24 - joy
 - hostscreen.cpp: blendBackgrounds() added. This function updates the 
   background of active GUI with the running ARAnyM screen contents.
