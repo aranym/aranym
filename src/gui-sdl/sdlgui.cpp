@@ -54,6 +54,13 @@ bool SDLGui_Init()
     return false;
   }
 
+  /* Convert the font graphics to the actual screen format */
+  fontgfx = SDL_DisplayFormat(stdfontgfx);
+  if( fontgfx==NULL )
+  {
+    panicbug("Could not convert font: %s", SDL_GetError() );
+    return false;
+  }
   return true;
 }
 
