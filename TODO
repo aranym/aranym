@@ -1,5 +1,6 @@
 TODO before 0.8.2final:
 - the floppy exchange detection emulation (almost done)
+- Load/Save buttons in GUI (at least)
 - keyboard layout configurable. This is a must.
 
 Roadmap:
