@@ -2,6 +2,8 @@
 - parameters.cpp: 'RedirPrinter' removed.
   Default printer file is 'stderr'.
 
+- aranym.spec: aranymrc.example removed.
+
 
 * tagged as ARANYM_0_9_0_BETA
 
