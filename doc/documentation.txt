@@ -384,7 +384,7 @@ Since TOS itself cannot manage harddisks you have to install
 a harddisk driver. There are several drivers but not all are suitable to 
 work with Aranym (due to missing SCSI DMA emulation). Recommended ones
 are either Cecile (freeware - http://www.czuba-tech.com) or HDDRIVER
-(commercial software - http://ooc.de).
+(commercial software - http://www.seimet.de).
 
 If you have connected a real harddisk from any TOS machine and this 
 drive is bootable (driver is already installed) then Aranym should 
