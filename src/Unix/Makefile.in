@@ -132,6 +132,7 @@ install: $(APP) installdirs
 	$(INSTALL_DATA) ../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL
 	$(INSTALL_DATA) ../../doc/documentation.txt $(DESTDIR)$(docdir)/$(APP)/documentation.txt
 	$(INSTALL_DATA) ../../data/font8.bmp $(DESTDIR)$(datadir)/$(APP)/font8.bmp
+# JOY, uncomment it for releases
 #	$(INSTALL_DATA) ../../data/etos512k.img $(DESTDIR)$(datadir)/$(APP)/etos512k.img
 	$(INSTALL_DATA) ../../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) ../../atari/aranymrc.example $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
@@ -168,6 +169,7 @@ uninstall:
 	rm -f $(DESTDIR)$(docdir)/$(APP)/INSTALL
 	rm -f $(DESTDIR)$(docdir)/$(APP)/documentation.txt
 	rm -f $(DESTDIR)$(datadir)/$(APP)/font8.bmp
+# JOY, uncomment it for releases
 #	rm -f $(DESTDIR)$(datadir)/$(APP)/etos512k.img
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
@@ -227,6 +229,7 @@ bindist: $(APP) bindistdirs
 	$(INSTALL_DATA) ../../INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
 	$(INSTALL_DATA) ../../doc/documentation.txt tmpdist$(docdir)/$(APP)/documentation.txt
 	$(INSTALL_DATA) ../../data/font8.bmp tmpdist$(datadir)/$(APP)/font8.bmp
+# JOY, uncomment it for releases
 #	$(INSTALL_DATA) ../../data/etos512k.img tmpdist$(datadir)/$(APP)/etos512k.img
 	$(INSTALL_DATA) ../../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) ../../atari/aranymrc.example tmpdist$(datadir)/$(APP)/atari/aranymrc.example
