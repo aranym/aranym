@@ -1,3 +1,7 @@
+2005/01/29 - Patrice
+- configure.ac: Add option to add path to Mesa header files.
+
+
 2005/01/28 - Andreas
 - uae_cpu/newcpu.h: Handle unaligned access in get_ilong.
 
