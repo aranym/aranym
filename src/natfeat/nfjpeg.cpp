@@ -171,6 +171,8 @@ int32 JpegDriver::get_image_info(memptr jpeg_ptr)
 int32 JpegDriver::get_image_size(memptr jpeg_ptr)
 {
 	struct _JPGD_STRUCT *tmp;
+	int image_size;
+	SDL_Surface *surface;
 
 	D(bug("nfjpeg: get_image_size()"));
 
@@ -182,6 +184,21 @@ int32 JpegDriver::get_image_size(memptr jpeg_ptr)
 			return EINVFN;
 		}
 	}
+
+	/* Recalculate OutSize and MFDBWordSize */
+	surface = images[tmp->handle].src;
+	image_size = surface->w;
+	if ((image_size & 15)!=0) {
+		image_size = (image_size | 15)+1;
+	}
+	image_size *= SDL_SwapBE16(tmp->OutPixelSize);
+	tmp->MFDBWordSize = SDL_SwapBE16(image_size>>1);
+
+	image_size *= surface->h;
+	tmp->OutSize = SDL_SwapBE32(image_size);
+
+	D(bug("nfjpeg: get_image_size() = %dx%dx%d -> %d",
+		surface->w, surface->h, SDL_SwapBE16(tmp->OutPixelSize), image_size));
 	return 0;
 }
 
@@ -337,13 +354,13 @@ SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, ui
 	if ((line_width & 15)!=0) {	/* Must be multiple of 16 */
 		line_width = (line_width | 15)+1;
 	}
-	jpgd_ptr->MFDBWordSize = SDL_SwapBE16(line_width);
+	jpgd_ptr->MFDBWordSize = SDL_SwapBE16(line_width >> 4);
 
 	jpgd_ptr->MFDBFormatFlag = 0;
 
 	jpgd_ptr->MFDBBitPlanes = SDL_SwapBE16(jpgd_ptr->OutPixelSize) * 8;
 
-	image_size = line_width * surface->h;
+	image_size = line_width * surface->h * SDL_SwapBE16(jpgd_ptr->OutPixelSize);
 	jpgd_ptr->OutSize = SDL_SwapBE32(image_size);
 
 	jpgd_ptr->MFDBReserved1 = jpgd_ptr->MFDBReserved2 = jpgd_ptr->MFDBReserved3 = 0;

@@ -153,12 +153,6 @@ JPGD_ENUM JpegDecOpenDriver(struct _JPGD_STRUCT *jpgd_ptr)
 
 JPGD_ENUM JpegDecCloseDriver(struct _JPGD_STRUCT *jpgd_ptr)
 {
-	if (jpgd_ptr->OutFlag==0) {
-		if (jpgd_ptr->OutPointer) {
-			Mfree(jpgd_ptr->OutPointer);
-			jpgd_ptr->OutPointer = jpgd_ptr->MFDBAddress = 0;
-		}
-	}
 	return nfCall((NFJPEG(NFJPEG_CLOSEDRIVER), jpgd_ptr));
 }
 
@@ -182,11 +176,11 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 	int row_length, y;
 
 	row_length = jpgd_ptr->XLoopCounter * 16 * 16 * jpgd_ptr->OutComponents;
-	jpgd_ptr->OutTmpHeight = 16;
+	jpgd_ptr->OutTmpHeight = 0;
+	jpgd_ptr->MCUsCounter = jpgd_ptr->XLoopCounter * jpgd_ptr->YLoopCounter;
 
 	if (jpgd_ptr->OutFlag==0) {
 		/* Allocate memory to hold complete image */
-		jpgd_ptr->OutPointer = jpgd_ptr->MFDBAddress = Atari_MxAlloc(jpgd_ptr->OutSize);
 		if (jpgd_ptr->OutPointer==NULL) {
 			return NOTENOUGHMEMORY;
 		}
@@ -201,7 +195,11 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 			}
 
 			jpgd_ptr->OutTmpPointer += row_length;
+			jpgd_ptr->OutTmpHeight += 16;
+			jpgd_ptr->MCUsCounter -= jpgd_ptr->XLoopCounter;
 		}
+
+		jpgd_ptr->MFDBAddress = jpgd_ptr->OutPointer;
 	} else {
 		unsigned char *filename="output.tga";
 		long handle;
@@ -238,6 +236,9 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 			if (jpgd_ptr->Write) {
 				jpgd_ptr->Write(jpgd_ptr);
 			}
+
+			jpgd_ptr->MCUsCounter -= jpgd_ptr->XLoopCounter;
+			jpgd_ptr->OutTmpHeight += 16;
 		}
 
 		/* Close file */
