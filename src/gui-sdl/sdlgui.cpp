@@ -724,63 +724,63 @@ int SDLGui_DoDialog(SGOBJ *dlg)
             retbutton=oldbutton;
           else
           {
-          obj = SDLGui_FindObj(dlg, x, y);
-          if(obj>0)
-          {
-            switch(dlg[obj].type)
+            obj = SDLGui_FindObj(dlg, x, y);
+            if(obj>0)
             {
-              case SGBUTTON:
-                break;
-              case SGEDITFIELD:
-                SDLGui_EditField(dlg, obj);
-                break;
-              case SGRADIOBUT:
-                // Find first radio button in this group
-                i = obj-1;
-                while (dlg[i].type==SGRADIOBUT)
-                  i--;
-                i+=1;
-                // Update state
-                while (dlg[i].type==SGRADIOBUT)
-                {
-                  bool updated = false;
-                  if ((i == obj) && (~dlg[i].state & SG_SELECTED))
+              switch(dlg[obj].type)
+              {
+                case SGBUTTON:
+                  break;
+                case SGEDITFIELD:
+                  SDLGui_EditField(dlg, obj);
+                  break;
+                case SGRADIOBUT:
+                  // Find first radio button in this group
+                  i = obj-1;
+                  while (dlg[i].type==SGRADIOBUT)
+                    i--;
+                  i+=1;
+                  // Update state
+                  while (dlg[i].type==SGRADIOBUT)
                   {
-                    // Select this radio button
-                    dlg[obj].state |= SG_SELECTED;
-                    updated = true;
-                  }
-                  else if ((i != obj) && (dlg[i].state & SG_SELECTED))
-                  {
-                    // Deselect this radio button
-                    dlg[obj].state &= ~SG_SELECTED;
-                    updated = true;
-                  }
+                    bool updated = false;
+                    if ((i == obj) && (~dlg[i].state & SG_SELECTED))
+                    {
+                      // Select this radio button
+                      dlg[obj].state |= SG_SELECTED;
+                      updated = true;
+                    }
+                    else if ((i != obj) && (dlg[i].state & SG_SELECTED))
+                    {
+                      // Deselect this radio button
+                      dlg[obj].state &= ~SG_SELECTED;
+                      updated = true;
+                    }
 
-                  if (updated)
-                  {
-                    SDLGui_DrawRadioButtonState(dlg, obj);
-                    SDLGui_RefreshObj(dlg, obj);
+                    if (updated)
+                    {
+                      SDLGui_DrawRadioButtonState(dlg, obj);
+                      SDLGui_RefreshObj(dlg, obj);
 
-                    updated = false;
+                      updated = false;
+                    }
+
+                    i++;
                   }
-
-                  i++;
-                }
-                break;
-              case SGCHECKBOX:
-                dlg[obj].state ^= SG_SELECTED;
-                SDLGui_DrawCheckBoxState(dlg, obj);
-                SDLGui_RefreshObj(dlg, obj);
-                break;
-              case SGPOPUP:
-                dlg[obj].state |= SG_SELECTED;
-                SDLGui_DrawPopupButton(dlg, obj);
-                SDLGui_RefreshObj(dlg, obj);
-                retbutton=obj;
-                break;
+                  break;
+                case SGCHECKBOX:
+                  dlg[obj].state ^= SG_SELECTED;
+                  SDLGui_DrawCheckBoxState(dlg, obj);
+                  SDLGui_RefreshObj(dlg, obj);
+                  break;
+                case SGPOPUP:
+                  dlg[obj].state |= SG_SELECTED;
+                  SDLGui_DrawPopupButton(dlg, obj);
+                  SDLGui_RefreshObj(dlg, obj);
+                  retbutton=obj;
+                  break;
+              }
             }
-          }
           }
           if(oldbutton>0)
           {
