@@ -1,3 +1,9 @@
+2002/12/14 - johan
+- Special handling of 32 bit vro_cpyfm D=S mode (see 2002/09/28).
+- Mode handling for screen->screen blits.
+- Updated fvdi.prg, aranym.sys and fvdi.sys.
+
+
 2002/12/10 - STanda
 - extfs: interface & debug cleanup
 - hostfs: completely new NatFeat driven implementation of the host OS
