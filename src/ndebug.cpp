@@ -531,7 +531,7 @@ void ndebug::showTypes() {
 	bug("3:        MMU TT browser");
 }
 
-int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr &nextpc, uaecptr &nxdis, uaecptr &nxmem) {
+int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
 	char input[80];
 	char cmd, *inptr;
 	int count;
@@ -695,7 +695,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr &nextpc, uaecptr &nxdis, uae
 	return 1;
 }
 
-int ndebug::icanon(FILE *f, bool wasGrabbed, uaecptr &nextpc, uaecptr &nxdis, uaecptr &nxmem) {
+int ndebug::icanon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
 	struct termio newtty;
 	char buffer[1];
 	int count;
@@ -776,7 +776,7 @@ int ndebug::icanon(FILE *f, bool wasGrabbed, uaecptr &nextpc, uaecptr &nxdis, ua
 	return 1;
 }
 
-int ndebug::dm(FILE *f, bool wasGrabbed, uaecptr &nextpc, uaecptr &nxdis, uaecptr &nxmem) {
+int ndebug::dm(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
 	struct termio newtty;
 	char buffer[1];
 	int count;
@@ -1072,6 +1072,10 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.8  2001/11/28 09:36:05  milan
+ * cleaning
+ * update of config.* file
+ *
  * Revision 1.7  2001/11/21 13:29:51  milan
  * cleanning & portability
  *

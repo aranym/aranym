@@ -3068,12 +3068,48 @@ void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, volatile unsigned in
     volatile uaecptr newpc = 0;
     m68kpc_offset = addr - m68k_getpc ();
     if (cnt == 0) {
-	int opwords;
+/*	int opwords;
 	for (opwords = 0; opwords < 5; opwords++) {
 		get_iword_1 (m68kpc_offset + opwords*2);
 	}
 	get_iword_1 (m68kpc_offset);
-	m68kpc_offset += 2;
+	m68kpc_offset += 2;*/
+setjmpagainx:
+        int prb = setjmp(excep_env);
+        if (prb != 0) {
+            goto setjmpagainx;
+        }
+        char instrname[20],*ccpt;
+        int opwords;
+        uae_u32 opcode;
+        struct mnemolookup *lookup;
+        struct instr *dp;
+        for (opwords = 0; opwords < 5; opwords++) {
+            get_iword_1 (m68kpc_offset + opwords*2);
+        }
+        opcode = get_iword_1 (m68kpc_offset);
+        m68kpc_offset += 2;
+        if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
+            opcode = 0x4AFC;
+        }
+        dp = table68k + opcode;
+        for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
+            ;
+        strcpy (instrname, lookup->name);
+        ccpt = strstr (instrname, "cc");
+        if (ccpt != 0) {
+            strncpy (ccpt, ccnames[dp->cc], 2);
+        }
+        if (dp->suse) {
+            newpc = m68k_getpc () + m68kpc_offset;
+            newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, buffer);
+            strcpy(buffer,"");
+        }
+        if (dp->duse) {
+            newpc = m68k_getpc () + m68kpc_offset;
+            newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
+            strcpy(buffer,"");
+        }
     } else {
 setjmpagain:
         int prb = setjmp(excep_env);

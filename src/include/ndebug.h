@@ -116,9 +116,9 @@ class ndebug {
   static void log2phys(FILE *, uaecptr);
 
   static void showTypes();
-  static int canon(FILE *, bool, uaecptr &, uaecptr &, uaecptr &);
-  static int icanon(FILE *, bool, uaecptr &, uaecptr &, uaecptr &);
-  static int dm(FILE *, bool, uaecptr &, uaecptr &, uaecptr &);
+  static int canon(FILE *, bool, uaecptr, uaecptr &, uaecptr &);
+  static int icanon(FILE *, bool, uaecptr, uaecptr &, uaecptr &);
+  static int dm(FILE *, bool, uaecptr, uaecptr &, uaecptr &);
  
 #endif
 
