@@ -70,6 +70,7 @@ static bool bShutdown;
 
 extern void Dialog_AboutDlg();
 extern void Dialog_DiscDlg();
+extern void Dialog_HotkeysDlg();
 extern void Dialog_KeyboardDlg();
 extern void Dialog_HelpDlg();
 
@@ -126,6 +127,8 @@ void Dialog_MainDlg()
 			break;
 
 		case HOTKEYS:
+			Dialog_HotkeysDlg();
+			break;
 		case TOS:
 		case VIDEO:
 		case MEMORY:
@@ -195,3 +198,7 @@ int GUImainDlg()
 
 	return 0;
 }
+
+/*
+vim:ts=4:sw=4:
+*/
