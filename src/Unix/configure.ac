@@ -3,7 +3,7 @@ dnl Written in 1999 by Christian Bauer et al.
 dnl Adapted for ARAnyM by Milan Jurik
 
 AC_INIT(main_unix.cpp)
-AC_PREREQ(2.53)
+AC_PREREQ(2.52)
 AC_CONFIG_HEADER(config.h)
 
 dnl Options.
