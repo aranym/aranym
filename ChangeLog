@@ -1,3 +1,7 @@
+2002/10/01 - patrice
+- ikbd: Joystick support bugfixed.
+
+
 2002/10/01 - milan
 - use off_t for file offsets in IDE emulation (from Bochs), sync with Bochs
 

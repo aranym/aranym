@@ -697,13 +697,13 @@ void process_joystick_event(SDL_Event event)
 {
 	switch(event.type) {
 		case SDL_JOYAXISMOTION:
-			ikbd.SendJoystickAxis(event.jaxis.axis,event.jaxis.value);
+			ikbd.SendJoystickAxis(1, event.jaxis.axis,event.jaxis.value);
 			break;		
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYBUTTONUP:
 			/* Only button 0 */
 			if (event.jbutton.button==0) {
-				ikbd.SendJoystickButton(event.jbutton.state==SDL_PRESSED);
+				ikbd.SendJoystickButton(1, event.jbutton.state==SDL_PRESSED);
 			}
 			break;		
 	}

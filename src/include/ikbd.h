@@ -13,6 +13,8 @@
 
 #include "acia.h"
 
+/*--- Defines ---*/
+
 #define HW_IKBD 0xfffc00
 
 enum ikbd_packet_t {
@@ -28,6 +30,8 @@ enum ikbd_packet_t {
 #define IKBD_JOY_RIGHT 	3
 #define IKBD_JOY_FIRE 	7
 
+/*--- IKBD class ---*/
+
 class IKBD: public ACIA {
 	private:
 		/* IKBD keyboard state */
@@ -37,13 +41,9 @@ class IKBD: public ACIA {
 		int mouserel_enabled;
 		int mousex, mousey, mouseb;
 		
-		/* IKBD joystick 0 state */
-		int joy0_enabled;
-		int joy0_state;
-		
-		/* IKBD joystick 1 state */
-		int joy1_enabled;
-		int joy1_state;
+		/* IKBD joysticks state */
+		int joy_enabled[2];
+		int joy_state[2];
 
 		/* Buffer when writing to IKBD */
 		uae_u8 *outbuffer;	
@@ -64,6 +64,8 @@ class IKBD: public ACIA {
 		void ThrowInterrupt(void);
 		void MergeMousePacket(int *relx, int *rely, int buttons);
 
+		void send(uae_u8 value);
+
 	public:
 		IKBD(void);
 		IKBD(int inlen, int outlen);	/* Params are length (2^x) of in/out buffers */
@@ -77,10 +79,8 @@ class IKBD: public ACIA {
 
 		void SendKey(uae_u8 scancode);
 		void SendMouseMotion(int relx, int rely, int buttons);
-		void SendJoystickAxis(int numaxis, int value);
-		void SendJoystickButton(int pressed);
-
-		void send(uae_u8 value);
+		void SendJoystickAxis(int numjoy, int numaxis, int value);
+		void SendJoystickButton(int numjoy, int pressed);
 };
 
 #endif /* _IKBD_H */

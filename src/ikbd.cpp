@@ -14,6 +14,8 @@
 #define DEBUG 0
 #include "debug.h"
 
+/*--- Defines ---*/
+
 #define DEFAULT_INBUFFERLEN (1<<6)
 #define DEFAULT_OUTBUFFERLEN (1<<4)
 
@@ -71,15 +73,18 @@ void IKBD::reset()
 	outwrite = 0;
 	intype = IKBD_PACKET_UNKNOWN;
 
-	mouse_enabled = SDL_FALSE;
-	mouserel_enabled = SDL_FALSE;
+	/* Default: mouse on port 0 enabled */
+	mouse_enabled = SDL_TRUE;
+	mouserel_enabled = SDL_TRUE;
 	mousex = mousey = mouseb = 0;
 	
-	joy0_enabled = SDL_TRUE;
-	joy0_state = 0;
+	/* Default: joystick on port 0 disabled */
+	joy_enabled[0] = SDL_FALSE;
+	joy_state[0] = 0;
 	
-	joy1_enabled = SDL_FALSE;
-	joy1_state = 0;
+	/* Default: joystick on port 1 enabled */
+	joy_enabled[1] = SDL_TRUE;
+	joy_state[1] = 0;
 
 	D(bug("ikbd: reset"));
 }
@@ -107,26 +112,29 @@ uae_u8 IKBD::ReadData()
 {
 	SDL_LockMutex(rwLock);
 
-	if (inread == inwrite) {
-		/* Queue empty */
+	if (inread != inwrite) {
 
-		/* Update MFP GPIP */
-		uae_u8 x = ReadAtariInt8(0xfffa01);
-		x |= 0x10;
-		WriteAtariInt8(0xfffa01, x);
-	} else {
 		rxdr = inbuffer[inread++];
 		D(bug("ikbd: ReadData()=0x%02x at position %d",rxdr, inread-1));
 
 		inread &= (inbufferlen-1);
-	}
 
-	if (inread == inwrite) {
-		sr &= ~(1<<ACIA_SR_RXFULL);
-	} else {
-		sr |= (1<<ACIA_SR_RXFULL);
+		if (inread == inwrite) {
+			/* Queue empty */
 
-		ThrowInterrupt();
+			/* Update MFP GPIP */
+			uae_u8 x = ReadAtariInt8(0xfffa01);
+			x |= 0x10;
+			WriteAtariInt8(0xfffa01, x);
+
+			sr &= ~((1<<ACIA_SR_INTERRUPT)|(1<<ACIA_SR_RXFULL));
+
+		} else {
+			/* Still bytes to read ? */
+			sr |= (1<<ACIA_SR_RXFULL);
+
+			ThrowInterrupt();
+		} 
 	}
 
 	SDL_UnlockMutex(rwLock);
@@ -164,7 +172,7 @@ void IKBD::WriteData(uae_u8 value)
 					D(bug("ikbd: Set mouse relative mode"));
 					mouse_enabled = SDL_TRUE;
 					mouserel_enabled = SDL_TRUE;
-					joy0_enabled = SDL_TRUE;
+					joy_enabled[1] = SDL_TRUE;
 					outwrite = 0;
 					break;
 				case 0x0d:
@@ -210,7 +218,7 @@ void IKBD::WriteData(uae_u8 value)
 					break;
 				case 0x1a:
 					D(bug("ikbd: Joysticks disabled"));
-					joy0_enabled = joy1_enabled = SDL_FALSE;
+					joy_enabled[0] = joy_enabled[1] = SDL_FALSE;
 					outwrite = 0;
 					break;
 				case 0x1c:
@@ -260,7 +268,7 @@ void IKBD::WriteData(uae_u8 value)
 				case 0x0a:
 					D(bug("ikbd: Set mouse emulation via keyboard"));
 					mouse_enabled = SDL_TRUE;
-					joy0_enabled = SDL_TRUE;
+					joy_enabled[1] = SDL_TRUE;
 					outwrite = 0;
 					break;
 				case 0x0b:
@@ -288,7 +296,7 @@ void IKBD::WriteData(uae_u8 value)
 					D(bug("ikbd: Set mouse absolute mode"));
 					mouse_enabled = SDL_TRUE;
 					mouserel_enabled = SDL_FALSE;
-					joy0_enabled = SDL_TRUE;
+					joy_enabled[1] = SDL_TRUE;
 					outwrite = 0;
 					break;
 			}
@@ -420,14 +428,14 @@ void IKBD::MergeMousePacket(int *relx, int *rely, int buttons)
 	*rely = disty;
 }
 
-void IKBD::SendJoystickAxis(int numaxis, int value)
+void IKBD::SendJoystickAxis(int numjoy, int numaxis, int value)
 {
 	uae_u8 newjoy_state;
 
-	if (!joy0_enabled)
+	if (!joy_enabled[numjoy])
 		return;
 
-	newjoy_state = joy0_state;
+	newjoy_state = joy_state[numjoy];
 
 	switch(numaxis) {
 		case 0:
@@ -450,31 +458,31 @@ void IKBD::SendJoystickAxis(int numaxis, int value)
 			break;
 	}
 
-	if (joy0_state != newjoy_state) {
-		joy0_state = newjoy_state;
+	if (joy_state[numjoy] != newjoy_state) {
+		joy_state[numjoy] = newjoy_state;
 		intype = IKBD_PACKET_JOYSTICK;
-		send(0xfe);
-		send(joy0_state);
+		send(0xfe | numjoy);
+		send(joy_state[numjoy]);
 	}
 }
 
-void IKBD::SendJoystickButton(int pressed)
+void IKBD::SendJoystickButton(int numjoy, int pressed)
 {
 	uae_u8 newjoy_state;
 
-	if (!joy0_enabled)
+	if (!joy_enabled[numjoy])
 		return;
 
-	newjoy_state = joy0_state;
+	newjoy_state = joy_state[numjoy];
 
 	newjoy_state &= ~(1<<IKBD_JOY_FIRE);
 	newjoy_state |= (pressed & 1)<<IKBD_JOY_FIRE;
 
-	if (joy0_state != newjoy_state) {
-		joy0_state = newjoy_state;
+	if (joy_state[numjoy] != newjoy_state) {
+		joy_state[numjoy] = newjoy_state;
 		intype = IKBD_PACKET_JOYSTICK;
-		send(0xfe);
-		send(joy0_state);
+		send(0xfe | numjoy);
+		send(joy_state[numjoy]);
 	}
 }
 
@@ -488,7 +496,7 @@ void IKBD::send(uae_u8 value)
 	SDL_LockMutex(rwLock);
 
 	/* Add new byte to IKBD buffer */
-/*	D(bug("ikbd: send(0x%02x) at position %d",value,inwrite));*/
+	D(bug("ikbd: send(0x%02x) at position %d",value,inwrite));
 	inbuffer[inwrite++] = value;
 
 	inwrite &= (inbufferlen-1);
@@ -542,7 +550,7 @@ void IKBD::ThrowInterrupt(void)
 		return;
 		
 	/* set Interrupt Request */
-	sr |= (1<<ACIA_SR_INTERRUPT)|(1<<ACIA_SR_RXFULL);
+	sr |= (1<<ACIA_SR_INTERRUPT);
 
 	/* signal ACIA interrupt */
 	mfp.setGPIPbit(0x10, 0);
