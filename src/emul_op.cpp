@@ -184,6 +184,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			if (textAddr >=0 && textAddr < (RAMSize + ROMSize + FastRAMSize)) {
 				uint8 *textPtr = Atari2HostAddr(textAddr);
 				printf("%s", textPtr);
+				fflush(stdout);
 			}
 			else {
 				D(bug("Wrong debugText addr: %u", textAddr));
