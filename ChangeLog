@@ -1,3 +1,10 @@
+2001/12/02 - joy
+- keyboard conversion code rewritten again. As the SDL returns different
+  scancodes for same keys under different OSes I created a heuristic
+  analysis of pressed keys that tries to detect the offset between the
+  SDL scancode and the physical one. Tested under framebuffer and X11 on Linux.
+
+
 2001/11/30 - Johan Klockars <rand@cd.chalmers.se> && STanda
 - fVDI: improved and made fit into fVDI CVS repository directory structure.
   General speedup of line and polygon drawing. 
