@@ -82,6 +82,10 @@ static void do_function(struct func *f)
 
     if (match(l,".LFE"))
 	l = l->prev;
+
+    while (match(l,".")) // { STanda
+	l = l->prev;     // } STanda
+
     if (!match(l,"ret"))
 	oops();
 
