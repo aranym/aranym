@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.1.6
+%define ver	0.1.7
 %define rel	3
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -69,7 +69,11 @@ rm -rf $RPM_BUILD_ROOT
 /usr/local/share/aranym/atari/tools/fastram.prg.bz2
 /usr/local/share/aranym/atari/tools/pc101us.kbd.bz2
 /usr/local/share/aranym/atari/tools/pcpatch.prg.bz2
+/usr/local/share/aranym/atari/sound/zmagxsnd.prg.bz2
 
 %changelog
+* Mon Apr 22 2002 Petr Stehlik <pstehlik@sophics.cz>
+Sound driver added
+
 * Sun Apr 14 2002 Petr Stehlik <pstehlik@sophics.cz>
 First working version
