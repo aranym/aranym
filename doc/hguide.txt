@@ -210,14 +210,18 @@ used for JIT compiler mainly.
 10) Threads and interrupts
 --------------------------
 
-I have tried several different models of threading in ARAnyM but although
-it always worked OK in Linux it often had problems in non-Linux operating
+I tried several different models of threading in ARAnyM. Although they
+always worked OK in Linux there often were problems in non-Linux operating
 systems so the current (0.6.2+?) ARAnyM internals are based on the following
 model:
 
 - CPU MC68040 emulation runs in the main thread. The main() function
-  first calls main.cpp:InitAll(), then Start680x0() and when the CPU
-  emulation ends it calls main.cpp:ExitAll() and quits.
+  first calls main.cpp:InitAll(), then Start680x0() (which starts the CPU
+  emulation loop) and when the CPU emulation ends it calls
+  main.cpp:ExitAll() and quits. So not only MC68040 emulation runs
+  in the main thread but also all the EmulOp and Native Features,
+  hardware emulation and fVDI screen output (VIDEL screen output 
+  is different, see below).
 
 - Then there is a SDL timer thread that runs with 10 ms resolution (wish it
   was 5 ms but unfortunately SDL is internally locked to 10 ms resolution).
@@ -225,12 +229,20 @@ model:
   TriggerInternalIRQ().
   This Trigger does one simple and quick thing: it sets SPCFLAG_INTERNAL_IRQ
   for the CPU. That's all it does and the timer function then ends.
-  It's a very short function (takes very little CPU cycles) and so it could
+  It's a very short function (takes only a few CPU cycles) and so it could
   be called from a real timer interrupt (is there such available?),
   preferably running at 200 Hz.
 
 - There is also a SDL_GUI thread but this one is running only if the GUI
-  is active.
+  is active. The SDL_GUI thread ensures that the active GUI does not
+  stop the emulation - ARAnyM continues running in background! This is 
+  an unusual behaviour and was implemented because I wanted to keep
+  the Atari time in sync. We basically don't have a Hibernate option
+  for the Atari so I had to let the CPU running (including all interrupts
+  and stuff). If I didn't do that the Atari time would be delayed.
+  This allows for very cool effects (imagine Lines.app running in TOS
+  and the GUI dialog above it). If we went for GUI translucence it
+  would be astonishing :-)
 
 All the user interactivity and interrupt emulation now relies on the CPU:
 When the SPCFLAG_INTERNAL_IRQ is set we have to wait until CPU emulation
