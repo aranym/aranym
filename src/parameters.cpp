@@ -120,9 +120,9 @@ static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
 /*************************************************************************/
 struct Config_Tag global_conf[]={
 	{ "FastRAM", Int_Tag, &bx_options.fastram, 0, 0},
-	{ "Floppy", String_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path), 0},
-	{ "TOS", String_Tag, bx_options.tos_path, sizeof(bx_options.tos_path), 0},
-	{ "EmuTOS", String_Tag, bx_options.emutos_path, sizeof(bx_options.emutos_path), 0},
+	{ "Floppy", Path_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path), 0},
+	{ "TOS", Path_Tag, bx_options.tos_path, sizeof(bx_options.tos_path), 0},
+	{ "EmuTOS", Path_Tag, bx_options.emutos_path, sizeof(bx_options.emutos_path), 0},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab, 0, 0},
 #ifdef ENABLE_EPSLIMITER
 	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
@@ -281,7 +281,7 @@ void presave_opengl() {
 	{ "IsCDROM", Bool_Tag, &Disk->isCDROM, 0, 0},	\
 	{ "ByteSwap", Bool_Tag, &Disk->byteswap, 0, 0},	\
 	{ "ReadOnly", Bool_Tag, &Disk->readonly, 0, 0},	\
-	{ "Path", String_Tag, Disk->path, sizeof(Disk->path), 0},	\
+	{ "Path", Path_Tag, Disk->path, sizeof(Disk->path), 0},	\
 	{ "Cylinders", Int_Tag, &Disk->cylinders, 0, 0},	\
 	{ "Heads", Int_Tag, &Disk->heads, 0, 0},	\
 	{ "SectorsPerTrack", Int_Tag, &Disk->spt, 0, 0},	\
@@ -357,7 +357,7 @@ void presave_ide() {
 
 /*************************************************************************/
 #define DISK_CONFIG(Disk)	struct Config_Tag Disk ## _configs[] = {	\
-	{ "Path", String_Tag, bx_options.Disk.path, sizeof(bx_options.Disk.path), 0},	\
+	{ "Path", Path_Tag, bx_options.Disk.path, sizeof(bx_options.Disk.path), 0},	\
 	{ "Present", Bool_Tag, &bx_options.Disk.present, 0, 0},	\
 	{ "PartID", String_Tag, bx_options.Disk.partID, sizeof(bx_options.Disk.partID), 0},	\
 	{ "ByteSwap", Bool_Tag, &bx_options.Disk.byteswap, 0, 0},	\
@@ -385,32 +385,32 @@ void presave_disk() {
 
 /*************************************************************************/
 struct Config_Tag arafs_conf[]={
-	{ "A", String_Tag, &bx_options.aranymfs[0].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "B", String_Tag, &bx_options.aranymfs[1].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "C", String_Tag, &bx_options.aranymfs[2].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "D", String_Tag, &bx_options.aranymfs[3].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "E", String_Tag, &bx_options.aranymfs[4].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "F", String_Tag, &bx_options.aranymfs[5].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "G", String_Tag, &bx_options.aranymfs[6].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "H", String_Tag, &bx_options.aranymfs[7].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "I", String_Tag, &bx_options.aranymfs[8].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "J", String_Tag, &bx_options.aranymfs[9].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "K", String_Tag, &bx_options.aranymfs[10].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "L", String_Tag, &bx_options.aranymfs[11].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "M", String_Tag, &bx_options.aranymfs[12].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "N", String_Tag, &bx_options.aranymfs[13].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "O", String_Tag, &bx_options.aranymfs[14].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "P", String_Tag, &bx_options.aranymfs[15].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "Q", String_Tag, &bx_options.aranymfs[16].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "R", String_Tag, &bx_options.aranymfs[17].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "S", String_Tag, &bx_options.aranymfs[18].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "T", String_Tag, &bx_options.aranymfs[19].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "U", String_Tag, &bx_options.aranymfs[20].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "V", String_Tag, &bx_options.aranymfs[21].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "W", String_Tag, &bx_options.aranymfs[22].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "X", String_Tag, &bx_options.aranymfs[23].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "Y", String_Tag, &bx_options.aranymfs[24].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
-	{ "Z", String_Tag, &bx_options.aranymfs[25].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "A", Path_Tag, bx_options.aranymfs[0].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "B", Path_Tag, bx_options.aranymfs[1].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "C", Path_Tag, bx_options.aranymfs[2].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "D", Path_Tag, bx_options.aranymfs[3].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "E", Path_Tag, bx_options.aranymfs[4].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "F", Path_Tag, bx_options.aranymfs[5].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "G", Path_Tag, bx_options.aranymfs[6].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "H", Path_Tag, bx_options.aranymfs[7].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "I", Path_Tag, bx_options.aranymfs[8].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "J", Path_Tag, bx_options.aranymfs[9].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "K", Path_Tag, bx_options.aranymfs[10].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "L", Path_Tag, bx_options.aranymfs[11].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "M", Path_Tag, bx_options.aranymfs[12].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "N", Path_Tag, bx_options.aranymfs[13].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "O", Path_Tag, bx_options.aranymfs[14].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "P", Path_Tag, bx_options.aranymfs[15].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "Q", Path_Tag, bx_options.aranymfs[16].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "R", Path_Tag, bx_options.aranymfs[17].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "S", Path_Tag, bx_options.aranymfs[18].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "T", Path_Tag, bx_options.aranymfs[19].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "U", Path_Tag, bx_options.aranymfs[20].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "V", Path_Tag, bx_options.aranymfs[21].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "W", Path_Tag, bx_options.aranymfs[22].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "X", Path_Tag, bx_options.aranymfs[23].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "Y", Path_Tag, bx_options.aranymfs[24].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
+	{ "Z", Path_Tag, bx_options.aranymfs[25].rootPath, sizeof(bx_options.aranymfs[0].rootPath), 0},
 	{ NULL , Error_Tag, NULL, 0, 0}
 };
 
@@ -449,6 +449,8 @@ void presave_arafs() {
 /*************************************************************************/
 #define ETH(x) bx_options.ethernet.x
 struct Config_Tag ethernet_conf[]={
+	{ "Type", String_Tag, &ETH(type), sizeof(ETH(type)), 0},
+	{ "Tunnel", String_Tag, &ETH(tunnel), sizeof(ETH(tunnel)), 0},
 	{ "HostIP", String_Tag, &ETH(ip_host), sizeof(ETH(ip_host)), 0},
 	{ "AtariIP", String_Tag, &ETH(ip_atari), sizeof(ETH(ip_atari)), 0},
 	{ "Netmask", String_Tag, &ETH(netmask), sizeof(ETH(netmask)), 0},
@@ -494,7 +496,7 @@ void presave_lilo() {
 
 struct Config_Tag midi_conf[]={
 	{ "Enabled", Bool_Tag, &MIDI(enabled), 0, 0},
-	{ "Output", String_Tag, &MIDI(output), sizeof(MIDI(output)), 0},
+	{ "Output", Path_Tag, &MIDI(output), sizeof(MIDI(output)), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -781,6 +783,43 @@ int process_cmdline(int argc, char **argv)
 	return optind;
 }
 
+
+void postload_PathTag( const char *filename, struct Config_Tag *ptr ) {
+	char *path = (char *)ptr->buf;
+	if ( !strlen(path) )
+		return;
+
+	char home[2048];
+	const char *prefix = NULL;
+	size_t prefixLen = 0;
+
+	if ( path[0] == '~' ) {
+		// replace with the home folder path
+		prefix = getHomeFolder(home, sizeof(home));
+		prefixLen = strlen( prefix );
+		path++;
+	} else if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
+		// find the last dirseparator
+		const char *slash = &filename[strlen(filename)];
+		while ( --slash >= filename &&
+			*slash != '/' &&
+			*slash != '\\' );
+		// get the path part (in front of the slash)
+		prefix = filename;
+		prefixLen = slash - prefix + 1;
+	}
+
+	if ( prefixLen > 0 ) {
+		if ( (size_t)ptr->buf_size >= prefixLen + strlen(path) ) {
+			memmove( (char*)ptr->buf + prefixLen, path, strlen(path)+1 );	
+			memmove( (char*)ptr->buf, prefix, prefixLen );
+		} else {
+			fprintf(stderr, "Error - config entry size is insufficient\n" );
+		}
+	}
+}
+
+
 // append a filename to a path
 char *addFilename(char *buffer, const char *file, unsigned int bufsize)
 {
@@ -826,11 +865,15 @@ char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
 static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose)
 {
 	int status = input_config(filename, conf, title);
-	if (verbose) {
-		if (status >= 0)
+	if (status >= 0) {
+		if (verbose)
 			fprintf(f, "%s configuration: found %d valid directives.\n", title, status);
-		else
-			fprintf(f, "Error while reading/processing the '%s' config file.\n", filename);
+		struct Config_Tag *ptr;
+		for ( ptr = conf; ptr->buf; ++ptr )
+			if ( ptr->type == Path_Tag )
+				postload_PathTag(filename, ptr);
+	} else {
+		fprintf(f, "Error while reading/processing the '%s' config file.\n", filename);
 	}
 	return status;
 }
