@@ -99,31 +99,6 @@ static int keyboardTable[0x80] = {
 /*78-7f*/ 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-#define MAXDRIVES   32
-int drive_fd[MAXDRIVES];
-bool is_floppy_inserted() { return drive_fd[0] >= 0; }
-void remove_floppy()
-{
-	if (is_floppy_inserted()) {
-		close(drive_fd[0]);
-		drive_fd[0] = -1;
-		D(bug("Floppy removed"));
-	}
-}
-
-void insert_floppy(bool rw = false)
-{
-	remove_floppy();
-	drive_fd[0] = open("/dev/fd0", rw ? (O_RDWR | O_SYNC) : O_RDONLY);
-	if (is_floppy_inserted()) {
-		init_fdc();
-		D(bug("Floppy inserted %s", rw ? "read-write" : "read-only"));
-	}
-	else {
-		D(bug("Inserting of floppy failed."));
-	}
-}
-
 bool grabbedMouse = false;
 bool hiddenMouse = false;
 bool canGrabAgain = true;
@@ -268,13 +243,6 @@ static void check_event(void)
 
 				if (alternated && sym == SDLK_PRINT) {
 					hostScreen.makeSnapshot();
-				}
-
-				else if (sym == SDLK_SCROLLOCK) {
-					if (is_floppy_inserted())
-						remove_floppy();
-					else
-						insert_floppy(shifted);
 				}
 
 				else if (sym == SDLK_PAGEUP) {
@@ -550,10 +518,7 @@ bool InitAll(void)
 		SDL_WarpMouse(640/2, 480/2);
 	grabMouse(true);
 
-	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
-
-	// do not insert floppy automatically
-	// insert_floppy();
+	init_fdc();
 
 #ifdef METADOS_DRV
 	// install the drives
@@ -600,9 +565,6 @@ void ExitAll(void)
 	mon_exit();
 #endif
 
-	// remove floppy (flush buffers)
-	remove_floppy();
-
 	SDL_VideoQuit();
 
 	SDL_Quit();
@@ -611,6 +573,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.29  2001/10/25 12:25:28  joy
+ * request the ROM to be 512 kB long. On the web there are just 256 kB long images...
+ *
  * Revision 1.28  2001/10/23 21:26:15  standa
  * The hostScreen size is used to handle the mouseOut flag.
  *
@@ -631,6 +596,9 @@ void ExitAll(void)
  *
  * Revision 1.22  2001/10/08 21:46:05  standa
  * The $Header$ and $Log$
+ * The $Header$ and Revision 1.29  2001/10/25 12:25:28  joy
+ * The $Header$ and request the ROM to be 512 kB long. On the web there are just 256 kB long images...
+ * The $Header$ and
  * The $Header$ and Revision 1.28  2001/10/23 21:26:15  standa
  * The $Header$ and The hostScreen size is used to handle the mouseOut flag.
  * The $Header$ and
