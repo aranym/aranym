@@ -81,6 +81,7 @@ static char *strhelp[] = {"Help:\n",
 	" j | J                browse up\n",
 	" k | K                browse down\n",
 	" r                    refresh D(bug()) | reset aktual row\n",
+	" L <file>             save debugger's info to <file>\n",
 #ifdef FULL_HISTORY
 	" H <lines>            show history of PC",
 #endif
@@ -368,6 +369,41 @@ void ndebug::set_Sx(char **inl) {
 				break;
 		}
 }
+
+void ndebug::errorintofile(FILE *f, char **inl) {
+	char *name;
+	FILE *fp;
+	unsigned int ar;
+	
+	if (!more_params (inl)) {
+		bug("L command needs more arguments!");
+		return;
+	}
+	
+	name = *inl;
+	while (**inl != '\0' && !isspace (**inl)) (*inl)++;
+	**inl = '\0';
+
+	fp = fopen (name, "w");
+	if (fp == NULL) {
+		bug("Couldn't open file");
+		return;
+	}
+
+        for (unsigned int i = 0; i < dbsize; i++) {
+		ar = (dbstart + i) % dbsize;
+		if (dbbuffer[ar] != NULL
+			&& (((dbstart <= dbend) && (ar >= dbstart) && (ar <= dbend))
+			|| (dbstart > dbend) && (i < dbsize))) {
+			fprintf(fp, "%s\n", dbbuffer[ar]);
+		}
+	}
+								
+	fclose (fp);
+	return;
+}
+
+
 
 void ndebug::saveintofile(FILE *f, char **inl) {
 	uae_u32 src, len;
@@ -712,6 +748,9 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			set_special(SPCFLAG_BRK);
 			if (wasGrabbed) grabMouse(true);
 			return 0;
+		case 'L':
+			errorintofile(f, &inptr);
+			break;
 #ifdef FULL_HISTORY
 		case 'H':
 			if (!more_params(&inptr)) count = 10;
@@ -1103,6 +1142,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.14  2002/02/01 20:19:38  milan
+ * ioctl -> tcgetattr, tcsetattr
+ *
  * Revision 1.13  2002/01/31 19:37:47  milan
  * panicbug, cleaning
  *

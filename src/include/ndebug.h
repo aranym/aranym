@@ -47,6 +47,7 @@ class ndebug {
   static void set_Px(char **);
   static void set_Sx(char **);
   static void saveintofile(FILE *, char **);
+  static void errorintofile(FILE *, char **);
   static void loadintomemory(FILE *, char **);
   static void convertNo(char **);
   static uae_u32 readhex(char, char **);

@@ -27,7 +27,7 @@ AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU 
 
 AC_ARG_ENABLE(sdltimer,        [  --enable-sdltimer       use SDL Timer for Timer C [default=yes]], [WANT_SDLTIMER=$enableval], [WANT_SDLTIMER=yes])
 
-AC_ARG_ENABLE(pagecheck,       [  --enable-pagecheck      different memory check [default=no]], [WANT_PAGECHECK=$enableval], [WANT_PAGECHECK=yes])
+AC_ARG_ENABLE(pagecheck,       [  --enable-pagecheck      different memory check [default=yes]], [WANT_PAGECHECK=$enableval], [WANT_PAGECHECK=yes])
 
 AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB [default=no]], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
