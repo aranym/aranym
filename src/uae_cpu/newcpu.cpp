@@ -1350,6 +1350,11 @@ int m68k_do_specialties(void)
 		return CFLOW_EXEC_RETURN;
 	}
 
+	if (SPCFLAGS_TEST( SPCFLAG_NMI )) {
+		quit_program = 1;
+		return 1;
+	}
+
 	return 0;
 }
 
