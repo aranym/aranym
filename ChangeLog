@@ -1,3 +1,14 @@
+2001/12/27 - joy (tagged as ARANYM_0_0_15)
+- FastRAM can be fixed size (--enable-fastram=X) - that makes the check
+  ram_boundary() even faster (comparing with constant value instead of fetching
+  the value of a global variable). 34k7 dhry now (this is probably the fastest
+  possible solution before splitting the RAM into 4k blocks as Johan suggested.
+  Please fix the configure.in - it doesn't work properly - there's no value
+  for FixedSizeFastRAM in the config.h.
+- TOS 4.04 patched to enable FastRAM check.
+- fullmmu is disabled by default now.
+
+
 2001/12/26 - joy (tagged as ARANYM_0_0_14)
 - handling of MFP interrupts moved from CPU to MFP module
 - checking for VBL and MFP joined in one 'if' - another nice speedup (33k5 now)
@@ -16,7 +27,7 @@
 - added "--refresh <x>" cmdline option. Default value is 2 = 50/2 Hz screen
   refresh. Allowed values are 1 - 200 (50Hz - 1/4 Hz)
 - check_ram_boundary() allows direct access to physical videoram
-- check_ram_boundary() now makes FastRAM equally fast as ST-RAM
+- check_ram_boundary() now makes FastRAM equally fast as ST-RAM (30k5)
 
 
 2001/12/21 - STanda
