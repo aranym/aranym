@@ -481,7 +481,7 @@ fi
 dnl Direct Truecolor
 if [[ "x$WANT_DIRECTCOLOR" = "xyes" ]]; then
     if [[ "x$WANT_FIXEDVIDEORAM" = "xno" ]]; then
-        AC_MSG_WARN([Direct truecolor needs fixed position of VideoRAM needs, ignored])
+        AC_MSG_WARN([Direct truecolor needs fixed position of VideoRAM, ignored])
     else
         AC_DEFINE(DIRECT_TRUECOLOR)
     fi
@@ -836,6 +836,7 @@ echo Monitor ................................ : $WANT_MON
 echo Timer C using SDL Timer ................ : $WANT_SDLTIMER
 echo Page check memory ...................... : $WANT_PAGECHECK
 echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM
+echo Fixed position of VideoRAM ............. : $WANT_FIXEDVIDEORAM
 echo TOS Direct Truecolor.................... : $WANT_DIRECTCOLOR
 echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
 echo Blitter SDL blit acceleration .......... : $WANT_BLITSDLBLIT
