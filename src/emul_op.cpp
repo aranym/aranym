@@ -193,9 +193,9 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 
 		case M68K_EMUL_OP_DMAREAD:	// for EmuTOS - code 0x7136
 		{
-			int dev = ReadInt32(r->a[7]+14);
+			int dev = ReadInt16(r->a[7]+14);
 			long buf = ReadInt32(r->a[7]+10);
-			int cnt = ReadInt32(r->a[7]+8);
+			int cnt = ReadInt16(r->a[7]+8);
 			long recnr = ReadInt32(r->a[7]+4);
 			D(bug("ARAnyM DMAread(start=%ld, count=%d, buffer=%ld, device=%d)", recnr, cnt, buf, dev));
 
@@ -233,12 +233,12 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 
 		case M68K_EMUL_OP_XHDI:	// for EmuTOS - code 0x7137
 			// D(bug("ARAnyM XHDI(%u)\n", get_word(r->a[7]+4, true)));
-			switch(ReadInt32(r->a[7]+4)) {
+			switch(ReadInt16(r->a[7]+4)) {
 				case 14:	/* XHGetCapatity */
 					{
 						// UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
-						uint16 major = ReadInt32(r->a[7]+6);
-						uint16 minor = ReadInt32(r->a[7]+8);
+						uint16 major = ReadInt16(r->a[7]+6);
+						uint16 minor = ReadInt16(r->a[7]+8);
 						uint32 blocks = ReadInt32(r->a[7]+10);
 						uint32 blocksize = ReadInt32(r->a[7]+14);
 						D(bug("ARAnyM XHGetCapacity(major=%u, minor=%u, blocks=%lu, blocksize=%lu)", major, minor, blocks, blocksize));
