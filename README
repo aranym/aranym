@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.8.6beta released on 2004/02/08
+      version 0.8.7beta released on 2004/02/15
 
 
  1) License
@@ -41,7 +41,7 @@ where TOS/GEM applications could continue to live forever.
    o Atari floppy DD/HD for connecting floppy image or real floppy drive
    o two IDE channels for connecting disk images, harddrives or CD-ROMs
    o extended keyboard and mouse support (including mouse wheel)
-   o direct access to host file system via MetaDOS and MiNT fs drivers
+   o direct access to host file system via BetaDOS and MiNT xfs drivers
    o networking using ethernet emulation with a driver for MiNT-Net
    o TOS 4.04, EmuTOS or Linux as the booting operating system
    o runs with FreeMiNT, MagiC, and any other operating system that runs
@@ -117,11 +117,11 @@ Look into FAQ for more details.
 
 You can use IDE emulation, but you can have only 2 IDE devices. So a better
 way is to use Natfeat CD-ROM driver, where you can have up to 26 CD-ROM
-drives (physical devices A to Z for MetaDOS). The SDL driver allows only audio
+drives (physical devices A to Z for BetaDOS). The SDL driver allows only audio
 CD playing, whereas the Linux driver allows you also data CD-ROM access.
 
 First, See section [CDROMS] in your config file. Each drive letter is a
-physical device for MetaDOS, and you can give it any host CD-ROM drive number
+physical device for BetaDOS, and you can give it any host CD-ROM drive number
 (if you have multiple CD-ROM drives on your host machine).
 
 Example:
@@ -140,12 +140,12 @@ edit your config.sys file, and add a line like this:
 
 You can now use audio CDs with your favorite CD player. If you also want access
 to data CD-ROMs, you need an iso9660 filesystem driver. You can find some with
-MetaDOS, and add the lines:
+BetaDOS, and add the lines:
 
 *DOS, \auto\iso9660.dos, G:A, H:W, I:Z
 
 To have gemdos drives G, H, I (on your desktop) use the respective A, W, Z
-MetaDOS devices.
+BetaDOS devices.
 
 
  7) Accessing data on host OS filesystem
