@@ -2196,36 +2196,42 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tfpuop_restore(opcode);\n");
 	break;
      case i_CINVL:
+	printf ("\tflush_internals();\n");
 #ifdef USE_JIT
  	printf ("\tif (opcode&0x80)\n"
 		"\t\tflush_icache(31);\n");
 #endif
 	break;
      case i_CINVP:
+	printf ("\tflush_internals();\n");
 #ifdef USE_JIT
 	printf ("\tif (opcode&0x80)\n"
 		"\t\tflush_icache(32);\n");
 #endif
 	break;
      case i_CINVA:
+	printf ("\tflush_internals();\n");
 #ifdef USE_JIT
 	printf ("\tif (opcode&0x80)\n"
 		"\t\tflush_icache(33);\n");
 #endif
 	break;
      case i_CPUSHL:
+	printf ("\tflush_internals();\n");
 #ifdef USE_JIT
 	printf ("\tif (opcode&0x80)\n"
 		"\t\tflush_icache(41);\n");
 #endif
 	break;
      case i_CPUSHP:
+	printf ("\tflush_internals();\n");
 #ifdef USE_JIT
 	printf ("\tif (opcode&0x80)\n"
 		"\t\tflush_icache(42);\n");
 #endif
 	break;
      case i_CPUSHA:
+	printf ("\tflush_internals();\n");
 #ifdef USE_JIT
 	printf ("\tif (opcode&0x80)\n"
 		"\t\tflush_icache(43);\n");
@@ -2338,41 +2344,30 @@ static void generate_one_opcode (int rp)
 	return;
 
     if (opcode_next_clev[rp] != cpu_level) {
-#ifdef DISDIP
-	fprintf (stblfile, "{&&op_%lx_%d, %ld}, /* %s */\n", opcode, opcode_last_postfix[rp], opcode, lookuptab[i].name);
-#else
 	fprintf (stblfile, "{ CPUFUNC(op_%lx_%d), 0, %ld }, /* %s */\n", opcode, opcode_last_postfix[rp],
 		 opcode, lookuptab[i].name);
-#endif
 	return;
     }
 
 	if (table68k[opcode].flagdead == 0)
 	/* force to the "ff" variant since the instruction doesn't set at all the condition codes */
-#ifdef DISDIP
-    fprintf (stblfile, "{&&op_%lx_%d, %ld}, /* %s */\n", opcode, postfix, opcode, lookuptab[i].name);
-#else
     fprintf (stblfile, "{ CPUFUNC_FF(op_%lx_%d), 0, %ld }, /* %s */\n", opcode, postfix, opcode, lookuptab[i].name);
-#endif
 	else
-#ifdef DISDIP
-    fprintf (stblfile, "{&&op_%lx_%d, %ld}, /* %s */\n", opcode, postfix, opcode, lookuptab[i].name);
-#else
     fprintf (stblfile, "{ CPUFUNC(op_%lx_%d), 0, %ld }, /* %s */\n", opcode, postfix, opcode, lookuptab[i].name);
-#endif
 
-#ifndef DISDIP
     fprintf (headerfile, "extern cpuop_func op_%lx_%d_nf;\n", opcode, postfix);
     fprintf (headerfile, "extern cpuop_func op_%lx_%d_ff;\n", opcode, postfix);
-#endif
     
-#ifdef DISDIP
-    printf ("op_%lx_%d: /* %s */\n", opcode, postfix, lookuptab[i].name);
-    printf ("\t{\n");
-#else
     printf ("cpuop_rettype REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
+#ifdef DISDIP
+    printf ("\tuae_u32 pc;\n");
+    printf ("\tif (initial) goto op_%lx_%d_lab;\n", opcode, postfix);
+    printf ("\top_smalltbl_0_lab[opcode] = &&op_%lx_%d_lab;\n", opcode, postfix);
+    printf ("\treturn;\n");
+    printf ("op_%lx_%d_lab: /* %s */\n", opcode, postfix, lookuptab[i].name);
+#else
 	printf ("\tcpuop_begin();\n");
-#endif	
+#endif
 	/* gb-- The "nf" variant for an instruction that doesn't set the condition
 	   codes at all is the same as the "ff" variant, so we don't need the "nf"
 	   variant to be compiled since it is mapped to the "ff" variant in the
@@ -2502,7 +2497,6 @@ static void generate_one_opcode (int rp)
     if (table68k[opcode].flagdead == 0)
 	printf ("\n#endif\n");
 #ifdef DISDIP
-    printf ("\t}\n");
     printf ("\tif (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {\n");
     printf ("\t\tif (m68k_do_specialties())\n");
     printf ("\t\t\treturn;\n");
@@ -2524,12 +2518,12 @@ static void generate_one_opcode (int rp)
     printf ("\tcheck_ram_boundary(pc, 2, false);\n");
 #endif
     printf ("\topcode = GET_OPCODE;\n");
-    printf ("\tgoto *op_tbl_0[opcode];\n\n");
+    printf ("\tgoto *op_smalltbl_0_lab[opcode];\n\n");
     previous_gener_opcode = opcode;
 #else
     printf ("\tcpuop_end(%s);\n", cflow_string_of(opcode));
-    printf ("}\n");
 #endif
+    printf ("}\n");
     opcode_next_clev[rp] = next_cpu_level;
     opcode_last_postfix[rp] = postfix;
 }
@@ -2550,9 +2544,6 @@ static void generate_func (void)
     for (i = 0; i < 1; i++) {
 	cpu_level = 4 - i;
 	postfix = i;
-#ifdef DISDIP
-	fprintf (stblfile, "static cputbllabs op_smalltbl_0[] = {\n");
-#else
 	fprintf (stblfile, "struct cputbl CPUFUNC(op_smalltbl_%d)[] = {\n", postfix);
 
 	/* sam: this is for people with low memory (eg. me :)) */
@@ -2571,22 +2562,15 @@ static void generate_func (void)
 	        "#define PART_7 1\n"
 	        "#define PART_8 1\n"
 	        "#endif\n\n");
-#endif
 	rp = 0;
 	for(j=1;j<=8;++j) {
 		int k = (j*nr_cpuop_funcs)/8;
-#ifndef DISDIP
 		printf ("#ifdef PART_%d\n",j);
-#endif
 		for (; rp < k; rp++)
 		   generate_one_opcode (rp);
-#ifndef DISDIP
 		printf ("#endif\n\n");
-#endif
 	}
-#ifndef DISDIP
 	fprintf (stblfile, "{ 0, 0, 0 }};\n");
-#endif
     }
 }
 
@@ -2610,54 +2594,8 @@ int main (int argc, char **argv)
     freopen ("cpuemu.cpp", "wb", stdout);
 
     generate_includes (stdout);
-#ifndef DISDIP
     generate_includes (stblfile);
-#else
-    printf ("\nstruct cputbllabs {\n");
-    printf ("\tvoid *label;\n");
-    printf ("\tunsigned int no;\n");
-    printf ("};\n");
-    printf ("bool initial = false;\n\n");
-    printf ("void m68k_instr_set(void) {\n");
-    printf ("#include \"cpustbl.cpp\"\n\n");
-    printf ("\tuae_u32 pc;\n");
-    printf ("\tuae_u32 opcode;\n");
-    printf ("\tstatic void *op_tbl_0[65536];\n\n");
-    printf ("\tif (initial) goto start_jump;\n");
-    printf ("\tfor (int i = 0; i < 65536; i++)\n");
-    printf ("\t\top_tbl_0[i] = &&illegal_opcode;\n");
-    printf ("\t{int i = 0;\n");
-    printf ("\twhile (op_smalltbl_0[i].no != 65535) {\n");
-    printf ("\t\top_tbl_0[op_smalltbl_0[i].no] = op_smalltbl_0[i].label;\n");
-    printf ("\t\ti++;\n");
-    printf ("\t}}\n");
-    printf ("\tinitial = true;\n");
-    printf ("start_jump:\n");
-    printf ("\tpc = m68k_getpc();\n");
-#if ARAM_PAGE_CHECK
-    printf ("\tif (((pc ^ pc_page) > ARAM_PAGE_MASK)) {\n");
-    printf ("\t\tcheck_ram_boundary(pc, 2, false);\n");
-    printf ("\t\tpc_page = pc;\n");
-    printf ("\t\tpc_offset = (uae_u32)get_real_address(pc, 0, sz_word) - pc;\n");
-    printf ("\t}\n");
-#else
-    printf ("\tcheck_ram_boundary(pc, 2, false);\n");
-#endif
-    printf ("\topcode = GET_OPCODE;\n");
-    printf ("\tgoto *op_tbl_0[opcode];\n\n");
-    printf ("illegal_opcode:\n");
-    printf ("\top_illg(opcode);\n");
-    printf ("\tif (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {\n");
-    printf ("\t\tif (m68k_do_specialties())\n");
-    printf ("\t\t\treturn;\n");
-    printf ("\t}\n");
-    printf ("\tgoto start_jump;\n\n");
-#endif
     generate_func ();
-#ifdef DISDIP
-    printf ("}\n");
-    fprintf (stblfile, "{&&illegal_opcode, 65535}};\n");
-#endif
     free (table68k);
     return 0;
 }

@@ -25,16 +25,6 @@
  */
 
 #include "sysdeps.h"
-
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
-# include <sys/mman.h>
-#endif
-
-#include <cerrno>
-#include <csignal>
-#include <cstdlib>
-#include <SDL.h>
-
 #include "cpu_emulation.h"
 #include "main.h"
 #include "input.h"
@@ -49,6 +39,15 @@
 #ifdef ENABLE_MON
 # include "mon.h"
 #endif
+
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
+# include <sys/mman.h>
+#endif
+
+#include <cerrno>
+#include <csignal>
+#include <cstdlib>
+#include <SDL.h>
 
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
@@ -180,7 +179,11 @@ int main(int argc, char **argv)
 	if (mprotect(ROMBaseHost + 0x100000, 0x100000, PROT_NONE) == -1) {
 		perror("Couldn't set HW address space");
 		exit(-1);
-	}	
+	}
+	if ((FakeIOBaseHost = (uint8 *)vm_acquire(0x00100000)) == VM_MAP_FAILED) {
+		ErrorAlert("Not enough free memory.\n");
+		QuitEmulator();
+	}
 #endif /* NATMEM_OFFESET */
 
 	// Start 68k and jump to ROM boot routine
@@ -248,6 +251,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.64  2002/04/22 18:30:50  milan
+ * header files reform
+ *
  * Revision 1.63  2002/04/22 08:55:08  milan
  * better segfault handling with fullhistory
  *

@@ -40,8 +40,14 @@ uint32 ROMSize = 0x00200000;		// Size of ROM
 
 uint32 RealROMSize;	// Real size of ROM
 
+const uint32 HWBase = 0x00f00000;	// HW base (Atari address space)
+
 memptr FastRAMBase = 0x01000000;		// Fast-RAM base (Atari address space)
 uint8 *FastRAMBaseHost;	// Fast-RAM base (host address space)
+
+#ifdef USE_JIT
+uint8 *FakeIOBaseHost;
+#endif
 
 #ifdef FIXED_VIDEORAM
 memptr VideoRAMBase = ARANYMVRAMSTART;  // VideoRAM base (Atari address space)

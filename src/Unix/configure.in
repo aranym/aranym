@@ -134,7 +134,7 @@ AC_PROG_INSTALL
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h fcntl.h sys/mman.h sys/ioctl.h)
-AC_CHECK_HEADERS(features.h sys/feature_tests.h dirent.h signal.h getopt.h)
+AC_CHECK_HEADERS(features.h sys/feature_tests.h dirent.h getopt.h)
 AC_CHECK_HEADERS(termios.h termio.h alloca.h sys/statfs.h sys/statvfs.h)
 AC_CHECK_HEADERS(sys/types.h sys/stat.h sys/vfs.h utime.h sys/param.h)
 AC_CHECK_HEADERS(sys/mount.h types.h stat.h)
@@ -848,10 +848,7 @@ fi
 dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
   CPUINCLUDES="-I../uae_cpu"
-  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp $CPUSRCS $JITSRCS $MMUSRCS"
-  if [[ "x$WANT_DIS_DIP" = "xno" ]]; then
-    CPUSRCS="$CPUSRCS cpustbl.cpp"
-  fi
+  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp cpustbl.cpp $CPUSRCS $JITSRCS $MMUSRCS"
 fi
 
 dnl Remove the "-g" option if set for GCC.

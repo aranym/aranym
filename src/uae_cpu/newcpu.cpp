@@ -51,6 +51,14 @@ uaecptr last_addr_for_exception_3;
 /* Address that generated the exception */
 uaecptr last_fault_for_exception_3;
 
+#ifdef DISDIP
+/* Is opcode label tabel initialized?*/
+bool initial;
+
+/* Jump table */
+void *op_smalltbl_0_lab[65536];
+#endif
+
 int areg_byteinc[] = { 1,1,1,1,1,1,1,2 };
 int imm8_table[] = { 8,1,2,3,4,5,6,7 };
 
@@ -80,7 +88,6 @@ cpuop_rettype REGPARAM2 op_illg_1 (uae_u32 opcode)
 
 static void build_cpufunctbl (void)
 {
-#ifndef DISDIP
     int i;
     unsigned long opcode;
     int cpu_level = 4;
@@ -109,6 +116,10 @@ static void build_cpufunctbl (void)
 	if (tbl[i].specific)
 	    cpufunctbl[cft_map (tbl[i].opcode)] = tbl[i].handler;
     }
+#ifdef DISDIP
+    for (i = 0; i < 65536; i++)
+	(*cpufunctbl[i])(i);
+    initial = true;
 #endif
 }
 
@@ -1212,6 +1223,12 @@ void m68k_natfea(uae_u32 opcode)
 
 cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
 {
+#ifdef DISDIP
+	if (initial) goto op_illg_lab;
+	op_smalltbl_0_lab[opcode] = &&op_illg_lab;
+	return;
+op_illg_lab:
+#endif
 	uaecptr pc = m68k_getpc ();
 
 	if ((opcode & 0xF000) == 0xA000) {
@@ -1237,9 +1254,13 @@ cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
 void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
     if ((opcode & 0xFF8) == 0x0500) { /* PFLUSHN instruction (An) */
+	flush_internals();
     } else if ((opcode & 0xFF8) == 0x0508) { /* PFLUSH instruction (An) */
+	flush_internals();
     } else if ((opcode & 0xFF8) == 0x0510) { /* PFLUSHAN instruction */
+	flush_internals();
     } else if ((opcode & 0xFF8) == 0x0518) { /* PFLUSHA instruction */
+	flush_internals();
     } else if ((opcode & 0xFF8) == 0x548) { /* PTESTW instruction */
     } else if ((opcode & 0xFF8) == 0x568) { /* PTESTR instruction */
     } else op_illg(opcode);
@@ -1445,6 +1466,14 @@ void m68k_do_execute (void)
 #if USE_JIT
 void m68k_compile_execute (void)
 {
+setjmpagain:
+    int prb = setjmp(excep_env);
+    if (prb != 0) {
+	flush_icache(0);
+	flush_internals();
+        Exception(prb, 0);
+    	goto setjmpagain;
+    }
     for (;;) {
 	if (quit_program > 0) {
 	    if (quit_program == 1)
@@ -1486,11 +1515,7 @@ setjmpagain:
 #ifdef DEBUGGER
 	if (debugging) debug();
 #endif
-#ifdef DISDIP
-	m68k_instr_set();
-#else
 	m68k_do_execute();
-#endif
     }
 
 #if USE_JIT

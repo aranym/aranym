@@ -102,7 +102,7 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write) { 
 
 
 #ifdef FIXED_VIDEORAM
-# define do_get_real_address(a)		(((memptr)(a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff))
+# define do_get_real_address(a)		(((uae_u8 *)(a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff))
 #else
 # define do_get_real_address(a)          ((uae_u8 *)(a) + MEMBaseDiff)
 #endif
@@ -462,5 +462,13 @@ static __inline__ bool valid_address(uaecptr addr, bool write, uaecptr pc, int s
 
 #define valid_address(a,w,p,s)		phys_valid_address(a,w,p,s)
 #endif
+
+static void inline flush_internals() {
+#if ARAM_PAGE_CHECK
+    pc_page = 0xeeeeeeee;
+    read_page = 0xeeeeeeee;
+    write_page = 0xeeeeeeee;
+#endif
+}
 
 #endif /* MEMORY_H */

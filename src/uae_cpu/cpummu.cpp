@@ -703,7 +703,10 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		}
 		if (didflush)
 			D(bug("  -> flushed %d matching entries", didflush));
-		
+		flush_internals();
+#ifdef USE_JIT
+		flush_icache(0);
+#endif
 	} else if ((opcode & 0x0FD8) == 0x548) {
 		int write, regno;
 		regno = opcode & 7;

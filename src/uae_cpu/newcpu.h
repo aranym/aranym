@@ -265,6 +265,11 @@ extern uaecptr last_fault_for_exception_3;
 /* 68040+ 68881 */
 extern struct cputbl op_smalltbl_0_ff[];
 
+#ifdef DISDIP
+extern bool initial;
+extern void *op_smalltbl_0_lab[];
+#endif
+
 extern void m68k_do_execute(void);
 extern void m68k_execute(void);
 #if USE_JIT

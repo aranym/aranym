@@ -1,5 +1,7 @@
 2002/04/21 - milan
 - header files reform
+- distributed dispatcher rewroted
+- JIT compiler integrated
 
 
 ** Version 0.1.7
