@@ -3,7 +3,6 @@ Before 0.8.0 release:
 - host-ip, atari-ip, netmask, mtu in config file ([ETH0])
 - supermount point of hostfs in config file
 - diskimage updating config file automatically
-- P4 JIT fix from Basilisk
 - major doc update (networking, disk image, afros)
 
 Some hot ideas (before we'll forget them :-)
