@@ -1,9 +1,48 @@
 ARAnyM source code consists of several parts. Some were taken from other
-projects (Basilisk II, Bochs, STonX) and the core, glue and additional
-features were written by the following ARAnyM developers:
+projects (Basilisk II, Bochs, STonX) - we thank to them and to their
+authors for releasing the code under GPL.
+
+The ARAnyM core, glue and additional features were written by the
+following main ARAnyM developers:
 
 Ctirad Fertr <phanatic@volny.cz>
-Milan Jurik <M.Jurik@sh.cvut.cz>
-Stanislav Opichal <opichals@seznam.cz>
-Petr Stehlik <pstehlik@sophics.cz>
+- the main idea of new Atari machine
+- deep user testing
+- VIDEL color fixes
 
+Milan Jurik <M.Jurik@sh.cvut.cz>
+- main framework from Basilisk and building system (autoconf stuff)
+- continuous updates and syncing with UAE CPU core
+- memory management (direct, real addressing modes)
+- portability generally, Solaris and Windows
+- 68040 MMU (Memory Management Unit) emulation (in progress)
+- 68040 JIT (in progress)
+- ndebug (New Debug)
+- TV conf GUI (nobody seen it yet :)
+
+Stanislav Opichal <opichals@seznam.cz>
+- aranymfs: host filesystem access based on MetaDOS driver
+- VIDEL bitplanes to chunky conversion code
+- fVDI driver
+- general hostscreen and SDL work
+
+Petr Stehlik <pstehlik@sophics.cz>
+- hardware emulation (VIDEL,MFP,YAMAHA,ACIA,FDC,IDE,Blitter,NVRAM,..)
+- 68040 friendly TOS
+- keyboard and mouse
+- parallel port (in progress)
+
+
+This is the list of people who have contributed to project
+
+Thanks go to :-
+
+Patrice Mandin
+- for close examination of our code and finding obvious and not-so-obvious
+  bugs (IDE, parameters handling, TOS patches)
+
+Francois LE COAT
+- for the Solaris port
+
+Olivier Landemarre)
+- for the Windows/cygwin port
