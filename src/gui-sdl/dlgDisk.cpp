@@ -32,9 +32,9 @@
 #include "hardware.h"		// for getFDC()
 #include "debug.h"
 
-extern bx_options_t gui_options;
-
 extern int Dialog_AlertDlg(const char *);
+
+bx_options_t gui_options;
 
 // floppy
 static char ide0_name[22];	// size of this array defines also the GUI edit size
@@ -90,7 +90,8 @@ enum DISCDLG {
 	IDE1_SIZE,
 	text_size1mb,
 	IDE1_GENERATE,
-	EXIT
+	APPLY,
+	CANCEL
 };
 
 static SGOBJ discdlg[] =
@@ -137,7 +138,8 @@ static SGOBJ discdlg[] =
   { SGEDITFIELD, 0, 0,	 8,20, 5,1, ide1_size},
   { SGTEXT, 0, 0,		14,20, 2,1, "MB" },
   { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0,	17,20, 10,1, "Generate" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0,	10,23, 20,1, "Back to main menu" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8,23, 8,1, "Apply" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28,23, 8,1, "Cancel" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 
@@ -246,7 +248,6 @@ static void UpdateDiskParameters(int disk, bool updateCHS)
 bool make_image(long sec, const char *filename)
 {
 	FILE *fp;
-	char buffer[1024];
 
 	fp = fopen(filename, "w");
 	if (fp == NULL) {
@@ -313,6 +314,9 @@ void Dialog_DiscDlg(void)
   char floppy_path[80]="";
   char ide0_path[80]="";
   char ide1_path[80]="";
+
+  // preload bx settings
+  gui_options = bx_options;
 
   /* Set up dialog to actual values: */
   // floppy
@@ -447,7 +451,7 @@ void Dialog_DiscDlg(void)
         break;
     }
   }
-  while(but!=EXIT);
+  while(but!=APPLY && but!=CANCEL);
 
   /* Read values from dialog */
   int cyl, head, spt;
@@ -474,4 +478,8 @@ void Dialog_DiscDlg(void)
   gui_options.atadevice[0][1].readonly = getSelected(IDE1_READONLY);
   gui_options.atadevice[0][1].isCDROM = getSelected(IDE1_CDROM);
   gui_options.atadevice[0][1].byteswap = getSelected(IDE1_BYTESWAP);
+
+  /* apply the values */
+  if (but == APPLY)
+	  bx_options = gui_options;
 }
