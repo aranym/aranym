@@ -1,5 +1,16 @@
+2001/12/19 - joy
+- check_ram_boundary() cleaner now - no default value for 'write' parameter
+  and the 'size' parameter contains the natural value - 1 for byte access,
+  2 for a word access and 4 for a long (doubleword) access.
+
+- you can define NO_MEMORY_CHECK in memory.h to see the original
+  speed of old unsafe, often crashing ARAnyM (Dhry: 27k -> 34k)
+
+
 2001/12/17 - joy
 - SDL Timers are back! --enable-sdltimer
+- VBL timer runs at precise 50 Hz now
+- VIDEL screen refresh at fixed 25 Hz now
 
 
 2001/12/16 - joy
