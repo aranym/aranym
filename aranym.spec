@@ -95,10 +95,12 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/createdisk/createdisk.sh
 /usr/share/aranym/createdisk/mbrdata
 /usr/share/aranym/floppy.sh
-/usr/share/aranym/font8.bmp
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Sat Jan 03 2004 Petr Stehlik <pstehlik@sophics.cz>
+font8.bmp removed.
+
 * Sat Oct 04 2003 Petr Stehlik <pstehlik@sophics.cz>
 Version increased. NFCDROM.BOS added.
 
