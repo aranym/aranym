@@ -39,16 +39,31 @@ extern uint32 ROMBase;		// ROM base (Atari address space)
 extern uint8 *ROMBaseHost;	// ROM base (host address space)
 extern uint32 ROMSize;		// Size of ROM
 
-//extern uint32 TTRAMBase;	// TT-RAM base (Atari address space)
-//extern uint8 *TTRAMBaseHost;	// TT-RAM base (host address space)
+extern uint32 RealROMSize;	// Real size of ROM
+
+extern uint32 TTRAMBase;	// TT-RAM base (Atari address space)
+extern uint8 *TTRAMBaseHost;	// TT-RAM base (host address space)
 extern uint32 TTRAMSize;	// Size of TT-RAM
 
 extern uint32 VideoRAMBase;	// VideoRAM base (Atari address space)
 extern uint8 *VideoRAMBaseHost;	// VideoRAM base (host address space)
 //extern uint32 VideoRAMSize;	// Size of VideoRAM
 
-// Mac memory access functions
+// Atari memory access functions
 #include "memory.h"
+static inline uint32 ReadAtariInt32(uint32 addr) {return get_long_direct(addr);}
+static inline uint32 ReadAtariInt16(uint32 addr) {return get_word_direct(addr);}
+static inline uint32 ReadAtariInt8(uint32 addr) {return get_byte_direct(addr);}
+static inline void WriteAtariInt32(uint32 addr, uint32 l) {put_long_direct(addr, l);}
+static inline void WriteAtariInt16(uint32 addr, uint32 w) {put_word_direct(addr, w);}
+static inline void WriteAtariInt8(uint32 addr, uint32 b) {put_byte_direct(addr, b);}
+static inline uint8 *Atari2HostAddr(uint32 addr) {return get_real_address_direct(addr);}
+//static inline uint32 Host2AtariAddr(uint8 *addr) {return get_virtual_address(addr);}
+
+static inline void *Atari_memset(uint32 addr, int c, size_t n) {return memset(Atari2HostAddr(addr), c, n);}
+static inline void *Atari2Host_memcpy(void *dest, uint32 src, size_t n) {return memcpy(dest, Atari2HostAddr(src), n);}
+static inline void *Host2Atari_memcpy(uint32 dest, const void *src, size_t n) {return memcpy(Atari2HostAddr(dest), src, n);}
+static inline void *Atari2Atari_memcpy(uint32 dest, uint32 src, size_t n) {return memcpy(Atari2HostAddr(dest), Atari2HostAddr(src), n);}
 
 /*
  *  680x0 emulation
@@ -62,7 +77,7 @@ extern void Exit680x0(void);
 struct M68kRegisters;
 extern void Start680x0(void);					// Reset and start 680x0
 extern "C" void Execute68k(uint32 addr, M68kRegisters *r);	// Execute 68k code from EMUL_OP routine
-extern "C" void Execute68kTrap(uint16 trap, M68kRegisters *r);	// Execute MacOS 68k trap from EMUL_OP routine
+extern "C" void Execute68kTrap(uint16 trap, M68kRegisters *r);	// Execute Atari 68k trap from EMUL_OP routine
 
 // Interrupt functions
 // extern void TriggerInterrupt(void);	// Trigger interrupt level 1 (InterruptFlag must be set first)

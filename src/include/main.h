@@ -53,9 +53,6 @@ extern bool grabMouse(bool grab);
 // Platform-specific functions
 extern void FlushCodeCache(void *start, uint32 size);	// Code was patched, flush caches if neccessary
 extern void QuitEmulator(void);				// Quit emulator
-extern void ErrorAlert(const char *text);		// Display error alert
-extern void WarningAlert(const char *text);		// Display warning alert
-extern bool ChoiceAlert(const char *text, const char *pos, const char *neg);	// Display choice alert
 
 // Interrupt flags
 enum {
@@ -77,6 +74,9 @@ extern void ClearInterruptFlag(uint32 flag);
 
 /*
  * $Log$
+ * Revision 1.5  2001/07/24 13:58:52  joy
+ * grabMouse() called from uae debugger
+ *
  * Revision 1.4  2001/07/20 22:48:19  milan
  * mmu_op use only set/longjmp now, first step for ndebug integration, signals
  * and pthread checks removed, cleaning etc.

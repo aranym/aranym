@@ -29,11 +29,11 @@ AC_ARG_ENABLE(addressing,
     real) 	ADDRESSING_TEST_ORDER="real";;
     direct)	ADDRESSING_TEST_ORDER="direct";;
     banks)	ADDRESSING_TEST_ORDER="banks";;
-    fastest)ADDRESSING_TEST_ORDER="direct banks";;
+    fastest)ADDRESSING_TEST_ORDER="real direct banks";;
     *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: fastest, real, direct, banks]);;
   esac
 ],
-[ ADDRESSING_TEST_ORDER="direct banks"
+[ ADDRESSING_TEST_ORDER="real direct banks"
 ])
 
 dnl Canonical system information.
@@ -46,7 +46,8 @@ case "$target_os" in
   netbsd*)	OS_TYPE=netbsd;;
   freebsd*)	OS_TYPE=freebsd;;
   solaris*)	OS_TYPE=solaris;;
-  *)		OS_TYPE=`echo $target_os | sed -e 's/-/_/' | sed -e 's/\./_/'`;;
+  darwin*)	OS_TYPE=darwin;;
+  *)		OS_TYPE=`echo $target_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
 esac
 DEFINES="$DEFINES -DOS_$OS_TYPE"
 
@@ -60,7 +61,7 @@ case "$target_cpu" in
   m68k* ) CPU_TYPE=m68k HAVE_M68K=yes;;
   sparc* ) CPU_TYPE=sparc HAVE_SPARC=yes;;
   powerpc* ) CPU_TYPE=powerpc HAVE_POWERPC=yes;;
-  *) CPU_TYPE=`echo $target_cpu | sed -e 's/-/_/'`;;
+  *) CPU_TYPE=`echo $target_cpu | sed -e 's/-/_/g'`;;
 esac
 DEFINES="$DEFINES -DCPU_$CPU_TYPE"
 
@@ -74,7 +75,7 @@ AC_PROG_INSTALL
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h)
+AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/mman.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
@@ -93,6 +94,11 @@ AC_STRUCT_TM
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
+AC_CHECK_FUNCS(mmap mprotect munmap)
+AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect)
+
+dnl Darwin seems to define mach_task_self() instead of task_self().
+AC_CHECK_FUNCS(mach_task_self task_self)
 
 CAN_NATIVE_M68K=no
 dnl Use 68k CPU natively?
@@ -109,10 +115,150 @@ dnl to be put into the config.h file
 dnl $1 -- the macro to define
 dnl $2 -- the value to translate
 AC_DEFUN(AC_TRANSLATE_DEFINE, [
-    if [[ "x$2" = "xyes" ]]; then
+    if [[ "x$2" = "xyes" -o "x$2" = "xguessing yes" ]]; then
         AC_DEFINE($1)
     fi
 ])
+
+dnl Various checks if the system supports vm_allocate() and the like functions.
+have_mach_vm=no
+if [[ "x$ac_cv_func_vm_allocate" = "xyes" -a "x$ac_cv_func_vm_deallocate" = "xyes" -a \
+      "x$ac_cv_func_vm_protect" = "xyes" ]]; then
+  have_mach_vm=yes
+fi
+AC_TRANSLATE_DEFINE(HAVE_MACH_VM, "$have_mach_vm")
+
+dnl Check that vm_allocate(), vm_protect() work
+if [[ "x$have_mach_vm" = "xyes" ]]; then
+
+AC_CACHE_CHECK("whether vm_protect works",
+  ac_cv_vm_protect_works, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  ac_cv_vm_protect_works=yes
+  dnl First the tests that should segfault
+  for test_def in NONE_READ NONE_WRITE READ_WRITE; do
+    AC_TRY_RUN([
+      #define CONFIGURE_TEST_VM_MAP
+      #define TEST_VM_PROT_$test_def
+      #include "vm_alloc.cpp"
+    ], ac_cv_vm_protect_works=no, rm -f core,
+    dnl When cross-compiling, do not assume anything
+    ac_cv_vm_protect_works="guessing no"
+    )
+  done
+  AC_TRY_RUN([
+    #define CONFIGURE_TEST_VM_MAP
+    #define TEST_VM_PROT_RDWR_WRITE
+    #include "vm_alloc.cpp"
+  ], , ac_cv_vm_protect_works=no,
+  dnl When cross-compiling, do not assume anything
+  ac_cv_vm_protect_works="guessing no"
+  )
+  AC_LANG_RESTORE
+  ]
+)
+
+dnl Remove support for vm_allocate() if vm_protect() does not work
+if [[ "x$have_mach_vm" = "xyes" ]]; then
+  case $ac_cv_vm_protect_works in
+    *yes) have_mach_vm=yes;;
+    *no) have_mach_vm=no;;
+  esac
+fi
+AC_TRANSLATE_DEFINE(HAVE_MACH_VM, "$have_mach_vm")
+
+fi dnl HAVE_MACH_VM
+
+dnl Various checks if the system supports mmap() and the like functions.
+dnl ... and Mach memory allocators are not supported
+have_mmap_vm=no
+if [[ "x$ac_cv_func_mmap" = "xyes" -a "x$ac_cv_func_munmap" = "xyes" -a \
+      "x$ac_cv_func_mprotect" = "xyes" ]]; then
+  if [[ "x$have_mach_vm" = "xno" ]]; then
+    have_mmap_vm=yes
+  fi
+fi
+AC_TRANSLATE_DEFINE(HAVE_MMAP_VM, "$have_mmap_vm")
+
+dnl Check that mmap() and associated functions work.
+if [[ "x$have_mmap_vm" = "xyes" ]]; then
+
+dnl Check if we have a working anonymous mmap()
+AC_CACHE_CHECK("whether mmap supports MAP_ANON",
+  ac_cv_mmap_anon, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_RUN([
+    #define HAVE_MMAP_ANON
+    #define CONFIGURE_TEST_VM_MAP
+    #define TEST_VM_MMAP_ANON
+    #include "vm_alloc.cpp"
+  ], ac_cv_mmap_anon=yes, ac_cv_mmap_anon=no,
+  dnl When cross-compiling, do not assume anything.
+  ac_cv_mmap_anon="guessing no"
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(HAVE_MMAP_ANON, "$ac_cv_mmap_anon")
+
+AC_CACHE_CHECK("whether mmap supports MAP_ANONYMOUS",
+  ac_cv_mmap_anonymous, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_RUN([
+    #define HAVE_MMAP_ANONYMOUS
+    #define CONFIGURE_TEST_VM_MAP
+    #define TEST_VM_MMAP_ANON
+    #include "vm_alloc.cpp"
+  ], ac_cv_mmap_anonymous=yes, ac_cv_mmap_anonymous=no,
+  dnl When cross-compiling, do not assume anything.
+  ac_cv_mmap_anonymous="guessing no"
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(HAVE_MMAP_ANONYMOUS, "$ac_cv_mmap_anonymous")
+
+AC_CACHE_CHECK("whether mprotect works",
+  ac_cv_mprotect_works, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  ac_cv_mprotect_works=yes
+  dnl First the tests that should segfault
+  for test_def in NONE_READ NONE_WRITE READ_WRITE; do
+    AC_TRY_RUN([
+      #define CONFIGURE_TEST_VM_MAP
+      #define TEST_VM_PROT_$test_def
+      #include "vm_alloc.cpp"
+    ], ac_cv_mprotect_works=no, rm -f core,
+    dnl When cross-compiling, do not assume anything
+    ac_cv_mprotect_works="guessing no"
+    )
+  done
+  AC_TRY_RUN([
+    #define CONFIGURE_TEST_VM_MAP
+    #define TEST_VM_PROT_RDWR_WRITE
+    #include "vm_alloc.cpp"
+  ], , ac_cv_mprotect_works=no,
+  dnl When cross-compiling, do not assume anything
+  ac_cv_mprotect_works="guessing no"
+  )
+  AC_LANG_RESTORE
+  ]
+)
+
+dnl Remove support for mmap() if mprotect() does not work
+if [[ "x$have_mmap_vm" = "xyes" ]]; then
+  case $ac_cv_mprotect_works in
+    *yes) have_mmap_vm=yes;;
+    *no) have_mmap_vm=no;;
+  esac
+fi
+AC_TRANSLATE_DEFINE(HAVE_MMAP_VM, $have_mmap_vm)
+
+fi dnl HAVE_MMAP_VM
 
 dnl Check if we have vasprintf (_GNU_SOURCE)
 AC_CACHE_CHECK("for vasprintf",
@@ -143,26 +289,23 @@ AC_CACHE_CHECK("whether we can map Low Memory area 0x0000-0x2000",
   AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
   AC_TRY_RUN([
-    #include <unistd.h>
-    #include <fcntl.h>
-    #include <sys/mman.h>
-    
-    int main()
-    { int zero_fd; char * lm;
-      if ((zero_fd = open("/dev/zero", O_RDWR)) < 0) exit(1);
-      if ((lm = (char *)mmap((caddr_t)0x0000, 0x2000, PROT_READ | PROT_WRITE, MAP_FIXED | MAP_PRIVATE, zero_fd, 0)) == MAP_FAILED) exit(1);
-      lm[0] = 0x12;
-	  munmap(lm, 0x2000);
-      close(zero_fd);
-      exit(0);
+    #include "vm_alloc.cpp"
+    int main(void) { /* returns 0 if we could map the lowmem globals */
+      volatile char * lm;
+      if (vm_init() < 0) exit(1);
+      if ((lm = (volatile char *)vm_acquire_fixed(0, 0x2000)) == VM_MAP_FAILED) exit(1);
+      lm[0] = 'z';
+      if (vm_release((char *)lm, 0x2000) < 0) exit(1);
+      vm_exit(); exit(0);
     }
-  ],
-  [ac_cv_can_map_lm=yes],
-  [ac_cv_can_map_lm=no]
+  ], ac_cv_can_map_lm=yes, ac_cv_can_map_lm=no,
+  dnl When cross-compiling, do not assume anything.
+  ac_cv_can_map_lm="guessing no"
   )
   AC_LANG_RESTORE
   ]
 )
+
 
 dnl New debugger
 if [[ "x$WANT_NDEBUG" = "xyes" ]]; then
@@ -330,6 +473,14 @@ dnl Remove the "-g" option if set for GCC.
 if [[ "x$HAVE_GCC27" = "xyes" ]]; then
   CFLAGS=`echo $CFLAGS | sed -e 's/-g//g'`
   CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-g//g'`
+fi
+
+dnl Remove the "-O2" option if set for GCC and set the "-O3" option.
+if [[ "x$HAVE_GCC27" = "xyes" ]]; then
+  CFLAGS=`echo $CXXFLAGS | sed -e 's/-O2//g'`
+  CFLAGS="-O3 $CFLAGS"
+  CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-O2//g'`
+  CXXFLAGS="-O3 $CXXFLAGS"
 fi
 
 dnl Or if we have -Ofast

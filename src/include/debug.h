@@ -30,6 +30,7 @@ extern uaecptr history[MAX_HIST];
 extern void debug(void);
 extern void activate_debugger(void);
 
+#define ErrorAlert(a)	fprintf(stderr, a)
 
 /*
  *  debug.h - Debugging utilities

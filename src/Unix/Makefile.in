@@ -10,13 +10,14 @@ bindir = @bindir@
 datadir = @datadir@
 mandir = @mandir@
 man1dir = $(mandir)/man1
+docdir = @prefix@/share/doc
 
 DESTDIR =
 
 CC = @CC@
 CXX = @CXX@
-CFLAGS = @CFLAGS@ -g -O3 -m486
-CXXFLAGS = @CXXFLAGS@ -g -O3 -m486
+CFLAGS = @CFLAGS@
+CXXFLAGS = @CXXFLAGS@
 CPPFLAGS = @CPPFLAGS@ -I../include -I. @CPUINCLUDES@
 DEFS = @DEFS@ @DEFINES@ -D_REENTRANT -DDATADIR=\"$(datadir)/$(APP)\"
 LDFLAGS = @LDFLAGS@
@@ -36,26 +37,28 @@ host_triplet = @host@
 ## Files
 SRCS = ../main.cpp \
 	main_unix.cpp \
-	../hardware.cpp \
-	../mfp.cpp \
+	vm_alloc.cpp \
 	../acia.cpp \
 	../acsifdc.cpp \
-	../fdc.cpp \
-	../rtc.cpp \
 	../ata.cpp \
-	../ide.cpp \
-	../fakeio.cpp \
-	../emul_op.cpp \
 	../blitter.cpp \
+	../cdrom.cpp \
+	../dsp.cpp \
+	../emul_op.cpp \
+	../extfs.cpp \
+	../fakeio.cpp \
+	../fdc.cpp \
+	../fvdidrv.cpp \
+	../hardware.cpp \
+	../hostscreen.cpp \
+	../ide.cpp \
+	../mfp.cpp \
+	../mmu.cpp \
+	../ndebug.cpp \
+	../parameters.cpp \
+	../rtc.cpp \
 	../videl.cpp \
 	../yamaha.cpp \
-	../dsp.cpp \
-	../mmu.cpp \
-	../extfs.cpp \
-	../fvdidrv.cpp \
-	../hostscreen.cpp \
-	../parameters.cpp \
-	../ndebug.cpp \
 	$(CPUSRCS)
 APP = aranym
 
@@ -91,13 +94,31 @@ $(APP): $(OBJ_DIR) $(OBJS)
 
 install: $(APP) installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
+	$(INSTALL_DATA) ../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog
+	$(INSTALL_DATA) ../TODO $(DESTDIR)$(docdir)/$(APP)/TODO
+	$(INSTALL_DATA) ../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
+	$(INSTALL_DATA) ../atari/fandafs/fandafs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fandafs/fandafs.dos.bz2
+	$(INSTALL_DATA) ../atari/tools/fastram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
+	$(INSTALL_DATA) ../atari/tools/gemram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/gemram.prg.bz2
 
 installdirs:
-	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP)
+	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/createdisk $(DESTDIR)$(datadir)/$(APP)/atari/fandafs $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(docdir)/$(APP)
 
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
+	rm -f $(DESTDIR)$(docdir)/$(APP)/changelog
+	rm -f $(DESTDIR)$(docdir)/$(APP)/TODO
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fandafs/fandafs.dos.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/gemram.prg.bz2
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/createdisk
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/fandafs
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/fvdi
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/tools
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari
 	rmdir $(DESTDIR)$(datadir)/$(APP)
+	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
 	rm -f $(APP) $(OBJ_DIR)/* core* *.core *~ *.bak
@@ -112,17 +133,20 @@ distclean: clean
 
 depend dep:
 	makedepend $(CPPFLAGS) $(DEFS) -Y. $(SRCS) -p$(OBJ_DIR)/ 2>/dev/null
-	sed 's/\/..\/uae_cpu\/fpu\//\//' < Makefile > Makefile.new
+	sed -n '/^# DO NOT DELETE THIS LINE -- make depend depends on it./,$$p' < Makefile > Makefile.wrk
+	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' < Makefile > Makefile.new
 	mv Makefile.new Makefile
-	sed 's/\/..\/uae_cpu\//\//' < Makefile > Makefile.new
-	mv Makefile.new Makefile
-	sed 's/\/..\//\//' < Makefile > Makefile.new
-	mv Makefile.new Makefile
+	tail +2 Makefile.wrk | sed 's/\/..\/uae_cpu\/fpu\//\//' > Makefile.new
+	mv Makefile.new Makefile.wrk
+	sed 's/\/..\/uae_cpu\//\//' < Makefile.wrk > Makefile.new
+	mv Makefile.new Makefile.wrk
+	sed 's/\/..\//\//' < Makefile.wrk >> Makefile
+	rm -f Makefile.wrk
 
 $(OBJ_DIR)/%.o : %.c
-	$(CC) $(CPPFLAGS) -Wall $(DEFS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(DEFS) -Wall $(CFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
-	$(CXX) $(CPPFLAGS) -Wall $(DEFS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(DEFS) -g -Wall $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.s
 	$(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@
 

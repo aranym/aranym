@@ -1,0 +1,14 @@
+Source: aranym
+Section: contrib/otherosfs
+Priority: extra
+Maintainer: Milan Jurik <Mj.Jurik@sh.cvut.cz>
+Standards-Version: 0.0.5
+Build-Depends: debhelper (>= 3), bzip2
+
+Package: aranym
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Atari Running ANY Machine
+ aranym is an Atari emulator.
+ .
+ NOTE:

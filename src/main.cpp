@@ -1,7 +1,5 @@
 /*
  * $Header$
- *
- * 2001 MJ
  */
 
 /*
@@ -43,11 +41,6 @@
 int CPUType;
 bool CPUIs68060;
 int FPUType;
-
-// Constants
-const char ROM_FILE_NAME[] = DATADIR "/ROM";
-
-#define ErrorAlert(a)   fprintf(stderr, a)
 
 void init_fdc();                // fdc.cpp
 
@@ -210,12 +203,23 @@ static void check_event(void)
             bool pressed = (type == SDL_KEYDOWN);
             int sym = event.key.keysym.sym;
             bool shifted = SDL_GetModState() & KMOD_SHIFT;
+            bool alternated = SDL_GetModState() & KMOD_ALT;
 
             if (pressed) {
                 // process some hotkeys
-                if (sym == SDLK_PAUSE && shifted) {
-                    pendingQuit = true;
+                if (sym == SDLK_PAUSE) {
+		  if (shifted) pendingQuit = true;
+                } else if (start_debug && alternated) {
+                    // release mouse
+                    grabMouse(false);
+                    // show it
+                    hideMouse(false);
+                    // let user quit the window before it's grabbed again
+                    canGrabAgain = false;
+                    // activate debugger
+                    activate_debugger();
                 }
+                
                 else if (sym == SDLK_F11)
                     insert_floppy(shifted);
                 else if (sym == SDLK_F12)
@@ -363,58 +367,10 @@ bool InitAll(void)
     // thus I changed the SDL_Quit to ExitAll & removed the EditAll from QuitEmulator
     atexit(ExitAll);
 
-    //  SDL_EnableUNICODE(1);
-
-    // Initialize variables
-    RAMBaseHost = NULL;
-    ROMBaseHost = NULL;
-    //TTRAMBaseHost = NULL;
-
-#ifdef NDEBUG
-    if (start_debug) ndebug::init();
-#endif
-
-    // Create areas for Atari ST-RAM, ROM, HW registers and TT-RAM
-    int MB = (1 << 20);
-    RAMBaseHost = (uint8 *) malloc((16 + 32) * MB);
-    if (RAMBaseHost == NULL) {
-        ErrorAlert("Not enough memory\n");
-        QuitEmulator();
-    }
-    ROMBaseHost = RAMBaseHost + ROMBase;
-    //TTRAMBaseHost = RAMBaseHost + TTRAMBase;
-
-    // Initialize MEMBaseDiff now so that Host2MacAddr in the Video module
-    // will return correct results
-    // ROMBase = RAMBase + 0xe00000;
-
-    InitMEMBaseDiff(RAMBaseHost, RAMBase);
-    D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
-    D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
-    //D(bug("TT-RAM starts at %p (%08x)", TTRAMBaseHost, TTRAMBase));
-
-    // Load TOS ROM
-    int rom_fd = open(rom_path ? rom_path : ROM_FILE_NAME, O_RDONLY);
-    if (rom_fd < 0) {
-        ErrorAlert("ROM file not found\n");
-        QuitEmulator();
-    }
-    D(bug("Reading ROM file..."));
-    ROMSize = lseek(rom_fd, 0, SEEK_END);
-    if (ROMSize != 512 * 1024) {
-        ErrorAlert("Invalid ROM size\n");
-        close(rom_fd);
-        QuitEmulator();
-    }
-    lseek(rom_fd, 0, SEEK_SET);
-    if (read(rom_fd, ROMBaseHost, ROMSize) != (ssize_t) ROMSize) {
-        ErrorAlert("ROM file reading error\n");
-        close(rom_fd);
-        QuitEmulator();
-    }
-
     CPUType = 4;
     FPUType = 1;
+
+    //  SDL_EnableUNICODE(1);
 
     // The fullscreen mode implies mouse grab (standa)
     if (fullscreen)
@@ -487,9 +443,6 @@ void ExitAll(void)
 
     // remove floppy (flush buffers)
     remove_floppy();
-
-    // Free ROM/RAM areas
-    free(RAMBaseHost);
 
     SDL_VideoQuit();
 

@@ -1,0 +1,9 @@
+aranym (0.0.5-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Milan Jurik <M.Jurik@sh.cvut.cz>  Mon, 23 Jul 2001 14:13:37 +0200
+
+Local variables:
+mode: debian-changelog
+End:

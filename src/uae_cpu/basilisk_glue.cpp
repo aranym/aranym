@@ -33,13 +33,18 @@
 // RAM and ROM pointers
 uint32 RAMBase = 0;	// RAM base (Atari address space) gb-- init is important
 uint8 *RAMBaseHost;	// RAM base (host address space)
-uint32 RAMSize;		// Size of RAM
+uint32 RAMSize = 0x00e00000;		// Size of RAM
+
 uint32 ROMBase = 0x00e00000;		// ROM base (Atari address space)
 uint8 *ROMBaseHost;	// ROM base (host address space)
-uint32 ROMSize;		// Size of ROM
-//uint32 TTRAMBase = 0x01000000;		// TT-RAM base (Atari address space)
-//uint8 *TTRAMBaseHost;	// TT-RAM base (host address space)
+uint32 ROMSize = 0x00200000;		// Size of ROM
+
+uint32 RealROMSize;	// Real size of ROM
+
+uint32 TTRAMBase = 0x01000000;		// TT-RAM base (Atari address space)
+uint8 *TTRAMBaseHost;	// TT-RAM base (host address space)
 uint32 TTRAMSize;	// Size of TT-RAM
+
 uint32 VideoRAMBase = ARANYMVRAMSTART;	// VideoRAM base (Atari address space)
 uint8 *VideoRAMBaseHost;// VideoRAM base (host address space)
 //uint32 VideoRAMSize;	// Size of VideoRAM
@@ -47,6 +52,8 @@ uint32 InterruptFlags;
 
 #if DIRECT_ADDRESSING
 uintptr MEMBaseDiff;	// Global offset between a Atari address and its Host equivalent
+#endif
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
 uintptr VMEMBaseDiff;	// Global offset between a Atari VideoRAM address and /dev/fb0 mmap
 #endif
 

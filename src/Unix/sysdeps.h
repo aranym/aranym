@@ -47,7 +47,6 @@
 # include <fcntl.h>
 #endif
 
-
 #ifdef TIME_WITH_SYS_TIME
 # include <sys/time.h>
 # include <time.h>
@@ -59,8 +58,24 @@
 # endif
 #endif
 
+#ifdef ENABLE_NATIVE_M68K
+
+/* Mac and host address space are the same */
+#define REAL_ADDRESSING 1
+
+/* Using 68k natively */
+#define EMULATED_68K 0
+
+/* Mac ROM is not write protected */
+#define ROM_IS_WRITE_PROTECTED 0
+#define USE_SCRATCHMEM_SUBTERFUGE 1
+
+#else
+
 /* Mac and host address space are distinct */
+#ifndef REAL_ADDRESSING
 #define REAL_ADDRESSING 0
+#endif
 
 /* Using 68k emulator */
 #define EMULATED_68K 1
@@ -76,6 +91,8 @@
 # define ROM_IS_WRITE_PROTECTED 1
 #endif
 
+#endif
+
 /* Direct Addressing requires Video on SEGV signals */
 #if DIRECT_ADDRESSING && !ENABLE_VOSF
 # undef  ENABLE_VOSF
@@ -85,10 +102,24 @@
 /* Data types */
 typedef unsigned char uint8;
 typedef signed char int8;
+#if SIZEOF_SHORT == 2
 typedef unsigned short uint16;
 typedef short int16;
+#elif SIZEOF_INT == 2
+typedef unsigned int uint16;
+typedef int int16;
+#else
+#error "No 2 byte type, you lose."
+#endif
+#if SIZEOF_INT == 4
 typedef unsigned int uint32;
 typedef int int32;
+#elif SIZEOF_LONG == 4
+typedef unsigned long uint32;
+typedef long int32;
+#else
+#error "No 4 byte type, you lose."
+#endif
 #if SIZEOF_LONG == 8
 typedef unsigned long uint64;
 typedef long int64;
@@ -129,6 +160,45 @@ typedef uae_u32 uaecptr;
 #endif
 
 /* UAE CPU defines */
+#ifdef WORDS_BIGENDIAN
+
+#ifdef CPU_CAN_ACCESS_UNALIGNED
+
+/* Big-endian CPUs which can do unaligned accesses */
+static inline uae_u32 do_get_mem_long(uae_u32 *a) {return *a;}
+static inline uae_u32 do_get_mem_word(uae_u16 *a) {return *a;}
+static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {*a = v;}
+static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {*a = v;}
+
+#else /* CPU_CAN_ACCESS_UNALIGNED */
+
+#ifdef sgi
+/* The SGI MIPSPro compilers can do unaligned accesses given enough hints.
+ * They will automatically inline these routines. */
+#ifdef __cplusplus
+extern "C" { /* only the C compiler does unaligned accesses */
+#endif
+extern uae_u32 do_get_mem_long(uae_u32 *a);
+extern uae_u32 do_get_mem_word(uae_u16 *a);
+extern void do_put_mem_long(uae_u32 *a, uae_u32 v);
+extern void do_put_mem_word(uae_u16 *a, uae_u32 v);
+#ifdef __cplusplus
+}
+#endif
+
+#else /* sgi */
+
+/* Big-endian CPUs which can not do unaligned accesses (this is not the most efficient way to do this...) */
+static inline uae_u32 do_get_mem_long(uae_u32 *a) {uint8 *b = (uint8 *)a; return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];}
+static inline uae_u32 do_get_mem_word(uae_u16 *a) {uint8 *b = (uint8 *)a; return (b[0] << 8) | b[1];}
+static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {uint8 *b = (uint8 *)a; b[0] = v >> 24; b[1] = v >> 16; b[2] = v >> 8; b[3] = v;}
+static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {uint8 *b = (uint8 *)a; b[0] = v >> 8; b[1] = v;}
+#endif /* sgi */
+
+#endif /* CPU_CAN_ACCESS_UNALIGNED */
+
+#else /* WORDS_BIGENDIAN */
+
 #ifdef __i386__
 
 /* Intel x86 */
@@ -175,6 +245,8 @@ static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {uint8 *b = (uint8 *)a
 
 #endif /* CPU_CAN_ACCESS_UNALIGNED */
 
+#endif /* WORDS_BIGENDIAN */
+
 #ifndef HAVE_OPTIMIZED_BYTESWAP_32
 static inline uae_u32 do_byteswap_32(uae_u32 v)
 	{ return (((v >> 24) & 0xff) | ((v >> 8) & 0xff00) | ((v & 0xff) << 24) | ((v & 0xff00) << 8)); }
@@ -197,8 +269,6 @@ static inline uae_u32 do_byteswap_16(uae_u32 v)
 #define ENUMDECL typedef enum
 #define ENUMNAME(name) name
 #define write_log printf
-#undef USE_MAPPED_MEMORY
-#undef CAN_MAP_MEMORY
 
 #ifdef X86_ASSEMBLY
 #define ASM_SYM_FOR_FUNC(a) __asm__(a)

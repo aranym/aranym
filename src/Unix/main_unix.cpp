@@ -28,7 +28,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
 #include <errno.h>
 
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
@@ -38,23 +37,31 @@
 
 #include "cpu_emulation.h"
 #include "main.h"
+#include "vm_alloc.h"
 #include "hardware.h"
 #include "parameters.h"
 
 #define DEBUG 1
 #include "debug.h"
 
+// Constants
+const char ROM_FILE_NAME[] = DATADIR "/ROM";
+const int SCRATCH_MEM_SIZE = 0x10000;	// Size of scratch memory area
+
+#if USE_SCRATCHMEM_SUBTERFUGE
+uint8 *ScratchMem = NULL;			// Scratch memory for Mac ROM writes
+#endif
+
 #if REAL_ADDRESSING
-static bool lm_area_mapped = false; // Flag: Low Memory area mmap()ped
-static bool memory_mapped_from_zero = false; // Flag: Could allocate RAM area from 0
+static bool lm_area_mapped = false;	// Flag: Low Memory area mmap()ped
 #endif
 
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
 {
-    char *n = (char *)malloc(strlen(s) + 1);
-    strcpy(n, s);
-    return n;
+	char *n = (char *)malloc(strlen(s) + 1);
+	strcpy(n, s);
+	return n;
 }
 #endif
 
@@ -62,29 +69,136 @@ extern "C" char *strdup(const char *s)
 /*
  *  Main program
  */
-#ifdef __cplusplus
-extern "C"
-#endif
 int main(int argc, char **argv)
 {
-    srand(time(NULL));
-    tzset();
+	// Initialize variables
+	RAMBaseHost = NULL;
+	ROMBaseHost = NULL;
+	TTRAMBaseHost = NULL;
+	TTRAMSize = 32*1024*1024;
 
-    program_name = argv[0];
-    decode_switches(argc, argv);
+	program_name = argv[0];
+	decode_switches(argc, argv);
 
-    // Initialize everything
-    if (!InitAll())
-        QuitEmulator();
-    D(bug("Initialization complete"));
+#ifdef NDEBUG
+	if (start_debug) ndebug::init();
+#endif
 
-    // Start 68k and jump to ROM boot routine
-    D(bug("Starting emulation..."));
-    Start680x0();
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
+	TTRAMSize = TTRAMSize & -getpagesize();					// Round down to page boundary
+#endif
 
-    QuitEmulator();
+	// Initialize VM system
+	vm_init();
 
-    return 0;
+#if REAL_ADDRESSING
+	// Flag: RAM and ROM are contigously allocated from address 0
+	bool memory_mapped_from_zero = false;
+	
+	// Under Solaris/SPARC and NetBSD/m68k, Basilisk II is known to crash
+	// when trying to map a too big chunk of memory starting at address 0
+#if defined(OS_solaris) || defined(OS_netbsd)
+	const bool can_map_all_memory = false;
+#else
+	const bool can_map_all_memory = true;
+#endif
+	
+	// Try to allocate all memory from 0x0000, if it is not known to crash
+	if (can_map_all_memory && (vm_acquire_fixed(0, RAMSize + ROMSize + TTRAMSize) == 0)) {
+		D(bug("Could allocate RAM and ROM from 0x0000"));
+		memory_mapped_from_zero = true;
+	}
+	
+	// Otherwise, just create the Low Memory area (0x0000..0x2000)
+	else if (vm_acquire_fixed(0, 0x2000) == 0) {
+		D(bug("Could allocate the Low Memory globals"));
+		lm_area_mapped = true;
+	}
+	
+	// Exit on failure
+	else {
+		ErrorAlert("Cannot map Low Memory Globals.\n");
+		QuitEmulator();
+	}
+#endif
+
+	// Create areas for Mac RAM and ROM
+#if REAL_ADDRESSING
+	if (memory_mapped_from_zero) {
+		RAMBaseHost = (uint8 *)0;
+		ROMBaseHost = RAMBaseHost + RAMSize;
+		TTRAMBaseHost = RAMBaseHost + 0x1000000;
+	}
+	else
+#endif
+	{
+		RAMBaseHost = (uint8 *)vm_acquire(RAMSize);
+		ROMBaseHost = (uint8 *)vm_acquire(ROMSize);
+		TTRAMBaseHost = (uint8 *)vm_acquire(TTRAMSize);
+		if (RAMBaseHost == VM_MAP_FAILED || ROMBaseHost == VM_MAP_FAILED || TTRAMBaseHost == VM_MAP_FAILED) {
+			ErrorAlert("Not enough free memory.\n");
+			QuitEmulator();
+		}
+	}
+
+#if USE_SCRATCHMEM_SUBTERFUGE
+	// Allocate scratch memory
+	ScratchMem = (uint8 *)vm_acquire(SCRATCH_MEM_SIZE);
+	if (ScratchMem == VM_MAP_FAILED) {
+		ErrorAlert("Not enough free memory.\n");
+		QuitEmulator();
+	}
+	ScratchMem += SCRATCH_MEM_SIZE/2;	// ScratchMem points to middle of block
+#endif
+
+#if DIRECT_ADDRESSING
+	// RAMBase shall always be zero
+	MEMBaseDiff = (uintptr)RAMBaseHost;
+	RAMBase = 0;
+	ROMBase = 0xe00000;
+	TTRAMBase = 0x1000000;
+#endif
+#if REAL_ADDRESSING
+	RAMBase = (uint32)RAMBaseHost;
+	ROMBase = (uint32)ROMBaseHost;
+	TTRAMBase = (uint32)TTRAMBaseHost;
+#endif
+	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
+	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
+	D(bug("TT-RAM starts at %p (%08x)", TTRAMBaseHost, TTRAMBase));
+
+	// Load TOS ROM
+	int rom_fd = open(rom_path ? rom_path : ROM_FILE_NAME, O_RDONLY);
+	if (rom_fd < 0) {
+		ErrorAlert("ROM file not found\n");
+		QuitEmulator();
+	}
+	D(bug("Reading ROM file..."));
+	RealROMSize = lseek(rom_fd, 0, SEEK_END);
+	if (RealROMSize != 512 * 1024) {
+		ErrorAlert("Invalid ROM size\n");
+		close(rom_fd);
+		QuitEmulator();
+	}
+	lseek(rom_fd, 0, SEEK_SET);
+	if (read(rom_fd, ROMBaseHost, RealROMSize) != (ssize_t) RealROMSize) {
+		ErrorAlert("ROM file reading error\n");
+		close(rom_fd);
+		QuitEmulator();
+	}
+
+	// Initialize everything
+	if (!InitAll())
+		QuitEmulator();
+	D(bug("Initialization complete"));
+
+	// Start 68k and jump to ROM boot routine
+	D(bug("Starting emulation..."));
+	Start680x0();
+
+	QuitEmulator();
+
+	return 0;
 }
 
 
@@ -94,13 +208,45 @@ int main(int argc, char **argv)
 
 void QuitEmulator(void)
 {
-    D(bug("QuitEmulator"));
+	D(bug("QuitEmulator"));
 
-    // Exit 680x0 emulation
-    Exit680x0();
+#if EMULATED_68K
+	// Exit 680x0 emulation
+	Exit680x0();
+#endif
 
-    // Deinitialize all initialized things & threads and exit the emulator
-    exit(0);  // now the main.cpp/atexit() resp. ExitAll is called!
+	// Free ROM/RAM areas
+	if (RAMBaseHost != VM_MAP_FAILED) {
+		vm_release(RAMBaseHost, RAMSize);
+		RAMBaseHost = NULL;
+	}
+	if (ROMBaseHost != VM_MAP_FAILED) {
+		vm_release(ROMBaseHost, ROMSize);
+		ROMBaseHost = NULL;
+	}
+	if (TTRAMBaseHost !=VM_MAP_FAILED) {
+		vm_release(ROMBaseHost, TTRAMSize);
+		ROMBaseHost = NULL;
+	}
+
+#if USE_SCRATCHMEM_SUBTERFUGE
+	// Delete scratch memory area
+	if (ScratchMem != (uint8 *)VM_MAP_FAILED) {
+		vm_release((void *)(ScratchMem - SCRATCH_MEM_SIZE/2), SCRATCH_MEM_SIZE);
+		ScratchMem = NULL;
+	}
+#endif
+
+#if REAL_ADDRESSING
+	// Delete Low Memory area
+	if (lm_area_mapped)
+		vm_release(0, 0x2000);
+#endif
+	
+	// Exit VM wrappers
+	vm_exit();
+
+	exit(0);
 }
 
 

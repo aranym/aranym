@@ -1,3 +1,17 @@
+2001/08/10 - milan
+- real addressing now working correct
+
+- the first step for reintegration of BasiliskII's CPU API
+
+- Makefile depends repaired
+
+- new sync with BasiliskII (CVS 24.7.2001)
+
+- memory allocation back in main_unix.cpp - better for portability of real
+  addressing, also ROM reading back there, not only POSIX, we have also
+  non-POSIX OS's
+
+
 2001/08/09 - joy
 
 - added ata-new.cpp and cdrom.cpp from Bochs. Compilable but don't work yet (dunno why).

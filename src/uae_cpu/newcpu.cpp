@@ -155,7 +155,7 @@ static void build_cpufunctbl (void)
     for (opcode = 0; opcode < 65536; opcode++) {
 	cpuop_func *f;
 
-	if (table68k[opcode].mnemo == i_ILLG/* || table68k[opcode].clev > cpu_level*/)
+	if (table68k[opcode].mnemo == i_ILLG || table68k[opcode].clev > cpu_level)
 	    continue;
 
 	if (table68k[opcode].handler != -1) {
@@ -665,7 +665,8 @@ void MakeFromSR (void)
 
 void Exception(int nr, uaecptr oldpc)
 {
-    MakeSR();
+   uae_u32 currpc = m68k_getpc ();
+   MakeSR();
     if (!regs.s) {
 	regs.usp = m68k_areg(regs, 7);
 	if (CPUType >= 2)
@@ -714,7 +715,7 @@ void Exception(int nr, uaecptr oldpc)
 
 		// PC
     	    m68k_areg(regs, 7) -= 4;
-    	    put_long (m68k_areg(regs, 7), m68k_getpc ());
+    	    put_long (m68k_areg(regs, 7), currpc);
 	    goto kludge_me_do;
 	} else if (nr ==5 || nr == 6 || nr == 7 || nr == 9) {
 	    m68k_areg(regs, 7) -= 4;
@@ -725,7 +726,7 @@ void Exception(int nr, uaecptr oldpc)
 	    m68k_areg(regs, 7) -= 2;
 	    put_word (m68k_areg(regs, 7), nr * 4);
 	    m68k_areg(regs, 7) -= 4;
-	    put_long (m68k_areg(regs, 7), m68k_getpc ());
+	    put_long (m68k_areg(regs, 7), currpc);
 	    m68k_areg(regs, 7) -= 2;
 	    put_word (m68k_areg(regs, 7), regs.sr);
 	    regs.sr |= (1 << 13);
@@ -751,7 +752,7 @@ void Exception(int nr, uaecptr oldpc)
 	}
     }
     m68k_areg(regs, 7) -= 4;
-    put_long (m68k_areg(regs, 7), m68k_getpc ());
+    put_long (m68k_areg(regs, 7), currpc);
 kludge_me_do:
     m68k_areg(regs, 7) -= 2;
     put_word (m68k_areg(regs, 7), regs.sr);
@@ -1131,21 +1132,19 @@ void m68k_reset (void)
     /* gb-- moved into {fpp,fpu_x86}.cpp::fpu_init()
     regs.fpcr = regs.fpsr = regs.fpiar = 0; */
     fpu_reset();
-    { // MMU
-        regs.urp = 0;
-        regs.srp = 0;
-        regs.tce = 0;
-//	regs.tcp = 0;    !!! A reset oper doesn't affect this bit
-        regs.dtt0 = 0;
-        regs.dtt1 = 0;
-        regs.itt0 = 0;
-        regs.itt1 = 0;
-        regs.mmusr = 0;
-    }
-    { // Cache
-        regs.cacr = 0;
-	regs.caar = 0;
-    }
+    // MMU
+    regs.urp = 0;
+    regs.srp = 0;
+    regs.tce = 0;
+//    regs.tcp = 0;    !!! Reset doesn't affect this bit
+    regs.dtt0 = 0;
+    regs.dtt1 = 0;
+    regs.itt0 = 0;
+    regs.itt1 = 0;
+    regs.mmusr = 0;
+    // Cache
+    regs.cacr = 0;
+    regs.caar = 0;
 }
 
 void REGPARAM2 op_illg (uae_u32 opcode)

@@ -130,15 +130,15 @@ extern void byteput(uaecptr addr, uae_u32 b);
 #endif /* !DIRECT_ADDRESSING && !REAL_ADDRESSING */
 
 #if REAL_ADDRESSING
-#define do_get_real_address(a)		((uae_u8 *)(a))
-#define do_get_virtual_address(a)	((uae_u32)(a))
-#define InitMEMBaseDiff(va, ra)		do { } while (0)
-#endif /* REAL_ADDRESSING */
+const uintptr MEMBaseDiff = 0;
+#endif
 
 #if DIRECT_ADDRESSING
 extern uintptr MEMBaseDiff;
-extern uintptr VMEMBaseDiff;
+#endif
 
+#if REAL_ADDRESSING || DIRECT_ADDRESSING
+extern uintptr VMEMBaseDiff;
 #ifdef FULL_MMU
 # define do_get_real_address(a,b,c)	do_get_real_address_mmu(a,b,c)
 # define get_long(a,b)			get_long_mmu(a,b)
@@ -157,16 +157,13 @@ extern uintptr VMEMBaseDiff;
 # define put_word(a,b)			put_word_direct(a,b)
 # define put_byte(a,b)			put_byte_direct(a,b)
 # define get_real_address(a,b,c)	get_real_address_direct(a)
-#endif
+#endif /* FULL_MMU */
 
 #define do_get_real_address_direct(a)		(((a) < 0xff000000) ? (((a) < ARANYMVRAMSTART) ? ((uae_u8 *)(a) + MEMBaseDiff) : ((uae_u8 *)(a) + VMEMBaseDiff)) : ((uae_u8 *)(a & 0x00ffffff) + MEMBaseDiff))
 
 #define InitMEMBaseDiff(va, ra)		(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 #define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 
-#endif /* DIRECT_ADDRESSING */
-
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
 static __inline__ uae_u32 get_long_direct(uaecptr addr)
 {
     if (((addr & 0xfff00000) == 0x00f00000) || ((addr & 0xfff00000) == 0xfff00000)) return HWget_l(addr & 0x00ffffff);

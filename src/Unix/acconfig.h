@@ -20,9 +20,6 @@
 /* Define if using native 68k mode. */
 #undef ENABLE_NATIVE_M68K
 
-/* Define if pthreads are available. */
-#undef HAVE_PTHREADS
-
 /* Define if your system support GNU SOURCEs (vasprintf function) */
 #undef HAVE_GNU_SOURCE
 
@@ -31,6 +28,18 @@
 
 /* Define if using full MMU */
 #undef FULLMMU
+
+/* Define if your system has a working vm_allocate()-based memory allocator */
+#undef HAVE_MACH_VM
+
+/* Define if your system has a working mmap()-based memory allocator */
+#undef HAVE_MMAP_VM
+
+/* Define if <sys/mman.h> defines MAP_ANON and mmap()'ing with MAP_ANON works */
+#undef HAVE_MMAP_ANON
+
+/* Define if <sys/mman.h> defines MAP_ANONYMOUS and mmap()'ing with MAP_ANONYMOUS works */
+#undef HAVE_MMAP_ANONYMOUS
 
 
 /* Leave that blank line there!!  Autoheader needs it.
