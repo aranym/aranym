@@ -1385,13 +1385,14 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 
           if (ret < 0) {
             D(bug("could not lseek() hard drive image file"));
+          }
+          else {
+	    ret = BX_SELECTED_HD.hard_drive->read((bx_ptr_t) BX_SELECTED_CONTROLLER.buffer, 512);
+            if (ret < 512) {
+              D(bug("logical sector was %u", (unsigned) logical_sector));
+              D(bug("could not read() hard drive image file at byte %ld", logical_sector*512));
             }
-
-	  ret = BX_SELECTED_HD.hard_drive->read((bx_ptr_t) BX_SELECTED_CONTROLLER.buffer, 512);
-          if (ret < 512) {
-            D(bug("logical sector was %u", (unsigned) logical_sector));
-            D(bug("could not read() hard drive image file at byte %ld", logical_sector*512));
-            }
+          }
 
           BX_SELECTED_CONTROLLER.error_register = 0;
           BX_SELECTED_CONTROLLER.status.busy  = 0;
