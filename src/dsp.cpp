@@ -130,7 +130,11 @@ DSP::DSP(void)
 
 DSP::~DSP(void)
 {
+#ifndef OS_darwin
+	//	in Mac OS X a call of shutdown during ending of aranym
+	//	leads to a hanging application which will not end
 	shutdown();
+#endif
 }
 
 /* Other functions to init/shutdown dsp emulation */
