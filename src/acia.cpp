@@ -94,7 +94,7 @@ void IKBD::doTransmit(void)
 	status |= 0x81;
 	inTransmit = true;
 	/* signal ACIA interrupt */
-	mfp.IRQ(6);
+	mfp.IRQ(6, 1);
 }
 
 static inline uint8 int2bcd(int a)

@@ -233,7 +233,7 @@ static const int HW = 0xfffa00;
 		};
 	}
 
-void MFP::IRQ(int no, int count = 1) {
+void MFP::IRQ(int no, int count) {
 	switch(no) {
 		// printer BUSY interrupt
 		case 0:	break;

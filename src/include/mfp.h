@@ -78,7 +78,7 @@ public:
 	MFP();
 	virtual uae_u8 handleRead(uaecptr);
 	virtual void handleWrite(uaecptr, uae_u8);
-	void IRQ(int, int count = 1);
+	void IRQ(int, int count);
 	int doInterrupt(void);
 };
 
