@@ -46,6 +46,8 @@ where TOS/GEM applications could continue to live forever.
    o TOS 4.04, EmuTOS or Linux as the booting operating system
    o runs with FreeMiNT, MagiC, and any other operating system that runs
      also on real Atari computer.
+   o Native CD-ROM access (under Linux), without scsi/ide/whatsoever
+     emulation
 
 Important: ARAnyM is not finished. Consider this to be a beta version
 and a work-in-progress. Sorry for incomplete and confusing documentation.
@@ -92,7 +94,6 @@ case.
 You just need to fill the [LILO] sections with the correct parameters, and
 then to run aranym with '-l' or '--lilo' to use it instead of TOS/EmuTOS.
 This is currently not usable, due to missing/bugged MMU/hardware emulation.
-
 
 
  5) Connecting harddrives
@@ -152,7 +153,43 @@ We tested several harddisk drivers and found the HDDRIVER (once the SCSI bus
 scanning is disabled) and Cecile to work OK.
 
 
- 6) Accessing data on host OS filesystem
+ 6) Connecting CD-ROM drives
+ ---------------------------
+
+You can use IDE emulation, but you can have only 2 IDE devices. So a better
+way is to use Natfeat CD-ROM driver, where you can have up to 26 CD-ROM
+drives (physical devices A to Z for MetaDOS). It is only supported under
+Linux at the moment.
+
+First, See section [CDROMS] in your config file. Each drive letter is a
+physical device for MetaDOS, and you can give it any host device (if you have
+multiple CD-ROM drives on your host machine).
+
+Example:
+
+[CDROMS]
+A = /dev/cdrom2
+..
+W = /dev/cdrom1
+..
+Z = /dev/cdrom
+
+Then, on the Atari side, copy the file nfcdrom.bos to your auto folder, and
+edit your config.sys file, and add a line like this:
+
+*BOS, \auto\nfcdrom.bos, A, W, Z
+
+You can now use audio CDs with your favorite CD player. If you also want access
+to data CD-ROMs, you need an iso9660 filesystem driver. You can find some with
+MetaDOS, and add the lines:
+
+*DOS, \auto\iso9660.dos, G:A, H:W, I:Z
+
+To have gemdos drives G, H, I (on your desktop) use the respective A, W, Z
+MetaDOS devices.
+
+
+ 7) Accessing data on host OS filesystem
  ---------------------------------------
 
 For accessing data on a host filesystem you can map the host fs to a logical
@@ -193,14 +230,14 @@ More info you'll find in atari/hostfs/README file.
 Note: We are planning on writing a tool for BDCONFIG.SYS auto-configuration.
 
 
- 7) Networking
+ 8) Networking
  -------------
 
 Make sure your host OS is Linux and your Atari OS is FreeMiNT. Then follow
 instructions in the atari/network/ethernet/README file.
 
 
- 8) Keyboard shortcuts
+ 9) Keyboard shortcuts
  ---------------------
 
 Keys not found on a PC keyboard:
@@ -230,7 +267,7 @@ Alt+Ctrl+Esc   - release the input focus if ARAnyM runs in a window (so you
 Scroll Lock    - switch between windowed and fullscreen mode
 
 
- 9) Troubleshooting
+ 10) Troubleshooting
  ------------------
 
 If your Microsoft IntelliMouse doesn't work correctly on Linux framebuffer
@@ -239,7 +276,7 @@ console you may want to set the SDL_MOUSEDEV_IMPS2 environment variable to 1.
 Example for bash: export SDL_MOUSEDEV_IMPS2=1; aranym
 
 
- 10) More information
+ 11) More information
  --------------------
 
  Read the NEWS file for user visible changes.
