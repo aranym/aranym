@@ -3978,17 +3978,24 @@ raw_init_cpu(void)
 	break;
   case 15:
 	if (c->x86_vendor == X86_VENDOR_INTEL) {
-	  /*  Assume any BranID >= 8 and family == 15 yields a Pentium 4 */
+	  /* Assume any BrandID >= 8 and family == 15 yields a Pentium 4 */
 	  if (c->x86_brand_id >= 8)
 		c->x86_processor = X86_PROCESSOR_PENTIUM4;
+	}
+	if (c->x86_vendor == X86_VENDOR_AMD) {
+	  /* Assume an Athlon processor if family == 15 and it was not
+	     detected as an x86-64 so far */
+	  if (c->x86_processor == X86_PROCESSOR_max)
+		c->x86_processor = X86_PROCESSOR_ATHLON;
 	}
 	break;
   }
   if (c->x86_processor == X86_PROCESSOR_max) {
-	fprintf(stderr, "Error: unknown processor type\n");
-	fprintf(stderr, "  Family  : %d\n", c->x86);
-	fprintf(stderr, "  Model   : %d\n", c->x86_model);
-	fprintf(stderr, "  Mask    : %d\n", c->x86_mask);
+	panicbug("Error: unknown processor type\n");
+	panicbug("  Family  : %d\n", c->x86);
+	panicbug("  Model   : %d\n", c->x86_model);
+	panicbug("  Mask    : %d\n", c->x86_mask);
+	panicbug("  Vendor  : %s [%d]\n", c->x86_vendor_id, c->x86_vendor);
 	if (c->x86_brand_id)
 	  fprintf(stderr, "  BrandID : %02x\n", c->x86_brand_id);
 	abort();

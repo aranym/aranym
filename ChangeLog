@@ -3,6 +3,8 @@
 
 - "SDL/" removed from includes, path to SDL headers must be fully defined
 
+- sync with BasiliskII
+
 
 2003/05/27 - milan
 - configure.ac: MacOS X support rewritten (thanks, Stefan Kuhr)

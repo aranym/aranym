@@ -6016,7 +6016,7 @@ void build_comp(void)
 		prop[cft_map(tbl[i].opcode)].cflow = cflow;
 
 		int uses_fpu = tbl[i].specific & 32;
-		if (uses_fpu && avoid_fpu)
+		if ((uses_fpu && avoid_fpu) || avoid_opcode(tbl[i].opcode))
 			compfunctbl[cft_map(tbl[i].opcode)] = NULL;
 		else
 			compfunctbl[cft_map(tbl[i].opcode)] = tbl[i].handler;
@@ -6024,7 +6024,7 @@ void build_comp(void)
 
     for (i = 0; nftbl[i].opcode < 65536; i++) {
 		int uses_fpu = tbl[i].specific & 32;
-		if (uses_fpu && avoid_fpu)
+		if ((uses_fpu && avoid_fpu) || avoid_opcode(nftbl[i].opcode))
 			nfcompfunctbl[cft_map(nftbl[i].opcode)] = NULL;
 		else
 			nfcompfunctbl[cft_map(nftbl[i].opcode)] = nftbl[i].handler;
@@ -6105,7 +6105,7 @@ static void flush_icache_none(int n)
 {
 	/* Nothing to do.  */
 }
- 
+
 static void flush_icache_hard(int n)
 {
     uae_u32 i;
