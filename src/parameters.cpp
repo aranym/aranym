@@ -3,7 +3,8 @@
 #include "config.h"
 #include "parameters.h"
 #include "tools.h"		// for safe_strncpy()
-#include "emu_bochs.h"	// for BX_INSERTED define
+
+#define BX_INSERTED	true	// copied from emu_bochs.h
 
 #define DEBUG 0
 #include "debug.h"
