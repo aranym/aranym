@@ -5,6 +5,16 @@
 - cygwin support hopefully perfect now (uses registry to find out the path
   to "My Documents" folder which is used instead of the Unix-ish $HOME).
 
+- hostfs.cpp: char a[2048] - local arrays for filenames now defined with
+  MAXPATHNAME2LEN (MAXPATHNAMELEN was already used and I wasn't sure if
+  it can be used in the other cases as well).
+
+- !IMPORTANT! With MAXPATHNAME2LEN set to 2048 gcc 3.2 created incorrect
+  code on cygwin. Thus both MAXPATHNAME[2]LEN were set to 255 for now.
+  I realize it's dangerously low value but if we are suffering from
+  stack overwrites we need to go low and re-check all issues again.
+  Note that this fixes the wrong mapping of host folders under Cygwin..
+
 
 2003/04/09 - joy
 - parameters.cpp: do not include emu_bochs.h - this breaks some platforms.
