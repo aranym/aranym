@@ -336,7 +336,8 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 		0xffff, 0xffff, 0xffff, 0xffff
 	};
 	for( int i=0; i<16; i++ )
-		hostScreen.fillArea( i<<4, hostScreen.getHeight()-16, 15, 16, ptrn, hostScreen.getPaletteColor(i) );
+		hostScreen.fillArea( i<<4, hostScreen.getHeight()-16, 15, 16, ptrn,
+                             hostScreen.getBpp() > 1 ? hostScreen.getPaletteColor(i) : i );
 #endif  // DEBUG_DRAW_PALETTE
 
 
@@ -625,10 +626,14 @@ int FVDIDriver::drawMouse( void *wrk, int16 x, int16 y, uint32 mode )
 			for( uint16 i=0; i<32; i+=2 )
 				Mouse.shape[i >> 1] = reverse_bits( get_word( fPatterAddress + i, true ) );
 
-			Mouse.storage.color.foreground = hostScreen.getPaletteColor( get_word( mode + MOUSE_FGCOLOR, true ) );
-			Mouse.storage.color.background = hostScreen.getPaletteColor( get_word( mode + MOUSE_BGCOLOR, true ) );
 			Mouse.hotspot.x = get_word( mode + MOUSE_HOTSPOT_X, true );
 			Mouse.hotspot.y = get_word( mode + MOUSE_HOTSPOT_Y, true );
+			Mouse.storage.color.foreground = get_word( mode + MOUSE_FGCOLOR, true );
+			Mouse.storage.color.background = get_word( mode + MOUSE_BGCOLOR, true );
+			if ( hostScreen.getBpp() > 1 ) {
+				Mouse.storage.color.foreground = hostScreen.getPaletteColor( Mouse.storage.color.foreground );
+				Mouse.storage.color.background = hostScreen.getPaletteColor( Mouse.storage.color.background );
+			}
 
 #if DEBUG > 1
 			char buffer[30];
@@ -761,8 +766,10 @@ int FVDIDriver::expandArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy,
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, get_word( (uint32)src + MFDB_BITPLANES, true )));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", get_long( (uint32)dest, true ), get_word( (uint32)dest + MFDB_WDWIDTH, true ) * (get_word( (uint32)dest + MFDB_BITPLANES, true )>>2), get_word( (uint32)dest + MFDB_BITPLANES, true )));
 
-	fgColor = hostScreen.getPaletteColor( fgColor );
-	bgColor = hostScreen.getPaletteColor( bgColor );
+	if ( hostScreen.getBpp() > 1 ) {
+		fgColor = hostScreen.getPaletteColor( fgColor );
+		bgColor = hostScreen.getPaletteColor( bgColor );
+	}
 
 	if ( dest != NULL && // no MFDB structure
 		 get_long( (uint32)dest, true ) != 0 && // mfdb->address == 0 => screen
@@ -1004,8 +1011,10 @@ int FVDIDriver::fillArea(uint32 vwk, uint32 x_, uint32 y_, int w, int h,
 	      fgColor, hostScreen.getPaletteColor(fgColor),
 	      bgColor, hostScreen.getPaletteColor(bgColor)));
 
-	fgColor = hostScreen.getPaletteColor(fgColor);
-	bgColor = hostScreen.getPaletteColor(bgColor);
+	if ( hostScreen.getBpp() > 1 ) {
+		fgColor = hostScreen.getPaletteColor(fgColor);
+		bgColor = hostScreen.getPaletteColor(bgColor);
+	}
 
 	if (!hostScreen.renderBegin())
 		return 1;
@@ -1619,8 +1628,13 @@ int FVDIDriver::drawMoveLine(int16 table[], int length, uint16 index[], int move
 int FVDIDriver::drawLine(uint32 vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 y2_,
                          uint16 pattern, int32 colors, int logOp)
 {
-	uint32 fgColor = hostScreen.getPaletteColor((int16)(colors & 0xffff));
-	uint32 bgColor = hostScreen.getPaletteColor((int16)(colors >> 16));
+	uint32 fgColor = (int16)(colors & 0xffff);
+	uint32 bgColor = (int16)(colors >> 16);
+
+	if ( hostScreen.getBpp() > 1 ) {
+		fgColor = hostScreen.getPaletteColor(fgColor);
+		bgColor = hostScreen.getPaletteColor(bgColor);
+	}
 
 	int16* table = 0;
 	uint16* index = 0;
@@ -1751,11 +1765,16 @@ int FVDIDriver::drawLine(uint32 vwk, uint32 x1_, uint32 y1_, uint32 x2_, uint32 
 int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr, int moves,
                          uint32 pattern_addr, int32 colors)
 {
-        if (vwk & 1)
+	if (vwk & 1)
 		return -1;      // Don't know about any special fills
 
-	uint32 fgColor = hostScreen.getPaletteColor((int16)(colors & 0xffff));
-	uint32 bgColor = hostScreen.getPaletteColor((int16)(colors >> 16));
+	uint32 fgColor = (int16)(colors & 0xffff);
+	uint32 bgColor = (int16)(colors >> 16);
+
+	if ( hostScreen.getBpp() > 1 ) {
+		fgColor = hostScreen.getPaletteColor(fgColor);
+		bgColor = hostScreen.getPaletteColor(bgColor);
+	}
 
 	// Allocate arrays for data
 	if (!AllocPoints(n) || !AllocIndices(moves) || !AllocCrossings(200))
@@ -1925,6 +1944,9 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.31  2002/01/08 22:40:00  standa
+ * The palette fix and a little 8bit driver update.
+ *
  * Revision 1.30  2002/01/08 21:20:57  standa
  * fVDI driver palette store on res change implemented.
  *
