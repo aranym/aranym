@@ -45,7 +45,7 @@ uint32 nf_call(memptr stack, bool inSuper)
 	unsigned int idx = MASTERID2IDX(fncode);
 	if (idx >= nf_objs_cnt) {
 		D(bug("nf_call: wrong ID %d", idx));
-		return 0;	/* FIXME: is this a good answer for wrong ID call? */
+		return (uint32)-32L;	/* EINVFN - invalid function */
 	}
 
 	fncode = MASKOUTMASTERID(fncode);
