@@ -1,10 +1,15 @@
+2004/12/17 - Patrice
+- nfosmesa: more endianness fixes. Extensions reenabled, beware the lengthy
+  compilation!
+
+
 2004/12/16 - Patrice
-- nfosmesa: more bugfixes.
+- nfosmesa: more endianness fixes.
 
 
 2004/12/15 - Patrice
-- nfosmesa: more bugfixes, small doc in doc/documentation.txt, added ldg to
-  spec file.
+- nfosmesa: more endianness fixes, small doc in doc/documentation.txt,
+  added ldg to spec file.
 
 
 2004/12/14 - Patrice

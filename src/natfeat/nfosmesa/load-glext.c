@@ -7,7 +7,7 @@
 		( void (*)(GLenum a))
 		SDL_LoadFunction(library_handle,"glBlendEquation");
 	fn.glDrawRangeElements =
-		( void (*)(GLenum a, GLuint b, GLuint c, GLsizei d, GLenum e, const GLvoid * f))
+		( void (*)(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices))
 		SDL_LoadFunction(library_handle,"glDrawRangeElements");
 	fn.glColorTable =
 		( void (*)(GLenum a, GLenum b, GLsizei c, GLenum d, GLenum e, const GLvoid * f))

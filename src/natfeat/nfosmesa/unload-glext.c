@@ -7,7 +7,7 @@
 		( void (*)(GLenum a))
 		NULL;
 	fn.glDrawRangeElements =
-		( void (*)(GLenum a, GLuint b, GLuint c, GLsizei d, GLenum e, const GLvoid * f))
+		( void (*)(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices))
 		NULL;
 	fn.glColorTable =
 		( void (*)(GLenum a, GLenum b, GLsizei c, GLenum d, GLenum e, const GLvoid * f))

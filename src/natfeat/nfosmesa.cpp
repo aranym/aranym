@@ -22,7 +22,7 @@
 #include <SDL_endian.h>
 #include <GL/osmesa.h>
 
-#define NFOSMESA_GLEXT	0
+#define NFOSMESA_GLEXT	1
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
@@ -30,7 +30,7 @@
 #include "nfosmesa.h"
 #include "../../atari/nfosmesa/nfosmesa_nfapi.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /*--- Defines ---*/

@@ -2,7 +2,7 @@
 
 	 void (*glBlendColor)(GLclampf a, GLclampf b, GLclampf c, GLclampf d);
 	 void (*glBlendEquation)(GLenum a);
-	 void (*glDrawRangeElements)(GLenum a, GLuint b, GLuint c, GLsizei d, GLenum e, const GLvoid * f);
+	 void (*glDrawRangeElements)(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices);
 	 void (*glColorTable)(GLenum a, GLenum b, GLsizei c, GLenum d, GLenum e, const GLvoid * f);
 	 void (*glColorTableParameterfv)(GLenum a, GLenum b, const GLfloat * c);
 	 void (*glColorTableParameteriv)(GLenum a, GLenum b, const GLint * c);

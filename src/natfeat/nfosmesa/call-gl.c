@@ -3367,7 +3367,7 @@ void OSMesaDriver::glMap2d(Uint32 ctx, GLenum target, GLdouble u1, GLdouble u2, 
 				break;
 		}
 
-		tmp1=(GLdouble *)malloc(size*uorder*sizeof(GLdouble));
+		tmp1=(GLdouble *)malloc(size*(uorder+vorder)*sizeof(GLdouble));
 		if (tmp1) {
 			ptr1 =(GLubyte *)points;
 			for (i=0;i<uorder;i++) {
@@ -3377,23 +3377,20 @@ void OSMesaDriver::glMap2d(Uint32 ctx, GLenum target, GLdouble u1, GLdouble u2, 
 				ptr1 += ustride*sizeof(GLdouble);
 			}
 
-			tmp2=(GLdouble *)malloc(size*vorder*sizeof(GLdouble));
-			if (tmp2) {
-				ptr2 =(GLubyte *)points;
-				for (i=0;i<vorder;i++) {
-					for (j=0;j<size;j++) {
-						Atari2HostDoublePtr(1, (Uint32 *)&ptr2[j], &tmp2[i*size+j]);
-					}
-					ptr2 += vstride*sizeof(GLdouble);
+			tmp2=&tmp1[uorder*size];
+
+			ptr2 =(GLubyte *)points;
+			for (i=0;i<vorder;i++) {
+				for (j=0;j<size;j++) {
+					Atari2HostDoublePtr(1, (Uint32 *)&ptr2[j], &tmp2[i*size+j]);
 				}
+				ptr2 += vstride*sizeof(GLdouble);
+			}
 
-				fn.glMap2d(  target,
-					u1,  u2,  size,  uorder,  tmp1,
-					v1,  v2,  size,  vorder,  tmp2
-				);
-
-				free(tmp2);
-			}			
+			fn.glMap2d(  target,
+				u1,  u2,  size,  uorder,
+				v1,  v2,  size*uorder,  vorder, tmp1
+			);
 
 			free(tmp1);
 		}
@@ -3431,7 +3428,7 @@ void OSMesaDriver::glMap2f(Uint32 ctx, GLenum target, GLfloat u1, GLfloat u2, GL
 				break;
 		}
 
-		tmp1=(GLfloat *)malloc(size*uorder*sizeof(GLfloat));
+		tmp1=(GLfloat *)malloc(size*(uorder+vorder)*sizeof(GLfloat));
 		if (tmp1) {
 			ptr1 =(GLubyte *)points;
 			for (i=0;i<uorder;i++) {
@@ -3441,23 +3438,20 @@ void OSMesaDriver::glMap2f(Uint32 ctx, GLenum target, GLfloat u1, GLfloat u2, GL
 				ptr1 += ustride*sizeof(GLfloat);
 			}
 
-			tmp2=(GLfloat *)malloc(size*vorder*sizeof(GLfloat));
-			if (tmp2) {
-				ptr2 =(GLubyte *)points;
-				for (i=0;i<vorder;i++) {
-					for (j=0;j<size;j++) {
-						Atari2HostFloatPtr(1, (Uint32 *)&ptr2[j], &tmp2[i*size+j]);
-					}
-					ptr2 += vstride*sizeof(GLfloat);
+			tmp2= &tmp1[uorder*size];
+
+			ptr2 =(GLubyte *)points;
+			for (i=0;i<vorder;i++) {
+				for (j=0;j<size;j++) {
+					Atari2HostFloatPtr(1, (Uint32 *)&ptr2[j], &tmp2[i*size+j]);
 				}
+				ptr2 += vstride*sizeof(GLfloat);
+			}
 
-				fn.glMap2f(  target,
-					u1,  u2,  size,  uorder,  tmp1,
-					v1,  v2,  size,  vorder,  tmp2
-				);
-
-				free(tmp2);
-			}			
+			fn.glMap2f(  target,
+				u1,  u2,  size,  uorder,
+				v1,  v2,  size*uorder,  vorder,  tmp1
+			);
 
 			free(tmp1);
 		}
