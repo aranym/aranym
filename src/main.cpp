@@ -49,6 +49,7 @@ void setVirtualTimer(void);		// basilisk_glue
 SDL_TimerID my_timer_id;
 
 extern int irqindebug;
+extern long maxInnerCounter;	// hack to edit newcpu.cpp's counter refresh
 
 static int keyboardTable[0x80] = {
 /* 0-7 */ 0, SDLK_ESCAPE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5,
@@ -413,54 +414,44 @@ void invoke200HzInterrupt()
 	}
 }
 
-
 /*
- *  Initialize everything, returns false on error
+ * TOS ROM
  */
-
-bool InitAll(void)
-{
-	if (SDL_Init(SDL_INIT_VIDEO /*| SDL_INIT_TIMER */ ) != 0) {
-		ErrorAlert("SDL initialization failed.");
-		return true;			//FIXME?
+bool InitROM(void) {
+	// read ROM file
+	D(bug("Reading ROM file..."));
+	FILE *f = fopen(rom_path, "rb");
+	if (f == NULL) {
+		ErrorAlert("ROM file not found\n");
+		return false;
 	}
-	// Be bsure that the atexit function do not double any cleanup already done
-	// thus I changed the SDL_Quit to ExitAll & removed the EditAll from QuitEmulator
-	atexit(ExitAll);
-
-	CPUType = 4;
-	FPUType = 1;
-
-	// Setting "SP & PC"
-	WriteAtariInt32(0x00000000, ReadAtariInt32(ROMBase));
-	WriteAtariInt32(0x00000004, ReadAtariInt32(ROMBase + 4));
-
-	//  SDL_EnableUNICODE(1);
-
-	// The fullscreen mode implies mouse grab (standa)
-	if (fullscreen)
-		grab_mouse = true;
-
-	// grab mouse
-/*
-	if (grab_mouse) {
-		grabMouse(true);
+	int RealROMSize = 512 * 1024;
+	if (fread(ROMBaseHost, 1, RealROMSize, f) != (ssize_t) RealROMSize) {
+		ErrorAlert("ROM file reading error\n");
+		fclose(f);
+		return false;
 	}
-*/
-	// warp mouse to center of Atari screen and grab it
-	if (! fullscreen)
-		SDL_WarpMouse(640/2, 480/2);
-	grabMouse(true);
+	fclose(f);
 
-	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
+	if (ReadAtariInt16(ROMBase + 2) != 0x0404) {
+		ErrorAlert("Wrong TOS version\n");
+		return false;
+	}
 
-	// do not insert floppy automatically
-	// insert_floppy();
+	// patch it for 68040 compatibility
+	// TODO
 
+	// patch cookies
+	ROMBaseHost[0x00416] = bx_options.cookies._mch >> 24;
+	ROMBaseHost[0x00417] = (bx_options.cookies._mch >> 16) & 0xff;
+	ROMBaseHost[0x00418] = (bx_options.cookies._mch >> 8) & 0xff;
+	ROMBaseHost[0x00419] = (bx_options.cookies._mch) & 0xff;
+
+	// patch it for direct TC mode
 	if (direct_truecolor) {
 		// Patch TOS (enforce VIDEL VideoRAM at ARANYMVRAMSTART)
 		D(bug("Patching TOS for direct VIDEL output..."));
-#if 1
+
 		ROMBaseHost[35752] = 0x2e;
 		ROMBaseHost[35753] = 0x3c;
 		ROMBaseHost[35754] = ARANYMVRAMSTART >> 24;
@@ -471,13 +462,49 @@ bool InitAll(void)
 		ROMBaseHost[35759] = 6;
 		ROMBaseHost[35760] = 0x4e;
 		ROMBaseHost[35761] = 0x71;
-#else
-		WriteAtariInt16(ROMBase + 35752, 0x2e3c);
-		WriteAtariInt32(ROMBase + 35754, ARANYMVRAMSTART);
-		WriteAtariInt16(ROMBase + 35758, 0x6006);
-		WriteAtariInt16(ROMBase + 35760, 0x4e71);
-#endif
 	}
+
+	return true;
+}
+
+
+/*
+ *  Initialize everything, returns false on error
+ */
+
+bool InitAll(void)
+{
+	if (! InitROM())
+		return false;
+
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+		ErrorAlert("SDL initialization failed.");
+		return false;
+	}
+	// Be sure that the atexit function do not double any cleanup already done
+	// thus I changed the SDL_Quit to ExitAll & removed the ExitAll from QuitEmulator
+	atexit(ExitAll);
+
+	CPUType = 4;
+	FPUType = 1;
+
+	maxInnerCounter = 10000;	// finetune this! Slower machines require lower number
+
+	// Setting "SP & PC"
+	WriteAtariInt32(0x00000000, ReadAtariInt32(ROMBase));
+	WriteAtariInt32(0x00000004, ReadAtariInt32(ROMBase + 4));
+
+	//  SDL_EnableUNICODE(1);
+
+	// warp mouse to center of Atari screen and grab it
+	if (! fullscreen)
+		SDL_WarpMouse(640/2, 480/2);
+	grabMouse(true);
+
+	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
+
+	// do not insert floppy automatically
+	// insert_floppy();
 
 #ifdef METADOS_DRV
 	// install the drives
@@ -487,7 +514,7 @@ bool InitAll(void)
 	// Init HW
 	HWInit();
 
-	// Init 680x0 emulation (this also activates the memory system which is needed for PatchROM())
+	// Init 680x0 emulation
 	if (!Init680x0())
 		return false;
 
