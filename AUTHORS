@@ -29,6 +29,15 @@ Petr Stehlik <pstehlik@sophics.cz>
 - XHDI interface
 - release management
 
+Johan Klockars <rand@cd.chalmers.se>
+- fVDI author, helps with ARAnyM fVDI driver
+- fVDI driver polyline implementation
+- PAGE_MASK addressing speedup
+
+Didier MEQUIGNON <didier.mequignon@wanadoo.fr>
+- audio support in ARAnyM
+- Atari XBIOS sound driver (atari/sound/*)
+
 
 ARAnyM source code consists of several parts. Some were taken from other
 projects (in alphabetical order):
@@ -105,16 +114,6 @@ Antonin Kral
 Frank Naumann
 - for the NetBSD port
 - termio -> termios conversion
-
-Johan Klockars
-- fVDI author, helps with ARAnyM fVDI driver
-- fVDI driver polyline implementation
-- PAGE_MASK addressing speedup
-- info about ISO C++ norm (for MJ)
-
-Didier MEQUIGNON
-- audio support in ARAnyM
-- Atari XBIOS sound driver (atari/sound/*)
 
 Thomas Huth
 - SDL GUI (from hatari project)

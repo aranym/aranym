@@ -71,6 +71,7 @@
 
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
@@ -375,7 +376,7 @@ static inline uae_u32 do_byteswap_16(uae_u32 v)
 
 #undef KNOWN_ALLOC
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+#if REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING
 # define KNOWN_ALLOC	1
 #else
 # define KNOWN_ALLOC	0

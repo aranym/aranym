@@ -27,8 +27,6 @@ AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU 
 
 AC_ARG_ENABLE(sdltimer,        [  --enable-sdltimer       use SDL Timer for Timer C [default=yes]], [WANT_SDLTIMER=$enableval], [WANT_SDLTIMER=yes])
 
-AC_ARG_ENABLE(pagecheck,       [  --enable-pagecheck      different memory check [default=yes]], [WANT_PAGECHECK=$enableval], [WANT_PAGECHECK=yes])
-
 AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB [default=no]], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
 AC_ARG_ENABLE(fixedvideoram,   [  --enable-fixedvideoram  use fixed start of VideoRAM [default=no]], [WANT_FIXEDVIDEORAM=$enableval], [WANT_FIXEDVIDEORAM=no])
@@ -64,10 +62,24 @@ AC_ARG_ENABLE(addressing,
     real) 	ADDRESSING_TEST_ORDER="real";;
     direct)	ADDRESSING_TEST_ORDER="direct";;
     normal)	ADDRESSING_TEST_ORDER="normal";;
-    *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: real, direct, normal]);;
+    fixed)	ADDRESSING_TEST_ORDER="fixed";;
+    *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: real, direct, fixed, normal]);;
   esac
 ],
 [ ADDRESSING_TEST_ORDER="real direct normal"
+])
+
+AC_ARG_ENABLE(addr-check,
+[  --enable-addr-check=AM  specify the memory check to use [default=page]],
+[ case "$enableval" in
+    full)	MEMORY_CHECK="full";;
+    page)	MEMORY_CHECK="page";;
+    hwsp)       MEMORY_CHECK="hwsp";;
+    pagehwsp)   MEMORY_CHECK="pagehwsp";;
+    *)		AC_MSG_ERROR([--enable-addr-check takes only one of the following values: full, page, hwsp, pagehwsp]);;
+  esac
+],
+[ MEMORY_CHECK="page"
 ])
 
 dnl Experimental hacks around spcflags handling.
@@ -145,6 +157,7 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
 AC_C_CONST
 AC_C_INLINE
+#AC_C_VOLATILE
 AC_CHECK_SIZEOF(short, 2)
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
@@ -466,6 +479,27 @@ AC_CACHE_CHECK("whether we can map Low Memory area 0x0000-0x2000",
 
 SYSSRCS="$SYSSRCS $MONSRCS"
 
+if [[ "x$WANT_JIT" = "xyes" ]]; then
+  WANT_EXSIGSEGV=yes
+fi
+  
+case $MEMORY_CHECK in
+  page) AC_DEFINE(ARAM_PAGE_CHECK)
+        ;;
+  hwsp) ADDRESSING_TEST_ORDER="fixed"
+        WANT_EXSIGSEGV="yes"
+	AC_DEFINE(NOCHECKBOUNDARY)
+	AC_DEFINE(RAMENDNEEDED)
+	;;
+  pagehwsp) ADDRESSING_TEST_ORDER="fixed"
+        WANT_EXSIGSEGV="yes"
+	AC_DEFINE(ARAM_PAGE_CHECK)
+	AC_DEFINE(NOCHECKBOUNDARY)
+	AC_DEFINE(RAMENDNEEDED)
+	;;
+  *) ;;
+esac
+ 
 dnl Full opcode's history
 if [[ "x$WANT_HISTORY" = "xyes" ]]; then
     AC_DEFINE(FULL_HISTORY)
@@ -481,55 +515,66 @@ fi
 
 dnl Timer C
 if [[ "x$WANT_SDLTIMER" = "xyes" ]]; then
-    AC_DEFINE(USE_TIMERS)
-fi
-
-dnl Page check
-if [[ "x$WANT_PAGECHECK" = "xyes" -a "x$WANT_JIT" = "xno" ]]; then
-    AC_DEFINE(ARAM_PAGE_CHECK)
+  AC_DEFINE(USE_TIMERS)
 fi
 
 dnl fixed size FastRAM
 if [[ "x$WANT_FIXEDFASTRAM" != "xno" ]]; then
-dnl    DEFINES="$DEFINES -DFixedSizeFastRAM=\"$WANT_FIXEDFASTRAM\""
-    AC_DEFINE_UNQUOTED(FixedSizeFastRAM, $WANT_FIXEDFASTRAM)
+  AC_DEFINE_UNQUOTED(FixedSizeFastRAM, $WANT_FIXEDFASTRAM)
 fi
 
 dnl fixed start of VideoRAM
 if [[ "x$WANT_FIXEDVIDEORAM" = "xyes" ]]; then
-    AC_DEFINE(FIXED_VIDEORAM)
+  AC_DEFINE(FIXED_VIDEORAM)
 else
-    if [[ "x$WANT_MMU" = "xyes" ]]; then
-        AC_MSG_WARN([MMU needs fixed position of VideoRAM])
-	AC_DEFINE(FIXED_VIDEORAM)
-    fi
+  if [[ "x$WANT_MMU" = "xyes" ]]; then
+    AC_MSG_WARN([MMU needs fixed position of VideoRAM])
+    AC_DEFINE(FIXED_VIDEORAM)
+  fi
 fi
 
 dnl Direct Truecolor
 if [[ "x$WANT_DIRECTCOLOR" = "xyes" ]]; then
-    if [[ "x$WANT_FIXEDVIDEORAM" = "xno" ]]; then
-        AC_MSG_WARN([Direct truecolor needs fixed position of VideoRAM, ignored])
-    else
-        AC_DEFINE(DIRECT_TRUECOLOR)
-    fi
+  if [[ "x$WANT_FIXEDVIDEORAM" = "xno" ]]; then
+    AC_MSG_WARN([Direct truecolor needs fixed position of VideoRAM, ignored])
+  else
+    AC_DEFINE(DIRECT_TRUECOLOR)
+  fi
 fi
 
 dnl Blitter memmove acceleration
 if [[ "x$WANT_BLITMEMMOVE" = "xyes" ]]; then
-    AC_DEFINE(BLITTER_MEMMOVE)
+  AC_DEFINE(BLITTER_MEMMOVE)
 fi
 
 dnl Blitter SDL surface blitting
 if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
-    AC_DEFINE(BLITTER_SDLBLIT)
-    AC_DEFINE(BLITTER_MEMMOVE)	dnl required for the SDLBLIT
+  AC_DEFINE(BLITTER_SDLBLIT)
+  AC_DEFINE(BLITTER_MEMMOVE)	dnl required for the SDLBLIT
 fi
 
 dnl Ethernet card emulation
 if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
-    AC_DEFINE(ETHERNET_SUPPORT)
-    SYSSRCS="$SYSSRCS ../ether.cpp ether_unix.cpp"
+  AC_DEFINE(ETHERNET_SUPPORT)
+  SYSSRCS="$SYSSRCS ../ether.cpp ether_unix.cpp"
 fi
+
+dnl Extended signal segmentation fault handler
+if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
+  case $target_os in
+    linux*)
+      if [[ "x$HAVE_I386" = "xyes" ]]; then
+        SYSSRCS="$SYSSRCS linux/sigsegv_linux.cpp"
+      else
+        AC_MSG_ERROR([Sorry, extended segfault handler supported on your platform])
+      fi
+      ;;
+    *)
+      AC_MSG_ERROR([Sorry, extended segfault handler supported on your platform])
+      ;;
+  esac
+fi
+
 
 dnl Determine the addressing mode to use
 if [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
@@ -579,6 +624,13 @@ else
       ADDRESSING_MODE="direct"
       DEFINES="$DEFINES -DDIRECT_ADDRESSING"
       break
+      ;;
+    fixed)
+      if [[ "x$OS_TYPE" = "xlinux" -a "x$HAVE_I386" ]]; then
+        ADDRESSING_MODE="fixed (0x51000000)"
+        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
+        break
+      fi
       ;;
     normal)
       ADDRESSING_MODE="normal"
@@ -719,7 +771,7 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" ]]; then
       AC_MSG_WARN([!!!!! MMU&JIT in progress, dangerous !!!!!])
   fi
   JITSRCS="$JITSRCS ../uae_cpu/compiler/compemu_support.cpp"
-  DEFINES="$DEFINES -DUSE_JIT -DNATMEM_OFFSET"
+  DEFINES="$DEFINES -DUSE_JIT"
 
   if [[ "x$WANT_JIT_DEBUG" = "xyes" ]]; then
     if [[ "x$WANT_MON" = "xyes" ]]; then
@@ -915,14 +967,14 @@ echo Distributed dispatcher ................. : $WANT_DIS_DIP
 echo Debugger ............................... : $WHICH_DEBUG
 echo Monitor ................................ : $WANT_MON
 echo Timer C using SDL Timer ................ : $WANT_SDLTIMER
-echo Page check memory ...................... : $WANT_PAGECHECK
+echo Check memory ........................... : $MEMORY_CHECK
 echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM
 echo Fixed position of VideoRAM ............. : $WANT_FIXEDVIDEORAM
 echo TOS Direct Truecolor.................... : $WANT_DIRECTCOLOR
 echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
 echo Blitter SDL blit acceleration .......... : $WANT_BLITSDLBLIT
 echo Support for aranymfs ................... : $WANT_ARANYMFS
+echo Support for ECE ........................ : $WANT_ETHERNET
 echo GUI .................................... : $WANT_SDLGUI
-
 echo
 echo "Configuration done. Now type \"make\" (or \"gmake\")."

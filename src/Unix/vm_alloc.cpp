@@ -131,7 +131,7 @@ bool vm_acquire_fixed(void * addr, size_t size)
 #ifdef HAVE_MMAP_VM
 	if (mmap(addr, size, VM_PAGE_DEFAULT, map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
 		return false;
-	
+
 	// Since I don't know the standard behavior of mmap(), zero-fill here
 	if (memset(addr, 0, size) != addr)
 		return false;
@@ -140,12 +140,12 @@ bool vm_acquire_fixed(void * addr, size_t size)
 	return false;
 #endif
 #endif
-	
+
 	// Explicitely protect the newly mapped region here because on some systems,
 	// say MacOS X, mmap() doesn't honour the requested protection flags.
 	if (vm_protect(addr, size, VM_PAGE_DEFAULT) != 0)
 		return false;
-	
+
 	return true;
 }
 

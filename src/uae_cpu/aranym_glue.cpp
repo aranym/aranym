@@ -47,7 +47,7 @@ uint32 HWSize = 0x00100000;    // Size of HW space
 memptr FastRAMBase = 0x01000000;		// Fast-RAM base (Atari address space)
 uint8 *FastRAMBaseHost;	// Fast-RAM base (host address space)
 
-#ifdef USE_JIT
+#ifdef EXTENDED_SIGSEGV
 uint8 *FakeIOBaseHost;
 #endif
 

@@ -50,8 +50,14 @@ extern uint8 *FastRAMBaseHost;	// Fast-RAM base (host address space)
 extern memptr VideoRAMBase;	// VideoRAM base (Atari address space)
 extern uint8 *VideoRAMBaseHost;	// VideoRAM base (host address space)
 
-#ifdef USE_JIT
+#ifdef EXTENDED_SIGSEGV
 extern uint8 *FakeIOBaseHost;
+#endif
+
+#ifdef RAMENDNEEDED
+# define RAMEnd 0x01000000	// Not accessible top of memory
+#else
+# define RAMEnd 0
 #endif
 
 // Atari memory access functions

@@ -95,6 +95,12 @@
 /* Define if you want to use ethernet card emulation */
 #undef ETHERNET_SUPPORT
 
+/* Define if you don't want to use check memory boundary */
+#undef NOCHECKBOUNDARY
+
+/* Define if you want protect end of memory */
+#undef RAMENDNEEDED
+
 
 /* Leave that blank line there!!  Autoheader needs it.
    If you're adding to this file, keep in mind:

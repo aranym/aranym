@@ -40,10 +40,6 @@
 # include "mon.h"
 #endif
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
-# include <sys/mman.h>
-#endif
-
 #include <cerrno>
 #include <csignal>
 #include <cstdlib>
@@ -81,6 +77,13 @@ void segmentationfault(int x)
 	exit(0);
 }
 
+#ifdef NOCHECKBOUNDARY
+extern void install_sigsegv();
+#else
+static void install_sigsegv() {
+	signal(SIGSEGV, segmentationfault);
+}
+#endif
 
 /*
  *  Main program
@@ -100,7 +103,7 @@ int main(int argc, char **argv)
 	if (bx_options.startup.debugger) ndebug::init();
 #endif
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+#if REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING
 	// Initialize VM system
 	vm_init();
 
@@ -112,7 +115,7 @@ int main(int argc, char **argv)
 	// when trying to map a too big chunk of memory starting at address 0
 	
 	// Try to allocate all memory from 0x0000, if it is not known to crash
-	if (vm_acquire_fixed(0, RAMSize + ROMSize + HWSize + FastRAMSize) == true) {
+	if (vm_acquire_fixed(0, RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd) == true) {
 		D(bug("Could allocate RAM and ROM from 0x0000"));
 		memory_mapped_from_zero = true;
 	}
@@ -125,6 +128,22 @@ int main(int argc, char **argv)
 	}
 	else
 #endif
+#ifdef FIXED_ADDRESSING
+	if (vm_acquire_fixed((void *)FMEMORY, RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd) == false) {
+		panicbug("Not enough free memory.");
+		QuitEmulator();
+	}
+	RAMBaseHost = (uint8 *)FMEMORY;
+	ROMBaseHost = RAMBaseHost + ROMBase;
+	HWBaseHost = RAMBaseHost + HWBase;
+	FastRAMBaseHost = RAMBaseHost + FastRAMBase;
+# ifdef USE_JIT
+	if (vm_acquire_fixed((void *)(FMEMORY + 0xff000000), RAMSize + ROMSize + HWSize) == false) {
+		panicbug("Not enough free memory.");
+		QuitEmulator();
+	}
+# endif
+#else
 	{
 		RAMBaseHost = (uint8 *)vm_acquire(RAMSize);
 		ROMBaseHost = (uint8 *)vm_acquire(ROMSize);
@@ -135,12 +154,15 @@ int main(int argc, char **argv)
 			QuitEmulator();
 		}
 	}
-
+#endif
 	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
 	D(bug("HW space starts at %p (%08x)", HWBaseHost, HWBase));
 	D(bug("TT-RAM starts at %p (%08x)", FastRAMBaseHost, FastRAMBase));
-#endif /* REAL_ADDRESSING || DIRECT_ADDRESSING */
+#ifdef RAMENDNEEDED
+	D(bug("RAMEnd needed"));
+#endif
+#endif /* REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING */
 
 	// Initialize everything
 	D(bug("Initializing All Modules..."));
@@ -148,9 +170,7 @@ int main(int argc, char **argv)
 		QuitEmulator();
 	D(bug("Initialization complete"));
 
-#ifndef USE_JIT
-	signal(SIGSEGV, segmentationfault);
-#endif
+	install_sigsegv();
 
 #ifdef ENABLE_MON
 	sigemptyset(&sigint_sa.sa_mask);
@@ -163,28 +183,46 @@ int main(int argc, char **argv)
 # endif
 #endif
 
-#ifdef NATMEM_OFFSET
-	if (mprotect(ROMBaseHost, ROMSize, PROT_READ) == -1) {
-		perror("Couldn't protect ROM");
+#ifdef NOCHECKBOUNDARY
+	if (vm_protect(ROMBaseHost, ROMSize, VM_PAGE_READ)) {
+		panicbug("Couldn't protect ROM");
 		exit(-1);
 	}
 
-	D(panicbug("Protect ROM (%08lx - %08lx)", ROMBaseHost, ROMBaseHost + ROMSize));
+	D(panicbug("Protected ROM (%08lx - %08lx)", ROMBaseHost, ROMBaseHost + ROMSize));
+#endif
 
-	if (mprotect(HWBaseHost, HWSize, PROT_NONE) == -1) {
-		perror("Couldn't set HW address space");
+#ifdef RAMENDNEEDED
+	if (vm_protect(ROMBaseHost + ROMSize + HWSize + FastRAMSize, RAMEnd, VM_PAGE_NOACCESS)) {
+		panicbug("Couldn't protect RAMEnd");
+		exit(-1);
+	}
+	D(panicbug("Protected RAMEnd (%08lx - %08lx)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
+#endif
+
+#ifdef USE_JIT
+	if (vm_protect(HWBaseHost, HWSize, VM_PAGE_NOACCESS)) {
+		panicbug("Couldn't set HW address space");
 		exit(-1);
 	}
 
-	D(panicbug("Protect HW space (%08lx - %08lx)", HWBaseHost, HWBaseHost + HWSize));
+	D(panicbug("Protected HW space (%08lx - %08lx)", HWBaseHost, HWBaseHost + HWSize));
 
+	if (vm_protect(RAMBaseHost + 0xff000000, 0x1000000, VM_PAGE_NOACCESS)) {
+		panicbug("Couldn't set mirror address space");
+		QuitEmulator();
+	}
+
+	D(panicbug("Protected mirror space (%08lx - %08lx)", RAMBaseHost + 0xff000000, RAMBaseHost + 0xff000000 + RAMSize + ROMSize + HWSize));
+#if 0
 	if ((FakeIOBaseHost = (uint8 *)vm_acquire(0x00100000)) == VM_MAP_FAILED) {
 		panicbug("Not enough free memory.");
 		QuitEmulator();
 	}
 
 	D(panicbug("FakeIOspace %p", FakeIOBaseHost));
-#endif /* NATMEM_OFFESET */
+#endif
+#endif /* USE_JIT */
 
 	// Start 68k and jump to ROM boot routine
 	D(bug("Starting emulation..."));
@@ -214,8 +252,11 @@ void QuitEmulator(void)
 	ExitAll();
 
 	// Free ROM/RAM areas
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+#if REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING
 	if (RAMBaseHost != VM_MAP_FAILED) {
+#ifdef RAMENDNEEDED
+		vm_release(RAMBaseHost + RAMSize + ROMSize + HWSize + FastRAMSize, RAMEnd);
+#endif
 		vm_release(RAMBaseHost, RAMSize);
 		RAMBaseHost = NULL;
 	}
@@ -257,6 +298,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.68  2002/06/24 19:14:14  joy
+ * Call ExitAll() to safely stop the timer thread before releasing Atari memory()
+ *
  * Revision 1.67  2002/05/14 19:09:50  milan
  * Better structure of vm_alloc, not own OS dependent includes
  * Some debug outputs added for JIT compiler

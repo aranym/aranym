@@ -1,3 +1,10 @@
+2002/07/03 - milan
+- JIT compiler: some minor corrections in JIT
+
+- sigsegv_linux.cpp, memory.h: new memory access for x86/linux added
+    - without direct check of memory boundary (extended sigsegv handler)
+
+
 2002/07/01 - STanda
 - The filename -> 8.3 format transformation adjusted. Now it should handle
   also the filenames ending with a dot (.). These should be appended with

@@ -1,5 +1,5 @@
-#if !REAL_ADDRESSING && !DIRECT_ADDRESSING
-#error "Only Real or Direct Addressing is supported with the JIT Compiler"
+#if !FIXED_ADDRESSING
+#error "Only Fixed Addressing is supported with the JIT Compiler"
 #endif
 
 #define writemem_special writemem
@@ -5098,7 +5098,7 @@ static void writemem_real(int address, int source, int offset, int size, int tmp
 	    address -= 0xfff00000;
     }
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+#if FIXED_ADDRESSING
 	if (clobber)
 	    f=source;
 	switch(size) {
@@ -5133,7 +5133,7 @@ static void writemem_real(int address, int source, int offset, int size, int tmp
 
 static __inline__ void writemem(int address, int source, int offset, int size, int tmp)
 {
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+#if FIXED_ADDRESSING
 	// shall not be called in those addressing modes
 	write_log("writemem: in real or direct addressing mode\n");
 	abort();
@@ -5250,7 +5250,7 @@ static void readmem_real(int address, int dest, int offset, int size, int tmp)
 	    address -= 0xfff00000;
     }
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+#if FIXED_ADDRESSING
 	switch(size) {
 	 case 1: mov_b_brR(dest,address,MEMBaseDiff); break; 
 	 case 2: mov_w_brR(dest,address,MEMBaseDiff); bswap_16(dest); break;
@@ -5274,7 +5274,7 @@ static void readmem_real(int address, int dest, int offset, int size, int tmp)
 
 static __inline__ void readmem(int address, int dest, int offset, int size, int tmp)
 {
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+#if FIXED_ADDRESSING
 	// shall not be called in those addressing modes
 	write_log("readmem: in real or direct addressing mode\n");
 	abort();
@@ -5352,7 +5352,7 @@ void readlong(int address, int dest, int tmp)
 /* This one might appear a bit odd... */
 static __inline__ void get_n_addr_old(int address, int dest, int tmp)
 {
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+#if FIXED_ADDRESSING
 	// shall not be called in those addressing modes
 	write_log("get_n_addr_old: in real or direct addressing mode\n");
 	abort();
@@ -5385,7 +5385,7 @@ static __inline__ void get_n_addr_real(int address, int dest, int tmp)
 #if REAL_ADDRESSING
 	mov_l_rr(dest, address);
 	forget_about(tmp);
-#elif DIRECT_ADDRESSING
+#elif FIXED_ADDRESSING
 	lea_l_brr(dest,address,MEMBaseDiff);
 	forget_about(tmp);
 #else
@@ -5418,7 +5418,7 @@ void get_n_addr(int address, int dest, int tmp)
 
 void get_n_addr_jmp(int address, int dest, int tmp)
 {
-#if REAL_ADDRESSING || DIRECT_ADDRESSING
+#if FIXED_ADDRESSING
 	/* For this, we need to get the same address as the rest of UAE
 	 would --- otherwise we end up translating everything twice */
     get_n_addr(address,dest,tmp);
@@ -6682,7 +6682,7 @@ void execute_normal(void)
 	if (!check_for_cache_miss()) {
 		cpu_history pc_hist[MAXRUN];
 		int blocklen = 0;
-#if 0 && (REAL_ADDRESSING || DIRECT_ADDRESSING)
+#if 0 && FIXED_ADDRESSING
 		start_pc_p = regs.pc_p;
 		start_pc = get_virtual_address(regs.pc_p);
 #else

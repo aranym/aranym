@@ -72,10 +72,9 @@ extern uintptr MEMBaseDiff;
 /*
  * "size" is the size of the memory access (byte = 1, word = 2, long = 4)
  */
-//#define NOCHECKBOUNDARY
-#ifndef NOCHECKBOUNDARY
 static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 {
+#ifndef NOCHECKBOUNDARY
 	if (addr <= (FastRAM_BEGIN + FastRAM_SIZE - size)) {
 		if (!write)
 			return;
@@ -95,16 +94,13 @@ static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 	// D(bug("BUS ERROR %s at $%x\n", (write ? "writting" : "reading"), addr));
 	regs.mmu_fault_addr = addr;
 	longjmp(excep_env, 2);
-}
-#else
-static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write) { }
 #endif
-
+}
 
 #ifdef FIXED_VIDEORAM
-# define do_get_real_address(a)		(((uaecptr)(a) < (uaecptr)ARANYMVRAMSTART) ? ((uae_u8 *)((uaecptr)(a) + MEMBaseDiff)) : ((uae_u8 *)((uaecptr)(a) + VMEMBaseDiff)))
+# define do_get_real_address(a)		((uae_u8 *)(((uaecptr)(a) < ARANYMVRAMSTART) ? ((uaecptr)(a) + MEMBaseDiff) : ((uaecptr)(a) + VMEMBaseDiff)))
 #else
-# define do_get_real_address(a)          ((uae_u8 *)((uaecptr)(a) + MEMBaseDiff))
+# define do_get_real_address(a)		((uae_u8 *)((uintptr)(a) + MEMBaseDiff))
 #endif
 
 static __inline__ uae_u8 *phys_get_real_address(uaecptr addr)
