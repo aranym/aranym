@@ -17,7 +17,7 @@
 #include "emul_op.h"
 #include "ndebug.h"
 
-extern int intlev(void);	// From baisilisk_glue.cpp
+extern int intlev(void);	// From basilisk_glue.cpp
 extern int timerCinterrupts;
 
 #include "m68k.h"
@@ -775,13 +775,13 @@ static void Interrupt(int nr)
 
 static void MFPInterrupt(int nr)
 {
-    // fprintf(stderr, "CPU: jsem v MFPInterruptu\n");
+    // fprintf(stderr, "CPU: in MFPInterrupt\n");
     assert(nr < 16 && nr >= 0);
     lastint_regs = regs;
     lastint_no = 6;
     Exception(nr+64, 0);
 
-    regs.intmask = 6;//7;	// used to be 6 but STonX sets it to 7
+    regs.intmask = 6;
 }
 
 uae_u32 m68k_move2c (int regno, uae_u32 *regp)
@@ -1801,38 +1801,29 @@ static int do_specialties (void)
 	}
     }
 
-    // ACIA received data
-    uae_u8 MFPintr = 6;	// MFP interrupt 6 = ACIA
-    uae_u8 mask = 1 << MFPintr;
-    if ((regs.spcflags & SPCFLAG_MFP_ACIA) && (6 > regs.intmask)) {
-    	uae_u8 value = get_byte_direct(0xfffa11);
-    	if ((value & mask) == 0) {
-    		// fprintf(stderr, "Spoustim IRQ\n");
-    		put_byte_direct(0xfffa11, value | mask);
-        	MFPInterrupt(MFPintr);
-		regs.stopped = 0;
-    		regs.spcflags &= ~SPCFLAG_MFP_ACIA;
-    	}
-    }
-
-    // Timer C (200 Hz system timer, simulated using two 100 Hz timers)
-    MFPintr = 5;	// MFP interrupt 5 = Timer C
-    mask = 1 << MFPintr;
-    if ((regs.spcflags & (SPCFLAG_MFP_TIMERC))
-    	&& (6 > regs.intmask)) {
-    	// fprintf(stderr, "uvnitr MFP_TIMERC\n");
-    	uae_u8 value = get_byte_direct(0xfffa11);
-    	if ((value & mask) == 0) {
-    		// fprintf(stderr, "Spoustim IRQ\n");
-    		put_byte_direct(0xfffa11, value | mask);
-        	MFPInterrupt(MFPintr);
-		regs.stopped = 0;
-		if (--timerCinterrupts <= 0)
-			regs.spcflags &= ~SPCFLAG_MFP_TIMERC;
+    // check for MFP interrupts
+    // 5: TimerC
+    // 6: ACIA received data
+	static int mfpFlags[8] = {0, 0, 0, 0, 0, SPCFLAG_MFP_TIMERC, SPCFLAG_MFP_ACIA, 0};
+	static int SPCFLAG_MFP_ALL = SPCFLAG_MFP_TIMERC | SPCFLAG_MFP_ACIA;
+	if (regs.spcflags & SPCFLAG_MFP_ALL) {
+		for(int mfpInt = 6; mfpInt >= 5; mfpInt--) {
+			int mfpFlag = mfpFlags[mfpInt];
+			if ((regs.spcflags & mfpFlag) && (6 > regs.intmask)) {
+				int value = get_byte_direct(0xfffa11);
+				int mfpMask = 1 << mfpInt;
+				if (! (value & mfpMask)) {
+					put_byte_direct(0xfffa11, value | mfpMask);
+	    			MFPInterrupt(mfpInt);
+					regs.stopped = 0;
+					regs.spcflags &= ~mfpFlag;
+				}
+			}
+		}
 	}
-    }
-    
+
 /*  
+// do not understand the INT vs DOINT stuff so I disabled it (joy)
     if (regs.spcflags & SPCFLAG_INT) {
 	regs.spcflags &= ~SPCFLAG_INT;
 	regs.spcflags |= SPCFLAG_DOINT;
@@ -1871,7 +1862,7 @@ static void m68k_run_1 (void)
 		}
 #ifndef USE_TIMERS
 		{
-			if (++innerCounter > 100) {
+			if (++innerCounter > 100) {	// fine tune this constant for slower machines
 				innerCounter = 0;
 				incrementVirtualTimer();
 			}
