@@ -148,7 +148,7 @@ uae_u8 need_to_preserve[]={1,1,1,1,0,1,1,1};
 
 static void jit_fail(const char *msg, const char *file, int line, const char *function)
 {
-	panicbug(stderr, "JIT failure in function %s from file %s at line %d: %s\n",
+	panicbug("JIT failure in function %s from file %s at line %d: %s",
 			function, file, line, msg);
 	abort();
 }
