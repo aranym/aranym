@@ -44,11 +44,22 @@ VidelRefresh = 2
 ; set the connected monitor (-1 = don't change NVRAM setting)
 VidelMonitor = -1
 
+
+[AUTOZOOM]
 ; Automatically resize the atari screen to the host screen size
-AutoZoom = No
+Enabled = No
 
 ; Use integer coefficients to resize the atari screen
-AutoZoomInteger = No
+IntegerCoefs = No
+
+; Use a fixed host screen size whenever the Atari screen size changes
+FixedSize = No
+
+; Width of host screen if fixed size
+Width = 800
+
+; Height of host sceren if fixed size
+Height = 600
 
 
 [TOS]

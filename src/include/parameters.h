@@ -95,8 +95,6 @@ typedef struct {
   int8 boot_color_depth;		// boot color depth
   uint8 refresh;
   int8 monitor;				// VGA or TV
-  bool autozoom;	// Autozoom enabled
-  bool autozoomint;	// Autozoom with integer coefficients
 } bx_video_options_t;
 
 // Startup options
@@ -160,6 +158,15 @@ typedef struct {
 } bx_cpu_options_t;
 #endif
 
+// Autozoom options
+typedef struct {
+  bool enabled;		// Autozoom enabled
+  bool integercoefs;	// Autozoom with integer coefficients
+  bool fixedsize;	// Keep host screen size constant ?
+  uint32 width;		// Wanted host screen size
+  uint32 height;
+} bx_autozoom_options_t;
+
 /*
 typedef struct {
   char      *path;
@@ -194,6 +201,7 @@ typedef struct {
 #ifdef ENABLE_EPSLIMITER
   bx_cpu_options_t  cpu;
 #endif
+  bx_autozoom_options_t	autozoom;
   char			tos_path[512];
   char			emutos_path[512];
   uint32		fastram;

@@ -237,8 +237,6 @@ struct Config_Tag video_conf[]={
 	{ "BootColorDepth", Byte_Tag, &bx_options.video.boot_color_depth, 0, 0},
 	{ "VidelRefresh", Byte_Tag, &bx_options.video.refresh, 0, 0},
 	{ "VidelMonitor", Byte_Tag, &bx_options.video.monitor, 0, 0},
-	{ "AutoZoom", Bool_Tag, &bx_options.video.autozoom, 0, 0},
-	{ "AutoZoomInteger", Bool_Tag, &bx_options.video.autozoomint, 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -247,8 +245,6 @@ void preset_video() {
   bx_options.video.boot_color_depth = -1;	// Boot in color depth
   bx_options.video.monitor = -1;			// preserve default NVRAM monitor
   bx_options.video.refresh = 2;			// 25 Hz update
-  bx_options.video.autozoom = false;
-  bx_options.video.autozoomint = false;
 }
 
 void postload_video() {
@@ -570,6 +566,30 @@ void presave_nfcdroms() {
 }
 
 /*************************************************************************/
+struct Config_Tag autozoom_conf[]={
+	{ "Enabled", Bool_Tag, &bx_options.autozoom.enabled, 0, 0},
+	{ "IntegerCoefs", Bool_Tag, &bx_options.autozoom.integercoefs, 0, 0},
+	{ "FixedSize", Bool_Tag, &bx_options.autozoom.fixedsize, 0, 0},
+	{ "Width", Int_Tag, &bx_options.autozoom.width, 0, 0},
+	{ "Height", Int_Tag, &bx_options.autozoom.height, 0, 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+void preset_autozoom() {
+  bx_options.autozoom.enabled = false;
+  bx_options.autozoom.integercoefs = false;
+  bx_options.autozoom.fixedsize = false;
+  bx_options.autozoom.width = 640;
+  bx_options.autozoom.height = 480;
+}
+
+void postload_autozoom() {
+}
+
+void presave_autozoom() {
+}
+
+/*************************************************************************/
 void usage (int status) {
   printf ("Usage: %s [OPTIONS]\n", program_name);
   printf ("\
@@ -617,6 +637,7 @@ void preset_cfg() {
   preset_lilo();
   preset_midi();
   preset_nfcdroms();
+  preset_autozoom();
 }
 
 void postload_cfg() {
@@ -633,6 +654,7 @@ void postload_cfg() {
   postload_lilo();
   postload_midi();
   postload_nfcdroms();
+  postload_autozoom();
 }
 
 void presave_cfg() {
@@ -649,6 +671,7 @@ void presave_cfg() {
   presave_lilo();
   presave_midi();
   presave_nfcdroms();
+  presave_autozoom();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -950,6 +973,7 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, lilo_conf, "[LILO]", true);
 	process_config(f, rcfile, midi_conf, "[MIDI]", true);
 	process_config(f, rcfile, nfcdroms_conf, "[CDROMS]", true);
+	process_config(f, rcfile, autozoom_conf, "[AUTOZOOM]", true);
 
 	return true;
 }
@@ -992,6 +1016,7 @@ bool saveSettings(const char *fs)
 	update_config(fs, lilo_conf, "[LILO]");
 	update_config(fs, midi_conf, "[MIDI]");
 	update_config(fs, nfcdroms_conf, "[CDROMS]");
+	update_config(fs, autozoom_conf, "[AUTOZOOM]");
 
 	return true;
 }

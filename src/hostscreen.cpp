@@ -279,6 +279,13 @@ void HostScreen::searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp )
 
 void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 {
+	if (bx_options.autozoom.enabled)  {
+		if (bx_options.autozoom.fixedsize) {
+			width = bx_options.autozoom.width;
+			height = bx_options.autozoom.height;
+		}
+	}
+
 	// Select a correct video mode
 	searchVideoMode(&width, &height, &bpp);	
 
@@ -379,13 +386,13 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		if ((width>SdlGlTextureWidth) || (height>SdlGlTextureHeight)) {
 			this->width = width = SdlGlTextureWidth;
 			this->height = height = SdlGlTextureHeight;
-			bx_options.video.autozoom=1;
-			bx_options.video.autozoomint=0;
+			bx_options.autozoom.enabled = true;
+			bx_options.autozoom.integercoefs = false;
 
 			D(bug("gl: autozoom enabled"));
 		} else {
-			bx_options.video.autozoom=0;
-			bx_options.video.autozoomint=0;
+			bx_options.autozoom.enabled = false;
+			bx_options.autozoom.integercoefs = false;
 			D(bug("gl: autozoom disabled"));
 		}
 	}
@@ -1243,6 +1250,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.46  2004/04/26 07:24:50  standa
+ * Just comment adjustments.
+ *
  * Revision 1.45  2004/02/07 13:20:42  joy
  * explanation for some unclear trick
  *
