@@ -1,3 +1,7 @@
+2005/01/24 - Andreas
+- More MMU emulation fixes.  Linux boots now.
+
+
 2005/01/23 - Patrice
 - Reorganized parallel port emulation. Time to write drivers for all OS.
 
