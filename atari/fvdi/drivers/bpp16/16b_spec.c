@@ -3,9 +3,15 @@
 
 #include "driver.h"
 
+#define ARANYM
+
+#ifdef ARANYM
+
 #define ARANYMVRAMSTART 0xf0000000UL
 extern void CDECL set_resolution( long width, long height, long depth, long freq ); /* STanda */
 extern void CDECL debug_aranym( long freq ); /* STanda */
+
+#endif
 
 
 #if 1
@@ -57,12 +63,17 @@ extern Device device;
 
 char driver_name[] = "ARAnyM 2001-10-30 (|| bit)";
 
+#ifdef ARANYM
+
 struct {
+	short used; /* wheher the mode option was used or not. */
 	short width;
 	short height;
 	short bpp;
 	short freq;
-} resolution = { 640, 480, 16, 85 };
+} resolution = { 0, 640, 480, 16, 85 };
+
+#endif
 
 
 extern Driver *me;
@@ -73,7 +84,6 @@ extern short *loaded_palette;
 extern short colours[][3];
 extern void CDECL initialize_palette(Virtual *vwk, long start, long entries, short requested[][3], Colour palette[]);
 extern void CDECL c_initialize_palette(Virtual *vwk, long start, long entries, short requested[][3], Colour palette[]);
-/*extern void *c_set_colours;	*/	/* Just to check if the routine is available */
 extern long tokenize( char* value );
 
 long wk_extend = 0;
@@ -87,11 +97,18 @@ short debug = 0;
 
 short shadow = 0;
 
+#ifdef ARANYM
+
 extern void *c_set_colours_8, *c_set_colours_16, *c_set_colours_32;
 extern void *c_get_colours_8, *c_get_colours_16, *c_get_colours_32;
 extern void *c_get_colour_8, *c_get_colour_16, *c_get_colour_32;
 
-void *set_colours_r = &c_set_colours_16;void *get_colours_r = &c_get_colours_16;void *get_colour_r  = &c_get_colour_16;
+void *set_colours_r = &c_set_colours_16;
+void *get_colours_r = &c_get_colours_16;
+void *get_colour_r  = &c_get_colour_16;
+
+#endif
+
 
 #if 0
 short cache_img = 0;
@@ -187,7 +204,7 @@ long set_mode(const char **ptr)
 	*ptr = access->funcs.get_token(*ptr, token, 80);
 
 
-#ifndef RAGE
+#ifdef ARANYM
 	tokenptr = token;
 	tokenptr = get_num(tokenptr, &resolution.width);
 	tokenptr = get_num(tokenptr, &resolution.height);
@@ -195,6 +212,7 @@ long set_mode(const char **ptr)
 	tokenptr = get_num(tokenptr, &resolution.freq);
 
 	depth = (resolution.bpp / 8) - 1;
+	resolution.used = 1;
 #else
 	rage_mode = -1;
 	if (access->funcs.equal(token, "key"))
@@ -349,7 +367,10 @@ void CDECL initialize(Virtual *vwk)
 	int old_palette_size;
 	Colour *old_palette_colours;
 	int fast_w_bytes;
+#ifdef ARANYM
 	long fb_base = ARANYMVRAMSTART;
+#endif
+
 #if 0
 	int i;
 #endif
@@ -369,31 +390,45 @@ void CDECL initialize(Virtual *vwk)
 	vwk = me->default_vwk;	/* This is what we're interested in */
 	wk = vwk->real_address;
 
-	set_resolution( resolution.width, resolution.height, resolution.bpp, resolution.freq ); /* STanda */
+
+#ifdef ARANYM
+	if ( resolution.used ) {
+		set_resolution( resolution.width, resolution.height, resolution.bpp, resolution.freq );
+	} else {
+		resolution.width = wk->screen.mfdb.width;
+		resolution.height = wk->screen.mfdb.height;
+		resolution.bpp = wk->screen.mfdb.bitplanes;
+	}
+#endif
 
 	/*
 	 * Some things need to be changed from the
 	 * default workstation settings.
 	 */
 
-	wk->screen.look_up_table = 0;			/* Was 1 (???)  Shouldn't be needed (graphics_mode) */
+#ifdef ARANYM
 	wk->screen.mfdb.address = (void *)fb_base;
 	wk->screen.mfdb.width = resolution.width;
 	wk->screen.mfdb.height = resolution.height;
 	wk->screen.mfdb.wdwidth = ((long)resolution.width * graphics_mode->bpp) / 16;
-	wk->screen.mfdb.standard = 0;
 	wk->screen.mfdb.bitplanes = graphics_mode->bpp;
 	wk->screen.wrap = resolution.width * (graphics_mode->bpp / 8);
+
+	wk->screen.coordinates.max_x = resolution.width - 1;
+	wk->screen.coordinates.max_y = (resolution.height & 0xfff0) - 1;    /* Desktop can't deal with non-16N heights */
+#endif
+
+	wk->screen.look_up_table = 0;			/* Was 1 (???)  Shouldn't be needed (graphics_mode) */
+	wk->screen.mfdb.standard = 0;
 	if (wk->screen.pixel.width > 0)        /* Starts out as screen width */
-		wk->screen.pixel.width = (wk->screen.pixel.width * 1000L) / resolution.width;
+		wk->screen.pixel.width = (wk->screen.pixel.width * 1000L) / wk->screen.mfdb.width;
 	else                                   /*   or fixed DPI (negative) */
 		wk->screen.pixel.width = 25400 / -wk->screen.pixel.width;
 	if (wk->screen.pixel.height > 0)        /* Starts out as screen height */
-		wk->screen.pixel.height = (wk->screen.pixel.height * 1000L) / resolution.height;
+		wk->screen.pixel.height = (wk->screen.pixel.height * 1000L) / wk->screen.mfdb.height;
 	else                                    /*   or fixed DPI (negative) */
 		wk->screen.pixel.height = 25400 / -wk->screen.pixel.height;
-	wk->screen.coordinates.max_x = resolution.width - 1;
-	wk->screen.coordinates.max_y = (resolution.height & 0xfff0) - 1;    /* Desktop can't deal with non-16N heights */
+
 
 	/*
 	 * This code needs more work.
@@ -426,9 +461,13 @@ void CDECL initialize(Virtual *vwk)
 	device.byte_width = wk->screen.wrap;
 	device.address = wk->screen.mfdb.address;
 
+
+#ifdef ARANYM
 #if 0
 	debug_aranym( wk->screen.mfdb.width ); /* STanda: ARAnyM emul_op debug call (20) */
 #endif
+#endif
+
 
 #ifdef FAST
 	if (shadow) {

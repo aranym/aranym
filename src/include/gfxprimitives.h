@@ -49,7 +49,7 @@ extern "C" {
 }
 
 #define getBpp24Pixel( address ) \
-    ( ((uint32)address[0] << 16) | ((uint32)address[1] << 8) | (uint32)address[2] )
+    ( ((uint32)(address)[0] << 16) | ((uint32)(address)[1] << 8) | (uint32)(address)[2] )
 
 #else
 
@@ -61,7 +61,7 @@ extern "C" {
 }
 
 #define getBpp24Pixel( address ) \
-    ( ((uint32)address[2] << 16) | ((uint32)address[1] << 8) | (uint32)address[0] )
+    ( ((uint32)(address)[2] << 16) | ((uint32)(address)[1] << 8) | (uint32)(address)[0] )
 
 #endif
 

@@ -4,7 +4,7 @@
 #include "fvdi.h"
 #include "relocate.h"
 
-extern void CDECL set_colour_hook( long paletteIndex, long tcWord ); /* STanda */
+extern void CDECL set_colour_hook( long paletteIndex, short red, short green, short blue, long tcWord ); /* STanda */
 
 #define ECLIPSE 0
 #define NOVA 0		/* 1 - byte swap 16 bit colour value (NOVA etc) */
@@ -87,10 +87,6 @@ GETNAME(Virtual *vwk, long colour, long *foreground, long *background)
 	Colour *local_palette, *global_palette;
 	Colour *fore_pal, *back_pal;
 	unsigned long tc_word;
-
-debug_aranym( 10 );
-
-
 
 	local_palette = vwk->palette;
 	if (local_palette && !((long)local_palette & 1))	/* Complete local palette? */
@@ -181,7 +177,9 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 				break;
 			}
 #endif
-			set_colour_hook( start + i, (long)tc_word ); /* STanda */
+			set_colour_hook( start + i,
+							 palette[start + i].vdi.red, palette[start + i].vdi.green, palette[start + i].vdi.blue,
+							 (long)tc_word ); /* STanda */
 
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}
@@ -223,7 +221,9 @@ SETNAME(Virtual *vwk, long start, long entries, unsigned short *requested, Colou
 				break;
 			}
 #endif
-			set_colour_hook( start + i, (long)tc_word ); /* STanda */
+			set_colour_hook( start + i,
+							 palette[start + i].vdi.red, palette[start + i].vdi.green, palette[start + i].vdi.blue,
+							 (long)tc_word ); /* STanda */
 
 			*(PIXEL *)&palette[start + i].real = (PIXEL)tc_word;
 		}

@@ -1,3 +1,7 @@
+2001/11/1 - STanda
+- fVDI: The 16,24 and 32bit modes works now.
+
+
 2001/10/31 - STanda
 - fVDI: The resolution change works now with the current driver. Do not try
   to compile the m68k part, it's just full of hacks, but it works for me.
