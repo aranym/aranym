@@ -124,11 +124,10 @@ uint8 IKBD::ReadData()
 			/* Queue empty */
 
 			/* Update MFP GPIP */
-			// uint8 x = ReadAtariInt8(0xfffa01);
-			uint8 x = getMFP()->handleRead(0xfffa01);
-			x |= 0x10;
-			// WriteAtariInt8(0xfffa01, x);
-			getMFP()->handleWrite(0xfffa01, x);
+			// uint8 x = getMFP()->handleRead(0xfffa01);
+			// x |= 0x10;
+			// getMFP()->handleWrite(0xfffa01, x);
+			getMFP()->setGPIPbit(0x10, 0x10);
 
 			sr &= ~((1<<ACIA_SR_INTERRUPT)|(1<<ACIA_SR_RXFULL));
 
