@@ -94,5 +94,7 @@ that particular programmer but rather who is the author of the idea :-)
 
 - Milan: SIGINT ndebug problem solution
 
+- Milan: --with-opengl-prefix
+
 - STanda: hostfs.cpp: enable debug and implement all NOT IMPLEMENTED needed
          methods.

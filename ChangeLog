@@ -1,5 +1,12 @@
+2003/04/23 - milan
+- configure.ac: on Sparc with GCC 3.x use older FPU (UAE), GCC bug workaround
+
+- Makefile.in,configure.ac: small update
+
+
 2003/04/22 - johan
 - fvdidrv.cpp: Reverse transparent mode for vrt_cpyfm corrected.
+
 
 2003/04/16 - patrice
 - Corrected inclusion of SDL headers.

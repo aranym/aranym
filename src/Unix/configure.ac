@@ -2,8 +2,9 @@ dnl Process this file with autoconf to produce a configure script.
 dnl Written in 1999 by Christian Bauer et al.
 dnl Adapted for ARAnyM by Milan Jurik
 
-AC_INIT(main_unix.cpp)
+AC_INIT(aranym,0.8,aranym-user@nightmare.sh.cvut.cz,aranym)
 AC_PREREQ(2.52)
+AC_REVISION($Revision$)
 AC_CONFIG_HEADER(config.h)
 
 dnl Canonical system information.
@@ -1178,9 +1179,14 @@ dnl Select appropriate FPU source.
 gcc_AC_C_FLOAT_FORMAT
 AC_CHECK_HEADERS(ieee754.h ieeefp.h floatingpoint.h nan.h)
 
+dnl GCC bug 9763 (and 8300)
+if [[ "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GCC30" = "xyes" ]]; then
+  FPE_CORE_TEST_ORDER="uae"
+fi
+
 if [[ "x$WANT_JIT_FPU" = "xyes" -a "x$FPE_CORE_TEST_ORDER" != "xieee" ]]; then
 dnl  AC_MSG_WARN([Sorry, JIT-FPU supports only the "ieee" FPE implementation])
-  FPE_CORE="ieee"
+  FPE_CORE_TEST_ORDER="ieee"
   dnl Restore previous variables. FPE_CORE_STR and FPUSRCS are overwritten
 fi
 
