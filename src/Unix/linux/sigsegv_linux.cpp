@@ -87,8 +87,10 @@ static void segfault_vec(int x, struct sigcontext sc) {
 
 	in_handler = 1;
 
+#ifdef JIT	/* does not compile with default configure */
 	D(compiler_status());
-	D(panicbug("BUS ERROR fault address is %08x at %08x", addr, ainstr));
+#endif
+	D(panicbug("\nBUS ERROR fault address is %08x at %08x", addr, ainstr));
 	D(panicbug("instruction is %08x", instr));
 
 	D(panicbug("PC %08x", regs.pc)); 
@@ -116,7 +118,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 		case 0x0a:
 			D(panicbug("OR m8, r8"));
 			size = 1;
-			transfer_type = TYPE_STORE;
+			transfer_type = TYPE_LOAD;	// JOY: was TYPE_STORE(!!)
 			instruction = INSTR_OR8;
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
@@ -199,7 +201,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			size = 1;
 			instruction = INSTR_MOVIMM8;
 			reg = (addr_instr[1] >> 3) & 7;
-			imm = addr_instr[2];
+			imm = addr_instr[3];	// JOY: was 2
 			len += 3 + get_instr_size_add(addr_instr + 1);
 			break;
 	}
@@ -249,6 +251,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 				}
 				break;
 			case INSTR_OR8:
+				D(bug("OR LOADING %x", addr));
 				*((uae_u8 *)preg) |= HWget_b(addr);
 				break;
 			case INSTR_AND8:
@@ -281,6 +284,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	} else {
 		switch (instruction) {
 			case INSTR_MOV8:
+				D(bug("MOV value = $%x\n", *((uae_u8 *)preg)));
 				HWput_b(addr, *((uae_u8 *)preg));
 				break;
 			case INSTR_MOV32:
@@ -291,6 +295,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 				}
 				break;
 			case INSTR_OR8:
+				D(bug("OR STORING $%x to %x", *((uae_u8 *)preg), addr));
 				HWput_b(addr, *((uae_u8 *)preg) | HWget_b(addr));
 				break;
 			case INSTR_MOVIMM8:
