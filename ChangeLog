@@ -9,6 +9,8 @@
 - compemu_support.cpp: warning "JIT disabled if you have small cache size"
   enabled
 
+- cdrom.cpp: some corrections in the latest port from Bochs
+
 
 2004/01/29 - joy
 - src/MacOSX/*: suddenly Carlo Baiocco appeared and sent me a complete
