@@ -8,13 +8,13 @@ TODO in keyboard support:
 - editable hotkeys (releasing input grab, Setup GUI, PrintScreen) [0.8.6]
 - runtime switch between symtable and scantable [0.8.7]
 - loadable keyboard layout (similar to hatari) [0.8.8]
-- editable keyboard layout (need WYSIWYG - impossible in 320x200) [0.9.0]
+- editable keyboard layout (need WYSIWYG - impossible in 320x200) [0.9.0?]
 
 TODO in GUI-SDL:
 - create AlertBox() for the GUI-SDL
-- automagic detector of C/H/S geometry for loaded disk images [0.8.5]
-- open up GUI whenever the config file is not found (so that user can edit
-  the default values before saving them). [0.8.5]
+- automagic detector of C/H/S geometry for loaded disk images [0.8.5+]
+- open up GUI whenever the config file is not found (so that users can edit
+  the default values before saving them). [0.8.6]
 - Apply changes automatically before Save Config and perhaps also before Reboot
 - simple window/fullscreen switch
 - change GUI font loading routine - load standard TOS font (2048/4096 bytes)

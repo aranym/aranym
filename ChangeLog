@@ -2,7 +2,13 @@
 - videl.cpp, parameters.*, main.cpp, configure.ac, documentation.txt:
   DIRECT_TRUECOLOR hack removed. I don't think it was ever used.
 
-- main_unix.cpp: slightly better readability.
+- main_unix.cpp: code rearranged for slightly better readability.
+
+- gui-sdl/sdlgui.*: SG_HIDDEN state introduced. Helps for context-sensitive
+  display.
+
+- gui-sdl/dlgDisk.cpp: no more confused users as all CD-ROM unrelated
+  settings are hidden now when CD-ROM is selected.
 
 
 2004/01/02 - joy
