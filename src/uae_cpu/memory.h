@@ -21,7 +21,7 @@
 #define REGS
 typedef char flagtype;
 
-extern struct regstruct
+extern struct regstruct         // MJ tuhle ptakovinu uz musim konecne odstranit
 {
     uae_u32 regs[16];
     uaecptr  usp,isp,msp;
