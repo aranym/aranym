@@ -16,6 +16,7 @@
 #include "parameters.h"
 #include "toserror.h"
 #include "hostfs.h"
+#include "tools.h"
 #include "araobjs.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
@@ -43,40 +44,13 @@
 
 #include "../../atari/hostfs/hostfs_nfapi.h"	/* XFS_xx and DEV_xx enum */
 
-extern "C" {
 
-#if (defined(HAVE_WCHAR_T) && defined(OS_darwin))  // Stupid hack
-	static char* strapply( char* str, __wchar_t (*functor)(__wchar_t) )
-	{
-		char* pos = str;
-		while ( (*pos = (char)functor( (__wchar_t)*pos )) != 0 )
-			pos++;
-
-		return str;
-	}
-#else
-	static char* strapply( char* str, int (*functor)(int) )
-	{
-		char* pos = str;
-		while ( (*pos = (char)functor( (int)*pos )) != 0 )
-			pos++;
-
-		return str;
-	}
+// please remember to leave this define _after_ the reqired system headers!!!
+// some systems does define this to some important value for them....
+#ifndef O_BINARY
+# define O_BINARY 0
 #endif
 
-	static char* strd2upath( char* dest, char* src )
-	{
-		char* result = dest;
-		while( *src ) {
-			*dest++ = (((*src == '\\') || (*src == '/')) ? DIRSEPARATOR[0] : *src);
-			src++;
-		}
-		*dest=0;
-
-		return result;
-	}
-}
 
 
 #if 0
@@ -465,34 +439,37 @@ void HostFs::fetchXFSC( XfsCookie *fc, memptr filep )
 	fc->xfs	  = ReadInt32( filep );	 // fs
 	fc->dev	  = ReadInt16( filep + 4 );	 // dev
 	fc->aux	  = ReadInt16( filep + 6 );	 // aux
-	fc->index = (XfsFsFile*)ReadInt32( filep + 8 ); // index
+	fc->index = (XfsFsFile*)MAP32TOVOIDP( ReadInt32( filep + 8 ) ); // index
 }
 void HostFs::flushXFSC( XfsCookie *fc, memptr filep )
 {
 	WriteInt32( filep	 , fc->xfs );
 	WriteInt16( filep + 4, fc->dev );
 	WriteInt16( filep + 6, fc->aux );
-	WriteInt32( filep + 8, (uint32)fc->index );
+	WriteInt32( filep + 8, (uint32)MAPVOIDPTO32( fc->index ) );
 }
 
 void HostFs::fetchXFSF( ExtFile *extFile, memptr filep )
 {
 	extFile->links	= ReadInt16( filep );
 	extFile->flags	= ReadInt16( filep + 2 );
-	extFile->hostfd = ReadInt32( filep + 4 ); // offset not needed (replaced by the host fd)
-	extFile->devinfo= ReadInt32( filep + 8 );
+#if SIZEOF_INT != 4 || DEBUG_NON32BIT
+	extFile->hostFd = fdMapper.getNative( ReadInt32( filep + 4 ) ); // offset not needed (replaced by the host fd)
+#else
+	extFile->hostFd = (int)ReadInt32( filep + 4 ); // offset not needed (replaced by the host fd)
+#endif
 	fetchXFSC( &extFile->fc, filep + 12 ); // sizeof(12)
-	// 4bytes of the devdrvp
-	extFile->next	= ReadInt32( filep + 28 );
 }
 void HostFs::flushXFSF( ExtFile *extFile, memptr filep )
 {
 	WriteInt16( filep, extFile->links );
 	WriteInt16( filep + 2, extFile->flags );
-	WriteInt32( filep + 4, extFile->hostfd ); // instead of the offset
-	WriteInt32( filep + 8, extFile->devinfo );
+#if SIZEOF_INT != 4 || DEBUG_NON32BIT
+	WriteInt32( filep + 4, fdMapper.get32bit( extFile->hostFd ) ); // instead of the offset
+#else
+	WriteInt32( filep + 4, (uint32)extFile->hostFd ); // instead of the offset
+#endif
 	flushXFSC( &extFile->fc, filep + 12 ); // sizeof(12)
-	WriteInt32( filep + 28, extFile->next );
 }
 
 void HostFs::fetchXFSD( XfsDir *dirh, memptr dirp )
@@ -500,18 +477,14 @@ void HostFs::fetchXFSD( XfsDir *dirh, memptr dirp )
 	fetchXFSC( (XfsCookie*)dirh, dirp ); // sizeof(12)
 	dirh->index = ReadInt16( dirp + 12 );
 	dirh->flags = ReadInt16( dirp + 14 );
-	dirh->pathIndex = ReadInt16( dirp + 16 );
-	a2fmemcpy( (char*)&dirh->dir, dirp + 18, sizeof(dirh->dir) );
-	dirh->next	= (XfsDir*)ReadInt32( dirp + 76 );
+	a2fmemcpy( (char*)&dirh->hostDir, dirp + 18, sizeof(dirh->hostDir) );
 }
 void HostFs::flushXFSD( XfsDir *dirh, memptr dirp )
 {
 	flushXFSC( (XfsCookie*)dirh, dirp ); // sizeof(12)
 	WriteInt16( dirp + 12, dirh->index );
 	WriteInt16( dirp + 14, dirh->flags );
-	WriteInt16( dirp + 16, dirh->pathIndex );
-	f2amemcpy( dirp + 18, (char*)&dirh->dir, sizeof(dirh->dir) );
-	WriteInt32( dirp + 76, (uint32)dirh->next );
+	f2amemcpy( dirp + 18, (char*)&dirh->hostDir, sizeof(dirh->hostDir) );
 }
 
 
@@ -1067,16 +1040,12 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 	char fpathName[MAXPATHNAMELEN];
 	convertPathA2F( mounts.find(dir->dev)->second, fpathName, pathName, "" ); // convert the fname into the hostfs form (check the 8+3 file existence)
 
-	int fd = open( fpathName, O_CREAT|O_WRONLY|O_TRUNC
-#ifdef O_BINARY
-					| O_BINARY
-#endif
-					, mode );
+	int fd = open( fpathName, O_CREAT|O_WRONLY|O_TRUNC|O_BINARY, mode );
 	if (fd < 0)
 		return unix2toserrno(errno,TOS_EFILNF);
 	close( fd );
 
-	XfsFsFile *newFsFile = new XfsFsFile();
+	XfsFsFile *newFsFile = new XfsFsFile();	MAPNEWVOIDP( newFsFile );
 	newFsFile->name = strdup( fname );
 	newFsFile->refCount = 1;
 	newFsFile->childCount = 0;
@@ -1121,11 +1090,7 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 
 	D(bug("HOSTFS: dev_open (%s,%d)", fpathName, fp->flags));
 
-	int fd = open( fpathName, st2flags(fp->flags)
-#ifdef O_BINARY
-					| O_BINARY
-#endif
-					, 0 );
+	int fd = open( fpathName, st2flags(fp->flags)|O_BINARY, 0 );
 	if (fd < 0) {
 		if (! isPathValid( fpathName ))
 			return TOS_EPTHNF;
@@ -1133,11 +1098,13 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 			return unix2toserrno(errno,TOS_EFILNF);
 	}
 
-	fp->offset = 0;
-	fp->hostfd = fd;
+	fp->hostFd = fd;
 
-	D(bug("HOSTFS: dev_open (fd = %ld)", fp->hostfd));
+    #if SIZEOF_INT != 4 || DEBUG_NON32BIT
+		fdMapper.putNative( fp->hostFd );
+    #endif
 
+	D(bug("HOSTFS: dev_open (fd = %ld)", fp->hostFd));
 	return TOS_E_OK;
 
 }
@@ -1145,11 +1112,16 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 
 int32 HostFs::xfs_dev_close(ExtFile *fp, int16 pid)
 {
-	D(bug("HOSTFS: dev_close (%ld, %d)", fp->hostfd, pid));
+	D(bug("HOSTFS: dev_close (%ld, %d)", fp->hostFd, pid));
 
-	if ( fp->links <= 0 )
-		if ( close( fp->hostfd ) )
+	if ( fp->links <= 0 ) {
+		if ( close( fp->hostFd ) )
 			return unix2toserrno(errno,TOS_EIO);
+
+        #if SIZEOF_INT != 4 || DEBUG_NON32BIT
+			fdMapper.removeNative( fp->hostFd );
+	    #endif
+	}
 
 	return TOS_E_OK;
 }
@@ -1169,11 +1141,10 @@ int32 HostFs::xfs_dev_read(ExtFile *fp, memptr buffer, uint32 count)
 
 	while ( toRead > 0 ) {
 		toReadNow = ( toRead > FRDWR_BUFFER_LENGTH ) ? FRDWR_BUFFER_LENGTH : toRead;
-		readCount = read( fp->hostfd, fBuff, toReadNow );
+		readCount = read( fp->hostFd, fBuff, toReadNow );
 		if ( readCount <= 0 )
 			break;
 
-		fp->offset += readCount;
 		f2amemcpy( destBuff, (char*)fBuff, readCount );
 		destBuff += readCount;
 		toRead -= readCount;
@@ -1200,11 +1171,10 @@ int32 HostFs::xfs_dev_write(ExtFile *fp, memptr buffer, uint32 count)
 	while ( toWrite > 0 ) {
 		toWriteNow = ( toWrite > FRDWR_BUFFER_LENGTH ) ? FRDWR_BUFFER_LENGTH : toWrite;
 		a2fmemcpy( (char*)fBuff, sourceBuff, toWriteNow );
-		writeCount = write( fp->hostfd, fBuff, toWriteNow );
+		writeCount = write( fp->hostFd, fBuff, toWriteNow );
 		if ( writeCount <= 0 )
 			break;
 
-		fp->offset += writeCount;
 		sourceBuff += writeCount;
 		toWrite -= writeCount;
 	}
@@ -1230,14 +1200,13 @@ int32 HostFs::xfs_dev_lseek(ExtFile *fp, int32 offset, int16 seekmode)
 		default: return TOS_EINVFN;
 	}
 
-	off_t newoff = lseek( fp->hostfd, offset, whence);
+	off_t newoff = lseek( fp->hostFd, offset, whence);
 
 	D(bug("HOSTFS: dev_lseek (%d,%d,%d)", offset, seekmode, (int32)newoff));
 
 	if ( newoff == -1 )
 		return unix2toserrno(errno,TOS_EIO);
 
-	fp->offset = (int32)newoff;
 	return newoff;
 }
 
@@ -1471,8 +1440,8 @@ int32 HostFs::xfs_opendir( XfsDir *dirh, uint16 flags )
 	dirh->flags = flags;
 	dirh->index = 0;
 
-	dirh->dir = opendir( fpathName );
-	if ( dirh->dir == NULL )
+	dirh->hostDir = opendir( fpathName );
+	if ( dirh->hostDir == NULL )
 		return unix2toserrno(errno,TOS_EPTHNF);
 
 	return TOS_E_OK;
@@ -1482,7 +1451,7 @@ int32 HostFs::xfs_opendir( XfsDir *dirh, uint16 flags )
 
 int32 HostFs::xfs_closedir( XfsDir *dirh )
 {
-	if ( closedir( dirh->dir ) )
+	if ( closedir( dirh->hostDir ) )
 		return unix2toserrno(errno,TOS_EPTHNF);
 
 	return TOS_E_OK;
@@ -1494,18 +1463,13 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 	struct dirent *dirEntry;
 
 
-#if 0
-	if ((void*)(dirEntry = readdir( dirh->dir )) == NULL)
-		return unix2toserrno(errno,TOS_ENMFIL);
-#else
 	do {
-		if ((void*)(dirEntry = readdir( dirh->dir )) == NULL)
+		if ((void*)(dirEntry = readdir( dirh->hostDir )) == NULL)
 			return TOS_ENMFIL;
 	} while ( !dirh->fc.index->parent &&
 			  ( dirEntry->d_name[0] == '.' &&
 				( !dirEntry->d_name[1] ||
 				  ( dirEntry->d_name[1] == '.' && !dirEntry->d_name[2] ) ) ) );
-#endif
 
 	XfsFsFile *newFsFile = new XfsFsFile();
 	newFsFile->name = strdup( dirEntry->d_name );
@@ -1532,6 +1496,8 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 
 	dirh->index++;
 	dirh->fc.index->childCount++;
+
+	MAPNEWVOIDP( newFsFile );
 	newFsFile->parent = dirh->fc.index;
 	newFsFile->refCount = 1;
 	newFsFile->childCount = 0;
@@ -1547,7 +1513,7 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 
 int32 HostFs::xfs_rewinddir( XfsDir *dirh )
 {
-	rewinddir( dirh->dir );
+	rewinddir( dirh->hostDir );
 	dirh->index = 0;
 	return TOS_E_OK;
 }
@@ -1655,7 +1621,7 @@ int32 HostFs::xfs_root( uint16 dev, XfsCookie *fc )
 	fc->xfs = it->second->fsDrv;
 	fc->dev = dev;
 	fc->aux = 0;
-	fc->index = new XfsFsFile();
+	fc->index = new XfsFsFile(); MAPNEWVOIDP( fc->index );
 
 	fc->index->parent = NULL;
 	fc->index->name = it->second->hostRoot;
@@ -1749,6 +1715,7 @@ void HostFs::xfs_freefs( XfsFsFile *fs )
 			xfs_freefs( fs->parent );
 			free( fs->name );
 		}
+		MAPDELVOIDP( fs );
 		delete fs;
 	} else {
 		D2(bug( "freefs: notfree" ));
@@ -1797,6 +1764,7 @@ int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 		if ( lstat( fpathName, &statBuf ) )
 			return unix2toserrno( errno, TOS_EFILNF );
 
+		MAPNEWVOIDP( newFsFile );
 		newFsFile->name = strdup(fname);
         newFsFile->refCount = 1;
         newFsFile->childCount = 0;
@@ -1877,6 +1845,7 @@ int32 HostFs::xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook )
     } else
         fs->name = mounts.find(oldCook->dev)->second->hostRoot;
 
+	MAPNEWVOIDP( fs );
     fs->refCount = 1;
     fs->childCount = 0; /* don't heritate childs! */
 
@@ -1984,6 +1953,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.11.2.5  2003/03/28 13:19:58  joy
+ * little compile fixes
+ *
  * Revision 1.11.2.4  2003/03/28 12:59:07  joy
  * little fix 2nd
  *

@@ -1,3 +1,10 @@
+2003/04/03 - STanda
+- hostfs.*: general clean up
+
+- tools.*: The 32bit <-> host mapping for systems with non 32bit
+  void* and int. Several other functions were moved to the tools.h.
+
+
 2003/04/01 - joy & Honza/ATACK
 - main_unix.cpp: segfault on gentoo (where the argv[0] does not contain
   the path (only filename)

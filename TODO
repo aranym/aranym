@@ -1,6 +1,6 @@
 Before 0.8.0 final release:
 ---------------------------
-- man page from deb package to standard archive
+- man page from deb package to standard archive (merge also with main trunk /STan/)
 - automagically updated BDCONFIG.SYS
 - some doc update (networking, disk image, afros)
 - provide also MMU build
