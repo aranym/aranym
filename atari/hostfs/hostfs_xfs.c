@@ -287,18 +287,24 @@ FILESYS aranym_fs =
     };
 
 
+/* Use the 0x4c2L for drive mapping (if == 0) */
+#define USE_DCNTL 0
+
+
+#if USE_DCNTL
+
 /*
  * filesystem basic description
  */
-static struct fs_descr aranym_fs_descr[26];
-#if 0
+static struct fs_descr aranym_fs_descr =
     {
         &aranym_fs,
         0, /* this is filled in by MiNT at FS_MOUNT */
         0, /* FIXME: what about flags? */
         {0,0,0,0}  /* reserved */
     };
-#endif
+
+#endif /* USE_DCNTL */
 
 
 extern DEVDRV aranym_fs_devdrv; /* from aranym_dev.c */
@@ -307,6 +313,7 @@ extern DEVDRV aranym_fs_devdrv; /* from aranym_dev.c */
 #define MINT_FS_NAME    "hostfs"     /* mount point at u:\\ */
 #define MINT_SER_NAME   "serial2"    /* device name in u:\\dev\\ */
 #define MINT_COM_NAME   "aranym"     /* device name in u:\\dev\\ */
+
 
 FILESYS *aranym_fs_init(void)
 {
@@ -338,13 +345,30 @@ FILESYS *aranym_fs_init(void)
 	return &aranym_fs;
 #else
 
-	/* clear all the entries */
-	memset( aranym_fs_descr, 0, sizeof( aranym_fs_descr ) );
+#if USE_DCNTL
+
+	/* Try to install */
+	r = d_cntl (FS_INSTALL, "u:\\", (long) &aranym_fs_descr);
+	if (r != 0 && r != (long)kernel)
+	{
+		c_conws ("error: Dcnt(FS_INSTALL,...) failed.\n");
+		DEBUG(("Return value was %li", r));
+
+		/* Nothing installed, so nothing to stay resident */
+		return NULL;
+	}
+	else
+
+#endif
 
 	{
 		ulong drvBits = fs_drive_bits();
 		ushort drvNumber = 0;
 		char mountPoint[] = "u:\\XX";
+
+		succ |= 1;
+
+		c_conws("\nMounts: ");
 
 		while ( drvBits ) {
 			/* search the 1st log 1 bit position -> drvNumber */
@@ -353,13 +377,11 @@ FILESYS *aranym_fs_init(void)
 			/* ready */
 			succ = 0;
 
-			/* fill in the driver pointer */
-			aranym_fs_descr[drvNumber].file_system = &aranym_fs;
+			mountPoint[3] = drvNumber+'a';
+			mountPoint[4] = '\0';
 
-			mountPoint[4] = mountPoint[3] = drvNumber+'a';
-			nf_stderr("mountPoint: ");nf_stderr(mountPoint);nf_stderr("\n");
-
-			{
+			c_conws("Drive: ");
+			if (0) {
 				char sss[50];
 				char *ptr = &sss[48];
 				int R=10;
@@ -367,42 +389,57 @@ FILESYS *aranym_fs_init(void)
 				sss[49] = '\0';
 				while( x>0 ) { *ptr--="0123456789ABCDEF"[x%R]; x/=R; }; ptr++;
 
-				nf_stderr("drvNumber: ");nf_stderr(ptr);nf_stderr("\n");
+				c_conws( (const char*)ptr );
 			}
 
-			/* Try to install */
-			r = d_cntl (FS_INSTALL, "u:\\", (long) &aranym_fs_descr[drvNumber]);
-			if (r != 0 && r != (long)kernel)
-			{
-				c_conws (MSG_PFAILURE("mountPoint",
-									  "Dcntl(FS_INSTALL,...) failed"));
-				DEBUG(("Return value was %li", r));
-				/* Nothing installed, so nothing to stay resident */
-			} else {
-				succ |= 1;
+#if !USE_DCNTL
 
-				/* mount */
-				r = d_cntl(FS_MOUNT, mountPoint, (long) &aranym_fs_descr[drvNumber]);
-				if (r != aranym_fs_descr[drvNumber].dev_no )
-				{
-					c_conws (MSG_PFAILURE("mountPoint",
-										  "Dcnt(FS_MOUNT,...) failed"));
+			c_conws( (const char*)mountPoint );
+			c_conws(" ");
+
+			/* check whether the drive is already assigned or not */
+			if ( ! ( *((long *) 0x4c2L) & (1UL << drvNumber) ) ) {
+				r = aranym_fs_native_init( drvNumber, mountPoint, "/", 0 /*caseSensitive*/,
+										   &aranym_fs, &aranym_fs_devdrv );
+				if ( r < 0 ) {
+					c_conws ("error: Native init failed.\n");
 					DEBUG(("Return value was %li", r));
 				} else {
-					succ |= 2;
-					/* init */
+					/* put the drive letter into the GEMDOS drive bits */
+					*((long *) 0x4c2L) |= 1UL << drvNumber;
 
-					r = aranym_fs_native_init(aranym_fs_descr[drvNumber].dev_no, mountPoint, "/", 0 /*caseSensitive*/,
-											  &aranym_fs, &aranym_fs_devdrv );
-					r = 0;
-					if ( r < 0 ) {
-						c_conws (MSG_PFAILURE("mountPoint",
-											  "native init failed"));
-						DEBUG(("Return value was %li", r));
-					} else {
-						succ = 0; /* do not unmount */
-						keep = 1; /* at least one is mounted */
-					}
+					succ = 0; /* do not unmount */
+					keep = 1; /* at least one is mounted */
+				}
+			} else {
+				c_conws("error: drive already present.\n");
+			}
+#else
+
+			/* two letter drive mount (via Dcntl()) */
+			mountPoint[4] = mountPoint[3];
+
+			c_conws( (const char*)mountPoint );
+			c_conws(" ");
+
+			/* mount */
+			r = d_cntl(FS_MOUNT, mountPoint, (long) &aranym_fs_descr);
+			if (r != aranym_fs_descr.dev_no )
+			{
+				c_conws ("error: Dcnt(FS_MOUNT,...) failed.\n");
+				DEBUG(("Return value was %li", r));
+			} else {
+				succ |= 2;
+				/* init */
+
+				r = aranym_fs_native_init( aranym_fs_descr.dev_no, mountPoint, "/", 0 /*caseSensitive*/,
+										   &aranym_fs, &aranym_fs_devdrv );
+				if ( r < 0 ) {
+					c_conws ("error: Native init failed.\n");
+					DEBUG(("Return value was %li", r));
+				} else {
+					succ = 0; /* do not unmount */
+					keep = 1; /* at least one is mounted */
 				}
 			}
 
@@ -410,30 +447,20 @@ FILESYS *aranym_fs_init(void)
 			if ( succ & 2 ) {
 				/* unmount */
 				r = d_cntl(FS_UNMOUNT, mountPoint,
-						   (long) &aranym_fs_descr[drvNumber]);
-				nf_stderr("Dcntl(FS_UNMOUNT,...)\n");
-				DEBUG(("Dcntl(FS_UNMOUNT,...) = %li", r ));
+						   (long) &aranym_fs_descr);
+				c_conws("Dcntl(FS_UNMOUNT,...)\n");
 				if ( r < 0 ) {
 					/* Can't uninstall,
 					 * because unmount failed */
 					fail |= 2;
 				}
 			}
-			if ( succ & 1 ) {
-				/* uninstall */
-				r = d_cntl(FS_UNINSTALL, mountPoint,
-						   (long) &aranym_fs_descr[drvNumber]);
-				nf_stderr("Dcntl(FS_UNINSTALL,...)\n");
-				DEBUG(("Dcntl(FS_UNINSTALL,...) = %li", r ));
-				if ( r < 0 ) {
-					/* Can't say NULL,
-					 * because uninstall failed */
-					fail |= 1;
-				}
-			}
+#endif
 
 			drvNumber++; drvBits>>=1;
 		}
+
+		c_conws("\n");
 	}
 
 	/* everything OK */
@@ -443,6 +470,19 @@ FILESYS *aranym_fs_init(void)
 		c_conws (buff);
 		return &aranym_fs; /* We where successfull */
 	}
+#if USE_DCNTL
+	else
+	{
+		/* uninstall */
+		r = d_cntl(FS_UNINSTALL, "u:\\", (long) &aranym_fs_descr);
+		c_conws("Dcntl(FS_UNINSTALL,...)\n");
+		if ( r < 0 ) {
+			/* Can't say NULL,
+			 * because uninstall failed */
+			fail |= 1;
+		}
+	}
+#endif
 
 	if ( fail )
 		return (FILESYS *) 1; /* Can't say NULL,
@@ -454,6 +494,9 @@ FILESYS *aranym_fs_init(void)
 
 /*
  * $Log$
+ * Revision 1.4  2003/03/20 01:08:17  standa
+ * HOSTFS mapping update.
+ *
  * Revision 1.3  2003/03/01 11:57:37  joy
  * major HOSTFS NF API cleanup
  *

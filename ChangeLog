@@ -1,3 +1,18 @@
+2003/03/20 - STanda
+- hostfs.cpp: mapping improved.
+- .DOS/.XFS:  .xfs works now just like the MetaDOS's driver
+  it maps all the drives under the same driver letters.
+  It goes through the [aranymfs] for the mapping.
+  After a conversation with Frank Naumann I conclude that
+  the M(B)etaDOS/ExtenDOS would not work with the 1.16 FreeMiNT
+  kernel line. So do not use the .dos driver there as the
+  very same thing is provided by the .xfs there now.
+  The configuration stays the same.
+- aranym_xfs.c: the source can be swithed to use the Dcntl()
+  to map the drives, but in that case you can't get the single
+  letter mountpoints.
+
+
 2003/03/19 - STanda
 - hostfs.cpp: the metados hostfs.dos driver simply sets the mapping the
   same way as aranymfs.dos. No change for the user.

@@ -77,7 +77,7 @@ extern DEVDRV  aranym_fs_devdrv;
 void* _cdecl InitDevice( long bosDevID, long dosDevID )
 {
 	static fcookie root;
-	char mountPoint[3] = "a:";
+	char mountPoint[] = "A:";
 	mountPoint[0] += (bosDevID = (bosDevID-'A')&0x1f); // mask out bad values of the bosDevID
 
 	/*
@@ -88,15 +88,17 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 	DEBUG(("InitDevice: %s [%ld - %lx]: [%ld] addr: %lx", mountPoint, dosDevID, dosDevID, bosDevID, &ara_fs_root ));
 
 	aranym_fs_init();
-	aranym_fs_native_init(bosDevID, mountPoint, "/tmp", 1,
-						  &aranym_fs, &aranym_fs_devdrv );
 
+	/* map the MetaDOS drive to some bosDrive | 0x6000 so that the mapping would
+	   not colide with the MiNT one */
+	aranym_fs_native_init( bosDevID | 0x6000, mountPoint, "/tmp", 1,
+						   &aranym_fs, &aranym_fs_devdrv );
 
-	aranym_fs.root( bosDevID, &curproc->p_cwd->root[bosDevID] );
+	aranym_fs.root( bosDevID | 0x6000, &curproc->p_cwd->root[bosDevID] );
 
 	{
 		fcookie *relto = &curproc->p_cwd->root[bosDevID];
-		DEBUG (("InitDevice: root (%lx, %li, %i)", relto->fs, relto->index, relto->dev));
+		DEBUG (("InitDevice: root (%08lx, %08lx, %04x)", relto->fs, relto->index, relto->dev));
 	}
 
 	return &ldp;
@@ -106,6 +108,9 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 /**
  * $Log$
+ * Revision 1.4  2003/03/05 09:30:45  standa
+ * mountPath declaration fixed.
+ *
  * Revision 1.3  2003/03/03 20:39:44  standa
  * Parameter passing fixed.
  *

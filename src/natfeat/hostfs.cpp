@@ -1631,13 +1631,13 @@ int32 HostFs::xfs_root( uint16 dev, XfsCookie *fc )
 {
 	MountMap::iterator it = mounts.find(dev);
 	if ( it == mounts.end() ) {
-		D2(bug( "root: dev = %#04x -> EDRIVE\n", dev ));
+		D(bug( "root: dev = %#04x -> EDRIVE\n", dev ));
 		return TOS_EDRIVE;
 	}
 
-	D2(bug( "root:\n"
+	D(bug( "root:\n"
 		   "  dev	 = %#04x\n"
-		   "  devnum = %#04x\n",
+		   "  devdrv = %#08lx\n",
 		   dev, it->second->fsDrv));
 
 	fc->xfs = it->second->fsDrv;
@@ -1864,6 +1864,7 @@ int32 HostFs::xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook )
         fs->parent->childCount++;
     } else
         fs->name = mounts.find(oldCook->dev)->second->hostRoot;
+
     fs->refCount = 1;
     fs->childCount = 0; /* don't heritate childs! */
 
@@ -1915,18 +1916,18 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	a2fstrcpy( fmountpoint, mountpoint );
 
 	ExtDrive *drv = new ExtDrive();
-	drv->driveNumber = devnum;
 	drv->fsDrv = filesys;
 	drv->fsDevDrv = filesys_devdrv;
 
-	// in case of MetaDOS mapping the devnum is <MAXDRIVES
-	// -> use the [aranymfs] of config file here
-	// note: maybe we should check the mountPoint to be "A:" rather than the device number
-	if ( (unsigned int)devnum < sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0]) ) {
-		char mountPoint[] = "a:"; mountPoint[0] = devnum+'A';
-		drv->mountPoint = strdup( mountPoint );
-		drv->hostRoot = strdup( bx_options.aranymfs[devnum].rootPath );
-		drv->halfSensitive = bx_options.aranymfs[devnum].halfSensitive;
+	// The mountPoint is of a "A:" format:
+	//    MetaDOS mapping the devnum is <MAXDRIVES
+	if ( strlen( fmountpoint ) == 2 ) {
+		int dnum = fmountpoint[0]-'A';
+
+		// -> use the [aranymfs] of config file here
+		drv->mountPoint = strdup( fmountpoint );
+		drv->hostRoot = strdup( bx_options.aranymfs[dnum].rootPath );
+		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
 	} else {
 		drv->mountPoint = strdup( fmountpoint );
 
@@ -1947,6 +1948,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		}
 	}
 
+	drv->driveNumber = devnum;
 	mounts.insert(std::make_pair( devnum, drv ));
 
 	D(bug("HOSTFS: fs_native_init:\n"
@@ -1970,6 +1972,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 /*
  * $Log$
+ * Revision 1.10  2003/03/20 01:08:17  standa
+ * HOSTFS mapping update.
+ *
  * Revision 1.9  2003/03/17 09:42:39  standa
  * The chattr,chmod implementation ported from stonx.
  *
