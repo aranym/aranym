@@ -594,12 +594,7 @@ aranym_interrupt (void)
 	static int in_use = 0;
 	if (in_use)
 		return;
-
-	in_use = 1;
-	nfInterrupt( in_use );
-
+	nfInterrupt( in_use = 1 );
 	recv_packet (&if_ara);
-
-	in_use = 0;
-	nfInterrupt( in_use );
+	nfInterrupt( in_use = 0 );
 }
