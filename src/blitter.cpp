@@ -103,9 +103,9 @@ UW BLITTER::LM_UW(memptr addr) {
 }
 
 void BLITTER::SM_UW(memptr addr, UW value) {
-	if (addr <= 0x800 || addr >= 0xe00000) {
-		panicbug("Blitter Error! Tries to write to %06lx", addr);
-		exit(-1);
+	if (addr <= 0x800 || (addr >= 0x0e00000 && addr < 0x1000000)) {
+		D(bug("Blitter tried to write to %06lx", addr));
+		return;
 	}
 	WriteAtariInt16(addr, value);	//??
 }
@@ -551,12 +551,12 @@ void BLITTER::Do_Blit(void)
 	SHOWPARAMS;
 #endif
 
-	if (source_addr <= 0x800 || source_addr >= 0x1000000) {
-		panicbug("Blitter Source out of range: $%08lx", source_addr);
-//		return;
+	if (source_addr <= 0x800 || (source_addr >= 0x0e80000 && source_addr < 0x1000000)) {
+		panicbug("Blitter Source address out of range: $%08lx", source_addr);
+		return;
 	}
-	if (dest_addr <= 0x800 || dest_addr >= 0xe00000) {
-		panicbug("Blitter Destionation out of range: $%08lx", dest_addr);
+	if (dest_addr <= 0x800 || (dest_addr >= 0x0e00000 && dest_addr < 0x1000000)) {
+		panicbug("Blitter Destination address out of range: $%08lx", dest_addr);
 		return;
 	}
 
