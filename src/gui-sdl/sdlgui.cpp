@@ -53,14 +53,6 @@ bool SDLGui_Init()
     panicbug("ARAnyM GUI will not be available");
     return false;
   }
-
-  /* Convert the font graphics to the actual screen format */
-  fontgfx = SDL_DisplayFormat(stdfontgfx);
-  if( fontgfx==NULL )
-  {
-    panicbug("Could not convert font: %s", SDL_GetError() );
-    return false;
-  }
   return true;
 }
 
@@ -90,14 +82,9 @@ int SDLGui_UnInit()
 */
 int SDLGui_PrepareFont()
 {
-/* FIXME: Freeing the old font gfx does sometimes crash with a SEGFAULT
-  if(fontgfx)
-    SDL_FreeSurface(fontgfx);
-*/
-
   if( stdfontgfx == NULL )
   {
-    fprintf(stderr, "Error: The font has not been loaded!\n");
+    panicbug("Error: The font has not been loaded!");
     return -1;
   }
 
@@ -107,7 +94,7 @@ int SDLGui_PrepareFont()
   SCRUNLOCK;
   if( fontgfx==NULL )
   {
-    fprintf(stderr, "Could not convert font:\n %s\n", SDL_GetError() );
+    panicbug("Could not convert font: %s", SDL_GetError() );
     return -1;
   }
   /* Set transparent pixel */
@@ -121,6 +108,13 @@ int SDLGui_PrepareFont()
   return 0;
 }
 
+void SDLGui_FreeFont()
+{
+  if(fontgfx) {
+    SDL_FreeSurface(fontgfx);
+    fontgfx = NULL;
+  }
+}
 
 /*-----------------------------------------------------------------------*/
 /*
