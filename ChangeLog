@@ -1,3 +1,8 @@
+2005/01/06 - Andreas Schwab
+- uae_cpu/gencpu.c: Don't pop too much for format 7 exception frame in
+  rte insn.
+
+
 2005/01/06 - joy
 - mfp.cpp: Laurent (STonC author whose code has been used for ARAnyM
   MFP emulation) identified copy&rename_variables&paste error.
