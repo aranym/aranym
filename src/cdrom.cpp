@@ -365,6 +365,12 @@ if (using_file == 0)
 }
 #endif
 
+#ifdef OS_linux
+  if (using_file == 0)
+  {
+     ioctl(fd, CDROMEJECT, NULL);
+  }
+#endif
     close(fd);
     fd = -1;
     }
