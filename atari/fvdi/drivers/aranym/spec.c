@@ -5,42 +5,18 @@
 
 int nf_initialize(void);
 
-long CDECL c_get_videoramaddress(void); /* STanda */
-void CDECL c_set_resolution(long width, long height, long depth, long freq); /* STanda */
+long CDECL c_get_videoramaddress(void);
+void CDECL c_set_resolution(long width, long height, long depth, long freq);
 long CDECL c_get_width(void);
 long CDECL c_get_height(void);
+void CDECL c_openwk(Virtual *vwk);
+void CDECL c_closewk(Virtual *vwk);
 
-#if 0
-char r_16[] = {5, 15, 14, 13, 12, 11};
-char g_16[] = {6, 10, 9, 8, 7, 6, 5};
-char b_16[] = {5, 4, 3, 2, 1, 0};
+/* color bit organization */
 char none[] = {0};
-
-char red[] = {5, 11, 12, 13, 14, 15};
-char green[] = {5, 6, 7, 8, 9, 10};
-char blue[] = {5, 0, 1, 2, 3, 4};
-char alpha[] = {0};
-char genlock[] = {0};
-char unused[] = {1, 5};
-#endif
-
 char r_8[] = {8};
 char g_8[] = {8};
 char b_8[] = {8};
-#if 0
-char r_16[] = {5, 7, 6, 5, 4, 3};
-char g_16[] = {6, 2, 1, 0, 15, 14, 13};
-char b_16[] = {5, 12, 11, 10, 9, 8};
-char r_16f[] = {5, 15, 14, 13, 12, 11};
-char g_16f[] = {6, 10, 9, 8, 7, 6, 5};
-char b_16f[] = {5, 4, 3, 2, 1, 0};
-char r_32[] = {8, 15, 14, 13, 12, 11, 10,  9,  8};
-char g_32[] = {8, 23, 22, 21, 20, 19, 18, 17, 16};
-char b_32[] = {8, 31, 30, 29, 28, 27, 26, 25, 24};
-char r_32f[] = {8, 23, 22, 21, 20, 19, 18, 17, 16};
-char g_32f[] = {8, 15, 14, 13, 12, 11, 10,  9, 8};
-char b_32f[] = {8,  7,  6,  5,  4,  3,  2,  1, 0};
-#else
 char r_16[] = {5, 3, 4, 5, 6, 7};
 char g_16[] = {6, 13, 14, 15, 0, 1, 2};
 char b_16[] = {5, 8, 9, 10, 11, 12};
@@ -53,8 +29,6 @@ char b_32[] = {8,  0,  1,  2,  3,  4,  5,  6,  7};
 char r_32f[] = {8,  8,  9, 10, 11, 12, 13, 14, 15};
 char g_32f[] = {8, 16, 17, 18, 19, 20, 21, 22, 23};
 char b_32f[] = {8, 24, 25, 26, 27, 28, 29, 30, 31};
-#endif
-char none[] = {0};
 
 /**
  * Mode *graphics_mode
@@ -105,7 +79,7 @@ Mode mode[7] = /* FIXME: big and little endian differences. */
 
 extern Device device;
 
-char driver_name[] = "NatFeat/ARAnyM 2004-02-22 (xx bit)";
+char driver_name[] = "NatFeat/ARAnyM 2005-01-24 (xx bit)";
 
 struct {
 	short used; /* Whether the mode option was used or not. */
@@ -134,7 +108,6 @@ short accel_c = A_SET_PIX | A_GET_PIX | A_MOUSE | A_LINE | A_BLIT | A_FILL | A_E
 Mode *graphics_mode = &mode[1];
 
 short debug = 0;
-short shadow = 0;
 
 extern void *c_write_pixel;
 extern void *c_read_pixel;
@@ -161,23 +134,11 @@ void *set_colours_r = &c_set_colours_16;
 void *get_colours_r = &c_get_colours_16;
 void *get_colour_r  = &c_get_colour_16;
 
-#if 0
-short cache_img = 0;
-short cache_from_screen = 0;
-#endif
-
 long set_mode(const char **ptr);
 long set_scrninfo(const char **ptr);
 
 
 Option options[] = {
-#if 0
-	{"aesbuf",     set_aesbuf,        -1},  /* aesbuf address, set AES background buffer address */
-	{"screen",     set_screen,        -1},  /* screen address, set old screen address */
-	{"imgcache",   &cache_img,         1},  /* imgcache, turn on caching of images blitted to the screen */
-	{"screencache",&cache_from_screen, 1},  /* screencache, turn on caching of images blitted from the screen */
-	{"noshadow",   &shadow,            0},  /* noshadow, do not use a RAM buffer */
-#endif
 	{"mode",       set_mode,          -1},  /* mode WIDTHxHEIGHTxDEPTH@FREQ */
 	{"scrninfo",   set_scrninfo,      -1},  /* scrninfo fb, make vq_scrninfo return values regarding actual fb layout */
 	{"debug",      &debug,             2}   /* debug, turn on debugging aids */
@@ -273,33 +234,6 @@ long set_mode(const char **ptr)
 
 	return 1;
 }
-
-
-#if 0
-long set_aesbuf(const char **ptr)
-{
-	char token[80];
-
-	if (!(*ptr = access->funcs.skip_space(*ptr)))
-		;		/* *********** Error, somehow */
-	*ptr = access->funcs.get_token(*ptr, token, 80);
-	aes_buffer = access->funcs.atol(token);
-
-	return 1;
-}
-
-long set_screen(const char **ptr)
-{
-	char token[80];
-
-	if (!(*ptr = access->funcs.skip_space(*ptr)))
-		;		/* *********** Error, somehow */
-	*ptr = access->funcs.get_token(*ptr, token, 80);
-	old_screen = access->funcs.atol(token);
-
-	return 1;
-}
-#endif
 
 
 void setup_scrninfo(Device *device, Mode *graphics_mode); /* from init.c */
@@ -399,61 +333,19 @@ long check_token(char *token, const char **ptr)
 }
 
 
-/*
- * Do whatever setup work might be necessary on boot up
- * and which couldn't be done directly while loading.
- * Supplied is the default fVDI virtual workstation.
- */
-void CDECL initialize(Virtual *vwk)
+static void setup_wk(Virtual *vwk)
 {
-	Workstation *wk;
-	int old_palette_size;
-	Colour *old_palette_colours;
-	long fb_base;
+	Workstation *wk = vwk->real_address;
 
-	if (!nf_initialize()) {
-		access->funcs.puts("  No or incompatible NatFeat fVDI!");
-		access->funcs.puts("\x0d\x0a");
-		return;
-	}
-
-	fb_base = c_get_videoramaddress();
-
-#if 0
-	debug = access->funcs.misc(0, 1, 0);
-#endif
-
-	if (debug > 2) {
-		char buf[10];
-		access->funcs.puts("  fb_base  = $");
-		access->funcs.ltoa(buf, fb_base, 16);
-		access->funcs.puts(buf);
-		access->funcs.puts("\x0d\x0a");
-	}
-
-	vwk = me->default_vwk;	/* This is what we're interested in */
-	wk = vwk->real_address;
-
-
-	if (resolution.used) {
-		resolution.bpp = graphics_mode->bpp; /* Table value (like rounded down) --- e.g. no 23bit but 16 etc */
-		c_set_resolution(resolution.width, resolution.height, resolution.bpp, resolution.freq);
-		resolution.width = c_get_width();
-		resolution.height = c_get_height();
-
-		wk->screen.mfdb.width = resolution.width;
-		wk->screen.mfdb.height = resolution.height;
-	} else {
-		/* FIXME: Hack to get it working after boot in less than 16bit */
-		resolution.bpp = graphics_mode->bpp; /* 16 bit by default */
-	}
-
+	/* update the settings */
+	wk->screen.mfdb.width = resolution.width;
+	wk->screen.mfdb.height = resolution.height;
 
 	/*
-	 * Some things need to be changed from the	
+	 * Some things need to be changed from the
 	 * default workstation settings.
 	 */
-	wk->screen.mfdb.address = (void *)fb_base;
+	wk->screen.mfdb.address = (void *)c_get_videoramaddress();
 	wk->screen.mfdb.wdwidth = ((long)wk->screen.mfdb.width * resolution.bpp) / 16;
 	wk->screen.mfdb.bitplanes = resolution.bpp;
 	wk->screen.wrap = wk->screen.mfdb.width * (resolution.bpp / 8);
@@ -472,16 +364,32 @@ void CDECL initialize(Virtual *vwk)
 	else									/*	 or fixed DPI (negative) */
 		wk->screen.pixel.height = 25400 / -wk->screen.pixel.height;
 	
+	device.address		= wk->screen.mfdb.address;
+	device.byte_width	= wk->screen.wrap;
+
+	/**
+	 * The following needs to be here due to bpp > 8 modes where the SDL
+	 * palette needs the appropriate SDL_surface->format to be set prior
+	 * use i.e. _after_ the resolution change
+	 **/
+	c_initialize_palette(vwk, 0, wk->screen.palette.size, colours, wk->screen.palette.colours);
+}
+
+
+static void initialize_wk_palette(Virtual *vwk)
+{
+	Workstation *wk = vwk->real_address;
+
+	if (loaded_palette)
+		access->funcs.copymem(loaded_palette, colours, 256 * 3 * sizeof(short));
 
 	/*
 	 * This code needs more work.
 	 * Especially if there was no VDI started since before.
 	 */
 
-	if (loaded_palette)
-		access->funcs.copymem(loaded_palette, colours, 256 * 3 * sizeof(short));
-	if ((old_palette_size = wk->screen.palette.size) != 256) {	/* Started from different graphics mode? */
-		old_palette_colours = wk->screen.palette.colours;
+	if (wk->screen.palette.size != 256) {	/* Started from different graphics mode? */
+		Colour *old_palette_colours = wk->screen.palette.colours;
 		wk->screen.palette.colours = (Colour *)access->funcs.malloc(256L * sizeof(Colour), 3);	/* Assume malloc won't fail. */
 		if (wk->screen.palette.colours) {
 			wk->screen.palette.size = 256;
@@ -490,28 +398,37 @@ void CDECL initialize(Virtual *vwk)
 		} else
 			wk->screen.palette.colours = old_palette_colours;
 	}
+}
 
-	if (debug > 1) {
-		access->funcs.puts("  Setting up palette");
+
+/*
+ * Do whatever setup work might be necessary on boot up
+ * and which couldn't be done directly while loading.
+ * Supplied is the default fVDI virtual workstation.
+ */
+void CDECL initialize(Virtual *vwk)
+{
+	vwk = me->default_vwk;  /* This is what we're interested in */
+	
+	if (!nf_initialize()) {
+		access->funcs.puts("  No or incompatible NatFeat fVDI!");
+		access->funcs.puts("\x0d\x0a");
+		return;
+	}
+
+	initialize_wk_palette(vwk);
+
+	setup_wk(vwk);
+
+	if (debug > 2) {
+		char buf[10];
+		access->funcs.puts("  fb_base  = $");
+		access->funcs.ltoa(buf, c_get_videoramaddress(), 16);
+		access->funcs.puts(buf);
 		access->funcs.puts("\x0d\x0a");
 	}
-
-	/* The following should be here due to bpp <= 8 modes */
-	/* the palette is updated on resolution change */
-	if (accel_c & A_SET_PAL)
-		c_initialize_palette(vwk, 0, wk->screen.palette.size, colours, wk->screen.palette.colours);
-	else
-		initialize_palette(vwk, 0, wk->screen.palette.size, colours, wk->screen.palette.colours);
-
-	device.byte_width = wk->screen.wrap;
-	device.address = (void*)c_get_videoramaddress();
-	vwk->real_address->screen.mfdb.address = device.address;
-
-	if (!wk->screen.shadow.address) {
-		driver_name[33] = ')';
-		driver_name[34] = 0;
-	}
 }
+
 
 /*
  *
@@ -533,6 +450,7 @@ long CDECL setup(long type, long value)
 	return ret;
 }
 
+
 /*
  * Initialize according to parameters (boot and sent).
  * Create new (or use old) Workstation and default Virtual.
@@ -540,13 +458,35 @@ long CDECL setup(long type, long value)
  */
 Virtual* CDECL opnwk(Virtual *vwk)
 {
+	vwk = me->default_vwk;  /* This is what we're interested in */
+
+	/* switch off VIDEL */
+	c_openwk(vwk);
+
+	if (resolution.used) {
+		resolution.bpp = graphics_mode->bpp; /* Table value (like rounded down) --- e.g. no 23bit but 16 etc */
+
+		c_set_resolution(resolution.width, resolution.height, resolution.bpp, resolution.freq);
+	} else {
+		/* FIXME: Hack to get it working after boot in less than 16bit */
+		resolution.bpp = graphics_mode->bpp; /* 16 bit by default */
+	}
+
+	/* update the width/height if restricted by the native part */
+	resolution.width = c_get_width();
+	resolution.height = c_get_height();
+
+	setup_wk(vwk);
+
 	return 0;
 }
+
 
 /*
  * 'Deinitialize'
  */
 void CDECL clswk(Virtual *vwk)
 {
+	c_closewk(vwk);
 }
 

@@ -10,9 +10,9 @@
 /* if you change anything in the enum {} below you have to increase
    this FVDIDRV_NFAPI_VERSION!
 
-   fVDI v0.960 driver API, fVDI Natfeat v1.100
+   fVDI v0.960 driver API, fVDI Natfeat v1.300
 */
-#define FVDIDRV_NFAPI_VERSION    0x12000960L
+#define FVDIDRV_NFAPI_VERSION    0x13000960L
 
 enum {
 	FVDI_GET_VERSION = 0,	/* subID = 0 */
@@ -29,7 +29,9 @@ enum {
 	FVDI_GET_FBADDR,
 	FVDI_SET_RESOLUTION,
 	FVDI_GET_WIDTH,
-	FVDI_GET_HEIGHT
+	FVDI_GET_HEIGHT,
+	FVDI_OPENWK,
+	FVDI_CLOSEWK
 };
 
 extern unsigned long nfFvdiDrvId;

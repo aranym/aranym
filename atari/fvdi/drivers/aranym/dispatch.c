@@ -204,3 +204,16 @@ c_get_height(void)
 {
    return ARAnyM((NF_fVDI+FVDI_GET_HEIGHT));
 }
+
+long CDECL
+c_openwk(void)
+{
+   return ARAnyM((NF_fVDI+FVDI_OPENWK));
+}
+
+long CDECL
+c_closewk(void)
+{
+   return ARAnyM((NF_fVDI+FVDI_CLOSEWK));
+}
+

@@ -162,8 +162,6 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
 	hostScreen.lock();
 
-	getVIDEL()->setRendering(false);
-
 	uint32 result = 0;
 	switch (fncode) {
 		// NEEDED functions
@@ -305,6 +303,16 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 			result = hostScreen.getHeight();
 			break;
 
+		case FVDI_OPENWK:
+			getVIDEL()->setRendering(false);
+			result = 1;
+			break;
+
+		case FVDI_CLOSEWK:
+			getVIDEL()->setRendering(true);
+			result = 1;
+			break;
+
 		default:
 			// not implemented functions
 			D(bug("fVDI: Unknown %d", fncode));
@@ -326,7 +334,7 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
 	hostScreen.unlock();
 
-	D(bug("fVDI: result = %lx", result));
+	D(bug("fVDI: fncode = %d, result = %lx", fncode, result));
 	return result;
 }
 
@@ -499,6 +507,8 @@ void FVDIDriver::setColor(memptr vwk, uint32 paletteIndex, uint32 red, uint32 gr
 		                           ((red * ((1L << 5) - 1) + 500L) / 1000) << 3,
 		                           ((green * ((1L << 6) - 1) + 500L) / 1000) << 2,
 		                           ((blue * ((1L << 5) - 1) + 500L) / 1000) << 3);
+
+	hostScreen.updatePalette( 256 );
 }
 
 
@@ -2028,6 +2038,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.62  2005/01/12 14:35:16  joy
+ * more unused variables hidden
+ *
  * Revision 1.61  2005/01/12 10:56:02  joy
  * compiler warnings about unused variables fixed
  *
