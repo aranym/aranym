@@ -14,9 +14,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#define SAVE_BKG_TO_FILE	/* for some reason storing to memory fails */
-
-
 /*
 void SelectVideoMode()
 {
@@ -58,31 +55,26 @@ void HostScreen::makeSnapshot()
 void HostScreen::toggleFullScreen()
 {
 	bx_options.video.fullscreen = !bx_options.video.fullscreen;
-	SDL_WM_ToggleFullScreen(surf);
+	SDL_WM_ToggleFullScreen(mainSurface);
 }
 
-void HostScreen::save_bkg()
+void HostScreen::saveBackground()
 {
-#ifdef SAVE_BKG_TO_FILE
-	SDL_SaveBMP(surf, "background");
-#else
-	saved_background_size = surf->pitch * surf->h;
-	saved_background = realloc(saved_background, saved_background_size);
-	int ret = SDL_SaveBMP_RW(surf, SDL_RWFromMem(saved_background, saved_background_size), 0);
-	D(bug("screen size (%dx%d) = %d saved to %p with code %d", surf->pitch, surf->h, saved_background_size, saved_background, ret));
-#endif
+	if (backgroundSurf == NULL) {
+		backgroundSurf = SDL_ConvertSurface(mainSurface, mainSurface->format, mainSurface->flags & ~SDL_HWSURFACE);
+		surf = backgroundSurf;
+	}
 }
 
-void HostScreen::restore_bkg()
+void HostScreen::restoreBackground()
 {
-#ifdef SAVE_BKG_TO_FILE
-	SDL_Surface *emisurf = SDL_LoadBMP("background");
-#else
-	SDL_Surface *emisurf = SDL_LoadBMP_RW(SDL_RWFromMem(saved_background, saved_background_size), 0);
-#endif
-	int ret = SDL_BlitSurface(emisurf, NULL, surf, NULL);
-	fprintf(stderr, "screen restored from %p, code %d\n", emisurf, ret);
-	update(true);
+	if (backgroundSurf != NULL) {
+		SDL_BlitSurface(backgroundSurf, NULL, mainSurface, NULL);
+		surf = mainSurface;
+		update(true);
+		SDL_FreeSurface(backgroundSurf);
+		backgroundSurf = NULL;
+	}
 }
 
 void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
@@ -101,7 +93,8 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	if (bx_options.video.fullscreen)
 		sdl_videoparams |= SDL_FULLSCREEN;
 
-	surf = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
+	mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
+	surf = mainSurface;
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 
 	// restore the pallete settings
@@ -937,6 +930,10 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.27  2002/06/09 20:08:31  joy
+ * save_bkg/restore_bkg added (used in SDL GUI)
+ * the save to mem worked for a while and then it started failing for no apparent reason so I had to write saving to file. It's a hack. Proper solution would be to create a complete surface by cloning the current one and blit the screen there, I think.
+ *
  * Revision 1.26  2002/06/07 20:56:56  joy
  * added window/fullscreen mode switch
  *
