@@ -1,7 +1,11 @@
 Before 0.8.0 release:
 ---------------------
-- host-ip, atari-ip, netmask, mtu in config file ([ETH0])
 - automagically updated CONFIG.SYS/BDCONFIG.SYS
+- some renaming: "network/araeth" -> "network/ethernet"
+- some renaming: "araether.c" -> "ethernet.c"
+- some renaming: "araifc/aratapif.c" -> "aratapif.c"
+- some renaming: "araethip.c" -> "nfeth-config.c"
+- Makefile magic: "araethip.c" build by ./make.sh of the xif.
 - some doc update (networking, disk image, afros)
 
 Roadmap:
@@ -21,7 +25,11 @@ Some hot ideas (before they get forgotten)
 Note that the name before a TODO item doesn't mean the item is assigned to
 that particular programmer but rather who is the author of the idea :-)
 
+- joy: detect loop lockups (e.g. "Illegal instruction: 00e0 at 00000030"
+       repeated endlessly) and allow restarting ARAnyM gracefully
+
 - joy: patch for fixing MetaDOS Pexec bug (maybe not needed as BetaDOS is OK)
+
 - joy: make the PureC patch more error-proof
 
 - joy: put all ARAnyM patches and drivers together to a nice package

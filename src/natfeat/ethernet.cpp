@@ -78,12 +78,12 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			break;
 
 		case XIF_GET_MAC:	// what is the MAC address?
-			D(bug("Ethernet: getHWddr"));
 			/* store MAC address to provided buffer */
 			{
 				int ethX = getParameter(0);
 				memptr buf_ptr = getParameter(1);	// destination buffer
 				uint32 buf_size = getParameter(2);	// buffer size
+				D(bug("Ethernet: getMAC(%d, %p, %d", ethX, buf_ptr, buf_size));
 
 				if (! ValidAddr(buf_ptr, true, buf_size))
 					BUS_ERROR(buf_ptr);
@@ -98,8 +98,10 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			if ( !getParameter(0) ) {
 				D(bug("Ethernet: /IRQ"));
 				finishInterupt();
-			} else
+			} else {
 				D(bug("Ethernet: IRQ"));
+				ret = 0;	/* ethX requested the interrupt */
+			}
 
 			break;
 		case XIF_START:
@@ -141,10 +143,12 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 int ETHERNETDriver::get_params(GET_PAR which)
 {
-	int ethX = getParameter(0);
+	// int ethX = getParameter(0);
 	memptr name_ptr = getParameter(1);
 	uint32 name_maxlen = getParameter(2);
 	char *text = NULL;
+
+	D(bug("Ethernet: getPAR(%d) to (%d, %p, %d)", which, ethX, name_ptr, name_maxlen));
 
 	if (! ValidAddr(name_ptr, true, name_maxlen))
 		BUS_ERROR(name_ptr);
@@ -174,7 +178,7 @@ int32 ETHERNETDriver::readPacketLength(int ethX)
 
 void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 {
-	D(bug("Ethernet: ReadPacket dest %08lx, len %08lx", buffer, len));
+	D(bug("Ethernet: ReadPacket dest %08lx, len %lx", buffer, len));
 	Host2Atari_memcpy(buffer, packet, packet_length > 1514 ? 1514 : packet_length );
 }
 
@@ -186,6 +190,8 @@ void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
 {
 	uint8 packetToWrite[1516];
+
+	D(bug("Ethernet: SendPacket src %08lx, len %lx", buffer, len));
 
 	len = len > 1514 ? 1514 : len;
 	Atari2Host_memcpy(packetToWrite, buffer, len );

@@ -1,3 +1,19 @@
+2003/03/22 - joy
+- [ETH0] settings in the config file
+
+- aranym_xfs.c: ifdef'ed one debug print
+
+- araethip.c: improved and adapted for possible many eth devices
+
+- nfeth-config.sh: added, calls araethip and shows how easy is to configure
+  the device automagically.
+
+- araether.c: AUTO_IP_CONFIGURE (automatical internal configuration of
+  eth addr and netmask) added but is not working well, thus disabled by
+  default. Also the DEBUG(()) system doesn't seem to work so I wrote
+  mine for the ioctl() - can be enabled by defining MY_DEBUG.
+
+
 2003/03/21 - joy
 - networking: NF API extended to allow emulating more than 1 network card
 

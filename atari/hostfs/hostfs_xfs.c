@@ -465,9 +465,11 @@ FILESYS *aranym_fs_init(void)
 
 	/* everything OK */
 	if ( keep ) {
+#if 0
 		char buff[255];
 		ksprintf_old( buff, "fs_drv = %08lx", (long)&aranym_fs );
 		c_conws (buff);
+#endif
 		return &aranym_fs; /* We where successfull */
 	}
 #if USE_DCNTL
@@ -494,6 +496,9 @@ FILESYS *aranym_fs_init(void)
 
 /*
  * $Log$
+ * Revision 1.6  2003/03/22 22:46:25  joy
+ * cosmetical change in displayed info
+ *
  * Revision 1.5  2003/03/20 21:27:22  standa
  * The .xfs mapping to the U:\G mountpouints (single letter) implemented.
  *
