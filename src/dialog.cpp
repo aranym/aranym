@@ -35,6 +35,11 @@
 */
 #include "file.h"
 #include "sdlgui.h"
+#include "host.h"
+
+#define Screen_Save		hostScreen.save
+#define Screen_SetFullUpdate()
+#define Screen_Draw		hostScreen.restore
 
 static bool bQuitProgram;
 
@@ -57,7 +62,7 @@ static bool bQuitProgram;
 SGOBJ maindlg[] =
 {
   { SGBOX, 0, 0, 0,0, 36,20, NULL },
-  { SGTEXT, 0, 0, 10,1, 16,1, "Hatari main menu" },
+  { SGTEXT, 0, 0, 10,1, 16,1, "ARAnyM main menu" },
   { SGBUTTON, 0, 0, 4,4, 12,1, "About" },
   { SGBUTTON, 0, 0, 4,6, 12,1, "Discs" },
   { SGBUTTON, 0, 0, 4,8, 12,1, "TOS/GEM" },
@@ -80,11 +85,11 @@ SGOBJ maindlg[] =
 SGOBJ aboutdlg[] =
 {
   { SGBOX, 0, 0, 0,0, 40,25, NULL },
-  { SGTEXT, 0, 0, 14,1, 12,1, "aranym" },
-  { SGTEXT, 0, 0, 14,2, 12,1, "============" },
-  { SGTEXT, 0, 0, 1,4, 38,1, "Hatari has been written by:  T. Huth," },
-  { SGTEXT, 0, 0, 1,5, 38,1, "S. Marothy, S. Berndtsson, P. Bates," },
-  { SGTEXT, 0, 0, 1,6, 38,1, "B. Schmidt and many others." },
+  { SGTEXT, 0, 0, 14,1, 12,1, "ARAnyM" },
+  { SGTEXT, 0, 0, 14,2, 12,1, "======" },
+  { SGTEXT, 0, 0, 1,4, 38,1, "ARAnyM has been written by:  C. Fertr," },
+  { SGTEXT, 0, 0, 1,5, 38,1, "M. Jurik, S. Opichal, P. Stehlik" },
+  { SGTEXT, 0, 0, 1,6, 38,1, "and many others." },
   { SGTEXT, 0, 0, 1,7, 38,1, "Please see the docs for more info." },
   { SGTEXT, 0, 0, 1,9, 38,1, "This program is free software; you can" },
   { SGTEXT, 0, 0, 1,10, 38,1, "redistribute it and/or modify it under" },
@@ -658,6 +663,9 @@ void Dialog_DiscDlg(void)
           }
         }
         break;
+      case -1:
+      	bQuitProgram = true;
+      	break;
     }
   }
   while(but!=DISCDLG_EXIT && !bQuitProgram);
@@ -706,6 +714,9 @@ void Dialog_TosGemDlg(void)
       case DLGTOSGEM_RESPOPUP:
         tosgemdlg[DLGTOSGEM_RESPOPUP].state &= ~SG_SELECTED;
         break;
+      case -1:
+      	bQuitProgram = true;
+      	break;
     }
   }
   while(but!=DLGTOSGEM_EXIT && !bQuitProgram);
@@ -791,6 +802,9 @@ void Dialog_ScreenDlg(void)
           ScreenSnapShot_BeginRecording(DialogParams.Screen.bCaptureChange, 25);
         }
         break;
+      case -1:
+      	bQuitProgram = true;
+      	break;
     }
   }
   while( but!=DLGSCRN_EXIT && !bQuitProgram );
@@ -835,6 +849,8 @@ void Dialog_SoundDlg(void)
   do
   {
     but = SDLGui_DoDialog(sounddlg);
+    if (but == -1)
+      bQuitProgram = true;
   }
   while( but!=DLGSOUND_EXIT && !bQuitProgram );
 
@@ -876,6 +892,8 @@ void Dialog_MemDlg(void)
   do
   {
     but = SDLGui_DoDialog(memorydlg);
+    if (but == -1)
+      bQuitProgram = true;
   }
   while( but!=DLGMEM_EXIT && !bQuitProgram );
 
@@ -925,6 +943,8 @@ void Dialog_JoyDlg(void)
   do
   {
     but = SDLGui_DoDialog(joystickdlg);
+    if (but == -1)
+      bQuitProgram = true;
   }
   while( but!=DLGJOY_EXIT && !bQuitProgram );
 
@@ -982,9 +1002,11 @@ void Dialog_CpuDlg(void)
 /*
   This functions sets up the actual font and then displays the main dialog.
 */
-int Dialog_MainDlg(bool *bReset)
+int Dialog_MainDlg(bool *bReset, bool *bQuit)
 {
   int retbut;
+
+  Screen_Save();
 
   SDLGui_PrepareFont();
   SDLGui_CenterDlg(maindlg);
@@ -1034,9 +1056,12 @@ int Dialog_MainDlg(bool *bReset)
       case MAINDLG_QUIT:
         bQuitProgram = true;
         break;
+      case -1:
+      	bQuitProgram = true;
+      	break;
     }
-    // Screen_SetFullUpdate();
-    // Screen_Draw();
+    Screen_SetFullUpdate();
+    Screen_Draw();
   }
   while(retbut!=MAINDLG_OK && retbut!=MAINDLG_CANCEL && !bQuitProgram);
 
@@ -1046,6 +1071,8 @@ int Dialog_MainDlg(bool *bReset)
     *bReset = true;
   else
     *bReset = false;
+
+  *bQuit = bQuitProgram;
 
   return(retbut==MAINDLG_OK);
 }
@@ -1060,6 +1087,7 @@ bool Dialog_DoProperty(void)
 {
   bool bOKDialog;  /* Did user 'OK' dialog? */
   bool bForceReset;
+  bool bQuit;
 #if 0
   Main_PauseEmulation();
 
@@ -1071,7 +1099,7 @@ bool Dialog_DoProperty(void)
   bRestoreMemoryState = false;
   bForceReset = false;
 #endif
-  bOKDialog = Dialog_MainDlg(&bForceReset);
+  bOKDialog = Dialog_MainDlg(&bForceReset, &bQuit);
 #if 0
   /* Copy details to configuration, and ask user if wishes to reset */
   if (bOKDialog)
@@ -1084,6 +1112,6 @@ bool Dialog_DoProperty(void)
 
   Main_UnPauseEmulation();
 #endif
-  return(bOKDialog);
+  return(bQuit);
 }
 
