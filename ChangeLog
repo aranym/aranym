@@ -7,6 +7,9 @@
 - SDL locks moved from newcpu.cpp to aranym_glue.cpp (let's keep the borrowed
   modules as clean as possible).
 
+- emul_op.cpp: activate_debugger() on 0x71ff disabled as it was crashing
+  whole emulation.
+
 
 2003/07/17 - joy
 - src/natfeat/hostfs.cpp: converPathA2F() tried to strip a drive letter

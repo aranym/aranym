@@ -213,7 +213,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 		case M68K_EMUL_OP_DEBUGGER:
 #ifdef DEBUGGER
-			activate_debugger();
+//			activate_debugger();
 #endif
 			break;
 		default:
