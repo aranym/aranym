@@ -154,6 +154,14 @@ typedef struct {
   bx_disk_options_t	diskd;
   bx_cdrom_options_t	cdromd;
   bx_atadevice_options_t atadevice[BX_MAX_ATA_CHANNEL][2];
+  bx_disk_options_t	disk0;
+  bx_disk_options_t	disk1;
+  bx_disk_options_t	disk2;
+  bx_disk_options_t	disk3;
+  bx_disk_options_t	disk4;
+  bx_disk_options_t	disk5;
+  bx_disk_options_t	disk6;
+  bx_disk_options_t	disk7;
   bx_aranymfs_options_t	aranymfs[ 'Z'-'A'+1 ];
 //  bx_cookies_options_t cookies;
   bx_video_options_t	video;

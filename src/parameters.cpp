@@ -223,7 +223,7 @@ void presave_opengl() {
 	{ "Heads", Int_Tag, &bx_options.Disk.heads},	\
 	{ "SectorsPerTrack", Int_Tag, &bx_options.Disk.spt},	\
 	{ NULL , Error_Tag, NULL }	\
-}	\
+}
 
 BX_DISK_CONFIG(diskc);
 BX_DISK_CONFIG(diskd);
@@ -294,6 +294,33 @@ void postload_ide() {
 }
 
 void presave_ide() {
+}
+
+/*************************************************************************/
+#define DISK_CONFIG(Disk)	struct Config_Tag Disk ## _configs[] = {	\
+	{ "Path", String_Tag, bx_options.Disk.path, sizeof(bx_options.Disk.path)},	\
+	{ "Present", Bool_Tag, &bx_options.Disk.present},	\
+	{ "ByteSwap", Bool_Tag, &bx_options.Disk.byteswap},	\
+	{ "ReadOnly", Bool_Tag, &bx_options.Disk.readonly},	\
+	{ NULL , Error_Tag, NULL }	\
+}
+
+DISK_CONFIG(disk0);
+DISK_CONFIG(disk1);
+DISK_CONFIG(disk2);
+DISK_CONFIG(disk3);
+DISK_CONFIG(disk4);
+DISK_CONFIG(disk5);
+DISK_CONFIG(disk6);
+DISK_CONFIG(disk7);
+
+void preset_disk() {
+}
+
+void postload_disk() {
+}
+
+void presave_disk() {
 }
 
 /*************************************************************************/
@@ -394,6 +421,7 @@ Options:\n\
 void preset_cfg() {
   preset_global();
   preset_ide();
+  preset_disk();
   preset_arafs();
   preset_video();
   preset_tos();
@@ -405,6 +433,7 @@ void preset_cfg() {
 void postload_cfg() {
   postload_global();
   postload_ide();
+  postload_disk();
   postload_arafs();
   postload_video();
   postload_tos();
@@ -416,6 +445,7 @@ void postload_cfg() {
 void presave_cfg() {
   presave_global();
   presave_ide();
+  presave_disk();
   presave_arafs();
   presave_video();
   presave_tos();
@@ -637,6 +667,14 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, tos_conf, "[TOS]", true);
 	process_config(f, rcfile, ide_swap ? diskd_configs : diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, ide_swap ? diskc_configs : diskd_configs, "[IDE1]", true);
+	process_config(f, rcfile, disk0_configs, "[DISK0]", true);
+	process_config(f, rcfile, disk1_configs, "[DISK1]", true);
+	process_config(f, rcfile, disk2_configs, "[DISK2]", true);
+	process_config(f, rcfile, disk3_configs, "[DISK3]", true);
+	process_config(f, rcfile, disk4_configs, "[DISK4]", true);
+	process_config(f, rcfile, disk5_configs, "[DISK5]", true);
+	process_config(f, rcfile, disk6_configs, "[DISK6]", true);
+	process_config(f, rcfile, disk7_configs, "[DISK7]", true);
 	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
 }
@@ -655,6 +693,14 @@ int saveSettings(const char *fs)
 	update_config(fs, tos_conf, "[TOS]");
 	update_config(fs, ide_swap ? diskd_configs : diskc_configs, "[IDE0]");
 	update_config(fs, ide_swap ? diskc_configs : diskd_configs, "[IDE1]");
+	update_config(fs, disk0_configs, "[DISK0]");
+	update_config(fs, disk1_configs, "[DISK1]");
+	update_config(fs, disk2_configs, "[DISK2]");
+	update_config(fs, disk3_configs, "[DISK3]");
+	update_config(fs, disk4_configs, "[DISK4]");
+	update_config(fs, disk5_configs, "[DISK5]");
+	update_config(fs, disk6_configs, "[DISK6]");
+	update_config(fs, disk7_configs, "[DISK7]");
 	update_config(fs, arafs_conf, "[ARANYMFS]");
 	update_config(fs, opengl_conf, "[OPENGL]");
 

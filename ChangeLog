@@ -1,8 +1,13 @@
 2003/02/26 - joy
 - ETHERNET_OLD (the one from Basilisk) removed completely
+
 - Networking now at interrupt level 3 (Audio stays at int level 5)
-- "--swap-ide" command line switch added (exchanges IDE0 and IDE1 drives)
-  I find it useful for preparing new disk images
+
+- parameters.cpp: "--swap-ide" command line switch added (exchanges IDE0
+  and IDE1 drives). I find it useful for preparing new disk images..
+
+- parameters.[cpp|h]: get ready for SCSI disks ([DISK0-7]) (single
+  partition mounting)
 
 
 2003/02/26 - STanda & joy
