@@ -447,12 +447,25 @@ extern "C" char *strdup(const char *s);
 # define IOCTL_STORAGE_EJECT_MEDIA        CTL_CODE(IOCTL_STORAGE_BASE, 0x0202, METHOD_BUFFERED, FILE_READ_ACCESS)
 #endif
 
-#define bcopy(src, dest, size)  memcpy(dest, src, size)
-
-#define usleep(microseconds)    {}
-
 #endif /* OS_mingw */
 
+#if !HAVE_STRCHR
+# define strchr index
+# define strrchr rindex
+char *strchr (), *strrchr ();
+#endif
+
+#if !HAVE_MEMCPY
+# define memcpy(d, s, n) bcopy ((s), (d), (n))
+# define memmove(d, s, n) bcopy ((s), (d), (n))
+#else
+# if !HAVE_BCOPY
+#  define bcopy(src, dest, size)  memcpy(dest, src, size)
+# endif
+#endif
+
+#if !HAVE_USLEEP
+# define usleep(microseconds)    {}
 #endif
 
 #ifdef MACOSX_support
@@ -472,3 +485,5 @@ extern CFBundleRef mainBundle;
 # define LONGJMP(a,b)	longjmp(a,b)
 # define JMP_BUF	jmp_buf
 #endif
+
+#endif /* SYSDEPS_H */

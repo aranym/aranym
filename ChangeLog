@@ -1,3 +1,7 @@
+2004/07/14 - milan
+- small sysdeps.h reorganisation
+
+
 2004/07/14 - Xavier
 - doc/build-cygwin.sh: updated for SDL 1.2.7 and latest Cygwin (new GCC and
   X.org/X11 packages).
