@@ -1,13 +1,16 @@
+2003/02/26 - joy
+- ETHERNET_OLD (the one from Basilisk) removed completely
+- Networking now at interrupt level 3 (Audio stays at int level 5)
+- "--swap-ide" command line switch added (exchanges IDE0 and IDE1 drives)
+  I find it useful for preparing new disk images
+
+
 2003/02/26 - STanda & joy
 - natfeat/ece.cpp: after removing hostScreen.lock and one unfortunate D(bug)
   it started working. Wonderful. TODO: change interrupt (probably to INT3).
   Also would be good if root privileges for tuntap weren't necessary.
 
 - "araeth" -> "eth" rename
-
-- ETHERNET_OLD (the one from Basilisk) removed completely
-
-- Networking now at interrupt level 3 (Audio stays at int level 5)
 
 
 2003/02/20 - joy

@@ -32,6 +32,7 @@ static struct option const long_options[] =
   {"version", no_argument, 0, 'V'},
   {"config", required_argument, 0, 'c'},
   {"save", no_argument, 0, 's'},
+  {"swap-ide", no_argument, 0, 'S'},
   {"emutos", no_argument, 0, 'e'},
   {NULL, 0, NULL, 0}
 };
@@ -40,6 +41,7 @@ char *program_name;
 char rom_path[512] = DATADIR "/ROM";
 char emutos_path[512] = DATADIR "/etos512k.img";
 bool boot_emutos = false;
+bool ide_swap = false;
 uint32 FastRAMSize;
 
 static char config_folder[512] = ARANYMHOME;
@@ -373,6 +375,7 @@ Options:\n\
   -d, --disk CHAR:ROOTPATH   METADOS filesystem assignment e.g. d:/atari/d_drive\n\
   -c, --config FILE          read different configuration file\n\
   -s, --save                 save configuration file\n\
+  -S, --swap-ide             swap IDE drives\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
@@ -421,9 +424,12 @@ void presave_cfg() {
   presave_opengl();
 }
 
-void check_for_help_version_configfile(int argc, char **argv) {
+void early_cmdline_check(int argc, char **argv) {
 	for (int c = 0; c < argc; c++) {
-		if ((strcmp(argv[c], "-c") == 0) || (strcmp(argv[c], "--config") == 0)) {
+		if (strcmp(argv[c], "--swap-ide") == 0)
+			ide_swap = true;
+
+		else if ((strcmp(argv[c], "-c") == 0) || (strcmp(argv[c], "--config") == 0)) {
 			if ((c + 1) < argc) {
 				strncpy(config_file, argv[c + 1], sizeof(config_file)-1);
 				config_file[sizeof(config_file)-1] = '\0';
@@ -462,6 +468,7 @@ int process_cmdline(int argc, char **argv)
 							 "d:" /* filesystem assignment */
 							 "c:" /* small hack*/
 							 "s"  /* save config file */
+							 "S"  /* IDE swap */
 							 "h"  /* help */
 							 "V"  /* version */,
 							 long_options, (int *) 0)) != EOF) {
@@ -538,6 +545,10 @@ int process_cmdline(int argc, char **argv)
 
 			case 's':
 				saveConfigFile = true;
+				break;
+
+			case 'S':
+				ide_swap = true;	/* this is just a cosmetic code to make get_opt() happy - in fact it's pre-set in the early_cmdline_check */
 				break;
 
 #ifndef FixedSizeFastRAM
@@ -624,8 +635,8 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 #endif
 	process_config(f, rcfile, video_conf, "[VIDEO]", true);
 	process_config(f, rcfile, tos_conf, "[TOS]", true);
-	process_config(f, rcfile, diskc_configs, "[IDE0]", true);
-	process_config(f, rcfile, diskd_configs, "[IDE1]", true);
+	process_config(f, rcfile, ide_swap ? diskd_configs : diskc_configs, "[IDE0]", true);
+	process_config(f, rcfile, ide_swap ? diskc_configs : diskd_configs, "[IDE1]", true);
 	process_config(f, rcfile, arafs_conf, "[ARANYMFS]", true);
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
 }
@@ -642,8 +653,8 @@ int saveSettings(const char *fs)
 #endif
 	update_config(fs, video_conf, "[VIDEO]");
 	update_config(fs, tos_conf, "[TOS]");
-	update_config(fs, diskc_configs, "[IDE0]");
-	update_config(fs, diskd_configs, "[IDE1]");
+	update_config(fs, ide_swap ? diskd_configs : diskc_configs, "[IDE0]");
+	update_config(fs, ide_swap ? diskc_configs : diskd_configs, "[IDE1]");
 	update_config(fs, arafs_conf, "[ARANYMFS]");
 	update_config(fs, opengl_conf, "[OPENGL]");
 
@@ -669,7 +680,7 @@ bool check_cfg()
 bool decode_switches(FILE *f, int argc, char **argv)
 {
 	build_cfgfilename();
-	check_for_help_version_configfile(argc, argv);
+	early_cmdline_check(argc, argv);
 	preset_cfg();
 	decode_ini_file(f, config_file);
 	process_cmdline(argc, argv);
