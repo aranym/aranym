@@ -1,3 +1,10 @@
+2003/09/05 - joy
+- blitter.cpp, mfp.cpp, rtc.cpp: rid of compiler warning "comparing unsigned
+  variable with signed value"
+
+- various files: rid of compiler warning "unused parameter"
+
+
 2003/09/03 - milan
 - CPU flight recorder from BasiliskII ported and SR support added
 
