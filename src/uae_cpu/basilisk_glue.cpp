@@ -123,7 +123,7 @@ void TriggerMFP(bool enable)
 	if (enable)
 		regs.spcflags |= SPCFLAG_MFP;
 	else
-		regs.spcflags &= SPCFLAG_MFP;
+		regs.spcflags &= ~SPCFLAG_MFP;
 }
 
 void TriggerNMI(void)
