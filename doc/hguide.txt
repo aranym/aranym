@@ -12,6 +12,7 @@
 7) Sources
 8) debuggers
 9) Checking memory boundary
+10) Threads and interrupts
 
 
 
@@ -204,4 +205,51 @@ the previous possibility.
   The sixth is special possibility, there is sigsegv handler used also
 for handling access to HW pace. It isn't completely committed today. It is
 used for JIT compiler mainly.
+
+
+10) Threads and interrupts
+--------------------------
+
+I have tried several different models of threading in ARAnyM but although
+it always worked OK in Linux it often had problems in non-Linux operating
+systems so the current (0.6.2+?) ARAnyM internals are based on the following
+model:
+
+- CPU MC68040 emulation runs in the main thread. The main() function
+  first calls main.cpp:InitAll(), then Start680x0() and when the CPU
+  emulation ends it calls main.cpp:ExitAll() and quits.
+
+- Then there is a SDL timer thread that runs with 10 ms resolution (wish it
+  was 5 ms but unfortunately SDL is internally locked to 10 ms resolution).
+  It calls the main.cpp:my_callback_function() that in turn calls
+  TriggerInternalIRQ().
+  This Trigger does one simple and quick thing: it sets SPCFLAG_INTERNAL_IRQ
+  for the CPU. That's all it does and the timer function then ends.
+  It's a very short function (takes very little CPU cycles) and so it could
+  be called from a real timer interrupt (is there such available?),
+  preferably running at 200 Hz.
+
+- There is also a SDL_GUI thread but this one is running only if the GUI
+  is active.
+
+All the user interactivity and interrupt emulation now relies on the CPU:
+When the SPCFLAG_INTERNAL_IRQ is set we have to wait until CPU emulation
+calls SERVE_INTERNAL_IRQ() (which normally happens in m68k_do_specialties()
+after processing each instruction). This function calls external function
+main.cpp:invoke200HzInterrupt() (as you see from the name I wish it was
+called 200 times per second).
+
+The invoke200HzInterrupt() then does a whole bunch of things including:
+- emulates 200 Hz MFP TimerC interrupt (calls mfp.IRQ(5))
+- emulates VBL (calls TriggerVBL())
+- updates screen (VIDEL emulation) (calls videl.renderScreen())
+- process user input: keyboard and mouse events (calls check_event())
+- shows visual activity indicator (calls heartBeat())
+
+As you see from the model once the heart beat stops you can no longer
+expect ARAnyM to follow your keyboard or mouse commands. It also means
+it's essential to have the CPU emulation correct, not falling into any
+neverending loops or traps. Luckily we have just implemented solutions
+for the double bus fault as well as bus error loops so we should be
+on the safe side now.
 

@@ -70,8 +70,7 @@ that particular programmer but rather who is the author of the idea :-)
        for HW_IDE. Best would be to implement word and longword HW access
        emulation directly for all modules.
 
-- joy: document the way the aranym works - especially the hardware
-       emulation (ARAnyM Hackers Guide), use of threads etc.
+- joy: document the way hardware emulation works
 
 - joy: document the command line switches, keyboard combos and write Users
        Guide.

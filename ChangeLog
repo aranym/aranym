@@ -1,3 +1,9 @@
+2003/10/26 - joy
+- doc/hguide.txt: written "Threads and Interrupts" chapter. I always
+  wanted to document it since I myself had often hard time recalling
+  how it was actually implemented.
+
+
 2003/10/25 - joy
 - newcpu.cpp, aranym_glue.cpp: bus error handling code rearranged a bit:
   SDL related code should not pollute the newcpu.cpp. Also tried to fix
