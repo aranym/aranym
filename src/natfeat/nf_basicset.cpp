@@ -73,10 +73,12 @@ int32 NF_Shutdown::dispatch(uint32 fncode)
 
 // print text on standard error stream
 // internally limited to 2048 characters for now
-int32 NF_StdErr::dispatch(uint32 /*fncode*/)
+int32 NF_StdErr::dispatch(uint32 fncode)
 {
 	char buffer[2048];
 	FILE *output = stderr;
+
+	DUNUSED(fncode);
 
 	memptr str_ptr = getParameter(0);
 	D(bug("NF_StdErr(%d, %p)", fncode, str_ptr));

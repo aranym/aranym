@@ -1,6 +1,7 @@
 2005/01/12 - milan
 - all files: "unused varible" GCC warnings can be viewed with
              --enable-full-debug
+	     a few other warnings gone
 
 
 2005/01/12 - Andreas

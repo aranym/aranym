@@ -34,6 +34,7 @@
 #include "tools.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
+#undef DEBUG
 #define DEBUG 0
 #include "debug.h"
 

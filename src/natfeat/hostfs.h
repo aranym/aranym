@@ -28,6 +28,10 @@
 
 #include "nf_base.h"
 #include "tools.h"
+
+#define DEBUG 0
+#include "debug.h"
+
 #ifdef HAVE_NEW_HEADERS
 # include <map>
 #else

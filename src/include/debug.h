@@ -15,6 +15,11 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#ifdef WHOLEDEBUG
+# undef DEBUG
+# define DEBUG 2
+#endif
+
 #if DEBUG
 #define DUNUSED(x)
 #else
