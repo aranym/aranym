@@ -226,7 +226,7 @@ void showBackTrace(int count, bool showLast = true)
 void debug (void)
 {
    MakeFromSR();
-   if (ignore_irq && regs.m) {
+   if (ignore_irq && regs.s && !regs.m ) {
      SPCFLAGS_SET( SPCFLAG_BRK );
      return;
    }
