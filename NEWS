@@ -17,7 +17,8 @@
 
  o various little SETUP GUI improvements (edit fields are much better now,
    CHS values are updated correctly after creating new empty disk image,
-   repeated saving of config file from the SETUP GUI fixed).
+   repeated saving of config file from the SETUP GUI fixed, new Keyboard
+   and mouse setup dialog - almost empty now, but promising :-).
 
  o AutoZoom screen fixed and improved. You can now choose a constant host
    screen size for whatever the Atari screen size is. Might be very useful
@@ -30,6 +31,10 @@
 
  o new EmuTOS included in this release fixes XaAES/FreeMiNT 1.16.1beta
    keyboard problems.
+
+ o host mouse wheel can produce Eiffel 1.08+ compatible scancodes now.
+   Switch this mode in the SETUP GUI. Note that currently neither fVDI
+   nor EmuTOS support this.
 
  All beta testers (i.e. YOU :-) are encouraged to report all bugs
  and problems either into aranym user mailing list or directly into

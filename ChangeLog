@@ -1,10 +1,12 @@
+* tagged as ARANYM_0_8_11_BETA
+
 2004/11/07 - joy
 - wheel mouse support: based on discussion in mailing list and patch provided
   by Xavier. Switchable between original arrow up/down key simulation and
   new Eiffel compatible set of extended scancodes in the SETUP GUI.
   No possibility to store in config file, yet (intentionally).
 
-- doc/documentation: updated section about creating empty disk image.
+- doc/documentation.txt: updated section about creating empty disk image.
   Also added more information about ARAnyM networking (mostly gathered
   from my replies in the mailing lists).
 
@@ -12,6 +14,8 @@
   Apply button in the main dialog was removed.
   Also Keyboard&mouse dialog offers first functionality: switching between
   two host mouse wheel modes.
+
+- DOC files, aranym.spec, include/version.h: updated for a new release.
 
 
 2004/11/01 - Patrice
