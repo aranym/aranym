@@ -7,8 +7,6 @@
 #define Screen_SetFullUpdate()
 #define Screen_Draw()		{ hostScreen.lock(); hostScreen.restoreBackground(); hostScreen.unlock(); }
 
-extern int Dialog_AlertDlg(const char *);
-
 /* The main dialog: */
 enum MAINDLG {
 	box_main,
@@ -65,14 +63,40 @@ SGOBJ maindlg[] = {
 	{-1, 0, 0, 0, 0, 0, 0, NULL}
 };
 
+static const char *ABOUT_TEXT =
+"               ARAnyM\n"
+"               ======\n"
+"\n"
+"ARAnyM as an Open Source project has\n"
+"been developed by a loosely knit team\n"
+"of hackers accross the Net. Please see\n"
+"the doc file AUTHORS for more info.\n"
+"\n"
+"This program is free software; you can\n"
+"redistribute it and/or modify it under\n"
+"the terms of the GNU General Public\n"
+"License as published by the Free Soft-\n"
+"ware Foundation; either version 2 of\n"
+"the License, or (at your option) any\n"
+"later version.\n"
+"\n"
+"This program is distributed in the\n"
+"hope that it will be useful, but\n"
+"WITHOUT ANY WARRANTY. See the GNU Ge-\n"
+"neral Public License for more details.";
+
+static const char *HELP_TEXT = 
+"          ARAnyM SETUP menu:\n"
+"          ------------------\n"
+"Changes must be confirmed with APPLY first. Note that all changes are applied immediately to a running ARAnyM.\n"
+"Some changes require system reboot in order to take effect. It's actually safest to always reboot after any change.";
+
 static bool bReboot;
 static bool bShutdown;
 
-extern void Dialog_AboutDlg();
 extern void Dialog_DiscDlg();
 extern void Dialog_HotkeysDlg();
 extern void Dialog_KeyboardDlg();
-extern void Dialog_HelpDlg();
 
 static char path[MAX_FILENAME_LENGTH] = "";
 
@@ -115,7 +139,7 @@ void Dialog_MainDlg()
 		retbut = SDLGui_DoDialog(maindlg);
 		switch (retbut) {
 		case ABOUT:
-			Dialog_AboutDlg();
+			SDLGui_Alert(ABOUT_TEXT, ALERT_OK);
 			break;
 
 		case DISCS:
@@ -135,7 +159,7 @@ void Dialog_MainDlg()
 		case HOSTFS:
 		case CDROM:
 		case INOUT:
-			Dialog_AlertDlg("Unimplemented yet.");
+			SDLGui_Alert("Unimplemented yet.", ALERT_OK);
 			break;
 
 		case LOAD:
@@ -169,7 +193,7 @@ void Dialog_MainDlg()
 			break;
 
 		case HELP:
-			Dialog_HelpDlg();
+			SDLGui_Alert(HELP_TEXT, ALERT_OK);
 			break;
 
 		case CLOSE:
