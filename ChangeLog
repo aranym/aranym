@@ -1,6 +1,6 @@
 2002/09/23 - patrice
 - hostscreen: modified to select the nearest best video mode.
-- videl: modifier to render from any bpp to any bpp, using any screen pitch.
+- videl: modified to render from any bpp to any bpp, using any screen pitch.
 
 
 2002/09/20 - patrice
