@@ -1,3 +1,7 @@
+2002/11/09 - milan
+- sync with BasiliskII: some obsolete structures removed, support for Opteron
+
+
 2002/11/06 - joy
 - aranym can be compiled without the DSP emulation again
 - ulong in nf_stderr fixed to uint32

@@ -76,11 +76,11 @@ static inline unsigned int cft_map (unsigned int f)
 #endif
 }
 
-cpuop_rettype REGPARAM2 op_illg_1 (uae_u32 opcode) REGPARAM;
+void REGPARAM2 op_illg_1 (uae_u32 opcode) REGPARAM;
 
-cpuop_rettype REGPARAM2 op_illg_1 (uae_u32 opcode)
+void REGPARAM2 op_illg_1 (uae_u32 opcode)
 {
-    cpuop_return( op_illg (cft_map (opcode)) );
+    op_illg (cft_map (opcode));
 }
 
 static void build_cpufunctbl (void)
@@ -1272,7 +1272,7 @@ void m68k_natfeat_call(void)
 }
 
 #ifdef DISDIP
-cpuop_rettype REGPARAM2 op_illg (uae_u32 opc)
+void REGPARAM2 op_illg (uae_u32 opc)
 {
 	uae_u32 xpc;
 	if (initial) {
@@ -1285,7 +1285,7 @@ cpuop_rettype REGPARAM2 op_illg (uae_u32 opc)
 op_illg_lab:
 	opcode = cft_map(opcode);
 #else
-cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
+void REGPARAM2 op_illg (uae_u32 opcode)
 #endif
 {		
 	uaecptr pc = m68k_getpc ();
@@ -1295,7 +1295,7 @@ cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
 #ifdef DISDIP
 	longjmp(loop_env, 0);
 #else
-	cpuop_return(CFLOW_TRAP);
+	return;
 #endif
 	}
 
@@ -1304,7 +1304,7 @@ cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
 #ifdef DISDIP
 	longjmp(loop_env, 0);
 #else
-	cpuop_return(CFLOW_TRAP);
+	return;
 #endif
 	}
 
@@ -1318,7 +1318,7 @@ cpuop_rettype REGPARAM2 op_illg (uae_u32 opcode)
 }
 	longjmp(loop_env, 0);
 #else
-	cpuop_return(CFLOW_TRAP);
+	return;
 #endif
 }
 
@@ -1460,7 +1460,7 @@ int m68k_do_specialties(void)
 */
 	if (SPCFLAGS_TEST( SPCFLAG_BRK | SPCFLAG_MODE_CHANGE )) {
 		SPCFLAGS_CLEAR( SPCFLAG_BRK | SPCFLAG_MODE_CHANGE );
-		return CFLOW_EXEC_RETURN;
+		return 1;
 	}
 
 	if (SPCFLAGS_TEST( SPCFLAG_NMI ))

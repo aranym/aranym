@@ -135,11 +135,13 @@ HAVE_I386=no
 HAVE_M68K=no
 HAVE_SPARC=no
 HAVE_POWERPC=no
+HAVE_X86_64=no
 case "$target_cpu" in
   i386* | i486* | i586* | i686* | i786* ) CPU_TYPE=i386 HAVE_I386=yes;;
   m68k* ) CPU_TYPE=m68k HAVE_M68K=yes;;
   sparc* ) CPU_TYPE=sparc HAVE_SPARC=yes;;
   powerpc* ) CPU_TYPE=powerpc HAVE_POWERPC=yes;;
+  x86_64* ) CPU_TYPE=x86_64 HAVE_X86_64=yes;;
   *) CPU_TYPE=`echo $target_cpu | sed -e 's/-/_/g'`;;
 esac
 DEFINES="$DEFINES -DCPU_$CPU_TYPE"
@@ -943,6 +945,13 @@ if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
     JITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $JITSRCS"
 #    JITSRCS="cpufast1_nf.s cpufast2_nf.s cpufast3_nf.s cpufast4_nf.s cpufast5_nf.s cpufast6_nf.s cpufast7_nf.s cpufast8_nf.s $JITSRCS"
     CAN_JIT=yes
+  fi
+elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
+  dnl x86-64 CPU
+  DEFINES="$DEFINES -DUNALIGNED_PROFITABLE"
+  if [[ "x$HAVE_GAS" = "xyes" ]]; then
+    ASM_OPTIMIZATIONS="x86-64"
+    DEFINES="$DEFINES -DX86_64_ASSEMBLY -DOPTIMIZED_FLAGS"
   fi
 elif [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xyes" ]]; then
   dnl SPARC CPU

@@ -847,25 +847,6 @@ static int source_is_imm1_8 (struct instr *i)
     return i->stype == 3;
 }
 
-static const char * cflow_string_of(uae_u32 opcode)
-{
-	const char * cflow_type_str;
-	
-	int cflow_type = table68k[opcode].cflow & ~fl_trap;
-	switch (cflow_type) {
-		case fl_branch:		cflow_type_str = "CFLOW_BRANCH";		break;
-		case fl_jump:		cflow_type_str = "CFLOW_JUMP";			break;
-		case fl_return:		cflow_type_str = "CFLOW_RETURN";		break;
-		default:			cflow_type_str = "CFLOW_NORMAL";
-	}
-	
-	/* Patch M68K_EXEC_RETURN instruction */
-	if (table68k[opcode].mnemo == i_EMULOP_RETURN)
-		cflow_type_str = "CFLOW_EXEC_RETURN";
-	
-	return cflow_type_str;
-}
-
 static void gen_opcode (unsigned long int opcode)
 {
     struct instr *curi = table68k + opcode;
@@ -1360,7 +1341,7 @@ static void gen_opcode (unsigned long int opcode)
 #ifdef DISDIP
 	printf ("\tgoto %s;\n", endlabelstr);
 #else
-	printf ("cpuop_return(%s);\n", cflow_string_of(opcode));
+	printf ("return;\n");
 #endif
 	printf ("didnt_jump_%lx:;\n", opcode);
 	need_endlabel = 1;
@@ -1396,7 +1377,7 @@ static void gen_opcode (unsigned long int opcode)
 #ifdef DISDIP
 	printf ("\tgoto %s;\n", endlabelstr);
 #else
-	printf ("cpuop_return(%s);\n", cflow_string_of(opcode));
+	printf ("return;\n");
 #endif
 	printf ("\t\t}\n");
 	printf ("\t}\n");
@@ -2362,7 +2343,7 @@ static void generate_one_opcode (int rp)
     fprintf (headerfile, "extern cpuop_func op_%lx_%d_ff;\n", opcode, postfix);
     
 #ifdef DISDIP
-    printf ("cpuop_rettype REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opc) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
+    printf ("void REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opc) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
     printf ("\tuae_u32 pc;\n");
     printf ("\tif (initial) {\n");
     printf ("\t\topcode = opc;\n");
@@ -2377,7 +2358,7 @@ static void generate_one_opcode (int rp)
     printf ("\tprintf(\"%%08x: %lx -> %%lx\\n\", m68k_getpc(), opcode);\n", opcode);
 #endif
 #else
-    printf ("cpuop_rettype REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
+    printf ("void REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
 	printf ("\tcpuop_begin();\n");
 #endif
 	/* gb-- The "nf" variant for an instruction that doesn't set the condition
@@ -2529,7 +2510,7 @@ static void generate_one_opcode (int rp)
 #endif
     printf ("\tgoto *op_smalltbl_0_lab[opcode];\n\n");
 #else
-    printf ("\tcpuop_end(%s);\n", cflow_string_of(opcode));
+    printf ("\tcpuop_end();\n");
 #endif
     printf ("}\n");
     opcode_next_clev[rp] = next_cpu_level;

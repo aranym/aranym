@@ -351,7 +351,7 @@ static void build_insn (int insn)
 		if ((unsigned)mnp >= (sizeof(mnemonic)-1)) {
 			mnemonic[sizeof(mnemonic)-1] = '\0';
 			fprintf(stderr, "WTF!!! Instruction '%s' overflow\n", mnemonic);
-			exit(1);
+			abort();
 		}
 	    }
 	    pos++;
