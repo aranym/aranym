@@ -65,7 +65,7 @@ PRIVATE inline void FFPU make_zero_negative(fpu_register & r);
 PRIVATE inline void FFPU make_inf_positive(fpu_register & r);
 PRIVATE inline void FFPU make_inf_negative(fpu_register & r);
 
-PRIVATE inline void FFPU fast_scale(fpu_register & r, int add);
+// MJ PRIVATE inline void FFPU fast_scale(fpu_register & r, int add);
 PRIVATE inline fpu_register FFPU fast_fgetexp(fpu_register const & r);
 
 // May be optimized for particular processors

@@ -167,9 +167,9 @@ PUBLIC void FFPU fpu_dump_flags(void)
 		(get_fpsr() & FPSR_CCB_NAN) != 0);
 }
 
+#if FPU_DEBUG && FPU_DUMP_REGISTERS
 PRIVATE void FFPU dump_registers(const char * str)
 {
-#if FPU_DEBUG && FPU_DUMP_REGISTERS
 	char temp_str[512];
 
 	sprintf(temp_str, "%s: %.04f, %.04f, %.04f, %.04f, %.04f, %.04f, %.04f, %.04f\n",
@@ -179,12 +179,15 @@ PRIVATE void FFPU dump_registers(const char * str)
 		fpu_get_register(6), fpu_get_register(7) );
 	
 	fpu_debug((temp_str));
+#else
+PRIVATE void FFPU dump_registers(const char *)
+{
 #endif
 }
 
+#if FPU_DEBUG && FPU_DUMP_FIRST_BYTES
 PRIVATE void FFPU dump_first_bytes(uae_u8 * buffer, uae_s32 actual)
 {
-#if FPU_DEBUG && FPU_DUMP_FIRST_BYTES
 	char temp_buf1[256], temp_buf2[10];
 	int bytes = sizeof(temp_buf1)/3-1-3;
 	if (actual < bytes)
@@ -198,6 +201,9 @@ PRIVATE void FFPU dump_first_bytes(uae_u8 * buffer, uae_s32 actual)
 	
 	strcat(temp_buf1, "\n");
 	fpu_debug((temp_buf1));
+#else
+	PRIVATE void FFPU dump_first_bytes(uae_u8 *, uae_s32)
+{
 #endif
 }
 
