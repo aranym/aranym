@@ -1,3 +1,8 @@
+2004/08/19 - Xavier
+- uae_cpu/cpu_emulation.h, Unix/cygwin/sigsegv_cygwin.cpp: hwsp and pagehwsp
+  address checking modes support on Cygwin.
+
+
 2004/08/16 - Xavier
 - Unix/cygwin/sigsegv_cygwin.cpp: fixed GCC warnings.
 

@@ -80,18 +80,6 @@ typedef void (*sighandler_t)(int);
 
 /******************************************************************************/
 
-#ifdef NO_NESTED_SIGSEGV
-
-JMP_BUF sigsegv_env;
-
-static void
-atari_bus_fault(void)
-{
-	LONGJMP(excep_env, 2);
-}
-
-#endif /* NO_NESTED_SIGSEGV */
-
 #if (__i386__)
 
 /* instruction jump table */
@@ -883,11 +871,18 @@ buserr:
 }
 
 #ifdef NO_NESTED_SIGSEGV
+
+JMP_BUF sigsegv_env;
+
+static void
+atari_bus_fault(void)
+{
+	LONGJMP(excep_env, 2);
+}
+
 static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultaddr) {
 	if (SETJMP(sigsegv_env) != 0)
 	{
-		in_handler = 0;
-		regs.mmu_fault_addr = faultaddr - FMEMORY;
 		CONTEXT_EIP = (long unsigned int)atari_bus_fault;
 		return;
 	}
