@@ -1,3 +1,9 @@
+2004/07/13 - joy
+- natfeat/ethernet.cpp: ARATAPIF is now found in $PATH again (Standa forgot
+  to remove some of his debugging stuff). Thank for the bug report goes to
+  Clement BENRABAH.
+
+
 2004/07/13 - milan
 - macro BUS_ERROR defined in cpu_emulation.h and documented
 
