@@ -89,7 +89,7 @@
           <td>Serial</td><td>0%</td>
         </tr>
         <tr valign="top">
-          <td>Parallel</td><td>70%</td>
+          <td>Parallel</td><td>90%</td>
         </tr>
         <tr valign="top">
           <td>MIDI</td><td>0%</td>
@@ -106,10 +106,10 @@
           <th bgcolor="#eeeeee" colspan="2" align="left">Operating System</th>
         </tr>
         <tr valign="top">
-          <td>TOS</td><td>required original v4.04 only</td>
+          <td><a href="http://emutos.sf.net/">EmuTOS</a></td><td>included in standard binary distribution</td>
         </tr>
         <tr valign="top">
-          <td>EmuTOS</td><td>latest <a href="http://emutos.sf.net/">release</a> works OK</td>
+          <td>TOS</td><td>original Falcon v4.04 (optional)</td>
         </tr>
         <tr valign="top">
           <td>MagiC</td><td>bootable &amp; working</td>

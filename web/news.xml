@@ -7,6 +7,14 @@
     <text>
       <table>
 
+        <tr><td valign="top">2002/07/20</td>
+            <td>
+              ARAnyM 0.2.0 has been released and you can <a href="download.html">
+              download</a> it at usual place.<br/>
+              The major news in this release are EmuTOS being part of standard binary distribution, GUI runtime configuration (unfinished) and prepared floppy disk image with up-to-date ARAnyM drivers and utilities. Please read the complete NEWS file in the ARAnyM distribution.
+            </td>
+        </tr>
+
         <tr><td valign="top">2002/04/22</td>
             <td>
               ARAnyM 0.1.7 has been released and you can <a href="download.html">
