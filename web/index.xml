@@ -19,7 +19,11 @@
       <p/>
       To create the virtual machine we started a project named ARAnyM in early 2001.
       In some three weeks we have been booting to desktop and since then we work
-      on configuration, new features etc. We are seeking for new developers so if
+      on configuration, new drivers and ports to other operating systems etc.
+      <p/>
+      There are several people working on the project - the file <a href=
+      "http://www.sophics.cz/cgi-bin/cvsweb/aranym/AUTHORS?rev=1&content-type=text/x-cvsweb-markup">
+      AUTHORS</a> lists them. And we are seeking for new developers so if
       you are willing to help us then send a mail to <contact>aranym@sophics.cz</contact>.
       <p/>
       See the <a href="progress.html">Progress</a> and the <a href="news.html">News</a> sections for the
