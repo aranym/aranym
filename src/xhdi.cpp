@@ -46,7 +46,7 @@ uint32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 	if (writing && !disk->xhdiWrite)
 		return (uint32)-36L;	// EACCDN (access denied)
 
-	FILE *f = fopen(disk->path, writing ? "wb" : "rb");
+	FILE *f = fopen(disk->path, writing ? "a+b" : "rb");
 	if (f != NULL) {
 		int size = SECTORSIZE*count;
 		uint8 *hostbuf = Atari2HostAddr(buf);

@@ -3,6 +3,7 @@
 - EmuTOS loading routine display the date when the EmuTOS was built.
 - XHDI support moved to separate xhdi.[ch] file and XHDIDriver class.
   XHReadWrite() implemented. Old DMAread EmulOp is deprecated now.
+- XHReadWrite() writes to disk only if XdhiWrite switch in config file.
 - nearly all compile time warnings removed!
 
 
