@@ -371,7 +371,7 @@ if (using_file == 0)
 #ifdef OS_linux
   if (using_file == 0)
   {
-     ioctl(fd, CDROMEJECT, NULL);
+     if(ioctl(fd, CDROMEJECT) == -1) panicbug("Error by eject");
   }
 #endif
     close(fd);

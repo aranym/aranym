@@ -3,6 +3,11 @@
 
 - address validation in CPU interface
 
+- exceptions.h removed, interface moved to CPU interface, include file in
+  sysdeps.h
+
+- error handling of CD-ROM eject on Linux
+
 
 2002/02/25 - milan
 - fp_extended, fp_single, fp_double -> fpu_extended, fpu_single, fpu_double
