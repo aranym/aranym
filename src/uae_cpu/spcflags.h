@@ -60,7 +60,7 @@ enum {
 };
 
 #define SPCFLAGS_TEST(m) \
-	((regs.spcflags & (m)) != 0)
+	(regs.spcflags & (m))
 
 /* Macro only used in m68k_reset() */
 #define SPCFLAGS_INIT(m) do { \

@@ -612,11 +612,11 @@ void MakeFromSR (void)
 	    }
 	}
 
-    regs.spcflags |= SPCFLAG_INT;
+    SPCFLAGS_SET( SPCFLAG_INT );
     if (regs.t1 || regs.t0)
-	regs.spcflags |= SPCFLAG_TRACE;
+	SPCFLAGS_SET( SPCFLAG_TRACE );
     else
-	regs.spcflags &= ~(SPCFLAG_TRACE/* | SPCFLAG_DOTRACE*/);
+	SPCFLAGS_CLEAR( SPCFLAG_TRACE/* | SPCFLAG_DOTRACE */);
 }
 
 void Exception(int nr, uaecptr oldpc)
@@ -698,7 +698,7 @@ kludge_me_do:
     m68k_setpc (get_long (regs.vbr + 4*nr));
     fill_prefetch_0 ();
     regs.t1 = regs.t0 = regs.m = 0;
-    regs.spcflags &= ~(SPCFLAG_TRACE | SPCFLAG_DOTRACE);
+    SPCFLAGS_CLEAR( SPCFLAG_TRACE | SPCFLAG_DOTRACE );
 }
 
 static void Interrupt(int nr)
@@ -1070,7 +1070,7 @@ void m68k_reset (void)
     SET_CFLG (0);
     SET_VFLG (0);
     SET_NFLG (0);
-    regs.spcflags = 0;
+    SPCFLAGS_INIT( 0 );
     regs.intmask = 7;
     regs.vbr = regs.sfc = regs.dfc = 0;
     /* gb-- moved into {fpp,fpu_x86}.cpp::fpu_init()
@@ -1101,7 +1101,7 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 
 		// Return from Execute68k()?
 		if (opcode == M68K_EXEC_RETURN) {
-			regs.spcflags |= SPCFLAG_BRK;
+			SPCFLAGS_SET( SPCFLAG_BRK );
 			quit_program = 1;
 			return;
 		}
@@ -2771,39 +2771,39 @@ static void do_trace (void)
                && (uae_s16)m68k_dreg(regs, opcode & 7) != 0))
       {
  	    last_trace_ad = m68k_getpc ();
-	    regs.spcflags &= ~SPCFLAG_TRACE;
-	    regs.spcflags |= SPCFLAG_DOTRACE;
+	    SPCFLAGS_CLEAR( SPCFLAG_TRACE );
+	    SPCFLAGS_SET( SPCFLAG_DOTRACE );
 	}
     } else if (regs.t1) {
        last_trace_ad = m68k_getpc ();
-       regs.spcflags &= ~SPCFLAG_TRACE;
-       regs.spcflags |= SPCFLAG_DOTRACE;
+       SPCFLAGS_CLEAR( SPCFLAG_TRACE );
+       SPCFLAGS_SET( SPCFLAG_DOTRACE );
     }
 }
 
 #define SERVE_VBL_MFP(resetStop)							\
 {															\
-	if (regs.spcflags & (SPCFLAG_VBL|SPCFLAG_MFP)) {		\
-		if (regs.spcflags & SPCFLAG_VBL) {					\
+	if (SPCFLAGS_TEST( SPCFLAG_VBL|SPCFLAG_MFP )) {		\
+		if (SPCFLAGS_TEST( SPCFLAG_VBL )) {					\
 			if (4 > regs.intmask) {							\
 				Interrupt(4);								\
 				regs.stopped = 0;							\
-				regs.spcflags &= ~SPCFLAG_VBL;				\
+				SPCFLAGS_CLEAR( SPCFLAG_VBL );				\
 				if (resetStop)								\
-					regs.spcflags &= ~SPCFLAG_STOP;			\
+					SPCFLAGS_CLEAR( SPCFLAG_STOP );			\
 			}												\
 		}													\
-		if (regs.spcflags & SPCFLAG_MFP) {					\
+		if (SPCFLAGS_TEST( SPCFLAG_MFP )) {					\
 			if (6 > regs.intmask) {							\
 				int vector_number = mfp.doInterrupt();		\
 				if (vector_number) {						\
 					MFPInterrupt(vector_number);			\
 					regs.stopped = 0;						\
 					if (resetStop)							\
-						regs.spcflags &= ~SPCFLAG_STOP;		\
+						SPCFLAGS_CLEAR( SPCFLAG_STOP );		\
 				}											\
 				else										\
-					regs.spcflags &= ~SPCFLAG_MFP;			\
+					SPCFLAGS_CLEAR( SPCFLAG_MFP );			\
 			}												\
 		}													\
 	}														\
@@ -2812,14 +2812,14 @@ static void do_trace (void)
 static int do_specialties(void)
 {
 	/*n_spcinsns++;*/
-	if (regs.spcflags & SPCFLAG_DOTRACE) {
+	if (SPCFLAGS_TEST( SPCFLAG_DOTRACE )) {
 		Exception (9,last_trace_ad);
 	}
-	while (regs.spcflags & SPCFLAG_STOP) {
+	while (SPCFLAGS_TEST( SPCFLAG_STOP )) {
 		usleep(1000);	// give unused time slices back to OS
 		SERVE_VBL_MFP(true);
 	}
-	if (regs.spcflags & SPCFLAG_TRACE)
+	if (SPCFLAGS_TEST( SPCFLAG_TRACE ))
 		do_trace ();
 
 	SERVE_VBL_MFP(false);
@@ -2831,8 +2831,8 @@ static int do_specialties(void)
 		regs.spcflags |= SPCFLAG_DOINT;
 	}
 */
-	if (regs.spcflags & (SPCFLAG_BRK | SPCFLAG_MODE_CHANGE)) {
-		regs.spcflags &= ~(SPCFLAG_BRK | SPCFLAG_MODE_CHANGE);
+	if (SPCFLAGS_TEST( SPCFLAG_BRK | SPCFLAG_MODE_CHANGE )) {
+		SPCFLAGS_CLEAR( SPCFLAG_BRK | SPCFLAG_MODE_CHANGE );
 		return 1;
 	}
 
@@ -2890,7 +2890,7 @@ static void m68k_run_1 (void)
 	(*cpufunctbl[opcode])(opcode);
 #endif
 
-	if (regs.spcflags) {
+	if (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {
 	    if (do_specialties())
 		return;
 	}

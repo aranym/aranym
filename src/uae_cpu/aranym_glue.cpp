@@ -129,20 +129,20 @@ void Start680x0(void)
  */
 void TriggerInterrupt(void)
 {
-	regs.spcflags |= SPCFLAG_INT;
+	SPCFLAGS_SET( SPCFLAG_INT );
 }
 
 void TriggerVBL(void)
 {
-	regs.spcflags |= SPCFLAG_VBL;
+	SPCFLAGS_SET( SPCFLAG_VBL );
 }
 
 void TriggerMFP(bool enable)
 {
 	if (enable)
-		regs.spcflags |= SPCFLAG_MFP;
+		SPCFLAGS_SET( SPCFLAG_MFP );
 	else
-		regs.spcflags &= ~SPCFLAG_MFP;
+		SPCFLAGS_CLEAR( SPCFLAG_MFP );
 }
 
 void TriggerNMI(void)

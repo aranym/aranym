@@ -666,7 +666,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			return 0;
 		case 't':
 			if (more_params(&inptr)) m68k_setpc(readhex(&inptr));
-			set_special(SPCFLAG_BRK);
+			SPCFLAGS_SET( SPCFLAG_BRK );
 			return 0;
 		case 'd':
 			if (more_params(&inptr)) daddr = readhex(&inptr);
@@ -733,7 +733,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			skipaddr = nextpc;
 			do_skip = true;
 			irqindebug = true;
-			set_special(SPCFLAG_BRK);
+			SPCFLAGS_SET( SPCFLAG_BRK );
 			if (wasGrabbed) grabMouse(true);
 			return 0;
 		case 'f':
@@ -744,7 +744,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			skipaddr = readhex(&inptr);
 			do_skip = true;
 			irqindebug = true;
-			set_special(SPCFLAG_BRK);
+			SPCFLAGS_SET( SPCFLAG_BRK );
 			if (wasGrabbed) grabMouse(true);
 			return 0;
 		case 'L':
@@ -792,7 +792,7 @@ int ndebug::icanon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uae
 		if (read(0, buffer, sizeof(buffer))) {
 			switch (buffer[0]) {
 				case 't':
-					set_special(SPCFLAG_BRK);
+					SPCFLAGS_SET( SPCFLAG_BRK );
 					fprintf(stderr, "\n");
 					tcsetattr(0, TCSAFLUSH, &savetty);
 					fflush(stderr);
@@ -877,7 +877,7 @@ int ndebug::dm(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr
 			switch (buffer[0]) {
 				case 't':
 					nxmem = maddr;
-					set_special(SPCFLAG_BRK);
+					SPCFLAGS_SET( SPCFLAG_BRK );
 					fprintf(stderr, "\n");
 					tcsetattr(0, TCSAFLUSH, &savetty);
 					fflush(stderr);
@@ -928,7 +928,7 @@ void ndebug::run() {
 	nxmem = 0;
 
 	if (do_skip && (m68k_getpc() != skipaddr)) {
-		set_special(SPCFLAG_BRK);
+		SPCFLAGS_SET( SPCFLAG_BRK );
 		return;
 	}
 

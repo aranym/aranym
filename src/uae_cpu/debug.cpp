@@ -41,7 +41,7 @@ void activate_debugger (void)
     if (debugger_active)
 	return;
     debugger_active = 1;
-    set_special (SPCFLAG_BRK);
+    SPCFLAGS_SET( SPCFLAG_BRK );
     debugging = 1;
     /* use_debugger = 1; */
 }
@@ -230,7 +230,7 @@ void debug (void)
     }
 
     if (do_skip && (m68k_getpc() != skipaddr/* || regs.a[0] != 0x1e558*/)) {
-	set_special (SPCFLAG_BRK);
+	SPCFLAGS_SET( SPCFLAG_BRK );
 	return;
     }
     do_skip = 0;
@@ -358,14 +358,14 @@ void debug (void)
 	 case 't': 
 	    if (more_params (&inptr))
 		m68k_setpc (readhex (&inptr));
-	    set_special (SPCFLAG_BRK);
+	    SPCFLAGS_SET( SPCFLAG_BRK );
 		if (wasGrabbed) grabMouse(true);	// lock keyboard and mouse
 	    return;
 	 case 'z':
 	    skipaddr = nextpc;
 	    do_skip = 1;
 	    irqindebug = true;
-	    set_special (SPCFLAG_BRK);
+	    SPCFLAGS_SET( SPCFLAG_BRK );
 		if (wasGrabbed) grabMouse(true);	// lock keyboard and mouse
 	    return;
 
@@ -373,7 +373,7 @@ void debug (void)
 	    skipaddr = readhex (&inptr);
 	    do_skip = 1;
 	    irqindebug = true;
-	    set_special (SPCFLAG_BRK);
+	    SPCFLAGS_SET( SPCFLAG_BRK );
 	    if (skipaddr == 0xC0DEDBAD) {
 	        trace_same_insn_count = 0;
 		memcpy (trace_insn_copy, do_get_real_address(regs.pcp, true, false), 10);

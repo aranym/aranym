@@ -35,16 +35,6 @@ struct cputbl {
 
 extern void REGPARAM2 op_illg (uae_u32) REGPARAM;
 
-static __inline__ void set_special (uae_u32 x)
-{
-    regs.spcflags |= x;
-}
-
-static __inline__ void unset_special (uae_u32 x)
-{
-    regs.spcflags &= ~x;
-}
-
 #define m68k_dreg(r,num) ((r).regs[(num)])
 #define m68k_areg(r,num) (((r).regs + 8)[(num)])
 
@@ -172,7 +162,7 @@ static __inline__ void m68k_setstopped (int stop)
 {
     regs.stopped = stop;
     if (stop)
-	regs.spcflags |= SPCFLAG_STOP;
+	SPCFLAGS_SET( SPCFLAG_STOP );
 }
 
 extern uae_u32 get_disp_ea_020 (uae_u32 base, uae_u32 dp);
