@@ -9,6 +9,12 @@
 
         <tr><td valign="top">2002/02/12</td>
             <td>
+              Current ARAnyM (in CVS) runs FreeMiNT with <a href="snapshots.html">Memory Protection</a>.<br/>
+            </td>
+        </tr>
+
+        <tr><td valign="top">2002/02/12</td>
+            <td>
               ARAnyM v0.0.21 has just been <a href="download.html">released</a>.<br/>
               New version supports more architectures thanks to better IDE emulation.<br/>
               And we have a new <a href=

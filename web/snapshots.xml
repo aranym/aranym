@@ -5,8 +5,7 @@
   <chapter>
     <title>Screenshots</title>
     <text>
-      We have received first couple of screenshots. They are quite interesting - just see 
-      for yourself:
+      Have a look at ARAnyM running various operating systems and applications:
       <ul>
         <li><a href="images/mint-aniplayer.jpg">FreeMiNT/N.AES desktop running Aniplayer</a> (71kB) </li>
         <li><a href="images/mint-cab.jpg">Crystal Atari Browser</a> (92kB) </li>
@@ -15,6 +14,7 @@
         <li><a href="images/blyp-stguide.png">ST-Guide and Blyp viewing The Atari Compendium HYPertext using 16bit fVDI driver</a> (20kB) </li>
         <li><a href="images/mint-xaaes.png">EasyMiNT installed FreeMiNT, fVDI, XaAES 0.934</a> (14kB) </li>
         <li>EmuTOS <a href="images/emutos1.gif">booting</a> (7kB) and <a href="images/emutos2.gif"> running ParShell </a> (13kB) </li>
+        <li>FreeMiNT running with <a href="images/mmuenabled.png">Memory Protection</a> (13kB)</li>
       </ul>
     </text>
   </chapter>
