@@ -1,3 +1,8 @@
+2002/02/01 - milan
+- the 1st step of rewriting CPU/Memory <-> HW interface, look at
+  cpu_emulation.h
+
+
 2002/02/01 - STanda
 - MiNT aranym.xfs added. This is the preliminary version working with HostOS
   root in u:\nativefs just like stonx.xfs does. The mapping to other folders
