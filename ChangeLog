@@ -15,6 +15,7 @@
 - gui-sdl/dlgMain.cpp: hotkey editor activated.
 
 - parameters.cpp: hotkeys are saved to config file, section [HOTKEYS].
+  Further cleanup. [ARANYMFS] fallback dropped.
 
 
 2005/02/12 - Patrice
