@@ -1,3 +1,8 @@
+2003/05/26 - milan
+- configure.ac, fpu_ieee.cpp: Sparc problem solved, see "2003/04/23 - milan"
+  and GCC bugs #8300 and #9763
+
+
 2003/04/23 - milan
 - configure.ac: Sparc gcc 3.x bug workaround taken from HEAD
 
