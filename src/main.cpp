@@ -209,7 +209,7 @@ static void check_event(void)
 	static bool wasShiftPressed = false;		// for correct emulation of PageUp/Down
 	static bool mouseOut = false;
 
-	if (mouseOut) {
+	if (!fullscreen && mouseOut) {
 		// host mouse moved but the Atari mouse did not => mouse is
 		// probably at the Atari screen border. Ungrab it and warp the host mouse at
 		// the same location so the mouse moves smoothly.
@@ -338,15 +338,17 @@ static void check_event(void)
 				ikbd_send(yrel);
 			}
 
-			// check whether user doesn't try to go out of window (top or left)
-			if ((xrel < 0 && aradata.getAtariMouseX() == 0) ||
-				(yrel < 0 && aradata.getAtariMouseY() == 0))
-				mouseOut = true;
+			if (! fullscreen) {
+				// check whether user doesn't try to go out of window (top or left)
+				if ((xrel < 0 && aradata.getAtariMouseX() == 0) ||
+					(yrel < 0 && aradata.getAtariMouseY() == 0))
+					mouseOut = true;
 
-			// warning - hardcoded values of screen size - stupid
-			if ((xrel > 0 && aradata.getAtariMouseX() >= 639) ||
-				(yrel > 0 && aradata.getAtariMouseY() >= 479))
-				mouseOut = true;
+				// warning - hardcoded values of screen size - stupid
+				if ((xrel > 0 && aradata.getAtariMouseX() >= 639) ||
+					(yrel > 0 && aradata.getAtariMouseY() >= 479))
+					mouseOut = true;
+			}
 		}
 		else if (event.type == SDL_ACTIVEEVENT) {
 			if (event.active.state == SDL_APPMOUSEFOCUS)
@@ -460,7 +462,8 @@ bool InitAll(void)
 	}
 */
 	// warp mouse to center of Atari screen and grab it
-	SDL_WarpMouse(640/2, 480/2);
+	if (! fullscreen)
+		SDL_WarpMouse(640/2, 480/2);
 	grabMouse(true);
 
 	drive_fd[0] = drive_fd[1] = drive_fd[2] = -1;
@@ -471,7 +474,7 @@ bool InitAll(void)
 	if (direct_truecolor) {
 		// Patch TOS (enforce VIDEL VideoRAM at ARANYMVRAMSTART)
 		D(bug("Patching TOS for direct VIDEL output..."));
-#if 0
+#if 1
 		ROMBaseHost[35752] = 0x2e;
 		ROMBaseHost[35753] = 0x3c;
 		ROMBaseHost[35754] = ARANYMVRAMSTART >> 24;
