@@ -73,7 +73,7 @@ ARANYM_SOURCES=${PWD}/aranym
 # A small function used to report errors
 function check_return() {
   if [ $? -ne 0 ] ; then
-    if [ -z $* ] ; then
+    if [ -z "$*" ] ; then
       echo "$0: ERROR" 1>&2
     else
       echo "$0: ERROR: $*" 1>&2

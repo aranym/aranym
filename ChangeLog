@@ -1,3 +1,7 @@
+2004/01/07 - Xavier
+- doc/build-cygwin.sh: Corrected a minor bug in error handling.
+
+
 * tagged as ARANYM_0_8_5_BETA
 
 2004/01/07 - joy
