@@ -1,6 +1,6 @@
 %define name	aranym
-%define ver	0.1.7
-%define rel	3
+%define ver	0.2.0
+%define rel	0
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
 %define group	Console/Emulators
@@ -72,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/atari/sound/zmagxsnd.prg.bz2
 
 %changelog
+* Sat Jul 20 2002 Petr Stehlik <pstehlik@sophics.cz>
+Version increased.
+
 * Thu Jun 06 2002 Petr Stehlik <pstehlik@sophics.cz>
 Install path changed from /usr/local to /usr
 
