@@ -85,38 +85,42 @@ extern uintptr MEMBaseDiff;
 
 #define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 
+#ifdef NO_MEMORY_CHECK
+#define check_ram_boundary(a, b, c)
+#else
 /*
- * "minus" is the length of memory access-1, i.e. 0 for byte, 1 for word and 3 for long
+ * "size" is the size of the memory access (byte = 1, word = 2, long = 4)
  */
-static __inline__ void check_ram_boundary(uaecptr addr, int minus, bool write = false)
+static __inline__ void check_ram_boundary(uaecptr addr, int size, bool write)
 {
 	if (write) {
-		if (addr >= 8 && addr < (STRAM_END-minus))	// first two longwords are ROM
+		if (addr >= 8 && addr <= (STRAM_END - size))	// first two longwords are ROM
 			return;
 	}
 	else {
-		if (addr < (ROM_END-minus))
+		if (addr <= (ROM_END - size))
 			return;
 	}
 
-	if (addr >= FastRAM_BEGIN && addr < (FastRAM_BEGIN+FastRAMSize-minus))	// FastRAM
+	if (addr >= FastRAM_BEGIN && addr <= (FastRAM_BEGIN + FastRAMSize - size))	// FastRAM
 		return;
 
 #ifdef DIRECT_TRUECOLOR
 	if (bx_options.video.direct_truecolor) {		// VideoRAM
-		if (addr >= ARANYMVRAMSTART && addr < (ARANYMVRAMSTART + ARANYMVRAMSIZE-minus))
+		if (addr >= ARANYMVRAMSTART && addr <= (ARANYMVRAMSTART + ARANYMVRAMSIZE - size))
 			return;
 	}
 #endif
 	// printf("BUS ERROR %s at $%x\n", (write ? "writting" : "reading"), addr);
 	BUS_ERROR;
 }
+#endif /* NO_MEMORY_CHECK */
 
 static __inline__ uae_u32 get_long_direct(uaecptr addr)
 {
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
-    check_ram_boundary(addr, 3);
+    check_ram_boundary(addr, 4, false);
     uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
     return do_get_mem_long(m);
 }
@@ -125,7 +129,7 @@ static __inline__ uae_u32 get_word_direct(uaecptr addr)
 {
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_w(addr);
-    check_ram_boundary(addr, 1);
+    check_ram_boundary(addr, 2, false);
     uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
     return do_get_mem_word(m);
 }
@@ -134,7 +138,7 @@ static __inline__ uae_u32 get_byte_direct(uaecptr addr)
 {
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) return HWget_b(addr);
-    check_ram_boundary(addr, 0);
+    check_ram_boundary(addr, 1, false);
     uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
     return do_get_mem_byte(m);
 }
@@ -146,7 +150,7 @@ static __inline__ void put_long_direct(uaecptr addr, uae_u32 l)
         HWput_l(addr, l);
         return;
     } 
-    check_ram_boundary(addr, 3, true);
+    check_ram_boundary(addr, 4, true);
     uae_u32 * const m = (uae_u32 *)do_get_real_address_direct(addr);
     do_put_mem_long(m, l);
 }
@@ -158,7 +162,7 @@ static __inline__ void put_word_direct(uaecptr addr, uae_u32 w)
         HWput_w(addr, w);
         return;
     }
-    check_ram_boundary(addr, 1, true);
+    check_ram_boundary(addr, 2, true);
     uae_u16 * const m = (uae_u16 *)do_get_real_address_direct(addr);
     do_put_mem_word(m, w);
 }
@@ -170,7 +174,7 @@ static __inline__ void put_byte_direct(uaecptr addr, uae_u32 b)
         HWput_b(addr, b);
         return;
     }
-    check_ram_boundary(addr, 0, true);
+    check_ram_boundary(addr, 1, true);
     uae_u8 * const m = (uae_u8 *)do_get_real_address_direct(addr);
     do_put_mem_byte(m, b);
 }

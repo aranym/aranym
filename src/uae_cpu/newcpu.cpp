@@ -2919,7 +2919,7 @@ static void m68k_run_1 (void)
 	    if (++firsthist == MAX_HIST) firsthist = 0;
 	}
 #endif
-	check_ram_boundary(regs.pcp, 1);
+	check_ram_boundary(regs.pcp, 2, false);
 	opcode = GET_OPCODE;
 
 #ifdef X86_ASSEMBLY
