@@ -702,6 +702,13 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
         AC_MSG_ERROR([Sorry, extended segfault handler supported on your platform])
       fi
       ;;
+    openbsd*)
+      if [[ "x$HAVE_I386" = "xyes" ]]; then
+        SYSSRCS="$SYSSRCS xbsd/sigsegv_xbsd.cpp"
+      else
+        AC_MSG_ERROR([Sorry, extended segfault handler supported on your platform])
+      fi
+      ;;
     *)
       AC_MSG_ERROR([Sorry, extended segfault handler supported on your platform])
       ;;
@@ -759,6 +766,11 @@ else
       ;;
     fixed)
       if [[ "x$OS_TYPE" = "xlinux" -a "x$HAVE_I386" ]]; then
+        ADDRESSING_MODE="fixed (0x51000000)"
+        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
+        break
+      fi
+      if [[ "x$OS_TYPE" = "xopenbsd" -a "x$HAVE_I386" ]]; then
         ADDRESSING_MODE="fixed (0x51000000)"
         DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
         break

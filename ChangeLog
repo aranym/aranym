@@ -8,6 +8,9 @@
 
 - for OpenBSD dirent.h again in sysdeps.h
 
+- preversion of JIT compiler support for OpenBSD/i386, later I will enable
+  it also for NetBSD/i38 and FreeBSD/i386
+
 
 2002/10/01 - patrice
 - ikbd: Joystick support bugfixed.
