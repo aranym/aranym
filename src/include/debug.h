@@ -72,4 +72,10 @@ extern void deactivate_debugger(void);
 #define D(x) ;
 #endif
 
+#if DEBUG > 1
+#define D2(x) (x);
+#else
+#define D2(x) ;
+#endif
+
 #endif
