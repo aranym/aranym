@@ -91,6 +91,8 @@ static struct option const long_options[] =
 #define TOS_FILENAME		"ROM"
 #define EMUTOS_FILENAME		"etos512k.img"
 
+char *program_name;		// set by main()
+
 bool startupGUI = false;
 
 bool boot_emutos = false;
@@ -553,7 +555,7 @@ void presave_nfcdroms() {
 
 /*************************************************************************/
 void usage (int status) {
-  printf ("Usage: aranym [OPTIONS]\n");
+  printf ("Usage: %s [OPTIONS]\n", program_name);
   printf ("\
 Options:\n\
   -a, --floppy NAME          floppy image file NAME\n\

@@ -237,6 +237,9 @@ int main(int argc, char **argv)
 	// display version string on console (help when users provide debug info)
 	infoprint("%s", VERSION_STRING);
 
+	// remember program name
+	program_name = argv[0];
+
 	// parse command line switches
 	if (!decode_switches(stderr, argc, argv))
 		exit(-1);

@@ -1,3 +1,7 @@
+2004/01/05 - joy
+- main_unix.cpp, parameters.cpp: 'program_name' is back (cygwin needs it)
+
+
 2003/01/04 - STanda
 - fvdidrv:
    * NF API interface polished (made with a use of the enum {} like
