@@ -77,8 +77,10 @@ extern "C" {
 ExtFs::ExtFs()
 {
 	// first initialize the drive array to NULLs
-	for( char i='A'; i<='Z'; i++ )
-		install( i, NULL, false );
+	for(char i=0; i<'Z'-'A'+1; i++) {
+		drives[i].rootPath = NULL;
+		drives[i].currPath = NULL;
+	}
 }
 
 ExtFs::~ExtFs()
@@ -127,11 +129,6 @@ void ExtFs::install( const char driveSign, const char* rootPath, bool halfSensit
 				  driveNo + 'A',
 				  rootPath ? rootPath : "null",
 				  halfSensitive ? "halfSensitive" : "full"));
-	}
-	else {
-		// do initialize to NULL (better than an undefined value like before)
-		drives[driveNo].rootPath = NULL;
-		drives[driveNo].currPath = NULL;
 	}
 }
 
@@ -2680,6 +2677,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.65  2003/11/29 00:30:20  joy
+ * extfs drives initialized
+ *
  * Revision 1.64  2003/04/08 10:26:42  joy
  * merging changes from 0_8_0 branch
  *
