@@ -222,7 +222,6 @@ extern bool boot_lilo;
 void usage(int);
 extern bool check_cfg();
 extern bool decode_switches(FILE *, int, char **);
-extern int saveSettings(const char *);
 extern char *getConfFilename(const char *file, char *buffer, unsigned int bufsize);
 extern char *getDataFilename(const char *file, char *buffer, unsigned int bufsize);
 char *addFilename(char *buffer, const char *file, unsigned int bufsize);
@@ -231,7 +230,8 @@ char *addFilename(char *buffer, const char *file, unsigned int bufsize);
 char *getConfFolder(char *buffer, unsigned int bufsize);
 char *getDataFolder(char *buffer, unsigned int bufsize);
 
-extern bool loadSettings();
-extern bool saveSettings();
+extern const char *getConfigFile();
+extern bool loadSettings(const char *);
+extern bool saveSettings(const char *);
 
 #endif

@@ -851,14 +851,14 @@ static int process_config(FILE *f, const char *filename, struct Config_Tag *conf
 	return status;
 }
 
-static void decode_ini_file(FILE *f, const char *rcfile)
+static bool decode_ini_file(FILE *f, const char *rcfile)
 {
 	// Does the config exist?
 	struct stat buf;
 	if (stat(rcfile, &buf) == -1) {
 		fprintf(f, "Config file '%s' not found.\nThe config file is created with default values. Edit it to suit your needs.\n", rcfile);
 		saveConfigFile = true;
-		return;
+		return false;
 	}
 
 	fprintf(f, "Using config file: '%s'\n", rcfile);
@@ -894,14 +894,22 @@ static void decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, lilo_conf, "[LILO]", true);
 	process_config(f, rcfile, midi_conf, "[MIDI]", true);
 	process_config(f, rcfile, nfcdroms_conf, "[CDROMS]", true);
+
+	return true;
 }
 
-int saveSettings(const char *fs)
+bool loadSettings(const char *cfg_file) {
+	return decode_ini_file(stderr, cfg_file);
+}
+
+bool saveSettings(const char *fs)
 {
 	presave_cfg();
 
-	if (update_config(fs, global_conf, "[GLOBAL]") < 0)
+	if (update_config(fs, global_conf, "[GLOBAL]") < 0) {
 		fprintf(stderr, "Error while writing the '%s' config file.\n", fs);
+		return false;
+	}
 	update_config(fs, startup_conf, "[STARTUP]");
 #ifdef USE_JIT
 	update_config(fs, jit_conf, "[JIT]");
@@ -928,7 +936,7 @@ int saveSettings(const char *fs)
 	update_config(fs, midi_conf, "[MIDI]");
 	update_config(fs, nfcdroms_conf, "[CDROMS]");
 
-	return 0;
+	return true;
 }
 
 bool check_cfg()
@@ -968,5 +976,6 @@ bool decode_switches(FILE *f, int argc, char **argv)
 	return check_cfg();
 }
 
-bool loadSettings() { return false; }
-bool saveSettings() { return saveSettings(config_file); }
+const char *getConfigFile() {
+	return config_file;
+}

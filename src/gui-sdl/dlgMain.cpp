@@ -1,5 +1,6 @@
 #include "sysdeps.h"
 #include "sdlgui.h"
+#include "file.h"
 #include "parameters.h"		// load/saveSettings()
 
 #define Screen_Save()		{ hostScreen.lock(); hostScreen.saveBackground(); hostScreen.unlock(); }
@@ -57,6 +58,30 @@ extern void Dialog_AboutDlg();
 extern void Dialog_DiscDlg();
 extern void Dialog_KeyboardDlg();
 
+static char path[MAX_FILENAME_LENGTH]="";
+
+void LoadSettings()
+{
+	if (strlen(path) == 0) {
+		strncpy(path, getConfigFile(), sizeof(path));
+		path[sizeof(path)-1] = '\0';
+	}
+	if (SDLGui_FileSelect(path, false)) {
+		loadSettings(path);
+	}
+}
+
+void SaveSettings()
+{
+	if (strlen(path) == 0) {
+		strncpy(path, getConfigFile(), sizeof(path));
+		path[sizeof(path)-1] = '\0';
+	}
+	if (SDLGui_FileSelect(path, true)) {
+		saveSettings(path);
+	}
+}
+
 int Dialog_MainDlg()
 {
   int retbut;
@@ -90,11 +115,11 @@ int Dialog_MainDlg()
         break;
 
       case MAINDLG_LOAD:
-        loadSettings();
+        LoadSettings();
       	break;
 
       case MAINDLG_SAVE:
-        saveSettings();
+        SaveSettings();
       	break;
 
       case MAINDLG_REBOOT:

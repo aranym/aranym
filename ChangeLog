@@ -8,7 +8,10 @@
 - gui-sdl/sdlgui.cpp: IPC fix: keyboard and mouse events decoded from user
   events.
 
-- gui-sdl/dlgMain.cpp: missing initialization of reboot/shutdown flags
+- gui-sdl/dlgMain.cpp: missing initialization of reboot/shutdown flags.
+  Loading/saving of config file with editable filename implemented.
+
+- parameters.cpp,h: loading and saving of config file from GUI works now.
 
 
 2003/12/28 AM - joy
