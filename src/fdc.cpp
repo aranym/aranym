@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define FDC_DEBUG 1
+#define FDC_DEBUG 0
 
 struct disk_geom
 {
@@ -29,7 +29,6 @@ extern int drive_fd[];
 
 int dma_mode,dma_scr,dma_car,dma_sr;
 int fdc_command,fdc_track,fdc_sector,fdc_data,fdc_int,fdc_status;
-int snd_porta;
 
 void init_fdc(void)
 {
@@ -67,8 +66,11 @@ void fdc_exec_command (void)
 
 	address = (HWget_b(0xff8609)<<16)|(HWget_b(0xff860b)<<8)
 			|HWget_b(0xff860d);
-	fprintf(stderr, "FDC DMA virtual address = %06x\n", address);
 	buffer=do_get_real_address(address, true, false);	//?? Je to OK?
+	int snd_porta = getFloppyStats();
+#if FDC_DEBUG
+	fprintf(stderr, "FDC DMA virtual address = %06x, physical = %08x, snd = %d\n", address, buffer, snd_porta);
+#endif
 	sides=(~snd_porta)&1;
 	d=(~snd_porta)&6;
 	switch(d)
@@ -164,9 +166,9 @@ void fdc_exec_command (void)
 						if (count==read(drive_fd[d], buffer, count))
 						{
 							address += count;
-							HWput_b(0xfff8609, address>>16);
-							HWput_b(0xfff860b, address>>8);
-							HWput_b(0xfff860d, address);
+							HWput_b(0xff8609, address>>16);
+							HWput_b(0xff860b, address>>8);
+							HWput_b(0xff860d, address);
 							dma_scr=0;
 							dma_sr=1;
 							break;
@@ -186,9 +188,9 @@ void fdc_exec_command (void)
 						if (count==read(drive_fd[d], buffer, count))
 						{
 							address += count;
-							HWput_b(0xfff8609, address>>16);
-							HWput_b(0xfff860b, address>>8);
-							HWput_b(0xfff860d, address);
+							HWput_b(0xff8609, address>>16);
+							HWput_b(0xff860b, address>>8);
+							HWput_b(0xff860d, address);
 							dma_scr=0;
 							dma_sr=1;
 							fdc_sector += dma_scr; /* *(512/disk[d].secsize);*/
@@ -205,9 +207,9 @@ void fdc_exec_command (void)
 						if (count==write(drive_fd[d], buffer, count))
 						{
 							address += count;
-							HWput_b(0xfff8609, address>>16);
-							HWput_b(0xfff860b, address>>8);
-							HWput_b(0xfff860d, address);
+							HWput_b(0xff8609, address>>16);
+							HWput_b(0xff860b, address>>8);
+							HWput_b(0xff860d, address);
 							dma_scr=0;
 							dma_sr=1;
 							break;
@@ -223,9 +225,9 @@ void fdc_exec_command (void)
 						if (count==write(drive_fd[d], buffer, count))
 						{
 							address += count;
-							HWput_b(0xfff8609, address>>16);
-							HWput_b(0xfff860b, address>>8);
-							HWput_b(0xfff860d, address);
+							HWput_b(0xff8609, address>>16);
+							HWput_b(0xff860b, address>>8);
+							HWput_b(0xff860d, address);
 							dma_scr=0;
 							dma_sr=1;
 							fdc_sector += dma_scr; /* *(512/disk[d].secsize);*/
