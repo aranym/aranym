@@ -12,7 +12,7 @@
       <p/>
       We modeled the virtual machine after the most advanced Atari
       computer equipped with the latest hardware extensions - that is Falcon030
-      with Afterburner040 (bringing the CPU to MC68040) and a graphics card. But we don't
+      with Afterburner040 (bringing the CPU to MC68040) and a graphics card. But we didn't
       stop there - the virtual machine will be extended to allow developing new powerful
       TOS/GEM applications and will become the new platform for all current and previous
       Atari users.
@@ -22,7 +22,7 @@
       on configuration, new drivers and ports to other operating systems etc.
       <p/>
       There are several people working on the project - the file <a href=
-      "http://www.sophics.cz/cgi-bin/cvsweb/aranym/AUTHORS?rev=1&content-type=text/x-cvsweb-markup">
+      "http://www.sophics.cz/cgi-bin/cvsweb/aranym/AUTHORS?rev=1&amp;content-type=text/x-cvsweb-markup">
       AUTHORS</a> lists them. And we are seeking for new developers so if
       you are willing to help us then send a mail to <contact>aranym@sophics.cz</contact>.
       <p/>
@@ -31,7 +31,9 @@
       <p/>
       Feel free to send comments or questions to <contact>aranym@sophics.cz</contact>.
 
-      <br/><br/><counter/>
+      <br/><br/>
+      <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=41106" width="88" height="31" border="0" alt="SourceForge Logo" align="right"/></a>
+      <counter/>
     </text>
   </chapter>
 </document>
