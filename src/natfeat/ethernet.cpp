@@ -85,12 +85,13 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			ret = INTLEVEL;
 			break;
 
-		case XIF_GETMAC:	// what is the MAC address?
+		case XIF_GET_MAC:	// what is the MAC address?
 			D(bug("Ethernet: getHWddr"));
 			/* store MAC address to provided buffer */
 			{
-				memptr buf_ptr = getParameter(0);	// destination buffer
-				uint32 buf_size = getParameter(1);	// buffer size
+				/* int ethX = getParameter(0); */
+				memptr buf_ptr = getParameter(1);	// destination buffer
+				uint32 buf_size = getParameter(2);	// buffer size
 
 				if (! ValidAddr(buf_ptr, true, buf_size))
 					BUS_ERROR(buf_ptr);
@@ -112,19 +113,23 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 			break;
 		case XIF_START:
-			startThread();
+			startThread( getParameter(0) /* ethX */);
 			break;
 		case XIF_STOP:
-			stopThread();
+			stopThread( getParameter(0) /* ethX */);
 			break;
 		case XIF_READLENGTH:
-			ret = readPacketLength( 0/* getParameter(0) *//* nif */ );
+			ret = readPacketLength( getParameter(0) /* ethX */);
 			break;
 		case XIF_READBLOCK:
-			readPacket( getParameter(0) /* buff */, getParameter(1) /* len */ );
+			readPacket( getParameter(0) /* ethX */,
+						getParameter(1) /* buff */,
+						getParameter(2) /* len */ );
 			break;
 		case XIF_WRITEBLOCK:
-			sendPacket( getParameter(0) /* buff */, getParameter(1) /* len */ );
+			sendPacket( getParameter(0) /* ethX */,
+						getParameter(1) /* buff */,
+						getParameter(2) /* len */ );
 			break;
 
 		case XIF_GET_IPHOST:
@@ -146,8 +151,8 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 int ETHERNETDriver::get_params(const char *text)
 {
-	memptr name_ptr = getParameter(0);
-	uint32 name_maxlen = getParameter(1);
+	memptr name_ptr = getParameter(1);
+	uint32 name_maxlen = getParameter(2);
 
 	if (! ValidAddr(name_ptr, true, name_maxlen))
 		BUS_ERROR(name_ptr);
@@ -159,16 +164,16 @@ int ETHERNETDriver::get_params(const char *text)
 }
 
 
-int32 ETHERNETDriver::readPacketLength(memptr nif)
+int32 ETHERNETDriver::readPacketLength(int ethX)
 {
-	return packet_length;
+	return packet_length; /* packet_length[ethX] */
 }
 
 /*
  *  ETHERNETDriver ReadPacket routine
  */
 
-void ETHERNETDriver::readPacket(memptr buffer, uint32 len)
+void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 {
 	D(bug("Ethernet: ReadPacket dest %08lx, len %08lx", buffer, len));
 	Host2Atari_memcpy(buffer, packet, packet_length > 1514 ? 1514 : packet_length );
@@ -179,7 +184,7 @@ void ETHERNETDriver::readPacket(memptr buffer, uint32 len)
  *  ETHERNETDriver writePacket routine
  */
 
-void ETHERNETDriver::sendPacket(memptr buffer, uint32 len)
+void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
 {
 	uint8 packetToWrite[1516];
 
@@ -208,7 +213,6 @@ bool ETHERNETDriver::init(void)
 {
 	// int nonblock = 1;
 	char devName[128]="/dev/"TAP_DEVICE;
-	bool result = false;
 
 	D(bug("Ethernet: init"));
 
@@ -235,36 +239,36 @@ bool ETHERNETDriver::init(void)
 		};
 		int result;
 		result = execvp( TAP_INIT, args );
-		D(bug("execvp returns with %d", errno));
 		::exit(result);
 	}
+
 	D(bug("waiting for "TAP_INIT));
 	int status;
-	wait3(&status,WNOHANG,NULL);
+	waitpid(pid, &status, 0);
+	bool failed = true;
 	if (WIFEXITED(status)) {
 		if (WEXITSTATUS(status)) {
 			panicbug(TAP_INIT" failed (code %d).", WEXITSTATUS(status));
-			return false;
 		}
 		else {
-			result = true;
+			failed = false;
 			D(bug(TAP_INIT" initialized OK"));
 		}
 	} else {
-		fd = -1;
 		D(bug(TAP_INIT"'s fork/exec/waitpid failed badly"));
 	}
 
-	// Close /dev/net/tun device
-	if (fd >= 0) {
+	// Close /dev/net/tun device if exec failed
+	if (failed) {
 		close(fd);
 		fd = -1;
+		return false;
 	}
 
 	// Set nonblocking I/O
 	//ioctl(fd, FIONBIO, &nonblock);
 
-	return result;
+	return true;
 }
 
 
@@ -276,11 +280,13 @@ void ETHERNETDriver::exit(void)
 	D(bug("Ethernet: exit"));
 
 	// Stop reception thread
-	stopThread();
+	stopThread(0 /* ethX */);
 
 	// Close /dev/net/tun device
-	if (fd > 0)
+	if (fd > 0) {
 		close(fd);
+		fd = -1;
+	}
 }
 
 
@@ -288,9 +294,9 @@ void ETHERNETDriver::exit(void)
 /*
  *  Start packet reception thread
  */
-bool ETHERNETDriver::startThread(void)
+bool ETHERNETDriver::startThread(int ethX)
 {
-	if (!handlingThread && fd>=0) {
+	if (fd > 0 && !handlingThread) {
 		D(bug("Ethernet: Start thread"));
 
 		if ((intAck = SDL_CreateSemaphore(0)) == NULL) {
@@ -311,7 +317,7 @@ bool ETHERNETDriver::startThread(void)
 /*
  *  Stop packet reception thread
  */
-void ETHERNETDriver::stopThread(void)
+void ETHERNETDriver::stopThread(int ethX)
 {
 	if (handlingThread) {
 		D(bug("Ethernet: Stop thread"));
