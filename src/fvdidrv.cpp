@@ -958,7 +958,7 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 						break;
 					case 4:
 						if (!((theWord >> (15 - (i & 0xf))) & 1))
-							WriteInt16(destAddress + offset, fgColor);
+							WriteInt16(destAddress + offset, bgColor);
 						break;
 					}
 				}
@@ -990,7 +990,7 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 						break;
 					case 4:
 						if (!((theWord >> (15 - (i & 0xf))) & 1))
-							put_dtriplet(destAddress + offset, fgColor);
+							put_dtriplet(destAddress + offset, bgColor);
 						break;
 					}
 				}
@@ -1022,7 +1022,7 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 						break;
 					case 4:
 						if (!((theWord >> (15 - (i & 0xf))) & 1))
-							WriteInt32(destAddress + offset, fgColor);
+							WriteInt32(destAddress + offset, bgColor);
 						break;
 					}
 				}
@@ -1076,7 +1076,7 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 								break;
 							case 4:
 								if (!((theWord >> (15 - (i & 0xf))) & 1))
-									color[i&0xf] = fgColor;
+									color[i&0xf] = bgColor;
 								break;
 						}
 					}
@@ -1120,7 +1120,7 @@ int FVDIDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr de
 					break;
 				case 4:
 					if (!((theWord >> (15 - (i & 0xf))) & 1))
-						hostScreen.putPixel(dx + i - sx, dy + j, fgColor);
+						hostScreen.putPixel(dx + i - sx, dy + j, bgColor);
 					break;
 			}
 		}
@@ -2131,6 +2131,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.50  2003/02/19 20:02:35  standa
+ * Small bugfix in nonbitplane modes.
+ *
  * Revision 1.49  2003/02/19 19:39:38  standa
  * SDL surface is now in TOS colors internally for bitplane modes. This
  * allows much simpler blits and expands.
