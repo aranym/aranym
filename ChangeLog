@@ -1,3 +1,12 @@
+2002/07/18 - joy
+- DSP host code is disabled when DSP_EMULATION is not defined. This was
+  required to get Alt+Ctrl+Del warm boot working again (there must be a bug
+  in current DSP emulation).
+
+- trying to enforce releasing the Alt+Ctrl keys after Alt+Ctrl+Esc combo
+  that causes ARAnyM to drop the mouse/keyboard exclusive control.
+
+
 2002/07/16 - joy
 - fixed pretty scary bug in yamaha.cpp. As a direct result PARCP started 
   working reliably.
