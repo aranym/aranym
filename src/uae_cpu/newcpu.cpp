@@ -1216,7 +1216,7 @@ void m68k_emulop(uae_u32 opcode)
 
 void NatFea(uae_u32 opcode, M68kRegisters *r)
 {
-	fprintf(stderr, "NatFea!\n");
+	D(bug("NatFea at PC=$%x", regs.pc);
 	memptr stack = r->a[7] + 4;	/* skip return address */
 	switch(opcode & 0xff) {
 		case 1: r->d[0] = nf_get_id(stack); break;
