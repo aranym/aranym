@@ -89,6 +89,9 @@
 /* Define if you want to use FreeBSD's imitation of O_SYNC */
 #undef HAVE_O_FSYNC
 
+/* Define if you want to use ethernet card emulation */
+#undef ETHERNET_SUPPORT
+
 
 /* Leave that blank line there!!  Autoheader needs it.
    If you're adding to this file, keep in mind:

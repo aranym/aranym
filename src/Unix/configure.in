@@ -517,7 +517,7 @@ fi
 
 dnl Ethernet card emulation
 if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
-    AC_DEFINE(ETHERNETSUPPORT)
+    AC_DEFINE(ETHERNET_SUPPORT)
     SYSSRCS="$SYSSRCS ../ether.cpp ether_unix.cpp"
 fi
 
