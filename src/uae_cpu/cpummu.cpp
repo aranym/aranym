@@ -740,7 +740,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 	} else if ((opcode & 0x0FD8) == 0x548) {
 		int write, regno;
 		regno = opcode & 7;
-		write = opcode & 32;
+		write = (opcode & 32) == 0;
 		D(bug("PTEST%c (A%d) %08x DFC=%d", write ? 'W' : 'R', regno, m68k_areg(regs, regno), regs.dfc));
 		mmu_set_mmusr(0);
 		mmu_translate(m68k_areg(regs, regno), regs.dfc, write, m68k_getpc(), sz_byte, 1); 
