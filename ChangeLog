@@ -1,3 +1,8 @@
+2001/12/26 - joy (tagged as ARANYM_0_0_14)
+- handling of MFP interrupts moved from CPU to MFP module
+- checking for VBL and MFP joined in one 'if' - another nice speedup (33k5 now)
+
+
 2001/12/25 - joy (tagged as ARANYM_0_0_13)
 - ACIA IRQs are not buffered (like TimerC IRQs are) - it was causing bad
   keyboard&mouse lockups. Apparently TOS can read several scancodes from IKBD
@@ -31,7 +36,7 @@
   2 for a word access and 4 for a long (doubleword) access.
 
 - you can define NO_MEMORY_CHECK in memory.h to see the original
-  speed of old unsafe, often crashing ARAnyM (Dhry: 27k -> 34k)
+  speed of old unsafe, often crashing ARAnyM (Dhry: 27k -> 31k)
 
 
 2001/12/17 - joy
