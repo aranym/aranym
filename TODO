@@ -98,3 +98,6 @@ that particular programmer but rather who is author of the idea :-)
 - patrice: rework dsp thread synchronization. It seems it may hang sometimes.
 
 - patrice: full automake/autoconf support.
+
+- patrice: put needed Linux kernel include files to compile Lilo support,
+           without needing to unpack the huge kernel archive.
