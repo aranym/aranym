@@ -51,7 +51,7 @@ static void mmu_dump_ttr(const char * label, uae_u32 ttr)
 		  ));
 }
 
-extern void mmu_make_transparent_region(uaecptr baseaddr, uae_u32 size, int datamode)
+void mmu_make_transparent_region(uaecptr baseaddr, uae_u32 size, int datamode)
 {
 	uae_u32 * ttr;
 	uae_u32 * ttr0 = datamode ? &regs.dtt0 : &regs.itt0;
@@ -101,7 +101,7 @@ static inline int mmu_match_ttr(uae_u32 ttr, uaecptr addr, int write, int super,
 	return TTR_NO_MATCH;
 }
 
-struct mmu_atc_line atc[64];
+struct mmu_atc_line atc[128];
 static int atc_rand = 0;
 static int atc_last_hit = -1;
 
@@ -229,7 +229,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 void mmu_dump_atc(void)
 {
 	int i;
-	for (i = 0; i < 64; i++)	{
+	for (i = 0; i < 128; i++)	{
 		if (!atc[i].v)
 			continue;
 		D(bug("ATC[%02d] G=%d S=%d CM=%d M=%d W=%d R=%d FC2=%d log=%08x --> phys=%08x",
@@ -347,6 +347,10 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, uaecptr pc, 
 		page_frame = theaddr & 0xfffff000;
 		atc_sel = ((theaddr & 0xf000) >> 12) & 0xf;
 	}
+	if (datamode) atc_sel += 64;
+
+	if (test & MMU_TEST_FORCE_TABLE_SEARCH)
+		goto table_search;
 // check_atc:
 	
 	atc_rand++;	/* for random replacement */
@@ -368,9 +372,6 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, uaecptr pc, 
 			break;
 		atc_index = -1;
 	}
-
-	if (test & MMU_TEST_FORCE_TABLE_SEARCH)
-		goto table_search;
 
 	if (atc_index != -1)	{
 atc_matched:
@@ -637,7 +638,14 @@ bus_err:
 #endif
 
 	ssw |= fc & 7; /* Copy TM */
-	ssw |= size << 5;
+	switch (size) {
+	case sz_byte:
+		ssw |= 1 << 5;
+		break;
+	case sz_word:
+		ssw |= 2 << 5;
+		break;
+	}
 
 	regs.mmu_fault_addr = theaddr;
 	regs.mmu_fslw = fslw;
@@ -678,6 +686,118 @@ make_non_resident_atc:
 	goto bus_err;
 }
 
+uae_u32 mmu_get_unaligned (uaecptr addr, int fc, int size)
+{
+	uaecptr physaddr;
+	uaecptr pc = m68k_getpc();
+	int size1 = size - (addr & (size - 1));
+	uae_u32 result;
+	JMP_BUF excep_env_old;
+
+	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
+	int prb = SETJMP(excep_env);
+	if (prb != 0) {
+		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+		regs.mmu_fault_addr = addr;
+		regs.mmu_ssw = (regs.mmu_ssw & ~(3 << 5)) | ((size == 2 ? sz_word : sz_long) << 5);
+		LONGJMP(excep_env, prb);
+	}
+	physaddr = mmu_translate(addr, fc, 0, pc, size1 == 1 ? sz_byte : sz_word, 0);
+	switch (size1) {
+	case 1:
+		result = phys_get_byte(physaddr);
+		break;
+	case 2:
+		result = phys_get_word (physaddr);
+		break;
+	default:
+		result = (uae_u32)phys_get_byte (physaddr) << 16;
+		result |= phys_get_word (physaddr + 1);
+		break;
+	}
+	prb = SETJMP(excep_env);
+	if (prb != 0) {
+		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+		regs.mmu_fault_addr = addr;
+		regs.mmu_ssw = (regs.mmu_ssw & ~(3 << 5)) | ((size == 2 ? sz_word : sz_long) << 5);
+		regs.mmu_ssw |= (1 << 11);
+		LONGJMP(excep_env, prb);
+	}
+	physaddr = mmu_translate(addr, fc, 0, pc, (size - size1) == 1 ? sz_byte : sz_word, 0);
+	result <<= (size - size1) * 8;
+	switch (size - size1) {
+	case 1:
+		result |= phys_get_byte(physaddr);
+		break;
+	case 2:
+		result |= phys_get_word (physaddr);
+		break;
+	case 3:
+		result |= (uae_u32)phys_get_byte (physaddr) << 16;
+		result |= phys_get_word (physaddr + 1);
+		break;
+	}
+	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+	return result;
+}
+
+void mmu_put_unaligned (uaecptr addr, uae_u32 data, int fc, int size)
+{
+	uaecptr physaddr;
+	uaecptr pc = m68k_getpc();
+	int size1 = size - (addr & (size - 1));
+	uae_u32 data1 = data >> 8 * (size - size1);
+	JMP_BUF excep_env_old;
+
+	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
+	int prb = SETJMP(excep_env);
+	if (prb != 0) {
+		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+		regs.mmu_fault_addr = addr;
+		regs.mmu_ssw = (regs.mmu_ssw & ~(3 << 5)) | ((size == 2 ? sz_word : sz_long) << 5);
+		regs.wb3_data = data;
+		regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
+		LONGJMP(excep_env, prb);
+	}
+	physaddr = mmu_translate(addr, fc, 1, pc, size1 == 1 ? sz_byte : sz_word, 0);
+	switch (size1) {
+	case 1:
+		phys_put_byte(physaddr, data1);
+		break;
+	case 2:
+		phys_put_word (physaddr, data1);
+		break;
+	case 3:
+		phys_put_byte (physaddr, data1 >> 16);
+		phys_put_word (physaddr + 1, data1);
+		break;
+	}
+	prb = SETJMP(excep_env);
+	if (prb != 0) {
+		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+		regs.mmu_fault_addr = addr;
+		regs.mmu_ssw = (regs.mmu_ssw & ~(3 << 5)) | ((size == 2 ? sz_word : sz_long) << 5);
+		regs.mmu_ssw |= (1 << 11);
+		regs.wb3_data = data;
+		regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
+		LONGJMP(excep_env, prb);
+	}
+	physaddr = mmu_translate(addr + size1, fc, 1, pc, (size - size1) == 1 ? sz_byte : sz_word, 0);
+	switch (size - size1) {
+	case 1:
+		phys_put_byte(physaddr, data);
+		break;
+	case 2:
+		phys_put_word (physaddr, data);
+		break;
+	case 3:
+		phys_put_byte (physaddr, data >> 16);
+		phys_put_word (physaddr + 1, data);
+		break;
+	}
+	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+}
+
 void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
 	DUNUSED(extra);
@@ -692,7 +812,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 				/* PFLUSHN (An) flush page entry if not global */
 				addr = m68k_areg(regs, regno) & (regs.mmu_pagesize == MMU_PAGE_4KB ? MMU_PAGE_ADDR_MASK_4 : MMU_PAGE_ADDR_MASK_8);
 				D(bug("PFLUSHN (A%d) %08x DFC=%d", regno, addr, regs.dfc));
-				for (i = 0; i < 64; i++)	{
+				for (i = 0; i < 128; i++)	{
 					if (atc[i].v && !atc[i].g && atc[i].log == addr
 							&& (int)(regs.dfc & 4) == atc[i].fc2)
 					{
@@ -705,7 +825,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 				/* PFLUSH (An) flush page entry */
 				addr = m68k_areg(regs, regno) & (regs.mmu_pagesize == MMU_PAGE_4KB ? MMU_PAGE_ADDR_MASK_4 : MMU_PAGE_ADDR_MASK_8);
 				D(bug("PFLUSH (A%d) %08x DFC=%d", regno, addr, regs.dfc));
-				for (i = 0; i < 64; i++)	{
+				for (i = 0; i < 128; i++)	{
 					if (atc[i].v && atc[i].log == addr
 							&& (int)(regs.dfc & 4) == atc[i].fc2)
 					{
@@ -719,7 +839,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 			case 2:
 				/* PFLUSHAN flush all except global */
 				D(bug("PFLUSHAN"));
-				for (i = 0; i < 64; i++)	{
+				for (i = 0; i < 128; i++)	{
 					if (atc[i].v && !atc[i].g)
 					{
 						atc[i].v = 0;
@@ -731,7 +851,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 			case 3:
 				/* PFLUSHA flush all entries */
 				D(bug("PFLUSHA"));
-				for (i = 0; i < 64; i++)	{
+				for (i = 0; i < 128; i++)	{
 					if (atc[i].v)
 						didflush++;
 					atc[i].v = 0;
@@ -746,12 +866,16 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		flush_icache(0);
 #endif
 	} else if ((opcode & 0x0FD8) == 0x548) {
-		int write, regno;
+		int write, regno, i;
 		uae_u32 addr;
 		regno = opcode & 7;
 		write = (opcode & 32) == 0;
 		addr = m68k_areg(regs, regno) & (regs.mmu_pagesize == MMU_PAGE_4KB ? MMU_PAGE_ADDR_MASK_4 : MMU_PAGE_ADDR_MASK_8);
 		D(bug("PTEST%c (A%d) %08x DFC=%d", write ? 'W' : 'R', regno, addr, regs.dfc));
+		for (i = 0; i < 128; i++) {
+			if (atc[i].v && atc[i].log == addr && (int)(regs.dfc & 4) == atc[i].fc2)
+				atc[i].v = 0;
+		}
 		mmu_set_mmusr(0);
 		mmu_translate(addr, regs.dfc, write, m68k_getpc(), sz_byte, MMU_TEST_FORCE_TABLE_SEARCH | MMU_TEST_NO_BUSERR); 
 		D(bug("PTEST result: mmusr %08x", regs.mmusr));
