@@ -46,6 +46,7 @@ enum HOTKEYSDLG {
 	screenshot_key,
 	FULLSCREEN,
 	fullscreen_key,
+	HELP,
 	APPLY,
 	CANCEL
 };
@@ -78,10 +79,24 @@ static SGOBJ hotkeysdlg[] =
 	{ SGTEXT, 0, 0, 14,13, 25,1, key_screenshot },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 15, 11,1, "Fullscreen" },
 	{ SGTEXT, 0, 0, 14,15, 25,1, key_fullscreen },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8,20, 8,1, "Apply" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28,20, 8,1, "Cancel" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2,20, 6,1, "Help" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 20,20, 8,1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 30,20, 8,1, "Cancel" },
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
+
+static const char *HELP_TEXT = "Define hotkeys for certain functions:\n"
+"\n"
+"Setup .... you are using it right now\n"
+"Quit ..... quits ARAnyM\n"
+"Reboot ... like the reset button\n"
+"Ungrab ... free mouse and kbd\n"
+"Debug .... internal debugger\n"
+"Screenshot screen image to file\n"
+"Fullscreen from/to window mode\n"
+"\n"
+"LS = Left Shift, LC = Left Ctrl,\n"
+"RA = Right Alt, RM = Right Meta.";
 
 static SGOBJ presskeydlg[] =
 {
@@ -164,6 +179,10 @@ void Dialog_HotkeysDlg()
 				break;
 			case FULLSCREEN:
 				hotkeys.fullscreen = getKey();
+				break;
+
+			case HELP:
+				SDLGui_Alert(HELP_TEXT, ALERT_OK);
 				break;
 		}
 	} while(but != APPLY && but != CANCEL);

@@ -1,7 +1,7 @@
 /*
  * dlgDisk.cpp - dialog for editing Disk settings
  *
- * Copyright (c) 2003-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2003-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * gui-sdl original code and ideas borrowed from Hatari emulator
  * disk_image() borrowed from Bochs project, IIRC
@@ -31,8 +31,6 @@
 #include "tools.h"
 #include "hardware.h"		// for getFDC()
 #include "debug.h"
-
-extern int Dialog_AlertDlg(const char *);
 
 bx_options_t gui_options;
 
@@ -90,6 +88,7 @@ enum DISCDLG {
 	IDE1_SIZE,
 	text_size1mb,
 	IDE1_GENERATE,
+	HELP,
 	APPLY,
 	CANCEL
 };
@@ -138,10 +137,20 @@ static SGOBJ discdlg[] =
   { SGEDITFIELD, 0, 0,	 8,20, 5,1, ide1_size},
   { SGTEXT, 0, 0,		14,20, 2,1, "MB" },
   { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0,	17,20, 10,1, "Generate" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8,23, 8,1, "Apply" },
-  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28,23, 8,1, "Cancel" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2,23, 6,1, "Help" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 20,23, 8,1, "Apply" },
+  { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 30,23, 8,1, "Cancel" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
+
+static const char *HELP_TEXT =
+"For creating new disk image click on the [Path] and select an existing file (beware - its contents will be lost!).\n"
+"\n"
+"Then set the desired [Size:] of the new disk in MegaBytes.\n"
+"\n"
+"At last click on Generate and the disk image will be created.\n"
+"\n"
+"Now you can reboot to your OS and partition this new disk.";
 
 void setState(int index, int bits, bool set)
 {
@@ -288,9 +297,9 @@ static bool create_disk_image(int disk)
 	char text[250];
 	bool ret = false;
  	sprintf(text, "Create disk image '%s' with size %ld MB?", path, size);
- 	if (Dialog_AlertDlg(text) == 1) {
+ 	if (SDLGui_Alert(text, ALERT_OKCANCEL)) {
 		int cyl, heads = 16, spt = 63, sectors;
-		if (File_Exists(path) && Dialog_AlertDlg("File Exists. Overwrite?")!=1) {
+		if (File_Exists(path) && SDLGui_Alert("File Exists. Overwrite?", ALERT_OKCANCEL) == false) {
 			return false;
 		}
 		// create the file
@@ -449,6 +458,10 @@ void Dialog_DiscDlg(void)
       case IDE1_MOUNT:
       	RemountCDROM(1);
         break;
+
+			case HELP:
+				SDLGui_Alert(HELP_TEXT, ALERT_OK);
+				break;
     }
   }
   while(but!=APPLY && but!=CANCEL);
@@ -483,3 +496,7 @@ void Dialog_DiscDlg(void)
   if (but == APPLY)
 	  bx_options = gui_options;
 }
+
+/*
+vim:ts=4:sw=4:
+*/
