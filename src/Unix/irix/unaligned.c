@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef sgi
+#if (defined(sgi) && !defined(__GNUC__))
 #include "sysdeps.h"
 
 /* Tell the compiler to pack data on 1-byte boundaries 
