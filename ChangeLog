@@ -1,3 +1,7 @@
+2004/09/29 - Xavier
+- fvdidrv.cpp: fixed a typo that prevented ARAnyM to compile here.
+
+
 2004/09/24 - Patrice
 - Natfeat FVDI driver: added functions to read back the screen width and height
   really set on the host side
