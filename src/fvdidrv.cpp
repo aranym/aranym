@@ -75,10 +75,10 @@ inline bool FVDIDriver::AllocIndices(int n)
 	if (n > index_count) {
 		D2(bug("More indices %d->%d\n", index_count, n));
 		int count = n * 2;	// Take a few extra right away
-		int16* tmp = new(nothrow) int16[count];
+		int16* tmp = new(std::nothrow) int16[count];
 		if (!tmp) {
 			count = n;
-			tmp = new(nothrow) int16[count];
+			tmp = new(std::nothrow) int16[count];
 		}
 		if (tmp) {
 			delete[] alloc_index;
@@ -95,14 +95,14 @@ inline bool FVDIDriver::AllocCrossings(int n)
 	if (n > crossing_count) {
 		D2(bug("More crossings %d->%d\n", crossing_count, n));
 		int count = n * 2;		// Take a few extra right away
-		int16* tmp = new(nothrow) int16[count];
+		int16* tmp = new(std::nothrow) int16[count];
 		if (!tmp) {
 			count = (n * 3) / 2;	// Try not so many extra
-			tmp = new(nothrow) int16[count];
+			tmp = new(std::nothrow) int16[count];
 		}
 		if (!tmp) {
 			count = n;		// This is going to be slow if it goes on...
-			tmp = new(nothrow) int16[count];
+			tmp = new(std::nothrow) int16[count];
 		}
 		if (tmp) {
 			std::memcpy(tmp, alloc_crossing, crossing_count * sizeof(*alloc_crossing));
@@ -120,10 +120,10 @@ inline bool FVDIDriver::AllocPoints(int n)
 	if (n > point_count) {
 		D2(bug("More points %d->%d", point_count, n));
 		int count = n * 2;	// Take a few extra right away
-		int16* tmp = new(nothrow) int16[count * 2];
+		int16* tmp = new(std::nothrow) int16[count * 2];
 		if (!tmp) {
 			count = n;
-			tmp = new(nothrow) int16[count * 2];
+			tmp = new(std::nothrow) int16[count * 2];
 		}
 		if (tmp) {
 			delete[] alloc_point;
@@ -1889,6 +1889,10 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.28  2001/12/17 08:33:00  standa
+ * Thread synchronization added. The check_event and fvdidriver actions are
+ * synchronized each to other.
+ *
  * Revision 1.27  2001/12/12 02:17:36  standa
  * Some line clipping bug fixed (the clip is on every time now -> should fix).
  *
