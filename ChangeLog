@@ -1,3 +1,7 @@
+* tagged as ARANYM_0_8_0_ABANDONED
+  This branch is probably dead. Don't commit here.
+
+
 2003/06/26 - joy
 - emul_op.cpp: QuitEmulator() removed from handling of an undefined emul_op.
   That way undefined emul_op can be used for debugging (it displays all
