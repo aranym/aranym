@@ -345,16 +345,19 @@ static bool mouseOut = false;
 #ifdef SDL_GUI
 extern bool isGuiAvailable;	// from main.cpp
 static SDL_Thread *GUIthread = NULL;
+static const int GUI_RETURN_INFO = (SDL_USEREVENT+1);
 
 int open_gui(void * /*ptr*/)
 {
 	hostScreen.openGUI();
 	int status = GUImainDlg();
 
-	if (status == STATUS_SHUTDOWN)
-		pendingQuit = true;
-	else if (status == STATUS_REBOOT)
-		RestartAll();
+	// the status is sent to event checking thread by the USEREVENT+1 message
+	SDL_Event ev;
+	ev.type = GUI_RETURN_INFO;
+	ev.user.code = status;	// STATUS_SHUTDOWN or STATUS_REBOOT
+	ev.user.data1 = NULL;
+	SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(GUI_RETURN_INFO));
 
 	hostScreen.closeGUI();
 	return 0;
@@ -650,6 +653,9 @@ void check_event()
 					| SDL_EVENTMASK(SDL_JOYBUTTONDOWN)
 					| SDL_EVENTMASK(SDL_JOYBUTTONUP)
 					| SDL_EVENTMASK(SDL_ACTIVEEVENT)
+#ifdef SDL_GUI
+					| SDL_EVENTMASK(GUI_RETURN_INFO)
+#endif
 					| SDL_EVENTMASK(SDL_QUIT);
 
 	SDL_PumpEvents();
@@ -670,7 +676,15 @@ void check_event()
 		else if (type == SDL_ACTIVEEVENT) {
 			process_active_event(event);
 		}
-
+#ifdef SDL_GUI
+		else if (type == GUI_RETURN_INFO) {
+			int status = event.user.code;
+			if (status == STATUS_SHUTDOWN)
+				pendingQuit = true;
+			else if (status == STATUS_REBOOT)
+				RestartAll();
+		}
+#endif
 		else if (type == SDL_QUIT) {
 			pendingQuit = true;
 		}
