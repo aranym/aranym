@@ -5,6 +5,8 @@
   The binaries (.bz2 packed) was updated with the newly compiled files.
   You might want to try them to test whether they work as the previous
   ones.
+- atari/fvdi/utility/fvdicout: The Ptermres should be now filled with
+  a correct value IMHO. 
 
 
 2002/05/20 - Heiko Achilles

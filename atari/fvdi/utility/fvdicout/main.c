@@ -1,8 +1,9 @@
-
-#include <mintbind.h>
 #include <string.h>
-#include <support.h>
 #include <unistd.h>
+#include <support.h>
+#include <mintbind.h>
+#include <mint/sysvars.h>
+#include <mint/basepage.h>
 
 #include "global.h"
 #include "ansicol.h"
@@ -20,11 +21,7 @@
 int do_debug = 0;
 #endif
 
-extern int __mint;
-
-#ifdef __GNUC__
 long _stksize = 32768;
-#endif
 
 # ifndef _cdecl
 # define _cdecl         __CDECL
@@ -51,10 +48,10 @@ extern long old_bconout;
 
 long super_func(void)
 {
-   old_bconout = *(long *)0x586;
-   *(long *)0x586 = (long)bconout_stub;
+    old_bconout = *(long *)0x586;
+    *(long *)0x586 = (long)bconout_stub;
 
-   return 0;
+    return 0;
 }
 
 void _cdecl handle_char (long c)
@@ -70,7 +67,7 @@ void open_console(void)
 
 	short work_out[57];
 	vq_extnd(vdi_handle, 0, work_out);
-	
+
 	config.next = NULL;
 	*config.progname = 0;
 	*config.arg = 0;
@@ -138,6 +135,11 @@ static void global_term_fvdi(void)
     v_clsvwk(vdi_handle);
 }
 
+static long get_bp(void)
+{
+	return (long)(*((*(OSHEADER **)_sysbase)->p_run));
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -145,7 +147,7 @@ int main(int argc, char *argv[])
 	global_init_fvdi();
 	open_console();
 
-#if 0
+#if JUST_TEST
 	{
 		int count = 100;
 		while( count-- ) {
@@ -158,7 +160,10 @@ int main(int argc, char *argv[])
 	// HOOK in!!!
 	Supexec(super_func);
 
-	Ptermres(250*1024, 0);
+	{
+		BASEPAGE *bp=(BASEPAGE *)Supexec(get_bp);
+		Ptermres( bp->p_dlen + bp->p_tlen + bp->p_blen + sizeof(BASEPAGE) + _stksize, 0);
+	}
 #endif
 
 	// dummy when Ptermres fails
@@ -166,5 +171,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-
-

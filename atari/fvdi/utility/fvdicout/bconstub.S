@@ -39,8 +39,7 @@ _hndle_char:
 old_stack:
 	ds.l	1
 
-	ds.b	4096
+	ds.b	16384
 stack:
-	ds.b	4096
 
 	.end
