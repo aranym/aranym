@@ -92,8 +92,8 @@ SDL_cond *stop_condition;
 bool InitMEM() {
 #if REAL_ADDRESSING
 	// Atari address space = host address space
-	RAMBase = (uint32)RAMBaseHost;
-	ROMBase = (uint32)ROMBaseHost;
+	RAMBase = (uintptr)RAMBaseHost;
+	ROMBase = (uintptr)ROMBaseHost;
 #else
 	InitMEMBaseDiff(RAMBaseHost, RAMBase);
 	InitROMBaseDiff(ROMBaseHost, ROMBase);

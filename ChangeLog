@@ -1,3 +1,9 @@
+2005/01/11 - milan (thanks Andreas Jochens)
+- uae_cpu/aranym_glue.cpp: 64 bit fix for GCC 4.0 happy
+
+- uae_cpu/newcpu.cpp: 64 bit fix for pc_offset computation
+
+
 2005/01/11 - Petr
 - gui-sdl/sdlgui.cpp: 64bit cleanup thanks to Debian BTS #288992
 

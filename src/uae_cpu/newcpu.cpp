@@ -1485,7 +1485,7 @@ void m68k_do_execute (void)
 	if (((pc ^ pc_page) > ARAM_PAGE_MASK)) {
 	    check_ram_boundary(pc, 2, false);
 	    pc_page = pc;
-	    pc_offset = (uae_u32)get_real_address(pc, 0, sz_word) - pc;
+	    pc_offset = (uintptr)get_real_address(pc, 0, sz_word) - pc;
 	}
 #else
 	check_ram_boundary(pc, 2, false);
