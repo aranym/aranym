@@ -81,7 +81,7 @@ static void build_cpufunctbl (void)
     int i;
     unsigned long opcode;
     int cpu_level = 4;
-    struct cputbl *tbl = op_smalltbl_0;
+    struct cputbl *tbl = op_smalltbl_0_ff;
 
     for (opcode = 0; opcode < 65536; opcode++)
 	cpufunctbl[cft_map (opcode)] = op_illg_1;
@@ -160,20 +160,6 @@ static __inline__ uae_u32 get_ilong_1(uae_u32 o)
 # define get_ibyte_1(o) get_byte(m68k_getpc() + (o) + 1)
 # define get_iword_1(o) get_word(m68k_getpc() + (o))
 # define get_ilong_1(o) get_long(m68k_getpc() + (o))
-#endif
-
-#ifdef ARAM_PAGE_CHECK
-# ifdef HAVE_GET_WORD_UNSWAPPED
-#  define GET_OPCODE (do_get_mem_word_unswapped((uae_u16*)(pc + pc_offset)));
-# else
-#  define GET_OPCODE (do_get_mem_word((uae_u16*)(pc + pc_offset)));
-# endif
-#else
-# ifdef HAVE_GET_WORD_UNSWAPPED
-#  define GET_OPCODE (do_get_mem_word_unswapped (get_real_address(m68k_getpc(), 0, sz_word)))
-# else
-#  define GET_OPCODE (get_iword (0))
-# endif
 #endif
 
 uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
@@ -1455,11 +1441,13 @@ void m68k_compile_execute (void)
 	}
 	m68k_do_compile_execute();
     }
+#if 0
     if (debugging) {
 	uaecptr nextpc;
 	m68k_dumpstate(&nextpc);
 	exit(1);
     }
+#endif
 }
 #endif
 
@@ -1537,7 +1525,7 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 	    opcode = 0x4AFC;
 	}
 	dp = table68k + opcode;
-	for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
+	for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
 	    ;
 
 	strcpy (instrname, lookup->name);
@@ -1644,7 +1632,7 @@ setjmpagain:
 			opcode = 0x4AFC;
 		}
 		dp = table68k + opcode;
-		for (lookup = lookuptab;lookup->mnemo != dp->mnemo; lookup++)
+		for (lookup = lookuptab;(unsigned)lookup->mnemo != (unsigned)dp->mnemo; lookup++)
 		    ;
 		strcpy (instrname, lookup->name);
 		ccpt = strstr (instrname, "cc");
@@ -1806,7 +1794,7 @@ void m68k_dumpstate (uaecptr *nextpc)
 	    (unsigned long)regs.itt0,
 	    (unsigned long)regs.itt1);
     for (i = 0; i < 8; i++){
-	printf ("FP%d: %g ", i, fpu.registers[i]);
+	printf ("FP%d: %g ", i, (double)fpu.registers[i]);
 	if ((i & 3) == 3) printf ("\n");
     }
 #if 0

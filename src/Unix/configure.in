@@ -85,6 +85,8 @@ AC_ARG_ENABLE(jit-fpu,
 ])
 
 AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code disassemblers [default=no]], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
+
+AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distrubuted dispatcher [default=no]], [WANT_DIS_DIP=$enableval], [WANT_DIS_DIP=no])
 		    
 dnl Canonical system information.
 AC_CANONICAL_HOST
@@ -467,7 +469,7 @@ if [[ "x$WANT_SDLTIMER" = "xyes" ]]; then
 fi
 
 dnl Page check
-if [[ "x$WANT_PAGECHECK" = "xyes" ]]; then
+if [[ "x$WANT_PAGECHECK" = "xyes" -a "x$WANT_JIT" = "xno" ]]; then
     AC_DEFINE(ARAM_PAGE_CHECK)
 fi
 
@@ -626,6 +628,15 @@ if [[ "x$HAVE_GCC27" = "xyes" ]]; then
     CXXFLAGS="$SAVED_CXXFLAGS"
   fi
 fi
+
+dnl Distributed dispatcher eliminates pipeline stall
+dnl It needs computed gotos (supported by GNU C++)
+dnl DODO - test for computed gotos
+if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
+  DEFINE="$DEFINE -DDISDIP"
+else
+  WANT_DIS_DIP = no
+fi			
 				
 dnl Select appropriate CPU source and REGPARAM define.
 ASM_OPTIMIZATIONS=none
@@ -641,7 +652,11 @@ if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" -a "x$OS_TYPE" != "xfree
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
     ASM_OPTIMIZATIONS=i386
     DEFINES="$DEFINES -DX86_ASSEMBLY -DUNALIGNED_PROFITABLE -DOPTIMIZED_FLAGS"
-    CPUSRCS="cpufast1.s cpufast2.s cpufast3.s cpufast4.s cpufast5.s cpufast6.s cpufast7.s cpufast8.s"
+    if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
+      CPUSRCS="cpufast.s"
+    else
+      CPUSRCS="cpufast1.s cpufast2.s cpufast3.s cpufast4.s cpufast5.s cpufast6.s cpufast7.s cpufast8.s"
+    fi
     JITSRCS="cpufast1_nf.s cpufast2_nf.s cpufast3_nf.s cpufast4_nf.s cpufast5_nf.s cpufast6_nf.s cpufast7_nf.s cpufast8_nf.s $JITSRCS"
     CAN_JIT=yes
   fi

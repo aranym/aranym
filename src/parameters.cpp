@@ -318,7 +318,7 @@ void usage (int status) {
   printf ("%s\n", VERSION_STRING);
   printf ("Usage: %s [OPTION]... [FILE]...\n", program_name);
   printf ("\
-Options:
+Options:\n\
   -a, --floppy NAME          floppy image file NAME\n\
   -N, --nomouse              don't grab mouse at startup\n\
   -f, --fullscreen           start in fullscreen\n\

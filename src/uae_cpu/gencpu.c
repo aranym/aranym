@@ -2491,12 +2491,13 @@ static void generate_func (void)
     using_mmu = 0;
 #endif
 
-    cpu_level = 4;
-    postfix = 0;
-    fprintf (stblfile, "struct cputbl op_smalltbl_0[] = {\n");
+    for (i = 0; i < 1; i++) {
+	cpu_level = 4 - i;
+	postfix = i;
+	fprintf (stblfile, "struct cputbl CPUFUNC(op_smalltbl_%d)[] = {\n", postfix);
 
-    /* sam: this is for people with low memory (eg. me :)) */
-    printf ("\n"
+	/* sam: this is for people with low memory (eg. me :)) */
+	printf ("\n"
 		"#if !defined(PART_1) && !defined(PART_2) && "
 	 	"!defined(PART_3) && !defined(PART_4) && "
 		"!defined(PART_5) && !defined(PART_6) && "
@@ -2511,17 +2512,18 @@ static void generate_func (void)
 	        "#define PART_7 1\n"
 	        "#define PART_8 1\n"
 	        "#endif\n\n");
-	
-    rp = 0;
-    for(j=1;j<=8;++j) {
-	int k = (j*nr_cpuop_funcs)/8;
-	printf ("#ifdef PART_%d\n",j);
-	for (; rp < k; rp++)
-	   generate_one_opcode (rp);
-	printf ("#endif\n\n");
-    }
 
-    fprintf (stblfile, "{ 0, 0, 0 }};\n");
+	rp = 0;
+	for(j=1;j<=8;++j) {
+		int k = (j*nr_cpuop_funcs)/8;
+		printf ("#ifdef PART_%d\n",j);
+		for (; rp < k; rp++)
+		   generate_one_opcode (rp);
+		printf ("#endif\n\n");
+	}
+
+	fprintf (stblfile, "{ 0, 0, 0 }};\n");
+    }
 }
 
 int main (int argc, char **argv)

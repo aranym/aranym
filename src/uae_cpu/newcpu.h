@@ -212,6 +212,20 @@ static __inline__ void m68k_setstopped (int stop)
 	SPCFLAGS_SET( SPCFLAG_STOP );
 }
 
+#ifdef ARAM_PAGE_CHECK
+# ifdef HAVE_GET_WORD_UNSWAPPED
+#  define GET_OPCODE (do_get_mem_word_unswapped((uae_u16*)(pc + pc_offset)));
+# else
+#  define GET_OPCODE (do_get_mem_word((uae_u16*)(pc + pc_offset)));
+# endif
+#else
+# ifdef HAVE_GET_WORD_UNSWAPPED
+#  define GET_OPCODE (do_get_mem_word_unswapped (get_real_address(m68k_getpc(), 0, sz_word)))
+# else
+#  define GET_OPCODE (get_iword (0))
+# endif
+#endif
+
 extern uae_u32 get_disp_ea_020 (uae_u32 base, uae_u32 dp);
 extern uae_u32 get_disp_ea_000 (uae_u32 base, uae_u32 dp);
 
@@ -248,7 +262,7 @@ extern uaecptr last_fault_for_exception_3;
 #define CPU_OP_NAME(a) op ## a
 
 /* 68040+ 68881 */
-extern struct cputbl op_smalltbl_0[];
+extern struct cputbl op_smalltbl_0_ff[];
 
 extern void m68k_do_execute(void);
 extern void m68k_execute(void);
