@@ -11,19 +11,25 @@
 NF_Name nf_name;
 NF_Version nf_version;
 NF_StdErr nf_stderr;
-HostFs hostFs;
 XHDIDriver Xhdi;
 FVDIDriver fVDIDrv;
+#ifdef ARANYM_HOSTFS
+HostFs hostFs;
+#endif
 /* add your NatFeat object declaration here */
 
 pNatFeat nf_objects[] = {
-	&nf_name,
-	&nf_version,
-	&nf_stderr,
-	&hostFs,
+	&fVDIDrv,
 	&Xhdi,
-	&fVDIDrv
+
+#ifdef ARANYM_HOSTFS
+	&hostFs,
+#endif
 	/* add your NatFeat object here */
+
+	&nf_stderr,
+	&nf_version,
+	&nf_name
 };
 
 unsigned int nf_objs_cnt = sizeof(nf_objects) / sizeof(nf_objects[0]);
