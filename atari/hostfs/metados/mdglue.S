@@ -8,14 +8,14 @@
 	
 	.globl	_init
 
-	.globl	_d_free, _f_sfirst, _f_snext, _f_open
-	.globl	_f_close, _d_atime, _f_write, _f_read
-	.globl	_f_attrib, _f_create, _f_seek, _f_cntl
-	.globl  _d_create, _d_delete, _f_rename
-	.globl  _d_getpath, _d_dsetpath
-	.globl	_d_pathconf, _f_xattr, _d_opendir, _d_readdir
-	.globl	_d_closedir, _d_xreaddir, _d_rewinddir
-	.globl	_d_readlabel, _d_delete
+	.globl	_sys_d_free, _sys_f_sfirst, _sys_f_snext, _sys_f_open
+	.globl	_sys_f_close, _sys_d_atime, _sys_f_write, _sys_f_read
+	.globl	_sys_f_attrib, _sys_f_create, _sys_f_seek, _sys_f_cntl
+	.globl  _sys_d_create, _sys_d_delete, _sys_f_rename
+	.globl  _sys_d_getpath, _sys_d_dsetpath
+	.globl	_sys_d_pathconf, _sys_f_xattr, _sys_d_opendir, _sys_d_readdir
+	.globl	_sys_d_closedir, _sys_d_xreaddir, _sys_d_rewinddir
+	.globl	_sys_d_readlabel, _sys_d_delete
 
 	.globl	_DriverName, _ShowBanner, _InitDevice
 
@@ -193,7 +193,7 @@ wrap_dfree:
 
 	move.w	10(a0),-(sp)	// drive #
 	move.l	6(a0),-(sp)	// diskinfo *
-	MDBSR	a0,_d_free
+	MDBSR	a0,_sys_d_free
 	lea	6(sp),sp
 
 	RSTCK
@@ -204,7 +204,7 @@ wrap_dcreate:
 	SSTCK	a0
 
 	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
-	MDBSR	a0,_d_create
+	MDBSR	a0,_sys_d_create
 	lea	4(sp),sp
 
 	RSTCK
@@ -215,7 +215,7 @@ wrap_ddelete:
 	SSTCK	a0
 
 	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
-	MDBSR	a0,_d_delete
+	MDBSR	a0,_sys_d_delete
 	lea	4(sp),sp
 
 	RSTCK
@@ -226,7 +226,7 @@ wrap_dsetpath:
 	SSTCK	a0
 
 	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
-//	MDBSR	a0,_d_dsetpath
+//	MDBSR	a0,_sys_d_dsetpath
 	lea	4(sp),sp
 
 	RSTCK
@@ -238,7 +238,7 @@ wrap_fcreate:
 
 	move.w	10(a0),-(sp)	// attr
 	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
-	MDBSR	a0,_f_create
+	MDBSR	a0,_sys_f_create
 	lea	6(sp),sp
 
 	RSTCK
@@ -250,7 +250,7 @@ wrap_fopen:
 
 	move.w	10(a0),-(sp)	// mode
 	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
-	MDBSR	a0,_f_open
+	MDBSR	a0,_sys_f_open
 	lea	6(sp),sp
 
 	RSTCK
@@ -266,7 +266,7 @@ wrap_fclose:
 	SSTCK	a0
 
 	move.w	6(a0),-(sp)	// handle
-	MDBSR	a0,_f_close
+	MDBSR	a0,_sys_f_close
 	lea	2(sp),sp
 
 	RSTCK
@@ -279,7 +279,7 @@ wrap_fread:
 	move.l	12(a0),-(sp)	// buffer
 	move.l	8(a0),-(sp)	// count
 	move.w	6(a0),-(sp)	// handle
-	MDBSR	a0,_f_read
+	MDBSR	a0,_sys_f_read
 	lea	10(sp),sp
 
 	RSTCK
@@ -292,7 +292,7 @@ wrap_fwrite:
 	move.l	12(a0),-(sp)	// buffer
 	move.l	8(a0),-(sp)	// count
 	move.w	6(a0),-(sp)	// handle
-	MDBSR	a0,_f_write
+	MDBSR	a0,_sys_f_write
 	lea	10(sp),sp
 
 	RSTCK
@@ -303,7 +303,7 @@ wrap_fdelete:
 	SSTCK	a0
 
 	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
-	MDBSR	a0,_f_delete
+	MDBSR	a0,_sys_f_delete
 	lea	4(sp),sp
 
 	RSTCK
@@ -317,7 +317,7 @@ wrap_fseek:
 	move.w	12(a0),-(sp)	// mode
 	move.w	10(a0),-(sp)	// handle
 	move.l	6(a0),-(sp)	// count
-	MDBSR	a0,_f_seek
+	MDBSR	a0,_sys_f_seek
 	lea	8(sp),sp
 
 	RSTCK
@@ -325,7 +325,7 @@ wrap_fseek:
 	move.l	a5,-(sp)
 	move.l	a4,-(sp)
 	move.l	a3,-(sp)
-	bsr	_f_seek
+	bsr	_sys_f_seek
 	lea	12(sp),sp
 #endif
 	PRINT	d0
@@ -338,7 +338,7 @@ wrap_fattrib:
 	move.w	12(a0),-(sp)	// attrib
 	move.w	10(a0),-(sp)	// flag
 	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
-	MDBSR	a0,_f_attrib
+	MDBSR	a0,_sys_f_attrib
 	lea	8(sp),sp
 
 	RSTCK
@@ -350,7 +350,7 @@ wrap_fsfirst:
 
 	move.w	10(a0),-(sp)	// flags
 	move.l	a4,-(sp)	// name/mask - 6(a0) or a4 MD
-	MDBSR	a0,_f_sfirst
+	MDBSR	a0,_sys_f_sfirst
 	lea	6(sp),sp
 
 	RSTCK
@@ -359,7 +359,7 @@ wrap_fsfirst:
 wrap_fsnext:
 	PRINT	#79
 	SSTCK	a0
-	MDBSR	a0,_f_snext
+	MDBSR	a0,_sys_f_snext
 
 	RSTCK
 	rts
@@ -371,7 +371,7 @@ wrap_frename:
 	move.l	12(a0),-(sp)	// newname
 	move.l	a4,-(sp)	// oldname - 8(a0) or a4 MD (yes 8(a0)!!!)
 	move.w	6(a0),-(sp)	// reserved
-	MDBSR	a0,_f_rename
+	MDBSR	a0,_sys_f_rename
 	lea	10(sp),sp
 
 	RSTCK
@@ -383,8 +383,8 @@ wrap_fdatime:
 
 	move.w	12(a0),-(sp)	// flag
 	move.w	10(a0),-(sp)	// handle
-	move.l	6(a0),-(sp)	// timeptr	MDBSR	a0,_f_datime
-	MDBSR	a0,_f_datime
+	move.l	6(a0),-(sp)	// timeptr	MDBSR	a0,_sys_f_datime
+	MDBSR	a0,_sys_f_datime
 	lea	8(sp),sp
 
 	RSTCK
@@ -397,7 +397,7 @@ wrap_fcntl:
 	move.w	12(a0),-(sp)	// cmd
 	move.l	8(a0),-(sp)	// argument
 	move.w	6(a0),-(sp)	// handle
-//	MDBSR	a0,_f_cntl
+//	MDBSR	a0,_sys_f_cntl
 	lea	8(sp),sp
 
 	RSTCK
@@ -409,7 +409,7 @@ wrap_dpathconf:
 
 	move.w	10(a0),-(sp)	// mode
 	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
-	MDBSR	a0,_d_pathconf
+	MDBSR	a0,_sys_d_pathconf
 	lea	6(sp),sp
 
 	RSTCK
@@ -421,7 +421,7 @@ wrap_dopendir:
 
 	move.w	10(a0),-(sp)	// flag
 	move.l	a4,-(sp)	// name 6(a0) or a4 MD
-	MDBSR	a0,_d_opendir
+	MDBSR	a0,_sys_d_opendir
 	lea	6(sp),sp
 
 	RSTCK
@@ -434,7 +434,7 @@ wrap_dreaddir:
 	move.l	12(a0),-(sp)	// buffer
 	move.l	8(a0),-(sp)	// dirhandle
 	move.w	6(a0),-(sp)	// len
-	MDBSR	a0,_d_readdir
+	MDBSR	a0,_sys_d_readdir
 	lea	10(sp),sp
 
 	RSTCK
@@ -445,7 +445,7 @@ wrap_drewinddir:
 	SSTCK	a0
 
 	move.l	6(a0),-(sp)	// dirhandle
-	MDBSR	a0,_d_rewind
+	MDBSR	a0,_sys_d_rewind
 	lea	4(sp),sp
 
 	RSTCK
@@ -456,7 +456,7 @@ wrap_dclosedir:
 	SSTCK	a0
 
 	move.l	6(a0),-(sp)	// dirhandle
-	MDBSR	a0,_d_closedir
+	MDBSR	a0,_sys_d_closedir
 	lea	4(sp),sp
 
 	RSTCK
@@ -469,7 +469,7 @@ wrap_fxattr:
 	move.l	12(a0),-(sp)	// xattr*
 	move.l	a4,-(sp)	// name 8(a0) or a4 MD
 	move.w	6(a0),-(sp)	// flag
-	MDBSR	a0,_f_xattr
+	MDBSR	a0,_sys_f_xattr
 	lea	10(sp),sp
 
 	RSTCK
@@ -484,7 +484,7 @@ wrap_dxreaddir:
 	move.l	12(a0),-(sp)	// buffer
 	move.l	8(a0),-(sp)	// dirhandle
 	move.w	6(a0),-(sp)	// len
-	MDBSR	a0,_d_xreaddir
+	MDBSR	a0,_sys_d_xreaddir
 	lea	18(sp),sp
 
 	RSTCK
@@ -497,7 +497,7 @@ wrap_dreadlabel:
 	move.w	14(a0),-(sp)	// len
 	move.l	10(a0),-(sp)	// buffer
 	move.l	a4,-(sp)	// pathname 6(a0) or a4 MD
-	MDBSR	a0,_d_readlabel
+	MDBSR	a0,_sys_d_readlabel
 	lea	10(sp),sp
 
 	RSTCK
@@ -513,6 +513,9 @@ stack:
 	
 //
 // $Log$
+// Revision 1.2  2003/03/03 20:39:44  standa
+// Parameter passing fixed.
+//
 // Revision 1.1  2002/12/10 20:47:21  standa
 // The HostFS (the host OS filesystem access via NatFeats) implementation.
 //

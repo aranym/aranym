@@ -22,7 +22,6 @@
 #ifndef _global_h_
 #define _global_h_
 
-#define __KERNEL_XFS__
 #ifdef ARAnyM_MetaDOS
 
 #include "filesys.h"
@@ -97,6 +96,9 @@ extern struct kerinfo *KERNEL;
 
 /*
  * $Log$
+ * Revision 1.4  2003/10/02 18:13:41  standa
+ * Large HOSTFS cleanup (see the ChangeLog for more)
+ *
  * Revision 1.3  2003/03/24 08:58:53  joy
  * aranymfs.xfs renamed to hostfs.xfs
  *

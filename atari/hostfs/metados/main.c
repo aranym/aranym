@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * The ARAnyM MetaDOS driver.
+ * The ARAnyM BetaDOS driver.
  *
  * 2001/2002 STan
  *
@@ -25,6 +25,7 @@
 #include "../hostfs_dev.h"
 
 #include "mintproc.h"
+#include "mintfake.h"
 
 
 #define DEVNAME "ARAnyM Host Filesystem"
@@ -36,6 +37,8 @@ long ldp;
 
 void _cdecl ShowBanner( void );
 void* _cdecl InitDevice( long bosDevID, long dosDevID );
+long set_cookie (ulong tag, ulong val);
+ulong get_cookie (ulong tag);
 
 /* Diverse Utility-Funktionen */
 
@@ -55,14 +58,42 @@ static int Bconws( char *str )
     return cnt;
 }
 
-	extern char init;
-
 void _cdecl ShowBanner( void )
 {
     Bconws (
             "\n\033p "DEVNAME" "VERSION" \033q "
             "\nCopyright (c) ARAnyM Development Team, "__DATE__"\n"
             );
+}
+
+struct cookie
+{
+	long tag;
+	long value;
+};
+
+ulong get_cookie (ulong tag)
+{
+	struct cookie *cookie = *(struct cookie **)0x5a0;
+	if (!cookie) return 0;
+
+	while (cookie->tag) {
+		if (cookie->tag == tag) return cookie->value;
+		cookie++;
+	}
+
+	return 0;
+}
+
+long set_cookie (ulong tag, ulong val)
+{
+	struct cookie *cookie = *(struct cookie **)0x5a0;
+	if (!cookie) return 0;
+
+	while (cookie->tag) cookie++;
+	cookie->tag = tag;
+	cookie->value = val;
+	return 1;
 }
 
 
@@ -76,28 +107,41 @@ extern DEVDRV  aranym_fs_devdrv;
 
 void* _cdecl InitDevice( long bosDevID, long dosDevID )
 {
-	static fcookie root;
 	char mountPoint[] = "A:";
-	mountPoint[0] += (bosDevID = (bosDevID-'A')&0x1f); // mask out bad values of the bosDevID
+	mountPoint[0] += (dosDevID = (dosDevID&0x1f)); // mask out bad values of the dosDevID
+
+	/*
+	 * Hack to get the drive table the same for all hostfs.dos
+	 * instances loaded by BetaDOS into memory.
+         *
+	 * Note: This is definitely not MP friendly, but FreeMiNT
+	 *       doesn't support B(M)etaDOS anyway.
+	 */	
+	{
+ 		/* 'BDhf'... BetaDOS Host Filesystem cookie */
+		ulong p = get_cookie(0x42446866);
+		if ( p ) curproc = (void*)p;
+		else set_cookie(0x42446866, (ulong)curproc);
+	}
 
 	/*
 	 * We _must_ use the bosDevID to define the drive letter here
 	 * because MetaDOS (in contrary to BetaDOS) does not provide
 	 * the dosDevID
 	 */
-	DEBUG(("InitDevice: %s [%ld - %lx]: [%ld] addr: %lx", mountPoint, dosDevID, dosDevID, bosDevID, &ara_fs_root ));
+	DEBUG(("InitDevice: %s [dosDev=%ld, bosDev=%ld] addr: %lx", mountPoint, dosDevID, bosDevID, &ara_fs_root ));
 
 	aranym_fs_init();
 
-	/* map the MetaDOS drive to some bosDrive | 0x6000 so that the mapping would
+	/* map the BetaDOS drive to some bosDrive | 0x6000 so that the mapping would
 	   not colide with the MiNT one */
-	aranym_fs_native_init( bosDevID | 0x6000, mountPoint, "/tmp", 1,
+	aranym_fs_native_init( dosDevID | 0x6000, mountPoint, "/tmp", 1,
 						   &aranym_fs, &aranym_fs_devdrv );
 
-	aranym_fs.root( bosDevID | 0x6000, &curproc->p_cwd->root[bosDevID] );
+	aranym_fs.root( dosDevID | 0x6000, &curproc->p_cwd->root[dosDevID] );
 
 	{
-		fcookie *relto = &curproc->p_cwd->root[bosDevID];
+		fcookie *relto = &curproc->p_cwd->root[dosDevID];
 		DEBUG (("InitDevice: root (%08lx, %08lx, %04x)", relto->fs, relto->index, relto->dev));
 	}
 
@@ -108,6 +152,9 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 /**
  * $Log$
+ * Revision 1.6  2003/03/24 08:58:53  joy
+ * aranymfs.xfs renamed to hostfs.xfs
+ *
  * Revision 1.5  2003/03/20 21:27:22  standa
  * The .xfs mapping to the U:\G mountpouints (single letter) implemented.
  *

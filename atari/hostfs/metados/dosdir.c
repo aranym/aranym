@@ -39,7 +39,7 @@
 
 
 long _cdecl
-d_free (MetaDOSDir long *buf, int d)
+sys_d_free (MetaDOSDir long *buf, int d)
 {
     PROC *p = curproc;
     fcookie *dir = 0;
@@ -47,6 +47,11 @@ d_free (MetaDOSDir long *buf, int d)
     fcookie root;
     long r;
 
+#ifdef ARAnyM_MetaDOS
+    d = (int)tolower(pathNameMD[0])-'a';
+    dir = &p->p_cwd->root[d];
+    TRACE(("Dfree(%d)", d));
+#else
     TRACE(("Dfree(%d)", d));
     assert (p->p_fd && p->p_cwd);
 
@@ -56,7 +61,6 @@ d_free (MetaDOSDir long *buf, int d)
     else
         d = p->p_cwd->curdrv;
 
-#ifndef ARAnyM_MetaDOS
     /* If it's not a standard drive or an alias of one, get the pointer to
      * the filesystem structure and use the root directory of the
      * drive.
@@ -91,7 +95,6 @@ d_free (MetaDOSDir long *buf, int d)
      * does keep the results more accurate
      */
     (void)disk_changed(d);
-#endif // ARAnyM_MetaDOS
 
   aliased:
 
@@ -100,6 +103,7 @@ d_free (MetaDOSDir long *buf, int d)
      * better)
      */
     dir = &p->p_cwd->curdir[d];
+#endif // ARAnyM_MetaDOS
     if (!dir->fs)
     {
         DEBUG(("Dfree: bad drive"));
@@ -110,7 +114,7 @@ d_free (MetaDOSDir long *buf, int d)
 }
 
 long _cdecl
-d_create (MetaDOSDir const char *path)
+sys_d_create (MetaDOSDir const char *path)
 {
     PROC *p = curproc;
     fcookie dir;
@@ -172,7 +176,7 @@ d_create (MetaDOSDir const char *path)
 }
 
 long _cdecl
-d_delete (MetaDOSDir const char *path)
+sys_d_delete (MetaDOSDir const char *path)
 {
     struct ucred *cred = curproc->p_cred->ucr;
 
@@ -311,7 +315,7 @@ d_delete (MetaDOSDir const char *path)
  */
 
 long _cdecl
-f_sfirst (MetaDOSDTA const char *path, int attrib)
+sys_f_sfirst (MetaDOSDTA const char *path, int attrib)
 {
     PROC *p = curproc;
 
@@ -544,12 +548,12 @@ f_sfirst (MetaDOSDTA const char *path, int attrib)
     /* OK, now basically just do Fsnext, except that instead of ENMFILES we
      * return ENOENT.
      * NOTE: If we already have found a volume label from the search above,
-     * then we skip the f_snext and just return that.
+     * then we skip the sys_f_snext and just return that.
      */
     if (havelabel)
         return E_OK;
 
-	r = f_snext(MetaDOSDTA0pass);
+	r = sys_f_snext(MetaDOSDTA0pass);
     if (r == ENMFILES) r = ENOENT;
     if (r)
         TRACE(("Fsfirst: returning %ld", r));
@@ -570,7 +574,7 @@ f_sfirst (MetaDOSDTA const char *path, int attrib)
 long searchtime;
 
 long _cdecl
-f_snext (MetaDOSDTA0)
+sys_f_snext (MetaDOSDTA0)
 {
     PROC *p = curproc;
 
@@ -644,7 +648,7 @@ f_snext (MetaDOSDTA0)
         return EINTERNAL;
     }
 
-    /* BUG: f_snext and readdir should check for disk media changes
+    /* BUG: sys_f_snext and readdir should check for disk media changes
      */
     for(;;)
     {
@@ -744,7 +748,7 @@ f_snext (MetaDOSDTA0)
 }
 
 long _cdecl
-f_attrib (MetaDOSFile const char *name, int rwflag, int attr)
+sys_f_attrib (MetaDOSFile const char *name, int rwflag, int attr)
 {
     PROC *p = curproc;
     struct ucred *cred = p->p_cred->ucr;
@@ -803,7 +807,7 @@ f_attrib (MetaDOSFile const char *name, int rwflag, int attr)
 }
 
 long _cdecl
-f_delete (MetaDOSFile const char *name)
+sys_f_delete (MetaDOSFile const char *name)
 {
     PROC *p = curproc;
     struct ucred *cred = p->p_cred->ucr;
@@ -898,7 +902,7 @@ f_delete (MetaDOSFile const char *name)
 }
 
 long _cdecl
-f_rename (MetaDOSFile int junk, const char *old, const char *new)
+sys_f_rename (MetaDOSFile int junk, const char *old, const char *new)
 {
     PROC *p = curproc;
     struct ucred *cred = p->p_cred->ucr;
@@ -1007,7 +1011,7 @@ f_rename (MetaDOSFile int junk, const char *old, const char *new)
  * see also Sysconf() in dos.c
  */
 long _cdecl
-d_pathconf (MetaDOSDir const char *name, int which)
+sys_d_pathconf (MetaDOSDir const char *name, int which)
 {
     fcookie dir;
     long r;
@@ -1038,7 +1042,7 @@ d_pathconf (MetaDOSDir const char *name, int which)
  * and as a bonus allow for arbitrary length file names
  */
 long _cdecl
-d_opendir (MetaDOSDir const char *name, int flag)
+sys_d_opendir (MetaDOSDir const char *name, int flag)
 {
     PROC *p = curproc;
 
@@ -1081,7 +1085,7 @@ d_opendir (MetaDOSDir const char *name, int flag)
     r = xfs_opendir (dir.fs, dirh, flag);
     if (r)
     {
-        DEBUG(("d_opendir(%s): opendir returned %ld", name, r));
+        DEBUG(("sys_d_opendir(%s): opendir returned %ld", name, r));
         release_cookie (&dir);
 #ifndef ARAnyM_MetaDOS
         kfree (dirh);
@@ -1099,7 +1103,7 @@ d_opendir (MetaDOSDir const char *name, int flag)
 }
 
 long _cdecl
-d_readdir (MetaDOSDir int len, long handle, char *buf)
+sys_d_readdir (MetaDOSDir int len, long handle, char *buf)
 {
 #ifndef ARAnyM_MetaDOS
     DIR *dirh = (DIR *) handle;
@@ -1116,18 +1120,18 @@ d_readdir (MetaDOSDir int len, long handle, char *buf)
     if (r == E_OK)
         release_cookie (&fc);
 
-    DEBUG(("d_readdir(): returned %ld", r));
+    DEBUG(("sys_d_readdir(): returned %ld", r));
 
     return r;
 }
 
-/* jr: just as d_readdir, but also returns XATTR structure (not
+/* jr: just as sys_d_readdir, but also returns XATTR structure (not
  * following links). Note that the return value reflects the
  * result of the Dreaddir operation, the result of the Fxattr
  * operation is stored in long *xret
  */
 long _cdecl
-d_xreaddir (MetaDOSDir int len, long handle, char *buf, XATTR *xattr, long *xret)
+sys_d_xreaddir (MetaDOSDir int len, long handle, char *buf, XATTR *xattr, long *xret)
 {
 #ifndef ARAnyM_MetaDOS
     DIR *dirh = (DIR *) handle;
@@ -1159,7 +1163,7 @@ d_xreaddir (MetaDOSDir int len, long handle, char *buf, XATTR *xattr, long *xret
 
 
 long _cdecl
-d_rewind (MetaDOSDir long handle)
+sys_d_rewind (MetaDOSDir long handle)
 {
 #ifndef ARAnyM_MetaDOS
     DIR *dirh = (DIR *) handle;
@@ -1176,11 +1180,11 @@ d_rewind (MetaDOSDir long handle)
 /*
  * NOTE: there is also code in terminate() in dosmem.c that
  * does automatic closes of directory searches.
- * If you change d_closedir(), you may also need to change
+ * If you change sys_d_closedir(), you may also need to change
  * terminate().
  */
 long _cdecl
-d_closedir (MetaDOSDir long handle)
+sys_d_closedir (MetaDOSDir long handle)
 {
     PROC *p = curproc;
 #ifndef ARAnyM_MetaDOS
@@ -1229,7 +1233,7 @@ d_closedir (MetaDOSDir long handle)
  * flag is 1 if not (like lstat).
  */
 long _cdecl
-f_xattr (MetaDOSFile int flag, const char *name, XATTR *xattr)
+sys_f_xattr (MetaDOSFile int flag, const char *name, XATTR *xattr)
 {
     fcookie fc;
     long r;
@@ -1267,7 +1271,7 @@ f_xattr (MetaDOSFile int flag, const char *name, XATTR *xattr)
  * original written by jr
  */
 long _cdecl
-d_readlabel (MetaDOSDir const char *name, char *buf, int buflen)
+sys_d_readlabel (MetaDOSDir const char *name, char *buf, int buflen)
 {
     fcookie dir;
     long r;
@@ -1291,7 +1295,7 @@ d_readlabel (MetaDOSDir const char *name, char *buf, int buflen)
  * original written by jr
  */
 long _cdecl
-d_writelabel (MetaDOSDir const char *name, const char *label)
+sys_d_writelabel (MetaDOSDir const char *name, const char *label)
 {
     PROC *p = curproc;
     struct ucred *cred = p->p_cred->ucr;

@@ -43,8 +43,9 @@ LIBS =  $(LIBKERN) -lgcc
 CPU = 000
 
 # ensure that FreeMiNT CVS proc.h is never loaded
-MDFLAGS = -D_mint_proc_h
+MDFLAGS = -D_mint_proc_h -D_libkern_kernel_xfs_xdd_h
 # some little code pieces needs to be metados dependent 
+MDFLAGS += -D__KERNEL_XFS__
 MDFLAGS += -DARAnyM_MetaDOS
 MDFLAGS += $(DEBUG_INFO)
 

@@ -12,6 +12,8 @@
 #ifndef _mintfake_h_
 #define _mintfake_h_
 
+# include "debug.h"
+
 # ifndef ARAnyM_MetaDOS
 # define ARAnyM_MetaDOS
 # endif
@@ -65,6 +67,11 @@
 # undef  PATH_MAX
 #endif
 # define PATH_MAX 1024
+
+#ifdef SPRINTF_MAX
+# undef  SPRINTF_MAX
+#endif
+# define SPRINTF_MAX 128
 
 
 #endif /* _mintfake_h_ */

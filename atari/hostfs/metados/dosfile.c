@@ -31,6 +31,7 @@
 # include "mint/emu_tos.h"
 # include "mint/time.h"
 
+# include "debug.h"
 # include "filesys.h"
 # include "k_fds.h"
 
@@ -42,7 +43,7 @@ short select_coll;
 
 
 long _cdecl
-f_open (MetaDOSFile const char *name, short mode)
+sys_f_open (MetaDOSFile const char *name, short mode)
 {
 	PROC *p = curproc;
 	FILEPTR *fp = NULL;
@@ -115,7 +116,7 @@ f_open (MetaDOSFile const char *name, short mode)
 }
 
 long _cdecl
-f_create (MetaDOSFile const char *name, short attrib)
+sys_f_create (MetaDOSFile const char *name, short attrib)
 {
 	PROC *p = curproc;
 	FILEPTR *fp = NULL;
@@ -189,7 +190,7 @@ f_create (MetaDOSFile const char *name, short attrib)
 }
 
 long _cdecl
-f_close (MetaDOSFile short fd)
+sys_f_close (MetaDOSFile short fd)
 {
 	PROC *p = curproc;
 	FILEPTR *f;
@@ -232,7 +233,7 @@ f_close (MetaDOSFile short fd)
 }
 
 long _cdecl
-f_read (MetaDOSFile short fd, long count, char *buf)
+sys_f_read (MetaDOSFile short fd, long count, char *buf)
 {
 	PROC *p = curproc;
 	FILEPTR *f;
@@ -255,7 +256,7 @@ f_read (MetaDOSFile short fd, long count, char *buf)
 }
 
 long _cdecl
-f_write (MetaDOSFile short fd, long count, const char *buf)
+sys_f_write (MetaDOSFile short fd, long count, const char *buf)
 {
 	PROC *p = curproc;
 	FILEPTR *f;
@@ -309,7 +310,7 @@ f_write (MetaDOSFile short fd, long count, const char *buf)
 }
 
 long _cdecl
-f_seek (MetaDOSFile long place, short fd, short how)
+sys_f_seek (MetaDOSFile long place, short fd, short how)
 {
 	PROC *p = curproc;
 	FILEPTR *f;
@@ -330,7 +331,7 @@ f_seek (MetaDOSFile long place, short fd, short how)
 
 
 long _cdecl
-f_datime (MetaDOSFile ushort *timeptr, short fd, short wflag)
+sys_f_datime (MetaDOSFile ushort *timeptr, short fd, short wflag)
 {
 	PROC *p = curproc;
 	FILEPTR *f;

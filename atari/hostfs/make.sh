@@ -1,5 +1,5 @@
 if [ x$FREEMINT_SRC_HOME == x ]; then 
-	FREEMINT_SRC_HOME=/opt/home/stop/projects/freemint
+	FREEMINT_SRC_HOME=/local/home/standa/projects/mint/freemint
 fi
 
 if [ ! -e $FREEMINT_SRC_HOME/COPYING.MiNT ]; then 
@@ -22,5 +22,5 @@ cp $HOSTFS_BUILD_HOME/hostfs/metados/*.dos bin
 cp $HOSTFS_BUILD_HOME/hostfs/*.xfs bin
 
 # cleanup the FreeMiNT cvs tree
-rm -rf $HOSTFS_BUILD_HOME/hostfs
-rm -rf $HOSTFS_BUILD_HOME/natfeat
+#rm -rf $HOSTFS_BUILD_HOME/hostfs
+#rm -rf $HOSTFS_BUILD_HOME/natfeat

@@ -22,6 +22,7 @@
  * various file system interface things
  */
 
+# include "mintproc.h"
 # include "filesys.h"
 # include "libkern/libkern.h"
 
@@ -31,7 +32,6 @@
 
 # include "k_fds.h"
 
-# include "mintproc.h"
 # include "mintfake.h"
 
 
@@ -202,7 +202,7 @@ relpath2cookie (fcookie *relto, const char *path, char *lastname, fcookie *res, 
         lastname = temp2;
     }
 
-    *lastname = 0;
+    *lastname = '\0';
 
     PATH2COOKIE_DB (("relpath2cookie(%s, dolast=%d, depth=%d [relto %lx, %i])",
                      path, dolast, depth, relto->fs, relto->dev));
@@ -282,7 +282,7 @@ relpath2cookie (fcookie *relto, const char *path, char *lastname, fcookie *res, 
             dup_cookie (&dir, &cwd->rootdir);
         else {
             dup_cookie (&dir, &cwd->root[drv]);
-            PATH2COOKIE_DB (("relpath2cookie: rooted and !root_dir (%lx, %li, %i) for dir", dir.fs, dir.index, dir.dev));
+            PATH2COOKIE_DB (("relpath2cookie: rooted and !root_dir (drv = %i, %lx, %li, %i) for dir", drv, dir.fs, dir.index, dir.dev));
         }
     }
     else
@@ -352,7 +352,7 @@ relpath2cookie (fcookie *relto, const char *path, char *lastname, fcookie *res, 
             PATH2COOKIE_DB (("fs is a KNOPARSE, nothing to do"));
 
             strncpy (lastname, path, PATH_MAX-1);
-            lastname[PATH_MAX - 1] = 0;
+            lastname[PATH_MAX - 1] = '\0';
             r = 0;
             *res = dir;
         }
@@ -415,11 +415,6 @@ relpath2cookie (fcookie *relto, const char *path, char *lastname, fcookie *res, 
 
     while (*path)
     {
-        /*  skip slashes
-         */
-        while (DIRSEP (*path))
-            path++;
-
         /* now we must have a directory, since there are more things
          * in the path
          */
@@ -442,11 +437,21 @@ relpath2cookie (fcookie *relto, const char *path, char *lastname, fcookie *res, 
             break;
         }
 
+        /*  skip slashes
+         */
+        while (DIRSEP (*path))
+            path++;
+
         /* if there's nothing left in the path, we can break here
+         *
+         * fna: I think this is an error, e.g.
+         *      looking up: /foo/bar/ should result in an error, or?
+         *      at least there is no lastname, so clear it
          */
         if (!*path)
         {
             PATH2COOKIE_DB (("relpath2cookie: no more path, breaking (1)"));
+            *lastname = '\0'; /* no lastname */
             *res = dir;
             break;
         }

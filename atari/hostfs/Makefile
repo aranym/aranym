@@ -41,6 +41,8 @@ DEFINITIONS =
 LD = $(CC) -nostdlib -Wl,--entry -Wl,_init
 LIBS = $(LIBKERN) -lgcc
 CPU = 030
+CFLAGS += -D__KERNEL_XFS__
+
 
 # default definitions
 OBJS = $(COBJS:.c=.o)

@@ -23,13 +23,13 @@
 
 extern short select_coll;
 
-long _cdecl f_open (MetaDOSFile const char *name, short mode);
-long _cdecl f_create (MetaDOSFile const char *name, short attrib);
-long _cdecl f_close (MetaDOSFile short fd);
-long _cdecl f_read (MetaDOSFile short fd, long count, char *buf);
-long _cdecl f_write (MetaDOSFile short fd, long count, const char *buf);
-long _cdecl f_seek (MetaDOSFile long place, short fd, short how);
-long _cdecl f_datime (MetaDOSFile ushort *timeptr, short fd, short wflag);
+long _cdecl sys_f_open (MetaDOSFile const char *name, short mode);
+long _cdecl sys_f_create (MetaDOSFile const char *name, short attrib);
+long _cdecl sys_f_close (MetaDOSFile short fd);
+long _cdecl sys_f_read (MetaDOSFile short fd, long count, char *buf);
+long _cdecl sys_f_write (MetaDOSFile short fd, long count, const char *buf);
+long _cdecl sys_f_seek (MetaDOSFile long place, short fd, short how);
+long _cdecl sys_f_datime (MetaDOSFile ushort *timeptr, short fd, short wflag);
 
 
 # endif /* _dosfile_h */

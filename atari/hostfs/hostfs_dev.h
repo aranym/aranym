@@ -22,7 +22,6 @@
 #ifndef _aranym_dev_h_
 #define _aranym_dev_h_
 
-#define __KERNEL_XFS__
 #include "mint/mint.h"
 #include "mint/dcntl.h"
 #include "mint/file.h"
@@ -34,6 +33,9 @@ extern DEVDRV aranym_fs_devdrv;
 
 /*
  * $Log$
+ * Revision 1.2  2003/03/01 11:57:37  joy
+ * major HOSTFS NF API cleanup
+ *
  * Revision 1.1  2002/12/10 20:47:21  standa
  * The HostFS (the host OS filesystem access via NatFeats) implementation.
  *
