@@ -1,3 +1,9 @@
+2005/03/14 - Xavier
+- gui-sdl/dlgFileSelect.cpp:
+  - New sorting algoritm : folders at the top, files at the bottom.
+  - Reformatted using GNU indent (with "-kr -nce -ts4", as suggested by Petr).
+
+
 2005/03/05 - Xavier
 - doc/build-cygwin.sh: added SDL_image support. Allows to compile nfjpeg on
   Windows.

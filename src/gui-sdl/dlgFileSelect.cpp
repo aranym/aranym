@@ -14,58 +14,141 @@
 #include <string.h>
 #include <dirent.h>
 
+#include <debug.h>
+
 #include "sdlgui.h"
 #include "file.h"
 
-#define SGFSDLG_FILENAME  5
-#define SGFSDLG_UPDIR     6
-#define SGFSDLG_ROOTDIR   7
-#define SGFSDLG_ENTRY1    10
-#define SGFSDLG_ENTRY16   25
-#define SGFSDLG_UP        26
-#define SGFSDLG_DOWN      27
-#define SGFSDLG_OKAY      28
-#define SGFSDLG_CANCEL    29
+#define SGFSDLG_FILENAME   5
+#define SGFSDLG_UPDIR      6
+#define SGFSDLG_ROOTDIR    7
+#define SGFSDLG_FIRSTENTRY 10
+#define SGFSDLG_LASTENTRY  24
+#define SGFSDLG_UP         25
+#define SGFSDLG_DOWN       26
+#define SGFSDLG_OKAY       27
+#define SGFSDLG_CANCEL     28
+
+#define ENTRY_COUNT (SGFSDLG_LASTENTRY - SGFSDLG_FIRSTENTRY + 1)
+#define ENTRY_LENGTH 35
 
 
-static char dlgpath[39], dlgfname[33];              /* File and path name in the dialog */
-static char dlgfilenames[16][36];
+static char dlgpath[39], dlgfname[33];	/* File and path name in the dialog */
+static char dlgfilenames[ENTRY_COUNT][ENTRY_LENGTH + 1];
 
 /* The dialog data: */
-static SGOBJ fsdlg[] =
+static SGOBJ fsdlg[] = {
+	{SGBOX, SG_BACKGROUND, 0, 0, 0, 40, 25, NULL},
+	{SGTEXT, 0, 0, 13, 1, 13, 1, "Choose a file"},
+	{SGTEXT, 0, 0, 1, 2, 7, 1, "Folder:"},
+	{SGTEXT, 0, 0, 1, 3, 38, 1, dlgpath},
+	{SGTEXT, 0, 0, 1, 4, 6, 1, "File:"},
+	{SGTEXT, 0, 0, 7, 4, 31, 1, dlgfname},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 31, 1, 4, 1, ".."},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 36, 1, 3, 1, "/"},
+	{SGBOX, 0, 0, 1, 6, 38, 15, NULL},
+	{SGBOX, 0, 0, 38, 6, 1, 15, NULL},
+	{SGTEXT, 0, 0, 2, 6, ENTRY_LENGTH, 1, dlgfilenames[0]},
+	{SGTEXT, 0, 0, 2, 7, ENTRY_LENGTH, 1, dlgfilenames[1]},
+	{SGTEXT, 0, 0, 2, 8, ENTRY_LENGTH, 1, dlgfilenames[2]},
+	{SGTEXT, 0, 0, 2, 9, ENTRY_LENGTH, 1, dlgfilenames[3]},
+	{SGTEXT, 0, 0, 2, 10, ENTRY_LENGTH, 1, dlgfilenames[4]},
+	{SGTEXT, 0, 0, 2, 11, ENTRY_LENGTH, 1, dlgfilenames[5]},
+	{SGTEXT, 0, 0, 2, 12, ENTRY_LENGTH, 1, dlgfilenames[6]},
+	{SGTEXT, 0, 0, 2, 13, ENTRY_LENGTH, 1, dlgfilenames[7]},
+	{SGTEXT, 0, 0, 2, 14, ENTRY_LENGTH, 1, dlgfilenames[8]},
+	{SGTEXT, 0, 0, 2, 15, ENTRY_LENGTH, 1, dlgfilenames[9]},
+	{SGTEXT, 0, 0, 2, 16, ENTRY_LENGTH, 1, dlgfilenames[10]},
+	{SGTEXT, 0, 0, 2, 17, ENTRY_LENGTH, 1, dlgfilenames[11]},
+	{SGTEXT, 0, 0, 2, 18, ENTRY_LENGTH, 1, dlgfilenames[12]},
+	{SGTEXT, 0, 0, 2, 19, ENTRY_LENGTH, 1, dlgfilenames[13]},
+	{SGTEXT, 0, 0, 2, 20, ENTRY_LENGTH, 1, dlgfilenames[14]},
+	{SGBUTTON, SG_SELECTABLE | SG_TOUCHEXIT, 0, 38, 6, 1, 1, "\x01"},
+	/* Arrow up */
+	{SGBUTTON, SG_SELECTABLE | SG_TOUCHEXIT, 0, 38, 20, 1, 1, "\x02"},
+	/* Arrow down */
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, 10, 23, 8, 1,
+	 "OK"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 24, 23, 8, 1, "Cancel"},
+	{-1, 0, 0, 0, 0, 0, 0, NULL}
+};
+
+struct listentry {
+	char *filename;
+	bool directory;
+	struct listentry *next;
+};
+
+/* Create a sorted list from the directory listing of path */
+struct listentry *create_list(char *path)
 {
-    { SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL },
-    { SGTEXT, 0, 0, 13,1, 13,1, "Choose a file" },
-    { SGTEXT, 0, 0, 1,2, 7,1, "Folder:" },
-    { SGTEXT, 0, 0, 1,3, 38,1, dlgpath },
-    { SGTEXT, 0, 0, 1,4, 6,1, "File:" },
-    { SGTEXT, 0, 0, 7,4, 31,1, dlgfname },
-    { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 31,1, 4,1, ".." },
-    { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 36,1, 3,1, "/" },
-    { SGBOX, 0, 0, 1,6, 38,16, NULL },
-    { SGBOX, 0, 0, 38,6, 1,16, NULL },
-    { SGTEXT, 0, 0, 2,6, 35,1, dlgfilenames[0] },
-    { SGTEXT, 0, 0, 2,7, 35,1, dlgfilenames[1] },
-    { SGTEXT, 0, 0, 2,8, 35,1, dlgfilenames[2] },
-    { SGTEXT, 0, 0, 2,9, 35,1, dlgfilenames[3] },
-    { SGTEXT, 0, 0, 2,10, 35,1, dlgfilenames[4] },
-    { SGTEXT, 0, 0, 2,11, 35,1, dlgfilenames[5] },
-    { SGTEXT, 0, 0, 2,12, 35,1, dlgfilenames[6] },
-    { SGTEXT, 0, 0, 2,13, 35,1, dlgfilenames[7] },
-    { SGTEXT, 0, 0, 2,14, 35,1, dlgfilenames[8] },
-    { SGTEXT, 0, 0, 2,15, 35,1, dlgfilenames[9] },
-    { SGTEXT, 0, 0, 2,16, 35,1, dlgfilenames[10] },
-    { SGTEXT, 0, 0, 2,17, 35,1, dlgfilenames[11] },
-    { SGTEXT, 0, 0, 2,18, 35,1, dlgfilenames[12] },
-    { SGTEXT, 0, 0, 2,19, 35,1, dlgfilenames[13] },
-    { SGTEXT, 0, 0, 2,20, 35,1, dlgfilenames[14] },
-    { SGTEXT, 0, 0, 2,21, 35,1, dlgfilenames[15] },
-    { SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT      , 0, 38,6, 1,1, "\x01" },  /* Arrow up */
-    { SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT      , 0, 38,21, 1,1, "\x02" }, /* Arrow down */
-    { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 10,23, 8,1, "Okay" },
-    { SGBUTTON, SG_SELECTABLE|SG_EXIT           , 0, 24,23, 8,1, "Cancel" },
-    { -1, 0, 0, 0,0, 0,0, NULL }
-  };
+	struct listentry *list = NULL;
+	struct listentry *newentry;
+	DIR *dd;
+	struct dirent *direntry;
+	char tempstr[MAX_FILENAME_LENGTH];
+	struct stat filestat;
+
+	if ((dd = opendir(path)) == NULL)
+		return NULL;
+
+	while ((direntry = readdir(dd)) != NULL) {
+		/* Allocate enough memory to store a new list entry and
+		   its filemane */
+		newentry =
+			(struct listentry *) malloc(sizeof(struct listentry) +
+										strlen(direntry->d_name) + 1);
+
+		/* Store filename */
+		newentry->filename = (char *) (newentry + 1);
+		strcpy(newentry->filename, direntry->d_name);
+
+		/* Is this entry a directory ? */
+		strcpy(tempstr, path);
+		strcat(tempstr, newentry->filename);
+		if (stat(tempstr, &filestat) == 0 && S_ISDIR(filestat.st_mode))
+			newentry->directory = true;
+		else
+			newentry->directory = false;
+
+		/* Search for right place to insert new entry */
+		struct listentry **prev = &list;
+		struct listentry *next = list;
+		while (next != NULL) {
+			/* directory first, then files */
+			if ((newentry->directory == true)
+				&& (next->directory == false))
+				break;
+
+			/* Sort by name */
+			if ((newentry->directory == next->directory)
+				&& (strcmp(newentry->filename, next->filename) < 0))
+				break;
+
+			prev = &(next->next);
+			next = next->next;
+		}
+
+		/* Insert new entry */
+		newentry->next = next;
+		*prev = newentry;
+	}
+
+	if (closedir(dd) != 0)
+		bug("Error on closedir.");
+
+	return list;
+}
+
+/* Free memory allocated for each member of list */
+void free_list(struct listentry *list)
+{
+	while (list != NULL) {
+		struct listentry *temp = list;
+		list = list->next;
+		free(temp);
+	}
+}
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -75,226 +158,229 @@ static SGOBJ fsdlg[] =
 */
 int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
 {
-  int i;
-  int entries = 0;                             /* How many files are in the actual directory? */
-  int ypos = 0;
-  struct dirent **files = NULL;
-  char path[MAX_FILENAME_LENGTH], fname[128];  /* The actual file and path names */
-  bool reloaddir = true;                       /* Do we have to reload the directory file list? */
-  bool refreshentries = true;                  /* Do we have to update the file names in the dialog? */
-  int retbut;
-  int oldcursorstate;
-  int selection = -1;                          /* The actual selection, -1 if none selected */
+	int i;
+	int ypos = 0;
+	struct listentry *list = NULL;
+	/* The actual file and path names */
+	char path[MAX_FILENAME_LENGTH], fname[128];
+	/* Do we have to reload the directory file list? */
+	bool reloaddir = true;
+	/* Do we have to update the file names in the dialog? */
+	bool refreshentries = true;
+	int retbut;
+	int oldcursorstate;
+	/* The actual selection, -1 if none selected */
+	int selection = -1;
+	bool eol;
 
-  if(bAllowNew)
-    fsdlg[SGFSDLG_FILENAME].type = SGEDITFIELD;
-  else
-    fsdlg[SGFSDLG_FILENAME].type = SGTEXT;
+	if (bAllowNew)
+		fsdlg[SGFSDLG_FILENAME].type = SGEDITFIELD;
+	else
+		fsdlg[SGFSDLG_FILENAME].type = SGTEXT;
 
-  /* Prepare the path and filename variables */
-  File_splitpath(path_and_name, path, fname, NULL);
-  File_ShrinkName(dlgpath, path, 38);
-  File_ShrinkName(dlgfname, fname, 32);
+	/* Prepare the path and filename variables */
+	File_splitpath(path_and_name, path, fname, NULL);
+	File_ShrinkName(dlgpath, path, 38);
+	File_ShrinkName(dlgfname, fname, 32);
 
-  /* Save old mouse cursor state and enable cursor anyway */
-  SCRLOCK;
-  oldcursorstate = SDL_ShowCursor(SDL_QUERY);
-  if( oldcursorstate==SDL_DISABLE )
-    SDL_ShowCursor(SDL_ENABLE);
-  SCRUNLOCK;
+	/* Save old mouse cursor state and enable cursor anyway */
+	SCRLOCK;
+	oldcursorstate = SDL_ShowCursor(SDL_QUERY);
+	if (oldcursorstate == SDL_DISABLE)
+		SDL_ShowCursor(SDL_ENABLE);
+	SCRUNLOCK;
 
-  do
-  {
-    if( reloaddir )
-    {
-      if( strlen(path)>=MAX_FILENAME_LENGTH )
-      {
-        fprintf(stderr, "SDLGui_FileSelect: Path name too long!\n");
-        return false;
-      }
+	do {
+		if (reloaddir) {
+			if (strlen(path) >= MAX_FILENAME_LENGTH) {
+				fprintf(stderr,
+						"SDLGui_FileSelect: Path name too long!\n");
+				return false;
+			}
 
-      /* Free old allocated memory: */
-      if( files!=NULL )
-      {
-        for(i=0; i<entries; i++)
-        {
-          free(files[i]);
-        }
-        free(files);
-        files = NULL;
-      }
+			free_list(list);
 
-      /* Load directory entries: */
-      entries = scandir(path, &files, 0, alphasort);
-      if(entries<0)
-      {
-        fprintf(stderr, "SDLGui_FileSelect: Path not found.\n");
-        strcpy(path, "/");	// reset path and reload entries
-        strcpy(dlgpath, path);
-        entries = scandir(path, &files, 0, alphasort);
-        if (entries<0)
-        	return false;	// we're really lost if even root is unreadable
-      }
-      reloaddir = false;
-      refreshentries = true;
-    }
+			/* Load directory entries: */
+			list = create_list(path);
+			if (list == NULL) {
+				fprintf(stderr, "SDLGui_FileSelect: Path not found.\n");
+				/* reset path and reload entries */
+				strcpy(path, "/");
+				strcpy(dlgpath, path);
+				list = create_list(path);
+				if (list == NULL)
+					/* we're really lost if even root is
+					   unreadable */
+					return false;
+			}
+			reloaddir = false;
+			refreshentries = true;
+		}
 
-    if( refreshentries )
-    {
-      /* Copy entries to dialog: */
-      for(i=0; i<16; i++)
-      {
-        if( i+ypos<entries )
-        {
-          char tempstr[MAX_FILENAME_LENGTH];
-          struct stat filestat;
-          /* Prepare entries: */
-          strcpy(tempstr, "  ");
-          strcat(tempstr, files[i+ypos]->d_name);
-          File_ShrinkName(dlgfilenames[i], tempstr, 35);
-          /* Mark folders: */
-          strcpy(tempstr, path);
-          strcat(tempstr, files[i+ypos]->d_name);
-          if( stat(tempstr, &filestat)==0 && S_ISDIR(filestat.st_mode) )
-            dlgfilenames[i][0] = SGFOLDER;    /* Mark folders */
-          fsdlg[SGFSDLG_ENTRY1+i].flags=(SG_SELECTABLE|SG_EXIT|SG_RADIO);
-        }
-        else
-        {
-          dlgfilenames[i][0] = 0;  /* Clear entry */
-          fsdlg[SGFSDLG_ENTRY1+i].flags=0;
-        }
-        fsdlg[SGFSDLG_ENTRY1+i].state=0;
-      }
-      refreshentries = false;
-    }
+		if (refreshentries) {
+			struct listentry *temp = list;
+			for (i = 0; i < ypos; i++)
+				temp = temp->next;
 
-    /* Show dialog: */
-    retbut = SDLGui_DoDialog(fsdlg);
+			/* Copy entries to dialog: */
+			for (i = 0; i < ENTRY_COUNT; i++) {
+				if (temp != NULL) {
+					char tempstr[MAX_FILENAME_LENGTH];
+					/* Prepare entries: */
+					strcpy(tempstr, "  ");
+					strcat(tempstr, temp->filename);
+					File_ShrinkName(dlgfilenames[i], tempstr,
+									ENTRY_LENGTH);
+					/* Mark folders: */
+					if (temp->directory)
+						dlgfilenames[i][0] = SGFOLDER;
+					fsdlg[SGFSDLG_FIRSTENTRY + i].flags =
+						(SG_SELECTABLE | SG_EXIT | SG_RADIO);
+					temp = temp->next;
+				}
+				else {
+					/* Clear entry */
+					dlgfilenames[i][0] = 0;
+					fsdlg[SGFSDLG_FIRSTENTRY + i].flags = 0;
+				}
+				fsdlg[SGFSDLG_FIRSTENTRY + i].state = 0;
+			}
 
-    /* Has the user clicked on a file or folder? */
-    if( retbut>=SGFSDLG_ENTRY1 && retbut<=SGFSDLG_ENTRY16)
-    {
-      char tempstr[MAX_FILENAME_LENGTH];
-      struct stat filestat;
+			if (temp == NULL)
+				eol = true;
+			else
+				eol = false;
 
-      strcpy(tempstr, path);
-      strcat(tempstr, files[retbut-SGFSDLG_ENTRY1+ypos]->d_name);
-      if( stat(tempstr, &filestat)==0 && S_ISDIR(filestat.st_mode) )
-      {
-        /* Set the new directory */
-        strcpy(path, tempstr);
-        if( strlen(path)>=3 )
-        {
-          if(path[strlen(path)-2]=='/' && path[strlen(path)-1]=='.')
-            path[strlen(path)-2] = 0;  /* Strip a single dot at the end of the path name */
-          if(path[strlen(path)-3]=='/' && path[strlen(path)-2]=='.' && path[strlen(path)-1]=='.')
-          {
-            /* Handle the ".." folder */
-            char *ptr;
-            if( strlen(path)==3 )
-              path[1] = 0;
-            else
-            {
-              path[strlen(path)-3] = 0;
-              ptr = strrchr(path, '/');
-              if(ptr)  *(ptr+1) = 0;
-            }
-          }
-        }
-        File_AddSlashToEndFileName(path);
-        reloaddir = true;
-        /* Copy the path name to the dialog */
-        File_ShrinkName(dlgpath, path, 38);
-        selection = -1;                /* Remove old selection */
-        // fname[0] = 0;
-        dlgfname[0] = 0;
-        ypos = 0;
-      }
-      else
-      {
-        /* Select a file */
-        selection = retbut-SGFSDLG_ENTRY1+ypos;
-        strcpy(fname, files[selection]->d_name);
-        File_ShrinkName(dlgfname, fname, 32);
-      }
-    }
-    else    /* Has the user clicked on another button? */
-    {
-      switch(retbut)
-      {
-        case SGFSDLG_UPDIR:                 /* Change path to parent directory */
-          if( strlen(path)>2 )
-          {
-            char *ptr;
-            File_CleanFileName(path);
-            ptr = strrchr(path, '/');
-            if(ptr)  *(ptr+1) = 0;
-            File_AddSlashToEndFileName(path);
-            reloaddir = true;
-            File_ShrinkName(dlgpath, path, 38);  /* Copy the path name to the dialog */
-            selection = -1;                 /* Remove old selection */
-            fname[0] = 0;
-            dlgfname[0] = 0;
-            ypos = 0;
-          }
-          break;
-        case SGFSDLG_ROOTDIR:               /* Change to root directory */
-          strcpy(path, "/");
-          reloaddir = true;
-          strcpy(dlgpath, path);
-          selection = -1;                   /* Remove old selection */
-          fname[0] = 0;
-          dlgfname[0] = 0;
-          ypos = 0;
-          break;
-        case SGFSDLG_UP:                    /* Scroll up */
-          if( ypos>0 )
-          {
-            --ypos;
-            refreshentries = true;
-          }
-          SDL_Delay(20);
-          break;
-        case SGFSDLG_DOWN:                  /* Scroll down */
-          if( ypos+17<=entries )
-          {
-            ++ypos;
-            refreshentries = true;
-          }
-          SDL_Delay(20);
-          break;
-      } /* switch */
-    } /* other button code */
+			refreshentries = false;
+		}
 
-  }
-  while(retbut!=SGFSDLG_OKAY && retbut!=SGFSDLG_CANCEL && retbut!=-1);
+		/* Show dialog: */
+		retbut = SDLGui_DoDialog(fsdlg);
 
-  SCRLOCK;
-  if( oldcursorstate==SDL_DISABLE )
-    SDL_ShowCursor(SDL_DISABLE);
-  SCRUNLOCK;
+		/* Has the user clicked on a file or folder? */
+		if ((retbut >= SGFSDLG_FIRSTENTRY)
+			&& (retbut <= SGFSDLG_LASTENTRY)) {
+			char tempstr[MAX_FILENAME_LENGTH];
+			struct stat filestat;
+			struct listentry *temp = list;
 
-  {
-    /* if user edited filename, use new one */
-    char dlgfname2[33];
-    File_ShrinkName(dlgfname2, fname, 32);
-    if (strcmp(dlgfname, dlgfname2) != 0)
-      strcpy(fname, dlgfname);
-  }
+			strcpy(tempstr, path);
+			for (int i = 0; i < ((retbut - SGFSDLG_FIRSTENTRY) + ypos);
+				 i++)
+				temp = temp->next;
+			strcat(tempstr, temp->filename);
+			if (stat(tempstr, &filestat) == 0 && S_ISDIR(filestat.st_mode)) {
+				/* Set the new directory */
+				strcpy(path, tempstr);
+				if (strlen(path) >= 3) {
+					if ((path[strlen(path) - 2] == '/')
+						&& (path[strlen(path) - 1] == '.'))
+						/* Strip a single dot at the
+						   end of the path name */
+						path[strlen(path) - 2] = 0;
+					if ((path[strlen(path) - 3] == '/')
+						&& (path[strlen(path) - 2] == '.')
+						&& (path[strlen(path) - 1] == '.')) {
+						/* Handle the ".." folder */
+						char *ptr;
+						if (strlen(path) == 3)
+							path[1] = 0;
+						else {
+							path[strlen(path) - 3] = 0;
+							ptr = strrchr(path, '/');
+							if (ptr)
+								*(ptr + 1) = 0;
+						}
+					}
+				}
+				File_AddSlashToEndFileName(path);
+				reloaddir = true;
+				/* Copy the path name to the dialog */
+				File_ShrinkName(dlgpath, path, 38);
+				selection = -1;	/* Remove old selection */
+				// fname[0] = 0;
+				dlgfname[0] = 0;
+				ypos = 0;
+			}
+			else {
+				/* Select a file */
+				selection = retbut - SGFSDLG_FIRSTENTRY + ypos;
+				strcpy(fname, temp->filename);
+				File_ShrinkName(dlgfname, fname, 32);
+			}
+		}
+		else {
+			/* Has the user clicked on another button? */
+			switch (retbut) {
+			case SGFSDLG_UPDIR:
+				/* Change path to parent directory */
+				if (strlen(path) > 2) {
+					char *ptr;
+					File_CleanFileName(path);
+					ptr = strrchr(path, '/');
+					if (ptr)
+						*(ptr + 1) = 0;
+					File_AddSlashToEndFileName(path);
+					reloaddir = true;
+					/* Copy the path name to the dialog */
+					File_ShrinkName(dlgpath, path, 38);
+					/* Remove old selection */
+					selection = -1;
+					fname[0] = 0;
+					dlgfname[0] = 0;
+					ypos = 0;
+				}
+				break;
+			case SGFSDLG_ROOTDIR:
+				/* Change to root directory */
+				strcpy(path, "/");
+				reloaddir = true;
+				strcpy(dlgpath, path);
+				/* Remove old selection */
+				selection = -1;
+				fname[0] = 0;
+				dlgfname[0] = 0;
+				ypos = 0;
+				break;
+			case SGFSDLG_UP:
+				/* Scroll up */
+				if (ypos > 0) {
+					--ypos;
+					refreshentries = true;
+				}
+				SDL_Delay(20);
+				break;
+			case SGFSDLG_DOWN:
+				/* Scroll down */
+				if (eol == false) {
+					++ypos;
+					refreshentries = true;
+				}
+				SDL_Delay(20);
+				break;
+			}					/* switch */
+		}						/* other button code */
 
-  File_makepath(path_and_name, path, fname, NULL);
+	}
+	while ((retbut != SGFSDLG_OKAY) && (retbut != SGFSDLG_CANCEL)
+		   && (retbut != -1));
 
-  /* Free old allocated memory: */
-  if( files!=NULL )
-  {
-    for(i=0; i<entries; i++)
-    {
-      free(files[i]);
-    }
-    free(files);
-    files = NULL;
-  }
+	SCRLOCK;
+	if (oldcursorstate == SDL_DISABLE)
+		SDL_ShowCursor(SDL_DISABLE);
+	SCRUNLOCK;
 
-  return( retbut==SGFSDLG_OKAY );
+	{
+		/* if user edited filename, use new one */
+		char dlgfname2[33];
+		File_ShrinkName(dlgfname2, fname, 32);
+		if (strcmp(dlgfname, dlgfname2) != 0)
+			strcpy(fname, dlgfname);
+	}
+
+	File_makepath(path_and_name, path, fname, NULL);
+
+	free_list(list);
+
+	return (retbut == SGFSDLG_OKAY);
 }
