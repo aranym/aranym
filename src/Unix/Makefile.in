@@ -46,6 +46,7 @@ SRCS = ../main.cpp \
 	../blitter.cpp \
 	../videl.cpp \
 	../yamaha.cpp \
+	../dsp.cpp \
 	../mmu.cpp \
 	../extfs.cpp \
 	../parameters.cpp \
