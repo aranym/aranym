@@ -13,7 +13,6 @@
 #include "emul_op.h"
 #include "ndebug.h"
 
-extern int intlev(void);			// From basilisk_glue.cpp
 extern int mfpCounter5, mfpCounter6;// From basilisk_glue.cpp
 
 #include "m68k.h"
@@ -733,8 +732,8 @@ static void Interrupt(int nr)
     Exception(nr+24, 0);
 
     regs.intmask = nr;
-    // why the hell the SPCFLAG_INT is to be set???
-    // regs.spcflags |= SPCFLAG_INT;
+    // why the hell the SPCFLAG_INT is to be set??? (joy)
+    // regs.spcflags |= SPCFLAG_INT; (disabled by joy)
 }
 
 static void MFPInterrupt(int nr)
@@ -2802,13 +2801,13 @@ static void do_trace (void)
     }
 }
 
-#define SERVE_DOINT										\
+#define SERVE_VBL										\
 {														\
-	if (regs.spcflags & SPCFLAG_DOINT) {				\
-		int intr = intlev ();							\
-		regs.spcflags &= ~SPCFLAG_DOINT;				\
-		if (intr != -1 && intr > regs.intmask) {		\
-			Interrupt (intr);							\
+	if (regs.spcflags & SPCFLAG_VBL) {					\
+		int intr = 4;									\
+		regs.spcflags &= ~SPCFLAG_VBL;					\
+		if (intr > regs.intmask) {						\
+			Interrupt(intr);							\
 			regs.stopped = 0;							\
 			regs.spcflags &= ~SPCFLAG_STOP;					/* needed only if in while(STOP) */	\
 		}												\
@@ -2826,8 +2825,8 @@ static void do_trace (void)
    			MFPInterrupt(irq);							\
 			regs.stopped = 0;							\
 			regs.spcflags &= ~SPCFLAG_STOP;					/* needed only if in while(STOP) */	\
-			if (--mfpCounter ## irq <= 0)				\
-				regs.spcflags &= ~(mask);					/* shouldn't be this reset even if it's masked out (like the DOINT)? */	\
+			if (irq == 6 || --mfpCounter ## irq <= 0)	\
+				regs.spcflags &= ~(mask);					/* shouldn't be this reset even if it's masked out (like the VBL)? */	\
 		}												\
 	}													\
 }
@@ -2845,14 +2844,14 @@ static int do_specialties(void)
 		Exception (9,last_trace_ad);
 	}
 	while (regs.spcflags & SPCFLAG_STOP) {
-		usleep(1000);	// give slices to OS
-		SERVE_DOINT;
+		usleep(1000);	// give unused time slices back to OS
+		SERVE_VBL;
 		SERVE_ALL_MFP;
 	}
 	if (regs.spcflags & SPCFLAG_TRACE)
 		do_trace ();
 
-	SERVE_DOINT;
+	SERVE_VBL;
 	SERVE_ALL_MFP;
 
 /*  

@@ -1,4 +1,12 @@
-2001/12/22 - joy
+2001/12/25 - joy (tagged as ARANYM_0_0_13)
+- ACIA IRQs are not buffered (like TimerC IRQs are) - it was causing bad
+  keyboard&mouse lockups. Apparently TOS can read several scancodes from IKBD
+  in one IRQ and our poor implementation fits that feature :-)
+
+- TimerC interrupt fired only if enabled in MFP IRQ enable reg.
+
+
+2001/12/22 - joy (tagged as ARANYM_0_0_12)
 - most video related parameters moved to bx_options.video struct
 - added "--refresh <x>" cmdline option. Default value is 2 = 50/2 Hz screen
   refresh. Allowed values are 1 - 200 (50Hz - 1/4 Hz)
