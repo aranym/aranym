@@ -172,12 +172,14 @@ static void segfault_vec(int x, struct sigcontext sc) {
 #if SIGSEGV_HANDLER_GOTO
 	void *ssvjmp = &&label_INSTR_UNKNOWN;
 #endif
+
 #if 1
-	if (in_handler > 1) {
+	if (in_handler > 0) {
 		panicbug("Segmentation fault in handler :-(");
 		abort();
 	}
 #endif
+	in_handler += 1;
 
 #if 0 && SIGSEGV_HANDLER_GOTO
 	if (!sigsegvjmptbl_set) {
@@ -186,8 +188,6 @@ static void segfault_vec(int x, struct sigcontext sc) {
 		sigsegvjmptbl[CASE_INSTR_ADD8] = &&label_INSTR_ADD8_L;
 	}
 #endif
-
-	in_handler += 1;
 
 #ifdef USE_JIT	/* does not compile with default configure */
 	D(compiler_status());

@@ -1,6 +1,10 @@
 2004/08/16 - Xavier
 - Unix/cygwin/sigsegv_cygwin.cpp: fixed GCC warnings.
 
+- Unix/cygwin/sigsegv_cygwin.cpp, Unix/linux/sigsegv_linux.cpp,
+  Unix/xbsd/sigsegv_xbsd.cpp: nested sigsegv are not allowed anymore. This
+  was unused since 2004/07/06 and was not supported under Windows.
+
 
 2004/08/12 - Xavier
 - Unix/configure.ac, Unix/cygwin/sigsegv_cygwin.cpp, uae_cpu/cpu_emulation.h :

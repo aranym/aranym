@@ -105,8 +105,9 @@ static void segfault_vec(int x, siginfo_t *sip, struct sigcontext *scp) {
 	int pom1, pom2 = 0;
 	instruction_t instruction = INSTR_UNKNOWN;
 	void *preg;
+
 #if 1
-	if (in_handler > 1) {
+	if (in_handler > 0) {
 		panicbug("Segmentation fault in handler :-(");
 		abort();
 	}

@@ -3,7 +3,7 @@
 
 #define SIGSEGV_HANDLER_GOTO 0
 
-#define DEBUG 2
+#define DEBUG 0
 #include "debug.h"
 
 /* No header file for this ? */
@@ -241,12 +241,14 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 #if SIGSEGV_HANDLER_GOTO
 	void *ssvjmp = &&label_INSTR_UNKNOWN;
 #endif
+
 #if 1
-	if (in_handler > 1) {
+	if (in_handler > 0) {
 		panicbug("Segmentation fault in handler :-(");
 		abort();
 	}
 #endif
+	in_handler += 1;
 
 #if SIGSEGV_HANDLER_GOTO
 	if (!sigsegvjmptbl_set) {
@@ -255,8 +257,6 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 		sigsegvjmptbl[CASE_INSTR_ADD8] = &&label_INSTR_ADD8_L;
 	}
 #endif
-
-	in_handler += 1;
 
 #ifdef USE_JIT	/* does not compile with default configure */
 	D(compiler_status());
