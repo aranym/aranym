@@ -5,10 +5,6 @@
  *	Patrice Mandin
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
@@ -4406,6 +4402,7 @@ static void dsp_tfr(void)
 
 static void dsp_tst(void)
 {
+/*
 	uint32 destreg, source[3], dest[3];
 
 	destreg = (cur_inst>>3) & 1;
@@ -4421,11 +4418,21 @@ static void dsp_tst(void)
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
+*/
+	uint32 destreg;
+	
+	destreg = (cur_inst>>3) & 1;
+
+	dsp_ccr_extension(&dsp.registers[REG_A2+destreg], &dsp.registers[REG_A1+destreg], &dsp.registers[REG_A0+destreg]);
+	dsp_ccr_unnormalized(&dsp.registers[REG_A2+destreg], &dsp.registers[REG_A1+destreg], &dsp.registers[REG_A0+destreg]);
+	dsp_ccr_negative(&dsp.registers[REG_A2+destreg], &dsp.registers[REG_A1+destreg], &dsp.registers[REG_A0+destreg]);
+	dsp_ccr_zero(&dsp.registers[REG_A2+destreg], &dsp.registers[REG_A1+destreg], &dsp.registers[REG_A0+destreg]);
 
 	dsp.registers[REG_SR] &= BITMASK(16)-(1<<SR_V);
 }
 
 /*
+	2002-07-22:PM	FIX:removed sub56 operation in tst()
 	2002-07-19:PM	BUG:movec_b and movec_d operations permuted
 					BUG:pm_5: wrong bit number used for write flag
 					BUG:div: did not save the result
