@@ -144,14 +144,16 @@ case "$target_os" in
   cygwin*)
     DEFINES="$DEFINES -fpermissive"
     LIBS="$LIBS -lSDL -lSDLmain -liberty"
+    EXTRASYSSRCS=parameters_unix.cpp
     ;;
   solaris*)
     AC_DEFINE(_XOPEN_SOURCE, 500)
     DEFINES="$DEFINES -DBSD_COMP -fpermissive"
+    EXTRASYSSRCS=parameters_unix.cpp
     WANT_EXTFS="no"
     ;;
   *)
-    EXTRASYSSRCS=parameters.cpp
+    EXTRASYSSRCS=parameters_unix.cpp
     ;;
 esac
 
