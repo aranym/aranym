@@ -18,7 +18,7 @@
           <td>68040 MMU</td><td>80%</td>
         </tr>
         <tr>
-          <td>TODO</td><td>optimalization, JIT(Should not loosing time with this in times when CPUs are getting 100GHz tacts in near future.)</td>
+          <td>TODO</td><td>speed optimalization, JIT</td>
         </tr>
         <tr>
           <th bgcolor="#999999" colspan="2" align="left">RAM</th>
@@ -27,10 +27,7 @@
           <td>ST-RAM</td><td>100%</td>
         </tr>
         <tr>
-          <td>FastRAM</td><td>95% (fixed size 32MB)</td>
-        </tr>
-        <tr>
-          <td>TODO</td><td>FastRAM size onfly setup. Maybe automatic sizing on demand?</td>
+          <td>FastRAM</td><td>100% (theoretically up to 4GB of RAM)</td>
         </tr>
         <tr>
           <th bgcolor="#999999" colspan="2" align="left">VIDEO</th>
@@ -39,19 +36,19 @@
           <td>BLITTER</td><td>100%</td>
         </tr>
         <tr>
-          <td>VIDEL</td><td>95%</td>
+          <td>VIDEL</td><td>100%</td>
         </tr>
         <tr>
           <td>VGA/RGB/TV modes</td><td>100%</td>
         </tr>
         <tr>
-          <td>Extended modes</td><td>working (using BlowUP and Videl Inside - Videlity doesn't work)</td>
+          <td>Extended modes</td><td>working (using BlowUP030 or Videl Inside)</td>
         </tr>
         <tr>
-          <td>Native fVDI driver</td><td>10%</td>
+          <td>Native fVDI driver</td><td>50%</td>
         </tr>
         <tr>
-          <td>TODO</td><td>fVDI driver, bitplane mode conversion speedup?</td>
+          <td>TODO</td><td>finish fVDI driver</td>
         </tr>
         <tr>
           <th bgcolor="#999999" colspan="2" align="left">SOUND</th>
@@ -72,7 +69,7 @@
           <th bgcolor="#999999" colspan="2" align="left">Discs</th>
         </tr>
         <tr>
-          <td></td><td>Man need to setup the disc values manually and used HDDriver or antother Falcon IDE supporting driver</td>
+          <td></td><td>You need HDDriver or another Falcon IDE compatible driver</td>
         </tr>
         <tr>
           <td>read/write PC Floppy access</td><td>100% (bootable)</td>
@@ -84,16 +81,16 @@
           <td>real Atari HDD access</td><td>100% (bootable, via IDE emulation)</td>
         </tr>
         <tr>
-          <td>HostOS filesystem folder to TOS partition assignment</td><td>70% (MetaDOS driver... unstable)</td>
+          <td>CD-ROM</td><td>80% (data CD works 100%, music CD not supported)</td>
         </tr>
         <tr>
-          <td>TODO</td><td>runtime disc parameters determination</td>
+          <td>HostOS filesystem folder to TOS partition assignment</td><td>90% (MetaDOS driver)</td>
         </tr>
         <tr>
           <td>TODO</td><td>SCSI emulation</td>
         </tr>
         <tr>
-          <td>TODO</td><td>debug the MetaDOS driver (.xfs for MiNT &amp; MagiC), CD/DVD-ROM support</td>
+          <td>TODO</td><td>debug the MetaDOS driver (.xfs for MiNT &amp; MagiC)</td>
         </tr>
         <tr>
           <th bgcolor="#999999" colspan="2" align="left">I/O Ports</th>
@@ -108,16 +105,16 @@
           <td>MIDI</td><td>0%</td>
         </tr>
         <tr>
-          <td>mouse</td><td>mapped to PC mouse (TODO: STonX like handling)</td>
+          <td>mouse</td><td>mapped to PC mouse</td>
         </tr>
         <tr>
-          <td>keyboard</td><td>mapped to PC keyboard (TODO: fix the map table, support for 2 ALT)</td>
+          <td>keyboard</td><td>mapped to PC keyboard (TODO: configurable map table)</td>
         </tr>
         <tr>
           <th bgcolor="#999999" colspan="2" align="left">Operating System</th>
         </tr>
         <tr>
-          <td>TOS</td><td>Yes, only 4.04</td>
+          <td>TOS</td><td>required original v4.04 only</td>
         </tr>
         <tr>
           <td>MagiC</td><td>bootable &amp; working</td>
@@ -126,7 +123,7 @@
           <td>FreeMiNT+N.AES/XaAES</td><td>bootable &amp; working</td>
         </tr>
         <tr>
-          <td>TODO</td><td>FreeMint support, network layer and interconnection with HostOS, opensource TOS replacement, full FreeMiNT integration</td>
+          <td>TODO</td><td>FreeMint support, network layer and interconnection with HostOS, opensource TOS replacement (EmuTOS), full FreeMiNT integration</td>
         </tr>
       </table>
     </text>
