@@ -84,7 +84,6 @@ class HostFs : public NF_Base
 		NativeTypeMapper<int> fdMapper;
 	#endif
 
-	bool isPathValid(const char *fileName);
 	void xfs_debugCookie( XfsCookie *fc );
 
   public:
@@ -179,6 +178,9 @@ class HostFs : public NF_Base
 
 /*
  * $Log$
+ * Revision 1.6.2.1  2003/04/03 12:11:29  standa
+ * 32bit <-> host mapping + general hostfs cleanup.
+ *
  * Revision 1.6  2003/03/20 01:08:17  standa
  * HOSTFS mapping update.
  *
