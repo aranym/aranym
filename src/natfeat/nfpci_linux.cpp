@@ -30,7 +30,7 @@
 #include "nfpci.h"
 #include "nfpci_linux.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 /*--- Defines ---*/
@@ -56,7 +56,7 @@ static uint32 num_pci_devices=0;
 PciDriverLinux::PciDriverLinux()
 {
 	uint32 device[17], i;
-	char buffer[32];
+	char buffer[512];
 	FILE *f;
 
 	D(bug(NFPCI_NAME "PciDriverLinux()"));
@@ -67,12 +67,16 @@ PciDriverLinux::PciDriverLinux()
 	}
 
 	num_pci_devices=0;
-	while (!feof(f)) {
+	while (fgets(buffer, sizeof(buffer)-1, f)) {
 		pci_device_t *new_device;
 
-		for (i=0; i<17; i++) {
-			fscanf(f, "%x", &device[i]);
-		}
+		sscanf(buffer, "%x %x %x %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx",
+			&device[0], &device[1], &device[2], &device[3], 
+			&device[4], &device[5], &device[6], &device[7], 
+			&device[8], &device[9], &device[10], &device[11], 
+			&device[12], &device[13], &device[14], &device[15], 
+			&device[16]
+		);
 
 		/* Add device to list */
 		++num_pci_devices;
@@ -87,16 +91,6 @@ PciDriverLinux::PciDriverLinux()
 			(new_device->info[0] >> 3) & 0x1f,
 			new_device->info[0] & 0x07
 		);
-
-		/* Go to end of line */
-		if (feof(f)) {
-			break;
-		}
-
-		fread(buffer, sizeof(char), 1, f);
-		while (buffer[0]!='\n') {
-			fread(buffer, sizeof(char), 1, f);
-		}
 	}
 
 	fclose(f);
