@@ -23,11 +23,11 @@
 
 #define VER_MAJOR	0
 #define VER_MINOR	8
-#define VER_MICRO	11
+#define VER_MICRO	12
 
 #ifndef VER_STATUS
-//#define VER_STATUS	"alpha"
-#define VER_STATUS	"beta"
+#define VER_STATUS	"alpha"
+//#define VER_STATUS	"beta"
 #endif
 
 #define str(x)		_stringify (x)
