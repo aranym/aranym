@@ -34,7 +34,7 @@ uae_u8 VIDEL::handleRead(uaecptr addr) {
 		case 0x66: return videl >> 8;
 		case 0x67: return videl & 0x00ff;
 		case 0xc0: return videoctrl >> 8;
-		case 0xc1: return videoctrl;
+		case 0xc1: return (videoctrl | 0x03);	// enforce TV
 		case 0xc3: return videomode;
 		default: return 0;
 	}
