@@ -3251,28 +3251,220 @@ void OSMesaDriver::glMap1d(Uint32 ctx, GLenum target, GLdouble u1, GLdouble u2, 
 {
 	D(bug("nfosmesa: glMap1d"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	{
+		GLdouble *tmp;
+		GLubyte *ptr;
+		int size, i,j;
+		
+		switch(target) {
+			case GL_MAP1_INDEX:
+			case GL_MAP1_TEXTURE_COORD_1:
+				size=1;
+				break;
+			case GL_MAP1_TEXTURE_COORD_2:
+				size=2;
+				break;
+			case GL_MAP1_VERTEX_3:
+			case GL_MAP1_NORMAL:
+			case GL_MAP1_TEXTURE_COORD_3:
+				size=3;
+				break;
+			default:
+				size=4;
+				break;
+		}
+
+		tmp=(GLdouble *)malloc(size*order*sizeof(GLdouble));
+		if (tmp) {
+			ptr =(GLubyte *)points;
+			for (i=0;i<order;i++) {
+				for (j=0;j<size;j++) {
+					Atari2HostDoublePtr(1, (Uint32 *)&ptr[j], &tmp[i*size+j]);
+				}
+				ptr += stride*sizeof(GLdouble);
+			}
+			fn.glMap1d(  target,  u1,  u2,  size,  order,  tmp );
+			free(tmp);
+		}
+	}
+#else
 	fn.glMap1d(  target,  u1,  u2,  stride,  order,  points );
+#endif
 }
 
 void OSMesaDriver::glMap1f(Uint32 ctx, GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat *points )
 {
 	D(bug("nfosmesa: glMap1f"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	{
+		GLfloat *tmp;
+		GLubyte *ptr;
+		int size, i,j;
+		
+		switch(target) {
+			case GL_MAP1_INDEX:
+			case GL_MAP1_TEXTURE_COORD_1:
+				size=1;
+				break;
+			case GL_MAP1_TEXTURE_COORD_2:
+				size=2;
+				break;
+			case GL_MAP1_VERTEX_3:
+			case GL_MAP1_NORMAL:
+			case GL_MAP1_TEXTURE_COORD_3:
+				size=3;
+				break;
+			default:
+				size=4;
+				break;
+		}
+
+		tmp=(GLfloat *)malloc(size*order*sizeof(GLfloat));
+		if (tmp) {
+			ptr =(GLubyte *)points;
+			for (i=0;i<order;i++) {
+				for (j=0;j<size;j++) {
+					Atari2HostFloatPtr(1, (Uint32 *)&ptr[j], &tmp[i*size+j]);
+				}
+				ptr += stride*sizeof(GLfloat);
+			}
+			fn.glMap1f(  target,  u1,  u2,  size,  order,  tmp );
+			free(tmp);
+		}
+	}
+#else
 	fn.glMap1f(  target,  u1,  u2,  stride,  order,  points );
+#endif
 }
 
 void OSMesaDriver::glMap2d(Uint32 ctx, GLenum target, GLdouble u1, GLdouble u2, GLint ustride, GLint uorder, GLdouble v1, GLdouble v2, GLint vstride, GLint vorder, const GLdouble *points )
 {
 	D(bug("nfosmesa: glMap2d"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	{
+		GLdouble *tmp1,*tmp2;
+		GLubyte *ptr1,*ptr2;
+		int size, i,j;
+		
+		switch(target) {
+			case GL_MAP2_INDEX:
+			case GL_MAP2_TEXTURE_COORD_1:
+				size=1;
+				break;
+			case GL_MAP2_TEXTURE_COORD_2:
+				size=2;
+				break;
+			case GL_MAP2_VERTEX_3:
+			case GL_MAP2_NORMAL:
+			case GL_MAP2_TEXTURE_COORD_3:
+				size=3;
+				break;
+			default:
+				size=4;
+				break;
+		}
+
+		tmp1=(GLdouble *)malloc(size*uorder*sizeof(GLdouble));
+		if (tmp1) {
+			ptr1 =(GLubyte *)points;
+			for (i=0;i<uorder;i++) {
+				for (j=0;j<size;j++) {
+					Atari2HostDoublePtr(1, (Uint32 *)&ptr1[j], &tmp1[i*size+j]);
+				}
+				ptr1 += ustride*sizeof(GLdouble);
+			}
+
+			tmp2=(GLdouble *)malloc(size*vorder*sizeof(GLdouble));
+			if (tmp2) {
+				ptr2 =(GLubyte *)points;
+				for (i=0;i<vorder;i++) {
+					for (j=0;j<size;j++) {
+						Atari2HostDoublePtr(1, (Uint32 *)&ptr2[j], &tmp2[i*size+j]);
+					}
+					ptr2 += vstride*sizeof(GLdouble);
+				}
+
+				fn.glMap2d(  target,
+					u1,  u2,  size,  uorder,  tmp1,
+					v1,  v2,  size,  vorder,  tmp2
+				);
+
+				free(tmp2);
+			}			
+
+			free(tmp1);
+		}
+	}
+#else
 	fn.glMap2d(  target,  u1,  u2,  ustride,  uorder,  v1,  v2,  vstride,  vorder,  points );
+#endif
 }
 
 void OSMesaDriver::glMap2f(Uint32 ctx, GLenum target, GLfloat u1, GLfloat u2, GLint ustride, GLint uorder, GLfloat v1, GLfloat v2, GLint vstride, GLint vorder, const GLfloat *points )
 {
 	D(bug("nfosmesa: glMap2f"));
 	SelectContext(ctx);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	{
+		GLfloat *tmp1,*tmp2;
+		GLubyte *ptr1,*ptr2;
+		int size, i,j;
+		
+		switch(target) {
+			case GL_MAP2_INDEX:
+			case GL_MAP2_TEXTURE_COORD_1:
+				size=1;
+				break;
+			case GL_MAP2_TEXTURE_COORD_2:
+				size=2;
+				break;
+			case GL_MAP2_VERTEX_3:
+			case GL_MAP2_NORMAL:
+			case GL_MAP2_TEXTURE_COORD_3:
+				size=3;
+				break;
+			default:
+				size=4;
+				break;
+		}
+
+		tmp1=(GLfloat *)malloc(size*uorder*sizeof(GLfloat));
+		if (tmp1) {
+			ptr1 =(GLubyte *)points;
+			for (i=0;i<uorder;i++) {
+				for (j=0;j<size;j++) {
+					Atari2HostFloatPtr(1, (Uint32 *)&ptr1[j], &tmp1[i*size+j]);
+				}
+				ptr1 += ustride*sizeof(GLfloat);
+			}
+
+			tmp2=(GLfloat *)malloc(size*vorder*sizeof(GLfloat));
+			if (tmp2) {
+				ptr2 =(GLubyte *)points;
+				for (i=0;i<vorder;i++) {
+					for (j=0;j<size;j++) {
+						Atari2HostFloatPtr(1, (Uint32 *)&ptr2[j], &tmp2[i*size+j]);
+					}
+					ptr2 += vstride*sizeof(GLfloat);
+				}
+
+				fn.glMap2f(  target,
+					u1,  u2,  size,  uorder,  tmp1,
+					v1,  v2,  size,  vorder,  tmp2
+				);
+
+				free(tmp2);
+			}			
+
+			free(tmp1);
+		}
+	}
+#else
 	fn.glMap2f(  target,  u1,  u2,  ustride,  uorder,  v1,  v2,  vstride,  vorder,  points );
+#endif
 }
 
 void OSMesaDriver::glGetMapdv(Uint32 ctx, GLenum target, GLenum query, GLdouble *v )
@@ -3312,16 +3504,22 @@ void OSMesaDriver::glEvalCoord1f(Uint32 ctx, GLfloat u )
 
 void OSMesaDriver::glEvalCoord1dv(Uint32 ctx, const GLdouble *u )
 {
+	GLdouble tmp[1];
+
 	D(bug("nfosmesa: glEvalCoord1dv"));
 	SelectContext(ctx);
-	fn.glEvalCoord1dv(  u );
+	Atari2HostDoublePtr(1, (Uint32 *)u, tmp);
+	fn.glEvalCoord1dv( tmp );
 }
 
 void OSMesaDriver::glEvalCoord1fv(Uint32 ctx, const GLfloat *u )
 {
+	GLfloat tmp[1];
+
 	D(bug("nfosmesa: glEvalCoord1fv"));
 	SelectContext(ctx);
-	fn.glEvalCoord1fv(  u );
+	Atari2HostFloatPtr(1, (Uint32 *)u, tmp);
+	fn.glEvalCoord1fv( tmp );
 }
 
 void OSMesaDriver::glEvalCoord2d(Uint32 ctx, GLdouble u, GLdouble v )
@@ -3340,16 +3538,22 @@ void OSMesaDriver::glEvalCoord2f(Uint32 ctx, GLfloat u, GLfloat v )
 
 void OSMesaDriver::glEvalCoord2dv(Uint32 ctx, const GLdouble *u )
 {
+	GLdouble tmp[2];
+
 	D(bug("nfosmesa: glEvalCoord2dv"));
 	SelectContext(ctx);
-	fn.glEvalCoord2dv(  u );
+	Atari2HostDoublePtr(2, (Uint32 *)u, tmp);
+	fn.glEvalCoord2dv( tmp );
 }
 
 void OSMesaDriver::glEvalCoord2fv(Uint32 ctx, const GLfloat *u )
 {
+	GLfloat tmp[2];
+
 	D(bug("nfosmesa: glEvalCoord2fv"));
 	SelectContext(ctx);
-	fn.glEvalCoord2fv(  u );
+	Atari2HostFloatPtr(2, (Uint32 *)u, tmp);
+	fn.glEvalCoord2fv( tmp );
 }
 
 void OSMesaDriver::glMapGrid1d(Uint32 ctx, GLint un, GLdouble u1, GLdouble u2 )

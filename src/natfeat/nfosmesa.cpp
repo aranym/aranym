@@ -407,8 +407,10 @@ GLboolean OSMesaDriver::OSMesaGetDepthBuffer( Uint32 c, GLint *width, GLint *hei
 {
 	D(bug("nfosmesa: OSMesaGetDepthBuffer"));
 	SelectContext(c);
-	*width = SDL_SwapBE32(contexts[c].width);
-	*height = SDL_SwapBE32(contexts[c].height);
+	*width = 0;
+	*height = 0;
+	*bytesPerValue = 0;
+	*buffer = NULL;	/* Can not return pointer in host memory */
 	return GL_FALSE;
 }
 
@@ -416,8 +418,10 @@ GLboolean OSMesaDriver::OSMesaGetColorBuffer( Uint32 c, GLint *width, GLint *hei
 {
 	D(bug("nfosmesa: OSMesaGetColorBuffer"));
 	SelectContext(c);
-	*width = SDL_SwapBE32(contexts[c].width);
-	*height = SDL_SwapBE32(contexts[c].height);
+	*width = 0;
+	*height = 0;
+	*format = 0;
+	*buffer = NULL;	/* Can not return pointer in host memory */
 	return GL_FALSE;
 }
 
@@ -465,9 +469,13 @@ GLdouble OSMesaDriver::Atari2HostDouble(Uint32 high, Uint32 low)
 	Uint32 *ptr;
 
 	ptr = (Uint32 *)&tmp;
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
 	ptr[0]=low;
 	ptr[1]=high;
-/*	D(bug("nfosmesa: 0x%08x:%08x -> %.3f",high,low,tmp));*/
+#else
+	ptr[0]=high;
+	ptr[1]=low;
+#endif
 	return tmp;
 }
 
