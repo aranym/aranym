@@ -1,3 +1,13 @@
+2002/08/11 - joy
+- NatFeats now keep their name and SupervisorRequired flag with them.
+
+- NatFeats main dispatcher now checks for user/supervisor mode and throws
+  privilege instruction exception if appropriate.
+
+- NatFeats main dispatcher does not copy parameters to local array. NatFeats
+  themselves fetch the parameters with getParameter() call.
+
+
 2002/08/08 - patrice
 - DSP: CCR-related stuff written, some bugfixes.
 
