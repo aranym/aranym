@@ -11,7 +11,7 @@ Things that must be done before first beta release:
 
 + mouse pointer must be sync'ed with the host mouse (in X-Windows)
 
-- aranym HW registers - define a structure, use it for FastRAM.PRG (to find out
++ aranym HW registers - define a structure, use it for FastRAM.PRG (to find out
   the correct size of FastRAM) and for StandaFsEditor.PRG (will edit CONFIG.SYS
   automagically and will add there the GEMDOS drives that were attached in aranym)
   The structure address will be obtained by calling an undefined instruction.
@@ -31,7 +31,7 @@ Things that must be done before first beta release:
 
 - in hardware.cpp: HWget_l/HWput_l should not have the special case for HW_IDE
 
-- replace timer thread with SDL_getTimerMilis() in uae_cpu inner loop. The advantages
++ replace timer thread with SDL_getTimerMilis() in uae_cpu inner loop. The advantages
   are mainly exact 200 Hz (instead of approx 100 Hz we have currently) and
   screen updating in main thread (thus no inter-thread collisions)
 
