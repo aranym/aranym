@@ -277,6 +277,15 @@ inline void HostScreen::renderEnd() {
 }
 
 
+inline void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced )
+{
+	if ( !forced && !doUpdate ) // the HW surface is available
+		return;
+
+	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
+	SDL_UpdateRect(surf, x, y, w, h);
+}
+
 inline void HostScreen::update( bool forced )
 {
 	update( 0, 0, width, height, forced );
@@ -288,15 +297,6 @@ inline void HostScreen::update()
 	update( 0, 0, width, height, false );
 }
 
-
-inline void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced )
-{
-	if ( !forced && !doUpdate ) // the HW surface is available
-		return;
-
-	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
-	SDL_UpdateRect(surf, x, y, w, h);
-}
 
 inline uint32 HostScreen::getPixel( int16 x, int16 y ) {
 	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
@@ -400,6 +400,10 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.24  2001/12/17 08:33:00  standa
+ * Thread synchronization added. The check_event and fvdidriver actions are
+ * synchronized each to other.
+ *
  * Revision 1.23  2001/12/03 20:56:07  standa
  * The gfsprimitives library files removed. All the staff was moved and
  * adjusted directly into the HostScreen class.
