@@ -471,8 +471,8 @@ void process_keyboard_event(SDL_Event event)
 					canGrabMouseAgain = false;	// let it leave our window
 					send2Atari = false;
 					// release the Control and Alt keys
-					ikbd.send(0x1d|0x80);	// Control released
-					ikbd.send(0x38|0x80);	// Alternate released
+					ikbd.SendKey(0x1d|0x80);	// Control released
+					ikbd.SendKey(0x38|0x80);	// Alternate released
 				}
 #ifdef SDL_GUI
 				else {
@@ -537,26 +537,26 @@ void process_keyboard_event(SDL_Event event)
 	if (sym == SDLK_PAGEUP) {
 		if (pressed) {
 			if (! shifted)
-				ikbd.send(0x2a);	// press and hold LShift
-			ikbd.send(0x48);	// press keyUp
+				ikbd.SendKey(0x2a);	// press and hold LShift
+			ikbd.SendKey(0x48);	// press keyUp
 		}
 		else {
-			ikbd.send(0xc8);	// release keyUp
+			ikbd.SendKey(0xc8);	// release keyUp
 			if (! shifted)
-				ikbd.send(0xaa);	// release LShift
+				ikbd.SendKey(0xaa);	// release LShift
 		}
 		send2Atari = false;
 	}
 	else if (sym == SDLK_PAGEDOWN) {
 		if (pressed) {
 			if (! shifted)
-				ikbd.send(0x2a);	// press and hold LShift
-			ikbd.send(0x50);	// press keyDown
+				ikbd.SendKey(0x2a);	// press and hold LShift
+			ikbd.SendKey(0x50);	// press keyDown
 		}
 		else {
-			ikbd.send(0xd0);	// release keyDown
+			ikbd.SendKey(0xd0);	// release keyDown
 			if (! shifted)
-				ikbd.send(0xaa);	// release LShift
+				ikbd.SendKey(0xaa);	// release LShift
 		}
 		send2Atari = false;
 	}
@@ -568,7 +568,7 @@ void process_keyboard_event(SDL_Event event)
 		if (scanAtari > 0) {
 			if (!pressed)
 				scanAtari |= 0x80;
-			ikbd.send(scanAtari);
+			ikbd.SendKey(scanAtari);
 		}
 	}
 }
@@ -602,11 +602,11 @@ void process_mouse_event(SDL_Event event)
 				grabTheMouse();
 		}
 		else if (event.button.button == 4) {	/* mouse wheel Up */
-			ikbd.send(0x48);	// press keyUp
+			ikbd.SendKey(0x48);	// press keyUp
 			return;
 		}
 		else if (event.button.button == 5) {	/* mouse wheel Down */
-			ikbd.send(0x50);	// press keyDown
+			ikbd.SendKey(0x50);	// press keyDown
 			return;
 		}
 	}
@@ -626,11 +626,11 @@ void process_mouse_event(SDL_Event event)
 		else if (event.button.button == SDL_BUTTON_LEFT)
 			but &= ~2;
 		else if (event.button.button == 4) {	/* mouse wheel Up */
-			ikbd.send(0xc8);	// release keyUp
+			ikbd.SendKey(0xc8);	// release keyUp
 			return;
 		}
 		else if (event.button.button == 5) {	/* mouse wheel Down */
-			ikbd.send(0xd0);	// release keyDown
+			ikbd.SendKey(0xd0);	// release keyDown
 			return;
 		}
 	}
@@ -638,11 +638,6 @@ void process_mouse_event(SDL_Event event)
 		SDL_MouseMotionEvent eve = event.motion;
 		xrel = eve.xrel;
 		yrel = eve.yrel;
-
-		if (xrel < -127 || xrel > 127)
-			xrel = 0;
-		if (yrel < -127 || yrel > 127)
-			yrel = 0;
 	}
 
 	// send the mouse data packet
@@ -652,9 +647,7 @@ void process_mouse_event(SDL_Event event)
 			return;	// if GUI is open do not pass mouse motion to Atari
 		}
 #endif
-		ikbd.send(0xf8 | but);
-		ikbd.send(xrel);
-		ikbd.send(yrel);
+		ikbd.SendMouseMotion(xrel, yrel, but);
 	}
 
 	if (! bx_options.video.fullscreen && aradata.isAtariMouseDriver()) {
@@ -696,6 +689,26 @@ void process_active_event(SDL_Event event)
 #endif
 }
 
+/*--- Joystick event ---*/
+
+SDL_Joystick *sdl_joystick;
+
+void process_joystick_event(SDL_Event event)
+{
+	switch(event.type) {
+		case SDL_JOYAXISMOTION:
+			ikbd.SendJoystickAxis(event.jaxis.axis,event.jaxis.value);
+			break;		
+		case SDL_JOYBUTTONDOWN:
+		case SDL_JOYBUTTONUP:
+			/* Only button 0 */
+			if (event.jbutton.button==0) {
+				ikbd.SendJoystickButton(event.jbutton.state==SDL_PRESSED);
+			}
+			break;		
+	}
+}
+
 bool check_event()
 {
 	if (!bx_options.video.fullscreen && mouseOut) {
@@ -716,6 +729,10 @@ bool check_event()
 		else if (type == SDL_MOUSEBUTTONDOWN || type == SDL_MOUSEBUTTONUP
 				 || type == SDL_MOUSEMOTION && grabbedMouse) {
 			process_mouse_event(event);
+		}
+		else if (type == SDL_JOYAXISMOTION || type == SDL_JOYBUTTONDOWN
+			|| type == SDL_JOYBUTTONUP) {
+			process_joystick_event(event);
 		}
 		else if (event.type == SDL_ACTIVEEVENT) {
 			process_active_event(event);

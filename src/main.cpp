@@ -398,7 +398,7 @@ bool InitAll(void)
 	if (! InitOS())
 		return false;
 
-	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO;
+	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK;
 	if (SDL_Init(sdlInitParams) != 0) {
 		panicbug("SDL initialization failed.");
 		return false;
@@ -413,6 +413,13 @@ bool InitAll(void)
 	if ( strstr( driverName, "fb" ) )		// fullscreen on framebuffer
 		bx_options.video.fullscreen = true;
 
+	// Check if at least one joystick present, open it
+	if (SDL_NumJoysticks()>0) {
+		sdl_joystick=SDL_JoystickOpen(0);
+		if (!sdl_joystick) {
+			printf("Could not open joystick #0\n");
+		}
+	}
 
 	// For InterruptFlag controling
 	InterruptFlagLock = SDL_CreateMutex();
@@ -505,6 +512,13 @@ void main_loop()
 
 void ExitAll(void)
 {
+	/* Close opened joystick */
+	if (SDL_NumJoysticks()>0) {
+		if (SDL_JoystickOpened(0)) {
+			SDL_JoystickClose(sdl_joystick);
+		}
+	}
+
 	// Terminate CPU thread
 	if (CPUthread != NULL) {
 		SDL_KillThread(CPUthread);
@@ -530,6 +544,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.81  2002/09/15 15:17:15  joy
+ * CPU to separate thread
+ *
  * Revision 1.80  2002/09/12 21:18:09  joy
  * romdiff -> romset
  *

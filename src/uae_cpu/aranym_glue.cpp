@@ -101,10 +101,10 @@ void AtariReset(void)
 {
 	// reset Atari hardware here
 	fprintf(stderr, "Reset hardware: ");
-
+/*
 	fprintf(stderr, "IKBD ");
 	ikbd.init();
-
+*/
 	fprintf(stderr, " [OK]\n");
 }
 

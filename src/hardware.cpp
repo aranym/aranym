@@ -14,6 +14,8 @@
 #include "ide.h"
 #include "dsp.h"
 #include "mmu.h"
+#include "ikbd.h"
+#include "midi.h"
 #include "hostscreen.h"
 #include "parallel.h"
 
@@ -80,8 +82,8 @@ HARDWARE ICs[] = {
 	{"DSP", HW_DSP, 8, &dsp},
 	{"STMFP", 0xfffa00, 0x30, &mfp},
 //	{"STFPC", 0xfffa40, 8},
-	{"IKBD", 0xfffc00, 4, &ikbd},
-	{"MIDI", 0xfffc04, 4, &midi}
+	{"IKBD", HW_IKBD, 4, &ikbd},
+	{"MIDI", HW_MIDI, 4, &midi}
 //	{"RTC", 0xfffc20, 0x20}
 };
 
@@ -178,6 +180,9 @@ void HWput_b (uaecptr addr, uae_u8 b) {
 
 /*
  * $Log$
+ * Revision 1.45  2002/09/20 14:14:54  pmandin
+ * DSP bugfixes and updates
+ *
  * Revision 1.44  2002/08/26 19:25:06  milan
  * Large change of CPU, 32 bit IDE access corrected etc.
  *

@@ -1,60 +1,71 @@
-/* Joy 2001 */
+/*
+ *	ACIA 6850 emulation
+ *
+ *	Joy 2001
+ *	Patrice Mandin
+ */
 
 #ifndef _ACIA_H
 #define _ACIA_H
 
-#include <SDL.h>
-#include <SDL_thread.h>
-
 #include "icio.h"
 
+/*--- ACIA CR register ---*/
+
+/* Clock predivisor, bits 0-1 */
+#define ACIA_CR_PREDIV_MASK		0x03
+
+#define ACIA_CR_PREDIV1		0x00	/* Nominal clock = 500 Khz */
+#define ACIA_CR_PREDIV16	0x01	/* Clock/16 = 31250 Hz */
+#define ACIA_CR_PREDIV64	0x02	/* Clock/64 = 7812.5 Hz */
+#define ACIA_CR_RESET		0x03	/* Master reset */
+
+/* Format, bits 2-4 */
+#define ACIA_CR_PARITY		0x02	/* 0=parity, 1=no parity */
+#define ACIA_CR_STOPBITS	0x03	/* 0=2 stop bits, 1=1 stop bits */
+#define ACIA_CR_DATABITS	0x04	/* 0=7 data bits, 1=8 data bits */
+
+/* Emission control, bits 5-6 */
+#define ACIA_CR_EMIT_RTS	0x05	/* 0=RTS low, 1=RTS high */
+#define ACIA_CR_EMIT_INTER	0x06	/* 0=interrupt disabled, 1=interrupt enabled */
+
+/* Reception control, bit 7 */
+#define ACIA_CR_REC_INTER	0x07	/* 0=interrupt disabled, 1=interrupt enabled */
+
+/*--- ACIA SR register ---*/
+#define ACIA_SR_RXFULL		0x00	/* Receive full */
+#define ACIA_SR_TXEMPTY		0x01	/* Transmit empty */
+#define ACIA_SR_CD			0x02	/* Carrier detect */
+#define ACIA_SR_CTS			0x03	/* Clear to send */
+#define ACIA_SR_FRAMEERR	0x04	/* Frame error */
+#define ACIA_SR_OVERRUN		0x05	/* Overrun */
+#define ACIA_SR_PARITYERR	0x06	/* Parity error */
+#define ACIA_SR_INTERRUPT	0x07	/* Interrupt source */
+
+/*--- ACIA class ---*/
 class ACIA : public ICio {
-protected:
-	uaecptr baseaddr;
-	uae_u8 status;
-	uae_u8 mode;
-	uae_u8 rxdata;
-	uae_u8 txdata;
+	protected:
+		uaecptr baseaddr;
 
-public:
-	ACIA(uaecptr);
-	virtual ~ACIA() {};
+		uae_u8 sr;		/* Status register */
+		uae_u8 cr;		/* Control register */
+		uae_u8 rxdr;	/* Reception data register */
+		uae_u8 txdr;	/* Transmit data register */
 
-	virtual uae_u8 handleRead(uaecptr addr);
-	virtual void handleWrite(uaecptr addr, uae_u8 value);
-	virtual uae_u8 getStatus() { return 2; };
-	virtual void setMode(uae_u8 value) {};
-	virtual uae_u8 getData() { return 0xa2; };
-	virtual void setData(uae_u8) {};
-};
+	public:
+		ACIA(uaecptr);
+		~ACIA(void);
+		virtual void reset(void);
 
-#define MAXBUF 		((1<<12)-1) // has to be a number with all bits set
+		virtual uae_u8 handleRead(uaecptr addr);
+		virtual void handleWrite(uaecptr addr, uae_u8 value);
 
-class IKBD: public ACIA {
-private:
-	int buffer[MAXBUF+1];
-	int ikbd_inbuf;
-	int ikbd_bufpos;
-	SDL_mutex   *rwLock;	// Read/Write lock
-	void compressMouseMove( int &pos );
+		virtual uae_u8 ReadStatus();
+		virtual void WriteControl(uae_u8 value);
+		virtual uae_u8 ReadData();
+		virtual void WriteData(uae_u8);
 
-public:
-	IKBD();
-	void init();
-	virtual ~IKBD();
-
-	bool isBufferEmpty();
-	virtual uae_u8 getStatus();
-	virtual void setMode(uae_u8 value);
-	virtual uae_u8 getData();
-	virtual void setData(uae_u8);
-	void send(int value);
-	void doTransmit(void);
-};
-
-class MIDI: public ACIA {
-public:
-	MIDI() : ACIA(0xfffc02) {};
+		void PrintControlRegister(char *devicename, uae_u8 value);
 };
 
 #endif /* _ACIA_H */

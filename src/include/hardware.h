@@ -8,7 +8,8 @@
 
 #include "aradata.h"
 #include "mfp.h"
-#include "acia.h"
+#include "ikbd.h"
+#include "midi.h"
 #include "yamaha.h"
 #include "videl.h"
 #include "parallel.h"
@@ -16,6 +17,7 @@
 extern ARADATA aradata;
 extern MFP mfp;
 extern IKBD ikbd;
+extern MIDI midi;
 extern YAMAHA yamaha;
 extern VIDEL videl;
 
@@ -40,6 +42,9 @@ extern char* debug_print_IO(uaecptr addr);	// for debugging only
 
 /*
  * $Log$
+ * Revision 1.19  2002/07/24 18:30:59  joy
+ * parameter size fixed
+ *
  * Revision 1.18  2001/11/19 17:48:58  joy
  * parallel port emulation
  *
