@@ -216,6 +216,7 @@ int main(int argc, char **argv)
 	}
 
 	// Initialize everything
+	D(bug("Initializing All Modules..."));
 	if (!InitAll())
 		QuitEmulator();
 	D(bug("Initialization complete"));
@@ -296,6 +297,9 @@ void FlushCodeCache(void *start, uint32 size)
 
 /*
  * $Log$
+ * Revision 1.43  2001/09/11 11:31:30  joy
+ * detect segmentation fault and quit cleanly. Print the offending PC address.
+ *
  * Revision 1.42  2001/09/11 10:12:41  joy
  * define SRACKA if you want to get rid of the complicated vm management. Use ./configure --enable-addressing=direct at the same time, otherwise it's not compilable.
  *
