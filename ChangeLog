@@ -11,6 +11,8 @@
 
 - new TOS patch for redirecting printer Xconout vector to host console
 
+- new function "Reboot" that does hard restart of the machine.
+
 
 ** Version 0.1.6
 

@@ -1,3 +1,8 @@
+ Several bad bugs in aranymfs fixed.
+ It's possible to Reboot the machine by pressing Ctrl+Pause/Break
+ Two new config file options: "Redir_Console" and "Redit_Printer".
+
+
 2002/04/12 - version 0.1.6 released
 ==========
 
