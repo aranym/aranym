@@ -18,7 +18,7 @@ Things that must be done before first beta release:
   The structure address will be obtained by calling an undefined instruction.
   TOS will hold it in a CookieJar ARAx.
 
-- MetaDOS files renaming in CVS.. every fanda word whould be aranym.
+- MetaDOS filesystem debugging (e.g. PureC don't want to compile a .prj file 8-().
 
 - printing - definitely a must. Either by YAMAHA emulation or directly
   by hooking into TOS xconout. Anyone having a copy of TOS ROM that was able
@@ -77,16 +77,20 @@ Things for 1.0 release:
 
 + mouse pointer shared between X-Windows and aranym (like in vmware)
 
+- aranymfs  filesystem
+    - the Host OS part should be rewritten nearly from scratch, I have 
+      ideas to use some platform independent library and later either VFS lib.
+    - m68k code cleanup... the .c file can be easily rewritten to .s.
+      This would be usefull, not to need the C compiler for this, woudn't be?
+    - .xfs filesystem modules for MagiC and MiNT.
+
 + [50%] fVDI working (TOS+aranym drivers)
-    - reorganize the loop nesting (performance) in HostScreen::gfxXXX methods.
     - add support for other than 16bit host color depth surfaces
         - this requires quite large hacks with blitting and expanding
           (only 2 bytes per pixel works now and moreover no shadow buffer is used
           which probably will be needed in the future)
+    - reorganize the loop nesting (performance) in HostScreen::gfxXXX methods.
 
-- .xfs filesystem modules for MagiC and MiNT that uses the VFS (virtual
-  filesystem portable library) to access any disc (or network drive).
- 
 - sound output using GSXB library
 
 The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by

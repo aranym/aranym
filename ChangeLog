@@ -1,3 +1,10 @@
+2001/10/17 - STanda
+- ExtFs: Small bug fix. The Fsfirst&next returns the . and .. dirs too.
+         (according to Julian Reschke's advice)
+- Tools: The changes that were made and uploaded to JOY's ftp are in CVS now
+         The README was modified a bit.
+
+
 2001/10/16 - STanda
 - fVDI:  The segfault bug in gfxLineColor removed.
 - VIDEL: The 16, 24 and 32 destBpp are supported when #define SUPPORT_MULTIPLEDESTBPP
