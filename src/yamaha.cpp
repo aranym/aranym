@@ -1,11 +1,24 @@
 /* Joy 2001 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "yamaha.h"
 #include "parameters.h"
+
+#ifdef DSP_EMULATION
+#include "dsp.h"
+
+extern DSP dsp;
+#endif
+
+#define DEBUG 1
+#include "debug.h"
 
 YAMAHA::YAMAHA() {
 	active_reg = 0;
@@ -14,17 +27,20 @@ YAMAHA::YAMAHA() {
 static const int HW = 0xff8800;
 
 uae_u8 YAMAHA::handleRead(uaecptr addr) {
+	uae_u8 value=0;
+
 	addr -= HW;
 	if (addr == 0) {
 		switch(active_reg) {
 			case 15:
-				return parallel.getData();
+				value=parallel.getData();
 			default:
-				return yamaha_regs[active_reg];
+				value=yamaha_regs[active_reg];
 		}
 	}
 
-	return 0;
+/*	D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr+HW, value, showPC()));*/
+	return value;
 }
 
 void YAMAHA::handleWrite(uaecptr addr, uae_u8 value) {
@@ -39,8 +55,14 @@ void YAMAHA::handleWrite(uaecptr addr, uae_u8 value) {
 			switch(active_reg) {
 				case 7:
 					parallel.setDirection(value >> 7);
+					break;
 				case 14:
 					parallel.setStrobe((value >> 5) & 0x01);
+#ifdef DSP_EMULATION
+					if (value & (1<<4)) {
+						dsp.reset();
+					}
+#endif
 					break;
 				case 15:
 					parallel.setData(value);
@@ -48,6 +70,8 @@ void YAMAHA::handleWrite(uaecptr addr, uae_u8 value) {
 			}
 			break;
 	}
+
+/*	D(bug("HWput_b(0x%08x,0x%02x) at 0x%08x", addr+HW, value, showPC()));*/
 }
 
 int YAMAHA::getFloppyStat() { return yamaha_regs[14] & 7; }
