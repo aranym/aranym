@@ -1,3 +1,20 @@
+2002/02/01 - STanda
+- MiNT aranym.xfs added. This is the preliminary version working with HostOS
+  root in u:\nativefs just like stonx.xfs does. The mapping to other folders
+  is possible and is going to be done later.
+  There are several unimplemented functions there, but the basic functionality
+  is implemented.
+  The m68k part is available only as a binary in src/atari/aranymfs.
+  The sources were grabbed from the STonX directly and hacked just to work and
+  needs cleaning.
+  The whole ExtFs should be rearchitectured. It was designed for MetaDOS and
+  now it is getting very, very unclean. Better not to look into the code.
+  I will rewrite this nearly from scratch during the planed shift to a portable
+  library.
+  CAUTION: There might be crude bugs in it, so please test it on some not very
+  essential files on the mounted host filesystem.
+
+
 2002/01/30 - joy
 - emul_op.cpp: OP_DEBUGUTIL made more secure (wrong addr will not crash aranym)
 

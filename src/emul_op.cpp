@@ -134,6 +134,13 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			invoke200HzInterrupt();	/* Windows has a broken threading - we have to call it manually */
 #endif /* __CYGWIN__ */
 			break;
+
+		case M68K_EMUL_OP_EXTFS_HFS:
+			extFS.dispatchXFS( get_long(r->a[7], true), r );  // SO
+#ifdef __CYGWIN__
+			invoke200HzInterrupt();	/* Windows has a broken threading - we have to call it manually */
+#endif /* __CYGWIN__ */
+			break;
 #endif
 
 		// VT52 Xconout

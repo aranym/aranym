@@ -90,6 +90,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 {
 	LogicalDev ldp;
 	ExtDta	   dta;
+	ExtDir	   extDir;
 	ExtFile	   extFile;
 	char	   pathname[ MAXPATHNAMELEN ];
 
@@ -300,9 +301,9 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			fetchFILE( &extFile, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 			r->d[0] = Fcntl( &ldp, (char*)pathname, &extFile,
-							 (int16) get_word( r->a[7] + 6, true ),	  // handle
+							 (int16)get_word( r->a[7] + 6, true ),	  // handle
 							 (void*)get_long( r->a[7] + 8, true ),	  // arg
-							 (int16) get_word( r->a[7] + 12, true ) ); // cmd
+							 (int16)get_word( r->a[7] + 12, true ) ); // cmd
 			flushFILE( &extFile, r->a[5] );
 			break;
 		case 292:	// Dpathconf:
@@ -315,7 +316,7 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
 				r->d[0] = Dpathconf( &ldp, (char*)pathname, &extFile,
 									 (const char*)pn,					 // pathname
-									 (int16) get_word( r->a[7] + 10, true ) ); // cmd
+									 (int16)get_word( r->a[7] + 10, true ) ); // cmd
 				flushFILE( &extFile, r->a[5] );
 				D(bug("MetaDOS: /Dpathconf res = %#8x (%d)", r->d[0],(int32)r->d[0]));
 			}
@@ -325,41 +326,41 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 				char pn[MAXPATHNAMELEN];
 
 				D(bug("%s", "Dopendir"));
-				fetchFILE( &extFile, r->a[5] );
+				fetchEDIR( &extDir, r->a[5] );
 				a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
 				a2fstrcpy( (char*)pn, (uint8*)get_long( r->a[7] + 6, true ) );
-				r->d[0] = Dopendir( &ldp, (char*)pathname, &extFile,
+				r->d[0] = Dopendir( &ldp, pathname, &extDir,
 									(const char*)pn,					// pathname
-									(int16) get_word( r->a[7] + 10, true ) ); // flag
-				flushFILE( &extFile, r->a[5] );
+									(int16)get_word( r->a[7] + 10, true ) ); // flag
+				flushEDIR( &extDir, r->a[5] );
 				D(bug("MetaDOS: /Dopendir res = %#08x (%d)", r->d[0],(int32)r->d[0]));
 			}
 			break;
 		case 297:	// Dreaddir:
 			D(bug("%s", "Dreaddir"));
-			fetchFILE( &extFile, r->a[5] );
+			fetchEDIR( &extDir, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-			r->d[0] = Dreaddir( &ldp, (char*)pathname, &extFile,
+			r->d[0] = Dreaddir( &ldp, (char*)pathname, &extDir,
 								(int16) get_word( r->a[7] + 6, true ),	 // len
 								get_long( r->a[7] + 8, true ),			 // dirhandle
 								(char*)get_long( r->a[7] + 12, true ) ); // bufferp
-			flushFILE( &extFile, r->a[5] );
+			flushEDIR( &extDir, r->a[5] );
 			break;
 		case 298:	// Drewinddir:
 			D(bug("%s", "Drewinddir"));
-			fetchFILE( &extFile, r->a[5] );
+			fetchEDIR( &extDir, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-			r->d[0] = Drewinddir( &ldp, (char*)pathname, &extFile,
-								  get_long( r->a[7] + 6, true ) );		 // dirhandle
-			flushFILE( &extFile, r->a[5] );
+			r->d[0] = Drewinddir( &extDir );
+			//get_long( r->a[7] + 6, true ) );		 // dirhandle
+			flushEDIR( &extDir, r->a[5] );
 			break;
 		case 299:	// Dclosedir:
 			D(bug("%s", "Dclosedir"));
-			fetchFILE( &extFile, r->a[5] );
+			fetchEDIR( &extDir, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-			r->d[0] = Dclosedir( &ldp, (char*)pathname, &extFile,
-								 get_long( r->a[7] + 6, true ) );		// dirhandle
-			flushFILE( &extFile, r->a[5] );
+			r->d[0] = Dclosedir( &extDir );
+			//get_long( r->a[7] + 6, true ) );		// dirhandle
+			flushEDIR( &extDir, r->a[5] );
 			break;
 		case 300:	// Fxattr:
 			{
@@ -379,19 +380,321 @@ void ExtFs::dispatch( uint32 fncode, M68kRegisters *r )
 			break;
 		case 322:	// Dxreaddir:
 			D(bug("%s", "Dxreaddir"));
-			fetchFILE( &extFile, r->a[5] );
+			fetchEDIR( &extDir, r->a[5] );
 			a2fstrcpy( (char*)pathname, (uint8*)r->a[4] );
-			r->d[0] = Dxreaddir( &ldp, (char*)pathname, &extFile,
+			r->d[0] = Dxreaddir( &ldp, (char*)pathname, &extDir,
 								 (int16) get_word( r->a[7] + 6, true ),	  // len
 								 get_long( r->a[7] + 8, true ),			  // dirhandle
 								 (char*)get_long( r->a[7] + 12, true ),	  // bufferp
 								 get_long( r->a[7] + 16, true ),		  // XATTR*
 								 get_long( r->a[7] + 20, true ) );		  // xret
+			flushEDIR( &extDir, r->a[5] );
 			break;
 		case 338:	// Dreadlabel:
 			D(bug("%s", "Dreadlabel"));
 			r->d[0] = (uint32)TOS_EINVFN;
 			break;
+		default:
+			D(bug("Unknown"));
+			r->d[0] = (uint32)TOS_EINVFN;
+	}
+}
+
+void ExtFs::dispatchXFS( uint32 fncode, M68kRegisters *r )
+{
+	XfsCookie  fc;
+	XfsCookie  resFc;
+	ExtFile	   extFile;
+	ExtDir	   dirh;
+
+#define    SBC_STX_FS     0x00010000
+#define    SBC_STX_FS_DEV 0x00010100
+#define    SBC_STX_SER    0x00010200
+#define    SBC_STX_COM    0x00010300
+
+	// fix the stack (the fncode was pushed onto the stack)
+	r->a[7] += 4;
+
+	D(bug("XFS: %4x ", fncode&0xffff));
+
+#if 0 // toto??? 1 - yes
+	1 D(bug("%s", "fs_chattr"));
+	1 D(bug("%s", "fs_chown"));
+	1 D(bug("%s", "fs_chmode"));
+	1 D(bug("%s", "fs_getname"));
+	  D(bug("%s", "fs_writelabel"));
+	  D(bug("%s", "fs_readlabel"));
+	1 D(bug("%s", "fs_symlink"));
+	1 D(bug("%s", "fs_hardlink"));
+	1 D(bug("%s", "fs_fscntl"));
+	  D(bug("%s", "fs_dskchng"));
+	  D(bug("%s", "fs_sync"));
+	  D(bug("%s", "fs_mknod"));
+	1 D(bug("%s", "fs_unmount"));
+	1 D(bug("%s", "fs_dev_ioctl"));
+	  D(bug("%s", "fs_dev_select"));
+	  D(bug("%s", "fs_dev_unselect"));
+#endif
+
+	switch (fncode) {
+		case SBC_STX_FS:
+			D(bug("fs_init (%x)", r->a[7]));
+			mint_fs_drv    = get_long( r->a[7], true );   // filesys
+			mint_fs_devdrv = get_long( r->a[7] + 4, true );   // devdrv
+			// +  8 // retaddr
+			// + 12 // kerinfo
+			mint_fs_devnum = get_word( r->a[7] + 16, true );   // devnum
+			D(bug("MiNT fs:\n"
+				  " fs_drv     = %#08x\n"
+				  " fs_devdrv  = %#08x\n"
+				  " fs_devnum  = %#04x\n"
+				  ,mint_fs_drv
+				  ,mint_fs_devdrv
+				  ,(int)mint_fs_devnum));
+			break;
+		case SBC_STX_FS+0x01:
+			fetchXFSC( &fc, get_long(r->a[7] + 6, true) );
+			r->d[0] = xfs_root( get_word(r->a[7] + 4, true),   /* dev */
+								&fc ); /* fcookie */
+			flushXFSC( &fc, get_long(r->a[7] + 6, true) );
+			break;
+		case SBC_STX_FS+0x02:
+			D(bug("%s", "fs_lookup"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_lookup( &fc,
+								  (char*)get_long( r->a[7] + 8, true ) /* name */,
+								  &resFc );
+			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+			flushXFSC( &resFc, get_long(r->a[7] + 12, true) );
+			break;
+		case SBC_STX_FS+0x03:
+			D(bug("%s", "fs_creat"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_creat( &fc,
+								 (char*)get_long( r->a[7] + 8, true ) /* name */,
+								 get_word( r->a[7] + 12, true ) /* mode */,
+								 get_word( r->a[7] + 14, true ) /* attrib */,
+								  &resFc );
+			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+			flushXFSC( &resFc, get_long(r->a[7] + 16, true) );
+			break;
+		case SBC_STX_FS+0x04:
+			D(bug("%s", "fs_getdev"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_getdev( &fc, (int32*)get_long( r->a[7] + 8, true ) );
+			flushXFSC( &resFc, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS+0x05:
+			D(bug("%s", "fs_getxattr"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_getxattr( &fc,
+									get_long( r->a[7] + 8, true ) ); // XATTR*
+			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS+0x06:
+			D(bug("%s", "fs_chattr"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x07:
+			D(bug("%s", "fs_chown"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x08:
+			D(bug("%s", "fs_chmode"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x09:
+			D(bug("%s", "fs_mkdir"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_mkdir( &fc,
+								 (char*)get_long(r->a[7] + 8, true),  // name
+								 get_word(r->a[7] + 12, true) ); // mode
+			break;
+		case SBC_STX_FS+0x0a:
+			D(bug("%s", "fs_rmdir"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_rmdir( &fc, (char*)get_long(r->a[7] + 8, true) );
+			break;
+		case SBC_STX_FS+0x0b:
+			D(bug("%s", "fs_remove"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_remove( &fc,
+								  (char*)get_long( r->a[7] + 8, true ) ); // name
+			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS+0x0c:
+			D(bug("%s", "fs_getname"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x0d:
+			D(bug("%s", "fs_rename"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &resFc, get_long(r->a[7] + 12, true) );
+			r->d[0] = xfs_rename( &fc, (char*)get_long(r->a[7] + 8, true),
+								  &resFc, (char*)get_long(r->a[7] + 16, true) );
+			// not needed: flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+			// not needed: flushXFSC( &resFc, get_long(r->a[7] + 12, true) );
+			break;
+		case SBC_STX_FS+0x0e:
+			D(bug("%s", "fs_opendir"));
+			fetchXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_opendir( &dirh,
+								   get_word( r->a[7] + 8, true ) ); // flags
+			flushXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS+0x0f:
+			D(bug("%s", "fs_readdir"));
+			fetchXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_readdir( &dirh,
+								   (char*)get_long( r->a[7] +  8, true ), // buff
+								   get_word( r->a[7] + 12, true ), // bufflen
+								   &resFc );
+			flushXFSD( &dirh,  get_long(r->a[7] +  4, true) );
+			flushXFSC( &resFc, get_long(r->a[7] + 14, true) );
+			break;
+		case SBC_STX_FS+0x10:
+			D(bug("%s", "fs_rewinddir"));
+			fetchXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			r->d[0] = Drewinddir( &dirh );
+			flushXFSD( &dirh,  get_long(r->a[7] +  4, true) );
+			break;
+		case SBC_STX_FS+0x11:
+			D(bug("%s", "fs_closedir"));
+			fetchXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			r->d[0] = Dclosedir( &dirh );
+			flushXFSD( &dirh, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS+0x12:
+			D(bug("%s", "fs_pathconf"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_pathconf( &fc,
+									get_word(r->a[7] + 8, true) ); // which
+			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS+0x13:
+			D(bug("%s", "fs_dfree"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_dfree( &fc,
+								 get_long(r->a[7] + 8, true) ); // buff
+			break;
+		case SBC_STX_FS+0x14:
+			D(bug("%s", "fs_writelabel"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x15:
+			D(bug("%s", "fs_readlabel"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x16:
+			D(bug("%s", "fs_symlink"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x17:
+			D(bug("%s", "fs_readlink"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_readlink( &fc,
+									(char*)get_long(r->a[7] + 8, true), // buff
+									get_word(r->a[7] + 12, true) ); // len
+			break;
+		case SBC_STX_FS+0x18:
+			D(bug("%s", "fs_hardlink"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x19:
+			D(bug("%s", "fs_fscntl"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x1a:
+			D(bug("%s", "fs_dskchng"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x1b:
+			D(bug("%s", "fs_release"));
+			fetchXFSC( &fc, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_release( &fc );
+			flushXFSC( &fc, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS+0x1c:
+			D(bug("%s", "fs_dupcookie"));
+			fetchXFSC( &resFc, get_long(r->a[7] + 4, true) );
+			fetchXFSC( &fc, get_long(r->a[7] + 8, true) );
+			r->d[0] = xfs_dupcookie( &resFc, &fc );
+			flushXFSC( &resFc, get_long(r->a[7] + 4, true) );
+			flushXFSC( &fc, get_long(r->a[7] + 8, true) );
+			break;
+		case SBC_STX_FS+0x1d:
+			D(bug("%s", "fs_sync"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x1e:
+			D(bug("%s", "fs_mknod"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS+0x1f:
+			D(bug("%s", "fs_unmount"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+
+		case SBC_STX_FS_DEV+0x01:
+			D(bug("%s", "fs_dev_open"));
+			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_dev_open( &extFile );
+			flushXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS_DEV+0x02:
+			D(bug("%s", "fs_dev_write"));
+			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			r->d[0] = Fwrite( NULL, NULL, &extFile,
+							  0, // handle
+							  get_long(r->a[7] + 12, true), // bytes
+							  (void*)get_long(r->a[7] + 8, true) ); // buffer
+			flushXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS_DEV+0x03:
+			D(bug("%s", "fs_dev_read"));
+			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			r->d[0] = Fread( NULL, NULL, &extFile,
+							 0, // handle
+							 get_long(r->a[7] + 12, true), // bytes
+							 (void*)get_long(r->a[7] + 8, true) ); // buffer
+			flushXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS_DEV+0x04:
+			D(bug("%s", "fs_dev_lseek"));
+			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			r->d[0] = Fseek( NULL, NULL, &extFile,
+							 get_long( r->a[7] + 8, true ),			 // offset
+							 0,  // handle
+							 get_word( r->a[7] + 12, true ) );       // seekmode
+			flushXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS_DEV+0x05:
+			D(bug("%s", "fs_dev_ioctl"));
+			r->d[0] = (uint32)TOS_EINVFN;
+			break;
+		case SBC_STX_FS_DEV+0x06:
+			D(bug("%s", "fs_dev_datime"));
+			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			r->d[0] = xfs_dev_datime( &extFile,
+									  (uint32*)get_long( r->a[7] + 8, true ), // datetimep
+									  (int16) get_word( r->a[7] + 12, true ) );// wflag
+			flushXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			break;
+		case SBC_STX_FS_DEV+0x07:
+			D(bug("%s", "fs_dev_close"));
+			fetchXFSF( &extFile, get_long(r->a[7] + 4, true) );
+			r->d[0] = Fclose( NULL, NULL, &extFile,
+							  0 ); // handle
+			break;
+		case SBC_STX_FS_DEV+0x08:
+			D(bug("%s", "fs_dev_select"));
+			r->d[0] = (uint32)TOS_E_OK;
+			break;
+		case SBC_STX_FS_DEV+0x09:
+			D(bug("%s", "fs_dev_unselect"));
+			r->d[0] = (uint32)TOS_E_OK;
+			break;
+
 		default:
 			D(bug("Unknown"));
 			r->d[0] = (uint32)TOS_EINVFN;
@@ -431,8 +734,7 @@ void ExtFs::fetchDTA( ExtDta *dta, uint32 dtap )
 	dta->ds_dirh	 = (DIR*)get_long( dtap, true );
 	dta->ds_attrib	 = get_word( dtap + 4, true );
 	dta->ds_index	 = get_byte( dtap + 6, true );
-	//	dta->ds_ast		 = get_byte( dtap + 6, true );
-	a2fmemcpy( (uint8*)dta->ds_name, (uint8*)(dtap + 7), 14 );
+	a2fmemcpy( (uint8*)dta->ds_name, (uint8*)(dtap + 7), 14 ); // search mask
 
 	// Common FS
 	dta->d_attrib = get_byte( dtap + 21, true );
@@ -441,15 +743,12 @@ void ExtFs::fetchDTA( ExtDta *dta, uint32 dtap )
 	dta->d_length = get_long( dtap + 26, true );
 	a2fmemcpy( (uint8*)dta->d_fname, (uint8*)(dtap + 30), 14 );
 }
-
-
 void ExtFs::flushDTA( ExtDta *dta, uint32 dtap )
 {
 	// Normally reserved ... used in the CookFS
 	put_long( dtap	  , (uint32)dta->ds_dirh );
 	put_word( dtap + 4, dta->ds_attrib );
 	put_byte( dtap + 6, dta->ds_index );
-	//	put_byte( dtap + 6, dta->ds_ast );
 	f2amemcpy( (uint8*)(dtap + 7), (uint8*)dta->ds_name, 14 );
 
 	// Common FS
@@ -464,21 +763,94 @@ void ExtFs::flushDTA( ExtDta *dta, uint32 dtap )
 void ExtFs::fetchFILE( ExtFile *extFile, uint32 filep )
 {
 	extFile->index	= get_word( filep,		 true );
-	extFile->mode	= get_word( filep + 2,	 true );
+	//extFile->mode	= get_word( filep + 2,	 true );
 	extFile->flags	= get_word( filep + 4,	 true ); // never used in the code
-	extFile->hostfh = get_long( filep + 6,	 true );
+	extFile->hostfd = get_long( filep + 6,	 true );
 	extFile->offset = get_long( filep + 10, true );  // probably not used
-	extFile->device = get_word( filep + 14, true );  // never used
-}
+	//	extFile->device = get_word( filep + 14, true );  // never used
 
+	extFile->links  = 0; // Fclose dosn't close the file when > 0
+}
 void ExtFs::flushFILE( ExtFile *extFile, uint32 filep )
 {
 	put_word( filep	   , extFile->index );
-	put_word( filep + 2, extFile->mode	);
+	//put_word( filep + 2, extFile->mode	);
 	put_word( filep + 4, extFile->flags );
-	put_long( filep + 6, extFile->hostfh );
+	put_long( filep + 6, extFile->hostfd );
 	put_long( filep +10, extFile->offset );
-	put_word( filep +14, extFile->device );
+	//put_word( filep +14, extFile->device );
+}
+
+void ExtFs::fetchEDIR( ExtDir *extDir, uint32 dirp )
+{
+	assert( 6 + sizeof(extDir->dir) < 8 * 4 ); // MetaDOS provided space
+
+	extDir->flags      = get_word( dirp    , true );
+	extDir->fc.dev     = get_word( dirp + 2, true );
+	extDir->pathIndex  = get_word( dirp + 4, true );
+	a2fmemcpy( (uint8*)&extDir->dir, (uint8*)(dirp + 6), sizeof(extDir->dir) );
+}
+void ExtFs::flushEDIR( ExtDir *extDir, uint32 dirp )
+{
+	put_word( dirp	  , extDir->flags );
+	put_word( dirp + 2, extDir->fc.dev );
+	put_word( dirp + 4, extDir->pathIndex );
+	f2amemcpy( (uint8*)(dirp + 6), (uint8*)&extDir->dir, sizeof(extDir->dir) );
+}
+
+
+void ExtFs::fetchXFSC( XfsCookie *fc, uint32 filep )
+{
+	fc->xfs   = get_long( filep, true );  // fs
+	fc->dev   = get_word( filep + 4, true );  // dev
+	fc->aux   = get_word( filep + 6, true );  // aux
+	fc->index = (XfsFsFile*)get_long( filep + 8, true ); // index
+}
+void ExtFs::flushXFSC( XfsCookie *fc, uint32 filep )
+{
+	put_long( filep    , fc->xfs );
+	put_word( filep + 4, fc->dev );
+	put_word( filep + 6, fc->aux );
+	put_long( filep + 8, (uint32)fc->index );
+}
+
+void ExtFs::fetchXFSF( ExtFile *extFile, uint32 filep )
+{
+	extFile->links  = get_word( filep, true );
+	extFile->flags  = get_word( filep + 2, true );
+	extFile->hostfd = get_long( filep + 4, true ); // offset not needed (replaced by the host fd)
+	extFile->devinfo= get_long( filep + 8, true );
+	fetchXFSC( &extFile->fc, filep + 12 ); // sizeof(12)
+	// 4bytes of the devdrvp
+	extFile->next   = get_long( filep + 28, true );
+}
+void ExtFs::flushXFSF( ExtFile *extFile, uint32 filep )
+{
+	put_word( filep, extFile->links );
+	put_word( filep + 2, extFile->flags );
+	put_long( filep + 4, extFile->hostfd ); // instead of the offset
+	put_long( filep + 8, extFile->devinfo );
+	flushXFSC( &extFile->fc, filep + 12 ); // sizeof(12)
+	put_long( filep + 28, extFile->next );
+}
+
+void ExtFs::fetchXFSD( XfsDir *dirh, uint32 dirp )
+{
+	fetchXFSC( (XfsCookie*)dirh, dirp ); // sizeof(12)
+	dirh->index = get_word( dirp + 12, true );
+	dirh->flags = get_word( dirp + 14, true );
+	dirh->pathIndex = get_word( dirp + 16, true );
+	a2fmemcpy( (uint8*)&dirh->dir, (uint8*)(dirp + 18), sizeof(dirh->dir) );
+	dirh->next  = (XfsDir*)get_long( dirp + 76, true );
+}
+void ExtFs::flushXFSD( XfsDir *dirh, uint32 dirp )
+{
+	flushXFSC( (XfsCookie*)dirh, dirp ); // sizeof(12)
+	put_word( dirp + 12, dirh->index );
+	put_word( dirp + 14, dirh->flags );
+	put_word( dirp + 16, dirh->pathIndex );
+	f2amemcpy( (uint8*)(dirp + 18), (uint8*)&dirh->dir, sizeof(dirh->dir) );
+	put_long( dirp + 76, (uint32)dirh->next );
 }
 
 
@@ -576,9 +948,9 @@ uint16 ExtFs::statmode2xattrmode(mode_t m)
 }
 
 
-int ExtFs::st2mode(uint16 mode)
+int ExtFs::st2flags(uint16 flags)
 {
-	switch(mode & 0x3)
+	switch(flags & 0x3)
 		{
 			case 0: return O_RDONLY;
 			case 1: return O_WRONLY;	/* kludge to avoid files being created */
@@ -588,7 +960,7 @@ int ExtFs::st2mode(uint16 mode)
 }
 
 
-int16 ExtFs::mode2st(int flags)
+int16 ExtFs::flags2st(int flags)
 {
 	int16 res = 0;
 
@@ -805,18 +1177,14 @@ void ExtFs::convertPathA2F( char* fpathName, char* pathName, char* basePath )
 }
 
 
-int32 ExtFs::Dfree(LogicalDev *ldp, char *pathName, ExtFile *fp, uint32 diskinfop, int16 drive )
+int32 ExtFs::Dfree_(char *fpathName, uint32 diskinfop )
 {
-	char fpathName[MAXPATHNAMELEN];
+
 #ifdef HAVE_SYS_STATVFS_H
 	struct statvfs buff;
 #else
 	struct statfs buff;
 #endif
-
-	convertPathA2F( fpathName, pathName );
-
-	D(bug("MetaDOS: Dfree (drive = %d,%s,%s)", 'A' + drive, pathName, fpathName));
 
 #ifdef HAVE_SYS_STATVFS_H
 	if ( statvfs(fpathName, &buff) )
@@ -833,6 +1201,26 @@ int32 ExtFs::Dfree(LogicalDev *ldp, char *pathName, ExtFile *fp, uint32 diskinfo
 	return TOS_E_OK;
 }
 
+int32 ExtFs::Dfree(LogicalDev *ldp, char *pathName, ExtFile *fp, uint32 diskinfop, int16 drive )
+{
+	char fpathName[MAXPATHNAMELEN];
+	convertPathA2F( fpathName, pathName );
+
+	D(bug("MetaDOS: Dfree (drive = %d,%s,%s)", 'A' + drive, pathName, fpathName));
+
+	return Dfree_( fpathName, diskinfop );
+}
+
+int32 ExtFs::xfs_dfree( XfsCookie *dir, uint32 buf )
+{
+	char fpathName[MAXPATHNAMELEN];
+	cookie2Pathname( dir->index, NULL, fpathName );
+
+	D(bug("XFS: xfs_dfree (%s)", fpathName));
+
+	return Dfree_( fpathName, buf );
+}
+
 
 int32 ExtFs::Dcreate(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *pn)
 {
@@ -847,6 +1235,21 @@ int32 ExtFs::Dcreate(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *p
 	return TOS_E_OK;
 }
 
+int32 ExtFs::xfs_mkdir( XfsCookie *dir, char *name, uint16 mode )
+{
+	char fname[2048];
+	a2fstrcpy( fname, (uint8*)name );
+
+	char fpathName[MAXPATHNAMELEN];
+	cookie2Pathname( dir->index, fname, fpathName );
+
+	if ( mkdir( (char*)fpathName, mode ) )
+		return unix2toserrno(errno,TOS_EFILNF);
+
+	return TOS_E_OK;
+}
+
+
 
 int32 ExtFs::Ddelete(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *pn)
 {
@@ -860,6 +1263,25 @@ int32 ExtFs::Ddelete(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *p
 
 	return TOS_E_OK;
 }
+
+
+int32 ExtFs::xfs_rmdir( XfsCookie *dir, char *name )
+{
+	char fname[2048];
+	a2fstrcpy( fname, (uint8*)name );
+
+	char pathName[MAXPATHNAMELEN];
+	cookie2Pathname( dir->index, fname, pathName );
+
+	char fpathName[MAXPATHNAMELEN];
+	convertPathA2F( fpathName, pathName, "" ); // convert the fname into the hostfs form
+
+	if ( rmdir( fpathName ) )
+		return unix2toserrno(errno,TOS_EFILNF);
+
+	return TOS_E_OK;
+}
+
 
 
 int32 ExtFs::Dsetpath(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *pn)
@@ -889,54 +1311,86 @@ int32 ExtFs::Fcreate(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *p
 
 	D(bug("MetaDOS: Fcreate (%s,%s,%d)", pathName, fpathName, attr));
 
-	return fileOpen( (char*)fpathName,
-					 O_CREAT|O_WRONLY|O_TRUNC,
-					 S_IRUSR|S_IWUSR | S_IRGRP | S_IROTH,
-					 fp );
+	return Fopen_( (char*)fpathName,
+				   O_CREAT|O_WRONLY|O_TRUNC,
+				   S_IRUSR|S_IWUSR | S_IRGRP | S_IROTH,
+				   fp );
 }
 
-
-int32 ExtFs::Fopen(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *pn, int16 mode)
+int32 ExtFs::xfs_creat( XfsCookie *dir, char *name, uint16 mode, int16 flags, XfsCookie *fc )
 {
+	char fname[2048];
+	a2fstrcpy( fname, (uint8*)name );
+
+	char pathName[MAXPATHNAMELEN];
+	cookie2Pathname(dir->index,fname,pathName); // get the cookie filename
+
 	char fpathName[MAXPATHNAMELEN];
-	convertPathA2F( fpathName, pathName );
+	convertPathA2F( fpathName, pathName, "" ); // convert the fname into the hostfs form (check the 8+3 file existence)
 
-	D(bug("MetaDOS: Fopen (%s,%s,%d)", pathName, fpathName, mode));
-
-	fp->device	= toupper(pathName[0]) - 'A'; // FIXME
-
-	return fileOpen( (char*)fpathName, st2mode(mode), 0, fp );
-}
-
-
-uint32 ExtFs::fileOpen( const char* pathName, int flags, int mode, ExtFile *fp )
-{
-	int fh = open( pathName, flags, mode );
-
-	// D(bug("ret: %d", fh));
-
-	if (fh < 0) {
-		/*
-		  DBG("open(): %s",strerror(errno));
-		  SET_Z();
-		*/
+	int fd = open( fpathName, O_CREAT|O_WRONLY|O_TRUNC, mode );
+	if (fd < 0)
 		return unix2toserrno(errno,TOS_EFILNF);
-	}
+	close( fd );
 
-	fp->mode   = mode2st( flags );
-	fp->offset = 0;
-	fp->hostfh = fh;
+	XfsFsFile *newFsFile = new XfsFsFile();
+	newFsFile->name = strdup( fname );
+    newFsFile->refCount = 1;
+    newFsFile->childCount = 0;
+    newFsFile->parent = dir->index;
+    dir->index->childCount++;
+
+    *fc = *dir;
+    fc->index = newFsFile;
 
 	return TOS_E_OK;
 }
 
 
+int32 ExtFs::Fopen_( const char* pathName, int flags, int mode_, ExtFile *fp )
+{
+	int fd = open( pathName, flags, mode_ );
+	if (fd < 0)
+		return unix2toserrno(errno,TOS_EFILNF);
+
+	fp->flags   = flags2st(flags);
+	fp->offset = 0;
+	fp->hostfd = fd;
+
+	D(bug("  Fopen (fd = %ld)", fp->hostfd));
+
+	return TOS_E_OK;
+}
+
+int32 ExtFs::Fopen(LogicalDev *ldp, char *pathName, ExtFile *fp, const char *pn, int16 flags)
+{
+	char fpathName[MAXPATHNAMELEN];
+	convertPathA2F( fpathName, pathName );
+
+	D(bug("MetaDOS: Fopen (%s,%s,%d)", pathName, fpathName, flags));
+
+	return Fopen_( (char*)fpathName, st2flags(flags), 0, fp );
+}
+
+
+int32 ExtFs::xfs_dev_open(ExtFile *fp)
+{
+	char fpathName[MAXPATHNAMELEN];
+	cookie2Pathname(fp->fc.index, NULL, fpathName);
+
+	D(bug("XFS: dev_open (%s,%d)", fpathName, fp->flags));
+
+	return Fopen_( (char*)fpathName, st2flags(fp->flags), 0, fp );
+}
+
+
 int32 ExtFs::Fclose(LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle)
 {
-	D(bug("MetaDOS: Fclose (%d)", handle));
+	D(bug("MetaDOS: Fclose (%ld, %d)", fp->hostfd, handle));
 
-	if ( close( fp->hostfh ) < 0 )
-		return unix2toserrno(errno,TOS_EIO);
+	if ( fp->links <= 0 )
+		if ( close( fp->hostfd ) )
+			return unix2toserrno(errno,TOS_EIO);
 
 	return TOS_E_OK;
 }
@@ -944,29 +1398,25 @@ int32 ExtFs::Fclose(LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle)
 
 #define FRDWR_BUFFER_LENGTH	8192
 
-
 int32 ExtFs::Fread(LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle, uint32 count, void *buffer)
 {
 	uint8 fBuff[ FRDWR_BUFFER_LENGTH ];
 	uint8 *destBuff = (uint8*)buffer;
+	ssize_t readCount = 0;
 	ssize_t toRead = count;
 	ssize_t toReadNow;
-	ssize_t readCount = 0;
 
 	D(bug("MetaDOS: Fread (%d,%d)", handle, count));
 
 	while ( toRead > 0 ) {
 		toReadNow = ( toRead > FRDWR_BUFFER_LENGTH ) ? FRDWR_BUFFER_LENGTH : toRead;
-		readCount = read( fp->hostfh, fBuff, toReadNow );
-
-		//		D(bug("MetaDOS: Fread readCount (%d)", readCount));
-
+		readCount = read( fp->hostfd, fBuff, toReadNow );
 		if ( readCount <= 0 )
 			break;
 
+		fp->offset += readCount;
 		f2amemcpy( destBuff, fBuff, readCount );
 		destBuff += readCount;
-		fp->offset += readCount;
 		toRead -= readCount;
 	}
 
@@ -974,7 +1424,7 @@ int32 ExtFs::Fread(LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle, u
 
 	//	D(bug("MetaDOS: Fread error (%d)", errno));
 	if ( readCount < 0 )
-		return TOS_EINTRN;// FIXME
+		return unix2toserrno(errno,TOS_EINTRN);
 
 	return count - toRead;
 }
@@ -993,21 +1443,20 @@ int32 ExtFs::Fwrite(LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle, 
 	while ( toWrite > 0 ) {
 		toWriteNow = ( toWrite > FRDWR_BUFFER_LENGTH ) ? FRDWR_BUFFER_LENGTH : toWrite;
 		a2fmemcpy( fBuff, sourceBuff, toWriteNow );
-		writeCount = write( fp->hostfh, fBuff, toWriteNow );
+		writeCount = write( fp->hostfd, fBuff, toWriteNow );
 
 		D(bug("MetaDOS: Fwrite writeCount (%d)", writeCount));
 
 		if ( writeCount <= 0 )
 			break;
 
-		sourceBuff += writeCount;
 		fp->offset += writeCount;
+		sourceBuff += writeCount;
 		toWrite -= writeCount;
 	}
 
-	//	D(bug("MetaDOS: Fread error (%d)", errno));
 	if ( writeCount < 0 )
-		return TOS_EINTRN;// FIXME
+		return unix2toserrno(errno,TOS_EINTRN);
 
 	return count - toWrite;
 }
@@ -1021,7 +1470,25 @@ int32 ExtFs::Fdelete(LogicalDev *ldp, char *pathName, ExtFile *fp,
 
 	D(bug("MetaDOS: Fdelete (%s,%s)", pathName, fpathName));
 
-	if ( remove( fpathName ) )
+	if ( unlink( fpathName ) )
+		return unix2toserrno(errno,TOS_EFILNF);
+
+	return TOS_E_OK;
+}
+
+
+int32 ExtFs::xfs_remove( XfsCookie *dir, char *name )
+{
+	char fname[2048];
+	a2fstrcpy( fname, (uint8*)name );
+
+	char pathName[MAXPATHNAMELEN];
+	cookie2Pathname(dir->index,fname,pathName); // get the cookie filename
+
+	char fpathName[MAXPATHNAMELEN];
+	convertPathA2F( fpathName, pathName, "" ); // convert the fname into the hostfs form (check the 8+3 file existence)
+
+	if ( unlink( fpathName ) )
 		return unix2toserrno(errno,TOS_EFILNF);
 
 	return TOS_E_OK;
@@ -1039,7 +1506,7 @@ int32 ExtFs::Fseek(LogicalDev *ldp, char *pathName, ExtFile *fp, int32 offset, i
 		default: return TOS_EINVFN;
 	}
 
-	off_t newoff = lseek( fp->hostfh, offset, whence);
+	off_t newoff = lseek( fp->hostfd, offset, whence);
 
 	D(bug("MetaDOS: Fseek (%d,%d,%d,%d)", offset, handle, seekmode, (int32)newoff));
 
@@ -1080,8 +1547,8 @@ int32 ExtFs::Fsfirst( LogicalDev *ldp, char *pathName, ExtDta *dta, const char *
 {
 	int16 idx;
 	if ( ( idx = getFreeDirIndex( fs_pathName ) ) == -1 ) {
-		D(bug("MetaDOS: Fsfirst no more directories!! (Fanda specific error)"));
-		return TOS_ENHNDL; // FIXME? No more dir handles (Fanda specific)
+		D(bug("MetaDOS: Fsfirst no more directories!! (ARAnyM specific error)"));
+		return TOS_ENHNDL; // FIXME? No more dir handles (ARAnyM specific)
 	}
 	dta->ds_index = idx;
 
@@ -1164,17 +1631,32 @@ int32 ExtFs::Frename(LogicalDev *ldp, char *pathName, ExtFile *fp,
 	return TOS_E_OK;
 }
 
-
-int32 ExtFs::Fdatime( LogicalDev *ldp, char *pathName, ExtFile *fp, uint32 *datetimep, int16 handle, int16 wflag)
+int32 ExtFs::xfs_rename( XfsCookie *olddir, char *oldname, XfsCookie *newdir, char *newname )
 {
-	char fpathName[MAXPATHNAMELEN];
-	struct stat statBuf;
+	char foldname[2048];
+	char fnewname[2048];
+	a2fstrcpy( foldname, (uint8*)oldname );
+	a2fstrcpy( fnewname, (uint8*)newname );
 
-	convertPathA2F( fpathName, pathName );
-	if ( stat(fpathName, &statBuf) )
+	char fpathName[MAXPATHNAMELEN];
+	char fnewPathName[MAXPATHNAMELEN];
+	cookie2Pathname( olddir->index, foldname, fpathName );
+	cookie2Pathname( newdir->index, fnewname, fnewPathName );
+
+	if ( rename( fpathName, fnewPathName ) )
 		return unix2toserrno(errno,TOS_EFILNF);
 
-	D(bug("MetaDOS: Fdatime "));
+	return TOS_E_OK;
+}
+
+
+int32 ExtFs::Fdatime_( char *fpathName, ExtFile *fp, uint32 *datetimep, int16 wflag)
+{
+	D(bug("MetaDOS: Fdatime (%s)", fpathName));
+	struct stat statBuf;
+
+	if ( stat(fpathName, &statBuf) )
+		return unix2toserrno(errno,TOS_EFILNF);
 
 	uint32 datetime = get_long( (uint32)datetimep, true );
 	if (wflag != 0) {
@@ -1205,6 +1687,22 @@ int32 ExtFs::Fdatime( LogicalDev *ldp, char *pathName, ExtFile *fp, uint32 *date
 	return TOS_E_OK; //EBADRQ;
 }
 
+int32 ExtFs::Fdatime( LogicalDev *ldp, char *pathName, ExtFile *fp, uint32 *datetimep, int16 handle, int16 wflag)
+{
+	char fpathName[MAXPATHNAMELEN];
+	convertPathA2F( fpathName, pathName );
+
+	return Fdatime_( fpathName, fp, datetimep, wflag );
+}
+
+int32 ExtFs::xfs_dev_datime( ExtFile *fp, uint32 *datetimep, int16 wflag)
+{
+	char fpathName[MAXPATHNAMELEN];
+	cookie2Pathname( fp->fc.index, NULL, fpathName );
+
+	return Fdatime_( fpathName, fp, datetimep, wflag );
+}
+
 
 int32 ExtFs::Fcntl( LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle, void *arg, int16 cmd)
 {
@@ -1213,31 +1711,27 @@ int32 ExtFs::Fcntl( LogicalDev *ldp, char *pathName, ExtFile *fp, int16 handle, 
 }
 
 
-int32 ExtFs::Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp, const char* pn, int16 cmd)
+int32 ExtFs::Dpathconf_( char *fpathName, int16 which, ExtDrive *drv )
 {
-	D(bug("MetaDOS: Dpathconf (%s,%d)", pathName, cmd));
-
 	int	 oldErrno = errno;
-	char fpathName[MAXPATHNAMELEN];
-#ifdef HAVE_SYS_STATVFS_H 
+#ifdef HAVE_SYS_STATVFS_H
 	struct statvfs buf;
 #else
 	struct statfs buf;
 #endif
-	convertPathA2F( fpathName, pathName );
 
-	D(bug("MetaDOS: Dpathconf (%s,%s,%d)", pathName, fpathName, cmd));
+	D(bug("MetaDOS: Dpathconf (%s,%d)", fpathName, which));
 
-#ifdef HAVE_SYS_STATVFS_H 
+#ifdef HAVE_SYS_STATVFS_H
 	if ( statvfs(fpathName, &buf) )
 #else
 	if ( statfs(fpathName, &buf) )
 #endif
 		return unix2toserrno(errno,TOS_EFILNF);
 
-	switch (cmd) {
+	switch (which) {
 		case -1:
-			return 8;  // maximal cmd value
+			return 8;  // maximal which value
 
 		case 0:	  // DP_IOPEN
 			return 0x7fffffffL; // unlimited
@@ -1250,11 +1744,11 @@ int32 ExtFs::Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp, const char
 			return result;
 		}
 		case 2:	  // DP_PATHMAX
-			return MAXPATHNAMELEN; // FIXME: This is the limitation of this implementation (Fanda specific)
+			return MAXPATHNAMELEN; // FIXME: This is the limitation of this implementation (ARAnyM specific)
 
 		case 3:	  // DP_NAMEMAX
-#ifdef HAVE_SYS_STATVFS_H 
-                        return buf.f_namemax;
+#ifdef HAVE_SYS_STATVFS_H
+			return buf.f_namemax;
 #else
 # ifdef OS_linux
 			return buf.f_namelen;
@@ -1270,8 +1764,10 @@ int32 ExtFs::Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp, const char
 			return 0;  // files are NOT truncated... (hope correct)
 
 		case 6:	{ // DP_CASE
-			ExtDrive *drv = getDrive( pathName );
-			return drv->halfSensitive ? 2 : 0; // full case sensitive
+			if ( drv )
+				return drv->halfSensitive ? 2 : 0; // full case sensitive
+			else
+				return 0;
 		}
 		case 7:	  // D_XATTRMODE
 			return 0x0ff0001fL;	 // only the archive bit is not recognised in the Fxattr
@@ -1286,53 +1782,100 @@ int32 ExtFs::Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp, const char
 }
 
 
-int32 ExtFs::Dopendir( LogicalDev *ldp, char *pathName, ExtFile *fp, const char* pn, int16 flag)
+int32 ExtFs::Dpathconf( LogicalDev *ldp, char *pathName, ExtFile *fp, const char* pn, int16 which )
 {
-	if ( ( fp->index = getFreeDirIndex( fs_pathName ) ) == -1 ) {
-		D(bug("MetaDOS: Dopendir no more directories!! (Fanda specific error)"));
-		return TOS_ENHNDL; // FIXME? No more dir handles (Fanda specific)
+	D(bug("MetaDOS: Dpathconf (%s,%d)", pathName, which));
+
+	char fpathName[MAXPATHNAMELEN];
+	convertPathA2F( fpathName, pathName );
+
+	ExtDrive *drv = getDrive( pathName );
+
+	return Dpathconf_( fpathName, which, drv );
+}
+
+
+int32 ExtFs::xfs_pathconf( XfsCookie *fc, int16 which )
+{
+	char fpathName[MAXPATHNAMELEN];
+	cookie2Pathname(fc->index, NULL, fpathName);
+
+	return Dpathconf_( fpathName, which, NULL );
+}
+
+
+int32 ExtFs::Dopendir_( char *fpathName, ExtDir *dirh, int16 flags)
+{
+	dirh->dir = opendir( fpathName );
+	if ( dirh->dir == NULL ) {
+		freeDirIndex( dirh->pathIndex, fs_pathName );
+		return unix2toserrno(errno,TOS_EPTHNF);
 	}
 
-	convertPathA2F( fs_pathName[ fp->index ], pathName );
-
-	D(bug("MetaDOS: Dopendir (%s,%s,%d)", pathName, fs_pathName[ fp->index ], flag));
-
-	fp->device = toupper(pathName[0]) - 'A'; // FIXME
-	fp->hostfh = (uint32)opendir( fs_pathName[ fp->index ] );
-	if ( ((DIR*)fp->hostfh) == NULL )
-		return unix2toserrno(errno,TOS_EPTHNF);
-
 	return TOS_E_OK;
 }
 
-
-int32 ExtFs::Dclosedir( LogicalDev *ldp, char *pathName, ExtFile *fp, int32 dirhandle)
+int32 ExtFs::Dopendir( LogicalDev *ldp, char *pathName, ExtDir *dirh, const char* pn, int16 flags)
 {
-	freeDirIndex( fp->index, fs_pathName );
+	if ( ( dirh->pathIndex = getFreeDirIndex( fs_pathName ) ) == -1 ) {
+		D(bug("MetaDOS: Dopendir no more directories!! (ARAnyM specific error)"));
+		return TOS_ENHNDL; // FIXME? No more dir handles (ARAnyM specific)
+	}
 
-	if ( closedir( (DIR*)fp->hostfh ) )
+	convertPathA2F( fs_pathName[ dirh->pathIndex ], pathName );
+
+	D(bug("MetaDOS: Dopendir (%s,%s,%d)", pathName, fs_pathName[ dirh->pathIndex ], flags));
+
+	dirh->flags = flags;
+	dirh->fc.dev = toupper(pathName[0]) - 'A'; // FIXME
+	return Dopendir_( fs_pathName[ dirh->pathIndex ], dirh, flags );
+}
+
+int32 ExtFs::xfs_opendir( XfsDir *dirh, uint16 flags )
+{
+	if ( ( dirh->pathIndex = getFreeDirIndex( fs_pathName ) ) == -1 ) {
+		D(bug("MetaDOS: Dopendir no more directories!! (ARAnyM specific error)"));
+		return TOS_ENHNDL; // FIXME? No more dir handles (ARAnyM specific)
+	}
+
+	cookie2Pathname(dirh->fc.index, NULL, fs_pathName[ dirh->pathIndex ]);
+
+	D(bug("XFS: opendir (%s,%d)", fs_pathName[ dirh->pathIndex ], flags));
+
+	dirh->flags = flags;
+	dirh->index = 0;
+	return Dopendir_( fs_pathName[ dirh->pathIndex ], dirh, flags );
+}
+
+
+
+int32 ExtFs::Dclosedir( ExtDir *dirh )
+{
+	freeDirIndex( dirh->pathIndex, fs_pathName );
+
+	if ( closedir( dirh->dir ) )
 		return unix2toserrno(errno,TOS_EPTHNF);
 
 	return TOS_E_OK;
 }
 
 
-int32 ExtFs::Dreaddir( LogicalDev *ldp, char *pathName, ExtFile *fp,
+int32 ExtFs::Dreaddir( LogicalDev *ldp, char *pathName, ExtDir *dirh,
 					   int16 len, int32 dirhandle, char* buff )
 {
 	struct dirent *dirEntry;
 
-	if ((void*)(dirEntry = readdir( (DIR*)fp->hostfh )) == NULL)
+	if ((void*)(dirEntry = readdir( dirh->dir )) == NULL)
 		return unix2toserrno(errno,TOS_ENMFIL);
 
-	if ( fp->mode == 0 ) {
-		if ( (uint16)len < strlen( dirEntry->d_name ) )
+	if ( dirh->flags == 0 ) {
+		if ( (uint16)len < strlen( dirEntry->d_name ) + 4 )
 			return TOS_ERANGE;
 
 		put_long( (uint32)buff, dirEntry->d_ino );
 		f2astrcpy( (uint8*)buff + 4, (uint8*)dirEntry->d_name );
 
-		D(bug("MetaDOS: Dreaddir (%s,%s)", fs_pathName[ fp->index ], (char*)dirEntry->d_name ));
+		D(bug("MetaDOS: Dreaddir (%s,%s)", fs_pathName[ dirh->pathIndex ], (char*)dirEntry->d_name ));
 	} else {
 		char truncFileName[MAXPATHNAMELEN];
 		transformFileName( truncFileName, (char*)dirEntry->d_name );
@@ -1341,32 +1884,102 @@ int32 ExtFs::Dreaddir( LogicalDev *ldp, char *pathName, ExtFile *fp,
 			return TOS_ERANGE;
 
 		f2astrcpy( (uint8*)buff, (uint8*)truncFileName );
-		D(bug("MetaDOS: Dreaddir (%s,%s)", fs_pathName[ fp->index ], (char*)truncFileName ));
+		D(bug("MetaDOS: Dreaddir (%s,%s)", fs_pathName[ dirh->pathIndex ], (char*)truncFileName ));
 	}
 
 	return TOS_E_OK;
 }
 
 
-int32 ExtFs::Drewinddir( LogicalDev *ldp, char *pathName, ExtFile *fp, int32 dirhandle)
+int32 ExtFs::Dxreaddir_( char *fpathName, ExtDir *dirh,
+						 int16 len, char* buff, uint32 xattrp, uint32 xretp )
 {
-	rewinddir( (DIR*)fp->hostfh );
+	int32 result = Dreaddir( NULL, fpathName, dirh, len, 0, buff );
+	if ( result != 0 )
+		return result;
+
+	ssize_t length = strlen( fpathName ) - 1;
+	if ( fpathName[ length++ ] != '/' )
+		fpathName[ length++ ] = '/';
+	a2fstrcpy( &fpathName[ length ], (uint8*)&buff[ dirh->flags == 0 ? 4 : 0 ] );
+
+	put_long( xretp, Fxattr_( NULL, fpathName, 1, xattrp ) ); // FIXME: retp should be byref!
+	fpathName[ length ] = '\0';
+
+	return result;
+}
+
+int32 ExtFs::Dxreaddir( LogicalDev *ldp, char *pathName, ExtDir *dirh,
+						 int16 len, int32 dirhandle, char* buff, uint32 xattrp, uint32 xretp )
+{
+	return Dxreaddir_( fs_pathName[ dirh->pathIndex ], dirh, len, buff, xattrp, xretp );
+}
+
+
+int32 ExtFs::xfs_readdir( ExtDir *dirh, char* buff, int16 len, XfsCookie *fc )
+{
+	struct dirent *dirEntry;
+
+
+#if 0
+	if ((void*)(dirEntry = readdir( dirh->dir )) == NULL)
+		return unix2toserrno(errno,TOS_ENMFIL);
+#else
+    do {
+		if ((void*)(dirEntry = readdir( dirh->dir )) == NULL)
+			return unix2toserrno(errno,TOS_ENMFIL);
+    } while ( !dirh->fc.index->parent &&
+			  ( dirEntry->d_name[0] == '.' &&
+				( !dirEntry->d_name[1] ||
+				  ( dirEntry->d_name[1] == '.' && !dirEntry->d_name[2] ) ) ) );
+#endif
+
+	XfsFsFile *newFsFile = new XfsFsFile();
+	newFsFile->name = strdup( dirEntry->d_name );
+
+	if ( dirh->flags == 0 ) {
+		if ( (uint16)len < strlen( dirEntry->d_name ) + 4 )
+			return TOS_ERANGE;
+
+		put_long( (uint32)buff, dirEntry->d_ino );
+		f2astrcpy( (uint8*)buff + 4, (uint8*)dirEntry->d_name );
+
+		D(bug("XFS: readdir (%s)", (char*)dirEntry->d_name ));
+	} else {
+		char truncFileName[MAXPATHNAMELEN];
+		transformFileName( truncFileName, (char*)dirEntry->d_name );
+
+		if ( (uint16)len < strlen( truncFileName ) )
+			return TOS_ERANGE;
+
+		f2astrcpy( (uint8*)buff, (uint8*)truncFileName );
+		D(bug("XFS: readdir (%s)", (char*)truncFileName ));
+	}
+
+	dirh->index++;
+	dirh->fc.index->childCount++;
+	newFsFile->parent = dirh->fc.index;
+    newFsFile->refCount = 1;
+    newFsFile->childCount = 0;
+
+	fc->xfs = mint_fs_drv;
+    fc->dev = dirh->fc.dev;
+	fc->aux = 0;
+    fc->index = newFsFile;
+
 	return TOS_E_OK;
 }
 
 
-int32 ExtFs::Fxattr( LogicalDev *ldp, char *pathName, ExtDta *dta,
-					 int16 flag, const char* pn, uint32 xattrp )
+int32 ExtFs::Drewinddir( ExtDir *dirh )
 {
-	char fpathName[MAXPATHNAMELEN];
-	convertPathA2F( fpathName, pathName );
-
-	return Fxattr_( ldp, fpathName, dta, flag, pn, xattrp );
+	rewinddir( dirh->dir );
+	dirh->index = 0;
+	return TOS_E_OK;
 }
 
 
-int32 ExtFs::Fxattr_( LogicalDev *ldp, char *fpathName, ExtDta *dta,
-					  int16 flag, const char* pn, uint32 xattrp )
+int32 ExtFs::Fxattr_( LogicalDev *ldp, char *fpathName, int16 flag, uint32 xattrp )
 {
 	D(bug("MetaDOS: Fxattr (%s,%d)", fpathName, flag));
 
@@ -1407,25 +2020,253 @@ int32 ExtFs::Fxattr_( LogicalDev *ldp, char *fpathName, ExtDta *dta,
 	return TOS_E_OK;
 }
 
-
-int32 ExtFs::Dxreaddir( LogicalDev *ldp, char *pathName, ExtFile *fp,
-						int16 len, int32 dirhandle, char* buff, uint32 xattrp, uint32 xretp )
+int32 ExtFs::Fxattr( LogicalDev *ldp, char *pathName, ExtDta *dta,
+					 int16 flag, const char* pn, uint32 xattrp )
 {
-	char*	fpathName = fs_pathName[ fp->index ];
+	char fpathName[MAXPATHNAMELEN];
+	convertPathA2F( fpathName, pathName );
 
-	int32 result = Dreaddir( ldp, fpathName, fp, len, dirhandle, buff );
-	if ( result != 0 )
-		return result;
+	return Fxattr_( ldp, fpathName, flag, xattrp );
+}
 
-	ssize_t length = strlen( fpathName ) - 1;
-	if ( fpathName[ length++ ] != '/' )
-		fpathName[ length++ ] = '/';
-	a2fstrcpy( &fpathName[ length ], (uint8*)&buff[ fp->mode == 0 ? 4 : 0 ] );
+int32 ExtFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
+{
+	char fpathName[MAXPATHNAMELEN];
+	cookie2Pathname(fc->index, NULL, fpathName);
 
-	put_long( xretp, Fxattr_( ldp, fpathName, NULL, 1, pathName, xattrp ) );
-	fpathName[ length ] = '\0';
+	return Fxattr_( NULL, fpathName, 1 /* lstat */, xattrp );
+}
 
-	return result;
+
+/*
+ * build a complete linux filepath
+ * --> fs    something like a handle to a known file
+ *     name  a postfix to the path of fs or NULL, if no postfix
+ *     buf   buffer for the complete filepath or NULL if static one
+ *           should be used.
+ * <-- complete filepath or NULL if error
+ */
+char *ExtFs::cookie2Pathname( ExtFs::XfsFsFile *fs, const char *name, char *buf )
+{
+    static char sbuf[256]; /* FIXME: size should told by unix */
+
+    if (!buf)
+        buf = sbuf;
+    if (!fs)
+    {
+        /* we are at root */
+        if (!name)
+            return NULL;
+        else
+            strcpy(buf, name);
+    }
+    else
+    {
+        char *h;
+        if (!cookie2Pathname(fs->parent, fs->name, buf))
+            return NULL;
+        if (name && *name)
+        {
+            if ((h = strchr(buf, '\0'))[-1] != '/')
+                *h++ = '/';
+            strcpy( h, name );
+        }
+    }
+    return buf;
+}
+
+
+int32 ExtFs::xfs_root( uint16 dev, XfsCookie *fc )
+{
+	D(bug( "root:\n"
+		   "  dev    = %#04x\n"
+		   "  devnum = %#04x\n",
+		   dev, mint_fs_devnum));
+
+	if ( dev != mint_fs_devnum )
+		return TOS_EDRIVE;
+
+	fc->xfs = mint_fs_drv;
+	fc->dev = dev;
+	fc->aux = 0;
+	fc->index = new XfsFsFile();
+
+	fc->index->parent = NULL;
+	fc->index->name = "/";
+	fc->index->refCount = 1;
+	fc->index->childCount = 0;
+
+	D(bug( "root result:\n"
+		   "  fs    = %08lx\n"
+		   "  dev   = %04x\n"
+		   "  aux   = %04x\n"
+		   "  index = %08lx\n",
+		   fc->xfs, fc->dev, fc->aux, fc->index));
+
+	return TOS_E_OK;
+}
+
+
+int32 ExtFs::xfs_getdev( XfsCookie *fc, int32 *devspecial )
+{
+    put_long((uint32)devspecial,0); /* reserved */
+    return (int32)mint_fs_devdrv;
+}
+
+
+int32 ExtFs::xfs_readlink( XfsCookie *dir, char *buf, int16 len )
+{
+	char fpathName[MAXPATHNAMELEN];
+	cookie2Pathname(dir->index,NULL,fpathName); // get the cookie filename
+
+	char fbuf[MAXPATHNAMELEN];
+	int rv;
+    if ((rv=readlink(fpathName,fbuf,len-1)) < 0)
+		return unix2toserrno( errno, TOS_EFILNF );
+
+	// FIXME: the link destination should be scanned if pointing to some
+	//	      of the native file cookies and then should be adjusted.
+
+	f2astrcpy( (uint8*)buf, (uint8*)fbuf );
+	return TOS_E_OK;
+}
+
+
+void ExtFs::xfs_freefs( XfsFsFile *fs )
+{
+    D(bug( "freefs:\n"
+		 "  fs = %08lx\n"
+		 "    parent   = %08lx\n"
+		 "    name     = \"%s\"\n"
+		 "    usecnt   = %d\n"
+		 "    childcnt = %d\n",
+		 (long)fs,
+		 (long)(fs->parent),
+		 fs->name,
+		 fs->refCount,
+		 fs->childCount ));
+
+    if ( !fs->refCount && !fs->childCount )	{
+		D(bug( "freefs: realfree\n" ));
+		if ( fs->parent ) {
+			fs->parent->childCount--;
+			xfs_freefs( fs->parent );
+			free( fs->name );
+		}
+		delete fs;
+	} else {
+		D(bug( "freefs: notfree\n" ));
+	}
+}
+
+
+int32 ExtFs::xfs_lookup( XfsCookie *dir, char *name, XfsCookie *fc )
+{
+	char fname[2048];
+	a2fstrcpy( fname, (uint8*)name );
+
+	D(bug( "XFS: lookup: %s", fname ));
+
+    XfsFsFile *newFsFile;
+
+    if ( !fname || !*fname || (*fname == '.' && !fname[1]) ) {
+		newFsFile = dir->index;
+		newFsFile->refCount++;
+	} else if ( *fname == '.' && fname[1] == '.' && !fname[2] ) {
+		if ( !dir->index->parent ) {
+			D(bug( "lookup to \"..\" at root" ));
+			return TOS_EMOUNT;
+		}
+		newFsFile = dir->index->parent;
+		newFsFile->refCount++;
+	} else {
+		if ( (newFsFile = new XfsFsFile()) == NULL ) {
+			D(bug( "lookup: malloc() failed!" ));
+			return TOS_ENSMEM;
+		}
+
+		newFsFile->parent = dir->index;
+
+		char pathName[MAXPATHNAMELEN];
+		cookie2Pathname(dir->index,fname,pathName); // get the cookie filename
+
+		char fpathName[MAXPATHNAMELEN];
+		convertPathA2F( fpathName, pathName, "" ); // convert the fname into the hostfs form
+
+		struct stat statBuf;
+
+		D(bug( "XFS: lookup stat: %s", fpathName ));
+
+		if ( lstat( fpathName, &statBuf ) )
+			return unix2toserrno( errno, TOS_EFILNF );
+
+		newFsFile->name = strdup(fname);
+		newFsFile->refCount = 1;
+		newFsFile->childCount = 0;
+		dir->index->childCount++; /* same as: new->parent->childcnt++ */
+	}
+
+    *fc = *dir;
+    fc->index = newFsFile;
+
+	return TOS_E_OK;
+}
+
+
+int32 ExtFs::xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook )
+{
+    XfsFsFile *fs = new XfsFsFile();
+
+    if ( ( fs->parent = oldCook->index->parent ) != NULL ) {
+		if ( (fs->name = strdup(oldCook->index->name)) == NULL ) {
+			D(bug( "dupcookie: strdup() failed!\n" ));
+			delete fs;
+			return TOS_ENSMEM;
+		}
+		fs->parent->childCount++;
+	} else
+		fs->name = "/";
+    fs->refCount = 1;
+    fs->childCount = 0; /* don't heritate childs! */
+
+    *newCook = *oldCook;
+    newCook->index = fs;
+
+	return TOS_E_OK;
+}
+
+
+int32 ExtFs::xfs_release( XfsCookie *fc )
+{
+    D(bug( "release():\n"
+		 "  fc = %08lx\n"
+		 "    fs    = %08lx\n"
+		 "    dev   = %04x\n"
+		 "    aux   = %04x\n"
+		 "    index = %08lx\n"
+		 "      parent   = %08lx\n"
+		 "      name     = \"%s\"\n"
+		 "      usecnt   = %d\n"
+		 "      childcnt = %d\n",
+		 (long)fc,
+		 (long)fc->xfs,
+		 (int)fc->dev,
+		 (int)fc->aux,
+		 (long)fc->index,
+		 (long)fc->index->parent,
+		   fc->index->name,
+		   fc->index->refCount,
+		   fc->index->childCount ));
+
+    if ( !fc->index->refCount )
+		{
+			D(bug( "release: RELEASE OF UNUSED FILECOOKIE!\n" ));
+			return TOS_EACCDN;
+		}
+    fc->index->refCount--;
+    xfs_freefs( fc->index );
+
+    return TOS_E_OK;
 }
 
 
@@ -1535,6 +2376,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.24  2002/01/31 19:37:47  milan
+ * panicbug, cleaning
+ *
  * Revision 1.23  2002/01/26 21:22:24  standa
  * Cleanup from no needed method arguments.
  *
