@@ -34,6 +34,8 @@ extern "C" int vasprintf(char **, const char *, va_list);
 
 #include "parameters.h"
 
+extern void QuitEmulator(void);
+
 #ifdef NEWDEBUG
 
 #ifndef HAVE_STRDUP
@@ -1343,6 +1345,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.35  2004/07/28 20:10:09  milan
+ * switch 'I' modified, debugger can ignore interupt mode
+ *
  * Revision 1.34  2004/07/09 18:41:56  milan
  * (sig)set/longjmp corrections
  *
