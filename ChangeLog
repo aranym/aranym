@@ -6,6 +6,9 @@
   Unix/xbsd/sigsegv_xbsd.cpp: hwsp and pagehwsp address checking modes fixed
   (stacked address fault was wrong).
 
+- NFPCI: Patrice: give access to the 256 bytes of configuration space.
+  Some bugfixes.
+
 
 2004/08/16 - Xavier
 - Unix/cygwin/sigsegv_cygwin.cpp: fixed GCC warnings.
