@@ -97,7 +97,7 @@ int FPUType;
 static uint32 lastTicks;
 #define USE_GETTICKS 1		// undefine this if your ARAnyM time goes slower
 
-SDL_TimerID my_timer_id = 0;
+SDL_TimerID my_timer_id = NULL;
 
 bool isGuiAvailable;
 
@@ -485,13 +485,26 @@ bool InitAll(void)
 
 	InputInit();
 
-#ifdef SDL_GUI
-	isGuiAvailable = SDLGui_Init();
-#endif
-
 	// Init 680x0 emulation
 	if (!Init680x0())
 		return false;
+
+#ifdef SDL_GUI
+	isGuiAvailable = SDLGui_Init();
+
+	if (isGuiAvailable && startupGUI) {
+		// enable timer thread for input events
+		my_timer_id = SDL_AddTimer(20, input_callback, NULL);
+		if (my_timer_id != NULL) {
+extern int open_gui(void *);
+			// open GUI
+			open_gui(NULL);
+			// GUI finished - disable timer thread
+			SDL_RemoveTimer(my_timer_id);
+			my_timer_id = NULL;
+		}
+	}
+#endif
 
 #ifdef DEBUGGER
 	if (bx_options.startup.debugger) {
@@ -522,20 +535,6 @@ bool InitAll(void)
 	mon_write_byte = mon_write_byte_b2;
 #endif
 
-#ifdef SDL_GUI
-	if (isGuiAvailable && startupGUI) {
-		// enable timer thread for input events
-		my_timer_id = SDL_AddTimer(20, input_callback, NULL);
-		if (my_timer_id > 0) {
-extern int open_gui(void *);
-			// open GUI
-			open_gui(NULL);
-			// GUI finished - disable timer thread
-			SDL_RemoveTimer(my_timer_id);
-			my_timer_id = 0;
-		}
-	}
-#endif
 	return true;
 }
 
@@ -566,7 +565,7 @@ void ExitAll(void)
 	// Exit Time Manager
 	if (my_timer_id) {
 		SDL_RemoveTimer(my_timer_id);
-		my_timer_id = 0;
+		my_timer_id = NULL;
 		SDL_Delay(100);	// give it a time to safely finish the timer thread
 	}
 

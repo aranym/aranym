@@ -13,6 +13,9 @@
 
 - parameters.cpp,h: loading and saving of config file from GUI works now.
 
+- main.cpp: fixed scary bug - how could this work this morning? Use the 
+  GUI timer thread _before_ the actual 200 Hz timer thread is started...
+
 
 2003/12/28 AM - joy
 - sdl-gui.cpp, dlgMain.cpp: font init moved back to the main dialog,
