@@ -1,12 +1,12 @@
 2002/01/28 - version 0.0.20 released
 ==========
 
- ARAnyM is at least 33% faster than the previous release. We greatly
+ ARAnyM is at least +33% faster than the previous release. We greatly
  optimized the CPU memory access time and also interrupt emulation.
 
  ARAnyM runs with the SDL TimerThread by default again. This gives us
  more flexibility (see the STOP insn below) and is necessary for
- the JIT CPU (just-in-time compilation of m68k code).
+ the upcoming JIT CPU (just-in-time compilation of m68k code).
 
  ARAnyM supports STOP instruction that put the CPU to sleep. This works
  perfectly in latest EmuTOS (CVS version). ARAnyM does not eat CPU
@@ -28,6 +28,12 @@
 
  Many many fixes - in floppy (formatting works), fVDI driver (colors after
  resolution change), NVRAM (year 2002 not 2001), MFP (TimerC) and more.
+
+ Great thing for all Debian users - ARAnyM is now included in Debian Sid
+ distribution.
+
+ Last but not least - ARAnyM runs under Windows as well. You can compile
+ the released source code with Cygwin to get Windows executable.
 
  Look into ChangeLog for more details.
 

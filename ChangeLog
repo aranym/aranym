@@ -1,3 +1,13 @@
+ARAnyM 0.0.20 released
+----------------------
+
+2002/01/28 - joy
+- tools/clocky.prg.bz2 updated - the hotkey combo is back at LShift+RShift
+  (the Alt+LShift collided with Thing).
+- updated aranymrc.example
+- updated most documentation and web pages
+
+
 2002/01/27 - joy
 - XHDI dispatch added to emul_op
 - XHGetCapacity() implemented
