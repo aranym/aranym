@@ -1,3 +1,9 @@
+2003/12/16 - joy
+- mfp.cpp: initializing the internal variables suddenly fixed all the 
+  weird problems I had with booting the aranym since I converted the HW
+  classes to dynamically created objects. So it's finally solved. 
+
+
 2003/12/16 - Xavier
 - doc/build-cygwin.sh: added a small shell script to ease compilation on
   Cygwin systems. This script is needed since SDL does not allow to build
