@@ -1,3 +1,7 @@
+2002/03/15 - milan
+- Exception() is called only from main loop, not from trans. function.
+
+
 2002/03/14 - Olivier Landemarre <Olivier.Landemarre@utbm.fr> & STanda
 - ExtFs: ugly bug in flags2st fixed. This might affect some problems
   we had with the MetaDOS driver, but unfortunatelly PureC still refuses

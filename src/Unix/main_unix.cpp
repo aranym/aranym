@@ -153,7 +153,9 @@ int main(int argc, char **argv)
 
 	// register segmentation fault handler only if you don't start with debugging enabled
 	// if (! start_debug)
+#ifndef USE_JIT
 		signal(SIGSEGV, segmentationfault);
+#endif
 
 #ifdef ENABLE_MON
 	sigemptyset(&sigint_sa.sa_mask);
@@ -229,6 +231,9 @@ static void sigint_handler(...)
 
 /*
  * $Log$
+ * Revision 1.60  2002/02/23 13:44:52  joy
+ * input related code separated from main.cpp
+ *
  * Revision 1.59  2002/01/17 14:59:19  milan
  * cleaning in HW <-> memory communication
  * support for JIT CPU

@@ -619,7 +619,7 @@ bus_err:
 	D(bug("BUS ERROR: fc=%d w=%d log=%08x ssw=%04x fslw=%08x", fc, write, theaddr, ssw, fslw));
 
 	if ((test & MMU_TEST_NO_BUSERR) == 0)	{
-		Exception(2, pc);
+//		Exception(2, pc);
 		longjmp(excep_env, 2);
 	}
 	return 0;
