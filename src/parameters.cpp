@@ -72,7 +72,7 @@ void init_ide() {
 	bx_options.diskc.spt = 63;
 	strcpy(bx_options.diskc.path, "/home/joy/aranym/src/Unix/diskImage");
 
-	bx_options.diskd.present = 1;
+	bx_options.diskd.present = 0;
 	bx_options.diskd.byteswap = false;
 	bx_options.diskd.cylinders = 2100;
 	bx_options.diskd.heads = 16;
@@ -80,7 +80,7 @@ void init_ide() {
 	strcpy(bx_options.diskd.path, "/dev/hdd");
 
 	bx_options.newHardDriveSupport = 1;
-	bx_options.cdromd.present = 0;
+	bx_options.cdromd.present = 1;
 }
 
 int decode_switches (int argc, char **argv) {
