@@ -1202,15 +1202,32 @@ int FVDIDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest
 
 		switch(planes) {
 		case 16:
-			for(int32 j = 0; j < h; j++)
-				for(int32 i = sx; i < sx + w; i++) {
-					srcData = ReadInt16(data + j * pitch + i * 2);
-					//uint16 destData = ReadInt16(videoRam + (dx + i - sx) * 2 + (dy + j) * screenPitch); // shadow?
-					destData = hostScreen.getPixel(dx + i - sx, dy + j);
-					applyBlitLogOperation(logOp, destData, srcData);
-					//WriteInt16(videoRam + (dx + i - sx) * 2 + (dy + j) * screenPitch, destData); // shadow?
-					hostScreen.putPixel(dx + i - sx, dy + j, destData);
+			if (logOp != 3) {
+				for(int32 j = 0; j < h; j++)
+					for(int32 i = sx; i < sx + w; i++) {
+						srcData = ReadInt16(data + j * pitch + i * 2);
+						//uint16 destData = ReadInt16(videoRam + (dx + i - sx) * 2 + (dy + j) * screenPitch); // shadow?
+						destData = hostScreen.getPixel(dx + i - sx, dy + j);
+						applyBlitLogOperation(logOp, destData, srcData);
+						//WriteInt16(videoRam + (dx + i - sx) * 2 + (dy + j) * screenPitch, destData); // shadow?
+						hostScreen.putPixel(dx + i - sx, dy + j, destData);
+					}
+			} else {
+				uint16* daddr_base = (uint16*)((long)hostScreen.getVideoramAddress() +
+				                          dy * hostScreen.getPitch() + dx * 2);
+				memptr saddr_base = data + sx * 2;
+				for(int32 j = 0; j < h; j++) {
+					uint16* daddr = daddr_base;
+					memptr saddr = saddr_base;
+					daddr_base += hostScreen.getPitch() / 2;
+					saddr_base += pitch;
+					for(int32 i = 0; i < w; i++) {
+						destData = ReadInt16(saddr);
+						saddr += 2;
+						*daddr++ = destData;
+					}
 				}
+			}
 			break;
 		case 24:
 			for(int32 j = 0; j < h; j++)
@@ -1907,6 +1924,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.40  2002/09/15 15:17:15  joy
+ * CPU to separate thread
+ *
  * Revision 1.39  2002/08/03 12:36:42  johan
  * Updated to work with new API (dependencies on internal fVDI structures
  * have been removed and all parameters are passed on the stack).
