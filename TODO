@@ -11,7 +11,8 @@ Things that must be done before first beta release:
 
 + mouse pointer must be sync'ed with the host mouse (in X-Windows)
 
-+ aranym HW registers - define a structure, use it for FastRAM.PRG (to find out
++ [35%]
+  aranym HW registers - define a structure, use it for FastRAM.PRG (to find out
   the correct size of FastRAM) and for StandaFsEditor.PRG (will edit CONFIG.SYS
   automagically and will add there the GEMDOS drives that were attached in aranym)
   The structure address will be obtained by calling an undefined instruction.
@@ -38,12 +39,9 @@ Things that must be done before first beta release:
 - enable SWACCEL and HWBLITS of Blitter - either in ./configure or make it
   configurable in runtime (depends on runtime config GUI stuff Milan made)
 
-- move ROM file reading back to main.cpp, perhaps even with 040 patching routine so 
++ [67%]
+  move ROM file reading back to main.cpp, perhaps even with 040 patching routine so 
   aranym could use pure TOS 4.04
-
-- find out how the GUI config stuff by Milan works
-
-- find out how the new Milan debugger works
 
 - improve the keyboard emulation - make the keyboard layout editable (for national keyboards),
   well define and DOCUMENT keyboard combos for quitting, mounting floppy/cdrom, screen shot
@@ -68,7 +66,7 @@ Things that must be done before first beta release:
 The goal for the first beta is to get functional Atari/TOS machine replacement
 fully usable for regular GEM users.
 
-Estimated amount of work for first beta release: unknown
+Estimated amount of work for first beta release: two weeks
 
 Things for 1.0 release:
 =======================
@@ -77,7 +75,7 @@ Things for 1.0 release:
 
 + mouse pointer shared between X-Windows and aranym (like in vmware)
 
-+ fVDI working (TOS+aranym drivers)
++ [75%] fVDI working (TOS+aranym drivers)
 
 - sound output using GSXB library
 
@@ -85,7 +83,7 @@ The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
 all Atari power users/MiNTers. Key elements are TCP/IP networking, large
 screen resolution in high color/true color, fast CPU/FPU and plenty of RAM.
 
-Estimated time for 1.0 release: summer/fall 2001.
+Estimated time for 1.0 release: spring 2002.
 
 Things for 2.0 release:
 =======================
