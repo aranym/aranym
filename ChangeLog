@@ -1,6 +1,7 @@
 2002/03/26 - joy
-- transformFileName in extfs.cpp fixed - ARAnyM will not crash when it
-  encounters a long filename.
+- transformFileName in extfs.cpp fixed three times. ARAnyM will not crash
+  when it encounters a long filename. ST-Zip will not crash when browsing
+  MetaDOS drive. Maybe that PureC works now as well?
 
 
 2002/03/22 - joy
