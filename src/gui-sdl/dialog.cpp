@@ -37,6 +37,7 @@
 #include "sdlgui.h"
 #include "host.h"
 #include "ata.h"
+#include "parameters.h"		// load/saveSettings()
 
 #define Screen_Save()		{ hostScreen.lock(); hostScreen.saveBackground(); hostScreen.unlock(); }
 		
@@ -46,34 +47,30 @@
 static bool bQuitProgram;
 
 /* The main dialog: */
-#define MAINDLG_ABOUT    2
-#define MAINDLG_DISCS    3
-#define MAINDLG_REBOOT   5
-#define MAINDLG_QUIT     6
-#define MAINDLG_OK       10
-#define MAINDLG_CANCEL   11
-/*
-#define MAINDLG_TOSGEM   4
-#define MAINDLG_SCREEN   5
-#define MAINDLG_SOUND    6
-#define MAINDLG_CPU      7
-#define MAINDLG_MEMORY   8
-#define MAINDLG_JOY      9
-#define MAINDLG_KEYBD    10
-#define MAINDLG_DEVICES  11
-#define MAINDLG_RESET    13
-#define MAINDLG_OK       14
-#define MAINDLG_CANCEL   15
-#define MAINDLG_QUIT     16
-*/
+enum {
+	maindlg_border,
+	maindlg_text_main,
+	MAINDLG_ABOUT,
+	MAINDLG_DISCS,
+	MAINDLG_KEYBD,
+	maindlg_text_aranym,
+	MAINDLG_REBOOT,
+	MAINDLG_QUIT,
+	maindlg_text_config,
+	MAINDLG_LOAD,
+	MAINDLG_SAVE,
+	MAINDLG_OK,
+	MAINDLG_CANCEL
+};
+
 SGOBJ maindlg[] =
 {
   { SGBOX, 0, 0, 0,0, 36,20, NULL },
   { SGTEXT, 0, 0, 10,1, 16,1, "ARAnyM main menu" },
   { SGBUTTON, 0, 0, 4,4, 12,1, "About" },
   { SGBUTTON, 0, 0, 4,6, 12,1, "Disks" },
+  { SGBUTTON, 0, 0, 4,8, 12,1, "Keyboard" },
 /*
-  { SGBUTTON, 0, 0, 4,8, 12,1, "TOS/GEM" },
   { SGBUTTON, 0, 0, 4,10, 12,1, "Screen" },
   { SGBUTTON, 0, 0, 4,12, 12,1, "Sound" },
   { SGBUTTON, 0, 0, 20,4, 12,1, "CPU" },
@@ -167,6 +164,17 @@ SGOBJ discdlg[] =
   { SGBUTTON, 0, 0, 10,23, 20,1, "Back to main menu" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
+
+/* The keyboard dialog: */
+SGOBJ keyboarddlg[] =
+{
+  { SGBOX, 0, 0, 0,0, 30,8, NULL },
+  { SGTEXT, 0, 0, 8,2, 14,1, "Keyboard setup" },
+  { SGTEXT, 0, 0, 2,4, 25,1, "Sorry, not yet supported." },
+  { SGBUTTON, 0, 0, 5,6, 20,1, "Back to main menu" },
+  { -1, 0, 0, 0,0, 0,0, NULL }
+};
+
 
 #if 0 // joy
 
@@ -329,17 +337,6 @@ SGOBJ joystickdlg[] =
   { SGCHECKBOX, 0, 0, 5,13, 22,1, "Use cursor emulation" },
   { SGCHECKBOX, 0, 0, 5,14, 17,1, "Enable autofire" },
   { SGBUTTON, 0, 0, 5,17, 20,1, "Back to main menu" },
-  { -1, 0, 0, 0,0, 0,0, NULL }
-};
-
-
-/* The keyboard dialog: */
-SGOBJ keyboarddlg[] =
-{
-  { SGBOX, 0, 0, 0,0, 30,8, NULL },
-  { SGTEXT, 0, 0, 8,2, 14,1, "Keyboard setup" },
-  { SGTEXT, 0, 0, 2,4, 25,1, "Sorry, not yet supported." },
-  { SGBUTTON, 0, 0, 5,6, 20,1, "Back to main menu" },
   { -1, 0, 0, 0,0, 0,0, NULL }
 };
 
@@ -1027,8 +1024,14 @@ int Dialog_MainDlg(bool *bReset)
         SDLGui_CenterDlg(aboutdlg);
         SDLGui_DoDialog(aboutdlg);
         break;
+
       case MAINDLG_DISCS:
         Dialog_DiscDlg();
+        break;
+
+      case MAINDLG_KEYBD:
+        SDLGui_CenterDlg(keyboarddlg);
+        SDLGui_DoDialog(keyboarddlg);
         break;
 /*
       case MAINDLG_TOSGEM:
@@ -1049,22 +1052,27 @@ int Dialog_MainDlg(bool *bReset)
       case MAINDLG_JOY:
         Dialog_JoyDlg();
         break;
-      case MAINDLG_KEYBD:
-        SDLGui_CenterDlg(keyboarddlg);
-        SDLGui_DoDialog(keyboarddlg);
-        break;
       case MAINDLG_DEVICES:
         SDLGui_CenterDlg(devicedlg);
         SDLGui_DoDialog(devicedlg);
         break;
 */
+      case MAINDLG_LOAD:
+        loadSettings();
+      	break;
+
+      case MAINDLG_SAVE:
+        saveSettings();
+      	break;
 
       case MAINDLG_REBOOT:
         *bReset = true;
         break;
+
       case MAINDLG_QUIT:
         bQuitProgram = true;
         break;
+
       case -1:
       	bQuitProgram = true;
       	break;
