@@ -34,7 +34,6 @@
 #define SCRUNLOCK	hostScreen.unlock()
 #define sdlscrn	hostScreen.getPhysicalSurface()
 static bool bQuitProgram;
-#define MAX_FILENAME_LENGTH 260
 
 static SDL_Surface *stdfontgfx=NULL;
 static SDL_Surface *fontgfx=NULL;   /* The actual font graphics */
@@ -682,7 +681,11 @@ int SDLGui_FileSelect(char *path_and_name)
       if(entries<0)
       {
         fprintf(stderr, "SDLGui_FileSelect: Path not found.\n");
-        return false;
+        strcpy(path, "/");	// reset path and reload entries
+        strcpy(dlgpath, path);
+        entries = scandir(path, &files, 0, alphasort);
+        if (entries<0)
+        	return false;	// we're really lost if even root is unreadable
       }
       reloaddir = false;
       refreshentries = true;
