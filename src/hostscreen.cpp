@@ -265,11 +265,11 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 							   uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
 {
-	uint32 pixx, pixy;
-	uint32 x,y;
-	uint32 dx,dy;
-	uint32 sx,sy;
-	uint32 swaptmp;
+	int16 pixx, pixy;
+	int16 x,y;
+	int16 dx,dy;
+	int16 sx,sy;
+	int16 swaptmp;
 	uint8 *pixel;
 	uint8 ppos;
 
@@ -316,6 +316,8 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 		swaptmp = pixx; pixx = pixy; pixy = swaptmp;
 	}
 
+	D(bug("ln pix pixx, pixy: %d,%d : %d,%d : %x, %d", sx, sy, dx, dy, pixx, pixy));
+
 	/* Draw */
 	x=0;
 	y=0;
@@ -331,6 +333,8 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 			break;
 		case 2:
 			for (; x < dx; x++, pixel += pixx) {
+				D2(bug("ln pix: %x, %d", pixel, x));
+
 				switch (logOp) {
 					case 1:
 						*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos++) & 0xf ) )) != 0 ) ? fgColor : bgColor); // STanda
@@ -599,6 +603,9 @@ void HostScreen::gfxBoxColorPatternBgTrans(int16 x1, int16 y1, int16 x2, int16 y
 
 /*
  * $Log$
+ * Revision 1.12  2001/10/08 21:46:05  standa
+ * The $Header$ and $Log$ CVS tags added.
+ *
  * Revision 1.11  2001/10/03 06:37:41  standa
  * General cleanup. Some constants added. Better "to screen" operation
  * recognition (the videoram address is checked too - instead of only the
