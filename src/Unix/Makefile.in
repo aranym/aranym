@@ -111,21 +111,6 @@ $(APP): $(OBJ_DIR) $(OBJS)
 $(APP_STATIC): $(OBJ_DIR) $(OBJS)
 	$(CXX) -o $(APP_STATIC) -static $(LDFLAGS) $(OBJS) $(LIBS)
 
-Makefile: configure Makefile.in
-	./configure
-
-configure: configure.in aclocal.m4
-	$(AUTOCONF)
-
-aclocal.m4:
-	$(ACLOCAL)
-
-config.h: config.h.in configure Makefile.in
-	./configure
-
-config.h.in: acconfig.h
-	$(AUTOHEADER)
-
 install: $(APP) installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
 	$(INSTALL_DATA) ../../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog

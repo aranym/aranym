@@ -234,7 +234,7 @@ void preset_ide() {
   set_ide(0, "", 0, 0, 0, false);
   set_ide(1, "", 0, 0, 0, false);
 
-  bx_options.newHardDriveSupport = 1;
+  bx_options.newHardDriveSupport = true;
 }
 
 void postload_ide() {

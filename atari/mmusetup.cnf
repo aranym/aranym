@@ -113,7 +113,7 @@ pd_flags=c_wt
 
 # VideoRAM (10 MB)
 #logical=$f0000000
-#physical=$f000000
+#physical=$f0000000
 #size=10*1024*1024
 #pd_flags=c_p
 

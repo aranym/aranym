@@ -16,13 +16,9 @@ Things for 1.0 release:
 
 - in hardware.cpp: HWget_l/HWput_l should not have the special case for HW_IDE
 
-- full support of instr. MOVES
-
 - full revision of CPU/FPU instr. set
 
 - support for Just-In-Time compilation
-
-- MMU040 (MiNT with memory protection, Linux)
 
 - Networking for MiNTNet (like in vmware)
 
@@ -40,6 +36,8 @@ Things for 1.0 release:
   (ARAnyM Hackers Guide)
 
 - document the command line switches, keyboard combos and write Users Guide.
+
+- Bus error handling
 
 The goal for version 1.0 is to have real TOS/MiNT compatible machine usable by
 all Atari power users/MiNTers. Key elements are TCP/IP networking, large
