@@ -544,7 +544,8 @@ int SDLGui_DoDialog(SGOBJ *dlg)
           retbutton = 0;	/* TODO should be the number of the Cancel button */
           break;
         case 0x87654321:	/* TODO a signal that resolution has changed */
-          SDLGui_DrawDialog(dlg);
+		  SDLGui_CenterDlg(dlg);	// re-center dialog (screen size changed)
+          SDLGui_DrawDialog(dlg);	// re-draw dialog (screen contents changed)
           break;
         case SDL_MOUSEBUTTONDOWN:
           retbutton = mousedown(dlg, eventX, eventY, &oldbutton);
