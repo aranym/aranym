@@ -353,8 +353,10 @@ int LiloCheckKernel(
 		memcpy(RAMBaseHost+rd_start, ramdisk, ramdisk_length);
 
 		bi.ramdisk.addr = SDL_SwapBE32(rd_start);
+		bi.ramdisk.size = SDL_SwapBE32(ramdisk_length);
 	} else {
 		bi.ramdisk.addr = 0;
+		bi.ramdisk.size = 0;
 	}
 
 	/*--- Create the bootinfo structure ---*/
