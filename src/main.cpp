@@ -491,6 +491,7 @@ void ExitAll(void)
 	if (my_timer_id) {
 		SDL_RemoveTimer(my_timer_id);
 		my_timer_id = 0;
+		SDL_Delay(10);	// give it a time to safely finish the timer thread
 	}
 #endif
 
@@ -509,6 +510,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.70  2002/06/24 19:10:35  joy
+ * It should be safe now to call ExitAll() anytime (even if InitAll() was not called yet)
+ *
  * Revision 1.69  2002/06/07 20:58:06  joy
  * heart beat added
  *
