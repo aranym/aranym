@@ -55,7 +55,9 @@ typedef struct {
   } bx_cookies_options;
  
 typedef struct {
+#ifdef DIRECT_TRUECOLOR
   bool direct_truecolor;	// patch TOS to enable direct true color
+#endif /* DIRECT_TRUECOLOR */
   } bx_video_options;
  
 typedef struct {
