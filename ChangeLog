@@ -1,3 +1,19 @@
+2002/10/08 - joy (version 0.6.5-beta)
+- the major arch change in version 0.6.0 has been reverted. CPU is running
+  in the main thread again. SDL_Timer thread is back on all platforms but
+  it's not doing anything but setting up a CPU flag that is being checked
+  in CPU inner loop, in do_specialties().
+
+  Advantages:
+  - all SDL activity is in the main thread automagically
+  - should fix all the troubles with non-Linux host operating systems
+
+ TODO:
+ - check if the overall performance of ARAnyM is not worse than before
+ - make sure the keyboard is checked under all circumstances (STOP insn,
+   CPU crash, deep JIT loop, ...?) so we won't lose the control over aranym.
+
+
 2002/10/03 - milan
 - ndebug supports breakpoints
 

@@ -12,7 +12,7 @@ void hideMouse(bool hide);
 bool grabMouse(bool grab);
 void grabTheMouse();
 void releaseTheMouse();
-bool check_event();
+void check_event();
 extern void QuitEmulator();
 
 extern SDL_Joystick *sdl_joystick;

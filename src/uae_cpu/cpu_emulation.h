@@ -132,6 +132,7 @@ extern void Restart680x0(void);	// Restart running 680x0
 extern void Quit680x0(void);	// Quit 680x0
 
 // Interrupt functions
+extern void TriggerInternalIRQ(void);
 extern void TriggerVBL(void);		// Trigger interrupt level 4
 extern void TriggerInterrupt(void);	// Trigger interrupt level 5
 extern void TriggerMFP(bool);		// Trigger interrupt level 6

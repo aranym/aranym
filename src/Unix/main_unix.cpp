@@ -233,7 +233,7 @@ int main(int argc, char **argv)
 
 	// Start 68k and jump to ROM boot routine
 	D(bug("Starting emulation..."));
-	main_loop();
+	Start680x0();
 
 	// returning from emulation after the NMI
 

@@ -100,12 +100,6 @@ bool Init680x0(void)
 void AtariReset(void)
 {
 	// reset Atari hardware here
-	fprintf(stderr, "Reset hardware: ");
-/*
-	fprintf(stderr, "IKBD ");
-	ikbd.init();
-*/
-	fprintf(stderr, " [OK]\n");
 }
 
 /*
@@ -167,6 +161,11 @@ void Quit680x0(void)
 /*
  *  Trigger interrupts
  */
+void TriggerInternalIRQ(void)
+{
+	SPCFLAGS_SET( SPCFLAG_INTERNAL_IRQ );
+}
+
 void TriggerVBL(void)
 {
 	SPCFLAGS_SET( SPCFLAG_VBL );
@@ -189,94 +188,3 @@ void TriggerNMI(void)
 {
 	SPCFLAGS_SET( SPCFLAG_NMI );
 }
-
-
-// Two next functions ("executes") will be removed
-/*
- *  Execute MacOS 68k trap
- *  r->a[7] and r->sr are unused!
- */
-#if 0
-void Execute68kTrap(uint16 trap, struct M68kRegisters *r)
-{
-	int i;
-
-	// Save old PC
-	uaecptr oldpc = m68k_getpc();
-
-	// Set registers
-	for (i=0; i<8; i++)
-		m68k_dreg(regs, i) = r->d[i];
-	for (i=0; i<7; i++)
-		m68k_areg(regs, i) = r->a[i];
-
-	// Push trap and EXEC_RETURN on stack
-	m68k_areg(regs, 7) -= 2;
-	put_word(m68k_areg(regs, 7), M68K_EXEC_RETURN);
-	m68k_areg(regs, 7) -= 2;
-	put_word(m68k_areg(regs, 7), trap);
-
-	// Execute trap
-	m68k_setpc(m68k_areg(regs, 7));
-	quit_program = 0;
-	m68k_go(true);
-
-	// Clean up stack
-	m68k_areg(regs, 7) += 4;
-
-	// Restore old PC
-	m68k_setpc(oldpc);
-
-	// Get registers
-	for (i=0; i<8; i++)
-		r->d[i] = m68k_dreg(regs, i);
-	for (i=0; i<7; i++)
-		r->a[i] = m68k_areg(regs, i);
-	quit_program = 0;
-}
-
-
-/*
- *  Execute 68k subroutine
- *  The executed routine must reside in UAE memory!
- *  r->a[7] and r->sr are unused!
- */
-
-void Execute68k(uint32 addr, struct M68kRegisters *r)
-{
-	int i;
-
-	// Save old PC
-	uaecptr oldpc = m68k_getpc();
-
-	// Set registers
-	for (i=0; i<8; i++)
-		m68k_dreg(regs, i) = r->d[i];
-	for (i=0; i<7; i++)
-		m68k_areg(regs, i) = r->a[i];
-
-	// Push EXEC_RETURN and faked return address (points to EXEC_RETURN) on stack
-	m68k_areg(regs, 7) -= 2;
-	put_word(m68k_areg(regs, 7), M68K_EXEC_RETURN);
-	m68k_areg(regs, 7) -= 4;
-	put_long(m68k_areg(regs, 7), m68k_areg(regs, 7) + 4);
-
-	// Execute routine
-	m68k_setpc(addr);
-	quit_program = 0;
-	m68k_go(true);
-
-	// Clean up stack
-	m68k_areg(regs, 7) += 2;
-
-	// Restore old PC
-	m68k_setpc(oldpc);
-
-	// Get registers
-	for (i=0; i<8; i++)
-		r->d[i] = m68k_dreg(regs, i);
-	for (i=0; i<7; i++)
-		r->a[i] = m68k_areg(regs, i);
-	quit_program = 0;
-}
-#endif

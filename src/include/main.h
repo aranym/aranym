@@ -44,8 +44,7 @@ struct M68kRegisters {
 // General functions
 extern bool InitAll(void);
 extern void ExitAll(void);
-extern void main_loop(void);
-extern bool invoke200HzInterrupt(void);
+extern void invoke200HzInterrupt(void);
 #ifdef OS_irix
 extern void setactvdebug();
 #else

@@ -1416,8 +1416,17 @@ static void do_trace (void)
 	}														\
 }
 
+#define SERVE_INTERNAL_IRQ()								\
+{															\
+	if (SPCFLAGS_TEST( SPCFLAG_INTERNAL_IRQ )) {			\
+		SPCFLAGS_CLEAR( SPCFLAG_INTERNAL_IRQ );				\
+		invoke200HzInterrupt();								\
+	}														\
+}
+
 int m68k_do_specialties(void)
 {
+	SERVE_INTERNAL_IRQ();
 #if USE_JIT
 	// Block was compiled
 	SPCFLAGS_CLEAR( SPCFLAG_JIT_END_COMPILE );
@@ -1435,6 +1444,7 @@ int m68k_do_specialties(void)
 	}
 	while (SPCFLAGS_TEST( SPCFLAG_STOP )) {
 		usleep(1000);	// give unused time slices back to OS
+		SERVE_INTERNAL_IRQ();
 		SERVE_VBL_MFP(true);
 		if (SPCFLAGS_TEST( SPCFLAG_NMI ))
 			break;

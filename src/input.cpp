@@ -709,7 +709,7 @@ void process_joystick_event(SDL_Event event)
 	}
 }
 
-bool check_event()
+void check_event()
 {
 	if (!bx_options.video.fullscreen && mouseOut) {
 		// host mouse moved but the Atari mouse did not => mouse is
@@ -743,5 +743,6 @@ bool check_event()
 		}
 	}
 
-	return pendingQuit;
+	if (pendingQuit)
+		Quit680x0();	// forces CPU to quit the loop
 }
