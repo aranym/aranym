@@ -7,6 +7,12 @@
 #include "version.h"
 #include "cfgopts.h"
 
+#define ARANYMHOME		".aranym"
+#define ARANYMCONFIG	"config"
+#define ARANYMNVRAM		"nvram"
+#define ARANYMKEYMAP	"keymap"
+#define DIRSEPARATOR	"/"
+
 enum geo_type {
 	geoCylinders,
 	geoHeads,
@@ -114,5 +120,6 @@ extern char emutos_path[512];
 void usage(int);
 extern int decode_switches(FILE *, int, char **);
 extern int save_settings(const char *);
+extern char *getConfFilename(const char *file, char *buffer, unsigned int bufsize);
 
 #endif
