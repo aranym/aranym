@@ -1,3 +1,8 @@
+2002/12/16 - STanda
+- several cleanups regarding the extfs and hostfs (main.cpp, nf_objs.cpp)
+- STL bugfix in natfeat/hostfs.h (the std namespace usage)
+
+
 2002/12/14 - johan
 - Special handling of 32 bit vro_cpyfm D=S mode (see 2002/09/28).
 - Mode handling for screen->screen blits.
