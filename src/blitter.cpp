@@ -398,12 +398,7 @@ static void (*do_hop_op_P[4][16])( BLITTER& ) =
 
 uint8 BLITTER::handleRead(memptr addr) {
 	addr -= getHWoffset();
-/*
-	if (blit) {
-		Do_Blit();
-		blit = false;
-	}
-*/
+
 	switch(addr) {
 		case 0x3a: return hop;
 		case 0x3b: return op;
@@ -461,19 +456,19 @@ uae_u32 BLITTER::handleReadL(uaecptr addr) {
 
 void BLITTER::handleWrite(memptr addr, uint8 value) {
 	addr -= getHWoffset();
-/*
+
+	switch(addr) {
+		case 0x3a: STORE_B_ff8a3a(value);
+		case 0x3b: STORE_B_ff8a3b(value);
+		case 0x3c: STORE_B_ff8a3c(value);
+		case 0x3d: STORE_B_ff8a3d(value);
+		default:
+			panicbug("Blitter tried to write byte %d to register %x at %06x", value, addr+getHWoffset(), showPC());
+	}
+
 	if (blit) {
 		Do_Blit();
 		blit = false;
-	}
-*/
-	switch(addr) {
-		case 0x3a: return STORE_B_ff8a3a(value);
-		case 0x3b: return STORE_B_ff8a3b(value);
-		case 0x3c: return STORE_B_ff8a3c(value);
-		case 0x3d: return STORE_B_ff8a3d(value);
-		default:
-			panicbug("Blitter tried to write byte %d to register %x at %06x", value, addr+getHWoffset(), showPC());
 	}
 }
 
@@ -495,10 +490,15 @@ void BLITTER::handleWriteW(uaecptr addr, uint16 value) {
 		case 0x30: dest_y_inc = value; break;
 		case 0x36: x_count = value; break;
 		case 0x38: y_count = value; break;
-		case 0x3a: // fallthrough
-		case 0x3c: BASE_IO::handleWriteW(addr+getHWoffset(), value); break;
+		case 0x3a: STORE_B_ff8a3a(value >> 8); STORE_B_ff8a3b(value); break;
+		case 0x3c: STORE_B_ff8a3c(value >> 8); STORE_B_ff8a3d(value); break;
 		default:
 			panicbug("Blitter tried to write word %d to register %x at %06x", value, addr+getHWoffset(), showPC());
+	}
+
+	if (blit) {
+		Do_Blit();
+		blit = false;
 	}
 }
 
@@ -522,11 +522,7 @@ void BLITTER::handleWriteL(uaecptr addr, uint32 value) {
 
 B BLITTER::LOAD_B_ff8a3c(void)
 {
-	if (blit) {
-		Do_Blit();
-		blit = false;
-	}
-	return (B) line_num & 0x3f;
+	return line_num & 0x3f;
 }
 
 void BLITTER::STORE_B_ff8a3a(B v)
