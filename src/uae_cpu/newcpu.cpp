@@ -573,7 +573,7 @@ void MakeFromSR (void)
 	    }
 	}
 
-    SPCFLAGS_SET( SPCFLAG_INT );
+    // SPCFLAGS_SET( SPCFLAG_INT );
     if (regs.t1 || regs.t0)
 	SPCFLAGS_SET( SPCFLAG_TRACE );
     else
@@ -1281,12 +1281,21 @@ static void do_trace (void)
 
 #define SERVE_VBL_MFP(resetStop)							\
 {															\
-	if (SPCFLAGS_TEST( SPCFLAG_VBL|SPCFLAG_MFP )) {		\
+	if (SPCFLAGS_TEST( SPCFLAG_VBL|SPCFLAG_INT5|SPCFLAG_MFP )) {		\
 		if (SPCFLAGS_TEST( SPCFLAG_VBL )) {					\
 			if (4 > regs.intmask) {							\
 				Interrupt(4);								\
 				regs.stopped = 0;							\
 				SPCFLAGS_CLEAR( SPCFLAG_VBL );				\
+				if (resetStop)								\
+					SPCFLAGS_CLEAR( SPCFLAG_STOP );			\
+			}												\
+		}													\
+		if (SPCFLAGS_TEST( SPCFLAG_INT5 )) {					\
+			if (5 > regs.intmask) {							\
+				Interrupt(5);								\
+				regs.stopped = 0;							\
+				SPCFLAGS_CLEAR( SPCFLAG_INT5 );				\
 				if (resetStop)								\
 					SPCFLAGS_CLEAR( SPCFLAG_STOP );			\
 			}												\
