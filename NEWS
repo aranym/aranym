@@ -4,13 +4,49 @@
  This release brings a couple of major changes. Probably the greatest is
  that the JIT (just-in-time) compiler of m68k code into x86 code works
  and makes ARAnyM the fastest Atari clone ever made. Now you can do things
- you never think would be possible - like watching fullscreen DivX movies
- or playing famous games like Quake. It's real fast.
+ you never thought that would be possible - like watching fullscreen DivX
+ movies or playing famous games like Quake. It's real fast.
 
  Another cool thing is the Native Features interface, designed to allow
- unified 
+ writing video/sound/disk drivers and other extensions in a portable way.
+ First thing that got ported to NatFeat interface is the XHDI extension
+ that lets EmuTOS access the ARAnyM disk drives directly. Other drivers
+ will be ported to NatFeats soon. Look at src/natfeat/atari_example.c
+ to see how easy is to write a NatFeat compliant driver.
 
-2002/10/11 - version 0.6.6b - DSP (in separate thread) is enabled by default
+ Surprising news is the DSP M56001 emulation that was added by Patrice.
+ See what he has to say about it: "I only got one DSP program to work:
+ a very simple rotozoom one I wrote. There are many things missing
+ in the DSP emulation: interrupts, audio. The only programs that could
+ work are those that use the DSP for calculations (and read/write their
+ parameters on the host port). BadMood is in this case. You can also use
+ the Motorola DSP tools to build DSP programs under Aranym, they work."
+
+ Patrice also rewrote the IKBD/MIDI/ACIA implementation and ARAnyM now
+ supports also joysticks. And improved VIDEL by adding auto center and
+ auto zoom features (small Atari resolution should be zoomed automatically).
+
+ New config options in aranym config file are as follows:
+
+ [JIT]
+ JIT = Yes|No
+ JITFPU = Yes|No
+ JITCacheSize = <amount_in_kB>	// cache size - bigger = better
+ JITLazyFlush = <number>
+
+ [IDE0|1]
+ XhdiWrite = Yes|No 			// default is No, enable for EmuTOS
+
+ Also, ndebug was improved. Breakpoints were added and also
+ "run until <addr_in_memory> = <certain_value>" was implemented.
+
+ fVDI blitting is faster now up to 4 times. Also, you have to update both
+ fVDI.PRG and aranym.sys fVDI driver on your disk images. Don't forget that!
+
+ For other fixes and changes please look into the ChangeLog file. Thanks.
+
+
+ This is a list of unreleased versions and major changes in them:
 
 2002/10/08 - version 0.6.5b - CPU back in main thread, SDL issues fixed
 
