@@ -5,24 +5,23 @@ TODO generally:
 - configurable insertion of floppy on bootup (perhaps also IDE CD?)
 
 TODO in keyboard support:
-- editable hotkeys (releasing input grab, Setup GUI, PrintScreen) [0.8.10]
-- runtime switch between symtable and scantable [0.8.10]
-- loadable keyboard layout (similar to hatari) [0.8.10]
-- editable keyboard layout (need WYSIWYG - impossible in 320x200) [0.9.0?]
+- editable hotkeys (releasing input grab, Setup GUI, PrintScreen)
+- runtime switch between symtable and scantable
+- loadable keyboard layout (similar to hatari)
+- editable keyboard layout (need WYSIWYG - impossible in 320x200)
 
 TODO in GUI-SDL:
 - open up GUI whenever the config file is not found (so that users can edit
-  the default values before saving them). [0.8.9]
+  the default values before saving them).
 - Apply changes automatically before Save Config and perhaps also before Reboot
 - change GUI font loading routine - load standard TOS font (2048/4096 bytes)
-  directly (instead of some MS Windows bitmap) [0.9.0]
+  directly (instead of some MS Windows bitmap)
 - fileselector: sorting by file type (folders first) and then by file .ext
-- edit field: allow upper case
+- edit field: allow upper case and generally fix keyboard input in SDL
 - create other dialogs for editing the rest of config file settings
 
 TODO in TOS patches and utilities:
 - automatic updater of BDCONFIG.SYS
-- PureC patch more error-proof
 - separate mouse driver from Clocky and make it NatFeat based
 - enforce 0x50000 _MCH value (warn user if they have 0x30000)
 - finish and publish TOS XHDI disk driver

@@ -1,3 +1,7 @@
+2004/07/28 - joy
+- atari/tools/pcpatch.c: verbose error handling
+
+
 2004/07/28 - patrice
 - Correctly read PCI devices list (inspired from pciutils code).
 
