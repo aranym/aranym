@@ -30,7 +30,7 @@ class CdromDriverSdl : public CdromDriver
 	private:
 		SDL_CD *drive_handles[32];	/* Handle for each possible opened drive */
 
-		void ScanDrives(void);
+		void ScanDrives();
 		int OpenDrive(memptr device);
 		void CloseDrive(int drive);
 
@@ -45,8 +45,8 @@ class CdromDriverSdl : public CdromDriver
 		int32 cd_discinfo(memptr device, memptr buffer);
 
 	public:
-		CdromDriverSdl(void);
-		virtual ~CdromDriverSdl(void);
+		CdromDriverSdl();
+		virtual ~CdromDriverSdl();
 };
 
 #endif /* NFCDROM_SDL_H */

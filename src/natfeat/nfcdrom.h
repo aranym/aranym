@@ -108,7 +108,7 @@ class CdromDriver : public NF_Base
 		int GetDrive(memptr device);	/* Return drive letter of a metados device */
 		unsigned char BinaryToBcd(unsigned char value);	/* Convert a value to BCD */
 
-		virtual void ScanDrives(void) = 0;
+		virtual void ScanDrives() = 0;
 		virtual int OpenDrive(memptr device) = 0;
 		virtual void CloseDrive(int drive) = 0;
 
@@ -130,6 +130,7 @@ class CdromDriver : public NF_Base
 		char *name();
 		bool isSuperOnly();
 		int32 dispatch(uint32 fncode);
+		virtual ~CdromDriver() { };
 };
 
 #endif /* NFCDROM_H */

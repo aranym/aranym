@@ -30,7 +30,7 @@ class CdromDriverLinux : public CdromDriver
 
 		uint16 AtariToLinuxIoctl(uint16 opcode);	/* Translate ioctl numbers */
 
-		void ScanDrives(void);
+		void ScanDrives();
 		int OpenDrive(memptr device);
 		void CloseDrive(int drive);
 
@@ -45,8 +45,8 @@ class CdromDriverLinux : public CdromDriver
 		int32 cd_discinfo(memptr device, memptr buffer);
 
 	public:
-		CdromDriverLinux(void);
-		~CdromDriverLinux(void);
+		CdromDriverLinux();
+		virtual ~CdromDriverLinux();
 };
 
 #endif /* NFCDROM_LINUX_H */

@@ -51,7 +51,7 @@
 
 /*--- Public functions ---*/
 
-CdromDriverSdl::CdromDriverSdl(void)
+CdromDriverSdl::CdromDriverSdl()
 {
 	int i;
 
@@ -62,7 +62,7 @@ CdromDriverSdl::CdromDriverSdl(void)
 	}
 }
 
-CdromDriverSdl::~CdromDriverSdl(void)
+CdromDriverSdl::~CdromDriverSdl()
 {
 	int i;
 
@@ -74,7 +74,7 @@ CdromDriverSdl::~CdromDriverSdl(void)
 
 /*--- Private functions ---*/
 
-void CdromDriverSdl::ScanDrives(void)
+void CdromDriverSdl::ScanDrives()
 {
 	int i, first_char;
 

@@ -1,4 +1,8 @@
 2003/10/06 - milan
+- nfcdrom: another cleanup (destructors) 
+
+
+2003/10/06 - milan
 - newcpu.cpp: Exceptions in JIT handled correctly now, grrr.
 
 

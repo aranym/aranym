@@ -57,7 +57,7 @@ typedef struct {
 
 /*--- Public functions ---*/
 
-CdromDriverLinux::CdromDriverLinux(void)
+CdromDriverLinux::CdromDriverLinux()
 {
 	int i;
 
@@ -68,7 +68,7 @@ CdromDriverLinux::CdromDriverLinux(void)
 	}
 }
 
-CdromDriverLinux::~CdromDriverLinux(void)
+CdromDriverLinux::~CdromDriverLinux()
 {
 	int i;
 
@@ -80,7 +80,7 @@ CdromDriverLinux::~CdromDriverLinux(void)
 
 /*--- Private functions ---*/
 
-void CdromDriverLinux::ScanDrives(void)
+void CdromDriverLinux::ScanDrives()
 {
 	int i;
 
