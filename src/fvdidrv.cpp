@@ -27,6 +27,7 @@ extern VIDEL videl;
 #define MFDB_WDWIDTH                8
 #define MFDB_BITPLANES             12
 #define VWK_SCREEN_MFDB_ADDRESS    24
+#define VWK_CLIP_RECT              80
 #define VWK_MODE                   90
 
 
@@ -95,14 +96,17 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 			 *	d6	background and foreground colour
 			 *	d7	logic operation
 			 */
-			r->d[0] = expandArea( (void*)get_long( (uint32)r->a[1], true),
-								  (MFDB*)get_long( (uint32)r->a[1] + 12, true ) /* src MFDB* */,
-								  (MFDB*)get_long( (uint32)r->a[1] + 4, true ) /* dest MFDB* */,
-								  r->d[1] /* sx */, r->d[2] /* sy */,
-								  r->d[3] /* dx */, r->d[4] /* dy */,
-								  r->d[0] & 0xffff /* w */, r->d[0] >> 16 /* h */,
-								  r->d[6] & 0xffff /* fgcolor */, r->d[6] >> 16 /* bgcolor */,
-								  r->d[7] & 0xffff /* logical operation */ );
+			if ( ( r->d[2] >> 16 ) != 0 )
+				r->d[0] = (uint32)-1; // we can do only one line at once
+			else
+				r->d[0] = expandArea( (void*)get_long( (uint32)r->a[1], true),
+									  (MFDB*)get_long( (uint32)r->a[1] + 12, true ) /* src MFDB* */,
+									  (MFDB*)get_long( (uint32)r->a[1] + 4, true ) /* dest MFDB* */,
+									  r->d[1] /* sx */, r->d[2] /* sy */,
+									  r->d[3] /* dx */, r->d[4] /* dy */,
+									  r->d[0] & 0xffff /* w */, r->d[0] >> 16 /* h */,
+									  r->d[6] & 0xffff /* fgcolor */, r->d[6] >> 16 /* bgcolor */,
+									  r->d[7] & 0xffff /* logical operation */ );
 			break;
 
 		case 5: // fillArea
@@ -1047,29 +1051,142 @@ uint32 FVDIDriver::blitArea(void *vwk, MFDB *src, MFDB *dest, int32 sx, int32 sy
  * A negative return will break down the special modes into separate calls,
  * with no more fallback possible.
  **/
+
+
+
+/* --------- Clipping routines for box/line */
+
+/* Clipping based heavily on code from                       */
+/* http://www.ncsa.uiuc.edu/Vis/Graphics/src/clipCohSuth.c   */
+
+#define CLIP_LEFT_EDGE   0x1
+#define CLIP_RIGHT_EDGE  0x2
+#define CLIP_BOTTOM_EDGE 0x4
+#define CLIP_TOP_EDGE    0x8
+#define CLIP_INSIDE(a)   (!a)
+#define CLIP_REJECT(a,b) (a&b)
+#define CLIP_ACCEPT(a,b) (!(a|b))
+
+extern "C" {
+static inline int clipEncode (int16 x, int16 y, int16 left, int16 top, int16 right, int16 bottom)
+{
+	int code = 0;
+	if (x < left) {
+		code |= CLIP_LEFT_EDGE;
+	} else if (x > right) {
+		code |= CLIP_RIGHT_EDGE;
+	}
+	if (y < top) {
+		code |= CLIP_TOP_EDGE;
+	} else if (y > bottom) {
+		code |= CLIP_BOTTOM_EDGE;
+	}
+	return code;
+}
+}
+
+static inline int clipLine(void *vwk, int16 *x1, int16 *y1, int16 *x2, int16 *y2)
+{
+	int16 left,right,top,bottom;
+	int code1, code2;
+	int draw = 0;
+	int16 swaptmp;
+	float m;
+
+	if ( !get_word( (uint32)vwk + VWK_CLIP_RECT, true ) )
+		return 1; // clipping is off
+
+	D(bug("fVDI: %s %d,%d:%d,%d", "clipLineBEG", *x1, *y1, *x2, *y2 ));
+
+	/* Get clipping boundary */
+	left   = get_word( (uint32)vwk + VWK_CLIP_RECT + 2, true );
+	top    = get_word( (uint32)vwk + VWK_CLIP_RECT + 4, true );
+	right  = get_word( (uint32)vwk + VWK_CLIP_RECT + 6, true );
+	bottom = get_word( (uint32)vwk + VWK_CLIP_RECT + 8, true );
+
+	D(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", left, top, right, bottom ));
+
+	while (1) {
+		code1 = clipEncode (*x1, *y1, left, top, right, bottom);
+		code2 = clipEncode (*x2, *y2, left, top, right, bottom);
+		if (CLIP_ACCEPT(code1, code2)) {
+			draw = 1;
+			break;
+		} else if (CLIP_REJECT(code1, code2))
+			break;
+		else {
+			if(CLIP_INSIDE (code1)) {
+				int16* swapPtr;
+				swapPtr = x2; x2 = x1; x1 = swapPtr;
+				swapPtr = y2; y2 = y1; y1 = swapPtr;
+				swaptmp = code2; code2 = code1; code1 = swaptmp;
+			}
+			if (*x2 != *x1) {
+				m = (*y2 - *y1) / (float)(*x2 - *x1);
+			} else {
+				m = 1.0f;
+			}
+			if (code1 & CLIP_LEFT_EDGE) {
+				*y1 += (int16)((left - *x1) * m);
+				*x1 = left;
+			} else if (code1 & CLIP_RIGHT_EDGE) {
+				*y1 += (int16)((right - *x1) * m);
+				*x1 = right;
+			} else if (code1 & CLIP_BOTTOM_EDGE) {
+				if (*x2 != *x1) {
+					*x1 += (int16)((bottom - *y1) / m);
+				}
+				*y1 = bottom;
+			} else if (code1 & CLIP_TOP_EDGE) {
+				if (*x2 != *x1) {
+					*x1 += (int16)((top - *y1) / m);
+				}
+				*y1 = top;
+			}
+			D(bug("fVDI: %s %d,%d", "clipLineINS", *x1, *y1 ));
+		}
+	}
+
+	D(bug("fVDI: %s %d,%d:%d,%d", "clipLineEND", *x1, *y1, *x2, *y2 ));
+
+	return draw;
+}
+
+
 uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 							uint16 pattern, uint32 fgColor, uint32 bgColor, uint32 logOp )
 {
 	D(bug("fVDI: %s %x %d,%d:%d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "drawLine", logOp, x1, y1, x2, y2, pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
+
+	int16 sx1 = (int16)x1;
+	int16 sy1 = (int16)y1;
+	int16 sx2 = (int16)x2;
+	int16 sy2 = (int16)y2; // FIXME!!!
+
+	if ( !clipLine( vwk, &sx1, &sy1, &sx2, &sy2 ) ) // do not draw the line when it is out
+		return 1;
+
+	D(bug("fVDI: %s %x %d,%d:%d,%d p:%x, (fgc:%d /%x/ : bgc:%d /%x/)", "drawLine", logOp, sx1, sy1, sx2, sy2, pattern, fgColor, hostScreen.getPaletteColor( fgColor ), bgColor, hostScreen.getPaletteColor( bgColor ) ));
+
 	fgColor = hostScreen.getPaletteColor( fgColor );
 	bgColor = hostScreen.getPaletteColor( bgColor );
 
-	hostScreen.drawLine( x1, y1, x2, y2, pattern, fgColor, bgColor, logOp );
+	hostScreen.drawLine( sx1, sy1, sx2, sy2, pattern, fgColor, bgColor, logOp );
 
 	int32 dx, dy, lx, ly;
-	if ( x1 >= x2 ) {
-		lx = x2;
-		dx = x1 - x2 + 1;
+	if ( sx1 >= sx2 ) {
+		lx = sx2;
+		dx = sx1 - sx2 + 1;
 	} else {
-		lx = x1;
-		dx = x2 - x1 + 1;
+		lx = sx1;
+		dx = sx2 - sx1 + 1;
 	}
-	if ( y1 >= y2 ) {
-		ly = y2;
-		dy = y1 - y2 + 1;
+	if ( sy1 >= sy2 ) {
+		ly = sy2;
+		dy = sy1 - sy2 + 1;
 	} else {
-		ly = y1;
-		dy = y2 - y1 + 1;
+		ly = sy1;
+		dy = sy2 - sy1 + 1;
 	}
 
 	hostScreen.update( lx, ly, dx, dy, true );
@@ -1082,6 +1199,9 @@ uint32 FVDIDriver::drawLine(void *vwk, int32 x1, int32 y1, int32 x2, int32 y2,
 
 /*
  * $Log$
+ * Revision 1.16  2001/10/16 09:07:36  standa
+ * The fVDI expandArea M->M implemented. The 16bit driver should work now.
+ *
  * Revision 1.15  2001/10/14 16:11:54  standa
  * Syntax fix. STanda's calls to videl.renderNoFlag commented out.
  *
