@@ -20,8 +20,6 @@
 
 # include <osbind.h>
 
-#define MY_DEBUG 0
-
 #define AUTO_IP_CONFIGURE 0
 
 #if AUTO_IP_CONFIGURE
@@ -340,12 +338,7 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 #if AUTO_IP_CONFIGURE
 	enum {NONE, ADDR, NETMASK} gif = NONE;
 #endif
-#if MY_DEBUG
-	char a[255];
-	ksprintf(a, "Ethernet ioctl %d\n", cmd - ('S'<<8));
-	nf_stderr(a);
-#endif
-	DEBUG (("araeth: ioctl cmd = %d (%x) bytes", cmd));
+	DEBUG (("araeth: ioctl cmd = %d \"('%c'<<8)|%d\" bytes", cmd, cmd>>8, cmd&0xff));
 
 
 
