@@ -1,3 +1,9 @@
+2003/01/15 - STanda
+
+- fVDI: The drawMouse() hot_x/hot_y are stripped to 4 bits.
+  The m68k driver has a bug in the parameter passing for drawMouse()
+
+
 2003/01/14 - STanda
 
 - fVDI: The drawMouse() calling fixed for the natfeat dispatch.

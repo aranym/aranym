@@ -716,15 +716,10 @@ void FVDIDriver::saveMouseBackground(int16 x, int16 y, int16 width, int16 height
 {
 	D2(bug("fVDI: saveMouseBackground: %d,%d,%d,%d", x, y, width, height));
 
-	if (!hostScreen.renderBegin())
-		return;
-
 	for(uint16 i = 0; i < height; i++)
 		for(uint16 j = 0; j < width; j++) {
 			Mouse.storage.background[i][j] = hostScreen.getPixel(x + j, y + i);
 		}
-
-	hostScreen.renderEnd();
 
 	Mouse.storage.x = x;
 	Mouse.storage.y = y;
@@ -758,8 +753,8 @@ int FVDIDriver::drawMouse(memptr wrk, int32 x, int32 y, uint32 mode, uint32 data
 		for(uint16 i = 0; i < 32; i += 2)
 			Mouse.shape[i >> 1] = reverse_bits(ReadInt16(fPatterAddress + i));
 
-		Mouse.hotspot.x = hot_x;
-		Mouse.hotspot.y = hot_y;
+		Mouse.hotspot.x = hot_x & 0xf;
+		Mouse.hotspot.y = hot_y & 0xf;
 		Mouse.storage.color.foreground = (int16)(color >> 16);
 		Mouse.storage.color.background = (int16)(color & 0xffff);
 		if (hostScreen.getBpp() > 1) {
@@ -2119,6 +2114,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.45  2003/01/14 20:49:16  standa
+ * Natfeat dispatch for fVDI::drawMouse() fixed.
+ *
  * Revision 1.44  2002/12/14 04:58:03  johan
  * Fast 32 bit vro_cpyfm D=S mode.
  * Screen->screen vro_cpyfm modes.
