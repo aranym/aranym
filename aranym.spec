@@ -32,17 +32,17 @@ rm -rf %{realname}
 #%patch -p1
 
 %build
-./configure
+./configure --prefix=/usr
 make
 make clean
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/local/bin
-mkdir -p $RPM_BUILD_ROOT/usr/local/share
-mkdir -p $RPM_BUILD_ROOT/usr/local/share/aranym
+mkdir -p $RPM_BUILD_ROOT/usr/bin
+mkdir -p $RPM_BUILD_ROOT/usr/share
+mkdir -p $RPM_BUILD_ROOT/usr/share/aranym
 make install DESTDIR=$RPM_BUILD_ROOT
-install aranym $RPM_BUILD_ROOT/usr/local/bin
+install aranym $RPM_BUILD_ROOT/usr/bin
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -51,27 +51,30 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc ../../doc ../../AUTHORS ../../BUGS ../../COPYING ../../FAQ ../../INSTALL ../../NEWS ../../ChangeLog ../../README ../../TODO
-/usr/local/bin/aranym
-/usr/local/share/aranym/atari/newdesk.inf
-/usr/local/share/aranym/atari/aranymrc.example
-/usr/local/share/aranym/atari/mmusetup.cnf
-/usr/local/share/aranym/atari/aranymfs/aranymfs.dos.bz2
-/usr/local/share/aranym/atari/aranymfs/aranym.xfs.bz2
-/usr/local/share/aranym/atari/aranymfs/config.sys
-/usr/local/share/aranym/createdisk/createdisk.README
-/usr/local/share/aranym/createdisk/createdisk.sh
-/usr/local/share/aranym/createdisk/mbrdata
-/usr/local/share/aranym/atari/fvdi/aranym.sys.bz2
-/usr/local/share/aranym/atari/fvdi/fvdi.prg.bz2
-/usr/local/share/aranym/atari/fvdi/fvdi.sys
-/usr/local/share/aranym/atari/tools/README
-/usr/local/share/aranym/atari/tools/clocky.prg.bz2
-/usr/local/share/aranym/atari/tools/fastram.prg.bz2
-/usr/local/share/aranym/atari/tools/pc101us.kbd.bz2
-/usr/local/share/aranym/atari/tools/pcpatch.prg.bz2
-/usr/local/share/aranym/atari/sound/zmagxsnd.prg.bz2
+/usr/bin/aranym
+/usr/share/aranym/atari/newdesk.inf
+/usr/share/aranym/atari/aranymrc.example
+/usr/share/aranym/atari/mmusetup.cnf
+/usr/share/aranym/atari/aranymfs/aranymfs.dos.bz2
+/usr/share/aranym/atari/aranymfs/aranym.xfs.bz2
+/usr/share/aranym/atari/aranymfs/config.sys
+/usr/share/aranym/createdisk/createdisk.README
+/usr/share/aranym/createdisk/createdisk.sh
+/usr/share/aranym/createdisk/mbrdata
+/usr/share/aranym/atari/fvdi/aranym.sys.bz2
+/usr/share/aranym/atari/fvdi/fvdi.prg.bz2
+/usr/share/aranym/atari/fvdi/fvdi.sys
+/usr/share/aranym/atari/tools/README
+/usr/share/aranym/atari/tools/clocky.prg.bz2
+/usr/share/aranym/atari/tools/fastram.prg.bz2
+/usr/share/aranym/atari/tools/pc101us.kbd.bz2
+/usr/share/aranym/atari/tools/pcpatch.prg.bz2
+/usr/share/aranym/atari/sound/zmagxsnd.prg.bz2
 
 %changelog
+* Thu Jun 06 2002 Petr Stehlik <pstehlik@sophics.cz>
+Install path changed from /usr/local to /usr
+
 * Mon Apr 22 2002 Petr Stehlik <pstehlik@sophics.cz>
 Sound driver added
 
