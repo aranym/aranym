@@ -124,9 +124,11 @@ uint8 IKBD::ReadData()
 			/* Queue empty */
 
 			/* Update MFP GPIP */
-			uint8 x = ReadAtariInt8(0xfffa01);
+			// uint8 x = ReadAtariInt8(0xfffa01);
+			uint8 x = getMFP()->handleRead(0xfffa01);
 			x |= 0x10;
-			WriteAtariInt8(0xfffa01, x);
+			// WriteAtariInt8(0xfffa01, x);
+			getMFP()->handleWrite(0xfffa01, x);
 
 			sr &= ~((1<<ACIA_SR_INTERRUPT)|(1<<ACIA_SR_RXFULL));
 
@@ -548,7 +550,8 @@ void IKBD::send(uint8 value)
 void IKBD::ThrowInterrupt(void)
 {
 	/* Check MFP IER */
-	if ((HWget_b(0xfffa09) & 0x40)==0)
+	// if ((HWget_b(0xfffa09) & 0x40)==0)
+	if ((getMFP()->handleRead(0xfffa09) & 0x40)==0)
 		return;
 
 	/* Check ACIA interrupt on reception */
