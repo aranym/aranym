@@ -1,10 +1,35 @@
-/* MJ 2001 */
+/*
+ * parameters.cpp - parameter init/load/save code
+ *
+ * Copyright (c) 2001-2004 ARAnyM developer team (see AUTHORS)
+ *
+ * Authors:
+ *  MJ		Milan Jurik
+ *  Joy		Petr Stehlik
+ * 
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+
 #include "sysdeps.h"
 #include "config.h"
 #include "parameters.h"
 #include "tools.h"		// for safe_strncpy()
-
-#define BX_INSERTED	true	// copied from emu_bochs.h
 
 #define DEBUG 0
 #include "debug.h"
@@ -130,7 +155,6 @@ void preset_global() {
 }
 
 void postload_global() {
-	bx_options.floppy.inserted = (strlen(bx_options.floppy.path) > 0);
 #ifndef FixedSizeFastRAM
 	FastRAMSize = FastRAMSizeMB * 1024 * 1024;
 #endif
@@ -345,16 +369,6 @@ void preset_ide() {
 }
 
 void postload_ide() {
-	int channel = 0;
-	for(int device=0; device<2; device++) {
-    	if (bx_options.atadevice[channel][device].present) {
-    		bx_options.atadevice[channel][device].status = BX_INSERTED;
-			bx_options.atadevice[channel][device].type = (bx_options.atadevice[channel][device].isCDROM) ? IDE_CDROM : IDE_DISK;
-		}
-		else {
-			bx_options.atadevice[channel][device].type = IDE_NONE;
-		}
-	}
 }
 
 void presave_ide() {
@@ -899,7 +913,10 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 }
 
 bool loadSettings(const char *cfg_file) {
-	return decode_ini_file(stderr, cfg_file);
+	preset_cfg();
+	bool ret = decode_ini_file(stderr, cfg_file);
+	postload_cfg();
+	return ret;
 }
 
 bool saveSettings(const char *fs)
