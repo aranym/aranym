@@ -9,6 +9,7 @@
 
 #include "icio.h"
 #include <SDL.h>
+#include "hostscreen.h"
 
 class VIDEL : public BASE_IO {
 protected:
@@ -42,16 +43,7 @@ inline void VIDEL::renderScreen() {
 }
 
 inline void VIDEL::setRendering( bool render ) {
-	bool tempRender = doRender; // FIXME
-
 	doRender = render;
-
-	// STanda: FIXME!!! HACK.... the SDL thread safety problem: VIDEL runs in different thread than fVDIDrv.
-	// Either needs to be synchronized or all SDL calls should go from a single thread!!!
-	if (doRender == tempRender)
-		return;
-	SDL_Delay(250);
-	// FIXME: HACK
 }
 
 
@@ -60,6 +52,10 @@ inline void VIDEL::setRendering( bool render ) {
 
 /*
  * $Log$
+ * Revision 1.14  2001/12/17 07:09:44  standa
+ * SDL_delay() added to setRendering to avoid SDL access the graphics from
+ * both VIDEL and fVDIDriver threads....
+ *
  * Revision 1.13  2001/11/07 21:18:25  milan
  * SDL_CFLAGS in CXXFLAGS now.
  *

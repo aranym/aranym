@@ -8,8 +8,8 @@
 #include "cpu_emulation.h"
 #include "main.h"
 
-#include "videl.h"
 #include "hostscreen.h"
+#include "videl.h"
 
 #include "fvdidrv.h"
 #include <new>     // Johan Klockars
@@ -21,8 +21,9 @@
 // this serves for debugging the color palette code
 #undef DEBUG_DRAW_PALETTE
 
+
+// from host.cpp
 extern HostScreen hostScreen;
-extern VIDEL videl;
 
 
 // The Atari structures offsets
@@ -69,7 +70,7 @@ extern VIDEL videl;
 
 // The polygon code needs some arrays of unknown size
 // These routines and members are used so that no unnecessary allocations are done
-bool FVDIDriver::AllocIndices(int n)
+inline bool FVDIDriver::AllocIndices(int n)
 {
 	if (n > index_count) {
 		D2(bug("More indices %d->%d\n", index_count, n));
@@ -89,7 +90,7 @@ bool FVDIDriver::AllocIndices(int n)
 	return index_count >= n;
 }
 
-bool FVDIDriver::AllocCrossings(int n)
+inline bool FVDIDriver::AllocCrossings(int n)
 {
 	if (n > crossing_count) {
 		D2(bug("More crossings %d->%d\n", crossing_count, n));
@@ -114,7 +115,7 @@ bool FVDIDriver::AllocCrossings(int n)
 	return crossing_count >= n;
 }
 
-bool FVDIDriver::AllocPoints(int n)
+inline bool FVDIDriver::AllocPoints(int n)
 {
 	if (n > point_count) {
 		D2(bug("More points %d->%d", point_count, n));
@@ -149,6 +150,12 @@ class Points {
 
 void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 {
+#ifdef USE_TIMERS
+	// Thread safety patch
+	hostScreen.lock();
+#endif
+
+
 	MFDB dst;
 	MFDB src;
 
@@ -332,6 +339,11 @@ void FVDIDriver::dispatch( uint32 fncode, M68kRegisters *r )
 		hostScreen.fillArea( i<<4, hostScreen.getHeight()-16, 15, 16, ptrn, hostScreen.getPaletteColor( i ), hostScreen.getPaletteColor( 0 ) );
 #endif  // DEBUG_DRAW_PALETTE
 
+
+#ifdef USE_TIMERS
+	// Thread safety patch
+	hostScreen.unlock();
+#endif
 }
 
 
@@ -1877,6 +1889,9 @@ int FVDIDriver::fillPoly(uint32 vwk, int32 points_addr, int n, uint32 index_addr
 
 /*
  * $Log$
+ * Revision 1.27  2001/12/12 02:17:36  standa
+ * Some line clipping bug fixed (the clip is on every time now -> should fix).
+ *
  * Revision 1.26  2001/12/11 21:03:57  standa
  * Johan's patch caused DEBUG directive to fail e.g. in main.cpp.
  * The inline functions were put into the .cpp file.

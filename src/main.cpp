@@ -683,6 +683,11 @@ void invoke200HzInterrupt()
 	if (++VBL_counter == 4) {	// divided by 4 => 50 Hz VBL
 		VBL_counter = 0;
 
+#ifdef USE_TIMERS
+		// Thread safety patch
+		hostScreen.lock();
+#endif
+
 		check_event();		// process keyboard and mouse events
 		TriggerVBL();		// generate VBL
 
@@ -690,6 +695,11 @@ void invoke200HzInterrupt()
 			videl.renderScreen();
 			refreshCounter = 0;
 		}
+
+#ifdef USE_TIMERS
+		// Thread safety patch
+		hostScreen.unlock();
+#endif
 	}
 }
 
@@ -901,7 +911,7 @@ bool InitAll(void)
 	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
 	printf("Using timers\n");
 #endif
-	
+
 #if ENABLE_MON
 	// Initialize mon
 	mon_init();
@@ -937,6 +947,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.50  2001/12/17 00:26:13  joy
+ * SDL Timer is back! Use --enable-sdltimer to emulate TimerC (200 Hz interrupt) using a separate timer thread.
+ *
  * Revision 1.49  2001/12/11 21:08:25  standa
  * The SDL_WarpMouse() was causing Floating Point error on fbcon.
  * It was moved behind the HWInit() to be called after SDL_SetVideoMode (correct

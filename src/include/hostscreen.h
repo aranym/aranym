@@ -9,6 +9,7 @@
 
 
 #include <SDL.h>
+#include <SDL_thread.h>
 
 
 /**
@@ -43,6 +44,7 @@
 
 class HostScreen {
   protected:
+	SDL_mutex   *screenLock;
 	SDL_Surface *surf;	// The main window surface
 	uint32 sdl_videoparams;
 	uint32 width, height, bpp;
@@ -77,7 +79,15 @@ class HostScreen {
 		// setting up the static palette settings
 		palette.sdl.ncolors = 256;
 		palette.sdl.colors = palette.standard;
+
+		screenLock = SDL_CreateMutex();
 	}
+	~HostScreen() {
+		SDL_DestroyMutex(screenLock);
+	}
+
+	inline void lock();
+	inline void unlock();
 
 	inline bool	  renderBegin();
 	inline void	  renderEnd();
@@ -237,6 +247,20 @@ inline uint32 HostScreen::getColor( uint32 red, uint32 green, uint32 blue ) {
 }
 
 
+inline void HostScreen::lock() {
+	while (SDL_mutexP(screenLock)==-1) {
+		SDL_Delay(20);
+		fprintf(stderr, "Couldn't lock mutex\n");
+	}
+}
+
+inline void HostScreen::unlock() {
+	while (SDL_mutexV(screenLock)==-1) {
+		SDL_Delay(20);
+		fprintf(stderr, "Couldn't unlock mutex\n");
+	}
+}
+
 inline bool HostScreen::renderBegin() {
 	if (SDL_MUSTLOCK(surf))
 		if (SDL_LockSurface(surf) < 0) {
@@ -376,6 +400,10 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.23  2001/12/03 20:56:07  standa
+ * The gfsprimitives library files removed. All the staff was moved and
+ * adjusted directly into the HostScreen class.
+ *
  * Revision 1.22  2001/11/29 23:51:56  standa
  * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
  *

@@ -132,11 +132,9 @@ int VIDEL::getScreenHeight()
 	return yres;
 }
 
+
 void VIDEL::updateColors()
 {
-	if (hostColorsSync)
-		return;
-
 	D(bug("ColorUpdate in progress"));
 
 	// Test the ST compatible set or not.
@@ -186,6 +184,7 @@ void VIDEL::updateColors()
 	hostColorsSync = true;
 }
 
+
 void VIDEL::renderScreenNoFlag()
 {
 	int vw	 = getScreenWidth();
@@ -234,7 +233,8 @@ void VIDEL::renderScreenNoFlag()
 	uint16 *hvram = (uint16 *) VideoRAMBaseHost;
 
 	if (bpp < 16) {
-		updateColors();
+		if (!hostColorsSync)
+			updateColors();
 
 		// The SDL colors blitting...
 		// FIXME!!! The SDL hvram need not to be line aligned (see the surface->format->pitch!!!)
@@ -380,6 +380,10 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.34  2001/12/14 12:15:18  joy
+ * double line didn't work due to my stupid idea. Fixed.
+ * Debugginng of write access to VIDEL registers added.
+ *
  * Revision 1.33  2001/12/07 15:46:47  joy
  * VIDEL registers are preinitialized partially to allow VIDEL unaware EmuTOS to display something.
  *
