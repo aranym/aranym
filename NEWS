@@ -80,9 +80,6 @@
  fVDI ARAnyM driver and fVDI itself so expect the next major release
  to be a real killer (in both good and bad sense ;-)
 
- Milan Jurik is still working on finishing the JIT CPU compiler so you
- never know when to expect a major speed increase of ARAnyM.
-
  BTW, if there is a developer that would be willing to finish the nearly
  working ECE (Ethernet Card Emulation) then please join us in ARAnyM
  development mailing list.
