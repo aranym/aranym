@@ -1,3 +1,7 @@
+2003/01/09 - joy
+- Didier updated audio driver to use NatFeats when available
+
+
 2002/12/29 - joy
 - videl: Sébastien Briais sent a patch that allows virtual screen on VIDEL
   by emulating the 'linewidth' and 'lineoffset' VIDEL registers.
