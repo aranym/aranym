@@ -1,3 +1,12 @@
+2005/01/24 - STanda
+- fVDI driver
+  * famous fVDI boot bug fixed! VIDEL is shut off on openwk()
+    instead on the first NF(fVDI) call.
+  * Changing the resolution upon openwk() again (back to what was
+    in 0.8.10?)
+  * cleanup in the spec.c m68k part of the driver.
+
+
 2005/01/24 - Patrice
 - nfosmesa: Return OpenGL version as 1.0 when extensions disabled.
 
