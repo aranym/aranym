@@ -1,3 +1,9 @@
+2002/04/29 - joy
+- ErrorAlert() has been replaced with panicbug() as I needed sprintf
+  like parameter parsing. Now all file errors in main() report also
+  the problematic filename.
+
+
 2002/04/25 - STanda
 - The fvdicout.app added to atari/fvdi/utility. This is the Johan'si
   bconout.gtp replacement. It is built using the FreeMiNT CVS tree
