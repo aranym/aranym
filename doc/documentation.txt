@@ -1,4 +1,4 @@
-Aranym features and HOWTO
+ARAnyM features and HOWTO
 -------------------------
 
 Content:
@@ -17,16 +17,16 @@ Content:
   11. Linux/m68k
 
 
-This document will explain you all Aranym features and configuration 
+This document will explain you all ARAnyM features and configuration 
 procedures as well as important principles of functionality.
 
-Note: This text was written for the main Linux version of Aranym.
+Note: This text was written for the main Linux version of ARAnyM.
       Some features described here may not be available in other 
-      Aranym ports. If you use other than Linux version of Aranym,
+      ARAnyM ports. If you use other than Linux version of ARAnyM,
       please read also additional documentation for your version.
 
-Note: "HOST" means the machine that `hosts' the Aranym virtual machine.
-      For most users it's simply their PC or laptop that runs the Aranym.
+Note: "HOST" means the machine that `hosts' the ARAnyM virtual machine.
+      For most users it's simply their PC or laptop that runs the ARAnyM.
 
 
 1. General information
@@ -35,18 +35,18 @@ Note: "HOST" means the machine that `hosts' the Aranym virtual machine.
   You need to have SDL library installed (http://www.libsdl.org) and
 configured. Required is version 1.2.x or later.
 
-  Aranym keeps its configuration in a folder named ".aranym" in your HOME
+  ARAnyM keeps its configuration in a folder named ".aranym" in your HOME
 directory (NVRAM settings is stored in that directory as well).
 The full path to the config file is then $HOME/.aranym/config and
 is in plain text so you can edit it with a plain text editor.
-If the file is not found upon Aranym startup then it is generated 
+If the file is not found upon ARAnyM startup then it is generated 
 automatically and the options contain default values. Have a look at 
 the aranym/doc/config file for inspiration.
 
-  Aranym also recognises several command line options - try starting ARAnyM
+  ARAnyM also recognises several command line options - try starting ARAnyM
 with the option "--help" to find out more. The command line options have 
 a higher priority over the config file. You can use it for temporary change
-of Aranym parameters or you can even store the command line options setting
+of ARAnyM parameters or you can even store the command line options setting
 to the config file using "aranym --save".
 
 1.1 Operating systems
@@ -58,15 +58,15 @@ to the config file using "aranym --save".
   at http://emutos.sf.net/).
 - and finally Linux/m68k.
 
-  Aranym expects to find the TOS 4.04 ROM image in $PREFIX/share/aranym/ROM
+  ARAnyM expects to find the TOS 4.04 ROM image in $PREFIX/share/aranym/ROM
 (if not specified otherwise in the ./configure phase). If you want to keep
-the TOS ROM elsewhere then don't forget to update your Aranym config file:
+the TOS ROM elsewhere then don't forget to update your ARAnyM config file:
 edit the "TOS" line and set the right path to the file ("TOS=/path/to/TOS").
 
-  Aranym also runs with latest EmuTOS. Simply set the "EmuTOS=" config
+  ARAnyM also runs with latest EmuTOS. Simply set the "EmuTOS=" config
 option to point to your EmuTOS ROM image file.
 
-  Aranym can directly load and a boot a Linux kernel from your host drive.
+  ARAnyM can directly load and a boot a Linux kernel from your host drive.
 You just need to fill the [LILO] sections with the correct parameters, and
 then to run aranym with '-l' or '--lilo' to use it instead of TOS/EmuTOS.
 
@@ -74,11 +74,11 @@ then to run aranym with '-l' or '--lilo' to use it instead of TOS/EmuTOS.
 2. CPU and FPU
 --------------
 
-  Aranym CPU is fully compatible with 68040 and 68882 instruction set.
+  ARAnyM CPU is fully compatible with 68040 and 68882 instruction set.
 Since the address and data caches of original MC68040 are not emulated
 there are no compatibility issues with 68000-only dirty written
 programs. So forget all TOS patches, cache switchers and FPU drivers,
-these are NOT needed in Aranym.
+these are NOT needed in ARAnyM.
 
 2.1. JIT compiler
 -----------------
@@ -89,11 +89,11 @@ it before compilation:
 
 ./configure --enable-jit-compiler
 
-  And also in your Aranym config file, section [JIT]:
+  And also in your ARAnyM config file, section [JIT]:
 
 JIT = Yes
 
-  Other interesting lines in the Aranym config file are:
+  Other interesting lines in the ARAnyM config file are:
 
 JITFPU = Yes
 
@@ -123,12 +123,12 @@ with "lazy cache flushing".
 3. RAM
 ------
 
-  Aranym provides both ST-RAM and FastRAM (sometimes also called
+  ARAnyM provides both ST-RAM and FastRAM (sometimes also called
 TT-RAM). ST-RAM size is always 14MB. FastRAM size is adjustable from 
 0 up to 4GB. However, in the default addressing mode (called "real") 
 only maximum of 128MB addressable space is possible (i.e. only 112MB
 for FastRAM). If you want more RAM then you need to reconfigure and
-recompile your Aranym binary:
+recompile your ARAnyM binary:
 
 ./configure --enable-addressing=direct && make clean && make
 
@@ -142,13 +142,13 @@ mode is a bit slower (that's why it is not the default mode).
 4.1. HOST side
 --------------
 
-  Aranym accesses HOST graphics output via the SDL library. This library
+  ARAnyM accesses HOST graphics output via the SDL library. This library
 is able to use X Windows as well as the framebuffer device. It also uses
-HOST hardware acceleration when available. For standard "Aranym only" use 
+HOST hardware acceleration when available. For standard "ARAnyM only" use 
 the framebuffer is the best and fastest solution. You may use also 
-X11 if you want to run Aranym in a window (usable for debugging, 
+X11 if you want to run ARAnyM in a window (usable for debugging, 
 etc.) or if your graphics card is not supported by framebuffer 
-drivers. All resolution changes are managed within the Aranym like 
+drivers. All resolution changes are managed within the ARAnyM like 
 on real TOS machine.
 
 
@@ -159,14 +159,14 @@ on real TOS machine.
 kernels in most Linux distributions do not have this feature compiled in
 by default. There are also many graphics cards which do not have
 framebuffer driver yet. The generic VESA mode framebuffer driver is not
-very suitable for Aranym. In case you are lucky owner of any graphics
+very suitable for ARAnyM. In case you are lucky owner of any graphics
 card supported by framebuffer (probably all Matrox cards, nearly all 
 cards from nVidia, some from ATI and several others) then you should 
 recompile your kernel with framebuffer support for your card enabled.
 
-  Framebuffer support in kernel is detected automatically by Aranym. Simply
-start Aranym from Linux virtual console. No X Windows is required for
-running Aranym on framebuffer.
+  Framebuffer support in kernel is detected automatically by ARAnyM. Simply
+start ARAnyM from Linux virtual console. No X Windows is required for
+running ARAnyM on framebuffer.
 
 
 4.1.2. X Windows
@@ -175,10 +175,10 @@ running Aranym on framebuffer.
   Under X Windows just type "aranym" (aranym will run in window) or
 "aranym -f" for fullscreen mode.
 
-  In fullscreen mode under X Windows Aranym uses resolutions defined in the 
+  In fullscreen mode under X Windows ARAnyM uses resolutions defined in the 
 X Windows config file. I.e. if you have defined following modes: 1024x768, 
 800x600 and 640x480 then you shouldn't switch into higher resolution under
-Aranym. Lower resolutions are possible but they will be displayed with
+ARAnyM. Lower resolutions are possible but they will be displayed with
 a black border in near-higher resolution.
 
 
@@ -188,10 +188,10 @@ a black border in near-higher resolution.
 [to be written]
 
 
-4.2. Aranym side
+4.2. ARAnyM side
 ----------------
 
-  There are several ways how Aranym generates graphics output.
+  There are several ways how ARAnyM generates graphics output.
 
 
 4.2.1. VIDEL emulation (default, used for booting)
@@ -204,8 +204,8 @@ to define your own graphics modes. In this case only vertical and
 horizontal resolutions and color depth are important, other parameters
 are ignored.
 
-  This Aranym screen output is very slow though, especially in higher 
-resolutions because Aranym must convert whole screen data many times 
+  This ARAnyM screen output is very slow though, especially in higher 
+resolutions because ARAnyM must convert whole screen data many times 
 per second (adjustable - see below) into HOST native format. So it's 
 usable mainly for booting and/or installation purposes. This mode 
 also allows you to run some not cleanly written (nonGEM) software 
@@ -214,7 +214,7 @@ thanks to 99,9% lowlevel compatibility with Falcon030 graphics system.
   Switches:
 
   Monitor type (-m) informs TOS in real F030 which monitor type is 
-connected. From Aranym point of view it causes only that TOS uses 
+connected. From ARAnyM point of view it causes only that TOS uses 
 different vertical resolutions (200/400 lines for RGB/TV instead for 
 240/480 lines for VGA, plus 640x400xTC for RGB/TV). In fact it is 
 usable only for experiments with some unclean Falcon software (a few 
@@ -223,7 +223,7 @@ programs work only on RGB/TV).
 -m1 ...RGB/TV is connected
 -m0 ...VGA is connected (default)
 
-  Refresh rate (-v <number>) sets how often will Aranym convert atari 
+  Refresh rate (-v <number>) sets how often will ARAnyM convert atari 
 graphics into HOST native format. Default value is 2, which means 
 refresh rate 50/2 = 25Hz (fps). Higher refresh rate causes smoother 
 graphics but slows down whole emulation.
@@ -240,12 +240,12 @@ during boot process. Valid values are:
   If not selected then TOS uses the NVRAM setting.
 
 Note: Remember that VIDEL emulation is not usable for serious work 
-      in GEM and you can never reach full Aranym power when using it!
+      in GEM and you can never reach full ARAnyM power when using it!
 
 - Autozoom:
 
 In the aranym config file, you can also choose to enable the 'autozoom'
-feature. It allows Aranym to zoom/strech the atari screen to fit the size
+feature. It allows ARAnyM to zoom/strech the atari screen to fit the size
 of the host screen. This is specially useful on Linux with vesafb, which is
 not resizable.
 
@@ -266,18 +266,18 @@ Examples for a 320x200 atari screen on a 1024x768 host screen:
     is bigger than the host screen.
 
 
-4.2.3. fVDI + Aranym driver           
+4.2.3. fVDI + ARAnyM driver           
 ---------------------------
 
   This mode is newest, fastest and the only hardware accelerated. This
 is the only right mode suitable for real work in GEM. All you need is to
-install fVDI with special driver developed for Aranym. Following files are
+install fVDI with special driver developed for ARAnyM. Following files are
 needed:
 
 FVDI.PRG ... main fVDI engine created by Johan Klockars
 FVDI.SYS ... config file
 ARANYM.SYS . fVDI screen driver (the m68k part of it - the HOST native
-             part is in the Aranym core)
+             part is in the ARAnyM core)
 
   You can run fVDI from AUTO folder (recommended) or from the desktop.
 For starting from AUTO folder you need to place the FVDI.PRG into \AUTO,
@@ -325,7 +325,7 @@ all sounds nicely!
 
   You can use floppy image or real floppy drive of your computer. In both
 cases reading, writing and formatting is possible.
-  Aranym also tries to boots from the floppy (like on original Atari).
+  ARAnyM also tries to boots from the floppy (like on original Atari).
 Both DD (720KB) and HD (1.44MB) are supported. Larger floppy images known
 from STonX are supported, too.
 
@@ -335,7 +335,7 @@ device or floppy image file in the commandline:
 -a /dev/fd0 		... for real floppy device
 -a /path/disk.img ... for floppy image
 
-  or rather in the Aranym config file:
+  or rather in the ARAnyM config file:
 
 Floppy = /dev/fd0 (or /path/floppy.img)
 
@@ -345,7 +345,7 @@ Floppy = /dev/fd0 (or /path/floppy.img)
 
 There are several ways how to manage harddrives. You can connect harddisk
 from real Atari or clone computer directly into your HOST machine and
-Aranym will be able to use it and even boot from it! 
+ARAnyM will be able to use it and even boot from it! 
 
 Another way is to use harddisk images and finally there is also
 the possibility of linking HOST fs directories as a logical disk.
@@ -363,7 +363,7 @@ Look into FAQ for more details.
 7.1. Using IDE emulation
 ------------------------
 
-  Aranym can emulate both channels of Falcon IDE interface thus it's 
+  ARAnyM can emulate both channels of Falcon IDE interface thus it's 
 able to use any disk device (or file) as a harddisk. It uses direct
 access to devices so you don't need to have the disk mounted under
 the HOST OS; paths to devices are enough.
@@ -376,7 +376,7 @@ the HOST OS; paths to devices are enough.
 it into your HOST machine - say as master on the second IDE channel 
 (which means that path under Linux will be /dev/hdc).
   Then you need to specify geometry of such drive and path in the 
-Aranym config file. Important parameters are number of cylinders, 
+ARAnyM config file. Important parameters are number of cylinders, 
 tracks and sectors per track (usually named C/H/S). There are several 
 ways to obtain it. Easiest is to look onto harddrive label where 
 C/H/S parameters are usually printed. On the PC you can look into the 
@@ -391,7 +391,7 @@ logical      3876/240/63
 parameters. Beware of the hdparm utility which gives you only the "logical"
 C/H/S which is not really what you need.
 
-Now open Aranym config file and write here those parameters and the path:
+Now open ARAnyM config file and write here those parameters and the path:
 
 [IDE0]
 Present = Yes
@@ -411,7 +411,7 @@ Present = No
 7.1.2. How to use a harddisk image
 ----------------------------------
 
-  Harddisk images are large files which are used by Aranym as a real 
+  Harddisk images are large files which are used by ARAnyM as a real 
 harddisk. There are two ways how to make such image. If you want to 
 make a copy of your real atari harddisk, then type:
 
@@ -459,7 +459,7 @@ driver. In case you use and empty harddisk or image, you have to run
 driver from floppy and partition it first like on real TOS machine.
 
   If you have connected a real harddisk from any TOS machine and this 
-drive is bootable (driver is already installed) then Aranym should 
+drive is bootable (driver is already installed) then ARAnyM should 
 boot from it like usually. However, if you were using some special HW
 drivers, like e.g. Afterburner, Centurbo or NOVA/Rage gfx card drivers,
 you want to disable them. So try the first boot with Ctrl held down (AUTO
@@ -478,7 +478,7 @@ IsCDROM = Yes
 Path = /dev/hdb
 
   Then you need to install drivers (like SPIN) for the IDE CD-ROM on 
-the Aranym side.
+the ARAnyM side.
 
 
 7.2. Host Fs driver
@@ -490,12 +490,12 @@ and also native MiNT HostFS.XFS driver. BetaDOS is a free and improved
 replacement of MetaDOS which in turn was Atari designed AUTO folder patch
 that extended the TOS ROM GEMDOS with support for loadable drivers. 
 
-Aranym driver for BetaDOS is available in atari/hostfs/hostfs.dos.bz2.
+ARAnyM driver for BetaDOS is available in atari/hostfs/hostfs.dos.bz2.
 You can unpack it and add to the BetaDOS configuration file (bdconfig.sys).
 The example of config.sys you will find in the same directory as the driver.
 
 The problem is how to put it on a new harddisk. One way is to use floppy.
-Another possibility is to boot the AFROS (Aranym FRee OS) and attach your
+Another possibility is to boot the AFROS (ARAnyM FRee OS) and attach your
 disk drive as Slave ([IDE1]).
 
   As you setup the bdconfig.sys (e.g.):
@@ -514,7 +514,7 @@ like:
 
 Note: These drives aren't bootable. They are also not designed as 
       alternative to the harddisk images but rather as a way to 
-      transfer files between HOST fs and Aranym.
+      transfer files between HOST fs and ARAnyM.
 
 For permanent mapping edit the aranym config file, the [ARANYMFS] block
 and add the desired path, as follows:
