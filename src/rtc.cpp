@@ -142,8 +142,12 @@ void RTC::handleWrite(memptr addr, uint8 value) {
 }
 
 void RTC::setAddr(uint8 value) {
-	if (value < 64)
+	if (value < sizeof(nvram)) {
 		index = value;
+	}
+	else {
+		D(bug("NVRAM: trying to set out-of-bound position (%d)", value));
+	}
 }
 
 uint8 RTC::getData() {
@@ -165,8 +169,9 @@ uint8 RTC::getData() {
 		value = rtc_uip ? 0x80 : 0;
 		rtc_uip = !rtc_uip;
 	}
-	else
+	else {
 		value = nvram[index];
+	}
 	D(bug("Reading NVRAM data at %d = %d ($%02x) at %06x\n", index, value, value, showPC()));
 	return value;
 }
