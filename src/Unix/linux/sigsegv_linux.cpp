@@ -40,7 +40,8 @@ enum instruction_t {
 	INSTR_ORIMM8,
 	INSTR_AND8,
 	INSTR_ADD8,
-	INSTR_CMP8
+	INSTR_CMP8,
+	INSTR_DIV8
 };
 
 static inline int get_instr_size_add(unsigned char *p)
@@ -86,6 +87,7 @@ static void segfault_vec(int x, struct sigcontext sc) {
 	transfer_type_t transfer_type = TYPE_UNKNOWN;
 	int size = 4;
 	int imm = 0;
+	int pom1, pom2 = 0;
 	instruction_t instruction = INSTR_UNKNOWN;
 	void *preg;
 #if 1
@@ -256,6 +258,13 @@ static void segfault_vec(int x, struct sigcontext sc) {
 			len += 4 + get_instr_size_add(addr_instr + 1);
 			if (size == 4) len += 2;
 			break;
+		case 0xf6:
+			D(panicbug("DIV m8"));
+			transfer_type = TYPE_LOAD;
+			instruction = INSTR_DIV8;
+//			reg = (addr_instr[1] >> 3) & 7;
+			len += 2 + get_instr_size_add(addr_instr + 1);
+			break;
 	}
 
 	if (instruction == INSTR_UNKNOWN) {
@@ -336,6 +345,11 @@ static void segfault_vec(int x, struct sigcontext sc) {
 					else sc.eflags &= 0xffffff7f;
 				if ((imm > 255) || (imm < 0)) sc.eflags |= 0x1;
 					else sc.eflags &= 0xfffffffe;
+				break;
+			case INSTR_DIV8:
+				pom1 = sc.eax & 0xffff;
+				pom2 = HWget_b(addr);
+				sc.eax = sc.eax & 0xffff0000 + ((pom1 / pom2) << 8) + (pom1 / pom2);
 				break;
 			default: abort();
 		}
