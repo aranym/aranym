@@ -19,6 +19,7 @@
 #include "emul_op.h"
 
 extern int intlev(void);	// From baisilisk_glue.cpp
+extern int MFPintlev(void);	// From baisilisk_glue.cpp
 
 #include "m68k.h"
 #include "memory.h"
@@ -728,12 +729,13 @@ kludge_me_do:
 static void Interrupt(int nr)
 {
     // fprintf(stderr, "CPU: jsem v Interruptu(%d)\n", nr);
-    // assert(nr < 8 && nr >= 0);
+    assert(nr < 8 && nr >= 0);
     lastint_regs = regs;
     lastint_no = nr;
     Exception(nr+24, 0);
 
     regs.intmask = nr;
+    // why the hell the SPCFLAG_INT is to be set???
     // regs.spcflags |= SPCFLAG_INT;
 }
 
@@ -1246,15 +1248,17 @@ static int do_specialties (void)
 	}
     }
     if (regs.spcflags & SPCFLAG_MFPINT) {
+	int intr = MFPintlev();
 	regs.spcflags &= ~SPCFLAG_MFPINT;
-	if (6 > regs.intmask) {
+	if (intr > 0 && 6 > regs.intmask) {
 		// fprintf(stderr, "Jdu cist z MFP\n");
 		uae_u8 value = get_byte(0xfffa11);
 		// fprintf(stderr, "Vycetl jsem %x\n", value);
-	    if (! (value & 0x20)) {
-	    	put_byte(0xfffa11, value | 0x20);
+		int mask = (1 << intr);
+	    if (! (value & mask)) {
+	    	put_byte(0xfffa11, value | mask);
 	        // fprintf(stderr, "CPU:IntMask OK, volam MFPInterrupt\n");
-	        MFPInterrupt (5);
+	        MFPInterrupt (intr);
 	        regs.stopped = 0;
 	    }
 	    else {
@@ -1265,18 +1269,6 @@ static int do_specialties (void)
 		// fprintf(stderr, "CPU:TimerC int masked out\n");
 	}
     }
-/*
-    if (regs.spcflags & SPCFLAG_VBLINT) {
-	regs.spcflags &= ~SPCFLAG_VBLINT;
-	if (4 > regs.intmask) {
-        	Interrupt (4);
-	        regs.stopped = 0;
-	}
-	else {
-		fprintf(stderr, "CPU:VBL int masked out\n");
-	}
-    }
-*/
 /*
     if (regs.spcflags & SPCFLAG_INT) {
 	regs.spcflags &= ~SPCFLAG_INT;
