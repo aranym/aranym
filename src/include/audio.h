@@ -5,7 +5,7 @@
 
 typedef struct audio_parameters
 {
-	void *buffer;
+	memptr buffer;
 	uint32 len;
 	uint32 volume;
 } AUDIOPAR;
