@@ -122,6 +122,8 @@ int main(int argc, char **argv)
 	NatFeatCookie *nf_ptr = initNatFeats();
 	unsigned long nfEtherFsId = nfEthernetID(nf_ptr);
 	int usage = FALSE;
+	enum { NONE, HOST, ATARI, NETMASK } which;
+	int ethX = 0;
 
 	if (nfEtherFsId == 0) {
 		fprintf(stderr, "ERROR: NatFeat `ETHERNET' not found!\n");
@@ -133,14 +135,17 @@ int main(int argc, char **argv)
 	}
 	else {
 		int i;
+		which = NONE;
 		for(i=1; i<argc; i++) {
 			char *p = argv[i];
 			if (strcmp(p, "--get-host-ip") == 0)
-				puts(getEthX(nf_ptr, ETH(XIF_GET_IPHOST)));
+				which = HOST;
 			else if (strcmp(p, "--get-atari-ip") == 0)
-				puts(getEthX(nf_ptr, ETH(XIF_GET_IPATARI)));
+				which = ATARI;
 			else if (strcmp(p, "--get-netmask") == 0)
-				puts(getEthX(nf_ptr, ETH(XIF_GET_NETMASK)));
+				which = NETMASK;
+			else if (strcmp(p, "eth0") == 0)
+				ethX = 0;
 			else {
 				usage = TRUE;
 				break;
@@ -148,9 +153,18 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (usage) {
-		fprintf(stderr, "Usage: %s [--get-host-ip] [--get-atari-ip] [--get-netmask]\n", argv[0]);
+	if (usage || which == NONE) {
+		fprintf(stderr, "Usage: %s --get-host-ip | --get-atari-ip | --get-netmask] [eth0]\n", argv[0]);
+		return 0;
 	}
+
+	unsigned long xifID = 0;
+	switch(which) {
+		case HOST:	xifID = ETH(XIF_GET_IPHOST); break;
+		case ATARI: xifID = ETH(XIF_GET_IPATARI); break;
+		case NETMAS: xifID = ETH(XIF_GET_NETMASK); break;
+	}
+	puts(getEthX(nf_ptr, xifID));
 
 	return 0;
 }
