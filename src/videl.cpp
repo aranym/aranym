@@ -16,7 +16,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include "gfxprimitives.h"
 
 
 // from host.cpp
@@ -364,6 +363,10 @@ void VIDEL::renderScreenNoFlag()
 
 /*
  * $Log$
+ * Revision 1.31  2001/11/18 21:23:20  standa
+ * The little/big endian compiletime check. No runtime for big endian graphic
+ * cards on little enddian machines, but I think there is no such case.
+ *
  * Revision 1.30  2001/11/11 22:03:09  joy
  * direct truecolor is optional (compile time configurable)
  *

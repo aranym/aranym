@@ -14,7 +14,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include "gfxprimitives.h"
 
 
 /*
@@ -900,6 +899,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.22  2001/11/29 23:51:56  standa
+ * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
+ *
  * Revision 1.21  2001/11/21 13:29:51  milan
  * cleanning & portability
  *

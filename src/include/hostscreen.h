@@ -9,7 +9,36 @@
 
 
 #include <SDL.h>
-#include "gfxprimitives.h"
+
+
+/**
+ * This macro handles the endianity for 24 bit per item data
+ **/
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+
+#define putBpp24Pixel( address, color ) \
+{ \
+        ((Uint8*)(address))[0] = ((color) >> 16) & 0xff; \
+        ((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
+        ((Uint8*)(address))[2] = (color) & 0xff; \
+}
+
+#define getBpp24Pixel( address ) \
+    ( ((uint32)(address)[0] << 16) | ((uint32)(address)[1] << 8) | (uint32)(address)[2] )
+
+#else
+
+#define putBpp24Pixel( address, color ) \
+{ \
+    ((Uint8*)(address))[0] = (color) & 0xff; \
+        ((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
+        ((Uint8*)(address))[2] = ((color) >> 16) & 0xff; \
+}
+
+#define getBpp24Pixel( address ) \
+    ( ((uint32)(address)[2] << 16) | ((uint32)(address)[1] << 8) | (uint32)(address)[0] )
+
+#endif
 
 
 class HostScreen {
@@ -347,6 +376,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.22  2001/11/29 23:51:56  standa
+ * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
+ *
  * Revision 1.21  2001/11/21 17:26:26  standa
  * The BIGENDIAN bitplaneToChunky corrected.
  *
