@@ -1,3 +1,7 @@
+2002/09/24 - milan
+- sync with BasiliskII (cleanups, jumps align corrected)
+
+
 2002/09/24 - patrice
 - videl: bugfixes, Atari screen centered on host screen, autozoom feature
   added (with and without integer coefficients).

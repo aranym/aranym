@@ -1,9 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Written in 1999 by Christian Bauer et al.
+dnl Adapted for ARAnyM by Milan Jurik
 
 AC_INIT(main_unix.cpp)
 AC_PREREQ(2.53)
-AC_CONFIG_HEADERS(config.h)
+AC_CONFIG_HEADER(config.h)
 
 dnl Options.
 AC_ARG_ENABLE(nat-debug,     [  --enable-nat-debug      enable native debugger support [default=yes]], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
@@ -51,16 +52,16 @@ AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI [default=ye
 
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
-[  --enable-fpe=which      specify which fpu emulator to use [default=ieee]],
+[  --enable-fpe=FPE        specify which fpu emulator to use [default=auto]],
 [ case "$enableval" in
-    default)	FPE_CORE="default";; dnl ieee
-	uae)		FPE_CORE="uae";;
-	i386)		FPE_CORE="i386";;
-	ieee)		FPE_CORE="ieee";;
-	*)		AC_MSG_ERROR([--enable-fpe takes only one of the following values: default, uae, i386, ieee]);;
+    auto)	FPE_CORE_TEST_ORDER="ieee uae";; dnl ieee
+    uae)	FPE_CORE_TEST_ORDER="uae";;
+    i386)	FPE_CORE_TEST_ORDER="x86";;
+    ieee)	FPE_CORE_TEST_ORDER="ieee";;
+    *)		AC_MSG_ERROR([--enable-fpe takes only one of the following values: auto, uae, x86, ieee]);;
   esac
 ],
-[ FPE_CORE="default"
+[ FPE_CORE_TEST_ORDER="ieee uae"
 ])
 
 dnl Addressing modes.
@@ -158,8 +159,9 @@ AC_PROG_INSTALL
 
 dnl Checks for header files.
 AC_HEADER_STDC
+AC_HEADER_DIRENT	
 AC_CHECK_HEADERS(unistd.h fcntl.h sys/mman.h sys/ioctl.h)
-AC_CHECK_HEADERS(dirent.h getopt.h)
+AC_CHECK_HEADERS(getopt.h)
 AC_CHECK_HEADERS(termios.h termio.h alloca.h sys/statfs.h sys/statvfs.h)
 AC_CHECK_HEADERS(sys/types.h sys/stat.h sys/vfs.h utime.h sys/param.h)
 AC_CHECK_HEADERS(sys/mount.h types.h stat.h)
@@ -184,6 +186,9 @@ AC_TYPE_SIGNAL
 AC_HEADER_TIME
 AC_STRUCT_TM
 
+dnl Checks for libraries
+AC_CHECK_LIB(m, sin)
+
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
 AC_CHECK_FUNCS(sigaction signal)
@@ -197,7 +202,7 @@ CAN_NATIVE_M68K=no
 dnl Use 68k CPU natively?
 WANT_NATIVE_M68K=no
 if [[ "x$HAVE_M68K" = "xyes" -a "x$CAN_NATIVE_M68K" = "xyes" ]]; then
-  AC_DEFINE(ENABLE_NATIVE_M68K)
+  AC_DEFINE([ENABLE_NATIVE_M68K], 1, [Define if using native 68k mode.])
   WANT_NATIVE_M68K=yes
 fi
 
@@ -211,7 +216,7 @@ case "$target_os" in
     EXTRASYSSRCS=parameters_unix.cpp
     ;;
   solaris*)
-    AC_DEFINE(_XOPEN_SOURCE, 500)
+    AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
     DEFINES="$DEFINES -DBSD_COMP -fpermissive -D__EXTENSIONS__"
     EXTRASYSSRCS=parameters_unix.cpp
 dnl    WANT_ARANYMFS="no"
@@ -220,11 +225,11 @@ dnl    WANT_ARANYMFS="no"
     EXTRASYSSRCS="parameters_unix.cpp irix/unaligned.c"
     ;;
   freebsd*)
-    AC_DEFINE(HAVE_O_FSYNC)
+    AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS=parameters_unix.cpp
     ;;	      
   darwin*)
-    AC_DEFINE(HAVE_O_FSYNC)
+    AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS=parameters_unix.cpp darwin/cdrom_osx.cc
     DEFINES="$DEFINES -DDONTUSEUNIXCDROM"
     ;;
@@ -233,31 +238,16 @@ dnl    WANT_ARANYMFS="no"
     ;;
 esac
 
-dnl Support for direct access to host's fs
-if [[ "x$WANT_ARANYMFS" = "xyes" ]]; then
-  EXTFSSRC="../extfs.cpp"
-  AC_DEFINE(EXTFS_SUPPORT)
-else
-  EXTFSSRC=""
-fi
-
-dnl SDL GUI
-if [[ "x$WANT_SDLGUI" = "xyes" ]]; then
-  SDLGUISRC="../sdlgui.cpp ../dialog.cpp ../file.cpp"
-  AC_DEFINE(SDL_GUI)
-else
-  SDLGUISRC=""
-fi
-
-SYSSRCS="$SDLGUISRC $EXTFSSRC $SEMSRC $UISRCS $EXTRASYSSRCS"
+SYSSRCS="$SYSSRCS $EXTRASYSSRCS"
 
 dnl Define a macro that translates a yesno-variable into a C macro definition
 dnl to be put into the config.h file
 dnl $1 -- the macro to define
 dnl $2 -- the value to translate
+dnl $3 -- template name
 AC_DEFUN(AC_TRANSLATE_DEFINE, [
     if [[ "x$2" = "xyes" -o "x$2" = "xguessing yes" ]]; then
-        AC_DEFINE($1)
+        AC_DEFINE([$1], 1, [$3])
     fi
 ])
 
@@ -288,12 +278,13 @@ if [[ "x$ac_cv_func_vm_allocate" = "xyes" -a "x$ac_cv_func_vm_deallocate" = "xye
       "x$ac_cv_func_vm_protect" = "xyes" ]]; then
   have_mach_vm=yes
 fi
-AC_TRANSLATE_DEFINE(HAVE_MACH_VM, "$have_mach_vm")
+AC_TRANSLATE_DEFINE(HAVE_MACH_VM, "$have_mach_vm",
+  [Define if your system has a working vm_allocate()-based memory allocator.])
 
 dnl Check that vm_allocate(), vm_protect() work
 if [[ "x$have_mach_vm" = "xyes" ]]; then
 
-AC_CACHE_CHECK("whether vm_protect works",
+AC_CACHE_CHECK([whether vm_protect works],
   ac_cv_vm_protect_works, [
   AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
@@ -328,7 +319,8 @@ if [[ "x$have_mach_vm" = "xyes" ]]; then
     *no) have_mach_vm=no;;
   esac
 fi
-AC_TRANSLATE_DEFINE(HAVE_MACH_VM, "$have_mach_vm")
+AC_TRANSLATE_DEFINE(HAVE_MACH_VM, "$have_mach_vm",
+  [Define if your system has a working vm_allocate()-based memory allocator.])
 
 fi dnl HAVE_MACH_VM
 
@@ -341,13 +333,14 @@ if [[ "x$ac_cv_func_mmap" = "xyes" -a "x$ac_cv_func_munmap" = "xyes" -a \
     have_mmap_vm=yes
   fi
 fi
-AC_TRANSLATE_DEFINE(HAVE_MMAP_VM, "$have_mmap_vm")
+AC_TRANSLATE_DEFINE(HAVE_MMAP_VM, "$have_mmap_vm",
+  [Define if your system has a working mmap()-based memory allocator.])
 
 dnl Check that mmap() and associated functions work.
 if [[ "x$have_mmap_vm" = "xyes" ]]; then
 
 dnl Check if we have a working anonymous mmap()
-AC_CACHE_CHECK("whether mmap supports MAP_ANON",
+AC_CACHE_CHECK([whether mmap supports MAP_ANON],
   ac_cv_mmap_anon, [
   AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
@@ -363,9 +356,10 @@ AC_CACHE_CHECK("whether mmap supports MAP_ANON",
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(HAVE_MMAP_ANON, "$ac_cv_mmap_anon")
+AC_TRANSLATE_DEFINE(HAVE_MMAP_ANON, "$ac_cv_mmap_anon",
+  [Define if <sys/mman.h> defines MAP_ANON and mmap()'ing with MAP_ANON works.])
 
-AC_CACHE_CHECK("whether mmap supports MAP_ANONYMOUS",
+AC_CACHE_CHECK([whether mmap supports MAP_ANONYMOUS],
   ac_cv_mmap_anonymous, [
   AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
@@ -381,9 +375,10 @@ AC_CACHE_CHECK("whether mmap supports MAP_ANONYMOUS",
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(HAVE_MMAP_ANONYMOUS, "$ac_cv_mmap_anonymous")
+AC_TRANSLATE_DEFINE(HAVE_MMAP_ANONYMOUS, "$ac_cv_mmap_anonymous",
+  [Define if <sys/mman.h> defines MAP_ANONYMOUS and mmap()'ing with MAP_ANONYMOUS works.])
 
-AC_CACHE_CHECK("whether mprotect works",
+AC_CACHE_CHECK([whether mprotect works],
   ac_cv_mprotect_works, [
   AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
@@ -418,12 +413,97 @@ if [[ "x$have_mmap_vm" = "xyes" ]]; then
     *no) have_mmap_vm=no;;
   esac
 fi
-AC_TRANSLATE_DEFINE(HAVE_MMAP_VM, $have_mmap_vm)
+AC_TRANSLATE_DEFINE(HAVE_MMAP_VM, $have_mmap_vm,
+  [Define if your system has a working mmap()-based memory allocator.])
 
 fi dnl HAVE_MMAP_VM
 
+dnl Check if we can mmap 0x2000 bytes from 0x0000
+AC_CACHE_CHECK([whether we can map Low Memory area 0x0000-0x2000],
+  ac_cv_can_map_lm, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_RUN([
+    #include "vm_alloc.cpp"
+    int main(void) { /* returns 0 if we could map the lowmem globals */
+      volatile char * lm = 0;
+      if (vm_init() < 0) exit(1);
+      if (vm_acquire_fixed(0, 0x2000) == false) exit(1);
+      lm[0] = 'z';
+      if (vm_release((char *)lm, 0x2000) < 0) exit(1);
+      vm_exit(); exit(0);
+    }
+  ], ac_cv_can_map_lm=yes, ac_cv_can_map_lm=no,
+  dnl When cross-compiling, do not assume anything.
+  ac_cv_can_map_lm="guessing no"
+  )
+  AC_LANG_RESTORE
+  ]
+)
+
+dnl Check signal handlers need to be reinstalled
+AC_CACHE_CHECK([whether signal handlers need to be reinstalled],
+  ac_cv_signal_need_reinstall, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_RUN([
+    #include <stdlib.h>
+    #ifdef HAVE_UNISTD_H
+    #include <unistd.h>
+    #endif
+    #include <signal.h>
+    static int handled_signal = 0;
+    RETSIGTYPE sigusr1_handler(int) { handled_signal++; }
+    int main(void) { /* returns 0 if signals need not to be reinstalled */
+      signal(SIGUSR1, sigusr1_handler); raise(SIGUSR1); raise(SIGUSR1);
+      exit(handled_signal == 2);
+    }
+  ], ac_cv_signal_need_reinstall=yes, ac_cv_signal_need_reinstall=no,
+  dnl When cross-compiling, do not assume anything.
+  ac_cv_signal_need_reinstall="guessing yes"
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(SIGNAL_NEED_REINSTALL, "$ac_cv_signal_need_reinstall",
+  [Define if your system requires signals to be reinstalled.])
+
+dnl Check if sigaction handlers need to be reinstalled
+AC_CACHE_CHECK([whether sigaction handlers need to be reinstalled],
+  ac_cv_sigaction_need_reinstall, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_RUN([
+    #include <stdlib.h>
+    #ifdef HAVE_UNISTD_H
+    #include <unistd.h>
+    #endif
+    #include <signal.h>
+    static int handled_signal = 0;
+    RETSIGTYPE sigusr1_handler(int) { handled_signal++; }
+    typedef RETSIGTYPE (*signal_handler)(int);
+    static signal_handler mysignal(int sig, signal_handler handler) {
+      struct sigaction old_sa;
+      struct sigaction new_sa;
+      new_sa.sa_handler = handler;
+      return ((sigaction(sig,&new_sa,&old_sa) < 0) ? SIG_IGN : old_sa.sa_handler);
+    }
+    int main(void) { /* returns 0 if signals need not to be reinstalled */
+      mysignal(SIGUSR1, sigusr1_handler); raise(SIGUSR1); raise(SIGUSR1);
+      exit(handled_signal == 2);
+    }
+  ], ac_cv_sigaction_need_reinstall=yes, ac_cv_sigaction_need_reinstall=no,
+  dnl When cross-compiling, do not assume anything.
+  ac_cv_sigaction_need_reinstall="guessing yes"
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(SIGACTION_NEED_REINSTALL, "$ac_cv_sigaction_need_reinstall",
+  [Define if your system requires sigactions to be reinstalled.])
+
 dnl Check if we have vasprintf (_GNU_SOURCE)
-AC_CACHE_CHECK("for vasprintf",
+AC_CACHE_CHECK([for vasprintf],
   ac_cv_have_vasprintf, [
   AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
@@ -441,11 +521,32 @@ AC_CACHE_CHECK("for vasprintf",
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(HAVE_GNU_SOURCE, "$ac_cv_have_vasprintf")
+AC_TRANSLATE_DEFINE(HAVE_GNU_SOURCE, "$ac_cv_have_vasprintf",
+  [Define if your system support GNU SOURCEs (vasprintf function)])
 if [[ "x$ac_cv_have_vasprintf" = "xyes" ]]; then
   DEFINES="$DEFINES -D_GNU_SOURCE"
 else SYSSRCS="$SYSSRCS vasprintf.c"
 fi
+
+AC_CACHE_CHECK([for sighandler_t],
+  ac_cv_have_sighandler_t, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_COMPILE([
+    #define _GNU_SOURCE
+    #include <signal.h>
+    #include <stdio.h>
+  ], [
+    signal(0, (sighandler_t)NULL);
+  ],
+  [ac_cv_have_sighandler_t=yes],
+  [ac_cv_have_sighandler_t=no]
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(HAVE_SIGHANDLER_T, "$ac_cv_have_sighandler_t",
+  [Define if <signal.h> doesn't define sighandler_t])	
 
 dnl Check if we have getopt_long
 AC_CACHE_CHECK("for getopt_long",
@@ -471,70 +572,47 @@ if [[ "x$ac_cv_have_getopt_long" = "xno" ]]; then
   SYSSRCS="$SYSSRCS getopt_init.c getopt1.c getopt.c"
 fi
 
-dnl Check if we can mmap 0x2000 bytes from 0x0000
-AC_CACHE_CHECK("whether we can map Low Memory area 0x0000-0x2000",
-  ac_cv_can_map_lm, [
-  AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_RUN([
-    #include "vm_alloc.cpp"
-    int main(void) { /* returns 0 if we could map the lowmem globals */
-      volatile char * lm = 0;
-      if (vm_init() < 0) exit(1);
-      if (vm_acquire_fixed(0, 0x2000) == false) exit(1);
-      lm[0] = 'z';
-      if (vm_release((char *)lm, 0x2000) < 0) exit(1);
-      vm_exit(); exit(0);
-    }
-  ], ac_cv_can_map_lm=yes, ac_cv_can_map_lm=no,
-  dnl When cross-compiling, do not assume anything.
-  ac_cv_can_map_lm="guessing no"
-  )
-  AC_LANG_RESTORE
-  ]
-)
-
 if [[ "x$WANT_JIT" = "xyes" ]]; then
   WANT_EXSIGSEGV=yes
   MEMORY_CHECK=sseg
 fi
   
 case $MEMORY_CHECK in
-  no)   AC_DEFINE(NOCHECKBOUNDARY)
+  no)   AC_DEFINE([NOCHECKBOUNDARY], 1, [Define if you don't want to use check memory boundary])
         ;;
-  page) AC_DEFINE(ARAM_PAGE_CHECK)
+  page) AC_DEFINE([ARAM_PAGE_CHECK], 1, [Define if you want to try out a different memory check])
         ;;
   hwsp) ADDRESSING_TEST_ORDER="fixed"
         WANT_EXSIGSEGV="yes"
-        AC_DEFINE(NOCHECKBOUNDARY)
-	AC_DEFINE(EXTENDED_SIGSEGV)
-        AC_DEFINE(RAMENDNEEDED)
+        AC_DEFINE([NOCHECKBOUNDARY], 1, [Define if you don't want to use check memory boundary])
+	AC_DEFINE([EXTENDED_SIGSEGV], 1, [Define if you want to use extended segafault handler])
+        AC_DEFINE([RAMENDNEEDED])
         ;;
   pagehwsp) ADDRESSING_TEST_ORDER="fixed"
         WANT_EXSIGSEGV="yes"
-        AC_DEFINE(ARAM_PAGE_CHECK)
-        AC_DEFINE(NOCHECKBOUNDARY)
-	AC_DEFINE(EXTENDED_SIGSEGV)
-        AC_DEFINE(RAMENDNEEDED)
+        AC_DEFINE([ARAM_PAGE_CHECK], 1, [Define if you want to try out a different memory check])
+        AC_DEFINE([NOCHECKBOUNDARY], 1, [Define if you don't want to use check memory boundary])
+	AC_DEFINE([EXTENDED_SIGSEGV], 1, [Define if you want to use extended segafault handler])
+        AC_DEFINE([RAMENDNEEDED], 1, [Define if you want protect end of memory])
         ;;
    sseg) ADDRESSING_TEST_ORDER="fixed"
         WANT_EXSIGSEGV="yes"
-        AC_DEFINE(NOCHECKBOUNDARY)
-	AC_DEFINE(RAMENDNEEDED)
-        AC_DEFINE(EXTENDED_SIGSEGV)
-	AC_DEFINE(HW_SIGSEGV)
-        ;;					
+        AC_DEFINE([NOCHECKBOUNDARY], 1, [Define if you don't want to use check memory boundary])
+	AC_DEFINE([RAMENDNEEDED], 1,)
+        AC_DEFINE([EXTENDED_SIGSEGV], 1, [Define if you want to use extended segafault handler])
+	AC_DEFINE([HW_SIGSEGV], 1, [Define if you want to use extended segfault handler also for HW space])
+        ;;
   *) ;;
 esac
  
 dnl Full opcode's history
 if [[ "x$WANT_HISTORY" = "xyes" ]]; then
-    AC_DEFINE(FULL_HISTORY)
+    AC_DEFINE([FULL_HISTORY], 1, [Define if you want to use full history])
 fi
 
 dnl Full MMU
 if [[ "x$WANT_MMU" = "xyes" ]]; then
-    AC_DEFINE(FULLMMU)
+    AC_DEFINE([FULLMMU], 1, [Define if using full MMU])
     MMUSRCS="../uae_cpu/cpummu.cpp"
 else
     MMUSRCS=""
@@ -542,7 +620,7 @@ fi
 
 dnl DSP
 if [[ "x$WANT_DSP" = "xyes" ]]; then
-    AC_DEFINE(DSP_EMULATION)
+    AC_DEFINE([DSP_EMULATION], 1, [Define if using DSP])
     DSPSRCS="../dsp_cpu.cpp"
 else
     DSPSRCS=""
@@ -550,12 +628,12 @@ fi
 
 dnl DSP thread
 if [[ "x$WANT_DSP_THREAD" = "xyes" ]]; then
-    AC_DEFINE(DSP_THREADED)
+    AC_DEFINE([DSP_THREADED], 1, [Define if using DSP thread])
 fi
 
 dnl DSP disassembler
 if [[ "x$WANT_DSP_DISASM" = "xyes" ]]; then
-    AC_DEFINE(DSP_DISASM)
+    AC_DEFINE([DSP_DISASM], 1, [Define if DSP disassembly])
 	DSPDISSRCS="../dsp_disasm.cpp"
 else
 	DSPDISSRCS=""
@@ -563,16 +641,16 @@ fi
 
 dnl fixed size FastRAM
 if [[ "x$WANT_FIXEDFASTRAM" != "xno" ]]; then
-  AC_DEFINE_UNQUOTED(FixedSizeFastRAM, $WANT_FIXEDFASTRAM)
+  AC_DEFINE_UNQUOTED([FixedSizeFastRAM], $WANT_FIXEDFASTRAM, [Define if you want FastRAM of fixed size])
 fi
 
 dnl fixed start of VideoRAM
 if [[ "x$WANT_FIXEDVIDEORAM" = "xyes" ]]; then
-  AC_DEFINE(FIXED_VIDEORAM)
+  AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
 else
   if [[ "x$WANT_MMU" = "xyes" ]]; then
     AC_MSG_WARN([MMU needs fixed position of VideoRAM])
-    AC_DEFINE(FIXED_VIDEORAM)
+    AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
   fi
 fi
 
@@ -581,25 +659,37 @@ if [[ "x$WANT_DIRECTCOLOR" = "xyes" ]]; then
   if [[ "x$WANT_FIXEDVIDEORAM" = "xno" ]]; then
     AC_MSG_WARN([Direct truecolor needs fixed position of VideoRAM, ignored])
   else
-    AC_DEFINE(DIRECT_TRUECOLOR)
+    AC_DEFINE([DIRECT_TRUECOLOR], 1, [Define if you want direct truecolor output])
   fi
 fi
 
 dnl Blitter memmove acceleration
 if [[ "x$WANT_BLITMEMMOVE" = "xyes" ]]; then
-  AC_DEFINE(BLITTER_MEMMOVE)
+  AC_DEFINE([BLITTER_MEMMOVE], 1, [Define if you want accelerated blitter output])
 fi
 
 dnl Blitter SDL surface blitting
 if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
-  AC_DEFINE(BLITTER_SDLBLIT)
-  AC_DEFINE(BLITTER_MEMMOVE)	dnl required for the SDLBLIT
+  AC_DEFINE([BLITTER_SDLBLIT], 1, [Define if you want even more accelerated blitter output])
+  AC_DEFINE([BLITTER_MEMMOVE], 1, [Define if you want accelerated blitter output])	dnl required for the SDLBLIT
 fi
 
 dnl Ethernet card emulation
 if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
-  AC_DEFINE(ETHERNET_SUPPORT)
+  AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
   SYSSRCS="$SYSSRCS ../ether.cpp ether_unix.cpp"
+fi
+
+dnl Support for direct access to host's fs
+if [[ "x$WANT_ARANYMFS" = "xyes" ]]; then
+  SYSSRCS="$SYSSRCS ../extfs.cpp"
+  AC_DEFINE([EXTFS_SUPPORT], 1, [Define if you want to use direct access to host's fs])
+fi
+
+dnl SDL GUI
+if [[ "x$WANT_SDLGUI" = "xyes" ]]; then
+  SYSSRCS="$SYSSRCS ../sdlgui.cpp ../dialog.cpp ../file.cpp"
+  AC_DEFINE([SDL_GUI], 1, [Define if you want to build SDL GUI])
 fi
 
 dnl Extended signal segmentation fault handler
@@ -618,24 +708,6 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
   esac
 fi
 
-AC_CACHE_CHECK("for sighandler_t",
-  ac_cv_have_sighandler_t, [
-  AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_COMPILE([
-    #define _GNU_SOURCE
-    #include <signal.h>
-    #include <stdio.h>
-  ], [
-    signal(0, (sighandler_t)NULL);
-  ],
-  [ac_cv_have_sighandler_t=yes],
-  [ac_cv_have_sighandler_t=no]
-  )
-  AC_LANG_RESTORE
-  ]
-)
-AC_TRANSLATE_DEFINE(HAVE_SIGHANDLER_T, "$ac_cv_have_sighandler_t")				      
 dnl Determine the addressing mode to use
 if [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
   ADDRESSING_MODE="real"
@@ -778,14 +850,15 @@ fi
 
 dnl gb-- JITSRCS will be emptied later if the JIT is not available
 dnl gb-- Other platforms should define their own set of noflags file variants
+CAN_JIT=no
 JITSRCS="compemu1.cpp compemu2.cpp compemu3.cpp compemu4.cpp compemu5.cpp compemu6.cpp compemu7.cpp compemu8.cpp"
 
 if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" -a "x$OS_TYPE" != "xfreebsd" ]]; then
   dnl i386 CPU
-  DEFINES="$DEFINES -DREGPARAM=\"__attribute__((regparm(3)))\""
+  DEFINES="$DEFINES -DUNALIGNED_PROFITABLE -DREGPARAM=\"__attribute__((regparm(3)))\""
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
     ASM_OPTIMIZATIONS=i386
-    DEFINES="$DEFINES -DX86_ASSEMBLY -DUNALIGNED_PROFITABLE -DOPTIMIZED_FLAGS"
+    DEFINES="$DEFINES -DX86_ASSEMBLY -DOPTIMIZED_FLAGS -DSAHF_SETO_PROFITABLE"
     if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
       CPUSRCS="cpufast.s"
     else
@@ -853,81 +926,212 @@ else
   JITSRCS=""
 fi
 
+dnl Utility macro used by next two tests.
+dnl AC_EXAMINE_OBJECT(C source code,
+dnl	commands examining object file,
+dnl	[commands to run if compile failed]):
+dnl
+dnl Compile the source code to an object file; then convert it into a
+dnl printable representation.  All unprintable characters and
+dnl asterisks (*) are replaced by dots (.).  All white space is
+dnl deleted.  Newlines (ASCII 0x10) in the input are preserved in the
+dnl output, but runs of newlines are compressed to a single newline.
+dnl Finally, line breaks are forcibly inserted so that no line is
+dnl longer than 80 columns and the file ends with a newline.  The
+dnl result of all this processing is in the file conftest.dmp, which
+dnl may be examined by the commands in the second argument.
+dnl
+AC_DEFUN([gcc_AC_EXAMINE_OBJECT],
+[AC_LANG_SAVE
+AC_LANG_C
+dnl Next bit cribbed from AC_TRY_COMPILE.
+cat > conftest.$ac_ext <<EOF
+[#line __oline__ "configure"
+#include "confdefs.h"
+$1
+]EOF
+if AC_TRY_EVAL(ac_compile); then
+  od -c conftest.o |
+    sed ['s/^[0-7]*[ 	]*/ /
+	  s/\*/./g
+	  s/ \\n/*/g
+	  s/ [0-9][0-9][0-9]/./g
+	  s/  \\[^ ]/./g'] |
+    tr -d '
+ ' | tr -s '*' '
+' | fold | sed '$a\
+' > conftest.dmp
+  $2
+ifelse($3, , , else
+  $3
+)dnl
+fi
+rm -rf conftest*
+AC_LANG_RESTORE])
+
+dnl Floating point format probe.
+dnl The basic concept is the same as the above: grep the object
+dnl file for an interesting string.  We have to watch out for
+dnl rounding changing the values in the object, however; this is
+dnl handled by ignoring the least significant byte of the float.
+dnl
+dnl Does not know about VAX G-float or C4x idiosyncratic format.
+dnl It does know about PDP-10 idiosyncratic format, but this is
+dnl not presently supported by GCC.  S/390 "binary floating point"
+dnl is in fact IEEE (but maybe we should have that in EBCDIC as well
+dnl as ASCII?)
+dnl
+AC_DEFUN([gcc_AC_C_FLOAT_FORMAT],
+[AC_CACHE_CHECK(floating point format, ac_cv_c_float_format,
+[gcc_AC_EXAMINE_OBJECT(
+[/* This will not work unless sizeof(double) == 8.  */
+extern char sizeof_double_must_be_8 [sizeof(double) == 8 ? 1 : -1];
+
+/* This structure must have no internal padding.  */
+struct possibility {
+  char prefix[8];
+  double candidate;
+  char postfix[8];
+};
+
+#define C(cand) { "\nformat:", cand, ":tamrof\n" }
+struct possibility table [] =
+{
+  C( 3.25724264705901305206e+01), /* @@IEEEFP - IEEE 754 */
+  C( 3.53802595280598432000e+18), /* D__float - VAX */
+  C( 5.32201830133125317057e-19), /* D.PDP-10 - PDP-10 - the dot is 0x13a */
+  C( 1.77977764695171661377e+10), /* IBMHEXFP - s/390 format, ascii */
+  C(-5.22995989424860458374e+10)  /* IBMHEXFP - s/390 format, EBCDIC */
+};],
+ [if   grep 'format:.@IEEEF.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='IEEE (big-endian)'
+  elif grep 'format:.I@@PFE.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='IEEE (big-endian)'
+  elif grep 'format:.FEEEI@.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='IEEE (little-endian)'
+  elif grep 'format:.EFP@@I.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='IEEE (little-endian)'
+  elif grep 'format:.__floa.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='VAX D-float'
+  elif grep 'format:..PDP-1.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='PDP-10'
+  elif grep 'format:.BMHEXF.:tamrof' conftest.dmp >/dev/null 2>&1; then
+    ac_cv_c_float_format='IBM 370 hex'
+  else
+    AC_MSG_ERROR(Unknown floating point format)
+  fi],
+  [AC_MSG_ERROR(compile failed)])
+])
+# IEEE is the default format.  If the float endianness isn't the same
+# as the integer endianness, we have to set FLOAT_WORDS_BIG_ENDIAN
+# (which is a tristate: yes, no, default).  This is only an issue with
+# IEEE; the other formats are only supported by a few machines each,
+# all with the same endianness.
+format=IEEE_FLOAT_FORMAT
+fbigend=
+case $ac_cv_c_float_format in
+    'IEEE (big-endian)' )
+	if test $ac_cv_c_bigendian = no; then
+	    fbigend=1
+	fi
+	;;
+    'IEEE (little-endian)' )
+	if test $ac_cv_c_bigendian = yes; then
+	    fbigend=0
+	fi
+	;;
+    'VAX D-float' )
+	format=VAX_FLOAT_FORMAT
+	;;
+    'PDP-10' )
+	format=PDP10_FLOAT_FORMAT
+	;;
+    'IBM 370 hex' )
+	format=IBM_FLOAT_FORMAT
+	;;
+esac
+AC_DEFINE_UNQUOTED(HOST_FLOAT_FORMAT, $format,
+  [Define to the floating point format of the host machine.])
+if test -n "$fbigend"; then
+	AC_DEFINE_UNQUOTED(HOST_FLOAT_WORDS_BIG_ENDIAN, $fbigend,
+  [Define to 1 if the host machine stores floating point numbers in
+   memory with the word containing the sign bit at the lowest address,
+   or to 0 if it does it the other way around.
+
+   This macro should not be defined if the ordering is the same as for
+   multi-word integers.])
+fi
+])
+
 dnl Select appropriate FPU source.
-dnl 1. Optimized X86 assembly core if target is i386 architecture
-SAVED_DEFINES=$DEFINES
-if [[ "x$FPE_CORE" = "xi386" ]]; then
-  if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" -a "x$HAVE_GAS" = "xyes" ]]; then
-    DEFINES="$DEFINES -DFPU_X86"
-    FPE_CORE_STR="i386 optimized core"
-    FPUSRCS="../uae_cpu/fpu/fpu_x86.cpp"
-    FPE_CORE="i386"
-  else
-    AC_MSG_WARN([Sorry, no suitable FPU mode i386])
-    FPE_CORE="uae"
-  fi
-fi
+gcc_AC_C_FLOAT_FORMAT
+AC_CHECK_HEADERS(ieee754.h ieeefp.h floatingpoint.h nan.h)
 
-if [[ "x$FPE_CORE" = "xdefault" ]]; then
-  if [[ "x$HAVE_I386" = "xyes" -a "x$OS_TYPE" != "freebsd" ]];  then
-    FPE_CORE="ieee"
-  else
-    FPE_CORE="uae"
-  fi
-fi
-
-dnl 2. JIT-FPU only supports IEEE-based implementation.
-if [[ "x$WANT_JIT_FPU" = "xyes" -a "x$FPE_CORE" != "xieee" ]]; then
-  AC_MSG_WARN([Sorry, JIT-FPU supports only the "ieee" FPE implementation])
+if [[ "x$WANT_JIT_FPU" = "xyes" -a "x$FPE_CORE_TEST_ORDER" != "xieee" ]]; then
+dnl  AC_MSG_WARN([Sorry, JIT-FPU supports only the "ieee" FPE implementation])
   FPE_CORE="ieee"
   dnl Restore previous variables. FPE_CORE_STR and FPUSRCS are overwritten
-  DEFINES=$SAVED_DEFINES
 fi
 
-dnl 3. Choose either IEEE-based implementation or the old UAE core
-if [[ "x$FPE_CORE" = "xieee" ]]; then
-  AC_CHECK_HEADERS(fenv.h)
-  AC_CHECK_FUNCS(feclearexcept fegetexceptflag feraiseexcept fesetexceptflag fetestexcept)
-  AC_CHECK_FUNCS(fegetround fesetround)
-  DEFINES="$DEFINES -DFPU_IEEE"
-  FPE_CORE_STR="ieee-based fpu core"
-  FPUSRCS="../uae_cpu/fpu/fpu_ieee.cpp"
-elif [[ "x$FPE_CORE" = "xuae" ]]; then
-  DEFINES="$DEFINES -DFPU_UAE"
-  FPE_CORE_STR="original uae core"
-  FPUSRCS="../uae_cpu/fpu/fpu_uae.cpp"
+for fpe in $FPE_CORE_TEST_ORDER; do
+  case $fpe in
+  ieee)
+    case $ac_cv_c_float_format in
+    IEEE*)
+      FPE_CORE="IEEE fpu core"
+      DEFINES="$DEFINES -DFPU_IEEE"
+      FPUSRCS="../uae_cpu/fpu/fpu_ieee.cpp"
+      dnl Math functions not mandated by C99 standard
+      AC_CHECK_FUNCS(isnanl isinfl)
+      dnl Math functions required by C99 standard, but probably not
+      dnl implemented everywhere. In that case, we fall back to the
+      dnl regular variant for doubles.
+      AC_CHECK_FUNCS(logl log10l expl powl fabsl sqrtl)
+      AC_CHECK_FUNCS(sinl cosl tanl sinhl coshl tanhl)
+      AC_CHECK_FUNCS(asinl acosl atanl asinhl acoshl atanhl)
+      AC_CHECK_FUNCS(floorl ceill)
+      break
+      ;;
+    esac
+    ;;
+  x86)
+    if [[ ":$HAVE_GCC27:$HAVE_I386:$HAVE_GAS:" = ":yes:yes:yes:" ]]; then
+      FPE_CORE="i387 fpu core"
+      DEFINES="$DEFINES -DFPU_X86"
+      FPUSRCS="../uae_cpu/fpu/fpu_x86.cpp"
+      break
+    fi
+    ;;
+  uae)
+    FPE_CORE="uae fpu core"
+    DEFINES="$DEFINES -DFPU_UAE"
+    FPUSRCS="../uae_cpu/fpu/fpu_uae.cpp"
+    break
+    ;;
+  *)
+    AC_MSG_ERROR([Internal configure.in script error for $fpe fpu core])
+    ;;
+  esac
+done
+if [[ "x$FPE_CORE" = "x" ]]; then
+  AC_MSG_ERROR([Sorry, no suitable FPU core found in $FPE_CORE_TEST_ORDER])
 fi
 
 dnl Check for certain math functions
-dnl AC_CHECK_FUNCS(atanh)
-AC_CACHE_CHECK("for atanh",
-  ac_cv_have_atanh, [
-  AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_COMPILE([
-    #include <math.h>
-  ], [
-    atanh(1);
-  ],
-  [ac_cv_have_atanh=yes],
-  [ac_cv_have_atanh=no]
-  )
-  AC_LANG_RESTORE
-  ]
-)
-AC_TRANSLATE_DEFINE(HAVE_ATANH, "$ac_cv_have_atanh")
+AC_CHECK_FUNCS(atanh)
+AC_CHECK_FUNCS(isnan isinf finite isnormal signbit)
 
 dnl Select debugger
 if [[ "x$WANT_JIT" = "xno" ]]; then
   if [[ "x$WHICH_DEBUG" = "xndebug" ]]; then
-    AC_DEFINE(DEBUGGER)
-    AC_DEFINE(NEWDEBUG)
+    AC_DEFINE([DEBUGGER], 1, [Define if using some debugger])
+    AC_DEFINE([NEWDEBUG], 1, [Define if using New Debugger])
     CPUSRCS="$CPUSRCS ../uae_cpu/debug.cpp"
   fi
 
   dnl UAE debugger
   if [[ "x$WHICH_DEBUG" = "xuae" ]]; then
-    AC_DEFINE(DEBUGGER)
+    AC_DEFINE([DEBUGGER], 1, [Define if using some debugger])
     CPUSRCS="$CPUSRCS ../uae_cpu/debug.cpp"
   fi
 
@@ -942,7 +1146,7 @@ if [[ "x$WANT_JIT" = "xno" ]]; then
       mon_srcdir=../../../mon/src
       if grep mon_init $mon_srcdir/mon.h >/dev/null 2>/dev/null; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(ENABLE_MON)
+        AC_DEFINE([ENABLE_MON], 1, [Define if using "mon".])
         MONSRCS="$mon_srcdir/mon.cpp $mon_srcdir/mon_6502.cpp $mon_srcdir/mon_z80.cpp $mon_srcdir/mon_cmd.cpp $mon_srcdir/mon_disass.cpp $mon_srcdir/mon_ppc.cpp $mon_srcdir/mon_lowmem.cpp $mon_srcdir/disass/floatformat.c $mon_srcdir/disass/i386-dis.c $mon_srcdir/disass/m68k-dis.c $mon_srcdir/disass/m68k-opc.c"
         CXXFLAGS="$CXXFLAGS -I$mon_srcdir -I$mon_srcdir/disass"
         AC_CHECK_LIB(readline, readline)
@@ -1032,7 +1236,7 @@ echo Use exclusive spcflags handling ........ : $WANT_SPCFLAGS_EXCL
 echo Use JIT compiler ....................... : $WANT_JIT
 echo Use JIT compiler for FPU instructions .. : $WANT_JIT_FPU
 echo JIT debug mode ......................... : $WANT_JIT_DEBUG
-echo Floating-Point emulation core .......... : $FPE_CORE_STR
+echo Floating-Point emulation core .......... : $FPE_CORE
 echo Assembly optimizations ................. : $ASM_OPTIMIZATIONS
 echo Addressing mode ........................ : $ADDRESSING_MODE
 echo Full MMU support ....................... : $WANT_MMU

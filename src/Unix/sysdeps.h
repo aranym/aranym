@@ -43,7 +43,6 @@
 #include <sys/statvfs.h>
 #include <fcntl.h>
 #include <termios.h>
-#include <dirent.h>
 #include <time.h>
 #include <alloca.h>
 
@@ -61,7 +60,6 @@
 #include <sys/ioctl.h>
 #include <time.h>
 #include <utime.h>
-#include <dirent.h>
 #include <fcntl.h>
 #include <termios.h>
 
@@ -75,7 +73,6 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <dirent.h>
 #include <termios.h>
 #include <utime.h>
 #include <alloca.h>
@@ -155,8 +152,21 @@
 # endif
 #endif
 
-#ifdef HAVE_DIRENT_H
+#if HAVE_DIRENT_H
 # include <dirent.h>
+# define NAMLEN(dirent) strlen((dirent)->d_name)
+#else
+# define dirent direct
+# define NAMLEN(dirent) (dirent)->d_namlen
+# if HAVE_SYS_NDIR_H
+#  include <sys/ndir.h>
+# endif
+# if HAVE_SYS_DIR_H
+#  include <sys/dir.h>
+# endif
+# if HAVE_NDIR_H
+#  include <ndir.h>
+# endif
 #endif
 
 #endif /* OS_INCLUDES_DEFINE */
@@ -223,6 +233,14 @@ typedef int64 intptr;
 #endif
 
 #define memptr uint32
+
+/* Define codes for all the float formats that we know of.
+ * Though we only handle IEEE format.  */
+#define UNKNOWN_FLOAT_FORMAT 0
+#define IEEE_FLOAT_FORMAT 1
+#define VAX_FLOAT_FORMAT 2
+#define IBM_FLOAT_FORMAT 3
+#define C4X_FLOAT_FORMAT 4
 
 /* UAE CPU data types */
 #define uae_s8 int8
@@ -354,10 +372,6 @@ static inline uae_u32 do_byteswap_16(uae_u32 v)
 #undef NO_INLINE_MEMORY_ACCESS
 #undef MD_HAVE_MEM_1_FUNCS
 #define write_log printf
-
-#ifndef ASM_VOLATILE
-#define ASM_VOLATILE __asm__ __volatile__
-#endif
 
 #ifdef X86_ASSEMBLY
 #define ASM_SYM_FOR_FUNC(a) __asm__(a)

@@ -2,8 +2,9 @@
 #error "Only Fixed Addressing is supported with the JIT Compiler"
 #endif
 
-#define writemem_special writemem
-#define readmem_special  readmem
+#if X86_ASSEMBLY && !SAHF_SETO_PROFITABLE
+#error "Only [LS]AHF scheme to [gs]et flags is supported with the JIT Compiler"
+#endif
 
 #define USE_MATCH 0
 
@@ -20,6 +21,7 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
+#include "vm_alloc.h"
 
 #include "m68k.h"
 #include "memory.h"
@@ -84,13 +86,13 @@ const bool		JITDebug			= false;	// Don't use JIT debug mode at all
 const uae_u32	MIN_CACHE_SIZE		= 2048;		// Minimal translation cache size (2048 KB)
 static uae_u32	cache_size			= 0;		// Size of total cache allocated for compiled blocks
 static uae_u32	current_cache_size	= 0;		// Cache grows upwards: how much has been consumed yet
-static int		lazy_flush			= 0;		// (0: hard flush, [1-2]: lazy-flush version X)
-#if 0
-static bool		compile_atraps		= false;	// Flag: compile A-Traps
-#endif
+static bool		lazy_flush			= true;		// Flag: lazy translation cache invalidation
 static bool		avoid_fpu			= true;		// Flag: compile FPU instructions ?
 static bool		have_cmov			= false;	// target has CMOV instructions ?
 static bool		have_rat_stall		= true;		// target has partial register stalls ?
+static bool		tune_alignment		= false;	// Tune code alignments for running CPU ?
+static int		align_loops			= 32;		// Align the start of loops
+static int		align_jumps			= 32;		// Align the start of jumps
 static int		zero_fd				= -1;
 static int		optcount[10]		= {
 	10,		// How often a block has to be executed before it is translated
@@ -98,11 +100,6 @@ static int		optcount[10]		= {
 	0, 0, 0, 0,
 	-1, -1, -1, -1
 };
-
-#if PROFILE_ATRAPS_EXEC
-static unsigned int atraps_exec_count = 0;
-static unsigned int atraps_comp_count = 0;
-#endif
 
 struct op_properties {
 	uae_u8 use_flags;
@@ -117,11 +114,6 @@ static op_properties prop[65536];
 static inline int end_block(uae_u32 opcode)
 {
 	return (prop[opcode].cflow & fl_end_block);
-}
-
-static inline bool may_trap(uae_u32 opcode)
-{
-	return (prop[opcode].cflow & fl_trap);
 }
 
 uae_u8* start_pc_p;
@@ -189,6 +181,9 @@ extern struct cputbl op_smalltbl_5_nf[];
 #endif
 
 static void flush_icache_hard(int n);
+static void flush_icache_lazy(int n);
+static void flush_icache_none(int n);
+void (*flush_icache)(int n) = flush_icache_none;
 
 
 
@@ -585,70 +580,6 @@ static __inline__ void alloc_blockinfos(void)
 }
 
 /********************************************************************
- * Preferences handling. This is just a convenient place to put it  *
- ********************************************************************/
-extern int have_done_picasso;
-
-void check_prefs_changed_comp (void)
-{
-#if 0
-	/* gb-- BasiliskII does not have dynamic prefs changing */
-    currprefs.comptrustbyte = changed_prefs.comptrustbyte;
-    currprefs.comptrustword = changed_prefs.comptrustword;
-    currprefs.comptrustlong = changed_prefs.comptrustlong;
-    currprefs.comptrustnaddr= changed_prefs.comptrustnaddr;
-    currprefs.compnf = changed_prefs.compnf;
-    currprefs.comp_hardflush= changed_prefs.comp_hardflush;
-    currprefs.comp_constjump= changed_prefs.comp_constjump;
-    currprefs.comp_oldsegv= changed_prefs.comp_oldsegv;
-    currprefs.compfpu= changed_prefs.compfpu;
-    if (cache_size!=changed_prefs.cachesize) {
-	cache_size = changed_prefs.cachesize;
-	alloc_cache();
-    }
-    currprefs.comp_midopt=changed_prefs.comp_midopt;
-    currprefs.comp_lowopt=changed_prefs.comp_lowopt;
-
-    if (!currprefs.compforcesettings && !have_done_picasso) {
-	int stop=0;
-	if (currprefs.comptrustbyte!=0) 
-	    stop=write_log("<JIT compiler> : comptrustbyte is not 'direct'\n");
-	if (currprefs.comptrustword!=0) 
-	    stop=write_log("<JIT compiler> : comptrustword is not 'direct'\n");
-	if (currprefs.comptrustlong!=0) 
-	    stop=write_log("<JIT compiler> : comptrustlong is not 'direct'\n");
-	if (currprefs.comptrustnaddr!=0) 
-	    stop=write_log("<JIT compiler> : comptrustnaddr is not 'direct'\n");
-	if (currprefs.compnf!=1) 
-	    stop=write_log("<JIT compiler> : compnf is not 'yes'\n");
-	if (cache_size<2048) 
-	    stop=write_log("<JIT compiler> : cachesize is less than 2048\n");
-	if (currprefs.comp_hardflush) 
-	    stop=write_log("<JIT compiler> : comp_flushmode is 'hard'\n");
-	if (!canbang) 
-	    stop=write_log("<JIT compiler> : Cannot use most direct memory access,\n"
-			"                  and unable to recover from failed guess!\n");
-	if (stop) {
-	    write_log("JIT: The above configuration problems were detected\n"
-		   "JIT: These will adversely affect performance, and should\n"
-		   "JIT: not be used. For more info, please see README.JIT-tuning\n"
-		   "JIT: in the UAE documentation directory. You can force\n"
-		   "JIT: your settings to be used by setting\n"
-		   "JIT:      'compforcesettings=yes'\n"
-		   "JIT: in your config file\n");
-	    exit(1);
-	}
-    }
-#endif
-}
-
-/********************************************************************
- * Get the optimizer stuff                                          *
- ********************************************************************/
-
-#include "mid_optimizer.cpp"
-
-/********************************************************************
  * Functions to emit data into memory, and other general support    *
  ********************************************************************/
 
@@ -691,12 +622,8 @@ static __inline__ uae_u32 reverse32(uae_u32 v)
 
 #include "codegen_x86.cpp"
 
-// gb-- <codegen_x86.cpp> that includes <low_optimizer_x86.cpp> defines
-//		lopt_emit_all()
-
 void set_target(uae_u8* t)
 {
-    lopt_emit_all();
     target=t;
 }
 
@@ -707,7 +634,6 @@ static __inline__ uae_u8* get_target_noopt(void)
 
 __inline__ uae_u8* get_target(void)
 {
-    lopt_emit_all();
     return get_target_noopt();
 }
 
@@ -4553,9 +4479,6 @@ int kill_rodent(int r)
 
 uae_u32 get_const(int r)
 {
-#if USE_OPTIMIZER
-    if (!reg_alloc_run) 
-#endif
 	Dif (!isconst(r)) {
 	    D(panicbug("Register %d should be constant, but isn't",r));
 	    abort();
@@ -4601,44 +4524,6 @@ static __inline__ unsigned int cft_map (unsigned int f)
 #endif
 }
 
-#if 0
-void build_comp_atraps(void)
-{
-	uint32 opcode;
-	
-#if 1
-	// Compile BlockMoveData
-	opcode = cft_map(0xa22e);
-	compfunctbl[opcode] = op_block_move_data_comp_ff;
-	nfcompfunctbl[opcode] = op_block_move_data_comp_nf;
-	prop[opcode].use_flags = 0;
-	prop[opcode].set_flags = 0x1f;
-	prop[opcode].cflow = fl_trap;
-#endif
-
-#if 0
-	// Interpret BlockMoveData
-	opcode = cft_map(0xa22e);
-	cpufunctbl[opcode] = op_block_move_data_ff;
-	nfcpufunctbl[opcode] = op_block_move_data_nf;
-	prop[opcode].use_flags = 0;
-	prop[opcode].set_flags = FLAG_Z;
-	prop[opcode].cflow = 0;
-#endif
-
-#if 0
-	// BlockMove
-	// FIXME: must flush cache if length >= 12
-	opcode = cft_map(0xa20e);
-	compfunctbl[opcode] = op_block_move_data_comp_ff;
-	nfcompfunctbl[opcode] = op_block_move_data_comp_nf;
-	prop[opcode].use_flags = 0;
-	prop[opcode].set_flags = 0x1f;
-	prop[opcode].cflow = fl_trap;
-#endif
-}
-#endif
-
 void compiler_init(void)
 {
 	static bool initialized = false;
@@ -4677,23 +4562,14 @@ void compiler_init(void)
 	raw_init_cpu();
 	D(panicbug("<JIT compiler> : target processor has CMOV instructions : %s", have_cmov ? "yes" : "no"));
 	D(panicbug("<JIT compiler> : target processor can suffer from partial register stalls : %s", have_rat_stall ? "yes" : "no"));
-	
+	D(panicbug("<JIT compiler> : alignment for loops, jumps are %d, %d\n", align_loops, align_jumps));
+
 	// Translation cache flush mechanism
-	lazy_flush = bx_options.jit.jitlazyflush;
-	if ((lazy_flush < 0) || (lazy_flush > 2))
-	    abort();
-	D(panicbug("<JIT compiler> : translation cache flush : %s",
-		  lazy_flush == 0 ? "hard" :
-		  lazy_flush == 1 ? "lazy, version 1" :
-		  lazy_flush == 2 ? "lazy, version 2 (experimental)" : "<error>"));
-#if 0
-	// Compiler A-Traps
-	compile_atraps = PrefsFindBool("jitatraps");
-	write_log("<JIT compiler> : compile A-Traps : %s\n", str_on_off(compile_atraps));
-#endif
+	lazy_flush = (bx_options.jit.jitlazyflush == 0) ? false : true;
+	write_log("<JIT compiler> : lazy translation cache invalidation : %s\n", str_on_off(lazy_flush));
+	flush_icache = lazy_flush ? flush_icache_lazy : flush_icache_hard;
+	
 	// Compiler features
-	D(panicbug("<JIT compiler> : optimizer : %s", str_on_off(USE_OPTIMIZER)));
-	D(panicbug("<JIT compiler> : low-level optimizer : %s", str_on_off(USE_LOW_OPTIMIZER)));
 	D(panicbug("<JIT compiler> : register aliasing : %s", str_on_off(1)));
 	D(panicbug("<JIT compiler> : FP register aliasing : %s", str_on_off(USE_F_ALIAS)));
 	D(panicbug("<JIT compiler> : lazy constant offsetting : %s", str_on_off(USE_OFFSET)));
@@ -4701,10 +4577,6 @@ void compiler_init(void)
 	
 	// Build compiler tables
 	build_comp();
-#if 0
-	if (compile_atraps)
-		build_comp_atraps();
-#endif	
 	initialized = true;
 	
 #if PROFILE_COMPILE_TIME
@@ -4721,11 +4593,7 @@ void compiler_exit(void)
 	
 	// Deallocate translation cache
 	if (compiled_code) {
-#ifndef WIN32
-		munmap((caddr_t)compiled_code, cache_size);
-#else
-		free(compiled_code);
-#endif
+		vm_release(compiled_code, cache_size * 1024);
 		compiled_code = 0;
 	}
 	
@@ -4746,12 +4614,6 @@ void compiler_exit(void)
 	D(panicbug("Total compilation time : %.1f sec (%.1f%%)", double(compile_time)/double(CLOCKS_PER_SEC), 100.0*double(compile_time)/double(emul_time)));
 #endif
 
-#if 0 && PROFILE_ATRAPS_EXEC
-	write_log("### Compiled A-Traps statistics\n");
-	write_log("Total compilation count : %d\n", atraps_comp_count);
-	write_log("Total execution count   : %d\n", atraps_exec_count);
-	write_log("\n");
-#endif
 }
 
 bool compiler_use_jit(void)
@@ -4918,8 +4780,6 @@ void flush(int save_regs)
     if (needflags) {
 	D(panicbug("Warning! flush with needflags=1!"));
     }
-
-    lopt_emit_all();
 }
 
 static void flush_keepflags(void)
@@ -4956,7 +4816,6 @@ static void flush_keepflags(void)
 	}
     }
     raw_fp_cleanup_drop();
-    lopt_emit_all();
 }
 
 void freescratch(void)
@@ -4984,7 +4843,6 @@ void freescratch(void)
 
 static void align_target(uae_u32 a)
 {
-    lopt_emit_all();
     /* Fill with NOPs --- makes debugging with gdb easier */
     while ((uae_u32)target&(a-1)) 
 	*target++=0x90;
@@ -5054,11 +4912,6 @@ static uae_u32 get_handler_address(uae_u32 addr)
 {
     uae_u32 cl=cacheline(addr);
     blockinfo* bi=get_blockinfo_addr_new((void*)addr,0);
-
-#if USE_OPTIMIZER
-    if (!bi && reg_alloc_run)
-	return 0;
-#endif
     return (uae_u32)&(bi->direct_handler_to_use);
 }
 
@@ -5066,11 +4919,6 @@ static uae_u32 get_handler(uae_u32 addr)
 {
     uae_u32 cl=cacheline(addr);
     blockinfo* bi=get_blockinfo_addr_new((void*)addr,0);
-
-#if USE_OPTIMIZER
-    if (!bi && reg_alloc_run)
-	return 0;
-#endif
     return (uae_u32)bi->direct_handler_to_use;
 }
 
@@ -5095,7 +4943,6 @@ static void writemem_real(int address, int source, int offset, int size, int tmp
     }
 #endif
 
-#if FIXED_ADDRESSING
 	if (clobber)
 	    f=source;
 	switch(size) {
@@ -5105,85 +4952,16 @@ static void writemem_real(int address, int source, int offset, int size, int tmp
 	}
 	forget_about(tmp);
 	forget_about(f);
-#else
-    mov_l_rr(f,address);
-    shrl_l_ri(f,16);   /* The index into the baseaddr table */
-    mov_l_rm_indexed(f,(uae_u32)(baseaddr),f,4);
-
-    if (address==source && size>1) { /* IBrowse does this! */
-	add_l(f,address); /* f now has the final address */
-	switch(size) {
-	 case 2: bswap_16(source); mov_w_Rr(f,source,0); bswap_16(source); break;
-	 case 4: bswap_32(source); mov_l_Rr(f,source,0); bswap_32(source); break;
-	}
-    }
-    else {
-	/* f now holds the offset */
-	switch(size) {
-	 case 1: mov_b_mrr_indexed(address,f,1,source); break;
-	 case 2: bswap_16(source); mov_w_mrr_indexed(address,f,1,source); bswap_16(source); break;
-	 case 4: bswap_32(source); mov_l_mrr_indexed(address,f,1,source); bswap_32(source); break;
-	}
-    }
-#endif
-}
-
-static __inline__ void writemem(int address, int source, int offset, int size, int tmp)
-{
-#if FIXED_ADDRESSING
-	// shall not be called in those addressing modes
-	panicbug("writemem: in fixed addressing mode\n");
-	abort();
-#else
-    int f=tmp;
-
-    mov_l_rr(f,address);
-    shrl_l_ri(f,16);   /* The index into the mem bank table */
-    mov_l_rm_indexed(f,(uae_u32)mem_banks,f,4);
-    /* Now f holds a pointer to the actual membank */
-    mov_l_rR(f,f,offset);
-    /* Now f holds the address of the b/w/lput function */
-    call_r_02(f,address,source,4,size);
-    forget_about(tmp);
-#endif
 }
 
 void writebyte(int address, int source, int tmp)
 {
-#if 0
-    int  distrust;
-    switch (currprefs.comptrustbyte) {
-     case 0: distrust=0; break;
-     case 1: distrust=1; break;
-     case 2: distrust=((start_pc&0xF80000)==0xF80000); break;
-     case 3: distrust=!have_done_picasso; break;
-     default: abort();
-    }
-#endif
-
-    if (special_mem&SPECMEM_WRITE)
-	writemem_special(address,source,20,1,tmp);
-    else
 	writemem_real(address,source,20,1,tmp,0);
 }
 
 static __inline__ void writeword_general(int address, int source, int tmp,
 					 int clobber)
 {
-#if 0
-    int  distrust;
-    switch (currprefs.comptrustword) {
-     case 0: distrust=0; break;
-     case 1: distrust=1; break;
-     case 2: distrust=((start_pc&0xF80000)==0xF80000); break;
-     case 3: distrust=!have_done_picasso; break;
-     default: abort();
-    }
-#endif
-
-    if (special_mem&SPECMEM_WRITE)
-	writemem_special(address,source,16,2,tmp);
-    else
 	writemem_real(address,source,16,2,tmp,clobber);
 }
 
@@ -5200,20 +4978,6 @@ void writeword(int address, int source, int tmp)
 static __inline__ void writelong_general(int address, int source, int tmp, 
 					 int clobber)
 {
-#if 0
-    int  distrust;
-    switch (currprefs.comptrustlong) {
-     case 0: distrust=0; break;
-     case 1: distrust=1; break;
-     case 2: distrust=((start_pc&0xF80000)==0xF80000); break;
-     case 3: distrust=!have_done_picasso; break;
-     default: abort();
-    }
-#endif
-
-    if (special_mem&SPECMEM_WRITE)
-	writemem_special(address,source,12,4,tmp);
-    else
 	writemem_real(address,source,12,4,tmp,clobber);
 }
 
@@ -5248,118 +5012,30 @@ static void readmem_real(int address, int dest, int offset, int size, int tmp)
     }
 #endif
 
-#if FIXED_ADDRESSING
 	switch(size) {
 	 case 1: mov_b_brR(dest,address,MEMBaseDiff); break; 
 	 case 2: mov_w_brR(dest,address,MEMBaseDiff); bswap_16(dest); break;
 	 case 4: mov_l_brR(dest,address,MEMBaseDiff); bswap_32(dest); break;
 	}
 	forget_about(tmp);
-#else
-    mov_l_rr(f,address);
-    shrl_l_ri(f,16);   /* The index into the baseaddr table */
-    mov_l_rm_indexed(f,(uae_u32)baseaddr,f,4);
-    /* f now holds the offset */
-  
-    switch(size) {
-     case 1: mov_b_rrm_indexed(dest,address,f,1); break;
-     case 2: mov_w_rrm_indexed(dest,address,f,1); bswap_16(dest); break;
-     case 4: mov_l_rrm_indexed(dest,address,f,1); bswap_32(dest); break;
-    }
-    forget_about(tmp);
-#endif
-}
-
-static __inline__ void readmem(int address, int dest, int offset, int size, int tmp)
-{
-#if FIXED_ADDRESSING
-	// shall not be called in those addressing modes
-	panicbug("readmem: in fixed addressing mode\n");
-	abort();
-#else
-    int f=tmp;
-
-    mov_l_rr(f,address);
-    shrl_l_ri(f,16);   /* The index into the mem bank table */
-    mov_l_rm_indexed(f,(uae_u32)mem_banks,f,4);
-    /* Now f holds a pointer to the actual membank */
-    mov_l_rR(f,f,offset);
-    /* Now f holds the address of the b/w/lget function */
-    call_r_11(dest,f,address,size,4);
-    forget_about(tmp);
-#endif
 }
 
 void readbyte(int address, int dest, int tmp)
 {
-#if 0
-    int  distrust;
-    switch (currprefs.comptrustbyte) {
-     case 0: distrust=0; break;
-     case 1: distrust=1; break;
-     case 2: distrust=((start_pc&0xF80000)==0xF80000); break;
-     case 3: distrust=!have_done_picasso; break;
-     default: abort();
-    }
-#endif
-
-    if (special_mem&SPECMEM_READ)
-	readmem_special(address,dest,8,1,tmp);
-    else
 	readmem_real(address,dest,8,1,tmp);
 }
 
 void readword(int address, int dest, int tmp)
 {
-#if 0
-    int  distrust;
-    switch (currprefs.comptrustword) {
-     case 0: distrust=0; break;
-     case 1: distrust=1; break;
-     case 2: distrust=((start_pc&0xF80000)==0xF80000); break;
-     case 3: distrust=!have_done_picasso; break;
-     default: abort();
-    }
-#endif
-
-    if (special_mem&SPECMEM_READ)
-	readmem_special(address,dest,4,2,tmp);
-    else
 	readmem_real(address,dest,4,2,tmp);
 }
 
 void readlong(int address, int dest, int tmp)
 {
-#if 0
-    int  distrust;
-    switch (currprefs.comptrustlong) {
-     case 0: distrust=0; break;
-     case 1: distrust=1; break;
-     case 2: distrust=((start_pc&0xF80000)==0xF80000); break;
-     case 3: distrust=!have_done_picasso; break;
-     default: abort();
-    }
-#endif
-
-    if (special_mem&SPECMEM_READ)
-	readmem_special(address,dest,0,4,tmp);
-    else
 	readmem_real(address,dest,0,4,tmp);
 }
 
-/* This one might appear a bit odd... */
-static __inline__ void get_n_addr_old(int address, int dest, int tmp)
-{
-#if FIXED_ADDRESSING
-	// shall not be called in those addressing modes
-	panicbug("get_n_addr_old: in real or direct addressing mode\n");
-	abort();
-#else
-    readmem(address,dest,24,4,tmp);
-#endif
-}
-
-static __inline__ void get_n_addr_real(int address, int dest, int tmp)
+void get_n_addr(int address, int dest, int tmp)
 {
 	// a is the register containing the virtual address
 	// after the offset had been fetched
@@ -5382,54 +5058,17 @@ static __inline__ void get_n_addr_real(int address, int dest, int tmp)
 
 #if REAL_ADDRESSING
 	mov_l_rr(dest, address);
-	forget_about(tmp);
 #elif FIXED_ADDRESSING
 	lea_l_brr(dest,address,MEMBaseDiff);
-	forget_about(tmp);
-#else
-	mov_l_rr(f,address);
-	shrl_l_ri(f,16);   /* The index into the baseaddr bank table */
-	mov_l_rm_indexed(f,(uae_u32)baseaddr,f,4);
-	add_l(dest,a);
-	forget_about(tmp);
 #endif
-}
-
-void get_n_addr(int address, int dest, int tmp)
-{
-#if 0
-    int  distrust;
-    switch (currprefs.comptrustnaddr) {
-     case 0: distrust=0; break;
-     case 1: distrust=1; break;
-     case 2: distrust=((start_pc&0xF80000)==0xF80000); break;
-     case 3: distrust=!have_done_picasso; break;
-     default: abort();
-    }
-#endif
-
-    if (special_mem)
-	get_n_addr_old(address,dest,tmp);
-    else
-	get_n_addr_real(address,dest,tmp);
+	forget_about(tmp);
 }
 
 void get_n_addr_jmp(int address, int dest, int tmp)
 {
-#if FIXED_ADDRESSING
 	/* For this, we need to get the same address as the rest of UAE
 	 would --- otherwise we end up translating everything twice */
     get_n_addr(address,dest,tmp);
-#else
-    int f=tmp;
-    if (address!=dest)
-	f=dest;
-    mov_l_rr(f,address);
-    shrl_l_ri(f,16);   /* The index into the baseaddr bank table */
-    mov_l_rm_indexed(dest,(uae_u32)baseaddr,f,4);
-    add_l(dest,address);
-    forget_about(tmp);
-#endif
 }
 
 
@@ -5528,11 +5167,7 @@ void alloc_cache(void)
 {
 	if (compiled_code) {
 		flush_icache_hard(6);
-#ifndef WIN32
-		munmap((caddr_t)compiled_code, cache_size*1024);
-#else
-		free(compiled_code);
-#endif
+		vm_release(compiled_code, cache_size * 1024);
 		compiled_code = 0;
 	}
 	
@@ -5540,18 +5175,12 @@ void alloc_cache(void)
 		return;
 	
 	while (!compiled_code && cache_size) {
-#ifndef WIN32
-		compiled_code = (uae_u8 *)mmap(0, cache_size * 1024,
-			PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE, zero_fd, 0);
-		if (compiled_code == (uae_u8 *)MAP_FAILED) {
-#else
-		compiled_code = (uae_u8 *)malloc(cache_size * 1024);
-		if (compiled_code == 0) {
-#endif
+		if ((compiled_code = (uae_u8 *)vm_acquire(cache_size * 1024)) == VM_MAP_FAILED) {
 			compiled_code = 0;
 			cache_size /= 2;
 		}
 	}
+	vm_protect(compiled_code, cache_size, VM_PAGE_READ | VM_PAGE_WRITE | VM_PAGE_EXECUTE);
 	
 	if (compiled_code) {
 		D(panicbug("<JIT compiler> : actual translation cache size : %d KB at 0x%08X", cache_size, compiled_code));
@@ -5798,54 +5427,55 @@ static __inline__ void create_popalls(void)
      registers before jumping back to the various get-out routines.
      This generates the code for it.
   */
-  popall_do_nothing=current_compile_p;
+  align_target(align_jumps);
+  popall_do_nothing=get_target();
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
   }
   raw_jmp((uae_u32)do_nothing);
-  align_target(32);
   
+  align_target(align_jumps);
   popall_execute_normal=get_target();
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
   }
   raw_jmp((uae_u32)execute_normal);
-  align_target(32);
 
+  align_target(align_jumps);
   popall_cache_miss=get_target();
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
   }
   raw_jmp((uae_u32)cache_miss);
-  align_target(32);
 
+  align_target(align_jumps);
   popall_recompile_block=get_target();
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
   }
   raw_jmp((uae_u32)recompile_block);
-  align_target(32);
-  
+
+  align_target(align_jumps);
   popall_exec_nostats=get_target();
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
   }
   raw_jmp((uae_u32)exec_nostats);
-  align_target(32);
-  
+
+  align_target(align_jumps);
   popall_check_checksum=get_target();
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
   }
   raw_jmp((uae_u32)check_checksum);
-  align_target(32);
-  
+
+  align_target(align_jumps);
   current_compile_p=get_target();
 #else
   popall_exec_nostats=(void *)exec_nostats;
@@ -5887,13 +5517,13 @@ static void prepare_block(blockinfo* bi)
     int i;
 
     set_target(current_compile_p);
-    align_target(32);
+    align_target(align_jumps);
     bi->direct_pen=(cpuop_func *)get_target();
     raw_mov_l_rm(0,(uae_u32)&(bi->pc_p));
     raw_mov_l_mr((uae_u32)&regs.pc_p,0);
     raw_jmp((uae_u32)popall_execute_normal);
 
-    align_target(32);
+    align_target(align_jumps);
     bi->direct_pcc=(cpuop_func *)get_target();
     raw_mov_l_rm(0,(uae_u32)&(bi->pc_p));
     raw_mov_l_mr((uae_u32)&regs.pc_p,0);
@@ -6041,7 +5671,12 @@ void build_comp(void)
     default_ss=empty_ss;
 }
 
-    
+
+static void flush_icache_none(int n)
+{
+	/* Nothing to do.  */
+}
+ 
 static void flush_icache_hard(int n)
 {
     uae_u32 i;
@@ -6080,7 +5715,7 @@ static void flush_icache_hard(int n)
    we simply mark everything as "needs to be checked". 
 */
 
-static __inline__ void flush_icache_lazy_1(int n)
+static __inline__ void flush_icache_lazy(int n)
 {
     uae_u32 i;
     blockinfo* bi;
@@ -6120,20 +5755,6 @@ static __inline__ void flush_icache_lazy_1(int n)
 	active->prev_p=&dormant;
 	active=NULL;
 }
-
-// gb-- not implemented yet
-#define flush_icache_lazy_2 flush_icache_lazy_1
-
-void flush_icache(int n)
-{
-    switch (lazy_flush) {
-    case 0: flush_icache_hard(n); break;
-    case 1: flush_icache_lazy_1(n); break;
-    case 2: flush_icache_lazy_2(n); break;
-    default: abort();
-    }
-}
-
 
 static void catastrophe(void)
 {
@@ -6313,21 +5934,18 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	    if ((uae_u32)currpcp>max_pcp)
 		max_pcp=(uae_u32)currpcp;
 
-	    if (COMPILER_CAN_NOFLAGS) {
+// 	    if (COMPILER_CAN_NOFLAGS) {
 		liveflags[i]=((liveflags[i+1]&
 			       (~prop[op].set_flags))|
 			      prop[op].use_flags);
 		if (prop[op].is_addx && (liveflags[i+1]&FLAG_Z)==0)
 		    liveflags[i]&= ~FLAG_Z;
-	    }
-	    else {
-		liveflags[i]=0x1f;
-	    }
+// 	    }
 	}
 
 	bi->needed_flags=liveflags[0];
 
-	align_target(32);
+	align_target(align_loops);
 	was_comp=0;
 
 	bi->direct_handler=(cpuop_func *)get_target();
@@ -6370,7 +5988,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		compop_func **comptbl;
 		uae_u32 opcode=DO_GET_OPCODE(pc_hist[i].location);
 		needed_flags=(liveflags[i+1] & prop[opcode].set_flags);
-		if (!needed_flags && COMPILER_CAN_NOFLAGS) {
+		if (!needed_flags) {
 		    cputbl=nfcpufunctbl;
 		    comptbl=nfcompfunctbl;
 		}
@@ -6388,13 +6006,6 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		    }
 		    was_comp++;
 
-#if PROFILE_ATRAPS_EXEC
-			if ((opcode & cft_map(0xf000)) == cft_map(0xa000)) {
-				atraps_comp_count++;
-				add_l_mi((uae_u32)&atraps_exec_count,1);
-			}
-#endif
-			
 		    comptbl[opcode](opcode);
 		    freescratch();
 		    if (!(liveflags[i+1] & FLAG_CZNV)) { 
@@ -6509,7 +6120,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		raw_jmp((uae_u32)popall_do_nothing);
 		create_jmpdep(bi,0,tba,t1);
 
-		align_target(16);
+		align_target(align_jumps);
 		/* not-predicted outcome */
 		*branchadd=(uae_u32)get_target()-((uae_u32)branchadd+4);
 		live=tmp; /* Ouch again */
@@ -6615,14 +6226,13 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 #endif
 	
 	log_dump();
-	align_target(32);
+	align_target(align_jumps);
 
 	/* This is the non-direct handler */
 	bi->handler=
 	    bi->handler_to_use=(cpuop_func *)get_target();
 	raw_cmp_l_mi((uae_u32)&regs.pc_p,(uae_u32)pc_hist[0].location);
 	raw_jnz((uae_u32)popall_cache_miss);
-	lopt_emit_all();
 	comp_pc_p=(uae_u8*)pc_hist[0].location;
 
 	bi->status=BI_FINALIZING;
@@ -6632,9 +6242,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 
 	raw_jmp((uae_u32)bi->direct_handler);
 
-	align_target(32);
 	current_compile_p=get_target();
-
 	raise_in_cl_list(bi);
 	
 	/* We will flush soon, anyway, so let's do it now */
@@ -6660,10 +6268,10 @@ void exec_nostats(void)
 {
 	for (;;)  { 
 		uae_u32 opcode = GET_OPCODE;
-#ifdef X86_ASSEMBLY__disable
-		ASM_VOLATILE("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
-			: : "b" (cpufunctbl[opcode]), "a" (opcode)
-			: "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
+#if (1 && defined(X86_ASSEMBLY))
+		__asm__ __volatile__("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
+							 : : "b" (cpufunctbl[opcode]), "a" (opcode)
+							 : "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
 #else
 		(*cpufunctbl[opcode])(opcode);
 #endif
@@ -6691,10 +6299,10 @@ void execute_normal(void)
 #if FLIGHT_RECORDER
 			m68k_record_step(m68k_getpc());
 #endif
-#ifdef X86_ASSEMBLY__disable
-			ASM_VOLATILE("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
-				: : "b" (cpufunctbl[opcode]), "a" (opcode)
-				: "%edx", "%ecx", "%esi", "%edi", "%ebp", "memory", "cc");
+#if (1 && defined(X86_ASSEMBLY))
+			__asm__ __volatile__("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
+								 : : "b" (cpufunctbl[opcode]), "a" (opcode)
+								 : "%edx", "%ecx", "%esi", "%edi", "%ebp", "memory", "cc");
 #else
 			(*cpufunctbl[opcode])(opcode);
 #endif
@@ -6713,10 +6321,10 @@ typedef void (*compiled_handler)(void);
 void m68k_do_compile_execute(void)
 {
 	for (;;) {
-#ifdef X86_ASSEMBLY__disable
-		ASM_VOLATILE("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
-			: : "b" (cache_tags[cacheline(regs.pc_p)].handler)
-			: "%edx", "%ecx", "%eax", "%esi", "%edi", "%ebp", "memory", "cc");
+#if (1 && defined(X86_ASSEMBLY))
+		__asm__ __volatile__("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
+							 : : "b" (cache_tags[cacheline(regs.pc_p)].handler)
+							 : "%edx", "%ecx", "%eax", "%esi", "%edi", "%ebp", "memory", "cc");
 #else
 		((compiled_handler)(pushall_call_handler))();
 #endif

@@ -29,8 +29,8 @@ extern int broken_in;
 /* Control flow information */
 #define CFLOW_NORMAL		0
 #define CFLOW_BRANCH		1
-#define CFLOW_JUMP			2
-#define CFLOW_TRAP			CFLOW_JUMP
+#define CFLOW_JUMP		2
+#define CFLOW_TRAP		CFLOW_JUMP
 #define CFLOW_RETURN		3
 #define CFLOW_SPCFLAGS		32	/* some spcflags are set */
 #define CFLOW_EXEC_RETURN	64	/* must exit from the execution loop */
@@ -43,7 +43,7 @@ extern int broken_in;
    begining of the function, thus making it possible to cpuopti to remove them
    since m68k_run_1 will save those registers before calling the instruction
    handler */
-# define cpuop_tag(tag)		ASM_VOLATILE ( "#cpuop_" tag )
+# define cpuop_tag(tag)		__asm__ __volatile__ ( "#cpuop_" tag )
 #else
 # define cpuop_tag(tag)		;
 #endif

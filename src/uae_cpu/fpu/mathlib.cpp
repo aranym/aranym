@@ -70,8 +70,8 @@ PRIVATE fpu_extended fp_do_pow(fpu_extended x, fpu_extended y)
 		}
     }
 	
-	ASM_VOLATILE("fyl2x" : "=t" (value) : "0" (x), "u" (1.0) : "st(1)");
-	ASM_VOLATILE("fmul		%%st(1)		# y * log2(x)\n\t"
+	__asm__ __volatile__("fyl2x" : "=t" (value) : "0" (x), "u" (1.0) : "st(1)");
+	__asm__ __volatile__("fmul		%%st(1)		# y * log2(x)\n\t"
 				 "fst		%%st(1)\n\t"
 				 "frndint				# int(y * log2(x))\n\t"
 				 "fxch\n\t"
@@ -79,7 +79,7 @@ PRIVATE fpu_extended fp_do_pow(fpu_extended x, fpu_extended y)
 				 "f2xm1					# 2^(fract(y * log2(x))) - 1\n\t"
 				 : "=t" (value), "=u" (exponent) : "0" (y), "1" (value));
 	value += 1.0;
-	ASM_VOLATILE("fscale" : "=t" (value) : "0" (value), "u" (exponent));
+	__asm__ __volatile__("fscale" : "=t" (value) : "0" (value), "u" (exponent));
 	return value;
 }
 
@@ -91,9 +91,9 @@ PRIVATE fpu_extended fp_do_log1p(fpu_extended x)
 	//   -1 + sqrt(2) / 2 <= x <= 1 - sqrt(2) / 2
 	// 0.29 is a safe value.
 	if (fp_fabs(x) <= 0.29)
-		ASM_VOLATILE("fldln2; fxch; fyl2xp1" : "=t" (value) : "0" (x));
+		__asm__ __volatile__("fldln2; fxch; fyl2xp1" : "=t" (value) : "0" (x));
 	else
-		ASM_VOLATILE("fldln2; fxch; fyl2x" : "=t" (value) : "0" (x + 1.0));
+		__asm__ __volatile__("fldln2; fxch; fyl2x" : "=t" (value) : "0" (x + 1.0));
 	return value;
 }
 

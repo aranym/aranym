@@ -1498,11 +1498,11 @@ void m68k_do_execute (void)
 #endif
 	opcode = GET_OPCODE;
 
-// Seems to be faster without the assembly... - yes, it is "bugfix"
+// Seems to be faster without the assembly...
 #if (0 && defined(X86_ASSEMBLY))
-	__asm__ __volatile__ ("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
-                     : : "b" (cpufunctbl[opcode]), "a" (opcode)
-                     : "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
+	__asm__ __volatile__("\tpushl %%ebp\n\tcall *%%ebx\n\tpopl %%ebp" /* FIXME */
+						 : : "b" (cpufunctbl[opcode]), "a" (opcode)
+						 : "%edx", "%ecx", "%esi", "%edi",  "%ebp", "memory", "cc");
 #else
 	(*cpufunctbl[opcode])(opcode);
 #endif
@@ -1523,9 +1523,6 @@ setjmpagain:
     int prb = setjmp(excep_env);
     if (prb != 0) {
 	flush_icache(0);
-#if 0	// the following call is not needed, it seems
-	flush_internals();
-#endif
         Exception(prb, 0);
     	goto setjmpagain;
     }

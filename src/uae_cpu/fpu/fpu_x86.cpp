@@ -271,7 +271,7 @@ PRIVATE char * FFPU etos(fpu_register const & e)
     FSTP    DWORD PTR f
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%1\n"
 			"fstp	%0\n"
 		:	"=m" (f)
@@ -325,14 +325,14 @@ PRIVATE void FFPU FPU_CONSISTENCY_CHECK_START(void)
 /*	_asm {
 	  FNSTSW checked_sw_atstart
 	} */
-	ASM_VOLATILE("fnstsw %0" : "=m" (checked_sw_atstart));
+	__asm__ __volatile__("fnstsw %0" : "=m" (checked_sw_atstart));
 }
 
 PRIVATE void FFPU FPU_CONSISTENCY_CHECK_STOP(const char *name)
 {
 	uae_u16 checked_sw_atend;
 //	_asm FNSTSW checked_sw_atend
-	ASM_VOLATILE("fnstsw %0" : "=m" (checked_sw_attend));
+	__asm__ __volatile__("fnstsw %0" : "=m" (checked_sw_attend));
 	char msg[256];
 
 	// Check for FPU stack overflows/underflows.
@@ -400,7 +400,7 @@ PRIVATE void __inline__ FFPU build_ex_status ()
 {
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word_accrued |= x86_status_word;
 	}
 }
@@ -502,7 +502,7 @@ PRIVATE void FFPU signed_to_extended ( uae_s32 x, fpu_register & f )
 		FSTP    TBYTE PTR [ESI]
 	} */
 	
-	ASM_VOLATILE("fildl %1\n\tfstpt %0" : "=m" (f) : "m" (x));
+	__asm__ __volatile__("fildl %1\n\tfstpt %0" : "=m" (f) : "m" (x));
 	D(bug("signed_to_extended (%X) = %s\r\n",(int)x,etos(f)));
 	FPU_CONSISTENCY_CHECK_STOP("signed_to_extended");
 }
@@ -520,7 +520,7 @@ PRIVATE uae_s32 FFPU extended_to_signed_32 ( fpu_register const & f )
     FNSTSW  sw_temp
 	} */
 
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fistpl	%0\n"
 			"fnstsw	%1\n"
@@ -530,7 +530,7 @@ PRIVATE uae_s32 FFPU extended_to_signed_32 ( fpu_register const & f )
 	
 	if(sw_temp & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		if(sw_temp & (SW_OE|SW_UE|SW_DE|SW_IE)) { // Map SW_OE to OPERR.
 			x86_status_word |= SW_IE;
 			x86_status_word_accrued |= SW_IE;
@@ -562,7 +562,7 @@ PRIVATE uae_s16 FFPU extended_to_signed_16 ( fpu_register const & f )
     FNSTSW  sw_temp
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fistp	%0\n"
 			"fnstsw	%1\n"
@@ -572,7 +572,7 @@ PRIVATE uae_s16 FFPU extended_to_signed_16 ( fpu_register const & f )
 
 	if(sw_temp & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		if(sw_temp & (SW_OE|SW_UE|SW_DE|SW_IE)) { // Map SW_OE to OPERR.
 			x86_status_word |= SW_IE;
 			x86_status_word_accrued |= SW_IE;
@@ -602,7 +602,7 @@ PRIVATE uae_s8 FFPU extended_to_signed_8 ( fpu_register const & f )
     FNSTSW  sw_temp
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fistp	%0\n"
 			"fnstsw	%1\n"
@@ -612,7 +612,7 @@ PRIVATE uae_s8 FFPU extended_to_signed_8 ( fpu_register const & f )
 
 	if(sw_temp & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		if(sw_temp & (SW_OE|SW_UE|SW_DE|SW_IE)) { // Map SW_OE to OPERR.
 			x86_status_word |= SW_IE;
 			x86_status_word_accrued |= SW_IE;
@@ -644,7 +644,7 @@ PRIVATE void FFPU double_to_extended ( double x, fpu_register & f )
 		FSTP    TBYTE PTR [EDI]
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldl	%1\n"
 			"fstpt	%0\n"
 		:	"=m" (f)
@@ -665,7 +665,7 @@ PRIVATE fpu_double FFPU extended_to_double( fpu_register const & f )
     FSTP    QWORD PTR result
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%1\n"
 			"fstpl	%0\n"
 		:	"=m" (result)
@@ -685,7 +685,7 @@ PRIVATE void FFPU to_single ( uae_u32 src, fpu_register & f )
 		FSTP    TBYTE PTR [ESI]
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"flds	%1\n"
 			"fstpt	%0\n"
 		:	"=m" (f)
@@ -779,7 +779,7 @@ PRIVATE void FFPU to_double ( uae_u32 wrd1, uae_u32 wrd2, fpu_register & f )
 		FSTP    TBYTE PTR [EDI]
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldl	%1\n"
 			"fstpt	%0\n"
 		:	"=m" (f)
@@ -803,7 +803,7 @@ PRIVATE uae_u32 FFPU from_single ( fpu_register const & f )
     FNSTSW  sw_temp
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fstps	%0\n"
 			"fnstsw	%1\n"
@@ -850,7 +850,7 @@ PRIVATE void FFPU from_double ( fpu_register const & f, uae_u32 *wrd1, uae_u32 *
     FNSTSW  sw_temp
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fstpl	%0\n"
 			"fnstsw	%1\n"
@@ -887,7 +887,7 @@ PRIVATE void FFPU do_fmove ( fpu_register & dest, fpu_register const & src )
 		FSTP    TBYTE PTR [EDI]
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fxam	\n"
 			"fnstsw	%0\n"
@@ -901,7 +901,7 @@ PRIVATE void FFPU do_fmove ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fsmove ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fxam   \n"
 			"fnstsw %0\n"
@@ -915,7 +915,7 @@ PRIVATE void FFPU do_fsmove ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fdmove ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fxam   \n"
 			"fnstsw %0\n"
@@ -955,7 +955,7 @@ PRIVATE void FFPU do_fint ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"frndint\n"
 			"fxam	\n"
@@ -966,7 +966,7 @@ PRIVATE void FFPU do_fint ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -993,7 +993,7 @@ PRIVATE void FFPU do_fintrz ( fpu_register & dest, fpu_register const & src )
 		FSTP    TBYTE PTR [EDI]
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fstcw	%0\n"
 			"andl	$(~X86_ROUNDING_MODE), %0\n"
 			"orl	$CW_RC_ZERO, %0\n"
@@ -1010,7 +1010,7 @@ PRIVATE void FFPU do_fintrz ( fpu_register & dest, fpu_register const & src )
 	
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -1030,7 +1030,7 @@ PRIVATE void FFPU do_fsqrt ( fpu_register & dest, fpu_register const & src )
 		FSTP    TBYTE PTR [EDI]
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fsqrt	\n"
 			"fxam	\n"
@@ -1042,7 +1042,7 @@ PRIVATE void FFPU do_fsqrt ( fpu_register & dest, fpu_register const & src )
 	
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -1052,7 +1052,7 @@ PRIVATE void FFPU do_fsqrt ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fssqrt ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fsqrt  \n"
 			"fxam   \n"
@@ -1064,7 +1064,7 @@ PRIVATE void FFPU do_fssqrt ( fpu_register & dest, fpu_register const & src )
 
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -1074,7 +1074,7 @@ PRIVATE void FFPU do_fssqrt ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fdsqrt ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fsqrt  \n"
 			"fxam   \n"
@@ -1086,7 +1086,7 @@ PRIVATE void FFPU do_fdsqrt ( fpu_register & dest, fpu_register const & src )
 
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -1104,7 +1104,7 @@ PRIVATE void FFPU do_ftst ( fpu_register const & src )
 		FSTP    ST(0)
 	} */
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%1\n"
 			"fxam	\n"
 			"fnstsw	%0\n"
@@ -1115,7 +1115,7 @@ PRIVATE void FFPU do_ftst ( fpu_register const & src )
 	
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~SW_EXCEPTION_MASK;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_ftst");
@@ -1300,7 +1300,7 @@ PRIVATE void FFPU do_fsin ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fsin	\n"
 			"fxam	\n"
@@ -1311,7 +1311,7 @@ PRIVATE void FFPU do_fsin ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -1332,7 +1332,7 @@ PRIVATE void FFPU do_ftan ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fptan	\n"
 			"fstp	%%st(0)\n"
@@ -1344,7 +1344,7 @@ PRIVATE void FFPU do_ftan ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_PE - SW_UE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -1363,7 +1363,7 @@ PRIVATE void FFPU do_fabs ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fabs	\n"
 			"fxam	\n"
@@ -1375,7 +1375,7 @@ PRIVATE void FFPU do_fabs ( fpu_register & dest, fpu_register const & src )
 	// x86 fabs should not rise any exceptions (except stack underflow)
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~SW_EXCEPTION_MASK;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fabs");
@@ -1384,7 +1384,7 @@ PRIVATE void FFPU do_fabs ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fsabs ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fabs   \n"
 			"fxam   \n"
@@ -1396,7 +1396,7 @@ PRIVATE void FFPU do_fsabs ( fpu_register & dest, fpu_register const & src )
 	// x86 fabs should not rise any exceptions (except stack underflow)
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~SW_EXCEPTION_MASK;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fsabs");
@@ -1405,7 +1405,7 @@ PRIVATE void FFPU do_fsabs ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fdabs ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fabs   \n"
 			"fxam   \n"
@@ -1417,7 +1417,7 @@ PRIVATE void FFPU do_fdabs ( fpu_register & dest, fpu_register const & src )
 	// x86 fabs should not rise any exceptions (except stack underflow)
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~SW_EXCEPTION_MASK;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fdabs");
@@ -1435,7 +1435,7 @@ PRIVATE void FFPU do_fneg ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fchs	\n"
 			"fxam	\n"
@@ -1447,7 +1447,7 @@ PRIVATE void FFPU do_fneg ( fpu_register & dest, fpu_register const & src )
 	// x86 fchs should not rise any exceptions (except stack underflow)
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~SW_EXCEPTION_MASK;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fneg");
@@ -1456,7 +1456,7 @@ PRIVATE void FFPU do_fneg ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fsneg ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fchs   \n"
 			"fxam   \n"
@@ -1468,7 +1468,7 @@ PRIVATE void FFPU do_fsneg ( fpu_register & dest, fpu_register const & src )
 	// x86 fchs should not rise any exceptions (except stack underflow)
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~SW_EXCEPTION_MASK;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fsneg");
@@ -1477,7 +1477,7 @@ PRIVATE void FFPU do_fsneg ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fdneg ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fchs   \n"
 			"fxam   \n"
@@ -1489,7 +1489,7 @@ PRIVATE void FFPU do_fdneg ( fpu_register & dest, fpu_register const & src )
 	// x86 fchs should not rise any exceptions (except stack underflow)
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~SW_EXCEPTION_MASK;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fdneg");
@@ -1507,7 +1507,7 @@ PRIVATE void FFPU do_fcos ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fcos	\n"
 			"fxam	\n"
@@ -1518,7 +1518,7 @@ PRIVATE void FFPU do_fcos ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -1538,7 +1538,7 @@ PRIVATE void FFPU do_fgetexp ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fxtract\n"
 			"fstp	%%st(0)\n"
@@ -1550,7 +1550,7 @@ PRIVATE void FFPU do_fgetexp ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~SW_EXCEPTION_MASK;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fgetexp");
@@ -1569,7 +1569,7 @@ PRIVATE void FFPU do_fgetman ( fpu_register & dest, fpu_register const & src )
 		FSTP    TBYTE PTR [EDI]
 		FSTP    ST(0)						; pop exponent
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fxtract\n"
 			"fxam	\n"
@@ -1581,7 +1581,7 @@ PRIVATE void FFPU do_fgetman ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~SW_EXCEPTION_MASK;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fgetman");
@@ -1601,7 +1601,7 @@ PRIVATE void FFPU do_fdiv ( fpu_register & dest, fpu_register const & src )
 		FSTP    TBYTE PTR [EDI]
 		FSTP    ST(0)
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fldt	%1\n"
 			"fdiv	%%st(1), %%st(0)\n"
@@ -1614,7 +1614,7 @@ PRIVATE void FFPU do_fdiv ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word_accrued |= x86_status_word;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fdiv");
@@ -1623,7 +1623,7 @@ PRIVATE void FFPU do_fdiv ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fsdiv ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fldt   %1\n"
 			"fdiv   %%st(1), %%st(0)\n"
@@ -1636,7 +1636,7 @@ PRIVATE void FFPU do_fsdiv ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word_accrued |= x86_status_word;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fsdiv");
@@ -1645,7 +1645,7 @@ PRIVATE void FFPU do_fsdiv ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fddiv ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fldt   %1\n"
 			"fdiv   %%st(1), %%st(0)\n"
@@ -1658,7 +1658,7 @@ PRIVATE void FFPU do_fddiv ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word_accrued |= x86_status_word;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fddiv");
@@ -1725,7 +1725,7 @@ partial_loop:
 	
 #if !USE_3_BIT_QUOTIENT
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"movl	%6, %%ecx\n"	// %6: x86_control_word		(read)
 			"andl	$(~X86_ROUNDING_MODE), %%ecx\n"
 			"orl	$CW_RC_ZERO, %%ecx\n"
@@ -1756,7 +1756,7 @@ partial_loop:
 	
 #else
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%3\n"
 			"fldt	%2\n"
 			"0:\n"					// partial_loop
@@ -1776,7 +1776,7 @@ partial_loop:
 	
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_UE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -1848,7 +1848,7 @@ partial_loop:
 
 #if !USE_3_BIT_QUOTIENT
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"movl	%6, %%ecx\n"	// %6: x86_control_word		(read)
 			"andl	$(~X86_ROUNDING_MODE), %%ecx\n"
 			"orl	$CW_RC_NEAR, %%ecx\n"
@@ -1879,7 +1879,7 @@ partial_loop:
 	
 #else
 	
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%3\n"
 			"fldt	%2\n"
 			"0:\n"					// partial_loop
@@ -1899,7 +1899,7 @@ partial_loop:
 	
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_UE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -2030,7 +2030,7 @@ PRIVATE void FFPU do_fadd ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fldt	%1\n"
 			"fadd	\n"
@@ -2042,7 +2042,7 @@ PRIVATE void FFPU do_fadd ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_UE - SW_OE - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -2052,7 +2052,7 @@ PRIVATE void FFPU do_fadd ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fsadd ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fldt   %1\n"
 			"fadd   \n"
@@ -2073,7 +2073,7 @@ PRIVATE void FFPU do_fsadd ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fdadd ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fldt   %1\n"
 			"fadd   \n"
@@ -2104,7 +2104,7 @@ PRIVATE void FFPU do_fmul ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fldt	%1\n"
 			"fmul	\n"
@@ -2116,7 +2116,7 @@ PRIVATE void FFPU do_fmul ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word_accrued |= x86_status_word;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fmul");
@@ -2125,7 +2125,7 @@ PRIVATE void FFPU do_fmul ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fsmul ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fldt   %1\n"
 			"fmul   \n"
@@ -2137,7 +2137,7 @@ PRIVATE void FFPU do_fsmul ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word_accrued |= x86_status_word;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fsmul");
@@ -2146,7 +2146,7 @@ PRIVATE void FFPU do_fsmul ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fdmul ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fldt   %1\n"
 			"fmul   \n"
@@ -2158,7 +2158,7 @@ PRIVATE void FFPU do_fdmul ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word_accrued |= x86_status_word;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fdmul");
@@ -2185,7 +2185,7 @@ PRIVATE void FFPU do_fsgldiv ( fpu_register & dest, fpu_register const & src )
 		FSTP    ST(0)
     FLDCW   x86_control_word
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fstcw	%0\n"
 			"andl	$(~X86_ROUNDING_PRECISION), %0\n"
 			"orl	$PRECISION_CONTROL_SINGLE, %0\n"
@@ -2203,7 +2203,7 @@ PRIVATE void FFPU do_fsgldiv ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word_accrued |= x86_status_word;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fsgldiv");
@@ -2223,7 +2223,7 @@ PRIVATE void FFPU do_fscale ( fpu_register & dest, fpu_register const & src )
 		FSTP    TBYTE PTR [EDI]
 		FSTP    ST(0)
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fldt	%1\n"
 			"fscale	\n"
@@ -2236,7 +2236,7 @@ PRIVATE void FFPU do_fscale ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_UE - SW_OE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -2265,7 +2265,7 @@ PRIVATE void FFPU do_fsglmul ( fpu_register & dest, fpu_register const & src )
 
     FLDCW   x86_control_word
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fstcw	%0\n"
 			"andl	$(~X86_ROUNDING_PRECISION), %0\n"
 			"orl	$PRECISION_CONTROL_SINGLE, %0\n"
@@ -2282,7 +2282,7 @@ PRIVATE void FFPU do_fsglmul ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word_accrued |= x86_status_word;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fsglmul");
@@ -2302,7 +2302,7 @@ PRIVATE void FFPU do_fsub ( fpu_register & dest, fpu_register const & src )
 		FSTP    TBYTE PTR [EDI]
 		FSTP    ST(0)
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fldt	%1\n"
 			"fsub	%%st(1), %%st(0)\n"
@@ -2315,7 +2315,7 @@ PRIVATE void FFPU do_fsub ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_UE - SW_OE - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -2325,7 +2325,7 @@ PRIVATE void FFPU do_fsub ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fssub ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fldt   %1\n"
 			"fsub   %%st(1), %%st(0)\n"
@@ -2338,7 +2338,7 @@ PRIVATE void FFPU do_fssub ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_UE - SW_OE - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -2348,7 +2348,7 @@ PRIVATE void FFPU do_fssub ( fpu_register & dest, fpu_register const & src )
 PRIVATE void FFPU do_fdsub ( fpu_register & dest, fpu_register const & src )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt   %2\n"
 			"fldt   %1\n"
 			"fsub   %%st(1), %%st(0)\n"
@@ -2361,7 +2361,7 @@ PRIVATE void FFPU do_fdsub ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //              _asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_UE - SW_OE - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -2383,7 +2383,7 @@ PRIVATE void FFPU do_fsincos ( fpu_register & dest_sin, fpu_register & dest_cos,
 		FSTP    TBYTE PTR [EDI]
 		FSTP    ST(0)
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%3\n"
 			"fsincos\n"
 			"fstpt	%1\n"
@@ -2396,7 +2396,7 @@ PRIVATE void FFPU do_fsincos ( fpu_register & dest_sin, fpu_register & dest_cos,
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~(SW_EXCEPTION_MASK - SW_IE - SW_UE - SW_PE);
 		x86_status_word_accrued |= x86_status_word;
 	}
@@ -2417,7 +2417,7 @@ PRIVATE void FFPU do_fcmp ( fpu_register & dest, fpu_register const & src )
 		FSTP    ST(0)
 		FSTP    ST(0)
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fldt	%1\n"
 			"fsub	%%st(1), %%st(0)\n"
@@ -2430,7 +2430,7 @@ PRIVATE void FFPU do_fcmp ( fpu_register & dest, fpu_register const & src )
 		);
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		x86_status_word &= ~SW_EXCEPTION_MASK;
 	}
 	FPU_CONSISTENCY_CHECK_STOP("do_fcmp");
@@ -2542,10 +2542,10 @@ PRIVATE void FFPU from_pack (fpu_double src, uae_u32 * wrd1, uae_u32 * wrd2, uae
 
 	WORD sw_temp;
 //	_asm FNSTSW sw_temp
-	ASM_VOLATILE("fnstsw %0" : "=m" (sw_temp));
+	__asm__ __volatile__("fnstsw %0" : "=m" (sw_temp));
 	if(sw_temp & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
-		ASM_VOLATILE("fnclex");
+		__asm__ __volatile__("fnclex");
 		if(sw_temp & SW_PE) {
 			x86_status_word |= SW_PE;
 			x86_status_word_accrued |= SW_PE;
@@ -3198,7 +3198,7 @@ PRIVATE void FFPU do_null_frestore ()
 	x86_control_word = CW_INITIAL;
 /*  _asm	FLDCW   x86_control_word
 	_asm	FNCLEX */
-	ASM_VOLATILE("fldcw %0\n\tfnclex" : : "m" (x86_control_word));
+	__asm__ __volatile__("fldcw %0\n\tfnclex" : : "m" (x86_control_word));
 }
 
 // FSAVE has no pre-decrement
@@ -6511,7 +6511,7 @@ PRIVATE void FFPU set_constant ( fpu_register & f, char *name, double value, uae
 			FLD     QWORD PTR [value]
 			FSTP    TBYTE PTR [ESI]
 		} */
-		ASM_VOLATILE(
+		__asm__ __volatile__(
 			"fldl	%1\n"
 				"fstpt	%0\n"
 			:	"=m" (f)
@@ -6525,7 +6525,7 @@ PRIVATE void FFPU set_constant ( fpu_register & f, char *name, double value, uae
 			FMUL
 			FSTP    TBYTE PTR [ESI]
 		} */
-		ASM_VOLATILE(
+		__asm__ __volatile__(
 			"fildl	%2\n"
 				"fldl	%1\n"
 				"fmul	\n"
@@ -6548,7 +6548,7 @@ PRIVATE void FFPU do_fldpi ( fpu_register & dest )
 		MOV			EDI, [dest]
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldpi	\n"
 			"fxam	\n"
 			"fnstsw	%0\n"
@@ -6568,7 +6568,7 @@ PRIVATE void FFPU do_fldlg2 ( fpu_register & dest )
 		MOV			EDI, [dest]
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldlg2	\n"
 			"fxam	\n"
 			"fnstsw	%0\n"
@@ -6588,7 +6588,7 @@ PRIVATE void FFPU do_fldl2e ( fpu_register & dest )
 		MOV			EDI, [dest]
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldl2e	\n"
 			"fxam	\n"
 			"fnstsw	%0\n"
@@ -6608,7 +6608,7 @@ PRIVATE void FFPU do_fldz ( fpu_register & dest )
 		MOV			EDI, [dest]
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldz	\n"
 			"fxam	\n"
 			"fnstsw	%0\n"
@@ -6628,7 +6628,7 @@ PRIVATE void FFPU do_fldln2 ( fpu_register & dest )
 		MOV			EDI, [dest]
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fldln2	\n"
 			"fxam	\n"
 			"fnstsw	%0\n"
@@ -6648,7 +6648,7 @@ PRIVATE void FFPU do_fld1 ( fpu_register & dest )
 		MOV			EDI, [dest]
 		FSTP    TBYTE PTR [EDI]
 	} */
-	ASM_VOLATILE(
+	__asm__ __volatile__(
 			"fld1	\n"
 			"fxam	\n"
 			"fnstsw	%0\n"
@@ -6671,7 +6671,7 @@ PUBLIC void FFPU fpu_init( bool integral_68040 )
 		initialized_lookup_tables = true;
 	}
 	
-	ASM_VOLATILE("fsave %0" : "=m" (m_fpu_state_original));
+	__asm__ __volatile__("fsave %0" : "=m" (m_fpu_state_original));
 	
 	FPU is_integral = integral_68040;
 	FPU instruction_address = 0;
@@ -6693,7 +6693,7 @@ PUBLIC void FFPU fpu_init( bool integral_68040 )
 		FNINIT
 		FLDCW   x86_control_word
 	} */
-	ASM_VOLATILE("fninit\nfldcw %0" : : "m" (x86_control_word));
+	__asm__ __volatile__("fninit\nfldcw %0" : : "m" (x86_control_word));
 
 	do_fldpi( const_pi );
 	do_fldlg2( const_lg2 );
@@ -6724,12 +6724,12 @@ PUBLIC void FFPU fpu_init( bool integral_68040 )
 		FNINIT
 		FLDCW   x86_control_word
 	} */
-	ASM_VOLATILE("fninit\nfldcw %0" : : "m" (x86_control_word));
+	__asm__ __volatile__("fninit\nfldcw %0" : : "m" (x86_control_word));
 }
 
 PUBLIC void FFPU fpu_exit( void )
 {
-	ASM_VOLATILE("frstor %0" : : "m" (m_fpu_state_original));
+	__asm__ __volatile__("frstor %0" : : "m" (m_fpu_state_original));
 }
 
 PUBLIC void FFPU fpu_reset( void )

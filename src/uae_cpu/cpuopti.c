@@ -44,6 +44,7 @@ static char * match(struct line *l, const char *m)
     return str + len;
 }
 
+#if 0
 static int is_label(struct line *l)
 {
     char *str = l->data;
@@ -59,6 +60,7 @@ static int is_label(struct line *l)
 
     return (*str == ':');
 }
+#endif
 
 static int insn_references_reg (struct line *l, char *reg)
 {

@@ -617,8 +617,6 @@ genastore (char *from, amodes mode, char *reg, wordsizes size, char *to)
 
 static void genmov16(uae_u32 opcode, struct instr *curi)
 {
-#if 1
-	/* gb-- We support more MOVE16 variants for Basilisk II */
 	comprintf("\tint src=scratchie++;\n");
 	comprintf("\tint dst=scratchie++;\n");
 	
@@ -653,22 +651,6 @@ static void genmov16(uae_u32 opcode, struct instr *curi)
 	comprintf("\tint tmp=scratchie;\n");
 	comprintf("\tscratchie+=4;\n");
 	
-	comprintf("\tif (special_mem) {\n"
-		"\treadlong(src,tmp,scratchie);\n"
-		"\twritelong_clobber(dst,tmp,scratchie);\n"
-		"\tadd_l_ri(src,4);\n"
-		"\tadd_l_ri(dst,4);\n"
-		"\treadlong(src,tmp,scratchie);\n"
-		"\twritelong_clobber(dst,tmp,scratchie);\n"
-		"\tadd_l_ri(src,4);\n"
-		"\tadd_l_ri(dst,4);\n"
-		"\treadlong(src,tmp,scratchie);\n"
-		"\twritelong_clobber(dst,tmp,scratchie);\n"
-		"\tadd_l_ri(src,4);\n"
-		"\tadd_l_ri(dst,4);\n"
-		"\treadlong(src,tmp,scratchie);\n"
-		"\twritelong_clobber(dst,tmp,scratchie);\n");
-	comprintf("\t} else {\n");
 	comprintf("\tget_n_addr(src,src,scratchie);\n"
 		"\tget_n_addr(dst,dst,scratchie);\n"
 		"\tmov_l_rR(tmp+0,src,0);\n"
@@ -681,52 +663,7 @@ static void genmov16(uae_u32 opcode, struct instr *curi)
 		"\tforget_about(tmp+1);\n"
 		"\tmov_l_Rr(dst,tmp+2,8);\n"
 		"\tforget_about(tmp+2);\n"
-		"\tmov_l_Rr(dst,tmp+3,12);\n"
-		"\t}\n");
-#else    
-    comprintf("\tint src=scratchie++;\n"
-	      "\tuae_u16 dstreg=((%s)>>12)&0x07;\n",gen_nextiword());
-    comprintf("\tint dst=scratchie++;\n"
-	      "\tint tmp=scratchie;\n"
-	      "\tscratchie+=4;\n"
-	      "\tmov_l_rr(src,8+srcreg);\n"
-	      "\tand_l_ri(src,~15);\n"
-	      "\tmov_l_rr(dst,8+dstreg);\n"
-	      "\tand_l_ri(dst,~15);\n"
-	      "\tadd_l_ri(srcreg+8,16);\n"
-	      "\tadd_l_ri(dstreg+8,16);\n");
-
-    comprintf("\tif (special_mem) {\n"
-	      "\treadlong(src,tmp,scratchie);\n"
-	      "\twritelong_clobber(dst,tmp,scratchie);\n"
-	      "\tadd_l_ri(src,4);\n"
-	      "\tadd_l_ri(dst,4);\n"
-	      "\treadlong(src,tmp,scratchie);\n"
-	      "\twritelong_clobber(dst,tmp,scratchie);\n"
-	      "\tadd_l_ri(src,4);\n"
-	      "\tadd_l_ri(dst,4);\n"
-	      "\treadlong(src,tmp,scratchie);\n"
-	      "\twritelong_clobber(dst,tmp,scratchie);\n"
-	      "\tadd_l_ri(src,4);\n"
-	      "\tadd_l_ri(dst,4);\n"
-	      "\treadlong(src,tmp,scratchie);\n"
-	      "\twritelong_clobber(dst,tmp,scratchie);\n");
-    comprintf("\t} else {\n");
-    comprintf("\tget_n_addr(src,src,scratchie);\n"
-	      "\tget_n_addr(dst,dst,scratchie);\n"
-	      "\tmov_l_rR(tmp+0,src,0);\n"
-	      "\tmov_l_rR(tmp+1,src,4);\n"
-	      "\tmov_l_rR(tmp+2,src,8);\n"
-	      "\tmov_l_rR(tmp+3,src,12);\n"
-	      "\tmov_l_Rr(dst,tmp+0,0);\n"
-	      "\tforget_about(tmp+0);\n"
-	      "\tmov_l_Rr(dst,tmp+1,4);\n"
-	      "\tforget_about(tmp+1);\n"
-	      "\tmov_l_Rr(dst,tmp+2,8);\n"
-	      "\tforget_about(tmp+2);\n"
-	      "\tmov_l_Rr(dst,tmp+3,12);\n"
-	      "\t}\n");
-#endif
+		"\tmov_l_Rr(dst,tmp+3,12);\n");
 }
 
 static void 
@@ -773,12 +710,6 @@ genmovemle (uae_u16 opcode)
     comprintf ("\tsigned char offset=0;\n");
     genamode (table68k[opcode].dmode, "dstreg", table68k[opcode].size, "src", 2, 1);
 
-    /* *Sigh* Some clever geek realized that the fastest way to copy a
-       buffer from main memory to the gfx card is by using movmle. Good
-       on her, but unfortunately, gfx mem isn't "real" mem, and thus that
-       act of cleverness means that movmle must pay attention to special_mem,
-       or Genetic Species is a rather boring-looking game ;-) */
-    comprintf("\tif (!special_mem) {\n");
     comprintf("\tget_n_addr(srca,native,scratchie);\n");
 
     if (table68k[opcode].dmode!=Apdi) {
@@ -828,47 +759,6 @@ genmovemle (uae_u16 opcode)
     if (table68k[opcode].dmode == Apdi) {
 	comprintf("\t\t\tlea_l_brr(8+dstreg,srca,(uae_s32)offset);\n");
     }
-    comprintf("\t} else {\n");
-
-    if (table68k[opcode].dmode!=Apdi) {
-	comprintf("\tmov_l_rr(tmp,srca);\n");
-	comprintf("\tfor (i=0;i<16;i++) {\n"
-		  "\t\tif ((mask>>i)&1) {\n");
-	switch(table68k[opcode].size) {
-	 case sz_long: 
-	    comprintf("\t\t\twritelong(tmp,i,scratchie);\n"
-		      "\t\t\tadd_l_ri(tmp,4);\n");
-	    break;
-	 case sz_word: 
-	    comprintf("\t\t\twriteword(tmp,i,scratchie);\n"
-		      "\t\t\tadd_l_ri(tmp,2);\n");
-	    break;
-	 default: abort();
-	}
-    }
-    else {  /* Pre-decrement */
-	comprintf("\tfor (i=0;i<16;i++) {\n"
-		  "\t\tif ((mask>>i)&1) {\n");
-	switch(table68k[opcode].size) {
-	 case sz_long: 
-	    comprintf("\t\t\tsub_l_ri(srca,4);\n"
-		      "\t\t\twritelong(srca,15-i,scratchie);\n");
-	    break;
-	 case sz_word: 
-	    comprintf("\t\t\tsub_l_ri(srca,2);\n"
-		      "\t\t\twriteword(srca,15-i,scratchie);\n");
-	    break;
-	 default: abort();
-	}
-    }
-  
-
-    comprintf("\t\t}\n"
-	      "\t}");
-    if (table68k[opcode].dmode == Apdi) {
-	comprintf("\t\t\tmov_l_rr(8+dstreg,srca);\n");
-    }
-    comprintf("\t}\n");
 }
 
 

@@ -71,16 +71,16 @@ enum {
 	regs.spcflags &= ~(m); \
 } while (0)
 
-#elif defined(CPU_i386) && defined(X86_ASSEMBLY)
+#elif defined(__i386__) && defined(X86_ASSEMBLY)
 
 #define HAVE_HARDWARE_LOCKS 1
 
 #define SPCFLAGS_SET(m) do { \
-	ASM_VOLATILE("lock\n\torl %1,%0" : "=m" (regs.spcflags) : "i" ((m))); \
+	__asm__ __volatile__("lock\n\torl %1,%0" : "=m" (regs.spcflags) : "i" ((m))); \
 } while (0)
 
 #define SPCFLAGS_CLEAR(m) do { \
-	ASM_VOLATILE("lock\n\tandl %1,%0" : "=m" (regs.spcflags) : "i" (~(m))); \
+	__asm__ __volatile__("lock\n\tandl %1,%0" : "=m" (regs.spcflags) : "i" (~(m))); \
 } while (0)
 
 #else

@@ -31,7 +31,8 @@
 #include "sysdeps.h"
 
 /* Default behavior is *not* to use long doubles */
-#define USE_LONG_DOUBLE 0
+#undef USE_LONG_DOUBLE
+#undef USE_QUAD_DOUBLE
 
 /* -------------------------------------------------------------------------- */
 /* --- Original UAE fpu core                                              --- */
@@ -105,6 +106,10 @@ typedef uae_f32		fpu_single;
 
 #elif defined(FPU_IEEE)
 
+#if HOST_FLOAT_FORMAT != IEEE_FLOAT_FORMAT
+#error "No IEEE float format, you lose."
+#endif
+
 /* 4-byte floats */
 #if SIZEOF_FLOAT == 4
 typedef float uae_f32;
@@ -127,21 +132,22 @@ typedef long double uae_f64;
 #if SIZEOF_LONG_DOUBLE == 12
 typedef long double uae_f96;
 typedef uae_f96 fpu_register;
-#elif SIZEOF_LONG_DOUBLE == 16
+#define USE_LONG_DOUBLE 1
+#elif (SIZEOF_LONG_DOUBLE == 16) && 0
+/* Disable for now and probably for good as (i) the emulator
+   implementation is not correct, (ii) I don't know of any CPU which
+   handles this kind of format *natively* with conformance to IEEE.  */
 typedef long double uae_f128;
 typedef uae_f128 fpu_register;
+#define USE_QUAD_DOUBLE 1
 #else
-#error "No float type bigger than 8 bytes, you lose."
+typedef uae_f64 fpu_register;
 #endif
-
-/* We *do* use long doubles for the IEEE-based FPE */
-#undef	USE_LONG_DOUBLE
-#define	USE_LONG_DOUBLE 1
 
 /* We need all those floating-point types */
 typedef fpu_register	fpu_extended;
-typedef uae_f64		fpu_double;
-typedef uae_f32		fpu_single;
+typedef uae_f64			fpu_double;
+typedef uae_f32			fpu_single;
 
 #endif
 

@@ -112,7 +112,7 @@ PRIVATE inline void FFPU set_fpccr(uae_u32 new_fpcond)
 
 /* Make FPSR according to the value passed in argument */
 PRIVATE inline void FFPU make_fpsr(fpu_register const & r)
-	{ uae_u16 sw; ASM_VOLATILE ("fxam\n\tfnstsw %0" : "=r" (sw) : "f" (r)); FPU fpsr.condition_codes = sw; }
+	{ uae_u16 sw; __asm__ __volatile__ ("fxam\n\tfnstsw %0" : "=r" (sw) : "f" (r)); FPU fpsr.condition_codes = sw; }
 
 /* Return the corresponding ID of the current floating-point condition codes */
 /* NOTE: only valid for evaluation of a condition */
@@ -126,7 +126,7 @@ PRIVATE inline bool FFPU fpcctrue(int condition)
 #endif /* FPU_UAE */
 
 /* Return the address of the floating-point condition codes truth table */
-PUBLIC inline uae_u8 * const FFPU address_of_fpcond_truth_table(void)
+static inline uae_u8 * const FFPU address_of_fpcond_truth_table(void)
 	{ return ((uae_u8*)&fpcond_truth_table[0][0]); }
 
 #endif /* FPU_X86_USE_NATIVE_FLAGS */
@@ -217,7 +217,7 @@ PRIVATE inline void FFPU make_fpsr(fpu_register const & r)
 /* -------------------------------------------------------------------------- */
 
 /* Return the address of the floating-point condition codes register */
-PUBLIC inline uae_u32 * const FFPU address_of_fpccr(void)
+static inline uae_u32 * const FFPU address_of_fpccr(void)
 	{ return ((uae_u32 *)& FPU fpsr.condition_codes); }
 
 #endif /* FPU_FLAGS_H */
