@@ -559,9 +559,9 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 		case 'Q':
 			fprintf(f, "Really quit?\n");
 			if (fgets(input, 80, stdin) == NULL)
-			QuitEmulator();
+				QuitEmulator();
 			if (input[0] == 'y' || input[0] == 'Y')
-			QuitEmulator();
+				QuitEmulator();
 			break;
 		case 'R':
 			m68k_reset();
@@ -1072,6 +1072,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.10  2002/01/08 16:13:18  joy
+ * config variables moved from global ones to bx_options struct.
+ *
  * Revision 1.9  2001/12/07 00:31:31  milan
  * small bug in 'z' command of ndebug corrected, big one stays, it needs better solution
  *

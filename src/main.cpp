@@ -62,9 +62,12 @@ void setactvdebug(int)
 #endif
 {
 	grabMouse(false);
+
+#ifdef DEBUGGER
 	activate_debugger();
-#ifdef NEWDEBUG
+# ifdef NEWDEBUG
 	signal(SIGINT, setactvdebug);
+# endif
 #endif
 }
 
@@ -687,8 +690,12 @@ void invoke200HzInterrupt()
 	int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
 	if (count == 0)
 		return;
+	
+#ifdef DEBUGGER
 	if (!debugging || irqindebug)
+#endif
 		mfp.IRQ(5, count);
+
 	lastTicks += (count * 5);
 
 	VBL_counter += count;
@@ -998,6 +1005,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.60  2002/01/15 21:27:07  joy
+ * gettimeofday() for platforms where SDL_GetTicks() returns wrong values
+ *
  * Revision 1.59  2002/01/11 11:55:41  joy
  * SDL_GetTicks() returns unsigned value! Thanks to Olivier for the fix. This could lead to stop after 23 days of aranym run :-(
  *

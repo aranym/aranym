@@ -23,6 +23,7 @@
 #include "main.h"
 #include "emul_op.h"
 #include "araobjs.h"
+#include "parameters.h"
 
 #ifdef ENABLE_MON
 #include "mon.h"

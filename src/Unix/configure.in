@@ -503,7 +503,8 @@ fi
 
 dnl fixed size FastRAM
 if [[ "x$WANT_FIXEDFASTRAM" != "xno" ]]; then
-    AC_DEFINE(FixedSizeFastRAM, $WANT_FIXEDFASTRAM)
+dnl    DEFINES="$DEFINES -DFixedSizeFastRAM=\"$WANT_FIXEDFASTRAM\""
+    AC_DEFINE_UNQUOTED(FixedSizeFastRAM, $WANT_FIXEDFASTRAM)
 fi
 
 dnl Direct Truecolor

@@ -118,6 +118,10 @@ install: $(APP) installdirs
 	$(INSTALL_DATA) ../../AUTHORS $(DESTDIR)$(docdir)/$(APP)/AUTHORS
 	$(INSTALL_DATA) ../../NEWS $(DESTDIR)$(docdir)/$(APP)/NEWS
 	$(INSTALL_DATA) ../../README $(DESTDIR)$(docdir)/$(APP)/README
+	$(INSTALL_DATA) ../../FAQ $(DESTDIR)$(docdir)/$(APP)/FAQ
+	$(INSTALL_DATA) ../../COPYING $(DESTDIR)$(docdir)/$(APP)/COPYING
+	$(INSTALL_DATA) ../../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
+	$(INSTALL_DATA) ../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL
 	$(INSTALL_DATA) ../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) ../atari/aranymrc.example $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
 	$(INSTALL_DATA) ../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
@@ -140,6 +144,10 @@ uninstall:
 	rm -f $(DESTDIR)$(docdir)/$(APP)/AUTHORS
 	rm -f $(DESTDIR)$(docdir)/$(APP)/NEWS
 	rm -f $(DESTDIR)$(docdir)/$(APP)/README
+	rm -f $(DESTDIR)$(docdir)/$(APP)/FAQ
+	rm -f $(DESTDIR)$(docdir)/$(APP)/COPYING
+	rm -f $(DESTDIR)$(docdir)/$(APP)/BUGS
+	rm -f $(DESTDIR)$(docdir)/$(APP)/INSTALL
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/aranymrc.example
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
@@ -163,7 +171,7 @@ mostlyclean:
 	rm -f $(APP) $(OBJ_DIR)/* core* *.core *~ *.bak $(APPCONFTV)
 
 clean: mostlyclean
-	rm -f cpuemu.cpp cpudefs.cpp cputmp*.s cpufast*.s cpustbl.cpp cputbl.h newcpu.s memory.s
+	rm -f cpuemu.cpp cpudefs.cpp cputmp*.s cpufast*.s cpustbl.cpp cputbl.h newcpu.s memory.s compemu.cpp compstbl.cpp comptbl.h
 
 distclean: clean
 	rm -rf $(OBJ_DIR)
@@ -184,6 +192,10 @@ bindist: $(APP) bindistdirs
 	$(INSTALL_DATA) ../../AUTHORS tmpdist$(docdir)/$(APP)/AUTHORS
 	$(INSTALL_DATA) ../../NEWS tmpdist$(docdir)/$(APP)/NEWS
 	$(INSTALL_DATA) ../../README tmpdist$(docdir)/$(APP)/README
+	$(INSTALL_DATA) ../../FAQ $(DESTDIR)$(docdir)/$(APP)/FAQ
+	$(INSTALL_DATA) ../../COPYING $(DESTDIR)$(docdir)/$(APP)/COPYING
+	$(INSTALL_DATA) ../../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
+	$(INSTALL_DATA) ../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL	
 	$(INSTALL_DATA) ../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) ../atari/aranymrc.example tmpdist$(datadir)/$(APP)/atari/aranymrc.example
 	$(INSTALL_DATA) ../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
@@ -204,6 +216,7 @@ devdist: mrproper
 
 dist: distclean
 	cd ../../web/build/ && ./saxonserver &
+	sleep 10
 	cd ../../web/ && $(MAKE)
 	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=aranym/web/build/saxon.jar --exclude=autogen.sh --exclude=CVS aranym
 
