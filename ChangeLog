@@ -1,3 +1,8 @@
+2002/04/20 - STanda
+- PurePascal and its debugger snapshot added.
+- ExtFs: Small general code cleanup
+
+
 2002/04/19 - Didier MEQUIGNON & joy
 - simple audio driver. Atari side uses ZMAGXSND.PRG, a slightly modified
   MagiCMac sound driver. The communication is based on illegal instruction

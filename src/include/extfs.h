@@ -27,72 +27,68 @@
 class ExtFs {
   private:
 
-    typedef struct
-    {
+	struct LogicalDev {
 		int16	dummy;
-    } LogicalDev;            // Dummy structure... I don't know the meaning in COOK_FS
+	};			// Dummy structure... I don't know the meaning in COOK_FS
 
-    typedef struct XfsFsFile
-    {
+	struct XfsFsFile {
 		XfsFsFile *parent;
-		uint32    refCount;
-		uint32    childCount;
-		char      *name;
-	} XfsFsFile;
+		uint32	  refCount;
+		uint32	  childCount;
+		char	  *name;
+	};
 
-    typedef struct
-    {
+	struct XfsCookie {
 		uint32    xfs;
 		uint16    dev;
 		uint16    aux;
 		XfsFsFile *index;
-	} XfsCookie;
+	};
 
-    typedef struct           /* used by Fsetdta, Fgetdta */
-    {
-		DIR     *ds_dirh;      // opendir resulting handle to perform dirscan
-		uint16 	ds_attrib;     // search attribs wanted
-		uint8 	ds_index;      // index in the fs_pathName array (seems like a hack, but I don't know better)
-		int8    ds_name[14];
+	struct ExtDta {			// used by Fsetdta, Fgetdta
+		DIR	*ds_dirh;		// opendir resulting handle to perform dirscan
+		uint16	ds_attrib;	// search attribs wanted
+		uint8	ds_index;	// index in the fs_pathName array (seems like a hack, but I don't know better)
+		int8	ds_name[14];
 
 		// And now GEMDOS specified fields
-		uint8   d_attrib;
-		uint16  d_time;
-		uint16  d_date;
-		uint32  d_length;
-		int8    d_fname[14];
-    } ExtDta;                // See myDTA in Julian's COOK_FS
+		uint8	d_attrib;
+		uint16	d_time;
+		uint16	d_date;
+		uint32	d_length;
+		int8	d_fname[14];
+	};				// See myDTA in Julian's COOK_FS
 
-    typedef struct
-    {
+	struct ExtFile {
 		XfsCookie fc;
-		int16     index;
-		int16     flags;
-		int16     links;
-		int32     hostfd;
-		int32     offset;
-		int32     devinfo;
-		uint32    next;
-    } ExtFile;               // See MYFILE in Julian's COOK_FS
+		int16	  index;
+		int16	  flags;
+		int16	  links;
+		int32	  hostfd;
+		int32	  offset;
+		int32	  devinfo;
+		uint32	  next;
+	} ;				// See MYFILE in Julian's COOK_FS
 
-	typedef struct XfsDir
-	{
-		XfsCookie fc;         /* cookie for this directory */
-		uint16    index;      /* index of the current entry */
-		uint16    flags;      /* flags (e. g. tos or not) */
-		DIR       *dir;       /* used DIR */
-		int16     pathIndex;  /* index of the pathName in the internal pool FIXME? */
-		XfsDir    *next;      /* linked together so we can close them to process term */
-	} ExtDir;
+	struct XfsDir {
+		XfsCookie fc;			// cookie for this directory
+		uint16    index;		// index of the current entry
+		uint16    flags;		// flags (e. g. tos or not)
+		DIR       *dir;			// used DIR
+		int16	  pathIndex;	// index of the pathName in the internal pool FIXME?
+		XfsDir	  *next;		// linked together so we can close them to process term
+	};
 
-	typedef struct
-	{
+	typedef struct XfsDir ExtDir;
+
+
+	struct ExtDrive	{
 		bool halfSensitive;
 		char *rootPath;
-		char *currPath;      // Only Dsetpath uses this in the .DOS driver -> can be removed
-    } ExtDrive;
+		char *currPath;		// Only Dsetpath uses this in the .DOS driver -> can be removed
+	};
 
-    ExtDrive drives[ 'Z'-'A'+1 ];
+	ExtDrive drives[ 'Z'-'A'+1 ];
 
 	bool isPathValid(const char *fileName);
 
@@ -255,7 +251,7 @@ class ExtFs {
 	int32 xfs_remove( XfsCookie *dir, char *name );
 	int32 xfs_pathconf( XfsCookie *fc, int16 which );
 	int32 xfs_opendir( XfsDir *dirh, uint16 flags );
-	int32 xfs_readdir( ExtDir *dirh, char* buff, int16 len, XfsCookie *fc );
+	int32 xfs_readdir( XfsDir *dirh, char* buff, int16 len, XfsCookie *fc );
 	int32 xfs_mkdir( XfsCookie *dir, char *name, uint16 mode );
 	int32 xfs_rmdir( XfsCookie *dir, char *name );
 	int32 xfs_readlink( XfsCookie *dir, char *buf, int16 len );
@@ -273,6 +269,10 @@ class ExtFs {
 
 /*
  * $Log$
+ * Revision 1.18  2002/04/19 16:23:24  standa
+ * The Fxattr bug fixed. QED works, Thing can refresh without the JOY's ugly
+ * patch in Dpathconf.
+ *
  * Revision 1.17  2002/04/19 14:21:04  standa
  * Patrice's FreeMiNT compilation patch adjusted by ExtFs suffixes.
  *

@@ -2129,7 +2129,7 @@ int32 ExtFs::DxreaddirExtFs( LogicalDev *ldp, char *pathName, ExtDir *dirh,
 }
 
 
-int32 ExtFs::xfs_readdir( ExtDir *dirh, char* buff, int16 len, XfsCookie *fc )
+int32 ExtFs::xfs_readdir( XfsDir *dirh, char* buff, int16 len, XfsCookie *fc )
 {
 	struct dirent *dirEntry;
 
@@ -2605,6 +2605,10 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.47  2002/04/19 16:23:24  standa
+ * The Fxattr bug fixed. QED works, Thing can refresh without the JOY's ugly
+ * patch in Dpathconf.
+ *
  * Revision 1.46  2002/04/19 14:21:04  standa
  * Patrice's FreeMiNT compilation patch adjusted by ExtFs suffixes.
  *
