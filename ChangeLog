@@ -1,3 +1,11 @@
+2003/12/19 - patrice
+
+- bad implementation of bcopy() macro for mingw in sysdeps.h.
+
+- changed DATADIR to ARANYM_DATADIR to make mingw and cygwin happy (not
+  conflicting with their system headers).
+  
+
 2003/12/17 - joy
 - parameters.cpp: "GUIfont" config option added (as promised). Most of
   the complicated logic for guessing the right path for non-Unix systems

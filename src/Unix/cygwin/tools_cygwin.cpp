@@ -3,7 +3,6 @@
 #define _CYGWIN_TOOLS_H
 
 #include "tools.h"
-#undef DATADIR	// unfortunately win32 defines a struct of the same name
 #include <sys/cygwin.h>
 #include <windows.h>
 

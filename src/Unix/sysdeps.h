@@ -441,7 +441,7 @@ extern "C" char *strdup(const char *s);
 # define IOCTL_STORAGE_EJECT_MEDIA        CTL_CODE(IOCTL_STORAGE_BASE, 0x0202, METHOD_BUFFERED, FILE_READ_ACCESS)
 #endif
 
-#define bcopy(src, dest, size)  memcpy(dest, src, n)
+#define bcopy(src, dest, size)  memcpy(dest, src, size)
 
 #define usleep(microseconds)    {}
 

@@ -45,7 +45,7 @@ char *getConfFolder(char *buffer, unsigned int bufsize)
 
 char *getDataFolder(char *buffer, unsigned int bufsize)
 {
-	// data folder is defined at configure time in DATADIR (using --datadir)
-	return safe_strncpy(buffer, DATADIR, bufsize);
+	// data folder is defined at configure time in ARANYM_DATADIR (using --datadir)
+	return safe_strncpy(buffer, ARANYM_DATADIR, bufsize);
 }
 

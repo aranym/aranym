@@ -55,7 +55,7 @@ char *getDataFolder(char *buffer, unsigned int bufsize)
 	// if it's not, data folder path is extracted from argv[0]
 	// (path to aranym executable) + ARADATA subfolder
 	if (IS_CYGWIN_FHS) {
-		return safe_strncpy(buffer, DATADIR, bufsize);
+		return safe_strncpy(buffer, ARANYM_DATADIR, bufsize);
 	}
 
 	// remember path to program
