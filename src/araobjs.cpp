@@ -16,9 +16,14 @@ ExtFs      extFS;
 // The HostScreen custom fVDI driver implementation
 FVDIDriver fVDIDrv;
 
+//The Audio driver
+AudioDriver AudioDrv;
 
 /*
  * $Log$
+ * Revision 1.4  2001/11/21 13:29:51  milan
+ * cleanning & portability
+ *
  * Revision 1.3  2001/11/20 23:29:26  milan
  * Extfs now not needed for ARAnyM's compilation
  *
