@@ -1,7 +1,7 @@
 /*
  * input.cpp - handling of keyboard/mouse input
  *
- * Copyright (c) 2001-2003 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -75,6 +75,18 @@ static bool grabbedMouse = false;
 static bool hiddenMouse = false;
 static bool capslockState = false;
 
+static void hideMouse(bool hide)
+{
+	if (hide) {
+		SDL_ShowCursor(SDL_DISABLE);
+		hiddenMouse = true;
+	}
+	else if (!hide) {
+		SDL_ShowCursor(SDL_ENABLE);
+		hiddenMouse = false;
+	}
+}
+
 void InputInit()
 {
 	// warp mouse to center of Atari 320x200 screen and grab it
@@ -94,18 +106,6 @@ void InputReset()
 }
 
 
-void hideMouse(bool hide)
-{
-	if (hide) {
-		SDL_ShowCursor(SDL_DISABLE);
-		hiddenMouse = true;
-	}
-	else if (!hide) {
-		SDL_ShowCursor(SDL_ENABLE);
-		hiddenMouse = false;
-	}
-}
-
 bool grabMouse(bool grab)
 {
 	int current = SDL_WM_GrabInput(SDL_GRAB_QUERY);
@@ -123,7 +123,7 @@ bool grabMouse(bool grab)
 }
 
 
-void grabTheMouse()
+static void grabTheMouse()
 {
 #if DEBUG
 	int x,y;
@@ -140,7 +140,7 @@ void grabTheMouse()
 	}
 }
 
-void releaseTheMouse()
+static void releaseTheMouse()
 {
 	grabMouse(false);	// release mouse
 	hideMouse(false);	// show it
@@ -178,7 +178,7 @@ static int keyboardTable[0x80] = {
 /*78-7f*/ -1, -1, -1, -1, -1, -1, -1, -1
 };
 
-int keysymToAtari(SDL_keysym keysym)
+static int keysymToAtari(SDL_keysym keysym)
 {
  
 // fprintf (stdout, "scancode: %x - sym: %x - char: %s\n", keysym.scancode, keysym.sym, SDL_GetKeyName (keysym.sym));
@@ -249,7 +249,7 @@ static int keyboardTable[0x80] = {
 /*78-7f*/ 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-int keysymToAtari(SDL_keysym keysym)
+static int keysymToAtari(SDL_keysym keysym)
 {
  
 	int sym = keysym.sym;
@@ -270,7 +270,7 @@ int keysymToAtari(SDL_keysym keysym)
 
 #if KEYBOARD_TRANSLATION == KEYSYM_SCANCODE
 // Heuristic analysis to find out the obscure scancode offset
-int findScanCodeOffset(SDL_keysym keysym)
+static int findScanCodeOffset(SDL_keysym keysym)
 {
 	int scanPC = keysym.scancode;
 	int offset = UNDEFINED_OFFSET;
@@ -340,7 +340,7 @@ int findScanCodeOffset(SDL_keysym keysym)
 	return offset;
 }
 
-int keysymToAtari(SDL_keysym keysym)
+static int keysymToAtari(SDL_keysym keysym)
 {
 	static int offset = UNDEFINED_OFFSET;
 
@@ -417,7 +417,8 @@ extern bool isGuiAvailable;	// from main.cpp
 static SDL_Thread *GUIthread = NULL;
 static const int GUI_RETURN_INFO = (SDL_USEREVENT+1);
 
-int open_gui(void * /*ptr*/)
+// running in a different thread
+static int open_gui(void * /*ptr*/)
 {
 	hostScreen.openGUI();
 	int status = GUImainDlg();
@@ -450,7 +451,7 @@ void kill_GUI_thread()
 }
 #endif
 
-void process_keyboard_event(SDL_Event &event)
+static void process_keyboard_event(SDL_Event &event)
 {
 	bool pressed = (event.type == SDL_KEYDOWN);
 	SDL_keysym keysym = event.key.keysym;
@@ -574,7 +575,7 @@ void process_keyboard_event(SDL_Event &event)
 	}
 }
 
-void process_mouse_event(SDL_Event event)
+static void process_mouse_event(SDL_Event event)
 {
 #ifdef SDL_GUI
 	if (hostScreen.isGUIopen()) {
@@ -681,7 +682,7 @@ void process_mouse_event(SDL_Event event)
 	}
 }
 
-void process_active_event(SDL_Event event)
+static void process_active_event(SDL_Event event)
 {
 	// if we have input focus
 	if (SDL_GetAppState() & SDL_APPINPUTFOCUS) {
@@ -724,7 +725,7 @@ void process_active_event(SDL_Event event)
 
 SDL_Joystick *sdl_joystick;
 
-void process_joystick_event(SDL_Event event)
+static void process_joystick_event(SDL_Event event)
 {
 	switch(event.type) {
 		case SDL_JOYAXISMOTION:
@@ -740,6 +741,9 @@ void process_joystick_event(SDL_Event event)
 	}
 }
 
+///////
+// main function for checking keyboard, mouse and joystick events
+// called from main.cpp every 20 ms
 void check_event()
 {
 	if (!bx_options.video.fullscreen && mouseOut) {
@@ -801,3 +805,7 @@ void check_event()
 		Quit680x0();	// forces CPU to quit the loop
 	}
 }
+
+/*
+vim:ts=4:sw=4:
+*/
