@@ -23,8 +23,8 @@ uae_u8 ARADATA::handleRead(uaecptr addr) {
 		case 1: return 'A';
 		case 2: return 'R';
 		case 3: return 'A';
-		case 4: return VERSION_MAJOR;
-		case 5: return VERSION_MINOR;
+		case 4: return 0;	/* VERSION_MAJOR */
+		case 5: return 0;	/* VERSION_MINOR */
 		case 6: return FastRAMSize >> 24;
 		case 7: return FastRAMSize >> 16;
 		case 8: return FastRAMSize >> 8;
