@@ -1,3 +1,8 @@
+2003/04/12 - joy
+- compemu_support.cpp: unnecessary fopen("/dev/zero", O_RDWR) removed.
+  This allows running aranym-jit on ARAnyM Demo CD (Knoppix based).
+
+
 ** ARAnyM 0.8.0beta3 released
 
 2003/04/10 - joy

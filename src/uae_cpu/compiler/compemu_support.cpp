@@ -137,7 +137,6 @@ static bool		setzflg_uses_bsf	= false;	// setzflg virtual instruction can use na
 static bool             tune_nop_fillers        = true;         // Tune no-op fillers for architecture
 static int		align_loops			= 32;		// Align the start of loops
 static int		align_jumps			= 32;		// Align the start of jumps
-static int		zero_fd				= -1;
 static int		optcount[10]		= {
 	10,		// How often a block has to be executed before it is translated
 	0,		// How often to use naive translation
@@ -4886,15 +4885,6 @@ void compiler_init(void)
 	if (initialized)
 		return;
 	
-#ifndef WIN32
-	// Open /dev/zero
-	zero_fd = open("/dev/zero", O_RDWR);
-	if (zero_fd < 0) {
-		panicbug("Cannot open /dev/zero (%s)", strerror(errno));
-		QuitEmulator();
-	}
-#endif
-	
 #if JIT_DEBUG
 	// JIT debug mode ?
 	JITDebug = bx_options.startup.debugger;
@@ -4968,12 +4958,6 @@ void compiler_exit(void)
 		compiled_code = 0;
 	}
 
-#ifndef WIN32
-	// Close /dev/zero
-	if (zero_fd > 0)
-		close(zero_fd);
-#endif
-	
 #if PROFILE_COMPILE_TIME
 	panicbug("### Compile Block statistics");
 	panicbug("Number of calls to compile_block : %d", compile_count);
