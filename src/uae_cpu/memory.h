@@ -19,12 +19,12 @@
 #include "registers.h"
 
 #define BUS_ERROR	longjmp(excep_env, 2)
-#define STRAM_END	0x0e00000	// should be replaced by global ROMBase as soon as ROMBase will be a constant
-#define ROM_END		0x0e80000	// should be replaced by ROMBase + RealROMSize if we are going tto work with larger TOS ROMs than 512 kilobytes
-#define TTRAM_BEGIN	0x1000000	// should be replaced by global TTRAMBase as soon as TTRAMBase will be a constant
+#define STRAM_END	0x0e00000UL	// should be replaced by global ROMBase as soon as ROMBase will be a constant
+#define ROM_END		0x0e80000UL	// should be replaced by ROMBase + RealROMSize if we are going tto work with larger TOS ROMs than 512 kilobytes
+#define TTRAM_BEGIN	0x1000000UL	// should be replaced by global TTRAMBase as soon as TTRAMBase will be a constant
 extern uint32 TTRAMSize;
 
-#define ARANYMVRAMSTART 0xf0000000
+#define ARANYMVRAMSTART 0xf0000000UL
 #define ARANYMVRAMSIZE	0x00100000	// should be a variable to protect VGA card offscreen memory
 
 #if !DIRECT_ADDRESSING && !REAL_ADDRESSING
@@ -175,7 +175,8 @@ static __inline__ void check_ram_boundary(uaecptr addr, bool write = false)
 		if (addr >= ARANYMVRAMSTART && addr < (ARANYMVRAMSTART + ARANYMVRAMSIZE))
 			return;
 	}
-   BUS_ERROR;
+	printf("BUS ERROR %s at $%x\n", (write ? "writting" : "reading"), addr);
+	BUS_ERROR;
 }
 
 static __inline__ uae_u32 get_long_direct(uaecptr addr)
