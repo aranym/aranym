@@ -339,7 +339,7 @@ bool ACSIFDC::is_floppy_inserted()
 void ACSIFDC::fdc_exec_command()
 {
 	static int dir=1,motor=1;
-	int sides,d;
+	int actual_side, d;
 	memptr address;
 	long offset;
 	long count;
@@ -349,7 +349,7 @@ void ACSIFDC::fdc_exec_command()
 	buffer = Atari2HostAddr(address);
 	int snd_porta = getYAMAHA()->getFloppyStat();
 	D(bug("FDC DMA virtual address = %06x, physical = %08x, snd = %d", address, buffer, snd_porta));
-	sides=(~snd_porta)&1;
+	actual_side=(~snd_porta)&1;
 	d=(~snd_porta)&6;
 	switch(d)
 	{
@@ -428,7 +428,7 @@ void ACSIFDC::fdc_exec_command()
 		{
 			offset=secsize
 				* (((spt*sides*head))
-				+ (spt * sides) + (fdc_sector-1));
+				+ (spt * actual_side) + (fdc_sector-1));
 			switch(fdc_command & 0xf0)
 			{
 				case 0x80:
