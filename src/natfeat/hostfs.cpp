@@ -87,7 +87,6 @@ extern "C" {
     1 D(bug("%s", "fs_chmode"));
       D(bug("%s", "fs_writelabel"));
       D(bug("%s", "fs_readlabel"));
-    1 D(bug("%s", "fs_symlink"));
     1 D(bug("%s", "fs_hardlink"));
     1 D(bug("%s", "fs_fscntl"));
       D(bug("%s", "fs_dskchng"));
@@ -1569,14 +1568,16 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, uint32 xattrp )
 
 int32 HostFs::xfs_root( uint16 dev, XfsCookie *fc )
 {
+	MountMap::iterator it = mounts.find(dev);
+	if ( it == mounts.end() ) {
+		D2(bug( "root: dev = %#04x -> EDRIVE\n", dev ));
+		return TOS_EDRIVE;
+	}
+
 	D2(bug( "root:\n"
 		   "  dev	 = %#04x\n"
 		   "  devnum = %#04x\n",
-		   dev, mint_fs_devnum));
-
-	MountMap::iterator it = mounts.find(dev);
-	if ( it == mounts.end() )
-		return TOS_EDRIVE;
+		   dev, it->second->fsDrv));
 
 	fc->xfs = it->second->fsDrv;
 	fc->dev = dev;
@@ -1877,6 +1878,9 @@ void HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot, 
 
 /*
  * $Log$
+ * Revision 1.6  2003/03/08 08:51:51  joy
+ * disable DEBUG
+ *
  * Revision 1.5  2003/03/01 11:57:37  joy
  * major HOSTFS NF API cleanup
  *

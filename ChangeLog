@@ -1,3 +1,13 @@
+2003/03/11 - STanda
+- aratapif: made working even in nondebug mode. The exec() arguments
+  needs to be put into the child process adress space to be able to
+  execute any binary.
+- BetaDOS 3.12: works correctly with the hostfs.dos driver here it
+  seems. Please test the driver throughly. It gives you the long names
+  also under FreeMiNT (unlike the aranymfs.dos which does not work
+  at all in my 1.16 setup - it does in 1.15.12 however)
+
+
 2003/03/07 - joy
 - aranym.spec: paths to share/aranym had to be corrected (though I'd say
   they were OK previously and that our Makefile install: is wrong)

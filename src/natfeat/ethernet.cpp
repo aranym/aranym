@@ -189,18 +189,34 @@ bool ETHERNETDriver::init(void)
 	}
 
 	int pid = fork();
+	if (pid < 0) {
+		panicbug("Ethernet: fork() failed! closing device");
+		close(fd);
+		return false;
+	}
+
 	if (pid == 0) {
+		// the arguments _need_ to be placed into the child process
+		// memory (otherwise this does not work here)
+		char *args[] = {
+			TAP_INIT, TAP_DEVICE, TAP_MTU,
+			XIF_ATARI_IP, XIF_HOST_IP, XIF_NETMASK,
+			NULL
+		};
 		int result;
-		if ( (result = execlp( TAP_INIT, TAP_INIT, TAP_DEVICE, TAP_MTU,
-							XIF_ATARI_IP, XIF_HOST_IP, XIF_NETMASK) )) {
-			panicbug("initTap failure: %d", result);
-			if (result == -1) {
-				perror("execl tunifc");
-				result = 5;
-			}
+
+		D(bug("\nexeclp(%s,%s,%s,%s,%s,%s)\n", TAP_INIT, TAP_DEVICE, TAP_MTU,
+			  XIF_ATARI_IP, XIF_HOST_IP, XIF_NETMASK));
+
+		result = execv( TAP_INIT, args );
+		panicbug("initTap failure: %d", result);
+		if (result == -1) {
+			perror("execl tunifc");
+			result = 5;
 		}
 		::exit(result);
 	}
+
 	D(bug("waiting for tunifc"));
 	int status;
 	waitpid(pid, &status, 0);
@@ -215,8 +231,7 @@ bool ETHERNETDriver::init(void)
 		else {
 			D(bug("tunifc initialized OK"));
 		}
-	}
-	else {
+	} else {
 		D(bug("tunifc failed badly"));
 	}
 
