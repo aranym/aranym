@@ -65,7 +65,7 @@ HARDWARE ICs[] = {
 	{"Cartridge", 0xfa0000, 0x20000, &fake_io},
 	{"Memory Management", 0xff8000, 8, &mmu},
 	{"VIDEL", 0xff8200, 0xc4, &videl},
-	{"DMA/FDC", 0xff8600, 0x10, &fdc},
+	{"DMA/FDC", 0xff8600, 0x0e, &fdc},
 //	{"DMA/SCSI", 0xff8700, 0x16, &fake_io},
 // 	{"SCSI", 0xff8780, 0x10, &fake_io},
 	{"Yamaha", 0xff8800, 4, &yamaha},
@@ -180,6 +180,9 @@ void HWput_b (uaecptr addr, uae_u8 b) {
 
 /*
  * $Log$
+ * Revision 1.46  2002/09/27 21:01:17  pmandin
+ * Acia, Ikbd, Midi update
+ *
  * Revision 1.45  2002/09/20 14:14:54  pmandin
  * DSP bugfixes and updates
  *
