@@ -1,3 +1,7 @@
+2005/01/16 - milan
+- cdrom.cpp: new fix for *BSD (thanks, Konrad)
+
+
 2005/01/16 - Petr
 - natfeat/xhdi: fixed scary off-by-one bug. Direct partition access works
   for virtual disk images (detection of real devices size doesn't work yet).

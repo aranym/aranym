@@ -89,6 +89,7 @@ extern "C" {
 #include <sys/file.h>
 #include <sys/cdio.h>
 #include <sys/disklabel.h>
+#include <netinet/in.h>
 
 // XXX
 #define BX_CD_FRAMESIZE 2048
