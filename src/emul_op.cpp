@@ -192,92 +192,23 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		}
 			break;
 
-		case M68K_EMUL_OP_DMAREAD:	// for EmuTOS - code 0x7136
-		{
-			int dev = ReadInt16(r->a[7]+14);
-			long buf = ReadInt32(r->a[7]+10);
-			int cnt = ReadInt16(r->a[7]+8);
-			long recnr = ReadInt32(r->a[7]+4);
-			D(bug("ARAnyM DMAread(start=%ld, count=%d, buffer=%ld, device=%d)", recnr, cnt, buf, dev));
-
-			bx_disk_options_t *disk;
-			switch(dev) {
-				case 16:	disk = &bx_options.diskc; break;
-				case 17:	disk = &bx_options.diskd; break;
-				default:	disk = NULL; break;
+		case M68K_EMUL_OP_DMAREAD:	// DEPRECATED (for EmuTOS - code 0x7136)
+			{
+				uint16 dev = ReadInt16(r->a[7]+14);
+				memptr buf = ReadInt32(r->a[7]+10);
+				uint16 cnt = ReadInt16(r->a[7]+8);
+				uint32 recnr = ReadInt32(r->a[7]+4);
+				D(bug("ARAnyM DMAread(start=%ld, count=%d, buffer=%ld, device=%d)", recnr, cnt, buf, dev));
+				panicbug("ARAnym DMAread - deprecated call");
+				r->d[0] = Xhdi.XHReadWrite(dev, 0, 0, recnr, cnt, buf);
 			}
-
-			if (disk == NULL) {
-				r->d[0] = (uint32)-15L;	// EUNDEV (unknown device)
-				break;
-			}
-
-			FILE *f = fopen(disk->path, "rb");
-			if (f != NULL) {
-				const int secsize = 512;
-				const int size = secsize*cnt;
-				uint8 *hostbuf = Atari2HostAddr(buf);
-				fseek(f, recnr*secsize, SEEK_SET);
-				fread(hostbuf, size, 1, f);
-				fclose(f);
-				if (! disk->byteswap) {
-					for(int i=0; i<size; i++) {
-						int tmp = hostbuf[i];
-						hostbuf[i] = hostbuf[i+1];
-						hostbuf[++i] = tmp;
-					}
-				}
-			}
-			r->d[0] = 0;	// 0 = no error
-		}
 			break;
 
 		case M68K_EMUL_OP_XHDI:	// for EmuTOS - code 0x7137
-			// D(bug("ARAnyM XHDI(%u)\n", get_word(r->a[7]+4, true)));
-			switch(ReadInt16(r->a[7]+4)) {
-				case 14:	/* XHGetCapatity */
-					{
-						// UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
-						uint16 major = ReadInt16(r->a[7]+6);
-						uint16 minor = ReadInt16(r->a[7]+8);
-						uint32 blocks = ReadInt32(r->a[7]+10);
-						uint32 blocksize = ReadInt32(r->a[7]+14);
-						D(bug("ARAnyM XHGetCapacity(major=%u, minor=%u, blocks=%lu, blocksize=%lu)", major, minor, blocks, blocksize));
-
-						if (minor != 0) {
-							r->d[0] = (uint32)-15L;	// EUNDEV (unknown device)
-							break;
-						}
-
-						bx_disk_options_t *disk;
-						switch(major) {
-							case 16:	disk = &bx_options.diskc; break;
-							case 17:	disk = &bx_options.diskd; break;
-							default:	disk = NULL; break;
-						}
-
-						if (disk == NULL)
-							r->d[0] = (uint32)-15L;	// EUNDEV (unknown device)
-
-						struct stat buf;
-						if (! stat(disk->path, &buf)) {
-							long t_blocks = buf.st_size >> 9;	// 512 bytes block FIXME
-							D(bug("t_blocks = %ld\n", t_blocks));
-							if (blocks > 0)
-								WriteAtariInt32(blocks, t_blocks);
-							if (blocksize > 0)
-								WriteAtariInt32(blocksize, 512);	// FIXME
-							r->d[0] = 0L;
-						}
-						else {
-							r->d[0] = (uint32)-15L;	// actually file error
-						}
-					}
-					break;
-
-				default:
-					r->d[0] = (uint32)-32L; // EINVFN
-					break;
+			{
+				memptr stack = r->a[7] + 4;
+				uint16 fncode = ReadInt16(stack); stack += 2;
+				r->d[0] = Xhdi.dispatch(fncode, stack);
 			}
 			break;
 
