@@ -505,8 +505,16 @@ void BLITTER::handleWriteW(uaecptr addr, uint16 value) {
 void BLITTER::handleWriteL(uaecptr addr, uint32 value) {
 	addr -= getHWoffset();
 	switch(addr) {
-		case 0x24: source_addr = value & 0xfffffffe; break;
-		case 0x32: dest_addr = value & 0xfffffffe; break;
+		case 0x24:
+			D(bug("Blitter sets source to $%08lx at $%08lx", value, showPC());
+			source_addr = value & 0xfffffffe;
+			source_addr_backup = source_addr;
+			break;
+		case 0x32:
+			D(bug("Blitter sets dest to $%08lx at $%08lx", value, showPC());
+			dest_addr = value & 0xfffffffe;
+			dest_addr_backup = dest_addr;
+			break;
 		default: BASE_IO::handleWriteL(addr+getHWoffset(), value); break;
 	}
 
@@ -550,6 +558,15 @@ void BLITTER::Do_Blit(void)
 #if DEBUG
 	SHOWPARAMS;
 #endif
+
+	if (source_addr != source_addr_backup) {
+		D(bug("Blitter starts with obsolete source addr $%08lx, should be $%08lx", source_addr, source_addr_backup));
+		source_addr = source_addr_backup;
+	}
+	if (dest_addr != dest_addr_backup) {
+		D(bug("Blitter starts with obsolete dest addr $%08lx, should be $%08lx", dest_addr, dest_addr_backup));
+		dest_addr = dest_addr_backup;
+	}
 
 	if (source_addr <= 0x800 || (source_addr >= 0x0e80000 && source_addr < 0x1000000)) {
 		panicbug("Blitter Source address out of range: $%08lx", source_addr);
