@@ -58,27 +58,6 @@ typedef struct {
 	char name[32];
 } metados_bos_header_t __attribute__((packed));
 
-struct atari_cdrom_tocentry 
-{
-	/* input parameters */
-	unsigned char	cdte_track;		/* track number or CDROM_LEADOUT */
-	unsigned char	cdte_format;	/* CDROM_LBA or CDROM_MSF */
-
-	/* output parameters */
-	unsigned char	cdte_info;
-#if 0
-	unsigned	cdte_adr:4;	/*	the SUBQ channel encodes 0: nothing,
-								1: position data, 2: MCN, 3: ISRC,
-								else: reserved */
-	unsigned	cdte_ctrl:4;	/*	bit 0: audio with pre-emphasis,
-									bit 1: digital copy permitted,
-									bit 2: data track,
-									bit 3: four channel */
-#endif
-	unsigned char	cdte_datamode;	/* currently not set */
-	unsigned long	cdte_addr;	/* track start */
-} __attribute__((packed));
-
 struct atari_cdrom_subchnl 
 {
 	/* input parameters */
@@ -109,25 +88,6 @@ struct atari_cdrom_audioctrl
         unsigned char volume;
     } channel[4];
 } __attribute__((packed));
-
-/*
-typedef struct {
-	unsigned short length;
-	unsigned char first;
-	unsigned char last;
-} atari_tocheader_t __attribute__((packed));
-*/
-typedef struct {
-	unsigned char reserved1;
-	unsigned char info;
-/*
-	unsigned adr:4;
-	unsigned ctrl:4;
-*/
-	unsigned char track;
-	unsigned char reserved2;
-	unsigned long absaddr;
-} atari_tocentry_t __attribute__((packed));
 
 typedef struct {	/* TOC entry for MetaGetToc() function */
 	unsigned char track;
@@ -503,7 +463,7 @@ int32 CdromDriver::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 			break;
 		case CDROMREADTOCENTRY:
 			{
-				int errorcode;
+				int errorcode, i;
 				struct cdrom_tocentry tocentry;
 				unsigned char *atari_tocentry;
 				
@@ -512,24 +472,28 @@ int32 CdromDriver::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 				tocentry.cdte_format = atari_tocentry[1];
 
 				D(bug("nf: cdrom:  Ioctl(READTOCENTRY,0x%02x,0x%02x)", tocentry.cdte_track, tocentry.cdte_format));
+				D(bug("nf: cdrom:   input: %02x %02x %02x %02x %02x %02x %02x %02x",
+					atari_tocentry[0], atari_tocentry[1], atari_tocentry[2], atari_tocentry[3],
+					atari_tocentry[4], atari_tocentry[5], atari_tocentry[6], atari_tocentry[7]
+				));
 
 				errorcode=ioctl(drive_handles[drive], new_opcode, &tocentry);
 
 				if (errorcode>=0) {
 					atari_tocentry[0] = tocentry.cdte_track;
 					atari_tocentry[1] = tocentry.cdte_format;
-					atari_tocentry[2] = 0;
-					atari_tocentry[3] = (tocentry.cdte_adr & 0x0f)<<4;
-					atari_tocentry[3] |= tocentry.cdte_ctrl & 0x0f;
-					atari_tocentry[4] = tocentry.cdte_datamode;
+					atari_tocentry[2] = (tocentry.cdte_adr & 0x0f)<<4;
+					atari_tocentry[2] |= tocentry.cdte_ctrl & 0x0f;
+					atari_tocentry[3] = tocentry.cdte_datamode;
+					atari_tocentry[4] = atari_tocentry[5] = 0;
 
 					if (tocentry.cdte_format == CDROM_LBA) {
-						*((unsigned long *) &atari_tocentry[5]) = SDL_SwapBE32(tocentry.cdte_addr.lba);
+						*((unsigned long *) &atari_tocentry[6]) = SDL_SwapBE32(tocentry.cdte_addr.lba);
 					} else {
-						atari_tocentry[5] = 0;
-						atari_tocentry[6] = tocentry.cdte_addr.msf.minute;
-						atari_tocentry[7] = tocentry.cdte_addr.msf.second;
-						atari_tocentry[8] = tocentry.cdte_addr.msf.frame;
+						atari_tocentry[6] = 0;
+						atari_tocentry[7] = tocentry.cdte_addr.msf.minute;
+						atari_tocentry[8] = tocentry.cdte_addr.msf.second;
+						atari_tocentry[9] = tocentry.cdte_addr.msf.frame;
 					}
 				}
 				return errorcode;
@@ -601,11 +565,19 @@ int32 CdromDriver::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 					atari_subchnl->cdsc_trk = subchnl.cdsc_trk;
 					atari_subchnl->cdsc_ind = subchnl.cdsc_ind;
 
-					atari_subchnl->cdsc_absaddr = ((subchnl.cdsc_absaddr.lba)>>24) & 0x000000ff;
-					atari_subchnl->cdsc_absaddr |= ((subchnl.cdsc_absaddr.lba)<<8) & 0xffffff00;
+					if (subchnl.cdsc_format == CDROM_LBA) {
+						atari_subchnl->cdsc_absaddr = SDL_SwapBE32(subchnl.cdsc_absaddr.lba);
+						atari_subchnl->cdsc_reladdr = SDL_SwapBE32(subchnl.cdsc_reladdr.lba);
+					} else {
+						atari_subchnl->cdsc_absaddr = subchnl.cdsc_absaddr.msf.minute<<8;
+						atari_subchnl->cdsc_absaddr |= subchnl.cdsc_absaddr.msf.second<<16;
+						atari_subchnl->cdsc_absaddr |= subchnl.cdsc_absaddr.msf.frame<<24;
 
-					atari_subchnl->cdsc_reladdr = ((subchnl.cdsc_reladdr.lba)>>24) & 0x000000ff;
-					atari_subchnl->cdsc_reladdr |= ((subchnl.cdsc_reladdr.lba)<<8) & 0xffffff00;
+						atari_subchnl->cdsc_reladdr = subchnl.cdsc_reladdr.msf.minute<<8;
+						atari_subchnl->cdsc_reladdr |= subchnl.cdsc_reladdr.msf.second<<16;
+						atari_subchnl->cdsc_reladdr |= subchnl.cdsc_reladdr.msf.frame<<24;
+					}
+
 				}
 				return errorcode;
 			}
