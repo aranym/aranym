@@ -438,9 +438,9 @@ int open_gui(void *ptr)
 	bool reboot = false;
 	bool quit = false;
 
-	hostScreen.setGUIopen(true);
+	hostScreen.openGUI();
 	Dialog_DoProperty(&reboot, &quit);
-	hostScreen.setGUIopen(false);
+	hostScreen.closeGUI();
 
 	if (quit)
 		pendingQuit = true;

@@ -58,11 +58,41 @@ void HostScreen::toggleFullScreen()
 	SDL_WM_ToggleFullScreen(mainSurface);
 }
 
+void HostScreen::openGUI()
+{
+	if (isGUIopen()) {
+		panicbug("GUI is already open!");
+		return;
+	}
+
+	// allocate new background video surface
+	if (backgroundSurf != NULL)
+		panicbug("Memory leak? The background video surface should not be allocated.");
+
+	backgroundSurf = SDL_ConvertSurface(mainSurface, mainSurface->format, mainSurface->flags & ~SDL_HWSURFACE);
+	GUIopened = true;
+}
+
+void HostScreen::closeGUI()
+{
+	// update the main surface and then redirect VDI to it
+	restoreBackground();
+	surf = mainSurface;			// redirect VDI to main surface
+
+	// free background video surface
+	if (backgroundSurf != NULL) {
+		D(bug("Freeing background video surface"));
+		SDL_FreeSurface(backgroundSurf);
+		backgroundSurf = NULL;
+	}
+	GUIopened = false;
+}
+
 void HostScreen::saveBackground()
 {
-	if (backgroundSurf == NULL) {
-		backgroundSurf = SDL_ConvertSurface(mainSurface, mainSurface->format, mainSurface->flags & ~SDL_HWSURFACE);
-		surf = backgroundSurf;
+	if (backgroundSurf != NULL) {
+		SDL_BlitSurface(mainSurface, NULL, backgroundSurf, NULL);
+		surf = backgroundSurf;	// redirect VDI to background surface
 	}
 }
 
@@ -70,10 +100,7 @@ void HostScreen::restoreBackground()
 {
 	if (backgroundSurf != NULL) {
 		SDL_BlitSurface(backgroundSurf, NULL, mainSurface, NULL);
-		surf = mainSurface;
 		update(true);
-		SDL_FreeSurface(backgroundSurf);
-		backgroundSurf = NULL;
 	}
 }
 
@@ -930,6 +957,9 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 
 /*
  * $Log$
+ * Revision 1.28  2002/07/19 12:27:40  joy
+ * main and background video surfaces. 'surf' is just pointer to either of them depending on whether SDL GUI is active and has stored the background or not.
+ *
  * Revision 1.27  2002/06/09 20:08:31  joy
  * save_bkg/restore_bkg added (used in SDL GUI)
  * the save to mem worked for a while and then it started failing for no apparent reason so I had to write saving to file. It's a hack. Proper solution would be to create a complete surface by cloning the current one and blit the screen there, I think.

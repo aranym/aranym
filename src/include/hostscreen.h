@@ -111,11 +111,13 @@ class HostScreen {
 	inline void	  update( bool forced );
 	inline void	  update();
 
-	// save and restore background (cannot be nested)
+	// GUI
+	void openGUI();
+	void closeGUI();
+	bool isGUIopen()	{ return GUIopened; }
+	// save and restore background under GUI
 	void saveBackground();
 	void restoreBackground();
-	bool isGUIopen()	{ return GUIopened; }
-	void setGUIopen(bool opened)	{ GUIopened = opened; }
 	SDL_Surface *getPhysicalSurface() { return mainSurface; }
 
 	uint32 getBpp();
@@ -398,6 +400,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.34  2002/07/19 12:25:00  joy
+ * main and background video surfaces
+ *
  * Revision 1.33  2002/06/26 21:06:27  joy
  * bool GUIopened flag added
  *
