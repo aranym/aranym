@@ -27,7 +27,7 @@ void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
 		spec_desired.channels = (uint8) ReadInt16(r->a[7] + 6);
 		spec_desired.samples = ReadInt16(r->a[7] + 8);
 		spec_desired.userdata = (void *) &AudioParameters;
-		AudioParameters.buffer = (void *) ReadInt32(r->a[7] + 10);
+		AudioParameters.buffer = ReadInt32(r->a[7] + 10);
 		AudioParameters.len = 0;
 		D(bug
 		  ("Audio: OpenAudio %x Fr:%d Ch:%d S:%d", spec_desired.format,
@@ -45,7 +45,7 @@ void AudioDriver::dispatch(uint32 fncode, M68kRegisters * r)
 			   spec_obtained.channels, spec_obtained.samples));
 			if (spec_desired.userdata && spec_obtained.size) {
 				AUDIOPAR *par = (AUDIOPAR *)(spec_desired.userdata);
-				void *buffer = do_get_real_address(par->buffer);
+				uint8 *buffer = Atari2HostAddr(par->buffer);
 				memset(buffer, 0, spec_obtained.size);
 			}
 			r->d[0] = (uint32) spec_obtained.format;
@@ -103,7 +103,7 @@ static void audio_callback(void *userdata, uint8 * stream, int len)
 {
 	AUDIOPAR *par = (AUDIOPAR *)userdata;
 	if (userdata) {
-		uint8 *buffer = do_get_real_address(par->buffer);
+		uint8 *buffer = Atari2HostAddr(par->buffer);
 		SDL_MixAudio(stream, buffer, len, par->volume);
 		par->len = len;
 		TriggerInterrupt();		// Interrupt level 5

@@ -14,7 +14,6 @@
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
-#include "memory.h"
 #include "parameters.h"
 
 #define DEBUG 0
@@ -145,18 +144,14 @@ void fdc_exec_command (void)
 {
 	static int dir=1,motor=1;
 	int sides,d;
-	uaecptr address;
+	memptr address;
 	long offset;
 	long count;
-	uae_u8 *buffer;
-	// STanda: commented out
-	//extern void linea_init(void);
-	//extern int linea_ok;
-	// STanda
+	uint8 *buffer;
 
 	address = (HWget_b(0xff8609)<<16)|(HWget_b(0xff860b)<<8)
 			|HWget_b(0xff860d);
-	buffer=do_get_real_address(address);	//?? Je to OK? - FIXME
+	buffer = Atari2HostAddr(address);
 	int snd_porta = yamaha.getFloppyStat();
 	D(bug("FDC DMA virtual address = %06x, physical = %08x, snd = %d", address, buffer, snd_porta));
 	sides=(~snd_porta)&1;

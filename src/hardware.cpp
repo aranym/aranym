@@ -116,8 +116,6 @@ void handleWrite(uaecptr addr, uae_u8 value) {
 #define HW_IDE	0xf00000
 
 uae_u32 HWget_l (uaecptr addr) {
-//	uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
-//	return do_get_mem_long(m);
 	D(bug("HWget_l %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	// return (handleRead(addr) << 24) | (handleRead(addr+1) << 16) | (handleRead(addr+2) << 8) | handleRead(addr+3);
 /*
@@ -131,8 +129,6 @@ uae_u32 HWget_l (uaecptr addr) {
 }
 
 uae_u32 HWget_w (uaecptr addr) {
-//	uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
-//	return do_get_mem_word(m);
 	D(bug("HWget_w %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE)
 		return ide.handleReadW(addr);
@@ -141,15 +137,11 @@ uae_u32 HWget_w (uaecptr addr) {
 }
 
 uae_u32 HWget_b (uaecptr addr) {
-//	uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
-//	return do_get_mem_byte(m);
 	D(bug("HWget_b %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
 	return handleRead(addr);
 }
 
 void HWput_l (uaecptr addr, uae_u32 l) {
-//	uae_u32 * const m = (uae_u32 *)do_get_real_address(addr);
-//	do_put_mem_long(m, l);
 	D(bug("HWput_l %x,%d ($%08x) -> %s at %08x", addr, l, l, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE)
 		ide.handleWriteL(addr, l);
@@ -162,8 +154,6 @@ void HWput_l (uaecptr addr, uae_u32 l) {
 }
 
 void HWput_w (uaecptr addr, uae_u32 w) {
-//	uae_u16 * const m = (uae_u16 *)do_get_real_address(addr);
-//	do_put_mem_word(m, w);
 	D(bug("HWput_w %x,%d ($%04x) -> %s at %08x", addr, w, w, debug_print_IO(addr), showPC()));
 	if (addr == HW_IDE)
 		ide.handleWriteW(addr, w);
@@ -174,8 +164,6 @@ void HWput_w (uaecptr addr, uae_u32 w) {
 }
 
 void HWput_b (uaecptr addr, uae_u32 b) {
-//	uae_u8 * const m = (uae_u8 *)do_get_real_address(addr);
-//	do_put_mem_byte(m, b);
 	D(bug("HWput_b %x,%u ($%02x) -> %s at %08x", addr, b & 0xff, b & 0xff, debug_print_IO(addr), showPC()));
 	handleWrite(addr, b);
 }
@@ -183,6 +171,9 @@ void HWput_b (uaecptr addr, uae_u32 b) {
 
 /*
  * $Log$
+ * Revision 1.37  2002/03/21 10:26:31  joy
+ * serious bug fixed - we forgot to set the faulty address in hardware register accesses!
+ *
  * Revision 1.36  2002/02/26 21:08:13  milan
  * address validation in CPU interface
  *
