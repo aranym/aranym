@@ -982,7 +982,36 @@ int16 ExtFs::flags2st(int flags)
 	return res;
 }
 
-
+/***
+ * Long filename to 8+3 transformation.
+ * The extensions, if exists in the original filename, are only shortened
+ * and never appended with anything due to the filename extension driven
+ * file type recognition posibility used by nearly all desktop programs.
+ *
+ * The translation rules are:
+ *   The filename that has no extension and:
+ *      - is max 11 chars long is splited to the filename and extension
+ *        just by inserting a dot to the 8th position (example 1).
+ *      - is longer than 11 chars is shortened to 8 chars and appended
+ *        with the hashcode extension (~XX... example 2).
+ *   The filename is over 8 chars:
+ *      the filename is shortened to 5 and appended with the hashcode put
+ *      into the name part (not the extention... example 3). The extension
+ *      shortend to max 3 chars and appended too.
+ *   The extension is over 3 chars long:
+ *      The filename is appended with the hashcode and the extension is
+ *      shortened to max 3 chars (example 4).
+ *
+ * Examples:
+ *   1. longnamett        -> longname.tt
+ *   2. longfilename      -> longfile.~XX
+ *   3. longfilename.ext  -> longf~XX.ext
+ *   4. file.html         -> file~XX.htm
+ *
+ * @param dest   The buffer to put the filename (max 12 char).
+ * @param source The source filename string.
+ *
+ **/
 void ExtFs::transformFileName( char* dest, const char* source )
 {
 #ifdef DEBUG_FILENAMETRANSFORMATION
@@ -2500,6 +2529,9 @@ int32 ExtFs::findFirst( ExtDta *dta, char *fpathName )
 
 /*
  * $Log$
+ * Revision 1.35  2002/03/27 15:54:27  standa
+ * Debug removed.
+ *
  * Revision 1.34  2002/03/27 15:53:29  standa
  * The transformFileName() has been rewriten.
  *
