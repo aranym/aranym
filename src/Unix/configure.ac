@@ -1489,23 +1489,15 @@ else
 	have_zlib="not required"
 fi
 
-dnl Linux kernel includes (for lilo)
-
-AC_ARG_WITH(kernel-includes,
-        [  --with-kernel-includes=DIR Specify where to find Linux kernel headers],
-        LINUXKERNEL_INCDIR=$withval, LINUXKERNEL_INCDIR="/usr/src/linux/include")
-
 dnl Linux loader
 
 LILOSRCS=""
 if [[ "x$WANT_LILO" = "xyes" ]]; then
 	if [[ "x$WANT_MMU" = "xyes" ]]; then
 		LILOSRCS="../lilo.cpp"
-		CFLAGS="$CFLAGS -I$LINUXKERNEL_INCDIR"
-                CXXFLAGS="$CXXFLAGS -I$LINUXKERNEL_INCDIR"
 		AC_DEFINE([ENABLE_LILO], 1, [Define if lilo enabled])
 	else
-		AC_MSG_ERROR([Linux kernel requires functionnal MMU emulation])
+		AC_MSG_ERROR([Linux kernel requires functional MMU emulation])
 	fi
 fi
 
@@ -1626,7 +1618,6 @@ echo GUI .................................... : $WANT_SDLGUI
 echo OpenGL ................................. : $WANT_OPENGL
 echo Linux loader ........................... : $WANT_LILO
 echo Zlib ................................... : $have_zlib
-echo Linux kernel includes .................. : $LINUXKERNEL_INCDIR
 echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
 echo NatFeat PCI driver ..................... : $WANT_NFPCI
 echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA
