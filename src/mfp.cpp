@@ -210,6 +210,7 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 					break;
 
 		case 0x05:	data_direction = value;
+					D(bug("GPIP Data Direction set to %02x", value));
 					break;
 
 		case 0x07:	irq_enable = (irq_enable & 0x00ff) | (value << 8);
@@ -305,12 +306,6 @@ void MFP::handleWrite(memptr addr, uint8 value) {
  */
 void MFP::setGPIPbit(int mask, int value)
 {
-	// hack
-	if (mask == 0x10) {
-		IRQ(6, 1);
-	}
-	return;
-	// /hack
 	static int map_gpip_to_ier[8] = {0, 1, 2, 3, 6, 7, 14, 15} ;	
 	mask &= 0xff;
 	int oldGPIP = GPIP_data;
@@ -321,7 +316,7 @@ void MFP::setGPIPbit(int mask, int value)
 	for(j = 0, i = 1 ; j < 8 ; j++, i <<= 1) {
 		if ((oldGPIP & i) != (GPIP_data & i)) {
 			D(bug("setGPIPbit: i=$%x, irq_enable=$%x, old=$%x, new=$%x", i, irq_enable, oldGPIP, GPIP_data));
-			if (irq_enable & i) {
+			if (active_edge & i) {
 				/* interrupt when going from 0 to 1  */
 				if (oldGPIP & i)
 					continue;
@@ -337,9 +332,9 @@ void MFP::setGPIPbit(int mask, int value)
 	}	
 }
 
-void MFP::IRQ(int no, int count)
+void MFP::IRQ(int irq, int count)
 {
-	switch(no) {
+	switch(irq) {
 		// printer BUSY interrupt
 		case 0:	break;
 
