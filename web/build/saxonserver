@@ -24,7 +24,7 @@ then
 		wget ftp://ftp.sophics.cz/pub/aranym/tools/saxon.jar
 	fi
 	echo "Starting saxon.jar..."
-	java -classpath $PWD/saxon.jar Main
+	java -classpath $PWD:$PWD/saxon.jar Main
 else
 	echo "saxon.jar is already running..."
 	exit 0
