@@ -278,18 +278,25 @@ void SDLGui_DrawRadioButton(SGOBJ *rdlg, int objnum)
 */
 void SDLGui_DrawCheckBox(SGOBJ *cdlg, int objnum)
 {
-  char str[80];
-  int x, y;
+  char *txtptr = cdlg[objnum].txt;
+  int txtlen = strlen(txtptr);
+  bool selected = cdlg[objnum].state&SG_SELECTED;
+  char str[txtlen+2+1];
 
-  x = (cdlg[0].x+cdlg[objnum].x)*fontwidth;
-  y = (cdlg[0].y+cdlg[objnum].y)*fontheight;
+  if (cdlg[objnum].flags&SG_BUTTON_RIGHT) {
+    strcpy(str, txtptr);
+    str[txtlen] = ' ';
+    str[txtlen+1] = selected ? SGCHECKBOX_SELECTED : SGCHECKBOX_NORMAL;
+    str[txtlen+2] = '\0';
+  }
+  else {
+    str[0] = selected ? SGCHECKBOX_SELECTED : SGCHECKBOX_NORMAL;
+    str[1] = ' ';
+    strcpy(&str[2], txtptr);
+  }
 
-  if( cdlg[objnum].state&SG_SELECTED )
-    str[0]=SGCHECKBOX_SELECTED;
-   else
-    str[0]=SGCHECKBOX_NORMAL;
-  str[1]=' ';
-  strcpy(&str[2], cdlg[objnum].txt);
+  int x = (cdlg[0].x+cdlg[objnum].x)*fontwidth;
+  int y = (cdlg[0].y+cdlg[objnum].y)*fontheight;
 
   SDLGui_Text(x, y, str);
 }
