@@ -775,7 +775,7 @@ Since ARAnyM version 0.9.0 Linux/m68k kernel should boot up normally,
 like on a Falcon030 with MC68040. You can use normal Atari bootstrap
 for booting Linux/m68k from TOS or you can boot the linux kernel directly
 thanks to ARAnyM integrated LILO (Linux Loader). Of course you need
-the MMU enabled version of ARAnyM.
+the MMU enabled version of ARAnyM (binary should be named "aranym-mmu").
 
 Debian Woody:
 ~~~~~~~~~~~~~
@@ -808,5 +808,5 @@ Debian Sarge linux ramdisks:
   http://ftp.debian.org/dists/sarge/main/installer-m68k/current/images/nativehd/
   (initrd22.gz, initrd.gz)
 
-With correct config file you simply start "aranym -l" and that's it.
+With correct config file you simply start "aranym-mmu -l -N" and that's it.
 
