@@ -49,6 +49,10 @@ typedef struct {
   char *path;
   unsigned long address;
   } bx_rom_options;
+
+typedef struct {
+  long _mch;
+  } bx_cookies_options;
  
 typedef struct {
   char *path;
@@ -70,6 +74,7 @@ typedef struct {
   bx_disk_options   diskc;
   bx_disk_options   diskd;
   bx_cdrom_options  cdromd;
+  bx_cookies_options cookies;
   char              bootdrive[2];
   unsigned long     vga_update_interval;
   unsigned long     keyboard_serial_delay;
