@@ -20,6 +20,15 @@ extern int in_handler;
 
 class NF_Base
 {
+protected:
+	/**
+	 * Host<->Atari mem & str functions
+	 **/
+	void a2fmemcpy( char *dest, memptr source, size_t count );
+	void a2fstrcpy( char *dest, memptr source );
+	void f2amemcpy( memptr dest, char *source, size_t count );
+	void f2astrcpy( memptr dest, char *source );
+
 public:
 	virtual char *name() = 0;
 	virtual bool isSuperOnly() = 0;
