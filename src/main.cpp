@@ -80,7 +80,7 @@ bool CPUIs68060;
 int FPUType;
 
 // Timer stuff
-static long lastTicks;
+static uint32 lastTicks;
 #ifdef USE_TIMERS
 SDL_TimerID my_timer_id;
 #endif
@@ -675,7 +675,7 @@ void invoke200HzInterrupt()
 	static int refreshCounter = 0;
 
 	/* syncing to 200 Hz */
-	long newTicks = SDL_GetTicks();
+	uint32 newTicks = SDL_GetTicks();
 	int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
 	if (count == 0)
 		return;
@@ -983,6 +983,9 @@ void ExitAll(void)
 
 /*
  * $Log$
+ * Revision 1.58  2002/01/09 19:14:12  milan
+ * Preliminary support for SGI/Irix
+ *
  * Revision 1.57  2002/01/08 16:13:18  joy
  * config variables moved from global ones to bx_options struct.
  *
