@@ -8,7 +8,9 @@
       The main goal of the project is to create a virtual machine that would allow everyone to
       run current 32bit Atari ST/TT/Falcon applications on their computer regardless if it's
       an IBM clone (read it as "PC" :-), an Apple, an Unix server, a graphics workstation or
-      even a portable computer. We modeled the virtual machine after the most advanced Atari
+      even a portable computer.
+      <p/>
+      We modeled the virtual machine after the most advanced Atari
       computer equipped with the latest hardware extensions - that is Falcon030
       with Afterburner040 (bringing the CPU to MC68040) and a graphics card. But we don't
       stop there - the virtual machine will be extended to allow developing new powerful
@@ -17,14 +19,10 @@
       <p/>
       To create the virtual machine we started a project named ARAnyM in early 2001.
       In some three weeks we have been booting to desktop and since then we work
-      on configuration, new features etc. There are several active developers right
-      now:
-        Milan Jurik (working mainly on CPU and portability),
-        Standa Opichal of Jay Software fame (working on fVDI and related things),
-        Ctirad Fertr (father of the whole idea)
-        and Petr Stehlik AKA Joy Software (working on HW emulation and such things).
+      on configuration, new features etc. We are seeking for new developers so if
+      you are willing to help us then send a mail to <contact>aranym@sophics.cz</contact>.
       <p/>
-      See the <a href="progress.html">progress</a> and the <a href="news.html">News</a> sections for the
+      See the <a href="progress.html">Progress</a> and the <a href="news.html">News</a> sections for the
       most current information.
       <p/>
       Feel free to send comments or questions to <contact>aranym@sophics.cz</contact>.

@@ -7,7 +7,7 @@
     <text>
       Please note that ARAnyM is not finished yet. It's a work in progress and the current
       status is somewhere between alpha and beta. It may work but we can't guarantee 
-      anything. Better backup your data first and be ready for everything :-)
+      anything. Better backup your data first.
       <p/>
       Most up-to-date source code is available in the <a href="cvs.html">CVS</a>.
       <p/>
@@ -16,7 +16,10 @@
       Regular releases (source, binary and disk images) happen to be at
       <a href="http://sourceforge.net/project/showfiles.php?group_id=41106">Sourceforge.net</a>.
       <p/>
-      For running ARAnyM you will also need TOS 4.04 from Falcon (available <a href="http://www.atariroms.fsnet.co.uk/">here</a>) or EmuTOS (fresh from <a href="http://emutos.sf.net/">CVS</a>).
+      Debian users can fetch ARAnyM with apt from unstable. See 
+      <a href="http://packages.debian.org/unstable/otherosfs/aranym.html">ARAnyM in Debian</a>.
+      <p/>
+      For running ARAnyM you will also need TOS 4.04 from Falcon (available <a href="http://www.atariroms.fsnet.co.uk/">here</a>) or EmuTOS (get fresh from <a href="http://emutos.sf.net/">CVS</a>).
     </text>
   </chapter>
 </document>
