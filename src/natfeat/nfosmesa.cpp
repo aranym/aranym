@@ -1,7 +1,7 @@
 /*
 	NatFeat host OSMesa rendering
 
-	ARAnyM (C) 2003 Patrice Mandin
+	ARAnyM (C) 2004,2005 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -128,48 +128,24 @@ int OSMesaDriver::OpenLibrary(void)
 {
 	D(bug("nfosmesa: OpenLibrary"));
 
-	/* Check if libOSMesa contains libGL or not */
-	if (libosmesa_handle==NULL) {
-		libosmesa_handle=SDL_LoadObject(bx_options.osmesa.libosmesa);
-		if (libosmesa_handle==NULL) {
-			D(bug("nfosmesa: Can not load '%s' library\n", bx_options.osmesa.libosmesa));
-			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
-			return -1;
-		}
-
-		fn.glBegin =
-			( void (*)(GLenum mode ))
-			SDL_LoadFunction(libosmesa_handle,"glBegin");
-
-		libgl_needed = (SDL_bool) (fn.glBegin==NULL);
-		D(bug("nfosmesa: libGL needed: %s", libgl_needed ? "true" : "false"));
-
-		fn.glBegin = 
-			( void (*)(GLenum mode ))
-			NULL;
-
-		SDL_UnloadObject(libosmesa_handle);
-		libosmesa_handle=NULL;
-	}
-
 	/* Check if channel size is correct */
-	if (!libgl_needed) {
-		switch(bx_options.osmesa.channel_size) {
-			case 16:
-			case 32:
-				D(bug("nfosmesa: Channel size: %d", bx_options.osmesa.channel_size));
-				break;
-			default:
-				fprintf(stderr, "nfosmesa: Unsupported channel size, must be 16 or 32\n");
-				return -1;
-		}
+	switch(bx_options.osmesa.channel_size) {
+		case 16:
+		case 32:
+			D(bug("nfosmesa: Channel size: %d -> libGL included in libOSMesa", bx_options.osmesa.channel_size));
+			libgl_needed = SDL_FALSE;
+			break;
+		default:
+			D(bug("nfosmesa: Channel size: %d -> libGL separated from libOSMesa", bx_options.osmesa.channel_size));
+			libgl_needed = SDL_TRUE;
+			break;
 	}
 
 	/* Load LibGL if needed */
 	if ((libgl_handle==NULL) && libgl_needed) {
 		libgl_handle=SDL_LoadObject(bx_options.osmesa.libgl);
 		if (libgl_handle==NULL) {
-			D(bug("nfosmesa: Can not load '%s' library\n", bx_options.osmesa.libgl));
+			D(bug("nfosmesa: Can not load '%s' library", bx_options.osmesa.libgl));
 			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
 			return -1;
 		}
@@ -181,7 +157,7 @@ int OSMesaDriver::OpenLibrary(void)
 	if (libosmesa_handle==NULL) {
 		libosmesa_handle=SDL_LoadObject(bx_options.osmesa.libosmesa);
 		if (libosmesa_handle==NULL) {
-			D(bug("nfosmesa: Can not load '%s' library\n", bx_options.osmesa.libosmesa));
+			D(bug("nfosmesa: Can not load '%s' library", bx_options.osmesa.libosmesa));
 			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
 			return -1;
 		}

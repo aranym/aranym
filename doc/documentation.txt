@@ -700,7 +700,7 @@ with included libGL) and libOSMesa32 (32 bits float value per channel, with
 included libGL). You need to adjust the config file this way:
 
 - libOSMesa:
-ChannelSize = 0								/* unused */
+ChannelSize = 0								/* mandatory */
 libGL = /path/to/mesa/libGL.so				/* mandatory */
 libOSMesa = /path/to/mesa/libOSMesa.so		/* mandatory */
 
