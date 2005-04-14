@@ -1,0 +1,66 @@
+#!/bin/sh
+# This scripts helps with building the source .tar.gz file
+
+VER_MAJOR=0
+VER_MINOR=9
+VER_MICRO=0
+VER_STATUS=
+#
+VERSION=$VER_MAJOR"."$VER_MINOR"."$VER_MICRO
+TAG="ARANYM_"$VER_MAJOR"_"$VER_MINOR"_"$VER_MICRO
+if [ "x$VER_STATUS" != "x" ]
+then
+	VERSION=$VERSION""$VER_STATUS
+	TAG=$TAG"_"$VER_STATUS
+fi
+#upper case the tag
+TAG=`echo $TAG | tr '[:lower:]' '[:upper:]'`
+FOLDER="aranym-"$VERSION
+FNAME=$FOLDER".tar.gz"
+#
+echo "download from CVS? (y/N)"
+read key
+if [ "x$key" = "xy" ]; then
+	cvs -z3 -d:ext:joy@cvs.sophics.cz:/var/repos export -r $TAG aranym
+fi
+#
+grep "define VER_MAJOR" aranym/src/include/version.h | grep $VER_MAJOR >/dev/null
+if [ $? -ne 0 ]; then
+	echo "ERROR: increase major version in src/include/version.h"
+	exit 1
+fi
+grep "define VER_MINOR" aranym/src/include/version.h | grep $VER_MINOR >/dev/null
+if [ $? -ne 0 ]; then
+	echo "ERROR: increase minor version in src/include/version.h"
+	exit 1
+fi
+grep "define VER_MICRO" aranym/src/include/version.h | grep $VER_MICRO >/dev/null
+if [ $? -ne 0 ]; then
+	echo "ERROR: increase micro version in src/include/version.h"
+	exit 1
+fi
+grep "[Vv]ersion "$VERSION aranym/README >/dev/null
+if [ $? -ne 0 ]; then
+	echo "ERROR: increase version in README"
+	exit 1
+fi
+grep "%define ver" aranym/aranym.spec | grep $VERSION >/dev/null
+if [ $? -ne 0 ]; then
+	echo "ERROR: increase version in aranym.spec"
+	exit 1
+fi
+#grep "AC_INIT(aranym, "$VERSION aranym/src/Unix/configure.ac | grep $VERSION >/dev/null
+#if [ $? -ne 0 ]; then
+#	echo "ERROR: increase version in src/configure.ac"
+#	exit 1
+#fi
+#
+cd aranym/src/Unix
+./autogen.sh
+make distclean
+echo "Edit the Makefile.in (enable the EmuTOS installation)"
+read key
+echo "Copy etos512k.img to the aranym/data subfolder"
+read key
+cd ../../../ && mv aranym $FOLDER && GZIP=--best tar chozf $FNAME --exclude=autogen.sh --exclude=CVS $FOLDER
+
