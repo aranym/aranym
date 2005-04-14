@@ -24,8 +24,8 @@
 #define VER_MICRO	0
 
 #ifndef VER_STATUS
-#define VER_STATUS
-//#define VER_STATUS	"+cvs"
+//#define VER_STATUS
+#define VER_STATUS	"+cvs"
 #endif
 
 #define str(x)		_stringify (x)
