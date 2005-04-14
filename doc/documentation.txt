@@ -15,6 +15,7 @@ Content:
   9. CD-ROM drives
   10. OpenGL rendering for Atari applications
   11. Linux/m68k
+  12. Programming with ARAnyM
 
 
 This document will explain you all ARAnyM features and configuration 
@@ -340,6 +341,7 @@ device or floppy image file in the commandline:
 Floppy = /dev/fd0 (or /path/floppy.img)
 
 
+
 7. Disk devices 
 ---------------
 
@@ -347,8 +349,8 @@ There are several ways how to manage harddrives. You can connect harddisk
 from real Atari or clone computer directly into your HOST machine and
 ARAnyM will be able to use it and even boot from it! 
 
-Another way is to use harddisk images and finally there is also
-the possibility of linking HOST fs directories as a logical disk.
+Another way is to use harddisk or single partition images and finally there
+is also the possibility of mapping HOST fs directories as a logical disk.
 Also note that we prepared several disk images for you - visit our download
 area at http://aranym.atari.org/
 
@@ -360,8 +362,8 @@ it just like a real harddisk before you can actually use it.
 Look into FAQ for more details.
 
 
-7.1. Using IDE emulation
-------------------------
+7.1. Attaching Atari harddisk (image) using IDE emulation
+---------------------------------------------------------
 
   ARAnyM can emulate both channels of Falcon IDE interface thus it's 
 able to use any disk device (or file) as a harddisk. It uses direct
@@ -481,7 +483,75 @@ Path = /dev/hdb
 the ARAnyM side.
 
 
-7.2. Host Fs driver
+7.2. Single Partition mount
+---------------------------
+
+Single partitions are better in several aspects over Atari harddrives:
+
+ - much faster access to data (direct access, not via IDE emulation)
+
+ - no problems with CHS geometry, size is autodetected and that's enough
+
+ - no need to partition it and can be formatted by Host OS tools
+
+ - no Atari harddisk driver is needed
+
+ - partition can be mounted on Host OS (Linux) for direct access to files
+
+There is only one drawback - single partitions are supported in EmuTOS
+only (and FreeMiNT if booted from EmuTOS), so if you still prefer TOS 4.04
+this is not for you (yet, as I am working on NF-XHDI driver for TOS).
+
+Example of creating a single partition image in Linux Host OS and working
+with it:
+
+# create 16 MB disk
+dd if=/dev/zero of=/tmp/mydisk.img bs=1M count=16
+
+# format it
+/sbin/mkdosfs /tmp/mydisk.img
+
+# mount it
+sudo mount -t msdos /tmp/mydisk.img /mnt -o loop=/dev/loop1
+
+# copy files there
+sudo cp files* /mnt
+
+# unmount it
+sudo umount /mnt
+
+# add to ARAnyM in the config file
+[PARTITION0]
+Path = /tmp/mydisk.img
+Present = Yes
+PartID = $6
+ByteSwap = Yes
+ReadOnly = No
+
+and now you can start ARAnyM with EmuTOS (and FreeMiNT) and access this
+new drive. Plain TOS doesn't support it (yet), unfortunately.
+
+You could of course format the mydisk.img with a different filesystem,
+use "mke2fs" for ext2 (and change the PartID to $83). Or, you could even
+format it with Atari GEMDOS filesystem using "mkdosfs -A" (changing the
+PartID to "BGM").
+And last but not least - you could access selected partitions on your
+real harddrive this way. Just set the Path to /dev/hda2, for example
+(and set correct PartID) and ARAnyM will access second partition on your
+real harddrive directly.
+
+List of most useful partition IDs follows:
+
+GEM = Atari FAT16 (up to 31 MB)
+BGM = Atari FAT16 (BigGeM = more than 32 MB)
+LNX = Atari Linux (also "MIX" as Minix or "RAW" are supported)
+$6 = DOS FAT16 in IBM PC format
+$83 = Linux in IBM PC format
+
+For this new feature you need ARAnyM 0.9.0+ and up-to-date EmuTOS.
+
+
+7.3. Host Fs driver
 -------------------
 
 For accessing data on a host filesystem you can map the host fs to a logical
@@ -526,11 +596,12 @@ More info you'll find in atari/hostfs/README file.
 Note: We are planning on writing a tool for BDCONFIG.SYS auto-configuration.
 
 
-7.3. Hostfs.xfs driver for Mint
--------------------------------
+7.3.2 Hostfs.xfs driver for Mint
+--------------------------------
 
   This is Mint version of ARAnyM HostFS driver. Place it into your MINT 
 directory; it will map the host fs to logical disks automatically.
+
 
 
 8. Networking
@@ -555,8 +626,8 @@ host computer to hide ARAnyM and to route traffic to it. For this you'll
 probably use masquerading.
 
 
-8.1. Linux host OS networking setup
------------------------------------
+8.1.1 Linux host OS networking setup
+------------------------------------
 
 Proxy-ARP:
 ----------
@@ -674,8 +745,8 @@ Bridged
   sure you edit the USER, NIF and maybe also the TAPS and BRIDGE variables.
 
 
-8.1 MS Windows host OS networking setup
----------------------------------------
+8.1.2 MS Windows host OS networking setup
+-----------------------------------------
 
 In MS Windows ARAnyM provides TAP-Win32 based networking. It can provide
 the point-to-point or bridged networking just like Linux's one. I didn't
@@ -784,6 +855,7 @@ To have gemdos drives G, H, I (on your desktop) use the respective A, W, Z
 BetaDOS devices.
 
 
+
 10) OpenGL rendering for Atari applications (Linux only atm)
 -------------------------------------------
 
@@ -865,4 +937,33 @@ Debian Sarge linux ramdisks:
   (initrd22.gz, initrd.gz)
 
 With correct config file you simply start "aranym-mmu -l -N" and that's it.
+
+
+
+12) Programming with ARAnyM
+---------------------------
+
+ARAnyM contains an unified interface for accessing emulator specific
+features in a "standard" way that is called Native Features. This new
+standard has been developed in a close cooperation with ARAnyM, STonC,
+hatari and EmuTOS developers and its main goal was to allow developing
+universal drivers shareable across all Atari emulators. This NatFeat
+interface is to be used by operating system drivers only - it is not 
+intended for direct use by regular applications!
+
+[please note that there are some bits of NatFeats documentation
+ available in the ARAnyM archive but it's mostly obsolete and worst
+ of all it's incorrect in the promotion of NatFeat usage via the cookie
+ by regular apps. This will be fixed eventually when time permits.]
+
+If you need to detect that your TOS/GEM software is running on ARAnyM
+then please check the standard Atari cookie _MCH. While stock Falcon's
+_MCH cookie value is $30000 and Milan's (as the latest TOS compatible
+real hardware) _MCH cookie value is $40000, on the ARAnyM this cookie
+value should be set to $50000 (unless changed in the ARAnyM's config
+file, but that applies to TOS only, anyway. EmuTOS hardwires $50000).
+
+FreeMiNT 1.16+ contains direct support for NatFeat drivers and is
+able to use NatFeat debug output for FreeMiNT debug messages. Also
+EmuTOS naturally supports basic NatFeats.
 
