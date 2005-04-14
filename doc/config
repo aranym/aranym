@@ -110,8 +110,8 @@ ModelName = Master
 
 
 # Direct partitions configuration
-# Range: DISK0-DISK7
-[DISK0]
+# Range: PARTITION0-PARTITION7
+[PARTITION0]
 Path = 
 Present = No
 PartID = BGM

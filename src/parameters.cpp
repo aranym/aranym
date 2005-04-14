@@ -1191,14 +1191,14 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, ide_swap ? diskd_configs : diskc_configs, "[IDE0]", true);
 	process_config(f, rcfile, ide_swap ? diskc_configs : diskd_configs, "[IDE1]", true);
 
-	process_config(f, rcfile, disk0_configs, "[DISK0]", true);
-	process_config(f, rcfile, disk1_configs, "[DISK1]", true);
-	process_config(f, rcfile, disk2_configs, "[DISK2]", true);
-	process_config(f, rcfile, disk3_configs, "[DISK3]", true);
-	process_config(f, rcfile, disk4_configs, "[DISK4]", true);
-	process_config(f, rcfile, disk5_configs, "[DISK5]", true);
-	process_config(f, rcfile, disk6_configs, "[DISK6]", true);
-	process_config(f, rcfile, disk7_configs, "[DISK7]", true);
+	process_config(f, rcfile, disk0_configs, "[PARTITION0]", true);
+	process_config(f, rcfile, disk1_configs, "[PARTITION1]", true);
+	process_config(f, rcfile, disk2_configs, "[PARTITION2]", true);
+	process_config(f, rcfile, disk3_configs, "[PARTITION3]", true);
+	process_config(f, rcfile, disk4_configs, "[PARTITION4]", true);
+	process_config(f, rcfile, disk5_configs, "[PARTITION5]", true);
+	process_config(f, rcfile, disk6_configs, "[PARTITION6]", true);
+	process_config(f, rcfile, disk7_configs, "[PARTITION7]", true);
 
 	process_config(f, rcfile, arafs_conf, "[HOSTFS]", true);
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
@@ -1236,14 +1236,14 @@ bool saveSettings(const char *fs)
 	update_config(fs, ide_swap ? diskd_configs : diskc_configs, "[IDE0]");
 	update_config(fs, ide_swap ? diskc_configs : diskd_configs, "[IDE1]");
 
-	update_config(fs, disk0_configs, "[DISK0]");
-	update_config(fs, disk1_configs, "[DISK1]");
-	update_config(fs, disk2_configs, "[DISK2]");
-	update_config(fs, disk3_configs, "[DISK3]");
-	update_config(fs, disk4_configs, "[DISK4]");
-	update_config(fs, disk5_configs, "[DISK5]");
-	update_config(fs, disk6_configs, "[DISK6]");
-	update_config(fs, disk7_configs, "[DISK7]");
+	update_config(fs, disk0_configs, "[PARTITION0]");
+	update_config(fs, disk1_configs, "[PARTITION1]");
+	update_config(fs, disk2_configs, "[PARTITION2]");
+	update_config(fs, disk3_configs, "[PARTITION3]");
+	update_config(fs, disk4_configs, "[PARTITION4]");
+	update_config(fs, disk5_configs, "[PARTITION5]");
+	update_config(fs, disk6_configs, "[PARTITION6]");
+	update_config(fs, disk7_configs, "[PARTITION7]");
 
 	update_config(fs, arafs_conf, "[HOSTFS]");
 	update_config(fs, opengl_conf, "[OPENGL]");
