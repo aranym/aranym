@@ -1,4 +1,4 @@
-2005/02/22 - version 0.9.0beta2 release
+2005/04/14 - version 0.9.0 release
 
  We've been providing 68040 PMMU (a memory management unit emulation,
  required for running FreeMiNT with MMU protection, and Linux/m68k)
@@ -27,6 +27,10 @@
  o parallel port mapped to parport (in linux) or to a file
  o hotkeys configuration: Setup, Quit, Reboot, Ungrab, Debugger, ScreenShot
    and FullScreen hotkeys can be configured at runtime in the SETUP.
+ o SETUP fileselector improved (folders before files, CWD)
+ o fVDI pixel size bug fixed
+ o documentation.txt updated with several new sections (networking,
+   programming with ARAnyM, single partitions support and more).
 
 
 2004/11/07 - version 0.8.11beta released

@@ -1,3 +1,14 @@
+2005/04/14 - Petr
+- doc/documentation.txt: [PARTITION] documented. Programming with ARAnyM
+  documented (NatFeats, detection of ARAnyM presence).
+
+- doc/config, parameters.cpp: [DISK] renamed to [PARTITION].
+
+- build_cygwin.sh moved from doc/ to tools/.
+
+- README, NEWS, version.h: usual release updates
+
+
 2005/04/05 - Petr (actually Carlo)
 - src/MacOSX/*: Carlo has updated the project (added MMU target)
 

@@ -1,6 +1,10 @@
 Things to do (written by Joy, volunteers ask in the mailing list)
 -----------------------------------------------------------------
 
+Fix bugs:
+- colon as filename case sensitivity flag in HostFS - see Xavier's msg in ML
+- find out why changing IDE parameters and Rebooting doesn't show up in linux
+
 TODO generally:
 - configurable insertion of floppy on bootup (perhaps also IDE CD?)
 

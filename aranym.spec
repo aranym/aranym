@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.9.0beta2
+%define ver	0.9.0
 %define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -33,15 +33,15 @@ rm -rf %{realname}
 #%patch -p1
 
 %build
-./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug --enable-jit-compiler
+./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug --enable-jit-compiler --enable-nfjpeg
 make
 mv aranym aranym-jit
 make clean
-./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug --enable-fullmmu --enable-lilo --enable-fixed-videoram
+./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug --enable-fullmmu --enable-lilo --enable-fixed-videoram --enable-nfjpeg
 make
 mv aranym aranym-mmu
 make clean
-./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug
+./configure --prefix=/usr --mandir=/usr/share/man --disable-nat-debug --enable-nfjpeg
 make
 
 %install
@@ -95,6 +95,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/aranym/etos512k.img
 
 %changelog
+* Thu Apr 14 2005 Petr Stehlik <pstehlik@sophics.cz>
+Version increased. NFJPEG enabled.
+
 * Tue Feb 22 2005 Petr Stehlik <pstehlik@sophics.cz>
 Version increased. aranymrc.example removed.
 
