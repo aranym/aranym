@@ -24,6 +24,7 @@
 #define VER_MICRO	0
 
 #ifndef VER_STATUS
+#define VER_STATUS
 //#define VER_STATUS	"+cvs"
 #endif
 
