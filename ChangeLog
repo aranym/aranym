@@ -1,3 +1,8 @@
+2005/04/15 - STanda
+- atari/hostfs/hostfs_xfs.c: some filesystem flags changed.
+  this should fix the bug #1178909 (hostfs broken under linux) and
+  problems with not being able to execute files with executable flag set.
+
 
 * tagged as ARANYM_0_9_0
 
