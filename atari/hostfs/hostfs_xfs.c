@@ -281,17 +281,25 @@ FILESYS aranym_fs =
          * FS_EXT_2            extensions level 2 - additional place at the end
          * FS_EXT_3            extensions level 3 - stat & native UTC timestamps
          */
-        (FS_NOXBIT|FS_CASESENSITIVE),
+	FS_CASESENSITIVE |
+	FS_LONGPATH      |
+	FS_REENTRANT_L1  |
+	FS_REENTRANT_L2  |
+	FS_EXT_1         |
+	FS_EXT_2         ,
         ara_fs_root, ara_fs_lookup, ara_fs_creat, ara_fs_getdev, ara_fs_getxattr,
         ara_fs_chattr, ara_fs_chown, ara_fs_chmode, ara_fs_mkdir, ara_fs_rmdir,
         ara_fs_remove, ara_fs_getname, ara_fs_rename, ara_fs_opendir,
         ara_fs_readdir, ara_fs_rewinddir, ara_fs_closedir, ara_fs_pathconf,
         ara_fs_dfree, ara_fs_writelabel, ara_fs_readlabel, ara_fs_symlink,
         ara_fs_readlink, ara_fs_hardlink, ara_fs_fscntl, ara_fs_dskchng,
-        ara_fs_release, ara_fs_dupcookie, ara_fs_sync, ara_fs_mknod,
-        ara_fs_unmount,
-        0L,             /* stat64() */
-        0L, 0L, 0L,                 /* res1-3 */
+        ara_fs_release, ara_fs_dupcookie, ara_fs_sync,
+	/* FS_EXT_1 */
+	ara_fs_mknod, ara_fs_unmount,
+	/* FS_EXT_2 */
+	/* FS_EXT_3 */
+        0L,                 /* TODO: stat64() */
+        0L, 0L, 0L,         /* res1-3 */
         0L, 0L,             /* lock, sleeperd */
         0L, 0L              /* block(), deblock() */
     };
@@ -515,6 +523,9 @@ FILESYS *aranym_fs_init(void)
 
 /*
  * $Log$
+ * Revision 1.9  2003/10/02 18:13:41  standa
+ * Large HOSTFS cleanup (see the ChangeLog for more)
+ *
  * Revision 1.8  2003/03/24 08:58:53  joy
  * aranymfs.xfs renamed to hostfs.xfs
  *
