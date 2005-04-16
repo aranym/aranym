@@ -183,7 +183,6 @@ install: $(APP) $(TAPIF) $(APP).1.gz installdirs
 	$(INSTALL) ../../tools/arabridge $(DESTDIR)$(datadir)/$(APP)/arabridge
 	$(INSTALL) ../../tools/floppy.sh $(DESTDIR)$(datadir)/$(APP)/floppy.sh
 	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
-	$(INSTALL_DATA) ../../atari/fvdi/fvdi.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
 	$(INSTALL_DATA) ../../atari/fvdi/fvdi.sys $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.sys
 	$(INSTALL_DATA) ../../atari/tools/README $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
 	$(INSTALL_DATA) ../../atari/tools/clocky.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
@@ -231,7 +230,6 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/arabridge
 	rm -f $(DESTDIR)$(datadir)/$(APP)/floppy.sh
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.sys
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
@@ -306,7 +304,6 @@ bindist: $(APP) $(TAPIF) $(APP).1.gz bindistdirs
 	$(INSTALL) ../../tools/arabridge tmpdist$(datadir)/$(APP)/arabridge
 	$(INSTALL) ../../tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
 	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
-	$(INSTALL_DATA) ../../atari/fvdi/fvdi.prg.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.prg.bz2
 	$(INSTALL_DATA) ../../atari/fvdi/fvdi.sys tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.sys
 	$(INSTALL_DATA) ../../atari/tools/README tmpdist$(datadir)/$(APP)/atari/tools/README
 	$(INSTALL_DATA) ../../atari/tools/clocky.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
