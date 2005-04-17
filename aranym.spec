@@ -61,40 +61,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc ../../doc ../../AUTHORS ../../BUGS ../../COPYING ../../FAQ ../../INSTALL ../../NEWS ../../ChangeLog ../../README ../../TODO
 %attr(4755,root,root) /usr/bin/aratapif
 /usr/bin/aranym
 /usr/bin/aranym-jit
 /usr/bin/aranym-mmu
 /usr/share/man/man1/aranym.1.gz
-/usr/share/aranym/atari/hostfs/hostfs.dos.bz2
-/usr/share/aranym/atari/hostfs/hostfs.xfs.bz2
-/usr/share/aranym/atari/hostfs/bdconfig.sys
-/usr/share/aranym/atari/hostfs/README
-/usr/share/aranym/atari/network/aranym.xif.bz2
-/usr/share/aranym/atari/network/nfeth-config.bz2
-/usr/share/aranym/atari/network/eth0-config.sh
-/usr/share/aranym/atari/network/README
-/usr/share/aranym/atari/fvdi/aranym.sys.bz2
-/usr/share/aranym/atari/fvdi/fvdi.prg.bz2
-/usr/share/aranym/atari/fvdi/fvdi.sys
-/usr/share/aranym/atari/nfcdrom/nfcdrom.bos.bz2
-/usr/share/aranym/atari/nfjpeg/nfjpeg.prg.bz2
-/usr/share/aranym/atari/nfosmesa/osmesa.ldg.bz2
-/usr/share/aranym/atari/sound/README
-/usr/share/aranym/atari/sound/zmagxsnd.prg.bz2
-/usr/share/aranym/atari/tools/README
-/usr/share/aranym/atari/tools/clocky.prg.bz2
-/usr/share/aranym/atari/tools/fastram.prg.bz2
-/usr/share/aranym/atari/tools/pc101us.kbd.bz2
-/usr/share/aranym/atari/tools/pcpatch.prg.bz2
-/usr/share/aranym/atari/newdesk.inf
-/usr/share/aranym/atari/mmusetup.cnf
-/usr/share/aranym/arabridge
-/usr/share/aranym/floppy.sh
-/usr/share/aranym/etos512k.img
+/usr/share/aranym
+/usr/share/doc/aranym
 
 %changelog
+* Sun Apr 17 2005 Petr Stehlik <pstehlik@sophics.cz>
+Files list fixed.
+
 * Thu Apr 14 2005 Petr Stehlik <pstehlik@sophics.cz>
 Version increased. NFJPEG enabled.
 
