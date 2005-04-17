@@ -1,3 +1,11 @@
+2005/04/17 - Petr
+- Makefile.in: fvdi.prg.bz2 was removed from archive...
+
+- aranym.spec: %files section cleaned up. Fixes build problem with
+  unpackaged documentation and makes it much easier to maintain (no need
+  to track changes in Makefile.in).
+
+
 2005/04/15 - STanda
 - atari/hostfs/hostfs_xfs.c: some filesystem flags changed.
   this should fix the bug #1178909 (hostfs broken under linux) and
