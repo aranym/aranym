@@ -33,31 +33,41 @@
 	.text
 
 _OpenDriver:
+	moveml	d1/a0-a1,sp@-
 	movel	a0,sp@-
 	bsr		_JpegDecOpenDriver
 	addql	#4,sp
+	moveml	sp@+,d1/a0-a1
 	rts
 	
 _CloseDriver:
+	moveml	d1/a0-a1,sp@-
 	movel	a0,sp@-
 	bsr		_JpegDecCloseDriver
 	addql	#4,sp
+	moveml	sp@+,d1/a0-a1
 	rts
 
 _GetImageInfo:
+	moveml	d1/a0-a1,sp@-
 	movel	a0,sp@-
 	bsr		_JpegDecGetImageInfo
 	addql	#4,sp
+	moveml	sp@+,d1/a0-a1
 	rts
 
 _GetImageSize:
+	moveml	d1/a0-a1,sp@-
 	movel	a0,sp@-
 	bsr		_JpegDecGetImageSize
 	addql	#4,sp
+	moveml	sp@+,d1/a0-a1
 	rts
 
 _DecodeImage:
+	moveml	d1/a0-a1,sp@-
 	movel	a0,sp@-
 	bsr		_JpegDecDecodeImage
 	addql	#4,sp
+	moveml	sp@+,d1/a0-a1
 	rts
