@@ -420,7 +420,6 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	else
 #endif /* ENABLE_OPENGL */
 	{
-		bug("SDL_SetVideoMode(%d, %d, %d, %d);", width, height, bpp, sdl_videoparams);
 		mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
 	}
 
@@ -1320,6 +1319,9 @@ void HostScreen::update()
 
 /*
  * $Log$
+ * Revision 1.52  2005/04/22 21:52:36  xavier
+ * Switch between fullscreen and windowed mode on Microsoft Windows
+ *
  * Revision 1.51  2005/01/22 16:39:48  joy
  * --disable-gui now disables all SDL GUI related code
  *
