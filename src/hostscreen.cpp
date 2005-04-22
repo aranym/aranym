@@ -122,7 +122,29 @@ void HostScreen::makeSnapshot()
 void HostScreen::toggleFullScreen()
 {
 	bx_options.video.fullscreen = !bx_options.video.fullscreen;
-	SDL_WM_ToggleFullScreen(mainSurface);
+	sdl_videoparams ^= SDL_FULLSCREEN;
+	if(SDL_WM_ToggleFullScreen(mainSurface) == 0) {
+		// SDL_WM_ToggleFullScreen() did not work.
+		// We have to change video mode "by hand".
+		SDL_Surface *temp = SDL_ConvertSurface(mainSurface, mainSurface->format,
+		                                       mainSurface->flags);
+		if (temp == NULL)
+			bug("toggleFullScreen: Unable to save screen content.");
+
+		mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
+		if (mainSurface == NULL)
+			bug("toggleFullScreen: Unable to set new video mode.");
+		if (mainSurface->format->BitsPerPixel <= 8)
+			SDL_SetColors(mainSurface, temp->format->palette->colors, 0,
+			              temp->format->palette->ncolors);
+
+		if (SDL_BlitSurface(temp, NULL, mainSurface, NULL) != 0)
+			bug("toggleFullScreen: Unable to restore screen content.");
+		SDL_FreeSurface(temp);
+
+		if (isGUIopen() == 0)
+			surf = mainSurface;
+	}
 }
 
 #ifdef SDL_GUI
@@ -398,6 +420,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	else
 #endif /* ENABLE_OPENGL */
 	{
+		bug("SDL_SetVideoMode(%d, %d, %d, %d);", width, height, bpp, sdl_videoparams);
 		mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
 	}
 
@@ -1297,6 +1320,9 @@ void HostScreen::update()
 
 /*
  * $Log$
+ * Revision 1.51  2005/01/22 16:39:48  joy
+ * --disable-gui now disables all SDL GUI related code
+ *
  * Revision 1.50  2005/01/12 14:35:16  joy
  * more unused variables hidden
  *

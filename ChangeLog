@@ -1,3 +1,9 @@
+2005/04/22 - Xavier
+- hostscreen.cpp: SDL_WM_ToggleFullScreen does not work on some GUIs (Microsoft
+  Windows GUI, for example). Added some code to implement the switch to and
+  from fullscreen mode in this case.
+
+
 2005/04/22 - Patrice
 - nfjpeg: Save d1/a0-a1 used as scratch registers by gcc when calling JPEG
   decoding routines
