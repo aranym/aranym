@@ -59,7 +59,9 @@ bool cpu_debugging = false;
 struct flag_struct regflags;
 
 /* LongJump buffers */
+#ifdef EXCEPTIONS_VIA_LONGJMP
 JMP_BUF excep_env;
+#endif
 #ifdef DISDIP
 JMP_BUF loop_env;
 #endif
@@ -239,24 +241,24 @@ int lastint_no;
 static inline uae_u8 get_ibyte_1(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o + 1;
-    return phys_get_byte(mmu_translate(addr, FC_INST, 0, addr, sz_byte, 0));
+    return phys_get_byte(mmu_translate(addr, FC_INST, 0, sz_byte, 0));
 }
 static inline uae_u16 get_iword_1(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o;
-    return phys_get_word(mmu_translate(addr, FC_INST, 0, addr, sz_word, 0));
+    return phys_get_word(mmu_translate(addr, FC_INST, 0, sz_word, 0));
 }
 static inline uae_u32 get_ilong_1(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o;
     if (is_unaligned(addr, 4)) {
 	uae_u32 result;
-	result = phys_get_word(mmu_translate(addr, FC_INST, 0, addr, sz_word, 0));
+	result = phys_get_word(mmu_translate(addr, FC_INST, 0, sz_word, 0));
 	result <<= 16;
-	result |= phys_get_word(mmu_translate(addr + 2, FC_INST, 0, addr, sz_word, 0));
+	result |= phys_get_word(mmu_translate(addr + 2, FC_INST, 0, sz_word, 0));
 	return result;
     }
-    return phys_get_long(mmu_translate(addr, FC_INST, 0, addr, sz_long, 0));
+    return phys_get_long(mmu_translate(addr, FC_INST, 0, sz_long, 0));
 }
 #else
 # define get_ibyte_1(o) get_byte(m68k_getpc() + (o) + 1)
@@ -719,7 +721,9 @@ static inline void exc_make_frame(
 
 extern void showBackTrace(int, bool=true);
 
+#ifdef EXCEPTIONS_VIA_LONGJMP
 static int building_bus_fault_stack_frame=0;
+#endif
 
 void Exception(int nr, uaecptr oldpc)
 {
@@ -738,38 +742,55 @@ void Exception(int nr, uaecptr oldpc)
 #endif
         // panicbug("Exception Nr. %d CPC: %08lx NPC: %08lx SP=%08lx Addr: %08lx", nr, currpc, get_long (regs.vbr + 4*nr), m68k_areg(regs, 7), regs.mmu_fault_addr);
 
-        if (building_bus_fault_stack_frame) {
+#ifdef EXCEPTIONS_VIA_LONGJMP
+	if (!building_bus_fault_stack_frame)
+#else
+	try
+#endif
+	{
+#ifdef EXCEPTIONS_VIA_LONGJMP
+            building_bus_fault_stack_frame= 1;
+#endif
+	    /* 68040 */
+	    exc_push_long(0);	/* PD3 */
+	    exc_push_long(0);	/* PD2 */
+	    exc_push_long(0);	/* PD1 */
+	    exc_push_long(0);	/* PD0/WB1D */
+	    exc_push_long(0);	/* WB1A */
+	    exc_push_long(0);	/* WB2D */
+	    exc_push_long(0);	/* WB2A */
+	    exc_push_long(regs.wb3_data);	/* WB3D */
+	    exc_push_long(regs.mmu_fault_addr);	/* WB3A */
+	    exc_push_long(regs.mmu_fault_addr);
+	    exc_push_word(0);	/* WB1S */
+	    exc_push_word(0);	/* WB2S */
+	    exc_push_word(regs.wb3_status);	/* WB3S */
+	    regs.wb3_status = 0;
+	    exc_push_word(regs.mmu_ssw);
+#ifdef PUREC
+	    exc_push_long(0 /* was regs.mmu_fault_addr */);	/* EA *//* bullshit here, took 10 hours to debug with PureC $12345678 test. It should be an internal register, keep 0 to preserve MSP in PureC */
+#else
+	    exc_push_long(regs.mmu_fault_addr); /* EA *//* ARAnyM has 040, so stack format 7, not 000 stack format */
+#endif
+	    exc_make_frame(7, regs.sr, regs.fault_pc, 2, 0, 0);
+
+	}
+#ifdef EXCEPTIONS_VIA_LONGJMP
+	else
+#else
+	catch (m68k_exception)
+#endif
+	{
             report_double_bus_error();
-            building_bus_fault_stack_frame=0;
-            return;
+#ifdef EXCEPTIONS_VIA_LONGJMP
+            building_bus_fault_stack_frame= 0;
+#endif
+	    return;
         }
 
-	building_bus_fault_stack_frame=1;
-
-	/* 68040 */
-	exc_push_long(0);	/* PD3 */
-	exc_push_long(0);	/* PD2 */
-	exc_push_long(0);	/* PD1 */
-	exc_push_long(0);	/* PD0/WB1D */
-	exc_push_long(0);	/* WB1A */
-	exc_push_long(0);	/* WB2D */
-	exc_push_long(0);	/* WB2A */
-	exc_push_long(regs.wb3_data);	/* WB3D */
-	exc_push_long(regs.mmu_fault_addr);	/* WB3A */
-	exc_push_long(regs.mmu_fault_addr);
-	exc_push_word(0);	/* WB1S */
-	exc_push_word(0);	/* WB2S */
-	exc_push_word(regs.wb3_status);	/* WB3S */
-	regs.wb3_status = 0;
-	exc_push_word(regs.mmu_ssw);
-#ifdef PUREC
-	exc_push_long(0 /* was regs.mmu_fault_addr */);	/* EA *//* bullshit here, took 10 hours to debug with PureC $12345678 test. It should be an internal register, keep 0 to preserve MSP in PureC */
-#else
-	exc_push_long(regs.mmu_fault_addr); /* EA *//* ARAnyM has 040, so stack format 7, not 000 stack format */
+#ifdef EXCEPTIONS_VIA_LONGJMP
+	building_bus_fault_stack_frame= 0;
 #endif
-	exc_make_frame(7, regs.sr, regs.fault_pc, 2, 0, 0);
-
-	building_bus_fault_stack_frame=0;
         /* end of BUS ERROR handler */
     } else if (nr == 3) {
 	exc_make_frame(2, regs.sr, last_addr_for_exception_3, nr,
@@ -1521,24 +1542,25 @@ void m68k_do_execute (void)
 void m68k_compile_execute (void)
 {
 setjmpagain:
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
+    TRY(prb) {
+	for (;;) {
+	    if (quit_program > 0) {
+		if (quit_program == 1) {
+#if FLIGHT_RECORDER
+		    dump_log();
+#endif
+		    break;
+		}
+		quit_program = 0;
+		m68k_reset ();
+	    }
+	    m68k_do_compile_execute();
+	}
+    }
+    CATCH(prb) {
 	flush_icache(0);
         Exception(prb, 0);
     	goto setjmpagain;
-    }
-    for (;;) {
-	if (quit_program > 0) {
-	    if (quit_program == 1) {
-#if FLIGHT_RECORDER
-		dump_log();
-#endif
-		break;
-	    }
-	    quit_program = 0;
-	    m68k_reset ();
-	}
-	m68k_do_compile_execute();
     }
 }
 #endif
@@ -1549,34 +1571,35 @@ void m68k_execute (void)
     m68k_execute_depth++;
 #endif
 #ifdef DEBUGGER
-    volatile bool after_exception = false;
+    VOLATILE bool after_exception = false;
 #endif
 
 setjmpagain:
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
+    TRY(prb) {
+	for (;;) {
+	    if (quit_program > 0) {
+		if (quit_program == 1) {
+#if FLIGHT_RECORDER
+		    dump_log();
+#endif
+		    break;
+		}
+		quit_program = 0;
+		m68k_reset ();
+	    }
+#ifdef DEBUGGER
+	    if (debugging && !after_exception) debug();
+	    after_exception = false;
+#endif
+	    m68k_do_execute();
+	}
+    }
+    CATCH(prb) {
         Exception(prb, 0);
 #ifdef DEBUGGER
 	after_exception = true;
 #endif
     	goto setjmpagain;
-    }
-    for (;;) {
-	if (quit_program > 0) {
-	    if (quit_program == 1) {
-#if FLIGHT_RECORDER
-		dump_log();
-#endif
-		break;
-	    }
-	    quit_program = 0;
-	    m68k_reset ();
-	}
-#ifdef DEBUGGER
-	if (debugging && !after_exception) debug();
-	after_exception = false;
-#endif
-	m68k_do_execute();
     }
 
 #ifdef USE_JIT
@@ -1674,58 +1697,52 @@ void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
 }
 
 #ifdef NEWDEBUG
-void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, volatile unsigned int cnt)
+void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, VOLATILE unsigned int cnt)
 {
     char *buffer = (char *)malloc(80 * sizeof(char));
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
     strcpy(buffer,"");
-    volatile uaecptr newpc = 0;
+    VOLATILE uaecptr newpc = 0;
     m68kpc_offset = addr - m68k_getpc ();
     if (cnt == 0) {
-        int prb = SETJMP(excep_env);
-        if (prb != 0) {
-            goto setjmpagainx;
-        }
-        char instrname[20],*ccpt;
-        int opwords;
-        uae_u32 opcode;
-        struct mnemolookup *lookup;
-        struct instr *dp;
-        for (opwords = 0; opwords < 5; opwords++) {
-            get_iword_1 (m68kpc_offset + opwords*2);
-        }
-        opcode = get_iword_1 (m68kpc_offset);
-        m68kpc_offset += 2;
-        if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
-            opcode = 0x4AFC;
-        }
-        dp = table68k + opcode;
-        for (lookup = lookuptab;(unsigned int)lookup->mnemo != dp->mnemo; lookup++)
-            ;
-        strcpy (instrname, lookup->name);
-        ccpt = strstr (instrname, "cc");
-        if (ccpt != 0) {
-            strncpy (ccpt, ccnames[dp->cc], 2);
-        }
-        if (dp->suse) {
-            newpc = m68k_getpc () + m68kpc_offset;
-            newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, buffer);
-            strcpy(buffer,"");
-        }
-        if (dp->duse) {
-            newpc = m68k_getpc () + m68kpc_offset;
-            newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
-            strcpy(buffer,"");
-        }
+        TRY(prb) {
+	    char instrname[20],*ccpt;
+	    int opwords;
+	    uae_u32 opcode;
+	    struct mnemolookup *lookup;
+	    struct instr *dp;
+	    for (opwords = 0; opwords < 5; opwords++) {
+		get_iword_1 (m68kpc_offset + opwords*2);
+	    }
+	    opcode = get_iword_1 (m68kpc_offset);
+	    m68kpc_offset += 2;
+	    if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
+		opcode = 0x4AFC;
+	    }
+	    dp = table68k + opcode;
+	    for (lookup = lookuptab;(unsigned int)lookup->mnemo != dp->mnemo; lookup++)
+		;
+	    strcpy (instrname, lookup->name);
+	    ccpt = strstr (instrname, "cc");
+	    if (ccpt != 0) {
+		strncpy (ccpt, ccnames[dp->cc], 2);
+	    }
+	    if (dp->suse) {
+		newpc = m68k_getpc () + m68kpc_offset;
+		newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, buffer);
+		strcpy(buffer,"");
+	    }
+	    if (dp->duse) {
+		newpc = m68k_getpc () + m68kpc_offset;
+		newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
+		strcpy(buffer,"");
+	    }
+	}
+	CATCH(prb) {}
     } else {
 setjmpagain:
-        int prb = SETJMP(excep_env);
-        if (prb != 0) {
-		fprintf (f, " unknown address\n");
-                goto setjmpagain;
-        }
-	while (cnt-- > 0) {
+	TRY(prb) {
+	    while (cnt-- > 0) {
 		char instrname[20],*ccpt;
 		int opwords;
 		uae_u32 opcode;
@@ -1779,12 +1796,16 @@ setjmpagain:
 		    fprintf (f, " == %08lx", (unsigned long)newpc);
 		fprintf (f, "\n");
 	    }
+	}
+	CATCH(prb) {
+		fprintf (f, " unknown address\n");
+                goto setjmpagain;
+	}
     }
-setjmpagainx:
     if (nextpc)
 	*nextpc = m68k_getpc () + m68kpc_offset;
     free(buffer);
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    RESTORE_EXCEPTION;
 }
 
 #ifdef FULL_HISTORY
@@ -1801,72 +1822,68 @@ void showDisasm(uaecptr addr) {
 		buff[i] = (char *)malloc(80 * sizeof(char));
 		strcpy(buff[i],"");
 	}
-	JMP_BUF excep_env_old;
-	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-	volatile uaecptr newpc = 0;
+	SAVE_EXCEPTION;
+	VOLATILE uaecptr newpc = 0;
 	m68kpc_offset = addr - m68k_getpc ();
-	int prb = SETJMP(excep_env);
-	if (prb != 0) {
-		bug("%s%s%s%s%s%s%s%s%s%s%s%s unknown address", sbuffer[0], buff[0],  buff[1],  buff[2], buff[3], buff[4], sbuffer[1], sbuffer[2], sbuffer[3], sbuffer[4], sbuffer[5], sbuffer[6]);
-		free(buffer);
-		for (int i = 0; i < 7; i++) free(sbuffer[i]);
-		for (int i = 0; i < 5; i++) free(buff[i]);
-		return;
-	}
-	char instrname[20],*ccpt;
-	int opwords;
-	uae_u32 opcode;
-	struct mnemolookup *lookup;
-	struct instr *dp;
-	sprintf(sbuffer[0], "%08lx: ", m68k_getpc () + m68kpc_offset);
-	for (opwords = 0; opwords < 5; opwords++) {
-		sprintf (buff[opwords], "%04x ", get_iword_1 (m68kpc_offset + opwords*2));
-	}
-	opcode = get_iword_1 (m68kpc_offset);
-	m68kpc_offset += 2;
-	if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
-		opcode = 0x4AFC;
-	}
-	dp = table68k + opcode;
-	for (lookup = lookuptab;(unsigned int)lookup->mnemo != dp->mnemo; lookup++)
-		    ;
-	strcpy (instrname, lookup->name);
-	ccpt = strstr (instrname, "cc");
-	if (ccpt != 0) {
-		strncpy (ccpt, ccnames[dp->cc], 2);
-	}
-	sprintf (sbuffer[1], "%s", instrname);
-	switch (dp->size){
-		 case sz_byte: sprintf (sbuffer[2], ".B "); break;
-		 case sz_word: sprintf (sbuffer[2], ".W "); break;
-		 case sz_long: sprintf (sbuffer[2], ".L "); break;
-		 default: sprintf (sbuffer[2], "   "); break;
-	}
+	TRY(prb) {
+	    char instrname[20],*ccpt;
+	    int opwords;
+	    uae_u32 opcode;
+	    struct mnemolookup *lookup;
+	    struct instr *dp;
+	    sprintf(sbuffer[0], "%08lx: ", m68k_getpc () + m68kpc_offset);
+	    for (opwords = 0; opwords < 5; opwords++) {
+		    sprintf (buff[opwords], "%04x ", get_iword_1 (m68kpc_offset + opwords*2));
+	    }
+	    opcode = get_iword_1 (m68kpc_offset);
+	    m68kpc_offset += 2;
+	    if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
+		    opcode = 0x4AFC;
+	    }
+	    dp = table68k + opcode;
+	    for (lookup = lookuptab;(unsigned int)lookup->mnemo != dp->mnemo; lookup++)
+			;
+	    strcpy (instrname, lookup->name);
+	    ccpt = strstr (instrname, "cc");
+	    if (ccpt != 0) {
+		    strncpy (ccpt, ccnames[dp->cc], 2);
+	    }
+	    sprintf (sbuffer[1], "%s", instrname);
+	    switch (dp->size){
+		     case sz_byte: sprintf (sbuffer[2], ".B "); break;
+		     case sz_word: sprintf (sbuffer[2], ".W "); break;
+		     case sz_long: sprintf (sbuffer[2], ".L "); break;
+		     default: sprintf (sbuffer[2], "   "); break;
+	    }
 
-	if (dp->suse) {
-		newpc = m68k_getpc () + m68kpc_offset;
-		newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, buffer);
-		sprintf(sbuffer[3], "%s", buffer);
-		strcpy(buffer,"");
+	    if (dp->suse) {
+		    newpc = m68k_getpc () + m68kpc_offset;
+		    newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, buffer);
+		    sprintf(sbuffer[3], "%s", buffer);
+		    strcpy(buffer,"");
+	    }
+	    if (dp->suse && dp->duse) sprintf (sbuffer[4], ",");
+	    if (dp->duse) {
+		    newpc = m68k_getpc () + m68kpc_offset;
+		    newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
+		    sprintf(sbuffer[5], "%s", buffer);
+		    strcpy(buffer,"");
+	    }
+	    if (ccpt != 0) {
+		    if (cctrue(dp->cc)) sprintf (sbuffer[6], " == %08lx (TRUE)", (unsigned long)newpc);
+			    else sprintf (sbuffer[6], " == %08lx (FALSE)", (unsigned long)newpc);
+	    } else if ((opcode & 0xff00) == 0x6100) /* BSR */
+		    sprintf (sbuffer[6], " == %08lx", (unsigned long)newpc);
+
+	    bug("%s%s%s%s%s%s%s%s%s%s%s%s", sbuffer[0], buff[0], buff[1], buff[2], buff[3],  buff[4], sbuffer[1], sbuffer[2], sbuffer[3], sbuffer[4], sbuffer[5], sbuffer[6]);
 	}
-	if (dp->suse && dp->duse) sprintf (sbuffer[4], ",");
-	if (dp->duse) {
-		newpc = m68k_getpc () + m68kpc_offset;
-		newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
-		sprintf(sbuffer[5], "%s", buffer);
-		strcpy(buffer,"");
+	CATCH(prb) {
+		bug("%s%s%s%s%s%s%s%s%s%s%s%s unknown address", sbuffer[0], buff[0],  buff[1],  buff[2], buff[3], buff[4], sbuffer[1], sbuffer[2], sbuffer[3], sbuffer[4], sbuffer[5], sbuffer[6]);
 	}
-	if (ccpt != 0) {
-		if (cctrue(dp->cc)) sprintf (sbuffer[6], " == %08lx (TRUE)", (unsigned long)newpc);
-			else sprintf (sbuffer[6], " == %08lx (FALSE)", (unsigned long)newpc);
-	} else if ((opcode & 0xff00) == 0x6100) /* BSR */
-		sprintf (sbuffer[6], " == %08lx", (unsigned long)newpc);
-	
-	bug("%s%s%s%s%s%s%s%s%s%s%s%s", sbuffer[0], buff[0], buff[1], buff[2], buff[3],  buff[4], sbuffer[1], sbuffer[2], sbuffer[3], sbuffer[4], sbuffer[5], sbuffer[6]);
 	free(buffer);
 	for (int i = 0; i < 7; i++) free(sbuffer[i]);
 	for (int i = 0; i < 5; i++) free(buff[i]);
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+	RESTORE_EXCEPTION;
 }
 #endif
 #endif

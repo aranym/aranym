@@ -266,9 +266,8 @@ static void phys_dump_mem (uaecptr addr, int lines)
 	}
 }
 
-uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, uaecptr pc, int size, int test)
+uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, int test)
 {
-	DUNUSED(pc);
 	uae_u32 
 		atc_hit_addr = 0,
 		root_ptr,
@@ -654,8 +653,7 @@ bus_err:
 	D(bug("BUS ERROR: fc=%d w=%d log=%08x ssw=%04x fslw=%08x", fc, write, theaddr, ssw, fslw));
 
 	if ((test & MMU_TEST_NO_BUSERR) == 0)	{
-//		Exception(2, pc);
-		LONGJMP(excep_env, 2);
+		THROW(2);
 	}
 	return 0;
 
@@ -689,113 +687,113 @@ make_non_resident_atc:
 uae_u32 mmu_get_unaligned (uaecptr addr, int fc, int size)
 {
 	uaecptr physaddr;
-	uaecptr pc = m68k_getpc();
 	int size1 = size - (addr & (size - 1));
 	uae_u32 result;
-	JMP_BUF excep_env_old;
 
-	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-	int prb = SETJMP(excep_env);
-	if (prb != 0) {
-		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+	SAVE_EXCEPTION;
+	TRY(prb) {
+		physaddr = mmu_translate(addr, fc, 0, size1 == 1 ? sz_byte : sz_word, 0);
+		switch (size1) {
+		case 1:
+			result = phys_get_byte(physaddr);
+			break;
+		case 2:
+			result = phys_get_word (physaddr);
+			break;
+		default:
+			result = (uae_u32)phys_get_byte (physaddr) << 16;
+			result |= phys_get_word (physaddr + 1);
+			break;
+		}
+	}
+	CATCH(prb) {
+		RESTORE_EXCEPTION;
 		regs.mmu_fault_addr = addr;
 		regs.mmu_ssw = (regs.mmu_ssw & ~(3 << 5)) | ((size & 3) << 5);
-		LONGJMP(excep_env, prb);
+		THROW_AGAIN(prb);
 	}
-	physaddr = mmu_translate(addr, fc, 0, pc, size1 == 1 ? sz_byte : sz_word, 0);
-	switch (size1) {
-	case 1:
-		result = phys_get_byte(physaddr);
-		break;
-	case 2:
-		result = phys_get_word (physaddr);
-		break;
-	default:
-		result = (uae_u32)phys_get_byte (physaddr) << 16;
-		result |= phys_get_word (physaddr + 1);
-		break;
+	TRY(prb2) {
+		physaddr = mmu_translate(addr + size1, fc, 0, (size - size1) == 1 ? sz_byte : sz_word, 0);
+		result <<= (size - size1) * 8;
+		switch (size - size1) {
+		case 1:
+			result |= phys_get_byte(physaddr);
+			break;
+		case 2:
+			result |= phys_get_word (physaddr);
+			break;
+		case 3:
+			result |= (uae_u32)phys_get_byte (physaddr) << 16;
+			result |= phys_get_word (physaddr + 1);
+			break;
+		}
 	}
-	prb = SETJMP(excep_env);
-	if (prb != 0) {
-		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+	CATCH(prb2) {
+		RESTORE_EXCEPTION;
 		regs.mmu_fault_addr = addr;
 		regs.mmu_ssw = (regs.mmu_ssw & ~(3 << 5)) | ((size & 3) << 5);
 		regs.mmu_ssw |= (1 << 11);
-		LONGJMP(excep_env, prb);
+		THROW_AGAIN(prb2);
 	}
-	physaddr = mmu_translate(addr + size1, fc, 0, pc, (size - size1) == 1 ? sz_byte : sz_word, 0);
-	result <<= (size - size1) * 8;
-	switch (size - size1) {
-	case 1:
-		result |= phys_get_byte(physaddr);
-		break;
-	case 2:
-		result |= phys_get_word (physaddr);
-		break;
-	case 3:
-		result |= (uae_u32)phys_get_byte (physaddr) << 16;
-		result |= phys_get_word (physaddr + 1);
-		break;
-	}
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+	RESTORE_EXCEPTION;
 	return result;
 }
 
 void mmu_put_unaligned (uaecptr addr, uae_u32 data, int fc, int size)
 {
 	uaecptr physaddr;
-	uaecptr pc = m68k_getpc();
 	int size1 = size - (addr & (size - 1));
 	uae_u32 data1 = data >> 8 * (size - size1);
-	JMP_BUF excep_env_old;
 
-	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-	int prb = SETJMP(excep_env);
-	if (prb != 0) {
-		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+	SAVE_EXCEPTION;
+	TRY(prb) {
+		physaddr = mmu_translate(addr, fc, 1, size1 == 1 ? sz_byte : sz_word, 0);
+		switch (size1) {
+		case 1:
+			phys_put_byte(physaddr, data1);
+			break;
+		case 2:
+			phys_put_word (physaddr, data1);
+			break;
+		case 3:
+			phys_put_byte (physaddr, data1 >> 16);
+			phys_put_word (physaddr + 1, data1);
+			break;
+		}
+	}
+	CATCH(prb) {
+		RESTORE_EXCEPTION;
 		regs.mmu_fault_addr = addr;
 		regs.mmu_ssw = (regs.mmu_ssw & ~(3 << 5)) | ((size & 3) << 5);
 		regs.wb3_data = data;
 		regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-		LONGJMP(excep_env, prb);
+		THROW_AGAIN(prb);
 	}
-	physaddr = mmu_translate(addr, fc, 1, pc, size1 == 1 ? sz_byte : sz_word, 0);
-	switch (size1) {
-	case 1:
-		phys_put_byte(physaddr, data1);
-		break;
-	case 2:
-		phys_put_word (physaddr, data1);
-		break;
-	case 3:
-		phys_put_byte (physaddr, data1 >> 16);
-		phys_put_word (physaddr + 1, data1);
-		break;
+	TRY(prb2) {
+		physaddr = mmu_translate(addr + size1, fc, 1, (size - size1) == 1 ? sz_byte : sz_word, 0);
+		switch (size - size1) {
+		case 1:
+			phys_put_byte(physaddr, data);
+			break;
+		case 2:
+			phys_put_word (physaddr, data);
+			break;
+		case 3:
+			phys_put_byte (physaddr, data >> 16);
+			phys_put_word (physaddr + 1, data);
+			break;
+		}
 	}
-	prb = SETJMP(excep_env);
-	if (prb != 0) {
-		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+	CATCH(prb2) {
+		RESTORE_EXCEPTION;
 		regs.mmu_fault_addr = addr;
 		regs.mmu_ssw = (regs.mmu_ssw & ~(3 << 5)) | ((size & 3) << 5);
 		regs.mmu_ssw |= (1 << 11);
 		regs.wb3_data = data;
 		regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-		LONGJMP(excep_env, prb);
+		THROW_AGAIN(prb2);
 	}
-	physaddr = mmu_translate(addr + size1, fc, 1, pc, (size - size1) == 1 ? sz_byte : sz_word, 0);
-	switch (size - size1) {
-	case 1:
-		phys_put_byte(physaddr, data);
-		break;
-	case 2:
-		phys_put_word (physaddr, data);
-		break;
-	case 3:
-		phys_put_byte (physaddr, data >> 16);
-		phys_put_word (physaddr + 1, data);
-		break;
-	}
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+	RESTORE_EXCEPTION;
 }
 
 void mmu_op(uae_u32 opcode, uae_u16 extra)
@@ -877,7 +875,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 				atc[i].v = 0;
 		}
 		mmu_set_mmusr(0);
-		mmu_translate(addr, regs.dfc, write, m68k_getpc(), sz_byte, MMU_TEST_FORCE_TABLE_SEARCH | MMU_TEST_NO_BUSERR); 
+		mmu_translate(addr, regs.dfc, write, sz_byte, MMU_TEST_FORCE_TABLE_SEARCH | MMU_TEST_NO_BUSERR); 
 		D(bug("PTEST result: mmusr %08x", regs.mmusr));
 	} else
 		op_illg (opcode);

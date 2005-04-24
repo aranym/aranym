@@ -446,7 +446,7 @@ buserr:
 
 	regs.mmu_fault_addr = addr;
 	in_handler = 0;
-	LONGJMP(excep_env, 2);
+	THROW(2);
 }
 
 #endif

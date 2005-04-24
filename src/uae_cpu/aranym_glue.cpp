@@ -175,14 +175,17 @@ void Start680x0(void)
 	if (bx_options.jit.jit) {
 # ifdef X86_ASSEMBLY_disable
 setjmpagain:
-	    int prb = SETJMP(excep_env);
-	    if (prb != 0) {
+	    TRY(prb) {
+# endif
+		m68k_compile_execute();
+# ifdef X86_ASSEMBLY_disable
+	    }
+	    CATCH(prb) {
 		flush_icache(0);
 	        Exception(prb, 0);
     		goto setjmpagain;
 	    }	
 # endif
-		m68k_compile_execute();
 	}
 	else
 #endif

@@ -432,7 +432,7 @@ void ndebug::errorintofile(FILE *, char **inl) {
 
 
 void ndebug::saveintofile(FILE *, char **inl) {
-	volatile uae_u32 src, len;
+	uae_u32 src, len;
 	char *name;
 	FILE *fp;
 
@@ -556,10 +556,10 @@ void ndebug::writeintomem(FILE *, char **c) {
 	}
 }
 
-void ndebug::backtrace(FILE *f, volatile unsigned int lines) {
-	volatile uaecptr st = m68k_areg(regs,7);
+void ndebug::backtrace(FILE *f, unsigned int lines) {
+	uaecptr st = m68k_areg(regs,7);
 	while (lines-- > 0) {
-		if (valid_address(st, 0, 0, sz_long))
+		if (valid_address(st, 0, sz_long))
 			fprintf (f, "%08lx: %08x\n", (unsigned long)st, ReadAtariInt32(st));
 		else
 			fprintf (f, " unknown address\n");
@@ -570,23 +570,24 @@ void ndebug::backtrace(FILE *f, volatile unsigned int lines) {
 void ndebug::log2phys(FILE *, uaecptr addr) {
 #ifdef FULLMMU
 	if (regs.mmu_enabled) {
-setjmpagain:
-		JMP_BUF excep_env_old;
-		memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-	        int prb = SETJMP(excep_env);
-        	if (prb == 2) {
-			bug("Bus error");
-	                goto setjmpagain;
-        	} if (prb == 3) {
-			bug("Access error");
-			goto setjmpagain;
-		} if (prb != 0) {
-			bug("Unknonw access error - %d", prb);
-			goto setjmpagain;
+		SAVE_EXCEPTION;
+		TRY(prb) {
+			bug("MMU enabled: %08lx -> %08lx", (unsigned long)addr,
+			    (unsigned long)mmu_translate(addr, FC_DATA, 0, sz_long, 0));
 		}
-		bug("MMU enabled: %08lx -> %08lx",	(unsigned long)addr,
-			(unsigned long)mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_long, 0));
-		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+		CATCH(prb) {
+			switch (prb) {
+			case 2:
+				bug("Bus error");
+				break;
+			case 3:
+				bug("Access error");
+				break;
+			default:
+				bug("Unknonw access error - %d", int(prb));
+			}
+		}
+		RESTORE_EXCEPTION;
 	} else {
 #endif /* FULLMMU */
 		bug("MMU disabled: %08lx", (unsigned long)addr);
@@ -1168,36 +1169,33 @@ void ndebug::nexit() {
 	tcsetattr(0, TCSAFLUSH, &savetty);
 }
 
-void ndebug::dumpmem(FILE *f, volatile uaecptr addr, uaecptr * nxmem, volatile unsigned int lns)
+void ndebug::dumpmem(FILE *f, VOLATILE uaecptr addr, uaecptr * nxmem, unsigned int lns)
 {
-	JMP_BUF excep_env_old;
-	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-	uaecptr a;
+	SAVE_EXCEPTION;
+	VOLATILE uaecptr a;
 	broken_in = 0;
 	for (; lns-- && !broken_in;) {
-		volatile int i;
+		VOLATILE int i;
 		fprintf(f, "%08lx: \n", (unsigned long)addr);
 		for (i = 0; i < 16; i++) {
-setjmpagain:
-        		if (SETJMP(excep_env) != 0) {
+			TRY(prb) {
+				a = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+				if ((addr & 0xfff00000) == 0x00f00000) {
+					fprintf(f, "%04x ", (unsigned int) HWget_w(a));
+				}
+				else {
+					fprintf(f, "%04x ", (unsigned int) ReadAtariInt16(a));
+				}
+			}
+			CATCH(prb) {
 				fprintf (f, "UA   ");
-				addr += 2;
-				if (++i == 16) break;
-		                goto setjmpagain;
 		        }
-			a = addr < 0xff000000 ? addr : addr & 0x00ffffff;
-			if ((addr & 0xfff00000) == 0x00f00000) {
-				fprintf(f, "%04x ", (unsigned int) HWget_w(a));
-			}
-			else {
-				fprintf(f, "%04x ", (unsigned int) ReadAtariInt16(a));
-			}
 			addr += 2;
 		}
 		fprintf(f, "\n");
 	}
 	*nxmem = addr;
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+	RESTORE_EXCEPTION;
 }
 
 uae_u32 ndebug::readhex (char v, char **c)
@@ -1345,6 +1343,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.36  2005/01/22 16:02:33  joy
+ * extern decl of QuitEmulator
+ *
  * Revision 1.35  2004/07/28 20:10:09  milan
  * switch 'I' modified, debugger can ignore interupt mode
  *

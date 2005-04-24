@@ -55,7 +55,7 @@ int32 nf_call(memptr stack, bool inSuper)
 	D(bug("nf_call(%s, %d)", obj->name(), fncode));
 
 	if (obj->isSuperOnly() && !inSuper) {
-		LONGJMP(excep_env, 8);	// privilege exception
+		THROW(8);	// privilege exception
 	}
 
 	return obj->dispatch(fncode);

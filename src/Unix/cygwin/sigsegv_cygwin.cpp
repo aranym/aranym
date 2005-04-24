@@ -894,7 +894,7 @@ JMP_BUF sigsegv_env;
 static void
 atari_bus_fault(void)
 {
-	LONGJMP(excep_env, 2);
+	THROW(2);
 }
 
 static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultaddr) {

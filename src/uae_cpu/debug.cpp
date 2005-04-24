@@ -356,7 +356,7 @@ void debug (void)
 		if (!more_params (&inptr))
 		    goto S_argh;
 		len = readhex (&inptr);
-		if (! valid_address (src, false, 0, len)) {
+		if (! valid_address (src, false, len)) {
 		    printf ("Invalid memory block\n");
 		    break;
 		}

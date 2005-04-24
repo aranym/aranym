@@ -162,7 +162,6 @@ static inline void mmu_set_root_pointer(int regno, uae_u32 val)
 extern uaecptr mmu_translate(uaecptr addr,
 		int fc,
 		int write,
-		uaecptr pc,
 		int size,
 		int test
 		) REGPARAM;

@@ -49,7 +49,32 @@
 
 // newcpu.h
 extern void Exception (int, uaecptr);
+#ifdef EXCEPTIONS_VIA_LONGJMP
 extern JMP_BUF excep_env;
+#define SAVE_EXCEPTION \
+	JMP_BUF excep_env_old; \
+	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF))
+#define RESTORE_EXCEPTION \
+	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF))
+#define TRY(var) int var = SETJMP(excep_env); if (!var)
+#define CATCH(var) else
+#define THROW(n) LONGJMP(excep_env, n)
+#define THROW_AGAIN(var) LONGJMP(excep_env, var)
+#define VOLATILE volatile
+#else
+struct m68k_exception {
+	int prb;
+	m68k_exception (int exc) : prb (exc) {}
+	operator int() { return prb; }
+};
+#define SAVE_EXCEPTION
+#define RESTORE_EXCEPTION
+#define TRY(var) try
+#define CATCH(var) catch(m68k_exception var)
+#define THROW(n) throw m68k_exception(n)
+#define THROW_AGAIN(var) throw
+#define VOLATILE
+#endif
 extern int in_exception_2;
 
 #define STRAM_END	0x0e00000UL	// should be replaced by global ROMBase as soon as ROMBase will be a constant
@@ -125,7 +150,7 @@ static inline void check_ram_boundary(uaecptr addr, int size, bool write)
 	// D(bug("BUS ERROR %s at $%x\n", (write ? "writing" : "reading"), addr));
 	regs.mmu_fault_addr = addr;
 	regs.mmu_ssw = ((size & 3) << 5) | (write ? 0 : (1 << 8));
-	LONGJMP(excep_env, 2);
+	THROW(2);
 }
 
 #else
@@ -150,15 +175,15 @@ static inline uae_u8 *phys_get_real_address(uaecptr addr)
 #ifndef NOCHECKBOUNDARY
 static inline bool phys_valid_address(uaecptr addr, bool write, int sz)
 {
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-        memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
-        return false;
+    SAVE_EXCEPTION;
+    TRY(prb) {
+	check_ram_boundary(addr, sz, write);
     }
-    check_ram_boundary(addr, sz, write);
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
+	return false;
+    }
+    RESTORE_EXCEPTION;
     return true;
 }
 #else
@@ -305,17 +330,17 @@ static inline uae_u32 get_long(uaecptr addr)
 {
     if (is_unaligned(addr, 4))
 	return mmu_get_unaligned(addr, FC_DATA, 4);
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
     uae_u32 l;
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
-	regs.mmu_fault_addr = addr;
-	LONGJMP(excep_env, prb);
+    TRY(prb) {
+	l = phys_get_long(mmu_translate(addr, FC_DATA, 0, sz_long, 0));
+	RESTORE_EXCEPTION;
     }
-    l = phys_get_long(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_long, 0));
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
+	regs.mmu_fault_addr = addr;
+	THROW_AGAIN(prb);
+    }
     return l;
 }
 
@@ -323,33 +348,33 @@ static inline uae_u16 get_word(uaecptr addr)
 {
     if (is_unaligned(addr, 2))
 	return mmu_get_unaligned(addr, FC_DATA, 2);
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
     uae_u16 w;
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
-	regs.mmu_fault_addr = addr;
-	LONGJMP(excep_env, prb);
+    TRY(prb) {
+	w = phys_get_word(mmu_translate(addr, FC_DATA, 0, sz_word, 0));
+	RESTORE_EXCEPTION;
     }
-    w = phys_get_word(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_word, 0));
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
+	regs.mmu_fault_addr = addr;
+	THROW_AGAIN(prb);
+    }
     return w;
 }
 
 static inline uae_u8 get_byte(uaecptr addr)
 {
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
     uae_u8 b;
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
-	regs.mmu_fault_addr = addr;
-	LONGJMP(excep_env, prb);
+    TRY(prb) {
+	b = phys_get_byte(mmu_translate(addr, FC_DATA, 0, sz_byte, 0));
+	RESTORE_EXCEPTION;
     }
-    b = phys_get_byte(mmu_translate(addr, FC_DATA, 0, m68k_getpc(), sz_byte, 0));
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
+	regs.mmu_fault_addr = addr;
+	THROW_AGAIN(prb);
+    }
     return b;
 }
 
@@ -357,52 +382,52 @@ static inline void put_long(uaecptr addr, uae_u32 l)
 {
     if (is_unaligned(addr, 4))
 	return mmu_put_unaligned(addr, l, FC_DATA, 4);
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
+    TRY(prb) {
+	phys_put_long(mmu_translate(addr, FC_DATA, 1, sz_long, 0),l);
+	RESTORE_EXCEPTION;
+    }
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
 	regs.mmu_fault_addr = addr;
 	regs.wb3_data = l;
 	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	LONGJMP(excep_env, prb);
+	THROW_AGAIN(prb);
     }
-    phys_put_long(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_long, 0),l);
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 }
 
 static inline void put_word(uaecptr addr, uae_u16 w)
 {
     if (is_unaligned(addr, 2))
 	return mmu_put_unaligned(addr, w, FC_DATA, 2);
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
+    TRY(prb) {
+	phys_put_word(mmu_translate(addr, FC_DATA, 1, sz_word, 0),w);
+	RESTORE_EXCEPTION;
+    }
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
 	regs.mmu_fault_addr = addr;
 	regs.wb3_data = w;
 	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	LONGJMP(excep_env, prb);
+	THROW_AGAIN(prb);
     }
-    phys_put_word(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_word, 0),w);
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 }
 
 static inline void put_byte(uaecptr addr, uae_u16 b)
 {
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
+    TRY(prb) {
+	phys_put_byte(mmu_translate(addr, FC_DATA, 1, sz_byte, 0),b);
+	RESTORE_EXCEPTION;
+    }
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
 	regs.mmu_fault_addr = addr;
 	regs.wb3_data = b;
 	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	LONGJMP(excep_env, prb);
+	THROW_AGAIN(prb);
     }
-    phys_put_byte(mmu_translate(addr, FC_DATA, 1, m68k_getpc(), sz_byte, 0),b);
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 }
 
 static inline uae_u8 *get_real_address(uaecptr addr, int write, int sz)
@@ -412,56 +437,56 @@ static inline uae_u8 *get_real_address(uaecptr addr, int write, int sz)
         case 1: i = sz_byte; break;
         case 2: i = sz_word; break;
     }
-    return phys_get_real_address(mmu_translate(addr, FC_DATA, write, m68k_getpc(), i, 0));
+    return phys_get_real_address(mmu_translate(addr, FC_DATA, write, i, 0));
 }
 
 static inline uae_u32 sfc_get_long(uaecptr addr)
 {
     if (is_unaligned(addr, 4))
 	return mmu_get_unaligned(addr, regs.sfc, 4);
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
     uae_u32 l;
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
-	regs.mmu_fault_addr = addr;
-	LONGJMP(excep_env, prb);
+    TRY(prb) {
+	l = phys_get_long(mmu_translate(addr, regs.sfc, 0, sz_long, 0));
+	RESTORE_EXCEPTION;
     }
-    l = phys_get_long(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_long, 0));
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
+	regs.mmu_fault_addr = addr;
+	THROW_AGAIN(prb);
+    }
     return l;
 }
 static inline uae_u16 sfc_get_word(uaecptr addr)
 {
     if (is_unaligned(addr, 1))
 	return mmu_get_unaligned(addr, regs.dfc, 2);
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
     uae_u16 w;
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
-	regs.mmu_fault_addr = addr;
-	LONGJMP(excep_env, prb);
+    TRY(prb) {
+	w = phys_get_word(mmu_translate(addr, regs.sfc, 0, sz_word, 0));
+	RESTORE_EXCEPTION;
     }
-    w = phys_get_word(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_word, 0));
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
+	regs.mmu_fault_addr = addr;
+	THROW_AGAIN(prb);
+    }
     return w;
 }
 static inline uae_u8 sfc_get_byte(uaecptr addr)
 {
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
     uae_u8 b;
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
-	regs.mmu_fault_addr = addr;
-	LONGJMP(excep_env, prb);
+    TRY(prb) {
+	b = phys_get_byte(mmu_translate(addr, regs.sfc, 0, sz_byte, 0));
+	RESTORE_EXCEPTION;
     }
-    b = phys_get_byte(mmu_translate(addr, regs.sfc, 0, m68k_getpc(), sz_byte, 0));
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
+	regs.mmu_fault_addr = addr;
+	THROW_AGAIN(prb);
+    }
     return b;
 }
 
@@ -469,69 +494,69 @@ static inline void dfc_put_long(uaecptr addr, uae_u32 l)
 {
     if (is_unaligned(addr, 4))
 	return mmu_put_unaligned(addr, l, regs.dfc, 4);
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
+    TRY(prb) {
+	phys_put_long(mmu_translate(addr, regs.dfc, 1, sz_long, 0), l);
+	RESTORE_EXCEPTION;
+    }
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
 	regs.mmu_fault_addr = addr;
 	regs.wb3_data = l;
 	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	LONGJMP(excep_env, prb);
+	THROW_AGAIN(prb);
     }
-    phys_put_long(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_long, 0), l);
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 }
 static inline void dfc_put_word(uaecptr addr, uae_u16 w)
 {
     if (is_unaligned(addr, 1))
 	return mmu_put_unaligned(addr, w, regs.dfc, 2);
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
+    TRY(prb) {
+	phys_put_word(mmu_translate(addr, regs.dfc, 1, sz_word, 0), w);
+	RESTORE_EXCEPTION;
+    }
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
 	regs.mmu_fault_addr = addr;
 	regs.wb3_data = w;
 	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	LONGJMP(excep_env, prb);
+	THROW_AGAIN(prb);
     }
-    phys_put_word(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_word, 0), w);
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 }
 static inline void dfc_put_byte(uaecptr addr, uae_u16 b)
 {
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-    int prb = SETJMP(excep_env);
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    SAVE_EXCEPTION;
+    TRY(prb) {
+	phys_put_byte(mmu_translate(addr, regs.dfc, 1, sz_byte, 0), b);
+	RESTORE_EXCEPTION;
+    }
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
 	regs.mmu_fault_addr = addr;
 	regs.wb3_data = b;
 	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	LONGJMP(excep_env, prb);
+	THROW_AGAIN(prb);
     }
-    phys_put_byte(mmu_translate(addr, regs.dfc, 1, m68k_getpc(), sz_byte, 0), b);
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
 }
 
-static inline bool valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
+static inline bool valid_address(uaecptr addr, bool write, int sz)
 {
-    JMP_BUF excep_env_old;
-    memcpy(excep_env_old, excep_env, sizeof(JMP_BUF));
-    int prb = SETJMP(excep_env);
-    wordsizes i = sz_long;
-    switch (sz) {
-        case 1: i = sz_byte; break;
-        case 2: i = sz_word; break;
+    SAVE_EXCEPTION;
+    TRY(prb) {
+	wordsizes i = sz_long;
+	switch (sz) {
+	    case 1: i = sz_byte; break;
+	    case 2: i = sz_word; break;
+	}
+	check_ram_boundary(mmu_translate(addr, FC_DATA, (write ? 1 : 0), i, 0), sz, write);
+	RESTORE_EXCEPTION;
+	return true;
     }
-    if (prb != 0) {
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
+    CATCH(prb) {
+	RESTORE_EXCEPTION;
 	return false;
     } 
-    check_ram_boundary(mmu_translate(addr, FC_DATA, (write ? 1 : 0), pc, i, 0), sz, write);
-    memcpy(excep_env, excep_env_old, sizeof(JMP_BUF));
-    return true;
 }
 
 #else
@@ -544,7 +569,7 @@ static inline bool valid_address(uaecptr addr, bool write, uaecptr pc, int sz)
 #  define put_byte(a,b)			phys_put_byte(a,b)
 #  define get_real_address(a,w,s)	phys_get_real_address(a)
 
-#define valid_address(a,w,p,s)		phys_valid_address(a,w,s)
+#define valid_address(a,w,s)		phys_valid_address(a,w,s)
 #endif
 
 static inline void flush_internals() {
