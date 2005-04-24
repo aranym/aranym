@@ -2,6 +2,8 @@
 - new configuration option --enable-cxx-exceptions, implement use of C++
   exceptions instead of setjmp/longjmp for exception handling.
 
+- ndebug.cpp: fix stdarg usage, handle NEED_TO_DEBUG_BADLY in showHistory.
+
 
 2005/04/22 - Xavier
 - hostscreen.cpp: SDL_WM_ToggleFullScreen does not work on some GUIs (Microsoft

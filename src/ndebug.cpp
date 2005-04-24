@@ -159,13 +159,14 @@ int dbprintf(char *s, ...)
 {
 #endif
 	va_list a;
-	va_start(a, s);
 #ifdef NEWDEBUG
 	if (bx_options.startup.debugger) {
 		int i;
 		if (dbbuffer[dbend] != NULL)
 			free(dbbuffer[dbend]);
+		va_start(a, s);
 		i = vasprintf(&dbbuffer[dbend++], s, a);
+		va_end(a);
 		if (dbend == dbsize) dbend = 0;
 		if (dbstart == dbend) dbstart++;
 		if (dbstart == dbsize) dbstart = 0;
@@ -174,16 +175,14 @@ int dbprintf(char *s, ...)
 	} else {
 #endif
 		int i;
-		char *c;
-		i = vasprintf(&c, s, a);
-		i += fprintf(stderr, c);
+		va_start(a, s);
+		i = vfprintf(stderr, s, a);
 		i += fprintf(stderr, "\n");
-		free(c);
+		va_end(a);
 		return i;
 #ifdef NEWDEBUG
 	}
 #endif
-	va_end(a);
 }
 
 #ifdef NEWDEBUG
@@ -195,25 +194,24 @@ int pdbprintf(char *s, ...)
 #endif
 	int i = 0;
 	va_list a;
-	va_start(a, s);
 #ifdef NEWDEBUG
 	if (bx_options.startup.debugger) {
 		if (dbbuffer[dbend] != NULL)
 			free(dbbuffer[dbend]);
+		va_start(a, s);
 		i += vasprintf(&dbbuffer[dbend++], s, a);
+		va_end(a);
 		if (dbend == dbsize) dbend = 0;
 		if (dbstart == dbend) dbstart++;
 		if (dbstart == dbsize) dbstart = 0;
 		reset_aktualrow();
 	}
 #endif
-	char *c;
-	i += vasprintf(&c, s, a);
-	i += fprintf(stderr, c);
+	va_start(a, s);
+	i = vfprintf(stderr, s, a);
 	i += fprintf(stderr, "\n");
-	free(c);
-	return i;
 	va_end(a);
+	return i;
 }
 
 
@@ -221,23 +219,18 @@ int pdbprintf(char *s, ...)
 void ndebug::warn_print(FILE * f)
 {
 	unsigned int ar;
-	char *s = (char *) malloc((rowlen + 1) * sizeof(char));
 	for (unsigned int i = 0; i < get_warnlen(); i++) {
 		ar = (aktualrow + i) % dbsize;
 		if (dbbuffer[ar] != NULL
 			&& (((dbstart <= dbend) && (ar >= dbstart) && (ar <= dbend))
 			|| (dbstart > dbend) && (i < dbsize))) {
-			snprintf(s, rowlen, dbbuffer[ar]);
-			fprintf(f, s);
-			for (unsigned int j = 0; j < (rowlen - strlen(s)); j++)
-				putc(' ', f);
+			fprintf(f, "%-*.*s", rowlen, rowlen, dbbuffer[ar]);
 		} else {
 			for (unsigned int j = 0; j < rowlen; j++)
 				putc(' ', f);
 		}
 		fprintf(f, "|\n");
 	}
-	free(s);
 }
 
 void ndebug::m68k_print(FILE * f)
@@ -1324,18 +1317,30 @@ void ndebug::convertNo(char **s) {
 #ifdef FULL_HISTORY
 void ndebug::showHistory(unsigned int count) {
 	unsigned int temp = lasthist;
+#ifdef NEED_TO_DEBUG_BADLY
+	struct regstruct save_regs = regs;
+	struct flag_struct save_flags = regflags;
+#endif
 	
 	while (count-- > 0 && temp != firsthist) {
 	    if (temp == 0) temp = MAX_HIST-1; else temp--;
 	}
 	bug("History:");
 	while (temp != lasthist) {
-#ifndef NEED_TO_DEBUG_BADLY
+#ifdef NEED_TO_DEBUG_BADLY
+		regs = history[temp];
+		regflags = historyf[temp];
+		m68k_dumpstate (NULL);
+#else
 		showDisasm(history[temp]);
 #endif
 		//bug("%04x", history[temp]);
 		if (++temp == MAX_HIST) temp = 0;
 	}
+#ifdef NEED_TO_DEBUG_BADLY
+	regs = save_regs;
+	regflags = save_flags;
+#endif
 }
 #endif
 
@@ -1343,6 +1348,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.37  2005/04/24 01:00:59  schwab
+ * Implement use of C++ exceptions instead of setjmp/longjmp for exception handling
+ *
  * Revision 1.36  2005/01/22 16:02:33  joy
  * extern decl of QuitEmulator
  *
