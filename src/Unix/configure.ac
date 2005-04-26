@@ -62,7 +62,7 @@ AC_ARG_ENABLE(nfpci,           [  --enable-nfpci          enable NatFeat PCI (de
 
 AC_ARG_ENABLE(nfosmesa,        [  --enable-nfosmesa       enable NatFeat OSMesa (default=no)], [WANT_NFOSMESA=$enableval], [WANT_NFOSMESA=no])
 
-AC_ARG_ENABLE(nfjpeg,          [  --enable-nfjpeg         enable NatFeat JPEG (default=no)], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=no])
+AC_ARG_ENABLE(nfjpeg,          [  --enable-nfjpeg         enable NatFeat JPEG (default=yes)], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=yes])
 
 AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emulation (default=yes)], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 

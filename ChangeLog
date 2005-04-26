@@ -1,3 +1,7 @@
+2005/04/26 - Xavier
+- Unix/configure.ac: nfjpeg enabled by default
+
+
 2005/04/24 - Andreas
 - new configuration option --enable-cxx-exceptions, implement use of C++
   exceptions instead of setjmp/longjmp for exception handling.
