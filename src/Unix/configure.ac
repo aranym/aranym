@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl Written in 1999 by Christian Bauer et al.
 dnl Adapted for ARAnyM by Milan Jurik
 
-AC_INIT(aranym,0.8,aranym@bobek.sh.cvut.cz,aranym)
+AC_INIT(aranym,0.9,aranym@bobek.sh.cvut.cz,aranym)
 AC_PREREQ(2.52)
 AC_REVISION($Revision$)
 AC_CONFIG_HEADER(config.h)
@@ -1598,7 +1598,7 @@ NFJPEGSRCS=""
 if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
 	dnl Check for SDL_Image
 	AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
-	if test "x$have_sdlimage_lib"="xyes"; then
+	if test "x$have_sdlimage_lib" = "xyes"; then
 		AC_DEFINE([NFJPEG_SUPPORT], 1, [Define if you want to use host JPEG decoder])
 		NFJPEGSRCS="../natfeat/nfjpeg.cpp"
 		LIBS="$LIBS -lSDL_image"

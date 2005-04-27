@@ -1,3 +1,7 @@
+2005/04/27 - milan
+- Unix/configure.ac: nfjpeg test corrected
+
+
 2005/04/26 - Xavier
 - Unix/configure.ac: nfjpeg enabled by default
 
