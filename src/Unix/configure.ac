@@ -82,10 +82,11 @@ dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
 [  --enable-fpe=FPE        specify which fpu emulator to use (default=auto)],
 [ case "$enableval" in
-    auto)	FPE_CORE_TEST_ORDER="ieee uae";; dnl ieee
-    uae)	FPE_CORE_TEST_ORDER="uae";;
-    i386)	FPE_CORE_TEST_ORDER="x86";;
+    dnl default is always ieee, if architecture has this fp format
+    auto)	FPE_CORE_TEST_ORDER="ieee uae";;
     ieee)	FPE_CORE_TEST_ORDER="ieee";;
+    uae)	FPE_CORE_TEST_ORDER="uae";;
+    x86)	FPE_CORE_TEST_ORDER="x86";;
     *)		AC_MSG_ERROR([--enable-fpe takes only one of the following values: auto, uae, x86, ieee]);;
   esac
 ],
@@ -258,7 +259,7 @@ CAN_NATIVE_M68K=no
 dnl Use 68k CPU natively?
 WANT_NATIVE_M68K=no
 if [[ "x$HAVE_M68K" = "xyes" -a "x$CAN_NATIVE_M68K" = "xyes" ]]; then
-  AC_DEFINE([ENABLE_NATIVE_M68K], 1, [Define if using native 68k mode.])
+  AC_DEFINE(ENABLE_NATIVE_M68K, 1, [Define if using native 68k mode.])
   WANT_NATIVE_M68K=yes
 fi
 
@@ -1012,7 +1013,7 @@ if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   CFLAGS="$CFLAGS -fomit-frame-pointer"
   CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
   if [[ "x$WANT_CXX_EXCEPTIONS" = "xno" ]]; then
-    CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
+    CXXFLAGS="$CXXFLAGS -fomit-frame-pointer -fno-exceptions"
   fi 
 fi
 
@@ -1021,7 +1022,7 @@ dnl As of 2001/08/02, this affects the following compilers:
 dnl Official: probably gcc-3.1 (mainline CVS)
 dnl Mandrake: gcc-2.96 >= 0.59mdk, gcc-3.0.1 >= 0.1mdk
 dnl Red Hat : gcc-2.96 >= 89, gcc-3.0 >= 1
-if [[ "x$HAVE_GCC27" = "xyes" -a "x$FPE_CORE" = "xi386" ]]; then
+if [[ "x$HAVE_GCC27" = "xyes" -a "x$FPE_CORE" = "xx86" ]]; then
   SAVED_CXXFLAGS="$CXXFLAGS"
   CXXFLAGS="$CXXFLAGS -fno-merge-constants"
   AC_CACHE_CHECK([whether GCC supports constants merging], ac_cv_gcc_constants_merging, [
@@ -1435,8 +1436,8 @@ fi
 
 dnl Remove the "-g" option if set for GCC.
 if [[ "x$HAVE_GCC27" = "xyes" ]]; then
-  CFLAGS=`echo $CFLAGS | sed -e 's/-g //g'`
-  CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-g //g'`
+  CFLAGS=`echo $CFLAGS | sed -e 's/-g\b//g'`
+  CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-g\b//g'`
 fi
 if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
   DBGSP="-g"

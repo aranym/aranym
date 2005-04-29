@@ -2,21 +2,26 @@
  *  vm_alloc.cpp - Wrapper to various virtual memory allocation schemes
  *                 (supports mmap, vm_allocate or fallbacks to malloc)
  *
- *  Basilisk II (C) 1997-2002 Christian Bauer
+ * Copyright (c) 2000-2005 ARAnyM developer team (see AUTHORS)
+ * 
+ * Originally derived from Basilisk II (C) 1997-2000 Christian Bauer
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "vm_alloc.h"
@@ -277,7 +282,7 @@ void * vm_acquire(size_t size, int options)
 	// Sanity checks for 64-bit platforms
 	if (sizeof(void *) == 8 && (options & VM_MAP_32BIT) && !((char *)addr <= (char *)0xffffffff))
 		return VM_MAP_FAILED;
-	
+
 	next_address = (char *)addr + size;
 	
 	// Since I don't know the standard behavior of mmap(), zero-fill here
@@ -326,6 +331,10 @@ void * vm_acquire(size_t size, int options)
 
 bool vm_acquire_fixed(void * addr, size_t size, int options)
 {
+	// Fixed mappings are required to be private
+	if (options & VM_MAP_SHARED)
+		return false;
+
 #ifdef HAVE_MACH_VM
 	// vm_allocate() returns a zero-filled memory region
 	if (vm_allocate(mach_task_self(), (vm_address_t *)&addr, size, 0) != KERN_SUCCESS)
@@ -344,7 +353,7 @@ bool vm_acquire_fixed(void * addr, size_t size, int options)
 #ifdef HAVE_WIN32_VM
 	// Windows cannot allocate Low Memory
 	if (addr == NULL)
-		return -1;
+		return false;
 
 	// Allocate a possibly offset region to align on 64K boundaries
 	LPVOID req_addr = align_addr_segment(addr);
@@ -440,6 +449,17 @@ int vm_protect(void * addr, size_t size, int prot)
 #endif
 }
 
+/* Returns the size of a page.  */
+
+int vm_get_page_size(void)
+{
+#ifdef _WIN32
+    return 4096;
+#else
+    return getpagesize();
+#endif
+}
+
 #ifdef CONFIGURE_TEST_VM_MAP
 /* Tests covered here:
    - TEST_VM_PROT_* program slices actually succeeds when a crash occurs
@@ -450,11 +470,7 @@ int main(void)
 	vm_init();
 	
 #define page_align(address) ((char *)((unsigned long)(address) & -page_size))
-#ifdef _WIN32
-	const unsigned long page_size = 4096;
-#else
-	unsigned long page_size = getpagesize();
-#endif
+	const unsigned long page_size = vm_get_page_size();
 	
 	const int area_size = 6 * page_size;
 	volatile char * area = (volatile char *) vm_acquire(area_size);

@@ -1,7 +1,7 @@
 /*
  * main_unix.cpp - Startup code for Unix
  *
- * Copyright (c) 2000-2004 ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2000-2005 ARAnyM developer team (see AUTHORS)
  *
  * Authors:
  *  MJ		Milan Jurik
@@ -26,7 +26,6 @@
  * along with ARAnyM; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
