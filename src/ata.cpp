@@ -36,21 +36,11 @@
 #define DEBUG 0
 #include "debug.h"
 
-// WARNING: dangerous options!
-// These options provoke certain kinds of errors for testing purposes when they
-// are set to a nonzero value.  DO NOT ENABLE THEM when using any disk image
-// you care about.
-#define TEST_READ_BEYOND_END 0
-#define TEST_WRITE_BEYOND_END 0
-#if TEST_READ_BEYOND_END || TEST_WRITE_BEYOND_END
-#warning BEWARE: Dangerous options are enabled in ata.cpp
-#warning If you are not trying to provoke hard drive errors you should disable them right now.
-#endif
-// end of dangerous options.
 
 
 #define INDEX_PULSE_CYCLE 10
 
+#define ATA_DMA 0
 #define PACKET_SIZE 12
 
 bx_hard_drive_c bx_hard_drive;
@@ -442,9 +432,6 @@ if ( quantumsMax == 0)
               BX_SELECTED_CONTROLLER(channel).status.drq = 1;
               BX_SELECTED_CONTROLLER(channel).status.seek_complete = 1;
 
-#if TEST_READ_BEYOND_END==1
-	      BX_SELECTED_CONTROLLER(channel).cylinder_no += 100000;
-#endif
 	      if (!calculate_logical_address(channel, &logical_sector)) {
 	        bug("multi-sector read reached invalid sector %lu, aborting", logical_sector);
 		command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
@@ -872,17 +859,11 @@ if ( quantumsMax == 0)
             off_t logical_sector;
             off_t ret;
 
-#if TEST_WRITE_BEYOND_END==1
-	    BX_SELECTED_CONTROLLER(channel).cylinder_no += 100000;
-#endif
 	    if (!calculate_logical_address(channel, &logical_sector)) {
 	      bug("write reached invalid sector %lu, aborting", logical_sector);
 	      command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
 	      return;
             }
-#if TEST_WRITE_BEYOND_END==2
-	    logical_sector += 100000;
-#endif
 	    ret = BX_SELECTED_DRIVE(channel).hard_drive->lseek(logical_sector * 512, SEEK_SET);
             if (ret < 0) {
               bug("could not lseek() hard drive image file at byte %lu", logical_sector * 512);
@@ -1278,11 +1259,39 @@ if ( quantumsMax == 0)
 					  uint16 alloc_length = read_16bit(BX_SELECTED_CONTROLLER(channel).buffer + 7);
 
 					  uint8 format = (BX_SELECTED_CONTROLLER(channel).buffer[9] >> 6);
-                                          int i;
-					  switch (format) {
+// Win32:  I just read the TOC using Win32's IOCTRL functions (Ben)
+#if defined(WIN32)
+#ifdef LOWLEVEL_CDROM
+					switch (format) {
+						case 2:
+						case 3:
+						case 4:
+							if (msf != TRUE)
+								D(panicbug("READ_TOC_EX: msf not set for format %i", format));
+						case 0:
+						case 1:
+						case 5:
+						      if (!(BX_SELECTED_DRIVE(channel).cdrom.cd->read_toc(BX_SELECTED_CONTROLLER(channel).buffer,
+									    &toc_length, msf, starting_track, format))) {
+										atapi_cmd_error(channel, SENSE_ILLEGAL_REQUEST, ASC_INV_FIELD_IN_CMD_PACKET);
+										raise_interrupt(channel);
+						      } else {
+										init_send_atapi_command(channel, atapi_command, toc_length, alloc_length);
+										ready_to_send_atapi(channel);
+						      }
+						      break;
+						default:
+						      panicbug("(READ TOC) Format %d not supported", format);
+					}
+#else
+					panicbug("LOWLEVEL_CDROM not defined");
+#endif
+#else  // WIN32
+					int i;
+					switch (format) {
 						case 0:
 #ifdef LOWLEVEL_CDROM
-						      if (!(BX_SELECTED_DRIVE(channel).cdrom.cd->read_toc(BX_SELECTED_CONTROLLER(channel).buffer,
+							if (!(BX_SELECTED_DRIVE(channel).cdrom.cd->read_toc(BX_SELECTED_CONTROLLER(channel).buffer,
 										       &toc_length, msf, starting_track, format))) {
 							    atapi_cmd_error(channel, SENSE_ILLEGAL_REQUEST,
 									    ASC_INV_FIELD_IN_CMD_PACKET);
@@ -1315,6 +1324,7 @@ if ( quantumsMax == 0)
 						      panicbug("(READ TOC) Format %d not supported", format);
 						      break;
 					  }
+#endif  // WIN32
 				    } else {
 					  atapi_cmd_error(channel, SENSE_NOT_READY, ASC_MEDIUM_NOT_PRESENT);
 					  raise_interrupt(channel);
@@ -1322,46 +1332,58 @@ if ( quantumsMax == 0)
 			      }
 			      break;
 
-			      case 0x28: // read (10)
-			      case 0xa8: // read (12)
-			                 { 
+              case 0x28: // read (10)
+              case 0xa8: // read (12)
+                { 
+                  uint32 transfer_length;
 
-				    uint32 transfer_length;
-				    if (atapi_command == 0x28)
-				          transfer_length = read_16bit(BX_SELECTED_CONTROLLER(channel).buffer + 7);
-				    else
-				          transfer_length = read_32bit(BX_SELECTED_CONTROLLER(channel).buffer + 6);
+                  if (atapi_command == 0x28)
+                    transfer_length = read_16bit(BX_SELECTED_CONTROLLER(channel).buffer + 7);
+                  else
+                    transfer_length = read_32bit(BX_SELECTED_CONTROLLER(channel).buffer + 6);
 
-				    uint32 lba = read_32bit(BX_SELECTED_CONTROLLER(channel).buffer + 2);
+                  uint32 lba = read_32bit(BX_SELECTED_CONTROLLER(channel).buffer + 2);
 
-				    if (!BX_SELECTED_DRIVE(channel).cdrom.ready) {
-					  atapi_cmd_error(channel, SENSE_NOT_READY, ASC_MEDIUM_NOT_PRESENT);
-					  raise_interrupt(channel);
-					  break;
-				    }
+                  if (!BX_SELECTED_DRIVE(channel).cdrom.ready) {
+                    atapi_cmd_error(channel, SENSE_NOT_READY, ASC_MEDIUM_NOT_PRESENT);
+                    raise_interrupt(channel);
+                    break;
+                  }
 
-				    if (transfer_length == 0) {
-					  atapi_cmd_nop(channel);
-					  raise_interrupt(channel);
-					  break;
-				    }
+                  // Ben: see comment below
+                  if (lba + transfer_length > BX_SELECTED_DRIVE(channel).cdrom.capacity) {
+                    transfer_length = (BX_SELECTED_DRIVE(channel).cdrom.capacity - lba);
+                  }
 
-				    if (lba + transfer_length > BX_SELECTED_DRIVE(channel).cdrom.capacity) {
-					  atapi_cmd_error(channel, SENSE_ILLEGAL_REQUEST, ASC_LOGICAL_BLOCK_OOR);
-					  raise_interrupt(channel);
-					  break;
-				    }
+                  //if (transfer_length == 0) {
+                  if (transfer_length <= 0) {
+                    atapi_cmd_nop(channel);
+                    raise_interrupt(channel);
+                    break;
+                  }
 
-				    //BX_INFO(("cdrom: READ LBA=%d LEN=%d", lba, transfer_length));
+/* Ben: I commented this out and added the three lines above.  I am not sure this is the correct thing
+        to do, but it seems to work.
+        FIXME: I think that if the transfer_length is more than we can transfer, we should return
+        some sort of flag/error/bitrep stating so.  I haven't read the atapi specs enough to know
+        what needs to be done though.
 
-				    // handle command
-				    init_send_atapi_command(channel, atapi_command, transfer_length * 2048,
-							    transfer_length * 2048, true);
-				    BX_SELECTED_DRIVE(channel).cdrom.remaining_blocks = transfer_length;
-				    BX_SELECTED_DRIVE(channel).cdrom.next_lba = lba;
-				    ready_to_send_atapi(channel);
-			      }
-			      break;
+                  if (lba + transfer_length > BX_SELECTED_DRIVE(channel).cdrom.capacity) {
+                    atapi_cmd_error(channel, SENSE_ILLEGAL_REQUEST, ASC_LOGICAL_BLOCK_OOR);
+                    raise_interrupt(channel);
+                    break;
+                  }
+*/
+                  D(bug("cdrom: READ (%d) LBA=%d LEN=%d", atapi_command==0x28?10:12, lba, transfer_length));
+
+                  // handle command
+                  init_send_atapi_command(channel, atapi_command, transfer_length * 2048,
+                                          transfer_length * 2048, true);
+                  BX_SELECTED_DRIVE(channel).cdrom.remaining_blocks = transfer_length;
+                  BX_SELECTED_DRIVE(channel).cdrom.next_lba = lba;
+                  ready_to_send_atapi(channel);
+                }
+                break;
 
 				case 0x2b: { // seek
 					uint32 lba = read_32bit(BX_SELECTED_CONTROLLER(channel).buffer + 2);
@@ -1454,7 +1476,9 @@ if ( quantumsMax == 0)
 			      default:
 				    panicbug("Unknown ATAPI command 0x%x (%d)",
 					     atapi_command, atapi_command);
-				    raise_interrupt(channel);
+                                    // We'd better signal the error if the user chose to continue
+			            atapi_cmd_error(channel, SENSE_ILLEGAL_REQUEST, ASC_INV_FIELD_IN_CMD_PACKET);
+			            raise_interrupt(channel);
 				    break;
 			}
 		  }
@@ -1532,8 +1556,8 @@ if ( quantumsMax == 0)
 	  if (!BX_SELECTED_IS_HD(channel))
 		D(bug("calibrate drive issued to non-disk"));
 
-	  // FIXME Maybe we should signal an error in case of cdrom
-	  // if (!BX_SELECTED_IS_PRESENT(channel) || !BX_SELECTED_IS_HD(channel))
+          // FIXME Maybe we should signal an error in case of cdrom
+          // if (!BX_SELECTED_IS_PRESENT(channel) || !BX_SELECTED_IS_HD(channel))
           if (!BX_SELECTED_IS_PRESENT(channel)) {
             BX_SELECTED_CONTROLLER(channel).error_register = 0x02; // Track 0 not found
             BX_SELECTED_CONTROLLER(channel).status.busy = 0;
@@ -1583,17 +1607,11 @@ if ( quantumsMax == 0)
 		break;
 	  }
 
-#if TEST_READ_BEYOND_END==2
-	  BX_SELECTED_CONTROLLER(channel).cylinder_no += 100000;
-#endif
 	  if (!calculate_logical_address(channel, &logical_sector)) {
 	    bug("initial read from sector %lu out of bounds, aborting", logical_sector);
 	    command_aborted(channel, value);
 	    break;
 	  }
-#if TEST_READ_BEYOND_END==3
-	  logical_sector += 100000;
-#endif
 	  ret=BX_SELECTED_DRIVE(channel).hard_drive->lseek(logical_sector * 512, SEEK_SET);
           if (ret < 0) {
             bug("could not lseek() hard drive image file, aborting");
@@ -1743,6 +1761,7 @@ if ( quantumsMax == 0)
 
 	    default:
 	      panicbug("SET FEATURES with unknown subcommand: 0x%02x", (unsigned) BX_SELECTED_CONTROLLER(channel).features );
+              // We'd better signal the error if the user chose to continue
 	      command_aborted(channel, value);
 	  }
 	  break;
@@ -1899,7 +1918,31 @@ if ( quantumsMax == 0)
 	    command_aborted(channel, 0x70);
 	  }
           break;
-	  
+
+       case 0xC8: // READ DMA
+          if (ATA_DMA) {
+            BX_SELECTED_CONTROLLER(channel).status.drive_ready = 1;
+            BX_SELECTED_CONTROLLER(channel).status.seek_complete = 1;
+            BX_SELECTED_CONTROLLER(channel).status.drq   = 1;
+            BX_SELECTED_CONTROLLER(channel).current_command = value;
+          } else {
+            D(panicbug("write cmd 0xC8 (READ DMA) not supported"));
+            command_aborted(channel, 0xC8);
+          }
+          break;
+
+        case 0xCA: // WRITE DMA
+          if (ATA_DMA) {
+            BX_SELECTED_CONTROLLER(channel).status.drive_ready = 1;
+            BX_SELECTED_CONTROLLER(channel).status.seek_complete = 1;
+            BX_SELECTED_CONTROLLER(channel).status.drq   = 1;
+            BX_SELECTED_CONTROLLER(channel).current_command = value;
+          } else {
+            D(panicbug("write cmd 0xCA (WRITE DMA) not supported"));
+            command_aborted(channel, 0xCA);
+          }
+          break;
+
 
 	// List all the write operations that are defined in the ATA/ATAPI spec
 	// that we don't support.  Commands that are listed here will cause a
@@ -1944,9 +1987,7 @@ if ( quantumsMax == 0)
 	case 0xC4: bug("write cmd 0xC4 (READ MULTIPLE) not supported");command_aborted(channel, 0xC4); break;
 	case 0xC5: bug("write cmd 0xC5 (WRITE MULTIPLE) not supported");command_aborted(channel, 0xC5); break;
 	case 0xC7: bug("write cmd 0xC7 (READ DMA QUEUED) not supported");command_aborted(channel, 0xC7); break;
-	case 0xC8: bug("write cmd 0xC8 (READ DMA) not supported");command_aborted(channel, 0xC8); break;
 	case 0xC9: bug("write cmd 0xC9 (READ DMA NO RETRY) not supported"); command_aborted(channel, 0xC9); break;
-	case 0xCA: bug("write cmd 0xCA (WRITE DMA) not supported");command_aborted(channel, 0xCA); break;
 	case 0xCC: bug("write cmd 0xCC (WRITE DMA QUEUED) not supported");command_aborted(channel, 0xCC); break;
 	case 0xCD: bug("write cmd 0xCD (CFA WRITE MULTIPLE W/OUT ERASE) not supported");command_aborted(channel, 0xCD); break;
 	case 0xD1: bug("write cmd 0xD1 (CHECK MEDIA CARD TYPE) not supported");command_aborted(channel, 0xD1); break;
@@ -2072,14 +2113,14 @@ bx_hard_drive_c::calculate_logical_address(Bit8u channel, off_t *sector)
       off_t logical_sector;
 
       if (BX_SELECTED_CONTROLLER(channel).lba_mode) {
-	    logical_sector = ((Bit32u)BX_SELECTED_CONTROLLER(channel).head_no) << 24 |
-		  ((Bit32u)BX_SELECTED_CONTROLLER(channel).cylinder_no) << 8 |
-		  (Bit32u)BX_SELECTED_CONTROLLER(channel).sector_no;
+        logical_sector = ((Bit32u)BX_SELECTED_CONTROLLER(channel).head_no) << 24 |
+          ((Bit32u)BX_SELECTED_CONTROLLER(channel).cylinder_no) << 8 |
+          (Bit32u)BX_SELECTED_CONTROLLER(channel).sector_no;
       } else
-	    logical_sector = (BX_SELECTED_CONTROLLER(channel).cylinder_no * BX_SELECTED_DRIVE(channel).hard_drive->heads *
-			      BX_SELECTED_DRIVE(channel).hard_drive->sectors) +
-		  (Bit32u)(BX_SELECTED_CONTROLLER(channel).head_no * BX_SELECTED_DRIVE(channel).hard_drive->sectors) +
-		  (BX_SELECTED_CONTROLLER(channel).sector_no - 1);
+        logical_sector = ((uint32)BX_SELECTED_CONTROLLER(channel).cylinder_no * BX_SELECTED_DRIVE(channel).hard_drive->heads *
+          BX_SELECTED_DRIVE(channel).hard_drive->sectors) +
+          (Bit32u)(BX_SELECTED_CONTROLLER(channel).head_no * BX_SELECTED_DRIVE(channel).hard_drive->sectors) +
+          (BX_SELECTED_CONTROLLER(channel).sector_no - 1);
 
       Bit32u sector_count= 
            (Bit32u)BX_SELECTED_DRIVE(channel).hard_drive->cylinders * 
@@ -2088,7 +2129,7 @@ bx_hard_drive_c::calculate_logical_address(Bit8u channel, off_t *sector)
 
       if (logical_sector >= sector_count) {
             bug("calc_log_addr: out of bounds");
-	    return false;
+            return false;
       }
       *sector = logical_sector;
       return true;
@@ -2430,7 +2471,11 @@ bx_hard_drive_c::identify_drive(Bit8u channel)
   //       9: 1 = LBA supported
   //       8: 1 = DMA supported
   //     7-0: Vendor unique
-  BX_SELECTED_DRIVE(channel).id_drive[49] = 1<<9;
+  if (ATA_DMA) {
+    BX_SELECTED_DRIVE(channel).id_drive[49] = (1<<9) | (1<<8);
+  } else {
+    BX_SELECTED_DRIVE(channel).id_drive[49] = 1<<9;
+  }
 
   // Word 50: Reserved
   BX_SELECTED_DRIVE(channel).id_drive[50] = 0;
@@ -2493,7 +2538,11 @@ bx_hard_drive_c::identify_drive(Bit8u channel)
   // supported e.g., if Mode 0 is supported bit 0 is set.
   // The high order byte contains a single bit set to indiciate
   // which mode is active.
-  BX_SELECTED_DRIVE(channel).id_drive[63] = 0x0;
+  if (ATA_DMA) {
+    BX_SELECTED_DRIVE(channel).id_drive[63] = 0x07;
+  } else {
+    BX_SELECTED_DRIVE(channel).id_drive[63] = 0x0;
+  }
 
   // Word 64-79 Reserved
   for (i=64; i<=79; i++)
@@ -2777,8 +2826,83 @@ bx_hard_drive_c::set_cd_media_status(Bit32u handle, unsigned status)
   return( BX_HD_THIS channels[channel].drives[device].cdrom.ready );
 }
 
+bool
+bx_hard_drive_c::bmdma_read_sector(Bit8u channel, Bit8u *buffer)
+{
+  off_t logical_sector;
+  off_t ret;
 
-/*** default_image_t function definitions ***/
+  if (BX_SELECTED_CONTROLLER(channel).current_command != 0xC8) {
+    D(panicbug("command 0xC8 (READ DMA) not active"));
+    command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
+    return 0;
+  }
+  if (!calculate_logical_address(channel, &logical_sector)) {
+    D(panicbug("BM-DMA read sector reached invalid sector %lu, aborting", (unsigned long)logical_sector));
+    command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
+    return 0;
+  }
+  ret = BX_SELECTED_DRIVE(channel).hard_drive->lseek(logical_sector * 512, SEEK_SET);
+  if (ret < 0) {
+    D(panicbug("could not lseek() hard drive image file"));
+    command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
+    return 0;
+  }
+  ret = BX_SELECTED_DRIVE(channel).hard_drive->read((bx_ptr_t) buffer, 512);
+  if (ret < 512) {
+    D(panicbug("logical sector was %lu", (unsigned long)logical_sector));
+    D(panicbug("could not read() hard drive image file at byte %lu", (unsigned long)logical_sector*512));
+    command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
+    return 0;
+  }
+  increment_address(channel);
+  return 1;
+}
+
+  bool
+bx_hard_drive_c::bmdma_write_sector(Bit8u channel, Bit8u *buffer)
+{
+  off_t logical_sector;
+  off_t ret;
+
+  if (BX_SELECTED_CONTROLLER(channel).current_command != 0xCA) {
+    D(panicbug("command 0xCA (WRITE DMA) not active"));
+    command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
+    return 0;
+  }
+  if (!calculate_logical_address(channel, &logical_sector)) {
+    D(panicbug("BM-DMA read sector reached invalid sector %lu, aborting", (unsigned long)logical_sector));
+    command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
+    return 0;
+  }
+  ret = BX_SELECTED_DRIVE(channel).hard_drive->lseek(logical_sector * 512, SEEK_SET);
+  if (ret < 0) {
+    D(panicbug("could not lseek() hard drive image file"));
+    command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
+    return 0;
+  }
+  ret = BX_SELECTED_DRIVE(channel).hard_drive->write((bx_ptr_t) buffer, 512);
+  if (ret < 512) {
+    D(panicbug("could not write() hard drive image file at byte %lu", (unsigned long)logical_sector*512));
+    command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
+    return 0;
+  }
+  increment_address(channel);
+  return 1;
+}
+
+  void
+bx_hard_drive_c::bmdma_complete(Bit8u channel)
+{
+  BX_SELECTED_CONTROLLER(channel).status.busy = 0;
+  BX_SELECTED_CONTROLLER(channel).status.drive_ready = 1;
+  BX_SELECTED_CONTROLLER(channel).status.write_fault = 0;
+  BX_SELECTED_CONTROLLER(channel).status.seek_complete = 1;
+  BX_SELECTED_CONTROLLER(channel).status.drq = 0;
+  BX_SELECTED_CONTROLLER(channel).status.corrected_data = 0;
+  BX_SELECTED_CONTROLLER(channel).status.err = 0;
+  raise_interrupt(channel);
+}
 
 int default_image_t::open (const char* pathname, bool readonly)
 {

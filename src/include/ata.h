@@ -303,6 +303,11 @@ public:
   BX_HD_SMF unsigned get_cd_media_status(Bit32u handle);
   BX_HD_SMF unsigned set_cd_media_status(Bit32u handle, unsigned status);
 
+  BX_HD_SMF bool  bmdma_read_sector(Bit8u channel, Bit8u *buffer);
+  BX_HD_SMF bool  bmdma_write_sector(Bit8u channel, Bit8u *buffer);
+  BX_HD_SMF void  bmdma_complete(Bit8u channel);
+
+
 #if !BX_USE_HD_SMF
   Bit32u read(Bit32u address, unsigned io_len);
   void   write(Bit32u address, Bit32u value, unsigned io_len);
