@@ -3,6 +3,10 @@
 
 - ata.*, cdrom.*: sync with Bochs and small cleanup
 
+- uae_cpu: small sync and cleanup of non-JIT CPU
+
+- doc/hguide.txt: actualized a bit
+
 
 2005/04/27 - milan
 - Unix/configure.ac: nfjpeg test corrected

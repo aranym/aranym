@@ -1,7 +1,7 @@
 /*
  * memory.h - memory management
  *
- * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2005 Milan Jurik of ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
