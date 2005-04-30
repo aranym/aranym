@@ -163,12 +163,13 @@ static bool		JITDebug			= false;	// Enable runtime disassemblers through mon?
 const bool		JITDebug			= false;	// Don't use JIT debug mode at all
 #endif
 
-const uae_u32	MIN_CACHE_SIZE		= 1024;		// Minimal translation cache size (2048 KB)
+const uae_u32	MIN_CACHE_SIZE		= 1024;		// Minimal translation cache size (1 MB)
 static uae_u32	cache_size			= 0;		// Size of total cache allocated for compiled blocks
 static uae_u32	current_cache_size	= 0;		// Cache grows upwards: how much has been consumed already
 static bool		lazy_flush			= true;		// Flag: lazy translation cache invalidation
 static bool		avoid_fpu			= true;		// Flag: compile FPU instructions ?
 static bool		have_cmov			= false;	// target has CMOV instructions ?
+static bool		have_lahf_lm		= true;		// target has LAHF supported in long mode ?
 static bool		have_rat_stall		= true;		// target has partial register stalls ?
 static bool		tune_alignment		= true;		// Tune code alignments for running CPU ?
 static bool             tune_nop_fillers        = true;         // Tune no-op fillers for architecture
@@ -5697,7 +5698,10 @@ static uint8 *do_alloc_code(uint32 size, int depth)
 
 static inline uint8 *alloc_code(uint32 size)
 {
-	return do_alloc_code(size, 0);
+	uint8 *ptr = do_alloc_code(size, 0);
+	/* allocated code must fit in 32-bit boundaries */
+	assert((uintptr)ptr <= 0xffffffff);
+	return ptr;
 }
 
 void alloc_cache(void)
@@ -6056,7 +6060,7 @@ static inline void create_popalls(void)
   raw_and_l_ri(r,TAGMASK);
   raw_jmp_m_indexed((uintptr)cache_tags,r,SIZEOF_VOID_P);
 
-#ifdef X86_ASSEMBLY_disable
+#if 0 && (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
   align_target(align_jumps);
   m68k_compile_execute = (void (*)(void))get_target();
   for (i=N_REGS;i--;) {
@@ -6869,7 +6873,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 			int r2 = (r==0) ? 1 : 0;
 			raw_mov_l_ri(r2,(uintptr)popall_do_nothing);
 			raw_cmp_l_mi((uintptr)specflags,0);
-			raw_cmov_l_rm_indexed(r2,(uintptr)cache_tags,r,4,4);
+			raw_cmov_l_rm_indexed(r2,(uintptr)cache_tags,r,SIZEOF_VOID_P,NATIVE_CC_EQ);
 			raw_jmp_r(r2);
 		}
 		else if (was_comp && isconst(PC_P)) {
@@ -7044,7 +7048,7 @@ void execute_normal(void)
 
 typedef void (*compiled_handler)(void);
 
-#ifdef X86_ASSEMBLY_disable
+#if 0 && (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
 void (*m68k_compile_execute)(void) = NULL;
 #else
 void m68k_do_compile_execute(void)

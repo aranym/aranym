@@ -538,7 +538,7 @@ LOWFUNC(NONE,NONE,2,raw_sign_extend_32_rr,(W4 d, R4 s))
 	MOVSLQrr(s, d);
 }
 LENDFUNC(NONE,NONE,2,raw_sign_extend_32_rr,(W4 d, R4 s))
-	
+
 LOWFUNC(NONE,NONE,2,raw_sign_extend_16_rr,(W4 d, R2 s))
 {
 	MOVSWLrr(s, d);
@@ -942,7 +942,7 @@ LOWFUNC(WRITE,NONE,2,raw_xor_l_ri,(RW4 d, IMM i))
 	XORLir(i, d);
 }
 LENDFUNC(WRITE,NONE,2,raw_xor_l_ri,(RW4 d, IMM i))
-	
+
 LOWFUNC(WRITE,NONE,2,raw_and_l_ri,(RW4 d, IMM i))
 {
 	ANDLir(i, d);
@@ -1233,7 +1233,7 @@ LOWFUNC(NONE,READ,1,raw_pop_l_m,(MEMW d))
 	emit_long(d);
 }
 LENDFUNC(NONE,READ,1,raw_pop_l_m,(MEMW d))
-	
+
 LOWFUNC(WRITE,NONE,2,raw_bt_l_ri,(R4 r, IMM i))
 {
 	emit_byte(0x0f);
@@ -2533,7 +2533,7 @@ LOWFUNC(WRITE,NONE,2,raw_xor_l_ri,(RW4 d, IMM i))
     emit_long(i);
 }
 LENDFUNC(WRITE,NONE,2,raw_xor_l_ri,(RW4 d, IMM i))
-	
+
 LOWFUNC(WRITE,NONE,2,raw_and_l_ri,(RW4 d, IMM i))
 {
 	if (optimize_imm8 && isbyte(i)) {
@@ -3063,21 +3063,21 @@ static inline void raw_jl(uae_u32 t)
 {
     emit_byte(0x0f);
     emit_byte(0x8c);
-    emit_long(t-(uae_u32)target-4);
+    emit_long(t-(uintptr)target-4);
 }
 
 static inline void raw_jz(uae_u32 t)
 {
     emit_byte(0x0f);
     emit_byte(0x84);
-    emit_long(t-(uae_u32)target-4);
+    emit_long(t-(uintptr)target-4);
 }
 
 static inline void raw_jnz(uae_u32 t)
 {
     emit_byte(0x0f);
     emit_byte(0x85);
-    emit_long(t-(uae_u32)target-4);
+    emit_long(t-(uintptr)target-4);
 }
 
 static inline void raw_jnz_l_oponly(void)
@@ -3375,7 +3375,7 @@ enum {
   X86_PROCESSOR_K6,
   X86_PROCESSOR_ATHLON,
   X86_PROCESSOR_PENTIUM4,
-  X86_PROCESSOR_K8,
+  X86_PROCESSOR_X86_64,
   X86_PROCESSOR_max
 };
 
@@ -3387,7 +3387,7 @@ static const char * x86_processor_string_table[X86_PROCESSOR_max] = {
   "K6",
   "Athlon",
   "Pentium4",
-  "K8"
+  "x86-64"
 };
 
 static struct ptt {
@@ -3439,7 +3439,12 @@ x86_get_cpu_vendor(struct cpuinfo_x86 *c)
 static void
 cpuid(uae_u32 op, uae_u32 *eax, uae_u32 *ebx, uae_u32 *ecx, uae_u32 *edx)
 {
-  static uae_u8 cpuid_space[256];   
+  const int CPUID_SPACE = 4096;
+  uae_u8* cpuid_space = (uae_u8 *)vm_acquire(CPUID_SPACE);
+  if (cpuid_space == VM_MAP_FAILED)
+    abort();
+  vm_protect(cpuid_space, CPUID_SPACE, VM_PAGE_READ | VM_PAGE_WRITE | VM_PAGE_EXECUTE);
+  
   static uae_u32 s_op, s_eax, s_ebx, s_ecx, s_edx;
   uae_u8* tmp=get_target();
 
@@ -3467,6 +3472,8 @@ cpuid(uae_u32 op, uae_u32 *eax, uae_u32 *ebx, uae_u32 *ecx, uae_u32 *edx)
   if (ebx != NULL) *ebx = s_ebx;
   if (ecx != NULL) *ecx = s_ecx;
   if (edx != NULL) *edx = s_edx;
+
+  vm_release(cpuid_space, CPUID_SPACE);
 }
 
 static void
@@ -3516,12 +3523,14 @@ raw_init_cpu(void)
   cpuid(0x80000000, &xlvl, NULL, NULL, NULL);
   if ( (xlvl & 0xffff0000) == 0x80000000 ) {
 	if ( xlvl >= 0x80000001 ) {
-	  uae_u32 features;
-	  cpuid(0x80000001, NULL, NULL, NULL, &features);
+	  uae_u32 features, extra_features;
+	  cpuid(0x80000001, NULL, NULL, &extra_features, &features);
 	  if (features & (1 << 29)) {
 		/* Assume x86-64 if long mode is supported */
-		c->x86_processor = X86_PROCESSOR_K8;
+		c->x86_processor = X86_PROCESSOR_X86_64;
 	  }
+	  if (extra_features & (1 << 0))
+		  have_lahf_lm = true;
 	}
   }
   

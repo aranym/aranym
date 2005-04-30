@@ -1,3 +1,7 @@
+2005/05/01 - milan
+- uae_cpu/compiler: sync with Basilisk (64bit pointers fixed)
+
+
 2005/04/29 - milan
 - Unix: a small sync with Basilisk and cleanup
 

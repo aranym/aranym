@@ -124,11 +124,11 @@ enum {
 enum {
   X86_AL  = X86_Reg8L_Base,
   X86_CL,   X86_DL,   X86_BL,
-  X86_SPL,   X86_BPL,   X86_SIL,   X86_DIL,
+  X86_SPL,  X86_BPL,  X86_SIL,  X86_DIL,
   X86_R8B,  X86_R9B,  X86_R10B, X86_R11B,
   X86_R12B, X86_R13B, X86_R14B, X86_R15B,
-  X86_AH = X86_Reg8H_Base + 4,
-  X86_CH,  X86_DH,  X86_BH
+  X86_AH  = X86_Reg8H_Base + 4,
+  X86_CH,   X86_DH,   X86_BH
 };
 
 enum {
@@ -241,10 +241,10 @@ typedef unsigned short	_us;
 typedef signed int	_sl;
 typedef unsigned int	_ul;
 
-#define _UC(X)		((_uc  )(X))
-#define _US(X)		((_us  )(X))
-#define _SL(X)		((_sl  )(X))
-#define _UL(X)		((_ul  )(X))
+#define _UC(X)		((_uc  )(unsigned long)(X))
+#define _US(X)		((_us  )(unsigned long)(X))
+#define _SL(X)		((_sl  )(unsigned long)(X))
+#define _UL(X)		((_ul  )(unsigned long)(X))
 
 # define _PUC(X)	((_uc *)(X))
 # define _PUS(X)	((_us *)(X))
@@ -418,7 +418,6 @@ typedef unsigned int	_ul;
 					                 (_x86_RIP_addressing_possible(D, O) ? \
 				                          _r_D(R, (D) - ((uintptr)x86_get_target() + 4 + (O))) : \
 				                          _r_DSIB(R,D))) : \
-					                 _r_DSIB(R,D                ))  : \
 				           (_rIP(B)    ? _r_D   (R,D                )   : \
 				           (_rsp12P(B) ? _r_DBIS(R,D,_rSP(),_rSP(),1)   : \
 						         _r_DB  (R,D,     B       ))))  : \
