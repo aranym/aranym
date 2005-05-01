@@ -851,6 +851,15 @@ if [[ "x$WANT_SDLGUI" = "xyes" ]]; then
   CPPFLAGS="$CPPFLAGS -I../gui-sdl"
   AC_DEFINE([SDL_GUI], 1, [Define if you want to build SDL GUI])
 fi
+echo $WANT_JIT
+dnl C++ exceptions
+if [[ "x$WANT_JIT" = "xyes" ]]; then
+  WANT_CXX_EXCEPTIONS="no"
+  echo $WANT_CXX_EXCEPTIONS
+fi
+if [[ "x$WANT_CXX_EXCEPTIONS" = "xno" ]]; then
+  AC_DEFINE(EXCEPTIONS_VIA_LONGJMP, 1, [Define if you want to use setjmp/longjmp instead of C++ exceptions])
+fi
 
 dnl Extended signal segmentation fault handler
 if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
@@ -1659,10 +1668,6 @@ case "$target_os" in
 esac
 CFLAGS="$CFLAGS -DARANYM_DATADIR=$ARANYM_DATADIR"
 CXXFLAGS="$CXXFLAGS -DARANYM_DATADIR=$ARANYM_DATADIR"
-
-if test "x$WANT_CXX_EXCEPTIONS" = xno; then
-	AC_DEFINE(EXCEPTIONS_VIA_LONGJMP, 1, [Define if you want to use setjmp/longjmp instead of C++ exceptions])
-fi
 
 dnl Generate Makefile.
 
