@@ -17,13 +17,8 @@
 #define DEBUG 1
 #include "debug.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdarg>
 # include <cstdlib>
-#else
-# include <stdarg.h>
-# include <stdlib.h>
-#endif
 
 #ifndef HAVE_GNU_SOURCE
 
@@ -1348,6 +1343,9 @@ void ndebug::showHistory(unsigned int count) {
 
 /*
  * $Log$
+ * Revision 1.38  2005/04/24 11:59:29  schwab
+ * - ndebug.cpp: fix stdarg usage, handle NEED_TO_DEBUG_BADLY in showHistory.
+ *
  * Revision 1.37  2005/04/24 01:00:59  schwab
  * Implement use of C++ exceptions instead of setjmp/longjmp for exception handling
  *

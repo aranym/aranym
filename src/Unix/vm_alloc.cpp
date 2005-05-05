@@ -26,13 +26,8 @@
 
 #include "vm_alloc.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
 # include <cstring>
-#else
-# include <stdlib.h>
-# include <string.h>
-#endif
 #ifdef HAVE_WIN32_VM
 #define WIN32_LEAN_AND_MEAN /* avoid including junk */
 #include <windows.h>

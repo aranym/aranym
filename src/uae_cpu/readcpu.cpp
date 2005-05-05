@@ -10,17 +10,10 @@
 #include "sysdeps.h"
 #include "readcpu.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdio>
 # include <cstdlib>
 # include <cstring>
 # include <cctype>
-#else
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <ctype.h>
-#endif
 
 int nr_cpuop_funcs;
 

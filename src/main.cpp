@@ -42,11 +42,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
-#else
-# include <stdlib.h>
-#endif
 
 #include <SDL.h>
 

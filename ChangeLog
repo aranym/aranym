@@ -1,3 +1,7 @@
+2005/05/06 - milan
+- support of old headers removed
+
+
 2005/05/01 - milan
 - uae_cpu/compiler: sync with Basilisk (64bit pointers fixed)
 

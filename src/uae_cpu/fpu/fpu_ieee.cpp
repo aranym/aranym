@@ -98,11 +98,7 @@
  */
 
 #include "sysdeps.h"
-#ifdef HAVE_NEW_HEADERS
-# include <cstdio>
-#else
-# include <stdio.h>
-#endif
+#include <cstdio>
 #include "memory.h"
 #include "readcpu.h"
 #include "newcpu.h"

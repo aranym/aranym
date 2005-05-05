@@ -6,11 +6,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
-#else
-# include <stdlib.h>
-#endif
 
 int get_geometry(char *dev_path, geo_type geo) {
   DUNUSED(dev_path);

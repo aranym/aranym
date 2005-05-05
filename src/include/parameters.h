@@ -35,13 +35,8 @@
 #include "cfgopts.h"
 #include <SDL_keyboard.h>
 
-#ifdef HAVE_NEW_HEADERS
 # include <cassert>
 # include <cstdio>
-#else
-# include <assert.h>
-# include <stdio.h>
-#endif
 
 #ifndef ARANYMHOME
 # define ARANYMHOME		".aranym"

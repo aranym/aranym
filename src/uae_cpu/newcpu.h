@@ -39,11 +39,7 @@
 #include "m68k.h"
 #include "memory.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <csetjmp>
-#else
-# include <setjmp.h>
-#endif
 
 extern int areg_byteinc[];
 extern int imm8_table[];

@@ -49,15 +49,9 @@
 # include <sys/vfs.h>
 #endif
 
-#ifdef HAVE_NEW_HEADERS
 # include <cerrno>
 # include <cstdlib>
 # include <cstring>
-#else
-# include <errno.h>
-# include <stdlib.h>
-# include <stdio.h>
-#endif
 
 #ifdef OS_mint
 #include <mint/osbind.h>

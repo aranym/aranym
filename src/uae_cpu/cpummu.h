@@ -28,11 +28,7 @@
 
 #include "registers.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
-#else
-# include <stdlib.h>
-#endif
 
 #define MMU_TEST_PTEST		1
 #define MMU_TEST_VERBOSE	2
@@ -95,7 +91,7 @@ struct mmu_atc_line	{
 	uaecptr phys, log;
 };
 
-extern struct mmu_atc_line atc[128];
+extern struct mmu_atc_line atc[64];
 
 #define TTR_I0	4
 #define TTR_I1	5

@@ -25,11 +25,7 @@
 
 #include "sysdeps.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <map>
-#else
-# include <map.h>
-#endif
 
 
 // minimun and maximum macros

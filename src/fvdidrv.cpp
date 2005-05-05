@@ -17,13 +17,8 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <new>     // Johan Klockars
 # include <cstring> // Johan Klockars
-#else
-# include <new.h>
-# include <string.h>
-#endif
 
 #include "../atari/fvdi/drivers/aranym/fvdidrv_nfapi.h"	/* FVDI_xx enum */
 
@@ -2038,6 +2033,11 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.63  2005/01/24 18:22:53  standa
+ * openwk() and closewk() added to the NF api -> boot bug fixed.
+ *
+ * Large cleanup in the m68k part.
+ *
  * Revision 1.62  2005/01/12 14:35:16  joy
  * more unused variables hidden
  *

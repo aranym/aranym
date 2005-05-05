@@ -34,11 +34,7 @@
 
 #include "main.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
-#else
-# include <stdlib.h>
-#endif
 
 #ifdef __MINGW32__
 #include <winsock2.h>

@@ -27,11 +27,7 @@
 #include "sysdeps.h"
 #include "aramd5.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstring>
-#else
-# include <string.h>
-#endif
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 void

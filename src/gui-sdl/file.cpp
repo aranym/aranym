@@ -10,15 +10,9 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
 # include <cstdio>
 # include <cstring>
-#else
-# include <stdlib.h>
-# include <stdio.h>
-# include <string.h>
-#endif
 
 #ifdef OS_solaris
   #define DIRHANDLE dirp->d_fd

@@ -35,11 +35,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
-#else
-# include <stdlib.h>
-#endif
 
 #ifndef USE_JIT
 # define USE_JIT 0

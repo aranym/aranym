@@ -85,15 +85,9 @@
 #define PROFILE_UNTRANSLATED_INSNS	1
 #endif
 
-#ifdef HAVE_NEW_HEADERS
 # include <csignal>
 # include <cstdlib>
 # include <cerrno>
-#else
-# include <signal.h>
-# include <stdlib.h>
-# include <errno.h>
-#endif
 
 #if defined(__x86_64__) && 0
 #define RECORD_REGISTER_USAGE		1

@@ -32,11 +32,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <map>
-#else
-# include <map.h>
-#endif
 
 class HostFs : public NF_Base
 {

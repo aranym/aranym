@@ -44,15 +44,9 @@
 # include "mon.h"
 #endif
 
-#ifdef HAVE_NEW_HEADERS
 # include <cerrno>
 # include <csignal>
 # include <cstdlib>
-#else
-# include <errno.h>
-# include <signal.h>
-# include <stdlib.h>
-#endif
 
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)

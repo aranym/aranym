@@ -9,11 +9,7 @@
 #include "file.h"
 #include "debug.h"
 
-#ifdef HAVE_NEW_HEADERS
-# include <cstdlib>
-#else
-# include <stdlib.h>
-#endif
+#include <cstdlib>
 
 #include "font8.h"
 

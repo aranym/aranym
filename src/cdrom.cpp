@@ -38,15 +38,9 @@
 #include "debug.h"
 
 #ifdef SUPPORT_CDROM
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
 # include <cstdio>
 # include <cerrno>
-#else
-# include <stdlib.h>
-# include <stdio.h>
-# include <errno.h>
-#endif
 
 #define LOG_THIS /* no SMF tricks here, not needed */
 

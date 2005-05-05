@@ -98,13 +98,6 @@
  */
 
 #include "sysdeps.h"
-#ifdef HAVE_NEW_HEADERS
-# include <cmath>
-# include <cstdio>
-#else
-# include <math.h>
-# include <stdio.h>
-#endif
 #include "memory.h"
 #include "readcpu.h"
 #include "newcpu.h"
@@ -112,6 +105,9 @@
 #define FPU_IMPLEMENTATION
 #include "fpu/fpu.h"
 #include "fpu/fpu_uae.h"
+
+# include <cmath>
+# include <cstdio>
 
 /* Global FPU context */
 fpu_t fpu;

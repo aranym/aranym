@@ -1,25 +1,3 @@
-dnl checks for new version of ANSI C++ includes
-
-AC_DEFUN([AC_CXX_CHEADERS],
-  [AC_CACHE_CHECK([for ANSI C++ headers],
-  ac_cv_cxx_cheaders,
-  [AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_COMPILE([
-  #include <cstdlib>
-  #include <cstdio>
-  #include <cerrno>
-  #include <cstring>
-  #include <new>
-  ],[return 0;],
-  ac_cv_cxx_cheaders=yes, ac_cv_cxx_cheaders=no)
-  AC_LANG_RESTORE
-  ])
-  if test "$ac_cv_cxx_cheaders" = yes; then
-    AC_DEFINE(HAVE_NEW_HEADERS, 1, [Define if using new version of ANSI C++ headers.])
-  fi
-])
-
 dnl Check whether the compiler recognizes bool
 
 AC_DEFUN([AC_CXX_BOOL],

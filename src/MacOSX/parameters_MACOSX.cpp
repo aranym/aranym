@@ -4,11 +4,7 @@
 #include "tools.h"
 #include "parameters.h"
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
-#else
-# include <stdlib.h>
-#endif
 
 int get_geometry(char *dev_path, geo_type geo) {
   return -1;

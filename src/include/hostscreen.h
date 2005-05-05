@@ -24,13 +24,8 @@
 #ifndef _HOSTSCREEN_H
 #define _HOSTSCREEN_H
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
 # include <cstring>
-#else
-# include <stdlib.h>
-# include <string.h>
-#endif
 
 #include <SDL.h>
 #include <SDL_thread.h>
@@ -402,6 +397,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.50  2005/01/22 16:39:48  joy
+ * --disable-gui now disables all SDL GUI related code
+ *
  * Revision 1.49  2004/12/11 09:55:52  pmandin
  * Move update function from .h to .cpp, mandatory for NFOSMesa
  *

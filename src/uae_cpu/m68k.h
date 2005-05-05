@@ -37,11 +37,7 @@
 
 #if (defined(__i386__) && defined(X86_ASSEMBLY)) || (defined(__x86_64__) && defined(X86_64_ASSEMBLY))
 
-#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
-#else
-# include <stdlib.h>
-#endif
 
 #ifndef SAHF_SETO_PROFITABLE
 
