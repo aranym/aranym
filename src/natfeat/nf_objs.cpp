@@ -5,8 +5,13 @@
 #include "audio.h"
 #include "hostfs.h"
 #include "ethernet.h"
-#include "fvdidrv.h"
 #include "debugprintf.h"
+#ifdef NFVDI_SUPPORT
+# include "nfvdi.h"
+# include "nfvdi_soft.h"
+#else
+# include "fvdidrv.h"
+#endif
 #ifdef NFCDROM_SUPPORT
 # include "nfcdrom.h"
 # ifdef NFCDROM_LINUX_SUPPORT
@@ -41,7 +46,11 @@ NF_StdErr nf_stderr;
 DebugPrintf dbgprintf;
 XHDIDriver Xhdi;
 AUDIODriver Audio;
+#ifdef NFVDI_SUPPORT
+SoftVdiDriver Vdi;
+#else
 FVDIDriver fVDIDrv;
+#endif
 #ifdef HOSTFS_SUPPORT
 HostFs hostFs;
 #endif
@@ -71,9 +80,13 @@ JpegDriver Jpeg;
 
 pNatFeat nf_objects[] = {
 	&nf_name, &nf_version, &nf_shutdown, &nf_stderr,	/* NF basic set */
-	&fVDIDrv,
 	&Xhdi,
 	&Audio,
+#ifdef NFVDI_SUPPORT
+	&Vdi,
+#else
+	&fVDIDrv,
+#endif
 #ifdef HOSTFS_SUPPORT
 	&hostFs,
 #endif

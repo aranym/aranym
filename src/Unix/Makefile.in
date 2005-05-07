@@ -35,6 +35,7 @@ NFCDROMSRCS = @NFCDROMSRCS@
 NFPCISRCS = @NFPCISRCS@
 NFOSMESASRCS = @NFOSMESASRCS@
 NFJPEGSRCS = @NFJPEGSRCS@
+NFVDISRCS = @NFVDISRCS@
 PARALLELX86SRCS = @PARALLELX86SRCS@
 PARALLELPARPORTSRCS = @PARALLELPARPORTSRCS@
 GUISDLSRCS = @GUISDLSRCS@
@@ -67,7 +68,6 @@ SRCS = ../main.cpp \
 	../emul_op.cpp \
 	../natfeats.cpp \
 	../fakeio.cpp \
-	../fvdidrv.cpp \
 	../hardware.cpp \
 	../host.cpp \
 	../hostscreen.cpp \
@@ -99,6 +99,7 @@ SRCS = ../main.cpp \
 	$(NFPCISRCS) \
 	$(NFOSMESASRCS) \
 	$(NFJPEGSRCS) \
+	$(NFVDISRCS) \
 	$(PARALLELX86SRCS) \
 	$(PARALLELPARPORTSRCS) \
 	$(SYSSRCS) \

@@ -1,3 +1,8 @@
+2005/05/07 - Patrice
+- NF vdi driver split in 2 parts: a base class, and an implementation class
+  (software rendering driver atm).
+
+
 2005/05/06 - milan
 - support of old headers removed
 
