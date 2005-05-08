@@ -1,3 +1,8 @@
+2005/05/08 - Patrice
+- Dynamically create the natfeats. A few more work, and we will be able to
+  choose between different NF drivers for the same feature.
+
+
 2005/05/07 - Patrice
 - NF vdi driver split in 2 parts: a base class, and an implementation class
   (software rendering driver atm).

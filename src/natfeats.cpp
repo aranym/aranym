@@ -51,11 +51,11 @@ int32 nf_call(memptr stack, bool inSuper)
 	fncode = MASKOUTMASTERID(fncode);
 	context = stack + 4;	/* parameters follow on the stack */
 
-	pNatFeat obj = nf_objects[idx];
+	NF_Base *obj = nf_objects[idx];
 	D(bug("nf_call(%s, %d)", obj->name(), fncode));
 
 	if (obj->isSuperOnly() && !inSuper) {
-		THROW(8);	// privilege exception
+		LONGJMP(excep_env, 8);	// privilege exception
 	}
 
 	return obj->dispatch(fncode);

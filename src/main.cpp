@@ -35,6 +35,7 @@
 #include "romdiff.h"
 #include "parameters.h"
 #include "version.h"		// for heartBeat
+#include "natfeat/nf_objs.h"
 #ifdef ENABLE_LILO
 #include "lilo.h"
 #endif
@@ -42,7 +43,11 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifdef HAVE_NEW_HEADERS
 # include <cstdlib>
+#else
+# include <stdlib.h>
+#endif
 
 #include <SDL.h>
 
@@ -546,11 +551,11 @@ bool InitAll(void)
 	CPUType = 4;
 	FPUType = 1;
 
-	// Init NF
-	// initNatFeats(); enable when the NatFeats are created dynamically
-
 	// Init HW
 	HWInit();
+
+	// Init NF
+	NFCreate();
 
 	InputInit();
 
@@ -644,6 +649,9 @@ void ExitAll(void)
 	kill_GUI_thread();
 	SDLGui_UnInit();
 #endif
+
+	// Natfeats
+	NFDestroy();
 
 	// hardware
 	HWExit();

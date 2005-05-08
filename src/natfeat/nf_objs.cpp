@@ -1,6 +1,28 @@
-#include "nf_objs.h"
+/*
+	Native features
 
+	ARAnyM (C) 2005 Patrice Mandin
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+/*--- Includes ---*/
+
+#include "nf_objs.h"
 #include "nf_basicset.h"
+
 #include "xhdi.h"
 #include "audio.h"
 #include "hostfs.h"
@@ -35,87 +57,101 @@
 #endif
 /* add your NatFeat class definition here */
 
+/*--- Defines ---*/
 
-/* NF basic set */
-NF_Name nf_name;
-NF_Version nf_version;
-NF_Shutdown nf_shutdown;
-NF_StdErr nf_stderr;
+#define MAX_NATFEATS 32
 
-/* additional NF */
-DebugPrintf dbgprintf;
-XHDIDriver Xhdi;
-AUDIODriver Audio;
+/*--- Variables ---*/
+
+NF_Base *nf_objects[MAX_NATFEATS];	/* The natfeats we can use */
+unsigned int nf_objs_cnt;			/* Number of natfeats we can use */
+
+/*--- Functions prototypes ---*/
+
+static void NFAdd(NF_Base *new_nf);
+
+/*--- Functions ---*/
+
+void NFCreate(void)
+{
+	nf_objs_cnt=0;
+	memset(nf_objects, 0, sizeof(nf_objects));
+
+	/* NF basic set */
+	NFAdd(new NF_Name);
+	NFAdd(new NF_Version);
+	NFAdd(new NF_Shutdown);
+	NFAdd(new NF_StdErr);
+
+	/* additional NF */
+	NFAdd(new DebugPrintf);
+	NFAdd(new XHDIDriver);
+	NFAdd(new AUDIODriver);
+
 #ifdef NFVDI_SUPPORT
-SoftVdiDriver Vdi;
+	NFAdd(new SoftVdiDriver);
 #else
-FVDIDriver fVDIDrv;
+	NFAdd(new FVDIDriver);
 #endif
+
 #ifdef HOSTFS_SUPPORT
-HostFs hostFs;
+	NFAdd(new HostFs);
 #endif
+
 #ifdef ETHERNET_SUPPORT
-ETHERNETDriver Ethernet;
+	NFAdd(new ETHERNETDriver);
 #endif
+
 #ifdef NFCDROM_SUPPORT
 # ifdef NFCDROM_LINUX_SUPPORT
-CdromDriverLinux CdRom;
+	NFAdd(new CdromDriverLinux);
 # endif
 # ifdef NFCDROM_SDL_SUPPORT
-CdromDriverSdl CdRom;
+	NFAdd(new CdromDriverSdl);
 # endif
 #endif
+
 #ifdef NFPCI_SUPPORT
 # ifdef NFPCI_LINUX_SUPPORT
-PciDriverLinux Pci;
+	NFAdd(new PciDriverLinux);
 # endif
 #endif
+
 #ifdef NFOSMESA_SUPPORT
-OSMesaDriver OSMesa;
+	NFAdd(new OSMesaDriver);
 #endif
+
 #ifdef NFJPEG_SUPPORT
-JpegDriver Jpeg;
+	NFAdd(new JpegDriver);
 #endif
-/* add your NatFeat object declaration here */
 
-pNatFeat nf_objects[] = {
-	&nf_name, &nf_version, &nf_shutdown, &nf_stderr,	/* NF basic set */
-	&Xhdi,
-	&Audio,
-#ifdef NFVDI_SUPPORT
-	&Vdi,
-#else
-	&fVDIDrv,
-#endif
-#ifdef HOSTFS_SUPPORT
-	&hostFs,
-#endif
-#ifdef ETHERNET_SUPPORT
-	&Ethernet,
-#endif
-#ifdef NFCDROM_SUPPORT
-	&CdRom,
-#endif
-#ifdef NFPCI_SUPPORT
-	&Pci,
-#endif
-#ifdef NFOSMESA_SUPPORT
-	&OSMesa,
-#endif
-#ifdef NFJPEG_SUPPORT
-	&Jpeg,
-#endif
-	/* add your NatFeat object below */
+	/* add your NatFeat object declaration here */
+}
 
-	/* */
-	&dbgprintf
-};
+static void NFAdd(NF_Base *new_nf)
+{
+	/* Add a natfeat to our array */
+	if (nf_objs_cnt == MAX_NATFEATS) {
+		fprintf(stderr, "No more available slots to add a Natfeat\n");
+	}
 
-unsigned int nf_objs_cnt = sizeof(nf_objects) / sizeof(nf_objects[0]);
+	nf_objects[nf_objs_cnt++] = new_nf;
+}
 
-void NFReset()
+void NFDestroy(void)
 {
 	for(unsigned int i=0; i<nf_objs_cnt; i++) {
-		nf_objects[i]->reset();
+		if (nf_objects[i]) {
+			delete nf_objects[i];
+		}
+	}
+}
+
+void NFReset(void)
+{
+	for(unsigned int i=0; i<nf_objs_cnt; i++) {
+		if (nf_objects[i]) {
+			nf_objects[i]->reset();
+		}
 	}
 }
