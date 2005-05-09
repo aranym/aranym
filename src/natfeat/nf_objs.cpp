@@ -133,6 +133,7 @@ static void NFAdd(NF_Base *new_nf)
 	/* Add a natfeat to our array */
 	if (nf_objs_cnt == MAX_NATFEATS) {
 		fprintf(stderr, "No more available slots to add a Natfeat\n");
+		return;
 	}
 
 	nf_objects[nf_objs_cnt++] = new_nf;
