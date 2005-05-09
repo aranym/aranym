@@ -1731,7 +1731,7 @@ echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
 echo NatFeat PCI driver ..................... : $WANT_NFPCI
 echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA
 echo NatFeat JPEG decoder ................... : $WANT_NFJPEG
-echo NatFeat VDI driver (new) ................ : $WANT_NFVDI
+echo new NatFeat VDI driver ................. : $WANT_NFVDI
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86
 echo Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT
