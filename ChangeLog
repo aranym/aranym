@@ -1,3 +1,7 @@
+2005/05/09 - Patrice
+- Moved more driver independant stuff from nfvdi_soft.cpp to nfvdi.cpp
+
+
 2005/05/08 - Patrice
 - Dynamically create the natfeats. A few more work, and we will be able to
   choose between different NF drivers for the same feature.

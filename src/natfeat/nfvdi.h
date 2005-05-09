@@ -28,12 +28,53 @@
 
 /*--- Defines ---*/
 
+// The Atari structures offsets
+#define MFDB_ADDRESS                0
+#define MFDB_WIDTH                  4
+#define MFDB_HEIGHT                 6
+#define MFDB_WDWIDTH                8
+#define MFDB_STAND                 10
+#define MFDB_NPLANES               12
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+
+#define put_dtriplet(address, data) \
+{ \
+	WriteInt8((address), ((data) >> 16) & 0xff); \
+	WriteInt8((address) + 1, ((data) >> 8) & 0xff); \
+	WriteInt8((address) + 2, (data) & 0xff); \
+}
+
+#define get_dtriplet(address) \
+	((ReadInt8((address)) << 16) | (ReadInt8((address) + 1) << 8) | ReadInt8((address) + 2))
+
+#else
+
+#define put_dtriplet(address, data) \
+{ \
+	WriteInt8((address), (data) & 0xff); \
+	WriteInt8((address) + 1, ((data) >> 8) & 0xff); \
+	WriteInt8((address) + 2, ((data) >> 16) & 0xff); \
+}
+
+#define get_dtriplet(address) \
+	((ReadInt8((address) + 2) << 16) | (ReadInt8((address) + 1) << 8) | ReadInt8((address)))
+
+#endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
+
 /*--- Types ---*/
 
 /*--- Class ---*/
 
 class VdiDriver : public NF_Base
 {
+	public:
+		char *name();
+		bool isSuperOnly();
+		int32 dispatch(uint32 fncode);
+
+		virtual ~VdiDriver();
+
 	protected:
 		void setResolution(int32 width, int32 height, int32 depth);
 		int32 getWidth(void);
@@ -66,13 +107,13 @@ class VdiDriver : public NF_Base
 		virtual void setColor(memptr vwk, uint32 paletteIndex, uint32 red,
 			uint32 green, uint32 blue);
 		virtual int32 getFbAddr(void);
-		
-	public:
-		char *name();
-		bool isSuperOnly();
-		int32 dispatch(uint32 fncode);
 
-		virtual ~VdiDriver();
+		/* Inlined functions */
+		inline void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp,
+			uint16 bitplaneWords[8]);
+		inline uint32 applyBlitLogOperation(int logicalOperation,
+			uint32 destinationData, uint32 sourceData);
+
 };
 
 #endif /* NFVDI_H */

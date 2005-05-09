@@ -35,40 +35,6 @@
 
 #define EINVFN -32
 
-// The Atari structures offsets
-#define MFDB_ADDRESS                0
-#define MFDB_WIDTH                  4
-#define MFDB_HEIGHT                 6
-#define MFDB_WDWIDTH                8
-#define MFDB_STAND                 10
-#define MFDB_NPLANES               12
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-
-#define put_dtriplet(address, data) \
-{ \
-	WriteInt8((address), ((data) >> 16) & 0xff); \
-	WriteInt8((address) + 1, ((data) >> 8) & 0xff); \
-	WriteInt8((address) + 2, (data) & 0xff); \
-}
-
-#define get_dtriplet(address) \
-	((ReadInt8((address)) << 16) | (ReadInt8((address) + 1) << 8) | ReadInt8((address) + 2))
-
-#else
-
-#define put_dtriplet(address, data) \
-{ \
-	WriteInt8((address), (data) & 0xff); \
-	WriteInt8((address) + 1, ((data) >> 8) & 0xff); \
-	WriteInt8((address) + 2, ((data) >> 16) & 0xff); \
-}
-
-#define get_dtriplet(address) \
-	((ReadInt8((address) + 2) << 16) | (ReadInt8((address) + 1) << 8) | ReadInt8((address)))
-
-#endif // SDL_BYTEORDER == SDL_BIG_ENDIAN
-
 static const uint8 vdi_colours[] = { 0,2,3,6,4,7,5,8,9,10,11,14,12,15,13,255 };
 static const uint8 tos_colours[] = { 0,255,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
 #define toTosColors( color ) \
@@ -212,29 +178,7 @@ int32 SoftVdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 		color = hostScreen.getPixel((int16)x, (int16)y);
 		hostScreen.renderEnd();
 	} else {
-		D(bug("fVDI: %s %d,%d (%d)", "read_pixel no screen", (uint16)x, (uint16)y, (uint32)color));
-		uint16 planes = ReadInt16(src + MFDB_NPLANES);
-		uint32 row_address = ReadInt32(src + MFDB_ADDRESS) +
-		                     ReadInt16(src + MFDB_WDWIDTH) * 2 * planes * y;
-		switch (planes) {
-		case 8:
-			color = ReadInt8(row_address + x);
-			break;
-		case 16:
-			color = ReadInt16(row_address + x * 2);
-			break;
-		case 24:
-			color = ((uint32)ReadInt8(row_address + x * 3) << 16) +
-			        ((uint32)ReadInt8(row_address + x * 3 + 1) << 8) +
-			        (uint32)ReadInt8(row_address + x * 3 + 2);
-			break;
-		case 32:
-			color = ReadInt32(row_address + x * 4);
-			break;
-		default:
-			color = 0xffffffff;
-			break;
-		}
+		color = VdiDriver::getPixel(vwk, src, x, y);
 	}
 
 	return color;
@@ -279,28 +223,7 @@ int32 SoftVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 		hostScreen.renderEnd();
 		hostScreen.update((int16)x, (int16)y, 1, 1, true);
 	} else {
-		D(bug("fVDI: %s %d,%d (%d)", "write_pixel no screen", (uint16)x, (uint16)y, (uint32)color));
-		uint16 planes = ReadInt16(dst + MFDB_NPLANES);
-		uint32 row_address = ReadInt32(dst + MFDB_ADDRESS) +
-		                     ReadInt16(dst + MFDB_WDWIDTH) * 2 * planes * y;
-		switch (planes) {
-		case 8:
-			WriteInt8(row_address + x, color);
-			break;
-		case 16:
-			WriteInt16(row_address + x * 2, color);
-			break;
-		case 24:
-			WriteInt8(row_address + x * 3, (color >> 16) & 0xff);
-			WriteInt8(row_address + x * 3 + 1, (color >> 8) & 0xff);
-			WriteInt8(row_address + x * 3 + 2, color & 0xff);
-			break;
-		case 32:
-			WriteInt32(row_address + x * 4, color);
-			break;
-		default:
-			break;
-		}
+		return VdiDriver::putPixel(vwk, dst, x, y, color);
 	}
 
 	return 1;
@@ -541,38 +464,6 @@ int32 SoftVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
  *   short reserved[3];
  * } MFDB;
  **/
-extern "C" {
-	void keypress()
-	{
-		SDL_Event event;
-		int quit = 0;
-		while (!quit) {
-			while (SDL_PollEvent(&event)) {
-				if (event.type == SDL_KEYDOWN) {
-					quit = 1;
-					break;
-				}
-			}
-		}
-	}
-
-	static inline void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8])
-	{
-		DUNUSED(bpp);
-		for (int l=0; l<16; l++) {
-			uint8 data = sdlPixelData[l]; // note: this is about 2000 dryhstones speedup (the local variable)
-
-			bitplaneWords[0] <<= 1; bitplaneWords[0] |= (data >> 0) & 1;
-			bitplaneWords[1] <<= 1; bitplaneWords[1] |= (data >> 1) & 1;
-			bitplaneWords[2] <<= 1; bitplaneWords[2] |= (data >> 2) & 1;
-			bitplaneWords[3] <<= 1; bitplaneWords[3] |= (data >> 3) & 1;
-			bitplaneWords[4] <<= 1; bitplaneWords[4] |= (data >> 4) & 1;
-			bitplaneWords[5] <<= 1; bitplaneWords[5] |= (data >> 5) & 1;
-			bitplaneWords[6] <<= 1; bitplaneWords[6] |= (data >> 6) & 1;
-			bitplaneWords[7] <<= 1; bitplaneWords[7] |= (data >> 7) & 1;
-		}
-	}
-}
 
 int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp,
@@ -593,172 +484,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
 
 	if (dest) {
-		// mfdb->address = videoramstart
-
-		D(bug("fVDI: expandArea M->M"));
-
-		uint32 destPlanes  = (uint32)ReadInt16( dest + MFDB_NPLANES );
-		uint32 destPitch   = ReadInt16(dest + MFDB_WDWIDTH) * destPlanes << 1; // MFDB *dest->pitch
-		uint32 destAddress = ReadInt32(dest);
-
-		switch(destPlanes) {
-		case 16:
-			for(uint16 j = 0; j < h; j++) {
-				D2(fprintf(stderr, "fVDI: bmp:"));
-
-				uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
-				for(uint16 i = sx; i < sx + w; i++) {
-					uint32 offset = (dx + i - sx) * 2 + (dy + j) * destPitch;
-					if (i % 16 == 0)
-						theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
-
-					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
-					switch(logOp) {
-					case 1:
-						WriteInt16(destAddress + offset, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
-						break;
-					case 2:
-						if ((theWord >> (15 - (i & 0xf))) & 1)
-							WriteInt16(destAddress + offset, fgColor);
-						break;
-					case 3:
-						if ((theWord >> (15 - (i & 0xf))) & 1)
-							WriteInt16(destAddress + offset, ~ReadInt16(destAddress + offset));
-						break;
-					case 4:
-						if (!((theWord >> (15 - (i & 0xf))) & 1))
-							WriteInt16(destAddress + offset, bgColor);
-						break;
-					}
-				}
-				D2(bug("")); //newline
-			}
-			break;
-		case 24:
-			for(uint16 j = 0; j < h; j++) {
-				D2(fprintf(stderr, "fVDI: bmp:"));
-
-				uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
-				for(uint16 i = sx; i < sx + w; i++) {
-					uint32 offset = (dx + i - sx) * 3 + (dy + j) * destPitch;
-					if (i % 16 == 0)
-						theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
-
-					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
-					switch(logOp) {
-					case 1:
-						put_dtriplet(destAddress + offset, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
-						break;
-					case 2:
-						if ((theWord >> (15 - (i & 0xf))) & 1)
-							put_dtriplet(destAddress + offset, fgColor);
-						break;
-					case 3:
-						if ((theWord >> (15-(i&0xf))) & 1)
-							put_dtriplet(destAddress + offset, ~get_dtriplet(destAddress + offset));
-						break;
-					case 4:
-						if (!((theWord >> (15 - (i & 0xf))) & 1))
-							put_dtriplet(destAddress + offset, bgColor);
-						break;
-					}
-				}
-				D2(bug("")); //newline
-			}
-			break;
-		case 32:
-			for(uint16 j = 0; j < h; j++) {
-				D2(fprintf(stderr, "fVDI: bmp:"));
-
-				uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
-				for(uint16 i = sx; i < sx + w; i++) {
-					uint32 offset = (dx + i - sx) * 4 + (dy + j) * destPitch;
-					if (i % 16 == 0)
-						theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
-
-					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
-					switch(logOp) {
-					case 1:
-						WriteInt32(destAddress + offset, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
-						break;
-					case 2:
-						if ((theWord >> (15-(i&0xf))) & 1)
-							WriteInt32(destAddress + offset, fgColor);
-						break;
-					case 3:
-						if ((theWord >> (15 - (i & 0xf))) & 1)
-							WriteInt32(destAddress + offset, ~ReadInt32(destAddress + offset));
-						break;
-					case 4:
-						if (!((theWord >> (15 - (i & 0xf))) & 1))
-							WriteInt32(destAddress + offset, bgColor);
-						break;
-					}
-				}
-				D2(bug("")); //newline
-			}
-			break;
-		default:
-			{ // do the mangling for bitplanes. TOS<->VDI color conversions implemented.
-				uint8 color[16];
-				uint16 bitplanePixels[8];
-
-				for(uint16 j = 0; j < h; j++) {
-					D2(fprintf(stderr, "fVDI: bmp:"));
-
-					uint32 address = destAddress + ((((dx >> 4) * destPlanes) << 1) + (dy + j) * destPitch);
-					hostScreen.bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
-
-					uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
-					for(uint16 i = sx; i < sx + w; i++) {
-						if (i % 16 == 0) {
-							uint32 wordIndex = ((dx + i - sx) >> 4) * destPlanes;
-
-							// convert the 16pixels (VDI->TOS colors - within the chunkyToBitplane
-							// function) into the bitplane and write it to the destination
-							//
-							// note: we can't do the conversion directly
-							//       because it needs the little->bigendian conversion
-							chunkyToBitplane(color, destPlanes, bitplanePixels);
-							for(uint32 d = 0; d < destPlanes; d++)
-								WriteInt16(address + (d<<1), bitplanePixels[d]);
-
-							// convert next 16pixels to chunky
-							address = destAddress + ((wordIndex << 1) + (dy + j) * destPitch);
-							hostScreen.bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
-							theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
-						}
-
-						D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
-						switch(logOp) {
-							case 1:
-								color[i&0xf] = ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor;
-								break;
-							case 2:
-								if ((theWord >> (15-(i&0xf))) & 1)
-									color[i&0xf] = fgColor;
-								break;
-							case 3:
-								if ((theWord >> (15 - (i & 0xf))) & 1)
-									color[i&0xf] = ~color[i&0xf];
-								break;
-							case 4:
-								if (!((theWord >> (15 - (i & 0xf))) & 1))
-									color[i&0xf] = bgColor;
-								break;
-						}
-					}
-					chunkyToBitplane(color, destPlanes, bitplanePixels);
-					for(uint32 d = 0; d < destPlanes; d++)
-						WriteInt16(address + (d<<1), bitplanePixels[d]);
-
-					D2(bug("")); //newline
-				}
-			}
-			break;
-		}
-
-		return 1;
+		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
 	}
 
 	if (!hostScreen.renderBegin())
@@ -921,57 +647,6 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
  * A return with 0 gives a fallback (normally pixel by pixel drawing by the
  * fVDI engine).
  **/
-#define applyBlitLogOperation(logicalOperation, destinationData, sourceData) \
-	switch(logicalOperation) { \
-	case 0: \
-		destinationData = 0; \
-		break; \
-	case 1: \
-		destinationData = sourceData & destinationData; \
-		break; \
-	case 2: \
-		destinationData = sourceData & ~destinationData; \
-		break; \
-	case 3: \
-		destinationData = sourceData; \
-		break; \
-	case 4: \
-		destinationData = ~sourceData & destinationData; \
-		break; \
-	case 5: \
-		destinationData = destinationData; \
-		break; \
-	case 6: \
-		destinationData = sourceData ^ destinationData; \
-		break; \
-	case 7: \
-		destinationData = sourceData | destinationData; \
-		break; \
-	case 8: \
-		destinationData = ~(sourceData | destinationData); \
-		break; \
-	case 9: \
-		destinationData = ~(sourceData ^ destinationData); \
-		break; \
-	case 10: \
-		destinationData = ~destinationData; \
-		break; \
-	case 11: \
-		destinationData = sourceData | ~destinationData; \
-		break; \
-	case 12: \
-		destinationData = ~sourceData; \
-		break; \
-	case 13: \
-		destinationData = ~sourceData | destinationData; \
-		break; \
-	case 14: \
-		destinationData = ~(sourceData & destinationData); \
-		break; \
-	case 15: \
-		destinationData = 0xffff; \
-		break; \
-	}
 
 int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
@@ -990,56 +665,8 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		D(bug("fVDI: blitArea M->: address %x, pitch %d, planes %d", data, pitch, planes));
 
 		if (toMemory) {
-			// the destPlanes is always the same?
-			planes = ReadInt16(dest + MFDB_NPLANES);		// MFDB *dest->bitplanes
-			uint32 destPitch = ReadInt16(dest + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
-			memptr destAddress = (memptr)ReadInt32(dest);
-
-			D(bug("fVDI: blitArea M->M"));
-
-			uint32 srcData;
-			uint32 destData;
-
-			switch(planes) {
-			case 16:
-				for(int32 j = 0; j < h; j++)
-					for(int32 i = sx; i < sx + w; i++) {
-						uint32 offset = (dx + i - sx) * 2 + (dy + j) * destPitch;
-						srcData = ReadInt16(data + j * pitch + i * 2);
-						destData = ReadInt16(destAddress + offset);
-						applyBlitLogOperation(logOp, destData, srcData);
-						WriteInt16(destAddress + offset, destData);
-					}
-				break;
-			case 24:
-				for(int32 j = 0; j < h; j++)
-					for(int32 i = sx; i < sx + w; i++) {
-						uint32 offset = (dx + i - sx) * 3 + (dy + j) * destPitch;
-						srcData = get_dtriplet(data + j * pitch + i * 3);
-						destData = get_dtriplet(destAddress + offset);
-						applyBlitLogOperation(logOp, destData, srcData);
-						put_dtriplet(destAddress + offset, destData);
-					}
-				break;
-			case 32:
-				for(int32 j = 0; j < h; j++)
-					for(int32 i = sx; i < sx + w; i++) {
-						uint32 offset = (dx + i - sx) * 4 + (dy + j) * destPitch;
-						srcData = ReadInt32(data + j * pitch + i * 4);
-						destData = ReadInt32(destAddress + offset);
-						applyBlitLogOperation(logOp, destData, srcData);
-						WriteInt32(destAddress + offset, destData);
-					}
-				break;
-
-			default:
-				if (planes < 16) {
-					D(bug("fVDI: blitArea M->M: NOT TESTED bitplaneToCunky conversion"));
-				}
-			}
-			return 1;
+			return VdiDriver::blitArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
 		}
-
 
 		D(bug("fVDI: blitArea M->S"));
 
@@ -1058,7 +685,7 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					for(int32 i = sx; i < sx + w; i++) {
 						srcData = ReadInt16(data + j * pitch + i * 2);
 						destData = hostScreen.getPixel(dx + i - sx, dy + j);
-						applyBlitLogOperation(logOp, destData, srcData);
+						destData = applyBlitLogOperation(logOp, destData, srcData);
 						hostScreen.putPixel(dx + i - sx, dy + j, destData);
 					}
 			} else {
@@ -1083,7 +710,7 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 				for(int32 i = sx; i < sx + w; i++) {
 					srcData = get_dtriplet(data + j * pitch + i * 3);
 					destData = hostScreen.getPixel(dx + i - sx, dy + j);
-					applyBlitLogOperation(logOp, destData, srcData);
+					destData = applyBlitLogOperation(logOp, destData, srcData);
 					hostScreen.putPixel(dx + i - sx, dy + j, destData);
 				}
 			break;
@@ -1093,7 +720,7 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					for(int32 i = sx; i < sx + w; i++) {
 						srcData = ReadInt32(data + j * pitch + i * 4);
 						destData = hostScreen.getPixel(dx + i - sx, dy + j);
-						applyBlitLogOperation(logOp, destData, srcData);
+						destData = applyBlitLogOperation(logOp, destData, srcData);
 						hostScreen.putPixel(dx + i - sx, dy + j, destData);
 					}
 			} else {
@@ -1134,7 +761,7 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 						}
 
 						destData = hostScreen.getPixel(dx + i - sx, dy + j);
-						applyBlitLogOperation(logOp, destData, color[bitNo]);
+						destData = applyBlitLogOperation(logOp, destData, color[bitNo]);
 						hostScreen.putPixel(dx + i - sx, dy + j, destData);
 					}
 				}
@@ -1173,7 +800,7 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					uint32 offset = (dx + i - sx) * 2 + (dy + j) * destPitch;
 					srcData = hostScreen.getPixel(i, sy + j);
 					destData = ReadInt16(destAddress + offset);
-					applyBlitLogOperation(logOp, destData, srcData);
+					destData = applyBlitLogOperation(logOp, destData, srcData);
 					WriteInt16(destAddress + offset, destData);
 				}
 			break;
@@ -1183,7 +810,7 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					uint32 offset = (dx + i - sx) * 3 + (dy + j) * destPitch;
 					srcData = hostScreen.getPixel( i, sy + j );
 					destData = get_dtriplet(destAddress + offset);
-					applyBlitLogOperation(logOp, destData, srcData);
+					destData = applyBlitLogOperation(logOp, destData, srcData);
 					put_dtriplet(destAddress + offset, destData);
 				}
 			break;
@@ -1193,7 +820,7 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					uint32 offset = (dx + i - sx) * 4 + (dy + j) * destPitch;
 					srcData = hostScreen.getPixel(i, sy + j);
 					destData = ReadInt32(destAddress + offset);
-					applyBlitLogOperation(logOp, destData, srcData);
+					destData = applyBlitLogOperation(logOp, destData, srcData);
 					WriteInt32(destAddress + offset, destData);
 				}
 			break;
@@ -1251,7 +878,7 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 			for(int32 i = 0; i < w; i++) {
 				srcData = hostScreen.getPixel(i + sx, sy + j);
 				destData = hostScreen.getPixel(i + dx, dy + j);
-				applyBlitLogOperation(logOp, destData, srcData);
+				destData = applyBlitLogOperation(logOp, destData, srcData);
 				hostScreen.putPixel(dx + i, dy + j, destData);
 			}
 
@@ -1867,6 +1494,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.1  2005/05/07 09:36:23  pmandin
+ * Split NF vdi driver in 2 parts
+ *
  * Revision 1.63  2005/01/24 18:22:53  standa
  * openwk() and closewk() added to the NF api -> boot bug fixed.
  *
