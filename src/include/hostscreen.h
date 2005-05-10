@@ -124,6 +124,8 @@ class HostScreen {
 	void update( bool forced );
 	void update();
 
+	void OpenGLUpdate(void);
+
 #ifdef SDL_GUI
 	// GUI
 	void openGUI();
@@ -397,6 +399,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.51  2005/05/05 22:47:02  milan
+ * support of old headers removed
+ *
  * Revision 1.50  2005/01/22 16:39:48  joy
  * --disable-gui now disables all SDL GUI related code
  *

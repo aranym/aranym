@@ -32,9 +32,6 @@
 #define _VIDEL_H
 
 #include "icio.h"
-#include "hostscreen.h"
-
-#include <SDL.h>
 
 class VIDEL : public BASE_IO {
 protected:
@@ -60,7 +57,7 @@ public:
 	virtual void handleWrite(uint32 addr, uint8 value);
 
 	void updateColors();
-	void renderScreen();
+	void renderScreen(void);
 	void setRendering( bool render );
 
 	int getScreenBpp();
@@ -70,22 +67,17 @@ public:
 	long getVideoramAddress();
 };
 
-
-inline void VIDEL::renderScreen() {
-	if ( doRender )
-		renderScreenNoFlag();
-}
-
 inline void VIDEL::setRendering( bool render ) {
 	doRender = render;
 }
 
-
-#endif
-
+#endif /* _VIDEL_H */
 
 /*
  * $Log$
+ * Revision 1.24  2004/09/02 20:14:30  pmandin
+ * Second fix for autozoom: recalculate zoom tables when host screen size changes
+ *
  * Revision 1.23  2004/02/14 01:37:31  joy
  * reset all HW chips
  *

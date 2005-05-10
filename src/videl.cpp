@@ -231,6 +231,19 @@ void VIDEL::updateColors()
 	hostColorsSync = true;
 }
 
+void VIDEL::renderScreen(void)
+{
+	if ( doRender )
+		renderScreenNoFlag();
+
+#ifdef ENABLE_OPENGL
+	if (bx_options.opengl.enabled) {
+		hostScreen.OpenGLUpdate();
+
+		SDL_GL_SwapBuffers();
+	}
+#endif	/* ENABLE_OPENGL */
+}
 
 void VIDEL::renderScreenNoFlag()
 {

@@ -1,3 +1,8 @@
+2005/05/10 - Patrice
+- OpenGL rendering done regularly in Videl->renderScreen(), instead of
+  hostScreen.update(): much faster!
+
+
 2005/05/09 - Patrice
 - Moved more driver independant stuff from nfvdi_soft.cpp to nfvdi.cpp
 

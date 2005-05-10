@@ -1278,33 +1278,7 @@ void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced )
 
 	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
 	// SDL_UpdateRect(surf, x, y, w, h);
-#ifdef ENABLE_OPENGL
-	if (bx_options.opengl.enabled) {
-		/* Update the texture */
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SdlGlTextureWidth, SdlGlTextureHeight, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
-
-		/* Render the textured quad */
-		glBegin(GL_QUADS);
-			glTexCoord2f( 0.0, 0.0 );
-			glVertex2i( 0, 0);
-
-			glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), 0.0 );
-			glVertex2i( bx_options.opengl.width, 0);
-
-			glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
-			glVertex2i( bx_options.opengl.width, bx_options.opengl.height);
-
-			glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
-			glVertex2i( 0, bx_options.opengl.height);
-		glEnd();
-
-		SDL_GL_SwapBuffers();
-	}
-	else
-#endif	/* ENABLE_OPENGL */
-	{
-		SDL_UpdateRect(mainSurface, x, y, w, h);
-	}
+	SDL_UpdateRect(mainSurface, x, y, w, h);
 }
 
 void HostScreen::update( bool forced )
@@ -1317,8 +1291,32 @@ void HostScreen::update()
 	update( 0, 0, width, height, false );
 }
 
+void HostScreen::OpenGLUpdate(void)
+{
+	/* Update the texture */
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SdlGlTextureWidth, SdlGlTextureHeight, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
+
+	/* Render the textured quad */
+	glBegin(GL_QUADS);
+		glTexCoord2f( 0.0, 0.0 );
+		glVertex2i( 0, 0);
+
+		glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), 0.0 );
+		glVertex2i( bx_options.opengl.width, 0);
+
+		glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
+		glVertex2i( bx_options.opengl.width, bx_options.opengl.height);
+
+		glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
+		glVertex2i( 0, bx_options.opengl.height);
+	glEnd();
+}
+
 /*
  * $Log$
+ * Revision 1.53  2005/04/22 21:57:16  xavier
+ * Remove debug code left by mistake.
+ *
  * Revision 1.52  2005/04/22 21:52:36  xavier
  * Switch between fullscreen and windowed mode on Microsoft Windows
  *
