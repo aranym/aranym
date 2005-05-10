@@ -1293,6 +1293,7 @@ void HostScreen::update()
 
 void HostScreen::OpenGLUpdate(void)
 {
+#ifdef ENABLE_OPENGL
 	/* Update the texture */
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SdlGlTextureWidth, SdlGlTextureHeight, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
 
@@ -1310,10 +1311,14 @@ void HostScreen::OpenGLUpdate(void)
 		glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
 		glVertex2i( 0, bx_options.opengl.height);
 	glEnd();
+#endif
 }
 
 /*
  * $Log$
+ * Revision 1.54  2005/05/10 10:37:44  pmandin
+ * Faster OpenGL rendering
+ *
  * Revision 1.53  2005/04/22 21:57:16  xavier
  * Remove debug code left by mistake.
  *
