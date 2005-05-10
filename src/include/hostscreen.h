@@ -224,9 +224,13 @@ inline uint32 HostScreen::gfxGetPixel( int16 x, int16 y )
 	return 0;	// should never happen
 }
 
-
-
-inline uint32 HostScreen::getBpp() {
+inline uint32 HostScreen::getBpp()
+{
+#ifdef ENABLE_OPENGL
+	if (bx_options.opengl.enabled) {
+		return bpp;
+	}
+#endif
 	return surf->format->BytesPerPixel;
 }
 
@@ -399,6 +403,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.52  2005/05/10 10:37:44  pmandin
+ * Faster OpenGL rendering
+ *
  * Revision 1.51  2005/05/05 22:47:02  milan
  * support of old headers removed
  *

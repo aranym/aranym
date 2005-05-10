@@ -81,6 +81,7 @@ class VdiDriver : public NF_Base
 		int32 getHeight(void);
 		int32 openWorkstation(void);
 		int32 closeWorkstation(void);
+		int32 getBpp(void);
 
 		virtual int32 getPixel(memptr vwk, memptr src, int32 x, int32 y);
 		virtual int32 putPixel(memptr vwk, memptr dst, int32 x, int32 y,

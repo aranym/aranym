@@ -217,3 +217,8 @@ c_closewk(void)
    return ARAnyM((NF_fVDI+FVDI_CLOSEWK));
 }
 
+long CDECL
+c_get_bpp(void)
+{
+   return ARAnyM((NF_fVDI+FVDI_GETBPP));
+}

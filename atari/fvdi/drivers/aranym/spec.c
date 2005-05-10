@@ -11,6 +11,7 @@ long CDECL c_get_width(void);
 long CDECL c_get_height(void);
 void CDECL c_openwk(Virtual *vwk);
 void CDECL c_closewk(Virtual *vwk);
+long CDECL c_get_bpp(void);
 
 /* color bit organization */
 char none[] = {0};
@@ -485,6 +486,7 @@ Virtual* CDECL opnwk(Virtual *vwk)
 	/* update the width/height if restricted by the native part */
 	resolution.width = c_get_width();
 	resolution.height = c_get_height();
+	resolution.bpp = c_get_bpp();
 
 	setup_wk(vwk);
 

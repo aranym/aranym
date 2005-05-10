@@ -174,6 +174,9 @@ int32 VdiDriver::dispatch(uint32 fncode)
 		case FVDI_CLOSEWK:
 			ret = closeWorkstation();
 			break;
+		case FVDI_GETBPP:
+			ret = getBpp();
+			break;
 		default:
 			D(bug("nfvdi: unimplemented function #%d", fncode));
 			break;
@@ -294,6 +297,11 @@ int32 VdiDriver::closeWorkstation(void)
 {
 	getVIDEL()->setRendering(true);
 	return 1;
+}
+
+int32 VdiDriver::getBpp(void)
+{
+	return hostScreen.getBpp();
 }
 
 /*--- Virtual functions ---*/
