@@ -91,7 +91,9 @@ struct mmu_atc_line	{
 	uaecptr phys, log;
 };
 
-extern struct mmu_atc_line atc[64];
+#define ATC_SIZE	128
+
+extern struct mmu_atc_line atc[ATC_SIZE];
 
 #define TTR_I0	4
 #define TTR_I1	5

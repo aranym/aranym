@@ -1,3 +1,7 @@
+2005/05/11 - milan
+- uae_cpu/cpu_mmu.*: a small prototype fix
+
+
 2005/05/11 - Patrice
 - Can dynamically choose a NF CD-ROM driver (linux or sdl one).
 

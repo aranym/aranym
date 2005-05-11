@@ -101,7 +101,7 @@ static inline int mmu_match_ttr(uae_u32 ttr, uaecptr addr, int write, int super,
 	return TTR_NO_MATCH;
 }
 
-struct mmu_atc_line atc[128];
+struct mmu_atc_line atc[ATC_SIZE];
 static int atc_rand = 0;
 static int atc_last_hit = -1;
 
@@ -229,7 +229,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 void mmu_dump_atc(void)
 {
 	int i;
-	for (i = 0; i < 128; i++)	{
+	for (i = 0; i < ATC_SIZE; i++)	{
 		if (!atc[i].v)
 			continue;
 		D(bug("ATC[%02d] G=%d S=%d CM=%d M=%d W=%d R=%d FC2=%d log=%08x --> phys=%08x",
@@ -346,7 +346,7 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 		page_frame = theaddr & 0xfffff000;
 		atc_sel = ((theaddr & 0xf000) >> 12) & 0xf;
 	}
-	if (datamode) atc_sel += 64;
+	if (datamode) atc_sel += (ATC_SIZE / 2);
 
 	if (test & MMU_TEST_FORCE_TABLE_SEARCH)
 		goto table_search;
@@ -354,7 +354,7 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 	
 	atc_rand++;	/* for random replacement */
 	
-	for (i = 0; i < 4; i++)	{
+	for (i = 0; i < (ATC_SIZE / 32); i++)	{
 		atc_index = atc_sel + (16 * i);
 
 #if DBG_MMU_VERBOSE
@@ -450,7 +450,7 @@ table_search:
 	
 	if (atc_index == -1)	{
 		//write_log("MMU: replace atc: ");
-		for (i = 0; i < 4; i++)	{
+		for (i = 0; i < (ATC_SIZE / 32); i++)	{
 			if (!atc[atc_sel + (16 * i)].v)	{
 				atc_index = atc_sel + (16 * i);
 				break;
@@ -810,7 +810,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 				/* PFLUSHN (An) flush page entry if not global */
 				addr = m68k_areg(regs, regno) & (regs.mmu_pagesize == MMU_PAGE_4KB ? MMU_PAGE_ADDR_MASK_4 : MMU_PAGE_ADDR_MASK_8);
 				D(bug("PFLUSHN (A%d) %08x DFC=%d", regno, addr, regs.dfc));
-				for (i = 0; i < 128; i++)	{
+				for (i = 0; i < ATC_SIZE; i++)	{
 					if (atc[i].v && !atc[i].g && atc[i].log == addr
 							&& (int)(regs.dfc & 4) == atc[i].fc2)
 					{
@@ -823,7 +823,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 				/* PFLUSH (An) flush page entry */
 				addr = m68k_areg(regs, regno) & (regs.mmu_pagesize == MMU_PAGE_4KB ? MMU_PAGE_ADDR_MASK_4 : MMU_PAGE_ADDR_MASK_8);
 				D(bug("PFLUSH (A%d) %08x DFC=%d", regno, addr, regs.dfc));
-				for (i = 0; i < 128; i++)	{
+				for (i = 0; i < ATC_SIZE; i++)	{
 					if (atc[i].v && atc[i].log == addr
 							&& (int)(regs.dfc & 4) == atc[i].fc2)
 					{
@@ -837,7 +837,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 			case 2:
 				/* PFLUSHAN flush all except global */
 				D(bug("PFLUSHAN"));
-				for (i = 0; i < 128; i++)	{
+				for (i = 0; i < ATC_SIZE; i++)	{
 					if (atc[i].v && !atc[i].g)
 					{
 						atc[i].v = 0;
@@ -849,7 +849,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 			case 3:
 				/* PFLUSHA flush all entries */
 				D(bug("PFLUSHA"));
-				for (i = 0; i < 128; i++)	{
+				for (i = 0; i < ATC_SIZE; i++)	{
 					if (atc[i].v)
 						didflush++;
 					atc[i].v = 0;
@@ -870,7 +870,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		write = (opcode & 32) == 0;
 		addr = m68k_areg(regs, regno) & (regs.mmu_pagesize == MMU_PAGE_4KB ? MMU_PAGE_ADDR_MASK_4 : MMU_PAGE_ADDR_MASK_8);
 		D(bug("PTEST%c (A%d) %08x DFC=%d", write ? 'W' : 'R', regno, addr, regs.dfc));
-		for (i = 0; i < 128; i++) {
+		for (i = 0; i < ATC_SIZE; i++) {
 			if (atc[i].v && atc[i].log == addr && (int)(regs.dfc & 4) == atc[i].fc2)
 				atc[i].v = 0;
 		}
