@@ -1,5 +1,5 @@
 2005/05/11 - milan
-- uae_cpu/cpu_mmu.*: a small prototype fix
+- uae_cpu/cpu_mmu.*: a small prototype fix, debug variable disabled
 
 
 2005/05/11 - Patrice

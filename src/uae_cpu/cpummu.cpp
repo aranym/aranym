@@ -800,7 +800,8 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
 	DUNUSED(extra);
 	if ((opcode & 0xFE0) == 0x0500) {
-		int i, regno, didflush = 0;
+		int i, regno;
+		D(didflush = 0);
 		uae_u32 addr;
 		/* PFLUSH */
 		regno = opcode & 7;
@@ -815,7 +816,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 							&& (int)(regs.dfc & 4) == atc[i].fc2)
 					{
 						atc[i].v = 0;
-						didflush++;
+						D(didflush++);
 					}
 				}
 				break;
@@ -828,7 +829,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 							&& (int)(regs.dfc & 4) == atc[i].fc2)
 					{
 						atc[i].v = 0;
-						didflush++;
+						D(didflush++);
 					}
 				}
 
@@ -841,7 +842,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 					if (atc[i].v && !atc[i].g)
 					{
 						atc[i].v = 0;
-						didflush++;
+						D(didflush++);
 					}
 				}
 				break;
@@ -851,14 +852,13 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 				D(bug("PFLUSHA"));
 				for (i = 0; i < ATC_SIZE; i++)	{
 					if (atc[i].v)
-						didflush++;
+						D(didflush++);
 					atc[i].v = 0;
 				}
 				atc_last_hit = -1;
 				break;
 		}
-		if (didflush)
-			D(bug("  -> flushed %d matching entries", didflush));
+		D(bug("  -> flushed %d matching entries", didflush));
 		flush_internals();
 #ifdef USE_JIT
 		flush_icache(0);
