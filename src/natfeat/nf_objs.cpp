@@ -20,6 +20,8 @@
 
 /*--- Includes ---*/
 
+#include "hostscreen.h"
+
 #include "nf_objs.h"
 #include "nf_basicset.h"
 
@@ -31,6 +33,9 @@
 #ifdef NFVDI_SUPPORT
 # include "nfvdi.h"
 # include "nfvdi_soft.h"
+# ifdef ENABLE_OPENGL
+#  include "nfvdi_opengl.h"
+# endif
 #else
 # include "fvdidrv.h"
 #endif
@@ -59,6 +64,10 @@
 
 #define MAX_NATFEATS 32
 
+/*--- External variables ---*/
+
+extern HostScreen hostScreen;
+
 /*--- Variables ---*/
 
 NF_Base *nf_objects[MAX_NATFEATS];	/* The natfeats we can use */
@@ -86,8 +95,15 @@ void NFCreate(void)
 	NFAdd(new XHDIDriver);
 	NFAdd(new AUDIODriver);
 
+	hostScreen.OpenGLVdi = SDL_FALSE;
 #ifdef NFVDI_SUPPORT
-	NFAdd(new SoftVdiDriver);
+# ifdef ENABLE_OPENGL
+	if (strcmp("opengl", bx_options.natfeats.vdi_driver)==0) {
+		NFAdd(new OpenGLVdiDriver);
+		hostScreen.OpenGLVdi = SDL_TRUE;
+	} else 
+# endif
+		NFAdd(new SoftVdiDriver);
 #else
 	NFAdd(new FVDIDriver);
 #endif
@@ -142,6 +158,7 @@ void NFDestroy(void)
 	for(unsigned int i=0; i<nf_objs_cnt; i++) {
 		if (nf_objects[i]) {
 			delete nf_objects[i];
+			nf_objects[i] = NULL;
 		}
 	}
 }

@@ -84,6 +84,8 @@ HostScreen::HostScreen(void) {
 	SdlGlSurface=NULL;
 	SdlGlTexture=NULL;
 #endif /* ENABLE_OPENGL */
+
+	OpenGLVdi = SDL_FALSE;
 }
 
 HostScreen::~HostScreen(void) {
@@ -1294,6 +1296,10 @@ void HostScreen::update()
 void HostScreen::OpenGLUpdate(void)
 {
 #ifdef ENABLE_OPENGL
+	if (OpenGLVdi) {
+		return;
+	}
+
 	/* Update the texture */
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SdlGlTextureWidth, SdlGlTextureHeight, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
 
@@ -1321,6 +1327,9 @@ uint32 HostScreen::getBitsPerPixel(void)
 
 /*
  * $Log$
+ * Revision 1.56  2005/05/11 16:16:24  pmandin
+ * Confused by bpp (bits per pixel) and bpp (bytes per pixel)
+ *
  * Revision 1.55  2005/05/10 16:57:54  pmandin
  * Forgot some #IFDEF
  *

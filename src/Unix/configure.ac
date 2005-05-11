@@ -1505,6 +1505,7 @@ if [[ "x$WANT_OPENGL" = "xyes" ]]; then
     LIBS="$LIBS $GL_LIBS"
   else
     AC_MSG_ERROR([OpenGL not found])
+    WANT_OPENGL="no"
   fi
 fi
 
@@ -1617,6 +1618,9 @@ NFVDISRCS="../fvdidrv.cpp"
 if [[ "x$WANT_NFVDI" = "xyes" ]]; then
 	AC_DEFINE([NFVDI_SUPPORT], 1, [Define if you want to use VDI driver])
 	NFVDISRCS="../natfeat/nfvdi.cpp ../natfeat/nfvdi_soft.cpp"
+	if [[ "x$WANT_OPENGL" = "xyes" ]]; then
+		NFVDISRCS="$NFVDISRCS ../natfeat/nfvdi_opengl.cpp"
+	fi
 fi
 
 dnl Exception per second limiter

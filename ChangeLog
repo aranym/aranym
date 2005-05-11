@@ -3,7 +3,8 @@
 
 
 2005/05/11 - Patrice
-- Can dynamically choose a NF CD-ROM driver (linux or sdl one).
+- Can dynamically choose a NF CD-ROM driver (linux or sdl one). Can also choose
+  a NF VDI driver: software renderer, or the non working OpenGL renderer.
 
 - Get confused with bpp (bytes per pixel) and bpp (bits per pixel).
 

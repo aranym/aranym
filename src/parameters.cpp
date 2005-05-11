@@ -719,11 +719,13 @@ void presave_parallel() {
 
 struct Config_Tag natfeat_conf[]={
 	{ "CDROM", String_Tag, &NATFEAT_CONF(cdrom_driver), sizeof(NATFEAT_CONF(cdrom_driver)), 0},
+	{ "Vdi", String_Tag, &NATFEAT_CONF(vdi_driver), sizeof(NATFEAT_CONF(vdi_driver)), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_natfeat() {
   safe_strncpy(NATFEAT_CONF(cdrom_driver), "sdl", sizeof(NATFEAT_CONF(cdrom_driver)));
+  safe_strncpy(NATFEAT_CONF(vdi_driver), "soft", sizeof(NATFEAT_CONF(vdi_driver)));
 }
 
 void postload_natfeat() {

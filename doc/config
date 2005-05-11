@@ -235,3 +235,9 @@ Parport = /dev/parport0
 #  sdl -> Use SDL functions for CD-ROM access (audio only)
 CDROM = sdl
 #  CDROM = linux
+
+# VDI renderer to use
+#  soft -> Standard software renderer
+#  opengl -> Hardware accelerated renderer (non working atm)
+Vdi = soft
+#  Vdi = opengl

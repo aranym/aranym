@@ -192,7 +192,8 @@ typedef struct {
 
 // NatFeats options
 typedef struct {
-	char cdrom_driver[256];	/* NFCDROM driver */
+	char cdrom_driver[256];	/* CD-ROM driver */
+	char vdi_driver[256];	/* VDI driver */
 } bx_natfeat_options_t;
 
 // Parallel port options

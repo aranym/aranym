@@ -124,7 +124,8 @@ class HostScreen {
 	void update( bool forced );
 	void update();
 
-	void OpenGLUpdate(void);
+	void OpenGLUpdate(void);	/* Full screen update with NF software VDI */
+	SDL_bool OpenGLVdi;			/* Using NF OpenGL VDI renderer ? */
 
 #ifdef SDL_GUI
 	// GUI
@@ -413,6 +414,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.55  2005/05/11 16:16:24  pmandin
+ * Confused by bpp (bits per pixel) and bpp (bytes per pixel)
+ *
  * Revision 1.53  2005/05/10 21:03:40  pmandin
  * Added getBpp function to FVDI driver
  *
