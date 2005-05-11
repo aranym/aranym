@@ -228,7 +228,16 @@ inline uint32 HostScreen::getBpp()
 {
 #ifdef ENABLE_OPENGL
 	if (bx_options.opengl.enabled) {
-		return bpp;
+		switch (bpp) {
+			case 15:
+			case 16:
+				return 2;
+			case 24:
+				return 3;
+			case 32:
+				return 4;
+		}		
+		return 1;
 	}
 #endif
 	return surf->format->BytesPerPixel;
@@ -403,6 +412,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.53  2005/05/10 21:03:40  pmandin
+ * Added getBpp function to FVDI driver
+ *
  * Revision 1.52  2005/05/10 10:37:44  pmandin
  * Faster OpenGL rendering
  *
