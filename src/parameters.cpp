@@ -715,6 +715,24 @@ void presave_parallel() {
 }
 
 /*************************************************************************/
+#define NATFEAT_CONF(x) bx_options.natfeats.x
+
+struct Config_Tag natfeat_conf[]={
+	{ "CDROM", String_Tag, &NATFEAT_CONF(cdrom_driver), sizeof(NATFEAT_CONF(cdrom_driver)), 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+void preset_natfeat() {
+  safe_strncpy(NATFEAT_CONF(cdrom_driver), "sdl", sizeof(NATFEAT_CONF(cdrom_driver)));
+}
+
+void postload_natfeat() {
+}
+
+void presave_natfeat() {
+}
+
+/*************************************************************************/
 #ifdef OS_darwin
 #define HOTKEY_OPENGUI		SDLK_PRINT	// F13
 #define	HOTKEY_FULLSCREEN	SDLK_NUMLOCK
@@ -839,6 +857,7 @@ void preset_cfg() {
   preset_autozoom();
   preset_osmesa();
   preset_parallel();
+  preset_natfeat();
 }
 
 void postload_cfg() {
@@ -859,6 +878,7 @@ void postload_cfg() {
   postload_autozoom();
   postload_osmesa();
   postload_parallel();
+  postload_natfeat();
 }
 
 void presave_cfg() {
@@ -879,6 +899,7 @@ void presave_cfg() {
   presave_autozoom();
   presave_osmesa();
   presave_parallel();
+  presave_natfeat();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -907,10 +928,7 @@ void early_cmdline_check(int argc, char **argv) {
 			infoprint("OpenGL support   : %s", (ENABLE_OPENGL == 1) ? "enabled" : "disabled");
 			infoprint("HOSTFS support   : %s", (HOSTFS_SUPPORT == 1) ? "enabled" : "disabled");
 			infoprint("Native features:");
-			infoprint(" CD-ROM driver   : %s, %s driver",
-				(NFCDROM_SUPPORT == 1) ? "enabled" : "disabled",
-				(NFCDROM_LINUX_SUPPORT == 1) ? "linux" : "sdl"
-			);
+			infoprint(" CD-ROM driver   : %s", (NFCDROM_SUPPORT == 1) ? "enabled" : "disabled");
 			infoprint(" OSMesa rendering: %s", (NFOSMESA_SUPPORT == 1) ? "enabled" : "disabled");
 			infoprint(" JPEG decoder    : %s", (NFJPEG_SUPPORT == 1) ? "enabled" : "disabled");
 
@@ -1205,6 +1223,7 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, autozoom_conf, "[AUTOZOOM]", true);
 	process_config(f, rcfile, osmesa_conf, "[NFOSMESA]", true);
 	process_config(f, rcfile, parallel_conf, "[PARALLEL]", true);
+	process_config(f, rcfile, natfeat_conf, "[NATFEATS]", true);
 
 	return true;
 }
@@ -1250,6 +1269,7 @@ bool saveSettings(const char *fs)
 	update_config(fs, autozoom_conf, "[AUTOZOOM]");
 	update_config(fs, osmesa_conf, "[NFOSMESA]");
 	update_config(fs, parallel_conf, "[PARALLEL]");
+	update_config(fs, natfeat_conf, "[NATFEATS]");
 
 	return true;
 }

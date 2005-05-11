@@ -227,3 +227,11 @@ File = stderr
 #  File = stderr
 # Linux parport device for Type=parport
 Parport = /dev/parport0
+
+
+[NATFEATS]
+# CD-ROM driver to use
+#  linux -> Use Linux ioctls() for CD-ROM access (audio and data)
+#  sdl -> Use SDL functions for CD-ROM access (audio only)
+CDROM = sdl
+#  CDROM = linux

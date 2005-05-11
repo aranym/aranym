@@ -190,6 +190,11 @@ typedef struct {
 	char libosmesa[256];	/* Pathname to libOSMesa */
 } bx_nfosmesa_options_t;
 
+// NatFeats options
+typedef struct {
+	char cdrom_driver[256];	/* NFCDROM driver */
+} bx_natfeat_options_t;
+
 // Parallel port options
 typedef struct {
 	char type[256];
@@ -245,6 +250,7 @@ typedef struct {
   bx_autozoom_options_t	autozoom;
   bx_nfosmesa_options_t	osmesa;
   bx_parallel_options_t parallel;
+  bx_natfeat_options_t natfeats;
 #ifdef GDBSTUB
   bx_gdbstub_t		gdbstub;
 #endif

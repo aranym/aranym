@@ -36,11 +36,9 @@
 #endif
 #ifdef NFCDROM_SUPPORT
 # include "nfcdrom.h"
+# include "nfcdrom_sdl.h"
 # ifdef NFCDROM_LINUX_SUPPORT
 #  include "nfcdrom_linux.h"
-# endif
-# ifdef NFCDROM_SDL_SUPPORT
-#  include "nfcdrom_sdl.h"
 # endif
 #endif
 #ifdef NFPCI_SUPPORT
@@ -104,11 +102,11 @@ void NFCreate(void)
 
 #ifdef NFCDROM_SUPPORT
 # ifdef NFCDROM_LINUX_SUPPORT
-	NFAdd(new CdromDriverLinux);
+	if (strcmp("linux", bx_options.natfeats.cdrom_driver)==0)
+		NFAdd(new CdromDriverLinux);
+	else
 # endif
-# ifdef NFCDROM_SDL_SUPPORT
-	NFAdd(new CdromDriverSdl);
-# endif
+		NFAdd(new CdromDriverSdl);
 #endif
 
 #ifdef NFPCI_SUPPORT
