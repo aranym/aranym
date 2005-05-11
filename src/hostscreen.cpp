@@ -1314,8 +1314,16 @@ void HostScreen::OpenGLUpdate(void)
 #endif
 }
 
+uint32 HostScreen::getBitsPerPixel(void)
+{
+	return surf->format->BitsPerPixel;
+}
+
 /*
  * $Log$
+ * Revision 1.55  2005/05/10 16:57:54  pmandin
+ * Forgot some #IFDEF
+ *
  * Revision 1.54  2005/05/10 10:37:44  pmandin
  * Faster OpenGL rendering
  *

@@ -138,7 +138,8 @@ class HostScreen {
 	SDL_Surface *getPhysicalSurface() { return mainSurface; }
 #endif
 
-	uint32 getBpp();
+	uint32 getBpp();	/* Bytes per pixel */
+	uint32 getBitsPerPixel(void);
 	uint32 getPitch();
 	uint32 getWidth();
 	uint32 getHeight();
@@ -228,7 +229,7 @@ inline uint32 HostScreen::getBpp()
 {
 #ifdef ENABLE_OPENGL
 	if (bx_options.opengl.enabled) {
-		switch (bpp) {
+		switch(bpp) {
 			case 15:
 			case 16:
 				return 2;
@@ -236,7 +237,7 @@ inline uint32 HostScreen::getBpp()
 				return 3;
 			case 32:
 				return 4;
-		}		
+		}
 		return 1;
 	}
 #endif

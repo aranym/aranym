@@ -1,6 +1,8 @@
 2005/05/11 - Patrice
 - Can dynamically choose a NF CD-ROM driver (linux or sdl one).
 
+- Get confused with bpp (bytes per pixel) and bpp (bits per pixel).
+
 
 2005/05/11 - milan
 - natfeats.cpp: THROW(), not LONGJMP()

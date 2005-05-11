@@ -301,7 +301,7 @@ int32 VdiDriver::closeWorkstation(void)
 
 int32 VdiDriver::getBpp(void)
 {
-	return hostScreen.getBpp();
+	return hostScreen.getBitsPerPixel();
 }
 
 /*--- Virtual functions ---*/
