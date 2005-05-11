@@ -79,9 +79,9 @@ extern "C" {
 
 #include "cfgopts.h"
 
-# include <cstdio>
-# include <cstdlib>
-# include <cstring>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 char	*trim(char *buffer)
 {
