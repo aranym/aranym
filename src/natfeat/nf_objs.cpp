@@ -91,7 +91,7 @@ void NFCreate(void)
 
 #ifdef NFVDI_SUPPORT
 # ifdef ENABLE_OPENGL
-	if (strcmp("opengl", bx_options.natfeats.vdi_driver)==0)
+	if ((strcmp("opengl", bx_options.natfeats.vdi_driver)==0) && bx_options.opengl.enabled)
 		NFAdd(new OpenGLVdiDriver);
 	else 
 # endif
