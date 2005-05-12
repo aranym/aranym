@@ -172,14 +172,13 @@ int32 SoftVdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 	DUNUSED(vwk);
 	uint32 color = 0;
 
-	if (!src) {
-		if (!hostScreen.renderBegin())
-			return 0;
-		color = hostScreen.getPixel((int16)x, (int16)y);
-		hostScreen.renderEnd();
-	} else {
-		color = VdiDriver::getPixel(vwk, src, x, y);
-	}
+	if (src)
+		return VdiDriver::getPixel(vwk, src, x, y);
+
+	if (!hostScreen.renderBegin())
+		return 0;
+	color = hostScreen.getPixel((int16)x, (int16)y);
+	hostScreen.renderEnd();
 
 	return color;
 }
@@ -215,17 +214,17 @@ int32 SoftVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 	if (vwk & 1)
 		return 0;
 
-	if (!dst) {
-		// To screen
-		if (!hostScreen.renderBegin())
-			return 1;
-		hostScreen.putPixel((int16)x, (int16)y, color);
-		hostScreen.renderEnd();
-		hostScreen.update((int16)x, (int16)y, 1, 1, true);
-	} else {
+	if (dst)
 		return VdiDriver::putPixel(vwk, dst, x, y, color);
-	}
 
+	// To screen
+	if (!hostScreen.renderBegin())
+		return 1;
+	hostScreen.putPixel((int16)x, (int16)y, color);
+	hostScreen.renderEnd();
+	hostScreen.update((int16)x, (int16)y, 1, 1, true);
+
+	D(bug("softvdi: putpixel(x,y,0x%08x)", x,y,color));
 	return 1;
 }
 
@@ -1494,6 +1493,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.2  2005/05/09 12:21:10  pmandin
+ * Move driver independent functions to nfvdi.cpp
+ *
  * Revision 1.1  2005/05/07 09:36:23  pmandin
  * Split NF vdi driver in 2 parts
  *

@@ -82,9 +82,8 @@ int32 OpenGLVdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 	if (vwk & 1)
 		return color;
 
-	if (src) {
+	if (src)
 		return VdiDriver::getPixel(vwk, src, x, y);
-	}
 
 	glReadPixels(x,y,1,1, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &color);
 	color >>= 8;
@@ -123,16 +122,14 @@ int32 OpenGLVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 	if (vwk & 1)
 		return 0;
 
-	if (dst) {
+	if (dst)
 		return VdiDriver::putPixel(vwk, dst, x, y, color);
-	}
-
-//	color=random();
 
 	glBegin(GL_POINTS);
-		glColor3i((color>>16)&0xff, (color>>8)&0xff, color&0xff);
+		glColor3ub((color>>16)&0xff, (color>>8)&0xff, color&0xff);
 		glVertex2i(x,y);
 	glEnd();
+
 //	D(bug("glvdi: putpixel(%d,%d,0x%08x)", x,y,color));
 	return 1;
 }
@@ -199,9 +196,9 @@ int32 OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	DUNUSED(bgColor);
 	DUNUSED(mouse_type);
 
-	SDL_ShowCursor(1);
-	D(bug("glvdi: drawmouse"));
-	return 1;
+//	SDL_ShowCursor(1);
+//	D(bug("glvdi: drawmouse"));
+	return -1;
 }
 
 /**
@@ -245,9 +242,8 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp,
 	uint32 fgColor, uint32 bgColor)
 {
-	if (dest) {
+	if (dest)
 		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
-	}
 
 	D(bug("glvdi: expandarea"));
 	return -1;
@@ -289,9 +285,6 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 		bgColor &= 0xff;
 	}
 
-//	fgColor = random();
-//	bgColor = random();
-
 	uint16 pattern[16];
 	for(int i = 0; i < 16; ++i)
 		pattern[i] = ReadInt16(pattern_addr + i * 2);
@@ -326,8 +319,8 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 		}
 
 		/* First, the back color */
-		glColor3i((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-		glBegin(GL_POLYGON);
+		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		glBegin(GL_QUADS);
 			glVertex2i(x,y);
 			glVertex2i(x+w-1,y);
 			glVertex2i(x+w-1,y+h-1);
@@ -337,7 +330,7 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 		/* Fill with fgColor */
 		glEnable(GL_POLYGON_STIPPLE);
 		glPolygonStipple((const GLubyte *)gl_pattern);
-		glColor3i((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 		glBegin(GL_POLYGON);
 			glVertex2i(x,y);
 			glVertex2i(x+w-1,y);
@@ -345,6 +338,8 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			glVertex2i(x,y+h-1);
 		glEnd();
 		glDisable(GL_POLYGON_STIPPLE);
+
+		D(bug("glvdi:  fillarea, with polygon"));
 	} else {
 		for(h = h - 1; h >= 0; h--) {
 			y = (int16)ReadInt16(table); table+=2;
@@ -352,7 +347,7 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			w = (int16)ReadInt16(table) - x + 1; table+=2;
 
 			/* First, the back color */
-			glColor3i((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+			glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
 			glBegin(GL_LINES);
 				glVertex2i(x,y);
 				glVertex2i(x+w-1,y);
@@ -361,16 +356,16 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			/* Fill with fgColor */
 			glEnable(GL_LINE_STIPPLE);
 			glLineStipple(1,pattern[y&15]);
-			glColor3i((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
-			glBegin(GL_POLYGON);
+			glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+			glBegin(GL_LINES);
 				glVertex2i(x,y);
 				glVertex2i(x+w-1,y);
 			glEnd();
 			glDisable(GL_LINE_STIPPLE);
 		}
+		D(bug("glvdi:  fillarea, with horizontal lines"));
 	}
 
-//	D(bug("glvdi: fillarea"));
 	return 1;
 }
 
@@ -451,7 +446,7 @@ int OpenGLVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2,
 	uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp)
 {
 	/* First, the back color */
-	glColor3i((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+	glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
 	glBegin(GL_LINES);
 		glVertex2i(x1,y1);
 		glVertex2i(x2,y2);
@@ -461,7 +456,7 @@ int OpenGLVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2,
 	glEnable(GL_LINE_STIPPLE);
 	glLineStipple(1,pattern);
 
-	glColor3i((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+	glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 	glBegin(GL_LINES);
 		glVertex2i(x1,y1);
 		glVertex2i(x2,y2);
@@ -535,9 +530,6 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 		bgColor &= 0xff;
 	}
 
-//	fgColor = random();
-//	bgColor = random();
-
 	memptr table = 0;
 	memptr index = 0;
 	int length = 0;
@@ -609,7 +601,8 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 void OpenGLVdiDriver::getHwColor(uint16 index, uint32 red, uint32 green,
 	uint32 blue, memptr hw_value)
 {
-	WriteInt32(hw_value, (palette_red[index]<<16)|(palette_green[index]<<8)|palette_blue[index]);
+	WriteInt32(hw_value, (((red*255)/1000)<<16)|(((green*255)/1000)<<8)|((blue*255)/1000));
+	D(bug("fVDI: getHwColor (%03d) %04d,%04d,%04d - %lx", index, red, green, blue, ReadInt32( hw_value )));
 }
 
 /**
