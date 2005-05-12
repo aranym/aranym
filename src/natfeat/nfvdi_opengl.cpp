@@ -47,6 +47,8 @@ OpenGLVdiDriver::OpenGLVdiDriver()
 	memset(palette_red, 0, sizeof(palette_red));
 	memset(palette_green, 0, sizeof(palette_green));
 	memset(palette_blue, 0, sizeof(palette_blue));
+
+	hostScreen.EnableOpenGLVdi();
 }
 
 OpenGLVdiDriver::~OpenGLVdiDriver()

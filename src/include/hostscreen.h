@@ -80,6 +80,7 @@ class HostScreen {
 	unsigned int SdlGlTextureWidth;
 	unsigned int SdlGlTextureHeight;
 	uint8 *SdlGlTexture;
+	SDL_bool OpenGLVdi;			/* Using NF OpenGL VDI renderer ? */
 
   public:
 	SDL_mutex   *screenLock;
@@ -125,7 +126,8 @@ class HostScreen {
 	void update();
 
 	void OpenGLUpdate(void);	/* Full screen update with NF software VDI */
-	SDL_bool OpenGLVdi;			/* Using NF OpenGL VDI renderer ? */
+	void EnableOpenGLVdi(void);
+	void DisableOpenGLVdi(void);
 
 #ifdef SDL_GUI
 	// GUI
@@ -414,6 +416,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.56  2005/05/11 20:19:26  pmandin
+ * Add NF vdi OpenGL renderer
+ *
  * Revision 1.55  2005/05/11 16:16:24  pmandin
  * Confused by bpp (bits per pixel) and bpp (bytes per pixel)
  *

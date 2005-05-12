@@ -85,7 +85,7 @@ HostScreen::HostScreen(void) {
 	SdlGlTexture=NULL;
 #endif /* ENABLE_OPENGL */
 
-	OpenGLVdi = SDL_FALSE;
+	DisableOpenGLVdi();
 }
 
 HostScreen::~HostScreen(void) {
@@ -1325,8 +1325,21 @@ uint32 HostScreen::getBitsPerPixel(void)
 	return surf->format->BitsPerPixel;
 }
 
+void HostScreen::EnableOpenGLVdi(void)
+{
+	OpenGLVdi = SDL_TRUE;
+}
+
+void HostScreen::DisableOpenGLVdi(void)
+{
+	OpenGLVdi = SDL_FALSE;
+}
+
 /*
  * $Log$
+ * Revision 1.57  2005/05/11 20:19:26  pmandin
+ * Add NF vdi OpenGL renderer
+ *
  * Revision 1.56  2005/05/11 16:16:24  pmandin
  * Confused by bpp (bits per pixel) and bpp (bytes per pixel)
  *
