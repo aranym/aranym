@@ -782,12 +782,29 @@ int32 VdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 int32 VdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
-	DUNUSED(vwk);
+	int32 ret;
 
-	if (!dest || !src) {
-		D(bug("VdiDriver::blitArea(): source or destination is NULL"));
-		return 1;
+	if (src) {
+		if (dest) {
+			ret=blitArea_M2M(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
+		} else {
+			ret=blitArea_M2S(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
+		}
+	} else {
+		if (dest) {
+			ret=blitArea_S2M(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
+		} else {
+			ret=blitArea_S2S(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
+		}
 	}
+
+	return ret;
+}
+
+int32 VdiDriver::blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
+	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
+{
+	DUNUSED(vwk);
 
 	uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *src->bitplanes
 	uint32 pitch  = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *src->pitch
@@ -841,6 +858,54 @@ int32 VdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	}
 
 	return 1;
+}
+
+int32 VdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
+	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
+{
+	DUNUSED(vwk);
+	DUNUSED(src);
+	DUNUSED(sx);
+	DUNUSED(sy);
+	DUNUSED(dest);
+	DUNUSED(dx);
+	DUNUSED(dy);
+	DUNUSED(w);
+	DUNUSED(h);
+	DUNUSED(logOp);
+	return -1;
+}
+
+int32 VdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
+	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
+{
+	DUNUSED(vwk);
+	DUNUSED(src);
+	DUNUSED(sx);
+	DUNUSED(sy);
+	DUNUSED(dest);
+	DUNUSED(dx);
+	DUNUSED(dy);
+	DUNUSED(w);
+	DUNUSED(h);
+	DUNUSED(logOp);
+	return -1;
+}
+
+int32 VdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
+	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
+{
+	DUNUSED(vwk);
+	DUNUSED(src);
+	DUNUSED(sx);
+	DUNUSED(sy);
+	DUNUSED(dest);
+	DUNUSED(dx);
+	DUNUSED(dy);
+	DUNUSED(w);
+	DUNUSED(h);
+	DUNUSED(logOp);
+	return -1;
 }
 
 /**

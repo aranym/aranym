@@ -82,6 +82,8 @@ class VdiDriver : public NF_Base
 		int32 openWorkstation(void);
 		int32 closeWorkstation(void);
 		int32 getBpp(void);
+		int32 blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest,
+			int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
 		virtual int32 getPixel(memptr vwk, memptr src, int32 x, int32 y);
 		virtual int32 putPixel(memptr vwk, memptr dst, int32 x, int32 y,
@@ -95,8 +97,6 @@ class VdiDriver : public NF_Base
 		virtual int32 fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			int32 h, memptr pattern_address, uint32 fgColor, uint32 bgColor,
 			uint32 logOp, uint32 interior_style);
-		virtual int32 blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
-			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 		virtual int32 drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 			uint32 y2_, uint32 pattern, uint32 fgColor, uint32 bgColor,
 			uint32 logOp, memptr clip);
@@ -109,12 +109,26 @@ class VdiDriver : public NF_Base
 			uint32 green, uint32 blue);
 		virtual int32 getFbAddr(void);
 
+		/* Blit memory to screen */
+		virtual int32 blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
+			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+		/* Blit screen to screen */
+		virtual int32 blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
+			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+		/* Blit screen to memory */
+		virtual int32 blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
+			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+
 		/* Inlined functions */
 		inline void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp,
 			uint16 bitplaneWords[8]);
 		inline uint32 applyBlitLogOperation(int logicalOperation,
 			uint32 destinationData, uint32 sourceData);
 
+	private:
+		/* Blit memory to memory */
+		int32 blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
+			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 };
 
 #endif /* NFVDI_H */

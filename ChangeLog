@@ -1,6 +1,8 @@
 2005/05/12 - Patrice
 - Keep all OpenGL things in hostScreen and nfvdi classes.
 
+- Split blitArea() function in 4 parts.
+
 
 2005/05/11 - milan
 - uae_cpu/cpu_mmu.*: a small prototype fix, debug variable disabled

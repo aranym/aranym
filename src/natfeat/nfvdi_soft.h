@@ -50,8 +50,6 @@ class SoftVdiDriver : public VdiDriver
 		int32 fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			int32 h, memptr pattern_address, uint32 fgColor, uint32 bgColor,
 			uint32 logOp, uint32 interior_style);
-		int32 blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
-			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 		int32 drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 			uint32 y2_, uint32 pattern, uint32 fgColor, uint32 bgColor,
 			uint32 logOp, memptr clip);
@@ -63,6 +61,13 @@ class SoftVdiDriver : public VdiDriver
 		void setColor(memptr vwk, uint32 paletteIndex, uint32 red,
 			uint32 green, uint32 blue);
 		int32 getFbAddr(void);
+
+		int32 blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
+			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+		int32 blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
+			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+		int32 blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
+			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
 	private:
 		struct _Mouse {

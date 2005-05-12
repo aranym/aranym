@@ -647,46 +647,32 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
  * fVDI engine).
  **/
 
-int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
+int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
 	DUNUSED(vwk);
-	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d", "blitArea", logOp, sx, sy, dx, dy, w, h ));
-	D(bug("fVDI: %s %x,%x : %x,%x", "blitArea - MFDB addresses", src, dest,
-              (src) ? (ReadInt32(src)) : 0, (dest) ? (ReadInt32(dest)) : 0));
 
-	bool toMemory = dest;
-	if (src) { // fromMemory
-		uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *src->bitplanes
-		uint32 pitch  = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *src->pitch
-		memptr data   = ReadInt32(src) + sy * pitch;			// MFDB *src->address host OS address
+	if (!hostScreen.renderBegin())
+		return 1;
 
-		D(bug("fVDI: blitArea M->: address %x, pitch %d, planes %d", data, pitch, planes));
+	uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *src->bitplanes
+	uint32 pitch  = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *src->pitch
+	memptr data   = ReadInt32(src) + sy * pitch;			// MFDB *src->address host OS address
 
-		if (toMemory) {
-			return VdiDriver::blitArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
-		}
+	uint32 srcData;
+	uint32 destData;
 
-		D(bug("fVDI: blitArea M->S"));
-
-		if (!hostScreen.renderBegin())
-			return 1;
-
-		D(bug("fVDI: M->S: address %x, pitch %d, planes %d", data, pitch, planes));
-
-		uint32 srcData;
-		uint32 destData;
-
-		switch(planes) {
+	switch(planes) {
 		case 16:
 			if (logOp != 3) {
-				for(int32 j = 0; j < h; j++)
+				for(int32 j = 0; j < h; j++) {
 					for(int32 i = sx; i < sx + w; i++) {
 						srcData = ReadInt16(data + j * pitch + i * 2);
 						destData = hostScreen.getPixel(dx + i - sx, dy + j);
 						destData = applyBlitLogOperation(logOp, destData, srcData);
 						hostScreen.putPixel(dx + i - sx, dy + j, destData);
 					}
+				}
 			} else {
 				uint16* daddr_base = (uint16*)((long)hostScreen.getVideoramAddress() +
 				                          dy * hostScreen.getPitch() + dx * 2);
@@ -765,34 +751,30 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					}
 				}
 			}
-		}
-
-		hostScreen.renderEnd();
-		hostScreen.update(dx, dy, w, h, true);
-
-		return 1;
 	}
 
-	if (toMemory) {
-		D(bug("fVDI: blitArea S->M"));
+	hostScreen.renderEnd();
+	hostScreen.update(dx, dy, w, h, true);
 
-		if (!hostScreen.renderBegin())
-			return 1;
+	return 1;
+}
 
-		//uint32 planes = screenPlanes;
-		//uint32 pitch  = screenPitch;
-		//memptr data   = videoRam + sy*pitch;
+int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
+	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
+{
+	DUNUSED(vwk);
 
-		uint32 planes = ReadInt16(dest + MFDB_NPLANES);			// MFDB *dest->bitplanes
-		uint32 destPitch = ReadInt16(dest + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
-		memptr destAddress = ReadInt32(dest);
+	if (!hostScreen.renderBegin())
+		return 1;
 
-		D(bug("fVDI: S->M: address %x, pitch %d, planes %d", destAddress, destPitch, planes));
+	uint32 planes = ReadInt16(dest + MFDB_NPLANES);			// MFDB *dest->bitplanes
+	uint32 destPitch = ReadInt16(dest + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
+	memptr destAddress = ReadInt32(dest);
 
-		uint32 srcData;
-		uint32 destData;
+	uint32 srcData;
+	uint32 destData;
 
-		switch(planes) {
+	switch(planes) {
 		case 16:
 			for(int32 j = 0; j < h; j++)
 				for(int32 i = sx; i < sx + w; i++) {
@@ -850,16 +832,16 @@ int32 SoftVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					}
 				}
 			}
-		}
-
-		D(bug("fVDI: blitArea S->M: renderEnd"));
-		hostScreen.renderEnd();
-		D(bug("fVDI: blitArea S->M: return 1"));
-		return 1;
 	}
 
-	D(bug("fVDI: %s ", "blitArea - S->S!"));
+	hostScreen.renderEnd();
+	return 1;
+}
 
+int32 SoftVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
+	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
+{
+	DUNUSED(vwk);
 
 	if (logOp == 3) {
 	        // for S->S blits... -> SDL does the whole thing at once
@@ -1493,6 +1475,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.3  2005/05/12 11:30:03  pmandin
+ * Bugfixes
+ *
  * Revision 1.2  2005/05/09 12:21:10  pmandin
  * Move driver independent functions to nfvdi.cpp
  *

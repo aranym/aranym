@@ -395,21 +395,27 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
  * fVDI engine).
  **/
 
-int32 OpenGLVdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
+int32 OpenGLVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
 	DUNUSED(vwk);
-	DUNUSED(src);
-	DUNUSED(sx);
-	DUNUSED(sy);
-	DUNUSED(dest);
-	DUNUSED(dx);
-	DUNUSED(dy);
-	DUNUSED(w);
-	DUNUSED(h);
-	DUNUSED(logOp);
 
-	D(bug("glvdi: blitarea"));
+	return -1;
+}
+
+int32 OpenGLVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
+	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
+{
+	DUNUSED(vwk);
+
+	return -1;
+}
+
+int32 OpenGLVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
+	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
+{
+	DUNUSED(vwk);
+
 	return -1;
 }
 
@@ -582,17 +588,23 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	memptr index_addr, int moves, memptr pattern_addr, uint32 fgColor,
 	uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip)
 {
-	DUNUSED(vwk);
 	DUNUSED(points_addr);
-	DUNUSED(n);
 	DUNUSED(index_addr);
 	DUNUSED(moves);
-	DUNUSED(pattern_addr);
 	DUNUSED(fgColor);
 	DUNUSED(bgColor);
 	DUNUSED(logOp);
 	DUNUSED(interior_style);
 	DUNUSED(clip);
+
+	if (vwk & 1)
+		return -1;      // Don't know about any special fills
+	if (!n)
+		return 1;
+
+	uint16 pattern[16];
+	for(int i = 0; i < 16; ++i)
+		pattern[i] = ReadInt16(pattern_addr + i * 2);
 
 	D(bug("glvdi: fillpoly"));
 	return -1;
