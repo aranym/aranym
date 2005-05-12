@@ -25,7 +25,7 @@
 #include "nfvdi.h"
 #include "nfvdi_opengl.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #include <SDL_opengl.h>
