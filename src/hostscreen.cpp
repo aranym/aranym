@@ -1328,15 +1328,25 @@ uint32 HostScreen::getBitsPerPixel(void)
 void HostScreen::EnableOpenGLVdi(void)
 {
 	OpenGLVdi = SDL_TRUE;
+#ifdef ENABLE_OPENGL
+	glDisable(GL_TEXTURE_2D);
+#endif
 }
 
 void HostScreen::DisableOpenGLVdi(void)
 {
 	OpenGLVdi = SDL_FALSE;
+#ifdef ENABLE_OPENGL
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, SdlGlTexObj);
+#endif
 }
 
 /*
  * $Log$
+ * Revision 1.58  2005/05/12 07:55:08  pmandin
+ * Keep OpenGL related stuff in hostscreen and nfvdi classes
+ *
  * Revision 1.57  2005/05/11 20:19:26  pmandin
  * Add NF vdi OpenGL renderer
  *
