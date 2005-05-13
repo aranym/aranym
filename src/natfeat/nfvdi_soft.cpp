@@ -54,12 +54,6 @@ SoftVdiDriver::SoftVdiDriver()
 {
 	index_count = crossing_count = point_count = 0;
 	alloc_index = alloc_crossing = alloc_point = NULL;
-
-	// This is the default drv (shouldn't be used)
-	Mouse.storage.x = 0;
-	Mouse.storage.y = 0;
-	Mouse.storage.width = 1;
-	Mouse.storage.height = 1;
 }
 
 SoftVdiDriver::~SoftVdiDriver()
@@ -225,205 +219,6 @@ int32 SoftVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 	hostScreen.update((int16)x, (int16)y, 1, 1, true);
 
 	D(bug("softvdi: putpixel(x,y,0x%08x)", x,y,color));
-	return 1;
-}
-
-/**
- * Draw the mouse
- *
- * Draw a coloured line between two points.
- *
- * c_mouse_draw(Workstation *wk, long x, long y, Mouse *mouse)
- * mouse_draw
- * In:  a1  Pointer to Workstation struct
- *  d0/d1   x,y
- *  d2  0 - move shown  1 - move hidden  2 - hide  3 - show  >3 - change shape (pointer to mouse struct)
- *
- * Unlike all the other functions, this does not receive a pointer to a VDI
- * struct, but rather one to the screen's workstation struct. This is
- * because the mouse handling concerns the screen as a whole (and the
- * routine is also called from inside interrupt routines).
- *
- * The Mouse structure pointer doubles as a mode variable. If it is a small
- * number, the mouse's state is supposed to change somehow, while a large
- * number is a pointer to a new mouse shape.
- *
- * This is currently not a required function, but it probably should be.
- * The fallback handling is not done in the usual way, and to make it
- * at least somewhat usable, the mouse pointer is reduced to 4x4 pixels.
- *
- * typedef struct Fgbg_ {
- *   short background;
- *   short foreground;
- * } Fgbg;
- *
- * typedef struct Mouse_ {
- * 0  short type;
- * 2   short hide;
- *   struct position_ {
- * 4   short x;
- * 6   short y;
- *   } position;
- *   struct hotspot_ {
- * 8   short x;
- * 10   short y;
- *   } hotspot;
- * 12  Fgbg colour;
- * 16  short mask[16];
- * 48  short data[16];
- * 80  void *extra_info;
- * } Mouse;
- **/
-extern "C" {
-#if DEBUG > 0
-	static void getBinary(uint16 data, char *buffer)
-	{
-		for(uint16 i = 0; i <= 15; i++) {
-			buffer[i] = (data & 1) ? '1' : ' ';
-			data >>= 1;
-		}
-		buffer[16] = '\0';
-	}
-#endif
-	static uint16 reverse_bits(uint16 data)
-	{
-		uint16 res = 0;
-		for(uint16 i = 0; i <= 15; i++)
-			res |= ((data >> i) & 1) << (15 - i);
-		return res;
-	}
-}
-
-
-void SoftVdiDriver::restoreMouseBackground()
-{
-	int16 x = Mouse.storage.x;
-	int16 y = Mouse.storage.y;
-
-	if (!hostScreen.renderBegin())
-		return;
-
-	for(uint16 i = 0; i < Mouse.storage.height; i++)
-		for(uint16 j = 0; j < Mouse.storage.width; j++)
-			hostScreen.putPixel(x + j, y + i, Mouse.storage.background[i][j]);
-
-	hostScreen.renderEnd();
-	hostScreen.update(x, y, Mouse.storage.width, Mouse.storage.height, true);
-}
-
-
-void SoftVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width, int16 height)
-{
-	D2(bug("fVDI: saveMouseBackground: %d,%d,%d,%d", x, y, width, height));
-
-	for(uint16 i = 0; i < height; i++)
-		for(uint16 j = 0; j < width; j++) {
-			Mouse.storage.background[i][j] = hostScreen.getPixel(x + j, y + i);
-		}
-
-	Mouse.storage.x = x;
-	Mouse.storage.y = y;
-	Mouse.storage.height = height;
-	Mouse.storage.width = width;
-}
-
-int32 SoftVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
-	uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor, uint32 bgColor,
-	uint32 mouse_type)
-{
-	DUNUSED(wk);
-	DUNUSED(mouse_type);
-	D2(bug("fVDI: mouse mode: %x", mode));
-
-	switch (mode) {
-	case 0:  // move shown
-		restoreMouseBackground();
-		break;
-	case 1:  // move hidden
-		return 1;
-	case 2:  // hide
-		restoreMouseBackground();
-		return 1;
-	case 3:  // show
-		break;
-
-	default: // change pointer shape
-		D(bug("fVDI: mouse : %08x, %08x, (%08x,%08x)", hot_x, hot_y, fgColor, bgColor));
-		memptr fPatterAddress = (memptr)mode;
-		for(uint16 i = 0; i < 32; i += 2)
-			Mouse.mask[i >> 1] = reverse_bits(ReadInt16(fPatterAddress + i));
-		fPatterAddress  = (memptr)data;
-		for(uint16 i = 0; i < 32; i += 2)
-			Mouse.shape[i >> 1] = reverse_bits(ReadInt16(fPatterAddress + i));
-
-		Mouse.hotspot.x = hot_x & 0xf;
-		Mouse.hotspot.y = hot_y & 0xf;
-		Mouse.storage.color.foreground = fgColor;
-		Mouse.storage.color.background = bgColor;
-
-#if DEBUG > 1
-		char buffer[30];
-		for(uint16 i = 0; i <= 15; i++) {
-			getBinary(Mouse.mask[i], buffer);
-			D2(bug("fVDI: apm:%s", buffer));
-		}
-		for(uint16 i = 0; i <= 15; i++) {
-			getBinary(Mouse.shape[i], buffer);
-			D2(bug("fVDI: apd:%s", buffer));
-		}
-#endif // DEBUG == 1
-
-		return 1;
-	}
-
-	// handle the mouse hotspot point
-	x -= Mouse.hotspot.x;
-	y -= Mouse.hotspot.y;
-
-	// roll the pattern properly
-	uint16 mm[16];
-	uint16 md[16];
-	uint16 shift = x & 0xf;
-	for(uint16 i = 0; i <= 15; i++) {
-		mm[(i + (y & 0xf)) & 0xf] = (Mouse.mask[i]  << shift) | ((Mouse.mask[i]  >> (16 - shift)) & ((1 << shift) - 1));
-		md[(i + (y & 0xf)) & 0xf] = (Mouse.shape[i] << shift) | ((Mouse.shape[i] >> (16 - shift)) & ((1 << shift) - 1));
-	}
-
-	// beware of the edges of the screen
-	int16 w, h;
-
-	if (x < 0) {
-		w = 16 + x;
-		x = 0;
-	} else {
-		w = 16;
-		if ((int16)x + 16 >= (int32)hostScreen.getWidth())
-			w = hostScreen.getWidth() - (int16)x;
-	}
-	if (y < 0) {
-		h = 16 + y;
-		y = 0;
-	} else {
-		h = 16;
-		if ((int16)y + 16 >= (int32)hostScreen.getHeight())
-			h = hostScreen.getHeight() - (int16)y;
-	}
-
-	D2(bug("fVDI: mouse x,y: %d,%d,%d,%d (%x,%x)", x, y, w, h,
-	   Mouse.storage.color.background, Mouse.storage.color.foreground));
-
-	// draw the mouse
-	if (!hostScreen.renderBegin())
-		return 1;
-
-	saveMouseBackground(x, y, w, h);
-
-	hostScreen.fillArea(x, y, w, h, mm, Mouse.storage.color.background);
-	hostScreen.fillArea(x, y, w, h, md, Mouse.storage.color.foreground);
-
-	hostScreen.renderEnd();
-	hostScreen.update((uint16)x, (uint16)y, w, h, true);
-
 	return 1;
 }
 
@@ -1475,6 +1270,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.4  2005/05/12 17:11:06  pmandin
+ * Split blitArea function in 4 parts
+ *
  * Revision 1.3  2005/05/12 11:30:03  pmandin
  * Bugfixes
  *

@@ -41,9 +41,6 @@ class SoftVdiDriver : public VdiDriver
 		int32 getPixel(memptr vwk, memptr src, int32 x, int32 y);
 		int32 putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 			uint32 color);
-		int32 drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
-			uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor,
-			uint32 bgColor, uint32 mouse_type);
 		int32 expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp,
 			uint32 fgColor, uint32 bgColor);
@@ -70,27 +67,6 @@ class SoftVdiDriver : public VdiDriver
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
 	private:
-		struct _Mouse {
-			struct {
-				uint16 x, y;
-				uint16 width, height;
-				uint32 background[16][16]; // The mouse background backup surface for FVDIDriver
-				struct {
-					uint32 foreground; // The mouse shape color for FVDIDriver
-					uint32 background; // The mouse mask color for FVDIDriver
-				} color;
-			} storage;
-			struct hotspot_ {
-				int16  x, y;
-			} hotspot;
-			struct colors_ {
-				int16  fgColorIndex, bgColorIndex;
-			} colors;
-
-			uint16 mask[16];
-			uint16 shape[16];
-		} Mouse;
-
 		int drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 			uint32 fgColor, uint32 bgColor, int logOp, bool last_pixel,
 			int cliprect[], int minmax[]);
@@ -112,9 +88,6 @@ class SoftVdiDriver : public VdiDriver
 		int crossing_count;
 		int16* alloc_point;
 		int point_count;
-
-		void restoreMouseBackground();
-		void saveMouseBackground(int16 x, int16 y, int16 width, int16 height);
 };
 
 #endif /* NFVDI_SOFT_H */

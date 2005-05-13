@@ -88,9 +88,6 @@ class VdiDriver : public NF_Base
 		virtual int32 getPixel(memptr vwk, memptr src, int32 x, int32 y);
 		virtual int32 putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 			uint32 color);
-		virtual int32 drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
-			uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor,
-			uint32 bgColor, uint32 mouse_type);
 		virtual int32 expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp,
 			uint32 fgColor, uint32 bgColor);
@@ -126,6 +123,12 @@ class VdiDriver : public NF_Base
 			uint32 destinationData, uint32 sourceData);
 
 	private:
+		SDL_Cursor *cursor;
+
+		int32 drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
+			uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor,
+			uint32 bgColor, uint32 mouse_type);
+
 		/* Blit memory to memory */
 		int32 blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);

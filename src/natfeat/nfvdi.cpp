@@ -265,7 +265,7 @@ inline uint32 VdiDriver::applyBlitLogOperation(int logicalOperation,
 			destinationData = ~(sourceData & destinationData);
 			break;
 		case 15:
-			destinationData = 0xffff;
+			destinationData = 0xffffffffUL;
 			break;
 	}
 
@@ -473,15 +473,37 @@ int32 VdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	DUNUSED(wk);
 	DUNUSED(x);
 	DUNUSED(y);
-	DUNUSED(mode);
-	DUNUSED(data);
-	DUNUSED(hot_x);
-	DUNUSED(hot_y);
 	DUNUSED(fgColor);
 	DUNUSED(bgColor);
 	DUNUSED(mouse_type);
 
-	return -1;
+	switch (mode) {
+		case 0:
+		case 1:
+			break;
+		case 2:
+			SDL_ShowCursor(SDL_ENABLE);
+			break;
+		case 3:
+			SDL_ShowCursor(SDL_DISABLE);
+			break;
+		default:
+			{
+				if (cursor)
+					SDL_FreeCursor(cursor);
+
+				cursor = SDL_CreateCursor(
+					(Uint8 *)Atari2HostAddr(data),
+					(Uint8 *)Atari2HostAddr(mode),
+					16, 16, hot_x, hot_y
+				);
+
+				SDL_SetCursor(cursor);
+			}
+			break;
+	}
+
+	return 1;
 }
 
 /**

@@ -1,3 +1,7 @@
+2005/05/13 - Patrice
+- nfvdi: Use host mouse cursor. Need to sync with input.cpp mouse routines.
+
+
 2005/05/12 - Patrice
 - Keep all OpenGL things in hostScreen and nfvdi classes.
 
