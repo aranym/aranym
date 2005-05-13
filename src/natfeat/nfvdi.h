@@ -73,6 +73,7 @@ class VdiDriver : public NF_Base
 		bool isSuperOnly();
 		int32 dispatch(uint32 fncode);
 
+		VdiDriver();
 		virtual ~VdiDriver();
 
 	protected:

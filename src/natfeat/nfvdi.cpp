@@ -189,8 +189,17 @@ int32 VdiDriver::dispatch(uint32 fncode)
 	return ret;
 }
 
+VdiDriver::VdiDriver()
+{
+	cursor = NULL;
+}
+
 VdiDriver::~VdiDriver()
 {
+	if (cursor) {
+		SDL_FreeCursor(cursor);
+		cursor = NULL;
+	}
 }
 
 /*--- Protected functions ---*/
@@ -482,10 +491,10 @@ int32 VdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 		case 1:
 			break;
 		case 2:
-			SDL_ShowCursor(SDL_ENABLE);
+			SDL_ShowCursor(SDL_DISABLE);
 			break;
 		case 3:
-			SDL_ShowCursor(SDL_DISABLE);
+			SDL_ShowCursor(SDL_ENABLE);
 			break;
 		default:
 			{
