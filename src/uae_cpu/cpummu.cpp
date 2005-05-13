@@ -101,9 +101,11 @@ static inline int mmu_match_ttr(uae_u32 ttr, uaecptr addr, int write, int super,
 	return TTR_NO_MATCH;
 }
 
+#ifndef DISABLE_ATC
 struct mmu_atc_line atc[ATC_SIZE];
 static int atc_rand = 0;
 static int atc_last_hit = -1;
+#endif
 
 /* {{{ mmu_dump_table */
 static void mmu_dump_table(const char * label, uaecptr root_ptr)
@@ -225,6 +227,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 }
 /* }}} */
 
+#ifndef DISABLE_ATC
 /* {{{ mmu_dump_atc */
 void mmu_dump_atc(void)
 {
@@ -241,6 +244,7 @@ void mmu_dump_atc(void)
 	}
 }
 /* }}} */
+#endif
 
 /* {{{ mmu_dump_tables */
 void mmu_dump_tables(void)
@@ -250,7 +254,9 @@ void mmu_dump_tables(void)
 	mmu_dump_ttr("DTT1", regs.dtt1);
 	mmu_dump_ttr("ITT0", regs.itt0);
 	mmu_dump_ttr("ITT1", regs.itt1);
+#ifndef DISABLE_ATC
 	mmu_dump_atc();
+#endif
 	//mmu_dump_table("SRP", regs.srp);
 }
 /* }}} */
@@ -280,7 +286,10 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 	uae_u16	ssw = 0;
 	uae_u32 page_frame;
 	int supervisor, datamode =0;
-	int i, atc_sel, atc_index = -1, n_table_searches = 0;
+#ifndef DISABLE_ATC
+	int i, atc_sel, atc_index = -1;
+#endif
+	int n_table_searches = 0;
 
 //	if (theaddr == 0x40000000) test |= MMU_TEST_VERBOSE;
 	
@@ -339,19 +348,25 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 	if (regs.mmu_pagesize == MMU_PAGE_8KB)	{
 		pgi = (theaddr & 0x3e000) >> 13;
 		page_frame = theaddr & 0xffffe000;
+#ifndef DISABLE_ATC
 		atc_sel = ((theaddr & 0x1e000) >> 13) & 0xf;
+#endif
 	}
 	else	{
 		pgi = (theaddr & 0x3f000) >> 12;
 		page_frame = theaddr & 0xfffff000;
+#ifndef DISABLE_ATC
 		atc_sel = ((theaddr & 0xf000) >> 12) & 0xf;
+#endif
 	}
+#ifndef DISABLE_ATC
 	if (datamode) atc_sel += (ATC_SIZE / 2);
+#endif
 
 	if (test & MMU_TEST_FORCE_TABLE_SEARCH)
 		goto table_search;
 // check_atc:
-	
+#ifndef DISABLE_ATC
 	atc_rand++;	/* for random replacement */
 	
 	for (i = 0; i < (ATC_SIZE / 32); i++)	{
@@ -440,14 +455,14 @@ atc_matched:
 		return atc_hit_addr;
 	}
 	atc_index = -1;
-	
+#endif	
 table_search:
 
 	if (n_table_searches++ > 3)	{
 		panicbug("MMU: apparently looping during table search.");
 		abort();
 	}
-	
+#ifndef DISABLE_ATC
 	if (atc_index == -1)	{
 		//write_log("MMU: replace atc: ");
 		for (i = 0; i < (ATC_SIZE / 32); i++)	{
@@ -461,7 +476,7 @@ table_search:
 			atc_index = atc_sel + (16 * (atc_rand & 2));
 		}
 	}
-
+#endif
 	fslw |= (1 << 6); /* TWE: flag as being in table search */
 
 #if DBG_MMU_VERBOSE
@@ -591,7 +606,7 @@ get_page_descriptor:
 		if (modify)
 			phys_put_long(page_des_addr, page_des);
 	}
-	
+#ifndef DISABLE_ATC
 	atc[atc_index].log = page_frame;
 	atc[atc_index].v = 1;
 	atc[atc_index].r = 1;
@@ -602,7 +617,7 @@ get_page_descriptor:
 	atc[atc_index].phys = page_des & (regs.mmu_pagesize ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
 
 	atc[atc_index].m = (page_des & MMU_DES_MODIFIED) ? 1 : 0;
-
+#endif
 	
 #if 0
 	if (atc_hit_addr != 0 && atc_hit_addr != phys_addr)	{
@@ -611,9 +626,50 @@ get_page_descriptor:
 		activate_debugger();
 	}
 #endif
+
+#ifndef DISABLE_ATC
 	/* re-use the end of the atc code */
 	goto atc_matched;
+#else
+
+	if (test && wp)
+		regs.mmusr |= MMU_MMUSR_W;
+
+	atc_hit_addr = (page_des & (regs.mmu_pagesize ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4)) | ((regs.mmu_pagesize == MMU_PAGE_8KB) 
+			? (theaddr & 0x1fff)
+			: (theaddr & 0x0fff));
+
+	if (test)	{
+		if (page_des & MMU_DES_GLOBAL)
+			regs.mmusr |= MMU_MMUSR_G;
+		if (page_des & MMU_DES_SUPER)
+			regs.mmusr |= MMU_MMUSR_S;
+		if (page_des & MMU_DES_MODIFIED)
+			regs.mmusr |= MMU_MMUSR_M;
+		regs.mmusr |= MMU_MMUSR_R;
+
+		regs.mmusr |= (page_des & (regs.mmu_pagesize ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4)) & MMU_MMUSR_ADDR_MASK;
+	}
 	
+	if (page_des & MMU_DES_SUPER)	{
+		D(bug("MMU: Supervisor only"));
+		fslw |= (1 << 8);
+		goto bus_err;
+	}
+
+	if (wp && write)	{
+		D(bug("MMU: write protected!"));
+		fslw |= (1 << 7);
+		goto bus_err;
+	}
+
+	if (!((page_des & MMU_DES_MODIFIED) ? 1 : 0) && write)	{
+		/* we need to update the M bit of the final descriptor */
+		goto table_search;
+	}
+	return atc_hit_addr;
+
+#endif
 bus_err:
 
 	ssw |= (1 << 10);	/* ATC */
@@ -669,7 +725,7 @@ make_non_resident_atc:
 	mmu_dump_ttr("ITT0", regs.itt0);	
 	mmu_dump_ttr("ITT1", regs.itt1);	
 #endif
-
+#ifndef DISABLE_ATC
 	atc[atc_index].log = page_frame;
 	atc[atc_index].phys = 0;
 	atc[atc_index].v = 1;
@@ -679,6 +735,7 @@ make_non_resident_atc:
 	atc[atc_index].fc2 = supervisor;
 	atc[atc_index].g = 0;
 	atc[atc_index].m = 0;
+#endif
 	if (test && wp)
 		regs.mmusr |= MMU_MMUSR_W;
 	goto bus_err;
@@ -800,6 +857,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
 	DUNUSED(extra);
 	if ((opcode & 0xFE0) == 0x0500) {
+#ifndef DISABLE_ATC
 		int i, regno;
 		D(didflush = 0);
 		uae_u32 addr;
@@ -859,6 +917,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 				break;
 		}
 		D(bug("  -> flushed %d matching entries", didflush));
+#endif
 		flush_internals();
 #ifdef USE_JIT
 		flush_icache(0);
@@ -870,10 +929,12 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		write = (opcode & 32) == 0;
 		addr = m68k_areg(regs, regno) & (regs.mmu_pagesize == MMU_PAGE_4KB ? MMU_PAGE_ADDR_MASK_4 : MMU_PAGE_ADDR_MASK_8);
 		D(bug("PTEST%c (A%d) %08x DFC=%d", write ? 'W' : 'R', regno, addr, regs.dfc));
+#ifndef DISABLE_ATC
 		for (i = 0; i < ATC_SIZE; i++) {
 			if (atc[i].v && atc[i].log == addr && (int)(regs.dfc & 4) == atc[i].fc2)
 				atc[i].v = 0;
 		}
+#endif
 		mmu_set_mmusr(0);
 		mmu_translate(addr, regs.dfc, write, sz_byte, MMU_TEST_FORCE_TABLE_SEARCH | MMU_TEST_NO_BUSERR); 
 		D(bug("PTEST result: mmusr %08x", regs.mmusr));

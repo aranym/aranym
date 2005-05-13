@@ -93,7 +93,9 @@ struct mmu_atc_line	{
 
 #define ATC_SIZE	128
 
+#ifndef DISABLE_ATC
 extern struct mmu_atc_line atc[ATC_SIZE];
+#endif
 
 #define TTR_I0	4
 #define TTR_I1	5

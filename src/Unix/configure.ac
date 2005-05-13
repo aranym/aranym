@@ -36,6 +36,8 @@ AC_ARG_ENABLE(flightrecorder,  [  --enable-flightrecorder enable CPU flight reco
 
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU (default=no)], [WANT_MMU=$enableval], [WANT_MMU=no])
 
+AC_ARG_ENABLE(fullatc,         [  --enable-fullatc        enable full ATC in 68040 MMU (default=yes)], [WANT_ATC=$enableval], [WANT_ATC=yes])
+
 AC_ARG_ENABLE(realstop,        [  --enable-realstop       enable real STOP instruction (default=yes)], [WANT_REALSTOP=$enableval], [WANT_REALSTOP=yes])
 
 AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 (default=yes)], [WANT_DSP=$enableval], [WANT_DSP=yes])
@@ -770,6 +772,11 @@ else
     if [[ "x$WANT_PUREC" = "xyes" ]]; then
         AC_DEFINE([PUREC], 1, [Define if PureC hack needed])
     fi
+fi
+
+dnl Full ATC
+if [[ "x$WANT_ATC" = "xno" ]]; then
+    AC_DEFINE([DISABLE_ATC], 1, [Define if not using full ATC])
 fi
 
 dnl DSP
@@ -1709,7 +1716,17 @@ echo JIT debug mode ......................... : $WANT_JIT_DEBUG
 echo Floating-Point emulation core .......... : $FPE_CORE
 echo Assembly optimizations ................. : $ASM_OPTIMIZATIONS
 echo Addressing mode ........................ : $ADDRESSING_MODE
-echo Full MMU support ....................... : $WANT_MMU
+echo -n Full MMU support ....................... : $WANT_MMU
+if [[ "x$WANT_MMU" = "xyes" ]]; then
+    echo -n " ("
+    if [[ "x$WANT_ATC" = "xyes" ]]; then
+        echo -n "with ATC"
+    else
+        echo -n "without ATC"
+    fi
+    echo -n \)
+fi
+echo
 echo Real STOP implementation ............... : $WANT_REALSTOP
 echo DSP 56001 support ...................... : $WANT_DSP
 echo DSP 56001 disassembly support .......... : $WANT_DSP_DISASM
