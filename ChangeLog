@@ -1,6 +1,7 @@
 2005/05/14 - Patrice
 - nfvdi: Missing constructor, and initialization. Swapped disable/enable cursor
-  in drawMouse.
+  in drawMouse. OpenGL renderer: add logical operations, and screen to screen
+  blits.
 
 
 2005/05/13 - milan

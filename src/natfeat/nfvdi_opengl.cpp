@@ -34,6 +34,13 @@
 
 #define EINVFN -32
 
+static const GLenum logicOps[16]={
+	GL_CLEAR, GL_AND, GL_AND_REVERSE, GL_COPY,
+	GL_AND_INVERTED, GL_NOOP, GL_XOR, GL_OR,
+	GL_NOR, GL_EQUIV, GL_INVERT, GL_OR_REVERSE,
+	GL_COPY_INVERTED, GL_OR_INVERTED, GL_NAND, GL_SET
+};
+
 /*--- Types ---*/
 
 /*--- Variables ---*/
@@ -44,6 +51,16 @@ extern HostScreen hostScreen;
 
 OpenGLVdiDriver::OpenGLVdiDriver()
 {
+/*	logicOps[0] = GL_CLEAR;
+	logicOps[1] = GL_AND;
+
+		static const ={
+			GL_CLEAR, GL_AND, GL_AND_REVERSE, GL_COPY,
+			GL_AND_INVERTED, GL_NOOP, GL_XOR, GL_OR,
+			GL_NOR, GL_EQUIV, GL_INVERT, GL_OR_REVERSE,
+			GL_COPY_INVERTED, GL_OR_INVERTED, GL_NAND, GL_SET
+		};
+*/
 	memset(palette_red, 0, sizeof(palette_red));
 	memset(palette_green, 0, sizeof(palette_green));
 	memset(palette_blue, 0, sizeof(palette_blue));
@@ -208,8 +225,8 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
  * with no more fallback possible.
  **/
 
-int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
-	int32 h, memptr pattern_addr, uint32 fgColor, uint32 bgColor,
+int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
+	int32 w, int32 h, memptr pattern_addr, uint32 fgColor, uint32 bgColor,
 	uint32 logOp, uint32 interior_style)
 {
 	DUNUSED(interior_style);
@@ -240,6 +257,7 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 	      fgColor, bgColor));
 
 	/* Perform rectangle fill. */
+	glLogicOp(logicOps[logOp & 15]);
 
 	if (!table) {
 		/* Generate the pattern */
@@ -259,6 +277,8 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			glVertex2i(x+w-1,y+h-1);
 			glVertex2i(x,y+h-1);
 		glEnd();
+
+		glEnable(GL_COLOR_LOGIC_OP);
 
 		/* Fill with fgColor */
 		glEnable(GL_POLYGON_STIPPLE);
@@ -286,6 +306,8 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 				glVertex2i(x+w-1,y);
 			glEnd();
 
+			glEnable(GL_COLOR_LOGIC_OP);
+
 			/* Fill with fgColor */
 			glEnable(GL_LINE_STIPPLE);
 			glLineStipple(1,pattern[y&15]);
@@ -299,6 +321,7 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 		D(bug("glvdi:  fillarea, with horizontal lines"));
 	}
 
+	glDisable(GL_COLOR_LOGIC_OP);
 	return 1;
 }
 
@@ -349,7 +372,16 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 {
 	DUNUSED(vwk);
 
-	return -1;
+	/* FIXME: does logical operations work in this case ? */
+	glEnable(GL_COLOR_LOGIC_OP);	
+	glLogicOp(logicOps[logOp & 15]);
+
+	glRasterPos2i(dx,dy+h-1);
+
+	glCopyPixels(sx,sy+h-1, w,h, GL_COLOR);
+
+	glDisable(GL_COLOR_LOGIC_OP);
+	return 1;
 }
 
 /**
@@ -391,10 +423,13 @@ int OpenGLVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2,
 		glVertex2i(x2,y2);
 	glEnd();
 
-	/* Draw with fgColor */
+	glEnable(GL_COLOR_LOGIC_OP);
+	glLogicOp(logicOps[logOp & 15]);
+
 	glEnable(GL_LINE_STIPPLE);
 	glLineStipple(1,pattern);
 
+	/* Draw with fgColor */
 	glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 	glBegin(GL_LINES);
 		glVertex2i(x1,y1);
@@ -402,6 +437,7 @@ int OpenGLVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2,
 	glEnd();
 
 	glDisable(GL_LINE_STIPPLE);
+	glDisable(GL_COLOR_LOGIC_OP);
 
 	D(bug("glvdi: drawline(%d,%d,%d,%d,0x%08x,0x%08x",x1,y1,x2,y2,fgColor,bgColor));
 	return 1;
