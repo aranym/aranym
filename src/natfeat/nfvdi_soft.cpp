@@ -65,6 +65,16 @@ SoftVdiDriver::~SoftVdiDriver()
 
 /*--- Private functions ---*/
 
+int32 SoftVdiDriver::openWorkstation(void)
+{
+	return VdiDriver::openWorkstation();
+}
+
+int32 SoftVdiDriver::closeWorkstation(void)
+{
+	return VdiDriver::closeWorkstation();
+}
+
 // The polygon code needs some arrays of unknown size
 // These routines and members are used so that no unnecessary allocations are done
 inline bool SoftVdiDriver::AllocIndices(int n)

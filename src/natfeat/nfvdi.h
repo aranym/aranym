@@ -80,12 +80,12 @@ class VdiDriver : public NF_Base
 		void setResolution(int32 width, int32 height, int32 depth);
 		int32 getWidth(void);
 		int32 getHeight(void);
-		int32 openWorkstation(void);
-		int32 closeWorkstation(void);
 		int32 getBpp(void);
 		int32 blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest,
 			int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
+		virtual int32 openWorkstation(void);
+		virtual int32 closeWorkstation(void);
 		virtual int32 getPixel(memptr vwk, memptr src, int32 x, int32 y);
 		virtual int32 putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 			uint32 color);

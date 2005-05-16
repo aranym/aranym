@@ -51,21 +51,9 @@ extern HostScreen hostScreen;
 
 OpenGLVdiDriver::OpenGLVdiDriver()
 {
-/*	logicOps[0] = GL_CLEAR;
-	logicOps[1] = GL_AND;
-
-		static const ={
-			GL_CLEAR, GL_AND, GL_AND_REVERSE, GL_COPY,
-			GL_AND_INVERTED, GL_NOOP, GL_XOR, GL_OR,
-			GL_NOR, GL_EQUIV, GL_INVERT, GL_OR_REVERSE,
-			GL_COPY_INVERTED, GL_OR_INVERTED, GL_NAND, GL_SET
-		};
-*/
 	memset(palette_red, 0, sizeof(palette_red));
 	memset(palette_green, 0, sizeof(palette_green));
 	memset(palette_blue, 0, sizeof(palette_blue));
-
-	hostScreen.EnableOpenGLVdi();
 }
 
 OpenGLVdiDriver::~OpenGLVdiDriver()
@@ -73,6 +61,18 @@ OpenGLVdiDriver::~OpenGLVdiDriver()
 }
 
 /*--- Private functions ---*/
+
+int32 OpenGLVdiDriver::openWorkstation(void)
+{
+	hostScreen.EnableOpenGLVdi();
+	return VdiDriver::openWorkstation();
+}
+
+int32 OpenGLVdiDriver::closeWorkstation(void)
+{
+	hostScreen.DisableOpenGLVdi();
+	return VdiDriver::closeWorkstation();
+}
 
 /**
  * Get a coloured pixel.
@@ -371,6 +371,8 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
 	DUNUSED(vwk);
+	DUNUSED(src);
+	DUNUSED(dest);
 
 	/* FIXME: does logical operations work in this case ? */
 	glEnable(GL_COLOR_LOGIC_OP);	

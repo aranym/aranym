@@ -38,6 +38,8 @@ class SoftVdiDriver : public VdiDriver
 		~SoftVdiDriver();
 
 	protected:
+		int32 openWorkstation(void);
+		int32 closeWorkstation(void);
 		int32 getPixel(memptr vwk, memptr src, int32 x, int32 y);
 		int32 putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 			uint32 color);

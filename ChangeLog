@@ -1,3 +1,7 @@
+2005/05/16 - Patrice
+- nfvdi: Enable OpenGL rendering when opening the VDI workstation.
+
+
 2005/05/14 - Patrice
 - nfvdi: Missing constructor, and initialization. Swapped disable/enable cursor
   in drawMouse. OpenGL renderer: add logical operations, and screen to screen
