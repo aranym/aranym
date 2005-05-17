@@ -257,8 +257,6 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 	      fgColor, bgColor));
 
 	/* Perform rectangle fill. */
-	glLogicOp(logicOps[logOp & 15]);
-
 	if (!table) {
 		/* Generate the pattern */
 		uint32 gl_pattern[32];
@@ -270,20 +268,28 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 		}
 
 		/* First, the back color */
-		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-		glBegin(GL_QUADS);
-			glVertex2i(x,y);
-			glVertex2i(x+w-1,y);
-			glVertex2i(x+w-1,y+h-1);
-			glVertex2i(x,y+h-1);
-		glEnd();
+		if (logOp == 1) {
+			glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+			glBegin(GL_QUADS);
+				glVertex2i(x,y);
+				glVertex2i(x+w-1,y);
+				glVertex2i(x+w-1,y+h-1);
+				glVertex2i(x,y+h-1);
+			glEnd();
+		}
 
 		glEnable(GL_COLOR_LOGIC_OP);
+		if (logOp == 3) {
+			glLogicOp(GL_XOR);
+			glColor3ub(0xff,0xff,0xff);
+		} else {
+			glLogicOp(GL_COPY);
+			glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+		}
 
 		/* Fill with fgColor */
 		glEnable(GL_POLYGON_STIPPLE);
 		glPolygonStipple((const GLubyte *)gl_pattern);
-		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 		glBegin(GL_POLYGON);
 			glVertex2i(x,y);
 			glVertex2i(x+w-1,y);
@@ -300,18 +306,26 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 			w = (int16)ReadInt16(table) - x + 1; table+=2;
 
 			/* First, the back color */
-			glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-			glBegin(GL_LINES);
-				glVertex2i(x,y);
-				glVertex2i(x+w-1,y);
-			glEnd();
+			if (logOp==1) {
+				glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+				glBegin(GL_LINES);
+					glVertex2i(x,y);
+					glVertex2i(x+w-1,y);
+				glEnd();
+			}
 
 			glEnable(GL_COLOR_LOGIC_OP);
+			if (logOp == 3) {
+				glLogicOp(GL_XOR);
+				glColor3ub(0xff,0xff,0xff);
+			} else {
+				glLogicOp(GL_COPY);
+				glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+			}
 
 			/* Fill with fgColor */
 			glEnable(GL_LINE_STIPPLE);
 			glLineStipple(1,pattern[y&15]);
-			glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 			glBegin(GL_LINES);
 				glVertex2i(x,y);
 				glVertex2i(x+w-1,y);
@@ -380,7 +394,7 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 
 	glRasterPos2i(dx,dy+h-1);
 
-	glCopyPixels(sx,sy+h-1, w,h, GL_COLOR);
+	glCopyPixels(sx,hostScreen.getHeight()-(sy+h-1), w,h, GL_COLOR);
 
 	glDisable(GL_COLOR_LOGIC_OP);
 	return 1;
@@ -418,21 +432,28 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 int OpenGLVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2,
 	uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp)
 {
-	/* First, the back color */
-	glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-	glBegin(GL_LINES);
-		glVertex2i(x1,y1);
-		glVertex2i(x2,y2);
-	glEnd();
+	if (logOp == 1) {
+		/* First, the back color */
+		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		glBegin(GL_LINES);
+			glVertex2i(x1,y1);
+			glVertex2i(x2,y2);
+		glEnd();
+	}
 
 	glEnable(GL_COLOR_LOGIC_OP);
-	glLogicOp(logicOps[logOp & 15]);
+	if (logOp == 3) {
+		glLogicOp(GL_XOR);
+		glColor3ub(0xff,0xff,0xff);
+	} else {
+		glLogicOp(GL_COPY);
+		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+	}
 
 	glEnable(GL_LINE_STIPPLE);
 	glLineStipple(1,pattern);
 
 	/* Draw with fgColor */
-	glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 	glBegin(GL_LINES);
 		glVertex2i(x1,y1);
 		glVertex2i(x2,y2);
