@@ -308,6 +308,10 @@ int32 FVDIDriver::dispatch(uint32 fncode)
 			result = 1;
 			break;
 
+		case FVDI_GETBPP:
+			result = hostScreen.getBitsPerPixel();
+			break;
+
 		default:
 			// not implemented functions
 			D(bug("fVDI: Unknown %d", fncode));
@@ -2033,6 +2037,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.64  2005/05/05 22:47:02  milan
+ * support of old headers removed
+ *
  * Revision 1.63  2005/01/24 18:22:53  standa
  * openwk() and closewk() added to the NF api -> boot bug fixed.
  *
