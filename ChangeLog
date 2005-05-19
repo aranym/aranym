@@ -1,6 +1,6 @@
 2005/05/19 - Patrice
 - nfvdi: Add some OpenGL logical operations for blitArea() operations, and
-  preliminary expandArea() function.
+  preliminary expandArea() function. Updated aranym.sys FVDI driver.
 
 
 2005/05/16 - Patrice
