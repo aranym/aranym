@@ -192,6 +192,9 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp,
 	uint32 fgColor, uint32 bgColor)
 {
+	Uint8 *bitmap, *s, *d;
+	int width, srcpitch, dstpitch, y;
+
 	if (dest)
 		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
 
