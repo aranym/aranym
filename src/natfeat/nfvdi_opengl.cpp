@@ -195,8 +195,48 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	if (dest)
 		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
 
-	D(bug("glvdi: expandarea"));
-	return -1;
+	/* Allocate temp space for monochrome bitmap */
+	width = w;
+	if (width & 7) {
+		width = (width | 7)+1;
+	}
+	bitmap = (Uint8 *)malloc((width*h)>>3);
+	if (bitmap==NULL) {
+		return -1;
+	}
+
+	/* Copy the bitmap from source */
+	srcpitch = ReadInt16(src + MFDB_WDWIDTH) * 2;
+	s = (Uint8 *)Atari2HostAddr(ReadInt32(src + MFDB_ADDRESS) + sy * srcpitch);
+	dstpitch = width>>3;
+	d = bitmap + (dstpitch * (h-1));
+	for (y=0;y<h;y++) {
+		memcpy(d, s, width>>3);
+		s += srcpitch;
+		d -= dstpitch;	
+	}
+
+	if (logOp == 1) {
+		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		glRasterPos2i(dx,dy /*hostScreen.getHeight()-(dy+h-1)*/);
+		glBitmap(w,h, 0,0, 0,0, (const GLubyte *)bitmap);
+	}
+
+	glEnable(GL_COLOR_LOGIC_OP);
+	if (logOp == 3) {
+		glLogicOp(GL_XOR);
+		glColor3ub(0xff,0xff,0xff);
+	} else {
+		glLogicOp(GL_COPY);
+		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+	}
+
+	glRasterPos2i(dx,dy/*hostScreen.getHeight()-(dy+h-1)*/);
+	glBitmap(w,h, 0,0, 0,0, (const GLubyte *)bitmap);
+	glDisable(GL_COLOR_LOGIC_OP);
+
+	free(bitmap);
+	return 1;
 }
 
 /**
@@ -369,7 +409,25 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
 	DUNUSED(vwk);
+	DUNUSED(src);
+	DUNUSED(sx);
+	DUNUSED(sy);
+	DUNUSED(dest);
 
+	/* Clear rectangle ? */
+	if (logOp==0) {
+		glColor3ub(0,0,0);
+		glBegin(GL_QUADS);
+			glVertex2i(dx,dy);
+			glVertex2i(dx+w-1,dy);
+			glVertex2i(dx+w-1,dy+h-1);
+			glVertex2i(dx,dy+h-1);
+		glEnd();
+		D(bug("glvdi: blit_m2s: clear rectangle"));
+		return 1;
+	}
+
+	D(bug("glvdi: blit_m2s(%dx%d: %d,%d -> %d,%d, %d)",w,h,sx,sy,dx,dy,logOp));
 	return -1;
 }
 
@@ -377,7 +435,17 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
 	DUNUSED(vwk);
+	DUNUSED(src);
+	DUNUSED(sx);
+	DUNUSED(sy);
+	DUNUSED(dest);
+	DUNUSED(dx);
+	DUNUSED(dy);
+	DUNUSED(w);
+	DUNUSED(h);
+	DUNUSED(logOp);
 
+	D(bug("glvdi: blit_s2m(%dx%d: %d,%d -> %d,%d, %d)",w,h,sx,sy,dx,dy,logOp));
 	return -1;
 }
 
@@ -388,12 +456,30 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	DUNUSED(src);
 	DUNUSED(dest);
 
+	/* Copy a rectangle on itself ? */
+	if ((sx==dx) && (sy==dy) && (logOp==3)) {
+		D(bug("glvdi: blit_s2s: self copy"));
+		return 1;
+	}
+
+	/* Clear rectangle ? */
+	if (logOp==0) {
+		glColor3ub(0,0,0);
+		glBegin(GL_QUADS);
+			glVertex2i(dx,dy);
+			glVertex2i(dx+w-1,dy);
+			glVertex2i(dx+w-1,dy+h-1);
+			glVertex2i(dx,dy+h-1);
+		glEnd();
+		D(bug("glvdi: blit_s2s: clear rectangle"));
+		return 1;
+	}
+
 	/* FIXME: does logical operations work in this case ? */
 	glEnable(GL_COLOR_LOGIC_OP);	
 	glLogicOp(logicOps[logOp & 15]);
 
 	glRasterPos2i(dx,dy+h-1);
-
 	glCopyPixels(sx,hostScreen.getHeight()-(sy+h-1), w,h, GL_COLOR);
 
 	glDisable(GL_COLOR_LOGIC_OP);
