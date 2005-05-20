@@ -1,3 +1,7 @@
+2005/05/20 - Patrice
+- nfvdi: preliminary blitArea() between screen and memory.
+
+
 2005/05/19 - Patrice
 - nfvdi: Add some OpenGL logical operations for blitArea() operations, and
   preliminary expandArea() function. Updated aranym.sys FVDI driver.

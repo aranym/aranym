@@ -411,15 +411,18 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 int32 OpenGLVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
+	int y;
+
 	DUNUSED(vwk);
-	DUNUSED(src);
-	DUNUSED(sx);
-	DUNUSED(sy);
 	DUNUSED(dest);
 
 	/* Clear rectangle ? */
-	if (logOp==0) {
-		glColor3ub(0,0,0);
+	if ((logOp==0) || (logOp==15)) {
+		if (logOp==0) {
+			glColor3ub(0,0,0);
+		} else if (logOp==15) {
+			glColor3ub(0xff,0xff,0xff);
+		}
 		glBegin(GL_QUADS);
 			glVertex2i(dx,dy);
 			glVertex2i(dx+w-1,dy);
@@ -431,25 +434,86 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	}
 
 	D(bug("glvdi: blit_m2s(%dx%d: %d,%d -> %d,%d, %d)",w,h,sx,sy,dx,dy,logOp));
-	return -1;
+
+	uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *dest->bitplanes
+	if ((planes!=16) && (planes!=32)) {
+		D(bug("glvdi: blit_m2s: %d planes unsupported",planes));
+		return -1;
+	}
+	if (logOp!=3) {
+		D(bug("glvdi: blit_m2s: logOp %d unsupported",logOp));
+		return -1;
+	}
+
+	uint32 srcPitch = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
+	Uint8 *srcAddress = Atari2HostAddr(ReadInt32(src));
+	srcAddress += sy * srcPitch;
+	srcAddress += sx * (planes>>3);
+
+	for (y=0;y<h;y++) {
+		glRasterPos2i(dx,dy+y);
+		switch(planes) {
+			case 16:
+				glDrawPixels(w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, srcAddress);
+				break;
+			case 32:
+				glDrawPixels(w,1, GL_RGBA, GL_UNSIGNED_INT, srcAddress);
+				break;
+		}
+		srcAddress += srcPitch;
+	}
+
+	return 1;
 }
 
 int32 OpenGLVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
+	int y;
+
 	DUNUSED(vwk);
 	DUNUSED(src);
-	DUNUSED(sx);
-	DUNUSED(sy);
-	DUNUSED(dest);
-	DUNUSED(dx);
-	DUNUSED(dy);
-	DUNUSED(w);
-	DUNUSED(h);
-	DUNUSED(logOp);
 
 	D(bug("glvdi: blit_s2m(%dx%d: %d,%d -> %d,%d, %d)",w,h,sx,sy,dx,dy,logOp));
-	return -1;
+
+	uint32 planes = ReadInt16(dest + MFDB_NPLANES);			// MFDB *dest->bitplanes
+	if ((planes!=16) && (planes!=32)) {
+		D(bug("glvdi: blit_s2m: %d planes unsupported",planes));
+		return -1;
+	}
+	if ((logOp!=0) && (logOp!=3) && (logOp!=15)) {
+		D(bug("glvdi: blit_s2m: logOp %d unsupported",logOp));
+		return -1;
+	}
+
+	uint32 destPitch = ReadInt16(dest + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
+	Uint8 *destAddress = Atari2HostAddr(ReadInt32(dest));
+	destAddress += dy * destPitch;
+	destAddress += dx * (planes>>3);
+
+	for (y=0;y<h;y++) {
+		switch(logOp) {
+			case 0:
+				memset(destAddress, 0, destPitch);
+				break;
+			case 15:
+				memset(destAddress, 0xff, destPitch);
+				break;
+			case 3:
+				switch(planes) {
+					case 16:
+						glReadPixels(sx,sy+y, w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, destAddress);
+						break;
+					case 32:
+						glReadPixels(sx,sy+y, w,1, GL_RGBA, GL_UNSIGNED_INT, destAddress);
+						break;
+				}
+				break;
+		}
+		destAddress += destPitch;
+	}
+
+	return 1;
 }
 
 int32 OpenGLVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
@@ -466,8 +530,12 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	}
 
 	/* Clear rectangle ? */
-	if (logOp==0) {
-		glColor3ub(0,0,0);
+	if ((logOp==0) || (logOp==15)) {
+		if (logOp==0) {
+			glColor3ub(0,0,0);
+		} else if (logOp==15) {
+			glColor3ub(0xff,0xff,0xff);
+		}
 		glBegin(GL_QUADS);
 			glVertex2i(dx,dy);
 			glVertex2i(dx+w-1,dy);
