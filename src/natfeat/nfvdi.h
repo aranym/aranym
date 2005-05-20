@@ -117,10 +117,10 @@ class VdiDriver : public NF_Base
 		virtual int32 blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
-		/* Inlined functions */
-		inline void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp,
+		/* Inlinable functions */
+		void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp,
 			uint16 bitplaneWords[8]);
-		inline uint32 applyBlitLogOperation(int logicalOperation,
+		uint32 applyBlitLogOperation(int logicalOperation,
 			uint32 destinationData, uint32 sourceData);
 
 	private:

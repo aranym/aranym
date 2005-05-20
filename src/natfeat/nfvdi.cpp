@@ -204,7 +204,7 @@ VdiDriver::~VdiDriver()
 
 /*--- Protected functions ---*/
 
-inline void VdiDriver::chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp,
+void VdiDriver::chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp,
 	uint16 bitplaneWords[8])
 {
 	DUNUSED(bpp);
@@ -222,7 +222,7 @@ inline void VdiDriver::chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp,
 	}
 }
 
-inline uint32 VdiDriver::applyBlitLogOperation(int logicalOperation,
+uint32 VdiDriver::applyBlitLogOperation(int logicalOperation,
 	uint32 destinationData, uint32 sourceData)
 {
 	switch(logicalOperation) {
