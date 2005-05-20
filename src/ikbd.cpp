@@ -471,6 +471,29 @@ void IKBD::SendJoystickAxis(int numjoy, int numaxis, int value)
 	}
 }
 
+void IKBD::SendJoystickHat(int numjoy, int value)
+{
+	uint8 newjoy_state;
+
+	if (!joy_enabled[numjoy])
+		return;
+
+	/* Keep current button press */
+	newjoy_state = joy_state[numjoy] & (1<<IKBD_JOY_FIRE);
+
+	if (value & SDL_HAT_LEFT) newjoy_state |= 1<<IKBD_JOY_LEFT;
+	if (value & SDL_HAT_RIGHT) newjoy_state |= 1<<IKBD_JOY_RIGHT;
+	if (value & SDL_HAT_UP) newjoy_state |= 1<<IKBD_JOY_UP;
+	if (value & SDL_HAT_DOWN) newjoy_state |= 1<<IKBD_JOY_DOWN;
+
+	if (joy_state[numjoy] != newjoy_state) {
+		joy_state[numjoy] = newjoy_state;
+		intype = IKBD_PACKET_JOYSTICK;
+		send(0xfe | numjoy);
+		send(joy_state[numjoy]);
+	}
+}
+
 void IKBD::SendJoystickButton(int numjoy, int pressed)
 {
 	uint8 newjoy_state;

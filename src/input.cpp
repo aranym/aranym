@@ -719,14 +719,14 @@ static void process_joystick_event(SDL_Event event)
 {
 	switch(event.type) {
 		case SDL_JOYAXISMOTION:
-			getIKBD()->SendJoystickAxis(1, event.jaxis.axis,event.jaxis.value);
+			getIKBD()->SendJoystickAxis(1, event.jaxis.axis, event.jaxis.value);
+			break;		
+		case SDL_JOYHATMOTION:
+			getIKBD()->SendJoystickHat(1, event.jhat.value);
 			break;		
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYBUTTONUP:
-			/* Only button 0 */
-			if (event.jbutton.button==0) {
-				getIKBD()->SendJoystickButton(1, event.jbutton.state==SDL_PRESSED);
-			}
+			getIKBD()->SendJoystickButton(1, event.jbutton.state==SDL_PRESSED);
 			break;		
 	}
 }
@@ -751,6 +751,7 @@ void check_event()
 					| SDL_EVENTMASK(SDL_MOUSEBUTTONUP)
 					| SDL_EVENTMASK(SDL_MOUSEMOTION)
 					| SDL_EVENTMASK(SDL_JOYAXISMOTION)
+					| SDL_EVENTMASK(SDL_JOYHATMOTION)
 					| SDL_EVENTMASK(SDL_JOYBUTTONDOWN)
 					| SDL_EVENTMASK(SDL_JOYBUTTONUP)
 					| SDL_EVENTMASK(SDL_ACTIVEEVENT)
@@ -771,7 +772,7 @@ void check_event()
 			process_mouse_event(event);
 		}
 		else if (type == SDL_JOYAXISMOTION || type == SDL_JOYBUTTONDOWN
-			|| type == SDL_JOYBUTTONUP) {
+			|| type == SDL_JOYBUTTONUP || type == SDL_JOYHATMOTION) {
 			process_joystick_event(event);
 		}
 		else if (type == SDL_ACTIVEEVENT) {
