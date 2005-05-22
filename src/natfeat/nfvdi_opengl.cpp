@@ -199,10 +199,7 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
 
 	/* Allocate temp space for monochrome bitmap */
-	width = w;
-	if (width & 7) {
-		width = (width | 7)+1;
-	}
+	width = (w + 31) & ~31;
 	bitmap = (Uint8 *)malloc((width*h)>>3);
 	if (bitmap==NULL) {
 		return -1;
@@ -220,9 +217,14 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	}
 
 	if (logOp == 1) {
+		/* First, the back color */
 		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-		glRasterPos2i(dx,dy /*hostScreen.getHeight()-(dy+h-1)*/);
-		glBitmap(w,h, 0,0, 0,0, (const GLubyte *)bitmap);
+		glBegin(GL_QUADS);
+			glVertex2i(dx, dy);
+			glVertex2i(dx+w-1, dy);
+			glVertex2i(dx+w-1, dy+h-1);
+			glVertex2i(dx, dy+h-1);
+		glEnd();
 	}
 
 	glEnable(GL_COLOR_LOGIC_OP);
@@ -234,7 +236,7 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 	}
 
-	glRasterPos2i(dx,dy/*hostScreen.getHeight()-(dy+h-1)*/);
+	glRasterPos2i(dx,dy+h);
 	glBitmap(w,h, 0,0, 0,0, (const GLubyte *)bitmap);
 	glDisable(GL_COLOR_LOGIC_OP);
 
@@ -440,15 +442,14 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 		D(bug("glvdi: blit_m2s: %d planes unsupported",planes));
 		return -1;
 	}
-	if (logOp!=3) {
-		D(bug("glvdi: blit_m2s: logOp %d unsupported",logOp));
-		return -1;
-	}
 
 	uint32 srcPitch = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
 	Uint8 *srcAddress = Atari2HostAddr(ReadInt32(src));
 	srcAddress += sy * srcPitch;
 	srcAddress += sx * (planes>>3);
+
+	glEnable(GL_COLOR_LOGIC_OP);
+	glLogicOp(logicOps[logOp]);
 
 	for (y=0;y<h;y++) {
 		glRasterPos2i(dx,dy+y);
@@ -457,12 +458,13 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 				glDrawPixels(w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, srcAddress);
 				break;
 			case 32:
-				glDrawPixels(w,1, GL_RGBA, GL_UNSIGNED_INT, srcAddress);
+				glDrawPixels(w,1, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, srcAddress);
 				break;
 		}
 		srcAddress += srcPitch;
 	}
 
+	glDisable(GL_COLOR_LOGIC_OP);
 	return 1;
 }
 
@@ -680,6 +682,8 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	uint32 y2_, uint32 pattern, uint32 fgColor, uint32 bgColor,
 	uint32 logOp, memptr clip)
 {
+	DUNUSED(clip);
+
 	if (hostScreen.getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
@@ -780,17 +784,10 @@ void OpenGLVdiDriver::setColor(memptr vwk, uint32 paletteIndex, uint32 red,
 	uint32 green, uint32 blue)
 {
 	DUNUSED(vwk);
-
-	if (paletteIndex>255) {
-		return;
-	}
-
-	palette_red[paletteIndex] = red & 0xff;
-	glPixelMapuiv(GL_PIXEL_MAP_I_TO_R, 256, palette_red);
-	palette_green[paletteIndex] = green & 0xff;
-	glPixelMapuiv(GL_PIXEL_MAP_I_TO_G, 256, palette_green);
-	palette_blue[paletteIndex] = blue & 0xff;
-	glPixelMapuiv(GL_PIXEL_MAP_I_TO_B, 256, palette_blue);
+	DUNUSED(paletteIndex);
+	DUNUSED(red);
+	DUNUSED(green);
+	DUNUSED(blue);
 }
 
 int32 OpenGLVdiDriver::getFbAddr(void)

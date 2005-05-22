@@ -1,5 +1,9 @@
+2005/05/22 - Johan
+- OpenGL nfvdi: more blit fixes.
+
+
 2005/05/20 - Patrice
-- nfvdi: preliminary blitArea() between screen and memory.
+- OpenGL nfvdi: preliminary blitArea() between screen and memory.
 
 - input, ikbd: Add support for joystick hat.
 
