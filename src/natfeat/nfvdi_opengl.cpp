@@ -272,9 +272,8 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 	int32 w, int32 h, memptr pattern_addr, uint32 fgColor, uint32 bgColor,
-	uint32 logOp, uint32 interior_style)
+	uint32 logOp, uint32 /*interior_style*/)
 {
-	DUNUSED(interior_style);
 	if (hostScreen.getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
@@ -410,13 +409,10 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
  * fVDI engine).
  **/
 
-int32 OpenGLVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
-	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
+int32 OpenGLVdiDriver::blitArea_M2S(memptr /*vwk*/, memptr src, int32 sx, int32 sy,
+	memptr /*dest*/, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
 	int y;
-
-	DUNUSED(vwk);
-	DUNUSED(dest);
 
 	/* Clear rectangle ? */
 	if ((logOp==0) || (logOp==15)) {
@@ -458,7 +454,7 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 				glDrawPixels(w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, srcAddress);
 				break;
 			case 32:
-				glDrawPixels(w,1, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, srcAddress);
+				glDrawPixels(w,1, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, srcAddress);
 				break;
 		}
 		srcAddress += srcPitch;
@@ -468,13 +464,10 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	return 1;
 }
 
-int32 OpenGLVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
+int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
 	int y;
-
-	DUNUSED(vwk);
-	DUNUSED(src);
 
 	D(bug("glvdi: blit_s2m(%dx%d: %d,%d -> %d,%d, %d)",w,h,sx,sy,dx,dy,logOp));
 
@@ -507,7 +500,7 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 						glReadPixels(sx,sy+y, w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, destAddress);
 						break;
 					case 32:
-						glReadPixels(sx,sy+y, w,1, GL_RGBA, GL_UNSIGNED_INT, destAddress);
+						glReadPixels(sx,sy+y, w,1, GL_BGRA, GL_UNSIGNED_INT, destAddress);
 						break;
 				}
 				break;
@@ -518,13 +511,9 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 	return 1;
 }
 
-int32 OpenGLVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
-	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
+int32 OpenGLVdiDriver::blitArea_S2S(memptr /*vwk*/, memptr /*src*/, int32 sx,
+	int32 sy, memptr /*dest*/, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
-	DUNUSED(vwk);
-	DUNUSED(src);
-	DUNUSED(dest);
-
 	/* Copy a rectangle on itself ? */
 	if ((sx==dx) && (sy==dy) && (logOp==3)) {
 		D(bug("glvdi: blit_s2s: self copy"));
@@ -682,11 +671,23 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	uint32 y2_, uint32 pattern, uint32 fgColor, uint32 bgColor,
 	uint32 logOp, memptr clip)
 {
-	DUNUSED(clip);
+	int clipped=0;
 
 	if (hostScreen.getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
+	}
+
+	if (clip) {
+		int x,y,w,h;
+
+		x=ReadInt32(clip);
+		y=ReadInt32(clip+4);
+		w=ReadInt32(clip+8);
+		h=ReadInt32(clip+12);
+		glScissor(x,y+h-1,w,h);
+		glEnable(GL_SCISSOR_TEST);
+		clipped=1;
 	}
 
 	memptr table = 0;
@@ -734,6 +735,9 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	} else
 		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp);
 
+	if (clipped) {
+		glDisable(GL_SCISSOR_TEST);
+	}
 	return 1;
 }
 
@@ -780,14 +784,9 @@ void OpenGLVdiDriver::getHwColor(uint16 index, uint32 red, uint32 green,
  *  12(a7)  blue component byte value
  **/
  
-void OpenGLVdiDriver::setColor(memptr vwk, uint32 paletteIndex, uint32 red,
-	uint32 green, uint32 blue)
+void OpenGLVdiDriver::setColor(memptr /*vwk*/, uint32 /*paletteIndex*/,
+	uint32 /*red*/, uint32 /*green*/, uint32 /*blue*/)
 {
-	DUNUSED(vwk);
-	DUNUSED(paletteIndex);
-	DUNUSED(red);
-	DUNUSED(green);
-	DUNUSED(blue);
 }
 
 int32 OpenGLVdiDriver::getFbAddr(void)

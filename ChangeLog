@@ -1,5 +1,5 @@
-2005/05/22 - Johan
-- OpenGL nfvdi: more blit fixes.
+2005/05/22 - Johan & Patrice
+- OpenGL nfvdi: more blit fixes. Added line clipping.
 
 
 2005/05/20 - Patrice
