@@ -679,13 +679,26 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	}
 
 	if (clip) {
-		int x,y,w,h;
+		int cx1,cy1,cx2,cy2, x,y,w,h;
 
-		x=ReadInt32(clip);
-		y=ReadInt32(clip+4);
-		w=ReadInt32(clip+8);
-		h=ReadInt32(clip+12);
-		glScissor(x,y+h-1,w,h);
+		cx1=ReadInt32(clip);
+		cy1=ReadInt32(clip+4);
+		cx2=ReadInt32(clip+8);
+		cy2=ReadInt32(clip+12);
+
+		x=cx1;
+		w=cx2-cx1+1;
+		if (cx2<cx1) {
+			x=cx2;
+			w=cx1-cx2+1;
+		}
+		y=cy1;
+		h=cy2-cy1+1;
+		if (cy2<cy1) {
+			y=cy2;
+			h=cy1-cy2+1;
+		}
+		glScissor(x,hostScreen.getHeight()-(y+h-1),w,h);
 		glEnable(GL_SCISSOR_TEST);
 		clipped=1;
 	}
