@@ -338,7 +338,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			/* Projection matrix */
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluOrtho2D(0.0, bx_options.opengl.width, bx_options.opengl.height, 0.0);
+			gluOrtho2D(0.0, bx_options.opengl.width-1, bx_options.opengl.height-1, 0.0);
 
 			/* Texture matrix */
 			glMatrixMode(GL_TEXTURE);
@@ -1309,13 +1309,13 @@ void HostScreen::OpenGLUpdate(void)
 		glVertex2i( 0, 0);
 
 		glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), 0.0 );
-		glVertex2i( bx_options.opengl.width, 0);
+		glVertex2i( bx_options.opengl.width-1, 0);
 
 		glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
-		glVertex2i( bx_options.opengl.width, bx_options.opengl.height);
+		glVertex2i( bx_options.opengl.width-1, bx_options.opengl.height-1);
 
 		glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
-		glVertex2i( 0, bx_options.opengl.height);
+		glVertex2i( 0, bx_options.opengl.height-1);
 	glEnd();
 #endif
 }
@@ -1344,6 +1344,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.59  2005/05/12 11:29:25  pmandin
+ * Disable texturing with OpenGL NFVDI
+ *
  * Revision 1.58  2005/05/12 07:55:08  pmandin
  * Keep OpenGL related stuff in hostscreen and nfvdi classes
  *
