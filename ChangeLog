@@ -1,3 +1,7 @@
+2005/05/24 - Patrice
+- OpenGL nfvdi: fixed screen to memory blits.
+
+
 2005/05/22 - Johan & Patrice
 - OpenGL nfvdi: more blit fixes. Added line clipping.
 

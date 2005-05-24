@@ -497,10 +497,10 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, in
 			case 3:
 				switch(planes) {
 					case 16:
-						glReadPixels(sx,sy+y, w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, destAddress);
+						glReadPixels(sx,hostScreen.getHeight()-(sy+y), w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, destAddress);
 						break;
 					case 32:
-						glReadPixels(sx,sy+y, w,1, GL_BGRA, GL_UNSIGNED_INT, destAddress);
+						glReadPixels(sx,hostScreen.getHeight()-(sy+y), w,1, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, destAddress);
 						break;
 				}
 				break;
@@ -537,7 +537,6 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr /*vwk*/, memptr /*src*/, int32 sx,
 		return 1;
 	}
 
-	/* FIXME: does logical operations work in this case ? */
 	glEnable(GL_COLOR_LOGIC_OP);	
 	glLogicOp(logicOps[logOp & 15]);
 
