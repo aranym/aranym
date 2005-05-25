@@ -1,3 +1,7 @@
+2005/05/25 - Patrice
+- OpenGL nfvdi: fixed line clipping.
+
+
 2005/05/24 - Patrice
 - OpenGL nfvdi: fixed screen to memory blits.
 

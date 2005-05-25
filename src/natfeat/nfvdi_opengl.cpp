@@ -670,37 +670,20 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	uint32 y2_, uint32 pattern, uint32 fgColor, uint32 bgColor,
 	uint32 logOp, memptr clip)
 {
-	int clipped=0;
+	int cx1,cy1,cx2,cy2;
 
 	if (hostScreen.getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
 
-	if (clip) {
-		int cx1,cy1,cx2,cy2, x,y,w,h;
+	cx1=ReadInt32(clip);
+	cy1=ReadInt32(clip+4);
+	cx2=ReadInt32(clip+8);
+	cy2=ReadInt32(clip+12);
 
-		cx1=ReadInt32(clip);
-		cy1=ReadInt32(clip+4);
-		cx2=ReadInt32(clip+8);
-		cy2=ReadInt32(clip+12);
-
-		x=cx1;
-		w=cx2-cx1+1;
-		if (cx2<cx1) {
-			x=cx2;
-			w=cx1-cx2+1;
-		}
-		y=cy1;
-		h=cy2-cy1+1;
-		if (cy2<cy1) {
-			y=cy2;
-			h=cy1-cy2+1;
-		}
-		glScissor(x,hostScreen.getHeight()-(y+h-1),w,h);
-		glEnable(GL_SCISSOR_TEST);
-		clipped=1;
-	}
+	glScissor(cx1,hostScreen.getHeight()-(cy2+1),cx2-cx1,cy2-cy1);
+	glEnable(GL_SCISSOR_TEST);
 
 	memptr table = 0;
 	memptr index = 0;
@@ -747,9 +730,7 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	} else
 		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp);
 
-	if (clipped) {
-		glDisable(GL_SCISSOR_TEST);
-	}
+	glDisable(GL_SCISSOR_TEST);
 	return 1;
 }
 
