@@ -489,10 +489,10 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, in
 	for (y=0;y<h;y++) {
 		switch(logOp) {
 			case 0:
-				memset(destAddress, 0, destPitch);
+				memset(destAddress, 0, w*(planes>>3));
 				break;
 			case 15:
-				memset(destAddress, 0xff, destPitch);
+				memset(destAddress, 0xff, w*(planes>>3));
 				break;
 			case 3:
 				switch(planes) {
