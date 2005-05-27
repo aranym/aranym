@@ -1,3 +1,8 @@
+2005/05/27 - Patrice
+- nfvdi: revert back old mouse driver for software renderer. Will add OpenGL
+  support soon, till support for host mouse cursor is usable.
+
+
 2005/05/25 - Patrice
 - OpenGL nfvdi: fixed line clipping.
 

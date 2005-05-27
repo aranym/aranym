@@ -152,6 +152,60 @@ int32 OpenGLVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 }
 
 /**
+ * Draw the mouse
+ *
+ * Draw a coloured line between two points.
+ *
+ * c_mouse_draw(Workstation *wk, long x, long y, Mouse *mouse)
+ * mouse_draw
+ * In:  a1  Pointer to Workstation struct
+ *  d0/d1   x,y
+ *  d2  0 - move shown  1 - move hidden  2 - hide  3 - show  >3 - change shape (pointer to mouse struct)
+ *
+ * Unlike all the other functions, this does not receive a pointer to a VDI
+ * struct, but rather one to the screen's workstation struct. This is
+ * because the mouse handling concerns the screen as a whole (and the
+ * routine is also called from inside interrupt routines).
+ *
+ * The Mouse structure pointer doubles as a mode variable. If it is a small
+ * number, the mouse's state is supposed to change somehow, while a large
+ * number is a pointer to a new mouse shape.
+ *
+ * This is currently not a required function, but it probably should be.
+ * The fallback handling is not done in the usual way, and to make it
+ * at least somewhat usable, the mouse pointer is reduced to 4x4 pixels.
+ *
+ * typedef struct Fgbg_ {
+ *   short background;
+ *   short foreground;
+ * } Fgbg;
+ *
+ * typedef struct Mouse_ {
+ * 0  short type;
+ * 2   short hide;
+ *   struct position_ {
+ * 4   short x;
+ * 6   short y;
+ *   } position;
+ *   struct hotspot_ {
+ * 8   short x;
+ * 10   short y;
+ *   } hotspot;
+ * 12  Fgbg colour;
+ * 16  short mask[16];
+ * 48  short data[16];
+ * 80  void *extra_info;
+ * } Mouse;
+ **/
+ 
+int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
+	uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor, uint32 bgColor,
+	uint32 mouse_type)
+{
+	return VdiDriver::drawMouse(wk,x,y,mode,data,hot_x,hot_y,fgColor,bgColor,mouse_type);
+}
+
+/**
  * Expand a monochrome area to a coloured one.
  *
  * c_expand_area(Virtual *vwk, MFDB *src, long src_x, long src_y,
