@@ -11,10 +11,14 @@ typedef struct nf_audio_parameters
 
 class AUDIODriver : public NF_Base
 {
-public:
-	char *name() { return "AUDIO"; }
-	bool isSuperOnly() { return true; }
-	int32 dispatch(uint32 fncode);
+	public:
+		AUDIODriver();
+		~AUDIODriver();
+
+		char *name();
+		bool isSuperOnly();
+		void reset();
+		int32 dispatch(uint32 fncode);
 };
 
 #endif /* _AUDIO_H */

@@ -7,6 +7,33 @@
 
 static void audio_callback(void *userdata, Uint8 * stream, int len);
 
+AUDIODriver::AUDIODriver()
+{
+}
+
+AUDIODriver::~AUDIODriver()
+{
+	SDL_CloseAudio();
+}
+
+void AUDIODriver::reset()
+{
+	/* FIXME: calling SDL_CloseAudio() on reset (which should be done)
+	   hangs ARAnyM */
+
+	/*SDL_CloseAudio();*/
+}
+
+char *AUDIODriver::name()
+{
+	return "AUDIO";
+}
+
+bool AUDIODriver::isSuperOnly()
+{
+	return true;
+}
+
 int32 AUDIODriver::dispatch(uint32 fncode)
 {
 	static SDL_AudioSpec spec_desired;
