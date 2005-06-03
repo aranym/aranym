@@ -322,8 +322,6 @@ void QuitEmulator(void)
 
 	// Exit VM wrappers
 	vm_exit();
-
-	exit(0);
 }
 
 #ifdef ENABLE_MON

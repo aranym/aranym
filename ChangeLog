@@ -1,6 +1,8 @@
 2005/06/03 - Patrice
 - NF audio: close SDL audio device on exit. Closing it on Atari reset event
   hangs ARAnyM on my system, more investigation needed.
+- main.cpp, Unix/main_unix.cpp: SDL_Quit() was called twice: once in ExitAll(),
+  and once at exit().
 
 
 2005/05/27 - Patrice

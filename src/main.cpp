@@ -661,7 +661,7 @@ void ExitAll(void)
 	mon_exit();
 #endif
 
-	SDL_VideoQuit();
+	SDL_Quit();
 }
 
 void RestartAll()
