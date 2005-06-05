@@ -278,6 +278,8 @@ int32 SoftVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
  * 80  void *extra_info;
  * } Mouse;
  **/
+
+#ifndef USE_HOST_MOUSE_CURSOR
 extern "C" {
 	static uint16 reverse_bits(uint16 data)
 	{
@@ -319,11 +321,13 @@ void SoftVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width,
 	Mouse.storage.height = height;
 	Mouse.storage.width = width;
 }
+#endif
 
 int SoftVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor, uint32 bgColor,
 	uint32 mouse_type)
 {
+#ifndef USE_HOST_MOUSE_CURSOR
 	DUNUSED(wk);
 	DUNUSED(mouse_type);
 	D2(bug("fVDI: mouse mode: %x", mode));
@@ -406,6 +410,9 @@ int SoftVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	hostScreen.update((uint16)x, (uint16)y, w, h, true);
 
 	return 1;
+#else
+	return VdiDriver::drawMouse(wk,x,y,mode,data,hot_x,hot_y,fgColor,bgColor,mouse_type);
+#endif
 }
 
 /**
@@ -1456,6 +1463,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.7  2005/05/27 11:57:03  pmandin
+ * Revert back to software mouse driver for nfvdi
+ *
  * Revision 1.6  2005/05/16 09:50:37  pmandin
  * Enable OpenGL rendering when opening workstation
  *

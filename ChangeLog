@@ -1,3 +1,8 @@
+2005/06/05 - Patrice
+- nfvdi: added mouse cursor rendering for OpenGL driver. Host SDL cursor can be
+  enabled in nfvdi.h by uncommenting USE_HOST_MOUSE_CURSOR (experimental).
+
+
 2005/06/03 - Patrice
 - NF audio: close SDL audio device on exit. Closing it on Atari reset event
   hangs ARAnyM on my system, more investigation needed.

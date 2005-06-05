@@ -72,6 +72,7 @@ class SoftVdiDriver : public VdiDriver
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
 	private:
+#ifndef USE_HOST_MOUSE_CURSOR
 		struct _Mouse {
 			struct {
 				uint16 x, y;
@@ -95,6 +96,7 @@ class SoftVdiDriver : public VdiDriver
 
 		void restoreMouseBackground(void);
 		void saveMouseBackground(int16 x, int16 y, int16 width, int16 height);
+#endif
 
 		int drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 			uint32 fgColor, uint32 bgColor, int logOp, bool last_pixel,

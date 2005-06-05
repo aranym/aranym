@@ -23,6 +23,8 @@
 
 /*--- Includes ---*/
 
+#include <SDL_opengl.h>
+
 #include "parameters.h"
 
 /*--- Defines ---*/
@@ -72,9 +74,23 @@ class OpenGLVdiDriver : public VdiDriver
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
 	private:
-		uint32 palette_red[256];
-		uint32 palette_green[256];
-		uint32 palette_blue[256];
+#ifndef USE_HOST_MOUSE_CURSOR
+		struct _Mouse {
+			struct {
+				uint16 x, y;
+				uint32 background[16][16]; // The mouse background backup surface for FVDIDriver
+			} storage;
+			struct hotspot_ {
+				int16  x, y;
+			} hotspot;
+
+			GLuint tex_obj;
+			uint32 texture[16][16];
+		} Mouse;
+
+		void restoreMouseBackground(void);
+		void saveMouseBackground(int16 x, int16 y);
+#endif
 
 		int drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 			uint32 fgColor, uint32 bgColor, int logOp);

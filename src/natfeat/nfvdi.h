@@ -28,6 +28,9 @@
 
 /*--- Defines ---*/
 
+/* Uncomment this to use host SDL cursor */
+//#define USE_HOST_MOUSE_CURSOR 1
+
 // The Atari structures offsets
 #define MFDB_ADDRESS                0
 #define MFDB_WIDTH                  4
