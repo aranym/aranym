@@ -219,10 +219,8 @@ int32 OpenGLVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 #ifndef USE_HOST_MOUSE_CURSOR
 void OpenGLVdiDriver::restoreMouseBackground(void)
 {
-	for(uint16 i = 0; i < 16; i++) {
-		glRasterPos2i(Mouse.storage.x,Mouse.storage.y);
-		glDrawPixels(16,1, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[i][0]));
-	}
+	glRasterPos2i(Mouse.storage.x,Mouse.storage.y+16);
+	glDrawPixels(16,16, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[0][0]));
 }
 
 void OpenGLVdiDriver::saveMouseBackground(int16 x, int16 y)
@@ -230,13 +228,11 @@ void OpenGLVdiDriver::saveMouseBackground(int16 x, int16 y)
 	Mouse.storage.x = x;
 	Mouse.storage.y = y;
 
-	for(uint16 i = 0; i < 16; i++) {
-		glReadPixels(
-			Mouse.storage.x,hostScreen.getHeight()-(Mouse.storage.y+i+1),
-			16,1,
-			GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[i][0])
-		);
-	}
+	glReadPixels(
+		Mouse.storage.x,hostScreen.getHeight()-(Mouse.storage.y+16),
+		16,16,
+		GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[0][0])
+	);
 }
 #endif
 
