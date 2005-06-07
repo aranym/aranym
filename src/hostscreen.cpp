@@ -347,6 +347,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			/* Model view matrix */
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
+			glTranslatef(0.375, 0.375, 0.0);
 
 			/* Enable texturing */
 			glEnable(GL_TEXTURE_2D);
@@ -1344,6 +1345,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.61  2005/06/06 08:06:49  pmandin
+ * Revert back off by 1 stuff
+ *
  * Revision 1.60  2005/05/24 12:48:43  pmandin
  * OpenGL rendering off by 1 unit
  *
