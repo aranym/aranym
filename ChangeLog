@@ -1,3 +1,9 @@
+2005/06/07 - Johan
+- Report mouse events (input.cpp) to m68k fVDI driver via Natfeat "backdoor".
+- Support for forced mouse positioning.
+- Fix for OpenGL integer coordinates (hostscreen) according to MicroSoft tip.
+- A bunch of bug fixes for OpenGL drawing. Mostly off-by-one things.
+
 2005/06/05 - Patrice
 - nfvdi: added mouse cursor rendering for OpenGL driver. Host SDL cursor can be
   enabled in nfvdi.h by uncommenting USE_HOST_MOUSE_CURSOR (experimental).
