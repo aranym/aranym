@@ -28,9 +28,6 @@
 
 /*--- Defines ---*/
 
-/* Uncomment this to use host SDL cursor */
-//#define USE_HOST_MOUSE_CURSOR 1
-
 // The Atari structures offsets
 #define MFDB_ADDRESS                0
 #define MFDB_WIDTH                  4
@@ -132,6 +129,8 @@ class VdiDriver : public NF_Base
 	private:
 		SDL_Cursor *cursor;
 
+		int events, new_event, mouse_x, mouse_y, buttons, wheel, vblank;
+ 
 		/* Blit memory to memory */
 		int32 blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
