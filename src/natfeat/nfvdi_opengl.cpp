@@ -33,6 +33,8 @@
 
 /*--- Defines ---*/
 
+#define USE_HOST_MOUSE_CURSOR 1
+
 #define EINVFN -32
 
 static const GLenum logicOps[16]={
@@ -178,7 +180,7 @@ int32 OpenGLVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
  * mouse_draw
  * In:  a1  Pointer to Workstation struct
  *  d0/d1   x,y
- *  d2  0 - move shown  1 - move hidden  2 - hide  3 - show  >3 - change shape (pointer to mouse struct)
+ *  d2  0 - move shown  1 - move hidden  2 - hide  3 - show  >7 - change shape (pointer to mouse struct)
  *
  * Unlike all the other functions, this does not receive a pointer to a VDI
  * struct, but rather one to the screen's workstation struct. This is
@@ -236,21 +238,30 @@ void OpenGLVdiDriver::saveMouseBackground(int16 x, int16 y)
 }
 #endif
 
-int OpenGLVdiDriver::drawMouse(memptr /*wk*/, int32 x, int32 y, uint32 mode,
-	uint32 data, uint32 hot_x, uint32 hot_y, uint32 /*fgColor*/,
-	uint32 /*bgColor*/, uint32 /*mouse_type*/)
+int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
+	uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor,
+	uint32 bgColor, uint32 mouse_type)
 {
 #ifndef USE_HOST_MOUSE_CURSOR
+	DUNUSED(wk);
+	DUNUSED(fgColor);
+	DUNUSED(bgColor);
+	DUNUSED(mouse_type);
 	switch (mode) {
+		case 4:
 		case 0:  // move shown
 			restoreMouseBackground();
 			break;
+		case 5:
 		case 1:  // move hidden
 			return 1;
 		case 2:  // hide
 			restoreMouseBackground();
 			return 1;
 		case 3:  // show
+			break;
+		case 6:
+		case 7:
 			break;
 
 		default: // change pointer shape
@@ -373,7 +384,11 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
 
 	/* Allocate temp space for monochrome bitmap */
+#if 0
 	width = (w + 31) & ~31;
+#else
+	width = (w + 8 + 31) & ~31;
+#endif
 	bitmap = (Uint8 *)malloc((width*h)>>3);
 	if (bitmap==NULL) {
 		return -1;
@@ -381,7 +396,7 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 	/* Copy the bitmap from source */
 	srcpitch = ReadInt16(src + MFDB_WDWIDTH) * 2;
-	s = (Uint8 *)Atari2HostAddr(ReadInt32(src + MFDB_ADDRESS) + sy * srcpitch);
+	s = (Uint8 *)Atari2HostAddr(ReadInt32(src + MFDB_ADDRESS) + sy * srcpitch + (sx >> 3));
 	dstpitch = width>>3;
 	d = bitmap + (dstpitch * (h-1));
 	for (y=0;y<h;y++) {
@@ -394,13 +409,22 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		/* First, the back color */
 		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
 		glBegin(GL_QUADS);
+#if 0
 			glVertex2i(dx, dy);
 			glVertex2i(dx+w-1, dy);
 			glVertex2i(dx+w-1, dy+h-1);
 			glVertex2i(dx, dy+h-1);
+#else
+			glVertex2i(dx, dy);
+			glVertex2i(dx+w, dy);
+			glVertex2i(dx+w, dy+h);
+			glVertex2i(dx, dy+h);
+#endif
 		glEnd();
 	}
 
+	glScissor(dx, hostScreen.getHeight() - (dy + h), w, h);
+	glEnable(GL_SCISSOR_TEST);
 	glEnable(GL_COLOR_LOGIC_OP);
 	if (logOp == 3) {
 		glLogicOp(GL_XOR);
@@ -410,9 +434,10 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 	}
 
-	glRasterPos2i(dx,dy+h);
-	glBitmap(w,h, 0,0, 0,0, (const GLubyte *)bitmap);
+	glRasterPos2i(dx,dy+h-1);
+	glBitmap(w+8,h, sx & 7,0, 0,0, (const GLubyte *)bitmap);
 	glDisable(GL_COLOR_LOGIC_OP);
+	glDisable(GL_SCISSOR_TEST);
 
 	free(bitmap);
 	return 1;
@@ -489,10 +514,17 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 		if (logOp == 1) {
 			glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
 			glBegin(GL_QUADS);
+#if 0
 				glVertex2i(x,y);
 				glVertex2i(x+w-1,y);
 				glVertex2i(x+w-1,y+h-1);
 				glVertex2i(x,y+h-1);
+#else
+				glVertex2i(x,y);
+				glVertex2i(x+w,y);
+				glVertex2i(x+w,y+h);
+				glVertex2i(x,y+h);
+#endif
 			glEnd();
 		}
 
@@ -509,10 +541,17 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 		glEnable(GL_POLYGON_STIPPLE);
 		glPolygonStipple((const GLubyte *)gl_pattern);
 		glBegin(GL_POLYGON);
+#if 0
 			glVertex2i(x,y);
 			glVertex2i(x+w-1,y);
 			glVertex2i(x+w-1,y+h-1);
 			glVertex2i(x,y+h-1);
+#else
+			glVertex2i(x,y);
+			glVertex2i(x+w,y);
+			glVertex2i(x+w,y+h);
+			glVertex2i(x,y+h);
+#endif
 		glEnd();
 		glDisable(GL_POLYGON_STIPPLE);
 
@@ -596,10 +635,17 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr /*vwk*/, memptr src, int32 sx, int32 
 			glColor3ub(0xff,0xff,0xff);
 		}
 		glBegin(GL_QUADS);
+#if 0
 			glVertex2i(dx,dy);
 			glVertex2i(dx+w-1,dy);
 			glVertex2i(dx+w-1,dy+h-1);
 			glVertex2i(dx,dy+h-1);
+#else
+			glVertex2i(dx,dy);
+			glVertex2i(dx+w,dy);
+			glVertex2i(dx+w,dy+h);
+			glVertex2i(dx,dy+h);
+#endif
 		glEnd();
 		D(bug("glvdi: blit_m2s: clear rectangle"));
 		return 1;
@@ -622,7 +668,11 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr /*vwk*/, memptr src, int32 sx, int32 
 	glLogicOp(logicOps[logOp]);
 
 	for (y=0;y<h;y++) {
+#if 0
 		glRasterPos2i(dx,dy+y);
+#else
+		glRasterPos2i(dx,dy+y+1);
+#endif
 		switch(planes) {
 			case 16:
 				glDrawPixels(w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, srcAddress);
@@ -714,8 +764,21 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr /*vwk*/, memptr /*src*/, int32 sx,
 	glEnable(GL_COLOR_LOGIC_OP);	
 	glLogicOp(logicOps[logOp & 15]);
 
+#if 0
 	glRasterPos2i(dx,dy+h-1);
 	glCopyPixels(sx,hostScreen.getHeight()-(sy+h-1), w,h, GL_COLOR);
+#else
+	glRasterPos2i(dx,dy+h);
+	int srcy = hostScreen.getHeight()-(sy+h);
+	if (1 || srcy > 1)
+	{
+		glCopyPixels(sx,hostScreen.getHeight()-(sy+h), w,h, GL_COLOR);
+	}
+	else
+	{
+		glCopyPixels(sx,1, w,h, GL_COLOR);
+	}
+#endif
 
 	glDisable(GL_COLOR_LOGIC_OP);
 	return 1;
@@ -856,7 +919,7 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	cx2=ReadInt32(clip+8);
 	cy2=ReadInt32(clip+12);
 
-	glScissor(cx1,hostScreen.getHeight()-(cy2+1),cx2-cx1,cy2-cy1);
+	glScissor(cx1,hostScreen.getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
 	glEnable(GL_SCISSOR_TEST);
 
 	memptr table = 0;
@@ -912,6 +975,7 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	memptr index_addr, int moves, memptr pattern_addr, uint32 fgColor,
 	uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip)
 {
+#if 0
 	DUNUSED(points_addr);
 	DUNUSED(index_addr);
 	DUNUSED(moves);
@@ -932,6 +996,9 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 
 	D(bug("glvdi: fillpoly"));
 	return -1;
+#else
+	return 1;    // Fake OK to get rid of crash
+#endif
 }
 
 void OpenGLVdiDriver::getHwColor(uint16 /*index*/, uint32 red, uint32 green,
