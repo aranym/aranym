@@ -33,6 +33,8 @@
 
 /*--- Defines ---*/
 
+//#define USE_HOST_MOUSE_CURSOR 1
+
 #define EINVFN -32
 
 static const uint8 vdi_colours[] = { 0,2,3,6,4,7,5,8,9,10,11,14,12,15,13,255 };
@@ -241,7 +243,7 @@ int32 SoftVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
  * mouse_draw
  * In:  a1  Pointer to Workstation struct
  *  d0/d1   x,y
- *  d2  0 - move shown  1 - move hidden  2 - hide  3 - show  >3 - change shape (pointer to mouse struct)
+ *  d2  0 - move shown  1 - move hidden  2 - hide  3 - show  >7 - change shape (pointer to mouse struct)
  *
  * Unlike all the other functions, this does not receive a pointer to a VDI
  * struct, but rather one to the screen's workstation struct. This is
@@ -333,15 +335,20 @@ int SoftVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	D2(bug("fVDI: mouse mode: %x", mode));
 
 	switch (mode) {
+	case 4:
 	case 0:  // move shown
 		restoreMouseBackground();
 		break;
+	case 5:
 	case 1:  // move hidden
 		return 1;
 	case 2:  // hide
 		restoreMouseBackground();
 		return 1;
 	case 3:  // show
+		break;
+	case 6:
+	case 7:
 		break;
 
 	default: // change pointer shape
@@ -1463,6 +1470,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.8  2005/06/05 21:47:46  pmandin
+ * OpenGL mouse rendering
+ *
  * Revision 1.7  2005/05/27 11:57:03  pmandin
  * Revert back to software mouse driver for nfvdi
  *
