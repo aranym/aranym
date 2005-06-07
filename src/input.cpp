@@ -32,6 +32,10 @@
 #  include "sdlgui.h"
 #endif
 
+#include "natfeats.h"
+#include "nf_objs.h"
+#include "nfvdi.h"
+
 #define DEBUG 0
 #include "debug.h"
 
@@ -567,6 +571,20 @@ static void process_keyboard_event(SDL_Event &event)
 
 static void process_mouse_event(SDL_Event event)
 {
+	static NF_Base* fvdi = 0;
+	bool fvdi_events = false;
+	bool mouse_exit = false;
+
+	if (!fvdi) {
+		unsigned int i;
+		for(i = 0; i < nf_objs_cnt; i++) {
+			if (strcasecmp("fVDI", nf_objects[i]->name()) == 0) {
+			    fvdi = nf_objects[i];
+			    break;
+			}
+		}
+	}
+
 #ifdef SDL_GUI
 	if (hostScreen.isGUIopen()) {
 		int typ = event.type;
@@ -598,6 +616,9 @@ static void process_mouse_event(SDL_Event event)
 				grabTheMouse();
 		}
 		else if (event.button.button == 4) {	/* mouse wheel Up */
+			if (fvdi_events = fvdi->dispatch(0xc00100ff))
+				return;
+
 			if (bx_options.ikbd.wheel_eiffel) {
 				getIKBD()->SendKey(0xF6);
 				getIKBD()->SendKey(0x05);
@@ -614,6 +635,9 @@ static void process_mouse_event(SDL_Event event)
 			return;
 		}
 		else if (event.button.button == 5) {	/* mouse wheel Down */
+			if (fvdi_events = fvdi->dispatch(0xc0010001))
+				return;
+
 			if (bx_options.ikbd.wheel_eiffel) {
 				getIKBD()->SendKey(0xF6);
 				getIKBD()->SendKey(0x05);
@@ -636,11 +660,13 @@ static void process_mouse_event(SDL_Event event)
 		else if (event.button.button == SDL_BUTTON_LEFT)
 			but &= ~2;
 		else if (event.button.button == 4) {	/* mouse wheel Up */
-			getIKBD()->SendKey(0xc8);	// release keyUp
+			if (!bx_options.ikbd.wheel_eiffel)
+				getIKBD()->SendKey(0xc8);	// release keyUp
 			return;
 		}
 		else if (event.button.button == 5) {	/* mouse wheel Down */
-			getIKBD()->SendKey(0xd0);	// release keyDown
+			if (!bx_options.ikbd.wheel_eiffel)
+				getIKBD()->SendKey(0xd0);	// release keyDown
 			return;
 		}
 	}
@@ -648,6 +674,22 @@ static void process_mouse_event(SDL_Event event)
 		SDL_MouseMotionEvent eve = event.motion;
 		xrel = eve.xrel;
 		yrel = eve.yrel;
+
+		fvdi_events = fvdi->dispatch(0x80008000 | (eve.x << 16) | (eve.y));
+		// Can't use the method below to get out of the window
+		// if the events are reported directly, since it only
+		// works with hidden mouse pointer.
+		// So, define top left corner as exit point.
+		mouse_exit = (eve.x == 0) && (eve.y == 0);
+	}
+
+	if (lastbut != but)
+		fvdi_events = fvdi->dispatch(0xb0000000 | but);
+
+	if (fvdi_events) {
+		if (!bx_options.video.fullscreen && mouse_exit)
+			mouseOut = true;
+		return;
 	}
 
 	// send the mouse data packet
