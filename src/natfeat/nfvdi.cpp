@@ -25,6 +25,8 @@
 #include "../../atari/fvdi/drivers/aranym/fvdidrv_nfapi.h"
 #include "hostscreen.h"
 
+#include "cpu_emulation.h"
+
 #define DEBUG 0
 #include "debug.h"
 
@@ -56,6 +58,68 @@ int32 VdiDriver::dispatch(uint32 fncode)
 
 	D(bug("nfvdi: dispatch(%u)", fncode));
 
+	if (fncode & 0x80000000) {
+	    if (!events)
+		return 0;
+
+	    fncode &= 0x7fffffff;
+	    if (fncode & 0x8000) {
+		mouse_x = fncode >> 16;
+		mouse_y = fncode & 0x7fff;
+		new_event |= 1;
+	    } else {
+		switch (fncode >> 28) {
+		case 3:
+		    buttons = ((fncode & 1) << 1) | ((fncode & 2) >> 1);
+		    new_event |= 2;
+		    break;
+	        case 4:
+		    wheel += (signed char)(fncode & 0xff);
+		    new_event |= 4;
+		    break;
+	        case 5:
+		    vblank++;
+		    new_event |= 8;
+		    break;
+		}
+	    }
+	    TriggerInt3();
+	    
+	    return 1;
+	}
+
+	if (fncode == FVDI_EVENT) {
+	    memptr array = getParameter(0);
+	    if (!array) {
+		new_event = buttons = wheel = vblank = 0;
+		events = 1;
+	    } else {
+		int n = 0;
+		if (new_event & 1) {
+		    WriteInt32(array + n++ * 4, 2);
+		    WriteInt32(array + n++ * 4,
+		               (mouse_x << 16) | (mouse_y & 0xffff));
+		}
+		if (new_event & 2) {
+		    WriteInt32(array + n++ * 4, 3);
+		    WriteInt32(array + n++ * 4, buttons);
+		}
+		if (new_event & 4) {
+		    WriteInt32(array + n++ * 4, 4);
+		    WriteInt32(array + n++ * 4, 0x00000000 | (wheel & 0xffff));
+		}
+		if (new_event & 8) {
+		    WriteInt32(array + n++ * 4, 5);
+		    WriteInt32(array + n++ * 4, vblank);
+		}
+		if (n < 8)
+		    WriteInt32(array + n * 4, 0);
+		new_event = wheel = vblank = 0;
+	    }
+	    return 1;
+	}
+
+
 	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
 	hostScreen.lock();
 
@@ -71,10 +135,10 @@ int32 VdiDriver::dispatch(uint32 fncode)
 			break;
 		case FVDI_MOUSE:
 			{
-				// mode (0 - move, 1 - hide, 2 - show)
+				// mode (0/1 - move, 2 - hide, 3 - show)
 				// These are only valid when not mode
 				uint32 mask = getParameter(3);
-				if ( mask > 3 ) {
+				if ( mask > 7 ) {
 					ret = drawMouse((memptr)getParameter(0),	// wk
 						getParameter(1), getParameter(2),	// x, y
 						mask,                                // mask*
@@ -192,6 +256,7 @@ int32 VdiDriver::dispatch(uint32 fncode)
 VdiDriver::VdiDriver()
 {
 	cursor = NULL;
+	events = 0;
 }
 
 VdiDriver::~VdiDriver()
@@ -480,8 +545,6 @@ int32 VdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	uint32 mouse_type)
 {
 	DUNUSED(wk);
-	DUNUSED(x);
-	DUNUSED(y);
 	DUNUSED(fgColor);
 	DUNUSED(bgColor);
 	DUNUSED(mouse_type);
@@ -491,10 +554,19 @@ int32 VdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 		case 1:
 			break;
 		case 2:
+#if 0
 			SDL_ShowCursor(SDL_DISABLE);
+#endif
 			break;
 		case 3:
 			SDL_ShowCursor(SDL_ENABLE);
+			break;
+		case 4:
+		case 5:
+			SDL_WarpMouse(x, y);
+			break;
+		case 6:
+		case 7:
 			break;
 		default:
 			{
