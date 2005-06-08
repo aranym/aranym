@@ -1,6 +1,8 @@
 2005/06/08 - Patrice
 - hostscreen: correct endianness of GL_RGBA shadow surface for videl OpenGL
-  rendering. Updating the texture with dirty rectangles list.
+  rendering. Updating the texture with dirty rectangles list. Added
+  getComponent() function to read the real screen organization, waiting for
+  Johan to sync fvdi driver.
 
 
 2005/06/07 - Johan

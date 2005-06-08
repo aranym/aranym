@@ -18,6 +18,8 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <SDL_endian.h>
+
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "parameters.h"
@@ -240,6 +242,10 @@ int32 VdiDriver::dispatch(uint32 fncode)
 			break;
 		case FVDI_GETBPP:
 			ret = getBpp();
+			break;
+		case FVDI_GETCOMPONENT:
+			getComponent(getParameter(0),getParameter(1),getParameter(2),getParameter(3));
+			ret = 0;
 			break;
 		default:
 			D(bug("nfvdi: unimplemented function #%d", fncode));
@@ -1102,3 +1108,12 @@ int32 VdiDriver::getFbAddr(void)
 	return 0;
 }
 
+void VdiDriver::getComponent(int component, memptr mask, memptr shift, memptr loss)
+{
+	Uint32 host_mask, host_shift, host_loss;
+	
+	hostScreen.getMask(component, &host_mask, &host_shift, &host_loss);
+	*(Atari2HostAddr(mask))=SDL_SwapBE32(host_mask);
+	*(Atari2HostAddr(shift))=SDL_SwapBE32(host_shift);
+	*(Atari2HostAddr(loss))=SDL_SwapBE32(host_loss);
+}

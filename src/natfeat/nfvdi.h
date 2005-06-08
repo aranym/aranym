@@ -83,6 +83,7 @@ class VdiDriver : public NF_Base
 		int32 getBpp(void);
 		int32 blitArea(memptr vwk, memptr src, int32 sx, int32 sy, memptr dest,
 			int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+		void getComponent(int component, memptr mask, memptr shift, memptr loss);
 
 		virtual int32 openWorkstation(void);
 		virtual int32 closeWorkstation(void);

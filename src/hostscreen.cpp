@@ -1409,8 +1409,35 @@ void HostScreen::DisableOpenGLVdi(void)
 #endif
 }
 
+void HostScreen::getComponent(int component, Uint32 *mask, Uint32 *shift, Uint32 *loss)
+{
+	SDL_PixelFormat *format;
+
+	format = mainSurface->format;
+	switch(component) {
+		case 0:		/* Component R */
+			*mask = format->Rmask;
+			*shift = format->Rshift;
+			*loss = format->Rloss;
+			break;
+		case 1:		/* Component G */
+			*mask = format->Gmask;
+			*shift = format->Gshift;
+			*loss = format->Gloss;
+			break;
+		case 2:		/* Component B */
+			*mask = format->Bmask;
+			*shift = format->Bshift;
+			*loss = format->Bloss;
+			break;
+	}
+}
+
 /*
  * $Log$
+ * Revision 1.64  2005/06/08 18:14:59  pmandin
+ * Update texture using a dirty rectangles list
+ *
  * Revision 1.63  2005/06/08 15:50:44  pmandin
  * Correct endianness of GL_RGBA shadow surface
  *

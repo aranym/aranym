@@ -149,6 +149,7 @@ class HostScreen {
 	uint32 getWidth();
 	uint32 getHeight();
 	uintptr getVideoramAddress();
+	void getComponent(int component, Uint32 *mask, Uint32 *shift, Uint32 *loss);
 
 	void   setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue );
 	uint32 getPaletteColor( uint8 index );
@@ -418,6 +419,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.58  2005/06/08 18:14:59  pmandin
+ * Update texture using a dirty rectangles list
+ *
  * Revision 1.57  2005/05/12 07:55:08  pmandin
  * Keep OpenGL related stuff in hostscreen and nfvdi classes
  *
