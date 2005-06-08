@@ -81,6 +81,8 @@ class HostScreen {
 	unsigned int SdlGlTextureHeight;
 	uint8 *SdlGlTexture;
 	SDL_bool OpenGLVdi;			/* Using NF OpenGL VDI renderer ? */
+	SDL_bool *dirty_rects;		/* Dirty rectangles list */
+	int dirty_w,dirty_h;
 
   public:
 	SDL_mutex   *screenLock;
@@ -416,6 +418,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.57  2005/05/12 07:55:08  pmandin
+ * Keep OpenGL related stuff in hostscreen and nfvdi classes
+ *
  * Revision 1.56  2005/05/11 20:19:26  pmandin
  * Add NF vdi OpenGL renderer
  *

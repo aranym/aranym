@@ -83,6 +83,8 @@ HostScreen::HostScreen(void) {
 	// OpenGL stuff
 	SdlGlSurface=NULL;
 	SdlGlTexture=NULL;
+	dirty_rects=NULL;
+	dirty_w=dirty_h=0;
 #endif /* ENABLE_OPENGL */
 
 	DisableOpenGLVdi();
@@ -99,6 +101,11 @@ HostScreen::~HostScreen(void) {
 	// OpenGL stuff
 #ifdef ENABLE_OPENGL
 	if (bx_options.opengl.enabled) {
+		if (dirty_rects) {
+			delete dirty_rects;
+			dirty_rects=NULL;
+		}
+
 		if (mainSurface) {
 			SDL_FreeSurface(mainSurface);
 			mainSurface=NULL;
@@ -426,6 +433,15 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			bx_options.autozoom.integercoefs = false;
 			D(bug("gl: autozoom disabled"));
 		}
+
+		/* Create dirty rectangles list */
+		if (dirty_rects)
+			delete dirty_rects;
+		
+		dirty_w=((width|15)+1)>>4;
+		dirty_h=((height|15)+1)>>4;
+		dirty_rects=new SDL_bool[dirty_w*dirty_h];
+		memset(dirty_rects,SDL_FALSE,sizeof(SDL_bool)*dirty_w*dirty_h);
 	}
 	else
 #endif /* ENABLE_OPENGL */
@@ -1289,6 +1305,28 @@ void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced )
 	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
 	// SDL_UpdateRect(surf, x, y, w, h);
 	SDL_UpdateRect(mainSurface, x, y, w, h);
+
+#ifdef ENABLE_OPENGL
+	if (!OpenGLVdi && bx_options.opengl.enabled && dirty_rects) {
+		/* Mark dirty rectangles */
+		int x1,y1,x2,y2, i,j;
+		
+		x1=x>>4;
+		y1=y>>4;
+		x2=x+w;
+		if (x2&15) x2=(x2|15)+1;
+		x2>>=4;
+		y2=y+h;
+		if (y2&15) y2=(y2|15)+1;
+		y2>>=4;
+
+		for (j=y1;j<y2;j++) {
+			for (i=x1;i<x2;i++) {
+				dirty_rects[i+(j*dirty_w)]=SDL_TRUE;
+			}
+		}
+	}
+#endif
 }
 
 void HostScreen::update( bool forced )
@@ -1309,7 +1347,28 @@ void HostScreen::OpenGLUpdate(void)
 	}
 
 	/* Update the texture */
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, SdlGlTextureWidth, SdlGlTextureHeight, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
+	{
+		int x,y;
+
+		for (y=0;y<dirty_h;y++) {
+			SDL_bool update_line=SDL_FALSE;
+			for (x=0;x<dirty_w;x++) {
+				if (dirty_rects[y*dirty_w+x]==SDL_TRUE) {
+					update_line=SDL_TRUE;
+					break;
+				}
+			}
+			if (update_line) {
+				glTexSubImage2D(GL_TEXTURE_2D, 0,
+					 0, y<<4,
+					 SdlGlTextureWidth, 16 /*SdlGlTextureHeight*/,
+					 GL_RGBA, GL_UNSIGNED_BYTE,
+					 SdlGlTexture + (y<<4)*SdlGlTextureWidth*4
+				);
+			}
+		}
+	}
+	memset(dirty_rects,SDL_FALSE,sizeof(SDL_bool)*dirty_w*dirty_h);
 
 	/* Render the textured quad */
 	glBegin(GL_QUADS);
@@ -1352,6 +1411,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.63  2005/06/08 15:50:44  pmandin
+ * Correct endianness of GL_RGBA shadow surface
+ *
  * Revision 1.62  2005/06/07 21:30:36  johan
  * fix for integer coordinates according to MicroSoft tip
  *
