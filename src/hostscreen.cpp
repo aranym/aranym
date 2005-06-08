@@ -389,7 +389,14 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 
 		D(bug("gl: texture will be %dx%d texture",SdlGlTextureWidth,SdlGlTextureHeight));
 
-		mainSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, SdlGlTextureWidth,SdlGlTextureHeight,bpp, 255<<16,255<<8,255,255<<24);
+		mainSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+			SdlGlTextureWidth,SdlGlTextureHeight,bpp,
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+			255,255<<8,255<<16,255<<24	/* GL_RGBA little endian */
+#else
+			255<<24,255<<16,255<<8,255	/* GL_RGBA big endian */
+#endif
+		);
 		SdlGlTexture = (uint8 *) (mainSurface->pixels);
 
 		glGenTextures(1, &SdlGlTexObj);
@@ -402,7 +409,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering); // scale when image bigger than texture
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering); // scale when image smaller than texture
 
-		glTexImage2D(GL_TEXTURE_2D, 0, 4, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
 
 		D(bug("gl: texture created"));
 
@@ -1345,6 +1352,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.62  2005/06/07 21:30:36  johan
+ * fix for integer coordinates according to MicroSoft tip
+ *
  * Revision 1.61  2005/06/06 08:06:49  pmandin
  * Revert back off by 1 stuff
  *
