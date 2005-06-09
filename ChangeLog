@@ -1,3 +1,7 @@
+2005/06/09 - Patrice
+- nfvdi: added preliminary OpenGL fillPoly() rendering.
+
+
 2005/06/08 - Patrice
 - hostscreen: correct endianness of GL_RGBA shadow surface for videl OpenGL
   rendering. Updating the texture with dirty rectangles list. Added

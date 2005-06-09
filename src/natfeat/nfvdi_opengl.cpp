@@ -972,33 +972,77 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 }
 
 int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
-	memptr index_addr, int moves, memptr pattern_addr, uint32 fgColor,
-	uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip)
+	memptr /*index_addr*/, int moves, memptr pattern_addr, uint32 fgColor,
+	uint32 bgColor, uint32 logOp, uint32 /*interior_style*/, memptr clip)
 {
-#if 0
-	DUNUSED(points_addr);
-	DUNUSED(index_addr);
-	DUNUSED(moves);
-	DUNUSED(fgColor);
-	DUNUSED(bgColor);
-	DUNUSED(logOp);
-	DUNUSED(interior_style);
-	DUNUSED(clip);
+	int i,cx1,cy1,cx2,cy2;
+	uint32 gl_pattern[32];
 
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
 	if (!n)
 		return 1;
 
+	if (moves) {
+		D(bug("nfvdi:opengl: fillPoly():moves table unsupported"));
+		return 1;
+	}
+
 	uint16 pattern[16];
-	for(int i = 0; i < 16; ++i)
+	for(i=0;i<16;i++)
 		pattern[i] = ReadInt16(pattern_addr + i * 2);
 
+	memset(gl_pattern,0, sizeof(gl_pattern));
+	for (i=0; i<32; i++) {
+		gl_pattern[i] = (pattern[i&15]<<16)|pattern[i&15];
+	}
+
+	cx1=ReadInt32(clip);
+	cy1=ReadInt32(clip+4);
+	cx2=ReadInt32(clip+8);
+	cy2=ReadInt32(clip+12);
+
+	glScissor(cx1,hostScreen.getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
+	glEnable(GL_SCISSOR_TEST);
+
+	if (logOp == 1) {
+		/* First, the back color */
+		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		glBegin(GL_POLYGON);
+		for (i=0;i<n;i++) {
+			glVertex2i(
+				(int16)ReadInt16(points_addr + i * 4),
+				(int16)ReadInt16(points_addr + i * 4 + 2)
+			);
+		}
+		glEnd();
+	}
+
+	glEnable(GL_COLOR_LOGIC_OP);
+	if (logOp == 3) {
+		glLogicOp(GL_XOR);
+		glColor3ub(0xff,0xff,0xff);
+	} else {
+		glLogicOp(GL_COPY);
+		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+	}
+
+	glEnable(GL_POLYGON_STIPPLE);
+	glPolygonStipple((const GLubyte *)gl_pattern);
+
+	glBegin(GL_POLYGON);
+	for (i=0;i<n;i++) {
+		glVertex2i(
+			(int16)ReadInt16(points_addr + i * 4),
+			(int16)ReadInt16(points_addr + i * 4 + 2)
+		);
+	}
+	glEnd();
+
+	glDisable(GL_POLYGON_STIPPLE);
+	glDisable(GL_SCISSOR_TEST);
 	D(bug("glvdi: fillpoly"));
-	return -1;
-#else
-	return 1;    // Fake OK to get rid of crash
-#endif
+	return 1;
 }
 
 void OpenGLVdiDriver::getHwColor(uint16 /*index*/, uint32 red, uint32 green,
