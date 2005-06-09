@@ -1113,7 +1113,8 @@ void VdiDriver::getComponent(int component, memptr mask, memptr shift, memptr lo
 	Uint32 host_mask, host_shift, host_loss;
 	
 	hostScreen.getComponent(component, &host_mask, &host_shift, &host_loss);
-	*(Atari2HostAddr(mask))=SDL_SwapBE32(host_mask);
-	*(Atari2HostAddr(shift))=SDL_SwapBE32(host_shift);
-	*(Atari2HostAddr(loss))=SDL_SwapBE32(host_loss);
+
+	WriteInt32(mask,host_mask);
+	WriteInt32(shift,host_shift);
+	WriteInt32(loss,host_loss);
 }
