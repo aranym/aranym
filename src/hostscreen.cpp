@@ -1409,7 +1409,7 @@ void HostScreen::DisableOpenGLVdi(void)
 #endif
 }
 
-void HostScreen::getComponent(int component, Uint32 *mask, Uint32 *shift, Uint32 *loss)
+int HostScreen::getComponent(int component, Uint32 *mask, Uint32 *shift, Uint32 *loss)
 {
 	SDL_PixelFormat *format;
 
@@ -1431,10 +1431,15 @@ void HostScreen::getComponent(int component, Uint32 *mask, Uint32 *shift, Uint32
 			*loss = format->Bloss;
 			break;
 	}
+
+	return format->BitsPerPixel;
 }
 
 /*
  * $Log$
+ * Revision 1.65  2005/06/08 19:33:02  pmandin
+ * Add getComponent() function
+ *
  * Revision 1.64  2005/06/08 18:14:59  pmandin
  * Update texture using a dirty rectangles list
  *

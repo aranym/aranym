@@ -1,5 +1,6 @@
 2005/06/09 - Patrice
-- nfvdi: added preliminary OpenGL fillPoly() rendering.
+- nfvdi: added preliminary OpenGL fillPoly() rendering. Host screen organization
+  fixed on the ARAnyM side.
 
 
 2005/06/08 - Patrice

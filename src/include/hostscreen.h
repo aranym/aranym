@@ -149,7 +149,7 @@ class HostScreen {
 	uint32 getWidth();
 	uint32 getHeight();
 	uintptr getVideoramAddress();
-	void getComponent(int component, Uint32 *mask, Uint32 *shift, Uint32 *loss);
+	int getComponent(int component, Uint32 *mask, Uint32 *shift, Uint32 *loss);
 
 	void   setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue );
 	uint32 getPaletteColor( uint8 index );
@@ -419,6 +419,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.59  2005/06/08 19:33:02  pmandin
+ * Add getComponent() function
+ *
  * Revision 1.58  2005/06/08 18:14:59  pmandin
  * Update texture using a dirty rectangles list
  *

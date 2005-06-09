@@ -1111,8 +1111,58 @@ int32 VdiDriver::getFbAddr(void)
 void VdiDriver::getComponent(int component, memptr mask, memptr shift, memptr loss)
 {
 	Uint32 host_mask, host_shift, host_loss;
+	int bpp;
 	
-	hostScreen.getComponent(component, &host_mask, &host_shift, &host_loss);
+	bpp = hostScreen.getComponent(component, &host_mask, &host_shift, &host_loss);
+
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	/* Convert from host to Atari format */
+	switch(bpp) {
+		case 15:
+			/* xrrrrrgg gggbbbbb -> gggbbbbb xrrrrrgg */
+			switch(host_shift) {
+				case 0:	/* B */
+					host_shift=8;
+					host_loss=3;
+					break;
+				case 5:	/* G */
+					host_shift=0;
+					host_loss=6;
+					break;
+				case 10:	/* R */
+					host_shift=2;
+					host_loss=3;
+					break;
+			}
+			break;
+		case 16:
+			/* rrrrrggg gggbbbbb -> gggbbbbb rrrrrggg */
+			switch(host_shift) {
+				case 0:	/* B */
+					host_shift=8;
+					host_loss=3;
+					break;
+				case 5:	/* G */
+					host_shift=0;
+					host_loss=5;
+					break;
+				case 10:	/* R */
+					host_shift=3;
+					host_loss=3;
+					break;
+			}
+			break;
+		case 24:
+			/* 16->0, 8->8, 0->16 */
+			host_shift=16-host_shift;
+			break;
+		case 32:
+			/* 24->0, 16->8, 8->16, 0->24 */
+			host_shift=24-host_shift;
+			break;
+	}
+	host_mask = (0xff>>host_loss)<<host_shift;
+#endif
 
 	WriteInt32(mask,host_mask);
 	WriteInt32(shift,host_shift);
