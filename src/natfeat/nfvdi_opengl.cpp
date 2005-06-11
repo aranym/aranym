@@ -114,18 +114,17 @@ int32 OpenGLVdiDriver::closeWorkstation(void)
 
 int32 OpenGLVdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 {
-	int32 color = 0;
+	Uint8 rgba_color[4];
 
 	if (vwk & 1)
-		return color;
+		return 0;
 
 	if (src)
 		return VdiDriver::getPixel(vwk, src, x, y);
 
-	glReadPixels(x,y,1,1, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &color);
-	color >>= 8;
+	glReadPixels(x,y,1,1, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, rgba_color);
 //	D(bug("glvdi: getpixel"));
-	return color;
+	return (rgba_color[0]<<16)|(rgba_color[1]<<8)|rgba_color[2];
 }
 
 /**
