@@ -399,9 +399,9 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		mainSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 			SdlGlTextureWidth,SdlGlTextureHeight,bpp,
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-			255,255<<8,255<<16,255<<24	/* GL_RGBA little endian */
+			255<<16,255<<8,255,255<<24	/* GL_BGRA little endian */
 #else
-			255<<24,255<<16,255<<8,255	/* GL_RGBA big endian */
+			255<<8,255<<16,255<<24,255	/* GL_BGRA big endian */
 #endif
 		);
 		SdlGlTexture = (uint8 *) (mainSurface->pixels);
@@ -416,7 +416,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering); // scale when image bigger than texture
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering); // scale when image smaller than texture
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, SdlGlTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, SdlGlTexture);
 
 		D(bug("gl: texture created"));
 
@@ -1361,8 +1361,8 @@ void HostScreen::OpenGLUpdate(void)
 			if (update_line) {
 				glTexSubImage2D(GL_TEXTURE_2D, 0,
 					 0, y<<4,
-					 SdlGlTextureWidth, 16 /*SdlGlTextureHeight*/,
-					 GL_RGBA, GL_UNSIGNED_BYTE,
+					 SdlGlTextureWidth, 16,
+					 GL_BGRA, GL_UNSIGNED_BYTE,
 					 SdlGlTexture + (y<<4)*SdlGlTextureWidth*4
 				);
 			}
@@ -1409,34 +1409,11 @@ void HostScreen::DisableOpenGLVdi(void)
 #endif
 }
 
-int HostScreen::getComponent(int component, Uint32 *mask, Uint32 *shift, Uint32 *loss)
-{
-	SDL_PixelFormat *format;
-
-	format = mainSurface->format;
-	switch(component) {
-		case 0:		/* Component R */
-			*mask = format->Rmask;
-			*shift = format->Rshift;
-			*loss = format->Rloss;
-			break;
-		case 1:		/* Component G */
-			*mask = format->Gmask;
-			*shift = format->Gshift;
-			*loss = format->Gloss;
-			break;
-		case 2:		/* Component B */
-			*mask = format->Bmask;
-			*shift = format->Bshift;
-			*loss = format->Bloss;
-			break;
-	}
-
-	return format->BitsPerPixel;
-}
-
 /*
  * $Log$
+ * Revision 1.66  2005/06/09 19:50:16  pmandin
+ * Fixing getComponent function
+ *
  * Revision 1.65  2005/06/08 19:33:02  pmandin
  * Add getComponent() function
  *
