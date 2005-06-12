@@ -728,6 +728,12 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, in
 				}
 				break;
 		}
+		if (planes==32) {
+			/* Clear alpha value */
+			for(int n = 0; n < destPitch / 4; n += 4) {
+				*(long *)(destAddress + n) &= 0xffffff00UL;
+			}
+		}
 		destAddress += destPitch;
 	}
 
