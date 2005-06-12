@@ -133,9 +133,6 @@ typedef struct {
 // OpenGL options
 typedef struct {
   bool enabled;
-  uint32 width;
-  uint32 height;
-  uint32 bpp;
   bool filtered;
 } bx_opengl_options_t;
 

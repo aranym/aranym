@@ -29,6 +29,7 @@
 #include "hostscreen.h"
 #include "parameters.h"
 #include "gui-sdl/sdlgui.h"
+#include "main.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -337,15 +338,21 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		if (SdlGlSurface==NULL) {
 			sdl_videoparams |= SDL_OPENGL;
 
-/*			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, bx_options.opengl.bpp);*/
-			SdlGlSurface = SDL_SetVideoMode(bx_options.opengl.width, bx_options.opengl.height, 0 /*bx_options.opengl.bpp*/, sdl_videoparams);
+			SdlGlSurface = SDL_SetVideoMode(width, height, 32, sdl_videoparams);
+			if (!SdlGlSurface) {
+				fprintf(stderr,"Can not setup %dx%dx%d OpenGL video mode\n",width,height,32);
+				QuitEmulator();
+			}
+			this->width = width = SdlGlSurface->w;
+			this->height = height = SdlGlSurface->h;
+			this->bpp = bpp = SdlGlSurface->format->BitsPerPixel;
 
-			glViewport(0, 0, bx_options.opengl.width, bx_options.opengl.height);
+			glViewport(0, 0, width, height);
 
 			/* Projection matrix */
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			gluOrtho2D(0.0, bx_options.opengl.width, bx_options.opengl.height, 0.0);
+			gluOrtho2D(0.0, width, height, 0.0);
 
 			/* Texture matrix */
 			glMatrixMode(GL_TEXTURE);
@@ -368,8 +375,6 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		if (mainSurface) {
 			SDL_FreeSurface(mainSurface);
 		}
-		
-		this->bpp = bpp = 32;
 
 		/* Create a texture */
 		if (SdlGlTexture) {
@@ -404,6 +409,10 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			255<<8,255<<16,255<<24,255	/* GL_BGRA big endian */
 #endif
 		);
+		if (!mainSurface) {
+			fprintf(stderr,"Can not create %dx%dx%d texture\n",SdlGlTextureWidth,SdlGlTextureHeight,bpp);
+			QuitEmulator();
+		}
 		SdlGlTexture = (uint8 *) (mainSurface->pixels);
 
 		glGenTextures(1, &SdlGlTexObj);
@@ -1376,13 +1385,13 @@ void HostScreen::OpenGLUpdate(void)
 		glVertex2i( 0, 0);
 
 		glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), 0.0 );
-		glVertex2i( bx_options.opengl.width, 0);
+		glVertex2i( width, 0);
 
 		glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
-		glVertex2i( bx_options.opengl.width, bx_options.opengl.height);
+		glVertex2i( width, height);
 
 		glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
-		glVertex2i( 0, bx_options.opengl.height);
+		glVertex2i( 0, height);
 	glEnd();
 #endif
 }
@@ -1411,6 +1420,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.67  2005/06/11 20:13:14  pmandin
+ * Remove getComponent stuff
+ *
  * Revision 1.66  2005/06/09 19:50:16  pmandin
  * Fixing getComponent function
  *

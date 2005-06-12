@@ -297,9 +297,6 @@ void presave_video()
 /*************************************************************************/
 struct Config_Tag opengl_conf[]={
 	{ "Enabled", Bool_Tag, &bx_options.opengl.enabled, 0, 0},
-	{ "Width", Int_Tag, &bx_options.opengl.width, 0, 0},
-	{ "Height", Int_Tag, &bx_options.opengl.height, 0, 0},
-	{ "Bpp", Int_Tag, &bx_options.opengl.bpp, 0, 0},
 	{ "Filtered", Bool_Tag, &bx_options.opengl.filtered, 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
@@ -307,9 +304,6 @@ struct Config_Tag opengl_conf[]={
 void preset_opengl()
 {
   bx_options.opengl.enabled = false;
-  bx_options.opengl.width = 640;
-  bx_options.opengl.height = 480;
-  bx_options.opengl.bpp = 16;
   bx_options.opengl.filtered = false;
 }
 

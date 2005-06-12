@@ -1,3 +1,8 @@
+2005/06/12 - Patrice
+- hostscreen,parameters: removed width and height parameters for OpenGL, using
+  current ones or autozoom ones'.
+
+
 2005/06/11 - Patrice
 - nfvdi,hostscreen: remove getComponent() stuff, useless with GL_BGRA format.
 

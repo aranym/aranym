@@ -137,15 +137,6 @@ G =
 #  (ARAnyM must be compiled with OpenGL support)
 Enabled = No
 
-# Width of the host OpenGL screen
-Width = 640
-
-# Height of the host OpenGL screen
-Height = 480
-
-# Bpp of the host OpenGL screen
-Bpp = 16
-
 # Use linear filtering on the atari screen
 Filtered = No
 
@@ -238,6 +229,6 @@ CDROM = sdl
 
 # VDI renderer to use
 #  soft -> Standard software renderer
-#  opengl -> Hardware accelerated renderer (non working atm)
+#  opengl -> Hardware accelerated renderer
 Vdi = soft
 #  Vdi = opengl
