@@ -334,42 +334,39 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		GLint MaxTextureSize;
 		int filtering;		
 
-		/* Set video mode if not already done */
-		if (SdlGlSurface==NULL) {
-			sdl_videoparams |= SDL_OPENGL;
+		sdl_videoparams |= SDL_OPENGL;
 
-			SdlGlSurface = SDL_SetVideoMode(width, height, 32, sdl_videoparams);
-			if (!SdlGlSurface) {
-				fprintf(stderr,"Can not setup %dx%dx%d OpenGL video mode\n",width,height,32);
-				QuitEmulator();
-			}
-			this->width = width = SdlGlSurface->w;
-			this->height = height = SdlGlSurface->h;
-			this->bpp = bpp = SdlGlSurface->format->BitsPerPixel;
-
-			glViewport(0, 0, width, height);
-
-			/* Projection matrix */
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluOrtho2D(0.0, width, height, 0.0);
-
-			/* Texture matrix */
-			glMatrixMode(GL_TEXTURE);
-			glLoadIdentity();
-
-			/* Model view matrix */
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-			glTranslatef(0.375, 0.375, 0.0);
-
-			/* Enable texturing */
-			glEnable(GL_TEXTURE_2D);
-			{
-				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-			}
-			D(bug("gl: video mode set"));
+		SdlGlSurface = SDL_SetVideoMode(width, height, 32, sdl_videoparams);
+		if (!SdlGlSurface) {
+			fprintf(stderr,"Can not setup %dx%dx%d OpenGL video mode\n",width,height,32);
+			QuitEmulator();
 		}
+		this->width = width = SdlGlSurface->w;
+		this->height = height = SdlGlSurface->h;
+		this->bpp = bpp = SdlGlSurface->format->BitsPerPixel;
+
+		glViewport(0, 0, width, height);
+
+		/* Projection matrix */
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluOrtho2D(0.0, width, height, 0.0);
+
+		/* Texture matrix */
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+
+		/* Model view matrix */
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glTranslatef(0.375, 0.375, 0.0);
+
+		/* Enable texturing */
+		glEnable(GL_TEXTURE_2D);
+		{
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		}
+		D(bug("gl: video mode set"));
 
 		/* Create a surface for Aranym */
 		if (mainSurface) {
@@ -1420,6 +1417,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.68  2005/06/12 15:03:22  pmandin
+ * Remove width and height parameters in OpenGL section
+ *
  * Revision 1.67  2005/06/11 20:13:14  pmandin
  * Remove getComponent stuff
  *
