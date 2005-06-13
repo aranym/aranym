@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 # Read original include file, and generate function calls
 
+# FIXME: replace gl*() by nfgl*()
+
 $file = @ARGV[0];
 
 if ( ! defined(open(FILE, $file)) ) {

@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 # Read original include file, and generate dispatcher
 
+# FIXME: replace gl*() by nfgl*()
+
 $file = @ARGV[0];
 $prefix = "NFOSMESA_";
 
@@ -35,7 +37,7 @@ while ($ligne = <FILE>) {
 		# Remove return type, replace by "ret=" if any
 		if ($ligne !~ /^GLAPI +void +(GL)*APIENTRY/ ) {
 			$ligne = "ret =" . $ligne;
-		}		
+		}
 		$ligne =~ s/GLAPI.*(GL)*APIENTRY// ;
 
 #print "/* $ligne */\n";

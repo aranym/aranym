@@ -1,6 +1,8 @@
 2005/06/13 - Patrice
 - hostscreen: disabling texturing when not used. Correctly setup shadow texture
   when it is smaller than asked screen.
+- nfosmesa: Don't pollute gl namespace in NFOSMesa class. Allow NFOSMesa to be
+  enabled with hardware OpenGL rendering.
 
 
 2005/06/12 - Patrice

@@ -48,7 +48,7 @@ while ($ligne = <FILE>) {
 
 		$prototype = $ligne;
 		# Add object prototype
-		$prototype =~ s/(GL)*APIENTRY */OSMesaDriver::/ ;
+		$prototype =~ s/(GL)*APIENTRY */OSMesaDriver::nf/ ;
 		$prototype =~ s/GLAPI *//;
 		$prototype =~ s/;$//;
 		# Remove start of line

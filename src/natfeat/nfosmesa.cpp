@@ -492,14 +492,14 @@ Uint32 OSMesaDriver::LenglGetString(Uint32 ctx, GLenum name)
 {
 	D(bug("nfosmesa: LenglGetString"));
 #if NFOSMESA_GLEXT
-	return strlen((const char *)glGetString(ctx,name));
+	return strlen((const char *)nfglGetString(ctx,name));
 #else
 	switch(name) {
 		case GL_EXTENSIONS:
 		case GL_VERSION:
 			return 4;
 		default:
-			return strlen((const char *)glGetString(ctx,name));
+			return strlen((const char *)nfglGetString(ctx,name));
 	}
 #endif
 }
@@ -508,7 +508,7 @@ void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 {
 	D(bug("nfosmesa: PutglGetString"));
 #if NFOSMESA_GLEXT
-	strcpy((char *)buffer,(const char *)glGetString(ctx,name));
+	strcpy((char *)buffer,(const char *)nfglGetString(ctx,name));
 #else
 	switch(name) {
 		case GL_EXTENSIONS:
@@ -518,7 +518,7 @@ void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 			strcpy((char *)buffer, "1.0");
 			break;
 		default:
-			strcpy((char *)buffer,(const char *)glGetString(ctx,name));
+			strcpy((char *)buffer,(const char *)nfglGetString(ctx,name));
 			break;
 	}
 #endif
