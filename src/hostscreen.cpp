@@ -332,13 +332,24 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 #ifdef ENABLE_OPENGL
 	if (bx_options.opengl.enabled) {
 		GLint MaxTextureSize;
-		int filtering;		
+		int filtering, i, gl_bpp[4]={0,16,24,32};
 
 		sdl_videoparams |= SDL_OPENGL;
 
-		SdlGlSurface = SDL_SetVideoMode(width, height, 32, sdl_videoparams);
+		/* Setup at least 15 bits true colour OpenGL context */
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE,5);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
+		SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,15);
+
+		for (i=0;i<4;i++) {
+			SdlGlSurface = SDL_SetVideoMode(width, height, gl_bpp[i], sdl_videoparams);
+			if (SdlGlSurface) {
+				break;
+			}
+		}
 		if (!SdlGlSurface) {
-			fprintf(stderr,"Can not setup %dx%dx%d OpenGL video mode\n",width,height,32);
+			fprintf(stderr,"Can not setup %dx%d OpenGL video mode\n",width,height);
 			QuitEmulator();
 		}
 		this->width = width = SdlGlSurface->w;
@@ -361,12 +372,8 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		glLoadIdentity();
 		glTranslatef(0.375, 0.375, 0.0);
 
-		/* Enable texturing */
-		glEnable(GL_TEXTURE_2D);
-		{
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		}
-		D(bug("gl: video mode set"));
+		/* Setup texturing mode */
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 		/* Create a surface for Aranym */
 		if (mainSurface) {
@@ -1377,6 +1384,8 @@ void HostScreen::OpenGLUpdate(void)
 	memset(dirty_rects,SDL_FALSE,sizeof(SDL_bool)*dirty_w*dirty_h);
 
 	/* Render the textured quad */
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, SdlGlTexObj);
 	glBegin(GL_QUADS);
 		glTexCoord2f( 0.0, 0.0 );
 		glVertex2i( 0, 0);
@@ -1390,6 +1399,7 @@ void HostScreen::OpenGLUpdate(void)
 		glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
 		glVertex2i( 0, height);
 	glEnd();
+	glDisable(GL_TEXTURE_2D);
 #endif
 }
 
@@ -1401,22 +1411,18 @@ uint32 HostScreen::getBitsPerPixel(void)
 void HostScreen::EnableOpenGLVdi(void)
 {
 	OpenGLVdi = SDL_TRUE;
-#ifdef ENABLE_OPENGL
-	glDisable(GL_TEXTURE_2D);
-#endif
 }
 
 void HostScreen::DisableOpenGLVdi(void)
 {
 	OpenGLVdi = SDL_FALSE;
-#ifdef ENABLE_OPENGL
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, SdlGlTexObj);
-#endif
 }
 
 /*
  * $Log$
+ * Revision 1.69  2005/06/12 15:32:00  pmandin
+ * OpenGL video mode was locked to 640x480
+ *
  * Revision 1.68  2005/06/12 15:03:22  pmandin
  * Remove width and height parameters in OpenGL section
  *
