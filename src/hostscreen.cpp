@@ -375,38 +375,41 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		/* Setup texturing mode */
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-		/* Create a surface for Aranym */
+		/* Delete previous stuff */
 		if (mainSurface) {
 			SDL_FreeSurface(mainSurface);
+			mainSurface=NULL;
 		}
 
-		/* Create a texture */
 		if (SdlGlTexture) {
 			glDeleteTextures(1, &SdlGlTexObj);
 		}
 
-		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
+		/* Full screen OpenGL rendering ? */
+		if (!OpenGLVdi) {
+			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
 
-		D(bug("gl: need at least a %dx%d texture",width,height));
-		D(bug("gl: texture is at most a %dx%d texture",MaxTextureSize,MaxTextureSize));
+			D(bug("gl: need at least a %dx%d texture",width,height));
+			D(bug("gl: texture is at most a %dx%d texture",MaxTextureSize,MaxTextureSize));
 
-		/* Calculate the smallest needed texture */
-		SdlGlTextureWidth = SdlGlTextureHeight = MaxTextureSize;
-		if (width<SdlGlTextureWidth) {
-			while (((SdlGlTextureWidth>>1)>width) && (SdlGlTextureWidth>64)) {
-				SdlGlTextureWidth>>=1;
+			/* Calculate the smallest needed texture */
+			SdlGlTextureWidth = SdlGlTextureHeight = MaxTextureSize;
+			if (width<SdlGlTextureWidth) {
+				while (((SdlGlTextureWidth>>1)>width) && (SdlGlTextureWidth>64)) {
+					SdlGlTextureWidth>>=1;
+				}
 			}
-		}
-		if (height<SdlGlTextureHeight) {
-			while (((SdlGlTextureHeight>>1)>height) && (SdlGlTextureHeight>64)) {
-				SdlGlTextureHeight>>=1;
+			if (height<SdlGlTextureHeight) {
+				while (((SdlGlTextureHeight>>1)>height) && (SdlGlTextureHeight>64)) {
+					SdlGlTextureHeight>>=1;
+				}
 			}
-		}
 
-		D(bug("gl: texture will be %dx%d texture",SdlGlTextureWidth,SdlGlTextureHeight));
+			D(bug("gl: texture will be %dx%d texture",SdlGlTextureWidth,SdlGlTextureHeight));
+		}
 
 		mainSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-			SdlGlTextureWidth,SdlGlTextureHeight,bpp,
+			SdlGlTextureWidth,SdlGlTextureHeight,32,
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 			255<<16,255<<8,255,255<<24	/* GL_BGRA little endian */
 #else
@@ -419,42 +422,46 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		}
 		SdlGlTexture = (uint8 *) (mainSurface->pixels);
 
-		glGenTextures(1, &SdlGlTexObj);
-		glBindTexture(GL_TEXTURE_2D, SdlGlTexObj);
+		if (!OpenGLVdi) {
+			glGenTextures(1, &SdlGlTexObj);
+			glBindTexture(GL_TEXTURE_2D, SdlGlTexObj);
 
-		filtering = GL_NEAREST;		
-		if (bx_options.opengl.filtered) {
-			filtering = GL_LINEAR;
-		}
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering); // scale when image bigger than texture
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering); // scale when image smaller than texture
+			filtering = GL_NEAREST;		
+			if (bx_options.opengl.filtered) {
+				filtering = GL_LINEAR;
+			}
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering); // scale when image bigger than texture
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering); // scale when image smaller than texture
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, SdlGlTexture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, SdlGlTexture);
 
-		D(bug("gl: texture created"));
+			D(bug("gl: texture created"));
 
-		/* Activate autozoom if texture smaller than screen */
-		if ((width>SdlGlTextureWidth) || (height>SdlGlTextureHeight)) {
-			this->width = width = SdlGlTextureWidth;
-			this->height = height = SdlGlTextureHeight;
-			bx_options.autozoom.enabled = true;
-			bx_options.autozoom.integercoefs = false;
+			/* Activate autozoom if texture smaller than screen */
+			SdlGlWidth = width;
+			SdlGlHeight = height;
+			if ((width>SdlGlTextureWidth) || (height>SdlGlTextureHeight)) {
+				this->width = width = SdlGlTextureWidth;
+				this->height = height = SdlGlTextureHeight;
+				bx_options.autozoom.enabled = true;
+				bx_options.autozoom.integercoefs = false;
 
-			D(bug("gl: autozoom enabled"));
-		} else {
-			bx_options.autozoom.enabled = false;
-			bx_options.autozoom.integercoefs = false;
-			D(bug("gl: autozoom disabled"));
-		}
+				D(bug("gl: autozoom enabled"));
+			} else {
+				bx_options.autozoom.enabled = false;
+				bx_options.autozoom.integercoefs = false;
+				D(bug("gl: autozoom disabled"));
+			}
 
-		/* Create dirty rectangles list */
-		if (dirty_rects)
-			delete dirty_rects;
+			/* Create dirty rectangles list */
+			if (dirty_rects)
+				delete dirty_rects;
 		
-		dirty_w=((width|15)+1)>>4;
-		dirty_h=((height|15)+1)>>4;
-		dirty_rects=new SDL_bool[dirty_w*dirty_h];
-		memset(dirty_rects,SDL_FALSE,sizeof(SDL_bool)*dirty_w*dirty_h);
+			dirty_w=((width|15)+1)>>4;
+			dirty_h=((height|15)+1)>>4;
+			dirty_rects=new SDL_bool[dirty_w*dirty_h];
+			memset(dirty_rects,SDL_FALSE,sizeof(SDL_bool)*dirty_w*dirty_h);
+		}
 	}
 	else
 #endif /* ENABLE_OPENGL */
@@ -1391,13 +1398,13 @@ void HostScreen::OpenGLUpdate(void)
 		glVertex2i( 0, 0);
 
 		glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), 0.0 );
-		glVertex2i( width, 0);
+		glVertex2i( SdlGlWidth, 0);
 
 		glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
-		glVertex2i( width, height);
+		glVertex2i( SdlGlWidth, SdlGlHeight);
 
 		glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
-		glVertex2i( 0, height);
+		glVertex2i( 0, SdlGlHeight);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 #endif
@@ -1420,6 +1427,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.70  2005/06/13 12:12:41  pmandin
+ * Disable texturing when not needed
+ *
  * Revision 1.69  2005/06/12 15:32:00  pmandin
  * OpenGL video mode was locked to 640x480
  *

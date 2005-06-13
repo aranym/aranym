@@ -1,5 +1,6 @@
 2005/06/13 - Patrice
-- hostscreen: disabling texturing when not used.
+- hostscreen: disabling texturing when not used. Correctly setup shadow texture
+  when it is smaller than asked screen.
 
 
 2005/06/12 - Patrice

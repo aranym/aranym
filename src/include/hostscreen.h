@@ -80,6 +80,7 @@ class HostScreen {
 	unsigned int SdlGlTextureWidth;
 	unsigned int SdlGlTextureHeight;
 	uint8 *SdlGlTexture;
+	int SdlGlWidth, SdlGlHeight;
 	SDL_bool OpenGLVdi;			/* Using NF OpenGL VDI renderer ? */
 	SDL_bool *dirty_rects;		/* Dirty rectangles list */
 	int dirty_w,dirty_h;
@@ -418,6 +419,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.61  2005/06/11 20:13:14  pmandin
+ * Remove getComponent stuff
+ *
  * Revision 1.60  2005/06/09 19:50:16  pmandin
  * Fixing getComponent function
  *
