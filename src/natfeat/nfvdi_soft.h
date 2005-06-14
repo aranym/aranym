@@ -36,6 +36,7 @@ class SoftVdiDriver : public VdiDriver
 	public:
 		SoftVdiDriver();
 		~SoftVdiDriver();
+		void reset(void);
 
 	protected:
 		int32 openWorkstation(void);

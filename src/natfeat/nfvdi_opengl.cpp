@@ -69,6 +69,12 @@ OpenGLVdiDriver::~OpenGLVdiDriver()
 #endif	
 }
 
+void OpenGLVdiDriver::reset(void)
+{
+	hostScreen.DisableOpenGLVdi();
+	VdiDriver::reset();
+}
+
 /*--- Private functions ---*/
 
 int32 OpenGLVdiDriver::openWorkstation(void)

@@ -38,6 +38,7 @@ class OpenGLVdiDriver : public VdiDriver
 	public:
 		OpenGLVdiDriver();
 		~OpenGLVdiDriver();
+		void reset(void);
 
 	protected:
 		int32 openWorkstation(void);

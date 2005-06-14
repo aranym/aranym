@@ -75,6 +75,7 @@ class VdiDriver : public NF_Base
 
 		VdiDriver();
 		virtual ~VdiDriver();
+		virtual void reset(void);
 
 	protected:
 		void setResolution(int32 width, int32 height, int32 depth);

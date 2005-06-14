@@ -65,6 +65,11 @@ SoftVdiDriver::~SoftVdiDriver()
 	delete[] alloc_point;
 }
 
+void SoftVdiDriver::reset(void)
+{
+	VdiDriver::reset();
+}
+
 /*--- Private functions ---*/
 
 int32 SoftVdiDriver::openWorkstation(void)
@@ -1470,6 +1475,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.9  2005/06/07 21:35:12  johan
+ * support for forced mouse positioning
+ *
  * Revision 1.8  2005/06/05 21:47:46  pmandin
  * OpenGL mouse rendering
  *
