@@ -86,7 +86,8 @@ HostScreen::HostScreen(void) {
 	SdlGlTexture=NULL;
 	dirty_rects=NULL;
 	dirty_w=dirty_h=0;
-	npot_texture=SDL_FALSE;
+	npot_texture=rect_texture=SDL_FALSE;
+	rect_target=GL_TEXTURE_2D;
 #endif /* ENABLE_OPENGL */
 
 	DisableOpenGLVdi();
@@ -388,21 +389,50 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		/* Full screen OpenGL rendering ? */
 		if (!OpenGLVdi) {
 			GLint MaxTextureSize;
+			char *extensions;
 
+			rect_target=GL_TEXTURE_2D;
+			npot_texture = rect_texture = SDL_FALSE;
 			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
+
+			extensions = (char *)glGetString(GL_EXTENSIONS);
+
+			/* Check texture rectangle extensions */
+
+#if defined(GL_NV_texture_rectangle)
+			if (strstr(extensions, "GL_NV_texture_rectangle")) {
+				rect_texture = SDL_TRUE;
+				rect_target=GL_TEXTURE_RECTANGLE_NV;
+				glGetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_NV, &MaxTextureSize);
+			}
+#endif
+#if defined(GL_EXT_texture_rectangle)
+			if (strstr(extensions, "GL_EXT_texture_rectangle")) {
+				rect_texture = SDL_TRUE;
+				rect_target=GL_TEXTURE_RECTANGLE;
+				glGetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_EXT, &MaxTextureSize);
+			}
+#endif
+#if defined(GL_ARB_texture_rectangle)
+			if (strstr(extensions, "GL_ARB_texture_rectangle")) {
+				rect_texture = SDL_TRUE;
+				rect_target=GL_TEXTURE_RECTANGLE;
+				glGetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB, &MaxTextureSize);
+			}
+#endif
+
+			/* Check non power of two texture extension */
+			npot_texture = rect_texture;
+			if (strstr(extensions, "GL_ARB_texture_non_power_of_two")) {
+				npot_texture=SDL_TRUE;
+				rect_texture=SDL_FALSE;
+				rect_target=GL_TEXTURE_2D;
+				glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
+			}
+
 			SdlGlTextureWidth = SdlGlTextureHeight = MaxTextureSize;
 			D(bug("gl: need at least a %dx%d texture",width,height));
 			D(bug("gl: texture is at most a %dx%d texture",MaxTextureSize,MaxTextureSize));
-
-			/* Check non power of two texture */
-			if (!npot_texture) {
-				char *extensions;
-
-				extensions = (char *)glGetString(GL_EXTENSIONS);
-				npot_texture = (SDL_bool) (
-					(strstr(extensions, "GL_ARB_texture_non_power_of_two")!=NULL)
-				);
-			}
 
 			if (!npot_texture) {
 				/* Calculate the smallest needed texture */
@@ -457,10 +487,10 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			if (bx_options.opengl.filtered) {
 				filtering = GL_LINEAR;
 			}
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering); // scale when image bigger than texture
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering); // scale when image smaller than texture
+			glTexParameteri(rect_target, GL_TEXTURE_MAG_FILTER, filtering); // scale when image bigger than texture
+			glTexParameteri(rect_target, GL_TEXTURE_MIN_FILTER, filtering); // scale when image smaller than texture
 
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, SdlGlTexture);
+			glTexImage2D(rect_target, 0, GL_RGBA, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, SdlGlTexture);
 
 			D(bug("gl: texture created"));
 
@@ -1389,9 +1419,14 @@ void HostScreen::update()
 void HostScreen::OpenGLUpdate(void)
 {
 #ifdef ENABLE_OPENGL
+	GLfloat tex_width, tex_height;
+
 	if (OpenGLVdi) {
 		return;
 	}
+
+	glEnable(rect_target);
+	glBindTexture(rect_target, SdlGlTexObj);
 
 	/* Update the texture */
 	{
@@ -1406,7 +1441,7 @@ void HostScreen::OpenGLUpdate(void)
 				}
 			}
 			if (update_line) {
-				glTexSubImage2D(GL_TEXTURE_2D, 0,
+				glTexSubImage2D(rect_target, 0,
 					 0, y<<4,
 					 SdlGlTextureWidth, 16,
 					 GL_BGRA, GL_UNSIGNED_BYTE,
@@ -1418,22 +1453,28 @@ void HostScreen::OpenGLUpdate(void)
 	memset(dirty_rects,SDL_FALSE,sizeof(SDL_bool)*dirty_w*dirty_h);
 
 	/* Render the textured quad */
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, SdlGlTexObj);
+	tex_width = ((GLfloat)width)/((GLfloat)SdlGlTextureWidth);
+	tex_height = ((GLfloat)height)/((GLfloat)SdlGlTextureHeight);
+	if (rect_target!=GL_TEXTURE_2D) {
+		tex_width = (GLfloat)width;
+		tex_height = (GLfloat)height;
+	}
+
 	glBegin(GL_QUADS);
 		glTexCoord2f( 0.0, 0.0 );
 		glVertex2i( 0, 0);
 
-		glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), 0.0 );
+		glTexCoord2f( tex_width, 0.0 );
 		glVertex2i( SdlGlWidth, 0);
 
-		glTexCoord2f( (GLfloat)(((GLfloat)width)/((GLfloat)SdlGlTextureWidth)), (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
+		glTexCoord2f( tex_width, tex_height);
 		glVertex2i( SdlGlWidth, SdlGlHeight);
 
-		glTexCoord2f( 0.0, (GLfloat)(((GLfloat)height)/((GLfloat)SdlGlTextureHeight)) );
+		glTexCoord2f( 0.0, tex_height);
 		glVertex2i( 0, SdlGlHeight);
 	glEnd();
-	glDisable(GL_TEXTURE_2D);
+
+	glDisable(rect_target);
 #endif
 }
 
@@ -1454,6 +1495,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.72  2005/06/14 15:11:43  pmandin
+ * Use non power of two texture when available
+ *
  * Revision 1.71  2005/06/13 12:58:05  pmandin
  * Correctly setup shadow texture when smaller than asked
  *
