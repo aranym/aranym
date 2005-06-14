@@ -24,6 +24,7 @@
 /*--- Includes ---*/
 
 #include <SDL_opengl.h>
+#include <GL/glu.h>
 
 #include "parameters.h"
 
@@ -99,6 +100,9 @@ class OpenGLVdiDriver : public VdiDriver
 			uint32 fgColor, uint32 bgColor, int logOp);
 		int drawMoveLine(memptr table, int length, memptr index, int moves,
 			uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp);
+
+		/* Polygon tesselator */
+		GLUtesselator *tess;
 };
 
 #endif /* NFVDI_OPENGL_H */

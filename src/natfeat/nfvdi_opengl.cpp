@@ -30,6 +30,7 @@
 
 #include <SDL_endian.h>
 #include <SDL_opengl.h>
+#include <GL/glu.h>
 
 /*--- Defines ---*/
 
@@ -57,6 +58,7 @@ OpenGLVdiDriver::OpenGLVdiDriver()
 #ifndef USE_HOST_MOUSE_CURSOR
 	Mouse.tex_obj=0;
 #endif
+	tess=NULL;
 }
 
 OpenGLVdiDriver::~OpenGLVdiDriver()
@@ -67,6 +69,10 @@ OpenGLVdiDriver::~OpenGLVdiDriver()
 		Mouse.tex_obj=0;
 	}
 #endif	
+	if (tess) {
+		gluDeleteTess(tess);
+		tess=NULL;
+	}
 }
 
 void OpenGLVdiDriver::reset(void)
@@ -736,7 +742,7 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, in
 		}
 		if (planes==32) {
 			/* Clear alpha value */
-			for(int n = 0; n < destPitch / 4; n += 4) {
+			for(Uint32 n = 0; n < destPitch / 4; n += 4) {
 				*(long *)(destAddress + n) &= 0xffffff00UL;
 			}
 		}
@@ -982,11 +988,32 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	return 1;
 }
 
+/* Polygon tesselator callback functions */
+
+#ifndef CALLBACK
+#define CALLBACK
+#endif
+
+extern "C" {
+	static void CALLBACK tess_begin(GLenum which) {
+		glBegin(which);
+	}
+
+	static void CALLBACK tess_end(void) {
+		glEnd();
+	}
+
+	static void CALLBACK tess_error(GLenum errorCode) {
+		fprintf(stderr,"glvdi: Tesselation error: %s\n", gluErrorString(errorCode));
+	}
+}
+
 int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	memptr /*index_addr*/, int moves, memptr pattern_addr, uint32 fgColor,
 	uint32 bgColor, uint32 logOp, uint32 /*interior_style*/, memptr clip)
 {
-	int i,cx1,cy1,cx2,cy2;
+	int i,cx1,cy1,cx2,cy2, tess_list;
+	GLdouble *poly_coords;
 	uint32 gl_pattern[32];
 
 	if (vwk & 1)
@@ -1016,17 +1043,38 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	glScissor(cx1,hostScreen.getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
 	glEnable(GL_SCISSOR_TEST);
 
+	/* Create tesselator */
+	if (!tess) {
+		tess=gluNewTess();
+		gluTessCallback(tess,GLU_TESS_VERTEX,(void (*)())glVertex3dv);
+		gluTessCallback(tess,GLU_TESS_BEGIN,(void (*)())tess_begin);
+		gluTessCallback(tess,GLU_TESS_END,(void (*)())tess_end);
+		gluTessCallback(tess,GLU_TESS_ERROR,(void (*)())tess_error);
+	}
+
+	/* Tesselate polygon in list */
+	tess_list = glGenLists(1);
+	poly_coords = new GLdouble[3*n];	
+
+	glNewList(tess_list, GL_COMPILE);
+		gluTessBeginPolygon(tess, NULL);
+			gluTessBeginContour(tess);
+			for (i=0;i<n;i++) {
+				poly_coords[i*3+0] = (GLdouble) ReadInt16(points_addr + i*4);
+				poly_coords[i*3+1] = (GLdouble) ReadInt16(points_addr + i*4 +2);
+				poly_coords[i*3+2] = 0.0;
+				gluTessVertex(tess, &poly_coords[i*3], &poly_coords[i*3]);
+			}
+			gluTessEndContour(tess);
+		gluTessEndPolygon(tess);
+	glEndList();
+
+	delete poly_coords;
+
 	if (logOp == 1) {
 		/* First, the back color */
 		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-		glBegin(GL_POLYGON);
-		for (i=0;i<n;i++) {
-			glVertex2i(
-				(int16)ReadInt16(points_addr + i * 4),
-				(int16)ReadInt16(points_addr + i * 4 + 2)
-			);
-		}
-		glEnd();
+		glCallList(tess_list);
 	}
 
 	glEnable(GL_COLOR_LOGIC_OP);
@@ -1041,15 +1089,9 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	glEnable(GL_POLYGON_STIPPLE);
 	glPolygonStipple((const GLubyte *)gl_pattern);
 
-	glBegin(GL_POLYGON);
-	for (i=0;i<n;i++) {
-		glVertex2i(
-			(int16)ReadInt16(points_addr + i * 4),
-			(int16)ReadInt16(points_addr + i * 4 + 2)
-		);
-	}
-	glEnd();
+	glCallList(tess_list);
 
+	glDeleteLists(tess_list,1);
 	glDisable(GL_POLYGON_STIPPLE);
 	glDisable(GL_SCISSOR_TEST);
 	D(bug("glvdi: fillpoly"));

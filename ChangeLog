@@ -1,5 +1,5 @@
 2005/06/14 - Patrice
-- nfvdi: Add reset method.
+- nfvdi: Add reset method. OpenGL rendering: tesselate polygons.
 
 
 2005/06/13 - Patrice
