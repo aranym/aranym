@@ -86,6 +86,7 @@ HostScreen::HostScreen(void) {
 	SdlGlTexture=NULL;
 	dirty_rects=NULL;
 	dirty_w=dirty_h=0;
+	npot_texture=SDL_FALSE;
 #endif /* ENABLE_OPENGL */
 
 	DisableOpenGLVdi();
@@ -331,7 +332,6 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 
 #ifdef ENABLE_OPENGL
 	if (bx_options.opengl.enabled) {
-		GLint MaxTextureSize;
 		int filtering, i, gl_bpp[4]={0,16,24,32};
 
 		sdl_videoparams |= SDL_OPENGL;
@@ -387,24 +387,51 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 
 		/* Full screen OpenGL rendering ? */
 		if (!OpenGLVdi) {
-			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
+			GLint MaxTextureSize;
 
+			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
+			SdlGlTextureWidth = SdlGlTextureHeight = MaxTextureSize;
 			D(bug("gl: need at least a %dx%d texture",width,height));
 			D(bug("gl: texture is at most a %dx%d texture",MaxTextureSize,MaxTextureSize));
 
-			/* Calculate the smallest needed texture */
-			SdlGlTextureWidth = SdlGlTextureHeight = MaxTextureSize;
-			if (width<SdlGlTextureWidth) {
-				while (((SdlGlTextureWidth>>1)>width) && (SdlGlTextureWidth>64)) {
-					SdlGlTextureWidth>>=1;
-				}
-			}
-			if (height<SdlGlTextureHeight) {
-				while (((SdlGlTextureHeight>>1)>height) && (SdlGlTextureHeight>64)) {
-					SdlGlTextureHeight>>=1;
-				}
+			/* Check non power of two texture */
+			if (!npot_texture) {
+				char *extensions;
+
+				extensions = (char *)glGetString(GL_EXTENSIONS);
+				npot_texture = (SDL_bool) (
+					(strstr(extensions, "GL_ARB_texture_non_power_of_two")!=NULL)
+				);
 			}
 
+			if (!npot_texture) {
+				/* Calculate the smallest needed texture */
+				if (width<SdlGlTextureWidth) {
+					while (((SdlGlTextureWidth>>1)>width) && (SdlGlTextureWidth>64)) {
+						SdlGlTextureWidth>>=1;
+					}
+				}
+				if (height<SdlGlTextureHeight) {
+					while (((SdlGlTextureHeight>>1)>height) && (SdlGlTextureHeight>64)) {
+						SdlGlTextureHeight>>=1;
+					}
+				}
+			} else {
+				if (width<SdlGlTextureWidth) {
+					if (width>64) {
+						SdlGlTextureWidth=width;
+					} else {
+						SdlGlTextureWidth=64;
+					}
+				}
+				if (height<SdlGlTextureHeight) {
+					if (height>64) {
+						SdlGlTextureHeight=height;
+					} else {
+						SdlGlTextureHeight=64;
+					}
+				}
+			}
 			D(bug("gl: texture will be %dx%d texture",SdlGlTextureWidth,SdlGlTextureHeight));
 		}
 
@@ -1427,6 +1454,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.71  2005/06/13 12:58:05  pmandin
+ * Correctly setup shadow texture when smaller than asked
+ *
  * Revision 1.70  2005/06/13 12:12:41  pmandin
  * Disable texturing when not needed
  *

@@ -81,6 +81,7 @@ class HostScreen {
 	unsigned int SdlGlTextureHeight;
 	uint8 *SdlGlTexture;
 	int SdlGlWidth, SdlGlHeight;
+	SDL_bool npot_texture;		/* Use non power of two texture ? */
 	SDL_bool OpenGLVdi;			/* Using NF OpenGL VDI renderer ? */
 	SDL_bool *dirty_rects;		/* Dirty rectangles list */
 	int dirty_w,dirty_h;
@@ -419,6 +420,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.62  2005/06/13 12:58:05  pmandin
+ * Correctly setup shadow texture when smaller than asked
+ *
  * Revision 1.61  2005/06/11 20:13:14  pmandin
  * Remove getComponent stuff
  *

@@ -1,5 +1,6 @@
 2005/06/14 - Patrice
-- nfvdi: Add reset method. OpenGL rendering: tesselate polygons.
+- nfvdi: Add reset method. OpenGL rendering: tesselate polygons, use non power
+  of two texture when available.
 
 
 2005/06/13 - Patrice
