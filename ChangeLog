@@ -1,3 +1,8 @@
+2005/06/15 - Patrice
+- nfosmesa: g++ 3 with -O3 was over-optimizing Atari2HostDouble to a null
+  function.
+
+
 2005/06/14 - Patrice
 - nfvdi: Add reset method. OpenGL rendering: tesselate polygons, use non power
   of two texture or rectangle texture when available.

@@ -526,10 +526,8 @@ void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 
 GLdouble OSMesaDriver::Atari2HostDouble(Uint32 high, Uint32 low)
 {
-	GLdouble tmp;
-	Uint32 *ptr;
+	Uint32 ptr[2];
 
-	ptr = (Uint32 *)&tmp;
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 	ptr[0]=low;
 	ptr[1]=high;
@@ -537,7 +535,8 @@ GLdouble OSMesaDriver::Atari2HostDouble(Uint32 high, Uint32 low)
 	ptr[0]=high;
 	ptr[1]=low;
 #endif
-	return tmp;
+
+	return *((GLdouble *)ptr);
 }
 
 void OSMesaDriver::Atari2HostDoublePtr(Uint32 size, Uint32 *src, GLdouble *dest)
