@@ -1,3 +1,7 @@
+2005/06/16 - milan
+- some small cleanups and fixes in building process
+
+
 2005/06/15 - Patrice
 - nfosmesa: g++ 3 with -O3 was over-optimizing Atari2HostDouble to a null
   function.

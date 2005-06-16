@@ -145,7 +145,7 @@ AC_ARG_ENABLE(jit-fpu,
 
 AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code disassemblers (default=no)], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
 
-AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distrubuted dispatcher (default=no)], [WANT_DIS_DIP=$enableval], [WANT_DIS_DIP=no])
+AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distributed dispatcher (default=no)], [WANT_DIS_DIP=$enableval], [WANT_DIS_DIP=no])
 
 AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation (default=yes)], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
 
@@ -293,7 +293,7 @@ case "$target_os" in
     DEFINES="$DEFINES -DARANYMHOME=\\\"aranym\\\""
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS="parameters_unix.cpp"
-    if test "x$with_fink" = "xno"; then
+    if test "x$WITH_FINK" = "xno"; then
         CXXFLAGS="$CXXFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
         CFLAGS="$CFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
         LDFLAGS="$LDFLAGS -F$HOME/Library/Frameworks"
@@ -870,11 +870,17 @@ dnl Extended signal segmentation fault handler
 if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
   case "$target_os" in
     linux*)
-      if [[ "x$HAVE_I386" = "xyes" ]]; then
-        SYSSRCS="$SYSSRCS linux/sigsegv_linux.cpp"
-      else
-        AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
-      fi
+      case "$CPU_TYPE" in
+        i386)
+	  SYSSRCS="$SYSSRCS linux/sigsegv_linux_x86.cpp"
+	  ;;
+	x86-64)
+          SYSSRCS="$SYSSRCS linux/sigsegv_linux_x86_64.cpp"
+          ;;
+        *)
+          AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
+          ;;
+      esac
       ;;
     openbsd*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
@@ -1520,7 +1526,7 @@ dnl SDL
 
 SDL_CFLAGS=
 SDL_LIBS=
-if test "$OS_TYPE" != "darwin" -o "x$with_fink" = "xyes"; then
+if test "$OS_TYPE" != "darwin" -o "x$WITH_FINK" = "xyes"; then
 	AM_PATH_SDL(1.2.0, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found! ***]))
 fi
 LIBS="$LIBS $SDL_LIBS"
@@ -1660,7 +1666,7 @@ dnl Data directory
 APP=aranym
 case "$target_os" in
 	darwin*)
-		if test "x$with_fink" = "xno"; then
+		if test "x$WITH_FINK" = "xno"; then
 			TARGET="\$(APP_LIB)"
 		else
 			TARGET="\$(APP)"
