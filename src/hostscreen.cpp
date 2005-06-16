@@ -153,9 +153,10 @@ void HostScreen::toggleFullScreen()
 		if (SDL_BlitSurface(temp, NULL, mainSurface, NULL) != 0)
 			bug("toggleFullScreen: Unable to restore screen content.");
 		SDL_FreeSurface(temp);
-
+#ifdef SDL_GUI
 		if (isGUIopen() == 0)
 			surf = mainSurface;
+#endif /* SDL_GUI */
 	}
 }
 
@@ -1495,6 +1496,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.73  2005/06/14 16:45:04  pmandin
+ * Use rectangle texture when available
+ *
  * Revision 1.72  2005/06/14 15:11:43  pmandin
  * Use non power of two texture when available
  *
