@@ -1,3 +1,3 @@
 	NFOSMESA_LENGLGETSTRING,
 	NFOSMESA_PUTGLGETSTRING,
-/* Functions generated: 2 */
+

@@ -40,49 +40,50 @@ while ($ligne = <FILE>) {
 		}
 		$ligne =~ s/GLAPI.*(GL)*APIENTRY// ;
 
+		# Add nf
+		$ligne =~ s/$function_name/nf$function_name/;
+
 #print "/* $ligne */\n";
 
 		if ( $ligne =~ /\( *void *\)/ ) {
 			# Remove void list of parameters
-			$ligne =~ s/\( *void *\)/\(getParameter()\)/;
+			$ligne =~ s/\( *void *\)/\(\)/;
 		} elsif ( $ligne =~ /\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/ ) {
 			# Replace one parameter
 			$param_type = $1;
 #print "/* $1 */\n";
 			if ( $param_type =~ /GLdouble/ ) {
-				$ligne =~ s/\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/(getParameter(),Atari2HostDouble(getParameter(),getParameter()))/;
+				$ligne =~ s/\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/(Atari2HostDouble(getStackedParameter(),getStackedParameter()))/;
 			} elsif ( $param_type =~ /GLclampd/ ) {
-				$ligne =~ s/\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/(getParameter(),(GLclampd)Atari2HostDouble(getParameter(),getParameter()))/;
+				$ligne =~ s/\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/((GLclampd)Atari2HostDouble(getStackedParameter(),getStackedParameter()))/;
 			} elsif ( $param_type =~ /GLfloat/ ) {
-				$ligne =~ s/\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/(getParameter(),Atari2HostFloat(getParameter(),getParameter()))/;
+				$ligne =~ s/\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/((GLfloat)getStackedFloat())/;
 			} elsif ( $param_type =~ /GLclampf/ ) {
-				$ligne =~ s/\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/(getParameter(),(GLclampf)Atari2HostFloat(getParameter(),getParameter()))/;
+				$ligne =~ s/\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/((GLclampf)getStackedFloat())/;
 			} else {
-				$ligne =~ s/\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/(getParameter(),getParameter())/;
+				$ligne =~ s/\( *((const)* *(\w)+) *(\w)+(\[*.*\])* *\)/(getStackedParameter())/;
 			}
 		} elsif ( $ligne =~ /\( *(const)* *(\w)+ *\* *((\w)+)* *\)/ ) {
 			# Replace one parameter, a pointer
-			$ligne =~ s/\( *((const)* *(\w)+ *\*) *((\w)+)* *\)/(getParameter(),($1)Atari2HostAddr(getParameter()))/;
+			$ligne =~ s/\( *((const)* *(\w)+ *\*) *((\w)+)* *\)/(($1)Atari2HostAddr(getStackedParameter()))/;
 		} else {
-			# Add parameter for context
-			$ligne =~ s/\(/(getParameter(),/;
 			# Replace parameters by getParameter(n)
 			if ( $ligne =~ /\( *((const)* *(\w)+ *\** *(const)*) *\** *((\w)+)* *,/) {
 # print "/* $1 */\n";
 				$param_type = $1;
 				if ( $ligne =~ /\( *((const)* *(\w)+ *\*+ *(const)* *\**) *((\w)+)* *,/ ) {
-					$ligne =~ s/\( *((const)* *(\w)+ *\*+ *(const)* *\**) *((\w)+)* *,/(($1)Atari2HostAddr(getParameter()),/;
+					$ligne =~ s/\( *((const)* *(\w)+ *\*+ *(const)* *\**) *((\w)+)* *,/(($1)Atari2HostAddr(getStackedParameter()),/;
 				} else {
 					if ($param_type =~ /GLdouble/ ) {
-						$ligne =~ s/\( *(const)* *(\w)+ *\** *(const)* *((\w)+)* *,/(Atari2HostDouble(getParameter(),getParameter()),/;
+						$ligne =~ s/\( *(const)* *(\w)+ *\** *(const)* *((\w)+)* *,/(Atari2HostDouble(getStackedParameter(),getStackedParameter()),/;
 					} elsif ($param_type =~ /GLclampd/ ) {
-						$ligne =~ s/\( *(const)* *(\w)+ *\** *(const)* *((\w)+)* *,/((GLclampd)Atari2HostDouble(getParameter(),getParameter()),/;
+						$ligne =~ s/\( *(const)* *(\w)+ *\** *(const)* *((\w)+)* *,/((GLclampd)Atari2HostDouble(getStackedParameter(),getStackedParameter()),/;
 					} elsif ($param_type =~ /GLfloat/ ) {
-						$ligne =~ s/\( *(const)* *(\w)+ *\** *(const)* *((\w)+)* *,/(Atari2HostFloat(getParameter(),getParameter()),/;
+						$ligne =~ s/\( *(const)* *(\w)+ *\** *(const)* *((\w)+)* *,/((GLfloat)getStackedFloat(),/;
 					} elsif ($param_type =~ /GLclampf/ ) {
-						$ligne =~ s/\( *(const)* *(\w)+ *\** *(const)* *((\w)+)* *,/((GLclampf)Atari2HostFloat(getParameter(),getParameter()),/;
+						$ligne =~ s/\( *(const)* *(\w)+ *\** *(const)* *((\w)+)* *,/((GLclampf)getStackedFloat(),/;
 					} else {
-						$ligne =~ s/\( *(const)* *(\w)+ *\** *(const)* *((\w)+)* *,/(getParameter(),/;
+						$ligne =~ s/\( *(const)* *(\w)+ *\** *(const)* *((\w)+)* *,/(getStackedParameter(),/;
 					}
 				}
 			}
@@ -90,18 +91,18 @@ while ($ligne = <FILE>) {
 # print "/* $1 */\n";
 				$param_type = $1;
 				if ( $ligne =~ /, *((const)* *(\w)+ *\*+ *(const)* *\**) *((\w)+)* *,/ ) {
-					$ligne =~ s/, *((const)* *(\w)+ *\*+ *(const)* *\**) *((\w)+)* *,/,($1)Atari2HostAddr(getParameter()),/;
+					$ligne =~ s/, *((const)* *(\w)+ *\*+ *(const)* *\**) *((\w)+)* *,/,($1)Atari2HostAddr(getStackedParameter()),/;
 				} else {
 					if ($param_type =~ /GLdouble/ ) {
-						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *,/,Atari2HostDouble(getParameter(),getParameter()),/;
+						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *,/,Atari2HostDouble(getStackedParameter(),getStackedParameter()),/;
 					} elsif ($param_type =~ /GLclampd/ ) {
-						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *,/,(GLclampd)Atari2HostDouble(getParameter(),getParameter()),/;
+						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *,/,(GLclampd)Atari2HostDouble(getStackedParameter(),getStackedParameter()),/;
 					} elsif ($param_type =~ /GLfloat/ ) {
-						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *,/,Atari2HostFloat(getParameter(),getParameter()),/;
+						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *,/,(GLfloat)getStackedFloat(),/;
 					} elsif ($param_type =~ /GLclampf/ ) {
-						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *,/,(GLclampf)Atari2HostFloat(getParameter(),getParameter()),/;
+						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *,/,(GLclampf)getStackedFloat(),/;
 					} else {
-						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *,/,getParameter(),/;
+						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *,/,getStackedParameter(),/;
 					}
 				}
 			}
@@ -109,27 +110,27 @@ while ($ligne = <FILE>) {
 # print "/* $1 */\n";
 				$param_type = $1;
 				if ( $ligne =~ /, *((const)* *(\w)+ *\*+ *(const)* *\**) *((\w)+)* *\)/ ) {
-					$ligne =~ s/, *((const)* *(\w)+ *\*+ *(const)* *\**) *((\w)+)* *\)/,($1)Atari2HostAddr(getParameter()))/;
+					$ligne =~ s/, *((const)* *(\w)+ *\*+ *(const)* *\**) *((\w)+)* *\)/,($1)Atari2HostAddr(getStackedParameter()))/;
 				} else {
 					if ($param_type =~ /GLdouble/ ) {
-						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *\)/,Atari2HostDouble(getParameter(),getParameter()))/;
+						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *\)/,Atari2HostDouble(getStackedParameter(),getStackedParameter()))/;
 					} elsif ($param_type =~ /GLclampd/ ) {
-						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *\)/,(GLclampd)Atari2HostDouble(getParameter(),getParameter()))/;
+						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *\)/,(GLclampd)Atari2HostDouble(getStackedParameter(),getStackedParameter()))/;
 					} elsif ($param_type =~ /GLfloat/ ) {
-						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *\)/,Atari2HostFloat(getParameter(),getParameter()))/;
+						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *\)/,(GLfloat)getStackedFloat())/;
 					} elsif ($param_type =~ /GLclampf/ ) {
-						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *\)/,(GLclampf)Atari2HostFloat(getParameter(),getParameter()))/;
+						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *\)/,(GLclampf)getStackedFloat())/;
 					} else {
-						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *\)/,getParameter())/;
+						$ligne =~ s/, *(const)* *(\w)+ *\** *(const)* *\**((\w)+)* *\)/,getStackedParameter())/;
 					}
 				}
 			}
 		}
 
-		# Add parameter number for context
+		# Add parameter number
 		$param=0;
-		while ( $ligne =~ /getParameter\(\)/ ) {
-			$ligne =~ s/getParameter\(\)/getParameter($param)/;
+		while ( $ligne =~ /getStacked(Float|Parameter)(\(\))/ ) {
+			$ligne =~ s/\(\)/\($param\)/;
 			$param++;
 		}
 

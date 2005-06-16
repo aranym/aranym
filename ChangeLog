@@ -1,3 +1,8 @@
+2005/06/16 - Patrice
+- nfosmesa: Reworked interface to host, can use a MiNT device (to write) ioctl,
+  or NF interface. On the Atari side, parameters are no more stacked twice.
+
+
 2005/06/16 - milan
 - some small cleanups and fixes in building process
 

@@ -55,13 +55,6 @@ while ($ligne = <FILE>) {
 		$ligne =~ s/^GLAPI.*(GL)*APIENTRY// ;
 		$ligne =~ s/^ *// ;
 
-		# Add context parameter
-		if ( $ligne =~ /(\( *void *\))/ ) {
-			$prototype =~ s/$1/Uint32 ctx/;
-		} else {
-			$prototype =~ s/\(/(Uint32 ctx,/;
-		}
-
 		# Remove parameter types
 		if ( $ligne =~ /\( *(void) *\)/ ) {
 			# Remove void list of parameters
@@ -79,7 +72,7 @@ while ($ligne = <FILE>) {
 		print "$prototype\n";
 		print "{\n";
 		print "\tD(bug(\"nfosmesa: $function_name\"));\n";
-		print "\tSelectContext(ctx);\n";
+#		print "\tSelectContext(ctx);\n";
 		print "\tfn.$ligne\n";
 		print "}\n\n";
 

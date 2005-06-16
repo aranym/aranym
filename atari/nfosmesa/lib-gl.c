@@ -32,2328 +32,2331 @@
 
 void glClearIndex( GLfloat c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCLEARINDEX),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLCLEARINDEX,cur_context,&c);
 }
 
 void glClearColor( GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCLEARCOLOR),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCLEARCOLOR,cur_context,&red);
 }
 
 void glClear( GLbitfield mask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCLEAR),cur_context,mask));
+	(*HostCall_p)(NFOSMESA_GLCLEAR,cur_context,&mask);
 }
 
 void glIndexMask( GLuint mask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXMASK),cur_context,mask));
+	(*HostCall_p)(NFOSMESA_GLINDEXMASK,cur_context,&mask);
 }
 
 void glColorMask( GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLORMASK),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCOLORMASK,cur_context,&red);
 }
 
 void glAlphaFunc( GLenum func, GLclampf ref )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLALPHAFUNC),cur_context,func,ref));
+	(*HostCall_p)(NFOSMESA_GLALPHAFUNC,cur_context,&func);
 }
 
 void glBlendFunc( GLenum sfactor, GLenum dfactor )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLBLENDFUNC),cur_context,sfactor,dfactor));
+	(*HostCall_p)(NFOSMESA_GLBLENDFUNC,cur_context,&sfactor);
 }
 
 void glLogicOp( GLenum opcode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLOGICOP),cur_context,opcode));
+	(*HostCall_p)(NFOSMESA_GLLOGICOP,cur_context,&opcode);
 }
 
 void glCullFace( GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCULLFACE),cur_context,mode));
+	(*HostCall_p)(NFOSMESA_GLCULLFACE,cur_context,&mode);
 }
 
 void glFrontFace( GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLFRONTFACE),cur_context,mode));
+	(*HostCall_p)(NFOSMESA_GLFRONTFACE,cur_context,&mode);
 }
 
 void glPointSize( GLfloat size )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPOINTSIZE),cur_context,size));
+	(*HostCall_p)(NFOSMESA_GLPOINTSIZE,cur_context,&size);
 }
 
 void glLineWidth( GLfloat width )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLINEWIDTH),cur_context,width));
+	(*HostCall_p)(NFOSMESA_GLLINEWIDTH,cur_context,&width);
 }
 
 void glLineStipple( GLint factor, GLushort pattern )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLINESTIPPLE),cur_context,factor,pattern));
+	(*HostCall_p)(NFOSMESA_GLLINESTIPPLE,cur_context,&factor);
 }
 
 void glPolygonMode( GLenum face, GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPOLYGONMODE),cur_context,face,mode));
+	(*HostCall_p)(NFOSMESA_GLPOLYGONMODE,cur_context,&face);
 }
 
 void glPolygonOffset( GLfloat factor, GLfloat units )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPOLYGONOFFSET),cur_context,factor,units));
+	(*HostCall_p)(NFOSMESA_GLPOLYGONOFFSET,cur_context,&factor);
 }
 
 void glPolygonStipple( const GLubyte *mask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPOLYGONSTIPPLE),cur_context,mask));
+	(*HostCall_p)(NFOSMESA_GLPOLYGONSTIPPLE,cur_context,&mask);
 }
 
 void glGetPolygonStipple( GLubyte *mask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETPOLYGONSTIPPLE),cur_context,mask));
+	(*HostCall_p)(NFOSMESA_GLGETPOLYGONSTIPPLE,cur_context,&mask);
 }
 
 void glEdgeFlag( GLboolean flag )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEDGEFLAG),cur_context,flag));
+	(*HostCall_p)(NFOSMESA_GLEDGEFLAG,cur_context,&flag);
 }
 
 void glEdgeFlagv( const GLboolean *flag )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEDGEFLAGV),cur_context,flag));
+	(*HostCall_p)(NFOSMESA_GLEDGEFLAGV,cur_context,&flag);
 }
 
 void glScissor( GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLSCISSOR),cur_context,x,y,width,height));
+	(*HostCall_p)(NFOSMESA_GLSCISSOR,cur_context,&x);
 }
 
 void glClipPlane( GLenum plane, const GLdouble *equation )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCLIPPLANE),cur_context,plane,equation));
+	(*HostCall_p)(NFOSMESA_GLCLIPPLANE,cur_context,&plane);
 }
 
 void glGetClipPlane( GLenum plane, GLdouble *equation )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETCLIPPLANE),cur_context,plane,equation));
+	(*HostCall_p)(NFOSMESA_GLGETCLIPPLANE,cur_context,&plane);
 }
 
 void glDrawBuffer( GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDRAWBUFFER),cur_context,mode));
+	(*HostCall_p)(NFOSMESA_GLDRAWBUFFER,cur_context,&mode);
 }
 
 void glReadBuffer( GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLREADBUFFER),cur_context,mode));
+	(*HostCall_p)(NFOSMESA_GLREADBUFFER,cur_context,&mode);
 }
 
 void glEnable( GLenum cap )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLENABLE),cur_context,cap));
+	(*HostCall_p)(NFOSMESA_GLENABLE,cur_context,&cap);
 }
 
 void glDisable( GLenum cap )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDISABLE),cur_context,cap));
+	(*HostCall_p)(NFOSMESA_GLDISABLE,cur_context,&cap);
 }
 
 GLboolean glIsEnabled( GLenum cap )
 {
-	return nfCall((NFOSMESA(NFOSMESA_GLISENABLED),cur_context,cap));
+	return (GLboolean)(*HostCall_p)(NFOSMESA_GLISENABLED,cur_context,&cap);
 }
 
 void glEnableClientState( GLenum cap )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLENABLECLIENTSTATE),cur_context,cap));
+	(*HostCall_p)(NFOSMESA_GLENABLECLIENTSTATE,cur_context,&cap);
 }
 
 void glDisableClientState( GLenum cap )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDISABLECLIENTSTATE),cur_context,cap));
+	(*HostCall_p)(NFOSMESA_GLDISABLECLIENTSTATE,cur_context,&cap);
 }
 
 void glGetBooleanv( GLenum pname, GLboolean *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETBOOLEANV),cur_context,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETBOOLEANV,cur_context,&pname);
 }
 
 void glGetDoublev( GLenum pname, GLdouble *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETDOUBLEV),cur_context,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETDOUBLEV,cur_context,&pname);
 }
 
 void glGetFloatv( GLenum pname, GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETFLOATV),cur_context,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETFLOATV,cur_context,&pname);
 }
 
 void glGetIntegerv( GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETINTEGERV),cur_context,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETINTEGERV,cur_context,&pname);
 }
 
 void glPushAttrib( GLbitfield mask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPUSHATTRIB),cur_context,mask));
+	(*HostCall_p)(NFOSMESA_GLPUSHATTRIB,cur_context,&mask);
 }
 
 void glPopAttrib( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPOPATTRIB),cur_context));
+	(*HostCall_p)(NFOSMESA_GLPOPATTRIB,cur_context,NULL);
 }
 
 void glPushClientAttrib( GLbitfield mask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPUSHCLIENTATTRIB),cur_context,mask));
+	(*HostCall_p)(NFOSMESA_GLPUSHCLIENTATTRIB,cur_context,&mask);
 }
 
 void glPopClientAttrib( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPOPCLIENTATTRIB),cur_context));
+	(*HostCall_p)(NFOSMESA_GLPOPCLIENTATTRIB,cur_context,NULL);
 }
 
 GLint glRenderMode( GLenum mode )
 {
-	return nfCall((NFOSMESA(NFOSMESA_GLRENDERMODE),cur_context,mode));
+	return (GLint)(*HostCall_p)(NFOSMESA_GLRENDERMODE,cur_context,&mode);
 }
 
 GLenum glGetError( void )
 {
-	return nfCall((NFOSMESA(NFOSMESA_GLGETERROR),cur_context));
+	return (GLenum)(*HostCall_p)(NFOSMESA_GLGETERROR,cur_context,NULL);
 }
+
 /*
 const GLubyte* glGetString( GLenum name )
 {
-	return nfCall((NFOSMESA(NFOSMESA_GLGETSTRING),cur_context,name));
+	return (const GLubyte*)(*HostCall_p)(NFOSMESA_GLGETSTRING,cur_context,&name);
 }
 */
+
 void glFinish( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLFINISH),cur_context));
+	(*HostCall_p)(NFOSMESA_GLFINISH,cur_context,NULL);
 }
 
 void glFlush( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLFLUSH),cur_context));
+	(*HostCall_p)(NFOSMESA_GLFLUSH,cur_context,NULL);
 }
 
 void glHint( GLenum target, GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLHINT),cur_context,target,mode));
+	(*HostCall_p)(NFOSMESA_GLHINT,cur_context,&target);
 }
 
 void glClearDepth( GLclampd depth )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCLEARDEPTH),cur_context,depth));
+	(*HostCall_p)(NFOSMESA_GLCLEARDEPTH,cur_context,&depth);
 }
 
 void glDepthFunc( GLenum func )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDEPTHFUNC),cur_context,func));
+	(*HostCall_p)(NFOSMESA_GLDEPTHFUNC,cur_context,&func);
 }
 
 void glDepthMask( GLboolean flag )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDEPTHMASK),cur_context,flag));
+	(*HostCall_p)(NFOSMESA_GLDEPTHMASK,cur_context,&flag);
 }
 
 void glDepthRange( GLclampd near_val, GLclampd far_val )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDEPTHRANGE),cur_context,near_val,far_val));
+	(*HostCall_p)(NFOSMESA_GLDEPTHRANGE,cur_context,&near_val);
 }
 
 void glClearAccum( GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCLEARACCUM),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCLEARACCUM,cur_context,&red);
 }
 
 void glAccum( GLenum op, GLfloat value )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLACCUM),cur_context,op,value));
+	(*HostCall_p)(NFOSMESA_GLACCUM,cur_context,&op);
 }
 
 void glMatrixMode( GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMATRIXMODE),cur_context,mode));
+	(*HostCall_p)(NFOSMESA_GLMATRIXMODE,cur_context,&mode);
 }
 
 void glOrtho( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLORTHO),cur_context,left,right,bottom,top,near_val,far_val));
+	(*HostCall_p)(NFOSMESA_GLORTHO,cur_context,&left);
 }
 
 void glFrustum( GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLFRUSTUM),cur_context,left,right,bottom,top,near_val,far_val));
+	(*HostCall_p)(NFOSMESA_GLFRUSTUM,cur_context,&left);
 }
 
 void glViewport( GLint x, GLint y, GLsizei width, GLsizei height )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVIEWPORT),cur_context,x,y,width,height));
+	(*HostCall_p)(NFOSMESA_GLVIEWPORT,cur_context,&x);
 }
 
 void glPushMatrix( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPUSHMATRIX),cur_context));
+	(*HostCall_p)(NFOSMESA_GLPUSHMATRIX,cur_context,NULL);
 }
 
 void glPopMatrix( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPOPMATRIX),cur_context));
+	(*HostCall_p)(NFOSMESA_GLPOPMATRIX,cur_context,NULL);
 }
 
 void glLoadIdentity( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLOADIDENTITY),cur_context));
+	(*HostCall_p)(NFOSMESA_GLLOADIDENTITY,cur_context,NULL);
 }
 
 void glLoadMatrixd( const GLdouble *m )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLOADMATRIXD),cur_context,m));
+	(*HostCall_p)(NFOSMESA_GLLOADMATRIXD,cur_context,&m);
 }
 
 void glLoadMatrixf( const GLfloat *m )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLOADMATRIXF),cur_context,m));
+	(*HostCall_p)(NFOSMESA_GLLOADMATRIXF,cur_context,&m);
 }
 
 void glMultMatrixd( const GLdouble *m )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTMATRIXD),cur_context,m));
+	(*HostCall_p)(NFOSMESA_GLMULTMATRIXD,cur_context,&m);
 }
 
 void glMultMatrixf( const GLfloat *m )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTMATRIXF),cur_context,m));
+	(*HostCall_p)(NFOSMESA_GLMULTMATRIXF,cur_context,&m);
 }
 
 void glRotated( GLdouble angle, GLdouble x, GLdouble y, GLdouble z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLROTATED),cur_context,angle,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLROTATED,cur_context,&angle);
 }
 
 void glRotatef( GLfloat angle, GLfloat x, GLfloat y, GLfloat z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLROTATEF),cur_context,angle,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLROTATEF,cur_context,&angle);
 }
 
 void glScaled( GLdouble x, GLdouble y, GLdouble z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLSCALED),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLSCALED,cur_context,&x);
 }
 
 void glScalef( GLfloat x, GLfloat y, GLfloat z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLSCALEF),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLSCALEF,cur_context,&x);
 }
 
 void glTranslated( GLdouble x, GLdouble y, GLdouble z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTRANSLATED),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLTRANSLATED,cur_context,&x);
 }
 
 void glTranslatef( GLfloat x, GLfloat y, GLfloat z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTRANSLATEF),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLTRANSLATEF,cur_context,&x);
 }
 
 GLboolean glIsList( GLuint list )
 {
-	return nfCall((NFOSMESA(NFOSMESA_GLISLIST),cur_context,list));
+	return (GLboolean)(*HostCall_p)(NFOSMESA_GLISLIST,cur_context,&list);
 }
 
 void glDeleteLists( GLuint list, GLsizei range )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDELETELISTS),cur_context,list,range));
+	(*HostCall_p)(NFOSMESA_GLDELETELISTS,cur_context,&list);
 }
 
 GLuint glGenLists( GLsizei range )
 {
-	return nfCall((NFOSMESA(NFOSMESA_GLGENLISTS),cur_context,range));
+	return (GLuint)(*HostCall_p)(NFOSMESA_GLGENLISTS,cur_context,&range);
 }
 
 void glNewList( GLuint list, GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNEWLIST),cur_context,list,mode));
+	(*HostCall_p)(NFOSMESA_GLNEWLIST,cur_context,&list);
 }
 
 void glEndList( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLENDLIST),cur_context));
+	(*HostCall_p)(NFOSMESA_GLENDLIST,cur_context,NULL);
 }
 
 void glCallList( GLuint list )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCALLLIST),cur_context,list));
+	(*HostCall_p)(NFOSMESA_GLCALLLIST,cur_context,&list);
 }
 
 void glCallLists( GLsizei n, GLenum type, const GLvoid *lists )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCALLLISTS),cur_context,n,type,lists));
+	(*HostCall_p)(NFOSMESA_GLCALLLISTS,cur_context,&n);
 }
 
 void glListBase( GLuint base )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLISTBASE),cur_context,base));
+	(*HostCall_p)(NFOSMESA_GLLISTBASE,cur_context,&base);
 }
 
 void glBegin( GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLBEGIN),cur_context,mode));
+	(*HostCall_p)(NFOSMESA_GLBEGIN,cur_context,&mode);
 }
 
 void glEnd( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEND),cur_context));
+	(*HostCall_p)(NFOSMESA_GLEND,cur_context,NULL);
 }
 
 void glVertex2d( GLdouble x, GLdouble y )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX2D),cur_context,x,y));
+	(*HostCall_p)(NFOSMESA_GLVERTEX2D,cur_context,&x);
 }
 
 void glVertex2f( GLfloat x, GLfloat y )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX2F),cur_context,x,y));
+	(*HostCall_p)(NFOSMESA_GLVERTEX2F,cur_context,&x);
 }
 
 void glVertex2i( GLint x, GLint y )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX2I),cur_context,x,y));
+	(*HostCall_p)(NFOSMESA_GLVERTEX2I,cur_context,&x);
 }
 
 void glVertex2s( GLshort x, GLshort y )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX2S),cur_context,x,y));
+	(*HostCall_p)(NFOSMESA_GLVERTEX2S,cur_context,&x);
 }
 
 void glVertex3d( GLdouble x, GLdouble y, GLdouble z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX3D),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLVERTEX3D,cur_context,&x);
 }
 
 void glVertex3f( GLfloat x, GLfloat y, GLfloat z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX3F),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLVERTEX3F,cur_context,&x);
 }
 
 void glVertex3i( GLint x, GLint y, GLint z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX3I),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLVERTEX3I,cur_context,&x);
 }
 
 void glVertex3s( GLshort x, GLshort y, GLshort z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX3S),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLVERTEX3S,cur_context,&x);
 }
 
 void glVertex4d( GLdouble x, GLdouble y, GLdouble z, GLdouble w )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX4D),cur_context,x,y,z,w));
+	(*HostCall_p)(NFOSMESA_GLVERTEX4D,cur_context,&x);
 }
 
 void glVertex4f( GLfloat x, GLfloat y, GLfloat z, GLfloat w )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX4F),cur_context,x,y,z,w));
+	(*HostCall_p)(NFOSMESA_GLVERTEX4F,cur_context,&x);
 }
 
 void glVertex4i( GLint x, GLint y, GLint z, GLint w )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX4I),cur_context,x,y,z,w));
+	(*HostCall_p)(NFOSMESA_GLVERTEX4I,cur_context,&x);
 }
 
 void glVertex4s( GLshort x, GLshort y, GLshort z, GLshort w )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX4S),cur_context,x,y,z,w));
+	(*HostCall_p)(NFOSMESA_GLVERTEX4S,cur_context,&x);
 }
 
 void glVertex2dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX2DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX2DV,cur_context,&v);
 }
 
 void glVertex2fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX2FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX2FV,cur_context,&v);
 }
 
 void glVertex2iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX2IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX2IV,cur_context,&v);
 }
 
 void glVertex2sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX2SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX2SV,cur_context,&v);
 }
 
 void glVertex3dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX3DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX3DV,cur_context,&v);
 }
 
 void glVertex3fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX3FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX3FV,cur_context,&v);
 }
 
 void glVertex3iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX3IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX3IV,cur_context,&v);
 }
 
 void glVertex3sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX3SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX3SV,cur_context,&v);
 }
 
 void glVertex4dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX4DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX4DV,cur_context,&v);
 }
 
 void glVertex4fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX4FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX4FV,cur_context,&v);
 }
 
 void glVertex4iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX4IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX4IV,cur_context,&v);
 }
 
 void glVertex4sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEX4SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLVERTEX4SV,cur_context,&v);
 }
 
 void glNormal3b( GLbyte nx, GLbyte ny, GLbyte nz )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMAL3B),cur_context,nx,ny,nz));
+	(*HostCall_p)(NFOSMESA_GLNORMAL3B,cur_context,&nx);
 }
 
 void glNormal3d( GLdouble nx, GLdouble ny, GLdouble nz )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMAL3D),cur_context,nx,ny,nz));
+	(*HostCall_p)(NFOSMESA_GLNORMAL3D,cur_context,&nx);
 }
 
 void glNormal3f( GLfloat nx, GLfloat ny, GLfloat nz )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMAL3F),cur_context,nx,ny,nz));
+	(*HostCall_p)(NFOSMESA_GLNORMAL3F,cur_context,&nx);
 }
 
 void glNormal3i( GLint nx, GLint ny, GLint nz )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMAL3I),cur_context,nx,ny,nz));
+	(*HostCall_p)(NFOSMESA_GLNORMAL3I,cur_context,&nx);
 }
 
 void glNormal3s( GLshort nx, GLshort ny, GLshort nz )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMAL3S),cur_context,nx,ny,nz));
+	(*HostCall_p)(NFOSMESA_GLNORMAL3S,cur_context,&nx);
 }
 
 void glNormal3bv( const GLbyte *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMAL3BV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLNORMAL3BV,cur_context,&v);
 }
 
 void glNormal3dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMAL3DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLNORMAL3DV,cur_context,&v);
 }
 
 void glNormal3fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMAL3FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLNORMAL3FV,cur_context,&v);
 }
 
 void glNormal3iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMAL3IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLNORMAL3IV,cur_context,&v);
 }
 
 void glNormal3sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMAL3SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLNORMAL3SV,cur_context,&v);
 }
 
 void glIndexd( GLdouble c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXD),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLINDEXD,cur_context,&c);
 }
 
 void glIndexf( GLfloat c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXF),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLINDEXF,cur_context,&c);
 }
 
 void glIndexi( GLint c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXI),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLINDEXI,cur_context,&c);
 }
 
 void glIndexs( GLshort c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXS),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLINDEXS,cur_context,&c);
 }
 
 void glIndexub( GLubyte c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXUB),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLINDEXUB,cur_context,&c);
 }
 
 void glIndexdv( const GLdouble *c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXDV),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLINDEXDV,cur_context,&c);
 }
 
 void glIndexfv( const GLfloat *c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXFV),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLINDEXFV,cur_context,&c);
 }
 
 void glIndexiv( const GLint *c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXIV),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLINDEXIV,cur_context,&c);
 }
 
 void glIndexsv( const GLshort *c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXSV),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLINDEXSV,cur_context,&c);
 }
 
 void glIndexubv( const GLubyte *c )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXUBV),cur_context,c));
+	(*HostCall_p)(NFOSMESA_GLINDEXUBV,cur_context,&c);
 }
 
 void glColor3b( GLbyte red, GLbyte green, GLbyte blue )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3B),cur_context,red,green,blue));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3B,cur_context,&red);
 }
 
 void glColor3d( GLdouble red, GLdouble green, GLdouble blue )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3D),cur_context,red,green,blue));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3D,cur_context,&red);
 }
 
 void glColor3f( GLfloat red, GLfloat green, GLfloat blue )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3F),cur_context,red,green,blue));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3F,cur_context,&red);
 }
 
 void glColor3i( GLint red, GLint green, GLint blue )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3I),cur_context,red,green,blue));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3I,cur_context,&red);
 }
 
 void glColor3s( GLshort red, GLshort green, GLshort blue )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3S),cur_context,red,green,blue));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3S,cur_context,&red);
 }
 
 void glColor3ub( GLubyte red, GLubyte green, GLubyte blue )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3UB),cur_context,red,green,blue));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3UB,cur_context,&red);
 }
 
 void glColor3ui( GLuint red, GLuint green, GLuint blue )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3UI),cur_context,red,green,blue));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3UI,cur_context,&red);
 }
 
 void glColor3us( GLushort red, GLushort green, GLushort blue )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3US),cur_context,red,green,blue));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3US,cur_context,&red);
 }
 
 void glColor4b( GLbyte red, GLbyte green, GLbyte blue, GLbyte alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4B),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4B,cur_context,&red);
 }
 
 void glColor4d( GLdouble red, GLdouble green, GLdouble blue, GLdouble alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4D),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4D,cur_context,&red);
 }
 
 void glColor4f( GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4F),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4F,cur_context,&red);
 }
 
 void glColor4i( GLint red, GLint green, GLint blue, GLint alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4I),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4I,cur_context,&red);
 }
 
 void glColor4s( GLshort red, GLshort green, GLshort blue, GLshort alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4S),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4S,cur_context,&red);
 }
 
 void glColor4ub( GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4UB),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4UB,cur_context,&red);
 }
 
 void glColor4ui( GLuint red, GLuint green, GLuint blue, GLuint alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4UI),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4UI,cur_context,&red);
 }
 
 void glColor4us( GLushort red, GLushort green, GLushort blue, GLushort alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4US),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4US,cur_context,&red);
 }
 
 void glColor3bv( const GLbyte *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3BV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3BV,cur_context,&v);
 }
 
 void glColor3dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3DV,cur_context,&v);
 }
 
 void glColor3fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3FV,cur_context,&v);
 }
 
 void glColor3iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3IV,cur_context,&v);
 }
 
 void glColor3sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3SV,cur_context,&v);
 }
 
 void glColor3ubv( const GLubyte *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3UBV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3UBV,cur_context,&v);
 }
 
 void glColor3uiv( const GLuint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3UIV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3UIV,cur_context,&v);
 }
 
 void glColor3usv( const GLushort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR3USV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR3USV,cur_context,&v);
 }
 
 void glColor4bv( const GLbyte *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4BV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4BV,cur_context,&v);
 }
 
 void glColor4dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4DV,cur_context,&v);
 }
 
 void glColor4fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4FV,cur_context,&v);
 }
 
 void glColor4iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4IV,cur_context,&v);
 }
 
 void glColor4sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4SV,cur_context,&v);
 }
 
 void glColor4ubv( const GLubyte *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4UBV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4UBV,cur_context,&v);
 }
 
 void glColor4uiv( const GLuint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4UIV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4UIV,cur_context,&v);
 }
 
 void glColor4usv( const GLushort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLOR4USV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLCOLOR4USV,cur_context,&v);
 }
 
 void glTexCoord1d( GLdouble s )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD1D),cur_context,s));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD1D,cur_context,&s);
 }
 
 void glTexCoord1f( GLfloat s )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD1F),cur_context,s));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD1F,cur_context,&s);
 }
 
 void glTexCoord1i( GLint s )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD1I),cur_context,s));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD1I,cur_context,&s);
 }
 
 void glTexCoord1s( GLshort s )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD1S),cur_context,s));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD1S,cur_context,&s);
 }
 
 void glTexCoord2d( GLdouble s, GLdouble t )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD2D),cur_context,s,t));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD2D,cur_context,&s);
 }
 
 void glTexCoord2f( GLfloat s, GLfloat t )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD2F),cur_context,s,t));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD2F,cur_context,&s);
 }
 
 void glTexCoord2i( GLint s, GLint t )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD2I),cur_context,s,t));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD2I,cur_context,&s);
 }
 
 void glTexCoord2s( GLshort s, GLshort t )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD2S),cur_context,s,t));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD2S,cur_context,&s);
 }
 
 void glTexCoord3d( GLdouble s, GLdouble t, GLdouble r )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD3D),cur_context,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD3D,cur_context,&s);
 }
 
 void glTexCoord3f( GLfloat s, GLfloat t, GLfloat r )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD3F),cur_context,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD3F,cur_context,&s);
 }
 
 void glTexCoord3i( GLint s, GLint t, GLint r )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD3I),cur_context,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD3I,cur_context,&s);
 }
 
 void glTexCoord3s( GLshort s, GLshort t, GLshort r )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD3S),cur_context,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD3S,cur_context,&s);
 }
 
 void glTexCoord4d( GLdouble s, GLdouble t, GLdouble r, GLdouble q )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD4D),cur_context,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD4D,cur_context,&s);
 }
 
 void glTexCoord4f( GLfloat s, GLfloat t, GLfloat r, GLfloat q )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD4F),cur_context,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD4F,cur_context,&s);
 }
 
 void glTexCoord4i( GLint s, GLint t, GLint r, GLint q )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD4I),cur_context,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD4I,cur_context,&s);
 }
 
 void glTexCoord4s( GLshort s, GLshort t, GLshort r, GLshort q )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD4S),cur_context,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD4S,cur_context,&s);
 }
 
 void glTexCoord1dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD1DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD1DV,cur_context,&v);
 }
 
 void glTexCoord1fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD1FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD1FV,cur_context,&v);
 }
 
 void glTexCoord1iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD1IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD1IV,cur_context,&v);
 }
 
 void glTexCoord1sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD1SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD1SV,cur_context,&v);
 }
 
 void glTexCoord2dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD2DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD2DV,cur_context,&v);
 }
 
 void glTexCoord2fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD2FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD2FV,cur_context,&v);
 }
 
 void glTexCoord2iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD2IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD2IV,cur_context,&v);
 }
 
 void glTexCoord2sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD2SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD2SV,cur_context,&v);
 }
 
 void glTexCoord3dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD3DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD3DV,cur_context,&v);
 }
 
 void glTexCoord3fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD3FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD3FV,cur_context,&v);
 }
 
 void glTexCoord3iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD3IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD3IV,cur_context,&v);
 }
 
 void glTexCoord3sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD3SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD3SV,cur_context,&v);
 }
 
 void glTexCoord4dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD4DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD4DV,cur_context,&v);
 }
 
 void glTexCoord4fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD4FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD4FV,cur_context,&v);
 }
 
 void glTexCoord4iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD4IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD4IV,cur_context,&v);
 }
 
 void glTexCoord4sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORD4SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORD4SV,cur_context,&v);
 }
 
 void glRasterPos2d( GLdouble x, GLdouble y )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS2D),cur_context,x,y));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS2D,cur_context,&x);
 }
 
 void glRasterPos2f( GLfloat x, GLfloat y )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS2F),cur_context,x,y));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS2F,cur_context,&x);
 }
 
 void glRasterPos2i( GLint x, GLint y )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS2I),cur_context,x,y));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS2I,cur_context,&x);
 }
 
 void glRasterPos2s( GLshort x, GLshort y )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS2S),cur_context,x,y));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS2S,cur_context,&x);
 }
 
 void glRasterPos3d( GLdouble x, GLdouble y, GLdouble z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS3D),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS3D,cur_context,&x);
 }
 
 void glRasterPos3f( GLfloat x, GLfloat y, GLfloat z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS3F),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS3F,cur_context,&x);
 }
 
 void glRasterPos3i( GLint x, GLint y, GLint z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS3I),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS3I,cur_context,&x);
 }
 
 void glRasterPos3s( GLshort x, GLshort y, GLshort z )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS3S),cur_context,x,y,z));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS3S,cur_context,&x);
 }
 
 void glRasterPos4d( GLdouble x, GLdouble y, GLdouble z, GLdouble w )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS4D),cur_context,x,y,z,w));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS4D,cur_context,&x);
 }
 
 void glRasterPos4f( GLfloat x, GLfloat y, GLfloat z, GLfloat w )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS4F),cur_context,x,y,z,w));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS4F,cur_context,&x);
 }
 
 void glRasterPos4i( GLint x, GLint y, GLint z, GLint w )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS4I),cur_context,x,y,z,w));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS4I,cur_context,&x);
 }
 
 void glRasterPos4s( GLshort x, GLshort y, GLshort z, GLshort w )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS4S),cur_context,x,y,z,w));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS4S,cur_context,&x);
 }
 
 void glRasterPos2dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS2DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS2DV,cur_context,&v);
 }
 
 void glRasterPos2fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS2FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS2FV,cur_context,&v);
 }
 
 void glRasterPos2iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS2IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS2IV,cur_context,&v);
 }
 
 void glRasterPos2sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS2SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS2SV,cur_context,&v);
 }
 
 void glRasterPos3dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS3DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS3DV,cur_context,&v);
 }
 
 void glRasterPos3fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS3FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS3FV,cur_context,&v);
 }
 
 void glRasterPos3iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS3IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS3IV,cur_context,&v);
 }
 
 void glRasterPos3sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS3SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS3SV,cur_context,&v);
 }
 
 void glRasterPos4dv( const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS4DV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS4DV,cur_context,&v);
 }
 
 void glRasterPos4fv( const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS4FV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS4FV,cur_context,&v);
 }
 
 void glRasterPos4iv( const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS4IV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS4IV,cur_context,&v);
 }
 
 void glRasterPos4sv( const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRASTERPOS4SV),cur_context,v));
+	(*HostCall_p)(NFOSMESA_GLRASTERPOS4SV,cur_context,&v);
 }
 
 void glRectd( GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRECTD),cur_context,x1,y1,x2,y2));
+	(*HostCall_p)(NFOSMESA_GLRECTD,cur_context,&x1);
 }
 
 void glRectf( GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRECTF),cur_context,x1,y1,x2,y2));
+	(*HostCall_p)(NFOSMESA_GLRECTF,cur_context,&x1);
 }
 
 void glRecti( GLint x1, GLint y1, GLint x2, GLint y2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRECTI),cur_context,x1,y1,x2,y2));
+	(*HostCall_p)(NFOSMESA_GLRECTI,cur_context,&x1);
 }
 
 void glRects( GLshort x1, GLshort y1, GLshort x2, GLshort y2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRECTS),cur_context,x1,y1,x2,y2));
+	(*HostCall_p)(NFOSMESA_GLRECTS,cur_context,&x1);
 }
 
 void glRectdv( const GLdouble *v1, const GLdouble *v2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRECTDV),cur_context,v1,v2));
+	(*HostCall_p)(NFOSMESA_GLRECTDV,cur_context,&v1);
 }
 
 void glRectfv( const GLfloat *v1, const GLfloat *v2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRECTFV),cur_context,v1,v2));
+	(*HostCall_p)(NFOSMESA_GLRECTFV,cur_context,&v1);
 }
 
 void glRectiv( const GLint *v1, const GLint *v2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRECTIV),cur_context,v1,v2));
+	(*HostCall_p)(NFOSMESA_GLRECTIV,cur_context,&v1);
 }
 
 void glRectsv( const GLshort *v1, const GLshort *v2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRECTSV),cur_context,v1,v2));
+	(*HostCall_p)(NFOSMESA_GLRECTSV,cur_context,&v1);
 }
 
 void glVertexPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *ptr )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLVERTEXPOINTER),cur_context,size,type,stride,ptr));
+	(*HostCall_p)(NFOSMESA_GLVERTEXPOINTER,cur_context,&size);
 }
 
 void glNormalPointer( GLenum type, GLsizei stride, const GLvoid *ptr )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNORMALPOINTER),cur_context,type,stride,ptr));
+	(*HostCall_p)(NFOSMESA_GLNORMALPOINTER,cur_context,&type);
 }
 
 void glColorPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *ptr )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLORPOINTER),cur_context,size,type,stride,ptr));
+	(*HostCall_p)(NFOSMESA_GLCOLORPOINTER,cur_context,&size);
 }
 
 void glIndexPointer( GLenum type, GLsizei stride, const GLvoid *ptr )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINDEXPOINTER),cur_context,type,stride,ptr));
+	(*HostCall_p)(NFOSMESA_GLINDEXPOINTER,cur_context,&type);
 }
 
 void glTexCoordPointer( GLint size, GLenum type, GLsizei stride, const GLvoid *ptr )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXCOORDPOINTER),cur_context,size,type,stride,ptr));
+	(*HostCall_p)(NFOSMESA_GLTEXCOORDPOINTER,cur_context,&size);
 }
 
 void glEdgeFlagPointer( GLsizei stride, const GLvoid *ptr )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEDGEFLAGPOINTER),cur_context,stride,ptr));
+	(*HostCall_p)(NFOSMESA_GLEDGEFLAGPOINTER,cur_context,&stride);
 }
 
 void glGetPointerv( GLenum pname, GLvoid **params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETPOINTERV),cur_context,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETPOINTERV,cur_context,&pname);
 }
 
 void glArrayElement( GLint i )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLARRAYELEMENT),cur_context,i));
+	(*HostCall_p)(NFOSMESA_GLARRAYELEMENT,cur_context,&i);
 }
 
 void glDrawArrays( GLenum mode, GLint first, GLsizei count )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDRAWARRAYS),cur_context,mode,first,count));
+	(*HostCall_p)(NFOSMESA_GLDRAWARRAYS,cur_context,&mode);
 }
 
 void glDrawElements( GLenum mode, GLsizei count, GLenum type, const GLvoid *indices )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDRAWELEMENTS),cur_context,mode,count,type,indices));
+	(*HostCall_p)(NFOSMESA_GLDRAWELEMENTS,cur_context,&mode);
 }
 
 void glInterleavedArrays( GLenum format, GLsizei stride, const GLvoid *pointer )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINTERLEAVEDARRAYS),cur_context,format,stride,pointer));
+	(*HostCall_p)(NFOSMESA_GLINTERLEAVEDARRAYS,cur_context,&format);
 }
 
 void glShadeModel( GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLSHADEMODEL),cur_context,mode));
+	(*HostCall_p)(NFOSMESA_GLSHADEMODEL,cur_context,&mode);
 }
 
 void glLightf( GLenum light, GLenum pname, GLfloat param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLIGHTF),cur_context,light,pname,param));
+	(*HostCall_p)(NFOSMESA_GLLIGHTF,cur_context,&light);
 }
 
 void glLighti( GLenum light, GLenum pname, GLint param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLIGHTI),cur_context,light,pname,param));
+	(*HostCall_p)(NFOSMESA_GLLIGHTI,cur_context,&light);
 }
 
 void glLightfv( GLenum light, GLenum pname, const GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLIGHTFV),cur_context,light,pname,params));
+	(*HostCall_p)(NFOSMESA_GLLIGHTFV,cur_context,&light);
 }
 
 void glLightiv( GLenum light, GLenum pname, const GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLIGHTIV),cur_context,light,pname,params));
+	(*HostCall_p)(NFOSMESA_GLLIGHTIV,cur_context,&light);
 }
 
 void glGetLightfv( GLenum light, GLenum pname, GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETLIGHTFV),cur_context,light,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETLIGHTFV,cur_context,&light);
 }
 
 void glGetLightiv( GLenum light, GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETLIGHTIV),cur_context,light,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETLIGHTIV,cur_context,&light);
 }
 
 void glLightModelf( GLenum pname, GLfloat param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLIGHTMODELF),cur_context,pname,param));
+	(*HostCall_p)(NFOSMESA_GLLIGHTMODELF,cur_context,&pname);
 }
 
 void glLightModeli( GLenum pname, GLint param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLIGHTMODELI),cur_context,pname,param));
+	(*HostCall_p)(NFOSMESA_GLLIGHTMODELI,cur_context,&pname);
 }
 
 void glLightModelfv( GLenum pname, const GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLIGHTMODELFV),cur_context,pname,params));
+	(*HostCall_p)(NFOSMESA_GLLIGHTMODELFV,cur_context,&pname);
 }
 
 void glLightModeliv( GLenum pname, const GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLIGHTMODELIV),cur_context,pname,params));
+	(*HostCall_p)(NFOSMESA_GLLIGHTMODELIV,cur_context,&pname);
 }
 
 void glMaterialf( GLenum face, GLenum pname, GLfloat param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMATERIALF),cur_context,face,pname,param));
+	(*HostCall_p)(NFOSMESA_GLMATERIALF,cur_context,&face);
 }
 
 void glMateriali( GLenum face, GLenum pname, GLint param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMATERIALI),cur_context,face,pname,param));
+	(*HostCall_p)(NFOSMESA_GLMATERIALI,cur_context,&face);
 }
 
 void glMaterialfv( GLenum face, GLenum pname, const GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMATERIALFV),cur_context,face,pname,params));
+	(*HostCall_p)(NFOSMESA_GLMATERIALFV,cur_context,&face);
 }
 
 void glMaterialiv( GLenum face, GLenum pname, const GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMATERIALIV),cur_context,face,pname,params));
+	(*HostCall_p)(NFOSMESA_GLMATERIALIV,cur_context,&face);
 }
 
 void glGetMaterialfv( GLenum face, GLenum pname, GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETMATERIALFV),cur_context,face,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETMATERIALFV,cur_context,&face);
 }
 
 void glGetMaterialiv( GLenum face, GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETMATERIALIV),cur_context,face,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETMATERIALIV,cur_context,&face);
 }
 
 void glColorMaterial( GLenum face, GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLORMATERIAL),cur_context,face,mode));
+	(*HostCall_p)(NFOSMESA_GLCOLORMATERIAL,cur_context,&face);
 }
 
 void glPixelZoom( GLfloat xfactor, GLfloat yfactor )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPIXELZOOM),cur_context,xfactor,yfactor));
+	(*HostCall_p)(NFOSMESA_GLPIXELZOOM,cur_context,&xfactor);
 }
 
 void glPixelStoref( GLenum pname, GLfloat param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPIXELSTOREF),cur_context,pname,param));
+	(*HostCall_p)(NFOSMESA_GLPIXELSTOREF,cur_context,&pname);
 }
 
 void glPixelStorei( GLenum pname, GLint param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPIXELSTOREI),cur_context,pname,param));
+	(*HostCall_p)(NFOSMESA_GLPIXELSTOREI,cur_context,&pname);
 }
 
 void glPixelTransferf( GLenum pname, GLfloat param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPIXELTRANSFERF),cur_context,pname,param));
+	(*HostCall_p)(NFOSMESA_GLPIXELTRANSFERF,cur_context,&pname);
 }
 
 void glPixelTransferi( GLenum pname, GLint param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPIXELTRANSFERI),cur_context,pname,param));
+	(*HostCall_p)(NFOSMESA_GLPIXELTRANSFERI,cur_context,&pname);
 }
 
 void glPixelMapfv( GLenum map, GLsizei mapsize, const GLfloat *values )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPIXELMAPFV),cur_context,map,mapsize,values));
+	(*HostCall_p)(NFOSMESA_GLPIXELMAPFV,cur_context,&map);
 }
 
 void glPixelMapuiv( GLenum map, GLsizei mapsize, const GLuint *values )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPIXELMAPUIV),cur_context,map,mapsize,values));
+	(*HostCall_p)(NFOSMESA_GLPIXELMAPUIV,cur_context,&map);
 }
 
 void glPixelMapusv( GLenum map, GLsizei mapsize, const GLushort *values )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPIXELMAPUSV),cur_context,map,mapsize,values));
+	(*HostCall_p)(NFOSMESA_GLPIXELMAPUSV,cur_context,&map);
 }
 
 void glGetPixelMapfv( GLenum map, GLfloat *values )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETPIXELMAPFV),cur_context,map,values));
+	(*HostCall_p)(NFOSMESA_GLGETPIXELMAPFV,cur_context,&map);
 }
 
 void glGetPixelMapuiv( GLenum map, GLuint *values )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETPIXELMAPUIV),cur_context,map,values));
+	(*HostCall_p)(NFOSMESA_GLGETPIXELMAPUIV,cur_context,&map);
 }
 
 void glGetPixelMapusv( GLenum map, GLushort *values )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETPIXELMAPUSV),cur_context,map,values));
+	(*HostCall_p)(NFOSMESA_GLGETPIXELMAPUSV,cur_context,&map);
 }
 
 void glBitmap( GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLBITMAP),cur_context,width,height,xorig,yorig,xmove,ymove,bitmap));
+	(*HostCall_p)(NFOSMESA_GLBITMAP,cur_context,&width);
 }
 
 void glReadPixels( GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLREADPIXELS),cur_context,x,y,width,height,format,type,pixels));
+	(*HostCall_p)(NFOSMESA_GLREADPIXELS,cur_context,&x);
 }
 
 void glDrawPixels( GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDRAWPIXELS),cur_context,width,height,format,type,pixels));
+	(*HostCall_p)(NFOSMESA_GLDRAWPIXELS,cur_context,&width);
 }
 
 void glCopyPixels( GLint x, GLint y, GLsizei width, GLsizei height, GLenum type )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOPYPIXELS),cur_context,x,y,width,height,type));
+	(*HostCall_p)(NFOSMESA_GLCOPYPIXELS,cur_context,&x);
 }
 
 void glStencilFunc( GLenum func, GLint ref, GLuint mask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLSTENCILFUNC),cur_context,func,ref,mask));
+	(*HostCall_p)(NFOSMESA_GLSTENCILFUNC,cur_context,&func);
 }
 
 void glStencilMask( GLuint mask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLSTENCILMASK),cur_context,mask));
+	(*HostCall_p)(NFOSMESA_GLSTENCILMASK,cur_context,&mask);
 }
 
 void glStencilOp( GLenum fail, GLenum zfail, GLenum zpass )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLSTENCILOP),cur_context,fail,zfail,zpass));
+	(*HostCall_p)(NFOSMESA_GLSTENCILOP,cur_context,&fail);
 }
 
 void glClearStencil( GLint s )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCLEARSTENCIL),cur_context,s));
+	(*HostCall_p)(NFOSMESA_GLCLEARSTENCIL,cur_context,&s);
 }
 
 void glTexGend( GLenum coord, GLenum pname, GLdouble param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXGEND),cur_context,coord,pname,param));
+	(*HostCall_p)(NFOSMESA_GLTEXGEND,cur_context,&coord);
 }
 
 void glTexGenf( GLenum coord, GLenum pname, GLfloat param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXGENF),cur_context,coord,pname,param));
+	(*HostCall_p)(NFOSMESA_GLTEXGENF,cur_context,&coord);
 }
 
 void glTexGeni( GLenum coord, GLenum pname, GLint param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXGENI),cur_context,coord,pname,param));
+	(*HostCall_p)(NFOSMESA_GLTEXGENI,cur_context,&coord);
 }
 
 void glTexGendv( GLenum coord, GLenum pname, const GLdouble *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXGENDV),cur_context,coord,pname,params));
+	(*HostCall_p)(NFOSMESA_GLTEXGENDV,cur_context,&coord);
 }
 
 void glTexGenfv( GLenum coord, GLenum pname, const GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXGENFV),cur_context,coord,pname,params));
+	(*HostCall_p)(NFOSMESA_GLTEXGENFV,cur_context,&coord);
 }
 
 void glTexGeniv( GLenum coord, GLenum pname, const GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXGENIV),cur_context,coord,pname,params));
+	(*HostCall_p)(NFOSMESA_GLTEXGENIV,cur_context,&coord);
 }
 
 void glGetTexGendv( GLenum coord, GLenum pname, GLdouble *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETTEXGENDV),cur_context,coord,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETTEXGENDV,cur_context,&coord);
 }
 
 void glGetTexGenfv( GLenum coord, GLenum pname, GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETTEXGENFV),cur_context,coord,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETTEXGENFV,cur_context,&coord);
 }
 
 void glGetTexGeniv( GLenum coord, GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETTEXGENIV),cur_context,coord,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETTEXGENIV,cur_context,&coord);
 }
 
 void glTexEnvf( GLenum target, GLenum pname, GLfloat param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXENVF),cur_context,target,pname,param));
+	(*HostCall_p)(NFOSMESA_GLTEXENVF,cur_context,&target);
 }
 
 void glTexEnvi( GLenum target, GLenum pname, GLint param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXENVI),cur_context,target,pname,param));
+	(*HostCall_p)(NFOSMESA_GLTEXENVI,cur_context,&target);
 }
 
 void glTexEnvfv( GLenum target, GLenum pname, const GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXENVFV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLTEXENVFV,cur_context,&target);
 }
 
 void glTexEnviv( GLenum target, GLenum pname, const GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXENVIV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLTEXENVIV,cur_context,&target);
 }
 
 void glGetTexEnvfv( GLenum target, GLenum pname, GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETTEXENVFV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETTEXENVFV,cur_context,&target);
 }
 
 void glGetTexEnviv( GLenum target, GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETTEXENVIV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETTEXENVIV,cur_context,&target);
 }
 
 void glTexParameterf( GLenum target, GLenum pname, GLfloat param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXPARAMETERF),cur_context,target,pname,param));
+	(*HostCall_p)(NFOSMESA_GLTEXPARAMETERF,cur_context,&target);
 }
 
 void glTexParameteri( GLenum target, GLenum pname, GLint param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXPARAMETERI),cur_context,target,pname,param));
+	(*HostCall_p)(NFOSMESA_GLTEXPARAMETERI,cur_context,&target);
 }
 
 void glTexParameterfv( GLenum target, GLenum pname, const GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXPARAMETERFV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLTEXPARAMETERFV,cur_context,&target);
 }
 
 void glTexParameteriv( GLenum target, GLenum pname, const GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXPARAMETERIV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLTEXPARAMETERIV,cur_context,&target);
 }
 
 void glGetTexParameterfv( GLenum target, GLenum pname, GLfloat *params)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETTEXPARAMETERFV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETTEXPARAMETERFV,cur_context,&target);
 }
 
 void glGetTexParameteriv( GLenum target, GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETTEXPARAMETERIV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETTEXPARAMETERIV,cur_context,&target);
 }
 
 void glGetTexLevelParameterfv( GLenum target, GLint level, GLenum pname, GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETTEXLEVELPARAMETERFV),cur_context,target,level,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETTEXLEVELPARAMETERFV,cur_context,&target);
 }
 
 void glGetTexLevelParameteriv( GLenum target, GLint level, GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETTEXLEVELPARAMETERIV),cur_context,target,level,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETTEXLEVELPARAMETERIV,cur_context,&target);
 }
 
 void glTexImage1D( GLenum target, GLint level, GLint internalFormat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXIMAGE1D),cur_context,target,level,internalFormat,width,border,format,type,pixels));
+	(*HostCall_p)(NFOSMESA_GLTEXIMAGE1D,cur_context,&target);
 }
 
 void glTexImage2D( GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXIMAGE2D),cur_context,target,level,internalFormat,width,height,border,format,type,pixels));
+	(*HostCall_p)(NFOSMESA_GLTEXIMAGE2D,cur_context,&target);
 }
 
 void glGetTexImage( GLenum target, GLint level, GLenum format, GLenum type, GLvoid *pixels )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETTEXIMAGE),cur_context,target,level,format,type,pixels));
+	(*HostCall_p)(NFOSMESA_GLGETTEXIMAGE,cur_context,&target);
 }
 
 void glGenTextures( GLsizei n, GLuint *textures )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGENTEXTURES),cur_context,n,textures));
+	(*HostCall_p)(NFOSMESA_GLGENTEXTURES,cur_context,&n);
 }
 
 void glDeleteTextures( GLsizei n, const GLuint *textures)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDELETETEXTURES),cur_context,n,textures));
+	(*HostCall_p)(NFOSMESA_GLDELETETEXTURES,cur_context,&n);
 }
 
 void glBindTexture( GLenum target, GLuint texture )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLBINDTEXTURE),cur_context,target,texture));
+	(*HostCall_p)(NFOSMESA_GLBINDTEXTURE,cur_context,&target);
 }
 
 void glPrioritizeTextures( GLsizei n, const GLuint *textures, const GLclampf *priorities )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPRIORITIZETEXTURES),cur_context,n,textures,priorities));
+	(*HostCall_p)(NFOSMESA_GLPRIORITIZETEXTURES,cur_context,&n);
 }
 
 GLboolean glAreTexturesResident( GLsizei n, const GLuint *textures, GLboolean *residences )
 {
-	return nfCall((NFOSMESA(NFOSMESA_GLARETEXTURESRESIDENT),cur_context,n,textures,residences));
+	return (GLboolean)(*HostCall_p)(NFOSMESA_GLARETEXTURESRESIDENT,cur_context,&n);
 }
 
 GLboolean glIsTexture( GLuint texture )
 {
-	return nfCall((NFOSMESA(NFOSMESA_GLISTEXTURE),cur_context,texture));
+	return (GLboolean)(*HostCall_p)(NFOSMESA_GLISTEXTURE,cur_context,&texture);
 }
 
 void glTexSubImage1D( GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXSUBIMAGE1D),cur_context,target,level,xoffset,width,format,type,pixels));
+	(*HostCall_p)(NFOSMESA_GLTEXSUBIMAGE1D,cur_context,&target);
 }
 
 void glTexSubImage2D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXSUBIMAGE2D),cur_context,target,level,xoffset,yoffset,width,height,format,type,pixels));
+	(*HostCall_p)(NFOSMESA_GLTEXSUBIMAGE2D,cur_context,&target);
 }
 
 void glCopyTexImage1D( GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOPYTEXIMAGE1D),cur_context,target,level,internalformat,x,y,width,border));
+	(*HostCall_p)(NFOSMESA_GLCOPYTEXIMAGE1D,cur_context,&target);
 }
 
 void glCopyTexImage2D( GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOPYTEXIMAGE2D),cur_context,target,level,internalformat,x,y,width,height,border));
+	(*HostCall_p)(NFOSMESA_GLCOPYTEXIMAGE2D,cur_context,&target);
 }
 
 void glCopyTexSubImage1D( GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOPYTEXSUBIMAGE1D),cur_context,target,level,xoffset,x,y,width));
+	(*HostCall_p)(NFOSMESA_GLCOPYTEXSUBIMAGE1D,cur_context,&target);
 }
 
 void glCopyTexSubImage2D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOPYTEXSUBIMAGE2D),cur_context,target,level,xoffset,yoffset,x,y,width,height));
+	(*HostCall_p)(NFOSMESA_GLCOPYTEXSUBIMAGE2D,cur_context,&target);
 }
 
 void glMap1d( GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble *points )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMAP1D),cur_context,target,u1,u2,stride,order,points));
+	(*HostCall_p)(NFOSMESA_GLMAP1D,cur_context,&target);
 }
 
 void glMap1f( GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat *points )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMAP1F),cur_context,target,u1,u2,stride,order,points));
+	(*HostCall_p)(NFOSMESA_GLMAP1F,cur_context,&target);
 }
 
 void glMap2d( GLenum target, GLdouble u1, GLdouble u2, GLint ustride, GLint uorder, GLdouble v1, GLdouble v2, GLint vstride, GLint vorder, const GLdouble *points )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMAP2D),cur_context,target,u1,u2,ustride,uorder,v1,v2,vstride,vorder,points));
+	(*HostCall_p)(NFOSMESA_GLMAP2D,cur_context,&target);
 }
 
 void glMap2f( GLenum target, GLfloat u1, GLfloat u2, GLint ustride, GLint uorder, GLfloat v1, GLfloat v2, GLint vstride, GLint vorder, const GLfloat *points )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMAP2F),cur_context,target,u1,u2,ustride,uorder,v1,v2,vstride,vorder,points));
+	(*HostCall_p)(NFOSMESA_GLMAP2F,cur_context,&target);
 }
 
 void glGetMapdv( GLenum target, GLenum query, GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETMAPDV),cur_context,target,query,v));
+	(*HostCall_p)(NFOSMESA_GLGETMAPDV,cur_context,&target);
 }
 
 void glGetMapfv( GLenum target, GLenum query, GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETMAPFV),cur_context,target,query,v));
+	(*HostCall_p)(NFOSMESA_GLGETMAPFV,cur_context,&target);
 }
 
 void glGetMapiv( GLenum target, GLenum query, GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETMAPIV),cur_context,target,query,v));
+	(*HostCall_p)(NFOSMESA_GLGETMAPIV,cur_context,&target);
 }
 
 void glEvalCoord1d( GLdouble u )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALCOORD1D),cur_context,u));
+	(*HostCall_p)(NFOSMESA_GLEVALCOORD1D,cur_context,&u);
 }
 
 void glEvalCoord1f( GLfloat u )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALCOORD1F),cur_context,u));
+	(*HostCall_p)(NFOSMESA_GLEVALCOORD1F,cur_context,&u);
 }
 
 void glEvalCoord1dv( const GLdouble *u )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALCOORD1DV),cur_context,u));
+	(*HostCall_p)(NFOSMESA_GLEVALCOORD1DV,cur_context,&u);
 }
 
 void glEvalCoord1fv( const GLfloat *u )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALCOORD1FV),cur_context,u));
+	(*HostCall_p)(NFOSMESA_GLEVALCOORD1FV,cur_context,&u);
 }
 
 void glEvalCoord2d( GLdouble u, GLdouble v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALCOORD2D),cur_context,u,v));
+	(*HostCall_p)(NFOSMESA_GLEVALCOORD2D,cur_context,&u);
 }
 
 void glEvalCoord2f( GLfloat u, GLfloat v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALCOORD2F),cur_context,u,v));
+	(*HostCall_p)(NFOSMESA_GLEVALCOORD2F,cur_context,&u);
 }
 
 void glEvalCoord2dv( const GLdouble *u )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALCOORD2DV),cur_context,u));
+	(*HostCall_p)(NFOSMESA_GLEVALCOORD2DV,cur_context,&u);
 }
 
 void glEvalCoord2fv( const GLfloat *u )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALCOORD2FV),cur_context,u));
+	(*HostCall_p)(NFOSMESA_GLEVALCOORD2FV,cur_context,&u);
 }
 
 void glMapGrid1d( GLint un, GLdouble u1, GLdouble u2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMAPGRID1D),cur_context,un,u1,u2));
+	(*HostCall_p)(NFOSMESA_GLMAPGRID1D,cur_context,&un);
 }
 
 void glMapGrid1f( GLint un, GLfloat u1, GLfloat u2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMAPGRID1F),cur_context,un,u1,u2));
+	(*HostCall_p)(NFOSMESA_GLMAPGRID1F,cur_context,&un);
 }
 
 void glMapGrid2d( GLint un, GLdouble u1, GLdouble u2, GLint vn, GLdouble v1, GLdouble v2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMAPGRID2D),cur_context,un,u1,u2,vn,v1,v2));
+	(*HostCall_p)(NFOSMESA_GLMAPGRID2D,cur_context,&un);
 }
 
 void glMapGrid2f( GLint un, GLfloat u1, GLfloat u2, GLint vn, GLfloat v1, GLfloat v2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMAPGRID2F),cur_context,un,u1,u2,vn,v1,v2));
+	(*HostCall_p)(NFOSMESA_GLMAPGRID2F,cur_context,&un);
 }
 
 void glEvalPoint1( GLint i )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALPOINT1),cur_context,i));
+	(*HostCall_p)(NFOSMESA_GLEVALPOINT1,cur_context,&i);
 }
 
 void glEvalPoint2( GLint i, GLint j )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALPOINT2),cur_context,i,j));
+	(*HostCall_p)(NFOSMESA_GLEVALPOINT2,cur_context,&i);
 }
 
 void glEvalMesh1( GLenum mode, GLint i1, GLint i2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALMESH1),cur_context,mode,i1,i2));
+	(*HostCall_p)(NFOSMESA_GLEVALMESH1,cur_context,&mode);
 }
 
 void glEvalMesh2( GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2 )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLEVALMESH2),cur_context,mode,i1,i2,j1,j2));
+	(*HostCall_p)(NFOSMESA_GLEVALMESH2,cur_context,&mode);
 }
 
 void glFogf( GLenum pname, GLfloat param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLFOGF),cur_context,pname,param));
+	(*HostCall_p)(NFOSMESA_GLFOGF,cur_context,&pname);
 }
 
 void glFogi( GLenum pname, GLint param )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLFOGI),cur_context,pname,param));
+	(*HostCall_p)(NFOSMESA_GLFOGI,cur_context,&pname);
 }
 
 void glFogfv( GLenum pname, const GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLFOGFV),cur_context,pname,params));
+	(*HostCall_p)(NFOSMESA_GLFOGFV,cur_context,&pname);
 }
 
 void glFogiv( GLenum pname, const GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLFOGIV),cur_context,pname,params));
+	(*HostCall_p)(NFOSMESA_GLFOGIV,cur_context,&pname);
 }
 
 void glFeedbackBuffer( GLsizei size, GLenum type, GLfloat *buffer )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLFEEDBACKBUFFER),cur_context,size,type,buffer));
+	(*HostCall_p)(NFOSMESA_GLFEEDBACKBUFFER,cur_context,&size);
 }
 
 void glPassThrough( GLfloat token )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPASSTHROUGH),cur_context,token));
+	(*HostCall_p)(NFOSMESA_GLPASSTHROUGH,cur_context,&token);
 }
 
 void glSelectBuffer( GLsizei size, GLuint *buffer )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLSELECTBUFFER),cur_context,size,buffer));
+	(*HostCall_p)(NFOSMESA_GLSELECTBUFFER,cur_context,&size);
 }
 
 void glInitNames( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLINITNAMES),cur_context));
+	(*HostCall_p)(NFOSMESA_GLINITNAMES,cur_context,NULL);
 }
 
 void glLoadName( GLuint name )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLOADNAME),cur_context,name));
+	(*HostCall_p)(NFOSMESA_GLLOADNAME,cur_context,&name);
 }
 
 void glPushName( GLuint name )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPUSHNAME),cur_context,name));
+	(*HostCall_p)(NFOSMESA_GLPUSHNAME,cur_context,&name);
 }
 
 void glPopName( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLPOPNAME),cur_context));
+	(*HostCall_p)(NFOSMESA_GLPOPNAME,cur_context,NULL);
 }
 
 /*
 void glDrawRangeElements( GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const GLvoid *indices )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDRAWRANGEELEMENTS),cur_context,mode,start,end,count,type,indices));
+	(*HostCall_p)(NFOSMESA_GLDRAWRANGEELEMENTS,cur_context,&mode);
 }
 
 void glTexImage3D( GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid *pixels )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXIMAGE3D),cur_context,target,level,internalFormat,width,height,depth,border,format,type,pixels));
+	(*HostCall_p)(NFOSMESA_GLTEXIMAGE3D,cur_context,&target);
 }
 
 void glTexSubImage3D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTEXSUBIMAGE3D),cur_context,target,level,xoffset,yoffset,zoffset,width,height,depth,format,type,pixels));
+	(*HostCall_p)(NFOSMESA_GLTEXSUBIMAGE3D,cur_context,&target);
 }
 
 void glCopyTexSubImage3D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOPYTEXSUBIMAGE3D),cur_context,target,level,xoffset,yoffset,zoffset,x,y,width,height));
+	(*HostCall_p)(NFOSMESA_GLCOPYTEXSUBIMAGE3D,cur_context,&target);
 }
 
 void glColorTable( GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid *table )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLORTABLE),cur_context,target,internalformat,width,format,type,table));
+	(*HostCall_p)(NFOSMESA_GLCOLORTABLE,cur_context,&target);
 }
 
 void glColorSubTable( GLenum target, GLsizei start, GLsizei count, GLenum format, GLenum type, const GLvoid *data )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLORSUBTABLE),cur_context,target,start,count,format,type,data));
+	(*HostCall_p)(NFOSMESA_GLCOLORSUBTABLE,cur_context,&target);
 }
 
 void glColorTableParameteriv(GLenum target, GLenum pname, const GLint *params)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLORTABLEPARAMETERIV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLCOLORTABLEPARAMETERIV,cur_context,&target);
 }
 
 void glColorTableParameterfv(GLenum target, GLenum pname, const GLfloat *params)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOLORTABLEPARAMETERFV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLCOLORTABLEPARAMETERFV,cur_context,&target);
 }
 
 void glCopyColorSubTable( GLenum target, GLsizei start, GLint x, GLint y, GLsizei width )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOPYCOLORSUBTABLE),cur_context,target,start,x,y,width));
+	(*HostCall_p)(NFOSMESA_GLCOPYCOLORSUBTABLE,cur_context,&target);
 }
 
 void glCopyColorTable( GLenum target, GLenum internalformat, GLint x, GLint y, GLsizei width )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOPYCOLORTABLE),cur_context,target,internalformat,x,y,width));
+	(*HostCall_p)(NFOSMESA_GLCOPYCOLORTABLE,cur_context,&target);
 }
 
 void glGetColorTable( GLenum target, GLenum format, GLenum type, GLvoid *table )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETCOLORTABLE),cur_context,target,format,type,table));
+	(*HostCall_p)(NFOSMESA_GLGETCOLORTABLE,cur_context,&target);
 }
 
 void glGetColorTableParameterfv( GLenum target, GLenum pname, GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETCOLORTABLEPARAMETERFV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETCOLORTABLEPARAMETERFV,cur_context,&target);
 }
 
 void glGetColorTableParameteriv( GLenum target, GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETCOLORTABLEPARAMETERIV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETCOLORTABLEPARAMETERIV,cur_context,&target);
 }
 
 void glBlendEquation( GLenum mode )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLBLENDEQUATION),cur_context,mode));
+	(*HostCall_p)(NFOSMESA_GLBLENDEQUATION,cur_context,&mode);
 }
 
 void glBlendColor( GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLBLENDCOLOR),cur_context,red,green,blue,alpha));
+	(*HostCall_p)(NFOSMESA_GLBLENDCOLOR,cur_context,&red);
 }
 
 void glHistogram( GLenum target, GLsizei width, GLenum internalformat, GLboolean sink )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLHISTOGRAM),cur_context,target,width,internalformat,sink));
+	(*HostCall_p)(NFOSMESA_GLHISTOGRAM,cur_context,&target);
 }
 
 void glResetHistogram( GLenum target )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRESETHISTOGRAM),cur_context,target));
+	(*HostCall_p)(NFOSMESA_GLRESETHISTOGRAM,cur_context,&target);
 }
 
 void glGetHistogram( GLenum target, GLboolean reset, GLenum format, GLenum type, GLvoid *values )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETHISTOGRAM),cur_context,target,reset,format,type,values));
+	(*HostCall_p)(NFOSMESA_GLGETHISTOGRAM,cur_context,&target);
 }
 
 void glGetHistogramParameterfv( GLenum target, GLenum pname, GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETHISTOGRAMPARAMETERFV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETHISTOGRAMPARAMETERFV,cur_context,&target);
 }
 
 void glGetHistogramParameteriv( GLenum target, GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETHISTOGRAMPARAMETERIV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETHISTOGRAMPARAMETERIV,cur_context,&target);
 }
 
 void glMinmax( GLenum target, GLenum internalformat, GLboolean sink )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMINMAX),cur_context,target,internalformat,sink));
+	(*HostCall_p)(NFOSMESA_GLMINMAX,cur_context,&target);
 }
 
 void glResetMinmax( GLenum target )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLRESETMINMAX),cur_context,target));
+	(*HostCall_p)(NFOSMESA_GLRESETMINMAX,cur_context,&target);
 }
 
 void glGetMinmax( GLenum target, GLboolean reset, GLenum format, GLenum types, GLvoid *values )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETMINMAX),cur_context,target,reset,format,types,values));
+	(*HostCall_p)(NFOSMESA_GLGETMINMAX,cur_context,&target);
 }
 
 void glGetMinmaxParameterfv( GLenum target, GLenum pname, GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETMINMAXPARAMETERFV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETMINMAXPARAMETERFV,cur_context,&target);
 }
 
 void glGetMinmaxParameteriv( GLenum target, GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETMINMAXPARAMETERIV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETMINMAXPARAMETERIV,cur_context,&target);
 }
 
 void glConvolutionFilter1D( GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const GLvoid *image )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCONVOLUTIONFILTER1D),cur_context,target,internalformat,width,format,type,image));
+	(*HostCall_p)(NFOSMESA_GLCONVOLUTIONFILTER1D,cur_context,&target);
 }
 
 void glConvolutionFilter2D( GLenum target, GLenum internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *image )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCONVOLUTIONFILTER2D),cur_context,target,internalformat,width,height,format,type,image));
+	(*HostCall_p)(NFOSMESA_GLCONVOLUTIONFILTER2D,cur_context,&target);
 }
 
 void glConvolutionParameterf( GLenum target, GLenum pname, GLfloat params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCONVOLUTIONPARAMETERF),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLCONVOLUTIONPARAMETERF,cur_context,&target);
 }
 
 void glConvolutionParameterfv( GLenum target, GLenum pname, const GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCONVOLUTIONPARAMETERFV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLCONVOLUTIONPARAMETERFV,cur_context,&target);
 }
 
 void glConvolutionParameteri( GLenum target, GLenum pname, GLint params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCONVOLUTIONPARAMETERI),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLCONVOLUTIONPARAMETERI,cur_context,&target);
 }
 
 void glConvolutionParameteriv( GLenum target, GLenum pname, const GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCONVOLUTIONPARAMETERIV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLCONVOLUTIONPARAMETERIV,cur_context,&target);
 }
 
 void glCopyConvolutionFilter1D( GLenum target, GLenum internalformat, GLint x, GLint y, GLsizei width )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOPYCONVOLUTIONFILTER1D),cur_context,target,internalformat,x,y,width));
+	(*HostCall_p)(NFOSMESA_GLCOPYCONVOLUTIONFILTER1D,cur_context,&target);
 }
 
 void glCopyConvolutionFilter2D( GLenum target, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOPYCONVOLUTIONFILTER2D),cur_context,target,internalformat,x,y,width,height));
+	(*HostCall_p)(NFOSMESA_GLCOPYCONVOLUTIONFILTER2D,cur_context,&target);
 }
 
 void glGetConvolutionFilter( GLenum target, GLenum format, GLenum type, GLvoid *image )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETCONVOLUTIONFILTER),cur_context,target,format,type,image));
+	(*HostCall_p)(NFOSMESA_GLGETCONVOLUTIONFILTER,cur_context,&target);
 }
 
 void glGetConvolutionParameterfv( GLenum target, GLenum pname, GLfloat *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETCONVOLUTIONPARAMETERFV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETCONVOLUTIONPARAMETERFV,cur_context,&target);
 }
 
 void glGetConvolutionParameteriv( GLenum target, GLenum pname, GLint *params )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETCONVOLUTIONPARAMETERIV),cur_context,target,pname,params));
+	(*HostCall_p)(NFOSMESA_GLGETCONVOLUTIONPARAMETERIV,cur_context,&target);
 }
 
 void glSeparableFilter2D( GLenum target, GLenum internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *row, const GLvoid *column )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLSEPARABLEFILTER2D),cur_context,target,internalformat,width,height,format,type,row,column));
+	(*HostCall_p)(NFOSMESA_GLSEPARABLEFILTER2D,cur_context,&target);
 }
 
 void glGetSeparableFilter( GLenum target, GLenum format, GLenum type, GLvoid *row, GLvoid *column, GLvoid *span )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETSEPARABLEFILTER),cur_context,target,format,type,row,column,span));
+	(*HostCall_p)(NFOSMESA_GLGETSEPARABLEFILTER,cur_context,&target);
 }
 
 void glActiveTexture( GLenum texture )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLACTIVETEXTURE),cur_context,texture));
+	(*HostCall_p)(NFOSMESA_GLACTIVETEXTURE,cur_context,&texture);
 }
 
 void glClientActiveTexture( GLenum texture )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCLIENTACTIVETEXTURE),cur_context,texture));
+	(*HostCall_p)(NFOSMESA_GLCLIENTACTIVETEXTURE,cur_context,&texture);
 }
 
 void glCompressedTexImage1D( GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const GLvoid *data )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOMPRESSEDTEXIMAGE1D),cur_context,target,level,internalformat,width,border,imageSize,data));
+	(*HostCall_p)(NFOSMESA_GLCOMPRESSEDTEXIMAGE1D,cur_context,&target);
 }
 
 void glCompressedTexImage2D( GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const GLvoid *data )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOMPRESSEDTEXIMAGE2D),cur_context,target,level,internalformat,width,height,border,imageSize,data));
+	(*HostCall_p)(NFOSMESA_GLCOMPRESSEDTEXIMAGE2D,cur_context,&target);
 }
 
 void glCompressedTexImage3D( GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const GLvoid *data )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOMPRESSEDTEXIMAGE3D),cur_context,target,level,internalformat,width,height,depth,border,imageSize,data));
+	(*HostCall_p)(NFOSMESA_GLCOMPRESSEDTEXIMAGE3D,cur_context,&target);
 }
 
 void glCompressedTexSubImage1D( GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const GLvoid *data )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE1D),cur_context,target,level,xoffset,width,format,imageSize,data));
+	(*HostCall_p)(NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE1D,cur_context,&target);
 }
 
 void glCompressedTexSubImage2D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const GLvoid *data )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE2D),cur_context,target,level,xoffset,yoffset,width,height,format,imageSize,data));
+	(*HostCall_p)(NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE2D,cur_context,&target);
 }
 
 void glCompressedTexSubImage3D( GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const GLvoid *data )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE3D),cur_context,target,level,xoffset,yoffset,zoffset,width,height,depth,format,imageSize,data));
+	(*HostCall_p)(NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE3D,cur_context,&target);
 }
 
 void glGetCompressedTexImage( GLenum target, GLint lod, GLvoid *img )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLGETCOMPRESSEDTEXIMAGE),cur_context,target,lod,img));
+	(*HostCall_p)(NFOSMESA_GLGETCOMPRESSEDTEXIMAGE,cur_context,&target);
 }
 
 void glMultiTexCoord1d( GLenum target, GLdouble s )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1D),cur_context,target,s));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1D,cur_context,&target);
 }
 
 void glMultiTexCoord1dv( GLenum target, const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1DV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1DV,cur_context,&target);
 }
 
 void glMultiTexCoord1f( GLenum target, GLfloat s )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1F),cur_context,target,s));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1F,cur_context,&target);
 }
 
 void glMultiTexCoord1fv( GLenum target, const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1FV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1FV,cur_context,&target);
 }
 
 void glMultiTexCoord1i( GLenum target, GLint s )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1I),cur_context,target,s));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1I,cur_context,&target);
 }
 
 void glMultiTexCoord1iv( GLenum target, const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1IV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1IV,cur_context,&target);
 }
 
 void glMultiTexCoord1s( GLenum target, GLshort s )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1S),cur_context,target,s));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1S,cur_context,&target);
 }
 
 void glMultiTexCoord1sv( GLenum target, const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1SV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1SV,cur_context,&target);
 }
 
 void glMultiTexCoord2d( GLenum target, GLdouble s, GLdouble t )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2D),cur_context,target,s,t));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2D,cur_context,&target);
 }
 
 void glMultiTexCoord2dv( GLenum target, const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2DV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2DV,cur_context,&target);
 }
 
 void glMultiTexCoord2f( GLenum target, GLfloat s, GLfloat t )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2F),cur_context,target,s,t));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2F,cur_context,&target);
 }
 
 void glMultiTexCoord2fv( GLenum target, const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2FV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2FV,cur_context,&target);
 }
 
 void glMultiTexCoord2i( GLenum target, GLint s, GLint t )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2I),cur_context,target,s,t));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2I,cur_context,&target);
 }
 
 void glMultiTexCoord2iv( GLenum target, const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2IV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2IV,cur_context,&target);
 }
 
 void glMultiTexCoord2s( GLenum target, GLshort s, GLshort t )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2S),cur_context,target,s,t));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2S,cur_context,&target);
 }
 
 void glMultiTexCoord2sv( GLenum target, const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2SV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2SV,cur_context,&target);
 }
 
 void glMultiTexCoord3d( GLenum target, GLdouble s, GLdouble t, GLdouble r )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3D),cur_context,target,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3D,cur_context,&target);
 }
 
 void glMultiTexCoord3dv( GLenum target, const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3DV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3DV,cur_context,&target);
 }
 
 void glMultiTexCoord3f( GLenum target, GLfloat s, GLfloat t, GLfloat r )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3F),cur_context,target,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3F,cur_context,&target);
 }
 
 void glMultiTexCoord3fv( GLenum target, const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3FV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3FV,cur_context,&target);
 }
 
 void glMultiTexCoord3i( GLenum target, GLint s, GLint t, GLint r )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3I),cur_context,target,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3I,cur_context,&target);
 }
 
 void glMultiTexCoord3iv( GLenum target, const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3IV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3IV,cur_context,&target);
 }
 
 void glMultiTexCoord3s( GLenum target, GLshort s, GLshort t, GLshort r )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3S),cur_context,target,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3S,cur_context,&target);
 }
 
 void glMultiTexCoord3sv( GLenum target, const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3SV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3SV,cur_context,&target);
 }
 
 void glMultiTexCoord4d( GLenum target, GLdouble s, GLdouble t, GLdouble r, GLdouble q )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4D),cur_context,target,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4D,cur_context,&target);
 }
 
 void glMultiTexCoord4dv( GLenum target, const GLdouble *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4DV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4DV,cur_context,&target);
 }
 
 void glMultiTexCoord4f( GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4F),cur_context,target,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4F,cur_context,&target);
 }
 
 void glMultiTexCoord4fv( GLenum target, const GLfloat *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4FV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4FV,cur_context,&target);
 }
 
 void glMultiTexCoord4i( GLenum target, GLint s, GLint t, GLint r, GLint q )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4I),cur_context,target,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4I,cur_context,&target);
 }
 
 void glMultiTexCoord4iv( GLenum target, const GLint *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4IV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4IV,cur_context,&target);
 }
 
 void glMultiTexCoord4s( GLenum target, GLshort s, GLshort t, GLshort r, GLshort q )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4S),cur_context,target,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4S,cur_context,&target);
 }
 
 void glMultiTexCoord4sv( GLenum target, const GLshort *v )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4SV),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4SV,cur_context,&target);
 }
 
 void glLoadTransposeMatrixd( const GLdouble m[16] )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLOADTRANSPOSEMATRIXD),cur_context,constGLdoublem[16]));
+	(*HostCall_p)(NFOSMESA_GLLOADTRANSPOSEMATRIXD,cur_context,&constGLdoublem[16]);
 }
 
 void glLoadTransposeMatrixf( const GLfloat m[16] )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLLOADTRANSPOSEMATRIXF),cur_context,constGLfloatm[16]));
+	(*HostCall_p)(NFOSMESA_GLLOADTRANSPOSEMATRIXF,cur_context,&constGLfloatm[16]);
 }
 
 void glMultTransposeMatrixd( const GLdouble m[16] )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTTRANSPOSEMATRIXD),cur_context,constGLdoublem[16]));
+	(*HostCall_p)(NFOSMESA_GLMULTTRANSPOSEMATRIXD,cur_context,&constGLdoublem[16]);
 }
 
 void glMultTransposeMatrixf( const GLfloat m[16] )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTTRANSPOSEMATRIXF),cur_context,constGLfloatm[16]));
+	(*HostCall_p)(NFOSMESA_GLMULTTRANSPOSEMATRIXF,cur_context,&constGLfloatm[16]);
 }
 
 void glSampleCoverage( GLclampf value, GLboolean invert )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLSAMPLECOVERAGE),cur_context,value,invert));
+	(*HostCall_p)(NFOSMESA_GLSAMPLECOVERAGE,cur_context,&value);
 }
 
 void glActiveTextureARB(GLenum texture)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLACTIVETEXTUREARB),cur_context,texture));
+	(*HostCall_p)(NFOSMESA_GLACTIVETEXTUREARB,cur_context,&texture);
 }
 
 void glClientActiveTextureARB(GLenum texture)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLCLIENTACTIVETEXTUREARB),cur_context,texture));
+	(*HostCall_p)(NFOSMESA_GLCLIENTACTIVETEXTUREARB,cur_context,&texture);
 }
 
 void glMultiTexCoord1dARB(GLenum target, GLdouble s)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1DARB),cur_context,target,s));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1DARB,cur_context,&target);
 }
 
 void glMultiTexCoord1dvARB(GLenum target, const GLdouble *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1DVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1DVARB,cur_context,&target);
 }
 
 void glMultiTexCoord1fARB(GLenum target, GLfloat s)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1FARB),cur_context,target,s));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1FARB,cur_context,&target);
 }
 
 void glMultiTexCoord1fvARB(GLenum target, const GLfloat *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1FVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1FVARB,cur_context,&target);
 }
 
 void glMultiTexCoord1iARB(GLenum target, GLint s)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1IARB),cur_context,target,s));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1IARB,cur_context,&target);
 }
 
 void glMultiTexCoord1ivARB(GLenum target, const GLint *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1IVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1IVARB,cur_context,&target);
 }
 
 void glMultiTexCoord1sARB(GLenum target, GLshort s)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1SARB),cur_context,target,s));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1SARB,cur_context,&target);
 }
 
 void glMultiTexCoord1svARB(GLenum target, const GLshort *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD1SVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD1SVARB,cur_context,&target);
 }
 
 void glMultiTexCoord2dARB(GLenum target, GLdouble s, GLdouble t)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2DARB),cur_context,target,s,t));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2DARB,cur_context,&target);
 }
 
 void glMultiTexCoord2dvARB(GLenum target, const GLdouble *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2DVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2DVARB,cur_context,&target);
 }
 
 void glMultiTexCoord2fARB(GLenum target, GLfloat s, GLfloat t)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2FARB),cur_context,target,s,t));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2FARB,cur_context,&target);
 }
 
 void glMultiTexCoord2fvARB(GLenum target, const GLfloat *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2FVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2FVARB,cur_context,&target);
 }
 
 void glMultiTexCoord2iARB(GLenum target, GLint s, GLint t)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2IARB),cur_context,target,s,t));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2IARB,cur_context,&target);
 }
 
 void glMultiTexCoord2ivARB(GLenum target, const GLint *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2IVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2IVARB,cur_context,&target);
 }
 
 void glMultiTexCoord2sARB(GLenum target, GLshort s, GLshort t)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2SARB),cur_context,target,s,t));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2SARB,cur_context,&target);
 }
 
 void glMultiTexCoord2svARB(GLenum target, const GLshort *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD2SVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD2SVARB,cur_context,&target);
 }
 
 void glMultiTexCoord3dARB(GLenum target, GLdouble s, GLdouble t, GLdouble r)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3DARB),cur_context,target,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3DARB,cur_context,&target);
 }
 
 void glMultiTexCoord3dvARB(GLenum target, const GLdouble *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3DVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3DVARB,cur_context,&target);
 }
 
 void glMultiTexCoord3fARB(GLenum target, GLfloat s, GLfloat t, GLfloat r)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3FARB),cur_context,target,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3FARB,cur_context,&target);
 }
 
 void glMultiTexCoord3fvARB(GLenum target, const GLfloat *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3FVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3FVARB,cur_context,&target);
 }
 
 void glMultiTexCoord3iARB(GLenum target, GLint s, GLint t, GLint r)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3IARB),cur_context,target,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3IARB,cur_context,&target);
 }
 
 void glMultiTexCoord3ivARB(GLenum target, const GLint *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3IVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3IVARB,cur_context,&target);
 }
 
 void glMultiTexCoord3sARB(GLenum target, GLshort s, GLshort t, GLshort r)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3SARB),cur_context,target,s,t,r));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3SARB,cur_context,&target);
 }
 
 void glMultiTexCoord3svARB(GLenum target, const GLshort *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD3SVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD3SVARB,cur_context,&target);
 }
 
 void glMultiTexCoord4dARB(GLenum target, GLdouble s, GLdouble t, GLdouble r, GLdouble q)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4DARB),cur_context,target,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4DARB,cur_context,&target);
 }
 
 void glMultiTexCoord4dvARB(GLenum target, const GLdouble *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4DVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4DVARB,cur_context,&target);
 }
 
 void glMultiTexCoord4fARB(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4FARB),cur_context,target,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4FARB,cur_context,&target);
 }
 
 void glMultiTexCoord4fvARB(GLenum target, const GLfloat *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4FVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4FVARB,cur_context,&target);
 }
 
 void glMultiTexCoord4iARB(GLenum target, GLint s, GLint t, GLint r, GLint q)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4IARB),cur_context,target,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4IARB,cur_context,&target);
 }
 
 void glMultiTexCoord4ivARB(GLenum target, const GLint *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4IVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4IVARB,cur_context,&target);
 }
 
 void glMultiTexCoord4sARB(GLenum target, GLshort s, GLshort t, GLshort r, GLshort q)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4SARB),cur_context,target,s,t,r,q));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4SARB,cur_context,&target);
 }
 
 void glMultiTexCoord4svARB(GLenum target, const GLshort *v)
 {
-	nfCall((NFOSMESA(NFOSMESA_GLMULTITEXCOORD4SVARB),cur_context,target,v));
+	(*HostCall_p)(NFOSMESA_GLMULTITEXCOORD4SVARB,cur_context,&target);
 }
 */
+
 void glEnableTraceMESA( GLbitfield mask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLENABLETRACEMESA),cur_context,mask));
+	(*HostCall_p)(NFOSMESA_GLENABLETRACEMESA,cur_context,&mask);
 }
 
 void glDisableTraceMESA( GLbitfield mask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLDISABLETRACEMESA),cur_context,mask));
+	(*HostCall_p)(NFOSMESA_GLDISABLETRACEMESA,cur_context,&mask);
 }
 
 void glNewTraceMESA( GLbitfield mask, const GLubyte * traceName )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLNEWTRACEMESA),cur_context,mask,traceName));
+	(*HostCall_p)(NFOSMESA_GLNEWTRACEMESA,cur_context,&mask);
 }
 
 void glEndTraceMESA( void )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLENDTRACEMESA),cur_context));
+	(*HostCall_p)(NFOSMESA_GLENDTRACEMESA,cur_context,NULL);
 }
 
 void glTraceAssertAttribMESA( GLbitfield attribMask )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTRACEASSERTATTRIBMESA),cur_context,attribMask));
+	(*HostCall_p)(NFOSMESA_GLTRACEASSERTATTRIBMESA,cur_context,&attribMask);
 }
 
 void glTraceCommentMESA( const GLubyte * comment )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTRACECOMMENTMESA),cur_context,comment));
+	(*HostCall_p)(NFOSMESA_GLTRACECOMMENTMESA,cur_context,&comment);
 }
 
 void glTraceTextureMESA( GLuint name, const GLubyte* comment )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTRACETEXTUREMESA),cur_context,name,comment));
+	(*HostCall_p)(NFOSMESA_GLTRACETEXTUREMESA,cur_context,&name);
 }
 
 void glTraceListMESA( GLuint name, const GLubyte* comment )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTRACELISTMESA),cur_context,name,comment));
+	(*HostCall_p)(NFOSMESA_GLTRACELISTMESA,cur_context,&name);
 }
 
 void glTracePointerMESA( GLvoid* pointer, const GLubyte* comment )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTRACEPOINTERMESA),cur_context,pointer,comment));
+	(*HostCall_p)(NFOSMESA_GLTRACEPOINTERMESA,cur_context,&pointer);
 }
 
 void glTracePointerRangeMESA( const GLvoid* first, const GLvoid* last, const GLubyte* comment )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLTRACEPOINTERRANGEMESA),cur_context,first,last,comment));
+	(*HostCall_p)(NFOSMESA_GLTRACEPOINTERRANGEMESA,cur_context,&first);
 }
 
 void glBlendEquationSeparateATI( GLenum modeRGB, GLenum modeA )
 {
-	nfCall((NFOSMESA(NFOSMESA_GLBLENDEQUATIONSEPARATEATI),cur_context,modeRGB,modeA));
+	(*HostCall_p)(NFOSMESA_GLBLENDEQUATIONSEPARATEATI,cur_context,&modeRGB);
 }
 
 /* Functions generated: 465 */

@@ -7,7 +7,7 @@ GLboolean (*OSMesaMakeCurrent)( OSMesaContext ctx, void *buffer, GLenum type, GL
 OSMesaContext (*OSMesaGetCurrentContext)( void );
 void (*OSMesaPixelStore)( GLint pname, GLint value );
 void (*OSMesaGetIntegerv)( GLint pname, GLint *value );
-GLboolean (*OSMesaGetDepthBuffer)( OSMesaContext c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer );
-GLboolean (*OSMesaGetColorBuffer)( OSMesaContext c, GLint *width, GLint *height, GLint *format, void **buffer );
+GLboolean (*OSMesaGetDepthBuffer)(GLint *width, GLint *height, GLint *bytesPerValue, void **buffer );
+GLboolean (*OSMesaGetColorBuffer)(GLint *width, GLint *height, GLint *format, void **buffer );
 void * (*OSMesaGetProcAddress)( const char *funcName );
 /* Functions generated : 10 */

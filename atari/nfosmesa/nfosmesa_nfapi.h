@@ -24,15 +24,14 @@
 /* if you change anything in the enum {} below you have to increase 
    this ARANFOSMESA_NFAPI_VERSION!
 */
-#define ARANFOSMESA_NFAPI_VERSION	0x00000000
+#define ARANFOSMESA_NFAPI_VERSION	0x00000001
 
 enum {
-	GET_VERSION = 0,	/* no parameters, return NFAPI_VERSION in d0 */
+	GET_VERSION=0,	/* no parameters, return NFAPI_VERSION in d0 */
+#include "enum-misc.h"
 #include "enum-osmesa.h"
 #include "enum-gl.h"
 #include "enum-glext.h"
-#include "enum-misc.h"
-	NFOSMESA_LAST
 };
 
 #define NFOSMESA(a)	(nfOSMesaId + a)

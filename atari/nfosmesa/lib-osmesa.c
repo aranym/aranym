@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <mint/cookie.h>
 #include <mint/osbind.h>
+#include <mint/mintbind.h>
 
 #include <GL/gl.h>
 
@@ -41,10 +42,19 @@
 #define C___NF	0x5f5f4e46L
 #endif
 
+#define NFOSMESA_DEVICE	"u:\\dev\\nfosmesa"
+
 /*--- Local variables ---*/
 
 unsigned long nfOSMesaId=0;
 OSMesaContext cur_context=0;
+static int dev_handle=-1;
+
+int (*HostCall_p)(int function_number, OSMesaContext ctx, void *first_param);
+
+/*--- Local functions ---*/
+
+static int HostCall_natfeats(int function_number, OSMesaContext ctx, void *first_param);
 
 /*--- OSMesa functions redirectors ---*/
 
@@ -63,70 +73,106 @@ static void InitNatfeat(void)
 	}
 }
 
-OSMesaContext OSMesaCreateContext( GLenum format, OSMesaContext sharelist )
+static int HostCall_natfeats(int function_number, OSMesaContext ctx, void *first_param)
 {
+	return nfCall((nfOSMesaId+function_number,ctx,first_param));
+}
+
+static int HostCall_device(int function_number, OSMesaContext ctx, void *first_param)
+{
+	unsigned long params[2];
+
+	params[0] = (unsigned long) ctx;
+	params[1] = (unsigned long) &first_param;
+
+	return Fcntl(dev_handle, params, (short) function_number);
+}
+
+static int InstallHostCall(void)
+{
+	/* Try the MiNT device */
+	dev_handle = Fopen(NFOSMESA_DEVICE, 0);
+	if (dev_handle>0) {
+		if (Fcntl(dev_handle, "OSMESA", ('N'<<8)|'F')==1) {
+			HostCall_p = HostCall_device;
+			return 1;
+		}
+		Fclose(dev_handle);
+	}
+
+	/* TOS maybe, try the cookie */
 	if (nfOSMesaId==0) {
 		InitNatfeat();
 		if (nfOSMesaId==0) {
-			return NULL;
+			return 0;
 		}
+		HostCall_p = HostCall_natfeats;
 	}
 
-	cur_context=nfCall((NFOSMESA(NFOSMESA_OSMESACREATECONTEXT), format, sharelist));
+	return 1;
+}
+
+OSMesaContext OSMesaCreateContext( GLenum format, OSMesaContext sharelist )
+{
+	if (!InstallHostCall()) {
+		return NULL;
+	}
+
+	cur_context=(OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXT, 0, &format);
 	return cur_context;
 }
 
 OSMesaContext OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist)
 {
-	if (nfOSMesaId==0) {
-		InitNatfeat();
-		if (nfOSMesaId==0) {
-			return NULL;
-		}
+	if (!InstallHostCall()) {
+		return NULL;
 	}
 
-	cur_context=nfCall((NFOSMESA(NFOSMESA_OSMESACREATECONTEXTEXT), format, depthBits, stencilBits, accumBits, sharelist));
+	cur_context=(OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXTEXT, 0, &format);
 	return cur_context;
 }
 
 void OSMesaDestroyContext( OSMesaContext ctx )
 {
-	nfCall((NFOSMESA(NFOSMESA_OSMESADESTROYCONTEXT), ctx));
+	(*HostCall_p)(NFOSMESA_OSMESADESTROYCONTEXT, 0, &ctx);
 	freeglGetString();
+	if (dev_handle>0) {
+		Fclose(dev_handle);
+		dev_handle=-1;
+	}
 }
 
 GLboolean OSMesaMakeCurrent( OSMesaContext ctx, void *buffer, GLenum type, GLsizei width, GLsizei height )
 {
-	cur_context=ctx;
-	return nfCall((NFOSMESA(NFOSMESA_OSMESAMAKECURRENT),ctx, buffer, type, width, height));
+	return (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAMAKECURRENT,0, &ctx);
 }
 
 OSMesaContext OSMesaGetCurrentContext( void )
 {
-	return nfCall((NFOSMESA(NFOSMESA_OSMESAGETCURRENTCONTEXT)));
+	return (OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESAGETCURRENTCONTEXT, 0, NULL);
 }
 
 void OSMesaPixelStore( GLint pname, GLint value )
 {
-	nfCall((NFOSMESA(NFOSMESA_OSMESAPIXELSTORE),cur_context,pname, value));
+	(*HostCall_p)(NFOSMESA_OSMESAPIXELSTORE,0, &pname);
 }
 
 void OSMesaGetIntegerv( GLint pname, GLint *value )
 {
-	nfCall((NFOSMESA(NFOSMESA_OSMESAGETINTEGERV),cur_context,pname, value));
+	(*HostCall_p)(NFOSMESA_OSMESAGETINTEGERV,0, &pname);
 }
 
 GLboolean OSMesaGetDepthBuffer( OSMesaContext c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer )
 {
-	return nfCall((NFOSMESA(NFOSMESA_OSMESAGETDEPTHBUFFER),c, width, height, bytesPerValue, buffer));
+	return (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAGETDEPTHBUFFER,0, &c);
 }
 
 GLboolean OSMesaGetColorBuffer( OSMesaContext c, GLint *width, GLint *height, GLint *format, void **buffer )
 {
-	return nfCall((NFOSMESA(NFOSMESA_OSMESAGETCOLORBUFFER),c, width, height, format, buffer));
+	return (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAGETCOLORBUFFER,0, &c);
 }
 
 void *OSMesaGetProcAddress( const char *funcName )
 {
-	return nfCall((NFOSMESA(NFOSMESA_OSMESAGETPROCADDRESS),funcName));
+	return (void *)(*HostCall_p)(NFOSMESA_OSMESAGETPROCADDRESS,0, &funcName);
 }

@@ -64,10 +64,18 @@ const GLubyte* glGetString( GLenum name )
 
 	if (i!=4) {
 		if (gl_strings[i]==NULL) {
-			len=nfCall((NFOSMESA(NFOSMESA_LENGLGETSTRING),cur_context,name));
+			unsigned long params[3];
+			
+			params[0] = (unsigned long) cur_context;
+			params[1] = (unsigned long) name;
+
+			len=(int)(*HostCall_p)(NFOSMESA_LENGLGETSTRING,0,params);
 			gl_strings[i]=(GLubyte *)Atari_MxAlloc(len+1);
 			if (gl_strings[i]) {
-				nfCall((NFOSMESA(NFOSMESA_PUTGLGETSTRING),cur_context,name,gl_strings[i]));
+				params[0] = (unsigned long) cur_context;
+				params[1] = (unsigned long) name;
+				params[2] = (unsigned long) gl_strings[i];
+				(*HostCall_p)(NFOSMESA_PUTGLGETSTRING,0,params);
 			} else {
 				return gl_strings[4];
 			}

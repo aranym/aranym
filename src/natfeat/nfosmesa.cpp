@@ -61,6 +61,7 @@ OSMesaDriver::OSMesaDriver()
 	cur_context = -1;
 	libgl_handle = libosmesa_handle = NULL;
 	libgl_needed = SDL_FALSE;
+	ctx_ptr = NULL;
 }
 
 OSMesaDriver::~OSMesaDriver()
@@ -95,18 +96,19 @@ bool OSMesaDriver::isSuperOnly()
 int32 OSMesaDriver::dispatch(uint32 fncode)
 {
 	int32 ret = 0;
-
-/*	D(bug("nfosmesa: dispatch(%u)", fncode));*/
+	
+	SelectContext(getParameter(0));
+	ctx_ptr = (Uint32 *)Atari2HostAddr(getParameter(1));
 
 	switch(fncode) {
 		case GET_VERSION:
     		ret = ARANFOSMESA_NFAPI_VERSION;
 			break;
 		case NFOSMESA_LENGLGETSTRING:
-			ret = LenglGetString(getParameter(0),getParameter(1));
+			ret = LenglGetString(getStackedParameter(0),getStackedParameter(1));
 			break;
 		case NFOSMESA_PUTGLGETSTRING:
-			PutglGetString(getParameter(0),getParameter(1),(GLubyte *)Atari2HostAddr(getParameter(2)));
+			PutglGetString(getStackedParameter(0),getStackedParameter(1),(GLubyte *)Atari2HostAddr(getStackedParameter(2)));
 			break;
 #include "nfosmesa/dispatch-osmesa.c"
 #include "nfosmesa/dispatch-gl.c"
@@ -204,10 +206,10 @@ int OSMesaDriver::CloseLibrary(void)
 			(void (*)(GLint,GLint *))
 			NULL;
 		fn.OSMesaGetDepthBuffer =
-			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
+			(GLboolean (*)(GLint *,GLint *,GLint *,void **))
 			NULL;
 		fn.OSMesaGetColorBuffer =
-			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
+			(GLboolean (*)(GLint *,GLint *,GLint *,void **))
 			NULL;
 		fn.OSMesaGetProcAddress =
 			(void *(*)(const char *))
@@ -266,10 +268,10 @@ void OSMesaDriver::InitPointersOSMesa(void)
 			(void (*)(GLint,GLint *))
 			SDL_LoadFunction(libosmesa_handle,"OSMesaGetIntegerv");
 		fn.OSMesaGetDepthBuffer =
-			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
+			(GLboolean (*)(GLint *,GLint *,GLint *,void **))
 			SDL_LoadFunction(libosmesa_handle,"OSMesaGetDepthBuffer");
 		fn.OSMesaGetColorBuffer =
-			(GLboolean (*)(OSMesaContext,GLint *,GLint *,GLint *,void **))
+			(GLboolean (*)(GLint *,GLint *,GLint *,void **))
 			SDL_LoadFunction(libosmesa_handle,"OSMesaGetColorBuffer");
 		fn.OSMesaGetProcAddress =
 			(void *(*)(const char *))
@@ -280,7 +282,8 @@ void OSMesaDriver::SelectContext(Uint32 ctx)
 {
 	void *draw_buffer;
 
-	if ((ctx>MAX_OSMESA_CONTEXTS) || (cur_context<0)) {
+	if ((ctx>MAX_OSMESA_CONTEXTS) || (ctx==0)) {
+		D(bug("nfosmesa: SelectContext: %d out of bounds",ctx));
 		return;
 	}
 	if ((Uint32)cur_context != ctx) {
@@ -289,6 +292,7 @@ void OSMesaDriver::SelectContext(Uint32 ctx)
 			draw_buffer = contexts[ctx].src_buffer;
 		}
 		fn.OSMesaMakeCurrent(contexts[ctx].ctx, draw_buffer, contexts[ctx].type, contexts[ctx].width, contexts[ctx].height);
+		D(bug("nfosmesa: SelectContext: %d is current",ctx));
 		cur_context = ctx;
 	}
 }
@@ -305,7 +309,7 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 	OSMesaContext share_ctx;
 	GLenum osmesa_format;
 
-	D(bug("nfosmesa: OSMesaCreateContextExt"));
+	D(bug("nfosmesa: OSMesaCreateContextExt(%d,%d,%d,%d,0x%08x)",format,depthBits,stencilBits,accumBits,sharelist));
 
 	if (sharelist || (num_contexts==MAX_OSMESA_CONTEXTS)) {
 		return 0;
@@ -404,7 +408,7 @@ GLboolean OSMesaDriver::OSMesaMakeCurrent( Uint32 ctx, void *buffer, GLenum type
 {
 	void *draw_buffer;
 
-	D(bug("nfosmesa: OSMesaMakeCurrent"));
+	D(bug("nfosmesa: OSMesaMakeCurrent(%d,0x%08x,%d,%d,%d)",ctx,buffer,type,width,height));
 	if (ctx>MAX_OSMESA_CONTEXTS) {
 		return GL_FALSE;
 	}
@@ -442,24 +446,24 @@ Uint32 OSMesaDriver::OSMesaGetCurrentContext( void )
 	return cur_context;
 }
 
-void OSMesaDriver::OSMesaPixelStore( Uint32 c, GLint pname, GLint value )
+void OSMesaDriver::OSMesaPixelStore(GLint pname, GLint value )
 {
 	D(bug("nfosmesa: OSMesaPixelStore"));
-	SelectContext(c);
+	SelectContext(cur_context);
 	fn.OSMesaPixelStore(pname, value);
 }
 
-void OSMesaDriver::OSMesaGetIntegerv( Uint32 c, GLint pname, GLint *value )
+void OSMesaDriver::OSMesaGetIntegerv(GLint pname, GLint *value )
 {
 	GLint tmp;
 
 	D(bug("nfosmesa: OSMesaGetIntegerv"));
-	SelectContext(c);
+	SelectContext(cur_context);
 	fn.OSMesaGetIntegerv(pname, &tmp);
 	*value = SDL_SwapBE32(tmp);
 }
 
-GLboolean OSMesaDriver::OSMesaGetDepthBuffer( Uint32 c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer )
+GLboolean OSMesaDriver::OSMesaGetDepthBuffer(Uint32 c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer )
 {
 	D(bug("nfosmesa: OSMesaGetDepthBuffer"));
 	SelectContext(c);
@@ -470,7 +474,7 @@ GLboolean OSMesaDriver::OSMesaGetDepthBuffer( Uint32 c, GLint *width, GLint *hei
 	return GL_FALSE;
 }
 
-GLboolean OSMesaDriver::OSMesaGetColorBuffer( Uint32 c, GLint *width, GLint *height, GLint *format, void **buffer )
+GLboolean OSMesaDriver::OSMesaGetColorBuffer(Uint32 c, GLint *width, GLint *height, GLint *format, void **buffer )
 {
 	D(bug("nfosmesa: OSMesaGetColorBuffer"));
 	SelectContext(c);
@@ -481,9 +485,8 @@ GLboolean OSMesaDriver::OSMesaGetColorBuffer( Uint32 c, GLint *width, GLint *hei
 	return GL_FALSE;
 }
 
-void *OSMesaDriver::OSMesaGetProcAddress( const char *funcName )
+void *OSMesaDriver::OSMesaGetProcAddress( const char */*funcName*/ )
 {
-	DUNUSED(funcName);
 	D(bug("nfosmesa: OSMesaGetProcAddress"));
 	return NULL;
 }
@@ -491,15 +494,16 @@ void *OSMesaDriver::OSMesaGetProcAddress( const char *funcName )
 Uint32 OSMesaDriver::LenglGetString(Uint32 ctx, GLenum name)
 {
 	D(bug("nfosmesa: LenglGetString"));
+	SelectContext(ctx);
 #if NFOSMESA_GLEXT
-	return strlen((const char *)nfglGetString(ctx,name));
+	return strlen((const char *)nfglGetString(name));
 #else
 	switch(name) {
 		case GL_EXTENSIONS:
 		case GL_VERSION:
 			return 4;
 		default:
-			return strlen((const char *)nfglGetString(ctx,name));
+			return strlen((const char *)nfglGetString(name));
 	}
 #endif
 }
@@ -507,8 +511,9 @@ Uint32 OSMesaDriver::LenglGetString(Uint32 ctx, GLenum name)
 void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 {
 	D(bug("nfosmesa: PutglGetString"));
+	SelectContext(ctx);
 #if NFOSMESA_GLEXT
-	strcpy((char *)buffer,(const char *)nfglGetString(ctx,name));
+	strcpy((char *)buffer,(const char *)nfglGetString(name));
 #else
 	switch(name) {
 		case GL_EXTENSIONS:
@@ -518,7 +523,7 @@ void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 			strcpy((char *)buffer, "1.0");
 			break;
 		default:
-			strcpy((char *)buffer,(const char *)nfglGetString(ctx,name));
+			strcpy((char *)buffer,(const char *)nfglGetString(name));
 			break;
 	}
 #endif
@@ -535,7 +540,6 @@ GLdouble OSMesaDriver::Atari2HostDouble(Uint32 high, Uint32 low)
 	ptr[0]=high;
 	ptr[1]=low;
 #endif
-
 	return *((GLdouble *)ptr);
 }
 
@@ -548,14 +552,12 @@ void OSMesaDriver::Atari2HostDoublePtr(Uint32 size, Uint32 *src, GLdouble *dest)
 	}
 }
 
-GLfloat OSMesaDriver::Atari2HostFloat(Uint32 high, Uint32 low)
+/*
+GLfloat OSMesaDriver::Atari2HostFloat(Uint32 value)
 {
-	GLfloat tmp;
-
-	tmp=(GLfloat)Atari2HostDouble(high,low);
-	return tmp;
+	return value;
 }
-
+*/
 void OSMesaDriver::Atari2HostFloatPtr(Uint32 size, Uint32 *src, GLfloat *dest)
 {
 	Uint32 i,*tmp;
@@ -943,6 +945,19 @@ void OSMesaDriver::ConvertContext32(Uint32 ctx)
 			}
 			break;
 	}
+}
+
+Uint32 OSMesaDriver::getStackedParameter(Uint32 n)
+{
+	return SDL_SwapBE32(ctx_ptr[n]);
+}
+
+float OSMesaDriver::getStackedFloat(Uint32 n)
+{
+	Uint32 tmp;
+
+	tmp = SDL_SwapBE32(ctx_ptr[n]);
+	return *((float *)&tmp);
 }
 
 #include "nfosmesa/call-gl.c"

@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 # Read original include file, and generate enumeration
+# Input: <file_name>
 
 $file = @ARGV[0];
+#$start = @ARGV[1];
 $prefix = "NFOSMESA_";
 
 if ( ! defined(open(FILE, $file)) ) {
@@ -36,10 +38,12 @@ while ($ligne = <FILE>) {
 		$function_name =~ tr/a-z/A-Z/;
 		chomp($ligne);
 
+#		print "#define\t$prefix$function_name\t$start\n";
 		print "\t$prefix$function_name,\n";
 
 		$linecount++;
+#		$start++;
 	}
 }
 close(FILE);
-print "/* Functions generated: $linecount */\n";
+print "\n/* Functions generated: $linecount */\n";

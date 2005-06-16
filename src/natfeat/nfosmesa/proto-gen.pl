@@ -52,15 +52,6 @@ while ($ligne = <FILE>) {
 			$lettre++;
 		}
 
-		# Add context parameter
-		if ($ligne =~ /,/ ) {
-			$ligne =~ s/\(/(Uint32 ctx,/;
-		} elsif ($ligne =~ /\( *void *\)/ ) { 
-			$ligne =~ s/\(.*\)/(Uint32 ctx)/;
-		} else {
-			$ligne =~ s/\(/(Uint32 ctx,/;
-		}
-
 		print "\t$ligne\n";
 
 		$linecount++;

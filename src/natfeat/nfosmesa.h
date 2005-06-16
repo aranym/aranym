@@ -91,12 +91,16 @@ class OSMesaDriver : public NF_Base
 		void ConvertContext16(Uint32 ctx);	/* 16 bits per channel */
 		void ConvertContext32(Uint32 ctx);	/* 32 bits per channel */
 
+		/* Read parameter on m68k stack */
+		Uint32 *ctx_ptr;	/* Current parameter list */
+		Uint32 getStackedParameter(Uint32 n);
+		float getStackedFloat(Uint32 n);
+
 		Uint32 LenglGetString(Uint32 ctx, GLenum name);
 		void PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer);
 
 		GLdouble Atari2HostDouble(Uint32 high, Uint32 low);
 		void Atari2HostDoublePtr(Uint32 size, Uint32 *src, GLdouble *dest);
-		GLfloat Atari2HostFloat(Uint32 high, Uint32 low);
 		void Atari2HostFloatPtr(Uint32 size, Uint32 *src, GLfloat *dest);
 		void Atari2HostIntPtr(Uint32 size, Uint32 *src, GLint *dest);
 		void Atari2HostShortPtr(Uint32 size, Uint16 *src, GLshort *dest);
@@ -106,8 +110,8 @@ class OSMesaDriver : public NF_Base
 		void OSMesaDestroyContext( Uint32 ctx );
 		GLboolean OSMesaMakeCurrent( Uint32 ctx, void *buffer, GLenum type, GLsizei width, GLsizei height );
 		Uint32 OSMesaGetCurrentContext( void );
-		void OSMesaPixelStore( Uint32 c, GLint pname, GLint value );
-		void OSMesaGetIntegerv( Uint32 c, GLint pname, GLint *value );
+		void OSMesaPixelStore(GLint pname, GLint value );
+		void OSMesaGetIntegerv(GLint pname, GLint *value );
 		GLboolean OSMesaGetDepthBuffer( Uint32 c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer );
 		GLboolean OSMesaGetColorBuffer( Uint32 c, GLint *width, GLint *height, GLint *format, void **buffer );
 		void *OSMesaGetProcAddress( const char *funcName );

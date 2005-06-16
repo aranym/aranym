@@ -30,6 +30,8 @@ typedef struct osmesa_context *OSMesaContext;
 extern unsigned long nfOSMesaId;
 extern OSMesaContext cur_context;
 
+extern int (*HostCall_p)(int function_number, OSMesaContext ctx, void *first_param);
+
 /*--- Functions prototypes ---*/
 
 OSMesaContext OSMesaCreateContext( GLenum format, OSMesaContext sharelist );
