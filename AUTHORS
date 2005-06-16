@@ -127,7 +127,7 @@ Bernd Schmidt (UAE CPU)
 Christian Bauer (BasiliskII core)
 Marinos "Nino" Yannikos and Martin D. Griffiths (STonX)
 Gwenole Beauchesne (BasiliskII[-JIT])
-
+Bernie Meyer (UAE JIT)
 
 This is the list of people who have contributed to project
 
@@ -182,3 +182,5 @@ Carlo Baiocco
 Laurent Vogel
 - crucial MFP/IKBD GPIP fix
 
+Konrad Kokoszkiewicz
+- many hints and small fixes
