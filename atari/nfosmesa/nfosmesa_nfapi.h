@@ -32,6 +32,7 @@ enum {
 #include "enum-osmesa.h"
 #include "enum-gl.h"
 #include "enum-glext.h"
+	NFOSMESA_LAST
 };
 
 #define NFOSMESA(a)	(nfOSMesaId + a)

@@ -83,7 +83,7 @@ static int HostCall_device(int function_number, OSMesaContext ctx, void *first_p
 	unsigned long params[2];
 
 	params[0] = (unsigned long) ctx;
-	params[1] = (unsigned long) &first_param;
+	params[1] = (unsigned long) first_param;
 
 	return Fcntl(dev_handle, params, (short) function_number);
 }
@@ -93,11 +93,8 @@ static int InstallHostCall(void)
 	/* Try the MiNT device */
 	dev_handle = Fopen(NFOSMESA_DEVICE, 0);
 	if (dev_handle>0) {
-		if (Fcntl(dev_handle, "OSMESA", ('N'<<8)|'F')==1) {
-			HostCall_p = HostCall_device;
-			return 1;
-		}
-		Fclose(dev_handle);
+		HostCall_p = HostCall_device;
+		return 1;
 	}
 
 	/* TOS maybe, try the cookie */

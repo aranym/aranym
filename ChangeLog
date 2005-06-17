@@ -1,3 +1,7 @@
+2005/06/17 - Patrice
+- nfosmesa: Added nfosmesa device driver for MiNT, non working atm.
+
+
 2005/06/16 - Patrice
 - nfosmesa: Reworked interface to host, can use a MiNT device (to write) ioctl,
   or NF interface. On the Atari side, parameters are no more stacked twice.
