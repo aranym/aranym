@@ -25,5 +25,5 @@ all: $(TARGET)
 .c.o:
 	$(CC) -o $@ -c $< $(CFLAGS) $(INCLUDES) $(DEFINITIONS)
 
-$(TARGET): $(OBJS) $(LIBKERNTARGET)
+$(TARGET): $(OBJS)
 	$(LD) $(CFLAGS) -o $@ $(OBJS) $(LIBS)

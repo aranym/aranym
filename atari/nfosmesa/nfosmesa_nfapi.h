@@ -21,6 +21,8 @@
 #ifndef _NFOSMESA_NFAPI_H
 #define _NFOSMESA_NFAPI_H
 
+#define NFOSMESA_IOCTL	(('N'<<8)|'F')
+
 /* if you change anything in the enum {} below you have to increase 
    this ARANFOSMESA_NFAPI_VERSION!
 */

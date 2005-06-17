@@ -80,39 +80,44 @@ static int HostCall_natfeats(int function_number, OSMesaContext ctx, void *first
 
 static int HostCall_device(int function_number, OSMesaContext ctx, void *first_param)
 {
-	unsigned long params[2];
+	unsigned long params[3];
 
-	params[0] = (unsigned long) ctx;
-	params[1] = (unsigned long) first_param;
+	params[0] = (unsigned long) function_number;
+	params[1] = (unsigned long) ctx;
+	params[2] = (unsigned long) first_param;
 
-	return Fcntl(dev_handle, params, (short) function_number);
+	return Fcntl(dev_handle, params, NFOSMESA_IOCTL);
 }
 
 static int InstallHostCall(void)
 {
 	/* Try the MiNT device */
-	dev_handle = Fopen(NFOSMESA_DEVICE, 0);
-	if (dev_handle>0) {
-		HostCall_p = HostCall_device;
-		return 1;
+	if (dev_handle<0) {
+		dev_handle = Fopen(NFOSMESA_DEVICE, 0);
+		if (dev_handle>0) {
+			HostCall_p = HostCall_device;
+			return 1;
+		}
 	}
 
 	/* TOS maybe, try the cookie */
 	if (nfOSMesaId==0) {
 		InitNatfeat();
-		if (nfOSMesaId==0) {
-			return 0;
+		if (nfOSMesaId!=0) {
+			HostCall_p = HostCall_natfeats;
+			return 1;
 		}
-		HostCall_p = HostCall_natfeats;
 	}
 
-	return 1;
+	return 0;
 }
 
 OSMesaContext OSMesaCreateContext( GLenum format, OSMesaContext sharelist )
 {
-	if (!InstallHostCall()) {
-		return NULL;
+	if (HostCall_p==NULL) {
+		if (!InstallHostCall()) {
+			return NULL;
+		}
 	}
 
 	cur_context=(OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXT, 0, &format);
@@ -121,8 +126,10 @@ OSMesaContext OSMesaCreateContext( GLenum format, OSMesaContext sharelist )
 
 OSMesaContext OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist)
 {
-	if (!InstallHostCall()) {
-		return NULL;
+	if (HostCall_p==NULL) {
+		if (!InstallHostCall()) {
+			return NULL;
+		}
 	}
 
 	cur_context=(OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXTEXT, 0, &format);

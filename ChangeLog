@@ -1,5 +1,6 @@
 2005/06/17 - Patrice
-- nfosmesa: Added nfosmesa device driver for MiNT, non working atm.
+- nfosmesa: Added nfosmesa device driver for MiNT, which now works. You can use
+  it with MiNT 1.16, which was removing __NF cookie.
 
 
 2005/06/16 - Patrice
