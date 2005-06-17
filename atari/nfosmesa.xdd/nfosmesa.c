@@ -48,26 +48,6 @@
 # define VER_MINOR	1
 # define VER_STATUS	
 
-
-/*
- * debugging stuff
- */
-
-# if 1
-# define DEV_DEBUG	1
-# endif
-
-# if 0
-# define INT_DEBUG	1
-# endif
-
-
-/*
- * default settings
- */
-
-
-
 /*
  * messages
  */
@@ -80,9 +60,6 @@
 
 # define MSG_GREET	\
 	"½ " MSG_BUILDDATE " by Patrice Mandin.\r\n\r\n"
-
-# define MSG_FAILURE	\
-	"\7\r\nSorry, driver NOT installed - initialization failed!\r\n\r\n"
 
 
 /****************************************************************************/
@@ -192,7 +169,7 @@ DEVDRV * _cdecl
 init (struct kerinfo *k)
 {
 	unsigned long dummy;
-	long r;
+/*	long r;*/
 
 	kernel = k;
 	
@@ -202,8 +179,8 @@ init (struct kerinfo *k)
 	DEBUG (("%s: enter init", __FILE__));
 
 	/* Check NF presence */
-	r = s_system(S_GETCOOKIE, C___NF, (long) &dummy);
-	if (r<0) {
+/*	r = s_system(S_GETCOOKIE, C___NF, (long) &dummy);*/
+	if (get_toscookie (C___NF, &dummy)!=0) {
 		c_conws("__NF cookie not present on this system\r\n");
 		return NULL;
 	}
@@ -215,9 +192,16 @@ init (struct kerinfo *k)
 		return NULL;
 	}
 
+	/* Check API version */
+	if (nfCall((nfOSMesaId+GET_VERSION))!=ARANFOSMESA_NFAPI_VERSION) {
+		c_conws("NF OSMesa functions use an incompatible API\r\n");
+		return NULL;
+	}
+
 	/* Install device */
 	if (d_cntl (DEV_INSTALL, "u:\\dev\\nfosmesa", (long) &raw_dev_descriptor)<=0) {
 		ALERT (("[NFOSMESA] init: Unable to install device"));
+		return NULL;
 	}		
 
 	install_time = timestamp;
@@ -235,18 +219,12 @@ init (struct kerinfo *k)
 static long _cdecl
 nfosmesa_open (FILEPTR *f)
 {
-	DEBUG (("nfosmesa_open [%i]: enter (%lx)", f->fc.aux, f->flags));
-
-	f->pos = 0;
-
-	DEBUG (("nfosmesa_open: return E_OK (added %lx)", f));
 	return E_OK;
 }
 
 static long _cdecl
 nfosmesa_close (FILEPTR *f, int pid)
 {
-	DEBUG (("nfosmesa_close [%i]", f->fc.aux));	
 	return E_OK;
 }
 
@@ -256,46 +234,37 @@ nfosmesa_close (FILEPTR *f, int pid)
 static long _cdecl
 nfosmesa_write (FILEPTR *f, const char *buf, long bytes)
 {
-	DEBUG (("nfosmesa_write [%i]: enter (%lx, %ld)", f->fc.aux, buf, bytes));
 	return ENOSYS;
 }
 
 static long _cdecl
 nfosmesa_read (FILEPTR *f, char *buf, long bytes)
 {
-	DEBUG (("nfosmesa_read [%i]: enter (%lx, %ld)", f->fc.aux, buf, bytes));
 	return ENOSYS;
 }
 
 static long _cdecl
 nfosmesa_lseek (FILEPTR *f, long where, int whence)
 {
-	DEBUG (("nfosmesa_lseek [%i]: enter (%ld, %d)", f->fc.aux, where, whence));
 	return ENOSYS;
 }
 
 static long _cdecl
 nfosmesa_ioctl (FILEPTR *f, int mode, void *buf)
 {
-	long r = ENOSYS;
-	unsigned long *tmp = (unsigned long *)buf;
+	unsigned long *tmp =(unsigned long *)buf;
 	
-	DEBUG (("nfosmesa_ioctl [%i]: (%x, (%c %i), %lx)", f->fc.aux, mode, (char) (mode >> 8), (mode & 0xff), buf));
-	
-	if (mode<NFOSMESA_LAST) {
-		/* Execute command */
-		r = nfCall((nfOSMesaId+mode,tmp[0],tmp[1]));
+	if (mode!=NFOSMESA_IOCTL) {
+		return ENOSYS;
 	}
 	
-	DEBUG (("nfosmesa_ioctl: return %li", r));
-	return r;
+	/* Execute command */
+	return nfCall((nfOSMesaId+tmp[0],tmp[1],tmp[2]));
 }
 
 static long _cdecl
 nfosmesa_datime (FILEPTR *f, ushort *timeptr, int rwflag)
 {
-	DEBUG (("nfosmesa_datime [%i]: enter (%i)", f->fc.aux, rwflag));
-	
 	if (rwflag)
 		return EACCES;
 	
@@ -308,8 +277,6 @@ nfosmesa_datime (FILEPTR *f, ushort *timeptr, int rwflag)
 static long _cdecl
 nfosmesa_select (FILEPTR *f, long proc, int mode)
 {
-	DEBUG (("nfosmesa_select [%i]: enter (%li, %i)", f->fc.aux, proc, mode));
-	
 	/* we're always ready for I/O */
 	return 1;
 }
@@ -317,9 +284,6 @@ nfosmesa_select (FILEPTR *f, long proc, int mode)
 static void _cdecl
 nfosmesa_unselect (FILEPTR *f, long proc, int mode)
 {
-	DEBUG (("nfosmesa_unselect [%i]: enter (%li, %i)", f->fc.aux, proc, mode));
-
-	/* nothing for us to do here */
 }
 
 /* END device driver routines - top half */
