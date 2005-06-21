@@ -35,7 +35,9 @@
 #include "debug.h"
 
 #ifdef ENABLE_OPENGL
+#define NO_SDL_GLEXT	/* Don't use SDL version of glext */
 #include <SDL_opengl.h>
+#include <GL/glext.h>
 #endif
 
 #define RGB_BLACK     0x00000000
@@ -356,7 +358,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		}
 		this->width = width = SdlGlSurface->w;
 		this->height = height = SdlGlSurface->h;
-		this->bpp = bpp = SdlGlSurface->format->BitsPerPixel;
+		this->bpp = bpp = 32;	/* bpp of texture that will be used */
 
 		glViewport(0, 0, width, height);
 
@@ -410,14 +412,14 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 #if defined(GL_EXT_texture_rectangle)
 			if (strstr(extensions, "GL_EXT_texture_rectangle")) {
 				rect_texture = SDL_TRUE;
-				rect_target=GL_TEXTURE_RECTANGLE;
+				rect_target=GL_TEXTURE_RECTANGLE_EXT;
 				glGetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_EXT, &MaxTextureSize);
 			}
 #endif
 #if defined(GL_ARB_texture_rectangle)
 			if (strstr(extensions, "GL_ARB_texture_rectangle")) {
 				rect_texture = SDL_TRUE;
-				rect_target=GL_TEXTURE_RECTANGLE;
+				rect_target=GL_TEXTURE_RECTANGLE_ARB;
 				glGetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB, &MaxTextureSize);
 			}
 #endif
@@ -1496,6 +1498,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.74  2005/06/16 13:26:47  milan
+ * Disabled for non-gui version
+ *
  * Revision 1.73  2005/06/14 16:45:04  pmandin
  * Use rectangle texture when available
  *

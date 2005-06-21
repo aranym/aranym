@@ -1,3 +1,7 @@
+2005/06/21 - Patrice
+- hostscreen: Don't use SDL version of glext.h. Also fix bpp for OpenGL screen.
+
+
 2005/06/20 - milan
 - configure.ac: needed size of LMA increased to 16 MB, should solve problem on
                 some systems with autodetection
