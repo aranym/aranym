@@ -1068,6 +1068,7 @@ int SoftVdiDriver::drawMoveLine(memptr table, int length, memptr index, int move
 {
 	int x1 = (int16)ReadInt16(table); table+=2;
 	int y1 = (int16)ReadInt16(table); table+=2;
+	moves *= 2;
 	moves-=2;
 	if ((int16)ReadInt16(index + moves) == -4)
 		moves-=2;
@@ -1475,6 +1476,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.10  2005/06/14 08:00:45  pmandin
+ * Add reset method
+ *
  * Revision 1.9  2005/06/07 21:35:12  johan
  * support for forced mouse positioning
  *

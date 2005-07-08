@@ -1,3 +1,7 @@
+2005/07/09 - Johan
+- nfvdi_*:      Bug fix for polylines with moves.
+- nfvdi_opengl: Bug fix for single pixel lines. Speedup for polylines.
+	
 2005/06/21 - Patrice
 - hostscreen: Don't use SDL version of glext.h. Also fix bpp for OpenGL screen.
 

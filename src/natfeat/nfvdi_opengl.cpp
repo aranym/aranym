@@ -833,12 +833,77 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr /*vwk*/, memptr /*src*/, int32 sx,
 int OpenGLVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2,
 	uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp)
 {
-	if (logOp == 1) {
+	if ((logOp == 1) && (pattern != 0xffff)) {
 		/* First, the back color */
 		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		if ((x1 == x2) && (y1 == y2)) {
+			glBegin(GL_POINTS);
+				glVertex2i(x1,y1);
+			glEnd();
+		} else {
+			glBegin(GL_LINES);
+				glVertex2i(x1,y1);
+				glVertex2i(x2,y2);
+			glEnd();
+		}
+	}
+
+	glEnable(GL_COLOR_LOGIC_OP);
+	if (logOp == 3) {
+		glLogicOp(GL_XOR);
+		glColor3ub(0xff,0xff,0xff);
+	} else {
+		glLogicOp(GL_COPY);
+		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+	}
+
+	glEnable(GL_LINE_STIPPLE);
+	glLineStipple(1,pattern);
+
+	/* Draw with fgColor */
+	if ((x1 == x2) && (y1 == y2)) {
+		glBegin(GL_POINTS);
+			glVertex2i(x1,y1);
+		glEnd();
+	} else {
 		glBegin(GL_LINES);
 			glVertex2i(x1,y1);
 			glVertex2i(x2,y2);
+		glEnd();
+	}
+
+	glDisable(GL_LINE_STIPPLE);
+	glDisable(GL_COLOR_LOGIC_OP);
+
+	D(bug("glvdi: drawline(%d,%d,%d,%d,0x%08x,0x%08x",x1,y1,x2,y2,fgColor,bgColor));
+	return 1;
+}
+
+int OpenGLVdiDriver::drawTableLine(memptr table, int length, uint16 pattern,
+	uint32 fgColor, uint32 bgColor, int logOp)
+{
+	int x, y, tmp_length;
+	memptr tmp_table;
+
+	if ((logOp == 1) && (pattern != 0xffff)) {
+		/* First, the back color */
+		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		tmp_length = length;
+		tmp_table = table;
+		if ((ReadInt16(table) == ReadInt16(table + length * 4 - 4)) &&
+		    (ReadInt16(table + 2) == ReadInt16(table + length * 4 - 2))) {
+			length--;
+			glBegin(GL_LINE_LOOP);
+		} else {
+			glBegin(GL_LINE_STRIP);
+		}
+		for(; length > 0; length--) {
+			x = (int16)ReadInt16(table); table += 2;
+			y = (int16)ReadInt16(table); table += 2;
+			glVertex2i(x, y);
+		}
+		length = tmp_length;
+		table = tmp_table;
 		glEnd();
 	}
 
@@ -855,9 +920,18 @@ int OpenGLVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2,
 	glLineStipple(1,pattern);
 
 	/* Draw with fgColor */
-	glBegin(GL_LINES);
-		glVertex2i(x1,y1);
-		glVertex2i(x2,y2);
+	if ((ReadInt16(table) == ReadInt16(table + length * 4 - 4)) &&
+	    (ReadInt16(table + 2) == ReadInt16(table + length * 4 - 2))) {
+		length--;
+		glBegin(GL_LINE_LOOP);
+	} else {
+		glBegin(GL_LINE_STRIP);
+	}
+	for(; length > 0; length--) {
+		x = (int16)ReadInt16(table); table += 2;
+		y = (int16)ReadInt16(table); table += 2;
+		glVertex2i(x, y);
+	}
 	glEnd();
 
 	glDisable(GL_LINE_STIPPLE);
@@ -867,28 +941,12 @@ int OpenGLVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2,
 	return 1;
 }
 
-int OpenGLVdiDriver::drawTableLine(memptr table, int length, uint16 pattern,
-	uint32 fgColor, uint32 bgColor, int logOp)
-{
-	int x1 = (int16)ReadInt16(table); table+=2;
-	int y1 = (int16)ReadInt16(table); table+=2;
-	for(--length; length > 0; length--) {
-		int x2 = (int16)ReadInt16(table); table+=2;
-		int y2 = (int16)ReadInt16(table); table+=2;
-
-		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp);
-		x1 = x2;
-		y1 = y2;
-	}
-
-	return 1;
-}
-
 int OpenGLVdiDriver::drawMoveLine(memptr table, int length, memptr index, int moves,
 	uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp)
 {
 	int x1 = (int16)ReadInt16(table); table+=2;
 	int y1 = (int16)ReadInt16(table); table+=2;
+	moves *= 2;
 	moves-=2;
 	if ((int16)ReadInt16(index + moves) == -4)
 		moves-=2;
