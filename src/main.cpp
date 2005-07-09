@@ -259,6 +259,7 @@ void invoke200HzInterrupt()
 		if (count == 4) multiple_interrupts4++;
 		if (count > max_mult_interrupts) {
 			max_mult_interrupts = count;
+			D(bug("Max multiple interrupts increased to %d", count));
 		}
 	}
 #endif
