@@ -1,3 +1,9 @@
+2005/07/09 - Petr
+- main.cpp: added RTC device driver for real interrupts at 256 HZ rate.
+  - startup IRQ storm corrected
+  - IRQ debug statistics printed
+
+
 2005/07/09 - Johan
 - nfvdi_*:      Bug fix for polylines with moves.
 - nfvdi_opengl: Bug fix for single pixel lines. Speedup for polylines.

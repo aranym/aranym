@@ -49,6 +49,13 @@
 # include <stdlib.h>
 #endif
 
+#define RTC_TIMER 0
+
+#if RTC_TIMER
+#include <linux/rtc.h>
+#include <errno.h>
+#endif
+
 #include <SDL.h>
 
 #ifdef SDL_GUI
@@ -90,10 +97,25 @@ bool CPUIs68060;
 int FPUType;
 
 // Timer stuff
-static uint32 lastTicks;
+static uint32 lastTicks = 0;
 #define USE_GETTICKS 1		// undefine this if your ARAnyM time goes slower
 
+#if RTC_TIMER
+static SDL_Thread *RTCthread = NULL;
+static bool quit_rtc_loop = false;
+#else
 SDL_TimerID my_timer_id = NULL;
+#endif
+
+#if DEBUG
+static int early_interrupts = 0;
+static int multiple_interrupts = 0;
+static int multiple_interrupts2 = 0;
+static int multiple_interrupts3 = 0;
+static int multiple_interrupts4 = 0;
+static int max_mult_interrupts = 0;
+static int total_interrupts = 0;
+#endif
 
 #ifdef SDL_GUI
 bool isGuiAvailable;
@@ -158,11 +180,8 @@ void heartBeat()
 	}
 }
 
-/*
- * the following function is called from the CPU emulation anytime
- * or it is called from the timer interrupt * approx. each 10 milliseconds.
- */
-void invoke200HzInterrupt()
+/* the count is number of 200 Hz interrupts to generate at once */
+void do_200hz_irq(int count)
 {
 #define VBL_IN_TIMERC	4	/* VBL happens once in 4 TimerC 200 Hz interrupts ==> 50 Hz VBL */
 #define VIDEL_REFRESH	bx_options.video.refresh	/* VIDEL screen is refreshed once in 2 VBL interrupts ==> 25 Hz */
@@ -170,24 +189,10 @@ void invoke200HzInterrupt()
 	static int VBL_counter = 0;
 	static int refreshCounter = 0;
 
-	/* syncing to 200 Hz */
-#if USE_GETTICKS
-	uint32 newTicks = SDL_GetTicks();
-#else
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	uint32 newTicks = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-#endif
-	int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
-	if (count == 0)
-		return;
-	
 #ifdef DEBUGGER
 	if (!debugging || irqindebug)
 #endif
 		getMFP()->IRQ(5, count);
-
-	lastTicks += (count * 5);
 
 	VBL_counter += count;
 	if (VBL_counter >= VBL_IN_TIMERC) {	// divided by 4 => 50 Hz VBL
@@ -221,6 +226,104 @@ void invoke200HzInterrupt()
 }
 
 /*
+ * the following function is called from the CPU emulation anytime
+ */
+void invoke200HzInterrupt()
+{
+	/* syncing to 200 Hz */
+#if USE_GETTICKS
+	uint32 newTicks = SDL_GetTicks();
+#else
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	uint32 newTicks = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+#endif
+
+	// correct lastTicks at start-up
+	if (lastTicks == 0) { lastTicks = newTicks - 5; }
+
+	int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
+	if (count == 0) {
+#if DEBUG
+		early_interrupts++;
+#endif
+		return;
+	}
+
+#if DEBUG
+	total_interrupts++;
+	if (count > 1) {
+		multiple_interrupts++;
+		if (count == 2) multiple_interrupts2++;
+		if (count == 3) multiple_interrupts3++;
+		if (count == 4) multiple_interrupts4++;
+		if (count > max_mult_interrupts) {
+			max_mult_interrupts = count;
+		}
+	}
+#endif
+
+#if RTC_TIMER
+	// do not generate multiple interrupts, let it synchronize over time
+	count = 1;
+#endif
+
+	lastTicks += (count * 5);
+
+	do_200hz_irq(count);
+}
+
+#if RTC_TIMER
+static int rtc_timer_thread(void * /*ptr*/) {
+	int fd, retval;
+	unsigned long data;
+	// struct timeval tv;
+
+	fd = open ("/dev/rtc", O_RDONLY);
+
+	if (fd == -1) {
+		perror("/dev/rtc");
+		exit(errno);
+	}
+
+	retval = ioctl(fd, RTC_IRQP_SET, 256); // 256 Hz
+	if (retval == -1) {
+		perror("ioctl");
+		exit(errno);
+	}
+
+	/* Enable periodic interrupts */
+	retval = ioctl(fd, RTC_PIE_ON, 0);
+	if (retval == -1) {
+		perror("ioctl");
+		exit(errno);
+	}
+
+	while(! quit_rtc_loop) {
+		/* This blocks */
+		retval = read(fd, &data, sizeof(unsigned long));
+		if (retval == -1) {
+			perror("read");
+			exit(errno);
+		}
+		TriggerInternalIRQ();
+	}
+
+	/* Disable periodic interrupts */
+	retval = ioctl(fd, RTC_PIE_OFF, 0);
+	if (retval == -1) {
+		perror("ioctl");
+		exit(errno);
+	}
+
+	close(fd);
+
+	return 0;
+}
+
+#else
+
+/*
  * my_callback_function() is called every 10 miliseconds (~ 100 Hz)
  */
 Uint32 my_callback_function(Uint32 /*interval*/, void * /*param*/)
@@ -228,6 +331,7 @@ Uint32 my_callback_function(Uint32 /*interval*/, void * /*param*/)
 	TriggerInternalIRQ();
 	return 10;					// come back in 10 milliseconds
 }
+#endif
 
 /*
  * Load, check and patch the TOS 4.04 ROM image file
@@ -519,9 +623,12 @@ bool InitAll(void)
 	if (! InitOS())
 		return false;
 
- 	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK | SDL_INIT_TIMER;
+ 	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK;
 #if NFCDROM_SUPPORT
 	sdlInitParams |= SDL_INIT_CDROM;
+#endif
+#if !RTC_TIMER
+	sdlInitParams |= SDL_INIT_TIMER;
 #endif
 	if (SDL_Init(sdlInitParams) != 0) {
 		panicbug("SDL initialization failed.");
@@ -587,19 +694,15 @@ bool InitAll(void)
 #endif
 
 	// timer init
-#if USE_GETTICKS
-	lastTicks = SDL_GetTicks();
+#if RTC_TIMER
+	RTCthread = SDL_CreateThread(rtc_timer_thread, NULL);
 #else
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	lastTicks = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-#endif
-
 	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
 	if (my_timer_id == NULL) {
 		panicbug("SDL Timer does not work!");
 		return false;
 	}
+#endif
 
 #ifdef GDBSTUB
 	if (bx_options.startup.debugger) {
@@ -639,11 +742,22 @@ void ExitAll(void)
  	}
 
 	// Exit Time Manager
+#if RTC_TIMER
+	if (RTCthread != NULL) {
+		quit_rtc_loop = true;
+		SDL_Delay(100);	// give it a time to safely finish the timer thread
+		SDL_KillThread(RTCthread);
+		RTCthread = NULL;
+	}
+#else
 	if (my_timer_id) {
 		SDL_RemoveTimer(my_timer_id);
 		my_timer_id = NULL;
 		SDL_Delay(100);	// give it a time to safely finish the timer thread
 	}
+#endif
+
+	D(bug("200 Hz IRQ statistics: max multiple irqs %d, total multiple irq ratio %02.2lf%%, 2xirq ration %02.2lf%%, 3xirq ratio %02.2lf%%, 4xirq ration %02.2lf%%, early irq ratio %02.2lf%%", max_mult_interrupts, multiple_interrupts*100.0 / total_interrupts, multiple_interrupts2*100.0 / total_interrupts, multiple_interrupts3*100.0 / total_interrupts, multiple_interrupts4*100.0 / total_interrupts, early_interrupts * 100.0 / total_interrupts));
 
 #ifdef SDL_GUI
 	kill_GUI_thread();
