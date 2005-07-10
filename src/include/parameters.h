@@ -125,6 +125,7 @@ typedef struct {
   bool jitfpu;
   bool tunealign;
   bool tunenop;
+  bool jitinline;
   uint32 jitcachesize;
   uint32 jitlazyflush;
   char jitblacklist[512];

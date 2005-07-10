@@ -2729,7 +2729,7 @@ gen_opcode (unsigned long int opcode)
      case i_EMULOP:
 	failure;
 	break;
-     
+
      case i_NATFEAT_ID:
      case i_NATFEAT_CALL:
 	failure;

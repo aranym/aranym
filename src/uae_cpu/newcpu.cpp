@@ -1526,7 +1526,7 @@ void m68k_do_execute (void)
 	                m68k_record_step(m68k_getpc());
 #endif
 	(*cpufunctbl[opcode])(opcode);
-
+	cpu_check_ticks();
 	regs.fault_pc = m68k_getpc();
 
 #ifndef DISDIP

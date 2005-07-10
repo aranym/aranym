@@ -156,6 +156,11 @@ static bool		JITDebug			= false;	// Enable runtime disassemblers through mon?
 #else
 const bool		JITDebug			= false;	// Don't use JIT debug mode at all
 #endif
+#if USE_INLINING
+static bool		follow_const_jumps	= true;		// Flag: translation through constant jumps	
+#else
+const bool		follow_const_jumps	= false;
+#endif
 
 const uae_u32	MIN_CACHE_SIZE		= 1024;		// Minimal translation cache size (1 MB)
 static uae_u32	cache_size			= 0;		// Size of total cache allocated for compiled blocks
@@ -5013,6 +5018,9 @@ void compiler_init(void)
 	panicbug("<JIT compiler> : register aliasing : %s", str_on_off(1));
 	panicbug("<JIT compiler> : FP register aliasing : %s", str_on_off(USE_F_ALIAS));
 	panicbug("<JIT compiler> : lazy constant offsetting : %s", str_on_off(USE_OFFSET));
+#if USE_INLINING
+	follow_const_jumps = bx_options.jit.jitinline;
+#endif
 	panicbug("<JIT compiler> : block inlining : %s", str_on_off(USE_INLINING));
 	panicbug("<JIT compiler> : separate blockinfo allocation : %s", str_on_off(USE_SEPARATE_BIA));
 	
@@ -6225,7 +6233,7 @@ void build_comp(void)
 	
 	for (i = 0; tbl[i].opcode < 65536; i++) {
 		int cflow = table68k[tbl[i].opcode].cflow;
-		if (USE_INLINING && ((cflow & fl_const_jump) != 0))
+		if (follow_const_jumps && (tbl[i].specific & 16))
 			cflow = fl_const_jump;
 		else
 			cflow &= ~fl_const_jump;
@@ -6628,8 +6636,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 
 #if USE_CHECKSUM_INFO
 		trace_in_rom = trace_in_rom && isinrom((uintptr)currpcp);
-#if USE_INLINING
-		if (is_const_jump(op)) {
+		if (follow_const_jumps && is_const_jump(op)) {
 			checksum_info *csi = alloc_checksum_info();
 			csi->start_p = (uae_u8 *)min_pcp;
 			csi->length = max_pcp - min_pcp + LONGEST_68K_INST;
@@ -6637,7 +6644,6 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 			bi->csi = csi;
 			max_pcp = (uintptr)currpcp;
 		}
-#endif
 		min_pcp = (uintptr)currpcp;
 #else
 	    if ((uintptr)currpcp<min_pcp)
@@ -6693,6 +6699,15 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	    init_comp();
 	    was_comp=1;
 
+#ifdef USE_CPU_EMUL_SERVICES
+	    raw_sub_l_mi((uintptr)&emulated_ticks,blocklen);
+	    raw_jcc_b_oponly(NATIVE_CC_GT);
+	    uae_s8 *branchadd=(uae_s8*)get_target();
+	    emit_byte(0);
+	    raw_call((uintptr)cpu_do_check_ticks);
+	    *branchadd=(uintptr)get_target()-((uintptr)branchadd+1);
+#endif
+	    
 #if JIT_DEBUG
 		if (JITDebug) {
 			raw_mov_l_mi((uintptr)&last_regs_pc_p,(uintptr)pc_hist[0].location);
@@ -6714,6 +6729,19 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		    cputbl=cpufunctbl;
 		    comptbl=compfunctbl;
 		}
+
+#if FLIGHT_RECORDER
+		{
+		    mov_l_ri(S1, get_virtual_address((uae_u8 *)(pc_hist[i].location)) | 1);
+		    clobber_flags();
+		    remove_all_offsets();
+		    int arg = readreg_specific(S1,4,REG_PAR1);
+		    prepare_for_call_1();
+		    unlock2(arg);
+		    prepare_for_call_2();
+		    raw_call((uintptr)m68k_record_step);
+		}
+#endif
 		
 		failure = 1; // gb-- defaults to failure state
 		if (comptbl[opcode] && optlev>1) { 
@@ -6990,6 +7018,9 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	compile_time += (clock() - start_time);
 #endif
     }
+
+    /* Account for compilation time */
+    cpu_do_check_ticks();
 }
 
 void do_nothing(void)
@@ -7005,6 +7036,7 @@ void exec_nostats(void)
 		m68k_record_step(m68k_getpc());
 #endif
 		(*cpufunctbl[opcode])(opcode);
+		cpu_check_ticks();
 		if (end_block(opcode) || SPCFLAGS_TEST(SPCFLAG_ALL)) {
 			return; /* We will deal with the spcflags in the caller */
 		}
@@ -7030,6 +7062,7 @@ void execute_normal(void)
 			m68k_record_step(m68k_getpc());
 #endif
 			(*cpufunctbl[opcode])(opcode);
+			cpu_check_ticks();
 			if (end_block(opcode) || SPCFLAGS_TEST(SPCFLAG_ALL) || blocklen>=MAXRUN) {
 				compile_block(pc_hist, blocklen);
 				return; /* We will deal with the spcflags in the caller */

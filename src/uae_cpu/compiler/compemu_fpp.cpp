@@ -655,7 +655,7 @@ void comp_fbcc_opp (uae_u32 opcode)
 
 	// comp_pc_p is expected to be bound to 32-bit addresses
 	assert((uintptr)comp_pc_p <= 0xffffffffUL);
-    
+
     if (opcode&0x20) {  /* only cc from 00 to 1f are defined */
 	FAIL(1);
 	return;

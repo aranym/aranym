@@ -223,7 +223,8 @@ struct Config_Tag jit_conf[]={
 	{ "TuneNOPfill", Bool_Tag, &bx_options.jit.tunenop, 0, 0},
 	{ "JITCacheSize", Int_Tag, &bx_options.jit.jitcachesize, 0, 0},
 	{ "JITLazyFlush", Int_Tag, &bx_options.jit.jitlazyflush, 0, 0},
-        { "JITBlackList", String_Tag, &bx_options.jit.jitblacklist, sizeof(bx_options.jit.jitblacklist), 0},
+	{ "JITBlackList", String_Tag, &bx_options.jit.jitblacklist, sizeof(bx_options.jit.jitblacklist), 0},
+	{ "JITInline", Bool_Tag, &bx_options.jit.jitinline, 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
