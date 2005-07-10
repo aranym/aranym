@@ -142,8 +142,10 @@ static const uae_u8 need_to_preserve[]={1,1,1,1,0,1,1,1};
 #define CLOBBER_TEST clobber_flags()
 #define CLOBBER_CL16 
 #define CLOBBER_CL8  
+#define CLOBBER_SE32
 #define CLOBBER_SE16
 #define CLOBBER_SE8
+#define CLOBBER_ZE32
 #define CLOBBER_ZE16
 #define CLOBBER_ZE8
 #define CLOBBER_SW16 clobber_flags()
@@ -3444,7 +3446,7 @@ cpuid(uae_u32 op, uae_u32 *eax, uae_u32 *ebx, uae_u32 *ecx, uae_u32 *edx)
   if (cpuid_space == VM_MAP_FAILED)
     abort();
   vm_protect(cpuid_space, CPUID_SPACE, VM_PAGE_READ | VM_PAGE_WRITE | VM_PAGE_EXECUTE);
-  
+
   static uae_u32 s_op, s_eax, s_ebx, s_ecx, s_edx;
   uae_u8* tmp=get_target();
 
