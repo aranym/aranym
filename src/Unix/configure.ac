@@ -874,7 +874,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
         i386)
 	  SYSSRCS="$SYSSRCS linux/sigsegv_linux_x86.cpp"
 	  ;;
-	x86-64)
+	x86_64)
           SYSSRCS="$SYSSRCS linux/sigsegv_linux_x86_64.cpp"
           ;;
         *)
