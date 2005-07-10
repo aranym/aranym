@@ -206,8 +206,8 @@ static inline void unknown_instruction(uint32 instr) {
 }
 
 static void segfault_vec(int, CONTEXT_TYPE CONTEXT_NAME) {
-	memptr addr = CONTEXT_CR2;
-	memptr ainstr = CONTEXT_EIP;
+	uintptr addr = CONTEXT_CR2;
+	uintptr ainstr = CONTEXT_EIP;
 	uint32 instr = (uint32)*(uint32 *)ainstr;
 	uint8 *addr_instr = (uint8 *)ainstr;
 	int reg = -1;
