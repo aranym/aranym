@@ -1,3 +1,10 @@
+2005/07/10 - Johan
+- nfvdi_*: Made the base class capable of polygon filling.
+           OpenGL driver makes use of that for now because of
+           problems with the current polygon tesselation code.
+           Software driver still uses its own polygon filler,
+           but the support routines are now in the base class.
+
 2005/07/10 - milan
 - src/Unix/configure.ac: typo
 
