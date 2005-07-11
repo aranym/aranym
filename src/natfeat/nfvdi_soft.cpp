@@ -18,7 +18,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <new>
 #include <cstring>
 
 #include "sysdeps.h"
@@ -54,15 +53,10 @@ extern HostScreen hostScreen;
 
 SoftVdiDriver::SoftVdiDriver()
 {
-	index_count = crossing_count = point_count = 0;
-	alloc_index = alloc_crossing = alloc_point = NULL;
 }
 
 SoftVdiDriver::~SoftVdiDriver()
 {
-	delete[] alloc_index;
-	delete[] alloc_crossing;
-	delete[] alloc_point;
 }
 
 void SoftVdiDriver::reset(void)
@@ -82,83 +76,6 @@ int32 SoftVdiDriver::closeWorkstation(void)
 	return VdiDriver::closeWorkstation();
 }
 
-// The polygon code needs some arrays of unknown size
-// These routines and members are used so that no unnecessary allocations are done
-inline bool SoftVdiDriver::AllocIndices(int n)
-{
-	if (n > index_count) {
-		D2(bug("More indices %d->%d\n", index_count, n));
-		int count = n * 2;		// Take a few extra right away
-		int16* tmp = new(std::nothrow) int16[count];
-		if (!tmp) {
-			count = n;
-			tmp = new(std::nothrow) int16[count];
-		}
-		if (tmp) {
-			delete[] alloc_index;
-			alloc_index = tmp;
-			index_count = count;
-		}
-	}
-
-	return index_count >= n;
-}
-
-inline bool SoftVdiDriver::AllocCrossings(int n)
-{
-	if (n > crossing_count) {
-		D2(bug("More crossings %d->%d\n", crossing_count, n));
-		int count = n * 2;		// Take a few extra right away
-		int16* tmp = new(std::nothrow) int16[count];
-		if (!tmp) {
-			count = (n * 3) / 2;	// Try not so many extra
-			tmp = new(std::nothrow) int16[count];
-		}
-		if (!tmp) {
-			count = n;		// This is going to be slow if it goes on...
-			tmp = new(std::nothrow) int16[count];
-		}
-		if (tmp) {
-			std::memcpy(tmp, alloc_crossing, crossing_count * sizeof(*alloc_crossing));
-			delete[] alloc_crossing;
-			alloc_crossing = tmp;
-			crossing_count = count;
-		}
-	}
-
-	return crossing_count >= n;
-}
-
-inline bool SoftVdiDriver::AllocPoints(int n)
-{
-	if (n > point_count) {
-		D2(bug("More points %d->%d", point_count, n));
-		int count = n * 2;		// Take a few extra right away
-		int16* tmp = new(std::nothrow) int16[count * 2];
-		if (!tmp) {
-			count = n;
-			tmp = new(std::nothrow) int16[count * 2];
-		}
-		if (tmp) {
-			delete[] alloc_point;
-			alloc_point = tmp;
-			point_count = count;
-		}
-	}
-
-	return point_count >= n;
-}
-
-// A helper class to make it possible to access
-// points in a nicer way in fillPoly.
-class Points {
-  public:
-	explicit Points(int16* vector_) : vector(vector_) { }
-	~Points() { }
-	int16* operator[](int n) { return &vector[n * 2]; }
-  private:
-	int16* vector;
-};
 
 /**
  * Get a coloured pixel.
@@ -621,6 +538,19 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 	return 1;
 }
 
+void SoftVdiDriver::fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
+                             uint16* pattern, uint32 fgColor, uint32 bgColor,
+                             uint32 logOp)
+{
+	if (!hostScreen.renderBegin())
+		return;
+
+	hostScreen.fillArea(x, y, w, h, pattern, fgColor, bgColor, logOp);
+
+	hostScreen.renderEnd();
+	hostScreen.update(x, y, w, h, true);
+}
+
 /**
  * Blit an area
  *
@@ -651,6 +581,7 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
 	DUNUSED(vwk);
+	DUNUSED(dest);
 
 	if (!hostScreen.renderBegin())
 		return 1;
@@ -763,6 +694,8 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
 	DUNUSED(vwk);
+	DUNUSED(src);
+	DUNUSED(dest);
 
 	if (!hostScreen.renderBegin())
 		return 1;
@@ -842,6 +775,8 @@ int32 SoftVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
 	DUNUSED(vwk);
+	DUNUSED(src);
+	DUNUSED(dest);
 
 	if (logOp == 3) {
 	        // for S->S blits... -> SDL does the whole thing at once
@@ -1229,17 +1164,17 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	return 1;
 }
 
-// This is supposed to be a fast 16x16/16 with 32 bit intermediate result
-#define SMUL_DIV(x,y,z)	((short)(((x)*(long)(y))/(z)))
-// Some other possible variants are
-//#define SMUL_DIV(x,y,z)	((long)(y - y1) * (x2 - x1) / (y2 - y1))
-//#define SMUL_DIV(x,y,z)	((short)(((short)(x)*(long)((short)(y)))/(short)(z)))
-
 int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	memptr index_addr, int moves, memptr pattern_addr, uint32 fgColor,
 	uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip)
 {
+#if 0
+	return VdiDriver::fillPoly(vwk, points_addr, n, index_addr, moves,
+	                           pattern_addr, fgColor, bgColor, logOp,
+	                           interior_style, clip);
+#else
 	DUNUSED(interior_style);
+
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
 
@@ -1253,7 +1188,7 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 
 	int cliparray[4];
 	int* cliprect = 0;
-	if (clip) {	// Clipping is not off
+	if (clip) {     // Clipping is not off
 		cliprect = cliparray;
 		cliprect[0] = (int16)ReadInt32(clip);
 		cliprect[1] = (int16)ReadInt32(clip + 4);
@@ -1316,7 +1251,7 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 
 	for(int16 y = miny; y <= maxy; ++y) {
 		int ints = 0;
-		int16 x1 = 0;	// Make the compiler happy with some initializations
+		int16 x1 = 0;   // Make the compiler happy with some initializations
 		int16 y1 = 0;
 		int16 x2 = 0;
 		int16 y2 = 0;
@@ -1333,10 +1268,10 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 		}
 
 		for(int i = indices; i < n; ++i) {
-			if (AllocCrossings(ints + 1))
+			if (EnoughCrossings(ints + 1) || AllocCrossings(ints + 1))
 				crossing = alloc_crossing;
 			else
-				break;		// At least something will get drawn
+				break;          // At least something will get drawn
 
 			if (indices) {
 				x1 = x2;
@@ -1349,7 +1284,7 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 					if (--move_n >= 0)
 						movepnt = (index[move_n] + 4) / 2;
 					else
-						movepnt = -1;		// Never again equal to n
+						movepnt = -1;           // Never again equal to n
 					continue;
 				}
 			}
@@ -1382,7 +1317,7 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 		x1 = cliprect[0];
 		x2 = cliprect[2];
 		for(int i = 0; i < ints - 1; i += 2) {
-			y1 = crossing[i];	// Really x-values, but...
+			y1 = crossing[i];       // Really x-values, but...
 			y2 = crossing[i + 1];
 			if (y1 < x1)
 				y1 = x1;
@@ -1404,6 +1339,7 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 		hostScreen.update(minx, miny, maxx - minx + 1, maxy - miny + 1, true);
 
 	return 1;
+#endif
 }
 
 void SoftVdiDriver::getHwColor(uint16 index, uint32 red, uint32 green,
@@ -1476,6 +1412,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.11  2005/07/08 23:16:32  johan
+ * Bug fixes and speedups for polylines.
+ *
  * Revision 1.10  2005/06/14 08:00:45  pmandin
  * Add reset method
  *

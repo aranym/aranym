@@ -53,6 +53,9 @@ class SoftVdiDriver : public VdiDriver
 		int32 fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			int32 h, memptr pattern_address, uint32 fgColor, uint32 bgColor,
 			uint32 logOp, uint32 interior_style);
+		void	fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
+		                 uint16* pattern, uint32 fgColor, uint32 bgColor,
+		                 uint32 logOp);
 		int32 drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 			uint32 y2_, uint32 pattern, uint32 fgColor, uint32 bgColor,
 			uint32 logOp, memptr clip);
@@ -108,18 +111,6 @@ class SoftVdiDriver : public VdiDriver
 		int drawMoveLine(memptr table, int length, memptr index, int moves,
 			uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp,
 			int cliprect[], int minmax[]);
-
-		// fillPoly helpers
-		bool AllocIndices(int n);
-		bool AllocCrossings(int n);
-		bool AllocPoints(int n);
-
-		int16* alloc_index;
-		int index_count;
-		int16* alloc_crossing;
-		int crossing_count;
-		int16* alloc_point;
-		int point_count;
 };
 
 #endif /* NFVDI_SOFT_H */
