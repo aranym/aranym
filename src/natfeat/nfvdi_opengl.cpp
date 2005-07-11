@@ -607,6 +607,40 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 	return 1;
 }
 
+void OpenGLVdiDriver::fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
+                               uint16* pattern, uint32 fgColor, uint32 bgColor,
+                               uint32 logOp)
+{
+	/* First, the back color */
+	if (logOp==1) {
+		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		glBegin(GL_LINES);
+			glVertex2i(x,y);
+			glVertex2i(x+w-1,y+h-1);
+		glEnd();
+	}
+
+	glEnable(GL_COLOR_LOGIC_OP);
+	if (logOp == 3) {
+		glLogicOp(GL_XOR);
+		glColor3ub(0xff,0xff,0xff);
+	} else {
+		glLogicOp(GL_COPY);
+		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+	}
+
+	/* Fill with fgColor */
+	glEnable(GL_LINE_STIPPLE);
+	glLineStipple(1,pattern[y&15]);
+	glBegin(GL_LINES);
+		glVertex2i(x,y);
+		glVertex2i(x+w-1,y+h-1);
+	glEnd();
+	glDisable(GL_LINE_STIPPLE);
+
+	glDisable(GL_COLOR_LOGIC_OP);
+}
+
 /**
  * Blit an area
  *
@@ -1067,12 +1101,20 @@ extern "C" {
 }
 
 int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
-	memptr /*index_addr*/, int moves, memptr pattern_addr, uint32 fgColor,
-	uint32 bgColor, uint32 logOp, uint32 /*interior_style*/, memptr clip)
+	memptr index_addr, int moves, memptr pattern_addr, uint32 fgColor,
+	uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip)
 {
+#if 1
+	return VdiDriver::fillPoly(vwk, points_addr, n, index_addr, moves,
+	                           pattern_addr, fgColor, bgColor, logOp,
+	                           interior_style, clip);
+#else
 	int i,cx1,cy1,cx2,cy2, tess_list;
 	GLdouble *poly_coords;
 	uint32 gl_pattern[32];
+
+	DUNUSED(index_addr);
+	DUNUSED(interior_style);
 
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
@@ -1154,6 +1196,7 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	glDisable(GL_SCISSOR_TEST);
 	D(bug("glvdi: fillpoly"));
 	return 1;
+#endif
 }
 
 void OpenGLVdiDriver::getHwColor(uint16 /*index*/, uint32 red, uint32 green,
