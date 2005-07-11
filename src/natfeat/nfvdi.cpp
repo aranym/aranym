@@ -18,6 +18,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <new>
 #include <SDL_endian.h>
 
 #include "sysdeps.h"
@@ -257,12 +258,18 @@ int32 VdiDriver::dispatch(uint32 fncode)
 
 VdiDriver::VdiDriver()
 {
+	index_count = crossing_count = point_count = 0;
+	alloc_index = alloc_crossing = alloc_point = NULL;
 	cursor = NULL;
 	events = 0;
 }
 
 VdiDriver::~VdiDriver()
 {
+	delete[] alloc_index;
+	delete[] alloc_crossing;
+	delete[] alloc_point;
+
 	if (cursor) {
 		SDL_FreeCursor(cursor);
 		cursor = NULL;
@@ -383,6 +390,74 @@ int32 VdiDriver::getBpp(void)
 {
 	return hostScreen.getBitsPerPixel();
 }
+
+// The polygon code needs some arrays of unknown size
+// These routines and members are used so that no unnecessary allocations are done
+bool VdiDriver::AllocIndices(int n)
+{
+	if (n > index_count) {
+		D2(bug("More indices %d->%d\n", index_count, n));
+		int count = n * 2;		// Take a few extra right away
+		int16* tmp = new(std::nothrow) int16[count];
+		if (!tmp) {
+			count = n;
+			tmp = new(std::nothrow) int16[count];
+		}
+		if (tmp) {
+			delete[] alloc_index;
+			alloc_index = tmp;
+			index_count = count;
+		}
+	}
+
+	return index_count >= n;
+}
+
+bool VdiDriver::AllocCrossings(int n)
+{
+	if (n > crossing_count) {
+		D2(bug("More crossings %d->%d\n", crossing_count, n));
+		int count = n * 2;		// Take a few extra right away
+		int16* tmp = new(std::nothrow) int16[count];
+		if (!tmp) {
+			count = (n * 3) / 2;	// Try not so many extra
+			tmp = new(std::nothrow) int16[count];
+		}
+		if (!tmp) {
+			count = n;		// This is going to be slow if it goes on...
+			tmp = new(std::nothrow) int16[count];
+		}
+		if (tmp) {
+			std::memcpy(tmp, alloc_crossing, crossing_count * sizeof(*alloc_crossing));
+			delete[] alloc_crossing;
+			alloc_crossing = tmp;
+			crossing_count = count;
+		}
+	}
+
+	return crossing_count >= n;
+}
+
+bool VdiDriver::AllocPoints(int n)
+{
+	if (n > point_count) {
+		D2(bug("More points %d->%d", point_count, n));
+		int count = n * 2;		// Take a few extra right away
+		int16* tmp = new(std::nothrow) int16[count * 2];
+		if (!tmp) {
+			count = n;
+			tmp = new(std::nothrow) int16[count * 2];
+		}
+		if (tmp) {
+			delete[] alloc_point;
+			alloc_point = tmp;
+			point_count = count;
+		}
+	}
+
+	return point_count >= n;
+}
+
 
 /*--- Virtual functions ---*/
 
@@ -1068,19 +1143,164 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	memptr index_addr, int moves, memptr pattern_addr, uint32 fgColor,
 	uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip)
 {
-	DUNUSED(vwk);
-	DUNUSED(points_addr);
-	DUNUSED(n);
-	DUNUSED(index_addr);
-	DUNUSED(moves);
-	DUNUSED(pattern_addr);
-	DUNUSED(fgColor);
-	DUNUSED(bgColor);
-	DUNUSED(logOp);
 	DUNUSED(interior_style);
-	DUNUSED(clip);
+	if (vwk & 1)
+		return -1;      // Don't know about any special fills
 
-	return -1;
+	// Allocate arrays for data
+	if (!AllocPoints(n) || !AllocIndices(moves) || !AllocCrossings(200))
+		return -1;
+
+	uint16 pattern[16];
+	for(int i = 0; i < 16; ++i)
+		pattern[i] = ReadInt16(pattern_addr + i * 2);
+
+	int cliparray[4];
+	int* cliprect = 0;
+	if (clip) {	// Clipping is not off
+		cliprect = cliparray;
+		cliprect[0] = (int16)ReadInt32(clip);
+		cliprect[1] = (int16)ReadInt32(clip + 4);
+		cliprect[2] = (int16)ReadInt32(clip + 8);
+		cliprect[3] = (int16)ReadInt32(clip + 12);
+		D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", cliprect[0], cliprect[1],
+		       cliprect[2], cliprect[3]));
+	}
+
+	Points p(alloc_point);
+	int16* index = alloc_index;
+	int16* crossing = alloc_crossing;
+
+	for(int i = 0; i < n; ++i) {
+		p[i][0] = (int16)ReadInt16(points_addr + i * 4);
+		p[i][1] = (int16)ReadInt16(points_addr + i * 4 + 2);
+	}
+	bool indices = moves;
+	for(int i = 0; i < moves; ++i)
+		index[i] = (int16)ReadInt16(index_addr + i * 2);
+
+
+	if (!n)
+		return 1;
+
+	if (!indices) {
+		if ((p[0][0] == p[n - 1][0]) && (p[0][1] == p[n - 1][1]))
+			n--;
+	} else {
+		moves--;
+		if (index[moves] == -4)
+			moves--;
+		if (index[moves] == -2)
+			moves--;
+	}
+
+	int miny = p[0][1];
+	int maxy = miny;
+	for(int i = 1; i < n; ++i) {
+		int16 y = p[i][1];
+		if (y < miny) {
+			miny = y;
+		}
+		if (y > maxy) {
+			maxy = y;
+		}
+	}
+	if (cliprect) {
+		if (miny < cliprect[1])
+			miny = cliprect[1];
+		if (maxy > cliprect[3])
+			maxy = cliprect[3];
+	}
+
+	int minx = 1000000;
+	int maxx = -1000000;
+
+	for(int16 y = miny; y <= maxy; ++y) {
+		int ints = 0;
+		int16 x1 = 0;	// Make the compiler happy with some initializations
+		int16 y1 = 0;
+		int16 x2 = 0;
+		int16 y2 = 0;
+		int move_n = 0;
+		int movepnt = 0;
+		if (indices) {
+			move_n = moves;
+			movepnt = (index[move_n] + 4) / 2;
+			x2 = p[0][0];
+			y2 = p[0][1];
+		} else {
+			x1 = p[n - 1][0];
+			y1 = p[n - 1][1];
+		}
+
+		for(int i = indices; i < n; ++i) {
+			if (EnoughCrossings(ints + 1) || AllocCrossings(ints + 1))
+				crossing = alloc_crossing;
+			else
+				break;		// At least something will get drawn
+
+			if (indices) {
+				x1 = x2;
+				y1 = y2;
+			}
+			x2 = p[i][0];
+			y2 = p[i][1];
+			if (indices) {
+				if (i == movepnt) {
+					if (--move_n >= 0)
+						movepnt = (index[move_n] + 4) / 2;
+					else
+						movepnt = -1;		// Never again equal to n
+					continue;
+				}
+			}
+
+			if (y1 < y2) {
+				if ((y >= y1) && (y < y2)) {
+					crossing[ints++] = SMUL_DIV((y - y1), (x2 - x1), (y2 - y1)) + x1;
+				}
+			} else if (y1 > y2) {
+				if ((y >= y2) && (y < y1)) {
+					crossing[ints++] = SMUL_DIV((y - y2), (x1 - x2), (y1 - y2)) + x2;
+				}
+			}
+			if (!indices) {
+				x1 = x2;
+				y1 = y2;
+			}
+		}
+
+		for(int i = 0; i < ints - 1; ++i) {
+			for(int j = i + 1; j < ints; ++j) {
+				if (crossing[i] > crossing[j]) {
+					int16 tmp = crossing[i];
+					crossing[i] = crossing[j];
+					crossing[j] = tmp;
+				}
+			}
+		}
+
+		x1 = cliprect[0];
+		x2 = cliprect[2];
+		for(int i = 0; i < ints - 1; i += 2) {
+			y1 = crossing[i];	// Really x-values, but...
+			y2 = crossing[i + 1];
+			if (y1 < x1)
+				y1 = x1;
+			if (y2 > x2)
+				y2 = x2;
+			if (y1 <= y2) {
+				fillArea(y1, y, y2 - y1 + 1, 1, pattern,
+				         fgColor, bgColor, logOp);
+				if (y1 < minx)
+					minx = y1;
+				if (y2 > maxx)
+					maxx = y2;
+			}
+		}
+	}
+
+	return 1;
 }
 
 void VdiDriver::getHwColor(uint16 index, uint32 red, uint32 green,

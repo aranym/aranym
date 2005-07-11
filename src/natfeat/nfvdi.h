@@ -36,6 +36,12 @@
 #define MFDB_STAND                 10
 #define MFDB_NPLANES               12
 
+// This is supposed to be a fast 16x16/16 with 32 bit intermediate result
+#define SMUL_DIV(x,y,z)	((short)(((x)*(long)(y))/(z)))
+// Some other possible variants are
+//#define SMUL_DIV(x,y,z)	((long)(y - y1) * (x2 - x1) / (y2 - y1))
+//#define SMUL_DIV(x,y,z)	((short)(((short)(x)*(long)((short)(y)))/(short)(z)))
+
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 
 #define put_dtriplet(address, data) \
@@ -99,6 +105,9 @@ class VdiDriver : public NF_Base
 		virtual int32 fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			int32 h, memptr pattern_address, uint32 fgColor, uint32 bgColor,
 			uint32 logOp, uint32 interior_style);
+		virtual	void fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
+		                      uint16* pattern, uint32 fgColor, uint32 bgColor,
+		                      uint32 logOp) = 0;
 		virtual int32 drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 			uint32 y2_, uint32 pattern, uint32 fgColor, uint32 bgColor,
 			uint32 logOp, memptr clip);
@@ -127,6 +136,27 @@ class VdiDriver : public NF_Base
 		uint32 applyBlitLogOperation(int logicalOperation,
 			uint32 destinationData, uint32 sourceData);
 
+		// fillPoly helpers
+		bool AllocIndices(int n);
+		bool AllocCrossings(int n);
+		bool EnoughCrossings(int n) { return n <= crossing_count; }
+		bool AllocPoints(int n);
+
+		int16* alloc_index;
+		int16* alloc_crossing;
+		int16* alloc_point;
+
+		// A helper class to make it possible to access
+		// points in a nicer way in fillPoly.
+		class Points {
+		  public:
+			explicit Points(int16* vector_) : vector(vector_) { }
+			~Points() { }
+			int16* operator[](int n) { return &vector[n * 2]; }
+		  private:
+			int16* vector;
+		};
+
 	private:
 		SDL_Cursor *cursor;
 
@@ -135,6 +165,10 @@ class VdiDriver : public NF_Base
 		/* Blit memory to memory */
 		int32 blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+
+		int index_count;
+		int crossing_count;
+		int point_count;
 };
 
 #endif /* NFVDI_H */
