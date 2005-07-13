@@ -474,6 +474,9 @@ static void genamode (amodes mode, char *reg, wordsizes size, char *name, int ge
 		abort ();
 	    }
 	    break;
+/*	 case Apdi:
+	    printf ("\tm68k_areg (regs, %s) = %sa;\n", reg, name);
+	    break;*/
 	 default:
 	    break;
 	}
@@ -777,7 +780,6 @@ static void genflags (flagtypes type, wordsizes size, char *value, char *src, ch
 	start_brace ();
 	printf ("\tuae_u32 %s;\n", value);
 	break;
-
      default:
 	break;
     }
@@ -838,7 +840,6 @@ static void genflags (flagtypes type, wordsizes size, char *value, char *src, ch
 	break;
     }
 #endif
-
     genflags_normal (type, size, value, src, dst);
 }
 
@@ -2620,5 +2621,7 @@ int main ()
     generate_includes (stblfile);
     generate_func ();
     free (table68k);
+    fclose(headerfile);
+    fclose(stblfile);
     return 0;
 }

@@ -3,6 +3,11 @@
 
 - src/Unix/vm_alloc.cpp: close(zero_fd) only when opened
 
+- correct version of JITInlining
+
+- JIT compilation of dispatcher enabled
+
+
 2005/07/10 - Johan
 - nfvdi_*: Made the base class capable of polygon filling.
            OpenGL driver makes use of that for now because of

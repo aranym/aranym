@@ -5021,7 +5021,7 @@ void compiler_init(void)
 #if USE_INLINING
 	follow_const_jumps = bx_options.jit.jitinline;
 #endif
-	panicbug("<JIT compiler> : block inlining : %s", str_on_off(USE_INLINING));
+	panicbug("<JIT compiler> : block inlining : %s", str_on_off(follow_const_jumps));
 	panicbug("<JIT compiler> : separate blockinfo allocation : %s", str_on_off(USE_SEPARATE_BIA));
 	
 	// Build compiler tables
@@ -6062,9 +6062,9 @@ static inline void create_popalls(void)
   raw_and_l_ri(r,TAGMASK);
   raw_jmp_m_indexed((uintptr)cache_tags,r,SIZEOF_VOID_P);
 
-#if 0 && (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
+#if (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
   align_target(align_jumps);
-  m68k_compile_execute = (void (*)(void))get_target();
+  m68k_do_compile_execute = (void (*)(void))get_target();
   for (i=N_REGS;i--;) {
 	  if (need_to_preserve[i])
 		  raw_push_l_r(i);
@@ -6285,6 +6285,10 @@ void build_comp(void)
 		}
 		prop[cft_map(opcode)].set_flags = table68k[opcode].flagdead;
 		prop[cft_map(opcode)].use_flags = table68k[opcode].flaglive;
+		/* Unconditional jumps don't evaluate condition codes, so they
+		 * don't actually use any flags themselves */
+		if (prop[cft_map(opcode)].cflow & fl_const_jump)
+			prop[cft_map(opcode)].use_flags = 0;
     }
 	for (i = 0; nfctbl[i].handler != NULL; i++) {
 		if (nfctbl[i].specific)
@@ -7075,8 +7079,8 @@ void execute_normal(void)
 
 typedef void (*compiled_handler)(void);
 
-#if 0 && (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
-void (*m68k_compile_execute)(void) = NULL;
+#if (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
+void (*m68k_do_compile_execute)(void) = NULL;
 #else
 void m68k_do_compile_execute(void)
 {

@@ -310,13 +310,13 @@ extern void *op_smalltbl_0_lab[];
 extern void m68k_do_execute(void);
 extern void m68k_execute(void);
 #ifdef USE_JIT
-#if 0 && (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
+# if (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
 /* This is generated code */
-extern void (*m68k_compile_execute)(void);
-#else
+extern void (*m68k_do_compile_execute)(void);
+# else
 extern void m68k_do_compile_execute(void);
+# endif
 extern void m68k_compile_execute(void);
-#endif
 #endif
 #ifdef USE_CPU_EMUL_SERVICES
 extern int32 emulated_ticks;
@@ -331,6 +331,5 @@ static inline void cpu_check_ticks(void)
 #define cpu_check_ticks()
 #define cpu_do_check_ticks()
 #endif
-
 
 #endif /* NEWCPU_H */

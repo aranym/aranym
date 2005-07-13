@@ -173,19 +173,7 @@ void Start680x0(void)
 	m68k_reset();
 #ifdef USE_JIT
 	if (bx_options.jit.jit) {
-# ifdef X86_ASSEMBLY_disable
-setjmpagain:
-	    TRY(prb) {
-# endif
 		m68k_compile_execute();
-# ifdef X86_ASSEMBLY_disable
-	    }
-	    CATCH(prb) {
-		flush_icache(0);
-	        Exception(prb, 0);
-    		goto setjmpagain;
-	    }	
-# endif
 	}
 	else
 #endif
