@@ -27,7 +27,8 @@
 - main.cpp: added RTC device driver for real interrupts at 256 HZ rate.
   Enable #RTC_TIMER if you want to see it running. And start ARAnyM
   as root because it sets the /dev/rtc to 256 Hz interrupt which is not
-  allowed to regular user (unless enabled in /proc/sys/dev/rtc/max-user-freq).
+  allowed to regular user (unless enabled by running the following command:
+  sysctl -w dev.rtc.max-user-freq=1024)
   - startup IRQ storm corrected (more than 80 useless IRQs at power on)
   - IRQ debug statistics printed (if #DEBUG enabled)
 
