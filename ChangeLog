@@ -1,3 +1,8 @@
+2005/07/16 - Andreas
+- natfeat/nfcdrom_linux.cpp: move include of linux/cdrom.h down to fix
+  compilation problem.
+
+
 2005/07/16 - Petr
 - natfeat/nfvdi.cpp: swapped return values for the mouse event dispatch
   since default fvdidrv.cpp used value 1 as indication of unknown NF subcode.
