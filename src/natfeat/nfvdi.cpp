@@ -63,7 +63,7 @@ int32 VdiDriver::dispatch(uint32 fncode)
 
 	if (fncode & 0x80000000) {
 	    if (!events)
-		return 0;
+		return 1;
 
 	    fncode &= 0x7fffffff;
 	    if (fncode & 0x8000) {
@@ -88,7 +88,7 @@ int32 VdiDriver::dispatch(uint32 fncode)
 	    }
 	    TriggerInt3();
 	    
-	    return 1;
+	    return 0;
 	}
 
 	if (fncode == FVDI_EVENT) {
@@ -1327,3 +1327,4 @@ int32 VdiDriver::getFbAddr(void)
 {
 	return 0;
 }
+
