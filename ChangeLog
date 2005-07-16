@@ -1,3 +1,10 @@
+2005/07/16 - Petr
+- natfeat/nfvdi.cpp: swapped return values for the mouse event dispatch
+  since default fvdidrv.cpp used value 1 as indication of unknown NF subcode.
+
+- input.cpp: adapted for the swapped return values from the nfvdi dispatch.
+
+
 2005/07/13 - milan
 - src/Unix/config.*: updated (thanks, Aurelien Jarno)
 
