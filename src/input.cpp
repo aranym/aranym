@@ -571,7 +571,7 @@ static void process_keyboard_event(SDL_Event &event)
 
 static void process_mouse_event(SDL_Event event)
 {
-	static NF_Base* fvdi = 0;
+	static NF_Base* fvdi = NULL;
 	bool fvdi_events = false;
 	bool mouse_exit = false;
 
@@ -616,7 +616,7 @@ static void process_mouse_event(SDL_Event event)
 				grabTheMouse();
 		}
 		else if (event.button.button == 4) {	/* mouse wheel Up */
-			if (fvdi_events = fvdi->dispatch(0xc00100ff))
+			if (fvdi != NULL && fvdi->dispatch(0xc00100ff) == 0)
 				return;
 
 			if (bx_options.ikbd.wheel_eiffel) {
@@ -635,7 +635,7 @@ static void process_mouse_event(SDL_Event event)
 			return;
 		}
 		else if (event.button.button == 5) {	/* mouse wheel Down */
-			if (fvdi_events = fvdi->dispatch(0xc0010001))
+			if (fvdi != NULL && fvdi->dispatch(0xc0010001) == 0)
 				return;
 
 			if (bx_options.ikbd.wheel_eiffel) {
@@ -675,7 +675,10 @@ static void process_mouse_event(SDL_Event event)
 		xrel = eve.xrel;
 		yrel = eve.yrel;
 
-		fvdi_events = fvdi->dispatch(0x80008000 | (eve.x << 16) | (eve.y));
+		if (fvdi != NULL) {
+			if (fvdi->dispatch(0x80008000 | (eve.x << 16) | (eve.y)) == 0)
+				fvdi_events = true;
+		}
 		// Can't use the method below to get out of the window
 		// if the events are reported directly, since it only
 		// works with hidden mouse pointer.
@@ -683,8 +686,10 @@ static void process_mouse_event(SDL_Event event)
 		mouse_exit = (eve.x == 0) && (eve.y == 0);
 	}
 
-	if (lastbut != but)
-		fvdi_events = fvdi->dispatch(0xb0000000 | but);
+	if (lastbut != but) {
+		if (fvdi != NULL && (fvdi->dispatch(0xb0000000 | but) == 0))
+			fvdi_events = true;
+	}
 
 	if (fvdi_events) {
 		if (!bx_options.video.fullscreen && mouse_exit)
