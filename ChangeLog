@@ -4,6 +4,8 @@
 
 - input.cpp: adapted for the swapped return values from the nfvdi dispatch.
   - also CHECK_HOTKEY adapted to allow hotkeys with mod keys only
+  - and keysym.mod replaced with GetModState() since keysym.mod didn't return
+    single mod key presses.
 
 - dlgHotkeys.cpp: display hotkeys with mod keys only correctly
 

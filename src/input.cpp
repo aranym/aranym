@@ -450,7 +450,7 @@ static void process_keyboard_event(SDL_Event &event)
 {
 	SDL_keysym keysym = event.key.keysym;
 	SDLKey sym = keysym.sym;
-	int state = keysym.mod;	// SDL_GetModState();
+	int state = SDL_GetModState(); // keysym.mod does not deliver single mod key presses for some reason
 
 #ifdef SDL_GUI
 	if (hostScreen.isGUIopen()) {
