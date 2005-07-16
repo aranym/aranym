@@ -445,7 +445,7 @@ void kill_GUI_thread()
 }
 #endif /* SDL_GUI */
 
-#define CHECK_HOTKEY(Hotkey) (sym == bx_options.hotkeys.Hotkey.sym && masked_mod == bx_options.hotkeys.Hotkey.mod)
+#define CHECK_HOTKEY(Hotkey) ((bx_options.hotkeys.Hotkey.sym == 0 || sym == bx_options.hotkeys.Hotkey.sym) && masked_mod == bx_options.hotkeys.Hotkey.mod)
 static void process_keyboard_event(SDL_Event &event)
 {
 	SDL_keysym keysym = event.key.keysym;

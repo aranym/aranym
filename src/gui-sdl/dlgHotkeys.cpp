@@ -139,7 +139,15 @@ char *displayKeysym(SDL_keysym keysym, char *buffer)
 	if (mods & KMOD_RALT) strcat(buffer, "RA+");
 	if (mods & KMOD_LMETA) strcat(buffer, "LM+");
 	if (mods & KMOD_RMETA) strcat(buffer, "RM+");
-	strcat(buffer, SDL_GetKeyName(keysym.sym));
+	if (keysym.sym) {
+		strcat(buffer, SDL_GetKeyName(keysym.sym));
+	}
+	else {
+		// mod keys only, remove last plus sign
+		int len = strlen(buffer);
+		if (len > 0 && buffer[len-1] == '+')
+			buffer[len-1] = '\0';
+	}
 	return buffer;
 }
 

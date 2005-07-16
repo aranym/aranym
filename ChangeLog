@@ -3,6 +3,9 @@
   since default fvdidrv.cpp used value 1 as indication of unknown NF subcode.
 
 - input.cpp: adapted for the swapped return values from the nfvdi dispatch.
+  - also CHECK_HOTKEY adapted to allow hotkeys with mod keys only
+
+- dlgHotkeys.cpp: display hotkeys with mod keys only correctly
 
 
 2005/07/13 - milan
