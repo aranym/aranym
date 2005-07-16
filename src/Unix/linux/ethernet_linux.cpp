@@ -128,6 +128,8 @@ bool TunTapEthernetHandler::open( const char* mode ) {
 bool TunTapEthernetHandler::close() {
 	// Close /dev/net/tun device
 	::close(fd);
+	D(bug("TunTap: close"));
+
 	return true;
 }
 
