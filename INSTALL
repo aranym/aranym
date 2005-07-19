@@ -29,7 +29,10 @@ x86          NetBSD
 
 2) Compilation
 --------------
-If you run a flavour of Unix or Linux, go to src/Unix folder first.
+
+  2-1) Unix or Linux
+  ------------------
+Go to src/Unix folder first.
 
 If you got the source code from CVS then type
 ./autogen.sh && make
@@ -40,6 +43,14 @@ If you have a source snapshot or proper ARAnyM source code release then type
 ./configure --help shows you all the compile time options.
 
 If everything went OK you got an executable file named "aranym".
+
+
+  2-2) Microsoft Windows
+  ----------------------
+Compilation is accomplished using the Cygwin linux-like environment
+(http://www.cygwin.com/).
+
+Details are available in tools/build-cygwin.sh.
 
 
 3) Installation
