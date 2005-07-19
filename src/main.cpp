@@ -36,6 +36,7 @@
 #include "parameters.h"
 #include "version.h"		// for heartBeat
 #include "natfeat/nf_objs.h"
+#include "audio.h"
 #ifdef ENABLE_LILO
 #include "lilo.h"
 #endif
@@ -57,6 +58,8 @@
 #endif
 
 #include <SDL.h>
+
+extern AUDIO	*audio;
 
 #ifdef SDL_GUI
 #include "sdlgui.h"
@@ -653,6 +656,8 @@ bool InitAll(void)
 		}
 	}
 
+	audio = new AUDIO();
+
 	// For InterruptFlag controling
 	InterruptFlagLock = SDL_CreateMutex();
 
@@ -775,6 +780,8 @@ void ExitAll(void)
 	// Deinitialize mon
 	mon_exit();
 #endif
+
+	delete audio;
 
 	SDL_Quit();
 }

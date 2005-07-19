@@ -61,6 +61,7 @@ SRCS = ../main.cpp \
 	../acsifdc.cpp \
 	../aradata.cpp \
 	../ata.cpp \
+	../audio.cpp \
 	../blitter.cpp \
 	../cdrom.cpp \
 	../cfgopts.c \
@@ -92,7 +93,7 @@ SRCS = ../main.cpp \
 	../natfeat/nf_base.cpp \
 	../natfeat/nf_objs.cpp \
 	../natfeat/xhdi.cpp \
-	../natfeat/audio.cpp \
+	../natfeat/nfaudio.cpp \
 	../natfeat/nf_basicset.cpp \
 	../natfeat/debugprintf.cpp \
 	$(NFCDROMSRCS) \

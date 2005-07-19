@@ -24,7 +24,7 @@
 #include "nf_basicset.h"
 
 #include "xhdi.h"
-#include "audio.h"
+#include "nfaudio.h"
 #include "hostfs.h"
 #include "ethernet.h"
 #include "debugprintf.h"

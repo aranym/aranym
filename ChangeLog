@@ -1,3 +1,10 @@
+2005/07/19 - Patrice
+- Splitted nfaudio driver in two parts. It is now possible to have several
+  audio emulations (ym, dma, dsp) along with nf audio emulation, all mixed in
+  a final audio buffer. The NF audio driver now does convert buffer from Atari
+  to host format, instead of letting Atari side doing this.
+
+
 2005/07/16 - Andreas
 - natfeat/nfcdrom_linux.cpp: move include of linux/cdrom.h down to fix
   compilation problem.
