@@ -392,6 +392,21 @@ bool InitTOSROM(void)
 	ROMBaseHost[0x00437] = 0x06;	/* XBIOS, DMA8 */
 #endif
 
+	/*
+		Remove TOS check for joypads port that set DMA audio bit to 0 if not
+		present
+	*/
+	ROMBaseHost[0x0043e] = 0x4e;	/* btst #7,d0 (d0 is value on joypad port) */
+	ROMBaseHost[0x0043f] = 0x71;
+	ROMBaseHost[0x00440] = 0x4e;
+	ROMBaseHost[0x00441] = 0x71;
+	ROMBaseHost[0x00442] = 0x4e;	/* bne.s 0xe00448 */
+	ROMBaseHost[0x00443] = 0x71;
+	ROMBaseHost[0x00444] = 0x4e;	/* bclr #1,d1 (d1 is value of _SND cookie) */
+	ROMBaseHost[0x00445] = 0x71;
+	ROMBaseHost[0x00446] = 0x4e;
+	ROMBaseHost[0x00447] = 0x71;
+
 	if (FastRAMSize > 0) {
 		int i;
 

@@ -1,5 +1,6 @@
 2005/07/20 - Patrice
-- Preliminary DMA audio emulation.
+- Preliminary DMA audio emulation. Remove TOS check for joypad port presence that
+  set DMA audio bit in _SND cookie to 0 if absent (!!).
 
 
 2005/07/19 - Xavier
