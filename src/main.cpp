@@ -387,9 +387,9 @@ bool InitTOSROM(void)
 	ROMBaseHost[0x00419] = (bx_options.tos.cookie_mch) & 0xff;
 	// _SND
 #if DSP_EMULATION
-	ROMBaseHost[0x00437] = 0x0C;	/* DSP emulation and XBIOS routines */
+	ROMBaseHost[0x00437] = 0x0E;	/* DSP, XBIOS, DMA8 */
 #else
-	ROMBaseHost[0x00437] = 0x04;	/* no hardware, only XBIOS routines */
+	ROMBaseHost[0x00437] = 0x06;	/* XBIOS, DMA8 */
 #endif
 
 	if (FastRAMSize > 0) {
