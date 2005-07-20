@@ -199,12 +199,24 @@ AC_DEFUN([MDL_HAVE_OPENGL],
 
   AC_CACHE_CHECK([for OpenGL], mdl_cv_have_OpenGL,
   [
+    if test x"$OS_TYPE" = xcygwin; then
+      mdl_cv_have_OpenGL=yes
+
+      have_GL=yes
+      have_GLU=yes
+      have_GLX=no
+      GL_LIBS="-lopengl32 -lglu32"
+
+      AC_SUBST(GL_CFLAGS)
+      AC_SUBST(GL_LIBS)
+    else 
+
     if test x"$use_Mesa" = xyes; then
       GL_search_list="MesaGL   GL"
       GLU_search_list="MesaGLU GLU"
       GLX_search_list="MesaGLX GLX"
     else
-      GL_search_list="GL  MesaGL"
+      GL_search_list="GL MesaGL"
       GLU_search_list="GLU MesaGLU"
       GLX_search_list="GLX MesaGLX"
     fi
@@ -258,6 +270,9 @@ dnl and we don't want to be global namespace polluters.
     CPPFLAGS="$GL_save_CPPFLAGS"
 
     AC_LANG_RESTORE
+
+dnl if !cygwin
+    fi
    
 dnl bugfix: dont forget to cache this variables, too
     mdl_cv_GL_CFLAGS="$GL_CFLAGS"
