@@ -1146,10 +1146,10 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	/* Create tesselator */
 	if (!tess) {
 		tess=gluNewTess();
-		gluTessCallback(tess,GLU_TESS_VERTEX,(void (*)())glVertex3dv);
-		gluTessCallback(tess,GLU_TESS_BEGIN,(void (*)())tess_begin);
-		gluTessCallback(tess,GLU_TESS_END,(void (*)())tess_end);
-		gluTessCallback(tess,GLU_TESS_ERROR,(void (*)())tess_error);
+		gluTessCallback(tess,GLU_TESS_VERTEX,(_GLUfuncptr)glVertex3dv);
+		gluTessCallback(tess,GLU_TESS_BEGIN,(_GLUfuncptr)tess_begin);
+		gluTessCallback(tess,GLU_TESS_END,(_GLUfuncptr)tess_end);
+		gluTessCallback(tess,GLU_TESS_ERROR,(_GLUfuncptr)tess_error);
 	}
 
 	/* Tesselate polygon in list */
