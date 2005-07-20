@@ -35,6 +35,7 @@
 #include "dsp.h"
 #include "acsifdc.h"
 #include "ide.h"
+#include "audio_dma.h"
 
 extern Parallel *parallel;
 
@@ -53,6 +54,7 @@ VIDEL *getVIDEL(void);
 DSP *getDSP(void);
 ACSIFDC *getFDC(void);
 IDE *getIDE(void);
+AUDIODMA *getAUDIODMA(void);
 
 extern uae_u32 HWget_l(uaecptr addr);
 extern uae_u16 HWget_w(uaecptr addr);

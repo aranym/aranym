@@ -1,3 +1,7 @@
+2005/07/20 - Patrice
+- Preliminary DMA audio emulation.
+
+
 2005/07/19 - Xavier
 - INSTALL: added a pointer to tools/build-cygwin.sh for compiling on Microsoft
   Windows.

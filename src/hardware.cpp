@@ -33,6 +33,7 @@
 #include "ide.h"
 #include "mmu.h"
 #include "hostscreen.h"
+#include "audio_dma.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -51,9 +52,10 @@ BLITTER *blitter;
 VIDEL *videl;
 YAMAHA *yamaha;
 ARADATA *aradata;
+AUDIODMA *audiodma;
 
 enum {iMFP = 0, iMMU, iIKBD, iMIDI, iFDC, iRTC, iIDE, iDSP, iBLITTER, iVIDEL,
-	  iYAMAHA, iARADATA, iSOUND, iDSPDMA, iSCC, iCARTRIDGE, iPADDLE,
+	  iYAMAHA, iARADATA, iAUDIODMA, iDSPDMA, iSCC, iCARTRIDGE, iPADDLE,
 	  /* the iITEMS must be the last one in the enum */
 	  iITEMS};
 
@@ -73,8 +75,8 @@ void HWInit()
 	arhw[iVIDEL] = videl = new VIDEL(0xff8200, 0xc4);
 	arhw[iYAMAHA] = yamaha = new YAMAHA(0xff8800, 4);
 	arhw[iARADATA] = aradata = new ARADATA(0xf90000, 18);
+	arhw[iAUDIODMA] = audiodma = new AUDIODMA(0xff8900, 0x22);
 
-	arhw[iSOUND] = new BASE_IO(0xff8900, 0x22);
 	arhw[iDSPDMA] = new BASE_IO(0xff8930, 0x14);
 	arhw[iSCC] = new BASE_IO(0xff8c80, 0x16);
 	arhw[iPADDLE] = new BASE_IO(0xff9200, 0x24);
@@ -121,6 +123,7 @@ VIDEL* getVIDEL()	{ return videl; }
 DSP* getDSP()		{ return dsp; }
 ACSIFDC *getFDC()	{ return fdc; }
 IDE *getIDE()		{ return ide; }
+AUDIODMA *getAUDIODMA()	{ return audiodma; }
 
 uae_u32 HWget_l (uaecptr addr) {
 	D(bug("HWget_l %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));

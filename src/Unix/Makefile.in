@@ -62,6 +62,7 @@ SRCS = ../main.cpp \
 	../aradata.cpp \
 	../ata.cpp \
 	../audio.cpp \
+	../audio_dma.cpp \
 	../blitter.cpp \
 	../cdrom.cpp \
 	../cfgopts.c \
