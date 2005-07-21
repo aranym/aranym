@@ -1,5 +1,5 @@
 /*
-	Audio DMA emulation
+	Audio crossbar emulation
 
 	ARAnyM (C) 2005 Patrice Mandin
 
@@ -18,37 +18,31 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef AUDIODMA_H
-#define AUDIODMA_H
+#ifndef CROSSBAR_H
+#define CROSSBAR_H
 
 #include "icio.h"
 
-/*--- AUDIODMA class ---*/
+/*--- CROSSBAR class ---*/
 
-class AUDIODMA : public BASE_IO {
+class CROSSBAR : public BASE_IO {
 	private:
-		int freqs[4];
-		uint32	current;
-		uint16	mode;
-
-		void updateCurrent();
-		void updateControl();
-		void updateMode();
+		uint16	input, output;
+		uint8	extfreqdiv, intfreqdiv, rec_tracks;
+		uint8	in_source, adc_input;
+		uint8	gain, atten;
+		uint8	gpio_dir, gpio_data;
 
 	public:
-		AUDIODMA(memptr, uint32);
-		~AUDIODMA();
+		CROSSBAR(memptr, uint32);
+		~CROSSBAR();
 		void reset();
 
 		virtual uae_u8 handleRead(uaecptr addr);
 		virtual void handleWrite(uaecptr addr, uae_u8 value);
 
-		void updateFreq(void);
-
-		/* Only for audio callback */
-		uint16	control;
-		uint32	start, end;
-		int	start_tic;
+		int getIntFreq(void);
+		int getIntPrediv(void);
 };
 
-#endif /* AUDIODMA_H */
+#endif /* CROSSBAR_H */

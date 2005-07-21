@@ -34,6 +34,7 @@
 #include "mmu.h"
 #include "hostscreen.h"
 #include "audio_dma.h"
+#include "audio_crossbar.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -53,9 +54,10 @@ VIDEL *videl;
 YAMAHA *yamaha;
 ARADATA *aradata;
 AUDIODMA *audiodma;
+CROSSBAR *crossbar;
 
 enum {iMFP = 0, iMMU, iIKBD, iMIDI, iFDC, iRTC, iIDE, iDSP, iBLITTER, iVIDEL,
-	  iYAMAHA, iARADATA, iAUDIODMA, iDSPDMA, iSCC, iCARTRIDGE, iPADDLE,
+	  iYAMAHA, iARADATA, iAUDIODMA, iCROSSBAR, iSCC, iCARTRIDGE, iPADDLE,
 	  /* the iITEMS must be the last one in the enum */
 	  iITEMS};
 
@@ -76,8 +78,8 @@ void HWInit()
 	arhw[iYAMAHA] = yamaha = new YAMAHA(0xff8800, 4);
 	arhw[iARADATA] = aradata = new ARADATA(0xf90000, 18);
 	arhw[iAUDIODMA] = audiodma = new AUDIODMA(0xff8900, 0x22);
+	arhw[iCROSSBAR] = crossbar = new CROSSBAR(0xff8930, 0x14);
 
-	arhw[iDSPDMA] = new BASE_IO(0xff8930, 0x14);
 	arhw[iSCC] = new BASE_IO(0xff8c80, 0x16);
 	arhw[iPADDLE] = new BASE_IO(0xff9200, 0x24);
 	arhw[iCARTRIDGE] = new BASE_IO(0xfa0000, 0x20000);
@@ -124,6 +126,7 @@ DSP* getDSP()		{ return dsp; }
 ACSIFDC *getFDC()	{ return fdc; }
 IDE *getIDE()		{ return ide; }
 AUDIODMA *getAUDIODMA()	{ return audiodma; }
+CROSSBAR *getCROSSBAR()	{ return crossbar; }
 
 uae_u32 HWget_l (uaecptr addr) {
 	D(bug("HWget_l %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));

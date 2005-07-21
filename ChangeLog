@@ -1,3 +1,7 @@
+2005/07/21 - Patrice
+- Preliminary crossbar audio emulation.
+
+
 2005/07/20 - Patrice
 - Preliminary DMA audio emulation. Remove TOS check for joypad port presence that
   set DMA audio bit in _SND cookie to 0 if absent (!!).

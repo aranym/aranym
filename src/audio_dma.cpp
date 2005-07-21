@@ -90,7 +90,7 @@ extern "C" {
 		uint32	src;
 		int j,k;
 
-		D(bug("audiodma: resize 8bit"));		
+//		D(bug("audiodma: resize 8bit"));		
 		src = current_replay + offset*channels;
 		j = k = 0;
 		while (((current_replay+j*skip)<end_replay) && (dst_len>0)) {
@@ -110,7 +110,7 @@ extern "C" {
 		uint32	src;
 		int j,k;
 		
-		D(bug("audiodma: resize 16bit"));		
+//		D(bug("audiodma: resize 16bit"));		
 		src = current_replay + offset*channels;
 		j = k = 0;
 //		fprintf(stderr, "16bit:");
@@ -139,7 +139,7 @@ extern "C" {
 			|| (freq==0) || (start_replay==0) || (end_replay==0))
 			return;
 
-		D(bug("audiodma: %d to fill, from %d Hz to %d Hz", len, freq, audio->obtained.freq));
+//		D(bug("audiodma: %d to fill, from %d Hz to %d Hz", len, freq, audio->obtained.freq));
 
 		/* Allocate needed temp buffer */
 		if (tmp_buf_len<len) {
@@ -148,7 +148,7 @@ extern "C" {
 			}
 			tmp_buf_len = len*cvt.len_mult;
 			tmp_buf = malloc(tmp_buf_len);
-			D(bug("audiodma: %d allocated for temp buffer", tmp_buf_len));
+//			D(bug("audiodma: %d allocated for temp buffer", tmp_buf_len));
 		}
 
 		dest = (Uint8 *)tmp_buf;
@@ -156,8 +156,8 @@ extern "C" {
 		while (dest_len>0) {
 			int converted_len;
 
-			D(bug("audiodma: replay from 0x%08x to 0x%08x via 0x%08x", start_replay, end_replay, current_replay));
-			D(bug("audiodma: buffer 0x%08x, len %d", dest, dest_len));
+//			D(bug("audiodma: replay from 0x%08x to 0x%08x via 0x%08x", start_replay, end_replay, current_replay));
+//			D(bug("audiodma: buffer 0x%08x, len %d", dest, dest_len));
 
 			/* Resize Atari buffer using offset, skip and freq */
 			switch(format & 0xff) {
@@ -171,7 +171,7 @@ extern "C" {
 					return;
 			}
 
-			D(bug("audiodma: %d converted from %d", converted_len, dest_len));
+//			D(bug("audiodma: %d converted from %d", converted_len, dest_len));
 
 			/* Go to next part */
 			dest_len -= converted_len;
@@ -181,18 +181,18 @@ extern "C" {
 			if (current_replay<end_replay)
 				continue;
 
-			D(bug("audiodma: end of frame"));
+//			D(bug("audiodma: end of frame"));
 				
 			if (getAUDIODMA()->control & CTRL_PLAYBACK_ENABLE) {
 				if (getAUDIODMA()->control & CTRL_PLAYBACK_REPEAT) {
 					start_replay = current_replay = getAUDIODMA()->start;
 					end_replay = getAUDIODMA()->end;			
 					getAUDIODMA()->start_tic = SDL_GetTicks();
-					D(bug("audiodma: playback loop: 0x%08x to 0x%08x", start_replay, end_replay));
+//					D(bug("audiodma: playback loop: 0x%08x to 0x%08x", start_replay, end_replay));
 				} else {
 					getAUDIODMA()->control &= ~CTRL_PLAYBACK_ENABLE;
 					playing = SDL_AUDIO_STOPPED;
-					D(bug("audiodma: playback stop"));
+//					D(bug("audiodma: playback stop"));
 					memset(dest, 0x80, dest_len);
 					break;
 				}
@@ -201,10 +201,10 @@ extern "C" {
 			/* Generate MFP interrupt if needed */
 			if (getAUDIODMA()->control & CTRL_TIMERA_PLAYBACK_END) {
 				getMFP()->IRQ(13, 1);
-				D(bug("audiodma: MFP Timer A interrupt triggered"));
+//				D(bug("audiodma: MFP Timer A interrupt triggered"));
 			} else if (getAUDIODMA()->control & CTRL_MFPI7_PLAYBACK_END) {
 				getMFP()->IRQ(15, 1);
-				D(bug("audiodma: MFP I7 interrupt triggered"));
+//				D(bug("audiodma: MFP I7 interrupt triggered"));
 			}
 		}
 
@@ -537,13 +537,26 @@ void AUDIODMA::updateMode(void)
 	skip = ((mode>>MODE_PLAY_TRACK) & MODE_PLAY_TRACK_MASK)+1;
 	skip *= ((format & 0xff)>>3)*channels;
 
-	freq = freqs[(mode>>MODE_FREQ) & MODE_FREQ_MASK];
+	updateFreq();
 
-	D(bug("audio: mode: format 0x%04x, %d channels, offset %d, skip %d, %d freq",
+	D(bug("audiodma: mode: format 0x%04x, %d channels, offset %d, skip %d, %d freq",
 		format, channels, offset, skip, freq));
 
 	SDL_BuildAudioCVT(&cvt,
 		format, channels, audio->obtained.freq,
 		audio->obtained.format, audio->obtained.channels, audio->obtained.freq
 	);
+}
+
+void AUDIODMA::updateFreq(void)
+{
+	int prediv;
+
+	prediv = getCROSSBAR()->getIntPrediv();
+	if (prediv == 0) {
+		freq = freqs[(mode>>MODE_FREQ) & MODE_FREQ_MASK];
+	} else {
+		freq = getCROSSBAR()->getIntFreq() / (256 * (prediv+1));
+	}
+	D(bug("audiodma:  freq %d Hz", freq));
 }

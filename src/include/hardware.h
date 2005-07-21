@@ -36,6 +36,7 @@
 #include "acsifdc.h"
 #include "ide.h"
 #include "audio_dma.h"
+#include "audio_crossbar.h"
 
 extern Parallel *parallel;
 
@@ -55,6 +56,7 @@ DSP *getDSP(void);
 ACSIFDC *getFDC(void);
 IDE *getIDE(void);
 AUDIODMA *getAUDIODMA(void);
+CROSSBAR *getCROSSBAR(void);
 
 extern uae_u32 HWget_l(uaecptr addr);
 extern uae_u16 HWget_w(uaecptr addr);
