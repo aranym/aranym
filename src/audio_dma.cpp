@@ -113,19 +113,14 @@ extern "C" {
 //		D(bug("audiodma: resize 16bit"));		
 		src = current_replay + offset*channels;
 		j = k = 0;
-//		fprintf(stderr, "16bit:");
 		while (((current_replay+j*skip)<end_replay) && (dst_len>0)) {
 			j = (k * freq) / audio->obtained.freq;
 			for (int i=0;i<channels;i++) {
 				*dest++ = ReadInt16(src + (i<<1) + j*skip);
 				dst_len -= 2;
 			}
-//			if ((k & 255)==0) {
-//				fprintf(stderr, " 0x%04x", *(dest-1));
-//			}
 			k++;
 		}
-//		fprintf(stderr, "\n");
 		current_replay += j*skip;
 		return (k*channels)<<1;
 	}
@@ -152,7 +147,7 @@ extern "C" {
 		}
 
 		dest = (Uint8 *)tmp_buf;
-		dest_len = len;
+		dest_len = (int) (len / cvt.len_ratio);
 		while (dest_len>0) {
 			int converted_len;
 
@@ -188,11 +183,11 @@ extern "C" {
 					start_replay = current_replay = getAUDIODMA()->start;
 					end_replay = getAUDIODMA()->end;			
 					getAUDIODMA()->start_tic = SDL_GetTicks();
-//					D(bug("audiodma: playback loop: 0x%08x to 0x%08x", start_replay, end_replay));
+					D(bug("audiodma: playback loop: 0x%08x to 0x%08x", start_replay, end_replay));
 				} else {
 					getAUDIODMA()->control &= ~CTRL_PLAYBACK_ENABLE;
 					playing = SDL_AUDIO_STOPPED;
-//					D(bug("audiodma: playback stop"));
+					D(bug("audiodma: playback stop"));
 					memset(dest, 0x80, dest_len);
 					break;
 				}
@@ -201,24 +196,18 @@ extern "C" {
 			/* Generate MFP interrupt if needed */
 			if (getAUDIODMA()->control & CTRL_TIMERA_PLAYBACK_END) {
 				getMFP()->IRQ(13, 1);
-//				D(bug("audiodma: MFP Timer A interrupt triggered"));
+				D(bug("audiodma: MFP Timer A interrupt triggered"));
 			} else if (getAUDIODMA()->control & CTRL_MFPI7_PLAYBACK_END) {
 				getMFP()->IRQ(15, 1);
-//				D(bug("audiodma: MFP I7 interrupt triggered"));
+				D(bug("audiodma: MFP I7 interrupt triggered"));
 			}
 		}
 
 		/* Convert Atari buffer to host format */
 		cvt.buf = (Uint8 *)tmp_buf;
-		cvt.len = len;
+		cvt.len = (int) (len / cvt.len_ratio);
 		SDL_ConvertAudio(&cvt);
-/*
-		fprintf(stderr,"buffer: %d", len);
-		for (int i=0;i<len>>8;i++) {
-			fprintf(stderr," %02x", cvt.buf[i<<8]);
-		}
-		fprintf(stderr,"\n");
-*/
+
 		SDL_MixAudio(stream, cvt.buf, len, SDL_MIX_MAXVOLUME);
 	}
 };
