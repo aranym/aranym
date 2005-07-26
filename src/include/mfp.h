@@ -83,8 +83,8 @@ private:
 	uint8 GPIP_data;
 	uint8 active_edge;
 	uint8 data_direction;
-	uint8 irq_enable;
-	uint8 irq_pending;
+	uint16 irq_enable;
+	uint16 irq_pending;
 	uint16 irq_inservice;
 	uint16 irq_mask;
 	MFP_TimerA A;

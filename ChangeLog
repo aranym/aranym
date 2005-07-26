@@ -1,3 +1,7 @@
+2005/07/26 - Patrice
+- mfp.h: Wrong size for irq_* values.
+
+
 2005/07/25 - Patrice
 - Fixed speedy replay in DMA audio. Timer A interrupt still not triggered.
 
