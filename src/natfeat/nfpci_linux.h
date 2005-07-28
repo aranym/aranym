@@ -23,6 +23,29 @@
 
 #include "parameters.h"
 
+/*--- Types ---*/
+
+typedef struct {
+	/* Infos read from PCI_FILE_DEVICES */
+	/* 0: bus, device, function */
+	/* 1: vendor id, device id */
+	/* 2: irq */
+	/* 3-8: base addresses */
+	/* 9: ROM base address */
+	/* 10-15: sizes */
+	/* 16: ROM size */
+	uint32 info[17];
+
+	/* Configuration bytes */
+	unsigned char config[256];
+	uint32 config_length;
+
+	/* Device file to access config bytes */
+	char filename[256];
+} pci_device_t;
+
+/*--- Linux PCI driver class ---*/
+
 class PciDriverLinux : public PciDriver
 {
 	public:
@@ -73,6 +96,9 @@ class PciDriverLinux : public PciDriver
 		int32 bus_to_virt(uint32 device_handle, uint32 pci_address, memptr data);
 		int32 virt_to_phys(memptr virt_cpu_address, memptr data);
 		int32 phys_to_virt(memptr phys_cpu_address, memptr data);
+
+		pci_device_t *pci_devices;
+		uint32 num_pci_devices;
 };
 
 #endif /* NFPCI_LINUX_H */

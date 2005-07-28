@@ -39,32 +39,6 @@
 
 #define PCI_FILE_DEVICES	"/proc/bus/pci/devices"
 
-/*--- Types ---*/
-
-typedef struct {
-	/* Infos read from PCI_FILE_DEVICES */
-	/* 0: bus, device, function */
-	/* 1: vendor id, device id */
-	/* 2: irq */
-	/* 3-8: base addresses */
-	/* 9: ROM base address */
-	/* 10-15: sizes */
-	/* 16: ROM size */
-	uint32 info[17];
-
-	/* Configuration bytes */
-	unsigned char config[256];
-	int config_length;
-
-	/* Device file to access config bytes */
-	char filename[256];
-} pci_device_t;
-
-/*--- Variables ---*/
-
-static pci_device_t *pci_devices=NULL;
-static uint32 num_pci_devices=0;
-
 /*--- Public functions ---*/
 
 PciDriverLinux::PciDriverLinux()
@@ -74,17 +48,18 @@ PciDriverLinux::PciDriverLinux()
 	FILE *f, *fc;
 
 	D(bug(NFPCI_NAME "PciDriverLinux()"));
+	num_pci_devices=0;
+	pci_devices=NULL;
 
 	f=fopen(PCI_FILE_DEVICES,"r");
 	if (f==NULL) {
 		return;
 	}
 
-	num_pci_devices=0;
 	while (fgets(buffer, sizeof(buffer)-1, f)) {
 		pci_device_t *new_device;
 
-		sscanf(buffer, "%x %x %x %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx %lx",
+		sscanf(buffer, "%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x",
 			&device[0], &device[1], &device[2], &device[3], 
 			&device[4], &device[5], &device[6], &device[7], 
 			&device[8], &device[9], &device[10], &device[11], 
@@ -157,13 +132,14 @@ PciDriverLinux::~PciDriverLinux()
 		free(pci_devices);
 		pci_devices=NULL;
 	}
+	num_pci_devices=0;
 }
 
 /*--- Private functions ---*/
 
 int32 PciDriverLinux::find_device(uint32 device_vendor_id, uint32 index)
 {
-	int32 i, j;
+	uint32 i, j;
 	
 	D(bug(NFPCI_NAME "find_device(0x%08x,%d)", device_vendor_id, index));
 
@@ -240,7 +216,7 @@ int32 PciDriverLinux::read_config_byte(uint32 device_handle, memptr data, uint32
 	if (device_handle>num_pci_devices)
 		return ATARI_PCI_BAD_HANDLE;
 	
-	if (num_register>pci_devices[device_handle].config_length-1)
+	if (num_register>(uint32)(pci_devices[device_handle].config_length-1))
 		return ATARI_PCI_BAD_REGISTER_NUMBER;
 
 	buf = (unsigned char *) (Atari2HostAddr(data));
@@ -258,7 +234,7 @@ int32 PciDriverLinux::read_config_word(uint32 device_handle, memptr data, uint32
 	if (device_handle>num_pci_devices)
 		return ATARI_PCI_BAD_HANDLE;
 	
-	if (num_register>pci_devices[device_handle].config_length-2)
+	if (num_register>(uint32)(pci_devices[device_handle].config_length-2))
 		return ATARI_PCI_BAD_REGISTER_NUMBER;
 
 	num_register &= -2;
@@ -346,35 +322,32 @@ int32 PciDriverLinux::read_config_long_fast(uint32 device_handle, uint32 num_reg
 	return (int32) reg_value;
 }
 
-int32 PciDriverLinux::write_config_byte(uint32 device_handle, uint32 num_register, uint32 value)
-{
-	D(bug(NFPCI_NAME "write_config_byte(0x%08x,%d,0x%08x)", device_handle, num_register, value));
-	return ATARI_PCI_FUNC_NOT_SUPPORTED;
-}
-
-int32 PciDriverLinux::write_config_word(uint32 device_handle, uint32 num_register, uint32 value)
-{
-	D(bug(NFPCI_NAME "write_config_word(0x%08x,%d,0x%08x)", device_handle, num_register, value));
-	return ATARI_PCI_FUNC_NOT_SUPPORTED;
-}
-
-int32 PciDriverLinux::write_config_long(uint32 device_handle, uint32 num_register, uint32 value)
-{
-	D(bug(NFPCI_NAME "write_config_long(0x%08x,%d,0x%08x)", device_handle, num_register, value));
-	return ATARI_PCI_FUNC_NOT_SUPPORTED;
-}
-
-int32 PciDriverLinux::hook_interrupt(uint32 device_handle, memptr data, uint32 parameter)
+int32 PciDriverLinux::write_config_byte(uint32 /*device_handle*/, uint32 /*num_register*/, uint32 /*value*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::unhook_interrupt(uint32 device_handle)
+int32 PciDriverLinux::write_config_word(uint32 /*device_handle*/, uint32 /*num_register*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriverLinux::write_config_long(uint32 /*device_handle*/, uint32 /*num_register*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriverLinux::hook_interrupt(uint32 /*device_handle*/, memptr /*data*/, uint32 /*parameter*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriverLinux::unhook_interrupt(uint32 /*device_handle*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 } 
 
-int32 PciDriverLinux::special_cycle(uint32 num_bus, uint32 data)
+int32 PciDriverLinux::special_cycle(uint32 /*num_bus*/, uint32 /*data*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 } 
@@ -383,107 +356,107 @@ int32 PciDriverLinux::special_cycle(uint32 num_bus, uint32 data)
 
 /* set_interrupt */	
 
-int32 PciDriverLinux::get_resource(uint32 device_handle)
+int32 PciDriverLinux::get_resource(uint32 /*device_handle*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::get_card_used(uint32 device_handle, memptr callback)
+int32 PciDriverLinux::get_card_used(uint32 /*device_handle*/, memptr /*callback*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::set_card_used(uint32 device_handle, memptr callback)
+int32 PciDriverLinux::set_card_used(uint32 /*device_handle*/, memptr /*callback*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_mem_byte(uint32 device_handle, uint32 pci_address, uint32 num_register)
+int32 PciDriverLinux::read_mem_byte(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*num_register*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_mem_word(uint32 device_handle, uint32 pci_address, uint32 num_register)
+int32 PciDriverLinux::read_mem_word(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*num_register*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_mem_long(uint32 device_handle, uint32 pci_address, uint32 num_register)
+int32 PciDriverLinux::read_mem_long(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*num_register*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_mem_byte_fast(uint32 device_handle, uint32 pci_address)
+int32 PciDriverLinux::read_mem_byte_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_mem_word_fast(uint32 device_handle, uint32 pci_address)
+int32 PciDriverLinux::read_mem_word_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_mem_long_fast(uint32 device_handle, uint32 pci_address)
+int32 PciDriverLinux::read_mem_long_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::write_mem_byte(uint32 device_handle, uint32 pci_address, uint32 value)
+int32 PciDriverLinux::write_mem_byte(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::write_mem_word(uint32 device_handle, uint32 pci_address, uint32 value)
+int32 PciDriverLinux::write_mem_word(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::write_mem_long(uint32 device_handle, uint32 pci_address, uint32 value)
+int32 PciDriverLinux::write_mem_long(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_io_byte(uint32 device_handle, uint32 pci_address, memptr data)
+int32 PciDriverLinux::read_io_byte(uint32 /*device_handle*/, uint32 /*pci_address*/, memptr /*data*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_io_word(uint32 device_handle, uint32 pci_address, memptr data)
+int32 PciDriverLinux::read_io_word(uint32 /*device_handle*/, uint32 /*pci_address*/, memptr /*data*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_io_long(uint32 device_handle, uint32 pci_address, memptr data)
+int32 PciDriverLinux::read_io_long(uint32 /*device_handle*/, uint32 /*pci_address*/, memptr /*data*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_io_byte_fast(uint32 device_handle, uint32 pci_address)
+int32 PciDriverLinux::read_io_byte_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_io_word_fast(uint32 device_handle, uint32 pci_address)
+int32 PciDriverLinux::read_io_word_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::read_io_long_fast(uint32 device_handle, uint32 pci_address)
+int32 PciDriverLinux::read_io_long_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::write_io_byte(uint32 device_handle, uint32 pci_address, uint32 value)
+int32 PciDriverLinux::write_io_byte(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::write_io_word(uint32 device_handle, uint32 pci_address, uint32 value)
+int32 PciDriverLinux::write_io_word(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::write_io_long(uint32 device_handle, uint32 pci_address, uint32 value)
+int32 PciDriverLinux::write_io_long(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
@@ -498,22 +471,22 @@ int32 PciDriverLinux::get_pagesize(void)
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::virt_to_bus(uint32 device_handle, memptr virt_cpu_address, memptr data)
+int32 PciDriverLinux::virt_to_bus(uint32 /*device_handle*/, memptr /*virt_cpu_address*/, memptr /*data*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::bus_to_virt(uint32 device_handle, uint32 pci_address, memptr data)
+int32 PciDriverLinux::bus_to_virt(uint32 /*device_handle*/, uint32 /*pci_address*/, memptr /*data*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::virt_to_phys(memptr virt_cpu_address, memptr data)
+int32 PciDriverLinux::virt_to_phys(memptr /*virt_cpu_address*/, memptr /*data*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
 
-int32 PciDriverLinux::phys_to_virt(memptr phys_cpu_address, memptr data)
+int32 PciDriverLinux::phys_to_virt(memptr /*phys_cpu_address*/, memptr /*data*/)
 {
 	return ATARI_PCI_FUNC_NOT_SUPPORTED;
 }
