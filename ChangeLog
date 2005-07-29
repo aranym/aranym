@@ -1,5 +1,6 @@
 2005/07/29 - Patrice
-- Trigger MFP interrupt only once per audio callback.
+- Trigger MFP interrupt only once per audio callback. Default format is 16 bits
+  stereo for audio dma.
 
 
 2005/07/26 - Patrice

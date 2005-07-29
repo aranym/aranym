@@ -520,17 +520,15 @@ void AUDIODMA::updateMode(void)
 			format = AUDIO_S8;
 			channels = 2;
 			break;
-		case MODE_FORMAT_16STEREO:
-			format = AUDIO_S16MSB;
-			channels = 2;
-			break;
 		case MODE_FORMAT_8MONO:
 			format = AUDIO_S8;
 			channels = 1;
 			break;
+		case MODE_FORMAT_16STEREO:
 		default:
-			format = 0;
-			channels = 0;
+			format = AUDIO_S16MSB;
+			channels = 2;
+			break;
 	}
 
 	offset = (mode>>MODE_MONITOR_TRACK) & MODE_MONITOR_TRACK_MASK;
