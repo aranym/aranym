@@ -128,7 +128,7 @@ extern "C" {
 	static void audio_callback(void *userdata, uint8 * stream, int len)
 	{
 		Uint8 *dest;
-		int dest_len;
+		int dest_len, trigger_interrupt;
 
 		if ((playing!=SDL_AUDIO_PLAYING) || (format==0) || (channels==0)
 			|| (freq==0) || (start_replay==0) || (end_replay==0))
@@ -146,6 +146,7 @@ extern "C" {
 //			D(bug("audiodma: %d allocated for temp buffer", tmp_buf_len));
 		}
 
+		trigger_interrupt = 0;
 		dest = (Uint8 *)tmp_buf;
 		dest_len = (int) (len / cvt.len_ratio);
 		while (dest_len>0) {
@@ -193,6 +194,17 @@ extern "C" {
 				}
 			}
 
+			/* Trigger MFP interrupt if needed */
+			if (getAUDIODMA()->control & CTRL_TIMERA_PLAYBACK_END) {
+				trigger_interrupt = 1;
+				D(bug("audiodma: MFP Timer A interrupt to trigger"));
+			} else if (getAUDIODMA()->control & CTRL_MFPI7_PLAYBACK_END) {
+				trigger_interrupt = 1;
+				D(bug("audiodma: MFP I7 interrupt to trigger"));
+			}
+		}
+
+		if (trigger_interrupt) {
 			/* Generate MFP interrupt if needed */
 			if (getAUDIODMA()->control & CTRL_TIMERA_PLAYBACK_END) {
 				getMFP()->IRQ(13, 1);
@@ -202,7 +214,7 @@ extern "C" {
 				D(bug("audiodma: MFP I7 interrupt triggered"));
 			}
 		}
-
+		
 		/* Convert Atari buffer to host format */
 		cvt.buf = (Uint8 *)tmp_buf;
 		cvt.len = (int) (len / cvt.len_ratio);

@@ -1,3 +1,7 @@
+2005/07/29 - Patrice
+- Trigger MFP interrupt only once per audio callback.
+
+
 2005/07/26 - Patrice
 - mfp.h: Wrong size for irq_* values.
 
