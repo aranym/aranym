@@ -1342,6 +1342,27 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 #endif
 }
 
+int32 SoftVdiDriver::drawText(memptr vwk, memptr text, uint32 length,
+			      int32 dst_x, int32 dst_y, memptr font,
+			      uint32 w, uint32 h, uint32 fgColor, uint32 bgColor,
+			      uint32 logOp, memptr clip)
+{
+	DUNUSED(vwk);
+	DUNUSED(text);
+	DUNUSED(length);
+	DUNUSED(dst_x);
+	DUNUSED(dst_y);
+	DUNUSED(font);
+	DUNUSED(w);
+	DUNUSED(h);
+	DUNUSED(fgColor);
+	DUNUSED(bgColor);
+	DUNUSED(logOp);
+	DUNUSED(clip);
+
+	return 0;
+}
+
 void SoftVdiDriver::getHwColor(uint16 index, uint32 red, uint32 green,
 	uint32 blue, memptr hw_value)
 {
@@ -1412,6 +1433,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.12  2005/07/11 22:56:45  johan
+ * Polygon filling support routines moved to base class.
+ *
  * Revision 1.11  2005/07/08 23:16:32  johan
  * Bug fixes and speedups for polylines.
  *

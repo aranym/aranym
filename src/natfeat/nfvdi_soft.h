@@ -62,6 +62,10 @@ class SoftVdiDriver : public VdiDriver
 		int32 fillPoly(memptr vwk, memptr points_addr, int n,
 			memptr index_addr, int moves, memptr pattern_addr, uint32 fgColor,
 			uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip);
+		int32 drawText(memptr vwk, memptr text, uint32 length,
+			int32 dst_x, int32 dst_y, memptr font,
+			uint32 w, uint32 h, uint32 fgColor, uint32 bgColor,
+			uint32 logOp, memptr clip);
 		void getHwColor(uint16 index, uint32 red, uint32 green,
 			uint32 blue, memptr hw_value);
 		void setColor(memptr vwk, uint32 paletteIndex, uint32 red,

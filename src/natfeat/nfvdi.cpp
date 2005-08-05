@@ -216,6 +216,20 @@ int32 VdiDriver::dispatch(uint32 fncode)
 			                  getParameter(9),			// interior style
 			                  (memptr)getParameter(10));		// clip rectangle
 			break;
+		case FVDI_TEXT:
+			ret = drawText((memptr)getParameter(0),		// vwk
+			                  (memptr)getParameter(1),		// text*
+			                  getParameter(2),			// length
+			                  getParameter(3),			// dst_x
+			                  getParameter(4),			// dst_y
+			                  (memptr)getParameter(5),		// font*
+			                  getParameter(6),			// width
+			                  getParameter(7),			// height
+			                  getParameter(8),			// fgColor
+			                  getParameter(9),			// bgColor
+			                  getParameter(10),			// logic operation
+			                  (memptr)getParameter(11));		// clip rectangle
+			break;
 		case FVDI_GET_HWCOLOR:
 			getHwColor(getParameter(0), getParameter(1), getParameter(2), getParameter(3), getParameter(4));
 			break;
@@ -1301,6 +1315,26 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	}
 
 	return 1;
+}
+
+int32 VdiDriver::drawText(memptr vwk, memptr text, uint32 length, int32 dst_x, int32 dst_y,
+			  memptr font, uint32 w, uint32 h, uint32 fgColor, uint32 bgColor,
+			  uint32 logOp, memptr clip)
+{
+	DUNUSED(vwk);
+	DUNUSED(text);
+	DUNUSED(length);
+	DUNUSED(dst_x);
+	DUNUSED(dst_y);
+	DUNUSED(font);
+	DUNUSED(w);
+	DUNUSED(h);
+	DUNUSED(fgColor);
+	DUNUSED(bgColor);
+	DUNUSED(logOp);
+	DUNUSED(clip);
+
+	return -1;
 }
 
 void VdiDriver::getHwColor(uint16 index, uint32 red, uint32 green,
