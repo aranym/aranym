@@ -36,7 +36,11 @@
 
 #ifdef ENABLE_OPENGL
 #define NO_SDL_GLEXT	/* Don't use SDL version of glext */
+#if 0
 #include <SDL_opengl.h>
+#else
+#include <GL/gl.h>
+#endif
 #include <GL/glext.h>
 #endif
 
@@ -365,7 +369,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		/* Projection matrix */
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluOrtho2D(0.0, width, height, 0.0);
+		glOrtho(0.0, width, height, 0.0, -1.0, 1.0);
 
 		/* Texture matrix */
 		glMatrixMode(GL_TEXTURE);
@@ -1498,6 +1502,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.75  2005/06/21 12:50:27  pmandin
+ * Small fixes for OpenGL rendering
+ *
  * Revision 1.74  2005/06/16 13:26:47  milan
  * Disabled for non-gui version
  *
