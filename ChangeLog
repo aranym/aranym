@@ -1,3 +1,9 @@
+2005/08/05 - Johan
+- nfvdi*: Support for accelerated text drawing.
+- nfvdi_opengl.cpp: Fix for S2S blit problem at bottom of screen.
+  Also added rounding for getHwColor.
+- hostscreen.cpp: Removed unnecessary dependency on glu function.
+
 2005/07/29 - Patrice
 - Trigger MFP interrupt only once per audio callback. Default format is 16 bits
   stereo for audio dma.
