@@ -746,7 +746,11 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, in
 		return -1;
 	}
 	if ((logOp!=0) && (logOp!=3) && (logOp!=15)) {
+#if 0
 		D(bug("glvdi: blit_s2m: logOp %d unsupported",logOp));
+#else
+		bug("glvdi: blit_s2m: logOp %d unsupported",logOp);
+#endif
 		return -1;
 	}
 
@@ -819,15 +823,20 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr /*vwk*/, memptr /*src*/, int32 sx,
 	glRasterPos2i(dx,dy+h-1);
 	glCopyPixels(sx,hostScreen.getHeight()-(sy+h-1), w,h, GL_COLOR);
 #else
-	glRasterPos2i(dx,dy+h);
-	int srcy = hostScreen.getHeight()-(sy+h);
-	if (1 || srcy > 1)
-	{
-		glCopyPixels(sx,hostScreen.getHeight()-(sy+h), w,h, GL_COLOR);
-	}
-	else
-	{
-		glCopyPixels(sx,1, w,h, GL_COLOR);
+	if (sy >= dy) {
+	  if (dy + h == (int32)hostScreen.getHeight())
+	    h--;
+	  glRasterPos2i(dx,dy+h);
+	  glCopyPixels(sx,hostScreen.getHeight()-(sy+h), w,h, GL_COLOR);
+	} else {
+	  int srcy = hostScreen.getHeight()-(sy+h);
+	  if (dy + h < (int32)hostScreen.getHeight()) {
+	    glRasterPos2i(dx,dy+h);
+	    glCopyPixels(sx,srcy, w,h, GL_COLOR);
+	  } else {
+	    glRasterPos2i(dx, hostScreen.getHeight() - 1);
+	    glCopyPixels(sx,srcy+1, w,h, GL_COLOR);
+	  }
 	}
 #endif
 
@@ -1199,10 +1208,107 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 #endif
 }
 
+int32 OpenGLVdiDriver::drawText(memptr vwk, memptr text, uint32 length,
+				int32 dx, int32 dy, memptr font,
+				uint32 ch_w, uint32 ch_h, uint32 fgColor, uint32 bgColor,
+				uint32 logOp, memptr clip)
+{
+	DUNUSED(vwk);
+	int32 cx1, cy1, cx2, cy2;
+	cx1 = ReadInt32(clip);
+	cy1 = ReadInt32(clip + 4);
+	cx2 = ReadInt32(clip + 8);
+	cy2 = ReadInt32(clip + 12);
+
+	int width, count;
+	if ((dy + (int32)ch_h <= cy1) || (dy > cy2) || (dx > cx2) ||
+	    (dx + (width = length * (int32)ch_w) <= cx1))
+		return 1;
+	if (dx + width - (int32)ch_w > cx2) {
+		count   = dx + width - cx2 - 1;
+		count  /= ch_w;
+		length -= count;
+	}
+	if (dx + (int32)ch_w <= cx1) {
+		count   = cx1 - dx;
+		count  /= ch_w;
+		length -= count;
+		dx     += ch_w * count;
+		text   += count * 2;
+	}
+
+	/* Allocate temporary space for monochrome bitmap */
+	width = (ch_w * length + 31) & ~31;	/* Changed meaning of width from above! */
+	Uint8 *bitmap = (Uint8 *)malloc((width * ch_h) >> 3);
+	if (!bitmap) {
+		return -1;
+	}
+
+	uint8 *fontaddr = Atari2HostAddr(font);
+	width >>= 3;
+	for(uint32 i = 0; i < length; i++) {
+	  Uint8 *chardata = &fontaddr[ReadInt16(text) * 16];
+	  text += 2;
+	  Uint8 *ptr = bitmap + i + (ch_h - 1) * width;
+	  for(uint32 j = 0; j < ch_h; j++) {
+	    *ptr = *chardata++;
+	    ptr -= width;
+	  }
+	}
+
+	int sx, sy, w, h;
+	sx = 0;
+	sy = 0;
+	w = ch_w * length;
+	h = ch_h;
+
+	glScissor(cx1,           hostScreen.getHeight() - cy2 - 1,
+		  cx2 - cx1 + 1, cy2 - cy1 + 1);
+	glEnable(GL_SCISSOR_TEST);
+
+	if (logOp == 1) {
+		/* First, the back color */
+		glColor3ub((bgColor >> 16) & 0xff, (bgColor >> 8) & 0xff,
+			   bgColor & 0xff);
+		glBegin(GL_QUADS);
+			glVertex2i(dx,     dy);
+			glVertex2i(dx + w, dy);
+			glVertex2i(dx + w, dy + h);
+			glVertex2i(dx,     dy + h);
+		glEnd();
+	}
+
+	glEnable(GL_COLOR_LOGIC_OP);
+	if (logOp == 3) {
+		glLogicOp(GL_XOR);
+		glColor3ub(0xff, 0xff, 0xff);
+	} else {
+		glLogicOp(GL_COPY);
+		glColor3ub((fgColor >> 16) & 0xff, (fgColor >> 8) & 0xff,
+			   fgColor & 0xff);
+	}
+
+	sx = 0;
+	if (dx < 0) {
+	  sx = -dx;
+	  dx = 0;
+	}
+	glRasterPos2i(dx, dy + h - 1);
+	glBitmap(w, h,  sx, 0,  0, 0, (const GLubyte *)bitmap);
+
+	glDisable(GL_COLOR_LOGIC_OP);
+	glDisable(GL_SCISSOR_TEST);
+
+	free(bitmap);
+
+	return 1;
+}
+
 void OpenGLVdiDriver::getHwColor(uint16 /*index*/, uint32 red, uint32 green,
 	uint32 blue, memptr hw_value)
 {
-	WriteInt32(hw_value, (((red*255)/1000)<<16)|(((green*255)/1000)<<8)|((blue*255)/1000));
+	WriteInt32(hw_value, (((red * 255 + 500) / 1000) << 16) |
+		   (((green * 255 + 500) / 1000) << 8)|((blue * 255 + 500) / 1000));
 }
 
 /**
