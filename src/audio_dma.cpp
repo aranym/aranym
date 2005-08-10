@@ -491,7 +491,7 @@ void AUDIODMA::updateCurrent(void)
 	current = start;
 
 	if (playing == SDL_AUDIO_PLAYING) {
-		current = (end_replay-start_replay)>>1;
+		current += (end_replay-start_replay)>>1;
 	}
 }
 
