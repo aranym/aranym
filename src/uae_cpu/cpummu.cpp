@@ -294,7 +294,8 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 //	if (theaddr == 0x40000000) test |= MMU_TEST_VERBOSE;
 	
 	supervisor = fc & 4;
-	
+
+#if 0
 	switch(fc)	{
 		case 0: /* data cache push */
 		case 1:
@@ -312,6 +313,9 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 			panicbug("FC=%d should not happen", fc);
 			abort();
 	}
+#else
+	datamode = (fc == 0) ? 1 : (fc % 2);
+#endif
 	
 	root_ptr = supervisor ? regs.srp : regs.urp;
 	

@@ -1,3 +1,7 @@
+2005/08/14 - milan
+- uae_cpu/cpummu.cpp: microoptimalization
+
+
 2005/08/05 - Johan
 - nfvdi*: Support for accelerated text drawing.
 - nfvdi_opengl.cpp: Fix for S2S blit problem at bottom of screen.
