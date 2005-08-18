@@ -1,3 +1,7 @@
+2005/08/18 - milan
+- CPU sync with BasiliskII (better x86 types detection and JITc correction)
+
+
 2005/08/14 - milan
 - uae_cpu/cpummu.cpp: microoptimalization
 

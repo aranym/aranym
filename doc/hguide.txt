@@ -158,7 +158,7 @@ features. In progress.
 --------------
 CPU:
 
-BasiliskII (CVS 1.5.2005)
+BasiliskII (CVS 17.8.2005)
 AmigaXL (Amithlon, AmigaOSXL) (14.9.2002)
 hatari (CVS 2.2.2002)
 UAE 0.8.22

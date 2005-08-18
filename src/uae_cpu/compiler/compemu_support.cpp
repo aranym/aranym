@@ -6711,7 +6711,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	    raw_call((uintptr)cpu_do_check_ticks);
 	    *branchadd=(uintptr)get_target()-((uintptr)branchadd+1);
 #endif
-	    
+
 #if JIT_DEBUG
 		if (JITDebug) {
 			raw_mov_l_mi((uintptr)&last_regs_pc_p,(uintptr)pc_hist[0].location);
