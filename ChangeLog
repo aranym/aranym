@@ -1,3 +1,7 @@
+2005/08/18 - Petr&milan
+- include/aramd5.h: portability
+
+
 2005/08/18 - milan
 - CPU sync with BasiliskII (better x86 types detection and JITc correction)
 

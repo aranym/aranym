@@ -25,8 +25,8 @@
 
 # include <cstdio>
 
-#define md5byte unsigned char
-#define UWORD32	unsigned long
+#define md5byte uint8
+#define UWORD32	uint32
 
 struct MD5Context {
 	UWORD32 buf[4];
