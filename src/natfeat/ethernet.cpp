@@ -86,7 +86,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				// CAUTION: the 'ARETH0' wasn't a good choice
 				// (Linux bridging didn't work with that)
 				uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
-				memcpy(Atari2HostAddr(buf_ptr), mac_addr, buf_size);	// use H2Amemcpy
+				f2amemcpy(buf_ptr, (char *)mac_addr, buf_size);
 			}
 			break;
 
@@ -179,7 +179,7 @@ void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 {
 	DUNUSED(ethX);
 	D(bug("Ethernet: ReadPacket dest %08lx, len %lx", buffer, len));
-	Host2Atari_memcpy(buffer, packet, len > 1514 ? 1514 : len );
+	f2amemcpy(buffer, (char *)packet, len > 1514 ? 1514 : len );
 	if (len > 1514) {
 		panicbug("ETHERNETDriver::readPacket() - length %d > 1514", len);
 	}
@@ -198,7 +198,7 @@ void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
 	D(bug("Ethernet: SendPacket src %08lx, len %lx", buffer, len));
 
 	len = len > 1514 ? 1514 : len;
-	Atari2Host_memcpy(packetToWrite, buffer, len );
+	a2fmemcpy((char *)packetToWrite, buffer, len );
 
 	// Transmit packet
 	if (handler->send(packetToWrite, len) < 0) {
