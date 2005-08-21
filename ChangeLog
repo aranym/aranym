@@ -1,3 +1,10 @@
+2005/08/21 - Petr
+- natfeat/ethernet.cpp: do not use Atari2Host_memcpy() and similar, they
+  ignore MMU setup. Fixed by replacing with a2fmemcpy() family.
+  This was an essential fix. Now NF Ethernet works under Linux-m68k :-)
+  Other NF drivers need similar fixes.
+
+
 2005/08/18 - Petr&milan
 - include/aramd5.h: portability
 
