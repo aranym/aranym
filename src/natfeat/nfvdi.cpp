@@ -635,6 +635,15 @@ int32 VdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
  * } Mouse;
  **/
 
+void VdiDriver::restoreMouseBackground(void)
+{
+}
+
+void VdiDriver::saveMouseBackground(int16 /*x*/, int16 /*y*/, int16 /*width*/,
+	int16 /*height*/)
+{
+}
+
 int32 VdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor, uint32 bgColor,
 	uint32 mouse_type)

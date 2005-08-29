@@ -32,8 +32,6 @@
 
 /*--- Defines ---*/
 
-//#define USE_HOST_MOUSE_CURSOR 1
-
 #define EINVFN -32
 
 static const uint8 vdi_colours[] = { 0,2,3,6,4,7,5,8,9,10,11,14,12,15,13,255 };
@@ -203,7 +201,6 @@ int32 SoftVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
  * } Mouse;
  **/
 
-#ifndef USE_HOST_MOUSE_CURSOR
 extern "C" {
 	static uint16 reverse_bits(uint16 data)
 	{
@@ -245,13 +242,15 @@ void SoftVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width,
 	Mouse.storage.height = height;
 	Mouse.storage.width = width;
 }
-#endif
 
 int SoftVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor, uint32 bgColor,
 	uint32 mouse_type)
 {
-#ifndef USE_HOST_MOUSE_CURSOR
+	if (bx_options.nfvdi.use_host_mouse_cursor) {
+		return VdiDriver::drawMouse(wk,x,y,mode,data,hot_x,hot_y,fgColor,bgColor,mouse_type);
+	}
+
 	DUNUSED(wk);
 	DUNUSED(mouse_type);
 	D2(bug("fVDI: mouse mode: %x", mode));
@@ -339,9 +338,6 @@ int SoftVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	hostScreen.update((uint16)x, (uint16)y, w, h, true);
 
 	return 1;
-#else
-	return VdiDriver::drawMouse(wk,x,y,mode,data,hot_x,hot_y,fgColor,bgColor,mouse_type);
-#endif
 }
 
 /**
@@ -1433,6 +1429,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.13  2005/08/05 08:55:29  johan
+ * Support for accelerated text drawing.
+ *
  * Revision 1.12  2005/07/11 22:56:45  johan
  * Polygon filling support routines moved to base class.
  *

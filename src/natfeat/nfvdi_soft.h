@@ -39,6 +39,9 @@ class SoftVdiDriver : public VdiDriver
 		void reset(void);
 
 	protected:
+		void restoreMouseBackground(void);
+		void saveMouseBackground(int16 x, int16 y, int16 width, int16 height);
+
 		int32 openWorkstation(void);
 		int32 closeWorkstation(void);
 		int32 getPixel(memptr vwk, memptr src, int32 x, int32 y);
@@ -80,32 +83,6 @@ class SoftVdiDriver : public VdiDriver
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
 	private:
-#ifndef USE_HOST_MOUSE_CURSOR
-		struct _Mouse {
-			struct {
-				uint16 x, y;
-				uint16 width, height;
-				uint32 background[16][16]; // The mouse background backup surface for FVDIDriver
-				struct {
-					uint32 foreground; // The mouse shape color for FVDIDriver
-					uint32 background; // The mouse mask color for FVDIDriver
-				} color;
-			} storage;
-			struct hotspot_ {
-				int16  x, y;
-			} hotspot;
-			struct colors_ {
-				int16  fgColorIndex, bgColorIndex;
-			} colors;
-
-			uint16 mask[16];
-			uint16 shape[16];
-		} Mouse;
-
-		void restoreMouseBackground(void);
-		void saveMouseBackground(int16 x, int16 y, int16 width, int16 height);
-#endif
-
 		int drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 			uint32 fgColor, uint32 bgColor, int logOp, bool last_pixel,
 			int cliprect[], int minmax[]);

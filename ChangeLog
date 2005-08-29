@@ -1,3 +1,7 @@
+2005/08/29 - Patrice
+- nfvdi: Make usage of host mouse cursor a configurable option.
+
+
 2005/08/21 - Petr
 - natfeat/ethernet.cpp: do not use Atari2Host_memcpy() and similar, they
   ignore MMU setup. Fixed by replacing with a2fmemcpy() family.

@@ -84,6 +84,30 @@ class VdiDriver : public NF_Base
 		virtual void reset(void);
 
 	protected:
+		struct _Mouse {
+			struct {
+				uint16 x, y;
+				uint16 width, height;
+				uint32 background[16][16]; // The mouse background backup surface for FVDIDriver
+				struct {
+					uint32 foreground; // The mouse shape color for FVDIDriver
+					uint32 background; // The mouse mask color for FVDIDriver
+				} color;
+			} storage;
+			struct hotspot_ {
+				int16  x, y;
+			} hotspot;
+			struct colors_ {
+				int16  fgColorIndex, bgColorIndex;
+			} colors;
+
+			uint16 mask[16];
+			uint16 shape[16];
+		} Mouse;
+
+		virtual void restoreMouseBackground(void);
+		virtual void saveMouseBackground(int16 x, int16 y, int16 width, int16 height);
+
 		void setResolution(int32 width, int32 height, int32 depth);
 		int32 getWidth(void);
 		int32 getHeight(void);

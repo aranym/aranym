@@ -34,8 +34,6 @@
 
 /*--- Defines ---*/
 
-#define USE_HOST_MOUSE_CURSOR 1
-
 #define EINVFN -32
 
 static const GLenum logicOps[16]={
@@ -55,20 +53,18 @@ extern HostScreen hostScreen;
 
 OpenGLVdiDriver::OpenGLVdiDriver()
 {
-#ifndef USE_HOST_MOUSE_CURSOR
-	Mouse.tex_obj=0;
-#endif
+	mouse_tex_obj=0;
+	memset(mouse_texture, 0, sizeof(mouse_texture));
 	tess=NULL;
 }
 
 OpenGLVdiDriver::~OpenGLVdiDriver()
 {
-#ifndef USE_HOST_MOUSE_CURSOR
-	if (Mouse.tex_obj>0) {
-		glDeleteTextures(1, &Mouse.tex_obj);
-		Mouse.tex_obj=0;
+	if (mouse_tex_obj>0) {
+		glDeleteTextures(1, &mouse_tex_obj);
+		mouse_tex_obj=0;
 	}
-#endif	
+
 	if (tess) {
 		gluDeleteTess(tess);
 		tess=NULL;
@@ -86,23 +82,25 @@ void OpenGLVdiDriver::reset(void)
 int32 OpenGLVdiDriver::openWorkstation(void)
 {
 	hostScreen.EnableOpenGLVdi();
-#ifndef USE_HOST_MOUSE_CURSOR
-	if (Mouse.tex_obj==0) {
-		glGenTextures(1, &Mouse.tex_obj);
+
+	if (!bx_options.nfvdi.use_host_mouse_cursor) {
+		if (mouse_tex_obj==0) {
+			glGenTextures(1, &mouse_tex_obj);
+		}
 	}
-#endif	
+
 	return VdiDriver::openWorkstation();
 }
 
 int32 OpenGLVdiDriver::closeWorkstation(void)
 {
 	hostScreen.DisableOpenGLVdi();
-#ifndef USE_HOST_MOUSE_CURSOR
-	if (Mouse.tex_obj>0) {
-		glDeleteTextures(1, &Mouse.tex_obj);
-		Mouse.tex_obj=0;
+
+	if (mouse_tex_obj>0) {
+		glDeleteTextures(1, &mouse_tex_obj);
+		mouse_tex_obj=0;
 	}
-#endif	
+
 	return VdiDriver::closeWorkstation();
 }
 
@@ -229,31 +227,33 @@ int32 OpenGLVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
  * } Mouse;
  **/
 
-#ifndef USE_HOST_MOUSE_CURSOR
 void OpenGLVdiDriver::restoreMouseBackground(void)
 {
 	glRasterPos2i(Mouse.storage.x,Mouse.storage.y+16);
 	glDrawPixels(16,16, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[0][0]));
 }
 
-void OpenGLVdiDriver::saveMouseBackground(int16 x, int16 y)
+void OpenGLVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width,
+	int16 height)
 {
 	Mouse.storage.x = x;
 	Mouse.storage.y = y;
 
 	glReadPixels(
-		Mouse.storage.x,hostScreen.getHeight()-(Mouse.storage.y+16),
-		16,16,
+		Mouse.storage.x,hostScreen.getHeight()-(Mouse.storage.y+height),
+		width,height,
 		GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[0][0])
 	);
 }
-#endif
 
 int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor,
 	uint32 bgColor, uint32 mouse_type)
 {
-#ifndef USE_HOST_MOUSE_CURSOR
+	if (bx_options.nfvdi.use_host_mouse_cursor) {
+		return VdiDriver::drawMouse(wk,x,y,mode,data,hot_x,hot_y,fgColor,bgColor,mouse_type);
+	}
+
 	DUNUSED(wk);
 	DUNUSED(fgColor);
 	DUNUSED(bgColor);
@@ -291,13 +291,13 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 						if (SDL_SwapBE16(cur_mask[my]) & (1<<mx))
 							color |= 0x000000ffUL;	/* opaque */
 				
-						Mouse.texture[my][16-mx]=SDL_SwapBE32(color);
+						mouse_texture[my][16-mx]=SDL_SwapBE32(color);
 					}
 				}
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // scale when image bigger than texture
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // scale when image smaller than texture
-				glTexImage2D(GL_TEXTURE_2D, 0, 4, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, Mouse.texture);
+				glTexImage2D(GL_TEXTURE_2D, 0, 4, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, mouse_texture);
 
 				Mouse.hotspot.x = hot_x & 0xf;
 				Mouse.hotspot.y = hot_y & 0xf;
@@ -315,14 +315,14 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	x = (x>maxx ? maxx : (x<0 ? 0: x));
 	y = (y>maxy ? maxy : (y<0 ? 0: y));
 
-	saveMouseBackground(x,y);
+	saveMouseBackground(x,y,16,16);
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	/* Texture may have been unbound */
-	glBindTexture(GL_TEXTURE_2D, Mouse.tex_obj);
+	glBindTexture(GL_TEXTURE_2D, mouse_tex_obj);
 
 	/* Render the textured quad */
 	glBegin(GL_QUADS);
@@ -342,9 +342,6 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 	return 1;
-#else
-	return VdiDriver::drawMouse(wk,x,y,mode,data,hot_x,hot_y,fgColor,bgColor,mouse_type);
-#endif
 }
 
 /**

@@ -194,6 +194,11 @@ typedef struct {
 	char vdi_driver[256];	/* VDI driver */
 } bx_natfeat_options_t;
 
+// NFvdi options
+typedef struct {
+	bool use_host_mouse_cursor; /* Use host mouse cursor */
+} bx_nfvdi_options_t;
+
 // Parallel port options
 typedef struct {
 	char type[256];
@@ -250,6 +255,7 @@ typedef struct {
   bx_nfosmesa_options_t	osmesa;
   bx_parallel_options_t parallel;
   bx_natfeat_options_t natfeats;
+  bx_nfvdi_options_t	nfvdi;
 #ifdef GDBSTUB
   bx_gdbstub_t		gdbstub;
 #endif

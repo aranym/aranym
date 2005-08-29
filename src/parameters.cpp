@@ -730,6 +730,24 @@ void presave_natfeat() {
 }
 
 /*************************************************************************/
+#define NFVDI_CONF(x) bx_options.nfvdi.x
+
+struct Config_Tag nfvdi_conf[]={
+	{ "UseHostMouseCursor", Bool_Tag,  &NFVDI_CONF(use_host_mouse_cursor), 0, 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+void preset_nfvdi() {
+	NFVDI_CONF(use_host_mouse_cursor) = false;
+}
+
+void postload_nfvdi() {
+}
+
+void presave_nfvdi() {
+}
+
+/*************************************************************************/
 #ifdef OS_darwin
 #define HOTKEY_OPENGUI		SDLK_PRINT	// F13
 #define	HOTKEY_FULLSCREEN	SDLK_NUMLOCK
@@ -855,6 +873,7 @@ void preset_cfg() {
   preset_osmesa();
   preset_parallel();
   preset_natfeat();
+  preset_nfvdi();
 }
 
 void postload_cfg() {
@@ -876,6 +895,7 @@ void postload_cfg() {
   postload_osmesa();
   postload_parallel();
   postload_natfeat();
+  postload_nfvdi();
 }
 
 void presave_cfg() {
@@ -897,6 +917,7 @@ void presave_cfg() {
   presave_osmesa();
   presave_parallel();
   presave_natfeat();
+  presave_nfvdi();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -1221,6 +1242,7 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 	process_config(f, rcfile, osmesa_conf, "[NFOSMESA]", true);
 	process_config(f, rcfile, parallel_conf, "[PARALLEL]", true);
 	process_config(f, rcfile, natfeat_conf, "[NATFEATS]", true);
+	process_config(f, rcfile, nfvdi_conf, "[NFVDI]", true);
 
 	return true;
 }
@@ -1267,6 +1289,7 @@ bool saveSettings(const char *fs)
 	update_config(fs, osmesa_conf, "[NFOSMESA]");
 	update_config(fs, parallel_conf, "[PARALLEL]");
 	update_config(fs, natfeat_conf, "[NATFEATS]");
+	update_config(fs, nfvdi_conf, "[NFVDI]");
 
 	return true;
 }

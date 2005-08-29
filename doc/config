@@ -232,3 +232,8 @@ CDROM = sdl
 #  opengl -> Hardware accelerated renderer
 Vdi = soft
 #  Vdi = opengl
+
+
+[NFVDI]
+# Tell Aranym whether to use host mouse cursor, or standard Atari cursor
+UseHostMouseCursor = No
