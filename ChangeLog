@@ -1,3 +1,8 @@
+2005/09/01 - milan
+- src/Unix/configure.ac: enforce fixed videoram for SDL blitter
+- src/uae_cpu/debug.cpp: correct register size
+
+
 2005/08/29 - Patrice
 - nfvdi: Make usage of host mouse cursor a configurable option.
 

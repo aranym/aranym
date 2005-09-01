@@ -43,6 +43,8 @@
 
 #include "gdbstub.h"
 
+#include "main.h"
+
 static int debugger_active = 0;
 int debugging = 0;
 int irqindebug = 0;
@@ -315,7 +317,7 @@ void debug (void)
 	 case 'R': m68k_reset(); break;
 	 case 'A':
 	    {
-	        char reg;
+	        uae_u32 reg;
     	        if (more_params (&inptr))
 		    if ((reg = readhex(&inptr)) < 8)
 		        if (more_params (&inptr))
@@ -324,7 +326,7 @@ void debug (void)
 	    }
 	 case 'D':
 	    {
-	        char reg;
+	        uae_u32 reg;
     	        if (more_params (&inptr))
 		    if ((reg = readhex(&inptr)) < 8)
 		        if (more_params (&inptr))

@@ -818,6 +818,11 @@ if [[ "x$WANT_BLITMEMMOVE" = "xyes" ]]; then
   AC_DEFINE([BLITTER_MEMMOVE], 1, [Define if you want accelerated blitter output])
 fi
 
+  if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
+    AC_MSG_WARN([Blitter SDL surface blitting support needs fixed position of VideoRAM])
+    AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
+    WANT_FIXEDVIDEORAM="yes"
+  fi
 dnl Blitter SDL surface blitting
 if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
   AC_DEFINE([BLITTER_SDLBLIT], 1, [Define if you want even more accelerated blitter output])
