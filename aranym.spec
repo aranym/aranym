@@ -10,7 +10,7 @@ Summary:	32-bit Atari personal computer (Falcon030/TT030) virtual machine.
 Name:		%{name}
 Version:	%{ver}
 Release:	%{rel}
-Copyright:	%{copy}
+License:	%{copy}
 Packager: %{joy}
 URL: http://aranym.sourceforge.net/
 Group:	%{group}
