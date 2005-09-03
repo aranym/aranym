@@ -143,14 +143,6 @@ static void dump_log(void)
 }
 #endif /* FLIGHT_RECORDER */
 
-#if ENABLE_MON
-static void dump_regs(void)
-{
-	m68k_dumpstate(NULL);
-}
-#endif
-
-
 int broken_in;
 
 static inline unsigned int cft_map (unsigned int f)
@@ -1202,20 +1194,14 @@ void m68k_reset (void)
     regs.cacr = 0;
     regs.caar = 0;
 #if FLIGHT_RECORDER
-	log_ptr = 0;
-	memset(log, 0, sizeof(log));
-#endif
-
 #if ENABLE_MON
-	static bool first_time = true;
-	if (first_time) {
-		first_time = false;
-		mon_add_command("regs", dump_regs, "regs                    Dump m68k emulator registers\n");
-#if FLIGHT_RECORDER
-		// Install "log" command in mon
-		mon_add_command("log", dump_log, "log                      Dump m68k emulation log\n");
+    if (log_ptr == -1) {
+        // Install "log" command in mon
+        mon_add_command("log", dump_log, "log                      Dump m68k emulation log\n");
+    }
 #endif
-	}
+    log_ptr = 0;
+    memset(log, 0, sizeof(log));
 #endif
 }
 
