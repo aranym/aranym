@@ -1,3 +1,11 @@
+2005/09/03 - Petr
+- atari/network/ethernet/ethernet_nfapi.h: (ethX) is missing in IRQ subcall
+
+- natfeat/ethernet.cpp: XIF_GET_MAC: subcall returns FALSE if particular
+  ethX is not defined in the config file, TRUE otherwise. Expected
+  by Linux ethernet driver...
+
+
 2005/09/01 - milan
 - src/Unix/configure.ac: enforce fixed videoram for SDL blitter
 - src/uae_cpu/debug.cpp: correct register size
