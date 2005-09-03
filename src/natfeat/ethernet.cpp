@@ -75,6 +75,12 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			/* store MAC address to provided buffer */
 			{
 				int ethX = getParameter(0);
+				// TODO: make sure ethX is defined in ARAnyM configuration
+				if (ethX != 0) { // TODO, currently hacked to allow ETH0 only
+					ret = 0; // return FALSE if ethX not defined
+					break;
+				}
+
 				memptr buf_ptr = getParameter(1);	// destination buffer
 				uint32 buf_size = getParameter(2);	// buffer size
 				D(bug("Ethernet: getMAC(%d, %p, %d", ethX, buf_ptr, buf_size));
@@ -87,6 +93,8 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				// (Linux bridging didn't work with that)
 				uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
 				f2amemcpy(buf_ptr, (char *)mac_addr, buf_size);
+
+				ret = 1; // TRUE
 			}
 			break;
 
@@ -333,3 +341,6 @@ int ETHERNETDriver::receiveFunc(void *arg)
 	return 0;
 }
 
+/*
+vim:ts=4:sw=4:
+*/
