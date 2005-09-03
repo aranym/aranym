@@ -32,7 +32,7 @@
 enum {
 	GET_VERSION = 0,	/* no parameters, return NFAPI_VERSION in d0 */
 	XIF_INTLEVEL,		/* no parameters, return Interrupt Level in d0 */
-	XIF_IRQ,			/* (ethX), acknowledge interrupt from host */
+	XIF_IRQ,			/* acknowledge interrupt from host */
 	XIF_START,			/* (ethX), called on 'ifup', start receiver thread */
 	XIF_STOP,			/* (ethX), called on 'ifdown', stop the thread */
 	XIF_READLENGTH,		/* (ethX), return size of network data block to read */
