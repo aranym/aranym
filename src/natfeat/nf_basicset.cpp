@@ -1,7 +1,7 @@
 /*
  * nf_basicset.cpp - NatFeat Basic Set
  *
- * Copyright (c) 2002-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2002-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -52,7 +52,7 @@ int32 NF_Name::dispatch(uint32 fncode)
 			text = "Unimplemented NF_NAME sub-id";
 			break;
 	}
-	host2AtariSafeStrncpy(name_ptr, text, name_maxlen-1);
+	Host2AtariSafeStrncpy(name_ptr, text, name_maxlen-1);
 	return strlen(text);
 }
 
@@ -88,8 +88,12 @@ int32 NF_StdErr::dispatch(uint32 fncode)
 	if (! ValidAddr(str_ptr, false, 1))
 		BUS_ERROR(str_ptr);
 
-	atari2HostSafeStrncpy(buffer, str_ptr, sizeof(buffer));
+	Atari2HostSafeStrncpy(buffer, str_ptr, sizeof(buffer));
 	fputs(buffer, output);
 	fflush(output); // ensure immediate data output
 	return strlen(buffer);
 }
+
+/*
+vim:ts=4:sw=4:
+*/
