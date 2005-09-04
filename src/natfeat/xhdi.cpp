@@ -152,7 +152,7 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 		return EDRVNR;
 	}
 
-	uint8 *hostbuf = Atari2HostAddr(buf);
+	// uint8 *hostbuf = Atari2HostAddr(buf);
 
 	if (disk->sim_root) {
 		assert(sizeof(rootsector) == XHDI_BLOCK_SIZE);
@@ -189,11 +189,13 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 				sector.part[i].siz = 0;
 			}
 
-			memcpy(hostbuf, &sector, sizeof(sector));
+			// memcpy(hostbuf, &sector, sizeof(sector));
+			Host2Atari_memcpy(buf, &sector, sizeof(sector));
 
 			// correct the count and buffer position
 			count--;
-			hostbuf+=XHDI_BLOCK_SIZE;
+			// hostbuf+=XHDI_BLOCK_SIZE;
+			buf+=XHDI_BLOCK_SIZE;
 			if (count == 0) {
 				return E_OK;
 			}
@@ -202,25 +204,29 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 		recno--;
 	}
 
-	int size = XHDI_BLOCK_SIZE*count;
 	off_t offset = (off_t)recno * XHDI_BLOCK_SIZE;
 	fseek(f, offset, SEEK_SET);
-	if (writing) {
-		if (! disk->byteswap)
-			byteSwapBuf(hostbuf, size);
-		if (fwrite(hostbuf, size, 1, f) != 1) {
-			panicbug("error writing");
+	for(int i=0; i<count; i++) {
+		uint8 tempbuf[XHDI_BLOCK_SIZE];
+		if (writing) {
+			Atari2Host_memcpy(tempbuf, buf, sizeof(tempbuf));
+			if (! disk->byteswap)
+				byteSwapBuf(tempbuf, sizeof(tempbuf));
+			if (fwrite(tempbuf, sizeof(tempbuf), 1, f) != 1) {
+				panicbug("error writing");
+				break;
+			}
 		}
-		if (! disk->byteswap)
-			byteSwapBuf(hostbuf, size);
-	}
-	else {
-		if (fread(hostbuf, size, 1, f) != 1) {
-			panicbug("error reading");
+		else {
+			if (fread(tempbuf, sizeof(tempbuf), 1, f) != 1) {
+				panicbug("error reading");
+				break;
+			}
+			if (! disk->byteswap)
+				byteSwapBuf(tempbuf, sizeof(tempbuf));
+			Host2Atari_memcpy(buf, tempbuf, sizeof(tempbuf));
 		}
-		if (! disk->byteswap)
-			byteSwapBuf(hostbuf, size);
-
+		buf += sizeof(tempbuf);
 	}
 	fclose(f);
 	return E_OK;
@@ -244,7 +250,7 @@ int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
 	}
 
 	if (product_name && stringlen) {
-		host2AtariSafeStrncpy(product_name, disk->name, stringlen);
+		Host2AtariSafeStrncpy(product_name, disk->name, stringlen);
 	}
 
 	return E_OK;

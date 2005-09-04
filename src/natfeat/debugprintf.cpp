@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2004 Petr Stehlik of the Aranym dev team
+ * Copyright 2002-2005 Petr Stehlik of the Aranym dev team
  *
  * printf routines Copyright 2000 Frank Naumann <fnaumann@freemint.de>
  * All rights reserved.
@@ -35,12 +35,7 @@ int32 DebugPrintf::dispatch(uint32 fncode)
 	memptr str_ptr = getParameter(0);
 	D(bug("DebugPrintf(%d, %p)", fncode, str_ptr));
 
-	// maybe the ValidAddr check is no longer necessary
-	// hopefully the atari2HostSafeStrncpy would throw the bus error?
-	if (! ValidAddr(str_ptr, false, 1))
-		BUS_ERROR(str_ptr);
-
-	atari2HostSafeStrncpy(buffer, str_ptr, sizeof(buffer));
+	Atari2HostSafeStrncpy(buffer, str_ptr, sizeof(buffer));
 
 	int ret = debugprintf(output, buffer, 1);
 	fflush(output);
@@ -62,7 +57,6 @@ uint32 DebugPrintf::debugprintf(FILE *f, const char *fmt, uint32 param)
 	int width;
 	int long_flag;
 	
-	char *s_arg;
 	int   i_arg;
 	long  l_arg;
 
@@ -113,8 +107,9 @@ uint32 DebugPrintf::debugprintf(FILE *f, const char *fmt, uint32 param)
 			}
 			case 's':
 			{
-				s_arg = (char *)Atari2HostAddr(getParameter(param++));	// use A2Hstrcpy
-				len += PUTS (f, s_arg, width);
+				char buf[256];
+				Atari2HostSafeStrncpy(buf, getParameter(param++), sizeof(buf));
+				len += PUTS (f, buf, width);
 				break;
 			}
 			case 'i':
@@ -244,3 +239,7 @@ uint32 DebugPrintf::PUTL(FILE *f, uint32 u, int base, int width, int fill_char)
 	
 	return put;
 }
+
+/*
+vim:ts=4:sw=4:
+*/

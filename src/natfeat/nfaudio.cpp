@@ -1,3 +1,26 @@
+/*
+ * nfaudio.cpp - NatFeat Audio driver
+ *
+ * Copyright (c) 2002-2005 ARAnyM dev team (see AUTHORS)
+ * 
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include <SDL.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,34 +50,33 @@ extern "C" {
 		if (!par->buffer)
 			return;
 
-		uint8 *buffer = Atari2HostAddr(par->buffer);
+		/* Convert Atari audio to host audio */
+		par->len = cvt.needed ? (uint32 ) (len / cvt.len_ratio) : len;
+
+		/* Current buffer too small ? */
+		if (cvt_buf_len < par->len) {
+			if (cvt.buf) {
+				free(cvt.buf);
+				cvt.buf=NULL;
+			}
+		}
+
+		/* Allocate needed buffer */
+		if (cvt.buf==NULL) {
+			cvt.buf=(uint8 *)malloc(par->len);
+			cvt_buf_len = par->len;
+		}
+
+		/* Buffer is used always (not only for sound conversion) because
+		 * we cannot play sound from Atari memory directly.
+		 * We have to copy it to host memory first... */
+		Atari2Host_memcpy(cvt.buf, par->buffer, par->len);
 
 		if (cvt.needed) {
-			/* Convert Atari audio to host audio */
-			par->len = (uint32 ) (len / cvt.len_ratio);
-
-			/* Current buffer too small ? */
-			if (cvt_buf_len<par->len) {
-				if (cvt.buf) {
-					free(cvt.buf);
-					cvt.buf=NULL;
-				}
-			}
-
-			/* Allocate needed buffer */
-			if (cvt.buf==NULL) {
-				cvt.buf=(Uint8 *)malloc(par->len);
-				cvt_buf_len = par->len;
-			}
-
-			memcpy(cvt.buf, buffer, par->len);
 			cvt.len = par->len;
 			SDL_ConvertAudio(&cvt);
-			SDL_MixAudio(stream, cvt.buf, len, par->volume);
-		} else {
-			par->len = len;
-			SDL_MixAudio(stream, buffer, len, par->volume);
 		}
+		SDL_MixAudio(stream, cvt.buf, len, par->volume);
 
 		TriggerInt5();		// Audio is at interrupt level 5
 	}
@@ -167,3 +189,7 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 	}
 	return ret;
 }
+
+/*
+vim:ts=4:sw=4:
+*/
