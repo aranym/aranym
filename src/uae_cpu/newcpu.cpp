@@ -99,6 +99,8 @@ struct rec_step {
 	uae_u32 isp;
 };
 
+bool cpu_flight_recorder_active = false;
+
 const int LOG_SIZE = 8192;
 static rec_step log[LOG_SIZE];
 static int log_ptr = -1; // First time initialization
@@ -109,8 +111,29 @@ static const char *log_filename(void)
 	return name ? name : "log.68k";
 }
 
+static void dump_log();
 void m68k_record_step(uaecptr pc)
 {
+	static bool last_state = false;
+	if (! cpu_flight_recorder_active) {
+		if (last_state) {
+			// dump log out
+		    	dump_log();
+
+			// remember last state
+			last_state = false;
+		}
+		return;
+	}
+
+	if (! last_state) {
+		// reset old log
+    	log_ptr = 0;
+    	memset(log, 0, sizeof(log));
+		// remember last state
+		last_state = true;
+	}
+
 	for (int i = 0; i < 8; i++) {
 		log[log_ptr].d[i] = m68k_dreg(regs, i);
 		log[log_ptr].a[i] = m68k_areg(regs, i);

@@ -313,3 +313,8 @@ void report_double_bus_error()
 	panicbug(CPU_MSG);
 	CPU_ACTION;
 }
+
+#if FLIGHT_RECORDER
+extern bool cpu_flight_recorder_active;
+void cpu_flight_recorder(int activate) { cpu_flight_recorder_active = activate; }
+#endif

@@ -196,7 +196,9 @@ extern void TriggerInt5(void);		// Trigger interrupt level 5
 extern void TriggerMFP(bool);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
 
+#if FLIGHT_RECORDER
 extern void cpu_flight_recorder(int);
+#endif
 
 // CPU looping handlers
 void check_eps_limit(uaecptr);
