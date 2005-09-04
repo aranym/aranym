@@ -44,9 +44,10 @@
  * Configuration zone ends
  **************************/
 
+#define MAX_PACKET_SIZE	1514
 
 static ssize_t packet_length;
-static uint8 packet[1516];
+static uint8 packet[MAX_PACKET_SIZE+2];
 
 // Global variables
 static SDL_Thread *handlingThread;			// Packet reception thread
@@ -92,7 +93,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				// CAUTION: the 'ARETH0' wasn't a good choice
 				// (Linux bridging didn't work with that)
 				uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
-				f2amemcpy(buf_ptr, (char *)mac_addr, buf_size);
+				Host2Atari_memcpy(buf_ptr, mac_addr, MIN(buf_size, sizeof(mac_addr)));
 
 				ret = 1; // TRUE
 			}
@@ -168,7 +169,7 @@ int ETHERNETDriver::get_params(GET_PAR which)
 		default: text = "";
 	}
 
-	host2AtariSafeStrncpy(name_ptr, text, name_maxlen);
+	Host2AtariSafeStrncpy(name_ptr, text, name_maxlen);
 	return strlen(text);
 }
 
@@ -187,9 +188,9 @@ void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 {
 	DUNUSED(ethX);
 	D(bug("Ethernet: ReadPacket dest %08lx, len %lx", buffer, len));
-	f2amemcpy(buffer, (char *)packet, len > 1514 ? 1514 : len );
-	if (len > 1514) {
-		panicbug("ETHERNETDriver::readPacket() - length %d > 1514", len);
+	Host2Atari_memcpy(buffer, packet, MIN(len, MAX_PACKET_SIZE));
+	if (len > MAX_PACKET_SIZE) {
+		panicbug("ETHERNETDriver::readPacket() - length %d > %d", len, MAX_PACKET_SIZE);
 	}
 }
 
@@ -201,12 +202,12 @@ void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
 {
 	DUNUSED(ethX);
-	uint8 packetToWrite[1516];
+	uint8 packetToWrite[MAX_PACKET_SIZE+2];
 
 	D(bug("Ethernet: SendPacket src %08lx, len %lx", buffer, len));
 
-	len = len > 1514 ? 1514 : len;
-	a2fmemcpy((char *)packetToWrite, buffer, len );
+	len = MIN(len, MAX_PACKET_SIZE);
+	Atari2Host_memcpy( packetToWrite, buffer, len );
 
 	// Transmit packet
 	if (handler->send(packetToWrite, len) < 0) {
@@ -325,7 +326,7 @@ int ETHERNETDriver::receiveFunc(void *arg)
 	// ssize_t length;
 	for (;;) {
 		// Read packet device
-		packet_length = handler->recv(packet, 1514);
+		packet_length = handler->recv(packet, MAX_PACKET_SIZE);
 
 		// Trigger ETHERNETDriver interrupt (call the m68k side)
 		D(bug(" packet received (len %d), triggering ETHERNETDriver interrupt", packet_length));
