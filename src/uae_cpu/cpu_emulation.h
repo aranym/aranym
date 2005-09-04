@@ -1,7 +1,7 @@
 /*
  * cpu_emulation.h - CPU interface
  *
- * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2005 Milan Jurik of ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -131,16 +131,44 @@ extern JMP_BUF sigsegv_env;
 // For address validation
 static inline bool ValidAtariAddr(memptr addr, bool write, uint32 len) { return phys_valid_address(addr, write, len); }
 static inline bool ValidAddr(memptr addr, bool write, uint32 len) { return valid_address(addr, write, len); }
-
-// This function will be removed
-static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
-
-
-// These functions will be removed
-static inline void *Atari_memset(memptr addr, int c, size_t n) {return memset(Atari2HostAddr(addr), c, n);}
-static inline void *Atari2Host_memcpy(void *dest, memptr src, size_t n) {return memcpy(dest, Atari2HostAddr(src), n);}
-static inline void *Host2Atari_memcpy(memptr dest, const void *src, size_t n) {return memcpy(Atari2HostAddr(dest), src, n);}
-static inline void *Atari2Atari_memcpy(memptr dest, memptr src, size_t n) {return memcpy(Atari2HostAddr(dest), Atari2HostAddr(src), n);}
+/*
+static inline void Atari_memset(memptr addr, int c, size_t n)
+{
+	while ( n-- )
+		WriteInt8( addr++, c );
+}
+*/
+static inline void Atari2Host_memcpy(void *dst, memptr src, size_t n)
+{
+	uint8 *dest = (uint8 *)dst;
+	while ( n-- )
+		*dest++ = (char)ReadInt8( (uint32)src++ );
+}
+static inline void Host2Atari_memcpy(memptr dest, const void *src, size_t n)
+{
+	uint8 *source = (uint8 *)src;
+	while ( n-- )
+		WriteInt8( dest++, *source++ );
+}
+static inline void Atari2HostSafeStrncpy( char *dest, memptr source, size_t count )
+{
+	while ( count > 1 && (*dest = (char)ReadInt8( (uint32)source++ )) != 0 ) {
+		count--;
+		dest++;
+	}
+	if (count > 0)
+		*dest = '\0';
+}
+static inline void Host2AtariSafeStrncpy( memptr dest, char *source, size_t count )
+{
+	while ( count > 1 && *source ) {
+		WriteInt8( dest++, (uint8)*source++ );
+		count--;
+	}
+	if (count > 0)
+		WriteInt8( dest, 0 );
+}
+// static inline void *Atari2Atari_memcpy(memptr dest, memptr src, size_t n) {return memcpy(Atari2HostAddr(dest), Atari2HostAddr(src), n);}
 
 /*
  *  680x0 emulation
@@ -168,6 +196,8 @@ extern void TriggerInt5(void);		// Trigger interrupt level 5
 extern void TriggerMFP(bool);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
 
+extern void cpu_flight_recorder(int);
+
 // CPU looping handlers
 void check_eps_limit(uaecptr);
 void report_double_bus_error(void);
@@ -176,3 +206,7 @@ void report_double_bus_error(void);
 static inline uaecptr showPC(void) { return m68k_getpc(); }	// for debugging only
 
 #endif
+
+/*
+vim:ts=4:sw=4:
+*/
