@@ -1,7 +1,7 @@
 /*
  * nf_base.h - NatFeat common base
  *
- * Copyright (c) 2002-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2002-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -28,17 +28,6 @@
 
 class NF_Base
 {
-protected:
-	/**
-	 * Host<->Atari mem & str functions
-	 **/
-	void a2fmemcpy( char *dest, memptr source, size_t count );
-	void f2amemcpy( memptr dest, char *source, size_t count );
-	void a2fstrcpy( char *dest, memptr source );
-	void f2astrcpy( memptr dest, char *source );
-	void atari2HostSafeStrncpy( char *dest, memptr source, size_t count );
-	void host2AtariSafeStrncpy( memptr dest, char *source, size_t count );
-
 public:
 	NF_Base() {};
 	virtual ~NF_Base() {};
