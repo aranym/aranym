@@ -464,6 +464,16 @@ static void process_keyboard_event(SDL_Event &event)
 	}
 #endif /* SDL_GUI */
 
+#if FLIGHT_RECORDER
+	static bool flight_was_active = false;
+	bool flight_should_be_active = (state & (KMOD_SHIFT)) == KMOD_SHIFT;
+	if (flight_was_active != flight_should_be_active) {
+		cpu_flight_recorder(flight_should_be_active);
+		flight_was_active = flight_should_be_active;
+		panicbug("Flight was %sactivated!", (flight_should_be_active ? "" : "DE"));
+	}
+#endif
+
 	bool pressed = (event.type == SDL_KEYDOWN);
 	bool shifted = state & KMOD_SHIFT;
 	// bool controlled = state & KMOD_CTRL;
