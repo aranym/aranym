@@ -1,3 +1,49 @@
+2005/09/04 - Petr
+- uae_cpu/cpu_emulation.h: Host2Atari/Atari2Host operations now correctly
+  based on ReadInt/WriteInt functions that honor MMU setup.
+  Atari2HostAddr() removed. Was deprecated for a long time already, anyway.
+
+- fakeio.cpp: Atari2HostAddr() replaced with Read/WriteHWMem functions.
+  Perhaps proper solution is to move the #ifdef HW_SIGSEGV into the above
+  mentioned functions? TODO: review it.
+
+- nf_base.{cpp,h}: memory operations moved to uae_cpu/cpu_emulation.h
+
+- natfeats.cpp, natfeat/{debugprintf, xhdi, nfcdrom, nfaudio}: fixed to
+  not use Atari2HostAddr (thus direct Atari memory access) but rather
+  the Host2Atari/Atari2Host memcpy functions.
+  Notice: nfaudio now uses cvt buffer always for copying the sound data
+  from Atari to host - even when there is no conversion needed...
+
+- videl.cpp, fvdidrv.cpp, natfeat/(nfjpeg, nfcdrom_sdl, nfcdrom_linux): 
+  TODO: needs to be modified to not use Atari2HostAddr, see above.
+
+- natfeat/nf_basicset.cpp: just renamed memcpy functions
+
+- natfeat/hostfs.cpp: renamed memcpy functions, strcpy() replaced with strncpy
+  TODO: review and correct the "FIXME 999" strncpy()'s
+
+- natfeat/ethernet.cpp: mostly clean up for better source code readability
+
+- acsifdc.cpp: fixed to not use Atari2HostAddr(). Cleaned up a bit by
+  merging code for reading/writing multiple sectors with single ones.
+  Added a hack that was supposed to fix floppy under linux - not working yet.
+
+- uae_cpu/{aranym_glue.cpp, cpu_emulation.h, newcpu.cpp}: trying to make
+  the FLIGHT_RECORDER a bit more useful.
+
+- input.cpp: if FLIGH_RECORDER is compiled in then it can be enabled
+  for a while by pressing and holding down both Shift keys. This is just
+  a trial how to make it more useful, will be refined in future (configurable
+  event launcher, accessible from SETUP GUI...)
+
+- include/version.h: micro version increased to warn everybody that
+  there were a lot of changes thus something could break...
+
+
+*** CVS tagged as ARANYM_0_9_1_ALPHA
+
+
 2005/09/03 - Petr
 - atari/network/ethernet/ethernet_nfapi.h: (ethX) is missing in IRQ subcall
 
