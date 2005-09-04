@@ -1,7 +1,7 @@
 /*
  * fakeio.cpp - memory mapped peripheral emulation code
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -29,13 +29,18 @@
 #include "parameters.h"
 
 #ifdef HW_SIGSEGV
-# define FakeIOPlace (addr - HWBase + FakeIOBaseHost)
+# define ReadFakeIOPlace(a) do_get_mem_byte((uint8 *)(a - HWBase + FakeIOBaseHost))
+# define WriteFakeIOPlace(a, v) do_put_mem_byte((uint8 *)(a - HWBase + FakeIOBaseHost), v);
 #else
-# define FakeIOPlace Atari2HostAddr(addr)
+// exactly same code as with previous deprecated Atari2HostAddr().
+// Maybe that correct solution is to move this HW_SIGSEGV #ifdef into
+// the ReadHWMem functions...
+# define ReadFakeIOPlace(a) ReadHWMemInt8(a)
+# define WriteFakeIOPlace(a, v) WriteHWMemInt8(a, v)
 #endif
 
 uint8 BASE_IO::handleRead(memptr addr) {
-	return do_get_mem_byte((uint8 *)FakeIOPlace); // fetch from underlying RAM
+	return ReadFakeIOPlace(addr); // fetch from underlying RAM
 }
 
 uint16 BASE_IO::handleReadW(memptr addr) {
@@ -47,7 +52,7 @@ uint32 BASE_IO::handleReadL(memptr addr) {
 }
 
 void BASE_IO::handleWrite(memptr addr, uint8 value) {
-	do_put_mem_byte((uint8 *)FakeIOPlace, value); // store to underlying RAM
+	WriteFakeIOPlace(addr, value); // store to underlying RAM
 }
 
 void BASE_IO::handleWriteW(memptr addr, uint16 value) {
@@ -59,3 +64,7 @@ void BASE_IO::handleWriteL(memptr addr, uint32 value) {
 	handleWriteW(addr, value >> 16);
 	handleWriteW(addr+2, value);
 }
+
+/*
+vim:ts=4:sw=4:
+*/
