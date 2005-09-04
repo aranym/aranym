@@ -15,7 +15,7 @@
   Notice: nfaudio now uses cvt buffer always for copying the sound data
   from Atari to host - even when there is no conversion needed...
 
-- videl.cpp, fvdidrv.cpp, natfeat/(nfjpeg, nfcdrom_sdl, nfcdrom_linux): 
+- videl.cpp, fvdidrv.cpp, natfeat/{nfjpeg, nfcdrom_sdl, nfcdrom_linux}: 
   TODO: needs to be modified to not use Atari2HostAddr, see above.
 
 - natfeat/nf_basicset.cpp: just renamed memcpy functions
@@ -25,7 +25,7 @@
 
 - natfeat/ethernet.cpp: mostly clean up for better source code readability
 
-- acsifdc.cpp: fixed to not use Atari2HostAddr(). Cleaned up a bit by
+- acsifdc.{cpp,h}: fixed to not use Atari2HostAddr(). Cleaned up a bit by
   merging code for reading/writing multiple sectors with single ones.
   Added a hack that was supposed to fix floppy under linux - not working yet.
 
