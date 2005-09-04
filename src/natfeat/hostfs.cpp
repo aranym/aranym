@@ -1,7 +1,7 @@
 /*
  * hostfs.cpp - HostFS routines
  *
- * Copyright (c) 2001-2004 STanda of ARAnyM development team (see AUTHORS)
+ * Copyright (c) 2001-2005 STanda of ARAnyM development team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -505,14 +505,14 @@ void HostFs::fetchXFSD( XfsDir *dirh, memptr dirp )
 	fetchXFSC( (XfsCookie*)dirh, dirp ); // sizeof(12)
 	dirh->index = ReadInt16( dirp + 12 );
 	dirh->flags = ReadInt16( dirp + 14 );
-	a2fmemcpy( (char*)&dirh->hostDir, dirp + 18, sizeof(dirh->hostDir) );
+	Atari2Host_memcpy( (char*)&dirh->hostDir, dirp + 18, sizeof(dirh->hostDir) );
 }
 void HostFs::flushXFSD( XfsDir *dirh, memptr dirp )
 {
 	flushXFSC( (XfsCookie*)dirh, dirp ); // sizeof(12)
 	WriteInt16( dirp + 12, dirh->index );
 	WriteInt16( dirp + 14, dirh->flags );
-	f2amemcpy( dirp + 18, (char*)&dirh->hostDir, sizeof(dirh->hostDir) );
+	Host2Atari_memcpy( dirp + 18, (char*)&dirh->hostDir, sizeof(dirh->hostDir) );
 }
 
 
@@ -1072,7 +1072,7 @@ int32 HostFs::xfs_dfree( XfsCookie *dir, uint32 diskinfop )
 int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 {
 	char fname[MAXPATHNAMELEN];
-	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+	Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname( dir, fname, fpathName );
@@ -1087,7 +1087,7 @@ int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 {
 	char fname[MAXPATHNAMELEN];
-	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+	Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname( dir, fname, fpathName );
@@ -1103,7 +1103,7 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 {
 	DUNUSED(flags);
 	char fname[MAXPATHNAMELEN];
-	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+	Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
 	// convert and mask out the file type bits for unix open()
 	mode = modeMint2Host( mode ) & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO);
@@ -1206,7 +1206,7 @@ int32 HostFs::xfs_dev_read(ExtFile *fp, memptr buffer, uint32 count)
 		if ( readCount <= 0 )
 			break;
 
-		f2amemcpy( destBuff, (char*)fBuff, readCount );
+		Host2Atari_memcpy( destBuff, fBuff, readCount );
 		destBuff += readCount;
 		toRead -= readCount;
 	}
@@ -1231,7 +1231,7 @@ int32 HostFs::xfs_dev_write(ExtFile *fp, memptr buffer, uint32 count)
 
 	while ( toWrite > 0 ) {
 		toWriteNow = ( toWrite > FRDWR_BUFFER_LENGTH ) ? FRDWR_BUFFER_LENGTH : toWrite;
-		a2fmemcpy( (char*)fBuff, sourceBuff, toWriteNow );
+		Atari2Host_memcpy( fBuff, sourceBuff, toWriteNow );
 		writeCount = write( fp->hostFd, fBuff, toWriteNow );
 		if ( writeCount <= 0 )
 			break;
@@ -1275,7 +1275,7 @@ int32 HostFs::xfs_dev_lseek(ExtFile *fp, int32 offset, int16 seekmode)
 int32 HostFs::xfs_remove( XfsCookie *dir, memptr name )
 {
 	char fname[MAXPATHNAMELEN];
-	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+	Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname(dir,fname,fpathName); // get the cookie filename
@@ -1291,8 +1291,8 @@ int32 HostFs::xfs_rename( XfsCookie *olddir, memptr oldname, XfsCookie *newdir, 
 {
 	char foldname[MAXPATHNAMELEN];
 	char fnewname[MAXPATHNAMELEN];
-	atari2HostSafeStrncpy( foldname, oldname, sizeof(foldname) );
-	atari2HostSafeStrncpy( fnewname, newname, sizeof(fnewname) );
+	Atari2HostSafeStrncpy( foldname, oldname, sizeof(foldname) );
+	Atari2HostSafeStrncpy( fnewname, newname, sizeof(fnewname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	char fnewPathName[MAXPATHNAMELEN];
@@ -1309,8 +1309,8 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 {
 	char ffromname[MAXPATHNAMELEN];
 	char ftoname[MAXPATHNAMELEN];
-	atari2HostSafeStrncpy( ffromname, fromname, sizeof(ffromname) );
-	atari2HostSafeStrncpy( ftoname, toname, sizeof(ftoname) );
+	Atari2HostSafeStrncpy( ffromname, fromname, sizeof(ffromname) );
+	Atari2HostSafeStrncpy( ftoname, toname, sizeof(ftoname) );
 
 	char ffromName[MAXPATHNAMELEN];
 	cookie2Pathname( dir, ffromname, ffromName );
@@ -1629,7 +1629,7 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 			return TOS_ERANGE;
 
 		WriteInt32( (uint32)buff, dirEntry->d_ino );
-		host2AtariSafeStrncpy( buff + 4, dirEntry->d_name, len-4 );
+		Host2AtariSafeStrncpy( buff + 4, dirEntry->d_name, len-4 );
 	} else {
 		char truncFileName[MAXPATHNAMELEN];
 		transformFileName( truncFileName, (char*)dirEntry->d_name );
@@ -1639,7 +1639,7 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 		if ( (uint16)len < strlen( truncFileName ) )
 			return TOS_ERANGE;
 
-		host2AtariSafeStrncpy( buff, truncFileName, len );
+		Host2AtariSafeStrncpy( buff, truncFileName, len );
 	}
 
 	dirh->index++;
@@ -1923,7 +1923,7 @@ int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 
 	D(bug( "HOSTFS: /fs_readlink: %s", fpathName ));
 
-	host2AtariSafeStrncpy( buf, fpathName, len );
+	Host2AtariSafeStrncpy( buf, fpathName, len );
 	return TOS_E_OK;
 }
 
@@ -1960,7 +1960,7 @@ void HostFs::xfs_freefs( XfsFsFile *fs )
 int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 {
 	char fname[MAXPATHNAMELEN];
-	atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+	Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
 
 	D(bug( "HOSTFS: fs_lookup: %s", fname ));
 
@@ -2054,7 +2054,7 @@ int32 HostFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, in
         *pfpathName = '\0';
         D(bug( "HOSTFS: fs_getname result = \"%s\"", fpathName ));
 
-        f2astrcpy( pathName, fpathName );
+        Host2AtariSafeStrncpy( pathName, fpathName, 999 ); // TODO FIXME 999
         return TOS_E_OK;
     }
 }
@@ -2086,7 +2086,7 @@ int32 HostFs::xfs_fscntl ( XfsCookie * /*dir*/, memptr /*name*/, int16 cmd, int3
 		case MX_KER_XFSNAME:
 		{
 			D(bug( "HOSTFS: fs_fscntl: MX_KER_XFSNAME: arg = %08lx", arg ));
-			f2astrcpy (arg, "HostFS Filesystem");
+			Host2AtariSafeStrncpy(arg, "HostFS Filesystem", 999); // TODO FIXME 999
 			return TOS_E_OK;
 		}
 		case FS_INFO:
@@ -2094,10 +2094,10 @@ int32 HostFs::xfs_fscntl ( XfsCookie * /*dir*/, memptr /*name*/, int16 cmd, int3
 			D(bug( "HOSTFS: fs_fscntl: FS_INFO: arg = %08lx", arg ));
 			if (arg)
 			{
-				f2astrcpy (arg   , "HostFS XFS");
+				Host2AtariSafeStrncpy(arg, "HostFS XFS", 999); // TODO FIXME 999
 				WriteInt32(arg+32, ((int32)HOSTFS_XFS_VERSION << 16) | HOSTFS_NFAPI_VERSION );
 				WriteInt32(arg+36, FS_HOSTFS );
-				f2astrcpy (arg+40, "host fs");
+				Host2AtariSafeStrncpy(arg+40, "host fs", 999); // TODO FIXME 999
 			}
 			return TOS_E_OK;
 		}
@@ -2184,7 +2184,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 				bool halfSensitive, memptr filesys, memptr filesys_devdrv )
 {
 	char fmountPoint[MAXPATHNAMELEN];
-	atari2HostSafeStrncpy( fmountPoint, mountpoint, sizeof(fmountPoint) );
+	Atari2HostSafeStrncpy( fmountPoint, mountpoint, sizeof(fmountPoint) );
 
 	ExtDrive *drv = new ExtDrive();
 	drv->fsDrv = filesys;
@@ -2212,7 +2212,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		// no [HOSTFS] match -> map to the passed mountpoint
 		//  - future extension to map from m68k side
 		char fhostroot[MAXPATHNAMELEN];
-		atari2HostSafeStrncpy( fhostroot, hostroot, sizeof(fhostroot) );
+		Atari2HostSafeStrncpy( fhostroot, hostroot, sizeof(fhostroot) );
 
 		drv->hostRoot = strdup( fhostroot );
 		drv->halfSensitive = halfSensitive;
@@ -2290,3 +2290,7 @@ HostFs::~HostFs()
 }
 
 #endif /* HOSTFS_SUPPORT */
+
+/*
+vim:ts=4:sw=4:
+*/
