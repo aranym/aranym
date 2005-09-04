@@ -1,7 +1,7 @@
 /**
  * NatFeats (Native Features main dispatcher)
  *
- * Petr Stehlik (c) 2002
+ * Petr Stehlik (c) 2002-2005
  *
  * GPL
  */
@@ -21,13 +21,10 @@ static memptr context = 0;
 
 uint32 nf_get_id(memptr stack)
 {
+	char name[80];
 	memptr name_ptr = ReadInt32(stack);
-	if (! ValidAddr(name_ptr, false, 1))
-		BUS_ERROR(name_ptr);
-
-	char *name = (char *)Atari2HostAddr(name_ptr);	// FIXME replace with special strcpy
+	Atari2HostSafeStrncpy(name, name_ptr, sizeof(name));
 	D(bug("nf_get_id '%s'", name));
-
 
 	for(unsigned int i=0; i < nf_objs_cnt; i++) {
 		if (strcasecmp(name, nf_objects[i]->name()) == 0) {
@@ -68,3 +65,7 @@ uint32 nf_getparameter(int i)
 
 	return ReadInt32(context + i*4);
 }
+
+/*
+vim:ts=4:sw=4:
+*/
