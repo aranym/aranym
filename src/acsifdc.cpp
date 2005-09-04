@@ -1,7 +1,7 @@
 /*
  * acsifdc.cpp - Atari floppy emulation code
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -336,19 +336,37 @@ bool ACSIFDC::is_floppy_inserted()
 	return (drive_fd >= 0);
 }
 
+bool ACSIFDC::read_file(int device, long offset, memptr address, int secsize, int count)
+{
+	if (lseek(device, offset, SEEK_SET) < 0) return false;
+	uint8 buffer[secsize];
+	for(int i=0; i<count; i++) {
+		if (::read(device, buffer, secsize) != secsize) return false;
+		Host2Atari_memcpy(address, buffer, secsize);
+		address += secsize;
+	}
+	return true;
+}
+
+bool ACSIFDC::write_file(int device, long offset, memptr address, int secsize, int count)
+{
+	if (lseek(device, offset, SEEK_SET) < 0) return false;
+	uint8 buffer[secsize];
+	for(int i=0; i<count; i++) {
+		Atari2Host_memcpy(buffer, address, secsize);
+		address += secsize;
+		if (::write(device, buffer, secsize) != secsize) return false;
+	}
+	return true;
+}
 void ACSIFDC::fdc_exec_command()
 {
 	static int dir=1,motor=1;
 	int actual_side, d;
-	memptr address;
 	long offset;
-	long count;
-	uint8 *buffer;
 
-	address = DMAaddr;
-	buffer = Atari2HostAddr(address);
 	int snd_porta = getYAMAHA()->getFloppyStat();
-	D(bug("FDC DMA virtual address = %06x, physical = %08x, snd = %d", address, buffer, snd_porta));
+	D(bug("FDC DMA address = %06x, snd = %d", DMAaddr, snd_porta));
 	actual_side=(~snd_porta)&1;
 	d=(~snd_porta)&6;
 	switch(d)
@@ -429,11 +447,19 @@ void ACSIFDC::fdc_exec_command()
 			offset=secsize
 				* (((spt*sides*head))
 				+ (spt * actual_side) + (fdc_sector-1));
+			// special hack for 'fixing' dma_scr in Linux where it's often = 20
+			int newscr = spt - fdc_sector + 1;
+			if (newscr < dma_scr && spt > 1) {
+				panicbug(">>>Fixed SCR from %d to %d", dma_scr, newscr);
+				dma_scr = newscr;
+			}
 			switch(fdc_command & 0xf0)
 			{
 				case 0x80:
-					D(bug("\tFDC READ SECTOR %d to 0x%06lx", (secsize)?offset/secsize:-1/*dma_scr*/,address));
-
+					assert(dma_scr == 1); // otherwise the fallthrough will cause problems
+					// fallthrough
+				case 0x90:
+					D(bug("\tFDC READ SECTOR  %d to 0x%06lx", dma_scr, DMAaddr));
 #if REMOUNT_FLOPPY_ON_BOOTSECTOR_READING
 					// special hack for remounting physical floppy on
 					// bootsector access
@@ -443,71 +469,30 @@ void ACSIFDC::fdc_exec_command()
 						insert_floppy();
 					}
 #endif
-					count=dma_scr*secsize;
-					if (lseek(drive_fd, offset, SEEK_SET)>=0)
-					{
-						if (count==read(drive_fd, buffer, count))
-						{
-							address += count;
-							DMAaddr = address;
-							dma_scr=0;
-							dma_sr=1;
-							break;
-						}
-						else {
-							D(bug("read(%d, %d, %d) didn't return correct len.", drive_fd, buffer, count));
-						}
+					if (read_file(drive_fd, offset, DMAaddr, secsize, dma_scr)) {
+						DMAaddr += dma_scr*secsize;
+						dma_scr=0;
+						dma_sr=1;
+						break;
 					}
-					fdc_status |= 0x10;
-					dma_sr=1;
-					break;
-				case 0x90:
-					D(bug("\tFDC READ SECTOR M. %d to 0x%06lx", dma_scr,address));
-					count=dma_scr*secsize;
-					if (lseek(drive_fd, offset, SEEK_SET)>=0)
-					{
-						if (count==read(drive_fd, buffer, count))
-						{
-							address += count;
-							DMAaddr = address;
-							dma_scr=0;
-							dma_sr=1;
-							fdc_sector += dma_scr; /* *(512/secsize);*/
-							break;
-						}
+					else {
+						panicbug("Floppy read(%d, %06x, %d) failed.", drive_fd, DMAaddr, dma_scr);
 					}
 					fdc_status |= 0x10;
 					dma_sr=1;
 					break;
 				case 0xa0:
-					count=dma_scr*secsize;
-					if (lseek(drive_fd, offset, SEEK_SET)>=0)
-					{
-						if (count==write(drive_fd, buffer, count))
-						{
-							address += count;
-							DMAaddr = address;
-							dma_scr=0;
-							dma_sr=1;
-							break;
-						}
-					}
-					fdc_status |= 0x10;
-					dma_sr=1;
-					break;
+					assert(dma_scr == 1); // otherwise the fallthrough will cause problems
+					// fallthrough
 				case 0xb0:
-					count=dma_scr*secsize;
-					if (lseek(drive_fd, offset, SEEK_SET)>=0)
-					{
-						if (count==write(drive_fd, buffer, count))
-						{
-							address += count;
-							DMAaddr = address;
-							dma_scr=0;
-							dma_sr=1;
-							fdc_sector += dma_scr; /* *(512/secsize);*/
-							break;
-						}
+					if (write_file(drive_fd, offset, DMAaddr, secsize, dma_scr)) {
+						DMAaddr += dma_scr*secsize;
+						dma_scr=0;
+						dma_sr=1;
+						break;
+					}
+					else {
+						panicbug("Floppy write(%d, %06x, %d) failed.", drive_fd, DMAaddr, dma_scr);
 					}
 					fdc_status |= 0x10;
 					dma_sr=1;
@@ -531,3 +516,7 @@ void ACSIFDC::fdc_exec_command()
 	if (!(fdc_status & 1))
 		getMFP()->setGPIPbit(0x20, 0);
 }
+
+/*
+vim:ts=4:sw=4:
+*/

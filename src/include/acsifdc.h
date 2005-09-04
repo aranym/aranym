@@ -1,7 +1,7 @@
 /*
  * acsifdc.h - Atari floppy emulation code - class definition
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -68,6 +68,8 @@ private:
 	void setDMAMode(uint16);
 	void set_floppy_geometry();
 	void fdc_exec_command();
+	bool read_file(int device, long offset, memptr address, int secsize, int count);
+	bool write_file(int device, long offset, memptr address, int secsize, int count);
 };
 
 #endif /* _ACSIFDC_H */
