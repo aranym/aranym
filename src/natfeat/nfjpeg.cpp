@@ -38,6 +38,9 @@
 
 #define EINVFN	-32
 
+// FIXME should be replaced with ReadInt/WriteInt functions
+static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
+
 /*--- Types ---*/
 
 /*--- Constructor/destructor functions ---*/
@@ -428,3 +431,7 @@ void JpegDriver::read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, in
 	*b >>= format->Bshift;
 	*b <<= format->Bloss;
 }
+
+/*
+vim:ts=4:sw=4:
+*/

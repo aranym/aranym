@@ -29,6 +29,8 @@
 // from host.cpp
 extern HostScreen hostScreen;
 
+// FIXME should be replaced with ReadInt/WriteInt functions
+static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
 
 // The Atari structures offsets
 #define MFDB_ADDRESS                0
@@ -2037,6 +2039,9 @@ int FVDIDriver::fillPoly(memptr vwk, memptr points_addr, int n, memptr index_add
 
 /*
  * $Log$
+ * Revision 1.65  2005/05/18 14:43:55  pmandin
+ * Missing getBpp fonction in old fvdi driver
+ *
  * Revision 1.64  2005/05/05 22:47:02  milan
  * support of old headers removed
  *

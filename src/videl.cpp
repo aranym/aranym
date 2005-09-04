@@ -1,7 +1,7 @@
 /*
  * videl.cpp - Falcon VIDEL emulation
  *
- * Copyright (c) 2001-2004 ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2001-2005 ARAnyM developer team (see AUTHORS)
  *
  * Authors:
  *  joy		Petr Stehlik
@@ -43,6 +43,9 @@
 
 // from host.cpp
 extern HostScreen hostScreen;
+
+// FIXME should be replaced with ReadInt/WriteInt functions
+static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
 
 #define HW	getHWoffset()
 #define VIDEL_COLOR_REGS_BEGIN	0xff9800
@@ -955,3 +958,7 @@ void VIDEL::renderScreenZoom()
 		}
 	}
 }
+
+/*
+vim:ts=4:sw=4:
+*/

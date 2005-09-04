@@ -1,7 +1,7 @@
 /*
 	NatFeat host CD-ROM access, SDL CD-ROM driver
 
-	ARAnyM (C) 2003 Patrice Mandin
+	ARAnyM (C) 2003-2005 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -48,6 +48,9 @@
 #define	CDROM_AUDIO_COMPLETED	0x13	/* audio play successfully completed */
 #define	CDROM_AUDIO_ERROR	0x14	/* audio play stopped due to error */
 #define	CDROM_AUDIO_NO_STATUS	0x15	/* no current audio status to return */
+
+// FIXME should be replaced with ReadInt/WriteInt functions
+static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
 
 /*--- Public functions ---*/
 
@@ -512,3 +515,7 @@ int32 CdromDriverSdl::cd_discinfo(memptr device, memptr buffer)
 	CloseDrive(drive);
 	return 0;
 }
+
+/*
+vim:ts=4:sw=4:
+*/

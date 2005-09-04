@@ -1,7 +1,7 @@
 /*
 	NatFeat host CD-ROM access, Linux CD-ROM driver
 
-	ARAnyM (C) 2003 Patrice Mandin
+	ARAnyM (C) 2003-2005 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -54,6 +54,9 @@ typedef struct {
     unsigned char	audiostatus;
     unsigned char	mcn[23];
 } __attribute__((packed)) atari_mcn_t;
+
+// FIXME should be replaced with ReadInt/WriteInt functions
+static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
 
 /*--- Public functions ---*/
 
@@ -661,3 +664,7 @@ int32 CdromDriverLinux::cd_discinfo(memptr device, memptr buffer)
 	CloseDrive(drive);
 	return 0;
 }
+
+/*
+vim:ts=4:sw=4:
+*/
