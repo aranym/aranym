@@ -1,3 +1,8 @@
+2005/09/06 - Patrice
+- Don't open GUI when OpenGL enabled, it will crash. hostscreen class should be
+  split in two parts like nfvdi: a software renderer, and an OpenGL renderer.
+
+
 2005/09/04 - Petr
 - uae_cpu/cpu_emulation.h: Host2Atari/Atari2Host operations now correctly
   based on ReadInt/WriteInt functions that honor MMU setup.
