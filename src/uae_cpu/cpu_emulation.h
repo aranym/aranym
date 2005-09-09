@@ -137,17 +137,29 @@ static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(a
 
 static inline void Atari2Host_memcpy(void *dst, memptr src, size_t n)
 {
-	memcpy(dest, Atari2HostAddr(src), n);
+#if 0
+	memcpy(dst, Atari2HostAddr(src), n);
+#else
+	uint8 *dest = (uint8 *)dst;
+	while ( n-- )
+		*dest++ = (char)ReadInt8( (uint32)src++ );
+#endif
 }
 
 static inline void Host2Atari_memcpy(memptr dest, const void *src, size_t n)
 {
+#if 0
 	memcpy(Atari2HostAddr(dest), src, n);
+#else
+	uint8 *source = (uint8 *)src;
+	while ( n-- )
+		WriteInt8( dest++, *source++ );
+#endif
 }
 
 static inline void Atari2HostSafeStrncpy( char *dest, memptr source, size_t count )
 {
-	while ( count > 1 && (*dest = (char)ReadHWMemInt8( source++ )) != 0 ) {
+	while ( count > 1 && (*dest = (char)ReadInt8( source++ )) != 0 ) {
 		count--;
 		dest++;
 	}
@@ -158,11 +170,11 @@ static inline void Atari2HostSafeStrncpy( char *dest, memptr source, size_t coun
 static inline void Host2AtariSafeStrncpy( memptr dest, char *source, size_t count )
 {
 	while ( count > 1 && *source ) {
-		WriteHWMemInt8( dest++, (uint8)*source++ );
+		WriteInt8( dest++, (uint8)*source++ );
 		count--;
 	}
 	if (count > 0)
-		WriteHWMemInt8( dest, 0 );
+		WriteInt8( dest, 0 );
 }
 
 /*
