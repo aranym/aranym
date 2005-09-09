@@ -131,44 +131,39 @@ extern JMP_BUF sigsegv_env;
 // For address validation
 static inline bool ValidAtariAddr(memptr addr, bool write, uint32 len) { return phys_valid_address(addr, write, len); }
 static inline bool ValidAddr(memptr addr, bool write, uint32 len) { return valid_address(addr, write, len); }
-/*
-static inline void Atari_memset(memptr addr, int c, size_t n)
-{
-	while ( n-- )
-		WriteInt8( addr++, c );
-}
-*/
+
+// Helper functions for usual memory operations
+static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
+
 static inline void Atari2Host_memcpy(void *dst, memptr src, size_t n)
 {
-	uint8 *dest = (uint8 *)dst;
-	while ( n-- )
-		*dest++ = (char)ReadInt8( (uint32)src++ );
+	memcpy(dest, Atari2HostAddr(src), n);
 }
+
 static inline void Host2Atari_memcpy(memptr dest, const void *src, size_t n)
 {
-	uint8 *source = (uint8 *)src;
-	while ( n-- )
-		WriteInt8( dest++, *source++ );
+	memcpy(Atari2HostAddr(dest), src, n);
 }
+
 static inline void Atari2HostSafeStrncpy( char *dest, memptr source, size_t count )
 {
-	while ( count > 1 && (*dest = (char)ReadInt8( (uint32)source++ )) != 0 ) {
+	while ( count > 1 && (*dest = (char)ReadHWMemInt8( source++ )) != 0 ) {
 		count--;
 		dest++;
 	}
 	if (count > 0)
 		*dest = '\0';
 }
+
 static inline void Host2AtariSafeStrncpy( memptr dest, char *source, size_t count )
 {
 	while ( count > 1 && *source ) {
-		WriteInt8( dest++, (uint8)*source++ );
+		WriteHWMemInt8( dest++, (uint8)*source++ );
 		count--;
 	}
 	if (count > 0)
-		WriteInt8( dest, 0 );
+		WriteHWMemInt8( dest, 0 );
 }
-// static inline void *Atari2Atari_memcpy(memptr dest, memptr src, size_t n) {return memcpy(Atari2HostAddr(dest), Atari2HostAddr(src), n);}
 
 /*
  *  680x0 emulation
