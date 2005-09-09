@@ -44,9 +44,6 @@
 // from host.cpp
 extern HostScreen hostScreen;
 
-// FIXME should be replaced with ReadInt/WriteInt functions
-static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
-
 #define HW	getHWoffset()
 #define VIDEL_COLOR_REGS_BEGIN	0xff9800
 #define VIDEL_COLOR_REGS_END	0xffa200
