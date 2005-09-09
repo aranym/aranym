@@ -29,18 +29,13 @@
 #include "parameters.h"
 
 #ifdef HW_SIGSEGV
-# define ReadFakeIOPlace(a) do_get_mem_byte((uint8 *)(a - HWBase + FakeIOBaseHost))
-# define WriteFakeIOPlace(a, v) do_put_mem_byte((uint8 *)(a - HWBase + FakeIOBaseHost), v);
+# define FakeIOPlace (addr - HWBase + FakeIOBaseHost)
 #else
-// exactly same code as with previous deprecated Atari2HostAddr().
-// Maybe that correct solution is to move this HW_SIGSEGV #ifdef into
-// the ReadHWMem functions...
-# define ReadFakeIOPlace(a) ReadHWMemInt8(a)
-# define WriteFakeIOPlace(a, v) WriteHWMemInt8(a, v)
+# define FakeIOPlace Atari2HostAddr(addr)
 #endif
 
 uint8 BASE_IO::handleRead(memptr addr) {
-	return ReadFakeIOPlace(addr); // fetch from underlying RAM
+	return do_get_mem_byte((uint8 *)FakeIOPlace); // fetch from underlying RAM
 }
 
 uint16 BASE_IO::handleReadW(memptr addr) {
@@ -52,7 +47,7 @@ uint32 BASE_IO::handleReadL(memptr addr) {
 }
 
 void BASE_IO::handleWrite(memptr addr, uint8 value) {
-	WriteFakeIOPlace(addr, value); // store to underlying RAM
+	do_put_mem_byte((uint8 *)FakeIOPlace, value); // store to underlying RAM
 }
 
 void BASE_IO::handleWriteW(memptr addr, uint16 value) {
