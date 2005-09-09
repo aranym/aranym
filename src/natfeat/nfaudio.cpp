@@ -50,33 +50,34 @@ extern "C" {
 		if (!par->buffer)
 			return;
 
-		/* Convert Atari audio to host audio */
-		par->len = cvt.needed ? (uint32 ) (len / cvt.len_ratio) : len;
-
-		/* Current buffer too small ? */
-		if (cvt_buf_len < par->len) {
-			if (cvt.buf) {
-				free(cvt.buf);
-				cvt.buf=NULL;
-			}
-		}
-
-		/* Allocate needed buffer */
-		if (cvt.buf==NULL) {
-			cvt.buf=(uint8 *)malloc(par->len);
-			cvt_buf_len = par->len;
-		}
-
-		/* Buffer is used always (not only for sound conversion) because
-		 * we cannot play sound from Atari memory directly.
-		 * We have to copy it to host memory first... */
-		Atari2Host_memcpy(cvt.buf, par->buffer, par->len);
+		uint8 *buffer = Atari2HostAddr(par->buffer);
 
 		if (cvt.needed) {
+			/* Convert Atari audio to host audio */
+			par->len = (uint32 ) (len / cvt.len_ratio);
+
+			/* Current buffer too small ? */
+			if (cvt_buf_len<par->len) {
+				if (cvt.buf) {
+					free(cvt.buf);
+					cvt.buf=NULL;
+				}
+			}
+
+			/* Allocate needed buffer */
+			if (cvt.buf==NULL) {
+				cvt.buf=(uint8 *)malloc(par->len);
+				cvt_buf_len = par->len;
+			}
+
+			memcpy(cvt.buf, buffer, par->len);
 			cvt.len = par->len;
 			SDL_ConvertAudio(&cvt);
+			SDL_MixAudio(stream, cvt.buf, len, par->volume);
+		} else {
+			par->len = len;
+			SDL_MixAudio(stream, buffer, len, par->volume);
 		}
-		SDL_MixAudio(stream, cvt.buf, len, par->volume);
 
 		TriggerInt5();		// Audio is at interrupt level 5
 	}
