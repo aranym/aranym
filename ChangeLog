@@ -1,3 +1,17 @@
+2005/09/10 - Petr
+- uae_cpu/cpu_emulation.h: uses ReadInt/WriteInt which is wrong (regarding
+  the MMU) but at least consistent with all the NF modules.
+
+
+2005/09/09 - Petr - BIG ROLLBACK of changes done on 2005/09/04
+- uae_cpu/cpu_emulation.h: Host2Atari/Atari2Host operations now use
+  direct Atari memory access thus ignoring any MMU setup.
+  Atari2HostAddr() is back.
+
+- fakeio.cpp, videl.cpp, fvdidrv.cpp, natfeat/{nfjpeg, nfcdrom_sdl,
+  nfcdrom_linux, nfaudio} rolled back to previous revision.
+
+
 2005/09/06 - Patrice
 - Don't open GUI when OpenGL enabled, it will crash. hostscreen class should be
   split in two parts like nfvdi: a software renderer, and an OpenGL renderer.
