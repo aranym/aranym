@@ -55,9 +55,6 @@ typedef struct {
     unsigned char	mcn[23];
 } __attribute__((packed)) atari_mcn_t;
 
-// FIXME should be replaced with ReadInt/WriteInt functions
-static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
-
 /*--- Public functions ---*/
 
 CdromDriverLinux::CdromDriverLinux()

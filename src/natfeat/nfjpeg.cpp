@@ -38,9 +38,6 @@
 
 #define EINVFN	-32
 
-// FIXME should be replaced with ReadInt/WriteInt functions
-static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
-
 /*--- Types ---*/
 
 /*--- Constructor/destructor functions ---*/

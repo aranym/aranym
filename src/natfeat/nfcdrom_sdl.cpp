@@ -49,9 +49,6 @@
 #define	CDROM_AUDIO_ERROR	0x14	/* audio play stopped due to error */
 #define	CDROM_AUDIO_NO_STATUS	0x15	/* no current audio status to return */
 
-// FIXME should be replaced with ReadInt/WriteInt functions
-static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
-
 /*--- Public functions ---*/
 
 CdromDriverSdl::CdromDriverSdl()
