@@ -61,6 +61,10 @@
 #define KEYBOARD_TRANSLATION	KEYSYM_SCANCODE
 #endif
 
+
+// according to Gerhard Stoll Milan defined scancode 76 for AltGr key
+#define RALT_ATARI_SCANCODE		(bx_options.ikbd.altgr ? 76 : 0x38)
+
 /*********************************************************************
  * Mouse handling
  *********************************************************************/
@@ -184,8 +188,9 @@ static int keysymToAtari(SDL_keysym keysym)
 	  case SDLK_LCTRL:
 	    return 0x1D;
 		break;
-	  case SDLK_LALT:
 	  case SDLK_RALT:
+		return RALT_ATARI_SCANCODE;
+	  case SDLK_LALT:
 	    return 0x38;
 		break;
 	  case SDLK_LSHIFT:
@@ -247,11 +252,11 @@ static int keysymToAtari(SDL_keysym keysym)
 {
  
 	int sym = keysym.sym;
-	// map right Control and Alternate keys to the left ones
+	if (sym == SDLK_RALT)
+		return RALT_ATARI_SCANCODE;
+	// map right Control key to the left one
 	if (sym == SDLK_RCTRL)
 		sym = SDLK_LCTRL;
-	if (sym == SDLK_RALT)
-		sym = SDLK_LALT;
 	for (int i = 0; i < 0x73; i++) {
 		if (keyboardTable[i] == sym) {
 			return i;
@@ -369,10 +374,10 @@ static int keysymToAtari(SDL_keysym keysym)
 		case SDLK_INSERT:	return 0x52;	/* Insert */
 		case SDLK_DELETE:	return 0x53;	/* Delete */
 
-		// Map Right Alt/Alt Gr/Control to the Atari keys
-		case SDLK_RCTRL:	return 0x1d;	/* Control */
-		case SDLK_MODE:
-		case SDLK_RALT:		return 0x38;	/* Alternate */
+		// keys not found on original Atari keyboard
+		case SDLK_RCTRL:	return 0x1d;	/* map right Control to Atari control */
+		case SDLK_RALT:		return RALT_ATARI_SCANCODE;
+		case SDLK_MODE:		return 0;	// unknown key
 
 		default:
 		{

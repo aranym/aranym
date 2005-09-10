@@ -208,7 +208,8 @@ typedef struct {
 
 // Keyboard and mouse
 typedef struct {
-  bool wheel_eiffel;		// eiffel compatible scancodes for mouse wheel
+  bool wheel_eiffel;	// eiffel compatible scancodes for mouse wheel
+  bool altgr;			// real AltGr like on Milan
 } bx_ikbd_options_t;
 
 // Hotkeys
