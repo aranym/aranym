@@ -29,9 +29,6 @@ Calling SDLGUI in fullscreen mode does crash the program anyway.
 Windows 95/98/99/00 do not support direct disk access (Windows NT/2K/XP do).
 This is a limitation of Cygwin, or rather a limitation of the windows itself.
 
-Windows do not allow switching from window to full-screen and back using
-the ScrollLock key. A bug in libSDL.
-
 Only Linux-ia32 (x86) and MS-Windows currently support JIT compiler
 for the CPU emulator. This is not a design limitation or a bug
 in other operating systems, it's just lack of manpower willing to work

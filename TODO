@@ -4,6 +4,11 @@ Things to do (written by Joy, volunteers ask in the mailing list)
 Fix bugs:
 - colon as filename case sensitivity flag in HostFS - see Xavier's msg in ML
 - find out why changing IDE parameters and Rebooting doesn't show up in linux
+- short parameter for lilo in manpage is wrong ("-s") but source is OK
+- when mouse grab on startup is off grabbing mouse no longer possible
+- after mouse ungrab/re-grab certain shift/control/alt key seems to be pressed
+- improve the whole mouse grab/ungrab
+- correct postal address of GPL
 
 TODO generally:
 - configurable insertion of floppy on bootup (perhaps also IDE CD?)
@@ -33,13 +38,6 @@ TODO in ARAnyM source code itself:
 - add proper copyright header to every edited file (see main.cpp)
 - remove RCS keywords (they complicate comparing and merging of revisions)
 - clean up, tidy up. Indent. Comment. Document.
-
-
-ARAnyM Roadmap:
----------------
-
-1.0.0 should be complete and ready for a CD ISO image distribution
-      (installable on a wide range of PC-like hardware).
 
 
 Some hot ideas (before they get forgotten)
