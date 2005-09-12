@@ -1,0 +1,1004 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>ARAnyM features and HOWTO</title>
+</head><body>
+
+<h1>ARAnyM features and HOWTO</h1>
+
+<h2>Content</h2>
+
+<ol>
+<li><a href="#preface">Preface</a></li>
+<li><a href="#general">General information</a></li>
+<li><a href="#cpu_fpu">CPU and FPU</a></li>
+<li><a href="#ram">RAM</a></li>
+<li><a href="#video">Video</a></li>
+<li><a href="#audio">Audio</a></li>
+<li><a href="#floppy">Floppy</a></li>
+<li><a href="#harddisk">Disk devices</a></li>
+<li><a href="#network">Networking</a></li>
+<li><a href="#cdrom">CD-ROM drives</a></li>
+<li><a href="#opengl">OpenGL rendering for Atari applications</a></li>
+<li><a href="#linux">Linux/m68k</a></li>
+<li><a href="#coding">Programming with ARAnyM</a></li>
+</ol>
+
+<h2><a name="preface">1. Preface</a></h2>
+
+<p>This document will explain you all ARAnyM features and configuration 
+procedures as well as important principles of functionality.</p>
+
+<p>Note: This text was written for the main Linux version of ARAnyM.
+Some features described here may not be available in other 
+ARAnyM ports. If you use other than Linux version of ARAnyM,
+please read also additional documentation for your version.</p>
+
+<p>Note: "HOST" means the machine that `hosts' the ARAnyM virtual machine.
+For most users it's simply their PC or laptop that runs the ARAnyM.</p>
+
+<h2><a name="general">2. General information</a></h2>
+
+<p>You need to have SDL library installed (http://www.libsdl.org) and
+configured. Required is version 1.2.x or later.</p>
+
+<p>ARAnyM keeps its configuration in a folder named ".aranym" in your HOME
+directory (NVRAM settings is stored in that directory as well).
+The full path to the config file is then $HOME/.aranym/config and
+is in plain text so you can edit it with a plain text editor.
+If the file is not found upon ARAnyM startup then it is generated 
+automatically and the options contain default values. Have a look at 
+the aranym/doc/config file for inspiration.</p>
+
+<p>ARAnyM also recognises several command line options - try starting ARAnyM
+with the option "--help" to find out more. The command line options have 
+a higher priority over the config file. You can use it for temporary change
+of ARAnyM parameters or you can even store the command line options setting
+to the config file using "aranym --save".</p>
+
+<h3>2.1. Operating systems</h3>
+
+<p>You also need an operating system:</p>
+<ul>
+<li>either ATARI original TOS 4.04 (found in Falcon030)</li>
+<li>the free TOS replacement called EmuTOS (get the latest version from CVS
+  at http://emutos.sf.net/)</li>
+<li>and finally Linux/m68k</li>
+</ul>
+
+<p>ARAnyM expects to find the TOS 4.04 ROM image in $PREFIX/share/aranym/ROM
+(if not specified otherwise in the ./configure phase). If you want to keep
+the TOS ROM elsewhere then don't forget to update your ARAnyM config file:
+edit the "TOS" line and set the right path to the file ("TOS=/path/to/TOS").</p>
+
+<p>ARAnyM also runs with latest EmuTOS. Simply set the "EmuTOS=" config
+option to point to your EmuTOS ROM image file.</p>
+
+<p>ARAnyM can directly load and a boot a Linux kernel from your host drive.
+You just need to fill the [LILO] sections with the correct parameters, and
+then to run aranym with '-l' or '--lilo' to use it instead of TOS/EmuTOS.</p>
+
+<h2><a name="cpu_fpu">3. CPU and FPU</a></h2>
+
+<p>ARAnyM CPU is fully compatible with 68040 and 68882 instruction set.
+Since the address and data caches of original MC68040 are not emulated
+there are no compatibility issues with 68000-only dirty written
+programs. So forget all TOS patches, cache switchers and FPU drivers,
+these are NOT needed in ARAnyM.</p>
+
+<h3>3.1. JIT compiler</h3>
+
+<p>For the maximum power (with low price) you can use JIT compiler from m68k
+code for x86 code. It is supported only on GNU/Linux now. You must enable
+it before compilation:</p>
+
+<pre>
+$ ./configure --enable-jit-compiler
+</pre>
+
+<p>And also in your ARAnyM config file, section [JIT]:</p>
+
+<pre>
+JIT = Yes
+</pre>
+
+<p>Other interesting lines in the ARAnyM config file are:</p>
+
+<pre>
+JITFPU = Yes
+</pre>
+
+<p>Set to No when you have problems with FPU. We have reported some problems
+with one library (lame.slb)</p>
+
+<pre>
+JITCacheSize = 8192
+</pre>
+
+<p>Cache size for translated code in kB. Don't forget - bigger cache is good
+only if you have enough memory.</p>
+
+<pre>
+JITLazyFlush = 1
+</pre>
+
+<p>I think that the best description has Gwenole Beauchesne:</p>
+
+<p>The solution I came up with is what I called "lazy cache flushing" (oops,
+well s/flushing/invalidation/ ;-).  In that case, the whole cache is kept
+but the entry points are mapped to a special prologue code that will
+perform a checksum on the basic block, the next time it is called. If
+checksum matches, the code is kept and revived, otherwise it needs to be
+retranslated.</p>
+
+<p>For everybody - only in some very abnormal situation could be a problem
+with "lazy cache flushing".</p>
+
+<h2><a name="ram">4. RAM</a></h2>
+
+<p>ARAnyM provides both ST-RAM and FastRAM (sometimes also called
+TT-RAM). ST-RAM size is always 14MB. FastRAM size is adjustable from 
+0 up to 4GB. However, in the default addressing mode (called "real") 
+only maximum of 128MB addressable space is possible (i.e. only 112MB
+for FastRAM). If you want more RAM then you need to reconfigure and
+recompile your ARAnyM binary:</p>
+
+<pre>
+$ ./configure --enable-addressing=direct
+$ make clean
+$ make
+</pre>
+
+<p>In "direct" addressing mode up to 4GB of RAM is possible but this 
+mode is a bit slower (that's why it is not the default mode).</p>
+
+<h2><a name="video">5. Video</a></h2>
+
+<h3>5.1. Host side</h3>
+
+<p>ARAnyM accesses host graphics output via the SDL library. This library
+is able to use X Windows as well as the framebuffer device. It also uses
+HOST hardware acceleration when available. For standard "ARAnyM only" use 
+the framebuffer is the best and fastest solution. You may use also 
+X11 if you want to run ARAnyM in a window (usable for debugging, 
+etc.) or if your graphics card is not supported by framebuffer 
+drivers. All resolution changes are managed within the ARAnyM like 
+on real TOS machine.</p>
+
+<h4>5.1.1. Framebuffer</h4>
+
+<p>Framebuffer device is a part of the HOST Linux kernel but unfortunately 
+kernels in most Linux distributions do not have this feature compiled in
+by default. There are also many graphics cards which do not have
+framebuffer driver yet. The generic VESA mode framebuffer driver is not
+very suitable for ARAnyM. In case you are lucky owner of any graphics
+card supported by framebuffer (probably all Matrox cards, nearly all 
+cards from nVidia, some from ATI and several others) then you should 
+recompile your kernel with framebuffer support for your card enabled.</p>
+
+<p>Framebuffer support in kernel is detected automatically by ARAnyM. Simply
+start ARAnyM from Linux virtual console. No X Windows is required for
+running ARAnyM on framebuffer.</p>
+
+<h4>5.1.2. X window system</h4>
+
+<p>Under X Window system just type "aranym" (aranym will run in window) or
+"aranym -f" for fullscreen mode.</p>
+
+<p>In fullscreen mode under X Windows ARAnyM uses resolutions defined in the 
+X Windows config file. I.e. if you have defined following modes: 1024x768, 
+800x600 and 640x480 then you shouldn't switch into higher resolution under
+ARAnyM. Lower resolutions are possible but they will be displayed with
+a black border in near-higher resolution.</p>
+
+<h4>5.1.3. OpenGL</h4>
+
+<p>It is now possible to render the Atari screen using OpenGL. In the [OPENGL]
+section of the config file, you can choose width, height and bpp of the OpenGL
+screen. The Atari screen will be zoomed/stretched accordingly. You can also
+disable/enable linear filtering for the atari screen.</p>
+
+<h3>5.2. ARAnyM side</h3>
+
+<p>There are several ways how ARAnyM generates graphics output.</p>
+
+<h4>5.2.1. VIDEL emulation (default, used for booting)</h4>
+
+<p>In this mode, Falcon video subsystem is emulated. All modes known 
+from Falcon030 are available, including the extended modes. You can
+use your favourite screen enhancer (Videlity, BlowUP030, Videl Inside)
+to define your own graphics modes. In this case only vertical and
+horizontal resolutions and color depth are important, other parameters
+are ignored.</p>
+
+<p>This ARAnyM screen output is very slow though, especially in higher 
+resolutions because ARAnyM must convert whole screen data many times 
+per second (adjustable - see below) into HOST native format. So it's 
+usable mainly for booting and/or installation purposes. This mode 
+also allows you to run some not cleanly written (nonGEM) software 
+thanks to 99,9% lowlevel compatibility with Falcon030 graphics system.</p>
+
+<p>Switches:</p>
+
+<p>Monitor type (-m) informs TOS in real F030 which monitor type is 
+connected. From ARAnyM point of view it causes only that TOS uses 
+different vertical resolutions (200/400 lines for RGB/TV instead for 
+240/480 lines for VGA, plus 640x400xTC for RGB/TV). In fact it is 
+usable only for experiments with some unclean Falcon software (a few 
+programs work only on RGB/TV).</p>
+
+<pre>
+-m1 ...RGB/TV is connected
+-m0 ...VGA is connected (default)
+</pre>
+
+<p>Refresh rate (-v &lt;number&gt;) sets how often will ARAnyM convert atari 
+graphics into HOST native format. Default value is 2, which means 
+refresh rate 50/2 = 25Hz (fps). Higher refresh rate causes smoother 
+graphics but slows down whole emulation.</p>
+
+<p>Boot color depth (-r &lt;number of bytes per pixel&gt;) forces color depth
+during boot process. Valid values are:</p>
+
+<pre>
+ 1...monochrome
+ 2...4colors
+ 4...16 colors
+ 8...256 colors
+16...Falcon TC (16bit)
+</pre>
+
+<p>If not selected then TOS uses the NVRAM setting.</p>
+
+<p>Note: Remember that VIDEL emulation is not usable for serious work 
+in GEM and you can never reach full ARAnyM power when using it!</p>
+
+<h4>5.2.2. Autozoom</h4>
+
+<p>In the aranym config file, you can also choose to enable the 'autozoom'
+feature. It allows ARAnyM to zoom/strech the atari screen to fit the size
+of the host screen. This is specially useful on Linux with vesafb, which is
+not resizable.</p>
+
+<p>Examples for a 320x200 atari screen on a 1024x768 host screen:</p>
+
+<h5>autozoom=no</h5>
+<p>The atari screen is centered on the host screen.
+  (zoomcoefx=320/320=1, zoomcoefy=200/200=1)</p>
+
+<h5>autozoom=yes,autozoominteger=no</h5>
+
+<p>The atari screen is zoomed to 1024x768. Not all atari pixels look
+  the same, due to the non-integer zooming coefficients. (Some are 3
+  pixels wide, others are 4 pixels wide).
+  (zoomcoefx=1024/320=3.2, zoomcoefy=768/200=3.84)</p>
+
+<h5>autozoom=yes,autozoominteger=yes</h5>
+
+<p>The atari screen is zoomed to 960x600, centered on the host screen.
+  All atari pixels look the same, due to integer zooming coefficients.
+  (zoomcoefx=int(1024/320)=3, zoomcoefy=int(768/200)=3)
+  Note: autozoominteger is automatically disabled if the atari screen
+  is bigger than the host screen.</p>
+
+<h4>5.2.3. fVDI + ARAnyM driver</h4>
+
+<p>This mode is newest, fastest and the only hardware accelerated. This
+is the only right mode suitable for real work in GEM. All you need is to
+install fVDI with special driver developed for ARAnyM. Following files are
+needed:</p>
+
+<h5>FVDI.PRG</h5>
+<p>main fVDI engine created by Johan Klockars</p>
+<h5>FVDI.SYS</h5>
+<p>configuration file</p>
+<h5>ARANYM.SYS</h5>
+<p>fVDI screen driver (the m68k part of it - the HOST native
+part is in the ARAnyM core)</p>
+
+<p>You can run fVDI from AUTO folder (recommended) or from the desktop.
+For starting from AUTO folder you need to place the FVDI.PRG into \AUTO,
+CONFIG.SYS in the root of the boot drive and ARANYM.SYS into \GEMSYS folder
+(or specify the path in the FVDI.SYS file).</p>
+
+<p>The simplest FVDI.SYS that sets graphics mode into resolution
+1024x768x16bit should look like this:</p>
+
+<pre>
+PATH = C:/GEMSYS
+booted
+01r aranym.sys mode 1024x768x16@75
+</pre>
+
+<p>Number after "@" is the refresh rate (in Hz) and is accepted only on 
+framebuffer devices in fullscreen.</p>
+
+<p>Look into general fVDI documentation and example FVDI.SYS file for 
+more informations.</p>
+
+<h3>5.3. Mouse and keyboard grabbing</h3>
+
+<p>[to be written]</p>
+
+<h2><a name="audio">6. Audio</a></h2>
+
+<p>You have several choices to have audio output from Atari applications to the
+host audio device:</p>
+
+<h3>6.1. NF audio driver</h3>
+
+<p>Put the atari/sound/zmagxsnd.prg to your AUTO folder and Aniplayer
+(after switching to XBIOS in its Sound Config dialog) should play
+all sounds nicely!</p>
+
+<h3>6.2. Audio DMA emulation</h3>
+
+<p>ARAnyM now emulates Falcon audio DMA emulation. Beware that it is not accurate
+so the emulation could crash an application using audio DMA to replay samples.</p>
+
+<h2><a name="floppy">7. Floppy disks</a></h2>
+
+<p>You can use floppy image or real floppy drive of your computer. In both
+cases reading, writing and formatting is possible.</p>
+
+<p>ARAnyM also tries to boots from the floppy (like on original Atari).
+Both DD (720KB) and HD (1.44MB) are supported. Larger floppy images known
+from STonX are supported, too.</p>
+
+<p>In order to get it working you need only to specify path to your floppy 
+device or floppy image file in the commandline:</p>
+
+<pre>
+-a /dev/fd0 		... for real floppy device
+-a /path/disk.img ... for floppy image
+</pre>
+
+<p>or rather in the ARAnyM config file, in [GLOBAL] section:</p>
+
+<pre>
+Floppy = /dev/fd0 (or /path/floppy.img)
+</pre>
+
+<h2><a name="harddisk">8. Disk devices</a></h2>
+
+<p>There are several ways how to manage harddrives. You can connect harddisk
+from real Atari or clone computer directly into your HOST machine and
+ARAnyM will be able to use it and even boot from it!</p>
+
+<p>Another way is to use harddisk or single partition images and finally there
+is also the possibility of mapping HOST fs directories as a logical disk.
+Also note that we prepared several disk images for you - visit our download
+area at http://aranym.atari.org/</p>
+
+<p>Harddisk images are large files that contain all sectors of an atari harddisk.
+They work much the same way as a floppy image. You can simply create a large
+file and tell ARAnyM to use it as a harddisk, but you will need to format
+it just like a real harddisk before you can actually use it.</p>
+
+<p>Look into FAQ for more details.</p>
+
+<h3>8.1. Attaching Atari harddisk or image using IDE emulation</h3>
+
+<p>ARAnyM can emulate both channels of Falcon IDE interface thus it's 
+able to use any disk device (or file) as a harddisk. It uses direct
+access to devices so you don't need to have the disk mounted under
+the HOST OS; paths to devices are enough.</p>
+
+<h4>8.1.1. How to connect a real harddisk</h4>
+
+<p>Take a harddisk (from you real TOS machine or any other) and connect 
+it into your HOST machine - say as master on the second IDE channel 
+(which means that path under Linux will be /dev/hdc).</p>
+
+<p>Then you need to specify geometry of such drive and path in the 
+ARAnyM config file. Important parameters are number of cylinders, 
+tracks and sectors per track (usually named C/H/S). There are several 
+ways to obtain it. Easiest is to look onto harddrive label where 
+C/H/S parameters are usually printed. On the PC you can look into the 
+BIOS SETUP. Or under Linux you can use utility called hdparm.</p>
+
+<pre>
+$ cat /proc/ide/hdc/geometry 
+physical     62016/15/63
+logical      3876/240/63
+</pre>
+
+<p>The line with "physical" is what you need, 62016/15/63 are C/H/S geometry 
+parameters. Beware of the hdparm utility which gives you only the "logical"
+C/H/S which is not really what you need.</p>
+
+<p>Now open ARAnyM config file and write here those parameters and the path:</p>
+
+<pre>
+[IDE0]
+Present = Yes
+Path = /dev/hdc
+Cylinders = 62016
+Heads = 15
+SectorsPerTrack = 63
+ByteSwap = No
+</pre>
+
+<p>Since there are two IDE channels emulated, you can attach two harddisks.
+If you use only one then disable the second with:</p>
+
+<pre>
+[IDE1]
+Present = No
+</pre>
+
+<h4>8.1.2. How to use a harddisk image</h4>
+
+<p>Harddisk images are large files which are used by ARAnyM as a real 
+harddisk. There are two ways how to make such image. If you want to 
+make a copy of your real atari harddisk, then type:</p>
+
+<pre>
+$ dd if=/dev/hdb of=/path/to/my/AtariDrive
+</pre>
+
+<p>That will create an image file of the whole disk connected as /dev/hdb.</p>
+
+<p>CAUTION: Be _very_ careful when using the dd command when you are root
+as you can destroy your system by a simple typo mistake !</p>
+
+<p>You can also create a empty disk image file in the SETUP GUI.
+  Press Pause (or run "aranym --gui"), specify the disk image size and
+  click on the Generate button. The current fileselector is unable
+  to specify an unexisting filename unfortunately (this must be fixed),
+  so for the time being please point it to an existing file that you don't
+  mind get destroyed.</p>
+
+<p>Then the disk image must by partitioned and the partitions must be
+  formatted. Plain old AHDI could do that, I hope. I myself use HDDRIVER
+  as I bought it.</p>
+
+<p>Also please note that EmuTOS doesn't handle partitions larger than 255 MB.</p>
+
+<p>Then it is same as in previous section. Only in Path will be a file instead
+of a device:</p>
+
+<pre>
+[IDE0]
+Present = Yes
+Path = /path/filename
+Cylinders = 940
+Heads = 16
+SectorsPerTrack = 63
+ByteSwap = No
+</pre>
+
+<p>Note: C/H/S parameters must be correct even for image files!</p>
+
+<h4>8.1.3. Harddisk driver installation</h4>
+
+<p>Since TOS itself cannot manage harddisks you have to install a harddisk
+driver. In case you use and empty harddisk or image, you have to run
+driver from floppy and partition it first like on real TOS machine.</p>
+
+<p>If you have connected a real harddisk from any TOS machine and this 
+drive is bootable (driver is already installed) then ARAnyM should 
+boot from it like usually. However, if you were using some special HW
+drivers, like e.g. Afterburner, Centurbo or NOVA/Rage gfx card drivers,
+you want to disable them. So try the first boot with Ctrl held down (AUTO
+folder programs are not executed then).</p>
+
+<h4><a name="atapi">8.1.4. CD-ROM (IDE ATAPI emulation)</a></h4>
+
+<p>There is also a possibility of attaching real CD-ROM on emulated IDE
+channel:</p>
+
+<pre>
+[IDE1]
+Present = Yes
+IsCDROM = Yes
+Path = /dev/hdb
+</pre>
+
+<p>Then you need to install drivers (like SPIN) for the IDE CD-ROM on 
+the ARAnyM side.</p>
+
+<h3>8.2. Single Partition mount</h3>
+
+<p>Single partitions are better in several aspects over Atari harddrives:</p>
+
+<ul>
+<li>much faster access to data (direct access, not via IDE emulation)</li>
+<li>no problems with CHS geometry, size is autodetected and that's enough</li>
+<li>no need to partition it and can be formatted by Host OS tools</li>
+<li>no Atari harddisk driver is needed</li>
+<li>partition can be mounted on Host OS (Linux) for direct access to files</li>
+</ul>
+
+<p>There is only one drawback - single partitions are supported in EmuTOS
+only (and FreeMiNT if booted from EmuTOS), so if you still prefer TOS 4.04
+this is not for you (yet, as I am working on NF-XHDI driver for TOS).</p>
+
+<p>Example of creating a single partition image in Linux Host OS and working
+with it:</p>
+
+<pre>
+# create 16 MB disk
+$ dd if=/dev/zero of=/tmp/mydisk.img bs=1M count=16
+
+# format it
+$ /sbin/mkdosfs /tmp/mydisk.img
+
+# mount it
+$ sudo mount -t msdos /tmp/mydisk.img /mnt -o loop=/dev/loop1
+
+# copy files there
+$ sudo cp files* /mnt
+
+# unmount it
+$ sudo umount /mnt
+
+# add to ARAnyM in the config file
+[PARTITION0]
+Path = /tmp/mydisk.img
+Present = Yes
+PartID = $6
+ByteSwap = Yes
+ReadOnly = No
+</pre>
+
+<p>and now you can start ARAnyM with EmuTOS (and FreeMiNT) and access this
+new drive. Plain TOS doesn't support it (yet), unfortunately.</p>
+
+<p>You could of course format the mydisk.img with a different filesystem,
+use "mke2fs" for ext2 (and change the PartID to $83). Or, you could even
+format it with Atari GEMDOS filesystem using "mkdosfs -A" (changing the
+PartID to "BGM").</p>
+
+<p>And last but not least - you could access selected partitions on your
+real harddrive this way. Just set the Path to /dev/hda2, for example
+(and set correct PartID) and ARAnyM will access second partition on your
+real harddrive directly.</p>
+
+<p>List of most useful partition IDs follows:</p>
+
+<table>
+<tr>
+<td>Value/ASCII character string
+<td>Type
+<tr>
+<td>GEM
+<td>Atari FAT16 (up to 31 MB)
+<tr>
+<td>BGM
+<td>Atari FAT16 (BigGeM = more than 32 MB)
+<tr>
+<td>LNX
+<td>Atari Linux (also "MIX" as Minix or "RAW" are supported)
+<tr>
+<td>$6
+<td>DOS FAT16 in IBM PC format
+<tr>
+<td>$83
+<td>Linux in IBM PC format
+</table>
+
+<p>For this new feature you need ARAnyM 0.9.0+ and up-to-date EmuTOS.</p>
+
+<h3>8.3. Host Fs driver</h3>
+
+<p>For accessing data on a host filesystem you can map the host fs to a logical
+drive in TOS or MiNT. We have created HostFS BetaDOS driver for use in TOS
+and also native MiNT HostFS.XFS driver. BetaDOS is a free and improved
+replacement of MetaDOS which in turn was Atari designed AUTO folder patch
+that extended the TOS ROM GEMDOS with support for loadable drivers.</p>
+
+<p>ARAnyM driver for BetaDOS is available in atari/hostfs/hostfs.dos.bz2.
+You can unpack it and add to the BetaDOS configuration file (bdconfig.sys).
+The example of config.sys you will find in the same directory as the driver.</p>
+
+<p>The problem is how to put it on a new harddisk. One way is to use floppy.
+Another possibility is to boot the AFROS (ARAnyM FRee OS) and attach your
+disk drive as Slave ([IDE1]).</p>
+
+<p>As you setup the bdconfig.sys (e.g.):</p>
+
+<pre>
+*DOS, c:\auto\hostfs.dos, M:M
+</pre>
+
+<p>The M:1 means you want to have the TOS M: drive mapped to some HOST OS
+directory. The directory must be put to aranym by the command line argument -d
+like:</p>
+
+<pre>
+$ aranym -dm:/opt/home/atari/
+</pre>
+
+<p>This would map the /opt/home/atari/ to the TOS drive M:\.</p>
+
+<p>There can be up to 26 mapped drives.</p>
+
+<p>Note: These drives aren't bootable. They are also not designed as 
+      alternative to the harddisk images but rather as a way to 
+      transfer files between HOST fs and ARAnyM.</p>
+
+<p>For permanent mapping edit the aranym config file, the [ARANYMFS] block
+and add the desired path, as follows:</p>
+
+<pre>
+M=/opt/home/atari
+</pre>
+
+<p>More info you'll find in atari/hostfs/README file.</p>
+
+<p>Note: We are planning on writing a tool for BDCONFIG.SYS auto-configuration.</p>
+
+<h4>8.3.2 Hostfs.xfs driver for Mint</h4>
+
+<p>This is Mint version of ARAnyM HostFS driver. Place it into your MINT 
+directory; it will map the host fs to logical disks automatically.</p>
+
+<h2><a name="network">9. Networking</a></h2>
+
+<p>The networking in ARAnyM is not an easy topic because there are
+several different ways you can hook up your virtual machine to the
+network and you need to choose the right one for your environment.</p>
+
+<p>I would say that the first question is whether you're on a LAN with
+spare IP addresses or if your host computer has a single public IP and
+is hooked up to internet directly.</p>
+
+<p>For LAN setup, you probably want your ARAnyM to appear on the LAN just
+like any other machine so others can ssh, ftp or telnet into it. There
+are two possible ways: either you can use bridging or proxy-arp (see
+below).</p>
+
+<p>For single host computer with public IP the problem is that you usually
+cannot afford assigning another public IP to ARAnyM so you'll want the
+host computer to hide ARAnyM and to route traffic to it. For this you'll
+probably use masquerading.</p>
+
+<h3>9.1. Linux host OS networking setup</h3>
+
+<h4>9.1.1. Proxy-ARP</h4>
+
+<p>Setting up the proxy-arp is very easy. My host computer at office has IP
+address 192.168.0.5 and the netmask is 255.255.255.0. As I know IP
+addresses in the range 192.168.0.100+ are unused in our office I have
+chosen 192.168.0.113/114 as the IP addresses of the tap0 tunnel:</p>
+
+<pre>
+[ETH0]
+Type = ppp
+HostIP = 192.168.0.113
+AtariIP = 192.168.0.114
+Netmask = 255.255.255.252
+</pre>
+
+<p>Then the 'aratapif' is to be setuid root and located in $PATH and the
+tun/tap modules must be loaded (see the documentation.txt and the README
+in the ethernet folder). Then you can enable the proxy-arp with the
+following commands (as root):</p>
+
+<pre>
+$ echo 1 >/proc/sys/net/ipv4/conf/eth0/proxy_arp
+$ echo 1 >/proc/sys/net/ipv4/conf/tap0/proxy_arp
+</pre>
+
+<p>[this is what I've googled up. One of these commands might be
+unnecessary or it can be accomplished with the 'arp' command more
+elegantly - please correct me].</p>
+
+<p>After launching ARAnyM and loading FreeMiNT (with the aranym.xif driver)
+you just start my nfeth-config.sh script and it will run the following
+two commands in FreeMiNT:</p>
+
+<pre>
+$ ifconfig eth0 addr 192.168.0.114 netmask 255.255.255.252
+$ route add default eth0 gw 192.168.0.113
+</pre>
+
+<p>And that's it. Now ARAnyM is connected to your LAN with IP 192.168.0.114
+and it's fully accessible. It can of course connect to any other machine
+and also access the internet via our company gateway.</p>
+
+<h4>9.1.2. Masquerading</h4>
+
+<p>Bjoern Spruck has contributed a piece of shell script that should set up
+  the Linux Host OS' networking for ARAnyM in the masquerading mode:</p>
+
+<pre>
+#/bin/bash
+#
+# All this should be done as root
+#
+# Load tun/tap module
+modprobe tun
+#
+# change rights to suid for cause aranym is calling it
+chmod +s /usr/local/bin/aratapif
+#
+# init ip-masquerating
+#
+/usr/sbin/iptables -D POSTROUTING -t nat -s 192.168.0.0/24 -d ! 192.168.0.0/24 -j MASQUERADE >& /dev/null
+/usr/sbin/iptables -t nat -s 192.168.0.0/24 -d ! 192.168.0.0/24 -A POSTROUTING -j MASQUERADE
+#
+# enable ip-masq
+#
+echo 1 > /proc/sys/net/ipv4/ip_forward
+</pre>
+
+<p>This script needs to be started as one of the last things in your Host OS
+  boot. Obviously the chmod is not necessary to call each time, it's there
+  just as a reminder I guess. And the last "echo 1 >" is superseded in modern
+  Linux distributions by other methods. But using it doesn't hurt.</p>
+
+<h4>9.1.3. Bridged</h4>
+
+<p>Recently Standa developed a new method called Bridging that allows ARAnyM
+  to get its own IP address and to act like a regular machine on your LAN.
+  For Bridging setup enter this in the ARAnyM config file:</p>
+
+<pre>
+[ETH0]
+type = bridge
+tunnel = tap0
+HostIP = 192.168.1.3
+AtariIP = 192.168.1.2
+Netmask = 255.255.255.0
+</pre>
+
+<p>At last you need to configure the IP address, route and netmask on the
+  FreeMiNT side. For that I developed the 'nfeth-config' tool that can
+  read the ethernet setting from the ARAnyM config file. As of ARAnyM
+  0.8.11 this requires FreeMiNT 1.16.0+ with NatFeat support.
+  You can simply run the 'eth0-config.sh' shell script during FreeMiNT
+  boot up and it will set up the eth0 interface properly.</p>
+
+<p>My experience shows that the bridging is real easy to get working using
+  the 'arabridge' script.
+  Or even easier, follow (as root) this step by step HOWTO.</p>
+
+<p>Let's say we want to hook the ARAnyM to the 'eth0' interface:</p>
+
+<p>1. get ip and netmask of eth0</p>
+<p>2. shut down eth0</p>
+<pre>
+$ ifconfig eth0 0.0.0.0
+</pre>
+<p>3. create tap0</p>
+<pre>
+$ modprobe tun
+$ tunctl -t tap0 -u &lt;your_username&gt;
+</pre>
+<p>4. create bridge</p>
+<pre>
+$ brctl addbr br0
+</pre>
+<p>5. add eth0+tap0 to the bridge</p>
+<pre>
+$ brctl addif br0 eth0
+$ brctl addif br0 tap0
+</pre>
+<p>6. set ip and netmask of br0 to be same as was the eth0</p>
+<pre>
+$ ifconfig br0 192.168.0.1 netmask 255.255.255.0 up
+</pre>
+
+<p>and that's it. Problems could arise if firewall is running on the
+  same host because the eth0 basically disappears (is replaced with the br0)
+  though it's still possible to fix the firewall setup afterwards.</p>
+
+<p>I have updated the arabridge script, it now works well in Debian. Make
+  sure you edit the USER, NIF and maybe also the TAPS and BRIDGE variables.</p>
+
+<h3>9.2. MS Windows host OS networking setup</h3>
+
+<p>In MS Windows ARAnyM provides TAP-Win32 based networking. It can provide
+the point-to-point or bridged networking just like Linux's one. I didn't
+hear about ARP-Proxy for Windows so far though.</p>
+
+<p>It is required to install the Win32-TAP network driver. You can download the
+coLinux installer from
+<a href="http://prdownloads.sourceforge.net/colinux/coLinux-0.6.2.exe?download">
+colinux download page</a> and install just the TAP driver using custom setup.</p>
+
+<h4>9.2.1. Point-to-point</h4>
+
+<p>Configure the IP address and netmask of the TAP Connection in the connection
+properties dialog. We will take the 192.168.5.1 with netmask 255.255.255.0
+for example.</p>
+
+<p>Then in the ARANYM config file put an entry like this:</p>
+
+<pre>
+[ETH0]
+Type = ppp
+Tunnel = ARAnyM TAP
+HostIP = 192.168.5.1
+AtariIP = 192.168.5.2
+Netmask = 255.255.255.0
+</pre>
+
+<p>Tunnel is the name of the TAP device as shown in the control panel / network
+connections.</p>
+
+<h4>9.2.2. Internet Connection Sharing (masquerading or NAT)</h4>
+
+<p>Configure the active internet connection 'Internet Connection Sharing'
+to be shared with the ARAnyM TAP Connection.  One note here
+is that the LAN address range cannot be a private address to begin with 
+192.168.0.xxx. Windows will complain that there is a network already
+configured for an Internet connection.  So if you are behind
+your own router, make sure the local addresses are something like
+192.168.1.x.  This way Windows will allow you share the internet
+connection.</p>
+
+<p>Then in the ARANYM config file put an entry like this:</p>
+
+<pre>
+[ETH0]
+Type = ppp
+Tunnel = ARAnyM TAP
+HostIP = 192.168.0.1
+AtariIP = 192.168.0.2
+Netmask = 255.255.255.0
+</pre>
+
+<h4>9.2.3. Bridged</h4>
+
+<p>Windows XP provide built-in bridge functionality. So you can create a bridged
+connection over your active internet connection and the ARAnyM TAP one.
+A very nice HowTo has been done for OpenVPN and is located at
+<a href="http://www.pavelec.net/adam/openvpn/bridge">OpenVPN web site</a>.</p>
+
+<p>Your ARANYM configuration file needs to reflect the LAN settings, of course.</p>
+
+<p>This way the running ARAnyM behaves like another machine connected to your
+LAN. You can use e.g. the SpareMiNT's dhcpclient package to lease the IP
+address from your DHCP server just as your host OS does. Or you can set
+the static IP address. All just like if you have another box sitting beside
+your host machine.</p>
+
+<h2><a name="cdrom">10. CD-ROM drives</a></h2>
+
+<p>You can use IDE emulation (see section <a href="#atapi">8.1.4</a>), but you can have only 2 IDE
+devices. So a better way is to use Natfeat CD-ROM driver, where you can have
+up to 26 CD-ROM drives (physical devices A to Z for BetaDOS). The SDL driver
+allows only audio CD playing, whereas the Linux driver allows you also data
+CD-ROM access.</p>
+
+<p>First, See section [CDROMS] in your config file. Each drive letter is a
+physical device for BetaDOS, and you can give it any host CD-ROM drive number
+(if you have multiple CD-ROM drives on your host machine).</p>
+
+<p>Example:</p>
+
+<pre>
+[CDROMS]
+A = 0
+..
+W = 1
+..
+Z = 2
+</pre>
+
+<p>Then, on the Atari side, copy the file nfcdrom.bos to your auto folder, and
+edit your config.sys file, and add a line like this:</p>
+
+<pre>
+*BOS, \auto\nfcdrom.bos, A, W, Z
+</pre>
+
+<p>You can now use audio CDs with your favorite CD player. If you also want access
+to data CD-ROMs, you need an iso9660 filesystem driver. You can find some with
+BetaDOS, and add the lines:</p>
+
+<pre>
+*DOS, \auto\iso9660.dos, G:A, H:W, I:Z
+</pre>
+
+<p>To have gemdos drives G, H, I (on your desktop) use the respective A, W, Z
+BetaDOS devices.</p>
+
+<h2><a name="opengl">11. OpenGL rendering for Atari applications (Linux only atm)</a></h2>
+
+<p>You can use the power of the host CPU to render OpenGL scenes, instead of
+using an emulated m68k and its fpu. This is not hardware accelerated!</p>
+<p>First, you need to install Mesa and its offscreen rendering part (OSMesa).
+Compile Mesa using 'make linux' or 'make linux-x86' on Linux, or make 'darwin'
+on MacOSX.</p>
+<p>Then you can configure ARAnyM to use OSMesa, with --enable-nfosmesa
+--disable-opengl, then make should do its work. ARAnyM should not be linked
+with your system OpenGL library, otherwise it won't work.</p>
+<p>Finally, fill the [NFOSMESA] section in the config file as needed, you can
+give the complete path to your Mesa libGL and libOSMesa files.</p>
+
+<p>Atari side: just use osmesa.ldg provided in ARAnyM archive, instead of the
+original one. You can even use it instead of previous mesa_gl.ldg an
+tiny_gl.ldg. If you are using MiNT, don't forget the nfosmesa.xdd device driver.</p>
+
+<p>There are different libOSMesa libraries for the host: libOSMesa (8 bits per
+channel, with separated libGL), libOSMesa16 (16 bits integer value per channel,
+with included libGL) and libOSMesa32 (32 bits float value per channel, with
+included libGL). You need to adjust the config file this way:</p>
+
+<pre>
+- libOSMesa:
+ChannelSize = 0					/* mandatory */
+libGL = /path/to/mesa/libGL.so			/* mandatory */
+libOSMesa = /path/to/mesa/libOSMesa.so		/* mandatory */
+
+- libOSMesa16:
+ChannelSize = 16				/* mandatory */
+libGL = /path/to/mesa/libGL.so			/* unused */
+libOSMesa = /path/to/mesa/libOSMesa16.so	/* mandatory */
+
+- libOSMesa32:
+ChannelSize = 32				/* mandatory */
+libGL = /path/to/mesa/libGL.so			/* unused */
+libOSMesa = /path/to/mesa/libOSMesa32.so	/* mandatory */
+</pre>
+
+<h2><a name="linux">12. Linux/m68k on ARAnyM</a></h2>
+
+<p>Since ARAnyM version 0.9.0 Linux/m68k kernel should boot up normally,
+like on a Falcon030 with MC68040. You can use normal Atari bootstrap
+for booting Linux/m68k from TOS or you can boot the linux kernel directly
+thanks to ARAnyM integrated LILO (Linux Loader). Of course you need
+the MMU enabled version of ARAnyM (binary should be named "aranym-mmu").</p>
+
+<h3>12.1. Debian Woody</h3>
+
+<p>modify your config file:</p>
+<pre>
+[LILO]
+Kernel = /path/to/linux.bin
+Ramdisk = /path/to/root.bin
+Args = root=/dev/ram load_ramdisk=1 ramdisk_size=13000 stram_swap=0 debug debug=par console=tty0 video=atafb:vga2 nolangchooser
+</pre>
+<p>Visit
+<a href="http://ftp.debian.org/dists/woody/main/disks-m68k/current/atari/">
+this site</a> for linux.bin (kernel image) and root.bin (ramdisk image).</p>
+
+<h3>12.2. Debian Sarge</h3>
+
+<p>modify your config file:</p>
+<pre>
+[LILO]
+Kernel = /path/to/vmlinuz-2.4.27-atari
+Ramdisk = /path/to/initrd.gz
+Args = root=/dev/ram load_ramdisk=1 ramdisk_size=13000 stram_swap=0 debug debug=par console=tty0 video=atafb:vga2 debian-installer/framebuffer=false
+</pre>
+<p>Visit
+<a href="http://ftp.debian.org/dists/sarge/main/installer-m68k/current/images/kernels/">
+this site</a> for linux kernel images (vmlinuz-2.2.25-atari or vmlinuz-2.4.27-atari).<br>
+Visit
+<a href="http://ftp.debian.org/dists/sarge/main/installer-m68k/current/images/nativehd/">
+this site</a> for ramdisk images (initrd22.gz or initrd.gz).</p>
+
+<p>With correct config file you simply start "aranym-mmu -l -N" and that's it.</p>
+
+<h2><a name="coding">13. Programming with ARAnyM</a></h2>
+
+<p>ARAnyM contains an unified interface for accessing emulator specific
+features in a "standard" way that is called Native Features. This new
+standard has been developed in a close cooperation with ARAnyM, STonC,
+hatari and EmuTOS developers and its main goal was to allow developing
+universal drivers shareable across all Atari emulators. This NatFeat
+interface is to be used by operating system drivers only - it is not 
+intended for direct use by regular applications!</p>
+
+<p>[please note that there are some bits of NatFeats documentation
+ available in the ARAnyM archive but it's mostly obsolete and worst
+ of all it's incorrect in the promotion of NatFeat usage via the cookie
+ by regular apps. This will be fixed eventually when time permits.]</p>
+
+<p>If you need to detect that your TOS/GEM software is running on ARAnyM
+then please check the standard Atari cookie _MCH. While stock Falcon's
+_MCH cookie value is $30000 and Milan's (as the latest TOS compatible
+real hardware) _MCH cookie value is $40000, on the ARAnyM this cookie
+value should be set to $50000 (unless changed in the ARAnyM's config
+file, but that applies to TOS only, anyway. EmuTOS hardwires $50000).</p>
+
+<p>FreeMiNT 1.16+ contains direct support for NatFeat drivers and is
+able to use NatFeat debug output for FreeMiNT debug messages. Also
+EmuTOS naturally supports basic NatFeats.</p>
+
+</body></html>
