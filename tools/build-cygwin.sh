@@ -251,7 +251,7 @@ if [ configure.ac -nt Makefile ] ; then
   echo "done."
   echo ${LINE}
 else
-  if [ ! -z $@ ] ; then
+  if [ ! -z "$*" ] ; then
     echo "$0: WARNING: configure options ignored. if you want to re-configure, please run :" 1>&2
     echo "rm ${ARANYM_BUILD}/src/Unix/Makefile && $0 $@" 1>&2
     echo ${LINE}

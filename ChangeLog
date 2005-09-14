@@ -1,3 +1,8 @@
+2005/09/14 - Xavier
+- tools/build-cygwin.sh: fixed a small bug that was preventing a warning to be
+  displayed.
+
+
 2005/09/10 - Petr
 - uae_cpu/cpu_emulation.h: uses ReadInt/WriteInt which is wrong (regarding
   the MMU) but at least consistent with all the NF modules. The complete
