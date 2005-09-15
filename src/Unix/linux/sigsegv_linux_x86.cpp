@@ -58,7 +58,7 @@ typedef void (*sighandler_t)(int);
 #endif
 
 #define CONTEXT_NAME	sc
-#define CONTEXT_TYPE	struct sigcontext
+#define CONTEXT_TYPE	volatile struct sigcontext
 #define CONTEXT_ADDR	& CONTEXT_NAME
 #define CONTEXT_ATYPE	CONTEXT_TYPE *
 #define CONTEXT_EIP	CONTEXT_NAME.eip
@@ -182,10 +182,10 @@ static inline void set_eflags(int i, CONTEXT_ATYPE CONTEXT_NAME, type_size_t t) 
 
 static inline void *get_preg(int reg, CONTEXT_ATYPE CONTEXT_NAME, int size) {
 	switch (reg) {
-		case 0: return &(CONTEXT_AEAX);
-		case 1: return &(CONTEXT_AECX);
-		case 2: return &(CONTEXT_AEDX);
-		case 3: return &(CONTEXT_AEBX);
+		case 0: return (void *)&(CONTEXT_AEAX);
+		case 1: return (void *)&(CONTEXT_AECX);
+		case 2: return (void *)&(CONTEXT_AEDX);
+		case 3: return (void *)&(CONTEXT_AEBX);
 		case 4: return (((uae_u8*)&(CONTEXT_AEAX)) + 1);
 		case 5: return (size > 1) ? (void*)(&(CONTEXT_AEBP)) : (void*)(((uae_u8*)&(CONTEXT_AECX)) + 1);
 		case 6: return (size > 1) ? (void*)(&(CONTEXT_AESI)) : (void*)(((uae_u8*)&(CONTEXT_AEDX)) + 1);
