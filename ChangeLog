@@ -1,3 +1,8 @@
+2005/09/15 - milan
+- src/Unix/linux/sigsegv_linux_x86.cpp: added 'volatile' to struct sigcontext.
+  Fixes GCC 4.x problem (crash upon startup).
+
+
 2005/09/14 - Xavier
 - tools/build-cygwin.sh: fixed a small bug that was preventing a warning to be
   displayed.
