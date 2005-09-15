@@ -7,7 +7,8 @@ Fix bugs:
 - short parameter for lilo in manpage is wrong ("-s") but source is OK
 - when mouse grab on startup is off grabbing mouse no longer possible
 - after mouse ungrab/re-grab certain shift/control/alt key seems to be pressed
-- improve the whole mouse grab/ungrab
+- improve the whole mouse grab/ungrab - auto grab could grab mouse
+  automagically when it enters aranym window only if the window is on top
 - correct postal address of GPL
 
 TODO generally:
