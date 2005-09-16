@@ -1,3 +1,7 @@
+2005/09/16 - Patrice
+- Remove old fvdidrv.cpp.
+
+
 2005/09/15 - Petr
 - doc/documentation.html renamed to aranym.html (directly in repository)
 - doc/documentation.txt removed (is superseded by aranym.html)

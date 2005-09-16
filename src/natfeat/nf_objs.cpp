@@ -28,14 +28,10 @@
 #include "hostfs.h"
 #include "ethernet.h"
 #include "debugprintf.h"
-#ifdef NFVDI_SUPPORT
-# include "nfvdi.h"
-# include "nfvdi_soft.h"
-# ifdef ENABLE_OPENGL
-#  include "nfvdi_opengl.h"
-# endif
-#else
-# include "fvdidrv.h"
+#include "nfvdi.h"
+#include "nfvdi_soft.h"
+#ifdef ENABLE_OPENGL
+# include "nfvdi_opengl.h"
 #endif
 #ifdef NFCDROM_SUPPORT
 # include "nfcdrom.h"
@@ -89,16 +85,12 @@ void NFCreate(void)
 	NFAdd(new XHDIDriver);
 	NFAdd(new AUDIODriver);
 
-#ifdef NFVDI_SUPPORT
 # ifdef ENABLE_OPENGL
 	if ((strcmp("opengl", bx_options.natfeats.vdi_driver)==0) && bx_options.opengl.enabled)
 		NFAdd(new OpenGLVdiDriver);
 	else 
 # endif
 		NFAdd(new SoftVdiDriver);
-#else
-	NFAdd(new FVDIDriver);
-#endif
 
 #ifdef HOSTFS_SUPPORT
 	NFAdd(new HostFs);
