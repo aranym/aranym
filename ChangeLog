@@ -1,3 +1,7 @@
+2005/09/19 - Patrice
+- Add DSP_ prefix to some definitions.
+
+
 2005/09/16 - Patrice
 - Remove old fvdidrv.cpp.
 

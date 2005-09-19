@@ -543,48 +543,48 @@ static dsp_emul_t opcodes_movep[4]={
 };
 
 static int registers_lmove[8][2]={
-	{REG_A1,REG_A0},	/* A10 */
-	{REG_B1,REG_B0},	/* B10 */
-	{REG_X1,REG_X0},	/* X */
-	{REG_Y1,REG_Y0},	/* Y */
-	{REG_A,REG_A},		/* A */
-	{REG_B,REG_B},		/* B */
-	{REG_A,REG_B},		/* AB */
-	{REG_B,REG_A}		/* BA */
+	{DSP_REG_A1,DSP_REG_A0},	/* A10 */
+	{DSP_REG_B1,DSP_REG_B0},	/* B10 */
+	{DSP_REG_X1,DSP_REG_X0},	/* X */
+	{DSP_REG_Y1,DSP_REG_Y0},	/* Y */
+	{DSP_REG_A,DSP_REG_A},		/* A */
+	{DSP_REG_B,DSP_REG_B},		/* B */
+	{DSP_REG_A,DSP_REG_B},		/* AB */
+	{DSP_REG_B,DSP_REG_A}		/* BA */
 };
 
 static int registers_tcc[16][2]={
-	{REG_B,REG_A},
-	{REG_A,REG_B},
-	{REG_NULL,REG_NULL},
-	{REG_NULL,REG_NULL},
+	{DSP_REG_B,DSP_REG_A},
+	{DSP_REG_A,DSP_REG_B},
+	{DSP_REG_NULL,DSP_REG_NULL},
+	{DSP_REG_NULL,DSP_REG_NULL},
 
-	{REG_NULL,REG_NULL},
-	{REG_NULL,REG_NULL},
-	{REG_NULL,REG_NULL},
-	{REG_NULL,REG_NULL},
+	{DSP_REG_NULL,DSP_REG_NULL},
+	{DSP_REG_NULL,DSP_REG_NULL},
+	{DSP_REG_NULL,DSP_REG_NULL},
+	{DSP_REG_NULL,DSP_REG_NULL},
 
-	{REG_X0,REG_A},
-	{REG_X0,REG_B},
-	{REG_X1,REG_A},
-	{REG_X1,REG_B},
+	{DSP_REG_X0,DSP_REG_A},
+	{DSP_REG_X0,DSP_REG_B},
+	{DSP_REG_X1,DSP_REG_A},
+	{DSP_REG_X1,DSP_REG_B},
 
-	{REG_Y0,REG_A},
-	{REG_Y0,REG_B},
-	{REG_Y1,REG_A},
-	{REG_Y1,REG_B}
+	{DSP_REG_Y0,DSP_REG_A},
+	{DSP_REG_Y0,DSP_REG_B},
+	{DSP_REG_Y1,DSP_REG_A},
+	{DSP_REG_Y1,DSP_REG_B}
 };
 
 static int registers_mpy[8][2]={
-	{REG_X0,REG_X0},
-	{REG_Y0,REG_Y0},
-	{REG_X1,REG_X0},
-	{REG_Y1,REG_Y0},
+	{DSP_REG_X0,DSP_REG_X0},
+	{DSP_REG_Y0,DSP_REG_Y0},
+	{DSP_REG_X1,DSP_REG_X0},
+	{DSP_REG_Y1,DSP_REG_Y0},
 
-	{REG_X0,REG_Y1},
-	{REG_Y0,REG_X0},
-	{REG_X1,REG_Y0},
-	{REG_Y1,REG_X1}
+	{DSP_REG_X0,DSP_REG_Y1},
+	{DSP_REG_Y0,DSP_REG_X0},
+	{DSP_REG_X1,DSP_REG_Y0},
+	{DSP_REG_Y1,DSP_REG_X1}
 };
 
 static int registers_mask[64]={
@@ -640,7 +640,7 @@ static void dsp_execute_instruction(void)
 #endif
 
 	/* Decode and execute current instruction */
-	cur_inst = read_memory(SPACE_P,getDSP()->pc);
+	cur_inst = read_memory(DSP_SPACE_P,getDSP()->pc);
 	cur_inst_len = 1;
 
 	value = (cur_inst >> 16) & BITMASK(8);
@@ -686,19 +686,19 @@ static void dsp_postexecute_update_pc(void)
 	if (getDSP()->loop_rep) {
 		/* Is PC on the instruction to repeat ? */		
 		if (pc_on_rep==0) {
-			--getDSP()->registers[REG_LC];
-			getDSP()->registers[REG_LC] &= BITMASK(16);
+			--getDSP()->registers[DSP_REG_LC];
+			getDSP()->registers[DSP_REG_LC] &= BITMASK(16);
 
-			if (getDSP()->registers[REG_LC] > 0) {
+			if (getDSP()->registers[DSP_REG_LC] > 0) {
 				cur_inst_len=0;	/* Stay on this instruction */
 			} else {
 				getDSP()->loop_rep = 0;
-				getDSP()->registers[REG_LC] = getDSP()->registers[REG_LCSAVE];
+				getDSP()->registers[DSP_REG_LC] = getDSP()->registers[DSP_REG_LCSAVE];
 			}
 		} else {
 			/* Init LC at right value */
-			if (getDSP()->registers[REG_LC] == 0) {
-				getDSP()->registers[REG_LC] = 0x010000;
+			if (getDSP()->registers[DSP_REG_LC] == 0) {
+				getDSP()->registers[DSP_REG_LC] = 0x010000;
 			}
 			pc_on_rep = 0;
 		}
@@ -711,28 +711,28 @@ static void dsp_postexecute_update_pc(void)
 
 	/* When running a DO loop, we test the end of loop with the */
 	/* updated PC, pointing to last instruction of the loop */
-	if (getDSP()->registers[REG_SR] & (1<<SR_LF)) {
+	if (getDSP()->registers[DSP_REG_SR] & (1<<DSP_SR_LF)) {
 
 		/* Did we execute the last instruction in loop ? */
 		if (getDSP()->last_loop_inst) {		
 			getDSP()->last_loop_inst = 0;
 
-			--getDSP()->registers[REG_LC];
-			getDSP()->registers[REG_LC] &= BITMASK(16);
+			--getDSP()->registers[DSP_REG_LC];
+			getDSP()->registers[DSP_REG_LC] &= BITMASK(16);
 
-			if (getDSP()->registers[REG_LC]==0) {
+			if (getDSP()->registers[DSP_REG_LC]==0) {
 				/* end of loop */
 				uint32 newpc;
 				
-				dsp_stack_pop(&newpc, &getDSP()->registers[REG_SR]);
-				dsp_stack_pop(&getDSP()->registers[REG_LA], &getDSP()->registers[REG_LC]);
+				dsp_stack_pop(&newpc, &getDSP()->registers[DSP_REG_SR]);
+				dsp_stack_pop(&getDSP()->registers[DSP_REG_LA], &getDSP()->registers[DSP_REG_LC]);
 			} else {
 				/* Loop one more time */
-				getDSP()->pc = getDSP()->stack[0][getDSP()->registers[REG_SSH]];
+				getDSP()->pc = getDSP()->stack[0][getDSP()->registers[DSP_REG_SSH]];
 			}
 		}
 
-		if (getDSP()->pc == getDSP()->registers[REG_LA]) {
+		if (getDSP()->pc == getDSP()->registers[DSP_REG_LA]) {
 			/* We are executing the last loop instruction */
 			getDSP()->last_loop_inst = 1;
 		}
@@ -747,11 +747,11 @@ static void dsp_postexecute_interrupts(void)
 {
 	uint32 ipl, ipl_hi;
 	
-	ipl = (getDSP()->registers[REG_SR]>>SR_I0) & BITMASK(2);
-	ipl_hi = (getDSP()->periph[SPACE_X][DSP_IPR]>>10) & BITMASK(2);
+	ipl = (getDSP()->registers[DSP_REG_SR]>>DSP_SR_I0) & BITMASK(2);
+	ipl_hi = (getDSP()->periph[DSP_SPACE_X][DSP_IPR]>>10) & BITMASK(2);
 
 	/* Trace, level 3 */
-	if (getDSP()->registers[REG_SR] & (1<<SR_T)) {
+	if (getDSP()->registers[DSP_REG_SR] & (1<<DSP_SR_T)) {
 		/* Raise interrupt p:0x0004 */
 #if DSP_DISASM_INTER
 		D(bug("Dsp: Interrupt: Trace"));
@@ -763,8 +763,8 @@ static void dsp_postexecute_interrupts(void)
 
 		/* Host transmit */
 		if (
-			(getDSP()->periph[SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HTIE)) &&
-			((getDSP()->periph[SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HTDE))==0)
+			(getDSP()->periph[DSP_SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HTIE)) &&
+			((getDSP()->periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HTDE))==0)
 			) {
 			/* Raise interrupt p:0x0022 */
 #if DSP_DISASM_INTER
@@ -774,8 +774,8 @@ static void dsp_postexecute_interrupts(void)
 
 		/* Host receive */
 		if (
-			(getDSP()->periph[SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HRIE)) &&
-			((getDSP()->periph[SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HRDF)))
+			(getDSP()->periph[DSP_SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HRIE)) &&
+			((getDSP()->periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HRDF)))
 			) {
 			/* Raise interrupt p:0x0020 */
 #if DSP_DISASM_INTER
@@ -785,8 +785,8 @@ static void dsp_postexecute_interrupts(void)
 
 		/* Host command */
 		if (
-			(getDSP()->periph[SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HCIE)) &&
-			(getDSP()->periph[SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HCP))
+			(getDSP()->periph[DSP_SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HCIE)) &&
+			(getDSP()->periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HCP))
 			) {
 			/* Raise interrupt p:((hostport[CPU_HOST_CVR] & 31)<<1) */
 #if DSP_DISASM_INTER
@@ -808,7 +808,7 @@ static void dsp_ccr_extension(uint32 *reg0, uint32 *reg1, uint32 * /*reg2*/)
 {
 	uint32 scaling, value, numbits;
 
-	scaling = (getDSP()->registers[REG_SR]>>SR_S0) & BITMASK(2);
+	scaling = (getDSP()->registers[DSP_REG_SR]>>DSP_SR_S0) & BITMASK(2);
 	value = (*reg0) & 0xff;
 	numbits = 8;
 	switch(scaling) {
@@ -829,8 +829,8 @@ static void dsp_ccr_extension(uint32 *reg0, uint32 *reg1, uint32 * /*reg2*/)
 			break;
 	}
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_E);
-	getDSP()->registers[REG_SR] |= ((value==0) || (value==(uint32)(BITMASK(numbits))))<<SR_E;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_E);
+	getDSP()->registers[DSP_REG_SR] |= ((value==0) || (value==(uint32)(BITMASK(numbits))))<<DSP_SR_E;
 }
 
 static void dsp_ccr_unnormalized(uint32 *reg0, uint32 *reg1, uint32 *reg2)
@@ -838,7 +838,7 @@ static void dsp_ccr_unnormalized(uint32 *reg0, uint32 *reg1, uint32 *reg2)
 	DUNUSED(reg2);
 	uint32 scaling, value;
 
-	scaling = (getDSP()->registers[REG_SR]>>SR_S0) & BITMASK(2);
+	scaling = (getDSP()->registers[DSP_REG_SR]>>DSP_SR_S0) & BITMASK(2);
 
 	switch(scaling) {
 		case 0:
@@ -856,16 +856,16 @@ static void dsp_ccr_unnormalized(uint32 *reg0, uint32 *reg1, uint32 *reg2)
 			break;
 	}
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_U);
-	getDSP()->registers[REG_SR] |= ((value==0) || (value==BITMASK(2)))<<SR_U;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_U);
+	getDSP()->registers[DSP_REG_SR] |= ((value==0) || (value==BITMASK(2)))<<DSP_SR_U;
 }
 
 static void dsp_ccr_negative(uint32 *reg0, uint32 *reg1, uint32 *reg2)
 {
 	DUNUSED(reg1);
 	DUNUSED(reg2);
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_N);
-	getDSP()->registers[REG_SR] |= (((*reg0)>>7) & 1)<<SR_N;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_N);
+	getDSP()->registers[DSP_REG_SR] |= (((*reg0)>>7) & 1)<<DSP_SR_N;
 }
 
 static void dsp_ccr_zero(uint32 *reg0, uint32 *reg1, uint32 *reg2)
@@ -881,8 +881,8 @@ static void dsp_ccr_zero(uint32 *reg0, uint32 *reg1, uint32 *reg2)
 		zeroed=0;
 	}
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_Z);
-	getDSP()->registers[REG_SR] |= zeroed<<SR_Z;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_Z);
+	getDSP()->registers[DSP_REG_SR] |= zeroed<<DSP_SR_Z;
 }
 
 /**********************************
@@ -895,10 +895,10 @@ static uint32 read_memory_disasm(int space, uint16 address)
 	address &= BITMASK(16);
 
 	switch(space) {
-		case SPACE_X:
-		case SPACE_Y:
+		case DSP_SPACE_X:
+		case DSP_SPACE_Y:
 			/* Internal RAM or ROM ? */
-			if ((getDSP()->registers[REG_OMR] & (1<<OMR_DE)) &&
+			if ((getDSP()->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
 				(address>=0x100) && (address<0x200)) {
 				return getDSP()->rom[space][address] & BITMASK(24);
 			}
@@ -909,7 +909,7 @@ static uint32 read_memory_disasm(int space, uint16 address)
 			}
 
 			/* Now continue with common code, no break here */
-		case SPACE_P:
+		case DSP_SPACE_P:
 			if (address<=0x8000) {
 				return getDSP()->ram[space][address] & BITMASK(24);
 			}
@@ -925,10 +925,10 @@ static uint32 read_memory(int space, uint16 address)
 	address &= BITMASK(16);
 
 	switch(space) {
-		case SPACE_X:
-		case SPACE_Y:
+		case DSP_SPACE_X:
+		case DSP_SPACE_Y:
 			/* Internal RAM or ROM ? */
-			if ((getDSP()->registers[REG_OMR] & (1<<OMR_DE)) &&
+			if ((getDSP()->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
 				(address>=0x100) && (address<0x200)) {
 				return getDSP()->rom[space][address] & BITMASK(24);
 			}
@@ -936,21 +936,21 @@ static uint32 read_memory(int space, uint16 address)
 			/* Peripheral address ? */
 			if (address >= 0xffc0) {
 
-				if ((space==SPACE_X) && (address==0xffc0+DSP_HOST_HRX)) {
+				if ((space==DSP_SPACE_X) && (address==0xffc0+DSP_HOST_HRX)) {
 					int trdy;
 
 					/* Read available data from host for the DSP */
 					getDSP()->host2dsp();
 
 					/* Clear HRDF bit to say that DSP has read */
-					getDSP()->periph[SPACE_X][DSP_HOST_HSR] &= BITMASK(8)-(1<<DSP_HOST_HSR_HRDF);
+					getDSP()->periph[DSP_SPACE_X][DSP_HOST_HSR] &= BITMASK(8)-(1<<DSP_HOST_HSR_HRDF);
 #if DSP_DISASM_HOSTREAD
 					D(bug("Dsp: (H->D): Dsp HRDF cleared"));
 #endif
 					/* Clear/set TRDY bit */
 					getDSP()->hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TRDY);
 					trdy = (getDSP()->hostport[CPU_HOST_ISR]>>CPU_HOST_ISR_TXDE) & 1;
-					trdy &= !((getDSP()->periph[SPACE_X][DSP_HOST_HSR]>>DSP_HOST_HSR_HRDF) & 1);
+					trdy &= !((getDSP()->periph[DSP_SPACE_X][DSP_HOST_HSR]>>DSP_HOST_HSR_HRDF) & 1);
 					getDSP()->hostport[CPU_HOST_ISR] |= (trdy & 1)<< CPU_HOST_ISR_TRDY;
 				}
 
@@ -958,7 +958,7 @@ static uint32 read_memory(int space, uint16 address)
 			}
 
 			/* Now continue with common code, no break here */
-		case SPACE_P:
+		case DSP_SPACE_P:
 #if DSP_CHECK_MEM_ACCESS
 			if (address<0x8000) {
 #endif
@@ -1000,10 +1000,10 @@ static void write_memory(int space, uint32 address, uint32 value)
 #endif
 
 	switch(space) {
-		case SPACE_X:
+		case DSP_SPACE_X:
 			/* Internal RAM or ROM ? */
 			if ((address >= 0x100) && (address <= 0x200)) {
-				if (getDSP()->registers[REG_OMR] & (1<<OMR_DE)) {
+				if (getDSP()->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) {
 					/* Can not write to rom */
 					return;
 				}
@@ -1015,7 +1015,7 @@ static void write_memory(int space, uint32 address, uint32 value)
 					case DSP_HOST_HTX:
 						getDSP()->periph[space][DSP_HOST_HTX] = value;
 						/* Clear HTDE bit to say that DSP has written */
-						getDSP()->periph[SPACE_X][DSP_HOST_HSR] &= BITMASK(8)-(1<<DSP_HOST_HSR_HTDE);
+						getDSP()->periph[DSP_SPACE_X][DSP_HOST_HSR] &= BITMASK(8)-(1<<DSP_HOST_HSR_HTDE);
 #if DSP_DISASM_HOSTWRITE
 						D(bug("Dsp: (D->H): Dsp HTDE cleared"));
 #endif
@@ -1028,7 +1028,7 @@ static void write_memory(int space, uint32 address, uint32 value)
 						getDSP()->hostport[CPU_HOST_ISR] &=
 							BITMASK(8)-((1<<CPU_HOST_ISR_HF3)|(1<<CPU_HOST_ISR_HF2));
 						getDSP()->hostport[CPU_HOST_ISR] |=
-							getDSP()->periph[SPACE_X][DSP_HOST_HCR] & ((1<<CPU_HOST_ISR_HF3)|(1<<CPU_HOST_ISR_HF2));
+							getDSP()->periph[DSP_SPACE_X][DSP_HOST_HCR] & ((1<<CPU_HOST_ISR_HF3)|(1<<CPU_HOST_ISR_HF2));
 						break;
 					case DSP_HOST_HSR:
 						/* Read only */
@@ -1057,12 +1057,12 @@ static void write_memory(int space, uint32 address, uint32 value)
 			/* x:0x0000-0x01ff is internal ram/rom */
 			/* x:0x0200-0x3fff = p:0x4200-0x7fff */
 			if ((address >= 0x200) && (address <= 0x3fff)) {
-				getDSP()->ram[SPACE_P][address+0x4000] = value;
+				getDSP()->ram[DSP_SPACE_P][address+0x4000] = value;
 			}
 			break;
-		case SPACE_Y:
+		case DSP_SPACE_Y:
 			if ((address >= 0x100) && (address <= 0x200)) {
-				if (getDSP()->registers[REG_OMR] & (1<<OMR_DE)) {
+				if (getDSP()->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) {
 					/* Can not write to rom */
 					return;
 				}
@@ -1090,10 +1090,10 @@ static void write_memory(int space, uint32 address, uint32 value)
 			/* y:0x0000-0x01ff is internal ram/rom */
 			/* y:0x0200-0x3fff = p:0x0200-0x3fff */
 			if ((address >= 0x200) && (address <= 0x3fff)) {
-				getDSP()->ram[SPACE_P][address] = value;
+				getDSP()->ram[DSP_SPACE_P][address] = value;
 			}
 			break;
-		case SPACE_P:
+		case DSP_SPACE_P:
 			getDSP()->ram[space][address] = value;
 #if DSP_CHECK_MEM_ACCESS
 			if (address>=0x8000) {
@@ -1110,9 +1110,9 @@ static void write_memory(int space, uint32 address, uint32 value)
 			/* p:0x0200-0x3fff = y:0x200-0x3fff */
 			/* p:0x4200-0x7fff = x:0x200-0x3fff */
 			if ((address >= 0x200) && (address <= 0x3fff)) {
-				getDSP()->ram[SPACE_Y][address] = value;
+				getDSP()->ram[DSP_SPACE_Y][address] = value;
 			} else if ((address >= 0x4200) && (address <= 0x7fff)) {
-				getDSP()->ram[SPACE_X][address-0x4000] = value;
+				getDSP()->ram[DSP_SPACE_X][address-0x4000] = value;
 			}
 			break;
 	}
@@ -1120,13 +1120,13 @@ static void write_memory(int space, uint32 address, uint32 value)
 #ifdef DSP_DISASM
 #if DSP_DISASM_MEM
 	switch(space) {
-		case SPACE_P:
+		case DSP_SPACE_P:
 			fprintf(stderr,"Dsp: Mem: p:0x%04x:0x%06x -> 0x%06x\n", address, curvalue, read_memory_disasm(space, address));
 			break;
-		case SPACE_X:
+		case DSP_SPACE_X:
 			fprintf(stderr,"Dsp: Mem: x:0x%04x:0x%06x -> 0x%06x\n", address, curvalue, read_memory_disasm(space, address));
 			break;
-		case SPACE_Y:
+		case DSP_SPACE_Y:
 			fprintf(stderr,"Dsp: Mem: y:0x%04x:0x%06x -> 0x%06x\n", address, curvalue, read_memory_disasm(space, address));
 			break;
 	}
@@ -1140,7 +1140,7 @@ static void write_memory(int space, uint32 address, uint32 value)
 
 static void dsp_stack_push(uint32 curpc, uint32 cursr)
 {
-	if (getDSP()->registers[REG_SP]==0x0f) {
+	if (getDSP()->registers[DSP_REG_SP]==0x0f) {
 		/* Stack full, raise interrupt */
 		D(bug("Dsp: Interrupt: Stack error (overflow)"));
 #if DSP_DISASM_STATE
@@ -1151,17 +1151,17 @@ static void dsp_stack_push(uint32 curpc, uint32 cursr)
 		return;
 	}
 
-	getDSP()->registers[REG_SP]++;
-	getDSP()->registers[REG_SSH]++;
-	getDSP()->registers[REG_SSL]++;
+	getDSP()->registers[DSP_REG_SP]++;
+	getDSP()->registers[DSP_REG_SSH]++;
+	getDSP()->registers[DSP_REG_SSL]++;
 
-	getDSP()->stack[0][getDSP()->registers[REG_SSH]]=curpc;
-	getDSP()->stack[1][getDSP()->registers[REG_SSL]]=cursr;
+	getDSP()->stack[0][getDSP()->registers[DSP_REG_SSH]]=curpc;
+	getDSP()->stack[1][getDSP()->registers[DSP_REG_SSL]]=cursr;
 }
 
 static void dsp_stack_pop(uint32 *newpc, uint32 *newsr)
 {
-	if (getDSP()->registers[REG_SP]==0x00) {
+	if (getDSP()->registers[DSP_REG_SP]==0x00) {
 		/* Stack empty, raise interrupt */
 		D(bug("Dsp: Interrupt: Stack error (underflow)"));
 #if DSP_DISASM_STATE
@@ -1172,12 +1172,12 @@ static void dsp_stack_pop(uint32 *newpc, uint32 *newsr)
 		return;
 	}
 
-	*newpc = getDSP()->stack[0][getDSP()->registers[REG_SSH]];
-	*newsr = getDSP()->stack[1][getDSP()->registers[REG_SSL]];
+	*newpc = getDSP()->stack[0][getDSP()->registers[DSP_REG_SSH]];
+	*newsr = getDSP()->stack[1][getDSP()->registers[DSP_REG_SSL]];
 
-	--getDSP()->registers[REG_SP];
-	--getDSP()->registers[REG_SSH];
-	--getDSP()->registers[REG_SSL];
+	--getDSP()->registers[DSP_REG_SP];
+	--getDSP()->registers[DSP_REG_SSH];
+	--getDSP()->registers[DSP_REG_SSL];
 }
 
 /**********************************
@@ -1189,7 +1189,7 @@ static void dsp_update_rn(uint32 numreg, int16 modifier)
 	int16 value;
 	uint16 m_reg;
 
-	m_reg = (uint16) getDSP()->registers[REG_M0+numreg];
+	m_reg = (uint16) getDSP()->registers[DSP_REG_M0+numreg];
 	if (m_reg == 0) {
 		/* Bit reversed carry update */
 		dsp_update_rn_bitreverse(numreg);
@@ -1198,9 +1198,9 @@ static void dsp_update_rn(uint32 numreg, int16 modifier)
 		dsp_update_rn_modulo(numreg, modifier);
 	} else if (m_reg == 65535) {
 		/* Linear addressing mode */
-		value = (int16) getDSP()->registers[REG_R0+numreg];
+		value = (int16) getDSP()->registers[DSP_REG_R0+numreg];
 		value += modifier;
-		getDSP()->registers[REG_R0+numreg] = ((uint32) value) & BITMASK(16);
+		getDSP()->registers[DSP_REG_R0+numreg] = ((uint32) value) & BITMASK(16);
 	} else {
 		/* Undefined */
 	}
@@ -1212,7 +1212,7 @@ static void dsp_update_rn_bitreverse(uint32 numreg)
 	uint32 value, r_reg;
 
 	/* Check how many bits to reverse */
-	value = getDSP()->registers[REG_N0+numreg];
+	value = getDSP()->registers[DSP_REG_N0+numreg];
 	for (revbits=0;revbits<16;revbits++) {
 		if (value & (1<<revbits)) {
 			break;
@@ -1221,7 +1221,7 @@ static void dsp_update_rn_bitreverse(uint32 numreg)
 	revbits++;
 		
 	/* Reverse Rn bits */
-	r_reg = getDSP()->registers[REG_R0+numreg];
+	r_reg = getDSP()->registers[DSP_REG_R0+numreg];
 	value = r_reg & (BITMASK(16)-BITMASK(revbits));
 	for (i=0;i<revbits;i++) {
 		if (r_reg & (1<<i)) {
@@ -1244,7 +1244,7 @@ static void dsp_update_rn_bitreverse(uint32 numreg)
 		}
 	}
 
-	getDSP()->registers[REG_R0+numreg] = value;
+	getDSP()->registers[DSP_REG_R0+numreg] = value;
 }
 
 static void dsp_update_rn_modulo(uint32 numreg, int16 modifier)
@@ -1252,20 +1252,20 @@ static void dsp_update_rn_modulo(uint32 numreg, int16 modifier)
 	uint16 bufsize, modulo, lobound, hibound, value;
 	int16 r_reg;
 
-	modulo = (getDSP()->registers[REG_M0+numreg]+1) & BITMASK(16);
+	modulo = (getDSP()->registers[DSP_REG_M0+numreg]+1) & BITMASK(16);
 	bufsize = 1;
 	while (bufsize < modulo) {
 		bufsize <<= 1;
 	}
 	
 	/* lobound is the highest multiple of bufsize<= Rn */
-	value = getDSP()->registers[REG_R0+numreg] & BITMASK(16);
+	value = getDSP()->registers[DSP_REG_R0+numreg] & BITMASK(16);
 	value /= bufsize;
 	lobound = value*bufsize;
 
 	hibound = lobound + modulo-1;
 
-	r_reg = (int16) (getDSP()->registers[REG_R0+numreg] & BITMASK(16));
+	r_reg = (int16) (getDSP()->registers[DSP_REG_R0+numreg] & BITMASK(16));
 	r_reg += modifier;
 	if (r_reg>hibound) {
 		r_reg -= hibound;
@@ -1275,7 +1275,7 @@ static void dsp_update_rn_modulo(uint32 numreg, int16 modifier)
 		r_reg += hibound;
 	}
 
-	getDSP()->registers[REG_R0+numreg] = ((uint32) r_reg) & BITMASK(16);
+	getDSP()->registers[DSP_REG_R0+numreg] = ((uint32) r_reg) & BITMASK(16);
 }
 
 static int dsp_calc_ea(uint32 ea_mode, uint32 *dst_addr)
@@ -1287,38 +1287,38 @@ static int dsp_calc_ea(uint32 ea_mode, uint32 *dst_addr)
 	switch (value) {
 		case 0:
 			/* (Rx)-Nx */
-			*dst_addr = getDSP()->registers[REG_R0+numreg];
-			dsp_update_rn(numreg, -getDSP()->registers[REG_N0+numreg]);
+			*dst_addr = getDSP()->registers[DSP_REG_R0+numreg];
+			dsp_update_rn(numreg, -getDSP()->registers[DSP_REG_N0+numreg]);
 			break;
 		case 1:
 			/* (Rx)+Nx */
-			*dst_addr = getDSP()->registers[REG_R0+numreg];
-			dsp_update_rn(numreg, getDSP()->registers[REG_N0+numreg]);
+			*dst_addr = getDSP()->registers[DSP_REG_R0+numreg];
+			dsp_update_rn(numreg, getDSP()->registers[DSP_REG_N0+numreg]);
 			break;
 		case 2:
 			/* (Rx)- */
-			*dst_addr = getDSP()->registers[REG_R0+numreg];
+			*dst_addr = getDSP()->registers[DSP_REG_R0+numreg];
 			dsp_update_rn(numreg, -1);
 			break;
 		case 3:
 			/* (Rx)+ */
-			*dst_addr = getDSP()->registers[REG_R0+numreg];
+			*dst_addr = getDSP()->registers[DSP_REG_R0+numreg];
 			dsp_update_rn(numreg, +1);
 			break;
 		case 4:
 			/* (Rx) */
-			*dst_addr = getDSP()->registers[REG_R0+numreg];
+			*dst_addr = getDSP()->registers[DSP_REG_R0+numreg];
 			break;
 		case 5:
 			/* (Rx+Nx) */
-			curreg = getDSP()->registers[REG_R0+numreg];
-			dsp_update_rn(numreg, getDSP()->registers[REG_N0+numreg]);
-			*dst_addr = getDSP()->registers[REG_R0+numreg];
-			getDSP()->registers[REG_R0+numreg] = curreg;
+			curreg = getDSP()->registers[DSP_REG_R0+numreg];
+			dsp_update_rn(numreg, getDSP()->registers[DSP_REG_N0+numreg]);
+			*dst_addr = getDSP()->registers[DSP_REG_R0+numreg];
+			getDSP()->registers[DSP_REG_R0+numreg] = curreg;
 			break;
 		case 6:
 			/* aa */
-			*dst_addr = read_memory(SPACE_P,getDSP()->pc+1);
+			*dst_addr = read_memory(DSP_SPACE_P,getDSP()->pc+1);
 			cur_inst_len++;
 			if (numreg != 0) {
 				return 1; /* immediate value */
@@ -1327,7 +1327,7 @@ static int dsp_calc_ea(uint32 ea_mode, uint32 *dst_addr)
 		case 7:
 			/* -(Rx) */
 			dsp_update_rn(numreg, -1);
-			*dst_addr = getDSP()->registers[REG_R0+numreg];
+			*dst_addr = getDSP()->registers[DSP_REG_R0+numreg];
 			break;
 	}
 	/* address */
@@ -1338,32 +1338,32 @@ static int dsp_calc_ea(uint32 ea_mode, uint32 *dst_addr)
  *	Condition code test
  **********************************/
 
-#define SR_NV	8	/* N xor V */
-#define SR_ZUE	9	/* Z or ((not U) and (not E)) */
-#define SR_ZNV	10	/* Z or (N xor V) */
+#define DSP_SR_NV	8	/* N xor V */
+#define DSP_SR_ZUE	9	/* Z or ((not U) and (not E)) */
+#define DSP_SR_ZNV	10	/* Z or (N xor V) */
 
 #define CCR_BIT(x,y) \
 	(((x) >> (y)) & 1)	
 
 static int cc_code_map[8]={
-	SR_C,
-	SR_NV,
-	SR_Z,
-	SR_N,
-	SR_ZUE,
-	SR_E,
-	SR_L,
-	SR_ZNV
+	DSP_SR_C,
+	DSP_SR_NV,
+	DSP_SR_Z,
+	DSP_SR_N,
+	DSP_SR_ZUE,
+	DSP_SR_E,
+	DSP_SR_L,
+	DSP_SR_ZNV
 };
 
 static int dsp_calc_cc(uint32 cc_code)
 {
 	uint16 value;	
 
-	value = getDSP()->registers[REG_SR] & BITMASK(8);
-	value |= (CCR_BIT(value,SR_N) ^ CCR_BIT(value, SR_V))<<SR_NV;
-	value |= (CCR_BIT(value,SR_Z) | ((~CCR_BIT(value,SR_U)) & (~CCR_BIT(value,SR_E))))<<SR_ZUE;
-	value |= (CCR_BIT(value,SR_Z) | CCR_BIT(value, SR_NV))<<SR_ZNV;
+	value = getDSP()->registers[DSP_REG_SR] & BITMASK(8);
+	value |= (CCR_BIT(value,DSP_SR_N) ^ CCR_BIT(value, DSP_SR_V))<<DSP_SR_NV;
+	value |= (CCR_BIT(value,DSP_SR_Z) | ((~CCR_BIT(value,DSP_SR_U)) & (~CCR_BIT(value,DSP_SR_E))))<<DSP_SR_ZUE;
+	value |= (CCR_BIT(value,DSP_SR_Z) | CCR_BIT(value, DSP_SR_NV))<<DSP_SR_ZNV;
 	
 	return (uint32)(CCR_BIT(value,cc_code_map[cc_code & BITMASK(3)]))==((cc_code>>3) & 1);
 }
@@ -1496,15 +1496,15 @@ static void dsp_andi(void)
 	switch(regnum) {
 		case 0:
 			/* mr */
-			getDSP()->registers[REG_SR] &= (value<<8)|BITMASK(8);
+			getDSP()->registers[DSP_REG_SR] &= (value<<8)|BITMASK(8);
 			break;
 		case 1:
 			/* ccr */
-			getDSP()->registers[REG_SR] &= (BITMASK(8)<<8)|value;
+			getDSP()->registers[DSP_REG_SR] &= (BITMASK(8)<<8)|value;
 			break;
 		case 2:
 			/* omr */
-			getDSP()->registers[REG_OMR] &= value;
+			getDSP()->registers[DSP_REG_OMR] &= value;
 			break;
 	}
 }
@@ -1561,8 +1561,8 @@ static void dsp_bchg(void)
 		case 3:
 			/* bchg #n,R */
 			numreg = value;
-			if ((numreg==REG_A) || (numreg==REG_B)) {
-				numreg = REG_A1+(numreg & 1);
+			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
+				numreg = DSP_REG_A1+(numreg & 1);
 			}
 			value = getDSP()->registers[numreg];
 			newcarry = (value>>numbit) & 1;
@@ -1572,19 +1572,19 @@ static void dsp_bchg(void)
 				value += (1<<numbit);
 			}
 			getDSP()->registers[numreg] = value;
-			if (((numreg==REG_A) || (numreg==REG_B)) && (numbit==23)) {
+			if (((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) && (numbit==23)) {
 				if (newcarry) {
-					getDSP()->registers[REG_A2+(numreg & 1)]=0x00;
+					getDSP()->registers[DSP_REG_A2+(numreg & 1)]=0x00;
 				} else  {
-					getDSP()->registers[REG_A2+(numreg & 1)]=0xff;
+					getDSP()->registers[DSP_REG_A2+(numreg & 1)]=0xff;
 				}
 			}
 			break;
 	}
 
 	/* Set carry */
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_C);
-	getDSP()->registers[REG_SR] |= newcarry<<SR_C;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_C);
+	getDSP()->registers[DSP_REG_SR] |= newcarry<<DSP_SR_C;
 }
 
 static void dsp_bclr(void)
@@ -1627,22 +1627,22 @@ static void dsp_bclr(void)
 		case 3:
 			/* bclr #n,R */
 			numreg = value;
-			if ((numreg==REG_A) || (numreg==REG_B)) {
-				numreg = REG_A1+(numreg & 1);
+			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
+				numreg = DSP_REG_A1+(numreg & 1);
 			}
 			value = getDSP()->registers[numreg];
 			newcarry = (value>>numbit) & 1;
 			value &= 0xffffffff-(1<<numbit);
 			getDSP()->registers[numreg] = value;
-			if (((numreg==REG_A) || (numreg==REG_B)) && (numbit==23)) {
-				getDSP()->registers[REG_A2+(numreg & 1)]=0x00;
+			if (((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) && (numbit==23)) {
+				getDSP()->registers[DSP_REG_A2+(numreg & 1)]=0x00;
 			}
 			break;
 	}
 
 	/* Set carry */
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_C);
-	getDSP()->registers[REG_SR] |= newcarry<<SR_C;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_C);
+	getDSP()->registers[DSP_REG_SR] |= newcarry<<DSP_SR_C;
 }
 
 static void dsp_bset(void)
@@ -1685,22 +1685,22 @@ static void dsp_bset(void)
 		case 3:
 			/* bset #n,R */
 			numreg = value;
-			if ((numreg==REG_A) || (numreg==REG_B)) {
-				numreg = REG_A1+(numreg & 1);
+			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
+				numreg = DSP_REG_A1+(numreg & 1);
 			}
 			value = getDSP()->registers[numreg];
 			newcarry = (value>>numbit) & 1;
 			value |= (1<<numbit);
 			getDSP()->registers[numreg] = value;
-			if (((numreg==REG_A) || (numreg==REG_B)) && (numbit==23)) {
-				getDSP()->registers[REG_A2+(numreg & 1)]=0xff;
+			if (((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) && (numbit==23)) {
+				getDSP()->registers[DSP_REG_A2+(numreg & 1)]=0xff;
 			}
 			break;
 	}
 
 	/* Set carry */
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_C);
-	getDSP()->registers[REG_SR] |= newcarry<<SR_C;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_C);
+	getDSP()->registers[DSP_REG_SR] |= newcarry<<DSP_SR_C;
 }
 
 static void dsp_btst(void)
@@ -1737,8 +1737,8 @@ static void dsp_btst(void)
 		case 3:
 			/* btst #n,R */
 			numreg = value;
-			if ((numreg==REG_A) || (numreg==REG_B)) {
-				numreg = REG_A1+(numreg & 1);
+			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
+				numreg = DSP_REG_A1+(numreg & 1);
 			}
 			value = getDSP()->registers[numreg];
 			newcarry = (value>>numbit) & 1;
@@ -1746,8 +1746,8 @@ static void dsp_btst(void)
 	}
 
 	/* Set carry */
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_C);
-	getDSP()->registers[REG_SR] |= newcarry<<SR_C;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_C);
+	getDSP()->registers[DSP_REG_SR] |= newcarry<<DSP_SR_C;
 }
 
 static void dsp_div(void)
@@ -1755,23 +1755,23 @@ static void dsp_div(void)
 	uint32 srcreg, destreg, source, dest[3], newcarry, cursign;
 	uint16 newsr;
 
-	srcreg = REG_NULL;
+	srcreg = DSP_REG_NULL;
 	switch((cur_inst>>4) & BITMASK(2)) {
-		case 0:	srcreg = REG_X0;	break;
-		case 1:	srcreg = REG_Y0;	break;
-		case 2:	srcreg = REG_X1;	break;
-		case 3:	srcreg = REG_Y1;	break;
+		case 0:	srcreg = DSP_REG_X0;	break;
+		case 1:	srcreg = DSP_REG_Y0;	break;
+		case 2:	srcreg = DSP_REG_X1;	break;
+		case 3:	srcreg = DSP_REG_Y1;	break;
 	}
-	destreg = REG_A+((cur_inst>>3) & 1);
+	destreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	source = getDSP()->registers[srcreg];
-	dest[0] = getDSP()->registers[REG_A2+(destreg & 1)];
-	dest[1] = getDSP()->registers[REG_A1+(destreg & 1)];
-	dest[2] = getDSP()->registers[REG_A0+(destreg & 1)];
+	dest[0] = getDSP()->registers[DSP_REG_A2+(destreg & 1)];
+	dest[1] = getDSP()->registers[DSP_REG_A1+(destreg & 1)];
+	dest[2] = getDSP()->registers[DSP_REG_A0+(destreg & 1)];
 	newcarry = 0;
 
 	newsr = dsp_asl56(dest);
-	dest[2] |= (getDSP()->registers[REG_SR]>>SR_C) & 1;
+	dest[2] |= (getDSP()->registers[DSP_REG_SR]>>DSP_SR_C) & 1;
 
 	if (((dest[0]>>7) & 1) ^ ((source>>23) & 1)) {
 		/* D += S */
@@ -1797,28 +1797,28 @@ static void dsp_div(void)
 		}
 	}
 
-	getDSP()->registers[REG_A2+(destreg & 1)] = dest[0];
-	getDSP()->registers[REG_A1+(destreg & 1)] = dest[1];
-	getDSP()->registers[REG_A0+(destreg & 1)] = dest[2];
+	getDSP()->registers[DSP_REG_A2+(destreg & 1)] = dest[0];
+	getDSP()->registers[DSP_REG_A1+(destreg & 1)] = dest[1];
+	getDSP()->registers[DSP_REG_A0+(destreg & 1)] = dest[2];
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_C)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= (newcarry<<SR_C);
-	getDSP()->registers[REG_SR] |= newsr & (1<<SR_L);
-	getDSP()->registers[REG_SR] |= newsr & (1<<SR_V);
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= (newcarry<<DSP_SR_C);
+	getDSP()->registers[DSP_REG_SR] |= newsr & (1<<DSP_SR_L);
+	getDSP()->registers[DSP_REG_SR] |= newsr & (1<<DSP_SR_V);
 }
 
 static void dsp_do(void)
 {
 	uint32 value;
 
-	dsp_stack_push(getDSP()->registers[REG_LA], getDSP()->registers[REG_LC]);
+	dsp_stack_push(getDSP()->registers[DSP_REG_LA], getDSP()->registers[DSP_REG_LC]);
 
-	getDSP()->registers[REG_LA] = read_memory(SPACE_P, getDSP()->pc+1) & BITMASK(16);
+	getDSP()->registers[DSP_REG_LA] = read_memory(DSP_SPACE_P, getDSP()->pc+1) & BITMASK(16);
 	cur_inst_len++;
 
-	dsp_stack_push(getDSP()->pc+cur_inst_len, getDSP()->registers[REG_SR]);
+	dsp_stack_push(getDSP()->pc+cur_inst_len, getDSP()->registers[DSP_REG_SR]);
 
-	getDSP()->registers[REG_SR] |= (1<<SR_LF);
+	getDSP()->registers[DSP_REG_SR] |= (1<<DSP_SR_LF);
 
 	value = (cur_inst>>12) & (BITMASK(2)<<2);
 	value |= (cur_inst>>6) & 1<<1;
@@ -1836,14 +1836,14 @@ static void dsp_do_0(void)
 
 	memspace = (cur_inst>>6) & 1;
 	addr = (cur_inst>>8) & BITMASK(6);
-	getDSP()->registers[REG_LC] = read_memory(memspace, addr) & BITMASK(16);
+	getDSP()->registers[DSP_REG_LC] = read_memory(memspace, addr) & BITMASK(16);
 }
 
 static void dsp_do_2(void)
 {
 	/* #xx */
-	getDSP()->registers[REG_LC] = (cur_inst>>8) & BITMASK(8);
-	getDSP()->registers[REG_LC] |= (cur_inst & BITMASK(4))<<8;
+	getDSP()->registers[DSP_REG_LC] = (cur_inst>>8) & BITMASK(8);
+	getDSP()->registers[DSP_REG_LC] |= (cur_inst & BITMASK(4))<<8;
 }
 
 static void dsp_do_4(void)
@@ -1856,7 +1856,7 @@ static void dsp_do_4(void)
 	memspace = (cur_inst>>6) & 1;
 	ea_mode = (cur_inst>>8) & BITMASK(6);
 	dsp_calc_ea(ea_mode, &addr);
-	getDSP()->registers[REG_LC] = read_memory(memspace, addr) & BITMASK(16);
+	getDSP()->registers[DSP_REG_LC] = read_memory(memspace, addr) & BITMASK(16);
 }
 
 static void dsp_do_c(void)
@@ -1866,23 +1866,23 @@ static void dsp_do_c(void)
 	/* S */
 
 	numreg = (cur_inst>>8) & BITMASK(6);
-	if ((numreg == REG_A) || (numreg == REG_B)) {
-		dsp_pm_read_accu24(numreg, &getDSP()->registers[REG_LC]); 
+	if ((numreg == DSP_REG_A) || (numreg == DSP_REG_B)) {
+		dsp_pm_read_accu24(numreg, &getDSP()->registers[DSP_REG_LC]); 
 	} else {
-		getDSP()->registers[REG_LC] = getDSP()->registers[numreg];
+		getDSP()->registers[DSP_REG_LC] = getDSP()->registers[numreg];
 	}
-	getDSP()->registers[REG_LC] &= BITMASK(16);
+	getDSP()->registers[DSP_REG_LC] &= BITMASK(16);
 }
 
 static void dsp_enddo(void)
 {
 	uint32 newpc;
 
-	dsp_stack_pop(&newpc, &getDSP()->registers[REG_SR]);
-	getDSP()->pc = getDSP()->registers[REG_LA];
+	dsp_stack_pop(&newpc, &getDSP()->registers[DSP_REG_SR]);
+	getDSP()->pc = getDSP()->registers[DSP_REG_LA];
 	cur_inst_len = 0;
 
-	dsp_stack_pop(&getDSP()->registers[REG_LA], &getDSP()->registers[REG_LC]);
+	dsp_stack_pop(&getDSP()->registers[DSP_REG_LA], &getDSP()->registers[DSP_REG_LC]);
 }
 
 static void dsp_illegal(void)
@@ -1954,13 +1954,13 @@ static void dsp_jclr(void)
 	cur_inst_len++;
 
 	if ((value & (1<<numbit))==0) {
-		newpc = read_memory(SPACE_P, getDSP()->pc+1);
+		newpc = read_memory(DSP_SPACE_P, getDSP()->pc+1);
 
 		/* Polling loop ? */
 		if (newpc == getDSP()->pc) {
 
 			/* Are we waiting for host port ? */
-			if ((memspace==SPACE_X) && (addr==0xffc0+DSP_HOST_HSR)) {
+			if ((memspace==DSP_SPACE_X) && (addr==0xffc0+DSP_HOST_HSR)) {
 				/* Wait for host to write */
 				if (numbit==DSP_HOST_HSR_HRDF) {
 #if DSP_DISASM_STATE
@@ -2032,7 +2032,7 @@ static void dsp_jscc(void)
 	}
 
 	if (dsp_calc_cc(cc_code)) {
-		dsp_stack_push(getDSP()->pc+cur_inst_len, getDSP()->registers[REG_SR]);
+		dsp_stack_push(getDSP()->pc+cur_inst_len, getDSP()->registers[DSP_REG_SR]);
 
 		getDSP()->pc = newpc;
 		cur_inst_len = 0;
@@ -2075,9 +2075,9 @@ static void dsp_jsclr(void)
 
 	cur_inst_len++;
 	if ((value & (1<<numbit))==0) {
-		dsp_stack_push(getDSP()->pc+cur_inst_len+1, getDSP()->registers[REG_SR]);
+		dsp_stack_push(getDSP()->pc+cur_inst_len+1, getDSP()->registers[DSP_REG_SR]);
 
-		newpc = read_memory(SPACE_P, getDSP()->pc+1);
+		newpc = read_memory(DSP_SPACE_P, getDSP()->pc+1);
 		getDSP()->pc = newpc;
 		cur_inst_len = 0;
 	} 
@@ -2120,7 +2120,7 @@ static void dsp_jset(void)
 
 	cur_inst_len++;
 	if (value & (1<<numbit)) {
-		newpc = read_memory(SPACE_P, getDSP()->pc+1);
+		newpc = read_memory(DSP_SPACE_P, getDSP()->pc+1);
 
 		getDSP()->pc = newpc;
 		cur_inst_len=0;
@@ -2137,7 +2137,7 @@ static void dsp_jsr(void)
 		dsp_calc_ea((cur_inst>>8) & BITMASK(6),&newpc);
 	}
 
-	dsp_stack_push(getDSP()->pc+cur_inst_len, getDSP()->registers[REG_SR]);
+	dsp_stack_push(getDSP()->pc+cur_inst_len, getDSP()->registers[DSP_REG_SR]);
 
 	getDSP()->pc = newpc;
 	cur_inst_len = 0;
@@ -2179,9 +2179,9 @@ static void dsp_jsset(void)
 
 	cur_inst_len++;
 	if (value & (1<<numbit)) {
-		dsp_stack_push(getDSP()->pc+cur_inst_len+1, getDSP()->registers[REG_SR]);
+		dsp_stack_push(getDSP()->pc+cur_inst_len+1, getDSP()->registers[DSP_REG_SR]);
 
-		newpc = read_memory(SPACE_P, getDSP()->pc+1);
+		newpc = read_memory(DSP_SPACE_P, getDSP()->pc+1);
 		getDSP()->pc = newpc;
 		cur_inst_len = 0;
 	} 
@@ -2196,9 +2196,9 @@ static void dsp_lua(void)
 	dstreg = cur_inst & BITMASK(3);
 	
 	if (cur_inst & (1<<3)) {
-		getDSP()->registers[REG_N0+dstreg] = getDSP()->registers[REG_N0+srcreg];
+		getDSP()->registers[DSP_REG_N0+dstreg] = getDSP()->registers[DSP_REG_N0+srcreg];
 	} else {
-		getDSP()->registers[REG_R0+dstreg] = getDSP()->registers[REG_R0+srcreg];
+		getDSP()->registers[DSP_REG_R0+dstreg] = getDSP()->registers[DSP_REG_R0+srcreg];
 	}
 }
 
@@ -2227,7 +2227,7 @@ static void dsp_movec_7(void)
 	if (cur_inst & (1<<15)) {
 		/* Write D1 */
 
-		if ((numreg2 == REG_A) || (numreg2 == REG_B)) {
+		if ((numreg2 == DSP_REG_A) || (numreg2 == DSP_REG_B)) {
 			dsp_pm_read_accu24(numreg2, &getDSP()->registers[numreg1]); 
 		} else {
 			getDSP()->registers[numreg1] = getDSP()->registers[numreg2];
@@ -2236,14 +2236,14 @@ static void dsp_movec_7(void)
 	} else {
 		/* Read S1 */
 
-		if ((numreg2 == REG_A) || (numreg2 == REG_B)) {
+		if ((numreg2 == DSP_REG_A) || (numreg2 == DSP_REG_B)) {
 			value = getDSP()->registers[numreg1];
-			getDSP()->registers[REG_A2+(numreg2 & 1)] = 0;
+			getDSP()->registers[DSP_REG_A2+(numreg2 & 1)] = 0;
 			if (value & (1<<23)) {
-				getDSP()->registers[REG_A2+(numreg2 & 1)] = 0xff;
+				getDSP()->registers[DSP_REG_A2+(numreg2 & 1)] = 0xff;
 			}
-			getDSP()->registers[REG_A1+(numreg2 & 1)] = value & BITMASK(24);
-			getDSP()->registers[REG_A0+(numreg2 & 1)] = 0;
+			getDSP()->registers[DSP_REG_A1+(numreg2 & 1)] = value & BITMASK(24);
+			getDSP()->registers[DSP_REG_A0+(numreg2 & 1)] = 0;
 		} else {
 			getDSP()->registers[numreg2] = getDSP()->registers[numreg1];
 			getDSP()->registers[numreg2] &= BITMASK(registers_mask[numreg2]);
@@ -2342,27 +2342,27 @@ static void dsp_movem(void)
 	if  (cur_inst & (1<<15)) {
 		/* Write D */
 
-		if ((numreg == REG_A) || (numreg == REG_B)) {
-			value = read_memory(SPACE_P, addr);
-			getDSP()->registers[REG_A2+(numreg & 1)] = 0;
+		if ((numreg == DSP_REG_A) || (numreg == DSP_REG_B)) {
+			value = read_memory(DSP_SPACE_P, addr);
+			getDSP()->registers[DSP_REG_A2+(numreg & 1)] = 0;
 			if (value & (1<<23)) {
-				getDSP()->registers[REG_A2+(numreg & 1)] = 0xff;
+				getDSP()->registers[DSP_REG_A2+(numreg & 1)] = 0xff;
 			}
-			getDSP()->registers[REG_A1+(numreg & 1)] = value & BITMASK(24);
-			getDSP()->registers[REG_A0+(numreg & 1)] = 0;
+			getDSP()->registers[DSP_REG_A1+(numreg & 1)] = value & BITMASK(24);
+			getDSP()->registers[DSP_REG_A0+(numreg & 1)] = 0;
 		} else {
-			getDSP()->registers[numreg] = read_memory(SPACE_P, addr);
+			getDSP()->registers[numreg] = read_memory(DSP_SPACE_P, addr);
 			getDSP()->registers[numreg] &= BITMASK(registers_mask[numreg]);
 		}
 	} else {
 		/* Read S */
 
-		if ((numreg == REG_A) || (numreg == REG_B)) {
+		if ((numreg == DSP_REG_A) || (numreg == DSP_REG_B)) {
 			dsp_pm_read_accu24(numreg, &value); 
 		} else {
 			value = getDSP()->registers[numreg];
 		}
-		write_memory(SPACE_P, addr, value);
+		write_memory(DSP_SPACE_P, addr, value);
 	}
 }
 
@@ -2391,7 +2391,7 @@ static void dsp_movep_0(void)
 	if  (cur_inst & (1<<15)) {
 		/* Write pp */
 
-		if ((numreg == REG_A) || (numreg == REG_B)) {
+		if ((numreg == DSP_REG_A) || (numreg == DSP_REG_B)) {
 			dsp_pm_read_accu24(numreg, &value); 
 		} else {
 			value = getDSP()->registers[numreg];
@@ -2402,13 +2402,13 @@ static void dsp_movep_0(void)
 
 		value = read_memory(memspace, addr);
 
-		if ((numreg == REG_A) || (numreg == REG_B)) {
-			getDSP()->registers[REG_A2+(numreg & 1)] = 0;
+		if ((numreg == DSP_REG_A) || (numreg == DSP_REG_B)) {
+			getDSP()->registers[DSP_REG_A2+(numreg & 1)] = 0;
 			if (value & (1<<23)) {
-				getDSP()->registers[REG_A2+(numreg & 1)] = 0xff;
+				getDSP()->registers[DSP_REG_A2+(numreg & 1)] = 0xff;
 			}
-			getDSP()->registers[REG_A1+(numreg & 1)] = value & BITMASK(24);
-			getDSP()->registers[REG_A0+(numreg & 1)] = 0;
+			getDSP()->registers[DSP_REG_A1+(numreg & 1)] = value & BITMASK(24);
+			getDSP()->registers[DSP_REG_A0+(numreg & 1)] = 0;
 		} else {
 			getDSP()->registers[numreg] = value;
 			getDSP()->registers[numreg] &= BITMASK(registers_mask[numreg]);
@@ -2431,10 +2431,10 @@ static void dsp_movep_1(void)
 
 	if (cur_inst & (1<<15)) {
 		/* Write pp */
-		write_memory(memspace, xyaddr, read_memory(SPACE_P, paddr));
+		write_memory(memspace, xyaddr, read_memory(DSP_SPACE_P, paddr));
 	} else {
 		/* Read pp */
-		write_memory(SPACE_P, paddr, read_memory(memspace, xyaddr));
+		write_memory(DSP_SPACE_P, paddr, read_memory(memspace, xyaddr));
 	}
 }
 
@@ -2481,18 +2481,18 @@ static void dsp_norm(void)
 	uint32 cursr,cur_e, cur_euz, dest[3], numreg, rreg;
 	uint16 newsr;
 
-	cursr = getDSP()->registers[REG_SR];
-	cur_e = (cursr>>SR_E) & 1;	/* E */
+	cursr = getDSP()->registers[DSP_REG_SR];
+	cur_e = (cursr>>DSP_SR_E) & 1;	/* E */
 	cur_euz = ~cur_e;			/* (not E) and U and (not Z) */
-	cur_euz &= (cursr>>SR_U) & 1;
-	cur_euz &= ~((cursr>>SR_Z) & 1);
+	cur_euz &= (cursr>>DSP_SR_U) & 1;
+	cur_euz &= ~((cursr>>DSP_SR_Z) & 1);
 	cur_euz &= 1;
 
 	numreg = (cur_inst>>3) & 1;
-	dest[0] = getDSP()->registers[REG_A2+numreg];
-	dest[1] = getDSP()->registers[REG_A1+numreg];
-	dest[2] = getDSP()->registers[REG_A0+numreg];
-	rreg = REG_R0+((cur_inst>>8) & BITMASK(3));
+	dest[0] = getDSP()->registers[DSP_REG_A2+numreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+numreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+numreg];
+	rreg = DSP_REG_R0+((cur_inst>>8) & BITMASK(3));
 
 	if (cur_euz) {
 		newsr = dsp_asl56(dest);
@@ -2506,17 +2506,17 @@ static void dsp_norm(void)
 		newsr = 0;
 	}
 
-	getDSP()->registers[REG_A2+numreg] = dest[0];
-	getDSP()->registers[REG_A1+numreg] = dest[1];
-	getDSP()->registers[REG_A0+numreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+numreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+numreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+numreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_ori(void)
@@ -2528,15 +2528,15 @@ static void dsp_ori(void)
 	switch(regnum) {
 		case 0:
 			/* mr */
-			getDSP()->registers[REG_SR] |= value<<8;
+			getDSP()->registers[DSP_REG_SR] |= value<<8;
 			break;
 		case 1:
 			/* ccr */
-			getDSP()->registers[REG_SR] |= value;
+			getDSP()->registers[DSP_REG_SR] |= value;
 			break;
 		case 2:
 			/* omr */
-			getDSP()->registers[REG_OMR] |= value;
+			getDSP()->registers[DSP_REG_OMR] |= value;
 			break;
 	}
 }
@@ -2545,7 +2545,7 @@ static void dsp_rep(void)
 {
 	uint32 value;
 
-	getDSP()->registers[REG_LCSAVE] = getDSP()->registers[REG_LC];
+	getDSP()->registers[DSP_REG_LCSAVE] = getDSP()->registers[DSP_REG_LC];
 
 	value = (cur_inst>>12) & (BITMASK(2)<<2);
 	value |= (cur_inst>>6) & (1<<1);
@@ -2561,14 +2561,14 @@ static void dsp_rep_1(void)
 	/* x:aa */
 	/* y:aa */
 
-	getDSP()->registers[REG_LC]=read_memory((cur_inst>>6) & 1,(cur_inst>>8) & BITMASK(6));
+	getDSP()->registers[DSP_REG_LC]=read_memory((cur_inst>>6) & 1,(cur_inst>>8) & BITMASK(6));
 }
 
 static void dsp_rep_3(void)
 {
 	/* #xxx */
 
-	getDSP()->registers[REG_LC]= (cur_inst>>8) & BITMASK(8);
+	getDSP()->registers[DSP_REG_LC]= (cur_inst>>8) & BITMASK(8);
 }
 
 static void dsp_rep_5(void)
@@ -2579,7 +2579,7 @@ static void dsp_rep_5(void)
 	/* y:ea */
 
 	dsp_calc_ea((cur_inst>>8) & BITMASK(6),&value);
-	getDSP()->registers[REG_LC]= value;
+	getDSP()->registers[DSP_REG_LC]= value;
 }
 
 static void dsp_rep_d(void)
@@ -2589,12 +2589,12 @@ static void dsp_rep_d(void)
 	/* R */
 
 	numreg = (cur_inst>>8) & BITMASK(6);
-	if ((numreg == REG_A) || (numreg == REG_B)) {
-		dsp_pm_read_accu24(numreg, &getDSP()->registers[REG_LC]); 
+	if ((numreg == DSP_REG_A) || (numreg == DSP_REG_B)) {
+		dsp_pm_read_accu24(numreg, &getDSP()->registers[DSP_REG_LC]); 
 	} else {
-		getDSP()->registers[REG_LC] = getDSP()->registers[numreg];
+		getDSP()->registers[DSP_REG_LC] = getDSP()->registers[numreg];
 	}
-	getDSP()->registers[REG_LC] &= BITMASK(16);
+	getDSP()->registers[DSP_REG_LC] &= BITMASK(16);
 }
 
 static void dsp_reset(void)
@@ -2609,7 +2609,7 @@ static void dsp_rti(void)
 	dsp_stack_pop(&newpc, &newsr);
 
 	getDSP()->pc = newpc;
-	getDSP()->registers[REG_SR] = newsr;
+	getDSP()->registers[DSP_REG_SR] = newsr;
 
 	cur_inst_len = 0;
 }
@@ -2650,10 +2650,10 @@ static void dsp_tcc(void)
 		regdest1 = registers_tcc[(cur_inst>>3) & BITMASK(4)][0];
 
 		/* Read S1 */
-		if ((regsrc1 == REG_A) || (regsrc1 == REG_B)) {
-			tmp_parmove_src[0][0]=getDSP()->registers[REG_A2+(regsrc1 & 1)];
-			tmp_parmove_src[0][1]=getDSP()->registers[REG_A1+(regsrc1 & 1)];
-			tmp_parmove_src[0][2]=getDSP()->registers[REG_A0+(regsrc1 & 1)];
+		if ((regsrc1 == DSP_REG_A) || (regsrc1 == DSP_REG_B)) {
+			tmp_parmove_src[0][0]=getDSP()->registers[DSP_REG_A2+(regsrc1 & 1)];
+			tmp_parmove_src[0][1]=getDSP()->registers[DSP_REG_A1+(regsrc1 & 1)];
+			tmp_parmove_src[0][2]=getDSP()->registers[DSP_REG_A0+(regsrc1 & 1)];
 		} else {
 			value = getDSP()->registers[regsrc1];
 			tmp_parmove_src[0][0]=0;
@@ -2665,14 +2665,14 @@ static void dsp_tcc(void)
 		}
 		
 		/* Write D1 */
-		getDSP()->registers[REG_A2+(regdest1 & 1)]=tmp_parmove_src[0][0];
-		getDSP()->registers[REG_A1+(regdest1 & 1)]=tmp_parmove_src[0][1];
-		getDSP()->registers[REG_A0+(regdest1 & 1)]=tmp_parmove_src[0][2];
+		getDSP()->registers[DSP_REG_A2+(regdest1 & 1)]=tmp_parmove_src[0][0];
+		getDSP()->registers[DSP_REG_A1+(regdest1 & 1)]=tmp_parmove_src[0][1];
+		getDSP()->registers[DSP_REG_A0+(regdest1 & 1)]=tmp_parmove_src[0][2];
 
 		/* S2,D2 transfer */
 		if (cur_inst & (1<<16)) {
-			regsrc2 = REG_R0+(cur_inst & BITMASK(3));
-			regdest2 = REG_R0+((cur_inst>>8) & BITMASK(3));
+			regsrc2 = DSP_REG_R0+(cur_inst & BITMASK(3));
+			regdest2 = DSP_REG_R0+((cur_inst>>8) & BITMASK(3));
 
 			getDSP()->registers[regdest2] = getDSP()->registers[regsrc2];
 		}
@@ -2737,46 +2737,46 @@ static void dsp_pm_read_accu24(int numreg, uint32 *dest)
 
 	/* Read an accumulator, stores it limited */
 
-	scaling = (getDSP()->registers[REG_SR]>>SR_S0) & BITMASK(2);
+	scaling = (getDSP()->registers[DSP_REG_SR]>>DSP_SR_S0) & BITMASK(2);
 	numreg &= 1;
 
 	/* scaling==1 */
-	value = getDSP()->registers[REG_A2+numreg] & 0xff;
+	value = getDSP()->registers[DSP_REG_A2+numreg] & 0xff;
 	numbits = 8;
 
 	switch(scaling) {
 		case 0:
 			value <<=1;
-			value |= (getDSP()->registers[REG_A1+numreg]>>23) & 1;
+			value |= (getDSP()->registers[DSP_REG_A1+numreg]>>23) & 1;
 			numbits=9;
 			break;
 		case 2:
 			value <<=2;
-			value |= (getDSP()->registers[REG_A1+numreg]>>22) & 3;
+			value |= (getDSP()->registers[DSP_REG_A1+numreg]>>22) & 3;
 			numbits=10;
 			break;
 	}
 
 	if ((value==0) || (value==(uint32)(BITMASK(numbits)))) {
 		/* No limiting */
-		*dest=getDSP()->registers[REG_A1+numreg];
-	} else if (getDSP()->registers[REG_A2+numreg] & (1<<7)) {
+		*dest=getDSP()->registers[DSP_REG_A1+numreg];
+	} else if (getDSP()->registers[DSP_REG_A2+numreg] & (1<<7)) {
 		/* Limited to maximum negative value */
 		*dest=0x00800000;
-		getDSP()->registers[REG_SR] |= (1<<SR_L);
+		getDSP()->registers[DSP_REG_SR] |= (1<<DSP_SR_L);
 	} else {
 		/* Limited to maximal positive value */
 		*dest=0x007fffff;
-		getDSP()->registers[REG_SR] |= (1<<SR_L);
+		getDSP()->registers[DSP_REG_SR] |= (1<<DSP_SR_L);
 	}	
 }
 
 static void dsp_pm_writereg(int numreg, int position)
 {
-	if ((numreg == REG_A) || (numreg == REG_B)) {
-		tmp_parmove_dest[position][0].host_pointer=&getDSP()->registers[REG_A2+(numreg & 1)];
-		tmp_parmove_dest[position][1].host_pointer=&getDSP()->registers[REG_A1+(numreg & 1)];
-		tmp_parmove_dest[position][2].host_pointer=&getDSP()->registers[REG_A0+(numreg & 1)];
+	if ((numreg == DSP_REG_A) || (numreg == DSP_REG_B)) {
+		tmp_parmove_dest[position][0].host_pointer=&getDSP()->registers[DSP_REG_A2+(numreg & 1)];
+		tmp_parmove_dest[position][1].host_pointer=&getDSP()->registers[DSP_REG_A1+(numreg & 1)];
+		tmp_parmove_dest[position][2].host_pointer=&getDSP()->registers[DSP_REG_A0+(numreg & 1)];
 
 		tmp_parmove_start[position]=0;
 		tmp_parmove_len[position]=3;
@@ -2810,7 +2810,7 @@ static void dsp_pm_0(void)
 	tmp_parmove_space[0]=memspace;
 
 	/* [x|y]0 to [A|B] */
-	value = getDSP()->registers[REG_X0+(memspace<<1)];
+	value = getDSP()->registers[DSP_REG_X0+(memspace<<1)];
 	if (value & (1<<23)) {
 		tmp_parmove_src[1][0]=0x0000ff;
 	} else {
@@ -2818,9 +2818,9 @@ static void dsp_pm_0(void)
 	}
 	tmp_parmove_src[1][1]=value;
 	tmp_parmove_src[1][2]=0x000000;
-	tmp_parmove_dest[1][0].host_pointer=&getDSP()->registers[REG_A2+numreg];
-	tmp_parmove_dest[1][1].host_pointer=&getDSP()->registers[REG_A1+numreg];
-	tmp_parmove_dest[1][2].host_pointer=&getDSP()->registers[REG_A0+numreg];
+	tmp_parmove_dest[1][0].host_pointer=&getDSP()->registers[DSP_REG_A2+numreg];
+	tmp_parmove_dest[1][1].host_pointer=&getDSP()->registers[DSP_REG_A1+numreg];
+	tmp_parmove_dest[1][2].host_pointer=&getDSP()->registers[DSP_REG_A0+numreg];
 
 	tmp_parmove_start[1] = 0;
 	tmp_parmove_len[1] = 3;
@@ -2844,23 +2844,23 @@ static void dsp_pm_1(void)
 	retour = dsp_calc_ea(value, &xy_addr);	
 
 	memspace = (cur_inst>>14) & 1;
-	numreg = REG_NULL;
+	numreg = DSP_REG_NULL;
 
 	if (memspace) {
 		/* Y: */
 		switch((cur_inst>>16) & BITMASK(2)) {
-			case 0:	numreg = REG_Y0;	break;
-			case 1:	numreg = REG_Y1;	break;
-			case 2:	numreg = REG_A;		break;
-			case 3:	numreg = REG_B;		break;
+			case 0:	numreg = DSP_REG_Y0;	break;
+			case 1:	numreg = DSP_REG_Y1;	break;
+			case 2:	numreg = DSP_REG_A;		break;
+			case 3:	numreg = DSP_REG_B;		break;
 		}
 	} else {
 		/* X: */
 		switch((cur_inst>>18) & BITMASK(2)) {
-			case 0:	numreg = REG_X0;	break;
-			case 1:	numreg = REG_X1;	break;
-			case 2:	numreg = REG_A;		break;
-			case 3:	numreg = REG_B;		break;
+			case 0:	numreg = DSP_REG_X0;	break;
+			case 1:	numreg = DSP_REG_X1;	break;
+			case 2:	numreg = DSP_REG_A;		break;
+			case 3:	numreg = DSP_REG_B;		break;
 		}
 	}
 
@@ -2884,7 +2884,7 @@ static void dsp_pm_1(void)
 	} else {
 		/* Read S1 */
 
-		if ((numreg==REG_A) || (numreg==REG_B)) {
+		if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
 			dsp_pm_read_accu24(numreg, &tmp_parmove_src[0][1]);
 		} else {
 			tmp_parmove_src[0][1]=getDSP()->registers[numreg];
@@ -2902,20 +2902,20 @@ static void dsp_pm_1(void)
 	/* S2 */
 	if (memspace) {
 		/* Y: */
-		numreg = REG_A + ((cur_inst>>19) & 1);
+		numreg = DSP_REG_A + ((cur_inst>>19) & 1);
 	} else {
 		/* X: */
-		numreg = REG_A + ((cur_inst>>17) & 1);
+		numreg = DSP_REG_A + ((cur_inst>>17) & 1);
 	}	
 	dsp_pm_read_accu24(numreg, &tmp_parmove_src[1][1]);
 	
 	/* D2 */
 	if (memspace) {
 		/* Y: */
-		numreg = REG_Y0 + ((cur_inst>>18) & 1);
+		numreg = DSP_REG_Y0 + ((cur_inst>>18) & 1);
 	} else {
 		/* X: */
-		numreg = REG_X0 + ((cur_inst>>16) & 1);
+		numreg = DSP_REG_X0 + ((cur_inst>>16) & 1);
 	}	
 	tmp_parmove_src[1][1] &= BITMASK(registers_mask[numreg]);
 	tmp_parmove_dest[1][1].host_pointer=&getDSP()->registers[numreg];
@@ -2966,12 +2966,12 @@ static void dsp_pm_2_2(void)
 		tmp_parmove_src[0][1]=
 		tmp_parmove_src[0][2]= 0x000000;
 
-	if ((srcreg == REG_A) || (srcreg == REG_B)) {
-		if ((dstreg == REG_A) || (dstreg == REG_B)) {
+	if ((srcreg == DSP_REG_A) || (srcreg == DSP_REG_B)) {
+		if ((dstreg == DSP_REG_A) || (dstreg == DSP_REG_B)) {
 			/* Accu to accu: full 56 bits */
-			tmp_parmove_src[0][0]=getDSP()->registers[REG_A2+(srcreg & 1)] & BITMASK(8);
-			tmp_parmove_src[0][1]=getDSP()->registers[REG_A1+(srcreg & 1)] & BITMASK(24);
-			tmp_parmove_src[0][2]=getDSP()->registers[REG_A0+(srcreg & 1)] & BITMASK(24);
+			tmp_parmove_src[0][0]=getDSP()->registers[DSP_REG_A2+(srcreg & 1)] & BITMASK(8);
+			tmp_parmove_src[0][1]=getDSP()->registers[DSP_REG_A1+(srcreg & 1)] & BITMASK(24);
+			tmp_parmove_src[0][2]=getDSP()->registers[DSP_REG_A0+(srcreg & 1)] & BITMASK(24);
 		} else {
 			/* Accu to register: limited 24 bits */
 			dsp_pm_read_accu24(srcreg, &tmp_parmove_src[0][1]); 
@@ -2980,7 +2980,7 @@ static void dsp_pm_2_2(void)
 			}
 		}
 	} else {
-		if ((dstreg == REG_A) || (dstreg == REG_B)) {
+		if ((dstreg == DSP_REG_A) || (dstreg == DSP_REG_B)) {
 			/* Register to accu: sign extended to 56 bits */
 			tmp_parmove_src[0][1]=getDSP()->registers[srcreg] & BITMASK(registers_mask[srcreg]);
 			if (tmp_parmove_src[0][1] & (1<<23)) {
@@ -3006,18 +3006,18 @@ static void dsp_pm_3(void)
 	srcvalue = (cur_inst >> 8) & BITMASK(8);
 
 	switch(dest) {
-		case REG_X0:
-		case REG_X1:
-		case REG_Y0:
-		case REG_Y1:
-		case REG_A:
-		case REG_B:
+		case DSP_REG_X0:
+		case DSP_REG_X1:
+		case DSP_REG_Y0:
+		case DSP_REG_Y1:
+		case DSP_REG_A:
+		case DSP_REG_B:
 			srcvalue <<= 16;
 			break;
 	}
 
 	tmp_parmove_src[0][0]=0x000000;
-	if ((dest == REG_A) || (dest == REG_B)) {
+	if ((dest == DSP_REG_A) || (dest == DSP_REG_B)) {
 		if (srcvalue & (1<<23)) {
 			tmp_parmove_src[0][0]=0x0000ff;
 		}
@@ -3084,7 +3084,7 @@ static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 		/* Write D */
 
 		/* S1 */
-		value = read_memory(SPACE_X,l_addr);
+		value = read_memory(DSP_SPACE_X,l_addr);
 		tmp_parmove_src[0][0] = 0x000000;
 		if (value & (1<<23)) {
 			tmp_parmove_src[0][0] = 0x0000ff;
@@ -3093,7 +3093,7 @@ static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 		tmp_parmove_src[0][2] = 0x000000;
 
 		/* S2 */
-		value = read_memory(SPACE_Y,l_addr);
+		value = read_memory(DSP_SPACE_Y,l_addr);
 		tmp_parmove_src[1][0] = 0x000000;
 		if (value & (1<<23)) {
 			tmp_parmove_src[1][0] = 0x0000ff;
@@ -3106,18 +3106,18 @@ static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 		tmp_parmove_start[0]=1;
 		tmp_parmove_len[0]=1;
 		if (numreg >= 4) {
-			tmp_parmove_dest[0][0].host_pointer = &getDSP()->registers[REG_A2+(numreg & 1)];
+			tmp_parmove_dest[0][0].host_pointer = &getDSP()->registers[DSP_REG_A2+(numreg & 1)];
 			tmp_parmove_start[0]=0;
 			tmp_parmove_len[0]=2;
 		}
 		numreg2 = registers_lmove[numreg][0];
-		if ((numreg2 == REG_A) || (numreg2 == REG_B)) {
-			tmp_parmove_dest[0][1].host_pointer = &getDSP()->registers[REG_A1+(numreg2 & 1)];
+		if ((numreg2 == DSP_REG_A) || (numreg2 == DSP_REG_B)) {
+			tmp_parmove_dest[0][1].host_pointer = &getDSP()->registers[DSP_REG_A1+(numreg2 & 1)];
 		} else {
 			tmp_parmove_dest[0][1].host_pointer = &getDSP()->registers[numreg2];
 		}
 		if (numreg >= 6) {
-			tmp_parmove_dest[0][2].host_pointer = &getDSP()->registers[REG_A0+(numreg & 1)];
+			tmp_parmove_dest[0][2].host_pointer = &getDSP()->registers[DSP_REG_A0+(numreg & 1)];
 			tmp_parmove_start[0]=0;
 			tmp_parmove_len[0]=3;
 		}
@@ -3129,18 +3129,18 @@ static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 		tmp_parmove_start[1]=1;
 		tmp_parmove_len[1]=1;
 		if (numreg >= 4) {
-			tmp_parmove_dest[1][0].host_pointer = &getDSP()->registers[REG_A2+(numreg & 1)];
+			tmp_parmove_dest[1][0].host_pointer = &getDSP()->registers[DSP_REG_A2+(numreg & 1)];
 			tmp_parmove_start[1]=0;
 			tmp_parmove_len[1]=2;
 		}
 		numreg2 = registers_lmove[numreg][1];
-		if ((numreg2 == REG_A) || (numreg2 == REG_B)) {
-			tmp_parmove_dest[1][1].host_pointer = &getDSP()->registers[REG_A1+(numreg2 & 1)];
+		if ((numreg2 == DSP_REG_A) || (numreg2 == DSP_REG_B)) {
+			tmp_parmove_dest[1][1].host_pointer = &getDSP()->registers[DSP_REG_A1+(numreg2 & 1)];
 		} else {
 			tmp_parmove_dest[1][1].host_pointer = &getDSP()->registers[numreg2];
 		}
 		if (numreg >= 6) {
-			tmp_parmove_dest[1][2].host_pointer = &getDSP()->registers[REG_A0+(numreg & 1)];
+			tmp_parmove_dest[1][2].host_pointer = &getDSP()->registers[DSP_REG_A0+(numreg & 1)];
 			tmp_parmove_start[1]=0;
 			tmp_parmove_len[1]=3;
 		}
@@ -3175,7 +3175,7 @@ static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 		tmp_parmove_len[0]=1;
 		
 		tmp_parmove_type[0]=1;
-		tmp_parmove_space[0]=SPACE_X;
+		tmp_parmove_space[0]=DSP_SPACE_X;
 
 		/* D2 */
 		tmp_parmove_dest[1][1].dsp_address=l_addr;
@@ -3184,7 +3184,7 @@ static void dsp_pm_4x(int /*immediat*/, uint32 l_addr)
 		tmp_parmove_len[1]=1;
 
 		tmp_parmove_type[1]=1;
-		tmp_parmove_space[1]=SPACE_Y;
+		tmp_parmove_space[1]=DSP_SPACE_Y;
 	}
 }
 
@@ -3237,7 +3237,7 @@ static void dsp_pm_5(void)
 	} else {
 		/* Read S */
 
-		if ((numreg==REG_A) || (numreg==REG_B)) {
+		if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
 			dsp_pm_read_accu24(numreg, &tmp_parmove_src[0][1]);
 		} else {
 			tmp_parmove_src[0][1]=getDSP()->registers[numreg];
@@ -3264,7 +3264,7 @@ static void dsp_pm_8(void)
 						S1,x:ea		y:ea,D2
 						S1,x:ea		S2,y:ea
 */
-	numreg1 = numreg2 = REG_NULL;
+	numreg1 = numreg2 = DSP_REG_NULL;
 
 	ea1 = (cur_inst>>8) & BITMASK(5);
 	if ((ea1>>3) == 0) {
@@ -3283,22 +3283,22 @@ static void dsp_pm_8(void)
 	dsp_calc_ea(ea2, &dummy2);
 
 	switch((cur_inst>>18) & BITMASK(2)) {
-		case 0:	numreg1=REG_X0;	break;
-		case 1:	numreg1=REG_X1;	break;
-		case 2:	numreg1=REG_A;	break;
-		case 3:	numreg1=REG_B;	break;
+		case 0:	numreg1=DSP_REG_X0;	break;
+		case 1:	numreg1=DSP_REG_X1;	break;
+		case 2:	numreg1=DSP_REG_A;	break;
+		case 3:	numreg1=DSP_REG_B;	break;
 	}
 	switch((cur_inst>>16) & BITMASK(2)) {
-		case 0:	numreg2=REG_Y0;	break;
-		case 1:	numreg2=REG_Y1;	break;
-		case 2:	numreg2=REG_A;	break;
-		case 3:	numreg2=REG_B;	break;
+		case 0:	numreg2=DSP_REG_Y0;	break;
+		case 1:	numreg2=DSP_REG_Y1;	break;
+		case 2:	numreg2=DSP_REG_A;	break;
+		case 3:	numreg2=DSP_REG_B;	break;
 	}
 	
 	if (cur_inst & (1<<15)) {
 		/* Write D1 */
 
-		value = read_memory(SPACE_X, dummy1);
+		value = read_memory(DSP_SPACE_X, dummy1);
 		tmp_parmove_src[0][0]= 0x000000;
 		if (value & (1<<23)) {
 			tmp_parmove_src[0][0]= 0x0000ff;
@@ -3311,7 +3311,7 @@ static void dsp_pm_8(void)
 	} else {
 		/* Read S1 */
 
-		if ((numreg1==REG_A) || (numreg1==REG_B)) {
+		if ((numreg1==DSP_REG_A) || (numreg1==DSP_REG_B)) {
 			dsp_pm_read_accu24(numreg1, &tmp_parmove_src[0][1]);
 		} else {
 			tmp_parmove_src[0][1]=getDSP()->registers[numreg1];
@@ -3323,13 +3323,13 @@ static void dsp_pm_8(void)
 		tmp_parmove_len[0]=1;
 
 		tmp_parmove_type[0]=1;
-		tmp_parmove_space[0]=SPACE_X;
+		tmp_parmove_space[0]=DSP_SPACE_X;
 	}
 
 	if (cur_inst & (1<<22)) {
 		/* Write D2 */
 
-		value = read_memory(SPACE_Y, dummy2);
+		value = read_memory(DSP_SPACE_Y, dummy2);
 		tmp_parmove_src[1][0]= 0x000000;
 		if (value & (1<<23)) {
 			tmp_parmove_src[1][0]= 0x0000ff;
@@ -3341,7 +3341,7 @@ static void dsp_pm_8(void)
 		tmp_parmove_type[1]=0;
 	} else {
 		/* Read S2 */
-		if ((numreg1==REG_A) || (numreg1==REG_B)) {
+		if ((numreg1==DSP_REG_A) || (numreg1==DSP_REG_B)) {
 			dsp_pm_read_accu24(numreg1, &tmp_parmove_src[1][1]);
 		} else {
 			tmp_parmove_src[1][1]=getDSP()->registers[numreg1];
@@ -3353,7 +3353,7 @@ static void dsp_pm_8(void)
 		tmp_parmove_len[1]=1;
 
 		tmp_parmove_type[1]=1;
-		tmp_parmove_space[1]=SPACE_Y;
+		tmp_parmove_space[1]=DSP_SPACE_Y;
 	}
 }
 
@@ -3408,7 +3408,7 @@ static uint16 dsp_asl56(uint32 *dest)
 
 	overflow = (carry != ((dest[0]>>7) & 1));
 
-	return (overflow<<SR_L)|(overflow<<SR_V)|(carry<<SR_C);
+	return (overflow<<DSP_SR_L)|(overflow<<DSP_SR_V)|(carry<<DSP_SR_C);
 }
 
 static uint16 dsp_asr56(uint32 *dest)
@@ -3431,7 +3431,7 @@ static uint16 dsp_asr56(uint32 *dest)
 	dest[0] &= BITMASK(7);
 	dest[0] |= (dest[0] & (1<<6))<<1;
 
-	return (carry<<SR_C);
+	return (carry<<DSP_SR_C);
 }
 
 static uint16 dsp_add56(uint32 *source, uint32 *dest)
@@ -3485,7 +3485,7 @@ static uint16 dsp_add56(uint32 *source, uint32 *dest)
 	dest[1] &= BITMASK(24);
 	dest[0] &= BITMASK(8);
 
-	return (overflow<<SR_L)|(overflow<<SR_V)|(carry<<SR_C);
+	return (overflow<<DSP_SR_L)|(overflow<<DSP_SR_V)|(carry<<DSP_SR_C);
 }
 
 static uint16 dsp_sub56(uint32 *source, uint32 *dest)
@@ -3540,7 +3540,7 @@ static uint16 dsp_sub56(uint32 *source, uint32 *dest)
 	dest[1] &= BITMASK(24);
 	dest[0] &= BITMASK(8);
 
-	return (overflow<<SR_L)|(overflow<<SR_V)|(carry<<SR_C);
+	return (overflow<<DSP_SR_L)|(overflow<<DSP_SR_V)|(carry<<DSP_SR_C);
 }
 
 static void dsp_mul56(uint32 source1, uint32 source2, uint32 *dest)
@@ -3645,20 +3645,20 @@ static void dsp_abs(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	dest[0] = getDSP()->registers[REG_A2+numreg];
-	dest[1] = getDSP()->registers[REG_A1+numreg];
-	dest[2] = getDSP()->registers[REG_A0+numreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+numreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+numreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+numreg];
 
 	overflowed = ((dest[2]==0) && (dest[1]==0) && (dest[0]==0x80));
 
 	dsp_abs56(dest);
 
-	getDSP()->registers[REG_A2+numreg] = dest[0];
-	getDSP()->registers[REG_A1+numreg] = dest[1];
-	getDSP()->registers[REG_A0+numreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+numreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+numreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+numreg] = dest[2];
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_V);
-	getDSP()->registers[REG_SR] |= (overflowed<<SR_L)|(overflowed<<SR_V);
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_V);
+	getDSP()->registers[DSP_REG_SR] |= (overflowed<<DSP_SR_L)|(overflowed<<DSP_SR_V);
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
@@ -3671,26 +3671,26 @@ static void dsp_adc(void)
 	uint32 srcreg, destreg, source[3], dest[3], curcarry;
 	uint16 newsr;
 
-	curcarry = (getDSP()->registers[REG_SR]>>SR_C) & 1;
+	curcarry = (getDSP()->registers[DSP_REG_SR]>>DSP_SR_C) & 1;
 
 	destreg = (cur_inst>>3) & 1;
-	dest[0] = getDSP()->registers[REG_A2+destreg];
-	dest[1] = getDSP()->registers[REG_A1+destreg];
-	dest[2] = getDSP()->registers[REG_A0+destreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+destreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+destreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+destreg];
 
 	srcreg = (cur_inst>>4) & 1;
 	switch(srcreg) {
 		case 0:	/* X */
-			source[1] = getDSP()->registers[REG_X1];
-			source[2] = getDSP()->registers[REG_X0];
+			source[1] = getDSP()->registers[DSP_REG_X1];
+			source[2] = getDSP()->registers[DSP_REG_X0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
 			}
 			break;
 		case 1:	/* Y */
-			source[1] = getDSP()->registers[REG_Y1];
-			source[2] = getDSP()->registers[REG_Y0];
+			source[1] = getDSP()->registers[DSP_REG_Y1];
+			source[2] = getDSP()->registers[DSP_REG_Y0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -3707,17 +3707,17 @@ static void dsp_adc(void)
 		newsr |= dsp_add56(source, dest);
 	}
 
-	getDSP()->registers[REG_A2+destreg] = dest[0];
-	getDSP()->registers[REG_A1+destreg] = dest[1];
-	getDSP()->registers[REG_A0+destreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+destreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+destreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+destreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_add(void)
@@ -3726,29 +3726,29 @@ static void dsp_add(void)
 	uint16 newsr;
 
 	destreg = (cur_inst>>3) & 1;
-	dest[0] = getDSP()->registers[REG_A2+destreg];
-	dest[1] = getDSP()->registers[REG_A1+destreg];
-	dest[2] = getDSP()->registers[REG_A0+destreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+destreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+destreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+destreg];
 
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	switch(srcreg) {
 		case 1:	/* A or B */
 			srcreg = destreg ^ 1;
-			source[0] = getDSP()->registers[REG_A2+srcreg];
-			source[1] = getDSP()->registers[REG_A1+srcreg];
-			source[2] = getDSP()->registers[REG_A0+srcreg];
+			source[0] = getDSP()->registers[DSP_REG_A2+srcreg];
+			source[1] = getDSP()->registers[DSP_REG_A1+srcreg];
+			source[2] = getDSP()->registers[DSP_REG_A0+srcreg];
 			break;
 		case 2:	/* X */
-			source[1] = getDSP()->registers[REG_X1];
-			source[2] = getDSP()->registers[REG_X0];
+			source[1] = getDSP()->registers[DSP_REG_X1];
+			source[2] = getDSP()->registers[DSP_REG_X0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
 			}
 			break;
 		case 3:	/* Y */
-			source[1] = getDSP()->registers[REG_Y1];
-			source[2] = getDSP()->registers[REG_Y0];
+			source[1] = getDSP()->registers[DSP_REG_Y1];
+			source[2] = getDSP()->registers[DSP_REG_Y0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -3756,7 +3756,7 @@ static void dsp_add(void)
 			break;
 		case 4:	/* X0 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_X0];
+			source[1] = getDSP()->registers[DSP_REG_X0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -3764,7 +3764,7 @@ static void dsp_add(void)
 			break;
 		case 5:	/* Y0 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_Y0];
+			source[1] = getDSP()->registers[DSP_REG_Y0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -3772,7 +3772,7 @@ static void dsp_add(void)
 			break;
 		case 6:	/* X1 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_X1];
+			source[1] = getDSP()->registers[DSP_REG_X1];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -3780,7 +3780,7 @@ static void dsp_add(void)
 			break;
 		case 7:	/* Y1 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_Y1];
+			source[1] = getDSP()->registers[DSP_REG_Y1];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -3790,17 +3790,17 @@ static void dsp_add(void)
 
 	newsr = dsp_add56(source, dest);
 
-	getDSP()->registers[REG_A2+destreg] = dest[0];
-	getDSP()->registers[REG_A1+destreg] = dest[1];
-	getDSP()->registers[REG_A0+destreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+destreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+destreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+destreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_addl(void)
@@ -3810,27 +3810,27 @@ static void dsp_addl(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	dest[0] = getDSP()->registers[REG_A2+numreg];
-	dest[1] = getDSP()->registers[REG_A1+numreg];
-	dest[2] = getDSP()->registers[REG_A0+numreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+numreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+numreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+numreg];
 	newsr = dsp_asl56(dest);
 
-	source[0] = getDSP()->registers[REG_A2+(numreg ^ 1)];
-	source[1] = getDSP()->registers[REG_A1+(numreg ^ 1)];
-	source[2] = getDSP()->registers[REG_A0+(numreg ^ 1)];
+	source[0] = getDSP()->registers[DSP_REG_A2+(numreg ^ 1)];
+	source[1] = getDSP()->registers[DSP_REG_A1+(numreg ^ 1)];
+	source[2] = getDSP()->registers[DSP_REG_A0+(numreg ^ 1)];
 	newsr |= dsp_add56(source, dest);
 
-	getDSP()->registers[REG_A2+numreg] = dest[0];
-	getDSP()->registers[REG_A1+numreg] = dest[1];
-	getDSP()->registers[REG_A0+numreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+numreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+numreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+numreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_addr(void)
@@ -3840,42 +3840,42 @@ static void dsp_addr(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	dest[0] = getDSP()->registers[REG_A2+numreg];
-	dest[1] = getDSP()->registers[REG_A1+numreg];
-	dest[2] = getDSP()->registers[REG_A0+numreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+numreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+numreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+numreg];
 	newsr = dsp_asr56(dest);
 
-	source[0] = getDSP()->registers[REG_A2+(numreg ^ 1)];
-	source[1] = getDSP()->registers[REG_A1+(numreg ^ 1)];
-	source[2] = getDSP()->registers[REG_A0+(numreg ^ 1)];
+	source[0] = getDSP()->registers[DSP_REG_A2+(numreg ^ 1)];
+	source[1] = getDSP()->registers[DSP_REG_A1+(numreg ^ 1)];
+	source[2] = getDSP()->registers[DSP_REG_A0+(numreg ^ 1)];
 	newsr |= dsp_add56(source, dest);
 
-	getDSP()->registers[REG_A2+numreg] = dest[0];
-	getDSP()->registers[REG_A1+numreg] = dest[1];
-	getDSP()->registers[REG_A0+numreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+numreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+numreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+numreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_and(void)
 {
 	uint32 srcreg, dstreg;
 
-	srcreg = REG_X0+((cur_inst>>4) & BITMASK(2));
-	dstreg = REG_A1+((cur_inst>>3) & 1);
+	srcreg = DSP_REG_X0+((cur_inst>>4) & BITMASK(2));
+	dstreg = DSP_REG_A1+((cur_inst>>3) & 1);
 
 	getDSP()->registers[dstreg] &= getDSP()->registers[srcreg];
 	getDSP()->registers[dstreg] &= BITMASK(24); /* FIXME: useless ? */
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_N)|(1<<SR_Z)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<SR_N;
-	getDSP()->registers[REG_SR] |= (getDSP()->registers[dstreg]==0)<<SR_Z;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<DSP_SR_N;
+	getDSP()->registers[DSP_REG_SR] |= (getDSP()->registers[dstreg]==0)<<DSP_SR_Z;
 }
 
 static void dsp_asl(void)
@@ -3885,18 +3885,18 @@ static void dsp_asl(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	dest[0] = getDSP()->registers[REG_A2+numreg];
-	dest[1] = getDSP()->registers[REG_A1+numreg];
-	dest[2] = getDSP()->registers[REG_A0+numreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+numreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+numreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+numreg];
 
 	newsr = dsp_asl56(dest);
 
-	getDSP()->registers[REG_A2+numreg] = dest[0];
-	getDSP()->registers[REG_A1+numreg] = dest[1];
-	getDSP()->registers[REG_A0+numreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+numreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+numreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+numreg] = dest[2];
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_C)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
@@ -3910,18 +3910,18 @@ static void dsp_asr(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	dest[0] = getDSP()->registers[REG_A2+numreg];
-	dest[1] = getDSP()->registers[REG_A1+numreg];
-	dest[2] = getDSP()->registers[REG_A0+numreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+numreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+numreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+numreg];
 
 	newsr = dsp_asr56(dest);
 
-	getDSP()->registers[REG_A2+numreg] = dest[0];
-	getDSP()->registers[REG_A1+numreg] = dest[1];
-	getDSP()->registers[REG_A0+numreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+numreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+numreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+numreg] = dest[2];
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_C)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
@@ -3935,12 +3935,12 @@ static void dsp_clr(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	getDSP()->registers[REG_A2+numreg]=0;
-	getDSP()->registers[REG_A1+numreg]=0;
-	getDSP()->registers[REG_A0+numreg]=0;
+	getDSP()->registers[DSP_REG_A2+numreg]=0;
+	getDSP()->registers[DSP_REG_A1+numreg]=0;
+	getDSP()->registers[DSP_REG_A0+numreg]=0;
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_E)|(1<<SR_N)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= (1<<SR_U)|(1<<SR_Z);
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_E)|(1<<DSP_SR_N)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= (1<<DSP_SR_U)|(1<<DSP_SR_Z);
 }
 
 static void dsp_cmp(void)
@@ -3949,21 +3949,21 @@ static void dsp_cmp(void)
 	uint16 newsr;
 
 	destreg = (cur_inst>>3) & 1;
-	dest[0] = getDSP()->registers[REG_A2+destreg];
-	dest[1] = getDSP()->registers[REG_A1+destreg];
-	dest[2] = getDSP()->registers[REG_A0+destreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+destreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+destreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+destreg];
 
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	switch(srcreg) {
 		case 0:	/* A or B */
 			srcreg = destreg ^ 1;
-			source[0] = getDSP()->registers[REG_A2+srcreg];
-			source[1] = getDSP()->registers[REG_A1+srcreg];
-			source[2] = getDSP()->registers[REG_A0+srcreg];
+			source[0] = getDSP()->registers[DSP_REG_A2+srcreg];
+			source[1] = getDSP()->registers[DSP_REG_A1+srcreg];
+			source[2] = getDSP()->registers[DSP_REG_A0+srcreg];
 			break;
 		case 4:	/* X0 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_X0];
+			source[1] = getDSP()->registers[DSP_REG_X0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -3971,7 +3971,7 @@ static void dsp_cmp(void)
 			break;
 		case 5:	/* Y0 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_Y0];
+			source[1] = getDSP()->registers[DSP_REG_Y0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -3979,7 +3979,7 @@ static void dsp_cmp(void)
 			break;
 		case 6:	/* X1 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_X1];
+			source[1] = getDSP()->registers[DSP_REG_X1];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -3987,7 +3987,7 @@ static void dsp_cmp(void)
 			break;
 		case 7:	/* Y1 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_Y1];
+			source[1] = getDSP()->registers[DSP_REG_Y1];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4002,8 +4002,8 @@ static void dsp_cmp(void)
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_cmpm(void)
@@ -4012,22 +4012,22 @@ static void dsp_cmpm(void)
 	uint16 newsr;
 
 	destreg = (cur_inst>>3) & 1;
-	dest[0] = getDSP()->registers[REG_A2+destreg];
-	dest[1] = getDSP()->registers[REG_A1+destreg];
-	dest[2] = getDSP()->registers[REG_A0+destreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+destreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+destreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+destreg];
 	dsp_abs56(dest);
 
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	switch(srcreg) {
 		case 0:	/* A or B */
 			srcreg = destreg ^ 1;
-			source[0] = getDSP()->registers[REG_A2+srcreg];
-			source[1] = getDSP()->registers[REG_A1+srcreg];
-			source[2] = getDSP()->registers[REG_A0+srcreg];
+			source[0] = getDSP()->registers[DSP_REG_A2+srcreg];
+			source[1] = getDSP()->registers[DSP_REG_A1+srcreg];
+			source[2] = getDSP()->registers[DSP_REG_A0+srcreg];
 			break;
 		case 4:	/* X0 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_X0];
+			source[1] = getDSP()->registers[DSP_REG_X0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4035,7 +4035,7 @@ static void dsp_cmpm(void)
 			break;
 		case 5:	/* Y0 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_Y0];
+			source[1] = getDSP()->registers[DSP_REG_Y0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4043,7 +4043,7 @@ static void dsp_cmpm(void)
 			break;
 		case 6:	/* X1 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_X1];
+			source[1] = getDSP()->registers[DSP_REG_X1];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4051,7 +4051,7 @@ static void dsp_cmpm(void)
 			break;
 		case 7:	/* Y1 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_Y1];
+			source[1] = getDSP()->registers[DSP_REG_Y1];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4067,23 +4067,23 @@ static void dsp_cmpm(void)
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_eor(void)
 {
 	uint32 srcreg, dstreg;
 
-	srcreg = REG_X0+((cur_inst>>4) & BITMASK(2));
-	dstreg = REG_A1+((cur_inst>>3) & 1);
+	srcreg = DSP_REG_X0+((cur_inst>>4) & BITMASK(2));
+	dstreg = DSP_REG_A1+((cur_inst>>3) & 1);
 
 	getDSP()->registers[dstreg] ^= getDSP()->registers[srcreg];
 	getDSP()->registers[dstreg] &= BITMASK(24); /* FIXME: useless ? */
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_N)|(1<<SR_Z)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<SR_N;
-	getDSP()->registers[REG_SR] |= (getDSP()->registers[dstreg]==0)<<SR_Z;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<DSP_SR_N;
+	getDSP()->registers[DSP_REG_SR] |= (getDSP()->registers[dstreg]==0)<<DSP_SR_Z;
 }
 
 static void dsp_lsl(void)
@@ -4092,15 +4092,15 @@ static void dsp_lsl(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	newcarry = (getDSP()->registers[REG_A1+numreg]>>23) & 1;
+	newcarry = (getDSP()->registers[DSP_REG_A1+numreg]>>23) & 1;
 
-	getDSP()->registers[REG_A1+numreg] &= BITMASK(24);
-	getDSP()->registers[REG_A1+numreg] <<= 1;
+	getDSP()->registers[DSP_REG_A1+numreg] &= BITMASK(24);
+	getDSP()->registers[DSP_REG_A1+numreg] <<= 1;
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_C)|(1<<SR_N)|(1<<SR_Z)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= newcarry;
-	getDSP()->registers[REG_SR] |= ((getDSP()->registers[numreg]>>23) & 1)<<SR_N;
-	getDSP()->registers[REG_SR] |= (getDSP()->registers[numreg]==0)<<SR_Z;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= newcarry;
+	getDSP()->registers[DSP_REG_SR] |= ((getDSP()->registers[numreg]>>23) & 1)<<DSP_SR_N;
+	getDSP()->registers[DSP_REG_SR] |= (getDSP()->registers[numreg]==0)<<DSP_SR_Z;
 }
 
 static void dsp_lsr(void)
@@ -4109,14 +4109,14 @@ static void dsp_lsr(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	newcarry = getDSP()->registers[REG_A1+numreg] & 1;
+	newcarry = getDSP()->registers[DSP_REG_A1+numreg] & 1;
 
-	getDSP()->registers[REG_A1+numreg] &= BITMASK(24);
-	getDSP()->registers[REG_A1+numreg] >>= 1;
+	getDSP()->registers[DSP_REG_A1+numreg] &= BITMASK(24);
+	getDSP()->registers[DSP_REG_A1+numreg] >>= 1;
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_C)|(1<<SR_N)|(1<<SR_Z)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= newcarry;
-	getDSP()->registers[REG_SR] |= (getDSP()->registers[numreg]==0)<<SR_Z;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= newcarry;
+	getDSP()->registers[DSP_REG_SR] |= (getDSP()->registers[numreg]==0)<<DSP_SR_Z;
 }
 
 static void dsp_mac(void)
@@ -4141,22 +4141,22 @@ static void dsp_mac(void)
 	}
 
 	destreg = (cur_inst>>3) & 1;
-	dest[0] = getDSP()->registers[REG_A2+destreg];
-	dest[1] = getDSP()->registers[REG_A1+destreg];
-	dest[2] = getDSP()->registers[REG_A0+destreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+destreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+destreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+destreg];
 	newsr = dsp_add56(source, dest);
 
-	getDSP()->registers[REG_A2+destreg] = dest[0];
-	getDSP()->registers[REG_A1+destreg] = dest[1];
-	getDSP()->registers[REG_A0+destreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+destreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+destreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+destreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_macr(void)
@@ -4181,24 +4181,24 @@ static void dsp_macr(void)
 	}
 
 	destreg = (cur_inst>>3) & 1;
-	dest[0] = getDSP()->registers[REG_A2+destreg];
-	dest[1] = getDSP()->registers[REG_A1+destreg];
-	dest[2] = getDSP()->registers[REG_A0+destreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+destreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+destreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+destreg];
 	newsr = dsp_add56(source, dest);
 
 	dsp_rnd56(dest);
 
-	getDSP()->registers[REG_A2+destreg] = dest[0];
-	getDSP()->registers[REG_A1+destreg] = dest[1];
-	getDSP()->registers[REG_A0+destreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+destreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+destreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+destreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_move(void)
@@ -4230,21 +4230,21 @@ static void dsp_mpy(void)
 
 		dsp_sub56(source, dest);
 
-		getDSP()->registers[REG_A2+destreg] = dest[0];
-		getDSP()->registers[REG_A1+destreg] = dest[1];
-		getDSP()->registers[REG_A0+destreg] = dest[2];
+		getDSP()->registers[DSP_REG_A2+destreg] = dest[0];
+		getDSP()->registers[DSP_REG_A1+destreg] = dest[1];
+		getDSP()->registers[DSP_REG_A0+destreg] = dest[2];
 	} else {
-		getDSP()->registers[REG_A2+destreg] = source[0];
-		getDSP()->registers[REG_A1+destreg] = source[1];
-		getDSP()->registers[REG_A0+destreg] = source[2];
+		getDSP()->registers[DSP_REG_A2+destreg] = source[0];
+		getDSP()->registers[DSP_REG_A1+destreg] = source[1];
+		getDSP()->registers[DSP_REG_A0+destreg] = source[2];
 	}
 
-	dsp_ccr_extension(&getDSP()->registers[REG_A2+destreg], &getDSP()->registers[REG_A1+destreg], &getDSP()->registers[REG_A0+destreg]);
-	dsp_ccr_unnormalized(&getDSP()->registers[REG_A2+destreg], &getDSP()->registers[REG_A1+destreg], &getDSP()->registers[REG_A0+destreg]);
-	dsp_ccr_negative(&getDSP()->registers[REG_A2+destreg], &getDSP()->registers[REG_A1+destreg], &getDSP()->registers[REG_A0+destreg]);
-	dsp_ccr_zero(&getDSP()->registers[REG_A2+destreg], &getDSP()->registers[REG_A1+destreg], &getDSP()->registers[REG_A0+destreg]);
+	dsp_ccr_extension(&getDSP()->registers[DSP_REG_A2+destreg], &getDSP()->registers[DSP_REG_A1+destreg], &getDSP()->registers[DSP_REG_A0+destreg]);
+	dsp_ccr_unnormalized(&getDSP()->registers[DSP_REG_A2+destreg], &getDSP()->registers[DSP_REG_A1+destreg], &getDSP()->registers[DSP_REG_A0+destreg]);
+	dsp_ccr_negative(&getDSP()->registers[DSP_REG_A2+destreg], &getDSP()->registers[DSP_REG_A1+destreg], &getDSP()->registers[DSP_REG_A0+destreg]);
+	dsp_ccr_zero(&getDSP()->registers[DSP_REG_A2+destreg], &getDSP()->registers[DSP_REG_A1+destreg], &getDSP()->registers[DSP_REG_A0+destreg]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_V);
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_V);
 }
 
 static void dsp_mpyr(void)
@@ -4270,16 +4270,16 @@ static void dsp_mpyr(void)
 
 	dsp_rnd56(dest);
 
-	getDSP()->registers[REG_A2+destreg] = dest[0];
-	getDSP()->registers[REG_A1+destreg] = dest[1];
-	getDSP()->registers[REG_A0+destreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+destreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+destreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+destreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_V);
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_V);
 }
 
 static void dsp_neg(void)
@@ -4287,9 +4287,9 @@ static void dsp_neg(void)
 	uint32 srcreg, source[3], dest[3], overflowed;
 
 	srcreg = (cur_inst>>3) & 1;
-	source[0] = getDSP()->registers[REG_A2+srcreg];
-	source[1] = getDSP()->registers[REG_A1+srcreg];
-	source[2] = getDSP()->registers[REG_A0+srcreg];
+	source[0] = getDSP()->registers[DSP_REG_A2+srcreg];
+	source[1] = getDSP()->registers[DSP_REG_A1+srcreg];
+	source[2] = getDSP()->registers[DSP_REG_A0+srcreg];
 
 	overflowed = ((source[2]==0) && (source[1]==0) && (source[0]==0x80));
 
@@ -4297,12 +4297,12 @@ static void dsp_neg(void)
 
 	dsp_sub56(source, dest);
 
-	getDSP()->registers[REG_A2+srcreg] = dest[0];
-	getDSP()->registers[REG_A1+srcreg] = dest[1];
-	getDSP()->registers[REG_A0+srcreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+srcreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+srcreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+srcreg] = dest[2];
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_V);
-	getDSP()->registers[REG_SR] |= (overflowed<<SR_L)|(overflowed<<SR_V);
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_V);
+	getDSP()->registers[DSP_REG_SR] |= (overflowed<<DSP_SR_L)|(overflowed<<DSP_SR_V);
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
@@ -4318,29 +4318,29 @@ static void dsp_not(void)
 {
 	uint32 dstreg;
 
-	dstreg = REG_A1+((cur_inst>>3) & 1);
+	dstreg = DSP_REG_A1+((cur_inst>>3) & 1);
 
 	getDSP()->registers[dstreg] = ~getDSP()->registers[dstreg];
 	getDSP()->registers[dstreg] &= BITMASK(24); /* FIXME: useless ? */
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_N)|(1<<SR_Z)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<SR_N;
-	getDSP()->registers[REG_SR] |= (getDSP()->registers[dstreg]==0)<<SR_Z;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<DSP_SR_N;
+	getDSP()->registers[DSP_REG_SR] |= (getDSP()->registers[dstreg]==0)<<DSP_SR_Z;
 }
 
 static void dsp_or(void)
 {
 	uint32 srcreg, dstreg;
 
-	srcreg = REG_X0+((cur_inst>>4) & BITMASK(2));
-	dstreg = REG_A1+((cur_inst>>3) & 1);
+	srcreg = DSP_REG_X0+((cur_inst>>4) & BITMASK(2));
+	dstreg = DSP_REG_A1+((cur_inst>>3) & 1);
 
 	getDSP()->registers[dstreg] |= getDSP()->registers[srcreg];
 	getDSP()->registers[dstreg] &= BITMASK(24); /* FIXME: useless ? */
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_N)|(1<<SR_Z)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<SR_N;
-	getDSP()->registers[REG_SR] |= (getDSP()->registers[dstreg]==0)<<SR_Z;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<DSP_SR_N;
+	getDSP()->registers[DSP_REG_SR] |= (getDSP()->registers[dstreg]==0)<<DSP_SR_Z;
 }
 
 static void dsp_rnd(void)
@@ -4349,17 +4349,17 @@ static void dsp_rnd(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	dest[0] = getDSP()->registers[REG_A2+numreg];
-	dest[1] = getDSP()->registers[REG_A1+numreg];
-	dest[2] = getDSP()->registers[REG_A0+numreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+numreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+numreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+numreg];
 
 	dsp_rnd56(dest);
 
-	getDSP()->registers[REG_A2+numreg] = dest[0];
-	getDSP()->registers[REG_A1+numreg] = dest[1];
-	getDSP()->registers[REG_A0+numreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+numreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+numreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+numreg] = dest[2];
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_V);
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_V);
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
@@ -4371,7 +4371,7 @@ static void dsp_rol(void)
 {
 	uint32 dstreg, newcarry;
 
-	dstreg = REG_A1+((cur_inst>>3) & 1);
+	dstreg = DSP_REG_A1+((cur_inst>>3) & 1);
 
 	newcarry = (getDSP()->registers[dstreg]>>23) & 1;
 
@@ -4379,17 +4379,17 @@ static void dsp_rol(void)
 	getDSP()->registers[dstreg] |= newcarry;
 	getDSP()->registers[dstreg] &= BITMASK(24);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_C)|(1<<SR_N)|(1<<SR_Z)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= newcarry;
-	getDSP()->registers[REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<SR_N;
-	getDSP()->registers[REG_SR] |= (getDSP()->registers[dstreg]==0)<<SR_Z;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= newcarry;
+	getDSP()->registers[DSP_REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<DSP_SR_N;
+	getDSP()->registers[DSP_REG_SR] |= (getDSP()->registers[dstreg]==0)<<DSP_SR_Z;
 }
 
 static void dsp_ror(void)
 {
 	uint32 dstreg, newcarry;
 
-	dstreg = REG_A1+((cur_inst>>3) & 1);
+	dstreg = DSP_REG_A1+((cur_inst>>3) & 1);
 
 	newcarry = getDSP()->registers[dstreg] & 1;
 
@@ -4397,10 +4397,10 @@ static void dsp_ror(void)
 	getDSP()->registers[dstreg] |= newcarry<<23;
 	getDSP()->registers[dstreg] &= BITMASK(24);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_C)|(1<<SR_N)|(1<<SR_Z)|(1<<SR_V));
-	getDSP()->registers[REG_SR] |= newcarry;
-	getDSP()->registers[REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<SR_N;
-	getDSP()->registers[REG_SR] |= (getDSP()->registers[dstreg]==0)<<SR_Z;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
+	getDSP()->registers[DSP_REG_SR] |= newcarry;
+	getDSP()->registers[DSP_REG_SR] |= ((getDSP()->registers[dstreg]>>23) & 1)<<DSP_SR_N;
+	getDSP()->registers[DSP_REG_SR] |= (getDSP()->registers[dstreg]==0)<<DSP_SR_Z;
 }
 
 static void dsp_sbc(void)
@@ -4408,26 +4408,26 @@ static void dsp_sbc(void)
 	uint32 srcreg, destreg, source[3], dest[3], curcarry;
 	uint16 newsr;
 
-	curcarry = (getDSP()->registers[REG_SR]>>(SR_C)) & 1;
+	curcarry = (getDSP()->registers[DSP_REG_SR]>>(DSP_SR_C)) & 1;
 
 	destreg = (cur_inst>>3) & 1;
-	dest[0] = getDSP()->registers[REG_A2+destreg];
-	dest[1] = getDSP()->registers[REG_A1+destreg];
-	dest[2] = getDSP()->registers[REG_A0+destreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+destreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+destreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+destreg];
 
 	srcreg = (cur_inst>>4) & 1;
 	switch(srcreg) {
 		case 0:	/* X */
-			source[1] = getDSP()->registers[REG_X1];
-			source[2] = getDSP()->registers[REG_X0];
+			source[1] = getDSP()->registers[DSP_REG_X1];
+			source[2] = getDSP()->registers[DSP_REG_X0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
 			}
 			break;
 		case 1:	/* Y */
-			source[1] = getDSP()->registers[REG_Y1];
-			source[2] = getDSP()->registers[REG_Y0];
+			source[1] = getDSP()->registers[DSP_REG_Y1];
+			source[2] = getDSP()->registers[DSP_REG_Y0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4444,17 +4444,17 @@ static void dsp_sbc(void)
 		newsr |= dsp_sub56(source, dest);
 	}
 
-	getDSP()->registers[REG_A2+destreg] = dest[0];
-	getDSP()->registers[REG_A1+destreg] = dest[1];
-	getDSP()->registers[REG_A0+destreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+destreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+destreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+destreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_sub(void)
@@ -4463,29 +4463,29 @@ static void dsp_sub(void)
 	uint16 newsr;
 
 	destreg = (cur_inst>>3) & 1;
-	dest[0] = getDSP()->registers[REG_A2+destreg];
-	dest[1] = getDSP()->registers[REG_A1+destreg];
-	dest[2] = getDSP()->registers[REG_A0+destreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+destreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+destreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+destreg];
 
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	switch(srcreg) {
 		case 1:	/* A or B */
 			srcreg = destreg ^ 1;
-			source[0] = getDSP()->registers[REG_A2+srcreg];
-			source[1] = getDSP()->registers[REG_A1+srcreg];
-			source[2] = getDSP()->registers[REG_A0+srcreg];
+			source[0] = getDSP()->registers[DSP_REG_A2+srcreg];
+			source[1] = getDSP()->registers[DSP_REG_A1+srcreg];
+			source[2] = getDSP()->registers[DSP_REG_A0+srcreg];
 			break;
 		case 2:	/* X */
-			source[1] = getDSP()->registers[REG_X1];
-			source[2] = getDSP()->registers[REG_X0];
+			source[1] = getDSP()->registers[DSP_REG_X1];
+			source[2] = getDSP()->registers[DSP_REG_X0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
 			}
 			break;
 		case 3:	/* Y */
-			source[1] = getDSP()->registers[REG_Y1];
-			source[2] = getDSP()->registers[REG_Y0];
+			source[1] = getDSP()->registers[DSP_REG_Y1];
+			source[2] = getDSP()->registers[DSP_REG_Y0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4493,7 +4493,7 @@ static void dsp_sub(void)
 			break;
 		case 4:	/* X0 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_X0];
+			source[1] = getDSP()->registers[DSP_REG_X0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4501,7 +4501,7 @@ static void dsp_sub(void)
 			break;
 		case 5:	/* Y0 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_Y0];
+			source[1] = getDSP()->registers[DSP_REG_Y0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4509,7 +4509,7 @@ static void dsp_sub(void)
 			break;
 		case 6:	/* X1 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_X1];
+			source[1] = getDSP()->registers[DSP_REG_X1];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4517,7 +4517,7 @@ static void dsp_sub(void)
 			break;
 		case 7:	/* Y1 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_Y1];
+			source[1] = getDSP()->registers[DSP_REG_Y1];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4527,17 +4527,17 @@ static void dsp_sub(void)
 
 	newsr = dsp_sub56(source, dest);
 
-	getDSP()->registers[REG_A2+destreg] = dest[0];
-	getDSP()->registers[REG_A1+destreg] = dest[1];
-	getDSP()->registers[REG_A0+destreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+destreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+destreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+destreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_subl(void)
@@ -4547,27 +4547,27 @@ static void dsp_subl(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	dest[0] = getDSP()->registers[REG_A2+numreg];
-	dest[1] = getDSP()->registers[REG_A1+numreg];
-	dest[2] = getDSP()->registers[REG_A0+numreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+numreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+numreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+numreg];
 	newsr = dsp_asl56(dest);
 
-	source[0] = getDSP()->registers[REG_A2+(numreg ^ 1)];
-	source[1] = getDSP()->registers[REG_A1+(numreg ^ 1)];
-	source[2] = getDSP()->registers[REG_A0+(numreg ^ 1)];
+	source[0] = getDSP()->registers[DSP_REG_A2+(numreg ^ 1)];
+	source[1] = getDSP()->registers[DSP_REG_A1+(numreg ^ 1)];
+	source[2] = getDSP()->registers[DSP_REG_A0+(numreg ^ 1)];
 	newsr |= dsp_sub56(source, dest);
 
-	getDSP()->registers[REG_A2+numreg] = dest[0];
-	getDSP()->registers[REG_A1+numreg] = dest[1];
-	getDSP()->registers[REG_A0+numreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+numreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+numreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+numreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_subr(void)
@@ -4577,27 +4577,27 @@ static void dsp_subr(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	dest[0] = getDSP()->registers[REG_A2+numreg];
-	dest[1] = getDSP()->registers[REG_A1+numreg];
-	dest[2] = getDSP()->registers[REG_A0+numreg];
+	dest[0] = getDSP()->registers[DSP_REG_A2+numreg];
+	dest[1] = getDSP()->registers[DSP_REG_A1+numreg];
+	dest[2] = getDSP()->registers[DSP_REG_A0+numreg];
 	newsr = dsp_asr56(dest);
 
-	source[0] = getDSP()->registers[REG_A2+(numreg ^ 1)];
-	source[1] = getDSP()->registers[REG_A1+(numreg ^ 1)];
-	source[2] = getDSP()->registers[REG_A0+(numreg ^ 1)];
+	source[0] = getDSP()->registers[DSP_REG_A2+(numreg ^ 1)];
+	source[1] = getDSP()->registers[DSP_REG_A1+(numreg ^ 1)];
+	source[2] = getDSP()->registers[DSP_REG_A0+(numreg ^ 1)];
 	newsr |= dsp_sub56(source, dest);
 
-	getDSP()->registers[REG_A2+numreg] = dest[0];
-	getDSP()->registers[REG_A1+numreg] = dest[1];
-	getDSP()->registers[REG_A0+numreg] = dest[2];
+	getDSP()->registers[DSP_REG_A2+numreg] = dest[0];
+	getDSP()->registers[DSP_REG_A1+numreg] = dest[1];
+	getDSP()->registers[DSP_REG_A0+numreg] = dest[2];
 
 	dsp_ccr_extension(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_negative(&dest[0], &dest[1], &dest[2]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-((1<<SR_V)|(1<<SR_C));
-	getDSP()->registers[REG_SR] |= newsr;
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
+	getDSP()->registers[DSP_REG_SR] |= newsr;
 }
 
 static void dsp_tfr(void)
@@ -4610,13 +4610,13 @@ static void dsp_tfr(void)
 	switch(srcreg) {
 		case 0:	/* A or B */
 			srcreg = destreg ^ 1;
-			source[0] = getDSP()->registers[REG_A2+srcreg];
-			source[1] = getDSP()->registers[REG_A1+srcreg];
-			source[2] = getDSP()->registers[REG_A0+srcreg];
+			source[0] = getDSP()->registers[DSP_REG_A2+srcreg];
+			source[1] = getDSP()->registers[DSP_REG_A1+srcreg];
+			source[2] = getDSP()->registers[DSP_REG_A0+srcreg];
 			break;
 		case 4:	/* X0 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_X0];
+			source[1] = getDSP()->registers[DSP_REG_X0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4624,7 +4624,7 @@ static void dsp_tfr(void)
 			break;
 		case 5:	/* Y0 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_Y0];
+			source[1] = getDSP()->registers[DSP_REG_Y0];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4632,7 +4632,7 @@ static void dsp_tfr(void)
 			break;
 		case 6:	/* X1 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_X1];
+			source[1] = getDSP()->registers[DSP_REG_X1];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4640,7 +4640,7 @@ static void dsp_tfr(void)
 			break;
 		case 7:	/* Y1 */
 			source[2] = 0;
-			source[1] = getDSP()->registers[REG_Y1];
+			source[1] = getDSP()->registers[DSP_REG_Y1];
 			source[0] = 0;
 			if (source[1] & (1<<23)) {
 				source[0] = 0x0000ff;
@@ -4650,9 +4650,9 @@ static void dsp_tfr(void)
 			return;
 	}
 
-	getDSP()->registers[REG_A2+destreg] = source[0];
-	getDSP()->registers[REG_A1+destreg] = source[1];
-	getDSP()->registers[REG_A0+destreg] = source[2];
+	getDSP()->registers[DSP_REG_A2+destreg] = source[0];
+	getDSP()->registers[DSP_REG_A1+destreg] = source[1];
+	getDSP()->registers[DSP_REG_A0+destreg] = source[2];
 }
 
 static void dsp_tst(void)
@@ -4661,12 +4661,12 @@ static void dsp_tst(void)
 	
 	destreg = (cur_inst>>3) & 1;
 
-	dsp_ccr_extension(&getDSP()->registers[REG_A2+destreg], &getDSP()->registers[REG_A1+destreg], &getDSP()->registers[REG_A0+destreg]);
-	dsp_ccr_unnormalized(&getDSP()->registers[REG_A2+destreg], &getDSP()->registers[REG_A1+destreg], &getDSP()->registers[REG_A0+destreg]);
-	dsp_ccr_negative(&getDSP()->registers[REG_A2+destreg], &getDSP()->registers[REG_A1+destreg], &getDSP()->registers[REG_A0+destreg]);
-	dsp_ccr_zero(&getDSP()->registers[REG_A2+destreg], &getDSP()->registers[REG_A1+destreg], &getDSP()->registers[REG_A0+destreg]);
+	dsp_ccr_extension(&getDSP()->registers[DSP_REG_A2+destreg], &getDSP()->registers[DSP_REG_A1+destreg], &getDSP()->registers[DSP_REG_A0+destreg]);
+	dsp_ccr_unnormalized(&getDSP()->registers[DSP_REG_A2+destreg], &getDSP()->registers[DSP_REG_A1+destreg], &getDSP()->registers[DSP_REG_A0+destreg]);
+	dsp_ccr_negative(&getDSP()->registers[DSP_REG_A2+destreg], &getDSP()->registers[DSP_REG_A1+destreg], &getDSP()->registers[DSP_REG_A0+destreg]);
+	dsp_ccr_zero(&getDSP()->registers[DSP_REG_A2+destreg], &getDSP()->registers[DSP_REG_A1+destreg], &getDSP()->registers[DSP_REG_A0+destreg]);
 
-	getDSP()->registers[REG_SR] &= BITMASK(16)-(1<<SR_V);
+	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_V);
 }
 
 /*

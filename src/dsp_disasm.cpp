@@ -96,64 +96,64 @@ void dsp56k_disasm_reg_compare(void)
 		}
 
 		switch(i) {
-			case REG_X0:
-			case REG_X1:
-			case REG_Y0:
-			case REG_Y1:
-			case REG_A0:
-			case REG_A1:
-			case REG_B0:
-			case REG_B1:
+			case DSP_REG_X0:
+			case DSP_REG_X1:
+			case DSP_REG_Y0:
+			case DSP_REG_Y1:
+			case DSP_REG_A0:
+			case DSP_REG_A1:
+			case DSP_REG_B0:
+			case DSP_REG_B1:
 				fprintf(stderr,"Dsp: Reg: %s: 0x%06x -> 0x%06x\n", registers_name[i], registers_save[i] & BITMASK(24), getDSP()->registers[i]  & BITMASK(24));
 				break;
-			case REG_R0:
-			case REG_R1:
-			case REG_R2:
-			case REG_R3:
-			case REG_R4:
-			case REG_R5:
-			case REG_R6:
-			case REG_R7:
-			case REG_M0:
-			case REG_M1:
-			case REG_M2:
-			case REG_M3:
-			case REG_M4:
-			case REG_M5:
-			case REG_M6:
-			case REG_M7:
-			case REG_N0:
-			case REG_N1:
-			case REG_N2:
-			case REG_N3:
-			case REG_N4:
-			case REG_N5:
-			case REG_N6:
-			case REG_N7:
-			case REG_SR:
-			case REG_LA:
-			case REG_LC:
+			case DSP_REG_R0:
+			case DSP_REG_R1:
+			case DSP_REG_R2:
+			case DSP_REG_R3:
+			case DSP_REG_R4:
+			case DSP_REG_R5:
+			case DSP_REG_R6:
+			case DSP_REG_R7:
+			case DSP_REG_M0:
+			case DSP_REG_M1:
+			case DSP_REG_M2:
+			case DSP_REG_M3:
+			case DSP_REG_M4:
+			case DSP_REG_M5:
+			case DSP_REG_M6:
+			case DSP_REG_M7:
+			case DSP_REG_N0:
+			case DSP_REG_N1:
+			case DSP_REG_N2:
+			case DSP_REG_N3:
+			case DSP_REG_N4:
+			case DSP_REG_N5:
+			case DSP_REG_N6:
+			case DSP_REG_N7:
+			case DSP_REG_SR:
+			case DSP_REG_LA:
+			case DSP_REG_LC:
 				fprintf(stderr,"Dsp: Reg: %s: 0x%04x -> 0x%04x\n", registers_name[i], registers_save[i] & BITMASK(16), getDSP()->registers[i]  & BITMASK(16));
 				break;
-			case REG_A2:
-			case REG_B2:
-			case REG_OMR:
-			case REG_SP:
-			case REG_SSH:
-			case REG_SSL:
+			case DSP_REG_A2:
+			case DSP_REG_B2:
+			case DSP_REG_OMR:
+			case DSP_REG_SP:
+			case DSP_REG_SSH:
+			case DSP_REG_SSL:
 				fprintf(stderr,"Dsp: Reg: %s: 0x%02x -> 0x%02x\n", registers_name[i], registers_save[i] & BITMASK(8), getDSP()->registers[i]  & BITMASK(8));
 				break;
-			case REG_A:
-			case REG_B:
+			case DSP_REG_A:
+			case DSP_REG_B:
 				{
 					fprintf(stderr,"Dsp: Reg: %s: 0x%02x:%06x:%06x -> 0x%02x:%06x:%06x\n",
 						registers_name[i],
-						registers_save[REG_A2+(i & 1)] & BITMASK(8),
-						registers_save[REG_A1+(i & 1)] & BITMASK(24),
-						registers_save[REG_A0+(i & 1)] & BITMASK(24),
-						getDSP()->registers[REG_A2+(i & 1)]  & BITMASK(8),
-						getDSP()->registers[REG_A1+(i & 1)]  & BITMASK(24),
-						getDSP()->registers[REG_A0+(i & 1)]  & BITMASK(24)
+						registers_save[DSP_REG_A2+(i & 1)] & BITMASK(8),
+						registers_save[DSP_REG_A1+(i & 1)] & BITMASK(24),
+						registers_save[DSP_REG_A0+(i & 1)] & BITMASK(24),
+						getDSP()->registers[DSP_REG_A2+(i & 1)]  & BITMASK(8),
+						getDSP()->registers[DSP_REG_A1+(i & 1)]  & BITMASK(24),
+						getDSP()->registers[DSP_REG_A0+(i & 1)]  & BITMASK(24)
 					);
 				}
 				break;
@@ -587,25 +587,25 @@ static dsp_emul_t opcodes_parmove[16]={
 };
 
 static int registers_tcc[16][2]={
-	{REG_B,REG_A},
-	{REG_A,REG_B},
-	{REG_NULL,REG_NULL},
-	{REG_NULL,REG_NULL},
+	{DSP_REG_B,DSP_REG_A},
+	{DSP_REG_A,DSP_REG_B},
+	{DSP_REG_NULL,DSP_REG_NULL},
+	{DSP_REG_NULL,DSP_REG_NULL},
 
-	{REG_NULL,REG_NULL},
-	{REG_NULL,REG_NULL},
-	{REG_NULL,REG_NULL},
-	{REG_NULL,REG_NULL},
+	{DSP_REG_NULL,DSP_REG_NULL},
+	{DSP_REG_NULL,DSP_REG_NULL},
+	{DSP_REG_NULL,DSP_REG_NULL},
+	{DSP_REG_NULL,DSP_REG_NULL},
 
-	{REG_X0,REG_A},
-	{REG_X0,REG_B},
-	{REG_X1,REG_A},
-	{REG_X1,REG_B},
+	{DSP_REG_X0,DSP_REG_A},
+	{DSP_REG_X0,DSP_REG_B},
+	{DSP_REG_X1,DSP_REG_A},
+	{DSP_REG_X1,DSP_REG_B},
 
-	{REG_Y0,REG_A},
-	{REG_Y0,REG_B},
-	{REG_Y1,REG_A},
-	{REG_Y1,REG_B}
+	{DSP_REG_Y0,DSP_REG_A},
+	{DSP_REG_Y0,DSP_REG_B},
+	{DSP_REG_Y1,DSP_REG_A},
+	{DSP_REG_Y1,DSP_REG_B}
 };
 
 static char *registers_lmove[8]={
@@ -709,12 +709,12 @@ static int dsp_calc_ea(uint32 ea_mode, char *dest)
 		case 0:
 			/* (Rx)-Nx */
 			sprintf(dest, ea_names[value], numreg, numreg);
-			registers_changed[REG_R0+numreg]=1;
+			registers_changed[DSP_REG_R0+numreg]=1;
 			break;
 		case 1:
 			/* (Rx)+Nx */
 			sprintf(dest, ea_names[value], numreg, numreg);
-			registers_changed[REG_R0+numreg]=1;
+			registers_changed[DSP_REG_R0+numreg]=1;
 			break;
 		case 5:
 			/* (Rx+Nx) */
@@ -723,12 +723,12 @@ static int dsp_calc_ea(uint32 ea_mode, char *dest)
 		case 2:
 			/* (Rx)- */
 			sprintf(dest, ea_names[value], numreg);
-			registers_changed[REG_R0+numreg]=1;
+			registers_changed[DSP_REG_R0+numreg]=1;
 			break;
 		case 3:
 			/* (Rx)+ */
 			sprintf(dest, ea_names[value], numreg);
-			registers_changed[REG_R0+numreg]=1;
+			registers_changed[DSP_REG_R0+numreg]=1;
 			break;
 		case 4:
 			/* (Rx) */
@@ -737,7 +737,7 @@ static int dsp_calc_ea(uint32 ea_mode, char *dest)
 		case 7:
 			/* -(Rx) */
 			sprintf(dest, ea_names[value], numreg);
-			registers_changed[REG_R0+numreg]=1;
+			registers_changed[DSP_REG_R0+numreg]=1;
 			break;
 		case 6:
 			switch ((ea_mode >> 2) & 1) {
@@ -880,15 +880,15 @@ static void dsp_andi(void)
 	switch(cur_inst & BITMASK(2)) {
 		case 0:
 			regname="mr";
-			registers_changed[REG_SR]=1;
+			registers_changed[DSP_REG_SR]=1;
 			break;
 		case 1:
 			regname="ccr";
-			registers_changed[REG_SR]=1;
+			registers_changed[DSP_REG_SR]=1;
 			break;
 		case 2:
 			regname="omr";
-			registers_changed[REG_OMR]=1;
+			registers_changed[DSP_REG_OMR]=1;
 			break;
 		default:
 			regname="";
@@ -1096,23 +1096,23 @@ static void dsp_btst(void)
 
 static void dsp_div(void)
 {
-	uint32 srcreg=REG_NULL, destreg;
+	uint32 srcreg=DSP_REG_NULL, destreg;
 	
 	switch((cur_inst>>4) & BITMASK(2)) {
 		case 0:
-			srcreg = REG_X0;
+			srcreg = DSP_REG_X0;
 				break;
 		case 1:
-			srcreg = REG_Y0;
+			srcreg = DSP_REG_Y0;
 				break;
 		case 2:
-			srcreg = REG_X1;
+			srcreg = DSP_REG_X1;
 				break;
 		case 3:
-			srcreg = REG_Y1;
+			srcreg = DSP_REG_Y1;
 				break;
 	}
-	destreg = REG_A+((cur_inst>>3) & 1);
+	destreg = DSP_REG_A+((cur_inst>>3) & 1);
 	registers_changed[destreg]=1;
 
 	fprintf(stderr,"Dsp: 0x%04x: div %s,%s\n",getDSP()->pc, registers_name[srcreg],registers_name[destreg]);
@@ -1128,8 +1128,8 @@ static void dsp_do(void)
 
 	opcodes_do[value]();
 	
-	registers_changed[REG_LA]=1;
-	registers_changed[REG_LC]=1;
+	registers_changed[DSP_REG_LA]=1;
+	registers_changed[DSP_REG_LC]=1;
 }
 
 static void dsp_do_0(void)
@@ -1485,7 +1485,7 @@ static void dsp_lua(void)
 
 	dsp_calc_ea((cur_inst>>8) & BITMASK(5), addr_name);
 	numreg = cur_inst & BITMASK(3);
-	registers_changed[REG_R0+numreg]=1;
+	registers_changed[DSP_REG_R0+numreg]=1;
 	
 	fprintf(stderr,"Dsp: 0x%04x: lua %s,r%d\n",getDSP()->pc, addr_name, numreg);
 }
@@ -1796,8 +1796,8 @@ static void dsp_norm(void)
 {
 	uint32 srcreg, destreg;
 
-	srcreg = REG_R0+((cur_inst>>8) & BITMASK(3));
-	destreg = REG_A+((cur_inst>>3) & 1);
+	srcreg = DSP_REG_R0+((cur_inst>>8) & BITMASK(3));
+	destreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[srcreg]=1;
 	registers_changed[destreg]=1;
@@ -1812,15 +1812,15 @@ static void dsp_ori(void)
 	switch(cur_inst & BITMASK(2)) {
 		case 0:
 			regname="mr";
-			registers_changed[REG_SR]=1;
+			registers_changed[DSP_REG_SR]=1;
 			break;
 		case 1:
 			regname="ccr";
-			registers_changed[REG_SR]=1;
+			registers_changed[DSP_REG_SR]=1;
 			break;
 		case 2:
 			regname="omr";
-			registers_changed[REG_OMR]=1;
+			registers_changed[DSP_REG_OMR]=1;
 			break;
 		default:
 			regname="";
@@ -1844,8 +1844,8 @@ static void dsp_rep(void)
 
 	opcodes_rep[value]();
 
-	registers_changed[REG_LA]=1;
-	registers_changed[REG_LC]=1;
+	registers_changed[DSP_REG_LA]=1;
+	registers_changed[DSP_REG_LC]=1;
 }
 
 static void dsp_rep_1(void)
@@ -1930,8 +1930,8 @@ static void dsp_tcc(void)
 
 	registers_changed[dst1reg]=1;
 	if (cur_inst & (1<<16)) {
-		src2reg = REG_R0+(cur_inst & BITMASK(3));
-		dst2reg = REG_R0+((cur_inst>>8) & BITMASK(3));
+		src2reg = DSP_REG_R0+(cur_inst & BITMASK(3));
+		dst2reg = DSP_REG_R0+((cur_inst>>8) & BITMASK(3));
 
 		registers_changed[dst2reg]=1;
 		fprintf(stderr,"Dsp: 0x%04x: t%s %s,%s %s,%s\n",
@@ -1979,15 +1979,15 @@ static void dsp_pm_0(void)
 	0000 100d 10mm mrrr S,y:ea	y0,D
 */
 	memspace = (cur_inst>>15) & 1;
-	numreg1 = REG_A+((cur_inst>>16) & 1);
+	numreg1 = DSP_REG_A+((cur_inst>>16) & 1);
 	dsp_calc_ea((cur_inst>>8) & BITMASK(6), addr_name);
 
 	if (memspace) {
 		strcpy(space_name,"y");
-		numreg2 = REG_Y0;
+		numreg2 = DSP_REG_Y0;
 	} else {
 		strcpy(space_name,"x");
-		numreg2 = REG_X0;
+		numreg2 = DSP_REG_X0;
 	}
 
 	registers_changed[numreg1]=1;
@@ -2021,16 +2021,16 @@ static void dsp_pm_1(void)
 	retour = dsp_calc_ea((cur_inst>>8) & BITMASK(6), addr_name);
 
 	if (memspace==SPACE_Y) {
-		s2reg = d2reg = REG_Y0;
+		s2reg = d2reg = DSP_REG_Y0;
 		switch((cur_inst>>16) & BITMASK(2)) {
-			case 0:	s2reg = d2reg = REG_Y0;	break;
-			case 1:	s2reg = d2reg = REG_Y1;	break;
-			case 2:	s2reg = d2reg = REG_A;	break;
-			case 3:	s2reg = d2reg = REG_B;	break;
+			case 0:	s2reg = d2reg = DSP_REG_Y0;	break;
+			case 1:	s2reg = d2reg = DSP_REG_Y1;	break;
+			case 2:	s2reg = d2reg = DSP_REG_A;	break;
+			case 3:	s2reg = d2reg = DSP_REG_B;	break;
 		}
 
-		s1reg = REG_A+((cur_inst>>19) & 1);
-		d1reg = REG_X0+((cur_inst>>18) & 1);
+		s1reg = DSP_REG_A+((cur_inst>>19) & 1);
+		d1reg = DSP_REG_X0+((cur_inst>>18) & 1);
 
 		registers_changed[d1reg]=1;
 
@@ -2065,16 +2065,16 @@ static void dsp_pm_1(void)
 		}		
 
 	} else {
-		s1reg = d1reg = REG_X0;
+		s1reg = d1reg = DSP_REG_X0;
 		switch((cur_inst>>18) & BITMASK(2)) {
-			case 0:	s1reg = d1reg = REG_X0;	break;
-			case 1:	s1reg = d1reg = REG_X1;	break;
-			case 2:	s1reg = d1reg = REG_A;	break;
-			case 3:	s1reg = d1reg = REG_B;	break;
+			case 0:	s1reg = d1reg = DSP_REG_X0;	break;
+			case 1:	s1reg = d1reg = DSP_REG_X1;	break;
+			case 2:	s1reg = d1reg = DSP_REG_A;	break;
+			case 3:	s1reg = d1reg = DSP_REG_B;	break;
 		}
 
-		s2reg = REG_A+((cur_inst>>17) & 1);
-		d2reg = REG_Y0+((cur_inst>>16) & 1);
+		s2reg = DSP_REG_A+((cur_inst>>17) & 1);
+		d2reg = DSP_REG_Y0+((cur_inst>>16) & 1);
 
 		registers_changed[d2reg]=1;
 
@@ -2127,7 +2127,7 @@ static void dsp_pm_2(void)
 
 	if (((cur_inst >> 8) & 0xffe0) == 0x2040) {
 		dsp_calc_ea((cur_inst>>8) & BITMASK(5), addr_name);
-		registers_changed[REG_R0+((cur_inst>>8) & BITMASK(3))]=1;
+		registers_changed[DSP_REG_R0+((cur_inst>>8) & BITMASK(3))]=1;
 		sprintf(parallelmove_name, "%s,r%d",addr_name, (cur_inst>>8) & BITMASK(3));
 		return;
 	}
@@ -2254,20 +2254,20 @@ static void dsp_pm_8(void)
 						S1,x:ea		y:ea,D2
 						S1,x:ea		S2,y:ea
 */
-	numreg1 = REG_X0;
+	numreg1 = DSP_REG_X0;
 	switch((cur_inst>>18) & BITMASK(2)) {
-		case 0:	numreg1 = REG_X0;	break;
-		case 1:	numreg1 = REG_X1;	break;
-		case 2:	numreg1 = REG_A;	break;
-		case 3:	numreg1 = REG_B;	break;
+		case 0:	numreg1 = DSP_REG_X0;	break;
+		case 1:	numreg1 = DSP_REG_X1;	break;
+		case 2:	numreg1 = DSP_REG_A;	break;
+		case 3:	numreg1 = DSP_REG_B;	break;
 	}
 
-	numreg2 = REG_Y0;
+	numreg2 = DSP_REG_Y0;
 	switch((cur_inst>>16) & BITMASK(2)) {
-		case 0:	numreg2 = REG_Y0;	break;
-		case 1:	numreg2 = REG_Y1;	break;
-		case 2:	numreg2 = REG_A;	break;
-		case 3:	numreg2 = REG_B;	break;
+		case 0:	numreg2 = DSP_REG_Y0;	break;
+		case 1:	numreg2 = DSP_REG_Y1;	break;
+		case 2:	numreg2 = DSP_REG_A;	break;
+		case 3:	numreg2 = DSP_REG_B;	break;
 	}
 
 	ea_mode1 = (cur_inst>>8) & BITMASK(5);
@@ -2333,7 +2333,7 @@ static void dsp_abs(void)
 {
 	uint32 numreg;
 	
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: abs %s %s\n",
@@ -2354,7 +2354,7 @@ static void dsp_adc(void)
 		srcname="x";
 	}
 
-	numreg=REG_A+((cur_inst>>3) & 1);
+	numreg=DSP_REG_A+((cur_inst>>3) & 1);
 	registers_changed[numreg]=1;
 
 	fprintf(stderr,"Dsp: 0x%04x: adc %s,%s %s\n",
@@ -2376,7 +2376,7 @@ static void dsp_add(void)
 	switch(srcreg) {
 		case 1:
 			srcreg = dstreg ^ 1;
-			srcname = registers_name[REG_A+srcreg];
+			srcname = registers_name[DSP_REG_A+srcreg];
 			break;
 		case 2:
 			srcname="x";
@@ -2384,10 +2384,10 @@ static void dsp_add(void)
 		case 3:
 			srcname="y";
 			break;
-		case REG_X0:
-		case REG_X1:
-		case REG_Y0:
-		case REG_Y1:
+		case DSP_REG_X0:
+		case DSP_REG_X1:
+		case DSP_REG_Y0:
+		case DSP_REG_Y1:
 			srcname=registers_name[srcreg];
 			break;
 		default:
@@ -2395,11 +2395,11 @@ static void dsp_add(void)
 			break;
 	}
 
-	registers_changed[REG_A+dstreg]=1;
+	registers_changed[DSP_REG_A+dstreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: add %s,%s %s\n",
 		getDSP()->pc,
 		srcname,
-		registers_name[REG_A+dstreg],
+		registers_name[DSP_REG_A+dstreg],
 		parallelmove_name
 	);
 }
@@ -2410,11 +2410,11 @@ static void dsp_addl(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	registers_changed[REG_A+numreg]=1;
+	registers_changed[DSP_REG_A+numreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: addl %s,%s %s\n",
 		getDSP()->pc,
-		registers_name[REG_A+(numreg ^ 1)],
-		registers_name[REG_A+numreg],
+		registers_name[DSP_REG_A+(numreg ^ 1)],
+		registers_name[DSP_REG_A+numreg],
 		parallelmove_name
 	);
 }
@@ -2425,11 +2425,11 @@ static void dsp_addr(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	registers_changed[REG_A+numreg]=1;
+	registers_changed[DSP_REG_A+numreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: addr %s,%s %s\n",
 		getDSP()->pc,
-		registers_name[REG_A+(numreg ^ 1)],
-		registers_name[REG_A+numreg],
+		registers_name[DSP_REG_A+(numreg ^ 1)],
+		registers_name[DSP_REG_A+numreg],
 		parallelmove_name
 	);
 }
@@ -2438,13 +2438,13 @@ static void dsp_and(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
 	fprintf(stderr,"Dsp: 0x%04x: and %s,%s %s\n",
 		getDSP()->pc,
-		registers_name[REG_X0+((cur_inst>>4) & BITMASK(2))],
+		registers_name[DSP_REG_X0+((cur_inst>>4) & BITMASK(2))],
 		registers_name[numreg],
 		parallelmove_name
 	);
@@ -2454,7 +2454,7 @@ static void dsp_asl(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2469,7 +2469,7 @@ static void dsp_asr(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2484,7 +2484,7 @@ static void dsp_clr(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2504,26 +2504,26 @@ static void dsp_cmp(void)
 
 	switch(srcreg) {
 		case 0:
-			srcreg = REG_A+(dstreg ^ 1);
+			srcreg = DSP_REG_A+(dstreg ^ 1);
 			break;
 		case 4:
-			srcreg = REG_X0;
+			srcreg = DSP_REG_X0;
 			break;
 		case 5:
-			srcreg = REG_Y0;
+			srcreg = DSP_REG_Y0;
 			break;
 		case 6:
-			srcreg = REG_X1;
+			srcreg = DSP_REG_X1;
 			break;
 		case 7:
-			srcreg = REG_Y1;
+			srcreg = DSP_REG_Y1;
 			break;
 	}
 
 	fprintf(stderr,"Dsp: 0x%04x: cmp %s,%s %s\n",
 		getDSP()->pc,
 		registers_name[srcreg],
-		registers_name[REG_A+dstreg],
+		registers_name[DSP_REG_A+dstreg],
 		parallelmove_name
 	);
 }
@@ -2537,26 +2537,26 @@ static void dsp_cmpm(void)
 
 	switch(srcreg) {
 		case 0:
-			srcreg = REG_A+(dstreg ^ 1);
+			srcreg = DSP_REG_A+(dstreg ^ 1);
 			break;
 		case 4:
-			srcreg = REG_X0;
+			srcreg = DSP_REG_X0;
 			break;
 		case 5:
-			srcreg = REG_Y0;
+			srcreg = DSP_REG_Y0;
 			break;
 		case 6:
-			srcreg = REG_X1;
+			srcreg = DSP_REG_X1;
 			break;
 		case 7:
-			srcreg = REG_Y1;
+			srcreg = DSP_REG_Y1;
 			break;
 	}
 
 	fprintf(stderr,"Dsp: 0x%04x: cmpm %s,%s %s\n",
 		getDSP()->pc,
 		registers_name[srcreg],
-		registers_name[REG_A+dstreg],
+		registers_name[DSP_REG_A+dstreg],
 		parallelmove_name
 	);
 }
@@ -2565,13 +2565,13 @@ static void dsp_eor(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
 	fprintf(stderr,"Dsp: 0x%04x: eor %s,%s %s\n",
 		getDSP()->pc,
-		registers_name[REG_X0+((cur_inst>>4) & BITMASK(2))],
+		registers_name[DSP_REG_X0+((cur_inst>>4) & BITMASK(2))],
 		registers_name[numreg],
 		parallelmove_name
 	);
@@ -2581,7 +2581,7 @@ static void dsp_lsl(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2596,7 +2596,7 @@ static void dsp_lsr(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2610,7 +2610,7 @@ static void dsp_lsr(void)
 static void dsp_mac(void)
 {
 	char *sign_name;
-	uint32 src1reg=REG_NULL, src2reg=REG_NULL, dstreg;
+	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
 		sign_name="-";
@@ -2620,47 +2620,47 @@ static void dsp_mac(void)
 	
 	switch((cur_inst>>4) & BITMASK(3)) {
 		case 0:
-			src1reg = REG_X0;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_X0;
+			src2reg = DSP_REG_X0;
 			break;
 		case 1:
-			src1reg = REG_Y0;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_Y0;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 2:
-			src1reg = REG_X1;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_X1;
+			src2reg = DSP_REG_X0;
 			break;
 		case 3:
-			src1reg = REG_Y1;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_Y1;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 4:
-			src1reg = REG_X0;
-			src2reg = REG_Y1;
+			src1reg = DSP_REG_X0;
+			src2reg = DSP_REG_Y1;
 			break;
 		case 5:
-			src1reg = REG_Y0;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_Y0;
+			src2reg = DSP_REG_X0;
 			break;
 		case 6:
-			src1reg = REG_X1;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_X1;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 7:
-			src1reg = REG_Y1;
-			src2reg = REG_X1;
+			src1reg = DSP_REG_Y1;
+			src2reg = DSP_REG_X1;
 			break;
 	}
 	dstreg = (cur_inst>>3) & 1;
 
-	registers_changed[REG_A+dstreg]=1;
+	registers_changed[DSP_REG_A+dstreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: mac %s%s,%s,%s %s\n",
 		getDSP()->pc,
 		sign_name,
 		registers_name[src1reg],
 		registers_name[src2reg],
-		registers_name[REG_A+dstreg],
+		registers_name[DSP_REG_A+dstreg],
 		parallelmove_name
 	);
 }
@@ -2668,7 +2668,7 @@ static void dsp_mac(void)
 static void dsp_macr(void)
 {
 	char *sign_name;
-	uint32 src1reg=REG_NULL, src2reg=REG_NULL, dstreg;
+	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
 		sign_name="-";
@@ -2678,47 +2678,47 @@ static void dsp_macr(void)
 	
 	switch((cur_inst>>4) & BITMASK(3)) {
 		case 0:
-			src1reg = REG_X0;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_X0;
+			src2reg = DSP_REG_X0;
 			break;
 		case 1:
-			src1reg = REG_Y0;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_Y0;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 2:
-			src1reg = REG_X1;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_X1;
+			src2reg = DSP_REG_X0;
 			break;
 		case 3:
-			src1reg = REG_Y1;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_Y1;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 4:
-			src1reg = REG_X0;
-			src2reg = REG_Y1;
+			src1reg = DSP_REG_X0;
+			src2reg = DSP_REG_Y1;
 			break;
 		case 5:
-			src1reg = REG_Y0;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_Y0;
+			src2reg = DSP_REG_X0;
 			break;
 		case 6:
-			src1reg = REG_X1;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_X1;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 7:
-			src1reg = REG_Y1;
-			src2reg = REG_X1;
+			src1reg = DSP_REG_Y1;
+			src2reg = DSP_REG_X1;
 			break;
 	}
 	dstreg = (cur_inst>>3) & 1;
 
-	registers_changed[REG_A+dstreg]=1;
+	registers_changed[DSP_REG_A+dstreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: macr %s%s,%s,%s %s\n",
 		getDSP()->pc,
 		sign_name,
 		registers_name[src1reg],
 		registers_name[src2reg],
-		registers_name[REG_A+dstreg],
+		registers_name[DSP_REG_A+dstreg],
 		parallelmove_name
 	);
 }
@@ -2737,7 +2737,7 @@ static void dsp_move_nopm(void)
 static void dsp_mpy(void)
 {
 	char *sign_name;
-	uint32 src1reg=REG_NULL, src2reg=REG_NULL, dstreg;
+	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
 		sign_name="-";
@@ -2747,47 +2747,47 @@ static void dsp_mpy(void)
 	
 	switch((cur_inst>>4) & BITMASK(3)) {
 		case 0:
-			src1reg = REG_X0;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_X0;
+			src2reg = DSP_REG_X0;
 			break;
 		case 1:
-			src1reg = REG_Y0;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_Y0;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 2:
-			src1reg = REG_X1;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_X1;
+			src2reg = DSP_REG_X0;
 			break;
 		case 3:
-			src1reg = REG_Y1;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_Y1;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 4:
-			src1reg = REG_X0;
-			src2reg = REG_Y1;
+			src1reg = DSP_REG_X0;
+			src2reg = DSP_REG_Y1;
 			break;
 		case 5:
-			src1reg = REG_Y0;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_Y0;
+			src2reg = DSP_REG_X0;
 			break;
 		case 6:
-			src1reg = REG_X1;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_X1;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 7:
-			src1reg = REG_Y1;
-			src2reg = REG_X1;
+			src1reg = DSP_REG_Y1;
+			src2reg = DSP_REG_X1;
 			break;
 	}
 	dstreg = (cur_inst>>3) & 1;
 
-	registers_changed[REG_A+dstreg]=1;
+	registers_changed[DSP_REG_A+dstreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: mpy %s%s,%s,%s %s\n",
 		getDSP()->pc,
 		sign_name,
 		registers_name[src1reg],
 		registers_name[src2reg],
-		registers_name[REG_A+dstreg],
+		registers_name[DSP_REG_A+dstreg],
 		parallelmove_name
 	);
 }
@@ -2795,7 +2795,7 @@ static void dsp_mpy(void)
 static void dsp_mpyr(void)
 {
 	char *sign_name;
-	uint32 src1reg=REG_NULL, src2reg=REG_NULL, dstreg;
+	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
 		sign_name="-";
@@ -2805,47 +2805,47 @@ static void dsp_mpyr(void)
 	
 	switch((cur_inst>>4) & BITMASK(3)) {
 		case 0:
-			src1reg = REG_X0;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_X0;
+			src2reg = DSP_REG_X0;
 			break;
 		case 1:
-			src1reg = REG_Y0;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_Y0;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 2:
-			src1reg = REG_X1;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_X1;
+			src2reg = DSP_REG_X0;
 			break;
 		case 3:
-			src1reg = REG_Y1;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_Y1;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 4:
-			src1reg = REG_X0;
-			src2reg = REG_Y1;
+			src1reg = DSP_REG_X0;
+			src2reg = DSP_REG_Y1;
 			break;
 		case 5:
-			src1reg = REG_Y0;
-			src2reg = REG_X0;
+			src1reg = DSP_REG_Y0;
+			src2reg = DSP_REG_X0;
 			break;
 		case 6:
-			src1reg = REG_X1;
-			src2reg = REG_Y0;
+			src1reg = DSP_REG_X1;
+			src2reg = DSP_REG_Y0;
 			break;
 		case 7:
-			src1reg = REG_Y1;
-			src2reg = REG_X1;
+			src1reg = DSP_REG_Y1;
+			src2reg = DSP_REG_X1;
 			break;
 	}
 	dstreg = (cur_inst>>3) & 1;
 
-	registers_changed[REG_A+dstreg]=1;
+	registers_changed[DSP_REG_A+dstreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: mpyr %s%s,%s,%s %s\n",
 		getDSP()->pc,
 		sign_name,
 		registers_name[src1reg],
 		registers_name[src2reg],
-		registers_name[REG_A+dstreg],
+		registers_name[DSP_REG_A+dstreg],
 		parallelmove_name
 	);
 }
@@ -2854,7 +2854,7 @@ static void dsp_neg(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2869,7 +2869,7 @@ static void dsp_not(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2884,13 +2884,13 @@ static void dsp_or(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
 	fprintf(stderr,"Dsp: 0x%04x: or %s,%s %s\n",
 		getDSP()->pc,
-		registers_name[REG_X0+((cur_inst>>4) & BITMASK(2))],
+		registers_name[DSP_REG_X0+((cur_inst>>4) & BITMASK(2))],
 		registers_name[numreg],
 		parallelmove_name
 	);
@@ -2900,7 +2900,7 @@ static void dsp_rnd(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2915,7 +2915,7 @@ static void dsp_rol(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2930,7 +2930,7 @@ static void dsp_ror(void)
 {
 	uint32 numreg;
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2952,7 +2952,7 @@ static void dsp_sbc(void)
 		srcname="x";
 	}
 
-	numreg = REG_A+((cur_inst>>3) & 1);
+	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
 	registers_changed[numreg]=1;
 
@@ -2975,7 +2975,7 @@ static void dsp_sub(void)
 	switch(srcreg) {
 		case 1:
 			srcreg = dstreg ^ 1;
-			srcname = registers_name[REG_A+srcreg];
+			srcname = registers_name[DSP_REG_A+srcreg];
 			break;
 		case 2:
 			srcname="x";
@@ -2983,10 +2983,10 @@ static void dsp_sub(void)
 		case 3:
 			srcname="y";
 			break;
-		case REG_X0:
-		case REG_X1:
-		case REG_Y0:
-		case REG_Y1:
+		case DSP_REG_X0:
+		case DSP_REG_X1:
+		case DSP_REG_Y0:
+		case DSP_REG_Y1:
 			srcname=registers_name[srcreg];
 			break;
 		default:
@@ -2994,11 +2994,11 @@ static void dsp_sub(void)
 			break;
 	}
 
-	registers_changed[REG_A+dstreg]=1;
+	registers_changed[DSP_REG_A+dstreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: sub %s,%s %s\n",
 		getDSP()->pc,
 		srcname,
-		registers_name[REG_A+dstreg],
+		registers_name[DSP_REG_A+dstreg],
 		parallelmove_name
 	);
 }
@@ -3009,11 +3009,11 @@ static void dsp_subl(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	registers_changed[REG_A+numreg]=1;
+	registers_changed[DSP_REG_A+numreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: subl %s,%s %s\n",
 		getDSP()->pc,
-		registers_name[REG_A+(numreg ^ 1)],
-		registers_name[REG_A+numreg],
+		registers_name[DSP_REG_A+(numreg ^ 1)],
+		registers_name[DSP_REG_A+numreg],
 		parallelmove_name
 	);
 }
@@ -3024,11 +3024,11 @@ static void dsp_subr(void)
 
 	numreg = (cur_inst>>3) & 1;
 
-	registers_changed[REG_A+numreg]=1;
+	registers_changed[DSP_REG_A+numreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: subr %s,%s %s\n",
 		getDSP()->pc,
-		registers_name[REG_A+(numreg ^ 1)],
-		registers_name[REG_A+numreg],
+		registers_name[DSP_REG_A+(numreg ^ 1)],
+		registers_name[DSP_REG_A+numreg],
 		parallelmove_name
 	);
 }
@@ -3041,14 +3041,14 @@ static void dsp_tfr(void)
 	dstreg = (cur_inst>>3) & 1;
 
 	if (srcreg==0) {
-		srcreg = REG_A+(dstreg ^ 1);
+		srcreg = DSP_REG_A+(dstreg ^ 1);
 	}
 
-	registers_changed[REG_A+dstreg]=1;
+	registers_changed[DSP_REG_A+dstreg]=1;
 	fprintf(stderr,"Dsp: 0x%04x: tfr %s,%s %s\n",
 		getDSP()->pc,
 		registers_name[srcreg],
-		registers_name[REG_A+dstreg],
+		registers_name[DSP_REG_A+dstreg],
 		parallelmove_name
 	);
 }
@@ -3057,7 +3057,7 @@ static void dsp_tst(void)
 {
 	fprintf(stderr,"Dsp: 0x%04x: tst %s %s\n",
 		getDSP()->pc,
-		registers_name[REG_A+((cur_inst>>3) & 1)],
+		registers_name[DSP_REG_A+((cur_inst>>3) & 1)],
 		parallelmove_name
 	);
 }
