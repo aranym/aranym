@@ -68,6 +68,8 @@ class device_image_t
       // written (count).
       virtual ssize_t write (const void* buf, size_t count) = 0;
 
+      virtual ~device_image_t() { }
+
       unsigned cylinders;
       unsigned heads;
       unsigned sectors;

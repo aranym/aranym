@@ -20,6 +20,7 @@ public:
 		virtual bool close() = 0;
 		virtual int recv(uint8 *buf, int len) = 0;
 		virtual int send(const uint8 *buf, int len) = 0;
+		virtual ~Handler() { }
 	};
 
 private:
