@@ -291,7 +291,7 @@ static void output_function(struct func *f)
     }
 }
 
-int main()
+int main(int argc, char **argv)
 {
     FILE *infile = stdin;
     char tmp[4096];

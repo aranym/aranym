@@ -5,6 +5,8 @@
 
 - cfgopts.cpp: made some functions static and don't link as C
 
+- uae_cpu/cpuopti.c: argc and argv are declared explicitly
+
 
 2005/09/20 - Johan
 - nfvdi.cpp: Made it possible to query ARAnyM about host mouse cursor.
