@@ -3,6 +3,8 @@
 
 - include/ata.h: virtual destructor
 
+- cfgopts.cpp: made some functions static and don't link as C
+
 
 2005/09/20 - Johan
 - nfvdi.cpp: Made it possible to query ARAnyM about host mouse cursor.

@@ -39,7 +39,7 @@
 /*	Please keep revision number current.							  */
 #define		  REVISION_NO "1.8.1"
 
-extern "C" {
+//extern "C" {
 
 #define ERROR	-1
 
@@ -83,7 +83,7 @@ extern "C" {
 #include <cstdlib>
 #include <cstring>
 
-char	*trim(char *buffer)
+static char	*trim(char *buffer)
 {
 #define	SPACE	' '
 #define	TABULA	'\t'
@@ -113,7 +113,7 @@ char	*trim(char *buffer)
 }
 
 
-char	*strip_comment(char *line)
+static char	*strip_comment(char *line)
 {
 #define	REM1	'#'
 #define REM2	';'
@@ -151,7 +151,7 @@ char	*strip_comment(char *line)
 /	  char *dest			  ; Destination file name
 /	  char *source			  ; Source file name
 /-------------------------------------------------------------------<<*/
-long fcopy(const char *dest, const char *source)
+static long fcopy(const char *dest, const char *source)
 {
 	FILE * d, *s;
 	char	*buffer;
@@ -610,5 +610,5 @@ int	main(int argc, char *argv[])
 
 #endif
 
-} // extern "C"
+//} // extern "C"
 
