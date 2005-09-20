@@ -93,10 +93,14 @@ int32 VdiDriver::dispatch(uint32 fncode)
 
 	if (fncode == FVDI_EVENT) {
 	    memptr array = getParameter(0);
-	    if (!array) {
+	    switch((int)array) {
+	    case 0:
+		return bx_options.nfvdi.use_host_mouse_cursor;
+	    case 1:
 		new_event = buttons = wheel = vblank = 0;
 		events = 1;
-	    } else {
+		break;
+	    default:
 		int n = 0;
 		if (new_event & 1) {
 		    WriteInt32(array + n++ * 4, 2);
@@ -118,6 +122,7 @@ int32 VdiDriver::dispatch(uint32 fncode)
 		if (n < 8)
 		    WriteInt32(array + n * 4, 0);
 		new_event = wheel = vblank = 0;
+		break;
 	    }
 	    return 1;
 	}

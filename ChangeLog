@@ -1,3 +1,6 @@
+2005/09/20 - Johan
+- nfvdi.cpp: Made it possible to query ARAnyM about host mouse cursor.
+
 2005/09/19 - Patrice
 - Add DSP_ prefix to some definitions.
 
