@@ -435,7 +435,11 @@ static int open_gui(void * /*ptr*/)
 
 bool start_GUI_thread()
 {
-	if (isGuiAvailable && !hostScreen.isGUIopen() && !bx_options.opengl.enabled) {
+	if (isGuiAvailable && !hostScreen.isGUIopen()
+#ifdef ENABLE_OPENGL
+		&& !bx_options.opengl.enabled
+#endif
+	) {
 		GUIthread = SDL_CreateThread(open_gui, NULL);
 	}
 	return (GUIthread != NULL);
