@@ -26,7 +26,7 @@
 /* if you change anything in the enum {} below you have to increase
    this HOSTFS_NFAPI_VERSION!
 */
-#define HOSTFS_NFAPI_VERSION    03
+#define HOSTFS_NFAPI_VERSION    04
 
 enum {
 	GET_VERSION = 0,	/* subID = 0 */
@@ -40,7 +40,9 @@ enum {
 	XFS_RELEASE, XFS_DUPCOOKIE, XFS_SYNC, XFS_MKNOD, XFS_UNMOUNT,
 	/* hostfs_dev */
 	DEV_OPEN, DEV_WRITE, DEV_READ, DEV_LSEEK, DEV_IOCTL, DEV_DATIME,
-	DEV_CLOSE, DEV_SELECT, DEV_UNSELECT
+	DEV_CLOSE, DEV_SELECT, DEV_UNSELECT,
+	/* new from 0.04 */
+	XFS_STAT64
 };
 
 extern unsigned long nfHostFsId;

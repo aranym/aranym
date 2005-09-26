@@ -29,10 +29,7 @@
 #include "nf_base.h"
 #include "tools.h"
 
-#define DEBUG 0
-#include "debug.h"
-
-# include <map>
+#include <map>
 
 class HostFs : public NF_Base
 {
@@ -110,11 +107,10 @@ class HostFs : public NF_Base
 		NativeTypeMapper<int> fdMapper;
 	#endif
 
-	#if DEBUG
-		void debugCookie( HostFs::XfsCookie *fc );
-	#endif
+	void debugCookie( HostFs::XfsCookie *fc );
+
   private:
-    void freeMounts();
+	void freeMounts();
 
   public:
 	HostFs();
@@ -166,8 +162,10 @@ class HostFs : public NF_Base
 
 	char *cookie2Pathname( ExtDrive *drv, XfsFsFile *fs, const char *name, char *buf );
 	char *cookie2Pathname( XfsCookie *fc, const char *name, char *buf );
-	char *host_readlink(const char *pathname, char *target, int len );
-	DIR  *host_opendir( const char *name );
+	int32 host_stat64  ( XfsCookie *fc, const char *pathname, struct stat *statbuf );
+	int32 host_statvfs ( const char *fpathName, void *buff );
+	char *host_readlink( const char *pathname, char *target, int len );
+	DIR  *host_opendir(  const char *name );
 	ExtDrive *findDrive( XfsCookie *dir, char *pathname );
 
 	void xfs_freefs( XfsFsFile *fs );
@@ -180,6 +178,7 @@ class HostFs : public NF_Base
 	int32 xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook );
 	int32 xfs_release( XfsCookie *fc );
 	int32 xfs_getxattr( XfsCookie *fc, memptr xattrp );
+	int32 xfs_stat64( XfsCookie *fc, memptr statp );
 	int32 xfs_chattr( XfsCookie *fc, int16 attr );
 	int32 xfs_chmod( XfsCookie *fc, uint16 mode );
 	int32 xfs_getdev( XfsCookie *fc, memptr devspecial );
@@ -195,12 +194,13 @@ class HostFs : public NF_Base
 	int32 xfs_rewinddir( XfsDir *dirh );
 	int32 xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode );
 	int32 xfs_rmdir( XfsCookie *dir, memptr name );
-	int32 xfs_readlink( XfsCookie *dir, memptr buf, int16 len );
-	int32 xfs_dfree( XfsCookie *dir, memptr buf );
+	int32 xfs_readlink( XfsCookie *dir, memptr buff, int16 len );
+	int32 xfs_dfree( XfsCookie *dir, memptr buff );
 	int32 xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname );
 
 	int32 xfs_dev_open(ExtFile *fp);
 	int32 xfs_dev_close(ExtFile *fp, int16 pid);
+	int32 xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff);
 	int32 xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag);
 	int32 xfs_dev_read( ExtFile *fp, memptr buffer, uint32 count);
 	int32 xfs_dev_write(ExtFile *fp, memptr buffer, uint32 count);
