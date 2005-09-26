@@ -33,6 +33,7 @@
 #define TOS_EPTHNF  -34 /* Path not found */
 #define TOS_ENHNDL  -35 /* Handle pool exhausted */
 #define TOS_EACCDN  -36 /* Access denied */
+#define TOS_EACCES TOS_EACCDN
 #define TOS_EIHNDL  -37 /* Invalid handle */
 #define TOS_ENSMEM  -39 /* Insufficient memory */
 #define TOS_EIMBA   -40 /* Invalid memory block address */
