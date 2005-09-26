@@ -1,3 +1,31 @@
+2005/09/26 - STanda
+- atari/hostfs/metados: warnings removed
+
+- atari/hostfs: Cleaned up the m68k part so that the Dcntl() is now used
+    to mount filesystems (which only works as expected in FreeMiNT
+    kernels 1.16.x since Apr 10 2003).
+
+  . Added the FS_NOXBIT filesystem flag back so that whatever is readable
+    is also executable from the kernel point of view (not x permission
+    is visible though on the files).
+
+  . NF API extended (the version is 0.4 now): You will need to use older
+    aranym build to update the drivers and after that boot using the 
+    CVS aranym binary to be able to mount drives properly.
+
+- hostfs.(h|cpp):
+  . The FS_EXT_3 xfs_stat64() and Dcntl(FUTIME_UTC) added to
+    speed the mintlib stat() and utime() calls.
+
+  . Dcntl() /xfs_fscntl()/ implementation extended:
+    * FS_INFO and FS_USAGE implemented (makes fsetter.app be able to
+      show filesystem information).
+    * FTRUNCATE implemented (needed for mintlib's truncate() and
+      ftruncate()).
+
+  . ioctl(FIONREAD/FIONWRITE/FIOEXCEPT) initial implementation.
+
+
 2005/09/21 - Patrice
 - input.cpp: Don't check for OpenGL enabled if not compiled in.
 
