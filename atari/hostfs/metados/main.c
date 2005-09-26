@@ -143,10 +143,12 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 	aranym_fs.root( dosDevID | 0x6000, &curproc->p_cwd->root[dosDevID] );
 
+#ifdef DEBUG_INFO
 	{
 		fcookie *relto = &curproc->p_cwd->root[dosDevID];
 		DEBUG (("InitDevice: root (%08lx, %08lx, %04x)", relto->fs, relto->index, relto->dev));
 	}
+#endif
 
 	return &ldp;
 }
@@ -155,6 +157,10 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 /**
  * $Log$
+ * Revision 1.8  2004/05/07 11:31:07  standa
+ * The BDhf cookie is not used in MagiC or MiNT because it was causing
+ * ARAnyM to crash.
+ *
  * Revision 1.7  2004/04/26 07:14:04  standa
  * Adjusted to the recent FreeMiNT CVS state to compile and also made
  * BetaDOS only. No more MetaDOS compatibility attempts.

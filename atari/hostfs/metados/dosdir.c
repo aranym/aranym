@@ -43,15 +43,16 @@ sys_d_free (MetaDOSDir long *buf, int d)
 {
     PROC *p = curproc;
     fcookie *dir = 0;
-    FILESYS *fs;
-    fcookie root;
-    long r;
 
 #ifdef ARAnyM_MetaDOS
     d = (int)tolower(pathNameMD[0])-'a';
     dir = &p->p_cwd->root[d];
     TRACE(("Dfree(%d)", d));
 #else
+    FILESYS *fs;
+    fcookie root;
+    long r;
+
     TRACE(("Dfree(%d)", d));
     assert (p->p_fd && p->p_cwd);
 
@@ -182,8 +183,6 @@ sys_d_delete (MetaDOSDir const char *path)
 
     fcookie parentdir, targdir;
     long r;
-    PROC *p;
-    int i;
     XATTR xattr;
     char temp1[PATH_MAX];
     ushort mode;
@@ -251,6 +250,9 @@ sys_d_delete (MetaDOSDir const char *path)
     else
     {
 #ifndef ARAnyM_MetaDOS
+        PROC *p;
+        int i;
+
         /* don't delete anyone else's root or current directory */
         for (p = proclist; p; p = p->gl_next)
         {
@@ -1297,13 +1299,12 @@ sys_d_readlabel (MetaDOSDir const char *name, char *buf, int buflen)
 long _cdecl
 sys_d_writelabel (MetaDOSDir const char *name, const char *label)
 {
-    PROC *p = curproc;
-    struct ucred *cred = p->p_cred->ucr;
-
     fcookie dir;
     long r;
 
 #ifndef ARAnyM_MetaDOS
+    PROC *p = curproc;
+    struct ucred *cred = p->p_cred->ucr;
 
     /* Draco: in secure mode only superuser can write labels
      */

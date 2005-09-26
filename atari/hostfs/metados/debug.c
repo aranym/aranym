@@ -473,6 +473,7 @@ FATAL (const char *s, ...)
 EXITING
 halt (void)
 {
+#ifndef ARAnyM_MetaDOS
     long r;
     long key;
     int scan;
@@ -480,7 +481,6 @@ halt (void)
     DEBUG (("halt() called, system halting...\r\n"));
     debug_ws ("MSG_system_halted");
 
-#ifndef ARAnyM_MetaDOS
     sys_q[READY_Q] = 0; /* prevent context switches */
     restr_intr();       /* restore interrupts to normal */
 
@@ -518,6 +518,7 @@ halt (void)
 EXITING
 HALT (void)
 {
+#ifndef ARAnyM_MetaDOS
     long r;
     long key;
     int scan;
@@ -525,7 +526,6 @@ HALT (void)
     DEBUG (("Fatal MiNT error: adjust debug level and hit a key...\r\n"));
     debug_ws ("MSG_fatal_reboot");
 
-#ifndef ARAnyM_MetaDOS
     sys_q[READY_Q] = 0; /* prevent context switches */
     restr_intr ();      /* restore interrupts to normal */
 

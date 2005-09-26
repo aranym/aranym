@@ -48,7 +48,9 @@ sys_f_open (MetaDOSFile const char *name, short mode)
 	PROC *p = curproc;
 	FILEPTR *fp = NULL;
 	short fd = MIN_OPEN - 1;
+# if O_GLOBAL
 	int global = 0;
+#endif
 	long ret;
 
 	TRACE (("Fopen(%s, %x)", name, mode));

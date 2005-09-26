@@ -80,7 +80,7 @@ long do_dup (short fd, short min);
 
 # define FP_GET(p, fd, fp)           *(fp) = fpMD
 # define FP_GET1(p, fd, fp)          *(fp) = fpMD
-# define GETFILEPTR(p, fd, fp)       0; *(fp) = fpMD
+# define GETFILEPTR(p, fd, fp)       0; (void)p; *(fp) = fpMD
 
 /** from k_prot.h **/
 # define groupmember( cred, gid ) 1
