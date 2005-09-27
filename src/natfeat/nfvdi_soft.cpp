@@ -23,6 +23,7 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "parameters.h"
+#include "host.h"
 #include "hostscreen.h"
 #include "nfvdi.h"
 #include "nfvdi_soft.h"
@@ -44,8 +45,6 @@ static const uint8 tos_colours[] = { 0,255,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
 /*--- Types ---*/
 
 /*--- Variables ---*/
-
-extern HostScreen hostScreen;
 
 /*--- Public functions ---*/
 
@@ -1429,6 +1428,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.14  2005/08/29 17:03:07  pmandin
+ * nfvdi: Make host mouse cursor usage configurable
+ *
  * Revision 1.13  2005/08/05 08:55:29  johan
  * Support for accelerated text drawing.
  *

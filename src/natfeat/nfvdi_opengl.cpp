@@ -21,6 +21,7 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "parameters.h"
+#include "host.h"
 #include "hostscreen.h"
 #include "nfvdi.h"
 #include "nfvdi_opengl.h"
@@ -46,8 +47,6 @@ static const GLenum logicOps[16]={
 /*--- Types ---*/
 
 /*--- Variables ---*/
-
-extern HostScreen hostScreen;
 
 /*--- Public functions ---*/
 

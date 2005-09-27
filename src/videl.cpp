@@ -33,6 +33,7 @@
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
+#include "host.h"
 #include "hostscreen.h"
 #include "videl.h"
 #include "hardware.h"
@@ -40,9 +41,6 @@
 
 #define DEBUG 0
 #include "debug.h"
-
-// from host.cpp
-extern HostScreen hostScreen;
 
 #define HW	getHWoffset()
 #define VIDEL_COLOR_REGS_BEGIN	0xff9800

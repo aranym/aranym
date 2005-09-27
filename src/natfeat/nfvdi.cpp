@@ -26,6 +26,7 @@
 #include "parameters.h"
 #include "nfvdi.h"
 #include "../../atari/fvdi/drivers/aranym/fvdidrv_nfapi.h"
+#include "host.h"
 #include "hostscreen.h"
 
 #include "cpu_emulation.h"
@@ -40,8 +41,6 @@
 /*--- Types ---*/
 
 /*--- Variables ---*/
-
-extern HostScreen hostScreen;
 
 /*--- Public functions ---*/
 
