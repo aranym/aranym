@@ -23,6 +23,8 @@
 
 /*--- Includes ---*/
 
+#include <SDL.h>
+
 #include "nf_base.h"
 #include "parameters.h"
 
