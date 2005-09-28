@@ -99,6 +99,7 @@ void InputInit()
 
 void InputReset()
 {
+	// FIXME: add? InputInit();
 	// FIXME: how??? capslockState (detect)
 	capslockState = (SDL_GetModState() & KMOD_CAPS) != 0;
 }
@@ -576,10 +577,11 @@ static void process_keyboard_event(SDL_Event &event)
 		send2Atari = false;
 	}
 
+
 	// send all pressed keys to IKBD
 	if (send2Atari) {
 		int scanAtari = keysymToAtari(keysym);
-		D(bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = '%s' ($%02x)", keysym.scancode, keysym.scancode, scanAtari, scanAtari, SDL_GetKeyName(sym), sym));
+		D(bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = '%s' ($%02x)", keysym.scancode, keysym.scancode, pressed ? scanAtari : scanAtari|0x80, pressed ? scanAtari : scanAtari|0x80, SDL_GetKeyName(sym), sym));
 		if (scanAtari > 0) {
 			if (!pressed)
 				scanAtari |= 0x80;
