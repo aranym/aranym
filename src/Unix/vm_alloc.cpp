@@ -33,6 +33,11 @@
 #include <windows.h>
 #endif
 
+#ifdef HAVE_FCNTL_H
+/* for O_RDWR - RedHat FC2 need this */
+#include <fcntl.h>
+#endif
+
 #ifdef HAVE_MACH_VM
 #ifndef HAVE_MACH_TASK_SELF
 #ifdef HAVE_TASK_SELF
