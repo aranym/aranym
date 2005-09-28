@@ -35,7 +35,7 @@
 
 #undef  DEBUG_FILENAMETRANSFORMATION
 #undef DEBUG
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #if 0
@@ -668,12 +668,12 @@ int HostFs::flagsMint2Host(uint16 flags)
 	int res = O_RDONLY;
 
 	/* exclusive */
-	if (!(flags & 0x3))
-		res = O_RDONLY;
 	if (flags & 0x1)
 		res = O_WRONLY;
 	if (flags & 0x2)
 		res = O_RDWR;
+	if ((flags & 0x3) == 0x3) /* FreeMiNT kernel O_EXEC */
+		res = O_RDONLY;
 
 	if (flags & 0x200)
 		res |= O_CREAT;
