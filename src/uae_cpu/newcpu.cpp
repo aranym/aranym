@@ -97,6 +97,7 @@ struct rec_step {
 	uae_u16 sr;
 	uae_u32 msp;
 	uae_u32 isp;
+	uae_u16 instr;
 };
 
 bool cpu_flight_recorder_active = false;
@@ -143,6 +144,11 @@ void m68k_record_step(uaecptr pc)
 	log[log_ptr].sr = regs.sr;
 	log[log_ptr].msp = regs.msp;
 	log[log_ptr].isp = regs.isp;
+	TRY(prb) {
+		log[log_ptr].instr = GET_OPCODE;
+	} CATCH(prb) {
+		log[log_ptr].instr = M68K_EMUL_OP_MAX;
+	}
 	log_ptr = (log_ptr + 1) % LOG_SIZE;
 }
 
@@ -158,6 +164,7 @@ static void dump_log(void)
 		fprintf(f, "d4 %08x d5 %08x d6 %08x d7 %08x\n", log[j].d[4], log[j].d[5], log[j].d[6], log[j].d[7]);
 		fprintf(f, "a0 %08x a1 %08x a2 %08x a3 %08x\n", log[j].a[0], log[j].a[1], log[j].a[2], log[j].a[3]);
 		fprintf(f, "a4 %08x a5 %08x a6 %08x a7 %08x\n", log[j].a[4], log[j].a[5], log[j].a[6], log[j].a[7]);
+		fprintf(f, "instr: %04x\n", log[j].instr);
 #if ENABLE_MON
 		disass_68k(f, log[j].pc);
 #endif

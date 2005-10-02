@@ -1,3 +1,7 @@
+2005/10/01 - milan
+- uae_cpu/newcpu.cpp: flight recorder stores the 1st word of instruction
+
+
 2005/09/27 - Patrice
 - various places: include "host.h" instead of redefining hostScreen extern.
 
