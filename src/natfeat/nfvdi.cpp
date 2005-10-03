@@ -279,6 +279,7 @@ VdiDriver::VdiDriver()
 	index_count = crossing_count = point_count = 0;
 	alloc_index = alloc_crossing = alloc_point = NULL;
 	cursor = NULL;
+	Mouse.storage.x = Mouse.storage.y = Mouse.storage.width = Mouse.storage.height = 0;
 	events = 0;
 }
 
@@ -656,6 +657,8 @@ int32 VdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	DUNUSED(fgColor);
 	DUNUSED(bgColor);
 	DUNUSED(mouse_type);
+
+	D(bug("VdiDriver::drawMouse(): x,y = [%ld,%ld] mode=%ld", x, y, mode));
 
 	switch (mode) {
 		case 0:
