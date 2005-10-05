@@ -1,3 +1,8 @@
+2005/10/05 - joy & STanda
+- input.cpp: the Alt Gr key might be reported as SDLK_MODE, not SDLK_RALT.
+  Fixed. Now Alt Gr works for more people :-)
+
+
 2005/10/01 - milan
 - uae_cpu/newcpu.cpp: flight recorder stores the 1st word of instruction
 
