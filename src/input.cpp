@@ -189,6 +189,7 @@ static int keysymToAtari(SDL_keysym keysym)
 	  case SDLK_LCTRL:
 	    return 0x1D;
 		break;
+	  case SDLK_MODE: /* passthru */ /* Alt Gr key according to SDL docs */
 	  case SDLK_RALT:
 		return RALT_ATARI_SCANCODE;
 	  case SDLK_LALT:
@@ -253,7 +254,7 @@ static int keysymToAtari(SDL_keysym keysym)
 {
  
 	int sym = keysym.sym;
-	if (sym == SDLK_RALT)
+	if (sym == SDLK_RALT || sym == SDLK_MODE /* Alt Gr */)
 		return RALT_ATARI_SCANCODE;
 	// map right Control key to the left one
 	if (sym == SDLK_RCTRL)
@@ -377,8 +378,8 @@ static int keysymToAtari(SDL_keysym keysym)
 
 		// keys not found on original Atari keyboard
 		case SDLK_RCTRL:	return 0x1d;	/* map right Control to Atari control */
+		case SDLK_MODE: /* passthru */ /* Alt Gr key according to SDL docs */
 		case SDLK_RALT:		return RALT_ATARI_SCANCODE;
-		case SDLK_MODE:		return 0;	// unknown key
 
 		default:
 		{
