@@ -127,6 +127,7 @@ extern "C" {
 	
 	static void audio_callback(void *userdata, uint8 * stream, int len)
 	{
+		DUNUSED(userdata);
 		Uint8 *dest;
 		int dest_len, trigger_interrupt;
 

@@ -36,6 +36,7 @@
 
 static void mmu_dump_ttr(const char * label, uae_u32 ttr)
 {
+	DUNUSED(label);
 	uae_u32 from_addr, to_addr;
 
 	from_addr = ttr & MMU_TTR_LOGICAL_BASE;
@@ -110,6 +111,7 @@ static int atc_last_hit = -1;
 /* {{{ mmu_dump_table */
 static void mmu_dump_table(const char * label, uaecptr root_ptr)
 {
+	DUNUSED(label);
 	const int ROOT_TABLE_SIZE = 128,
 		PTR_TABLE_SIZE = 128,
 		PAGE_TABLE_SIZE = 64,

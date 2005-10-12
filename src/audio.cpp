@@ -40,6 +40,7 @@ AUDIO	*audio;
 
 extern "C" {
 	static void UpdateAudio(void *unused, Uint8 *stream, int len) {
+		DUNUSED(unused);
 		for (int i=0; i<audio->num_callbacks; i++) {
 			if (audio->callbacks[i]) {
 				audio->callbacks[i](audio->userdatas[i], stream, len);
