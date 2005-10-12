@@ -10,6 +10,8 @@ Fix bugs:
 - improve the whole mouse grab/ungrab - auto grab could grab mouse
   automagically when it enters aranym window only if the window is on top
 - correct postal address of GPL
+- Disk mngmt: when new disk is inserted by clicking on PATH enable the "Insert"
+  automatically.
 
 TODO generally:
 - configurable insertion of floppy on bootup (perhaps also IDE CD?)
