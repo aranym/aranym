@@ -43,6 +43,7 @@
 # include "compiler/compemu.h"
 #endif
 #include "fpu/fpu.h"
+#include "natfeats.h"
 
 #include <cstdlib>
 

@@ -32,7 +32,6 @@
 
 #include "sysdeps.h"
 #include "memory.h"
-#include "natfeats.h"
 #include "tools.h"
 
 // RAM and ROM pointers (allocated and set by main_*.cpp)
