@@ -342,7 +342,7 @@ bool ACSIFDC::read_file(int device, long offset, memptr address, int secsize, in
 	uint8 buffer[secsize];
 	for(int i=0; i<count; i++) {
 		if (::read(device, buffer, secsize) != secsize) return false;
-		Host2Atari_memcpy(address, buffer, secsize);
+		memcpy(Atari2HostAddr(address), buffer, secsize);
 		address += secsize;
 	}
 	return true;
@@ -353,7 +353,7 @@ bool ACSIFDC::write_file(int device, long offset, memptr address, int secsize, i
 	if (lseek(device, offset, SEEK_SET) < 0) return false;
 	uint8 buffer[secsize];
 	for(int i=0; i<count; i++) {
-		Atari2Host_memcpy(buffer, address, secsize);
+		memcpy(buffer, Atari2HostAddr(address), secsize);
 		address += secsize;
 		if (::write(device, buffer, secsize) != secsize) return false;
 	}
