@@ -149,7 +149,7 @@ AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card e
 
 AC_ARG_ENABLE(purec,           [  --enable-purec          enable corrupted stack format (default=no)], [WANT_PUREC=$enableval], [WANT_PUREC=no])
 
-AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable use of C++ exceptions instead of setjmp/longjmp (default=yes)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
+AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable use of C++ exceptions instead of setjmp/longjmp (default=no)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=no])
 
 dnl Target OS type (target is host if not cross-compiling).
 case "$target_os" in
