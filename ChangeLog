@@ -1,3 +1,13 @@
+2005/10/13 - joy (& Standa :-)
+- natfeat/ethernet.{cpp,h}: wildly modified to allow handling more 
+  ethernet devices at once.
+
+- atari/network/ethernet/ethernet_nfapi: NFAPI version increased (XIF_IRQ is
+  handled differently now to allow for more ethernet devices)
+
+- atari/network/linux-m68k/*: linux-m68k kernel driver for our NF Ethernet
+
+
 2005/10/12 - joy
 - acsifdc.cpp: Atari2Host_memcpy() replaced with plain memcpy(). Previous
   code was incorrect because real ACSI DMA doesn't respect MMU.
