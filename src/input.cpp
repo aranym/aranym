@@ -32,7 +32,6 @@
 #  include "sdlgui.h"
 #endif
 
-#include "natfeats.h"
 #include "nf_objs.h"
 #include "nfvdi.h"
 
