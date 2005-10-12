@@ -33,6 +33,7 @@
 #include "sysdeps.h"
 #include "memory.h"
 #include "natfeats.h"
+#include "tools.h"
 
 // RAM and ROM pointers (allocated and set by main_*.cpp)
 extern memptr RAMBase;		// RAM base (Atari address space), does not include Low Mem when != 0
@@ -136,7 +137,7 @@ static inline bool ValidAddr(memptr addr, bool write, uint32 len) { return valid
 static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
 
 // should NatFeats work with physical (not MMU mapped) addresses
-#define NATFEAT_PHYS_ADDR	0
+#define NATFEAT_PHYS_ADDR	1
 
 #if NATFEAT_PHYS_ADDR
 #  define ReadNFInt8	ReadAtariInt8
@@ -179,7 +180,7 @@ static inline void Host2Atari_memcpy(memptr dest, const void *src, size_t n)
 static inline void Atari2HostSafeStrncpy( char *dest, memptr source, size_t count )
 {
 #if NATFEAT_PHYS_ADDR
-	safe_strncpy(dest, Atari2HostAddr(source), count);
+	safe_strncpy(dest, (const char*)Atari2HostAddr(source), count);
 #else
 	while ( count > 1 && (*dest = (char)ReadInt8( source++ )) != 0 ) {
 		count--;
@@ -193,7 +194,7 @@ static inline void Atari2HostSafeStrncpy( char *dest, memptr source, size_t coun
 static inline void Host2AtariSafeStrncpy( memptr dest, char *source, size_t count )
 {
 #if NATFEAT_PHYS_ADDR
-	safe_strncpy(Atari2HostAddr(dest), source, count);
+	safe_strncpy((char *)Atari2HostAddr(dest), source, count);
 #else
 	while ( count > 1 && *source ) {
 		WriteInt8( dest++, (uint8)*source++ );
