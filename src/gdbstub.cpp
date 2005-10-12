@@ -390,14 +390,12 @@ int gdbstub::access_linear(memptr laddress,
        return(0);
      }
    
-   if (write)
-     {
-       valid = Host2Atari_memcpy(phys, data, len);
-     }
-   else
-     {
-       valid = Atari2Host_memcpy(data, phys, len);
-     }
+   while(len--) {
+	if (write)
+		WriteInt8(phys++, *data++);
+	else
+		*data++ = ReadInt8(phys++);
+   }
    return(valid);
 }
 
@@ -830,3 +828,4 @@ int gdbstub::init(int portn)
    debug_loop();
    return 0;
 }
+
