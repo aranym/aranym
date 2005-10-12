@@ -91,6 +91,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			break;
 
 		case XIF_IRQ: // interrupt raised by native side thread polling tap0 interface
+			{
 			int dev_bit = getParameter(0);
 			if (dev_bit == 0) {
 				// dev_bit = 0 means "tell me what devices want me to serve their interrupts"
@@ -119,6 +120,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				// Acknowledge interrupt to reception thread
 				SDL_SemPost(handler->intAck);
 				ret = 0;
+			}
 			}
 			break;
 
@@ -288,7 +290,7 @@ void ETHERNETDriver::reset()
 	init();
 }
 
-Handler *ETHERNETDriver::getHandler(int ethX)
+ETHERNETDriver::Handler *ETHERNETDriver::getHandler(int ethX)
 {
 	if (ethX >= 0 && ethX < MAX_ETH)
 		return handlers[ethX];
