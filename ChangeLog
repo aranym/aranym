@@ -1,3 +1,21 @@
+2005/10/12 - joy
+- acsifdc.cpp: Atari2Host_memcpy() replaced with plain memcpy(). Previous
+  code was incorrect because real ACSI DMA doesn't respect MMU.
+
+- uae_cpu/cpu_emulation.h: Atari2Host_*/Host2Atari_* functions modified
+  to allow easy switching between MMU aware/ignoring NatFeats.
+
+  NatFeats switched to non-MMU mode. This makes it incompatible
+  with the NatFeat patch for linux-m68k kernel published in August.
+
+- include/version.h: version number changed to warn linux-m68k users
+  that available aranym linux kernel will not work with this aranym.
+
+- gui-sdl/sdlgui.cpp: MIN() defined by including #tools.h
+
+- NF based functions moved from cpu_emulation.h to natfeats.h
+
+
 2005/10/05 - joy & STanda
 - input.cpp: the Alt Gr key might be reported as SDLK_MODE, not SDLK_RALT.
   Fixed. Now Alt Gr works for more people :-)
