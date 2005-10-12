@@ -1,7 +1,7 @@
 /**
  * Ethernet driver
  *
- * Stan (c) 2002
+ * Standa, Petr (c) 2002-2005
  *
  * GPL
  */
@@ -11,20 +11,35 @@
 
 #include "nf_base.h"
 
+#define MAX_ETH		4
+#define MAX_PACKET_SIZE	1514
+
 class ETHERNETDriver : public NF_Base
 {
 public:
 	class Handler {
 	public:
-		virtual bool open( const char *mode ) = 0;
-		virtual bool close() = 0;
-		virtual int recv(uint8 *buf, int len) = 0;
-		virtual int send(const uint8 *buf, int len) = 0;
+		ssize_t packet_length;
+		uint8 packet[MAX_PACKET_SIZE+2];
+		SDL_Thread *handlingThread;	// Packet reception thread
+		SDL_sem *intAck;			// Interrupt acknowledge semaphore
+
+		Handler() {
+			packet_length = 0;
+			handlingThread = NULL;
+			intAck = NULL;
+		}
+
+		virtual bool open( const char * ) { return false; }
+		virtual bool close() { return false; }
+		virtual int recv(uint8 *, int) { return 0; }
+		virtual int send(const uint8 *, int) { return 0; }
 		virtual ~Handler() { }
 	};
 
 private:
-	Handler *handler;
+	Handler *handlers[MAX_ETH];
+	Handler *getHandler(int ethX);
 
 	int32 readPacketLength(int ethX);
 	void readPacket(int ethX, memptr buffer, uint32 len);
@@ -52,3 +67,7 @@ public:
 };
 
 #endif // _ETHERNET_H
+
+/*
+vim:ts=4:sw=4:
+*/

@@ -1,7 +1,7 @@
 /**
  * Ethernet Card Emulation
  *
- * Standa and Joy of ARAnyM team (c) 2004 
+ * Standa and Joy of ARAnyM team (c) 2002-2005
  *
  * GPL
  */
@@ -44,21 +44,12 @@
  * Configuration zone ends
  **************************/
 
-#define MAX_PACKET_SIZE	1514
-
-static ssize_t packet_length;
-static uint8 packet[MAX_PACKET_SIZE+2];
-
-// Global variables
-static SDL_Thread *handlingThread;			// Packet reception thread
-static SDL_sem *intAck;					// Interrupt acknowledge semaphore
-
 int32 ETHERNETDriver::dispatch(uint32 fncode)
 {
 	D(bug("Ethernet: Dispatch %d", fncode));
 
 	// If disabled then do nothing (the initialization didn't went through)
-	if ( !handler ) return 0;
+	//// FIXME if ( !handler ) return 0;
 
 	int32 ret = 0;
 	switch(fncode) {
@@ -77,7 +68,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			{
 				int ethX = getParameter(0);
 				// TODO: make sure ethX is defined in ARAnyM configuration
-				if (ethX != 0) { // TODO, currently hacked to allow ETH0 only
+				if (ethX != 0 && ethX != 1) { // TODO, currently hacked to allow ETH0/1 only
 					ret = 0; // return FALSE if ethX not defined
 					break;
 				}
@@ -100,16 +91,37 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			break;
 
 		case XIF_IRQ: // interrupt raised by native side thread polling tap0 interface
-			if ( !getParameter(0) ) {
-				D(bug("Ethernet: /IRQ"));
-				// Acknowledge interrupt to reception thread
-				SDL_SemPost(intAck);
-			} else {
-				D(bug("Ethernet: IRQ"));
-				ret = 0;	/* ethX requested the interrupt */
+			int dev_bit = getParameter(0);
+			if (dev_bit == 0) {
+				// dev_bit = 0 means "tell me what devices want me to serve their interrupts"
+				ret = 1;	/* eth0 requested the interrupt */
+//				ret = 2;	/* eth1 requested the interrupt */
+//				ret = 4;	/* eth2 requested the interrupt */
+//				ret = 8;	/* eth3 requested the interrupt */
 			}
+			else {
+				// otherwise the set bit means "I'm acknowledging this device's interrupt"
+				int ethX = -1;
+				switch(dev_bit) {
+					case 0x01: ethX = 0; break;
+					case 0x02: ethX = 1; break;
+					case 0x04: ethX = 2; break;
+					case 0x08: ethX = 3; break;
+					default: panicbug("Ethernet: wrong XIF_IRQ(%d)", dev_bit); break;
+				}
 
+				Handler *handler = getHandler(ethX);
+				if (handler == NULL) {
+					panicbug("Ethernet: handler for %d not found", ethX);
+					return 0;
+				}
+				D(bug("Ethernet: ETH%d IRQ acknowledged", ethX));
+				// Acknowledge interrupt to reception thread
+				SDL_SemPost(handler->intAck);
+				ret = 0;
+			}
 			break;
+
 		case XIF_START:
 			startThread( getParameter(0) /* ethX */);
 			break;
@@ -149,9 +161,8 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 int ETHERNETDriver::get_params(GET_PAR which)
 {
-	DUNUSED(which);
 	int ethX = getParameter(0);
-	DUNUSED(ethX);
+	DUNUSED(ethX); // FIXME
 	memptr name_ptr = getParameter(1);
 	uint32 name_maxlen = getParameter(2);
 	char *text = NULL;
@@ -176,8 +187,12 @@ int ETHERNETDriver::get_params(GET_PAR which)
 
 int32 ETHERNETDriver::readPacketLength(int ethX)
 {
-	DUNUSED(ethX);
-	return packet_length; /* packet_length[ethX] */
+	Handler *handler = getHandler(ethX);
+	if (handler == NULL) {
+		panicbug("Ethernet: handler for %d not found", ethX);
+		return 0;
+	}
+	return handler->packet_length;
 }
 
 /*
@@ -186,9 +201,13 @@ int32 ETHERNETDriver::readPacketLength(int ethX)
 
 void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 {
-	DUNUSED(ethX);
+	Handler *handler = getHandler(ethX);
+	if (handler == NULL) {
+		panicbug("Ethernet: handler for %d not found", ethX);
+		return;
+	}
 	D(bug("Ethernet: ReadPacket dest %08lx, len %lx", buffer, len));
-	Host2Atari_memcpy(buffer, packet, MIN(len, MAX_PACKET_SIZE));
+	Host2Atari_memcpy(buffer, handler->packet, MIN(len, MAX_PACKET_SIZE));
 	if (len > MAX_PACKET_SIZE) {
 		panicbug("ETHERNETDriver::readPacket() - length %d > %d", len, MAX_PACKET_SIZE);
 	}
@@ -201,7 +220,11 @@ void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 
 void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
 {
-	DUNUSED(ethX);
+	Handler *handler = getHandler(ethX);
+	if (handler == NULL) {
+		panicbug("Ethernet: handler for %d not found", ethX);
+		return;
+	}
 	uint8 packetToWrite[MAX_PACKET_SIZE+2];
 
 	D(bug("Ethernet: SendPacket src %08lx, len %lx", buffer, len));
@@ -221,16 +244,18 @@ void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
  */
 bool ETHERNETDriver::init(void)
 {
-	handlingThread = NULL;
-	handler = new ETHERNET_HANDLER_CLASSNAME;
-
-	strapply(bx_options.ethernet.type, tolower);
-	bool opened = handler->open( bx_options.ethernet.type );
-	if ( !opened ) {
-		delete handler;
-		handler = NULL;
+	for(int i=0; i<MAX_ETH; i++) {
+		Handler *handler = new ETHERNET_HANDLER_CLASSNAME;
+		strapply(bx_options.ethernet.type, tolower);
+		if ( handler->open( bx_options.ethernet.type ) ) {
+			handlers[i] = handler;
+		}
+		else {
+			delete handler;
+			handlers[i] = NULL;
+		}
 	}
-	return true;
+	return true; // kinda unnecessary
 }
 
 
@@ -241,13 +266,16 @@ void ETHERNETDriver::exit()
 {
 	D(bug("Ethernet: exit"));
 
-	// Stop reception thread
-	stopThread(0 /* ethX */);
-
-	if ( !handler ) return;
-	handler->close();
-	delete handler;
-	handler = NULL;
+	for(int i=0; i<MAX_ETH; i++) {
+		// Stop reception thread
+		Handler *handler = handlers[i];
+		if ( handler ) {
+			stopThread(i);
+			handler->close();
+			delete handler;
+			handlers[i]= NULL;
+		}
+	}
 }
 
 // reset, called upon OS reboot
@@ -258,6 +286,14 @@ void ETHERNETDriver::reset()
 	// TODO needs something smarter than exit&init
 	exit();
 	init();
+}
+
+Handler *ETHERNETDriver::getHandler(int ethX)
+{
+	if (ethX >= 0 && ethX < MAX_ETH)
+		return handlers[ethX];
+	else
+		return NULL;
 }
 
 // ctor
@@ -277,17 +313,21 @@ ETHERNETDriver::~ETHERNETDriver()
  */
 bool ETHERNETDriver::startThread(int ethX)
 {
-	DUNUSED(ethX);
-	if (!handlingThread) {
+	Handler *handler = getHandler(ethX);
+	if (handler == NULL) {
+		panicbug("Ethernet: handler for %d not found", ethX);
+		return false;
+	}
+	if (handler->handlingThread == NULL) {
 		D(bug("Ethernet: Start thread"));
 
-		if ((intAck = SDL_CreateSemaphore(0)) == NULL) {
+		if ((handler->intAck = SDL_CreateSemaphore(0)) == NULL) {
 			D(bug("WARNING: Cannot init semaphore"));
 			return false;
 		}
 
-		handlingThread = SDL_CreateThread( receiveFunc, handler );
-		if (!handlingThread) {
+		handler->handlingThread = SDL_CreateThread( receiveFunc, handler );
+		if (handler->handlingThread == NULL) {
 			D(bug("WARNING: Cannot start ETHERNETDriver thread"));
 			return false;
 		}
@@ -301,16 +341,20 @@ bool ETHERNETDriver::startThread(int ethX)
  */
 void ETHERNETDriver::stopThread(int ethX)
 {
-	DUNUSED(ethX);
-	if (handlingThread) {
+	Handler *handler = getHandler(ethX);
+	if (handler == NULL) {
+		panicbug("Ethernet: handler for %d not found", ethX);
+		return;
+	}
+	if (handler->handlingThread) {
 		D(bug("Ethernet: Stop thread"));
 
 #if FIXME
 		// pthread_cancel(handlingThread); // FIXME: set the cancel flag.
-		SDL_WaitThread(handlingThread, NULL);
-		SDL_DestroySemaphore(intAck);
+		SDL_WaitThread(handler->handlingThread, NULL);
+		SDL_DestroySemaphore(handler->intAck);
 #endif
-		handlingThread = NULL;
+		handler->handlingThread = NULL;
 	}
 }
 
@@ -326,7 +370,7 @@ int ETHERNETDriver::receiveFunc(void *arg)
 	// ssize_t length;
 	for (;;) {
 		// Read packet device
-		packet_length = handler->recv(packet, MAX_PACKET_SIZE);
+		handler->packet_length = handler->recv(handler->packet, MAX_PACKET_SIZE);
 
 		// Trigger ETHERNETDriver interrupt (call the m68k side)
 		D(bug(" packet received (len %d), triggering ETHERNETDriver interrupt", packet_length));
@@ -335,7 +379,7 @@ int ETHERNETDriver::receiveFunc(void *arg)
 
 		// Wait for interrupt acknowledge (m68k network driver read interrupt to finish)
 		D(bug(" waiting for int acknowledge"));
-		SDL_SemWait(intAck);
+		SDL_SemWait(handler->intAck);
 		D(bug(" int acknowledged"));
 	}
 
