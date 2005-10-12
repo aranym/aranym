@@ -18,6 +18,11 @@
 - audio.cpp, audio_dma.cpp, cpummu.cpp: hidden warnings about unused
   variables.
 
+- configure.ac: C++ exceptions disabled by default. They are causing serious
+  startup lockups. It might be caused by particular gcc version, or C++ lib
+  version, or something else. We don't know for sure.
+  Use ./configure --enable-cxx-exceptions if you want to try it out.
+
 
 2005/10/05 - joy & STanda
 - input.cpp: the Alt Gr key might be reported as SDLK_MODE, not SDLK_RALT.
