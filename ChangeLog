@@ -15,6 +15,9 @@
 
 - NF based functions moved from cpu_emulation.h to natfeats.h
 
+- audio.cpp, audio_dma.cpp, cpummu.cpp: hidden warnings about unused
+  variables.
+
 
 2005/10/05 - joy & STanda
 - input.cpp: the Alt Gr key might be reported as SDLK_MODE, not SDLK_RALT.
