@@ -162,10 +162,13 @@ irqreturn_t atari_nfeth_interrupt(int irq, void *dev_id, struct pt_regs *fp)
 	}
 	spin_lock(&anp->lock);
 	irq_for_eth_bitmask = nf_ethernet_interrupt(0);
-	this_dev_irq_bit = 2 ^ (anp->ethX);
+	this_dev_irq_bit = 1 << (anp->ethX);
 	if (this_dev_irq_bit & irq_for_eth_bitmask) {
 		recv_packet(dev);
 		nf_ethernet_interrupt(this_dev_irq_bit);
+	}
+	else {
+		printk(DRV_NAME " atari_nfeth_interrupt(%d): not for me\n", anp->ethX);
 	}
 	spin_unlock(&anp->lock);
 }
