@@ -27,7 +27,7 @@
 /* if you change anything in the enum {} below you have to increase 
    this ARAETHER_NFAPI_VERSION!
 */
-#define ARAETHER_NFAPI_VERSION	0x00000004
+#define ARAETHER_NFAPI_VERSION	0x00000005
 
 enum {
 	GET_VERSION = 0,	/* no parameters, return NFAPI_VERSION in d0 */
