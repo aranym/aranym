@@ -48,9 +48,6 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 {
 	D(bug("Ethernet: Dispatch %d", fncode));
 
-	// If disabled then do nothing (the initialization didn't went through)
-	//// FIXME if ( !handler ) return 0;
-
 	int32 ret = 0;
 	switch(fncode) {
 		case GET_VERSION:
@@ -67,8 +64,8 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			/* store MAC address to provided buffer */
 			{
 				int ethX = getParameter(0);
-				// TODO: make sure ethX is defined in ARAnyM configuration
-				if (ethX != 0 && ethX != 1) { // TODO, currently hacked to allow ETH0/1 only
+				Handler *handler = getHandler(ethX);
+				if (handler == NULL) {
 					ret = 0; // return FALSE if ethX not defined
 					break;
 				}
@@ -92,35 +89,35 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 		case XIF_IRQ: // interrupt raised by native side thread polling tap0 interface
 			{
-			int dev_bit = getParameter(0);
-			if (dev_bit == 0) {
-				// dev_bit = 0 means "tell me what devices want me to serve their interrupts"
-				ret = 1;	/* eth0 requested the interrupt */
-//				ret = 2;	/* eth1 requested the interrupt */
-//				ret = 4;	/* eth2 requested the interrupt */
-//				ret = 8;	/* eth3 requested the interrupt */
-			}
-			else {
-				// otherwise the set bit means "I'm acknowledging this device's interrupt"
-				int ethX = -1;
-				switch(dev_bit) {
-					case 0x01: ethX = 0; break;
-					case 0x02: ethX = 1; break;
-					case 0x04: ethX = 2; break;
-					case 0x08: ethX = 3; break;
-					default: panicbug("Ethernet: wrong XIF_IRQ(%d)", dev_bit); break;
+				int dev_bit = getParameter(0);
+				if (dev_bit == 0) {
+					// dev_bit = 0 means "tell me what devices want me to serve their interrupts"
+					ret = 1;	/* eth0 requested the interrupt */
+//					ret = 2;	/* eth1 requested the interrupt */
+//					ret = 4;	/* eth2 requested the interrupt */
+//					ret = 8;	/* eth3 requested the interrupt */
 				}
+				else {
+					// otherwise the set bit means "I'm acknowledging this device's interrupt"
+					int ethX = -1;
+					switch(dev_bit) {
+						case 0x01: ethX = 0; break;
+						case 0x02: ethX = 1; break;
+						case 0x04: ethX = 2; break;
+						case 0x08: ethX = 3; break;
+						default: panicbug("Ethernet: wrong XIF_IRQ(%d)", dev_bit); break;
+					}
 
-				Handler *handler = getHandler(ethX);
-				if (handler == NULL) {
-					panicbug("Ethernet: handler for %d not found", ethX);
-					return 0;
+					Handler *handler = getHandler(ethX);
+					if (handler == NULL) {
+						panicbug("Ethernet: handler for %d not found", ethX);
+						return 0;
+					}
+					D(bug("Ethernet: ETH%d IRQ acknowledged", ethX));
+					// Acknowledge interrupt to reception thread
+					SDL_SemPost(handler->intAck);
+					ret = 0;
 				}
-				D(bug("Ethernet: ETH%d IRQ acknowledged", ethX));
-				// Acknowledge interrupt to reception thread
-				SDL_SemPost(handler->intAck);
-				ret = 0;
-			}
 			}
 			break;
 
