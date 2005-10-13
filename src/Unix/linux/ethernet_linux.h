@@ -21,7 +21,7 @@ class TunTapEthernetHandler : public ETHERNETDriver::Handler {
 public:
 	TunTapEthernetHandler(int eth_idx) : Handler(eth_idx), fd(-1) {}
 
-	virtual bool open( const char *mode );
+	virtual bool open();
 	virtual bool close();
 	virtual int recv(uint8 *buf, int len);
 	virtual int send(const uint8 *buf, int len);

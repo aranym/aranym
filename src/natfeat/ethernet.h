@@ -47,7 +47,7 @@ public:
 			intAck = NULL;
 		}
 
-		virtual bool open( const char * ) { return false; }
+		virtual bool open() { return false; }
 		virtual bool close() { return false; }
 		virtual int recv(uint8 *, int) { return 0; }
 		virtual int send(const uint8 *, int) { return 0; }

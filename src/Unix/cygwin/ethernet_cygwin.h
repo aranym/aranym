@@ -25,7 +25,7 @@ class WinTapEthernetHandler : public ETHERNETDriver::Handler {
 public:
 	WinTapEthernetHandler(int eth_idx) : Handler(eth_idx);
 
-	virtual bool open( const char *mode );
+	virtual bool open();
 	virtual bool close();
 	virtual int recv(uint8 *buf, int len);
 	virtual int send(const uint8 *buf, int len);
