@@ -25,8 +25,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* MJ 2001 */
-
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
 
@@ -34,7 +32,6 @@
 #include "version.h"
 #include "cfgopts.h"
 #include <SDL_keyboard.h>
-#define MAX_ETH		4 // was #include "ethernet.h"
 
 # include <cassert>
 # include <cstdio>
@@ -50,6 +47,7 @@
 #endif
 
 #define BX_MAX_ATA_CHANNEL 1
+#define MAX_ETH		4
 
 enum geo_type {
 	geoCylinders,
