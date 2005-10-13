@@ -108,6 +108,7 @@ static int atc_rand = 0;
 static int atc_last_hit = -1;
 #endif
 
+#if DEBUG
 /* {{{ mmu_dump_table */
 static void mmu_dump_table(const char * label, uaecptr root_ptr)
 {
@@ -228,6 +229,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 	}
 }
 /* }}} */
+#endif
 
 #ifndef DISABLE_ATC
 /* {{{ mmu_dump_atc */
@@ -751,7 +753,7 @@ uae_u32 mmu_get_unaligned (uaecptr addr, int fc, int size)
 {
 	uaecptr physaddr;
 	int size1 = size - (addr & (size - 1));
-	uae_u32 result;
+	volatile uae_u32 result;
 
 	SAVE_EXCEPTION;
 	TRY(prb) {
