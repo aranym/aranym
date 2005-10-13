@@ -1,0 +1,87 @@
+diff -Nur /tmp/kernel-source-2.4.27-atari/arch/m68k/atari/config.c kernel-source-2.4.27-atari/arch/m68k/atari/config.c
+--- /tmp/kernel-source-2.4.27-atari/arch/m68k/atari/config.c	2002-11-29 00:53:09.000000000 +0100
++++ kernel-source-2.4.27-atari/arch/m68k/atari/config.c	2005-08-24 23:28:27.000000000 +0200
+@@ -32,6 +32,9 @@
+ #include <linux/delay.h>
+ #include <linux/ioport.h>
+ #include <linux/vt_kern.h>
++#ifdef CONFIG_NATFEAT
++#include "natfeat.h"
++#endif
+ 
+ #include <asm/bootinfo.h>
+ #include <asm/setup.h>
+@@ -237,6 +240,12 @@
+     }
+ }
+ 
++void atari_poweroff(void)
++{
++#ifdef CONFIG_NATFEAT
++    nf_shutdown();
++#endif
++}
+ 
+     /*
+      *  Setup the Atari configuration info
+@@ -248,6 +257,10 @@
+ 
+     memset(&atari_hw_present, 0, sizeof(atari_hw_present));
+ 
++#ifdef CONFIG_NATFEAT
++    nf_init();
++#endif
++
+     atari_debug_init();
+ 
+     ioport_resource.end  = 0xFFFFFFFF;  /* Change size of I/O space from 64KB
+@@ -271,6 +284,8 @@
+     mach_get_irq_list	 = atari_get_irq_list;
+     mach_gettimeoffset   = atari_gettimeoffset;
+     mach_reset           = atari_reset;
++    mach_halt            = atari_poweroff;
++    mach_power_off       = atari_poweroff;
+ #ifdef CONFIG_ATARI_FLOPPY
+     mach_floppy_setup	 = atari_floppy_setup;
+ #endif
+@@ -669,6 +684,11 @@
+ 
+ static void atari_get_model(char *model)
+ {
++#ifdef CONFIG_NATFEAT
++    if (nf_name1(model, 80)) {	// char model[80] defined in kernel/setup.c
++	return;
++    }
++#endif
+     strcpy(model, "Atari ");
+     switch (atari_mch_cookie >> 16) {
+ 	case ATARI_MCH_ST:
+diff -Nur /tmp/kernel-source-2.4.27-atari/arch/m68k/atari/Makefile kernel-source-2.4.27-atari/arch/m68k/atari/Makefile
+--- /tmp/kernel-source-2.4.27-atari/arch/m68k/atari/Makefile	2002-11-29 00:53:09.000000000 +0100
++++ kernel-source-2.4.27-atari/arch/m68k/atari/Makefile	2005-08-24 02:44:28.000000000 +0200
+@@ -20,4 +20,6 @@
+ obj-$(CONFIG_HADES)	+= hades-pci.o
+ endif
+ 
++obj-$(CONFIG_NATFEAT)	+= natfeat.o
++
+ include $(TOPDIR)/Rules.make
+--- /tmp/kernel-source-2.4.27-atari/.config	2005-08-03 21:38:35.000000000 +0200
++++ kernel-source-2.4.27-atari/.config	2005-08-25 00:27:49.000000000 +0200
+@@ -27,6 +27,8 @@
+ CONFIG_ATARI=y
+ # CONFIG_HADES is not set
+ # CONFIG_PCI is not set
++CONFIG_ARANYM=y
++CONFIG_NATFEAT=y
+ # CONFIG_MAC is not set
+ # CONFIG_APOLLO is not set
+ # CONFIG_VME is not set
+@@ -371,6 +373,7 @@
+ CONFIG_ATARILANCE=m
+ # CONFIG_ATARI_BIONET is not set
+ # CONFIG_ATARI_PAMSNET is not set
++CONFIG_ATARI_NFETH=y
+ 
+ #
+ # Character devices

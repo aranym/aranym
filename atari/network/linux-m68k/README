@@ -1,0 +1,35 @@
+How to enhance Linux-m68k kernel with NatFeats:
+
+1) get Debian linux-2.4.27 kernel source code
+   # apt-get install kernel-source-2.4.27
+   # cd /usr/src
+   # tar xjf kernel-source-2.4.27.tar.bz2
+
+2) patch with Debian m68k 2.4.27 kernel patch
+   # apt-get install kernel-patch-2.4.27-m68k
+   # cd /usr/src/kernel-source-2.4.27
+   # /usr/src/kernel-patch/m68k/apply/apply
+
+3) copy files to appropriate locations:
+   # cd /usr/src/kernel-source-2.4.27
+   # cp $ARANYM_PATH/natfeat.[ch]  arch/m68k/atari/
+   # cp $ARANYM_PATH/atari_nfeth.c drivers/net/
+   # cp $ARANYM_PATH/../ethernet/ethernet_nfapi.h arch/m68k/atari/natfeat_ethernet_nfapi.h
+
+4) patch kernel with NatFeat patch
+   # cd /usr/src/kernel-source-2.4.27
+   # patch -p1 < linux-2.4.27-atari-natfeats.diff
+
+5) rebuild
+   # make oldconfig
+   # make dep
+   # make
+
+6) enjoy the final kernel (vmlinux)
+
+Written in October 2005 by Petr Stehlik of ARAnyM team
+
+More info at
+  http://aranym.atari.org/
+  http://www.debian.org/
+
