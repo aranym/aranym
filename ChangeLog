@@ -18,6 +18,11 @@
 
 - ethernet type renamed from "ppp" to "ptp" (point-to-point)
 
+- ARAnyM and linux-m68k kernel driver tested with two concurrent network
+  interfaces. Cool! Code updated to handle up to 8 interfaces :-)
+
+- atari/network/linux-m68k/README: detailed HOW-TO build the NF enabled kernel
+
 
 2005/10/12 - joy
 - acsifdc.cpp: Atari2Host_memcpy() replaced with plain memcpy(). Previous
