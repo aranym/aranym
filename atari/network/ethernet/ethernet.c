@@ -41,7 +41,7 @@
 
 #define XIF_NAME	"ARAnyM Eth driver v0.6"
 
-#define MAX_ETH		1	/* up to 4 is possible after some fixes */
+#define MAX_ETH		4
 
 /* old handler */
 extern void (*old_interrupt)(void);
@@ -59,7 +59,7 @@ unsigned long inet_aton(const char *cp, long *addr);
 /*
  * Our interface structure
  */
-static struct netif if_ara;
+static struct netif if_aras[MAX_ETH];
 
 /*
  * Prototypes for our service functions
@@ -472,6 +472,7 @@ driver_init (void)
 {
 	static char message[100];
 	static char my_file_name[128];
+	int ethX;
 
 	nfEtherID = 0;
 	/* get the Ethernet NatFeat ID */
@@ -494,88 +495,95 @@ driver_init (void)
 	}
 
 	/*
-	 * Set interface name
+	 * registering ETHx
 	 */
-	strcpy (if_ara.name, "eth");
-	/*
-	 * Set interface unit. if_getfreeunit("name") returns a yet
-	 * unused unit number for the interface type "name".
-	 */
-	if_ara.unit = if_getfreeunit ("eth");
-	/*
-	 * Always set to zero
-	 */
-	if_ara.metric = 0;
-	/*
-	 * Initial interface flags, should be IFF_BROADCAST for
-	 * Ethernet.
-	 */
-	if_ara.flags = IFF_BROADCAST;
-	/*
-	 * Maximum transmission unit, should be >= 46 and <= 1500 for
-	 * Ethernet
-	 */
-	if_ara.mtu = 1500;
-	/*
-	 * Time in ms between calls to (*if_ara.timeout) ();
-	 */
-	if_ara.timer = 0;
+	for(ethX=0; ethX<MAX_ETH; ethX++)
+	{
+		struct netif *if_ara = &(if_aras[ethX]);
+		/*
+	 	 * Set interface name
+	 	 */
+		strcpy (if_ara->name, "eth");
+		/*
+		 * Set interface unit. if_getfreeunit("name") returns a yet
+		 * unused unit number for the interface type "name".
+		 */
+		if_ara->unit = ethX; /* if_getfreeunit ("eth"); */
+		/*
+		 * Always set to zero
+		 */
+		if_ara->metric = 0;
+		/*
+		 * Initial interface flags, should be IFF_BROADCAST for
+		 * Ethernet.
+		 */
+		if_ara->flags = IFF_BROADCAST;
+		/*
+		 * Maximum transmission unit, should be >= 46 and <= 1500 for
+		 * Ethernet
+		 */
+		if_ara->mtu = 1500;
+		/*
+		 * Time in ms between calls to (*if_ara.timeout) ();
+		 */
+		if_ara->timer = 0;
 
-	/*
-	 * Interface hardware type
-	 */
-	if_ara.hwtype = HWTYPE_ETH;
-	/*
-	 * Hardware address length, 6 bytes for Ethernet
-	 */
-	if_ara.hwlocal.len = ETH_ALEN;
-	if_ara.hwbrcst.len = ETH_ALEN;
+		/*
+		 * Interface hardware type
+		 */
+		if_ara->hwtype = HWTYPE_ETH;
+		/*
+		 * Hardware address length, 6 bytes for Ethernet
+		 */
+		if_ara->hwlocal.len = ETH_ALEN;
+		if_ara->hwbrcst.len = ETH_ALEN;
 
-	/*
-	 * Set interface hardware and broadcast addresses. For real ethernet
-	 * drivers you must get them from the hardware of course!
-	 */
-	/* FIXME TODO ask host for the hardware address */
-	get_hw_addr(if_ara.hwlocal.addr, ETH_ALEN);
-	memcpy (if_ara.hwbrcst.addr, "\377\377\377\377\377\377", ETH_ALEN);
+		/*
+		 * Set interface hardware and broadcast addresses. For real ethernet
+		 * drivers you must get them from the hardware of course!
+		 */
+		/* FIXME TODO ask host for the hardware address */
+		get_hw_addr(if_ara->hwlocal.addr, ETH_ALEN);
+		memcpy (if_ara->hwbrcst.addr, "\377\377\377\377\377\377", ETH_ALEN);
 
-	/*
-	 * Set length of send and receive queue. IF_MAXQ is a good value.
-	 */
-	if_ara.rcv.maxqlen = IF_MAXQ;
-	if_ara.snd.maxqlen = IF_MAXQ;
-	/*
-	 * Setup pointers to service functions
-	 */
-	if_ara.open = ara_open;
-	if_ara.close = ara_close;
-	if_ara.output = ara_output;
-	if_ara.ioctl = ara_ioctl;
-	/*
-	 * Optional timer function that is called every 200ms.
-	 */
-	if_ara.timeout = 0;
+		/*
+		 * Set length of send and receive queue. IF_MAXQ is a good value.
+		 */
+		if_ara->rcv.maxqlen = IF_MAXQ;
+		if_ara->snd.maxqlen = IF_MAXQ;
+		/*
+		 * Setup pointers to service functions
+		 */
+		if_ara->open = ara_open;
+		if_ara->close = ara_close;
+		if_ara->output = ara_output;
+		if_ara->ioctl = ara_ioctl;
+		/*
+		 * Optional timer function that is called every 200ms.
+		 */
+		if_ara->timeout = 0;
 
-	/*
-	 * Here you could attach some more data your driver may need
-	 */
-	if_ara.data = 0;
+		/*
+		 * Here you could attach some more data your driver may need
+		 */
+		if_ara->data = 0;
 
-	/*
-	 * Number of packets the hardware can receive in fast succession,
-	 * 0 means unlimited.
-	 */
-	if_ara.maxpackets = 0;
+		/*
+		 * Number of packets the hardware can receive in fast succession,
+		 * 0 means unlimited.
+		 */
+		if_ara->maxpackets = 0;
+
+		/*
+		 * Register the interface.
+		 */
+		if_register (if_ara);
+	}
 
 	/*
 	 * Install the interface interrupt.
 	 */
 	aranym_install_int();
-
-	/*
-	 * Register the interface.
-	 */
-	if_register (&if_ara);
 
 	/*
 	 * NETINFO->fname is a pointer to the drivers file name
@@ -595,7 +603,7 @@ driver_init (void)
 	/*
 	 * And say we are alive...
 	 */
-	ksprintf (message, XIF_NAME " (eth%d)\n\r", if_ara.unit);
+	ksprintf (message, XIF_NAME " (eth0)\n\r");
 	c_conws (message);
 	return 0;
 }
@@ -663,7 +671,7 @@ aranym_interrupt (void)
 		int this_dev_irq_bit = 1 << ethX;
 		int irq_for_eth_bitmask = nfInterrupt(0);
 		if (this_dev_irq_bit & irq_for_eth_bitmask) {
-			recv_packet (&if_ara);
+			recv_packet (&if_aras[ethX]);
 			nfInterrupt(this_dev_irq_bit);
 		}
 	}
