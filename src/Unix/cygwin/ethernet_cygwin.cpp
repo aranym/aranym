@@ -325,7 +325,7 @@ int get_device_guid(
 
 bool WinTapEthernetHandler::open( const char *mode )
 {
-	(void)mode; // ppp or bridge setting is done by the host OS
+	(void)mode; // ptp or bridge setting is done by the host OS
 
 	char device_path[256];
 	char device_guid[0x100];

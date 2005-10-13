@@ -16,6 +16,8 @@
   version 0.6 (copes with the new NFAPI but doesn't offer multiple
   ETH interfaces yet).
 
+- ethernet type renamed from "ppp" to "ptp" (point-to-point)
+
 
 2005/10/12 - joy
 - acsifdc.cpp: Atari2Host_memcpy() replaced with plain memcpy(). Previous

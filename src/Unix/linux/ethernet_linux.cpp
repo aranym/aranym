@@ -67,8 +67,8 @@ bool TunTapEthernetHandler::open( const char* mode ) {
 		return false;
 	}
 
-	// if not a PPP then ok
-	if ( strcmp(mode,"ppp") ) // FIXME should have been "ptp" as point-to-point
+	// if 'bridge' mode then we are done
+	if ( strcmp(mode, "bridge") == 0 )
 		return true;
 
 	int pid = fork();

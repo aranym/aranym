@@ -130,7 +130,7 @@ uint32 FastRAMSize;
 static char config_file[512];
 
 #if !defined(XIF_HOST_IP) && !defined(XIF_ATARI_IP) && !defined(XIF_NETMASK)
-# define XIF_TYPE	"ppp"
+# define XIF_TYPE	"ptp"
 # define XIF_TUNNEL	"tap0"
 # define XIF_HOST_IP	"192.168.0.1"
 # define XIF_ATARI_IP	"192.168.0.2"
