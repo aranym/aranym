@@ -56,15 +56,15 @@ bool TunTapEthernetHandler::open() {
 
 	// get the tunnel nif name if provided
 	if (strlen(devName) == 0) {
-		D(bug("TunTap: init(%d) - tunnel name undefined", ethX));
+		D(bug("TunTap(%d): tunnel name undefined", ethX));
 		return false;
 	}
 
-	D(bug("TunTap: init(%d) by open('%s')", ethX, devName));
+	D(bug("TunTap(%d): open('%s')", ethX, devName));
 
 	fd = tapOpen( devName );
 	if (fd < 0) {
-		panicbug("TunTap: NO_NET_DRIVER_WARN '%s': %s", devName, strerror(errno));
+		panicbug("TunTap(%d): NO_NET_DRIVER_WARN '%s': %s", ethX, devName, strerror(errno));
 		return false;
 	}
 
@@ -74,7 +74,7 @@ bool TunTapEthernetHandler::open() {
 
 	int pid = fork();
 	if (pid < 0) {
-		panicbug("TunTap: ERROR: fork() failed. Ethernet disabled!");
+		panicbug("TunTap(%d): ERROR: fork() failed. Ethernet disabled!", ethX);
 		::close(fd);
 		return false;
 	}
@@ -95,24 +95,24 @@ bool TunTapEthernetHandler::open() {
 		_exit(result);
 	}
 
-	D(bug("TunTap: waiting for "TAP_INIT" at pid %d", pid));
+	D(bug("TunTap(%d): waiting for "TAP_INIT" at pid %d", ethX, pid));
 	int status;
 	waitpid(pid, &status, 0);
 	bool failed = true;
 	if (WIFEXITED(status)) {
 		int err = WEXITSTATUS(status);
 		if (err == 255) {
-			panicbug("TunTap: ERROR: "TAP_INIT" not found. Ethernet disabled!");
+			panicbug("TunTap(%d): ERROR: "TAP_INIT" not found. Ethernet disabled!", ethX);
 		}
 		else if (err != 0) {
-			panicbug("TunTap: ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", err);
+			panicbug("TunTap(%d): ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", ethX, err);
 		}
 		else {
 			failed = false;
-			D(bug("TunTap: "TAP_INIT" initialized OK"));
+			D(bug("TunTap(%d): "TAP_INIT" initialized OK", ethX));
 		}
 	} else {
-		panicbug("TunTap: ERROR: "TAP_INIT" could not be started. Ethernet disabled!");
+		panicbug("TunTap(%d): ERROR: "TAP_INIT" could not be started. Ethernet disabled!", ethX);
 	}
 
 	// Close /dev/net/tun device if exec failed
@@ -130,7 +130,7 @@ bool TunTapEthernetHandler::open() {
 bool TunTapEthernetHandler::close() {
 	// Close /dev/net/tun device
 	::close(fd);
-	D(bug("TunTap: close"));
+	D(bug("TunTap(%d): close", ethX));
 
 	return true;
 }
@@ -151,7 +151,7 @@ int TunTapEthernetHandler::recv(uint8 *buf, int len) {
 
 int TunTapEthernetHandler::send(const uint8 *buf, int len) {
 	int res = write(fd, buf, len);
-	if (res < 0) D(bug("TunTap: WARNING: Couldn't transmit packet"));
+	if (res < 0) D(bug("TunTap(%d): WARNING: Couldn't transmit packet", ethX));
 	return res;
 }
 
@@ -168,7 +168,7 @@ int TunTapEthernetHandler::tapOpenOld(char *dev)
     if( *dev ) {
 		snprintf(tapname, sizeof(tapname), "/dev/%s", dev);
 		tapname[sizeof(tapname)-1] = '\0';
-		D(bug("TunTap: tapOpenOld %s", tapname));
+		D(bug("TunTap(%d): tapOpenOld %s", ethX, tapname));
 		return ::open(tapname, O_RDWR);
     }
 
@@ -177,7 +177,7 @@ int TunTapEthernetHandler::tapOpenOld(char *dev)
 		/* Open device */
 		if( (fd=::open(tapname, O_RDWR)) > 0 ) {
 			sprintf(dev, "tap%d",i);
-			D(bug("TunTap: tapOpenOld %s", dev));
+			D(bug("TunTap(%d): tapOpenOld %s", ethX, dev));
 			return fd;
 		}
     }
@@ -199,7 +199,7 @@ int TunTapEthernetHandler::tapOpen(char *dev)
     struct ifreq ifr;
 
     if( (fd = ::open("/dev/net/tun", O_RDWR)) < 0 ) {
-	    panicbug("TunTap: Error opening /dev/net/tun. Check if module is loaded and privileges are OK");
+	    panicbug("TunTap(%d): Error opening /dev/net/tun. Check if module is loaded and privileges are OK", ethX);
 	    return tapOpenOld(dev);
     }
 
@@ -220,7 +220,7 @@ int TunTapEthernetHandler::tapOpen(char *dev)
 
     strcpy(dev, ifr.ifr_name);
 
-    D(bug("TunTap: if opened %s", dev));
+    D(bug("TunTap(%d): if opened %s", ethX, dev));
     return fd;
 
   failed:
