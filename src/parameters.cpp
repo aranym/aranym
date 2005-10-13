@@ -546,12 +546,20 @@ ETH_CONFIG(eth3);
 #define ETH(i, x) bx_options.ethernet[i].x
 void preset_ethernet()
 {
-	for(int i=0; i<MAX_ETH; i++) {
-		safe_strncpy(ETH(i, type), XIF_TYPE, sizeof(ETH(i, type)));
-		safe_strncpy(ETH(i, tunnel), XIF_TUNNEL, sizeof(ETH(i, tunnel)));
-		safe_strncpy(ETH(i, ip_host), XIF_HOST_IP, sizeof(ETH(i, ip_host)));
-		safe_strncpy(ETH(i, ip_atari ), XIF_ATARI_IP, sizeof(ETH(i, ip_atari)));
-		safe_strncpy(ETH(i, netmask), XIF_NETMASK, sizeof(ETH(i, netmask)));
+	// ETH[0] with some default values
+	safe_strncpy(ETH(0, type), XIF_TYPE, sizeof(ETH(0, type)));
+	safe_strncpy(ETH(0, tunnel), XIF_TUNNEL, sizeof(ETH(0, tunnel)));
+	safe_strncpy(ETH(0, ip_host), XIF_HOST_IP, sizeof(ETH(0, ip_host)));
+	safe_strncpy(ETH(0, ip_atari), XIF_ATARI_IP, sizeof(ETH(0, ip_atari)));
+	safe_strncpy(ETH(0, netmask), XIF_NETMASK, sizeof(ETH(0, netmask)));
+
+	// ETH[1] - ETH[MAX_ETH] are empty by default
+	for(int i=1; i<MAX_ETH; i++) {
+		*ETH(i, type) = '\0';
+		*ETH(i, tunnel) = '\0';
+		*ETH(i, ip_host) = '\0';
+		*ETH(i, ip_atari) = '\0';
+		*ETH(i, netmask) = '\0';
 	}
 }
 
