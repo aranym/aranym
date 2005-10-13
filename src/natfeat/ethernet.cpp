@@ -14,7 +14,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-
 #include <SDL.h>
 #include <SDL_thread.h>
 
@@ -43,6 +42,8 @@
 /*
  * Configuration zone ends
  **************************/
+
+static int pending_interrupts = 0;
 
 int32 ETHERNETDriver::dispatch(uint32 fncode)
 {
@@ -92,10 +93,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				int dev_bit = getParameter(0);
 				if (dev_bit == 0) {
 					// dev_bit = 0 means "tell me what devices want me to serve their interrupts"
-					ret = 1;	/* eth0 requested the interrupt */
-//					ret = 2;	/* eth1 requested the interrupt */
-//					ret = 4;	/* eth2 requested the interrupt */
-//					ret = 8;	/* eth3 requested the interrupt */
+					ret = pending_interrupts;
 				}
 				else {
 					// otherwise the set bit means "I'm acknowledging this device's interrupt"
@@ -245,6 +243,7 @@ bool ETHERNETDriver::init(void)
 {
 	for(int i=0; i<MAX_ETH; i++) {
 		Handler *handler = new ETHERNET_HANDLER_CLASSNAME;
+		handler->ethX = i;
 		strapply(bx_options.ethernet.type, tolower);
 		if ( handler->open( bx_options.ethernet.type ) ) {
 			handlers[i] = handler;
@@ -374,12 +373,14 @@ int ETHERNETDriver::receiveFunc(void *arg)
 		// Trigger ETHERNETDriver interrupt (call the m68k side)
 		D(bug(" packet received (len %d), triggering ETHERNETDriver interrupt", packet_length));
 
+		pending_interrupts |= (1 << handler->ethX);
 		TRIGGER_INTERRUPT;
 
 		// Wait for interrupt acknowledge (m68k network driver read interrupt to finish)
 		D(bug(" waiting for int acknowledge"));
 		SDL_SemWait(handler->intAck);
 		D(bug(" int acknowledged"));
+		pending_interrupts &= ~(1 << handler->ethX);
 	}
 
 	return 0;
