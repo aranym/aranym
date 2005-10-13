@@ -19,12 +19,14 @@ class ETHERNETDriver : public NF_Base
 public:
 	class Handler {
 	public:
+		int ethX;
 		ssize_t packet_length;
 		uint8 packet[MAX_PACKET_SIZE+2];
 		SDL_Thread *handlingThread;	// Packet reception thread
 		SDL_sem *intAck;			// Interrupt acknowledge semaphore
 
 		Handler() {
+			ethX = -1;
 			packet_length = 0;
 			handlingThread = NULL;
 			intAck = NULL;
