@@ -43,7 +43,6 @@
  */
 
 #define TAP_INIT	"aratapif"
-#define TAP_DEVICE	"tap0"
 #define TAP_MTU		"1500"
 
 /*
@@ -51,15 +50,17 @@
  **************************/
 
 
-bool TunTapEthernetHandler::open( const char* mode ) {
+bool TunTapEthernetHandler::open() {
 	// int nonblock = 1;
-	char devName[128]=TAP_DEVICE;
+	char *devName = bx_options.ethernet[ethX].tunnel;
 
 	// get the tunnel nif name if provided
-	if (strlen(bx_options.ethernet[ethX].tunnel))
-		strcpy(devName, bx_options.ethernet[ethX].tunnel);
-	
-	D(bug("TunTap: init"));
+	if (strlen(devName) == 0) {
+		D(bug("TunTap: init(%d) - tunnel name undefined", ethX));
+		return false;
+	}
+
+	D(bug("TunTap: init(%d) by open('%s')", ethX, devName));
 
 	fd = tapOpen( devName );
 	if (fd < 0) {
@@ -68,7 +69,7 @@ bool TunTapEthernetHandler::open( const char* mode ) {
 	}
 
 	// if 'bridge' mode then we are done
-	if ( strcmp(mode, "bridge") == 0 )
+	if ( strcmp(bx_options.ethernet[ethX].type, "bridge") == 0 )
 		return true;
 
 	int pid = fork();
@@ -82,7 +83,8 @@ bool TunTapEthernetHandler::open( const char* mode ) {
 		// the arguments _need_ to be placed into the child process
 		// memory (otherwise this does not work here)
 		char *args[] = {
-			TAP_INIT, TAP_DEVICE,
+			TAP_INIT,
+			bx_options.ethernet[ethX].tunnel,
 			bx_options.ethernet[ethX].ip_host,
 			bx_options.ethernet[ethX].ip_atari,
 			bx_options.ethernet[ethX].netmask,
@@ -164,7 +166,8 @@ int TunTapEthernetHandler::tapOpenOld(char *dev)
     int i, fd;
 
     if( *dev ) {
-		sprintf(tapname, "/dev/%s", dev);
+		snprintf(tapname, sizeof(tapname), "/dev/%s", dev);
+		tapname[sizeof(tapname)-1] = '\0';
 		D(bug("TunTap: tapOpenOld %s", tapname));
 		return ::open(tapname, O_RDWR);
     }
