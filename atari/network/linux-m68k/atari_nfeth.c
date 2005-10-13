@@ -167,9 +167,11 @@ irqreturn_t atari_nfeth_interrupt(int irq, void *dev_id, struct pt_regs *fp)
 		recv_packet(dev);
 		nf_ethernet_interrupt(this_dev_irq_bit);
 	}
+#ifdef DEBUG
 	else {
 		printk(DRV_NAME " atari_nfeth_interrupt(%d): not for me\n", anp->ethX);
 	}
+#endif
 	spin_unlock(&anp->lock);
 }
 
