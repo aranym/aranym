@@ -257,8 +257,7 @@ bool ETHERNETDriver::init(void)
 {
 	for(int i=0; i<MAX_ETH; i++) {
 		Handler *handler = new ETHERNET_HANDLER_CLASSNAME(i);
-		strapply(bx_options.ethernet[i].type, tolower);
-		if ( handler->open( bx_options.ethernet[i].type ) ) {
+		if ( handler->open() ) {
 			handlers[i] = handler;
 		}
 		else {
@@ -389,16 +388,16 @@ int ETHERNETDriver::receiveFunc(void *arg)
 		handler->packet_length = handler->recv(handler->packet, MAX_PACKET_SIZE);
 
 		// Trigger ETHERNETDriver interrupt (call the m68k side)
-		D(bug(" packet received (len %d), triggering ETHERNETDriver interrupt", packet_length));
+		D(bug(" packet received (len %d), triggering ETHERNETDriver interrupt", handler->packet_length));
 
 		pending_interrupts |= (1 << handler->ethX);
 		TRIGGER_INTERRUPT;
 
 		// Wait for interrupt acknowledge (m68k network driver read interrupt to finish)
-		D(bug(" waiting for int acknowledge"));
+		D(bug(" waiting for int acknowledge with pending irq mask %02x", pending_interrupts));
 		SDL_SemWait(handler->intAck);
-		D(bug(" int acknowledged"));
 		pending_interrupts &= ~(1 << handler->ethX);
+		D(bug(" int acknowledged, pending irq mask now %02x", pending_interrupts));
 	}
 
 	return 0;
