@@ -1,7 +1,7 @@
 /**
  * Ethernet TUN/TAP driver
  *
- * Standa (c) 2004
+ * Standa (c) 2004-2005
  *
  * GPL
  */
@@ -19,7 +19,7 @@ class TunTapEthernetHandler : public ETHERNETDriver::Handler {
 	int tapOpen(char *dev);
 
 public:
-	TunTapEthernetHandler() : fd(-1) {}
+	TunTapEthernetHandler(int eth_idx) : Handler(eth_idx), fd(-1) {}
 
 	virtual bool open( const char *mode );
 	virtual bool close();

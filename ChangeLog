@@ -7,6 +7,9 @@
 
 - atari/network/linux-m68k/*: linux-m68k kernel driver for our NF Ethernet
 
+- Unix/linux+Unix/cygwin: Handler() ctor now takes ethX parameter that is
+  used internally in receiveFunc for setting up proper interrupt bit mask.
+
 
 2005/10/12 - joy
 - acsifdc.cpp: Atari2Host_memcpy() replaced with plain memcpy(). Previous

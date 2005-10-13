@@ -1,9 +1,24 @@
-/**
- * Ethernet Card Emulation
+/*
+ * ethernet.cpp - Ethernet Card Emulation
  *
- * Standa and Joy of ARAnyM team (c) 2002-2005
+ * Copyright (c) 2002-2005 Standa Opichal, Petr Stehlik of ARAnyM team
+ * 
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
- * GPL
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 #include "cpu_emulation.h"
@@ -242,8 +257,7 @@ void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
 bool ETHERNETDriver::init(void)
 {
 	for(int i=0; i<MAX_ETH; i++) {
-		Handler *handler = new ETHERNET_HANDLER_CLASSNAME;
-		handler->ethX = i;
+		Handler *handler = new ETHERNET_HANDLER_CLASSNAME(i);
 		strapply(bx_options.ethernet.type, tolower);
 		if ( handler->open( bx_options.ethernet.type ) ) {
 			handlers[i] = handler;
@@ -288,10 +302,15 @@ void ETHERNETDriver::reset()
 
 ETHERNETDriver::Handler *ETHERNETDriver::getHandler(int ethX)
 {
-	if (ethX >= 0 && ethX < MAX_ETH)
-		return handlers[ethX];
-	else
-		return NULL;
+	if (ethX >= 0 && ethX < MAX_ETH) {
+		Handler *h = handlers[ethX];
+		if (h != NULL) {
+			assert(h->ethX == ethX);
+			return h;
+		}
+	}
+
+	return NULL;
 }
 
 // ctor

@@ -1,7 +1,7 @@
 /**
  * Ethernet Win32-Tap driver
  *
- * Standa (c) 2004
+ * Standa (c) 2004-2005
  *
  * GPL
  */
@@ -23,7 +23,7 @@ class WinTapEthernetHandler : public ETHERNETDriver::Handler {
 	int device_total_out;
 
 public:
-	WinTapEthernetHandler();
+	WinTapEthernetHandler(int eth_idx) : Handler(eth_idx);
 
 	virtual bool open( const char *mode );
 	virtual bool close();
