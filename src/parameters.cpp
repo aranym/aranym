@@ -523,23 +523,36 @@ void presave_arafs()
 }
 
 /*************************************************************************/
-#define ETH(x) bx_options.ethernet.x
-struct Config_Tag ethernet_conf[]={
-	{ "Type", String_Tag, &ETH(type), sizeof(ETH(type)), 0},
-	{ "Tunnel", String_Tag, &ETH(tunnel), sizeof(ETH(tunnel)), 0},
-	{ "HostIP", String_Tag, &ETH(ip_host), sizeof(ETH(ip_host)), 0},
-	{ "AtariIP", String_Tag, &ETH(ip_atari), sizeof(ETH(ip_atari)), 0},
-	{ "Netmask", String_Tag, &ETH(netmask), sizeof(ETH(netmask)), 0},
-	{ NULL , Error_Tag, NULL, 0, 0 }
-};
+// struct Config_Tag ethernet_conf[]={
+#define ETH_CONFIG(Eth)	struct Config_Tag Eth ## _conf[] = {	\
+	{ "Type", String_Tag, &Eth->type, sizeof(Eth->type), 0}, \
+	{ "Tunnel", String_Tag, &Eth->tunnel, sizeof(Eth->tunnel), 0}, \
+	{ "HostIP", String_Tag, &Eth->ip_host, sizeof(Eth->ip_host), 0}, \
+	{ "AtariIP", String_Tag, &Eth->ip_atari, sizeof(Eth->ip_atari), 0}, \
+	{ "Netmask", String_Tag, &Eth->netmask, sizeof(Eth->netmask), 0}, \
+	{ NULL , Error_Tag, NULL, 0, 0 } \
+}
 
+static bx_ethernet_options_t *eth0 = &bx_options.ethernet[0];
+static bx_ethernet_options_t *eth1 = &bx_options.ethernet[1];
+static bx_ethernet_options_t *eth2 = &bx_options.ethernet[2];
+static bx_ethernet_options_t *eth3 = &bx_options.ethernet[3];
+
+ETH_CONFIG(eth0);
+ETH_CONFIG(eth1);
+ETH_CONFIG(eth2);
+ETH_CONFIG(eth3);
+
+#define ETH(i, x) bx_options.ethernet[i].x
 void preset_ethernet()
 {
-  safe_strncpy(ETH(type), XIF_TYPE, sizeof(ETH(type)));
-  safe_strncpy(ETH(tunnel), XIF_TUNNEL, sizeof(ETH(tunnel)));
-  safe_strncpy(ETH(ip_host), XIF_HOST_IP, sizeof(ETH(ip_host)));
-  safe_strncpy(ETH(ip_atari ), XIF_ATARI_IP, sizeof(ETH(ip_atari)));
-  safe_strncpy(ETH(netmask), XIF_NETMASK, sizeof(ETH(netmask)));
+	for(int i=0; i<MAX_ETH; i++) {
+		safe_strncpy(ETH(i, type), XIF_TYPE, sizeof(ETH(i, type)));
+		safe_strncpy(ETH(i, tunnel), XIF_TUNNEL, sizeof(ETH(i, tunnel)));
+		safe_strncpy(ETH(i, ip_host), XIF_HOST_IP, sizeof(ETH(i, ip_host)));
+		safe_strncpy(ETH(i, ip_atari ), XIF_ATARI_IP, sizeof(ETH(i, ip_atari)));
+		safe_strncpy(ETH(i, netmask), XIF_NETMASK, sizeof(ETH(i, netmask)));
+	}
 }
 
 void postload_ethernet()
@@ -1234,7 +1247,10 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 
 	process_config(f, rcfile, arafs_conf, "[HOSTFS]", true);
 	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
-	process_config(f, rcfile, ethernet_conf, "[ETH0]", true);
+	process_config(f, rcfile, eth0_conf, "[ETH0]", true);
+	process_config(f, rcfile, eth1_conf, "[ETH1]", true);
+	process_config(f, rcfile, eth2_conf, "[ETH2]", true);
+	process_config(f, rcfile, eth3_conf, "[ETH3]", true);
 	process_config(f, rcfile, lilo_conf, "[LILO]", true);
 	process_config(f, rcfile, midi_conf, "[MIDI]", true);
 	process_config(f, rcfile, nfcdroms_conf, "[CDROMS]", true);
@@ -1281,7 +1297,10 @@ bool saveSettings(const char *fs)
 
 	update_config(fs, arafs_conf, "[HOSTFS]");
 	update_config(fs, opengl_conf, "[OPENGL]");
-	update_config(fs, ethernet_conf, "[ETH0]");
+	update_config(fs, eth0_conf, "[ETH0]");
+	update_config(fs, eth1_conf, "[ETH1]");
+	update_config(fs, eth2_conf, "[ETH2]");
+	update_config(fs, eth3_conf, "[ETH3]");
 	update_config(fs, lilo_conf, "[LILO]");
 	update_config(fs, midi_conf, "[MIDI]");
 	update_config(fs, nfcdroms_conf, "[CDROMS]");

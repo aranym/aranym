@@ -34,6 +34,7 @@
 #include "version.h"
 #include "cfgopts.h"
 #include <SDL_keyboard.h>
+#define MAX_ETH		4 // was #include "ethernet.h"
 
 # include <cassert>
 # include <cstdio>
@@ -244,7 +245,7 @@ typedef struct {
   bx_startup_options_t	startup;
   bx_jit_options_t	jit;
   bx_opengl_options_t	opengl;
-  bx_ethernet_options_t ethernet;
+  bx_ethernet_options_t ethernet[MAX_ETH];
   bx_lilo_options_t		lilo;
   bx_midi_options_t		midi;
   bx_ikbd_options_t		ikbd;

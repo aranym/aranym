@@ -174,7 +174,6 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 int ETHERNETDriver::get_params(GET_PAR which)
 {
 	int ethX = getParameter(0);
-	DUNUSED(ethX); // FIXME
 	memptr name_ptr = getParameter(1);
 	uint32 name_maxlen = getParameter(2);
 	char *text = NULL;
@@ -186,9 +185,9 @@ int ETHERNETDriver::get_params(GET_PAR which)
 		BUS_ERROR(name_ptr);
 
 	switch(which) {
-		case HOST_IP: text = bx_options.ethernet.ip_host; break;
-		case ATARI_IP:text = bx_options.ethernet.ip_atari; break;
-		case NETMASK: text = bx_options.ethernet.netmask; break;
+		case HOST_IP: text = bx_options.ethernet[ethX].ip_host; break;
+		case ATARI_IP:text = bx_options.ethernet[ethX].ip_atari; break;
+		case NETMASK: text = bx_options.ethernet[ethX].netmask; break;
 		default: text = "";
 	}
 
@@ -258,8 +257,8 @@ bool ETHERNETDriver::init(void)
 {
 	for(int i=0; i<MAX_ETH; i++) {
 		Handler *handler = new ETHERNET_HANDLER_CLASSNAME(i);
-		strapply(bx_options.ethernet.type, tolower);
-		if ( handler->open( bx_options.ethernet.type ) ) {
+		strapply(bx_options.ethernet[i].type, tolower);
+		if ( handler->open( bx_options.ethernet[i].type ) ) {
 			handlers[i] = handler;
 		}
 		else {

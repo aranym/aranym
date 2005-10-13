@@ -1,7 +1,7 @@
 /**
  * Ethernet Emulation using tuntap driver in Linux
  *
- * Standa and Joy of ARAnyM team (c) 2004 
+ * Standa and Joy of ARAnyM team (c) 2004-2005
  *
  * GPL
  */
@@ -56,8 +56,8 @@ bool TunTapEthernetHandler::open( const char* mode ) {
 	char devName[128]=TAP_DEVICE;
 
 	// get the tunnel nif name if provided
-	if (strlen(bx_options.ethernet.tunnel))
-		strcpy(devName, bx_options.ethernet.tunnel);
+	if (strlen(bx_options.ethernet[ethX].tunnel))
+		strcpy(devName, bx_options.ethernet[ethX].tunnel);
 	
 	D(bug("TunTap: init"));
 
@@ -68,7 +68,7 @@ bool TunTapEthernetHandler::open( const char* mode ) {
 	}
 
 	// if not a PPP then ok
-	if ( strcmp(mode,"ppp") )
+	if ( strcmp(mode,"ppp") ) // FIXME should have been "ptp" as point-to-point
 		return true;
 
 	int pid = fork();
@@ -83,9 +83,9 @@ bool TunTapEthernetHandler::open( const char* mode ) {
 		// memory (otherwise this does not work here)
 		char *args[] = {
 			TAP_INIT, TAP_DEVICE,
-			bx_options.ethernet.ip_host,
-			bx_options.ethernet.ip_atari,
-			bx_options.ethernet.netmask,
+			bx_options.ethernet[ethX].ip_host,
+			bx_options.ethernet[ethX].ip_atari,
+			bx_options.ethernet[ethX].netmask,
 			TAP_MTU, NULL
 		};
 		int result;

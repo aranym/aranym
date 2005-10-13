@@ -331,8 +331,8 @@ bool WinTapEthernetHandler::open( const char *mode )
 	char device_guid[0x100];
 	char name_buffer[0x100] = {0, };
 
-	if ( strlen(bx_options.ethernet.tunnel) )
-		strncpy(name_buffer, bx_options.ethernet.tunnel, sizeof(name_buffer));
+	if ( strlen(bx_options.ethernet[ethX].tunnel) )
+		strncpy(name_buffer, bx_options.ethernet[ethX].tunnel, sizeof(name_buffer));
 
  	if ( get_device_guid(device_guid, sizeof(device_guid), name_buffer, sizeof(name_buffer)) < 0 ) {
 		panicbug("WinTap: ERROR: Could not find Windows tap device: %s", winerror(GetLastError()));
