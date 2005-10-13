@@ -118,6 +118,10 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 						case 0x02: ethX = 1; break;
 						case 0x04: ethX = 2; break;
 						case 0x08: ethX = 3; break;
+						case 0x10: ethX = 4; break;
+						case 0x20: ethX = 5; break;
+						case 0x40: ethX = 6; break;
+						case 0x80: ethX = 7; break;
 						default: panicbug("Ethernet: wrong XIF_IRQ(%d)", dev_bit); break;
 					}
 
@@ -155,15 +159,15 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			break;
 
 		case XIF_GET_IPHOST:
-			D(bug("XIF_GET_IPHOST\n"));
+			D(bug("XIF_GET_IPHOST"));
 			ret = get_params(HOST_IP);
 			break;
 		case XIF_GET_IPATARI:
-			D(bug("XIF_GET_IPATARI\n"));
+			D(bug("XIF_GET_IPATARI"));
 			ret = get_params(ATARI_IP);
 			break;
 		case XIF_GET_NETMASK:
-			D(bug("XIF_GET_NETMASK\n"));
+			D(bug("XIF_GET_NETMASK"));
 			ret = get_params(NETMASK);
 			break;
 	}
