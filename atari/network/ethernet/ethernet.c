@@ -1,7 +1,7 @@
 /*
  * ARAnyM ethernet driver.
  *
- * Copyright (c) 2002-2004 Standa and Petr of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2002-2005 Standa and Petr of ARAnyM dev team (see AUTHORS)
  * 
  * based on dummy.xif skeleton 12/14/94, Kay Roemer.
  *
@@ -39,7 +39,9 @@
 
 #include "ethernet_nfapi.h"
 
-#define XIF_NAME	"ARAnyM Eth driver v0.5"
+#define XIF_NAME	"ARAnyM Eth driver v0.6"
+
+#define MAX_ETH		1	/* up to 4 is possible after some fixes */
 
 /* old handler */
 extern void (*old_interrupt)(void);
@@ -116,10 +118,10 @@ get_hw_addr( char *buffer, int len )
 	nfCall((ETH(XIF_GET_MAC), 0L /* ethX */, buffer, (unsigned long)len));
 }
 
-static inline void
-nfInterrupt ( short in_use )
+static inline unsigned long
+nfInterrupt ( short bit_mask )
 {
-	nfCall((ETH(XIF_IRQ), (unsigned long)in_use));
+	return nfCall((ETH(XIF_IRQ), (unsigned long)bit_mask));
 }
 
 static inline short
@@ -501,7 +503,7 @@ driver_init (void)
 	 */
 	if_ara.unit = if_getfreeunit ("eth");
 	/*
-	 * Alays set to zero
+	 * Always set to zero
 	 */
 	if_ara.metric = 0;
 	/*
@@ -533,7 +535,7 @@ driver_init (void)
 	 * Set interface hardware and broadcast addresses. For real ethernet
 	 * drivers you must get them from the hardware of course!
 	 */
-	/* ask host for the hardware address */
+	/* FIXME TODO ask host for the hardware address */
 	get_hw_addr(if_ara.hwlocal.addr, ETH_ALEN);
 	memcpy (if_ara.hwbrcst.addr, "\377\377\377\377\377\377", ETH_ALEN);
 
@@ -651,11 +653,21 @@ void _cdecl
 aranym_interrupt (void)
 {
 	static int in_use = 0;
+	int ethX;
+
 	if (in_use)
-		return;
-	nfInterrupt( in_use = 1 );
-	recv_packet (&if_ara);
-	nfInterrupt( in_use = 0 );
+		return; /* primitive locking */
+	in_use++;
+
+	for(ethX = 0; ethX < MAX_ETH; ethX++) {
+		int this_dev_irq_bit = 1 << ethX;
+		int irq_for_eth_bitmask = nfInterrupt(0);
+		if (this_dev_irq_bit & irq_for_eth_bitmask) {
+			recv_packet (&if_ara);
+			nfInterrupt(this_dev_irq_bit);
+		}
+	}
+	in_use = 0;
 }
 
 /*
