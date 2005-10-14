@@ -113,37 +113,37 @@ get_int_level()
 }
 
 static inline void
-get_hw_addr( char *buffer, int len )
+get_hw_addr( int ethX, char *buffer, int len )
 {
-	nfCall((ETH(XIF_GET_MAC), 0L /* ethX */, buffer, (unsigned long)len));
+	nfCall((ETH(XIF_GET_MAC), (unsigned long)ethX, buffer, (unsigned long)len));
 }
 
 static inline unsigned long
-nfInterrupt ( short bit_mask )
+nfInterrupt( short bit_mask )
 {
 	return nfCall((ETH(XIF_IRQ), (unsigned long)bit_mask));
 }
 
 static inline short
-read_packet_len ()
+read_packet_len( int ethX )
 {
-	return nfCall((ETH(XIF_READLENGTH), 0L /* ethX */));
+	return nfCall((ETH(XIF_READLENGTH), (unsigned long)ethX));
 }
 
 static inline void
-read_block (char *cp, short len)
+read_block( int ethX, char *cp, short len )
 {
-	nfCall((ETH(XIF_READBLOCK), 0L /* ethX */, cp, (unsigned long)len));
+	nfCall((ETH(XIF_READBLOCK), (unsigned long)ethX, cp, (unsigned long)len));
 }
 
 static inline void
-send_block (char *cp, short len)
+send_block( int ethX, char *cp, short len )
 {
-	nfCall((ETH(XIF_WRITEBLOCK), 0L /* ethX */, cp, (unsigned long)len));
+	nfCall((ETH(XIF_WRITEBLOCK), (unsigned long)ethX, cp, (unsigned long)len));
 }
 
 static void
-aranym_install_int (void)
+aranym_install_int(void)
 {
 # define vector(x)      (x / 4)
 	old_interrupt = Setexc(vector(0x60) + get_int_level(), (long) my_interrupt);
@@ -155,10 +155,11 @@ aranym_install_int (void)
  * and the interface was down before.
  */
 static long
-ara_open (struct netif *nif)
+ara_open(struct netif *nif)
 {
+	int ethX = nif->unit;
 	DEBUG (("araeth: open (nif = %08lx)", (long)nif));
-	return nfCall((ETH(XIF_START), 0L /* ethX */));
+	return nfCall((ETH(XIF_START), (unsigned long)ethX));
 }
 
 /*
@@ -166,9 +167,10 @@ ara_open (struct netif *nif)
  * is done and the interface was up before.
  */
 static long
-ara_close (struct netif *nif)
+ara_close(struct netif *nif)
 {
-	return nfCall((ETH(XIF_STOP), 0L /* ethX */));
+	int ethX = nif->unit;
+	return nfCall((ETH(XIF_STOP), (unsigned long)ethX));
 }
 
 /*
@@ -327,10 +329,11 @@ ara_output (struct netif *nif, BUF *buf, const char *hwaddr, short hwlen, short 
 	 */
 	{
 		short len = nbuf->dend - nbuf->dstart;
+		int ethX = nif->unit;
 		DEBUG (("araeth: send %d (%x) bytes", len));
 		len = MAX (len, 60);
 
-		send_block (nbuf->dstart, len);
+		send_block (ethX, nbuf->dstart, len);
 	}
 
 	return 0;
@@ -351,17 +354,18 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 	char buffer[128];
 	struct ifreq *ifr = (struct ifreq *)arg;
 	long *data = ifr->ifru.data;
+	int ethX = nif->unit;
 
 	DEBUG (("araeth: ioctl cmd = %d \"('%c'<<8)|%d\" bytes", cmd, cmd>>8, cmd&0xff));
 
 	switch (cmd)
 	{
 		case SIOCGLNKSTATS:
-			nfCall((ETH(XIF_GET_IPATARI), 0L /*ethX*/, buffer, sizeof(buffer)));
+			nfCall((ETH(XIF_GET_IPATARI), (unsigned long)ethX, buffer, sizeof(buffer)));
 			inet_aton(buffer, data++);
-			nfCall((ETH(XIF_GET_IPHOST), 0L /*ethX*/, buffer, sizeof(buffer)));
+			nfCall((ETH(XIF_GET_IPHOST), (unsigned long)ethX, buffer, sizeof(buffer)));
 			inet_aton(buffer, data++);
-			nfCall((ETH(XIF_GET_NETMASK), 0L /*ethX*/, buffer, sizeof(buffer)));
+			nfCall((ETH(XIF_GET_NETMASK), (unsigned long)ethX, buffer, sizeof(buffer)));
 			inet_aton(buffer, data++);
 			return 0;
 
@@ -539,11 +543,9 @@ driver_init (void)
 		if_ara->hwbrcst.len = ETH_ALEN;
 
 		/*
-		 * Set interface hardware and broadcast addresses. For real ethernet
-		 * drivers you must get them from the hardware of course!
+		 * Set interface hardware and broadcast addresses.
 		 */
-		/* FIXME TODO ask host for the hardware address */
-		get_hw_addr(if_ara->hwlocal.addr, ETH_ALEN);
+		get_hw_addr(ethX, if_ara->hwlocal.addr, ETH_ALEN);
 		memcpy (if_ara->hwbrcst.addr, "\377\377\377\377\377\377", ETH_ALEN);
 
 		/*
@@ -617,9 +619,10 @@ recv_packet (struct netif *nif)
 {
 	ushort pktlen;
 	BUF *b;
+	int ethX = nif->unit;
 
 	/* read packet length (excluding 32 bit crc) */
-	pktlen = read_packet_len ();
+	pktlen = read_packet_len(ethX);
 
 	DEBUG (("araeth: recv_packet: %i", pktlen));
 
@@ -640,7 +643,7 @@ recv_packet (struct netif *nif)
 	}
 	b->dend += pktlen;
 
-	read_block (b->dstart, pktlen);
+	read_block(ethX, b->dstart, pktlen);
 
 	/* Pass packet to upper layers */
 	if (nif->bpf)
