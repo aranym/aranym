@@ -23,7 +23,7 @@ class WinTapEthernetHandler : public ETHERNETDriver::Handler {
 	int device_total_out;
 
 public:
-	WinTapEthernetHandler(int eth_idx) : Handler(eth_idx);
+	WinTapEthernetHandler(int eth_idx);
 
 	virtual bool open();
 	virtual bool close();

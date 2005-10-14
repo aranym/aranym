@@ -95,7 +95,8 @@ static char *winerror(int err) {
 }
 
 
-WinTapEthernetHandler::WinTapEthernetHandler()
+WinTapEthernetHandler::WinTapEthernetHandler(int eth_idx)
+	: ETHERNETDriver::Handler(eth_idx)
 {
 	device_handle = INVALID_HANDLE_VALUE;
 	device = NULL;
