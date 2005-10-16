@@ -1,3 +1,13 @@
+2005/10/16 - joy
+- aranym/atari/network/ethernet: updated for multiple interfaces. Tested.
+  Driver (version 0.6b) now prints all found and installed interfaces.
+  Updated also the binary (aranym.xif.bz2).
+
+- parameters.cpp: default ungrab changed to left Alt+Ctrl+Shift
+
+- TODO: updated with useful comments
+
+
 2005/10/13 - joy (& Standa :-)
 - natfeat/ethernet.{cpp,h}: wildly modified to allow handling more 
   ethernet devices at once.
