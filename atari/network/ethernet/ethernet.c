@@ -39,7 +39,7 @@
 
 #include "ethernet_nfapi.h"
 
-#define XIF_NAME	"ARAnyM Eth driver v0.6"
+#define XIF_NAME	"ARAnyM Eth driver v0.6b"
 
 #define MAX_ETH		4
 
@@ -112,10 +112,10 @@ get_int_level()
 	return nfCall((ETH(XIF_INTLEVEL)));
 }
 
-static inline void
+static inline unsigned long
 get_hw_addr( int ethX, char *buffer, int len )
 {
-	nfCall((ETH(XIF_GET_MAC), (unsigned long)ethX, buffer, (unsigned long)len));
+	return nfCall((ETH(XIF_GET_MAC), (unsigned long)ethX, buffer, (unsigned long)len));
 }
 
 static inline unsigned long
@@ -474,8 +474,8 @@ ara_config (struct netif *nif, struct ifopt *ifo)
 long
 driver_init (void)
 {
-	static char message[100];
-	static char my_file_name[128];
+	char message[100];
+	/* static char my_file_name[128]; */
 	int ethX;
 
 	nfEtherID = 0;
@@ -501,6 +501,7 @@ driver_init (void)
 	/*
 	 * registering ETHx
 	 */
+	strcpy(message, XIF_NAME " ("); /* for 'we are alive' message, see below */
 	for(ethX=0; ethX<MAX_ETH; ethX++)
 	{
 		struct netif *if_ara = &(if_aras[ethX]);
@@ -509,10 +510,12 @@ driver_init (void)
 	 	 */
 		strcpy (if_ara->name, "eth");
 		/*
-		 * Set interface unit. if_getfreeunit("name") returns a yet
-		 * unused unit number for the interface type "name".
+		 * Set interface unit to the ethX index and hope that
+		 * it was unused (if_getfreeunit("name") returns a yet
+		 * unused unit number for the interface type "name" but
+		 * we really need the unit to be the ethX)
 		 */
-		if_ara->unit = ethX; /* if_getfreeunit ("eth"); */
+		if_ara->unit = ethX; /* required */
 		/*
 		 * Always set to zero
 		 */
@@ -545,7 +548,9 @@ driver_init (void)
 		/*
 		 * Set interface hardware and broadcast addresses.
 		 */
-		get_hw_addr(ethX, if_ara->hwlocal.addr, ETH_ALEN);
+		if (! get_hw_addr(ethX, if_ara->hwlocal.addr, ETH_ALEN))
+			continue; /* if XIF_GET_MAC returns false then skip this interface */
+
 		memcpy (if_ara->hwbrcst.addr, "\377\377\377\377\377\377", ETH_ALEN);
 
 		/*
@@ -580,6 +585,8 @@ driver_init (void)
 		 * Register the interface.
 		 */
 		if_register (if_ara);
+
+		ksprintf(message + strlen(message), " eth%d", ethX); /* for 'alive' msg */
 	}
 
 	/*
@@ -593,19 +600,18 @@ driver_init (void)
 	 * NOTE: the file name will be overwritten when you leave the
 	 * init function. So if you need it later make a copy!
 	 */
+/*
 	if (NETINFO->fname)
 	{
 		strncpy (my_file_name, NETINFO->fname, sizeof (my_file_name));
 		my_file_name[sizeof (my_file_name) - 1] = '\0';
-# if 0
-		ksprintf (message, "My file name is '%s'\n\r", my_file_name);
-		c_conws (message);
-# endif
 	}
+*/
+
 	/*
 	 * And say we are alive...
 	 */
-	ksprintf (message, XIF_NAME " (eth0)\n\r");
+	strcat(message, " )\n\r");
 	c_conws (message);
 	return 0;
 }
