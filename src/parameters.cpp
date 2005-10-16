@@ -812,7 +812,7 @@ void preset_hotkeys()
 	bx_options.hotkeys.reboot.sym = HOTKEY_OPENGUI;
 	bx_options.hotkeys.reboot.mod = KMOD_LCTRL;
 	bx_options.hotkeys.ungrab.sym = SDLK_ESCAPE;
-	bx_options.hotkeys.ungrab.mod = (SDLMod)(KMOD_LCTRL | KMOD_LALT);
+	bx_options.hotkeys.ungrab.mod = (SDLMod)(KMOD_LSHIFT | KMOD_LCTRL | KMOD_LALT);
 	bx_options.hotkeys.debug.sym = HOTKEY_OPENGUI;
 	bx_options.hotkeys.debug.mod = KMOD_LALT;
 	bx_options.hotkeys.screenshot.sym = HOTKEY_SCREENSHOT;
