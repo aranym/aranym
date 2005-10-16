@@ -34,7 +34,7 @@
 #endif
 
 
-ulong    _cdecl fs_drive_bits();
+ulong    _cdecl fs_drive_bits(void);
 long     _cdecl aranym_fs_native_init(int fs_devnum, char *mountpoint, char *hostroot, int halfsensitive,
 									  void *fs, void *fs_dev);
 
@@ -78,11 +78,12 @@ long     _cdecl ara_fs_dupcookie (fcookie *new, fcookie *old);
 long     _cdecl ara_fs_sync		 (void);
 long     _cdecl ara_fs_mknod     (fcookie *dir, const char *name, ulong mode);
 long     _cdecl ara_fs_unmount	 (int drv);
+long     _cdecl ara_fs_stat64    (fcookie *file, STAT *xattr);
 
 
 unsigned long nfHostFsId;
 
-ulong     _cdecl fs_drive_bits()
+ulong     _cdecl fs_drive_bits(void)
 {
 	return nfCall((HOSTFS(GET_DRIVE_BITS)));
 }
@@ -292,8 +293,7 @@ FILESYS aranym_fs =
 	FS_REENTRANT_L1  |
 	FS_REENTRANT_L2  |
 	FS_EXT_1         |
-	FS_EXT_2         |
-	FS_EXT_3         ,
+	FS_EXT_2         ,
 	ara_fs_root, ara_fs_lookup, ara_fs_creat, ara_fs_getdev, ara_fs_getxattr,
 	ara_fs_chattr, ara_fs_chown, ara_fs_chmode, ara_fs_mkdir, ara_fs_rmdir,
 	ara_fs_remove, ara_fs_getname, ara_fs_rename, ara_fs_opendir,
@@ -306,7 +306,7 @@ FILESYS aranym_fs =
 	ara_fs_mknod, ara_fs_unmount,
 	/* FS_EXT_2 */
 	/* FS_EXT_3 */
-	ara_fs_stat64,
+	0L,
 	0L, 0L, 0L,         /* reserved 1,2,3 */
 	0L, 0L,             /* lock, sleepers */
 	0L, 0L              /* block(), deblock() */

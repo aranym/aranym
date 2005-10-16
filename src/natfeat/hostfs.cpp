@@ -90,7 +90,7 @@
 #endif
 
 // for the FS_EXT3 using host.xfs (recently changed)
-#define USE_FS_EXT3 1
+#undef USE_FS_EXT3
 
 
 int32 HostFs::dispatch(uint32 fncode)
