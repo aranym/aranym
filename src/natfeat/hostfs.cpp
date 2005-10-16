@@ -35,7 +35,7 @@
 
 #undef  DEBUG_FILENAMETRANSFORMATION
 #undef DEBUG
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #if 0
@@ -88,6 +88,10 @@
 #else
 #    define WHEN_INT4B(x,y) x
 #endif
+
+// for the FS_EXT3 using host.xfs (recently changed)
+#define USE_FS_EXT3 1
+
 
 int32 HostFs::dispatch(uint32 fncode)
 {
@@ -537,6 +541,7 @@ uint16 HostFs::time2dos(time_t t)
 {
 	struct tm *x;
 	x = localtime (&t);
+	D2(bug("HOSTFS: time2dos (%d:%d:%d)", x->tm_hour, x->tm_min, x->tm_sec));
 	return ((x->tm_sec&0x3f)>>1)|((x->tm_min&0x3f)<<5)|((x->tm_hour&0x1f)<<11);
 }
 
@@ -545,6 +550,7 @@ uint16 HostFs::date2dos(time_t t)
 {
 	struct tm *x;
 	x = localtime (&t);
+	D2(bug("HOSTFS: date2dos (%d,%d,%d)", x->tm_mday, x->tm_mon, x->tm_year-80+1980));
 	return x->tm_mday|((x->tm_mon+1)<<5)|(MAX(x->tm_year-80,0)<<9);
 }
 
@@ -1371,15 +1377,21 @@ int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 
 	uint32 datetime = ReadInt32( datetimep );
 	if (wflag != 0) {
-		struct tm ttm;
 		struct utimbuf tmb;
+
+#if defined(USE_FS_EXT3)
+		tmb.actime = datetime;
+#else
+		struct tm ttm;
 
 		datetime2tm( datetime, &ttm );
 		tmb.actime = mktime( &ttm );  /* access time */
+#endif
 		tmb.modtime = tmb.actime; /* modification time */
 
 		utime( fpathName, &tmb );
 
+#if ! defined(USE_FS_EXT3)
 		D(bug("HOSTFS: /dev_datime: setting to: %d.%d.%d %d:%d.%d",
 				  ttm.tm_mday,
 				  ttm.tm_mon,
@@ -1388,10 +1400,13 @@ int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 				  ttm.tm_min,
 				  ttm.tm_hour
 				  ));
+#endif
 	}
 
+#if ! defined(USE_FS_EXT3)
 	datetime =
 		( time2dos(statBuf.st_mtime) << 16 ) | date2dos(statBuf.st_mtime);
+#endif
 	WriteInt32( datetimep, datetime );
 
 	return TOS_E_OK; //EBADRQ;
@@ -1690,12 +1705,18 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, memptr xattrp )
 #else
 	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, statBuf.st_blocks );
 #endif
+#if defined(USE_FS_EXT3)
+	/* UWORD mtime	   */  WriteInt32( xattrp + 28, statBuf.st_mtime );
+	/* UWORD atime	   */  WriteInt32( xattrp + 32, statBuf.st_atime );
+	/* UWORD atime	   */  WriteInt32( xattrp + 36, statBuf.st_ctime );
+#else
 	/* UWORD mtime	   */  WriteInt16( xattrp + 28, time2dos(statBuf.st_mtime) );
 	/* UWORD mdate	   */  WriteInt16( xattrp + 30, date2dos(statBuf.st_mtime) );
 	/* UWORD atime	   */  WriteInt16( xattrp + 32, time2dos(statBuf.st_atime) );
 	/* UWORD adate	   */  WriteInt16( xattrp + 34, date2dos(statBuf.st_atime) );
 	/* UWORD ctime	   */  WriteInt16( xattrp + 36, time2dos(statBuf.st_ctime) );
 	/* UWORD cdate	   */  WriteInt16( xattrp + 38, date2dos(statBuf.st_ctime) );
+#endif
 	/* UWORD attr	   */  WriteInt16( xattrp + 40, modeHost2TOS(statBuf.st_mode) );
 	/* UWORD reserved2 */  WriteInt16( xattrp + 42, 0 );
 	/* LONG	 reserved3 */  WriteInt32( xattrp + 44, 0 );
