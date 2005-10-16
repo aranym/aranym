@@ -1,3 +1,11 @@
+2005/10/16 - STanda
+- hostfs: a little rollback (FS_EXT3 extensions removal) as it caused
+  problems with required timezone settings (not easily possible for
+  BetaDOS and FreeMiNT without mintlib-timezone package).
+
+  * New .dos and .xfs drivers are in atari/hostfs/bin
+
+
 2005/10/16 - joy
 - aranym/atari/network/ethernet: updated for multiple interfaces. Tested.
   Driver (version 0.6b) now prints all found and installed interfaces.
