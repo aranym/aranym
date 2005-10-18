@@ -6,6 +6,9 @@
   floppy format with 80 tracks (DD/HD/ED, and also non-standard 10,11 and
   20,21,22 sectors per track).
 
+- parameters.cpp: save only those multiple items ([PARTITION1-7], [ETH1-4])
+  that are not empty (to save some space in the config file).
+
 
 2005/10/16 - STanda
 - hostfs: a little rollback (FS_EXT3 extensions removal) as it caused
