@@ -1295,20 +1295,32 @@ bool saveSettings(const char *fs)
 	update_config(fs, ide_swap ? diskc_configs : diskd_configs, "[IDE1]");
 
 	update_config(fs, disk0_configs, "[PARTITION0]");
-	update_config(fs, disk1_configs, "[PARTITION1]");
-	update_config(fs, disk2_configs, "[PARTITION2]");
-	update_config(fs, disk3_configs, "[PARTITION3]");
-	update_config(fs, disk4_configs, "[PARTITION4]");
-	update_config(fs, disk5_configs, "[PARTITION5]");
-	update_config(fs, disk6_configs, "[PARTITION6]");
-	update_config(fs, disk7_configs, "[PARTITION7]");
+	if (strlen((char *)disk1_configs->buf))
+		update_config(fs, disk1_configs, "[PARTITION1]");
+	if (strlen((char *)disk2_configs->buf))
+		update_config(fs, disk2_configs, "[PARTITION2]");
+	if (strlen((char *)disk3_configs->buf))
+		update_config(fs, disk3_configs, "[PARTITION3]");
+	if (strlen((char *)disk4_configs->buf))
+		update_config(fs, disk4_configs, "[PARTITION4]");
+	if (strlen((char *)disk5_configs->buf))
+		update_config(fs, disk5_configs, "[PARTITION5]");
+	if (strlen((char *)disk6_configs->buf))
+		update_config(fs, disk6_configs, "[PARTITION6]");
+	if (strlen((char *)disk7_configs->buf))
+		update_config(fs, disk7_configs, "[PARTITION7]");
 
 	update_config(fs, arafs_conf, "[HOSTFS]");
 	update_config(fs, opengl_conf, "[OPENGL]");
+
 	update_config(fs, eth0_conf, "[ETH0]");
-	update_config(fs, eth1_conf, "[ETH1]");
-	update_config(fs, eth2_conf, "[ETH2]");
-	update_config(fs, eth3_conf, "[ETH3]");
+	if (strlen((char *)eth1_conf->buf))
+		update_config(fs, eth1_conf, "[ETH1]");
+	if (strlen((char *)eth2_conf->buf))
+		update_config(fs, eth2_conf, "[ETH2]");
+	if (strlen((char *)eth3_conf->buf))
+		update_config(fs, eth3_conf, "[ETH3]");
+
 	update_config(fs, lilo_conf, "[LILO]");
 	update_config(fs, midi_conf, "[MIDI]");
 	update_config(fs, nfcdroms_conf, "[CDROMS]");
