@@ -1,3 +1,12 @@
+2005/10/18 - joy
+- acsifdc.cpp: corrected detection of floppy format in linux-m68k by
+  reporting RECORD NOT FOUND when linux tried to read more sectors
+  than there are on a track (linux tries to read 20, HD floppy has 18 spt).
+  Also added some more heuristic so ARAnyM is now able to detect any
+  floppy format with 80 tracks (DD/HD/ED, and also non-standard 10,11 and
+  20,21,22 sectors per track).
+
+
 2005/10/16 - STanda
 - hostfs: a little rollback (FS_EXT3 extensions removal) as it caused
   problems with required timezone settings (not easily possible for
