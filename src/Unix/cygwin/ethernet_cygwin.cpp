@@ -330,9 +330,12 @@ bool WinTapEthernetHandler::open()
 	char device_guid[0x100];
 	char name_buffer[0x100] = {0, };
 
-	if ( strlen(bx_options.ethernet[ethX].tunnel) ) {
-		safe_strncpy(name_buffer, bx_options.ethernet[ethX].tunnel, sizeof(name_buffer));
+	if ( strlen(bx_options.ethernet[ethX].tunnel) == 0) {
+		D(bug("WinTap(%d): tunnel name undefined", ethX));
+		return false;
 	}
+
+	safe_strncpy(name_buffer, bx_options.ethernet[ethX].tunnel, sizeof(name_buffer));
 
  	if ( get_device_guid(device_guid, sizeof(device_guid), name_buffer, sizeof(name_buffer)) < 0 ) {
 		panicbug("WinTap: ERROR: Could not find Windows tap device: %s", winerror(GetLastError()));
