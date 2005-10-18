@@ -35,7 +35,7 @@
 
 #undef  DEBUG_FILENAMETRANSFORMATION
 #undef DEBUG
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #if 0
