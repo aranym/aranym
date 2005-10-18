@@ -37,7 +37,7 @@
 #include "ncr5380.h"
 #include "parameters.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 /* Defines */
@@ -55,6 +55,7 @@ enum {
 /* Variables */
 
 static NCR5380 ncr5380;
+static int panic_floppy_error = 0;
 
 ACSIFDC::ACSIFDC(memptr addr, uint32 size) : BASE_IO(addr, size) {
 	drive_fd = -1;
@@ -81,7 +82,7 @@ uint16 ACSIFDC::handleReadW(memptr addr) {
 		default: value = BASE_IO::handleReadW(addr);
 	}
 
-	D(bug("Reading ACSIFDC word data from %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
+	// D(bug("Reading ACSIFDC word data from %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
 	return value;
 }
 
@@ -96,13 +97,13 @@ uint8 ACSIFDC::handleRead(memptr addr) {
 		case 5: value = getDMAData(); break;
 		case 6: value = getDMAStatus() >> 8; break;
 		case 7: value = getDMAStatus(); break;
-		case 9: value = DMAaddr >> 16; break;
+		case 9: value = DMAaddr >> 16; D(bug("reading DMA addr")); break;
 		case 0x0b: value = DMAaddr >> 8; break;
 		case 0x0d: value = DMAaddr; break;
 		case 0x0f: value = 0; break;	// missing floppy-control reg emulation
 	}
 
-	D(bug("Reading ACSIFDC data from %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
+	// D(bug("Reading ACSIFDC data from %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
 	return value;
 }
 
@@ -119,7 +120,7 @@ void ACSIFDC::handleWrite(memptr addr, uint8 value) {
 	if (addr >= getHWsize())
 		return;
 
-	D(bug("Writing ACSIFDC data to %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
+	// D(bug("Writing ACSIFDC data to %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
 	switch(addr) {
 		case 4: setDMASectorCount(value << 8); break;
 		case 5: setDMASectorCount(value); break;
@@ -182,10 +183,11 @@ uint16 ACSIFDC::getDMAStatus()
 
 void ACSIFDC::setDMASectorCount(uint16 vv)
 {
-	D(bug("DMA car/scr <- %x (mode=%x)", vv, dma_mode));
+	// D(bug("DMA car/scr <- %x (mode=%x)", vv, dma_mode));
 	if (dma_mode&0x10)
 	{
 		dma_scr = vv;
+		D(bug("scr = %d", dma_scr));
 	}
 	else
 	{
@@ -225,17 +227,18 @@ void ACSIFDC::setDMASectorCount(uint16 vv)
 void ACSIFDC::setDMAMode(uint16 vv)
 {
 	dma_mode = vv;
-	D(bug("DMA mode <- %04x", dma_mode));
+	// D(bug("DMA mode <- %04x", dma_mode));
 }
 
 /*************************************************************************/
 
 // parameters of default floppy (3.5" HD 1.44 MB)
 #define SECSIZE		512
-#define SPT			18
+#define SPT_DD		9
+#define SPT_HD		18
+#define SPT_ED		36
 #define SIDES		2
 #define TRACKS		80
-#define SECTORS		(SPT * SIDES * TRACKS)
 
 void ACSIFDC::set_floppy_geometry()
 {
@@ -269,9 +272,22 @@ void ACSIFDC::set_floppy_geometry()
 		if (! valid) {
 			// bootsector contains invalid data - use our default
 			secsize = SECSIZE;
-			spt = SPT;
 			sides = SIDES;
-			sectors = SECTORS;
+
+			// try to guess DD/HD/ED format from total disk size
+			off_t disk_size = lseek(drive_fd, 0, SEEK_END);
+			if (disk_size == 720 * 1024)
+				spt = SPT_DD;
+			else if (disk_size == 1440 * 1024)
+				spt = SPT_HD;
+			else if (disk_size == 2880 * 1024)
+				spt = SPT_ED;
+			else if (disk_size % (secsize * sides * TRACKS) == 0)
+				spt = (disk_size / secsize / sides / TRACKS);
+			else // non-standard number of tracks?
+				spt = SPT_HD; // assume HD floppy
+
+			sectors = spt * sides * TRACKS;
 		}
 
 		tracks = (sectors / spt / sides);
@@ -328,6 +344,7 @@ bool ACSIFDC::insert_floppy()
 	set_floppy_geometry();
 
 	floppy_changed = true;
+	panic_floppy_error = 0;
 	return true;
 }
 
@@ -444,13 +461,15 @@ void ACSIFDC::fdc_exec_command()
 	{
 		if (d>=0)
 		{
+			int record_not_found = 0;
 			offset=secsize
 				* (((spt*sides*head))
 				+ (spt * actual_side) + (fdc_sector-1));
 			// special hack for 'fixing' dma_scr in Linux where it's often = 20
 			int newscr = spt - fdc_sector + 1;
 			if (newscr < dma_scr && spt > 1) {
-				panicbug(">>>Fixed SCR from %d to %d", dma_scr, newscr);
+				D(bug("FDC: Fixed SCR from %d to %d", dma_scr, newscr));
+				record_not_found = 1;
 				dma_scr = newscr;
 			}
 			switch(fdc_command & 0xf0)
@@ -473,10 +492,13 @@ void ACSIFDC::fdc_exec_command()
 						DMAaddr += dma_scr*secsize;
 						dma_scr=0;
 						dma_sr=1;
+						if (record_not_found)
+							fdc_status |= 0x10;
 						break;
 					}
 					else {
-						panicbug("Floppy read(%d, %06x, %d) failed.", drive_fd, DMAaddr, dma_scr);
+						if (! panic_floppy_error++)
+							panicbug("Floppy read(%d, %06x, %d) failed.", drive_fd, DMAaddr, dma_scr);
 					}
 					fdc_status |= 0x10;
 					dma_sr=1;
@@ -489,10 +511,13 @@ void ACSIFDC::fdc_exec_command()
 						DMAaddr += dma_scr*secsize;
 						dma_scr=0;
 						dma_sr=1;
+						if (record_not_found)
+							fdc_status |= 0x10;
 						break;
 					}
 					else {
-						panicbug("Floppy write(%d, %06x, %d) failed.", drive_fd, DMAaddr, dma_scr);
+						if (! panic_floppy_error++)
+							panicbug("Floppy write(%d, %06x, %d) failed.", drive_fd, DMAaddr, dma_scr);
 					}
 					fdc_status |= 0x10;
 					dma_sr=1;
