@@ -37,7 +37,7 @@
 #include "ncr5380.h"
 #include "parameters.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /* Defines */
@@ -234,10 +234,8 @@ void ACSIFDC::setDMAMode(uint16 vv)
 
 // parameters of default floppy (3.5" HD 1.44 MB)
 #define SECSIZE		512
-#define SPT_DD		9
-#define SPT_HD		18
-#define SPT_ED		36
 #define SIDES		2
+#define SPT			18
 #define TRACKS		80
 
 void ACSIFDC::set_floppy_geometry()
@@ -274,18 +272,12 @@ void ACSIFDC::set_floppy_geometry()
 			secsize = SECSIZE;
 			sides = SIDES;
 
-			// try to guess DD/HD/ED format from total disk size
+			// for any 80 track floppy compute the sector per track
 			off_t disk_size = lseek(drive_fd, 0, SEEK_END);
-			if (disk_size == 720 * 1024)
-				spt = SPT_DD;
-			else if (disk_size == 1440 * 1024)
-				spt = SPT_HD;
-			else if (disk_size == 2880 * 1024)
-				spt = SPT_ED;
-			else if (disk_size % (secsize * sides * TRACKS) == 0)
+			if (disk_size % (secsize * sides * TRACKS) == 0)
 				spt = (disk_size / secsize / sides / TRACKS);
 			else // non-standard number of tracks?
-				spt = SPT_HD; // assume HD floppy
+				spt = SPT; // assume HD floppy
 
 			sectors = spt * sides * TRACKS;
 		}
