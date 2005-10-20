@@ -1,3 +1,12 @@
+2005/10/20 - joy
+- mfp.cpp: compute real TimerA frequency (Linux-m68k uses 100 Hz, not 200 Hz)
+
+- main.cpp: use the real TimerA frequency (doesn't seem to work correctly)
+
+- configure.ac: "--enable-rtctimer" added. Enables /dev/rtc as main
+  source of timer interrupts. Allows for precise 200 Hz Timer A interrupts.
+
+
 2005/10/18 - joy
 - acsifdc.cpp: corrected detection of floppy format in linux-m68k by
   reporting RECORD NOT FOUND when linux tried to read more sectors
