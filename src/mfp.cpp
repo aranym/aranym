@@ -92,7 +92,7 @@ uint8 MFP_Timer::getData()
 int MFP_Timer::compute_timer_freq()
 {
 #define MFP_FREQ	2457600UL
-	int freq = MFP_FREQ / 100; // safe default
+	int freq;
 	switch(control) {
 		case 1: freq = MFP_FREQ /  4; break;
 		case 2: freq = MFP_FREQ / 10; break;
@@ -101,8 +101,12 @@ int MFP_Timer::compute_timer_freq()
 		case 5: freq = MFP_FREQ / 64; break;
 		case 6: freq = MFP_FREQ /100; break;
 		case 7: freq = MFP_FREQ /200; break;
+		default: freq = MFP_FREQ / 64; break; // TOS default
 	}
-	freq = freq / start_data;
+	if (start_data)
+		freq = freq / start_data;
+	else
+		freq = freq / 192; // TOS default
 	return freq;
 }
 
