@@ -70,7 +70,9 @@ AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emul
 
 AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per second limiter (default=no)], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
 
-AC_ARG_ENABLE(lilo,            [  --enable-lilo           enable Linux loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
+AC_ARG_ENABLE(lilo,            [  --enable-lilo           enable Linux-m68k loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
+
+AC_ARG_ENABLE(rtctimer,        [  --enable-rtctimer       enable Linux /dev/rtc as source timer (default=no)], WANT_RTCTIMER="$enableval", WANT_RTCTIMER="no")
 
 AC_ARG_ENABLE(parallelx86,     [  --enable-parallelx86    enable Linux X86 hw access for parallel port (default=no)], [WANT_PARALLELX86=$enableval], [WANT_PARALLELX86=no])
 
@@ -1636,6 +1638,16 @@ if [[ "x$WANT_EPSLIMITER" = "xyes" ]]; then
 	AC_DEFINE([ENABLE_EPSLIMITER], 1, [Define if you want to use EPS limiter])
 fi
 
+dnl Linux /dev/rtc source timer
+
+if test "x$WANT_RTCTIMER" = "xyes" ; then
+	if test "$OS_TYPE" = "linux"; then
+		AC_DEFINE([RTC_TIMER], 1, [Define if you want to use Linux /dev/rtc as source timer])
+	else
+		WANT_RTCTIMER="no"
+	fi
+fi
+
 dnl Linux/X86 hardware access for parallel port
 
 PARALLELX86SRCS=""
@@ -1727,6 +1739,7 @@ if [[ "x$WANT_MMU" = "xyes" ]]; then
     echo -n \)
 fi
 echo
+echo Linux /dev/rtc source timer ............ : $WANT_RTCTIMER
 echo Real STOP implementation ............... : $WANT_REALSTOP
 echo DSP 56001 support ...................... : $WANT_DSP
 echo DSP 56001 disassembly support .......... : $WANT_DSP_DISASM
@@ -1742,7 +1755,7 @@ echo Support for hostfs ..................... : $WANT_HOSTFS
 echo Support for ethernet ................... : $HAVE_ETHERNET
 echo GUI .................................... : $WANT_SDLGUI
 echo OpenGL ................................. : $WANT_OPENGL
-echo Linux loader ........................... : $WANT_LILO
+echo Linux-m68k loader ...................... : $WANT_LILO
 echo Zlib ................................... : $have_zlib
 echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
 echo NatFeat PCI driver ..................... : $WANT_NFPCI
