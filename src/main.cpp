@@ -219,7 +219,7 @@ void do_vbl_irq()
  */
 void invoke200HzInterrupt()
 {
-	int ms_ticks = getMFP()->timerA_ms_ticks();
+	int ms_ticks = getMFP()->timerC_ms_ticks();
 
 	/* syncing to 200 Hz */
 #if USE_GETTICKS

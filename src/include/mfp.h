@@ -104,7 +104,7 @@ public:
 	void IRQ(int, int count);
 	void setGPIPbit(int mask, int value);
 	int doInterrupt(void);
-	int timerA_ms_ticks();
+	int timerC_ms_ticks();
 
 private:
 	void set_active_edge(uint8 value);

@@ -107,6 +107,7 @@ int MFP_Timer::compute_timer_freq()
 		freq = freq / start_data;
 	else
 		freq = freq / 192; // TOS default
+
 	return freq;
 }
 
@@ -579,9 +580,9 @@ int MFP::doInterrupt()
         return vector ;
 }
 
-int MFP::timerA_ms_ticks()
+int MFP::timerC_ms_ticks()
 {
-	int freq = A.compute_timer_freq();
+	int freq = C.compute_timer_freq();
 
 	return 1000 / freq;
 }
