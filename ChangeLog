@@ -1,8 +1,6 @@
 2005/10/20 - joy
-- mfp.cpp: compute real TimerA frequency (Linux-m68k uses 100 Hz, not 200 Hz)
-
-- main.cpp: use the real TimerA frequency (doesn't seem to work correctly)
-
+- mfp.cpp: compute real TimerC frequency (linux-m68k uses 100 Hz, not 200 Hz)
+- main.cpp: use the real TimerC frequency for correct time in linux-m68k
 - configure.ac: "--enable-rtctimer" added. Enables /dev/rtc as main
   source of timer interrupts. Allows for precise 200 Hz Timer A interrupts.
 
@@ -293,6 +291,7 @@
   Also added rounding for getHwColor.
 - hostscreen.cpp: Removed unnecessary dependency on glu function.
 
+
 2005/07/29 - Patrice
 - Trigger MFP interrupt only once per audio callback. Default format is 16 bits
   stereo for audio dma.
@@ -382,7 +381,8 @@
 2005/07/09 - Johan
 - nfvdi_*:      Bug fix for polylines with moves.
 - nfvdi_opengl: Bug fix for single pixel lines. Speedup for polylines.
-	
+
+
 2005/06/21 - Patrice
 - hostscreen: Don't use SDL version of glext.h. Also fix bpp for OpenGL screen.
 
