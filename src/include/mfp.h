@@ -44,6 +44,7 @@ public:
 	void setData(uint8);
 	uint8 getData();
 	void resetCounter();
+	int compute_timer_freq();
 };
 
 class MFP_TimerA:public MFP_Timer {
@@ -103,6 +104,7 @@ public:
 	void IRQ(int, int count);
 	void setGPIPbit(int mask, int value);
 	int doInterrupt(void);
+	int timerA_ms_ticks();
 
 private:
 	void set_active_edge(uint8 value);

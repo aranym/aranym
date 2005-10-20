@@ -89,6 +89,23 @@ uint8 MFP_Timer::getData()
 	return current_data;
 }
 
+int MFP_Timer::compute_timer_freq()
+{
+#define MFP_FREQ	2457600UL
+	int freq = MFP_FREQ / 100; // safe default
+	switch(control) {
+		case 1: freq = MFP_FREQ /  4; break;
+		case 2: freq = MFP_FREQ / 10; break;
+		case 3: freq = MFP_FREQ / 16; break;
+		case 4: freq = MFP_FREQ / 50; break;
+		case 5: freq = MFP_FREQ / 64; break;
+		case 6: freq = MFP_FREQ /100; break;
+		case 7: freq = MFP_FREQ /200; break;
+	}
+	freq = freq / start_data;
+	return freq;
+}
+
 /*************************************************************************/
 
 MFP::MFP(memptr addr, uint32 size) : BASE_IO(addr, size)
@@ -557,3 +574,14 @@ int MFP::doInterrupt()
 #endif
         return vector ;
 }
+
+int MFP::timerA_ms_ticks()
+{
+	int freq = A.compute_timer_freq();
+
+	return 1000 / freq;
+}
+
+/*
+vim:ts=4:sw=4:
+*/
