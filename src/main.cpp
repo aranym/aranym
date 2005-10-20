@@ -50,8 +50,6 @@
 # include <stdlib.h>
 #endif
 
-#define RTC_TIMER 0
-
 #if RTC_TIMER
 #include <linux/rtc.h>
 #include <errno.h>
@@ -183,49 +181,37 @@ void heartBeat()
 	}
 }
 
-/* the count is number of 200 Hz interrupts to generate at once */
-void do_200hz_irq(int count)
+/* VBL is fixed at 50 Hz in ARAnyM */
+void do_vbl_irq()
 {
-#define VBL_IN_TIMERC	4	/* VBL happens once in 4 TimerC 200 Hz interrupts ==> 50 Hz VBL */
 #define VIDEL_REFRESH	bx_options.video.refresh	/* VIDEL screen is refreshed once in 2 VBL interrupts ==> 25 Hz */
 
-	static int VBL_counter = 0;
 	static int refreshCounter = 0;
 
-#ifdef DEBUGGER
-	if (!debugging || irqindebug)
-#endif
-		getMFP()->IRQ(5, count);
+	heartBeat();
 
-	VBL_counter += count;
-	if (VBL_counter >= VBL_IN_TIMERC) {	// divided by 4 => 50 Hz VBL
-		VBL_counter -= VBL_IN_TIMERC;
+	// Thread safety patch
+	hostScreen.lock();
 
-		heartBeat();
+	check_event();		// process keyboard and mouse events
+	TriggerVBL();		// generate VBL
 
-		// Thread safety patch
-		hostScreen.lock();
-
-		check_event();		// process keyboard and mouse events
-		TriggerVBL();		// generate VBL
-
-		if (++refreshCounter == VIDEL_REFRESH) {// divided by 2 again ==> 25 Hz screen update
-			getVIDEL()->renderScreen();
+	if (++refreshCounter == VIDEL_REFRESH) {// divided by 2 again ==> 25 Hz screen update
+		getVIDEL()->renderScreen();
 #ifdef SDL_GUI
-			if (hostScreen.isGUIopen()) {
-				static int blendRefresh = 0;
-				if (blendRefresh++ > 5) {
-					blendRefresh = 0;
-					hostScreen.blendBackgrounds();
-				}
+		if (hostScreen.isGUIopen()) {
+			static int blendRefresh = 0;
+			if (blendRefresh++ > 5) {
+				blendRefresh = 0;
+				hostScreen.blendBackgrounds();
 			}
-#endif /* SDL_GUI */
-			refreshCounter = 0;
 		}
-
-		// Thread safety patch
-		hostScreen.unlock();
+#endif /* SDL_GUI */
+		refreshCounter = 0;
 	}
+
+	// Thread safety patch
+	hostScreen.unlock();
 }
 
 /*
@@ -233,6 +219,8 @@ void do_200hz_irq(int count)
  */
 void invoke200HzInterrupt()
 {
+	int ms_ticks = 5; // getMFP()->timerA_ms_ticks();
+
 	/* syncing to 200 Hz */
 #if USE_GETTICKS
 	uint32 newTicks = SDL_GetTicks();
@@ -243,9 +231,9 @@ void invoke200HzInterrupt()
 #endif
 
 	// correct lastTicks at start-up
-	if (lastTicks == 0) { lastTicks = newTicks - 5; }
+	if (lastTicks == 0) { lastTicks = newTicks - ms_ticks; }
 
-	int count = (newTicks - lastTicks) / 5;	// miliseconds / 5 = 200 Hz
+	int count = (newTicks - lastTicks) / ms_ticks;
 	if (count == 0) {
 #if DEBUG
 		early_interrupts++;
@@ -272,9 +260,21 @@ void invoke200HzInterrupt()
 	count = 1;
 #endif
 
-	lastTicks += (count * 5);
+	int milliseconds = (count * ms_ticks);
+	lastTicks += milliseconds;
 
-	do_200hz_irq(count);
+#ifdef DEBUGGER
+	if (!debugging || irqindebug)
+#endif
+		getMFP()->IRQ(5, count);
+
+#define VBL_MS	40
+	static int VBL_counter = 0;
+	VBL_counter += milliseconds;
+	if (VBL_counter >= VBL_MS) {
+		VBL_counter -= VBL_MS;
+		do_vbl_irq();
+	}
 }
 
 #if RTC_TIMER
