@@ -169,7 +169,7 @@ install: $(APP) $(TAPIF) $(APP).1.gz installdirs
 	$(INSTALL_DATA) ../../COPYING $(DESTDIR)$(docdir)/$(APP)/COPYING
 	$(INSTALL_DATA) ../../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
 	$(INSTALL_DATA) ../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL
-	$(INSTALL_DATA) ../../doc/documentation.txt $(DESTDIR)$(docdir)/$(APP)/documentation.txt
+	$(INSTALL_DATA) ../../doc/aranym.html $(DESTDIR)$(docdir)/$(APP)/aranym.html
 	$(INSTALL_DATA) ../../doc/config $(DESTDIR)$(docdir)/$(APP)/config
 # JOY, uncomment it for releases
 #	$(INSTALL_DATA) ../../data/etos512k.img $(DESTDIR)$(datadir)/$(APP)/etos512k.img
