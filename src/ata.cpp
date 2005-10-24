@@ -2127,11 +2127,11 @@ bx_hard_drive_c::calculate_logical_address(Bit8u channel, off_t *sector)
            (Bit32u)BX_SELECTED_DRIVE(channel).hard_drive->heads * 
            (Bit32u)BX_SELECTED_DRIVE(channel).hard_drive->sectors;
 
+      *sector = logical_sector;
       if (logical_sector >= sector_count) {
             bug("calc_log_addr: out of bounds");
             return false;
       }
-      *sector = logical_sector;
       return true;
 }
 
