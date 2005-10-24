@@ -1,3 +1,9 @@
+2005/10/24 - Andreas
+- Makefile.in: update install target for removal of doc/documentation.txt.
+
+- ata.cpp: fix use of uninitialized variable.
+
+
 2005/10/20 - joy
 - mfp.cpp: compute real TimerC frequency (linux-m68k uses 100 Hz, not 200 Hz)
 - main.cpp: use the real TimerC frequency for correct time in linux-m68k
