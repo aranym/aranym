@@ -757,7 +757,12 @@ Netmask = 255.255.255.0
 
 <p>Let's say we want to hook the ARAnyM to the 'eth0' interface:</p>
 
-<p>1. get ip and netmask of eth0</p>
+<p>1. note ip, netmask and route of eth0</p>
+<pre>
+$ /sbin/ifconfig eth0
+$ /sbin/route
+</pre>
+Say eth0 had IP address 192.168.0.42 and default route was to 192.168.0.1
 <p>2. shut down eth0</p>
 <pre>
 $ ifconfig eth0 0.0.0.0
@@ -778,7 +783,11 @@ $ brctl addif br0 tap0
 </pre>
 <p>6. set ip and netmask of br0 to be same as was the eth0</p>
 <pre>
-$ ifconfig br0 192.168.0.1 netmask 255.255.255.0 up
+$ ifconfig br0 192.168.0.42 netmask 255.255.255.0 up
+</pre>
+<p>7. restore default route</p>
+<pre>
+$ route add default gw 192.168.0.1 br0
 </pre>
 
 <p>and that's it. Problems could arise if firewall is running on the
@@ -975,7 +984,7 @@ this site</a> for ramdisk images (initrd22.gz or initrd.gz).</p>
 
 <p>With correct config file you simply start "aranym-mmu -l -N" and that's it.</p>
 
-<h2><a name="coding">13. Programming with ARAnyM</a></h2>
+<h2><a name="coding">13. Programming for ARAnyM</a></h2>
 
 <p>ARAnyM contains an unified interface for accessing emulator specific
 features in a "standard" way that is called Native Features. This new
@@ -985,7 +994,7 @@ universal drivers shareable across all Atari emulators. This NatFeat
 interface is to be used by operating system drivers only - it is not 
 intended for direct use by regular applications!</p>
 
-<p>[please note that there are some bits of NatFeats documentation
+<p>Please note that there are some bits of NatFeats documentation
  available in the ARAnyM archive but it's mostly obsolete and worst
  of all it's incorrect in the promotion of NatFeat usage via the cookie
  by regular apps. This will be fixed eventually when time permits.]</p>
