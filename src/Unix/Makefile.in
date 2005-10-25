@@ -216,7 +216,7 @@ uninstall:
 	rm -f $(DESTDIR)$(docdir)/$(APP)/COPYING
 	rm -f $(DESTDIR)$(docdir)/$(APP)/BUGS
 	rm -f $(DESTDIR)$(docdir)/$(APP)/INSTALL
-	rm -f $(DESTDIR)$(docdir)/$(APP)/documentation.txt
+	rm -f $(DESTDIR)$(docdir)/$(APP)/aranym.html
 	rm -f $(DESTDIR)$(docdir)/$(APP)/config
 # JOY, uncomment it for releases
 #	rm -f $(DESTDIR)$(datadir)/$(APP)/etos512k.img
@@ -290,7 +290,7 @@ bindist: $(APP) $(TAPIF) $(APP).1.gz bindistdirs
 	$(INSTALL_DATA) ../../COPYING tmpdist$(docdir)/$(APP)/COPYING
 	$(INSTALL_DATA) ../../BUGS tmpdist$(docdir)/$(APP)/BUGS
 	$(INSTALL_DATA) ../../INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
-	$(INSTALL_DATA) ../../doc/documentation.txt tmpdist$(docdir)/$(APP)/documentation.txt
+	$(INSTALL_DATA) ../../doc/aranym.html tmpdist$(docdir)/$(APP)/aranym.html
 	$(INSTALL_DATA) ../../doc/config tmpdist$(docdir)/$(APP)/config
 # JOY, uncomment it for releases
 #	$(INSTALL_DATA) ../../data/etos512k.img tmpdist$(datadir)/$(APP)/etos512k.img
