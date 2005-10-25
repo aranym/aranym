@@ -64,7 +64,7 @@
 +obj-$(CONFIG_NATFEAT)	+= natfeat.o
 +
  include $(TOPDIR)/Rules.make
---- /tmp/kernel-source-2.4.27/drivers/net/Makefile	2004-08-08 01:26:04.000000000 +0200
+--- /tmp/kernel-source-2.4.27-atari/drivers/net/Makefile	2004-08-08 01:26:04.000000000 +0200
 +++ kernel-source-2.4.27-atari/drivers/net/Makefile	2005-10-25 09:36:20.000000000 +0200
 @@ -227,6 +227,7 @@
  obj-$(CONFIG_ATARILANCE) += atarilance.o
@@ -93,3 +93,81 @@
  
  #
  # Character devices
+--- /tmp/kernel-source-2.4.27-atari/arch/m68k/config.in	2005-08-03 21:38:18.000000000 +0200
++++ kernel-source-2.4.27-atari/arch/m68k/config.in	2005-08-24 23:31:08.000000000 +0200
+@@ -38,6 +38,12 @@
+ else
+    define_bool CONFIG_PCI n
+ fi  
++dep_bool '  ARAnyM support' CONFIG_ARANYM $CONFIG_ATARI
++if [ "$CONFIG_ARANYM" = "y" ]; then
++   define_bool CONFIG_NATFEAT y
++else
++   define_bool CONFIG_NATFEAT n
++fi  
+ bool 'Macintosh support' CONFIG_MAC
+ if [ "$CONFIG_MAC" = "y" ]; then
+    define_bool CONFIG_NUBUS y
+@@ -356,6 +362,9 @@
+ 	    tristate '  BioNet-100 support' CONFIG_ATARI_BIONET
+ 	    tristate '  PAMsNet support' CONFIG_ATARI_PAMSNET
+ 	 fi
++	 if [ "$CONFIG_NATFEAT" = "y" ]; then
++	    tristate '  NatFeat Ethernet support' CONFIG_ATARI_NFETH
++	 fi
+       fi
+       if [ "$CONFIG_SUN3" = "y" -o "$CONFIG_SUN3X" = "y" ]; then
+ 	tristate '  Sun3/Sun3x on-board LANCE support' CONFIG_SUN3LANCE
+--- /tmp/kernel-source-2.4.27-atari/Documentation/Configure.help	2005-08-03 21:38:18.000000000 +0200
++++ kernel-source-2.4.27-atari/Documentation/Configure.help	2005-08-24 23:47:00.000000000 +0200
+@@ -23555,6 +23555,13 @@
+   This option enables support for the Hades Atari clone. If you plan
+   to use this kernel on a Hades, say Y here; otherwise say N.
+ 
++ARAnyM support
++CONFIG_ARANYM
++  This option enables support for the ARAnyM virtual machine. If you plan
++  to use this kernel on ARAnyM, say Y here; otherwise say N.
++  Currently it just enables support for Native Features - a common
++  API for accessing host hardware from within the virtual machine.
++
+ Macintosh support
+ CONFIG_MAC
+   This option enables support for the Apple Macintosh series of
+@@ -24012,6 +24019,16 @@
+   ACSI port ("ACSI node"). The driver works (has to work...) with a
+   polled I/O scheme, so it's rather slow :-(
+ 
++ARAnyM networking support
++CONFIG_ATARI_NFETH
++  Say Y to include support for the NatFeat based Ethernet driver
++  currently available in ARAnyM virtual machine.
++
++  This driver is also available as a module ( = code which can be
++  inserted in and removed from the running kernel whenever you
++  want). The module is called atari_nfeth.o. If you want to compile it as a
++  module, say M here and read <file:Documentation/modules.txt>.
++
+ Amiga mouse support
+ CONFIG_AMIGAMOUSE
+   If you want to be able to use an Amiga mouse in Linux, say Y.
+--- /tmp/kernel-source-2.4.27-atari/drivers/net/Space.c	2005-08-03 21:38:18.000000000 +0200
++++ kernel-source-2.4.27-atari/drivers/net/Space.c	2005-08-19 23:02:49.000000000 +0200
+@@ -84,6 +84,7 @@
+ extern int seeq8005_probe(struct net_device *);
+ extern int smc_init( struct net_device * );
+ extern int atarilance_probe(struct net_device *);
++extern int atari_nfeth_probe(struct net_device *);
+ extern int sun3lance_probe(struct net_device *);
+ extern int sun3_82586_probe(struct net_device *);
+ extern int apne_probe(struct net_device *);
+@@ -333,6 +334,9 @@
+ #ifdef CONFIG_ATARILANCE	/* Lance-based Atari ethernet boards */
+ 	{atarilance_probe, 0},
+ #endif
++#ifdef CONFIG_ATARI_NFETH
++	{atari_nfeth_probe, 0},
++#endif
+ #ifdef CONFIG_SUN3LANCE         /* sun3 onboard Lance chip */
+ 	{sun3lance_probe, 0},
+ #endif
