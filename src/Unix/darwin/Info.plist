@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>aranym</string>
 	<key>CFBundleGetInfoString</key>
-	<string>0.8.11beta, http://aranym.sourceforge.net/, released on 2004-11-07 </string>
+	<string>0.9.1alpha, http://aranym.sourceforge.net/, released on 2005-11-07 </string>
 	<key>CFBundleIconFile</key>
 	<string>aranym2</string>
 	<key>CFBundleIdentifier</key>
@@ -19,11 +19,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8.11</string>
+	<string>0.9.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.11beta</string>
+	<string>0.9.1alpha</string>
 	<key>LSHasLocalizedDisplayName</key>
 	<false/>
 	<key>NSHumanReadableCopyright</key>
