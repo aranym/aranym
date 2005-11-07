@@ -156,11 +156,7 @@ static inline void check_ram_boundary(uaecptr, int, bool) { }
 #ifdef FIXED_VIDEORAM
 # define do_get_real_address(a)		((uae_u8 *)(((uaecptr)(a) < ARANYMVRAMSTART) ? ((uaecptr)(a) + MEMBaseDiff) : ((uaecptr)(a) + VMEMBaseDiff)))
 #else
-# if defined (OS_darwin) && !defined (MACOSX_support) // not correct fixed position of allocations
-#  define do_get_real_address(a)         ((uae_u8 *)(((uintptr)(a) < STRAM_END) ? ((uaecptr)(a) + MEMBaseDiff) : ((((uintptr)(a) >= FastRAM_BEGIN) ? ((uaecptr)(a) + FastRAMBaseDiff) : ((uaecptr)(a) + ROMBaseDiff)))))
-# else
-#define do_get_real_address(a)		((uae_u8 *)((uintptr)(a) + MEMBaseDiff))
-# endif
+# define do_get_real_address(a)		((uae_u8 *)((uintptr)(a) + MEMBaseDiff))
 #endif
 
 static inline uae_u8 *phys_get_real_address(uaecptr addr)

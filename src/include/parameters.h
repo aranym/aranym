@@ -37,11 +37,17 @@
 # include <cstdio>
 
 #ifndef ARANYMHOME
-# define ARANYMHOME		".aranym"
+# define ARANYMHOME	".aranym"
 #endif
-#define ARANYMCONFIG	"config"
-#define ARANYMNVRAM		"nvram"
-#define ARANYMKEYMAP	"keymap"
+#ifndef ARANYMCONFIG
+# define ARANYMCONFIG	"config"
+#endif
+#ifndef ARANYMNVRAM
+# define ARANYMNVRAM	"nvram"
+#endif
+#ifndef ARANYMKEYMAP
+# define ARANYMKEYMAP	"keymap"
+#endif
 #ifndef DIRSEPARATOR
 # define DIRSEPARATOR	"/"
 #endif

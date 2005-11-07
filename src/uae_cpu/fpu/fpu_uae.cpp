@@ -97,6 +97,7 @@
  * - Precision rounding single/double
  */
 
+
 #include "sysdeps.h"
 #include "memory.h"
 #include "readcpu.h"
@@ -106,8 +107,16 @@
 #include "fpu/fpu.h"
 #include "fpu/fpu_uae.h"
 
+#ifdef HAVE_NEW_HEADERS
+#define _GLIBCPP_USE_C99 1
 # include <cmath>
 # include <cstdio>
+using namespace __gnu_cxx;
+#undef _GLIBCPP_USE_C99
+#else
+# include <math.h>
+# include <stdio.h>
+#endif
 
 /* Global FPU context */
 fpu_t fpu;

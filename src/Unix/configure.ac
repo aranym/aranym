@@ -290,10 +290,13 @@ case "$target_os" in
     EXTRASYSSRCS=parameters_unix.cpp
     ;;	      
   darwin*)
-    DEFINES="$DEFINES -DARANYMHOME=\\\"aranym\\\""
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
-    EXTRASYSSRCS="parameters_unix.cpp"
-    if test "x$WITH_FINK" = "xno"; then
+    if test "x$WITH_FINK" = "xyes"; then
+        DEFINES="$DEFINES -DARANYMHOME=\\\"aranym\\\""
+        EXTRASYSSRCS="parameters_unix.cpp"
+    else
+        DEFINES="$DEFINES -DARANYMHOME=\\\"ARAnyM\\\" -DARANYMCONFIG=\\\"net.sourceforge.aranym.config\\\" -DARANYMNVRAM=\\\"net.sourceforge.aranym.nvram\\\" -DARANYMKEYMAP=\\\"net.sourceforge.aranym.keymap\\\""
+        EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLmain.M"
         CXXFLAGS="$CXXFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
         CFLAGS="$CFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
         LDFLAGS="$LDFLAGS -F$HOME/Library/Frameworks"
@@ -1677,10 +1680,10 @@ dnl Data directory
 APP=aranym
 case "$target_os" in
 	darwin*)
-		if test "x$WITH_FINK" = "xno"; then
-			TARGET="\$(APP_LIB)"
-		else
+		if test "x$WITH_FINK" = "xyes"; then
 			TARGET="\$(APP)"
+		else
+			TARGET="\$(APP_BUNDLE)"
 		fi
 		ARANYM_DATADIR="\"\\\"\${datadir}/\${APP}\\\"\""
 		;;

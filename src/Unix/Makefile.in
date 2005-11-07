@@ -112,16 +112,36 @@ SRCS = ../main.cpp \
 	$(DSPSRCS) \
 	$(LILOSRCS) \
 	$(GUISDLSRCS)
+
+BUNDLE_RESOURCES = \
+	darwin/aranym2.icns \
+	
+BUNDLE_LOCALIZATON_ROOT = \
+	darwin/
+BUNDLE_LOCALIZATON_ROOT_REMOVE = \
+	../
+
+BUNDLE_LOCALIZATON_FOLDERS = \
+	*.lproj
+	
+BUNDLE_LOCALIZATON_FILES = \
+	aranym.nib
+	
+BUNDLE_CONTENTS = \
+	darwin/info.plist \
+	darwin/PkgInfo 	
+
 APP = aranym
 APP_STATIC = aranym-static
 APP_LIB = libaranym.a
+APP_BUNDLE = ARAnym.app
 APP_IFC = aratapif
 TARGET = @TARGET@
 
 ## Rules
-.PHONY: install installdirs uninstall mostlyclean clean distclean depend dep
+.PHONY: install installdirs uninstall mostlyclean clean distclean depend dep $(APP_BUNDLE)
 .SUFFIXES:
-.SUFFIXES: .c .cpp .s .o .h
+.SUFFIXES: .c .cpp .s .o .h .m .M
 
 all: $(TARGET) $(TAPIF)
 
@@ -153,6 +173,26 @@ $(APP_STATIC): $(OBJ_DIR) $(OBJS)
 
 $(APP_LIB): $(OBJ_DIR) $(OBJS)
 	$(LD) -r -o $(APP_LIB) $(LDFLAGS) $(OBJS) $(LIBS)
+
+$(APP_BUNDLE): $(APP)
+	rm -rf $(APP_BUNDLE)
+	mkdir -p $(APP_BUNDLE)/Contents
+	cp -r $(BUNDLE_CONTENTS) $(APP_BUNDLE)/Contents
+	mkdir -p $(APP_BUNDLE)/Contents/MacOS
+	cp $(APP) $(APP_BUNDLE)/Contents/MacOS
+	mkdir -p $(APP_BUNDLE)/Contents/ARAnyM
+	mkdir -p $(APP_BUNDLE)/Contents/Resources
+	cp -r $(BUNDLE_RESOURCES) $(APP_BUNDLE)/Contents/Resources
+	cd $(BUNDLE_LOCALIZATON_ROOT); \
+		for locFolder in $(BUNDLE_LOCALIZATON_FOLDERS); do \
+			mkdir -p $(BUNDLE_LOCALIZATON_ROOT_REMOVE)$(APP_BUNDLE)/Contents/Resources/$$locFolder; \
+			for locFile in $(BUNDLE_LOCALIZATON_FILES); do \
+				cp -r $$locFolder/$$locFile \
+					$(BUNDLE_LOCALIZATON_ROOT_REMOVE)$(APP_BUNDLE)/Contents/Resources/$$locFolder/$$locFile; \
+				rm -rf $(BUNDLE_LOCALIZATON_ROOT_REMOVE)$(APP_BUNDLE)/Contents/Resources/$$locFolder/$$locFile/CVS; \
+				rm -rf $(BUNDLE_LOCALIZATON_ROOT_REMOVE)$(APP_BUNDLE)/Contents/Resources/$$locFolder/$$locFile/*/CVS; \
+			done; \
+		done
 
 install: $(APP) $(TAPIF) $(APP).1.gz installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
@@ -356,7 +396,11 @@ depend dep:
 
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o : %.m
+	$(CC) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o : %.M
 	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.s
 	$(CXX) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c $< -o $@

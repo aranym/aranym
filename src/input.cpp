@@ -121,7 +121,7 @@ bool grabMouse(bool grab)
 }
 
 
-static void grabTheMouse()
+void grabTheMouse()
 {
 #if DEBUG
 	int x,y;
@@ -138,7 +138,7 @@ static void grabTheMouse()
 	}
 }
 
-static void releaseTheMouse()
+void releaseTheMouse()
 {
 	grabMouse(false);	// release mouse
 	hideMouse(false);	// show it
@@ -179,13 +179,18 @@ static int keyboardTable[0x80] = {
 static int keysymToAtari(SDL_keysym keysym)
 {
  
-// fprintf (stdout, "scancode: %x - sym: %x - char: %s\n", keysym.scancode, keysym.sym, SDL_GetKeyName (keysym.sym));
+//fprintf (stdout, "scancode: %x - sym: %x - char: %s\n", keysym.scancode, keysym.sym, SDL_GetKeyName (keysym.sym));
 
 	int sym = keysym.scancode;
 
 	switch (keysym.sym) {
+#ifdef OS_darwin
+	  case SDLK_LMETA:
+	  case SDLK_RMETA:
+#else
 	  case SDLK_RCTRL:
 	  case SDLK_LCTRL:
+#endif
 	    return 0x1D;
 		break;
 	  case SDLK_MODE: /* passthru */ /* Alt Gr key according to SDL docs */
@@ -200,8 +205,13 @@ static int keysymToAtari(SDL_keysym keysym)
 	  case SDLK_RSHIFT:
 	    return 0x36;
 		break;
+#ifdef OS_darwin
+	  case SDLK_RCTRL:
+	  case SDLK_LCTRL:
+#else
 	  case SDLK_LMETA:
 	  case SDLK_RMETA:
+#endif
 	    return 0;
 	  default:
 	    break;
