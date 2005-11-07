@@ -180,7 +180,7 @@ $(APP_BUNDLE): $(APP)
 	cp -r $(BUNDLE_CONTENTS) $(APP_BUNDLE)/Contents
 	mkdir -p $(APP_BUNDLE)/Contents/MacOS
 	cp $(APP) $(APP_BUNDLE)/Contents/MacOS
-	mkdir -p $(APP_BUNDLE)/Contents/ARAnyM
+	#mkdir -p $(APP_BUNDLE)/Contents/ARAnyM
 	mkdir -p $(APP_BUNDLE)/Contents/Resources
 	cp -r $(BUNDLE_RESOURCES) $(APP_BUNDLE)/Contents/Resources
 	cd $(BUNDLE_LOCALIZATON_ROOT); \
