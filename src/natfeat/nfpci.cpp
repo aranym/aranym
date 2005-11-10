@@ -338,17 +338,17 @@ int32 PciDriver::read_io_long(uint32 /*device_handle*/, uint32 /*pci_address*/, 
 
 int32 PciDriver::read_io_byte_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
 {
-	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+	return 0xffffffffL;
 }
 
 int32 PciDriver::read_io_word_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
 {
-	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+	return 0xffffffffL;
 }
 
 int32 PciDriver::read_io_long_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
 {
-	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+	return 0xffffffffL;
 }
 
 int32 PciDriver::write_io_byte(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
