@@ -657,7 +657,7 @@ void dsp56k_disasm(void)
 {
 	uint32 value;
 
-	cur_inst = getDSP()->ram[SPACE_P][getDSP()->pc];
+	cur_inst = getDSP()->ram[DSP_SPACE_P][getDSP()->pc];
 
 #if 0
 	if (getDSP()->pc == 0x728) {
@@ -743,11 +743,11 @@ static int dsp_calc_ea(uint32 ea_mode, char *dest)
 			switch ((ea_mode >> 2) & 1) {
 				case 0:
 					/* Absolute address */
-					sprintf(dest, ea_names[value], getDSP()->ram[SPACE_P][getDSP()->pc+1]);
+					sprintf(dest, ea_names[value], getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]);
 					break;
 				case 1:
 					/* Immediate value */
-					sprintf(dest, ea_names[8], getDSP()->ram[SPACE_P][getDSP()->pc+1]);
+					sprintf(dest, ea_names[8], getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]);
 					retour = 1;
 					break;
 			}
@@ -1145,7 +1145,7 @@ static void dsp_do_0(void)
 	fprintf(stderr,"Dsp: 0x%04x: do %s,p:0x%04x\n",
 		getDSP()->pc,
 		name,
-		getDSP()->ram[SPACE_P][getDSP()->pc+1] & BITMASK(16)
+		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1] & BITMASK(16)
 	);
 }
 
@@ -1154,7 +1154,7 @@ static void dsp_do_2(void)
 	fprintf(stderr,"Dsp: 0x%04x: do #0x%04x,p:0x%04x\n",
 		getDSP()->pc,
 		((cur_inst>>8) & BITMASK(8))|((cur_inst & BITMASK(4))<<8),
-		getDSP()->ram[SPACE_P][getDSP()->pc+1] & BITMASK(16)
+		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1] & BITMASK(16)
 	);
 }
 
@@ -1175,7 +1175,7 @@ static void dsp_do_4(void)
 	fprintf(stderr,"Dsp: 0x%04x: do %s,p:0x%04x\n", 
 		getDSP()->pc,
 		name,
-		getDSP()->ram[SPACE_P][getDSP()->pc+1] & BITMASK(16)
+		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1] & BITMASK(16)
 	);
 }
 
@@ -1184,7 +1184,7 @@ static void dsp_do_c(void)
 	fprintf(stderr,"Dsp: 0x%04x: do %s,p:0x%04x\n",
 		getDSP()->pc,
 		registers_name[(cur_inst>>8) & BITMASK(6)],
-		getDSP()->ram[SPACE_P][getDSP()->pc+1] & BITMASK(16)
+		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1] & BITMASK(16)
 	);
 }
 
@@ -1267,7 +1267,7 @@ static void dsp_jclr(void)
 		getDSP()->pc,
 		numbit,
 		srcname,
-		getDSP()->ram[SPACE_P][getDSP()->pc+1]
+		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]
 	);
 }
 
@@ -1356,7 +1356,7 @@ static void dsp_jsclr(void)
 		getDSP()->pc,
 		numbit,
 		srcname,
-		getDSP()->ram[SPACE_P][getDSP()->pc+1]
+		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]
 	);
 }
 
@@ -1409,7 +1409,7 @@ static void dsp_jset(void)
 		getDSP()->pc,
 		numbit,
 		srcname,
-		getDSP()->ram[SPACE_P][getDSP()->pc+1]
+		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]
 	);
 }
 
@@ -1475,7 +1475,7 @@ static void dsp_jsset(void)
 		getDSP()->pc,
 		numbit,
 		srcname,
-		getDSP()->ram[SPACE_P][getDSP()->pc+1]
+		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]
 	);
 }
 
@@ -2020,7 +2020,7 @@ static void dsp_pm_1(void)
 	write_flag = (cur_inst>>15) & 1;
 	retour = dsp_calc_ea((cur_inst>>8) & BITMASK(6), addr_name);
 
-	if (memspace==SPACE_Y) {
+	if (memspace==DSP_SPACE_Y) {
 		s2reg = d2reg = DSP_REG_Y0;
 		switch((cur_inst>>16) & BITMASK(2)) {
 			case 0:	s2reg = d2reg = DSP_REG_Y0;	break;
