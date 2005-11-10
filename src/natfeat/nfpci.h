@@ -47,6 +47,9 @@
 
 class PciDriver : public NF_Base
 {
+	private:
+		int32 get_machine_id(void);
+
 	protected:
 		virtual int32 find_device(uint32 device_vendor_id, uint32 index);
 		virtual int32 find_classcode(uint32 class_code, uint32 index);
@@ -85,7 +88,6 @@ class PciDriver : public NF_Base
 		virtual	int32 write_io_byte(uint32 device_handle, uint32 pci_address, uint32 value);
 		virtual	int32 write_io_word(uint32 device_handle, uint32 pci_address, uint32 value);
 		virtual	int32 write_io_long(uint32 device_handle, uint32 pci_address, uint32 value);
-		virtual int32 get_machine_id(void);
 		virtual int32 get_pagesize(void);
 		virtual int32 virt_to_bus(uint32 device_handle, memptr virt_cpu_address, memptr data);
 		virtual int32 bus_to_virt(uint32 device_handle, uint32 pci_address, memptr data);

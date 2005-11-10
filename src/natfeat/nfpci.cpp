@@ -186,3 +186,212 @@ int32 PciDriver::dispatch(uint32 fncode)
 	D(bug(NFPCI_NAME " function returning with 0x%08x", ret));
 	return ret;
 }
+
+int32 PciDriver::find_device(uint32 /*device_vendor_id*/, uint32 /*index*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::find_classcode(uint32 /*class_code*/, uint32 /*index*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_config_byte(uint32 /*device_handle*/, memptr /*data*/, uint32 /*num_register*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_config_word(uint32 /*device_handle*/, memptr /*data*/, uint32 /*num_register*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_config_long(uint32 /*device_handle*/, memptr /*data*/, uint32 /*num_register*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_config_byte_fast(uint32 /*device_handle*/, uint32 /*num_register*/)
+{
+	return 0xffffffffUL;
+}
+
+int32 PciDriver::read_config_word_fast(uint32 /*device_handle*/, uint32 /*num_register*/)
+{
+	return 0xffffffffUL;
+}
+
+int32 PciDriver::read_config_long_fast(uint32 /*device_handle*/, uint32 /*num_register*/)
+{
+	return 0xffffffffUL;
+}
+
+int32 PciDriver::write_config_byte(uint32 /*device_handle*/, uint32 /*num_register*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::write_config_word(uint32 /*device_handle*/, uint32 /*num_register*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::write_config_long(uint32 /*device_handle*/, uint32 /*num_register*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::hook_interrupt(uint32 /*device_handle*/, memptr /*data*/, uint32 /*parameter*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::unhook_interrupt(uint32 /*device_handle*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+} 
+
+int32 PciDriver::special_cycle(uint32 /*num_bus*/, uint32 /*data*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+} 
+
+/* get_routing */
+
+/* set_interrupt */	
+
+int32 PciDriver::get_resource(uint32 /*device_handle*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::get_card_used(uint32 /*device_handle*/, memptr /*callback*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::set_card_used(uint32 /*device_handle*/, memptr /*callback*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_mem_byte(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*num_register*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_mem_word(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*num_register*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_mem_long(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*num_register*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_mem_byte_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
+{
+	return 0xffffffffL;
+}
+
+int32 PciDriver::read_mem_word_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
+{
+	return 0xffffffffL;
+}
+
+int32 PciDriver::read_mem_long_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
+{
+	return 0xffffffffL;
+}
+
+int32 PciDriver::write_mem_byte(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::write_mem_word(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::write_mem_long(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_io_byte(uint32 /*device_handle*/, uint32 /*pci_address*/, memptr /*data*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_io_word(uint32 /*device_handle*/, uint32 /*pci_address*/, memptr /*data*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_io_long(uint32 /*device_handle*/, uint32 /*pci_address*/, memptr /*data*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_io_byte_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_io_word_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::read_io_long_fast(uint32 /*device_handle*/, uint32 /*pci_address*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::write_io_byte(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::write_io_word(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::write_io_long(uint32 /*device_handle*/, uint32 /*pci_address*/, uint32 /*value*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::get_machine_id(void)
+{
+	return ARANYM_PCI_ID;
+}
+
+int32 PciDriver::get_pagesize(void)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::virt_to_bus(uint32 /*device_handle*/, memptr /*virt_cpu_address*/, memptr /*data*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::bus_to_virt(uint32 /*device_handle*/, uint32 /*pci_address*/, memptr /*data*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::virt_to_phys(memptr /*virt_cpu_address*/, memptr /*data*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}
+
+int32 PciDriver::phys_to_virt(memptr /*phys_cpu_address*/, memptr /*data*/)
+{
+	return ATARI_PCI_FUNC_NOT_SUPPORTED;
+}

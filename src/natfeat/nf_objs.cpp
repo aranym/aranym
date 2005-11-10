@@ -112,6 +112,8 @@ void NFCreate(void)
 #ifdef NFPCI_SUPPORT
 # ifdef NFPCI_LINUX_SUPPORT
 	NFAdd(new PciDriverLinux);
+# else
+	NFAdd(new PciDriver);
 # endif
 #endif
 

@@ -1,6 +1,9 @@
 2005/11/10 - Patrice
 - dsp_disasm was not building, fixed.
 
+- nfpci: make linux driver better subclass of nfpci, now when nfpci enabled, you
+  have a default null nfpci driver for non linux systems.
+
 
 2005/10/24 - Andreas
 - Makefile.in: update install target for removal of doc/documentation.txt.

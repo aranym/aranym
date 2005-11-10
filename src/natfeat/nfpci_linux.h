@@ -48,10 +48,6 @@ typedef struct {
 
 class PciDriverLinux : public PciDriver
 {
-	public:
-		PciDriverLinux();
-		virtual ~PciDriverLinux();
-
 	private:
 		int32 find_device(uint32 device_vendor_id, uint32 index);
 		int32 find_classcode(uint32 class_code, uint32 index);
@@ -61,44 +57,13 @@ class PciDriverLinux : public PciDriver
 		int32 read_config_byte_fast(uint32 device_handle, uint32 num_register);
 		int32 read_config_word_fast(uint32 device_handle, uint32 num_register);
 		int32 read_config_long_fast(uint32 device_handle, uint32 num_register);
-		int32 write_config_byte(uint32 device_handle, uint32 num_register, uint32 value);
-		int32 write_config_word(uint32 device_handle, uint32 num_register, uint32 value);
-		int32 write_config_long(uint32 device_handle, uint32 num_register, uint32 value);
-		int32 hook_interrupt(uint32 device_handle, memptr data, uint32 parameter);
-		int32 unhook_interrupt(uint32 device_handle); 
-		int32 special_cycle(uint32 num_bus, uint32 data); 
-/* get_routing */
-/* set_interrupt */	
-		int32 get_resource(uint32 device_handle);
-		int32 get_card_used(uint32 device_handle, memptr callback);
-		int32 set_card_used(uint32 device_handle, memptr callback);
-		int32 read_mem_byte(uint32 device_handle, uint32 pci_address, uint32 num_register);
-		int32 read_mem_word(uint32 device_handle, uint32 pci_address, uint32 num_register);
-		int32 read_mem_long(uint32 device_handle, uint32 pci_address, uint32 num_register);
-		int32 read_mem_byte_fast(uint32 device_handle, uint32 pci_address);
-		int32 read_mem_word_fast(uint32 device_handle, uint32 pci_address);
-		int32 read_mem_long_fast(uint32 device_handle, uint32 pci_address);
-		int32 write_mem_byte(uint32 device_handle, uint32 pci_address, uint32 value);
-		int32 write_mem_word(uint32 device_handle, uint32 pci_address, uint32 value);
-		int32 write_mem_long(uint32 device_handle, uint32 pci_address, uint32 value);
-		int32 read_io_byte(uint32 device_handle, uint32 pci_address, memptr data);
-		int32 read_io_word(uint32 device_handle, uint32 pci_address, memptr data);
-		int32 read_io_long(uint32 device_handle, uint32 pci_address, memptr data);
-		int32 read_io_byte_fast(uint32 device_handle, uint32 pci_address);
-		int32 read_io_word_fast(uint32 device_handle, uint32 pci_address);
-		int32 read_io_long_fast(uint32 device_handle, uint32 pci_address);
-		int32 write_io_byte(uint32 device_handle, uint32 pci_address, uint32 value);
-		int32 write_io_word(uint32 device_handle, uint32 pci_address, uint32 value);
-		int32 write_io_long(uint32 device_handle, uint32 pci_address, uint32 value);
-		int32 get_machine_id(void);
-		int32 get_pagesize(void);
-		int32 virt_to_bus(uint32 device_handle, memptr virt_cpu_address, memptr data);
-		int32 bus_to_virt(uint32 device_handle, uint32 pci_address, memptr data);
-		int32 virt_to_phys(memptr virt_cpu_address, memptr data);
-		int32 phys_to_virt(memptr phys_cpu_address, memptr data);
 
 		pci_device_t *pci_devices;
 		uint32 num_pci_devices;
+
+	public:
+		PciDriverLinux();
+		virtual ~PciDriverLinux();
 };
 
 #endif /* NFPCI_LINUX_H */
