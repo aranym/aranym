@@ -1,8 +1,64 @@
+2005/11/14 - Stefan
+- ChangeLog: Updated ChangeLog with missing informations.
+- aranym.html: Updated documentation of MaxOS X specific parts.
+- configure.ac: Changed name for configurations files to 
+  org.atari.aranym.conf, org.atari.aranym.nvram and org.atari.aranym.keymap.
+- input.cpp: removed unneded "#ifdef darwin" for command and control key 
+  change, the function was already specific to darwin.
+
+
 2005/11/10 - Patrice
 - dsp_disasm was not building, fixed.
 
 - nfpci: make linux driver better subclass of nfpci, now when nfpci enabled, you
   have a default null nfpci driver for non linux systems.
+
+
+2005/11/8 - Stefan
+- Makefile.in: Removed building of ARAnyM.app/Contents/ARAnyM data folder, 
+  in order to give precedence to Library/Application Support/ARAnyM by 
+  default
+- configure.ac: Fixed typing error of SDLMain.M file.
+
+
+2005/11/7 - Stefan
+- Makefile.in: Added targets to build an application bundle for MacOS X. 
+  Added suffixes .m and .M to also compile Objective C and Objective C++ 
+  sources, which are needed to build the darwin port.
+- configure.ac: Splited  EXTRASYSSRCS and DEFINES for darwin with fink and 
+  without. Without fink now the source files parameters_darwin.M and 
+  SDLMain.M below src/Unix/darwin/ get compiled and the defines now include 
+  ARANYMCONFIG, ARANYMNVRAM, ARANYMKEYMAP and ARANMYHOME. For darwin without 
+  fink now also the target changed to APP_BUNDLE in order to build an 
+  executable MacOS X application bundle. 
+- autogen.sh: Added -I $PWD to aclocal command. This solves trouble with 
+  missing macro definitions from sdl.m4, if this file is just copied into the 
+  same directory.
+- parameters.h: Put #ifndef around the definitions of ARANYMCONFIG, 
+  ARANYMNVRAM, ARANYMKEYMAP to be able to define their values via 
+  configure.ac.
+- input.cpp: Switched behaviour of command and control keys for darwin. So 
+  under MacOS X normal shortcuts are done as usual with the apple key also for 
+  Atari/GEM applications.
+- parameters_darwin.M: Objective C code to define versions of the functions 
+  getHomeFolder(), getConfFolder() and getDataFolder(). They return usual 
+  MacOS X pathes like ~/Library/Preferences/ and  ~/Library/Application 
+  Support/ARAnyM or a path inside the bundle itself for the configuration 
+  files.
+- Info.plist: Updated version informations to 0.9.1alpha. With each official 
+  release the version information should be updated. Can this be done 
+  automatically by the build system?
+- SDLMain.M: Completely cleaned up the source code and removed unnecessary 
+  parts.
+- English.lproj/aranym.nib: Renamed the resource file from SDLmain.nib to 
+  aranym.nib. Made changes to connect menu entries to according functions in 
+  SDLMain.M.
+- German.lproj/aranym.nib: Made a german port of the resources.
+- aranym.pbproj: Updated the XCode project to compile also with the changed 
+  Makefile.
+- memory.h: Removed unnecessary define of do_get_real_address for darwin port.
+- fpu_uae.cpp: Added some defines and using a namespace to overcome 
+  compatibility problems with names inside cmath and cstdio.
 
 
 2005/10/24 - Andreas

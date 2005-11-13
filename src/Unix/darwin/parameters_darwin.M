@@ -90,7 +90,7 @@ char *getConfFolder(char *buffer, unsigned int bufsize)
 //		/System/Library/Application Support
 char *getDataFolder(char *buffer, unsigned int bufsize)
 {
-	//  get the application's bundel, thus it's name (ARAnyM)
+	//  get the application's bundle, thus it's name (ARAnyM)
 	NSBundle* bundle=[NSBundle mainBundle];
 	//  the subpath inside the library folders
 	NSString *applicationSupportSubpath;

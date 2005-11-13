@@ -295,7 +295,7 @@ case "$target_os" in
         DEFINES="$DEFINES -DARANYMHOME=\\\"aranym\\\""
         EXTRASYSSRCS="parameters_unix.cpp"
     else
-        DEFINES="$DEFINES -DARANYMHOME=\\\"ARAnyM\\\" -DARANYMCONFIG=\\\"net.sourceforge.aranym.config\\\" -DARANYMNVRAM=\\\"net.sourceforge.aranym.nvram\\\" -DARANYMKEYMAP=\\\"net.sourceforge.aranym.keymap\\\""
+        DEFINES="$DEFINES -DARANYMHOME=\\\"ARAnyM\\\" -DARANYMCONFIG=\\\"org.atari.aranym.config\\\" -DARANYMNVRAM=\\\"org.atari.aranym.nvram\\\" -DARANYMKEYMAP=\\\"org.atari.aranym.keymap\\\""
         EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLMain.M"
         CXXFLAGS="$CXXFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
         CFLAGS="$CFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"

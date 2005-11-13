@@ -42,13 +42,12 @@ For most users it's simply their PC or laptop that runs the ARAnyM.</p>
 <p>You need to have SDL library installed (http://www.libsdl.org) and
 configured. Required is version 1.2.x or later.</p>
 
-<p>ARAnyM keeps its configuration in a folder named ".aranym" in your HOME
-directory (NVRAM settings is stored in that directory as well).
-The full path to the config file is then $HOME/.aranym/config and
-is in plain text so you can edit it with a plain text editor.
-If the file is not found upon ARAnyM startup then it is generated 
+<p>ARAnyM keeps all its configuration files in one folder. Under linux and most other operating systems this is ".aranym" in your HOME directory. For MacOS X it is Library/Preferences in your HOME directory. The NVRAM setting and the keymap file are stored in that directory as well. These files are normally named config, nvram and keymap or org.atari.aranym.config, org.atari.aranym.nvram and org.atari.aranym.keymap in case of MacOS X.   
+The configuration file is in plain text so you can edit it with a plain text editor. If the file is not found upon ARAnyM startup then it is generated 
 automatically and the options contain default values. Have a look at 
 the aranym/doc/config file for inspiration.</p>
+
+<p> A hint to path descriptions inside the config file. Generally four types of paths are supported, an absolute path description (starting with / or a drive letter for Windows), a relative path description to the current folder ARAnyM was started in, a HOME relative path starting with ~/, and a data folder relative path starting with */, which means $PREFIX/share/aranym/ for linux and most other operating systems and Library/Application Support/ARAnyM in case of MacOS X (recommended).</p>
 
 <p>ARAnyM also recognises several command line options - try starting ARAnyM
 with the option "--help" to find out more. The command line options have 
