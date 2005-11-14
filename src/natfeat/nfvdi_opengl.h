@@ -24,7 +24,11 @@
 /*--- Includes ---*/
 
 #include <SDL_opengl.h>
+#ifdef OS_darwin
+#include <OpenGL/glu.h>
+#else
 #include <GL/glu.h>
+#endif
 
 #include "parameters.h"
 

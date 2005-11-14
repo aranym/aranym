@@ -5,6 +5,10 @@
   org.atari.aranym.conf, org.atari.aranym.nvram and org.atari.aranym.keymap.
 - input.cpp: removed unneded "#ifdef darwin" for command and control key 
   change, the function was already specific to darwin.
+- nfvdi_opengl.h: Changed include of GL/glu.h to OpenGL/glu.h for darwin.
+- nfvdi_opengl.cpp: Changed include of GL/glu.h to OpenGL/glu.h for darwin.
+- hostscreen.cpp: Changed include of GL/glu.h to OpenGL/glu.h and GL/glext.h 
+  to OpenGL/glext.h for darwin.
 
 
 2005/11/10 - Patrice

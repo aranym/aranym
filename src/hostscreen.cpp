@@ -39,9 +39,17 @@
 #if 0
 #include <SDL_opengl.h>
 #else
-#include <GL/gl.h>
+#ifdef OS_darwin
+#include <OpenGL/glu.h>
+#else
+#include <GL/glu.h>
 #endif
+#endif
+#ifdef OS_darwin
+#include <OpenGL/glext.h>
+#else
 #include <GL/glext.h>
+#endif
 #endif
 
 #define RGB_BLACK     0x00000000
@@ -1502,6 +1510,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.76  2005/08/05 08:53:24  johan
+ * Removed unnecessary dependency on glu function.
+ *
  * Revision 1.75  2005/06/21 12:50:27  pmandin
  * Small fixes for OpenGL rendering
  *
