@@ -54,17 +54,20 @@ You can change it by using a nvram utility like 'bootconf.prg'.
 
 <h2>3. Setup the ROM image</h2>
 
-<p>First thing needed for any Atari emulator: the ROM image (original TOS 4.04 from
-your Falcon 030 is supported by ARAnyM), or the free-sofware <a href="http://emutos.sourceforge.net">EmuTOS</a>.<br>
+<p>First thing needed for a virtual machine to boot: an operating system. In original
+Atari machines the operating system (TOS) was stored in a ROM (read only memory - a hardware chip).
+ARAnyM supports original TOS 4.04 from Atari Falcon030 in a form of so called "ROM image" (a file
+that contains the data read from the ROM chip). ARAnyM also supports a free TOS replacement called
+<a href="http://emutos.sourceforge.net">EmuTOS</a>. Third possibility is to boot the Linux-m68k kernel.<br>
 <br>
 Once you got one, edit the config file, in the section [GLOBAL], you have one line
 'TOS=/path/to/tos404.img' to edit, and/or 'EmuTOS=/path/to/emutos.img' if you want
-to try/use EmuTOS instead.<br>
+to try/use EmuTOS instead. Linux-m68k kernel got its own [LILO] section in the config file.<br>
 <br>
 Default is to use original TOS, if not found, ARAnyM uses EmuTOS. You can force
-EmuTOS usage by adding '-e' or '--emutos' as command-line parameter to ARAnyM.<br>
+EmuTOS usage by adding '-e' or '--emutos' as command-line parameter to ARAnyM. Similarly you can force Linux-m68k boot by adding "-l" or "--lilo" command-line parameter.<br>
 <br>
-Now the emulator should run, and with TOS, after the Atari logo, you should reach
+Now the virtual machine should run, and with TOS, after the Atari logo, you should reach
 the GEM desktop.
 </p>
 
