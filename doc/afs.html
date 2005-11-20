@@ -13,7 +13,7 @@ Maybe we should share knowledge about how we got a working configuration using
 ARAnyM and pure Atari software? So let's start.
 </p>
 
-<h2>Compilation, getting an ARAnyM binary</h2>
+<h2>1. Compilation, getting an ARAnyM binary</h2>
 
 <p>If you are skilled enough to compile sources, you don't need any help, except
 for knowing which elements you need to enable at configure time. [TODO].<br>
@@ -22,7 +22,7 @@ For now, I consider you got a binary for ARAnyM (either .exe or anything else th
 can be launched).
 </p>
 
-<h2>First try</h2>
+<h2>2. First try</h2>
 
 <p>If you do a fresh start (no existing configuration file), you'd better launch
 ARAnyM from a console window (the black/white thing where you type mystical commands),
@@ -45,9 +45,14 @@ Couldn't protect ROM
 this file is OS-dependent, it should written somewhere in the doc). On any Unix
 system, it is '${HOME}/.aranym/config'. As the program says, it creates a default
 one, so you only need to read where it is created, and then you'll have to edit it
-to suit your needs.</p>
+to suit your needs.<br>
+<br>
+You'll also get a default nvram setting, which is VGA monitor, 320x200x16 colors
+boot screen and some other default setting for date format, keyboard and country.
+You can change it by using a nvram utility like 'bootconf.prg'.
+</p>
 
-<h2>Setup the ROM image</h2>
+<h2>3. Setup the ROM image</h2>
 
 <p>First thing needed for any Atari emulator: the ROM image (original TOS 4.04 from
 your Falcon 030 is supported by ARAnyM), or the free-sofware <a href="http://emutos.sourceforge.net">EmuTOS</a>.<br>
@@ -162,7 +167,7 @@ Processor halted.
 <p>I guess EmuTOS really needs a HardDisk image to be booted. I will retry as soon
 as I have one.</p>
 
-<h2>Create and setup a hard disk image</h2>
+<h2>4. Create and setup a hard disk image</h2>
 
 <p>I won't explain how to use a real hard disk from your old Atari computer, it is
 safer to use a blank disk image to test. So, I will make it using TOS.<br>
@@ -195,6 +200,99 @@ hda: Non-ATARI root sector
 </pre>
 
 <p>We need software to partition our hard disk image. Either from host side (with
-host specific tools), or from Atari side (using floppy images to run software).</p>
+host specific tools that must create an Atari root sector), or from Atari side
+(using floppy disks or images to run software).</p>
+
+<h2>5. Partition the hard disk image (Atari side)</h2>
+
+<p>We can use several Atari Hard Disk drivers:</p>
+
+<ul>
+<li>AHDI, from Atari (has partition utility, named hdx)
+<li>CBHD, from Steffen Engel
+<li>Cecile, from Centek (has partition utility)
+<li>HD Driver, from Uwe Seimet (has partition utility)
+<li>SCSI tools, from Julian Reschke, Hard&amp;Soft (has partition utility)
+</ul>
+
+<p>You can find some of them here:</p>
+
+<ul>
+<li><a href="http://ftp.lip6.fr/pub/atari/Disk/">http://ftp.lip6.fr/pub/atari/Disk/</a>
+<li><a href="http://atari.apinc.org/atari/download/disks.htm">http://atari.apinc.org/atari/download/disks.htm</a>
+<li><a href="http://www.seimet.de/atari_english.html">http://www.seimet.de/atari_english.html</a>
+<li><a href="http://centek.online.fr/atari/softs/s_cecile.htm">http://centek.online.fr/atari/softs/s_cecile.htm</a>
+</ul>
+
+<p>The question is, which ones work with ARAnyM?</p>
+
+<h3>5.1 Atari HDX 5.04</h3>
+
+<p>I got one error message when going to menu Disk->Partition, and ARAnyM crashes:</p>
+
+<pre>
+hard drive: io read to address f00001 unsupported
+hard drive: shouldnt get here!
+Segmentation fault
+</pre>
+
+<h3>5.2 Cecile 2.22</h3>
+
+<p>First run cecile.prg, so the partition utility (cc_tools.prg) can access the
+IDE hard disk. Run cc_tools.prg, select 'partition', then the first IDE hard disk.
+Create one partition on this hard disk. Then select 'install' to install the cecile.sys
+hard disk driver on it, selecting the first partition to boot from. Bingo, you
+can reboot ARAnyM, and it is now booting from the IDE disk image.<br>
+<br>
+When running ARAnyM, I got these error messages, maybe some stuff missing from
+IDE emulation:
+</p>
+
+<pre>
+SET FEATURES with unknown subcommand: 0xbe
+SET FEATURES with unknown subcommand: 0xd1
+SET FEATURES with unknown subcommand: 0xd1
+SET FEATURES with unknown subcommand: 0xd1
+SET FEATURES with unknown subcommand: 0xd1
+SET FEATURES with unknown subcommand: 0xd1
+hard drive: RESET
+</pre>
+
+<h3>5.3 HD Driver 8.1 demo</h3>
+
+<p>You can run hddriver.prg, but when running hddrutil.prg, partition is not
+available in the demo.<br>
+<br>
+[Need someone with full version to do the test]
+</p>
+
+<h3>5.4 CBHD 5.02</h3>
+
+<p>Run 'cbhd.prg' for the utility to reach the IDE disk. Then run 'cbhdconf.app'.
+When you try to partition, there are some errors coming from ARAnyM, and partitioning
+fails:</p>
+
+<pre>
+SET FEATURES with unknown subcommand: 0x88
+SET FEATURES with unknown subcommand: 0x88
+SET FEATURES with unknown subcommand: 0x88
+SET FEATURES with unknown subcommand: 0x8a
+SET FEATURES with unknown subcommand: 0x8a
+SET FEATURES with unknown subcommand: 0x8a
+hard drive: RESET
+write cmd 0xC4 (READ MULTIPLE) not supported
+write cmd 0xC4 (READ MULTIPLE) not supported
+write cmd 0xC4 (READ MULTIPLE) not supported
+write cmd 0xC4 (READ MULTIPLE) not supported
+write cmd 0xC4 (READ MULTIPLE) not supported
+write cmd 0xC4 (READ MULTIPLE) not supported
+write cmd 0xC4 (READ MULTIPLE) not supported
+write cmd 0xC4 (READ MULTIPLE) not supported
+write cmd 0xC4 (READ MULTIPLE) not supported
+</pre>
+
+<h3>5.5 SCSI Tools</h3>
+
+<p>[Need someone with full version to do the test]</p>
 
 </body></html>
