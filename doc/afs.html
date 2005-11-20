@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>ARAnyM from scratch</title>
+</head><body>
+
+<h1>Howto create your own ARAnyM setup from scratch</h1>
+
+<p>We, ARAnyM developpers hear many horror tales about ARAnyM installation, configuration
+and setup by beginners, or even people which know a lot about Atari computers.<br>
+<br>
+Maybe we should share knowledge about how we got a working configuration using
+ARAnyM and pure Atari software? So let's start.
+</p>
+
+<h2>Compilation, getting an ARAnyM binary</h2>
+
+<p>If you are skilled enough to compile sources, you don't need any help, except
+for knowing which elements you need to enable at configure time. [TODO].<br>
+<br>
+For now, I consider you got a binary for ARAnyM (either .exe or anything else that
+can be launched).
+</p>
+
+<h2>First try</h2>
+
+<p>If you do a fresh start (no existing configuration file), you'd better launch
+ARAnyM from a console window (the black/white thing where you type mystical commands),
+whatever your OS (Linux, win32, or MacOSX). It will be easier for you to know what
+prevents ARAnyM from working.</p>
+
+<pre>
+$ aranym
+ARAnyM 0.9.2pre1
+Config file '/home/patrice/.aranym/config' not found.
+The config file is created with default values. Edit it to suit your needs.
+TOS image '/usr/local/share/aranym/ROM' not found.
+EmuTOS image '/usr/local/share/aranym/etos512k.img' not found.
+No operating system found. ARAnyM can not boot!
+Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.
+Couldn't protect ROM
+</pre>
+
+<p>So what do have? First, it does not find its configuration file (the path to
+this file is OS-dependent, it should written somewhere in the doc). On any Unix
+system, it is '${HOME}/.aranym/config'. As the program says, it creates a default
+one, so you only need to read where it is created, and then you'll have to edit it
+to suit your needs.</p>
+
+<h2>Setup the ROM image</h2>
+
+<p>First thing needed for any Atari emulator: the ROM image (original TOS 4.04 from
+your Falcon 030 is supported by ARAnyM), or the free-sofware <a href="http://emutos.sourceforge.net">EmuTOS</a>.<br>
+<br>
+Once you got one, edit the config file, in the section [GLOBAL], you have one line
+'TOS=/path/to/tos404.img' to edit, and/or 'EmuTOS=/path/to/emutos.img' if you want
+to try/use EmuTOS instead.<br>
+<br>
+Default is to use original TOS, if not found, ARAnyM uses EmuTOS. You can force
+EmuTOS usage by adding '-e' or '--emutos' as command-line parameter to ARAnyM.<br>
+<br>
+Now the emulator should run, and with TOS, after the Atari logo, you should reach
+the GEM desktop.
+</p>
+
+<pre>
+$ aranym
+ARAnyM 0.9.2pre1
+Using config file: '/home/patrice/.aranym/config'
+[GLOBAL] configuration: found 5 valid directives.
+[HOTKEYS] configuration: found 7 valid directives.
+[STARTUP] configuration: found 1 valid directives.
+[JIT] configuration: found 8 valid directives.
+[VIDEO] configuration: found 4 valid directives.
+[TOS] configuration: found 2 valid directives.
+[IDE0] configuration: found 9 valid directives.
+[IDE1] configuration: found 9 valid directives.
+[PARTITION0] configuration: found 5 valid directives.
+[PARTITION1] configuration: found 0 valid directives.
+[PARTITION2] configuration: found 0 valid directives.
+[PARTITION3] configuration: found 0 valid directives.
+[PARTITION4] configuration: found 0 valid directives.
+[PARTITION5] configuration: found 0 valid directives.
+[PARTITION6] configuration: found 0 valid directives.
+[PARTITION7] configuration: found 0 valid directives.
+[HOSTFS] configuration: found 26 valid directives.
+[OPENGL] configuration: found 2 valid directives.
+[ETH0] configuration: found 5 valid directives.
+[ETH1] configuration: found 0 valid directives.
+[ETH2] configuration: found 0 valid directives.
+[ETH3] configuration: found 0 valid directives.
+[LILO] configuration: found 3 valid directives.
+[MIDI] configuration: found 2 valid directives.
+[CDROMS] configuration: found 26 valid directives.
+[AUTOZOOM] configuration: found 5 valid directives.
+[NFOSMESA] configuration: found 3 valid directives.
+[PARALLEL] configuration: found 3 valid directives.
+[NATFEATS] configuration: found 2 valid directives.
+[NFVDI] configuration: found 1 valid directives.
+TOS 4.04 loading... [OK]
+NVRAM loaded from '/home/patrice/.aranym/nvram'
+TunTap(0): ERROR: aratapif not found. Ethernet disabled!
+TunTap(0): ERROR: aratapif not found. Ethernet disabled!
+Reseting weird mouse packet: 540, 338, 0
+Reseting weird mouse packet: -479, -338, 0
+Floppy read(-1, 001cc6, 1) failed.
+</pre>
+
+<p>Wanna try EmuTOS?</p>
+
+<pre>
+$ aranym -e
+ARAnyM 0.9.2pre1
+Using config file: '/home/patrice/.aranym/config'
+[GLOBAL] configuration: found 5 valid directives.
+[HOTKEYS] configuration: found 7 valid directives.
+[STARTUP] configuration: found 1 valid directives.
+[JIT] configuration: found 8 valid directives.
+[VIDEO] configuration: found 4 valid directives.
+[TOS] configuration: found 2 valid directives.
+[IDE0] configuration: found 9 valid directives.
+[IDE1] configuration: found 9 valid directives.
+[PARTITION0] configuration: found 5 valid directives.
+[PARTITION1] configuration: found 0 valid directives.
+[PARTITION2] configuration: found 0 valid directives.
+[PARTITION3] configuration: found 0 valid directives.
+[PARTITION4] configuration: found 0 valid directives.
+[PARTITION5] configuration: found 0 valid directives.
+[PARTITION6] configuration: found 0 valid directives.
+[PARTITION7] configuration: found 0 valid directives.
+[HOSTFS] configuration: found 26 valid directives.
+[OPENGL] configuration: found 2 valid directives.
+[ETH0] configuration: found 5 valid directives.
+[ETH1] configuration: found 0 valid directives.
+[ETH2] configuration: found 0 valid directives.
+[ETH3] configuration: found 0 valid directives.
+[LILO] configuration: found 3 valid directives.
+[MIDI] configuration: found 2 valid directives.
+[CDROMS] configuration: found 26 valid directives.
+[AUTOZOOM] configuration: found 5 valid directives.
+[NFOSMESA] configuration: found 3 valid directives.
+[PARALLEL] configuration: found 3 valid directives.
+[NATFEATS] configuration: found 2 valid directives.
+[NFVDI] configuration: found 1 valid directives.
+EmuTOS 2005/09/18 loading from '/usr/local/share/atari-emu/emutos-0.8.1-512k.img'... [OK]
+NVRAM loaded from '/home/patrice/.aranym/nvram'
+TunTap(0): ERROR: aratapif not found. Ethernet disabled!
+TunTap(0): ERROR: aratapif not found. Ethernet disabled!
+BIOS: Detected memory: ST-RAM = 14 MB, FastRAM = 0 MB
+BDOS: Address of basepage = 00013000
+BDOS: cinit - osinit successful ...
+Detected scancode offset = 8 (key: 'space' with scancode $41)
+Floppy read(-1, 009fcc, 1) failed.
+hdv_boot returns 3
+Panic: bus error. misc = 0x2000, address = 0x00e01254
+opcode = 0x7008, sr = 0x602e, pc = 0x02060000
+Aregs: 602e0206 00e2bdac 00018a40 00018c74  00000000 00014a90 000151da 00015144
+Dregs: 0000046c 00000004 0000001c 00000000  00000000 00000000 00000000 00000000
+Processor halted.
+</pre>
+
+<p>I guess EmuTOS really needs a HardDisk image to be booted. I will retry as soon
+as I have one.</p>
+
+<h2>Create and setup a hard disk image</h2>
+
+<p>I won't explain how to use a real hard disk from your old Atari computer, it is
+safer to use a blank disk image to test. So, I will make it using TOS.<br>
+<br>
+Run ARAnyM, once you reach the GEM desktop, press 'Pause' (or the OS-dependent key
+which has this feature, read the doc), and go to disk submenu. There you can choose
+the floppy disk image, and one hard disk image for each IDE device (master and
+slave).<br>
+<br>
+Select 'Path' and choose the location (and name) of the hd image. Then select the
+size (in MB), and click 'Generate'. ARAnyM asks for confirmation, then does its job.
+A geometry has been chosen for this hd image (C/H/S = 8/16/63). Enable it by selecting
+the 'Present' checkbox. Select 'Apply' to go back to menu, then save the config
+file. If you shutdown the emulator, and edit the config file, you'll find what has
+been done in section [IDE0] of the config file.<br><br>
+On a real machine, it means we have plugged an hard disk in our machine, it does
+not mean there is software to drive it, which is the task of a hard disk driver.
+EmuTOS has one embedded, whereas TOS has not. However, the hard disk image must be
+partitionned to be used directly by EmuTOS:</p>
+
+<pre>
+$ aranym -e
+ARAnyM 0.9.2pre1
+Using config file: '/home/patrice/.aranym/config'
+[snip]
+[IDE0] configuration: found 9 valid directives.
+[snip]
+hda: Non-ATARI root sector
+[snip]
+</pre>
+
+<p>We need software to partition our hard disk image. Either from host side (with
+host specific tools), or from Atari side (using floppy images to run software).</p>
+
+</body></html>
