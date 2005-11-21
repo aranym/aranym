@@ -75,36 +75,7 @@ the GEM desktop.
 $ aranym
 ARAnyM 0.9.2pre1
 Using config file: '/home/patrice/.aranym/config'
-[GLOBAL] configuration: found 5 valid directives.
-[HOTKEYS] configuration: found 7 valid directives.
-[STARTUP] configuration: found 1 valid directives.
-[JIT] configuration: found 8 valid directives.
-[VIDEO] configuration: found 4 valid directives.
-[TOS] configuration: found 2 valid directives.
-[IDE0] configuration: found 9 valid directives.
-[IDE1] configuration: found 9 valid directives.
-[PARTITION0] configuration: found 5 valid directives.
-[PARTITION1] configuration: found 0 valid directives.
-[PARTITION2] configuration: found 0 valid directives.
-[PARTITION3] configuration: found 0 valid directives.
-[PARTITION4] configuration: found 0 valid directives.
-[PARTITION5] configuration: found 0 valid directives.
-[PARTITION6] configuration: found 0 valid directives.
-[PARTITION7] configuration: found 0 valid directives.
-[HOSTFS] configuration: found 26 valid directives.
-[OPENGL] configuration: found 2 valid directives.
-[ETH0] configuration: found 5 valid directives.
-[ETH1] configuration: found 0 valid directives.
-[ETH2] configuration: found 0 valid directives.
-[ETH3] configuration: found 0 valid directives.
-[LILO] configuration: found 3 valid directives.
-[MIDI] configuration: found 2 valid directives.
-[CDROMS] configuration: found 26 valid directives.
-[AUTOZOOM] configuration: found 5 valid directives.
-[NFOSMESA] configuration: found 3 valid directives.
-[PARALLEL] configuration: found 3 valid directives.
-[NATFEATS] configuration: found 2 valid directives.
-[NFVDI] configuration: found 1 valid directives.
+[snip]
 TOS 4.04 loading... [OK]
 NVRAM loaded from '/home/patrice/.aranym/nvram'
 TunTap(0): ERROR: aratapif not found. Ethernet disabled!
@@ -120,36 +91,7 @@ Floppy read(-1, 001cc6, 1) failed.
 $ aranym -e
 ARAnyM 0.9.2pre1
 Using config file: '/home/patrice/.aranym/config'
-[GLOBAL] configuration: found 5 valid directives.
-[HOTKEYS] configuration: found 7 valid directives.
-[STARTUP] configuration: found 1 valid directives.
-[JIT] configuration: found 8 valid directives.
-[VIDEO] configuration: found 4 valid directives.
-[TOS] configuration: found 2 valid directives.
-[IDE0] configuration: found 9 valid directives.
-[IDE1] configuration: found 9 valid directives.
-[PARTITION0] configuration: found 5 valid directives.
-[PARTITION1] configuration: found 0 valid directives.
-[PARTITION2] configuration: found 0 valid directives.
-[PARTITION3] configuration: found 0 valid directives.
-[PARTITION4] configuration: found 0 valid directives.
-[PARTITION5] configuration: found 0 valid directives.
-[PARTITION6] configuration: found 0 valid directives.
-[PARTITION7] configuration: found 0 valid directives.
-[HOSTFS] configuration: found 26 valid directives.
-[OPENGL] configuration: found 2 valid directives.
-[ETH0] configuration: found 5 valid directives.
-[ETH1] configuration: found 0 valid directives.
-[ETH2] configuration: found 0 valid directives.
-[ETH3] configuration: found 0 valid directives.
-[LILO] configuration: found 3 valid directives.
-[MIDI] configuration: found 2 valid directives.
-[CDROMS] configuration: found 26 valid directives.
-[AUTOZOOM] configuration: found 5 valid directives.
-[NFOSMESA] configuration: found 3 valid directives.
-[PARALLEL] configuration: found 3 valid directives.
-[NATFEATS] configuration: found 2 valid directives.
-[NFVDI] configuration: found 1 valid directives.
+[snip]
 EmuTOS 2005/09/18 loading from '/usr/local/share/atari-emu/emutos-0.8.1-512k.img'... [OK]
 NVRAM loaded from '/home/patrice/.aranym/nvram'
 TunTap(0): ERROR: aratapif not found. Ethernet disabled!
@@ -184,7 +126,7 @@ Select 'Path' and choose the location (and name) of the hd image. Then select th
 size (in MB), and click 'Generate'. ARAnyM asks for confirmation, then does its job.
 A geometry has been chosen for this hd image (C/H/S = 8/16/63). Enable it by selecting
 the 'Present' checkbox. Select 'Apply' to go back to menu, then save the config
-file. If you shutdown the emulator, and edit the config file, you'll find what has
+file. If you shutdown ARAnyM, and edit the config file, you'll find what has
 been done in section [IDE0] of the config file.<br><br>
 On a real machine, it means we have plugged an hard disk in our machine, it does
 not mean there is software to drive it, which is the task of a hard disk driver.
