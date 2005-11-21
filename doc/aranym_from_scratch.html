@@ -261,6 +261,14 @@ SET FEATURES with unknown subcommand: 0xd1
 hard drive: RESET
 </pre>
 
+<p>Unfortunately, EmuTOS does more checks on Atari root sector, and still fails:</p>
+
+<pre>
+hda: Non-ATARI root sector
+</pre>
+
+<p>It appears that Cecile put an invalid partition size, and EmuTOS detect this.</p>
+
 <h3>5.3 HD Driver 8.1 demo</h3>
 
 <p>You can run hddriver.prg, but when running hddrutil.prg, partition is not
