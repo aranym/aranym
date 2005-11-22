@@ -189,27 +189,11 @@ Create one partition on this hard disk. Then select 'install' to install the cec
 hard disk driver on it, selecting the first partition to boot from. Bingo, you
 can reboot ARAnyM, and it is now booting from the IDE disk image.<br>
 <br>
-When running ARAnyM, I got these error messages, maybe some stuff missing from
-IDE emulation:
+EmuTOS checks for partitions sizes against the whole disk size, and refuse to use
+the disk if partitions have boundaries outside the disk. The last partition created
+with Cecile on a hard disk has a wrong size (2 sectors off limits), and if you
+have only 1 partition created, its size is wrong, and EmuTOS won't use it.
 </p>
-
-<pre>
-SET FEATURES with unknown subcommand: 0xbe
-SET FEATURES with unknown subcommand: 0xd1
-SET FEATURES with unknown subcommand: 0xd1
-SET FEATURES with unknown subcommand: 0xd1
-SET FEATURES with unknown subcommand: 0xd1
-SET FEATURES with unknown subcommand: 0xd1
-hard drive: RESET
-</pre>
-
-<p>Unfortunately, EmuTOS does more checks on Atari root sector, and still fails:</p>
-
-<pre>
-hda: Non-ATARI root sector
-</pre>
-
-<p>It appears that Cecile put an invalid partition size, and EmuTOS detect this.</p>
 
 <h3>5.3 HD Driver 8.1 demo</h3>
 
