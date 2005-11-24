@@ -1,3 +1,7 @@
+2005/11/24 - Andreas
+- parameters.cpp: Fix aliasing violation and format string.
+
+
 2005/11/20 - Patrice
 - Started 'ARAnyM from scratch HOWTO'.
 

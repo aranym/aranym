@@ -824,7 +824,10 @@ void preset_hotkeys()
 void postload_hotkeys() {
 	// convert from string to pair of ints
 	for(uint i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
-		sscanf(hotkeys_rel[i].string, "%i:%i", (int *)&hotkeys_rel[i].keysym->sym, (int *)&hotkeys_rel[i].keysym->mod);
+		int sym, mod;
+		sscanf(hotkeys_rel[i].string, "%i:%i", &sym, &mod);
+		hotkeys_rel[i].keysym->sym = SDLKey(sym);
+		hotkeys_rel[i].keysym->mod = SDLMod(mod);
 	}
 }
 
@@ -1075,7 +1078,7 @@ int process_cmdline(int argc, char **argv)
 	
 			case 'a':
 				if ((strlen(optarg)-1) > sizeof(bx_options.floppy.path))
-					fprintf(stderr, "Floppy image filename longer than %u chars.\n", sizeof(bx_options.floppy.path));
+					fprintf(stderr, "Floppy image filename longer than %zu chars.\n", sizeof(bx_options.floppy.path));
 				safe_strncpy(bx_options.floppy.path, optarg, sizeof(bx_options.floppy.path));
 				break;
 
