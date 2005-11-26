@@ -80,8 +80,6 @@ TOS 4.04 loading... [OK]
 NVRAM loaded from '/home/patrice/.aranym/nvram'
 TunTap(0): ERROR: aratapif not found. Ethernet disabled!
 TunTap(0): ERROR: aratapif not found. Ethernet disabled!
-Reseting weird mouse packet: 540, 338, 0
-Reseting weird mouse packet: -479, -338, 0
 Floppy read(-1, 001cc6, 1) failed.
 </pre>
 
@@ -99,7 +97,6 @@ TunTap(0): ERROR: aratapif not found. Ethernet disabled!
 BIOS: Detected memory: ST-RAM = 14 MB, FastRAM = 0 MB
 BDOS: Address of basepage = 00013000
 BDOS: cinit - osinit successful ...
-Detected scancode offset = 8 (key: 'space' with scancode $41)
 Floppy read(-1, 009fcc, 1) failed.
 hdv_boot returns 3
 
@@ -201,8 +198,6 @@ $ aranym -e
 ARAnyM 0.9.2pre1
 Using config file: '/home/patrice/.aranym/config'
 [snip]
-[IDE0] configuration: found 9 valid directives.
-[snip]
 hda: Non-ATARI root sector
 [snip]
 </pre>
@@ -254,8 +249,9 @@ can reboot ARAnyM, and it is now booting from the IDE disk image.<br>
 <br>
 EmuTOS checks for partitions sizes against the whole disk size, and refuse to use
 the disk if partitions have boundaries outside the disk. The last partition created
-with Cecile on a hard disk has a wrong size (2 sectors off limits), and if you
-have only 1 partition created, its size is wrong, and EmuTOS won't use it.
+with Cecile on a hard disk has a wrong size (1 sector off limits), and if you
+have only 1 partition created, its size is wrong, and EmuTOS won't use it. So create at least
+2 partitions if you want to boot EmuTOS.
 </p>
 
 <h3>6.3 HD Driver 8.1 demo</h3>
@@ -291,9 +287,21 @@ write cmd 0xC4 (READ MULTIPLE) not supported
 write cmd 0xC4 (READ MULTIPLE) not supported
 </pre>
 
-<h3>6.5 SCSI Tools</h3>
+<h3>6.5 SCSI Tools 6.52</h3>
 
-<p>[Need someone with full version to do the test]</p>
+<p>Run 'hushi.prg' to start the driver. Then run 'scsitool.prg' to partition the hard disk image.
+Select 'Partitionen' -> 'Neu einrichten...' to create a new partition root sector for this image.
+Select 'Standard' in the dialog box, then you got a new dialog box where you choose partition
+types and sizes. Then select 'Ok' and 'Ja, partionieren...' to validate your changes.<br>
+<br>
+Now you have to install the driver. In 'Treiber' menu, select 'Instalieren...'. Select the new
+partition where to install the hard disk driver. Once installed, reconfigure it so it does not
+search for SCSI or ACSI drives ('Gerätereihenfolge' in installation dialog box). Just keep
+I0 and I1 for IDE devices.<br>
+<br>
+Surprinsingly, no error messages from the IDE emulation layer. And the image boots with both
+TOS and EmuTOS without problems.
+</p>
 
 <hr>
 Copyright (c) 2005 Patrice Mandin, ARAnyM dev team
