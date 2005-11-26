@@ -13,7 +13,7 @@ Maybe we should share knowledge about how we got a working configuration using
 ARAnyM and pure Atari software? So let's start.
 </p>
 
-<h2>1. Compilation, getting an ARAnyM binary</h2>
+<h2>1 - Compilation, getting an ARAnyM binary</h2>
 
 <p>If you are skilled enough to compile sources, you don't need any help, except
 for knowing which elements you need to enable at configure time. [TODO].<br>
@@ -22,7 +22,7 @@ For now, I consider you got a binary for ARAnyM (either .exe or anything else th
 can be launched).
 </p>
 
-<h2>2. First try</h2>
+<h2>2 - First try</h2>
 
 <p>If you do a fresh start (no existing configuration file), you'd better launch
 ARAnyM from a console window (the black/white thing where you type mystical commands),
@@ -49,27 +49,32 @@ to suit your needs.<br>
 <br>
 You'll also get a default nvram setting, which is VGA monitor, 320x200x16 colors
 boot screen and some other default setting for date format, keyboard and country.
-You can change it by using a nvram utility like 'bootconf.prg'.
+You can change it by using a nvram utility like 'bootconf.prg' <a href="#link1">[1]</a>.
 </p>
 
-<h2>3. Setup the operating system</h2>
+<h2>3 - Setup the operating system</h2>
 
-<p>First thing needed for any machine to boot: an operating system. In original
-Atari machines the operating system (TOS) was stored in a ROM (read only memory - a hardware chip).
-ARAnyM supports original TOS 4.04 from Atari Falcon030 in a form of so called "ROM image" (a file
-that contains the data read from the ROM chip). ARAnyM also supports a free TOS replacement called
-<a href="http://emutos.sourceforge.net">EmuTOS</a>. Third possibility is to boot the Linux-m68k kernel.<br>
+<p>ARAnyM is only the hardware platform on which the Atari software will run. And
+the first software to run before you can run an application is an Atari Operating
+System:<br>
 <br>
-Once you get one, edit the config file, in the section [GLOBAL], you have one line
-'TOS=/path/to/tos404.img' to edit, and/or 'EmuTOS=/path/to/emutos.img' if you want
-to try/use EmuTOS instead. Linux-m68k kernel got its own [LILO] section in the config file.<br>
+Original Atari machines and clones have an operating system residing in a ROM
+chip on the motherboard: the TOS. ARAnyM supports only the 4.04 version of the TOS,
+which is the latest produced by Atari for the Falcon 030. There are some dumping
+software that can read it from your Falcon for use with ARAnyM.<br>
 <br>
-Default is to use original TOS, if not found, ARAnyM uses EmuTOS. You can force
-EmuTOS usage by adding '-e' or '--emutos' as command-line parameter to ARAnyM. Similarly you can force Linux-m68k boot by adding "-l" or "--lilo" command-line parameter.<br>
+You can also use a more recent license-free operating system ROM image, that is
+EmuTOS <a href="#link2">[2]</a>.<br>
 <br>
-Now the virtual machine should run, and with TOS, after the Atari logo, you should reach
-the GEM desktop.
-</p>
+The latest possibility is to use Linux/m68k kernel as an alternative OS. Running
+it requires ARAnyM to be compiled with MMU (so you'll get no JIT, and using
+MMU slows down the m68k emulation a lot) and Lilo (Linux loader) support.
+
+<h3>3.1 - TOS</h3>
+
+<p>Just edit the config file, in the [GLOBAL] section, you'll find the 'TOS=' line
+to fill with the complete path to a TOS 4.04 ROM image file. If you run ARAnyM with
+it, after the Atari logo, you should reach the well-known GEM desktop.</p>
 
 <pre>
 $ aranym
@@ -83,7 +88,12 @@ TunTap(0): ERROR: aratapif not found. Ethernet disabled!
 Floppy read(-1, 001cc6, 1) failed.
 </pre>
 
-<p>Wanna try EmuTOS?</p>
+<h3>3.2 - EmuTOS</h3>
+
+<p>Just like TOS, edit the config file, in the [GLOBAL] section, you'll get the
+'EmuTOS=' line to fill with the complete path to a EmuTOS ROM image file. If you
+have both TOS and EmuTOS available, ARAnyM defaults to TOS. You can force EmuTOS
+usage using '-e' command-line parameter:</p>
 
 <pre>
 $ aranym -e
@@ -99,7 +109,11 @@ BDOS: Address of basepage = 00013000
 BDOS: cinit - osinit successful ...
 Floppy read(-1, 009fcc, 1) failed.
 hdv_boot returns 3
+</pre>
 
+<p>There you get the EmuTOS boot screen, pressing any key provides this crash.</p>
+
+<pre>
 Panic: bus error. misc = 0x2000, address = 0x00e01254
 opcode = 0x7008, sr = 0x602e, pc = 0x02060000
 Aregs: 602e0206 00e2bdac 00018a40 00018c74  00000000 00014a90 000151da 00015144
@@ -107,10 +121,143 @@ Dregs: 0000046c 00000004 0000001c 00000000  00000000 00000000 00000000 00000000
 Processor halted.
 </pre>
 
-<p>I guess EmuTOS really needs a HardDisk image to be booted. I will retry as soon
-as I have one.</p>
+<h3>3.3 - Linux/m68k</h3>
 
-<h2>4. Create and setup a floppy disk image</h2>
+<p>Linux/m68k settings have a special section [LILO] (for Linux loader), where
+you have some work to do. You must provide the kernel image <a href="#link3">[3]</a> file to use (of
+course) in the line 'Kernel='. A list of arguments to pass to the kernel to tell
+it some infos about the system, in the line 'Args=', and a root filesystem.<br>
+<br>
+The 'Args=' line must be filled with some infos, like the Atari frame buffer format,
+or more precisely, the video mode to use. Interleaved bitplanes formats are not
+supported, so it must be either monochrome (use 'video=atafb:sthigh') or 16 bits
+true colour mode.<br>
+<br>
+You also need to add 'console=tty0' if you enable debugging by adding 'debug
+debug=&lt;debug device&gt;' for the Linux kernel to open the root console, or it
+will fail to go further in the boot process once it has mounted its root
+filesystem.
+<br>
+The root filesystem is the filesystem the Linux kernel will boot from, and is
+required. It can be a ramdisk image file, a floppy disk, or a partition from a
+hard disk. For ARAnyM, the floppy disk and the partition can be image files.<br>
+<br>
+Once these lines (Kernel, Args, maybe Ramdisk) are filled, you can start ARAnyM
+with '-l' command-line parameter (wait a bit before Linux kernel starts)</p>
+</p>
+
+<h4>3.3.1 - Ramdisk image file</h4>
+
+<p>Give to ARAnyM's linux loader the full path to a ramdisk image file <a href="#link3">[3]</a>
+in the line 'Ramdisk='. It can be gzipped, no need to uncompress it yourself.<br>
+<br>
+You'll need to have 'root=/dev/ram load_ramdisk=1 ramdisk_size=&lt;n&gt;' in the
+'Args=' line. Replace &lt;n&gt; with a size in KB to allocate for the uncompressed
+ramdisk in RAM, 8000 seems to be a good default value. In fact this value is the
+size of the uncompressed ramdisk image. Remember you only have 14MB of STRAM, so
+add at least 16MB of FastRam to ARAnyM if you want to try Linux/m68k. This is the
+'FastRAM=' value in the [GLOBAL] section.<br>
+</p>
+
+<pre>
+[LILO]
+Kernel = /path/to/vmlinuz-2.2.25-atari
+Args = root=/dev/ram load_ramdisk=1 ramdisk_size=8000 [add some other arguments if needed]
+Ramdisk = /path/to/initrd22.gz
+</pre>
+
+<h4>3.3.2 - Floppy disk or image file</h4>
+
+<p>If you use the floppy disk image atari-root.img.gz from <a href="#link3">[3]</a>,
+uncompress it using gunzip, then edit the configuration file this way, to boot from
+the floppy disk image. You could also dd/rawcopy the image file to a real floppy
+disk, and use 'Floppy =' to point to your real floppy drive.
+</p>
+
+<pre>
+[GLOBAL]
+Floppy = /path/to/atari-root.img
+
+[LILO]
+Kernel = /path/to/vmlinuz-2.2.25-atari
+Args = root=/dev/fd0 [add some other arguments if needed]
+</pre>
+
+<h4>3.3.3 - Linux/m68k example boot log, using ramdisk image file</h4>
+
+<p>Note: I already had a 4MB disk image as IDE0 disk (hda in the log).</p>
+
+<pre>
+$ aranym -l
+Linux version 2.2.25-atari (root@aahz) (gcc version 2.7.2.3) #1 Wed Mar 17 18:40:05 CET 2004
+Atari hardware found: VIDEL STDMA-SCSI ST_MFP STND_DMA YM2149 PCM CODEC DSP56K ANALOG_JOY BLITTER IDE TT_CLK FDC_SPEED
+Console: colour dummy device 80x25
+Calibrating delay loop... 1.02 BogoMIPS
+Memory: 15872k/30720k available (1152k kernel code, 624k data, 72k init)
+Dentry hash table entries: 4096 (order 3, 32k)
+Buffer cache hash table entries: 32768 (order 5, 128k)
+kmem_create: Forcing size word alignment - buffer_head
+Page cache hash table entries: 8192 (order 3, 32k)
+kmem_create: Forcing size word alignment - filp
+VFS: Diskquotas version dquot_6.4.0 initialized
+kmem_create: Forcing size word alignment - dquot
+POSIX conformance testing by UNIFIX
+Linux/m68k PCI BIOS32 revision 0.01
+PCI: No PCI bus detected
+Linux NET4.0 for Linux 2.2
+Based upon Swansea University Computer Society NET3.039
+kmem_create: Forcing size word alignment - sock
+kmem_create: Forcing size word alignment - skbuff_head_cache
+NET4: Unix domain sockets 1.0 for Linux NET4.0.
+NET4: Linux TCP/IP 1.0 for NET4.0
+IP Protocols: ICMP, UDP, TCP
+kmem_create: Forcing size word alignment - tcp_open_request
+kmem_create: Forcing size word alignment - tcp_tw_bucket
+TCP: Hash tables configured (ehash 32768 bhash 32768)
+Initializing RT netlink socket
+Starting kswapd v 1.5
+Console: switching to mono frame buffer device 80x25
+Determined 640x400, depth 1
+   virtual 640x870
+fb0: Atari Builtin sthigh frame buffer device, using 68K of video memory
+M68K Serial driver version 1.01
+pty: 256 Unix98 ptys configured
+Atari mouse installed.
+Real Time Clock Driver v1.10
+Non-volatile memory driver v1.2
+Probing nvram size...  found 64 bytes
+RAM disk driver initialized:  16 RAM disks of 8000K size
+loop: registered device at major 7
+ide0: Falcon IDE interface
+hda: Master, ATA DISK drive
+ide0 at fff00000 on irq 0x0000000f
+hda: Master, 3MB w/256kB Cache, CHS=8/16/63
+Atari floppy driver: max. HD, track buffering
+Probing floppy drive(s):
+fd0
+md driver 0.36.6 MAX_MD_DEV=4, MAX_REAL=8
+Atari SCSI: resetting the SCSI bus... done
+scsi0: options CAN_QUEUE=8 CMD_PER_LUN=1 SCAT-GAT=0 TAGGED-QUEUING=no HOSTID=7 generic options AUTOSENSE REAL DMA SCSI-2 TAGGED QUEUING generic release=7
+scsi0 : Atari native SCSI
+scsi : 1 host.
+scsi : detected total.
+Partition check:
+ hda: AHDI GEM(3) hda1
+VFS: Mounted root (ext2 filesystem) readonly.
+Setting up filesystem, please wait ...
+umount: /initrd: Invalid argument
+mount: Mounting devfs on /dev failed: No such device
+Starting system log daemon: syslogd, klogd.
+Setting up Userspace DevFS:
+  Detecting cdrom devices ...
+Creating cdrom devices ...
+  Hard disk and partitions ...
+  Userdevfs sub-arch specific handling ...
+Userdevfs done.
+[not patient enough to wait more :-)]
+</pre>
+
+<h2>4 - Create and setup a floppy disk image</h2>
 
 <p>If your system does not have a floppy drive, or the direct floppy usage is not
 supported on your system - i.e. not win32 and Linux/Unix (correct me if it's wrong -,
@@ -124,9 +271,9 @@ feature on this screen. Or you can edit the configuration file, line 'Floppy=' i
 But we must create one first, before ARAnyM can use it.
 </p>
 
-<h3>4.1. under Linux (and maybe other Unices)</h3>
+<h3>4.1 - Under Linux (and maybe other Unices)</h3>
 
-<h4>4.1.1. from a real floppy disk</h4>
+<h4>4.1.1 - From a real floppy disk</h4>
 
 <p>Creating a floppy image from a real floppy disk is dead simple:</p>
 
@@ -134,7 +281,7 @@ But we must create one first, before ARAnyM can use it.
 $ dd if=/dev/fd0 of=/path/to/floppy.img
 </pre>
 
-<h4>4.1.2. from scratch (top l33t!)</h4>
+<h4>4.1.2 - From scratch (top l33t!)</h4>
 
 <p>First, we create an empty file, which has the same size as a 1.44 MB floppy.</p>
 
@@ -168,11 +315,11 @@ the loop device:</p>
 # losetup -d /dev/loop0
 </pre>
 
-<h3>4.2. some other OS</h3>
+<h3>4.2 - Some other OS</h3>
 
 <p>[TODO]</p>
 
-<h2>5. Create and setup a hard disk image</h2>
+<h2>5 - Create and setup a hard disk image</h2>
 
 <p>I won't explain how to use a real hard disk from your old Atari computer, it is
 safer to use a blank disk image to test. So, I will make it using TOS.<br>
@@ -206,7 +353,7 @@ hda: Non-ATARI root sector
 host specific tools that must create an Atari root sector), or from Atari side
 (using floppy disks or images to run software).</p>
 
-<h2>6. Partition the hard disk image (Atari side)</h2>
+<h2>6 - Partition the hard disk image (Atari side)</h2>
 
 <p>We can use several Atari Hard Disk drivers:</p>
 
@@ -229,7 +376,7 @@ host specific tools that must create an Atari root sector), or from Atari side
 
 <p>The question is, which ones work with ARAnyM?</p>
 
-<h3>6.1 Atari HDX 5.04</h3>
+<h3>6.1 - Atari HDX 5.04</h3>
 
 <p>I got one error message when going to menu Disk->Partition, and ARAnyM crashes:</p>
 
@@ -239,7 +386,7 @@ hard drive: shouldnt get here!
 Segmentation fault
 </pre>
 
-<h3>6.2 Cecile 2.22</h3>
+<h3>6.2 - Cecile 2.22</h3>
 
 <p>First run cecile.prg, so the partition utility (cc_tools.prg) can access the
 IDE hard disk. Run cc_tools.prg, select 'partition', then the first IDE hard disk.
@@ -254,7 +401,7 @@ have only 1 partition created, its size is wrong, and EmuTOS won't use it. So cr
 2 partitions if you want to boot EmuTOS.
 </p>
 
-<h3>6.3 HD Driver 8.1 demo</h3>
+<h3>6.3 - HD Driver 8.1 demo</h3>
 
 <p>You can run hddriver.prg, but when running hddrutil.prg, partition is not
 available in the demo.<br>
@@ -262,7 +409,7 @@ available in the demo.<br>
 [Need someone with full version to do the test]
 </p>
 
-<h3>6.4 CBHD 5.02</h3>
+<h3>6.4 - CBHD 5.02</h3>
 
 <p>Run 'cbhd.prg' for the utility to reach the IDE disk. Then run 'cbhdconf.app'.
 When you try to partition, there are some errors coming from ARAnyM, and partitioning
@@ -287,7 +434,7 @@ write cmd 0xC4 (READ MULTIPLE) not supported
 write cmd 0xC4 (READ MULTIPLE) not supported
 </pre>
 
-<h3>6.5 SCSI Tools 6.52</h3>
+<h3>6.5 - SCSI Tools 6.52</h3>
 
 <p>Run 'hushi.prg' to start the driver. Then run 'scsitool.prg' to partition the hard disk image.
 Select 'Partitionen' -> 'Neu einrichten...' to create a new partition root sector for this image.
@@ -302,6 +449,14 @@ I0 and I1 for IDE devices.<br>
 Surprinsingly, no error messages from the IDE emulation layer. And the image boots with both
 TOS and EmuTOS without problems.
 </p>
+
+<hr>
+<h2>Links</h2>
+<ul>
+<li><a name="link1">[1] Uwe Seimet's web site: </a><a href="http://www.seimet.de/atari_english.html">Bootconf, HD Driver</a>
+<li><a name="link2">[2] </a><a href="http://emutos.sourceforge.net">EmuTOS</a>
+<li><a name="link3">[3] </a><a href="http://ftp.fr.debian.org/debian/dists/stable/main/installer-m68k/current/images">Debian m68k installer</a>
+</ul>
 
 <hr>
 Copyright (c) 2005 Patrice Mandin, ARAnyM dev team
