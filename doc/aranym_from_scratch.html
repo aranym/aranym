@@ -13,7 +13,36 @@ Maybe we should share knowledge about how we got a working configuration using
 ARAnyM and pure Atari software? So let's start.
 </p>
 
-<h2>1 - Compilation, getting an ARAnyM binary</h2>
+<h2>0 - Table of contents</h2>
+
+<h3><a href="#compilation">1</a> - Compilation, getting an ARAnyM binary</h3>
+<h3><a href="#firsttry">2</a> - First try</h3>
+<h3><a href="#os">3</a> - Setup the operating system</h3>
+<h4><a href="#os_tos">3.1</a> - TOS</h4>
+<h4><a href="#os_emutos">3.2</a> - EmuTOS</h4>
+<h4><a href="#os_linux">3.3</a> - Linux/m68k</h4>
+<h5><a href="#os_linux_rd">3.3.1</a> - Ramdisk image file</h5>
+<h5><a href="#os_linux_fd">3.3.2</a> - Floppy disk or image file</h5>
+<h5><a href="#os_linux_log">3.3.3</a> - Linux/m68k example boot log, using ramdisk image file</h5>
+<h3><a href="#floppy">4</a> - Create and setup a floppy disk image</h3>
+<h4><a href="#floppy_linux">4.1</a> - Under Linux (and maybe other Unices)</h4>
+<h5><a href="#floppy_linux_real">4.1.1</a> - From a real floppy disk</h5>
+<h5><a href="#floppy_linux_scratch">4.1.2</a> - From scratch (top l33t!)</h5>
+<h4><a href="#floppy_otheros">4.2</a> - Some other OS</h4>
+<h3><a href="#harddisk">5</a> - Create and setup a hard disk image</h3>
+<h4><a href="#harddisk_image">5.1</a> - Create the hard disk image</h4>
+<h4><a href="#harddisk_atari">5.2</a> - Partition the hard disk image (Atari side)</h4>
+<h5><a href="#harddisk_atari_hdx">5.2.1</a> - Atari HDX 5.04</h5>
+<h5><a href="#harddisk_atari_cecile">5.2.2</a> - Cecile 2.22</h5>
+<h5><a href="#harddisk_atari_hddriver">5.2.3</a> - HD Driver 8.1 (demo)</h5>
+<h5><a href="#harddisk_atari_cbhd">5.2.4</a> - CBHD 5.02</h5>
+<h5><a href="#harddisk_atari_scsitools">5.2.5</a> - SCSI Tools 6.52</h5>
+<h5><a href="#harddisk_atari_icd">5.2.6</a> - ICD</h5>
+<h3><a href="#links">6</a> - Links</h3>
+
+<hr>
+
+<a name="compilation"><h2>1 - Compilation, getting an ARAnyM binary</h2></a>
 
 <p>If you are skilled enough to compile sources, you don't need any help, except
 for knowing which elements you need to enable at configure time. [TODO].<br>
@@ -22,7 +51,7 @@ For now, I consider you got a binary for ARAnyM (either .exe or anything else th
 can be launched).
 </p>
 
-<h2>2 - First try</h2>
+<a name="firsttry"><h2>2 - First try</h2></a>
 
 <p>If you do a fresh start (no existing configuration file), you'd better launch
 ARAnyM from a console window (the black/white thing where you type mystical commands),
@@ -52,7 +81,7 @@ boot screen and some other default setting for date format, keyboard and country
 You can change it by using a nvram utility like 'bootconf.prg' <a href="#link1">[1]</a>.
 </p>
 
-<h2>3 - Setup the operating system</h2>
+<a name="os"><h2>3 - Setup the operating system</h2></a>
 
 <p>ARAnyM is only the hardware platform on which the Atari software will run. And
 the first software to run before you can run an application is an Atari Operating
@@ -70,7 +99,7 @@ The latest possibility is to use Linux/m68k kernel as an alternative OS. Running
 it requires ARAnyM to be compiled with MMU (so you'll get no JIT, and using
 MMU slows down the m68k emulation a lot) and Lilo (Linux loader) support.
 
-<h3>3.1 - TOS</h3>
+<a name="os_tos"><h3>3.1 - TOS</h3></a>
 
 <p>Just edit the config file, in the [GLOBAL] section, you'll find the 'TOS=' line
 to fill with the complete path to a TOS 4.04 ROM image file. If you run ARAnyM with
@@ -88,7 +117,7 @@ TunTap(0): ERROR: aratapif not found. Ethernet disabled!
 Floppy read(-1, 001cc6, 1) failed.
 </pre>
 
-<h3>3.2 - EmuTOS</h3>
+<a name="os_emutos"><h3>3.2 - EmuTOS</h3></a>
 
 <p>Just like TOS, edit the config file, in the [GLOBAL] section, you'll get the
 'EmuTOS=' line to fill with the complete path to a EmuTOS ROM image file. If you
@@ -121,7 +150,7 @@ Dregs: 0000046c 00000004 0000001c 00000000  00000000 00000000 00000000 00000000
 Processor halted.
 </pre>
 
-<h3>3.3 - Linux/m68k</h3>
+<a name="os_linux"><h3>3.3 - Linux/m68k</h3></a>
 
 <p>Linux/m68k settings have a special section [LILO] (for Linux loader), where
 you have some work to do. You must provide the kernel image <a href="#link3">[3]</a> file to use (of
@@ -146,7 +175,7 @@ Once these lines (Kernel, Args, maybe Ramdisk) are filled, you can start ARAnyM
 with '-l' command-line parameter (wait a bit before Linux kernel starts)</p>
 </p>
 
-<h4>3.3.1 - Ramdisk image file</h4>
+<a name="os_linux_rd"><h4>3.3.1 - Ramdisk image file</h4></a>
 
 <p>Give to ARAnyM's linux loader the full path to a ramdisk image file <a href="#link3">[3]</a>
 in the line 'Ramdisk='. It can be gzipped, no need to uncompress it yourself.<br>
@@ -166,7 +195,7 @@ Args = root=/dev/ram load_ramdisk=1 ramdisk_size=8000 [add some other arguments 
 Ramdisk = /path/to/initrd22.gz
 </pre>
 
-<h4>3.3.2 - Floppy disk or image file</h4>
+<a name="os_linux_fd"><h4>3.3.2 - Floppy disk or image file</h4></a>
 
 <p>If you use the floppy disk image atari-root.img.gz from <a href="#link3">[3]</a>,
 uncompress it using gunzip, then edit the configuration file this way, to boot from
@@ -183,7 +212,7 @@ Kernel = /path/to/vmlinuz-2.2.25-atari
 Args = root=/dev/fd0 [add some other arguments if needed]
 </pre>
 
-<h4>3.3.3 - Linux/m68k example boot log, using ramdisk image file</h4>
+<a name="os_linux_log"><h4>3.3.3 - Linux/m68k example boot log, using ramdisk image file</h4></a>
 
 <p>Note: I already had a 4MB disk image as IDE0 disk (hda in the log).</p>
 
@@ -257,7 +286,7 @@ Userdevfs done.
 [not patient enough to wait more :-)]
 </pre>
 
-<h2>4 - Create and setup a floppy disk image</h2>
+<a name="floppy"><h2>4 - Create and setup a floppy disk image</h2></a>
 
 <p>If your system does not have a floppy drive, or the direct floppy usage is not
 supported on your system - i.e. not win32 and Linux/Unix (correct me if it's wrong -,
@@ -271,9 +300,9 @@ feature on this screen. Or you can edit the configuration file, line 'Floppy=' i
 But we must create one first, before ARAnyM can use it.
 </p>
 
-<h3>4.1 - Under Linux (and maybe other Unices)</h3>
+<a name="floppy_linux"><h3>4.1 - Under Linux (and maybe other Unices)</h3></a>
 
-<h4>4.1.1 - From a real floppy disk</h4>
+<a name="floppy_linux_real"><h4>4.1.1 - From a real floppy disk</h4></a>
 
 <p>Creating a floppy image from a real floppy disk is dead simple:</p>
 
@@ -281,7 +310,7 @@ But we must create one first, before ARAnyM can use it.
 $ dd if=/dev/fd0 of=/path/to/floppy.img
 </pre>
 
-<h4>4.1.2 - From scratch (top l33t!)</h4>
+<a name="floppy_linux_scratch"><h4>4.1.2 - From scratch (top l33t!)</h4></a>
 
 <p>First, we create an empty file, which has the same size as a 1.44 MB floppy.</p>
 
@@ -315,16 +344,18 @@ the loop device:</p>
 # losetup -d /dev/loop0
 </pre>
 
-<h3>4.2 - Some other OS</h3>
+<a name="floppy_otheros"><h3>4.2 - Some other OS</h3></a>
 
 <p>[TODO]</p>
 
-<h2>5 - Create and setup a hard disk image</h2>
+<a name="harddisk"><h2>5 - Create and setup a hard disk image</h2></a>
 
 <p>I won't explain how to use a real hard disk from your old Atari computer, it is
-safer to use a blank disk image to test. So, I will make it using TOS.<br>
-<br>
-Run ARAnyM, once you reach the GEM desktop, press 'Pause' (or the OS-dependent key
+safer to use a blank disk image to test. So, I will make it using TOS.</p>
+
+<a name="harddisk_image"><h3>5.1 - Create the hard disk image</h3></a>
+
+<p>Run ARAnyM, once you reach the GEM desktop, press 'Pause' (or the OS-dependent key
 which has this feature, read the doc), and go to disk submenu. There you can choose
 the floppy disk image, and one hard disk image for each IDE device (master and
 slave).<br>
@@ -353,30 +384,22 @@ hda: Non-ATARI root sector
 host specific tools that must create an Atari root sector), or from Atari side
 (using floppy disks or images to run software).</p>
 
-<h2>6 - Partition the hard disk image (Atari side)</h2>
+<a name="harddisk_atari"><h3>5.2 - Partition the hard disk image (Atari side)</h3></a>
 
 <p>We can use several Atari Hard Disk drivers:</p>
 
 <ul>
-<li>AHDI, from Atari (partition utility is named hdx)
-<li>CBHD, from Steffen Engel
-<li>Cecile, from Centek
-<li>HD Driver, from Uwe Seimet
+<li>AHDI, from Atari (partition utility is named hdx) <a href="#link4">[4]</a> <a href="#link7">[7]</a>
+<li>CBHD, from Steffen Engel <a href="#link4">[4]</a> <a href="#link5">[5]</a> <a href="#link7">[7]</a>
+<li>Cecile, from Centek <a href="#link6">[6]</a>
+<li>HD Driver, from Uwe Seimet <a href="#link1">[1]</a>, demo at <a href="#link4">[4]</a> <a href="#link5">[5]</a> <a href="#link7">[7]</a>
 <li>SCSI tools, from Julian Reschke
-</ul>
-
-<p>You can find some of them here:</p>
-
-<ul>
-<li><a href="http://ftp.lip6.fr/pub/atari/Disk/">http://ftp.lip6.fr/pub/atari/Disk/</a>
-<li><a href="http://atari.apinc.org/atari/download/disks.htm">http://atari.apinc.org/atari/download/disks.htm</a>
-<li><a href="http://www.seimet.de/atari_english.html">http://www.seimet.de/atari_english.html</a>
-<li><a href="http://centek.online.fr/atari/softs/s_cecile.htm">http://centek.online.fr/atari/softs/s_cecile.htm</a>
+<li>ICD tools, from ICD
 </ul>
 
 <p>The question is, which ones work with ARAnyM?</p>
 
-<h3>6.1 - Atari HDX 5.04</h3>
+<a name="harddisk_atari_hdx"><h4>5.2.1 - Atari HDX 5.04</h4></a>
 
 <p>I got one error message when going to menu Disk->Partition, and ARAnyM crashes:</p>
 
@@ -386,7 +409,7 @@ hard drive: shouldnt get here!
 Segmentation fault
 </pre>
 
-<h3>6.2 - Cecile 2.22</h3>
+<a name="harddisk_atari_cecile"><h4>5.2.2 - Cecile 2.22</h4></a>
 
 <p>First run cecile.prg, so the partition utility (cc_tools.prg) can access the
 IDE hard disk. Run cc_tools.prg, select 'partition', then the first IDE hard disk.
@@ -401,7 +424,7 @@ have only 1 partition created, its size is wrong, and EmuTOS won't use it. So cr
 2 partitions if you want to boot EmuTOS.
 </p>
 
-<h3>6.3 - HD Driver 8.1 demo</h3>
+<a name="harddisk_atari_hddriver"><h4>5.2.3 - HD Driver 8.1 demo</h4></a>
 
 <p>You can run hddriver.prg, but when running hddrutil.prg, partition is not
 available in the demo.<br>
@@ -409,7 +432,7 @@ available in the demo.<br>
 [Need someone with full version to do the test]
 </p>
 
-<h3>6.4 - CBHD 5.02</h3>
+<a name="harddisk_atari_cbhd"><h4>5.2.4 - CBHD 5.02</h4></a>
 
 <p>Run 'cbhd.prg' for the utility to reach the IDE disk. Then run 'cbhdconf.app'.
 When you try to partition, there are some errors coming from ARAnyM, and partitioning
@@ -434,7 +457,7 @@ write cmd 0xC4 (READ MULTIPLE) not supported
 write cmd 0xC4 (READ MULTIPLE) not supported
 </pre>
 
-<h3>6.5 - SCSI Tools 6.52</h3>
+<a name="harddisk_atari_scsitools"><h4>5.2.5 - SCSI Tools 6.52</h4></a>
 
 <p>Run 'hushi.prg' to start the driver. Then run 'scsitool.prg' to partition the hard disk image.
 Select 'Partitionen' -> 'Neu einrichten...' to create a new partition root sector for this image.
@@ -450,12 +473,19 @@ Surprinsingly, no error messages from the IDE emulation layer. And the image boo
 TOS and EmuTOS without problems.
 </p>
 
-<hr>
-<h2>Links</h2>
+<a name="harddisk_atari_icd"><h4>5.2.6 - ICD</h4></a>
+
+<p>[Need someone with full version to do the test]</p>
+
+<a name="links"><h2>6 - Links</h2></a>
 <ul>
 <li><a name="link1">[1] Uwe Seimet's web site: </a><a href="http://www.seimet.de/atari_english.html">Bootconf, HD Driver</a>
 <li><a name="link2">[2] </a><a href="http://emutos.sourceforge.net">EmuTOS</a>
 <li><a name="link3">[3] </a><a href="http://ftp.fr.debian.org/debian/dists/stable/main/installer-m68k/current/images">Debian m68k installer</a>
+<li><a name="link4">[4] </a><a href="http://ftp.lip6.fr/pub/atari/Disk/">LIP6 Atari FTP archive</a>
+<li><a name="link5">[5] </a><a href="ftp://chapelie.rma.ac.be/atari/utilities/disktools/">Chapelie Atari FTP archive</a>
+<li><a name="link6">[6] </a><a href="http://centek.online.fr/atari/softs/s_cecile.htm">Centek's website</a>
+<li><a name="link7">[7] </a><a href="http://atari.apinc.org/atari/download/disks.htm">musique.atari.org website</a>
 </ul>
 
 <hr>
