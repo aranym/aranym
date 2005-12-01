@@ -37,7 +37,7 @@ ARAnyM and pure Atari software? So let's start.
 <h5><a href="#harddisk_atari_hddriver">5.2.3</a> - HD Driver 8.1 (demo)</h5>
 <h5><a href="#harddisk_atari_cbhd">5.2.4</a> - CBHD 5.02</h5>
 <h5><a href="#harddisk_atari_scsitools">5.2.5</a> - SCSI Tools 6.52</h5>
-<h5><a href="#harddisk_atari_icd">5.2.6</a> - ICD</h5>
+<h5><a href="#harddisk_atari_icd">5.2.6</a> - ADSCSI</h5>
 <h3><a href="#links">6</a> - Links</h3>
 
 <hr>
@@ -394,7 +394,7 @@ host specific tools that must create an Atari root sector), or from Atari side
 <li>Cecile, from Centek <a href="#link6">[6]</a>
 <li>HD Driver, from Uwe Seimet <a href="#link1">[1]</a>, demo at <a href="#link4">[4]</a> <a href="#link5">[5]</a> <a href="#link7">[7]</a>
 <li>SCSI tools, from Julian Reschke
-<li>ICD tools, from ICD
+<li>ADSCSI, from ICD <a href="#link7">[7]</a>
 </ul>
 
 <p>The question is, which ones work with ARAnyM?</p>
@@ -473,9 +473,18 @@ Surprinsingly, no error messages from the IDE emulation layer. And the image boo
 TOS and EmuTOS without problems.
 </p>
 
-<a name="harddisk_atari_icd"><h4>5.2.6 - ICD</h4></a>
+<a name="harddisk_atari_icd"><h4>5.2.6 - ADSCSI</h4></a>
 
-<p>[Need someone with full version to do the test]</p>
+<p>Like other drivers, you need to run it first. The program is 'icdboot.prg'.
+All other programs, like 'hdutil.prg' (for configuration) requires it to be run.
+Unfortunately, it seems there is a problem with IDE emulation not suiting the
+driver:
+</p>
+
+<pre>
+IO write(f00000h): current command is 20h
+IO read(f00000h) with drq == 0: last command was 20h
+</pre>
 
 <a name="links"><h2>6 - Links</h2></a>
 <ul>
