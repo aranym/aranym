@@ -29,7 +29,7 @@ ARAnyM and pure Atari software? So let's start.
 <h5><a href="#floppy_linux_real">4.1.1</a> - From a real floppy disk</h5>
 <h5><a href="#floppy_linux_scratch">4.1.2</a> - From scratch (top l33t!)</h5>
 <h4><a href="#floppy_otheros">4.2</a> - Some other OS</h4>
-<h3><a href="#harddisk">5</a> - Create and setup a hard disk image</h3>
+<h3><a href="#harddisk">5</a> - Create and setup a hard disk image (IDE emulation)</h3>
 <h4><a href="#harddisk_image">5.1</a> - Create the hard disk image</h4>
 <h4><a href="#harddisk_atari">5.2</a> - Partition the hard disk image (Atari side)</h4>
 <h5><a href="#harddisk_atari_hdx">5.2.1</a> - Atari HDX 5.04</h5>
@@ -38,6 +38,9 @@ ARAnyM and pure Atari software? So let's start.
 <h5><a href="#harddisk_atari_cbhd">5.2.4</a> - CBHD 5.02</h5>
 <h5><a href="#harddisk_atari_scsitools">5.2.5</a> - SCSI Tools 6.52</h5>
 <h5><a href="#harddisk_atari_icd">5.2.6</a> - ADSCSI</h5>
+<h4><a href="#harddisk_linux">5.3</a> - Partition the hard disk image under Linux</h4>
+<h5><a href="#harddisk_linux_fdisk">5.3.1</a> - Using fdisk</h5>
+<h5><a href="#harddisk_linux_sfdisk">5.3.2</a> - Using sfdisk</h5>
 <h3><a href="#links">6</a> - Links</h3>
 
 <hr>
@@ -348,7 +351,7 @@ the loop device:</p>
 
 <p>[TODO]</p>
 
-<a name="harddisk"><h2>5 - Create and setup a hard disk image</h2></a>
+<a name="harddisk"><h2>5 - Create and setup a hard disk image (IDE emulation)</h2></a>
 
 <p>I won't explain how to use a real hard disk from your old Atari computer, it is
 safer to use a blank disk image to test. So, I will make it using TOS.</p>
@@ -428,7 +431,7 @@ have only 1 partition created, its size is wrong, and EmuTOS won't use it. So cr
 
 <p>You run hddriver.prg first, so that hddrutil.prg can access your hard disk.
 Go to 'Hardisk' -> 'Partition...', select the IDE device and partition it. Don't
-forget to install the driver on it to boot from it under TOS.
+forget to install the driver on it to boot from it under TOS.<br>
 <br>
 Booting from EmuTOS also works with it.
 </p>
@@ -485,6 +488,93 @@ driver:
 <pre>
 IO write(f00000h): current command is 20h
 IO read(f00000h) with drq == 0: last command was 20h
+</pre>
+
+<a name="harddisk_linux"><h3>5.3 - Partition the hard disk image under Linux</h3></a>
+
+<p>Linux come with several partition utilities: mpartition (from mtools), cfdisk, fdisk, sfdisk,
+parted and many more. All these tools will create a PC-like root sector on the hard disk image,
+so not all Atari hard disk drivers can be installed on these.<br>
+<br>
+ID you can use for partitions are 04 (FAT16<32MB), 06 (FAT16), 83 (Linux) for the most useful for
+an Atari system.<br>
+<br>
+EmuTOS supports the PC root sector format without an hard disk driver.
+</p>
+
+<a name="harddisk_linux_fdisk"><h4>5.3.1 - Using fdisk</h4></a>
+
+<p>You need to give it the C/H/S parameters of the disk image, as written in ARAnyM config file.
+In our case:</p>
+
+<pre>
+$ /sbin/fdisk -C 8 -H 16 -S 63 /path/to/harddisk.img
+</pre>
+
+<p>Press 'm' for some help. You need to create a partition (and choose its ID), then write the
+created partition table to the image before quitting.</p>
+
+<a name="harddisk_linux_sfdisk"><h4>5.3.2 - Using sfdisk</h4></a>
+
+<p>You need to give it the C/H/S parameters of the disk image, as written in ARAnyM config file.
+In our case:</p>
+
+<pre>
+$ /sbin/sfdisk -C 8 -H 16 -S 63 /path/to/harddisk.img
+Warning: test.img is not a block device
+Disk test.img: cannot get geometry
+
+Disk test.img: 8 cylinders, 16 heads, 63 sectors/track
+
+sfdisk: ERROR: sector 0 does not have an msdos signature
+ test.img: unrecognized partition table type
+Old situation:
+No partitions found
+Input in the following format; absent fields get a default value.
+&lt;start&gt; &lt;size&gt; &lt;type [E,S,L,X,hex]&gt; &lt;bootable [-,*]&gt; &lt;c,h,s&gt; &lt;c,h,s&gt;
+Usually you only need to specify &lt;start&gt; and &lt;size&gt; (and perhaps &lt;type&gt;).
+
+test.img1 :
+</pre>
+
+<p>Now the program asks for each partition its infos. The partitions are named 'test.img[n]'. To
+create a single partition covering all the image, which ID is 4 (FAT16<32MB), just enter:</p>
+
+<pre>
+,,4
+</pre>
+
+<p>The program will use default for start and size, which is all the disk, and set the partition ID
+to 4. Then it will ask the same for the other primary partitions, just reply with enter.</p>
+
+<pre>
+test.img1          0+      7       8-      4031+   4  FAT16 <32M
+test.img2 :
+test.img2          0       -       0          0    0  Empty
+test.img3 :
+test.img3          0       -       0          0    0  Empty
+test.img4 :
+test.img4          0       -       0          0    0  Empty
+New situation:
+Units = cylinders of 516096 bytes, blocks of 1024 bytes, counting from 0
+
+   Device Boot Start     End   #cyls    #blocks   Id  System
+test.img1          0+      7       8-      4031+   4  FAT16 <32M
+test.img2          0       -       0          0    0  Empty
+test.img3          0       -       0          0    0  Empty
+test.img4          0       -       0          0    0  Empty
+Warning: no primary partition is marked bootable (active)
+This does not matter for LILO, but the DOS MBR will not boot this disk.
+Do you want to write this to disk? [ynq]
+</pre>
+
+<p>Just reply 'y' to write your changes.</p>
+
+<pre>
+Successfully wrote the new partition table
+
+Re-reading the partition table ...
+BLKRRPART: Ioctl() inappropré pour un périphérique
 </pre>
 
 <a name="links"><h2>6 - Links</h2></a>
