@@ -34,7 +34,7 @@ ARAnyM and pure Atari software? So let's start.
 <h4><a href="#harddisk_atari">5.2</a> - Partition the hard disk image (Atari side)</h4>
 <h5><a href="#harddisk_atari_hdx">5.2.1</a> - Atari HDX 5.04</h5>
 <h5><a href="#harddisk_atari_cecile">5.2.2</a> - Cecile 2.22</h5>
-<h5><a href="#harddisk_atari_hddriver">5.2.3</a> - HD Driver 8.1 (demo)</h5>
+<h5><a href="#harddisk_atari_hddriver">5.2.3</a> - HD Driver 8.13</h5>
 <h5><a href="#harddisk_atari_cbhd">5.2.4</a> - CBHD 5.02</h5>
 <h5><a href="#harddisk_atari_scsitools">5.2.5</a> - SCSI Tools 6.52</h5>
 <h5><a href="#harddisk_atari_icd">5.2.6</a> - ADSCSI</h5>
@@ -424,12 +424,13 @@ have only 1 partition created, its size is wrong, and EmuTOS won't use it. So cr
 2 partitions if you want to boot EmuTOS.
 </p>
 
-<a name="harddisk_atari_hddriver"><h4>5.2.3 - HD Driver 8.1 demo</h4></a>
+<a name="harddisk_atari_hddriver"><h4>5.2.3 - HD Driver 8.13</h4></a>
 
-<p>You can run hddriver.prg, but when running hddrutil.prg, partition is not
-available in the demo.<br>
+<p>You run hddriver.prg first, so that hddrutil.prg can access your hard disk.
+Go to 'Hardisk' -> 'Partition...', select the IDE device and partition it. Don't
+forget to install the driver on it to boot from it under TOS.
 <br>
-[Need someone with full version to do the test]
+Booting from EmuTOS also works with it.
 </p>
 
 <a name="harddisk_atari_cbhd"><h4>5.2.4 - CBHD 5.02</h4></a>
