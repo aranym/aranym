@@ -26,6 +26,19 @@
 
 #include "icio.h"
 
+/* NVRAM keyboard setting */
+typedef enum {
+	NVRAM_KBD_US=0,
+	NVRAM_KBD_DE,
+	NVRAM_KBD_FR,
+	NVRAM_KBD_UK,
+	NVRAM_KBD_ES,
+	NVRAM_KBD_IT,
+	NVRAM_KBD_SE,
+	NVRAM_KBD_CHFR,
+	NVRAM_KBD_CHDE
+} nvram_t;
+
 class RTC : public BASE_IO {
 private:
 	uint8 index;
@@ -40,6 +53,8 @@ public:
 	bool save(void);
 	virtual uint8 handleRead(memptr);
 	virtual void handleWrite(memptr, uint8);
+
+	nvram_t getNvramKeyboard(void);
 
 private:
 	void setAddr(uint8 value);

@@ -1,3 +1,8 @@
+2005/12/04 - Patrice
+- rtc: added method to read nvram keyboard setting (for future planned stuff in
+  input).
+
+
 2005/11/24 - Andreas
 - parameters.cpp: Fix aliasing violation and format string.
 
