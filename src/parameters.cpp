@@ -825,7 +825,8 @@ void postload_hotkeys() {
 	// convert from string to pair of ints
 	for(uint i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
 		int sym, mod;
-		sscanf(hotkeys_rel[i].string, "%i:%i", &sym, &mod);
+		if ( sscanf(hotkeys_rel[i].string, "%i:%i", &sym, &mod) != 2 ) continue;
+
 		hotkeys_rel[i].keysym->sym = SDLKey(sym);
 		hotkeys_rel[i].keysym->mod = SDLMod(mod);
 	}
