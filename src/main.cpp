@@ -37,11 +37,12 @@
 #include "version.h"		// for heartBeat
 #include "natfeat/nf_objs.h"
 #include "audio.h"
-#ifdef ENABLE_LILO
-#include "lilo.h"
-#endif
 #ifdef ENABLE_CXX_EXCEPTIONS
 #include "rom.h"
+#else
+# ifdef ENABLE_LILO
+# include "lilo.h"
+# endif
 #endif
 
 #define DEBUG 0
