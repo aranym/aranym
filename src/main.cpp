@@ -40,6 +40,9 @@
 #ifdef ENABLE_LILO
 #include "lilo.h"
 #endif
+#ifdef ENABLE_CXX_EXCEPTIONS
+#include "rom.h"
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -337,6 +340,7 @@ Uint32 my_callback_function(Uint32 /*interval*/, void * /*param*/)
 }
 #endif
 
+#ifndef ENABLE_CXX_EXCEPTIONS
 /*
  * Load, check and patch the TOS 4.04 ROM image file
  */
@@ -581,6 +585,7 @@ bool InitEmuTOS(void)
 		panicbug("EmuTOS image '%s' reading error.", bx_options.tos_path);
 	return bEmuOK;
 }
+#endif /* ENABLE_CXX_EXCEPTIONS */
 
 /*
  * Initialize the Operating System - Linux, TOS 4.04 or EmuTOS
@@ -594,10 +599,33 @@ bool InitOS(void)
 	 * Note that EmuTOS should always be available so this will be
 	 * a nice fallback.
 	 */
-#ifdef ENABLE_LILO
+
+#ifdef ENABLE_CXX_EXCEPTIONS
+	 
+	bool result = true;
+
+	try {
+		if (boot_lilo) {
+			rom = new LinuxRom();
+		} else if (!boot_emutos) {
+			rom = new TosRom();
+		} else {
+			rom = new EmutosRom();
+		}
+	} catch (RomInitializationException &e) {
+		panicbug("No operating system found. ARAnyM can not boot!");
+		panicbug("Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.");
+		result = false;
+	}
+
+	return result;
+
+#else
+
+# ifdef ENABLE_LILO
 	if (boot_lilo && LiloInit())
 		return true;
-#endif
+# endif
 
 	bool isOS = false;
 	if (!boot_emutos && InitTOSROM())
@@ -615,6 +643,7 @@ bool InitOS(void)
 	panicbug("No operating system found. ARAnyM can not boot!");
 	panicbug("Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.");
 	return false;
+#endif /* ENABLE_CXX_EXCEPTIONS */
 }
 
 
@@ -749,10 +778,14 @@ bool InitAll(void)
 
 void ExitAll(void)
 {
-#ifdef ENABLE_LILO
+#ifdef ENABLE_CXX_EXCEPTIONS
+	delete rom;
+#else
+# ifdef ENABLE_LILO
 	if (boot_lilo) {
 		LiloShutdown();
 	}
+# endif
 #endif
 
  	/* Close opened joystick */
@@ -809,7 +842,11 @@ void RestartAll()
 	// HW reset provided by the RESET instruction hook
 
 	// OS init
+#ifdef ENABLE_CXX_EXCEPTIONS
+	rom->reset();
+#else
 	InitOS();
+#endif
 
 	// CPU init
 	Restart680x0();
