@@ -1,3 +1,8 @@
+2005/12/10 - STanda
+- autogen.sh: rollback to -r 1.9. You should use ACLOCAL_FLAGS to set the
+  include path (to whatever folder the sdl.m4 is in using -I /path/to/sdl.m4)
+
+
 2005/12/09 - Patrice
 - Added Rom class and derivatives for TOS, EmuTOS and Linux. For now, this is
   disabled till a solution is found to use C++ exceptions along with JIT. Also

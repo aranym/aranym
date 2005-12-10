@@ -45,7 +45,7 @@ fi
 
 aclocalinclude="$ACLOCAL_FLAGS"; \
 (echo $_echo_n " + Running aclocal: $_echo_c"; \
-    aclocal -I $PWD $aclocalinclude; \
+    aclocal $aclocalinclude; \
  echo "done.") && \
 (echo $_echo_n " + Running autoheader: $_echo_c"; \
     autoheader; \
