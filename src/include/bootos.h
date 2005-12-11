@@ -18,37 +18,54 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef ROM_H
-#define ROM_H
+#ifndef BOOTOS_H
+#define BOOTOS_H
 
-class RomInitializationException {
+/* Exception class */
+
+class BootOsException {
+	private:
+		char errMsg[256];
+	public:
+		BootOsException(void);
+		BootOsException(char *errorMessage);
+
+		char *getErrorMessage(void);
 };
 
-class Rom {
+/* Base class */
+
+class BootOs {
 	public:
 		void init(void);
-		void load(char *filename) throw (RomInitializationException);
+		void load(char *filename) throw (BootOsException);
 		void reset(void);
 };
 
-class TosRom : public Rom {
+/* TOS ROM class */
+
+class TosBootOs : public BootOs {
 	public:
-		TosRom(void) throw (RomInitializationException);
+		TosBootOs(void) throw (BootOsException);
 };
 
-class EmutosRom : public Rom {
+/* EmuTOS ROM class */
+
+class EmutosBootOs : public BootOs {
 	public:
-		EmutosRom(void) throw (RomInitializationException);
+		EmutosBootOs(void) throw (BootOsException);
 };
 
-class LinuxRom : public Rom {
+/* Linux/m68k loader class */
+
+class LinuxBootOs : public BootOs {
 	public:
-		LinuxRom(void) throw (RomInitializationException);
-		~LinuxRom(void);
+		LinuxBootOs(void) throw (BootOsException);
+		~LinuxBootOs(void);
 
 		void reset(void);
 };
 
-extern Rom *rom;
+extern BootOs *bootOs;
 
-#endif /* ROM_H */
+#endif /* BOOTOS_H */

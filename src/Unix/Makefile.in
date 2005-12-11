@@ -65,6 +65,7 @@ SRCS = ../main.cpp \
 	../audio_dma.cpp \
 	../audio_crossbar.cpp \
 	../blitter.cpp \
+	../bootos.cpp \
 	../cdrom.cpp \
 	../cfgopts.c \
 	../dsp.cpp \

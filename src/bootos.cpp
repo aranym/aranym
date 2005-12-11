@@ -24,19 +24,35 @@
 #ifdef ENABLE_LILO
 #include "lilo.h"
 #endif
-#include "rom.h"
+#include "bootos.h"
 #include "romdiff.h"
 
 #define DEBUG 0
 #include "debug.h"
 
-Rom *rom = NULL;
+BootOs *bootOs = NULL;
 
-/*
-	Rom
-*/
+/*	Exception class */
 
-void Rom::init(void)
+BootOsException::BootOsException(void)
+{
+	memset(errMsg, 0, sizeof(errMsg));
+}
+
+BootOsException::BootOsException(char *errorMessage)
+{
+	strncpy(errMsg, errorMessage, sizeof(errMsg));
+	errMsg[sizeof(errMsg)-1]='\0';
+}
+
+char *BootOsException::getErrorMessage(void)
+{
+	return &errMsg[0];
+}
+
+/*	Base class */
+
+void BootOs::init(void)
 {
 	/* Setting "SP & PC" for CPU with ROM based OS (TOS, EmuTOS) */
 	for (int i=0; i<8; i++) {
@@ -44,18 +60,18 @@ void Rom::init(void)
 	}
 }
 
-void Rom::reset(void)
+void BootOs::reset(void)
 {
 }
 
-void Rom::load(char *filename) throw (RomInitializationException)
+void BootOs::load(char *filename) throw (BootOsException)
 {
 	D(bug("Reading rom image '%s'", filename));
 	FILE *f = fopen(filename, "rb");
 
 	if (f == NULL) {
 		panicbug("Rom image '%s' not found.", filename);
-		throw RomInitializationException();
+		throw BootOsException("Can not open ROM image file");
 	}
 
 	/* Both TOS 4.04 and EmuTOS must be 512 KB */
@@ -66,18 +82,16 @@ void Rom::load(char *filename) throw (RomInitializationException)
 
 	if (sizeRead != (size_t)RealROMSize) {
 		panicbug("Rom image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", filename);
-		throw RomInitializationException();
+		throw BootOsException("Error reading ROM image file");
 	}
 }
 
-/*
-	TOS 4.04
-*/
+/*	TOS ROM class */
 
-TosRom::TosRom(void) throw (RomInitializationException)
+TosBootOs::TosBootOs(void) throw (BootOsException)
 {
 	if (strlen(bx_options.tos_path) == 0) {
-		throw RomInitializationException();
+		throw BootOsException("Path to TOS ROM image file undefined");
 	}
 
 	load(bx_options.tos_path);
@@ -89,8 +103,7 @@ TosRom::TosRom(void) throw (RomInitializationException)
 	unsigned char loadedTOS[16];
 	md5.computeSum(ROMBaseHost, RealROMSize, loadedTOS);
 	if (memcmp(loadedTOS, TOS404, 16) != 0) {
-		panicbug("Wrong TOS version. You need the original TOS 4.04.");
-		throw RomInitializationException();
+		throw BootOsException("Wrong TOS version. You need the original TOS 4.04.");
 	}
 
 	// patch it for 68040 compatibility
@@ -273,14 +286,12 @@ TosRom::TosRom(void) throw (RomInitializationException)
 	init();
 }
 
-/*
-	EmuTOS
-*/
+/*	EmuTOS ROM class */
 
-EmutosRom::EmutosRom(void) throw (RomInitializationException)
+EmutosBootOs::EmutosBootOs(void) throw (BootOsException)
 {
 	if (strlen(bx_options.emutos_path) == 0)
-		throw RomInitializationException();
+		throw BootOsException("Path to EmuTOS ROM image file undefined");
 
 	load(bx_options.emutos_path);
 
@@ -293,28 +304,30 @@ EmutosRom::EmutosRom(void) throw (RomInitializationException)
 	init();
 }
 
-/*
-	Linux/m68k
-*/
+/*	Linux/m68k loader class */
 
-LinuxRom::LinuxRom(void) throw (RomInitializationException)
+/* Note: everything from lilo.cpp could be moved there */
+
+LinuxBootOs::LinuxBootOs(void) throw (BootOsException)
 {
 #ifdef ENABLE_LILO
 	if (!LiloInit())
-#endif
 	{
-		throw RomInitializationException();
+		throw BootOsException("Error loading Linux/m68k kernel");
 	}
+#else
+	throw BootOsException("Linux/m68k loader disabled");
+#endif
 }
 
-LinuxRom::~LinuxRom(void)
+LinuxBootOs::~LinuxBootOs(void)
 {
 #ifdef ENABLE_LILO
 	LiloShutdown();
 #endif
 }
 
-void LinuxRom::reset(void)
+void LinuxBootOs::reset(void)
 {
 	/* Linux/m68k kernel is in RAM, and must be reloaded */
 
@@ -329,6 +342,5 @@ void LinuxRom::reset(void)
 }
 
 /*
- * $Log$
- *
- */
+	$Log$
+*/
