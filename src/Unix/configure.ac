@@ -1040,9 +1040,9 @@ dnl No RTTI
 if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   CFLAGS="$CFLAGS -fomit-frame-pointer"
   CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
-  if [[ "x$WANT_CXX_EXCEPTIONS" = "xno" ]]; then
-    CXXFLAGS="$CXXFLAGS -fomit-frame-pointer -fno-exceptions"
-  fi 
+#  if [[ "x$WANT_CXX_EXCEPTIONS" = "xno" ]]; then
+#    CXXFLAGS="$CXXFLAGS -fno-exceptions"
+#  fi 
 fi
 
 dnl (gb) Do not merge constants since it breaks fpu/fpu_x86.cpp.
