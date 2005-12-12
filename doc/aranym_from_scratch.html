@@ -41,7 +41,16 @@ ARAnyM and pure Atari software? So let's start.
 <h4><a href="#harddisk_linux">5.3</a> - Partition the hard disk image under Linux</h4>
 <h5><a href="#harddisk_linux_fdisk">5.3.1</a> - Using fdisk</h5>
 <h5><a href="#harddisk_linux_sfdisk">5.3.2</a> - Using sfdisk</h5>
-<h3><a href="#links">6</a> - Links</h3>
+<h3><a href="#drivers">6</a> - ARAnyM specific drivers</h3>
+<h4><a href="#drivers_fvdi">6.1</a> - FVDI</h4>
+<h4><a href="#drivers_hostfs">6.2</a> - hostfs</h4>
+<h4><a href="#drivers_network">6.3</a> - Network</h4>
+<h4><a href="#drivers_nfcdrom">6.4</a> - NF CD-ROM</h4>
+<h4><a href="#drivers_nfjpeg">6.5</a> - NF jpeg</h4>
+<h4><a href="#drivers_nfosmesa">6.6</a> - NF osmesa</h4>
+<h4><a href="#drivers_nfpci">6.7</a> - NF PCI</h4>
+<h4><a href="#drivers_audio">6.8</a> - Audio</h4>
+<h3><a href="#links">7</a> - Links</h3>
 
 <hr>
 
@@ -577,7 +586,28 @@ Re-reading the partition table ...
 BLKRRPART: Ioctl() inappropré pour un périphérique
 </pre>
 
-<a name="links"><h2>6 - Links</h2></a>
+<a name="drivers"><h2>6 - ARAnyM specific drivers</h2></a>
+
+<p>Now that you have a big hard disk image you can use and boot from, it is time
+to install ARAnyM specific drivers to improve your user experience with top
+experimental un-seen features. The reality is that these drivers help ARAnyM by
+using direct host features without passing it to the hardware emulation layer.<br>
+<br>
+All ARAnyM drivers are present in the atari subdir in ARAnyM archive. They come in
+various forms: TOS residents, Metados drivers, MiNT drivers, LDG libraries, and so
+on. Let's detail each one.
+</p>
+
+<a name="drivers_fvdi"><h3>6.1 - FVDI</h3></a>
+<a name="drivers_hostfs"><h3>6.2 - hostfs</h3></a>
+<a name="drivers_network"><h3>6.3 - Network</h3></a>
+<a name="drivers_nfcdrom"><h3>6.4 - NF CD-ROM</h3></a>
+<a name="drivers_nfjpeg"><h3>6.5 - NF jpeg</h3></a>
+<a name="drivers_nfosmesa"><h3>6.6 - NF osmesa</h3></a>
+<a name="drivers_nfpci"><h3>6.7 - NF PCI</h3></a>
+<a name="drivers_audio"><h3>6.8 - Audio</h3></a>
+
+<a name="links"><h2>7 - Links</h2></a>
 <ul>
 <li><a name="link1">[1] Uwe Seimet's web site: </a><a href="http://www.seimet.de/atari_english.html">Bootconf, HD Driver</a>
 <li><a name="link2">[2] </a><a href="http://emutos.sourceforge.net">EmuTOS</a>
