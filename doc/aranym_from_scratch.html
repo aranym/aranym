@@ -595,27 +595,85 @@ using direct host features without passing it to the hardware emulation layer.<b
 <br>
 All ARAnyM drivers are present in the atari subdir in ARAnyM archive. They come in
 various forms: TOS residents, Metados drivers, MiNT drivers, LDG libraries, and so
-on. Let's detail each one.
+on.<br>
+<br>
+MetaDOS drivers (.BOS and .DOS) requires installation of MetaDOS <a href="#link9">[9]</a> <a href="#link10">[10]</a>,
+BetaDOS <a href="#link8">[8]</a> <a href="#link9">[9]</a> <a href="#link10">[10]</a>,
+Spin <a href="#link9">[9]</a> <a href="#link10">[10]</a> or ExtenDOS <a href="#link11">[11]</a> in AUTO folder on
+boot drive. MiNT drivers (.XFS and .XDD) requires installation of MiNT kernel.<br>
+<br>
+Let's detail each one.
 </p>
 
 <a name="drivers_fvdi"><h3>6.1 - FVDI</h3></a>
+
+<p>[TODO]</p>
+
 <a name="drivers_hostfs"><h3>6.2 - hostfs</h3></a>
+
+<p>This disk driver allows you to access host filesystem directly without passing
+through the hard disk emulation layer. There are drivers for both Metados 'hostfs.dos'
+and MiNT 'hostfs.xfs'.
+</p>
+
 <a name="drivers_network"><h3>6.3 - Network</h3></a>
+
+<p>'aranym.xif' is the MiNT driver for ARAnyM networking. It emulates an Ethernet card
+on Atari side.</p>
+
 <a name="drivers_nfcdrom"><h3>6.4 - NF CD-ROM</h3></a>
+
+<p>This driver 'nfcdrom.bos' allows usage of CD-ROM (and playing audio CD) from your
+Atari applications. To access the files on a CD-ROM, you'll need an ISO9660 filesystem
+driver, that you should already have with the program you use to load the driver.</p>
+
 <a name="drivers_nfjpeg"><h3>6.5 - NF jpeg</h3></a>
+
+<p>If you know Brainstorm's JPEG DSP decoder for Falcon, you know it is much faster
+to decode JPEG images than poor Falcon 030/16 MHz cpu. With this driver, it is
+the host cpu that will decode the image for your Atari applications. Just install
+'nfjpeg.prg' in the AUTO folder to run it at your system's boot. This program
+is TOS resident, so it must be run before MiNT kernel.</p>
+
 <a name="drivers_nfosmesa"><h3>6.6 - NF osmesa</h3></a>
+
+<p>This one is a little tricky, there are both a device driver 'nfosmesa.xdd' required
+for MiNT, and a library 'osmesa.ldg' for Atari applications. OSMesa is an OpenGL
+offscreen renderer, i.e. it renders images using host CPU in RAM. The result is then
+passed to the Atari application for final display.</p>
+
 <a name="drivers_nfpci"><h3>6.7 - NF PCI</h3></a>
+
+<p>Latest Atari compatible hardware like Medusa, Hades or Milan have PCI bus to
+improve the system extensions. However, specific drivers are required for each
+PCI card. Currently the nfpci driver only allows you to list host PCI devices
+(a good start!). Just install 'nfpci.prg' in the AUTO folder to run it at your
+system's boot. This program is TOS resident, so it must be run before MiNT kernel.
+</p>
+
 <a name="drivers_audio"><h3>6.8 - Audio</h3></a>
+
+<p>With the Falcon, Atari added specific Xbios system calls to drive the sound
+hardware. So now it is possible for different hardware to be used by Atari
+applications, provided they use the system calls. Under MiNT, an audio device
+driver should be used when it will be done/debugged/stable. Run 'zmagxsnd.prg' to
+install this compatibility layer, and you'll be able to listen to audio under
+ARAnyM (only with compatible applications of course). This program is TOS resident,
+so it must be run before MiNT kernel.</p>
 
 <a name="links"><h2>7 - Links</h2></a>
 <ul>
-<li><a name="link1">[1] Uwe Seimet's web site: </a><a href="http://www.seimet.de/atari_english.html">Bootconf, HD Driver</a>
+<li><a name="link1">[1] </a><a href="http://www.seimet.de/atari_english.html">Uwe Seimet's web site: Bootconf, HD Driver</a>
 <li><a name="link2">[2] </a><a href="http://emutos.sourceforge.net">EmuTOS</a>
 <li><a name="link3">[3] </a><a href="http://ftp.fr.debian.org/debian/dists/stable/main/installer-m68k/current/images">Debian m68k installer</a>
-<li><a name="link4">[4] </a><a href="http://ftp.lip6.fr/pub/atari/Disk/">LIP6 Atari FTP archive</a>
-<li><a name="link5">[5] </a><a href="ftp://chapelie.rma.ac.be/atari/utilities/disktools/">Chapelie Atari FTP archive</a>
+<li><a name="link4">[4] </a><a href="http://ftp.lip6.fr/pub/atari/Disk/">LIP6 Atari FTP archive, Disk</a>
+<li><a name="link5">[5] </a><a href="ftp://chapelie.rma.ac.be/atari/utilities/disktools/">Chapelie Atari FTP archive, utilities/disktools</a>
 <li><a name="link6">[6] </a><a href="http://centek.online.fr/atari/softs/s_cecile.htm">Centek's website</a>
 <li><a name="link7">[7] </a><a href="http://atari.apinc.org/atari/download/disks.htm">musique.atari.org website</a>
+<li><a name="link8">[8] </a><a href="http://www.ettnet.se/~dlanor/main/html/ra_files.htm">Ulf Ronald Andersson's website</a>
+<li><a name="link9">[9] </a><a href="ftp://chapelie.rma.ac.be/atari/utilities/cd-rom/">Chapelie Atari FTP archive, utilities/cd-rom</a>
+<li><a name="link10">[10] </a><a href="http://ftp.lip6.fr/pub/atari/CD-rom/Drivers/">LIP6 Atari FTP archive, CD-rom/Drivers</a>
+<li><a name="link11">[11] </a><a href="http://www.anodynesoftware.com/">Anodyne software's website</a>
 </ul>
 
 <hr>

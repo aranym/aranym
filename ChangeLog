@@ -1,3 +1,7 @@
+2005/12/12 - Patrice
+- Filled ARAnyM specific drivers section a bit.
+
+
 2005/12/11 - Patrice
 - Renamed rom class to bootos, exceptions reenabled in configure.ac. New BootOs
   class used in main.
