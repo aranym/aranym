@@ -607,7 +607,36 @@ Let's detail each one.
 
 <a name="drivers_fvdi"><h3>6.1 - FVDI</h3></a>
 
-<p>[TODO]</p>
+<p>FVDI <a href="#link12">[12]</a> is a replacement VDI like the well-known NVDI. It allows usage of custom
+video and printer (among others) drivers to be used on your Atari system. 'fvdi.prg'
+is a TOS resident program that must be run from the AUTO folder. It has a config
+file 'fvdi.sys' at the root of the boot drive. In the config file, you'll find
+the line 'PATH=' which points to a directory ('c:\gemsys' as default) where to
+find its drivers (and fonts).<br>
+<br>
+ARAnyM needs its 'aranym.sys' driver to be put there. Near the end of the 'fvdi.sys'
+file, you'll find a line like this, which tells FVDI to map VDI device 01 (default
+video device) to aranym.sys driver:</p>
+
+<pre>
+01r aranym.sys mode 1024x768x16@70 assumenf
+</pre>
+
+<p>The resolution is fixed here and can not be changed after FVDI is started. You
+can also force a resolution in ARAnyM's [AUTOZOOM] section of its config file,
+for example for a 640x480 screen, and FVDI will use it instead:</p>
+
+<pre>
+[AUTOZOOM]
+FixedSize = Yes
+Width = 640
+Height = 480
+</pre>
+
+<p>Now ARAnyM does not need to emulate the Falcon's VIDEL video chip anymore, and
+so it is much faster at displaying GEM graphics, because it is also the host's CPU
+that does all the drawing, instead of the emulated m68k CPU. Beware that non-GEM
+applications will not work correctly in this mode.</p>
 
 <a name="drivers_hostfs"><h3>6.2 - hostfs</h3></a>
 
@@ -674,6 +703,7 @@ so it must be run before MiNT kernel.</p>
 <li><a name="link9">[9] </a><a href="ftp://chapelie.rma.ac.be/atari/utilities/cd-rom/">Chapelie Atari FTP archive, utilities/cd-rom</a>
 <li><a name="link10">[10] </a><a href="http://ftp.lip6.fr/pub/atari/CD-rom/Drivers/">LIP6 Atari FTP archive, CD-rom/Drivers</a>
 <li><a name="link11">[11] </a><a href="http://www.anodynesoftware.com/">Anodyne software's website</a>
+<li><a name="link12">[12] </a><a href="http://www.klockars.net/fvdi.html">FVDI's website</a>
 </ul>
 
 <hr>
