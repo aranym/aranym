@@ -32,7 +32,6 @@
 #include "parameters.h"
 #include "host.h"			// for the HostScreen
 #include "aramd5.h"
-#include "romdiff.h"
 #include "parameters.h"
 #include "version.h"		// for heartBeat
 #include "natfeat/nf_objs.h"
