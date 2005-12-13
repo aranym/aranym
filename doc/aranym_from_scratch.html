@@ -44,7 +44,8 @@ ARAnyM and pure Atari software? So let's start.
 <h3><a href="#drivers">6</a> - ARAnyM specific drivers</h3>
 <h4><a href="#drivers_fvdi">6.1</a> - FVDI</h4>
 <h5><a href="#drivers_fvdi_resolution">6.1.1</a> - Setting FVDI's video resolution</h5>
-<h5><a href="#drivers_fvdi_hostmousecursor">6.1.2</a> - Using host mouse cursor</h5>
+<h5><a href="#drivers_fvdi_hostmouse">6.1.2</a> - Using host mouse cursor</h5>
+<h5><a href="#drivers_fvdi_renderer">6.1.3</a> - Selecting VDI renderer</h5>
 <h4><a href="#drivers_hostfs">6.2</a> - hostfs</h4>
 <h4><a href="#drivers_network">6.3</a> - Network</h4>
 <h4><a href="#drivers_nfcdrom">6.4</a> - NF CD-ROM</h4>
@@ -673,6 +674,27 @@ when you click, nothing may happen, or you'll see yourself not clicking where it
 should be. You need to 'calibrate' the host mouse cursor, so the Atari OS and
 the host both have the same mouse position. To calibrate the mouse cursor, just
 move it to all sides of the Atari screen, and it should be OK.</p>
+
+<a name="drivers_fvdi_renderer"><h4>6.1.3 - Selecting VDI renderer</h4></a>
+
+<p>If your host system has hardware accelerated OpenGL, and your ARAnyM is compiled
+with OpenGL support, then you can try the OpenGL VDI backend instead of the pure
+software backend.You select it in the [NATFEATS] section of ARAnyM config file:</p>
+
+<pre>
+[NATFEATS]
+Vdi = opengl
+</pre>
+
+<p>Default value is 'Vdi = soft' for the software backend. You must also enable
+global OpenGL usage for ARAnyM in the [OPENGL] section:</p>
+
+<pre>
+[OPENGL]
+Enabled = Yes
+</pre>
+
+<p>As usual, you need to restart ARAnyM for changes to taken into account.</p>
 
 <a name="drivers_hostfs"><h3>6.2 - hostfs</h3></a>
 
