@@ -43,6 +43,7 @@ ARAnyM and pure Atari software? So let's start.
 <h5><a href="#harddisk_linux_sfdisk">5.3.2</a> - Using sfdisk</h5>
 <h3><a href="#drivers">6</a> - ARAnyM specific drivers</h3>
 <h4><a href="#drivers_fvdi">6.1</a> - FVDI</h4>
+<h5><a href="#drivers_fvdi_resolution">6.1.1</a> - Setting FVDI's video resolution</h5>
 <h4><a href="#drivers_hostfs">6.2</a> - hostfs</h4>
 <h4><a href="#drivers_network">6.3</a> - Network</h4>
 <h4><a href="#drivers_nfcdrom">6.4</a> - NF CD-ROM</h4>
@@ -622,6 +623,15 @@ video device) to aranym.sys driver:</p>
 01r aranym.sys mode 1024x768x16@70 assumenf
 </pre>
 
+<a name="drivers_fvdi_resolution"><h4>6.1.1 - Setting FVDI's video resolution</h4></a>
+
+<p>Near the end of 'fvdi.sys' configuration file, you'll see you can pass the
+resolution as a parameter to the driver:</p>
+
+<pre>
+01r aranym.sys mode 1024x768x16@70 assumenf
+</pre>
+
 <p>The resolution is fixed here and can not be changed after FVDI is started. You
 can also force a resolution in ARAnyM's [AUTOZOOM] section of its config file,
 for example for a 640x480 screen, and FVDI will use it instead:</p>
@@ -637,6 +647,31 @@ Height = 480
 so it is much faster at displaying GEM graphics, because it is also the host's CPU
 that does all the drawing, instead of the emulated m68k CPU. Beware that non-GEM
 applications will not work correctly in this mode.</p>
+
+<a name="drivers_fvdi_hostmouse"><h4>6.1.2 - Using host mouse cursor</h4></a>
+
+<p>If you think the mouse cursor is a bit slow and jerky, it is because everything
+is managed from Atari side. You have first mouse movement that goes through the
+emulated IKBD 6301 processor, then the emulated m68k VDI driver must delete current
+mouse cursor drawed on Atari screen, take the new mouse position into account, then
+redraw the mouse cursor at a new position. Wheew.<br>
+<br>
+In ARAnyM, you can configure the VDI driver to use directly the host mouse cursor,
+so all the steps mentionned above will be short-circuited. Just fill the [NFVDI]
+section of ARAnym's configuration file this way:</p>
+
+<pre>
+[NFVDI]
+UseHostMouseCursor = Yes
+</pre>
+
+<p>Restart ARAnyM, and check the super fast mouse cursor. There is still a problem
+remaining: At start, the Atari OS thinks the mouse position is at position
+x1,y1 on the Atari screen, whereas in reality, you see it at position x2,y2. So
+when you click, nothing may happen, or you'll see yourself not clicking where it
+should be. You need to 'calibrate' the host mouse cursor, so the Atari OS and
+the host both have the same mouse position. To calibrate the mouse cursor, just
+move it to all sides of the Atari screen, and it should be OK.</p>
 
 <a name="drivers_hostfs"><h3>6.2 - hostfs</h3></a>
 
