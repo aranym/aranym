@@ -47,6 +47,7 @@ ARAnyM and pure Atari software? So let's start.
 <h5><a href="#drivers_fvdi_hostmouse">6.1.2</a> - Using host mouse cursor</h5>
 <h5><a href="#drivers_fvdi_renderer">6.1.3</a> - Selecting VDI renderer</h5>
 <h4><a href="#drivers_hostfs">6.2</a> - hostfs</h4>
+<h5><a href="#drivers_hostfs_dos">6.2.1</a> - hostfs MetaDOS driver</h5>
 <h4><a href="#drivers_network">6.3</a> - Network</h4>
 <h4><a href="#drivers_nfcdrom">6.4</a> - NF CD-ROM</h4>
 <h4><a href="#drivers_nfjpeg">6.5</a> - NF jpeg</h4>
@@ -702,8 +703,38 @@ GUI routines are still software-rendering only.</p>
 
 <p>This disk driver allows you to access host filesystem directly without passing
 through the hard disk emulation layer. There are drivers for both Metados 'hostfs.dos'
-and MiNT 'hostfs.xfs'.
-</p>
+and MiNT 'hostfs.xfs'.</p>
+
+<a name="drivers_hostfs_dos"><h4>6.2.1 - hostfs MetaDOS driver</h4></a>
+
+<p>First as said before, you need to install MetaDOS, Spin, BetaDOS or ExtenDOS to
+load the driver at boot time. All have a configuration file 'config.sys' or
+'bdconfig.sys' depending on the loader. Note: after some tests, it appears the
+driver does not work with MetaDOS (and Spin which uses MetaDOS), so use either
+BetaDOS or ExtenDOS.<br>
+<br>
+You need to edit this file to add a line like this:</p>
+
+<pre>
+*DOS, \auto\hostfs.dos, P:Z
+</pre>
+
+<p>As you see, you have complete pathname to the driver, and 'P:Z' means that it
+maps the GEMDOS drive letter P to the MetaDOS device Z. P and Z can be any letter
+of course, but avoid those already used by harddisks, so start from Z for devices,
+and from P for drive letters. Standard GEM fileselector only have drive letters from
+A to P, so this is why it would be wise to not assign GEMDOS drives letters Q to Z.<br>
+<br>
+The device letter is configured in ARAnyM's config file, [HOSTFS] section, where
+you map a MetaDOS device to an host filesystem directory:</p>
+
+<pre>
+[HOSTFS]
+Z = /path/to/my/favorite/atari/software/
+</pre>
+
+<p>Now you don't need floppies anymore to move, copy and access files from your
+virtual Atari machine.</p>
 
 <a name="drivers_network"><h3>6.3 - Network</h3></a>
 
