@@ -716,21 +716,21 @@ BetaDOS or ExtenDOS.<br>
 You need to edit this file to add a line like this:</p>
 
 <pre>
-*DOS, \auto\hostfs.dos, P:Z
+*DOS, \auto\hostfs.dos, P:P
 </pre>
 
-<p>As you see, you have complete pathname to the driver, and 'P:Z' means that it
-maps the GEMDOS drive letter P to the MetaDOS device Z. P and Z can be any letter
-of course, but avoid those already used by harddisks, so start from Z for devices,
-and from P for drive letters. Standard GEM fileselector only have drive letters from
-A to P, so this is why it would be wise to not assign GEMDOS drives letters Q to Z.<br>
+<p>As you see, you have complete pathname to the driver, and 'P:P' means that it
+maps the GEMDOS drive letter P to the MetaDOS device P. In fact the MetaDOS device
+does not exists. But you must use the same letter for GEMDOS drive and MetaDOS
+device. Standard GEM fileselector only have drive letters from A to P, so this is
+why it would be wise to not assign GEMDOS drives letters Q to Z.<br>
 <br>
-The device letter is configured in ARAnyM's config file, [HOSTFS] section, where
-you map a MetaDOS device to an host filesystem directory:</p>
+The GEMDOS drive is configured in ARAnyM's config file, [HOSTFS] section, where
+you map a drive to a host filesystem directory:</p>
 
 <pre>
 [HOSTFS]
-Z = /path/to/my/favorite/atari/software/
+P = /path/to/my/favorite/atari/software/
 </pre>
 
 <p>Now you don't need floppies anymore to move, copy and access files from your
