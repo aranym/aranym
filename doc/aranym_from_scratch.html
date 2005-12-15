@@ -745,7 +745,46 @@ on Atari side.</p>
 
 <p>This driver 'nfcdrom.bos' allows usage of CD-ROM (and playing audio CD) from your
 Atari applications. To access the files on a CD-ROM, you'll need an ISO9660 filesystem
-driver, that you should already have with the program you use to load the driver.</p>
+driver, that you should already have with the program you use to load the driver.<br>
+<br>
+In the MetaDOS (or other) configuration file, you just have to add a line like this:</p>
+
+<pre>
+*BOS, \auto\nfcdrom, Y
+</pre>
+
+<p>This will create a MetaDOS device Y, which is declared in the ARAnyM config file
+in the section [CDROMS]:</p>
+
+<pre>
+[CDROMS]
+Y = 0
+</pre>
+
+<p>The number is the nth CD-ROM device on your host system, starting from 0. Now
+you can play audio CD with any Atari application. If you want data CD-ROM access,
+you'll need to use Linux nfcdrom driver on ARAnyM side, and install an ISO9660
+filesystem driver in MetaDOS configuration file for the MetaDOS device.<br>
+<br>
+Currently in ARAnyM, there are 2 nfcdrom drivers: the SDL one (works everywhere)
+but only allows audio CD control, and the Linux one which gives you total control
+over the CD-ROM drive. You choose which one to select in the [NATFEATS] section of
+ARAnyM config file:</p>
+
+<pre>
+[NATFEATS]
+CDROM = linux
+</pre>
+
+<p>The default value for CDROM is 'sdl' of course. The ISO9660 filesystem can then
+be mapped to the MetaDOS device in its config.sys file:</p>
+
+<pre>
+*DOS, \auto\iso9660.dos, H:Y
+</pre>
+
+<p>This line will create a GEMDOS drive H to access the CD-ROM filesystem through
+MetaDOS device Y.</p>
 
 <a name="drivers_nfjpeg"><h3>6.5 - NF jpeg</h3></a>
 
