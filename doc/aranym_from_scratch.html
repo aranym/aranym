@@ -46,14 +46,15 @@ ARAnyM and pure Atari software? So let's start.
 <h5><a href="#drivers_fvdi_resolution">6.1.1</a> - Setting FVDI's video resolution</h5>
 <h5><a href="#drivers_fvdi_hostmouse">6.1.2</a> - Using host mouse cursor</h5>
 <h5><a href="#drivers_fvdi_renderer">6.1.3</a> - Selecting VDI renderer</h5>
-<h4><a href="#drivers_hostfs">6.2</a> - hostfs</h4>
-<h5><a href="#drivers_hostfs_dos">6.2.1</a> - hostfs MetaDOS driver</h5>
-<h4><a href="#drivers_network">6.3</a> - Network</h4>
-<h4><a href="#drivers_nfcdrom">6.4</a> - NF CD-ROM</h4>
-<h4><a href="#drivers_nfjpeg">6.5</a> - NF jpeg</h4>
-<h4><a href="#drivers_nfosmesa">6.6</a> - NF osmesa</h4>
-<h4><a href="#drivers_nfpci">6.7</a> - NF PCI</h4>
-<h4><a href="#drivers_audio">6.8</a> - Audio</h4>
+<h4><a href="#drivers_hostfs">6.2</a> - Filesystem driver</h4>
+<h5><a href="#drivers_hostfs_dos">6.2.1</a> - MetaDOS driver</h5>
+<h5><a href="#drivers_hostfs_xfs">6.2.2</a> - MiNT driver</h5>
+<h4><a href="#drivers_network">6.3</a> - Network driver</h4>
+<h4><a href="#drivers_nfcdrom">6.4</a> - CD-ROM driver</h4>
+<h4><a href="#drivers_nfjpeg">6.5</a> - JPEG image decoder</h4>
+<h4><a href="#drivers_nfosmesa">6.6</a> - OSMesa software OpenGL driver</h4>
+<h4><a href="#drivers_nfpci">6.7</a> - PCI driver</h4>
+<h4><a href="#drivers_audio">6.8</a> - Audio driver</h4>
 <h3><a href="#links">7</a> - Links</h3>
 
 <hr>
@@ -606,7 +607,11 @@ BetaDOS <a href="#link8">[8]</a> <a href="#link9">[9]</a> <a href="#link10">[10]
 Spin <a href="#link9">[9]</a> <a href="#link10">[10]</a> or ExtenDOS <a href="#link11">[11]</a> in AUTO folder on
 boot drive. MiNT drivers (.XFS and .XDD) requires installation of MiNT kernel.<br>
 <br>
-Let's detail each one.
+Only the MiNT filesystem driver 'hostfs.xfs' ,the MiNT network driver 'aranym.xif',
+and the MiNT osmesa driver 'nfosmesa.xdd' requires MiNT to be installed and used.
+The OSmesa library 'osmesa.ldg' requires LDG <a href="#link13">[13]</a> installation.
+All the other drivers must be run from the AUTO folder, before the MiNT kernel if
+present.
 </p>
 
 <a name="drivers_fvdi"><h3>6.1 - FVDI</h3></a>
@@ -699,13 +704,13 @@ Enabled = Yes
 Note: currently you can't use the ARAnyM GUI when OpenGL is enabled, because
 GUI routines are still software-rendering only.</p>
 
-<a name="drivers_hostfs"><h3>6.2 - hostfs</h3></a>
+<a name="drivers_hostfs"><h3>6.2 - Filesystem driver</h3></a>
 
 <p>This disk driver allows you to access host filesystem directly without passing
 through the hard disk emulation layer. There are drivers for both Metados 'hostfs.dos'
 and MiNT 'hostfs.xfs'.</p>
 
-<a name="drivers_hostfs_dos"><h4>6.2.1 - hostfs MetaDOS driver</h4></a>
+<a name="drivers_hostfs_dos"><h4>6.2.1 - MetaDOS driver</h4></a>
 
 <p>First as said before, you need to install MetaDOS, Spin, BetaDOS or ExtenDOS to
 load the driver at boot time. All have a configuration file 'config.sys' or
@@ -736,12 +741,18 @@ P = /path/to/my/favorite/atari/software/
 <p>Now you don't need floppies anymore to move, copy and access files from your
 virtual Atari machine.</p>
 
-<a name="drivers_network"><h3>6.3 - Network</h3></a>
+<a name="drivers_hostfs_xfs"><h4>6.2.2 - MiNT driver</h4></a>
+
+<p>If you installed the MiNT multitasking kernel, then there is a driver for it.
+Just copy the 'hostfs.xfs' file in the MiNT directory, and all drives declared
+in [HOSTFS] section will be mounted under the U:\ directory.</p>
+
+<a name="drivers_network"><h3>6.3 - Network driver</h3></a>
 
 <p>'aranym.xif' is the MiNT driver for ARAnyM networking. It emulates an Ethernet card
 on Atari side.</p>
 
-<a name="drivers_nfcdrom"><h3>6.4 - NF CD-ROM</h3></a>
+<a name="drivers_nfcdrom"><h3>6.4 - CD-ROM driver</h3></a>
 
 <p>This driver 'nfcdrom.bos' allows usage of CD-ROM (and playing audio CD) from your
 Atari applications. To access the files on a CD-ROM, you'll need an ISO9660 filesystem
@@ -786,7 +797,7 @@ be mapped to the MetaDOS device in its config.sys file:</p>
 <p>This line will create a GEMDOS drive H to access the CD-ROM filesystem through
 MetaDOS device Y.</p>
 
-<a name="drivers_nfjpeg"><h3>6.5 - NF jpeg</h3></a>
+<a name="drivers_nfjpeg"><h3>6.5 - JPEG image decoder</h3></a>
 
 <p>If you know Brainstorm's JPEG DSP decoder for Falcon, you know it is much faster
 to decode JPEG images than poor Falcon 030/16 MHz cpu. With this driver, it is
@@ -794,14 +805,68 @@ the host cpu that will decode the image for your Atari applications. Just instal
 'nfjpeg.prg' in the AUTO folder to run it at your system's boot. This program
 is TOS resident, so it must be run before MiNT kernel.</p>
 
-<a name="drivers_nfosmesa"><h3>6.6 - NF osmesa</h3></a>
+<a name="drivers_nfosmesa"><h3>6.6 - OSMesa software OpenGL driver</h3></a>
 
 <p>This one is a little tricky, there are both a device driver 'nfosmesa.xdd' required
-for MiNT, and a library 'osmesa.ldg' for Atari applications. OSMesa is an OpenGL
-offscreen renderer, i.e. it renders images using host CPU in RAM. The result is then
-passed to the Atari application for final display.</p>
+for MiNT, and a library 'osmesa.ldg' for Atari applications. LDG <a href="#link13">[13]</a> must be installed
+for the library to be loaded/usable by applications. OSMesa is an OpenGL offscreen
+renderer, i.e. it renders images using host CPU in RAM. The result is then passed
+to the Atari application for final display.<br>
+<br>
+For OSMesa to operate properly, you must have OSMesa host's libraries compiled and
+installed. Then, fill the [NFOSMESA] section of the ARAnyM configuration file:</p>
 
-<a name="drivers_nfpci"><h3>6.7 - NF PCI</h3></a>
+<pre>
+[NFOSMESA]
+ChannelSize = 0
+LibGL = /path/to/libGL.so
+LibOSMesa = /path/to/libOSMesa.so
+</pre>
+
+<p>Channel size is the number of bits per color channel. Default is 8 (0 in config
+file), it means that one colour component (R,G,B,A) will use 8 bits. Other values
+are 16 and 32. It means a single pixel could use 8 or 16 bytes to be stored.<br>
+<br>
+If you have ARAnyM compiled with OpenGL support, and this implementation is not
+coming from Mesa <a href="#link14">[14]</a>, then the libraries will conflict.
+For example if you have installed drivers from your video card's vendor, then you
+can't use both with ARAnyM (i.e. libGL for your card and libGL from Mesa).<br>
+<br>
+However, if you have ARAnyM compiled with OpenGL support, you can use OSMesa if you
+use the 16 or 32 bits per channel version (libOSMesa16 or libOSMesa32), because
+they embed Mesa's libGL implementation, so no conflict in this case.<br>
+<br>
+Let me do a list of what can/can not be used:</p>
+
+<table border="1">
+<tr>
+<td><strong>ARAnyM compiled<br>with OpenGL</strong>
+<td><strong>ARAnyM compiled<br>with NFOSMesa</strong>
+<td><strong>NFOSMesa availability<br>for Atari applications</strong>
+<tr>
+<td>No
+<td>No
+<td>None
+<tr>
+<td>Yes
+<td>No
+<td>None
+<tr>
+<td>No
+<td>Yes
+<td>All libOSMesa implementations
+<tr>
+<td>Yes
+<td>Yes
+<td>Only with libOSMesa16 and libOSMesa32
+</table>
+
+<p>If you use libOSMesa16 or libOSMesa32, you must put the corresponding value in
+'ChannelSize' (i.e. 16 or 32), and 'LibGL=' will not be used. If you use default
+libOSMesa, set 'ChannelSize' to 0, and 'libGL=' will be used. In all cases, you
+must set correctly 'libOSMesa='.</p>
+
+<a name="drivers_nfpci"><h3>6.7 - PCI driver</h3></a>
 
 <p>Latest Atari compatible hardware like Medusa, Hades or Milan have PCI bus to
 improve the system extensions. However, specific drivers are required for each
@@ -810,15 +875,20 @@ PCI card. Currently the nfpci driver only allows you to list host PCI devices
 system's boot. This program is TOS resident, so it must be run before MiNT kernel.
 </p>
 
-<a name="drivers_audio"><h3>6.8 - Audio</h3></a>
+<a name="drivers_audio"><h3>6.8 - Audio driver</h3></a>
 
 <p>With the Falcon, Atari added specific Xbios system calls to drive the sound
 hardware. So now it is possible for different hardware to be used by Atari
 applications, provided they use the system calls. Under MiNT, an audio device
-driver should be used when it will be done/debugged/stable. Run 'zmagxsnd.prg' to
-install this compatibility layer, and you'll be able to listen to audio under
-ARAnyM (only with compatible applications of course). This program is TOS resident,
-so it must be run before MiNT kernel.</p>
+driver should be used when it will be done/debugged/stable.<br>
+<br>
+ARAnyM has some DMA audio emulation, but it may not be sufficient for programs to
+operate properly. Well-written applications use Xbios, and could use the ARAnyM
+audio driver.<br>
+<br>
+Run 'zmagxsnd.prg' to install this compatibility layer, and you should have a better
+audio experience under ARAnyM (only with compatible applications of course). This
+program is TOS resident, so it must be run before MiNT kernel.</p>
 
 <a name="links"><h2>7 - Links</h2></a>
 <ul>
@@ -834,6 +904,8 @@ so it must be run before MiNT kernel.</p>
 <li><a name="link10">[10] </a><a href="http://ftp.lip6.fr/pub/atari/CD-rom/Drivers/">LIP6 Atari FTP archive, CD-rom/Drivers</a>
 <li><a name="link11">[11] </a><a href="http://www.anodynesoftware.com/">Anodyne software's website</a>
 <li><a name="link12">[12] </a><a href="http://www.klockars.net/fvdi.html">FVDI's website</a>
+<li><a name="link13">[13] </a><a href="http://ldg.sourceforge.net">LDG's website</a>
+<li><a name="link14">[14] </a><a href="http://www.mesa3d.org">Mesa's website</a>
 </ul>
 
 <hr>
