@@ -726,7 +726,13 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr /*vwk*/, memptr src, int32 sx, int32 
 #endif
 		switch(planes) {
 			case 16:
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+				glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
+#endif
 				glDrawPixels(w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, srcAddress);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+				glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
+#endif
 				break;
 			case 32:
 				glDrawPixels(w,1, GL_BGRA,
@@ -782,7 +788,13 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, in
 			case 3:
 				switch(planes) {
 					case 16:
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+						glPixelStorei(GL_PACK_SWAP_BYTES, GL_TRUE);
+#endif
 						glReadPixels(sx,hostScreen.getHeight()-(sy+y+1), w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, destAddress);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+						glPixelStorei(GL_PACK_SWAP_BYTES, GL_FALSE);
+#endif
 						break;
 					case 32:
 						glReadPixels(sx,hostScreen.getHeight()-(sy+y+1), w,1, GL_BGRA,

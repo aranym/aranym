@@ -1,7 +1,7 @@
 2005/12/18 - Patrice
 - nfvdi_opengl: fixed getpixel() operation regarding host endianness. Reversed
   byte order for blits operations on big endian systems, so that GL_BGRA reads
-  or writes ARGB pixels.
+  or writes ARGB pixels. Done for both 16 and 32 bits per pixel.
 
 
 2005/12/12 - Patrice
