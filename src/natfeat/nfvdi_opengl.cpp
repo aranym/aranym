@@ -729,7 +729,13 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr /*vwk*/, memptr src, int32 sx, int32 
 				glDrawPixels(w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, srcAddress);
 				break;
 			case 32:
-				glDrawPixels(w,1, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, srcAddress);
+				glDrawPixels(w,1, GL_BGRA,
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+					GL_UNSIGNED_INT_8_8_8_8,
+#else
+					GL_UNSIGNED_INT_8_8_8_8_REV,
+#endif
+					srcAddress);
 				break;
 		}
 		srcAddress += srcPitch;
@@ -779,7 +785,13 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, in
 						glReadPixels(sx,hostScreen.getHeight()-(sy+y+1), w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, destAddress);
 						break;
 					case 32:
-						glReadPixels(sx,hostScreen.getHeight()-(sy+y+1), w,1, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8, destAddress);
+						glReadPixels(sx,hostScreen.getHeight()-(sy+y+1), w,1, GL_BGRA,
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+							GL_UNSIGNED_INT_8_8_8_8,
+#else
+							GL_UNSIGNED_INT_8_8_8_8_REV,
+#endif
+							destAddress);
 						break;
 				}
 				break;
