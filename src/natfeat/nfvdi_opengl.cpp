@@ -127,7 +127,7 @@ int32 OpenGLVdiDriver::closeWorkstation(void)
 
 int32 OpenGLVdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 {
-	Uint8 rgba_color[4];
+	Uint32 color;
 
 	if (vwk & 1)
 		return 0;
@@ -135,9 +135,15 @@ int32 OpenGLVdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 	if (src)
 		return VdiDriver::getPixel(vwk, src, x, y);
 
-	glReadPixels(x,y,1,1, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, rgba_color);
 //	D(bug("glvdi: getpixel"));
-	return (rgba_color[0]<<16)|(rgba_color[1]<<8)|rgba_color[2];
+
+	glReadPixels(x,y,1,1, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &color);
+
+	/* We have a RGBA color in host byte order, convert it to ARGB */
+	color >>= 8;
+
+	/* Mask out alpha bits */
+	return (color & 0x00ffffffUL);
 }
 
 /**
