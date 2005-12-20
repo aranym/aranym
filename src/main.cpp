@@ -347,25 +347,25 @@ bool InitOS(void)
 	 */
 
 	/* Try Linux/m68k */
-	try {
-		if (boot_lilo) {
+	if (boot_lilo) {
+		try {
 			bootOs = new LinuxBootOs();
 			return true;
+		} catch (BootOsException &e) {
+			/* Could not init Linux/m68k */
+			panicbug(e.getErrorMessage());
 		}
-	} catch (BootOsException &e) {
-		/* Could not init Linux/m68k */
-		panicbug(e.getErrorMessage());
 	}
 
 	/* Try TOS */
-	try {
-		if (!boot_emutos) {
+	if (!boot_emutos) {
+		try {
 			bootOs = new TosBootOs();
 			return true;
+		} catch (BootOsException &e) {
+			/* Could not init TOS */
+			panicbug(e.getErrorMessage());
 		}
-	} catch (BootOsException &e) {
-		/* Could not init TOS */
-		panicbug(e.getErrorMessage());
 	}
 
 	/* Try EmuTOS */
