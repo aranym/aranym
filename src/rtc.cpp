@@ -179,12 +179,12 @@ uint8 RTC::getData() {
 	else {
 		value = nvram[index];
 	}
-	D(bug("Reading NVRAM data at %d = %d ($%02x) at %06x\n", index, value, value, showPC()));
+	D(bug("Reading NVRAM data at %d = %d ($%02x) at %06x", index, value, value, showPC()));
 	return value;
 }
 
 void RTC::setData(uint8 value) {
-	D(bug("Writing NVRAM data at %d = %d ($%02x) at %06x\n", index, value, value, showPC()));
+	D(bug("Writing NVRAM data at %d = %d ($%02x) at %06x", index, value, value, showPC()));
 	nvram[index] = value;
 }
 
