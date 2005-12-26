@@ -1,3 +1,7 @@
+2005/12/26 - Patrice
+- hostscreen: remove unneeded inclusion of glext.h, we can use included SDL one.
+
+
 2005/12/18 - Patrice
 - nfvdi_opengl: fixed getpixel() operation regarding host endianness. Reversed
   byte order for blits operations on big endian systems, so that GL_BGRA reads

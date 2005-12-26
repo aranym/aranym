@@ -35,21 +35,7 @@
 #include "debug.h"
 
 #ifdef ENABLE_OPENGL
-#define NO_SDL_GLEXT	/* Don't use SDL version of glext */
-#if 0
 #include <SDL_opengl.h>
-#else
-#ifdef OS_darwin
-#include <OpenGL/glu.h>
-#else
-#include <GL/glu.h>
-#endif
-#endif
-#ifdef OS_darwin
-#include <OpenGL/glext.h>
-#else
-#include <GL/glext.h>
-#endif
 #endif
 
 #define RGB_BLACK     0x00000000
@@ -1510,6 +1496,12 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.77  2005/11/14 00:38:28  stefanq
+ * - nfvdi_opengl.h: Changed include of GL/glu.h to OpenGL/glu.h for darwin.
+ * - nfvdi_opengl.cpp: Changed include of GL/glu.h to OpenGL/glu.h for darwin.
+ * - hostscreen.cpp: Changed include of GL/glu.h to OpenGL/glu.h and GL/glext.h
+ *   to OpenGL/glext.h for darwin.
+ *
  * Revision 1.76  2005/08/05 08:53:24  johan
  * Removed unnecessary dependency on glu function.
  *
