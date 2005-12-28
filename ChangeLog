@@ -1,3 +1,8 @@
+2005/12/27 - Standa
+- hostfs: fixing f2astrcpy() function migration bug. PureC now works under
+  MiNT again as expected.
+
+
 2005/12/26 - Patrice
 - hostscreen: remove unneeded inclusion of glext.h, we can use included SDL one.
 

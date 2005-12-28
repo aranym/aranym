@@ -2054,7 +2054,7 @@ int32 HostFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, in
         *pfpathName = '\0';
         D(bug( "HOSTFS: fs_getname result = \"%s\"", fpathName ));
 
-        Host2AtariSafeStrncpy( pathName, fpathName, size );
+        Host2AtariSafeStrncpy( pathName, fpathName, pfpathName - fpathName + 1 );
         return TOS_E_OK;
     }
 }
