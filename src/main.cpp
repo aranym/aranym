@@ -36,6 +36,7 @@
 #include "natfeat/nf_objs.h"
 #include "audio.h"
 #include "bootos.h"
+#include "aranym_exception.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -351,7 +352,7 @@ bool InitOS(void)
 		try {
 			bootOs = new LinuxBootOs();
 			return true;
-		} catch (BootOsException &e) {
+		} catch (AranymException &e) {
 			/* Could not init Linux/m68k */
 			panicbug(e.getErrorMessage());
 		}
@@ -362,7 +363,7 @@ bool InitOS(void)
 		try {
 			bootOs = new TosBootOs();
 			return true;
-		} catch (BootOsException &e) {
+		} catch (AranymException &e) {
 			/* Could not init TOS */
 			panicbug(e.getErrorMessage());
 		}
@@ -372,7 +373,7 @@ bool InitOS(void)
 	try {
 		bootOs = new EmutosBootOs();
 		return true;
-	} catch (BootOsException &e) {
+	} catch (AranymException &e) {
 		/* Could not init EmuTOS */
 		panicbug(e.getErrorMessage());
 	}

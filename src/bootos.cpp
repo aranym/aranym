@@ -26,31 +26,12 @@
 #endif
 #include "bootos.h"
 #include "romdiff.h"
+#include "aranym_exception.h"
 
 #define DEBUG 0
 #include "debug.h"
 
 BootOs *bootOs = NULL;
-
-/*	Exception class */
-
-BootOsException::BootOsException(void)
-{
-	memset(errMsg, 0, sizeof(errMsg));
-}
-
-BootOsException::BootOsException(char *errorMessage)
-{
-	strncpy(errMsg, errorMessage, sizeof(errMsg));
-	errMsg[sizeof(errMsg)-1]='\0';
-}
-
-char *BootOsException::getErrorMessage(void)
-{
-	return &errMsg[0];
-}
-
-/*	Base class */
 
 void BootOs::init(void)
 {
@@ -64,14 +45,13 @@ void BootOs::reset(void)
 {
 }
 
-void BootOs::load(char *filename) throw (BootOsException)
+void BootOs::load(char *filename) throw (AranymException)
 {
 	D(bug("Reading rom image '%s'", filename));
 	FILE *f = fopen(filename, "rb");
 
 	if (f == NULL) {
-		panicbug("Rom image '%s' not found.", filename);
-		throw BootOsException("Can not open ROM image file");
+		throw AranymException("Rom image '%s' not found.", filename);
 	}
 
 	/* Both TOS 4.04 and EmuTOS must be 512 KB */
@@ -81,17 +61,16 @@ void BootOs::load(char *filename) throw (BootOsException)
 	fclose(f);
 
 	if (sizeRead != (size_t)RealROMSize) {
-		panicbug("Rom image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", filename);
-		throw BootOsException("Error reading ROM image file");
+		throw AranymException("Rom image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", filename);
 	}
 }
 
 /*	TOS ROM class */
 
-TosBootOs::TosBootOs(void) throw (BootOsException)
+TosBootOs::TosBootOs(void) throw (AranymException)
 {
 	if (strlen(bx_options.tos_path) == 0) {
-		throw BootOsException("Path to TOS ROM image file undefined");
+		throw AranymException("Path to TOS ROM image file undefined");
 	}
 
 	load(bx_options.tos_path);
@@ -103,7 +82,7 @@ TosBootOs::TosBootOs(void) throw (BootOsException)
 	unsigned char loadedTOS[16];
 	md5.computeSum(ROMBaseHost, RealROMSize, loadedTOS);
 	if (memcmp(loadedTOS, TOS404, 16) != 0) {
-		throw BootOsException("Wrong TOS version. You need the original TOS 4.04.");
+		throw AranymException("Wrong TOS version. You need the original TOS 4.04.");
 	}
 
 	// patch it for 68040 compatibility
@@ -288,10 +267,10 @@ TosBootOs::TosBootOs(void) throw (BootOsException)
 
 /*	EmuTOS ROM class */
 
-EmutosBootOs::EmutosBootOs(void) throw (BootOsException)
+EmutosBootOs::EmutosBootOs(void) throw (AranymException)
 {
 	if (strlen(bx_options.emutos_path) == 0)
-		throw BootOsException("Path to EmuTOS ROM image file undefined");
+		throw AranymException("Path to EmuTOS ROM image file undefined");
 
 	load(bx_options.emutos_path);
 
@@ -308,15 +287,15 @@ EmutosBootOs::EmutosBootOs(void) throw (BootOsException)
 
 /* Note: everything from lilo.cpp could be moved there */
 
-LinuxBootOs::LinuxBootOs(void) throw (BootOsException)
+LinuxBootOs::LinuxBootOs(void) throw (AranymException)
 {
 #ifdef ENABLE_LILO
 	if (!LiloInit())
 	{
-		throw BootOsException("Error loading Linux/m68k kernel");
+		throw AranymException("Error loading Linux/m68k kernel");
 	}
 #else
-	throw BootOsException("Linux/m68k loader disabled");
+	throw AranymException("Linux/m68k loader disabled");
 #endif
 }
 
@@ -343,4 +322,7 @@ void LinuxBootOs::reset(void)
 
 /*
 	$Log$
+	Revision 1.1  2005/12/11 14:16:07  pmandin
+	rom class renamed to bootos
+	
 */

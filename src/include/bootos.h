@@ -21,24 +21,12 @@
 #ifndef BOOTOS_H
 #define BOOTOS_H
 
-/* Exception class */
-
-class BootOsException {
-	private:
-		char errMsg[256];
-	public:
-		BootOsException(void);
-		BootOsException(char *errorMessage);
-
-		char *getErrorMessage(void);
-};
-
-/* Base class */
+#include "aranym_exception.h"
 
 class BootOs {
 	public:
 		void init(void);
-		void load(char *filename) throw (BootOsException);
+		void load(char *filename) throw (AranymException);
 		void reset(void);
 };
 
@@ -46,21 +34,21 @@ class BootOs {
 
 class TosBootOs : public BootOs {
 	public:
-		TosBootOs(void) throw (BootOsException);
+		TosBootOs(void) throw (AranymException);
 };
 
 /* EmuTOS ROM class */
 
 class EmutosBootOs : public BootOs {
 	public:
-		EmutosBootOs(void) throw (BootOsException);
+		EmutosBootOs(void) throw (AranymException);
 };
 
 /* Linux/m68k loader class */
 
 class LinuxBootOs : public BootOs {
 	public:
-		LinuxBootOs(void) throw (BootOsException);
+		LinuxBootOs(void) throw (AranymException);
 		~LinuxBootOs(void);
 
 		void reset(void);
