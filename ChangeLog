@@ -1,3 +1,8 @@
+2005/12/29 - Patrice
+- Created aranym exception class for future classes that need exceptions. Also now
+  it can be created with variable list of arguments like printf().
+
+
 2005/12/27 - Standa
 - hostfs: fixing f2astrcpy() function migration bug. PureC now works under
   MiNT again as expected.

@@ -60,6 +60,7 @@ SRCS = ../main.cpp \
 	../acia.cpp \
 	../acsifdc.cpp \
 	../aradata.cpp \
+	../aranym_exception.cpp \
 	../ata.cpp \
 	../audio.cpp \
 	../audio_dma.cpp \
