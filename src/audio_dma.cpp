@@ -24,13 +24,11 @@
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
-#include "audio.h"
+#include "host_audio.h"
 #include "audio_dma.h"
 
 #define DEBUG 0
 #include "debug.h"
-
-extern	AUDIO	*audio;
 
 /*--- Defines ---*/
 
@@ -94,7 +92,7 @@ extern "C" {
 		src = current_replay + offset*channels;
 		j = k = 0;
 		while (((current_replay+j*skip)<end_replay) && (dst_len>0)) {
-			j = (k * freq) / audio->obtained.freq;
+			j = (k * freq) / hostAudio->obtained.freq;
 			for (int i=0;i<channels;i++) {
 				*dest++ = ReadInt8(src + i + j*skip);
 				dst_len--;
@@ -114,7 +112,7 @@ extern "C" {
 		src = current_replay + offset*channels;
 		j = k = 0;
 		while (((current_replay+j*skip)<end_replay) && (dst_len>0)) {
-			j = (k * freq) / audio->obtained.freq;
+			j = (k * freq) / hostAudio->obtained.freq;
 			for (int i=0;i<channels;i++) {
 				*dest++ = ReadInt16(src + (i<<1) + j*skip);
 				dst_len -= 2;
@@ -135,7 +133,7 @@ extern "C" {
 			|| (freq==0) || (start_replay==0) || (end_replay==0))
 			return;
 
-//		D(bug("audiodma: %d to fill, from %d Hz to %d Hz", len, freq, audio->obtained.freq));
+//		D(bug("audiodma: %d to fill, from %d Hz to %d Hz", len, freq, hostAudio->obtained.freq));
 
 		/* Allocate needed temp buffer */
 		if (tmp_buf_len<len) {
@@ -238,13 +236,13 @@ AUDIODMA::AUDIODMA(memptr addr, uint32 size) : BASE_IO(addr, size)
 	tmp_buf=NULL;
 	reset();
 
-	audio->AddCallback(audio_callback, NULL);
+	hostAudio->AddCallback(audio_callback, NULL);
 }
 
 AUDIODMA::~AUDIODMA()
 {
 	D(bug("audiodma: interface destroyed at 0x%06x", getHWoffset()));
-	audio->RemoveCallback(audio_callback);
+	hostAudio->RemoveCallback(audio_callback);
 	reset();
 }
 
@@ -543,8 +541,8 @@ void AUDIODMA::updateMode(void)
 		format, channels, offset, skip, freq));
 
 	SDL_BuildAudioCVT(&cvt,
-		format, channels, audio->obtained.freq,
-		audio->obtained.format, audio->obtained.channels, audio->obtained.freq
+		format, channels, hostAudio->obtained.freq,
+		hostAudio->obtained.format, hostAudio->obtained.channels, hostAudio->obtained.freq
 	);
 }
 

@@ -1,3 +1,7 @@
+2005/12/30 - Patrice
+- Renamed AUDIO class to more accurate HostAudio class.
+
+
 2005/12/29 - Patrice
 - Created aranym exception class for future classes that need exceptions. Also now
   it can be created with variable list of arguments like printf().

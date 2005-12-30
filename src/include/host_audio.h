@@ -18,8 +18,8 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef AUDIO_H
-#define AUDIO_H
+#ifndef HOSTAUDIO_H
+#define HOSTAUDIO_H
 
 /*--- Defines ---*/
 
@@ -31,13 +31,13 @@ typedef void (*audio_callback_f)(void *unused, Uint8 *stream, int len);
 
 /*--- Class ---*/
 
-class AUDIO {
+class HostAudio {
 	private:
 		SDL_AudioSpec	desired;
 
 	public:
-		AUDIO();
-		~AUDIO();
+		HostAudio();
+		~HostAudio();
 
 		/* private data but needed by SDL audio callback */
 		int	num_callbacks;
@@ -52,4 +52,6 @@ class AUDIO {
 		SDL_AudioSpec	obtained;	
 };
 
-#endif /* AUDIO_H */
+extern HostAudio *hostAudio;
+
+#endif /* HOSTAUDIO_H */

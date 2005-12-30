@@ -20,7 +20,7 @@
 
 #include <SDL.h>
 
-#include "audio.h"
+#include "host_audio.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -32,18 +32,18 @@
 #define AUDIO_CHANNELS	2
 #define	AUDIO_SAMPLES	1024
 
-/*--- AUDIO class pointer ---*/
+/*--- HostAudio class pointer ---*/
 
-AUDIO	*audio;
+HostAudio	*hostAudio;
 
 /*--- SDL callback function ---*/
 
 extern "C" {
 	static void UpdateAudio(void *unused, Uint8 *stream, int len) {
 		DUNUSED(unused);
-		for (int i=0; i<audio->num_callbacks; i++) {
-			if (audio->callbacks[i]) {
-				audio->callbacks[i](audio->userdatas[i], stream, len);
+		for (int i=0; i<hostAudio->num_callbacks; i++) {
+			if (hostAudio->callbacks[i]) {
+				hostAudio->callbacks[i](hostAudio->userdatas[i], stream, len);
 			}
 		}
 	}
@@ -51,9 +51,9 @@ extern "C" {
 
 /*--- Constructor/destructor of AUDIO class ---*/
 
-AUDIO::AUDIO()
+HostAudio::HostAudio()
 {
-	D(bug("AUDIO: AUDIO()"));
+	D(bug("HostAudio: HostAudio()"));
 
 	num_callbacks = 0;
 	for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
@@ -72,21 +72,21 @@ AUDIO::AUDIO()
 		return;
 	}
 
-	D(bug("AUDIO: %d Hz, 0x%04x format, %d channels", obtained.freq, obtained.format, obtained.channels));
+	D(bug("HostAudio: %d Hz, 0x%04x format, %d channels", obtained.freq, obtained.format, obtained.channels));
 
 	SDL_PauseAudio(0);
 }
 
-AUDIO::~AUDIO()
+HostAudio::~HostAudio()
 {
-	D(bug("AUDIO: ~AUDIO()"));
+	D(bug("HostAudio: ~HostAudio()"));
 	
 	SDL_CloseAudio();
 }
 
 /*--- Public stuff ---*/
 
-void AUDIO::AddCallback(audio_callback_f callback, void *userdata)
+void HostAudio::AddCallback(audio_callback_f callback, void *userdata)
 {
 	if (num_callbacks>=MAX_AUDIO_CALLBACKS-1) {
 		fprintf(stderr, "Too many audio callbacks registered\n");
@@ -100,7 +100,7 @@ void AUDIO::AddCallback(audio_callback_f callback, void *userdata)
 	SDL_UnlockAudio();
 }
 
-void AUDIO::RemoveCallback(audio_callback_f callback)
+void HostAudio::RemoveCallback(audio_callback_f callback)
 {
 	SDL_LockAudio();
 	for (int i=0; i<num_callbacks;i++) {

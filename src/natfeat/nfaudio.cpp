@@ -28,12 +28,10 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "nfaudio.h"
-#include "audio.h"
+#include "host_audio.h"
 
 #define DEBUG 0
 #include "debug.h"
-
-extern AUDIO *audio;
 
 extern "C" {
 	static SDL_audiostatus playing;
@@ -88,12 +86,12 @@ AUDIODriver::AUDIODriver()
 	cvt.buf = NULL;
 	cvt_buf_len = 0;
 	reset();
-	audio->AddCallback(audio_callback, &AudioParameters);
+	hostAudio->AddCallback(audio_callback, &AudioParameters);
 }
 
 AUDIODriver::~AUDIODriver()
 {
-	audio->RemoveCallback(audio_callback);
+	hostAudio->RemoveCallback(audio_callback);
 	reset();
 }
 
@@ -134,7 +132,7 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 			D(bug("Audio: OpenAudio: 0x%08x", getParameter(4)));
 			SDL_BuildAudioCVT(&cvt,
 				(uint16)getParameter(1), (uint8)getParameter(2), getParameter(0),
-				audio->obtained.format, audio->obtained.channels, audio->obtained.freq
+				hostAudio->obtained.format, hostAudio->obtained.channels, hostAudio->obtained.freq
 			);
 			AudioParameters.buffer = getParameter(4);
 			AudioParameters.freq = getParameter(0);

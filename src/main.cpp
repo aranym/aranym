@@ -34,7 +34,7 @@
 #include "parameters.h"
 #include "version.h"		// for heartBeat
 #include "natfeat/nf_objs.h"
-#include "audio.h"
+#include "host_audio.h"
 #include "bootos.h"
 #include "aranym_exception.h"
 
@@ -53,8 +53,6 @@
 #endif
 
 #include <SDL.h>
-
-extern AUDIO	*audio;
 
 #ifdef SDL_GUI
 #include "sdlgui.h"
@@ -437,7 +435,7 @@ bool InitAll(void)
 		}
 	}
 
-	audio = new AUDIO();
+	hostAudio = new HostAudio();
 
 	// For InterruptFlag controling
 	InterruptFlagLock = SDL_CreateMutex();
@@ -558,7 +556,7 @@ void ExitAll(void)
 	mon_exit();
 #endif
 
-	delete audio;
+	delete hostAudio;
 
 	SDL_Quit();
 }

@@ -62,7 +62,6 @@ SRCS = ../main.cpp \
 	../aradata.cpp \
 	../aranym_exception.cpp \
 	../ata.cpp \
-	../audio.cpp \
 	../audio_dma.cpp \
 	../audio_crossbar.cpp \
 	../blitter.cpp \
@@ -75,6 +74,7 @@ SRCS = ../main.cpp \
 	../fakeio.cpp \
 	../hardware.cpp \
 	../host.cpp \
+	../host_audio.cpp \
 	../hostscreen.cpp \
 	../ide.cpp \
 	../identify.cpp \
