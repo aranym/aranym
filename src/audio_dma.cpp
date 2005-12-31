@@ -24,7 +24,7 @@
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
-#include "host_audio.h"
+#include "host.h"
 #include "audio_dma.h"
 
 #define DEBUG 0
@@ -86,13 +86,14 @@ extern "C" {
 	static int resize_8bit(Sint8 *dest, int dst_len)
 	{
 		uint32	src;
-		int j,k;
+		int j,k, hostfreq;
 
 //		D(bug("audiodma: resize 8bit"));		
 		src = current_replay + offset*channels;
 		j = k = 0;
+		hostfreq = host->getAudio()->obtained.freq;
 		while (((current_replay+j*skip)<end_replay) && (dst_len>0)) {
-			j = (k * freq) / hostAudio->obtained.freq;
+			j = (k * freq) / hostfreq;
 			for (int i=0;i<channels;i++) {
 				*dest++ = ReadInt8(src + i + j*skip);
 				dst_len--;
@@ -106,13 +107,14 @@ extern "C" {
 	static int resize_16bit(Sint16 *dest, int dst_len)
 	{
 		uint32	src;
-		int j,k;
+		int j,k, hostfreq;
 		
 //		D(bug("audiodma: resize 16bit"));		
 		src = current_replay + offset*channels;
 		j = k = 0;
+		hostfreq = host->getAudio()->obtained.freq;
 		while (((current_replay+j*skip)<end_replay) && (dst_len>0)) {
-			j = (k * freq) / hostAudio->obtained.freq;
+			j = (k * freq) / hostfreq;
 			for (int i=0;i<channels;i++) {
 				*dest++ = ReadInt16(src + (i<<1) + j*skip);
 				dst_len -= 2;
@@ -236,13 +238,13 @@ AUDIODMA::AUDIODMA(memptr addr, uint32 size) : BASE_IO(addr, size)
 	tmp_buf=NULL;
 	reset();
 
-	hostAudio->AddCallback(audio_callback, NULL);
+	host->getAudio()->AddCallback(audio_callback, NULL);
 }
 
 AUDIODMA::~AUDIODMA()
 {
 	D(bug("audiodma: interface destroyed at 0x%06x", getHWoffset()));
-	hostAudio->RemoveCallback(audio_callback);
+	host->getAudio()->RemoveCallback(audio_callback);
 	reset();
 }
 
@@ -541,8 +543,12 @@ void AUDIODMA::updateMode(void)
 		format, channels, offset, skip, freq));
 
 	SDL_BuildAudioCVT(&cvt,
-		format, channels, hostAudio->obtained.freq,
-		hostAudio->obtained.format, hostAudio->obtained.channels, hostAudio->obtained.freq
+		format,
+		channels,
+		host->getAudio()->obtained.freq,
+		host->getAudio()->obtained.format,
+		host->getAudio()->obtained.channels,
+		host->getAudio()->obtained.freq
 	);
 }
 

@@ -34,7 +34,6 @@
 #include "parameters.h"
 #include "version.h"		// for heartBeat
 #include "natfeat/nf_objs.h"
-#include "host_audio.h"
 #include "bootos.h"
 #include "aranym_exception.h"
 
@@ -435,7 +434,7 @@ bool InitAll(void)
 		}
 	}
 
-	hostAudio = new HostAudio();
+	host = new Host();
 
 	// For InterruptFlag controling
 	InterruptFlagLock = SDL_CreateMutex();
@@ -556,7 +555,7 @@ void ExitAll(void)
 	mon_exit();
 #endif
 
-	delete hostAudio;
+	delete host;
 
 	SDL_Quit();
 }

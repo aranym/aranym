@@ -1,5 +1,6 @@
 2005/12/30 - Patrice
 - Renamed AUDIO class to more accurate HostAudio class.
+- Created a Host class, and put HostAudio in it.
 
 
 2005/12/29 - Patrice

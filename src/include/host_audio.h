@@ -52,6 +52,4 @@ class HostAudio {
 		SDL_AudioSpec	obtained;	
 };
 
-extern HostAudio *hostAudio;
-
 #endif /* HOSTAUDIO_H */

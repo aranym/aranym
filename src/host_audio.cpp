@@ -21,6 +21,7 @@
 #include <SDL.h>
 
 #include "host_audio.h"
+#include "host.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -32,15 +33,13 @@
 #define AUDIO_CHANNELS	2
 #define	AUDIO_SAMPLES	1024
 
-/*--- HostAudio class pointer ---*/
-
-HostAudio	*hostAudio;
-
 /*--- SDL callback function ---*/
 
 extern "C" {
 	static void UpdateAudio(void *unused, Uint8 *stream, int len) {
 		DUNUSED(unused);
+		HostAudio *hostAudio = host->getAudio();
+
 		for (int i=0; i<hostAudio->num_callbacks; i++) {
 			if (hostAudio->callbacks[i]) {
 				hostAudio->callbacks[i](hostAudio->userdatas[i], stream, len);
@@ -49,7 +48,7 @@ extern "C" {
 	}
 };
 
-/*--- Constructor/destructor of AUDIO class ---*/
+/*--- Constructor/destructor of HostAudio class ---*/
 
 HostAudio::HostAudio()
 {
