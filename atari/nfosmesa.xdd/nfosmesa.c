@@ -193,7 +193,7 @@ init (struct kerinfo *k)
 	}
 
 	/* Check API version */
-	if (nfCall((nfOSMesaId+GET_VERSION))!=ARANFOSMESA_NFAPI_VERSION) {
+	if (nfCall((nfOSMesaId+GET_VERSION, 0, 0))!=ARANFOSMESA_NFAPI_VERSION) {
 		c_conws("NF OSMesa functions use an incompatible API\r\n");
 		return NULL;
 	}
