@@ -40,7 +40,6 @@ class HostAudio {
 		~HostAudio();
 
 		/* private data but needed by SDL audio callback */
-		int	num_callbacks;
 		audio_callback_f	callbacks[MAX_AUDIO_CALLBACKS];
 		void	*userdatas[MAX_AUDIO_CALLBACKS];
 

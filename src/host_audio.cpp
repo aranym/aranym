@@ -40,7 +40,7 @@ extern "C" {
 		DUNUSED(unused);
 		HostAudio *hostAudio = host->getAudio();
 
-		for (int i=0; i<hostAudio->num_callbacks; i++) {
+		for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
 			if (hostAudio->callbacks[i]) {
 				hostAudio->callbacks[i](hostAudio->userdatas[i], stream, len);
 			}
@@ -54,9 +54,9 @@ HostAudio::HostAudio()
 {
 	D(bug("HostAudio: HostAudio()"));
 
-	num_callbacks = 0;
 	for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
 		callbacks[i]=NULL;
+		userdatas[i]=NULL;
 	}
 
 	desired.freq = AUDIO_FREQ;
@@ -87,26 +87,37 @@ HostAudio::~HostAudio()
 
 void HostAudio::AddCallback(audio_callback_f callback, void *userdata)
 {
-	if (num_callbacks>=MAX_AUDIO_CALLBACKS-1) {
+	SDL_bool callbackAdded = SDL_FALSE;
+
+	SDL_LockAudio();
+
+	for (int i=0; i<MAX_AUDIO_CALLBACKS;i++) {
+		if (callbacks[i]==NULL) {
+			userdatas[i]=userdata;
+			callbacks[i]=callback;
+			callbackAdded = SDL_TRUE;
+			break;
+		}
+	}
+
+	SDL_UnlockAudio();
+
+	if (!callbackAdded) {
 		fprintf(stderr, "Too many audio callbacks registered\n");
 		return;
 	}
-
-	SDL_LockAudio();
-	userdatas[num_callbacks]=userdata;
-	callbacks[num_callbacks]=callback;
-	num_callbacks++;
-	SDL_UnlockAudio();
 }
 
 void HostAudio::RemoveCallback(audio_callback_f callback)
 {
 	SDL_LockAudio();
-	for (int i=0; i<num_callbacks;i++) {
+
+	for (int i=0; i<MAX_AUDIO_CALLBACKS;i++) {
 		if (callbacks[i]==callback) {
 			callbacks[i]=NULL;
 			userdatas[i]=NULL;
 		}
 	}
+
 	SDL_UnlockAudio();
 }
