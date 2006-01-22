@@ -215,7 +215,7 @@ uint8 MFP::handleRead(memptr addr)
 
 		default: value = 0;
 	};
-	D(bug("Reading MFP data from %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
+	D(bug("Reading MFP data from %04lx = %d ($%02x) at %06x", addr, value, value, showPC()));
 	return value;
 }
 
@@ -255,7 +255,7 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 	if (addr > getHWsize())
 		return;	// unhandled
 
-	D(bug("Writing MFP data to %04lx = %d ($%02x) at %06x\n", addr, value, value, showPC()));
+	D(bug("Writing MFP data to %04lx = %d ($%02x) at %06x", addr, value, value, showPC()));
 	switch(addr) {
 		case 0x01:	//GPIP_data = value;
 					GPIP_data &= ~data_direction ;
