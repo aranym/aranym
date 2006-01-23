@@ -54,10 +54,7 @@ HostAudio::HostAudio()
 {
 	D(bug("HostAudio: HostAudio()"));
 
-	for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
-		callbacks[i]=NULL;
-		userdatas[i]=NULL;
-	}
+	reset();
 
 	desired.freq = AUDIO_FREQ;
 	desired.format = AUDIO_FORMAT;
@@ -84,6 +81,18 @@ HostAudio::~HostAudio()
 }
 
 /*--- Public stuff ---*/
+
+void HostAudio::reset(void)
+{
+	SDL_LockAudio();
+
+	for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
+		callbacks[i]=NULL;
+		userdatas[i]=NULL;
+	}
+
+	SDL_UnlockAudio();
+}
 
 void HostAudio::AddCallback(audio_callback_f callback, void *userdata)
 {

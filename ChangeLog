@@ -1,3 +1,7 @@
+2006/01/23 - Patrice
+- host: Added reset() method for host stuff.
+
+
 2006/01/20 - Patrice
 - host_audio: Remove useless/crash prone num_callbacks related stuff.
 

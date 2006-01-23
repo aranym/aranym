@@ -17,6 +17,7 @@ class Host {
 	public:
 		Host();
 		~Host();
+		void reset(void);
 		
 		HostAudio *getAudio();
 };
@@ -28,6 +29,9 @@ extern Host *host;
 
 /*
  * $Log$
+ * Revision 1.3  2005/12/31 09:07:43  pmandin
+ * Created a Host class, put HostAudio in it
+ *
  * Revision 1.2  2001/10/25 19:56:01  standa
  * The Log and Header CVS tags in the Log removed. Was recursing.
  *

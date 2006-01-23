@@ -567,6 +567,9 @@ void RestartAll()
 	// NF reset provided by the RESET instruction hook
 	// HW reset provided by the RESET instruction hook
 
+	// Host reset
+	host->reset();
+
 	// OS init
 	bootOs->reset();
 

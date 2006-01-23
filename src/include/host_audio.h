@@ -38,6 +38,7 @@ class HostAudio {
 	public:
 		HostAudio();
 		~HostAudio();
+		void reset(void);
 
 		/* private data but needed by SDL audio callback */
 		audio_callback_f	callbacks[MAX_AUDIO_CALLBACKS];
