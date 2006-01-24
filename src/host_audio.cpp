@@ -54,7 +54,10 @@ HostAudio::HostAudio()
 {
 	D(bug("HostAudio: HostAudio()"));
 
-	reset();
+	for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
+		callbacks[i]=NULL;
+		userdatas[i]=NULL;
+	}
 
 	desired.freq = AUDIO_FREQ;
 	desired.format = AUDIO_FORMAT;
