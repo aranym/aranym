@@ -4,6 +4,7 @@
 #include "config.h"
 #include "tools.h"
 #include "parameters.h"
+#include "host_filesys.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -32,7 +33,7 @@ int get_geometry(char *dev_path, geo_type geo) {
 /*
  * Get the path to a user home folder.
  */
-char *getHomeFolder(char *buffer, unsigned int bufsize)
+char *HostFilesys::getHomeFolder(char *buffer, unsigned int bufsize)
 {
 	// Unix-like systems define HOME variable as the user home folder
 	if (IS_CYGWIN_FHS) {
@@ -49,13 +50,13 @@ char *getHomeFolder(char *buffer, unsigned int bufsize)
 /*
  * Get the path to folder with user-specific files (configuration, NVRAM)
  */
-char *getConfFolder(char *buffer, unsigned int bufsize)
+char *HostFilesys::getConfFolder(char *buffer, unsigned int bufsize)
 {
-	getHomeFolder(buffer, bufsize);
+	HostFilesys::getHomeFolder(buffer, bufsize);
 	return addFilename(buffer, ARANYMHOME, bufsize);
 }
 
-char *getDataFolder(char *buffer, unsigned int bufsize)
+char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 {
 	// test if Unix-like filesystem is in place
 	// if it's not, data folder path is extracted from argv[0]

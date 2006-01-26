@@ -9,8 +9,10 @@
 
 #include "hostscreen.h"
 #include "host_audio.h"
+#include "host_filesys.h"
 
-class Host {
+class Host : public HostFilesys
+{
 	public:
 		Host();
 		~Host();
@@ -26,6 +28,9 @@ extern Host *host;
 
 /*
  * $Log$
+ * Revision 1.5  2006/01/26 18:53:53  pmandin
+ * HostAudio object now statically created
+ *
  * Revision 1.4  2006/01/23 18:27:19  pmandin
  * Add reset method for host stuff
  *

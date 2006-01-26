@@ -31,6 +31,7 @@
 #include "parameters.h"
 #include "tools.h"		// for safe_strncpy()
 #include "gdbstub.h"
+#include "host.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -1138,11 +1139,11 @@ void postload_PathTag( const char *filename, struct Config_Tag *ptr ) {
 
 	if ( path[0] == '~' ) {
 		// replace with the home folder path
-		prefix = getHomeFolder(home, sizeof(home));
+		prefix = Host::getHomeFolder(home, sizeof(home));
 		prefixLen = strlen( prefix );
 		path++;
 	} else if (path[0] == '*') {
-		prefix=getDataFolder(home, sizeof(home));
+		prefix= Host::getDataFolder(home, sizeof(home));
 		prefixLen = strlen( prefix );
 		path++;
 	} else if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
@@ -1189,7 +1190,7 @@ char *addFilename(char *buffer, const char *file, unsigned int bufsize)
 // build a complete path to an user-specific file
 char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 {
-	getConfFolder(buffer, bufsize);
+	Host::getConfFolder(buffer, bufsize);
 
 	// Does the folder exist?
 	struct stat buf;
@@ -1204,7 +1205,7 @@ char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 // build a complete path to system wide data file
 char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
 {
-	getDataFolder(buffer, bufsize);
+	Host::getDataFolder(buffer, bufsize);
 	return addFilename(buffer, file, bufsize);
 }
 

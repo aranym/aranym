@@ -5,6 +5,7 @@
 
 2006/01/26 - Patrice
 - host: Don't need to dynamically create HostAudio object.
+- Created HostFilesys class for system-dependent paths functions.
 
 
 2006/01/23 - Patrice

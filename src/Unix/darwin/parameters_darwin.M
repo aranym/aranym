@@ -6,7 +6,7 @@
 #include "sysdeps.h"
 #include "tools.h"
 #include "parameters.h"
-
+#include "host_filesys.h"
 
 
 
@@ -28,7 +28,7 @@ int get_geometry(char */*dev_path*/, geo_type /*geo*/) {
 
 
 //  Get the path to the user's home folder.
-char *getHomeFolder(char *buffer, unsigned int bufsize)
+char *HostFilesys::getHomeFolder(char *buffer, unsigned int bufsize)
 {
 	NSString *homePath = [@"~/" stringByExpandingTildeInPath];
 	[homePath getCString: buffer maxLength: bufsize];
@@ -43,7 +43,7 @@ char *getHomeFolder(char *buffer, unsigned int bufsize)
 //		~/Library/Preferences
 //		/Library/Preferences
 //		/System/Library/Preferences
-char *getConfFolder(char *buffer, unsigned int bufsize)
+char *HostFilesys::getConfFolder(char *buffer, unsigned int bufsize)
 {
 	//  set the preferences folder name
 	NSString *preferencesPath = @"Preferences";
@@ -88,7 +88,7 @@ char *getConfFolder(char *buffer, unsigned int bufsize)
 //		~/Library/Application Support
 //		/Library/Application Support
 //		/System/Library/Application Support
-char *getDataFolder(char *buffer, unsigned int bufsize)
+char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 {
 	//  get the application's bundle, thus it's name (ARAnyM)
 	NSBundle* bundle=[NSBundle mainBundle];

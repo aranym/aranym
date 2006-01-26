@@ -269,7 +269,7 @@ DIRSEPARATOR='\"\/\"'
 
 case "$target_os" in
   linux*)
-    EXTRASYSSRCS="linux/parameters_linux.cpp linux/ethernet_linux.cpp"
+    EXTRASYSSRCS="linux/parameters_linux.cpp linux/ethernet_linux.cpp host_filesys_unix.cpp"
     ;;
   cygwin*)
     DEFINES="$DEFINES -DARANYMHOME=\"\\\"aranym\\\"\""
@@ -280,20 +280,20 @@ case "$target_os" in
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
     AC_DEFINE([_POSIX_C_SOURCE], 199506L, [Define if needed])
     DEFINES="$DEFINES -DBSD_COMP -fpermissive -D__EXTENSIONS__"
-    EXTRASYSSRCS=parameters_unix.cpp
+    EXTRASYSSRCS="parameters_unix.cpp  host_filesys_unix.cpp"
     ;;
   irix*)
-    EXTRASYSSRCS="parameters_unix.cpp irix/unaligned.c"
+    EXTRASYSSRCS="parameters_unix.cpp irix/unaligned.c host_filesys_unix.cpp"
     ;;
   freebsd*)
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
-    EXTRASYSSRCS=parameters_unix.cpp
+    EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
     ;;	      
   darwin*)
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     if test "x$WITH_FINK" = "xyes"; then
         DEFINES="$DEFINES -DARANYMHOME=\\\"aranym\\\""
-        EXTRASYSSRCS="parameters_unix.cpp"
+        EXTRASYSSRCS="parameters_unix.cpp  host_filesys_unix.cpp"
     else
         DEFINES="$DEFINES -DARANYMHOME=\\\"ARAnyM\\\" -DARANYMCONFIG=\\\"org.atari.aranym.config\\\" -DARANYMNVRAM=\\\"org.atari.aranym.nvram\\\" -DARANYMKEYMAP=\\\"org.atari.aranym.keymap\\\""
         EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLMain.M"
@@ -304,11 +304,11 @@ case "$target_os" in
     fi
     ;;
   beos*)
-    EXTRASYSSRCS="parameters_unix.cpp beos/cdrom_beos.cpp"
+    EXTRASYSSRCS="parameters_unix.cpp beos/cdrom_beos.cpp host_filesys_unix.cpp"
     DEFINES="$DEFINES -I./beos"
     ;;
   *)
-    EXTRASYSSRCS=parameters_unix.cpp
+    EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
     ;;
 esac
 

@@ -1,15 +1,32 @@
-/* MJ 2001 */
+/*
+	Host filesystem, Unix systems
+
+	ARAnyM (C) 2005 Patrice Mandin
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #include "sysdeps.h"
 #include "tools.h"
 #include "parameters.h"
 #include "host_filesys.h"
 
-# include <cstdlib>
+#define DEBUG 0
+#include "debug.h"
 
-int get_geometry(char *dev_path, geo_type geo) {
-  return -1;
-}
+#include <cstdlib>
 
 /*
  * Get the path to a user home folder.
@@ -20,10 +37,8 @@ char *HostFilesys::getHomeFolder(char *buffer, unsigned int bufsize)
 
 	// Unix-like systems define HOME variable as the user home folder
 	char *home = getenv("HOME");
-
 	if ( home )
 		strncpy( buffer, home, bufsize );
-
 	return buffer;
 }
 
@@ -55,22 +70,6 @@ char *HostFilesys::getConfFolder(char *buffer, unsigned int bufsize)
 
 char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 {
- 
- static char path[512]="";
- CFURLRef tosURL;
-
-	if (strlen (path) ==0)
-	{
-		tosURL=CFBundleCopyResourcesDirectoryURL ( mainBundle);
-		if (tosURL)
-		{
-			CFURLGetFileSystemRepresentation (tosURL, true, (uint8 *)path, 512);
-			delete (tosURL);
-			unsigned int len = strlen(path);
-			if ((len+1) < 512) 
-					strcat(path, DIRSEPARATOR);
-		}
-	}	
-	return safe_strncpy(buffer, path, bufsize);
+	// data folder is defined at configure time in ARANYM_DATADIR (using --datadir)
+	return safe_strncpy(buffer, ARANYM_DATADIR, bufsize);
 }
-
