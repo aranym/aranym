@@ -1610,7 +1610,14 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 		if ( (uint16)len < strlen( dirEntry->d_name ) + 4 )
 			return TOS_ERANGE;
 
-		WriteInt32( (uint32)buff, dirEntry->d_ino );
+		char fpathName[MAXPATHNAMELEN];
+		cookie2Pathname(&dirh->fc, dirEntry->d_name, fpathName);
+
+		struct stat statBuf;
+		if ( stat(fpathName, &statBuf) )
+			return errnoHost2Mint(errno,TOS_EFILNF);
+
+		WriteInt32( (uint32)buff, statBuf.st_ino );
 		Host2AtariSafeStrncpy( buff + 4, dirEntry->d_name, len-4 );
 	} else {
 		char truncFileName[MAXPATHNAMELEN];
