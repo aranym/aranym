@@ -86,12 +86,12 @@ AUDIODriver::AUDIODriver()
 	cvt.buf = NULL;
 	cvt_buf_len = 0;
 	reset();
-	host->getAudio()->AddCallback(audio_callback, &AudioParameters);
+	host->audio.AddCallback(audio_callback, &AudioParameters);
 }
 
 AUDIODriver::~AUDIODriver()
 {
-	host->getAudio()->RemoveCallback(audio_callback);
+	host->audio.RemoveCallback(audio_callback);
 	reset();
 }
 
@@ -134,9 +134,9 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 				(uint16)getParameter(1),
 				(uint8)getParameter(2),
 				getParameter(0),
-				host->getAudio()->obtained.format,
-				host->getAudio()->obtained.channels,
-				host->getAudio()->obtained.freq
+				host->audio.obtained.format,
+				host->audio.obtained.channels,
+				host->audio.obtained.freq
 			);
 			AudioParameters.buffer = getParameter(4);
 			AudioParameters.freq = getParameter(0);

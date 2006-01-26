@@ -91,7 +91,7 @@ extern "C" {
 //		D(bug("audiodma: resize 8bit"));		
 		src = current_replay + offset*channels;
 		j = k = 0;
-		hostfreq = host->getAudio()->obtained.freq;
+		hostfreq = host->audio.obtained.freq;
 		while (((current_replay+j*skip)<end_replay) && (dst_len>0)) {
 			j = (k * freq) / hostfreq;
 			for (int i=0;i<channels;i++) {
@@ -112,7 +112,7 @@ extern "C" {
 //		D(bug("audiodma: resize 16bit"));		
 		src = current_replay + offset*channels;
 		j = k = 0;
-		hostfreq = host->getAudio()->obtained.freq;
+		hostfreq = host->audio.obtained.freq;
 		while (((current_replay+j*skip)<end_replay) && (dst_len>0)) {
 			j = (k * freq) / hostfreq;
 			for (int i=0;i<channels;i++) {
@@ -238,13 +238,13 @@ AUDIODMA::AUDIODMA(memptr addr, uint32 size) : BASE_IO(addr, size)
 	tmp_buf=NULL;
 	reset();
 
-	host->getAudio()->AddCallback(audio_callback, NULL);
+	host->audio.AddCallback(audio_callback, NULL);
 }
 
 AUDIODMA::~AUDIODMA()
 {
 	D(bug("audiodma: interface destroyed at 0x%06x", getHWoffset()));
-	host->getAudio()->RemoveCallback(audio_callback);
+	host->audio.RemoveCallback(audio_callback);
 	reset();
 }
 
@@ -545,10 +545,10 @@ void AUDIODMA::updateMode(void)
 	SDL_BuildAudioCVT(&cvt,
 		format,
 		channels,
-		host->getAudio()->obtained.freq,
-		host->getAudio()->obtained.format,
-		host->getAudio()->obtained.channels,
-		host->getAudio()->obtained.freq
+		host->audio.obtained.freq,
+		host->audio.obtained.format,
+		host->audio.obtained.channels,
+		host->audio.obtained.freq
 	);
 }
 

@@ -10,32 +10,33 @@
 #include "hostscreen.h"
 #include "host.h"
 
+#define DEBUG 0
+#include "debug.h"
+
 // host OS dependent objects
 HostScreen hostScreen;
 Host *host;
 
 Host::Host()
 {
-	audio = new HostAudio();
+	D(bug("Host::Host()"));
 }
 
 Host::~Host()
 {
-	delete audio;
+	D(bug("Host::~Host()"));
 }
 
 void Host::reset(void)
 {
-	audio->reset();
-}
-
-HostAudio *Host::getAudio()
-{
-	return audio;
+	audio.reset();
 }
 
 /*
  * $Log$
+ * Revision 1.4  2006/01/23 18:27:19  pmandin
+ * Add reset method for host stuff
+ *
  * Revision 1.3  2005/12/31 09:07:43  pmandin
  * Created a Host class, put HostAudio in it
  *

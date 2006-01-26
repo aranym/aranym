@@ -11,15 +11,12 @@
 #include "host_audio.h"
 
 class Host {
-	private:
-		HostAudio *audio;
-		
 	public:
 		Host();
 		~Host();
 		void reset(void);
-		
-		HostAudio *getAudio();
+
+		HostAudio audio;
 };
 
 extern HostScreen hostScreen;
@@ -29,6 +26,9 @@ extern Host *host;
 
 /*
  * $Log$
+ * Revision 1.4  2006/01/23 18:27:19  pmandin
+ * Add reset method for host stuff
+ *
  * Revision 1.3  2005/12/31 09:07:43  pmandin
  * Created a Host class, put HostAudio in it
  *

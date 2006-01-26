@@ -1,3 +1,7 @@
+2006/01/26 - Patrice
+- host: Don't need to dynamically create HostAudio object.
+
+
 2006/01/23 - Patrice
 - host: Added reset() method for host stuff.
 

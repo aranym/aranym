@@ -38,11 +38,10 @@
 extern "C" {
 	static void UpdateAudio(void *unused, Uint8 *stream, int len) {
 		DUNUSED(unused);
-		HostAudio *hostAudio = host->getAudio();
 
 		for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
-			if (hostAudio->callbacks[i]) {
-				hostAudio->callbacks[i](hostAudio->userdatas[i], stream, len);
+			if (host->audio.callbacks[i]) {
+				host->audio.callbacks[i](host->audio.userdatas[i], stream, len);
 			}
 		}
 	}
