@@ -2532,18 +2532,18 @@ static void generate_one_opcode (int rp)
     printf ("\t\tpc_page = pc;\n");
     printf ("\t\tpc_offset = (uae_u32)get_real_address(pc, 0, sz_word) - pc;\n");
     printf ("\t}\n");
-#else
+#else /* ARAM_PAGE_CHECK */
     printf ("\tcheck_ram_boundary(pc, 2, false);\n");
-#endif
-#endif
+#endif /* ARAM_PAGE_CHECK */
+#endif /* !FULLMMU */
     printf ("\topcode = GET_OPCODE;}\n");
 #if 0
     printf ("\tprintf(\"%%lx 0x%%08x 0x%%08x\\n\", opcode, op_smalltbl_0_lab,op_smalltbl_0_lab[opcode]);\n");
 #endif
     printf ("\tgoto *op_smalltbl_0_lab[opcode];\n\n");
-#else
+#else /* DISDIP */
     printf ("\tcpuop_end();\n");
-#endif
+#endif /* DISDIP */
     printf ("}\n");
     opcode_next_clev[rp] = next_cpu_level;
     opcode_last_postfix[rp] = postfix;
