@@ -151,7 +151,7 @@ AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card e
 
 AC_ARG_ENABLE(purec,           [  --enable-purec          enable corrupted stack format (default=no)], [WANT_PUREC=$enableval], [WANT_PUREC=no])
 
-AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable use of C++ exceptions instead of setjmp/longjmp (default=no)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=no])
+AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable the use of C++ try/catch instead of setjmp/longjmp (default=no)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=no])
 
 dnl Target OS type (target is host if not cross-compiling).
 case "$target_os" in
@@ -1767,7 +1767,7 @@ echo NatFeat JPEG decoder ................... : $WANT_NFJPEG
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86
 echo Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT
-echo Use C++ Exceptions ..................... : $WANT_CXX_EXCEPTIONS
+echo Use C++ exceptions for m68k exceptions.. : $WANT_CXX_EXCEPTIONS
 echo
 echo "Configuration done. Now type \"make depend\" (or \"gmake depend\") then
 \"make\" (or \"gmake\")."
