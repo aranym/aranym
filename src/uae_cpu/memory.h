@@ -1,7 +1,7 @@
 /*
  * memory.h - memory management
  *
- * Copyright (c) 2001-2005 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2006 Milan Jurik of ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -46,31 +46,31 @@
 // newcpu.h
 extern void Exception (int, uaecptr);
 #ifdef EXCEPTIONS_VIA_LONGJMP
-extern JMP_BUF excep_env;
-#define SAVE_EXCEPTION \
-	JMP_BUF excep_env_old; \
-	memcpy(excep_env_old, excep_env, sizeof(JMP_BUF))
-#define RESTORE_EXCEPTION \
-	memcpy(excep_env, excep_env_old, sizeof(JMP_BUF))
-#define TRY(var) int var = SETJMP(excep_env); if (!var)
-#define CATCH(var) else
-#define THROW(n) LONGJMP(excep_env, n)
-#define THROW_AGAIN(var) LONGJMP(excep_env, var)
-#define VOLATILE volatile
+	extern JMP_BUF excep_env;
+	#define SAVE_EXCEPTION \
+		JMP_BUF excep_env_old; \
+		memcpy(excep_env_old, excep_env, sizeof(JMP_BUF))
+	#define RESTORE_EXCEPTION \
+		memcpy(excep_env, excep_env_old, sizeof(JMP_BUF))
+	#define TRY(var) int var = SETJMP(excep_env); if (!var)
+	#define CATCH(var) else
+	#define THROW(n) LONGJMP(excep_env, n)
+	#define THROW_AGAIN(var) LONGJMP(excep_env, var)
+	#define VOLATILE volatile
 #else
-struct m68k_exception {
-	int prb;
-	m68k_exception (int exc) : prb (exc) {}
-	operator int() { return prb; }
-};
-#define SAVE_EXCEPTION
-#define RESTORE_EXCEPTION
-#define TRY(var) try
-#define CATCH(var) catch(m68k_exception var)
-#define THROW(n) throw m68k_exception(n)
-#define THROW_AGAIN(var) throw
-#define VOLATILE
-#endif
+	struct m68k_exception {
+		int prb;
+		m68k_exception (int exc) : prb (exc) {}
+		operator int() { return prb; }
+	};
+	#define SAVE_EXCEPTION
+	#define RESTORE_EXCEPTION
+	#define TRY(var) try
+	#define CATCH(var) catch(m68k_exception var)
+	#define THROW(n) throw m68k_exception(n)
+	#define THROW_AGAIN(var) throw
+	#define VOLATILE
+#endif /* EXCEPTIONS_VIA_LONGJMP */
 extern int in_exception_2;
 
 #define STRAM_END	0x0e00000UL	// should be replaced by global ROMBase as soon as ROMBase will be a constant
