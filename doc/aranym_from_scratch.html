@@ -55,7 +55,9 @@ ARAnyM and pure Atari software? So let's start.
 <h4><a href="#drivers_nfosmesa">6.6</a> - OSMesa software OpenGL driver</h4>
 <h4><a href="#drivers_nfpci">6.7</a> - PCI driver</h4>
 <h4><a href="#drivers_audio">6.8</a> - Audio driver</h4>
-<h3><a href="#links">7</a> - Links</h3>
+<h3><a href="#mint">7</a> - MiNT installation</h4>
+<h3><a href="#mint_base">7.1</a> - MiNT base files</h4>
+<h3><a href="#links">8</a> - Links</h3>
 
 <hr>
 
@@ -890,7 +892,76 @@ Run 'zmagxsnd.prg' to install this compatibility layer, and you should have a be
 audio experience under ARAnyM (only with compatible applications of course). This
 program is TOS resident, so it must be run before MiNT kernel.</p>
 
-<a name="links"><h2>7 - Links</h2></a>
+<a name="mint"><h2>7 - MiNT installation</h2></a>
+
+<p>TOS and EmuTOS are both mono-tasking Atari operating systems. It means that
+except for TSR programs, only one program can be used by the user at one time.
+MiNT is a multitasking kernel that runs above TOS/EmuTOS and provides many
+modern services for applications.</p>
+
+<a name="mint_base"><h3>7.1 - MiNT base files</h3></a>
+
+<p>On Sparemint website <a href="#link15">[15]</a>, you can retrieve a recent
+(albeit beta) build of the MiNT kernel along with Xaaes as a replacement AES.
+Warning: there is not desktop application with it, but you can launch GEM
+applications (thus a desktop like Thing for example).<br>
+<br>
+At the bottom of Sparemint homepage, you'll find a link to the FreeMiNT 1.16.1 beta
+release archive. Retrieve the binary archive named 'freemint-1.16.1-beta.tar.gz'.
+Decompress it in a subdir of an accessible HOSTFS directory, so you can access it
+from within ARAnyM, rename it to a '8.3' length directory name:</p>
+
+<pre>
+$ cd /one/of/my/hostfs/path
+$ tar xvzf freemint-1.16.1-beta.tar.gz
+$ mv freemint-1.16.1-beta mint.116
+</pre>
+
+<p>Beware that having an error in MiNT configuration file can produce a broken
+installation, thus, do a backup copy of your disk image, before trying to install
+MiNT. It should not be a problem if you have a boot manager, so you can prevent
+MiNT from booting, and can fix the problem.<br>
+<br>
+Go to mint.116/mint/1-16-1.<br>
+<br>
+You can rename mfp.xdd, mfp_mil.xdd, scc.xdd, uart.xdd as .xd files, so MiNT does
+not load them, we don't need them in ARAnyM. In this directory, put hostfs.xfs
+that comes with ARAnyM to be able to access HOSTFS directories.<br>
+<br>
+Edit mint.cnf file to correct the path to xaloader.prg. Search the line starting
+with 'INIT=' and correct the xaloader path:</p>
+
+<pre>
+INIT=u:/c/mint/1-16-1/xaaes/xaloader.prg
+</pre>
+
+<p>If you're only enlightened by the green light of standard Atari desktop, you
+can try to boot Atari AES 4.1 <a href="#link16">[16]</a>. Unpack the aes-4.1.tar.gz
+archive in this directory. In this case, add a '#' at the start of the previous
+line to prevent Xaaes from booting, and add this line:</p>
+
+<pre>
+GEM=u:/c/mint/1-16-1/aes41/gem.sys
+</pre>
+
+Now boot ARAnyM, and we will copy some files from mint.116 HOSTFS directory to
+our disk image.<br>
+<br>
+First, copy the mint directory (in mint.116 directory) at the root of your boot
+drive. It contains everything needed to boot MiNT, like configuration file, device
+drivers, filesystem drivers, and Xaaes.<br>
+<br>
+Copy mintara.prg in auto subdirectory in the auto folder of your boot drive. Check that
+it is the latest file in the folder (You can unsort files in the desktop View menu).
+Also disable any MetaDOS-like driver, as MiNT does the same work. Now, you can
+reboot.</p>
+<br>
+MiNT should start itself, you have some debug informations in text console, if you
+run it from a CLI window. Press shift key to go to MiNT configuration menu, and
+disable memory protection, before going further. Now you should reach the GEM
+desktop (for Atari AES 4.1) or Xaaes launch screen.</p>
+
+<a name="links"><h2>8 - Links</h2></a>
 <ul>
 <li><a name="link1">[1] </a><a href="http://www.seimet.de/atari_english.html">Uwe Seimet's web site: Bootconf, HD Driver</a>
 <li><a name="link2">[2] </a><a href="http://emutos.sourceforge.net">EmuTOS</a>
@@ -906,6 +977,8 @@ program is TOS resident, so it must be run before MiNT kernel.</p>
 <li><a name="link12">[12] </a><a href="http://www.klockars.net/fvdi.html">FVDI's website</a>
 <li><a name="link13">[13] </a><a href="http://ldg.sourceforge.net">LDG's website</a>
 <li><a name="link14">[14] </a><a href="http://www.mesa3d.org">Mesa's website</a>
+<li><a name="link15">[15] </a><a href="http://sparemint.atariforge.net/sparemint/">Sparemint website</a>
+<li><a name="link16">[16] </a><a href="ftp://chapelie.rma.ac.be/atari/mint/gem/aes/">Chapelie Atari FTP archive, mint/gem/aes</a>
 </ul>
 
 <hr>

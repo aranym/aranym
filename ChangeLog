@@ -1,3 +1,7 @@
+2006/01/27 - Patrice
+- aranym from scratch: started MiNT section.
+
+
 2006/01/26 - Standa
 - hostfs: dirent.d_ino was deprecated in the latest cygwin version. The stat.st_ino
   has to be used now.
