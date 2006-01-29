@@ -15,6 +15,15 @@ Fix bugs:
 - store keyboard&mouse setting to config file
 - don't store empty config entries (ETH2,3,4; DISK2,3,4,5,6,7; HOSFSA-Z, ..)
 
+Feature request (Ingo):
+- remember last position of ARAnyM window and open new window there.
+My interpretation of that is "never open window partially off screen and
+work around the weird bug in SDL on MS Windows with window placement"
+
+Feature request:
+- update ARAnyM NVRAM before booting the OS with the current host locale.
+Could help with non-English keyboards to be usable out-of-the-box.
+
 TODO generally:
 - configurable insertion of floppy on bootup (perhaps also IDE CD?)
 
