@@ -1,3 +1,7 @@
+2006/01/29 - milan
+- cpummu.*, configure.ac: configurable size of ATC
+
+
 2006/01/28 - joy
 - configure.ac: Ingo Schmidt found out that --enable-blitsdlblit binary
   crashes with double bus fault. Thus this option is marked as EXPERIMENTAL

@@ -34,6 +34,102 @@
 #define DBG_MMU_VERBOSE	1
 #define DBG_MMU_SANITY	1
 
+#ifdef SMALL_ATC
+#define DISABLE_ATC
+struct mmu_atc_line super_read_qatc;
+bool super_read_qatc_valid = false;
+struct mmu_atc_line super_write_qatc;
+bool super_write_qatc_valid = false;
+struct mmu_atc_line super_instr_qatc;
+bool super_instr_qatc_valid = false;
+struct mmu_atc_line user_read_qatc;
+bool user_read_qatc_valid = false;
+struct mmu_atc_line user_write_qatc;
+bool user_write_qatc_valid = false;
+struct mmu_atc_line user_instr_qatc;
+bool user_instr_qatc_valid = false;
+
+#ifdef SMALL_ATC_STATS
+static unsigned int qatc_hits;
+#endif
+
+static inline unsigned int mmu_check_qatc(uaecptr page_frame, int supervisor, int write, int datamode) {
+	if (supervisor) {
+		if (datamode) {
+			if (write) {
+				if (super_write_qatc_valid) {
+					if (page_frame == super_write_qatc.log) {
+#ifdef SMALL_ATC_STATS
+						qatc_hits++;
+#endif
+						return 2;
+					}
+				} else return 0;
+			} else {
+				if (super_read_qatc_valid) {
+					if (page_frame == super_read_qatc.log) {
+#ifdef SMALL_ATC_STATS
+						qatc_hits++;
+#endif
+						return 1;
+					}
+				} else return 0;
+			}
+		} else {
+				if (super_instr_qatc_valid) {
+					if (page_frame == super_instr_qatc.log) {
+#ifdef SMALL_ATC_STATS
+						qatc_hits++;
+#endif
+						return 3;
+					}
+				}
+		}
+	} else {
+		if (datamode) {
+			if (write) {
+				if (user_write_qatc_valid) {
+					if (page_frame == user_write_qatc.log) {
+#ifdef SMALL_ATC_STATS
+						qatc_hits++;
+#endif
+						return 5;
+					}
+				} else return 0;
+			} else {
+				if (user_read_qatc_valid) {
+					if (page_frame == user_read_qatc.log) {
+#ifdef SMALL_ATC_STATS
+						qatc_hits++;
+#endif
+						return 4;
+					}
+				} else return 0;
+			}
+		} else {
+				if (user_instr_qatc_valid) {
+					if (page_frame == user_instr_qatc.log) {
+#ifdef SMALL_ATC_STATS
+						qatc_hits++;
+#endif
+						return 6;
+					}
+				} else return 0;
+		}
+	}
+	return 0;
+}
+
+static inline void mmu_flush_qatc() {
+	super_read_qatc_valid = false;
+	super_write_qatc_valid = false;
+	super_instr_qatc_valid = false;
+	user_read_qatc_valid = false;
+	user_write_qatc_valid = false;
+	user_instr_qatc_valid = false;
+}
+#endif
+
 static void mmu_dump_ttr(const char * label, uae_u32 ttr)
 {
 	DUNUSED(label);
@@ -106,6 +202,10 @@ static inline int mmu_match_ttr(uae_u32 ttr, uaecptr addr, int write, int super,
 struct mmu_atc_line atc[ATC_SIZE];
 static int atc_rand = 0;
 static int atc_last_hit = -1;
+
+# ifdef ATC_STATS
+static unsigned int mmu_atc_hits[ATC_SIZE];
+# endif
 #endif
 
 #if DEBUG
@@ -276,27 +376,55 @@ static void phys_dump_mem (uaecptr addr, int lines)
 	}
 }
 
+static uaecptr REGPARAM2 mmu_do_translate(uaecptr theaddr, int fc, int write, int size, int test, int datamode, int supervisor);
+
+static inline uaecptr mmu_bus_error(uae_u32 ssw, uae_u16 fslw, uaecptr theaddr, int fc, int write, int size, int test, int datamode, int supervisor) {
+	ssw |= (1 << 10);	/* ATC */
+	if (!write)
+		ssw |= (1 << 8);
+
+	fslw |= (1 << (write ? 23 : 24));
+	if (!datamode)	{
+		fslw |= (1 << 15); /* IO */
+
+		if (supervisor)
+			ssw |= 0x6;
+		else
+			ssw |= 0x2;
+	}
+#if 0
+	if (regs.t0)
+		fslw |= (1 << 19);
+	if (regs.t1)
+		fslw |= (1 << 20);
+#endif
+
+	ssw |= fc & 7; /* Copy TM */
+	switch (size) {
+	case sz_byte:
+		ssw |= 1 << 5;
+		break;
+	case sz_word:
+		ssw |= 2 << 5;
+		break;
+	}
+
+	regs.mmu_fault_addr = theaddr;
+	regs.mmu_fslw = fslw;
+	regs.mmu_ssw = ssw;
+
+	D(bug("BUS ERROR: fc=%d w=%d log=%08x ssw=%04x fslw=%08x", fc, write, theaddr, ssw, fslw));
+
+	if ((test & MMU_TEST_NO_BUSERR) == 0)	{
+		THROW(2);
+	}
+	return 0;
+}
+
 uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, int test)
 {
-	uae_u32 
-		atc_hit_addr = 0,
-		root_ptr,
-		root_des, root_des_addr,
-		ptr_des = 0, ptr_des_addr = 0,
-		page_des = 0, page_des_addr = 0,
-	//	phys_addr = 0,
-		fslw = 0;
-	uae_u8	ri, pi, pgi, wp = 0;
-	uae_u16	ssw = 0;
-	uae_u32 page_frame;
-	int supervisor, datamode =0;
-#ifndef DISABLE_ATC
-	int i, atc_sel, atc_index = -1;
-#endif
-	int n_table_searches = 0;
+	int supervisor, datamode;
 
-//	if (theaddr == 0x40000000) test |= MMU_TEST_VERBOSE;
-	
 	supervisor = fc & 4;
 
 #if 0
@@ -321,7 +449,7 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 	datamode = (fc == 0) ? 1 : (fc % 2);
 #endif
 	
-	root_ptr = supervisor ? regs.srp : regs.urp;
+//	root_ptr = supervisor ? regs.srp : regs.urp;
 	
 	/* check ttr0 */
 
@@ -333,7 +461,7 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 		switch(mmu_match_ttr(datamode ? regs.dtt0 : regs.itt0, theaddr, write, supervisor, test))	{
 			case TTR_NO_WRITE:
 				D(bug("MMU: write protected (via ttr) %lx", theaddr));
-				goto bus_err;
+				return mmu_bus_error(0, 0, theaddr, fc, write, size, test, datamode, supervisor);
 			case TTR_OK_MATCH:
 				return theaddr;
 		}
@@ -341,7 +469,7 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 		switch(mmu_match_ttr(datamode ? regs.dtt1 : regs.itt1, theaddr, write, supervisor, test))	{
 			case TTR_NO_WRITE:
 				D(bug("MMU: write protected (via ttr) %lx", theaddr));
-				goto bus_err;
+				return mmu_bus_error(0, 0, theaddr, fc, write, size, test, datamode, supervisor);
 			case TTR_OK_MATCH:
 				return theaddr;
 		}
@@ -350,12 +478,49 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 	if (!regs.mmu_enabled)
 		return theaddr;
 
+	return mmu_do_translate(theaddr, fc, write, size, test, datamode, supervisor);
+}
 
+static uaecptr REGPARAM2 mmu_do_translate(uaecptr theaddr, int fc, int write, int size, int test, int datamode, int supervisor)
+{
+	uae_u32 
+		atc_hit_addr = 0,
+		root_ptr,
+		root_des, root_des_addr,
+		ptr_des = 0, ptr_des_addr = 0,
+		page_des = 0, page_des_addr = 0,
+	//	phys_addr = 0,
+		fslw = 0;
+	uae_u8	ri, pi, pgi, wp = 0;
+	uae_u16	ssw = 0;
+	uae_u32 page_frame;
+#ifndef DISABLE_ATC
+	int i, atc_sel, atc_index = -1;
+#endif
+	int n_table_searches = 0;
+
+//	if (theaddr == 0x40000000) test |= MMU_TEST_VERBOSE;
+	
+	root_ptr = supervisor ? regs.srp : regs.urp;
+	
 	ri = (theaddr & 0xfe000000) >> 25;
 	pi = (theaddr & 0x01fc0000) >> 18;
 	if (regs.mmu_pagesize == MMU_PAGE_8KB)	{
 		pgi = (theaddr & 0x3e000) >> 13;
 		page_frame = theaddr & 0xffffe000;
+#ifdef SMALL_ATC
+		if (!test) {
+			switch (mmu_check_qatc(page_frame, supervisor, write, datamode)) {
+				case 0: break;
+				case 1: return super_read_qatc.phys | (theaddr & 0x1fff);
+				case 2: return super_write_qatc.phys | (theaddr & 0x1fff);
+				case 3: return super_instr_qatc.phys | (theaddr & 0x1fff);
+				case 4: return user_read_qatc.phys | (theaddr & 0x1fff);
+				case 5: return user_write_qatc.phys | (theaddr & 0x1fff);
+				case 6: return user_instr_qatc.phys | (theaddr & 0x1fff);
+			}
+		}
+#endif
 #ifndef DISABLE_ATC
 		atc_sel = ((theaddr & 0x1e000) >> 13) & 0xf;
 #endif
@@ -363,6 +528,19 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 	else	{
 		pgi = (theaddr & 0x3f000) >> 12;
 		page_frame = theaddr & 0xfffff000;
+#ifdef SMALL_ATC
+		if (!test) {
+			switch (mmu_check_qatc(page_frame, supervisor, write, datamode)) {
+				case 0: break;
+				case 1: return super_read_qatc.phys | (theaddr & 0x0fff);
+				case 2: return super_write_qatc.phys | (theaddr & 0x0fff);
+				case 3: return super_instr_qatc.phys | (theaddr & 0x0fff);
+				case 4: return user_read_qatc.phys | (theaddr & 0x0fff);
+				case 5: return user_write_qatc.phys | (theaddr & 0x0fff);
+				case 6: return user_instr_qatc.phys | (theaddr & 0x0fff);
+			}
+		}
+#endif
 #ifndef DISABLE_ATC
 		atc_sel = ((theaddr & 0xf000) >> 12) & 0xf;
 #endif
@@ -396,6 +574,9 @@ uaecptr REGPARAM2 mmu_translate(uaecptr theaddr, int fc, int write, int size, in
 	}
 
 	if (atc_index != -1)	{
+#ifdef ATC_STATS
+		mmu_atc_hits[atc_index]++;
+#endif
 atc_matched:
 
 		/* it's a hit! */
@@ -409,7 +590,7 @@ atc_matched:
 #if DBG_MMU_VERBOSE
 			D(bug("MMU: non-resident page!"));
 #endif
-			goto bus_err;
+			return mmu_bus_error(fslw, ssw, theaddr, fc, write, size, test, datamode, supervisor);
 		}
 
 		atc_hit_addr = atc[atc_index].phys | ((regs.mmu_pagesize == MMU_PAGE_8KB) 
@@ -445,12 +626,12 @@ atc_matched:
 		if (atc[atc_index].s && !supervisor)	{
 			D(bug("MMU: Supervisor only"));
 			fslw |= (1 << 8);
-			goto bus_err;
+			return mmu_bus_error(fslw, ssw, theaddr, fc, write, size, test, datamode, supervisor);
 		}
 		if (wp && write)	{
 			D(bug("MMU: write protected!"));
 			fslw |= (1 << 7);
-			goto bus_err;
+			return mmu_bus_error(fslw, ssw, theaddr, fc, write, size, test, datamode, supervisor);
 		}
 
 		if (!atc[atc_index].m && write)	{
@@ -499,7 +680,7 @@ table_search:
 #if DBG_MMU_SANITY
 	if (!phys_valid_address(root_des_addr, false, 4)) {
 		regs.mmusr = MMU_MMUSR_B;
-		goto bus_err;
+		return mmu_bus_error(fslw, ssw, theaddr, fc, write, size, test, datamode, supervisor);
 	}
 #endif
 	
@@ -532,7 +713,7 @@ table_search:
 #if DBG_MMU_SANITY
 	if (!phys_valid_address(ptr_des_addr, false, 4)) {
 		regs.mmusr = MMU_MMUSR_B;
-		goto bus_err;
+		return mmu_bus_error(fslw, ssw, theaddr, fc, write, size, test, datamode, supervisor);
 	}
 #endif
 	
@@ -566,7 +747,7 @@ get_page_descriptor:
 #if DBG_MMU_SANITY
 	if (!phys_valid_address(page_des_addr, false, 4)) {
 		regs.mmusr = MMU_MMUSR_B;
-		goto bus_err;
+		return mmu_bus_error(fslw, ssw, theaddr, fc, write, size, test, datamode, supervisor);
 	}
 #endif
 	
@@ -626,6 +807,41 @@ get_page_descriptor:
 
 	atc[atc_index].m = (page_des & MMU_DES_MODIFIED) ? 1 : 0;
 #endif
+#ifdef SMALL_ATC
+	if (supervisor) {
+		if (datamode) {
+			if (write) {
+				super_write_qatc_valid = true;
+				super_write_qatc.log = page_frame;
+				super_write_qatc.phys = page_des & (regs.mmu_pagesize ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
+			} else {
+				super_read_qatc_valid = true;
+				super_read_qatc.log = page_frame;
+				super_read_qatc.phys = page_des & (regs.mmu_pagesize ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
+			}
+		} else {
+				super_instr_qatc_valid = true;
+				super_instr_qatc.log = page_frame;
+				super_instr_qatc.phys = page_des & (regs.mmu_pagesize ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
+		}
+	} else {
+		if (datamode) {
+			if (write) {
+				user_write_qatc_valid = true;
+				user_write_qatc.log = page_frame;
+				user_write_qatc.phys = page_des & (regs.mmu_pagesize ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
+			} else {
+				user_read_qatc_valid = true;
+				user_read_qatc.log = page_frame;
+				user_read_qatc.phys = page_des & (regs.mmu_pagesize ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
+			}
+		} else {
+				user_instr_qatc_valid = true;
+				user_instr_qatc.log = page_frame;
+				user_instr_qatc.phys = page_des & (regs.mmu_pagesize ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
+		}
+	}
+#endif
 	
 #if 0
 	if (atc_hit_addr != 0 && atc_hit_addr != phys_addr)	{
@@ -662,13 +878,13 @@ get_page_descriptor:
 	if (page_des & MMU_DES_SUPER)	{
 		D(bug("MMU: Supervisor only"));
 		fslw |= (1 << 8);
-		goto bus_err;
+		return mmu_bus_error(fslw, ssw, theaddr, fc, write, size, test, datamode, supervisor);
 	}
 
 	if (wp && write)	{
 		D(bug("MMU: write protected!"));
 		fslw |= (1 << 7);
-		goto bus_err;
+		return mmu_bus_error(fslw, ssw, theaddr, fc, write, size, test, datamode, supervisor);
 	}
 
 	if (!((page_des & MMU_DES_MODIFIED) ? 1 : 0) && write)	{
@@ -678,48 +894,6 @@ get_page_descriptor:
 	return atc_hit_addr;
 
 #endif
-bus_err:
-
-	ssw |= (1 << 10);	/* ATC */
-	if (!write)
-		ssw |= (1 << 8);
-
-	fslw |= (1 << (write ? 23 : 24));
-	if (!datamode)	{
-		fslw |= (1 << 15); /* IO */
-
-		if (supervisor)
-			ssw |= 0x6;
-		else
-			ssw |= 0x2;
-	}
-#if 0
-	if (regs.t0)
-		fslw |= (1 << 19);
-	if (regs.t1)
-		fslw |= (1 << 20);
-#endif
-
-	ssw |= fc & 7; /* Copy TM */
-	switch (size) {
-	case sz_byte:
-		ssw |= 1 << 5;
-		break;
-	case sz_word:
-		ssw |= 2 << 5;
-		break;
-	}
-
-	regs.mmu_fault_addr = theaddr;
-	regs.mmu_fslw = fslw;
-	regs.mmu_ssw = ssw;
-
-	D(bug("BUS ERROR: fc=%d w=%d log=%08x ssw=%04x fslw=%08x", fc, write, theaddr, ssw, fslw));
-
-	if ((test & MMU_TEST_NO_BUSERR) == 0)	{
-		THROW(2);
-	}
-	return 0;
 
 make_non_resident_atc:
 #if DBG_MMU_VERBOSE
@@ -746,7 +920,7 @@ make_non_resident_atc:
 #endif
 	if (test && wp)
 		regs.mmusr |= MMU_MMUSR_W;
-	goto bus_err;
+	return mmu_bus_error(fslw, ssw, theaddr, fc, write, size, test, datamode, supervisor);
 }
 
 uae_u32 mmu_get_unaligned (uaecptr addr, int fc, int size)
@@ -882,6 +1056,10 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 							&& (int)(regs.dfc & 4) == atc[i].fc2)
 					{
 						atc[i].v = 0;
+# ifdef ATC_STATS
+						panicbug("ATC[%d]: %d hits", i, mmu_atc_hits[i]);
+						mmu_atc_hits[i] = 0;
+# endif
 						D(didflush++);
 					}
 				}
@@ -895,6 +1073,10 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 							&& (int)(regs.dfc & 4) == atc[i].fc2)
 					{
 						atc[i].v = 0;
+# ifdef ATC_STATS
+						panicbug("ATC[%d]: %d hits", i, mmu_atc_hits[i]);
+						mmu_atc_hits[i] = 0;
+# endif
 						D(didflush++);
 					}
 				}
@@ -908,6 +1090,10 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 					if (atc[i].v && !atc[i].g)
 					{
 						atc[i].v = 0;
+# ifdef ATC_STATS
+						panicbug("ATC[%d]: %d hits", i, mmu_atc_hits[i]);
+						mmu_atc_hits[i] = 0;
+# endif
 						D(didflush++);
 					}
 				}
@@ -920,6 +1106,10 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 					if (atc[i].v)
 						D(didflush++);
 					atc[i].v = 0;
+# ifdef ATC_STATS
+					panicbug("ATC[%d]: %d hits", i, mmu_atc_hits[i]);
+					mmu_atc_hits[i] = 0;
+# endif
 				}
 				atc_last_hit = -1;
 				break;
@@ -930,6 +1120,13 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 #ifdef USE_JIT
 		flush_icache(0);
 #endif
+#ifdef SMALL_ATC
+		mmu_flush_qatc();
+# ifdef SMALL_ATC_STATS
+		panicbug("QATC hits: %d", qatc_hits);
+		qatc_hits = 0;
+# endif
+#endif
 	} else if ((opcode & 0x0FD8) == 0x548) {
 		int write, regno, i;
 		uae_u32 addr;
@@ -939,9 +1136,21 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		D(bug("PTEST%c (A%d) %08x DFC=%d", write ? 'W' : 'R', regno, addr, regs.dfc));
 #ifndef DISABLE_ATC
 		for (i = 0; i < ATC_SIZE; i++) {
-			if (atc[i].v && atc[i].log == addr && (int)(regs.dfc & 4) == atc[i].fc2)
+			if (atc[i].v && atc[i].log == addr && (int)(regs.dfc & 4) == atc[i].fc2) {
+# ifdef ATC_STATS
+				panicbug("ATC[%d]: %d hits", i, mmu_atc_hits[i]);
+				mmu_atc_hits[i] = 0;
+# endif
 				atc[i].v = 0;
+			}
 		}
+#endif
+#ifdef SMALL_ATC
+		mmu_flush_qatc();
+# ifdef SMALL_ATC_STATS
+		panicbug("QATC hits: %d", qatc_hits);
+		qatc_hits = 0;
+# endif
 #endif
 		mmu_set_mmusr(0);
 		mmu_translate(addr, regs.dfc, write, sz_byte, MMU_TEST_FORCE_TABLE_SEARCH | MMU_TEST_NO_BUSERR); 

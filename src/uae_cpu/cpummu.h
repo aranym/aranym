@@ -159,12 +159,12 @@ static inline void mmu_set_root_pointer(int regno, uae_u32 val)
 #define FC_DATA regs.s ? 5 : 1
 #define FC_INST regs.s ? 6 : 2
 
-extern uaecptr mmu_translate(uaecptr addr,
+extern uaecptr REGPARAM2 mmu_translate(uaecptr theaddr,
 		int fc,
 		int write,
 		int size,
 		int test
-		) REGPARAM;
+		);
 
 extern uae_u32 mmu_get_unaligned(uaecptr addr, int fc, int size);
 extern void mmu_put_unaligned(uaecptr addr, uae_u32 data, int fc, int size);
