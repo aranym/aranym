@@ -170,8 +170,8 @@ static bool		avoid_fpu			= true;		// Flag: compile FPU instructions ?
 static bool		have_cmov			= false;	// target has CMOV instructions ?
 static bool		have_lahf_lm		= true;		// target has LAHF supported in long mode ?
 static bool		have_rat_stall		= true;		// target has partial register stalls ?
-static bool		tune_alignment		= true;		// Tune code alignments for running CPU ?
-static bool             tune_nop_fillers        = true;         // Tune no-op fillers for architecture
+const bool		tune_alignment		= true;		// Tune code alignments for running CPU ?
+const bool		tune_nop_fillers	= true;		// Tune no-op fillers for architecture
 static bool		setzflg_uses_bsf	= false;	// setzflg virtual instruction can use native BSF instruction correctly?
 static int		align_loops			= 32;		// Align the start of loops
 static int		align_jumps			= 32;		// Align the start of jumps
@@ -5001,14 +5001,6 @@ void compiler_init(void)
 	panicbug("<JIT compiler> : target processor can suffer from partial register stalls : %s", have_rat_stall ? "yes" : "no");
 	panicbug("<JIT compiler> : alignment for loops, jumps are %d, %d", align_loops, align_jumps);
 
-	// Alignment
-	tune_alignment = bx_options.jit.tunealign;
-	panicbug("<JIT compiler> : tune alignment : %s", str_on_off(tune_alignment));
-
-	// NOP fill
-	tune_nop_fillers = bx_options.jit.tunenop;
-	panicbug("<JIT compiler> : tune nop fillers : %s", str_on_off(tune_nop_fillers));
-
 	// Translation cache flush mechanism
 	lazy_flush = (bx_options.jit.jitlazyflush == 0) ? false : true;
 	panicbug("<JIT compiler> : lazy translation cache invalidation : %s", str_on_off(lazy_flush));
@@ -5982,15 +5974,43 @@ static inline void create_popalls(void)
   }
   vm_protect(popallspace, POPALLSPACE_SIZE, VM_PAGE_READ | VM_PAGE_WRITE);
 
+  int stack_space = STACK_OFFSET;
+  for (i=0;i<N_REGS;i++) {
+	  if (need_to_preserve[i])
+		  stack_space += sizeof(void *);
+  }
+  stack_space %= STACK_ALIGN;
+  if (stack_space)
+	  stack_space = STACK_ALIGN - stack_space;
+  
   current_compile_p=popallspace;
   set_target(current_compile_p);
-#if USE_PUSH_POP
-  /* If we can't use gcc inline assembly, we need to pop some
-     registers before jumping back to the various get-out routines.
-     This generates the code for it.
-  */
+
+  /* We need to guarantee 16-byte stack alignment on x86 at any point
+     within the JIT generated code. We have multiple exit points
+     possible but a single entry. A "jmp" is used so that we don't
+     have to generate stack alignment in generated code that has to
+     call external functions (e.g. a generic instruction handler).
+
+     In summary, JIT generated code is not leaf so we have to deal
+     with it here to maintain correct stack alignment. */
+  align_target(align_jumps);
+  current_compile_p=get_target();
+  pushall_call_handler=get_target();
+  for (i=N_REGS;i--;) {
+      if (need_to_preserve[i])
+	  raw_push_l_r(i);
+  }
+  raw_dec_sp(stack_space);
+  r=REG_PC_TMP;
+  raw_mov_l_rm(r,(uintptr)&regs.pc_p);
+  raw_and_l_ri(r,TAGMASK);
+  raw_jmp_m_indexed((uintptr)cache_tags,r,SIZEOF_VOID_P);
+
+  /* now the exit points */
   align_target(align_jumps);
   popall_do_nothing=get_target();
+  raw_inc_sp(stack_space);
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
@@ -5999,6 +6019,7 @@ static inline void create_popalls(void)
   
   align_target(align_jumps);
   popall_execute_normal=get_target();
+  raw_inc_sp(stack_space);
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
@@ -6007,6 +6028,7 @@ static inline void create_popalls(void)
 
   align_target(align_jumps);
   popall_cache_miss=get_target();
+  raw_inc_sp(stack_space);
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
@@ -6015,6 +6037,7 @@ static inline void create_popalls(void)
 
   align_target(align_jumps);
   popall_recompile_block=get_target();
+  raw_inc_sp(stack_space);
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
@@ -6023,6 +6046,7 @@ static inline void create_popalls(void)
 
   align_target(align_jumps);
   popall_exec_nostats=get_target();
+  raw_inc_sp(stack_space);
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
@@ -6031,66 +6055,12 @@ static inline void create_popalls(void)
 
   align_target(align_jumps);
   popall_check_checksum=get_target();
+  raw_inc_sp(stack_space);
   for (i=0;i<N_REGS;i++) {
       if (need_to_preserve[i])
 	  raw_pop_l_r(i);
   }
   raw_jmp((uintptr)check_checksum);
-
-  align_target(align_jumps);
-  current_compile_p=get_target();
-#else
-  popall_exec_nostats=(void *)exec_nostats;
-  popall_execute_normal=(void *)execute_normal;
-  popall_cache_miss=(void *)cache_miss;
-  popall_recompile_block=(void *)recompile_block;
-  popall_do_nothing=(void *)do_nothing;
-  popall_check_checksum=(void *)check_checksum;
-#endif
-
-  /* And now, the code to do the matching pushes and then jump
-     into a handler routine */
-  pushall_call_handler=get_target();
-#if USE_PUSH_POP
-  for (i=N_REGS;i--;) {
-      if (need_to_preserve[i])
-	  raw_push_l_r(i);
-  }
-#endif
-  r=REG_PC_TMP;
-  raw_mov_l_rm(r,(uintptr)&regs.pc_p);
-  raw_and_l_ri(r,TAGMASK);
-  raw_jmp_m_indexed((uintptr)cache_tags,r,SIZEOF_VOID_P);
-
-#if (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
-  align_target(align_jumps);
-  m68k_do_compile_execute = (void (*)(void))get_target();
-  for (i=N_REGS;i--;) {
-	  if (need_to_preserve[i])
-		  raw_push_l_r(i);
-  }
-  align_target(align_loops);
-  uae_u32 dispatch_loop = (uintptr)get_target();
-  r=REG_PC_TMP;
-  raw_mov_l_rm(r,(uintptr)&regs.pc_p);
-  raw_and_l_ri(r,TAGMASK);
-  raw_call_m_indexed((uintptr)cache_tags,r,SIZEOF_VOID_P);
-  raw_cmp_l_mi((uintptr)&regs.spcflags,0);
-  raw_jcc_b_oponly(NATIVE_CC_EQ);
-  emit_byte(dispatch_loop-((uintptr)get_target()+1));
-  raw_call((uintptr)m68k_do_specialties);
-  raw_test_l_rr(REG_RESULT,REG_RESULT);
-  raw_jcc_b_oponly(NATIVE_CC_EQ);
-  emit_byte(dispatch_loop-((uintptr)get_target()+1));
-  raw_cmp_b_mi((uintptr)&quit_program,0);
-  raw_jcc_b_oponly(NATIVE_CC_EQ);
-  emit_byte(dispatch_loop-((uintptr)get_target()+1));
-  for (i=0;i<N_REGS;i++) {
-	  if (need_to_preserve[i])
-		  raw_pop_l_r(i);
-  }
-  raw_ret();
-#endif
 
   // no need to further write into popallspace
   vm_protect(popallspace, POPALLSPACE_SIZE, VM_PAGE_READ | VM_PAGE_EXECUTE);
@@ -7079,9 +7049,6 @@ void execute_normal(void)
 
 typedef void (*compiled_handler)(void);
 
-#if (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
-void (*m68k_do_compile_execute)(void) = NULL;
-#else
 void m68k_do_compile_execute(void)
 {
 	for (;;) {
@@ -7093,4 +7060,28 @@ void m68k_do_compile_execute(void)
 		}
 	}
 }
+
+void m68k_compile_execute (void)
+{
+setjmpagain:
+    TRY(prb) {
+	for (;;) {
+	    if (quit_program > 0) {
+		if (quit_program == 1) {
+#if FLIGHT_RECORDER
+		    dump_log();
 #endif
+		    break;
+		}
+		quit_program = 0;
+		m68k_reset ();
+	    }
+	    m68k_do_compile_execute();
+	}
+    }
+    CATCH(prb) {
+	flush_icache(0);
+        Exception(prb, 0);
+    	goto setjmpagain;
+    }
+}

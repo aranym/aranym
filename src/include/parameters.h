@@ -128,8 +128,6 @@ typedef struct {
 typedef struct {
   bool jit;
   bool jitfpu;
-  bool tunealign;
-  bool tunenop;
   bool jitinline;
   uint32 jitcachesize;
   uint32 jitlazyflush;

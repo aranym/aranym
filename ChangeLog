@@ -1,6 +1,8 @@
 2006/01/29 - milan
 - cpummu.*, configure.ac: configurable size of ATC
 
+- JITc: fix stack alignment, m68k_compile_execute moved to JITc, sync with BII
+
 
 2006/01/28 - joy
 - configure.ac: Ingo Schmidt found out that --enable-blitsdlblit binary

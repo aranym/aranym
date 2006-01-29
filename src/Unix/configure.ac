@@ -36,7 +36,15 @@ AC_ARG_ENABLE(flightrecorder,  [  --enable-flightrecorder enable CPU flight reco
 
 AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU (default=no)], [WANT_MMU=$enableval], [WANT_MMU=no])
 
-AC_ARG_ENABLE(fullatc,         [  --enable-fullatc        enable full ATC in 68040 MMU (default=yes)], [WANT_ATC=$enableval], [WANT_ATC=yes])
+AC_ARG_ENABLE(atc,
+[  --enable-atc=ATC        select type of ATC for MMU (default=full)],
+[ case "$enableval" in
+        full)  ATC_TYPE="full";;
+       small)  ATC_type="small";;
+          no)  ATC_TYPE="no";;
+           *)  AC_MSG_ERROR([--enable-atc takes only one of the following values: full, small, no]);;
+  esac
+], [ATC_TYPE=full])
 
 AC_ARG_ENABLE(realstop,        [  --enable-realstop       enable real STOP instruction (default=yes)], [WANT_REALSTOP=$enableval], [WANT_REALSTOP=yes])
 
@@ -777,8 +785,13 @@ else
     fi
 fi
 
+dnl Small ATC
+if [[ "x$ATC_TYPE" = "xsmall" ]]; then
+    AC_DEFINE([SMALL_ATC], 1, [Define if using only small ATC])
+fi
+
 dnl Full ATC
-if [[ "x$WANT_ATC" = "xno" ]]; then
+if [[ "x$ATC_TYPE" = "xno" ]]; then
     AC_DEFINE([DISABLE_ATC], 1, [Define if not using full ATC])
 fi
 
@@ -805,6 +818,11 @@ if [[ "x$WANT_FIXEDVIDEORAM" = "xyes" ]]; then
 else
   if [[ "x$WANT_MMU" = "xyes" ]]; then
     AC_MSG_WARN([MMU needs fixed position of VideoRAM])
+    AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
+    WANT_FIXEDVIDEORAM="yes"
+  fi
+  if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
+    AC_MSG_WARN([Blitter SDL surface blitting support needs fixed position of VideoRAM])
     AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
     WANT_FIXEDVIDEORAM="yes"
   fi
@@ -1734,11 +1752,11 @@ echo Addressing mode ........................ : $ADDRESSING_MODE
 echo -n Full MMU support ....................... : $WANT_MMU
 if [[ "x$WANT_MMU" = "xyes" ]]; then
     echo -n " ("
-    if [[ "x$WANT_ATC" = "xyes" ]]; then
-        echo -n "with ATC"
-    else
-        echo -n "without ATC"
-    fi
+    case "$ATC_TYPE" in
+         full)  echo -n "with ATC";;
+	small)  echo -n "with small ATC";;
+	   no)  echo -n "without ATC";;
+    esac
     echo -n \)
 fi
 echo

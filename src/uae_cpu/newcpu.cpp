@@ -1583,33 +1583,6 @@ void m68k_do_execute (void)
     }
 }
 
-#if defined(USE_JIT)
-void m68k_compile_execute (void)
-{
-setjmpagain:
-    TRY(prb) {
-	for (;;) {
-	    if (quit_program > 0) {
-		if (quit_program == 1) {
-#if FLIGHT_RECORDER
-		    dump_log();
-#endif
-		    break;
-		}
-		quit_program = 0;
-		m68k_reset ();
-	    }
-	    m68k_do_compile_execute();
-	}
-    }
-    CATCH(prb) {
-	flush_icache(0);
-        Exception(prb, 0);
-    	goto setjmpagain;
-    }
-}
-#endif
-
 void m68k_execute (void)
 {
 #ifdef USE_JIT

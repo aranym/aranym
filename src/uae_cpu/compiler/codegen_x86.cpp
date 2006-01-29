@@ -85,6 +85,9 @@
 #define MUL_NREG1 EAX_INDEX /* %eax will hold the low 32 bits after a 32x32 mul */
 #define MUL_NREG2 EDX_INDEX /* %edx will hold the high 32 bits */
 
+#define STACK_ALIGN		16
+#define STACK_OFFSET	sizeof(void *)
+
 uae_s8 always_used[]={4,-1};
 #if defined(__x86_64__)
 uae_s8 can_byte[]={0,1,2,3,5,6,7,8,9,10,11,12,13,14,15,-1};
@@ -112,11 +115,12 @@ uae_u8 call_saved[]={0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0};
      by pushing, even though they are "saved" across function calls
 */
 #if defined(__x86_64__)
-/* callee-saved registers as defined by Linux/x86_64 ABI: rbx, rbp, rsp, r12 - r15 */
+/* callee-saved registers as defined by Linux AMD64 ABI: rbx, rbp, rsp, r12 - r15 */
 /* preserve r11 because it's generally used to hold pointers to functions */
 static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,0,0,0,0,0,1,1,1,1,1};
 #else
-static const uae_u8 need_to_preserve[]={1,1,1,1,0,1,1,1};
+/* callee-saved registers as defined by System V IA-32 ABI: edi, esi, ebx, ebp */
+static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,1,1};
 #endif
 
 /* Whether classes of instructions do or don't clobber the native flags */
@@ -3326,9 +3330,14 @@ static inline void raw_load_flagx(uae_u32 target, uae_u32 r)
 	raw_mov_l_rm(target,(uintptr)live.state[r].mem);
 }
 
+static inline void raw_dec_sp(int off)
+{
+    if (off) raw_sub_l_ri(ESP_INDEX,off);
+}
+
 static inline void raw_inc_sp(int off)
 {
-    raw_add_l_ri(ESP_INDEX,off);
+    if (off) raw_add_l_ri(ESP_INDEX,off);
 }
 
 /*************************************************************************

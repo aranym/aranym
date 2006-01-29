@@ -220,8 +220,6 @@ void presave_startup()
 struct Config_Tag jit_conf[]={
 	{ "JIT", Bool_Tag, &bx_options.jit.jit, 0, 0},
 	{ "JITFPU", Bool_Tag, &bx_options.jit.jitfpu, 0, 0},
-	{ "TuneAlignment", Bool_Tag, &bx_options.jit.tunealign, 0, 0},
-	{ "TuneNOPfill", Bool_Tag, &bx_options.jit.tunenop, 0, 0},
 	{ "JITCacheSize", Int_Tag, &bx_options.jit.jitcachesize, 0, 0},
 	{ "JITLazyFlush", Int_Tag, &bx_options.jit.jitlazyflush, 0, 0},
 	{ "JITBlackList", String_Tag, &bx_options.jit.jitblacklist, sizeof(bx_options.jit.jitblacklist), 0},
@@ -235,8 +233,6 @@ void preset_jit()
 	bx_options.jit.jitfpu = true;
 	bx_options.jit.jitcachesize = 8192;
 	bx_options.jit.jitlazyflush = 1;
-	bx_options.jit.tunealign = true;
-	bx_options.jit.tunenop = true;
 	strcpy(bx_options.jit.jitblacklist, "");
 }
 

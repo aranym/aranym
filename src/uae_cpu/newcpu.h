@@ -310,12 +310,6 @@ extern void *op_smalltbl_0_lab[];
 extern void m68k_do_execute(void);
 extern void m68k_execute(void);
 #ifdef USE_JIT
-# if (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY))
-/* This is generated code */
-extern void (*m68k_do_compile_execute)(void);
-# else
-extern void m68k_do_compile_execute(void);
-# endif
 extern void m68k_compile_execute(void);
 #endif
 #ifdef USE_CPU_EMUL_SERVICES
