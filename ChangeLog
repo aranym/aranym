@@ -1,3 +1,11 @@
+2006/01/29 - Standa
+- atari/nfstderr: nfstderr.bos driver that provides write using the NF_STDERR NF.
+
+- atari/tools/devdoc: dev.dos driver that provides a filesystem with all the .bos
+  drivers mounted. Using this you can use 'cat x.txt x:\dev\nfstderr' also in TOS.
+  This dev.dos is generic in the sense that it doesn't depend on aranym in any way.
+
+
 2006/01/29 - milan
 - cpummu.*, configure.ac: configurable size of ATC
 
