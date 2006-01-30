@@ -1,0 +1,42 @@
+BetaDOS x:\dev filesystem driver
+================================
+
+The dev.dos is a driver that creates the u:\dev folder known from the
+FreeMiNT and MagiC environment. The motivation is to create identical
+environment by which any HW dependent access is encapsulated. That
+approach is present in UNIX-like environments and is present in
+FreeMiNT as its fundamental concept.
+
+The aim is to make developers provide special driver for any HW (or
+NF which is considered to be OS only acces feature) they create. Such
+driver would make it possible to create an equivalent on another
+machine with the same interface and would automaticaly impose some
+level of reusability. So for TOS environments one would create BetaDOS
+.BOS device driver and for FreeMiNT .XDD device driver.
+
+This dev.dos driver automatically scans any .BOS driver loaded by
+BetaDOS and creates appropriate x:\dev\bos folder entry for each.
+It also asks the particular .BOS driver for an information whether
+it should also be placed into the x:\dev under its name.
+(FIXME: provide another ioctl() to provide better name?).
+
+Just install it to the bdconfig.sys e.g. as:
+...
+*BOS, \auto\nfstderr.bos, E
+
+*DOS, c:\auto\dev.dos, X:2
+...
+
+And you will get:
+
+X:\dev\bos\E
+X:\dev\nfstderr
+
+Ehere the nfstderr is actually like a hardlink to the bos\E entry.
+
+More documentation to come on this topic.
+
+Best Regards
+
+STanda
+
