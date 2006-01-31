@@ -34,6 +34,8 @@
 # ifndef _m68k_nf_ops_h
 # define _m68k_nf_ops_h
 
+#include <compiler.h>	/* for __CDECL */
+
 
 struct nf_ops
 {
