@@ -81,16 +81,16 @@ FILESYS * _cdecl init(struct kerinfo *k)
 		   (long)MINT_MAJOR, (long)MINT_MINOR, (long)MINT_KVERSION));
 
 	/* check for MiNT version */
-	if ( MINT_MAJOR < 1 || (MINT_MAJOR == 1 && MINT_MINOR < 15))
+	if ( MINT_MAJOR < 1 || (MINT_MAJOR == 1 && MINT_MINOR < 16))
 	{
 		c_conws (MSG_OLDMINT);
-		c_conws (MSG_FAILURE("MiNT too old"));
+		c_conws (MSG_FAILURE("This filesystem requires MiNT 1.16.x"));
 
 		return NULL;
 	}
 
 	/* install filesystem */
-	RetVal = aranym_fs_init();
+	RetVal = aranym_fs_init( k );
 
 #ifndef ARANYM
 	{
@@ -114,6 +114,9 @@ FILESYS * _cdecl init(struct kerinfo *k)
 
 /*
  * $Log$
+ * Revision 1.3  2003/03/24 08:58:53  joy
+ * aranymfs.xfs renamed to hostfs.xfs
+ *
  * Revision 1.2  2003/03/01 11:57:37  joy
  * major HOSTFS NF API cleanup
  *

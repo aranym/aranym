@@ -134,7 +134,7 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 	 */
 	DEBUG(("InitDevice: %s [dosDev=%ld, bosDev=%ld] addr: %lx", mountPoint, dosDevID, bosDevID, &ara_fs_root ));
 
-	aranym_fs_init();
+	aranym_fs_init( NULL );
 
 	/* map the BetaDOS drive to some bosDrive | 0x6000 so that the mapping would
 	   not colide with the MiNT one */
@@ -157,6 +157,9 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 /**
  * $Log$
+ * Revision 1.9  2005/09/26 22:18:05  standa
+ * Build warnings removal.
+ *
  * Revision 1.8  2004/05/07 11:31:07  standa
  * The BDhf cookie is not used in MagiC or MiNT because it was causing
  * ARAnyM to crash.

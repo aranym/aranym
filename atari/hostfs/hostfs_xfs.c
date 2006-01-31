@@ -19,8 +19,6 @@
  * Filesystem driver routines
  */
 
-#include <compiler.h>
-#include "nf_ops.h"
 #include "hostfs_xfs.h"
 #include "hostfs_nfapi.h"
 
@@ -495,21 +493,37 @@ FILESYS *aranym_fs_mount_drives(void)
 #endif /* !ARAnyM_MetaDOS */
 
 
-static
-short aranym_fs_nfinit(void)
+#ifdef ARAnyM_MetaDOS
+#include "nf_ops.h"
+
+static inline
+struct nf_ops *get_nf_ops(struct kerinfo *k) {
+	return nf_init();
+}
+#else
+#include "mint/arch/nf_ops.h"
+
+static inline
+struct nf_ops *get_nf_ops(struct kerinfo *k) {
+	return k->nf_ops;
+}
+#endif
+
+
+FILESYS *aranym_fs_init(void *kerinfo)
 {
-	struct nf_ops *nf_ops = nf_init();
+	struct nf_ops *nf_ops = get_nf_ops( (struct kerinfo *)kerinfo );
 	if ( !nf_ops ) {
-        c_conws("Native Features not present on this system\r\n");
-		return 1;
+		c_conws("Native Features not present on this system\r\n");
+		return NULL;
 	}
 
 	/* get the HostFs NatFeat ID */
 	nf_hostfs_id = nf_ops->get_id("HOSTFS");
 	if (nf_hostfs_id == 0) {
-        c_conws(MSG_PFAILURE("u:\\"MINT_FS_NAME,
-                             "\r\nThe HOSTFS NatFeat not found\r\n"));
-		return 2;
+		c_conws(MSG_PFAILURE("u:\\"MINT_FS_NAME,
+					"\r\nThe HOSTFS NatFeat not found\r\n"));
+		return NULL;
 	}
 
 	nf_call = nf_ops->call;
@@ -517,20 +531,9 @@ short aranym_fs_nfinit(void)
 	/* compare the version */
 	if (nf_call(HOSTFS(GET_VERSION)) != HOSTFS_NFAPI_VERSION) {
 		c_conws(MSG_PFAILURE("u:\\"MINT_FS_NAME,
-							 "\r\nHOSTFS NFAPI version mismatch\n\r"));
-		return 3;
-	}
-
-	return 0;
-}
-
-
-FILESYS *aranym_fs_init(void)
-{
-	short ret = aranym_fs_nfinit();
-	if ( ret ) 
-		/* NULL if the NF(HOSTFS) initialization failed */
+					"\r\nHOSTFS NFAPI version mismatch\n\r"));
 		return NULL;
+	}
 
 #ifdef ARAnyM_MetaDOS
 	/* just the initialization is enough, the rest is done in the metados/main.c */

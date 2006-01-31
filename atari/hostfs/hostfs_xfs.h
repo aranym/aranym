@@ -24,13 +24,16 @@
 
 #include "global.h"
 
-extern FILESYS *aranym_fs_init(void); /* init filesystem driver */
+extern FILESYS *aranym_fs_init(void *kerinfo); /* init filesystem driver */
 
 #endif /* _aranym_xfs_h */
 
 
 /*
  * $Log$
+ * Revision 1.2  2003/03/01 11:57:37  joy
+ * major HOSTFS NF API cleanup
+ *
  * Revision 1.1  2002/12/10 20:47:21  standa
  * The HostFS (the host OS filesystem access via NatFeats) implementation.
  *
