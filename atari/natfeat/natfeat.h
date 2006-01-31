@@ -7,6 +7,7 @@
 #ifndef _natfeat_h_
 #define _natfeat_h_
 
+#warning "This header files is now deprecated! Use the nf_ops.h instead!"
 
 #ifndef CDECL
 #  if __PUREC__

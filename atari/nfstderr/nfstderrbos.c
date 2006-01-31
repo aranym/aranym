@@ -23,8 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../nfpci/nfpci_cookie.h"
-#include "../natfeat/natfeat.h"
+#include "../natfeat/nf_ops.h"
 #include "metados_bos.h"
 
 /*--- Defines ---*/
@@ -74,7 +73,8 @@ static void press_any_key(void);
 
 /*--- Local variables ---*/
 
-unsigned long nfStdErrId;
+unsigned long nf_stderr_id = 0;
+long __CDECL (*nf_call)(long id, ...) = 0UL;
 
 static metados_bosheader_t * (*device_init_f)(void)=asm_init_devices;
 
@@ -82,29 +82,31 @@ static metados_bosheader_t * (*device_init_f)(void)=asm_init_devices;
 
 void *init_driver(void)
 {
-	unsigned long dummy;
-
+	struct nf_ops *nf_ops;
 	Cconws(
 		"\033p " DRIVER_NAME " " VERSION " \033q\r\n"
 		"Copyright (c) ARAnyM Development Team, " __DATE__ "\r\n"
 	);
 
 	/* Init the ID to 0 */
-	nfStdErrId = 0;
+	nf_stderr_id = 0;
 
-	if (!cookie_present(C___NF, &dummy)) {
+	nf_ops = nf_init();
+	if ( ! nf_ops ) {
 		Cconws("__NF cookie not present on this system\r\n");
 		press_any_key();
-		return (void*)-1;
+		return &device_init_f;
 	}
 
-	/* List present drives */
-	nfStdErrId=nfGetID(("NF_STDERR"));
-	if (nfStdErrId == 0) {
+	nf_stderr_id = nf_ops->get_id("NF_STDERR");
+	if (nf_stderr_id == 0) {
 		Cconws("NF_STDERR function not present on this system\r\n");
 		press_any_key();
-		return (void*)-1;
+		return &device_init_f;
 	}
+
+	/* store the nf_call pointer for faster calls */
+	nf_call = nf_ops->call;
 
 	return &device_init_f;
 }
@@ -121,7 +123,7 @@ metados_bosheader_t *init_devices(unsigned long phys_letter, unsigned long phys_
 	metados_bosheader_t *DefaultDevice;
 	metados_bosfunctions_t *DefaultFunctions;
 
-	if (nfStdErrId == 0) {
+	if (nf_stderr_id == 0) {
 		Cconws(" ARAnyM NF_STDERR device driver unavailable\r\n");
 		return (metados_bosheader_t *)-39;
 	}
@@ -202,7 +204,7 @@ long xwrite(metados_bosheader_t *device, void *buf, unsigned long first, unsigne
 		 * ('\0' would terminate the output)
 		 **/
 		outb[0] = ((char*)buf)[nwrite];
-		nfCall((nfStdErrId, outb));
+		nf_call(nf_stderr_id, outb);
 
 		nwrite++;
 		bytes--;
