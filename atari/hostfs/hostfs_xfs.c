@@ -19,7 +19,8 @@
  * Filesystem driver routines
  */
 
-#include "natfeat.h"
+#include <compiler.h>
+#include "nf_ops.h"
 #include "hostfs_xfs.h"
 #include "hostfs_nfapi.h"
 
@@ -81,186 +82,188 @@ long     _cdecl ara_fs_unmount	 (int drv);
 long     _cdecl ara_fs_stat64    (fcookie *file, STAT *xattr);
 
 
-unsigned long nfHostFsId;
+unsigned long nf_hostfs_id = 0;
+long __CDECL (*nf_call)(long id, ...) = 0UL;
+
 
 ulong     _cdecl fs_drive_bits(void)
 {
-	return nfCall((HOSTFS(GET_DRIVE_BITS)));
+	return nf_call(HOSTFS(GET_DRIVE_BITS));
 }
 
 long     _cdecl aranym_fs_native_init(int fs_devnum, char *mountpoint, char *hostroot, int halfsensitive,
 									  void *fs, void *fs_dev)
 {
-	return nfCall((HOSTFS(XFS_INIT), (long)fs_devnum, mountpoint, hostroot, (long)halfsensitive, fs, fs_dev));
+	return nf_call(HOSTFS(XFS_INIT), (long)fs_devnum, mountpoint, hostroot, (long)halfsensitive, fs, fs_dev);
 }
 
 long     _cdecl ara_fs_root       (int drv, fcookie *fc)
 {
-	return nfCall((HOSTFS(XFS_ROOT), (long)drv, fc));
+	return nf_call(HOSTFS(XFS_ROOT), (long)drv, fc);
 }
 
 long     _cdecl ara_fs_lookup     (fcookie *dir, const char *name, fcookie *fc)
 {
-	return nfCall((HOSTFS(XFS_LOOKUP), dir, name, fc));
+	return nf_call(HOSTFS(XFS_LOOKUP), dir, name, fc);
 }
 
 long     _cdecl ara_fs_creat      (fcookie *dir, const char *name,
 								   unsigned int mode, int attrib, fcookie *fc)
 {
-	return nfCall((HOSTFS(XFS_CREATE), dir, name, (long)mode, (long)attrib, fc));
+	return nf_call(HOSTFS(XFS_CREATE), dir, name, (long)mode, (long)attrib, fc);
 }
 
 DEVDRV * _cdecl ara_fs_getdev     (fcookie *fc, long *devspecial)
 {
-	return (DEVDRV*) nfCall((HOSTFS(XFS_GETDEV), fc, devspecial));
+	return (DEVDRV*) nf_call(HOSTFS(XFS_GETDEV), fc, devspecial);
 }
 
 long     _cdecl ara_fs_getxattr   (fcookie *file, XATTR *xattr)
 {
-	return nfCall((HOSTFS(XFS_GETXATTR), file, xattr));
+	return nf_call(HOSTFS(XFS_GETXATTR), file, xattr);
 }
 
 long     _cdecl ara_fs_chattr     (fcookie *file, int attr)
 {
-	return nfCall((HOSTFS(XFS_CHATTR), file, (long)attr));
+	return nf_call(HOSTFS(XFS_CHATTR), file, (long)attr);
 }
 
 long     _cdecl ara_fs_chown      (fcookie *file, int uid, int gid)
 {
-	return nfCall((HOSTFS(XFS_CHOWN), file, (long)uid, (long)gid));
+	return nf_call(HOSTFS(XFS_CHOWN), file, (long)uid, (long)gid);
 }
 
 long     _cdecl ara_fs_chmode     (fcookie *file, unsigned int mode)
 {
-	return nfCall((HOSTFS(XFS_CHMOD), file, (long)mode));
+	return nf_call(HOSTFS(XFS_CHMOD), file, (long)mode);
 }
 
 long     _cdecl ara_fs_mkdir      (fcookie *dir, const char *name, unsigned int mode)
 {
-	return nfCall((HOSTFS(XFS_MKDIR), dir, name, (long)mode));
+	return nf_call(HOSTFS(XFS_MKDIR), dir, name, (long)mode);
 }
 
 long     _cdecl ara_fs_rmdir      (fcookie *dir, const char *name)
 {
-	return nfCall((HOSTFS(XFS_RMDIR), dir, name));
+	return nf_call(HOSTFS(XFS_RMDIR), dir, name);
 }
 
 long     _cdecl ara_fs_remove     (fcookie *dir, const char *name)
 {
-	return nfCall((HOSTFS(XFS_REMOVE), dir, name));
+	return nf_call(HOSTFS(XFS_REMOVE), dir, name);
 }
 
 long     _cdecl ara_fs_getname    (fcookie *relto, fcookie *dir,
 								   char *pathname, int size)
 {
-	return nfCall((HOSTFS(XFS_GETNAME), relto, dir, pathname, (long)size));
+	return nf_call(HOSTFS(XFS_GETNAME), relto, dir, pathname, (long)size);
 }
 
 long     _cdecl ara_fs_rename     (fcookie *olddir, char *oldname,
 								   fcookie *newdir, const char *newname)
 {
-	return nfCall((HOSTFS(XFS_RENAME), olddir, oldname, newdir, newname));
+	return nf_call(HOSTFS(XFS_RENAME), olddir, oldname, newdir, newname);
 }
 
 long     _cdecl ara_fs_opendir    (DIR *dirh, int tosflag)
 {
-	return nfCall((HOSTFS(XFS_OPENDIR), dirh, (long)tosflag));
+	return nf_call(HOSTFS(XFS_OPENDIR), dirh, (long)tosflag);
 }
 
 long     _cdecl ara_fs_readdir    (DIR *dirh, char *name, int namelen,
 								   fcookie *fc)
 {
-	return nfCall((HOSTFS(XFS_READDIR), dirh, name, (long)namelen, fc));
+	return nf_call(HOSTFS(XFS_READDIR), dirh, name, (long)namelen, fc);
 }
 
 long     _cdecl ara_fs_rewinddir  (DIR *dirh)
 {
-	return nfCall((HOSTFS(XFS_REWINDDIR), dirh));
+	return nf_call(HOSTFS(XFS_REWINDDIR), dirh);
 }
 
 long     _cdecl ara_fs_closedir   (DIR *dirh)
 {
-	return nfCall((HOSTFS(XFS_CLOSEDIR), dirh));
+	return nf_call(HOSTFS(XFS_CLOSEDIR), dirh);
 }
 
 long     _cdecl ara_fs_pathconf   (fcookie *dir, int which)
 {
-	return nfCall((HOSTFS(XFS_PATHCONF), dir, (long)which));
+	return nf_call(HOSTFS(XFS_PATHCONF), dir, (long)which);
 }
 
 long     _cdecl ara_fs_dfree      (fcookie *dir, long *buf)
 {
-	return nfCall((HOSTFS(XFS_DFREE), dir, buf));
+	return nf_call(HOSTFS(XFS_DFREE), dir, buf);
 }
 
 long     _cdecl ara_fs_writelabel (fcookie *dir, const char *name)
 {
-	return nfCall((HOSTFS(XFS_WRITELABEL), dir, name));
+	return nf_call(HOSTFS(XFS_WRITELABEL), dir, name);
 }
 
 long     _cdecl ara_fs_readlabel  (fcookie *dir, char *name,
 								   int namelen)
 {
-	return nfCall((HOSTFS(XFS_READLABEL), dir, name, (long)namelen));
+	return nf_call(HOSTFS(XFS_READLABEL), dir, name, (long)namelen);
 }
 
 long     _cdecl ara_fs_symlink    (fcookie *dir, const char *name,
 								   const char *to)
 {
-	return nfCall((HOSTFS(XFS_SYMLINK), dir, name, to));
+	return nf_call(HOSTFS(XFS_SYMLINK), dir, name, to);
 }
 
 long     _cdecl ara_fs_readlink   (fcookie *dir, char *buf, int len)
 {
-	return nfCall((HOSTFS(XFS_READLINK), dir, buf, (long)len));
+	return nf_call(HOSTFS(XFS_READLINK), dir, buf, (long)len);
 }
 
 long     _cdecl ara_fs_hardlink   (fcookie *fromdir,
 								   const char *fromname,
 								   fcookie *todir, const char *toname)
 {
-	return nfCall((HOSTFS(XFS_HARDLINK), fromdir, fromname, todir, toname));
+	return nf_call(HOSTFS(XFS_HARDLINK), fromdir, fromname, todir, toname);
 }
 
 long     _cdecl ara_fs_fscntl     (fcookie *dir, const char *name,
 								   int cmd, long arg)
 {
-	return nfCall((HOSTFS(XFS_FSCNTL), dir, name, (long)cmd, arg));
+	return nf_call(HOSTFS(XFS_FSCNTL), dir, name, (long)cmd, arg);
 }
 
 long     _cdecl ara_fs_dskchng    (int drv, int mode)
 {
-	return nfCall((HOSTFS(XFS_DSKCHNG), (long)drv, (long)mode));
+	return nf_call(HOSTFS(XFS_DSKCHNG), (long)drv, (long)mode);
 }
 
 long     _cdecl ara_fs_release    (fcookie *fc)
 {
-	return nfCall((HOSTFS(XFS_RELEASE), fc));
+	return nf_call(HOSTFS(XFS_RELEASE), fc);
 }
 
 long     _cdecl ara_fs_dupcookie  (fcookie *new, fcookie *old)
 {
-	return nfCall((HOSTFS(XFS_DUPCOOKIE), new, old));
+	return nf_call(HOSTFS(XFS_DUPCOOKIE), new, old);
 }
 
 long     _cdecl ara_fs_sync       (void)
 {
-	return nfCall((HOSTFS(XFS_SYNC)));
+	return nf_call(HOSTFS(XFS_SYNC));
 }
 
 long     _cdecl ara_fs_mknod      (fcookie *dir, const char *name, ulong mode)
 {
-	return nfCall((HOSTFS(XFS_MKNOD), dir, name, mode));
+	return nf_call(HOSTFS(XFS_MKNOD), dir, name, mode);
 }
 
 long     _cdecl ara_fs_unmount    (int drv)
 {
-	return nfCall((HOSTFS(XFS_UNMOUNT), (long)drv));
+	return nf_call(HOSTFS(XFS_UNMOUNT), (long)drv);
 }
 
 long     _cdecl ara_fs_stat64     (fcookie *file, STAT *xattr)
 {
-	return nfCall((HOSTFS(XFS_STAT64), file, xattr));
+	return nf_call(HOSTFS(XFS_STAT64), file, xattr);
 }
 
 
@@ -495,19 +498,27 @@ FILESYS *aranym_fs_mount_drives(void)
 static
 short aranym_fs_nfinit(void)
 {
-	/* get the HostFs NatFeat ID */
-	nfHostFsId = nfGetID(("HOSTFS"));
-	if (nfHostFsId == 0) {
-        c_conws(MSG_PFAILURE("u:\\"MINT_FS_NAME,
-                             "\r\nThe HOSTFS NatFeat not found\r\n"));
+	struct nf_ops *nf_ops = nf_init();
+	if ( !nf_ops ) {
+        c_conws("Native Features not present on this system\r\n");
 		return 1;
 	}
 
+	/* get the HostFs NatFeat ID */
+	nf_hostfs_id = nf_ops->get_id("HOSTFS");
+	if (nf_hostfs_id == 0) {
+        c_conws(MSG_PFAILURE("u:\\"MINT_FS_NAME,
+                             "\r\nThe HOSTFS NatFeat not found\r\n"));
+		return 2;
+	}
+
+	nf_call = nf_ops->call;
+
 	/* compare the version */
-	if (nfCall((HOSTFS(GET_VERSION))) != HOSTFS_NFAPI_VERSION) {
+	if (nf_call(HOSTFS(GET_VERSION)) != HOSTFS_NFAPI_VERSION) {
 		c_conws(MSG_PFAILURE("u:\\"MINT_FS_NAME,
 							 "\r\nHOSTFS NFAPI version mismatch\n\r"));
-		return 2;
+		return 3;
 	}
 
 	return 0;

@@ -45,7 +45,7 @@ enum {
 	XFS_STAT64
 };
 
-extern unsigned long nfHostFsId;
-#define HOSTFS(a)	(nfHostFsId + a)
+extern unsigned long nf_hostfs_id;
+#define HOSTFS(a)	(nf_hostfs_id + a)
 
 #endif /* _HOSTFS_NFAPI_H */

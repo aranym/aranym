@@ -19,9 +19,13 @@
  * Filesystem device driver routines
  */
 
-#include "natfeat.h"
+#include <compiler.h>
+#include "nf_ops.h"
 #include "hostfs_dev.h"
 #include "hostfs_nfapi.h"
+
+/* from ../natfeat/natfeat.c */
+extern long __CDECL (*nf_call)(long id, ...);
 
 long _cdecl ara_fs_dev_open     (FILEPTR *f);
 long _cdecl ara_fs_dev_write    (FILEPTR *f, const char *buf, long bytes);
@@ -36,39 +40,39 @@ void _cdecl ara_fs_dev_unselect (FILEPTR *f, long proc, int mode);
 
 
 long _cdecl ara_fs_dev_open     (FILEPTR *f) {
-	return nfCall((HOSTFS(DEV_OPEN), f));
+	return nf_call(HOSTFS(DEV_OPEN), f);
 }
 
 long _cdecl ara_fs_dev_write    (FILEPTR *f, const char *buf, long bytes) {
-	return nfCall((HOSTFS(DEV_WRITE), f, buf, bytes));
+	return nf_call(HOSTFS(DEV_WRITE), f, buf, bytes);
 }
 
 long _cdecl ara_fs_dev_read     (FILEPTR *f, char *buf, long bytes) {
-	return nfCall((HOSTFS(DEV_READ), f, buf, bytes));
+	return nf_call(HOSTFS(DEV_READ), f, buf, bytes);
 }
 
 long _cdecl ara_fs_dev_lseek    (FILEPTR *f, long where, int whence) {
-	return nfCall((HOSTFS(DEV_LSEEK), f, where, (long)whence));
+	return nf_call(HOSTFS(DEV_LSEEK), f, where, (long)whence);
 }
 
 long _cdecl ara_fs_dev_ioctl    (FILEPTR *f, int mode, void *buf) {
-	return nfCall((HOSTFS(DEV_IOCTL), f, (long)mode, buf));
+	return nf_call(HOSTFS(DEV_IOCTL), f, (long)mode, buf);
 }
 
 long _cdecl ara_fs_dev_datime   (FILEPTR *f, ushort *timeptr, int rwflag) {
-	return nfCall((HOSTFS(DEV_DATIME), f, timeptr, (long)rwflag));
+	return nf_call(HOSTFS(DEV_DATIME), f, timeptr, (long)rwflag);
 }
 
 long _cdecl ara_fs_dev_close    (FILEPTR *f, int pid) {
-	return nfCall((HOSTFS(DEV_CLOSE), f, (long)pid));
+	return nf_call(HOSTFS(DEV_CLOSE), f, (long)pid);
 }
 
 long _cdecl ara_fs_dev_select   (FILEPTR *f, long proc, int mode) {
-	return nfCall((HOSTFS(DEV_SELECT), f, proc, (long)mode));
+	return nf_call(HOSTFS(DEV_SELECT), f, proc, (long)mode);
 }
 
 void _cdecl ara_fs_dev_unselect (FILEPTR *f, long proc, int mode) {
-	nfCall((HOSTFS(DEV_UNSELECT), f, proc, (long)mode));
+	nf_call(HOSTFS(DEV_UNSELECT), f, proc, (long)mode);
 }
 
 
@@ -84,6 +88,9 @@ DEVDRV aranym_fs_devdrv =
 
 /*
  * $Log$
+ * Revision 1.3  2003/03/24 08:58:53  joy
+ * aranymfs.xfs renamed to hostfs.xfs
+ *
  * Revision 1.2  2003/03/01 11:57:37  joy
  * major HOSTFS NF API cleanup
  *
