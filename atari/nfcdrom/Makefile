@@ -6,7 +6,7 @@ SOBJS = entry.S
 
 include ../CONFIGVARS
 
-CFLAGS  = -O2 -fomit-frame-pointer -Wall
+CFLAGS  = $(OPTS) $(WARN) $(GENERAL)
 LDFLAGS = -nostdlib -Wl,--entry -Wl,_init_driver -lgcc -lc
 
 COBJECTS = $(COBJS:.c=.o)
