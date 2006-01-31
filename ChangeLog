@@ -1,3 +1,19 @@
+2006/01/20 - Standa
+- atari/natfeat: the natfeat.h is now deprecated. A new nf_ops.h has been taken
+  from the FreeMiNT (freemint\sys\mint\arch\nf_ops.h) and adjusted for out of
+  mint cvs tree use.
+
+- atari/nfstderr: converted to use the new nf_ops.h (nf_init() used to detect
+  NFs and the returned 'struct nf_ops' pointer to call the features). Also there
+  is the freemint\sys\xdd\nfstderr folder containing the .xdd equivalent of this
+  driver for FreeMiNT. A great example how to do basic device driver for TOS as
+  well as for FreeMiNT with almost the same code.
+
+- atari/hostfs: uses nf_ops.h now.
+
+  Binaries and further documentation is comming soon.
+
+
 2006/01/29 - Standa
 - atari/nfstderr: nfstderr.bos driver that provides write using the NF_STDERR NF.
 
