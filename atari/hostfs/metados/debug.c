@@ -314,7 +314,7 @@ VDEBUGOUT (int level, const char *s, va_list args)
     }
 #endif // ARAnyM_MetaDOS
 
-    vsprintf (lptemp, len, s, args);
+    kvsprintf (lptemp, len, s, args);
 
     /* for alerts, try the alert pipe unconditionally */
     if (level == ALERT_LEVEL && _ALERT (lp))
