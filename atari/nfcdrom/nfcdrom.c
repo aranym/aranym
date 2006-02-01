@@ -36,10 +36,6 @@
 #define EINVFN	-32
 #endif
 
-#ifndef C___NF
-#define C___NF	0x5f5f4e46L
-#endif
-
 #ifndef DEV_CONSOLE
 #define DEV_CONSOLE	2
 #endif
