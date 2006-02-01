@@ -26,8 +26,7 @@
 #include <mint/cookie.h>
 #include <mint/osbind.h>
 
-#include "../natfeat/natfeat.h"
-#include "../nfpci/nfpci_cookie.h"
+#include "../natfeat/nf_ops.h"
 #include "metados_bos.h"
 #include "nfcdrom_nfapi.h"
 
@@ -46,7 +45,7 @@
 #endif
 
 #define DRIVER_NAME	"ARAnyM host CD-ROM driver"
-#define VERSION	"v0.1"
+#define VERSION	"v0.2"
 
 static const char device_name[METADOS_BOSDEVICE_NAMELEN]={
 	"ARAnyM CD-ROM driver"
@@ -87,16 +86,20 @@ static void press_any_key(void);
 
 /*--- Local variables ---*/
 
+static struct nf_ops *nfOps;
 static unsigned long nfCdRomId;
 static unsigned long drives_mask;
 
 static metados_bosheader_t * (*device_init_f)(void)=asm_init_devices;
 
+/*--- Functions prototypes ---*/
+
+void *init_driver(void);
+
 /*--- Functions ---*/
 
 void *init_driver(void)
 {
-	unsigned long dummy;
 	int i;
 	char letter[2]={0,0};
 
@@ -107,21 +110,22 @@ void *init_driver(void)
 
 	drives_mask=0;
 
-	if (!cookie_present(C___NF, &dummy)) {
+	nfOps = nf_init();
+	if (!nfOps) {
 		Cconws("__NF cookie not present on this system\r\n");
 		press_any_key();
 		return &device_init_f;
 	}
 
 	/* List present drives */
-	nfCdRomId=nfGetID(("CDROM"));
+	nfCdRomId=nfOps->get_id("CDROM");
 	if (nfCdRomId == 0) {
 		Cconws("NF CD-ROM functions not present on this system\r\n");
 		press_any_key();
 		return &device_init_f;
 	}
 
-	drives_mask=nfCall((NFCDROM(NFCD_DRIVESMASK)));
+	drives_mask=nfOps->call(NFCDROM(NFCD_DRIVESMASK));
 	Cconws(" Host drives present: ");
 	for (i='A'; i<='Z'; i++) {
 		if (drives_mask & (1<<(i-'A'))) {
@@ -191,27 +195,27 @@ long cd_open(metados_bosheader_t *device, metaopen_t *metaopen)
 	metaopen->name = device->name;
 	metaopen->reserved[0] = metaopen->reserved[1] = metaopen->reserved[2] = 0;
 
-	return nfCall((NFCDROM(NFCD_OPEN), device, metaopen));
+	return nfOps->call(NFCDROM(NFCD_OPEN), device, metaopen);
 }
 
 long cd_close(metados_bosheader_t *device)
 {
-	return nfCall((NFCDROM(NFCD_CLOSE), device));
+	return nfOps->call(NFCDROM(NFCD_CLOSE), device);
 }
 
 long cd_read(metados_bosheader_t *device, void *buffer, unsigned long first, unsigned long length)
 {
-	return nfCall((NFCDROM(NFCD_READ), device, buffer, first, length));
+	return nfOps->call(NFCDROM(NFCD_READ), device, buffer, first, length);
 }
 
 long cd_write(metados_bosheader_t *device, void *buffer, unsigned long first, unsigned long length)
 {
-	return nfCall((NFCDROM(NFCD_WRITE), device, buffer, first, length));
+	return nfOps->call(NFCDROM(NFCD_WRITE), device, buffer, first, length);
 }
 
 long cd_seek(metados_bosheader_t *device, unsigned long offset)
 {
-	return nfCall((NFCDROM(NFCD_SEEK), device, offset));
+	return nfOps->call(NFCDROM(NFCD_SEEK), device, offset);
 }
 
 long cd_status(metados_bosheader_t *device, metastatus_t *extended_status)
@@ -220,7 +224,7 @@ long cd_status(metados_bosheader_t *device, metastatus_t *extended_status)
 		memset(extended_status, 0, sizeof(metastatus_t));
 	}
 
-	return nfCall((NFCDROM(NFCD_STATUS), device, extended_status));
+	return nfOps->call(NFCDROM(NFCD_STATUS), device, extended_status);
 }
 
 long cd_ioctl(metados_bosheader_t *device, unsigned long magic, unsigned long opcode, void *buffer)
@@ -229,30 +233,30 @@ long cd_ioctl(metados_bosheader_t *device, unsigned long magic, unsigned long op
 		return EINVFN;
 	}
 	
-	return nfCall((NFCDROM(NFCD_IOCTL), device, opcode, buffer));
+	return nfOps->call(NFCDROM(NFCD_IOCTL), device, opcode, buffer);
 }
 
 long cd_startaudio(metados_bosheader_t *device, unsigned long dummy, metatracks_t *tracks)
 {
-	return nfCall((NFCDROM(NFCD_STARTAUDIO), device, dummy, tracks));
+	return nfOps->call(NFCDROM(NFCD_STARTAUDIO), device, dummy, tracks);
 }
 
 long cd_stopaudio(metados_bosheader_t *device)
 {
-	return nfCall((NFCDROM(NFCD_STOPAUDIO), device));
+	return nfOps->call(NFCDROM(NFCD_STOPAUDIO), device);
 }
 
 long cd_setsongtime(metados_bosheader_t *device, unsigned long dummy, unsigned long start_msf, unsigned long end_msf)
 {
-	return nfCall((NFCDROM(NFCD_SETSONGTIME), device, dummy, start_msf, end_msf));
+	return nfOps->call(NFCDROM(NFCD_SETSONGTIME), device, dummy, start_msf, end_msf);
 }
 
 long cd_gettoc(metados_bosheader_t *device, unsigned long dummy, metatocentry_t *toc_header)
 {
-	return nfCall((NFCDROM(NFCD_GETTOC), device, dummy, toc_header));
+	return nfOps->call(NFCDROM(NFCD_GETTOC), device, dummy, toc_header);
 }
 
 long cd_discinfo(metados_bosheader_t *device, metadiscinfo_t *discinfo)
 {
-	return nfCall((NFCDROM(NFCD_DISCINFO), device, discinfo));
+	return nfOps->call(NFCDROM(NFCD_DISCINFO), device, discinfo);
 }

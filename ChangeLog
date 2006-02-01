@@ -1,3 +1,7 @@
+2006/02/01 - Patrice
+- atari/nfcdrom: updated for new nf_ops.h
+
+
 2006/01/20 - Standa
 - atari/natfeat: the natfeat.h is now deprecated. A new nf_ops.h has been taken
   from the FreeMiNT (freemint\sys\mint\arch\nf_ops.h) and adjusted for out of

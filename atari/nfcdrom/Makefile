@@ -1,7 +1,7 @@
 
 TARGET = nfcdrom.bos
 
-COBJS = nfcdrom.c ../natfeat/natfeat.c ../nfpci/nfpci_cookie.c
+COBJS = nfcdrom.c ../natfeat/natfeat.c
 SOBJS = entry.S
 
 include ../CONFIGVARS
@@ -19,4 +19,4 @@ $(TARGET):	$(COBJECTS) $(SOBJECTS)
 	${STRIP} $(TARGET)
 
 clean:
-	rm $(OBJECTS) $(TARGET)
+	rm $(COBJECTS) $(SOBJECTS) $(TARGET)
