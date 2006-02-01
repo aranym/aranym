@@ -26,7 +26,7 @@
 #include <mint/cookie.h>
 #include <mint/osbind.h>
 
-#include "../natfeat/natfeat.h"
+#include "../natfeat/nf_ops.h"
 #include "../nfpci/nfpci_cookie.h"
 #include "nfjpeg_nfapi.h"
 #include "jpgdh.h"
@@ -35,10 +35,6 @@
 
 #ifndef EINVFN
 #define EINVFN	-32
-#endif
-
-#ifndef C___NF
-#define C___NF	0x5f5f4e46L
 #endif
 
 #ifndef DEV_CONSOLE
@@ -54,7 +50,7 @@
 #endif
 
 #define DRIVER_NAME	"ARAnyM host JPEG driver"
-#define VERSION	"v0.2"
+#define VERSION	"v0.3"
 
 #define CALLJPEGROUTINE(jpgd_ptr,func_ptr)	\
 __extension__	\
@@ -93,6 +89,7 @@ static void *Atari_MxAlloc(unsigned long size);
 
 /*--- Local variables ---*/
 
+static struct nf_ops *nfOps;
 static unsigned long nfJpegId;
 
 static JPGDDRV_STRUCT nfjpeg_cookie = {
@@ -109,8 +106,6 @@ static JPGDDRV_STRUCT nfjpeg_cookie = {
 
 void install_driver(unsigned long resident_length)
 {
-	unsigned long cookie_nf;
-
 	Cconws(
 		"\033p " DRIVER_NAME " " VERSION " \033q\r\n"
 		"Copyright (c) ARAnyM Development Team, " __DATE__ "\r\n"
@@ -124,13 +119,14 @@ void install_driver(unsigned long resident_length)
 	}	
 
 	/* Check if NF is present for NFJPEG */
-	if (!cookie_present(C___NF, &cookie_nf)) {
+	nfOps = nf_init();
+	if (!nfOps) {
 		Cconws("__NF cookie not present on this system\r\n");
 		press_any_key();
 		return;
 	}
 
-	nfJpegId = nfGetID(("JPEG"));
+	nfJpegId = nfOps->get_id("JPEG");
 	if (nfJpegId==0) {
 		Cconws("NF JPEG functions not present on this system\r\n");
 		press_any_key();
@@ -157,12 +153,12 @@ static void install_jpeg(void)
 
 JPGD_ENUM JpegDecOpenDriver(struct _JPGD_STRUCT *jpgd_ptr)
 {
-	return nfCall((NFJPEG(NFJPEG_OPENDRIVER), jpgd_ptr));
+	return nfOps->call(NFJPEG(NFJPEG_OPENDRIVER), jpgd_ptr);
 }
 
 JPGD_ENUM JpegDecCloseDriver(struct _JPGD_STRUCT *jpgd_ptr)
 {
-	return nfCall((NFJPEG(NFJPEG_CLOSEDRIVER), jpgd_ptr));
+	return nfOps->call(NFJPEG(NFJPEG_CLOSEDRIVER), jpgd_ptr);
 }
 
 long JpegDecGetStructSize(void)
@@ -172,12 +168,12 @@ long JpegDecGetStructSize(void)
 
 JPGD_ENUM JpegDecGetImageInfo(struct _JPGD_STRUCT *jpgd_ptr)
 {
-	return nfCall((NFJPEG(NFJPEG_GETIMAGEINFO), jpgd_ptr));
+	return nfOps->call(NFJPEG(NFJPEG_GETIMAGEINFO), jpgd_ptr);
 }
 
 JPGD_ENUM JpegDecGetImageSize(struct _JPGD_STRUCT *jpgd_ptr)
 {
-	return nfCall((NFJPEG(NFJPEG_GETIMAGESIZE), jpgd_ptr));
+	return nfOps->call(NFJPEG(NFJPEG_GETIMAGESIZE), jpgd_ptr);
 }
 
 JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
@@ -197,7 +193,7 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 		jpgd_ptr->OutTmpPointer = jpgd_ptr->OutPointer;
 		for (y=0;y<jpgd_ptr->YLoopCounter;y++) {
 			/* Decode Y row in OutTmpPointer */
-			nfCall((NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, y));
+			nfOps->call(NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, y);
 
 			if (jpgd_ptr->UserRoutine) {
 				CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->UserRoutine);
@@ -236,7 +232,7 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 		/* Write part of image to file */
 		for (y=0;y<jpgd_ptr->YLoopCounter;y++) {
 			/* Decode Y row in OutTmpPointer */
-			nfCall((NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, y));
+			nfOps->call(NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, y);
 			jpgd_ptr->OutTmpHeight = jpgd_ptr->MFDBPixelHeight - y*16;
 			if (jpgd_ptr->OutTmpHeight > 16) {
 				jpgd_ptr->OutTmpHeight = 16;

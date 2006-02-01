@@ -19,4 +19,4 @@ $(TARGET):	$(COBJECTS) $(SOBJECTS)
 	${STRIP} $(TARGET)
 
 clean:
-	rm $(OBJECTS) $(TARGET)
+	rm $(COBJECTS) $(SOBJECTS) $(TARGET)
