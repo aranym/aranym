@@ -33,19 +33,15 @@
 
 # include "libkern/libkern.h"
 
-#include "../natfeat/natfeat.h"
+#include "../natfeat/nf_ops.h"
 #include "../nfosmesa/nfosmesa_nfapi.h"
-
-#ifndef C___NF
-#define C___NF	0x5f5f4e46L
-#endif
 
 /*
  * version
  */
 
 # define VER_MAJOR	0
-# define VER_MINOR	1
+# define VER_MINOR	2
 # define VER_STATUS	
 
 /*
@@ -59,7 +55,7 @@
 	"\033p NFOSMesa device driver version " MSG_VERSION " \033q\r\n"
 
 # define MSG_GREET	\
-	"½ " MSG_BUILDDATE " by Patrice Mandin.\r\n\r\n"
+	"½ " MSG_BUILDDATE " ARAnyM Development Team.\r\n\r\n"
 
 
 /****************************************************************************/
@@ -157,6 +153,7 @@ static struct dev_descr raw_dev_descriptor =
 	0		/* reserved */
 };
 
+static struct nf_ops *nfOps;
 static unsigned long nfOSMesaId=0;
 
 /* END global data & access implementation */
@@ -168,9 +165,6 @@ static unsigned long nfOSMesaId=0;
 DEVDRV * _cdecl
 init (struct kerinfo *k)
 {
-	unsigned long dummy;
-/*	long r;*/
-
 	kernel = k;
 	
 	c_conws (MSG_BOOT);
@@ -179,21 +173,21 @@ init (struct kerinfo *k)
 	DEBUG (("%s: enter init", __FILE__));
 
 	/* Check NF presence */
-/*	r = s_system(S_GETCOOKIE, C___NF, (long) &dummy);*/
-	if (get_toscookie (C___NF, &dummy)!=0) {
+	nfOps = nf_init();
+	if (!nfOps) {
 		c_conws("__NF cookie not present on this system\r\n");
 		return NULL;
 	}
 
 	/* Check NFOSMesa presence */
-	nfOSMesaId=nfGetID(("OSMESA"));
+	nfOSMesaId=nfOps->get_id("OSMESA");
 	if (nfOSMesaId==0) {
 		c_conws("NF OSMesa functions not present on this system\r\n");
 		return NULL;
 	}
 
 	/* Check API version */
-	if (nfCall((nfOSMesaId+GET_VERSION, 0, 0))!=ARANFOSMESA_NFAPI_VERSION) {
+	if (nfOps->call(nfOSMesaId+GET_VERSION, 0, 0)!=ARANFOSMESA_NFAPI_VERSION) {
 		c_conws("NF OSMesa functions use an incompatible API\r\n");
 		return NULL;
 	}
@@ -259,7 +253,7 @@ nfosmesa_ioctl (FILEPTR *f, int mode, void *buf)
 	}
 	
 	/* Execute command */
-	return nfCall((nfOSMesaId+tmp[0],tmp[1],tmp[2]));
+	return nfOps->call(nfOSMesaId+tmp[0],tmp[1],tmp[2]);
 }
 
 static long _cdecl

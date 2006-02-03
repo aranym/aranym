@@ -32,22 +32,21 @@
 
 #include "lib-osmesa.h"
 #include "lib-misc.h"
-#include "../natfeat/natfeat.h"
-#include "../nfpci/nfpci_cookie.h"
+#include "../natfeat/nf_ops.h"
 #include "nfosmesa_nfapi.h"
 
 /*--- Defines ---*/
 
-#ifndef C___NF
-#define C___NF	0x5f5f4e46L
-#endif
-
 #define NFOSMESA_DEVICE	"u:\\dev\\nfosmesa"
+
+/*--- Global variables ---*/
+
+OSMesaContext cur_context=0;
 
 /*--- Local variables ---*/
 
-unsigned long nfOSMesaId=0;
-OSMesaContext cur_context=0;
+static struct nf_ops *nfOps;
+static unsigned long nfOSMesaId=0;
 static int dev_handle=-1;
 
 int (*HostCall_p)(int function_number, OSMesaContext ctx, void *first_param);
@@ -60,14 +59,13 @@ static int HostCall_natfeats(int function_number, OSMesaContext ctx, void *first
 
 static void InitNatfeat(void)
 {
-	unsigned long dummy;
-
-	if (!cookie_present(C___NF, &dummy)) {
+	nfOps = nf_init();
+	if (!nfOps) {
 		Cconws("__NF cookie not present on this system\r\n");
 		return;
 	}
 
-	nfOSMesaId=nfGetID(("OSMESA"));
+	nfOSMesaId=nfOps->get_id("OSMESA");
 	if (nfOSMesaId==0) {
 		Cconws("NF OSMesa functions not present on this system\r\n");
 	}
@@ -75,7 +73,7 @@ static void InitNatfeat(void)
 
 static int HostCall_natfeats(int function_number, OSMesaContext ctx, void *first_param)
 {
-	return nfCall((nfOSMesaId+function_number,ctx,first_param));
+	return nfOps->call(nfOSMesaId+function_number,ctx,first_param);
 }
 
 static int HostCall_device(int function_number, OSMesaContext ctx, void *first_param)

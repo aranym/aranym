@@ -29,7 +29,6 @@
 
 #include "lib-osmesa.h"
 #include "lib-oldmesa.h"
-#include "../natfeat/natfeat.h"
 #include "nfosmesa_nfapi.h"
 
 /*--- Defines ---*/

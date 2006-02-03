@@ -2,7 +2,7 @@
 TARGET = osmesa.ldg
 
 COBJS = nfosmesa.c lib-osmesa.c lib-oldmesa.c lib-misc.c lib-gl.c lib-glext.c \
-	../natfeat/natfeat.c ../nfpci/nfpci_cookie.c
+	../natfeat/natfeat.c
 
 include ../CONFIGVARS
 

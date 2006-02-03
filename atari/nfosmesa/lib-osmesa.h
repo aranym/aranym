@@ -27,7 +27,6 @@ typedef struct osmesa_context *OSMesaContext;
 
 /*--- Variables ---*/
 
-extern unsigned long nfOSMesaId;
 extern OSMesaContext cur_context;
 
 extern int (*HostCall_p)(int function_number, OSMesaContext ctx, void *first_param);
