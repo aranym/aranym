@@ -10,6 +10,8 @@
 #include "hostscreen.h"
 #include "host_audio.h"
 #include "host_filesys.h"
+#include "host_clock.h"
+#include "host_clock_unix.h"
 
 class Host : public HostFilesys
 {
@@ -19,6 +21,7 @@ class Host : public HostFilesys
 		void reset(void);
 
 		HostAudio audio;
+		HostClock *clock;
 };
 
 extern HostScreen hostScreen;
@@ -28,6 +31,9 @@ extern Host *host;
 
 /*
  * $Log$
+ * Revision 1.6  2006/01/26 22:48:20  pmandin
+ * Create a class for OS-dependent paths functions
+ *
  * Revision 1.5  2006/01/26 18:53:53  pmandin
  * HostAudio object now statically created
  *

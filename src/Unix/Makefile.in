@@ -57,6 +57,7 @@ host_triplet = @host@
 SRCS = ../main.cpp \
 	main_unix.cpp \
 	vm_alloc.cpp \
+	host_clock_unix.cpp \
 	../acia.cpp \
 	../acsifdc.cpp \
 	../aradata.cpp \

@@ -93,7 +93,6 @@ int FPUType;
 
 // Timer stuff
 static uint32 lastTicks = 0;
-#define USE_GETTICKS 1		// undefine this if your ARAnyM time goes slower
 
 #if RTC_TIMER
 static SDL_Thread *RTCthread = NULL;
@@ -216,13 +215,7 @@ void invoke200HzInterrupt()
 	int ms_ticks = getMFP()->timerC_ms_ticks();
 
 	/* syncing to 200 Hz */
-#if USE_GETTICKS
-	uint32 newTicks = SDL_GetTicks();
-#else
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	uint32 newTicks = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-#endif
+	uint32 newTicks = (uint32) host->clock->getClock();
 
 	// correct lastTicks at start-up
 	if (lastTicks == 0) { lastTicks = newTicks - ms_ticks; }

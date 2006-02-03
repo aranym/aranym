@@ -13,6 +13,8 @@
 #define DEBUG 0
 #include "debug.h"
 
+#define USE_SDL_CLOCK 1		// undefine this if your ARAnyM time goes slower
+
 // host OS dependent objects
 HostScreen hostScreen;
 Host *host;
@@ -20,20 +22,32 @@ Host *host;
 Host::Host()
 {
 	D(bug("Host::Host()"));
+
+#ifdef USE_SDL_CLOCK
+	clock = new HostClock();
+#else
+	clock = new HostClockUnix();
+#endif
 }
 
 Host::~Host()
 {
 	D(bug("Host::~Host()"));
+
+	delete clock;
 }
 
 void Host::reset(void)
 {
 	audio.reset();
+	clock->reset();
 }
 
 /*
  * $Log$
+ * Revision 1.5  2006/01/26 18:53:53  pmandin
+ * HostAudio object now statically created
+ *
  * Revision 1.4  2006/01/23 18:27:19  pmandin
  * Add reset method for host stuff
  *
