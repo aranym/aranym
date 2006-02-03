@@ -19,7 +19,7 @@
 */
 
 #include <stdlib.h>
-#include <sys/time.h>
+#include "sysdeps.h"
 
 #include "host_clock_unix.h"
 
