@@ -1,3 +1,7 @@
+2006/02/03 - Patrice
+- atari/nfpci: updated for new nf_ops.h
+
+
 2006/02/01 - Patrice
 - atari/nfcdrom, atari/nfjpeg: updated for new nf_ops.h
 
