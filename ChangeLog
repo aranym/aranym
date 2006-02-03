@@ -1,5 +1,7 @@
 2006/02/03 - Patrice
 - atari/nfpci: updated for new nf_ops.h
+- Disable check for SDL_LoadObject function in configure, it is present in
+  SDL>=1.2.6. The check fails on MacOSX for some different linker flag.
 
 
 2006/02/01 - Patrice
