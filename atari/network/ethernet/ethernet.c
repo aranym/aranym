@@ -73,73 +73,50 @@ static long	ara_config	(struct netif *, struct ifopt *);
 
 /* ================================================================ */
 static unsigned long nfEtherID;
+long __CDECL (*nf_call)(long id, ...) = 0UL;
 
-/* NatFeat opcodes */
-static long _NF_getid = 0x73004e75L;
-static long _NF_call  = 0x73014e75L;
-
-#ifndef _natfeat_h_
-#define _natfeat_h_
-
-
-#ifndef CDECL
-#  if __PUREC__
-#    define CDECL cdecl
-#  else
-#    define CDECL
-#  endif
-#endif
-
-/* NatFeat common defines */
-#define nfGetID(n)  (((long CDECL (*)(const char *))&_NF_getid)n)
-#define nfCall(n)   (((long CDECL (*)(long, ...))&_NF_call)n)
-
-#define nf_stderr(text)	\
-	(((long CDECL (*)(long, const char *))&_NF_call)(nfGetID(("NF_STDERR")), (text)))
-
-#endif /* _natfeat_h_ */
 /* ================================================================ */
 
 static inline unsigned long
 get_nfapi_version()
 {
-	return nfCall((ETH(GET_VERSION)));
+	return nf_call(ETH(GET_VERSION));
 }
 
 static inline unsigned long
 get_int_level()
 {
-	return nfCall((ETH(XIF_INTLEVEL)));
+	return nf_call(ETH(XIF_INTLEVEL));
 }
 
 static inline unsigned long
 get_hw_addr( int ethX, char *buffer, int len )
 {
-	return nfCall((ETH(XIF_GET_MAC), (unsigned long)ethX, buffer, (unsigned long)len));
+	return nf_call(ETH(XIF_GET_MAC), (unsigned long)ethX, buffer, (unsigned long)len);
 }
 
 static inline unsigned long
 nfInterrupt( short bit_mask )
 {
-	return nfCall((ETH(XIF_IRQ), (unsigned long)bit_mask));
+	return nf_call(ETH(XIF_IRQ), (unsigned long)bit_mask);
 }
 
 static inline short
 read_packet_len( int ethX )
 {
-	return nfCall((ETH(XIF_READLENGTH), (unsigned long)ethX));
+	return nf_call(ETH(XIF_READLENGTH), (unsigned long)ethX);
 }
 
 static inline void
 read_block( int ethX, char *cp, short len )
 {
-	nfCall((ETH(XIF_READBLOCK), (unsigned long)ethX, cp, (unsigned long)len));
+	nf_call(ETH(XIF_READBLOCK), (unsigned long)ethX, cp, (unsigned long)len);
 }
 
 static inline void
 send_block( int ethX, char *cp, short len )
 {
-	nfCall((ETH(XIF_WRITEBLOCK), (unsigned long)ethX, cp, (unsigned long)len));
+	nf_call(ETH(XIF_WRITEBLOCK), (unsigned long)ethX, cp, (unsigned long)len);
 }
 
 static void
@@ -159,7 +136,7 @@ ara_open(struct netif *nif)
 {
 	int ethX = nif->unit;
 	DEBUG (("araeth: open (nif = %08lx)", (long)nif));
-	return nfCall((ETH(XIF_START), (unsigned long)ethX));
+	return nf_call(ETH(XIF_START), (unsigned long)ethX);
 }
 
 /*
@@ -170,7 +147,7 @@ static long
 ara_close(struct netif *nif)
 {
 	int ethX = nif->unit;
-	return nfCall((ETH(XIF_STOP), (unsigned long)ethX));
+	return nf_call(ETH(XIF_STOP), (unsigned long)ethX);
 }
 
 /*
@@ -361,11 +338,11 @@ ara_ioctl (struct netif *nif, short cmd, long arg)
 	switch (cmd)
 	{
 		case SIOCGLNKSTATS:
-			nfCall((ETH(XIF_GET_IPATARI), (unsigned long)ethX, buffer, sizeof(buffer)));
+			nf_call(ETH(XIF_GET_IPATARI), (unsigned long)ethX, buffer, sizeof(buffer));
 			inet_aton(buffer, data++);
-			nfCall((ETH(XIF_GET_IPHOST), (unsigned long)ethX, buffer, sizeof(buffer)));
+			nf_call(ETH(XIF_GET_IPHOST), (unsigned long)ethX, buffer, sizeof(buffer));
 			inet_aton(buffer, data++);
-			nfCall((ETH(XIF_GET_NETMASK), (unsigned long)ethX, buffer, sizeof(buffer)));
+			nf_call(ETH(XIF_GET_NETMASK), (unsigned long)ethX, buffer, sizeof(buffer));
 			inet_aton(buffer, data++);
 			return 0;
 
@@ -478,18 +455,18 @@ driver_init (void)
 	/* static char my_file_name[128]; */
 	int ethX;
 
-	nfEtherID = 0;
 	/* get the Ethernet NatFeat ID */
-/*
+	nfEtherID = 0;
 	if (MINT_KVERSION >= 2 && KERNEL->nf_ops != NULL)
 		nfEtherID = KERNEL->nf_ops->get_id("ETHERNET");
-	else
-*/
-		nfEtherID = nfGetID(("ETHERNET"));
+
 	if ( nfEtherID == 0 ) {
 		c_conws(XIF_NAME " not installed - NatFeat not found\n\r");
 		return 1;
 	}
+
+	/* safe the nf_call pointer */
+	nf_call = KERNEL->nf_ops->call;
 
 	/* compare the version */
 	if ( get_nfapi_version() != ARAETHER_NFAPI_VERSION ) {
