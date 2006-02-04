@@ -555,6 +555,8 @@ void ExitAll(void)
 
 void RestartAll()
 {
+	lastTicks = 0;
+
 	// memory init
 
 	// NF reset provided by the RESET instruction hook
