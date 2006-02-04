@@ -2,7 +2,7 @@
 # the files that should go only into source distributions.
 
 HEADER = \
-	natfeat.h 
+	nf_ops.h 
 
 COBJS = \
 	natfeat.c
