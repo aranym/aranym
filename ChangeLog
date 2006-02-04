@@ -1,3 +1,12 @@
+2006/02/04 - Standa
+- atari/network/ethernet: updated to use nf_ops.h
+- atari/network/natfeat.h removed as an obsolete file
+- atari/hostfs: All the BetaDOS related code and ifdefs are now isolated
+  in the metados folder only. atari/hostfs files are basically ready to go
+  to the FreeMiNT cvs if we decide to do so. I also did a global aranym
+  -> hostfs replace as the source is not really aranym specific.
+
+
 2006/02/03 - Patrice
 - atari/nfpci, atari/nfosmesa, atari/nfosmesa.xdd: updated for new nf_ops.h.
 - Disable check for SDL_LoadObject function in configure, it is present in
