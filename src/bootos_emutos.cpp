@@ -1,7 +1,7 @@
 /*
-	ROM / OS loader, base class
+	ROM / OS loader, EmuTOS
 
-	Copyright (c) 2005 Patrice Mandin
+	ARAnyM (C) 2005 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,19 +18,28 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef BOOTOS_H
-#define BOOTOS_H
-
+#include "sysdeps.h"
+#include "cpu_emulation.h"
+#include "bootos_emutos.h"
 #include "aranym_exception.h"
 
-class BootOs
+#define DEBUG 0
+#include "debug.h"
+
+/*	EmuTOS ROM class */
+
+EmutosBootOs::EmutosBootOs(void) throw (AranymException)
 {
-	public:
-		void init(void);
-		void load(char *filename) throw (AranymException);
-		void reset(void);
-};
+	if (strlen(bx_options.emutos_path) == 0)
+		throw AranymException("Path to EmuTOS ROM image file undefined");
 
-extern BootOs *bootOs;
+	load(bx_options.emutos_path);
 
-#endif /* BOOTOS_H */
+	infoprint("EmuTOS %02x%02x/%02x/%02x loading from '%s'... [OK]",
+		ROMBaseHost[0x18], ROMBaseHost[0x19],
+		ROMBaseHost[0x1a], ROMBaseHost[0x1b],
+		bx_options.emutos_path
+	);
+
+	init();
+}

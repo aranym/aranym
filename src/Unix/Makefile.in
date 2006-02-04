@@ -67,6 +67,9 @@ SRCS = ../main.cpp \
 	../audio_crossbar.cpp \
 	../blitter.cpp \
 	../bootos.cpp \
+	../bootos_tos.cpp \
+	../bootos_emutos.cpp \
+	../bootos_linux.cpp \
 	../cdrom.cpp \
 	../cfgopts.c \
 	../dsp.cpp \

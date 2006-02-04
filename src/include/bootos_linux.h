@@ -1,5 +1,5 @@
 /*
-	ROM / OS loader, base class
+	ROM / OS loader, Linux/m68k
 
 	Copyright (c) 2005 Patrice Mandin
 
@@ -18,19 +18,21 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef BOOTOS_H
-#define BOOTOS_H
+#ifndef BOOTOSLINUX_H
+#define BOOTOSLINUX_H
 
 #include "aranym_exception.h"
+#include "bootos.h"
 
-class BootOs
+/* Linux/m68k loader class */
+
+class LinuxBootOs : public BootOs
 {
 	public:
-		void init(void);
-		void load(char *filename) throw (AranymException);
+		LinuxBootOs(void) throw (AranymException);
+		~LinuxBootOs(void);
+
 		void reset(void);
 };
 
-extern BootOs *bootOs;
-
-#endif /* BOOTOS_H */
+#endif /* BOOTOSLINUX_H */

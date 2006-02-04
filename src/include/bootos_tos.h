@@ -1,5 +1,5 @@
 /*
-	ROM / OS loader, base class
+	ROM / OS loader, TOS
 
 	Copyright (c) 2005 Patrice Mandin
 
@@ -18,19 +18,18 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef BOOTOS_H
-#define BOOTOS_H
+#ifndef BOOTOSTOS_H
+#define BOOTOSTOS_H
 
 #include "aranym_exception.h"
+#include "bootos.h"
 
-class BootOs
+/* TOS ROM class */
+
+class TosBootOs : public BootOs
 {
 	public:
-		void init(void);
-		void load(char *filename) throw (AranymException);
-		void reset(void);
+		TosBootOs(void) throw (AranymException);
 };
 
-extern BootOs *bootOs;
-
-#endif /* BOOTOS_H */
+#endif /* BOOTOSTOS_H */

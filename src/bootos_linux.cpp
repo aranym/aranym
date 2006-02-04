@@ -1,5 +1,5 @@
 /*
-	ROM / OS loader, base class
+	ROM / OS loader, Linux/m68k
 
 	ARAnyM (C) 2005 Patrice Mandin
 
@@ -20,42 +20,46 @@
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
-#include "bootos.h"
+#ifdef ENABLE_LILO
+#include "lilo.h"
+#endif
+#include "bootos_linux.h"
 #include "aranym_exception.h"
 
 #define DEBUG 0
 #include "debug.h"
 
-BootOs *bootOs = NULL;
+/*	Linux/m68k loader class */
 
-void BootOs::init(void)
+LinuxBootOs::LinuxBootOs(void) throw (AranymException)
 {
-	/* Setting "SP & PC" for CPU with ROM based OS (TOS, EmuTOS) */
-	for (int i=0; i<8; i++) {
-		RAMBaseHost[i] = ROMBaseHost[i];
+#ifdef ENABLE_LILO
+	if (!LiloInit())
+	{
+		throw AranymException("Error loading Linux/m68k kernel");
 	}
+#else
+	throw AranymException("Linux/m68k loader disabled");
+#endif
 }
 
-void BootOs::reset(void)
+LinuxBootOs::~LinuxBootOs(void)
 {
+#ifdef ENABLE_LILO
+	LiloShutdown();
+#endif
 }
 
-void BootOs::load(char *filename) throw (AranymException)
+void LinuxBootOs::reset(void)
 {
-	D(bug("Reading rom image '%s'", filename));
-	FILE *f = fopen(filename, "rb");
+	/* Linux/m68k kernel is in RAM, and must be reloaded */
 
-	if (f == NULL) {
-		throw AranymException("Rom image '%s' not found.", filename);
-	}
-
-	/* Both TOS 4.04 and EmuTOS must be 512 KB */
-	RealROMSize = 512<<10;	
-
-	size_t sizeRead = fread(ROMBaseHost, 1, RealROMSize, f);
-	fclose(f);
-
-	if (sizeRead != (size_t)RealROMSize) {
-		throw AranymException("Rom image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", filename);
-	}
+	/*
+		FIXME: Well, if we get there, LiloInit() already returned true the first
+		time. But maybe the kernel and/or ramdisk image has been deleted/corrupted
+		since then, so exception should be also thrown there.
+	*/
+#ifdef ENABLE_LILO
+	LiloInit();
+#endif
 }

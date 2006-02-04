@@ -34,7 +34,9 @@
 #include "parameters.h"
 #include "version.h"		// for heartBeat
 #include "natfeat/nf_objs.h"
-#include "bootos.h"
+#include "bootos_tos.h"
+#include "bootos_emutos.h"
+#include "bootos_linux.h"
 #include "aranym_exception.h"
 
 #define DEBUG 0

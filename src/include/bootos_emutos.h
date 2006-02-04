@@ -1,5 +1,5 @@
 /*
-	ROM / OS loader, base class
+	ROM / OS loader, EmuTOS
 
 	Copyright (c) 2005 Patrice Mandin
 
@@ -18,19 +18,17 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef BOOTOS_H
-#define BOOTOS_H
+#ifndef BOOTOSEMUTOS_H
+#define BOOTOSEMUTOS_H
 
 #include "aranym_exception.h"
+#include "bootos.h"
 
-class BootOs
-{
+/* EmuTOS ROM class */
+
+class EmutosBootOs : public BootOs {
 	public:
-		void init(void);
-		void load(char *filename) throw (AranymException);
-		void reset(void);
+		EmutosBootOs(void) throw (AranymException);
 };
 
-extern BootOs *bootOs;
-
-#endif /* BOOTOS_H */
+#endif /* BOOTOSEMUTOS_H */
