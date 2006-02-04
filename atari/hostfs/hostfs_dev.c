@@ -19,8 +19,6 @@
  * Filesystem device driver routines
  */
 
-#include <compiler.h>
-#include "nf_ops.h"
 #include "hostfs_dev.h"
 #include "hostfs_nfapi.h"
 
@@ -88,6 +86,9 @@ DEVDRV aranym_fs_devdrv =
 
 /*
  * $Log$
+ * Revision 1.4  2006/01/31 04:48:29  standa
+ * Converted to use the new nf_ops.h header introduced.
+ *
  * Revision 1.3  2003/03/24 08:58:53  joy
  * aranymfs.xfs renamed to hostfs.xfs
  *

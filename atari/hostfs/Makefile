@@ -18,7 +18,7 @@
 #
 TARGET = hostfs.xfs
 
-GENFILES = $(TARGET) .natfeat
+GENFILES = $(TARGET)
 SHELL = /bin/sh
 SUBDIRS = metados
 
@@ -36,7 +36,7 @@ debug:
 	$(MAKE) DEBUG_INFO=-DDEBUG_INFO 
 
 # default overwrites
-INCLUDES = -I$(top_srcdir) -I.natfeat
+INCLUDES = -I$(top_srcdir)
 DEFINITIONS =
 LD = $(CC) -nostdlib -Wl,--entry -Wl,_init
 LIBS = $(LIBKERN) -lgcc
@@ -47,13 +47,8 @@ CFLAGS += -D__KERNEL_XFS__
 # default definitions
 OBJS = $(COBJS:.c=.o)
 
-.natfeat: $(srcdir)/../natfeat
-	$(MKDIR) -p $@
-	$(CP) -r $</* $@
-	cd $@; $(MAKE) CPU=$(CPU) DEBUG_INFO=$(DEBUG_INFO) parentdir=..
-
-$(TARGET): .natfeat $(OBJS) $(LIBKERNTARGET) 
-	$(LD) $(CFLAGS) -o $@ $(OBJS) .natfeat/*.o $(LIBS)
+$(TARGET): $(OBJS) $(LIBKERNTARGET) 
+	$(LD) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
 	$(STRIP) $@
 
 include $(top_srcdir)/DEPENDENCIES
