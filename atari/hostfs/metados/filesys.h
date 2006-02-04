@@ -515,10 +515,4 @@ xdd_close (FILEPTR *f, int pid)
 }
 
 
-#ifdef ARAnyM_MetaDOS
-#define changedrv(dev, _fnc_)
-#define disk_changed(dev) 0
-#endif // ARAnyM_MetaDOS
-
-
 # endif /* _filesys_h */

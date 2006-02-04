@@ -34,6 +34,11 @@
 
 # include "mintfake.h"
 
+#ifdef ARAnyM_MetaDOS
+#define changedrv(dev, _fnc_)
+#define disk_changed(dev) 0
+#endif // ARAnyM_MetaDOS
+
 
 #if 1
 #define PATH2COOKIE_DB(x) TRACE(x)

@@ -19,18 +19,29 @@
  * Filesystem driver routines
  */
 
-#ifndef _aranym_xfs_h_
-#define _aranym_xfs_h_
+#ifndef _hostfs_xfs_h_
+#define _hostfs_xfs_h_
 
-#include "global.h"
+# include "mint/mint.h"
+# include "mint/file.h"
 
-extern FILESYS *aranym_fs_init(void *kerinfo); /* init filesystem driver */
+extern ulong    fs_drive_bits(void);
+extern long     hostfs_native_init(int fs_devnum, char *mountpoint, char *hostroot, int halfsensitive,
+									  void *fs, void *fs_dev);
 
-#endif /* _aranym_xfs_h */
+extern FILESYS *hostfs_init(void); /* init filesystem driver */
+
+extern FILESYS hostfs_fs;
+
+#endif /* _hostfs_xfs_h_ */
 
 
 /*
  * $Log$
+ * Revision 1.3  2006/01/31 15:57:39  standa
+ * More of the initialization reworked to work with the new nf_ops. This time
+ * I have tested it.
+ *
  * Revision 1.2  2003/03/01 11:57:37  joy
  * major HOSTFS NF API cleanup
  *

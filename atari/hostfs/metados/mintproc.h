@@ -23,6 +23,9 @@
 # undef DEFAULT_MODE
 # define DEFAULT_MODE           (0666)
 
+extern struct kerinfo kernelinfo;
+
+
 /** from proc.h **/
 # define MIN_OPEN	6	/* 0..MIN_OPEN-1 are reserved for system */
 

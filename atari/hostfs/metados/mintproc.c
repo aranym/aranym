@@ -13,6 +13,7 @@
 
 #include "mintproc.h"
 #include "mint/filedesc.h"
+#include "mint/kerinfo.h"
 
 #include "filesys.h"
 #include "mintfake.h"
@@ -176,3 +177,18 @@ DEVDRV fakedev;
 
 /** time.c **/
 long timezone = 0;
+
+
+/** kerinfo.c **/
+
+/*
+ * kernel info that is passed to loaded file systems and device drivers
+ */
+struct kerinfo kernelinfo =
+{
+	0, /* MINT_MAJ_VERSION */
+	16, /* MINT_MIN_VERSION */
+	DEFAULT_MODE,
+	2, /* kerinfo version */
+};
+

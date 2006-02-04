@@ -20,12 +20,15 @@
 
 #include "mint/mint.h"
 #include "mint/filedesc.h"
+#include "mint/kerinfo.h"
 
 #include "../hostfs_xfs.h"
 #include "../hostfs_dev.h"
 
 #include "mintproc.h"
 #include "mintfake.h"
+
+#include "nf_ops.h"
 
 
 #define DEVNAME "ARAnyM Host Filesystem"
@@ -42,27 +45,11 @@ ulong get_cookie (ulong tag);
 
 /* Diverse Utility-Funktionen */
 
-static int Bconws( char *str )
-{
-    int cnt = 0;
-
-    while (*str) {
-        cnt++;
-        if (*str == '\n') {
-            Bconout (2, '\r');
-            cnt++;
-        }
-        Bconout (2, *str++);
-    }
-
-    return cnt;
-}
-
 void _cdecl ShowBanner( void )
 {
-    Bconws (
-            "\n\033p "DEVNAME" "VERSION" \033q "
-            "\nCopyright (c) ARAnyM Development Team, "__DATE__"\n"
+    Cconws (
+            "\r\n\033p "DEVNAME" "VERSION" \033q "
+            "\r\nCopyright (c) ARAnyM Development Team, "__DATE__"\r\n"
             );
 }
 
@@ -97,12 +84,10 @@ long set_cookie (ulong tag, ulong val)
 }
 
 
-/* ../hostfs_xfs and ../hostfs_dev internals used */
-extern long     _cdecl aranym_fs_native_init(int fs_devnum, char *mountpoint, char *hostroot, int halfsensitive,
-											 void *fs, void *fs_dev);
-extern void* ara_fs_root;
-extern FILESYS aranym_fs;
-extern DEVDRV  aranym_fs_devdrv;
+/*
+ * global kerinfo structure
+ */
+struct kerinfo *KERNEL;
 
 
 void* _cdecl InitDevice( long bosDevID, long dosDevID )
@@ -132,16 +117,23 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 	 * because MetaDOS (in contrary to BetaDOS) does not provide
 	 * the dosDevID
 	 */
-	DEBUG(("InitDevice: %s [dosDev=%ld, bosDev=%ld] addr: %lx", mountPoint, dosDevID, bosDevID, &ara_fs_root ));
+	DEBUG(("InitDevice: %s [dosDev=%ld, bosDev=%ld] addr: %lx", mountPoint, dosDevID, bosDevID, &hostfs_fs ));
 
-	aranym_fs_init( NULL );
+	/* initialize Native Features */
+	kernelinfo.nf_ops = nf_init();
+	KERNEL = &kernelinfo;
+
+	/* check the NF HOSTFS avialability */
+	if ( ! hostfs_init() ) {
+		return (void*)-1;
+	}
 
 	/* map the BetaDOS drive to some bosDrive | 0x6000 so that the mapping would
 	   not colide with the MiNT one */
-	aranym_fs_native_init( dosDevID | 0x6000, mountPoint, "/tmp", 1,
-						   &aranym_fs, &aranym_fs_devdrv );
+	hostfs_native_init( dosDevID | 0x6000, mountPoint, "/tmp", 1,
+					&hostfs_fs, &hostfs_fs_devdrv );
 
-	aranym_fs.root( dosDevID | 0x6000, &curproc->p_cwd->root[dosDevID] );
+	hostfs_fs.root( dosDevID | 0x6000, &curproc->p_cwd->root[dosDevID] );
 
 #ifdef DEBUG_INFO
 	{
@@ -157,6 +149,10 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 /**
  * $Log$
+ * Revision 1.10  2006/01/31 15:57:39  standa
+ * More of the initialization reworked to work with the new nf_ops. This time
+ * I have tested it.
+ *
  * Revision 1.9  2005/09/26 22:18:05  standa
  * Build warnings removal.
  *

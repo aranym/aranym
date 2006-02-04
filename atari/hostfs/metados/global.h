@@ -16,24 +16,34 @@
  *
  * Modified by Chris Felsch <C.Felsch@gmx.de>.
  *
- * Filesystem device driver routines
+ * Global definitions and variables
  */
 
-#ifndef _hostfs_dev_h_
-#define _hostfs_dev_h_
+#ifndef _global_h_
+#define _global_h_
 
-#include "mint/mint.h"
-#include "mint/dcntl.h"
-#include "mint/file.h"
+#ifdef ARAnyM_MetaDOS
 
-extern DEVDRV hostfs_fs_devdrv;
+#include "filesys.h"
 
-#endif /* _hostfs_dev_h_ */
+#include "mint/kerinfo.h"
+extern struct kerinfo *KERNEL;
+
+/* console output via Cconws */
+#include "mint/osbind.h"
+#define c_conws Cconws
+
+#define MSG_PFAILURE(p,s) \
+    "\7Sorry, hostfs.dos NOT installed: " s "!\r\n"
+
+#endif /* ARAnyM_MetaDOS */
+
+#endif /* _global_h_ */
 
 
 /*
  * $Log$
- * Revision 1.3  2004/04/26 07:14:04  standa
+ * Revision 1.5  2004/04/26 07:14:04  standa
  * Adjusted to the recent FreeMiNT CVS state to compile and also made
  * BetaDOS only. No more MetaDOS compatibility attempts.
  *
@@ -43,6 +53,12 @@ extern DEVDRV hostfs_fs_devdrv;
  *
  * The mountpoint entries are now shared among several hostfs.dos instances
  * using a 'BDhf' cookie entry (atari/hostfs/metados/main.c).
+ *
+ * Revision 1.4  2003/10/02 18:13:41  standa
+ * Large HOSTFS cleanup (see the ChangeLog for more)
+ *
+ * Revision 1.3  2003/03/24 08:58:53  joy
+ * aranymfs.xfs renamed to hostfs.xfs
  *
  * Revision 1.2  2003/03/01 11:57:37  joy
  * major HOSTFS NF API cleanup

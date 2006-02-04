@@ -22,11 +22,6 @@
 #ifndef _global_h_
 #define _global_h_
 
-#ifdef ARAnyM_MetaDOS
-
-#include "filesys.h"
-
-#else
 
 #include "mint/mint.h"
 #include "mint/dcntl.h"
@@ -84,18 +79,27 @@
     "\7Sorry, hostfs.xfs NOT installed: " s "!\r\n\r\n"
 
 #define MSG_PFAILURE(p,s) \
-    "\7Sorry, " p " of hostfs.xfs NOT installed: " s "!\r\n"
+    "\7Sorry, hostfs.xfs NOT installed: " s "!\r\n"
 
 extern struct kerinfo *KERNEL;
 
-
-#endif /* ARAnyM_MetaDOS */
 
 #endif /* _global_h_ */
 
 
 /*
  * $Log$
+ * Revision 1.5  2004/04/26 07:14:04  standa
+ * Adjusted to the recent FreeMiNT CVS state to compile and also made
+ * BetaDOS only. No more MetaDOS compatibility attempts.
+ *
+ * Dfree() fix - for Calamus to be able to save its documents.
+ *
+ * Some minor bugfix backports from the current FreeMiNTs CVS version.
+ *
+ * The mountpoint entries are now shared among several hostfs.dos instances
+ * using a 'BDhf' cookie entry (atari/hostfs/metados/main.c).
+ *
  * Revision 1.4  2003/10/02 18:13:41  standa
  * Large HOSTFS cleanup (see the ChangeLog for more)
  *

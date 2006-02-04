@@ -57,6 +57,8 @@ OBJS = $(COBJS:.c=.o) $(SOBJS:%.S=%.o)
 .xfso:	$(srcdir)/../hostfs_xfs.c $(srcdir)/../hostfs_dev.c
 	$(MKDIR) -p $@
 	$(CP) -r $(srcdir)/../hostfs_xfs.c $(srcdir)/../hostfs_dev.c $@
+	$(CP) -r $(srcdir)/../hostfs_xfs.h $(srcdir)/../hostfs_dev.h $@
+	$(CP) -r $(srcdir)/../hostfs_nfapi.h $@
 	touch $@/BINFILES
 	touch $@/EXTRAFILES
 	touch $@/MISCFILES

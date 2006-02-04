@@ -17,7 +17,7 @@ include $(top_srcdir)/PHONY
 
 all-here: objs
 
-INCLUDES += -I$(top_srcdir) -I../.. -I../.natfeat
+INCLUDES = -I.. -I../.natfeat -I$(top_srcdir)
 CFLAGS += $(MDFLAGS)
 
 # default definitions

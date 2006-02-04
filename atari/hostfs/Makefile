@@ -24,7 +24,7 @@ SUBDIRS = metados
 
 srcdir = .
 top_srcdir = ../..
-subdir = 
+subdir = hostfs
 
 include $(top_srcdir)/CONFIGVARS
 include $(top_srcdir)/RULES
