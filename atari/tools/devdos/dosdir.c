@@ -20,7 +20,7 @@
 long __CDECL
 sys_dl_opendir (DIR *dirh, LIST *list, int flag)
 {
-	DEBUG(("dl_opendir: %lx\n", dirh));
+	DEBUG(("dl_opendir: %lx list=%lx\n", dirh, list));
 	dirh->list = list;
 	dirh->mode = flag;
 	dirh->current = (FCOOKIE*)listRewind(dirh->list);
@@ -30,28 +30,28 @@ sys_dl_opendir (DIR *dirh, LIST *list, int flag)
 long __CDECL
 sys_dl_readdir (DIR *dirh, char *buf, int len)
 {
-    dirh->current = (FCOOKIE *)listNext((LINKABLE*)dirh->current);
-    DEBUG(("dl_readdir: %lx: len %d, '%s'\n", dirh, len, dirh->current ? dirh->current->name : "ENMFILES"));
-    if (!dirh->current)
-        return -ENMFILES;
+	dirh->current = (FCOOKIE *)listNext((LINKABLE*)dirh->current);
+	DEBUG(("dl_readdir: %lx list=%lx: len %d, '%s'\n", dirh, dirh->list, len, dirh->current ? dirh->current->name : "ENMFILES"));
+	if (!dirh->current)
+		return -ENMFILES;
 
-    /* Insert file index if needed */
-    if (!dirh->mode) {
-	    *(long*)buf = (long)dirh->current;
-	    buf += 4;
-	    len -= 4;
-    }
-    if ( len <= 0 )
-	    return -ERANGE;
-    
-    strncpy(buf, dirh->current->name, len-1);
-    return 0;
+	/* Insert file index if needed */
+	if (!dirh->mode) {
+		*(long*)buf = (long)dirh->current;
+		buf += 4;
+		len -= 4;
+	}
+	if ( len <= 0 )
+		return -ERANGE;
+
+	strncpy(buf, dirh->current->name, len-1);
+	return 0;
 }
 
 long __CDECL
 sys_dl_closedir (DIR *dirh)
 {
-	DEBUG(("dl_closedir: %lx\n", dirh));
+	DEBUG(("dl_closedir: %lx list=%lx\n", dirh, dirh->list));
 	dirh->list = NULL;
 	dirh->current = NULL;
 	return 0;
@@ -71,11 +71,11 @@ sys_d_free (MetaDOSDir long *buf, int d)
 #if 1
 	return -ENOSYS;
 #else
-    PROC *p = curproc;
-    fcookie *dir = 0;
+	PROC *p = curproc;
+	fcookie *dir = 0;
 
-    d = (int)tolower(pathNameMD[0])-'a';
-    dir = &p->p_cwd->root[d];
+	d = (int)tolower(pathNameMD[0])-'a';
+	dir = &p->p_cwd->root[d];
 #endif
 }
 
@@ -173,41 +173,40 @@ sys_d_pathconf (MetaDOSDir const char *name, int which)
 long __CDECL
 sys_d_opendir (MetaDOSDir const char *name, int flag)
 {
-    DIR *dirh = (DIR *) dirMD;
-    FCOOKIE *fc;
-    long r = path2cookie( name, NULL, &fc);
-    if (r)
-    {
-        DEBUG(("Dopendir(%s): path2cookie returned %ld", name, r));
-        return r;
-    }
+	DIR *dirh = (DIR *) dirMD;
+	FCOOKIE *fc;
+	long r = path2cookie( name, NULL, &fc);
+	if (r)
+	{
+		DEBUG(("Dopendir(%s): path2cookie returned %ld", name, r));
+		return r;
+	}
 
-    r = sys_dl_opendir( dirh, fc->folder, flag);
-    if (r)
-        return r;
+	r = sys_dl_opendir( dirh, fc->folder, flag);
+	if (r)
+		return r;
 
-    return (long)dirh;
+	return (long)dirh;
 }
 
 long __CDECL
 sys_d_readdir (MetaDOSDir int len, long handle, char *buf)
 {
-    DIR *dirh = (DIR *) dirMD;
-    return sys_dl_readdir( dirh, buf, len);
+	DIR *dirh = (DIR *) dirMD;
+	return sys_dl_readdir( dirh, buf, len);
 }
 
 long __CDECL
 sys_d_xreaddir (MetaDOSDir int len, long handle, char *buf, struct xattr *xattr, long *xret)
 {
-    DIR *dirh = (DIR *) dirMD;
-    long ret = sys_dl_readdir( dirh, buf, len);
-    if ( ret )
-	    return ret;
+	DIR *dirh = (DIR *) dirMD;
+	long ret = sys_dl_readdir( dirh, buf, len);
+	if ( ret )
+		return ret;
 
-    *xret = getxattr( dirh->current, xattr);
-    return 0;
+	*xret = getxattr( dirh->current, xattr);
+	return 0;
 }
-
 
 long __CDECL
 sys_d_rewind (MetaDOSDir long handle)
