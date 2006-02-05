@@ -51,6 +51,8 @@ long strncmp(const char *s1, const char *s2, size_t n);
 char *strcat(char *dest, const char *src);
 char *strchr(const char *s, long c);
 char *strrchr(const char *s, long c);
+char *strupr(char *s);
+
 
 void qsort(void *base, long nmemb, long size,
            long (*compar)(const void *, const void *));

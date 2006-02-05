@@ -95,6 +95,23 @@ int toupper (int c)
 /* END: from ctype.c */
 
 
+char * strupr (char *s)
+{
+	char c;
+	char *old = s;
+	
+	while ((c = *s) != 0)
+	{
+		if (islower (c))
+			*s = _toupper(c);
+		
+		s++;
+	}
+	
+	return old;
+}
+
+
 /*
  * Turn string (max four characters) into a long
  */
