@@ -278,7 +278,7 @@ relpath2cookie (FCOOKIE *dir, const char *path, char *lastname, FCOOKIE **res)
 			while (c && !DIRSEP (c))
 			{
 				if (len++ < PATH_MAX)
-					*s++ = c;
+					*s++ = tolower(c);
 				c = *++path;
 			}
 
@@ -314,10 +314,10 @@ relpath2cookie (FCOOKIE *dir, const char *path, char *lastname, FCOOKIE **res)
 long
 path2cookie (const char *path, char *lastname, FCOOKIE **res)
 {
+	static FCOOKIE rootfc;
 	long r;
 
-	FCOOKIE rootfc;
-	rootfc.name = "R:"; // FIXME: DEBUG!
+	rootfc.name = "devdir:"; // FIXME: DEBUG!
 	rootfc.attr = FA_DIR;
 	rootfc.folder = &root;
 	rootfc.bos_dev = 0;
