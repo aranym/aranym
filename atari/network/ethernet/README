@@ -22,9 +22,9 @@ compiled in the host kernel). I load it with the following command:
 linux:~# modprobe tun
 
 And before loading this driver please check (and possibly fix) the 
-read/write permissions of the "/net/dev/tun" device:
+read/write permissions of the "/dev/net/tun" device:
 
-linux:~# chmod +rw /net/dev/tun
+linux:~# chmod a+rw /net/dev/tun
 
 Otherwise ARAnyM started by regular user could not access this device.
 
