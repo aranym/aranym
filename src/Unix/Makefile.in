@@ -79,6 +79,7 @@ SRCS = ../main.cpp \
 	../hardware.cpp \
 	../host.cpp \
 	../host_audio.cpp \
+	../host_clock.cpp \
 	../hostscreen.cpp \
 	../ide.cpp \
 	../identify.cpp \
