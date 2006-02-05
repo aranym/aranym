@@ -378,7 +378,7 @@ static void phys_dump_mem (uaecptr addr, int lines)
 
 static uaecptr REGPARAM2 mmu_do_translate(uaecptr theaddr, int fc, int write, int size, int test, int datamode, int supervisor);
 
-static inline uaecptr mmu_bus_error(uae_u32 ssw, uae_u16 fslw, uaecptr theaddr, int fc, int write, int size, int test, int datamode, int supervisor) {
+static inline uaecptr mmu_bus_error(uae_u32 fslw, uae_u16 ssw, uaecptr theaddr, int fc, int write, int size, int test, int datamode, int supervisor) {
 	ssw |= (1 << 10);	/* ATC */
 	if (!write)
 		ssw |= (1 << 8);

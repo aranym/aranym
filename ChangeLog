@@ -1,3 +1,7 @@
+2006/02/05 - Andreas
+- uae_cpu/cpummu.cpp: Fix parameters of mmu_bus_error.
+
+
 2006/02/04 - Patrice
 - BootOs files split in parts for each bootable OS. Will merge bootos_linux and
   lilo later.
