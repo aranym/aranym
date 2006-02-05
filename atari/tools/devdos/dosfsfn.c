@@ -50,7 +50,7 @@
 
 #define NUM_SEARCH	10
 
-struct {
+static struct {
 	DIR dirh;
 	unsigned long srchtim;
 } search_dirs[NUM_SEARCH];
@@ -197,8 +197,6 @@ pat_match (const char *name, const char *template)
 }
 
 
-char follow_links[PATH_MAX];
-
 /*
  * Fsfirst/next are actually implemented in terms of opendir/readdir/closedir.
  */
@@ -206,6 +204,7 @@ char follow_links[PATH_MAX];
 long __CDECL
 sys_f_sfirst (MetaDOSDTA const char *path, int attrib)
 {
+	static short initialized = 0;
 	char *s, *slash;
 	FCOOKIE *dir, *newdir;
 	struct dtabuf *dta = (struct dtabuf*)dtaMD;
@@ -214,6 +213,15 @@ sys_f_sfirst (MetaDOSDTA const char *path, int attrib)
 	char temp1[PATH_MAX];
 
 	TRACE(("Fsfirst(%s, %x)", path, attrib));
+
+	if ( !initialized ) {
+		initialized = 1;
+		for (i = 0; i < NUM_SEARCH; i++) {
+			search_dirs[i].dirh.list = NULL;
+			search_dirs[i].dirh.current = NULL;
+			search_dirs[i].srchtim = 0;
+		}
+	}
 
 	r = path2cookie (path, temp1, &dir);
 	if (r)
@@ -339,7 +347,7 @@ sys_f_sfirst (MetaDOSDTA const char *path, int attrib)
 	}
 
 	r = sys_dl_opendir (&search_dirs[i].dirh, dir->folder, TOS_SEARCH);
-	DEBUG(("Fsfirst opendir(%s) -> %d", dir->name, r));
+	DEBUG(("Fsfirst opendir(%s, %d) -> %d", dir->name, i, r));
 	if (r != E_OK)
 	{
 		DEBUG(("Fsfirst(%s): couldn't open directory (error %ld)", path, r));
@@ -421,13 +429,11 @@ sys_f_snext (MetaDOSDTA0)
 			sys_dl_closedir (dirh);
 
 			dta->magic = EVALID;
-			search_dirs[dta->index].dirh.list = NULL;
 
 			if (r != ENMFILES)
 				DEBUG(("Fsnext: returning %ld", r));
 			return r;
 		}
-
 
 		if (!pat_match (buf, dta->dta_pat))
 			continue;   /* different patterns */
@@ -447,6 +453,9 @@ sys_f_snext (MetaDOSDTA0)
 	dta->dta_attrib = attr;
 	dta->dta_size = 0;
 	strncpy (dta->dta_name, dirh->current->name, TOS_NAMELEN-1);
+
+	/* convert to upper characters (we are in TOS domain) */
+	strupr (dta->dta_name);
 
 	DEBUG(("Fsnext: %s\n", dta->dta_name));
 	return E_OK;
