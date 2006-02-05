@@ -24,11 +24,6 @@ typedef struct {
 	short	mode;
 } DIR;
 
-#if 0
-typedef struct {
-} FILEPTR;
-#endif
-
 long __CDECL sys_dl_opendir (DIR *dirh, LIST *list, int flag);
 long __CDECL sys_dl_readdir (DIR *dirh, char *buf, int len);
 long __CDECL sys_dl_closedir (DIR *dirh);
