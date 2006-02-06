@@ -87,7 +87,7 @@ long set_cookie (ulong tag, ulong val)
 /*
  * global kerinfo structure
  */
-struct kerinfo *KERNEL;
+struct kerinfo *kernel;
 
 
 void* _cdecl InitDevice( long bosDevID, long dosDevID )
@@ -121,7 +121,7 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 	/* initialize Native Features */
 	kernelinfo.nf_ops = nf_init();
-	KERNEL = &kernelinfo;
+	kernel = &kernelinfo;
 
 	/* check the NF HOSTFS avialability */
 	if ( ! hostfs_init() ) {
@@ -130,7 +130,7 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 	/* map the BetaDOS drive to some bosDrive | 0x6000 so that the mapping would
 	   not colide with the MiNT one */
-	hostfs_native_init( dosDevID | 0x6000, mountPoint, "/tmp", 1,
+	fs_native_init( dosDevID | 0x6000, mountPoint, "/tmp", 1,
 					&hostfs_fs, &hostfs_fs_devdrv );
 
 	hostfs_fs.root( dosDevID | 0x6000, &curproc->p_cwd->root[dosDevID] );
@@ -149,6 +149,11 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 /**
  * $Log$
+ * Revision 1.11  2006/02/04 21:03:03  standa
+ * Complete isolation of the metados fake mint VFS implemenation in the
+ * metados folder. No #ifdef ARAnyM_MetaDOS in the hostfs folder files
+ * themselves.
+ *
  * Revision 1.10  2006/01/31 15:57:39  standa
  * More of the initialization reworked to work with the new nf_ops. This time
  * I have tested it.

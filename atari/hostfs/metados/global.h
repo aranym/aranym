@@ -26,8 +26,10 @@
 
 #include "filesys.h"
 
+#include "mint/stat.h"
 #include "mint/kerinfo.h"
-extern struct kerinfo *KERNEL;
+
+extern struct kerinfo *kernel;
 
 /* console output via Cconws */
 #include "mint/osbind.h"
@@ -43,6 +45,11 @@ extern struct kerinfo *KERNEL;
 
 /*
  * $Log$
+ * Revision 1.1  2006/02/04 21:03:03  standa
+ * Complete isolation of the metados fake mint VFS implemenation in the
+ * metados folder. No #ifdef ARAnyM_MetaDOS in the hostfs folder files
+ * themselves.
+ *
  * Revision 1.5  2004/04/26 07:14:04  standa
  * Adjusted to the recent FreeMiNT CVS state to compile and also made
  * BetaDOS only. No more MetaDOS compatibility attempts.
