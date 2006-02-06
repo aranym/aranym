@@ -24,7 +24,14 @@
 #ifndef _ARAETHER_NFAPI_H
 #define _ARAETHER_NFAPI_H
 
-/* if you change anything in the enum {} below you have to increase 
+/*
+   The code for the FreeMiNT driver was moved to the FreeMiNT CVS:
+   freemint/sys/sockets/xif/nfeth.
+
+   If you edit this file then you would need to synchronize it with the
+   driver in the freemint CVS (nfeth_nfapi.h).
+
+   if you change anything in the enum {} below you have to increase 
    this ARAETHER_NFAPI_VERSION!
 */
 #define ARAETHER_NFAPI_VERSION	0x00000005
