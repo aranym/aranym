@@ -1,3 +1,10 @@
+2006/02/06 - Standa
+- atari/hostfs and atari/network/ethernet .xfs and .xif stuff moved to the
+  FreeMiNT CVS. The BetaDOS and src dependencies stay in their spots for now.
+- atari/tools/devdos: Fixed a critical bug in the path2cookie() function.
+  Now it appears to be quite stable (the fix was actually done on 2006/02/05).
+
+
 2006/02/05 - Andreas
 - uae_cpu/cpummu.cpp: Fix parameters of mmu_bus_error.
 
