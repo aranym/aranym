@@ -1,10 +1,7 @@
 hostfs.xfs
 ==========
 
-The xfs contains only the HOSTFS (NatFeat) driven .XFS interface
-implementation stub mounted to U:\[a-z].
-Later there might be some more devices so that we would only need
-single FreeMiNT kernel module (hostfs.xfs).
+The .xfs driver is now maintained in the FreeMiNT CVS repository.
 
 
 hostfs.dos
@@ -27,10 +24,6 @@ MetaDOS driver:
 
    This example maps drives E: and F:.
 
-FreeMiNT .XFS driver:
- * copy new hostfs.xfs (replace the old one) to your
-   bootdrive:\MINT folder - drives are mounted automatically.
-
 
 BUGS
 ----
@@ -39,16 +32,8 @@ hostfs.dos
    instead (version 3.12+ might be available at
    http://www.ettnet.se/~dlanor/main/html/ra_files.htm).
 
-hostfs.xfs
- - the symlinks are not finished (work somehow).
- - other problems might occur as it is in the early stage of development
- - file/group owners are not mapped between atari and host in any way
 
 Compilation
 -----------
- * to compile the xfs you need the source tree of FreeMiNT (at least
-   version 1.15.10b), set up so that it compiles. Point the
-   FREEMINT_SRC_HOME environment variable to its home (the
-   COPYING.MiNT file is there).
  * use make.sh to compile
- * the binaries are placed into the bin subfolder
+ * the binary is placed into the bin subfolder
