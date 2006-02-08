@@ -1,3 +1,7 @@
+2006/02/08 - Patrice
+- Merged bootos_linux and lilo.
+
+
 2006/02/06 - Standa
 - atari/hostfs and atari/network/ethernet .xfs and .xif stuff moved to the
   FreeMiNT CVS. The BetaDOS and src dependencies stay in their spots for now.

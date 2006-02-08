@@ -24,10 +24,50 @@
 #include "aranym_exception.h"
 #include "bootos.h"
 
+/*--- Some defines ---*/
+
+#define NUM_MEMINFO	4
+#define CL_SIZE		256
+
 /* Linux/m68k loader class */
 
 class LinuxBootOs : public BootOs
 {
+	private:
+		struct mem_info {
+			uint32 addr;		/* physical address of memory chunk */
+			uint32 size;		/* length of memory chunk (in bytes) */
+		};
+
+		struct atari_bootinfo {
+		    uint32 machtype;		/* machine type */
+		    uint32 cputype;		/* system CPU */
+		    uint32 fputype;		/* system FPU */
+		    uint32 mmutype;		/* system MMU */
+		    int32 num_memory;		/* # of memory blocks found */
+		    struct mem_info memory[NUM_MEMINFO];  /* memory description */
+		    struct mem_info ramdisk;	/* ramdisk description */
+		    char command_line[CL_SIZE];	/* kernel command line parameters */
+		    uint32 mch_cookie;		/* _MCH cookie from TOS */
+		    uint32 mch_type;		/* special machine types */
+		};
+
+		void *kernel;
+		unsigned long kernel_length;
+		void *ramdisk;
+		unsigned long ramdisk_length;
+		struct atari_bootinfo bi;
+		unsigned long bi_size;
+
+		void cleanup(void);
+		bool init(void);
+		void *loadFile(char *filename, unsigned long *length);
+		int checkKernel(void);
+		int create_bootinfo(void);
+		int add_bi_record(
+			unsigned short tag, unsigned short size, const void *data);
+		int add_bi_string(unsigned short tag, const char *s);
+
 	public:
 		LinuxBootOs(void) throw (AranymException);
 		~LinuxBootOs(void);

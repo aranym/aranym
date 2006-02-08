@@ -1572,10 +1572,8 @@ fi
 
 dnl Linux loader
 
-LILOSRCS=""
 if [[ "x$WANT_LILO" = "xyes" ]]; then
 	if [[ "x$WANT_MMU" = "xyes" ]]; then
-		LILOSRCS="../lilo.cpp"
 		AC_DEFINE([ENABLE_LILO], 1, [Define if lilo enabled])
 	else
 		AC_MSG_ERROR([Linux kernel requires functional MMU emulation])
@@ -1724,7 +1722,6 @@ AC_SUBST(SYSSRCS)
 AC_SUBST(CPUINCLUDES)
 AC_SUBST(CPUSRCS)
 AC_SUBST(DSPSRCS)
-AC_SUBST(LILOSRCS)
 AC_SUBST(NFCDROMSRCS)
 AC_SUBST(NFPCISRCS)
 AC_SUBST(NFOSMESASRCS)
