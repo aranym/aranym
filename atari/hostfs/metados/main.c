@@ -87,7 +87,7 @@ long set_cookie (ulong tag, ulong val)
 /*
  * global kerinfo structure
  */
-struct kerinfo *kernel;
+struct kerinfo *KERNEL;
 
 
 void* _cdecl InitDevice( long bosDevID, long dosDevID )
@@ -117,11 +117,11 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 	 * because MetaDOS (in contrary to BetaDOS) does not provide
 	 * the dosDevID
 	 */
-	DEBUG(("InitDevice: %s [dosDev=%ld, bosDev=%ld] addr: %lx", mountPoint, dosDevID, bosDevID, &hostfs_fs ));
+	DEBUG(("InitDevice: %s [dosDev=%ld, bosDev=%ld] addr: %lx", mountPoint, dosDevID, bosDevID, &hostfs_filesys ));
 
 	/* initialize Native Features */
 	kernelinfo.nf_ops = nf_init();
-	kernel = &kernelinfo;
+	KERNEL = &kernelinfo;
 
 	/* check the NF HOSTFS avialability */
 	if ( ! hostfs_init() ) {
@@ -131,9 +131,9 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 	/* map the BetaDOS drive to some bosDrive | 0x6000 so that the mapping would
 	   not colide with the MiNT one */
 	fs_native_init( dosDevID | 0x6000, mountPoint, "/tmp", 1,
-					&hostfs_fs, &hostfs_fs_devdrv );
+					&hostfs_filesys, &hostfs_fs_devdrv );
 
-	hostfs_fs.root( dosDevID | 0x6000, &curproc->p_cwd->root[dosDevID] );
+	hostfs_filesys.root( dosDevID | 0x6000, &curproc->p_cwd->root[dosDevID] );
 
 #ifdef DEBUG_INFO
 	{
@@ -149,6 +149,10 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 
 /**
  * $Log$
+ * Revision 1.12  2006/02/06 20:58:17  standa
+ * Sync with the FreeMiNT CVS. The make.sh now only builds the BetaDOS
+ * hostfs.dos.
+ *
  * Revision 1.11  2006/02/04 21:03:03  standa
  * Complete isolation of the metados fake mint VFS implemenation in the
  * metados folder. No #ifdef ARAnyM_MetaDOS in the hostfs folder files

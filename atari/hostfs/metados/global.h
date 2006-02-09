@@ -29,7 +29,7 @@
 #include "mint/stat.h"
 #include "mint/kerinfo.h"
 
-extern struct kerinfo *kernel;
+extern struct kerinfo *KERNEL;
 
 /* console output via Cconws */
 #include "mint/osbind.h"
@@ -45,6 +45,10 @@ extern struct kerinfo *kernel;
 
 /*
  * $Log$
+ * Revision 1.2  2006/02/06 20:58:17  standa
+ * Sync with the FreeMiNT CVS. The make.sh now only builds the BetaDOS
+ * hostfs.dos.
+ *
  * Revision 1.1  2006/02/04 21:03:03  standa
  * Complete isolation of the metados fake mint VFS implemenation in the
  * metados folder. No #ifdef ARAnyM_MetaDOS in the hostfs folder files
