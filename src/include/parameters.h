@@ -265,6 +265,8 @@ typedef struct {
 #endif
   char			tos_path[512];
   char			emutos_path[512];
+  char			bootstrap_path[512];
+  char			bootdrive;
   uint32		fastram;
   bool			autoMouseGrab;
   bx_hotkeys_t		hotkeys;

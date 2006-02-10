@@ -1,3 +1,13 @@
+2006/02/08 - Standa
+- BOOTSTRAP NF added. Using this the EmuTOS bootstraps the e.g. the FreeMiNT
+  kernel directly (without having to have any boot floppy or HDD image).
+  More information to come later (not all info is in CVS for all parts ATM).
+
+  Two new [GLOBAL] section config entries introduced:
+  Bootstrap = path/to/the/kernel
+  BootDrive = X
+ 
+
 2006/02/08 - Patrice
 - Merged bootos_linux and lilo.
 

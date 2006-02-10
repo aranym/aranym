@@ -25,6 +25,7 @@
 
 #include "xhdi.h"
 #include "nfaudio.h"
+#include "nfbootstrap.h"
 #include "hostfs.h"
 #include "ethernet.h"
 #include "debugprintf.h"
@@ -81,6 +82,7 @@ void NFCreate(void)
 	NFAdd(new NF_StdErr);
 
 	/* additional NF */
+	NFAdd(new BootstrapNatFeat);
 	NFAdd(new DebugPrintf);
 	NFAdd(new XHDIDriver);
 	NFAdd(new AUDIODriver);

@@ -116,6 +116,7 @@ static struct option const long_options[] =
 
 #define TOS_FILENAME		"ROM"
 #define EMUTOS_FILENAME		"etos512k.img"
+#define FREEMINT_FILENAME	"mintara.prg"
 
 char *program_name;		// set by main()
 
@@ -153,6 +154,8 @@ struct Config_Tag global_conf[]={
 	{ "Floppy", Path_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path), 0},
 	{ "TOS", Path_Tag, bx_options.tos_path, sizeof(bx_options.tos_path), 0},
 	{ "EmuTOS", Path_Tag, bx_options.emutos_path, sizeof(bx_options.emutos_path), 0},
+	{ "Bootstrap", Path_Tag, bx_options.bootstrap_path, sizeof(bx_options.bootstrap_path), 0},
+	{ "BootDrive", Char_Tag, &bx_options.bootdrive, 0, 0},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab, 0, 0},
 #ifdef ENABLE_EPSLIMITER
 	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
@@ -1355,6 +1358,7 @@ bool decode_switches(FILE *f, int argc, char **argv)
 	getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
 	getDataFilename(TOS_FILENAME, bx_options.tos_path, sizeof(bx_options.tos_path));
 	getDataFilename(EMUTOS_FILENAME, bx_options.emutos_path, sizeof(bx_options.emutos_path));
+	getDataFilename(FREEMINT_FILENAME, bx_options.bootstrap_path, sizeof(bx_options.bootstrap_path));
 
 	early_cmdline_check(argc, argv);
 	preset_cfg();
