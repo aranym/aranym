@@ -78,6 +78,9 @@ case "$1" in
 	/sbin/modprobe tun
 	/sbin/modprobe bridge
 
+	echo "Changing owner of /dev/net/tun..."
+	[ -c /dev/net/tun ] && chown $USER /dev/net/tun
+
 	echo "Setting up bridge $BRIDGE..."
 	brctl addbr $BRIDGE
 	brctl stp $BRIDGE off
