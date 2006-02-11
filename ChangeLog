@@ -1,3 +1,7 @@
+2006/02/11 - Patrice
+- nfcdrom: Merged SDL backend into base class as default implementation.
+
+
 2006/02/11 - joy
 - tools/arabridge: added chown $USER /dev/net/tun
 

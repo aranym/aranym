@@ -80,27 +80,6 @@ CdromDriverLinux::~CdromDriverLinux()
 
 /*--- Private functions ---*/
 
-void CdromDriverLinux::ScanDrives()
-{
-	int i;
-
-	D(bug(NFCD_NAME "ScanDrives()"));
-
-	drives_mask = 0;
-	for (i='A'; i<='Z'; i++) {
-		/* Check if there is a valid filename */
-		if (bx_options.nfcdroms[i-'A'].physdevtohostdev < 0) {
-			continue;
-		}
-
-		/* Check it is a device file, cdrom type */
-
-		/* Add to MetaDOS CD-ROM drives */
-		drives_mask |= 1<<(i-'A');
-		D(bug(NFCD_NAME "ScanDrives(): physical device %c added", i));
-	}
-}
-
 int CdromDriverLinux::OpenDrive(memptr device)
 {
 	int drive;

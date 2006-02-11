@@ -30,7 +30,6 @@ class CdromDriverLinux : public CdromDriver
 
 		uint16 AtariToLinuxIoctl(uint16 opcode);	/* Translate ioctl numbers */
 
-		void ScanDrives();
 		int OpenDrive(memptr device);
 		void CloseDrive(int drive);
 
