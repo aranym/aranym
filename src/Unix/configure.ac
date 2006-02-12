@@ -313,7 +313,7 @@ case "$target_os" in
     ;;
   beos*)
     EXTRASYSSRCS="parameters_unix.cpp beos/cdrom_beos.cpp host_filesys_unix.cpp"
-    DEFINES="$DEFINES -I./beos"
+    DEFINES="$DEFINES -I\$(srcdir)/beos"
     ;;
   *)
     EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
@@ -395,7 +395,7 @@ AC_CACHE_CHECK([whether vm_protect works],
       #define CONFIGURE_TEST_VM_MAP
       #define TEST_VM_PROT_$test_def
 	  $OSdarwinReq
-      #include "vm_alloc.cpp"
+      #include "$srcdir/vm_alloc.cpp"
     ], ac_cv_vm_protect_works=no, rm -f core,
     dnl When cross-compiling, do not assume anything
     ac_cv_vm_protect_works="guessing no"
@@ -405,7 +405,7 @@ AC_CACHE_CHECK([whether vm_protect works],
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_PROT_RDWR_WRITE
     $OSdarwinReq
-    #include "vm_alloc.cpp"
+    #include "$srcdir/vm_alloc.cpp"
   ], , ac_cv_vm_protect_works=no,
   dnl When cross-compiling, do not assume anything
   ac_cv_vm_protect_works="guessing no"
@@ -450,7 +450,7 @@ AC_CACHE_CHECK([whether mmap supports MAP_ANON],
     #define HAVE_MMAP_ANON
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_MMAP_ANON
-    #include "vm_alloc.cpp"
+    #include "$srcdir/vm_alloc.cpp"
   ], ac_cv_mmap_anon=yes, ac_cv_mmap_anon=no,
   dnl When cross-compiling, do not assume anything.
   ac_cv_mmap_anon="guessing no"
@@ -469,7 +469,7 @@ AC_CACHE_CHECK([whether mmap supports MAP_ANONYMOUS],
     #define HAVE_MMAP_ANONYMOUS
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_MMAP_ANON
-    #include "vm_alloc.cpp"
+    #include "$srcdir/vm_alloc.cpp"
   ], ac_cv_mmap_anonymous=yes, ac_cv_mmap_anonymous=no,
   dnl When cross-compiling, do not assume anything.
   ac_cv_mmap_anonymous="guessing no"
@@ -490,7 +490,7 @@ AC_CACHE_CHECK([whether mprotect works],
     AC_TRY_RUN([
       #define CONFIGURE_TEST_VM_MAP
       #define TEST_VM_PROT_$test_def
-      #include "vm_alloc.cpp"
+      #include "$srcdir/vm_alloc.cpp"
     ], ac_cv_mprotect_works=no, rm -f core,
     dnl When cross-compiling, do not assume anything
     ac_cv_mprotect_works="guessing no"
@@ -499,7 +499,7 @@ AC_CACHE_CHECK([whether mprotect works],
   AC_TRY_RUN([
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_PROT_RDWR_WRITE
-    #include "vm_alloc.cpp"
+    #include "$srcdir/vm_alloc.cpp"
   ], , ac_cv_mprotect_works=no,
   dnl When cross-compiling, do not assume anything
   ac_cv_mprotect_works="guessing no"
@@ -527,7 +527,7 @@ AC_CACHE_CHECK([whether we can map Low Memory area 0x0000-0x1000000],
   AC_LANG_CPLUSPLUS
   AC_TRY_RUN([
     $OSdarwinReq
-    #include "vm_alloc.cpp"
+    #include "$srcdir/vm_alloc.cpp"
     int main(void) { /* returns 0 if we could map the lowmem globals */
       volatile char * lm = 0;
       if (vm_init() < 0) exit(1);
@@ -552,7 +552,7 @@ AC_CACHE_CHECK([whether POSIX shared memory is working],
   AC_TRY_RUN([
     #define HAVE_POSIX_SHM
     $OSdarwinReq
-    #include "vm_alloc.cpp"
+    #include "$srcdir/vm_alloc.cpp"
     int main(void) { /* returns 0 if we have working POSIX shm */
       if (vm_init() < 0) exit(2);
       char *m1 = (char *)vm_acquire(32768, VM_MAP_DEFAULT | VM_MAP_33BIT);
@@ -576,7 +576,7 @@ AC_CACHE_CHECK([whether 33-bit memory addressing is working],
   AC_LANG_CPLUSPLUS
   AC_TRY_RUN([
     #define USE_33BIT_ADDRESSING 1
-    #include "vm_alloc.cpp"
+    #include "$srcdir/vm_alloc.cpp"
     int main(void) { /* returns 0 if we have working 33-bit addressing */
       if (sizeof(void *) < 8) exit(1);
       if (vm_init() < 0) exit(2);
@@ -881,7 +881,7 @@ dnl SDL GUI
 GUISDLSRCS=""
 if [[ "x$WANT_SDLGUI" = "xyes" ]]; then
   GUISDLSRCS="../gui-sdl/sdlgui.cpp ../gui-sdl/dlgFileSelect.cpp ../gui-sdl/file.cpp ../gui-sdl/dlgMain.cpp ../gui-sdl/dlgDisk.cpp ../gui-sdl/dlgKeyboard.cpp ../gui-sdl/dlgHotkeys.cpp ../gui-sdl/dlgAlert.cpp"
-  CPPFLAGS="$CPPFLAGS -I../gui-sdl"
+  CPPFLAGS="$CPPFLAGS -I\$(srcdir)/../gui-sdl"
   AC_DEFINE([SDL_GUI], 1, [Define if you want to build SDL GUI])
 fi
 dnl C++ exceptions
@@ -1173,7 +1173,7 @@ elif [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xy
   esac
 elif [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
   dnl Native m68k, no emulation
-  CPUINCLUDES="-I../native_cpu"
+  CPUINCLUDES="-I\$(srcdir)/../native_cpu"
   CPUSRCS="asm_support.s"
 fi
 
@@ -1450,11 +1450,11 @@ if [[ "x$WANT_JIT" = "xno" ]]; then
     else
       AC_MSG_CHECKING(for mon)
       mon_srcdir=../../../mon/src
-      if grep mon_init $mon_srcdir/mon.h >/dev/null 2>/dev/null; then
+      if grep mon_init $srcdir/$mon_srcdir/mon.h >/dev/null 2>/dev/null; then
         AC_MSG_RESULT(yes)
         AC_DEFINE([ENABLE_MON], 1, [Define if using "mon".])
         MONSRCS="$mon_srcdir/mon.cpp $mon_srcdir/mon_6502.cpp $mon_srcdir/mon_z80.cpp $mon_srcdir/mon_cmd.cpp $mon_srcdir/mon_disass.cpp $mon_srcdir/mon_ppc.cpp $mon_srcdir/mon_lowmem.cpp $mon_srcdir/disass/floatformat.c $mon_srcdir/disass/i386-dis.c $mon_srcdir/disass/m68k-dis.c $mon_srcdir/disass/m68k-opc.c"
-        CXXFLAGS="$CXXFLAGS -I$mon_srcdir -I$mon_srcdir/disass"
+        CXXFLAGS="$CXXFLAGS -I\$(srcdir)/$mon_srcdir -I\$(srcdir)/$mon_srcdir/disass"
         AC_CHECK_LIB(readline, readline)
         AC_CHECK_LIB(termcap, tputs)
         AC_CHECK_HEADERS(readline.h history.h readline/readline.h readline/history.h)
@@ -1476,7 +1476,7 @@ fi
 
 dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
-  CPUINCLUDES="-I../uae_cpu"
+  CPUINCLUDES="-I\$(srcdir)/../uae_cpu"
   CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp cpustbl.cpp $CPUSRCS $JITSRCS $MMUSRCS"
 fi
 

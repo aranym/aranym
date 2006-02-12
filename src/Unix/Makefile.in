@@ -12,14 +12,15 @@ datadir = @datadir@
 mandir = @mandir@
 man1dir = $(mandir)/man1
 docdir = $(prefix)/share/doc
+srcdir = @srcdir@
 
 DESTDIR =
 
 CC = @CC@
 CXX = @CXX@
-CFLAGS = -I../include -I. -I../natfeat @CFLAGS@
+CFLAGS = -I$(srcdir)/../include -I$(srcdir) -I. -I$(srcdir)../natfeat @CFLAGS@
 CXXFLAGS = @CXXFLAGS@
-CPPFLAGS = -I../include -I. -I../natfeat @CPUINCLUDES@ @CPPFLAGS@
+CPPFLAGS = -I$(srcdir)/../include -I$(srcdir) -I. -I$(srcdir)/../natfeat @CPUINCLUDES@ @CPPFLAGS@
 WFLAGS = @WFLAGS@
 DEFS = @DEFS@ @DEFINES@ -D_REENTRANT -D_THREAD_SAFE
 LDFLAGS = @LDFLAGS@
@@ -170,7 +171,7 @@ OBJS = $(SRCS_LIST_TO_OBJS)
 
 SRC_PATHS += $(sort $(foreach file, $(SRCS), $(dir $(file))))
 VPATH :=
-VPATH += $(addprefix :, $(subst  ,:, $(filter-out $($(subst, :, ,$(VPATH))), $(SRC_PATHS))))
+VPATH += $(addprefix :, $(subst  ,:, $(filter-out $($(subst, :, ,$(VPATH))), $(addprefix $(filter-out ./,$(srcdir)/), $(SRC_PATHS)))))
 
 $(APP): $(OBJ_DIR) $(OBJS)
 	$(CXX) -o $(APP) $(LDFLAGS) $(OBJS) $(LIBS)
@@ -207,46 +208,46 @@ install: $(APP) $(TAPIF) $(APP).1.gz installdirs
 	$(INSTALL_PROGRAM) $(APP_IFC) $(DESTDIR)$(bindir)/$(APP_IFC);\
 	fi
 	$(INSTALL_DATA) $(APP).1.gz $(DESTDIR)$(man1dir)/$(APP).1.gz
-	$(INSTALL_DATA) ../../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog
-	$(INSTALL_DATA) ../../TODO $(DESTDIR)$(docdir)/$(APP)/TODO
-	$(INSTALL_DATA) ../../AUTHORS $(DESTDIR)$(docdir)/$(APP)/AUTHORS
-	$(INSTALL_DATA) ../../NEWS $(DESTDIR)$(docdir)/$(APP)/NEWS
-	$(INSTALL_DATA) ../../README $(DESTDIR)$(docdir)/$(APP)/README
-	$(INSTALL_DATA) ../../FAQ $(DESTDIR)$(docdir)/$(APP)/FAQ
-	$(INSTALL_DATA) ../../COPYING $(DESTDIR)$(docdir)/$(APP)/COPYING
-	$(INSTALL_DATA) ../../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
-	$(INSTALL_DATA) ../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL
-	$(INSTALL_DATA) ../../doc/aranym.html $(DESTDIR)$(docdir)/$(APP)/aranym.html
-	$(INSTALL_DATA) ../../doc/config $(DESTDIR)$(docdir)/$(APP)/config
+	$(INSTALL_DATA) $(srcdir)/../../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog
+	$(INSTALL_DATA) $(srcdir)/../../TODO $(DESTDIR)$(docdir)/$(APP)/TODO
+	$(INSTALL_DATA) $(srcdir)/../../AUTHORS $(DESTDIR)$(docdir)/$(APP)/AUTHORS
+	$(INSTALL_DATA) $(srcdir)/../../NEWS $(DESTDIR)$(docdir)/$(APP)/NEWS
+	$(INSTALL_DATA) $(srcdir)/../../README $(DESTDIR)$(docdir)/$(APP)/README
+	$(INSTALL_DATA) $(srcdir)/../../FAQ $(DESTDIR)$(docdir)/$(APP)/FAQ
+	$(INSTALL_DATA) $(srcdir)/../../COPYING $(DESTDIR)$(docdir)/$(APP)/COPYING
+	$(INSTALL_DATA) $(srcdir)/../../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
+	$(INSTALL_DATA) $(srcdir)/../../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL
+	$(INSTALL_DATA) $(srcdir)/../../doc/aranym.html $(DESTDIR)$(docdir)/$(APP)/aranym.html
+	$(INSTALL_DATA) $(srcdir)/../../doc/config $(DESTDIR)$(docdir)/$(APP)/config
 # JOY, uncomment it for releases
-#	$(INSTALL_DATA) ../../data/etos512k.img $(DESTDIR)$(datadir)/$(APP)/etos512k.img
-	$(INSTALL_DATA) ../../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
-	$(INSTALL_DATA) ../../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
-	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
-	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.xfs.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
-	$(INSTALL_DATA) ../../atari/nfcdrom/nfcdrom.bos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom/nfcdrom.bos.bz2
-	$(INSTALL_DATA) ../../atari/nfjpeg/nfjpeg.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg/nfjpeg.prg.bz2
-	$(INSTALL_DATA) ../../atari/nfosmesa/osmesa.ldg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa/osmesa.ldg.bz2
-	$(INSTALL_DATA) ../../atari/hostfs/bdconfig.sys $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
-	$(INSTALL_DATA) ../../atari/hostfs/README $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
-	$(INSTALL_DATA) ../../atari/network/ethernet/bin/aranym.xif.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/aranym.xif.bz2
-	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/nfeth-config.bz2
-	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
-	$(INSTALL_DATA) ../../atari/network/ethernet/README $(DESTDIR)$(datadir)/$(APP)/atari/network/README
-	$(INSTALL) ../../tools/arabridge $(DESTDIR)$(datadir)/$(APP)/arabridge
-	$(INSTALL) ../../tools/floppy.sh $(DESTDIR)$(datadir)/$(APP)/floppy.sh
-	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
-	$(INSTALL_DATA) ../../atari/fvdi/fvdi.sys $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.sys
-	$(INSTALL_DATA) ../../atari/tools/README $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
-	$(INSTALL_DATA) ../../atari/tools/clocky.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
-	$(INSTALL_DATA) ../../atari/tools/fastram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
-	$(INSTALL_DATA) ../../atari/tools/pc101us.kbd.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
-	$(INSTALL_DATA) ../../atari/tools/pcpatch.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2
-	$(INSTALL_DATA) ../../atari/sound/zmagxsnd.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2
-	$(INSTALL_DATA) ../../atari/sound/README $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
+#	$(INSTALL_DATA) $(srcdir)/../../data/etos512k.img $(DESTDIR)$(datadir)/$(APP)/etos512k.img
+	$(INSTALL_DATA) $(srcdir)/../../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
+	$(INSTALL_DATA) $(srcdir)/../../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
+	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bin/hostfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bin/hostfs.xfs.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/nfcdrom/nfcdrom.bos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom/nfcdrom.bos.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/nfjpeg/nfjpeg.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg/nfjpeg.prg.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/nfosmesa/osmesa.ldg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa/osmesa.ldg.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bdconfig.sys $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/README $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
+	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/bin/aranym.xif.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/aranym.xif.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/nfeth-config.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
+	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/README $(DESTDIR)$(datadir)/$(APP)/atari/network/README
+	$(INSTALL) $(srcdir)/../../tools/arabridge $(DESTDIR)$(datadir)/$(APP)/arabridge
+	$(INSTALL) $(srcdir)/../../tools/floppy.sh $(DESTDIR)$(datadir)/$(APP)/floppy.sh
+	$(INSTALL_DATA) $(srcdir)/../../atari/fvdi/drivers/aranym.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/fvdi/fvdi.sys $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.sys
+	$(INSTALL_DATA) $(srcdir)/../../atari/tools/README $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
+	$(INSTALL_DATA) $(srcdir)/../../atari/tools/clocky.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/tools/fastram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/tools/pc101us.kbd.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/tools/pcpatch.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/sound/zmagxsnd.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/sound/README $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
 	
 installdirs:
-	$(SHELL) mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/hostfs $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa $(DESTDIR)$(datadir)/$(APP)/atari/network $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
+	$(SHELL) $(srcdir)/mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/hostfs $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa $(DESTDIR)$(datadir)/$(APP)/atari/network $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
 
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
@@ -317,10 +318,10 @@ distclean: clean
 	rm -rf autom4te.cache
 
 mrproper: distclean
-	rm -rf aclocal.m4 configure config.h.in
+	rm -rf $(srcdir)/aclocal.m4 $(srcdir)/configure $(srcdir)/config.h.in
 
 bindistdirs:
-	$(SHELL) mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
+	$(SHELL) $(srcdir)/mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
 bindist: $(APP) $(TAPIF) $(APP).1.gz bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
@@ -328,78 +329,60 @@ bindist: $(APP) $(TAPIF) $(APP).1.gz bindistdirs
 	$(INSTALL_PROGRAM) $(APP_IFC) tmpdist$(bindir)/$(APP_IFC);\
 	fi
 	$(INSTALL_DATA) $(APP).1.gz tmpdist$(man1dir)/$(APP).1.gz
-	$(INSTALL_DATA) ../../ChangeLog tmpdist$(docdir)/$(APP)/changelog
-	$(INSTALL_DATA) ../../TODO tmpdist$(docdir)/$(APP)/TODO
-	$(INSTALL_DATA) ../../AUTHORS tmpdist$(docdir)/$(APP)/AUTHORS
-	$(INSTALL_DATA) ../../NEWS tmpdist$(docdir)/$(APP)/NEWS
-	$(INSTALL_DATA) ../../README tmpdist$(docdir)/$(APP)/README
-	$(INSTALL_DATA) ../../FAQ tmpdist$(docdir)/$(APP)/FAQ
-	$(INSTALL_DATA) ../../COPYING tmpdist$(docdir)/$(APP)/COPYING
-	$(INSTALL_DATA) ../../BUGS tmpdist$(docdir)/$(APP)/BUGS
-	$(INSTALL_DATA) ../../INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
-	$(INSTALL_DATA) ../../doc/aranym.html tmpdist$(docdir)/$(APP)/aranym.html
-	$(INSTALL_DATA) ../../doc/config tmpdist$(docdir)/$(APP)/config
+	$(INSTALL_DATA) $(srcdir)/../../ChangeLog tmpdist$(docdir)/$(APP)/changelog
+	$(INSTALL_DATA) $(srcdir)/../../TODO tmpdist$(docdir)/$(APP)/TODO
+	$(INSTALL_DATA) $(srcdir)/../../AUTHORS tmpdist$(docdir)/$(APP)/AUTHORS
+	$(INSTALL_DATA) $(srcdir)/../../NEWS tmpdist$(docdir)/$(APP)/NEWS
+	$(INSTALL_DATA) $(srcdir)/../../README tmpdist$(docdir)/$(APP)/README
+	$(INSTALL_DATA) $(srcdir)/../../FAQ tmpdist$(docdir)/$(APP)/FAQ
+	$(INSTALL_DATA) $(srcdir)/../../COPYING tmpdist$(docdir)/$(APP)/COPYING
+	$(INSTALL_DATA) $(srcdir)/../../BUGS tmpdist$(docdir)/$(APP)/BUGS
+	$(INSTALL_DATA) $(srcdir)/../../INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
+	$(INSTALL_DATA) $(srcdir)/../../doc/aranym.html tmpdist$(docdir)/$(APP)/aranym.html
+	$(INSTALL_DATA) $(srcdir)/../../doc/config tmpdist$(docdir)/$(APP)/config
 # JOY, uncomment it for releases
-#	$(INSTALL_DATA) ../../data/etos512k.img tmpdist$(datadir)/$(APP)/etos512k.img
-	$(INSTALL_DATA) ../../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
-	$(INSTALL_DATA) ../../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
-	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
-	$(INSTALL_DATA) ../../atari/hostfs/bin/hostfs.xfs.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
-	$(INSTALL_DATA) ../../atari/nfcdrom/nfcdrom.bos.bz2 tmpdist$(datadir)/$(APP)/atari/nfcdrom/nfcdrom.bos.bz2
-	$(INSTALL_DATA) ../../atari/nfjpeg/nfjpeg.prg.bz2 tmpdir$(datadir)/$(APP)/atari/nfjpeg/nfjpeg.prg.bz2
-	$(INSTALL_DATA) ../../atari/nfosmesa/osmesa.ldg.bz2 tmpdir$(datadir)/$(APP)/atari/nfosmesa/osmesa.ldg.bz2
-	$(INSTALL_DATA) ../../atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
-	$(INSTALL_DATA) ../../atari/hostfs/README tmpdist$(datadir)/$(APP)/atari/hostfs/README
-	$(INSTALL_DATA) ../../atari/network/ethernet/bin/aranym.xif.bz2 tmpdist$(datadir)/$(APP)/atari/network/aranym.xif.bz2
-	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 tmpdist$(datadir)/$(APP)/atari/network/nfeth-config.bz2
-	$(INSTALL_DATA) ../../atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
-	$(INSTALL_DATA) ../../atari/network/ethernet/README tmpdist$(datadir)/$(APP)/atari/network/README
-	$(INSTALL) ../../tools/arabridge tmpdist$(datadir)/$(APP)/arabridge
-	$(INSTALL) ../../tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
-	$(INSTALL_DATA) ../../atari/fvdi/drivers/aranym.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
-	$(INSTALL_DATA) ../../atari/fvdi/fvdi.sys tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.sys
-	$(INSTALL_DATA) ../../atari/tools/README tmpdist$(datadir)/$(APP)/atari/tools/README
-	$(INSTALL_DATA) ../../atari/tools/clocky.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
-	$(INSTALL_DATA) ../../atari/tools/fastram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
-	$(INSTALL_DATA) ../../atari/tools/pc101us.kbd.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
-	$(INSTALL_DATA) ../../atari/tools/pcpatch.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2	
-	$(INSTALL_DATA) ../../atari/sound/zmagxsnd.prg.bz2 tmpdist$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2	
-	$(INSTALL_DATA) ../../atari/sound/README tmpdist$(datadir)/$(APP)/atari/sound/README
+#	$(INSTALL_DATA) $(srcdir)/../../data/etos512k.img tmpdist$(datadir)/$(APP)/etos512k.img
+	$(INSTALL_DATA) $(srcdir)/../../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
+	$(INSTALL_DATA) $(srcdir)/../../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
+	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bin/hostfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bin/hostfs.xfs.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/nfcdrom/nfcdrom.bos.bz2 tmpdist$(datadir)/$(APP)/atari/nfcdrom/nfcdrom.bos.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/nfjpeg/nfjpeg.prg.bz2 tmpdir$(datadir)/$(APP)/atari/nfjpeg/nfjpeg.prg.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/nfosmesa/osmesa.ldg.bz2 tmpdir$(datadir)/$(APP)/atari/nfosmesa/osmesa.ldg.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/README tmpdist$(datadir)/$(APP)/atari/hostfs/README
+	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/bin/aranym.xif.bz2 tmpdist$(datadir)/$(APP)/atari/network/aranym.xif.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 tmpdist$(datadir)/$(APP)/atari/network/nfeth-config.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
+	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/README tmpdist$(datadir)/$(APP)/atari/network/README
+	$(INSTALL) $(srcdir)/../../tools/arabridge tmpdist$(datadir)/$(APP)/arabridge
+	$(INSTALL) $(srcdir)/../../tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
+	$(INSTALL_DATA) $(srcdir)/../../atari/fvdi/drivers/aranym.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/fvdi/fvdi.sys tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.sys
+	$(INSTALL_DATA) $(srcdir)/../../atari/tools/README tmpdist$(datadir)/$(APP)/atari/tools/README
+	$(INSTALL_DATA) $(srcdir)/../../atari/tools/clocky.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/tools/fastram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/tools/pc101us.kbd.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
+	$(INSTALL_DATA) $(srcdir)/../../atari/tools/pcpatch.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2	
+	$(INSTALL_DATA) $(srcdir)/../../atari/sound/zmagxsnd.prg.bz2 tmpdist$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2	
+	$(INSTALL_DATA) $(srcdir)/../../atari/sound/README tmpdist$(datadir)/$(APP)/atari/sound/README
 	chmod -R a+r tmpdist
 	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
 	rm -rf tmpdist
 
 devdist: mrproper 
-	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz aranym
+	cd $(srcdir)/../../../ && GZIP=--best tar chozf $(APP).tar.gz aranym
 
 dist: distclean
-	cd ../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore aranym
+	cd $(srcdir)/../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore aranym
 
 depend dep:
-	makedepend $(CPPFLAGS) $(DEFS) -Y. $(SRCS) -p$(OBJ_DIR)/ 2>/dev/null
-	sed -n '/^# DO NOT DELETE THIS LINE -- make depend depends on it./,$$p' < Makefile > Makefile.wrk
-	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' < Makefile > Makefile.new
+	makedepend $(CPPFLAGS) $(DEFS) -Y. $(addprefix $(srcdir)/,$(SRCS)) -p$(OBJ_DIR)/ 2>/dev/null
+	{ \
+	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' < Makefile; \
+	sed '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./d' < Makefile | sed 's=^$(OBJ_DIR)/[^:]*/=$(OBJ_DIR)/='; \
+	} > Makefile.new
 	mv Makefile.new Makefile
-	tail -n +2 Makefile.wrk | sed 's=/../uae_cpu/fpu/=/=' > Makefile.new
-	mv Makefile.new Makefile.wrk
-	sed 's=/Unix/beos/=/Unix/=' < Makefile.wrk > Makefile.new
-	mv Makefile.new Makefile.wrk
-	sed 's=/Unix/cygwin/=/Unix/=' < Makefile.wrk > Makefile.new
-	mv Makefile.new Makefile.wrk
-	sed 's=/Unix/irix/=/Unix/=' < Makefile.wrk > Makefile.new
-	mv Makefile.new Makefile.wrk
-	sed 's=/Unix/linux/=/Unix/=' < Makefile.wrk > Makefile.new
-	mv Makefile.new Makefile.wrk
-	sed 's=/Unix/solaris/=/Unix/=' < Makefile.wrk > Makefile.new
-	mv Makefile.new Makefile.wrk
-	sed 's=/Unix/xbsd/=/Unix/=' < Makefile.wrk > Makefile.new
-	mv Makefile.new Makefile.wrk
-	sed 's=/../uae_cpu/=/=' < Makefile.wrk > Makefile.new
-	mv Makefile.new Makefile.wrk
-	sed 's=/../natfeat/=/=' < Makefile.wrk > Makefile.new
-	mv Makefile.new Makefile.wrk
-	sed 's=/../=/=' < Makefile.wrk >> Makefile
-	rm -f Makefile.wrk
 
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) -c $< -o $@
@@ -422,7 +405,7 @@ $(OBJ_DIR)/gencomp: $(OBJ_DIR)/gencomp.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs
 	$(CXX) $(LDFLAGS) -o $(OBJ_DIR)/gencomp $(OBJ_DIR)/gencomp.o $(OBJ_DIR)/readcpu.o $(OBJ_DIR)/cpudefs.o
 
 cpudefs.cpp: $(OBJ_DIR)/build68k ../uae_cpu/table68k
-	$(OBJ_DIR)/build68k <../uae_cpu/table68k >cpudefs.cpp
+	$(OBJ_DIR)/build68k <$(srcdir)/../uae_cpu/table68k >cpudefs.cpp
 cpustbl.cpp: cpuemu.cpp 
 cpustbl_nf.cpp: cpustbl.cpp
 compstbl.cpp: compemu.cpp
@@ -568,16 +551,16 @@ cpufast8_nf.s: cpuemu.cpp $(OBJ_DIR)/cpuopti
 
 # For tests
 newcpu.s: ../uae_cpu/newcpu.cpp
-	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) ../uae_cpu/newcpu.cpp -o newcpu.s
+	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) $(srcdir)/../uae_cpu/newcpu.cpp -o newcpu.s
 
 memory.s: ../uae_cpu/memory.cpp
-	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) ../uae_cpu/memory.cpp -o memory.s
+	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) $(srcdir)/../uae_cpu/memory.cpp -o memory.s
 
 $(APP_IFC): aratapif.c
-	$(CC) $(LDFLAGS) $(CFLAGS) -o $(APP_IFC) -DHAVE_AFINET aratapif.c
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $(APP_IFC) -DHAVE_AFINET $(srcdir)/aratapif.c
 
 $(APP).1.gz: ../../doc/$(APP).1
-	gzip -c ../../doc/$(APP).1 > $(APP).1.gz
+	gzip -c $(srcdir)/../../doc/$(APP).1 > $(APP).1.gz
 
 #-------------------------------------------------------------------------
 # DO NOT DELETE THIS LINE -- make depend depends on it.
