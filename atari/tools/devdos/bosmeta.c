@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #include "bosmeta.h"
 #include "dosdir.h"
@@ -154,7 +155,9 @@ long bosfs_initialize(void) {
 long
 getxattr (FCOOKIE *fc, struct xattr *res)
 {
-	res->mode = 0666 | ( fc->attr & FA_DIR ? 0111 : 0);
+	res->mode = 0666;
+        res->mode |= fc->attr & FA_DIR ? (S_IFDIR|0111) : 0;
+
 	res->index = (long)fc;
 	res->dev = (long)&root;
 	res->rdev = (long)&root;
@@ -182,14 +185,19 @@ getxattr (FCOOKIE *fc, struct xattr *res)
 long
 name2cookie (LIST *folder, const char *name, FCOOKIE **res)
 {
+	char lowname[32];
 	FCOOKIE* fc;
 
 	DEBUG(( "name2cookie: name=%s\n", name));
 
 	/* look for 'name' in the folder */
 	listForEach( FCOOKIE*, fc, folder) {
+		char *c = lowname;
+		char *f = fc->name;
+		while ( (*c++ = tolower(*f++)) ) ;
+
 		DEBUG(( "name2cookie: fc->name=%s\n", fc->name));
-		if ( ! strcmp( fc->name, name) ) {
+		if ( ! strcmp( lowname, name) ) {
 			*res = fc;
 			return 0;
 		}
