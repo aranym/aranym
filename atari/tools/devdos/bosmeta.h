@@ -63,6 +63,10 @@ struct xattr
 	long		reserved3[2];
 };
 
+static inline long
+is_terminal( FCOOKIE *fc) {
+	return fc->bos_info_flags & BOS_INFO_ISTTY;
+}
 
 long bosfs_initialize(void);
 

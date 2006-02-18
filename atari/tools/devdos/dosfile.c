@@ -46,13 +46,6 @@ typedef struct {
 
 
 static inline long
-is_terminal( FILEPTR *f)
-{
-	return f->fc->bos_info_flags & BOS_INFO_ISTTY;
-}
-
-
-static inline long
 do_open( FILEPTR *f, FCOOKIE *fc, short mode)
 {
 	metaopen_t metaopen;
@@ -226,7 +219,7 @@ sys_f_read (MetaDOSFile short fd, long count, char *buf)
 	FILEPTR *f = (FILEPTR*)fpMD;
 
 	DEBUG(("f_read: '%s' %lx\n", f->fc->name, f->fc->bos_info_flags));
-	if (is_terminal (f))
+	if (is_terminal (f->fc))
 		return tty_read (f, buf, count);
 
 	DEBUG(("f_read: block '%s'\n", f->fc->name));
@@ -239,7 +232,7 @@ sys_f_write (MetaDOSFile short fd, long count, const char *buf)
 	long r;
 	FILEPTR *f = (FILEPTR*)fpMD;
 
-	if (is_terminal (f))
+	if (is_terminal (f->fc))
 		return tty_write (f, buf, count);
 
 	/* Prevent broken device drivers from wiping the disk.
@@ -275,7 +268,7 @@ sys_f_seek (MetaDOSFile long place, short fd, short how)
 {
 	FILEPTR *f = (FILEPTR*)fpMD;
 
-	if (is_terminal (f))
+	if (is_terminal (f->fc))
 		return 0;
 
 	return do_lseek (f, place, how);
@@ -288,7 +281,7 @@ sys_f_datime (MetaDOSFile unsigned short *timeptr, short fd, short wflag)
 	FILEPTR *f = (FILEPTR*)fpMD;
 
 	/* some programs use Fdatime to test for TTY devices */
-	if (is_terminal (f))
+	if (is_terminal (f->fc))
 		return EACCES;
 
 	return EACCES; //FIXME: xdd_datime (f, timeptr, wflag);
