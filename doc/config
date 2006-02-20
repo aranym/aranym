@@ -142,7 +142,7 @@ Filtered = No
 
 
 # Networking (FreeMiNT with aranym.xif)
-# Range: ETH0 only for now
+# Range: ETH0-ETH3
 [ETH0]
 # Type: ptp or bridge
 Type = ptp
