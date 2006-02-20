@@ -1,5 +1,5 @@
 %define name	aranym
-%define ver	0.9.0
+%define ver	0.9.3beta
 %define rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -12,7 +12,7 @@ Version:	%{ver}
 Release:	%{rel}
 License:	%{copy}
 Packager: %{joy}
-URL: http://aranym.sourceforge.net/
+URL: http://aranym.org/
 Group:	%{group}
 Source: http://prdownloads.sourceforge.net/aranym/%{src}
 BuildRoot: /var/tmp/%{name}-root
@@ -70,6 +70,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/doc/aranym
 
 %changelog
+* Mon Feb 20 2006 Petr Stehlik <pstehlik@sophics.cz>
+URL changed to aranym.org. Version increased. Other changes in NEWS file.
+
 * Sun Apr 17 2005 Petr Stehlik <pstehlik@sophics.cz>
 Files list fixed.
 

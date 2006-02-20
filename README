@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.9.2beta released on 2005/10/15
+      version 0.9.3beta released on 2006/02/20
 
 
  1) License
@@ -25,9 +25,10 @@ this program; if not, write to the
  2) What is this?
  ----------------
 
-ARAnyM is a multiplatform virtual machine (a software layer) for running Atari
-ST/TT/Falcon TOS/GEM applications on any hardware with many host operating
-systems. The reason for writing ARAnyM is to provide Atari power users with
+ARAnyM is a multiplatform virtual machine (a software layer, or an emulator)
+for running Atari ST/TT/Falcon operating systems and applications on almost
+any hardware with many host operating systems.
+The reason for writing ARAnyM is to provide Atari power users with
 faster and better machines. The ultimate goal is to create a new platform
 where TOS/GEM applications could continue to live forever.
 
@@ -57,13 +58,13 @@ Any help with programming/documentation/porting is very welcome!
  3) Installing
  -------------
 
-See INSTALL file.
+See INSTALL file and http://wiki.aranym.org/
 
 
  4) Configuring and running
  --------------------------
 
-See doc/documentation.txt
+See http://wiki.aranym.org/
 
 
  5) Keyboard shortcuts
@@ -116,10 +117,10 @@ Example for bash: export SDL_MOUSEDEV_IMPS2=1; aranym
  Join our mailing list for ARAnyM users - the WEB interface for the list
  is at http://bobek.sh.cvut.cz/cgi-bin/mailman/listinfo/aranym-user/
 
- Visit http://aranym.atari.org/ for latest information and source code.
+ Visit http://aranym.org/ for latest information and source code.
 
  For developers we have a developer mailing list and a CVS server.
- For details go to http://aranym.atari.org/
+ For details go to http://aranym.org/
 
 
 The "Power Without The Price" is back!

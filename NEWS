@@ -1,10 +1,17 @@
-2005/10/1? - version 0.9.2beta release
+2006/02/20 - version 0.9.3beta release
 
- Most work put into NF VDI (mainly OpenGL).
+ Exciting news: ARAnyM now has its own domain (http://aranym.org) and also
+ brand new Wikiwiki for easier cooperation on improving ARAnyM documentation
+ - visit http://wiki.aranym.org and look around...
 
- You have to install new HostFS, NF VDI and also Ethernet drivers.
+ This is not much polished release. I have intended it mainly as a checkpoint
+ for both developers and users, to resync and continue developing further.
 
- o hotkey combination to free keyboard/mouse lock is left Alt+Ctrl+Shift
+ Eventhough most work went into into NF VDI since last release so ARAnyM can
+ now output via OpenGL and features TrueType fonts (thanks to improved fVDI)
+ there are many other changes in most areas of ARAnyM:
+
+ o hotkey combination to free keyboard/mouse lock is LeftAlt+Ctrl+Shift
    (configurable in the SETUP GUI)
  o improved and bugfixed HostFS
  o fixed nfjpeg and enabled by default
@@ -16,11 +23,18 @@
  o configurable NF VDI driver (software or opengl)
  o joystick hat
  o DMA audio emulation
- o RTC timer
+ o RTC timer for precise 200 Hz Timer C emulation
  o multiple ethernet interfaces (up to four in default build)
- o AltGr key
- o aranym.html (converted from original plain text documentation)
- o ethernet and floppy work in linux-m68k
+ o AltGr key (right Alt key on PC keyboard)
+ o ethernet and floppy work in linux-m68k kernel
+ o improved Mac OS X port
+ o all binaries removed from source archive, to comply with Debian rules
+   (don't distribute what you can't rebuild from the archive with supplied
+   tools). There is a new AFROS CVS repository for the binary drivers.
+
+ If upgrading from previous release you have to update the HostFS, NF VDI
+ and also Ethernet drivers. We'll provide a ZIP archive with all necessary
+ drivers.
 
  
 2005/04/14 - version 0.9.0 release

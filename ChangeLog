@@ -2,6 +2,7 @@
 - atari/*: binaries moved to a separate 'afros' repository
 - atari/fvdi: removed completely (now hosted in fVDI CVS repository)
 - src/Unix/Makefile.in: updated to not install the missing binaries
+- doc/*.html: documentation moved to http://wiki.aranym.org/
 
 
 2006/02/12 - Andreas
@@ -42,8 +43,8 @@
 
 
 2006/02/04 - Patrice
-- BootOs files split in parts for each bootable OS. Will merge bootos_linux and
-  lilo later.
+- BootOs files split in parts for each bootable OS. Will merge bootos_linux
+  and lilo later.
 
 
 2006/02/04 - Standa
@@ -67,27 +68,29 @@
 
 
 2006/01/20 - Standa
-- atari/natfeat: the natfeat.h is now deprecated. A new nf_ops.h has been taken
-  from the FreeMiNT (freemint\sys\mint\arch\nf_ops.h) and adjusted for out of
-  mint cvs tree use.
+- atari/natfeat: the natfeat.h is now deprecated. A new nf_ops.h has been
+  taken from the FreeMiNT (freemint\sys\mint\arch\nf_ops.h) and adjusted for
+  out of mint cvs tree use.
 
 - atari/nfstderr: converted to use the new nf_ops.h (nf_init() used to detect
-  NFs and the returned 'struct nf_ops' pointer to call the features). Also there
-  is the freemint\sys\xdd\nfstderr folder containing the .xdd equivalent of this
-  driver for FreeMiNT. A great example how to do basic device driver for TOS as
-  well as for FreeMiNT with almost the same code.
+  NFs and the returned 'struct nf_ops' pointer to call the features). Also
+  there is the freemint\sys\xdd\nfstderr folder containing the .xdd equivalent
+  of this driver for FreeMiNT. A great example how to do basic device driver
+  for TOS as well as for FreeMiNT with almost the same code.
 
 - atari/hostfs: uses nf_ops.h now.
-
-  Binaries and further documentation is comming soon.
+  Binaries and further documentation is coming soon.
 
 
 2006/01/29 - Standa
-- atari/nfstderr: nfstderr.bos driver that provides write using the NF_STDERR NF.
+- atari/nfstderr: nfstderr.bos driver that provides write using the NF_STDERR
+  NatFeat.
 
-- atari/tools/devdoc: dev.dos driver that provides a filesystem with all the .bos
-  drivers mounted. Using this you can use 'cat x.txt x:\dev\nfstderr' also in TOS.
-  This dev.dos is generic in the sense that it doesn't depend on aranym in any way.
+- atari/tools/devdos: dev.dos driver that provides a filesystem with all the
+  .bos drivers mounted. Using this you can use 'cat x.txt x:\dev\nfstderr'
+  also in TOS.
+  This dev.dos is generic in the sense that it doesn't depend on aranym in
+  any way.
 
 
 2006/01/29 - milan
@@ -110,8 +113,8 @@
 
 
 2006/01/26 - Standa
-- hostfs: dirent.d_ino was deprecated in the latest cygwin version. The stat.st_ino
-  has to be used now.
+- hostfs: dirent.d_ino was deprecated in the latest cygwin version. The
+  stat.st_ino has to be used now.
 
 
 2006/01/26 - Patrice
@@ -133,8 +136,8 @@
 
 
 2005/12/29 - Patrice
-- Created aranym exception class for future classes that need exceptions. Also now
-  it can be created with variable list of arguments like printf().
+- Created aranym exception class for future classes that need exceptions.
+  Also now it can be created with variable list of arguments like printf().
 - BootOs uses it now.
 
 
@@ -144,7 +147,7 @@
 
 
 2005/12/26 - Patrice
-- hostscreen: remove unneeded inclusion of glext.h, we can use included SDL one.
+- hostscreen: remove unneeded inclusion of glext.h, use included SDL one.
 
 
 2005/12/18 - Patrice
@@ -158,8 +161,8 @@
 
 
 2005/12/11 - Patrice
-- Renamed rom class to bootos, exceptions reenabled in configure.ac. New BootOs
-  class used in main.
+- Renamed rom class to bootos, exceptions reenabled in configure.ac.
+  New BootOs class used in main.
 
 
 2005/12/10 - STanda
@@ -184,8 +187,8 @@
 
 
 2005/12/04 - Patrice
-- rtc: added method to read nvram keyboard setting (for future planned stuff in
-  input).
+- rtc: added method to read nvram keyboard setting (for future planned stuff
+  in input).
 
 
 2005/11/24 - Andreas
@@ -212,8 +215,8 @@
 2005/11/10 - Patrice
 - dsp_disasm was not building, fixed.
 
-- nfpci: make linux driver better subclass of nfpci, now when nfpci enabled, you
-  have a default null nfpci driver for non linux systems.
+- nfpci: make linux driver better subclass of nfpci, now when nfpci enabled,
+  you have a default null nfpci driver for non linux systems.
 
 
 2005/11/8 - Stefan
@@ -470,8 +473,8 @@
 
 
 2005/09/06 - Patrice
-- Don't open GUI when OpenGL enabled, it will crash. hostscreen class should be
-  split in two parts like nfvdi: a software renderer, and an OpenGL renderer.
+- Don't open GUI when OpenGL enabled, it will crash. hostscreen class should
+  be split in two parts like nfvdi: a software and an OpenGL renderer.
 
 
 2005/09/04 - Petr
@@ -564,8 +567,8 @@
 
 
 2005/07/29 - Patrice
-- Trigger MFP interrupt only once per audio callback. Default format is 16 bits
-  stereo for audio dma.
+- Trigger MFP interrupt only once per audio callback. Default format is
+  16 bits stereo for audio dma.
 
 
 2005/07/26 - Patrice
@@ -581,8 +584,8 @@
 
 
 2005/07/20 - Patrice
-- Preliminary DMA audio emulation. Remove TOS check for joypad port presence that
-  set DMA audio bit in _SND cookie to 0 if absent (!!).
+- Preliminary DMA audio emulation. Remove TOS check for joypad port presence
+  that set DMA audio bit in _SND cookie to 0 if absent (!!).
 
 
 2005/07/19 - Xavier
@@ -655,7 +658,7 @@
 
 
 2005/06/21 - Patrice
-- hostscreen: Don't use SDL version of glext.h. Also fix bpp for OpenGL screen.
+- hostscreen: Don't use SDL version of glext.h. Also fix bpp for OpenGL screen
 
 
 2005/06/20 - milan
@@ -664,12 +667,12 @@
 
 
 2005/06/17 - Patrice
-- nfosmesa: Added nfosmesa device driver for MiNT, which now works. You can use
-  it with MiNT 1.16, which was removing __NF cookie.
+- nfosmesa: Added nfosmesa device driver for MiNT, which now works. You can
+  use it with MiNT 1.16, which was removing __NF cookie.
 
 
 2005/06/16 - Patrice
-- nfosmesa: Reworked interface to host, can use a MiNT device (to write) ioctl,
+- nfosmesa: Reworked interface to host, can use a MiNT device (to write) ioctl 
   or NF interface. On the Atari side, parameters are no more stacked twice.
 
 
@@ -688,10 +691,10 @@
 
 
 2005/06/13 - Patrice
-- hostscreen: disabling texturing when not used. Correctly setup shadow texture
-  when it is smaller than asked screen.
-- nfosmesa: Don't pollute gl namespace in NFOSMesa class. Allow NFOSMesa to be
-  compiled with hardware OpenGL rendering.
+- hostscreen: disabling texturing when not used. Correctly setup shadow
+  texture when it is smaller than asked screen.
+- nfosmesa: Don't pollute gl namespace in NFOSMesa class. Allow NFOSMesa
+  to be compiled with hardware OpenGL rendering.
 
 
 2005/06/12 - Patrice
@@ -705,8 +708,8 @@
 
 
 2005/06/09 - Patrice
-- nfvdi: added preliminary OpenGL fillPoly() rendering. Host screen organization
-  fixed on the ARAnyM side.
+- nfvdi: added preliminary OpenGL fillPoly() rendering. Host screen
+  organization fixed on the ARAnyM side.
 
 
 2005/06/08 - Patrice
@@ -724,14 +727,14 @@
 
 
 2005/06/05 - Patrice
-- nfvdi: added mouse cursor rendering for OpenGL driver. Host SDL cursor can be
-  enabled in nfvdi.h by uncommenting USE_HOST_MOUSE_CURSOR (experimental).
+- nfvdi: added mouse cursor rendering for OpenGL driver. Host SDL cursor can
+  be enabled in nfvdi.h by uncommenting USE_HOST_MOUSE_CURSOR (experimental).
 
 
 2005/06/03 - Patrice
 - NF audio: close SDL audio device on exit. Closing it on Atari reset event
   hangs ARAnyM on my system, more investigation needed.
-- main.cpp, Unix/main_unix.cpp: SDL_Quit() was called twice: once in ExitAll(),
+- main.cpp, Unix/main_unix.cpp: SDL_Quit() was called twice: once in ExitAll() 
   and once at exit().
 
 
@@ -770,9 +773,9 @@
 
 
 2005/05/14 - Patrice
-- nfvdi: Missing constructor, and initialization. Swapped disable/enable cursor
-  in drawMouse. OpenGL renderer: add logical operations, and screen to screen
-  blits.
+- nfvdi: Missing constructor, and initialization. Swapped disable/enable
+  cursor in drawMouse. OpenGL renderer: add logical operations, and screen
+  to screen blits.
 
 
 2005/05/13 - milan
@@ -794,8 +797,8 @@
 
 
 2005/05/11 - Patrice
-- Can dynamically choose a NF CD-ROM driver (linux or sdl one). Can also choose
-  a NF VDI driver: software renderer, or the non working OpenGL renderer.
+- Can dynamically choose a NF CD-ROM driver (linux or sdl one). Can also
+  choose a NF VDI driver: software renderer or the non working OpenGL renderer
 
 - Get confused with bpp (bytes per pixel) and bpp (bits per pixel).
 
