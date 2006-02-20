@@ -223,31 +223,18 @@ install: $(APP) $(TAPIF) $(APP).1.gz installdirs
 #	$(INSTALL_DATA) $(srcdir)/../../data/etos512k.img $(DESTDIR)$(datadir)/$(APP)/etos512k.img
 	$(INSTALL_DATA) $(srcdir)/../../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) $(srcdir)/../../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
-	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bin/hostfs.dos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bin/hostfs.xfs.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/nfcdrom/nfcdrom.bos.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom/nfcdrom.bos.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/nfjpeg/nfjpeg.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg/nfjpeg.prg.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/nfosmesa/osmesa.ldg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa/osmesa.ldg.bz2
 	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bdconfig.sys $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/README $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
-	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/bin/aranym.xif.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/aranym.xif.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/network/nfeth-config.bz2
 	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/README $(DESTDIR)$(datadir)/$(APP)/atari/network/README
 	$(INSTALL) $(srcdir)/../../tools/arabridge $(DESTDIR)$(datadir)/$(APP)/arabridge
 	$(INSTALL) $(srcdir)/../../tools/floppy.sh $(DESTDIR)$(datadir)/$(APP)/floppy.sh
-	$(INSTALL_DATA) $(srcdir)/../../atari/fvdi/drivers/aranym.sys.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/fvdi/fvdi.sys $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.sys
 	$(INSTALL_DATA) $(srcdir)/../../atari/tools/README $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
-	$(INSTALL_DATA) $(srcdir)/../../atari/tools/clocky.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/tools/fastram.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
 	$(INSTALL_DATA) $(srcdir)/../../atari/tools/pc101us.kbd.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/tools/pcpatch.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/sound/zmagxsnd.prg.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2
 	$(INSTALL_DATA) $(srcdir)/../../atari/sound/README $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
 	
 installdirs:
-	$(SHELL) $(srcdir)/mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/hostfs $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa $(DESTDIR)$(datadir)/$(APP)/atari/network $(DESTDIR)$(datadir)/$(APP)/atari/fvdi $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
+	$(SHELL) $(srcdir)/mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/hostfs $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa $(DESTDIR)$(datadir)/$(APP)/atari/network $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
 
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
@@ -270,34 +257,20 @@ uninstall:
 #	rm -f $(DESTDIR)$(datadir)/$(APP)/etos512k.img
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom/nfcdrom.bos.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg/nfjpeg.prg.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa/osmesa.ldg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/aranym.xif.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/nfeth-config.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/arabridge
 	rm -f $(DESTDIR)$(datadir)/$(APP)/floppy.sh
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/fvdi/fvdi.sys
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2
-	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/hostfs
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/network
-	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/fvdi
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/tools
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/sound
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari
@@ -321,7 +294,7 @@ mrproper: distclean
 	rm -rf $(srcdir)/aclocal.m4 $(srcdir)/configure $(srcdir)/config.h.in
 
 bindistdirs:
-	$(SHELL) $(srcdir)/mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/fvdi tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
+	$(SHELL) $(srcdir)/mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
 bindist: $(APP) $(TAPIF) $(APP).1.gz bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
@@ -344,27 +317,14 @@ bindist: $(APP) $(TAPIF) $(APP).1.gz bindistdirs
 #	$(INSTALL_DATA) $(srcdir)/../../data/etos512k.img tmpdist$(datadir)/$(APP)/etos512k.img
 	$(INSTALL_DATA) $(srcdir)/../../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
 	$(INSTALL_DATA) $(srcdir)/../../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
-	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bin/hostfs.dos.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.dos.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bin/hostfs.xfs.bz2 tmpdist$(datadir)/$(APP)/atari/hostfs/hostfs.xfs.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/nfcdrom/nfcdrom.bos.bz2 tmpdist$(datadir)/$(APP)/atari/nfcdrom/nfcdrom.bos.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/nfjpeg/nfjpeg.prg.bz2 tmpdir$(datadir)/$(APP)/atari/nfjpeg/nfjpeg.prg.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/nfosmesa/osmesa.ldg.bz2 tmpdir$(datadir)/$(APP)/atari/nfosmesa/osmesa.ldg.bz2
 	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	$(INSTALL_DATA) $(srcdir)/../../atari/hostfs/README tmpdist$(datadir)/$(APP)/atari/hostfs/README
-	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/bin/aranym.xif.bz2 tmpdist$(datadir)/$(APP)/atari/network/aranym.xif.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/nfeth-config/nfeth-config.bz2 tmpdist$(datadir)/$(APP)/atari/network/nfeth-config.bz2
 	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) $(srcdir)/../../atari/network/ethernet/README tmpdist$(datadir)/$(APP)/atari/network/README
 	$(INSTALL) $(srcdir)/../../tools/arabridge tmpdist$(datadir)/$(APP)/arabridge
 	$(INSTALL) $(srcdir)/../../tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
-	$(INSTALL_DATA) $(srcdir)/../../atari/fvdi/drivers/aranym.sys.bz2 tmpdist$(datadir)/$(APP)/atari/fvdi/aranym.sys.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/fvdi/fvdi.sys tmpdist$(datadir)/$(APP)/atari/fvdi/fvdi.sys
 	$(INSTALL_DATA) $(srcdir)/../../atari/tools/README tmpdist$(datadir)/$(APP)/atari/tools/README
-	$(INSTALL_DATA) $(srcdir)/../../atari/tools/clocky.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/clocky.prg.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/tools/fastram.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/fastram.prg.bz2
 	$(INSTALL_DATA) $(srcdir)/../../atari/tools/pc101us.kbd.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
-	$(INSTALL_DATA) $(srcdir)/../../atari/tools/pcpatch.prg.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pcpatch.prg.bz2	
-	$(INSTALL_DATA) $(srcdir)/../../atari/sound/zmagxsnd.prg.bz2 tmpdist$(datadir)/$(APP)/atari/sound/zmagxsnd.prg.bz2	
 	$(INSTALL_DATA) $(srcdir)/../../atari/sound/README tmpdist$(datadir)/$(APP)/atari/sound/README
 	chmod -R a+r tmpdist
 	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
