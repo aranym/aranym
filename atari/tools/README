@@ -1,8 +1,5 @@
 These are the first basic tools for Aranym:
 
-- FASTRAM.PRG v2.0 that detects FastRAM size automatically and reserves
-  64kB block of RAM for DMA operations to FastRAM (Cookie "_FRB")
-
 - CLOCKY.PRG that write actual mouse position to $f9000e/$f90010
   (It was faster to implement it into Clocky (TM) than to write a new TSR).
   Clocky by default do not alter the keyboard layout now. Get full
@@ -11,10 +8,5 @@ These are the first basic tools for Aranym:
 
 - PCPATCH.PRG that patches PureC (PC.PRG) to be able to compile
   projects and files from the BetaDOS driven filesystem.
-
-Soon there will be a tool for arafs that will edit the
-MetaDOS' config.sys file automatically.
-
-Finally all these tools will be merged into one AraKit.
 
 Petr
