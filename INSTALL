@@ -53,9 +53,16 @@ Compilation is accomplished using the Cygwin linux-like environment
 Details are available in tools/build-cygwin.sh.
 
 
+  2-3) Apple Mac OS X
+  -------------------
+There are several methods of building ARAnyM for OS X. Details will
+be added here.
+
+
 3) Installation
 ---------------
-You may install ARAnyM by typing 'make install' (root privileges expected)
+You may install ARAnyM on Unix/Linux by typing 'make install' (have root
+privileges as default configuration installs to /usr/local/),
 or you may run the binary directly by typing ./aranym.
 
 Next step is to obtain the operating system (TOS 4.04 or EmuTOS) and install
