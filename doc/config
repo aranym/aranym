@@ -13,6 +13,12 @@ TOS = /usr/local/share/aranym/ROM
 # location of EmuTOS (full path)
 EmuTOS = 
 
+# location of FreeMiNT kernel (full path)
+Bootstrap =
+
+# default boot drive for FreeMiNT
+BootDrive =
+
 # grab mouse to ARAnyM window when the mouse enters the window rectangle
 AutoGrabMouse = Yes
 
