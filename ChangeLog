@@ -1,3 +1,9 @@
+2006/02/20 - joy
+- atari/*: binaries moved to a separate 'afros' repository
+- atari/fvdi: removed completely (now hosted in fVDI CVS repository)
+- src/Unix/Makefile.in: updated to not install the missing binaries
+
+
 2006/02/12 - Andreas
 - Support compiling outside source directory.
 
