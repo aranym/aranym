@@ -1,8 +1,14 @@
+*** CVS tagged as ARANYM_0_9_3_BETA
+
 2006/02/20 - joy
-- atari/*: binaries moved to a separate 'afros' repository
+- atari/*: binaries moved to a separate 'afros' CVS repository
 - atari/fvdi: removed completely (now hosted in fVDI CVS repository)
+- natfeat/fvdidrv_nfapi.h: added from fVDI CVS
+- natfeat/nfvdi.cpp: renamed FVDI_TEXT enum to FVDI_TEXT_AREA (to match
+  the fVDI CVS)
 - src/Unix/Makefile.in: updated to not install the missing binaries
 - doc/*.html: documentation moved to http://wiki.aranym.org/
+- aranym.spec, README, NEWS, TODO, version.h: updated for release
 
 
 2006/02/12 - Andreas

@@ -1,7 +1,7 @@
 /*
 	NatFeat VDI driver
 
-	ARAnyM (C) 2005 Patrice Mandin
+	ARAnyM (C) 2005,2006 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "cpu_emulation.h"
 #include "parameters.h"
 #include "nfvdi.h"
-#include "../../atari/fvdi/drivers/aranym/fvdidrv_nfapi.h"
+#include "fvdidrv_nfapi.h"	// keep in sync with same file in fVDI CVS
 #include "host.h"
 #include "hostscreen.h"
 
@@ -220,7 +220,7 @@ int32 VdiDriver::dispatch(uint32 fncode)
 			                  getParameter(9),			// interior style
 			                  (memptr)getParameter(10));		// clip rectangle
 			break;
-		case FVDI_TEXT:
+		case FVDI_TEXT_AREA:
 			ret = drawText((memptr)getParameter(0),		// vwk
 			                  (memptr)getParameter(1),		// text*
 			                  getParameter(2),			// length
