@@ -58,9 +58,5 @@ fi
 cd aranym/src/Unix
 ./autogen.sh
 make distclean
-echo "Edit the Makefile.in (enable the EmuTOS installation)"
-read key
-echo "Copy etos512k.img to the aranym/data subfolder"
-read key
 cd ../../../ && mv aranym $FOLDER && GZIP=--best tar chozf $FNAME --exclude=autogen.sh --exclude=CVS $FOLDER
 
