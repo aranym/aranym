@@ -34,7 +34,7 @@
 
  If upgrading from previous release you have to update the HostFS, NF VDI
  and also Ethernet drivers. We'll provide a ZIP archive with all necessary
- drivers.
+ drivers. The impatient can get the Atari drivers at http://aranym.org/bin/
 
  
 2005/04/14 - version 0.9.0 release
