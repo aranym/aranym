@@ -398,6 +398,37 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
 	}
 
+	if ( (uint32)ReadInt16( src + MFDB_STAND ) == 0x0100 ) {
+		if ( ReadInt16( src + MFDB_NPLANES ) != 8 ) {
+			D(bug("fVDI: Only 8bit chunky expand is supported so far."));
+			return 0;
+		}
+
+		/* FIXME! This is a hack as this class should not use SDL functions directly */
+
+		SDL_Surface *textsurf = SDL_AllocSurface(SDL_SWSURFACE, w, h, 32,
+				0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+		if ( textsurf == NULL ) return 0;
+
+		/* 8bit greyscale aplha expand */
+		for(uint16 j = 0; j < h; j++) {
+			uint32 *dst = (uint32 *)textsurf->pixels + j * textsurf->pitch/4;
+			for(uint16 i = sx; i < sx + w; i++) {
+				*dst++ = fgColor | (ReadInt8(data + j * pitch + i) << 24);
+			}
+		}
+
+		D(bug("fVDI: %s %x, %d, %d", "8BIT expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
+
+		SDL_Rect destRect = { dx, dy, w, h };
+		SDL_BlitSurface(textsurf,NULL,hostScreen.getPhysicalSurface(),&destRect);
+		SDL_FreeSurface(textsurf);
+
+		hostScreen.update(dx, dy, w, h, true);
+		return 1;
+	}
+
+
 	if (!hostScreen.renderBegin())
 		return 1;
 
@@ -1428,6 +1459,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.15  2005/09/27 15:14:19  pmandin
+ * Use host.h inclusion
+ *
  * Revision 1.14  2005/08/29 17:03:07  pmandin
  * nfvdi: Make host mouse cursor usage configurable
  *

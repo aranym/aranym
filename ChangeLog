@@ -1,3 +1,8 @@
+2006/02/08 - Standa
+- nfvdi_soft: expandBitmap() now alpha expands 8bit chunked
+  (mfdb_standard = 0x0100)  data
+
+
 *** CVS tagged as ARANYM_0_9_3_BETA
 
 2006/02/20 - joy
