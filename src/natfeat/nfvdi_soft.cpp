@@ -406,23 +406,65 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 		/* FIXME! This is a hack as this class should not use SDL functions directly */
 
-		SDL_Surface *textsurf = SDL_AllocSurface(SDL_SWSURFACE, w, h, 32,
-				0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-		if ( textsurf == NULL ) return 0;
-
 		/* 8bit greyscale aplha expand */
-		for(uint16 j = 0; j < h; j++) {
-			uint32 *dst = (uint32 *)textsurf->pixels + j * textsurf->pitch/4;
-			for(uint16 i = sx; i < sx + w; i++) {
-				*dst++ = fgColor | (ReadInt8(data + j * pitch + i) << 24);
+		SDL_Surface *screen = hostScreen.getPhysicalSurface();
+		SDL_Surface *asurf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32,
+				screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, 0xFF000000);
+		if ( asurf == NULL ) return 0;
+
+		if (logOp == 1) {
+			/* no alpha surface */
+			SDL_Surface *blocksurf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, screen->format->BitsPerPixel,
+					screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+			if ( blocksurf == NULL ) return 0;
+
+			/* fill with the background color */
+			for(uint16 j = 0; j < h; j++) {
+				uint32 *dst = (uint32 *)blocksurf->pixels + j * blocksurf->pitch/4;
+				for(uint16 i = 0; i < w; i++) *dst++ = bgColor;
+			}
+
+			/* transparent alpha blit */
+			for(uint16 j = 0; j < h; j++) {
+				uint32 *dst = (uint32 *)asurf->pixels + j * asurf->pitch/4;
+				for(uint16 i = sx; i < sx + w; i++) {
+					*dst++ = fgColor | (ReadInt8(data + j * pitch + i) << 24);
+				}
+			}
+			SDL_Rect identRect = { 0, 0, w, h };
+			SDL_BlitSurface(asurf,NULL,blocksurf,&identRect);
+			SDL_FreeSurface(asurf);
+
+			/* blit the whole thing to the screen */
+			asurf = blocksurf;
+		} else {
+			for(uint16 j = 0; j < h; j++) {
+				uint32 *dst = (uint32 *)asurf->pixels + j * asurf->pitch/4;
+				switch(logOp) {
+					case 2:
+						for(uint16 i = sx; i < sx + w; i++) {
+							*dst++ = fgColor | (ReadInt8(data + j * pitch + i) << 24);
+						}
+						break;
+					case 3:
+						for(uint16 i = sx; i < sx + w; i++) {
+							*dst++ = ~hostScreen.getPixel(dx + i - sx, dy + j) | (ReadInt8(data + j * pitch + i) << 24);
+						}
+						break;
+					case 4:
+						for(uint16 i = sx; i < sx + w; i++) {
+							*dst++ = bgColor | ((0xff - ReadInt8(data + j * pitch + i)) << 24);
+						}
+						break;
+				}
 			}
 		}
 
 		D(bug("fVDI: %s %x, %d, %d", "8BIT expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
 
 		SDL_Rect destRect = { dx, dy, w, h };
-		SDL_BlitSurface(textsurf,NULL,hostScreen.getPhysicalSurface(),&destRect);
-		SDL_FreeSurface(textsurf);
+		SDL_BlitSurface(asurf,NULL,screen,&destRect);
+		SDL_FreeSurface(asurf);
 
 		hostScreen.update(dx, dy, w, h, true);
 		return 1;
@@ -1459,6 +1501,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.16  2006/02/21 20:14:03  standa
+ * A little hack to use alpha channeling for expandArea( of 8bit chunky data).
+ *
  * Revision 1.15  2005/09/27 15:14:19  pmandin
  * Use host.h inclusion
  *

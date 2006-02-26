@@ -1,4 +1,9 @@
-2006/02/08 - Standa
+2006/02/26 - Standa
+- nfvdi_soft: the remaining logical operations implemented for the
+  8bit alpha expand. Adjusted to work in all TC (16bit-32bit) modes. 
+
+
+2006/02/21 - Standa
 - nfvdi_soft: expandBitmap() now alpha expands 8bit chunked
   (mfdb_standard = 0x0100)  data
 
