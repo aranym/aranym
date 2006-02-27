@@ -792,7 +792,9 @@ struct Config_Tag hotkeys_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-struct { char *string; SDL_keysym *keysym; } hotkeys_rel[]={
+typedef struct { char *string; SDL_keysym *keysym; } HOTKEYS_REL;
+
+HOTKEYS_REL hotkeys_rel[]={
 	{ hotkeys[0], &bx_options.hotkeys.setup },
 	{ hotkeys[1], &bx_options.hotkeys.quit },
 	{ hotkeys[2], &bx_options.hotkeys.reboot },

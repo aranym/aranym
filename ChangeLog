@@ -1,3 +1,8 @@
+2006/02/27 - joy
+- tools/build-cygwin.sh: version of SDL increased to 1.2.9
+- include/host_clock.h: virtual destructor added
+- parameters.cpp: anonymous struct named HOTKEYS_REL
+
 2006/02/26 - Standa
 - nfvdi_soft: the remaining logical operations implemented for the
   8bit alpha expand. Adjusted to work in all TC (16bit-32bit) modes. 

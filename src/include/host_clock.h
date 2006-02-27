@@ -31,6 +31,7 @@ class HostClock {
 
 	public:
 		HostClock(void);
+		virtual ~HostClock() {}
 
 		void reset(void);
 		float getClock(void);	/* integer part are milli seconds */
