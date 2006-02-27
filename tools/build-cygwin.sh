@@ -76,7 +76,7 @@
 
 #----------------------------------------------
 # Edit this to suit your configuration !
-SDL_SOURCES=${PWD}/SDL-1.2.8
+SDL_SOURCES=${PWD}/SDL-1.2.9
 SDL_IMAGE_SOURCES=${PWD}/SDL_image-1.2.4
 ARANYM_SOURCES=${PWD}/aranym
 #----------------------------------------------
