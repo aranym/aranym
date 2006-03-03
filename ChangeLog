@@ -1,3 +1,7 @@
+2006/03/03 - Patrice
+- nfosmesa.xdd: fixed NF pointer read for MiNT device.
+
+
 2006/02/27 - joy
 - tools/build-cygwin.sh: version of SDL increased to 1.2.9
 - include/host_clock.h: virtual destructor added

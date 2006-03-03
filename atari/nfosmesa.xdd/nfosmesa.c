@@ -41,7 +41,7 @@
  */
 
 # define VER_MAJOR	0
-# define VER_MINOR	2
+# define VER_MINOR	3
 # define VER_STATUS	
 
 /*
@@ -173,7 +173,7 @@ init (struct kerinfo *k)
 	DEBUG (("%s: enter init", __FILE__));
 
 	/* Check NF presence */
-	nfOps = nf_init();
+	nfOps = kernel->nf_ops;
 	if (!nfOps) {
 		c_conws("__NF cookie not present on this system\r\n");
 		return NULL;
