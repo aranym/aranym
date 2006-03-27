@@ -38,6 +38,13 @@
 #include <SDL_opengl.h>
 #endif
 
+#ifdef OS_cygwin
+#define WIN32 1
+#include <SDL_syswm.h>
+#include <windows.h>
+#undef WIN32
+#endif
+
 #define RGB_BLACK     0x00000000
 #define RGB_BLUE      0x000000ff
 #define RGB_GREEN     0x00ff0000
@@ -543,6 +550,18 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	{
 		surf = mainSurface;
 	}
+
+#ifdef OS_cygwin
+	static SDL_SysWMinfo pInfo;
+	SDL_GetWMInfo(&pInfo);
+
+	RECT r;
+	GetWindowRect(pInfo.window, &r);  // now r contains the windows size and position
+	SetWindowPos(pInfo.window, 0,
+			bx_options.video.x_win_offset != -1 ? bx_options.video.x_win_offset : r.left,
+			bx_options.video.y_win_offset != -1 ? bx_options.video.y_win_offset : r.top,
+			0, 0, SWP_NOSIZE);
+#endif
 
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 
@@ -1496,6 +1515,9 @@ void HostScreen::DisableOpenGLVdi(void)
 
 /*
  * $Log$
+ * Revision 1.78  2005/12/26 20:35:44  pmandin
+ * Remove unneeded inclusion of glext.h, use SDL included one
+ *
  * Revision 1.77  2005/11/14 00:38:28  stefanq
  * - nfvdi_opengl.h: Changed include of GL/glu.h to OpenGL/glu.h for darwin.
  * - nfvdi_opengl.cpp: Changed include of GL/glu.h to OpenGL/glu.h for darwin.

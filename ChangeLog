@@ -1,3 +1,9 @@
+2006/03/27 - Standa
+- In MS Windows the window position can now be set using a command line
+  argument [-P xpos xpos]. No config file entries added yet.
+  The command line args are read into bx_options.video.[xy]_win_offset values.
+
+
 2006/03/03 - Patrice
 - nfosmesa.xdd: fixed NF pointer read for MiNT device.
 
