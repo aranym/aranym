@@ -268,6 +268,7 @@ typedef struct {
   char			tos_path[512];
   char			emutos_path[512];
   char			bootstrap_path[512];
+  char			bootstrap_args[512];
   char			bootdrive;
   uint32		fastram;
   bool			autoMouseGrab;

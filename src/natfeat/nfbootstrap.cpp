@@ -62,8 +62,17 @@ int32 BootstrapNatFeat::dispatch(uint32 fncode)
 		case 1:	/* get_bootdrive() */
 				return tolower(bx_options.bootdrive)-'a';
 
-		default:;
+		case 2:	/* get_bootargs() */
+				{
+					memptr addr = getParameter(0);
+					long size = getParameter(1);
+					bug("NF BOOTSTRAP_ARGS(%s)", bx_options.bootstrap_args);
+					Host2AtariSafeStrncpy(addr, bx_options.bootstrap_args, size);
+				}
 				return 0;
+
+		default:;
+				return -1;
 	}
 }
 

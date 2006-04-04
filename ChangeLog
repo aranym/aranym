@@ -1,3 +1,15 @@
+2006/04/03 - Standa
+- A new BootstrapArgs [GLOBAL] section config argument that is provided
+  through the BOOTSTRAP NF to EmuTOS which passes those to the kernel
+  as command line arguments. This allows us to boot without the need
+  of mint.ini.
+
+  E.g. this boots directly without even showing the bootmenu:
+  Bootstrap = ~/mint/freemint/sys/.compile_arad/mintarad.prg
+  BootstrapArgs = DEBUG_LEVEL=1 BOOT_DELAY=0 MEM_PROT=NO 
+  BootDrive = C 
+
+
 2006/03/27 - Standa
 - In MS Windows the window position can now be set using a command line
   argument [-P xpos xpos]. No config file entries added yet.

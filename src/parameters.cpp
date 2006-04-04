@@ -158,6 +158,7 @@ struct Config_Tag global_conf[]={
 	{ "TOS", Path_Tag, bx_options.tos_path, sizeof(bx_options.tos_path), 0},
 	{ "EmuTOS", Path_Tag, bx_options.emutos_path, sizeof(bx_options.emutos_path), 0},
 	{ "Bootstrap", Path_Tag, bx_options.bootstrap_path, sizeof(bx_options.bootstrap_path), 0},
+	{ "BootstrapArgs", String_Tag, bx_options.bootstrap_args, sizeof(bx_options.bootstrap_args), 0},
 	{ "BootDrive", Char_Tag, &bx_options.bootdrive, 0, 0},
 	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab, 0, 0},
 #ifdef ENABLE_EPSLIMITER
