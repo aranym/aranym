@@ -4,7 +4,11 @@
   against read/write access in user mode. It's disabled by default
   mainly because it will kill some performance when activated.
 
-- configure.ac: --enable-protect2k defined
+- configure.ac: --enable-protect2k added. It's not enabled by default
+  (see above, performance reasons) but it gets enabled as soon as you
+  opt for full MMU emulation. In such case the additional performance
+  loss will not be noticeable and it will add to more complete real HW
+  emulation.
 
 
 2006/04/13-30 - Standa

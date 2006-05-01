@@ -135,7 +135,7 @@ static inline void check_ram_boundary(uaecptr addr, int size, bool write)
 #ifdef PROTECT2K
 		// protect first 2kB of RAM - access in supervisor mode only
 		if (!regs.s && addr < 0x00000800UL)
-			// bus error (below)
+			; // bus error (below)
 		else {
 #endif
 		// check for write access to protected areas:

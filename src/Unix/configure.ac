@@ -52,7 +52,7 @@ AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 (defa
 
 AC_ARG_ENABLE(dsp-disasm,      [  --enable-dsp-disasm     enable DSP 56001 disassembler (default=no)], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
 
-AC_ARG_ENABLE(protect2k,       [  --enable-protect2k=X    protect first 2kB against usermode access (default=no)], [WANT_PROTECT2K=$enableval], [WANT_PROTECT2K=no])
+AC_ARG_ENABLE(protect2k,       [  --enable-protect2k      enable first 2kB of RAM Super protection (default=no)], [WANT_PROTECT2K=$enableval], [WANT_PROTECT2K=no])
 
 AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB (default=no)], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
@@ -811,7 +811,7 @@ fi
 
 dnl protect first 2kB of RAM
 if [[ "x$WANT_PROTECT2K" != "xno" ]]; then
-  AC_DEFINE_UNQUOTED([Protect2K], $WANT_PROTECT2K, [Define if you want to protect first 2kB of RAM])
+  AC_DEFINE([PROTECT2K], 1, [Define if you want to protect first 2kB of RAM against user mode access])
 fi
 
 dnl fixed size FastRAM
@@ -827,6 +827,9 @@ else
     AC_MSG_WARN([MMU needs fixed position of VideoRAM])
     AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
     WANT_FIXEDVIDEORAM="yes"
+    AC_MSG_WARN([Protection of first 2kB RAM enabled as well - won't hurt])
+    AC_DEFINE([PROTECT2K], 1, [Define if you want to protect first 2kB of RAM against user mode access])
+    WANT_PROTECT2K="yes"
   fi
   if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
     AC_MSG_WARN([Blitter SDL surface blitting support needs fixed position of VideoRAM])
@@ -1772,7 +1775,7 @@ echo Distributed dispatcher ................. : $WANT_DIS_DIP
 echo Debugger ............................... : $WHICH_DEBUG
 echo Monitor ................................ : $WANT_MON
 echo Check memory ........................... : $MEMORY_CHECK
-echo Usermode protection of first 2kB of RAM. : $WANT_PROTECT2K
+echo First 2kB of RAM Supervisor protected... : $WANT_PROTECT2K
 echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM
 echo Fixed position of VideoRAM ............. : $WANT_FIXEDVIDEORAM
 echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
