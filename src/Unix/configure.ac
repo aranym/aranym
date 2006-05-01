@@ -282,7 +282,7 @@ case "$target_os" in
   cygwin*)
     DEFINES="$DEFINES -DARANYMHOME=\"\\\"aranym\\\"\""
     LIBS="$LIBS -liberty"
-    EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp cygwin/ethernet_cygwin.cpp"
+    EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp cygwin/ethernet_cygwin.cpp cygwin/clipbrd_cygwin.cpp"
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])

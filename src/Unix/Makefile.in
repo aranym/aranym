@@ -104,6 +104,7 @@ SRCS = ../main.cpp \
 	../natfeat/xhdi.cpp \
 	../natfeat/nfaudio.cpp \
 	../natfeat/nfbootstrap.cpp \
+	../natfeat/nfclipbrd.cpp \
 	../natfeat/nf_basicset.cpp \
 	../natfeat/debugprintf.cpp \
 	../natfeat/nfvdi.cpp \

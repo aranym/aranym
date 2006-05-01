@@ -1,3 +1,13 @@
+2006/04/13-30 - Standa
+- Cygwin build: Clipboard NatFeat added. This is to be used by
+  a m68k side filesystem to be committed soon.
+
+  One would need to point the GEM environment to it by setting the
+  SCRAPDIR or CLIPBRD variable in most AES configs. It is good
+  to know that e.g. Thing overrides this setting with its own.
+  So one need to configure Thing to the appropriate folder.
+
+
 2006/04/03 - Standa
 - A new BootstrapArgs [GLOBAL] section config argument that is provided
   through the BOOTSTRAP NF to EmuTOS which passes those to the kernel
