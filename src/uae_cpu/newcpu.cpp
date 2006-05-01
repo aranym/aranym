@@ -1201,10 +1201,6 @@ static int m68k_execute_depth = 0;
 
 void m68k_reset (void)
 {
-    m68k_areg (regs, 7) = phys_get_long(0x00000000);
-    m68k_setpc (phys_get_long(0x00000004));
-    mmu_set_tc(regs.tc & ~0x8000); /* disable mmu */
-    fill_prefetch_0 ();
     regs.s = 1;
     regs.m = 0;
     regs.stopped = 0;
@@ -1218,6 +1214,15 @@ void m68k_reset (void)
     SPCFLAGS_INIT( 0 );
     regs.intmask = 7;
     regs.vbr = regs.sfc = regs.dfc = 0;
+
+    // need to ensure the following order of initialization is correct
+    // (it is definitely better than what it was before this commit
+    //  since it was reading from 0x00000000 in User mode and with active MMU)
+    mmu_set_tc(regs.tc & ~0x8000); /* disable mmu */
+    m68k_areg (regs, 7) = phys_get_long(0x00000000);
+    m68k_setpc (phys_get_long(0x00000004));
+    fill_prefetch_0 ();
+
     /* gb-- moved into {fpp,fpu_x86}.cpp::fpu_init()
     regs.fpcr = regs.fpsr = regs.fpiar = 0; */
     fpu_reset();

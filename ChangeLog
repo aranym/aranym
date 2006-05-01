@@ -10,6 +10,10 @@
   loss will not be noticeable and it will add to more complete real HW
   emulation.
 
+- uae-cpu/newcpu.cpp: changed the order of initialization in m68k_reset()
+  otherwise the PROTECT2K falls into a recursive death. It might also
+  fix the problems with rebooting with active MMU (I think it used to crash).
+
 
 2006/04/13-30 - Standa
 - Cygwin build: Clipboard NatFeat added. This is to be used by
