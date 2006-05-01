@@ -34,7 +34,7 @@ public:
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);
 
-	int32 open(uint32 id);
+	int32 open(uint32 id, uint32 mode);
 	int32 close(uint32 id);
 	int32 read(uint32 id, memptr buff, uint32 size, uint32 pos);
 	int32 write(uint32 id, memptr buff, uint32 len, uint32 pos);

@@ -45,7 +45,7 @@ int32 ClipbrdNatFeat::dispatch(uint32 fncode)
     		return CLIPBRD_NFAPI_VERSION;
 
 		case CLIP_OPEN:
-			return open( getParameter(0) );
+			return open( getParameter(0), getParameter(1) );
 		case CLIP_CLOSE:
 			return close( getParameter(0) );
 		case CLIP_READ:
@@ -58,14 +58,16 @@ int32 ClipbrdNatFeat::dispatch(uint32 fncode)
 	}
 }
 
-int32 ClipbrdNatFeat::open(uint32 id)
+int32 ClipbrdNatFeat::open(uint32 id, uint32 mode)
 {
-	D(bug("clipbrd: open id=%ld", id));
+	(void)id; (void)mode;
+	D(bug("clipbrd: open id=%ld mode=%ld", id, mode));
 	return 0;
 }
 
 int32 ClipbrdNatFeat::close(uint32 id)
 {
+	(void)id;
 	D(bug("clipbrd: close id=%ld", id));
 	return 0;
 }
@@ -75,6 +77,7 @@ int32 ClipbrdNatFeat::read(uint32 id, memptr buff, uint32 size, uint32 pos)
 	int len;
 	char *data = read_aclip( &len);
 
+	(void)id;
 	D(bug("clipbrd: read pos=%ld, len=%ld", pos, len));
 
 	len = len-pos>size ? size : len-pos;
@@ -92,16 +95,21 @@ int32 ClipbrdNatFeat::write(uint32 id, memptr buff, uint32 len, uint32 pos)
 	char *cdata = read_aclip( &clen);
 	char *data = new char[pos+len];
 
+	(void)id;
 	D(bug("clipbrd: write pos=%ld, len=%d", pos, len));
 
 	if ( cdata ) {
-		memcpy( data, cdata, clen>pos+len ? pos : clen);
+		memcpy( data, cdata, clen>(long)(pos+len) ? pos : clen);
 		delete []cdata;
 	}
 
 	Atari2Host_memcpy(data + pos, buff, len);
 
-	/* send to host os */
+	/* send to host os
+	 *
+	 * shortens the clip to pos+len (expects the writes to come sequentially
+	 * and therefore the last write sets the complete clipboard contents)
+	 */
 	write_aclip( data, pos+len);
 
 	delete []data;
