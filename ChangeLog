@@ -1,3 +1,12 @@
+2006/05/01 - joy
+- uae-cpu/memory.h: added #ifdef PROTECT2K that brings more ST/TT hardware
+  compatibility to ARAnyM. When defined it protects the first 2 kB of RAM
+  against read/write access in user mode. It's disabled by default
+  mainly because it will kill some performance when activated.
+
+- configure.ac: --enable-protect2k defined
+
+
 2006/04/13-30 - Standa
 - Cygwin build: Clipboard NatFeat added. This is to be used by
   a m68k side filesystem to be committed soon.

@@ -97,10 +97,14 @@ extern uae_u32 VideoRAMBase;
 #if ARAM_PAGE_CHECK
 extern uaecptr pc_page, read_page, write_page;
 extern uintptr pc_offset, read_offset, write_offset;
-# ifdef FULLMMU
-#  define ARAM_PAGE_MASK 0xfff
+# ifdef PROTECT2K
+#  define ARAM_PAGE_MASK 0x7ff
 # else
-#  define ARAM_PAGE_MASK 0xfffff
+#  ifdef FULLMMU
+#   define ARAM_PAGE_MASK 0xfff
+#  else
+#   define ARAM_PAGE_MASK 0xfffff
+#  endif
 # endif
 #endif
 
@@ -128,13 +132,20 @@ extern uintptr FastRAMBaseDiff;
 static inline void check_ram_boundary(uaecptr addr, int size, bool write)
 {
 	if (addr <= (FastRAM_BEGIN + FastRAM_SIZE - size)) {
-		if (!write)
-			return;
+#ifdef PROTECT2K
+		// protect first 2kB of RAM - access in supervisor mode only
+		if (!regs.s && addr < 0x00000800UL)
+			// bus error (below)
 		else {
-			// first two longwords of ST-RAM are ROM
-			if ((addr >= FastRAM_BEGIN) || (addr >= 8 && addr <= (STRAM_END - size)))
-				return;
+#endif
+		// check for write access to protected areas:
+		// - first two longwords of ST-RAM are non-writable (ROM shadow)
+		// - non-writable area between end of ST-RAM and begin of FastRAM
+		if (!write || addr >= FastRAM_BEGIN || (addr >= 8 && addr <= (STRAM_END - size)))
+			return;
+#ifdef PROTECT2K
 		}
+#endif
 	}
 #ifdef FIXED_VIDEORAM
 	if (addr >= ARANYMVRAMSTART && addr <= (ARANYMVRAMSTART + ARANYMVRAMSIZE - size))
@@ -573,3 +584,7 @@ static inline void flush_internals() {
 }
 
 #endif /* MEMORY_H */
+
+/*
+vim:ts=4:sw=4:
+*/

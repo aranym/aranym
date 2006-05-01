@@ -52,6 +52,8 @@ AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 (defa
 
 AC_ARG_ENABLE(dsp-disasm,      [  --enable-dsp-disasm     enable DSP 56001 disassembler (default=no)], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
 
+AC_ARG_ENABLE(protect2k,       [  --enable-protect2k=X    protect first 2kB against usermode access (default=no)], [WANT_PROTECT2K=$enableval], [WANT_PROTECT2K=no])
+
 AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB (default=no)], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
 AC_ARG_ENABLE(fixedvideoram,   [  --enable-fixedvideoram  use fixed start of VideoRAM (default=no)], [WANT_FIXEDVIDEORAM=$enableval], [WANT_FIXEDVIDEORAM=no])
@@ -805,6 +807,11 @@ if [[ "x$WANT_DSP" = "xyes" ]]; then
         AC_DEFINE([DSP_DISASM], 1, [Define if DSP disassembly])
         DSPSRCS="$DSPSRCS ../dsp_disasm.cpp"
     fi
+fi
+
+dnl protect first 2kB of RAM
+if [[ "x$WANT_PROTECT2K" != "xno" ]]; then
+  AC_DEFINE_UNQUOTED([Protect2K], $WANT_PROTECT2K, [Define if you want to protect first 2kB of RAM])
 fi
 
 dnl fixed size FastRAM
@@ -1765,6 +1772,7 @@ echo Distributed dispatcher ................. : $WANT_DIS_DIP
 echo Debugger ............................... : $WHICH_DEBUG
 echo Monitor ................................ : $WANT_MON
 echo Check memory ........................... : $MEMORY_CHECK
+echo Usermode protection of first 2kB of RAM. : $WANT_PROTECT2K
 echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM
 echo Fixed position of VideoRAM ............. : $WANT_FIXEDVIDEORAM
 echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
