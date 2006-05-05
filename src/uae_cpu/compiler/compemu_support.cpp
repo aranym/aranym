@@ -6707,6 +6707,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 #if FLIGHT_RECORDER
 		{
 		    mov_l_ri(S1, get_virtual_address((uae_u8 *)(pc_hist[i].location)) | 1);
+		    /* store also opcode to second register */
 		    clobber_flags();
 		    remove_all_offsets();
 		    int arg = readreg_specific(S1,4,REG_PAR1);
@@ -7007,7 +7008,7 @@ void exec_nostats(void)
 	for (;;)  { 
 		uae_u32 opcode = GET_OPCODE;
 #if FLIGHT_RECORDER
-		m68k_record_step(m68k_getpc());
+		m68k_record_step(m68k_getpc(), opcode);
 #endif
 		(*cpufunctbl[opcode])(opcode);
 		cpu_check_ticks();
@@ -7033,7 +7034,7 @@ void execute_normal(void)
 			pc_hist[blocklen++].location = (uae_u16 *)regs.pc_p;
 			uae_u32 opcode = GET_OPCODE;
 #if FLIGHT_RECORDER
-			m68k_record_step(m68k_getpc());
+			m68k_record_step(m68k_getpc(), opcode);
 #endif
 			(*cpufunctbl[opcode])(opcode);
 			cpu_check_ticks();

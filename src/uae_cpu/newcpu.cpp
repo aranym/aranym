@@ -103,7 +103,15 @@ struct rec_step {
 
 bool cpu_flight_recorder_active = false;
 
+#define FRLOG_ALL	0	/* dump ever growing log continuously */
+#define FRLOG_IRQ	1	/* dump interrupt handler routines */
+#define FRLOG_REGS	0	/* dump all data/address registers */
+
+#if FRLOG_ALL
+const int LOG_SIZE = 10;
+#else
 const int LOG_SIZE = 8192;
+#endif
 static rec_step log[LOG_SIZE];
 static int log_ptr = -1; // First time initialization
 
@@ -114,9 +122,10 @@ static const char *log_filename(void)
 }
 
 static void dump_log();
-void m68k_record_step(uaecptr pc)
+void m68k_record_step(uaecptr pc, int opcode)
 {
 	static bool last_state = false;
+
 	if (! cpu_flight_recorder_active) {
 		if (last_state) {
 			// dump log out
@@ -130,44 +139,58 @@ void m68k_record_step(uaecptr pc)
 
 	if (! last_state) {
 		// reset old log
-    	log_ptr = 0;
-    	memset(log, 0, sizeof(log));
+		log_ptr = 0;
+		memset(log, 0, sizeof(log));
 		// remember last state
 		last_state = true;
 	}
 
+#if FRLOG_REGS
 	for (int i = 0; i < 8; i++) {
 		log[log_ptr].d[i] = m68k_dreg(regs, i);
 		log[log_ptr].a[i] = m68k_areg(regs, i);
 	}
+#endif
 	log[log_ptr].pc = pc;
+
 	MakeSR();
 	log[log_ptr].sr = regs.sr;
 	log[log_ptr].msp = regs.msp;
 	log[log_ptr].isp = regs.isp;
-	TRY(prb) {
-		log[log_ptr].instr = GET_OPCODE;
-	} CATCH(prb) {
-		log[log_ptr].instr = M68K_EMUL_OP_MAX;
-	}
+	log[log_ptr].instr = opcode;
+
+#if FRLOG_IRQ
+	if (!(regs.s && !regs.m)) {
+#endif
 	log_ptr = (log_ptr + 1) % LOG_SIZE;
+#if FRLOG_IRQ
+	}
+#endif
+#if FRLOG_ALL
+	if (log_ptr == 0) dump_log();
+#endif
 }
 
 static void dump_log(void)
 {
+#if FRLOG_ALL
+	FILE *f = fopen(log_filename(), "a");
+#else
 	FILE *f = fopen(log_filename(), "w");
+#endif
 	if (f == NULL)
 		return;
 	for (int i = 0; i < LOG_SIZE; i++) {
 		int j = (i + log_ptr) % LOG_SIZE;
-		fprintf(f, "pc %08x sr %04x msp %08x isp %08x\n", log[j].pc, log[j].sr, log[j].msp, log[j].isp);
+		fprintf(f, "pc %08x  instr %04x  sr %04x  msp %08x  isp %08x\n", log[j].pc, log[j].instr, log[j].sr, log[j].msp, log[j].isp);
+#if ENABLE_MON
+		disass_68k(f, log[j].pc);
+#endif
+#if FRLOG_REGS
 		fprintf(f, "d0 %08x d1 %08x d2 %08x d3 %08x\n", log[j].d[0], log[j].d[1], log[j].d[2], log[j].d[3]);
 		fprintf(f, "d4 %08x d5 %08x d6 %08x d7 %08x\n", log[j].d[4], log[j].d[5], log[j].d[6], log[j].d[7]);
 		fprintf(f, "a0 %08x a1 %08x a2 %08x a3 %08x\n", log[j].a[0], log[j].a[1], log[j].a[2], log[j].a[3]);
 		fprintf(f, "a4 %08x a5 %08x a6 %08x a7 %08x\n", log[j].a[4], log[j].a[5], log[j].a[6], log[j].a[7]);
-		fprintf(f, "instr: %04x\n", log[j].instr);
-#if ENABLE_MON
-		disass_68k(f, log[j].pc);
 #endif
 	}
 	fclose(f);
@@ -1573,7 +1596,7 @@ void m68k_do_execute (void)
 #endif
 	opcode = GET_OPCODE;
 #if FLIGHT_RECORDER
-	                m68k_record_step(m68k_getpc());
+	m68k_record_step(m68k_getpc(), opcode);
 #endif
 	(*cpufunctbl[opcode])(opcode);
 	cpu_check_ticks();

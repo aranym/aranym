@@ -1,3 +1,14 @@
+2006/05/05 - joy
+- uae-cpu/newcpu.cpp: improved Flight Recorder. Now can dump to a continuous
+  log, skip interrupt handlers, omit register list and most important -
+  it does not hang the OS when fetching the OPCODE like it used to do
+  regularly.
+
+- uae-cpu/compiler/compemu_support.cpp: adapted for passing opcode into
+  flight recorder. NB! One place is unfinished - line 6710 - I don't know
+  how to pass in the opcode as second parameter, sorry.
+
+
 2006/05/01 - joy
 - uae-cpu/memory.h: added #ifdef PROTECT2K that brings more ST/TT hardware
   compatibility to ARAnyM. When defined it protects the first 2 kB of RAM
