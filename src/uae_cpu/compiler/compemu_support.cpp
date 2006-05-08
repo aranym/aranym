@@ -1400,7 +1400,8 @@ static  int alloc_reg_hinted(int r, int size, int willclobber, int hint)
     bestreg=-1;
     when=2000000000;
 
-    for (i=N_REGS;i--;) {
+    /* XXX use a regalloc_order table? */
+    for (i=0;i<N_REGS;i++) {
 	badness=live.nat[i].touched;
 	if (live.nat[i].nholds==0)
 	    badness=0;
@@ -5982,7 +5983,7 @@ static inline void create_popalls(void)
   stack_space %= STACK_ALIGN;
   if (stack_space)
 	  stack_space = STACK_ALIGN - stack_space;
-  
+
   current_compile_p=popallspace;
   set_target(current_compile_p);
 

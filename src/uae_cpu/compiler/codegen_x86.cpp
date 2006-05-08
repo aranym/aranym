@@ -56,6 +56,11 @@
 #define R14_INDEX 14
 #define R15_INDEX 15
 #endif
+/* XXX this has to match X86_Reg8H_Base + 4 */
+#define AH_INDEX (0x10+4+EAX_INDEX)
+#define CH_INDEX (0x10+4+ECX_INDEX)
+#define DH_INDEX (0x10+4+EDX_INDEX)
+#define BH_INDEX (0x10+4+EBX_INDEX)
 
 /* The register in which subroutines return an integer return value */
 #define REG_RESULT EAX_INDEX
@@ -1194,6 +1199,12 @@ LOWFUNC(WRITE,READ,0,raw_popfl,(void))
 	POPF();
 }
 LENDFUNC(WRITE,READ,0,raw_popfl,(void))
+
+/* Generate floating-point instructions */
+static inline void x86_fadd_m(MEMR s)
+{
+	FADDLm(s,X86_NOREG,X86_NOREG,1);
+}
 
 #else
 
@@ -2418,7 +2429,7 @@ LENDFUNC(NONE,READ,2,raw_mov_w_rm,(W2 d, IMM s))
 LOWFUNC(NONE,WRITE,2,raw_mov_b_mr,(IMM d, R1 s))
 {
     emit_byte(0x88);
-    emit_byte(0x05+8*s);
+    emit_byte(0x05+8*(s&0xf)); /* XXX this handles %ah case (defined as 0x10+4) and others */
     emit_long(d);
 }
 LENDFUNC(NONE,WRITE,2,raw_mov_b_mr,(IMM d, R1 s))
@@ -2971,6 +2982,14 @@ LOWFUNC(WRITE,READ,0,raw_popfl,(void))
 }
 LENDFUNC(WRITE,READ,0,raw_popfl,(void))
 
+/* Generate floating-point instructions */
+static inline void x86_fadd_m(MEMR s)
+{
+	emit_byte(0xdc);
+	emit_byte(0x05);
+	emit_long(s);
+}
+
 #endif
 
 /*************************************************************************
@@ -3234,7 +3253,7 @@ static inline void raw_flags_to_reg(int r)
   
 #if 1   /* Let's avoid those nasty partial register stalls */
   //raw_mov_b_mr((uintptr)live.state[FLAGTMP].mem,r);
-  raw_mov_b_mr(((uintptr)live.state[FLAGTMP].mem)+1,r+4);
+  raw_mov_b_mr(((uintptr)live.state[FLAGTMP].mem)+1,AH_INDEX);
   //live.state[FLAGTMP].status=CLEAN;
   live.state[FLAGTMP].status=INMEM;
   live.state[FLAGTMP].realreg=-1;
@@ -4064,7 +4083,7 @@ LOWFUNC(NONE,NONE,2,raw_fsin_rr,(FW d, FR s))
 }
 LENDFUNC(NONE,NONE,2,raw_fsin_rr,(FW d, FR s))
 
-double one=1;
+static const double one=1;
 LOWFUNC(NONE,NONE,2,raw_ftwotox_rr,(FW d, FR s))
 {
     int ds;
@@ -4084,9 +4103,7 @@ LOWFUNC(NONE,NONE,2,raw_ftwotox_rr,(FW d, FR s))
     emit_byte(0xe1);  /* subtract rounded from original */
     emit_byte(0xd9);
     emit_byte(0xf0);  /* f2xm1 */
-    emit_byte(0xdc);
-    emit_byte(0x05);
-    emit_long((uintptr)&one);  /* Add '1' without using extra stack space */
+    x86_fadd_m((uintptr)&one);  /* Add '1' without using extra stack space */
     emit_byte(0xd9);
     emit_byte(0xfd);  /* and scale it */
     emit_byte(0xdd);
@@ -4118,9 +4135,7 @@ LOWFUNC(NONE,NONE,2,raw_fetox_rr,(FW d, FR s))
     emit_byte(0xe1);  /* subtract rounded from original */
     emit_byte(0xd9);
     emit_byte(0xf0);  /* f2xm1 */
-    emit_byte(0xdc);
-    emit_byte(0x05);
-    emit_long((uintptr)&one);  /* Add '1' without using extra stack space */
+    x86_fadd_m((uintptr)&one);  /* Add '1' without using extra stack space */
     emit_byte(0xd9);
     emit_byte(0xfd);  /* and scale it */
     emit_byte(0xdd);

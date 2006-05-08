@@ -1,5 +1,5 @@
 2006/05/08 - milan
-- uae-cpu/compiler/compemu_support.cpp: compilable
+- JITc: cleaning, sync with BII 
 
 
 2006/05/05 - joy
