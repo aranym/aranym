@@ -6706,7 +6706,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 
 #if FLIGHT_RECORDER
 		{
-		    mov_l_ri(S1, get_virtual_address((uae_u8 *)(pc_hist[i].location)) | 1);
+		    mov_l_ri(S1, ((uintptr)(pc_hist[i].location)) | 1);
 		    /* store also opcode to second register */
 		    clobber_flags();
 		    remove_all_offsets();

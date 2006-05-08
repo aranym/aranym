@@ -1,3 +1,7 @@
+2006/05/08 - milan
+- uae-cpu/compiler/compemu_support.cpp: compilable
+
+
 2006/05/05 - joy
 - uae-cpu/newcpu.cpp: improved Flight Recorder. Now can dump to a continuous
   log, skip interrupt handlers, omit register list and most important -

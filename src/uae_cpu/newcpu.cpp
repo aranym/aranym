@@ -121,7 +121,6 @@ static const char *log_filename(void)
 	return name ? name : "log.68k";
 }
 
-static void dump_log();
 void m68k_record_step(uaecptr pc, int opcode)
 {
 	static bool last_state = false;
@@ -171,7 +170,7 @@ void m68k_record_step(uaecptr pc, int opcode)
 #endif
 }
 
-static void dump_log(void)
+void dump_log()
 {
 #if FRLOG_ALL
 	FILE *f = fopen(log_filename(), "a");
