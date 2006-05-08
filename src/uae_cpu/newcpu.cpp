@@ -186,18 +186,16 @@ void m68k_record_step(uaecptr pc, int opcode)
 	log[log_ptr].pc = pc;
 
 	MakeSR();
+#if ! FRLOG_IRQ
+	// is CPU in interrupt handler? Quit if should not be logged.
+	if (regs.s && !regs.m) return;
+#endif
 	log[log_ptr].sr = regs.sr;
 	log[log_ptr].msp = regs.msp;
 	log[log_ptr].isp = regs.isp;
 	log[log_ptr].instr = opcode;
 
-#if FRLOG_IRQ
-	if (!(regs.s && !regs.m)) {
-#endif
 	log_ptr = (log_ptr + 1) % LOG_SIZE;
-#if FRLOG_IRQ
-	}
-#endif
 #if FRLOG_ALL
 	if (log_ptr == 0) dump_log();
 #endif
