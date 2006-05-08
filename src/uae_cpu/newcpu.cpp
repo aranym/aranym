@@ -91,6 +91,14 @@ int movem_next[256];
 cpuop_func *cpufunctbl[65536];
 
 #if FLIGHT_RECORDER
+
+// feel free to edit the following defines to customize the dump
+#define FRLOG_HOTKEY	0	/* 1 = dump only when hotkey is held down */
+#define FRLOG_ALL	0	/* 1 = dump continuously to ever growing log */
+#define FRLOG_IRQ	1	/* 1 = dump also CPU in interrupts */
+#define FRLOG_REGS	0	/* 1 = dump also all data/address registers */
+#define FRLOG_SIZE	8192	/* this many instructions in single dump */
+
 struct rec_step {
 	uae_u32 d[8];
 	uae_u32 a[8];
@@ -103,14 +111,10 @@ struct rec_step {
 
 bool cpu_flight_recorder_active = false;
 
-#define FRLOG_ALL	0	/* dump ever growing log continuously */
-#define FRLOG_IRQ	1	/* dump interrupt handler routines */
-#define FRLOG_REGS	0	/* dump all data/address registers */
-
 #if FRLOG_ALL
 const int LOG_SIZE = 10;
 #else
-const int LOG_SIZE = 8192;
+const int LOG_SIZE = FRLOG_SIZE;
 #endif
 static rec_step log[LOG_SIZE];
 static int log_ptr = -1; // First time initialization
@@ -121,10 +125,38 @@ static const char *log_filename(void)
 	return name ? name : "log.68k";
 }
 
+static void dump_log()
+{
+#if FRLOG_ALL
+	FILE *f = fopen(log_filename(), "a");
+#else
+	FILE *f = fopen(log_filename(), "w");
+#endif
+	if (f == NULL)
+		return;
+	for (int i = 0; i < LOG_SIZE; i++) {
+		int j = (i + log_ptr) % LOG_SIZE;
+		fprintf(f, "pc %08x  instr %04x  sr %04x  msp %08x  isp %08x\n", log[j].pc, log[j].instr, log[j].sr, log[j].msp, log[j].isp);
+#if ENABLE_MON
+		disass_68k(f, log[j].pc);
+#else
+		// adding a simple opcode -> assembler conversion table would help
+#endif
+#if FRLOG_REGS
+		fprintf(f, "d0 %08x d1 %08x d2 %08x d3 %08x\n", log[j].d[0], log[j].d[1], log[j].d[2], log[j].d[3]);
+		fprintf(f, "d4 %08x d5 %08x d6 %08x d7 %08x\n", log[j].d[4], log[j].d[5], log[j].d[6], log[j].d[7]);
+		fprintf(f, "a0 %08x a1 %08x a2 %08x a3 %08x\n", log[j].a[0], log[j].a[1], log[j].a[2], log[j].a[3]);
+		fprintf(f, "a4 %08x a5 %08x a6 %08x a7 %08x\n", log[j].a[4], log[j].a[5], log[j].a[6], log[j].a[7]);
+#endif
+	}
+	fclose(f);
+}
+
 void m68k_record_step(uaecptr pc, int opcode)
 {
 	static bool last_state = false;
 
+#if ! FRLOG_HOTKEY
 	if (! cpu_flight_recorder_active) {
 		if (last_state) {
 			// dump log out
@@ -135,6 +167,7 @@ void m68k_record_step(uaecptr pc, int opcode)
 		}
 		return;
 	}
+#endif
 
 	if (! last_state) {
 		// reset old log
@@ -168,31 +201,6 @@ void m68k_record_step(uaecptr pc, int opcode)
 #if FRLOG_ALL
 	if (log_ptr == 0) dump_log();
 #endif
-}
-
-void dump_log()
-{
-#if FRLOG_ALL
-	FILE *f = fopen(log_filename(), "a");
-#else
-	FILE *f = fopen(log_filename(), "w");
-#endif
-	if (f == NULL)
-		return;
-	for (int i = 0; i < LOG_SIZE; i++) {
-		int j = (i + log_ptr) % LOG_SIZE;
-		fprintf(f, "pc %08x  instr %04x  sr %04x  msp %08x  isp %08x\n", log[j].pc, log[j].instr, log[j].sr, log[j].msp, log[j].isp);
-#if ENABLE_MON
-		disass_68k(f, log[j].pc);
-#endif
-#if FRLOG_REGS
-		fprintf(f, "d0 %08x d1 %08x d2 %08x d3 %08x\n", log[j].d[0], log[j].d[1], log[j].d[2], log[j].d[3]);
-		fprintf(f, "d4 %08x d5 %08x d6 %08x d7 %08x\n", log[j].d[4], log[j].d[5], log[j].d[6], log[j].d[7]);
-		fprintf(f, "a0 %08x a1 %08x a2 %08x a3 %08x\n", log[j].a[0], log[j].a[1], log[j].a[2], log[j].a[3]);
-		fprintf(f, "a4 %08x a5 %08x a6 %08x a7 %08x\n", log[j].a[4], log[j].a[5], log[j].a[6], log[j].a[7]);
-#endif
-	}
-	fclose(f);
 }
 #endif /* FLIGHT_RECORDER */
 

@@ -300,7 +300,6 @@ extern struct cputbl op_smalltbl_0_ff[];
 # define FLIGHT_RECORDER 0
 #else
 extern void m68k_record_step(uaecptr, int);
-extern void dump_log();
 #endif
 
 #ifdef DISDIP
