@@ -1,3 +1,9 @@
+2006/05/08 - joy
+- hostscreen.cpp: implemented window positioning for X11. Needs clean up.
+- parameters.cpp: window positioning no longer cygwin specific.
+- uae_cpu/newcpu: Flight Recorder more configurable (see the FRLOG #defines)
+
+
 2006/05/08 - milan
 - JITc: cleaning, sync with BII 
 
@@ -66,6 +72,7 @@
 - tools/build-cygwin.sh: version of SDL increased to 1.2.9
 - include/host_clock.h: virtual destructor added
 - parameters.cpp: anonymous struct named HOTKEYS_REL
+
 
 2006/02/26 - Standa
 - nfvdi_soft: the remaining logical operations implemented for the
