@@ -39,10 +39,12 @@
 #endif
 
 #ifdef OS_cygwin
-#define WIN32 1
-#include <SDL_syswm.h>
-#include <windows.h>
-#undef WIN32
+# define WIN32 1
+# include <SDL_syswm.h>
+# include <windows.h>
+# undef WIN32
+#else
+# include <SDL_syswm.h>
 #endif
 
 #define RGB_BLACK     0x00000000
@@ -551,17 +553,36 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		surf = mainSurface;
 	}
 
-#ifdef OS_cygwin
-	static SDL_SysWMinfo pInfo;
-	SDL_GetWMInfo(&pInfo);
+	/*********** set window position *************/
+	SDL_SysWMinfo info;
+	SDL_VERSION(&info.version);
+	if (SDL_GetWMInfo(&info) > 0 ) {
+#define NEW_X(old_x)	bx_options.video.x_win_offset != -1 ? bx_options.video.x_win_offset : old_x
+#define NEW_Y(old_y)	bx_options.video.y_win_offset != -1 ? bx_options.video.y_win_offset : old_y
 
-	RECT r;
-	GetWindowRect(pInfo.window, &r);  // now r contains the windows size and position
-	SetWindowPos(pInfo.window, 0,
-			bx_options.video.x_win_offset != -1 ? bx_options.video.x_win_offset : r.left,
-			bx_options.video.y_win_offset != -1 ? bx_options.video.y_win_offset : r.top,
+#ifdef OS_cygwin
+		RECT r;
+		GetWindowRect(info.window, &r);  // now r contains the windows size and position
+		SetWindowPos(info.window, 0,
+			NEW_X(r.left),
+			NEW_Y(r.top),
 			0, 0, SWP_NOSIZE);
 #endif
+		if (info.subsystem == SDL_SYSWM_X11) {
+			// get window pos
+			XWindowAttributes attr;
+			info.info.x11.lock_func();		// lock before any X11 operation
+			XGetWindowAttributes(info.info.x11.display, info.info.x11.window, &attr); // attr.x,attr.y now contains the window position
+
+			// set window pos
+			XMoveWindow(info.info.x11.display, info.info.x11.wmwindow,
+				NEW_X(attr.x),
+				NEW_Y(attr.y)
+			);
+			info.info.x11.unlock_func();	// unlock after X11 operation
+		}
+	}
+	/******** end of set window position **********/
 
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 
@@ -1512,270 +1533,6 @@ void HostScreen::DisableOpenGLVdi(void)
 {
 	OpenGLVdi = SDL_FALSE;
 }
-
-/*
- * $Log$
- * Revision 1.78  2005/12/26 20:35:44  pmandin
- * Remove unneeded inclusion of glext.h, use SDL included one
- *
- * Revision 1.77  2005/11/14 00:38:28  stefanq
- * - nfvdi_opengl.h: Changed include of GL/glu.h to OpenGL/glu.h for darwin.
- * - nfvdi_opengl.cpp: Changed include of GL/glu.h to OpenGL/glu.h for darwin.
- * - hostscreen.cpp: Changed include of GL/glu.h to OpenGL/glu.h and GL/glext.h
- *   to OpenGL/glext.h for darwin.
- *
- * Revision 1.76  2005/08/05 08:53:24  johan
- * Removed unnecessary dependency on glu function.
- *
- * Revision 1.75  2005/06/21 12:50:27  pmandin
- * Small fixes for OpenGL rendering
- *
- * Revision 1.74  2005/06/16 13:26:47  milan
- * Disabled for non-gui version
- *
- * Revision 1.73  2005/06/14 16:45:04  pmandin
- * Use rectangle texture when available
- *
- * Revision 1.72  2005/06/14 15:11:43  pmandin
- * Use non power of two texture when available
- *
- * Revision 1.71  2005/06/13 12:58:05  pmandin
- * Correctly setup shadow texture when smaller than asked
- *
- * Revision 1.70  2005/06/13 12:12:41  pmandin
- * Disable texturing when not needed
- *
- * Revision 1.69  2005/06/12 15:32:00  pmandin
- * OpenGL video mode was locked to 640x480
- *
- * Revision 1.68  2005/06/12 15:03:22  pmandin
- * Remove width and height parameters in OpenGL section
- *
- * Revision 1.67  2005/06/11 20:13:14  pmandin
- * Remove getComponent stuff
- *
- * Revision 1.66  2005/06/09 19:50:16  pmandin
- * Fixing getComponent function
- *
- * Revision 1.65  2005/06/08 19:33:02  pmandin
- * Add getComponent() function
- *
- * Revision 1.64  2005/06/08 18:14:59  pmandin
- * Update texture using a dirty rectangles list
- *
- * Revision 1.63  2005/06/08 15:50:44  pmandin
- * Correct endianness of GL_RGBA shadow surface
- *
- * Revision 1.62  2005/06/07 21:30:36  johan
- * fix for integer coordinates according to MicroSoft tip
- *
- * Revision 1.61  2005/06/06 08:06:49  pmandin
- * Revert back off by 1 stuff
- *
- * Revision 1.60  2005/05/24 12:48:43  pmandin
- * OpenGL rendering off by 1 unit
- *
- * Revision 1.59  2005/05/12 11:29:25  pmandin
- * Disable texturing with OpenGL NFVDI
- *
- * Revision 1.58  2005/05/12 07:55:08  pmandin
- * Keep OpenGL related stuff in hostscreen and nfvdi classes
- *
- * Revision 1.57  2005/05/11 20:19:26  pmandin
- * Add NF vdi OpenGL renderer
- *
- * Revision 1.56  2005/05/11 16:16:24  pmandin
- * Confused by bpp (bits per pixel) and bpp (bytes per pixel)
- *
- * Revision 1.55  2005/05/10 16:57:54  pmandin
- * Forgot some #IFDEF
- *
- * Revision 1.54  2005/05/10 10:37:44  pmandin
- * Faster OpenGL rendering
- *
- * Revision 1.53  2005/04/22 21:57:16  xavier
- * Remove debug code left by mistake.
- *
- * Revision 1.52  2005/04/22 21:52:36  xavier
- * Switch between fullscreen and windowed mode on Microsoft Windows
- *
- * Revision 1.51  2005/01/22 16:39:48  joy
- * --disable-gui now disables all SDL GUI related code
- *
- * Revision 1.50  2005/01/12 14:35:16  joy
- * more unused variables hidden
- *
- * Revision 1.49  2004/12/11 09:55:52  pmandin
- * Move update function from .h to .cpp, mandatory for NFOSMesa
- *
- * Revision 1.48  2004/10/31 23:15:56  pmandin
- * Do not need to enable autozoom to force screen size
- *
- * Revision 1.47  2004/09/10 17:07:25  pmandin
- * Autozoom: now you can choose a specific host screen size that will remain constant accross Atari screen size changes
- *
- * Revision 1.46  2004/04/26 07:24:50  standa
- * Just comment adjustments.
- *
- * Revision 1.45  2004/02/07 13:20:42  joy
- * explanation for some unclear trick
- *
- * Revision 1.44  2004/01/25 15:13:04  xavier
- * More work on SDL GUI
- *
- * Revision 1.43  2004/01/06 22:36:22  xavier
- * Improved SDL Gui maintainability and "look'n'feel".
- *
- * Revision 1.42  2004/01/05 10:05:20  standa
- * Palette handling reworked. Old non-NF dispatch removed.
- *
- * Revision 1.41  2003/12/28 19:34:04  joy
- * IPC fix - SDL user events
- *
- * Revision 1.40  2003/12/27 23:26:56  joy
- * color palette initialized to default TOS colors
- *
- * Revision 1.39  2003/12/25 22:51:05  joy
- * dirty hack for redrawing SDL GUI if screen size changed
- *
- * Revision 1.38  2003/12/24 23:31:15  joy
- * when GUI is open the background is being updated with running ARAnyM
- *
- * Revision 1.37  2003/06/01 08:35:39  milan
- * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
- *
- * Revision 1.36  2003/04/16 19:35:49  pmandin
- * Correct inclusion of SDL headers
- *
- * Revision 1.35  2003/03/29 08:45:38  milan
- * capabilities output
- * manpage
- * infoprint
- *
- * Revision 1.34  2003/02/09 14:51:04  pmandin
- * Filtered parameter for OpenGL rendering
- *
- * Revision 1.33  2002/12/02 16:54:38  milan
- * non-OpenGL support
- *
- * Revision 1.32  2002/12/01 10:28:29  pmandin
- * OpenGL rendering
- *
- * Revision 1.31  2002/09/23 09:21:37  pmandin
- * Select best video mode
- *
- * Revision 1.30  2002/07/20 12:44:17  joy
- * GUI can survive even video mode change now. Just the dialog is not redrawn yet
- *
- * Revision 1.29  2002/07/20 08:10:55  joy
- * GUI background saving/restoring fixed
- *
- * Revision 1.28  2002/07/19 12:27:40  joy
- * main and background video surfaces. 'surf' is just pointer to either of them depending on whether SDL GUI is active and has stored the background or not.
- *
- * Revision 1.27  2002/06/09 20:08:31  joy
- * save_bkg/restore_bkg added (used in SDL GUI)
- * the save to mem worked for a while and then it started failing for no apparent reason so I had to write saving to file. It's a hack. Proper solution would be to create a complete surface by cloning the current one and blit the screen there, I think.
- *
- * Revision 1.26  2002/06/07 20:56:56  joy
- * added window/fullscreen mode switch
- *
- * Revision 1.25  2002/01/08 21:20:57  standa
- * fVDI driver palette store on res change implemented.
- *
- * Revision 1.24  2001/12/22 18:13:24  joy
- * most video related parameters moved to bx_options.video struct.
- * --refresh <x> added
- *
- * Revision 1.23  2001/12/03 20:56:07  standa
- * The gfsprimitives library files removed. All the staff was moved and
- * adjusted directly into the HostScreen class.
- *
- * Revision 1.22  2001/11/29 23:51:56  standa
- * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
- *
- * Revision 1.21  2001/11/21 13:29:51  milan
- * cleanning & portability
- *
- * Revision 1.20  2001/11/19 01:37:35  standa
- * PaletteInversIndex search. Bugfix in fillArea in 8bit depth.
- *
- * Revision 1.19  2001/11/04 23:17:08  standa
- * 8bit destination surface support in VIDEL. Blit routine optimalization.
- * Bugfix in compatibility modes palette copying.
- *
- * Revision 1.18  2001/10/30 22:59:34  standa
- * The resolution change is now possible through the fVDI driver.
- *
- * Revision 1.17  2001/10/29 23:14:17  standa
- * The HostScreen support for arbitrary destination BPP (8,16,24,32bit).
- *
- * Revision 1.16  2001/10/25 19:56:01  standa
- * The Log and Header CVS tags in the Log removed. Was recursing.
- *
- * Revision 1.15  2001/10/24 17:55:01  standa
- * The fVDI driver fixes. Finishing the functionality tuning.
- *
- * Revision 1.14  2001/10/23 21:28:49  standa
- * Several changes, fixes and clean up. Shouldn't crash on high resolutions.
- * hostscreen/gfx... methods have fixed the loop upper boundary. The interface
- * types have changed quite havily.
- *
- * Revision 1.13  2001/10/16 19:06:55  standa
- * The uint32 changed to int16 to make the gfxLineColor work.
- * Now it seems not to segfault anywhere.
- *
- * Revision 1.12  2001/10/08 21:46:05  standa
- * The Header and Log CVS tags added.
- *
- * Revision 1.11  2001/10/03 06:37:41  standa
- * General cleanup. Some constants added. Better "to screen" operation
- * recognition (the videoram address is checked too - instead of only the
- * MFDB == NULL || MFDB->address == NULL)
- *
- * Revision 1.10  2001/09/30 23:09:23  standa
- * The line logical operation added.
- * The first version of blitArea (screen to screen only).
- *
- * Revision 1.9  2001/09/24 23:16:28  standa
- * Another minor changes. some logical operation now works.
- * fvdidrv/fillArea and fvdidrv/expandArea got the first logOp handling.
- *
- * Revision 1.8  2001/09/20 18:12:09  standa
- * Off by one bug fixed in fillArea.
- * Separate functions for transparent and opaque background.
- * gfxPrimitives methods moved to the HostScreen
- *
- * Revision 1.7  2001/09/05 15:06:41  joy
- * SelectVideoMode() commented out.
- *
- * Revision 1.6  2001/09/04 13:51:45  joy
- * debug disabled
- *
- * Revision 1.5  2001/08/30 14:04:59  standa
- * The fVDI driver. mouse_draw implemented. Partial pattern fill support.
- * Still buggy.
- *
- * Revision 1.4  2001/08/28 23:26:09  standa
- * The fVDI driver update.
- * VIDEL got the doRender flag with setter setRendering().
- *       The host_colors_uptodate variable name was changed to hostColorsSync.
- * HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
- *       was created.
- * fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
- *
- * Revision 1.3  2001/08/13 22:29:06  milan
- * IDE's params from aranymrc file etc.
- *
- * Revision 1.2  2001/07/24 09:36:51  joy
- * D(bug) macro replaces fprintf
- *
- * Revision 1.1  2001/06/18 13:21:55  standa
- * Several template.cpp like comments were added.
- * HostScreen SDL encapsulation class.
- *
- *
- */
 
 /*
 vim:ts=4:sw=4:

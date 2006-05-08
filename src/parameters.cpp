@@ -111,9 +111,7 @@ static struct option const long_options[] =
 #ifdef ENABLE_LILO
   {"lilo", no_argument, 0, 'l'},
 #endif
-#ifdef OS_cygwin
   {"display", required_argument, 0, 'P'},
-#endif
   {NULL, 0, NULL, 0}
 };
 
@@ -1021,9 +1019,7 @@ int process_cmdline(int argc, char **argv)
 #ifdef SDL_GUI
 							 "G"  /* GUI startup */
 #endif
-#ifdef OS_cygwin
 							 "P:" /* position of the window */
-#endif
 							 "S"  /* swap IDE drives */
 							 "h"  /* help */
 							 "V"  /* version */,
@@ -1098,12 +1094,11 @@ int process_cmdline(int argc, char **argv)
 				bx_options.video.boot_color_depth = atoi(optarg);
 				break;
 
-#ifdef OS_cygwin
 			case 'P':
 				bx_options.video.x_win_offset = atoi(optarg);
 				bx_options.video.y_win_offset = atoi(argv[optind]);
 				break;
-#endif
+
 #if HOSTFS_SUPPORT
 			case 'd':
 				if ( strlen(optarg) < 4 || optarg[1] != ':') {
