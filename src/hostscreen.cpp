@@ -567,7 +567,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			NEW_X(r.left),
 			NEW_Y(r.top),
 			0, 0, SWP_NOSIZE);
-#endif
+#else
 		if (info.subsystem == SDL_SYSWM_X11) {
 			// get window pos
 			XWindowAttributes attr;
@@ -581,6 +581,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			);
 			info.info.x11.unlock_func();	// unlock after X11 operation
 		}
+#endif
 	}
 	/******** end of set window position **********/
 
