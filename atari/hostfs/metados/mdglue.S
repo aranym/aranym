@@ -21,12 +21,19 @@
 
 
 .macro PRINT value
+//	nf_call( nf_get_id(NF_STDERR), value);
 #if 0
+	move.l  #s_stderr,-(sp)
+	move.l  #0,-(sp)		// fake return address
+	dc.w    0x7300
+	lea	8(sp),sp
+
 	move.l  \value,-(sp)
-	move.l  #20,-(sp)
-	move.l  #20,-(sp)
-        dc.w    0x7138
-        lea	12(sp),sp
+	move.l  #s_frm,-(sp)
+	move.l  d0,-(sp)
+	move.l  #0,-(sp)		// fake return address
+	dc.w    0x7301
+	lea	16(sp),sp
 #endif
 .endm PRINT
 
@@ -179,7 +186,7 @@ functionTable:
 	dc.l	wrap_dxreaddir		// 322
 	dc.l	-1, -1
 	dc.l	-1, -1, -1, -1, -1	// 329
-	dc.l	-1, -1, -1, -1, -1 	// 334
+	dc.l	-1, -1, -1, -1, -1	// 334
 	dc.l	-1, -1, -1
 	dc.l	wrap_dreadlabel		// 338
 	dc.l	-1			// 339
@@ -504,6 +511,11 @@ wrap_dreadlabel:
 	rts
 
 
+s_frm:
+	.ascii	"DEV: %ld\n\0"
+s_stderr:
+	.ascii	"DEBUGPRINTF\0"
+
 	.bss
 temp:
 	ds.l	1
@@ -513,6 +525,17 @@ stack:
 	
 //
 // $Log$
+// Revision 1.3  2004/04/26 07:14:04  standa
+// Adjusted to the recent FreeMiNT CVS state to compile and also made
+// BetaDOS only. No more MetaDOS compatibility attempts.
+//
+// Dfree() fix - for Calamus to be able to save its documents.
+//
+// Some minor bugfix backports from the current FreeMiNTs CVS version.
+//
+// The mountpoint entries are now shared among several hostfs.dos instances
+// using a 'BDhf' cookie entry (atari/hostfs/metados/main.c).
+//
 // Revision 1.2  2003/03/03 20:39:44  standa
 // Parameter passing fixed.
 //
