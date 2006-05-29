@@ -12,8 +12,8 @@
  */
 
 #define u8 unsigned char
-#define u16 unsigned short
-#define u32 unsigned long
+#define u16 uint16
+#define u32 uint32
 
 struct partition_info
 {

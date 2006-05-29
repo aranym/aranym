@@ -1,3 +1,7 @@
+2006/05/30 - Andreas
+- natfeat/atari_rootsec.h: Fix definition of fixed size integers.
+
+
 2006/05/08 - joy
 - hostscreen.cpp: implemented window positioning for X11. Needs clean up.
 - parameters.cpp: window positioning no longer cygwin specific.
