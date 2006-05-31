@@ -370,6 +370,12 @@ inline void HostScreen::blitArea( int16 sx, int16 sy, int16 dx, int16 dy, int16 
  */
 inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp, uint8 colorValues[16] )
 {
+/* The improved code will work on big endian machines too,
+ * but the bit order will be wrong.
+ * To fix this, the initial bitplane reads and the final
+ * pixel writes will need to be updated.
+ */
+#if SDL_BYTEORDER == SDL_BIGENDIAN
 	memset( colorValues, 0, 16 ); // clear the color values for the 16 pixels (word length)
 
 	for (int l = bpp - 1; l >= 0; l--) {
@@ -413,15 +419,97 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 		colorValues[15] <<= 1;	colorValues[15] |= (data >>  0) & 1;
 #endif
 	}
+#else
+	uint32 a, b, c, d, x;
+
+	/* Obviously the different cases can be broken out in various
+	 * ways to lessen the amount of work needed for <8 bit modes.
+	 * It's doubtful if the usage of those modes warrants it, though.
+	 * The branches below should be ~100% correctly predicted and
+	 * thus be more or less for free.
+	 * Getting the palette values inline does not seem to help
+	 * enough to worry about. The palette lookup is much slower than
+	 * this code, though, so it would be nice to do something about it.
+	 */
+	if (bpp >= 4) {
+		d = *(uint32 *)&atariBitplaneData[0];
+		c = *(uint32 *)&atariBitplaneData[2];
+		if (bpp == 4) {
+			a = b = 0;
+		} else {
+			b = *(uint32 *)&atariBitplaneData[4];
+			a = *(uint32 *)&atariBitplaneData[6];
+		}
+	} else {
+		a = b = c = 0;
+		if (bpp == 2) {
+			d = *(uint32 *)&atariBitplaneData[0];
+		} else {
+			d = atariBitplaneData[0];
+		}
+	}
+
+	x = a;
+	a =  (a & 0xf0f0f0f0)       | ((c & 0xf0f0f0f0) >> 4);
+	c = ((x & 0x0f0f0f0f) << 4) |  (c & 0x0f0f0f0f);
+	x = b;
+	b =  (b & 0xf0f0f0f0)       | ((d & 0xf0f0f0f0) >> 4);
+	d = ((x & 0x0f0f0f0f) << 4) |  (d & 0x0f0f0f0f);
+
+	x = a;
+	a =  (a & 0xcccccccc)       | ((b & 0xcccccccc) >> 2);
+	b = ((x & 0x33333333) << 2) |  (b & 0x33333333);
+	x = c;
+	c =  (c & 0xcccccccc)       | ((d & 0xcccccccc) >> 2);
+	d = ((x & 0x33333333) << 2) |  (d & 0x33333333);
+
+	a = (a & 0xaaaa5555) | ((a & 0x0000aaaa) << 15) | ((a & 0x55550000) >> 15);
+	b = (b & 0xaaaa5555) | ((b & 0x0000aaaa) << 15) | ((b & 0x55550000) >> 15);
+	c = (c & 0xaaaa5555) | ((c & 0x0000aaaa) << 15) | ((c & 0x55550000) >> 15);
+	d = (d & 0xaaaa5555) | ((d & 0x0000aaaa) << 15) | ((d & 0x55550000) >> 15);
+
+	colorValues[ 1] = a;
+	a >>= 8;
+	colorValues[ 9] = a;
+	a >>= 8;
+	colorValues[ 0] = a;
+	a >>= 8;
+	colorValues[ 8] = a;
+
+	colorValues[ 3] = b;
+	b >>= 8;
+	colorValues[11] = b;
+	b >>= 8;
+	colorValues[ 2] = b;
+	b >>= 8;
+	colorValues[10] = b;
+
+	colorValues[ 5] = c;
+	c >>= 8;
+	colorValues[13] = c;
+	c >>= 8;
+	colorValues[ 4] = c;
+	c >>= 8;
+	colorValues[12] = c;
+
+	colorValues[ 7] = d;
+	d >>= 8;
+	colorValues[15] = d;
+	d >>= 8;
+	colorValues[ 6] = d;
+	d >>= 8;
+	colorValues[14] = d;
+#endif
 }
-
-
 
 #endif
 
 
 /*
  * $Log$
+ * Revision 1.64  2005/06/14 16:45:04  pmandin
+ * Use rectangle texture when available
+ *
  * Revision 1.63  2005/06/14 15:11:43  pmandin
  * Use non power of two texture when available
  *
