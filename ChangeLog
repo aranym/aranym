@@ -1,3 +1,7 @@
+2006/06/05 - johan
+- nfvdi_opengl.cpp: Corrected alpha mask when blitting from screen to memory.
+
+
 2006/06/01 - johan
 - hostscreen.h: Major speedup for bitplane to chunky conversion.
                 Deactivated on big endian CPUs due to bit order differences.
