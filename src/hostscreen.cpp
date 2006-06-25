@@ -567,6 +567,8 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			NEW_X(r.left),
 			NEW_Y(r.top),
 			0, 0, SWP_NOSIZE);
+#elif defined(OS_darwin)
+		// ignore window position, as we don't know yet how to handle this.
 #else
 		if (info.subsystem == SDL_SYSWM_X11) {
 			// get window pos

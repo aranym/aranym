@@ -1,3 +1,8 @@
+2006/06/25 - joy
+- hostscreen.cpp: ignore window positioning on OS_darwin - that one does not
+  offer any SDL_SysWMinfo struct. Patch suggested by Philipp Donzé, thanks.
+
+
 2006/06/05 - johan
 - nfvdi_opengl.cpp: Corrected alpha mask when blitting from screen to memory.
 
