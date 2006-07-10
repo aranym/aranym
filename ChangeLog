@@ -1,3 +1,9 @@
+2006/07/10 - joy
+- hostscreen.cpp: window positioning surrounded with #if HAVE_X11_XLIB_H
+- configure.ac: check for X11/Xlib.h added (for the window positioning)
+- parameters.cpp: "-P" documented in the --help
+
+
 2006/06/25 - joy
 - hostscreen.cpp: ignore window positioning on OS_darwin - that one does not
   offer any SDL_SysWMinfo struct. Patch suggested by Philipp Donzé, thanks.
