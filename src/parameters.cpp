@@ -1,7 +1,7 @@
 /*
  * parameters.cpp - parameter init/load/save code
  *
- * Copyright (c) 2001-2005 ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2001-2006 ARAnyM developer team (see AUTHORS)
  *
  * Authors:
  *  MJ		Milan Jurik
@@ -284,9 +284,9 @@ void preset_video()
   bx_options.video.fullscreen = false;		// Boot in Fullscreen
   bx_options.video.boot_color_depth = -1;	// Boot in color depth
   bx_options.video.monitor = -1;			// preserve default NVRAM monitor
-  bx_options.video.refresh = 2;			// 25 Hz update
+  bx_options.video.refresh = 2;				// 25 Hz update
   bx_options.video.x_win_offset = -1;
-  bx_options.video.y_win_offset = -1;		// Window position to 20x20
+  bx_options.video.y_win_offset = -1;
 }
 
 void postload_video()
@@ -860,6 +860,7 @@ Options:\n\
   -c, --config FILE          read different configuration file\n\
   -s, --save                 save configuration file\n\
   -S, --swap-ide             swap IDE drives\n\
+  -P <X> <Y>                 set window position\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
