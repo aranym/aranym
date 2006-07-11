@@ -322,10 +322,6 @@ case "$target_os" in
     ;;
 esac
 
-AC_CHECK_HEADERS(X11/Xlib.h, [
-	LIBS="$LIBS -lX11"
-])
-
 SYSSRCS="$SYSSRCS $EXTRASYSSRCS"
 
 DEFINES="$DEFINES -DDIRSEPARATOR=$DIRSEPARATOR"
@@ -1572,6 +1568,13 @@ fi
 LIBS="$LIBS $SDL_LIBS"
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
+
+dnl X11 library for XMoveWindow stuff
+if test "$OS_TYPE" != "darwin"; then
+	AC_CHECK_HEADERS(X11/Xlib.h, [
+		LIBS="$LIBS -lX11"
+	])
+fi
 
 dnl Check for zlib
 if [[ "x$WANT_LILO" = "xyes" ]]; then
