@@ -56,6 +56,22 @@ extern "C" char *strdup(const char *s)
 }
 #endif
 
+#ifdef OS_mingw
+# ifndef HAVE_GETTIMEOFDAY
+extern "C" void gettimeofday(struct timeval *p, void *tz /*IGNORED*/)
+{
+        union {
+                long long ns100;
+                FILETIME ft;
+        } _now;
+
+        GetSystemTimeAsFileTime(&(_now.ft));
+        p->tv_usec=(long)((_now.ns100/10LL)%1000000LL);
+        p->tv_sec=(long)((_now.ns100-(116444736000000000LL))/10000000LL);
+}
+# endif
+#endif
+
 #if defined(ENABLE_MON) || defined(NEWDEBUG)
 static struct sigaction sigint_sa;
 # ifdef ENABLE_MON

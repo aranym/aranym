@@ -426,6 +426,7 @@ extern "C" char *strdup(const char *s);
 #endif
 
 #ifdef OS_mingw
+#include <windows.h>
 
 /* FIXME: O_SYNC not defined in mingw, is there a replacement value ?
  * Does it make floppy working even without it ?
@@ -445,6 +446,10 @@ extern "C" char *strdup(const char *s);
 #endif
 #ifndef IOCTL_STORAGE_EJECT_MEDIA
 # define IOCTL_STORAGE_EJECT_MEDIA        CTL_CODE(IOCTL_STORAGE_BASE, 0x0202, METHOD_BUFFERED, FILE_READ_ACCESS)
+#endif
+
+#ifndef HAVE_GETTIMEOFDAY
+extern "C" void gettimeofday(struct timeval *p, void *tz /*IGNORED*/);
 #endif
 
 #endif /* OS_mingw */

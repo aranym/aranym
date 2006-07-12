@@ -255,7 +255,7 @@ AC_CHECK_FUNCS(sigaction signal)
 AC_CHECK_FUNCS(mmap mprotect munmap)
 AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect)
 AC_CHECK_FUNCS(strchr memcpy bcopy)
-AC_CHECK_FUNCS(usleep)
+AC_CHECK_FUNCS(usleep gettimeofday)
 
 dnl Defines caddr_t as void * if not already defined
 AC_CHECK_TYPES(caddr_t)

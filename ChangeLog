@@ -1,3 +1,7 @@
+2006/07/12 - Patrice
+- mingw does not have gettimeofday() function.
+
+
 2006/07/10 - joy
 - hostscreen.cpp: window positioning surrounded with an additional
   SDL_VIDEO_DRIVER_X11 condition
@@ -6,6 +10,7 @@
   include file available but does not use X11 for the gfx output.
   Proper fix would probably be to rely on the SDL_VIDEO_DRIVER_X11 define
   even in the configure...
+
 
 2006/07/10 - joy
 - hostscreen.cpp: window positioning surrounded with #if HAVE_X11_XLIB_H
