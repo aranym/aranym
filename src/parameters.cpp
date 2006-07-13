@@ -829,7 +829,7 @@ void preset_hotkeys()
 
 void postload_hotkeys() {
 	// convert from string to pair of ints
-	for(uint i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
+	for(uint16 i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
 		int sym, mod;
 		if ( sscanf(hotkeys_rel[i].string, "%i:%i", &sym, &mod) != 2 ) continue;
 
@@ -840,7 +840,7 @@ void postload_hotkeys() {
 
 void presave_hotkeys() {
 	// convert from pair of ints to string
-	for(uint i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
+	for(uint16 i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
 		snprintf(hotkeys_rel[i].string, HOTKEYS_STRING_SIZE, "%d:%#x", hotkeys_rel[i].keysym->sym, hotkeys_rel[i].keysym->mod);
 	}
 }
