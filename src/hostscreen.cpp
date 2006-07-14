@@ -145,7 +145,7 @@ void HostScreen::toggleFullScreen()
 	bx_options.video.fullscreen = !bx_options.video.fullscreen;
 	sdl_videoparams ^= SDL_FULLSCREEN;
 	if(SDL_WM_ToggleFullScreen(mainSurface) == 0) {
-		D(bug("toggleFullScreen: SDL_WM_ToggleFullScreen() not supported -> using SDL_SetVideoMode()"));
+		D2(bug("toggleFullScreen: SDL_WM_ToggleFullScreen() not supported -> using SDL_SetVideoMode()"));
 
 		// SDL_WM_ToggleFullScreen() did not work.
 		// We have to change video mode "by hand".
@@ -154,12 +154,16 @@ void HostScreen::toggleFullScreen()
 		if (temp == NULL)
 			bug("toggleFullScreen: Unable to save screen content.");
 
+#if 1
+		setWindowSize( width, height, bpp );
+#else
 		mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
 		if (mainSurface == NULL)
 			bug("toggleFullScreen: Unable to set new video mode.");
 		if (mainSurface->format->BitsPerPixel <= 8)
 			SDL_SetColors(mainSurface, temp->format->palette->colors, 0,
 			              temp->format->palette->ncolors);
+#endif
 
 		if (SDL_BlitSurface(temp, NULL, mainSurface, NULL) != 0)
 			bug("toggleFullScreen: Unable to restore screen content.");

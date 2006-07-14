@@ -2,7 +2,8 @@
 - input.cpp: fixing bug #1521310: Shifters are now released before the
   GUI thread is started.
 - hostscreen.cpp: Trying to fix the toggle fullscreen. Updating the
-  screen after toggle so that it doesn't stay black.
+  screen after toggle so that it doesn't stay black. Also calls
+  setWindowSize() to set everything correctly. It works for me now.
 
 
 2006/07/12 - Patrice
