@@ -1,6 +1,8 @@
 2006/07/13 - Standa
 - input.cpp: fixing bug #1521310: Shifters are now released before the
   GUI thread is started.
+- hostscreen.cpp: Trying to fix the toggle fullscreen. Updating the
+  screen after toggle so that it doesn't stay black.
 
 
 2006/07/12 - Patrice

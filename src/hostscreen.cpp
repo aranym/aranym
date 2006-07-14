@@ -31,7 +31,7 @@
 #include "gui-sdl/sdlgui.h"
 #include "main.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #ifdef ENABLE_OPENGL
@@ -145,6 +145,8 @@ void HostScreen::toggleFullScreen()
 	bx_options.video.fullscreen = !bx_options.video.fullscreen;
 	sdl_videoparams ^= SDL_FULLSCREEN;
 	if(SDL_WM_ToggleFullScreen(mainSurface) == 0) {
+		D(bug("toggleFullScreen: SDL_WM_ToggleFullScreen() not supported -> using SDL_SetVideoMode()"));
+
 		// SDL_WM_ToggleFullScreen() did not work.
 		// We have to change video mode "by hand".
 		SDL_Surface *temp = SDL_ConvertSurface(mainSurface, mainSurface->format,
@@ -166,6 +168,9 @@ void HostScreen::toggleFullScreen()
 		if (isGUIopen() == 0)
 			surf = mainSurface;
 #endif /* SDL_GUI */
+
+		/* refresh the screen */
+		update( true);
 	}
 }
 
@@ -553,37 +558,40 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		surf = mainSurface;
 	}
 
-	/*********** set window position *************/
-	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if (SDL_GetWMInfo(&info) > 0 ) {
+	if (!bx_options.video.fullscreen) {
+		/*********** set window position *************/
+		/* note: only do this if not in fullscreen! */
+		SDL_SysWMinfo info;
+		SDL_VERSION(&info.version);
+		if (SDL_GetWMInfo(&info) > 0 ) {
 #define NEW_X(old_x)	bx_options.video.x_win_offset != -1 ? bx_options.video.x_win_offset : old_x
 #define NEW_Y(old_y)	bx_options.video.y_win_offset != -1 ? bx_options.video.y_win_offset : old_y
 
 #ifdef OS_cygwin
-		RECT r;
-		GetWindowRect(info.window, &r);  // now r contains the windows size and position
-		SetWindowPos(info.window, 0,
-			NEW_X(r.left),
-			NEW_Y(r.top),
-			0, 0, SWP_NOSIZE);
+			RECT r;
+			GetWindowRect(info.window, &r);  // now r contains the windows size and position
+			SetWindowPos(info.window, 0,
+					NEW_X(r.left),
+					NEW_Y(r.top),
+					0, 0, SWP_NOSIZE);
 #elif defined(SDL_VIDEO_DRIVER_X11) && defined(HAVE_X11_XLIB_H)
-		if (info.subsystem == SDL_SYSWM_X11) {
-			// get window pos
-			XWindowAttributes attr;
-			info.info.x11.lock_func();		// lock before any X11 operation
-			XGetWindowAttributes(info.info.x11.display, info.info.x11.window, &attr); // attr.x,attr.y now contains the window position
+			if (info.subsystem == SDL_SYSWM_X11) {
+				// get window pos
+				XWindowAttributes attr;
+				info.info.x11.lock_func();		// lock before any X11 operation
+				XGetWindowAttributes(info.info.x11.display, info.info.x11.window, &attr); // attr.x,attr.y now contains the window position
 
-			// set window pos
-			XMoveWindow(info.info.x11.display, info.info.x11.wmwindow,
-				NEW_X(attr.x),
-				NEW_Y(attr.y)
-			);
-			info.info.x11.unlock_func();	// unlock after X11 operation
-		}
+				// set window pos
+				XMoveWindow(info.info.x11.display, info.info.x11.wmwindow,
+						NEW_X(attr.x),
+						NEW_Y(attr.y)
+						);
+				info.info.x11.unlock_func();	// unlock after X11 operation
+			}
 #endif
+		}
+		/******** end of set window position **********/
 	}
-	/******** end of set window position **********/
 
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 
@@ -678,7 +686,7 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 	pixel = ((uint8*)surf->pixels) + pixx * (int)x1 + pixy * (int)y;
 	ppos = 0;
 
-	D(bug("HLn %3d,%3d,%3d", x1, x2, y));
+	D2(bug("HLn %3d,%3d,%3d", x1, x2, y));
 
 	/* Draw */
 	switch(surf->format->BytesPerPixel) {
@@ -807,7 +815,7 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 
 	ppos = 0;
 
-	D(bug("VLn %3d,%3d,%3d", x, y1, y2));
+	D2(bug("VLn %3d,%3d,%3d", x, y1, y2));
 
 	/* More variable setup */
 	dy=h+1;
@@ -954,7 +962,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 		}
 	}
 
-	D(bug("CLn %3d,%3d,%3d,%3d", x1, x2, y1, y2));
+	D2(bug("CLn %3d,%3d,%3d,%3d", x1, x2, y1, y2));
 
 	/* Variable setup */
 	dx = x2 - x1;
