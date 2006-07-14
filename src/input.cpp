@@ -515,6 +515,18 @@ static void process_keyboard_event(SDL_Event &event)
 		}
 #ifdef SDL_GUI
 		else if (CHECK_HOTKEY(setup)) {
+			/* release shifters (if any) */
+			if ( bx_options.hotkeys.setup.mod & KMOD_LSHIFT )
+				getIKBD()->SendKey(0x80 | 0x2a);
+			if ( bx_options.hotkeys.setup.mod & KMOD_RSHIFT )
+				getIKBD()->SendKey(0x80 | 0x36);
+			if ( bx_options.hotkeys.setup.mod & KMOD_CTRL )
+				getIKBD()->SendKey(0x80 | 0x1d);
+			if ( bx_options.hotkeys.setup.mod & KMOD_LALT )
+				getIKBD()->SendKey(0x80 | 0x38);
+			if ( bx_options.hotkeys.setup.mod & KMOD_MODE|KMOD_RALT )
+				getIKBD()->SendKey(0x80 | RALT_ATARI_SCANCODE);
+			
 			start_GUI_thread();
 			send2Atari = false;
 		}
