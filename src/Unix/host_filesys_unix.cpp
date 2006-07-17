@@ -73,3 +73,12 @@ char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 	// data folder is defined at configure time in ARANYM_DATADIR (using --datadir)
 	return safe_strncpy(buffer, ARANYM_DATADIR, bufsize);
 }
+
+void HostFilesys::makeDir(char *filename)
+{
+#ifdef OS_mingw
+	mkdir(filename);
+#else
+	mkdir(filename, 0755);
+#endif
+}

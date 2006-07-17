@@ -33,6 +33,9 @@ class HostFilesys {
 
 		/* Return ARAnyM data folder */
 		static char *getDataFolder(char *buffer, unsigned int bufsize);
+
+                /* Create a folder */
+                static void makeDir(char *filename);
 };
 
 #endif /* HOSTFILESYS_H */

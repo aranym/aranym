@@ -1208,7 +1208,7 @@ char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 	struct stat buf;
 	if (stat(buffer, &buf) == -1) {
 		D(bug("Creating config folder '%s'", buffer));
-		mkdir(buffer, 0755);
+		Host::makeDir(buffer);
 	}
 
 	return addFilename(buffer, file, bufsize);

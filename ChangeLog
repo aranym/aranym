@@ -1,3 +1,7 @@
+2006/07/17 - Patrice
+- mingw does not have mkdir() with permissions.
+
+
 2006/07/13 - Standa
 - input.cpp: fixing bug #1521310: Shifters are now released before the
   GUI thread is started.
