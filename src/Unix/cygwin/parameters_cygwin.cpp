@@ -4,7 +4,6 @@
 #include "config.h"
 #include "tools.h"
 #include "parameters.h"
-#include "host_filesys.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -77,4 +76,9 @@ char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 		buffer[0] = '\0';	// last resort - complete filename out
 
 	return addFilename(buffer, ARADATA, bufsize);
+}
+
+void HostFilesys::makeDir(char *filename)
+{
+	mkdir(filename, 0755);
 }
