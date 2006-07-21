@@ -32,6 +32,7 @@
 #include "tools.h"		// for safe_strncpy()
 #include "gdbstub.h"
 #include "host.h"
+#include "host_filesys.h"
 
 #define DEBUG 0
 #include "debug.h"
