@@ -1,4 +1,5 @@
 2006/08/10 - Patrice
+- HostFilesys::makeDir() now accepts permission flags, to be used by hostfs nf.
 - Disable hardware surface usage, to avoid locking the screen too frequently.
   Seems to be the only cause for slowness on MacOSX when not using OpenGL.
 

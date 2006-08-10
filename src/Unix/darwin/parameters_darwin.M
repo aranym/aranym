@@ -146,9 +146,10 @@ char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 	return(buffer);
 }
 
-void HostFilesys::makeDir(char *filename)
+int HostFilesys::makeDir(char *filename, int perm)
 {
 #error Please implement makeDir for darwin
+	/* return mkdir(filename, perm); */
 }
 
 

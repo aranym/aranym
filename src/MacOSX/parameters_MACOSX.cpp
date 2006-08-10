@@ -74,7 +74,7 @@ char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 	return safe_strncpy(buffer, path, bufsize);
 }
 
-void HostFilesys::makeDir(char *filename)
+int HostFilesys::makeDir(char *filename, int perm)
 {
-	mkdir(filename, 0755);
+	return mkdir(filename, perm);
 }

@@ -29,6 +29,7 @@
 #include "main.h"
 
 #include "parameters.h"
+#include "host_filesys.h"
 #include "toserror.h"
 #include "hostfs.h"
 #include "tools.h"
@@ -1068,7 +1069,7 @@ int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname( dir, fname, fpathName );
 
-	if ( mkdir( (char*)fpathName, mode ) )
+	if ( HostFilesys::makeDir( (char*)fpathName, mode ) )
 		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	return TOS_E_OK;

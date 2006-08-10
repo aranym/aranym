@@ -74,11 +74,11 @@ char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 	return safe_strncpy(buffer, ARANYM_DATADIR, bufsize);
 }
 
-void HostFilesys::makeDir(char *filename)
+int HostFilesys::makeDir(char *filename, int perm)
 {
 #ifdef OS_mingw
-	mkdir(filename);
+	return mkdir(filename);
 #else
-	mkdir(filename, 0755);
+	return mkdir(filename, perm);
 #endif
 }
