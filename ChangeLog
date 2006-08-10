@@ -1,3 +1,8 @@
+2006/08/10 - Patrice
+- Disable hardware surface usage, to avoid locking the screen too frequently.
+  Seems to be the only cause for slowness on MacOSX when not using OpenGL.
+
+
 2006/07/17 - Patrice
 - mingw does not have mkdir() with permissions.
 

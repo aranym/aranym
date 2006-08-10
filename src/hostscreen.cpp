@@ -292,7 +292,7 @@ void HostScreen::searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp )
 	}
 
 	/* Read available video modes */
-	modeflags = SDL_HWSURFACE | SDL_HWPALETTE;
+	modeflags = 0 /*SDL_HWSURFACE | SDL_HWPALETTE*/;
 	if (bx_options.video.fullscreen)
 		modeflags |= SDL_FULLSCREEN;
 
@@ -346,7 +346,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	this->bpp = bpp;
 
 	// SelectVideoMode();
-	sdl_videoparams = SDL_HWSURFACE | SDL_HWPALETTE;
+	sdl_videoparams = 0 /*SDL_HWSURFACE | SDL_HWPALETTE*/;
 	if (bx_options.video.fullscreen)
 		sdl_videoparams |= SDL_FULLSCREEN;
 
