@@ -1,8 +1,15 @@
 aclocal.m4
+aranym
+aratapif
 autom4te.cache
 config.h
 config.h.in
+config.log
 config.status
 configure
+cpudefs.cpp
+cpuemu.cpp
+cpustbl.cpp
+cputbl.h
 Makefile
 obj
