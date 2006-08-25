@@ -5,7 +5,9 @@
 #ifndef TAG_TYPE_defined
 #define TAG_TYPE_defined
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 typedef enum {
 	Error_Tag,
@@ -37,6 +39,8 @@ struct Config_Tag {
 extern int input_config(const char *, struct Config_Tag *, char *);
 extern int update_config(const char *, struct Config_Tag *, char *);
 
+#ifdef __cplusplus
 }
+#endif
 
 #endif
