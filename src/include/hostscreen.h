@@ -395,7 +395,11 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 		if (bpp == 2) {
 			d = *(uint32 *)&atariBitplaneData[0];
 		} else {
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+			d = atariBitplaneData[0]<<16;
+#else
 			d = atariBitplaneData[0];
+#endif
 		}
 	}
 
@@ -494,6 +498,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.66  2006/08/25 13:16:10  pmandin
+ * big endian patch from philipp donze
+ *
  * Revision 1.65  2006/05/31 22:06:18  johan
  * "Real" planar to chunky code for little endian CPUs.
  *
