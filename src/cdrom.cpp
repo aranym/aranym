@@ -98,14 +98,10 @@ extern "C" {
 #define CD_FRAMESIZE    2048
 
 #elif defined(OS_darwin)
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <dev/disk.h>
-#include <errno.h>
+// #include <dev/disk.h>
+// dev/disk.h is deprecated since OS 10.3. Use sys/disk.h instead.
+#include <sys/disk.h>
 #include <paths.h>
-#include <sys/param.h>
 
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOBSD.h>
@@ -255,7 +251,7 @@ static kern_return_t FindEjectableCDMedia( io_iterator_t *mediaIterator,
     }
   kernResult = IOServiceGetMatchingServices( *masterPort,
                                              classesToMatch, mediaIterator );
-  if ( (kernResult != KERN_SUCCESS) || (*mediaIterator == NULL) ) 
+  if ( (kernResult != KERN_SUCCESS) || (!*mediaIterator) ) 
     fprintf( stderr, "No ejectable CD media found.\n kernResult = %d\n", kernResult );
 
   return kernResult;
@@ -268,7 +264,7 @@ static kern_return_t GetDeviceFilePath( io_iterator_t mediaIterator,
   io_object_t nextMedia;
   kern_return_t kernResult = KERN_FAILURE;
   nextMedia = IOIteratorNext( mediaIterator );
-  if ( nextMedia == NULL )
+  if ( !nextMedia )
     {
       *deviceFilePath = '\0';
     }
@@ -358,7 +354,7 @@ static struct _CDTOC * ReadTOC( const char * devpath ) {
 
   }
 
-  if ( service == NULL ) {
+  if ( !service ) {
     fprintf( stderr, "CD media not found\n" );
     goto Exit;
   }
