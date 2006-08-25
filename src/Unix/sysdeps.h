@@ -284,7 +284,7 @@ typedef char flagtype;
 #define Bit32u uint32
 
 /* Alignment restrictions */
-#if defined(__i386__) || defined(__powerpc__) || defined(__m68k__) || defined(__x86_64__)
+#if defined(__i386__) || defined(__powerpc__) || defined(__m68k__) || defined(__x86_64__) || defined(__ppc__)
 # define CPU_CAN_ACCESS_UNALIGNED
 #endif
 

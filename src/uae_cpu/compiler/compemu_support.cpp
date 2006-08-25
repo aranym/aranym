@@ -6435,7 +6435,7 @@ int failure;
 #if defined(i386) || defined(__i386__)
 #define TARGET_NATIVE	TARGET_X86
 #endif
-#if defined(powerpc) || defined(__powerpc__)
+#if defined(powerpc) || defined(__powerpc__) || defined(__ppc__)
 #define TARGET_NATIVE	TARGET_POWERPC
 #endif
 #if defined(x86_64) || defined(__x86_64__)
