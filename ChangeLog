@@ -1,3 +1,8 @@
+2006/08/25 - Patrice
+- mkdir() also works for Darwin
+- Fixed hostscreen p2c routines on big endian, from Philipp Donze patch.
+
+
 2006/08/25 - joy
 - memory.h: finally found and fixed two (hopefully last) MMU problems.
 

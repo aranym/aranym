@@ -370,56 +370,6 @@ inline void HostScreen::blitArea( int16 sx, int16 sy, int16 dx, int16 dy, int16 
  */
 inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp, uint8 colorValues[16] )
 {
-/* The improved code will work on big endian machines too,
- * but the bit order will be wrong.
- * To fix this, the initial bitplane reads and the final
- * pixel writes will need to be updated.
- */
-#if SDL_BYTEORDER == SDL_BIGENDIAN
-	memset( colorValues, 0, 16 ); // clear the color values for the 16 pixels (word length)
-
-	for (int l = bpp - 1; l >= 0; l--) {
-		uint16 data = atariBitplaneData[l]; // note: this is about 2000 dryhstones sppedup (the local variable)
-
-#if SDL_BYTEORDER != SDL_BIG_ENDIAN
-		colorValues[ 0] <<= 1;	colorValues[ 0] |= (data >>  7) & 1;
-		colorValues[ 1] <<= 1;	colorValues[ 1] |= (data >>  6) & 1;
-		colorValues[ 2] <<= 1;	colorValues[ 2] |= (data >>  5) & 1;
-		colorValues[ 3] <<= 1;	colorValues[ 3] |= (data >>  4) & 1;
-		colorValues[ 4] <<= 1;	colorValues[ 4] |= (data >>  3) & 1;
-		colorValues[ 5] <<= 1;	colorValues[ 5] |= (data >>  2) & 1;
-		colorValues[ 6] <<= 1;	colorValues[ 6] |= (data >>  1) & 1;
-		colorValues[ 7] <<= 1;	colorValues[ 7] |= (data >>  0) & 1;
-
-		colorValues[ 8] <<= 1;	colorValues[ 8] |= (data >> 15) & 1;
-		colorValues[ 9] <<= 1;	colorValues[ 9] |= (data >> 14) & 1;
-		colorValues[10] <<= 1;	colorValues[10] |= (data >> 13) & 1;
-		colorValues[11] <<= 1;	colorValues[11] |= (data >> 12) & 1;
-		colorValues[12] <<= 1;	colorValues[12] |= (data >> 11) & 1;
-		colorValues[13] <<= 1;	colorValues[13] |= (data >> 10) & 1;
-		colorValues[14] <<= 1;	colorValues[14] |= (data >>  9) & 1;
-		colorValues[15] <<= 1;	colorValues[15] |= (data >>  8) & 1;
-#else
-		colorValues[ 0] <<= 1;	colorValues[ 0] |= (data >> 15) & 1;
-		colorValues[ 1] <<= 1;	colorValues[ 1] |= (data >> 14) & 1;
-		colorValues[ 2] <<= 1;	colorValues[ 2] |= (data >> 13) & 1;
-		colorValues[ 3] <<= 1;	colorValues[ 3] |= (data >> 12) & 1;
-		colorValues[ 4] <<= 1;	colorValues[ 4] |= (data >> 11) & 1;
-		colorValues[ 5] <<= 1;	colorValues[ 5] |= (data >> 10) & 1;
-		colorValues[ 6] <<= 1;	colorValues[ 6] |= (data >>  9) & 1;
-		colorValues[ 7] <<= 1;	colorValues[ 7] |= (data >>  8) & 1;
-
-		colorValues[ 8] <<= 1;	colorValues[ 8] |= (data >>  7) & 1;
-		colorValues[ 9] <<= 1;	colorValues[ 9] |= (data >>  6) & 1;
-		colorValues[10] <<= 1;	colorValues[10] |= (data >>  5) & 1;
-		colorValues[11] <<= 1;	colorValues[11] |= (data >>  4) & 1;
-		colorValues[12] <<= 1;	colorValues[12] |= (data >>  3) & 1;
-		colorValues[13] <<= 1;	colorValues[13] |= (data >>  2) & 1;
-		colorValues[14] <<= 1;	colorValues[14] |= (data >>  1) & 1;
-		colorValues[15] <<= 1;	colorValues[15] |= (data >>  0) & 1;
-#endif
-	}
-#else
 	uint32 a, b, c, d, x;
 
 	/* Obviously the different cases can be broken out in various
@@ -463,6 +413,44 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 	c =  (c & 0xcccccccc)       | ((d & 0xcccccccc) >> 2);
 	d = ((x & 0x33333333) << 2) |  (d & 0x33333333);
 
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	a = (a & 0x5555aaaa) | ((a & 0x00005555) << 17) | ((a & 0xaaaa0000) >> 17);
+	b = (b & 0x5555aaaa) | ((b & 0x00005555) << 17) | ((b & 0xaaaa0000) >> 17);
+	c = (c & 0x5555aaaa) | ((c & 0x00005555) << 17) | ((c & 0xaaaa0000) >> 17);
+	d = (d & 0x5555aaaa) | ((d & 0x00005555) << 17) | ((d & 0xaaaa0000) >> 17);
+	
+	colorValues[ 8] = a;
+	a >>= 8;
+	colorValues[ 0] = a;
+	a >>= 8;
+	colorValues[ 9] = a;
+	a >>= 8;
+	colorValues[ 1] = a;
+	
+	colorValues[10] = b;
+	b >>= 8;
+	colorValues[ 2] = b;
+	b >>= 8;
+	colorValues[11] = b;
+	b >>= 8;
+	colorValues[ 3] = b;
+	
+	colorValues[12] = c;
+	c >>= 8;
+	colorValues[ 4] = c;
+	c >>= 8;
+	colorValues[13] = c;
+	c >>= 8;
+	colorValues[ 5] = c;
+	
+	colorValues[14] = d;
+	d >>= 8;
+	colorValues[ 6] = d;
+	d >>= 8;
+	colorValues[15] = d;
+	d >>= 8;
+	colorValues[ 7] = d;
+#else
 	a = (a & 0xaaaa5555) | ((a & 0x0000aaaa) << 15) | ((a & 0x55550000) >> 15);
 	b = (b & 0xaaaa5555) | ((b & 0x0000aaaa) << 15) | ((b & 0x55550000) >> 15);
 	c = (c & 0xaaaa5555) | ((c & 0x0000aaaa) << 15) | ((c & 0x55550000) >> 15);
@@ -504,9 +492,11 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 #endif
 
-
 /*
  * $Log$
+ * Revision 1.65  2006/05/31 22:06:18  johan
+ * "Real" planar to chunky code for little endian CPUs.
+ *
  * Revision 1.64  2005/06/14 16:45:04  pmandin
  * Use rectangle texture when available
  *
