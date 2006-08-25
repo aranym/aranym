@@ -1,3 +1,15 @@
+2006/08/25 - Philipp
+- Various smaller corrections:
+   cdrom.cpp: Corrected some compiler warnings and include statements for OS X
+   cfgopts.h: Added C++ compiler check to avoid compile errors when included
+              from Objective C files.
+   parameters.h: Added C++ compiler check and removed parse error when included 
+              from Objective C files.
+   compemu_support.cpp, sysdeps.h: added correct PowerPC detection on Mac OS X
+              systems.
+- hostscreen.h: Fixed p2c routine for big endian, colors are now correct.
+
+
 2006/08/25 - Patrice
 - mkdir() also works for Darwin
 - Fixed hostscreen p2c routines on big endian, from Philipp Donze patch.
