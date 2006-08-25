@@ -1,3 +1,7 @@
+2006/08/25 - joy
+- memory.h: finally found and fixed two (hopefully last) MMU problems.
+
+
 2006/08/10 - Patrice
 - HostFilesys::makeDir() now accepts permission flags, to be used by hostfs nf.
 - Disable hardware surface usage, to avoid locking the screen too frequently.
