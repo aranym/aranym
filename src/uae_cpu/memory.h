@@ -463,7 +463,7 @@ static inline uae_u32 sfc_get_long(uaecptr addr)
 static inline uae_u16 sfc_get_word(uaecptr addr)
 {
     if (is_unaligned(addr, 2))
-	return mmu_get_unaligned(addr, regs.dfc, 2);
+	return mmu_get_unaligned(addr, regs.sfc, 2);
     SAVE_EXCEPTION;
     uae_u16 w;
     TRY(prb) {
