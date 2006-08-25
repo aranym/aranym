@@ -7,6 +7,9 @@ config.h.in
 config.log
 config.status
 configure
+compemu.cpp
+compstbl.cpp
+comptbl.h
 cpudefs.cpp
 cpuemu.cpp
 cpustbl.cpp
