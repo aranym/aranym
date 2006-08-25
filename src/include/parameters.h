@@ -33,8 +33,10 @@
 #include "cfgopts.h"
 #include <SDL_keyboard.h>
 
+#ifdef __cplusplus
 # include <cassert>
 # include <cstdio>
+#endif
 
 #ifndef ARANYMHOME
 # define ARANYMHOME	".aranym"
@@ -62,7 +64,7 @@ enum geo_type {
 	geoByteswap
 };
 
-extern int get_geometry(char *, geo_type geo);
+extern int get_geometry(char *, enum geo_type geo);
 
 // External filesystem type
 typedef struct {
