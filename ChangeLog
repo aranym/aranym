@@ -27,6 +27,20 @@
   Still has to be tested in relation to previous binary releases.
 - Updated autogen.sh script to stop if configure step fails. So it's easier to
   spot the error message and one doesn't get the idea that everything is OK!
+- Swapped meaning of CTRL and META key for Mac OS X back to "the logical way":
+  The Apple key(s) represent left and right meta key and CTRL key is mapped to
+  Atari CTRL key. ALT was already mapped to Atari ALT.
+- A new, more Mac like set of keyboard shortcuts defined:
+	Left Apple + , = Open preferences dialog
+	Left Apple + q = Quit
+	Left Apple + r = Reboot
+	Left Apple + escape = Grab/Ungrab mouse cursor
+	Left Apple + d = Enable debugger (if built-in)
+	Left Apple + s = Save screenshot
+	Left Apple + f = Toggle fullscreen mode
+  As you see, I wrote "Left Apple" because you can't define a hotkey to use
+  "any" Apple key. This is a limitation of the current way how hotkeys are 
+  defined.
 
 
 2006/08/25 - Philipp

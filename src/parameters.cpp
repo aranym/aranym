@@ -773,15 +773,6 @@ void presave_nfvdi() {
 }
 
 /*************************************************************************/
-#ifdef OS_darwin
-#define HOTKEY_OPENGUI		SDLK_PRINT	// F13
-#define	HOTKEY_FULLSCREEN	SDLK_NUMLOCK
-#define	HOTKEY_SCREENSHOT	SDLK_F15
-#else
-#define HOTKEY_OPENGUI		SDLK_PAUSE
-#define	HOTKEY_FULLSCREEN	SDLK_SCROLLOCK
-#define	HOTKEY_SCREENSHOT	SDLK_PRINT
-#endif
 
 #define HOTKEYS_STRING_SIZE		20
 static char hotkeys[10][HOTKEYS_STRING_SIZE];
@@ -811,20 +802,37 @@ HOTKEYS_REL hotkeys_rel[]={
 void preset_hotkeys()
 {
 	// default values
-	bx_options.hotkeys.setup.sym = HOTKEY_OPENGUI;
+#ifdef OS_darwin
+	bx_options.hotkeys.setup.sym = SDLK_COMMA;
+	bx_options.hotkeys.setup.mod = KMOD_LMETA;
+	bx_options.hotkeys.quit.sym = SDLK_q;
+	bx_options.hotkeys.quit.mod = KMOD_LMETA;
+	bx_options.hotkeys.reboot.sym = SDLK_r;
+	bx_options.hotkeys.reboot.mod = KMOD_LMETA;
+	bx_options.hotkeys.ungrab.sym = SDLK_ESCAPE;
+	bx_options.hotkeys.ungrab.mod = KMOD_LMETA;
+	bx_options.hotkeys.debug.sym = SDLK_d;
+	bx_options.hotkeys.debug.mod = KMOD_LMETA;
+	bx_options.hotkeys.screenshot.sym = SDLK_s;
+	bx_options.hotkeys.screenshot.mod = KMOD_LMETA;
+	bx_options.hotkeys.fullscreen.sym = SDLK_f;
+	bx_options.hotkeys.fullscreen.mod = KMOD_LMETA;
+#else
+	bx_options.hotkeys.setup.sym = SDLK_PAUSE;
 	bx_options.hotkeys.setup.mod = KMOD_NONE;
-	bx_options.hotkeys.quit.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.quit.sym = SDLK_PAUSE;
 	bx_options.hotkeys.quit.mod = KMOD_LSHIFT;
-	bx_options.hotkeys.reboot.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.reboot.sym = SDLK_PAUSE;
 	bx_options.hotkeys.reboot.mod = KMOD_LCTRL;
 	bx_options.hotkeys.ungrab.sym = SDLK_ESCAPE;
 	bx_options.hotkeys.ungrab.mod = (SDLMod)(KMOD_LSHIFT | KMOD_LCTRL | KMOD_LALT);
-	bx_options.hotkeys.debug.sym = HOTKEY_OPENGUI;
+	bx_options.hotkeys.debug.sym = SDLK_PAUSE;
 	bx_options.hotkeys.debug.mod = KMOD_LALT;
-	bx_options.hotkeys.screenshot.sym = HOTKEY_SCREENSHOT;
+	bx_options.hotkeys.screenshot.sym = SDLK_PRINT;
 	bx_options.hotkeys.screenshot.mod = KMOD_NONE;
-	bx_options.hotkeys.fullscreen.sym = HOTKEY_FULLSCREEN;
+	bx_options.hotkeys.fullscreen.sym = SDLK_SCROLLOCK;
 	bx_options.hotkeys.fullscreen.mod = KMOD_NONE;
+#endif
 }
 
 void postload_hotkeys() {
