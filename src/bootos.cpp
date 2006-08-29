@@ -1,7 +1,7 @@
 /*
 	ROM / OS loader, base class
 
-	ARAnyM (C) 2005 Patrice Mandin
+	ARAnyM (C) 2005-2006 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -40,13 +40,13 @@ void BootOs::reset(void)
 {
 }
 
-void BootOs::load(char *filename) throw (AranymException)
+void BootOs::load(const char *filename) throw (AranymException)
 {
-	D(bug("Reading rom image '%s'", filename));
+	D(bug("Reading OS ROM image '%s'", filename));
 	FILE *f = fopen(filename, "rb");
 
 	if (f == NULL) {
-		throw AranymException("Rom image '%s' not found.", filename);
+		throw AranymException("OS ROM image '%s' not found.", filename);
 	}
 
 	/* Both TOS 4.04 and EmuTOS must be 512 KB */
@@ -56,6 +56,8 @@ void BootOs::load(char *filename) throw (AranymException)
 	fclose(f);
 
 	if (sizeRead != (size_t)RealROMSize) {
-		throw AranymException("Rom image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", filename);
+		throw AranymException("OS ROM image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", filename);
 	}
 }
+/* vim:ts=4:sw=4
+ */
