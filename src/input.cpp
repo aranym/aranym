@@ -186,7 +186,7 @@ static int keysymToAtari(SDL_keysym keysym)
 	switch (keysym.sym) {
 	  case SDLK_LMETA:
 	  case SDLK_RMETA:
-	    return 0x1D;
+	    return 0;
 		break;
 	  case SDLK_MODE: /* passthru */ /* Alt Gr key according to SDL docs */
 	  case SDLK_RALT:
@@ -202,7 +202,7 @@ static int keysymToAtari(SDL_keysym keysym)
 		break;
 	  case SDLK_RCTRL:
 	  case SDLK_LCTRL:
-	    return 0;
+	    return 0x1D;
 	  default:
 	    break;
 	}
