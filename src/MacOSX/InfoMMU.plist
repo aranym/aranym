@@ -5,23 +5,23 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>MacAranym MMU</string>
+	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
 	<string>aranym2.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.aranym.MacAranym</string>
+	<string>org.aranym.MacAranym</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>MacAranym MMU</string>
+	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>aranym beta</string>
+	<string>${CURRENT_PROJECT_VERSION}</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.9.4 alpha</string>
+	<string>${CURRENT_PROJECT_VERSION}</string>
 	<key>NSMainNibFile</key>
 	<string>SDLMain.nib</string>
 	<key>NSPrincipalClass</key>
