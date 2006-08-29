@@ -562,41 +562,6 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		surf = mainSurface;
 	}
 
-	if (!bx_options.video.fullscreen) {
-		/*********** set window position *************/
-		/* note: only do this if not in fullscreen! */
-		SDL_SysWMinfo info;
-		SDL_VERSION(&info.version);
-		if (SDL_GetWMInfo(&info) > 0 ) {
-#define NEW_X(old_x)	bx_options.video.x_win_offset != -1 ? bx_options.video.x_win_offset : old_x
-#define NEW_Y(old_y)	bx_options.video.y_win_offset != -1 ? bx_options.video.y_win_offset : old_y
-
-#ifdef OS_cygwin
-			RECT r;
-			GetWindowRect(info.window, &r);  // now r contains the windows size and position
-			SetWindowPos(info.window, 0,
-					NEW_X(r.left),
-					NEW_Y(r.top),
-					0, 0, SWP_NOSIZE);
-#elif defined(SDL_VIDEO_DRIVER_X11) && defined(HAVE_X11_XLIB_H)
-			if (info.subsystem == SDL_SYSWM_X11) {
-				// get window pos
-				XWindowAttributes attr;
-				info.info.x11.lock_func();		// lock before any X11 operation
-				XGetWindowAttributes(info.info.x11.display, info.info.x11.window, &attr); // attr.x,attr.y now contains the window position
-
-				// set window pos
-				XMoveWindow(info.info.x11.display, info.info.x11.wmwindow,
-						NEW_X(attr.x),
-						NEW_Y(attr.y)
-						);
-				info.info.x11.unlock_func();	// unlock after X11 operation
-			}
-#endif
-		}
-		/******** end of set window position **********/
-	}
-
 	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
 
 	// update the surface's palette
