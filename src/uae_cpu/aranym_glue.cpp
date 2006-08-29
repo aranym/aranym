@@ -181,7 +181,7 @@ void Start680x0(void)
 }
 
 /*
- * Restart running 680x0 emulation
+ * Restart running 680x0 emulation safely from different thread
  */
 void Restart680x0(void)
 {
@@ -190,7 +190,7 @@ void Restart680x0(void)
 }
 
 /*
- * Quit 680x0 emulation
+ * Quit 680x0 emulation safely from different thread
  */
 void Quit680x0(void)
 {
