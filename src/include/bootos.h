@@ -1,7 +1,7 @@
 /*
 	ROM / OS loader, base class
 
-	Copyright (c) 2005 Patrice Mandin
+	Copyright (c) 2005-2006 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -25,12 +25,17 @@
 
 class BootOs
 {
+	protected:
+		virtual void init(void);
+		virtual void load(const char *filename) throw (AranymException);
+
 	public:
-		void init(void);
-		void load(char *filename) throw (AranymException);
-		void reset(void);
+		virtual ~BootOs() {};
+		virtual void reset(void);
 };
 
 extern BootOs *bootOs;
 
 #endif /* BOOTOS_H */
+/* vim:ts=4:sw=4
+ */
