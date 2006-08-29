@@ -32,3 +32,5 @@ class EmutosBootOs : public BootOs {
 };
 
 #endif /* BOOTOSEMUTOS_H */
+/* vim:ts=4:sw=4
+ */

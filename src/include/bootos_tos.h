@@ -1,7 +1,7 @@
 /*
 	ROM / OS loader, TOS
 
-	Copyright (c) 2005 Patrice Mandin
+	Copyright (c) 2005-2006 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -33,3 +33,5 @@ class TosBootOs : public BootOs
 };
 
 #endif /* BOOTOSTOS_H */
+/* vim:ts=4:sw=4
+ */
