@@ -1,3 +1,21 @@
+2006/08/29 - joy
+- ARAnyM window positioning code moved from hostscreen.cpp to main.cpp,
+  changed from platform specific window manager hacks to documented SDL
+  environment variables and changed the command line option to "-P xxx,yyy"
+  or simply "-P center" for centered window. This also removes the problematic
+  stuff in configure.ac for detecting X11 library I added recently.
+
+- Linux/m68k now reboots properly (before ARAnyM died with double bus error).
+  Problem lied in missing 'virtual' keyword in definition of 'reset' function
+  in parent class (BootOs). Beware! This inheritance trap can be hard to spot.
+
+- emul_op: implemented new M68K_EMUL_OP_RESET instruction that calls the
+  BootOs::reset function and basically reloads the linux kernel into RAM.
+
+- bootos_linux: created a simple OS init routine for successful Linux/m68k
+  reboot (the kernel jumps to $e00030). Makes use of M68K_EMUL_OP_RESET.
+
+
 2006/08/29 - Patrice
 - midi: output midi as raw values.
 
