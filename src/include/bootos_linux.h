@@ -1,7 +1,7 @@
 /*
 	ROM / OS loader, Linux/m68k
 
-	Copyright (c) 2005 Patrice Mandin
+	Copyright (c) 2005-2006 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ class LinuxBootOs : public BootOs
 		unsigned long bi_size;
 
 		void cleanup(void);
-		bool init(void);
+		void init(void);
 		void *loadFile(char *filename, unsigned long *length);
 		int checkKernel(void);
 		int create_bootinfo(void);
@@ -70,9 +70,11 @@ class LinuxBootOs : public BootOs
 
 	public:
 		LinuxBootOs(void) throw (AranymException);
-		~LinuxBootOs(void);
+		virtual ~LinuxBootOs(void);
 
-		void reset(void);
+		virtual void reset(void) throw (AranymException);
 };
 
 #endif /* BOOTOSLINUX_H */
+/* vim:ts=4:sw=4
+ */
