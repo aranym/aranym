@@ -1878,7 +1878,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$BUILD_DIR/..\"\n\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nexport PATH=$PATH:/usr/X11R6/bin\n\ncd ../Unix\n\nCONFIGURE_OPTIONS=\"--prefix=$HOME  --enable-blitmemmove --disable-nat-debug\"\nif [ -f autogen.sh ]; then\n\t./autogen.sh $CONFIGURE_OPTIONS\nelse\n\t./configure $CONFIGURE_OPTIONS\nfi\n";
+			shellScript = "cd \"$BUILD_DIR/..\"\n\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nexport PATH=$PATH:/usr/X11R6/bin\n\ncd ../Unix\n\nCONFIGURE_OPTIONS=\"--prefix=$HOME  --enable-blitmemmove --disable-nat-debug\"\nif [ -f autogen.sh ]; then\n\trm -r autom4te.cache config.h\n\t./autogen.sh $CONFIGURE_OPTIONS\nelse\n\t./configure $CONFIGURE_OPTIONS\nfi\n";
 		};
 		2087E5A105EE9F8C00F9ACA1 = {
 			buildActionMask = 2147483647;
@@ -1987,7 +1987,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$BUILD_DIR/..\"\n\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nexport PATH=$PATH:/usr/X11R6/bin\n\ncd ../Unix\nCONFIGURE_OPTIONS=\"--prefix=$HOME --enable-fullmmu --enable-lilo --without-zlib --enable-blitmemmove --disable-nat-debug\"\nif [ -f autogen.sh ]; then\n\t./autogen.sh $CONFIGURE_OPTIONS\nelse\n\t./configure $CONFIGURE_OPTIONS\nfi";
+			shellScript = "cd \"$BUILD_DIR/..\"\n\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nexport PATH=$PATH:/usr/X11R6/bin\n\ncd ../Unix\nCONFIGURE_OPTIONS=\"--prefix=$HOME --enable-fullmmu --enable-lilo --without-zlib --enable-blitmemmove --disable-nat-debug\"\nif [ -f autogen.sh ]; then\n\trm -r autom4te.cache config.h\n\t./autogen.sh $CONFIGURE_OPTIONS\nelse\n\t./configure $CONFIGURE_OPTIONS\nfi";
 		};
 		209D33E207CE691900F8A51D = {
 			buildActionMask = 2147483647;
@@ -3258,8 +3258,6 @@
 //294
 		29B97313FDCFA39411CA2CEA = {
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				SDKROOT = /Developer/SDKs/MacOSX10.3.0.sdk;
 			};
 			buildStyles = (
 				4A9504CCFFE6A4B311CA0CBA,
