@@ -421,6 +421,19 @@ bool InitAll(void)
 	if ( strstr( driverName, "fb" ) )		// fullscreen on framebuffer
 		bx_options.video.fullscreen = true;
 
+	// set preferred window position
+	const char *wpos = bx_options.video.window_pos;
+	if (strlen(wpos) > 0) {
+		if (strncasecmp(wpos, "center", strlen("center")) == 0) {
+			SDL_putenv("SDL_VIDEO_CENTERED=1");
+		}
+		else {
+			static char var[64];
+			snprintf(var, sizeof(var), "SDL_VIDEO_WINDOW_POS=%s", wpos);
+			SDL_putenv(var);
+		}
+	}
+
 	// Check if at least one joystick present, open it
 	if (SDL_NumJoysticks()>0) {
 		sdl_joystick=SDL_JoystickOpen(0);
