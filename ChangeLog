@@ -1,10 +1,11 @@
-2006/06/29 - Patrice
+2006/08/29 - Patrice
 - midi: output midi as raw values.
 
 
-2006/06/29 - Philipp
+2006/08/29 - Philipp
 - Repaired Mac OS X project file. Now compiles under Xcode 1.5 and can be 
   upgraded to Xcode 2.4 (by ignoring the "path empty" error message). 
+  Some changes as suggested by Francois. Slight reorganization. Added README.txt
   Still has to be tested in relation to previous binary releases.
 - Updated autogen.sh script to stop if configure step fails. So it's easier to
   spot the error message and one doesn't get the idea that everything is OK!
