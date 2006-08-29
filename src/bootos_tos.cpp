@@ -1,7 +1,7 @@
 /*
 	ROM / OS loader, TOS
 
-	ARAnyM (C) 2005 Patrice Mandin
+	ARAnyM (C) 2005-2006 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "bootos_tos.h"
 #include "romdiff.h"
 #include "aranym_exception.h"
+#include "emul_op.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -217,9 +218,9 @@ TosBootOs::TosBootOs(void) throw (AranymException)
 
 	// Xconout patch
 	if (bx_options.tos.redirect_CON) {
-		ROMBaseHost[0x8d44] = ROMBaseHost[0x8d50] = 0x71;
-		ROMBaseHost[0x8d45] = ROMBaseHost[0x8d51] = 0x2a;
-		ROMBaseHost[0x8d46] = ROMBaseHost[0x8d52] = 0x4e;
+		ROMBaseHost[0x8d44] = ROMBaseHost[0x8d50] = M68K_EMUL_OP_PUT_SCRAP >> 8;
+		ROMBaseHost[0x8d45] = ROMBaseHost[0x8d51] = M68K_EMUL_OP_PUT_SCRAP && 0xff;
+		ROMBaseHost[0x8d46] = ROMBaseHost[0x8d52] = 0x4e;	// RTS
 		ROMBaseHost[0x8d47] = ROMBaseHost[0x8d53] = 0x75;
 	}
 
@@ -227,3 +228,5 @@ TosBootOs::TosBootOs(void) throw (AranymException)
 
 	init();
 }
+/* vim:ts=4:sw=4
+ */
