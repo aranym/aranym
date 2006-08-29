@@ -1,7 +1,7 @@
 /*
 	ROM / OS loader, Linux/m68k
 
-	ARAnyM (C) 2005 Patrice Mandin
+	ARAnyM (C) 2005-2006 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "cpu_emulation.h"
 #include "bootos_linux.h"
 #include "aranym_exception.h"
+#include "emul_op.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -204,10 +205,19 @@ static union {
 
 LinuxBootOs::LinuxBootOs(void) throw (AranymException)
 {
-	if (!init())
-	{
-		throw AranymException("Error loading Linux/m68k kernel");
-	}
+	/* set up a minimal OS for successful Linux/m68k reboot */
+	ROMBaseHost[0x0000] = 0x60;		/* bra.s $e00030 */
+	ROMBaseHost[0x0001] = 0x2e;
+	ROMBaseHost[0x0030] = 0x46;		/* move.w #$2700,sr */
+	ROMBaseHost[0x0031] = 0xfc;
+	ROMBaseHost[0x0032] = 0x27;
+	ROMBaseHost[0x0033] = 0x00;
+	ROMBaseHost[0x0034] = 0x4e;		/* reset */
+	ROMBaseHost[0x0035] = 0x70;
+	ROMBaseHost[0x0036] = M68K_EMUL_RESET >> 8;
+	ROMBaseHost[0x0037] = M68K_EMUL_RESET & 0xff;
+
+	init();
 }
 
 LinuxBootOs::~LinuxBootOs(void)
@@ -215,16 +225,8 @@ LinuxBootOs::~LinuxBootOs(void)
 	cleanup();
 }
 
-void LinuxBootOs::reset(void)
+void LinuxBootOs::reset(void) throw (AranymException)
 {
-	/* Linux/m68k kernel is in RAM, and must be reloaded */
-
-	/*
-		FIXME: Well, if we get there, LiloInit() already returned true the first
-		time. But maybe the kernel and/or ramdisk image has been deleted/corrupted
-		since then, so exception should be also thrown there.
-	*/
-
 	init();
 }
 
@@ -243,7 +245,7 @@ void LinuxBootOs::cleanup(void)
 	}
 }
 
-bool LinuxBootOs::init(void)
+void LinuxBootOs::init(void)
 {
 	kernel=ramdisk=NULL;
 	kernel_length=ramdisk_length=0;
@@ -252,14 +254,15 @@ bool LinuxBootOs::init(void)
 	/* Load the kernel */
 	kernel=loadFile(bx_options.lilo.kernel, &kernel_length);
 	if (kernel==NULL) {
-		D(bug("lilo: can not load kernel image"));
-		return false;
+		throw AranymException("ARAnyM LILO: Error loading kernel '%s'", bx_options.lilo.kernel);
 	}
 
 	/* Load the ramdisk */
-	ramdisk=loadFile(bx_options.lilo.ramdisk, &ramdisk_length);
-	if (ramdisk==NULL) {
-		D(bug("lilo: can not load ramdisk (maybe useless)"));
+	if (strlen(bx_options.lilo.ramdisk) > 0) {
+		ramdisk=loadFile(bx_options.lilo.ramdisk, &ramdisk_length);
+		if (ramdisk==NULL) {
+			infoprint("ARAnyM LILO: Error loading ramdisk '%s'", bx_options.lilo.ramdisk);
+		}
 	}
 
 	memset(RAMBaseHost, 0, RAMSize);
@@ -268,15 +271,13 @@ bool LinuxBootOs::init(void)
 	/* Check the kernel */
 	if (checkKernel()<0) {
 		cleanup();
-		return false;
+		throw AranymException("ARAnyM LILO: Error setting up kernel");
 	}
 
 	/* Kernel and ramdisk copied in Atari RAM, we can free it */
 	cleanup();
-
-	return true;
 #else
-	return false;
+	throw AranymException("ARAnyM LILO: not compiled in");
 #endif /* ENABLE_LILO */
 }
 
@@ -540,13 +541,9 @@ int LinuxBootOs::checkKernel(void)
 	}
 
 	/*--- Init SP & PC ---*/
-	{
-		uint32 *tmp;
-
-		tmp = (uint32 *)RAMBaseHost;
-		tmp[0] = SDL_SwapBE32(KERNEL_START);	/* SP */
-		tmp[1] = SDL_SwapBE32(KERNEL_START);	/* PC */
-	}
+	uint32 *tmp = (uint32 *)RAMBaseHost;
+	tmp[0] = SDL_SwapBE32(KERNEL_START);	/* SP */
+	tmp[1] = SDL_SwapBE32(KERNEL_START);	/* PC */
 	
 	D(bug("lilo: ok"));
 	return 0;
@@ -648,3 +645,5 @@ int LinuxBootOs::add_bi_string(unsigned short tag, const char *s)
 	return 0;
 #endif /* ENABLE_LILO */
 }
+/* vim:ts=4:sw=4
+ */
