@@ -1,7 +1,9 @@
 /*
- *  emul_op.cpp - 68k opcodes for ROM patches
+ *  emul_op.cpp - 68k opcodes for ARAnyM specific hacking
  *
- *  Basilisk II (C) 1997-2000 Christian Bauer
+ *  Copyright (c) 2001-2006 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ *
+ *  based on Basilisk II (C) 1997-2000 Christian Bauer
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +25,7 @@
 #include "main.h"
 #include "emul_op.h"
 #include "parameters.h"
+#include "bootos.h"
 
 #ifdef ENABLE_MON
 # include "mon.h"
@@ -75,6 +78,11 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			QuitEmulator();
 			break;
 		}
+
+		case M68K_EMUL_RESET:	// used in Linux/m68k reboot routine
+			bootOs->reset();	// reload linux kernel
+			Reset680x0();		// reset CPU so it fetches correct SP && PC
+			break;
 
 		// VT52 Xconout
 		case M68K_EMUL_OP_PUT_SCRAP:
@@ -229,3 +237,5 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 	}
 }
+/* vim:ts=4:sw=4
+ */
