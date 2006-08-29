@@ -118,8 +118,7 @@ typedef struct {
   int8 boot_color_depth;		// boot color depth
   uint8 refresh;
   int8 monitor;				// VGA or TV
-  int16 x_win_offset;
-  int16 y_win_offset;	// window position coordinates
+  char window_pos[10];	// window position coordinates in the form "123,456"
 } bx_video_options_t;
 
 // Startup options

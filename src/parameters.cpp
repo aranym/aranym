@@ -286,8 +286,7 @@ void preset_video()
   bx_options.video.boot_color_depth = -1;	// Boot in color depth
   bx_options.video.monitor = -1;			// preserve default NVRAM monitor
   bx_options.video.refresh = 2;				// 25 Hz update
-  bx_options.video.x_win_offset = -1;
-  bx_options.video.y_win_offset = -1;
+  strcpy(bx_options.video.window_pos, "");	// ARAnyM window position on screen
 }
 
 void postload_video()
@@ -1042,7 +1041,7 @@ int process_cmdline(int argc, char **argv)
 			case 'D':
 				bx_options.startup.debugger = true;
 				break;
-# ifdef GDBSTUB
+#	ifdef GDBSTUB
 			case 'p':
 				port_number = atoi(optarg); 
 				break;
@@ -1057,7 +1056,7 @@ int process_cmdline(int argc, char **argv)
 					bx_options.gdbstub.bss_base = atoi(argv[optind]);
 				}
 				break;
-# endif
+#	endif
 #endif
 
 			case 'e':
@@ -1097,8 +1096,7 @@ int process_cmdline(int argc, char **argv)
 				break;
 
 			case 'P':
-				bx_options.video.x_win_offset = atoi(optarg);
-				bx_options.video.y_win_offset = atoi(argv[optind]);
+				safe_strncpy(bx_options.video.window_pos, optarg, sizeof(bx_options.video.window_pos));
 				break;
 
 #if HOSTFS_SUPPORT
