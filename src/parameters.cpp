@@ -612,7 +612,7 @@ struct Config_Tag midi_conf[]={
 
 void preset_midi() {
   MIDI(enabled)=false;
-  safe_strncpy(MIDI(output), "/tmp/aranym-midi.txt", sizeof(MIDI(output)));
+  safe_strncpy(MIDI(output), "/tmp/aranym-midi.bin", sizeof(MIDI(output)));
 }
 
 void postload_midi() {

@@ -35,9 +35,12 @@
 #define DEBUG 0
 #include "debug.h"
 
+#define MIDI_BUFSIZE 1024
+
 MIDI::MIDI(memptr addr, uint32 size) : ACIA(addr, size)
 {
 	output_to_file=0;
+	bufpos = 0;
 
 	D(bug("midi: interface created at 0x%06x", getHWoffset()));
 
@@ -56,6 +59,10 @@ MIDI::~MIDI(void)
 void MIDI::reset(void)
 {
 	D(bug("midi: reset"));
+	if (output_to_file) {
+		fflush(output_handle);
+		bufpos = 0;
+	}
 }
 
 uae_u8 MIDI::ReadStatus()
@@ -95,9 +102,10 @@ void MIDI::WriteData(uae_u8 value)
 	}
 
 	if (output_to_file) {
-		fprintf(output_handle,
-			(((value>=32) && (value<=127)) || (value==13) || (value==10)) ? "%c" : "<0x%02x>",
-			value);
-		fflush(output_handle);
+		fprintf(output_handle, "%c", value);
+		if (++bufpos > MIDI_BUFSIZE) {
+			bufpos = 0;
+			fflush(output_handle);
+		}
 	}
 }

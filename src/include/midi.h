@@ -31,6 +31,7 @@
 class MIDI: public ACIA {
 	private:
 		int output_to_file;
+		int bufpos;
 		FILE *output_handle;
 
 	public:
