@@ -860,7 +860,7 @@ Options:\n\
   -c, --config FILE          read different configuration file\n\
   -s, --save                 save configuration file\n\
   -S, --swap-ide             swap IDE drives\n\
-  -P <X> <Y>                 set window position\n\
+  -P <X,Y> or <center>       set window position\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
