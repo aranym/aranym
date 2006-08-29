@@ -1,7 +1,7 @@
 /*
 	ROM / OS loader, EmuTOS
 
-	ARAnyM (C) 2005 Patrice Mandin
+	ARAnyM (C) 2005-2006 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -43,3 +43,5 @@ EmutosBootOs::EmutosBootOs(void) throw (AranymException)
 
 	init();
 }
+/* vim:ts=4:sw=4
+ */
