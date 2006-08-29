@@ -17,3 +17,9 @@ Using Xcode to compile MacAranym:
 
 
 Have fun
+
+
+Note to Mac OS 10.3.9 users:
+----------------------------
+Do not install any update to Quicktime 7 or you won't be able to compile the 
+project without problems. Stick with Quicktime 6.5.2!

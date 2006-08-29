@@ -657,14 +657,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		201DD8CC05F70B7B0090F5B7 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = aclocal.m4;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		202FAA46062BB157002E6D3B = {
 			children = (
 				204862E406D1CDAB00EEF19E,
@@ -1878,7 +1870,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$BUILD_DIR/..\"\n\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nexport PATH=$PATH:/usr/X11R6/bin\n\ncd ../Unix\n\nCONFIGURE_OPTIONS=\"--prefix=$HOME  --enable-blitmemmove --disable-nat-debug\"\nif [ -f autogen.sh ]; then\n\trm -r autom4te.cache config.h\n\t./autogen.sh $CONFIGURE_OPTIONS\nelse\n\t./configure $CONFIGURE_OPTIONS\nfi\n";
+			shellScript = "cd \"$BUILD_DIR/..\"\n\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nexport PATH=$PATH:/usr/X11R6/bin\n\ncd ../Unix\n\nCONFIGURE_OPTIONS=\"--prefix=$HOME  --enable-blitmemmove --disable-nat-debug\"\nif [ -f autogen.sh ]; then\n\trm -rf autom4te.cache config.h 2>/dev/null\n\t./autogen.sh $CONFIGURE_OPTIONS\nelse\n\t./configure $CONFIGURE_OPTIONS\nfi\n";
 		};
 		2087E5A105EE9F8C00F9ACA1 = {
 			buildActionMask = 2147483647;
@@ -1987,7 +1979,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$BUILD_DIR/..\"\n\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nexport PATH=$PATH:/usr/X11R6/bin\n\ncd ../Unix\nCONFIGURE_OPTIONS=\"--prefix=$HOME --enable-fullmmu --enable-lilo --without-zlib --enable-blitmemmove --disable-nat-debug\"\nif [ -f autogen.sh ]; then\n\trm -r autom4te.cache config.h\n\t./autogen.sh $CONFIGURE_OPTIONS\nelse\n\t./configure $CONFIGURE_OPTIONS\nfi";
+			shellScript = "cd \"$BUILD_DIR/..\"\n\nexport ACLOCAL_FLAGS=\"-I $PWD\"\nexport MACOSX_DEPLOYMENT_TARGET=10.3\nexport PATH=$PATH:/usr/X11R6/bin\n\ncd ../Unix\nCONFIGURE_OPTIONS=\"--prefix=$HOME --enable-fullmmu --enable-lilo --without-zlib --enable-blitmemmove --disable-nat-debug\"\nif [ -f autogen.sh ]; then\n\trm -rf autom4te.cache config.h 2>/dev/null\n\t./autogen.sh $CONFIGURE_OPTIONS\nelse\n\t./configure $CONFIGURE_OPTIONS\nfi";
 		};
 		209D33E207CE691900F8A51D = {
 			buildActionMask = 2147483647;
@@ -4808,7 +4800,6 @@
 		F580C33805A7166701DAC342 = {
 			children = (
 				201C30AB05F758B100804E00,
-				201DD8CC05F70B7B0090F5B7,
 				201DD8BB05F707260090F5B7,
 				F5B5AED505E6B89301436688,
 				203122C90649109100ED24E4,
