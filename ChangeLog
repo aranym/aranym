@@ -1,6 +1,6 @@
 2006/08/31 - Philipp
-- Check global bootdrive variable before saving and after loading: it should
-  always be an printable ASCII value. (0 is not acceptable)
+- Check global bootdrive variable before saving and after loading config file:
+  it should always be a printable ASCII value. (0 is not acceptable)
 
 2006/08/29 - joy
 - ARAnyM window positioning code moved from hostscreen.cpp to main.cpp,
