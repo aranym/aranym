@@ -187,11 +187,15 @@ void postload_global()
 #ifndef FixedSizeFastRAM
 	FastRAMSize = bx_options.fastram * 1024 * 1024;
 #endif
+	if (!isalpha(bx_options.bootdrive))
+		bx_options.bootdrive = 0;
 }
 
 void presave_global()
 {
 	bx_options.fastram = FastRAMSize / 1024 / 1024;
+	if (bx_options.bootdrive == 0)
+		bx_options.bootdrive = ' ';
 }
 
 /*************************************************************************/
