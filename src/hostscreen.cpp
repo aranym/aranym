@@ -31,7 +31,7 @@
 #include "gui-sdl/sdlgui.h"
 #include "main.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #ifdef ENABLE_OPENGL
