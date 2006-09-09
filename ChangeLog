@@ -1,3 +1,8 @@
+2006/09/09 - Patrice
+- Videl: copy high bytes of color component to lower bytes, to make white really
+  white. STE has 4bits/component, hence 0xf was 0xf0, Falcon has 6bits/component.
+
+
 2006/09/04 - Patrice
 - Midi: don't bufferize data.
 

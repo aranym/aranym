@@ -199,6 +199,7 @@ void VIDEL::updateColors()
 		stCompatibleColorPalette = true;
 
 	// map the colortable into the correct pixel format
+	int r,g,b;
 
 #define F_COLORS(i) handleRead(VIDEL_COLOR_REGS_BEGIN + (i))
 #define STE_COLORS(i)	handleRead(0xff8240 + (i))
@@ -206,22 +207,28 @@ void VIDEL::updateColors()
 	if (!stCompatibleColorPalette) {
 		for (int i = 0; i < 256; i++) {
 			int offset = i << 2;
-			hostScreen.setPaletteColor( i,
-										F_COLORS(offset),
-										F_COLORS(offset + 1),
-										F_COLORS(offset + 3) );
+			r = F_COLORS(offset) & 0xfc;
+			r |= r>>6;
+			g = F_COLORS(offset + 1) & 0xfc;
+			g |= g>>6;
+			b = F_COLORS(offset + 3) & 0xfc;
+			b |= b>>6;
+			hostScreen.setPaletteColor(i, r,g,b);
 		}
 		hostScreen.updatePalette( 256 );
 	} else {
 		for (int i = 0; i < 16; i++) {
 			int offset = i << 1;
-
-			// fprintf(stderr,"HS: setColor: %03d,%6x - %x,%x,%x\n", index, sdl_colors[index], red, green, blue );
-
-			hostScreen.setPaletteColor( i,
-										(STE_COLORS(offset) << 5) | ((STE_COLORS(offset) << 1 ) & 0x8),
-										((STE_COLORS(offset + 1) << 1) & 0xE0) | ((STE_COLORS(offset + 1) >> 3) & 0x8),
-										((STE_COLORS(offset + 1) << 5) & 0xE0) | ((STE_COLORS(offset + 1) << 1) & 0x8));
+			r = STE_COLORS(offset) & 0x0f;
+			r = ((r & 7)<<1)|(r>>3);
+			r |= r<<4;
+			g = (STE_COLORS(offset + 1)>>4) & 0x0f;
+			g = ((g & 7)<<1)|(g>>3);
+			g |= g<<4;
+			b = STE_COLORS(offset + 1) & 0x0f;
+			b = ((b & 7)<<1)|(b>>3);
+			b |= b<<4;
+			hostScreen.setPaletteColor(i, r,g,b);
 		}
 		hostScreen.updatePalette( 16 );
 	}
