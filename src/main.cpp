@@ -24,6 +24,16 @@
  */
 
 
+#if defined(OS_cygwin)
+// HACK: cygwin/mingw32 mix crap (needs to be the first SDL header included)
+//       if not present the SDL_putenv uses cygwin implementation however
+//       the video driver reading it uses SDL_getenv which comes from the SDL
+//       build using mingw32...
+# define _WIN32 1
+# include <SDL_getenv.h>
+# undef _WIN32
+#endif
+
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
