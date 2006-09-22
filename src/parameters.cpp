@@ -608,14 +608,16 @@ void presave_lilo()
 #define MIDI(x) bx_options.midi.x
 
 struct Config_Tag midi_conf[]={
-	{ "Enabled", Bool_Tag, &MIDI(enabled), 0, 0},
-	{ "Output", Path_Tag, &MIDI(output), sizeof(MIDI(output)), 0},
+	{ "Type", String_Tag, &MIDI(type), sizeof(MIDI(type)), 0},
+	{ "File", Path_Tag, &MIDI(file), sizeof(MIDI(file)), 0},
+	{ "Sequencer", Path_Tag, &MIDI(sequencer), sizeof(MIDI(sequencer)), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_midi() {
-  MIDI(enabled)=false;
-  safe_strncpy(MIDI(output), "/tmp/aranym-midi.bin", sizeof(MIDI(output)));
+  safe_strncpy(MIDI(type), "file", sizeof(MIDI(type)));
+  safe_strncpy(MIDI(file), "/tmp/aranym-midi.bin", sizeof(MIDI(file)));
+  safe_strncpy(MIDI(sequencer), "/dev/sequencer", sizeof(MIDI(sequencer)));
 }
 
 void postload_midi() {
@@ -728,7 +730,7 @@ struct Config_Tag parallel_conf[]={
 
 void preset_parallel() {
   safe_strncpy(PARALLEL_CONF(type), "file", sizeof(PARALLEL_CONF(type)));
-  safe_strncpy(PARALLEL_CONF(file), "stderr", sizeof(PARALLEL_CONF(type)));
+  safe_strncpy(PARALLEL_CONF(file), "/tmp/aranym-parallel.bin", sizeof(PARALLEL_CONF(type)));
   safe_strncpy(PARALLEL_CONF(parport), "/dev/parport0", sizeof(PARALLEL_CONF(parport)));
 }
 

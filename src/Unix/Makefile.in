@@ -31,6 +31,7 @@ SDL_CFLAGS = @SDL_CFLAGS@
 SYSSRCS = @SYSSRCS@
 CPUSRCS = @CPUSRCS@
 DSPSRCS = @DSPSRCS@
+MIDISEQSRCS = @MIDISEQSRCS@
 NFCDROMSRCS = @NFCDROMSRCS@
 NFPCISRCS = @NFPCISRCS@
 NFOSMESASRCS = @NFOSMESASRCS@
@@ -89,6 +90,7 @@ SRCS = ../main.cpp \
 	../md5.cpp \
 	../mfp.cpp \
 	../midi.cpp \
+	../midi_file.cpp \
 	../mmu.cpp \
 	../ndebug.cpp \
 	../ncr5380.cpp \
@@ -109,6 +111,7 @@ SRCS = ../main.cpp \
 	../natfeat/debugprintf.cpp \
 	../natfeat/nfvdi.cpp \
 	../natfeat/nfvdi_soft.cpp \
+	$(MIDISEQSRCS) \
 	$(NFCDROMSRCS) \
 	$(NFPCISRCS) \
 	$(NFOSMESASRCS) \

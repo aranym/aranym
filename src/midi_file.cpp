@@ -18,9 +18,8 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "sysdeps.h"
 #include "hardware.h"
@@ -37,15 +36,15 @@ MidiFile::MidiFile(memptr addr, uint32 size) : MIDI(addr, size)
 {
 	D(bug("midi_file: interface created at 0x%06x", getHWoffset()));
 
-	output_handle = fopen(bx_options.midi.output,"w");
+	fd = open(bx_options.midi.file, O_WRONLY|O_CREAT, 0664);
 }
 
 MidiFile::~MidiFile(void)
 {
 	D(bug("midi_file: interface destroyed at 0x%06x", getHWoffset()));
 
-	if (output_handle) {
-		fclose(output_handle);
+	if (fd>=0) {
+		close(fd);
 	}
 }
 
@@ -53,7 +52,7 @@ void MidiFile::WriteData(uae_u8 value)
 {
 	D(bug("midi_file: WriteData(0x%02x)",value));
 
-	if (output_handle) {
-		fprintf(output_handle, "%c", value);
+	if (fd>=0) {
+		write(fd, &value, 1);
 	}
 }

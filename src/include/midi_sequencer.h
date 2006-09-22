@@ -1,5 +1,5 @@
 /*
-	Atari MIDI emulation
+	Atari MIDI emulation, output to sequencer device
 
 	ARAnyM (C) 2005-2006 Patrice Mandin
 
@@ -18,17 +18,22 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _MIDI_H
-#define _MIDI_H
+#ifndef _MIDI_SEQUENCER_H
+#define _MIDI_SEQUENCER_H
 
-#include "acia.h"
+#include "midi.h"
 
-class MIDI: public ACIA
+class MidiSequencer: public MIDI
 {
+	private:
+		int fd;
+		unsigned char packet[4];
+
 	public:
-		MIDI(memptr, uint32);
-		virtual ~MIDI();
-		virtual void reset(void);
+		MidiSequencer(memptr, uint32);
+		~MidiSequencer();
+
+		void WriteData(uint8);
 };
 
-#endif /* _MIDI_H */
+#endif /* _MIDI_SEQUENCER_H */

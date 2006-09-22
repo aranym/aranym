@@ -33,8 +33,8 @@
 #include "ide.h"
 #include "mmu.h"
 #include "hostscreen.h"
-#include "audio_dma.h"
-#include "audio_crossbar.h"
+#include "midi_file.h"
+#include "midi_sequencer.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -68,7 +68,13 @@ void HWInit()
 	arhw[iMFP] = mfp = new MFP(0xfffa00, 0x30);
 	arhw[iMMU] = mmu = new MMU(0xff8000, 8);
 	arhw[iIKBD] = ikbd = new IKBD(0xfffc00, 4);
-	arhw[iMIDI] = midi = new MIDI(0xfffc04, 4);
+#ifdef ENABLE_MIDI_SEQUENCER
+	if (strcmp("sequencer", bx_options.midi.type)==0)
+		midi = new MidiSequencer(0xfffc04, 4);
+	else
+#endif
+		midi = new MidiFile(0xfffc04, 4);
+	arhw[iMIDI] = midi;
 	arhw[iFDC] = fdc = new ACSIFDC(0xff8600, 0x10);
 	arhw[iRTC] = rtc = new RTC(0xff8960, 4);
 	arhw[iIDE] = ide = new IDE(0xf00000, 0x3a);

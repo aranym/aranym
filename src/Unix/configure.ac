@@ -1716,6 +1716,13 @@ if test "x$WANT_PARALLELPARPORT" = "xyes" ; then
 	fi
 fi
 
+dnl Linux /dev/sequencer MIDI support
+
+if test "$OS_TYPE" = "linux"; then
+	AC_DEFINE([ENABLE_MIDI_SEQUENCER], 1, [Define if you want to use Linux /dev/sequencer support])
+	MIDISEQSRCS="../midi_sequencer.cpp"
+fi
+
 dnl Data directory
 
 APP=aranym
@@ -1747,6 +1754,7 @@ AC_SUBST(SYSSRCS)
 AC_SUBST(CPUINCLUDES)
 AC_SUBST(CPUSRCS)
 AC_SUBST(DSPSRCS)
+AC_SUBST(MIDISEQSRCS)
 AC_SUBST(NFCDROMSRCS)
 AC_SUBST(NFPCISRCS)
 AC_SUBST(NFOSMESASRCS)

@@ -161,8 +161,9 @@ typedef struct {
 
 // Midi options
 typedef struct {
-	bool enabled;		/* MIDI output to file enabled ? */
-	char output[512];	/* /path/to/output.txt */
+	char type[32];		/* MIDI output type */
+	char file[512];	/* /path/to/output */
+	char sequencer[256];	/* /dev/sequencer */
 } bx_midi_options_t;
 
 // NfCdrom options

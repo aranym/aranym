@@ -171,11 +171,14 @@ Ramdisk = root.bin
 
 
 [MIDI]
-# Enable MIDI output to file
-Enabled = No
-
-# Full path to the midi output file
-Output = /tmp/aranym-midi.txt
+# Type of MIDI port emulation:
+#  file -> Output to file
+#  sequencer -> Use /dev/sequencer device under Linux
+Type = file
+# Output to file, filename
+File = /tmp/aranym-midi.bin
+# Output to Linux /dev/sequencer device
+Sequencer = /dev/sequencer
 
 
 [CDROMS]

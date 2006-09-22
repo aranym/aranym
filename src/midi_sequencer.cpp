@@ -1,5 +1,5 @@
 /*
-	Atari MIDI emulation
+	Atari MIDI emulation, output to sequencer device
 
 	ARAnyM (C) 2005-2006 Patrice Mandin
 
@@ -18,35 +18,49 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <linux/soundcard.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "midi.h"
+#include "midi_sequencer.h"
 #include "parameters.h"
 
 #define DEBUG 0
 #include "debug.h"
 
-MIDI::MIDI(memptr addr, uint32 size) : ACIA(addr, size)
+MidiSequencer::MidiSequencer(memptr addr, uint32 size) : MIDI(addr, size)
 {
-	D(bug("midi: interface created at 0x%06x", getHWoffset()));
+	D(bug("midi_sequencer: interface created at 0x%06x", getHWoffset()));
 
-	reset();
+	packet[0] = SEQ_MIDIPUTC;
+	packet[1] = 0;	/* data */
+	packet[2] = 0;	/* device number */
+	packet[3] = 0;	/* NULL */
+
+	fd = open(bx_options.midi.sequencer, O_WRONLY, 0664);
 }
 
-MIDI::~MIDI(void)
+MidiSequencer::~MidiSequencer(void)
 {
-	D(bug("midi: interface destroyed at 0x%06x", getHWoffset()));
+	D(bug("midi_sequencer: interface destroyed at 0x%06x", getHWoffset()));
+
+	if (fd>=0) {
+		close(fd);
+	}
 }
 
-void MIDI::reset(void)
+void MidiSequencer::WriteData(uae_u8 value)
 {
-	D(bug("midi: reset"));
+	D(bug("midi_sequencer: WriteData(0x%02x)",value));
 
-	ACIA::reset();
+	if (fd>=0) {
+		packet[1] = value;	
+		write(fd, packet, sizeof(packet));
+	}
 }

@@ -21,14 +21,12 @@
 #ifndef _MIDI_FILE_H
 #define _MIDI_FILE_H
 
-#include <stdio.h>
-
 #include "midi.h"
 
 class MidiFile: public MIDI
 {
 	private:
-		FILE *output_handle;
+		int fd;
 
 	public:
 		MidiFile(memptr, uint32);
