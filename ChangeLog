@@ -1,3 +1,15 @@
+2006/09/22 - joy
+- main.cpp: CapsLock in newer libsdl didn't work right. Took me quite some
+  time to figure out that the Debian's libsdl is patched with a fix for
+  CapsLock and NumLock (see Debian BTS #317010). Wish this fix was in upstream
+  but until it's there ARAnyM must contain a workaround that basically 
+  disables this fix in Debian's libsdl.
+
+- configure.ac, Makefile.in, natfeat/*: --enable-nfclipbrd added. Allowed
+  in cygwin only since there is now implementation of Clipboard
+  interconnection for MS-Windows only.
+
+
 2006/09/14 - Standa
 - main.cpp: hack for cygwin vs. mingw32 SDL_put(get)env mismatch workaround
   added.
