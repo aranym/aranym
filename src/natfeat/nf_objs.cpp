@@ -26,7 +26,6 @@
 #include "xhdi.h"
 #include "nfaudio.h"
 #include "nfbootstrap.h"
-#include "nfclipbrd.h"
 #include "hostfs.h"
 #include "ethernet.h"
 #include "debugprintf.h"
@@ -53,6 +52,10 @@
 #ifdef NFJPEG_SUPPORT
 # include "nfjpeg.h"
 #endif
+#ifdef NFCLIPBRD_SUPPORT
+# include "nfclipbrd.h"
+#endif
+
 /* add your NatFeat class definition here */
 
 /*--- Defines ---*/
@@ -83,9 +86,6 @@ void NFCreate(void)
 
 	/* additional NF */
 	NFAdd(new BootstrapNatFeat);
-#ifdef OS_cygwin
-	NFAdd(new ClipbrdNatFeat);
-#endif
 	NFAdd(new DebugPrintf);
 	NFAdd(new XHDIDriver);
 	NFAdd(new AUDIODriver);
@@ -130,6 +130,9 @@ void NFCreate(void)
 	NFAdd(new JpegDriver);
 #endif
 
+#ifdef NFCLIPBRD_SUPPORT
+	NFAdd(new ClipbrdNatFeat);
+#endif
 	/* add your NatFeat object declaration here */
 }
 
