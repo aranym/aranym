@@ -16,6 +16,9 @@ EmuTOS =
 # location of FreeMiNT kernel (full path)
 Bootstrap =
 
+# FreeMiNT configuration
+BootstrapArgs =
+
 # default boot drive for FreeMiNT
 BootDrive =
 
@@ -63,12 +66,6 @@ JIT = No
 # enable JIT compiler for FPU (if JIT compiler is enabled)
 JITFPU = Yes
 
-# enable NOP alignment
-TuneAlignment = Yes
-
-# enable better version of NOP alignment (if NOP alignment is enabled)
-TuneNOPfill = Yes
-
 # size of cache for compiled code
 JITCacheSize = 8192
 
@@ -77,6 +74,9 @@ JITLazyFlush = 1
 
 # disable compiling of certain instructions (16-bit mask)
 JITBlackList = 
+
+# ???
+JITInline = No
 
 [VIDEO]
 # start ARAnyM in fullscreen
