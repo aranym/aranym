@@ -1,7 +1,3 @@
-2006/09/22 - Patrice
-- midi: Splitted in base class and implementation class (file output atm).
-
-
 *** CVS tagged as ARANYM_0_9_4_BETA
 
 2006/09/22 - joy
@@ -18,7 +14,12 @@
 - doc/config: TuneAlignment, TuneNOPfill removed;
   BootstrapArgs, JITInline added.
 
-- doc/manual.1: updated (-G explained, -P added), project URL corrected
+- doc/aranym.1: man page updated (-P added), project URL corrected
+
+- doc/aranym-jit.1, aranym-mmu.1, aratapif.1: new manpages added
+
+- aranym.spec: thanks to David Bolt the spec file does not try to build
+  the JIT version on 64bit system (which caused the whole build to fail).
 
 - aranym.spec, README, NEWS, TODO, version.h: updated for release
 
