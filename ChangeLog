@@ -11,6 +11,11 @@
   in cygwin only since there is now implementation of Clipboard
   interconnection for MS-Windows only.
 
+- doc/config: TuneAlignment, TuneNOPfill removed;
+  BootstrapArgs, JITInline added.
+
+- doc/manual.1: updated (-G explained, -P added), project URL corrected
+
 - aranym.spec, README, NEWS, TODO, version.h: updated for release
 
 

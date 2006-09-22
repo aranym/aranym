@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH ARANYM 1 "July 6, 2004"
+.TH ARANYM 1 "September 22, 2006"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -26,7 +26,7 @@ ARAnyM \- Atari Running on Any Machine
 .\" TeX users may be more comfortable with the \fB<whatever>\fP and
 .\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
 .\" respectively.
-The main goal of the \fBARAnyM\fP project is to create a virtual machine that would allow everyone to install, use and also develop new 32bit TOS/GEM applications running also on Atari ST/TT/Falcon computers and compatibles.
+The main goal of the \fBARAnyM\fP project is to create a virtual machine that would allow everyone to install, use and improve Atari ST/TT/Falcon/clones operating systems and their applications.
 .SH OPTIONS
 These programs follow the usual GNU command line syntax, with long
 options starting with two dashes (`-').
@@ -82,17 +82,22 @@ boot linux kernel directly
 swap IDE drives for this session
 .TP
 .B \-G, \-\-gui
-open SETUP GUI at startup
+open up SETUP GUI at ARAnyM startup
+.TP
+.B \-P <X,Y>
+position ARAnyM window on screen (enter coordinates for upper left corner)
 .SH SEE ALSO
 .BR /usr/share/doc/aranym
 .br
 Directory with further reading.
+
 .br
 .BR /usr/share/aranym
 .br
 Directory with some useful tools and utilities.
+
 .br
-.BR http://aranym.atari.org
+.BR http://aranym.org
 .br
 Project web page.
 .SH NOTE
