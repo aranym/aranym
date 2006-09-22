@@ -1,7 +1,7 @@
 1) Compilation requirements
 ---------------------------
 
-For compiling ARAnyM you will need libSDL, version at least 1.2.x.
+For compiling ARAnyM you will need libSDL, version at least 1.2.9.
 You can get it from http://www.libsdl.org/ or from your OS distribution vendor.
 
 If you want to compile source fetched from CVS you also need
