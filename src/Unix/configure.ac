@@ -76,6 +76,8 @@ AC_ARG_ENABLE(nfosmesa,        [  --enable-nfosmesa       enable NatFeat OSMesa 
 
 AC_ARG_ENABLE(nfjpeg,          [  --enable-nfjpeg         enable NatFeat JPEG (default=yes)], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=yes])
 
+AC_ARG_ENABLE(nfclipbrd,       [  --enable-nfclipbrd      enable NatFeat Clipboard (default=no)], [WANT_NFCLIPBRD=$enableval], [WANT_NFCLIPBRD=no])
+
 AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emulation (default=yes)], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
 AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per second limiter (default=no)], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
@@ -284,13 +286,13 @@ case "$target_os" in
   cygwin*)
     DEFINES="$DEFINES -DARANYMHOME=\"\\\"aranym\\\"\""
     LIBS="$LIBS -liberty"
-    EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp cygwin/ethernet_cygwin.cpp cygwin/clipbrd_cygwin.cpp"
+    EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp cygwin/ethernet_cygwin.cpp"
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
     AC_DEFINE([_POSIX_C_SOURCE], 199506L, [Define if needed])
     DEFINES="$DEFINES -DBSD_COMP -fpermissive -D__EXTENSIONS__"
-    EXTRASYSSRCS="parameters_unix.cpp  host_filesys_unix.cpp"
+    EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
     ;;
   irix*)
     EXTRASYSSRCS="parameters_unix.cpp irix/unaligned.c host_filesys_unix.cpp"
@@ -303,7 +305,7 @@ case "$target_os" in
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     if test "x$WITH_FINK" = "xyes"; then
         DEFINES="$DEFINES -DARANYMHOME=\\\"aranym\\\""
-        EXTRASYSSRCS="parameters_unix.cpp  host_filesys_unix.cpp"
+        EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
     else
         DEFINES="$DEFINES -DARANYMHOME=\\\"ARAnyM\\\" -DARANYMCONFIG=\\\"org.atari.aranym.config\\\" -DARANYMNVRAM=\\\"org.atari.aranym.nvram\\\" -DARANYMKEYMAP=\\\"org.atari.aranym.keymap\\\""
         EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLMain.M"
@@ -1661,6 +1663,19 @@ if [[ "x$WANT_OPENGL" = "xyes" ]]; then
 	NFVDIGLSRCS="../natfeat/nfvdi_opengl.cpp"
 fi
 
+dnl Natfeat Clipboard driver (so far Windows only)
+
+NFCLIPBOARDSRCS=""
+if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
+	if [[ "x$OS_TYPE" = "xcygwin" ]]; then
+		AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use MS-Windows Clipboard])
+		NFCLIPBOARDSRCS="../natfeat/nfclipbrd.cpp"
+    	SYSSRCS="$SYSSRCS cygwin/clipbrd_cygwin.cpp"
+	else
+        AC_MSG_ERROR([Sorry, NatFeat Clipboard not implemented on your platform yet])
+	fi
+fi
+
 dnl Exception per second limiter
 
 if [[ "x$WANT_EPSLIMITER" = "xyes" ]]; then
@@ -1737,6 +1752,7 @@ AC_SUBST(NFPCISRCS)
 AC_SUBST(NFOSMESASRCS)
 AC_SUBST(NFJPEGSRCS)
 AC_SUBST(NFVDIGLSRCS)
+AC_SUBST(NFCLIPBOARDSRCS)
 AC_SUBST(PARALLELX86SRCS)
 AC_SUBST(PARALLELPARPORTSRCS)
 AC_SUBST(GUISDLSRCS)
@@ -1790,6 +1806,7 @@ echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
 echo NatFeat PCI driver ..................... : $WANT_NFPCI
 echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA
 echo NatFeat JPEG decoder ................... : $WANT_NFJPEG
+echo NatFeat Clipboard ...................... : $WANT_NFCLIPBRD
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86
 echo Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT
