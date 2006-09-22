@@ -84,8 +84,11 @@ rm -rf %{buildroot}
 #
 %ifnarch x86_64
  %{_bindir}/aranym-jit
+ %{_mandir}/man1/aranym-jit.1.gz
 %endif
 %{_mandir}/man1/aranym.1.gz
+%{_mandir}/man1/aranym-mmu.1.gz
+%{_mandir}/man1/aratapif.1.gz
 %{_datadir}/aranym
 #
 # should be %{_docdir}/aranym but make install places stuff in the "wrong" dir

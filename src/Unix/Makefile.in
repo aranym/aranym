@@ -208,8 +208,11 @@ install: $(APP) $(TAPIF) $(APP).1.gz installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
 	$(INSTALL_PROGRAM) $(APP_IFC) $(DESTDIR)$(bindir)/$(APP_IFC);\
+	$(INSTALL_DATA) $(APP_IFC).1.gz $(DESTDIR)$(man1dir)/$(APP_IFC).1.gz
 	fi
 	$(INSTALL_DATA) $(APP).1.gz $(DESTDIR)$(man1dir)/$(APP).1.gz
+	$(INSTALL_DATA) $(APP)-jit.1.gz $(DESTDIR)$(man1dir)/$(APP)-jit.1.gz
+	$(INSTALL_DATA) $(APP)-mmu.1.gz $(DESTDIR)$(man1dir)/$(APP)-mmu.1.gz
 	$(INSTALL_DATA) $(srcdir)/../../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog
 	$(INSTALL_DATA) $(srcdir)/../../TODO $(DESTDIR)$(docdir)/$(APP)/TODO
 	$(INSTALL_DATA) $(srcdir)/../../AUTHORS $(DESTDIR)$(docdir)/$(APP)/AUTHORS
@@ -239,8 +242,11 @@ uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
 	rm -f $(DESTDIR)$(bindir)/$(APP_IFC);\
+	rm -f $(DESTDIR)$(man1dir)/$(APP_IFC).1.gz
 	fi
 	rm -f $(DESTDIR)$(man1dir)/$(APP).1.gz
+	rm -f $(DESTDIR)$(man1dir)/$(APP)-jit.1.gz
+	rm -f $(DESTDIR)$(man1dir)/$(APP)-mmu.1.gz
 	rm -f $(DESTDIR)$(docdir)/$(APP)/changelog
 	rm -f $(DESTDIR)$(docdir)/$(APP)/TODO
 	rm -f $(DESTDIR)$(docdir)/$(APP)/AUTHORS
@@ -296,8 +302,11 @@ bindist: $(APP) $(TAPIF) $(APP).1.gz bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
 	$(INSTALL_PROGRAM) $(APP_IFC) tmpdist$(bindir)/$(APP_IFC);\
+	$(INSTALL_DATA) $(APP_IFC).1.gz tmpdist$(man1dir)/$(APP_IFC).1.gz
 	fi
 	$(INSTALL_DATA) $(APP).1.gz tmpdist$(man1dir)/$(APP).1.gz
+	$(INSTALL_DATA) $(APP)-jit.1.gz tmpdist$(man1dir)/$(APP)-jit.1.gz
+	$(INSTALL_DATA) $(APP)-mmu.1.gz tmpdist$(man1dir)/$(APP)-mmu.1.gz
 	$(INSTALL_DATA) $(srcdir)/../../ChangeLog tmpdist$(docdir)/$(APP)/changelog
 	$(INSTALL_DATA) $(srcdir)/../../TODO tmpdist$(docdir)/$(APP)/TODO
 	$(INSTALL_DATA) $(srcdir)/../../AUTHORS tmpdist$(docdir)/$(APP)/AUTHORS
