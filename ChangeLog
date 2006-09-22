@@ -1,13 +1,17 @@
+*** CVS tagged as ARANYM_0_9_4_BETA
+
 2006/09/22 - joy
-- main.cpp: CapsLock in newer libsdl didn't work right. Took me quite some
-  time to figure out that the Debian's libsdl is patched with a fix for
-  CapsLock and NumLock (see Debian BTS #317010). Wish this fix was in upstream
-  but until it's there ARAnyM must contain a workaround that basically 
-  disables this fix in Debian's libsdl.
+- main.cpp: CapsLock in newer libsdl worked differently in MS-Windows than
+  on my setup. Took me quite some time to figure out that the Debian's
+  libsdl is patched with a fix for CapsLock+NumLock (see Debian BTS #317010).
+  Wish this fix was in upstream but until it's there ARAnyM must contain
+  a workaround that basically disables this fix in Debian's libsdl.
 
 - configure.ac, Makefile.in, natfeat/*: --enable-nfclipbrd added. Allowed
   in cygwin only since there is now implementation of Clipboard
   interconnection for MS-Windows only.
+
+- aranym.spec, README, NEWS, TODO, version.h: updated for release
 
 
 2006/09/14 - Standa
@@ -16,8 +20,9 @@
 
 
 2006/09/09 - Patrice
-- Videl: copy high bytes of color component to lower bytes, to make white really
-  white. STE has 4bits/component, hence 0xf was 0xf0, Falcon has 6bits/component.
+- Videl: copy high bytes of color component to lower bytes, to make white
+  really white. STE has 4bits/component, hence 0xf was 0xf0, Falcon has
+  6bits/component.
 
 
 2006/09/04 - Patrice
@@ -56,11 +61,14 @@
   upgraded to Xcode 2.4 (by ignoring the "path empty" error message). 
   Some changes as suggested by Francois. Slight reorganization. Added README.txt
   Still has to be tested in relation to previous binary releases.
+
 - Updated autogen.sh script to stop if configure step fails. So it's easier to
   spot the error message and one doesn't get the idea that everything is OK!
+
 - Swapped meaning of CTRL and META key for Mac OS X back to "the logical way":
   The Apple key(s) represent left and right meta key and CTRL key is mapped to
   Atari CTRL key. ALT was already mapped to Atari ALT.
+
 - A new, more Mac like set of keyboard shortcuts defined:
 	Left Apple + , = Open preferences dialog
 	Left Apple + q = Quit
@@ -69,6 +77,7 @@
 	Left Apple + d = Enable debugger (if built-in)
 	Left Apple + s = Save screenshot
 	Left Apple + f = Toggle fullscreen mode
+
   As you see, I wrote "Left Apple" because you can't define a hotkey to use
   "any" Apple key. This is a limitation of the current way how hotkeys are 
   defined.
@@ -83,6 +92,7 @@
               from Objective C files.
    compemu_support.cpp, sysdeps.h: added correct PowerPC detection on Mac OS X
               systems.
+
 - hostscreen.h: Fixed p2c routine for big endian, colors are now correct.
 
 
@@ -97,6 +107,7 @@
 
 2006/08/10 - Patrice
 - HostFilesys::makeDir() now accepts permission flags, to be used by hostfs nf.
+
 - Disable hardware surface usage, to avoid locking the screen too frequently.
   Seems to be the only cause for slowness on MacOSX when not using OpenGL.
 
@@ -108,6 +119,7 @@
 2006/07/13 - Standa
 - input.cpp: fixing bug #1521310: Shifters are now released before the
   GUI thread is started.
+
 - hostscreen.cpp: Trying to fix the toggle fullscreen. Updating the
   screen after toggle so that it doesn't stay black. Also calls
   setWindowSize() to set everything correctly. It works for me now.

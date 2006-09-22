@@ -1,4 +1,68 @@
-2006/02/20 - version 0.9.3beta release
+2006/09/22 - version 0.9.4beta released
+
+ This release has one major highlight: two last MMU emulation bugs have
+ been fixed and ARAnyM now runs Linux-m68k stable for days without any
+ single issue. I can now fully recommend ARAnyM for Linux-m68k kernel
+ development and also Debian-m68k development. Hoping that it will help
+ the m68k linux platform to survive for a little longer.
+
+ There is also a great new feature for those who are tired of setting up
+ virtual disk drives for booting to TOS/GEM system: ARAnyM now supports
+ bootstrapping directly from host filesystem! You need new versions of
+ both EmuTOS and FreeMiNT kernel (with built-in HostFS driver) and
+ the following configuration (in the [GLOBAL] section of ARAnyM config file):
+   ------ aranym config --------
+   Bootstrap = /path/to/mint.prg
+   BootstrapArgs = DEBUG_LEVEL=1 BOOT_DELAY=0 MEM_PROT=NO 
+   BootDrive = C 
+   -----------------------------
+ Of course you also need to define the BootDrive (C:) host path in the
+ [HOSTFS] config section. FreeMiNT tries to locate the modules and other
+ files in usual C:\MINT\ path that is redirected to your host filesystem.
+
+ Other news and fixes:
+
+ o new command line parameter -P (as in Position) will position the ARAnyM
+   window to your desired location - enter the coordinates of upper left
+   window corner ("-P 50,50") or try to center the window with "-P center".
+   This should help especially on MS-Windows where the ARAnyM window often
+   ended partially off screen.
+
+ o Host desktop <-> AES clipboard interconnection. Currently for MS-Windows
+   only. You need a special FreeMiNT driver that creates a new filesystem
+   in FreeMiNT where you can point the AES to store the Clipboard. Find
+   more information in documentation at http://wiki.aranym.org/
+
+ o various improvements in graphics area - major speed up for bitplane modes,
+   speed up of graphics on Mac OS X, OpenGL alpha mask fix and others.
+
+ o Mac OS X: Swapped meaning of CTRL and META key for Mac OS X back to
+   "the logical way": The Apple key(s) represent left and right meta key
+   and CTRL key is mapped to Atari CTRL key.
+   A new, more Mac like set of keyboard shortcuts defined:
+	Left Apple + , = Open preferences dialog
+	Left Apple + q = Quit
+	Left Apple + r = Reboot
+	Left Apple + escape = Grab/Ungrab mouse cursor
+	Left Apple + d = Enable debugger (if built-in)
+	Left Apple + s = Save screenshot
+	Left Apple + f = Toggle fullscreen mode
+
+ o MS-Windows: corrected/improved window/fullscreen toggle.
+
+ o bug #1521310 fixed: Shifters are now released before the GUI thread
+   is started.
+
+ o MIDI now outputs raw data which could be used for mapping the MIDI port
+   to host MIDI directly (untested)
+
+ o new compile-time configuration (--enable-protect2k) improves compatibility
+   with ST/TT/Falcon where hardware protects first 2 kB of RAM against
+   user mode accesses. Enabled by default in MMU build only since it can
+   cause some performance degradation.
+
+
+2006/02/20 - version 0.9.3beta released
 
  Exciting news: ARAnyM now has its own domain (http://aranym.org) and also
  brand new Wikiwiki for easier cooperation on improving ARAnyM documentation
@@ -37,7 +101,7 @@
  drivers. The impatient can get the Atari drivers at http://aranym.org/bin/
 
  
-2005/04/14 - version 0.9.0 release
+2005/04/14 - version 0.9.0 released
 
  We've been providing 68040 PMMU (a memory management unit emulation,
  required for running FreeMiNT with MMU protection, and Linux/m68k)
