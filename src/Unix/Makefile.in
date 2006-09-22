@@ -204,11 +204,11 @@ $(APP_BUNDLE): $(APP)
 			done; \
 		done
 
-install: $(APP) $(TAPIF) $(APP).1.gz installdirs
+install: $(APP) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
 	$(INSTALL_PROGRAM) $(APP_IFC) $(DESTDIR)$(bindir)/$(APP_IFC);\
-	$(INSTALL_DATA) $(APP_IFC).1.gz $(DESTDIR)$(man1dir)/$(APP_IFC).1.gz
+	$(INSTALL_DATA) $(APP_IFC).1.gz $(DESTDIR)$(man1dir)/$(APP_IFC).1.gz ;\
 	fi
 	$(INSTALL_DATA) $(APP).1.gz $(DESTDIR)$(man1dir)/$(APP).1.gz
 	$(INSTALL_DATA) $(APP)-jit.1.gz $(DESTDIR)$(man1dir)/$(APP)-jit.1.gz
@@ -242,7 +242,7 @@ uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
 	rm -f $(DESTDIR)$(bindir)/$(APP_IFC);\
-	rm -f $(DESTDIR)$(man1dir)/$(APP_IFC).1.gz
+	rm -f $(DESTDIR)$(man1dir)/$(APP_IFC).1.gz ;\
 	fi
 	rm -f $(DESTDIR)$(man1dir)/$(APP).1.gz
 	rm -f $(DESTDIR)$(man1dir)/$(APP)-jit.1.gz
@@ -280,7 +280,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -f $(APP) $(TAPIF) $(APP).1.gz $(OBJ_DIR)/* core* *.core *~ *.bak
+	rm -f $(APP) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz $(OBJ_DIR)/* core* *.core *~ *.bak
 
 clean: mostlyclean
 	rm -f cpuemu.cpp cpudefs.cpp cputmp*.s cpufast*.s cpustbl.cpp cputbl.h newcpu.s memory.s compemu.cpp compstbl.cpp comptbl.h
@@ -298,11 +298,11 @@ mrproper: distclean
 bindistdirs:
 	$(SHELL) $(srcdir)/mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
-bindist: $(APP) $(TAPIF) $(APP).1.gz bindistdirs
+bindist: $(APP) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
 	$(INSTALL_PROGRAM) $(APP_IFC) tmpdist$(bindir)/$(APP_IFC);\
-	$(INSTALL_DATA) $(APP_IFC).1.gz tmpdist$(man1dir)/$(APP_IFC).1.gz
+	$(INSTALL_DATA) $(APP_IFC).1.gz tmpdist$(man1dir)/$(APP_IFC).1.gz ;\
 	fi
 	$(INSTALL_DATA) $(APP).1.gz tmpdist$(man1dir)/$(APP).1.gz
 	$(INSTALL_DATA) $(APP)-jit.1.gz tmpdist$(man1dir)/$(APP)-jit.1.gz
@@ -523,6 +523,15 @@ $(APP_IFC): aratapif.c
 
 $(APP).1.gz: ../../doc/$(APP).1
 	gzip -c $(srcdir)/../../doc/$(APP).1 > $(APP).1.gz
+
+$(APP)-jit.1.gz: ../../doc/$(APP)-jit.1
+	gzip -c $(srcdir)/../../doc/$(APP)-jit.1 > $(APP)-jit.1.gz
+
+$(APP)-mmu.1.gz: ../../doc/$(APP)-mmu.1
+	gzip -c $(srcdir)/../../doc/$(APP)-mmu.1 > $(APP)-mmu.1.gz
+
+$(APP_IFC).1.gz: ../../doc/$(APP_IFC).1
+	gzip -c $(srcdir)/../../doc/$(APP_IFC).1 > $(APP_IFC).1.gz
 
 #-------------------------------------------------------------------------
 # DO NOT DELETE THIS LINE -- make depend depends on it.

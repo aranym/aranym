@@ -68,7 +68,7 @@ class ACIA : public BASE_IO {
 
 	public:
 		ACIA(memptr, uint32);
-		virtual ~ACIA();
+		~ACIA();
 		void reset();
 
 		virtual uae_u8 handleRead(uaecptr addr);
