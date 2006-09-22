@@ -1,3 +1,7 @@
+2006/09/22 - Patrice
+- midi: Splitted in base class and implementation class (file output atm).
+
+
 *** CVS tagged as ARANYM_0_9_4_BETA
 
 2006/09/22 - joy
