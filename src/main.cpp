@@ -410,6 +410,9 @@ bool InitAll(void)
 	if (! InitOS())
 		return false;
 
+	// work around a bug fix in Debian's libsdl1.2-dev - BTS #317010
+	putenv("SDL_DISABLE_LOCK_KEYS=1");
+
  	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK;
 #if NFCDROM_SUPPORT
 	sdlInitParams |= SDL_INIT_CDROM;
