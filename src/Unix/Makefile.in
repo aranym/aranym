@@ -525,16 +525,16 @@ $(APP_IFC): aratapif.c
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $(APP_IFC) -DHAVE_AFINET $(srcdir)/aratapif.c
 
 $(APP).1.gz: ../../doc/$(APP).1
-	gzip -c $(srcdir)/../../doc/$(APP).1 > $(APP).1.gz
+	gzip -9 -c $(srcdir)/../../doc/$(APP).1 > $(APP).1.gz
 
 $(APP)-jit.1.gz: ../../doc/$(APP)-jit.1
-	gzip -c $(srcdir)/../../doc/$(APP)-jit.1 > $(APP)-jit.1.gz
+	gzip -9 -c $(srcdir)/../../doc/$(APP)-jit.1 > $(APP)-jit.1.gz
 
 $(APP)-mmu.1.gz: ../../doc/$(APP)-mmu.1
-	gzip -c $(srcdir)/../../doc/$(APP)-mmu.1 > $(APP)-mmu.1.gz
+	gzip -9 -c $(srcdir)/../../doc/$(APP)-mmu.1 > $(APP)-mmu.1.gz
 
 $(APP_IFC).1.gz: ../../doc/$(APP_IFC).1
-	gzip -c $(srcdir)/../../doc/$(APP_IFC).1 > $(APP_IFC).1.gz
+	gzip -9 -c $(srcdir)/../../doc/$(APP_IFC).1 > $(APP_IFC).1.gz
 
 #-------------------------------------------------------------------------
 # DO NOT DELETE THIS LINE -- make depend depends on it.
