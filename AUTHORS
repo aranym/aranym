@@ -184,3 +184,8 @@ Laurent Vogel
 
 Konrad Kokoszkiewicz
 - many hints and small fixes
+
+Philipp Donze
+- Mac OS X fixes, new project, universal (ppc+intel) binaries
+- various small fixes
+
