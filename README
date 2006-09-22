@@ -1,25 +1,25 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.9.3beta released on 2006/02/20
+      version 0.9.4beta released on 2006/09/22
 
 
  1) License
  ----------
 
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Soft-
-ware Foundation; either version 2 of the License, or (at your option) any
-later version.
+    ARAnyM is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+    ARAnyM is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with
-this program; if not, write to the 
- Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston,
- MA  02111-1307  USA
+    You should have received a copy of the GNU General Public License
+    along with ARAnyM; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
 
 
  2) What is this?
@@ -44,7 +44,7 @@ where TOS/GEM applications could continue to live forever.
    o extended keyboard and mouse support (including mouse wheel)
    o direct access to host file system via BetaDOS and MiNT xfs drivers
    o networking using ethernet emulation with a driver for MiNT-Net
-   o TOS 4.04, EmuTOS or Linux as the booting operating system
+   o TOS 4.04, EmuTOS or Linux-m68k as the boot operating system
    o runs with FreeMiNT, MagiC, and any other operating system that runs
      also on real Atari computer.
    o Native CD-ROM access (under Linux, other OS: audio CD only), without
@@ -82,7 +82,7 @@ Keys not found on Atari keyboard:
 Page Up key    - mapped as Shift+Arrow Up (usual combination in GEM apps)
 Page Down key  - mapped as Shift+Arrow Down (usual combo in GEM apps)
 
-Special keys:
+Special keys (most can be re-defined in the SETUP):
 -------------
 Pause/Break    - invoke SETUP GUI (ARAnyM on-the-fly configuration)
 Shift+Pause    - QUIT ARAnyM
@@ -91,7 +91,7 @@ Alt+Pause      - enter integrated debugger (only if started with "-D")
 
 PrintScreen    - create a screenshot in actual directory
 
-Alt+Ctrl+Esc   - release the keyboard/mouse input focus so you can use
+Alt+Ctrl+Shift  - release the keyboard/mouse input focus so you can use
                  your keyboard and mouse in other host applications.
 
 Scroll Lock    - switch between windowed and fullscreen mode
@@ -115,9 +115,11 @@ Example for bash: export SDL_MOUSEDEV_IMPS2=1; aranym
  Look at TODO if you want to help us.
 
  Join our mailing list for ARAnyM users - the WEB interface for the list
- is at http://bobek.sh.cvut.cz/cgi-bin/mailman/listinfo/aranym-user/
+ is at https://lists.bobek.cz/mailman/listinfo/cz-bobek-lists-aranym-user
 
  Visit http://aranym.org/ for latest information and source code.
+
+ Help us improve the Wiki documentation at http://wiki.aranym.org/
 
  For developers we have a developer mailing list and a CVS server.
  For details go to http://aranym.org/
