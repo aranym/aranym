@@ -44,6 +44,9 @@ MidiSequencer::MidiSequencer(memptr addr, uint32 size) : MIDI(addr, size)
 	packet[3] = 0;	/* NULL */
 
 	fd = open(bx_options.midi.sequencer, O_WRONLY, 0664);
+	if (fd<0) {
+		fprintf(stderr, "midi_sequencer: Can not open %s\n", bx_options.midi.sequencer); 
+	}
 }
 
 MidiSequencer::~MidiSequencer(void)
