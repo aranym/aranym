@@ -453,7 +453,7 @@ buserr:
 
 void install_sigsegv() {
 	sigemptyset(&sigsegv_sa.sa_mask);
-	sigsegv_sa.sa_handler = segfault_vec;
+	sigsegv_sa.sa_handler = (sighandler_t) segfault_vec;
 	sigsegv_sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGSEGV, &sigsegv_sa, NULL);
 //	signal(SIGSEGV, (sighandler_t)segfault_vec);

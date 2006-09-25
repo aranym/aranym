@@ -170,7 +170,7 @@ case "$target_os" in
   linux*)	OS_TYPE=linux;;
   openbsd*)	OS_TYPE=openbsd;;
   netbsd*)	OS_TYPE=netbsd;;
-  freebsd*)	OS_TYPE=freebsd;;
+  freebsd*|kfreebsd*-gnu)	OS_TYPE=freebsd;;
   solaris*)	OS_TYPE=solaris;;
   darwin*)	OS_TYPE=darwin;;
   cygwin*)	OS_TYPE=cygwin;;
@@ -297,7 +297,7 @@ case "$target_os" in
   irix*)
     EXTRASYSSRCS="parameters_unix.cpp irix/unaligned.c host_filesys_unix.cpp"
     ;;
-  freebsd*)
+  freebsd*|kfreebsd*-gnu)
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
     ;;	      
@@ -934,7 +934,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       fi
       ;;
-    freebsd*)
+    freebsd*|kfreebsd*-gnu)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
         SYSSRCS="$SYSSRCS xbsd/sigsegv_xbsd.cpp"
       else
@@ -1005,6 +1005,11 @@ else
         continue
       fi
       if [[ "x$OS_TYPE" = "xlinux" -a "x$HAVE_I386" ]]; then
+        ADDRESSING_MODE="fixed (0x51000000)"
+        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
+        break
+      fi
+      if [[ "x$OS_TYPE" = "xfreebsd" -a "x$HAVE_I386" ]]; then
         ADDRESSING_MODE="fixed (0x51000000)"
         DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
         break
