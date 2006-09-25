@@ -24,7 +24,7 @@
 #define DEVNAME "DEV.DOS Filesystem"
 #define VERSION "0.1"
 
-#if 1
+#if 0
 #include "nfd.h"
 #define TRACE(x) NFD(x)
 #define DEBUG(x) NFD(x)
