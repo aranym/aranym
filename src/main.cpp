@@ -535,6 +535,9 @@ void ExitAll(void)
 {
 	delete bootOs;
 
+	/* Pause audio before killing hw then host */
+	SDL_PauseAudio(SDL_TRUE);
+
  	/* Close opened joystick */
  	if (SDL_NumJoysticks()>0) {
  		if (SDL_JoystickOpened(0)) {

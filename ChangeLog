@@ -1,3 +1,7 @@
+2006/09/26 - Patrice
+- main.cpp: Pause audio before killing hw then host classes.
+
+
 2006/09/24 - joy
 - GNU/kFreeBSD support in configure.ac thanks to Petr Salinger. Closes Debian
   BTS #388995 and also ARAnyM's patch request #1549200.
