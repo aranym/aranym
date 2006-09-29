@@ -10,6 +10,12 @@
   if the ExitAll() freezed somehow (like by calling SDL_CloseAudio, for
   example) this would at least let the user control their desktop...
 
+- Unix/cygwin/parameters_cygwin.cpp: getHomeFolder() and getDataFolder()
+  ignore Cygwin environment now. Home is in Windows user's home (usually 
+  somewhere below Documents and Settings), data is where the ARAnyM's
+  executable resides.
+  Based on patch by Blaine Brysh (bbrysh at shaw.ca). Thanks.
+
 
 2006/09/26 - Patrice
 - main.cpp: Pause audio before killing hw then host classes.
