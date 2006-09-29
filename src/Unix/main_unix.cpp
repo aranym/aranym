@@ -47,6 +47,8 @@
 # include <csignal>
 # include <cstdlib>
 
+static sighandler_t oldsegfault = SIG_ERR;
+
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
 {
@@ -187,16 +189,21 @@ static void allocate_all_memory()
 }
 
 #ifdef EXTENDED_SIGSEGV
-extern void install_sigsegv();
+extern sighandler_t install_sigsegv();
 #else
-static void install_sigsegv() {
-	signal(SIGSEGV, segmentationfault);
+static sighandler_t install_sigsegv() {
+	return signal(SIGSEGV, segmentationfault);
 }
 #endif
 
+static void remove_sigsegv(sighandler_t orighandler) {
+	if (orighandler != SIG_ERR)
+		signal(SIGSEGV, orighandler);
+}
+
 static void install_signal_handler()
 {
-	install_sigsegv();
+	oldsegfault = install_sigsegv();
 	D(bug("Sigsegv handler installed"));
 
 #ifdef ENABLE_MON
@@ -249,6 +256,12 @@ static void install_signal_handler()
 #endif /* EXTENDED_SIGSEGV */
 }
 
+static void remove_signal_handler()
+{
+	remove_sigsegv(oldsegfault);
+	D(bug("Sigsegv handler removed"));
+}
+
 /*
  *  Main program
  */
@@ -290,6 +303,7 @@ int main(int argc, char **argv)
 	Start680x0();
 
 	// returning from emulation after the NMI
+	remove_signal_handler();
 
 	QuitEmulator();
 

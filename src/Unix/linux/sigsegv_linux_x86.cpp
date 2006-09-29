@@ -858,11 +858,12 @@ buserr:
 	BUS_ERROR(addr);
 }
 
-void install_sigsegv() {
-	signal(SIGSEGV, (sighandler_t)segfault_vec);
+sighandler_t install_sigsegv() {
+	sighandler_t orighandler = signal(SIGSEGV, (sighandler_t)segfault_vec);
 #if FULL_SIGSEGV_HANDLER_GOTO
 	struct sigcontext sc;
 	segfault_vec(0, sc);
 	sigsegvjmptbl_set = true;
 #endif
+	return orighandler;
 }
