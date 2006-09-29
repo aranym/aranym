@@ -1,7 +1,7 @@
 /*
  * input.cpp - handling of keyboard/mouse input
  *
- * Copyright (c) 2001-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2006 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -103,6 +103,11 @@ void InputReset()
 	capslockState = (SDL_GetModState() & KMOD_CAPS) != 0;
 }
 
+void InputExit()
+{
+	grabMouse(false);	// release mouse
+	hideMouse(false);	// show it
+}
 
 bool grabMouse(bool grab)
 {

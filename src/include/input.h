@@ -11,6 +11,7 @@
 
 void InputInit();
 void InputReset();
+void InputExit();
 bool grabMouse(bool grab);
 void check_event();
 
