@@ -37,8 +37,8 @@
 
 int get_geometry(char *dev_path, geo_type geo)
 {
-	UNUSED(dev_path);
-	UNUSED(geo);
+	(void)dev_path;
+	(void)geo;
 	return -1;
 }
 

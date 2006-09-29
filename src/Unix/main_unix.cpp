@@ -47,6 +47,11 @@
 # include <csignal>
 # include <cstdlib>
 
+#ifndef HAVE_SIGHANDLER_T
+typedef void (*sighandler_t)(int);
+#endif
+
+
 static sighandler_t oldsegfault = SIG_ERR;
 
 #ifndef HAVE_STRDUP
