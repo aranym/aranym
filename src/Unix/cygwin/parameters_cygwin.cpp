@@ -1,4 +1,25 @@
-/* MJ 2001 */
+/*
+ * parameters_cygwin.cpp - parameters specific for Cygwin build
+ *
+ * Copyright (c) 2001-2006 ARAnyM dev team (see AUTHORS)
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include "sysdeps.h"
 #include "config.h"
@@ -10,37 +31,32 @@
 #include "debug.h"
 
 # include <cstdlib>
+# include <ShlObj.h>
 
 #define ARADATA		"aranym"
 
-int get_geometry(char *dev_path, geo_type geo) {
-  return -1;
+int get_geometry(char *dev_path, geo_type geo)
+{
+	UNUSED(dev_path);
+	UNUSED(geo);
+	return -1;
 }
-
-// If Unix-like filesystem hierarchy (/home/$USER, /usr/share/aranym) is not
-// available then Cygwin sets HOME to "/cygdrive/c" automagically.
-// In such case we define the user folder by Windows environment variables
-// data folder is in "aranym" subfolder relative to ARAnyM executable.
-// Note that the FHS detection (Unix vs Windows) is an unreliable hack.
-// You should think about a configure option which would clearly define
-// whether this binary is Windows or Cygwin ready.
-
-#ifndef IS_CYGWIN_FHS
-#  define CYGWIN_FAKE_HOME	"/cygdrive/c"
-#  define IS_CYGWIN_FHS	(getenv("HOME") && strcmp(getenv("HOME"), CYGWIN_FAKE_HOME))
-#endif /* IS_CYGWIN_FHS */
 
 /*
  * Get the path to a user home folder.
  */
 char *HostFilesys::getHomeFolder(char *buffer, unsigned int bufsize)
 {
-	// Unix-like systems define HOME variable as the user home folder
-	if (IS_CYGWIN_FHS) {
-		safe_strncpy(buffer, getenv("HOME"), bufsize);
+	char szPath[MAX_PATH];
+	if (SUCCEEDED(::SHGetFolderPath(NULL, 
+		CSIDL_PERSONAL, 
+		NULL, 
+		0, 
+		szPath))) 
+	{
+		safe_strncpy(buffer, szPath, bufsize);
 	}
-	// If not then use registry to find out the "My Documents" folder
-	else if (get_home_dir(buffer, bufsize)) {
+	else {
 		buffer[0] = '\0';	// last resort - current folder
 	}
 
@@ -58,14 +74,7 @@ char *HostFilesys::getConfFolder(char *buffer, unsigned int bufsize)
 
 char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 {
-	// test if Unix-like filesystem is in place
-	// if it's not, data folder path is extracted from argv[0]
-	// (path to aranym executable) + ARADATA subfolder
-	if (IS_CYGWIN_FHS) {
-		return safe_strncpy(buffer, ARANYM_DATADIR, bufsize);
-	}
-
-	// remember path to program
+	// data folder is where the program resides
 	safe_strncpy(buffer, program_name, bufsize);
 	// strip out filename and separator from the path
 	char *ptr = strrchr(buffer, '/');	// first try Unix separator
@@ -74,7 +83,7 @@ char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 	else if ((ptr = strrchr(buffer, '\\')) != NULL)	// then DOS sep.
 		ptr[0] = '\0';
 	else
-		buffer[0] = '\0';	// last resort - complete filename out
+		buffer[0] = '\0';	// last resort - current folder
 
 	return addFilename(buffer, ARADATA, bufsize);
 }
