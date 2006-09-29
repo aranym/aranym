@@ -16,6 +16,11 @@
   executable resides.
   Based on patch by Blaine Brysh (bbrysh at shaw.ca). Thanks.
 
+- main_unix, linux/sigsegv_linux_x86: remove_signal_handler (restore original
+  sigsegv handler if there was any) right after the CPU emulation finished.
+  This is another improvement for a possible crash in QuitEmulator that
+  would now let SDL to clean itself (SDL parachute).
+
 
 2006/09/26 - Patrice
 - main.cpp: Pause audio before killing hw then host classes.
