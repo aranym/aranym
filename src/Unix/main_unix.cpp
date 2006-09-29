@@ -1,7 +1,7 @@
 /*
  * main_unix.cpp - Startup code for Unix
  *
- * Copyright (c) 2000-2005 ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2000-2006 ARAnyM developer team (see AUTHORS)
  *
  * Authors:
  *  MJ		Milan Jurik
@@ -338,6 +338,8 @@ void QuitEmulator(void)
 
 	// Exit VM wrappers
 	vm_exit();
+
+	exit(0); // the Quit is real
 }
 
 #ifdef ENABLE_MON
