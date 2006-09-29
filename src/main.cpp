@@ -1,7 +1,7 @@
 /*
  * main.cpp - startup/shutdown code
  *
- * Copyright (c) 2001-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2006 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -544,6 +544,8 @@ void ExitAll(void)
  			SDL_JoystickClose(sdl_joystick);
  		}
  	}
+
+	InputExit();
 
 	// Exit Time Manager
 #if RTC_TIMER
