@@ -49,7 +49,7 @@ char *HostFilesys::getHomeFolder(char *buffer, unsigned int bufsize)
 {
 	char szPath[MAX_PATH];
 	if (SUCCEEDED(::SHGetFolderPath(NULL, 
-		CSIDL_PERSONAL, 
+		CSIDL_PROFILE, 
 		NULL, 
 		0, 
 		szPath))) 
