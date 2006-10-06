@@ -65,6 +65,11 @@
 
 #include <SDL.h>
 
+// hack for SDL < 1.2.10 - remove when distros upgrade their SDL!
+#ifndef SDL_putenv
+#define SDL_putenv(x) putenv(x)
+#endif
+
 #ifdef SDL_GUI
 #include "sdlgui.h"
 extern char *displayKeysym(SDL_keysym keysym, char *buffer);
