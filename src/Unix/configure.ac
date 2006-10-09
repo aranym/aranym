@@ -52,7 +52,7 @@ AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 (defa
 
 AC_ARG_ENABLE(dsp-disasm,      [  --enable-dsp-disasm     enable DSP 56001 disassembler (default=no)], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
 
-AC_ARG_ENABLE(protect2k,       [  --enable-protect2k      enable first 2kB of RAM Super protection (default=no)], [WANT_PROTECT2K=$enableval], [WANT_PROTECT2K=no])
+AC_ARG_ENABLE(protect2k,       [  --enable-protect2k      enable first 2kB of RAM Super protection (default=yes)], [WANT_PROTECT2K=$enableval], [WANT_PROTECT2K=yes])
 
 AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB (default=no)], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
