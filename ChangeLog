@@ -1,3 +1,11 @@
+2006/10/09 - joy
+- configure.ac: after some profiling (http://wiki.aranym.org/speedtest)
+  I decided to enable protect2k by default for better compatibility
+  with real Atari hardware. Also the cxx-exceptions are enabled by default
+  now for non-SIGSEGV memory boundary checks. They bring a major speed up
+  to MMU mode (up to 60% in the speed test mentioned above).
+
+
 2006/09/29 - joy
 - main_unix.cpp: QuitEmulator didn't actually quit the program which was
   causing troubles mainly when no operating system was found (i.e. when the
