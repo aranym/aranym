@@ -831,7 +831,6 @@ else
     WANT_FIXEDVIDEORAM="yes"
     AC_MSG_WARN([Protection of first 2kB RAM enabled as well - won't hurt])
     AC_DEFINE([PROTECT2K], 1, [Define if you want to protect first 2kB of RAM against user mode access])
-    WANT_PROTECT2K="yes"
   fi
   if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
     AC_MSG_WARN([Blitter SDL surface blitting support needs fixed position of VideoRAM])
