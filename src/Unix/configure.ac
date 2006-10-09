@@ -163,7 +163,7 @@ AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card e
 
 AC_ARG_ENABLE(purec,           [  --enable-purec          enable corrupted stack format (default=no)], [WANT_PUREC=$enableval], [WANT_PUREC=no])
 
-AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable the use of C++ try/catch instead of setjmp/longjmp (default=no)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=no])
+AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
 
 dnl Target OS type (target is host if not cross-compiling).
 case "$target_os" in
@@ -895,8 +895,9 @@ if [[ "x$WANT_SDLGUI" = "xyes" ]]; then
   CPPFLAGS="$CPPFLAGS -I\$(srcdir)/../gui-sdl"
   AC_DEFINE([SDL_GUI], 1, [Define if you want to build SDL GUI])
 fi
+
 dnl C++ exceptions
-if [[ "x$WANT_JIT" = "xyes" ]]; then
+if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
   WANT_CXX_EXCEPTIONS="no"
 fi
 if [[ "x$WANT_CXX_EXCEPTIONS" = "xno" ]]; then
@@ -1074,9 +1075,6 @@ dnl No RTTI
 if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   CFLAGS="$CFLAGS -fomit-frame-pointer"
   CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
-#  if [[ "x$WANT_CXX_EXCEPTIONS" = "xno" ]]; then
-#    CXXFLAGS="$CXXFLAGS -fno-exceptions"
-#  fi 
 fi
 
 dnl (gb) Do not merge constants since it breaks fpu/fpu_x86.cpp.
