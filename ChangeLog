@@ -1,3 +1,8 @@
+2006/10/11 - joy
+- ikbd, rtc: switch between localtime() and gmtime() (returning UTC).
+- parameters, doc/config: new parameter "GMTime" set to No by default.
+
+
 2006/10/09 - joy
 - configure.ac: after some profiling (http://wiki.aranym.org/speedtest)
   I decided to enable protect2k by default for better compatibility

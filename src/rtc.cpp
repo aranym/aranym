@@ -1,7 +1,7 @@
 /*
  * rtc.cpp - Atari NVRAM emulation code
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2006 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -161,7 +161,7 @@ uint8 RTC::getData() {
 	uint8 value = 0;
 	if (index == 0 || index == 2 || index == 4 || (index >=7 && index <=9) ) {
 		time_t tim = time(NULL);
-		struct tm *curtim = localtime(&tim);	// current time
+		struct tm *curtim = bx_options.gmtime ? gmtime(&tim) : localtime(&tim);
 		switch(index) {
 			case 0:	value = curtim->tm_sec; break;
 			case 2: value = curtim->tm_min; break;

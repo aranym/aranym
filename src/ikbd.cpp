@@ -1,7 +1,7 @@
 /*
  * ikbd.cpp - IKBD 6301 emulation code
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2006 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -232,7 +232,7 @@ void IKBD::WriteData(uint8 value)
 
 						// Get current time
 						time_t tim = time(NULL);
-						struct tm *curtim = localtime(&tim);	// current time
+						struct tm *curtim = bx_options.gmtime ? gmtime(&tim) : localtime(&tim);
 
 						// Return packet
 						send(0xfc);
@@ -583,3 +583,7 @@ void IKBD::ThrowInterrupt(void)
 	/* signal ACIA interrupt */
 	getMFP()->setGPIPbit(0x10, 0);
 }
+
+/*
+vim:ts=4:sw=4:
+*/

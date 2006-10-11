@@ -1,7 +1,7 @@
 /*
  * parameters.h - parameter init/load/save code - header file
  *
- * Copyright (c) 2001-2005 ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2001-2006 ARAnyM developer team (see AUTHORS)
  *
  * Authors:
  *  MJ		Milan Jurik
@@ -274,6 +274,7 @@ typedef struct {
   char			bootdrive;
   uint32		fastram;
   bool			autoMouseGrab;
+  bool			gmtime;
   bx_hotkeys_t		hotkeys;
   bool			newHardDriveSupport;
 } bx_options_t;
