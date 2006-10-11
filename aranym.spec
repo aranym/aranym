@@ -97,16 +97,6 @@ Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 rm -rf %{realname}
 
 %setup -q -n %{realname}/src/Unix
-# because autogen.sh doesn't exist, it'll always bitch.
-# could do with being removed
-#
-./autogen.sh || echo "Autogen put out its usual complaint, ignored!"
-
-# really required for libSDL <1.2.11 not just (open)SUSE
-#
-%if %{_suse}
-%patch0
-%endif
 
 %build
 
@@ -120,13 +110,13 @@ rm -rf %{realname}
  %{__make} clean
 %endif
 
-%configure --disable-nat-debug --enable-fullmmu --enable-lilo --enable-fixed-videoram --enable-nfjpeg
+%configure --disable-nat-debug --enable-addressing=direct --enable-fullmmu --enable-lilo --enable-fixed-videoram --enable-nfjpeg
 %{__make} depend
 %{__make}
 %{__mv} aranym aranym-mmu
 %{__make} clean
 
-%configure --disable-nat-debug --enable-nfjpeg
+%configure --disable-nat-debug --enable-addressing=direct --enable-nfjpeg
 %{__make} depend
 %{__make}
 
