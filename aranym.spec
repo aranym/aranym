@@ -11,6 +11,12 @@
 
 %define	rel	%{_rel}
 
+# ensure where RPM thinks the docs should be matches reality
+# gets around SUSE using %{_prefix}/share/doc/packages and
+# fedora using %{_defaultdocdir}
+#
+%define	_docdir	%{_prefix}/share/doc
+
 #
 # now for distribution-specific modifications
 #
@@ -47,10 +53,11 @@
 Requires:	SDL >= 1.2.0
 BuildRequires:	SDL-devel >= 1.2.0
 BuildRequires:	update-desktop-files
-Patch0:		%{name}-%{ver}.patch
 %endif
 
 # building on a Mandriva/Mandrake Linux system so use the standard Mandriva release string
+#
+# this is experimental and untested as yet, but should work.
 #
 %if %{_mandriva}
  %define	_mandriva_version	%(cat /etc/mandriva-release|cut -f4 -d" ")
@@ -62,6 +69,8 @@ Patch0:		%{name}-%{ver}.patch
 %endif
 
 # building on a Fedora Core Linux system. not sure if there's a release string, but create one anyway
+#
+# this is experimental and untested as yet, but should work.
 #
 %if %{_fedora}
  %define	_fedora_version		%(cat /etc/fedora-release|cut -f4 -d" ")
@@ -82,8 +91,8 @@ Packager:	%{joy}
 URL:		http://aranym.org/
 Group:		%{group}
 Source0:	http://prdownloads.sourceforge.net/aranym/%{src}
-Source1:	%{name}.desktop
 BuildRoot:	/var/tmp/%{name}-root
+Patch:		%{name}-%{version}.patch
 
 %description
 ARAnyM is a software only TOS clone - a virtual machine that allows you
@@ -97,6 +106,7 @@ Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 rm -rf %{realname}
 
 %setup -q -n %{realname}/src/Unix
+%patch0
 
 %build
 
@@ -138,8 +148,9 @@ install aratapif %{buildroot}%{_bindir}
 # add a desktop menu entry
 #
 %if %{_suse}
-install -D -m644 ../../aranym.png %{buildroot}/%{_icondir}/aranym.png
-install -D -m644 %{_builddir}/aranym.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
+#mkdir -p %{buildroot}/%{_icondir}
+#install -m644 ../../aranym.png %{buildroot}/%{_icondir}/
+install -D -m644 ../../aranym.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
 %suse_update_desktop_file -i aranym
 %endif
 
@@ -157,8 +168,9 @@ EOF
 %endif
 
 %if %{_fedora}
-install -D -m644 ../../aranym.png %{buildroot}/%{_icondir}/aranym.png
-install -D -m644 %{_builddir}/aranym.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
+#mkdir -p %{buildroot}/%{_icondir}
+#install -m644 ../../aranym.png %{buildroot}/%{_icondir}/
+install -D -m644 ../../aranym.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
 #
 # no idea, as yet, how FC updates it's desktop menus so assume it uses a similar system to (open)SUSE
 #
@@ -195,20 +207,17 @@ rm -rf %{buildroot}
 %{_mandir}/man1/aranym-mmu.1.gz
 %{_mandir}/man1/aratapif.1.gz
 %{_datadir}/aranym
-
-# should be %{_docdir}/aranym but make install places stuff in the "wrong" dir
-#
-%{_datadir}/doc/aranym
+%{_docdir}/aranym
 
 # now for the desktop menu
 #
 %if %{_suse}
-%{_icondir}/aranym.png
+#%{_icondir}/aranym.png
 %attr(0644,root,root) %{_datadir}/applications/aranym.desktop
 %endif
 
 %if %{_fedora}
-%{_icondir}/aranym.png
+#%{_icondir}/aranym.png
 %attr(0644,root,root) %{_datadir}/applications/aranym.desktop
 %endif
 
@@ -219,7 +228,7 @@ rm -rf %{buildroot}
 %changelog
 * Tue Oct 11 2006 David Bolt <davjam@davjam.org>	0.9.4beta
 Added an aranym.desktop file for inclusion in desktop menus.
-Added an aranym.png image as icon for desktop menus.
+Temporarily uses emulator.png as the menu icon.
 Added bits to spec file to try and build packages for (open)SUSE, Mandriva
 and Fedora Core distributions without any changes.
 
