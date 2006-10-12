@@ -205,9 +205,13 @@ static union {
 
 LinuxBootOs::LinuxBootOs(void) throw (AranymException)
 {
+	/* RESET + Linux/m68k boot */
+	ROMBaseHost[0x0000] = 0x4e;		/* reset */
+	ROMBaseHost[0x0001] = 0x70;
+	ROMBaseHost[0x0002] = 0x4e;		/* jmp <abs.addr> */
+	ROMBaseHost[0x0003] = 0xf9;
+
 	/* set up a minimal OS for successful Linux/m68k reboot */
-	ROMBaseHost[0x0000] = 0x60;		/* bra.s $e00030 */
-	ROMBaseHost[0x0001] = 0x2e;
 	ROMBaseHost[0x0030] = 0x46;		/* move.w #$2700,sr */
 	ROMBaseHost[0x0031] = 0xfc;
 	ROMBaseHost[0x0032] = 0x27;
@@ -543,9 +547,14 @@ int LinuxBootOs::checkKernel(void)
 	/*--- Init SP & PC ---*/
 	uint32 *tmp = (uint32 *)RAMBaseHost;
 	tmp[0] = SDL_SwapBE32(KERNEL_START);	/* SP */
-	tmp[1] = SDL_SwapBE32(KERNEL_START);	/* PC */
+	tmp[1] = SDL_SwapBE32(0x00e00000);		/* PC = ROMBase */
+	ROMBaseHost[4] = KERNEL_START >> 24;
+	ROMBaseHost[5] = KERNEL_START >> 16;
+	ROMBaseHost[6] = KERNEL_START >>  8;
+	ROMBaseHost[7] = KERNEL_START & 0xff;
 	
 	D(bug("lilo: ok"));
+
 	return 0;
 #else
 	return -1;
