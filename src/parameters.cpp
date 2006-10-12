@@ -617,7 +617,7 @@ struct Config_Tag midi_conf[]={
 };
 
 void preset_midi() {
-  safe_strncpy(MIDI(type), "file", sizeof(MIDI(type)));
+  safe_strncpy(MIDI(type), "none", sizeof(MIDI(type)));
   safe_strncpy(MIDI(file), "/tmp/aranym-midi.bin", sizeof(MIDI(file)));
   safe_strncpy(MIDI(sequencer), "/dev/sequencer", sizeof(MIDI(sequencer)));
 }
