@@ -35,10 +35,12 @@
 MidiFile::MidiFile(memptr addr, uint32 size) : MIDI(addr, size)
 {
 	D(bug("midi_file: interface created at 0x%06x", getHWoffset()));
-
-	fd = open(bx_options.midi.file, O_WRONLY|O_CREAT, 0664);
-	if (fd<0) {
-		fprintf(stderr, "midi_file: Can not open %s\n", bx_options.midi.file); 
+	fd = -1;
+	if (strcmp("file", bx_options.midi.type)==0) {
+		fd = open(bx_options.midi.file, O_WRONLY|O_CREAT, 0664);
+		if (fd < 0) {
+			panicbug("midi_file: Can not open %s", bx_options.midi.file); 
+		}
 	}
 }
 
@@ -59,3 +61,7 @@ void MidiFile::WriteData(uae_u8 value)
 		write(fd, &value, 1);
 	}
 }
+
+/*
+vim:ts=4:sw=4:
+*/
