@@ -1,7 +1,7 @@
 /*
  * acia.cpp - ACIA 6850 emulation code
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2006 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -116,16 +116,17 @@ void ACIA::WriteData(uae_u8 value)
 
 void ACIA::PrintControlRegister(char *devicename, uae_u8 value)
 {
+	DUNUSED(devicename);
 	/* Clock */
 	switch(value & ACIA_CR_PREDIV_MASK) {
 		case ACIA_CR_PREDIV1:
-			printf("%s: clock = 500 khz\n", devicename);
+			D(bug("%s: clock = 500 kHz", devicename));
 			break;
 		case ACIA_CR_PREDIV16:
-			printf("%s: clock = 31250 hz\n", devicename);
+			D(bug("%s: clock = 31250 Hz", devicename));
 			break;
 		case ACIA_CR_PREDIV64:
-			printf("%s: clock = 7812.5 hz\n", devicename);
+			D(bug("%s: clock = 7812.5 Hz", devicename));
 			break;
 		case ACIA_CR_RESET:
 		default:
@@ -134,40 +135,44 @@ void ACIA::PrintControlRegister(char *devicename, uae_u8 value)
 
 	/* Format */
 	if (value & (1<<ACIA_CR_PARITY)) {
-		printf("%s: parity off\n", devicename);
+		D(bug("%s: parity off", devicename));
 	} else {
-		printf("%s: parity on\n", devicename);
+		D(bug("%s: parity on", devicename));
 	}
 	if (value & (1<<ACIA_CR_STOPBITS)) {
-		printf("%s: 1 stop bit\n", devicename);
+		D(bug("%s: 1 stop bit", devicename));
 	} else {
-		printf("%s: 2 stop bits\n", devicename);
+		D(bug("%s: 2 stop bits", devicename));
 	}
 	if (value & (1<<ACIA_CR_DATABITS)) {
-		printf("%s: 8 data bits\n", devicename);
+		D(bug("%s: 8 data bits", devicename));
 	} else {
-		printf("%s: 7 data bits\n", devicename);
+		D(bug("%s: 7 data bits", devicename));
 	}
 
 	/* Emission control */
 	if (value & (1<<ACIA_CR_EMIT_INTER)) {
-		printf("%s: emit interrupt enabled\n", devicename);
+		D(bug("%s: emit interrupt enabled", devicename));
 	} else {
-		printf("%s: emit interrupt disabled\n", devicename);
+		D(bug("%s: emit interrupt disabled", devicename));
 	}
 	if (value & (1<<ACIA_CR_EMIT_RTS)) {
-		printf("%s: RTS high\n", devicename);
+		D(bug("%s: RTS high", devicename));
 	} else {
-		printf("%s: RTS low\n", devicename);
+		D(bug("%s: RTS low", devicename));
 	}
 	if (((value>>ACIA_CR_EMIT_INTER) & 0x03)==0x03) {
-		printf("%s: emit BREAK\n", devicename);
+		D(bug("%s: emit BREAK", devicename));
 	}
 	
 	/* Reception control */
 	if (value & (1<<ACIA_CR_REC_INTER)) {
-		printf("%s: receive interrupt enabled\n", devicename);
+		D(bug("%s: receive interrupt enabled", devicename));
 	} else {
-		printf("%s: receive interrupt disabled\n", devicename);
+		D(bug("%s: receive interrupt disabled", devicename));
 	}
 }
+
+/*
+vim:ts=4:sw=4:
+*/
