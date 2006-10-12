@@ -175,6 +175,7 @@ Ramdisk = root.bin
 
 [MIDI]
 # Type of MIDI port emulation:
+#  none -> No output
 #  file -> Output to file
 #  sequencer -> Use /dev/sequencer device under Linux
 Type = file
