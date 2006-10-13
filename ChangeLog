@@ -3,7 +3,11 @@
   the /tmp/aranym-midi.bin file if there is no MIDI output.
 
 - bootos_linux: added the RESET instruction before the first kernel boot
-  in order to properly initialize hardware.
+  in order to properly initialize hardware. Fixes bug #1543599
+
+- aranym.spec: David Bolt continuously improves the spec file - now it
+  builds the RPM for SUSE, RedHat and also Mandriva and includes
+  desktop entry (aranym.desktop, added to CVS) and an icon.
 
 
 2006/10/11 - joy

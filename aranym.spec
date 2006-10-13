@@ -76,7 +76,7 @@ BuildRequires:	update-desktop-files
  %define	_fedora_version		%(cat /etc/fedora-release|cut -f4 -d" ")
  %define	_distribution		Fedora Core %{_fedora_version}
  %define	rel			%{_rel}.fc%{_fedora_version}
-BuildRequires:	update-desktop-files
+BuildRequires:	desktop-file-utils
 Requires:	SDL >= 1.2.0
 BuildRequires:	SDL-devel >= 1.2.0
 %endif
@@ -103,7 +103,8 @@ Ctirad Fertr, Milan Jurik, Standa Opichal, Petr Stehlik, Johan Klockars,
 Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 
 %prep
-rm -rf %{realname}
+%{__rm} -rf %{realname}
+[ -d "%{buildroot}" ] && %{__rm} -rf %{buildroot}
 
 %setup -q -n %{realname}/src/Unix
 %patch0
@@ -171,9 +172,13 @@ EOF
 #mkdir -p %{buildroot}/%{_icondir}
 #install -m644 ../../aranym.png %{buildroot}/%{_icondir}/
 install -D -m644 ../../aranym.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
-#
-# no idea, as yet, how FC updates it's desktop menus so assume it uses a similar system to (open)SUSE
-#
+desktop-file-install \
+ --delete-original \
+ --vendor fedora \
+ --dir %{buildroot}%{_datadir}/applications \
+ --add-category X-Fedora \
+ --add-category Application \
+ %{buildroot}/%{_datadir}/applications/%{name}.desktop
 %endif
 
 # Mandriva uses post-install and post-uninstall scripts for its desktop menu updates
@@ -189,7 +194,7 @@ install -D -m644 ../../aranym.desktop %{buildroot}/%{_datadir}/applications/aran
 %endif
 
 %clean
-rm -rf %{buildroot}
+%{__rm} -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
@@ -213,12 +218,12 @@ rm -rf %{buildroot}
 #
 %if %{_suse}
 #%{_icondir}/aranym.png
-%attr(0644,root,root) %{_datadir}/applications/aranym.desktop
+%attr(0644,root,root) %{_datadir}/applications/*
 %endif
 
 %if %{_fedora}
 #%{_icondir}/aranym.png
-%attr(0644,root,root) %{_datadir}/applications/aranym.desktop
+%attr(0644,root,root) %{_datadir}/applications/*
 %endif
 
 %if %{_mandriva}
