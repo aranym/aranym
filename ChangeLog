@@ -2,6 +2,13 @@
 - uae_cpu/fpu/types.h: "Fix long double support for x86 targets if
   -m128bit-long-double" - taken from Basilisk II CVS.
 
+- input.cpp: Flight Recorder is enabled by pressing the right Shift
+  and disabled by pressing the left Shift key.
+
+- uae_cpu/newcpu.cpp: fixed flushing of the flight recorder buffer
+  if driven by hotkeys. Also pre-set more reasonable defaults to
+  FRLOG_XXX defines.
+
 
 2006/10/12 - joy
 - added third MIDI type: 'none' and made it default to avoid creating
