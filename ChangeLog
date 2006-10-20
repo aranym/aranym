@@ -1,3 +1,8 @@
+2006/10/20 - joy
+- uae_cpu/fpu/types.h: "Fix long double support for x86 targets if
+  -m128bit-long-double" - taken from Basilisk II CVS.
+
+
 2006/10/12 - joy
 - added third MIDI type: 'none' and made it default to avoid creating
   the /tmp/aranym-midi.bin file if there is no MIDI output.
