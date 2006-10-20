@@ -93,9 +93,9 @@ cpuop_func *cpufunctbl[65536];
 #if FLIGHT_RECORDER
 
 // feel free to edit the following defines to customize the dump
-#define FRLOG_HOTKEY	0	/* 1 = dump only when hotkey is held down */
-#define FRLOG_ALL	0	/* 1 = dump continuously to ever growing log */
-#define FRLOG_IRQ	1	/* 1 = dump also CPU in interrupts */
+#define FRLOG_HOTKEY	1	/* 1 = dump only when hotkey is held down */
+#define FRLOG_ALL	1	/* 1 = dump continuously to ever growing log */
+#define FRLOG_IRQ	0	/* 1 = dump also CPU in interrupts */
 #define FRLOG_REGS	0	/* 1 = dump also all data/address registers */
 #define FRLOG_SIZE	8192	/* this many instructions in single dump */
 
@@ -156,7 +156,7 @@ void m68k_record_step(uaecptr pc, int opcode)
 {
 	static bool last_state = false;
 
-#if ! FRLOG_HOTKEY
+#if FRLOG_HOTKEY
 	if (! cpu_flight_recorder_active) {
 		if (last_state) {
 			// dump log out
