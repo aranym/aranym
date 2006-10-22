@@ -330,17 +330,15 @@ void debug (void)
 			m68k_reset();
 			break;
 		case 'A': {
-				uae_u32 reg;
 				if (more_params (&inptr))
-					if ((reg = readhex(&inptr)) < 8)
+					if ((uae_u32 reg = readhex(&inptr)) < 8)
 						if (more_params (&inptr))
 							m68k_areg (regs, reg) = readhex(&inptr);
 				break;
 			}
 		case 'D': {
-				uae_u32 reg;
 				if (more_params (&inptr))
-					if ((reg = readhex(&inptr)) < 8)
+					if ((uae_u32 reg = readhex(&inptr)) < 8)
 						if (more_params (&inptr))
 							m68k_dreg (regs, reg) = readhex(&inptr);
 				break;
@@ -476,27 +474,26 @@ S_argh:
 			}
 			break;
 		case 'h':
-		case '?': {
-				printf ("          HELP for UAE Debugger\n");
-				printf ("         -----------------------\n\n");
-				printf ("  g: <address>          Start execution at the current address or <address>\n");
-				printf ("  r:                    Dump state of the CPU\n");
-				printf ("  R:                    Reset CPU & FPU\n");
-				printf ("  i:                    Enable/Disable IRQ\n");
-				printf ("  I:                    Enable/Disable IRQ debbuging\n");
-				printf ("  A <number> <value>:   Set Ax\n");
-				printf ("  D <number> <value>:   Set Dx\n");
-				printf ("  m <address> <lines>:  Memory dump starting at <address>\n");
-				printf ("  d <address> <lines>:  Disassembly starting at <address>\n");
-				printf ("  t <address>:          Step one instruction\n");
-				printf ("  z:                    Step through one instruction - useful for JSR, DBRA etc\n");
-				printf ("  f <address>:          Step forward until PC == <address>\n");
-				printf ("  H <count>:            Show PC history <count> instructions\n");
-				printf ("  W <address> <value>:  Write into Aranym memory\n");
-				printf ("  S <file> <addr> <n>:  Save a block of Aranym memory\n");
-				printf ("  h,?:                  Show this help page\n");
-				printf ("  q:                    Quit the emulator. You don't want to use this command.\n\n");
-			}
+		case '?':
+			printf ("          HELP for UAE Debugger\n");
+			printf ("         -----------------------\n\n");
+			printf ("  g: <address>          Start execution at the current address or <address>\n");
+			printf ("  r:                    Dump state of the CPU\n");
+			printf ("  R:                    Reset CPU & FPU\n");
+			printf ("  i:                    Enable/Disable IRQ\n");
+			printf ("  I:                    Enable/Disable IRQ debbuging\n");
+			printf ("  A <number> <value>:   Set Ax\n");
+			printf ("  D <number> <value>:   Set Dx\n");
+			printf ("  m <address> <lines>:  Memory dump starting at <address>\n");
+			printf ("  d <address> <lines>:  Disassembly starting at <address>\n");
+			printf ("  t <address>:          Step one instruction\n");
+			printf ("  z:                    Step through one instruction - useful for JSR, DBRA etc\n");
+			printf ("  f <address>:          Step forward until PC == <address>\n");
+			printf ("  H <count>:            Show PC history <count> instructions\n");
+			printf ("  W <address> <value>:  Write into Aranym memory\n");
+			printf ("  S <file> <addr> <n>:  Save a block of Aranym memory\n");
+			printf ("  h,?:                  Show this help page\n");
+			printf ("  q:                    Quit the emulator. You don't want to use this command.\n\n");
 			break;
 
 		}
