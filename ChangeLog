@@ -1,3 +1,13 @@
+2006/10/22 - joy
+- uae_cpu/debug.cpp: reformatted using Artistic Style v1.18 using
+  the following switches: "--style=kr --indent=tab=4 --brackets=linux
+  --brackets=break-closing-headers --indent-cases". Also added
+  a simple command prompt prefix: 'i'=debug also irq handlers, 'I'=ignore
+  IRQs.
+
+- input.cpp: fixed invoking of internal debugger by pressing the hotkey
+
+
 2006/10/20 - joy
 - uae_cpu/fpu/types.h: "Fix long double support for x86 targets if
   -m128bit-long-double" - taken from Basilisk II CVS.
