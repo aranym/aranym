@@ -332,16 +332,20 @@ void debug (void)
 			m68k_reset();
 			break;
 		case 'A':
-			if (more_params (&inptr))
-				if ((uae_u32 reg = readhex(&inptr)) < 8)
+			if (more_params (&inptr)) {
+				uae_u32 reg = readhex(&inptr);
+				if (reg < 8)
 					if (more_params (&inptr))
 						m68k_areg (regs, reg) = readhex(&inptr);
+			}
 			break;
 		case 'D':
-			if (more_params (&inptr))
-				if ((uae_u32 reg = readhex(&inptr)) < 8)
+			if (more_params (&inptr)) {
+				uae_u32 reg = readhex(&inptr);
+				if (reg < 8)
 					if (more_params (&inptr))
 						m68k_dreg (regs, reg) = readhex(&inptr);
+			}
 			break;
 		case 'W':
 			writeintomem (&inptr);
