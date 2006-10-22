@@ -1,8 +1,26 @@
 /*
- * $Header$
+ * ndebug.cpp - new ARAnyM fullscreen debugger
  *
- * MJ 2001
+ * Copyright (c) 2001-2006 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
 
 #include "sysdeps.h"
 
@@ -51,7 +69,7 @@ char **ndebug::dbbuffer = NULL;
 unsigned int ndebug::dbstart = 0;
 unsigned int ndebug::dbend = 0;
 unsigned int ndebug::dbfull = 0;
-unsigned int ndebug::aktualrow = 0;
+unsigned int ndebug::actualrow = 0;
 unsigned int ndebug::tp = 0;
 bool ndebug::do_skip = false;
 uaecptr ndebug::skipaddr = 0;
@@ -95,7 +113,7 @@ static char *strhelp[] = {"Help:\n",
 	" q                    change to debug type No. 0\n",
 	" j | J                browse up\n",
 	" k | K                browse down\n",
-	" r                    refresh D(bug()) | reset aktual row\n",
+	" r                    refresh D(bug()) | reset actual row\n",
 	" L <file>             save debugger's info to <file>\n",
 	" v X <addr> <value>   step forward until (<address>) = <value> (X=b,w,l)\n",
 	" V X <address>        step forward until (<address>) changed (X=b,w,l)\n",
@@ -113,33 +131,33 @@ void ndebug::ignore_ws (char **c) {
   while (**c && isspace(**c)) (*c)++;
 }
 
-void ndebug::reset_aktualrow()
+void ndebug::reset_actualrow()
 {
 	if (dbend < get_warnlen()) {
-		aktualrow = dbfull ? (dbsize - (get_warnlen() - dbend)) : 0;
+		actualrow = dbfull ? (dbsize - (get_warnlen() - dbend)) : 0;
 	} else {
-		aktualrow = dbend - get_warnlen();
+		actualrow = dbend - get_warnlen();
 	}
 }
 
-void ndebug::set_aktualrow(signed int r)
+void ndebug::set_actualrow(signed int r)
 {
 	if (r == 0)
 		return;
 	if (r < 0) {
 		r = -r;
 		r %= dbsize;
-		if (aktualrow < (unsigned int) r) {
-			aktualrow = dbfull ? (dbsize - (r - aktualrow)) : 0;
+		if (actualrow < (unsigned int) r) {
+			actualrow = dbfull ? (dbsize - (r - actualrow)) : 0;
 		} else {
-			aktualrow -= r;
+			actualrow -= r;
 		}
 	} else {
-		if ((aktualrow + r) < dbend) {
-			aktualrow += r;
+		if ((actualrow + r) < dbend) {
+			actualrow += r;
 		} else {
-			aktualrow =
-				dbfull ? (dbsize - (dbend - (aktualrow + r))) : dbend;
+			actualrow =
+				dbfull ? (dbsize - (dbend - (actualrow + r))) : dbend;
 		}
 	}
 }
@@ -165,7 +183,7 @@ int dbprintf(char *s, ...)
 		if (dbend == dbsize) dbend = 0;
 		if (dbstart == dbend) dbstart++;
 		if (dbstart == dbsize) dbstart = 0;
-		reset_aktualrow();
+		reset_actualrow();
 		return i;
 	} else {
 #endif
@@ -199,7 +217,7 @@ int pdbprintf(char *s, ...)
 		if (dbend == dbsize) dbend = 0;
 		if (dbstart == dbend) dbstart++;
 		if (dbstart == dbsize) dbstart = 0;
-		reset_aktualrow();
+		reset_actualrow();
 	}
 #endif
 	va_start(a, s);
@@ -215,7 +233,7 @@ void ndebug::warn_print(FILE * f)
 {
 	unsigned int ar;
 	for (unsigned int i = 0; i < get_warnlen(); i++) {
-		ar = (aktualrow + i) % dbsize;
+		ar = (actualrow + i) % dbsize;
 		if (dbbuffer[ar] != NULL
 			&& (((dbstart <= dbend) && (ar >= dbstart) && (ar <= dbend))
 			|| (dbstart > dbend) && (i < dbsize))) {
@@ -617,6 +635,8 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 
 	show(f);
 
+	if (irqindebug) fprintf(f, "i");
+	if (ignore_irq) fprintf(f, "I");
 	fprintf(f, ">");
 	fflush(f);
 	if (fgets(input, 80, stdin) == NULL) {
@@ -644,10 +664,10 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			m68k_reset();
 			break;
 		case 'i':
-			irqindebug = !irqindebug; bug("IRQ %s\n", irqindebug ? "enabled" : "disabled"); break;
+			irqindebug = !irqindebug;
 			break;
 		case 'I':
-			ignore_irq = !ignore_irq; bug("IRQ debugging %s\n", ignore_irq ? "enabled" : "disabled"); break;
+			ignore_irq = !ignore_irq;
 			break;
 		case 'e':
 			dump_traps (f);
@@ -728,19 +748,19 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 				else bug("c command needs one argument!");
 			break;
 		case 'j':
-			set_aktualrow(-1);
+			set_actualrow(-1);
 			break;
 		case 'J':
-			set_aktualrow(1 - get_warnlen());
+			set_actualrow(1 - get_warnlen());
 			break;
 		case 'k':
-			set_aktualrow(1);
+			set_actualrow(1);
 			break;
 		case 'K':
-			set_aktualrow(get_warnlen() - 1);
+			set_actualrow(get_warnlen() - 1);
 			break;
 		case 'r':
-			reset_aktualrow();
+			reset_actualrow();
 			break;
 		case 'z':
 			skipaddr = nextpc;
@@ -950,19 +970,19 @@ int ndebug::icanon(FILE *f, bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
 					log2phys(f, maddr);
 					break;
 				case 'j':
-					set_aktualrow(-1);
+					set_actualrow(-1);
 					break;
 				case 'J':
-					set_aktualrow(1 - get_warnlen());
+					set_actualrow(1 - get_warnlen());
 					break;
 				case 'k':
-					set_aktualrow(1);
+					set_actualrow(1);
 					break;
 				case 'K':
-					set_aktualrow(get_warnlen() - 1);
+					set_actualrow(get_warnlen() - 1);
 					break;
 				case 'r':
-					reset_aktualrow();
+					reset_actualrow();
 					break;
 				case 'q':
 					tp = 0;
@@ -1342,118 +1362,5 @@ void ndebug::showHistory(unsigned int count) {
 #endif
 
 /*
- * $Log$
- * Revision 1.38  2005/04/24 11:59:29  schwab
- * - ndebug.cpp: fix stdarg usage, handle NEED_TO_DEBUG_BADLY in showHistory.
- *
- * Revision 1.37  2005/04/24 01:00:59  schwab
- * Implement use of C++ exceptions instead of setjmp/longjmp for exception handling
- *
- * Revision 1.36  2005/01/22 16:02:33  joy
- * extern decl of QuitEmulator
- *
- * Revision 1.35  2004/07/28 20:10:09  milan
- * switch 'I' modified, debugger can ignore interupt mode
- *
- * Revision 1.34  2004/07/09 18:41:56  milan
- * (sig)set/longjmp corrections
- *
- * Revision 1.33  2003/12/27 21:02:40  joy
- * warning fixed
- *
- * Revision 1.32  2003/09/03 20:15:55  milan
- * ndebug compilation warnings fixed
- *
- * Revision 1.31  2003/07/11 18:51:03  milan
- * some JIT bugs corrected
- * CD-ROM product ID corrected for little endian
- *
- * Revision 1.30  2002/10/15 21:26:53  milan
- * non-cheaders support (for MipsPro C/C++ compiler)
- *
- * Revision 1.29  2002/10/02 22:04:32  milan
- * ndebug supports breakpoints
- *
- * Revision 1.28  2002/09/30 21:57:33  milan
- * v&V commands added to ndebug, (<address>) vs. <value> operations
- * typo fix in configure.ac script
- *
- * Revision 1.27  2002/09/28 13:03:45  joy
- * ndebug::showHistory does not work if NEED_TO_DEBUG_BADLY is enabled
- *
- * Revision 1.26  2002/09/10 18:44:52  milan
- * ISO C++ forbids assignment of arrays
- *
- * Revision 1.25  2002/08/01 22:21:47  joy
- * compiler warning fixed
- *
- * Revision 1.24  2002/07/23 08:43:50  pmandin
- * gcc-3 friendliness
- *
- * Revision 1.23  2002/04/22 18:30:50  milan
- * header files reform
- *
- * Revision 1.22  2002/02/26 21:08:13  milan
- * address validation in CPU interface
- *
- * Revision 1.21  2002/02/25 23:52:13  milan
- * PC, stack, table68k - synchronized with MMU (Furlong) and JIT (Gwenole)
- *
- * Revision 1.17  2002/02/20 13:04:07  milan
- * Makefile's dependencies disabled - problems with make depend
- * valid_address
- *
- * Revision 1.16  2002/02/19 20:04:05  milan
- * src/ <-> CPU interaction cleaned
- * memory access cleaned
- *
- * Revision 1.15  2002/02/14 16:53:45  milan
- * new command for ndebug - 'L'
- *
- * Revision 1.14  2002/02/01 20:19:38  milan
- * ioctl -> tcgetattr, tcsetattr
- *
- * Revision 1.13  2002/01/31 19:37:47  milan
- * panicbug, cleaning
- *
- * Revision 1.12  2002/01/18 23:43:25  milan
- * fgetc returns int
- * abs needs stdlib.h
- *
- * Revision 1.11  2002/01/18 20:37:47  milan
- * FixedSizeFastRAM & Makefile fixed
- *
- * Revision 1.10  2002/01/08 16:13:18  joy
- * config variables moved from global ones to bx_options struct.
- *
- * Revision 1.9  2001/12/07 00:31:31  milan
- * small bug in 'z' command of ndebug corrected, big one stays, it needs better solution
- *
- * Revision 1.8  2001/11/28 09:36:05  milan
- * cleaning
- * update of config.* file
- *
- * Revision 1.7  2001/11/21 13:29:51  milan
- * cleanning & portability
- *
- * Revision 1.6  2001/11/06 20:36:54  milan
- * MMU's corrections
- *
- * Revision 1.5  2001/10/29 08:15:45  milan
- * some changes around debuggers
- *
- * Revision 1.4  2001/10/25 22:33:18  milan
- * fullhistory's support in ndebug
- *
- * Revision 1.3  2001/10/03 11:10:03  milan
- * Px supports now P5 <addr>, PC=<addr>
- *
- * Revision 1.2  2001/10/02 19:13:28  milan
- * ndebug, malloc
- *
- * Revision 1.1  2001/07/21 18:13:29  milan
- * sclerosis, sorry, ndebug added
- *
- *
- *
- */
+vim:ts=4:sw=4:
+*/
