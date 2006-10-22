@@ -541,12 +541,10 @@ static void process_keyboard_event(SDL_Event &event)
 #endif
 #ifdef DEBUGGER
 		else if (CHECK_HOTKEY(debug)) {
-			if (bx_options.startup.debugger) {
-				releaseTheMouse();
-				canGrabMouseAgain = false;	// let it leave our window
-				// activate debugger
-				activate_debugger();
-			}
+			releaseTheMouse();
+			canGrabMouseAgain = false;	// let it leave our window
+			// activate debugger
+			activate_debugger();
 			send2Atari = false;
 		}
 #endif
