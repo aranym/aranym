@@ -104,6 +104,7 @@ struct rec_step {
 	uae_u32 a[8];
 	uae_u32 pc;
 	uae_u16 sr;
+	uae_u32 usp;
 	uae_u32 msp;
 	uae_u32 isp;
 	uae_u16 instr;
@@ -136,7 +137,7 @@ static void dump_log()
 		return;
 	for (int i = 0; i < LOG_SIZE; i++) {
 		int j = (i + log_ptr) % LOG_SIZE;
-		fprintf(f, "pc %08x  instr %04x  sr %04x  msp %08x  isp %08x\n", log[j].pc, log[j].instr, log[j].sr, log[j].msp, log[j].isp);
+		fprintf(f, "pc %08x  instr %04x  sr %04x  usp %08x  msp %08x  isp %08x\n", log[j].pc, log[j].instr, log[j].sr, log[j].usp, log[j].msp, log[j].isp);
 #if ENABLE_MON
 		disass_68k(f, log[j].pc);
 #else
@@ -191,6 +192,7 @@ void m68k_record_step(uaecptr pc, int opcode)
 	if (regs.s && !regs.m) return;
 #endif
 	log[log_ptr].sr = regs.sr;
+	log[log_ptr].usp = regs.usp;
 	log[log_ptr].msp = regs.msp;
 	log[log_ptr].isp = regs.isp;
 	log[log_ptr].instr = opcode;
