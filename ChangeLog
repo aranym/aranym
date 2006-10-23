@@ -1,9 +1,14 @@
+2006/10/23 - joy
+- newcpu.cpp: "usp" register dump added to flight recorder
+- debug.cpp: ignore_irq set to 1 by default (don't trace interrupt routines)
+- ndebug.cpp: deactivate_debugger on 'g' (so you can enter debugger again).
+
 2006/10/22 - joy
 - uae_cpu/debug.cpp: reformatted using Artistic Style v1.18 using
   the following switches: "--style=kr --indent=tab=4 --brackets=linux
-  --brackets=break-closing-headers --indent-cases". Also added
-  a simple command prompt prefix: 'i'=debug also irq handlers, 'I'=ignore
-  IRQs.
+  --brackets=break-closing-headers --indent-cases".
+  Also added a simple command prompt prefix: 'i'=fire IRQs while in debugger,
+  'I'=ignore IRQ routines while tracing.
 
 - input.cpp: fixed invoking of internal debugger by pressing the hotkey
 
