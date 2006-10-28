@@ -348,7 +348,7 @@ bool ACSIFDC::is_floppy_inserted()
 bool ACSIFDC::read_file(int device, long offset, memptr address, int secsize, int count)
 {
 	if (lseek(device, offset, SEEK_SET) < 0) return false;
-	uint8 buffer[secsize];
+	void *buffer = alloca(secsize);
 	for(int i=0; i<count; i++) {
 		if (::read(device, buffer, secsize) != secsize) return false;
 		memcpy(Atari2HostAddr(address), buffer, secsize);
