@@ -360,7 +360,7 @@ bool ACSIFDC::read_file(int device, long offset, memptr address, int secsize, in
 bool ACSIFDC::write_file(int device, long offset, memptr address, int secsize, int count)
 {
 	if (lseek(device, offset, SEEK_SET) < 0) return false;
-	uint8 buffer[secsize];
+	void *buffer = alloca(secsize);
 	for(int i=0; i<count; i++) {
 		memcpy(buffer, Atari2HostAddr(address), secsize);
 		address += secsize;
@@ -368,6 +368,7 @@ bool ACSIFDC::write_file(int device, long offset, memptr address, int secsize, i
 	}
 	return true;
 }
+
 void ACSIFDC::fdc_exec_command()
 {
 	static int dir=1,motor=1;
