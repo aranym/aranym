@@ -29,7 +29,7 @@ typedef enum {
 } TAG_TYPE;
 
 struct Config_Tag {
-	char		*code;				/* Option switch		*/
+	const char	*code;				/* Option switch		*/
 	TAG_TYPE	type;				/* Type of option		*/
 	void		 *buf;				/* Storage location		*/
 	short		buf_size;			/* Storage size for String_Tag - max. 32k */

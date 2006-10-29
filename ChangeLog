@@ -1,5 +1,6 @@
 2006/10/28 - milan
 - ndebug.*: const char declarations in debug printfs
+- cfgopts.h: const char declaration of option name
 
 
 2006/10/23 - joy
