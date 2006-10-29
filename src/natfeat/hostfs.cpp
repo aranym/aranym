@@ -75,11 +75,7 @@
 #endif
 
 #ifdef HAVE_SYS_STATVFS_H
-# ifdef OS_solaris
-#    define STATVFS struct statvfs_t
-# else
-#    define STATVFS struct statvfs
-# endif
+#  define STATVFS struct statvfs
 #else
 #    define STATVFS struct statfs
 #endif

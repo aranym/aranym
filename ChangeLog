@@ -1,6 +1,7 @@
 2006/10/28 - milan
 - ndebug.*: const char declarations in debug printfs
 - cfgopts.h: const char declaration of option name
+- natfeat/hostfs.cpp: new Solaris versions support struct statvfs
 
 
 2006/10/23 - joy
