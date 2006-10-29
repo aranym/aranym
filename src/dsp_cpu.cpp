@@ -18,9 +18,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <SDL.h>
-#include <SDL_thread.h>
-
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
@@ -33,6 +30,9 @@
 
 #define DEBUG 0
 #include "debug.h"
+
+#include <SDL.h>
+#include <SDL_thread.h>
 
 /* More disasm infos, if wanted */
 #define DSP_DISASM_INST 0		/* Instructions */

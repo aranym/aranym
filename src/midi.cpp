@@ -18,10 +18,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
@@ -31,6 +27,10 @@
 
 #define DEBUG 0
 #include "debug.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 MIDI::MIDI(memptr addr, uint32 size) : ACIA(addr, size)
 {

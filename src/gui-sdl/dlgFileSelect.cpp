@@ -23,17 +23,16 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <SDL.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dirent.h>
-
-#include <debug.h>
-
+#include "sysdeps.h"
 #include "sdlgui.h"
 #include "file.h"
+
+#define DEBUG 0
+#include "debug.h"
+
+#include <cstdlib>
+#include <cstring>
+#include <SDL.h>
 
 #define SGFSDLG_FILENAME   5
 #define SGFSDLG_UPDIR      6
@@ -155,7 +154,7 @@ struct listentry *create_list(char *path)
 	}
 
 	if (closedir(dd) != 0)
-		bug("Error on closedir.");
+		D(bug("Error on closedir."));
 
 	return list;
 }

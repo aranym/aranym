@@ -18,8 +18,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <SDL_endian.h>
-
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "bootos_linux.h"
@@ -28,6 +26,8 @@
 
 #define DEBUG 0
 #include "debug.h"
+
+#include <SDL_endian.h>
 
 #ifdef ENABLE_LILO
 

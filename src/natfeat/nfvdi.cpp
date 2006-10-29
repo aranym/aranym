@@ -18,9 +18,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <new>
-#include <SDL_endian.h>
-
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "parameters.h"
@@ -33,6 +30,9 @@
 
 #define DEBUG 0
 #include "debug.h"
+
+#include <new>
+#include <SDL_endian.h>
 
 /*--- Defines ---*/
 

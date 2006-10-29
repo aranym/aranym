@@ -18,8 +18,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <cstring>
-
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "parameters.h"
@@ -30,6 +28,8 @@
 
 #define DEBUG 0
 #include "debug.h"
+
+#include <cstring>
 
 /*--- Defines ---*/
 
@@ -1501,6 +1501,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.17  2006/02/26 19:14:58  standa
+ * Added the remaining logOps implementation for expandArea(8bit).
+ *
  * Revision 1.16  2006/02/21 20:14:03  standa
  * A little hack to use alpha channeling for expandArea( of 8bit chunky data).
  *

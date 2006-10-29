@@ -10,8 +10,9 @@
 #ifndef _SDLGUI_H
 #define _SDLGUI_H
 
-#include <SDL.h>
 #include "host.h"
+
+#include <SDL.h>
 
 enum
 {

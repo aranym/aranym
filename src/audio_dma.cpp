@@ -18,8 +18,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
  
-#include <SDL.h>
-
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
@@ -29,6 +27,9 @@
 
 #define DEBUG 0
 #include "debug.h"
+
+#include <SDL.h>
+
 
 /*--- Defines ---*/
 

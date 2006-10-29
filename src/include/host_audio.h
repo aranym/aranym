@@ -21,6 +21,8 @@
 #ifndef HOSTAUDIO_H
 #define HOSTAUDIO_H
 
+#include <SDL.h>
+
 /*--- Defines ---*/
 
 #define	MAX_AUDIO_CALLBACKS	8
