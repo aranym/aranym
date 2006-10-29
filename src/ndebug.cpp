@@ -165,10 +165,10 @@ void ndebug::set_actualrow(signed int r)
 #endif
 
 #ifdef NEWDEBUG
-int ndebug::dbprintf(char *s, ...)
+int ndebug::dbprintf(const char *s, ...)
 {
 #else
-int dbprintf(char *s, ...)
+int dbprintf(const char *s, ...)
 {
 #endif
 	va_list a;
@@ -199,10 +199,10 @@ int dbprintf(char *s, ...)
 }
 
 #ifdef NEWDEBUG
-int ndebug::pdbprintf(char *s, ...)
+int ndebug::pdbprintf(const char *s, ...)
 {
 #else
-int pdbprintf(char *s, ...)
+int pdbprintf(const char *s, ...)
 {
 #endif
 	int i = 0;

@@ -1,7 +1,13 @@
+2006/10/28 - milan
+- ndebug.*: const char declarations in debug printfs
+
+
 2006/10/23 - joy
 - newcpu.cpp: "usp" register dump added to flight recorder
 - debug.cpp: ignore_irq set to 1 by default (don't trace interrupt routines)
 - ndebug.cpp: deactivate_debugger on 'g' (so you can enter debugger again).
+              this breaks breakpoints support
+
 
 2006/10/22 - joy
 - uae_cpu/debug.cpp: reformatted using Artistic Style v1.18 using

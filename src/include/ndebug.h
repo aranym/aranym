@@ -158,13 +158,13 @@ class ndebug {
 public:
   static
 #endif
-  int dbprintf(char *, ...);
+  int dbprintf(const char *, ...);
 
 #ifdef NEWDEBUG
 public:
     static
 #endif
-    int pdbprintf(char *, ...);
+    int pdbprintf(const char *, ...);
 
 #ifdef NEWDEBUG
   static bool do_skip;
