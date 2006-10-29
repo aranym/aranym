@@ -291,7 +291,7 @@ case "$target_os" in
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
     AC_DEFINE([_POSIX_C_SOURCE], 199506L, [Define if needed])
-    DEFINES="$DEFINES -DBSD_COMP -fpermissive -D__EXTENSIONS__"
+    DEFINES="$DEFINES -DBSD_COMP -D__EXTENSIONS__"
     EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
     ;;
   irix*)

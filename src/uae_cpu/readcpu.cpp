@@ -10,10 +10,17 @@
 #include "sysdeps.h"
 #include "readcpu.h"
 
-# include <cstdio>
-# include <cstdlib>
-# include <cstring>
-# include <cctype>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
+
+using std::strncmp;
+using std::abort;
+using std::fprintf;
+using std::strcmp;
+using std::strlen;
+using std::malloc;
 
 int nr_cpuop_funcs;
 
