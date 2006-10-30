@@ -3679,23 +3679,21 @@ static void dsp_adc(void)
 	dest[2] = getDSP()->registers[DSP_REG_A0+destreg];
 
 	srcreg = (cur_inst>>4) & 1;
-	switch(srcreg) {
-		case 0:	/* X */
-			source[1] = getDSP()->registers[DSP_REG_X1];
-			source[2] = getDSP()->registers[DSP_REG_X0];
-			source[0] = 0;
-			if (source[1] & (1<<23)) {
-				source[0] = 0x0000ff;
-			}
-			break;
-		case 1:	/* Y */
-			source[1] = getDSP()->registers[DSP_REG_Y1];
-			source[2] = getDSP()->registers[DSP_REG_Y0];
-			source[0] = 0;
-			if (source[1] & (1<<23)) {
-				source[0] = 0x0000ff;
-			}
-			break;
+	if (srcreg == 0) {	/* X */
+		source[1] = getDSP()->registers[DSP_REG_X1];
+		source[2] = getDSP()->registers[DSP_REG_X0];
+		source[0] = 0;
+		if (source[1] & (1<<23)) {
+			source[0] = 0x0000ff;
+		}
+	}
+	else {	/* Y */
+		source[1] = getDSP()->registers[DSP_REG_Y1];
+		source[2] = getDSP()->registers[DSP_REG_Y0];
+		source[0] = 0;
+		if (source[1] & (1<<23)) {
+			source[0] = 0x0000ff;
+		}
 	}
 
 	newsr = dsp_add56(source, dest);
@@ -3786,6 +3784,9 @@ static void dsp_add(void)
 				source[0] = 0x0000ff;
 			}
 			break;
+		default:
+			panicbug("source register undefined! dsp_cpu.cpp: %d", __LINE__);
+			exit(-1);
 	}
 
 	newsr = dsp_add56(source, dest);
@@ -3993,6 +3994,9 @@ static void dsp_cmp(void)
 				source[0] = 0x0000ff;
 			}
 			break;
+		default:
+			panicbug("source register undefined! dsp_cpu.cpp: %d", __LINE__);
+			exit(-1);
 	}
 
 	newsr = dsp_sub56(source, dest);
@@ -4057,6 +4061,9 @@ static void dsp_cmpm(void)
 				source[0] = 0x0000ff;
 			}
 			break;
+		default:
+			panicbug("source register undefined! dsp_cpu.cpp: %d", __LINE__);
+			exit(-1);
 	}
 
 	dsp_abs56(source);
@@ -4416,23 +4423,21 @@ static void dsp_sbc(void)
 	dest[2] = getDSP()->registers[DSP_REG_A0+destreg];
 
 	srcreg = (cur_inst>>4) & 1;
-	switch(srcreg) {
-		case 0:	/* X */
-			source[1] = getDSP()->registers[DSP_REG_X1];
-			source[2] = getDSP()->registers[DSP_REG_X0];
-			source[0] = 0;
-			if (source[1] & (1<<23)) {
-				source[0] = 0x0000ff;
-			}
-			break;
-		case 1:	/* Y */
-			source[1] = getDSP()->registers[DSP_REG_Y1];
-			source[2] = getDSP()->registers[DSP_REG_Y0];
-			source[0] = 0;
-			if (source[1] & (1<<23)) {
-				source[0] = 0x0000ff;
-			}
-			break;
+	if (srcreg == 0) {	/* X */
+		source[1] = getDSP()->registers[DSP_REG_X1];
+		source[2] = getDSP()->registers[DSP_REG_X0];
+		source[0] = 0;
+		if (source[1] & (1<<23)) {
+			source[0] = 0x0000ff;
+		}
+	}
+	else {	/* Y */
+		source[1] = getDSP()->registers[DSP_REG_Y1];
+		source[2] = getDSP()->registers[DSP_REG_Y0];
+		source[0] = 0;
+		if (source[1] & (1<<23)) {
+			source[0] = 0x0000ff;
+		}
 	}
 
 	newsr = dsp_sub56(source, dest);
@@ -4523,6 +4528,9 @@ static void dsp_sub(void)
 				source[0] = 0x0000ff;
 			}
 			break;
+		default:
+			panicbug("source register undefined! dsp_cpu.cpp: %d", __LINE__);
+			exit(-1);
 	}
 
 	newsr = dsp_sub56(source, dest);
@@ -4709,4 +4717,8 @@ static void dsp_tst(void)
 		BUG:div: did not save the result
 	2002-07-18:PM
 		FIX:modified ccr stuff to test arbitrary accumulator, not only A and B
+*/
+
+/*
+vim:ts=4:sw=4:
 */
