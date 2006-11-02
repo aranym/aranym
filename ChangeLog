@@ -1,3 +1,7 @@
+2006/11/02 - joy
+- parameters.cpp: store IKBD settings to [IKBD] section in config file
+
+
 2006/10/28 - milan
 - ndebug.*: const char declarations in debug printfs
 - cfgopts.h: const char declaration of option name

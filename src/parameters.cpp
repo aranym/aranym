@@ -862,6 +862,27 @@ void presave_hotkeys() {
 }
 
 /*************************************************************************/
+struct Config_Tag ikbd_conf[]={
+	{ "WheelEiffel", Bool_Tag, &bx_options.ikbd.wheel_eiffel, 0, 0},
+	{ "AltGr", Bool_Tag, &bx_options.ikbd.altgr, 0, 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+void preset_ikbd()
+{
+	bx_options.ikbd.wheel_eiffel = false;
+	bx_options.ikbd.altgr = true;
+}
+
+void postload_ikbd()
+{
+}
+
+void presave_ikbd()
+{
+}
+
+/*************************************************************************/
 void usage (int status) {
   printf ("Usage: %s [OPTIONS]\n", program_name);
   printf ("\
@@ -904,6 +925,7 @@ Options:\n\
 
 void preset_cfg() {
   preset_global();
+  preset_ikbd();
   preset_hotkeys();
   preset_ide();
   preset_disk();
@@ -926,6 +948,7 @@ void preset_cfg() {
 
 void postload_cfg() {
   postload_global();
+  postload_ikbd();
   postload_hotkeys();
   postload_ide();
   postload_disk();
@@ -948,6 +971,7 @@ void postload_cfg() {
 
 void presave_cfg() {
   presave_global();
+  presave_ikbd();
   presave_hotkeys();
   presave_ide();
   presave_disk();
@@ -1268,8 +1292,9 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 	fprintf(f, "Using config file: '%s'\n", rcfile);
 
 	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
-	process_config(f, rcfile, hotkeys_conf, "[HOTKEYS]", true);
 	process_config(f, rcfile, startup_conf, "[STARTUP]", true);
+	process_config(f, rcfile, ikbd_conf, "[IKBD]", true);
+	process_config(f, rcfile, hotkeys_conf, "[HOTKEYS]", true);
 	process_config(f, rcfile, jit_conf, "[JIT]", true);
 	process_config(f, rcfile, video_conf, "[VIDEO]", true);
 	process_config(f, rcfile, tos_conf, "[TOS]", true);
@@ -1318,8 +1343,9 @@ bool saveSettings(const char *fs)
 		fprintf(stderr, "Error while writing the '%s' config file.\n", fs);
 		return false;
 	}
-	update_config(fs, hotkeys_conf, "[HOTKEYS]");
 	update_config(fs, startup_conf, "[STARTUP]");
+	update_config(fs, ikbd_conf, "[IKBD]");
+	update_config(fs, hotkeys_conf, "[HOTKEYS]");
 	update_config(fs, jit_conf, "[JIT]");
 	update_config(fs, video_conf, "[VIDEO]");
 	update_config(fs, tos_conf, "[TOS]");
@@ -1373,7 +1399,7 @@ bool check_cfg()
 	{
 		panicbug("Maximum Fast RAM size for real addressing on x86/Linux is 112 MB");
 		panicbug("If you need bigger Fast RAM, you must recompile ARAnyM");
-		panicbug("./configure --enable-addressing=direct");
+		panicbug("Use ./configure --enable-addressing=direct");
 		return false;
 	}
 # endif
