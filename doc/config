@@ -62,6 +62,17 @@ GrabMouse = Yes
 Debugger = No
 
 
+[IKBD]
+# if enabled (set to Yes) then mouse wheel sends Eiffel scancodes
+# if disabled (set to No) then mouse wheel simulates Up/Down arrow keys
+WheelEiffel = No
+
+# AltGr key is the Alt key on the right of Space Bar on PC102+ keyboards
+# if enabled then the AltGr key sends same scancode as on Milan computer
+# if disabled then the AltGr key behaves just like the normal Alt key
+AltGr = Yes
+
+
 [JIT]
 # enable JIT compiler
 JIT = No
