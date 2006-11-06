@@ -1,3 +1,7 @@
+2006/11/06 - milan
+- ndebug.cpp: roll back of Joy's 23rd October
+
+
 2006/11/02 - joy
 - parameters.cpp: store IKBD settings to [IKBD] section in config file
 

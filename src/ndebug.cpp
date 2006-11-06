@@ -693,7 +693,10 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			if (more_params(&inptr)) m68k_setpc(readhex(&inptr));
 			fill_prefetch_0();
 			if (wasGrabbed) grabMouse(true);
-			deactivate_debugger();
+			/*
+			 * debugger activation/deactivation need to be rewriteen
+			 * deactivate_debugger();
+			 */
 			if (do_breakpoints)
 				SPCFLAGS_SET( SPCFLAG_BRK );
 			return 0;
