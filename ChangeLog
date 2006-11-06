@@ -1,5 +1,7 @@
 2006/11/06 - milan
 - ndebug.cpp: roll back of Joy's 23rd October
+- debug.cpp: roll back of Joy's 23rd October
+- CPU debugger is primary for CPU and key OS functions debugging
 
 
 2006/11/02 - joy
