@@ -49,7 +49,7 @@ static int debugger_active = 0;
 int debugging = 0;
 int irqindebug = 0;
 
-int ignore_irq = 1;
+int ignore_irq = 0;
 
 #ifdef UAEDEBUG
 static int do_skip;
@@ -246,7 +246,7 @@ void debug (void)
 # ifdef GDBSTUB
 	if (gdbstub::check(m68k_getpc()) != GDBSTUB_STOP_NO_REASON)
 		gdbstub::debug_loop();
-# else /* GDBSTUB */
+# else
 	char input[80];
 	uaecptr nextpc,nxdis,nxmem;
 
@@ -254,6 +254,17 @@ void debug (void)
 	input[1] = '\0';
 
 	if (do_skip && skipaddr == 0xC0DEDBAD) {
+#if 0
+		if (trace_same_insn_count > 0) {
+			if (memcmp (trace_insn_copy, regs.pcp, 10) == 0
+			        && memcmp (trace_prev_regs.regs, regs.regs, sizeof regs.regs) == 0) {
+				trace_same_insn_count++;
+				return;
+			}
+		}
+		if (trace_same_insn_count > 1)
+			fprintf (logfile, "[ repeated %d times ]\n", trace_same_insn_count);
+#endif
 		m68k_dumpstate (&nextpc);
 		trace_same_insn_count = 1;
 		memcpy (trace_insn_copy, phys_get_real_address(m68k_getpc()), 10);
@@ -268,18 +279,18 @@ void debug (void)
 
 	irqindebug = 0;
 
-#  ifndef FULL_HISTORY
-#   ifdef NEED_TO_DEBUG_BADLY
+#ifndef FULL_HISTORY
+#ifdef NEED_TO_DEBUG_BADLY
 	history[lasthist] = regs;
 	historyf[lasthist] = regflags;
-#   else /* NEED_TO_DEBUG_BADLY */
+#else
 	history[lasthist] = m68k_getpc();
-#   endif /* NEED_TO_DEBUG_BADLY */
+#endif
 	if (++lasthist == MAX_HIST) lasthist = 0;
 	if (lasthist == firsthist) {
 		if (++firsthist == MAX_HIST) firsthist = 0;
 	}
-#  endif /* FULL_HISTORY */
+#endif
 
 	m68k_dumpstate (&nextpc);
 	nxdis = nextpc;
