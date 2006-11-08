@@ -66,8 +66,10 @@
 #include <SDL.h>
 
 // hack for SDL < 1.2.10 - remove when distros upgrade their SDL!
-#ifndef SDL_putenv
-#define SDL_putenv(x) putenv(x)
+#ifndef OS_cygwin
+	#ifndef SDL_putenv
+		#define SDL_putenv(x) putenv(x)
+	#endif
 #endif
 
 #ifdef SDL_GUI
