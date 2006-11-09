@@ -1071,11 +1071,6 @@ int ndebug::dm(FILE *f, bool, uaecptr, uaecptr &, uaecptr &nxmem) {
 }
 
 void ndebug::run() {
-	uaecptr nextpc, nxdis, nxmem;
-	newm68k_disasm(stderr, m68k_getpc(), &nextpc, 0);
-	nxdis = nextpc;
-	nxmem = 0;
-
 	if (do_skip || do_skip_value || do_breakpoints) {
 		bool success = false;
 
@@ -1143,6 +1138,11 @@ void ndebug::run() {
 	irqindebug = false;
 	// release keyboard and mouse control
 	bool wasGrabbed = grabMouse(false);
+
+	uaecptr nextpc, nxdis, nxmem;
+	newm68k_disasm(stderr, m68k_getpc(), &nextpc, 0);
+	nxdis = nextpc;
+	nxmem = 0;
 
 	for (;;) {
 		switch(tp) {
