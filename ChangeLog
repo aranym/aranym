@@ -1,5 +1,13 @@
 2006/11/10 - joy
-- uae_cpu/gencpu.cpp: fixed LINK bug - in MMU mode, when restarted due
+- uae_cpu/gencpu.cpp: fixed RTD insn emulation bug (same problem as the LINK
+  insn below). According to a careful review at least 10 MOVE insns are
+  still affected by this CPU emulation problem on an unmapped memory page
+  boundary (op_11d8_0, op_11e0_0, op_13d8_0, op_2158_0, op_2160_0, op_21d8_0,
+  op_21e0_0, op_23d8_0, op_23e0_0, op_33d8_0)
+
+
+2006/11/10 very a.m. - joy
+- uae_cpu/gencpu.cpp: fixed LINK insn bug - in MMU mode, when restarted due
   to access to unmapped memory it decremented the stack pointer twice.
   This was causing all sorts of weird crashes in Linux-m68k.
   Similar fix is likely needed for all CPU instructions...
