@@ -461,7 +461,7 @@ void kill_GUI_thread()
 #endif /* SDL_GUI */
 
 #define CHECK_HOTKEY(Hotkey) ((bx_options.hotkeys.Hotkey.sym == 0 || sym == bx_options.hotkeys.Hotkey.sym) && masked_mod == bx_options.hotkeys.Hotkey.mod)
-static void process_keyboard_event(SDL_Event &event)
+static void process_keyboard_event(const SDL_Event &event)
 {
 	SDL_keysym keysym = event.key.keysym;
 	SDLKey sym = keysym.sym;
@@ -608,7 +608,7 @@ static void process_keyboard_event(SDL_Event &event)
 	}
 }
 
-static void process_mouse_event(SDL_Event event)
+static void process_mouse_event(const SDL_Event &event)
 {
 	static NF_Base* fvdi = NULL;
 	bool fvdi_events = false;
@@ -758,7 +758,7 @@ static void process_mouse_event(SDL_Event event)
 	}
 }
 
-static void process_active_event(SDL_Event event)
+static void process_active_event(const SDL_Event &event)
 {
 	// if we have input focus
 	if (SDL_GetAppState() & SDL_APPINPUTFOCUS) {
@@ -801,7 +801,7 @@ static void process_active_event(SDL_Event event)
 
 SDL_Joystick *sdl_joystick;
 
-static void process_joystick_event(SDL_Event event)
+static void process_joystick_event(const SDL_Event &event)
 {
 	switch(event.type) {
 		case SDL_JOYAXISMOTION:

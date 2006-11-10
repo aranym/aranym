@@ -1,5 +1,6 @@
 2006/11/11 - Patrice
-- Move video refresh stuff from main to hostscreen.
+- main,hostscreen: Move video refresh stuff from main to hostscreen.
+- input: Use const reference to process events.
 
 
 2006/11/10 - joy
