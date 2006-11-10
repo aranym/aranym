@@ -1,3 +1,12 @@
+2006/11/10 - joy
+- uae_cpu/gencpu.cpp: fixed LINK bug - in MMU mode, when restarted due
+  to access to unmapped memory it decremented the stack pointer twice.
+  This was causing all sorts of weird crashes in Linux-m68k.
+  Similar fix is likely needed for all CPU instructions...
+
+- ndebug.cpp: running with debugger active made much faster
+
+
 2006/11/06 - milan
 - ndebug.cpp: roll back of Joy's 23rd October
 - debug.cpp: roll back of Joy's 23rd October
