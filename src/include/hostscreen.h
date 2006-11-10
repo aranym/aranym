@@ -184,6 +184,9 @@ class HostScreen {
 
 	// Toggle Window/FullScreen mode
 	void   toggleFullScreen();
+
+	int	refreshCounter;
+	void	refresh(void);
 };
 
 
@@ -498,6 +501,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.67  2006/08/25 18:34:22  philipp
+ * Fixed p2c routine for big endian, colors are now correct.
+ *
  * Revision 1.66  2006/08/25 13:16:10  pmandin
  * big endian patch from philipp donze
  *

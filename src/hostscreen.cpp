@@ -71,7 +71,9 @@ static const unsigned long default_palette[] = {
     RGB_LTBLUE, RGB_LTMAGENTA, RGB_LTCYAN, RGB_BLACK
 };
 
-HostScreen::HostScreen(void) {
+HostScreen::HostScreen(void)
+	: refreshCounter(0)
+{
 	for(int i=0; i<256; i++) {
 		unsigned long color = default_palette[i%16];
 		palette.standard[i].r = color >> 24;
@@ -1510,6 +1512,23 @@ void HostScreen::EnableOpenGLVdi(void)
 void HostScreen::DisableOpenGLVdi(void)
 {
 	OpenGLVdi = SDL_FALSE;
+}
+
+void HostScreen::refresh(void)
+{
+	if (++refreshCounter == bx_options.video.refresh) {// divided by 2 again ==> 25 Hz screen update
+		getVIDEL()->renderScreen();
+#ifdef SDL_GUI
+		if (hostScreen.isGUIopen()) {
+			static int blendRefresh = 0;
+			if (blendRefresh++ > 5) {
+				blendRefresh = 0;
+				hostScreen.blendBackgrounds();
+			}
+		}
+#endif /* SDL_GUI */
+		refreshCounter = 0;
+	}
 }
 
 /*

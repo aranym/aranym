@@ -196,31 +196,15 @@ void heartBeat()
 /* VBL is fixed at 50 Hz in ARAnyM */
 void do_vbl_irq()
 {
-#define VIDEL_REFRESH	bx_options.video.refresh	/* VIDEL screen is refreshed once in 2 VBL interrupts ==> 25 Hz */
-
-	static int refreshCounter = 0;
-
 	heartBeat();
+	TriggerVBL();		// generate VBL
 
 	// Thread safety patch
 	hostScreen.lock();
 
 	check_event();		// process keyboard and mouse events
-	TriggerVBL();		// generate VBL
 
-	if (++refreshCounter == VIDEL_REFRESH) {// divided by 2 again ==> 25 Hz screen update
-		getVIDEL()->renderScreen();
-#ifdef SDL_GUI
-		if (hostScreen.isGUIopen()) {
-			static int blendRefresh = 0;
-			if (blendRefresh++ > 5) {
-				blendRefresh = 0;
-				hostScreen.blendBackgrounds();
-			}
-		}
-#endif /* SDL_GUI */
-		refreshCounter = 0;
-	}
+	hostScreen.refresh();
 
 	// Thread safety patch
 	hostScreen.unlock();

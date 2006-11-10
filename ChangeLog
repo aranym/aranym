@@ -1,3 +1,7 @@
+2006/11/11 - Patrice
+- Move video refresh stuff from main to hostscreen.
+
+
 2006/11/10 - joy
 - uae_cpu/gencpu.cpp: fixed RTD insn emulation bug (same problem as the LINK
   insn below). According to a careful review at least 10 MOVE insns are
