@@ -1272,8 +1272,8 @@ static void gen_opcode (unsigned long int opcode)
 	m68k_pc_offset = 0;
 	break;
      case i_RTD:
-	genamode (Aipi, "7", sz_long, "pc", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
 	genamode (curi->smode, "srcreg", curi->size, "offs", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
+	genamode (Aipi, "7", sz_long, "pc", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
 	printf ("\tm68k_areg(regs, 7) += offs;\n");
 	printf ("\tm68k_setpc_rte(pc);\n");
 	fill_prefetch_0 ();
