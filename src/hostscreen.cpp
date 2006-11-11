@@ -1514,20 +1514,23 @@ void HostScreen::DisableOpenGLVdi(void)
 	OpenGLVdi = SDL_FALSE;
 }
 
+/*
+ * this is called in VBL, i.e. 50 times per second
+ */
 void HostScreen::refresh(void)
 {
-	if (++refreshCounter == bx_options.video.refresh) {// divided by 2 again ==> 25 Hz screen update
+	if (++refreshCounter == bx_options.video.refresh) {
+		refreshCounter = 0;
 		getVIDEL()->renderScreen();
 #ifdef SDL_GUI
-		if (hostScreen.isGUIopen()) {
+		if (isGUIopen()) {
 			static int blendRefresh = 0;
 			if (blendRefresh++ > 5) {
 				blendRefresh = 0;
-				hostScreen.blendBackgrounds();
+				blendBackgrounds();
 			}
 		}
 #endif /* SDL_GUI */
-		refreshCounter = 0;
 	}
 }
 
