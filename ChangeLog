@@ -1,3 +1,8 @@
+2006/11/11 - Andreas
+- uae_cpu/gencpu.c: Perform pre-decrement side effect only after fetching
+  the value from memory.
+
+
 2006/11/11 - Patrice
 - main,hostscreen: Move video refresh stuff from main to hostscreen.
 - input: Use const reference to process events.
