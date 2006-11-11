@@ -327,19 +327,19 @@ static void genamode (amodes mode, char *reg, wordsizes size, char *name, int ge
 	    if (movem)
 		printf ("\tuaecptr %sa = m68k_areg(regs, %s);\n", name, reg);
 	    else
-		printf ("\tuaecptr %sa = m68k_areg(regs, %s) -= areg_byteinc[%s];\n", name, reg, reg);
+		printf ("\tuaecptr %sa = m68k_areg(regs, %s) - areg_byteinc[%s];\n", name, reg, reg);
 	    break;
 	 case sz_word:
 	    if (movem)
 		printf ("\tuaecptr %sa = m68k_areg(regs, %s);\n", name, reg);
 	    else
-		printf ("\tuaecptr %sa = m68k_areg(regs, %s) -= 2;\n", name, reg);
+		printf ("\tuaecptr %sa = m68k_areg(regs, %s) - 2;\n", name, reg);
 	    break;
 	 case sz_long:
 	    if (movem)
 		printf ("\tuaecptr %sa = m68k_areg(regs, %s);\n", name, reg);
 	    else
-		printf ("\tuaecptr %sa = m68k_areg(regs, %s) -= 4;\n", name, reg);
+		printf ("\tuaecptr %sa = m68k_areg(regs, %s) - 4;\n", name, reg);
 	    break;
 	 default:
 	    abort ();
@@ -474,9 +474,9 @@ static void genamode (amodes mode, char *reg, wordsizes size, char *name, int ge
 		abort ();
 	    }
 	    break;
-/*	 case Apdi:
+	 case Apdi:
 	    printf ("\tm68k_areg (regs, %s) = %sa;\n", reg, name);
-	    break;*/
+	    break;
 	 default:
 	    break;
 	}
