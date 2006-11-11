@@ -585,9 +585,9 @@ void presave_ethernet()
 #define LILO(x) bx_options.lilo.x
 
 struct Config_Tag lilo_conf[]={
-	{ "Kernel", String_Tag, &LILO(kernel), sizeof(LILO(kernel)), 0},
+	{ "Kernel", Path_Tag, &LILO(kernel), sizeof(LILO(kernel)), 0},
 	{ "Args", String_Tag, &LILO(args), sizeof(LILO(args)), 0},
-	{ "Ramdisk", String_Tag, &LILO(ramdisk), sizeof(LILO(ramdisk)), 0},
+	{ "Ramdisk", Path_Tag, &LILO(ramdisk), sizeof(LILO(ramdisk)), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
