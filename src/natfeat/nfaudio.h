@@ -15,6 +15,7 @@ class AUDIODriver : public NF_Base
 {
 	private:
 		AUDIOPAR AudioParameters;
+		bool locked;
 
 	public:
 		AUDIODriver();

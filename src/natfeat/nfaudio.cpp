@@ -1,7 +1,7 @@
 /*
  * nfaudio.cpp - NatFeat Audio driver
  *
- * Copyright (c) 2002-2005 ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2002-2006 ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -105,6 +105,7 @@ void AUDIODriver::reset()
 		free(cvt.buf);
 		cvt.buf = NULL;
 	}
+	locked = false;
 }
 
 char *AUDIODriver::name()
@@ -171,10 +172,22 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 
 		case 6:					// LockAudio         
 			D(bug("Audio: LockAudio"));
+			if (! locked) {
+				locked = true;
+				ret = 1;	// lock acquired OK
+			}
+			else
+				ret = -129;	// was already locked
 			break;
 
 		case 7:					// UnlockAudio    
 			D(bug("Audio: UnlockAudio"));
+			if (locked) {
+				locked = false;
+				ret = 0;	// unlocked OK
+			}
+			else
+				ret = -128;	// wasn't locked at all
 			break;
 
 		case 8:					// GetAudioFreq
