@@ -1,3 +1,18 @@
+2006/11/13 - Petr
+- parameters.cpp: there is no reasonable default filename for files that
+  will aranym write to thus MIDI filename set to empty and PARALLEL
+  outputs back to stderr.
+
+- parallel_file.cpp: make sure Type is set to "file" before creating
+  the file. This allows for Type = none like in MIDI. Also ensure
+  filename is not empty.
+
+- midi_file.cpp: ensure filename is not empty.
+
+- natfeat/nfaudio: implemented simulation of locking. At least the Locksnd()
+  and Unlocksnd() XBIOS calls should return proper values now.
+
+
 2006/11/11 - Andreas
 - uae_cpu/gencpu.c: Perform pre-decrement side effect only after fetching
   the value from memory.
@@ -8,7 +23,7 @@
 - input: Use const reference to process events.
 
 
-2006/11/10 - joy
+2006/11/10 - Petr
 - uae_cpu/gencpu.cpp: fixed RTD insn emulation bug (same problem as the LINK
   insn below). According to a careful review at least 10 MOVE insns are
   still affected by this CPU emulation problem on an unmapped memory page
@@ -16,9 +31,10 @@
   op_21e0_0, op_23d8_0, op_23e0_0, op_33d8_0)
 
 
-2006/11/10 very a.m. - joy
+2006/11/10 very a.m. - Petr
 - uae_cpu/gencpu.cpp: fixed LINK insn bug - in MMU mode, when restarted due
-  to access to unmapped memory it decremented the stack pointer twice.
+  to fetching its operand from an unmapped memory page it decremented
+  the stack pointer twice.
   This was causing all sorts of weird crashes in Linux-m68k.
   Similar fix is likely needed for all CPU instructions...
 
@@ -31,7 +47,7 @@
 - CPU debugger is primary for CPU and key OS functions debugging
 
 
-2006/11/02 - joy
+2006/11/02 - Petr
 - parameters.cpp: store IKBD settings to [IKBD] section in config file
 
 
@@ -43,14 +59,14 @@
   at first
 
 
-2006/10/23 - joy
+2006/10/23 - Petr
 - newcpu.cpp: "usp" register dump added to flight recorder
 - debug.cpp: ignore_irq set to 1 by default (don't trace interrupt routines)
 - ndebug.cpp: deactivate_debugger on 'g' (so you can enter debugger again).
               this breaks breakpoints support
 
 
-2006/10/22 - joy
+2006/10/22 - Petr
 - uae_cpu/debug.cpp: reformatted using Artistic Style v1.18 using
   the following switches: "--style=kr --indent=tab=4 --brackets=linux
   --brackets=break-closing-headers --indent-cases".
@@ -60,7 +76,7 @@
 - input.cpp: fixed invoking of internal debugger by pressing the hotkey
 
 
-2006/10/20 - joy
+2006/10/20 - Petr
 - uae_cpu/fpu/types.h: "Fix long double support for x86 targets if
   -m128bit-long-double" - taken from Basilisk II CVS.
 
@@ -72,7 +88,7 @@
   FRLOG_XXX defines.
 
 
-2006/10/12 - joy
+2006/10/12 - Petr
 - added third MIDI type: 'none' and made it default to avoid creating
   the /tmp/aranym-midi.bin file if there is no MIDI output.
 
@@ -84,12 +100,12 @@
   desktop entry (aranym.desktop, added to CVS) and an icon.
 
 
-2006/10/11 - joy
+2006/10/11 - Petr
 - ikbd, rtc: switch between localtime() and gmtime() (returning UTC).
 - parameters, doc/config: new parameter "GMTime" set to No by default.
 
 
-2006/10/09 - joy
+2006/10/09 - Petr
 - configure.ac: after some profiling (http://wiki.aranym.org/speedtest)
   I decided to enable protect2k by default for better compatibility
   with real Atari hardware. Also the cxx-exceptions are enabled by default
@@ -97,7 +113,7 @@
   to MMU mode (up to 60% in the speed test mentioned above).
 
 
-2006/09/29 - joy
+2006/09/29 - Petr
 - main_unix.cpp: QuitEmulator didn't actually quit the program which was
   causing troubles mainly when no operating system was found (i.e. when the
   InitAll() failed).
@@ -125,7 +141,7 @@
 - main.cpp: Pause audio before killing hw then host classes.
 
 
-2006/09/24 - joy
+2006/09/24 - Petr
 - GNU/kFreeBSD support in configure.ac thanks to Petr Salinger. Closes Debian
   BTS #388995 and also ARAnyM's patch request #1549200.
 
@@ -137,7 +153,7 @@
 
 *** CVS tagged as ARANYM_0_9_4_BETA
 
-2006/09/22 - joy
+2006/09/22 - Petr
 - main.cpp: CapsLock in newer libsdl worked differently in MS-Windows than
   on my setup. Took me quite some time to figure out that the Debian's
   libsdl is patched with a fix for CapsLock+NumLock (see Debian BTS #317010).
@@ -181,7 +197,7 @@
   it should always be a printable ASCII value. (0 is not acceptable)
 
 
-2006/08/29 - joy
+2006/08/29 - Petr
 - ARAnyM window positioning code moved from hostscreen.cpp to main.cpp,
   changed from platform specific window manager hacks to documented SDL
   environment variables and changed the command line option to "-P xxx,yyy"
@@ -248,7 +264,7 @@
 - Fixed hostscreen p2c routines on big endian, from Philipp Donze patch.
 
 
-2006/08/25 - joy
+2006/08/25 - Petr
 - memory.h: finally found and fixed two (hopefully last) MMU problems.
 
 
@@ -276,7 +292,7 @@
 - mingw does not have gettimeofday() function.
 
 
-2006/07/10 - joy
+2006/07/10 - Petr
 - hostscreen.cpp: window positioning surrounded with an additional
   SDL_VIDEO_DRIVER_X11 condition
 
@@ -286,13 +302,13 @@
   even in the configure...
 
 
-2006/07/10 - joy
+2006/07/10 - Petr
 - hostscreen.cpp: window positioning surrounded with #if HAVE_X11_XLIB_H
 - configure.ac: check for X11/Xlib.h added (for the window positioning)
 - parameters.cpp: "-P" documented in the --help
 
 
-2006/06/25 - joy
+2006/06/25 - Petr
 - hostscreen.cpp: ignore window positioning on OS_darwin - that one does not
   offer any SDL_SysWMinfo struct. Patch suggested by Philipp Donzé, thanks.
 
@@ -310,7 +326,7 @@
 - natfeat/atari_rootsec.h: Fix definition of fixed size integers.
 
 
-2006/05/08 - joy
+2006/05/08 - Petr
 - hostscreen.cpp: implemented window positioning for X11. Needs clean up.
 - parameters.cpp: window positioning no longer cygwin specific.
 - uae_cpu/newcpu: Flight Recorder more configurable (see the FRLOG #defines)
@@ -320,7 +336,7 @@
 - JITc: cleaning, sync with BII 
 
 
-2006/05/05 - joy
+2006/05/05 - Petr
 - uae-cpu/newcpu.cpp: improved Flight Recorder. Now can dump to a continuous
   log, skip interrupt handlers, omit register list and most important -
   it does not hang the OS when fetching the OPCODE like it used to do
@@ -331,7 +347,7 @@
   how to pass in the opcode as second parameter, sorry.
 
 
-2006/05/01 - joy
+2006/05/01 - Petr
 - uae-cpu/memory.h: added #ifdef PROTECT2K that brings more ST/TT hardware
   compatibility to ARAnyM. When defined it protects the first 2 kB of RAM
   against read/write access in user mode. It's disabled by default
@@ -380,7 +396,7 @@
 - nfosmesa.xdd: fixed NF pointer read for MiNT device.
 
 
-2006/02/27 - joy
+2006/02/27 - Petr
 - tools/build-cygwin.sh: version of SDL increased to 1.2.9
 - include/host_clock.h: virtual destructor added
 - parameters.cpp: anonymous struct named HOTKEYS_REL
@@ -398,7 +414,7 @@
 
 *** CVS tagged as ARANYM_0_9_3_BETA
 
-2006/02/20 - joy
+2006/02/20 - Petr
 - atari/*: binaries moved to a separate 'afros' CVS repository
 - atari/fvdi: removed completely (now hosted in fVDI CVS repository)
 - natfeat/fvdidrv_nfapi.h: added from fVDI CVS
@@ -417,7 +433,7 @@
 - nfcdrom: Merged SDL backend into base class as default implementation.
 
 
-2006/02/11 - joy
+2006/02/11 - Petr
 - tools/arabridge: added chown $USER /dev/net/tun
 
 
@@ -503,7 +519,7 @@
 - JITc: fix stack alignment, m68k_compile_execute moved to JITc, sync with BII
 
 
-2006/01/28 - joy
+2006/01/28 - Petr
 - configure.ac: Ingo Schmidt found out that --enable-blitsdlblit binary
   crashes with double bus fault. Thus this option is marked as EXPERIMENTAL
   UNSUPPORTED and BUGGY. It should probably be either fixed or removed.
@@ -676,14 +692,14 @@
 - ata.cpp: fix use of uninitialized variable.
 
 
-2005/10/20 - joy
+2005/10/20 - Petr
 - mfp.cpp: compute real TimerC frequency (linux-m68k uses 100 Hz, not 200 Hz)
 - main.cpp: use the real TimerC frequency for correct time in linux-m68k
 - configure.ac: "--enable-rtctimer" added. Enables /dev/rtc as main
   source of timer interrupts. Allows for precise 200 Hz Timer A interrupts.
 
 
-2005/10/18 - joy
+2005/10/18 - Petr
 - acsifdc.cpp: corrected detection of floppy format in linux-m68k by
   reporting RECORD NOT FOUND when linux tried to read more sectors
   than there are on a track (linux tries to read 20, HD floppy has 18 spt).
@@ -703,7 +719,7 @@
   * New .dos and .xfs drivers are in atari/hostfs/bin
 
 
-2005/10/16 - joy
+2005/10/16 - Petr
 - aranym/atari/network/ethernet: updated for multiple interfaces. Tested.
   Driver (version 0.6b) now prints all found and installed interfaces.
   Updated also the binary (aranym.xif.bz2).
@@ -713,7 +729,7 @@
 - TODO: updated with useful comments
 
 
-2005/10/13 - joy (& Standa :-)
+2005/10/13 - Petr (& Standa :-)
 - natfeat/ethernet.{cpp,h}: wildly modified to allow handling more 
   ethernet devices at once.
 
@@ -739,7 +755,7 @@
 - atari/network/linux-m68k/README: detailed HOW-TO build the NF enabled kernel
 
 
-2005/10/12 - joy
+2005/10/12 - Petr
 - acsifdc.cpp: Atari2Host_memcpy() replaced with plain memcpy(). Previous
   code was incorrect because real ACSI DMA doesn't respect MMU.
 
@@ -765,7 +781,7 @@
   Use ./configure --enable-cxx-exceptions if you want to try it out.
 
 
-2005/10/05 - joy & STanda
+2005/10/05 - Petr & STanda
 - input.cpp: the Alt Gr key might be reported as SDLK_MODE, not SDLK_RALT.
   Fixed. Now Alt Gr works for more people :-)
 
