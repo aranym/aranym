@@ -618,7 +618,7 @@ struct Config_Tag midi_conf[]={
 
 void preset_midi() {
   safe_strncpy(MIDI(type), "none", sizeof(MIDI(type)));
-  safe_strncpy(MIDI(file), "/tmp/aranym-midi.bin", sizeof(MIDI(file)));
+  safe_strncpy(MIDI(file), "", sizeof(MIDI(file)));
   safe_strncpy(MIDI(sequencer), "/dev/sequencer", sizeof(MIDI(sequencer)));
 }
 
@@ -732,7 +732,7 @@ struct Config_Tag parallel_conf[]={
 
 void preset_parallel() {
   safe_strncpy(PARALLEL_CONF(type), "file", sizeof(PARALLEL_CONF(type)));
-  safe_strncpy(PARALLEL_CONF(file), "/tmp/aranym-parallel.bin", sizeof(PARALLEL_CONF(type)));
+  safe_strncpy(PARALLEL_CONF(file), "stderr", sizeof(PARALLEL_CONF(type)));
   safe_strncpy(PARALLEL_CONF(parport), "/dev/parport0", sizeof(PARALLEL_CONF(parport)));
 }
 
