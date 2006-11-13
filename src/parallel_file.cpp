@@ -68,17 +68,20 @@ void ParallelFile::setData(uint8 value)
 {
 	D(bug("parallel_file: setData"));
 	if (!handle) {
-		if (strcmp("stdout", bx_options.parallel.file)==0) {
-			handle = stdout;
-		} else if (strcmp("stderr", bx_options.parallel.file)==0) {
-			handle = stderr;
-		} else {
-			handle = fopen(bx_options.parallel.file, "w");
-			if (!handle) {
-				fprintf(stderr,"Can not open file for parallel port\n");
-				return;
+		bx_parallel_options_t * p = &bx_options.parallel;
+		if (strcmp("file", p->type)==0) {
+			if (strcmp("stdout", p->file)==0) {
+				handle = stdout;
+			} else if (strcmp("stderr", p->file)==0) {
+				handle = stderr;
+			} else if (strlen(p->file) > 0) {
+				handle = fopen(p->file, "w");
+				if (!handle) {
+					panicbug("Can not open file for parallel port\n");
+					return;
+				}
+				close_handle=1;
 			}
-			close_handle=1;
 		}
 	}
 	fputc(value,handle);	
