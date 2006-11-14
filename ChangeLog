@@ -12,6 +12,9 @@
 - natfeat/nfaudio: implemented simulation of locking. At least the Locksnd()
   and Unlocksnd() XBIOS calls should return proper values now.
 
+- parameters.cpp: in [LILO] Kernel and Ramdisk made Path_Tag (filenames
+  might be relative or contain the "~").
+
 
 2006/11/11 - Andreas
 - uae_cpu/gencpu.c: Perform pre-decrement side effect only after fetching
