@@ -833,6 +833,13 @@ PRIVATE fpu_extended fp_do_exp(fpu_extended x);
 PRIVATE inline fpu_extended fp_do_exp(fpu_extended x)
 {
 	fpu_extended value, exponent;
+	if (isinf(x))
+	{
+		if(isneg(x))
+			return 0.;
+		else
+			return x;
+	}
 	__asm__ __volatile__("fldl2e                    # e^x = 2^(x * log2(e))\n\t"
 				 "fmul      %%st(1)         # x * log2(e)\n\t"
 				 "fst       %%st(1)\n\t"
@@ -909,6 +916,13 @@ PRIVATE inline fpu_extended fp_do_tan(fpu_extended x)
 PRIVATE inline fpu_extended fp_do_expm1(fpu_extended x)
 {
 	fpu_extended value, exponent, temp;
+	if (isinf(x))
+	{
+		if(isneg(x))
+			return -1.;
+		else
+			return x;
+	}
 	__asm__ __volatile__("fldl2e                    # e^x - 1 = 2^(x * log2(e)) - 1\n\t"
 				 "fmul      %%st(1)         # x * log2(e)\n\t"
 				 "fst       %%st(1)\n\t"
@@ -951,10 +965,8 @@ PRIVATE fpu_extended fp_do_sinh(fpu_extended x);
 #else
 PRIVATE inline fpu_extended fp_do_sinh(fpu_extended x)
 {
-	fpu_extended ex = fp_exp(x);
-	return 0.5 * (ex - 1.0 / ex);
-/*	fpu_extended exm1 = fp_expm1(fp_fabs(x));
-	return 0.5 * (exm1 / (exm1 + 1.0) + exm1) * fp_sgn1(x); */
+	fpu_extended exm1 = fp_expm1(fp_fabs(x));
+	return 0.5 * (exm1 / (exm1 + 1.0) + exm1) * fp_sgn1(x);
 }
 #endif
 
@@ -981,10 +993,8 @@ PRIVATE fpu_extended fp_do_tanh(fpu_extended x);
 #else
 PRIVATE inline fpu_extended fp_do_tanh(fpu_extended x)
 {
-	fpu_extended ex = fp_exp(2.0 * x);
-	return (ex - 1.0) / (ex + 1.0);
-/*	fpu_extended exm1 = fp_expm1(-fp_fabs(x + x));
-	return exm1 / (exm1 + 2.0) * fp_sgn1(-x); */
+	fpu_extended exm1 = fp_expm1(-fp_fabs(x + x));
+	return exm1 / (exm1 + 2.0) * fp_sgn1(-x);
 }
 #endif
 
