@@ -52,6 +52,8 @@
 
 #define SANITY_CHECK_ATC 1
 
+struct fixup fixup = {0, 0, 0};
+
 int quit_program = 0;
 
 // For instruction $7139
@@ -798,6 +800,13 @@ void Exception(int nr, uaecptr oldpc)
 {
     uae_u32 currpc = m68k_getpc ();
     MakeSR();
+
+    if (fixup.flag)
+    {
+        m68k_areg(regs, fixup.reg) = fixup.value;
+        fixup.flag = 0;
+    }
+
     if (!regs.s) {
 	regs.usp = m68k_areg(regs, 7);
 	m68k_areg(regs, 7) = regs.m ? regs.msp : regs.isp;

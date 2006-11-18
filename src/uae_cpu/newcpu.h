@@ -41,6 +41,12 @@
 
 # include <csetjmp>
 
+extern struct fixup {
+    int flag;
+    uae_u32 reg;
+    uaecptr value;
+}fixup;
+
 extern int areg_byteinc[];
 extern int imm8_table[];
 
