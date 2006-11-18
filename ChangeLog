@@ -1,3 +1,12 @@
+2006/11/18 - Petr
+- Xavier's patch fixes the following instructions that probably misbehaved
+  when restarted due to bus error: MOVE, RTR, SBCD, SUBX, ABCD and ADDX.
+
+- Bill Allombert's patches fix several FPU emulation errors: FCMP (Octave
+  didn't even start), FETOX and ATANH (the latest fixed by correcting
+  function fp_sgn1()).
+
+
 2006/11/13 - Petr
 - parameters.cpp: there is no reasonable default filename for files that
   will aranym write to thus MIDI filename set to empty and PARALLEL
