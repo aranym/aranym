@@ -965,6 +965,7 @@ PRIVATE fpu_extended fp_do_sinh(fpu_extended x);
 #else
 PRIVATE inline fpu_extended fp_do_sinh(fpu_extended x)
 {
+	if (isinf(x)) return x;
 	fpu_extended exm1 = fp_expm1(fp_fabs(x));
 	return 0.5 * (exm1 / (exm1 + 1.0) + exm1) * fp_sgn1(x);
 }
