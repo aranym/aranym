@@ -1,3 +1,10 @@
+2006/11/21 - Xavier
+- uae_cpu/cpummu.cpp: Restore memory to its original state when a misaligned
+  memory write accessing 2 different pages generates an access fault on the
+  2nd page. Should fix potential problems with read-modify-instructions like
+  NOT, NEG, ADD, SUB,...
+
+
 2006/11/18 - Petr
 - Xavier's patch fixes the following instructions that probably misbehaved
   when restarted due to bus error: MOVE, RTR, SBCD, SUBX, ABCD and ADDX.
