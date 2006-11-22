@@ -1,3 +1,8 @@
+2006/11/22 - Xavier
+- uae_cpu/cpummu.cpp: Reverting back to previous state. This is not a bug
+  since instruction is not restarted if access fault is caused by a write.
+
+
 2006/11/21 - Xavier
 - uae_cpu/cpummu.cpp: Restore memory to its original state when a misaligned
   memory write accessing 2 different pages generates an access fault on the

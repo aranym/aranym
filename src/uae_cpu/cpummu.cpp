@@ -980,29 +980,23 @@ uae_u32 mmu_get_unaligned (uaecptr addr, int fc, int size)
 
 void mmu_put_unaligned (uaecptr addr, uae_u32 data, int fc, int size)
 {
-	uaecptr physaddr1, physaddr2;
+	uaecptr physaddr;
 	int size1 = size - (addr & (size - 1));
-	int size2 = size - size1;
-	uae_u32 data1 = data >> (8 * size2);
-	uae_u32 data_bak1;
+	uae_u32 data1 = data >> 8 * (size - size1);
 
 	SAVE_EXCEPTION;
 	TRY(prb) {
-		physaddr1 = mmu_translate(addr, fc, 1, size1 == 1 ? sz_byte : sz_word, 0);
+		physaddr = mmu_translate(addr, fc, 1, size1 == 1 ? sz_byte : sz_word, 0);
 		switch (size1) {
 		case 1:
-			data_bak1 = phys_get_byte (physaddr1);
-			phys_put_byte (physaddr1, data1);
+			phys_put_byte(physaddr, data1);
 			break;
 		case 2:
-			data_bak1 = phys_get_word(physaddr1);
-			phys_put_word (physaddr1, data1);
+			phys_put_word (physaddr, data1);
 			break;
 		case 3:
-			data_bak1 = phys_get_byte (physaddr1) << 16;
-			data_bak1 |= phys_get_word(physaddr1);
-			phys_put_byte (physaddr1, data1 >> 16);
-			phys_put_word (physaddr1 + 1, data1);
+			phys_put_byte (physaddr, data1 >> 16);
+			phys_put_word (physaddr + 1, data1);
 			break;
 		}
 	}
@@ -1015,39 +1009,22 @@ void mmu_put_unaligned (uaecptr addr, uae_u32 data, int fc, int size)
 		THROW_AGAIN(prb);
 	}
 	TRY(prb2) {
-		physaddr2 = mmu_translate(addr + size1, fc, 1, size2 == 1 ? sz_byte : sz_word, 0);
-		switch (size2) {
+		physaddr = mmu_translate(addr + size1, fc, 1, (size - size1) == 1 ? sz_byte : sz_word, 0);
+		switch (size - size1) {
 		case 1:
-			phys_put_byte(physaddr2, data);
+			phys_put_byte(physaddr, data);
 			break;
 		case 2:
-			phys_put_word (physaddr2, data);
+			phys_put_word (physaddr, data);
 			break;
 		case 3:
-			phys_put_byte (physaddr2, data >> 16);
-			phys_put_word (physaddr2 + 1, data);
+			phys_put_byte (physaddr, data >> 16);
+			phys_put_word (physaddr + 1, data);
 			break;
 		}
 	}
 	CATCH(prb2) {
 		RESTORE_EXCEPTION;
-
-		/* Restore memory to its original state to allow
-		 * read-modify-write instructions like NOT, NEG, ADD,
-		 * SUB, ... to be successfully rerun */
-		switch (size1) {
-		case 1:
-			phys_put_byte (physaddr1, data_bak1);
-			break;
-		case 2:
-			phys_put_word (physaddr1, data_bak1);
-			break;
-		case 3:
-			phys_put_byte (physaddr1, data_bak1 >> 16);
-			phys_put_word (physaddr1 + 1, data_bak1);
-			break;
-		}
-
 		regs.mmu_fault_addr = addr;
 		regs.mmu_ssw = (regs.mmu_ssw & ~(3 << 5)) | ((size & 3) << 5);
 		regs.mmu_ssw |= (1 << 11);
