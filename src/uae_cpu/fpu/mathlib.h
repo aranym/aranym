@@ -311,7 +311,7 @@ union fpu_extended_shape {
 		unsigned int exponent:15;
 		unsigned int quiet_nan:1;
 		unsigned int mantissa0:15;
-		unsigned int mantissa1:30;
+		unsigned int mantissa1:32;
 		unsigned int mantissa2:32;
 		unsigned int mantissa3:32;
 #else
