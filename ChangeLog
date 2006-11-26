@@ -1,3 +1,7 @@
+2006/11/26 - Andreas
+- uae_cpu/fpu/fpu_{uae,ieee}.cpp: Fix aliasing issues.
+
+
 2006/11/26 - Standa
 - nfvdi_soft.cpp: Fixes for different vswr_mode alpha expansions
   (newsgroup reader Troll look good now).
