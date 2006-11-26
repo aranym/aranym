@@ -422,13 +422,13 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 			/* no alpha surface */
 			SDL_Surface *blocksurf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, screen->format->BitsPerPixel,
-					screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+					screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, 0xFF000000);
 			if ( blocksurf == NULL ) return 0;
 
 			/* fill with the background color */
 			for(uint16 j = 0; j < h; j++) {
 				uint32 *dst = (uint32 *)blocksurf->pixels + j * blocksurf->pitch/4;
-				for(uint16 i = 0; i < w; i++) *dst++ = bgColor;
+				for(uint16 i = 0; i < w; i++) *dst++ = bgColor | 0xff000000UL;
 			}
 
 			/* transparent alpha blit */
@@ -445,7 +445,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 			/* blit the whole thing to the screen */
 			asurf = blocksurf;
 		} else {
-			D(bug("fVDI: expandArea 8bit: logOp=%d", logOp));
+			D(bug("fVDI: expandArea 8bit: logOp=%d %lx %lx", logOp, fgColor, bgColor));
 
 			for(uint16 j = 0; j < h; j++) {
 				uint32 *dst = (uint32 *)asurf->pixels + j * asurf->pitch/4;
@@ -457,7 +457,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 						break;
 					case 3:
 						for(uint16 i = sx; i < sx + w; i++) {
-							*dst++ = ~hostScreen.getPixel(dx + i - sx, dy + j) | (ReadInt8(data + j * pitch + i) << 24);
+							*dst++ = (~hostScreen.getPixel(dx + i - sx, dy + j) & ~0xff000000UL) | (ReadInt8(data + j * pitch + i) << 24);
 						}
 						break;
 					case 4:
@@ -1510,6 +1510,12 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.19  2006/11/26 04:30:09  standa
+ * Other than 4 byte per pixel is not supported for the 8bit alpha expand used
+ * for antialised fonts rendering.
+ *
+ * More debug lines added.
+ *
  * Revision 1.18  2006/10/29 09:19:41  milan
  * changes around header files on many places - aranym header files included at first
  *
