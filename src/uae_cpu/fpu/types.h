@@ -161,4 +161,9 @@ typedef uae_f32			fpu_single;
 
 #endif
 
+union fpu_register_parts {
+	fpu_register val;
+	uae_u32 parts[sizeof(fpu_register) / 4];
+};
+
 #endif /* FPU_TYPES_H */

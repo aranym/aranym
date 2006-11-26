@@ -229,13 +229,13 @@ PRIVATE inline fpu_register FFPU make_single(uae_u32 value)
 		return (0.0);
 	
 	fpu_register result;
-	uae_u32 * p = (uae_u32 *)&result;
+	fpu_register_parts *p = (fpu_register_parts *)&result;
 
 	uae_u32 sign = (value & 0x80000000);
 	uae_u32 exp  = ((value & 0x7F800000) >> 23) + 1023 - 127;
 
-	p[FLO] = value << 29;
-	p[FHI] = sign | (exp << 20) | ((value & 0x007FFFFF) >> 3);
+	p->parts[FLO] = value << 29;
+	p->parts[FHI] = sign | (exp << 20) | ((value & 0x007FFFFF) >> 3);
 
 	fpu_debug(("make_single (%X) = %.04f\n",value,(double)result));
 	
@@ -259,10 +259,10 @@ PRIVATE inline uae_u32 FFPU extract_single(fpu_register const & src)
 		return 0;
 	
 	uae_u32 result;
-	uae_u32 *p = (uae_u32 *)&src;
+	fpu_register_parts const *p = (fpu_register_parts const *)&src;
 
-	uae_u32 sign = (p[FHI] & 0x80000000);
-	uae_u32 exp  = (p[FHI] & 0x7FF00000) >> 20;
+	uae_u32 sign = (p->parts[FHI] & 0x80000000);
+	uae_u32 exp  = (p->parts[FHI] & 0x7FF00000) >> 20;
 
 	if(exp + 127 < 1023) {
 		exp = 0;
@@ -272,7 +272,7 @@ PRIVATE inline uae_u32 FFPU extract_single(fpu_register const & src)
 		exp = exp + 127 - 1023;
 	}
 
-	result = sign | (exp << 23) | ((p[FHI] & 0x000FFFFF) << 3) | (p[FLO] >> 29);
+	result = sign | (exp << 23) | ((p->parts[FHI] & 0x000FFFFF) << 3) | (p->parts[FLO] >> 29);
 
 	fpu_debug(("extract_single (%.04f) = %X\n",(double)src,result));
 
@@ -369,7 +369,7 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 		return;
 	}
 	// is it NaN?
-	if ((wrd1 & 0x7fff0000) == 0x7fff0000 && wrd2 != 0 && wrd3 != 0) {
+	if ((wrd1 & 0x7fff0000) == 0x7fff0000 && (wrd2 != 0 || wrd3 != 0)) {
 		make_nan(result);
 		return;
 	}
@@ -431,15 +431,15 @@ PRIVATE inline void FFPU extract_extended(fpu_register const & src,
 	*wrd2 = 0x80000000 | (srp->ieee.mantissa0 << 15) | ((srp->ieee.mantissa1 & 0xfffe0000) >> 17);
 	*wrd3 = (srp->ieee.mantissa1 << 15) | ((srp->ieee.mantissa2 & 0xfffe0000) >> 17);
 #elif USE_LONG_DOUBLE
-	uae_u32 *p = (uae_u32 *)&src;
+	fpu_register_parts const *p = (fpu_register_parts const *)&src;
 #ifdef WORDS_BIGENDIAN
-	*wrd1 = p[0];
-	*wrd2 = p[1];
-	*wrd3 = p[2];
+	*wrd1 = p->parts[0];
+	*wrd2 = p->parts[1];
+	*wrd3 = p->parts[2];
 #else
-	*wrd3 = p[0];
-	*wrd2 = p[1];
-	*wrd1 = ( (uae_u32)*((uae_u16 *)&p[2]) ) << 16;
+	*wrd3 = p->parts[0];
+	*wrd2 = p->parts[1];
+	*wrd1 = (p->parts[2] & 0xffff) << 16;
 #endif
 #else
 	fp_declare_init_shape(srp, src, double);
@@ -551,7 +551,7 @@ PRIVATE inline void FFPU extract_packed(fpu_register const & src, uae_u32 * wrd1
 	char *cp;
 	char str[100];
 
-	sprintf(str, "%.16Le", src);
+	sprintf(str, "%.16Le", (long double)src);
 
 	fpu_debug(("extract_packed(%.04f,%s)\n",(double)src,str));
 
