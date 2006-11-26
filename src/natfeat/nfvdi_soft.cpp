@@ -400,7 +400,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 	if ( (uint32)ReadInt16( src + MFDB_STAND ) == 0x0100 ) {
 		if ( ReadInt16( src + MFDB_NPLANES ) != 8 ) {
-			D(bug("fVDI: Only 8bit chunky expand is supported so far."));
+			bug("fVDI: Only 8bit chunky expand is supported so far.");
 			return 0;
 		}
 
@@ -408,11 +408,18 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 		/* 8bit greyscale aplha expand */
 		SDL_Surface *screen = hostScreen.getPhysicalSurface();
+		if ( screen->format->BytesPerPixel != 4 ) {
+			bug("fVDI: Only 4byte SDL_Surface color depths supported so far.");
+			return 0;
+		}
+
 		SDL_Surface *asurf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32,
 				screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, 0xFF000000);
 		if ( asurf == NULL ) return 0;
 
 		if (logOp == 1) {
+			D(bug("fVDI: expandArea 8bit: logOp=%d screen=%p, format=%p [%d]", logOp, screen, screen->format, screen->format->BytesPerPixel));
+
 			/* no alpha surface */
 			SDL_Surface *blocksurf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, screen->format->BitsPerPixel,
 					screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
@@ -438,6 +445,8 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 			/* blit the whole thing to the screen */
 			asurf = blocksurf;
 		} else {
+			D(bug("fVDI: expandArea 8bit: logOp=%d", logOp));
+
 			for(uint16 j = 0; j < h; j++) {
 				uint32 *dst = (uint32 *)asurf->pixels + j * asurf->pitch/4;
 				switch(logOp) {
@@ -1501,6 +1510,9 @@ int32 SoftVdiDriver::getFbAddr(void)
 
 /*
  * $Log$
+ * Revision 1.18  2006/10/29 09:19:41  milan
+ * changes around header files on many places - aranym header files included at first
+ *
  * Revision 1.17  2006/02/26 19:14:58  standa
  * Added the remaining logOps implementation for expandArea(8bit).
  *
