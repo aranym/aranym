@@ -1,3 +1,8 @@
+2006/11/27 - Andreas
+- uae_cpu/fpu/fpu_ieee.cpp: Fix conversion of extended zero/Inf/NaN to
+  host format.
+
+
 2006/11/27 - Petr
 - natfeat/ethernet.cpp, parameters.*: "MAC=aa:bb:cc:dd:ee:ff" added to 
   [ETHx] section of config file - set your desired MAC Address freely now.

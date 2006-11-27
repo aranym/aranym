@@ -285,17 +285,20 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 {
 	// is it zero?
 	if ((wrd1 & 0x7fff0000) == 0 && wrd2 == 0 && wrd3 == 0)
-		return 0.0;
+		if (wrd1 & 0x80000000)
+			return -0.0;
+		else
+			return 0.0;
 
 	fpu_register result;
 #if USE_QUAD_DOUBLE
 	// is it NaN?
-	if ((wrd1 & 0x7fff0000) == 0x7fff0000 && wrd2 != 0 && wrd3 != 0) {
+	if ((wrd1 & 0x7fff0000) == 0x7fff0000 && ((wrd2 & 0x7fffffff) != 0 || wrd3 != 0)) {
 		make_nan(result);
 		return result;
 	}
 	// is it inf?
-	if ((wrd1 & 0x7ffff000) == 0x7fff0000 && wrd2 == 0 && wrd3 == 0) {
+	if ((wrd1 & 0x7ffff000) == 0x7fff0000 && (wrd2 & 0x7fffffff) == 0 && wrd3 == 0) {
 		if ((wrd1 & 0x80000000) == 0)
 			make_inf_positive(result);
 		else
@@ -365,17 +368,20 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 {
 	// is it zero?
 	if ((wrd1 && 0x7fff0000) == 0 && wrd2 == 0 && wrd3 == 0) {
-		make_zero_positive(result);
+		if (wrd1 & 0x80000000)
+			make_zero_negative(result);
+		else
+			make_zero_positive(result);
 		return;
 	}
 	// is it NaN?
-	if ((wrd1 & 0x7fff0000) == 0x7fff0000 && (wrd2 != 0 || wrd3 != 0)) {
+	if ((wrd1 & 0x7fff0000) == 0x7fff0000 && ((wrd2 & 0x7fffffff) != 0 || wrd3 != 0)) {
 		make_nan(result);
 		return;
 	}
 #if USE_QUAD_DOUBLE
 	// is it inf?
-	if ((wrd1 & 0x7ffff000) == 0x7fff0000 && wrd2 == 0 && wrd3 == 0) {
+	if ((wrd1 & 0x7ffff000) == 0x7fff0000 && (wrd2 & 0x7fffffff) == 0 && wrd3 == 0) {
 		if ((wrd1 & 0x80000000) == 0)
 			make_inf_positive(result);
 		else
