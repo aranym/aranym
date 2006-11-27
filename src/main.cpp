@@ -492,6 +492,7 @@ bool InitAll(void)
 	// timer init
 #if RTC_TIMER
 	RTCthread = SDL_CreateThread(rtc_timer_thread, NULL);
+	infoprint("Using RTC");
 #else
 	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
 	if (my_timer_id == NULL) {
