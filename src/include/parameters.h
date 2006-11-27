@@ -150,6 +150,7 @@ typedef struct {
   char ip_host[16];
   char ip_atari[16];
   char netmask[16];
+  char mac_addr[18];
 } bx_ethernet_options_t;
 
 // Lilo options

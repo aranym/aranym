@@ -139,6 +139,7 @@ static char config_file[512];
 # define XIF_HOST_IP	"192.168.0.1"
 # define XIF_ATARI_IP	"192.168.0.2"
 # define XIF_NETMASK	"255.255.255.0"
+# define XIF_MAC_ADDR	"00:41:45:55:49:00"		// just made up from 0AETH0
 #endif
 
 static bool saveConfigFile = false;
@@ -540,6 +541,7 @@ void presave_arafs()
 	{ "HostIP", String_Tag, &Eth->ip_host, sizeof(Eth->ip_host), 0}, \
 	{ "AtariIP", String_Tag, &Eth->ip_atari, sizeof(Eth->ip_atari), 0}, \
 	{ "Netmask", String_Tag, &Eth->netmask, sizeof(Eth->netmask), 0}, \
+	{ "MAC", String_Tag, &Eth->mac_addr, sizeof(Eth->mac_addr), 0}, \
 	{ NULL , Error_Tag, NULL, 0, 0 } \
 }
 
@@ -562,6 +564,7 @@ void preset_ethernet()
 	safe_strncpy(ETH(0, ip_host), XIF_HOST_IP, sizeof(ETH(0, ip_host)));
 	safe_strncpy(ETH(0, ip_atari), XIF_ATARI_IP, sizeof(ETH(0, ip_atari)));
 	safe_strncpy(ETH(0, netmask), XIF_NETMASK, sizeof(ETH(0, netmask)));
+	safe_strncpy(ETH(0, mac_addr), XIF_MAC_ADDR, sizeof(ETH(0, mac_addr)));
 
 	// ETH[1] - ETH[MAX_ETH] are empty by default
 	for(int i=1; i<MAX_ETH; i++) {
@@ -570,6 +573,7 @@ void preset_ethernet()
 		*ETH(i, ip_host) = '\0';
 		*ETH(i, ip_atari) = '\0';
 		*ETH(i, netmask) = '\0';
+		*ETH(i, mac_addr) = '\0';
 	}
 }
 

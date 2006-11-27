@@ -93,10 +93,24 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				if (! ValidAddr(buf_ptr, true, buf_size))
 					BUS_ERROR(buf_ptr);
 
-				// generate the MAC as '\0AETH0' for eth0
-				// CAUTION: the 'ARETH0' wasn't a good choice
-				// (Linux bridging didn't work with that)
 				uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
+				char *ms = bx_options.ethernet[ethX].mac_addr;
+				bool format_OK = false;
+				if (strlen(ms) == 2*6+5 && (ms[2] == ':' || ms[2] == '-')) {
+					ms[2] = ms[5] = ms[8] = ms[11] = ms[14] = ':';
+					int md[6] = {0, 0, 0, 0, 0, 0};
+					int matched = sscanf(ms, "%02x:%02x:%02x:%02x:%02x:%02x",
+						&md[0], &md[1], &md[2], &md[3], &md[4], &md[5]);
+					if (matched == 6) {
+						for(int i=0; i<6; i++)
+							mac_addr[i] = md[i];
+						format_OK = true;
+					}
+				}
+				if (!format_OK) {
+					panicbug("MAC Address of [ETH%d] in incorrect format", ethX);
+
+				}
 				Host2Atari_memcpy(buf_ptr, mac_addr, MIN(buf_size, sizeof(mac_addr)));
 
 				ret = 1; // TRUE
