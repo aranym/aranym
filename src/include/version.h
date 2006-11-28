@@ -25,9 +25,9 @@
 
 #ifndef VER_STATUS
 //#define VER_STATUS
-//#define VER_STATUS	"+cvs"
 //#define VER_STATUS	"alpha"
-#define VER_STATUS	"beta2"
+//#define VER_STATUS	"beta2"
+#define VER_STATUS	"beta2+cvs"
 #endif
 
 #define str(x)		_stringify (x)
