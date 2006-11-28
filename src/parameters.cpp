@@ -139,7 +139,7 @@ static char config_file[512];
 # define XIF_HOST_IP	"192.168.0.1"
 # define XIF_ATARI_IP	"192.168.0.2"
 # define XIF_NETMASK	"255.255.255.0"
-# define XIF_MAC_ADDR	"00:41:45:55:49:00"		// just made up from 0AETH0
+# define XIF_MAC_ADDR	"00:41:45:54:48:30"		// just made up from \0AETH0
 #endif
 
 static bool saveConfigFile = false;

@@ -171,6 +171,8 @@ Tunnel = tap0
 HostIP = 192.168.0.1
 AtariIP = 192.168.0.2
 Netmask = 255.255.255.0
+# enter your desired MAC Address here in the format "aa:bb:cc:dd:ee:ff"
+MAC =
 
 
 [LILO]

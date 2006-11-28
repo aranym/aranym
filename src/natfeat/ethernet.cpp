@@ -93,7 +93,10 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				if (! ValidAddr(buf_ptr, true, buf_size))
 					BUS_ERROR(buf_ptr);
 
+				// default MAC Address is just made up
 				uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
+
+				// convert user-defined MAC Address from string to 6 bytes array
 				char *ms = bx_options.ethernet[ethX].mac_addr;
 				bool format_OK = false;
 				if (strlen(ms) == 2*6+5 && (ms[2] == ':' || ms[2] == '-')) {
