@@ -1,3 +1,46 @@
+2006/11/28 - version 0.9.4beta2 released
+
+ I was so wrong when I wrote "last MMU bugs were fixed" in previous release
+ notes. This second beta release fixes several newly found CPU/FPU bugs that
+ appeared when ARAnyM became actually used by Debian-m68k people.
+ So the linux-m68k kernel as well as other MMU/FPU software should run
+ much better now.
+
+ Other news and fixes:
+
+ o optional MIDI output to /dev/sequencer (in [MIDI] try Type=sequencer)
+
+ o ARAnyM shouldn't hang on quit anymore
+
+ o protect2k enabled by default (better HW compatibility with Atari)
+
+ o cxx-exceptions enabled by default (considerably faster in MMU mode)
+
+ o in Cygwin ARAnyM ignores $HOME and follows Windows practice with
+   $HOME under Document and Settings/
+
+ o new config file option "GMTime" (set to No by default). When enabled,
+   ARAnyM uses Greenwich Mean Time (useful when running an OS that knows
+   timezones like something Linux based or maybe even properly configured
+   SpareMiNT)
+
+ o linux-m68k properly boots now (with HW initialized)
+
+ o IKBD settings (mouse wheel, AltGr) stored in [IKBD] section of ARAnyM
+   config file
+
+ o sound: preliminary locking (XBIOS LockSnd/UnlockSnd) implemented
+
+ o nfVDI: fixed vswr_mode alpha expansions (tested on newsgroup reader Troll)
+
+ o new option in [ETHx]: MAC = aa:bb:cc:dd:ee:ff for configuring the MAC
+   Address of the network interface. You can run several ARAnyMs in a LAN
+   now :-)
+
+ For the additions in the ARAnyM config file see the provided commented
+ configuration file.
+
+
 2006/09/22 - version 0.9.4beta released
 
  This release has one major highlight: two last MMU emulation bugs have

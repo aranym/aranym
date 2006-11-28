@@ -1,7 +1,7 @@
 # generic defines used by all distributions.
 #
 %define name	aranym
-%define ver	0.9.4beta
+%define ver	0.9.4beta2
 %define _rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>

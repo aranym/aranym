@@ -33,6 +33,7 @@ Petr Stehlik <pstehlik@sophics.cz>
 - SDL GUI (based on Hatari)
 - Networking adjustments and debugging
 - NatFeats
+- CPU/FPU/MMU debugging
 - ARAnyM Release Manager and Webmaster
 
 Johan Klockars <rand@cd.chalmers.se>
@@ -58,6 +59,7 @@ Patrice Mandin <pmandin@caramail.com>
 - Natfeat OpenGL rendering, using host's OSMesa
 - close examination of our code and finding obvious and not-so-obvious
   bugs (IDE, parameters handling, TOS patches)
+- MIDI output
 
 Xavier Joubert
 - for Windows/cygwin improvements
@@ -65,12 +67,14 @@ Xavier Joubert
 - CPU Double Bus Fault handling
 - SDL GUI improvements
 - enabled JIT CPU compiler in MS Windows by writing Win sigsegv handler
+- CPU/MMU fix for data on page boundary
 
 Andreas Schwab
 - damn important fix of MOVES instruction (for Linux-m68k boot)
 - fix of PTESTR/PTESTW and more MMU fixes
 - LILO fixes, no longer needs /usr/src/linux/include for compiling
 - complete PMMU revision and fixing, got Linux/m68k working
+- important IEEE/UAE FPU fixes
 
 ---
 

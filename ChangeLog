@@ -1,3 +1,5 @@
+*** CVS tagged as ARANYM_0_9_4_BETA2
+
 2006/11/27 - Andreas
 - uae_cpu/fpu/fpu_ieee.cpp: Fix conversion of extended zero/Inf/NaN to
   host format.
