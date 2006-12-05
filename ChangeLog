@@ -1,3 +1,9 @@
+2006/12/05 - Philipp
+- nfvdi_opengl.cpp: Fix of not-endianness-aware alpha channel clearing, which 
+  made Kronos fail to detect screen format on Mac OS X with OpenGL fVDI driver
+  enabled.
+
+
 *** CVS tagged as ARANYM_0_9_4_BETA2
 
 2006/11/27 - Andreas
