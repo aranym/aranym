@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AranymHomeDirectories</key>
+	<array>
+		<string>Aranym_files</string>
+		<string>~/Documents/Aranym_files</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
@@ -23,10 +28,8 @@
 	<key>CFBundleVersion</key>
 	<string>${CURRENT_PROJECT_VERSION}</string>
 	<key>NSMainNibFile</key>
-	<string>SDLMain.nib</string>
+	<string>SDLMain</string>
 	<key>NSPrincipalClass</key>
-	<string>SDLApplication</string>
-	<key>macaranym</key>
-	<string>SDL Cocoa App</string>
+	<string>NSApplication</string>
 </dict>
 </plist>

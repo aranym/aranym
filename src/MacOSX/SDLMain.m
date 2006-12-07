@@ -3,49 +3,22 @@
        Non-NIB-Code & other changes: Max Horn <max@quendi.de>
 
     Feel free to customize this file to suit your needs
-    Adapted for aranym
+	Adapted for aranym
 */
 
 #import "SDL.h"
 #import "SDLMain.h"
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <unistd.h>
-
-/* Use this flag to determine whether we use SDLMain.nib or not */
-#define		SDL_USE_NIB_FILE	1
+#import "parameters.h"
 
 
-/* Use this flag to determine whether we use CPS (docking) or not */
-#define		SDL_USE_CPS		1
-#ifdef SDL_USE_CPS
-/* Portions of CPS.h */
-typedef struct CPSProcessSerNum
-{
-	UInt32		lo;
-	UInt32		hi;
-} CPSProcessSerNum;
+static int gArgc;
+static char **gArgv;
+static BOOL gFinderLaunch;
+static BOOL gCalledAppMainline = FALSE;
+char gAranymFilesDirectory[MAXPATHLEN];  // Path to the "AranymFiles" folder
 
-extern OSErr	CPSGetCurrentProcess( CPSProcessSerNum *psn);
-extern OSErr 	CPSEnableForegroundOperation( CPSProcessSerNum *psn, UInt32 _arg2, UInt32 _arg3, UInt32 _arg4, UInt32 _arg5);
-extern OSErr	CPSSetFrontProcess( CPSProcessSerNum *psn);
-
-#endif /* SDL_USE_CPS */
-
-static int    gArgc;
-static char  **gArgv;
-static BOOL   gFinderLaunch;
-
-#if SDL_USE_NIB_FILE
-/* A helper category for NSString */
-@interface NSString (ReplaceSubString)
-- (NSString *)stringByReplacingRange:(NSRange)aRange with:(NSString *)aString;
-@end
-#else
-/* An internal Apple class used to setup Apple menus */
-@interface NSAppleMenuController:NSObject {}
-- (void)controlMenu:(NSMenu *)aMenu;
-@end
-#endif
 
 @interface SDLApplication : NSApplication
 @end
@@ -59,186 +32,122 @@ static BOOL   gFinderLaunch;
     event.type = SDL_QUIT;
     SDL_PushEvent(&event);
 }
-
 @end
-
 
 /* The main class of the application, the application's delegate */
 @implementation SDLMain
 
-- (IBAction) quit:(id)obj
-{
-	/* Post a SDL_QUIT event */
-    SDL_Event event;
-    event.type = SDL_QUIT;
-    SDL_PushEvent(&event);
-
-	[NSApp terminate:obj];
-}
-
 /* The user selected the "Preferencs..." menu entry */
-- (IBAction) showPrefs:(id)obj
+- (IBAction)doSetup:(id)sender
 {
     SDL_Event event;
 	event.type = SDL_KEYDOWN;
-	event.key.keysym.sym = SDLK_PRINT;
-	event.key.keysym.mod = KMOD_NONE;
+	event.key.keysym.sym = bx_options.hotkeys.setup.sym;
+	event.key.keysym.mod = bx_options.hotkeys.setup.mod;
     SDL_PushEvent(&event);
 }
 
 
 /* The user selected the "Fullscreen" menu entry */
-- (IBAction) makeFullscreen:(id)obj
+- (IBAction)doFullscreen:(id)sender
 {
     SDL_Event event;
 	event.type = SDL_KEYDOWN;
-	event.key.keysym.sym = SDLK_NUMLOCK;
-	event.key.keysym.mod = KMOD_NONE;
+	event.key.keysym.sym = bx_options.hotkeys.fullscreen.sym;
+	event.key.keysym.mod = bx_options.hotkeys.fullscreen.mod;
     SDL_PushEvent(&event);
 }
+
+/* The user selected the "Screenshot" menu entry */
+- (IBAction)doScreenshot:(id)sender
+{
+    SDL_Event event;
+	event.type = SDL_KEYDOWN;
+	event.key.keysym.sym = bx_options.hotkeys.screenshot.sym;
+	event.key.keysym.mod = bx_options.hotkeys.screenshot.mod;
+    SDL_PushEvent(&event);
+}
+
+/* The user selected the "Reboot" menu entry */
+- (IBAction)doReboot:(id)sender
+{
+    SDL_Event event;
+	event.type = SDL_KEYDOWN;
+	event.key.keysym.sym = bx_options.hotkeys.reboot.sym;
+	event.key.keysym.mod = bx_options.hotkeys.reboot.mod;
+    SDL_PushEvent(&event);
+}
+
+/* The user selected the "Reboot" menu entry */
+- (IBAction)doDebug:(id)sender
+{
+    SDL_Event event;
+	event.type = SDL_KEYDOWN;
+	event.key.keysym.sym = bx_options.hotkeys.debug.sym;
+	event.key.keysym.mod = bx_options.hotkeys.debug.mod;
+    SDL_PushEvent(&event);
+}
+
+/* A nice joke :-) */
+- (IBAction)help:(id)sender
+{
+    NSRunAlertPanel (@"Oh help, where have ye gone?", 
+        @"Sorry, there is no help available.\n\nThis message brought to you by We Don't Document, Inc.\n\n", @"Rats", @"Good, I never read it anyway", nil);
+}
+
 
 /* Set the working directory to the .app's parent directory */
 - (void) setupWorkingDirectory:(BOOL)shouldChdir
 {
-
     if (shouldChdir)
     {
         char parentdir[MAXPATHLEN];
-        char *c;
-
-        strncpy ( parentdir, gArgv[0], sizeof(parentdir) );
-        c = (char*) parentdir;
-
-        while (*c != '\0')     /* go to end */
-               c++;
-
-        while (*c != '/')      /* back up to parent */
-               c--;
-
-        *c++ = '\0';           /* cut off last part (binary name) */
-
-        assert ( chdir (parentdir) == 0 );   /* chdir to the binary app's parent */
-        assert ( chdir ("../../../") == 0 ); /* chdir to the .app's parent */
-    }
+		CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+		CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
+		if (CFURLGetFileSystemRepresentation(url2, true, (UInt8 *)parentdir, MAXPATHLEN)) {
+	        assert ( chdir (parentdir) == 0 );   /* chdir to the binary app's parent */
+		}
+		CFRelease(url);
+		CFRelease(url2);
+	}
+	
 }
 
-#if SDL_USE_NIB_FILE
-
-/* Fix menu to contain the real app name instead of "SDL App" */
-- (void)fixMenu:(NSMenu *)aMenu withAppName:(NSString *)appName
+- (void) findAranymFilesDirectory
 {
-    NSRange aRange;
-    NSEnumerator *enumerator;
-    NSMenuItem *menuItem;
+	//  get the application's bundle, thus it's name (ARAnyM)
+	NSBundle* bundle=[NSBundle mainBundle];
+	NSDictionary *infoDict = [bundle infoDictionary];
+	
+	NSArray* searchPaths = [infoDict objectForKey: @"AranymHomeDirectories"];
+	
+	//  helper to check existence
+	NSFileManager* fileManager = [NSFileManager defaultManager];
+	BOOL isDirectory = NO;
 
-    aRange = [[aMenu title] rangeOfString:@"SDL App"];
-    if (aRange.length != 0)
-        [aMenu setTitle: [[aMenu title] stringByReplacingRange:aRange with:appName]];
+	//  iterate through all folders and check if they exist
+	NSEnumerator* searchPathEnum = [searchPaths objectEnumerator];
+	NSString* currentPath;
+	while ((currentPath = [searchPathEnum nextObject]) != nil)
+	{
+		currentPath = [[currentPath stringByExpandingTildeInPath] stringByStandardizingPath];
+		[fileManager fileExistsAtPath: currentPath isDirectory: &isDirectory];
+		[currentPath getCString: gAranymFilesDirectory maxLength: MAXPATHLEN];
+		printf("--> %s %d\n", gAranymFilesDirectory, isDirectory);
+		
+		if (isDirectory)
+			//  it's a valid and existing directory
+			break;
+	}
+	
+	//  if Preferences folder couldn't be found, take first choise
+	if (currentPath == nil)
+		currentPath = [[[searchPaths objectAtIndex: 0] stringByExpandingTildeInPath] stringByStandardizingPath];
 
-    enumerator = [[aMenu itemArray] objectEnumerator];
-    while ((menuItem = [enumerator nextObject]))
-    {
-        aRange = [[menuItem title] rangeOfString:@"SDL App"];
-        if (aRange.length != 0)
-            [menuItem setTitle: [[menuItem title] stringByReplacingRange:aRange with:appName]];
-        if ([menuItem hasSubmenu])
-            [self fixMenu:[menuItem submenu] withAppName:appName];
-    }
-    [ aMenu sizeToFit ];
+	//  store this path, convert it to a C string and copy into buffer
+	[currentPath getCString: gAranymFilesDirectory maxLength: MAXPATHLEN];
 }
 
-#else
-
-void setupAppleMenu(void)
-{
-    /* warning: this code is very odd */
-    NSAppleMenuController *appleMenuController;
-    NSMenu *appleMenu;
-    NSMenuItem *appleMenuItem;
-
-    appleMenuController = [[NSAppleMenuController alloc] init];
-    appleMenu = [[NSMenu alloc] initWithTitle:@""];
-    appleMenuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
-    
-    [appleMenuItem setSubmenu:appleMenu];
-
-    /* yes, we do need to add it and then remove it --
-       if you don't add it, it doesn't get displayed
-       if you don't remove it, you have an extra, titleless item in the menubar
-       when you remove it, it appears to stick around
-       very, very odd */
-    [[NSApp mainMenu] addItem:appleMenuItem];
-    [appleMenuController controlMenu:appleMenu];
-    [[NSApp mainMenu] removeItem:appleMenuItem];
-    [appleMenu release];
-    [appleMenuItem release];
-}
-
-/* Create a window menu */
-void setupWindowMenu(void)
-{
-    NSMenu		*windowMenu;
-    NSMenuItem	*windowMenuItem;
-    NSMenuItem	*menuItem;
-
-
-    windowMenu = [[NSMenu alloc] initWithTitle:@"Window"];
-    
-    /* "Minimize" item */
-    menuItem = [[NSMenuItem alloc] initWithTitle:@"Minimize" action:@selector(performMiniaturize:) keyEquivalent:@"m"];
-    [windowMenu addItem:menuItem];
-    [menuItem release];
-    
-    /* Put menu into the menubar */
-    windowMenuItem = [[NSMenuItem alloc] initWithTitle:@"Window" action:nil keyEquivalent:@""];
-    [windowMenuItem setSubmenu:windowMenu];
-    [[NSApp mainMenu] addItem:windowMenuItem];
-    
-    /* Tell the application object that this is now the window menu */
-    [NSApp setWindowsMenu:windowMenu];
-
-    /* Finally give up our references to the objects */
-    [windowMenu release];
-    [windowMenuItem release];
-}
-
-/* Replacement for NSApplicationMain */
-void CustomApplicationMain (argc, argv)
-{
-    NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
-    SDLMain				*sdlMain;
-
-    /* Ensure the application object is initialised */
-    [SDLApplication sharedApplication];
-    
-#ifdef SDL_USE_CPS
-    {
-        CPSProcessSerNum PSN;
-        /* Tell the dock about us */
-        if (!CPSGetCurrentProcess(&PSN))
-            if (!CPSEnableForegroundOperation(&PSN,0x03,0x3C,0x2C,0x1103))
-                if (!CPSSetFrontProcess(&PSN))
-                    [SDLApplication sharedApplication];
-    }
-#endif /* SDL_USE_CPS */
-
-    /* Set up the menubar */
-    [NSApp setMainMenu:[[NSMenu alloc] init]];
-    setupAppleMenu();
-    setupWindowMenu();
-    
-    /* Create SDLMain and make it the app delegate */
-    sdlMain = [[SDLMain alloc] init];
-    [NSApp setDelegate:sdlMain];
-    
-    /* Start the main event loop */
-    [NSApp run];
-    
-    [sdlMain release];
-    [pool release];
-}
-
-#endif
 
 /* Called when the internal event loop has just started running */
 - (void) applicationDidFinishLaunching: (NSNotification *) note
@@ -247,60 +156,22 @@ void CustomApplicationMain (argc, argv)
 
     /* Set the working directory to the .app's parent directory */
     [self setupWorkingDirectory:gFinderLaunch];
+	[self findAranymFilesDirectory];
 
-#if SDL_USE_NIB_FILE
-    /* Set the main menu to contain the real app name instead of "SDL App" */
-    [self fixMenu:[NSApp mainMenu] withAppName:[[NSProcessInfo processInfo] processName]];
+#ifdef ENABLE_LILO
+	/* Enable linux booting if available! */
+	boot_lilo = 1;
 #endif
 
     /* Hand off to main application code */
+    gCalledAppMainline = TRUE;
     status = SDL_main (gArgc, gArgv);
 
     /* We're done, thank you for playing */
     exit(status);
 }
-
 @end
 
-
-@implementation NSString (ReplaceSubString)
-
-- (NSString *)stringByReplacingRange:(NSRange)aRange with:(NSString *)aString
-{
-    unsigned int bufferSize;
-    unsigned int selfLen = [self length];
-    unsigned int aStringLen = [aString length];
-    unichar *buffer;
-    NSRange localRange;
-    NSString *result;
-
-    bufferSize = selfLen + aStringLen - aRange.length;
-    buffer = NSAllocateMemoryPages(bufferSize*sizeof(unichar));
-    
-    /* Get first part into buffer */
-    localRange.location = 0;
-    localRange.length = aRange.location;
-    [self getCharacters:buffer range:localRange];
-    
-    /* Get middle part into buffer */
-    localRange.location = 0;
-    localRange.length = aStringLen;
-    [aString getCharacters:(buffer+aRange.location) range:localRange];
-     
-    /* Get last part into buffer */
-    localRange.location = aRange.location + aRange.length;
-    localRange.length = selfLen - localRange.location;
-    [self getCharacters:(buffer+aRange.location+aStringLen) range:localRange];
-    
-    /* Build output string */
-    result = [NSString stringWithCharacters:buffer length:bufferSize];
-    
-    NSDeallocateMemoryPages(buffer, bufferSize);
-    
-    return result;
-}
-
-@end
 
 
 
@@ -312,29 +183,28 @@ void CustomApplicationMain (argc, argv)
 /* Main entry point to executable - should *not* be SDL_main! */
 int main (int argc, char **argv)
 {
-
     /* Copy the arguments into a global variable */
-    int i;
-    
     /* This is passed if we are launched by double-clicking */
-    if ( argc >= 2 && strncmp (argv[1], "-psn", 4) == 0 ) {
+    if ( argc >= 2 && strncmp (argv[1], "-psn", 4) == 0 ) 
+	{
+        gArgv = (char **) SDL_malloc(sizeof (char *) * 2);
+        gArgv[0] = argv[0];
+        gArgv[1] = NULL;
         gArgc = 1;
-	gFinderLaunch = YES;
-    } else {
+        gFinderLaunch = YES;
+    } 
+	else 
+	{
+        int i;
         gArgc = argc;
-	gFinderLaunch = NO;
+        gArgv = (char **) SDL_malloc(sizeof (char *) * (argc+1));
+        for (i = 0; i <= argc; i++)
+            gArgv[i] = argv[i];
+        gFinderLaunch = NO;
     }
-    gArgv = (char**) malloc (sizeof(*gArgv) * (gArgc+1));
-    assert (gArgv != NULL);
-    for (i = 0; i < gArgc; i++)
-        gArgv[i] = argv[i];
-    gArgv[i] = NULL;
 
-#if SDL_USE_NIB_FILE
     [SDLApplication poseAsClass:[NSApplication class]];
-    NSApplicationMain (argc, argv);
-#else
-    CustomApplicationMain (argc, argv);
-#endif
+    NSApplicationMain (argc, (const char **)argv);
+
     return 0;
 }

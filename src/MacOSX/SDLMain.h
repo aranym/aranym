@@ -8,11 +8,10 @@
 #import <Cocoa/Cocoa.h>
 
 @interface SDLMain : NSObject
-{
-}
-
-- (IBAction) quit:(id)obj;
-- (IBAction) showPrefs:(id)obj;
-- (IBAction) makeFullscreen:(id)obj;
-
+- (IBAction)doSetup:(id)sender;
+- (IBAction)doFullscreen:(id)sender;
+- (IBAction)doScreenshot:(id)sender;
+- (IBAction)doReboot:(id)sender;
+- (IBAction)doDebug:(id)sender;
+- (IBAction)help:(id)sender;
 @end
