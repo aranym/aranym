@@ -1521,6 +1521,104 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		177581700B28B797003BC49C = {
+			fileEncoding = 5;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = AUTHORS;
+			path = /Volumes/System/AranymProject/aranym/AUTHORS;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		177581710B28B797003BC49C = {
+			fileEncoding = 5;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = BUGS;
+			path = /Volumes/System/AranymProject/aranym/BUGS;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		177581720B28B797003BC49C = {
+			fileEncoding = 5;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = ChangeLog;
+			path = /Volumes/System/AranymProject/aranym/ChangeLog;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		177581730B28B797003BC49C = {
+			fileEncoding = 5;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = COPYING;
+			path = /Volumes/System/AranymProject/aranym/COPYING;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		177581740B28B797003BC49C = {
+			fileEncoding = 5;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = FAQ;
+			path = /Volumes/System/AranymProject/aranym/FAQ;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		177581750B28B797003BC49C = {
+			fileEncoding = 5;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = INSTALL;
+			path = /Volumes/System/AranymProject/aranym/INSTALL;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		177581760B28B797003BC49C = {
+			fileEncoding = 5;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = NEWS;
+			path = /Volumes/System/AranymProject/aranym/NEWS;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		177581770B28B797003BC49C = {
+			fileEncoding = 5;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = README;
+			path = /Volumes/System/AranymProject/aranym/README;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		177581780B28B797003BC49C = {
+			fileEncoding = 5;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = TODO;
+			path = /Volumes/System/AranymProject/aranym/TODO;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		177581790B28B79B003BC49C = {
+			children = (
+				177581700B28B797003BC49C,
+				177581710B28B797003BC49C,
+				177581720B28B797003BC49C,
+				177581730B28B797003BC49C,
+				177581740B28B797003BC49C,
+				177581750B28B797003BC49C,
+				177581760B28B797003BC49C,
+				177581770B28B797003BC49C,
+				177581780B28B797003BC49C,
+			);
+			isa = PBXGroup;
+			name = Doc;
+			refType = 4;
+			sourceTree = "<group>";
+		};
 		1782B5450AA34565002A31CF = {
 			fileEncoding = 5;
 			isa = PBXFileReference;
@@ -3356,6 +3454,7 @@
 		29B97314FDCFA39411CA2CEA = {
 			children = (
 				173CCA830AA4762000800C63,
+				177581790B28B79B003BC49C,
 				29B97315FDCFA39411CA2CEA,
 				29B97317FDCFA39411CA2CEA,
 				080E96DDFE201D6D7F000001,

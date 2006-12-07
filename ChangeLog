@@ -1,3 +1,7 @@
+2006/12/07 - Philipp
+- Updated Xcode 1.5 project (=compiles again). Modifications to support dynamic
+  ARAnyM home directory (configurable in Info.plist file).
+
 2006/12/05 - Philipp
 - nfvdi_opengl.cpp: Fix of not-endianness-aware alpha channel clearing, which 
   made Kronos fail to detect screen format on Mac OS X with OpenGL fVDI driver
