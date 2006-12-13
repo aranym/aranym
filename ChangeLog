@@ -1,6 +1,14 @@
+2006/12/13 - Philipp
+- nfvdi_opengl.cpp: Fixed bug which made Mac OS X crash on gluDeleteTess() even
+  though no tesselation object was created.
+- hostscreen.h: Changes to remove warnings and errors when compiled on Mac OS X
+  with enabled OpenGL.
+
+
 2006/12/07 - Philipp
 - Updated Xcode 1.5 project (=compiles again). Modifications to support dynamic
   ARAnyM home directory (configurable in Info.plist file).
+
 
 2006/12/05 - Philipp
 - nfvdi_opengl.cpp: Fix of not-endianness-aware alpha channel clearing, which 

@@ -300,7 +300,7 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 						if (SDL_SwapBE16(cur_mask[my]) & (1<<mx))
 							color |= 0x000000ffUL;	/* opaque */
 				
-						mouse_texture[my][16-mx]=SDL_SwapBE32(color);
+						mouse_texture[my][15-mx]=SDL_SwapBE32(color);
 					}
 				}
 

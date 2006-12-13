@@ -30,6 +30,10 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
+#ifdef ENABLE_OPENGL
+#include <SDL_opengl.h>
+#endif
+
 #include "parameters.h"
 
 /**
@@ -74,13 +78,15 @@ class HostScreen {
 	int selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height);
 	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
 
+#ifdef ENABLE_OPENGL
 	// OpenGL stuff
 	SDL_Surface *SdlGlSurface;
-	unsigned int SdlGlTexObj;
+	GLuint SdlGlTexObj;
 	unsigned int SdlGlTextureWidth;
 	unsigned int SdlGlTextureHeight;
 	uint8 *SdlGlTexture;
 	int SdlGlWidth, SdlGlHeight;
+#endif
 	SDL_bool npot_texture;		/* Use non power of two texture ? */
 	SDL_bool rect_texture;		/* Use rectangle texture ? */
 	int rect_target;
@@ -501,6 +507,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.68  2006/11/10 23:21:26  pmandin
+ * Move video refresh from main to hostscreen. More to follow soon.
+ *
  * Revision 1.67  2006/08/25 18:34:22  philipp
  * Fixed p2c routine for big endian, colors are now correct.
  *
