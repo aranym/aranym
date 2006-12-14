@@ -429,6 +429,11 @@ bool write_token(FILE *outfile, struct Config_Tag *ptr)
 /-------------------------------------------------------------------<<*/
 int	update_config(const char *filename, struct Config_Tag configs[], char *header)
 {
+#ifdef OS_darwin
+	static char *tempfilename = "/tmp/aratemp.$$$";
+#else
+	static char *tempfilename = "temp.$$$";
+#endif
 	struct Config_Tag *ptr;
 	int	count = 0, lineno = 0;
 	FILE * infile, *outfile;
@@ -441,9 +446,11 @@ int	update_config(const char *filename, struct Config_Tag configs[], char *heade
 	infile = fopen(filename, "rt");
 	if ( infile == NULL ) {
 /* konfiguracni soubor jeste vubec neexistuje */
-		outfile = fopen("temp.$$$", "wt");
-		if ( outfile == NULL )
+		outfile = fopen(tempfilename, "wt");
+		if ( outfile == NULL ) {
+			fprintf(stderr, "Error: unable to open %s file.\n", tempfilename);
 			return ERROR;		/* return error designation. */
+		}
 		if ( header != NULL ) {
 			fprintf(outfile, "%s\n", header);
 		}
@@ -453,15 +460,18 @@ int	update_config(const char *filename, struct Config_Tag configs[], char *heade
 		}
 
 		fclose(outfile);
-		result = fcopy(filename, "temp.$$$");
-		remove("temp.$$$");
+		result = fcopy(filename, tempfilename);
+		remove(tempfilename);
 
-		if (result < 0)
+		if (result < 0) {
+			fprintf(stderr, "Error %d in fcopy.\n", result);
 			return result;
+		}
 		return count;
 	}
-	outfile = fopen("temp.$$$", "wt");
+	outfile = fopen(tempfilename, "wt");
 	if ( outfile == NULL ) {
+		fprintf(stderr, "Error: unable to open %s file.\n", tempfilename);
 		fclose(infile);
 		return ERROR;		   /* return error designation. */
 	}
@@ -535,11 +545,14 @@ int	update_config(const char *filename, struct Config_Tag configs[], char *heade
 	}
 	fclose(infile);
 	fclose(outfile);
-	result = fcopy(filename, "temp.$$$");
-	remove("temp.$$$");
+	result = fcopy(filename, tempfilename);
+	remove(tempfilename);
 
-	if (result < 0)
+	if (result < 0) {
+		fprintf(stderr, "Error %d in fcopy(%s,%s).\n", result, filename, 
+				tempfilename);
 		return result;
+	}
 	return count;
 }
 
