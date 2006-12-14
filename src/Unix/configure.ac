@@ -78,6 +78,8 @@ AC_ARG_ENABLE(nfjpeg,          [  --enable-nfjpeg         enable NatFeat JPEG (d
 
 AC_ARG_ENABLE(nfclipbrd,       [  --enable-nfclipbrd      enable NatFeat Clipboard (default=no)], [WANT_NFCLIPBRD=$enableval], [WANT_NFCLIPBRD=no])
 
+AC_ARG_ENABLE(nfvdi,           [  --enable-nfvdi          enable NatFeat VDI (default=yes)], [WANT_NFVDI=$enableval], [WANT_NFVDI=yes])
+
 AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emulation (default=yes)], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
 AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per second limiter (default=no)], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
@@ -1658,11 +1660,15 @@ if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
 	fi
 fi
 
-dnl Natfeat OpenGL VDI driver
+dnl Natfeat VDI driver
 
-NFVDIGLSRCS=""
-if [[ "x$WANT_OPENGL" = "xyes" ]]; then
-	NFVDIGLSRCS="../natfeat/nfvdi_opengl.cpp"
+NFVDISRCS=""
+if [[ "x$WANT_NFVDI" = "xyes" ]]; then
+	AC_DEFINE([NFVDI_SUPPORT], 1, [Define if you want to use NF VDI driver])
+	NFVDISRCS="../natfeat/nfvdi.cpp ../natfeat/nfvdi_soft.cpp"
+	if [[ "x$WANT_OPENGL" = "xyes" ]]; then
+		NFVDISRCS="$NFVDISRCS ../natfeat/nfvdi_opengl.cpp"
+	fi
 fi
 
 dnl Natfeat Clipboard driver (so far Windows only)
@@ -1761,7 +1767,7 @@ AC_SUBST(NFCDROMSRCS)
 AC_SUBST(NFPCISRCS)
 AC_SUBST(NFOSMESASRCS)
 AC_SUBST(NFJPEGSRCS)
-AC_SUBST(NFVDIGLSRCS)
+AC_SUBST(NFVDISRCS)
 AC_SUBST(NFCLIPBOARDSRCS)
 AC_SUBST(PARALLELX86SRCS)
 AC_SUBST(PARALLELPARPORTSRCS)
@@ -1817,6 +1823,7 @@ echo NatFeat PCI driver ..................... : $WANT_NFPCI
 echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA
 echo NatFeat JPEG decoder ................... : $WANT_NFJPEG
 echo NatFeat Clipboard ...................... : $WANT_NFCLIPBRD
+echo NatFeat VDI driver ..................... : $WANT_NFVDI
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86
 echo Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT

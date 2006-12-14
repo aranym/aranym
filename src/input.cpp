@@ -32,8 +32,10 @@
 #  include "sdlgui.h"
 #endif
 
-#include "nf_objs.h"
-#include "nfvdi.h"
+#ifdef NFVDI_SUPPORT
+# include "nf_objs.h"
+# include "nfvdi.h"
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -610,9 +612,10 @@ static void process_keyboard_event(const SDL_Event &event)
 
 static void process_mouse_event(const SDL_Event &event)
 {
+	bool mouse_exit = false;
+#ifdef NFVDI_SUPPORT
 	static NF_Base* fvdi = NULL;
 	bool fvdi_events = false;
-	bool mouse_exit = false;
 
 	if (!fvdi) {
 		unsigned int i;
@@ -623,6 +626,7 @@ static void process_mouse_event(const SDL_Event &event)
 			}
 		}
 	}
+#endif
 
 #ifdef SDL_GUI
 	if (hostScreen.isGUIopen()) {
@@ -655,8 +659,10 @@ static void process_mouse_event(const SDL_Event &event)
 				grabTheMouse();
 		}
 		else if (event.button.button == 4) {	/* mouse wheel Up */
+#ifdef NFVDI_SUPPORT
 			if (fvdi != NULL && fvdi->dispatch(0xc00100ff) == 0)
 				return;
+#endif
 
 			if (bx_options.ikbd.wheel_eiffel) {
 				getIKBD()->SendKey(0xF6);
@@ -674,8 +680,10 @@ static void process_mouse_event(const SDL_Event &event)
 			return;
 		}
 		else if (event.button.button == 5) {	/* mouse wheel Down */
+#ifdef NFVDI_SUPPORT
 			if (fvdi != NULL && fvdi->dispatch(0xc0010001) == 0)
 				return;
+#endif
 
 			if (bx_options.ikbd.wheel_eiffel) {
 				getIKBD()->SendKey(0xF6);
@@ -714,10 +722,12 @@ static void process_mouse_event(const SDL_Event &event)
 		xrel = eve.xrel;
 		yrel = eve.yrel;
 
+#ifdef NFVDI_SUPPORT
 		if (fvdi != NULL) {
 			if (fvdi->dispatch(0x80008000 | (eve.x << 16) | (eve.y)) == 0)
 				fvdi_events = true;
 		}
+#endif
 		// Can't use the method below to get out of the window
 		// if the events are reported directly, since it only
 		// works with hidden mouse pointer.
@@ -725,6 +735,7 @@ static void process_mouse_event(const SDL_Event &event)
 		mouse_exit = (eve.x == 0) && (eve.y == 0);
 	}
 
+#ifdef NFVDI_SUPPORT
 	if (lastbut != but) {
 		if (fvdi != NULL && (fvdi->dispatch(0xb0000000 | but) == 0))
 			fvdi_events = true;
@@ -735,6 +746,7 @@ static void process_mouse_event(const SDL_Event &event)
 			mouseOut = true;
 		return;
 	}
+#endif
 
 	// send the mouse data packet
 	if (xrel || yrel || lastbut != but) {
