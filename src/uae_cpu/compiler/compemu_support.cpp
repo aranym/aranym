@@ -42,7 +42,7 @@
  * code is not 64-bit clean and (ii) it's faster to resolve branches
  * that way.
  */
-#if !defined(__i386__) && !defined(__x86_64__)
+#if !defined(CPU_i386) && !defined(CPU_x86_64)
 #error "Only IA-32 and X86-64 targets are supported with the JIT Compiler"
 #endif
 
@@ -89,7 +89,7 @@
 # include <cstdlib>
 # include <cerrno>
 
-#if defined(__x86_64__) && 0
+#if defined(CPU_x86_64) && 0
 #define RECORD_REGISTER_USAGE		1
 #endif
 
@@ -6432,13 +6432,13 @@ int failure;
 #define TARGET_POWERPC	1
 #define TARGET_X86		2
 #define TARGET_X86_64	3
-#if defined(i386) || defined(__i386__)
+#if defined(CPU_i386)
 #define TARGET_NATIVE	TARGET_X86
 #endif
-#if defined(powerpc) || defined(__powerpc__) || defined(__ppc__)
+#if defined(CPU_powerpc)
 #define TARGET_NATIVE	TARGET_POWERPC
 #endif
-#if defined(x86_64) || defined(__x86_64__)
+#if defined(CPU_x86_64)
 #define TARGET_NATIVE	TARGET_X86_64
 #endif
 

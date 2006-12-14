@@ -130,7 +130,7 @@ union cacheline {
 
 #define KILLTHERAT 1  /* Set to 1 to avoid some partial_rat_stalls */
 
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 #define N_REGS 16 /* really only 15, but they are numbered 0-3,5-15 */
 #else
 #define N_REGS 8  /* really only 7, but they are numbered 0,1,2,3,5,6,7 */

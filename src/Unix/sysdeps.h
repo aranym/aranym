@@ -284,7 +284,7 @@ typedef char flagtype;
 #define Bit32u uint32
 
 /* Alignment restrictions */
-#if defined(__i386__) || defined(__powerpc__) || defined(__m68k__) || defined(__x86_64__) || defined(__ppc__)
+#if defined(CPU_i386) || defined(CPU_powerpc) || defined(CPU_m68k) || defined(CPU_x86_64)
 # define CPU_CAN_ACCESS_UNALIGNED
 #endif
 
@@ -328,7 +328,7 @@ static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {uint8 *b = (uint8 *)a
 
 #else /* WORDS_BIGENDIAN */
 
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(CPU_i386) || defined(CPU_x86_64)
 
 /* Intel x86 */
 #define X86_PPRO_OPT

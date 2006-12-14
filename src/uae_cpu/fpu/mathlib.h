@@ -449,7 +449,7 @@ PRIVATE inline bool FFPU fp_do_isinf(fpu_register const & r)
 	/* This additional ^ 0x80000000 is necessary because in Intel's
 	   internal representation of the implicit one is explicit.
 	   NOTE: anyway, this is equivalent to & 0x7fffffff in that case.  */
-#ifdef __i386__
+#ifdef CPU_i386
 	lx |= (hx ^ 0x80000000) | ((se & 0x7fff) ^ 0x7fff);
 #else
 	lx |= (hx & 0x7fffffff) | ((se & 0x7fff) ^ 0x7fff);

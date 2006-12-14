@@ -46,7 +46,7 @@
 #define EBP_INDEX 5
 #define ESI_INDEX 6
 #define EDI_INDEX 7
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 #define R8_INDEX  8
 #define R9_INDEX  9
 #define R10_INDEX 10
@@ -70,7 +70,7 @@
 /* Handle the _fastcall parameters of ECX and EDX */
 #define REG_PAR1 ECX_INDEX
 #define REG_PAR2 EDX_INDEX
-#elif defined(__x86_64__)
+#elif defined(CPU_x86_64)
 #define REG_PAR1 EDI_INDEX
 #define REG_PAR2 ESI_INDEX
 #else
@@ -94,7 +94,7 @@
 #define STACK_OFFSET	sizeof(void *)
 
 uae_s8 always_used[]={4,-1};
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 uae_s8 can_byte[]={0,1,2,3,5,6,7,8,9,10,11,12,13,14,15,-1};
 uae_s8 can_word[]={0,1,2,3,5,6,7,8,9,10,11,12,13,14,15,-1};
 #else
@@ -119,7 +119,7 @@ uae_u8 call_saved[]={0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0};
    - Special registers (such like the stack pointer) should not be "preserved"
      by pushing, even though they are "saved" across function calls
 */
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 /* callee-saved registers as defined by Linux AMD64 ABI: rbx, rbp, rsp, r12 - r15 */
 /* preserve r11 because it's generally used to hold pointers to functions */
 static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,0,0,0,0,0,1,1,1,1,1};
@@ -165,13 +165,13 @@ static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,1,1};
 #define CLOBBER_BSF  clobber_flags()
 
 /* FIXME: disabled until that's proofread.  */
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 #define USE_NEW_RTASM 1
 #endif
 
 #if USE_NEW_RTASM
 
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 #define X86_TARGET_64BIT		1
 #endif
 #define X86_FLAT_REGISTERS		0
@@ -195,7 +195,7 @@ static void jit_fail(const char *msg, const char *file, int line, const char *fu
 
 LOWFUNC(NONE,WRITE,1,raw_push_l_r,(R4 r))
 {
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 	PUSHQr(r);
 #else
 	PUSHLr(r);
@@ -205,7 +205,7 @@ LENDFUNC(NONE,WRITE,1,raw_push_l_r,(R4 r))
 
 LOWFUNC(NONE,READ,1,raw_pop_l_r,(R4 r))
 {
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 	POPQr(r);
 #else
 	POPLr(r);
@@ -215,7 +215,7 @@ LENDFUNC(NONE,READ,1,raw_pop_l_r,(R4 r))
 
 LOWFUNC(NONE,READ,1,raw_pop_l_m,(MEMW d))
 {
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 	POPQm(d, X86_NOREG, X86_NOREG, 1);
 #else
 	POPLm(d, X86_NOREG, X86_NOREG, 1);
@@ -528,7 +528,7 @@ LOWFUNC(READ,NONE,3,raw_cmov_l_rr,(RW4 d, R4 s, IMM cc))
 	if (have_cmov)
 		CMOVLrr(cc, s, d);
 	else { /* replacement using branch and mov */
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 		write_log("x86-64 implementations are bound to have CMOV!\n");
 		abort();
 #endif
@@ -701,7 +701,7 @@ LOWFUNC(NONE,READ,5,raw_cmov_l_rm_indexed,(W4 d, IMM base, R4 index, IMM factor,
 	if (have_cmov)
 		CMOVLmr(cond, base, X86_NOREG, index, factor, d);
 	else { /* replacement using branch and mov */
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 		write_log("x86-64 implementations are bound to have CMOV!\n");
 		abort();
 #endif
@@ -716,7 +716,7 @@ LOWFUNC(NONE,READ,3,raw_cmov_l_rm,(W4 d, IMM mem, IMM cond))
 	if (have_cmov)
 		CMOVLmr(cond, mem, X86_NOREG, X86_NOREG, 1, d);
 	else { /* replacement using branch and mov */
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 		write_log("x86-64 implementations are bound to have CMOV!\n");
 		abort();
 #endif
@@ -3206,7 +3206,7 @@ static inline void raw_emit_nop_filler(int nbytes)
   };
   static const uae_u8 prefixes[4] = { 0x66, 0x66, 0x66, 0x66 };
 
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
   /* The recommended way to pad 64bit code is to use NOPs preceded by
      maximally four 0x66 prefixes.  Balance the size of nops.  */
   if (nbytes == 0)

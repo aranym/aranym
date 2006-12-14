@@ -22,7 +22,7 @@ enum transfer_type_t {
 	TYPE_STORE
 };
 
-#if (__i386__)
+#if (CPU_i386)
 
 /* instruction jump table */
 //i386op_func *cpufunctbl[256];

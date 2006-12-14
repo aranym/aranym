@@ -70,7 +70,7 @@ enum {
 
 #define SleepAndWait()	usleep(1000);
 
-#elif (defined(__i386__) || defined(__x86_64__)) && defined(X86_ASSEMBLY) && !defined(ENABLE_REALSTOP)
+#elif (defined(CPU_i386) || defined(CPU_x86_64)) && defined(X86_ASSEMBLY) && !defined(ENABLE_REALSTOP)
 
 #define HAVE_HARDWARE_LOCKS 1
 

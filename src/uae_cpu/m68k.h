@@ -35,7 +35,7 @@
 
 #ifdef OPTIMIZED_FLAGS
 
-#if (defined(__i386__) && defined(X86_ASSEMBLY)) || (defined(__x86_64__) && defined(X86_64_ASSEMBLY))
+#if (defined(CPU_i386) && defined(X86_ASSEMBLY)) || (defined(CPU_x86_64) && defined(X86_64_ASSEMBLY))
 
 # include <cstdlib>
 
@@ -246,7 +246,7 @@ static inline int cctrue(int cc)
 }
 
 /* Manually emit LAHF instruction so that 64-bit assemblers can grok it */
-#if defined __x86_64__ && defined __GNUC__
+#if defined CPU_x86_64 && defined __GNUC__
 #define ASM_LAHF ".byte 0x9f"
 #else
 #define ASM_LAHF "lahf"
@@ -364,7 +364,7 @@ static inline int cctrue(int cc)
 
 #endif
 
-#elif defined(__sparc__) && (defined(SPARC_V8_ASSEMBLY) || defined(SPARC_V9_ASSEMBLY))
+#elif defined(CPU_sparc) && (defined(SPARC_V8_ASSEMBLY) || defined(SPARC_V9_ASSEMBLY))
 
 struct flag_struct {
     unsigned char nzvc;

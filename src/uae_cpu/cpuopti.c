@@ -296,7 +296,7 @@ int main(int argc, char **argv)
     FILE *infile = stdin;
     char tmp[4096];
 
-#ifdef __mc68000__
+#ifdef CPU_m68k
     if(system("perl machdep/cpuopti")==-1) {
        perror("perl machdep/cpuopti");
        return 10;

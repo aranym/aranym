@@ -103,7 +103,7 @@ int in_handler = 0;
 
 /******************************************************************************/
 
-#if (__i386__)
+#if (CPU_i386)
 
 /* instruction jump table */
 #if FULL_SIGSEGV_HANDLER_GOTO
@@ -908,7 +908,7 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 }
 #endif /* NO_NESTED_SIGSEGV */
 
-#endif /* (__i386__) */
+#endif /* (CPU_i386) */
 
 /******************************************************************************/
 
