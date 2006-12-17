@@ -311,10 +311,7 @@ case "$target_os" in
     else
         DEFINES="$DEFINES -DARANYMHOME=\\\"ARAnyM\\\" -DARANYMCONFIG=\\\"org.atari.aranym.config\\\" -DARANYMNVRAM=\\\"org.atari.aranym.nvram\\\" -DARANYMKEYMAP=\\\"org.atari.aranym.keymap\\\""
         EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLMain.M"
-        CXXFLAGS="$CXXFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
-        CFLAGS="$CFLAGS -F$HOME/Library/Frameworks -I$HOME/Library/Frameworks/SDL.framework/Headers"
-        LDFLAGS="$LDFLAGS -F$HOME/Library/Frameworks"
-        LIBS="$LIBS -framework AppKit -framework IOKit -framework CoreFoundation -framework SDL"
+        LIBS="$LIBS -framework AppKit -framework IOKit -framework CoreFoundation"
     fi
     ;;
   beos*)
@@ -1564,11 +1561,25 @@ if [[ "x$WANT_OPENGL" = "xyes" ]]; then
   fi
 fi
 
-dnl SDL
-
+dnl Check for SDL
 SDL_CFLAGS=
 SDL_LIBS=
-if test "$OS_TYPE" != "darwin" -o "x$WITH_FINK" = "xyes"; then
+SDL_LOCATION=
+if test "$OS_TYPE" == "darwin" -a "x$WITH_FINK" = "xno"; then
+	if test -d $HOME/Library/Frameworks/SDL.framework ; then
+		SDL_LOCATION="$HOME/Library/Frameworks"
+	elif test -d /Library/Frameworks/SDL.framework ; then
+		SDL_LOCATION="/Library/Frameworks"
+	elif test -d "$srcdir/MacOSX/SDL.framework" ; then
+		SDL_LOCATION="\$(srcdir)/MacOSX"
+	elif test -d "$srcdir/SDL.framework" ; then
+		SDL_LOCATION="\$(srcdir)"
+	else
+		AC_MSG_ERROR([SDL framework not found])
+	fi
+	CPPFLAGS="$CPPFLAGS -I$SDL_LOCATION/SDL.framework/Headers"
+	SDL_LIBS="-F$SDL_LOCATION -framework SDL"
+else
 	AM_PATH_SDL(1.2.0, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found! ***]))
 fi
 LIBS="$LIBS $SDL_LIBS"
@@ -1775,6 +1786,7 @@ AC_SUBST(GUISDLSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
 AC_SUBST(TARGET)
+AC_SUBST(SDL_LOCATION)
 AC_OUTPUT(Makefile)
 
 dnl Print summary.

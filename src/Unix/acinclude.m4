@@ -231,6 +231,12 @@ dnl and GL_X_LIBS.
   GL_CFLAGS="$X_CFLAGS"
   GL_X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
 fi
+
+dnl If we are running under darwin/Mac OS X then add the appropriate framework.
+if test x"$OS_TYPE" = xdarwin; then
+  GL_X_LIBS="-framework OpenGL"
+fi
+
     GL_save_CPPFLAGS="$CPPFLAGS"
     CPPFLAGS="$GL_CFLAGS"
 

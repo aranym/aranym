@@ -28,6 +28,7 @@ LIBS = @LIBS@
 SDL_LIBS = @SDL_LIBS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_CFLAGS = @SDL_CFLAGS@
+SDL_LOCATION = @SDL_LOCATION@
 SYSSRCS = @SYSSRCS@
 CPUSRCS = @CPUSRCS@
 DSPSRCS = @DSPSRCS@
@@ -142,6 +143,8 @@ BUNDLE_CONTENTS = \
 	darwin/info.plist \
 	darwin/PkgInfo 	
 
+BUNDLE_FRAMEWORKS = @SDL_LOCATION@/SDL.framework 
+
 APP = aranym
 APP_STATIC = aranym-static
 APP_LIB = libaranym.a
@@ -193,6 +196,8 @@ $(APP_BUNDLE): $(APP)
 	cp $(APP) $(APP_BUNDLE)/Contents/MacOS
 	#mkdir -p $(APP_BUNDLE)/Contents/ARAnyM
 	mkdir -p $(APP_BUNDLE)/Contents/Resources
+	mkdir -p $(APP_BUNDLE)/Contents/Frameworks
+	cp -rp $(BUNDLE_FRAMEWORKS) $(APP_BUNDLE)/Contents/Frameworks
 	cp -r $(BUNDLE_RESOURCES) $(APP_BUNDLE)/Contents/Resources
 	cd $(BUNDLE_LOCALIZATON_ROOT); \
 		for locFolder in $(BUNDLE_LOCALIZATON_FOLDERS); do \
