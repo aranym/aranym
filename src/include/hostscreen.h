@@ -30,11 +30,11 @@
 #include <SDL.h>
 #include <SDL_thread.h>
 
+#include "parameters.h"
+
 #ifdef ENABLE_OPENGL
 #include <SDL_opengl.h>
 #endif
-
-#include "parameters.h"
 
 /**
  * This macro handles the endianity for 24 bit per item data
@@ -507,6 +507,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.69  2006/12/13 00:11:05  philipp
+ * Small fixes for OpenGLVdiDriver bugs which bothered MacAranym (compilation and runtime errors/crashes).
+ *
  * Revision 1.68  2006/11/10 23:21:26  pmandin
  * Move video refresh from main to hostscreen. More to follow soon.
  *
