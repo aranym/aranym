@@ -3,6 +3,9 @@
 
 - gdbstub removed, not finished for years
 
+- Unix/solaris/sigsegv_solaris_x86.cpp: Solaris x86 extended segfault handler
+  (JITc support)
+
 
 2006/12/14 - Philipp
 - Changed use of compiler defined CPU macros __i386__, __x86_64__, __powerpc__ 

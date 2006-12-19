@@ -946,6 +946,13 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       fi
       ;;
+    solaris*)
+      if [[ "x$HAVE_I386" = "xyes" ]]; then
+        SYSSRCS="$SYSSRCS solaris/sigsegv_solaris_x86.cpp"
+      else
+        AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
+      fi
+      ;;
     *)
       AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       ;;
@@ -1017,6 +1024,11 @@ else
         break
       fi
       if [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
+        ADDRESSING_MODE="fixed (0x51000000)"
+        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
+        break
+      fi
+      if [[ "x$OS_TYPE" = "xsolaris" -a "x$HAVE=I386" ]]; then
         ADDRESSING_MODE="fixed (0x51000000)"
         DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
         break
