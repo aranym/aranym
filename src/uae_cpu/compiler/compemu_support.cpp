@@ -76,10 +76,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef ENABLE_MON
-#include "mon.h"
-#endif
-
 #ifndef WIN32
 #define PROFILE_COMPILE_TIME		1
 #define PROFILE_UNTRANSLATED_INSNS	1
@@ -6442,46 +6438,10 @@ int failure;
 #define TARGET_NATIVE	TARGET_X86_64
 #endif
 
-#ifdef ENABLE_MON
-static uae_u32 mon_read_byte_jit(uintptr addr)
-{
-	uae_u8 *m = (uae_u8 *)addr;
-	return (uintptr)(*m);
-}
- 
-static void mon_write_byte_jit(uintptr addr, uae_u32 b)
-{
-	uae_u8 *m = (uae_u8 *)addr;
-	*m = b;
-}
-#endif
-
 void disasm_block(int target, uint8 * start, size_t length)
 {
 	if (!JITDebug)
 		return;
-	
-#if defined(JIT_DEBUG) && defined(ENABLE_MON)
-	char disasm_str[200];
-	sprintf(disasm_str, "%s $%x $%x",
-			target == TARGET_M68K ? "d68" :
-			target == TARGET_X86 ? "d86" :
-			target == TARGET_X86_64 ? "d8664" :
-			target == TARGET_POWERPC ? "d" : "x",
-			start, start + length - 1);
-	
-	uae_u32 (*old_mon_read_byte)(uintptr) = mon_read_byte;
-	void (*old_mon_write_byte)(uintptr, uae_u32) = mon_write_byte;
-	
-	mon_read_byte = mon_read_byte_jit;
-	mon_write_byte = mon_write_byte_jit;
-	
-	char *arg[5] = {"mon", "-m", "-r", disasm_str, NULL};
-	mon(4, arg);
-	
-	mon_read_byte = old_mon_read_byte;
-	mon_write_byte = old_mon_write_byte;
-#endif
 }
 
 static inline void disasm_native_block(uint8 *start, size_t length)

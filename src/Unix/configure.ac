@@ -28,7 +28,6 @@ AC_ARG_ENABLE(debug,
 ],
 [WHICH_DEBUG="ndebug"
 ])
-AC_ARG_WITH(mon,               [  --with-mon              use mon as debugger (default=no)], [WANT_MON=$withval], [WANT_MON=no])
 
 AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history for debugger (default=no)], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
 
@@ -1199,12 +1198,7 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" = "xyes" ]]; then
   DEFINES="$DEFINES -DUSE_JIT=1"
 
   if [[ "x$WANT_JIT_DEBUG" = "xyes" ]]; then
-#    if [[ "x$WANT_MON" = "xyes" ]]; then
-      DEFINES="$DEFINES -DJIT_DEBUG=1"
-#    else
-#      AC_MSG_WARN([cxmon not found, ignoring --enable-jit-debug])
-#      WANT_JIT_DEBUG=no
-#    fi
+    DEFINES="$DEFINES -DJIT_DEBUG=1"
   fi
 
   if [[ "x$WANT_JIT_FPU" = "xyes" ]]; then
@@ -1453,34 +1447,7 @@ if [[ "x$WANT_JIT" = "xno" ]]; then
     AC_DEFINE([UAEDEBUG], 1, [Define if using UAE debugger])
     CPUSRCS="$CPUSRCS ../uae_cpu/debug.cpp"
   fi
-
-  dnl We use mon if possible.
-  MONSRCS=
-  if [[ "x$WANT_MON" = "xyes" ]]; then
-    if [[ "x$WHICH_DEBUG" = "xndebug" ]]; then
-      AC_MSG_WARN([ndebug and mon couldn't cooperated today]);
-      WANT_MON=no
-    else
-      AC_MSG_CHECKING(for mon)
-      mon_srcdir=../../../mon/src
-      if grep mon_init $srcdir/$mon_srcdir/mon.h >/dev/null 2>/dev/null; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE([ENABLE_MON], 1, [Define if using "mon".])
-        MONSRCS="$mon_srcdir/mon.cpp $mon_srcdir/mon_6502.cpp $mon_srcdir/mon_z80.cpp $mon_srcdir/mon_cmd.cpp $mon_srcdir/mon_disass.cpp $mon_srcdir/mon_ppc.cpp $mon_srcdir/mon_lowmem.cpp $mon_srcdir/disass/floatformat.c $mon_srcdir/disass/i386-dis.c $mon_srcdir/disass/m68k-dis.c $mon_srcdir/disass/m68k-opc.c"
-        CXXFLAGS="$CXXFLAGS -I\$(srcdir)/$mon_srcdir -I\$(srcdir)/$mon_srcdir/disass"
-        AC_CHECK_LIB(readline, readline)
-        AC_CHECK_LIB(termcap, tputs)
-        AC_CHECK_HEADERS(readline.h history.h readline/readline.h readline/history.h)
-      else
-        AC_MSG_RESULT(no)
-        AC_MSG_WARN([Could not find mon, ignoring --with-mon.])
-        WANT_MON=no
-      fi
-    fi
-  fi
 fi
-
-SYSSRCS="$SYSSRCS $MONSRCS"
 
 dnl Exclusive spcflags handling
 if [[ "x$WANT_SPCFLAGS_EXCL" = "xyes" ]]; then
@@ -1817,7 +1784,6 @@ echo DSP 56001 support ...................... : $WANT_DSP
 echo DSP 56001 disassembly support .......... : $WANT_DSP_DISASM
 echo Distributed dispatcher ................. : $WANT_DIS_DIP
 echo Debugger ............................... : $WHICH_DEBUG
-echo Monitor ................................ : $WANT_MON
 echo Check memory ........................... : $MEMORY_CHECK
 echo First 2kB of RAM Supervisor protected... : $WANT_PROTECT2K
 echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM

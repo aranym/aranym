@@ -27,10 +27,6 @@
 #include "parameters.h"
 #include "bootos.h"
 
-#ifdef ENABLE_MON
-# include "mon.h"
-#endif
-
 #if JIT_DEBUG
 # include "compiler/compemu.h"
 #endif
@@ -71,10 +67,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			       (unsigned long)r->a[6],
 			       (unsigned long)r->a[7],
 			       r->sr);
-#ifdef ENABLE_MON
-			char *arg[4] = {"mon", "-m", "-r", NULL};
-			mon(3, arg);
-#endif
 			QuitEmulator();
 			break;
 		}
@@ -229,10 +221,6 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			       (unsigned long)r->a[6],
 			       (unsigned long)r->a[7],
 			       r->sr);
-#ifdef ENABLE_MON
-			char *arg[4] = {"mon", "-m", "-r", NULL};
-			mon(3, arg);
-#endif
 			QuitEmulator();
 			break;
 	}

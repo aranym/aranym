@@ -77,20 +77,6 @@
 extern char *displayKeysym(SDL_keysym keysym, char *buffer);
 #endif
 
-#ifdef ENABLE_MON
-#include "mon.h"
-
-static uint32 mon_read_byte_b2(uint32 adr)
-{
-	return ReadAtariInt8(adr);
-}
-
-static void mon_write_byte_b2(uint32 adr, uint32 b)
-{
-	WriteAtariInt8(adr, b);
-}
-#endif	/* ENABLE_MON */
-
 //For starting debugger
 #ifdef OS_irix
 void setactvdebug()
@@ -508,13 +494,6 @@ bool InitAll(void)
 	}
 #endif
 
-#if ENABLE_MON
-	// Initialize mon
-	mon_init();
-	mon_read_byte = mon_read_byte_b2;
-	mon_write_byte = mon_write_byte_b2;
-#endif
-
 	return true;
 }
 
@@ -567,11 +546,6 @@ void ExitAll(void)
 
 	// hardware
 	HWExit();
-
-#if ENABLE_MON
-	// Deinitialize mon
-	mon_exit();
-#endif
 
 	delete host;
 

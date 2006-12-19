@@ -140,11 +140,7 @@ static void dump_log()
 	for (int i = 0; i < LOG_SIZE; i++) {
 		int j = (i + log_ptr) % LOG_SIZE;
 		fprintf(f, "pc %08x  instr %04x  sr %04x  usp %08x  msp %08x  isp %08x\n", log[j].pc, log[j].instr, log[j].sr, log[j].usp, log[j].msp, log[j].isp);
-#if ENABLE_MON
-		disass_68k(f, log[j].pc);
-#else
-		// adding a simple opcode -> assembler conversion table would help
-#endif
+	// adding a simple opcode -> assembler conversion table would help
 #if FRLOG_REGS
 		fprintf(f, "d0 %08x d1 %08x d2 %08x d3 %08x\n", log[j].d[0], log[j].d[1], log[j].d[2], log[j].d[3]);
 		fprintf(f, "d4 %08x d5 %08x d6 %08x d7 %08x\n", log[j].d[4], log[j].d[5], log[j].d[6], log[j].d[7]);
@@ -205,14 +201,6 @@ void m68k_record_step(uaecptr pc, int opcode)
 #endif
 }
 #endif /* FLIGHT_RECORDER */
-
-#if ENABLE_MON
-static void dump_regs(void)
-{
-	m68k_dumpstate(NULL);
-}
-#endif
-
 
 int broken_in;
 
@@ -1279,18 +1267,6 @@ void m68k_reset (void)
 #if FLIGHT_RECORDER
 	log_ptr = 0;
 	memset(log, 0, sizeof(log));
-#endif
-
-#if ENABLE_MON
-	static bool first_time = true;
-	if (first_time) {
-		first_time = false;
-		mon_add_command("regs", dump_regs, "regs                    Dump m68k emulator registers\n");
-#if FLIGHT_RECORDER
-		// Install "log" command in mon
-		mon_add_command("log", dump_log, "log                      Dump m68k emulation log\n");
-#endif
-	}
 #endif
 }
 

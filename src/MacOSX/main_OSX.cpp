@@ -40,10 +40,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef ENABLE_MON
-# include "mon.h"
-#endif
-
 # include <cerrno>
 # include <csignal>
 # include <cstdlib>
@@ -55,11 +51,6 @@ extern "C" char *strdup(const char *s)
 	strcpy(n, s);
 	return n;
 }
-#endif
-
-#ifdef ENABLE_MON
-static struct sigaction sigint_sa;
-static void sigint_handler(...);
 #endif
 
 extern void showBackTrace(int, bool=true);
@@ -172,15 +163,8 @@ static void install_signal_handler()
 	install_sigsegv();
 	D(bug("Sigsegv handler installed"));
 
-#ifdef ENABLE_MON
-	sigemptyset(&sigint_sa.sa_mask);
-	sigint_sa.sa_handler = (void (*)(int))sigint_handler;
-	sigint_sa.sa_flags = 0;
-	sigaction(SIGINT, &sigint_sa, NULL);
-#else
-# ifdef NEWDEBUG
+#ifdef NEWDEBUG
 	if (bx_options.startup.debugger) signal(SIGINT, setactvdebug);
-# endif
 #endif
 
 #ifdef EXTENDED_SIGSEGV
@@ -308,17 +292,3 @@ void QuitEmulator(void)
 
 	exit(0);
 }
-
-#ifdef ENABLE_MON
-static void sigint_handler(...)
-{
-#if EMULATED_68K
-	uaecptr nextpc;
-	extern void m68k_dumpstate(uaecptr *nextpc);
-	m68k_dumpstate(&nextpc);
-#endif
-	char *arg[4] = {"mon", "-m", "-r", NULL};
-	mon(3, arg);
-	QuitEmulator();
-}
-#endif
