@@ -231,14 +231,6 @@ typedef struct {
 	SDL_keysym	screenshot;
 } bx_hotkeys_t;
 
-#ifdef GDBSTUB
-typedef struct {
-  memptr text_base;
-  memptr data_base;
-  memptr bss_base;
-} bx_gdbstub_t;
-#endif
-
 #define DISKS	8
 
 // Options 
@@ -265,9 +257,6 @@ typedef struct {
   bx_parallel_options_t parallel;
   bx_natfeat_options_t natfeats;
   bx_nfvdi_options_t	nfvdi;
-#ifdef GDBSTUB
-  bx_gdbstub_t		gdbstub;
-#endif
   char			tos_path[512];
   char			emutos_path[512];
   char			bootstrap_path[512];

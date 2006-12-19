@@ -487,13 +487,6 @@ bool InitAll(void)
 	}
 #endif
 
-#ifdef GDBSTUB
-	if (bx_options.startup.debugger) {
-		D(bug("Activate gdbstub..."));
-		activate_debugger();
-	}
-#endif
-
 	return true;
 }
 

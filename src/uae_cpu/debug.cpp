@@ -41,8 +41,6 @@
 #include "input.h"
 #include "cpu_emulation.h"
 
-#include "gdbstub.h"
-
 #include "main.h"
 
 static int debugger_active = 0;
@@ -66,9 +64,6 @@ void activate_debugger (void)
 #endif
 #ifdef UAEDEBUG
 	do_skip = 0;
-#endif
-#ifdef GDBSTUB
-	gdbstub::init(port_number);
 #endif
 	if (debugger_active)
 		return;
@@ -243,10 +238,6 @@ void debug (void)
 #ifdef NEWDEBUG
 	ndebug::run();
 #else
-# ifdef GDBSTUB
-	if (gdbstub::check(m68k_getpc()) != GDBSTUB_STOP_NO_REASON)
-		gdbstub::debug_loop();
-# else
 	char input[80];
 	uaecptr nextpc,nxdis,nxmem;
 
@@ -501,7 +492,6 @@ S_argh:
 			break;
 		}
 	}
-# endif /* GDBSTUB */
 #endif /* NEWDEBUG */
 }
 

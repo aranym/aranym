@@ -1,6 +1,8 @@
 2006/12/19 - milan
 - cxmon support removed, not used for years
 
+- gdbstub removed, not finished for years
+
 
 2006/12/14 - Philipp
 - Changed use of compiler defined CPU macros __i386__, __x86_64__, __powerpc__ 

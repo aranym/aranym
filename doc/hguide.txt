@@ -181,8 +181,6 @@ c) mon     - based on BasiliskII's monitor, it isn't included in ARAnyM's
 
                  anoncvs@down.physik.uni-mainz.de:/cvs
 
-d) gdb     - experimental support of gdb as external debugger
-
 You can select a debugger with ./configure script.
 There are some functions and macros defined in debug.h for debugger output.
 
