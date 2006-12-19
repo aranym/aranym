@@ -51,13 +51,6 @@
 /* kludge for Brian, so he can compile under MSVC++ */
 #define USE_NORMAL_CALLING_CONVENTION 0
 
-#ifndef WIN32
-#include <sys/types.h>
-#include <sys/mman.h>
-#endif
-
-#include <fcntl.h>
-
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
