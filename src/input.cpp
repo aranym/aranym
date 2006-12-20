@@ -618,13 +618,7 @@ static void process_mouse_event(const SDL_Event &event)
 	bool fvdi_events = false;
 
 	if (!fvdi) {
-		unsigned int i;
-		for(i = 0; i < nf_objs_cnt; i++) {
-			if (strcasecmp("fVDI", nf_objects[i]->name()) == 0) {
-			    fvdi = nf_objects[i];
-			    break;
-			}
-		}
+		fvdi = NFGetDriver("fVDI");
 	}
 #endif
 
