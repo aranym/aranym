@@ -1554,9 +1554,9 @@ if test "$OS_TYPE" == "darwin" -a "x$WITH_FINK" = "xno"; then
 else
 	AM_PATH_SDL(1.2.0, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found! ***]))
 fi
-LIBS="$LIBS $SDL_LIBS"
-CFLAGS="$CFLAGS $SDL_CFLAGS"
-CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
+LIBS="$LIBS \$(SDL_LIBS)"
+CFLAGS="$CFLAGS \$(SDL_CFLAGS)"
+CXXFLAGS="$CXXFLAGS \$(SDL_CFLAGS)"
 
 dnl Check for zlib
 if [[ "x$WANT_LILO" = "xyes" ]]; then
