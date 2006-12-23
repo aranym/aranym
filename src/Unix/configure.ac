@@ -4,7 +4,6 @@ dnl Adapted for ARAnyM by Milan Jurik
 
 AC_INIT(aranym,0.9,aranym@bobek.sh.cvut.cz,aranym)
 AC_PREREQ(2.52)
-AC_REVISION($Revision$)
 AC_CONFIG_HEADER(config.h)
 
 dnl Canonical system information.
