@@ -1439,7 +1439,7 @@ AC_CHECK_FUNCS(isnan isinf finite isnormal signbit)
 dnl Select debugger
 if [[ "x$WANT_JIT" = "xno" ]]; then
   dnl new debugger
-  if [[ "x$WHICH_DEBUG" = "xndebug" ]]; then
+  if [[ "x$WHICH_DEBUG" = "xndebug" -a "x$ac_cv_func_sigaction" = "xyes" ]]; then
     AC_DEFINE([DEBUGGER], 1, [Define if using some internal debugger])
     AC_DEFINE([NEWDEBUG], 1, [Define if using new debugger])
     CPUSRCS="$CPUSRCS ../uae_cpu/debug.cpp"
