@@ -40,6 +40,10 @@ extern "C" {
 	static void UpdateAudio(void *unused, Uint8 *stream, int len) {
 		DUNUSED(unused);
 
+		if (!host) {
+			return;
+		}
+
 		for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
 			if (host->audio.callbacks[i]) {
 				host->audio.callbacks[i](host->audio.userdatas[i], stream, len);
@@ -71,7 +75,15 @@ HostAudio::HostAudio()
 		return;
 	}
 
-	D(bug("HostAudio: %d Hz, 0x%04x format, %d channels", obtained.freq, obtained.format, obtained.channels));
+#if DEBUG
+	{
+		char name[32];
+		if (SDL_AudioDriverName(name, 31)) {
+			D(bug("HostAudio: device %s opened", name));
+		}
+		D(bug("HostAudio: %d Hz, 0x%04x format, %d channels", obtained.freq, obtained.format, obtained.channels));
+	}
+#endif
 
 	SDL_PauseAudio(0);
 }
