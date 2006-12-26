@@ -33,11 +33,6 @@
 #include "cfgopts.h"
 #include <SDL_keyboard.h>
 
-#ifdef __cplusplus
-# include <cassert>
-# include <cstdio>
-#endif
-
 #ifndef ARANYMHOME
 # define ARANYMHOME	".aranym"
 #endif

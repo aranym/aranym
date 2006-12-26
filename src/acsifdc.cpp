@@ -30,6 +30,8 @@
  */
 
 #include "sysdeps.h"
+#include <cassert>
+
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"

@@ -22,6 +22,7 @@
  */
 
 #include "sysdeps.h"
+#include <cassert>
 #include "cpu_emulation.h"
 #include "xhdi.h"
 #include "atari_rootsec.h"
