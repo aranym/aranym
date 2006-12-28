@@ -1010,7 +1010,7 @@ int OpenGLVdiDriver::drawTableLine(memptr table, int length, uint16 pattern,
 	glDisable(GL_LINE_STIPPLE);
 	glDisable(GL_COLOR_LOGIC_OP);
 
-	D(bug("glvdi: drawline(%d,%d,%d,%d,0x%08x,0x%08x",x1,y1,x2,y2,fgColor,bgColor));
+	D(bug("glvdi: drawTableLine(%d,0x%08x,0x%08x",length,fgColor,bgColor));
 	return 1;
 }
 
