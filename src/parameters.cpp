@@ -145,6 +145,85 @@ static bx_atadevice_options_t *diskc = &bx_options.atadevice[0][0];
 static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
 
 
+void expand_path(char *buf, size_t buf_size) {
+	char *path = buf;
+	if ( !strlen(path) )
+		return;
+
+	char prefix[2048];
+	size_t prefixLen = 0;
+
+	if ( path[0] == '~' ) {
+		// replace with the home folder path
+		Host::getHomeFolder(prefix, sizeof(prefix));
+		strcat(prefix, DIRSEPARATOR);
+		prefixLen = strlen( prefix );
+		path++;
+	} else if (path[0] == '*') {
+		Host::getDataFolder(prefix, sizeof(prefix));
+		strcat(prefix, DIRSEPARATOR);
+		prefixLen = strlen( prefix );
+		path++;
+	} else if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
+		Host::getConfFolder(prefix, sizeof(prefix));
+		strcat(prefix, DIRSEPARATOR);
+		prefixLen = strlen( prefix );
+	}
+
+	if ( prefixLen > 0 ) {
+		if ( buf_size >= prefixLen + strlen(path) ) {
+			memmove( buf + prefixLen, path, strlen(path)+1 );	
+			memmove( buf, prefix, prefixLen );
+		} else {
+			fprintf(stderr, "Error - config entry size is insufficient\n" );
+		}
+	}
+}
+
+void compress_path(char *path)  {
+	if ( !strlen(path) )
+		return;
+
+	char prefix[2048];
+	size_t prefixLen = 0;
+	char *replacement = NULL;
+
+	/* Check if it's in the config directory */
+	Host::getConfFolder(prefix, sizeof(prefix));
+	strcat(prefix, DIRSEPARATOR);
+	prefixLen = strlen( prefix );
+
+	if (prefixLen>0 && strncmp(path, prefix, prefixLen) == 0) {
+		replacement = "";
+		bug("%s matches %s",path,prefix);
+	} 
+	else 
+	{
+		Host::getDataFolder(prefix, sizeof(prefix));
+		strcat(prefix, DIRSEPARATOR);
+		prefixLen = strlen(prefix);
+		if (prefixLen==0 || strncmp(path, prefix, prefixLen)) {
+			replacement = "*";
+			bug("%s matches %s",path,prefix);
+		} 
+		else 
+		{
+			/* Check if home prefix matches */
+			Host::getHomeFolder(prefix, sizeof(prefix));
+			strcat(prefix, DIRSEPARATOR);
+			prefixLen = strlen(prefix);
+			if (prefixLen>0 && strncmp(path, prefix, prefixLen) == 0) {
+				replacement = "~";
+				bug("%s matches %s",path,prefix);
+			}
+		}
+	}
+
+	if (replacement) 
+		strcpy(path, &path[prefixLen]);
+}
+
+
 // configuration file 
 /*************************************************************************/
 struct Config_Tag global_conf[]={
@@ -166,6 +245,9 @@ struct Config_Tag global_conf[]={
 
 void preset_global()
 {
+  strcpy(bx_options.tos_path, TOS_FILENAME);
+  strcpy(bx_options.emutos_path, EMUTOS_FILENAME);
+  strcpy(bx_options.bootstrap_path, FREEMINT_FILENAME);
   bx_options.autoMouseGrab = true;
   bx_options.gmtime = false;	// use localtime by default
   strcpy(bx_options.floppy.path, "");
@@ -187,10 +269,20 @@ void postload_global()
 #endif
 	if (!isalpha(bx_options.bootdrive))
 		bx_options.bootdrive = 0;
+
+	expand_path(bx_options.floppy.path, sizeof(bx_options.floppy.path));
+	expand_path(bx_options.tos_path, sizeof(bx_options.tos_path));
+	expand_path(bx_options.emutos_path, sizeof(bx_options.emutos_path));
+	expand_path(bx_options.bootstrap_path, sizeof(bx_options.bootstrap_path));
 }
 
 void presave_global()
 {
+	compress_path(bx_options.floppy.path);
+	compress_path(bx_options.tos_path);
+	compress_path(bx_options.emutos_path);
+	compress_path(bx_options.bootstrap_path);
+
 	bx_options.fastram = FastRAMSize / 1024 / 1024;
 	if (bx_options.bootdrive == 0)
 		bx_options.bootdrive = ' ';
@@ -399,10 +491,14 @@ void preset_ide()
 
 void postload_ide()
 {
+	expand_path(diskc->path, sizeof(diskc->path));
+	expand_path(diskd->path, sizeof(diskd->path));
 }
 
 void presave_ide()
 {
+	compress_path(diskc->path);
+	compress_path(diskd->path);
 }
 
 /*************************************************************************/
@@ -446,10 +542,16 @@ void preset_disk()
 
 void postload_disk()
 {
+	for(int i=0; i<DISKS; i++) {
+		expand_path(bx_options.disks[i].path, sizeof(bx_options.disks[i].path));
+	}
 }
 
 void presave_disk()
 {
+	for(int i=0; i<DISKS; i++) {
+		compress_path(bx_options.disks[i].path);
+	}
 }
 
 /*************************************************************************/
@@ -498,6 +600,8 @@ void preset_arafs()
 void postload_arafs()
 {
 	for(int i=0; i < 'Z'-'A'+1; i++) {
+		expand_path(bx_options.aranymfs[i].configPath, sizeof(bx_options.aranymfs[i].configPath));
+		
 		safe_strncpy(bx_options.aranymfs[i].rootPath, bx_options.aranymfs[i].configPath, sizeof(bx_options.aranymfs[i].rootPath));
 		int len = strlen(bx_options.aranymfs[i].configPath);
 		bx_options.aranymfs[i].halfSensitive = true;
@@ -516,10 +620,11 @@ void presave_arafs()
 	for(int i=0; i < 'Z'-'A'+1; i++) {
 		safe_strncpy(bx_options.aranymfs[i].configPath, bx_options.aranymfs[i].rootPath, sizeof(bx_options.aranymfs[i].configPath));
 		if ( strlen(bx_options.aranymfs[i].rootPath) > 0 &&
-			 bx_options.aranymfs[i].halfSensitive ) {
+			 !bx_options.aranymfs[i].halfSensitive ) {
 			// set the halfSensitive indicator
 			strcat( bx_options.aranymfs[i].configPath, ":" );
 		}
+		compress_path(bx_options.aranymfs[i].configPath);
 	}
 }
 
@@ -594,10 +699,14 @@ void preset_lilo()
 
 void postload_lilo()
 {
+	expand_path(bx_options.lilo.kernel, sizeof(bx_options.lilo.kernel));
+	expand_path(bx_options.lilo.ramdisk, sizeof(bx_options.lilo.ramdisk));
 }
 
 void presave_lilo()
 {
+	compress_path(bx_options.lilo.kernel);
+	compress_path(bx_options.lilo.ramdisk);
 }
 
 /*************************************************************************/
@@ -617,9 +726,11 @@ void preset_midi() {
 }
 
 void postload_midi() {
+	expand_path(bx_options.midi.file, sizeof(bx_options.midi.file));
 }
 
 void presave_midi() {
+	compress_path(bx_options.midi.file);
 }
 
 /*************************************************************************/
@@ -1149,45 +1260,6 @@ int process_cmdline(int argc, char **argv)
 	return optind;
 }
 
-void postload_PathTag( const char *filename, struct Config_Tag *ptr ) {
-	char *path = (char *)ptr->buf;
-	if ( !strlen(path) )
-		return;
-
-	char home[2048];
-	const char *prefix = NULL;
-	size_t prefixLen = 0;
-
-	if ( path[0] == '~' ) {
-		// replace with the home folder path
-		prefix = Host::getHomeFolder(home, sizeof(home));
-		prefixLen = strlen( prefix );
-		path++;
-	} else if (path[0] == '*') {
-		prefix= Host::getDataFolder(home, sizeof(home));
-		prefixLen = strlen( prefix );
-		path++;
-	} else if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
-		// find the last dirseparator
-		const char *slash = &filename[strlen(filename)];
-		while ( --slash >= filename &&
-			*slash != '/' &&
-			*slash != '\\' );
-		// get the path part (in front of the slash)
-		prefix = filename;
-		prefixLen = slash - prefix + 1;
-	}
-
-	if ( prefixLen > 0 ) {
-		if ( (size_t)ptr->buf_size >= prefixLen + strlen(path) ) {
-			memmove( (char*)ptr->buf + prefixLen, path, strlen(path)+1 );	
-			memmove( (char*)ptr->buf, prefix, prefixLen );
-		} else {
-			fprintf(stderr, "Error - config entry size is insufficient\n" );
-		}
-	}
-}
-
 // append a filename to a path
 char *addFilename(char *buffer, const char *file, unsigned int bufsize)
 {
@@ -1236,10 +1308,6 @@ static int process_config(FILE *f, const char *filename, struct Config_Tag *conf
 	if (status >= 0) {
 		if (verbose)
 			fprintf(f, "%s configuration: found %d valid directives.\n", title, status);
-		struct Config_Tag *ptr;
-		for ( ptr = conf; ptr->buf; ++ptr )
-			if ( ptr->type == Path_Tag )
-				postload_PathTag(filename, ptr);
 	} else {
 		fprintf(f, "Error while reading/processing the '%s' config file.\n", filename);
 	}
@@ -1380,9 +1448,6 @@ bool check_cfg()
 bool decode_switches(FILE *f, int argc, char **argv)
 {
 	getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
-	getDataFilename(TOS_FILENAME, bx_options.tos_path, sizeof(bx_options.tos_path));
-	getDataFilename(EMUTOS_FILENAME, bx_options.emutos_path, sizeof(bx_options.emutos_path));
-	getDataFilename(FREEMINT_FILENAME, bx_options.bootstrap_path, sizeof(bx_options.bootstrap_path));
 
 	early_cmdline_check(argc, argv);
 	preset_cfg();
