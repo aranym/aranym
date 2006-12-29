@@ -1,3 +1,19 @@
+2006/12/29 - Philipp
+- nfosmesa.cpp: Added Darwin/Mac OS X specific enhancement which allows loading
+  of libGL and libOSMesa libraries relative to binary executable location
+  instead of bundle location.
+- configure.ac: disabled testing for SDL_image, as this way of testing fails
+  always on Mac OS X. A new framework aware way of testing has to be found.
+  Removed modification of CFLAGS, CXXFLAGS and LIBS after SDL check.
+- Makefile.in: Added references to SDL_CFLAGS, SDL_CXXFLAGS and SLD_LIBS 
+  variables to corresponding CFLAGS, CXXFLAGS and LIBS.
+- parameters.cpp: bugfixes concerning loading and saving of Path_Tag variables.
+  The ~, * and config file relative path expansion and compression (when saving)
+  is now done in the corresponding postload_xx() and presave_xx() functions.
+- README_Xcode.rtf: added description on how to add support for additional
+  NatFeats (NFOSMESA and NFJPEG) to the base project.
+
+
 2006/12/26 - Patrice
 - mingw32: sigaction() does not exists.
 - cygwin: sometimes, audio callback is called before host is defined.
