@@ -128,6 +128,17 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 
 int OSMesaDriver::OpenLibrary(void)
 {
+#ifdef OS_darwin
+	char exedir[MAXPATHLEN];
+	char curdir[MAXPATHLEN];
+	getcwd(curdir, MAXPATHLEN);
+	CFURLRef url = CFBundleCopyExecutableURL(CFBundleGetMainBundle());
+	CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
+	CFURLGetFileSystemRepresentation(url2, false, (UInt8 *)exedir, MAXPATHLEN);
+	CFRelease(url2);
+	CFRelease(url);
+#endif
+	
 	D(bug("nfosmesa: OpenLibrary"));
 
 	/* Check if channel size is correct */
@@ -146,6 +157,14 @@ int OSMesaDriver::OpenLibrary(void)
 	/* Load LibGL if needed */
 	if ((libgl_handle==NULL) && libgl_needed) {
 		libgl_handle=SDL_LoadObject(bx_options.osmesa.libgl);
+#ifdef OS_darwin
+		/* If loading failed, try to load from executable directory */
+		if (libgl_handle==NULL) {
+			chdir(exedir);
+			libgl_handle=SDL_LoadObject(bx_options.osmesa.libgl);
+			chdir(curdir);
+		}
+#endif
 		if (libgl_handle==NULL) {
 			D(bug("nfosmesa: Can not load '%s' library", bx_options.osmesa.libgl));
 			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
@@ -158,6 +177,14 @@ int OSMesaDriver::OpenLibrary(void)
 	/* Load libOSMesa */
 	if (libosmesa_handle==NULL) {
 		libosmesa_handle=SDL_LoadObject(bx_options.osmesa.libosmesa);
+#ifdef OS_darwin
+		/* If loading failed, try to load from executable directory */
+		if (libosmesa_handle==NULL) {
+			chdir(exedir);
+			libosmesa_handle=SDL_LoadObject(bx_options.osmesa.libosmesa);
+			chdir(curdir);
+		}
+#endif
 		if (libosmesa_handle==NULL) {
 			D(bug("nfosmesa: Can not load '%s' library", bx_options.osmesa.libosmesa));
 			fprintf(stderr, "nfosmesa: %s\n", SDL_GetError());
