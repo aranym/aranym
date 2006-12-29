@@ -18,13 +18,13 @@ DESTDIR =
 
 CC = @CC@
 CXX = @CXX@
-CFLAGS = -I$(srcdir)/../include -I$(srcdir) -I. -I$(srcdir)../natfeat @CFLAGS@
-CXXFLAGS = @CXXFLAGS@
-CPPFLAGS = -I$(srcdir)/../include -I$(srcdir) -I. -I$(srcdir)/../natfeat @CPUINCLUDES@ @CPPFLAGS@
+CFLAGS = -I$(srcdir)/../include -I$(srcdir) -I. -I$(srcdir)../natfeat @CFLAGS@ $(SDL_CFLAGS)
+CXXFLAGS = @CXXFLAGS@ $(SDL_CFLAGS)
+CPPFLAGS = -I$(srcdir)/../include -I$(srcdir) -I. -I$(srcdir)/../natfeat @CPUINCLUDES@ @CPPFLAGS@ 
 WFLAGS = @WFLAGS@
 DEFS = @DEFS@ @DEFINES@ -D_REENTRANT -D_THREAD_SAFE
 LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@
+LIBS = @LIBS@ $(SDL_LIBS)
 SDL_LIBS = @SDL_LIBS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_CFLAGS = @SDL_CFLAGS@
