@@ -1553,9 +1553,6 @@ if test "$OS_TYPE" == "darwin" -a "x$WITH_FINK" = "xno"; then
 else
 	AM_PATH_SDL(1.2.0, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found! ***]))
 fi
-LIBS="$LIBS \$(SDL_LIBS)"
-CFLAGS="$CFLAGS \$(SDL_CFLAGS)"
-CXXFLAGS="$CXXFLAGS \$(SDL_CFLAGS)"
 
 dnl Check for zlib
 if [[ "x$WANT_LILO" = "xyes" ]]; then
@@ -1632,14 +1629,14 @@ dnl Natfeat JPEG decoder
 NFJPEGSRCS=""
 if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
 	dnl Check for SDL_Image
-	AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
-	if test "x$have_sdlimage_lib" = "xyes"; then
+#	AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
+#	if test "x$have_sdlimage_lib" = "xyes"; then
 		AC_DEFINE([NFJPEG_SUPPORT], 1, [Define if you want to use host JPEG decoder])
 		NFJPEGSRCS="../natfeat/nfjpeg.cpp"
 		LIBS="$LIBS -lSDL_image"
-	else
-		WANT_NFJPEG="no"
-	fi
+#	else
+#		WANT_NFJPEG="no"
+#	fi
 fi
 
 dnl Natfeat VDI driver
