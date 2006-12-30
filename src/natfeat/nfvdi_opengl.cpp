@@ -304,8 +304,8 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 					}
 				}
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // scale when image bigger than texture
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // scale when image smaller than texture
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // scale when image bigger than texture
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // scale when image smaller than texture
 				glTexImage2D(GL_TEXTURE_2D, 0, 4, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, mouse_texture);
 
 				Mouse.hotspot.x = hot_x & 0xf;
@@ -339,13 +339,13 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 		glVertex2i(x,y);
 
 		glTexCoord2f(1.0,0.0);
-		glVertex2i(x+15,y);
+		glVertex2i(x+16,y);
 
 		glTexCoord2f(1.0,1.0);
-		glVertex2i(x+15,y+15);
+		glVertex2i(x+16,y+16);
 
 		glTexCoord2f(0.0,1.0);
-		glVertex2i(x,y+15);
+		glVertex2i(x,y+16);
 	glEnd();
 
 	glDisable(GL_BLEND);
