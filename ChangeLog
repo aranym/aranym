@@ -1,3 +1,7 @@
+2006/12/31 - Philipp
+- parameters.cpp: fixed loading of data files relative to config file location.
+
+
 2006/12/30 - Philipp
 - nfvdi_opengl.cpp: Disabled interpolation for mouse cursor. Cursor is now drawn
   with correct size (16x16 instead of 15x15).

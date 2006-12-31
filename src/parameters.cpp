@@ -165,9 +165,15 @@ void expand_path(char *buf, size_t buf_size) {
 		prefixLen = strlen( prefix );
 		path++;
 	} else if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
-		Host::getConfFolder(prefix, sizeof(prefix));
-		strcat(prefix, DIRSEPARATOR);
-		prefixLen = strlen( prefix );
+		// path relative to config file
+		strcpy(prefix, config_file);
+		// find the last dirseparator
+		const char *slash = &prefix[strlen(prefix)];
+		while ( --slash >= prefix &&
+			*slash != '/' &&
+			*slash != '\\' );
+		// get the path part (in front of the slash)
+		prefixLen = slash - prefix + 1;
 	}
 
 	if ( prefixLen > 0 ) {
@@ -188,10 +194,15 @@ void compress_path(char *path)  {
 	size_t prefixLen = 0;
 	char *replacement = NULL;
 
-	/* Check if it's in the config directory */
-	Host::getConfFolder(prefix, sizeof(prefix));
-	strcat(prefix, DIRSEPARATOR);
-	prefixLen = strlen( prefix );
+	// path relative to config file
+	strcpy(prefix, config_file);
+	// find the last dirseparator
+	const char *slash = &prefix[strlen(prefix)];
+	while ( --slash >= prefix &&
+		*slash != '/' &&
+		*slash != '\\' );
+	// get the path part (in front of the slash)
+	prefixLen = slash - prefix + 1;
 
 	if (prefixLen>0 && strncmp(path, prefix, prefixLen) == 0) {
 		replacement = "";
