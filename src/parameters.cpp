@@ -204,28 +204,30 @@ void compress_path(char *path)  {
 	// get the path part (in front of the slash)
 	prefixLen = slash - prefix + 1;
 
-	if (prefixLen>0 && strncmp(path, prefix, prefixLen) == 0) {
+	if (prefixLen && strncmp(path, prefix, prefixLen) == 0) {
 		replacement = "";
-		bug("%s matches %s",path,prefix);
+		D(bug("%s matches %.*s", path, prefixLen, prefix));
 	} 
 	else 
 	{
 		Host::getDataFolder(prefix, sizeof(prefix));
-		strcat(prefix, DIRSEPARATOR);
 		prefixLen = strlen(prefix);
-		if (prefixLen==0 || strncmp(path, prefix, prefixLen)) {
+		if (prefixLen && strncmp(path, prefix, prefixLen)) {
+			strcat(prefix, DIRSEPARATOR);
+			prefixLen++;
 			replacement = "*";
-			bug("%s matches %s",path,prefix);
+			D(bug("%s matches %.*s", path, prefixLen, prefix));
 		} 
 		else 
 		{
 			/* Check if home prefix matches */
 			Host::getHomeFolder(prefix, sizeof(prefix));
-			strcat(prefix, DIRSEPARATOR);
 			prefixLen = strlen(prefix);
-			if (prefixLen>0 && strncmp(path, prefix, prefixLen) == 0) {
+			if (prefixLen && strncmp(path, prefix, prefixLen) == 0) {
+				strcat(prefix, DIRSEPARATOR);
+				prefixLen++;
 				replacement = "~";
-				bug("%s matches %s",path,prefix);
+				D(bug("%s matches %.*s", path, prefixLen, prefix));
 			}
 		}
 	}
