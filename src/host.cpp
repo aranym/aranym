@@ -9,6 +9,7 @@
 
 #include "hostscreen.h"
 #include "host.h"
+#include "dyngl.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -28,6 +29,14 @@ Host::Host()
 #else
 	clock = new HostClockUnix();
 #endif
+
+#ifdef ENABLE_OPENGL
+	if (dyngl_load(bx_options.opengl.library)==0) {
+		bx_options.opengl.enabled = false;
+	}
+#else
+	bx_options.opengl.enabled = false;
+#endif
 }
 
 Host::~Host()
@@ -45,6 +54,9 @@ void Host::reset(void)
 
 /*
  * $Log$
+ * Revision 1.6  2006/02/03 21:21:34  pmandin
+ * Created host clock class to encapsulate OS-dependent time functions
+ *
  * Revision 1.5  2006/01/26 18:53:53  pmandin
  * HostAudio object now statically created
  *
