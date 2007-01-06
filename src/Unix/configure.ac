@@ -1231,47 +1231,6 @@ fi
 AC_TRANSLATE_DEFINE(USE_33BIT_ADDRESSING, "$use_33bit_addressing",
   [Define to use 33-bit memory addressing on 64-bit JIT capable systems.])
 
-# IEEE is the default format.  If the float endianness isn't the same
-# as the integer endianness, we have to set FLOAT_WORDS_BIG_ENDIAN
-# (which is a tristate: yes, no, default).  This is only an issue with
-# IEEE; the other formats are only supported by a few machines each,
-# all with the same endianness.
-format=IEEE_FLOAT_FORMAT
-fbigend=
-case $ac_cv_c_float_format in
-    'IEEE (big-endian)' )
-	if test $ac_cv_c_bigendian = no; then
-	    fbigend=1
-	fi
-	;;
-    'IEEE (little-endian)' )
-	if test $ac_cv_c_bigendian = yes; then
-	    fbigend=0
-	fi
-	;;
-    'VAX D-float' )
-	format=VAX_FLOAT_FORMAT
-	;;
-    'PDP-10' )
-	format=PDP10_FLOAT_FORMAT
-	;;
-    'IBM 370 hex' )
-	format=IBM_FLOAT_FORMAT
-	;;
-esac
-AC_DEFINE_UNQUOTED(HOST_FLOAT_FORMAT, $format,
-  [Define to the floating point format of the host machine.])
-if test -n "$fbigend"; then
-	AC_DEFINE_UNQUOTED(HOST_FLOAT_WORDS_BIG_ENDIAN, $fbigend,
-  [Define to 1 if the host machine stores floating point numbers in
-   memory with the word containing the sign bit at the lowest address,
-   or to 0 if it does it the other way around.
-
-   This macro should not be defined if the ordering is the same as for
-   multi-word integers.])
-fi
-])
-
 dnl Select appropriate FPU source.
 gcc_AC_C_FLOAT_FORMAT
 AC_CHECK_HEADERS(ieee754.h ieeefp.h floatingpoint.h nan.h math.h)
