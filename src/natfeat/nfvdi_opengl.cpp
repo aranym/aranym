@@ -31,6 +31,7 @@
 
 #include <SDL_endian.h>
 #include <SDL_opengl.h>
+#include "dyngl.h"
 
 #define ENABLE_GLU_TESSELATOR 0
 
@@ -69,14 +70,16 @@ OpenGLVdiDriver::OpenGLVdiDriver()
 OpenGLVdiDriver::~OpenGLVdiDriver()
 {
 	if (mouse_tex_obj>0) {
-		glDeleteTextures(1, &mouse_tex_obj);
+		gl.DeleteTextures(1, &mouse_tex_obj);
 		mouse_tex_obj=0;
 	}
 
+#if ENABLE_GLU_TESSELATOR
 	if (tess) {
 		gluDeleteTess(tess);
 		tess=NULL;
 	}
+#endif
 }
 
 void OpenGLVdiDriver::reset(void)
@@ -93,7 +96,7 @@ int32 OpenGLVdiDriver::openWorkstation(void)
 
 	if (!bx_options.nfvdi.use_host_mouse_cursor) {
 		if (mouse_tex_obj==0) {
-			glGenTextures(1, &mouse_tex_obj);
+			gl.GenTextures(1, &mouse_tex_obj);
 		}
 	}
 
@@ -105,7 +108,7 @@ int32 OpenGLVdiDriver::closeWorkstation(void)
 	hostScreen.DisableOpenGLVdi();
 
 	if (mouse_tex_obj>0) {
-		glDeleteTextures(1, &mouse_tex_obj);
+		gl.DeleteTextures(1, &mouse_tex_obj);
 		mouse_tex_obj=0;
 	}
 
@@ -142,7 +145,7 @@ int32 OpenGLVdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 
 //	D(bug("glvdi: getpixel"));
 
-	glReadPixels(x,y,1,1, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &color);
+	gl.ReadPixels(x,y,1,1, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &color);
 
 	/* We have a RGBA color in host byte order, convert it to ARGB */
 	color >>= 8;
@@ -185,10 +188,10 @@ int32 OpenGLVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 	if (dst)
 		return VdiDriver::putPixel(vwk, dst, x, y, color);
 
-	glBegin(GL_POINTS);
-		glColor3ub((color>>16)&0xff, (color>>8)&0xff, color&0xff);
-		glVertex2i(x,y);
-	glEnd();
+	gl.Begin(GL_POINTS);
+		gl.Color3ub((color>>16)&0xff, (color>>8)&0xff, color&0xff);
+		gl.Vertex2i(x,y);
+	gl.End();
 
 //	D(bug("glvdi: putpixel(%d,%d,0x%08x)", x,y,color));
 	return 1;
@@ -243,8 +246,8 @@ int32 OpenGLVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 
 void OpenGLVdiDriver::restoreMouseBackground(void)
 {
-	glRasterPos2i(Mouse.storage.x,Mouse.storage.y+16);
-	glDrawPixels(16,16, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[0][0]));
+	gl.RasterPos2i(Mouse.storage.x,Mouse.storage.y+16);
+	gl.DrawPixels(16,16, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[0][0]));
 }
 
 void OpenGLVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width,
@@ -253,7 +256,7 @@ void OpenGLVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width,
 	Mouse.storage.x = x;
 	Mouse.storage.y = y;
 
-	glReadPixels(
+	gl.ReadPixels(
 		Mouse.storage.x,hostScreen.getHeight()-(Mouse.storage.y+height),
 		width,height,
 		GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[0][0])
@@ -309,9 +312,9 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 					}
 				}
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // scale when image bigger than texture
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // scale when image smaller than texture
-				glTexImage2D(GL_TEXTURE_2D, 0, 4, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, mouse_texture);
+				gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // scale when image bigger than texture
+				gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // scale when image smaller than texture
+				gl.TexImage2D(GL_TEXTURE_2D, 0, 4, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, mouse_texture);
 
 				Mouse.hotspot.x = hot_x & 0xf;
 				Mouse.hotspot.y = hot_y & 0xf;
@@ -331,30 +334,30 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 
 	saveMouseBackground(x,y,16,16);
 
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	gl.Enable(GL_TEXTURE_2D);
+	gl.Enable(GL_BLEND);
+	gl.BlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	/* Texture may have been unbound */
-	glBindTexture(GL_TEXTURE_2D, mouse_tex_obj);
+	gl.BindTexture(GL_TEXTURE_2D, mouse_tex_obj);
 
 	/* Render the textured quad */
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0,0.0);
-		glVertex2i(x,y);
+	gl.Begin(GL_QUADS);
+		gl.TexCoord2f(0.0,0.0);
+		gl.Vertex2i(x,y);
 
-		glTexCoord2f(1.0,0.0);
-		glVertex2i(x+16,y);
+		gl.TexCoord2f(1.0,0.0);
+		gl.Vertex2i(x+16,y);
 
-		glTexCoord2f(1.0,1.0);
-		glVertex2i(x+16,y+16);
+		gl.TexCoord2f(1.0,1.0);
+		gl.Vertex2i(x+16,y+16);
 
-		glTexCoord2f(0.0,1.0);
-		glVertex2i(x,y+16);
-	glEnd();
+		gl.TexCoord2f(0.0,1.0);
+		gl.Vertex2i(x,y+16);
+	gl.End();
 
-	glDisable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
+	gl.Disable(GL_BLEND);
+	gl.Disable(GL_TEXTURE_2D);
 	return 1;
 }
 
@@ -406,11 +409,8 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
 
 	/* Allocate temp space for monochrome bitmap */
-#if 0
-	width = (w + 31) & ~31;
-#else
 	width = (w + 8 + 31) & ~31;
-#endif
+
 	bitmap = (Uint8 *)malloc((width*h)>>3);
 	if (bitmap==NULL) {
 		return -1;
@@ -429,37 +429,30 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 	if (logOp == 1) {
 		/* First, the back color */
-		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-		glBegin(GL_QUADS);
-#if 0
-			glVertex2i(dx, dy);
-			glVertex2i(dx+w-1, dy);
-			glVertex2i(dx+w-1, dy+h-1);
-			glVertex2i(dx, dy+h-1);
-#else
-			glVertex2i(dx, dy);
-			glVertex2i(dx+w, dy);
-			glVertex2i(dx+w, dy+h);
-			glVertex2i(dx, dy+h);
-#endif
-		glEnd();
+		gl.Color3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		gl.Begin(GL_QUADS);
+			gl.Vertex2i(dx, dy);
+			gl.Vertex2i(dx+w, dy);
+			gl.Vertex2i(dx+w, dy+h);
+			gl.Vertex2i(dx, dy+h);
+		gl.End();
 	}
 
-	glScissor(dx, hostScreen.getHeight() - (dy + h), w, h);
-	glEnable(GL_SCISSOR_TEST);
-	glEnable(GL_COLOR_LOGIC_OP);
+	gl.Scissor(dx, hostScreen.getHeight() - (dy + h), w, h);
+	gl.Enable(GL_SCISSOR_TEST);
+	gl.Enable(GL_COLOR_LOGIC_OP);
 	if (logOp == 3) {
-		glLogicOp(GL_XOR);
-		glColor3ub(0xff,0xff,0xff);
+		gl.LogicOp(GL_XOR);
+		gl.Color3ub(0xff,0xff,0xff);
 	} else {
-		glLogicOp(GL_COPY);
-		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+		gl.LogicOp(GL_COPY);
+		gl.Color3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 	}
 
-	glRasterPos2i(dx,dy+h-1);
-	glBitmap(w+8,h, sx & 7,0, 0,0, (const GLubyte *)bitmap);
-	glDisable(GL_COLOR_LOGIC_OP);
-	glDisable(GL_SCISSOR_TEST);
+	gl.RasterPos2i(dx,dy+h-1);
+	gl.Bitmap(w+8,h, sx & 7,0, 0,0, (const GLubyte *)bitmap);
+	gl.Disable(GL_COLOR_LOGIC_OP);
+	gl.Disable(GL_SCISSOR_TEST);
 
 	free(bitmap);
 	return 1;
@@ -534,48 +527,34 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 
 		/* First, the back color */
 		if (logOp == 1) {
-			glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-			glBegin(GL_QUADS);
-#if 0
-				glVertex2i(x,y);
-				glVertex2i(x+w-1,y);
-				glVertex2i(x+w-1,y+h-1);
-				glVertex2i(x,y+h-1);
-#else
-				glVertex2i(x,y);
-				glVertex2i(x+w,y);
-				glVertex2i(x+w,y+h);
-				glVertex2i(x,y+h);
-#endif
-			glEnd();
+			gl.Color3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+			gl.Begin(GL_QUADS);
+				gl.Vertex2i(x,y);
+				gl.Vertex2i(x+w,y);
+				gl.Vertex2i(x+w,y+h);
+				gl.Vertex2i(x,y+h);
+			gl.End();
 		}
 
-		glEnable(GL_COLOR_LOGIC_OP);
+		gl.Enable(GL_COLOR_LOGIC_OP);
 		if (logOp == 3) {
-			glLogicOp(GL_XOR);
-			glColor3ub(0xff,0xff,0xff);
+			gl.LogicOp(GL_XOR);
+			gl.Color3ub(0xff,0xff,0xff);
 		} else {
-			glLogicOp(GL_COPY);
-			glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+			gl.LogicOp(GL_COPY);
+			gl.Color3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 		}
 
 		/* Fill with fgColor */
-		glEnable(GL_POLYGON_STIPPLE);
-		glPolygonStipple((const GLubyte *)gl_pattern);
-		glBegin(GL_POLYGON);
-#if 0
-			glVertex2i(x,y);
-			glVertex2i(x+w-1,y);
-			glVertex2i(x+w-1,y+h-1);
-			glVertex2i(x,y+h-1);
-#else
-			glVertex2i(x,y);
-			glVertex2i(x+w,y);
-			glVertex2i(x+w,y+h);
-			glVertex2i(x,y+h);
-#endif
-		glEnd();
-		glDisable(GL_POLYGON_STIPPLE);
+		gl.Enable(GL_POLYGON_STIPPLE);
+		gl.PolygonStipple((const GLubyte *)gl_pattern);
+		gl.Begin(GL_POLYGON);
+			gl.Vertex2i(x,y);
+			gl.Vertex2i(x+w,y);
+			gl.Vertex2i(x+w,y+h);
+			gl.Vertex2i(x,y+h);
+		gl.End();
+		gl.Disable(GL_POLYGON_STIPPLE);
 
 		D(bug("glvdi:  fillarea, with polygon"));
 	} else {
@@ -586,35 +565,35 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 
 			/* First, the back color */
 			if (logOp==1) {
-				glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-				glBegin(GL_LINES);
-					glVertex2i(x,y);
-					glVertex2i(x+w-1,y);
-				glEnd();
+				gl.Color3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+				gl.Begin(GL_LINES);
+					gl.Vertex2i(x,y);
+					gl.Vertex2i(x+w-1,y);
+				gl.End();
 			}
 
-			glEnable(GL_COLOR_LOGIC_OP);
+			gl.Enable(GL_COLOR_LOGIC_OP);
 			if (logOp == 3) {
-				glLogicOp(GL_XOR);
-				glColor3ub(0xff,0xff,0xff);
+				gl.LogicOp(GL_XOR);
+				gl.Color3ub(0xff,0xff,0xff);
 			} else {
-				glLogicOp(GL_COPY);
-				glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+				gl.LogicOp(GL_COPY);
+				gl.Color3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 			}
 
 			/* Fill with fgColor */
-			glEnable(GL_LINE_STIPPLE);
-			glLineStipple(1,pattern[y&15]);
-			glBegin(GL_LINES);
-				glVertex2i(x,y);
-				glVertex2i(x+w-1,y);
-			glEnd();
-			glDisable(GL_LINE_STIPPLE);
+			gl.Enable(GL_LINE_STIPPLE);
+			gl.LineStipple(1,pattern[y&15]);
+			gl.Begin(GL_LINES);
+				gl.Vertex2i(x,y);
+				gl.Vertex2i(x+w-1,y);
+			gl.End();
+			gl.Disable(GL_LINE_STIPPLE);
 		}
 		D(bug("glvdi:  fillarea, with horizontal lines"));
 	}
 
-	glDisable(GL_COLOR_LOGIC_OP);
+	gl.Disable(GL_COLOR_LOGIC_OP);
 	return 1;
 }
 
@@ -624,32 +603,32 @@ void OpenGLVdiDriver::fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
 {
 	/* First, the back color */
 	if (logOp==1) {
-		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-		glBegin(GL_LINES);
-			glVertex2i(x,y);
-			glVertex2i(x+w-1,y+h-1);
-		glEnd();
+		gl.Color3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		gl.Begin(GL_LINES);
+			gl.Vertex2i(x,y);
+			gl.Vertex2i(x+w-1,y+h-1);
+		gl.End();
 	}
 
-	glEnable(GL_COLOR_LOGIC_OP);
+	gl.Enable(GL_COLOR_LOGIC_OP);
 	if (logOp == 3) {
-		glLogicOp(GL_XOR);
-		glColor3ub(0xff,0xff,0xff);
+		gl.LogicOp(GL_XOR);
+		gl.Color3ub(0xff,0xff,0xff);
 	} else {
-		glLogicOp(GL_COPY);
-		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+		gl.LogicOp(GL_COPY);
+		gl.Color3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 	}
 
 	/* Fill with fgColor */
-	glEnable(GL_LINE_STIPPLE);
-	glLineStipple(1,pattern[y&15]);
-	glBegin(GL_LINES);
-		glVertex2i(x,y);
-		glVertex2i(x+w-1,y+h-1);
-	glEnd();
-	glDisable(GL_LINE_STIPPLE);
+	gl.Enable(GL_LINE_STIPPLE);
+	gl.LineStipple(1,pattern[y&15]);
+	gl.Begin(GL_LINES);
+		gl.Vertex2i(x,y);
+		gl.Vertex2i(x+w-1,y+h-1);
+	gl.End();
+	gl.Disable(GL_LINE_STIPPLE);
 
-	glDisable(GL_COLOR_LOGIC_OP);
+	gl.Disable(GL_COLOR_LOGIC_OP);
 }
 
 /**
@@ -686,23 +665,16 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr /*vwk*/, memptr src, int32 sx, int32 
 	/* Clear rectangle ? */
 	if ((logOp==0) || (logOp==15)) {
 		if (logOp==0) {
-			glColor3ub(0,0,0);
+			gl.Color3ub(0,0,0);
 		} else if (logOp==15) {
-			glColor3ub(0xff,0xff,0xff);
+			gl.Color3ub(0xff,0xff,0xff);
 		}
-		glBegin(GL_QUADS);
-#if 0
-			glVertex2i(dx,dy);
-			glVertex2i(dx+w-1,dy);
-			glVertex2i(dx+w-1,dy+h-1);
-			glVertex2i(dx,dy+h-1);
-#else
-			glVertex2i(dx,dy);
-			glVertex2i(dx+w,dy);
-			glVertex2i(dx+w,dy+h);
-			glVertex2i(dx,dy+h);
-#endif
-		glEnd();
+		gl.Begin(GL_QUADS);
+			gl.Vertex2i(dx,dy);
+			gl.Vertex2i(dx+w,dy);
+			gl.Vertex2i(dx+w,dy+h);
+			gl.Vertex2i(dx,dy+h);
+		gl.End();
 		D(bug("glvdi: blit_m2s: clear rectangle"));
 		return 1;
 	}
@@ -720,27 +692,23 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr /*vwk*/, memptr src, int32 sx, int32 
 	srcAddress += sy * srcPitch;
 	srcAddress += sx * (planes>>3);
 
-	glEnable(GL_COLOR_LOGIC_OP);
-	glLogicOp(logicOps[logOp]);
+	gl.Enable(GL_COLOR_LOGIC_OP);
+	gl.LogicOp(logicOps[logOp]);
 
 	for (y=0;y<h;y++) {
-#if 0
-		glRasterPos2i(dx,dy+y);
-#else
-		glRasterPos2i(dx,dy+y+1);
-#endif
+		gl.RasterPos2i(dx,dy+y+1);
 		switch(planes) {
 			case 16:
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-				glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
+				gl.PixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
 #endif
-				glDrawPixels(w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, srcAddress);
+				gl.DrawPixels(w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, srcAddress);
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-				glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
+				gl.PixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
 #endif
 				break;
 			case 32:
-				glDrawPixels(w,1, GL_BGRA,
+				gl.DrawPixels(w,1, GL_BGRA,
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 					GL_UNSIGNED_INT_8_8_8_8,
 #else
@@ -752,7 +720,7 @@ int32 OpenGLVdiDriver::blitArea_M2S(memptr /*vwk*/, memptr src, int32 sx, int32 
 		srcAddress += srcPitch;
 	}
 
-	glDisable(GL_COLOR_LOGIC_OP);
+	gl.Disable(GL_COLOR_LOGIC_OP);
 	return 1;
 }
 
@@ -769,11 +737,7 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, in
 		return -1;
 	}
 	if ((logOp!=0) && (logOp!=3) && (logOp!=15)) {
-#if 0
-		D(bug("glvdi: blit_s2m: logOp %d unsupported",logOp));
-#else
 		bug("glvdi: blit_s2m: logOp %d unsupported",logOp);
-#endif
 		return -1;
 	}
 
@@ -794,15 +758,15 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, in
 				switch(planes) {
 					case 16:
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-						glPixelStorei(GL_PACK_SWAP_BYTES, GL_TRUE);
+						gl.PixelStorei(GL_PACK_SWAP_BYTES, GL_TRUE);
 #endif
-						glReadPixels(sx,hostScreen.getHeight()-(sy+y+1), w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, destAddress);
+						gl.ReadPixels(sx,hostScreen.getHeight()-(sy+y+1), w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, destAddress);
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-						glPixelStorei(GL_PACK_SWAP_BYTES, GL_FALSE);
+						gl.PixelStorei(GL_PACK_SWAP_BYTES, GL_FALSE);
 #endif
 						break;
 					case 32:
-						glReadPixels(sx,hostScreen.getHeight()-(sy+y+1), w,1, GL_BGRA,
+						gl.ReadPixels(sx,hostScreen.getHeight()-(sy+y+1), w,1, GL_BGRA,
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 							GL_UNSIGNED_INT_8_8_8_8,
 #else
@@ -837,45 +801,45 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr /*vwk*/, memptr /*src*/, int32 sx,
 	/* Clear rectangle ? */
 	if ((logOp==0) || (logOp==15)) {
 		if (logOp==0) {
-			glColor3ub(0,0,0);
+			gl.Color3ub(0,0,0);
 		} else if (logOp==15) {
-			glColor3ub(0xff,0xff,0xff);
+			gl.Color3ub(0xff,0xff,0xff);
 		}
-		glBegin(GL_QUADS);
-			glVertex2i(dx,dy);
-			glVertex2i(dx+w-1,dy);
-			glVertex2i(dx+w-1,dy+h-1);
-			glVertex2i(dx,dy+h-1);
-		glEnd();
+		gl.Begin(GL_QUADS);
+			gl.Vertex2i(dx,dy);
+			gl.Vertex2i(dx+w-1,dy);
+			gl.Vertex2i(dx+w-1,dy+h-1);
+			gl.Vertex2i(dx,dy+h-1);
+		gl.End();
 		D(bug("glvdi: blit_s2s: clear rectangle"));
 		return 1;
 	}
 
-	glEnable(GL_COLOR_LOGIC_OP);	
-	glLogicOp(logicOps[logOp & 15]);
+	gl.Enable(GL_COLOR_LOGIC_OP);	
+	gl.LogicOp(logicOps[logOp & 15]);
 
 #if 0
-	glRasterPos2i(dx,dy+h-1);
-	glCopyPixels(sx,hostScreen.getHeight()-(sy+h-1), w,h, GL_COLOR);
+	gl.RasterPos2i(dx,dy+h-1);
+	gl.CopyPixels(sx,hostScreen.getHeight()-(sy+h-1), w,h, GL_COLOR);
 #else
 	if (sy >= dy) {
 	  if (dy + h == (int32)hostScreen.getHeight())
 	    h--;
-	  glRasterPos2i(dx,dy+h);
-	  glCopyPixels(sx,hostScreen.getHeight()-(sy+h), w,h, GL_COLOR);
+	  gl.RasterPos2i(dx,dy+h);
+	  gl.CopyPixels(sx,hostScreen.getHeight()-(sy+h), w,h, GL_COLOR);
 	} else {
 	  int srcy = hostScreen.getHeight()-(sy+h);
 	  if (dy + h < (int32)hostScreen.getHeight()) {
-	    glRasterPos2i(dx,dy+h);
-	    glCopyPixels(sx,srcy, w,h, GL_COLOR);
+	    gl.RasterPos2i(dx,dy+h);
+	    gl.CopyPixels(sx,srcy, w,h, GL_COLOR);
 	  } else {
-	    glRasterPos2i(dx, hostScreen.getHeight() - 1);
-	    glCopyPixels(sx,srcy+1, w,h, GL_COLOR);
+	    gl.RasterPos2i(dx, hostScreen.getHeight() - 1);
+	    gl.CopyPixels(sx,srcy+1, w,h, GL_COLOR);
 	  }
 	}
 #endif
 
-	glDisable(GL_COLOR_LOGIC_OP);
+	gl.Disable(GL_COLOR_LOGIC_OP);
 	return 1;
 }
 
@@ -913,45 +877,45 @@ int OpenGLVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2,
 {
 	if ((logOp == 1) && (pattern != 0xffff)) {
 		/* First, the back color */
-		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		gl.Color3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
 		if ((x1 == x2) && (y1 == y2)) {
-			glBegin(GL_POINTS);
-				glVertex2i(x1,y1);
-			glEnd();
+			gl.Begin(GL_POINTS);
+				gl.Vertex2i(x1,y1);
+			gl.End();
 		} else {
-			glBegin(GL_LINES);
-				glVertex2i(x1,y1);
-				glVertex2i(x2,y2);
-			glEnd();
+			gl.Begin(GL_LINES);
+				gl.Vertex2i(x1,y1);
+				gl.Vertex2i(x2,y2);
+			gl.End();
 		}
 	}
 
-	glEnable(GL_COLOR_LOGIC_OP);
+	gl.Enable(GL_COLOR_LOGIC_OP);
 	if (logOp == 3) {
-		glLogicOp(GL_XOR);
-		glColor3ub(0xff,0xff,0xff);
+		gl.LogicOp(GL_XOR);
+		gl.Color3ub(0xff,0xff,0xff);
 	} else {
-		glLogicOp(GL_COPY);
-		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+		gl.LogicOp(GL_COPY);
+		gl.Color3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 	}
 
-	glEnable(GL_LINE_STIPPLE);
-	glLineStipple(1,pattern);
+	gl.Enable(GL_LINE_STIPPLE);
+	gl.LineStipple(1,pattern);
 
 	/* Draw with fgColor */
 	if ((x1 == x2) && (y1 == y2)) {
-		glBegin(GL_POINTS);
-			glVertex2i(x1,y1);
-		glEnd();
+		gl.Begin(GL_POINTS);
+			gl.Vertex2i(x1,y1);
+		gl.End();
 	} else {
-		glBegin(GL_LINES);
-			glVertex2i(x1,y1);
-			glVertex2i(x2,y2);
-		glEnd();
+		gl.Begin(GL_LINES);
+			gl.Vertex2i(x1,y1);
+			gl.Vertex2i(x2,y2);
+		gl.End();
 	}
 
-	glDisable(GL_LINE_STIPPLE);
-	glDisable(GL_COLOR_LOGIC_OP);
+	gl.Disable(GL_LINE_STIPPLE);
+	gl.Disable(GL_COLOR_LOGIC_OP);
 
 	D(bug("glvdi: drawline(%d,%d,%d,%d,0x%08x,0x%08x",x1,y1,x2,y2,fgColor,bgColor));
 	return 1;
@@ -965,55 +929,55 @@ int OpenGLVdiDriver::drawTableLine(memptr table, int length, uint16 pattern,
 
 	if ((logOp == 1) && (pattern != 0xffff)) {
 		/* First, the back color */
-		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		gl.Color3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
 		tmp_length = length;
 		tmp_table = table;
 		if ((ReadInt16(table) == ReadInt16(table + length * 4 - 4)) &&
 		    (ReadInt16(table + 2) == ReadInt16(table + length * 4 - 2))) {
 			length--;
-			glBegin(GL_LINE_LOOP);
+			gl.Begin(GL_LINE_LOOP);
 		} else {
-			glBegin(GL_LINE_STRIP);
+			gl.Begin(GL_LINE_STRIP);
 		}
 		for(; length > 0; length--) {
 			x = (int16)ReadInt16(table); table += 2;
 			y = (int16)ReadInt16(table); table += 2;
-			glVertex2i(x, y);
+			gl.Vertex2i(x, y);
 		}
 		length = tmp_length;
 		table = tmp_table;
-		glEnd();
+		gl.End();
 	}
 
-	glEnable(GL_COLOR_LOGIC_OP);
+	gl.Enable(GL_COLOR_LOGIC_OP);
 	if (logOp == 3) {
-		glLogicOp(GL_XOR);
-		glColor3ub(0xff,0xff,0xff);
+		gl.LogicOp(GL_XOR);
+		gl.Color3ub(0xff,0xff,0xff);
 	} else {
-		glLogicOp(GL_COPY);
-		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+		gl.LogicOp(GL_COPY);
+		gl.Color3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 	}
 
-	glEnable(GL_LINE_STIPPLE);
-	glLineStipple(1,pattern);
+	gl.Enable(GL_LINE_STIPPLE);
+	gl.LineStipple(1,pattern);
 
 	/* Draw with fgColor */
 	if ((ReadInt16(table) == ReadInt16(table + length * 4 - 4)) &&
 	    (ReadInt16(table + 2) == ReadInt16(table + length * 4 - 2))) {
 		length--;
-		glBegin(GL_LINE_LOOP);
+		gl.Begin(GL_LINE_LOOP);
 	} else {
-		glBegin(GL_LINE_STRIP);
+		gl.Begin(GL_LINE_STRIP);
 	}
 	for(; length > 0; length--) {
 		x = (int16)ReadInt16(table); table += 2;
 		y = (int16)ReadInt16(table); table += 2;
-		glVertex2i(x, y);
+		gl.Vertex2i(x, y);
 	}
-	glEnd();
+	gl.End();
 
-	glDisable(GL_LINE_STIPPLE);
-	glDisable(GL_COLOR_LOGIC_OP);
+	gl.Disable(GL_LINE_STIPPLE);
+	gl.Disable(GL_COLOR_LOGIC_OP);
 
 	D(bug("glvdi: drawTableLine(%d,0x%08x,0x%08x",length,fgColor,bgColor));
 	return 1;
@@ -1072,8 +1036,8 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	cx2=ReadInt32(clip+8);
 	cy2=ReadInt32(clip+12);
 
-	glScissor(cx1,hostScreen.getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
-	glEnable(GL_SCISSOR_TEST);
+	gl.Scissor(cx1,hostScreen.getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
+	gl.Enable(GL_SCISSOR_TEST);
 
 	memptr table = 0;
 	memptr index = 0;
@@ -1120,7 +1084,7 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	} else
 		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp);
 
-	glDisable(GL_SCISSOR_TEST);
+	gl.Disable(GL_SCISSOR_TEST);
 	return 1;
 }
 
@@ -1134,11 +1098,11 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 
 extern "C" {
 	static void CALLBACK tess_begin(GLenum which) {
-		glBegin(which);
+		gl.Begin(which);
 	}
 
 	static void CALLBACK tess_end(void) {
-		glEnd();
+		gl.End();
 	}
 
 	static void CALLBACK tess_error(GLenum errorCode) {
@@ -1187,23 +1151,23 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	cx2=ReadInt32(clip+8);
 	cy2=ReadInt32(clip+12);
 
-	glScissor(cx1,hostScreen.getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
-	glEnable(GL_SCISSOR_TEST);
+	gl.Scissor(cx1,hostScreen.getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
+	gl.Enable(GL_SCISSOR_TEST);
 
 	/* Create tesselator */
 	if (!tess) {
 		tess=gluNewTess();
-		gluTessCallback(tess,GLU_TESS_VERTEX,(_GLUfuncptr)glVertex3dv);
+		gluTessCallback(tess,GLU_TESS_VERTEX,(_GLUfuncptr)gl.Vertex3dv);
 		gluTessCallback(tess,GLU_TESS_BEGIN,(_GLUfuncptr)tess_begin);
 		gluTessCallback(tess,GLU_TESS_END,(_GLUfuncptr)tess_end);
 		gluTessCallback(tess,GLU_TESS_ERROR,(_GLUfuncptr)tess_error);
 	}
 
 	/* Tesselate polygon in list */
-	tess_list = glGenLists(1);
+	tess_list = gl.GenLists(1);
 	poly_coords = new GLdouble[3*n];	
 
-	glNewList(tess_list, GL_COMPILE);
+	gl.NewList(tess_list, GL_COMPILE);
 		gluTessBeginPolygon(tess, NULL);
 			gluTessBeginContour(tess);
 			for (i=0;i<n;i++) {
@@ -1214,33 +1178,33 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 			}
 			gluTessEndContour(tess);
 		gluTessEndPolygon(tess);
-	glEndList();
+	gl.EndList();
 
 	delete poly_coords;
 
 	if (logOp == 1) {
 		/* First, the back color */
-		glColor3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
-		glCallList(tess_list);
+		gl.Color3ub((bgColor>>16)&0xff,(bgColor>>8)&0xff,bgColor&0xff);
+		gl.CallList(tess_list);
 	}
 
-	glEnable(GL_COLOR_LOGIC_OP);
+	gl.Enable(GL_COLOR_LOGIC_OP);
 	if (logOp == 3) {
-		glLogicOp(GL_XOR);
-		glColor3ub(0xff,0xff,0xff);
+		gl.LogicOp(GL_XOR);
+		gl.Color3ub(0xff,0xff,0xff);
 	} else {
-		glLogicOp(GL_COPY);
-		glColor3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
+		gl.LogicOp(GL_COPY);
+		gl.Color3ub((fgColor>>16)&0xff,(fgColor>>8)&0xff,fgColor&0xff);
 	}
 
-	glEnable(GL_POLYGON_STIPPLE);
-	glPolygonStipple((const GLubyte *)gl_pattern);
+	gl.Enable(GL_POLYGON_STIPPLE);
+	gl.PolygonStipple((const GLubyte *)gl_pattern);
 
-	glCallList(tess_list);
+	gl.CallList(tess_list);
 
-	glDeleteLists(tess_list,1);
-	glDisable(GL_POLYGON_STIPPLE);
-	glDisable(GL_SCISSOR_TEST);
+	gl.DeleteLists(tess_list,1);
+	gl.Disable(GL_POLYGON_STIPPLE);
+	gl.Disable(GL_SCISSOR_TEST);
 	D(bug("glvdi: fillpoly"));
 	return 1;
 #endif
@@ -1300,29 +1264,29 @@ int32 OpenGLVdiDriver::drawText(memptr vwk, memptr text, uint32 length,
 	w = ch_w * length;
 	h = ch_h;
 
-	glScissor(cx1,           hostScreen.getHeight() - cy2 - 1,
+	gl.Scissor(cx1,           hostScreen.getHeight() - cy2 - 1,
 		  cx2 - cx1 + 1, cy2 - cy1 + 1);
-	glEnable(GL_SCISSOR_TEST);
+	gl.Enable(GL_SCISSOR_TEST);
 
 	if (logOp == 1) {
 		/* First, the back color */
-		glColor3ub((bgColor >> 16) & 0xff, (bgColor >> 8) & 0xff,
+		gl.Color3ub((bgColor >> 16) & 0xff, (bgColor >> 8) & 0xff,
 			   bgColor & 0xff);
-		glBegin(GL_QUADS);
-			glVertex2i(dx,     dy);
-			glVertex2i(dx + w, dy);
-			glVertex2i(dx + w, dy + h);
-			glVertex2i(dx,     dy + h);
-		glEnd();
+		gl.Begin(GL_QUADS);
+			gl.Vertex2i(dx,     dy);
+			gl.Vertex2i(dx + w, dy);
+			gl.Vertex2i(dx + w, dy + h);
+			gl.Vertex2i(dx,     dy + h);
+		gl.End();
 	}
 
-	glEnable(GL_COLOR_LOGIC_OP);
+	gl.Enable(GL_COLOR_LOGIC_OP);
 	if (logOp == 3) {
-		glLogicOp(GL_XOR);
-		glColor3ub(0xff, 0xff, 0xff);
+		gl.LogicOp(GL_XOR);
+		gl.Color3ub(0xff, 0xff, 0xff);
 	} else {
-		glLogicOp(GL_COPY);
-		glColor3ub((fgColor >> 16) & 0xff, (fgColor >> 8) & 0xff,
+		gl.LogicOp(GL_COPY);
+		gl.Color3ub((fgColor >> 16) & 0xff, (fgColor >> 8) & 0xff,
 			   fgColor & 0xff);
 	}
 
@@ -1331,11 +1295,11 @@ int32 OpenGLVdiDriver::drawText(memptr vwk, memptr text, uint32 length,
 	  sx = -dx;
 	  dx = 0;
 	}
-	glRasterPos2i(dx, dy + h - 1);
-	glBitmap(w, h,  sx, 0,  0, 0, (const GLubyte *)bitmap);
+	gl.RasterPos2i(dx, dy + h - 1);
+	gl.Bitmap(w, h,  sx, 0,  0, 0, (const GLubyte *)bitmap);
 
-	glDisable(GL_COLOR_LOGIC_OP);
-	glDisable(GL_SCISSOR_TEST);
+	gl.Disable(GL_COLOR_LOGIC_OP);
+	gl.Disable(GL_SCISSOR_TEST);
 
 	free(bitmap);
 

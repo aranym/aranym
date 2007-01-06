@@ -36,6 +36,7 @@
 
 #ifdef ENABLE_OPENGL
 #include <SDL_opengl.h>
+#include "dyngl.h"
 #endif
 
 #ifdef OS_cygwin
@@ -125,10 +126,11 @@ HostScreen::~HostScreen(void) {
 			mainSurface=NULL;
 		}
 
-		if (SdlGlTexture) {
-			glDeleteTextures(1, &SdlGlTexObj);
-			SdlGlTexture=NULL;
-		}
+		/* TODO: gl pointer not valid anymore at this time */
+// 		if (SdlGlTexture) {
+// 			gl.DeleteTextures(1, &SdlGlTexObj);
+// 			SdlGlTexture=NULL;
+// 		}
 	}
 #endif
 }
@@ -378,24 +380,24 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		this->height = height = SdlGlSurface->h;
 		this->bpp = bpp = 32;	/* bpp of texture that will be used */
 
-		glViewport(0, 0, width, height);
+		gl.Viewport(0, 0, width, height);
 
 		/* Projection matrix */
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0.0, width, height, 0.0, -1.0, 1.0);
+		gl.MatrixMode(GL_PROJECTION);
+		gl.LoadIdentity();
+		gl.Ortho(0.0, width, height, 0.0, -1.0, 1.0);
 
 		/* Texture matrix */
-		glMatrixMode(GL_TEXTURE);
-		glLoadIdentity();
+		gl.MatrixMode(GL_TEXTURE);
+		gl.LoadIdentity();
 
 		/* Model view matrix */
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glTranslatef(0.375, 0.375, 0.0);
+		gl.MatrixMode(GL_MODELVIEW);
+		gl.LoadIdentity();
+		gl.Translatef(0.375, 0.375, 0.0);
 
 		/* Setup texturing mode */
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		gl.TexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 		/* Delete previous stuff */
 		if (mainSurface) {
@@ -404,7 +406,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		}
 
 		if (SdlGlTexture) {
-			glDeleteTextures(1, &SdlGlTexObj);
+			gl.DeleteTextures(1, &SdlGlTexObj);
 		}
 
 		/* Full screen OpenGL rendering ? */
@@ -414,9 +416,9 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 
 			rect_target=GL_TEXTURE_2D;
 			npot_texture = rect_texture = SDL_FALSE;
-			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
+			gl.GetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
 
-			extensions = (char *)glGetString(GL_EXTENSIONS);
+			extensions = (char *)gl.GetString(GL_EXTENSIONS);
 
 			/* Check texture rectangle extensions */
 
@@ -424,21 +426,21 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			if (strstr(extensions, "GL_NV_texture_rectangle")) {
 				rect_texture = SDL_TRUE;
 				rect_target=GL_TEXTURE_RECTANGLE_NV;
-				glGetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_NV, &MaxTextureSize);
+				gl.GetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_NV, &MaxTextureSize);
 			}
 #endif
 #if defined(GL_EXT_texture_rectangle)
 			if (strstr(extensions, "GL_EXT_texture_rectangle")) {
 				rect_texture = SDL_TRUE;
 				rect_target=GL_TEXTURE_RECTANGLE_EXT;
-				glGetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_EXT, &MaxTextureSize);
+				gl.GetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_EXT, &MaxTextureSize);
 			}
 #endif
 #if defined(GL_ARB_texture_rectangle)
 			if (strstr(extensions, "GL_ARB_texture_rectangle")) {
 				rect_texture = SDL_TRUE;
 				rect_target=GL_TEXTURE_RECTANGLE_ARB;
-				glGetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB, &MaxTextureSize);
+				gl.GetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB, &MaxTextureSize);
 			}
 #endif
 
@@ -448,7 +450,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 				npot_texture=SDL_TRUE;
 				rect_texture=SDL_FALSE;
 				rect_target=GL_TEXTURE_2D;
-				glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
+				gl.GetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
 			}
 
 			SdlGlTextureWidth = SdlGlTextureHeight = MaxTextureSize;
@@ -501,17 +503,17 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		SdlGlTexture = (uint8 *) (mainSurface->pixels);
 
 		if (!OpenGLVdi) {
-			glGenTextures(1, &SdlGlTexObj);
-			glBindTexture(GL_TEXTURE_2D, SdlGlTexObj);
+			gl.GenTextures(1, &SdlGlTexObj);
+			gl.BindTexture(GL_TEXTURE_2D, SdlGlTexObj);
 
 			filtering = GL_NEAREST;		
 			if (bx_options.opengl.filtered) {
 				filtering = GL_LINEAR;
 			}
-			glTexParameteri(rect_target, GL_TEXTURE_MAG_FILTER, filtering); // scale when image bigger than texture
-			glTexParameteri(rect_target, GL_TEXTURE_MIN_FILTER, filtering); // scale when image smaller than texture
+			gl.TexParameteri(rect_target, GL_TEXTURE_MAG_FILTER, filtering); // scale when image bigger than texture
+			gl.TexParameteri(rect_target, GL_TEXTURE_MIN_FILTER, filtering); // scale when image smaller than texture
 
-			glTexImage2D(rect_target, 0, GL_RGBA, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, SdlGlTexture);
+			gl.TexImage2D(rect_target, 0, GL_RGBA, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, SdlGlTexture);
 
 			D(bug("gl: texture created"));
 
@@ -1446,8 +1448,8 @@ void HostScreen::OpenGLUpdate(void)
 		return;
 	}
 
-	glEnable(rect_target);
-	glBindTexture(rect_target, SdlGlTexObj);
+	gl.Enable(rect_target);
+	gl.BindTexture(rect_target, SdlGlTexObj);
 
 	/* Update the texture */
 	{
@@ -1462,7 +1464,7 @@ void HostScreen::OpenGLUpdate(void)
 				}
 			}
 			if (update_line) {
-				glTexSubImage2D(rect_target, 0,
+				gl.TexSubImage2D(rect_target, 0,
 					 0, y<<4,
 					 SdlGlTextureWidth, 16,
 					 GL_BGRA, GL_UNSIGNED_BYTE,
@@ -1481,21 +1483,21 @@ void HostScreen::OpenGLUpdate(void)
 		tex_height = (GLfloat)height;
 	}
 
-	glBegin(GL_QUADS);
-		glTexCoord2f( 0.0, 0.0 );
-		glVertex2i( 0, 0);
+	gl.Begin(GL_QUADS);
+		gl.TexCoord2f( 0.0, 0.0 );
+		gl.Vertex2i( 0, 0);
 
-		glTexCoord2f( tex_width, 0.0 );
-		glVertex2i( SdlGlWidth, 0);
+		gl.TexCoord2f( tex_width, 0.0 );
+		gl.Vertex2i( SdlGlWidth, 0);
 
-		glTexCoord2f( tex_width, tex_height);
-		glVertex2i( SdlGlWidth, SdlGlHeight);
+		gl.TexCoord2f( tex_width, tex_height);
+		gl.Vertex2i( SdlGlWidth, SdlGlHeight);
 
-		glTexCoord2f( 0.0, tex_height);
-		glVertex2i( 0, SdlGlHeight);
-	glEnd();
+		gl.TexCoord2f( 0.0, tex_height);
+		gl.Vertex2i( 0, SdlGlHeight);
+	gl.End();
 
-	glDisable(rect_target);
+	gl.Disable(rect_target);
 #endif
 }
 
