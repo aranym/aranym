@@ -31,10 +31,15 @@
 
 #include <SDL_endian.h>
 #include <SDL_opengl.h>
-#ifdef OS_darwin
-#include <OpenGL/glu.h>
-#else
-#include <GL/glu.h>
+
+#define ENABLE_GLU_TESSELATOR 0
+
+#if ENABLE_GLU_TESSELATOR
+# ifdef OS_darwin
+#  include <OpenGL/glu.h>
+# else
+#  include <GL/glu.h>
+# endif
 #endif
 
 /*--- Defines ---*/
@@ -1121,6 +1126,8 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 
 /* Polygon tesselator callback functions */
 
+#if ENABLE_GLU_TESSELATOR
+
 #ifndef CALLBACK
 #define CALLBACK
 #endif
@@ -1138,12 +1145,13 @@ extern "C" {
 		fprintf(stderr,"glvdi: Tesselation error: %s\n", gluErrorString(errorCode));
 	}
 }
+#endif
 
 int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	memptr index_addr, int moves, memptr pattern_addr, uint32 fgColor,
 	uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip)
 {
-#if 1
+#if !ENABLE_GLU_TESSELATOR
 	return VdiDriver::fillPoly(vwk, points_addr, n, index_addr, moves,
 	                           pattern_addr, fgColor, bgColor, logOp,
 	                           interior_style, clip);
