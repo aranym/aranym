@@ -25,6 +25,7 @@
  */
 
 #include "config.h"
+#include <cassert>
 #include "sdlgui.h"
 #include "file.h"
 #include "ata.h"
