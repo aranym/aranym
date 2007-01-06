@@ -405,6 +405,7 @@ void presave_video()
 struct Config_Tag opengl_conf[]={
 	{ "Enabled", Bool_Tag, &bx_options.opengl.enabled, 0, 0},
 	{ "Filtered", Bool_Tag, &bx_options.opengl.filtered, 0, 0},
+	{ "Library", Path_Tag, bx_options.opengl.library, sizeof(bx_options.opengl.library), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -412,6 +413,7 @@ void preset_opengl()
 {
   bx_options.opengl.enabled = false;
   bx_options.opengl.filtered = false;
+  strcpy(bx_options.opengl.library, "");
 }
 
 void postload_opengl()

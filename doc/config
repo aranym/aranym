@@ -160,6 +160,9 @@ Enabled = No
 # Use linear filtering on the atari screen
 Filtered = No
 
+# If you don't want to use default GL library, set this value to your
+#  favorite libGL file.
+Library =
 
 # Networking (FreeMiNT with aranym.xif)
 # Range: ETH0-ETH3
