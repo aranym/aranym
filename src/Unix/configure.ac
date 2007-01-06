@@ -63,7 +63,9 @@ AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support 
 
 AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI (default=yes)], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
 
-AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default=no)], [WANT_OPENGL=$enableval], [WANT_OPENGL=no])
+AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default=yes)], [WANT_OPENGL=$enableval], [WANT_OPENGL=yes])
+
+AC_ARG_WITH(mesa-headers,      [  --with-mesa-headers     Path to Mesa header files], [WITH_MESAINC=$withval], [WITH_MESAINC=no])
 
 AC_ARG_ENABLE(nfcdrom,         [  --enable-nfcdrom        enable NatFeat CD-ROM (default=yes)], [WANT_NFCDROM=$enableval], [WANT_NFCDROM=yes])
 
@@ -90,8 +92,6 @@ AC_ARG_ENABLE(parallelx86,     [  --enable-parallelx86    enable Linux X86 hw ac
 AC_ARG_ENABLE(parport,         [  --enable-parport        enable Linux /dev/parport access for parallel port (default=yes)], [WANT_PARALLELPARPORT=$enableval], [WANT_PARALLELPARPORT=yes])
 
 AC_ARG_WITH(fink,              [  --with-fink             Use Fink suite to build Aranym on MacOSX (default=no)], [WITH_FINK=$withval], [WITH_FINK=no])
-
-AC_ARG_WITH(mesa-headers,      [  --with-mesa-headers     Path to Mesa header files], [WITH_MESAINC=$withval], [WITH_MESAINC=no])
 
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
@@ -1378,23 +1378,6 @@ if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
   fi
 fi
 
-dnl Check for Mesa first, unless we were asked not to.
-AC_ARG_ENABLE(mesa, [  --enable-mesa           prefer the Mesa library (default=yes)], [use_Mesa=$enableval], [use_Mesa=yes])
-
-dnl Add OpenGL ?
-if [[ "x$WANT_OPENGL" = "xyes" ]]; then
-  MDL_HAVE_OPENGL
-  if [[ "x$have_GL" = "xyes" ]]; then
-    AC_DEFINE([ENABLE_OPENGL], 1, [Define if using OpenGL])
-    CFLAGS="$CFLAGS $GL_CFLAGS"
-    CXXFLAGS="$CXXFLAGS $GL_CFLAGS"
-    LIBS="$LIBS $GL_LIBS"
-  else
-    AC_MSG_ERROR([OpenGL not found])
-    WANT_OPENGL="no"
-  fi
-fi
-
 dnl Check for SDL
 SDL_CFLAGS=
 SDL_LIBS=
@@ -1414,7 +1397,52 @@ if test "$OS_TYPE" == "darwin" -a "x$WITH_FINK" = "xno"; then
 	CPPFLAGS="$CPPFLAGS -I$SDL_LOCATION/SDL.framework/Headers"
 	SDL_LIBS="-F$SDL_LOCATION -framework SDL"
 else
-	AM_PATH_SDL(1.2.0, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found! ***]))
+	AM_PATH_SDL(1.2.10, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION or higher not found! ***]))
+fi
+
+dnl Add OpenGL ?
+if test "x$WANT_OPENGL" = "xyes"; then
+	AC_MSG_CHECKING(for OpenGL support)
+	have_opengl="no"
+	GL_LIBS=""
+	case "$host" in
+		*-*-cygwin* | *-*-mingw*)
+			GL_LIBS="-lopengl32"
+			;;
+		*-*-darwin*)
+			GL_LIBS="-Wl,-framework,OpenGL"
+			;;
+		*)
+			GL_LIBS="-lGL"
+			;;
+	esac
+	tmp_cflags=$CFLAGS
+	tmp_libs=$LIBS
+	CFLAGS="$CFLAGS $SDL_CFLAGS"
+	LIBS="$LIBS $SDL_LIBS $GL_LIBS"
+	AC_TRY_COMPILE([
+		 #include "SDL_opengl.h"
+		],[],[have_opengl="yes"])
+	AC_MSG_RESULT($have_opengl)
+	CFLAGS=$tmp_cflags
+	LIBS=$tmp_libs
+	DYNGLSRCS=""
+	if test "x$have_opengl" = "xyes"; then
+		AC_DEFINE([ENABLE_OPENGL], 1, [Define if OpenGL enabled])
+		DYNGLSRCS="../dyngl.c"
+	else
+		WANT_OPENGL="no"
+	fi
+
+dnl	MDL_HAVE_OPENGL
+dnl	if test "x$have_GL" = "xyes"; then
+dnl		AC_DEFINE([ENABLE_OPENGL], 1, [Define if using OpenGL])
+dnl		CFLAGS="$CFLAGS $GL_CFLAGS"
+dnl		CXXFLAGS="$CXXFLAGS $GL_CFLAGS"
+dnl		LIBS="$LIBS $GL_LIBS"
+dnl	else
+dnl		WANT_OPENGL="no"
+dnl	fi
 fi
 
 dnl Check for zlib
@@ -1614,6 +1642,7 @@ AC_SUBST(NFCLIPBOARDSRCS)
 AC_SUBST(PARALLELX86SRCS)
 AC_SUBST(PARALLELPARPORTSRCS)
 AC_SUBST(GUISDLSRCS)
+AC_SUBST(DYNGLSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
 AC_SUBST(TARGET)
