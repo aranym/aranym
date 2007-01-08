@@ -246,19 +246,24 @@ int32 OpenGLVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 
 void OpenGLVdiDriver::restoreMouseBackground(void)
 {
-	gl.RasterPos2i(Mouse.storage.x,Mouse.storage.y+16);
-	gl.DrawPixels(16,16, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[0][0]));
+	D(bug("restore >%d %d %d %d", Mouse.storage.x, Mouse.storage.y+Mouse.storage.height, Mouse.storage.width, Mouse.storage.height));
+	gl.RasterPos2i(Mouse.storage.x,Mouse.storage.y+Mouse.storage.height);
+	gl.DrawPixels(Mouse.storage.width, Mouse.storage.height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[0][0]));
 }
+
 
 void OpenGLVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width,
 	int16 height)
 {
 	Mouse.storage.x = x;
 	Mouse.storage.y = y;
+	Mouse.storage.width = width;
+	Mouse.storage.height = height;
 
+	y = hostScreen.getHeight()-(y+height);
+	D(bug("save <%d %d %d %d", x, y, width, height));
 	gl.ReadPixels(
-		Mouse.storage.x,hostScreen.getHeight()-(Mouse.storage.y+height),
-		width,height,
+		x, y, width, height,
 		GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, &(Mouse.storage.background[0][0])
 	);
 }
@@ -327,12 +332,12 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	y -= Mouse.hotspot.y;
 
 	// beware of the edges of the screen
-	int maxx=hostScreen.getWidth()-16, maxy=hostScreen.getHeight()-16;
+	int maxx=hostScreen.getWidth(), maxy=hostScreen.getHeight();
 
 	x = (x>maxx ? maxx : (x<0 ? 0: x));
 	y = (y>maxy ? maxy : (y<0 ? 0: y));
 
-	saveMouseBackground(x,y,16,16);
+	saveMouseBackground(x,y,MIN(maxx-x, 16),MIN(maxy-y-1, 16));
 
 	gl.Enable(GL_TEXTURE_2D);
 	gl.Enable(GL_BLEND);

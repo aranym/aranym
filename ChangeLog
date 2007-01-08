@@ -1,3 +1,8 @@
+2007/01/08 - Philipp
+- Partially fixed background restore for mouse cursor when it's close to right
+  or bottom border.
+
+
 2007/01/06 - Patrice
 - Move AC_ defined functions from configure.ac to acinclude.m4
 - Thread related CFLAGS are already defined in SDL_CFLAGS
