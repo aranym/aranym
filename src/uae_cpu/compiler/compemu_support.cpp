@@ -77,6 +77,7 @@
 # include <csignal>
 # include <cstdlib>
 # include <cerrno>
+# include <cassert>
 
 #if defined(CPU_x86_64) && 0
 #define RECORD_REGISTER_USAGE		1
