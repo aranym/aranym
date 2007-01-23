@@ -41,6 +41,7 @@
 
 # include <cmath>
 # include <cstdio>
+# include <cassert>
 
 #include "memory.h"
 #include "readcpu.h"
