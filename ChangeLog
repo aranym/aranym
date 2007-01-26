@@ -1,3 +1,7 @@
+2007/01/27 - Patrice
+- Move path related definitions from CXXFLAGS to config.h file.
+
+
 2007/01/08 - Philipp
 - Partially fixed background restore for mouse cursor when it's close to right
   or bottom border.
