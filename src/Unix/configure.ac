@@ -276,14 +276,14 @@ if [[ "x$HAVE_M68K" = "xyes" -a "x$CAN_NATIVE_M68K" = "xyes" ]]; then
   WANT_NATIVE_M68K=yes
 fi
 
-DIRSEPARATOR='\"\/\"'
+AC_DEFINE([DIRSEPARATOR], "/", [Default directory separator])
 
 case "$target_os" in
   linux*)
     EXTRASYSSRCS="linux/parameters_linux.cpp linux/ethernet_linux.cpp host_filesys_unix.cpp"
     ;;
   cygwin*)
-    DEFINES="$DEFINES -DARANYMHOME=\"\\\"aranym\\\"\""
+    AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
     LIBS="$LIBS -liberty"
     EXTRASYSSRCS="cygwin/parameters_cygwin.cpp cygwin/tools_cygwin.cpp cygwin/ethernet_cygwin.cpp"
     ;;
@@ -303,10 +303,12 @@ case "$target_os" in
   darwin*)
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     if test "x$WITH_FINK" = "xyes"; then
-        DEFINES="$DEFINES -DARANYMHOME=\\\"aranym\\\""
+        AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
         EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
     else
-        DEFINES="$DEFINES -DARANYMHOME=\\\"ARAnyM\\\" -DARANYMCONFIG=\\\"org.atari.aranym.config\\\" -DARANYMNVRAM=\\\"org.atari.aranym.nvram\\\" -DARANYMKEYMAP=\\\"org.atari.aranym.keymap\\\""
+        AC_DEFINE([ARANYMHOME], "ARAnyM", [Default ARAnyM directory])
+        AC_DEFINE([ARANYMCONFIG], "org.atari.aranym.config", [Default ARAnyM config file])
+        AC_DEFINE([ARANYMKEYMAP], "org.atari.aranym.keymap", [Default ARAnyM keymap])
         EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLMain.M"
         LIBS="$LIBS -framework AppKit -framework IOKit -framework CoreFoundation"
     fi
@@ -321,8 +323,6 @@ case "$target_os" in
 esac
 
 SYSSRCS="$SYSSRCS $EXTRASYSSRCS"
-
-DEFINES="$DEFINES -DDIRSEPARATOR=$DIRSEPARATOR"
 
 dnl Stupid hack around problem with extfs straply vs. Mac OS X
 AC_CACHE_CHECK([for __wchar_t],
