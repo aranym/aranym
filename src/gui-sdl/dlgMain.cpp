@@ -3,9 +3,9 @@
 #include "file.h"
 #include "parameters.h"			// load/saveSettings()
 
-#define Screen_Save()		{ hostScreen.lock(); hostScreen.saveBackground(); hostScreen.unlock(); }
+#define Screen_Save()		{ SCRLOCK; hostScreen.saveBackground(); SCRUNLOCK; }
 #define Screen_SetFullUpdate()
-#define Screen_Draw()		{ hostScreen.lock(); hostScreen.restoreBackground(); hostScreen.unlock(); }
+#define Screen_Draw()		{ SCRLOCK; hostScreen.restoreBackground(); SCRUNLOCK; }
 
 /* The main dialog: */
 enum MAINDLG {
@@ -130,9 +130,9 @@ void Dialog_MainDlg()
 
 	Screen_Save();
 
-	hostScreen.lock();
+	SCRLOCK;
 	SDL_ShowCursor(SDL_ENABLE);
-	hostScreen.unlock();
+	SCRUNLOCK;
 
 	bool closeDialog = false;
 	do {
@@ -205,9 +205,9 @@ void Dialog_MainDlg()
 	}
 	while (!closeDialog);
 
-	hostScreen.lock();
+	SCRLOCK;
 	SDL_ShowCursor(SDL_DISABLE);
-	hostScreen.unlock();
+	SCRUNLOCK;
 }
 
 /*-----------------------------------------------------------------------*/
