@@ -1,3 +1,7 @@
+2007/01/29 - Philipp
+- Existence check of MacOS X frameworks.
+
+
 2007/01/27 - Patrice
 - Move path related definitions from CXXFLAGS to config.h file.
 

@@ -306,11 +306,19 @@ case "$target_os" in
         AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
         EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
     else
-        AC_DEFINE([ARANYMHOME], "ARAnyM", [Default ARAnyM directory])
-        AC_DEFINE([ARANYMCONFIG], "org.atari.aranym.config", [Default ARAnyM config file])
-        AC_DEFINE([ARANYMKEYMAP], "org.atari.aranym.keymap", [Default ARAnyM keymap])
-        EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLMain.M"
-        LIBS="$LIBS -framework AppKit -framework IOKit -framework CoreFoundation"
+        dnl AC_DEFINE([ARANYMHOME], "ARAnyM", [Default ARAnyM directory])
+        dnl AC_DEFINE([ARANYMCONFIG], "org.atari.aranym.config", [Default ARAnyM config file])
+        dnl AC_DEFINE([ARANYMKEYMAP], "org.atari.aranym.keymap", [Default ARAnyM keymap])
+
+        EXTRASYSSRCS="MacOSX/parameters_MacOSX.m host_filesys_unix.cpp MacOSX/SDLMain.M"
+
+		BUNDLE_FRAMEWORKS=   dnl Empty list of frameworks to bundle
+		LDFLAGS="$LDFLAGS -FMacOSX" dnl Look for frameworks in MacOSX subdirectory
+		
+		dnl Check for some important frameworks
+		ARANYM_CHECK_FRAMEWORK(AppKit, [])
+		ARANYM_CHECK_FRAMEWORK(CoreFoundation, [#include <CoreFoundation/CoreFoundation.h>])
+		ARANYM_CHECK_FRAMEWORK(IOKit, [#include <IOKit/IOKitLib.h>])
     fi
     ;;
   beos*)
@@ -886,7 +894,7 @@ fi
 
 dnl SDL GUI
 GUISDLSRCS=""
-if [[ "x$WANT_SDLGUI" = "xyes" ]]; then
+if test "x$WANT_SDLGUI" = "xyes" ; then
   GUISDLSRCS="../gui-sdl/sdlgui.cpp ../gui-sdl/dlgFileSelect.cpp ../gui-sdl/file.cpp ../gui-sdl/dlgMain.cpp ../gui-sdl/dlgDisk.cpp ../gui-sdl/dlgKeyboard.cpp ../gui-sdl/dlgHotkeys.cpp ../gui-sdl/dlgAlert.cpp"
   CPPFLAGS="$CPPFLAGS -I\$(srcdir)/../gui-sdl"
   AC_DEFINE([SDL_GUI], 1, [Define if you want to build SDL GUI])
@@ -1379,24 +1387,17 @@ if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
 fi
 
 dnl Check for SDL
-SDL_CFLAGS=
-SDL_LIBS=
-SDL_LOCATION=
 if test "$OS_TYPE" == "darwin" -a "x$WITH_FINK" = "xno"; then
-	if test -d $HOME/Library/Frameworks/SDL.framework ; then
-		SDL_LOCATION="$HOME/Library/Frameworks"
-	elif test -d /Library/Frameworks/SDL.framework ; then
-		SDL_LOCATION="/Library/Frameworks"
-	elif test -d "$srcdir/MacOSX/SDL.framework" ; then
-		SDL_LOCATION="\$(srcdir)/MacOSX"
-	elif test -d "$srcdir/SDL.framework" ; then
-		SDL_LOCATION="\$(srcdir)"
-	else
-		AC_MSG_ERROR([SDL framework not found])
-	fi
+	ARANYM_CHECK_FRAMEWORK(SDL, [])
+fi
+if test "x$have_framework_SDL" = "xyes" ; then
+	ARANYM_CHECK_FRAMEWORK_LOCATION(SDL)
+	BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL_LOCATION"
+	SDL_CFLAGS=-I$SDL_LOCATION/Headers
 	CPPFLAGS="$CPPFLAGS -I$SDL_LOCATION/SDL.framework/Headers"
 	SDL_LIBS="-F$SDL_LOCATION -framework SDL"
 else
+	dnl Try macro from sdl.m4
 	AM_PATH_SDL(1.2.10, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION or higher not found! ***]))
 fi
 
@@ -1520,14 +1521,21 @@ dnl Natfeat JPEG decoder
 NFJPEGSRCS=""
 if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
 	dnl Check for SDL_Image
-#	AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
-#	if test "x$have_sdlimage_lib" = "xyes"; then
+	ARANYM_CHECK_FRAMEWORK(SDL_image, [])
+	if test "x$have_framework_SDL_image" = "xyes" ; then 
+		ARANYM_CHECK_FRAMEWORK_LOCATION(SDL_image)
+		SDL_CFLAGS="$SDL_CFLAGS -I$SDL_image_LOCATION/Headers"
+		BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL_image_LOCATION"
+		have_sdlimage_lib=yes
+	else
+		AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
+	fi
+	if test "x$have_sdlimage_lib" = "xyes" ; then
 		AC_DEFINE([NFJPEG_SUPPORT], 1, [Define if you want to use host JPEG decoder])
 		NFJPEGSRCS="../natfeat/nfjpeg.cpp"
-		LIBS="$LIBS -lSDL_image"
-#	else
-#		WANT_NFJPEG="no"
-#	fi
+	else
+		WANT_NFJPEG="no"
+	fi
 fi
 
 dnl Natfeat VDI driver
@@ -1646,7 +1654,7 @@ AC_SUBST(DYNGLSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
 AC_SUBST(TARGET)
-AC_SUBST(SDL_LOCATION)
+AC_SUBST(BUNDLE_FRAMEWORKS)
 AC_OUTPUT(Makefile)
 
 dnl Print summary.

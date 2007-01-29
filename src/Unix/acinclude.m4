@@ -1,3 +1,45 @@
+dnl Function to check for Mac OS X frameworks (stolen from Basilisk)
+dnl ARANYM_CHECK_FRAMEWORK($1=NAME, $2=INCLUDES)
+AC_DEFUN([ARANYM_CHECK_FRAMEWORK], [
+  AS_VAR_PUSHDEF([ac_Framework], [have_framework_$1])dnl
+  AC_CACHE_CHECK([whether compiler supports framework $1],
+    ac_Framework, [
+    saved_LIBS="$LIBS"
+    LIBS="$LIBS -framework $1"
+    AC_TRY_LINK(
+      [$2], [],
+      [AS_VAR_SET(ac_Framework, yes)], [AS_VAR_SET(ac_Framework, no); LIBS="$saved_LIBS"]
+    )
+  ])
+  AS_IF([test AS_VAR_GET(ac_Framework) = yes],
+    [AC_DEFINE(AS_TR_CPP(HAVE_FRAMEWORK_$1), 1, [Define if framework $1 is available.])]
+  )
+  AS_VAR_POPDEF([ac_Framework])dnl
+])
+
+
+dnl Find location of an existing Mac OS X framework
+dnl ARANYM_CHECK_FRAMEWORK_LOCATION($1=NAME)
+AC_DEFUN([ARANYM_CHECK_FRAMEWORK_LOCATION], [
+	AS_VAR_PUSHDEF([ac_Framework_Location], [$1_LOCATION])dnl
+	AC_CACHE_CHECK([location of $1 framework],
+		ac_Framework_Location, [
+		AS_VAR_SET(ac_Framework_Location, "")
+		pos_locations=`$CC -v main_unix.cpp -framework $1 $LDFLAGS 2>&1 | grep -e "> search" -A 999 | grep -e "End of " -B 999 | grep -e "^ "`
+		for pos_location in $pos_locations ; do
+			framework_loc="$pos_location/$1.framework"
+			if test -d "$framework_loc" ; then
+				AS_VAR_SET(ac_Framework_Location, "$framework_loc")
+				break;
+			fi
+		done
+	])
+	if test -z AS_VAR_GET(ac_Framework_Location) ; then
+		AC_MSG_ERROR([$1 framework not found])
+	fi
+	AS_VAR_POPDEF([ac_Framework_Location])dnl
+])
+
 dnl Check whether the compiler recognizes bool
 
 AC_DEFUN([AC_CXX_BOOL],
@@ -197,9 +239,23 @@ AC_DEFUN([MDL_HAVE_OPENGL],
   AC_REQUIRE([AC_PATH_X])
   AC_REQUIRE([AC_PATH_XTRA])
 
+  dnl Check for OpenGL framework
+  saved_LIBS="$LIBS"
+  ARANYM_CHECK_FRAMEWORK(OpenGL, [#include <OpenGL/OpenGL.h>])
+  LIBS="$saved_LIBS"
+
   AC_CACHE_CHECK([for OpenGL], mdl_cv_have_OpenGL,
   [
-    if test x"$OS_TYPE" = xcygwin; then
+    if test "x$have_framework_OpenGL" = "xyes" ; then
+      have_GL=yes
+      have_GLU=yes
+      have_GLX=no
+      GL_LIBS="-framework OpenGL"
+
+      AC_SUBST(GL_CFLAGS)
+      AC_SUBST(GL_LIBS)
+	
+    elif test x"$OS_TYPE" = xcygwin; then
       mdl_cv_have_OpenGL=yes
 
       have_GL=yes
@@ -230,11 +286,6 @@ dnl Add everything we need to compile and link X programs to GL_X_CFLAGS
 dnl and GL_X_LIBS.
   GL_CFLAGS="$X_CFLAGS"
   GL_X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 -lXext -lXmu -lXt -lXi $X_EXTRA_LIBS"
-fi
-
-dnl If we are running under darwin/Mac OS X then add the appropriate framework.
-if test x"$OS_TYPE" = xdarwin; then
-  GL_X_LIBS="-framework OpenGL"
 fi
 
     GL_save_CPPFLAGS="$CPPFLAGS"
