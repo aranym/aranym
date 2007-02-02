@@ -491,4 +491,9 @@ extern CFBundleRef mainBundle;
 # define JMP_BUF	jmp_buf
 #endif
 
+#define likely(x)	__builtin_expect(!!(x), 1)
+#define unlikely(x)	__builtin_expect(!!(x), 0)
+#define __always_inline	inline __attribute__((always_inline))
+
+
 #endif /* SYSDEPS_H */
