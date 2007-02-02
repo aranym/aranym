@@ -325,18 +325,17 @@ static inline void phys_put_byte(uaecptr addr, uae_u32 b)
 #ifdef FULLMMU
 static inline bool is_unaligned(uaecptr addr, int size)
 {
-    uae_u32 page_mask = (regs.mmu_pagesize == MMU_PAGE_4KB ? 0xfffff000 : 0xffffe000);
-    return ((addr & (size - 1)) && (addr ^ (addr + size - 1)) & page_mask);
+    return unlikely((addr & (size - 1)) && (addr ^ (addr + size - 1)) & 0xfff);
 }
 
-static inline uae_u32 get_long(uaecptr addr)
+static __always_inline uae_u32 get_long(uaecptr addr)
 {
     if (is_unaligned(addr, 4))
 	return mmu_get_unaligned(addr, FC_DATA, 4);
     SAVE_EXCEPTION;
     uae_u32 l;
     TRY(prb) {
-	l = phys_get_long(mmu_translate(addr, FC_DATA, 0, sz_long, 0));
+	l = phys_get_long(mmu_translate_fast(addr, regs.s, 1, 0, sz_long));
 	RESTORE_EXCEPTION;
     }
     CATCH(prb) {
@@ -347,14 +346,14 @@ static inline uae_u32 get_long(uaecptr addr)
     return l;
 }
 
-static inline uae_u16 get_word(uaecptr addr)
+static __always_inline uae_u16 get_word(uaecptr addr)
 {
     if (is_unaligned(addr, 2))
 	return mmu_get_unaligned(addr, FC_DATA, 2);
     SAVE_EXCEPTION;
     uae_u16 w;
     TRY(prb) {
-	w = phys_get_word(mmu_translate(addr, FC_DATA, 0, sz_word, 0));
+	w = phys_get_word(mmu_translate_fast(addr, regs.s, 1, 0, sz_word));
 	RESTORE_EXCEPTION;
     }
     CATCH(prb) {
@@ -365,12 +364,12 @@ static inline uae_u16 get_word(uaecptr addr)
     return w;
 }
 
-static inline uae_u8 get_byte(uaecptr addr)
+static __always_inline uae_u8 get_byte(uaecptr addr)
 {
     SAVE_EXCEPTION;
     uae_u8 b;
     TRY(prb) {
-	b = phys_get_byte(mmu_translate(addr, FC_DATA, 0, sz_byte, 0));
+	b = phys_get_byte(mmu_translate_fast(addr, regs.s, 1, 0, sz_byte));
 	RESTORE_EXCEPTION;
     }
     CATCH(prb) {
@@ -381,13 +380,13 @@ static inline uae_u8 get_byte(uaecptr addr)
     return b;
 }
 
-static inline void put_long(uaecptr addr, uae_u32 l)
+static __always_inline void put_long(uaecptr addr, uae_u32 l)
 {
     if (is_unaligned(addr, 4))
 	return mmu_put_unaligned(addr, l, FC_DATA, 4);
     SAVE_EXCEPTION;
     TRY(prb) {
-	phys_put_long(mmu_translate(addr, FC_DATA, 1, sz_long, 0),l);
+	phys_put_long(mmu_translate_fast(addr, regs.s, 1, 1, sz_long),l);
 	RESTORE_EXCEPTION;
     }
     CATCH(prb) {
@@ -399,13 +398,13 @@ static inline void put_long(uaecptr addr, uae_u32 l)
     }
 }
 
-static inline void put_word(uaecptr addr, uae_u16 w)
+static __always_inline void put_word(uaecptr addr, uae_u16 w)
 {
     if (is_unaligned(addr, 2))
 	return mmu_put_unaligned(addr, w, FC_DATA, 2);
     SAVE_EXCEPTION;
     TRY(prb) {
-	phys_put_word(mmu_translate(addr, FC_DATA, 1, sz_word, 0),w);
+	phys_put_word(mmu_translate_fast(addr, regs.s, 1, 1, sz_word),w);
 	RESTORE_EXCEPTION;
     }
     CATCH(prb) {
@@ -417,11 +416,11 @@ static inline void put_word(uaecptr addr, uae_u16 w)
     }
 }
 
-static inline void put_byte(uaecptr addr, uae_u16 b)
+static __always_inline void put_byte(uaecptr addr, uae_u16 b)
 {
     SAVE_EXCEPTION;
     TRY(prb) {
-	phys_put_byte(mmu_translate(addr, FC_DATA, 1, sz_byte, 0),b);
+	phys_put_byte(mmu_translate_fast(addr, regs.s, 1, 1, sz_byte),b);
 	RESTORE_EXCEPTION;
     }
     CATCH(prb) {

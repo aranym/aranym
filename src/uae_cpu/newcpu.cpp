@@ -1255,13 +1255,7 @@ void m68k_reset (void)
     regs.fpcr = regs.fpsr = regs.fpiar = 0; */
     fpu_reset();
     // MMU
-    mmu_set_root_pointer(0x806, 0);	// regs.urp = 0;
-    mmu_set_root_pointer(0x807, 0);	// regs.srp = 0;
-    mmu_set_ttr(TTR_D0, 0);
-    mmu_set_ttr(TTR_D1, 0);
-    mmu_set_ttr(TTR_I0, 0);
-    mmu_set_ttr(TTR_I1, 0);
-    mmu_set_mmusr(0);
+    mmu_reset();
     // Cache
     regs.cacr = 0;
     regs.caar = 0;

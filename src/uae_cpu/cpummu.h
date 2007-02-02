@@ -75,27 +75,36 @@ extern void mmu_dump_tables(void);
 #define MMU_PAGE_UR_SHIFT					11
 
 #define MMU_MMUSR_ADDR_MASK	0xfffff000
-#define MMU_MMUSR_B			(1 << 11)
-#define MMU_MMUSR_G			(1 << 10)
+#define MMU_MMUSR_B		(1 << 11)
+#define MMU_MMUSR_G		(1 << 10)
 #define MMU_MMUSR_U1		(1 << 9)
 #define MMU_MMUSR_U0		(1 << 8)
-#define MMU_MMUSR_S			(1 << 7)
-#define MMU_MMUSR_CM		(1 << 6) | ( 1 << 5)
-#define MMU_MMUSR_M			(1 << 4)
-#define MMU_MMUSR_W			(1 << 2)
-#define MMU_MMUSR_T			(1 << 1)
-#define MMU_MMUSR_R			(1 << 0)
+#define MMU_MMUSR_Ux		(MMU_MMUSR_U1 | MMU_MMUSR_U0)
+#define MMU_MMUSR_S		(1 << 7)
+#define MMU_MMUSR_CM		((1 << 6) | ( 1 << 5))
+#define MMU_MMUSR_M		(1 << 4)
+#define MMU_MMUSR_W		(1 << 2)
+#define MMU_MMUSR_T		(1 << 1)
+#define MMU_MMUSR_R		(1 << 0)
 
-struct mmu_atc_line	{
-	int	v, umode, g, s, cm, m, w, r, fc2;
-	uaecptr phys, log;
+struct mmu_atc_line {
+	uae_u16 tag;
+	unsigned global : 1;
+	unsigned tt : 1;
+	unsigned modified : 1;
+	unsigned write_protect : 1;
+	unsigned valid_data : 1;
+	unsigned valid_inst : 1;
+	uaecptr phys;
 };
 
-#define ATC_SIZE	128
+#define ATC_SIZE_LOG	10
+#define ATC_SIZE	(1 << ATC_SIZE_LOG)
 
-#ifndef DISABLE_ATC
-extern struct mmu_atc_line atc[ATC_SIZE];
-#endif
+#define ATC_INDEX(addr)	((((addr) >> 12) ^ ((addr) >> (32 - ATC_SIZE_LOG))) % ATC_SIZE)
+#define ATC_TAG(addr)	((addr) >> (ATC_SIZE_LOG + 12))
+
+extern struct mmu_atc_line atc[2][ATC_SIZE];
 
 #define TTR_I0	4
 #define TTR_I1	5
@@ -156,17 +165,28 @@ static inline void mmu_set_root_pointer(int regno, uae_u32 val)
 	*rp = val;
 }
 
-#define FC_DATA regs.s ? 5 : 1
-#define FC_INST regs.s ? 6 : 2
+#define FC_DATA		(regs.s ? 5 : 1)
+#define FC_INST		(regs.s ? 6 : 2)
 
-extern uaecptr REGPARAM2 mmu_translate(uaecptr theaddr,
-		int fc,
-		int write,
-		int size,
-		int test
-		);
+extern uaecptr REGPARAM2 mmu_translate(uaecptr addr, int fc, int write,
+				       int size, int test);
+
+static __always_inline uaecptr mmu_translate_fast(uaecptr addr, int super, int data,
+						  int write, int size)
+{
+	int idx = ATC_INDEX(addr);
+	int tag = ATC_TAG(addr);
+	struct mmu_atc_line *l = &atc[super][idx];
+	if (likely((l->tag == tag) &&
+		   (data ? l->valid_data : l->valid_inst) &&
+		   (!write || (!l->write_protect && l->modified))))
+		return l->phys | (addr & 0xfff);
+	return mmu_translate(addr, (super << 2) | (2 -data), write, size, 0);
+}
 
 extern uae_u32 mmu_get_unaligned(uaecptr addr, int fc, int size);
 extern void mmu_put_unaligned(uaecptr addr, uae_u32 data, int fc, int size);
+
+extern void mmu_reset(void);
 
 #endif /* CPUMMU_H */

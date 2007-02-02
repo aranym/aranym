@@ -95,22 +95,22 @@ extern void REGPARAM2 op_illg (uae_u32) REGPARAM;
 #define m68k_areg(r,num) (((r).regs + 8)[(num)])
 
 #ifdef FULLMMU
-static inline uae_u8 get_ibyte(uae_u32 o)
+static __always_inline uae_u8 get_ibyte(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o + 1;
-    return phys_get_byte(mmu_translate(addr, FC_INST, 0, sz_byte, 0));
+    return phys_get_byte(mmu_translate_fast(addr, regs.s, 0, 0, sz_byte));
 }
-static inline uae_u16 get_iword(uae_u32 o)
+static __always_inline uae_u16 get_iword(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o;
-    return phys_get_word(mmu_translate(addr, FC_INST, 0, sz_word, 0));
+    return phys_get_word(mmu_translate_fast(addr, regs.s, 0, 0, sz_word));
 }
-static inline uae_u32 get_ilong(uae_u32 o)
+static __always_inline uae_u32 get_ilong(uae_u32 o)
 {
     uaecptr addr = m68k_getpc() + o;
     if (is_unaligned (addr, 4))
 	return mmu_get_unaligned(addr, FC_INST, 4);
-    return phys_get_long(mmu_translate(addr, FC_INST, 0, sz_long, 0));
+    return phys_get_long(mmu_translate_fast(addr, regs.s, 0, 0, sz_long));
 }
 
 #else
