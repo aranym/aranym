@@ -198,3 +198,6 @@ Bill Allombert
 - FPU fixes
 - many bug reports about Debian problems on aranym
 
+Roman Zippel
+- MMU optimized (MMU translations cached for nice speed up)
+
