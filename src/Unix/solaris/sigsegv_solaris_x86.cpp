@@ -26,7 +26,7 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include <SDL_endian.h>
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #ifdef USE_JIT

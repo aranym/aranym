@@ -1393,23 +1393,6 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 #endif
 }
 
-#ifndef FULLMMU
-void mmu_op(uae_u32 opcode, uae_u16 /*extra*/)
-{
-    if ((opcode & 0xFF8) == 0x0500) { /* PFLUSHN instruction (An) */
-	flush_internals();
-    } else if ((opcode & 0xFF8) == 0x0508) { /* PFLUSH instruction (An) */
-	flush_internals();
-    } else if ((opcode & 0xFF8) == 0x0510) { /* PFLUSHAN instruction */
-	flush_internals();
-    } else if ((opcode & 0xFF8) == 0x0518) { /* PFLUSHA instruction */
-	flush_internals();
-    } else if ((opcode & 0xFF8) == 0x548) { /* PTESTW instruction */
-    } else if ((opcode & 0xFF8) == 0x568) { /* PTESTR instruction */
-    } else op_illg(opcode);
-}
-#endif
-
 static uaecptr last_trace_ad = 0;
 
 static void do_trace (void)

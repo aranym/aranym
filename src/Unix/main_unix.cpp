@@ -98,8 +98,6 @@ void segmentationfault(int)
 	exit(0);
 }
 
-bool ThirtyThreeBitAddressing = false;
-
 static void allocate_all_memory()
 {
 #if REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING
@@ -153,13 +151,6 @@ static void allocate_all_memory()
 	else
 # endif
 	{
-#ifdef USE_33BIT_ADDRESSING
-		// Speculatively enables 33-bit addressing
-		RAMBaseHost = (uint8*)vm_acquire(RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd, VM_MAP_DEFAULT | VM_MAP_33BIT);
-		if (RAMBaseHost != VM_MAP_FAILED)
-			ThirtyThreeBitAddressing = true;
-		else
-#endif
 		RAMBaseHost = (uint8*)vm_acquire(RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd);
 		if (RAMBaseHost == VM_MAP_FAILED) {
 			panicbug("Not enough free memory.");

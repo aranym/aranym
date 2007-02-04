@@ -782,12 +782,11 @@ if [[ "x$WANT_CDROM" = "xyes" ]]; then
      AC_DEFINE([SUPPORT_CDROM], 1, [Define if you want to use ATA CD-ROM emulation])
 fi
 
+MMUSRCS="../uae_cpu/cpummu.cpp"
 dnl Full MMU
 if [[ "x$WANT_MMU" = "xyes" ]]; then
     AC_DEFINE([FULLMMU], 1, [Define if using full MMU])
-    MMUSRCS="../uae_cpu/cpummu.cpp"
 else
-    MMUSRCS=""
     if [[ "x$WANT_PUREC" = "xyes" ]]; then
         AC_DEFINE([PUREC], 1, [Define if PureC hack needed])
     fi

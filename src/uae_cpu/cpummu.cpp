@@ -903,6 +903,7 @@ void mmu_put_unaligned (uaecptr addr, uae_u32 data, int fc, int size)
 	RESTORE_EXCEPTION;
 }
 
+#ifdef FULLMMU
 void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
 	int super = (regs.dfc & 4) != 0;
@@ -978,6 +979,22 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 	} else
 		op_illg (opcode);
 }
+#else
+void mmu_op(uae_u32 opcode, uae_u16 /*extra*/)
+{
+    if ((opcode & 0xFF8) == 0x0500) { /* PFLUSHN instruction (An) */
+	flush_internals();
+    } else if ((opcode & 0xFF8) == 0x0508) { /* PFLUSH instruction (An) */
+	flush_internals();
+    } else if ((opcode & 0xFF8) == 0x0510) { /* PFLUSHAN instruction */
+	flush_internals();
+    } else if ((opcode & 0xFF8) == 0x0518) { /* PFLUSHA instruction */
+	flush_internals();
+    } else if ((opcode & 0xFF8) == 0x548) { /* PTESTW instruction */
+    } else if ((opcode & 0xFF8) == 0x568) { /* PTESTR instruction */
+    } else op_illg(opcode);
+}
+#endif
 
 void mmu_reset(void)
 {
