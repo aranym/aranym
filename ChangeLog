@@ -1,5 +1,6 @@
 2007/02/04 - milan
-- JITc: 33 bit addressing hack removed
+- JITc: 33 bit addressing hack removed, other 64-bit fixes (CMOV, SAHF),
+        code based synced with Basilisk II
 
 - distrubuted dispatcher removed, not used at all
 
