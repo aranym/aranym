@@ -1528,6 +1528,9 @@ if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
 		have_sdlimage_lib=yes
 	else
 		AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
+		if test $have_sdlimage_lib = yes; then
+			LIBS="$LIBS -lSDL_image"
+		fi
 	fi
 	if test "x$have_sdlimage_lib" = "xyes" ; then
 		AC_DEFINE([NFJPEG_SUPPORT], 1, [Define if you want to use host JPEG decoder])
