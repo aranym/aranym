@@ -278,7 +278,7 @@ void ndebug::m68k_print(FILE * f)
 	    regs.t1, regs.t0, regs.s, regs.m,
 	    GET_XFLG, GET_NFLG, GET_ZFLG, GET_VFLG, GET_CFLG,
 	    		   (unsigned int) ((((int) regs.mmu_enabled) << 15) |
-				(((int) regs.mmu_pagesize) << 14)));
+				(((int) regs.mmu_pagesize_8k) << 14)));
 
 	fprintf(f, "CACR=%08lx DTT0=%08lx ITT0=%08lx SRP=%08lx  SFC=%d%d%d\n",
 		   (unsigned long) regs.cacr, (unsigned long) regs.dtt0,
@@ -579,7 +579,7 @@ void ndebug::log2phys(FILE *, uaecptr addr) {
 		SAVE_EXCEPTION;
 		TRY(prb) {
 			bug("MMU enabled: %08lx -> %08lx", (unsigned long)addr,
-			    (unsigned long)mmu_translate(addr, FC_DATA, 0, sz_long, 0));
+			    (unsigned long)mmu_translate(addr, regs.s, 1, 0));
 		}
 		CATCH(prb) {
 			switch (prb) {
