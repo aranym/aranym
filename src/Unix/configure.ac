@@ -829,9 +829,6 @@ if [[ "x$WANT_FIXEDVIDEORAM" = "xyes" ]]; then
   AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
 else
   if [[ "x$WANT_MMU" = "xyes" ]]; then
-    AC_MSG_WARN([MMU needs fixed position of VideoRAM])
-    AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
-    WANT_FIXEDVIDEORAM="yes"
     AC_MSG_WARN([Protection of first 2kB RAM enabled as well - won't hurt])
     AC_DEFINE([PROTECT2K], 1, [Define if you want to protect first 2kB of RAM against user mode access])
   fi
@@ -1529,7 +1526,7 @@ if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
 	else
 		AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
 		if test $have_sdlimage_lib = yes; then
-			LIBS="$LIBS -lSDL_image"
+			SDL_LIBS="$SDL_LIBS -lSDL_image"
 		fi
 	fi
 	if test "x$have_sdlimage_lib" = "xyes" ; then
