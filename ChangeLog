@@ -1,7 +1,15 @@
-2007/03/17 - Petr
+2007/03/17 - Petr comitting patches by Roman Zippel - thanks!
 - newcpu.[cpp|h], gencpu.c: bitfield instructions fixed (were reading a bit
-  too much). Also wrap around of bitfields in registers have been fixed.
-  Patch provided by Roman Zippel - thanks!
+  too much). Also wrap around of bitfields in registers has been fixed.
+
+- cpummu, newcpu, memory.h, registers.h: new core of the mmu atc cache.
+  It's now a two level cache. The first level cache is optimized for speed
+  (and actually consists of subcaches for read/writes, super/user,
+  instruction/data), while the second level is a bit larger and tries to take
+  alias issues a bit into account.
+
+- configure.ac: FIXED_VIDEORAM not required for MMU mode. SDL_image
+  added to SDL_LIBS instead of LIBS.
 
 
 2007/02/18 - Andreas
