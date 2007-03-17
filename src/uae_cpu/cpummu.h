@@ -246,11 +246,31 @@ extern void REGPARAM2 dfc_put_word(uaecptr addr, uae_u16 val);
 extern void REGPARAM2 dfc_put_byte(uaecptr addr, uae_u8 val);
 
 
-extern void mmu_flush_atc(uaecptr addr, bool super, bool global);
-extern void mmu_flush_atc_all(bool global);
-extern void mmu_reset(void);
-extern void mmu_set_tc(uae_u16 tc);
-extern void mmu_set_super(bool super);
+extern void REGPARAM2 mmu_flush_atc(uaecptr addr, bool super, bool global);
+extern void REGPARAM2 mmu_flush_atc_all(bool global);
+extern void REGPARAM2 mmu_op(uae_u32 opcode, uae_u16 extra);
+
+#ifdef FULLMMU
+
+extern void REGPARAM2 mmu_reset(void);
+extern void REGPARAM2 mmu_set_tc(uae_u16 tc);
+extern void REGPARAM2 mmu_set_super(bool super);
+
+#else
+
+static inline void mmu_reset(void)
+{
+}
+
+static inline void mmu_set_tc(uae_u16 /*tc*/)
+{
+}
+
+static inline void mmu_set_super(bool /*super*/)
+{
+}
+
+#endif
 
 #endif /* CPUMMU_H */
 /*

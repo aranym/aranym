@@ -34,6 +34,8 @@
 #define DBG_MMU_VERBOSE	1
 #define DBG_MMU_SANITY	1
 
+#ifdef FULLMMU
+
 mmu_atc_l1_array atc_l1[2];
 mmu_atc_l1_array *current_atc;
 struct mmu_atc_line atc_l2[2][ATC_L2_SIZE];
@@ -891,7 +893,6 @@ void dfc_put_byte(uaecptr addr, uae_u8 val)
 	}
 }
 
-#ifdef FULLMMU
 void mmu_op(uae_u32 opcode, uae_u16 extra)
 {
 	int super = (regs.dfc & 4) != 0;
@@ -952,18 +953,6 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 	} else
 		op_illg (opcode);
 }
-#else
-void mmu_op(uae_u32 opcode, uae_u16 /*extra*/)
-{
-	if ((opcode & 0xFE0) == 0x0500) {
-		/* PFLUSH instruction */
-		flush_internals();
-	} else if ((opcode & 0x0FD8) == 0x548) {
-		/* PTEST instruction */
-    } else
-		op_illg(opcode);
-}
-#endif
 
 void mmu_flush_atc(uaecptr addr, bool super, bool global)
 {
@@ -1039,6 +1028,21 @@ void mmu_set_super(bool super)
 {
 	current_atc = &atc_l1[super];
 }
+
+#else
+
+void mmu_op(uae_u32 opcode, uae_u16 /*extra*/)
+{
+	if ((opcode & 0xFE0) == 0x0500) {
+		/* PFLUSH instruction */
+		flush_internals();
+	} else if ((opcode & 0x0FD8) == 0x548) {
+		/* PTEST instruction */
+	} else
+		op_illg(opcode);
+}
+
+#endif
 
 /*
 vim:ts=4:sw=4:
