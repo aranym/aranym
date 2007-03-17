@@ -1,3 +1,8 @@
+2007/03/17 - Andreas
+- uae_cpu/memory.h: Change return type of test_ram_boundary to bool and
+  always define it.
+
+
 2007/03/17 - Petr comitting patches by Roman Zippel - thanks!
 - newcpu.[cpp|h], gencpu.c: bitfield instructions fixed (were reading a bit
   too much). Also wrap around of bitfields in registers has been fixed.

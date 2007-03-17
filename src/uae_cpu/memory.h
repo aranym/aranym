@@ -126,19 +126,19 @@ extern uintptr FastRAMBaseDiff;
 #endif
 
 #ifndef NOCHECKBOUNDARY
-static __always_inline int test_ram_boundary(uaecptr addr, int size, bool super, bool write)
+static __always_inline bool test_ram_boundary(uaecptr addr, int size, bool super, bool write)
 {
 	if (addr <= (FastRAM_BEGIN + FastRAM_SIZE - size)) {
 #ifdef PROTECT2K
 		// protect first 2kB of RAM - access in supervisor mode only
 		if (!super && addr < 0x00000800UL)
-			return 0;
+			return false;
 #endif
 		// check for write access to protected areas:
 		// - first two longwords of ST-RAM are non-writable (ROM shadow)
 		// - non-writable area between end of ST-RAM and begin of FastRAM
 		if (!write || addr >= FastRAM_BEGIN || (addr >= 8 && addr <= (STRAM_END - size)))
-			return 1;
+			return true;
 	}
 #ifdef FIXED_VIDEORAM
 	return addr >= ARANYMVRAMSTART && addr <= (ARANYMVRAMSTART + ARANYMVRAMSIZE - size);
@@ -161,6 +161,7 @@ static __always_inline void check_ram_boundary(uaecptr addr, int size, bool writ
 }
 
 #else
+static inline bool test_ram_boundary(uaecptr, int, bool, bool) { return 1; }
 static inline void check_ram_boundary(uaecptr, int, bool) { }
 #endif
 
