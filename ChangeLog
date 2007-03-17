@@ -1,3 +1,9 @@
+2007/03/17 - Petr
+- newcpu.[cpp|h], gencpu.c: bitfield instructions fixed (were reading a bit
+  too much). Also wrap around of bitfields in registers have been fixed.
+  Patch provided by Roman Zippel - thanks!
+
+
 2007/02/18 - Andreas
 - Repair SDL_image configuration.
 
