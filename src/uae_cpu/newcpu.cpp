@@ -1326,6 +1326,7 @@ void m68k_reset (void)
     fpu_reset();
     // MMU
     mmu_reset();
+    mmu_set_super(1);
     // Cache
     regs.cacr = 0;
     regs.caar = 0;

@@ -1,6 +1,7 @@
 2007/03/17 - Andreas
-- uae_cpu/memory.h: Change return type of test_ram_boundary to bool and
+- memory.h: Change return type of test_ram_boundary to bool and
   always define it.
+- newcpu.cpp: Call mmu_set_super in m68k_reset.
 
 
 2007/03/17 - Petr comitting patches by Roman Zippel - thanks!
