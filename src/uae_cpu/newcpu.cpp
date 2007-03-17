@@ -628,6 +628,84 @@ static int verify_ea (int reg, amodes mode, wordsizes size, uae_u32 *val)
 }
 #endif
 
+/*
+ * extract bitfield data from memory and return it in the MSBs
+ * bdata caches the unmodified data for put_bitfield()
+ */
+uae_u32 get_bitfield(uae_u32 src, uae_u32 bdata[2], uae_s32 offset, int width)
+{
+	uae_u32 tmp, res, mask;
+
+	offset &= 7;
+	mask = 0xffffffffu << (32 - width);
+	switch ((offset + width + 7) >> 3) {
+	case 1:
+		tmp = get_byte(src);
+		res = tmp << (24 + offset);
+		bdata[0] = tmp & ~(mask >> (24 + offset));
+		break;
+	case 2:
+		tmp = get_word(src);
+		res = tmp << (16 + offset);
+		bdata[0] = tmp & ~(mask >> (16 + offset));
+		break;
+	case 3:
+		tmp = get_word(src);
+		res = tmp << (16 + offset);
+		bdata[0] = tmp & ~(mask >> (16 + offset));
+		tmp = get_byte(src + 2);
+		res |= tmp << (8 + offset);
+		bdata[1] = tmp & ~(mask >> (8 + offset));
+		break;
+	case 4:
+		tmp = get_long(src);
+		res = tmp << offset;
+		bdata[0] = tmp & ~(mask >> offset);
+		break;
+	case 5:
+		tmp = get_long(src);
+		res = tmp << offset;
+		bdata[0] = tmp & ~(mask >> offset);
+		tmp = get_byte(src + 4);
+		res |= tmp >> (8 - offset);
+		bdata[1] = tmp & ~(mask << (8 - offset));
+		break;
+	default:
+		/* Panic? */
+		res = 0;
+		break;
+	}
+	return res;
+}
+
+/*
+ * write bitfield data (in the LSBs) back to memory, upper bits
+ * must be cleared already.
+ */
+void put_bitfield(uae_u32 dst, uae_u32 bdata[2], uae_u32 val, uae_s32 offset, int width)
+{
+	offset = (offset & 7) + width;
+	switch ((offset + 7) >> 3) {
+	case 1:
+		put_byte(dst, bdata[0] | (val << (8 - offset)));
+		break;
+	case 2:
+		put_word(dst, bdata[0] | (val << (16 - offset)));
+		break;
+	case 3:
+		put_word(dst, bdata[0] | (val >> (offset - 16)));
+		put_byte(dst + 2, bdata[1] | (val << (24 - offset)));
+		break;
+	case 4:
+		put_long(dst, bdata[0] | (val << (32 - offset)));
+		break;
+	case 5:
+		put_long(dst, bdata[0] | (val >> (offset - 32)));
+		put_byte(dst + 4, bdata[1] | (val << (40 - offset)));
+		break;
+	}
+}
+
 uae_u32 get_disp_ea_020 (uae_u32 base, uae_u32 dp)
 {
     int reg = (dp >> 12) & 15;

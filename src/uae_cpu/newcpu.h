@@ -256,8 +256,12 @@ static inline void m68k_setstopped (int stop)
 # endif
 #endif
 
-extern uae_u32 get_disp_ea_020 (uae_u32 base, uae_u32 dp);
-extern uae_u32 get_disp_ea_000 (uae_u32 base, uae_u32 dp);
+extern REGPARAM uae_u32 get_disp_ea_020 (uae_u32 base, uae_u32 dp);
+extern REGPARAM uae_u32 get_disp_ea_000 (uae_u32 base, uae_u32 dp);
+extern REGPARAM uae_u32 get_bitfield(uae_u32 src, uae_u32 bdata[2], uae_s32 offset, int width);
+extern REGPARAM void put_bitfield(uae_u32 dst, uae_u32 bdata[2], uae_u32 val, uae_s32 offset, int width);
+
+
 
 extern void MakeSR (void);
 extern void MakeFromSR (void);

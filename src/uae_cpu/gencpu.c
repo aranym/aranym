@@ -2097,31 +2097,34 @@ static void gen_opcode (unsigned long int opcode)
 	genamode (curi->smode, "srcreg", curi->size, "extra", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
 	genamode (curi->dmode, "dstreg", sz_long, "dst", GENA_GETV_FETCH_ALIGN, GENA_MOVEM_DO_INC, XLATE_LOG);
 	start_brace ();
+	printf ("\tuae_u32 bdata[2];");
 	printf ("\tuae_s32 offset = extra & 0x800 ? m68k_dreg(regs, (extra >> 6) & 7) : (extra >> 6) & 0x1f;\n");
 	printf ("\tint width = (((extra & 0x20 ? m68k_dreg(regs, extra & 7) : extra) -1) & 0x1f) +1;\n");
 	if (curi->dmode == Dreg) {
-	    printf ("\tuae_u32 tmp = m68k_dreg(regs, dstreg) << (offset & 0x1f);\n");
+	    printf ("\tuae_u32 tmp = m68k_dreg(regs, dstreg);\n");
+	    printf ("\toffset &= 0x1f;\n");
+	    printf ("\ttmp = (tmp << offset) | (tmp >> (32 - offset));\n");
+	    printf ("\tbdata[0] = tmp & ((1 << (32 - width)) - 1);\n");
 	} else {
-	    printf ("\tuae_u32 tmp,bf0,bf1;\n");
-	    printf ("\tdsta += (offset >> 3) | (offset & 0x80000000 ? ~0x1fffffff : 0);\n");
-	    printf ("\tbf0 = get_long(dsta);bf1 = get_byte(dsta+4) & 0xff;\n");
-	    printf ("\ttmp = (bf0 << (offset & 7)) | (bf1 >> (8 - (offset & 7)));\n");
+	    printf ("\tuae_u32 tmp;\n");
+	    printf ("\tdsta += offset >> 3;\n");
+	    printf ("\ttmp = get_bitfield(dsta, bdata, offset, width);\n");
 	}
-	printf ("\ttmp >>= (32 - width);\n");
-	printf ("\tSET_NFLG_ALWAYS (tmp & (1 << (width-1)) ? 1 : 0);\n");
+	printf ("\tSET_NFLG_ALWAYS (((uae_s32)tmp) < 0 ? 1 : 0);\n");
+	if (curi->mnemo == i_BFEXTS)
+		printf ("\ttmp = (uae_s32)tmp >> (32 - width);\n");
+	else
+		printf ("\ttmp >>= (32 - width);\n");
 	printf ("\tSET_ZFLG (tmp == 0); SET_VFLG (0); SET_CFLG (0);\n");
 	switch (curi->mnemo) {
 	 case i_BFTST:
 	    break;
 	 case i_BFEXTU:
+	 case i_BFEXTS:
 	    printf ("\tm68k_dreg(regs, (extra >> 12) & 7) = tmp;\n");
 	    break;
 	 case i_BFCHG:
-	    printf ("\ttmp = ~tmp;\n");
-	    break;
-	 case i_BFEXTS:
-	    printf ("\tif (GET_NFLG) tmp |= width == 32 ? 0 : (-1 << width);\n");
-	    printf ("\tm68k_dreg(regs, (extra >> 12) & 7) = tmp;\n");
+	    printf ("\ttmp = tmp ^ (0xffffffffu >> (32 - width));\n");
 	    break;
 	 case i_BFCLR:
 	    printf ("\ttmp = 0;\n");
@@ -2132,10 +2135,11 @@ static void gen_opcode (unsigned long int opcode)
 	    printf ("\tm68k_dreg(regs, (extra >> 12) & 7) = offset;\n");
 	    break;
 	 case i_BFSET:
-	    printf ("\ttmp = 0xffffffff;\n");
+	    printf ("\ttmp = 0xffffffffu >> (32 - width);\n");
 	    break;
 	 case i_BFINS:
 	    printf ("\ttmp = m68k_dreg(regs, (extra >> 12) & 7);\n");
+	    printf ("\ttmp = tmp & (0xffffffffu >> (32 - width));\n");
 	    printf ("\tSET_NFLG_ALWAYS (tmp & (1 << (width - 1)) ? 1 : 0);\n");
 	    printf ("\tSET_ZFLG (tmp == 0);\n");
 	    break;
@@ -2145,26 +2149,12 @@ static void gen_opcode (unsigned long int opcode)
 	if (curi->mnemo == i_BFCHG
 	    || curi->mnemo == i_BFCLR
 	    || curi->mnemo == i_BFSET
-	    || curi->mnemo == i_BFINS)
-	{
-	    printf ("\ttmp <<= (32 - width);\n");
+	    || curi->mnemo == i_BFINS) {
 	    if (curi->dmode == Dreg) {
-		printf ("\tm68k_dreg(regs, dstreg) = (m68k_dreg(regs, dstreg) & ((offset & 0x1f) == 0 ? 0 :\n");
-		printf ("\t\t(0xffffffff << (32 - (offset & 0x1f))))) |\n");
-		printf ("\t\t(tmp >> (offset & 0x1f)) |\n");
-		printf ("\t\t(((offset & 0x1f) + width) >= 32 ? 0 :\n");
-		printf (" (m68k_dreg(regs, dstreg) & ((uae_u32)0xffffffff >> ((offset & 0x1f) + width))));\n");
+		printf ("\ttmp = bdata[0] | (tmp << (32 - width));\n");
+	        printf ("\tm68k_dreg(regs, dstreg) = (tmp >> offset) | (tmp << (32 - offset));\n");
 	    } else {
-		printf ("\tbf0 = (bf0 & (0xff000000 << (8 - (offset & 7)))) |\n");
-		printf ("\t\t(tmp >> (offset & 7)) |\n");
-		printf ("\t\t(((offset & 7) + width) >= 32 ? 0 :\n");
-		printf ("\t\t (bf0 & ((uae_u32)0xffffffff >> ((offset & 7) + width))));\n");
-		printf ("\tput_long(dsta,bf0 );\n");
-		printf ("\tif (((offset & 7) + width) > 32) {\n");
-		printf ("\t\tbf1 = (bf1 & (0xff >> (width - 32 + (offset & 7)))) |\n");
-		printf ("\t\t\t(tmp << (8 - (offset & 7)));\n");
-		printf ("\t\tput_byte(dsta+4,bf1);\n");
-		printf ("\t}\n");
+		printf ("\tput_bitfield(dsta, bdata, tmp, offset, width);\n");
 	    }
 	}
 	break;
