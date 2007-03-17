@@ -89,9 +89,8 @@ extern struct regstruct
     uae_u32 urp,srp;
     uae_u32 tc;
 
-    int mmu_enabled;   /* flagtype tce; */
-
-    int mmu_pagesize; /*  flagtype tcp; */
+    int mmu_enabled;		/* flagtype tce; */
+    int mmu_pagesize_8k;	/*  flagtype tcp; */
 
     uae_u32 dtt0,dtt1,itt0,itt1;
     uae_u32 mmusr;
@@ -100,33 +99,6 @@ extern struct regstruct
     uae_u16 mmu_ssw;
     uae_u32 wb3_data;
     uae_u16 wb3_status;
-
-#if 0
-    flagtype atcvali[ATCSIZE];
-    flagtype atcvald[ATCSIZE];
-    flagtype atcu0d[ATCSIZE];
-    flagtype atcu0i[ATCSIZE];
-    flagtype atcu1d[ATCSIZE];
-    flagtype atcu1i[ATCSIZE];
-    flagtype atcsuperd[ATCSIZE];
-    flagtype atcsuperi[ATCSIZE];
-    int atccmd[ATCSIZE];
-    int atccmi[ATCSIZE];
-    flagtype atcmodifd[ATCSIZE];
-    flagtype atcmodifi[ATCSIZE];
-    flagtype atcwritepd[ATCSIZE];
-    flagtype atcwritepi[ATCSIZE];
-    flagtype atcresidd[ATCSIZE];
-    flagtype atcresidi[ATCSIZE];
-    flagtype atcglobald[ATCSIZE];
-    flagtype atcglobali[ATCSIZE];
-    flagtype atcfc2d[ATCSIZE];
-    flagtype atcfc2i[ATCSIZE];
-    uaecptr atcind[ATCSIZE];
-    uaecptr atcini[ATCSIZE];
-    uaecptr atcoutd[ATCSIZE];
-    uaecptr atcouti[ATCSIZE];
-#endif
 
     /* Cache reg*/
     uae_u32 cacr,caar;

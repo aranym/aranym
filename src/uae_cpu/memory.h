@@ -126,32 +126,32 @@ extern uintptr FastRAMBaseDiff;
 #endif
 
 #ifndef NOCHECKBOUNDARY
-/*
- * "size" is the size of the memory access (byte = 1, word = 2, long = 4)
- */
-static inline void check_ram_boundary(uaecptr addr, int size, bool write)
+static __always_inline int test_ram_boundary(uaecptr addr, int size, bool super, bool write)
 {
 	if (addr <= (FastRAM_BEGIN + FastRAM_SIZE - size)) {
 #ifdef PROTECT2K
 		// protect first 2kB of RAM - access in supervisor mode only
-		if (!regs.s && addr < 0x00000800UL)
-			; // bus error (below)
-		else {
+		if (!super && addr < 0x00000800UL)
+			return 0;
 #endif
 		// check for write access to protected areas:
 		// - first two longwords of ST-RAM are non-writable (ROM shadow)
 		// - non-writable area between end of ST-RAM and begin of FastRAM
 		if (!write || addr >= FastRAM_BEGIN || (addr >= 8 && addr <= (STRAM_END - size)))
-			return;
-#ifdef PROTECT2K
-		}
-#endif
+			return 1;
 	}
 #ifdef FIXED_VIDEORAM
-	if (addr >= ARANYMVRAMSTART && addr <= (ARANYMVRAMSTART + ARANYMVRAMSIZE - size))
+	return addr >= ARANYMVRAMSTART && addr <= (ARANYMVRAMSTART + ARANYMVRAMSIZE - size);
 #else
-	if (addr >= VideoRAMBase && addr <= (VideoRAMBase + ARANYMVRAMSIZE - size))
+	return addr >= VideoRAMBase && addr <= (VideoRAMBase + ARANYMVRAMSIZE - size);
 #endif
+}
+/*
+ * "size" is the size of the memory access (byte = 1, word = 2, long = 4)
+ */
+static __always_inline void check_ram_boundary(uaecptr addr, int size, bool write)
+{
+	if (test_ram_boundary(addr, size, regs.s, write))
 		return;
 
 	// D(bug("BUS ERROR %s at $%x\n", (write ? "writing" : "reading"), addr));
@@ -323,241 +323,188 @@ static inline void phys_put_byte(uaecptr addr, uae_u32 b)
 }
 
 #ifdef FULLMMU
-static inline bool is_unaligned(uaecptr addr, int size)
+static __always_inline bool is_unaligned(uaecptr addr, int size)
 {
-    return unlikely((addr & (size - 1)) && (addr ^ (addr + size - 1)) & 0xfff);
+    return unlikely((addr & (size - 1)) && (addr ^ (addr + size - 1)) & 0x1000);
+}
+
+static __always_inline uae_u8 *mmu_get_real_address(uaecptr addr, struct mmu_atc_line *cl)
+{
+	return do_get_real_address(cl->phys + addr);
+}
+
+static __always_inline uae_u32 mmu_get_long(uaecptr addr, int data, int size)
+{
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_lookup(addr, data, 0, &cl)))
+		return do_get_mem_long((uae_u32 *)mmu_get_real_address(addr, cl));
+	return mmu_get_long_slow(addr, regs.s, data, size, cl);
 }
 
 static __always_inline uae_u32 get_long(uaecptr addr)
 {
-    if (is_unaligned(addr, 4))
-	return mmu_get_unaligned(addr, FC_DATA, 4);
-    SAVE_EXCEPTION;
-    uae_u32 l;
-    TRY(prb) {
-	l = phys_get_long(mmu_translate_fast(addr, regs.s, 1, 0, sz_long));
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	THROW_AGAIN(prb);
-    }
-    return l;
+	if (unlikely(is_unaligned(addr, 4)))
+		return mmu_get_long_unaligned(addr, 1);
+	return mmu_get_long(addr, 1, sz_long);
+}
+
+static __always_inline uae_u16 mmu_get_word(uaecptr addr, int data, int size)
+{
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_lookup(addr, data, 0, &cl)))
+		return do_get_mem_word((uae_u16 *)mmu_get_real_address(addr, cl));
+	return mmu_get_word_slow(addr, regs.s, data, size, cl);
 }
 
 static __always_inline uae_u16 get_word(uaecptr addr)
 {
-    if (is_unaligned(addr, 2))
-	return mmu_get_unaligned(addr, FC_DATA, 2);
-    SAVE_EXCEPTION;
-    uae_u16 w;
-    TRY(prb) {
-	w = phys_get_word(mmu_translate_fast(addr, regs.s, 1, 0, sz_word));
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	THROW_AGAIN(prb);
-    }
-    return w;
+	if (unlikely(is_unaligned(addr, 2)))
+		return mmu_get_word_unaligned(addr, 1);
+	return mmu_get_word(addr, 1, sz_word);
+}
+
+static __always_inline uae_u8 mmu_get_byte(uaecptr addr, int data, int size)
+{
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_lookup(addr, data, 0, &cl)))
+		return do_get_mem_byte((uae_u8 *)mmu_get_real_address(addr, cl));
+	return mmu_get_byte_slow(addr, regs.s, data, size, cl);
 }
 
 static __always_inline uae_u8 get_byte(uaecptr addr)
 {
-    SAVE_EXCEPTION;
-    uae_u8 b;
-    TRY(prb) {
-	b = phys_get_byte(mmu_translate_fast(addr, regs.s, 1, 0, sz_byte));
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	THROW_AGAIN(prb);
-    }
-    return b;
+	return mmu_get_byte(addr, 1, sz_byte);
 }
 
-static __always_inline void put_long(uaecptr addr, uae_u32 l)
+static __always_inline void mmu_put_long(uaecptr addr, uae_u32 val, int data, int size)
 {
-    if (is_unaligned(addr, 4))
-	return mmu_put_unaligned(addr, l, FC_DATA, 4);
-    SAVE_EXCEPTION;
-    TRY(prb) {
-	phys_put_long(mmu_translate_fast(addr, regs.s, 1, 1, sz_long),l);
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	regs.wb3_data = l;
-	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	THROW_AGAIN(prb);
-    }
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_lookup(addr, data, 1, &cl)))
+		do_put_mem_long((uae_u32 *)mmu_get_real_address(addr, cl), val);
+	else
+		mmu_put_long_slow(addr, val, regs.s, data, size, cl);
 }
 
-static __always_inline void put_word(uaecptr addr, uae_u16 w)
+static __always_inline void put_long(uaecptr addr, uae_u32 val)
 {
-    if (is_unaligned(addr, 2))
-	return mmu_put_unaligned(addr, w, FC_DATA, 2);
-    SAVE_EXCEPTION;
-    TRY(prb) {
-	phys_put_word(mmu_translate_fast(addr, regs.s, 1, 1, sz_word),w);
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	regs.wb3_data = w;
-	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	THROW_AGAIN(prb);
-    }
+	if (unlikely(is_unaligned(addr, 4)))
+		mmu_put_long_unaligned(addr, val, 1);
+	else
+		mmu_put_long(addr, val, 1, sz_long);
 }
 
-static __always_inline void put_byte(uaecptr addr, uae_u16 b)
+static __always_inline void mmu_put_word(uaecptr addr, uae_u16 val, int data, int size)
 {
-    SAVE_EXCEPTION;
-    TRY(prb) {
-	phys_put_byte(mmu_translate_fast(addr, regs.s, 1, 1, sz_byte),b);
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	regs.wb3_data = b;
-	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	THROW_AGAIN(prb);
-    }
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_lookup(addr, data, 1, &cl)))
+		do_put_mem_word((uae_u16 *)mmu_get_real_address(addr, cl), val);
+	else
+		mmu_put_word_slow(addr, val, regs.s, data, size, cl);
+}
+
+static __always_inline void put_word(uaecptr addr, uae_u16 val)
+{
+	if (unlikely(is_unaligned(addr, 2)))
+		mmu_put_word_unaligned(addr, val, 1);
+	else
+		mmu_put_word(addr, val, 1, sz_word);
+}
+
+static __always_inline void mmu_put_byte(uaecptr addr, uae_u8 val, int data, int size)
+{
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_lookup(addr, data, 1, &cl)))
+		do_put_mem_byte((uae_u8 *)mmu_get_real_address(addr, cl), val);
+	else
+		mmu_put_byte_slow(addr, val, regs.s, data, size, cl);
+}
+
+static __always_inline void put_byte(uaecptr addr, uae_u8 val)
+{
+	mmu_put_byte(addr, val, 1, sz_byte);
 }
 
 static inline uae_u8 *get_real_address(uaecptr addr, int write, int sz)
 {
-    wordsizes i = sz_long;
-    switch (sz) {
-        case 1: i = sz_byte; break;
-        case 2: i = sz_word; break;
-    }
-    return phys_get_real_address(mmu_translate(addr, FC_DATA, write, i, 0));
+	(void)sz;
+    return phys_get_real_address(mmu_translate(addr, regs.s, 1, write));
 }
 
-static inline uae_u32 sfc_get_long(uaecptr addr)
+static __always_inline uae_u32 mmu_get_user_long(uaecptr addr, int super, int data, int size)
 {
-    if (is_unaligned(addr, 4))
-	return mmu_get_unaligned(addr, regs.sfc, 4);
-    SAVE_EXCEPTION;
-    uae_u32 l;
-    TRY(prb) {
-	l = phys_get_long(mmu_translate(addr, regs.sfc, 0, sz_long, 0));
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	THROW_AGAIN(prb);
-    }
-    return l;
-}
-static inline uae_u16 sfc_get_word(uaecptr addr)
-{
-    if (is_unaligned(addr, 2))
-	return mmu_get_unaligned(addr, regs.sfc, 2);
-    SAVE_EXCEPTION;
-    uae_u16 w;
-    TRY(prb) {
-	w = phys_get_word(mmu_translate(addr, regs.sfc, 0, sz_word, 0));
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	THROW_AGAIN(prb);
-    }
-    return w;
-}
-static inline uae_u8 sfc_get_byte(uaecptr addr)
-{
-    SAVE_EXCEPTION;
-    uae_u8 b;
-    TRY(prb) {
-	b = phys_get_byte(mmu_translate(addr, regs.sfc, 0, sz_byte, 0));
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	THROW_AGAIN(prb);
-    }
-    return b;
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_user_lookup(addr, super, data, 0, &cl)))
+		return do_get_mem_long((uae_u32 *)mmu_get_real_address(addr, cl));
+	return mmu_get_long_slow(addr, super, data, size, cl);
 }
 
-static inline void dfc_put_long(uaecptr addr, uae_u32 l)
+static __always_inline uae_u16 mmu_get_user_word(uaecptr addr, int super, int data, int size)
 {
-    if (is_unaligned(addr, 4))
-	return mmu_put_unaligned(addr, l, regs.dfc, 4);
-    SAVE_EXCEPTION;
-    TRY(prb) {
-	phys_put_long(mmu_translate(addr, regs.dfc, 1, sz_long, 0), l);
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	regs.wb3_data = l;
-	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	THROW_AGAIN(prb);
-    }
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_user_lookup(addr, super, data, 0, &cl)))
+		return do_get_mem_word((uae_u16 *)mmu_get_real_address(addr, cl));
+	return mmu_get_word_slow(addr, super, data, size, cl);
 }
-static inline void dfc_put_word(uaecptr addr, uae_u16 w)
+
+static __always_inline uae_u8 mmu_get_user_byte(uaecptr addr, int super, int data, int size)
 {
-    if (is_unaligned(addr, 2))
-	return mmu_put_unaligned(addr, w, regs.dfc, 2);
-    SAVE_EXCEPTION;
-    TRY(prb) {
-	phys_put_word(mmu_translate(addr, regs.dfc, 1, sz_word, 0), w);
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	regs.wb3_data = w;
-	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	THROW_AGAIN(prb);
-    }
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_user_lookup(addr, super, data, 0, &cl)))
+		return do_get_mem_byte((uae_u8 *)mmu_get_real_address(addr, cl));
+	return mmu_get_byte_slow(addr, super, data, size, cl);
 }
-static inline void dfc_put_byte(uaecptr addr, uae_u16 b)
+
+static __always_inline void mmu_put_user_long(uaecptr addr, uae_u32 val, int super, int data, int size)
 {
-    SAVE_EXCEPTION;
-    TRY(prb) {
-	phys_put_byte(mmu_translate(addr, regs.dfc, 1, sz_byte, 0), b);
-	RESTORE_EXCEPTION;
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	regs.mmu_fault_addr = addr;
-	regs.wb3_data = b;
-	regs.wb3_status = (regs.mmu_ssw & 0x7f) | 0x80;
-	THROW_AGAIN(prb);
-    }
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_user_lookup(addr, super, data, 1, &cl)))
+		do_put_mem_long((uae_u32 *)mmu_get_real_address(addr, cl), val);
+	else
+		mmu_put_long_slow(addr, val, super, data, size, cl);
+}
+
+static __always_inline void mmu_put_user_word(uaecptr addr, uae_u16 val, int super, int data, int size)
+{
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_user_lookup(addr, super, data, 1, &cl)))
+		do_put_mem_word((uae_u16 *)mmu_get_real_address(addr, cl), val);
+	else
+		mmu_put_word_slow(addr, val, super, data, size, cl);
+}
+
+static __always_inline void mmu_put_user_byte(uaecptr addr, uae_u8 val, int super, int data, int size)
+{
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_user_lookup(addr, super, data, 1, &cl)))
+		do_put_mem_byte((uae_u8 *)mmu_get_real_address(addr, cl), val);
+	else
+		mmu_put_byte_slow(addr, val, super, data, size, cl);
 }
 
 static inline bool valid_address(uaecptr addr, bool write, int sz)
 {
     SAVE_EXCEPTION;
     TRY(prb) {
-	wordsizes i = sz_long;
-	switch (sz) {
-	    case 1: i = sz_byte; break;
-	    case 2: i = sz_word; break;
-	}
-	check_ram_boundary(mmu_translate(addr, FC_DATA, (write ? 1 : 0), i, 0), sz, write);
-	RESTORE_EXCEPTION;
-	return true;
+		(void)sz;
+		check_ram_boundary(mmu_translate(addr, regs.s, 1, (write ? 1 : 0)), sz, write);
+		RESTORE_EXCEPTION;
+		return true;
     }
     CATCH(prb) {
-	RESTORE_EXCEPTION;
-	return false;
+		RESTORE_EXCEPTION;
+		return false;
     } 
 }
 

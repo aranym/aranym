@@ -300,25 +300,15 @@ int lastint_no;
 #ifdef FULLMMU
 static inline uae_u8 get_ibyte_1(uae_u32 o)
 {
-    uaecptr addr = m68k_getpc() + o + 1;
-    return phys_get_byte(mmu_translate(addr, FC_INST, 0, sz_byte, 0));
+    return get_ibyte(o);
 }
 static inline uae_u16 get_iword_1(uae_u32 o)
 {
-    uaecptr addr = m68k_getpc() + o;
-    return phys_get_word(mmu_translate(addr, FC_INST, 0, sz_word, 0));
+    return get_iword(o);
 }
 static inline uae_u32 get_ilong_1(uae_u32 o)
 {
-    uaecptr addr = m68k_getpc() + o;
-    if (is_unaligned(addr, 4)) {
-	uae_u32 result;
-	result = phys_get_word(mmu_translate(addr, FC_INST, 0, sz_word, 0));
-	result <<= 16;
-	result |= phys_get_word(mmu_translate(addr + 2, FC_INST, 0, sz_word, 0));
-	return result;
-    }
-    return phys_get_long(mmu_translate(addr, FC_INST, 0, sz_long, 0));
+    return get_ilong(o);
 }
 #else
 # define get_ibyte_1(o) get_byte(m68k_getpc() + (o) + 1)
@@ -785,6 +775,7 @@ void MakeFromSR (void)
     regs.t1 = (regs.sr >> 15) & 1;
     regs.t0 = (regs.sr >> 14) & 1;
     regs.s = (regs.sr >> 13) & 1;
+    mmu_set_super(regs.s);
     regs.m = (regs.sr >> 12) & 1;
     regs.intmask = (regs.sr >> 8) & 7;
     SET_XFLG ((regs.sr >> 4) & 1);
@@ -878,6 +869,7 @@ void Exception(int nr, uaecptr oldpc)
 	regs.usp = m68k_areg(regs, 7);
 	m68k_areg(regs, 7) = regs.m ? regs.msp : regs.isp;
 	regs.s = 1;
+	mmu_set_super(1);
     }
 
     if (nr == 2) {
@@ -2002,7 +1994,7 @@ void m68k_dumpstate (uaecptr *nextpc)
     printf ("T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%d C=%d IMASK=%d TCE=%d TCP=%d\n",
 	    regs.t1, regs.t0, regs.s, regs.m,
 	    (int)GET_XFLG, (int)GET_NFLG, (int)GET_ZFLG, (int)GET_VFLG, (int)GET_CFLG, regs.intmask,
-	    regs.mmu_enabled, regs.mmu_pagesize);
+	    regs.mmu_enabled, regs.mmu_pagesize_8k);
     printf ("CACR=%08lx CAAR=%08lx  URP=%08lx  SRP=%08lx\n",
             (unsigned long)regs.cacr,
 	    (unsigned long)regs.caar,

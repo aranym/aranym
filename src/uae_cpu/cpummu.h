@@ -30,15 +30,12 @@
 
 # include <cstdlib>
 
-#define MMU_TEST_PTEST		1
-#define MMU_TEST_VERBOSE	2
-#define MMU_TEST_FORCE_TABLE_SEARCH	4
-#define MMU_TEST_NO_BUSERR	8
+#define MMU_TEST_PTEST					1
+#define MMU_TEST_VERBOSE				2
+#define MMU_TEST_FORCE_TABLE_SEARCH		4
+#define MMU_TEST_NO_BUSERR				8
 
 extern void mmu_dump_tables(void);
-
-#define MMU_PAGE_8KB	1
-#define MMU_PAGE_4KB	0
 
 #define MMU_TTR_LOGICAL_BASE				0xff000000
 #define MMU_TTR_LOGICAL_MASK				0x00ff0000
@@ -48,9 +45,9 @@ extern void mmu_dump_tables(void);
 #define MMU_TTR_SFIELD_SHIFT				13
 #define MMU_TTR_UX_MASK						((1 << 9) | (1 << 8))
 #define MMU_TTR_UX_SHIFT					8
-#define MMU_TTR_CACHE_MASK				((1 << 6) | (1 << 5))
-#define MMU_TTR_CACHE_SHIFT						5
-#define MMU_TTR_BIT_WRITE_PROTECT				(1 << 2)
+#define MMU_TTR_CACHE_MASK					((1 << 6) | (1 << 5))
+#define MMU_TTR_CACHE_SHIFT					5
+#define MMU_TTR_BIT_WRITE_PROTECT			(1 << 2)
 
 #define MMU_UDT_MASK	3
 #define MMU_PDT_MASK	3
@@ -63,48 +60,41 @@ extern void mmu_dump_tables(void);
 #define MMU_DES_SUPER		(1 << 7)
 #define MMU_DES_GLOBAL		(1 << 10)
 
-#define MMU_ROOT_PTR_ADDR_MASK				0xfffffe00
-#define MMU_PTR_PAGE_ADDR_MASK_8			0xffffff80
-#define MMU_PTR_PAGE_ADDR_MASK_4			0xffffff00
+#define MMU_ROOT_PTR_ADDR_MASK			0xfffffe00
+#define MMU_PTR_PAGE_ADDR_MASK_8		0xffffff80
+#define MMU_PTR_PAGE_ADDR_MASK_4		0xffffff00
 
-#define MMU_PAGE_INDIRECT_MASK				0xfffffffc
-#define MMU_PAGE_ADDR_MASK_8				0xffffe000
-#define MMU_PAGE_ADDR_MASK_4				0xfffff000
-#define MMU_PAGE_UR_MASK_8					((1 << 12) | (1 << 11))
-#define MMU_PAGE_UR_MASK_4					(1 << 11)
-#define MMU_PAGE_UR_SHIFT					11
+#define MMU_PAGE_INDIRECT_MASK			0xfffffffc
+#define MMU_PAGE_ADDR_MASK_8			0xffffe000
+#define MMU_PAGE_ADDR_MASK_4			0xfffff000
+#define MMU_PAGE_UR_MASK_8				((1 << 12) | (1 << 11))
+#define MMU_PAGE_UR_MASK_4				(1 << 11)
+#define MMU_PAGE_UR_SHIFT				11
 
-#define MMU_MMUSR_ADDR_MASK	0xfffff000
-#define MMU_MMUSR_B		(1 << 11)
-#define MMU_MMUSR_G		(1 << 10)
-#define MMU_MMUSR_U1		(1 << 9)
-#define MMU_MMUSR_U0		(1 << 8)
-#define MMU_MMUSR_Ux		(MMU_MMUSR_U1 | MMU_MMUSR_U0)
-#define MMU_MMUSR_S		(1 << 7)
-#define MMU_MMUSR_CM		((1 << 6) | ( 1 << 5))
-#define MMU_MMUSR_M		(1 << 4)
-#define MMU_MMUSR_W		(1 << 2)
-#define MMU_MMUSR_T		(1 << 1)
-#define MMU_MMUSR_R		(1 << 0)
+#define MMU_MMUSR_ADDR_MASK				0xfffff000
+#define MMU_MMUSR_B						(1 << 11)
+#define MMU_MMUSR_G						(1 << 10)
+#define MMU_MMUSR_U1					(1 << 9)
+#define MMU_MMUSR_U0					(1 << 8)
+#define MMU_MMUSR_Ux					(MMU_MMUSR_U1 | MMU_MMUSR_U0)
+#define MMU_MMUSR_S						(1 << 7)
+#define MMU_MMUSR_CM					((1 << 6) | ( 1 << 5))
+#define MMU_MMUSR_M						(1 << 4)
+#define MMU_MMUSR_W						(1 << 2)
+#define MMU_MMUSR_T						(1 << 1)
+#define MMU_MMUSR_R						(1 << 0)
 
-struct mmu_atc_line {
-	uae_u16 tag;
-	unsigned global : 1;
-	unsigned tt : 1;
-	unsigned modified : 1;
-	unsigned write_protect : 1;
-	unsigned valid_data : 1;
-	unsigned valid_inst : 1;
-	uaecptr phys;
-};
-
-#define ATC_SIZE_LOG	10
-#define ATC_SIZE	(1 << ATC_SIZE_LOG)
-
-#define ATC_INDEX(addr)	((((addr) >> 12) ^ ((addr) >> (32 - ATC_SIZE_LOG))) % ATC_SIZE)
-#define ATC_TAG(addr)	((addr) >> (ATC_SIZE_LOG + 12))
-
-extern struct mmu_atc_line atc[2][ATC_SIZE];
+/* special status word (access error stack frame) */
+#define MMU_SSW_TM		0x0007
+#define MMU_SSW_TT		0x0018
+#define MMU_SSW_SIZE	0x0060
+#define  MMU_SSW_SIZE_B	0x0020
+#define  MMU_SSW_SIZE_W	0x0040
+#define  MMU_SSW_SIZE_L	0x0000
+#define MMU_SSW_RW		0x0100
+#define MMU_SSW_LK		0x0200
+#define MMU_SSW_ATC		0x0400
+#define MMU_SSW_MA		0x0800
 
 #define TTR_I0	4
 #define TTR_I1	5
@@ -115,24 +105,98 @@ extern struct mmu_atc_line atc[2][ATC_SIZE];
 #define TTR_NO_WRITE	1
 #define TTR_OK_MATCH	2
 
-static inline void mmu_set_tc(uae_u16 tc)
+struct mmu_atc_line {
+	uae_u16 tag;
+	unsigned tt : 1;
+	unsigned valid_data : 1;
+	unsigned valid_inst : 1;
+	unsigned global : 1;
+	unsigned modified : 1;
+	unsigned write_protect : 1;
+	unsigned hw : 1;
+	unsigned bus_fault : 1;
+	uaecptr phys;
+};
+
+/*
+ * We don't need to store the whole logical address in the atc cache, as part of
+ * it is encoded as index into the cache. 14 bits of the address are stored in
+ * the tag, this means at least 6 bits must go into the index. The upper two
+ * bits of the tag define the type of data in the atc line:
+ * - 00: a normal memory address
+ * - 11: invalid memory address or hardware access
+ *       (generated via ~ATC_TAG(addr) in the slow path)
+ * - 10: empty atc line
+ */
+
+#define ATC_TAG_SHIFT		18
+#define ATC_TAG(addr)		((uae_u32)(addr) >> ATC_TAG_SHIFT)
+
+
+#define ATC_L1_SIZE_LOG		8
+#define ATC_L1_SIZE			(1 << ATC_L1_SIZE_LOG)
+
+#define ATC_L1_INDEX(addr)	(((addr) >> 12) % ATC_L1_SIZE)
+
+/*
+ * first level atc cache
+ * indexed by [super][data][rw][idx]
+ */
+
+typedef struct mmu_atc_line mmu_atc_l1_array[2][2][ATC_L1_SIZE];
+extern mmu_atc_l1_array atc_l1[2];
+extern mmu_atc_l1_array *current_atc;
+
+#define ATC_L2_SIZE_LOG		12
+#define ATC_L2_SIZE			(1 << ATC_L2_SIZE_LOG)
+
+#define ATC_L2_INDEX(addr)	((((addr) >> 12) ^ ((addr) >> (32 - ATC_L2_SIZE_LOG))) % ATC_L2_SIZE)
+
+extern struct mmu_atc_line atc_l2[2][ATC_L2_SIZE];
+
+/*
+ * lookup address in the level 1 atc cache,
+ * the data and write arguments are constant in the common,
+ * thus allows gcc to generate a constant offset.
+ */
+static __always_inline int mmu_lookup(uaecptr addr, bool data, bool write,
+									  struct mmu_atc_line **cl)
 {
-	extern void activate_debugger (void);
-	regs.tc = tc;
-
-#if 0
-		if (tc & 0x8000)
-		{
-			uaecptr nextpc;
-			m68k_disasm(stdout, m68k_getpc(), &nextpc, 10);
-		}
-#endif
-
-	regs.mmu_enabled = tc & 0x8000 ? 1 : 0;
-	regs.mmu_pagesize = tc & 0x4000 ? MMU_PAGE_8KB : MMU_PAGE_4KB;
-
-//		D(bug("MMU: enabled=%d page=%d\n", regs.mmu_enabled, regs.mmu_pagesize));
+	addr >>= 12;
+	*cl = &(*current_atc)[data][write][addr % ATC_L1_SIZE];
+	return (*cl)->tag == addr >> (ATC_TAG_SHIFT - 12);
 }
+
+/*
+ * similiar to mmu_user_lookup, but for the use of the moves instruction
+ */
+static __always_inline int mmu_user_lookup(uaecptr addr, bool super, bool data,
+										   bool write, struct mmu_atc_line **cl)
+{
+	addr >>= 12;
+	*cl = &atc_l1[super][data][write][addr % ATC_L1_SIZE];
+	return (*cl)->tag == addr >> (ATC_TAG_SHIFT - 12);
+}
+
+extern REGPARAM2 uae_u16 mmu_get_word_unaligned(uaecptr addr, int data);
+extern REGPARAM2 uae_u32 mmu_get_long_unaligned(uaecptr addr, int data);
+
+extern REGPARAM2 uae_u8 mmu_get_byte_slow(uaecptr addr, int super, int data,
+										  int size, struct mmu_atc_line *cl);
+extern REGPARAM2 uae_u16 mmu_get_word_slow(uaecptr addr, int super, int data,
+										   int size, struct mmu_atc_line *cl);
+extern REGPARAM2 uae_u32 mmu_get_long_slow(uaecptr addr, int super, int data,
+										   int size, struct mmu_atc_line *cl);
+
+extern REGPARAM2 void mmu_put_word_unaligned(uaecptr addr, uae_u16 val, int data);
+extern REGPARAM2 void mmu_put_long_unaligned(uaecptr addr, uae_u32 val, int data);
+
+extern REGPARAM2 void mmu_put_byte_slow(uaecptr addr, uae_u8 val, int super, int data,
+										int size, struct mmu_atc_line *cl);
+extern REGPARAM2 void mmu_put_word_slow(uaecptr addr, uae_u16 val, int super, int data,
+										int size, struct mmu_atc_line *cl);
+extern REGPARAM2 void mmu_put_long_slow(uaecptr addr, uae_u32 val, int super, int data,
+										int size, struct mmu_atc_line *cl);
 
 extern void mmu_make_transparent_region(uaecptr baseaddr, uae_u32 size, int datamode);
 
@@ -156,37 +220,39 @@ static inline void mmu_set_mmusr(uae_u32 val)
 
 static inline void mmu_set_root_pointer(int regno, uae_u32 val)
 {
-	uae_u32 * rp;
-	switch(regno)	{
-		case 0x806: rp = &regs.urp; break;
-		case 0x807: rp = &regs.srp; break;
-		default: abort();
+	val &= MMU_ROOT_PTR_ADDR_MASK;
+	switch (regno) {
+	case 0x806:
+		regs.urp = val;
+		break;
+	case 0x807:
+		regs.srp = val;
+		break;
+	default:
+		abort();
 	}
-	*rp = val;
 }
 
 #define FC_DATA		(regs.s ? 5 : 1)
 #define FC_INST		(regs.s ? 6 : 2)
 
-extern uaecptr REGPARAM2 mmu_translate(uaecptr addr, int fc, int write,
-				       int size, int test);
+extern uaecptr REGPARAM2 mmu_translate(uaecptr addr, int super, int data, int write);
 
-static __always_inline uaecptr mmu_translate_fast(uaecptr addr, int super, int data,
-						  int write, int size)
-{
-	int idx = ATC_INDEX(addr);
-	int tag = ATC_TAG(addr);
-	struct mmu_atc_line *l = &atc[super][idx];
-	if (likely((l->tag == tag) &&
-		   (data ? l->valid_data : l->valid_inst) &&
-		   (!write || (!l->write_protect && l->modified))))
-		return l->phys | (addr & 0xfff);
-	return mmu_translate(addr, (super << 2) | (2 -data), write, size, 0);
-}
+extern uae_u32 REGPARAM2 sfc_get_long(uaecptr addr);
+extern uae_u16 REGPARAM2 sfc_get_word(uaecptr addr);
+extern uae_u8 REGPARAM2 sfc_get_byte(uaecptr addr);
+extern void REGPARAM2 dfc_put_long(uaecptr addr, uae_u32 val);
+extern void REGPARAM2 dfc_put_word(uaecptr addr, uae_u16 val);
+extern void REGPARAM2 dfc_put_byte(uaecptr addr, uae_u8 val);
 
-extern uae_u32 mmu_get_unaligned(uaecptr addr, int fc, int size);
-extern void mmu_put_unaligned(uaecptr addr, uae_u32 data, int fc, int size);
 
+extern void mmu_flush_atc(uaecptr addr, bool super, bool global);
+extern void mmu_flush_atc_all(bool global);
 extern void mmu_reset(void);
+extern void mmu_set_tc(uae_u16 tc);
+extern void mmu_set_super(bool super);
 
 #endif /* CPUMMU_H */
+/*
+vim:ts=4:sw=4:
+*/
