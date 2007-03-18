@@ -216,9 +216,7 @@ PUBLIC void FFPU dump_registers(const char *)
 {
 }
 
-PUBLIC void FFPU dump_first_bytes(uae_u8 *, uae_s32)
-{
-}
+#define dump_first_bytes(a,b)
 
 #endif
 
