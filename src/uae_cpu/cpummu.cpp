@@ -566,12 +566,12 @@ uae_u32 mmu_get_long_unaligned(uaecptr addr, int data)
 			THROW_AGAIN(prb);
 		}
 	} else {
-		res = (uae_u32)mmu_get_byte(addr++, data, sz_long) << 8;
+		res = (uae_u32)mmu_get_byte(addr, data, sz_long) << 8;
 		SAVE_EXCEPTION;
 		TRY(prb) {
-			res = (res | mmu_get_byte(addr++, data, sz_long)) << 8;
-			res = (res | mmu_get_byte(addr++, data, sz_long)) << 8;
-			res |= mmu_get_byte(addr, data, sz_long);
+			res = (res | mmu_get_byte(addr + 1, data, sz_long)) << 8;
+			res = (res | mmu_get_byte(addr + 2, data, sz_long)) << 8;
+			res |= mmu_get_byte(addr + 3, data, sz_long);
 			RESTORE_EXCEPTION;
 		}
 		CATCH(prb) {
@@ -649,10 +649,10 @@ REGPARAM2 void mmu_put_long_unaligned(uaecptr addr, uae_u32 val, int data)
 			mmu_put_word(addr, val >> 16, data, sz_long);
 			mmu_put_word(addr + 2, val, data, sz_long);
 		} else {
-			mmu_put_byte(addr++, val >> 24, data, sz_long);
-			mmu_put_byte(addr++, val >> 16, data, sz_long);
-			mmu_put_byte(addr++, val >> 8, data, sz_long);
-			mmu_put_byte(addr, val, data, sz_long);
+			mmu_put_byte(addr, val >> 24, data, sz_long);
+			mmu_put_byte(addr + 1, val >> 16, data, sz_long);
+			mmu_put_byte(addr + 2, val >> 8, data, sz_long);
+			mmu_put_byte(addr + 3, val, data, sz_long);
 		}
 		RESTORE_EXCEPTION;
 	}
@@ -671,8 +671,8 @@ REGPARAM2 void mmu_put_word_unaligned(uaecptr addr, uae_u16 val, int data)
 {
 	SAVE_EXCEPTION;
 	TRY(prb) {
-		mmu_put_byte(addr++, val >> 8, data, sz_word);
-		mmu_put_byte(addr, val, data, sz_word);
+		mmu_put_byte(addr, val >> 8, data, sz_word);
+		mmu_put_byte(addr + 1, val, data, sz_word);
 		RESTORE_EXCEPTION;
 	}
 	CATCH(prb) {
@@ -693,8 +693,10 @@ REGPARAM2 void mmu_put_byte_slow(uaecptr addr, uae_u8 val, int super, int data,
 
 	if (cl->tag == (uae_u16)~tag) {
 	redo:
-		if (cl->hw)
-			return HWput_b(cl->phys + addr, val);
+		if (cl->hw) {
+			HWput_b(cl->phys + addr, val);
+			return;
+		}
 		regs.wb3_data = val;
 		mmu_bus_error(addr, mmu_get_fc(super, data), 1, size);
 		return;
@@ -713,8 +715,10 @@ REGPARAM2 void mmu_put_word_slow(uaecptr addr, uae_u16 val, int super, int data,
 
 	if (cl->tag == (uae_u16)~tag) {
 	redo:
-		if (cl->hw)
-			return HWput_w(cl->phys + addr, val);
+		if (cl->hw) {
+			HWput_w(cl->phys + addr, val);
+			return;
+		}
 		regs.wb3_data = val;
 		mmu_bus_error(addr, mmu_get_fc(super, data), 1, size);
 		return;
@@ -733,8 +737,10 @@ REGPARAM2 void mmu_put_long_slow(uaecptr addr, uae_u32 val, int super, int data,
 
 	if (cl->tag == (uae_u16)~tag) {
 	redo:
-		if (cl->hw)
-			return HWput_l(cl->phys + addr, val);
+		if (cl->hw) {
+			HWput_l(cl->phys + addr, val);
+			return;
+		}
 		regs.wb3_data = val;
 		mmu_bus_error(addr, mmu_get_fc(super, data), 1, size);
 		return;
@@ -769,12 +775,12 @@ uae_u32 sfc_get_long(uaecptr addr)
 			THROW_AGAIN(prb);
 		}
 	} else {
-		res = (uae_u32)mmu_get_user_byte(addr++, super, data, sz_long) << 8;
+		res = (uae_u32)mmu_get_user_byte(addr, super, data, sz_long) << 8;
 		SAVE_EXCEPTION;
 		TRY(prb) {
-			res = (res | mmu_get_user_byte(addr++, super, data, sz_long)) << 8;
-			res = (res | mmu_get_user_byte(addr++, super, data, sz_long)) << 8;
-			res |= mmu_get_user_byte(addr, super, data, sz_long);
+			res = (res | mmu_get_user_byte(addr + 1, super, data, sz_long)) << 8;
+			res = (res | mmu_get_user_byte(addr + 2, super, data, sz_long)) << 8;
+			res |= mmu_get_user_byte(addr + 3, super, data, sz_long);
 			RESTORE_EXCEPTION;
 		}
 		CATCH(prb) {
@@ -832,10 +838,10 @@ void dfc_put_long(uaecptr addr, uae_u32 val)
 			mmu_put_user_word(addr, val >> 16, super, data, sz_long);
 			mmu_put_user_word(addr + 2, val, super, data, sz_long);
 		} else {
-			mmu_put_user_byte(addr++, val >> 24, super, data, sz_long);
-			mmu_put_user_byte(addr++, val >> 16, super, data, sz_long);
-			mmu_put_user_byte(addr++, val >> 8, super, data, sz_long);
-			mmu_put_user_byte(addr, val, super, data, sz_long);
+			mmu_put_user_byte(addr, val >> 24, super, data, sz_long);
+			mmu_put_user_byte(addr + 1, val >> 16, super, data, sz_long);
+			mmu_put_user_byte(addr + 2, val >> 8, super, data, sz_long);
+			mmu_put_user_byte(addr + 3, val, super, data, sz_long);
 		}
 		RESTORE_EXCEPTION;
 	}
@@ -860,8 +866,8 @@ void dfc_put_word(uaecptr addr, uae_u16 val)
 		if (likely(!is_unaligned(addr, 2)))
 			mmu_put_user_word(addr, val, super, data, sz_word);
 		else {
-			mmu_put_user_byte(addr++, val >> 8, super, data, sz_word);
-			mmu_put_user_byte(addr, val, super, data, sz_word);
+			mmu_put_user_byte(addr, val >> 8, super, data, sz_word);
+			mmu_put_user_byte(addr + 1, val, super, data, sz_word);
 		}
 		RESTORE_EXCEPTION;
 	}
