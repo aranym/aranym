@@ -125,7 +125,7 @@ long VIDEL::getVideoramAddress()
 int VIDEL::getScreenBpp()
 {
 	int f_shift = handleReadW(HW + 0x66);
-	int st_shift = handleReadW(HW + 0x60);
+	int st_shift = handleRead(HW + 0x60);
 	/* to get bpp, we must examine f_shift and st_shift.
 	 * f_shift is valid if any of bits no. 10, 8 or 4
 	 * is set. Priority in f_shift is: 10 ">" 8 ">" 4, i.e.
@@ -142,9 +142,9 @@ int VIDEL::getScreenBpp()
 		bits_per_pixel = 8;
 	else if (st_shift == 0)
 		bits_per_pixel = 4;
-	else if (st_shift == 0x100)
+	else if (st_shift == 0x01)
 		bits_per_pixel = 2;
-	else /* if (st_shift == 0x200) */
+	else /* if (st_shift == 0x02) */
 		bits_per_pixel = 1;
 
 	// D(bug("Videl works in %d bpp, f_shift=%04x, st_shift=%d", bits_per_pixel, f_shift, st_shift));
@@ -185,7 +185,7 @@ void VIDEL::updateColors()
 	// Test the ST compatible set or not.
 	bool stCompatibleColorPalette = false;
 
-	int st_shift = handleReadW(HW + 0x60);
+	int st_shift = handleRead(HW + 0x60);
 	if (st_shift == 0) {		   // bpp == 4
 		int hreg = handleReadW(HW + 0x82); // Too lame!
 		if (hreg == 0x10 | hreg == 0x17 | hreg == 0x3e)	  // Better way how to make out ST LOW mode wanted
@@ -193,7 +193,7 @@ void VIDEL::updateColors()
 
 		D(bug("ColorUpdate %x", hreg));
 	}
-	else if (st_shift == 0x100)	   // bpp == 2
+	else if (st_shift == 0x01)	   // bpp == 2
 		stCompatibleColorPalette = true;
 	else						   // bpp == 1	// if (st_shift == 0x200)
 		stCompatibleColorPalette = true;
