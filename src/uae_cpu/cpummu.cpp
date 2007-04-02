@@ -369,7 +369,10 @@ static uaecptr mmu_fill_atc_l2(uaecptr addr, int super, int data, int write,
 		l->global = 0;
 	} else {
 		l->valid_data = l->valid_inst = 1;
-		l->phys = (desc & ~0xfff) - (addr & ~0xfff);
+		if (regs.mmu_pagesize_8k)
+			l->phys = (desc & ~0x1fff) - (addr & ~0x1fff);
+		else
+			l->phys = (desc & ~0xfff) - (addr & ~0xfff);
 		l->global = (desc & MMU_MMUSR_G) != 0;
 		l->modified = (desc & MMU_MMUSR_M) != 0;
 		l->write_protect = (desc & MMU_MMUSR_W) != 0;
@@ -1022,10 +1025,13 @@ void mmu_reset(void)
 
 void mmu_set_tc(uae_u16 tc)
 {
-	regs.tc = tc;
+	if (regs.tc == tc)
+		return;
 
+	regs.tc = tc;
 	regs.mmu_enabled = tc & 0x8000 ? 1 : 0;
 	regs.mmu_pagesize_8k = tc & 0x4000 ? 1 : 0;
+	mmu_flush_atc_all(true);
 
 	D(bug("MMU: enabled=%d page8k=%d\n", regs.mmu_enabled, regs.mmu_pagesize_8k));
 }
