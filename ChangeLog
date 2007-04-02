@@ -1,3 +1,13 @@
+2007/04/02 - Petr
+- videl.cpp: a fix from hatari by Thothy: ST-Shifter register is byte wide
+- cpummu.cpp: Roman fixes 8 kB page mode and adds a flush to set_tc.
+
+
+2007/03/29 - Petr commiting patch by Roman
+- cpummu.cpp: the writeback data was written to the wrong location
+              as the pointer was modified.
+
+
 2007/03/18 - Andreas
 - fpu_uae.cpp: Make dump_first_bytes a real nop when !FPU_DEBUG.
 
@@ -8,7 +18,7 @@
 - newcpu.cpp: Call mmu_set_super in m68k_reset.
 
 
-2007/03/17 - Petr comitting patches by Roman Zippel - thanks!
+2007/03/17 - Petr commiting patches by Roman Zippel - thanks!
 - newcpu.[cpp|h], gencpu.c: bitfield instructions fixed (were reading a bit
   too much). Also wrap around of bitfields in registers has been fixed.
 
