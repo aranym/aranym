@@ -27,7 +27,6 @@
 		002F39FA09D0881F00EBEB88 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		002F3A0009D0884600EBEB88 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		170321810A64F616003EE1DC /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 170321800A64F616003EE1DC /* aranym.icns */; };
-		170C297B0BB871000026484E /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
 		170C2B880BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2B8B0BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2BA10BB873470026484E /* cpummu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC30A652B51009733EB /* cpummu.cpp */; };
@@ -1445,7 +1444,6 @@
 				17BCD68E0B20BFF400432CE1 /* cpuemu.cpp in Sources */,
 				17BCD6D20B20C39200432CE1 /* cpustbl.cpp in Sources */,
 				17CDFE620B2196CD001BABB0 /* fpu_uae.cpp in Sources */,
-				170C297B0BB871000026484E /* nfjpeg.cpp in Sources */,
 				170C2B880BB872920026484E /* dyngl.c in Sources */,
 				170C2BA10BB873470026484E /* cpummu.cpp in Sources */,
 			);
