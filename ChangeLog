@@ -1,5 +1,12 @@
 2007/05/10 - Standa
 - hostfs.cpp: symlink resolution buffer size glitch fixed and cleaned up
+- nfvdi_soft.cpp: mfdb.fd_stand extension meanings changed to be bit flags
+  (instead of 0x100 being a value itself as was before used for fVDI
+  antialiased fonts):
+                  0x0100 chunky expandArea
+                  0x1000 fd_wdwidth contains number of bytes instead ofwords
+  Those are used in the aranymfb I have implemented for Linux-m68k (patch
+  to be published).
  
 
 2007/04/02 - Petr

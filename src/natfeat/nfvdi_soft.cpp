@@ -1,7 +1,7 @@
 /*
 	NatFeat VDI driver, software
 
-	ARAnyM (C) 2001 Standa
+	ARAnyM (C) 2001-2007 Standa Opichal and others, see the AUTHORS file
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -94,7 +94,6 @@ int32 SoftVdiDriver::closeWorkstation(void)
 
 int32 SoftVdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 {
-	DUNUSED(vwk);
 	uint32 color = 0;
 
 	if (src)
@@ -380,13 +379,17 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp,
 	uint32 fgColor, uint32 bgColor)
 {
-	DUNUSED(vwk);
 	if (hostScreen.getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
 
 	uint16 pitch = ReadInt16(src + MFDB_WDWIDTH) * 2; // the byte width (always monochrom);
+	/* Linux does not wrap on words */
+	if ( (uint32)ReadInt16( src + MFDB_STAND ) & 0x1000 ) {
+		pitch >>= 1;
+	}
+
 	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%lx, %lx)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
@@ -398,7 +401,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
 	}
 
-	if ( (uint32)ReadInt16( src + MFDB_STAND ) == 0x0100 ) {
+	if ( (uint32)ReadInt16( src + MFDB_STAND ) & 0x100 ) {
 		if ( ReadInt16( src + MFDB_NPLANES ) != 8 ) {
 			bug("fVDI: Only 8bit chunky expand is supported so far.");
 			return 0;
@@ -478,7 +481,6 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		hostScreen.update(dx, dy, w, h, true);
 		return 1;
 	}
-
 
 	if (!hostScreen.renderBegin())
 		return 1;
@@ -665,6 +667,10 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 
 	uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *src->bitplanes
 	uint32 pitch  = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *src->pitch
+	if ( (uint32)ReadInt16( src + MFDB_STAND ) & 0x1000 ) {
+		/* Linux does not wrap on words */
+		pitch >>= 1;
+	}
 	memptr data   = ReadInt32(src) + sy * pitch;			// MFDB *src->address host OS address
 
 	uint32 srcData;
@@ -736,26 +742,38 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 
 		default: // bitplane modes...
 			if (planes < 16) {
-				uint8 color[16];
-
-				D(bug("fVDI: blitArea M->S: bitplaneToCunky conversion"));
-				uint16 *dataHost = (uint16*)Atari2HostAddr(data);
-				// FIXME: Hack! Should use the get_X() methods above
-
-				for(int32 j = 0; j < h; j++) {
-					uint32 wordIndex = (j * pitch >> 1) + (sx >> 4) * planes;
-					hostScreen.bitplaneToChunky(&dataHost[wordIndex], planes, color);
-
-					for(int32 i = sx; i < sx + w; i++) {
-						uint8 bitNo = i & 0xf;
-						if (bitNo == 0) {
-							uint32 wordIndex = (j * pitch >> 1) + (i >> 4) * planes;
-							hostScreen.bitplaneToChunky(&dataHost[wordIndex], planes, color);
+				if ( ((uint32)ReadInt16( src + MFDB_STAND ) & 0x100) && planes == 8) {
+					D(bug("fVDI: blitArea M->S: chunky8bit"));
+					for(int32 j = 0; j < h; j++) {
+						for(int32 i = sx; i < sx + w; i++) {
+							srcData = ReadInt8(data + j * pitch + i);
+							destData = hostScreen.getPixel(dx + i - sx, dy + j);
+							destData = applyBlitLogOperation(logOp, destData, srcData);
+							hostScreen.putPixel(dx + i - sx, dy + j, destData);
 						}
+					}
+				} else {
+					uint8 color[16];
 
-						destData = hostScreen.getPixel(dx + i - sx, dy + j);
-						destData = applyBlitLogOperation(logOp, destData, color[bitNo]);
-						hostScreen.putPixel(dx + i - sx, dy + j, destData);
+					D(bug("fVDI: blitArea M->S: bitplaneToChunky conversion"));
+					uint16 *dataHost = (uint16*)Atari2HostAddr(data);
+					// FIXME: Hack! Should use the get_X() methods above
+
+					for(int32 j = 0; j < h; j++) {
+						uint32 wordIndex = (j * pitch >> 1) + (sx >> 4) * planes;
+						hostScreen.bitplaneToChunky(&dataHost[wordIndex], planes, color);
+
+						for(int32 i = sx; i < sx + w; i++) {
+							uint8 bitNo = i & 0xf;
+							if (bitNo == 0) {
+								uint32 wordIndex = (j * pitch >> 1) + (i >> 4) * planes;
+								hostScreen.bitplaneToChunky(&dataHost[wordIndex], planes, color);
+							}
+
+							destData = hostScreen.getPixel(dx + i - sx, dy + j);
+							destData = applyBlitLogOperation(logOp, destData, color[bitNo]);
+							hostScreen.putPixel(dx + i - sx, dy + j, destData);
+						}
 					}
 				}
 			}
@@ -1508,293 +1526,3 @@ int32 SoftVdiDriver::getFbAddr(void)
 	return result;
 }
 
-/*
- * $Log$
- * Revision 1.19  2006/11/26 04:30:09  standa
- * Other than 4 byte per pixel is not supported for the 8bit alpha expand used
- * for antialised fonts rendering.
- *
- * More debug lines added.
- *
- * Revision 1.18  2006/10/29 09:19:41  milan
- * changes around header files on many places - aranym header files included at first
- *
- * Revision 1.17  2006/02/26 19:14:58  standa
- * Added the remaining logOps implementation for expandArea(8bit).
- *
- * Revision 1.16  2006/02/21 20:14:03  standa
- * A little hack to use alpha channeling for expandArea( of 8bit chunky data).
- *
- * Revision 1.15  2005/09/27 15:14:19  pmandin
- * Use host.h inclusion
- *
- * Revision 1.14  2005/08/29 17:03:07  pmandin
- * nfvdi: Make host mouse cursor usage configurable
- *
- * Revision 1.13  2005/08/05 08:55:29  johan
- * Support for accelerated text drawing.
- *
- * Revision 1.12  2005/07/11 22:56:45  johan
- * Polygon filling support routines moved to base class.
- *
- * Revision 1.11  2005/07/08 23:16:32  johan
- * Bug fixes and speedups for polylines.
- *
- * Revision 1.10  2005/06/14 08:00:45  pmandin
- * Add reset method
- *
- * Revision 1.9  2005/06/07 21:35:12  johan
- * support for forced mouse positioning
- *
- * Revision 1.8  2005/06/05 21:47:46  pmandin
- * OpenGL mouse rendering
- *
- * Revision 1.7  2005/05/27 11:57:03  pmandin
- * Revert back to software mouse driver for nfvdi
- *
- * Revision 1.6  2005/05/16 09:50:37  pmandin
- * Enable OpenGL rendering when opening workstation
- *
- * Revision 1.4  2005/05/12 17:11:06  pmandin
- * Split blitArea function in 4 parts
- *
- * Revision 1.3  2005/05/12 11:30:03  pmandin
- * Bugfixes
- *
- * Revision 1.2  2005/05/09 12:21:10  pmandin
- * Move driver independent functions to nfvdi.cpp
- *
- * Revision 1.1  2005/05/07 09:36:23  pmandin
- * Split NF vdi driver in 2 parts
- *
- * Revision 1.63  2005/01/24 18:22:53  standa
- * openwk() and closewk() added to the NF api -> boot bug fixed.
- *
- * Large cleanup in the m68k part.
- *
- * Revision 1.62  2005/01/12 14:35:16  joy
- * more unused variables hidden
- *
- * Revision 1.61  2005/01/12 10:56:02  joy
- * compiler warnings about unused variables fixed
- *
- * Revision 1.60  2005/01/11 20:32:13  standa
- * One more bugfix regarding the pointers and 64bit clean.
- *
- * Revision 1.59  2005/01/11 19:02:52  standa
- * 64bit cleanup revisited.
- *
- * Revision 1.58  2005/01/11 15:28:14  standa
- * 64bit cleanup
- *
- * Revision 1.57  2004/10/31 23:17:09  pmandin
- * Forgot some break instructions
- *
- * Revision 1.56  2004/09/29 20:45:57  xavier
- * Fixed typo.
- *
- * Revision 1.55  2004/09/24 13:50:14  pmandin
- * FVDI: add functions to read screen size really set by the host
- *
- * Revision 1.54  2004/06/07 08:39:23  standa
- * Code beautyfying. Some remarks removed. Some debugs added.
- *
- * Revision 1.53  2004/01/05 10:05:19  standa
- * Palette handling reworked. Old non-NF dispatch removed.
- *
- * Revision 1.52  2003/11/25 22:56:49  joy
- * part of a major hardware dispatcher rewrite
- *
- * Revision 1.51  2003/04/22 21:22:14  johan
- * Reverse transparent mode for vrt_cpyfm corrected.
- *
- * Revision 1.50  2003/02/19 20:02:35  standa
- * Small bugfix in nonbitplane modes.
- *
- * Revision 1.49  2003/02/19 19:39:38  standa
- * SDL surface is now in TOS colors internally for bitplane modes. This
- * allows much simpler blits and expands.
- *
- * Revision 1.48  2003/02/19 09:02:56  standa
- * The bitplane modes expandArea fix.
- *
- * Revision 1.47  2003/02/18 22:05:07  standa
- * The bitplane fVDI modes improved.
- *
- * Revision 1.46  2003/01/15 08:35:08  standa
- * The drawMouse hotspot coordinates are not stripped to 4bits (0..15).
- *
- * Revision 1.45  2003/01/14 20:49:16  standa
- * Natfeat dispatch for fVDI::drawMouse() fixed.
- *
- * Revision 1.44  2002/12/14 04:58:03  johan
- * Fast 32 bit vro_cpyfm D=S mode.
- * Screen->screen vro_cpyfm modes.
- *
- * Revision 1.43  2002/10/21 22:50:08  johan
- * NatFeat support added.
- *
- * Revision 1.42  2002/10/15 21:26:52  milan
- * non-cheaders support (for MipsPro C/C++ compiler)
- *
- * Revision 1.41  2002/09/28 00:07:37  johan
- * Special handling of vro_cpyfm D=S mode. 16 bit only.
- *
- * Revision 1.40  2002/09/15 15:17:15  joy
- * CPU to separate thread
- *
- * Revision 1.39  2002/08/03 12:36:42  johan
- * Updated to work with new API (dependencies on internal fVDI structures
- * have been removed and all parameters are passed on the stack).
- * Some internal fixes and cleanups.
- *
- * Revision 1.38  2002/06/24 17:08:48  standa
- * The pointer arithmetics fixed. The memptr usage introduced in my code.
- *
- * Revision 1.37  2002/04/22 18:30:50  milan
- * header files reform
- *
- * Revision 1.36  2002/03/27 20:01:47  standa
- * fVDI work also without the --fixedvideoram option. There is a new
- * getVideoramAddress native function. This might be reqested to be removed
- * in the future due to its missuse. The solution would be to make a
- * very special fVDI structure aware function that would set the address
- * to the required places.
- *
- * Revision 1.35  2002/02/19 20:04:05  milan
- * src/ <-> CPU interaction cleaned
- * memory access cleaned
- *
- * Revision 1.1.1.1  2002/02/10 23:32:50  jurikm
- * Unofficial ARAnyM
- *
- * Revision 1.34  2002/01/17 14:59:19  milan
- * cleaning in HW <-> memory communication
- * support for JIT CPU
- *
- * Revision 1.33  2002/01/13 23:08:49  standa
- * The fVDI driver expandArea 24 and 32bit patch. 1, 2 and 4bit depth driver
- * configuration available.
- *
- * Revision 1.32  2002/01/09 19:37:33  standa
- * The fVDI driver patched to not to pollute the HostScreen class getPaletteColor().
- *
- * Revision 1.31  2002/01/08 22:40:00  standa
- * The palette fix and a little 8bit driver update.
- *
- * Revision 1.30  2002/01/08 21:20:57  standa
- * fVDI driver palette store on res change implemented.
- *
- * Revision 1.29  2001/12/29 17:03:23  joy
- * Johan: new(nothrow) => new(std:nothrow)
- *
- * Revision 1.28  2001/12/17 08:33:00  standa
- * Thread synchronization added. The check_event and fvdidriver actions are
- * synchronized each to other.
- *
- * Revision 1.27  2001/12/12 02:17:36  standa
- * Some line clipping bug fixed (the clip is on every time now -> should fix).
- *
- * Revision 1.26  2001/12/11 21:03:57  standa
- * Johan's patch caused DEBUG directive to fail e.g. in main.cpp.
- * The inline functions were put into the .cpp file.
- *
- * Revision 1.25  2001/11/29 23:51:56  standa
- * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
- *
- * Revision 1.24  2001/11/26 16:07:57  standa
- * Olivier Landemarre found bug fixed.
- *
- * Revision 1.23  2001/11/19 01:39:10  standa
- * The first bitplane mode version. The blit and expand M->M needs to be
- * implemented. There is some pixel shift in blitting that I can't find.
- *
- * Revision 1.22  2001/10/31 23:17:38  standa
- * fVDI driver update The 16,24 and 32bit mode should work.
- *
- * Revision 1.21  2001/10/30 22:59:34  standa
- * The resolution change is now possible through the fVDI driver.
- *
- * Revision 1.20  2001/10/29 23:15:26  standa
- * The blitArea method rewitten to use macros. More readable code.
- *
- * Revision 1.19  2001/10/24 17:55:01  standa
- * The fVDI driver fixes. Finishing the functionality tuning.
- *
- * Revision 1.18  2001/10/23 21:28:49  standa
- * Several changes, fixes and clean up. Shouldn't crash on high resolutions.
- * hostscreen/gfx... methods have fixed the loop upper boundary. The interface
- * types have changed quite havily.
- *
- * Revision 1.17  2001/10/19 11:58:46  standa
- * The line clipping added (has bug, when neither one point is within the rect).
- * expandArea not handles the spacial mode (fallbacks it).
- * working with fVDI beta.
- *
- * Revision 1.16  2001/10/16 09:07:36  standa
- * The fVDI expandArea M->M implemented. The 16bit driver should work now.
- *
- * Revision 1.15  2001/10/14 16:11:54  standa
- * Syntax fix. STanda's calls to videl.renderNoFlag commented out.
- *
- * Revision 1.14  2001/10/12 08:25:38  standa
- * The fVDI blitting fixed and extended. Now only the expandToMemory and
- * blit mem2mem is to be done.
- *
- * Revision 1.13  2001/10/03 06:37:41  standa
- * General cleanup. Some constants added. Better "to screen" operation
- * recognition (the videoram address is checked too - instead of only the
- * MFDB == NULL || MFDB->address == NULL)
- *
- * Revision 1.12  2001/10/01 22:22:41  standa
- * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).
- * fvdidrv/blitArea form memory works in TC.
- *
- * Revision 1.11  2001/09/30 23:09:23  standa
- * The line logical operation added.
- * The first version of blitArea (screen to screen only).
- *
- * Revision 1.10  2001/09/24 23:16:28  standa
- * Another minor changes. some logical operation now works.
- * fvdidrv/fillArea and fvdidrv/expandArea got the first logOp handling.
- *
- * Revision 1.9  2001/09/21 13:57:32  standa
- * D2(x) used - see include/debug.h
- *
- * Revision 1.8  2001/09/21 06:53:26  standa
- * The blitting is now said to be working, although it is not implemented.
- * expand to memory (not to SDL surface) is not either processed or dispalyed.
- *
- * Revision 1.7  2001/09/20 18:12:09  standa
- * Off by one bug fixed in fillArea.
- * Separate functions for transparent and opaque background.
- * gfxPrimitives methods moved to the HostScreen
- *
- * Revision 1.6  2001/09/19 23:03:46  standa
- * The fVDI driver update. Basic expandArea was added to display texts.
- * Still heavy buggy code!
- *
- * Revision 1.5  2001/08/30 14:04:59  standa
- * The fVDI driver. mouse_draw implemented. Partial pattern fill support.
- * Still buggy.
- *
- * Revision 1.4  2001/08/28 23:26:09  standa
- * The fVDI driver update.
- * VIDEL got the doRender flag with setter setRendering().
- *       The host_colors_uptodate variable name was changed to hostColorsSync.
- * HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
- *       was created.
- * fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
- *
- * Revision 1.3  2001/08/09 12:35:43  standa
- * Forced commit to sync the CVS. ChangeLog should contain all details.
- *
- * Revision 1.2  2001/07/24 06:41:25  joy
- * updateScreen removed.
- * Videl reference should be removed as well.
- *
- * Revision 1.1  2001/06/18 15:48:42  standa
- * fVDI driver object.
- *
- *
- */
