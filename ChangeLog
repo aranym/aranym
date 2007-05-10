@@ -1,3 +1,7 @@
+2007/05/10 - Standa
+- hostfs.cpp: symlink resolution buffer size glitch fixed and cleaned up
+ 
+
 2007/04/02 - Petr
 - videl.cpp: a fix from hatari by Thothy: ST-Shifter register is byte wide
 - cpummu.cpp: Roman fixes 8 kB page mode and adds a flush to set_tc.

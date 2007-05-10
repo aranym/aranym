@@ -1508,7 +1508,7 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 			memmove( target + plen, target, strlen(target)+1 );	
 			memmove( target, pathname, plen );
 		} else {
-			panicbug( "HOSTFS: fs_readlink: relative link doesn't fit the len '%s'\n", target );
+			panicbug( "HOSTFS: host_readlink: relative link doesn't fit the len '%s'\n", target );
 			errno = ENOMEM;
 			return NULL;
 		}
@@ -1550,7 +1550,7 @@ DIR *HostFs::host_opendir( const char *fpathName ) {
 	struct stat statBuf;
 	if ( !lstat(fpathName, &statBuf) && S_ISLNK(statBuf.st_mode) ) {
 		char temp[MAXPATHNAMELEN];
-		if (host_readlink(fpathName,temp,MAXPATHNAMELEN-1))
+		if (host_readlink(fpathName,temp,sizeof(temp)-1))
 			return host_opendir( temp );
 	}
 
@@ -1661,7 +1661,7 @@ int32 HostFs::host_stat64( XfsCookie *fc, const char *fpathName, struct stat *st
 	// symlink
 	if ( S_ISLNK(statBuf->st_mode) ) {
 		char target[MAXPATHNAMELEN];
-		if (!host_readlink(fpathName,target,MAXPATHNAMELEN-1))
+		if (!host_readlink(fpathName,target,sizeof(target)-1))
 			return errnoHost2Mint(errno,TOS_EFILNF);
 
 		// doesn't point to a mapped drive
@@ -1909,7 +1909,7 @@ int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 	D(bug( "HOSTFS: fs_readlink: %s", fpathName ));
 
 	char target[MAXPATHNAMELEN];
-	if (!host_readlink(fpathName,target,len-1))
+	if (!host_readlink(fpathName,target,sizeof(target)-1))
 		return errnoHost2Mint( errno, TOS_EFILNF );
 
 	D(bug( "HOSTFS: fs_readlink: -> %s", target ));
@@ -2356,7 +2356,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	struct stat statBuf;
 	while ( !lstat(drv->hostRoot, &statBuf) && S_ISLNK(statBuf.st_mode) ) {
 		char target[MAXPATHNAMELEN];
-		if (host_readlink(drv->hostRoot,target,MAXPATHNAMELEN-1)) {
+		if (host_readlink(drv->hostRoot,target,sizeof(target)-1)) {
 			free( drv->hostRoot );
 			drv->hostRoot = strdup( target );
 		}
