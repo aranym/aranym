@@ -398,7 +398,7 @@ bool InitAll(void)
 	sdlInitParams |= SDL_INIT_TIMER;
 #endif
 	if (SDL_Init(sdlInitParams) != 0) {
-		panicbug("SDL initialization failed.");
+		panicbug("SDL initialization failed: %s", SDL_GetError());
 		return false;
 	}
 	atexit(SDL_Quit);
