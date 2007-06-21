@@ -219,9 +219,19 @@ TosBootOs::TosBootOs(void) throw (AranymException)
 	// Xconout patch
 	if (bx_options.tos.redirect_CON) {
 		ROMBaseHost[0x8d44] = ROMBaseHost[0x8d50] = M68K_EMUL_OP_PUT_SCRAP >> 8;
-		ROMBaseHost[0x8d45] = ROMBaseHost[0x8d51] = M68K_EMUL_OP_PUT_SCRAP && 0xff;
+		ROMBaseHost[0x8d45] = ROMBaseHost[0x8d51] = M68K_EMUL_OP_PUT_SCRAP & 0xff;
 		ROMBaseHost[0x8d46] = ROMBaseHost[0x8d52] = 0x4e;	// RTS
 		ROMBaseHost[0x8d47] = ROMBaseHost[0x8d53] = 0x75;
+	}
+	else {
+		ROMBaseHost[0x8d44] = 0xc2;
+		ROMBaseHost[0x8d45] = 0x7c;
+		ROMBaseHost[0x8d46] = 0x00;
+		ROMBaseHost[0x8d47] = 0xff;
+		ROMBaseHost[0x8d50] = 0x28;
+		ROMBaseHost[0x8d51] = 0x79;
+		ROMBaseHost[0x8d52] = 0x00;
+		ROMBaseHost[0x8d53] = 0xe4;
 	}
 
 	infoprint("TOS 4.04 loading... [OK]");
