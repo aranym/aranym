@@ -879,6 +879,7 @@ PRIVATE inline fpu_extended fp_do_sqrt(fpu_extended x)
 	return value;
 }
 
+#ifndef ACCURATE_SIN_COS_TAN
 #undef fp_sin
 #define fp_sin fp_do_sin
 
@@ -908,6 +909,7 @@ PRIVATE inline fpu_extended fp_do_tan(fpu_extended x)
 	__asm__ __volatile__("fptan" : "=t" (value), "=u" (value) : "0" (x));
 	return value;
 }
+#endif /* ACCURATE_SIN_COS_TAN */
 
 #undef fp_expm1
 #define fp_expm1 fp_do_expm1

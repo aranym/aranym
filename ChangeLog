@@ -1,3 +1,7 @@
+2007/06/23 - milan
+- fpu: Bill Allombert's patch for inaccurate x87 FPU
+
+
 2007/05/10 - Standa
 - hostfs.cpp: symlink resolution buffer size glitch fixed and cleaned up
 - nfvdi_soft.cpp: mfdb.fd_stand extension meanings changed to be bit flags
