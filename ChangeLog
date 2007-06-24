@@ -2,6 +2,10 @@
 - fpu: Bill Allombert's patch for inaccurate x87 FPU
 
 
+2007/06/21 - Petr
+- fixed a bug in TOS conout redirection
+
+
 2007/05/10 - Standa
 - hostfs.cpp: symlink resolution buffer size glitch fixed and cleaned up
 - nfvdi_soft.cpp: mfdb.fd_stand extension meanings changed to be bit flags
