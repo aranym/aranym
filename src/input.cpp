@@ -427,6 +427,8 @@ static const int GUI_RETURN_INFO = (SDL_USEREVENT+1);
 // running in a different thread
 static int open_gui(void * /*ptr*/)
 {
+	bool fullscreen = bx_options.video.fullscreen;
+
 	hostScreen.openGUI();
 	int status = GUImainDlg();
 
@@ -438,6 +440,16 @@ static int open_gui(void * /*ptr*/)
 	SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(GUI_RETURN_INFO));
 
 	hostScreen.closeGUI();
+
+	// small hack to toggle fullscreen from the SETUP GUI
+	if (bx_options.video.fullscreen != fullscreen) {
+		bx_options.video.fullscreen = fullscreen;
+
+		hostScreen.toggleFullScreen();
+		if (bx_options.video.fullscreen && !grabbedMouse)
+			grabTheMouse();
+	}
+
 	return 0;
 }
 
