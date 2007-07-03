@@ -1521,7 +1521,7 @@ void HostScreen::DisableOpenGLVdi(void)
  */
 void HostScreen::refresh(void)
 {
-	if (++refreshCounter == bx_options.video.refresh) {
+	if (++refreshCounter >= bx_options.video.refresh) {
 		refreshCounter = 0;
 		getVIDEL()->renderScreen();
 #ifdef SDL_GUI
