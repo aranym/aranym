@@ -244,7 +244,7 @@ void invoke200HzInterrupt()
 #endif
 		getMFP()->IRQ(5, count);
 
-#define VBL_MS	40
+#define VBL_MS	20
 	static int VBL_counter = 0;
 	VBL_counter += milliseconds;
 	if (VBL_counter >= VBL_MS) {
