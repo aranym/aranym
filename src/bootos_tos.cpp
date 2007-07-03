@@ -33,6 +33,18 @@
 
 TosBootOs::TosBootOs(void) throw (AranymException)
 {
+	tos_patch();
+}
+
+void TosBootOs::reset(void) throw (AranymException)
+{
+	tos_patch();
+}
+
+/*--- Private functions ---*/
+
+void TosBootOs::tos_patch(void) throw (AranymException)
+{
 	if (strlen(bx_options.tos_path) == 0) {
 		throw AranymException("Path to TOS ROM image file undefined");
 	}

@@ -30,6 +30,10 @@ class TosBootOs : public BootOs
 {
 	public:
 		TosBootOs(void) throw (AranymException);
+		void reset(void) throw (AranymException);
+	
+	private:
+		void tos_patch(void) throw (AranymException);
 };
 
 #endif /* BOOTOSTOS_H */
