@@ -16,12 +16,14 @@ enum MAINDLG {
 	DISCS,
 	HOTKEYS,
 	KEYBOARD,
-	TOS,
+	OS,
 	VIDEO,
+/*
 	MEMORY,
 	HOSTFS,
 	CDROM,
 	INOUT,
+*/
 	text_conffile,
 	LOAD,
 	SAVE,
@@ -39,16 +41,18 @@ SGOBJ maindlg[] = {
 	{SGBOX, SG_BACKGROUND, 0, 0, 0, 40, 25, NULL},
 	{SGBOX, 0, 0, 1, 2, 38, 15, NULL},
 	{SGTEXT, 0, 0, 14, 1, 14, 1, " ARAnyM SETUP "},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 3, 15, 1, "About"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 5, 15, 1, "Disks"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 7, 15, 1, "Hotkeys"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 9, 15, 1, "Keyboard&mouse"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 11, 15, 1, "TOS"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 3, 15, 1, "Video"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 5, 15, 1, "JIT CPU"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 7, 15, 1, "Host FS"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 9, 15, 1, "Host CD/DVD"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 22, 11, 15, 1, "Input/Output"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 3, 17, 1, "About"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 5, 17, 1, "Disks"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 7, 17, 1, "Hotkeys"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 9, 17, 1, "Keyboard + mouse"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 11, 17, 1, "Operating System"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 3, 17, 1, "Video"},
+/*
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 5, 17, 1, "JIT CPU"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 7, 17, 1, "Host FS"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 9, 17, 1, "Host CD/DVD"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 11, 17, 1, "Input/Output"},
+*/
 	{SGTEXT, 0, 0, 4, 15, 12, 1, "Config file:"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 17, 15, 6, 1, "Load"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 25, 15, 6, 1, "Save"},
@@ -97,6 +101,8 @@ static bool bShutdown;
 extern void Dialog_DiscDlg();
 extern void Dialog_HotkeysDlg();
 extern void Dialog_KeyboardDlg();
+extern void Dialog_OsDlg();
+extern void Dialog_VideoDlg();
 
 static char path[MAX_FILENAME_LENGTH] = "";
 
@@ -153,15 +159,20 @@ void Dialog_MainDlg()
 		case HOTKEYS:
 			Dialog_HotkeysDlg();
 			break;
-		case TOS:
+		case OS:
+			Dialog_OsDlg();
+			break;
 		case VIDEO:
+			Dialog_VideoDlg();
+			break;
+/*
 		case MEMORY:
 		case HOSTFS:
 		case CDROM:
 		case INOUT:
 			SDLGui_Alert("Unimplemented yet.", ALERT_OK);
 			break;
-
+*/
 		case LOAD:
 			LoadSettings();
 			break;
