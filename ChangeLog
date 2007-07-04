@@ -1,3 +1,10 @@
+2007/07/04 - Petr
+- rtc.cpp: check NVRAM related config options upon each reset
+  Also fixed NVRAM error in connected VGA/TV monitor (been there since day 1)
+
+- gui-sdl/dlgVideo.cpp: radio buttons cleared correctly now..
+
+
 2007/07/03 - Petr
 - bootos_tos.cpp: check TOS related config options upon each reset
 
