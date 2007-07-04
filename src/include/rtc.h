@@ -1,7 +1,7 @@
 /*
  * rtc.h - Atari NVRAM emulation code - declaration
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2007 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -61,6 +61,11 @@ private:
 	uint8 getData();
 	void setData(uint8);
 	void setChecksum();
+	void patch();
 };
 
 #endif // _RTC_H
+
+/*
+vim:ts=4:sw=4:
+*/
