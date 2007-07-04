@@ -47,8 +47,6 @@ enum VIDEODLG {
 	text_monitor,
 	MONITOR_NV,
 	MONITOR_VGA,
-//	MONITOR_RGB,
-//	MONITOR_MONO,
 	MONITOR_TV,
 	text_colordepth,
 	COLORDEPTH_NV,
@@ -95,8 +93,6 @@ static SGOBJ videodlg[] =
 	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 12,5, 7,1, "<NVRAM>" },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 12,6, 3,1, "VGA" },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 12,7, 2,1, "TV" },
-//	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 12,7, 3,1, "RGB" },
-//	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 12,8, 4,1, "Mono" },
 	{ SGTEXT, 0, 0, 25,4, 12,1, "Boot Depth:" },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25,5, 7,1, "<NVRAM>" },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25,6, 8,1, "2 colors" },
@@ -132,6 +128,12 @@ void Dialog_VideoDlg()
 	videodlg[FULLSCREEN].state = video->fullscreen ? SG_SELECTED : 0;
 	videodlg[WINDOW].state = !video->fullscreen ? SG_SELECTED : 0;
 
+	videodlg[FRAMESKIP_0].state = 0;
+	videodlg[FRAMESKIP_1].state = 0;
+	videodlg[FRAMESKIP_2].state = 0;
+	videodlg[FRAMESKIP_5].state = 0;
+	videodlg[FRAMESKIP_10].state = 0;
+	videodlg[FRAMESKIP_50].state = 0;
 	switch(video->refresh)
 	{
 		default:
@@ -143,16 +145,23 @@ void Dialog_VideoDlg()
 		case S01F: videodlg[FRAMESKIP_50].state = SG_SELECTED; break;
 	}
 
+	videodlg[MONITOR_NV].state = 0;
+	videodlg[MONITOR_VGA].state = 0;
+	videodlg[MONITOR_TV].state = 0;
 	switch(video->monitor)
 	{
 		default:
 		case -1: videodlg[MONITOR_NV].state = SG_SELECTED; break;
 		case 0: videodlg[MONITOR_VGA].state = SG_SELECTED; break;
 		case 1: videodlg[MONITOR_TV].state = SG_SELECTED; break;
-//		case 1: videodlg[MONITOR_RGB].state = SG_SELECTED; break;
-//		case 2: videodlg[MONITOR_MONO].state = SG_SELECTED; break;
 	}
 
+	videodlg[COLORDEPTH_NV].state = 0;
+	videodlg[COLORDEPTH_1].state = 0;
+	videodlg[COLORDEPTH_2].state = 0;
+	videodlg[COLORDEPTH_4].state = 0;
+	videodlg[COLORDEPTH_8].state = 0;
+	videodlg[COLORDEPTH_16].state = 0;
 	switch(video->boot_color_depth)
 	{
 		default:
@@ -164,10 +173,15 @@ void Dialog_VideoDlg()
 		case 16: videodlg[COLORDEPTH_16].state = SG_SELECTED; break;
 	}
 
-	videodlg[AUTOZOOM_ON].state |= autozoom->enabled ? SG_SELECTED:0;
-	videodlg[AZ_INTEGER].state |= autozoom->integercoefs ? SG_SELECTED:0;
-	videodlg[AZ_FIXEDSIZE].state |= autozoom->fixedsize ? SG_SELECTED:0;
+	videodlg[AUTOZOOM_ON].state = autozoom->enabled ? SG_SELECTED:0;
+	videodlg[AZ_INTEGER].state = autozoom->integercoefs ? SG_SELECTED:0;
+	videodlg[AZ_FIXEDSIZE].state = autozoom->fixedsize ? SG_SELECTED:0;
 
+	videodlg[RES_640].state = 0;
+	videodlg[RES_800].state = 0;
+	videodlg[RES_1024].state = 0;
+	videodlg[RES_1280].state = 0;
+	videodlg[RES_CUSTOM].state = 0;
 	if (autozoom->width == 640 && autozoom->height == 480)
 		videodlg[RES_640].state |= SG_SELECTED;
 	else if (autozoom->width == 800 && autozoom->height == 600)
@@ -177,7 +191,7 @@ void Dialog_VideoDlg()
 	else if (autozoom->width == 1280 && autozoom->height == 1024)
 		videodlg[RES_1280].state |= SG_SELECTED;
 	else {
-		//videodlg[RES_CUSTOM].state |= SG_SELECTED;
+		videodlg[RES_CUSTOM].state |= SG_SELECTED;
 	}
 	sprintf(video_width, "%4d", autozoom->width);
 	sprintf(video_height, "%4d", autozoom->height);
@@ -203,12 +217,6 @@ void Dialog_VideoDlg()
 			video->monitor = 0;
 		else if (videodlg[MONITOR_TV].state & SG_SELECTED)
 			video->monitor = 1;
-/*
-		else if (videodlg[MONITOR_RGB].state & SG_SELECTED)
-			video->monitor = 1;
-		else if (videodlg[MONITOR_MONO].state & SG_SELECTED)
-			video->monitor = 2;
-*/
 
 		video->boot_color_depth = -1;
 		if (videodlg[COLORDEPTH_1].state & SG_SELECTED)
