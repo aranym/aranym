@@ -1,3 +1,20 @@
+2007/07/03 - Petr
+- bootos_tos.cpp: check TOS related config options upon each reset
+
+- hostscreen.cpp: get ready for 'refresh' config option on-the-fly changes
+
+- input.cpp: hack for switching between fullscreen/window from the SETUP GUI
+
+- main.cpp: wrong millisecond count for 50 Hz VBL fixed (we used to be
+  refreshing the screen at 12.5 Hz instead of 25 Hz since some time)
+
+- gui-sdl: added dialogs for patching TOS and for Video settings. Most of the
+  settings require reboot to have some effect and some even cause crashes
+  when changed on-the-fly. Interesting. The autozoom options were added
+  in the hope that it finally helps to get documented how they affect the
+  nfVDI resolution (rumours say that fVDI settings are overriden by this).
+
+
 2007/06/23 - milan
 - fpu: Bill Allombert's patch for inaccurate x87 FPU
 
