@@ -47,31 +47,39 @@ int byte15th = (colors & 7) | (80:40) << 3 | (VGA : TV) << 4 | (PAL : NTSC) << 5
 int byte14th = VGA:TV ? line doubling : half screen;
 */
 
-RTC::RTC(memptr addr, uint32 size) : BASE_IO(addr, size) {
+RTC::RTC(memptr addr, uint32 size) : BASE_IO(addr, size)
+{
 	init();
 	reset();
 }
 
 void RTC::reset()
 {
+	patch();
 	index = 0;
 }
 
-RTC::~RTC() {
+RTC::~RTC()
+{
 	save();		// save NVRAM file upon exit automatically (should be conditionalized)
 }
 
-void RTC::init() {
+void RTC::init()
+{
 	// set up the nvram filename
 	getConfFilename(ARANYMNVRAM, nvram_filename, sizeof(nvram_filename));
 
 	load();		// load NVRAM file automatically
 
+}
+
+void RTC::patch()
+{
 	if (bx_options.video.monitor != -1) {
 		if (bx_options.video.monitor == 0)	// VGA
-			nvram[29] |= 32;		// the monitor type should be set on a working copy only
+			nvram[29] |= 0x10;		// the monitor type should be set on a working copy only
 		else
-			nvram[29] &= ~32;
+			nvram[29] &= ~0x10;
 	}
 	if (bx_options.video.boot_color_depth != -1) {
 		int res = nvram[29] & 0x07;
@@ -89,7 +97,8 @@ void RTC::init() {
 	setChecksum();
 }
 
-bool RTC::load() {
+bool RTC::load()
+{
 	bool ret = false;
 	FILE *f = fopen(nvram_filename, "rb");
 	if (f != NULL) {
@@ -108,7 +117,8 @@ bool RTC::load() {
 	return ret;
 }
 
-bool RTC::save() {
+bool RTC::save()
+{
 	bool ret = false;
 	FILE *f = fopen(nvram_filename, "wb");
 	if (f != NULL) {
@@ -124,7 +134,8 @@ bool RTC::save() {
 	return ret;
 }
 
-uint8 RTC::handleRead(memptr addr) {
+uint8 RTC::handleRead(memptr addr)
+{
 	addr -= getHWoffset();
 	if (addr > getHWsize())
 		return 0;
@@ -137,7 +148,8 @@ uint8 RTC::handleRead(memptr addr) {
 	return 0;
 }
 
-void RTC::handleWrite(memptr addr, uint8 value) {
+void RTC::handleWrite(memptr addr, uint8 value)
+{
 	addr -= getHWoffset();
 	if (addr > getHWsize())
 		return;
@@ -148,7 +160,8 @@ void RTC::handleWrite(memptr addr, uint8 value) {
 	}
 }
 
-void RTC::setAddr(uint8 value) {
+void RTC::setAddr(uint8 value)
+{
 	if (value < sizeof(nvram)) {
 		index = value;
 	}
@@ -157,7 +170,8 @@ void RTC::setAddr(uint8 value) {
 	}
 }
 
-uint8 RTC::getData() {
+uint8 RTC::getData()
+{
 	uint8 value = 0;
 	if (index == 0 || index == 2 || index == 4 || (index >=7 && index <=9) ) {
 		time_t tim = time(NULL);
@@ -183,7 +197,8 @@ uint8 RTC::getData() {
 	return value;
 }
 
-void RTC::setData(uint8 value) {
+void RTC::setData(uint8 value)
+{
 	D(bug("Writing NVRAM data at %d = %d ($%02x) at %06x", index, value, value, showPC()));
 	nvram[index] = value;
 }
@@ -206,3 +221,7 @@ void RTC::setChecksum()
 	nvram[CKS_LOC] = ~sum;
 	nvram[CKS_LOC+1] = sum;
 }
+
+/*
+vim:ts=4:sw=4:
+*/
