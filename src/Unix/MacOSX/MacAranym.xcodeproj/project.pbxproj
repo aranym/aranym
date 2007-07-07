@@ -221,14 +221,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 8D1107260486CEB800E47090 /* MacAranym */;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
 			remoteInfo = MacAranym;
 		};
 		17D10CA90C401D940083E7F2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 17BCD7880B20F64F00432CE1 /* MacAranym MMU */;
+			remoteGlobalIDString = 17BCD7880B20F64F00432CE1;
 			remoteInfo = "MacAranym MMU";
 		};
 /* End PBXContainerItemProxy section */
@@ -1483,16 +1483,9 @@
 				COMPILE_DEFS = "$(inherited)";
 				CONFIGURE_OPTIONS = "$(inherited) --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					.,
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				HEADER_SEARCH_PATHS = SDL.framework/Headers;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = MacAranym;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
 			};
 			name = "Release G5";
 		};
@@ -1506,16 +1499,27 @@
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "0.9.4 beta2";
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = (
+					.,
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_CW_ASM_SYNTAX = NO;
 				GCC_ENABLE_PASCAL_STRINGS = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				HEADER_SEARCH_PATHS = (
+					SDL.framework/Headers,
+					SDL_image.framework/Headers,
+					MesaGL/include,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
 			};
 			name = "Release G5";
 		};
@@ -1525,16 +1529,9 @@
 				COMPILE_DEFS = "$(inherited)";
 				CONFIGURE_OPTIONS = "$(inherited) --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					.,
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				HEADER_SEARCH_PATHS = SDL.framework/Headers;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = MacAranym;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Release;
 		};
@@ -1551,14 +1548,25 @@
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "0.9.4 beta2";
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = (
+					.,
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_CW_ASM_SYNTAX = NO;
 				GCC_ENABLE_PASCAL_STRINGS = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				HEADER_SEARCH_PATHS = (
+					SDL.framework/Headers,
+					SDL_image.framework/Headers,
+					MesaGL/include,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Release;
 		};
@@ -1597,17 +1605,10 @@
 				COMPILE_DEFS = "$(inherited)";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					.,
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				HEADER_SEARCH_PATHS = SDL.framework/Headers;
 				INFOPLIST_FILE = Info.plist;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Debug;
 		};
@@ -1617,17 +1618,10 @@
 				COMPILE_DEFS = "$(inherited)";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					.,
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				HEADER_SEARCH_PATHS = SDL.framework/Headers;
 				INFOPLIST_FILE = Info.plist;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Release;
 		};
@@ -1637,17 +1631,10 @@
 				COMPILE_DEFS = "$(inherited)";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					.,
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				HEADER_SEARCH_PATHS = SDL.framework/Headers;
 				INFOPLIST_FILE = Info.plist;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
 			};
 			name = "Release G5";
 		};
@@ -1657,16 +1644,9 @@
 				COMPILE_DEFS = "$(inherited)";
 				CONFIGURE_OPTIONS = "$(inherited) --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					.,
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				HEADER_SEARCH_PATHS = SDL.framework/Headers;
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = MacAranym;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Debug;
 		};
@@ -1679,14 +1659,25 @@
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "0.9.4 beta2";
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = (
+					.,
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_CW_ASM_SYNTAX = NO;
 				GCC_ENABLE_PASCAL_STRINGS = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				HEADER_SEARCH_PATHS = (
+					SDL.framework/Headers,
+					SDL_image.framework/Headers,
+					MesaGL/include,
+				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Debug;
 		};
