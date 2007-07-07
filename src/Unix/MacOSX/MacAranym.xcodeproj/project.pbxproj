@@ -31,6 +31,10 @@
 		170C2B8B0BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2BA10BB873470026484E /* cpummu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC30A652B51009733EB /* cpummu.cpp */; };
 		17115C750A65530500038162 /* SDLMain.nib in Resources */ = {isa = PBXBuildFile; fileRef = 17115C740A65530500038162 /* SDLMain.nib */; };
+		171B2BD50C4017C9007D8975 /* dlgOs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD30C4017C9007D8975 /* dlgOs.cpp */; };
+		171B2BD60C4017C9007D8975 /* dlgVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD40C4017C9007D8975 /* dlgVideo.cpp */; };
+		171B2BD70C4017C9007D8975 /* dlgOs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD30C4017C9007D8975 /* dlgOs.cpp */; };
+		171B2BD80C4017C9007D8975 /* dlgVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD40C4017C9007D8975 /* dlgVideo.cpp */; };
 		17398E120B21048100A9B4DB /* README.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17398E110B21048100A9B4DB /* README.rtf */; };
 		175822820A6554CE00EEE78F /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
 		1758228C0A6555CC00EEE78F /* main_unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E7C0A652B52009733EB /* main_unix.cpp */; };
@@ -281,6 +285,8 @@
 		170C2B840BB872920026484E /* dyngl_glext.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dyngl_glext.c; path = ../../dyngl_glext.c; sourceTree = SOURCE_ROOT; };
 		170C2B850BB872920026484E /* dyngl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dyngl.c; path = ../../dyngl.c; sourceTree = SOURCE_ROOT; };
 		17115C740A65530500038162 /* SDLMain.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = SDLMain.nib; sourceTree = "<group>"; };
+		171B2BD30C4017C9007D8975 /* dlgOs.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = dlgOs.cpp; sourceTree = "<group>"; };
+		171B2BD40C4017C9007D8975 /* dlgVideo.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = dlgVideo.cpp; sourceTree = "<group>"; };
 		1734DB140ABCA354001A746E /* config_ppc.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = config_ppc.h; path = build/MacAranym.build/config_ppc.h; sourceTree = "<group>"; };
 		1734DB150ABCA3AB001A746E /* config_i386.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = config_i386.h; path = build/MacAranym.build/config_i386.h; sourceTree = "<group>"; };
 		17398E110B21048100A9B4DB /* README.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README.rtf; sourceTree = "<group>"; };
@@ -702,6 +708,8 @@
 				17798CF10A652B50009733EB /* dlgHotkeys.cpp */,
 				17798CF20A652B50009733EB /* dlgKeyboard.cpp */,
 				17798CF30A652B50009733EB /* dlgMain.cpp */,
+				171B2BD30C4017C9007D8975 /* dlgOs.cpp */,
+				171B2BD40C4017C9007D8975 /* dlgVideo.cpp */,
 				17798CF40A652B50009733EB /* file.cpp */,
 				17798CF50A652B50009733EB /* file.h */,
 				17798CF60A652B50009733EB /* font8.h */,
@@ -1358,6 +1366,8 @@
 				17BCD83F0B20F6BF00432CE1 /* nfvdi_opengl.cpp in Sources */,
 				17CDFE630B2196D8001BABB0 /* fpu_uae.cpp in Sources */,
 				170C2B8B0BB872920026484E /* dyngl.c in Sources */,
+				171B2BD70C4017C9007D8975 /* dlgOs.cpp in Sources */,
+				171B2BD80C4017C9007D8975 /* dlgVideo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1446,6 +1456,8 @@
 				17CDFE620B2196CD001BABB0 /* fpu_uae.cpp in Sources */,
 				170C2B880BB872920026484E /* dyngl.c in Sources */,
 				170C2BA10BB873470026484E /* cpummu.cpp in Sources */,
+				171B2BD50C4017C9007D8975 /* dlgOs.cpp in Sources */,
+				171B2BD60C4017C9007D8975 /* dlgVideo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
