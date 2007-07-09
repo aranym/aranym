@@ -1,13 +1,15 @@
 2007/07/09 - version 0.9.5beta released
 
- This version brings major speed up of the MMU version thanks to work
- of Roman Zippel and also many improvements for Mac OS X by Philipp.
+ This version brings major speed up of the MMU version thanks to contribution
+ of Roman Zippel and also many improvements for Mac OS X as well as bunch of
+ smaller fixes at many places by dedicated ARAnyM developers.
 
  o OpenGL fixes: mouse cursor, alpha channel on big-endian machines
  o OpenGL is loaded dynamically now (requires SDL 1.2.10 or newer)
  o new project file for Xcode 2.x used to build Universal binaries of MacAranym
  o JITc for Solaris x86
- o MMU translation cache for major speed up
+ o MMU translation cache for major speed up of the MMU mode (now almost
+   comparable with non-MMU mode - 3 GHz host CPU outperforms 100 MHz 68060!)
  o HostFS symlink fix
  o new TOS patches and VIDEO SETUP dialogs. Most of the settings require
    reboot to take effect.
