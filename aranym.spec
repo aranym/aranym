@@ -1,7 +1,7 @@
 # generic defines used by all distributions.
 #
 %define name	aranym
-%define ver	0.9.4beta2
+%define ver	0.9.5beta
 %define _rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -231,6 +231,9 @@ desktop-file-install \
 %endif
 
 %changelog
+* Mon Jul 09 2007 Petr Stehlik <pstehlik@sophics.cz>
+New release. Version increased. Other changes in NEWS file.
+
 * Tue Oct 11 2006 David Bolt <davjam@davjam.org>	0.9.4beta
 Added an aranym.desktop file for inclusion in desktop menus.
 Temporarily uses emulator.png as the menu icon.
