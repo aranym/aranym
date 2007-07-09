@@ -1,3 +1,23 @@
+2007/07/09 - version 0.9.5beta released
+
+ This version brings major speed up of the MMU version thanks to work
+ of Roman Zippel and also many improvements for Mac OS X by Philipp.
+
+ o OpenGL fixes: mouse cursor, alpha channel on big-endian machines
+ o OpenGL is loaded dynamically now (requires SDL 1.2.10 or newer)
+ o new project file for Xcode 2.x used to build Universal binaries of MacAranym
+ o JITc for Solaris x86
+ o MMU translation cache for major speed up
+ o HostFS symlink fix
+ o new TOS patches and VIDEO SETUP dialogs. Most of the settings require
+   reboot to take effect.
+ o VIDEL refresh was wrong, now fixed and configurable on-the-fly in SETUP
+ o TV/VGA switch was wrong, now fixed and configurable in the SETUP
+ o small CPU bitfield insn fix, FPU sin/cos fix, VIDEL ST-Shifter fix,
+   nfVDI mfdb.fd_stand fix, TOS bconout redir fix...
+ o many other build system fixes
+
+
 2006/11/28 - version 0.9.4beta2 released
 
  I was so wrong when I wrote "last MMU bugs were fixed" in previous release
