@@ -23,7 +23,7 @@
 
 
 2007/06/23 - milan
-- fpu: Bill Allombert's patch for inaccurate x87 FPU
+- fpu: Bill Allombert's patch for inaccurate sin/cos/tan insns of x87 FPU
 
 
 2007/06/21 - Petr
@@ -32,6 +32,7 @@
 
 2007/05/10 - Standa
 - hostfs.cpp: symlink resolution buffer size glitch fixed and cleaned up
+
 - nfvdi_soft.cpp: mfdb.fd_stand extension meanings changed to be bit flags
   (instead of 0x100 being a value itself as was before used for fVDI
   antialiased fonts):
@@ -58,6 +59,7 @@
 2007/03/17 - Andreas
 - memory.h: Change return type of test_ram_boundary to bool and
   always define it.
+
 - newcpu.cpp: Call mmu_set_super in m68k_reset.
 
 
@@ -83,7 +85,7 @@
 - JITc: 33 bit addressing hack removed, other 64-bit fixes (CMOV, SAHF),
         code based synced with Basilisk II
 
-- distrubuted dispatcher removed, not used at all
+- distributed dispatcher removed, not used at all
 
 - cpummu.cpp now included in all CPU modes
 
@@ -125,14 +127,18 @@
 - nfosmesa.cpp: Added Darwin/Mac OS X specific enhancement which allows loading
   of libGL and libOSMesa libraries relative to binary executable location
   instead of bundle location.
+
 - configure.ac: disabled testing for SDL_image, as this way of testing fails
   always on Mac OS X. A new framework aware way of testing has to be found.
   Removed modification of CFLAGS, CXXFLAGS and LIBS after SDL check.
-- Makefile.in: Added references to SDL_CFLAGS, SDL_CXXFLAGS and SLD_LIBS 
+
+- Makefile.in: Added references to SDL_CFLAGS, SDL_CXXFLAGS and SDL_LIBS 
   variables to corresponding CFLAGS, CXXFLAGS and LIBS.
+
 - parameters.cpp: bugfixes concerning loading and saving of Path_Tag variables.
   The ~, * and config file relative path expansion and compression (when saving)
   is now done in the corresponding postload_xx() and presave_xx() functions.
+
 - README_Xcode.rtf: added description on how to add support for additional
   NatFeats (NFOSMESA and NFJPEG) to the base project.
 
@@ -162,12 +168,14 @@
   necessary step for cross-compilation, as some CPU sources are automatically 
   produced (build68k, gencpu). They should take the target CPU type into account
   and not the CPU type of the current host!
+
 - cfgopts.cpp: When saving the configuration on a Mac OS X system, the temporary
   file is created in /tmp instead of the current directory (path to 
   application), as this directory is in general not writable on Mac OS X.
   This option could also be enabled for other Unix based systems.
-- src/Unix/MacOSX/*: Added new project file for Xcode 2.x used to build Universal
-  binaries of MacAranym.
+
+- src/Unix/MacOSX/*: Added new project file for Xcode 2.x used to build
+  Universal binaries of MacAranym.
 
 
 2006/12/14 - Patrice
@@ -176,6 +184,7 @@
 2006/12/13 - Philipp
 - nfvdi_opengl.cpp: Fixed bug which made Mac OS X crash on gluDeleteTess() even
   though no tesselation object was created.
+
 - hostscreen.h: Changes to remove warnings and errors when compiled on Mac OS X
   with enabled OpenGL.
 
