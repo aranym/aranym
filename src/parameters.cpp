@@ -1,7 +1,7 @@
 /*
  * parameters.cpp - parameter init/load/save code
  *
- * Copyright (c) 2001-2006 ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2001-2007 ARAnyM developer team (see AUTHORS)
  *
  * Authors:
  *  MJ		Milan Jurik
@@ -145,7 +145,8 @@ static bx_atadevice_options_t *diskc = &bx_options.atadevice[0][0];
 static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
 
 
-void expand_path(char *buf, size_t buf_size) {
+void expand_path(char *buf, size_t buf_size)
+{
 	char *path = buf;
 	if ( !strlen(path) )
 		return;
@@ -153,17 +154,17 @@ void expand_path(char *buf, size_t buf_size) {
 	char prefix[2048];
 	size_t prefixLen = 0;
 
-	if ( path[0] == '~' ) {
+	if ( path[0] == '~' && (path[1] == '/' || path[1] == '\\') ) {
 		// replace with the home folder path
 		Host::getHomeFolder(prefix, sizeof(prefix));
 		strcat(prefix, DIRSEPARATOR);
 		prefixLen = strlen( prefix );
-		path++;
-	} else if (path[0] == '*') {
+		path+=2;
+	} else if (path[0] == '*' && (path[1] == '/' || path[1] == '\\') ) {
 		Host::getDataFolder(prefix, sizeof(prefix));
 		strcat(prefix, DIRSEPARATOR);
 		prefixLen = strlen( prefix );
-		path++;
+		path+=2;
 	} else if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
 		// path relative to config file
 		strcpy(prefix, config_file);
@@ -181,12 +182,13 @@ void expand_path(char *buf, size_t buf_size) {
 			memmove( buf + prefixLen, path, strlen(path)+1 );	
 			memmove( buf, prefix, prefixLen );
 		} else {
-			fprintf(stderr, "Error - config entry size is insufficient\n" );
+			panicbug("Error - config entry size is insufficient");
 		}
 	}
 }
 
-void compress_path(char *path)  {
+void compress_path(char *path)
+{
 	if ( !strlen(path) )
 		return;
 
@@ -212,9 +214,7 @@ void compress_path(char *path)  {
 	{
 		Host::getDataFolder(prefix, sizeof(prefix));
 		prefixLen = strlen(prefix);
-		if (prefixLen && strncmp(path, prefix, prefixLen)) {
-			strcat(prefix, DIRSEPARATOR);
-			prefixLen++;
+		if (prefixLen && strncmp(path, prefix, prefixLen) == 0) {
 			replacement = "*";
 			D(bug("%s matches %.*s", path, prefixLen, prefix));
 		} 
@@ -224,16 +224,18 @@ void compress_path(char *path)  {
 			Host::getHomeFolder(prefix, sizeof(prefix));
 			prefixLen = strlen(prefix);
 			if (prefixLen && strncmp(path, prefix, prefixLen) == 0) {
-				strcat(prefix, DIRSEPARATOR);
-				prefixLen++;
 				replacement = "~";
 				D(bug("%s matches %.*s", path, prefixLen, prefix));
 			}
 		}
 	}
 
-	if (replacement) 
-		strcpy(path, &path[prefixLen]);
+	if (replacement) {
+		int len1 = strlen(replacement);
+		int len2 = strlen(path+prefixLen);
+		memmove(path+len1, path+prefixLen, len2+1);
+		memcpy(path, replacement, len1);
+	}
 }
 
 
