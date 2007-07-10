@@ -1,5 +1,7 @@
-2007/07/10 - Philipp
-- MacAranym.xcodeproj/project.pbxproj: fixed, version increased to 0.9.5beta
+2007/07/10 - Petr
+- MacAranym.xcodeproj/project.pbxproj: fixed by Philipp, version increased
+
+- host.cpp: include dyngl.h only if ENABLE_OPENGL is defined (thanks Olivier)
 
 
 *** CVS tagged as ARANYM_0_9_5_BETA
