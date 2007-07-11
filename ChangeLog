@@ -1,3 +1,10 @@
+2007/07/11 - Petr
+- gui-sdl/dlgDisk.cpp: check for 8 GB barrier (16383/16/63 C/H/S) - thanks
+  to mikro_sk's BTS #1627890.
+
+- aranym.spec: "patch" related lines commented out (thanks Martin)
+
+
 2007/07/10 - Petr
 - MacAranym.xcodeproj/project.pbxproj: fixed by Philipp, version increased
 
