@@ -92,7 +92,7 @@ URL:		http://aranym.org/
 Group:		%{group}
 Source0:	http://prdownloads.sourceforge.net/aranym/%{src}
 BuildRoot:	/var/tmp/%{name}-root
-Patch:		%{name}-%{version}.patch
+#Patch:		%{name}-%{version}.patch
 
 %description
 ARAnyM is a software only TOS clone - a virtual machine that allows you
@@ -107,7 +107,7 @@ Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 [ -d "%{buildroot}" ] && %{__rm} -rf %{buildroot}
 
 %setup -q -n %{realname}/src/Unix
-%patch0
+#%patch0
 
 %build
 
