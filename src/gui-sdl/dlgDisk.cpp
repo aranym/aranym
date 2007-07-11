@@ -1,7 +1,7 @@
 /*
  * dlgDisk.cpp - dialog for editing Disk settings
  *
- * Copyright (c) 2003-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2003-2007 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * gui-sdl original code and ideas borrowed from Hatari emulator
  * disk_image() borrowed from Bochs project, IIRC
@@ -230,7 +230,7 @@ static void UpdateDiskParameters(int disk, bool updateCHS)
 	int sizeMB = ((size / 1024) + 512) / 1024;
 
 	if (updateCHS) {
-		if (size > 0) {
+		if (size > 0 && sizeMB <= 8063) { // 8 GB barrier
 			head = 16;
 			spt = 63;
 			int divisor = 512 * head * spt;	// 512 is sector size
@@ -294,6 +294,7 @@ static bool create_disk_image(int disk)
 {
 	const char *path = gui_options.atadevice[0][disk].path;
 	long size = atoi(disk == 0 ? ide0_size : ide1_size);
+	if (size > 8063) size = 8063; // 8 GB barrier
 	char text[250];
 	bool ret = false;
 	sprintf(text, "Create disk image '%s' with size %ld MB?", path, size);
