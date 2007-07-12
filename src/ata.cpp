@@ -2149,7 +2149,7 @@ bx_hard_drive_c::increment_address(Bit8u channel)
 	    BX_SELECTED_CONTROLLER(channel).sector_no = (Bit8u)((current_address) & 0xff);
       } else {
             BX_SELECTED_CONTROLLER(channel).sector_no++;
-            if (BX_SELECTED_CONTROLLER(channel).sector_no > BX_SELECTED_DRIVE(channel).hard_drive->sectors) {
+            if (BX_SELECTED_CONTROLLER(channel).sector_no > BX_SELECTED_DRIVE(channel).hard_drive->sectors || BX_SELECTED_CONTROLLER(channel).sector_no == 0) {
 		  BX_SELECTED_CONTROLLER(channel).sector_no = 1;
 		  BX_SELECTED_CONTROLLER(channel).head_no++;
 		  if (BX_SELECTED_CONTROLLER(channel).head_no >= BX_SELECTED_DRIVE(channel).hard_drive->heads) {
