@@ -1,4 +1,14 @@
 2007/07/11 - Petr
+- gui-sdl/dlgDisk.cpp: BTS #1627890 fixed properly by raising the max disk
+  size barrier up to 130 GB. Beware - the C/H/S autodetection in the SETUP
+  now forces sectors-per-track to 255 (used to be 63) so the geometry
+  for existing disks that would be auto-detected changes. Not sure if it
+  affects anything but be careful.
+
+- ata.cpp: fixed sector counter overflow for 255 sectors per track
+  
+
+2007/07/11 - Petr
 - gui-sdl/dlgDisk.cpp: check for 8 GB barrier (16383/16/63 C/H/S) - thanks
   to mikro_sk's BTS #1627890.
 
