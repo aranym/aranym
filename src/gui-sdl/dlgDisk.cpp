@@ -39,11 +39,16 @@ bx_options_t gui_options;
 static char ide0_name[22];		// size of this array defines also the GUI edit size
 static char ide1_name[22];
 
-static char ide0_size[6], ide0_cyl[6], ide0_head[4], ide0_spt[3];
-static char ide1_size[6], ide1_cyl[6], ide1_head[4], ide1_spt[3];
+static char ide0_size[6], ide0_cyl[6], ide0_head[3], ide0_spt[4];
+static char ide1_size[6], ide1_cyl[6], ide1_head[3], ide1_spt[4];
 
 static char *eject = "Eject";
 static char *insert = "Insert";
+
+#define BAR130G		130000
+#define MAXHEADS	16
+#define MAXSPT		255
+#define MAXCYLS		65535
 
 /* The disks dialog: */
 enum DISCDLG {
@@ -113,8 +118,8 @@ static SGOBJ discdlg[] = {
 	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 12, 8, 1, "ByteSwap"},
 	{SGTEXT, 0, 0, 2, 10, 10, 1, "Geo C/H/S:"},
 	{SGEDITFIELD, 0, 0, 12, 10, 5, 1, ide0_cyl},
-	{SGEDITFIELD, 0, 0, 19, 10, 3, 1, ide0_head},
-	{SGEDITFIELD, 0, 0, 24, 10, 2, 1, ide0_spt},
+	{SGEDITFIELD, 0, 0, 19, 10, 2, 1, ide0_head},
+	{SGEDITFIELD, 0, 0, 24, 10, 3, 1, ide0_spt},
 	{SGTEXT, 0, 0, 2, 12, 5, 1, "Size:"},
 	{SGEDITFIELD, 0, 0, 8, 12, 5, 1, ide0_size},
 	{SGTEXT, 0, 0, 14, 12, 2, 1, "MB"},
@@ -131,8 +136,8 @@ static SGOBJ discdlg[] = {
 	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 20, 8, 1, "ByteSwap"},
 	{SGTEXT, 0, 0, 2, 18, 10, 1, "Geo C/H/S:"},
 	{SGEDITFIELD, 0, 0, 12, 18, 5, 1, ide1_cyl},
-	{SGEDITFIELD, 0, 0, 19, 18, 3, 1, ide1_head},
-	{SGEDITFIELD, 0, 0, 24, 18, 2, 1, ide1_spt},
+	{SGEDITFIELD, 0, 0, 19, 18, 2, 1, ide1_head},
+	{SGEDITFIELD, 0, 0, 24, 18, 3, 1, ide1_spt},
 	{SGTEXT, 0, 0, 2, 20, 5, 1, "Size:"},
 	{SGEDITFIELD, 0, 0, 8, 20, 5, 1, ide1_size},
 	{SGTEXT, 0, 0, 14, 20, 2, 1, "MB"},
@@ -230,13 +235,11 @@ static void UpdateDiskParameters(int disk, bool updateCHS)
 	int sizeMB = ((size / 1024) + 512) / 1024;
 
 	if (updateCHS) {
-		if (size > 0 && sizeMB <= 8063) { // 8 GB barrier
-			head = 16;
-			spt = 63;
+		if (size > 0 && sizeMB <= BAR130G) {
+			head = MAXHEADS;
+			spt = MAXSPT;
 			int divisor = 512 * head * spt;	// 512 is sector size
 			cyl = size / divisor;
-			if (size % divisor)
-				cyl++;
 		}
 		else {
 			head = spt = cyl = 0;
@@ -249,8 +252,8 @@ static void UpdateDiskParameters(int disk, bool updateCHS)
 	// output
 	sprintf(disk == 0 ? ide0_size : ide1_size, "%5d", sizeMB);
 	sprintf(disk == 0 ? ide0_cyl : ide1_cyl, "%5d", cyl);
-	sprintf(disk == 0 ? ide0_head : ide1_head, "%3d", head);
-	sprintf(disk == 0 ? ide0_spt : ide1_spt, "%2d", spt);
+	sprintf(disk == 0 ? ide0_head : ide1_head, "%2d", head);
+	sprintf(disk == 0 ? ide0_spt : ide1_spt, "%3d", spt);
 }
 
 /* produce the image file */
@@ -293,24 +296,22 @@ bool make_image(long sec, const char *filename)
 static bool create_disk_image(int disk)
 {
 	const char *path = gui_options.atadevice[0][disk].path;
-	long size = atoi(disk == 0 ? ide0_size : ide1_size);
-	if (size > 8063) size = 8063; // 8 GB barrier
+	long sizeMB = atoi(disk == 0 ? ide0_size : ide1_size);
+	if (sizeMB > BAR130G)
+		sizeMB = BAR130G;
 	char text[250];
 	bool ret = false;
-	sprintf(text, "Create disk image '%s' with size %ld MB?", path, size);
+	sprintf(text, "Create disk image '%s' with size %ld MB?", path, sizeMB);
 	if (SDLGui_Alert(text, ALERT_OKCANCEL)) {
-		int cyl, heads = 16, spt = 63, sectors;
 		if (File_Exists(path)
 			&& SDLGui_Alert("File Exists. Overwrite?",
 							ALERT_OKCANCEL) == false) {
 			return false;
 		}
 		// create the file
-		cyl =
-			(int) (size * 1024.0 * 1024.0 / (float) heads / (float) spt /
-				   512.0);
-		assert(cyl < 65536);
-		sectors = cyl * heads * spt;
+		int cyl = sizeMB * 2048 / MAXHEADS / MAXSPT;
+		if (cyl > MAXCYLS) cyl = MAXCYLS;
+		long sectors = cyl * MAXHEADS * MAXSPT;
 		ret = make_image(sectors, path);
 		UpdateDiskParameters(disk, true);
 	}
@@ -480,6 +481,9 @@ void Dialog_DiscDlg(void)
 	sscanf(ide0_cyl, "%d", &cyl);
 	sscanf(ide0_head, "%d", &head);
 	sscanf(ide0_spt, "%d", &spt);
+	if (cyl > MAXCYLS) cyl = MAXCYLS;
+	if (head > MAXHEADS) head = MAXHEADS;
+	if (spt > MAXSPT) spt = MAXSPT;
 	gui_options.atadevice[0][0].cylinders = cyl;
 	gui_options.atadevice[0][0].heads = head;
 	gui_options.atadevice[0][0].spt = spt;
@@ -493,6 +497,9 @@ void Dialog_DiscDlg(void)
 	sscanf(ide1_cyl, "%d", &cyl);
 	sscanf(ide1_head, "%d", &head);
 	sscanf(ide1_spt, "%d", &spt);
+	if (cyl > MAXCYLS) cyl = MAXCYLS;
+	if (head > MAXHEADS) head = MAXHEADS;
+	if (spt > MAXSPT) spt = MAXSPT;
 	gui_options.atadevice[0][1].cylinders = cyl;
 	gui_options.atadevice[0][1].heads = head;
 	gui_options.atadevice[0][1].spt = spt;
