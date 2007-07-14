@@ -558,7 +558,11 @@ void RestartAll()
 	host->reset();
 
 	// OS init
-	bootOs->reset();
+	try {
+		bootOs->reset();
+	} catch (AranymException &e) {
+		panicbug(e.getErrorMessage());
+	}
 
 	// CPU init
 	Restart680x0();
