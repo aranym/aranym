@@ -79,6 +79,8 @@
 # include <cerrno>
 # include <cassert>
 
+#define UNUSED(param)	((void)(param))
+
 #if defined(CPU_x86_64) && 0
 #define RECORD_REGISTER_USAGE		1
 #endif
@@ -267,8 +269,6 @@ static int writereg_specific(int r, int size, int spec);
 static void prepare_for_call_1(void);
 static void prepare_for_call_2(void);
 static void align_target(uae_u32 a);
-
-static uae_s32 nextused[VREGS];
 
 uae_u32 m68k_pc_offset;
 
@@ -525,7 +525,7 @@ static inline void mark_callers_recompile(blockinfo * bi)
   }
 }
 
-static inline blockinfo* get_blockinfo_addr_new(void* addr, int setstate)
+static inline blockinfo* get_blockinfo_addr_new(void* addr, int /* setstate */)
 {
     blockinfo*  bi=get_blockinfo_addr(addr);
     int i;
@@ -533,7 +533,7 @@ static inline blockinfo* get_blockinfo_addr_new(void* addr, int setstate)
     if (!bi) {
 	for (i=0;i<MAX_HOLD_BI && !bi;i++) {
 	    if (hold_bi[i]) {
-		uae_u32 cl=cacheline(addr);
+		(void)cacheline(addr);
 		
 		bi=hold_bi[i];
 		hold_bi[i]=NULL;
@@ -705,10 +705,6 @@ static inline void alloc_blockinfos(void)
 
 static uae_u8* target;
 
-static  void emit_init(void)
-{
-}
-
 static inline void emit_byte(uae_u8 x)
 {
     *target++=x;
@@ -846,6 +842,9 @@ static inline void ru_set(uae_u16 *mask, int reg)
 {
 #if USE_OPTIMIZED_CALLS
 	*mask |= 1 << reg;
+#else
+	UNUSED(mask);
+	UNUSED(reg);
 #endif
 }
 
@@ -854,6 +853,8 @@ static inline bool ru_get(const uae_u16 *mask, int reg)
 #if USE_OPTIMIZED_CALLS
 	return (*mask & (1 << reg));
 #else
+	UNUSED(mask);
+	UNUSED(reg);
 	/* Default: instruction reads & write to register */
 	return true;
 #endif
@@ -879,6 +880,7 @@ static inline bool ru_write_p(const regusage *ru, int reg)
 	return ru_get(&ru->wmask, reg);
 }
 
+#if 0
 static void ru_fill_ea(regusage *ru, int reg, amodes mode,
 					   wordsizes size, int write_mode)
 {
@@ -926,6 +928,7 @@ static void ru_fill_ea(regusage *ru, int reg, amodes mode,
 
 /* TODO: split into a static initialization part and a dynamic one
    (instructions depending on extension words) */
+
 static void ru_fill(regusage *ru, uae_u32 opcode)
 {
 	m68k_pc_offset += 2;
@@ -941,7 +944,7 @@ static void ru_fill(regusage *ru, uae_u32 opcode)
 	bool handled = false;
 
 	/* Handle some instructions specifically */
-	uae_u16 reg, ext;
+	uae_u16 ext;
 	switch (dp->mnemo) {
 	case i_BFCHG:
 	case i_BFCLR:
@@ -1067,6 +1070,7 @@ static void ru_fill(regusage *ru, uae_u32 opcode)
 		abort();
 	}
 }
+#endif
 
 /********************************************************************
  * register allocation per block logging                            *
@@ -1081,7 +1085,7 @@ static uae_s8 nstate[N_REGS];
 #define L_NEEDED -2
 #define L_UNNEEDED -3
 
-static inline void big_to_small_state(bigstate * b, smallstate * s)
+static inline void big_to_small_state(bigstate * /* b */, smallstate * s)
 {
   int i;
 	
@@ -1091,7 +1095,7 @@ static inline void big_to_small_state(bigstate * b, smallstate * s)
 	s->nat[i] = nstate[i];
 }
 
-static inline int callers_need_recompile(bigstate * b, smallstate * s)
+static inline int callers_need_recompile(bigstate * /* b */, smallstate * s)
 {
   int i;
   int reverse = 0;
@@ -1162,8 +1166,6 @@ static inline void log_vwrite(int r)
 /* Using an n-reg to hold a v-reg */
 static inline void log_isreg(int n, int r)
 {
-  static int count = 0;
-  
   if (nstate[n] == L_UNKNOWN && r < 16 && !vwritten[r] && USE_MATCH)
 	nstate[n] = r;
   else {
@@ -1499,10 +1501,12 @@ static  int alloc_reg_hinted(int r, int size, int willclobber, int hint)
     return bestreg;
 }
 
+/*
 static  int alloc_reg(int r, int size, int willclobber)
 {
     return alloc_reg_hinted(r,size,willclobber,-1);
 }
+*/
 
 static  void unlock2(int r)
 {
@@ -1519,7 +1523,7 @@ static  void setlock(int r)
 
 static void mov_nregs(int d, int s)
 {
-    int ns=live.nat[s].nholds;
+    (void)live.nat[s].nholds;
     int nd=live.nat[d].nholds;
     int i;
 
@@ -1547,7 +1551,6 @@ static void mov_nregs(int d, int s)
 
 static inline void make_exclusive(int r, int size, int spec)
 {
-    int clobber;
     reg_status oldstate;
     int rr=live.state[r].realreg;
     int nr;
@@ -1624,7 +1627,6 @@ static inline void add_offset(int r, uae_u32 off)
 
 static inline void remove_offset(int r, int spec)
 {
-    reg_status oldstate;
     int rr;
 
     if (isconst(r))
@@ -1682,6 +1684,8 @@ static inline void record_register(int r)
 #if RECORD_REGISTER_USAGE
     if (r < 16)
 	reg_count_local[r]++;
+#else
+	UNUSED(r);
 #endif
 }
 
@@ -3787,7 +3791,6 @@ MENDFUNC(3,mov_b_bRr,(R4 d, R1 s, IMM offset))
 
 MIDFUNC(1,bswap_32,(RW4 r))
 {
-    int reg=r;
 
     if (isconst(r)) {
 	uae_u32 oldv=live.state[r].val;
@@ -5201,7 +5204,7 @@ void init_comp(void)
 /* Only do this if you really mean it! The next call should be to init!*/
 void flush(int save_regs)
 {
-    int fi,i;
+    int i;
     
 	log_flush();
     flush_flags(); /* low level */
@@ -5251,9 +5254,10 @@ void flush(int save_regs)
     }
 }
 
+#if 0
 static void flush_keepflags(void)
 {
-    int fi,i;
+    int i;
     
     for (i=0;i<VFREGS;i++) {
 	if (live.fate[i].needflush==NF_SCRATCH || 
@@ -5286,6 +5290,7 @@ static void flush_keepflags(void)
     }
     raw_fp_cleanup_drop();
 }
+#endif
 
 void freescratch(void)
 {
@@ -5383,25 +5388,28 @@ void register_branch(uae_u32 not_taken, uae_u32 taken, uae_u8 cond)
     branch_cc=cond;
 }
 
-
+/*
 static uae_u32 get_handler_address(uae_u32 addr)
 {
-    uae_u32 cl=cacheline(addr);
+    (void)cacheline(addr);
     blockinfo* bi=get_blockinfo_addr_new((void*)(uintptr)addr,0);
     return (uintptr)&(bi->direct_handler_to_use);
 }
+*/
 
 static uae_u32 get_handler(uae_u32 addr)
 {
-    uae_u32 cl=cacheline(addr);
+    (void)cacheline(addr);
     blockinfo* bi=get_blockinfo_addr_new((void*)(uintptr)addr,0);
     return (uintptr)bi->direct_handler_to_use;
 }
 
+/*
 static void load_handler(int reg, uae_u32 addr)
 {
     mov_l_rm(reg,get_handler_address(addr));
 }
+*/
 
 /* This version assumes that it is writing *real* memory, and *will* fail
  *  if that assumption is wrong! No branches, no second chances, just
@@ -5664,6 +5672,7 @@ static uint8 *do_alloc_code(uint32 size, int depth)
 
 	return do_alloc_code(size, depth + 1);
 #else
+	UNUSED(depth);
 	uint8 *code = (uint8 *)vm_acquire(size);
 	return code == VM_MAP_FAILED ? NULL : code;
 #endif
@@ -5868,7 +5877,6 @@ static inline int block_check_checksum(blockinfo* bi)
 
 static int called_check_checksum(blockinfo* bi) 
 {
-    dependency* x=bi->deplist;
     int isgood=1;
     int i;
     
@@ -6157,7 +6165,6 @@ static bool merge_blacklist()
 void build_comp(void) 
 {
 	int i;
-    int jumpcount=0;
     unsigned long opcode;
     struct comptbl* tbl=op_smalltbl_0_comp_ff;
     struct comptbl* nftbl=op_smalltbl_0_comp_nf;
@@ -6282,14 +6289,13 @@ void build_comp(void)
 }
 
 
-static void flush_icache_none(int n)
+static void flush_icache_none(int)
 {
 	/* Nothing to do.  */
 }
 
-static void flush_icache_hard(int n)
+static void flush_icache_hard(int)
 {
-    uae_u32 i;
     blockinfo* bi, *dbi;
 
     hard_flush_count++;
@@ -6325,9 +6331,8 @@ static void flush_icache_hard(int n)
    we simply mark everything as "needs to be checked". 
 */
 
-static inline void flush_icache_lazy(int n)
+static inline void flush_icache_lazy(int)
 {
-    uae_u32 i;
     blockinfo* bi;
     blockinfo* bi2;
 
@@ -6395,14 +6400,19 @@ void flush_icache_range(uae_u32 start, uae_u32 length)
 		bi = bi->next;
 	}
 	return;
+#else
+		UNUSED(start);
+		UNUSED(length);
 #endif
 	flush_icache(-1);
 }
 
+/*
 static void catastrophe(void)
 {
     abort();
 }
+*/
 
 int failure;
 
@@ -6420,7 +6430,7 @@ int failure;
 #define TARGET_NATIVE	TARGET_X86_64
 #endif
 
-void disasm_block(int target, uint8 * start, size_t length)
+void disasm_block(int /* target */, uint8 * /* start */, size_t /* length */)
 {
 	if (!JITDebug)
 		return;

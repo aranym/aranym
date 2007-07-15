@@ -92,7 +92,7 @@ static inline void set_eflags(int i, struct sigcontext *sc) {
 		else sc->sc_eflags &= 0xfffffffe;
 }
 
-static void segfault_vec(int x, siginfo_t *sip, struct sigcontext *scp) {
+static void segfault_vec(int /* x */, siginfo_t *sip, struct sigcontext *scp) {
 	memptr addr = (memptr)(sip->si_addr);
 	memptr ainstr = scp->sc_eip;
 	uint32 instr = (uint32)*(uint32 *)ainstr;

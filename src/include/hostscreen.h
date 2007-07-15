@@ -27,11 +27,10 @@
 # include <cstdlib>
 # include <cstring>
 
-#include <SDL.h>
-#include <SDL_thread.h>
-
 #include "parameters.h"
 
+#include <SDL.h>
+#include <SDL_thread.h>
 #ifdef ENABLE_OPENGL
 #include <SDL_opengl.h>
 #endif
@@ -507,6 +506,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.70  2006-12-17 14:46:00  philipp
+ * Fix: ENABLE_OPENGL is only defined after "parameters.h" has been included.
+ *
  * Revision 1.69  2006/12/13 00:11:05  philipp
  * Small fixes for OpenGLVdiDriver bugs which bothered MacAranym (compilation and runtime errors/crashes).
  *

@@ -25,7 +25,9 @@ AC_DEFUN([ARANYM_CHECK_FRAMEWORK_LOCATION], [
 	AC_CACHE_CHECK([location of $1 framework],
 		ac_Framework_Location, [
 		AS_VAR_SET(ac_Framework_Location, "")
-		pos_locations=`$CC -v main_unix.cpp -framework $1 $LDFLAGS 2>&1 | grep -e "> search" -A 999 | grep -e "End of " -B 999 | grep -e "^ "`
+		echo "#error dummy" > conftest.c
+		pos_locations=`$CC -v conftest.c -framework $1 2>&1 | grep -e "> search" -A 999 | grep -e "End of " -B 999 | grep -e "^ "`
+		rm -f conftest.c
 		for pos_location in $pos_locations ; do
 			framework_loc="$pos_location/$1.framework"
 			if test -d "$framework_loc" ; then

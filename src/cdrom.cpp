@@ -142,7 +142,6 @@ struct _CDTOC {
 
 static kern_return_t FindEjectableCDMedia( io_iterator_t *mediaIterator, mach_port_t *masterPort );
 static kern_return_t GetDeviceFilePath( io_iterator_t mediaIterator, char *deviceFilePath, CFIndex maxPathSize );
-//int OpenDrive( const char *deviceFilePath );
 static struct _CDTOC * ReadTOC( const char * devpath );
 
 static char CDDevicePath[ MAXPATHLEN ];
@@ -294,18 +293,6 @@ static kern_return_t GetDeviceFilePath( io_iterator_t mediaIterator,
   return kernResult;
 }
 
-
-static int OpenDrive( const char *deviceFilePath )
-{
-
-  int fileDescriptor;
-
-  fileDescriptor = open( deviceFilePath, O_RDONLY );
-  if ( fileDescriptor == -1 )
-    fprintf( stderr, "Error %d opening device %s.\n", errno, deviceFilePath );
-  return fileDescriptor;
-
-}
 
 static struct _CDTOC * ReadTOC( const char * devpath ) {
 
@@ -619,7 +606,7 @@ cdrom_interface::insert_cdrom(char *dev)
 #elif defined(OS_darwin)
       if(strcmp(path, "drive") == 0)
       {
-        mach_port_t masterPort = NULL;
+        mach_port_t masterPort = 0;
         io_iterator_t mediaIterator;
         kern_return_t kernResult;
         

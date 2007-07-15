@@ -292,7 +292,7 @@ void ndebug::m68k_print(FILE * f)
 		   (int) (regs.dfc % 2));
 
     for (unsigned int i = 0; i < 8; i++) {
-	fprintf(f, "FP%d: %Lg ", i, fpu.registers[i]);
+	fprintf(f, "FP%d: %Lg ", i, (long double)fpu.registers[i]);
 	if (i == 3) fprintf(f, "N=%d Z=%d\n",
 	    (fpu.fpsr.condition_codes & 0x8000000) != 0,
 	    (fpu.fpsr.condition_codes & 0x4000000) != 0);

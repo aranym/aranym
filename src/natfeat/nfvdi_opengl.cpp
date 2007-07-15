@@ -20,7 +20,6 @@
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
-#include "parameters.h"
 #include "host.h"
 #include "hostscreen.h"
 #include "nfvdi.h"
@@ -30,18 +29,9 @@
 #include "debug.h"
 
 #include <SDL_endian.h>
-#include <SDL_opengl.h>
 #include "dyngl.h"
 
 #define ENABLE_GLU_TESSELATOR 0
-
-#if ENABLE_GLU_TESSELATOR
-# ifdef OS_darwin
-#  include <OpenGL/glu.h>
-# else
-#  include <GL/glu.h>
-# endif
-#endif
 
 /*--- Defines ---*/
 

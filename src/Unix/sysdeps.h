@@ -23,8 +23,8 @@
 #ifndef SYSDEPS_H
 #define SYSDEPS_H
 
-#ifndef __STDC__
-#error "Your compiler is not ANSI. Get a real one."
+#if !defined(__STDC__) && !defined(__cplusplus)
+#error "Your compiler is not ANSI nor ISO. Get a real one."
 #endif
 
 #include "config.h"

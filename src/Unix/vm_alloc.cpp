@@ -64,6 +64,8 @@
 
 #define MAP_EXTRA_FLAGS (MAP_32BIT)
 
+#ifdef HAVE_MACH_VM
+#else
 #ifdef HAVE_MMAP_VM
 #if defined(__linux__) && defined(CPU_i386)
 /* Force a reasonnable address below 0x80000000 on x86 so that we
@@ -74,6 +76,9 @@
 #define MAP_BASE	0x00000000
 #endif
 static char * next_address = (char *)MAP_BASE;
+#endif
+#endif
+
 #ifdef HAVE_MMAP_ANON
 #define map_flags	(MAP_ANON | MAP_EXTRA_FLAGS)
 #define zero_fd		-1
@@ -86,10 +91,11 @@ static char * next_address = (char *)MAP_BASE;
 static int zero_fd	= -1;
 #endif
 #endif
-#endif
 
 /* Translate generic VM map flags to host values.  */
 
+#ifdef HAVE_MACH_VM
+#else
 #ifdef HAVE_MMAP_VM
 static int translate_map_flags(int vm_flags)
 {
@@ -104,6 +110,7 @@ static int translate_map_flags(int vm_flags)
 		flags |= MAP_32BIT;
 	return flags;
 }
+#endif
 #endif
 
 /* Align ADDR and SIZE to 64K boundaries.  */

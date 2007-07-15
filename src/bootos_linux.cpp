@@ -169,8 +169,11 @@ struct bi_record {
 #define MMUB_68040     2                       /* Internal MMU */
 #define MMU_68040      (1<<MMUB_68040)
 
+#ifdef PAGE_SIZE
+	/*	Might have been defined by vm_param.h. already, indirectly included by sysdeps.h */ 
+	#undef PAGE_SIZE
+#endif
 #define PAGE_SIZE 4096
-
 /*--- Defines ---*/
 
 #define MAXREAD_BLOCK_SIZE	(1<<20)	/* 1 MB */

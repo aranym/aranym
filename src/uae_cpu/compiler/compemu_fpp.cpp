@@ -87,7 +87,7 @@
 #define delay2  nop() ;nop()   
 
 #define UNKNOWN_EXTRA 0xFFFFFFFF
-static void fpuop_illg(uae_u32 opcode, uae_u32 extra)
+static void fpuop_illg(uae_u32 opcode, uae_u32 /* extra */)
 {
 /*
 	if (extra == UNKNOWN_EXTRA)
@@ -108,7 +108,6 @@ STATIC_INLINE int get_fp_value (uae_u32 opcode, uae_u16 extra)
     int size;
     int mode;
     int reg;
-    double* src;
     uae_u32 ad = 0;
     static int sz1[8] = { 4, 4, 12, 12, 2, 8, 1, 0 };
     static int sz2[8] = { 4, 4, 12, 12, 2, 8, 2, 0 };
@@ -223,8 +222,7 @@ STATIC_INLINE int get_fp_value (uae_u32 opcode, uae_u16 extra)
 	 {
 	     uae_u32 address=start_pc+((char *)comp_pc_p-(char *)start_pc_p)+
 		 m68k_pc_offset;
-	     uae_s32 PC16off =(uae_s32)(uae_s16)comp_get_iword((m68k_pc_offset+=2)
--2);
+	     uae_s32 PC16off =(uae_s32)(uae_s16)comp_get_iword((m68k_pc_offset+=2)-2);
 	     ad=S1;
 	     mov_l_ri(ad,address+PC16off);
 	     break;
@@ -567,7 +565,7 @@ STATIC_INLINE int get_fp_ad (uae_u32 opcode, uae_u32 * ad)
     abort();
 }
 
-void comp_fdbcc_opp (uae_u32 opcode, uae_u16 extra)
+void comp_fdbcc_opp (uae_u32 /* opcode */, uae_u16 /* extra */)
 {
     FAIL(1);
     return;
@@ -637,10 +635,8 @@ void comp_fscc_opp (uae_u32 opcode, uae_u16 extra)
     }
 }
 
-void comp_ftrapcc_opp (uae_u32 opcode, uaecptr oldpc)
+void comp_ftrapcc_opp (uae_u32 /* opcode */, uaecptr /* oldpc */)
 {
-    int cc;
-
     FAIL(1);
     return;
 }
@@ -651,7 +647,6 @@ void comp_fbcc_opp (uae_u32 opcode)
     uae_u32 off;
     uae_u32 v1;
     uae_u32 v2;
-    uae_u32 nh;
     int cc;
 
 	// comp_pc_p is expected to be bound to 32-bit addresses
@@ -937,6 +932,8 @@ static const fpu_register power10[]		= {
 };
 
 /* 128 words, indexed through the low byte of the 68k fpu control word */
+#if 0
+/* unused*/
 static uae_u16 x86_fpucw[]={
     0x137f, 0x137f, 0x137f, 0x137f, 0x137f, 0x137f, 0x137f, 0x137f, /* p0r0 */
     0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, /* p0r1 */
@@ -958,6 +955,8 @@ static uae_u16 x86_fpucw[]={
     0x177f, 0x177f, 0x177f, 0x177f, 0x177f, 0x177f, 0x177f, 0x177f, /* p3r2 */
     0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f  /* p3r3 */
 };
+#endif
+
 
 void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 {
@@ -978,7 +977,6 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 	    uae_u32 ad, list = 0;
 	    int incr = 0;
 	    if (extra & 0x2000) {
-		uae_u32 ad;
 
 		/* FMOVEM FPP->memory */
 		switch ((extra >> 11) & 3) { /* Get out early if failure */
@@ -991,7 +989,7 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		    FAIL(1); return;
 		}
 		ad=get_fp_ad (opcode, &ad);
-		if (ad<0) {
+		if ((uae_s32)ad<0) {
 		    m68k_setpc (m68k_getpc () - 4);
 		    fpuop_illg (opcode,extra);
 		    return;
@@ -1063,7 +1061,7 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		    FAIL(1); return;
 		}
 		ad=get_fp_ad (opcode, &ad);
-		if (ad<0) {
+		if ((uae_s32)ad<0) {
 		    m68k_setpc (m68k_getpc () - 4);
 			D(bug("no ad\n"));
 		    fpuop_illg (opcode,extra);
@@ -1086,7 +1084,6 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		if (incr < 0) {
 			// not reached
 			for (reg = 7; reg >= 0; reg--) {
-				uae_u32 wrd1, wrd2, wrd3;
 				if (list & 0x80) {
 					sub_l_ri(ad,4);
 					readlong(ad,S2,S3);
@@ -1105,7 +1102,6 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		}
 		else {
 			for (reg = 0; reg < 8; reg++) {
-				uae_u32 wrd1, wrd2, wrd3;
 				if (list & 0x80) {
 					readword(ad,S2,S3);
 					mov_w_mr(((uintptr)temp_fp)+8,S2);
@@ -1190,7 +1186,7 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		    return;
 		}
 		if (extra & 0x1000) {
-		    uae_u32 val=comp_get_ilong((m68k_pc_offset+=4)-4);
+		    comp_get_ilong((m68k_pc_offset+=4)-4);
 #if HANDLE_FPCR
 #if defined(FPU_USE_X86_ROUNDING_MODE) && defined(FPU_USE_X86_ROUNDING_PRECISION)
 			FAIL(1);

@@ -24,8 +24,6 @@
 
 #include <SDL_loadso.h>
 #include <SDL_endian.h>
-#include <GL/osmesa.h>
-
 #define NFOSMESA_GLEXT	0
 
 #include "sysdeps.h"

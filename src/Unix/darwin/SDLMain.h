@@ -11,6 +11,8 @@
 {
 }
 
+- (void) applicationDidFinishLaunching: (NSNotification *) note;
+- (void) applicationWillTerminate: (NSNotification *) aNotification;
 - (IBAction) quit:(id)obj;
 - (IBAction) showPrefs:(id)obj;
 - (IBAction) makeFullscreen:(id)obj;

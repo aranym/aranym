@@ -20,7 +20,7 @@ AC_ARG_ENABLE(debug,
     default)  WHICH_DEBUG="ndebug";;
         uae)  WHICH_DEBUG="uae";;
      ndebug)  WHICH_DEBUG="ndebug";;
-         no)  WHICH_DEBUG="no";;   
+         no)  WHICH_DEBUG="no";;
 	  *)  AC_MSG_ERROR([--enable-debug takes only one of the following values: default, uae, ndebug, no]);;
   esac
 ],
@@ -126,12 +126,12 @@ AC_ARG_ENABLE(addressing,
 AC_ARG_ENABLE(addr-check,
 [  --enable-addr-check=AM  specify the memory check to use (default=page)],
 [ case "$enableval" in
-    no)         MEMORY_CHECK="no";;
+    no)		MEMORY_CHECK="no";;
     full)	MEMORY_CHECK="full";;
     page)	MEMORY_CHECK="page";;
-    hwsp)       MEMORY_CHECK="hwsp";;
-    pagehwsp)   MEMORY_CHECK="pagehwsp";;
-    sseg)       MEMORY_CHECK="sseg";;
+    hwsp)	MEMORY_CHECK="hwsp";;
+    pagehwsp)	MEMORY_CHECK="pagehwsp";;
+    sseg)	MEMORY_CHECK="sseg";;
     *)		AC_MSG_ERROR([--enable-addr-check takes only one of the following values: no, full, page, hwsp, pagehwsp, sseg]);;
   esac
 ],
@@ -183,16 +183,37 @@ DEFINES="$DEFINES -DOS_$OS_TYPE"
 AC_DEFINE_UNQUOTED([OS_TYPE], "$OS_TYPE", [Define OS type])
 
 dnl Target CPU type.
+ARCHFLAGS=
 HAVE_I386=no
 HAVE_M68K=no
 HAVE_SPARC=no
 HAVE_POWERPC=no
 HAVE_X86_64=no
 case "$target_cpu" in
-  i386* | i486* | i586* | i686* | i786* ) CPU_TYPE=i386 HAVE_I386=yes;;
+  i386* | i486* | i586* | i686* | i786* )
+	CPU_TYPE=i386
+	HAVE_I386=yes
+	if [[ "x$OS_TYPE" = "xdarwin" ]]; then
+		ARCHFLAGS="-arch i386"
+		ISYSROOT="-isysroot /Developer/SDKs/MacOSX10.4u.sdk"
+		dnl Add the ARCHFLAGS here to let configure check for the target and not host capabilities.
+		CPPFLAGS="$CPPFLAGS $ISYSROOT $ARCHFLAGS"
+		LDFLAGS="$LDFLAGS $ISYSROOT $ARCHFLAGS"
+	fi
+	;;
   m68k* ) CPU_TYPE=m68k HAVE_M68K=yes;;
   sparc* ) CPU_TYPE=sparc HAVE_SPARC=yes;;
-  powerpc* ) CPU_TYPE=powerpc HAVE_POWERPC=yes;;
+  powerpc* )
+	CPU_TYPE=powerpc
+	HAVE_POWERPC=yes
+	if [[ "x$OS_TYPE" = "xdarwin" ]]; then
+		ARCHFLAGS="-arch ppc"
+		ISYSROOT=
+		dnl Add the ARCHFLAGS here to let configure check for the target and not host capabilities.
+		CPPFLAGS="$CPPFLAGS $ISYSROOT $ARCHFLAGS"
+		LDFLAGS="$LDFLAGS $ISYSROOT $ARCHFLAGS"
+	fi
+	;;
   x86_64* ) CPU_TYPE=x86_64 HAVE_X86_64=yes;;
   *) CPU_TYPE=`echo $target_cpu | sed -e 's/-/_/g'`;;
 esac
@@ -210,7 +231,7 @@ AC_PROG_INSTALL
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_HEADER_DIRENT	
+AC_HEADER_DIRENT
 AC_CHECK_HEADERS(unistd.h fcntl.h sys/mman.h mach/mach.h sys/ioctl.h)
 AC_CHECK_HEADERS(getopt.h)
 AC_CHECK_HEADERS(termios.h termio.h alloca.h sys/statfs.h sys/statvfs.h)
@@ -299,31 +320,34 @@ case "$target_os" in
   freebsd*|kfreebsd*-gnu)
     AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
     EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
-    ;;	      
+    ;;
   darwin*)
-    AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
-    if test "x$WITH_FINK" = "xyes"; then
-        AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
-        EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
-    else
-        dnl AC_DEFINE([ARANYMHOME], "ARAnyM", [Default ARAnyM directory])
-        dnl AC_DEFINE([ARANYMCONFIG], "org.atari.aranym.config", [Default ARAnyM config file])
-        dnl AC_DEFINE([ARANYMKEYMAP], "org.atari.aranym.keymap", [Default ARAnyM keymap])
+	AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
+	if test "x$WITH_FINK" = "xyes"; then
+		AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
+		EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
+	else
+		AC_DEFINE([SWAP_CNTRL_AND_META_KEY], 1, [Swap the meaning of the Control and Meta (Apple) key])
+		AC_DEFINE([ARANYMHOME], "ARAnyM", [Default ARAnyM directory])
+		AC_DEFINE([ARANYMCONFIG], "org.aranym.config", [Default ARAnyM config file])
+		AC_DEFINE([ARANYMNVRAM], "org.aranym.nvram", [Default ARAnyM NVRAM file])
+		AC_DEFINE([ARANYMKEYMAP], "org.aranym.keymap", [Default ARAnyM keymap])
 
-        EXTRASYSSRCS="MacOSX/parameters_MacOSX.m host_filesys_unix.cpp MacOSX/SDLMain.M"
+		dnl EXTRASYSSRCS="MacOSX/parameters_MacOSX.m host_filesys_unix.cpp MacOSX/SDLMain.M"
+		EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLMain.M"
 
 		BUNDLE_FRAMEWORKS=   dnl Empty list of frameworks to bundle
-		LDFLAGS="$LDFLAGS -FMacOSX" dnl Look for frameworks in MacOSX subdirectory
-		
+		dnl LDFLAGS="$LDFLAGS -FMacOSX" dnl Look for frameworks in MacOSX subdirectory
+
 		dnl Check for some important frameworks
 		ARANYM_CHECK_FRAMEWORK(AppKit, [])
 		ARANYM_CHECK_FRAMEWORK(CoreFoundation, [#include <CoreFoundation/CoreFoundation.h>])
 		ARANYM_CHECK_FRAMEWORK(IOKit, [#include <IOKit/IOKitLib.h>])
-    fi
-    ;;
+	fi
+	;;
   beos*)
     EXTRASYSSRCS="parameters_unix.cpp beos/cdrom_beos.cpp host_filesys_unix.cpp"
-    DEFINES="$DEFINES -I\$(srcdir)/beos"
+    CPPFLAGS="$CPPFLAGS -I\$(srcdir)/beos"
     ;;
   *)
     EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
@@ -708,7 +732,7 @@ AC_CACHE_CHECK([for sighandler_t],
   ]
 )
 AC_TRANSLATE_DEFINE(HAVE_SIGHANDLER_T, "$ac_cv_have_sighandler_t",
-  [Define if <signal.h> doesn't define sighandler_t])	
+  [Define if <signal.h> doesn't define sighandler_t])
 
 dnl Check if we have getopt_long
 AC_CACHE_CHECK([for getopt_long],
@@ -738,7 +762,7 @@ if [[ "x$WANT_JIT" = "xyes" ]]; then
   WANT_EXSIGSEGV=yes
   MEMORY_CHECK=sseg
 fi
-  
+
 case $MEMORY_CHECK in
   no)   AC_DEFINE([NOCHECKBOUNDARY], 1, [Define if you don't want to use check memory boundary])
         ;;
@@ -766,7 +790,7 @@ case $MEMORY_CHECK in
         ;;
   *) ;;
 esac
- 
+
 dnl Full opcode's history
 if [[ "x$WANT_HISTORY" = "xyes" ]]; then
     AC_DEFINE([FULL_HISTORY], 1, [Define if you want to use full history])
@@ -927,6 +951,13 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       fi
       ;;
+    darwin*)
+      if [[ "x$HAVE_I386" = "xyes" ]]; then
+        SYSSRCS="$SYSSRCS xbsd/sigsegv_xbsd.cpp"
+      else
+        AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
+      fi
+      ;;
     netbsd*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
         SYSSRCS="$SYSSRCS xbsd/sigsegv_xbsd.cpp"
@@ -940,7 +971,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       else
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       fi
-      ;;					
+      ;;
     cygwin*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
         SYSSRCS="$SYSSRCS cygwin/sigsegv_cygwin.cpp"
@@ -1022,6 +1053,11 @@ else
         break
       fi
       if [[ "x$OS_TYPE" = "xopenbsd" -a "x$HAVE_I386" ]]; then
+        ADDRESSING_MODE="fixed (0x51000000)"
+        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
+        break
+      fi
+      if [[ "x$OS_TYPE" = "xdarwin" -a "x$HAVE_I386" ]]; then
         ADDRESSING_MODE="fixed (0x51000000)"
         DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
         break
@@ -1132,22 +1168,25 @@ if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
 fi
 
 dnl And also remove functions calls costs
-if [[ "xWANT_SIGSEGV_GOTO" = "xyes" ]]; then
+if [[ "x$WANT_SIGSEGV_GOTO" = "xyes" ]]; then
   AC_DEFINE(SIGSEGV_HANDLER_GOTO, 1, [Define if you want computed gotos for sigsegv handler])
 fi
-				
+
 dnl Select appropriate CPU source and REGPARAM define.
+CPUSRCS=
+GENCPUSRCS=
 ASM_OPTIMIZATIONS=none
 if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
-  CPUSRCS="cpuemu.cpp"
+	GENCPUSRCS="cpuemu.cpp"
 else
-  CPUSRCS="cpuemu1.cpp cpuemu2.cpp cpuemu3.cpp cpuemu4.cpp cpuemu5.cpp cpuemu6.cpp cpuemu7.cpp cpuemu8.cpp"
+	GENCPUSRCS="cpuemu1.cpp cpuemu2.cpp cpuemu3.cpp cpuemu4.cpp cpuemu5.cpp cpuemu6.cpp cpuemu7.cpp cpuemu8.cpp"
 fi
 
-dnl gb-- JITSRCS will be emptied later if the JIT is not available
+dnl gb-- JITSRCS and GENJITSRCS will be emptied later if the JIT is not available
 dnl gb-- Other platforms should define their own set of noflags file variants
 CAN_JIT=no
-JITSRCS="compemu1.cpp compemu2.cpp compemu3.cpp compemu4.cpp compemu5.cpp compemu6.cpp compemu7.cpp compemu8.cpp"
+JITSRCS=
+GENJITSRCS="compemu1.cpp compemu2.cpp compemu3.cpp compemu4.cpp compemu5.cpp compemu6.cpp compemu7.cpp compemu8.cpp"
 
 if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   dnl i386 CPU
@@ -1156,12 +1195,12 @@ if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
     ASM_OPTIMIZATIONS=i386
     DEFINES="$DEFINES -DX86_ASSEMBLY -DOPTIMIZED_FLAGS -DSAHF_SETO_PROFITABLE"
 #    if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
-#      CPUSRCS="cpufast.s"
+#      GENCPUSRCS="cpufast.s"
 #    else
-#      CPUSRCS="cpufast1.s cpufast2.s cpufast3.s cpufast4.s cpufast5.s cpufast6.s cpufast7.s cpufast8.s"
+#      GENCPUSRCS="cpufast1.s cpufast2.s cpufast3.s cpufast4.s cpufast5.s cpufast6.s cpufast7.s cpufast8.s"
 #    fi
-    JITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $JITSRCS"
-#    JITSRCS="cpufast1_nf.s cpufast2_nf.s cpufast3_nf.s cpufast4_nf.s cpufast5_nf.s cpufast6_nf.s cpufast7_nf.s cpufast8_nf.s $JITSRCS"
+     GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
+#    GENJITSRCS="cpufast1_nf.s cpufast2_nf.s cpufast3_nf.s cpufast4_nf.s cpufast5_nf.s cpufast6_nf.s cpufast7_nf.s cpufast8_nf.s $GENJITSRCS"
     CAN_JIT=yes
   fi
 elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
@@ -1170,7 +1209,7 @@ elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
     ASM_OPTIMIZATIONS="x86-64"
     DEFINES="$DEFINES -DX86_64_ASSEMBLY -DOPTIMIZED_FLAGS"
-    JITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $JITSRCS"
+    GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
     CAN_JIT=yes
     WANT_33BIT_ADDRESSING=yes
   fi
@@ -1220,12 +1259,13 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" = "xyes" ]]; then
     JITSRCS="$JITSRCS ../uae_cpu/compiler/compemu_fpp.cpp"
   fi
 
-  JITSRCS="$JITSRCS compstbl.o cpustbl_nf.o"
+  GENJITSRCS="$GENJITSRCS compstbl.cpp cpustbl_nf.cpp"
 else
   WANT_JIT=no
   WANT_JIT_FPU=no
   WANT_JIT_DEBUG=no
   JITSRCS=""
+  GENJITSRCS=""
 fi
 
 dnl Use 33-bit memory addressing?
@@ -1328,7 +1368,8 @@ fi
 dnl UAE CPU sources for all non-m68k-native architectures.
 if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
   CPUINCLUDES="-I\$(srcdir)/../uae_cpu"
-  CPUSRCS="../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $FPUSRCS cpudefs.cpp cpustbl.cpp $CPUSRCS $JITSRCS $MMUSRCS"
+  CPUSRCS="$CPUSRCS ../uae_cpu/aranym_glue.cpp ../uae_cpu/memory.cpp ../uae_cpu/newcpu.cpp ../uae_cpu/readcpu.cpp $JITSRCS $FPUSRCS $MMUSRCS"
+  GENCPUSRCS="$GENCPUSRCS cpudefs.cpp cpustbl.cpp $GENJITSRCS"
 fi
 
 dnl Remove the "-g" option if set for GCC.
@@ -1383,15 +1424,15 @@ if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
 fi
 
 dnl Check for SDL
-if test "$OS_TYPE" == "darwin" -a "x$WITH_FINK" = "xno"; then
+SDL_CFLAGS=
+SDL_LIBS=
+if test "x$OS_TYPE" == "xdarwin" -a "x$WITH_FINK" = "xno"; then
 	ARANYM_CHECK_FRAMEWORK(SDL, [])
 fi
 if test "x$have_framework_SDL" = "xyes" ; then
 	ARANYM_CHECK_FRAMEWORK_LOCATION(SDL)
+	CPPFLAGS="$CPPFLAGS -I$SDL_LOCATION/Headers"
 	BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL_LOCATION"
-	SDL_CFLAGS=-I$SDL_LOCATION/Headers
-	CPPFLAGS="$CPPFLAGS -I$SDL_LOCATION/SDL.framework/Headers"
-	SDL_LIBS="-F$SDL_LOCATION -framework SDL"
 else
 	dnl Try macro from sdl.m4
 	AM_PATH_SDL(1.2.10, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION or higher not found! ***]))
@@ -1503,8 +1544,14 @@ if test "x$WANT_NFOSMESA" = "xyes"; then
 		AC_DEFINE([NFOSMESA_SUPPORT], 1, [Define if you want to use host OSMesa driver])
 		NFOSMESASRCS="../natfeat/nfosmesa.cpp"
 		if test "x$WITH_MESAINC" != "xno"; then
-			CFLAGS="$CFLAGS -I$WITH_MESAINC"
-			CXXFLAGS="$CXXFLAGS -I$WITH_MESAINC"
+			CPPFLAGS="$CPPFLAGS -I$WITH_MESAINC"
+		else
+			case "$target_os" in
+				dnl For darwin the OSMesa include path is by default not defined
+				darwin*)
+					CPPFLAGS="$CPPFLAGS -I/usr/X11R6/include/"
+				;;
+			esac
 		fi
 #	else
 #		AC_MSG_ERROR([*** SDL>=1.2.6 mandatory for nfosmesa ***])
@@ -1518,15 +1565,15 @@ NFJPEGSRCS=""
 if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
 	dnl Check for SDL_Image
 	ARANYM_CHECK_FRAMEWORK(SDL_image, [])
-	if test "x$have_framework_SDL_image" = "xyes" ; then 
+	if test "x$have_framework_SDL_image" = "xyes" ; then
 		ARANYM_CHECK_FRAMEWORK_LOCATION(SDL_image)
-		SDL_CFLAGS="$SDL_CFLAGS -I$SDL_image_LOCATION/Headers"
+		CPPFLAGS="$CPPFLAGS -I$SDL_image_LOCATION/Headers"
 		BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL_image_LOCATION"
 		have_sdlimage_lib=yes
 	else
 		AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
-		if test $have_sdlimage_lib = yes; then
-			SDL_LIBS="$SDL_LIBS -lSDL_image"
+		if test "x$have_sdlimage_lib" = "xyes"; then
+			LIBS="$LIBS -lSDL_image"
 		fi
 	fi
 	if test "x$have_sdlimage_lib" = "xyes" ; then
@@ -1570,7 +1617,7 @@ fi
 dnl Linux /dev/rtc source timer
 
 if test "x$WANT_RTCTIMER" = "xyes" ; then
-	if test "$OS_TYPE" = "linux"; then
+	if test "x$OS_TYPE" = "xlinux"; then
 		AC_DEFINE([RTC_TIMER], 1, [Define if you want to use Linux /dev/rtc as source timer])
 	else
 		WANT_RTCTIMER="no"
@@ -1581,7 +1628,7 @@ dnl Linux/X86 hardware access for parallel port
 
 PARALLELX86SRCS=""
 if test "x$WANT_PARALLELX86" = "xyes" ; then
-	if test "$OS_TYPE" = "linux" -a "x$HAVE_I386" = "xyes"; then
+	if test "x$OS_TYPE" = "xlinux" -a "x$HAVE_I386" = "xyes"; then
 		AC_DEFINE([ENABLE_PARALLELX86], 1, [Define if you want to use Linux/X86 hardware access for parallel port])
 		PARALLELX86SRCS="../parallel_x86.cpp"
 	else
@@ -1593,7 +1640,7 @@ dnl Linux /dev/parport access for parallel port
 
 PARALLELPARPORTSRCS=""
 if test "x$WANT_PARALLELPARPORT" = "xyes" ; then
-	if test "$OS_TYPE" = "linux"; then
+	if test "x$OS_TYPE" = "xlinux"; then
 		AC_DEFINE([ENABLE_PARALLELPARPORT], 1, [Define if you want to use Linux /dev/parport access for parallel port])
 		PARALLELPARPORTSRCS="../parallel_parport.cpp"
 	else
@@ -1603,7 +1650,7 @@ fi
 
 dnl Linux /dev/sequencer MIDI support
 
-if test "$OS_TYPE" = "linux"; then
+if test "x$OS_TYPE" = "xlinux"; then
 	AC_DEFINE([ENABLE_MIDI_SEQUENCER], 1, [Define if you want to use Linux /dev/sequencer support])
 	MIDISEQSRCS="../midi_sequencer.cpp"
 fi
@@ -1630,6 +1677,12 @@ esac
 CFLAGS="$CFLAGS -DARANYM_DATADIR=$ARANYM_DATADIR"
 CXXFLAGS="$CXXFLAGS -DARANYM_DATADIR=$ARANYM_DATADIR"
 
+dnl Remove the ARCHFLAGS again as they must be handled separately inside the Makefile.
+if [[ "x$ARCHFLAGS" != "x" ]]; then
+	CPPFLAGS=`echo $CPPFLAGS | sed -e "s:$ARCHFLAGS::g"`
+	LDFLAGS=`echo $LDFLAGS | sed -e "s:$ARCHFLAGS::g"`
+fi
+
 dnl Generate Makefile.
 
 AC_SUBST(WFLAGS)
@@ -1638,6 +1691,7 @@ AC_SUBST(DEFINES)
 AC_SUBST(SYSSRCS)
 AC_SUBST(CPUINCLUDES)
 AC_SUBST(CPUSRCS)
+AC_SUBST(GENCPUSRCS)
 AC_SUBST(DSPSRCS)
 AC_SUBST(MIDISEQSRCS)
 AC_SUBST(NFCDROMSRCS)
@@ -1653,6 +1707,10 @@ AC_SUBST(DYNGLSRCS)
 AC_SUBST(DBGSP)
 AC_SUBST(TAPIF)
 AC_SUBST(TARGET)
+AC_SUBST(CPU_TYPE)
+AC_SUBST(ARCHFLAGS)
+AC_SUBST(SDL_CFLAGS)
+AC_SUBST(SDL_LIBS)
 AC_SUBST(BUNDLE_FRAMEWORKS)
 AC_OUTPUT(Makefile)
 
@@ -1671,9 +1729,9 @@ echo -n Full MMU support ....................... : $WANT_MMU
 if [[ "x$WANT_MMU" = "xyes" ]]; then
     echo -n " ("
     case "$ATC_TYPE" in
-         full)  echo -n "with ATC";;
-	small)  echo -n "with small ATC";;
-	   no)  echo -n "without ATC";;
+		full)	echo -n "with ATC";;
+		small)	echo -n "with small ATC";;
+		no)		echo -n "without ATC";;
     esac
     echo -n \)
 fi
