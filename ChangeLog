@@ -1,27 +1,37 @@
 2007/07/15 - Stefan
 - hostscreen.h: Moved inclusion of parameters.h before SDL header files to solve
   a header file clash when using OSMesa on Mac OS X.
+
 - nfosmesa.cpp: Removed unnecessary inclusion of GL/OSMesa.h.
+
 - nfosmesa.h: Added conditional definition of GLAPI and GLAPIENTRY to solve a 
   clash of /usr/X11R6/include/GL/gl.h and 
   /System/Library/Frameworks/OpenGL.framework/Headers/gl.h on Mac OS X.
+
 - nfvdi_opengl.h: Removed unnecessary inclusion of glu.h, as this is done 
   above already by including SDL_opengl.h. Moved inclusion of parameters.h 
   before SDL header files to solve a header file clash when using OSMesa on Mac 
   OS X.
+
 - nfvdi_opengl.cpp: Removed unnecessary inclusion of glu.h, as this is done 
   above already by including SDL_opengl.h. Removed unnecessary inclusion of 
   parameters.h and SDL_opengl.h, which is done already by nfvdi_opengl.h.
-- sigsegv_xbsd.cpp: Solved a copmiler waring about unused parameter x in 
+
+- sigsegv_xbsd.cpp: Solved a compiler waring about unused parameter x in 
   function segfault_vec().
+
 - compemu_fpp.cpp: Solved lots of compiler warings regarding unused parameters
-  and variables. Some warings regarding signed/unsigned comparations still 
+  and variables. Some warnings regarding signed/unsigned comparations still 
   exist.
+
 - compemu_support.cpp: Solved lots of compiler warings regarding unused 
   parameters, variables and functions.
+
 - sysdeps.h: Checking for __STDC__ as well as for __cplusplus, as in ISO C++
   __STDC__ is implementation dependant.
+
 - acinclude.m4: Slightly changed the check for framework locations.
+
 - configure.ac: Added ARCHFLAGS, CPU_TYPE and GENSRCS to support the build of an 
   universal binary for darwin. For darwin also ISYSROOT is therefore needed. 
   Splited generated from existing source files into GENCPUSRCS and GENJITSRCS to 
@@ -29,6 +39,7 @@
   Cleaned up the usage of preprocessor (CPPFLAGS) and compiler flags (CFLAGS, 
   CXXFLAGS). Added general JIT support for darwin. Fixed an error in check for 
   WANT_SIGSEGV_GOTO. Added a default include path for OSMesa support on darwin. 
+
 - Makefile.in:  Fixed the VPATH. Cleaned up the usage of preprocessor (CPPFLAGS) 
   and compiler flags (CFLAGS, CXXFLAGS). Fixed the source file name cfgopts.c 
   into cfgopts.cpp. Changed the icon for darwin to busybee.icns. Added CPU_TYPE, 
@@ -43,21 +54,32 @@
   to generate the depedencies. This should now work on all systems. To not get 
   error messages for not existing files, generated source files are now listed 
   in GENCPUSRCS and excluded from dependency generation.
+
 - darwin/Makefile: Added this new Makefile to allow an easy setup for the PPC 
   and i386 parts and to finally  generate an universal binary of both.
+
 - darwin/busybee.icns: Added a new icon.
+
 - vm_alloc.cpp: Resolved some compiler warnings if HAVE_MACH_VM is defined.
+
 - bootos_linux.cpp: Resolved a double definition of PAGE_SIZE.
+
 - cdrom.cpp: solved compiler warning by removing OpenDrive(). Inside 
   cdrom_interface::insert_cdrom() masterPort now is initialized with 0 instead 
-  of NULL to remove a compiler warning and omitt a cast.
+  of NULL to remove a compiler warning and omit a cast.
+
 - input.cpp: Added a check on define SWAP_CNTRL_AND_META_KEY in keysymToAtari() 
   to swap them or not.
+
 - ndebug.cpp: Put a cast to long double for an fprintf() argument inside 
   ndebug::m68k_print() to remove a compiler warning.
+
 - darwin/Info.plist: Updated version, date and link to the homepage.
+
 - darwin/sdl.m4: Added file to support the new darwin/Makefile.
+
 - darwin/SDLMain.M: Cleaned up a little.
+
 - darwin/SDLMain.h: Added methods applicationDidFinishLaunching and 
   applicationWillTerminate.
 
@@ -76,7 +98,7 @@
 - gui-sdl/dlgDisk.cpp: check for 8 GB barrier (16383/16/63 C/H/S) - thanks
   to mikro_sk's BTS #1627890.
 
-- aranym.spec: "patch" related lines commented out (thanks Martin)
+- aranym.spec: "patch" related lines commented out (thanks Martin Tarenskeen)
 
 
 2007/07/10 - Petr
@@ -287,7 +309,6 @@
   with enabled OpenGL.
 
 
->>>>>>> 1.977
 2006/12/07 - Philipp
 - Updated Xcode 1.5 project (=compiles again). Modifications to support dynamic
   ARAnyM home directory (configurable in Info.plist file).
