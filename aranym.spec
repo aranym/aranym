@@ -73,7 +73,7 @@ BuildRequires:	update-desktop-files
 # this is experimental and untested as yet, but should work.
 #
 %if %{_fedora}
- %define	_fedora_version		%(cat /etc/fedora-release|cut -f4 -d" ")
+ %define	_fedora_version		%(cat /etc/fedora-release|cut -f3 -d" ")
  %define	_distribution		Fedora Core %{_fedora_version}
  %define	rel			%{_rel}.fc%{_fedora_version}
 BuildRequires:	desktop-file-utils
