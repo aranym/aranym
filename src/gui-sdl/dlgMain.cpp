@@ -1,3 +1,26 @@
+/*
+ * dlgMain.cpp - Main Setup dialog 
+ *
+ * Copyright (c) 2002-2007 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include "sysdeps.h"
 #include "sdlgui.h"
 #include "file.h"
@@ -18,12 +41,7 @@ enum MAINDLG {
 	KEYBOARD,
 	OS,
 	VIDEO,
-/*
-	MEMORY,
-	HOSTFS,
-	CDROM,
-	INOUT,
-*/
+	NETWORK,
 	text_conffile,
 	LOAD,
 	SAVE,
@@ -47,12 +65,7 @@ SGOBJ maindlg[] = {
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 9, 17, 1, "Keyboard + mouse"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 11, 17, 1, "Operating System"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 3, 17, 1, "Video"},
-/*
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 5, 17, 1, "JIT CPU"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 7, 17, 1, "Host FS"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 9, 17, 1, "Host CD/DVD"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 11, 17, 1, "Input/Output"},
-*/
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 21, 5, 17, 1, "Networking"},
 	{SGTEXT, 0, 0, 4, 15, 12, 1, "Config file:"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 17, 15, 6, 1, "Load"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 25, 15, 6, 1, "Save"},
@@ -103,6 +116,7 @@ extern void Dialog_HotkeysDlg();
 extern void Dialog_KeyboardDlg();
 extern void Dialog_OsDlg();
 extern void Dialog_VideoDlg();
+extern void Dialog_NetworkDlg();
 
 static char path[MAX_FILENAME_LENGTH] = "";
 
@@ -165,14 +179,9 @@ void Dialog_MainDlg()
 		case VIDEO:
 			Dialog_VideoDlg();
 			break;
-/*
-		case MEMORY:
-		case HOSTFS:
-		case CDROM:
-		case INOUT:
-			SDLGui_Alert("Unimplemented yet.", ALERT_OK);
+		case NETWORK:
+			Dialog_NetworkDlg();
 			break;
-*/
 		case LOAD:
 			LoadSettings();
 			break;
