@@ -1,7 +1,7 @@
 /*
  * dlgHotkeys.cpp - dialog for editing Hotkeys settings
  *
- * Copyright (c) 2003-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2003-2007 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * gui-sdl original code and ideas borrowed from Hatari emulator
  * disk_image() borrowed from Bochs project, IIRC
@@ -123,6 +123,10 @@ SDL_keysym getKey()
 			}
 		}
 	} while(keysym.sym == SDLK_UNKNOWN);
+
+	// special hack: Enter key = no key needed, just modifiers
+	if (keysym.sym == SDLK_RETURN)
+		keysym.sym = SDLK_UNKNOWN;
 
 	return keysym;
 }
