@@ -1,3 +1,11 @@
+2007/07/20 - Petr
+- gui-sdl/dlgNetwork.cpp: new dialog for setting up the networking
+
+- gui-sdl/dlgHotkeys.cpp: hotkey defined with the Enter key means that the
+  hotkey is actually just the modifiers (useful for mouse/keyboard ungrabbing
+  by combination like Alt+Shift+Ctrl)
+
+
 2007/07/15 - Stefan
 - hostscreen.h: Moved inclusion of parameters.h before SDL header files to solve
   a header file clash when using OSMesa on Mac OS X.
