@@ -4,6 +4,9 @@
 
 - Unix/aratapif.c: added include <arpa/inet.h> to define inet_aton()
 
+- gui-sdl/dlgNetwork.cpp: added type "None" to not store undefined [ETHx]
+  entries
+
 
 2007/07/20 - Petr
 - gui-sdl/dlgNetwork.cpp: new dialog for setting up the networking
