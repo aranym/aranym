@@ -50,6 +50,7 @@
 #define TOS_EXCPT   -69 /* Break by Exception: KAOS/MagiC */
 
 #define TOS_EEXIST  -85 /* file exist, try later */
+#define TOS_ENAMETOOLONG -86 /* Name too long */
 #define TOS_EIO     -90 /* I/O error */
 #define TOS_ENOSPC  -91 /* disk full */
 

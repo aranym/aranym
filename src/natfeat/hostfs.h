@@ -194,9 +194,10 @@ class HostFs : public NF_Base
 	int32 xfs_rewinddir( XfsDir *dirh );
 	int32 xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode );
 	int32 xfs_rmdir( XfsCookie *dir, memptr name );
-	int32 xfs_readlink( XfsCookie *dir, memptr buff, int16 len );
 	int32 xfs_dfree( XfsCookie *dir, memptr buff );
+	int32 xfs_readlabel( XfsCookie *dir, memptr buff, int16 len );
 	int32 xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname );
+	int32 xfs_readlink( XfsCookie *dir, memptr buff, int16 len );
 
 	int32 xfs_dev_open(ExtFile *fp);
 	int32 xfs_dev_close(ExtFile *fp, int16 pid);

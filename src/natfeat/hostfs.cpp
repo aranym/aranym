@@ -298,7 +298,10 @@ int32 HostFs::dispatch(uint32 fncode)
 
 		case XFS_READLABEL:
 			D(bug("%s", "fs_readlabel"));
-			ret = TOS_EINVFN;
+			fetchXFSC( &fc, getParameter(0) );
+			ret = xfs_readlabel( &fc, 
+								 (memptr)getParameter(1) /* buff */,
+								 getParameter(2) /* len */ );
 			break;
 
 		case XFS_SYMLINK:
@@ -1053,6 +1056,52 @@ int32 HostFs::xfs_dfree( XfsCookie *dir, uint32 diskinfop )
 	/* ULONG b_secsize */  WriteInt32( diskinfop +	8, buff.f_bsize /* not 512 according to stonx_fs */ );
 	/* ULONG b_clsize  */  WriteInt32( diskinfop + 12, 1 );
 
+	return TOS_E_OK;
+}
+
+
+//	fake Dreadlabel, extract the last folder name of the host path being root out the mount on 68k side
+int32 HostFs::xfs_readlabel(XfsCookie * dir, memptr buff, int16 len) {
+	// dir->drv->hostRoot contains the full path of the folder mounted to a drive
+	// to omitt very long label names, we stick to the last folder name
+	size_t	hostrootlen;
+	if (
+			dir && dir->drv && dir->drv->hostRoot
+		&&	(hostrootlen = strlen(dir->drv->hostRoot)) > 0
+	) {
+		//	it seems there is a host root path to be used
+		char* startchar = dir->drv->hostRoot;	//	position on start of name
+		char* poschar = &startchar[hostrootlen - 1];	//	position on last character
+		if (poschar > startchar && *poschar == *DIRSEPARATOR) {
+			//	ignore an ending slash
+			--poschar;
+		}
+		if (poschar > startchar && *poschar == ':') {
+			//	ignore an ending ":" from dos drive letters
+			--poschar;
+		}
+		char* endchar = poschar;	//	remember this position as the end of hostRoot to copy
+		//	search backwards for bounding slash
+		while (poschar > startchar && *poschar != *DIRSEPARATOR)
+			--poschar;
+		if (*poschar == *DIRSEPARATOR)
+			//	move to character behind that slash
+			++poschar;
+			
+		if (poschar <= endchar) {
+			//	there are some characters inbetween to copy
+			hostrootlen = endchar - poschar + 2;
+			if (len < 0 || hostrootlen > size_t(len)) {
+				return(TOS_ENAMETOOLONG);
+			} else {
+				Host2AtariSafeStrncpy(buff, poschar, hostrootlen);
+				return(TOS_E_OK);
+			}
+		}
+	}
+	//	there is no label name to extract
+	//	fall back to a default label
+	Host2AtariSafeStrncpy(buff, "HOSTFS", len);
 	return TOS_E_OK;
 }
 
