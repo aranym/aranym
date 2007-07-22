@@ -3,7 +3,7 @@
  *
  * made by extreme stripping of unnecessary code in standard ifconfig
  *
- * Standa and Joy of ARAnyM team in 03/2003
+ * Standa and Joy of ARAnyM team in 03/2003 (C) 2003-2007
  * 
  */
 
@@ -11,8 +11,6 @@
  * ifconfig   This file contains an implementation of the command
  *              that either displays or sets the characteristics of
  *              one or more of the system's networking interfaces.
- *
- * Version:     $Id$
  *
  * Author:      Fred N. van Kempen, <waltje@uwalt.nl.mugnet.org>
  *              and others.  Copyright 1993 MicroWalt Corporation
@@ -41,6 +39,7 @@
 #include <netinet/in.h>
 #include <net/if.h>
 #include <net/if_arp.h>
+#include <arpa/inet.h>
 #include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>
