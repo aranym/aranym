@@ -2,6 +2,8 @@
 - natfeat/ethernet.cpp: reset() just stops the receiver thread. Now networking
   works even after reboot.
 
+- Unix/aratapif.c: added include <arpa/inet.h> to define inet_aton()
+
 
 2007/07/20 - Petr
 - gui-sdl/dlgNetwork.cpp: new dialog for setting up the networking
