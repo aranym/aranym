@@ -1,3 +1,8 @@
+2007/07/22 - Petr
+- natfeat/ethernet.cpp: reset() just stops the receiver thread. Now networking
+  works even after reboot.
+
+
 2007/07/20 - Petr
 - gui-sdl/dlgNetwork.cpp: new dialog for setting up the networking
 

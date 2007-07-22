@@ -315,9 +315,13 @@ void ETHERNETDriver::reset()
 {
 	D(bug("Ethernet: reset"));
 
-	// TODO needs something smarter than exit&init
-	exit();
-	init();
+	for(int i=0; i<MAX_ETH; i++) {
+		// Stop reception thread
+		Handler *handler = handlers[i];
+		if ( handler ) {
+			stopThread(i);
+		}
+	}
 }
 
 ETHERNETDriver::Handler *ETHERNETDriver::getHandler(int ethX)
