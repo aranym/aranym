@@ -28,7 +28,8 @@ AC_DEFUN([ARANYM_CHECK_FRAMEWORK_LOCATION], [
 		echo "#error dummy" > conftest.c
 		pos_locations=`$CC -v conftest.c -framework $1 2>&1 | grep -e "> search" -A 999 | grep -e "End of " -B 999 | grep -e "^ "`
 		rm -f conftest.c
-		for pos_location in $pos_locations ; do
+		for pos_location in $FRAMEWORK_SEARCH_PATHS $pos_locations ; do
+			pos_location="`echo $pos_location | sed 's/^"//' | sed 's/"$//'`"
 			framework_loc="$pos_location/$1.framework"
 			if test -d "$framework_loc" ; then
 				AS_VAR_SET(ac_Framework_Location, "$framework_loc")
