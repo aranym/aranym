@@ -1,3 +1,13 @@
+2007/07/22 - Stefan
+- include/toserror.h: Added TOS_ENAMETOOLONG with value -86.
+
+- natfeat/hostfs.h, natfeat/hostfs.cpp: Implemented xfs_readlabel(). From the 
+  hostRoot path the last folder name is used as the label. If for any reason 
+  this is not possible (e.g. hostRoot is "/"), then a default label "HOSTFS"
+  will be used. This now enables MAGXDESK, which uses Dreadlabel(), to open 
+  hostfs volumes.
+
+
 2007/07/22 - Petr
 - natfeat/ethernet.cpp: reset() just stops the receiver thread. Now networking
   works even after reboot.
