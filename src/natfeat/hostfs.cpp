@@ -1099,10 +1099,14 @@ int32 HostFs::xfs_readlabel(XfsCookie * dir, memptr buff, int16 len) {
 			}
 		}
 	}
-	//	there is no label name to extract
-	//	fall back to a default label
-	Host2AtariSafeStrncpy(buff, "HOSTFS", len);
-	return TOS_E_OK;
+	if (len > 0) {
+		//	there is no label name to extract
+		//	fall back to a default label
+		Host2AtariSafeStrncpy(buff, "HOSTFS", len);
+		return TOS_E_OK;
+	} else {
+		return(TOS_ENAMETOOLONG);
+	}
 }
 
 
