@@ -2,17 +2,22 @@ Things to do (written by Joy, volunteers ask in the mailing list)
 -----------------------------------------------------------------
 
 Fix bugs:
+- enhance HELP of [HOTKEYS] about the special Enter key
+- change default Ungrab combination to Right Control
+- change default JIT settings to Yes
+- change the heartbeat /|\ in the window title 
+- "-d" cmdline option doesn't work (doesn't win over config file settings)
+- [PARTITION] settings into SETUP GUI ASAP
+- [HOSTFS] settings into SETUP GUI ASAP
+- [ETHx] update with DNS IP address (requires FreeMiNT update)
 - colon as filename case sensitivity flag in HostFS - see Xavier's msg in ML
   Solution: come up with URL like paths: "file://path?parameter=value"
   where parameter is e.g. CaseSensitivity.
   Thanks to file:// scheme this should even be backward compatible.
 - when mouse grab on startup is off grabbing mouse no longer possible
-- after mouse ungrab/re-grab certain shift/control/alt key seems to be pressed
 - improve the whole mouse grab/ungrab - auto grab could grab mouse
   automagically when it enters aranym window only if the window is on top
 - correct postal address of GPL
-- Disk mngmt: when new disk is inserted by clicking on PATH enable the "Insert"
-  automatically.
 - Disk mngmt: don't show the short path in the editable field - if someone edits it the "..." shortened version gets stored to configuration.
 - don't store empty config entries (ETH2,3,4; DISK2,3,4,5,6,7; HOSFSA-Z, ..)
 
@@ -37,7 +42,6 @@ TODO in GUI-SDL:
 TODO in TOS patches and utilities:
 - automatic updater of BDCONFIG.SYS
 - separate mouse driver from Clocky and make it NatFeat based
-- enforce 0x50000 _MCH value (warn user if they have 0x30000)
 - finish and publish TOS XHDI disk driver
 
 TODO in ARAnyM source code itself:
