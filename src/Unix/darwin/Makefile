@@ -1,7 +1,7 @@
 
-CONFIGURE_OPTIONS_ppc  = --host=powerpc-apple-darwin8.10.0 --enable-fullmmu --enable-opengl --enable-fpe=uae --enable-nfjpeg --enable-nfosmesa
-CONFIGURE_OPTIONS_i386 = --host=i386-apple-darwin8.10.0 --enable-opengl --enable-jit-compiler --enable-nfjpeg --enable-nfosmesa
-ACLOCAL_FLAGS = "-I ./darwin/"
+CONFIGURE_OPTIONS_ppc  = --host=powerpc-apple-darwin8.10.0 --enable-fullmmu --enable-opengl --enable-fpe=uae --enable-nfjpeg --enable-nfosmesa --disable-sdltest
+CONFIGURE_OPTIONS_i386 = --host=i386-apple-darwin8.10.0 --enable-opengl --enable-jit-compiler --enable-nfjpeg --enable-nfosmesa --disable-sdltest
+ACLOCAL_FLAGS = "-I ./darwin/ ENABLE_TUNTAP NO_NESTED_SIGSEGV"
 
 UNIX_PATH = ..
 
