@@ -12,6 +12,7 @@
 			buildConfigurationList = 17AAB2AA0B20A8330016FB8D /* Build configuration list for PBXAggregateTarget "Packaging" */;
 			buildPhases = (
 				17BCD8A20B20FFC200432CE1 /* CopyFiles */,
+				B4E213CC0C5BA71A00138A7F /* CopyFiles */,
 				17AAB2A80B20A8150016FB8D /* ShellScript */,
 			);
 			dependencies = (
@@ -19,6 +20,20 @@
 				17D10CAA0C401D940083E7F2 /* PBXTargetDependency */,
 			);
 			name = Packaging;
+			productName = "Build Release Package";
+		};
+		B44BF5160C57F9230051D057 /* Packaging JIT */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B44BF5270C57F9230051D057 /* Build configuration list for PBXAggregateTarget "Packaging JIT" */;
+			buildPhases = (
+				B44BF51B0C57F9230051D057 /* CopyFiles */,
+				B4E213D00C5BA78300138A7F /* CopyFiles */,
+				B44BF5260C57F9230051D057 /* ShellScript */,
+			);
+			dependencies = (
+				B439ACAA0C5B33400046EFC9 /* PBXTargetDependency */,
+			);
+			name = "Packaging JIT";
 			productName = "Build Release Package";
 		};
 /* End PBXAggregateTarget section */
@@ -214,6 +229,126 @@
 		17CDFE630B2196D8001BABB0 /* fpu_uae.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DD00A652B51009733EB /* fpu_uae.cpp */; };
 		17D5D2590AC70DBD003D0FE9 /* midi_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17D5D2580AC70DBD003D0FE9 /* midi_file.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		B439AC340C5B2FD00046EFC9 /* cpuemu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AAE3630A666BC100301447 /* cpuemu.cpp */; };
+		B439AC350C5B2FD00046EFC9 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 17798E460A652B51009733EB /* SDLMain.m */; };
+		B439AC360C5B2FD00046EFC9 /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
+		B439AC370C5B2FD00046EFC9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D5E0A652B50009733EB /* main.cpp */; };
+		B439AC380C5B2FD00046EFC9 /* compemu_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DBE0A652B51009733EB /* compemu_support.cpp */; };
+		B439AC390C5B2FD00046EFC9 /* vm_alloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E870A652B52009733EB /* vm_alloc.cpp */; };
+		B439AC3A0C5B2FD00046EFC9 /* host_clock_unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E170A652B51009733EB /* host_clock_unix.cpp */; };
+		B439AC3B0C5B2FD00046EFC9 /* acia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CD30A652B50009733EB /* acia.cpp */; };
+		B439AC3C0C5B2FD00046EFC9 /* acsifdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CD40A652B50009733EB /* acsifdc.cpp */; };
+		B439AC3D0C5B2FD00046EFC9 /* aradata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CD50A652B50009733EB /* aradata.cpp */; };
+		B439AC3E0C5B2FD00046EFC9 /* aranym_exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CD60A652B50009733EB /* aranym_exception.cpp */; };
+		B439AC3F0C5B2FD00046EFC9 /* ata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CD70A652B50009733EB /* ata.cpp */; };
+		B439AC400C5B2FD00046EFC9 /* audio_dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CD90A652B50009733EB /* audio_dma.cpp */; };
+		B439AC410C5B2FD00046EFC9 /* audio_crossbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CD80A652B50009733EB /* audio_crossbar.cpp */; };
+		B439AC420C5B2FD00046EFC9 /* blitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CDA0A652B50009733EB /* blitter.cpp */; };
+		B439AC430C5B2FD00046EFC9 /* bootos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CDE0A652B50009733EB /* bootos.cpp */; };
+		B439AC440C5B2FD00046EFC9 /* bootos_emutos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CDB0A652B50009733EB /* bootos_emutos.cpp */; };
+		B439AC450C5B2FD00046EFC9 /* bootos_linux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CDC0A652B50009733EB /* bootos_linux.cpp */; };
+		B439AC460C5B2FD00046EFC9 /* bootos_tos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CDD0A652B50009733EB /* bootos_tos.cpp */; };
+		B439AC470C5B2FD00046EFC9 /* compemu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4F045C90C493BF000CF31D2 /* compemu.cpp */; };
+		B439AC480C5B2FD00046EFC9 /* cdrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CDF0A652B50009733EB /* cdrom.cpp */; };
+		B439AC490C5B2FD00046EFC9 /* cfgopts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CE00A652B50009733EB /* cfgopts.cpp */; };
+		B439AC4A0C5B2FD00046EFC9 /* dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CE90A652B50009733EB /* dsp.cpp */; };
+		B439AC4B0C5B2FD00046EFC9 /* emul_op.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CEA0A652B50009733EB /* emul_op.cpp */; };
+		B439AC4C0C5B2FD00046EFC9 /* natfeats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DAA0A652B51009733EB /* natfeats.cpp */; };
+		B439AC4D0C5B2FD00046EFC9 /* fakeio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CEB0A652B50009733EB /* fakeio.cpp */; };
+		B439AC4E0C5B2FD00046EFC9 /* hardware.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF90A652B50009733EB /* hardware.cpp */; };
+		B439AC4F0C5B2FD00046EFC9 /* host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CFC0A652B50009733EB /* host.cpp */; };
+		B439AC500C5B2FD00046EFC9 /* host_audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CFA0A652B50009733EB /* host_audio.cpp */; };
+		B439AC510C5B2FD00046EFC9 /* host_clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CFB0A652B50009733EB /* host_clock.cpp */; };
+		B439AC520C5B2FD00046EFC9 /* hostscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CFD0A652B50009733EB /* hostscreen.cpp */; };
+		B439AC530C5B2FD00046EFC9 /* ide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CFE0A652B50009733EB /* ide.cpp */; };
+		B439AC540C5B2FD00046EFC9 /* identify.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CFF0A652B50009733EB /* identify.cpp */; };
+		B439AC550C5B2FD00046EFC9 /* ikbd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D000A652B50009733EB /* ikbd.cpp */; };
+		B439AC560C5B2FD00046EFC9 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D390A652B50009733EB /* input.cpp */; };
+		B439AC570C5B2FD00046EFC9 /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D5F0A652B50009733EB /* md5.cpp */; };
+		B439AC580C5B2FD00046EFC9 /* mfp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D600A652B50009733EB /* mfp.cpp */; };
+		B439AC590C5B2FD00046EFC9 /* midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D610A652B50009733EB /* midi.cpp */; };
+		B439AC5A0C5B2FD00046EFC9 /* mmu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D620A652B51009733EB /* mmu.cpp */; };
+		B439AC5B0C5B2FD00046EFC9 /* ndebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DAC0A652B51009733EB /* ndebug.cpp */; };
+		B439AC5C0C5B2FD00046EFC9 /* ncr5380.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DAB0A652B51009733EB /* ncr5380.cpp */; };
+		B439AC5D0C5B2FD00046EFC9 /* parallel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DB00A652B51009733EB /* parallel.cpp */; };
+		B439AC5E0C5B2FD00046EFC9 /* parallel_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DAD0A652B51009733EB /* parallel_file.cpp */; };
+		B439AC5F0C5B2FD00046EFC9 /* parameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DB10A652B51009733EB /* parameters.cpp */; };
+		B439AC600C5B2FD00046EFC9 /* romdiff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DB20A652B51009733EB /* romdiff.cpp */; };
+		B439AC610C5B2FD00046EFC9 /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DB30A652B51009733EB /* rtc.cpp */; };
+		B439AC620C5B2FD00046EFC9 /* tools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DB50A652B51009733EB /* tools.cpp */; };
+		B439AC630C5B2FD00046EFC9 /* videl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E8B0A652B52009733EB /* videl.cpp */; };
+		B439AC640C5B2FD00046EFC9 /* yamaha.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E8C0A652B52009733EB /* yamaha.cpp */; };
+		B439AC650C5B2FD00046EFC9 /* nf_base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D740A652B51009733EB /* nf_base.cpp */; };
+		B439AC660C5B2FD00046EFC9 /* nf_objs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D780A652B51009733EB /* nf_objs.cpp */; };
+		B439AC670C5B2FD00046EFC9 /* xhdi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DA80A652B51009733EB /* xhdi.cpp */; };
+		B439AC680C5B2FD00046EFC9 /* nfaudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D7A0A652B51009733EB /* nfaudio.cpp */; };
+		B439AC690C5B2FD00046EFC9 /* nfbootstrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D7C0A652B51009733EB /* nfbootstrap.cpp */; };
+		B439AC6A0C5B2FD00046EFC9 /* nfclipbrd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D820A652B51009733EB /* nfclipbrd.cpp */; };
+		B439AC6B0C5B2FD00046EFC9 /* nf_basicset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D760A652B51009733EB /* nf_basicset.cpp */; };
+		B439AC6C0C5B2FD00046EFC9 /* debugprintf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D670A652B51009733EB /* debugprintf.cpp */; };
+		B439AC6D0C5B2FD00046EFC9 /* nfvdi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DA20A652B51009733EB /* nfvdi.cpp */; };
+		B439AC6E0C5B2FD00046EFC9 /* nfvdi_soft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DA60A652B51009733EB /* nfvdi_soft.cpp */; };
+		B439AC6F0C5B2FD00046EFC9 /* nfcdrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D7E0A652B51009733EB /* nfcdrom.cpp */; };
+		B439AC700C5B2FD00046EFC9 /* hostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D720A652B51009733EB /* hostfs.cpp */; };
+		B439AC710C5B2FD00046EFC9 /* aranym_glue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DB70A652B51009733EB /* aranym_glue.cpp */; };
+		B439AC720C5B2FD00046EFC9 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DDD0A652B51009733EB /* memory.cpp */; };
+		B439AC730C5B2FD00046EFC9 /* newcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DDF0A652B51009733EB /* newcpu.cpp */; };
+		B439AC740C5B2FD00046EFC9 /* readcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DE20A652B51009733EB /* readcpu.cpp */; };
+		B439AC750C5B2FD00046EFC9 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC60A652B51009733EB /* debug.cpp */; };
+		B439AC760C5B2FD00046EFC9 /* dsp_cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CE70A652B50009733EB /* dsp_cpu.cpp */; };
+		B439AC770C5B2FD00046EFC9 /* sdlgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF70A652B50009733EB /* sdlgui.cpp */; };
+		B439AC780C5B2FD00046EFC9 /* dlgFileSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF00A652B50009733EB /* dlgFileSelect.cpp */; };
+		B439AC790C5B2FD00046EFC9 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF40A652B50009733EB /* file.cpp */; };
+		B439AC7A0C5B2FD00046EFC9 /* dlgMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF30A652B50009733EB /* dlgMain.cpp */; };
+		B439AC7B0C5B2FD00046EFC9 /* dlgDisk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CEF0A652B50009733EB /* dlgDisk.cpp */; };
+		B439AC7C0C5B2FD00046EFC9 /* dlgKeyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF20A652B50009733EB /* dlgKeyboard.cpp */; };
+		B439AC7D0C5B2FD00046EFC9 /* dlgHotkeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF10A652B50009733EB /* dlgHotkeys.cpp */; };
+		B439AC7E0C5B2FD00046EFC9 /* dlgAlert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CEE0A652B50009733EB /* dlgAlert.cpp */; };
+		B439AC7F0C5B2FD00046EFC9 /* main_unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E7C0A652B52009733EB /* main_unix.cpp */; };
+		B439AC800C5B2FD00046EFC9 /* midi_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17D5D2580AC70DBD003D0FE9 /* midi_file.cpp */; };
+		B439AC810C5B2FD00046EFC9 /* nfvdi_opengl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DA40A652B51009733EB /* nfvdi_opengl.cpp */; };
+		B439AC820C5B2FD00046EFC9 /* cpudefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AAE3620A666BC100301447 /* cpudefs.cpp */; };
+		B439AC830C5B2FD00046EFC9 /* cpustbl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AAE3640A666BC100301447 /* cpustbl.cpp */; };
+		B439AC840C5B2FD00046EFC9 /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
+		B439AC850C5B2FD00046EFC9 /* cpummu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC30A652B51009733EB /* cpummu.cpp */; };
+		B439AC860C5B2FD00046EFC9 /* dlgOs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD30C4017C9007D8975 /* dlgOs.cpp */; };
+		B439AC870C5B2FD00046EFC9 /* dlgVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD40C4017C9007D8975 /* dlgVideo.cpp */; };
+		B439AC880C5B2FD00046EFC9 /* sigsegv_darwin_x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */; };
+		B439AC890C5B2FD00046EFC9 /* compstbl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B46114630C480FCA00003172 /* compstbl.cpp */; };
+		B439AC8A0C5B2FD00046EFC9 /* cpustbl_nf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B46114660C480FEF00003172 /* cpustbl_nf.cpp */; };
+		B439AC8B0C5B2FD00046EFC9 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
+		B439AC8C0C5B2FD00046EFC9 /* cpuemu_nf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B49164930C540C2200CFB5B0 /* cpuemu_nf.cpp */; };
+		B439AC8E0C5B2FD00046EFC9 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
+		B439AC8F0C5B2FD00046EFC9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		B439AC900C5B2FD00046EFC9 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
+		B439AC910C5B2FD00046EFC9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
+		B439AC930C5B2FD00046EFC9 /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 170321800A64F616003EE1DC /* aranym.icns */; };
+		B439AC940C5B2FD00046EFC9 /* SDLMain.nib in Resources */ = {isa = PBXBuildFile; fileRef = 17115C740A65530500038162 /* SDLMain.nib */; };
+		B439AC960C5B2FD00046EFC9 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
+		B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DCE0A652B51009733EB /* fpu_ieee.cpp */; };
+		B43DC1970C635DFA0014243B /* compemu_fpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DBD0A652B51009733EB /* compemu_fpp.cpp */; };
+		B44BF51C0C57F9230051D057 /* AUTHORS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B00B21004100432CE1 /* AUTHORS */; };
+		B44BF51D0C57F9230051D057 /* BUGS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B10B21004100432CE1 /* BUGS */; };
+		B44BF51E0C57F9230051D057 /* ChangeLog in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B20B21004100432CE1 /* ChangeLog */; };
+		B44BF51F0C57F9230051D057 /* COPYING in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B30B21004100432CE1 /* COPYING */; };
+		B44BF5200C57F9230051D057 /* FAQ in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B40B21004100432CE1 /* FAQ */; };
+		B44BF5210C57F9230051D057 /* NEWS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B50B21004100432CE1 /* NEWS */; };
+		B44BF5220C57F9230051D057 /* README in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B60B21004100432CE1 /* README */; };
+		B44BF5230C57F9230051D057 /* TODO in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B70B21004100432CE1 /* TODO */; };
+		B44BF5240C57F9230051D057 /* config in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8C80B21010C00432CE1 /* config */; };
+		B44BF5250C57F9230051D057 /* README.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17398E110B21048100A9B4DB /* README.rtf */; };
+		B4772A340C63C7A90064DEA2 /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
+		B49164700C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
+		B49164710C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
+		B4A9E9C50C5B33AC00C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
+		B4A9EBEE0C5B374A00C156C3 /* ethernet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D6F0A652B51009733EB /* ethernet.cpp */; };
+		B4A9EC060C5B3C1400C156C3 /* ethernet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D6F0A652B51009733EB /* ethernet.cpp */; };
+		B4A9EC070C5B3C1400C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
+		B4A9EC080C5B3C3900C156C3 /* ethernet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D6F0A652B51009733EB /* ethernet.cpp */; };
+		B4A9EC090C5B3C3900C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
+		B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */; };
+		B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D1107320486CEB800E47090 /* MacAranym.app */; };
+		B4E213D20C5BA7A400138A7F /* MacAranym JIT IEEE.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -230,6 +365,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 17BCD7880B20F64F00432CE1;
 			remoteInfo = "MacAranym MMU";
+		};
+		B439ACA90C5B33400046EFC9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B439AC2F0C5B2FD00046EFC9;
+			remoteInfo = "MacAranym JIT IEEE";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -259,7 +401,7 @@
 		17BCD8A20B20FFC200432CE1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = DOC;
+			dstPath = "aranym-xxx-macosx/DOC";
 			dstSubfolderSpec = 16;
 			files = (
 				17BCD8B80B21004100432CE1 /* AUTHORS in CopyFiles */,
@@ -272,6 +414,57 @@
 				17BCD8BF0B21004100432CE1 /* TODO in CopyFiles */,
 				17BCD8C90B21010C00432CE1 /* config in CopyFiles */,
 				17398E120B21048100A9B4DB /* README.rtf in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B439AC950C5B2FD00046EFC9 /* Copy Frameworks into .app bundle */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B439AC960C5B2FD00046EFC9 /* SDL.framework in Copy Frameworks into .app bundle */,
+			);
+			name = "Copy Frameworks into .app bundle";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B44BF51B0C57F9230051D057 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "aranym-xxx-jit-macosx/DOC";
+			dstSubfolderSpec = 16;
+			files = (
+				B44BF51C0C57F9230051D057 /* AUTHORS in CopyFiles */,
+				B44BF51D0C57F9230051D057 /* BUGS in CopyFiles */,
+				B44BF51E0C57F9230051D057 /* ChangeLog in CopyFiles */,
+				B44BF51F0C57F9230051D057 /* COPYING in CopyFiles */,
+				B44BF5200C57F9230051D057 /* FAQ in CopyFiles */,
+				B44BF5210C57F9230051D057 /* NEWS in CopyFiles */,
+				B44BF5220C57F9230051D057 /* README in CopyFiles */,
+				B44BF5230C57F9230051D057 /* TODO in CopyFiles */,
+				B44BF5240C57F9230051D057 /* config in CopyFiles */,
+				B44BF5250C57F9230051D057 /* README.rtf in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B4E213CC0C5BA71A00138A7F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "aranym-xxx-macosx";
+			dstSubfolderSpec = 16;
+			files = (
+				B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */,
+				B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B4E213D00C5BA78300138A7F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "aranym-xxx-jit-macosx";
+			dstSubfolderSpec = 7;
+			files = (
+				B4E213D20C5BA7A400138A7F /* MacAranym JIT IEEE.app in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -589,7 +782,19 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym JIT IEEE.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B46114630C480FCA00003172 /* compstbl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = compstbl.cpp; path = build/MacAranym.build/compstbl.cpp; sourceTree = "<group>"; };
+		B46114660C480FEF00003172 /* cpustbl_nf.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = cpustbl_nf.cpp; path = build/MacAranym.build/cpustbl_nf.cpp; sourceTree = "<group>"; };
+		B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dlgNetwork.cpp; sourceTree = "<group>"; };
+		B49164930C540C2200CFB5B0 /* cpuemu_nf.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu_nf.cpp; path = build/MacAranym.build/cpuemu_nf.cpp; sourceTree = "<group>"; };
+		B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ethernet_darwin.cpp; path = darwin/ethernet_darwin.cpp; sourceTree = "<group>"; };
+		B4A9E9C20C5B33AC00C156C3 /* ethernet_darwin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ethernet_darwin.h; path = darwin/ethernet_darwin.h; sourceTree = "<group>"; };
+		B4F045C90C493BF000CF31D2 /* compemu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = compemu.cpp; path = build/MacAranym.build/compemu.cpp; sourceTree = "<group>"; };
+		B4F045CA0C493BF000CF31D2 /* comptbl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = comptbl.h; path = build/MacAranym.build/comptbl.h; sourceTree = "<group>"; };
+		B4F045CB0C493BF000CF31D2 /* cputbl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cputbl.h; path = build/MacAranym.build/cputbl.h; sourceTree = "<group>"; };
+		B4F046290C49571100CF31D2 /* sigsegv_solaris_x86.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sigsegv_solaris_x86.cpp; path = solaris/sigsegv_solaris_x86.cpp; sourceTree = "<group>"; };
+		B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sigsegv_darwin_x86.cpp; path = darwin/sigsegv_darwin_x86.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -612,6 +817,17 @@
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				177990520A6538B5009733EB /* IOKit.framework in Frameworks */,
 				17AAB12C0B206BF20016FB8D /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B439AC8D0C5B2FD00046EFC9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B439AC8E0C5B2FD00046EFC9 /* SDL.framework in Frameworks */,
+				B439AC8F0C5B2FD00046EFC9 /* Cocoa.framework in Frameworks */,
+				B439AC900C5B2FD00046EFC9 /* IOKit.framework in Frameworks */,
+				B439AC910C5B2FD00046EFC9 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -697,6 +913,7 @@
 		17798CED0A652B50009733EB /* gui-sdl */ = {
 			isa = PBXGroup;
 			children = (
+				B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */,
 				17798CEE0A652B50009733EB /* dlgAlert.cpp */,
 				17798CEF0A652B50009733EB /* dlgDisk.cpp */,
 				17798CF00A652B50009733EB /* dlgFileSelect.cpp */,
@@ -942,6 +1159,8 @@
 		17798DE70A652B51009733EB /* Unix */ = {
 			isa = PBXGroup;
 			children = (
+				B401FB9F0C53C10000B0667B /* solaris */,
+				B41C696D0C536D910013E498 /* darwin */,
 				17798DFE0A652B51009733EB /* cygwin */,
 				17798E1C0A652B51009733EB /* linux */,
 				17798E210A652B51009733EB /* MacOSX */,
@@ -1025,6 +1244,12 @@
 		17798EE30A652C3C009733EB /* Generated Sources */ = {
 			isa = PBXGroup;
 			children = (
+				B49164930C540C2200CFB5B0 /* cpuemu_nf.cpp */,
+				B4F045C90C493BF000CF31D2 /* compemu.cpp */,
+				B4F045CA0C493BF000CF31D2 /* comptbl.h */,
+				B4F045CB0C493BF000CF31D2 /* cputbl.h */,
+				B46114660C480FEF00003172 /* cpustbl_nf.cpp */,
+				B46114630C480FCA00003172 /* compstbl.cpp */,
 				17BCD68C0B20BFDB00432CE1 /* config.h */,
 				1734DB140ABCA354001A746E /* config_ppc.h */,
 				1734DB150ABCA3AB001A746E /* config_i386.h */,
@@ -1061,6 +1286,7 @@
 			children = (
 				8D1107320486CEB800E47090 /* MacAranym.app */,
 				17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */,
+				B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1100,6 +1326,24 @@
 				17B2B78D0C41785800595D44 /* libOSMesa.7.dylib */,
 			);
 			name = "Frameworks & Libraries";
+			sourceTree = "<group>";
+		};
+		B401FB9F0C53C10000B0667B /* solaris */ = {
+			isa = PBXGroup;
+			children = (
+				B4F046290C49571100CF31D2 /* sigsegv_solaris_x86.cpp */,
+			);
+			name = solaris;
+			sourceTree = "<group>";
+		};
+		B41C696D0C536D910013E498 /* darwin */ = {
+			isa = PBXGroup;
+			children = (
+				B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */,
+				B4A9E9C20C5B33AC00C156C3 /* ethernet_darwin.h */,
+				B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */,
+			);
+			name = darwin;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1147,6 +1391,27 @@
 			productReference = 8D1107320486CEB800E47090 /* MacAranym.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT IEEE */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B439AC970C5B2FD00046EFC9 /* Build configuration list for PBXNativeTarget "MacAranym JIT IEEE" */;
+			buildPhases = (
+				B439AC300C5B2FD00046EFC9 /* Run configure */,
+				B439AC310C5B2FD00046EFC9 /* Build CPU source files */,
+				B439AC320C5B2FD00046EFC9 /* Sources */,
+				B439AC8D0C5B2FD00046EFC9 /* Frameworks */,
+				B439AC920C5B2FD00046EFC9 /* Resources */,
+				B439AC950C5B2FD00046EFC9 /* Copy Frameworks into .app bundle */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MacAranym JIT IEEE";
+			productInstallPath = "$(HOME)/Applications";
+			productName = MacAranym;
+			productReference = B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1160,6 +1425,8 @@
 				8D1107260486CEB800E47090 /* MacAranym */,
 				17BCD7880B20F64F00432CE1 /* MacAranym MMU */,
 				17AAB2A90B20A8150016FB8D /* Packaging */,
+				B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT IEEE */,
+				B44BF5160C57F9230051D057 /* Packaging JIT */,
 			);
 		};
 /* End PBXProject section */
@@ -1183,6 +1450,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B439AC920C5B2FD00046EFC9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B439AC930C5B2FD00046EFC9 /* aranym.icns in Resources */,
+				B439AC940C5B2FD00046EFC9 /* SDLMain.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -1198,7 +1474,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$TARGET_BUILD_DIR/DOC\"\necho \"Processing text files...\"\nDATE=`date '+%Y\\/%m\\/%d'`\nmv COPYING ..\ncat README.rtf \\\n\t| sed \"s/(\\*VERSION\\*)/$CURRENT_PROJECT_VERSION/g\" \\\n\t| sed \"s/(\\*DATE\\*)/$DATE/g\" \\\n\t> ../README.rtf\nrm README.rtf\n\ncd \"$TARGET_BUILD_DIR\"\nVERSION=`echo \"-$CURRENT_PROJECT_VERSION\" | sed 's/ //g;s/-//g'`\nDMGNAME=aranym-$VERSION-macosx.dmg\necho \"Building disk image $DMGNAME...\"\nhdiutil create $DMGNAME -ov -volname \"MacAranym $CURRENT_PROJECT_VERSION\" -srcfolder . -format UDZO\nexit $?";
+			shellScript = "cd \"$TARGET_BUILD_DIR/aranym-xxx-macosx/DOC\"\necho \"Processing text files...\"\nDATE=`date '+%Y\\/%m\\/%d'`\nmv COPYING ..\ncat README.rtf \\\n\t| sed \"s/(\\*VERSION\\*)/$CURRENT_PROJECT_VERSION/g\" \\\n\t| sed \"s/(\\*DATE\\*)/$DATE/g\" \\\n\t> ../README.rtf\nrm README.rtf\n\ncd \"$TARGET_BUILD_DIR/aranym-xxx-macosx\"\nVERSION=`echo \"-$CURRENT_PROJECT_VERSION\" | sed 's/ //g;s/-//g'`\nDMGNAME=$TARGET_BUILD_DIR/aranym-$VERSION-macosx.dmg\necho \"Building disk image $DMGNAME...\"\nhdiutil create $DMGNAME -ov -volname \"MacAranym $CURRENT_PROJECT_VERSION\" -srcfolder . -format UDZO\nexit $?";
 		};
 		17AAB3240B20AF440016FB8D /* Run configure */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1276,6 +1552,58 @@
 			shellPath = /bin/sh;
 			shellScript = "########################## BUILD CPU EMULATION CORE ##########################\n\nmkdir -p \"$DERIVED_FILES_DIR\" && cd \"$DERIVED_FILES_DIR\" || exit 1\nTRANSFERRED=`rsync -pogt --stats cpudefs.cpp cpuemu.cpp cpuemu_*.cpp cputbl.h cpustbl.cpp Makefile config*.h \"$PROJECT_TEMP_DIR\" \\\n\t\t\t\t2>/dev/null | grep \"transferred:\"| awk '{print $5}'`\nRET=$?\necho \"$TRANSFERRED files transferred. (Return code $RET)\"\nif [ \"$RET\" -eq 0 -a \"$TRANSFERRED\" -eq 0 ]; then\n\texit 0\nfi\n\necho ; echo \"Building CPU definition...\"\n\ncd \"$TEMP_FILES_DIR\" \ngcc -o build68k \"$SOURCE_DIR/uae_cpu/build68k.c\" && \\\n\t(./build68k < \"$SOURCE_DIR/uae_cpu/table68k\" > \"$DERIVED_FILES_DIR/cpudefs.cpp\") || exit 1\n\nfor CURRENT_ARCH in $ARCHS ; do\n\techo ; echo \"Building CPU emulation core... $CURRENT_ARCH\"\n\tg++ `echo \"-DCPU_$CURRENT_ARCH\" | sed s/ppc/powerpc/` \"-I$DERIVED_FILES_DIR\" \"-I$SOURCE_DIR/Unix\" \"-I$SOURCE_DIR/uae_cpu\" -o gencpu \\\n\t\t\"$SOURCE_DIR/uae_cpu/gencpu.c\" \"$SOURCE_DIR/uae_cpu/readcpu.cpp\" \"$DERIVED_FILES_DIR/cpudefs.cpp\" && \\\n\t\t./gencpu || exit 1\n\tmv cpuemu.cpp \"$DERIVED_FILES_DIR/cpuemu_$CURRENT_ARCH.cpp\"\ndone\nmv cpustbl.cpp cputbl.h \"$DERIVED_FILES_DIR\" || exit 1\n\ncat << EOF > \"$DERIVED_FILES_DIR/cpuemu.cpp\"\n#ifdef CPU_i386\n#include \"cpuemu_i386.cpp\"\n#endif\n#ifdef CPU_powerpc\n#include \"cpuemu_ppc.cpp\"\n#endif\nEOF\n\ncd \"$DERIVED_FILES_DIR\"\nmkdir -p \"$PROJECT_TEMP_DIR\"\nrsync -pogt cpudefs.cpp cpuemu.cpp cpuemu_*.cpp cputbl.h cpustbl.cpp Makefile config*.h \"$PROJECT_TEMP_DIR\"\n";
 		};
+		B439AC300C5B2FD00046EFC9 /* Run configure */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run configure";
+			outputPaths = (
+				"$(DERIVED_FILES_DIR)/Makefile",
+				"$(DERIVED_FILES_DIR)/config.h",
+				"$(DERIVED_FILES_DIR)/config_i386.h",
+				"$(DERIVED_FILES_DIR)/config_ppc.h",
+				"$(TARGET_TEMP_DIR)/configure_options",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/Unix\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Configure system for all build architectures\nif [ -f autogen.sh ]; then\n\trm  config.h.in\n\tCONFIG_EXEC=./autogen.sh\nelse\n\tCONFIG_EXEC=./configure\nfi\n\"$CONFIG_EXEC\" $CONFIGURE_OPTIONS || exit 1\n\n# Modify config.h\nif [ $NATIVE_ARCH == ppc ]; then\n\tcat config.h | sed 's/CPU_TYPE \"powerpc\"/CPU_TYPE \"i386\"/' \\\n\t\t| sed 's/#define WORDS_BIGENDIAN 1/\\/* #undef WORDS_BIGENDIAN *\\//' > config_i386.h\n\t# 10.3.9 compatibility:\n\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\trm config.h\nelse\n\tcat config.h | sed 's/CPU_TYPE \"i386\"/CPU_TYPE \"powerpc\"/' \\\n\t\t| sed 's/\\/* #undef WORDS_BIGENDIAN *\\//#define WORDS_BIGENDIAN 1/' \\\n\t\t| sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\tmv config.h config_$NATIVE_ARCH.h\nfi\n\ncat << EOF > config.h\n#ifdef CPU_i386\n#include \"config_i386.h\"\n#endif\n#ifdef CPU_powerpc\n#include \"config_ppc.h\"\n#endif\nEOF\n\nmv config.h config_ppc.h config_i386.h Makefile \"$DERIVED_FILES_DIR\"\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
+		};
+		B439AC310C5B2FD00046EFC9 /* Build CPU source files */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			comments = "Build source files for CPU emulation.";
+			files = (
+			);
+			inputPaths = (
+				"$(SOURCE_DIR)/uae_cpu/build68k.c",
+				"$(SOURCE_DIR)/uae_cpu/table68k",
+				"$(DERIVED_FILES_DIR)/config_i386.h",
+				"$(DERIVED_FILES_DIR)/config_ppc.h",
+			);
+			name = "Build CPU source files";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "########################## BUILD CPU EMULATION CORE ##########################\nmkdir -p \"$DERIVED_FILES_DIR\" && cd \"$DERIVED_FILES_DIR\" || exit 1\nTRANSFERRED=`rsync -pogt --stats cpudefs.cpp cpuemu*.cpp cputbl.h cpustbl*.cpp compemu.cpp compstbl.cpp comptbl.h Makefile config*.h \"$PROJECT_TEMP_DIR\" \\\n\t\t\t\t2>/dev/null | grep \"transferred:\"| awk '{print $5}'`\nRET=$?\necho \"$TRANSFERRED files transferred. (Return code $RET)\"\nif [ \"$RET\" -eq 0 -a \"$TRANSFERRED\" -eq 0 ]; then\n\texit 0\nfi\n\necho ; echo \"Building CPU definition...\"\n\ncd \"$TEMP_FILES_DIR\" \necho \"Compile build68k\"\ngcc -o build68k \"$SOURCE_DIR/uae_cpu/build68k.c\" && \\\n\t(./build68k < \"$SOURCE_DIR/uae_cpu/table68k\" > \"$DERIVED_FILES_DIR/cpudefs.cpp\") || exit 1\n\necho \"Compile & Execute gencomp\"\ng++ -DCPU_i386 -DUSE_JIT=1 -DFULLMMU -DUSE_JIT_FPU=1 \"-I$DERIVED_FILES_DIR\" \"-I$SOURCE_DIR/Unix\" \"-I$SOURCE_DIR/uae_cpu\" -o gencomp \\\n\t\t\"$SOURCE_DIR/uae_cpu/compiler/gencomp.c\" \"$SOURCE_DIR/uae_cpu/readcpu.cpp\" \"$DERIVED_FILES_DIR/cpudefs.cpp\" && \\\n\t\t./gencomp || exit 1\nmv compemu.cpp compstbl.cpp comptbl.h \"$DERIVED_FILES_DIR\" || exit 1\n\necho \"Loop through Architectures\"\nfor CURRENT_ARCH in $ARCHS ; do\n\techo ; echo \"Building CPU emulation core... $CURRENT_ARCH\"\n\tg++ -DUSE_JIT=1 -DUSE_JIT_FPU=1 `echo \"-DCPU_$CURRENT_ARCH\" | sed s/ppc/powerpc/` \"-I$DERIVED_FILES_DIR\" \"-I$SOURCE_DIR/Unix\" \"-I$SOURCE_DIR/uae_cpu\" -o gencpu \\\n\t\t\"$SOURCE_DIR/uae_cpu/gencpu.c\" \"$SOURCE_DIR/uae_cpu/readcpu.cpp\" \"$DERIVED_FILES_DIR/cpudefs.cpp\" && \\\n\t\t./gencpu || exit 1\n\tmv cpuemu.cpp \"$DERIVED_FILES_DIR/cpuemu_$CURRENT_ARCH.cpp\"\ndone\nmv cpustbl.cpp cputbl.h \"$DERIVED_FILES_DIR\" || exit 1\n\necho \"Building $DERIVED_FILES_DIR/cpuemu.cpp\"\ncat << EOF > \"$DERIVED_FILES_DIR/cpuemu.cpp\"\n#ifdef CPU_i386\n#include \"cpuemu_i386.cpp\"\n#endif\n#ifdef CPU_powerpc\n#include \"cpuemu_ppc.cpp\"\n#endif\nEOF\n\necho \"Building $DERIVED_FILES_DIR/cpustbl_nf.cpp\"\ncat << EOF > \"$DERIVED_FILES_DIR/cpustbl_nf.cpp\"\n\t#define NOFLAGS\n\t#include \"cpustbl.cpp\"\nEOF\n\necho \"Building $DERIVED_FILES_DIR/cpuemu_nf.cpp\"\ncat << EOF > \"$DERIVED_FILES_DIR/cpuemu_nf.cpp\"\n\t#define NOFLAGS\n\t#include \"cpuemu.cpp\"\nEOF\n\ncd \"$DERIVED_FILES_DIR\"\nmkdir -p \"$PROJECT_TEMP_DIR\"\nrsync -pogt cpudefs.cpp cpuemu*.cpp cputbl.h cpustbl*.cpp compemu.cpp compstbl.cpp comptbl.h Makefile config*.h \"$PROJECT_TEMP_DIR\"\n";
+		};
+		B44BF5260C57F9230051D057 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/aranym-*-macosx.dmg",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$TARGET_BUILD_DIR/aranym-xxx-jit-macosx/DOC\"\necho \"Processing text files...\"\nDATE=`date '+%Y\\/%m\\/%d'`\nmv COPYING ..\ncat README.rtf \\\n\t| sed \"s/(\\*VERSION\\*)/$CURRENT_PROJECT_VERSION/g\" \\\n\t| sed \"s/(\\*DATE\\*)/$DATE/g\" \\\n\t> ../README.rtf\nrm README.rtf\n\ncd \"$TARGET_BUILD_DIR/aranym-xxx-jit-macosx\"\nVERSION=`echo \"-$CURRENT_PROJECT_VERSION\" | sed 's/ //g;s/-//g'`\nDMGNAME=$TARGET_BUILD_DIR/aranym-$VERSION-jitx86-macosx.dmg\necho \"Building disk image $DMGNAME...\"\nhdiutil create $DMGNAME -ov -volname \"MacAranym $CURRENT_PROJECT_VERSION\" -srcfolder . -format UDZO\nexit $?";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1283,6 +1611,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B4A9EC080C5B3C3900C156C3 /* ethernet.cpp in Sources */,
+				B4A9EC090C5B3C3900C156C3 /* ethernet_darwin.cpp in Sources */,
 				17BCD7F00B20F6BF00432CE1 /* SDLMain.m in Sources */,
 				17BCD7F10B20F6BF00432CE1 /* parameters_MacOSX.cpp in Sources */,
 				17BCD7F20B20F6BF00432CE1 /* main.cpp in Sources */,
@@ -1366,6 +1696,7 @@
 				170C2B8B0BB872920026484E /* dyngl.c in Sources */,
 				171B2BD70C4017C9007D8975 /* dlgOs.cpp in Sources */,
 				171B2BD80C4017C9007D8975 /* dlgVideo.cpp in Sources */,
+				B49164700C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1373,6 +1704,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B4A9EC060C5B3C1400C156C3 /* ethernet.cpp in Sources */,
+				B4A9EC070C5B3C1400C156C3 /* ethernet_darwin.cpp in Sources */,
 				17CA25E90A65489F00EF42A0 /* SDLMain.m in Sources */,
 				175822820A6554CE00EEE78F /* parameters_MacOSX.cpp in Sources */,
 				17798F050A652EF1009733EB /* main.cpp in Sources */,
@@ -1456,6 +1789,108 @@
 				170C2BA10BB873470026484E /* cpummu.cpp in Sources */,
 				171B2BD50C4017C9007D8975 /* dlgOs.cpp in Sources */,
 				171B2BD60C4017C9007D8975 /* dlgVideo.cpp in Sources */,
+				B49164710C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B439AC320C5B2FD00046EFC9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B4A9EBEE0C5B374A00C156C3 /* ethernet.cpp in Sources */,
+				B4772A340C63C7A90064DEA2 /* nfjpeg.cpp in Sources */,
+				B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */,
+				B439AC340C5B2FD00046EFC9 /* cpuemu.cpp in Sources */,
+				B439AC350C5B2FD00046EFC9 /* SDLMain.m in Sources */,
+				B439AC360C5B2FD00046EFC9 /* parameters_MacOSX.cpp in Sources */,
+				B439AC370C5B2FD00046EFC9 /* main.cpp in Sources */,
+				B439AC380C5B2FD00046EFC9 /* compemu_support.cpp in Sources */,
+				B43DC1970C635DFA0014243B /* compemu_fpp.cpp in Sources */,
+				B439AC390C5B2FD00046EFC9 /* vm_alloc.cpp in Sources */,
+				B439AC3A0C5B2FD00046EFC9 /* host_clock_unix.cpp in Sources */,
+				B439AC3B0C5B2FD00046EFC9 /* acia.cpp in Sources */,
+				B439AC3C0C5B2FD00046EFC9 /* acsifdc.cpp in Sources */,
+				B439AC3D0C5B2FD00046EFC9 /* aradata.cpp in Sources */,
+				B439AC3E0C5B2FD00046EFC9 /* aranym_exception.cpp in Sources */,
+				B439AC3F0C5B2FD00046EFC9 /* ata.cpp in Sources */,
+				B439AC400C5B2FD00046EFC9 /* audio_dma.cpp in Sources */,
+				B439AC410C5B2FD00046EFC9 /* audio_crossbar.cpp in Sources */,
+				B439AC420C5B2FD00046EFC9 /* blitter.cpp in Sources */,
+				B439AC430C5B2FD00046EFC9 /* bootos.cpp in Sources */,
+				B439AC440C5B2FD00046EFC9 /* bootos_emutos.cpp in Sources */,
+				B439AC450C5B2FD00046EFC9 /* bootos_linux.cpp in Sources */,
+				B439AC460C5B2FD00046EFC9 /* bootos_tos.cpp in Sources */,
+				B439AC470C5B2FD00046EFC9 /* compemu.cpp in Sources */,
+				B439AC480C5B2FD00046EFC9 /* cdrom.cpp in Sources */,
+				B439AC490C5B2FD00046EFC9 /* cfgopts.cpp in Sources */,
+				B439AC4A0C5B2FD00046EFC9 /* dsp.cpp in Sources */,
+				B439AC4B0C5B2FD00046EFC9 /* emul_op.cpp in Sources */,
+				B439AC4C0C5B2FD00046EFC9 /* natfeats.cpp in Sources */,
+				B439AC4D0C5B2FD00046EFC9 /* fakeio.cpp in Sources */,
+				B439AC4E0C5B2FD00046EFC9 /* hardware.cpp in Sources */,
+				B439AC4F0C5B2FD00046EFC9 /* host.cpp in Sources */,
+				B439AC500C5B2FD00046EFC9 /* host_audio.cpp in Sources */,
+				B439AC510C5B2FD00046EFC9 /* host_clock.cpp in Sources */,
+				B439AC520C5B2FD00046EFC9 /* hostscreen.cpp in Sources */,
+				B439AC530C5B2FD00046EFC9 /* ide.cpp in Sources */,
+				B439AC540C5B2FD00046EFC9 /* identify.cpp in Sources */,
+				B439AC550C5B2FD00046EFC9 /* ikbd.cpp in Sources */,
+				B439AC560C5B2FD00046EFC9 /* input.cpp in Sources */,
+				B439AC570C5B2FD00046EFC9 /* md5.cpp in Sources */,
+				B439AC580C5B2FD00046EFC9 /* mfp.cpp in Sources */,
+				B439AC590C5B2FD00046EFC9 /* midi.cpp in Sources */,
+				B439AC5A0C5B2FD00046EFC9 /* mmu.cpp in Sources */,
+				B439AC5B0C5B2FD00046EFC9 /* ndebug.cpp in Sources */,
+				B439AC5C0C5B2FD00046EFC9 /* ncr5380.cpp in Sources */,
+				B439AC5D0C5B2FD00046EFC9 /* parallel.cpp in Sources */,
+				B439AC5E0C5B2FD00046EFC9 /* parallel_file.cpp in Sources */,
+				B439AC5F0C5B2FD00046EFC9 /* parameters.cpp in Sources */,
+				B439AC600C5B2FD00046EFC9 /* romdiff.cpp in Sources */,
+				B439AC610C5B2FD00046EFC9 /* rtc.cpp in Sources */,
+				B439AC620C5B2FD00046EFC9 /* tools.cpp in Sources */,
+				B439AC630C5B2FD00046EFC9 /* videl.cpp in Sources */,
+				B439AC640C5B2FD00046EFC9 /* yamaha.cpp in Sources */,
+				B439AC650C5B2FD00046EFC9 /* nf_base.cpp in Sources */,
+				B439AC660C5B2FD00046EFC9 /* nf_objs.cpp in Sources */,
+				B439AC670C5B2FD00046EFC9 /* xhdi.cpp in Sources */,
+				B439AC680C5B2FD00046EFC9 /* nfaudio.cpp in Sources */,
+				B439AC690C5B2FD00046EFC9 /* nfbootstrap.cpp in Sources */,
+				B439AC6A0C5B2FD00046EFC9 /* nfclipbrd.cpp in Sources */,
+				B439AC6B0C5B2FD00046EFC9 /* nf_basicset.cpp in Sources */,
+				B439AC6C0C5B2FD00046EFC9 /* debugprintf.cpp in Sources */,
+				B439AC6D0C5B2FD00046EFC9 /* nfvdi.cpp in Sources */,
+				B439AC6E0C5B2FD00046EFC9 /* nfvdi_soft.cpp in Sources */,
+				B439AC6F0C5B2FD00046EFC9 /* nfcdrom.cpp in Sources */,
+				B439AC700C5B2FD00046EFC9 /* hostfs.cpp in Sources */,
+				B439AC710C5B2FD00046EFC9 /* aranym_glue.cpp in Sources */,
+				B439AC720C5B2FD00046EFC9 /* memory.cpp in Sources */,
+				B439AC730C5B2FD00046EFC9 /* newcpu.cpp in Sources */,
+				B439AC740C5B2FD00046EFC9 /* readcpu.cpp in Sources */,
+				B439AC750C5B2FD00046EFC9 /* debug.cpp in Sources */,
+				B439AC760C5B2FD00046EFC9 /* dsp_cpu.cpp in Sources */,
+				B439AC770C5B2FD00046EFC9 /* sdlgui.cpp in Sources */,
+				B439AC780C5B2FD00046EFC9 /* dlgFileSelect.cpp in Sources */,
+				B439AC790C5B2FD00046EFC9 /* file.cpp in Sources */,
+				B439AC7A0C5B2FD00046EFC9 /* dlgMain.cpp in Sources */,
+				B439AC7B0C5B2FD00046EFC9 /* dlgDisk.cpp in Sources */,
+				B439AC7C0C5B2FD00046EFC9 /* dlgKeyboard.cpp in Sources */,
+				B439AC7D0C5B2FD00046EFC9 /* dlgHotkeys.cpp in Sources */,
+				B439AC7E0C5B2FD00046EFC9 /* dlgAlert.cpp in Sources */,
+				B439AC7F0C5B2FD00046EFC9 /* main_unix.cpp in Sources */,
+				B439AC800C5B2FD00046EFC9 /* midi_file.cpp in Sources */,
+				B439AC810C5B2FD00046EFC9 /* nfvdi_opengl.cpp in Sources */,
+				B439AC820C5B2FD00046EFC9 /* cpudefs.cpp in Sources */,
+				B439AC830C5B2FD00046EFC9 /* cpustbl.cpp in Sources */,
+				B439AC840C5B2FD00046EFC9 /* dyngl.c in Sources */,
+				B439AC850C5B2FD00046EFC9 /* cpummu.cpp in Sources */,
+				B439AC860C5B2FD00046EFC9 /* dlgOs.cpp in Sources */,
+				B439AC870C5B2FD00046EFC9 /* dlgVideo.cpp in Sources */,
+				B439AC880C5B2FD00046EFC9 /* sigsegv_darwin_x86.cpp in Sources */,
+				B439AC890C5B2FD00046EFC9 /* compstbl.cpp in Sources */,
+				B439AC8A0C5B2FD00046EFC9 /* cpustbl_nf.cpp in Sources */,
+				B439AC8B0C5B2FD00046EFC9 /* dlgNetwork.cpp in Sources */,
+				B439AC8C0C5B2FD00046EFC9 /* cpuemu_nf.cpp in Sources */,
+				B4A9E9C50C5B33AC00C156C3 /* ethernet_darwin.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1472,14 +1907,19 @@
 			target = 17BCD7880B20F64F00432CE1 /* MacAranym MMU */;
 			targetProxy = 17D10CA90C401D940083E7F2 /* PBXContainerItemProxy */;
 		};
+		B439ACAA0C5B33400046EFC9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT IEEE */;
+			targetProxy = B439ACA90C5B33400046EFC9 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1706B4FB0ABCB606006CB74B /* Release G5 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "$(inherited)";
-				CONFIGURE_OPTIONS = "$(inherited) --disable-fullmmu";
+				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --disable-fullmmu --enable-fpe=uae";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -1491,8 +1931,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH)";
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE DIRECT_ADDRESSING FPU_UAE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
-				CONFIGURE_OPTIONS = "--enable-opengl --enable-fpe=uae";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP";
+				CONFIGURE_OPTIONS = "--with-classicconfig";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "0.9.5 beta";
@@ -1517,15 +1957,15 @@
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/darwin $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 			};
 			name = "Release G5";
 		};
 		1706B5030ABCB72B006CB74B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "$(inherited)";
-				CONFIGURE_OPTIONS = "$(inherited) --disable-fullmmu";
+				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --disable-fullmmu --enable-fpe=uae";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -1540,8 +1980,8 @@
 					ppc,
 					i386,
 				);
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE DIRECT_ADDRESSING FPU_UAE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
-				CONFIGURE_OPTIONS = "--enable-opengl --enable-fpe=uae";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP";
+				CONFIGURE_OPTIONS = "--with-classicconfig";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "0.9.5 beta";
@@ -1564,7 +2004,7 @@
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/darwin $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Release;
 		};
@@ -1600,8 +2040,8 @@
 		17BCD7E60B20F64F00432CE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "$(inherited)";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-fullmmu --enable-lilo";
+				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fullmmu --enable-lilo --enable-fpe=uae";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -1613,8 +2053,8 @@
 		17BCD7E70B20F64F00432CE1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "$(inherited)";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-fullmmu --enable-lilo";
+				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fullmmu --enable-lilo --enable-fpe=uae";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -1626,8 +2066,8 @@
 		17BCD7E80B20F64F00432CE1 /* Release G5 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "$(inherited)";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-fullmmu --enable-lilo";
+				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fullmmu --enable-lilo --enable-fpe=uae";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -1639,8 +2079,8 @@
 		17E8B5B50ABC88C600BBFD59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "$(inherited)";
-				CONFIGURE_OPTIONS = "$(inherited) --disable-fullmmu";
+				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --disable-fullmmu --enable-fpe=uae";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -1651,8 +2091,8 @@
 		17E8B5B60ABC88C600BBFD59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE DIRECT_ADDRESSING FPU_UAE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
-				CONFIGURE_OPTIONS = "--enable-opengl --enable-fpe=uae";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP";
+				CONFIGURE_OPTIONS = "--with-classicconfig";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "0.9.5 beta";
@@ -1675,9 +2115,93 @@
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu  $(SOURCE_DIR)/gui-sdl";
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/darwin $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Debug;
+		};
+		B439AC980C5B2FD00046EFC9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\" FPU_IEEE NO_NESTED_SIGSEGV ENABLE_TUNTAP";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fpe=ieee --enable-jit-compiler";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					../,
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = "MacAranym JIT IEEE";
+			};
+			name = Debug;
+		};
+		B439AC990C5B2FD00046EFC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = i386;
+				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\" FPU_IEEE NO_NESTED_SIGSEGV ENABLE_TUNTAP";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fpe=ieee --enable-jit-compiler";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					../,
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = "MacAranym JIT IEEE";
+			};
+			name = Release;
+		};
+		B439AC9A0C5B2FD00046EFC9 /* Release G5 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\" FPU_IEEE NO_NESTED_SIGSEGV ENABLE_TUNTAP";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fpe=ieee --enable-jit-compiler";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
+				HEADER_SEARCH_PATHS = (
+					../,
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = Info.plist;
+				PRODUCT_NAME = "MacAranym JIT IEEE";
+			};
+			name = "Release G5";
+		};
+		B44BF5280C57F9230051D057 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "Build Release Package";
+			};
+			name = Debug;
+		};
+		B44BF5290C57F9230051D057 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = "Build Release Package";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		B44BF52A0C57F9230051D057 /* Release G5 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Build Release Package";
+			};
+			name = "Release G5";
 		};
 /* End XCBuildConfiguration section */
 
@@ -1698,6 +2222,26 @@
 				17BCD7E60B20F64F00432CE1 /* Debug */,
 				17BCD7E70B20F64F00432CE1 /* Release */,
 				17BCD7E80B20F64F00432CE1 /* Release G5 */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B439AC970C5B2FD00046EFC9 /* Build configuration list for PBXNativeTarget "MacAranym JIT IEEE" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B439AC980C5B2FD00046EFC9 /* Debug */,
+				B439AC990C5B2FD00046EFC9 /* Release */,
+				B439AC9A0C5B2FD00046EFC9 /* Release G5 */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B44BF5270C57F9230051D057 /* Build configuration list for PBXAggregateTarget "Packaging JIT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B44BF5280C57F9230051D057 /* Debug */,
+				B44BF5290C57F9230051D057 /* Release */,
+				B44BF52A0C57F9230051D057 /* Release G5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

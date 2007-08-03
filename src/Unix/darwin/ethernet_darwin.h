@@ -1,0 +1,33 @@
+/**
+ * Ethernet TUN/TAP driver
+ *
+ * Standa (c) 2004-2005
+ *
+ * GPL
+ */
+
+#ifndef _ETHERNET_DARWIN_H
+#define _ETHERNET_DARWIN_H
+
+#include "ethernet.h"
+
+class TunTapEthernetHandler : public ETHERNETDriver::Handler {
+	int fd;
+
+	// the /dev/net/tun driver (TAP)
+	int tapOpenOld(char *dev);
+	int tapOpen(char *dev);
+
+public:
+	TunTapEthernetHandler(int eth_idx) : Handler(eth_idx), fd(-1) {}
+
+	virtual bool open();
+	virtual bool close();
+	virtual int recv(uint8 *buf, int len);
+	virtual int send(const uint8 *buf, int len);
+};
+
+#define ETHERNET_HANDLER_CLASSNAME TunTapEthernetHandler
+
+#endif // _ETHERNET_DARWIN_H
+

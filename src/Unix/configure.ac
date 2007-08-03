@@ -93,6 +93,8 @@ AC_ARG_ENABLE(parport,         [  --enable-parport        enable Linux /dev/parp
 
 AC_ARG_WITH(fink,              [  --with-fink             Use Fink suite to build Aranym on MacOSX (default=no)], [WITH_FINK=$withval], [WITH_FINK=no])
 
+AC_ARG_WITH(classicconfig,     [  --with-classicconfig	  Use Classic config names on MacOSX (default=no)], [WITH_CLASSIC_CONFIG=$withval], [WITH_CLASSIC_CONFIG=no])
+
 dnl FPU emulation core.
 AC_ARG_ENABLE(fpe,
 [  --enable-fpe=FPE        specify which fpu emulator to use (default=auto)],
@@ -325,16 +327,25 @@ case "$target_os" in
 	AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
 	if test "x$WITH_FINK" = "xyes"; then
 		AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
-		EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp"
+		EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp darwin/ethernet_darwin.cpp"
 	else
 		AC_DEFINE([SWAP_CNTRL_AND_META_KEY], 1, [Swap the meaning of the Control and Meta (Apple) key])
 		AC_DEFINE([ARANYMHOME], "ARAnyM", [Default ARAnyM directory])
-		AC_DEFINE([ARANYMCONFIG], "org.aranym.config", [Default ARAnyM config file])
-		AC_DEFINE([ARANYMNVRAM], "org.aranym.nvram", [Default ARAnyM NVRAM file])
-		AC_DEFINE([ARANYMKEYMAP], "org.aranym.keymap", [Default ARAnyM keymap])
-
+		
+		if test "x$WITH_CLASSIC_CONFIG" = "xyes"; then
+			echo "Using classic config"
+			AC_DEFINE([ARANYMCONFIG], "config", [Default ARAnyM config file])
+			AC_DEFINE([ARANYMNVRAM], "nvram", [Default ARAnyM NVRAM file])
+			AC_DEFINE([ARANYMKEYMAP], "keymap", [Default ARAnyM keymap])
+		else	
+			echo "Using preference files"
+			AC_DEFINE([ARANYMCONFIG], "org.aranym.config", [Default ARAnyM config file])
+			AC_DEFINE([ARANYMNVRAM], "org.aranym.nvram", [Default ARAnyM NVRAM file])
+			AC_DEFINE([ARANYMKEYMAP], "org.aranym.keymap", [Default ARAnyM keymap])
+		fi
+		
 		dnl EXTRASYSSRCS="MacOSX/parameters_MacOSX.m host_filesys_unix.cpp MacOSX/SDLMain.M"
-		EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLMain.M"
+		EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLMain.M darwin/ethernet_darwin.cpp"
 
 		BUNDLE_FRAMEWORKS=   dnl Empty list of frameworks to bundle
 		dnl LDFLAGS="$LDFLAGS -FMacOSX" dnl Look for frameworks in MacOSX subdirectory
@@ -373,32 +384,36 @@ AC_CACHE_CHECK([for __wchar_t],
 ])
 AC_TRANSLATE_DEFINE(HAVE_WCHAR_T, "$ac_cv_wchar_t", [Define if wchar_t is present])
 
-dnl Check that the host supports TUN/TAP devices
-AC_CACHE_CHECK([whether TUN/TAP is supported],
-  ac_cv_tun_tap_support, [
-  AC_TRY_COMPILE([
-    #if defined(HAVE_LINUX_IF_H) && defined(HAVE_LINUX_IF_TUN_H)
-    #ifdef HAVE_SYS_SOCKET_H
-    #include <sys/socket.h>
-    #endif
-    #include <linux/if.h>
-    #include <linux/if_tun.h>
-    #endif
-    #if defined(HAVE_NET_IF_H) && defined(HAVE_NET_IF_TUN_H)
-    #include <net/if.h>
-    #include <net/if_tun.h>
-    #endif
-  ], [
-    struct ifreq ifr;
-    memset(&ifr, 0, sizeof(ifr));
-    ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
-  ],
-  ac_cv_tun_tap_support=yes, ac_cv_tun_tap_support=no
-  )
-])
+if [[ "x$OS_TYPE" = "xdarwin" ]]; then
+	ac_cv_tun_tap_support=yes
+else
+  dnl Check that the host supports TUN/TAP devices
+  AC_CACHE_CHECK([whether TUN/TAP is supported],
+    ac_cv_tun_tap_support, [
+    AC_TRY_COMPILE([
+      #if defined(HAVE_LINUX_IF_H) && defined(HAVE_LINUX_IF_TUN_H)
+      #ifdef HAVE_SYS_SOCKET_H
+      #include <sys/socket.h>
+      #endif
+      #include <linux/if.h>
+      #include <linux/if_tun.h>
+      #endif
+      #if defined(HAVE_NET_IF_H) && defined(HAVE_NET_IF_TUN_H)
+      #include <net/if.h>
+      #include <net/if_tun.h>
+      #endif
+    ], [
+      struct ifreq ifr;
+      memset(&ifr, 0, sizeof(ifr));
+      ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
+    ],
+    ac_cv_tun_tap_support=yes, ac_cv_tun_tap_support=no
+    )
+  ])
+fi
 AC_TRANSLATE_DEFINE(ENABLE_TUNTAP, "$ac_cv_tun_tap_support",
   [Define if your system supports TUN/TAP devices.])
-
+  
 dnl Various checks if the system supports vm_allocate() and the like functions.
 have_mach_vm=no
 if [[ "x$ac_cv_func_vm_allocate" = "xyes" -a "x$ac_cv_func_vm_deallocate" = "xyes" -a \
@@ -953,7 +968,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       ;;
     darwin*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
-        SYSSRCS="$SYSSRCS xbsd/sigsegv_xbsd.cpp"
+        SYSSRCS="$SYSSRCS darwin/sigsegv_darwin_x86.cpp"
       else
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       fi

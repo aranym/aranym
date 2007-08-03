@@ -42,7 +42,11 @@
 #ifdef OS_cygwin
 #include "cygwin/ethernet_cygwin.h"
 #else
-#include "linux/ethernet_linux.h"
+#  ifdef OS_darwin
+#  include "../Unix/darwin/ethernet_darwin.h"
+#  else
+#  include "linux/ethernet_linux.h"
+#  endif
 #endif
 
 
@@ -239,7 +243,7 @@ void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 		panicbug("Ethernet: handler for %d not found", ethX);
 		return;
 	}
-	D(bug("Ethernet: ReadPacket dest %08lx, len %lx", buffer, len));
+	D(bug("Ethernet: ReadPacket dest %08lx, len %lx", buffer, len))
 	Host2Atari_memcpy(buffer, handler->packet, MIN(len, MAX_PACKET_SIZE));
 	if (len > MAX_PACKET_SIZE) {
 		panicbug("ETHERNETDriver::readPacket() - length %d > %d", len, MAX_PACKET_SIZE);

@@ -30,6 +30,9 @@
 #include "memory.h"
 #include "newcpu.h"
 #include "debug.h"
+#ifdef USE_JIT
+# include "compiler/compemu.h"
+#endif
 
 #define DBG_MMU_VERBOSE	1
 #define DBG_MMU_SANITY	1
