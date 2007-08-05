@@ -385,7 +385,11 @@ AC_CACHE_CHECK([for __wchar_t],
 AC_TRANSLATE_DEFINE(HAVE_WCHAR_T, "$ac_cv_wchar_t", [Define if wchar_t is present])
 
 if [[ "x$OS_TYPE" = "xdarwin" ]]; then
+  if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
 	ac_cv_tun_tap_support=yes
+  else
+	ac_cv_tun_tap_support=no
+  fi
 else
   dnl Check that the host supports TUN/TAP devices
   AC_CACHE_CHECK([whether TUN/TAP is supported],
@@ -967,10 +971,11 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       fi
       ;;
     darwin*)
-      if [[ "x$HAVE_I386" = "xyes" ]]; then
-        SYSSRCS="$SYSSRCS darwin/sigsegv_darwin_x86.cpp"
-      else
+      if [[ "x$CPU_TYPE" = "powerpc" ]]; then
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
+      else
+        SYSSRCS="$SYSSRCS darwin/sigsegv_darwin_x86.cpp"
+        AC_DEFINE(NO_NESTED_SIGSEGV, 1 , [Define if OS needs to cleanly exit sigsegv handler])
       fi
       ;;
     netbsd*)

@@ -18,22 +18,9 @@
 			dependencies = (
 				17D10CA80C401D940083E7F2 /* PBXTargetDependency */,
 				17D10CAA0C401D940083E7F2 /* PBXTargetDependency */,
+				B41F6DA50C646E0E00868C14 /* PBXTargetDependency */,
 			);
 			name = Packaging;
-			productName = "Build Release Package";
-		};
-		B44BF5160C57F9230051D057 /* Packaging JIT */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = B44BF5270C57F9230051D057 /* Build configuration list for PBXAggregateTarget "Packaging JIT" */;
-			buildPhases = (
-				B44BF51B0C57F9230051D057 /* CopyFiles */,
-				B4E213D00C5BA78300138A7F /* CopyFiles */,
-				B44BF5260C57F9230051D057 /* ShellScript */,
-			);
-			dependencies = (
-				B439ACAA0C5B33400046EFC9 /* PBXTargetDependency */,
-			);
-			name = "Packaging JIT";
 			productName = "Build Release Package";
 		};
 /* End PBXAggregateTarget section */
@@ -229,6 +216,7 @@
 		17CDFE630B2196D8001BABB0 /* fpu_uae.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DD00A652B51009733EB /* fpu_uae.cpp */; };
 		17D5D2590AC70DBD003D0FE9 /* midi_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17D5D2580AC70DBD003D0FE9 /* midi_file.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		B41F6DAA0C646F0E00868C14 /* MacAranym JIT IEEE.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */; };
 		B439AC340C5B2FD00046EFC9 /* cpuemu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AAE3630A666BC100301447 /* cpuemu.cpp */; };
 		B439AC350C5B2FD00046EFC9 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 17798E460A652B51009733EB /* SDLMain.m */; };
 		B439AC360C5B2FD00046EFC9 /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
@@ -327,17 +315,6 @@
 		B439AC960C5B2FD00046EFC9 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DCE0A652B51009733EB /* fpu_ieee.cpp */; };
 		B43DC1970C635DFA0014243B /* compemu_fpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DBD0A652B51009733EB /* compemu_fpp.cpp */; };
-		B44BF51C0C57F9230051D057 /* AUTHORS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B00B21004100432CE1 /* AUTHORS */; };
-		B44BF51D0C57F9230051D057 /* BUGS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B10B21004100432CE1 /* BUGS */; };
-		B44BF51E0C57F9230051D057 /* ChangeLog in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B20B21004100432CE1 /* ChangeLog */; };
-		B44BF51F0C57F9230051D057 /* COPYING in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B30B21004100432CE1 /* COPYING */; };
-		B44BF5200C57F9230051D057 /* FAQ in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B40B21004100432CE1 /* FAQ */; };
-		B44BF5210C57F9230051D057 /* NEWS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B50B21004100432CE1 /* NEWS */; };
-		B44BF5220C57F9230051D057 /* README in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B60B21004100432CE1 /* README */; };
-		B44BF5230C57F9230051D057 /* TODO in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B70B21004100432CE1 /* TODO */; };
-		B44BF5240C57F9230051D057 /* config in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8C80B21010C00432CE1 /* config */; };
-		B44BF5250C57F9230051D057 /* README.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17398E110B21048100A9B4DB /* README.rtf */; };
-		B4772A340C63C7A90064DEA2 /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
 		B49164700C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
 		B49164710C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
 		B4A9E9C50C5B33AC00C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
@@ -348,7 +325,6 @@
 		B4A9EC090C5B3C3900C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
 		B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */; };
 		B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D1107320486CEB800E47090 /* MacAranym.app */; };
-		B4E213D20C5BA7A400138A7F /* MacAranym JIT IEEE.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -366,7 +342,7 @@
 			remoteGlobalIDString = 17BCD7880B20F64F00432CE1;
 			remoteInfo = "MacAranym MMU";
 		};
-		B439ACA90C5B33400046EFC9 /* PBXContainerItemProxy */ = {
+		B41F6DA40C646E0E00868C14 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
@@ -428,43 +404,15 @@
 			name = "Copy Frameworks into .app bundle";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B44BF51B0C57F9230051D057 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "aranym-xxx-jit-macosx/DOC";
-			dstSubfolderSpec = 16;
-			files = (
-				B44BF51C0C57F9230051D057 /* AUTHORS in CopyFiles */,
-				B44BF51D0C57F9230051D057 /* BUGS in CopyFiles */,
-				B44BF51E0C57F9230051D057 /* ChangeLog in CopyFiles */,
-				B44BF51F0C57F9230051D057 /* COPYING in CopyFiles */,
-				B44BF5200C57F9230051D057 /* FAQ in CopyFiles */,
-				B44BF5210C57F9230051D057 /* NEWS in CopyFiles */,
-				B44BF5220C57F9230051D057 /* README in CopyFiles */,
-				B44BF5230C57F9230051D057 /* TODO in CopyFiles */,
-				B44BF5240C57F9230051D057 /* config in CopyFiles */,
-				B44BF5250C57F9230051D057 /* README.rtf in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B4E213CC0C5BA71A00138A7F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "aranym-xxx-macosx";
 			dstSubfolderSpec = 16;
 			files = (
+				B41F6DAA0C646F0E00868C14 /* MacAranym JIT IEEE.app in CopyFiles */,
 				B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */,
 				B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B4E213D00C5BA78300138A7F /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "aranym-xxx-jit-macosx";
-			dstSubfolderSpec = 7;
-			files = (
-				B4E213D20C5BA7A400138A7F /* MacAranym JIT IEEE.app in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -753,6 +701,7 @@
 		17798E8B0A652B52009733EB /* videl.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = videl.cpp; path = ../../videl.cpp; sourceTree = SOURCE_ROOT; };
 		17798E8C0A652B52009733EB /* yamaha.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = yamaha.cpp; path = ../../yamaha.cpp; sourceTree = SOURCE_ROOT; };
 		177990510A6538B5009733EB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		17A2B1960C66113000180C55 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.make; name = Makefile; path = darwin/Makefile; sourceTree = "<group>"; };
 		17AAB1190B206BF20016FB8D /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		17AAE3620A666BC100301447 /* cpudefs.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = cpudefs.cpp; path = build/MacAranym.build/cpudefs.cpp; sourceTree = "<group>"; };
 		17AAE3630A666BC100301447 /* cpuemu.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu.cpp; path = build/MacAranym.build/cpuemu.cpp; sourceTree = "<group>"; };
@@ -1339,6 +1288,7 @@
 		B41C696D0C536D910013E498 /* darwin */ = {
 			isa = PBXGroup;
 			children = (
+				17A2B1960C66113000180C55 /* Makefile */,
 				B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */,
 				B4A9E9C20C5B33AC00C156C3 /* ethernet_darwin.h */,
 				B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */,
@@ -1424,9 +1374,8 @@
 			targets = (
 				8D1107260486CEB800E47090 /* MacAranym */,
 				17BCD7880B20F64F00432CE1 /* MacAranym MMU */,
-				17AAB2A90B20A8150016FB8D /* Packaging */,
 				B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT IEEE */,
-				B44BF5160C57F9230051D057 /* Packaging JIT */,
+				17AAB2A90B20A8150016FB8D /* Packaging */,
 			);
 		};
 /* End PBXProject section */
@@ -1589,20 +1538,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "########################## BUILD CPU EMULATION CORE ##########################\nmkdir -p \"$DERIVED_FILES_DIR\" && cd \"$DERIVED_FILES_DIR\" || exit 1\nTRANSFERRED=`rsync -pogt --stats cpudefs.cpp cpuemu*.cpp cputbl.h cpustbl*.cpp compemu.cpp compstbl.cpp comptbl.h Makefile config*.h \"$PROJECT_TEMP_DIR\" \\\n\t\t\t\t2>/dev/null | grep \"transferred:\"| awk '{print $5}'`\nRET=$?\necho \"$TRANSFERRED files transferred. (Return code $RET)\"\nif [ \"$RET\" -eq 0 -a \"$TRANSFERRED\" -eq 0 ]; then\n\texit 0\nfi\n\necho ; echo \"Building CPU definition...\"\n\ncd \"$TEMP_FILES_DIR\" \necho \"Compile build68k\"\ngcc -o build68k \"$SOURCE_DIR/uae_cpu/build68k.c\" && \\\n\t(./build68k < \"$SOURCE_DIR/uae_cpu/table68k\" > \"$DERIVED_FILES_DIR/cpudefs.cpp\") || exit 1\n\necho \"Compile & Execute gencomp\"\ng++ -DCPU_i386 -DUSE_JIT=1 -DFULLMMU -DUSE_JIT_FPU=1 \"-I$DERIVED_FILES_DIR\" \"-I$SOURCE_DIR/Unix\" \"-I$SOURCE_DIR/uae_cpu\" -o gencomp \\\n\t\t\"$SOURCE_DIR/uae_cpu/compiler/gencomp.c\" \"$SOURCE_DIR/uae_cpu/readcpu.cpp\" \"$DERIVED_FILES_DIR/cpudefs.cpp\" && \\\n\t\t./gencomp || exit 1\nmv compemu.cpp compstbl.cpp comptbl.h \"$DERIVED_FILES_DIR\" || exit 1\n\necho \"Loop through Architectures\"\nfor CURRENT_ARCH in $ARCHS ; do\n\techo ; echo \"Building CPU emulation core... $CURRENT_ARCH\"\n\tg++ -DUSE_JIT=1 -DUSE_JIT_FPU=1 `echo \"-DCPU_$CURRENT_ARCH\" | sed s/ppc/powerpc/` \"-I$DERIVED_FILES_DIR\" \"-I$SOURCE_DIR/Unix\" \"-I$SOURCE_DIR/uae_cpu\" -o gencpu \\\n\t\t\"$SOURCE_DIR/uae_cpu/gencpu.c\" \"$SOURCE_DIR/uae_cpu/readcpu.cpp\" \"$DERIVED_FILES_DIR/cpudefs.cpp\" && \\\n\t\t./gencpu || exit 1\n\tmv cpuemu.cpp \"$DERIVED_FILES_DIR/cpuemu_$CURRENT_ARCH.cpp\"\ndone\nmv cpustbl.cpp cputbl.h \"$DERIVED_FILES_DIR\" || exit 1\n\necho \"Building $DERIVED_FILES_DIR/cpuemu.cpp\"\ncat << EOF > \"$DERIVED_FILES_DIR/cpuemu.cpp\"\n#ifdef CPU_i386\n#include \"cpuemu_i386.cpp\"\n#endif\n#ifdef CPU_powerpc\n#include \"cpuemu_ppc.cpp\"\n#endif\nEOF\n\necho \"Building $DERIVED_FILES_DIR/cpustbl_nf.cpp\"\ncat << EOF > \"$DERIVED_FILES_DIR/cpustbl_nf.cpp\"\n\t#define NOFLAGS\n\t#include \"cpustbl.cpp\"\nEOF\n\necho \"Building $DERIVED_FILES_DIR/cpuemu_nf.cpp\"\ncat << EOF > \"$DERIVED_FILES_DIR/cpuemu_nf.cpp\"\n\t#define NOFLAGS\n\t#include \"cpuemu.cpp\"\nEOF\n\ncd \"$DERIVED_FILES_DIR\"\nmkdir -p \"$PROJECT_TEMP_DIR\"\nrsync -pogt cpudefs.cpp cpuemu*.cpp cputbl.h cpustbl*.cpp compemu.cpp compstbl.cpp comptbl.h Makefile config*.h \"$PROJECT_TEMP_DIR\"\n";
-		};
-		B44BF5260C57F9230051D057 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-				"$(TARGET_BUILD_DIR)/aranym-*-macosx.dmg",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd \"$TARGET_BUILD_DIR/aranym-xxx-jit-macosx/DOC\"\necho \"Processing text files...\"\nDATE=`date '+%Y\\/%m\\/%d'`\nmv COPYING ..\ncat README.rtf \\\n\t| sed \"s/(\\*VERSION\\*)/$CURRENT_PROJECT_VERSION/g\" \\\n\t| sed \"s/(\\*DATE\\*)/$DATE/g\" \\\n\t> ../README.rtf\nrm README.rtf\n\ncd \"$TARGET_BUILD_DIR/aranym-xxx-jit-macosx\"\nVERSION=`echo \"-$CURRENT_PROJECT_VERSION\" | sed 's/ //g;s/-//g'`\nDMGNAME=$TARGET_BUILD_DIR/aranym-$VERSION-jitx86-macosx.dmg\necho \"Building disk image $DMGNAME...\"\nhdiutil create $DMGNAME -ov -volname \"MacAranym $CURRENT_PROJECT_VERSION\" -srcfolder . -format UDZO\nexit $?";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1798,7 +1733,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4A9EBEE0C5B374A00C156C3 /* ethernet.cpp in Sources */,
-				B4772A340C63C7A90064DEA2 /* nfjpeg.cpp in Sources */,
 				B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */,
 				B439AC340C5B2FD00046EFC9 /* cpuemu.cpp in Sources */,
 				B439AC350C5B2FD00046EFC9 /* SDLMain.m in Sources */,
@@ -1907,10 +1841,10 @@
 			target = 17BCD7880B20F64F00432CE1 /* MacAranym MMU */;
 			targetProxy = 17D10CA90C401D940083E7F2 /* PBXContainerItemProxy */;
 		};
-		B439ACAA0C5B33400046EFC9 /* PBXTargetDependency */ = {
+		B41F6DA50C646E0E00868C14 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT IEEE */;
-			targetProxy = B439ACA90C5B33400046EFC9 /* PBXContainerItemProxy */;
+			targetProxy = B41F6DA40C646E0E00868C14 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1919,7 +1853,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --disable-fullmmu --enable-fpe=uae";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -1931,8 +1865,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH)";
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP";
-				CONFIGURE_OPTIONS = "--with-classicconfig";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-opengl --enable-ethernet=no";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "0.9.5 beta";
@@ -1957,7 +1891,7 @@
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/darwin $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
+				USER_HEADER_SEARCH_PATHS = "$(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 			};
 			name = "Release G5";
 		};
@@ -1965,7 +1899,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --disable-fullmmu --enable-fpe=uae";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -1980,8 +1914,8 @@
 					ppc,
 					i386,
 				);
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP";
-				CONFIGURE_OPTIONS = "--with-classicconfig";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-opengl --enable-ethernet=no";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "0.9.5 beta";
@@ -2004,7 +1938,7 @@
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/darwin $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
+				USER_HEADER_SEARCH_PATHS = "$(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Release;
 		};
@@ -2041,7 +1975,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fullmmu --enable-lilo --enable-fpe=uae";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -2054,7 +1988,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fullmmu --enable-lilo --enable-fpe=uae";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -2067,7 +2001,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fullmmu --enable-lilo --enable-fpe=uae";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -2080,7 +2014,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --disable-fullmmu --enable-fpe=uae";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = Info.plist;
@@ -2091,8 +2025,8 @@
 		17E8B5B60ABC88C600BBFD59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP";
-				CONFIGURE_OPTIONS = "--with-classicconfig";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-opengl --enable-ethernet=no";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "0.9.5 beta";
@@ -2115,16 +2049,20 @@
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.3.9.sdk;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_TEMP_DIR) $(SOURCE_DIR)/darwin $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
+				USER_HEADER_SEARCH_PATHS = "$(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Debug;
 		};
 		B439AC980C5B2FD00046EFC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\" FPU_IEEE NO_NESTED_SIGSEGV ENABLE_TUNTAP";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fpe=ieee --enable-jit-compiler";
+				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\"  FPU_IEEE NO_NESTED_SIGSEGV";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=ieee --enable-jit-compiler";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -2134,6 +2072,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = "MacAranym JIT IEEE";
+				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 			};
 			name = Debug;
 		};
@@ -2141,9 +2080,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = i386;
-				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\" FPU_IEEE NO_NESTED_SIGSEGV ENABLE_TUNTAP";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fpe=ieee --enable-jit-compiler";
+				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\"  FPU_IEEE NO_NESTED_SIGSEGV";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=ieee --enable-jit-compiler";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
@@ -2154,15 +2097,20 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = "MacAranym JIT IEEE";
+				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 			};
 			name = Release;
 		};
 		B439AC9A0C5B2FD00046EFC9 /* Release G5 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\" FPU_IEEE NO_NESTED_SIGSEGV ENABLE_TUNTAP";
-				CONFIGURE_OPTIONS = "$(inherited) --enable-opengl --enable-fpe=ieee --enable-jit-compiler";
+				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\"  FPU_IEEE NO_NESTED_SIGSEGV";
+				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=ieee --enable-jit-compiler";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				HEADER_SEARCH_PATHS = (
@@ -2171,35 +2119,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				PRODUCT_NAME = "MacAranym JIT IEEE";
-			};
-			name = "Release G5";
-		};
-		B44BF5280C57F9230051D057 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = "Build Release Package";
-			};
-			name = Debug;
-		};
-		B44BF5290C57F9230051D057 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				PRODUCT_NAME = "Build Release Package";
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
-		B44BF52A0C57F9230051D057 /* Release G5 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "Build Release Package";
+				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 			};
 			name = "Release G5";
 		};
@@ -2232,16 +2152,6 @@
 				B439AC980C5B2FD00046EFC9 /* Debug */,
 				B439AC990C5B2FD00046EFC9 /* Release */,
 				B439AC9A0C5B2FD00046EFC9 /* Release G5 */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B44BF5270C57F9230051D057 /* Build configuration list for PBXAggregateTarget "Packaging JIT" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B44BF5280C57F9230051D057 /* Debug */,
-				B44BF5290C57F9230051D057 /* Release */,
-				B44BF52A0C57F9230051D057 /* Release G5 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

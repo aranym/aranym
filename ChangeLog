@@ -1,7 +1,13 @@
-2007/08/03
+2007/08/04 Jens
+- configure.ac: Use TARGET_CPU to determine for darwin, if JIT is
+  supported. Set NO_NESTED_SIGSEGV for Makefile build
+- /MacAranym.xcodeproj/project.pbxproj: JIT part of standard packaging,
+  ethernet disabled by default, since it is out of experimental.
+- darwin/Makefile: ethernet default =no (see above)
+
+2007/08/03 Jens
 - /MacAranym.xcodeproj/project.pbxproj Fixed compiler options; Added
   SDL-Image framework, MMU support
-
 
 2007/07/28 - Jens
 - ethernet_darwin.cpp/h: added ethernet support to darwin directory
