@@ -1,27 +1,39 @@
-2007/08/04 Jens
+2007/08/06 - Petr
+- gui-sdl/dlgDisk.cpp: pre-select inserted/created disk
+
+
+2007/08/04 - Jens
 - configure.ac: Use TARGET_CPU to determine for darwin, if JIT is
   supported. Set NO_NESTED_SIGSEGV for Makefile build
+
 - /MacAranym.xcodeproj/project.pbxproj: JIT part of standard packaging,
   ethernet disabled by default, since it is out of experimental.
+
 - darwin/Makefile: ethernet default =no (see above)
 
-2007/08/03 Jens
+2007/08/03 - Jens
 - /MacAranym.xcodeproj/project.pbxproj Fixed compiler options; Added
   SDL-Image framework, MMU support
 
 2007/07/28 - Jens
 - ethernet_darwin.cpp/h: added ethernet support to darwin directory
+
 - configure.ac: Assume ethernet=yes if OS is darwin
+
 - ethernet.cpp: Added include to ethernet_darwin.h
+
 
 2007/07/26 - Jens
 - darwin/sigsegv_darwin_x86.cpp: First running version of MacAranym with JIT
+
 - configure.ac: added parameter --with-classicconfig for classic configuration
   files and pointed to sigsegv_darwin_x86.cpp for JIT version.
+
 - src/Unix/MacOSX/MacAranym.xcodeproj/project.pbxproj: added new target
   MacAranym JIT and modified the other targets to keep their local
   parameter inside itself. Also a packaging JIT target is introduced with
   is a simple clone of the normal packaging target.
+
   
 2007/07/23 - Philipp
 - Fixed Mac OS X framework lookup in acinclude.m4.
