@@ -397,6 +397,7 @@ void Dialog_DiscDlg(void)
 					strcpy(gui_options.atadevice[0][0].path, tmpname);
 					File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
 					UpdateDiskParameters(0, true);
+					setSelected(IDE0_PRESENT, true);
 				}
 				else {
 					ide0_path[0] = 0;
@@ -412,6 +413,7 @@ void Dialog_DiscDlg(void)
 					strcpy(gui_options.atadevice[0][1].path, tmpname);
 					File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
 					UpdateDiskParameters(1, true);
+					setSelected(IDE1_PRESENT, true);
 				}
 				else {
 					ide1_path[0] = 0;
@@ -423,6 +425,7 @@ void Dialog_DiscDlg(void)
 			if (create_disk_image(0)) {
 				File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path,
 								discdlg[IDE0_PATH].w);
+				setSelected(IDE0_PRESENT, true);
 			}
 			else {
 				ide0_path[0] = 0;
@@ -433,6 +436,7 @@ void Dialog_DiscDlg(void)
 			if (create_disk_image(1)) {
 				File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path,
 								discdlg[IDE1_PATH].w);
+				setSelected(IDE1_PRESENT, true);
 			}
 			else {
 				ide1_path[0] = 0;
