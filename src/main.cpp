@@ -42,7 +42,9 @@
 #include "parameters.h"
 #include "host.h"			// for the HostScreen
 #include "parameters.h"
-#include "version.h"		// for heartBeat
+#ifdef HEARTBEAT
+#  include "version.h"		// for heartBeat
+#endif
 #include "natfeat/nf_objs.h"
 #include "bootos_tos.h"
 #include "bootos_emutos.h"
@@ -149,6 +151,7 @@ void ClearInterruptFlag(uint32 flag)
 	}
 }
 
+#ifdef HEARTBEAT
 /*
  * called in VBL
  * indicates that the ARAnyM is alive and kicking
@@ -178,11 +181,15 @@ void heartBeat()
 		SDL_WM_SetCaption(buf, NULL);
 	}
 }
+#endif
 
 /* VBL is fixed at 50 Hz in ARAnyM */
 void do_vbl_irq()
 {
+#ifdef HEARTBEAT
 	heartBeat();
+#endif
+
 	TriggerVBL();		// generate VBL
 
 	// Thread safety patch
