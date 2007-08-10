@@ -48,6 +48,11 @@
 # include <SDL_syswm.h>
 #endif
 
+#ifdef SDL_GUI
+#include "sdlgui.h"
+extern char *displayKeysym(SDL_keysym keysym, char *buffer);
+#endif
+
 #define RGB_BLACK     0x00000000
 #define RGB_BLUE      0x000000ff
 #define RGB_GREEN     0x00ff0000
@@ -566,7 +571,15 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		surf = mainSurface;
 	}
 
-	SDL_WM_SetCaption(VERSION_STRING, "ARAnyM");
+	char buf[sizeof(VERSION_STRING)+128];
+#ifdef SDL_GUI
+	char key[80];
+	displayKeysym(bx_options.hotkeys.setup, key);
+	snprintf(buf, sizeof(buf), "%s (press %s key for SETUP)", VERSION_STRING, key);
+#else
+	snprintf(buf, sizeof(buf), "%s", VERSION_STRING);
+#endif /* SDL_GUI */
+	SDL_WM_SetCaption(buf, "ARAnyM");
 
 	// update the surface's palette
 	updatePalette( 256 );
