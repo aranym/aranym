@@ -91,9 +91,11 @@ void InputInit()
 	// warp mouse to center of Atari 320x200 screen and grab it
 	if (! bx_options.video.fullscreen)
 		SDL_WarpMouse(320/2, 200/2);
-	grabMouse(true);
-	// hide mouse unconditionally
-	hideMouse(true);
+	if (bx_options.startup.grabMouseAllowed) {
+		grabMouse(true);
+		// hide mouse unconditionally
+		hideMouse(true);
+	}
 	// capslockState (yes, 'false' is correct)
 	capslockState = false;
 }
@@ -114,7 +116,7 @@ void InputExit()
 bool grabMouse(bool grab)
 {
 	int current = SDL_WM_GrabInput(SDL_GRAB_QUERY);
-	if (bx_options.startup.grabMouseAllowed && grab && current != SDL_GRAB_ON) {
+	if (grab && current != SDL_GRAB_ON) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 		grabbedMouse = true;
 		hideMouse(true);
