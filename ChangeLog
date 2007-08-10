@@ -6,7 +6,11 @@
 - parameters.cpp: JIT is now preset to Yes so it's enabled by default (unless
   disabled by the [JIT] section of your ARAnyM config file).
 
-- main.cpp: disabled the heart-beat I invented long time ago
+- main.cpp: disabled the heart-beat I invented long time ago - it's visually
+  annoying and distracting.
+
+- input.cpp: with "-N" (=don't grab mouse+kbd at startup) allow later
+  keyboard+mouse capture by clicking on the ARAnyM window.
 
 
 2007/08/06 - Petr

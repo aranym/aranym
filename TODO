@@ -11,7 +11,6 @@ Fix bugs:
   Solution: come up with URL like paths: "file://path?parameter=value"
   where parameter is e.g. CaseSensitivity.
   Thanks to file:// scheme this should even be backward compatible.
-- when mouse grab on startup is off grabbing mouse no longer possible
 - improve the whole mouse grab/ungrab - auto grab could grab mouse
   automagically when it enters aranym window only if the window is on top
 - correct postal address of GPL
