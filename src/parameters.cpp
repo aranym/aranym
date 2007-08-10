@@ -339,7 +339,7 @@ struct Config_Tag jit_conf[]={
 
 void preset_jit()
 {
-	bx_options.jit.jit = false;
+	bx_options.jit.jit = true;
 	bx_options.jit.jitfpu = true;
 	bx_options.jit.jitcachesize = 8192;
 	bx_options.jit.jitlazyflush = 1;
