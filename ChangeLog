@@ -1,3 +1,14 @@
+2007/08/10 - Petr
+- gui-sdl/dlgHotkeys.cpp: documented one hidden feature - if you need to set
+  just a shifter hotkey (like Right Control for releasing the mouse+keyboard)
+  then press and hold the Right Control and press the [Enter] key.
+
+- parameters.cpp: JIT is now preset to Yes so it's enabled by default (unless
+  disabled by the [JIT] section of your ARAnyM config file).
+
+- main.cpp: disabled the heart-beat I invented long time ago
+
+
 2007/08/06 - Petr
 - gui-sdl/dlgDisk.cpp: pre-select inserted/created disk
 
@@ -11,15 +22,15 @@
 
 - darwin/Makefile: ethernet default =no (see above)
 
+
 2007/08/03 - Jens
 - /MacAranym.xcodeproj/project.pbxproj Fixed compiler options; Added
   SDL-Image framework, MMU support
 
+
 2007/07/28 - Jens
 - ethernet_darwin.cpp/h: added ethernet support to darwin directory
-
 - configure.ac: Assume ethernet=yes if OS is darwin
-
 - ethernet.cpp: Added include to ethernet_darwin.h
 
 

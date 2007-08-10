@@ -2,10 +2,7 @@ Things to do (written by Joy, volunteers ask in the mailing list)
 -----------------------------------------------------------------
 
 Fix bugs:
-- enhance HELP of [HOTKEYS] about the special Enter key
 - change default Ungrab combination to Right Control
-- change default JIT settings to Yes
-- change the heartbeat /|\ in the window title 
 - "-d" cmdline option doesn't work (doesn't win over config file settings)
 - [PARTITION] settings into SETUP GUI ASAP
 - [HOSTFS] settings into SETUP GUI ASAP
