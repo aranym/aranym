@@ -89,14 +89,16 @@ static const char *HELP_TEXT = "Define hotkeys for certain functions:\n"
 "\n"
 "Setup .... you are using it right now\n"
 "Quit ..... quits ARAnyM\n"
-"Reboot ... like the reset button\n"
-"Ungrab ... free mouse and kbd\n"
+"Reboot ... restarts virtual machine\n"
+"Ungrab ... release mouse and keyboard\n"
 "Debug .... internal debugger\n"
-"Screenshot screen image to file\n"
-"Fullscreen from/to window mode\n"
+"Screenshot save screen image to file\n"
+"Fullscreen switch from/to window mode\n"
 "\n"
 "LS = Left Shift, LC = Left Ctrl,\n"
-"RA = Right Alt, RM = Right Meta.";
+"RA = Right Alt, RM = Right Meta.\n"
+"\n"
+"Shifter + [Enter] key => Shifter only";
 
 static SGOBJ presskeydlg[] =
 {
