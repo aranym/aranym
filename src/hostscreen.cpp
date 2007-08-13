@@ -70,6 +70,13 @@ extern char *displayKeysym(SDL_keysym keysym, char *buffer);
 #define RGB_LTYELLOW  0xaaaa0000
 #define RGB_WHITE     0xffff00ff
 
+#ifdef ENABLE_VBL_UPDATES
+#define MAXIMUM_UPDATE_CACHE 1000
+	static SDL_Rect updateRects[MAXIMUM_UPDATE_CACHE];
+	static int sdl_rectcount = 0;
+	static SDL_mutex  *updateLock;
+#endif
+
 static const unsigned long default_palette[] = {
     RGB_WHITE, RGB_RED, RGB_GREEN, RGB_YELLOW,
     RGB_BLUE, RGB_MAGENTA, RGB_CYAN, RGB_LTGRAY,
@@ -91,6 +98,9 @@ HostScreen::HostScreen(void)
 	snapCounter = 0;
 
 	screenLock = SDL_CreateMutex();
+#ifdef ENABLE_VBL_UPDATES
+	updateLock = SDL_CreateMutex();
+#endif
 
 	backgroundSurf = NULL;
 	GUIopened = false;
@@ -112,6 +122,9 @@ HostScreen::HostScreen(void)
 
 HostScreen::~HostScreen(void) {
 	SDL_DestroyMutex(screenLock);
+#ifdef ENABLE_VBL_UPDATES
+	SDL_DestroyMutex(updateLock);
+#endif
 
 	if (backgroundSurf) {
 		SDL_FreeSurface(backgroundSurf);
@@ -1417,7 +1430,21 @@ void HostScreen::update( int32 x, int32 y, int32 w, int32 h, bool forced )
 
 	//	SDL_UpdateRect(SDL_GetVideoSurface(), 0, 0, width, height);
 	// SDL_UpdateRect(surf, x, y, w, h);
+#ifdef ENABLE_VBL_UPDATES
+	SDL_mutexP(updateLock);
+	if (sdl_rectcount == MAXIMUM_UPDATE_CACHE) {
+		sdl_rectcount = 0;
+		SDL_UpdateRects(mainSurface, MAXIMUM_UPDATE_CACHE, updateRects);
+	}
+	updateRects[sdl_rectcount].x = x;
+	updateRects[sdl_rectcount].y = y;
+	updateRects[sdl_rectcount].w = w;
+	updateRects[sdl_rectcount].h = h;
+	sdl_rectcount++;
+	SDL_mutexV(updateLock);
+#else
 	SDL_UpdateRect(mainSurface, x, y, w, h);
+#endif
 
 #ifdef ENABLE_OPENGL
 	if (!OpenGLVdi && bx_options.opengl.enabled && dirty_rects) {
@@ -1536,6 +1563,15 @@ void HostScreen::refresh(void)
 {
 	if (++refreshCounter >= bx_options.video.refresh) {
 		refreshCounter = 0;
+#ifdef ENABLE_VBL_UPDATES
+		SDL_mutexP(updateLock);
+		if (sdl_rectcount > 0) {
+			SDL_UpdateRects(mainSurface, sdl_rectcount, updateRects);
+			sdl_rectcount = 0;
+		}
+		SDL_mutexV(updateLock);
+#endif
+
 		getVIDEL()->renderScreen();
 #ifdef SDL_GUI
 		if (isGUIopen()) {

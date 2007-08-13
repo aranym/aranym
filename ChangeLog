@@ -1,3 +1,22 @@
+2007/08/12 Jens
+- hostscreen.cpp: Introduces new option to have delayed screen updates
+via SDL_UpdateRects. This is necessary to have a fluently updated screen
+on the Mac in windowed mode. 
+(see http://www.libsdl.org/faq.php?action=listentries&category=7#68)
+It may be useful on some other systems too.
+- configure.ac: New option --enable-vblupdates for delayed updates
+- darwin/Makefile: add parameter --enable-vblupdates
+- main_unix.cpp: Changed calculation for the mirror space address.
+It should work in 64 Bit now too, it should be the correct address
+if all related address calculation is done in 32 Bit.
+
+2007/08/10 Jens
+- darwin/ethernet_darwin: Completed first TUN/TAP support on mac
+- darwin/aratapif.sh: A shell script version of aratapif
+- darwin/Readme_ethernet.txt: A short description of setting up
+  ethernet on the Mac
+- darwin/Makefile: add parameter --enable-ethernet
+
 2007/08/10 - Petr
 - gui-sdl/dlgHotkeys.cpp: documented one hidden feature - if you need to set
   just a shifter hotkey (like Right Control for releasing the mouse+keyboard)
@@ -26,15 +45,15 @@
 
 - darwin/Makefile: ethernet default =no (see above)
 
-
 2007/08/03 - Jens
 - /MacAranym.xcodeproj/project.pbxproj Fixed compiler options; Added
   SDL-Image framework, MMU support
 
-
 2007/07/28 - Jens
 - ethernet_darwin.cpp/h: added ethernet support to darwin directory
+
 - configure.ac: Assume ethernet=yes if OS is darwin
+
 - ethernet.cpp: Added include to ethernet_darwin.h
 
 

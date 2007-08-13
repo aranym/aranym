@@ -114,7 +114,7 @@ static void allocate_all_memory()
 	HWBaseHost = RAMBaseHost + HWBase;
 	FastRAMBaseHost = RAMBaseHost + FastRAMBase;
 # ifdef EXTENDED_SIGSEGV
-	if (vm_acquire_fixed((void *)(FMEMORY + 0xff000000), RAMSize + ROMSize + HWSize) == false) {
+	if (vm_acquire_fixed((void *)(FMEMORY + ~0xffffffL), RAMSize + ROMSize + HWSize) == false) {
 		panicbug("Not enough free memory.");
 		QuitEmulator();
 	}
@@ -228,12 +228,12 @@ static void install_signal_handler()
 
 	D(panicbug("Protected HW space (%08lx - %08lx)", HWBaseHost, HWBaseHost + HWSize));
 
-	if (vm_protect(RAMBaseHost + 0xff000000, 0x1000000, VM_PAGE_NOACCESS)) {
+	if (vm_protect(RAMBaseHost + ~0xffffffL, 0x1000000, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't set mirror address space");
 		QuitEmulator();
 	}
 
-	D(panicbug("Protected mirror space (%08lx - %08lx)", RAMBaseHost + 0xff000000, RAMBaseHost + 0xff000000 + RAMSize + ROMSize + HWSize));
+	D(panicbug("Protected mirror space (%08lx - %08lx)", RAMBaseHost + ~0xffffffL, RAMBaseHost + ~0xffffffL + RAMSize + ROMSize + HWSize));
 # endif /* HW_SIGSEGV */
 #endif /* EXTENDED_SIGSEGV */
 }

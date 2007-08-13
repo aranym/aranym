@@ -315,6 +315,9 @@
 		B439AC960C5B2FD00046EFC9 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DCE0A652B51009733EB /* fpu_ieee.cpp */; };
 		B43DC1970C635DFA0014243B /* compemu_fpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DBD0A652B51009733EB /* compemu_fpp.cpp */; };
+		B47270890C6BB5D600A1379D /* aratapif.sh in CopyFiles */ = {isa = PBXBuildFile; fileRef = B47270880C6BB5D600A1379D /* aratapif.sh */; };
+		B47270910C6BB62700A1379D /* README_ethernet.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = B47270900C6BB62700A1379D /* README_ethernet.txt */; };
+		B47272CA0C6BBF1300A1379D /* README_ethernet.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = B47270900C6BB62700A1379D /* README_ethernet.txt */; };
 		B49164700C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
 		B49164710C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
 		B4A9E9C50C5B33AC00C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
@@ -390,6 +393,7 @@
 				17BCD8BF0B21004100432CE1 /* TODO in CopyFiles */,
 				17BCD8C90B21010C00432CE1 /* config in CopyFiles */,
 				17398E120B21048100A9B4DB /* README.rtf in CopyFiles */,
+				B47270910C6BB62700A1379D /* README_ethernet.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,6 +414,8 @@
 			dstPath = "aranym-xxx-macosx";
 			dstSubfolderSpec = 16;
 			files = (
+				B47272CA0C6BBF1300A1379D /* README_ethernet.txt in CopyFiles */,
+				B47270890C6BB5D600A1379D /* aratapif.sh in CopyFiles */,
 				B41F6DAA0C646F0E00868C14 /* MacAranym JIT IEEE.app in CopyFiles */,
 				B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */,
 				B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */,
@@ -735,6 +741,8 @@
 		B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym JIT IEEE.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B46114630C480FCA00003172 /* compstbl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = compstbl.cpp; path = build/MacAranym.build/compstbl.cpp; sourceTree = "<group>"; };
 		B46114660C480FEF00003172 /* cpustbl_nf.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = cpustbl_nf.cpp; path = build/MacAranym.build/cpustbl_nf.cpp; sourceTree = "<group>"; };
+		B47270880C6BB5D600A1379D /* aratapif.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = aratapif.sh; path = darwin/aratapif.sh; sourceTree = "<group>"; };
+		B47270900C6BB62700A1379D /* README_ethernet.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README_ethernet.txt; path = darwin/README_ethernet.txt; sourceTree = "<group>"; };
 		B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dlgNetwork.cpp; sourceTree = "<group>"; };
 		B49164930C540C2200CFB5B0 /* cpuemu_nf.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu_nf.cpp; path = build/MacAranym.build/cpuemu_nf.cpp; sourceTree = "<group>"; };
 		B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ethernet_darwin.cpp; path = darwin/ethernet_darwin.cpp; sourceTree = "<group>"; };
@@ -1288,10 +1296,12 @@
 		B41C696D0C536D910013E498 /* darwin */ = {
 			isa = PBXGroup;
 			children = (
+				B47270880C6BB5D600A1379D /* aratapif.sh */,
 				17A2B1960C66113000180C55 /* Makefile */,
 				B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */,
 				B4A9E9C20C5B33AC00C156C3 /* ethernet_darwin.h */,
 				B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */,
+				B47270900C6BB62700A1379D /* README_ethernet.txt */,
 			);
 			name = darwin;
 			sourceTree = "<group>";
@@ -1865,11 +1875,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH)";
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-opengl --enable-ethernet=no";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE  ENABLE_VBL_UPDATES ENABLE_TUNTAP";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-opengl --enable-ethernet=no --enable-vblupdates=yes";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.5 beta";
+				CURRENT_PROJECT_VERSION = "0.9.5 beta+cvs";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
@@ -1914,11 +1924,11 @@
 					ppc,
 					i386,
 				);
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-opengl --enable-ethernet=no";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE  ENABLE_VBL_UPDATES ENABLE_TUNTAP";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-opengl --enable-ethernet=no --enable-vblupdates=yes";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.5 beta";
+				CURRENT_PROJECT_VERSION = "0.9.5 beta+cvs";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
@@ -2025,11 +2035,11 @@
 		17E8B5B60ABC88C600BBFD59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-opengl --enable-ethernet=no";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE  ENABLE_VBL_UPDATES ENABLE_TUNTAP";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-opengl --enable-ethernet=no --enable-vblupdates=yes";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.5 beta";
+				CURRENT_PROJECT_VERSION = "0.9.5 beta+cvs";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,

@@ -59,6 +59,8 @@ AC_ARG_ENABLE(blitmemmove,     [  --enable-blitmemmove    enable Blitter memmove
 
 AC_ARG_ENABLE(blitsdlblit,     [  --enable-blitsdlblit    enable SDL blitting routine EXPERIMENTAL UNSUPPORTED BUGGY (default=no)], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
 
+AC_ARG_ENABLE(vblupdate,       [  --enable-vblupdates     enable SDL update are only done during vbl ticks (default=no)], [WANT_VBLUPDATES=$enableval], [WANT_VBLUPDATES=no])
+
 AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support (default=yes)], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
 
 AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI (default=yes)], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
@@ -902,6 +904,11 @@ dnl Blitter SDL surface blitting
 if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
   AC_DEFINE([BLITTER_SDLBLIT], 1, [Define if you want even more accelerated blitter output])
   AC_DEFINE([BLITTER_MEMMOVE], 1, [Define if you want accelerated blitter output])	dnl required for the SDLBLIT
+fi
+
+dnl Update during vbl ticks
+if [[ "x$WANT_VBLUPDATES" = "xyes" ]]; then
+  AC_DEFINE([ENABLE_VBL_UPDATES], 1, [Define if you want delayed updates in VBL])
 fi
 
 HAVE_ETHERNET=no

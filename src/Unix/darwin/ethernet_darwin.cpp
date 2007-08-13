@@ -1,10 +1,31 @@
-/**
- * Ethernet Emulation using tuntap driver in Linux
+/*
+ * ethernet_darwin.cpp - Darwin Ethernet support (via TUN/TAP driver)
  *
- * Standa and Joy of ARAnyM team (c) 2004-2005
+ * Copyright (c) 2007 ARAnyM dev team (see AUTHORS)
+ * 
+ * Inspired by Bernie Meyer's UAE-JIT and Gwenole Beauchesne's Basilisk II-JIT
  *
- * GPL
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Last modified: 2007-08-09 Jens Heitmann
+ *
  */
+
 
 #if defined(OS_darwin)
  
@@ -15,7 +36,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <sys/poll.h>
 #include <sys/wait.h>	// waitpid()
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -28,7 +48,8 @@
  * Configuration zone begins
  */
 
-#define TAP_INIT	"aratapif"
+#define SUDO		"sudo"
+#define TAP_INIT	"/usr/local/bin/aratapif.sh"
 #define TAP_MTU		"1500"
 
 /*
@@ -45,18 +66,21 @@ bool TunTapEthernetHandler::open() {
 		D(bug("TunTap(%d): tunnel name undefined", ethX));
 		return false;
 	}
-
+	
+	// if 'bridge' mode then we are done
+	if ( strcmp(bx_options.ethernet[ethX].type, "bridge") == 0 ) {
+		panicbug("TunTap(%d): Bridge mode currently not supported '%s': %s", ethX, devName);
+		return false;	
+	}
+	
 	D(bug("TunTap(%d): open('%s')", ethX, devName));
-
+	
 	fd = tapOpen( devName );
 	if (fd < 0) {
 		panicbug("TunTap(%d): NO_NET_DRIVER_WARN '%s': %s", ethX, devName, strerror(errno));
 		return false;
 	}
 
-	// if 'bridge' mode then we are done
-	if ( strcmp(bx_options.ethernet[ethX].type, "bridge") == 0 )
-		return true;
 
 	int pid = fork();
 	if (pid < 0) {
@@ -69,6 +93,7 @@ bool TunTapEthernetHandler::open() {
 		// the arguments _need_ to be placed into the child process
 		// memory (otherwise this does not work here)
 		char *args[] = {
+			SUDO,
 			TAP_INIT,
 			bx_options.ethernet[ethX].tunnel,
 			bx_options.ethernet[ethX].ip_host,
@@ -77,7 +102,7 @@ bool TunTapEthernetHandler::open() {
 			TAP_MTU, NULL
 		};
 		int result;
-		result = execvp( TAP_INIT, args );
+		result = execvp( SUDO, args );
 		_exit(result);
 	}
 
