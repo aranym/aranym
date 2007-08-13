@@ -28,15 +28,27 @@
 /* Begin PBXBuildFile section */
 		002F39FA09D0881F00EBEB88 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		002F3A0009D0884600EBEB88 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
-		170321810A64F616003EE1DC /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 170321800A64F616003EE1DC /* aranym.icns */; };
 		170C2B880BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2B8B0BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2BA10BB873470026484E /* cpummu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC30A652B51009733EB /* cpummu.cpp */; };
-		17115C750A65530500038162 /* SDLMain.nib in Resources */ = {isa = PBXBuildFile; fileRef = 17115C740A65530500038162 /* SDLMain.nib */; };
 		171B2BD50C4017C9007D8975 /* dlgOs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD30C4017C9007D8975 /* dlgOs.cpp */; };
 		171B2BD60C4017C9007D8975 /* dlgVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD40C4017C9007D8975 /* dlgVideo.cpp */; };
 		171B2BD70C4017C9007D8975 /* dlgOs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD30C4017C9007D8975 /* dlgOs.cpp */; };
 		171B2BD80C4017C9007D8975 /* dlgVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD40C4017C9007D8975 /* dlgVideo.cpp */; };
+		1736B1070C70ED5900C56FAF /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
+		1736B1080C70ED5900C56FAF /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FE0C70ED5900C56FAF /* aranym.nib */; };
+		1736B1090C70ED5900C56FAF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1736B1000C70ED5900C56FAF /* Info.plist */; };
+		1736B10B0C70ED5900C56FAF /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1736B1020C70ED5900C56FAF /* SDLMain.m */; };
+		1736B10C0C70ED5900C56FAF /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
+		1736B10D0C70ED5900C56FAF /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FE0C70ED5900C56FAF /* aranym.nib */; };
+		1736B10E0C70ED5900C56FAF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1736B1000C70ED5900C56FAF /* Info.plist */; };
+		1736B10F0C70ED5900C56FAF /* SDLMain.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 1736B1010C70ED5900C56FAF /* SDLMain.h */; };
+		1736B1100C70ED5900C56FAF /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1736B1020C70ED5900C56FAF /* SDLMain.m */; };
+		1736B1110C70ED5900C56FAF /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
+		1736B1120C70ED5900C56FAF /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FE0C70ED5900C56FAF /* aranym.nib */; };
+		1736B1130C70ED5900C56FAF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1736B1000C70ED5900C56FAF /* Info.plist */; };
+		1736B1140C70ED5900C56FAF /* SDLMain.h in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 1736B1010C70ED5900C56FAF /* SDLMain.h */; };
+		1736B1150C70ED5900C56FAF /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1736B1020C70ED5900C56FAF /* SDLMain.m */; };
 		17398E120B21048100A9B4DB /* README.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17398E110B21048100A9B4DB /* README.rtf */; };
 		175822820A6554CE00EEE78F /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
 		1758228C0A6555CC00EEE78F /* main_unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E7C0A652B52009733EB /* main_unix.cpp */; };
@@ -120,10 +132,7 @@
 		17BCD7DD0B20F64F00432CE1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		17BCD7DE0B20F64F00432CE1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
 		17BCD7DF0B20F64F00432CE1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
-		17BCD7E10B20F64F00432CE1 /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 170321800A64F616003EE1DC /* aranym.icns */; };
-		17BCD7E20B20F64F00432CE1 /* SDLMain.nib in Resources */ = {isa = PBXBuildFile; fileRef = 17115C740A65530500038162 /* SDLMain.nib */; };
 		17BCD7E40B20F64F00432CE1 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
-		17BCD7F00B20F6BF00432CE1 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 17798E460A652B51009733EB /* SDLMain.m */; };
 		17BCD7F10B20F6BF00432CE1 /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
 		17BCD7F20B20F6BF00432CE1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D5E0A652B50009733EB /* main.cpp */; };
 		17BCD7F30B20F6BF00432CE1 /* vm_alloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E870A652B52009733EB /* vm_alloc.cpp */; };
@@ -211,14 +220,12 @@
 		17BCD8BE0B21004100432CE1 /* README in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B60B21004100432CE1 /* README */; };
 		17BCD8BF0B21004100432CE1 /* TODO in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B70B21004100432CE1 /* TODO */; };
 		17BCD8C90B21010C00432CE1 /* config in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8C80B21010C00432CE1 /* config */; };
-		17CA25E90A65489F00EF42A0 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 17798E460A652B51009733EB /* SDLMain.m */; };
 		17CDFE620B2196CD001BABB0 /* fpu_uae.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DD00A652B51009733EB /* fpu_uae.cpp */; };
 		17CDFE630B2196D8001BABB0 /* fpu_uae.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DD00A652B51009733EB /* fpu_uae.cpp */; };
 		17D5D2590AC70DBD003D0FE9 /* midi_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17D5D2580AC70DBD003D0FE9 /* midi_file.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		B41F6DAA0C646F0E00868C14 /* MacAranym JIT IEEE.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */; };
 		B439AC340C5B2FD00046EFC9 /* cpuemu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AAE3630A666BC100301447 /* cpuemu.cpp */; };
-		B439AC350C5B2FD00046EFC9 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 17798E460A652B51009733EB /* SDLMain.m */; };
 		B439AC360C5B2FD00046EFC9 /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
 		B439AC370C5B2FD00046EFC9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D5E0A652B50009733EB /* main.cpp */; };
 		B439AC380C5B2FD00046EFC9 /* compemu_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DBE0A652B51009733EB /* compemu_support.cpp */; };
@@ -310,8 +317,6 @@
 		B439AC8F0C5B2FD00046EFC9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		B439AC900C5B2FD00046EFC9 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
 		B439AC910C5B2FD00046EFC9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
-		B439AC930C5B2FD00046EFC9 /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 170321800A64F616003EE1DC /* aranym.icns */; };
-		B439AC940C5B2FD00046EFC9 /* SDLMain.nib in Resources */ = {isa = PBXBuildFile; fileRef = 17115C740A65530500038162 /* SDLMain.nib */; };
 		B439AC960C5B2FD00046EFC9 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DCE0A652B51009733EB /* fpu_ieee.cpp */; };
 		B43DC1970C635DFA0014243B /* compemu_fpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DBD0A652B51009733EB /* compemu_fpp.cpp */; };
@@ -373,6 +378,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				17BCD7E40B20F64F00432CE1 /* SDL.framework in Copy Frameworks into .app bundle */,
+				1736B10F0C70ED5900C56FAF /* SDLMain.h in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,6 +410,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B439AC960C5B2FD00046EFC9 /* SDL.framework in Copy Frameworks into .app bundle */,
+				1736B1140C70ED5900C56FAF /* SDLMain.h in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -436,6 +443,11 @@
 		171B2BD40C4017C9007D8975 /* dlgVideo.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = dlgVideo.cpp; sourceTree = "<group>"; };
 		1734DB140ABCA354001A746E /* config_ppc.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = config_ppc.h; path = build/MacAranym.build/config_ppc.h; sourceTree = "<group>"; };
 		1734DB150ABCA3AB001A746E /* config_i386.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = config_i386.h; path = build/MacAranym.build/config_i386.h; sourceTree = "<group>"; };
+		1736B0FD0C70ED5900C56FAF /* aranym.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = aranym.icns; sourceTree = "<group>"; };
+		1736B0FF0C70ED5900C56FAF /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/aranym.nib; sourceTree = "<group>"; };
+		1736B1000C70ED5900C56FAF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		1736B1010C70ED5900C56FAF /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
+		1736B1020C70ED5900C56FAF /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		17398E110B21048100A9B4DB /* README.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README.rtf; sourceTree = "<group>"; };
 		1743987C0B320B480011038E /* README_Xcode.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README_Xcode.rtf; sourceTree = "<group>"; };
 		17798CD30A652B50009733EB /* acia.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = acia.cpp; path = ../../acia.cpp; sourceTree = SOURCE_ROOT; };
@@ -803,10 +815,24 @@
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
 		};
+		1736B0FC0C70ED5900C56FAF /* gui-osx */ = {
+			isa = PBXGroup;
+			children = (
+				1736B0FD0C70ED5900C56FAF /* aranym.icns */,
+				1736B0FE0C70ED5900C56FAF /* aranym.nib */,
+				1736B1000C70ED5900C56FAF /* Info.plist */,
+				1736B1010C70ED5900C56FAF /* SDLMain.h */,
+				1736B1020C70ED5900C56FAF /* SDLMain.m */,
+			);
+			name = "gui-osx";
+			path = "../../gui-osx";
+			sourceTree = SOURCE_ROOT;
+		};
 		17798CD20A652B3B009733EB /* Aranym Sources */ = {
 			isa = PBXGroup;
 			children = (
 				17798D010A652B50009733EB /* include */,
+				1736B0FC0C70ED5900C56FAF /* gui-osx */,
 				17798CED0A652B50009733EB /* gui-sdl */,
 				17798D630A652B51009733EB /* natfeat */,
 				17798DB60A652B51009733EB /* uae_cpu */,
@@ -1395,8 +1421,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				17BCD7E10B20F64F00432CE1 /* aranym.icns in Resources */,
-				17BCD7E20B20F64F00432CE1 /* SDLMain.nib in Resources */,
+				1736B10C0C70ED5900C56FAF /* aranym.icns in Resources */,
+				1736B10D0C70ED5900C56FAF /* aranym.nib in Resources */,
+				1736B10E0C70ED5900C56FAF /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1404,8 +1431,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				170321810A64F616003EE1DC /* aranym.icns in Resources */,
-				17115C750A65530500038162 /* SDLMain.nib in Resources */,
+				1736B1070C70ED5900C56FAF /* aranym.icns in Resources */,
+				1736B1080C70ED5900C56FAF /* aranym.nib in Resources */,
+				1736B1090C70ED5900C56FAF /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1413,8 +1441,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B439AC930C5B2FD00046EFC9 /* aranym.icns in Resources */,
-				B439AC940C5B2FD00046EFC9 /* SDLMain.nib in Resources */,
+				1736B1110C70ED5900C56FAF /* aranym.icns in Resources */,
+				1736B1120C70ED5900C56FAF /* aranym.nib in Resources */,
+				1736B1130C70ED5900C56FAF /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1452,7 +1481,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/Unix\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Configure system for all build architectures\nif [ -f autogen.sh ]; then\n\trm -f config.h.in 2>/dev/null\n\tCONFIG_EXEC=./autogen.sh\nelse\n\tCONFIG_EXEC=./configure\nfi\n\"$CONFIG_EXEC\" $CONFIGURE_OPTIONS || exit 1\n\n# Modify config.h\nif [ $NATIVE_ARCH == ppc ]; then\n\tcat config.h | sed 's/CPU_TYPE \"powerpc\"/CPU_TYPE \"i386\"/' \\\n\t\t| sed 's/#define WORDS_BIGENDIAN 1/\\/* #undef WORDS_BIGENDIAN *\\//' > config_i386.h\n\t# 10.3.9 compatibility:\n\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\trm config.h\nelse\n\tcat config.h | sed 's/CPU_TYPE \"i386\"/CPU_TYPE \"powerpc\"/' \\\n\t\t| sed 's/\\/* #undef WORDS_BIGENDIAN *\\//#define WORDS_BIGENDIAN 1/' \\\n\t\t| sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\tmv config.h config_$NATIVE_ARCH.h\nfi\n\ncat << EOF > config.h\n#ifdef CPU_i386\n#include \"config_i386.h\"\n#endif\n#ifdef CPU_powerpc\n#include \"config_ppc.h\"\n#endif\nEOF\n\nmv config.h config_ppc.h config_i386.h Makefile \"$DERIVED_FILES_DIR\"\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
+			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/Unix\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Configure system for all build architectures\nif [ -f autogen.sh ]; then\n\trm -f config.h.in 2>/dev/null\n\tCONFIG_EXEC=./autogen.sh\nelse\n\tCONFIG_EXEC=./configure\nfi\n\"$CONFIG_EXEC\" $CONFIGURE_OPTIONS || exit 1\n\n# Modify config.h\nif [ $NATIVE_ARCH == ppc ]; then\n\tcat config.h | sed 's/CPU_TYPE \"powerpc\"/CPU_TYPE \"i386\"/' \\\n\t\t| sed 's/#define WORDS_BIGENDIAN 1/\\/* #undef WORDS_BIGENDIAN *\\//' > config_i386.h\n\t# 10.3.9 compatibility:\n\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\trm config.h\nelse\n\tcat config.h | sed 's/CPU_TYPE \"i386\"/CPU_TYPE \"powerpc\"/' \\\n\t\t| sed 's/\\/* #undef WORDS_BIGENDIAN *\\//#define WORDS_BIGENDIAN 1/' \\\n\t\t| sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\tmv config.h config_$NATIVE_ARCH.h\nfi\n\ncat << EOF > config.h\n#ifdef CPU_i386\n#include \"config_i386.h\"\n#endif\n#ifdef CPU_powerpc\n#include \"config_ppc.h\"\n#endif\nEOF\n\nmv config.h config_ppc.h config_i386.h Makefile \"$DERIVED_FILES_DIR\"\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
 		};
 		17AAB32E0B20AFF50016FB8D /* Build CPU source files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1490,7 +1519,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/Unix\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Configure system for all build architectures\nif [ -f autogen.sh ]; then\n\trm -f config.h.in 2>/dev/null\n\tCONFIG_EXEC=./autogen.sh\nelse\n\tCONFIG_EXEC=./configure\nfi\n\"$CONFIG_EXEC\" $CONFIGURE_OPTIONS || exit 1\n\n# Modify config.h\nif [ $NATIVE_ARCH == ppc ]; then\n\tcat config.h | sed 's/CPU_TYPE \"powerpc\"/CPU_TYPE \"i386\"/' \\\n\t\t| sed 's/#define WORDS_BIGENDIAN 1/\\/* #undef WORDS_BIGENDIAN *\\//' > config_i386.h\n\t# 10.3.9 compatibility:\n\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\trm config.h\nelse\n\tcat config.h | sed 's/CPU_TYPE \"i386\"/CPU_TYPE \"powerpc\"/' \\\n\t\t| sed 's/\\/* #undef WORDS_BIGENDIAN *\\//#define WORDS_BIGENDIAN 1/' \\\n\t\t| sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\tmv config.h config_$NATIVE_ARCH.h\nfi\n\ncat << EOF > config.h\n#ifdef CPU_i386\n#include \"config_i386.h\"\n#endif\n#ifdef CPU_powerpc\n#include \"config_ppc.h\"\n#endif\nEOF\n\nmv config.h config_ppc.h config_i386.h Makefile \"$DERIVED_FILES_DIR\"\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
+			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/Unix\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Configure system for all build architectures\nif [ -f autogen.sh ]; then\n\trm -f config.h.in 2>/dev/null\n\tCONFIG_EXEC=./autogen.sh\nelse\n\tCONFIG_EXEC=./configure\nfi\n\"$CONFIG_EXEC\" $CONFIGURE_OPTIONS || exit 1\n\n# Modify config.h\nif [ $NATIVE_ARCH == ppc ]; then\n\tcat config.h | sed 's/CPU_TYPE \"powerpc\"/CPU_TYPE \"i386\"/' \\\n\t\t| sed 's/#define WORDS_BIGENDIAN 1/\\/* #undef WORDS_BIGENDIAN *\\//' > config_i386.h\n\t# 10.3.9 compatibility:\n\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\trm config.h\nelse\n\tcat config.h | sed 's/CPU_TYPE \"i386\"/CPU_TYPE \"powerpc\"/' \\\n\t\t| sed 's/\\/* #undef WORDS_BIGENDIAN *\\//#define WORDS_BIGENDIAN 1/' \\\n\t\t| sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\tmv config.h config_$NATIVE_ARCH.h\nfi\n\ncat << EOF > config.h\n#ifdef CPU_i386\n#include \"config_i386.h\"\n#endif\n#ifdef CPU_powerpc\n#include \"config_ppc.h\"\n#endif\nEOF\n\nmv config.h config_ppc.h config_i386.h Makefile \"$DERIVED_FILES_DIR\"\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
 		};
 		17BCD78A0B20F64F00432CE1 /* Build CPU source files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1528,7 +1557,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/Unix\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Configure system for all build architectures\nif [ -f autogen.sh ]; then\n\trm -f config.h.in 2>/dev/null\n\tCONFIG_EXEC=./autogen.sh\nelse\n\tCONFIG_EXEC=./configure\nfi\n\"$CONFIG_EXEC\" $CONFIGURE_OPTIONS || exit 1\n\n# Modify config.h\nif [ $NATIVE_ARCH == ppc ]; then\n\tcat config.h | sed 's/CPU_TYPE \"powerpc\"/CPU_TYPE \"i386\"/' \\\n\t\t| sed 's/#define WORDS_BIGENDIAN 1/\\/* #undef WORDS_BIGENDIAN *\\//' > config_i386.h\n\t# 10.3.9 compatibility:\n\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\trm config.h\nelse\n\tcat config.h | sed 's/CPU_TYPE \"i386\"/CPU_TYPE \"powerpc\"/' \\\n\t\t| sed 's/\\/* #undef WORDS_BIGENDIAN *\\//#define WORDS_BIGENDIAN 1/' \\\n\t\t| sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\tmv config.h config_$NATIVE_ARCH.h\nfi\n\ncat << EOF > config.h\n#ifdef CPU_i386\n#include \"config_i386.h\"\n#endif\n#ifdef CPU_powerpc\n#include \"config_ppc.h\"\n#endif\nEOF\n\nmv config.h config_ppc.h config_i386.h Makefile \"$DERIVED_FILES_DIR\"\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
+			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/Unix\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Configure system for all build architectures\nif [ -f autogen.sh ]; then\n\trm -f config.h.in 2>/dev/null\n\tCONFIG_EXEC=./autogen.sh\nelse\n\tCONFIG_EXEC=./configure\nfi\n\"$CONFIG_EXEC\" $CONFIGURE_OPTIONS || exit 1\n\n# Modify config.h\nif [ $NATIVE_ARCH == ppc ]; then\n\tcat config.h | sed 's/CPU_TYPE \"powerpc\"/CPU_TYPE \"i386\"/' \\\n\t\t| sed 's/#define WORDS_BIGENDIAN 1/\\/* #undef WORDS_BIGENDIAN *\\//' > config_i386.h\n\t# 10.3.9 compatibility:\n\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\trm config.h\nelse\n\tcat config.h | sed 's/CPU_TYPE \"i386\"/CPU_TYPE \"powerpc\"/' \\\n\t\t| sed 's/\\/* #undef WORDS_BIGENDIAN *\\//#define WORDS_BIGENDIAN 1/' \\\n\t\t| sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_ppc.h\n\tmv config.h config_$NATIVE_ARCH.h\nfi\n\ncat << EOF > config.h\n#ifdef CPU_i386\n#include \"config_i386.h\"\n#endif\n#ifdef CPU_powerpc\n#include \"config_ppc.h\"\n#endif\nEOF\n\nmv config.h config_ppc.h config_i386.h Makefile \"$DERIVED_FILES_DIR\"\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
 		};
 		B439AC310C5B2FD00046EFC9 /* Build CPU source files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1558,7 +1587,6 @@
 			files = (
 				B4A9EC080C5B3C3900C156C3 /* ethernet.cpp in Sources */,
 				B4A9EC090C5B3C3900C156C3 /* ethernet_darwin.cpp in Sources */,
-				17BCD7F00B20F6BF00432CE1 /* SDLMain.m in Sources */,
 				17BCD7F10B20F6BF00432CE1 /* parameters_MacOSX.cpp in Sources */,
 				17BCD7F20B20F6BF00432CE1 /* main.cpp in Sources */,
 				17BCD7F30B20F6BF00432CE1 /* vm_alloc.cpp in Sources */,
@@ -1642,6 +1670,7 @@
 				171B2BD70C4017C9007D8975 /* dlgOs.cpp in Sources */,
 				171B2BD80C4017C9007D8975 /* dlgVideo.cpp in Sources */,
 				B49164700C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */,
+				1736B1100C70ED5900C56FAF /* SDLMain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1651,7 +1680,6 @@
 			files = (
 				B4A9EC060C5B3C1400C156C3 /* ethernet.cpp in Sources */,
 				B4A9EC070C5B3C1400C156C3 /* ethernet_darwin.cpp in Sources */,
-				17CA25E90A65489F00EF42A0 /* SDLMain.m in Sources */,
 				175822820A6554CE00EEE78F /* parameters_MacOSX.cpp in Sources */,
 				17798F050A652EF1009733EB /* main.cpp in Sources */,
 				17798F0C0A652F24009733EB /* vm_alloc.cpp in Sources */,
@@ -1735,6 +1763,7 @@
 				171B2BD50C4017C9007D8975 /* dlgOs.cpp in Sources */,
 				171B2BD60C4017C9007D8975 /* dlgVideo.cpp in Sources */,
 				B49164710C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */,
+				1736B10B0C70ED5900C56FAF /* SDLMain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1745,7 +1774,6 @@
 				B4A9EBEE0C5B374A00C156C3 /* ethernet.cpp in Sources */,
 				B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */,
 				B439AC340C5B2FD00046EFC9 /* cpuemu.cpp in Sources */,
-				B439AC350C5B2FD00046EFC9 /* SDLMain.m in Sources */,
 				B439AC360C5B2FD00046EFC9 /* parameters_MacOSX.cpp in Sources */,
 				B439AC370C5B2FD00046EFC9 /* main.cpp in Sources */,
 				B439AC380C5B2FD00046EFC9 /* compemu_support.cpp in Sources */,
@@ -1835,6 +1863,7 @@
 				B439AC8B0C5B2FD00046EFC9 /* dlgNetwork.cpp in Sources */,
 				B439AC8C0C5B2FD00046EFC9 /* cpuemu_nf.cpp in Sources */,
 				B4A9E9C50C5B33AC00C156C3 /* ethernet_darwin.cpp in Sources */,
+				1736B1150C70ED5900C56FAF /* SDLMain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1858,6 +1887,17 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		1736B0FE0C70ED5900C56FAF /* aranym.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1736B0FF0C70ED5900C56FAF /* English */,
+			);
+			name = aranym.nib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		1706B4FB0ABCB606006CB74B /* Release G5 */ = {
 			isa = XCBuildConfiguration;
@@ -1866,7 +1906,7 @@
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = MacAranym;
 			};
 			name = "Release G5";
@@ -1912,7 +1952,7 @@
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = MacAranym;
 			};
 			name = Release;
@@ -1988,7 +2028,7 @@
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
 			};
@@ -2001,7 +2041,7 @@
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
 			};
@@ -2014,7 +2054,7 @@
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
 			};
@@ -2027,7 +2067,7 @@
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = MacAranym;
 			};
 			name = Debug;
@@ -2080,7 +2120,7 @@
 					../,
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = "MacAranym JIT IEEE";
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 			};
@@ -2105,7 +2145,7 @@
 					../,
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = "MacAranym JIT IEEE";
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 			};
@@ -2127,7 +2167,7 @@
 					../,
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = "MacAranym JIT IEEE";
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 			};

@@ -1,14 +1,19 @@
+2007/08/13 Philipp
+- gui-osx: Moved Mac OS X GUI sources into separate folder.
+
+
 2007/08/12 Jens
 - hostscreen.cpp: Introduces new option to have delayed screen updates
-via SDL_UpdateRects. This is necessary to have a fluently updated screen
-on the Mac in windowed mode. 
-(see http://www.libsdl.org/faq.php?action=listentries&category=7#68)
-It may be useful on some other systems too.
+  via SDL_UpdateRects. This is necessary to have a fluently updated screen
+  on the Mac in windowed mode. 
+  (see http://www.libsdl.org/faq.php?action=listentries&category=7#68)
+  It may be useful on some other systems too.
 - configure.ac: New option --enable-vblupdates for delayed updates
 - darwin/Makefile: add parameter --enable-vblupdates
 - main_unix.cpp: Changed calculation for the mirror space address.
-It should work in 64 Bit now too, it should be the correct address
-if all related address calculation is done in 32 Bit.
+  It should work in 64 Bit now too, it should be the correct address
+  if all related address calculation is done in 32 Bit.
+
 
 2007/08/10 Jens
 - darwin/ethernet_darwin: Completed first TUN/TAP support on mac
@@ -16,6 +21,7 @@ if all related address calculation is done in 32 Bit.
 - darwin/Readme_ethernet.txt: A short description of setting up
   ethernet on the Mac
 - darwin/Makefile: add parameter --enable-ethernet
+
 
 2007/08/10 - Petr
 - gui-sdl/dlgHotkeys.cpp: documented one hidden feature - if you need to set
