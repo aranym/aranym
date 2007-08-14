@@ -1,3 +1,8 @@
+2007/08/15 Philipp
+- New Xcode 1.5 project in "src/Unix/MacOSX". Old project in "src/MacOSX" has
+  been removed.
+
+
 2007/08/13 Philipp
 - gui-osx: Moved Mac OS X GUI sources into separate folder.
 
