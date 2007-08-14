@@ -37,12 +37,9 @@
 			buildSettings = {
 				COMPILE_DEFS = "$(COMPILE_DEFS_COMMON) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS = "$(CONFIGURE_OPTIONS_COMMON) --enable-fpe=uae --enable-fullmmu --enable-lilo";
-				FRAMEWORK_SEARCH_PATHS = /Volumes/System/AranymProject/aranym/src/Unix/MacOSX;
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
-				SECTORDER_FLAGS = "";
 			};
 			dependencies = (
 			);
@@ -3915,6 +3912,12 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
+		178478B10C726AD5006A1906 = {
+			fileRef = 17B847BF0C7244D6009D5C48;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		17987EDE0C72445B00B5D640 = {
 			children = (
 				17987EDF0C72445B00B5D640,
@@ -4814,7 +4817,6 @@
 		17B849070C724AD6009D5C48 = {
 			buildActionMask = 2147483647;
 			files = (
-				17B8491B0C7255F9009D5C48,
 				17B8491C0C7255F9009D5C48,
 				17B8491D0C7255F9009D5C48,
 				17B8491E0C7255F9009D5C48,
@@ -4900,6 +4902,7 @@
 				173558AD0C7261210058A4BD,
 				173558AF0C7261210058A4BD,
 				173558B00C7261210058A4BD,
+				178478B10C726AD5006A1906,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4931,11 +4934,8 @@
 			buildSettings = {
 				COMPILE_DEFS = "$(COMPILE_DEFS_COMMON) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS = "$(CONFIGURE_OPTIONS_COMMON) --enable-fpe=uae --disable-fullmmu";
-				FRAMEWORK_SEARCH_PATHS = /Volumes/System/AranymProject/aranym/src/Unix/MacOSX;
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = MacAranym;
-				SECTORDER_FLAGS = "";
 			};
 			dependencies = (
 			);
@@ -5008,12 +5008,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "########################## BUILD CPU EMULATION CORE ##########################\n\nmkdir -p \"$DERIVED_FILES_DIR\" && cd \"$DERIVED_FILES_DIR\" || exit 1\nTRANSFERRED=`rsync -pogt --stats cpudefs.cpp cpuemu.cpp cpuemu_*.cpp cputbl.h cpustbl.cpp Makefile config*.h \"$PROJECT_TEMP_DIR\" 2>/dev/null 1>rsync_output.txt`\nRET=$?\nTRANSFERRED=`cat rsync_output.txt| grep \"transferred:\" | awk '{print $5}'`\nrm rsync_output.txt\necho \"$TRANSFERRED files transferred. (Return code $RET)\"\nif [ \"$RET\" -eq 0 -a \"$TRANSFERRED\" -eq 0 ]; then\n\texit 0\nfi\n\necho ; echo \"Building CPU definition...\"\n\ncd \"$TEMP_FILES_DIR\" \ngcc -o build68k \"$SOURCE_DIR/uae_cpu/build68k.c\" && \\\n\t(./build68k < \"$SOURCE_DIR/uae_cpu/table68k\" > \"$DERIVED_FILES_DIR/cpudefs.cpp\") || exit 1\n\nfor CURRENT_ARCH in $ARCHS ; do\n\techo ; echo \"Building CPU emulation core... $CURRENT_ARCH\"\n\tg++ `echo \"-DCPU_$CURRENT_ARCH\" | sed s/ppc/powerpc/` \"-I$DERIVED_FILES_DIR\" \"-I$SOURCE_DIR/Unix\" \"-I$SOURCE_DIR/uae_cpu\" -o gencpu \\\n\t\t\"$SOURCE_DIR/uae_cpu/gencpu.c\" \"$SOURCE_DIR/uae_cpu/readcpu.cpp\" \"$DERIVED_FILES_DIR/cpudefs.cpp\" && \\\n\t\t./gencpu || exit 1\n\tmv cpuemu.cpp \"$DERIVED_FILES_DIR/cpuemu_$CURRENT_ARCH.cpp\"\ndone\nmv cpustbl.cpp cputbl.h \"$DERIVED_FILES_DIR\" || exit 1\n\ncat << EOF > \"$DERIVED_FILES_DIR/cpuemu.cpp\"\n#ifdef CPU_i386\n#include \"cpuemu_i386.cpp\"\n#endif\n#ifdef CPU_powerpc\n#include \"cpuemu_ppc.cpp\"\n#endif\nEOF\n\ncd \"$DERIVED_FILES_DIR\"\nmkdir -p \"$PROJECT_TEMP_DIR\"\nrsync -pogt cpudefs.cpp cpuemu.cpp cpuemu_*.cpp cputbl.h cpustbl.cpp Makefile config*.h \"$PROJECT_TEMP_DIR\"\n";
-		};
-		17B8491B0C7255F9009D5C48 = {
-			fileRef = 17B847BF0C7244D6009D5C48;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		17B8491C0C7255F9009D5C48 = {
 			fileRef = 17B847C30C7244D7009D5C48;
