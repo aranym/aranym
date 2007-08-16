@@ -195,7 +195,7 @@ static int keysymToAtari(SDL_keysym keysym)
 	switch (keysym.sym) {
 	  case SDLK_LMETA:
 	  case SDLK_RMETA:
-		#if SWAP_CNTRL_AND_META_KEY
+		#if MAP_META_TO_CONTROL
 		  return 0x1D;
 		#else		
 		  return 0;
@@ -215,7 +215,7 @@ static int keysymToAtari(SDL_keysym keysym)
 		break;
 	  case SDLK_RCTRL:
 	  case SDLK_LCTRL:
-		#if SWAP_CNTRL_AND_META_KEY
+		#if MAP_CONTROL_TO_CONTROL
 		  return 0;
 		#else		
 		  return 0x1D;

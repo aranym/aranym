@@ -130,25 +130,16 @@ SRCS = ../main.cpp \
 	$(DYNGLSRCS)
 
 BUNDLE_RESOURCES = \
-	darwin/busybee.icns \
+	$(srcdir)/darwin/busybee.icns \
 	
-BUNDLE_LOCALIZATON_ROOT = \
-	darwin/
-	
-BUNDLE_LOCALIZATON_ROOT_REMOVE = \
-	../
-
 BUNDLE_LOCALIZATON_FOLDERS = \
-	*.lproj
-	
-BUNDLE_LOCALIZATON_FILES = \
-	aranym.nib
+	$(srcdir)/darwin/*.lproj
 	
 BUNDLE_CONTENTS = \
-	darwin/info.plist \
-	darwin/PkgInfo 	
+	$(srcdir)/darwin/Info.plist \
+	$(srcdir)/darwin/PkgInfo 	
 
-BUNDLE_FRAMEWORKS = @BUNDLE_FRAMEWORKS@
+BUNDLE_FRAMEWORKS =  /Library/Frameworks/SDL.framework /Library/Frameworks/SDL_image.framework
 
 APP = aranym
 APP_ARCH = aranym_$(CPU_TYPE)
@@ -207,16 +198,10 @@ $(APP_BUNDLE): $(APP)
 	mkdir -p $(APP_BUNDLE)/Contents/Frameworks
 	cp -rp $(BUNDLE_FRAMEWORKS) $(APP_BUNDLE)/Contents/Frameworks
 	cp -r $(BUNDLE_RESOURCES) $(APP_BUNDLE)/Contents/Resources
-	cd $(BUNDLE_LOCALIZATON_ROOT); \
-		for locFolder in $(BUNDLE_LOCALIZATON_FOLDERS); do \
-			mkdir -p $(BUNDLE_LOCALIZATON_ROOT_REMOVE)$(APP_BUNDLE)/Contents/Resources/$$locFolder; \
-			for locFile in $(BUNDLE_LOCALIZATON_FILES); do \
-				cp -r $$locFolder/$$locFile \
-					$(BUNDLE_LOCALIZATON_ROOT_REMOVE)$(APP_BUNDLE)/Contents/Resources/$$locFolder/$$locFile; \
-				rm -rf $(BUNDLE_LOCALIZATON_ROOT_REMOVE)$(APP_BUNDLE)/Contents/Resources/$$locFolder/$$locFile/CVS; \
-				rm -rf $(BUNDLE_LOCALIZATON_ROOT_REMOVE)$(APP_BUNDLE)/Contents/Resources/$$locFolder/$$locFile/*/CVS; \
-			done; \
-		done
+	for locFolder in $(BUNDLE_LOCALIZATON_FOLDERS); do \
+		cp -R $$locFolder $(APP_BUNDLE)/Contents/Resources/; \
+	done
+	find $(APP_BUNDLE)/Contents/Resources -type d -and \( -name CVS -or -name \*~.nib \) -or -name \*~ -or -name \*.bak | xargs rm -rf
 
 install: $(APP) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
@@ -353,9 +338,9 @@ dist: distclean
 	cd $(srcdir)/../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore aranym
 
 depend dep:
-	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' Makefile > Makefile.new
-	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) | sed 's=^[^:]*:=$(OBJ_DIR)/&=' >> Makefile.new
-	mv Makefile.new Makefile
+	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' $(srcdir)/Makefile > $(srcdir)/Makefile.new
+	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) | sed 's=^[^:]*:=$(OBJ_DIR)/&=' >> $(srcdir)/Makefile.new
+	mv $(srcdir)/Makefile.new $(srcdir)/Makefile
 
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@

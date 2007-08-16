@@ -1,3 +1,63 @@
+2007/08/16 Stefan
+- darwin/host_filesys_darwin.M: Added this file now containing the file system 
+  functions.
+
+- darwin/parameters_darwin.cpp: Renamed is from .M to .cpp, as of the split-off 
+  of darwin/host_filesys_datwin.M there's no Objective C code any longer.
+
+- darwin/English.lproj/aranym.nib, darwin/German.lproj/aranym.nib: Added some 
+  more menu items to control ARAnyM.
+
+- darwin/SDL.M, darwin/SDL.h: Added functionality to recognise configuration 
+  files or bundle names passed to ARAnyM at startup due to a double-click on 
+  either one. Solved a problem on terminating ARAnyM.
+
+- darwin/Info.plist: Added information to start ARAnyM via double-click on 
+  files with the extension ".ARAnyMCFG" or ".amcfg". Added information to 
+  define a bundle folder with the extension ".ARAnyMVM" or ".amvm". Such a 
+  bundle then can contain disk images, ROMs, a config file and also other 
+  stuff. A bundel is treated by the Finder like a single file. A double-click 
+  on such a bundle now starts ARAnyM, which then looks for an 
+  "org.aranym.amcfg" or usual "config" file to use.
+
+- darwin/araynm.pbproj: As this file is not in use any more, I now removed it.
+
+- darwin/aranym.xcodeproj: Added an XCode project instead. It mainly just 
+  relies on the darwin/Makefile. 
+
+- Unix/Makefile.in: The new XCode project sets its working path to the darwin 
+  folder. To gain from the XCode features, I adapted the Unix/Makefile.in that 
+  from within the darwin folder make -f ../Makefile_ppc can be started.
+
+- darwin/Makefile: Little changes were necessary to start the autogen.sh, 
+  configure and make depend separately from within the darwin folder.
+
+- configure.ac: Changed the default config file name according the new 
+  extension to "org.aranym.acfg". Added a new configuration switch to select 
+  either the control or meta key or both to emulate the control key. Added 
+  darwin/host_filesys_darwin.M and darwin/parameters_darwin.cpp to EXTRASYSSRC 
+  and removed darwin/parameters_darwin.M instead. Changed the srcdir variable 
+  to ".." to get the make system working comfortably form within XCode.
+
+- input.cpp: Using the new defines to decide for control or meta key to map the 
+  the emulated control key.
+
+- Unix/config.h: Also here I added the new control key defines 
+  MAP_META_TO_CONTROL and MAP_CONTROL_TO_CONTROL.
+
+- INSTALL: Added a more detailed description of how to build ARAnyM for Mac OS 
+  X.
+
+- uae_cpu/compiler/codegen_x86.cpp: Removed some easy compiler warnings.
+
+- darwin/sigsegv_darwin_x86.cpp: Removed some easy compiler warnings.
+
+- Unix/vm_alloc.cpp: Removed some easy compiler warnings.
+
+- uae_cpu/compiler/gencomp.c: Removed some unused functions and thus some 
+  compiler warnings.
+
+
 2007/08/15 Philipp
 - New Xcode 1.5 project in "src/Unix/MacOSX". Old project in "src/MacOSX" has
   been removed.

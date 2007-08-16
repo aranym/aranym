@@ -1,20 +1,24 @@
-/*   SDLMain.m - main entry point for our Cocoa-ized SDL app
-       Initial Version: Darrell Walisser <dwaliss1@purdue.edu>
-       Non-NIB-Code & other changes: Max Horn <max@quendi.de>
+//	SDLMain.m - main entry point for our Cocoa-ized SDL app
 
-    Feel free to customize this file to suit your needs
-*/
+
+
 
 #import <Cocoa/Cocoa.h>
+
+
+
 
 @interface SDLMain : NSObject
 {
 }
 
-- (void) applicationDidFinishLaunching: (NSNotification *) note;
-- (void) applicationWillTerminate: (NSNotification *) aNotification;
-- (IBAction) quit:(id)obj;
-- (IBAction) showPrefs:(id)obj;
-- (IBAction) makeFullscreen:(id)obj;
+- (BOOL) application: (NSApplication *) theApplication openFile: (NSString *) filename;
+- (void) applicationDidFinishLaunching: (NSNotification *) aNotificaton;
+- (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication *) sender;
+- (IBAction) showPrefs: (id) sender;
+- (IBAction) makeFullscreen: (id) sender;
+- (IBAction) makeScreenshot: (id) sender;
+- (IBAction) reboot: (id) sender;
+- (IBAction) debug: (id) sender;
 
 @end

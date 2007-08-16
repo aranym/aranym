@@ -55,8 +55,23 @@ Details are available in tools/build-cygwin.sh.
 
   2-3) Apple Mac OS X
   -------------------
-There are several methods of building ARAnyM for OS X. Details will
-be added here.
+Go to src/Unix/darwin folder first.
+
+If you got the source code from CVS then just type
+make
+
+If you want to configure ARAnyM for your personal needs, type 
+../configure_ppc --help
+
+Add preferred options to the CONFIGURE_OPTIONS_ppc and CONFIGURE_OPTIONS_i386 
+varaibales at the top of Makefile inside the darwin folder. After that run make 
+again.
+
+If everything went OK, you got an executable named "ARAnyM.app" inside the
+src/Unix folder.
+
+There are also other methods of building ARAnyM for OS X. Refere also to the 
+documents inside src/Unix/MacOSX.
 
 
 3) Installation

@@ -2,14 +2,55 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key> NSAppleScriptEnabled</key>
+	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleDisplayName</key>
+	<string>Atari Running on Any Machine</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ARAnyMCFG</string>
+				<string>amcfg</string>
+				<string>config</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>ARAnyM Configuration</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<true/>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ARAnyMVM</string>
+				<string>amvm</string>
+				<string>aranym</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>busybee.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>ARAnyM Virtual Machine</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<true/>
+			<key>LSTypeIsPackage</key>
+			<true/>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>aranym</string>
 	<key>CFBundleGetInfoString</key>
-	<string>0.9.5beta, http://aranym.org/, released on 2007-07-14 </string>
+	<string>0.9.5 beta, http://aranym.org/, released on 2007-07-14</string>
 	<key>CFBundleIconFile</key>
-	<string>busybee</string>
+	<string>busybee.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.aranym</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -23,11 +64,13 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.9.5beta</string>
+	<string>0.9.5  beta</string>
 	<key>LSHasLocalizedDisplayName</key>
+	<true/>
+	<key>NSAppleScriptEnabled</key>
 	<false/>
 	<key>NSHumanReadableCopyright</key>
-	<string>GNU General Public License</string>
+	<string>GNU General Public License, Version 2</string>
 	<key>NSMainNibFile</key>
 	<string>aranym</string>
 	<key>NSPrincipalClass</key>

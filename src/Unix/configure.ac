@@ -63,6 +63,19 @@ AC_ARG_ENABLE(vblupdate,       [  --enable-vblupdates     enable SDL update are 
 
 AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support (default=yes)], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
 
+AC_ARG_ENABLE(ctlkey,
+[  --enable-controlkey=WICH        specify which key to use for control key emulation (default=both)],
+[ case "$enableval" in
+    dnl default is both
+    control)	CONTROL_KEY_EMULATION="control";;
+    meta)		CONTROL_KEY_EMULATION="meta";;
+    both)		CONTROL_KEY_EMULATION="both";;
+    *)		AC_MSG_ERROR([--enable-controlkey takes only one of the following values: control, meta, both]);;
+  esac
+],
+[ CONTROL_KEY="both"
+])
+
 AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI (default=yes)], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
 
 AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default=yes)], [WANT_OPENGL=$enableval], [WANT_OPENGL=yes])
@@ -331,7 +344,6 @@ case "$target_os" in
 		AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
 		EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp darwin/ethernet_darwin.cpp"
 	else
-		AC_DEFINE([SWAP_CNTRL_AND_META_KEY], 1, [Swap the meaning of the Control and Meta (Apple) key])
 		AC_DEFINE([ARANYMHOME], "ARAnyM", [Default ARAnyM directory])
 		
 		if test "x$WITH_CLASSIC_CONFIG" = "xyes"; then
@@ -341,16 +353,14 @@ case "$target_os" in
 			AC_DEFINE([ARANYMKEYMAP], "keymap", [Default ARAnyM keymap])
 		else	
 			echo "Using preference files"
-			AC_DEFINE([ARANYMCONFIG], "org.aranym.config", [Default ARAnyM config file])
+			AC_DEFINE([ARANYMCONFIG], "org.aranym.amcfg", [Default ARAnyM config file])
 			AC_DEFINE([ARANYMNVRAM], "org.aranym.nvram", [Default ARAnyM NVRAM file])
 			AC_DEFINE([ARANYMKEYMAP], "org.aranym.keymap", [Default ARAnyM keymap])
 		fi
 		
-		dnl EXTRASYSSRCS="MacOSX/parameters_MacOSX.m host_filesys_unix.cpp MacOSX/SDLMain.M"
-		EXTRASYSSRCS="darwin/parameters_darwin.M darwin/SDLMain.M darwin/ethernet_darwin.cpp"
+		EXTRASYSSRCS="darwin/SDLMain.M darwin/host_filesys_darwin.M darwin/parameters_darwin.cpp darwin/ethernet_darwin.cpp"
 
-		BUNDLE_FRAMEWORKS=   dnl Empty list of frameworks to bundle
-		dnl LDFLAGS="$LDFLAGS -FMacOSX" dnl Look for frameworks in MacOSX subdirectory
+		BUNDLE_FRAMEWORKS= dnl Empty list of frameworks to bundle
 
 		dnl Check for some important frameworks
 		ARANYM_CHECK_FRAMEWORK(AppKit, [])
@@ -778,6 +788,19 @@ AC_TRANSLATE_DEFINE(HAVE_GETOPT_H, "$ac_cv_have_getopt_long")
 if [[ "x$ac_cv_have_getopt_long" = "xno" ]]; then
   SYSSRCS="$SYSSRCS getopt_init.c getopt1.c getopt.c"
 fi
+
+case $CONTROL_KEY in
+	meta)
+		AC_DEFINE([MAP_META_TO_CONTROL], 1, [Define if you want to map the meta key to the emulated control key])
+		;;
+	both)
+		AC_DEFINE([MAP_META_TO_CONTROL], 1, [Define if you want to map the meta key to the emulated control key])
+		AC_DEFINE([MAP_CONTROL_TO_CONTROL], 1, [Define if you want to map the control key to the emulated control key])
+		;;
+	control|*)
+		AC_DEFINE([MAP_CONTROL_TO_CONTROL], 1, [Define if you want to map the control key to the emulated control key])
+		;;
+esac
 
 if [[ "x$WANT_JIT" = "xyes" ]]; then
   WANT_EXSIGSEGV=yes
@@ -1693,6 +1716,7 @@ case "$target_os" in
 			TARGET="\$(APP_BUNDLE)"
 		fi
 		ARANYM_DATADIR="\"\\\"\${datadir}/\${APP}\\\"\""
+		srcdir=".."
 		;;
 	mingw*) TARGET="\$(APP)"
 		ARANYM_DATADIR="\"\\\"./\${APP}\\\"\""

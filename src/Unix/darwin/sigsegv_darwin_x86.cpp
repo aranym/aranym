@@ -242,8 +242,6 @@ int in_handler = 0;
 /* instruction jump table */
 //i386op_func *cpufunctbl[256];
 
-static struct sigaction sigsegv_sa;
-
 enum instruction_t {
 	INSTR_UNKNOWN,
 	INSTR_MOVZX8,
@@ -1016,9 +1014,9 @@ forward_exception(mach_port_t thread_port,
  * linkage because that is what exc_server expects.
  */
 kern_return_t
-catch_exception_raise(mach_port_t exception_port,
+catch_exception_raise(mach_port_t /*exception_port*/,
 					  mach_port_t thread,
-					  mach_port_t task,
+					  mach_port_t /*task*/,
 					  exception_type_t exception,
 					  exception_data_t code,
 					  mach_msg_type_number_t codeCount)
@@ -1045,7 +1043,7 @@ catch_exception_raise(mach_port_t exception_port,
 }
 
 static void *
-handleExceptions(void *priv)
+handleExceptions(void * /*priv*/)
 {
 	D(panicbug("handleExceptions\n"));
 
