@@ -1,8 +1,15 @@
+2007/08/19 Stefan
+- darwin/busybee.icns: I made a new glossy busy bee icon.
+
+- darwin/aranym.xcodeproj: Little fix so that the compiler finds the 
+  executable.
+
+
 2007/08/16 Stefan
 - darwin/host_filesys_darwin.M: Added this file now containing the file system 
   functions.
 
-- darwin/parameters_darwin.cpp: Renamed is from .M to .cpp, as of the split-off 
+- darwin/parameters_darwin.cpp: Renamed it from .M to .cpp, as of the split-off 
   of darwin/host_filesys_datwin.M there's no Objective C code any longer.
 
 - darwin/English.lproj/aranym.nib, darwin/German.lproj/aranym.nib: Added some 

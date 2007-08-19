@@ -497,19 +497,19 @@ LOWFUNC(WRITE,NONE,2,raw_shra_b_ri,(RW1 r, IMM i))
 }
 LENDFUNC(WRITE,NONE,2,raw_shra_b_ri,(RW1 r, IMM i))
 
-LOWFUNC(WRITE,NONE,1,raw_sahf,(R2 dummy_ah))
+LOWFUNC(WRITE,NONE,1,raw_sahf,(R2))
 {
 	SAHF();
 }
 LENDFUNC(WRITE,NONE,1,raw_sahf,(R2 dummy_ah))
 
-LOWFUNC(NONE,NONE,1,raw_cpuid,(R4 dummy_eax))
+LOWFUNC(NONE,NONE,1,raw_cpuid,(R4))
 {
 	CPUID();
 }
 LENDFUNC(NONE,NONE,1,raw_cpuid,(R4 dummy_eax))
 
-LOWFUNC(READ,NONE,1,raw_lahf,(W2 dummy_ah))
+LOWFUNC(READ,NONE,1,raw_lahf,(W2))
 {
 	LAHF();
 }
@@ -602,7 +602,7 @@ LOWFUNC(NONE,NONE,2,raw_mul_64_32,(RW4 d, RW4 s))
 }
 LENDFUNC(NONE,NONE,2,raw_mul_64_32,(RW4 d, RW4 s))
 
-LOWFUNC(NONE,NONE,2,raw_mul_32_32,(RW4 d, R4 s))
+LOWFUNC(NONE,NONE,2,raw_mul_32_32,(RW4, R4))
 {
 	abort(); /* %^$&%^$%#^ x86! */
 }
@@ -3221,11 +3221,11 @@ static inline void raw_emit_nop_filler(int nbytes)
     f32_1, f32_2, f32_3, f32_4, f32_5, f32_6, f32_7, f32_8,
     f32_9, f32_10, f32_11, f32_12, f32_13, f32_14, f32_15
   };
-  static const uae_u8 prefixes[4] = { 0x66, 0x66, 0x66, 0x66 };
 
 #if defined(CPU_x86_64)
   /* The recommended way to pad 64bit code is to use NOPs preceded by
      maximally four 0x66 prefixes.  Balance the size of nops.  */
+  static const uae_u8 prefixes[4] = { 0x66, 0x66, 0x66, 0x66 };
   if (nbytes == 0)
 	  return;
 
