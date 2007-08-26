@@ -152,7 +152,7 @@ TARGET = @TARGET@
 ## Rules
 .PHONY: install installdirs uninstall mostlyclean clean distclean depend dep $(APP_BUNDLE)
 .SUFFIXES:
-.SUFFIXES: .c .cpp .s .o .h .m .M
+.SUFFIXES: .c .cpp .s .o .h .m .M .mm
 
 all: $(TARGET) $(TAPIF)
 
@@ -196,7 +196,11 @@ $(APP_BUNDLE): $(APP)
 	#mkdir -p $(APP_BUNDLE)/Contents/ARAnyM
 	mkdir -p $(APP_BUNDLE)/Contents/Resources
 	mkdir -p $(APP_BUNDLE)/Contents/Frameworks
-	cp -rp $(BUNDLE_FRAMEWORKS) $(APP_BUNDLE)/Contents/Frameworks
+	for fwFolder in $(BUNDLE_FRAMEWORKS); do \
+	    if test -d $$fwFolder; then \
+		cp -rp $$fwFolder $(APP_BUNDLE)/Contents/Frameworks/; \
+	    fi; \
+	done
 	cp -r $(BUNDLE_RESOURCES) $(APP_BUNDLE)/Contents/Resources
 	for locFolder in $(BUNDLE_LOCALIZATON_FOLDERS); do \
 		cp -R $$locFolder $(APP_BUNDLE)/Contents/Resources/; \
@@ -345,6 +349,8 @@ depend dep:
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.m
+	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o : %.mm
 	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
 	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
