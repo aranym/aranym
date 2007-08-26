@@ -1,3 +1,47 @@
+2007/08/26 Jens
+- darwin/English.lproj: Tags set on menu entries
+
+- darwin/German.lproj: Tags set on menu entries
+
+- darwin/Makefile: Fix to make it 10.3.9 compatible (code for modifying config_ppc.h
+  taken from the xcodeproj)
+
+- darwin/ethernet_darwin.cpp: If it is started as fullscreen application, leave the fullscreen mode before 
+  opening the authorization dialog. After initialization reenter fullscreen mode. Added Authorization Service 
+  to ask for the user password for starting up the ethernet connection. Location of aratapif.sh changed to 
+  "~/Library/Application Support/ARAnyM"
+
+- darwin/Readme_ethernet.txt: Updated information for installation of the ethernet on Mac.
+
+- darwin/sigsegv_darwin_x86.cpp: Commented a enum value to reduce warnings during compilation.
+
+- darwin/SDLHotkeysRefresh.mm: New code interacting as an interface
+  between the cpp code and the Objective-C code of the MAC part that
+  updates the menu shortcuts.
+
+- gui-osx/German.lproj: Added german version
+
+- gui-osx/English.lproj: added tags for the different menu entries. For a list of the used tags 
+  see darwin/SDLHotkeysRefresh.mm
+
+- MacOSX/Readme.rtf: JIT/Ethernet comment changed
+
+- MacOSX/MacAranym.xcodeproj: changed that the configure is running twice for each target, to make sure that 
+  the config file is generated correctly for the target. Added Security.Framework.
+
+- configure.ac: Fixed a typo using vblupdates; added Security.Framework;
+  added SDLHotkeysRefresh.mm to source list for Makefile build
+
+- input.cpp: Fixed getting modifier if it is pushed by a Menu key
+
+- gui-sdl/dlgMain.cpp/main_unix.cpp: Call refreshHotkeys() on Mac to
+  update the key shortcuts in the screen menu bar
+
+- Makefile.in: Added compilation rules for .mm files. Fixed bundle
+  creation copying frameworks if SDL_image.framework is not available
+  it fails before.
+
+
 2007/08/19 Stefan
 - darwin/busybee.icns: I made a new glossy busy bee icon.
 
