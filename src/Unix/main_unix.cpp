@@ -47,6 +47,9 @@
 typedef void (*sighandler_t)(int);
 #endif
 
+#ifdef OS_darwin
+	extern void refreshMenuKeys();
+#endif
 
 static sighandler_t oldsegfault = SIG_ERR;
 
@@ -279,6 +282,10 @@ int main(int argc, char **argv)
 	D(bug("Initialization complete"));
 
 	install_signal_handler();
+
+#ifdef OS_darwin
+	refreshMenuKeys();
+#endif
 
 	// Start 68k and jump to ROM boot routine
 	D(bug("Starting emulation..."));

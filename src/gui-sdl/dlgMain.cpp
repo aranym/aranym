@@ -30,6 +30,10 @@
 #define Screen_SetFullUpdate()
 #define Screen_Draw()		{ SCRLOCK; hostScreen.restoreBackground(); SCRUNLOCK; }
 
+#ifdef OS_darwin
+	extern void refreshMenuKeys();
+#endif
+
 /* The main dialog: */
 enum MAINDLG {
 	box_main,
@@ -228,6 +232,9 @@ void Dialog_MainDlg()
 	SCRLOCK;
 	SDL_ShowCursor(SDL_DISABLE);
 	SCRUNLOCK;
+#ifdef OS_darwin
+	refreshMenuKeys();
+#endif
 }
 
 /*-----------------------------------------------------------------------*/
