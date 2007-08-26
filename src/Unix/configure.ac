@@ -59,7 +59,7 @@ AC_ARG_ENABLE(blitmemmove,     [  --enable-blitmemmove    enable Blitter memmove
 
 AC_ARG_ENABLE(blitsdlblit,     [  --enable-blitsdlblit    enable SDL blitting routine EXPERIMENTAL UNSUPPORTED BUGGY (default=no)], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
 
-AC_ARG_ENABLE(vblupdate,       [  --enable-vblupdates     enable SDL update are only done during vbl ticks (default=no)], [WANT_VBLUPDATES=$enableval], [WANT_VBLUPDATES=no])
+AC_ARG_ENABLE(vblupdates,      [  --enable-vblupdates     enable SDL update are only done during vbl ticks (default=no)], [WANT_VBLUPDATES=$enableval], [WANT_VBLUPDATES=no])
 
 AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support (default=yes)], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
 
@@ -342,7 +342,7 @@ case "$target_os" in
 	AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
 	if test "x$WITH_FINK" = "xyes"; then
 		AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
-		EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp darwin/ethernet_darwin.cpp"
+		EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp darwin/ethernet_darwin.cpp darwin/SDLHotkeysRefresh.mm"
 	else
 		AC_DEFINE([ARANYMHOME], "ARAnyM", [Default ARAnyM directory])
 		
@@ -358,7 +358,7 @@ case "$target_os" in
 			AC_DEFINE([ARANYMKEYMAP], "org.aranym.keymap", [Default ARAnyM keymap])
 		fi
 		
-		EXTRASYSSRCS="darwin/SDLMain.M darwin/host_filesys_darwin.M darwin/parameters_darwin.cpp darwin/ethernet_darwin.cpp"
+		EXTRASYSSRCS="darwin/SDLMain.M darwin/host_filesys_darwin.M darwin/parameters_darwin.cpp darwin/ethernet_darwin.cpp darwin/SDLHotkeysRefresh.mm"
 
 		BUNDLE_FRAMEWORKS= dnl Empty list of frameworks to bundle
 
@@ -366,6 +366,7 @@ case "$target_os" in
 		ARANYM_CHECK_FRAMEWORK(AppKit, [])
 		ARANYM_CHECK_FRAMEWORK(CoreFoundation, [#include <CoreFoundation/CoreFoundation.h>])
 		ARANYM_CHECK_FRAMEWORK(IOKit, [#include <IOKit/IOKitLib.h>])
+		ARANYM_CHECK_FRAMEWORK(Security, [#include <Security/Security.h>])
 	fi
 	;;
   beos*)
