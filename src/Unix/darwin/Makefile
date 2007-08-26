@@ -55,7 +55,7 @@ $(srcdir)/config.h: $(srcdir)/config_i386.h $(srcdir)/config_ppc.h
 	echo "#endif" >> $(srcdir)/config.h
 
 
-$(srcdir)/config_i386.h: $(srcdir)/configure.ac $(srcdir)/autogen.sh $(srcdir)/acinclude.m4 sdl.m4 $(srcdir)/config.guess $(srcdir)/config.h.in
+$(srcdir)/config_i386.h: $(srcdir)/configure.ac $(srcdir)/autogen.sh $(srcdir)/acinclude.m4 sdl.m4 $(srcdir)/config.guess
 	cd $(srcdir)/; NO_CONFIGURE=yes ACLOCAL_FLAGS=$(ACLOCAL_FLAGS) ./autogen.sh;
 	cd $(srcdir)/; ./configure $(CONFIGURE_OPTIONS_i386)
 	make -f $(srcdir)/Makefile depend
@@ -64,7 +64,7 @@ $(srcdir)/config_i386.h: $(srcdir)/configure.ac $(srcdir)/autogen.sh $(srcdir)/a
 	mv $(srcdir)/config.h $(srcdir)/config_i386.h
 
 
-$(srcdir)/config_ppc.h: $(srcdir)/configure.ac $(srcdir)/autogen.sh $(srcdir)/acinclude.m4 sdl.m4 $(srcdir)/config.guess $(srcdir)/config.h.in
+$(srcdir)/config_ppc.h: $(srcdir)/configure.ac $(srcdir)/autogen.sh $(srcdir)/acinclude.m4 sdl.m4 $(srcdir)/config.guess
 	cd $(srcdir)/; NO_CONFIGURE=yes ACLOCAL_FLAGS=$(ACLOCAL_FLAGS) ./autogen.sh;
 	cd $(srcdir)/; ./configure $(CONFIGURE_OPTIONS_ppc)
 	make -f $(srcdir)/Makefile depend

@@ -1,3 +1,9 @@
+2007/08/27 Jens
+- darwin/Makefile: removed config.h.in dependency from Makefile.
+  It makes some trouble building the Makefile target directly after
+  a CVS checkout and I don't think it's really necessary.
+
+
 2007/08/26 Jens
 - darwin/English.lproj: Tags set on menu entries
 
