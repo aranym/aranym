@@ -70,7 +70,10 @@ $(srcdir)/config_ppc.h: $(srcdir)/configure.ac $(srcdir)/autogen.sh $(srcdir)/ac
 	make -f $(srcdir)/Makefile depend
 	mv $(srcdir)/configure $(srcdir)/configure_ppc
 	mv $(srcdir)/config.log $(srcdir)/config_ppc.log
-	mv $(srcdir)/config.h $(srcdir)/config_ppc.h
+	# 10.3.9 compatibility:
+	cat $(srcdir)/config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\/* #undef HAVE_SYS_STATVFS_H *\//' > $(srcdir)/config_ppc.h
+	rm $(srcdir)/config.h
+#	mv $(srcdir)/config.h $(srcdir)/config_ppc.h
 
 
 $(srcdir)/Makefile_i386: $(srcdir)/config_i386.h $(srcdir)/Makefile.in
