@@ -55,7 +55,7 @@ typedef char * sigsegv_address_t;
 enum sigsegv_return_t {
   SIGSEGV_RETURN_SUCCESS,
   SIGSEGV_RETURN_FAILURE,
-  SIGSEGV_RETURN_SKIP_INSTRUCTION,
+//  SIGSEGV_RETURN_SKIP_INSTRUCTION,
 };
 
 // Define an address that is bound to be invalid for a program counter
