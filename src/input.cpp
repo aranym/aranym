@@ -489,8 +489,13 @@ static void process_keyboard_event(const SDL_Event &event)
 {
 	SDL_keysym keysym = event.key.keysym;
 	SDLKey sym = keysym.sym;
-	int state = SDL_GetModState(); // keysym.mod does not deliver single mod key presses for some reason
-
+	int state;
+	
+	if (keysym.mod == 0)
+		state  = SDL_GetModState(); // keysym.mod does not deliver single mod key presses for some reason
+	else
+		state = keysym.mod;	// May be send by SDL_PushEvent
+		
 #ifdef SDL_GUI
 	if (hostScreen.isGUIopen()) {
 		SDL_Event ev;
