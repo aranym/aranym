@@ -22,7 +22,7 @@
  * along with ARAnyM; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Last modified: 2007-08-09 Jens Heitmann
+ * Last modified: 2007-08-22 Jens Heitmann
  *
  */
 
@@ -31,7 +31,9 @@
  
 #include "cpu_emulation.h"
 #include "main.h"
+#include "host.h"			// for the HostScreen
 #include "ethernet_darwin.h"
+#include "host.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -44,33 +46,115 @@
 #include <net/if.h>
 #include <errno.h>
 
+#include <Security/Authorization.h>
+#include <Security/AuthorizationTags.h>
+
 /****************************
  * Configuration zone begins
  */
 
-#define SUDO		"sudo"
-#define TAP_INIT	"/usr/local/bin/aratapif.sh"
+#define TAP_SHELL	"/bin/sh"
+#define TAP_INIT	"Library/Application Support/ARAnyM/aratapif.sh"
 #define TAP_MTU		"1500"
 
 /*
  * Configuration zone ends
  **************************/
 
+static OSStatus authStatus;
+static AuthorizationRef authorizationRef;
+static bool fullscreen;
+
+static int openAuthorizationContext()
+{
+	if (authorizationRef == NULL) {
+
+		AuthorizationFlags authFlags = kAuthorizationFlagDefaults;// 1
+
+		authStatus = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment,// 3
+					authFlags, &authorizationRef);// 4
+		if (authStatus != errAuthorizationSuccess)
+			return authStatus;
+
+		fullscreen = bx_options.video.fullscreen;
+		if ( fullscreen )
+			hostScreen.toggleFullScreen();			
+
+		AuthorizationItem authItems = {kAuthorizationRightExecute, 0,// 5
+						NULL, 0};// 6
+		AuthorizationRights authRights = {1, &authItems};// 7
+		authFlags = kAuthorizationFlagDefaults |// 8
+						kAuthorizationFlagInteractionAllowed |// 9
+						kAuthorizationFlagPreAuthorize |// 10
+						kAuthorizationFlagExtendRights;// 11
+		authStatus = AuthorizationCopyRights (authorizationRef, &authRights, NULL, authFlags, NULL );// 12
+		return authStatus;
+		}
+	else
+		return authStatus;
+}
+
+static void closeAuthoizationContext()
+{
+	if (authorizationRef) {
+		AuthorizationFree (authorizationRef, kAuthorizationFlagDefaults);// 17
+		authorizationRef = NULL;
+
+		if ( fullscreen ) {
+			hostScreen.toggleFullScreen();
+		}
+	}
+}
+
+static int executeScriptAsRoot(char *application, char *args[]) {
+    OSStatus execStatus;
+	char app[2048];
+		
+	Host::getHomeFolder(app, sizeof(app));
+	strcat(app, DIRSEPARATOR);
+	strcat(app, application);
+	args[0] = app;
+	
+	FILE *authCommunicationsPipe = NULL;
+	char execReadBuffer[128];
+
+	AuthorizationFlags authFlags = kAuthorizationFlagDefaults;// 13
+	execStatus = AuthorizationExecuteWithPrivileges// 14
+                    (authorizationRef, TAP_SHELL, authFlags, args,// 15
+                    &authCommunicationsPipe);// 16
+					
+	if (execStatus == errAuthorizationSuccess)
+		for(;;) {
+			int bytesRead = read (fileno (authCommunicationsPipe),
+				execReadBuffer, sizeof (execReadBuffer));
+			if (bytesRead < 1) break;
+			write (fileno (stdout), execReadBuffer, bytesRead);
+		}
+				
+    return execStatus;
+}
 
 bool TunTapEthernetHandler::open() {
 	// int nonblock = 1;
 	char *devName = bx_options.ethernet[ethX].tunnel;
 
+	if ( strcmp(bx_options.ethernet[ethX].type, "none") == 0 ) {
+		if (ethX == MAX_ETH - 1) closeAuthoizationContext();
+		return false;	
+	}
+
+	// if 'bridge' mode then we are done
+	if ( strcmp(bx_options.ethernet[ethX].type, "bridge") == 0 ) {
+		panicbug("TunTap(%d): Bridge mode currently not supported '%s'", ethX, devName);
+		if (ethX == MAX_ETH - 1) closeAuthoizationContext();
+		return false;	
+	}
+	
 	// get the tunnel nif name if provided
 	if (strlen(devName) == 0) {
 		D(bug("TunTap(%d): tunnel name undefined", ethX));
+		if (ethX == MAX_ETH - 1) closeAuthoizationContext();
 		return false;
-	}
-	
-	// if 'bridge' mode then we are done
-	if ( strcmp(bx_options.ethernet[ethX].type, "bridge") == 0 ) {
-		panicbug("TunTap(%d): Bridge mode currently not supported '%s': %s", ethX, devName);
-		return false;	
 	}
 	
 	D(bug("TunTap(%d): open('%s')", ethX, devName));
@@ -78,63 +162,51 @@ bool TunTapEthernetHandler::open() {
 	fd = tapOpen( devName );
 	if (fd < 0) {
 		panicbug("TunTap(%d): NO_NET_DRIVER_WARN '%s': %s", ethX, devName, strerror(errno));
+		if (ethX == MAX_ETH - 1) closeAuthoizationContext();
 		return false;
 	}
 
-
-	int pid = fork();
-	if (pid < 0) {
-		panicbug("TunTap(%d): ERROR: fork() failed. Ethernet disabled!", ethX);
+	int auth = openAuthorizationContext();
+	if (auth) {
 		::close(fd);
-		return false;
-	}
-
-	if (pid == 0) {
+		panicbug("TunTap(%d): Authorization failed'%s'", ethX, devName);
+		return false;	
+		}
+		
+	bool failed = true;
+	{
 		// the arguments _need_ to be placed into the child process
 		// memory (otherwise this does not work here)
 		char *args[] = {
-			SUDO,
-			TAP_INIT,
+			NULL, // replaced with application support shell script
 			bx_options.ethernet[ethX].tunnel,
 			bx_options.ethernet[ethX].ip_host,
 			bx_options.ethernet[ethX].ip_atari,
 			bx_options.ethernet[ethX].netmask,
 			TAP_MTU, NULL
 		};
-		int result;
-		result = execvp( SUDO, args );
-		_exit(result);
-	}
 
-	D(bug("TunTap(%d): waiting for "TAP_INIT" at pid %d", ethX, pid));
-	int status;
-	waitpid(pid, &status, 0);
-	bool failed = true;
-	if (WIFEXITED(status)) {
-		int err = WEXITSTATUS(status);
-		if (err == 255) {
-			panicbug("TunTap(%d): ERROR: "TAP_INIT" not found. Ethernet disabled!", ethX);
-		}
-		else if (err != 0) {
-			panicbug("TunTap(%d): ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", ethX, err);
+		int result = executeScriptAsRoot( TAP_INIT, args );
+		if (result != 0) {
+			panicbug("TunTap(%d): ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", ethX, result);
 		}
 		else {
 			failed = false;
 			D(bug("TunTap(%d): "TAP_INIT" initialized OK", ethX));
 		}
-	} else {
-		panicbug("TunTap(%d): ERROR: "TAP_INIT" could not be started. Ethernet disabled!", ethX);
 	}
-
+	
 	// Close /dev/net/tun device if exec failed
 	if (failed) {
 		::close(fd);
+		if (ethX == MAX_ETH - 1) closeAuthoizationContext();
 		return false;
 	}
 
 	// Set nonblocking I/O
 	//ioctl(fd, FIONBIO, &nonblock);
 
+	if (ethX == MAX_ETH - 1) closeAuthoizationContext();
 	return true;
 }
 
@@ -170,7 +242,8 @@ int TunTapEthernetHandler::tapOpenOld(char *dev)
 		snprintf(tapname, sizeof(tapname), "/dev/%s", dev);
 		tapname[sizeof(tapname)-1] = '\0';
 		D(bug("TunTap(%d): tapOpenOld %s", ethX, tapname));
-		return ::open(tapname, O_RDWR);
+		fd=::open(tapname, O_RDWR);
+		if (fd > 0)	return fd;
     }
 
     for(i=0; i < 255; i++) {
