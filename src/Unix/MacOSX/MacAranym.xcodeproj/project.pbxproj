@@ -772,6 +772,7 @@
 		B49164930C540C2200CFB5B0 /* cpuemu_nf.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu_nf.cpp; path = build/MacAranym.build/cpuemu_nf.cpp; sourceTree = "<group>"; };
 		B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ethernet_darwin.cpp; path = darwin/ethernet_darwin.cpp; sourceTree = "<group>"; };
 		B4A9E9C20C5B33AC00C156C3 /* ethernet_darwin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ethernet_darwin.h; path = darwin/ethernet_darwin.h; sourceTree = "<group>"; };
+		B4C86DDB0C823CCA0077FB6E /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4F045C90C493BF000CF31D2 /* compemu.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = compemu.cpp; path = build/MacAranym.build/compemu.cpp; sourceTree = "<group>"; };
 		B4F045CA0C493BF000CF31D2 /* comptbl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = comptbl.h; path = build/MacAranym.build/comptbl.h; sourceTree = "<group>"; };
 		B4F045CB0C493BF000CF31D2 /* cputbl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cputbl.h; path = build/MacAranym.build/cputbl.h; sourceTree = "<group>"; };
@@ -1917,6 +1918,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				B428FAF60C7BA7100039CA66 /* English */,
+				B4C86DDB0C823CCA0077FB6E /* German */,
 			);
 			name = aranym.nib;
 			sourceTree = "<group>";
