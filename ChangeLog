@@ -3,6 +3,11 @@
   It makes some trouble building the Makefile target directly after
   a CVS checkout and I don't think it's really necessary.
 
+- gui-osx/English.lproj: Fixed properties tag
+
+- MacOSX/MacAranym.xcodeproj:German bundle added to package
+
+
 
 2007/08/26 Jens
 - darwin/English.lproj: Tags set on menu entries
