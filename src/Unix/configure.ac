@@ -182,7 +182,7 @@ AC_ARG_ENABLE(purec,           [  --enable-purec          enable corrupted stack
 AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
 
 dnl Host OS type (host is build if not cross-compiling).
-case "host_os" in
+case "$host_os" in
   linux*)	OS_TYPE=linux;;
   openbsd*)	OS_TYPE=openbsd;;
   netbsd*)	OS_TYPE=netbsd;;
