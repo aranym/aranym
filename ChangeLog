@@ -2,6 +2,7 @@
 - configure.ac: replace AC_CANONICAL_SYSTEM by AC_CANONICAL_HOST, use
   $host_xxx instead of $target_xxx.
 - Fix make depend.
+- Replace reserved identifier __always_inline by always_inline.
 
 
 2007/08/27 Jens

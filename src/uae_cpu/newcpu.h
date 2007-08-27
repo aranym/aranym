@@ -95,15 +95,15 @@ extern void REGPARAM2 op_illg (uae_u32) REGPARAM;
 #define m68k_areg(r,num) (((r).regs + 8)[(num)])
 
 #ifdef FULLMMU
-static __always_inline uae_u8 get_ibyte(uae_u32 o)
+static always_inline uae_u8 get_ibyte(uae_u32 o)
 {
 	return mmu_get_byte(m68k_getpc() + o + 1, 0, sz_byte);
 }
-static __always_inline uae_u16 get_iword(uae_u32 o)
+static always_inline uae_u16 get_iword(uae_u32 o)
 {
 	return mmu_get_word(m68k_getpc() + o, 0, sz_word);
 }
-static __always_inline uae_u32 get_ilong(uae_u32 o)
+static always_inline uae_u32 get_ilong(uae_u32 o)
 {
 	uaecptr addr = m68k_getpc() + o;
 
