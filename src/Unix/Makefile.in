@@ -342,9 +342,9 @@ dist: distclean
 	cd $(srcdir)/../../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore aranym
 
 depend dep:
-	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' $(srcdir)/Makefile > $(srcdir)/Makefile.new
-	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) | sed 's=^[^:]*:=$(OBJ_DIR)/&=' >> $(srcdir)/Makefile.new
-	mv $(srcdir)/Makefile.new $(srcdir)/Makefile
+	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' Makefile > Makefile.new
+	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) | sed 's=^[^:]*:=$(OBJ_DIR)/&=' >> Makefile.new
+	mv Makefile.new Makefile
 
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
