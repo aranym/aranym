@@ -7,7 +7,7 @@ AC_PREREQ(2.52)
 AC_CONFIG_HEADER(config.h)
 
 dnl Canonical system information.
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_HOST
 
 dnl Options.
 AC_ARG_ENABLE(nat-debug,     [  --enable-nat-debug      enable native debugger support (default=yes)], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
@@ -181,8 +181,8 @@ AC_ARG_ENABLE(purec,           [  --enable-purec          enable corrupted stack
 
 AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
 
-dnl Target OS type (target is host if not cross-compiling).
-case "$target_os" in
+dnl Host OS type (host is build if not cross-compiling).
+case "host_os" in
   linux*)	OS_TYPE=linux;;
   openbsd*)	OS_TYPE=openbsd;;
   netbsd*)	OS_TYPE=netbsd;;
@@ -194,7 +194,7 @@ case "$target_os" in
   mint*)	OS_TYPE=mint;;
   beos*)	OS_TYPE=beos;;
   mingw*)	OS_TYPE=mingw;;
-  *)		OS_TYPE=`echo $target_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
+  *)		OS_TYPE=`echo $host_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
 esac
 DEFINES="$DEFINES -DOS_$OS_TYPE"
 AC_DEFINE_UNQUOTED([OS_TYPE], "$OS_TYPE", [Define OS type])
@@ -206,7 +206,7 @@ HAVE_M68K=no
 HAVE_SPARC=no
 HAVE_POWERPC=no
 HAVE_X86_64=no
-case "$target_cpu" in
+case "$host_cpu" in
   i386* | i486* | i586* | i686* | i786* )
 	CPU_TYPE=i386
 	HAVE_I386=yes
@@ -232,7 +232,7 @@ case "$target_cpu" in
 	fi
 	;;
   x86_64* ) CPU_TYPE=x86_64 HAVE_X86_64=yes;;
-  *) CPU_TYPE=`echo $target_cpu | sed -e 's/-/_/g'`;;
+  *) CPU_TYPE=`echo $host_cpu | sed -e 's/-/_/g'`;;
 esac
 DEFINES="$DEFINES -DCPU_$CPU_TYPE"
 AC_DEFINE_UNQUOTED([CPU_TYPE], "$CPU_TYPE", [Define CPU type])
@@ -316,7 +316,7 @@ fi
 
 AC_DEFINE([DIRSEPARATOR], "/", [Default directory separator])
 
-case "$target_os" in
+case "$host_os" in
   linux*)
     EXTRASYSSRCS="linux/parameters_linux.cpp linux/ethernet_linux.cpp host_filesys_unix.cpp"
     ;;
@@ -440,7 +440,7 @@ fi
 AC_TRANSLATE_DEFINE(HAVE_MACH_VM, "$have_mach_vm",
   [Define if your system has a working vm_allocate()-based memory allocator.])
 
-case "$target_os" in
+case "$host_os" in
   darwin*)	OSdarwinReq="#define OS_darwin";;
   *)		OSdarwinReq= ;;
 esac
@@ -980,7 +980,7 @@ fi
 
 dnl Extended signal segmentation fault handler
 if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
-  case "$target_os" in
+  case "$host_os" in
     linux*)
       case "$CPU_TYPE" in
         i386)
@@ -1266,7 +1266,7 @@ elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
   fi
 elif [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xyes" ]]; then
   dnl SPARC CPU
-  case "$target_os" in
+  case "$host_os" in
   solaris*)
     AC_MSG_CHECKING(SPARC CPU architecture)
     SPARC_TYPE=`solaris/which_sparc`
@@ -1561,7 +1561,7 @@ NFCDROMSRCS=""
 if [[ "x$WANT_NFCDROM" = "xyes" ]]; then
 	AC_DEFINE([NFCDROM_SUPPORT], 1, [Define if you want to use host CD-ROM driver])
 	NFCDROMSRCS="../natfeat/nfcdrom.cpp"
-	case "$target_os" in
+	case "$host_os" in
 		linux*)
 			NFCDROMSRCS="$NFCDROMSRCS ../natfeat/nfcdrom_linux.cpp"
 			AC_DEFINE([NFCDROM_LINUX_SUPPORT], 1, [Define if you want to use Linux support as CD-ROM driver])
@@ -1573,7 +1573,7 @@ dnl Natfeat PCI driver
 
 NFPCISRCS=""
 if [[ "x$WANT_NFPCI" = "xyes" ]]; then
-	case "$target_os" in
+	case "$host_os" in
 		linux*)
 			AC_DEFINE([NFPCI_SUPPORT], 1, [Define if you want to use host PCI driver])
 			NFPCISRCS="../natfeat/nfpci.cpp"
@@ -1597,7 +1597,7 @@ if test "x$WANT_NFOSMESA" = "xyes"; then
 		if test "x$WITH_MESAINC" != "xno"; then
 			CPPFLAGS="$CPPFLAGS -I$WITH_MESAINC"
 		else
-			case "$target_os" in
+			case "$host_os" in
 				dnl For darwin the OSMesa include path is by default not defined
 				darwin*)
 					CPPFLAGS="$CPPFLAGS -I/usr/X11R6/include/"
@@ -1709,7 +1709,7 @@ fi
 dnl Data directory
 
 APP=aranym
-case "$target_os" in
+case "$host_os" in
 	darwin*)
 		if test "x$WITH_FINK" = "xyes"; then
 			TARGET="\$(APP)"
