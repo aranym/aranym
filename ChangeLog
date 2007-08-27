@@ -1,3 +1,9 @@
+2007/08/27 - Andreas
+- configure.ac: replace AC_CANONICAL_SYSTEM by AC_CANONICAL_HOST, use
+  $host_xxx instead of $target_xxx.
+- Fix make depend.
+
+
 2007/08/27 Jens
 - darwin/Makefile: removed config.h.in dependency from Makefile.
   It makes some trouble building the Makefile target directly after
