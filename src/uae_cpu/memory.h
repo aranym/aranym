@@ -126,7 +126,7 @@ extern uintptr FastRAMBaseDiff;
 #endif
 
 #ifndef NOCHECKBOUNDARY
-static always_inline bool test_ram_boundary(uaecptr addr, int size, bool super, bool write)
+static ALWAYS_INLINE bool test_ram_boundary(uaecptr addr, int size, bool super, bool write)
 {
 	if (addr <= (FastRAM_BEGIN + FastRAM_SIZE - size)) {
 #ifdef PROTECT2K
@@ -149,7 +149,7 @@ static always_inline bool test_ram_boundary(uaecptr addr, int size, bool super, 
 /*
  * "size" is the size of the memory access (byte = 1, word = 2, long = 4)
  */
-static always_inline void check_ram_boundary(uaecptr addr, int size, bool write)
+static ALWAYS_INLINE void check_ram_boundary(uaecptr addr, int size, bool write)
 {
 	if (test_ram_boundary(addr, size, regs.s, write))
 		return;
@@ -324,17 +324,17 @@ static inline void phys_put_byte(uaecptr addr, uae_u32 b)
 }
 
 #ifdef FULLMMU
-static always_inline bool is_unaligned(uaecptr addr, int size)
+static ALWAYS_INLINE bool is_unaligned(uaecptr addr, int size)
 {
     return unlikely((addr & (size - 1)) && (addr ^ (addr + size - 1)) & 0x1000);
 }
 
-static always_inline uae_u8 *mmu_get_real_address(uaecptr addr, struct mmu_atc_line *cl)
+static ALWAYS_INLINE uae_u8 *mmu_get_real_address(uaecptr addr, struct mmu_atc_line *cl)
 {
 	return do_get_real_address(cl->phys + addr);
 }
 
-static always_inline uae_u32 mmu_get_long(uaecptr addr, int data, int size)
+static ALWAYS_INLINE uae_u32 mmu_get_long(uaecptr addr, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -343,14 +343,14 @@ static always_inline uae_u32 mmu_get_long(uaecptr addr, int data, int size)
 	return mmu_get_long_slow(addr, regs.s, data, size, cl);
 }
 
-static always_inline uae_u32 get_long(uaecptr addr)
+static ALWAYS_INLINE uae_u32 get_long(uaecptr addr)
 {
 	if (unlikely(is_unaligned(addr, 4)))
 		return mmu_get_long_unaligned(addr, 1);
 	return mmu_get_long(addr, 1, sz_long);
 }
 
-static always_inline uae_u16 mmu_get_word(uaecptr addr, int data, int size)
+static ALWAYS_INLINE uae_u16 mmu_get_word(uaecptr addr, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -359,14 +359,14 @@ static always_inline uae_u16 mmu_get_word(uaecptr addr, int data, int size)
 	return mmu_get_word_slow(addr, regs.s, data, size, cl);
 }
 
-static always_inline uae_u16 get_word(uaecptr addr)
+static ALWAYS_INLINE uae_u16 get_word(uaecptr addr)
 {
 	if (unlikely(is_unaligned(addr, 2)))
 		return mmu_get_word_unaligned(addr, 1);
 	return mmu_get_word(addr, 1, sz_word);
 }
 
-static always_inline uae_u8 mmu_get_byte(uaecptr addr, int data, int size)
+static ALWAYS_INLINE uae_u8 mmu_get_byte(uaecptr addr, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -375,12 +375,12 @@ static always_inline uae_u8 mmu_get_byte(uaecptr addr, int data, int size)
 	return mmu_get_byte_slow(addr, regs.s, data, size, cl);
 }
 
-static always_inline uae_u8 get_byte(uaecptr addr)
+static ALWAYS_INLINE uae_u8 get_byte(uaecptr addr)
 {
 	return mmu_get_byte(addr, 1, sz_byte);
 }
 
-static always_inline void mmu_put_long(uaecptr addr, uae_u32 val, int data, int size)
+static ALWAYS_INLINE void mmu_put_long(uaecptr addr, uae_u32 val, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -390,7 +390,7 @@ static always_inline void mmu_put_long(uaecptr addr, uae_u32 val, int data, int 
 		mmu_put_long_slow(addr, val, regs.s, data, size, cl);
 }
 
-static always_inline void put_long(uaecptr addr, uae_u32 val)
+static ALWAYS_INLINE void put_long(uaecptr addr, uae_u32 val)
 {
 	if (unlikely(is_unaligned(addr, 4)))
 		mmu_put_long_unaligned(addr, val, 1);
@@ -398,7 +398,7 @@ static always_inline void put_long(uaecptr addr, uae_u32 val)
 		mmu_put_long(addr, val, 1, sz_long);
 }
 
-static always_inline void mmu_put_word(uaecptr addr, uae_u16 val, int data, int size)
+static ALWAYS_INLINE void mmu_put_word(uaecptr addr, uae_u16 val, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -408,7 +408,7 @@ static always_inline void mmu_put_word(uaecptr addr, uae_u16 val, int data, int 
 		mmu_put_word_slow(addr, val, regs.s, data, size, cl);
 }
 
-static always_inline void put_word(uaecptr addr, uae_u16 val)
+static ALWAYS_INLINE void put_word(uaecptr addr, uae_u16 val)
 {
 	if (unlikely(is_unaligned(addr, 2)))
 		mmu_put_word_unaligned(addr, val, 1);
@@ -416,7 +416,7 @@ static always_inline void put_word(uaecptr addr, uae_u16 val)
 		mmu_put_word(addr, val, 1, sz_word);
 }
 
-static always_inline void mmu_put_byte(uaecptr addr, uae_u8 val, int data, int size)
+static ALWAYS_INLINE void mmu_put_byte(uaecptr addr, uae_u8 val, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -426,7 +426,7 @@ static always_inline void mmu_put_byte(uaecptr addr, uae_u8 val, int data, int s
 		mmu_put_byte_slow(addr, val, regs.s, data, size, cl);
 }
 
-static always_inline void put_byte(uaecptr addr, uae_u8 val)
+static ALWAYS_INLINE void put_byte(uaecptr addr, uae_u8 val)
 {
 	mmu_put_byte(addr, val, 1, sz_byte);
 }
@@ -437,7 +437,7 @@ static inline uae_u8 *get_real_address(uaecptr addr, int write, int sz)
     return phys_get_real_address(mmu_translate(addr, regs.s, 1, write));
 }
 
-static always_inline uae_u32 mmu_get_user_long(uaecptr addr, int super, int data, int size)
+static ALWAYS_INLINE uae_u32 mmu_get_user_long(uaecptr addr, int super, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -446,7 +446,7 @@ static always_inline uae_u32 mmu_get_user_long(uaecptr addr, int super, int data
 	return mmu_get_long_slow(addr, super, data, size, cl);
 }
 
-static always_inline uae_u16 mmu_get_user_word(uaecptr addr, int super, int data, int size)
+static ALWAYS_INLINE uae_u16 mmu_get_user_word(uaecptr addr, int super, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -455,7 +455,7 @@ static always_inline uae_u16 mmu_get_user_word(uaecptr addr, int super, int data
 	return mmu_get_word_slow(addr, super, data, size, cl);
 }
 
-static always_inline uae_u8 mmu_get_user_byte(uaecptr addr, int super, int data, int size)
+static ALWAYS_INLINE uae_u8 mmu_get_user_byte(uaecptr addr, int super, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -464,7 +464,7 @@ static always_inline uae_u8 mmu_get_user_byte(uaecptr addr, int super, int data,
 	return mmu_get_byte_slow(addr, super, data, size, cl);
 }
 
-static always_inline void mmu_put_user_long(uaecptr addr, uae_u32 val, int super, int data, int size)
+static ALWAYS_INLINE void mmu_put_user_long(uaecptr addr, uae_u32 val, int super, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -474,7 +474,7 @@ static always_inline void mmu_put_user_long(uaecptr addr, uae_u32 val, int super
 		mmu_put_long_slow(addr, val, super, data, size, cl);
 }
 
-static always_inline void mmu_put_user_word(uaecptr addr, uae_u16 val, int super, int data, int size)
+static ALWAYS_INLINE void mmu_put_user_word(uaecptr addr, uae_u16 val, int super, int data, int size)
 {
 	struct mmu_atc_line *cl;
 
@@ -484,7 +484,7 @@ static always_inline void mmu_put_user_word(uaecptr addr, uae_u16 val, int super
 		mmu_put_word_slow(addr, val, super, data, size, cl);
 }
 
-static always_inline void mmu_put_user_byte(uaecptr addr, uae_u8 val, int super, int data, int size)
+static ALWAYS_INLINE void mmu_put_user_byte(uaecptr addr, uae_u8 val, int super, int data, int size)
 {
 	struct mmu_atc_line *cl;
 

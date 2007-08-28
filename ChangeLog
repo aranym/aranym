@@ -1,3 +1,8 @@
+2007/08/28 - Andreas
+- Rename always_inline to ALWAYS_INLINE to work around bug in MacOS
+  headers.
+
+
 2007/08/28 - Jens
 - configure.ac: Added missing $ sign determining OS_TYPE
 - macos/MacAranym.xcodeproj: adapted to new configure.ac

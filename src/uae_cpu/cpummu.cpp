@@ -278,7 +278,7 @@ void mmu_dump_tables(void)
 
 static uaecptr REGPARAM2 mmu_lookup_pagetable(uaecptr addr, int super, int write);
 
-static always_inline int mmu_get_fc(bool super, bool data)
+static ALWAYS_INLINE int mmu_get_fc(bool super, bool data)
 {
 	return (super ? 4 : 0) | (data ? 1 : 2);
 }
@@ -384,7 +384,7 @@ static uaecptr mmu_fill_atc_l2(uaecptr addr, int super, int data, int write,
 	return desc;
 }
 
-static always_inline bool
+static ALWAYS_INLINE bool
 mmu_fill_atc_l1(uaecptr addr, int super, int data, int write,
 				struct mmu_atc_line *l1)
 {

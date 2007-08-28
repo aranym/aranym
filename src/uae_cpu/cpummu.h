@@ -159,7 +159,7 @@ extern struct mmu_atc_line atc_l2[2][ATC_L2_SIZE];
  * the data and write arguments are constant in the common,
  * thus allows gcc to generate a constant offset.
  */
-static always_inline int mmu_lookup(uaecptr addr, bool data, bool write,
+static ALWAYS_INLINE int mmu_lookup(uaecptr addr, bool data, bool write,
 									  struct mmu_atc_line **cl)
 {
 	addr >>= 12;
@@ -170,7 +170,7 @@ static always_inline int mmu_lookup(uaecptr addr, bool data, bool write,
 /*
  * similiar to mmu_user_lookup, but for the use of the moves instruction
  */
-static always_inline int mmu_user_lookup(uaecptr addr, bool super, bool data,
+static ALWAYS_INLINE int mmu_user_lookup(uaecptr addr, bool super, bool data,
 										   bool write, struct mmu_atc_line **cl)
 {
 	addr >>= 12;
