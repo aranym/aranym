@@ -1,3 +1,9 @@
+2007/08/29 - Philipp
+- MacOSX/MacAranym.xcodeproj: "Debug" Konfiguration does not create a Universal
+  Binary anymore. It's for development and debugging purpose only, so there is
+  no need to compile each file for PPC and i386!
+
+
 2007/08/28 - Andreas
 - Rename always_inline to ALWAYS_INLINE to work around bug in MacOS
   headers.
@@ -5,7 +11,7 @@
 
 2007/08/28 - Jens
 - configure.ac: Added missing $ sign determining OS_TYPE
-- macos/MacAranym.xcodeproj: adapted to new configure.ac
+- MacOSX/MacAranym.xcodeproj: adapted to new configure.ac
 
 
 2007/08/27 - Andreas
