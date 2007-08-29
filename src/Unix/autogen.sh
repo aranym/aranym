@@ -38,7 +38,7 @@ if test "$DIE" -eq 1; then
         exit 1
 fi
 
-if test -z "$*"; then
+if [ -z "$*" -a -z "$NO_CONFIGURE" ]; then
         echo "I am going to run ./configure with no arguments - if you wish "
         echo "to pass any to it, please specify them on the $0 command line."
 fi
