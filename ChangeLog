@@ -1,9 +1,15 @@
+2007/08/30 - Patrice
+- sdl_gui: Render it in its own surface instead of drawing on main surface.
+  Some small redraw problems remain.
+
+
 2007/08/29 - Philipp
 - MacOSX/MacAranym.xcodeproj: "Debug" Konfiguration does not create a Universal
   Binary anymore. It's for development and debugging purpose only, so there is
   no need to compile each file for PPC and i386!
 - autoconf.sh: Fixed misleading message about running configure if NO_CONFIGURE
   is set.
+
 
 2007/08/28 - Andreas
 - Rename always_inline to ALWAYS_INLINE to work around bug in MacOS

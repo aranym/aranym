@@ -32,10 +32,28 @@
 
 #include "font8.h"
 
-#define sdlscrn		hostScreen.getPhysicalSurface()
+#define sdlscrn		gui_surf
 
 static SDL_Surface *fontgfx=NULL;
 static int fontwidth, fontheight;   /* Height and width of the actual font */
+
+/* gui surface */
+static SDL_Surface *gui_surf = NULL;
+static int gui_x = 0, gui_y = 0; /* gui position */
+
+static SDL_Color gui_palette[4] = {
+	{0,0,0,0},
+	{128,128,128,0},
+	{192,192,192, 0},
+	{255, 255, 255, 0}
+};
+
+enum {
+	blackc = 0,
+	darkgreyc,
+	greyc,
+	whitec
+};
 
 // Stores current dialog coordinates
 static SDL_Rect DialogRect = {0, 0, 0, 0};
@@ -52,11 +70,6 @@ enum
   SG_BCKGND_RECT_BOTTOM,
   SG_BCKGND_RECT_END
 };
-
-SDL_Color blackc[]     = {{0, 0, 0, 0}};
-SDL_Color darkgreyc[]  = {{128, 128, 128, 0}};
-SDL_Color greyc[]      = {{192, 192, 192, 0}};
-SDL_Color whitec[]     = {{255, 255, 255, 0}};
 
 enum
 {
@@ -120,6 +133,16 @@ bool SDLGui_Init()
     return false;
   }
 
+	gui_surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 320+8,200+8,8, 0,0,0,0);
+	if (!gui_surf) {
+		panicbug("Could not create surface for GUI");
+		panicbug("ARAnyM GUI will not be available");
+		return false;
+	}
+
+	/* Set GUI surface palette */
+	SDL_SetPalette(gui_surf, SDL_LOGPAL, gui_palette, 0, 4);
+
   /* Set font color 0 as transparent */
   SDL_SetColorKey(fontgfx, SDL_SRCCOLORKEY, 0);
 
@@ -137,6 +160,11 @@ bool SDLGui_Init()
 */
 int SDLGui_UnInit()
 {
+	if (gui_surf) {
+		SDL_FreeSurface(gui_surf);
+		gui_surf = NULL;
+	}
+
   if (fontgfx)
   {
     SDL_FreeSurface(fontgfx);
@@ -253,9 +281,10 @@ void SDLGui_UpdateRect(SDL_Rect *rect)
 /*
   Maps an SDL_Color to the screen format.
 */
-Uint32 SDLGui_MapColor(SDL_Color *color)
+Uint32 SDLGui_MapColor(int color)
 {
-  return SDL_MapRGB(sdlscrn->format, color->r, color->g, color->b);
+  return SDL_MapRGB(sdlscrn->format,
+  	gui_palette[color].r, gui_palette[color].g, gui_palette[color].b);
 }
 
 
@@ -269,9 +298,7 @@ void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
 
   SDLGui_ObjFullCoord(dlg, objnum, &coord);
 
-  SCRLOCK;
   SDLGui_UpdateRect(&coord);
-  SCRUNLOCK;
 }
 
 
@@ -279,15 +306,14 @@ void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
 /*
   Draw a text string.
 */
-void SDLGui_Text(int x, int y, const char *txt, SDL_Color *col)
+void SDLGui_Text(int x, int y, const char *txt, int col)
 {
   int i;
   char c;
   SDL_Rect sr, dr;
 
-  SDL_SetColors(fontgfx, col, 1, 1);
+  SDL_SetColors(fontgfx, &gui_palette[col], 1, 1);
 
-  SCRLOCK;
   for (i = 0 ; txt[i] != 0 ; i++)
   {
     c = txt[i];
@@ -303,7 +329,6 @@ void SDLGui_Text(int x, int y, const char *txt, SDL_Color *col)
 
     SDL_BlitSurface(fontgfx, &sr, sdlscrn, &dr);
   }
-  SCRUNLOCK;
 }
 
 
@@ -314,7 +339,7 @@ void SDLGui_Text(int x, int y, const char *txt, SDL_Color *col)
 void SDLGui_DrawText(SGOBJ *tdlg, int objnum)
 {
   SDL_Rect coord;
-  SDL_Color *textc, *backgroundc;
+  int textc, backgroundc;
 
   if (tdlg[objnum].state & SG_SELECTED)
   {
@@ -345,7 +370,7 @@ void SDLGui_DrawText(SGOBJ *tdlg, int objnum)
 void SDLGui_DrawEditField(SGOBJ *edlg, int objnum)
 {
   SDL_Rect coord;
-  SDL_Color *textc;
+  int textc;
 
   if (edlg[objnum].state & SG_DISABLED)
     textc = darkgreyc;
@@ -373,7 +398,7 @@ void SDLGui_DrawCursor(SGOBJ *dlg, cursor_state *cursor)
   if (cursor->object != -1)
   {
     SDL_Rect coord;
-    SDL_Color *cursorc;
+    int cursorc;
 
     SDLGui_DrawEditField(dlg, cursor->object);
 
@@ -397,15 +422,13 @@ void SDLGui_DrawCursor(SGOBJ *dlg, cursor_state *cursor)
   Draw a 3D effect around a given rectangle.
   Rectangle is updated to the full size of the new object.
 */
-void SDLGui_Draw3DAround(SDL_Rect *coord, SDL_Color *upleftc, SDL_Color *downrightc, SDL_Color *cornerc, int width)
+void SDLGui_Draw3DAround(SDL_Rect *coord, int upleftc, int downrightc, int cornerc, int width)
 {
   SDL_Rect rect;
   int i;
   Uint32 upleftcol    = SDLGui_MapColor(upleftc);
   Uint32 downrightcol = SDLGui_MapColor(downrightc);
   Uint32 cornercol    = SDLGui_MapColor(cornerc);
-
-  SCRLOCK;
 
   for ( i = 1 ; i <= width ; i++)
   {
@@ -446,8 +469,6 @@ void SDLGui_Draw3DAround(SDL_Rect *coord, SDL_Color *upleftc, SDL_Color *downrig
     SDL_FillRect(sdlscrn, &rect, cornercol);
   }
 
-  SCRUNLOCK;
-
   coord->x -= width;
   coord->y -= width;
   coord->w += (width * 2);
@@ -460,12 +481,10 @@ void SDLGui_Draw3DAround(SDL_Rect *coord, SDL_Color *upleftc, SDL_Color *downrig
   Draw a colored box around a given rectangle.
   Rectangle is updated to the full size of the new object.
 */
-void SDLGui_DrawBoxAround(SDL_Rect *coord, SDL_Color *color, int width)
+void SDLGui_DrawBoxAround(SDL_Rect *coord, int color, int width)
 {
   SDL_Rect rect;
   Uint32 col = SDLGui_MapColor(color);
-
-  SCRLOCK;
 
   rect.x = coord->x - width;
   rect.y = coord->y - width;
@@ -491,8 +510,6 @@ void SDLGui_DrawBoxAround(SDL_Rect *coord, SDL_Color *color, int width)
   rect.h = width;
   SDL_FillRect(sdlscrn, &rect, col);
 
-  SCRUNLOCK;
-
   coord->x -= width;
   coord->y -= width;
   coord->w += (width * 2);
@@ -505,11 +522,11 @@ void SDLGui_DrawBoxAround(SDL_Rect *coord, SDL_Color *color, int width)
   Draw a 3D box with given attributes.
 */
 void SDLGui_Draw3DBox(SDL_Rect *coord,
-                      SDL_Color *backgroundc,
-                      SDL_Color *inboxc,
-                      SDL_Color *upleftc,
-                      SDL_Color *downrightc,
-                      SDL_Color *outboxc,
+                      int backgroundc,
+                      int inboxc,
+                      int upleftc,
+                      int downrightc,
+                      int outboxc,
                       int widthbackground,
                       int widthinbox,
                       int width3D1,
@@ -518,16 +535,12 @@ void SDLGui_Draw3DBox(SDL_Rect *coord,
 {
   SDL_Rect rect;
 
-  SCRLOCK;
-
   // Draw background
   rect.x = coord->x - widthbackground;
   rect.y = coord->y - widthbackground;
   rect.w = coord->w + (widthbackground * 2);
   rect.h = coord->h + (widthbackground * 2);
   SDL_FillRect(sdlscrn, &rect, SDLGui_MapColor(backgroundc));
-
-  SCRUNLOCK;
 
   // Update coords
   coord->x -= widthbackground;
@@ -556,8 +569,7 @@ void SDLGui_Draw3DBox(SDL_Rect *coord,
 void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
 {
   SDL_Rect coord;
-  SDL_Color *my_blackc;
-  SDL_Color *upleftc, *downrightc;
+  int my_blackc, upleftc, downrightc;
 
   SDLGui_ObjCoord(bdlg, objnum, &coord);
 
@@ -584,13 +596,13 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
     case (SG_SELECTABLE | SG_DEFAULT | SG_BACKGROUND):
     case (SG_SELECTABLE | SG_DEFAULT):
       SDLGui_Draw3DBox(&coord,
-                       greyc, NULL, upleftc, downrightc, my_blackc,
+                       greyc, 0, upleftc, downrightc, my_blackc,
                        1, 0, 1, 0, 2);
       break;
     case (SG_SELECTABLE | SG_BACKGROUND):
     case SG_SELECTABLE:
       SDLGui_Draw3DBox(&coord,
-                       greyc, NULL, upleftc, downrightc, my_blackc,
+                       greyc, 0, upleftc, downrightc, my_blackc,
                        1, 0, 1, 0, 1);
       break;
     case (SG_DEFAULT | SG_BACKGROUND):
@@ -602,7 +614,7 @@ void SDLGui_DrawBox(SGOBJ *bdlg, int objnum)
     case SG_DEFAULT:
     case 0:
       SDLGui_Draw3DBox(&coord,
-                       greyc, NULL, upleftc, downrightc, NULL,
+                       greyc, 0, upleftc, downrightc, 0,
                        3, 0, 1, 1, 0);
       break;
   }
@@ -617,7 +629,7 @@ void SDLGui_DrawButton(SGOBJ *bdlg, int objnum)
 {
   SDL_Rect coord;
   int x, y;
-  SDL_Color *textc;
+  int textc;
 
   SDLGui_ObjCoord(bdlg, objnum, &coord);
 
@@ -649,7 +661,7 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
   Uint32 grey = SDLGui_MapColor(greyc);
   SDL_Rect coord;
   char str[2];
-  SDL_Color *textc;
+  int textc;
 
   SDLGui_ObjCoord(cdlg, objnum, &coord);
 
@@ -693,7 +705,7 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
 void SDLGui_DrawCheckBox(SGOBJ *cdlg, int objnum)
 {
   SDL_Rect coord;
-  SDL_Color *textc;
+  int textc;
 
   SDLGui_ObjCoord(cdlg, objnum, &coord);
 
@@ -718,7 +730,7 @@ void SDLGui_DrawPopupButton(SGOBJ *pdlg, int objnum)
 {
   SDL_Rect coord;
   const char *downstr = "\x02";
-  SDL_Color *textc;
+  int textc;
 
   if (pdlg[objnum].state & SG_DISABLED)
     textc = darkgreyc;
@@ -781,6 +793,18 @@ void SDLGui_DrawDialog(SGOBJ *dlg)
     SDLGui_DrawObject(dlg, i);
   }
   SDLGui_RefreshObj(dlg, 0);
+
+	/* Blit gui on screen */
+	SDL_Surface *dest = hostScreen.getPhysicalSurface();
+	SDL_Rect dst_rect;
+	dst_rect.x = gui_x = (dest->w - gui_surf->w) >> 1;
+	dst_rect.y = gui_y = (dest->h - gui_surf->h) >> 1;
+	dst_rect.w = gui_surf->w /* < dest->w ? gui_surf->w : dest->w*/;
+	dst_rect.h = gui_surf->h /*< dest->h ? gui_surf->h : dest->h*/;
+
+	SCRLOCK;
+	SDL_BlitSurface(gui_surf, NULL, dest, &dst_rect);
+	SCRUNLOCK;
 }
 
 
@@ -1039,7 +1063,9 @@ int SDLGui_MouseClick(SGOBJ *dlg, int fx, int fy, cursor_state *cursor)
   int original_state = 0;
   int x, y;
 
-  clicked_obj = SDLGui_FindObj(dlg, fx, fy);
+ 	fx -= gui_x;
+	fy -= gui_y;
+   clicked_obj = SDLGui_FindObj(dlg, fx, fy);
 
   if (clicked_obj >= 0)
   {
@@ -1074,8 +1100,8 @@ int SDLGui_MouseClick(SGOBJ *dlg, int fx, int fy, cursor_state *cursor)
           break;
 
         case SDL_MOUSEBUTTONUP:
-          x = (uintptr)evnt.user.data1;
-          y = (uintptr)evnt.user.data2;
+          x = (uintptr)evnt.user.data1-gui_x;
+          y = (uintptr)evnt.user.data2-gui_y;
           if (SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y))
           {
             // true if mouse button is released over clicked object.
@@ -1105,7 +1131,7 @@ int SDLGui_MouseClick(SGOBJ *dlg, int fx, int fy, cursor_state *cursor)
       // No special event occured.
       // Update object state according to mouse coordinates.
       SDL_GetMouseState(&x, &y);
-      SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y);
+      SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x-gui_x, y-gui_y);
 
       // Wait a little to avoid eating CPU.
       SDL_Delay(100);
