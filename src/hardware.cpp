@@ -35,6 +35,8 @@
 #include "hostscreen.h"
 #include "midi_file.h"
 #include "midi_sequencer.h"
+#include "videl.h"
+#include "videl_zoom.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -80,7 +82,12 @@ void HWInit()
 	arhw[iIDE] = ide = new IDE(0xf00000, 0x3a);
 	arhw[iDSP] = dsp = new DSP(0xffa200, 8);
 	arhw[iBLITTER] = blitter = new BLITTER(0xff8A00, 0x3e);
-	arhw[iVIDEL] = videl = new VIDEL(0xff8200, 0xc4);
+	if (bx_options.autozoom.enabled) {
+		videl = new VidelZoom(0xff8200, 0xc4);
+	} else {
+		videl = new VIDEL(0xff8200, 0xc4);
+	}
+	arhw[iVIDEL] = videl;
 	arhw[iYAMAHA] = yamaha = new YAMAHA(0xff8800, 4);
 	arhw[iARADATA] = aradata = new ARADATA(0xf90000, 18);
 	arhw[iAUDIODMA] = audiodma = new AUDIODMA(0xff8900, 0x22);
