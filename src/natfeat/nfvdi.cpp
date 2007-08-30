@@ -395,13 +395,13 @@ int32 VdiDriver::getHeight(void)
 
 int32 VdiDriver::openWorkstation(void)
 {
-	getVIDEL()->setRendering(false);
+	hostScreen.setVidelRendering(false);
 	return 1;
 }
 
 int32 VdiDriver::closeWorkstation(void)
 {
-	getVIDEL()->setRendering(true);
+	hostScreen.setVidelRendering(true);
 	return 1;
 }
 

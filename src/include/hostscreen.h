@@ -192,6 +192,10 @@ class HostScreen {
 
 	int	refreshCounter;
 	void	refresh(void);
+
+	bool	renderVidelSurface;
+	void	setVidelRendering(bool videlRender);
+	int	lastVidelWidth, lastVidelHeight, lastVidelBpp;
 };
 
 
@@ -506,6 +510,11 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.71  2007-07-15 17:33:22  stefanq
+ * Added darwin/Makefile to generate an universal binary for Mac OS X by only running make. This currently generates an universal binary with JIT support for Intel Macs, although it currently crashes.
+ * Changed the build system to allow two builds for different targets, which is needed by the new darwin/Makefile.
+ * Further changes have been done to mainly solve compiler warnings.
+ *
  * Revision 1.70  2006-12-17 14:46:00  philipp
  * Fix: ENABLE_OPENGL is only defined after "parameters.h" has been included.
  *

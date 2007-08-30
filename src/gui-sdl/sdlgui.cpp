@@ -793,20 +793,18 @@ void SDLGui_DrawDialog(SGOBJ *dlg)
     SDLGui_DrawObject(dlg, i);
   }
   SDLGui_RefreshObj(dlg, 0);
-
-	/* Blit gui on screen */
-	SDL_Surface *dest = hostScreen.getPhysicalSurface();
-	SDL_Rect dst_rect;
-	dst_rect.x = gui_x = (dest->w - gui_surf->w) >> 1;
-	dst_rect.y = gui_y = (dest->h - gui_surf->h) >> 1;
-	dst_rect.w = gui_surf->w /* < dest->w ? gui_surf->w : dest->w*/;
-	dst_rect.h = gui_surf->h /*< dest->h ? gui_surf->h : dest->h*/;
-
-	SCRLOCK;
-	SDL_BlitSurface(gui_surf, NULL, dest, &dst_rect);
-	SCRUNLOCK;
 }
 
+void SDLGui_setGuiPos(int guix, int guiy)
+{
+	gui_x = guix;
+	gui_y = guiy;
+}
+
+SDL_Surface *SDLGui_getSurface(void)
+{
+	return gui_surf;
+}
 
 /*-----------------------------------------------------------------------*/
 /*

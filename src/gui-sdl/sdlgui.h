@@ -87,4 +87,7 @@ SDL_Event getEvent(SGOBJ *dlg, cursor_state *cursor);
 typedef enum { ALERT_OK, ALERT_OKCANCEL } alert_type;
 extern bool SDLGui_Alert(const char *, alert_type type);
 
+void SDLGui_setGuiPos(int guix, int guiy);
+SDL_Surface *SDLGui_getSurface(void);
+
 #endif /* _SDLGUI_H */

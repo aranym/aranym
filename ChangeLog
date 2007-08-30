@@ -1,6 +1,9 @@
 2007/08/30 - Patrice
-- sdl_gui: Render it in its own surface instead of drawing on main surface.
-  Some small redraw problems remain.
+- videl, sdl_gui: Render it in itw own surface instead of drawing on main
+  surface (Some small redraw problems remain for sdl_gui with nfvdi).
+  Videl zoom disabled atm, will come back soon.
+- hostscreen: its refresh function now responsible for setting mode and blitting
+  videl, gui stuff on screen when needed.
 
 
 2007/08/29 - Philipp

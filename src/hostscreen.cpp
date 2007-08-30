@@ -117,6 +117,8 @@ HostScreen::HostScreen(void)
 	rect_target=GL_TEXTURE_2D;
 #endif /* ENABLE_OPENGL */
 
+	renderVidelSurface = true;
+	lastVidelWidth = lastVidelHeight = lastVidelBpp = -1;
 	DisableOpenGLVdi();
 }
 
@@ -1561,28 +1563,98 @@ void HostScreen::DisableOpenGLVdi(void)
  */
 void HostScreen::refresh(void)
 {
-	if (++refreshCounter >= bx_options.video.refresh) {
-		refreshCounter = 0;
-#ifdef ENABLE_VBL_UPDATES
-		SDL_mutexP(updateLock);
-		if (sdl_rectcount > 0) {
-			SDL_UpdateRects(mainSurface, sdl_rectcount, updateRects);
-			sdl_rectcount = 0;
+	if (++refreshCounter < bx_options.video.refresh) {
+		return;
+	}
+
+	refreshCounter = 0;
+
+	/* Create dummy main surface? */
+	if (!mainSurface) {
+		setWindowSize(320,200,8);
+	}
+
+	/* Render videl surface ? */
+	if (renderVidelSurface) {
+		SDL_Surface *videl_surf = getVIDEL()->getSurface();
+		if (videl_surf && mainSurface) {
+			int w = (videl_surf->w < 320) ? 320 : videl_surf->w;
+			int h = (videl_surf->h < 200) ? 200 : videl_surf->h;
+			int bpp = videl_surf->format->BitsPerPixel;
+			if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
+				setWindowSize(w, h, bpp);
+				lastVidelWidth = w;
+				lastVidelHeight = h;
+				lastVidelBpp = bpp;
+			}
+			/* Set palette from videl surface if needed */
+			if ((bpp==8) && (mainSurface->format->BitsPerPixel == 8)) {
+				SDL_Color palette[256];
+				for (int i=0; i<256; i++) {
+					palette[i].r = videl_surf->format->palette->colors[i].r;
+					palette[i].g = videl_surf->format->palette->colors[i].g;
+					palette[i].b = videl_surf->format->palette->colors[i].b;
+				}
+				SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
+			}
+
+			SDL_Rect dst_rect;
+			dst_rect.x = (mainSurface->w - videl_surf->w) >> 1;
+			dst_rect.y = (mainSurface->h - videl_surf->h) >> 1;
+			dst_rect.w = videl_surf->w;
+			dst_rect.h = videl_surf->h;
+
+			SDL_BlitSurface(videl_surf, NULL, mainSurface, &dst_rect);
 		}
-		SDL_mutexV(updateLock);
+	}
+
+#ifdef SDL_GUI
+	if (isGUIopen()) {
+		SDL_Surface *gui_surf = SDLGui_getSurface();
+		if (gui_surf && mainSurface) {
+			int gui_x, gui_y;
+
+			/* Blit gui on screen */
+			SDL_Rect dst_rect;
+			dst_rect.x = gui_x = (mainSurface->w - gui_surf->w) >> 1;
+			dst_rect.y = gui_y = (mainSurface->h - gui_surf->h) >> 1;
+			dst_rect.w = gui_surf->w /* < dest->w ? gui_surf->w : dest->w*/;
+			dst_rect.h = gui_surf->h /*< dest->h ? gui_surf->h : dest->h*/;
+
+			SDL_BlitSurface(gui_surf, NULL, mainSurface, &dst_rect);
+
+			SDLGui_setGuiPos(gui_x, gui_y);
+		}
+
+		static int blendRefresh = 0;
+		if (blendRefresh++ > 5) {
+			blendRefresh = 0;
+			blendBackgrounds();
+		}
+	}
+#endif /* SDL_GUI */
+
+#ifdef ENABLE_VBL_UPDATES
+	SDL_mutexP(updateLock);
+	if (sdl_rectcount > 0) {
+		SDL_UpdateRects(mainSurface, sdl_rectcount, updateRects);
+		sdl_rectcount = 0;
+	}
+	SDL_mutexV(updateLock);
 #endif
 
-		getVIDEL()->renderScreen();
-#ifdef SDL_GUI
-		if (isGUIopen()) {
-			static int blendRefresh = 0;
-			if (blendRefresh++ > 5) {
-				blendRefresh = 0;
-				blendBackgrounds();
-			}
-		}
-#endif /* SDL_GUI */
+#ifdef ENABLE_OPENGL
+	if (bx_options.opengl.enabled) {
+		OpenGLUpdate();
+
+		SDL_GL_SwapBuffers();
 	}
+#endif	/* ENABLE_OPENGL */
+}
+
+void HostScreen::setVidelRendering(bool videlRender)
+{
+	renderVidelSurface = videlRender;
 }
 
 /*
