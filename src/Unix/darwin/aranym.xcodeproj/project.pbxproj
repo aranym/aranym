@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		F83B57260C8B006200BA68D4 /* README_ethernet.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = README_ethernet.txt; sourceTree = "<group>"; };
+		F83B57270C8B006200BA68D4 /* SDLHotkeysRefresh.M */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SDLHotkeysRefresh.M; sourceTree = "<group>"; };
 		F84337D90C661D3F005E7B99 /* aranym.desktop */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = aranym.desktop; path = ../../../aranym.desktop; sourceTree = SOURCE_ROOT; };
 		F84337DA0C661D3F005E7B99 /* aranym.spec */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = aranym.spec; path = ../../../aranym.spec; sourceTree = SOURCE_ROOT; };
 		F84337DC0C661D3F005E7B99 /* CONFIGVARS */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CONFIGVARS; sourceTree = "<group>"; };
@@ -236,7 +238,6 @@
 		F84338D40C661D4C005E7B99 /* natfeats.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = natfeats.h; sourceTree = "<group>"; };
 		F84338D50C661D4C005E7B99 /* ncr5380.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ncr5380.h; sourceTree = "<group>"; };
 		F84338D60C661D4C005E7B99 /* ndebug.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ndebug.h; sourceTree = "<group>"; };
-		F84338D70C661D4C005E7B99 /* Ohne Titel.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "Ohne Titel.rtf"; sourceTree = "<group>"; };
 		F84338D80C661D4C005E7B99 /* parallel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = parallel.h; sourceTree = "<group>"; };
 		F84338D90C661D4C005E7B99 /* parallel_file.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = parallel_file.h; sourceTree = "<group>"; };
 		F84338DA0C661D4C005E7B99 /* parallel_parport.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = parallel_parport.h; sourceTree = "<group>"; };
@@ -251,11 +252,6 @@
 		F84338E30C661D4D005E7B99 /* videl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = videl.h; sourceTree = "<group>"; };
 		F84338E40C661D4D005E7B99 /* yamaha.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = yamaha.h; sourceTree = "<group>"; };
 		F84338E50C661D4D005E7B99 /* input.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = input.cpp; sourceTree = "<group>"; };
-		F84338EB0C661D4D005E7B99 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/SDLMain.nib; sourceTree = "<group>"; };
-		F84338F30C661D4E005E7B99 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
-		F84338F40C661D4E005E7B99 /* sdl.m4 */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = sdl.m4; sourceTree = "<group>"; };
-		F84338F50C661D4E005E7B99 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
-		F84338F60C661D4E005E7B99 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		F84338F70C661D4E005E7B99 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F84338F80C661D4F005E7B99 /* md5.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = md5.cpp; sourceTree = "<group>"; };
 		F84338F90C661D4F005E7B99 /* mfp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = mfp.cpp; sourceTree = "<group>"; };
@@ -403,17 +399,12 @@
 		F8433E730C66278D005E7B99 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = /Library/Frameworks/SDL_image.framework; sourceTree = "<absolute>"; };
 		F8433E740C66278D005E7B99 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
 		F8433E820C662B9D005E7B99 /* acinclude.m4 */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = acinclude.m4; path = Unix/acinclude.m4; sourceTree = "<group>"; };
-		F8433E830C662B9D005E7B99 /* aclocal.m4 */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = aclocal.m4; path = Unix/aclocal.m4; sourceTree = "<group>"; };
 		F8433E840C662B9D005E7B99 /* ansidecl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ansidecl.h; path = Unix/ansidecl.h; sourceTree = "<group>"; };
 		F8433E850C662B9D005E7B99 /* aratapif.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = aratapif.c; path = Unix/aratapif.c; sourceTree = "<group>"; };
 		F8433E860C662B9D005E7B99 /* autogen.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = autogen.sh; path = Unix/autogen.sh; sourceTree = "<group>"; };
-		F8433E880C662B9D005E7B99 /* output.0 */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = output.0; sourceTree = "<group>"; };
-		F8433E890C662B9D005E7B99 /* requests */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = requests; sourceTree = "<group>"; };
-		F8433E8A0C662B9D005E7B99 /* traces.0 */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = traces.0; sourceTree = "<group>"; };
 		F8433E8C0C662B9E005E7B99 /* cdrom_beos.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = cdrom_beos.cpp; sourceTree = "<group>"; };
 		F8433E8D0C662B9E005E7B99 /* cdrom_beos.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = cdrom_beos.h; sourceTree = "<group>"; };
 		F8433E8E0C662B9E005E7B99 /* config.guess */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = config.guess; path = Unix/config.guess; sourceTree = "<group>"; };
-		F8433E8F0C662B9E005E7B99 /* config.h.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = config.h.in; path = Unix/config.h.in; sourceTree = "<group>"; };
 		F8433E900C662B9E005E7B99 /* config.sub */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = config.sub; path = Unix/config.sub; sourceTree = "<group>"; };
 		F8433E910C662B9E005E7B99 /* configure.ac */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = configure.ac; path = Unix/configure.ac; sourceTree = "<group>"; };
 		F8433E930C662B9E005E7B99 /* aranym.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = aranym.icns; sourceTree = "<group>"; };
@@ -449,7 +440,7 @@
 		F84341050C664F6F005E7B99 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		F843410C0C664FD8005E7B99 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		F84341A00C665AEB005E7B99 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = config.h; path = Unix/config.h; sourceTree = "<group>"; };
-		F8536DF40C78E67500F4A745 /* ARAnyM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARAnyM.app; sourceTree = "<group>"; };
+		F8536DF40C78E67500F4A745 /* ARAnyM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARAnyM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F856EB6D0C73AE4000271AFE /* config_i386.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = config_i386.h; path = Unix/config_i386.h; sourceTree = "<group>"; };
 		F856EB6E0C73AE4000271AFE /* config_ppc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = config_ppc.h; path = Unix/config_ppc.h; sourceTree = "<group>"; };
 		F856ED260C73F96800271AFE /* aratapif.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; path = aratapif.sh; sourceTree = "<group>"; };
@@ -787,7 +778,6 @@
 				F84338A70C661D4B005E7B99 /* ikbd.cpp */,
 				F84338A80C661D4B005E7B99 /* include */,
 				F84338E50C661D4D005E7B99 /* input.cpp */,
-				F84338E60C661D4D005E7B99 /* MacOSX */,
 				F84338F70C661D4E005E7B99 /* main.cpp */,
 				F84338F80C661D4F005E7B99 /* md5.cpp */,
 				F84338F90C661D4F005E7B99 /* mfp.cpp */,
@@ -887,7 +877,6 @@
 				F84338D40C661D4C005E7B99 /* natfeats.h */,
 				F84338D50C661D4C005E7B99 /* ncr5380.h */,
 				F84338D60C661D4C005E7B99 /* ndebug.h */,
-				F84338D70C661D4C005E7B99 /* Ohne Titel.rtf */,
 				F84338D80C661D4C005E7B99 /* parallel.h */,
 				F84338D90C661D4C005E7B99 /* parallel_file.h */,
 				F84338DA0C661D4C005E7B99 /* parallel_parport.h */,
@@ -903,18 +892,6 @@
 				F84338E40C661D4D005E7B99 /* yamaha.h */,
 			);
 			path = include;
-			sourceTree = "<group>";
-		};
-		F84338E60C661D4D005E7B99 /* MacOSX */ = {
-			isa = PBXGroup;
-			children = (
-				F84338EA0C661D4D005E7B99 /* SDLMain.nib */,
-				F84338F30C661D4E005E7B99 /* README.txt */,
-				F84338F40C661D4E005E7B99 /* sdl.m4 */,
-				F84338F50C661D4E005E7B99 /* SDLMain.h */,
-				F84338F60C661D4E005E7B99 /* SDLMain.m */,
-			);
-			path = MacOSX;
 			sourceTree = "<group>";
 		};
 		F84338FE0C661D50005E7B99 /* natfeat */ = {
@@ -1097,17 +1074,14 @@
 			isa = PBXGroup;
 			children = (
 				F8433E820C662B9D005E7B99 /* acinclude.m4 */,
-				F8433E830C662B9D005E7B99 /* aclocal.m4 */,
 				F8433E840C662B9D005E7B99 /* ansidecl.h */,
 				F8433E850C662B9D005E7B99 /* aratapif.c */,
 				F8433E860C662B9D005E7B99 /* autogen.sh */,
-				F8433E870C662B9D005E7B99 /* autom4te.cache */,
 				F8433E8B0C662B9E005E7B99 /* beos */,
 				F8433E8E0C662B9E005E7B99 /* config.guess */,
 				F856EB6D0C73AE4000271AFE /* config_i386.h */,
 				F856EB6E0C73AE4000271AFE /* config_ppc.h */,
 				F84341A00C665AEB005E7B99 /* config.h */,
-				F8433E8F0C662B9E005E7B99 /* config.h.in */,
 				F8433E900C662B9E005E7B99 /* config.sub */,
 				F8433E910C662B9E005E7B99 /* configure.ac */,
 				F8433E920C662B9E005E7B99 /* darwin */,
@@ -1130,17 +1104,6 @@
 				F8433EE70C662B9E005E7B99 /* vm_alloc.h */,
 			);
 			name = Unix;
-			sourceTree = "<group>";
-		};
-		F8433E870C662B9D005E7B99 /* autom4te.cache */ = {
-			isa = PBXGroup;
-			children = (
-				F8433E880C662B9D005E7B99 /* output.0 */,
-				F8433E890C662B9D005E7B99 /* requests */,
-				F8433E8A0C662B9D005E7B99 /* traces.0 */,
-			);
-			name = autom4te.cache;
-			path = Unix/autom4te.cache;
 			sourceTree = "<group>";
 		};
 		F8433E8B0C662B9E005E7B99 /* beos */ = {
@@ -1169,7 +1132,9 @@
 				F8433EB30C662B9E005E7B99 /* Makefile */,
 				F856ED2A0C73F96800271AFE /* parameters_darwin.cpp */,
 				F8433EB70C662B9E005E7B99 /* PkgInfo */,
+				F83B57260C8B006200BA68D4 /* README_ethernet.txt */,
 				F8433EB80C662B9E005E7B99 /* sdl.m4 */,
+				F83B57270C8B006200BA68D4 /* SDLHotkeysRefresh.M */,
 				F8433EB90C662B9E005E7B99 /* SDLMain.h */,
 				F8433EBA0C662B9E005E7B99 /* SDLMain.M */,
 				F8433EBB0C662B9E005E7B99 /* sigsegv_darwin_x86.cpp */,
@@ -1296,14 +1261,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		F84338EA0C661D4D005E7B99 /* SDLMain.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				F84338EB0C661D4D005E7B99 /* English */,
-			);
-			name = SDLMain.nib;
-			sourceTree = "<group>";
-		};
 		F8433FD70C66417B005E7B99 /* aranym.nib */ = {
 			isa = PBXVariantGroup;
 			children = (

@@ -326,9 +326,6 @@
 		B47270890C6BB5D600A1379D /* aratapif.sh in CopyFiles */ = {isa = PBXBuildFile; fileRef = B47270880C6BB5D600A1379D /* aratapif.sh */; };
 		B47270910C6BB62700A1379D /* README_ethernet.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = B47270900C6BB62700A1379D /* README_ethernet.txt */; };
 		B47272CA0C6BBF1300A1379D /* README_ethernet.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = B47270900C6BB62700A1379D /* README_ethernet.txt */; };
-		B4844A5B0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4844A5A0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm */; };
-		B4844A5C0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4844A5A0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm */; };
-		B4844A5D0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4844A5A0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm */; };
 		B49164700C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
 		B49164710C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
 		B4A9E9C50C5B33AC00C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
@@ -339,6 +336,18 @@
 		B4A9EC090C5B3C3900C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
 		B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */; };
 		B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D1107320486CEB800E47090 /* MacAranym.app */; };
+		F83B575E0C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */ = {isa = PBXBuildFile; fileRef = F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */; };
+		F83B575F0C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */ = {isa = PBXBuildFile; fileRef = F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */; };
+		F83B57600C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */ = {isa = PBXBuildFile; fileRef = F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */; };
+		F83B576D0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F83B576C0C8B1F0100BA68D4 /* videl_zoom.cpp */; };
+		F83B576E0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F83B576C0C8B1F0100BA68D4 /* videl_zoom.cpp */; };
+		F83B576F0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F83B576C0C8B1F0100BA68D4 /* videl_zoom.cpp */; };
+		F83B57710C8B1F8A00BA68D4 /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
+		F83B57730C8B1FDA00BA68D4 /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
+		F83B57740C8B1FDF00BA68D4 /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
+		F83B57770C8B206300BA68D4 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
+		F83B57780C8B206700BA68D4 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
+		F83B57790C8B206C00BA68D4 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -755,7 +764,6 @@
 		B4640D4B0C7C2E0F0000572B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		B47270880C6BB5D600A1379D /* aratapif.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = aratapif.sh; path = darwin/aratapif.sh; sourceTree = "<group>"; };
 		B47270900C6BB62700A1379D /* README_ethernet.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README_ethernet.txt; path = darwin/README_ethernet.txt; sourceTree = "<group>"; };
-		B4844A5A0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SDLHotkeysRefresh.mm; path = darwin/SDLHotkeysRefresh.mm; sourceTree = "<group>"; };
 		B4844A650C7BA1A0003FE2D2 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = darwin/English.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4844A660C7BA1B4003FE2D2 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = darwin/German.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4844A6B0C7BA262003FE2D2 /* aranym.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = aranym.icns; path = darwin/aranym.icns; sourceTree = "<group>"; };
@@ -778,6 +786,8 @@
 		B4F045CB0C493BF000CF31D2 /* cputbl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cputbl.h; path = build/MacAranym.build/cputbl.h; sourceTree = "<group>"; };
 		B4F046290C49571100CF31D2 /* sigsegv_solaris_x86.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sigsegv_solaris_x86.cpp; path = solaris/sigsegv_solaris_x86.cpp; sourceTree = "<group>"; };
 		B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sigsegv_darwin_x86.cpp; path = darwin/sigsegv_darwin_x86.cpp; sourceTree = "<group>"; };
+		F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SDLHotkeysRefresh.M; path = darwin/SDLHotkeysRefresh.M; sourceTree = "<group>"; };
+		F83B576C0C8B1F0100BA68D4 /* videl_zoom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = videl_zoom.cpp; path = ../../videl_zoom.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -790,6 +800,7 @@
 				17BCD7DE0B20F64F00432CE1 /* IOKit.framework in Frameworks */,
 				17BCD7DF0B20F64F00432CE1 /* OpenGL.framework in Frameworks */,
 				B4640D4D0C7C2E0F0000572B /* Security.framework in Frameworks */,
+				F83B57780C8B206700BA68D4 /* SDL_image.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -802,6 +813,7 @@
 				177990520A6538B5009733EB /* IOKit.framework in Frameworks */,
 				17AAB12C0B206BF20016FB8D /* OpenGL.framework in Frameworks */,
 				B4640D4E0C7C2E0F0000572B /* Security.framework in Frameworks */,
+				F83B57770C8B206300BA68D4 /* SDL_image.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -814,6 +826,7 @@
 				B439AC900C5B2FD00046EFC9 /* IOKit.framework in Frameworks */,
 				B439AC910C5B2FD00046EFC9 /* OpenGL.framework in Frameworks */,
 				B4640D4C0C7C2E0F0000572B /* Security.framework in Frameworks */,
+				F83B57790C8B206C00BA68D4 /* SDL_image.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,6 +919,7 @@
 				17798DB40A652B51009733EB /* template.cpp */,
 				17798DB50A652B51009733EB /* tools.cpp */,
 				17798E8B0A652B52009733EB /* videl.cpp */,
+				F83B576C0C8B1F0100BA68D4 /* videl_zoom.cpp */,
 				17798E8C0A652B52009733EB /* yamaha.cpp */,
 			);
 			name = "Aranym Sources";
@@ -1341,10 +1355,10 @@
 				B4844A700C7BA262003FE2D2 /* parameters_darwin.cpp */,
 				B4844A710C7BA262003FE2D2 /* PkgInfo */,
 				B4844A720C7BA262003FE2D2 /* sdl.m4 */,
+				F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */,
 				B4844A730C7BA262003FE2D2 /* SDLMain.h */,
 				B4844A740C7BA262003FE2D2 /* SDLMain.M */,
 				B4844A640C7BA1A0003FE2D2 /* aranym.nib */,
-				B4844A5A0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm */,
 				B47270880C6BB5D600A1379D /* aratapif.sh */,
 				17A2B1960C66113000180C55 /* Makefile */,
 				B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */,
@@ -1694,7 +1708,9 @@
 				171B2BD80C4017C9007D8975 /* dlgVideo.cpp in Sources */,
 				B49164700C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */,
 				1736B1100C70ED5900C56FAF /* SDLMain.m in Sources */,
-				B4844A5C0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm in Sources */,
+				F83B575F0C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */,
+				F83B576E0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */,
+				F83B57730C8B1FDA00BA68D4 /* nfjpeg.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1788,7 +1804,9 @@
 				171B2BD60C4017C9007D8975 /* dlgVideo.cpp in Sources */,
 				B49164710C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */,
 				1736B10B0C70ED5900C56FAF /* SDLMain.m in Sources */,
-				B4844A5B0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm in Sources */,
+				F83B575E0C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */,
+				F83B576D0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */,
+				F83B57710C8B1F8A00BA68D4 /* nfjpeg.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1889,7 +1907,9 @@
 				B439AC8C0C5B2FD00046EFC9 /* cpuemu_nf.cpp in Sources */,
 				B4A9E9C50C5B33AC00C156C3 /* ethernet_darwin.cpp in Sources */,
 				1736B1150C70ED5900C56FAF /* SDLMain.m in Sources */,
-				B4844A5D0C7BA0EF003FE2D2 /* SDLHotkeysRefresh.mm in Sources */,
+				F83B57600C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */,
+				F83B576F0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */,
+				F83B57740C8B1FDF00BA68D4 /* nfjpeg.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1942,6 +1962,11 @@
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = MacAranym;
@@ -1972,6 +1997,9 @@
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
 					MesaGL/include,
+					/Library/Frameworks/SDL.framework/Headers,
+					/Library/Frameworks/SDL_image.framework/Headers,
+					/usr/X11R6/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;
@@ -1988,6 +2016,11 @@
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = MacAranym;
@@ -2019,6 +2052,9 @@
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
 					MesaGL/include,
+					/Library/Frameworks/SDL.framework/Headers,
+					/Library/Frameworks/SDL_image.framework/Headers,
+					/usr/X11R6/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;
@@ -2064,6 +2100,11 @@
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
@@ -2077,6 +2118,11 @@
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
@@ -2091,6 +2137,11 @@
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --enable-fullmmu --enable-lilo";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
@@ -2104,6 +2155,11 @@
 				COMPILE_DEFS = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=uae --disable-fullmmu";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = MacAranym;
@@ -2132,6 +2188,9 @@
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
 					MesaGL/include,
+					/Library/Frameworks/SDL.framework/Headers,
+					/Library/Frameworks/SDL_image.framework/Headers,
+					/usr/X11R6/include,
 				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -2150,8 +2209,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
@@ -2174,8 +2235,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)\"";
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -2199,8 +2262,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)\"";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				HEADER_SEARCH_PATHS = (
 					../,

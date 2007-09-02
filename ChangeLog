@@ -6,12 +6,17 @@
 
 - darwin/Makefile: New targets universal, i386 and ppc to choose the binary type 
   of ARAnyM. The ppc target now should also allow to build ARAnyM on Mac OS X 
-  10.3.9.
+  10.3.9. Fixed an error that the Makefile_ppc or Makefile_i386 is older than 
+  its dependencies.
 
 - INSTALL: Added description for darwin port.
 
 - Unix/Makefile.in: Removed support for .mm, as .M has already been used for 
   C++/Objective C mixed files. We should stick to one extension.
+
+- MacOSX/MacAranym.xcodeproj: Updated XCode project file.
+
+- darwin/aranym.xcodeproj: Updated XCode project file.
 
 - Unix/configure.ac: Renamed SDLHotkeysRefresh.mm to SDLHotkeysRefresh.M.
 
@@ -24,6 +29,10 @@
   localisations.
 
 - codegen_x86.cpp: Solved a compiler warning due to an unused local variable.
+
+-sigsegv_darwin_x86.cpp: Solved a compiler warning inside 
+  catch_exception_raise(), the return value krc now is initialized with 
+  KERN_SUCCESS.
 
 
 2007/08/30 - Patrice

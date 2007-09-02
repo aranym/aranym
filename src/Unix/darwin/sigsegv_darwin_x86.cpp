@@ -1022,7 +1022,7 @@ catch_exception_raise(mach_port_t /*exception_port*/,
 					  mach_msg_type_number_t codeCount)
 {
 	SIGSEGV_THREAD_STATE_TYPE state;
-	kern_return_t krc;
+	kern_return_t krc = KERN_SUCCESS;
 
 	D(panicbug("catch_exception_raise: %d", exception));
 
