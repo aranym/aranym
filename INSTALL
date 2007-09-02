@@ -70,6 +70,19 @@ again.
 If everything went OK, you got an executable named "ARAnyM.app" inside the
 src/Unix folder.
 
+This application expects its default configuration inside the current user's 
+~/Library/Preferences/org.aranym.amcfg file. Inside that config file a path 
+beginning with */ will be expanded to ~/Library/Application Support/ARAnyM.
+
+The ARAnyM.app also supports virtual machine bundles: Put all your disk image 
+files, host-fs destination folders, ROM image etc. and a properly configured
+org.aranym.amcfg file into a new folder. Give that folder the extension 
+".ARAnyM" or ".amvm". The Mac OS X Finder will then treat this new Folder as a 
+so called bundle. Just dubble click on it and ARAnyM should start and use it.
+
+To modify such a bundles content, in the Finder Control-click or right-click on 
+it and select "Show Package Contents".   
+
 There are also other methods of building ARAnyM for OS X. Refere also to the 
 documents inside src/Unix/MacOSX.
 

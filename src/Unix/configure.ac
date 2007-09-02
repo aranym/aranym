@@ -342,7 +342,11 @@ case "$host_os" in
 	AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
 	if test "x$WITH_FINK" = "xyes"; then
 		AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
+<<<<<<< configure.ac
+		EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp darwin/ethernet_darwin.cpp darwin/SDLHotkeysRefresh.M"
+=======
 		EXTRASYSSRCS="parameters_unix.cpp host_filesys_unix.cpp darwin/ethernet_darwin.cpp darwin/SDLHotkeysRefresh.mm"
+>>>>>>> 1.171
 	else
 		AC_DEFINE([ARANYMHOME], "ARAnyM", [Default ARAnyM directory])
 		
@@ -358,7 +362,11 @@ case "$host_os" in
 			AC_DEFINE([ARANYMKEYMAP], "org.aranym.keymap", [Default ARAnyM keymap])
 		fi
 		
+<<<<<<< configure.ac
+		EXTRASYSSRCS="darwin/SDLMain.M darwin/host_filesys_darwin.M darwin/parameters_darwin.cpp darwin/ethernet_darwin.cpp darwin/SDLHotkeysRefresh.M"
+=======
 		EXTRASYSSRCS="darwin/SDLMain.M darwin/host_filesys_darwin.M darwin/parameters_darwin.cpp darwin/ethernet_darwin.cpp darwin/SDLHotkeysRefresh.mm"
+>>>>>>> 1.171
 
 		BUNDLE_FRAMEWORKS= dnl Empty list of frameworks to bundle
 

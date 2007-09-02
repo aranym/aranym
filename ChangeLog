@@ -1,6 +1,35 @@
+2007/09/02 - Stefan
+- darwin/busybee.icns: Again another version of the busybee icon.
+
+- darwin/busybee112-glossy.xcf: Added gimp file which I use to create the 
+  busybee icon.
+
+- darwin/Makefile: New targets universal, i386 and ppc to choose the binary type 
+  of ARAnyM. The ppc target now should also allow to build ARAnyM on Mac OS X 
+  10.3.9.
+
+- INSTALL: Added description for darwin port.
+
+- Unix/Makefile.in: Removed support for .mm, as .M has already been used for 
+  C++/Objective C mixed files. We should stick to one extension.
+
+- Unix/configure.ac: Renamed SDLHotkeysRefresh.mm to SDLHotkeysRefresh.M.
+
+- aratapif.c: Made it compile on Mac OS X.
+
+- darwin/ethernet_darwin.cpp: Changed executeScriptAsRoot() to use 
+  Host::getDataFolder().
+
+- darwin/German.lproj/InfoPlist.strings: Added this file to allow further 
+  localisations.
+
+- codegen_x86.cpp: Solved a compiler warning due to an unused local variable.
+
+
 2007/08/30 - Patrice
 - videl, sdl_gui: Render it in itw own surface instead of drawing on main
   surface (Some small redraw problems remain for sdl_gui with nfvdi).
+
 - hostscreen: its refresh function now responsible for setting mode and blitting
   videl, gui stuff on screen when needed.
 
@@ -9,6 +38,7 @@
 - MacOSX/MacAranym.xcodeproj: "Debug" Konfiguration does not create a Universal
   Binary anymore. It's for development and debugging purpose only, so there is
   no need to compile each file for PPC and i386!
+
 - autoconf.sh: Fixed misleading message about running configure if NO_CONFIGURE
   is set.
 
@@ -20,13 +50,16 @@
 
 2007/08/28 - Jens
 - configure.ac: Added missing $ sign determining OS_TYPE
+
 - MacOSX/MacAranym.xcodeproj: adapted to new configure.ac
 
 
 2007/08/27 - Andreas
 - configure.ac: replace AC_CANONICAL_SYSTEM by AC_CANONICAL_HOST, use
   $host_xxx instead of $target_xxx.
+
 - Fix make depend.
+
 - Replace reserved identifier __always_inline by always_inline.
 
 
@@ -46,43 +79,46 @@
 
 - darwin/German.lproj: Tags set on menu entries
 
-- darwin/Makefile: Fix to make it 10.3.9 compatible (code for modifying config_ppc.h
-  taken from the xcodeproj)
+- darwin/Makefile: Fix to make it 10.3.9 compatible (code for modifying 
+  config_ppc.h taken from the xcodeproj)
 
-- darwin/ethernet_darwin.cpp: If it is started as fullscreen application, leave the fullscreen mode before 
-  opening the authorization dialog. After initialization reenter fullscreen mode. Added Authorization Service 
-  to ask for the user password for starting up the ethernet connection. Location of aratapif.sh changed to 
-  "~/Library/Application Support/ARAnyM"
+- darwin/ethernet_darwin.cpp: If it is started as fullscreen application, 
+  leave the fullscreen mode before opening the authorization dialog. After 
+  initialization reenter fullscreen mode. Added Authorization Service 
+  to ask for the user password for starting up the ethernet connection. 
+  Location of aratapif.sh changed to "~/Library/Application Support/ARAnyM"
 
-- darwin/Readme_ethernet.txt: Updated information for installation of the ethernet on Mac.
+- darwin/Readme_ethernet.txt: Updated information for installation of the 
+  ethernet on Mac.
 
-- darwin/sigsegv_darwin_x86.cpp: Commented a enum value to reduce warnings during compilation.
+- darwin/sigsegv_darwin_x86.cpp: Commented a enum value to reduce warnings 
+  during compilation.
 
-- darwin/SDLHotkeysRefresh.mm: New code interacting as an interface
-  between the cpp code and the Objective-C code of the MAC part that
-  updates the menu shortcuts.
+- darwin/SDLHotkeysRefresh.mm: New code interacting as an interface between 
+  the cpp code and the Objective-C code of the MAC part that updates the menu 
+  shortcuts.
 
 - gui-osx/German.lproj: Added german version
 
-- gui-osx/English.lproj: added tags for the different menu entries. For a list of the used tags 
-  see darwin/SDLHotkeysRefresh.mm
+- gui-osx/English.lproj: added tags for the different menu entries. For a list 
+  of the used tags see darwin/SDLHotkeysRefresh.mm
 
 - MacOSX/Readme.rtf: JIT/Ethernet comment changed
 
-- MacOSX/MacAranym.xcodeproj: changed that the configure is running twice for each target, to make sure that 
-  the config file is generated correctly for the target. Added Security.Framework.
+- MacOSX/MacAranym.xcodeproj: changed that the configure is running twice for 
+  each target, to make sure that the config file is generated correctly for 
+  the target. Added Security.Framework.
 
 - configure.ac: Fixed a typo using vblupdates; added Security.Framework;
   added SDLHotkeysRefresh.mm to source list for Makefile build
 
 - input.cpp: Fixed getting modifier if it is pushed by a Menu key
 
-- gui-sdl/dlgMain.cpp/main_unix.cpp: Call refreshHotkeys() on Mac to
-  update the key shortcuts in the screen menu bar
+- gui-sdl/dlgMain.cpp/main_unix.cpp: Call refreshHotkeys() on Mac to update 
+  the key shortcuts in the screen menu bar
 
-- Makefile.in: Added compilation rules for .mm files. Fixed bundle
-  creation copying frameworks if SDL_image.framework is not available
-  it fails before.
+- Makefile.in: Added compilation rules for .mm files. Fixed bundle creation 
+  copying frameworks if SDL_image.framework is not available it fails before.
 
 
 2007/08/19 Stefan
@@ -162,23 +198,29 @@
 
 
 2007/08/12 Jens
-- hostscreen.cpp: Introduces new option to have delayed screen updates
-  via SDL_UpdateRects. This is necessary to have a fluently updated screen
-  on the Mac in windowed mode. 
-  (see http://www.libsdl.org/faq.php?action=listentries&category=7#68)
-  It may be useful on some other systems too.
+- hostscreen.cpp: Introduces new option to have delayed screen updates via 
+  SDL_UpdateRects. This is necessary to have a fluently updated screen on the 
+  Mac in windowed mode (see 
+  http://www.libsdl.org/faq.php?action=listentries&category=7#68). It may be 
+  useful on some other systems too.
+
 - configure.ac: New option --enable-vblupdates for delayed updates
+
 - darwin/Makefile: add parameter --enable-vblupdates
-- main_unix.cpp: Changed calculation for the mirror space address.
-  It should work in 64 Bit now too, it should be the correct address
-  if all related address calculation is done in 32 Bit.
+
+- main_unix.cpp: Changed calculation for the mirror space address. It should 
+  work in 64 Bit now too, it should be the correct address if all related 
+  address calculation is done in 32 Bit.
 
 
 2007/08/10 Jens
 - darwin/ethernet_darwin: Completed first TUN/TAP support on mac
+
 - darwin/aratapif.sh: A shell script version of aratapif
-- darwin/Readme_ethernet.txt: A short description of setting up
-  ethernet on the Mac
+
+- darwin/Readme_ethernet.txt: A short description of setting up ethernet on the 
+  Mac
+
 - darwin/Makefile: add parameter --enable-ethernet
 
 
@@ -210,9 +252,11 @@
 
 - darwin/Makefile: ethernet default =no (see above)
 
+
 2007/08/03 - Jens
 - /MacAranym.xcodeproj/project.pbxproj Fixed compiler options; Added
   SDL-Image framework, MMU support
+
 
 2007/07/28 - Jens
 - ethernet_darwin.cpp/h: added ethernet support to darwin directory
@@ -228,12 +272,12 @@
 - configure.ac: added parameter --with-classicconfig for classic configuration
   files and pointed to sigsegv_darwin_x86.cpp for JIT version.
 
-- src/Unix/MacOSX/MacAranym.xcodeproj/project.pbxproj: added new target
-  MacAranym JIT and modified the other targets to keep their local
-  parameter inside itself. Also a packaging JIT target is introduced with
-  is a simple clone of the normal packaging target.
+- src/Unix/MacOSX/MacAranym.xcodeproj/project.pbxproj: added new target 
+  MacAranym JIT and modified the other targets to keep their local parameter 
+  inside itself. Also a packaging JIT target is introduced with is a simple 
+  clone of the normal packaging target.
 
-  
+
 2007/07/23 - Philipp
 - Fixed Mac OS X framework lookup in acinclude.m4.
 

@@ -3983,8 +3983,6 @@ LENDFUNC(NONE,WRITE,2,raw_fmov_ext_mr,(MEMW m, FR r))
 
 LOWFUNC(NONE,WRITE,2,raw_fmov_ext_mr_drop,(MEMW m, FR r))
 {
-    int rs;
-
     make_tos(r);
     raw_fstpt(m);	/* store and pop it */
     live.onstack[live.tos]=-1;

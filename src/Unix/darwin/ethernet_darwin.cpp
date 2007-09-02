@@ -54,7 +54,7 @@
  */
 
 #define TAP_SHELL	"/bin/sh"
-#define TAP_INIT	"Library/Application Support/ARAnyM/aratapif.sh"
+#define TAP_INIT	"aratapif.sh"
 #define TAP_MTU		"1500"
 
 /*
@@ -110,7 +110,7 @@ static int executeScriptAsRoot(char *application, char *args[]) {
     OSStatus execStatus;
 	char app[2048];
 		
-	Host::getHomeFolder(app, sizeof(app));
+	Host::getDataFolder(app, sizeof(app));
 	strcat(app, DIRSEPARATOR);
 	strcat(app, application);
 	args[0] = app;

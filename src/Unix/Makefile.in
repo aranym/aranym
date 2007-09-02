@@ -153,7 +153,7 @@ TARGET = @TARGET@
 ## Rules
 .PHONY: install installdirs uninstall mostlyclean clean distclean depend dep $(APP_BUNDLE)
 .SUFFIXES:
-.SUFFIXES: .c .cpp .s .o .h .m .M .mm
+.SUFFIXES: .c .cpp .s .o .h .m .M
 
 all: $(TARGET) $(TAPIF)
 
@@ -350,8 +350,6 @@ depend dep:
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.m
-	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
-$(OBJ_DIR)/%.o : %.mm
 	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/%.o : %.cpp
 	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@

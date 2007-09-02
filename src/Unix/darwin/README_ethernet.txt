@@ -22,7 +22,7 @@ FW_INTERFACE : the interface which is your normal MAC network device
                may be en0 for a wired RJ45 and en1 for a WLAN connection
 NAMESERVER	 : Point this to your normal name server
 
-Copy the file into the directory Library/Application Support/ARAnyM,
+Copy the file into the directory ~/Library/Application Support/Aranym,
 if the Aranym directory is not existent simply create a new one.
 
 3. Configuring MacAranym
@@ -39,8 +39,8 @@ MAC = 00:41:45:54:48:30
 
 Set the HostIP and AtariIP to a network that is outside of your normal
 network range. i.E. if your default network is 172.16.1.xxx than you may
-use i.E. 192.168.1.x, or if your normal network is 192.168.1.x you may
-use i.E. 172.16.1.xxx addresses.
+use i.e. 192.168.1.x, or if your normal network is 192.168.1.x you may
+use i.e. 172.16.1.xxx addresses.
 
 If you want to disable ethernet, set "Type=none".
 

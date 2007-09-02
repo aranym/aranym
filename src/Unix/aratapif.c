@@ -32,7 +32,7 @@
  *          20010404 - Arnaldo Carvalho de Melo, use setlocale
  */
 
-#include <features.h>
+//#include <features.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -78,7 +78,11 @@ static int set_ip_using(const char *name, int c, const char *ip, const char *tex
     else if (c == SIOCSIFDSTADDR)
     	memcpy(&ifr.ifr_dstaddr, &sin, sizeof(struct sockaddr));
     else if (c == SIOCSIFNETMASK)
-    	memcpy(&ifr.ifr_netmask, &sin, sizeof(struct sockaddr));
+#if OS_darwin		
+    	memcpy(&ifr.ifr_addr, &sin, sizeof(struct sockaddr));
+#else	
+		memcpy(&ifr.ifr_netmask, &sin, sizeof(struct sockaddr));
+#endif
     else
     	return 2;
 

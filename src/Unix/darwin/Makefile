@@ -1,20 +1,32 @@
 
-CONFIGURE_OPTIONS_ppc  = --host=powerpc-apple-darwin8.10.0 --enable-fullmmu --enable-opengl --enable-fpe=uae --enable-nfjpeg --enable-nfosmesa --enable-ethernet=no --enable-vblupdates
-CONFIGURE_OPTIONS_i386 = --host=i386-apple-darwin8.10.0 --enable-opengl --enable-jit-compiler --enable-nfjpeg --enable-nfosmesa --enable-ethernet=no --enable-vblupdates
+CONFIGURE_OPTIONS_ppc  = --host=powerpc-apple-darwin8.10.0 --enable-fullmmu --enable-opengl --enable-fpe=uae --enable-nfjpeg --enable-nfosmesa --enable-ethernet=yes --enable-vblupdates=yes
+CONFIGURE_OPTIONS_i386 = --host=i386-apple-darwin8.10.0 --enable-opengl --enable-jit-compiler --enable-nfjpeg --enable-nfosmesa --enable-ethernet=yes --enable-vblupdates=yes
 ACLOCAL_FLAGS = "-I ./darwin/"
 
 srcdir = ..
 
-.PHONY: all clean clean_i386 clean_ppc touch
+.PHONY: universal i386 ppc clean clean_i386 clean_ppc touch
 
 
-all: $(srcdir)/Makefile_i386 $(srcdir)/Makefile_ppc $(srcdir)/config.h
+universal: $(srcdir)/Makefile_i386 $(srcdir)/Makefile_ppc $(srcdir)/config.h
 	$(MAKE) -f $(srcdir)/Makefile_i386 aranym_i386
 	$(MAKE) -f $(srcdir)/Makefile_ppc aranym_powerpc
 	#	create the universal binary from the ppc and i386 versions
 	lipo -create aranym_powerpc aranym_i386 -output aranym
 	#	now just build the bundle containing the just build universal binary
-	make -f $(srcdir)/Makefile_ppc
+	$(MAKE) -f $(srcdir)/Makefile_ppc
+
+
+i386: $(srcdir)/Makefile_i386 $(srcdir)/config.h
+	$(MAKE) -f $(srcdir)/Makefile_i386 aranym_i386
+	mv aranym_i386 aranym
+	$(MAKE) -f $(srcdir)/Makefile_i386
+
+
+ppc: $(srcdir)/Makefile_ppc $(srcdir)/config.h
+	$(MAKE) -f $(srcdir)/Makefile_ppc aranym_powerpc
+	mv aranym_powerpc aranym
+	$(MAKE) -f $(srcdir)/Makefile_ppc
 
 
 clean: clean_i386 clean_ppc
@@ -70,10 +82,10 @@ $(srcdir)/config_ppc.h: $(srcdir)/configure.ac $(srcdir)/autogen.sh $(srcdir)/ac
 	make -f $(srcdir)/Makefile depend
 	mv $(srcdir)/configure $(srcdir)/configure_ppc
 	mv $(srcdir)/config.log $(srcdir)/config_ppc.log
+	#mv $(srcdir)/config.h $(srcdir)/config_ppc.h
 	# 10.3.9 compatibility:
 	cat $(srcdir)/config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\/* #undef HAVE_SYS_STATVFS_H *\//' > $(srcdir)/config_ppc.h
 	rm $(srcdir)/config.h
-#	mv $(srcdir)/config.h $(srcdir)/config_ppc.h
 
 
 $(srcdir)/Makefile_i386: $(srcdir)/config_i386.h $(srcdir)/Makefile.in
