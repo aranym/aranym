@@ -1,3 +1,10 @@
+2007/09/07 - Philipp
+- Corrected handling of --enable-ctrlkey in configure.ac and
+  input.cpp (currently only supported by Darwin / Mac OS X target).
+- MacOSX/MacAranym.xcodeproj: Removed (once again) dependency to SDL_image 
+  Framework.
+
+
 2007/09/02 - Stefan
 - darwin/busybee.icns: Again another version of the busybee icon.
 
@@ -30,7 +37,7 @@
 
 - codegen_x86.cpp: Solved a compiler warning due to an unused local variable.
 
--sigsegv_darwin_x86.cpp: Solved a compiler warning inside 
+- sigsegv_darwin_x86.cpp: Solved a compiler warning inside 
   catch_exception_raise(), the return value krc now is initialized with 
   KERN_SUCCESS.
 

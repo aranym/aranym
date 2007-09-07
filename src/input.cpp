@@ -188,7 +188,7 @@ static int keyboardTable[0x80] = {
 static int keysymToAtari(SDL_keysym keysym)
 {
  
-//fprintf (stdout, "scancode: %x - sym: %x - char: %s\n", keysym.scancode, keysym.sym, SDL_GetKeyName (keysym.sym));
+    //fprintf (stdout, "scancode: %x - sym: %x - char: %s\n", keysym.scancode, keysym.sym, SDL_GetKeyName (keysym.sym));
 
 	int sym = keysym.scancode;
 
@@ -216,9 +216,9 @@ static int keysymToAtari(SDL_keysym keysym)
 	  case SDLK_RCTRL:
 	  case SDLK_LCTRL:
 		#if MAP_CONTROL_TO_CONTROL
-		  return 0;
-		#else		
 		  return 0x1D;
+		#else		
+		  return 0;
 		#endif
 	  default:
 	    break;

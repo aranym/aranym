@@ -63,14 +63,14 @@ AC_ARG_ENABLE(vblupdates,      [  --enable-vblupdates     enable SDL update are 
 
 AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support (default=yes)], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
 
-AC_ARG_ENABLE(ctlkey,
-[  --enable-controlkey=WICH        specify which key to use for control key emulation (default=both)],
+AC_ARG_ENABLE(ctrlkey,
+[  --enable-ctrlkey=WICH        specify which key to use for control key emulation (default=both)],
 [ case "$enableval" in
     dnl default is both
-    control)	CONTROL_KEY_EMULATION="control";;
-    meta)		CONTROL_KEY_EMULATION="meta";;
-    both)		CONTROL_KEY_EMULATION="both";;
-    *)		AC_MSG_ERROR([--enable-controlkey takes only one of the following values: control, meta, both]);;
+    ctrl)	    CONTROL_KEY="ctrl";;
+    meta)		CONTROL_KEY="meta";;
+    both)		CONTROL_KEY="both";;
+    *)		AC_MSG_ERROR([--enable-ctrlkey takes only one of the following values: ctrl, meta, both]);;
   esac
 ],
 [ CONTROL_KEY="both"
@@ -798,7 +798,7 @@ case $CONTROL_KEY in
 		AC_DEFINE([MAP_META_TO_CONTROL], 1, [Define if you want to map the meta key to the emulated control key])
 		AC_DEFINE([MAP_CONTROL_TO_CONTROL], 1, [Define if you want to map the control key to the emulated control key])
 		;;
-	control|*)
+	ctrl)
 		AC_DEFINE([MAP_CONTROL_TO_CONTROL], 1, [Define if you want to map the control key to the emulated control key])
 		;;
 esac
