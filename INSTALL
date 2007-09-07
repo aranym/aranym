@@ -64,7 +64,7 @@ If you want to configure ARAnyM for your personal needs, type
 ../configure_ppc --help
 
 Add preferred options to the CONFIGURE_OPTIONS_ppc and CONFIGURE_OPTIONS_i386 
-varaibales at the top of Makefile inside the darwin folder. After that run make 
+variables at the top of Makefile inside the darwin folder. After that run make 
 again.
 
 If everything went OK, you got an executable named "ARAnyM.app" inside the
