@@ -2130,7 +2130,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE  ENABLE_VBL_UPDATES ENABLE_TUNTAP";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-ethernet=yes --enable-vblupdates=yes";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-vblupdates=yes";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "0.9.5 beta+cvs";
