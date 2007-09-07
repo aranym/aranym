@@ -452,6 +452,9 @@
 		1736B1020C70ED5900C56FAF /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		17398E110B21048100A9B4DB /* README.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README.rtf; sourceTree = "<group>"; };
 		1743987C0B320B480011038E /* README_Xcode.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README_Xcode.rtf; sourceTree = "<group>"; };
+		1765B6ED0C91C0B000DD682B /* libOSMesa.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOSMesa.6.dylib; path = MesaGL/lib/libOSMesa.6.dylib; sourceTree = "<group>"; };
+		1765B6EE0C91C0BB00DD682B /* tap.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = tap.kext; path = tuntap/tap.kext; sourceTree = "<group>"; };
+		1765B6EF0C91C0BB00DD682B /* tun.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = tun.kext; path = tuntap/tun.kext; sourceTree = "<group>"; };
 		17798CD30A652B50009733EB /* acia.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = acia.cpp; path = ../../acia.cpp; sourceTree = SOURCE_ROOT; };
 		17798CD40A652B50009733EB /* acsifdc.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = acsifdc.cpp; path = ../../acsifdc.cpp; sourceTree = SOURCE_ROOT; };
 		17798CD50A652B50009733EB /* aradata.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = aradata.cpp; path = ../../aradata.cpp; sourceTree = SOURCE_ROOT; };
@@ -747,7 +750,7 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B428FAF60C7BA7100039CA66 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/aranym.nib; sourceTree = "<group>"; };
-		B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "MacAranym JIT IEEE.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym JIT IEEE.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B46114630C480FCA00003172 /* compstbl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = compstbl.cpp; path = build/MacAranym.build/compstbl.cpp; sourceTree = "<group>"; };
 		B46114660C480FEF00003172 /* cpustbl_nf.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = cpustbl_nf.cpp; path = build/MacAranym.build/cpustbl_nf.cpp; sourceTree = "<group>"; };
 		B4640D4B0C7C2E0F0000572B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
@@ -844,6 +847,25 @@
 			name = "gui-osx";
 			path = "../../gui-osx";
 			sourceTree = SOURCE_ROOT;
+		};
+		1765B70F0C91C19F00DD682B /* OSMesa */ = {
+			isa = PBXGroup;
+			children = (
+				1765B6ED0C91C0B000DD682B /* libOSMesa.6.dylib */,
+				17B2B78D0C41785800595D44 /* libOSMesa.7.dylib */,
+				17B2B78C0C41785800595D44 /* libGL.1.dylib */,
+			);
+			name = OSMesa;
+			sourceTree = "<group>";
+		};
+		1765B7100C91C1B300DD682B /* TunTap */ = {
+			isa = PBXGroup;
+			children = (
+				1765B6EE0C91C0BB00DD682B /* tap.kext */,
+				1765B6EF0C91C0BB00DD682B /* tun.kext */,
+			);
+			name = TunTap;
+			sourceTree = "<group>";
 		};
 		17798CD20A652B3B009733EB /* Aranym Sources */ = {
 			isa = PBXGroup;
@@ -1307,8 +1329,8 @@
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				002F39F909D0881F00EBEB88 /* SDL.framework */,
 				17B2B51A0C41781B00595D44 /* SDL_image.framework */,
-				17B2B78C0C41785800595D44 /* libGL.1.dylib */,
-				17B2B78D0C41785800595D44 /* libOSMesa.7.dylib */,
+				1765B70F0C91C19F00DD682B /* OSMesa */,
+				1765B7100C91C1B300DD682B /* TunTap */,
 			);
 			name = "Frameworks & Libraries";
 			sourceTree = "<group>";
