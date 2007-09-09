@@ -1,3 +1,8 @@
+2007/09/09 - Stefan
+- darwin/Makefile: Removed dependency of ppc target from config_i386.h and the 
+  dependency of i386 target from config_ppc.h.
+
+
 2007/09/07 - Philipp
 - Corrected handling of --enable-ctrlkey in configure.ac and
   input.cpp (currently only supported by Darwin / Mac OS X target).

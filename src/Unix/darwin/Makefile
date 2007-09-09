@@ -17,13 +17,15 @@ universal: $(srcdir)/Makefile_i386 $(srcdir)/Makefile_ppc $(srcdir)/config.h
 	$(MAKE) -f $(srcdir)/Makefile_ppc
 
 
-i386: $(srcdir)/Makefile_i386 $(srcdir)/config.h
+i386: $(srcdir)/Makefile_i386 $(srcdir)/config_i386.h
+	cp $(srcdir)/config_i386.h $(srcdir)/config.h
 	$(MAKE) -f $(srcdir)/Makefile_i386 aranym_i386
 	mv aranym_i386 aranym
 	$(MAKE) -f $(srcdir)/Makefile_i386
 
 
-ppc: $(srcdir)/Makefile_ppc $(srcdir)/config.h
+ppc: $(srcdir)/Makefile_ppc $(srcdir)/config_ppc.h
+	cp $(srcdir)/config_ppc.h $(srcdir)/config.h
 	$(MAKE) -f $(srcdir)/Makefile_ppc aranym_powerpc
 	mv aranym_powerpc aranym
 	$(MAKE) -f $(srcdir)/Makefile_ppc
