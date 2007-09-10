@@ -82,12 +82,7 @@ void HWInit()
 	arhw[iIDE] = ide = new IDE(0xf00000, 0x3a);
 	arhw[iDSP] = dsp = new DSP(0xffa200, 8);
 	arhw[iBLITTER] = blitter = new BLITTER(0xff8A00, 0x3e);
-	if (bx_options.autozoom.enabled) {
-		videl = new VidelZoom(0xff8200, 0xc4);
-	} else {
-		videl = new VIDEL(0xff8200, 0xc4);
-	}
-	arhw[iVIDEL] = videl;
+	arhw[iVIDEL] = videl = new VidelZoom(0xff8200, 0xc4);
 	arhw[iYAMAHA] = yamaha = new YAMAHA(0xff8800, 4);
 	arhw[iARADATA] = aradata = new ARADATA(0xf90000, 18);
 	arhw[iAUDIODMA] = audiodma = new AUDIODMA(0xff8900, 0x22);
