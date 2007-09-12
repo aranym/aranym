@@ -297,6 +297,7 @@ VdiDriver::~VdiDriver()
 
 void VdiDriver::reset(void)
 {
+	hostScreen.setVidelRendering(true);
 }
 
 /*--- Protected functions ---*/
