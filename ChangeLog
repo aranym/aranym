@@ -1,7 +1,8 @@
 2007/09/14 - Patrice
 - nfvdi: render nfvdi screen in its own surface. Should be a bit slower in some
   cases due to the complete blit to screen, should be much faster on MacOSX now
-  even without the VBL_UPDATE option.
+  even without the VBL_UPDATE option. Added a dirty rectangle class, so the
+  hostscreen refresh function knows what part of a surface to update (TODO).
 
 
 2007/09/09 - Stefan
