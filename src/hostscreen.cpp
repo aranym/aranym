@@ -1613,10 +1613,7 @@ void HostScreen::refresh(void)
 		}
 #ifdef NFVDI_SUPPORT
 	} else {
-		NF_Base* fvdi = NULL;
-		if (!fvdi) {
-			fvdi = NFGetDriver("fVDI");
-		}
+		NF_Base* fvdi = NFGetDriver("fVDI");
 		if (fvdi) {
 			SDL_Surface *nfvdi_surf = ((VdiDriver *) fvdi)->getSurface();
 			if (nfvdi_surf && mainSurface) {
