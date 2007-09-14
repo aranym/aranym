@@ -78,6 +78,7 @@ SRCS = ../main.cpp \
 	../bootos_linux.cpp \
 	../cdrom.cpp \
 	../cfgopts.cpp \
+	../dirty_rects.cpp \
 	../dsp.cpp \
 	../emul_op.cpp \
 	../natfeats.cpp \

@@ -77,6 +77,9 @@ class HostScreen {
 	int selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height);
 	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
 
+	void refreshVidel(void);
+	void refreshNfvdi(void);
+
 #ifdef ENABLE_OPENGL
 	// OpenGL stuff
 	SDL_Surface *SdlGlSurface;
@@ -510,6 +513,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.72  2007-08-30 11:49:09  pmandin
+ * Render videl screen in its own surface, hostscreen refresh() does all the dirty work now.
+ *
  * Revision 1.71  2007-07-15 17:33:22  stefanq
  * Added darwin/Makefile to generate an universal binary for Mac OS X by only running make. This currently generates an universal binary with JIT support for Intel Macs, although it currently crashes.
  * Changed the build system to allow two builds for different targets, which is needed by the new darwin/Makefile.

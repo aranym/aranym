@@ -1579,82 +1579,21 @@ void HostScreen::refresh(void)
 		setWindowSize(320,200,8);
 	}
 
+	if (!mainSurface) {
+		return;
+	}
+	
 	/* Render videl surface ? */
 	if (renderVidelSurface) {
-		SDL_Surface *videl_surf = getVIDEL()->getSurface();
-		if (videl_surf && mainSurface) {
-			int w = (videl_surf->w < 320) ? 320 : videl_surf->w;
-			int h = (videl_surf->h < 200) ? 200 : videl_surf->h;
-			int bpp = videl_surf->format->BitsPerPixel;
-			if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
-				setWindowSize(w, h, bpp);
-				lastVidelWidth = w;
-				lastVidelHeight = h;
-				lastVidelBpp = bpp;
-			}
-			/* Set palette from videl surface if needed */
-			if ((bpp==8) && (mainSurface->format->BitsPerPixel == 8)) {
-				SDL_Color palette[256];
-				for (int i=0; i<256; i++) {
-					palette[i].r = videl_surf->format->palette->colors[i].r;
-					palette[i].g = videl_surf->format->palette->colors[i].g;
-					palette[i].b = videl_surf->format->palette->colors[i].b;
-				}
-				SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
-			}
-
-			SDL_Rect dst_rect;
-			dst_rect.x = (mainSurface->w - videl_surf->w) >> 1;
-			dst_rect.y = (mainSurface->h - videl_surf->h) >> 1;
-			dst_rect.w = videl_surf->w;
-			dst_rect.h = videl_surf->h;
-
-			SDL_BlitSurface(videl_surf, NULL, mainSurface, &dst_rect);
-		}
-#ifdef NFVDI_SUPPORT
+		refreshVidel();
 	} else {
-		NF_Base* fvdi = NFGetDriver("fVDI");
-		if (fvdi) {
-			SDL_Surface *nfvdi_surf = ((VdiDriver *) fvdi)->getSurface();
-			if (nfvdi_surf && mainSurface) {
-				int w = (nfvdi_surf->w < 320) ? 320 : nfvdi_surf->w;
-				int h = (nfvdi_surf->h < 200) ? 200 : nfvdi_surf->h;
-				int bpp = nfvdi_surf->format->BitsPerPixel;
-				if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
-					setWindowSize(w, h, bpp);
-					lastVidelWidth = w;
-					lastVidelHeight = h;
-					lastVidelBpp = bpp;
-				}
-
-				/* Set palette from videl surface if needed */
-				if ((bpp==8) && (mainSurface->format->BitsPerPixel == 8)) {
-					SDL_Color palette[256];
-					for (int i=0; i<256; i++) {
-						palette[i].r = nfvdi_surf->format->palette->colors[i].r;
-						palette[i].g = nfvdi_surf->format->palette->colors[i].g;
-						palette[i].b = nfvdi_surf->format->palette->colors[i].b;
-					}
-					SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
-				}
-
-				/* TODO: use dirty rectangle list of surface, to make it fast */
-				SDL_Rect dst_rect;
-				dst_rect.x = (mainSurface->w - nfvdi_surf->w) >> 1;
-				dst_rect.y = (mainSurface->h - nfvdi_surf->h) >> 1;
-				dst_rect.w = nfvdi_surf->w;
-				dst_rect.h = nfvdi_surf->h;
-
-				SDL_BlitSurface(nfvdi_surf, NULL, mainSurface, &dst_rect);
-			}
-		}
-#endif
+		refreshNfvdi();
 	}
 
 #ifdef SDL_GUI
 	if (isGUIopen()) {
 		SDL_Surface *gui_surf = SDLGui_getSurface();
-		if (gui_surf && mainSurface) {
+		if (gui_surf) {
 			int gui_x, gui_y;
 
 			/* Blit gui on screen */
@@ -1709,6 +1648,111 @@ void HostScreen::refresh(void)
 void HostScreen::setVidelRendering(bool videlRender)
 {
 	renderVidelSurface = videlRender;
+}
+
+void HostScreen::refreshVidel(void)
+{
+	SDL_Surface *videl_surf = getVIDEL()->getSurface();
+	if (!videl_surf) {
+		return;
+	}
+
+	int w = (videl_surf->w < 320) ? 320 : videl_surf->w;
+	int h = (videl_surf->h < 200) ? 200 : videl_surf->h;
+	int bpp = videl_surf->format->BitsPerPixel;
+	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
+		setWindowSize(w, h, bpp);
+		lastVidelWidth = w;
+		lastVidelHeight = h;
+		lastVidelBpp = bpp;
+	}
+
+	/* Set palette from videl surface if needed */
+	if ((bpp==8) && (mainSurface->format->BitsPerPixel == 8)) {
+		SDL_Color palette[256];
+		for (int i=0; i<256; i++) {
+			palette[i].r = videl_surf->format->palette->colors[i].r;
+			palette[i].g = videl_surf->format->palette->colors[i].g;
+			palette[i].b = videl_surf->format->palette->colors[i].b;
+		}
+		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
+	}
+
+	SDL_Rect dst_rect;
+	dst_rect.x = (mainSurface->w - videl_surf->w) >> 1;
+	dst_rect.y = (mainSurface->h - videl_surf->h) >> 1;
+	dst_rect.w = videl_surf->w;
+	dst_rect.h = videl_surf->h;
+
+	SDL_BlitSurface(videl_surf, NULL, mainSurface, &dst_rect);
+}
+
+void HostScreen::refreshNfvdi(void)
+{
+#ifdef NFVDI_SUPPORT
+	NF_Base* fvdi = NFGetDriver("fVDI");
+	if (!fvdi) {
+		return;
+	}
+
+	SDL_Surface *nfvdi_surf = ((VdiDriver *) fvdi)->getSurface();
+	if (!nfvdi_surf) {
+		return;
+	}
+
+	int w = (nfvdi_surf->w < 320) ? 320 : nfvdi_surf->w;
+	int h = (nfvdi_surf->h < 200) ? 200 : nfvdi_surf->h;
+	int bpp = nfvdi_surf->format->BitsPerPixel;
+	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
+		setWindowSize(w, h, bpp);
+		lastVidelWidth = w;
+		lastVidelHeight = h;
+		lastVidelBpp = bpp;
+	}
+
+	/* Set palette from videl surface if needed */
+	if ((bpp==8) && (mainSurface->format->BitsPerPixel == 8)) {
+		SDL_Color palette[256];
+		for (int i=0; i<256; i++) {
+			palette[i].r = nfvdi_surf->format->palette->colors[i].r;
+			palette[i].g = nfvdi_surf->format->palette->colors[i].g;
+			palette[i].b = nfvdi_surf->format->palette->colors[i].b;
+		}
+		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
+	}
+
+	Uint8 *dirtyRects = ((VdiDriver *) fvdi)->getDirtyRects();
+	if (!dirtyRects) {
+		/* No dirty rects, refresh whole surface */
+		SDL_Rect dst_rect;
+		dst_rect.x = (mainSurface->w - nfvdi_surf->w) >> 1;
+		dst_rect.y = (mainSurface->h - nfvdi_surf->h) >> 1;
+		dst_rect.w = nfvdi_surf->w;
+		dst_rect.h = nfvdi_surf->h;
+
+		SDL_BlitSurface(nfvdi_surf, NULL, mainSurface, &dst_rect);
+		return;
+	}
+
+	int dirty_w = ((VdiDriver *) fvdi)->getDirtyWidth();
+	int dirty_h = ((VdiDriver *) fvdi)->getDirtyHeight();
+	for (int y=0; y<dirty_h; y++) {
+		for (int x=0; x<dirty_w; x++) {
+			if (dirtyRects[y * dirty_w + x]) {
+				SDL_Rect src, dst;
+
+				src.x = dst.x = x<<4;
+				src.y = dst.y = y<<4;
+				src.w = dst.w = 1<<4;
+				src.h = dst.h = 1<<4;
+
+				SDL_BlitSurface(nfvdi_surf, &src, mainSurface, &dst);
+			}
+		}
+	}
+
+	((VdiDriver *) fvdi)->clearDirtyRects();
+#endif
 }
 
 /*

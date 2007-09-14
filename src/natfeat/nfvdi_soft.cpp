@@ -128,6 +128,7 @@ int32 SoftVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 
 	if (surface) {
 		hsPutPixel(x, y, color);
+		setDirtyRect(x,y,1,1);
 	}
 
 	return 1;
@@ -198,6 +199,8 @@ void SoftVdiDriver::restoreMouseBackground(void)
 	for(uint16 i = 0; i < Mouse.storage.height; i++)
 		for(uint16 j = 0; j < Mouse.storage.width; j++)
 			hsPutPixel(x + j, y + i, Mouse.storage.background[i][j]);
+
+	setDirtyRect(x,y,16,16);
 }
 
 void SoftVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width,
@@ -397,7 +400,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		if ( asurf == NULL ) return 0;
 
 		if (logOp == 1) {
-			D(bug("fVDI: expandArea 8bit: logOp=%d screen=%p, format=%p [%d]", logOp, screen, screen->format, screen->format->BytesPerPixel));
+			D(bug("fVDI: expandArea 8bit: logOp=%d screen=%p, format=%p [%d]", logOp, surface, surface->format, surface->format->BytesPerPixel));
 
 			/* no alpha surface */
 			SDL_Surface *blocksurf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, surface->format->BitsPerPixel,
@@ -854,6 +857,8 @@ int32 SoftVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 				destData = applyBlitLogOperation(logOp, destData, srcData);
 				hsPutPixel(dx + i, dy + j, destData);
 			}
+
+		setDirtyRect(dx,dy,w,h);
 	}
 
 	return 1;
@@ -1549,8 +1554,6 @@ void SoftVdiDriver::hsPutPixel( int x, int y, uint32 color )
 			*(uint32 *)p = color;
 			break;
 	} /* switch */
-
-	setDirtyRect(x,y,1,1);
 }
 
 void SoftVdiDriver::hsFillArea( int x, int y, int w, int h,
@@ -1572,6 +1575,7 @@ void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
 	uint8 *pixel, *pixellast;
 	int16 pixx, pixy;
 	int16 i;
+	int y0 = y;
 	int16 dx=w;
 	int16 dy=h;
 
@@ -1786,7 +1790,7 @@ void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
 			break;
 	}  // switch
 
-	setDirtyRect(x,y,w,h);
+	setDirtyRect(x,y0,w,h);
 }
 
 /**
@@ -1977,6 +1981,7 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 						hsPutPixel( x, y, fgColor );
 					break;
 			}
+			setDirtyRect(x,y,1,1);
 		}
 	}
 	if (y1 == y2) {
