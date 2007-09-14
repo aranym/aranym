@@ -28,6 +28,8 @@
 #include "nf_base.h"
 #include "parameters.h"
 
+#include "../include/dirty_rects.h"
+
 /*--- Defines ---*/
 
 // The Atari structures offsets
@@ -74,7 +76,7 @@
 
 /*--- Class ---*/
 
-class VdiDriver : public NF_Base
+class VdiDriver : public NF_Base, public DirtyRects
 {
 	public:
 		char *name();

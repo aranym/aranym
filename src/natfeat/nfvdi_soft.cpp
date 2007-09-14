@@ -128,7 +128,6 @@ int32 SoftVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 
 	if (surface) {
 		hsPutPixel(x, y, color);
-		/* TODO: mark in dirty rectangle */
 	}
 
 	return 1;
@@ -199,8 +198,6 @@ void SoftVdiDriver::restoreMouseBackground(void)
 	for(uint16 i = 0; i < Mouse.storage.height; i++)
 		for(uint16 j = 0; j < Mouse.storage.width; j++)
 			hsPutPixel(x + j, y + i, Mouse.storage.background[i][j]);
-
-	/* TODO: mark dirty rectangle */
 }
 
 void SoftVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width,
@@ -313,7 +310,6 @@ int SoftVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	hsFillArea(x, y, w, h, md, Mouse.storage.color.foreground,
 		Mouse.storage.color.foreground, 2);
 
-	/* TODO: mark dirty rectangle */
 	return 1;
 }
 
@@ -458,7 +454,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		SDL_BlitSurface(asurf,NULL,surface,&destRect);
 		SDL_FreeSurface(asurf);
 
-		/* TODO: mark dirty rectangle */
+		setDirtyRect(dx,dy,w,h);
 		return 1;
 	}
 
@@ -493,7 +489,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		D2(bug("")); //newline
 	}
 
-	/* TODO: mark dirty rectangle */
+	setDirtyRect(dx,dy,w,h);
 	return 1;
 }
 
@@ -588,7 +584,6 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 		}
 	}
 
-	/* TODO: mark dirty rectangle */
 	return 1;
 }
 
@@ -597,7 +592,6 @@ void SoftVdiDriver::fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
                              uint32 logOp)
 {
 	hsFillArea(x, y, w, h, pattern, fgColor, bgColor, logOp);
-	/* TODO: mark dirty rectangle */
 }
 
 /**
@@ -750,7 +744,7 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 			}
 	}
 
-	/* TODO: mark dirty rectangle */
+	setDirtyRect(dx,dy,w,h);
 	return 1;
 }
 
@@ -862,7 +856,6 @@ int32 SoftVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 			}
 	}
 
-	/* TODO: mark dirty rectangles */
 	return 1;
 }
 
@@ -1218,7 +1211,6 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	if (minmax[0] != 1000000) {
 		D(bug("fVDI: %s %d,%d:%d,%d", "drawLineUp",
 		       minmax[0], minmax[1], minmax[2], minmax[3]));
-		/* TODO: mark dirty rectangle */
 	} else {
 		D2(bug("fVDI: drawLineUp nothing to redraw"));
 	}
@@ -1397,7 +1389,6 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 		}
 	}
 
-	/* TODO: mark dirty rectangle */
 	return 1;
 #endif
 }
@@ -1558,6 +1549,8 @@ void SoftVdiDriver::hsPutPixel( int x, int y, uint32 color )
 			*(uint32 *)p = color;
 			break;
 	} /* switch */
+
+	setDirtyRect(x,y,1,1);
 }
 
 void SoftVdiDriver::hsFillArea( int x, int y, int w, int h,
@@ -1792,6 +1785,8 @@ void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
 			}
 			break;
 	}  // switch
+
+	setDirtyRect(x,y,w,h);
 }
 
 /**
@@ -1937,6 +1932,8 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 	srcrect.h = dstrect.h = h;
 
 	SDL_BlitSurface(surface, &srcrect, surface, &dstrect);
+
+	setDirtyRect(dx,dy,w,h);
 }
 
 /* Non-alpha line drawing code adapted from routine			 */
@@ -2225,6 +2222,8 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 			}
 			break;
 	}
+
+	setDirtyRect(x1,y1,x2-x1+1,y2-y1+1);
 }
 
 void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
@@ -2358,6 +2357,8 @@ void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
 			}
 			break;
 	}
+
+	setDirtyRect(x1,y,x2-x1+1,1);
 }
 
 void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
@@ -2488,4 +2489,6 @@ void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
 			}
 			break;
 	}
+
+	setDirtyRect(x,y1,1,y2);
 }

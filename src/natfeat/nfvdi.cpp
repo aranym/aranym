@@ -275,7 +275,7 @@ int32 VdiDriver::dispatch(uint32 fncode)
 }
 
 VdiDriver::VdiDriver()
-	: surface(NULL)
+	: DirtyRects(), surface(NULL)
 {
 	index_count = crossing_count = point_count = 0;
 	alloc_index = alloc_crossing = alloc_point = NULL;
@@ -424,6 +424,8 @@ void VdiDriver::setResolution(int32 width, int32 height, int32 depth)
 	if (surface==NULL) {
 		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width,height,depth ,0,0,0,0);
 	}
+
+	resizeDirty(width,height);
 
 	/* TODO: restore palette ? */
 }
