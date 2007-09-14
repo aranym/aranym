@@ -31,6 +31,11 @@
 #include "gui-sdl/sdlgui.h"
 #include "main.h"
 
+#ifdef NFVDI_SUPPORT
+# include "nf_objs.h"
+# include "nfvdi.h"
+#endif
+
 #define DEBUG 0
 #include "debug.h"
 
@@ -1606,6 +1611,47 @@ void HostScreen::refresh(void)
 
 			SDL_BlitSurface(videl_surf, NULL, mainSurface, &dst_rect);
 		}
+#ifdef NFVDI_SUPPORT
+	} else {
+		NF_Base* fvdi = NULL;
+		if (!fvdi) {
+			fvdi = NFGetDriver("fVDI");
+		}
+		if (fvdi) {
+			SDL_Surface *nfvdi_surf = ((VdiDriver *) fvdi)->getSurface();
+			if (nfvdi_surf && mainSurface) {
+				int w = (nfvdi_surf->w < 320) ? 320 : nfvdi_surf->w;
+				int h = (nfvdi_surf->h < 200) ? 200 : nfvdi_surf->h;
+				int bpp = nfvdi_surf->format->BitsPerPixel;
+				if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
+					setWindowSize(w, h, bpp);
+					lastVidelWidth = w;
+					lastVidelHeight = h;
+					lastVidelBpp = bpp;
+				}
+
+				/* Set palette from videl surface if needed */
+				if ((bpp==8) && (mainSurface->format->BitsPerPixel == 8)) {
+					SDL_Color palette[256];
+					for (int i=0; i<256; i++) {
+						palette[i].r = nfvdi_surf->format->palette->colors[i].r;
+						palette[i].g = nfvdi_surf->format->palette->colors[i].g;
+						palette[i].b = nfvdi_surf->format->palette->colors[i].b;
+					}
+					SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
+				}
+
+				/* TODO: use dirty rectangle list of surface, to make it fast */
+				SDL_Rect dst_rect;
+				dst_rect.x = (mainSurface->w - nfvdi_surf->w) >> 1;
+				dst_rect.y = (mainSurface->h - nfvdi_surf->h) >> 1;
+				dst_rect.w = nfvdi_surf->w;
+				dst_rect.h = nfvdi_surf->h;
+
+				SDL_BlitSurface(nfvdi_surf, NULL, mainSurface, &dst_rect);
+			}
+		}
+#endif
 	}
 
 #ifdef SDL_GUI
@@ -1648,8 +1694,19 @@ void HostScreen::refresh(void)
 		OpenGLUpdate();
 
 		SDL_GL_SwapBuffers();
-	}
+	} else
 #endif	/* ENABLE_OPENGL */
+	{
+		if ((mainSurface->flags & SDL_DOUBLEBUF)==SDL_DOUBLEBUF) {
+			SDL_Flip(mainSurface);
+		} else {
+			SDL_Rect update_rect;
+			update_rect.x = update_rect.y = 0;
+			update_rect.w = mainSurface->w;
+			update_rect.h = mainSurface->h;
+			SDL_UpdateRects(mainSurface,1,&update_rect);
+		}
+	}
 }
 
 void HostScreen::setVidelRendering(bool videlRender)

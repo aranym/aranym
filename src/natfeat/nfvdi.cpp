@@ -275,6 +275,7 @@ int32 VdiDriver::dispatch(uint32 fncode)
 }
 
 VdiDriver::VdiDriver()
+	: surface(NULL)
 {
 	index_count = crossing_count = point_count = 0;
 	alloc_index = alloc_crossing = alloc_point = NULL;
@@ -293,11 +294,20 @@ VdiDriver::~VdiDriver()
 		SDL_FreeCursor(cursor);
 		cursor = NULL;
 	}
+
+	if (surface) {
+		SDL_FreeSurface(surface);
+	}
 }
 
 void VdiDriver::reset(void)
 {
 	hostScreen.setVidelRendering(true);
+
+	if (surface) {
+		SDL_FreeSurface(surface);
+		surface = NULL;
+	}
 }
 
 /*--- Protected functions ---*/
@@ -379,19 +389,48 @@ uint32 VdiDriver::applyBlitLogOperation(int logicalOperation,
 	return destinationData;
 }
 
+SDL_Surface *VdiDriver::getSurface(void)
+{
+	return surface;
+}
+
 void VdiDriver::setResolution(int32 width, int32 height, int32 depth)
 {
-	hostScreen.setWindowSize(width, height, depth > 8 ? depth : 8);
+	if (width<64) {
+		width = 64;
+	}
+	if (height<64) {
+		height = 64;
+	}
+	if (depth<8) {
+		depth = 8;
+	}
+
+	/* Recreate surface if needed */
+	if (surface) {
+		if ((surface->format->BitsPerPixel != depth)
+		   || (surface->w != width)
+		   || (surface->h != height))
+		{
+			SDL_FreeSurface(surface);
+			surface = NULL;
+		}
+	}
+	if (surface==NULL) {
+		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width,height,depth ,0,0,0,0);
+	}
+
+	/* TODO: restore palette ? */
 }
 
 int32 VdiDriver::getWidth(void)
 {
-	return hostScreen.getWidth();
+	return (surface ? surface->w : 0);
 }
 
 int32 VdiDriver::getHeight(void)
 {
-	return hostScreen.getHeight();
+	return (surface ? surface->h : 0);
 }
 
 int32 VdiDriver::openWorkstation(void)
@@ -408,7 +447,7 @@ int32 VdiDriver::closeWorkstation(void)
 
 int32 VdiDriver::getBpp(void)
 {
-	return hostScreen.getBitsPerPixel();
+	return (surface ? surface->format->BitsPerPixel : 0);
 }
 
 // The polygon code needs some arrays of unknown size

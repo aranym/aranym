@@ -1,3 +1,9 @@
+2007/09/14 - Patrice
+- nfvdi: render nfvdi screen in its own surface. Should be a bit slower in some
+  cases due to the complete blit to screen, should be much faster on MacOSX now
+  even without the VBL_UPDATE option.
+
+
 2007/09/09 - Stefan
 - darwin/Makefile: Removed dependency of ppc target from config_i386.h and the 
   dependency of i386 target from config_ppc.h.

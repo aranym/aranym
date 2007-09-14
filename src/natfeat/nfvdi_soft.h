@@ -83,6 +83,7 @@ class SoftVdiDriver : public VdiDriver
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
 	private:
+		bool clipLine(int& x1, int& y1, int& x2, int& y2, int cliprect[]);
 		int drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 			uint32 fgColor, uint32 bgColor, int logOp, bool last_pixel,
 			int cliprect[], int minmax[]);
@@ -92,6 +93,26 @@ class SoftVdiDriver : public VdiDriver
 		int drawMoveLine(memptr table, int length, memptr index, int moves,
 			uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp,
 			int cliprect[], int minmax[]);
+
+		/* Functions from hostscreen */
+		uint32 hsGetPixel( int x, int y );
+		void hsPutPixel( int x, int y, uint32 color );
+		void hsFillArea( int x, int y, int w, int h,
+			uint16 *pattern, uint32 fgColor, uint32 bgColor,
+			uint16 logOp );
+		void hsGfxBoxColorPattern( int x, int y, int w, int h,
+			uint16 *areaPattern, uint32 fgColor, uint32 bgColor,
+			uint16 logOp );
+		void hsBitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
+			uint8 colorValues[16] );
+		void hsBlitArea( int sx, int sy, int dx, int dy, int w, int h );
+		void hsDrawLine( int x1, int y1, int x2, int y2,
+			uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp,
+			bool last_pixel /*= true*/);
+		void gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
+			uint32 fgColor, uint32 bgColor, uint16 logOp );
+		void gfxVLineColor( int16 x, int16 y1, int16 y2,
+			uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
 };
 
 #endif /* NFVDI_SOFT_H */

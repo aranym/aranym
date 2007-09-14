@@ -85,7 +85,11 @@ class VdiDriver : public NF_Base
 		virtual ~VdiDriver();
 		virtual void reset(void);
 
+		SDL_Surface *getSurface(void);
+
 	protected:
+		SDL_Surface *surface;
+
 		struct _Mouse {
 			struct {
 				uint16 x, y;
