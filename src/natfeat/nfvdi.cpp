@@ -396,6 +396,11 @@ SDL_Surface *VdiDriver::getSurface(void)
 
 void VdiDriver::setResolution(int32 width, int32 height, int32 depth)
 {
+	if (bx_options.autozoom.fixedsize) {
+		width = bx_options.autozoom.width;
+		height = bx_options.autozoom.height;
+	}
+
 	if (width<64) {
 		width = 64;
 	}
