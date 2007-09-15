@@ -31,9 +31,12 @@ DirtyRects::DirtyRects(int width, int height)
 
 DirtyRects::~DirtyRects(void)
 {
-	if (dirtyMarker) {
+	/* FIXME: frequent lockups when exiting ARAnyM when executing this
+	   cleanup for nfvdi surface, wtf???
+	*/
+	/*if (dirtyMarker) {
 		delete dirtyMarker;
-	}
+	}*/
 }
 
 /*--- Public functions ---*/
