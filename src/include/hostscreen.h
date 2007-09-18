@@ -35,6 +35,8 @@
 #include <SDL_opengl.h>
 #endif
 
+#include "dirty_rects.h"
+
 /**
  * This macro handles the endianity for 24 bit per item data
  **/
@@ -65,7 +67,8 @@
 #endif
 
 
-class HostScreen {
+class HostScreen: public DirtyRects
+{
   private:
  	SDL_Surface *mainSurface;		// The main window surface
  	SDL_Surface *backgroundSurf;	// Background window surface
@@ -79,6 +82,8 @@ class HostScreen {
 
 	void refreshVidel(void);
 	void refreshNfvdi(void);
+	void refreshGui(void);
+	void refreshScreen(void);
 
 #ifdef ENABLE_OPENGL
 	// OpenGL stuff
@@ -130,9 +135,6 @@ class HostScreen {
 
 	inline void lock();
 	inline void unlock();
-
-	inline bool	  renderBegin();
-	inline void	  renderEnd();
 
 	// the w, h should be width & height (but C++ complains -> 'if's in the implementation)
 	void update( int32 x, int32 y, int32 w, int32 h, bool forced = false );
@@ -317,21 +319,6 @@ inline void HostScreen::unlock() {
 	}
 }
 
-inline bool HostScreen::renderBegin() {
-	if (SDL_MUSTLOCK(surf))
-		if (SDL_LockSurface(surf) < 0) {
-			printf("Couldn't lock surface to refresh!\n");
-			return false;
-		}
-
-	return true;
-}
-
-inline void HostScreen::renderEnd() {
-	if (SDL_MUSTLOCK(surf))
-		SDL_UnlockSurface(surf);
-}
-
 inline uint32 HostScreen::getPixel( int16 x, int16 y ) {
 	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
 		return 0;
@@ -513,6 +500,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.73  2007-09-14 23:20:39  pmandin
+ * Now only update needed parts of nfvdi screen to screen surface
+ *
  * Revision 1.72  2007-08-30 11:49:09  pmandin
  * Render videl screen in its own surface, hostscreen refresh() does all the dirty work now.
  *

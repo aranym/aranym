@@ -90,7 +90,7 @@ static const unsigned long default_palette[] = {
 };
 
 HostScreen::HostScreen(void)
-	: refreshCounter(0)
+	: DirtyRects(), refreshCounter(0)
 {
 	for(int i=0; i<256; i++) {
 		unsigned long color = default_palette[i%16];
@@ -591,6 +591,8 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		surf = mainSurface;
 	}
 
+	resizeDirty(width, height);
+
 	char buf[sizeof(VERSION_STRING)+128];
 #ifdef SDL_GUI
 	char key[80];
@@ -610,15 +612,11 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	// is the SDL_update needed?
 	doUpdate = ( surf->flags & SDL_HWSURFACE ) == 0;
 
-	renderBegin();
-
 	VideoRAMBaseHost = (uint8 *) surf->pixels;
 	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
 	D(bug("VideoRAM starts at %p (%08x)", VideoRAMBaseHost, VideoRAMBase));
 	D(bug("surf->pixels = %x, getVideoSurface() = %x",
 			VideoRAMBaseHost, SDL_GetVideoSurface()->pixels));
-
-	renderEnd();
 
 	D(bug("Pixel format:bitspp=%d, tmasks r=%04x g=%04x b=%04x"
 			", tshifts r=%d g=%d b=%d"
@@ -1590,31 +1588,9 @@ void HostScreen::refresh(void)
 		refreshNfvdi();
 	}
 
-#ifdef SDL_GUI
 	if (isGUIopen()) {
-		SDL_Surface *gui_surf = SDLGui_getSurface();
-		if (gui_surf) {
-			int gui_x, gui_y;
-
-			/* Blit gui on screen */
-			SDL_Rect dst_rect;
-			dst_rect.x = gui_x = (mainSurface->w - gui_surf->w) >> 1;
-			dst_rect.y = gui_y = (mainSurface->h - gui_surf->h) >> 1;
-			dst_rect.w = gui_surf->w /* < dest->w ? gui_surf->w : dest->w*/;
-			dst_rect.h = gui_surf->h /*< dest->h ? gui_surf->h : dest->h*/;
-
-			SDL_BlitSurface(gui_surf, NULL, mainSurface, &dst_rect);
-
-			SDLGui_setGuiPos(gui_x, gui_y);
-		}
-
-		static int blendRefresh = 0;
-		if (blendRefresh++ > 5) {
-			blendRefresh = 0;
-			blendBackgrounds();
-		}
+		refreshGui();
 	}
-#endif /* SDL_GUI */
 
 #ifdef ENABLE_VBL_UPDATES
 	SDL_mutexP(updateLock);
@@ -1625,24 +1601,7 @@ void HostScreen::refresh(void)
 	SDL_mutexV(updateLock);
 #endif
 
-#ifdef ENABLE_OPENGL
-	if (bx_options.opengl.enabled) {
-		OpenGLUpdate();
-
-		SDL_GL_SwapBuffers();
-	} else
-#endif	/* ENABLE_OPENGL */
-	{
-		if ((mainSurface->flags & SDL_DOUBLEBUF)==SDL_DOUBLEBUF) {
-			SDL_Flip(mainSurface);
-		} else {
-			SDL_Rect update_rect;
-			update_rect.x = update_rect.y = 0;
-			update_rect.w = mainSurface->w;
-			update_rect.h = mainSurface->h;
-			SDL_UpdateRects(mainSurface,1,&update_rect);
-		}
-	}
+	refreshScreen();
 }
 
 void HostScreen::setVidelRendering(bool videlRender)
@@ -1685,6 +1644,8 @@ void HostScreen::refreshVidel(void)
 	dst_rect.h = videl_surf->h;
 
 	SDL_BlitSurface(videl_surf, NULL, mainSurface, &dst_rect);
+
+	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 }
 
 void HostScreen::refreshNfvdi(void)
@@ -1731,6 +1692,8 @@ void HostScreen::refreshNfvdi(void)
 		dst_rect.h = nfvdi_surf->h;
 
 		SDL_BlitSurface(nfvdi_surf, NULL, mainSurface, &dst_rect);
+
+		setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 		return;
 	}
 
@@ -1747,6 +1710,8 @@ void HostScreen::refreshNfvdi(void)
 				src.h = dst.h = 1<<4;
 
 				SDL_BlitSurface(nfvdi_surf, &src, mainSurface, &dst);
+
+				setDirtyRect(dst.x,dst.y,dst.w,dst.h);
 			}
 		}
 	}
@@ -1754,6 +1719,87 @@ void HostScreen::refreshNfvdi(void)
 	((VdiDriver *) fvdi)->clearDirtyRects();
 #endif
 }
+
+void HostScreen::refreshGui(void)
+{
+#ifdef SDL_GUI
+	SDL_Surface *gui_surf = SDLGui_getSurface();
+	if (!gui_surf) {
+		return;
+	}
+
+	int gui_x, gui_y;
+
+	/* Blit gui on screen */
+	SDL_Rect dst_rect;
+	dst_rect.x = gui_x = (mainSurface->w - gui_surf->w) >> 1;
+	dst_rect.y = gui_y = (mainSurface->h - gui_surf->h) >> 1;
+	dst_rect.w = gui_surf->w /* < dest->w ? gui_surf->w : dest->w*/;
+	dst_rect.h = gui_surf->h /*< dest->h ? gui_surf->h : dest->h*/;
+
+	SDL_BlitSurface(gui_surf, NULL, mainSurface, &dst_rect);
+
+	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
+
+	SDLGui_setGuiPos(gui_x, gui_y);
+
+	static int blendRefresh = 0;
+	if (blendRefresh++ > 5) {
+		blendRefresh = 0;
+		blendBackgrounds();
+	}
+#endif /* SDL_GUI */
+}
+
+void HostScreen::refreshScreen(void)
+{
+#ifdef ENABLE_OPENGL
+	if (bx_options.opengl.enabled) {
+		OpenGLUpdate();
+
+		SDL_GL_SwapBuffers();
+		return;
+	}
+#endif	/* ENABLE_OPENGL */
+
+	if ((mainSurface->flags & SDL_DOUBLEBUF)==SDL_DOUBLEBUF) {
+		SDL_Flip(mainSurface);
+		return;
+	}
+
+	if (!dirtyMarker) {
+		return;
+	}
+
+	/* Only update dirtied rects */
+	SDL_Rect update_rects[dirtyW*dirtyH];
+	int i = 0;
+	for (int y=0; y<dirtyH; y++) {
+		for (int x=0; x<dirtyW; x++) {
+			if (dirtyMarker[y * dirtyW + x]) {
+				int maxw = 1<<4, maxh = 1<<4;
+				if (mainSurface->w - (x<<4) < (1<<4)) {
+					maxw = mainSurface->w - (x<<4);
+				}
+				if (mainSurface->h - (y<<4) < (1<<4)) {
+					maxh = mainSurface->h - (y<<4);
+				}
+
+				update_rects[i].x = x<<4;
+				update_rects[i].y = y<<4;
+				update_rects[i].w = maxw;
+				update_rects[i].h = maxh;
+
+				i++;
+			}
+		}
+	}
+
+	SDL_UpdateRects(mainSurface,i,update_rects);
+
+	clearDirtyRects();
+}
+
 
 /*
 vim:ts=4:sw=4:
