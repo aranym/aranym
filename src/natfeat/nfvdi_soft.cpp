@@ -1970,18 +1970,18 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 					break;
 				case 2:
 					if ( pattern )
-						hsPutPixel( x, y, fgColor );
+						hsPutPixel( x1, y1, fgColor );
 					break;
 				case 3:
 					if ( pattern )
-						hsPutPixel( x, y, ~ hsGetPixel( x, y ) );
+						hsPutPixel( x1, y1, ~ hsGetPixel( x1, y1 ) );
 					break;
 				case 4:
 					if ( ! pattern )
-						hsPutPixel( x, y, fgColor );
+						hsPutPixel( x1, y1, fgColor );
 					break;
 			}
-			setDirtyRect(x,y,1,1);
+			setDirtyRect(x1,y1,1,1);
 		}
 	}
 	if (y1 == y2) {
