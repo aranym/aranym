@@ -35,7 +35,7 @@
 #define USE_SDL_CLOCK 1		// undefine this if your ARAnyM time goes slower
 
 // host OS dependent objects
-HostScreen hostScreen;
+//HostScreen hostScreen;
 Host *host;
 
 Host::Host()
@@ -66,6 +66,7 @@ Host::~Host()
 
 void Host::reset(void)
 {
+	/* TODO: should also reset hostscreen */
 	audio.reset();
 	clock->reset();
 }

@@ -1,3 +1,7 @@
+2007/09/19 - Patrice
+- hostscreen: member of Host class now, so created and destroyed there.
+
+
 2007/09/18 - Patrice
 - hostscreen: create functions to update each part of video subsystem to main
   surface, which also has its dirty rectangles list.

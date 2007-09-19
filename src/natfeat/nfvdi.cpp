@@ -23,8 +23,8 @@
 #include "parameters.h"
 #include "nfvdi.h"
 #include "fvdidrv_nfapi.h"	// keep in sync with same file in fVDI CVS
-#include "host.h"
 #include "hostscreen.h"
+#include "host.h"
 
 #include "cpu_emulation.h"
 
@@ -128,7 +128,7 @@ int32 VdiDriver::dispatch(uint32 fncode)
 
 
 	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
-	hostScreen.lock();
+	host->hostScreen.lock();
 
 	switch(fncode) {
 		case FVDI_GET_VERSION:
@@ -268,7 +268,7 @@ int32 VdiDriver::dispatch(uint32 fncode)
 	}
 
 	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
-	hostScreen.unlock();
+	host->hostScreen.unlock();
 
 	D(bug("nfvdi: function returning with 0x%08x", ret));
 	return ret;
@@ -302,7 +302,7 @@ VdiDriver::~VdiDriver()
 
 void VdiDriver::reset(void)
 {
-	hostScreen.setVidelRendering(true);
+	host->hostScreen.setVidelRendering(true);
 
 	if (surface) {
 		SDL_FreeSurface(surface);
@@ -442,13 +442,13 @@ int32 VdiDriver::getHeight(void)
 
 int32 VdiDriver::openWorkstation(void)
 {
-	hostScreen.setVidelRendering(false);
+	host->hostScreen.setVidelRendering(false);
 	return 1;
 }
 
 int32 VdiDriver::closeWorkstation(void)
 {
-	hostScreen.setVidelRendering(true);
+	host->hostScreen.setVidelRendering(true);
 	return 1;
 }
 
@@ -793,7 +793,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		return 1;
 	}
 
-	if (hostScreen.getBpp() <= 1) {
+	if (host->hostScreen.getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
@@ -916,7 +916,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					D2(fprintf(stderr, "fVDI: bmp:"));
 
 					uint32 address = destAddress + ((((dx >> 4) * destPlanes) << 1) + (dy + j) * destPitch);
-					hostScreen.bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
+					host->hostScreen.bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
 
 					uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
 					for(uint16 i = sx; i < sx + w; i++) {
@@ -934,7 +934,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 							// convert next 16pixels to chunky
 							address = destAddress + ((wordIndex << 1) + (dy + j) * destPitch);
-							hostScreen.bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
+							host->hostScreen.bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
 							theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 						}
 

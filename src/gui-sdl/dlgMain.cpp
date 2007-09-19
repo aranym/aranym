@@ -26,9 +26,9 @@
 #include "file.h"
 #include "parameters.h"			// load/saveSettings()
 
-#define Screen_Save()		{ SCRLOCK; hostScreen.saveBackground(); SCRUNLOCK; }
+#define Screen_Save()		{ SCRLOCK; host->hostScreen.saveBackground(); SCRUNLOCK; }
 #define Screen_SetFullUpdate()
-#define Screen_Draw()		{ SCRLOCK; hostScreen.restoreBackground(); SCRUNLOCK; }
+#define Screen_Draw()		{ SCRLOCK; host->hostScreen.restoreBackground(); SCRUNLOCK; }
 
 #ifdef OS_darwin
 	extern void refreshMenuKeys();
@@ -207,12 +207,12 @@ void Dialog_MainDlg()
 			break;
 
 		case FULLSCREEN:
-			hostScreen.toggleFullScreen();
+			host->hostScreen.toggleFullScreen();
 			closeDialog = true;
 			break;
 
 		case SCREENSHOT:
-			hostScreen.makeSnapshot();
+			host->hostScreen.makeSnapshot();
 			closeDialog = true;
 			break;
 

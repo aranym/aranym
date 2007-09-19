@@ -193,14 +193,14 @@ void do_vbl_irq()
 	TriggerVBL();		// generate VBL
 
 	// Thread safety patch
-	hostScreen.lock();
+	host->hostScreen.lock();
 
 	check_event();		// process keyboard and mouse events
 
-	hostScreen.refresh();
+	host->hostScreen.refresh();
 
 	// Thread safety patch
-	hostScreen.unlock();
+	host->hostScreen.unlock();
 }
 
 /*
@@ -465,13 +465,13 @@ bool InitAll(void)
 	if (isGuiAvailable && startupGUI) {
 		start_GUI_thread();
 		do {
-			hostScreen.lock();
+			host->hostScreen.lock();
 			check_event();			// process mouse & keyboard events
-			hostScreen.unlock();
+			host->hostScreen.unlock();
 
 			SDL_Delay(20);			// 50 Hz input events rate is OK
 		}
-		while(hostScreen.isGUIopen());
+		while(host->hostScreen.isGUIopen());
 	}
 #endif /* SDL_GUI */
 
@@ -548,6 +548,7 @@ void ExitAll(void)
 	HWExit();
 
 	delete host;
+	host = NULL;
 
 	SDL_Quit();
 }

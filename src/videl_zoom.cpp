@@ -81,8 +81,8 @@ SDL_Surface *VidelZoom::getSurface(void)
 		videlHeight = 64;
 	}
 
-	int hostWidth = hostScreen.getWidth();
-	int hostHeight = hostScreen.getHeight();
+	int hostWidth = host->hostScreen.getWidth();
+	int hostHeight = host->hostScreen.getHeight();
 
 	zoomWidth = hostWidth;
 	zoomHeight = hostHeight;

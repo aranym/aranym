@@ -439,7 +439,7 @@ static int open_gui(void * /*ptr*/)
 {
 	bool fullscreen = bx_options.video.fullscreen;
 
-	hostScreen.openGUI();
+	host->hostScreen.openGUI();
 	int status = GUImainDlg();
 
 	// the status is sent to event checking thread by the USEREVENT+1 message
@@ -449,13 +449,13 @@ static int open_gui(void * /*ptr*/)
 	ev.user.data1 = NULL;
 	SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(GUI_RETURN_INFO));
 
-	hostScreen.closeGUI();
+	host->hostScreen.closeGUI();
 
 	// small hack to toggle fullscreen from the SETUP GUI
 	if (bx_options.video.fullscreen != fullscreen) {
 		bx_options.video.fullscreen = fullscreen;
 
-		hostScreen.toggleFullScreen();
+		host->hostScreen.toggleFullScreen();
 		if (bx_options.video.fullscreen && !grabbedMouse)
 			grabTheMouse();
 	}
@@ -465,7 +465,7 @@ static int open_gui(void * /*ptr*/)
 
 bool start_GUI_thread()
 {
-	if (isGuiAvailable && !hostScreen.isGUIopen()
+	if (isGuiAvailable && !host->hostScreen.isGUIopen()
 #ifdef ENABLE_OPENGL
 		&& !bx_options.opengl.enabled
 #endif
@@ -497,7 +497,7 @@ static void process_keyboard_event(const SDL_Event &event)
 		state = keysym.mod;	// May be send by SDL_PushEvent
 		
 #ifdef SDL_GUI
-	if (hostScreen.isGUIopen()) {
+	if (host->hostScreen.isGUIopen()) {
 		SDL_Event ev;
 		ev.type = SDL_USEREVENT;	// map key down/up event to user event
 		ev.user.code = event.type;
@@ -579,17 +579,17 @@ static void process_keyboard_event(const SDL_Event &event)
 #endif
 		else if (CHECK_HOTKEY(ungrab)) {
 			if ( bx_options.video.fullscreen )
-				hostScreen.toggleFullScreen();
+				host->hostScreen.toggleFullScreen();
 			releaseTheMouse();
 			canGrabMouseAgain = false;	// let it leave our window
 			send2Atari = false;
 		}
 		else if (CHECK_HOTKEY(screenshot)) {
-			hostScreen.makeSnapshot();
+			host->hostScreen.makeSnapshot();
 			send2Atari = false;
 		}
 		else if (CHECK_HOTKEY(fullscreen)) {
-			hostScreen.toggleFullScreen();
+			host->hostScreen.toggleFullScreen();
 			if (bx_options.video.fullscreen && !grabbedMouse)
 				grabTheMouse();
 			send2Atari = false;
@@ -650,7 +650,7 @@ static void process_mouse_event(const SDL_Event &event)
 #endif
 
 #ifdef SDL_GUI
-	if (hostScreen.isGUIopen()) {
+	if (host->hostScreen.isGUIopen()) {
 		int typ = event.type;
 		if (typ == SDL_MOUSEBUTTONDOWN || typ == SDL_MOUSEBUTTONUP) {
 			SDL_Event ev;
@@ -785,8 +785,11 @@ static void process_mouse_event(const SDL_Event &event)
 			mouseOut = true;
 
 		// same check but for bottom and right side of our window
-		if ((xrel > 0 && getARADATA()->getAtariMouseX() >= (int32)hostScreen.getWidth() - 1) ||
-			(yrel > 0 && getARADATA()->getAtariMouseY() >= (int32)hostScreen.getHeight() - 1))
+		int hostw = host->hostScreen.getWidth();
+		int hosth = host->hostScreen.getHeight();
+
+		if ((xrel > 0 && getARADATA()->getAtariMouseX() >= (int32) hostw - 1) ||
+			(yrel > 0 && getARADATA()->getAtariMouseY() >= (int32) hosth - 1))
 			mouseOut = true;
 	}
 }
