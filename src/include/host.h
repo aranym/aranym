@@ -21,16 +21,19 @@ class Host : public HostFilesys
 		void reset(void);
 
 		HostAudio audio;
+		HostScreen hostScreen;
 		HostClock *clock;
 };
 
-extern HostScreen hostScreen;
 extern Host *host;
 
 #endif /* HOST_H */
 
 /*
  * $Log$
+ * Revision 1.7  2006-02-03 21:21:34  pmandin
+ * Created host clock class to encapsulate OS-dependent time functions
+ *
  * Revision 1.6  2006/01/26 22:48:20  pmandin
  * Create a class for OS-dependent paths functions
  *
