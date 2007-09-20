@@ -1,3 +1,8 @@
+2007/09/20 - Patrice
+- Need to disable SDL parachutes for signal handlers; conflict with Aranym
+  sigsegv handler?
+
+
 2007/09/19 - Patrice
 - hostscreen: member of Host class now, so created and destroyed there.
 
