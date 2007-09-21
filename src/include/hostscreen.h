@@ -111,32 +111,12 @@ class HostScreen: public DirtyRects
 
 	uint16 snapCounter; // ALT+PrintScreen to make a snap?
 
-	/**
-	 * This is the SDL_gfxPrimitives derived functions.
-	 **/
-	inline void	  gfxFastPixelColorNolock( int16 x, int16 y, uint32 color );
-	inline uint32 gfxGetPixel( int16 x, int16 y );
-
-	void   gfxHLineColor ( int16 x1, int16 x2, int16 y,
-						   uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
-	void   gfxVLineColor( int16 x, int16 y1, int16 y2,
-						  uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
-	void   gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
-	                     uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, bool last_pixel = true );
-	void   gfxBoxColorPattern( int16 x1, int16 y1, int16 x2, int16 y2,
-                               uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
-
   public:
 	HostScreen(void);
 	~HostScreen(void);
 
 	inline void lock();
 	inline void unlock();
-
-	// the w, h should be width & height (but C++ complains -> 'if's in the implementation)
-	void update( int32 x, int32 y, int32 w, int32 h, bool forced = false );
-	void update( bool forced );
-	void update();
 
 	void OpenGLUpdate(void);	/* Full screen update with NF software VDI */
 	void EnableOpenGLVdi(void);
@@ -165,18 +145,6 @@ class HostScreen: public DirtyRects
 	void   setWindowSize( uint32 width, uint32 height, uint32 bpp );
 	void   setRendering( bool render );
 
-	// gfx Primitives draw functions
-	uint32 getPixel( int16 x, int16 y );
-	void   putPixel( int16 x, int16 y, uint32 color );
-	void   putPixel( int16 x, int16 y, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
-	void   drawLine( int16 x1, int16 y1, int16 x2, int16 y2,
-	                 uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, bool last_pixel /*= true*/);
-	// transparent background
-	void   fillArea( int16 x1, int16 y1, int16 x2, int16 y2, uint16 *pattern, uint32 color );
-	// VDI required function to fill areas
-	void   fillArea( int16 x1, int16 y1, int16 x2, int16 y2, uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
-	void   blitArea( int16 sx, int16 sy, int16 dx, int16 dy, int16 w, int16 h );
-
 	/**
 	 * Atari bitplane to chunky conversion helper.
 	 **/
@@ -195,54 +163,6 @@ class HostScreen: public DirtyRects
 	void	setVidelRendering(bool videlRender);
 	int	lastVidelWidth, lastVidelHeight, lastVidelBpp;
 };
-
-
-// inline functions
-inline void HostScreen::gfxFastPixelColorNolock(int16 x, int16 y, uint32 color)
-{
-	int bpp;
-	uint8 *p;
-
-	/* Get destination format */
-	bpp = mainSurface->format->BytesPerPixel;
-	p = (uint8 *)mainSurface->pixels + y * mainSurface->pitch + x * bpp;
-	switch(bpp) {
-		case 1:
-			*p = color;
-			break;
-		case 2:
-			*(uint16 *)p = color;
-			break;
-		case 3:
-			putBpp24Pixel( p, color );
-			break;
-		case 4:
-			*(uint32 *)p = color;
-			break;
-	} /* switch */
-}
-
-inline uint32 HostScreen::gfxGetPixel( int16 x, int16 y )
-{
-	int bpp;
-	uint8 *p;
-
-	/* Get destination format */
-	bpp = mainSurface->format->BytesPerPixel;
-	p = (uint8 *)mainSurface->pixels + y * mainSurface->pitch + x * bpp;
-	switch(bpp) {
-		case 1:
-			return (uint32)(*(uint8 *)p);
-		case 2:
-			return (uint32)(*(uint16 *)p);
-		case 3:
-			// FIXME maybe some & problems? and endian
-			return getBpp24Pixel( p );
-		case 4:
-			return *(uint32 *)p;
-	} /* switch */
-	return 0;	// should never happen
-}
 
 inline uint32 HostScreen::getBpp()
 {
@@ -311,53 +231,6 @@ inline void HostScreen::unlock() {
 		fprintf(stderr, "Couldn't unlock mutex\n");
 	}
 }
-
-inline uint32 HostScreen::getPixel( int16 x, int16 y ) {
-	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
-		return 0;
-
-	return gfxGetPixel( x, y );
-}
-
-inline void HostScreen::putPixel( int16 x, int16 y, uint32 color ) {
-	if ( x < 0 || x >= (int32)width || y < 0 || y >= (int32)height )
-		return;
-
-	gfxFastPixelColorNolock( x, y, color );
-}
-
-inline void HostScreen::drawLine( int16 x1, int16 y1, int16 x2, int16 y2, uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, bool last_pixel = true )
-{
-	gfxLineColor( x1, y1, x2, y2, pattern, fgColor, bgColor, logOp, last_pixel ); // SDL_gfxPrimitives
-}
-
-
-inline void HostScreen::fillArea( int16 x, int16 y, int16 w, int16 h, uint16 *pattern, uint32 color )
-{
-	gfxBoxColorPattern( x, y, w, h, pattern, color, color, 2 );
-}
-
-inline void HostScreen::fillArea( int16 x, int16 y, int16 w, int16 h,
-								  uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
-{
-	gfxBoxColorPattern( x, y, w, h, pattern, fgColor, bgColor, logOp );
-}
-
-inline void HostScreen::blitArea( int16 sx, int16 sy, int16 dx, int16 dy, int16 w, int16 h )
-{
-	SDL_Rect srcrect;
-	SDL_Rect dstrect;
-
-	srcrect.x = sx;
-	srcrect.y = sy;
-	dstrect.x = dx;
-	dstrect.y = dy;
-	srcrect.w = dstrect.w = w;
-	srcrect.h = dstrect.h = h;
-
-	SDL_BlitSurface(mainSurface, &srcrect, mainSurface, &dstrect);
-}
-
 
 /**
  * Performs conversion from the TOS's bitplane word order (big endian) data
@@ -493,6 +366,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.75  2007-09-21 19:02:13  pmandin
+ * Remove various temp surfaces
+ *
  * Revision 1.74  2007-09-18 20:43:30  pmandin
  * More different functions to update the various video subsystem surfaces to the main screen surface
  *

@@ -6,7 +6,8 @@
 
 
 2007/09/21 - Patrice
-- hostscreen: remove temp surfaces used in various places.
+- hostscreen: remove temp surfaces used in various places. Also remove drawing
+  functions.
 
 
 2007/09/20 - Patrice
