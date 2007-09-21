@@ -37,35 +37,6 @@
 
 #include "dirty_rects.h"
 
-/**
- * This macro handles the endianity for 24 bit per item data
- **/
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-
-#define putBpp24Pixel( address, color ) \
-{ \
-        ((Uint8*)(address))[0] = ((color) >> 16) & 0xff; \
-        ((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
-        ((Uint8*)(address))[2] = (color) & 0xff; \
-}
-
-#define getBpp24Pixel( address ) \
-    ( ((uint32)(address)[0] << 16) | ((uint32)(address)[1] << 8) | (uint32)(address)[2] )
-
-#else
-
-#define putBpp24Pixel( address, color ) \
-{ \
-    ((Uint8*)(address))[0] = (color) & 0xff; \
-        ((Uint8*)(address))[1] = ((color) >> 8) & 0xff; \
-        ((Uint8*)(address))[2] = ((color) >> 16) & 0xff; \
-}
-
-#define getBpp24Pixel( address ) \
-    ( ((uint32)(address)[2] << 16) | ((uint32)(address)[1] << 8) | (uint32)(address)[0] )
-
-#endif
-
 
 class HostScreen: public DirtyRects
 {
@@ -102,12 +73,6 @@ class HostScreen: public DirtyRects
 	SDL_mutex   *screenLock;
 	uint32 sdl_videoparams;
 	uint32 width, height, bpp;
-	bool   doUpdate; // the HW surface is available -> the SDL need not to update the surface after ->pixel access
-
-	struct { // TOS palette (bpp < 16) to SDL color mapping
-		SDL_Color	standard[256];
-		uint32		native[256];
-	} palette;
 
 	uint16 snapCounter; // ALT+PrintScreen to make a snap?
 
@@ -115,8 +80,8 @@ class HostScreen: public DirtyRects
 	HostScreen(void);
 	~HostScreen(void);
 
-	inline void lock();
-	inline void unlock();
+	void lock(void);
+	void unlock(void);
 
 	void OpenGLUpdate(void);	/* Full screen update with NF software VDI */
 	void EnableOpenGLVdi(void);
@@ -132,15 +97,8 @@ class HostScreen: public DirtyRects
 
 	uint32 getBpp();	/* Bytes per pixel */
 	uint32 getBitsPerPixel(void);
-	uint32 getPitch();
-	uint32 getWidth();
-	uint32 getHeight();
-	uintptr getVideoramAddress();
-
-	void   setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue );
-	uint32 getPaletteColor( uint8 index );
-	void   updatePalette( uint16 colorCount );
-	uint32 getColor( uint32 red, uint32 green, uint32 blue );
+	uint32 getWidth(void);
+	uint32 getHeight(void);
 
 	void   setWindowSize( uint32 width, uint32 height, uint32 bpp );
 	void   setRendering( bool render );
@@ -163,74 +121,6 @@ class HostScreen: public DirtyRects
 	void	setVidelRendering(bool videlRender);
 	int	lastVidelWidth, lastVidelHeight, lastVidelBpp;
 };
-
-inline uint32 HostScreen::getBpp()
-{
-#ifdef ENABLE_OPENGL
-	if (bx_options.opengl.enabled) {
-		switch(bpp) {
-			case 15:
-			case 16:
-				return 2;
-			case 24:
-				return 3;
-			case 32:
-				return 4;
-		}
-		return 1;
-	}
-#endif
-	return mainSurface->format->BytesPerPixel;
-}
-
-inline uint32 HostScreen::getPitch() {
-	return mainSurface->pitch;
-}
-
-inline uint32 HostScreen::getWidth() {
-	return width;
-}
-
-inline uint32 HostScreen::getHeight() {
-	return height;
-}
-
-inline uintptr HostScreen::getVideoramAddress() {
-	return (uintptr)mainSurface->pixels;	/* FIXME maybe this should be mainSurface? */
-}
-
-inline void HostScreen::setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue ) {
-	SDL_Color& color = palette.standard[index];
-	color.r = red; color.g = green; color.b = blue; // set the SDL standard RGB palette settings
-	palette.native[index] = SDL_MapRGB( mainSurface->format, red, green, blue ); // convert the color to native
-}
-
-inline uint32 HostScreen::getPaletteColor( uint8 index ) {
-	return palette.native[index];
-}
-
-inline void HostScreen::updatePalette( uint16 colorCount ) {
-	SDL_SetColors( mainSurface, palette.standard, 0, colorCount );
-}
-
-inline uint32 HostScreen::getColor( uint32 red, uint32 green, uint32 blue ) {
-	return SDL_MapRGB( mainSurface->format, red, green, blue );
-}
-
-
-inline void HostScreen::lock() {
-	while (SDL_mutexP(screenLock)==-1) {
-		SDL_Delay(20);
-		fprintf(stderr, "Couldn't lock mutex\n");
-	}
-}
-
-inline void HostScreen::unlock() {
-	while (SDL_mutexV(screenLock)==-1) {
-		SDL_Delay(20);
-		fprintf(stderr, "Couldn't unlock mutex\n");
-	}
-}
 
 /**
  * Performs conversion from the TOS's bitplane word order (big endian) data
@@ -363,249 +253,3 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 }
 
 #endif
-
-/*
- * $Log$
- * Revision 1.75  2007-09-21 19:02:13  pmandin
- * Remove various temp surfaces
- *
- * Revision 1.74  2007-09-18 20:43:30  pmandin
- * More different functions to update the various video subsystem surfaces to the main screen surface
- *
- * Revision 1.73  2007-09-14 23:20:39  pmandin
- * Now only update needed parts of nfvdi screen to screen surface
- *
- * Revision 1.72  2007-08-30 11:49:09  pmandin
- * Render videl screen in its own surface, hostscreen refresh() does all the dirty work now.
- *
- * Revision 1.71  2007-07-15 17:33:22  stefanq
- * Added darwin/Makefile to generate an universal binary for Mac OS X by only running make. This currently generates an universal binary with JIT support for Intel Macs, although it currently crashes.
- * Changed the build system to allow two builds for different targets, which is needed by the new darwin/Makefile.
- * Further changes have been done to mainly solve compiler warnings.
- *
- * Revision 1.70  2006-12-17 14:46:00  philipp
- * Fix: ENABLE_OPENGL is only defined after "parameters.h" has been included.
- *
- * Revision 1.69  2006/12/13 00:11:05  philipp
- * Small fixes for OpenGLVdiDriver bugs which bothered MacAranym (compilation and runtime errors/crashes).
- *
- * Revision 1.68  2006/11/10 23:21:26  pmandin
- * Move video refresh from main to hostscreen. More to follow soon.
- *
- * Revision 1.67  2006/08/25 18:34:22  philipp
- * Fixed p2c routine for big endian, colors are now correct.
- *
- * Revision 1.66  2006/08/25 13:16:10  pmandin
- * big endian patch from philipp donze
- *
- * Revision 1.65  2006/05/31 22:06:18  johan
- * "Real" planar to chunky code for little endian CPUs.
- *
- * Revision 1.64  2005/06/14 16:45:04  pmandin
- * Use rectangle texture when available
- *
- * Revision 1.63  2005/06/14 15:11:43  pmandin
- * Use non power of two texture when available
- *
- * Revision 1.62  2005/06/13 12:58:05  pmandin
- * Correctly setup shadow texture when smaller than asked
- *
- * Revision 1.61  2005/06/11 20:13:14  pmandin
- * Remove getComponent stuff
- *
- * Revision 1.60  2005/06/09 19:50:16  pmandin
- * Fixing getComponent function
- *
- * Revision 1.59  2005/06/08 19:33:02  pmandin
- * Add getComponent() function
- *
- * Revision 1.58  2005/06/08 18:14:59  pmandin
- * Update texture using a dirty rectangles list
- *
- * Revision 1.57  2005/05/12 07:55:08  pmandin
- * Keep OpenGL related stuff in hostscreen and nfvdi classes
- *
- * Revision 1.56  2005/05/11 20:19:26  pmandin
- * Add NF vdi OpenGL renderer
- *
- * Revision 1.55  2005/05/11 16:16:24  pmandin
- * Confused by bpp (bits per pixel) and bpp (bytes per pixel)
- *
- * Revision 1.53  2005/05/10 21:03:40  pmandin
- * Added getBpp function to FVDI driver
- *
- * Revision 1.52  2005/05/10 10:37:44  pmandin
- * Faster OpenGL rendering
- *
- * Revision 1.51  2005/05/05 22:47:02  milan
- * support of old headers removed
- *
- * Revision 1.50  2005/01/22 16:39:48  joy
- * --disable-gui now disables all SDL GUI related code
- *
- * Revision 1.49  2004/12/11 09:55:52  pmandin
- * Move update function from .h to .cpp, mandatory for NFOSMesa
- *
- * Revision 1.48  2004/04/26 07:25:59  standa
- * GPL header & comment adjustments.
- *
- * Revision 1.47  2004/01/08 21:44:34  pmandin
- * Missing inclusion of config.h for ENABLE_OPENGL
- *
- * Revision 1.46  2004/01/05 10:05:20  standa
- * Palette handling reworked. Old non-NF dispatch removed.
- *
- * Revision 1.45  2003/12/24 23:30:54  joy
- * when GUI is open the background is being updated with running ARAnyM
- *
- * Revision 1.44  2003/06/01 08:35:39  milan
- * MacOS X support updated and <SDL/> removed from includes, path to SDL headers must be fully defined
- *
- * Revision 1.43  2003/04/16 19:35:49  pmandin
- * Correct inclusion of SDL headers
- *
- * Revision 1.42  2003/02/19 09:02:56  standa
- * The bitplane modes expandArea fix.
- *
- * Revision 1.41  2002/12/02 16:54:38  milan
- * non-OpenGL support
- *
- * Revision 1.40  2002/12/01 10:28:29  pmandin
- * OpenGL rendering
- *
- * Revision 1.39  2002/10/15 21:26:53  milan
- * non-cheaders support (for MipsPro C/C++ compiler)
- *
- * Revision 1.38  2002/09/23 09:21:37  pmandin
- * Select best video mode
- *
- * Revision 1.37  2002/07/25 13:44:29  pmandin
- * gcc-3.1 does not like a parameter to be set both in the definition and the method (drawline)
- *
- * Revision 1.36  2002/07/20 12:41:19  joy
- * always update() the physical video surface
- *
- * Revision 1.35  2002/07/20 08:10:55  joy
- * GUI background saving/restoring fixed
- *
- * Revision 1.34  2002/07/19 12:25:00  joy
- * main and background video surfaces
- *
- * Revision 1.33  2002/06/26 21:06:27  joy
- * bool GUIopened flag added
- *
- * Revision 1.32  2002/06/09 20:06:07  joy
- * save_bkg/restore_bkg added (used in SDL GUI)
- *
- * Revision 1.31  2002/06/07 20:55:35  joy
- * added toggle window/fullscreen mode switch
- *
- * Revision 1.30  2002/04/22 18:30:50  milan
- * header files reform
- *
- * Revision 1.29  2002/02/27 12:08:01  milan
- * uae_u32 -> uintptr where it is necessary
- *
- * Revision 1.28  2002/01/09 19:37:33  standa
- * The fVDI driver patched to not to pollute the HostScreen class getPaletteColor().
- *
- * Revision 1.27  2002/01/08 22:40:00  standa
- * The palette fix and a little 8bit driver update.
- *
- * Revision 1.26  2002/01/08 21:20:57  standa
- * fVDI driver palette store on res change implemented.
- *
- * Revision 1.25  2001/12/17 09:38:09  standa
- * The inline update() function order change to not to cause warnings.
- *
- * Revision 1.24  2001/12/17 08:33:00  standa
- * Thread synchronization added. The check_event and fvdidriver actions are
- * synchronized each to other.
- *
- * Revision 1.23  2001/12/03 20:56:07  standa
- * The gfsprimitives library files removed. All the staff was moved and
- * adjusted directly into the HostScreen class.
- *
- * Revision 1.22  2001/11/29 23:51:56  standa
- * Johan Klockars <rand@cd.chalmers.se> fVDI driver changes.
- *
- * Revision 1.21  2001/11/21 17:26:26  standa
- * The BIGENDIAN bitplaneToChunky corrected.
- *
- * Revision 1.20  2001/11/19 01:37:35  standa
- * PaletteInversIndex search. Bugfix in fillArea in 8bit depth.
- *
- * Revision 1.19  2001/11/18 21:04:59  standa
- * The BIG endiam chunky to bitplane conversion fix.
- *
- * Revision 1.18  2001/11/11 22:09:17  joy
- * gcc warning fix
- *
- * Revision 1.17  2001/11/07 21:18:25  milan
- * SDL_CFLAGS in CXXFLAGS now.
- *
- * Revision 1.16  2001/11/04 23:17:08  standa
- * 8bit destination surface support in VIDEL. Blit routine optimalization.
- * Bugfix in compatibility modes palette copying.
- *
- * Revision 1.15  2001/10/30 22:59:34  standa
- * The resolution change is now possible through the fVDI driver.
- *
- * Revision 1.14  2001/10/29 23:14:17  standa
- * The HostScreen support for arbitrary destination BPP (8,16,24,32bit).
- *
- * Revision 1.13  2001/10/25 19:56:01  standa
- * The Log and Header CVS tags in the Log removed. Was recursing.
- *
- * Revision 1.12  2001/10/24 17:55:01  standa
- * The fVDI driver fixes. Finishing the functionality tuning.
- *
- * Revision 1.11  2001/10/23 21:28:49  standa
- * Several changes, fixes and clean up. Shouldn't crash on high resolutions.
- * hostscreen/gfx... methods have fixed the loop upper boundary. The interface
- * types have changed quite havily.
- *
- * Revision 1.10  2001/10/08 21:46:05  standa
- * The Header and Log CVS tags added.
- *
- * Revision 1.9  2001/10/01 22:22:41  standa
- * bitplaneToChunky conversion moved into HostScreen (inline - should be no performance penalty).
- * fvdidrv/blitArea form memory works in TC.
- *
- * Revision 1.8  2001/09/30 23:09:23  standa
- * The line logical operation added.
- * The first version of blitArea (screen to screen only).
- *
- * Revision 1.7  2001/09/24 23:16:28  standa
- * Another minor changes. some logical operation now works.
- * fvdidrv/fillArea and fvdidrv/expandArea got the first logOp handling.
- *
- * Revision 1.6  2001/09/20 18:12:09  standa
- * Off by one bug fixed in fillArea.
- * Separate functions for transparent and opaque background.
- * gfxPrimitives methods moved to the HostScreen
- *
- * Revision 1.5  2001/09/19 22:52:43  standa
- * The putPixel is now much faster because it doesn't either update or surface locking.
- *
- * Revision 1.4  2001/09/17 10:36:08  joy
- * color fixed by Standa at AHody 2001.
- *
- * Revision 1.3  2001/08/30 14:04:59  standa
- * The fVDI driver. mouse_draw implemented. Partial pattern fill support.
- * Still buggy.
- *
- * Revision 1.2  2001/08/28 23:26:09  standa
- * The fVDI driver update.
- * VIDEL got the doRender flag with setter setRendering().
- *       The host_colors_uptodate variable name was changed to hostColorsSync.
- * HostScreen got the doUpdate flag cleared upon initialization if the HWSURFACE
- *       was created.
- * fVDIDriver got first version of drawLine and fillArea (thanks to SDL_gfxPrimitives).
- *
- * Revision 1.1  2001/06/18 13:21:55  standa
- * Several template.cpp like comments were added.
- * HostScreen SDL encapsulation class.
- *
- *
- */

@@ -7,7 +7,8 @@
 
 2007/09/21 - Patrice
 - hostscreen: remove temp surfaces used in various places. Also remove drawing
-  functions.
+  functions. No need to inline everything. Remove log messages from include
+  file.
 
 
 2007/09/20 - Patrice

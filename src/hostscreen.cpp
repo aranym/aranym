@@ -58,23 +58,6 @@
 extern char *displayKeysym(SDL_keysym keysym, char *buffer);
 #endif
 
-#define RGB_BLACK     0x00000000
-#define RGB_BLUE      0x000000ff
-#define RGB_GREEN     0x00ff0000
-#define RGB_CYAN      0x00ff00ff
-#define RGB_RED       0xff000000
-#define RGB_MAGENTA   0xff0000ff
-#define RGB_LTGRAY    0xbbbb00bb
-#define RGB_GRAY      0x88880088
-#define RGB_LTBLUE    0x000000aa
-#define RGB_LTGREEN   0x00aa0000
-#define RGB_LTCYAN    0x00aa00aa
-#define RGB_LTRED     0xaa000000
-#define RGB_LTMAGENTA 0xaa0000aa
-#define RGB_YELLOW    0xffff0000
-#define RGB_LTYELLOW  0xaaaa0000
-#define RGB_WHITE     0xffff00ff
-
 #ifdef ENABLE_VBL_UPDATES
 #define MAXIMUM_UPDATE_CACHE 1000
 	static SDL_Rect updateRects[MAXIMUM_UPDATE_CACHE];
@@ -82,23 +65,9 @@ extern char *displayKeysym(SDL_keysym keysym, char *buffer);
 	static SDL_mutex  *updateLock;
 #endif
 
-static const unsigned long default_palette[] = {
-    RGB_WHITE, RGB_RED, RGB_GREEN, RGB_YELLOW,
-    RGB_BLUE, RGB_MAGENTA, RGB_CYAN, RGB_LTGRAY,
-    RGB_GRAY, RGB_LTRED, RGB_LTGREEN, RGB_LTYELLOW,
-    RGB_LTBLUE, RGB_LTMAGENTA, RGB_LTCYAN, RGB_BLACK
-};
-
 HostScreen::HostScreen(void)
 	: DirtyRects(), refreshCounter(0)
 {
-	for(int i=0; i<256; i++) {
-		unsigned long color = default_palette[i%16];
-		palette.standard[i].r = color >> 24;
-		palette.standard[i].g = (color >> 16) & 0xff;
-		palette.standard[i].b = color & 0xff;
-	}
-
 	// the counter init
 	snapCounter = 0;
 
@@ -154,6 +123,55 @@ HostScreen::~HostScreen(void) {
 #endif
 }
 
+uint32 HostScreen::getBpp(void)
+{
+#ifdef ENABLE_OPENGL
+	if (bx_options.opengl.enabled) {
+		switch(bpp) {
+			case 15:
+			case 16:
+				return 2;
+			case 24:
+				return 3;
+			case 32:
+				return 4;
+		}
+		return 1;
+	}
+#endif
+	return mainSurface->format->BytesPerPixel;
+}
+
+uint32 HostScreen::getBitsPerPixel(void)
+{
+	return (mainSurface ? mainSurface->format->BitsPerPixel : 0);
+}
+
+uint32 HostScreen::getWidth(void)
+{
+	return width;
+}
+
+uint32 HostScreen::getHeight(void)
+{
+	return height;
+}
+
+void HostScreen::lock(void) {
+	while (SDL_mutexP(screenLock)==-1) {
+		SDL_Delay(20);
+		fprintf(stderr, "Couldn't lock mutex\n");
+	}
+}
+
+void HostScreen::unlock(void) {
+	while (SDL_mutexV(screenLock)==-1) {
+		SDL_Delay(20);
+		fprintf(stderr, "Couldn't unlock mutex\n");
+	}
+}
+
+
 void HostScreen::makeSnapshot()
 {
 	char filename[15];
@@ -171,9 +189,6 @@ void HostScreen::toggleFullScreen()
 	setWindowSize( width, height, bpp );
 
 	forceRefreshNfvdi();
-
-	/* refresh the screen */
-	/*update( true);*/
 }
 
 #ifdef SDL_GUI
@@ -503,9 +518,6 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 #endif /* SDL_GUI */
 	SDL_WM_SetCaption(buf, "ARAnyM");
 
-	// update the surface's palette
-	updatePalette( 256 );
-
 	D(bug("Surface Pitch = %d, width = %d, height = %d", surf->pitch, surf->w, surf->h));
 	D(bug("Must Lock? %s", SDL_MUSTLOCK(surf) ? "YES" : "NO"));
 
@@ -584,11 +596,6 @@ void HostScreen::OpenGLUpdate(void)
 
 	gl.Disable(rect_target);
 #endif
-}
-
-uint32 HostScreen::getBitsPerPixel(void)
-{
-	return mainSurface->format->BitsPerPixel;
 }
 
 void HostScreen::EnableOpenGLVdi(void)
