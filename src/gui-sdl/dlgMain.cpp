@@ -26,10 +26,6 @@
 #include "file.h"
 #include "parameters.h"			// load/saveSettings()
 
-#define Screen_Save()		{ SCRLOCK; host->hostScreen.saveBackground(); SCRUNLOCK; }
-#define Screen_SetFullUpdate()
-#define Screen_Draw()		{ SCRLOCK; host->hostScreen.restoreBackground(); SCRUNLOCK; }
-
 #ifdef OS_darwin
 	extern void refreshMenuKeys();
 #endif
@@ -152,8 +148,6 @@ void Dialog_MainDlg()
 
 	bReboot = bShutdown = false;
 
-	Screen_Save();
-
 	SCRLOCK;
 	SDL_ShowCursor(SDL_ENABLE);
 	SCRUNLOCK;
@@ -224,8 +218,6 @@ void Dialog_MainDlg()
 			closeDialog = true;
 			break;
 		}
-		Screen_SetFullUpdate();
-		Screen_Draw();
 	}
 	while (!closeDialog);
 

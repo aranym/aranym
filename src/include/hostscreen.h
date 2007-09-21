@@ -71,17 +71,14 @@ class HostScreen: public DirtyRects
 {
   private:
  	SDL_Surface *mainSurface;		// The main window surface
- 	SDL_Surface *backgroundSurf;	// Background window surface
-	SDL_Surface *surf;			// pointer to actual surface for VDI
   	bool GUIopened;
-  	void allocateBackgroundSurf();
-  	void freeBackgroundSurf();
 
 	int selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height);
 	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
 
 	void refreshVidel(void);
 	void refreshNfvdi(void);
+	void forceRefreshNfvdi(void);
 	void refreshGui(void);
 	void refreshScreen(void);
 
@@ -150,10 +147,6 @@ class HostScreen: public DirtyRects
 	void openGUI();
 	void closeGUI();
 	bool isGUIopen()	{ return GUIopened; }
-	// save and restore background under GUI
-	void saveBackground();
-	void restoreBackground();
-	void blendBackgrounds();
 	SDL_Surface *getPhysicalSurface() { return mainSurface; }
 #endif
 
@@ -211,8 +204,8 @@ inline void HostScreen::gfxFastPixelColorNolock(int16 x, int16 y, uint32 color)
 	uint8 *p;
 
 	/* Get destination format */
-	bpp = surf->format->BytesPerPixel;
-	p = (uint8 *)surf->pixels + y * surf->pitch + x * bpp;
+	bpp = mainSurface->format->BytesPerPixel;
+	p = (uint8 *)mainSurface->pixels + y * mainSurface->pitch + x * bpp;
 	switch(bpp) {
 		case 1:
 			*p = color;
@@ -235,8 +228,8 @@ inline uint32 HostScreen::gfxGetPixel( int16 x, int16 y )
 	uint8 *p;
 
 	/* Get destination format */
-	bpp = surf->format->BytesPerPixel;
-	p = (uint8 *)surf->pixels + y * surf->pitch + x * bpp;
+	bpp = mainSurface->format->BytesPerPixel;
+	p = (uint8 *)mainSurface->pixels + y * mainSurface->pitch + x * bpp;
 	switch(bpp) {
 		case 1:
 			return (uint32)(*(uint8 *)p);
@@ -267,11 +260,11 @@ inline uint32 HostScreen::getBpp()
 		return 1;
 	}
 #endif
-	return surf->format->BytesPerPixel;
+	return mainSurface->format->BytesPerPixel;
 }
 
 inline uint32 HostScreen::getPitch() {
-	return surf->pitch;
+	return mainSurface->pitch;
 }
 
 inline uint32 HostScreen::getWidth() {
@@ -283,13 +276,13 @@ inline uint32 HostScreen::getHeight() {
 }
 
 inline uintptr HostScreen::getVideoramAddress() {
-	return (uintptr)surf->pixels;	/* FIXME maybe this should be mainSurface? */
+	return (uintptr)mainSurface->pixels;	/* FIXME maybe this should be mainSurface? */
 }
 
 inline void HostScreen::setPaletteColor( uint8 index, uint32 red, uint32 green, uint32 blue ) {
 	SDL_Color& color = palette.standard[index];
 	color.r = red; color.g = green; color.b = blue; // set the SDL standard RGB palette settings
-	palette.native[index] = SDL_MapRGB( surf->format, red, green, blue ); // convert the color to native
+	palette.native[index] = SDL_MapRGB( mainSurface->format, red, green, blue ); // convert the color to native
 }
 
 inline uint32 HostScreen::getPaletteColor( uint8 index ) {
@@ -297,11 +290,11 @@ inline uint32 HostScreen::getPaletteColor( uint8 index ) {
 }
 
 inline void HostScreen::updatePalette( uint16 colorCount ) {
-	SDL_SetColors( surf, palette.standard, 0, colorCount );
+	SDL_SetColors( mainSurface, palette.standard, 0, colorCount );
 }
 
 inline uint32 HostScreen::getColor( uint32 red, uint32 green, uint32 blue ) {
-	return SDL_MapRGB( surf->format, red, green, blue );
+	return SDL_MapRGB( mainSurface->format, red, green, blue );
 }
 
 
@@ -362,7 +355,7 @@ inline void HostScreen::blitArea( int16 sx, int16 sy, int16 dx, int16 dy, int16 
 	srcrect.w = dstrect.w = w;
 	srcrect.h = dstrect.h = h;
 
-	SDL_BlitSurface(surf, &srcrect, surf, &dstrect);
+	SDL_BlitSurface(mainSurface, &srcrect, mainSurface, &dstrect);
 }
 
 
@@ -500,6 +493,9 @@ inline void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 
 /*
  * $Log$
+ * Revision 1.74  2007-09-18 20:43:30  pmandin
+ * More different functions to update the various video subsystem surfaces to the main screen surface
+ *
  * Revision 1.73  2007-09-14 23:20:39  pmandin
  * Now only update needed parts of nfvdi screen to screen surface
  *

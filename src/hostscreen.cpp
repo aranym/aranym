@@ -107,7 +107,6 @@ HostScreen::HostScreen(void)
 	updateLock = SDL_CreateMutex();
 #endif
 
-	backgroundSurf = NULL;
 	GUIopened = false;
 
 	mainSurface=NULL;
@@ -132,11 +131,6 @@ HostScreen::~HostScreen(void) {
 #ifdef ENABLE_VBL_UPDATES
 	SDL_DestroyMutex(updateLock);
 #endif
-
-	if (backgroundSurf) {
-		SDL_FreeSurface(backgroundSurf);
-		backgroundSurf=NULL;
-	}
 
 	// OpenGL stuff
 #ifdef ENABLE_OPENGL
@@ -165,7 +159,7 @@ void HostScreen::makeSnapshot()
 	char filename[15];
 	sprintf( filename, "snap%03d.bmp", snapCounter++ );
 
-	SDL_SaveBMP( surf, filename );
+	SDL_SaveBMP( mainSurface, filename );
 }
 
 
@@ -173,114 +167,27 @@ void HostScreen::toggleFullScreen()
 {
 	bx_options.video.fullscreen = !bx_options.video.fullscreen;
 	sdl_videoparams ^= SDL_FULLSCREEN;
-	if(SDL_WM_ToggleFullScreen(mainSurface) == 0) {
-		D2(bug("toggleFullScreen: SDL_WM_ToggleFullScreen() not supported -> using SDL_SetVideoMode()"));
 
-		// SDL_WM_ToggleFullScreen() did not work.
-		// We have to change video mode "by hand".
-		SDL_Surface *temp = SDL_ConvertSurface(mainSurface, mainSurface->format,
-		                                       mainSurface->flags);
-		if (temp == NULL)
-			bug("toggleFullScreen: Unable to save screen content.");
+	setWindowSize( width, height, bpp );
 
-#if 1
-		setWindowSize( width, height, bpp );
-#else
-		mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
-		if (mainSurface == NULL)
-			bug("toggleFullScreen: Unable to set new video mode.");
-		if (mainSurface->format->BitsPerPixel <= 8)
-			SDL_SetColors(mainSurface, temp->format->palette->colors, 0,
-			              temp->format->palette->ncolors);
-#endif
+	forceRefreshNfvdi();
 
-		if (SDL_BlitSurface(temp, NULL, mainSurface, NULL) != 0)
-			bug("toggleFullScreen: Unable to restore screen content.");
-		SDL_FreeSurface(temp);
-#ifdef SDL_GUI
-		if (isGUIopen() == 0)
-			surf = mainSurface;
-#endif /* SDL_GUI */
-
-		/* refresh the screen */
-		update( true);
-	}
+	/* refresh the screen */
+	update( true);
 }
 
 #ifdef SDL_GUI
-void HostScreen::allocateBackgroundSurf()
-{
-	// allocate new background video surface
-	if (backgroundSurf != NULL)
-		panicbug("Memory leak? The background video surface should not be allocated.");
-
-	backgroundSurf = SDL_ConvertSurface(mainSurface, mainSurface->format, mainSurface->flags);
-
-	D(bug("Allocating background video surface"));
-}
-
-void HostScreen::freeBackgroundSurf()
-{
-	// free background video surface
-	if (backgroundSurf != NULL) {
-		D(bug("Freeing background video surface"));
-		SDL_FreeSurface(backgroundSurf);
-		backgroundSurf = NULL;
-	}
-}
-
 void HostScreen::openGUI()
 {
-	D(bug("open GUI"));
-	if (isGUIopen()) {
-		D(bug("GUI is already open!"));
-		return;
-	}
-	allocateBackgroundSurf();
 	GUIopened = true;
 }
 
 void HostScreen::closeGUI()
 {
-	D(bug("close GUI"));
-	// update the main surface and then redirect VDI to it
-	restoreBackground();
-	surf = mainSurface;			// redirect VDI to main surface
-	D(bug("VDI redirected back to main video surface"));
-	freeBackgroundSurf();
+	forceRefreshNfvdi();
 	GUIopened = false;
 }
 
-void HostScreen::saveBackground()
-{
-	if (backgroundSurf != NULL) {
-		SDL_BlitSurface(mainSurface, NULL, backgroundSurf, NULL);
-		surf = backgroundSurf;	// redirect VDI to background surface
-		D(bug("video surface saved to background, VDI redirected"));
-	}
-}
-
-void HostScreen::restoreBackground()
-{
-	if (backgroundSurf != NULL) {
-		SDL_BlitSurface(backgroundSurf, NULL, mainSurface, NULL);
-		update(true);
-		D(bug("video surface restored"));
-	}
-}
-void HostScreen::blendBackgrounds()
-{
-	if (backgroundSurf != NULL) {
-		SDL_Rect *Rect;
-
-		Rect = SDLGui_GetFirstBackgroundRect();
-		while (Rect != NULL) {
-			SDL_BlitSurface(backgroundSurf, Rect, mainSurface, Rect);
-			Rect = SDLGui_GetNextBackgroundRect();
-		}
-		update(true);
-	}
-}
 #endif /* SDL_GUI */
 
 int HostScreen::selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height)
@@ -575,21 +482,14 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	}
 
 #ifdef SDL_GUI
-	if (isGUIopen()) {
-		freeBackgroundSurf();
-		allocateBackgroundSurf();
-		saveBackground();
+	if (GUIopened) {
 		// force SDL GUI to redraw the dialog because resolution has changed
 		SDL_Event event;
 		event.type = SDL_USEREVENT;
 		event.user.code = SDL_USEREVENT; // misused this code for signalizing the resolution change. Did that because I knew the code was unique (needed something distinguishable from keyboard and mouse codes that are sent by the same event name from the input checking thread)
 		SDL_PeepEvents(&event, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
 	}
-	else
 #endif /* SDL_GUI */
-	{
-		surf = mainSurface;
-	}
 
 	resizeDirty(width, height);
 
@@ -610,9 +510,9 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	D(bug("Must Lock? %s", SDL_MUSTLOCK(surf) ? "YES" : "NO"));
 
 	// is the SDL_update needed?
-	doUpdate = ( surf->flags & SDL_HWSURFACE ) == 0;
+	doUpdate = ( mainSurface->flags & SDL_HWSURFACE ) == 0;
 
-	VideoRAMBaseHost = (uint8 *) surf->pixels;
+	VideoRAMBaseHost = (uint8 *) mainSurface->pixels;
 	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
 	D(bug("VideoRAM starts at %p (%08x)", VideoRAMBaseHost, VideoRAMBase));
 	D(bug("surf->pixels = %x, getVideoSurface() = %x",
@@ -621,10 +521,10 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	D(bug("Pixel format:bitspp=%d, tmasks r=%04x g=%04x b=%04x"
 			", tshifts r=%d g=%d b=%d"
 			", tlosses r=%d g=%d b=%d",
-			surf->format->BitsPerPixel,
-			surf->format->Rmask, surf->format->Gmask, surf->format->Bmask,
-			surf->format->Rshift, surf->format->Gshift, surf->format->Bshift,
-			surf->format->Rloss, surf->format->Gloss, surf->format->Bloss));
+			mainSurface->format->BitsPerPixel,
+			mainSurface->format->Rmask, mainSurface->format->Gmask, mainSurface->format->Bmask,
+			mainSurface->format->Rshift, mainSurface->format->Gshift, mainSurface->format->Bshift,
+			mainSurface->format->Rloss, mainSurface->format->Gloss, mainSurface->format->Bloss));
 }
 
 /*
@@ -685,15 +585,15 @@ void HostScreen::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern, ui
 
 	/* More variable setup */
 	dx=w+1;
-	pixx = surf->format->BytesPerPixel;
-	pixy = surf->pitch;
-	pixel = ((uint8*)surf->pixels) + pixx * (int)x1 + pixy * (int)y;
+	pixx = mainSurface->format->BytesPerPixel;
+	pixy = mainSurface->pitch;
+	pixel = ((uint8*)mainSurface->pixels) + pixx * (int)x1 + pixy * (int)y;
 	ppos = 0;
 
 	D2(bug("HLn %3d,%3d,%3d", x1, x2, y));
 
 	/* Draw */
-	switch(surf->format->BytesPerPixel) {
+	switch(mainSurface->format->BytesPerPixel) {
 		case 1:
 			pixellast = pixel + dx;
 			switch (logOp) {
@@ -823,13 +723,13 @@ void HostScreen::gfxVLineColor( int16 x, int16 y1, int16 y2,
 
 	/* More variable setup */
 	dy=h+1;
-	pixx = surf->format->BytesPerPixel;
-	pixy = surf->pitch;
-	pixel = ((uint8*)surf->pixels) + pixx * (int)x + pixy * (int)y1;
+	pixx = mainSurface->format->BytesPerPixel;
+	pixy = mainSurface->pitch;
+	pixel = ((uint8*)mainSurface->pixels) + pixx * (int)x + pixy * (int)y1;
 	pixellast = pixel + pixy*dy;
 
 	/* Draw */
-	switch(surf->format->BytesPerPixel) {
+	switch(mainSurface->format->BytesPerPixel) {
 		case 1:
 			switch (logOp) {
 				case 1:
@@ -978,9 +878,9 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 	/* More variable setup */
 	dx = sx * dx + 1;
 	dy = sy * dy + 1;
-	pixx = surf->format->BytesPerPixel;
-	pixy = surf->pitch;
-	pixel = ((uint8*)surf->pixels) + pixx * (uint32)x1 + pixy * (uint32)y1;
+	pixx = mainSurface->format->BytesPerPixel;
+	pixy = mainSurface->pitch;
+	pixel = ((uint8*)mainSurface->pixels) + pixx * (uint32)x1 + pixy * (uint32)y1;
 	pixx *= sx;
 	pixy *= sy;
 	if (dx < dy) {
@@ -993,7 +893,7 @@ void HostScreen::gfxLineColor( int16 x1, int16 y1, int16 x2, int16 y2,
 	/* Draw */
 	x = !last_pixel;	// 0 if last pixel should be drawn, else 1
 	y = 0;
-	switch(surf->format->BytesPerPixel) {
+	switch(mainSurface->format->BytesPerPixel) {
 		case 1:
 			switch (logOp) {
 				case 1:
@@ -1221,16 +1121,16 @@ void HostScreen::gfxBoxColorPattern (int16 x, int16 y, int16 w, int16 h,
 	int16 dy=h;
 
 	/* More variable setup */
-	pixx = surf->format->BytesPerPixel;
-	pixy = surf->pitch;
-	pixel = ((uint8*)surf->pixels) + pixx * (int32)x + pixy * (int32)y;
+	pixx = mainSurface->format->BytesPerPixel;
+	pixy = mainSurface->pitch;
+	pixel = ((uint8*)mainSurface->pixels) + pixx * (int32)x + pixy * (int32)y;
 	pixellast = pixel + pixy*dy;
 
 	// STanda // FIXME here the pattern should be checked out of the loops for performance
 			  // but for now it is good enough (if there is no pattern -> another switch?)
 
 	/* Draw */
-	switch(surf->format->BytesPerPixel) {
+	switch(mainSurface->format->BytesPerPixel) {
 		case 1:
 			pixy -= (pixx*dx);
 			switch (logOp) {
@@ -1548,7 +1448,7 @@ void HostScreen::OpenGLUpdate(void)
 
 uint32 HostScreen::getBitsPerPixel(void)
 {
-	return surf->format->BitsPerPixel;
+	return mainSurface->format->BitsPerPixel;
 }
 
 void HostScreen::EnableOpenGLVdi(void)
@@ -1588,7 +1488,7 @@ void HostScreen::refresh(void)
 		refreshNfvdi();
 	}
 
-	if (isGUIopen()) {
+	if (GUIopened) {
 		refreshGui();
 	}
 
@@ -1646,6 +1546,21 @@ void HostScreen::refreshVidel(void)
 	SDL_BlitSurface(videl_surf, NULL, mainSurface, &dst_rect);
 
 	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
+}
+
+void HostScreen::forceRefreshNfvdi(void)
+{
+#ifdef NFVDI_SUPPORT
+	/* Force nfvdi surface refresh */
+	NF_Base* fvdi = NFGetDriver("fVDI");
+	if (fvdi) {
+		SDL_Surface *nfvdi_surf = ((VdiDriver *) fvdi)->getSurface();
+		if (nfvdi_surf) {
+			((VdiDriver *) fvdi)->setDirtyRect(
+				0,0, nfvdi_surf->w, nfvdi_surf->h);
+		}
+	}
+#endif
 }
 
 void HostScreen::refreshNfvdi(void)
@@ -1742,12 +1657,6 @@ void HostScreen::refreshGui(void)
 	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 
 	SDLGui_setGuiPos(gui_x, gui_y);
-
-	static int blendRefresh = 0;
-	if (blendRefresh++ > 5) {
-		blendRefresh = 0;
-		blendBackgrounds();
-	}
 #endif /* SDL_GUI */
 }
 

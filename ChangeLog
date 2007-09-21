@@ -1,3 +1,7 @@
+2007/09/21 - Patrice
+- hostscreen: remove temp surfaces used in various places.
+
+
 2007/09/20 - Patrice
 - Need to disable SDL parachutes for signal handlers; conflict with Aranym
   sigsegv handler?
