@@ -47,6 +47,12 @@
 		17398E120B21048100A9B4DB /* README.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17398E110B21048100A9B4DB /* README.rtf */; };
 		175822820A6554CE00EEE78F /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
 		1758228C0A6555CC00EEE78F /* main_unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E7C0A652B52009733EB /* main_unix.cpp */; };
+		175909560CA453990089CF9F /* dirty_rects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 175909550CA453990089CF9F /* dirty_rects.cpp */; };
+		175909570CA453990089CF9F /* dirty_rects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 175909550CA453990089CF9F /* dirty_rects.cpp */; };
+		175909580CA453990089CF9F /* dirty_rects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 175909550CA453990089CF9F /* dirty_rects.cpp */; };
+		17590BC30CA458410089CF9F /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
+		17590BC40CA458440089CF9F /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
+		17590BC50CA458470089CF9F /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
 		17798F050A652EF1009733EB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D5E0A652B50009733EB /* main.cpp */; };
 		17798F0C0A652F24009733EB /* vm_alloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E870A652B52009733EB /* vm_alloc.cpp */; };
 		17798F0D0A652F2F009733EB /* host_clock_unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E170A652B51009733EB /* host_clock_unix.cpp */; };
@@ -452,6 +458,7 @@
 		1736B1020C70ED5900C56FAF /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		17398E110B21048100A9B4DB /* README.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README.rtf; sourceTree = "<group>"; };
 		1743987C0B320B480011038E /* README_Xcode.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README_Xcode.rtf; sourceTree = "<group>"; };
+		175909550CA453990089CF9F /* dirty_rects.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = dirty_rects.cpp; path = ../../dirty_rects.cpp; sourceTree = SOURCE_ROOT; };
 		1765B6ED0C91C0B000DD682B /* libOSMesa.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOSMesa.6.dylib; path = MesaGL/lib/libOSMesa.6.dylib; sourceTree = "<group>"; };
 		1765B6EE0C91C0BB00DD682B /* tap.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = tap.kext; path = tuntap/tap.kext; sourceTree = "<group>"; };
 		1765B6EF0C91C0BB00DD682B /* tun.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = tun.kext; path = tuntap/tun.kext; sourceTree = "<group>"; };
@@ -748,7 +755,7 @@
 		17E8B58C0ABC82DD00BBFD59 /* cpuemu_ppc.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu_ppc.cpp; path = build/MacAranym.build/cpuemu_ppc.cpp; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B428FAF60C7BA7100039CA66 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/aranym.nib; sourceTree = "<group>"; };
 		B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym JIT IEEE.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B46114630C480FCA00003172 /* compstbl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = compstbl.cpp; path = build/MacAranym.build/compstbl.cpp; sourceTree = "<group>"; };
@@ -890,6 +897,7 @@
 				17798CDE0A652B50009733EB /* bootos.cpp */,
 				17798CDF0A652B50009733EB /* cdrom.cpp */,
 				17798CE00A652B50009733EB /* cfgopts.cpp */,
+				175909550CA453990089CF9F /* dirty_rects.cpp */,
 				17798CE70A652B50009733EB /* dsp_cpu.cpp */,
 				17798CE80A652B50009733EB /* dsp_disasm.cpp */,
 				17798CE90A652B50009733EB /* dsp.cpp */,
@@ -1709,6 +1717,8 @@
 				1736B1100C70ED5900C56FAF /* SDLMain.m in Sources */,
 				F83B575F0C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */,
 				F83B576E0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */,
+				175909570CA453990089CF9F /* dirty_rects.cpp in Sources */,
+				17590BC40CA458440089CF9F /* nfjpeg.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1804,6 +1814,8 @@
 				1736B10B0C70ED5900C56FAF /* SDLMain.m in Sources */,
 				F83B575E0C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */,
 				F83B576D0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */,
+				175909560CA453990089CF9F /* dirty_rects.cpp in Sources */,
+				17590BC30CA458410089CF9F /* nfjpeg.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1906,6 +1918,8 @@
 				1736B1150C70ED5900C56FAF /* SDLMain.m in Sources */,
 				F83B57600C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */,
 				F83B576F0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */,
+				175909580CA453990089CF9F /* dirty_rects.cpp in Sources */,
+				17590BC50CA458470089CF9F /* nfjpeg.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

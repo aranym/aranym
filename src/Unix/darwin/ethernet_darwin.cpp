@@ -35,7 +35,7 @@
 #include "ethernet_darwin.h"
 #include "host.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #include <sys/wait.h>	// waitpid()
@@ -78,7 +78,7 @@ static int openAuthorizationContext()
 
 		fullscreen = bx_options.video.fullscreen;
 		if ( fullscreen )
-			hostScreen.toggleFullScreen();			
+			host->hostScreen.toggleFullScreen();			
 
 		AuthorizationItem authItems = {kAuthorizationRightExecute, 0,// 5
 						NULL, 0};// 6
@@ -101,16 +101,20 @@ static void closeAuthoizationContext()
 		authorizationRef = NULL;
 
 		if ( fullscreen ) {
-			hostScreen.toggleFullScreen();
+			host->hostScreen.toggleFullScreen();
 		}
 	}
 }
 
 static int executeScriptAsRoot(char *application, char *args[]) {
     OSStatus execStatus;
-	char app[2048];
+	char app[MAXPATHLEN];
 		
-	Host::getDataFolder(app, sizeof(app));
+	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+	CFURLGetFileSystemRepresentation(url, true, (UInt8 *)app, MAXPATHLEN);
+	printf("TunTap: Binary directory '%s'\n", app);
+	CFRelease(url);
+	//Host::getDataFolder(app, sizeof(app));
 	strcat(app, DIRSEPARATOR);
 	strcat(app, application);
 	args[0] = app;
@@ -159,6 +163,12 @@ bool TunTapEthernetHandler::open() {
 	
 	D(bug("TunTap(%d): open('%s')", ethX, devName));
 	
+	int auth = openAuthorizationContext();
+	if (auth) {
+		::close(fd);
+		panicbug("TunTap(%d): Authorization failed'%s'", ethX, devName);
+		return false;	
+	}
 	fd = tapOpen( devName );
 	if (fd < 0) {
 		panicbug("TunTap(%d): NO_NET_DRIVER_WARN '%s': %s", ethX, devName, strerror(errno));
@@ -166,13 +176,6 @@ bool TunTapEthernetHandler::open() {
 		return false;
 	}
 
-	int auth = openAuthorizationContext();
-	if (auth) {
-		::close(fd);
-		panicbug("TunTap(%d): Authorization failed'%s'", ethX, devName);
-		return false;	
-		}
-		
 	bool failed = true;
 	{
 		// the arguments _need_ to be placed into the child process

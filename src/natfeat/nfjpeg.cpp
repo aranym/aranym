@@ -19,6 +19,8 @@
 */
 
 #include "sysdeps.h"
+
+#ifdef NFJPEG_SUPPORT
 #include "cpu_emulation.h"
 #include "parameters.h"
 #include "nfjpeg.h"
@@ -428,6 +430,7 @@ void JpegDriver::read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, in
 	*b >>= format->Bshift;
 	*b <<= format->Bloss;
 }
+#endif
 
 /*
 vim:ts=4:sw=4:

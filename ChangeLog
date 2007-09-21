@@ -1,3 +1,10 @@
+2007/09/21 - Philipp
+- MacAranym.xcodeproj/project.pbxproj: Fixed project to compile again.
+- ethernet_darwin.cpp: fixed reference to hostscreen
+- nfjpeg.cpp: Enabled conditional compilation by adding a check for 
+  NFJPEG_SUPPORT. This file is now always included in the darwin project.
+
+
 2007/09/21 - Patrice
 - hostscreen: remove temp surfaces used in various places.
 
