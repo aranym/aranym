@@ -1,5 +1,6 @@
 2007/09/22 - Patrice
-- Allow window resize.
+- Allow window resize. Videl, sdlgui and nfvdi surfaces are centered/clipped to
+  the screen surface.
 
 
 2007/09/21 - Philipp
