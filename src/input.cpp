@@ -853,6 +853,18 @@ static void process_joystick_event(const SDL_Event &event)
 	}
 }
 
+/*--- Video resize event ---*/
+
+static void process_resize_event(const SDL_Event &event)
+{
+	if (!host || bx_options.autozoom.fixedsize) {
+		return;
+	}
+
+	host->hostScreen.setWindowSize(event.resize.w, event.resize.h,
+		host->hostScreen.getBitsPerPixel());
+}
+
 ///////
 // main function for checking keyboard, mouse and joystick events
 // called from main.cpp every 20 ms
@@ -877,6 +889,7 @@ void check_event()
 					| SDL_EVENTMASK(SDL_JOYBUTTONDOWN)
 					| SDL_EVENTMASK(SDL_JOYBUTTONUP)
 					| SDL_EVENTMASK(SDL_ACTIVEEVENT)
+					| SDL_EVENTMASK(SDL_VIDEORESIZE)
 #ifdef SDL_GUI
 					| SDL_EVENTMASK(GUI_RETURN_INFO)
 #endif
@@ -899,6 +912,9 @@ void check_event()
 		}
 		else if (type == SDL_ACTIVEEVENT) {
 			process_active_event(event);
+		}
+		else if (type == SDL_VIDEORESIZE) {
+			process_resize_event(event);
 		}
 #ifdef SDL_GUI
 		else if (type == GUI_RETURN_INFO) {

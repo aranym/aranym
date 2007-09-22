@@ -1,3 +1,7 @@
+2007/09/22 - Patrice
+- Allow window resize.
+
+
 2007/09/21 - Philipp
 - MacAranym.xcodeproj/project.pbxproj: Fixed project to compile again.
 - ethernet_darwin.cpp: fixed reference to hostscreen

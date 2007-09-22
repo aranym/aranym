@@ -296,7 +296,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	this->bpp = bpp;
 
 	// SelectVideoMode();
-	sdl_videoparams = 0 /*SDL_HWSURFACE | SDL_HWPALETTE*/;
+	sdl_videoparams = SDL_RESIZABLE /*SDL_HWSURFACE | SDL_HWPALETTE*/;
 	if (bx_options.video.fullscreen)
 		sdl_videoparams |= SDL_FULLSCREEN;
 
