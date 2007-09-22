@@ -857,8 +857,14 @@ static void process_joystick_event(const SDL_Event &event)
 
 static void process_resize_event(const SDL_Event &event)
 {
-	if (!host || bx_options.autozoom.fixedsize) {
+	if (!host) {
 		return;
+	}
+
+	/* Use new size as fixed size */
+	if (bx_options.autozoom.fixedsize) {
+		bx_options.autozoom.width = event.resize.w;
+		bx_options.autozoom.height = event.resize.h;
 	}
 
 	host->hostScreen.setWindowSize(event.resize.w, event.resize.h,
