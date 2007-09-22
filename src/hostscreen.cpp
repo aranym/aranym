@@ -687,13 +687,22 @@ void HostScreen::refreshVidel(void)
 		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
-	SDL_Rect dst_rect;
-	dst_rect.x = (mainSurface->w - videl_surf->w) >> 1;
-	dst_rect.y = (mainSurface->h - videl_surf->h) >> 1;
-	dst_rect.w = videl_surf->w;
-	dst_rect.h = videl_surf->h;
+	SDL_Rect src_rect = {0,0, videl_surf->w, videl_surf->h};
+	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
+	if (mainSurface->w > videl_surf->w) {
+		dst_rect.x = (mainSurface->w - videl_surf->w) >> 1;
+		dst_rect.w = videl_surf->w;
+	} else {
+		src_rect.w = mainSurface->w;
+	}
+	if (mainSurface->h > videl_surf->h) {
+		dst_rect.y = (mainSurface->h - videl_surf->h) >> 1;
+		dst_rect.h = videl_surf->h;
+	} else {
+		src_rect.h = mainSurface->h;
+	}
 
-	SDL_BlitSurface(videl_surf, NULL, mainSurface, &dst_rect);
+	SDL_BlitSurface(videl_surf, &src_rect, mainSurface, &dst_rect);
 
 	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 }
@@ -793,20 +802,26 @@ void HostScreen::refreshGui(void)
 		return;
 	}
 
-	int gui_x, gui_y;
+	SDL_Rect src_rect = {0,0, gui_surf->w, gui_surf->h};
+	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
+	if (mainSurface->w > gui_surf->w) {
+		dst_rect.x = (mainSurface->w - gui_surf->w) >> 1;
+		dst_rect.w = gui_surf->w;
+	} else {
+		src_rect.w = mainSurface->w;
+	}
+	if (mainSurface->h > gui_surf->h) {
+		dst_rect.y = (mainSurface->h - gui_surf->h) >> 1;
+		dst_rect.h = gui_surf->h;
+	} else {
+		src_rect.h = mainSurface->h;
+	}
 
-	/* Blit gui on screen */
-	SDL_Rect dst_rect;
-	dst_rect.x = gui_x = (mainSurface->w - gui_surf->w) >> 1;
-	dst_rect.y = gui_y = (mainSurface->h - gui_surf->h) >> 1;
-	dst_rect.w = gui_surf->w /* < dest->w ? gui_surf->w : dest->w*/;
-	dst_rect.h = gui_surf->h /*< dest->h ? gui_surf->h : dest->h*/;
-
-	SDL_BlitSurface(gui_surf, NULL, mainSurface, &dst_rect);
+	SDL_BlitSurface(gui_surf, &src_rect, mainSurface, &dst_rect);
 
 	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 
-	SDLGui_setGuiPos(gui_x, gui_y);
+	SDLGui_setGuiPos(dst_rect.x, dst_rect.y);
 #endif /* SDL_GUI */
 }
 
