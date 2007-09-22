@@ -184,7 +184,6 @@ void HostScreen::makeSnapshot()
 void HostScreen::toggleFullScreen()
 {
 	bx_options.video.fullscreen = !bx_options.video.fullscreen;
-	sdl_videoparams ^= SDL_FULLSCREEN;
 
 	setWindowSize( width, height, bpp );
 
@@ -326,6 +325,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		this->width = width = SdlGlSurface->w;
 		this->height = height = SdlGlSurface->h;
 		this->bpp = bpp = 32;	/* bpp of texture that will be used */
+		bx_options.video.fullscreen = ((SdlGlSurface->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN);
 
 		gl.Viewport(0, 0, width, height);
 
@@ -494,6 +494,9 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 #endif /* ENABLE_OPENGL */
 	{
 		mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
+		if (mainSurface) {
+			bx_options.video.fullscreen = ((mainSurface->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN);
+		}
 	}
 
 #ifdef SDL_GUI
