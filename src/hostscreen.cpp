@@ -510,6 +510,7 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 #endif /* SDL_GUI */
 
 	resizeDirty(width, height);
+	forceRefreshNfvdi();
 
 	char buf[sizeof(VERSION_STRING)+128];
 #ifdef SDL_GUI
@@ -758,17 +759,22 @@ void HostScreen::refreshNfvdi(void)
 
 	Uint8 *dirtyRects = ((VdiDriver *) fvdi)->getDirtyRects();
 	if (!dirtyRects) {
-		/* No dirty rects, refresh whole surface */
-		SDL_Rect dst_rect;
-		dst_rect.x = (mainSurface->w - nfvdi_surf->w) >> 1;
-		dst_rect.y = (mainSurface->h - nfvdi_surf->h) >> 1;
-		dst_rect.w = nfvdi_surf->w;
-		dst_rect.h = nfvdi_surf->h;
-
-		SDL_BlitSurface(nfvdi_surf, NULL, mainSurface, &dst_rect);
-
-		setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 		return;
+	}
+
+	SDL_Rect src_rect = {0,0, nfvdi_surf->w, nfvdi_surf->h};
+	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
+	if (mainSurface->w > nfvdi_surf->w) {
+		dst_rect.x = (mainSurface->w - nfvdi_surf->w) >> 1;
+		dst_rect.w = nfvdi_surf->w;
+	} else {
+		src_rect.w = mainSurface->w;
+	}
+	if (mainSurface->h > nfvdi_surf->h) {
+		dst_rect.y = (mainSurface->h - nfvdi_surf->h) >> 1;
+		dst_rect.h = nfvdi_surf->h;
+	} else {
+		src_rect.h = mainSurface->h;
 	}
 
 	int dirty_w = ((VdiDriver *) fvdi)->getDirtyWidth();
@@ -778,10 +784,15 @@ void HostScreen::refreshNfvdi(void)
 			if (dirtyRects[y * dirty_w + x]) {
 				SDL_Rect src, dst;
 
-				src.x = dst.x = x<<4;
-				src.y = dst.y = y<<4;
-				src.w = dst.w = 1<<4;
-				src.h = dst.h = 1<<4;
+				src.x = src_rect.x + (x<<4);
+				src.y = src_rect.y + (y<<4);
+				src.w = (1<<4);
+				src.h = (1<<4);
+
+				dst.x = dst_rect.x + (x<<4);
+				dst.y = dst_rect.y + (y<<4);
+				dst.w = (1<<4);
+				dst.h = (1<<4);
 
 				SDL_BlitSurface(nfvdi_surf, &src, mainSurface, &dst);
 
