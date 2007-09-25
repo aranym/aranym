@@ -90,4 +90,7 @@ extern bool SDLGui_Alert(const char *, alert_type type);
 void SDLGui_setGuiPos(int guix, int guiy);
 SDL_Surface *SDLGui_getSurface(void);
 
+/* dlgHotkeys.cpp */
+char *displayKeysym(SDL_keysym keysym, char *buffer);
+
 #endif /* _SDLGUI_H */

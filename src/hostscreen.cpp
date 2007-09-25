@@ -54,8 +54,7 @@
 #endif
 
 #ifdef SDL_GUI
-#include "sdlgui.h"
-extern char *displayKeysym(SDL_keysym keysym, char *buffer);
+# include "sdlgui.h"
 #endif
 
 #ifdef ENABLE_VBL_UPDATES
