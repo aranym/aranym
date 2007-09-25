@@ -28,7 +28,9 @@
 #include "memory.h"
 #include "hostscreen.h"
 #include "parameters.h"
-#include "gui-sdl/sdlgui.h"
+#ifdef SDL_GUI
+# include "gui-sdl/sdlgui.h"
+#endif
 #include "main.h"
 
 #ifdef NFVDI_SUPPORT
@@ -51,10 +53,6 @@
 # undef WIN32
 #else
 # include <SDL_syswm.h>
-#endif
-
-#ifdef SDL_GUI
-# include "sdlgui.h"
 #endif
 
 #ifdef ENABLE_VBL_UPDATES
