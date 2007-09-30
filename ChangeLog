@@ -1,3 +1,8 @@
+2007/09/30 - Patrice
+- configure: Test SDL_image separately, it may be used for something else than
+  nfjpeg.
+
+
 2007/09/22 - Patrice
 - Allow window resize. Videl, sdlgui and nfvdi surfaces are centered/clipped to
   the screen surface.
