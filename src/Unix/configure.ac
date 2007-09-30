@@ -1489,6 +1489,34 @@ else
 	AM_PATH_SDL(1.2.10, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION or higher not found! ***]))
 fi
 
+dnl Check for SDL_Image
+ARANYM_CHECK_FRAMEWORK(SDL_image, [])
+if test "x$have_framework_SDL_image" = "xyes" ; then
+	ARANYM_CHECK_FRAMEWORK_LOCATION(SDL_image)
+	CPPFLAGS="$CPPFLAGS -I$SDL_image_LOCATION/Headers"
+	BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL_image_LOCATION"
+	have_sdlimage_lib=yes
+	have_sdlimage_h=yes
+else
+	tmp_cflags=$CFLAGS
+	tmp_cppflags=$CPPFLAGS
+	CFLAGS="$CFLAGS $SDL_CFLAGS"
+	CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
+
+	AC_CHECK_HEADER(SDL_image.h, have_sdlimage_h=yes, havesdlimage_h=no)
+	AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
+
+	CFLAGS=$tmp_cflags
+	CPPFLAGS=$tmp_cppflags
+
+	if test "x$have_sdlimage_h" = "xyes" -a "x$have_sdlimage_lib" = "xyes"; then
+		LIBS="$LIBS -lSDL_image"
+	fi
+fi
+if test "x$have_sdlimage_h" = "xyes" -a "x$have_sdlimage_lib" = "xyes"; then
+	AC_DEFINE(HAVE_SDL_IMAGE, 1, [Define if you have SDL_image])
+fi
+
 dnl Add OpenGL ?
 if test "x$WANT_OPENGL" = "xyes"; then
 	AC_MSG_CHECKING(for OpenGL support)
@@ -1614,20 +1642,7 @@ dnl Natfeat JPEG decoder
 
 NFJPEGSRCS=""
 if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
-	dnl Check for SDL_Image
-	ARANYM_CHECK_FRAMEWORK(SDL_image, [])
-	if test "x$have_framework_SDL_image" = "xyes" ; then
-		ARANYM_CHECK_FRAMEWORK_LOCATION(SDL_image)
-		CPPFLAGS="$CPPFLAGS -I$SDL_image_LOCATION/Headers"
-		BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL_image_LOCATION"
-		have_sdlimage_lib=yes
-	else
-		AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
-		if test "x$have_sdlimage_lib" = "xyes"; then
-			LIBS="$LIBS -lSDL_image"
-		fi
-	fi
-	if test "x$have_sdlimage_lib" = "xyes" ; then
+	if test "x$have_sdlimage_h" = "xyes" -a "x$have_sdlimage_lib" = "xyes"; then
 		AC_DEFINE([NFJPEG_SUPPORT], 1, [Define if you want to use host JPEG decoder])
 		NFJPEGSRCS="../natfeat/nfjpeg.cpp"
 	else
