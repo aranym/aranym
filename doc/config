@@ -28,6 +28,9 @@ AutoGrabMouse = Yes
 # UTC (GMT) or localtime? Set GMT for Linux-m68k or FreeMiNT with timezones
 GMTime = No
 
+# Logo (bmp image, or any image format supported by SDL_Image if ARAnym compiled
+#  with SDL_image
+Logo = /usr/local/share/aranym/logo.bmp
 
 # Hotkeys: invoke certain ARAnyM functions by pressing a key combination
 # Format: function = key code : modifiers combination

@@ -36,7 +36,7 @@
 #endif
 
 #include "dirty_rects.h"
-
+#include "logo.h"
 
 class HostScreen: public DirtyRects
 {
@@ -48,6 +48,7 @@ class HostScreen: public DirtyRects
 	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
 
 	void refreshVidel(void);
+	void refreshLogo(void);
 	void refreshNfvdi(void);
 	void forceRefreshNfvdi(void);
 	void refreshGui(void);
@@ -68,6 +69,8 @@ class HostScreen: public DirtyRects
 	SDL_bool OpenGLVdi;			/* Using NF OpenGL VDI renderer ? */
 	SDL_bool *dirty_rects;		/* Dirty rectangles list */
 	int dirty_w,dirty_h;
+
+	Logo *logo;
 
   public:
 	SDL_mutex   *screenLock;

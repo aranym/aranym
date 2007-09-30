@@ -255,6 +255,7 @@ struct Config_Tag global_conf[]={
 	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
 	{ "EpsMax", Int_Tag, &bx_options.cpu.eps_max, 0, 0},
 #endif
+	{ "Logo", Path_Tag, bx_options.logo_path, sizeof(bx_options.logo_path), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -275,6 +276,7 @@ void preset_global()
 	bx_options.cpu.eps_enabled = false;
 	bx_options.cpu.eps_max = 20;
 #endif
+  strcpy(bx_options.logo_path, "logo.bmp");
 }
 
 void postload_global()

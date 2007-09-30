@@ -263,6 +263,7 @@ typedef struct {
   bool			gmtime;
   bx_hotkeys_t		hotkeys;
   bool			newHardDriveSupport;
+  char			logo_path[512];
 } bx_options_t;
 
 extern bx_options_t bx_options;

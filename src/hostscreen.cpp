@@ -26,6 +26,7 @@
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
+#include "logo.h"
 #include "hostscreen.h"
 #include "parameters.h"
 #ifdef SDL_GUI
@@ -63,7 +64,7 @@
 #endif
 
 HostScreen::HostScreen(void)
-	: DirtyRects(), refreshCounter(0)
+	: DirtyRects(), logo(NULL), refreshCounter(0)
 {
 	// the counter init
 	snapCounter = 0;
@@ -90,6 +91,8 @@ HostScreen::HostScreen(void)
 	renderVidelSurface = true;
 	lastVidelWidth = lastVidelHeight = lastVidelBpp = -1;
 	DisableOpenGLVdi();
+
+	setWindowSize(320,200,8);
 }
 
 HostScreen::~HostScreen(void) {
@@ -118,6 +121,9 @@ HostScreen::~HostScreen(void) {
 // 		}
 	}
 #endif
+	if (logo) {
+		delete logo;
+	}
 }
 
 uint32 HostScreen::getBpp(void)
@@ -183,8 +189,6 @@ void HostScreen::toggleFullScreen()
 	bx_options.video.fullscreen = !bx_options.video.fullscreen;
 
 	setWindowSize( width, height, bpp );
-
-	forceRefreshNfvdi();
 }
 
 #ifdef SDL_GUI
@@ -660,6 +664,19 @@ void HostScreen::setVidelRendering(bool videlRender)
 void HostScreen::refreshVidel(void)
 {
 	SDL_Surface *videl_surf = getVIDEL()->getSurface();
+
+	/* Display logo if videl not ready */
+	bool displayLogo = true;
+	if (videl_surf) {
+		if ((videl_surf->w > 64) && (videl_surf->h > 64)) {
+			displayLogo = false;
+		}
+	}
+	if (displayLogo) {
+		refreshLogo();
+		return;
+	}
+
 	if (!videl_surf) {
 		return;
 	}
@@ -701,6 +718,67 @@ void HostScreen::refreshVidel(void)
 	}
 
 	SDL_BlitSurface(videl_surf, &src_rect, mainSurface, &dst_rect);
+
+	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
+}
+
+void HostScreen::refreshLogo(void)
+{
+	if (!logo) {
+		logo = new Logo(bx_options.logo_path);
+	}
+	if (!logo) {
+		return;
+	}
+
+	SDL_Surface *logo_surf = logo->getSurface();
+	if (!logo_surf) {
+		logo->load(bx_options.logo_path);
+		logo_surf = logo->getSurface();
+		if (!logo_surf) {
+			fprintf(stderr, "Can not load logo from %s file\n",
+				bx_options.logo_path); 
+			return;
+		}
+	}
+
+	int w = (logo_surf->w < 320) ? 320 : logo_surf->w;
+	int h = (logo_surf->h < 200) ? 200 : logo_surf->h;
+	int bpp = logo_surf->format->BitsPerPixel;
+	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
+		setWindowSize(w, h, bpp);
+		lastVidelWidth = w;
+		lastVidelHeight = h;
+		lastVidelBpp = bpp;
+	}
+
+	/* Set palette from surface */
+	if ((bpp==8) && (mainSurface->format->BitsPerPixel == 8)) {
+		SDL_Color palette[256];
+		for (int i=0; i<256; i++) {
+			palette[i].r = logo_surf->format->palette->colors[i].r;
+			palette[i].g = logo_surf->format->palette->colors[i].g;
+			palette[i].b = logo_surf->format->palette->colors[i].b;
+		}
+		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
+	}
+
+	SDL_Rect src_rect = {0,0, logo_surf->w, logo_surf->h};
+	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
+	if (mainSurface->w > logo_surf->w) {
+		dst_rect.x = (mainSurface->w - logo_surf->w) >> 1;
+		dst_rect.w = logo_surf->w;
+	} else {
+		src_rect.w = mainSurface->w;
+	}
+	if (mainSurface->h > logo_surf->h) {
+		dst_rect.y = (mainSurface->h - logo_surf->h) >> 1;
+		dst_rect.h = logo_surf->h;
+	} else {
+		src_rect.h = mainSurface->h;
+	}
+
+	SDL_BlitSurface(logo_surf, &src_rect, mainSurface, &dst_rect);
 
 	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 }

@@ -92,6 +92,7 @@ SRCS = ../main.cpp \
 	../identify.cpp \
 	../ikbd.cpp \
 	../input.cpp \
+	../logo.cpp \
 	../md5.cpp \
 	../mfp.cpp \
 	../midi.cpp \
