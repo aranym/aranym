@@ -422,6 +422,9 @@ void preset_opengl()
 
 void postload_opengl()
 {
+#ifndef ENABLE_OPENGL
+  bx_options.opengl.enabled = false;
+#endif
 }
 
 void presave_opengl()
@@ -880,7 +883,11 @@ void preset_natfeat() {
   safe_strncpy(NATFEAT_CONF(vdi_driver), "soft", sizeof(NATFEAT_CONF(vdi_driver)));
 }
 
-void postload_natfeat() {
+void postload_natfeat()
+{
+#ifndef ENABLE_OPENGL
+  safe_strncpy(NATFEAT_CONF(vdi_driver), "soft", sizeof(NATFEAT_CONF(vdi_driver)));
+#endif
 }
 
 void presave_natfeat() {
