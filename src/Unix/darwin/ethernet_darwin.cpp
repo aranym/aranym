@@ -46,6 +46,7 @@
 #include <net/if.h>
 #include <errno.h>
 
+#include <CoreFoundation/CoreFoundation.h>
 #include <Security/Authorization.h>
 #include <Security/AuthorizationTags.h>
 
