@@ -1,3 +1,10 @@
+2007/10/09 - Philipp
+- Updated MacAranym.xcodeproj
+- Moved OpenGL library initialisation from Host to HostScreen where it really
+  is used.
+- Added more information if OpenGL initialisation failed.
+
+
 2007/10/05 - Patrice
 - parameters.cpp: Always set OpenGL stuff to disabled if not compiled in.
 

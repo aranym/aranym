@@ -221,6 +221,9 @@
 		17BCD8BE0B21004100432CE1 /* README in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B60B21004100432CE1 /* README */; };
 		17BCD8BF0B21004100432CE1 /* TODO in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B70B21004100432CE1 /* TODO */; };
 		17BCD8C90B21010C00432CE1 /* config in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8C80B21010C00432CE1 /* config */; };
+		17C0AFFD0CBB0A85000D2916 /* logo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C0AFFC0CBB0A85000D2916 /* logo.cpp */; };
+		17C0AFFE0CBB0A85000D2916 /* logo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C0AFFC0CBB0A85000D2916 /* logo.cpp */; };
+		17C0AFFF0CBB0A85000D2916 /* logo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C0AFFC0CBB0A85000D2916 /* logo.cpp */; };
 		17CDFE620B2196CD001BABB0 /* fpu_uae.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DD00A652B51009733EB /* fpu_uae.cpp */; };
 		17CDFE630B2196D8001BABB0 /* fpu_uae.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DD00A652B51009733EB /* fpu_uae.cpp */; };
 		17D5D2590AC70DBD003D0FE9 /* midi_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17D5D2580AC70DBD003D0FE9 /* midi_file.cpp */; };
@@ -748,6 +751,7 @@
 		17BCD8B60B21004100432CE1 /* README */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = README; path = ../../../README; sourceTree = SOURCE_ROOT; };
 		17BCD8B70B21004100432CE1 /* TODO */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = TODO; path = ../../../TODO; sourceTree = SOURCE_ROOT; };
 		17BCD8C80B21010C00432CE1 /* config */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = config; path = ../../../doc/config; sourceTree = SOURCE_ROOT; };
+		17C0AFFC0CBB0A85000D2916 /* logo.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = logo.cpp; path = ../../logo.cpp; sourceTree = SOURCE_ROOT; };
 		17D5D2580AC70DBD003D0FE9 /* midi_file.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = midi_file.cpp; path = ../../midi_file.cpp; sourceTree = SOURCE_ROOT; };
 		17D5D25B0AC70DC6003D0FE9 /* midi_sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = midi_sequencer.cpp; path = ../../midi_sequencer.cpp; sourceTree = SOURCE_ROOT; };
 		17E683EA0C90E38900A8BE0B /* INSTALL */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = INSTALL; path = ../../../INSTALL; sourceTree = SOURCE_ROOT; };
@@ -755,7 +759,7 @@
 		17E8B58C0ABC82DD00BBFD59 /* cpuemu_ppc.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu_ppc.cpp; path = build/MacAranym.build/cpuemu_ppc.cpp; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B428FAF60C7BA7100039CA66 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/aranym.nib; sourceTree = "<group>"; };
 		B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym JIT IEEE.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B46114630C480FCA00003172 /* compstbl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = compstbl.cpp; path = build/MacAranym.build/compstbl.cpp; sourceTree = "<group>"; };
@@ -915,6 +919,7 @@
 				17798CFF0A652B50009733EB /* identify.cpp */,
 				17798D000A652B50009733EB /* ikbd.cpp */,
 				17798D390A652B50009733EB /* input.cpp */,
+				17C0AFFC0CBB0A85000D2916 /* logo.cpp */,
 				17798D5E0A652B50009733EB /* main.cpp */,
 				17798D5F0A652B50009733EB /* md5.cpp */,
 				17798D600A652B50009733EB /* mfp.cpp */,
@@ -1719,6 +1724,7 @@
 				F83B576E0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */,
 				175909570CA453990089CF9F /* dirty_rects.cpp in Sources */,
 				17590BC40CA458440089CF9F /* nfjpeg.cpp in Sources */,
+				17C0AFFE0CBB0A85000D2916 /* logo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1816,6 +1822,7 @@
 				F83B576D0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */,
 				175909560CA453990089CF9F /* dirty_rects.cpp in Sources */,
 				17590BC30CA458410089CF9F /* nfjpeg.cpp in Sources */,
+				17C0AFFD0CBB0A85000D2916 /* logo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1920,6 +1927,7 @@
 				F83B576F0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */,
 				175909580CA453990089CF9F /* dirty_rects.cpp in Sources */,
 				17590BC50CA458470089CF9F /* nfjpeg.cpp in Sources */,
+				17C0AFFF0CBB0A85000D2916 /* logo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

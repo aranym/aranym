@@ -37,7 +37,8 @@ dyngl_funcs gl;
 int dyngl_load(char *filename)
 {
 	int lib_loaded = 0;
-
+	
+#ifndef OS_darwin
 	if (strlen(filename)>1) {
 		if (SDL_GL_LoadLibrary(filename)<0) {
 			fprintf(stderr, "Can not load OpenGL library from <%s>\n", filename);
@@ -45,10 +46,12 @@ int dyngl_load(char *filename)
 			lib_loaded = 1;
 		}
 	}
+#endif
 
 	if (!lib_loaded) {
 		/* Try to load default */
 		if (SDL_GL_LoadLibrary(NULL)<0) {
+			fprintf(stderr, "Can not load default OpenGL library\n");
 			return 0;
 		}
 		fprintf(stderr, "Loaded default OpenGL library\n");

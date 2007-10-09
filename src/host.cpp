@@ -47,14 +47,6 @@ Host::Host()
 #else
 	clock = new HostClockUnix();
 #endif
-
-#ifdef ENABLE_OPENGL
-	if (dyngl_load(bx_options.opengl.library)==0) {
-		bx_options.opengl.enabled = false;
-	}
-#else
-	bx_options.opengl.enabled = false;
-#endif
 }
 
 Host::~Host()

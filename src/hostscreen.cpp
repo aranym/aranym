@@ -86,7 +86,13 @@ HostScreen::HostScreen(void)
 	dirty_w=dirty_h=0;
 	npot_texture=rect_texture=SDL_FALSE;
 	rect_target=GL_TEXTURE_2D;
-#endif /* ENABLE_OPENGL */
+
+	if (dyngl_load(bx_options.opengl.library)==0) {
+		bx_options.opengl.enabled = false;
+	}
+#else
+	bx_options.opengl.enabled = false;
+#endif /* !ENABLE_OPENGL */
 
 	renderVidelSurface = true;
 	lastVidelWidth = lastVidelHeight = lastVidelBpp = -1;
