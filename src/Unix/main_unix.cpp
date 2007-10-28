@@ -265,7 +265,7 @@ int main(int argc, char **argv)
 	program_name = argv[0];
 
 	// parse command line switches
-	if (!decode_switches(stderr, argc, argv))
+	if (!decode_switches(argc, argv))
 		exit(-1);
 
 #ifdef NEWDEBUG

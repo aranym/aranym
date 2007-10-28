@@ -15,7 +15,6 @@
 /																	   /
 /																	   /
 /---------------------------------------------------------------------*/
-#define		  Assigned_Revision 950802
 /*-------------------------[ Revision History ]------------------------/
 / Revision 1.0.0  :	 Original Code by Jeffry J. Brickley			   /
 /		   1.1.0  : added header capability, JJB, 950802
@@ -35,11 +34,8 @@
 /                   Int_Tag added                                   Joy/
 /          1.8.1  : trim() - memmove() for overlapping memory. Thanks  /
 /                   to Thothy                                       Joy/
+/          1.9.0  : compress/expand Path                            Joy/
 /------------------------------------------------------------------->>*/
-/*	Please keep revision number current.							  */
-#define		  REVISION_NO "1.8.1"
-
-//extern "C" {
 
 #define ERROR	-1
 
@@ -78,12 +74,27 @@
 /---------------------------------------------------------------------*/
 
 #include "cfgopts.h"
+#include "debug.h"
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+ConfigOptions::ConfigOptions(const char *cfgfile, const char *home, const char *data)
+{
+	config_file = cfgfile;
+	home_folder = home;
+	data_folder = data;
+	
+	safe_strncpy(config_folder, config_file, sizeof(config_folder));
+	char *slash = strrchr(config_folder, '/');
+	if (slash != NULL) {
+		*slash = '\0';
+	}
+	else {
+		slash = strrchr(config_folder, '\\');
+		if (slash != NULL)
+			*slash = '\0';
+	}
+}
 
-static char	*trim(char *buffer)
+char * ConfigOptions::trim(char *buffer)
 {
 #define	SPACE	' '
 #define	TABULA	'\t'
@@ -113,7 +124,7 @@ static char	*trim(char *buffer)
 }
 
 
-static char	*strip_comment(char *line)
+char * ConfigOptions::strip_comment(char *line)
 {
 #define	REM1	'#'
 #define REM2	';'
@@ -151,7 +162,7 @@ static char	*strip_comment(char *line)
 /	  char *dest			  ; Destination file name
 /	  char *source			  ; Source file name
 /-------------------------------------------------------------------<<*/
-static long fcopy(const char *dest, const char *source)
+long ConfigOptions::fcopy(const char *dest, const char *source)
 {
 	FILE * d, *s;
 	char	*buffer;
@@ -197,8 +208,84 @@ static long fcopy(const char *dest, const char *source)
 	return totcount;
 }
 
+void ConfigOptions::expand_path(char *dest, const char *path, unsigned short buf_size)
+{
+	dest[0] = '\0';
 
-static char	line[32768];
+	if ( !strlen(path) )
+		return;
+
+	size_t prefixLen = 0;
+
+	if ( path[0] == '~' && (path[1] == '/' || path[1] == '\\') ) {
+		safe_strncpy(dest, home_folder, buf_size);
+		path+=2;
+	} else if (path[0] == '*' && (path[1] == '/' || path[1] == '\\') ) {
+		safe_strncpy(dest, data_folder, buf_size);
+		path+=2;
+	} else if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
+		safe_strncpy(dest, config_folder, buf_size);
+	}
+	else {
+		safe_strncpy(dest, path, buf_size);
+		return;
+	}
+
+	strcat(dest, DIRSEPARATOR);
+	prefixLen = strlen( dest );
+
+	if ( buf_size >= prefixLen + strlen(path) ) {
+		memmove( dest + prefixLen, path, strlen(path)+1 );	
+	} else {
+		panicbug("Error - config entry size is insufficient");
+	}
+}
+
+void ConfigOptions::compress_path(char *dest, char *path, unsigned short buf_size)
+{
+	dest[0] = '\0';
+
+	if ( !strlen(path) ) {
+		return;
+	}
+
+	size_t prefixLen = 0;
+	char *replacement = NULL;
+
+	safe_strncpy(dest, config_folder, buf_size);
+
+	if (prefixLen && strncmp(path, dest, prefixLen) == 0) {
+		replacement = "";
+		D(bug("%s matches %.*s", path, prefixLen, dest));
+	} 
+	else 
+	{
+		safe_strncpy(dest, data_folder, buf_size);
+		prefixLen = strlen(dest);
+		if (prefixLen && strncmp(path, dest, prefixLen) == 0) {
+			replacement = "*";
+			D(bug("%s matches %.*s", path, prefixLen, dest));
+		} 
+		else 
+		{
+			/* Check if home prefix matches */
+			safe_strncpy(dest, home_folder, buf_size);
+			prefixLen = strlen(dest);
+			if (prefixLen && strncmp(path, dest, prefixLen) == 0) {
+				replacement = "~";
+				D(bug("%s matches %.*s", path, prefixLen, dest));
+			}
+		}
+	}
+
+	if (replacement) {
+		int len1 = strlen(replacement);
+		int len2 = strlen(path+prefixLen);
+		memmove(dest+len1, path+prefixLen, len2+1);
+		memcpy(dest, replacement, len1);
+	}
+}
+
 
 /*---------------------------------------------------------------------/
 /	reads from an input configuration (INI) file.
@@ -207,18 +294,17 @@ static char	line[32768];
 / return value:
 /	  int					  ; number of records read or -1 on error
 / parameters:
-/	  char *filename		  ; filename of INI style file
 /	  struct Config_Tag configs[]; Configuration structure
 /	  char *header			  ; INI header name (i.e. "[TEST]")
 /-------------------------------------------------------------------<<*/
-int	input_config(const char *filename, struct Config_Tag configs[], char *header)
+int	ConfigOptions::input_config(struct Config_Tag configs[], char *header)
 {
 	struct Config_Tag *ptr;
 	int	count = 0, lineno = 0, temp;
 	FILE * file;
 	char	*fptr, *tok, *next;
 
-	file = fopen(filename, "rt");
+	file = fopen(config_file, "rt");
 	if ( file == NULL ) 
 		return ERROR;	/* return error designation. */
 	if ( header != NULL )
@@ -249,7 +335,7 @@ int	input_config(const char *filename, struct Config_Tag configs[], char *header
 								++count;
 							}
 							else {
-								fprintf(stderr, ">>> Missing value in Config file %s on line %d !!!\n", filename, lineno);
+								panicbug(">>> Missing value in Config file %s on line %d !!!", config_file, lineno);
 							}
 							continue;
 						}
@@ -316,24 +402,31 @@ int	input_config(const char *filename, struct Config_Tag configs[], char *header
 							break;
 
 						case Path_Tag:
-						case String_Tag:
 							if (ptr->buf_size > 0) {
-								char *cptr = (char *)ptr->buf;
-								int bufsize = ptr->buf_size;
-								strncpy(cptr, next, bufsize);
-								cptr[bufsize-1] = '\0';	/* EOS */
+								char tmpbuf[MAX_PATH];
+								safe_strncpy(tmpbuf, next, sizeof(tmpbuf));
+								expand_path((char *)ptr->buf, tmpbuf, ptr->buf_size);
 								++count;
 							}
 							else {
-								fprintf(stderr, ">>> Wrong buf_size in Config_Tag struct: directive %s, buf_size %d !!!\n", ptr->code, ptr->buf_size);
+								panicbug(">>> Wrong buf_size in Config_Tag struct: directive %s, buf_size %d !!!", ptr->code, ptr->buf_size);
 							}
 							break;
 
+						case String_Tag:
+							if (ptr->buf_size > 0) {
+								safe_strncpy((char *)ptr->buf, next, ptr->buf_size);
+								++count;
+							}
+							else {
+								panicbug(">>> Wrong buf_size in Config_Tag struct: directive %s, buf_size %d !!!", ptr->code, ptr->buf_size);
+							}
+							break;
 						case Function_Tag:
 						case Error_Tag:
 						default:
 							printf("Error in Config file %s on line %d\n",
-								filename, lineno);
+								config_file, lineno);
 							break;
 						}
 					}
@@ -344,7 +437,22 @@ int	input_config(const char *filename, struct Config_Tag configs[], char *header
 	return count;
 }
 
-bool write_token(FILE *outfile, struct Config_Tag *ptr)
+
+int ConfigOptions::process_config(struct Config_Tag *conf, char *title, bool verbose)
+{
+	int status = input_config(conf, title);
+	if (status >= 0) {
+		if (verbose)
+			infoprint("%s configuration: found %d valid directives.", title, status);
+	}
+	else {
+		panicbug("Error while reading/processing the '%s' config file.", config_file);
+	}
+	return status;
+}
+
+
+bool ConfigOptions::write_token(FILE *outfile, struct Config_Tag *ptr)
 {
 	int temp;
 	bool ret_flag = true;
@@ -403,6 +511,13 @@ bool write_token(FILE *outfile, struct Config_Tag *ptr)
 		break;
 
 	case Path_Tag:
+		{
+			char tmpbuf[MAX_PATH];
+			compress_path(tmpbuf, (char *)ptr->buf, sizeof(tmpbuf));
+			fprintf(outfile, "%s\n", tmpbuf);
+		}
+		break;
+
 	case String_Tag:
 		fprintf(outfile, "%s\n", (char *)ptr->buf);
 		break;
@@ -423,11 +538,10 @@ bool write_token(FILE *outfile, struct Config_Tag *ptr)
 / return value:
 /	  int					  ; Number of records read & updated
 / parameters:
-/	  char *filename		  ; filename of INI file
 /	  struct Config_Tag configs[]; Configuration structure
 /	  char *header			  ; INI header name (i.e. "[TEST]")
 /-------------------------------------------------------------------<<*/
-int	update_config(const char *filename, struct Config_Tag configs[], char *header)
+int	ConfigOptions::update_config(struct Config_Tag configs[], char *header)
 {
 #ifdef OS_darwin
 	static char *tempfilename = "/tmp/aratemp.$$$";
@@ -443,12 +557,12 @@ int	update_config(const char *filename, struct Config_Tag configs[], char *heade
 	for ( ptr = configs; ptr->buf; ++ptr )
 		ptr->stat = 0;	/* jeste neulozeno do souboru */
 
-	infile = fopen(filename, "rt");
+	infile = fopen(config_file, "rt");
 	if ( infile == NULL ) {
 /* konfiguracni soubor jeste vubec neexistuje */
 		outfile = fopen(tempfilename, "wt");
 		if ( outfile == NULL ) {
-			fprintf(stderr, "Error: unable to open %s file.\n", tempfilename);
+			panicbug("Error: unable to open %s file.", tempfilename);
 			return ERROR;		/* return error designation. */
 		}
 		if ( header != NULL ) {
@@ -460,18 +574,18 @@ int	update_config(const char *filename, struct Config_Tag configs[], char *heade
 		}
 
 		fclose(outfile);
-		result = fcopy(filename, tempfilename);
+		result = fcopy(config_file, tempfilename);
 		remove(tempfilename);
 
 		if (result < 0) {
-			fprintf(stderr, "Error %d in fcopy.\n", result);
+			panicbug("Error %d in fcopy.", result);
 			return result;
 		}
 		return count;
 	}
 	outfile = fopen(tempfilename, "wt");
 	if ( outfile == NULL ) {
-		fprintf(stderr, "Error: unable to open %s file.\n", tempfilename);
+		panicbug("Error: unable to open %s file.", tempfilename);
 		fclose(infile);
 		return ERROR;		   /* return error designation. */
 	}
@@ -545,11 +659,11 @@ int	update_config(const char *filename, struct Config_Tag configs[], char *heade
 	}
 	fclose(infile);
 	fclose(outfile);
-	result = fcopy(filename, tempfilename);
+	result = fcopy(config_file, tempfilename);
 	remove(tempfilename);
 
 	if (result < 0) {
-		fprintf(stderr, "Error %d in fcopy(%s,%s).\n", result, filename, 
+		panicbug("Error %d in fcopy(%s,%s).", result, config_file, 
 				tempfilename);
 		return result;
 	}
@@ -616,12 +730,13 @@ int	main(int argc, char *argv[])
 	printf("Options are now:\ntest1 = %s\ntest2 = %s\ntest3 = %d\n"
 		"test4 = %ld\ntest5 = \"%s\"\n\n", TFprint(test1),
 		TFprint(test2), test3, test4, test5);
-#endif
+#endif /* TEST_UPDATE */
 
 	return 0;
 }
 
-#endif
+#endif /* TEST */
 
-//} // extern "C"
-
+/*
+vim:ts=4:sw=4:
+*/

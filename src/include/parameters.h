@@ -30,7 +30,6 @@
 
 #include "sysdeps.h"
 #include "version.h"
-#include "cfgopts.h"
 #include <SDL_keyboard.h>
 
 #ifndef ARANYMHOME
@@ -280,7 +279,7 @@ extern bool boot_lilo;
 
 void usage(int);
 extern bool check_cfg();
-extern bool decode_switches(FILE *, int, char **);
+extern bool decode_switches(int, char **);
 extern char *getConfFilename(const char *file, char *buffer, unsigned int bufsize);
 extern char *getDataFilename(const char *file, char *buffer, unsigned int bufsize);
 char *addFilename(char *buffer, const char *file, unsigned int bufsize);

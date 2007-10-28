@@ -5,9 +5,11 @@
 #ifndef TAG_TYPE_defined
 #define TAG_TYPE_defined
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include "config.h"
+#include "tools.h"
 
 typedef enum {
 	Error_Tag,
@@ -36,11 +38,33 @@ struct Config_Tag {
 	char		stat;				/* internal flag for update_config */
 };
 
-extern int input_config(const char *, struct Config_Tag *, char *);
-extern int update_config(const char *, struct Config_Tag *, char *);
+#define MAX_PATH	1024
 
-#ifdef __cplusplus
-}
+class ConfigOptions
+{
+	private:
+		char * trim(char *);
+		char * strip_comment(char *);
+		long fcopy(const char *, const char *);
+		void expand_path(char *, const char *, unsigned short);
+		void compress_path(char *, char *, unsigned short);
+		bool write_token(FILE *, struct Config_Tag *);
+
+		const char *config_file;
+		char config_folder[1024];
+		const char *home_folder;
+		const char *data_folder;
+		char line[32768];
+
+	public:
+		ConfigOptions(const char *, const char *, const char *);
+		int input_config(struct Config_Tag *, char *);
+		int update_config(struct Config_Tag *, char *);
+		int process_config(struct Config_Tag *, char *, bool verbose);
+};
+
 #endif
 
-#endif
+/*
+vim:ts=4:sw=4:
+*/

@@ -32,6 +32,7 @@
 #include "tools.h"		// for safe_strncpy()
 #include "host.h"
 #include "host_filesys.h"
+#include "cfgopts.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -145,100 +146,6 @@ static bx_atadevice_options_t *diskc = &bx_options.atadevice[0][0];
 static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
 
 
-void expand_path(char *buf, size_t buf_size)
-{
-	char *path = buf;
-	if ( !strlen(path) )
-		return;
-
-	char prefix[2048];
-	size_t prefixLen = 0;
-
-	if ( path[0] == '~' && (path[1] == '/' || path[1] == '\\') ) {
-		// replace with the home folder path
-		Host::getHomeFolder(prefix, sizeof(prefix));
-		strcat(prefix, DIRSEPARATOR);
-		prefixLen = strlen( prefix );
-		path+=2;
-	} else if (path[0] == '*' && (path[1] == '/' || path[1] == '\\') ) {
-		Host::getDataFolder(prefix, sizeof(prefix));
-		strcat(prefix, DIRSEPARATOR);
-		prefixLen = strlen( prefix );
-		path+=2;
-	} else if ( path[0] != '/' && path[0] != '\\' && path[1] != ':' ) {
-		// path relative to config file
-		strcpy(prefix, config_file);
-		// find the last dirseparator
-		const char *slash = &prefix[strlen(prefix)];
-		while ( --slash >= prefix &&
-			*slash != '/' &&
-			*slash != '\\' );
-		// get the path part (in front of the slash)
-		prefixLen = slash - prefix + 1;
-	}
-
-	if ( prefixLen > 0 ) {
-		if ( buf_size >= prefixLen + strlen(path) ) {
-			memmove( buf + prefixLen, path, strlen(path)+1 );	
-			memmove( buf, prefix, prefixLen );
-		} else {
-			panicbug("Error - config entry size is insufficient");
-		}
-	}
-}
-
-void compress_path(char *path)
-{
-	if ( !strlen(path) )
-		return;
-
-	char prefix[2048];
-	size_t prefixLen = 0;
-	char *replacement = NULL;
-
-	// path relative to config file
-	strcpy(prefix, config_file);
-	// find the last dirseparator
-	const char *slash = &prefix[strlen(prefix)];
-	while ( --slash >= prefix &&
-		*slash != '/' &&
-		*slash != '\\' );
-	// get the path part (in front of the slash)
-	prefixLen = slash - prefix + 1;
-
-	if (prefixLen && strncmp(path, prefix, prefixLen) == 0) {
-		replacement = "";
-		D(bug("%s matches %.*s", path, prefixLen, prefix));
-	} 
-	else 
-	{
-		Host::getDataFolder(prefix, sizeof(prefix));
-		prefixLen = strlen(prefix);
-		if (prefixLen && strncmp(path, prefix, prefixLen) == 0) {
-			replacement = "*";
-			D(bug("%s matches %.*s", path, prefixLen, prefix));
-		} 
-		else 
-		{
-			/* Check if home prefix matches */
-			Host::getHomeFolder(prefix, sizeof(prefix));
-			prefixLen = strlen(prefix);
-			if (prefixLen && strncmp(path, prefix, prefixLen) == 0) {
-				replacement = "~";
-				D(bug("%s matches %.*s", path, prefixLen, prefix));
-			}
-		}
-	}
-
-	if (replacement) {
-		int len1 = strlen(replacement);
-		int len2 = strlen(path+prefixLen);
-		memmove(path+len1, path+prefixLen, len2+1);
-		memcpy(path, replacement, len1);
-	}
-}
-
-
 // configuration file 
 /*************************************************************************/
 struct Config_Tag global_conf[]={
@@ -286,20 +193,10 @@ void postload_global()
 #endif
 	if (!isalpha(bx_options.bootdrive))
 		bx_options.bootdrive = 0;
-
-	expand_path(bx_options.floppy.path, sizeof(bx_options.floppy.path));
-	expand_path(bx_options.tos_path, sizeof(bx_options.tos_path));
-	expand_path(bx_options.emutos_path, sizeof(bx_options.emutos_path));
-	expand_path(bx_options.bootstrap_path, sizeof(bx_options.bootstrap_path));
 }
 
 void presave_global()
 {
-	compress_path(bx_options.floppy.path);
-	compress_path(bx_options.tos_path);
-	compress_path(bx_options.emutos_path);
-	compress_path(bx_options.bootstrap_path);
-
 	bx_options.fastram = FastRAMSize / 1024 / 1024;
 	if (bx_options.bootdrive == 0)
 		bx_options.bootdrive = ' ';
@@ -513,14 +410,10 @@ void preset_ide()
 
 void postload_ide()
 {
-	expand_path(diskc->path, sizeof(diskc->path));
-	expand_path(diskd->path, sizeof(diskd->path));
 }
 
 void presave_ide()
 {
-	compress_path(diskc->path);
-	compress_path(diskd->path);
 }
 
 /*************************************************************************/
@@ -564,16 +457,10 @@ void preset_disk()
 
 void postload_disk()
 {
-	for(int i=0; i<DISKS; i++) {
-		expand_path(bx_options.disks[i].path, sizeof(bx_options.disks[i].path));
-	}
 }
 
 void presave_disk()
 {
-	for(int i=0; i<DISKS; i++) {
-		compress_path(bx_options.disks[i].path);
-	}
 }
 
 /*************************************************************************/
@@ -622,8 +509,6 @@ void preset_arafs()
 void postload_arafs()
 {
 	for(int i=0; i < 'Z'-'A'+1; i++) {
-		expand_path(bx_options.aranymfs[i].configPath, sizeof(bx_options.aranymfs[i].configPath));
-		
 		safe_strncpy(bx_options.aranymfs[i].rootPath, bx_options.aranymfs[i].configPath, sizeof(bx_options.aranymfs[i].rootPath));
 		int len = strlen(bx_options.aranymfs[i].configPath);
 		bx_options.aranymfs[i].halfSensitive = true;
@@ -646,7 +531,6 @@ void presave_arafs()
 			// set the halfSensitive indicator
 			strcat( bx_options.aranymfs[i].configPath, ":" );
 		}
-		compress_path(bx_options.aranymfs[i].configPath);
 	}
 }
 
@@ -721,14 +605,10 @@ void preset_lilo()
 
 void postload_lilo()
 {
-	expand_path(bx_options.lilo.kernel, sizeof(bx_options.lilo.kernel));
-	expand_path(bx_options.lilo.ramdisk, sizeof(bx_options.lilo.ramdisk));
 }
 
 void presave_lilo()
 {
-	compress_path(bx_options.lilo.kernel);
-	compress_path(bx_options.lilo.ramdisk);
 }
 
 /*************************************************************************/
@@ -748,11 +628,9 @@ void preset_midi() {
 }
 
 void postload_midi() {
-	expand_path(bx_options.midi.file, sizeof(bx_options.midi.file));
 }
 
 void presave_midi() {
-	compress_path(bx_options.midi.file);
 }
 
 /*************************************************************************/
@@ -1328,24 +1206,12 @@ char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
 	return addFilename(buffer, file, bufsize);
 }
 
-static int process_config(FILE *f, const char *filename, struct Config_Tag *conf, char *title, bool verbose)
-{
-	int status = input_config(filename, conf, title);
-	if (status >= 0) {
-		if (verbose)
-			fprintf(f, "%s configuration: found %d valid directives.\n", title, status);
-	} else {
-		fprintf(f, "Error while reading/processing the '%s' config file.\n", filename);
-	}
-	return status;
-}
-
-static bool decode_ini_file(FILE *f, const char *rcfile)
+static bool decode_ini_file(const char *rcfile)
 {
 	// Does the config exist?
 	struct stat buf;
 	if (stat(rcfile, &buf) == -1) {
-		fprintf(f, "Config file '%s' not found.\nThe config file is created with default values. Edit it to suit your needs.\n", rcfile);
+		infoprint("Config file '%s' not found. It's been created with default values. Edit it to suit your needs.", rcfile);
 		saveConfigFile = true;
 #ifdef SDL_GUI
 		startupGUI = true;
@@ -1353,48 +1219,54 @@ static bool decode_ini_file(FILE *f, const char *rcfile)
 		return false;
 	}
 
-	fprintf(f, "Using config file: '%s'\n", rcfile);
+	infoprint("Using config file: '%s'", rcfile);
 
-	process_config(f, rcfile, global_conf, "[GLOBAL]", true);
-	process_config(f, rcfile, startup_conf, "[STARTUP]", true);
-	process_config(f, rcfile, ikbd_conf, "[IKBD]", true);
-	process_config(f, rcfile, hotkeys_conf, "[HOTKEYS]", true);
-	process_config(f, rcfile, jit_conf, "[JIT]", true);
-	process_config(f, rcfile, video_conf, "[VIDEO]", true);
-	process_config(f, rcfile, tos_conf, "[TOS]", true);
-	process_config(f, rcfile, ide_swap ? diskd_configs : diskc_configs, "[IDE0]", true);
-	process_config(f, rcfile, ide_swap ? diskc_configs : diskd_configs, "[IDE1]", true);
+	char home_folder[1024];
+	char data_folder[1024];
+	Host::getHomeFolder(home_folder, sizeof(home_folder));
+	Host::getDataFolder(data_folder, sizeof(data_folder));
+	ConfigOptions cfgopts(rcfile, home_folder, data_folder);
 
-	process_config(f, rcfile, disk0_configs, "[PARTITION0]", true);
-	process_config(f, rcfile, disk1_configs, "[PARTITION1]", true);
-	process_config(f, rcfile, disk2_configs, "[PARTITION2]", true);
-	process_config(f, rcfile, disk3_configs, "[PARTITION3]", true);
-	process_config(f, rcfile, disk4_configs, "[PARTITION4]", true);
-	process_config(f, rcfile, disk5_configs, "[PARTITION5]", true);
-	process_config(f, rcfile, disk6_configs, "[PARTITION6]", true);
-	process_config(f, rcfile, disk7_configs, "[PARTITION7]", true);
+	cfgopts.process_config(global_conf, "[GLOBAL]", true);
+	cfgopts.process_config(startup_conf, "[STARTUP]", true);
+	cfgopts.process_config(ikbd_conf, "[IKBD]", true);
+	cfgopts.process_config(hotkeys_conf, "[HOTKEYS]", true);
+	cfgopts.process_config(jit_conf, "[JIT]", true);
+	cfgopts.process_config(video_conf, "[VIDEO]", true);
+	cfgopts.process_config(tos_conf, "[TOS]", true);
+	cfgopts.process_config(ide_swap ? diskd_configs : diskc_configs, "[IDE0]", true);
+	cfgopts.process_config(ide_swap ? diskc_configs : diskd_configs, "[IDE1]", true);
 
-	process_config(f, rcfile, arafs_conf, "[HOSTFS]", true);
-	process_config(f, rcfile, opengl_conf, "[OPENGL]", true);
-	process_config(f, rcfile, eth0_conf, "[ETH0]", true);
-	process_config(f, rcfile, eth1_conf, "[ETH1]", true);
-	process_config(f, rcfile, eth2_conf, "[ETH2]", true);
-	process_config(f, rcfile, eth3_conf, "[ETH3]", true);
-	process_config(f, rcfile, lilo_conf, "[LILO]", true);
-	process_config(f, rcfile, midi_conf, "[MIDI]", true);
-	process_config(f, rcfile, nfcdroms_conf, "[CDROMS]", true);
-	process_config(f, rcfile, autozoom_conf, "[AUTOZOOM]", true);
-	process_config(f, rcfile, osmesa_conf, "[NFOSMESA]", true);
-	process_config(f, rcfile, parallel_conf, "[PARALLEL]", true);
-	process_config(f, rcfile, natfeat_conf, "[NATFEATS]", true);
-	process_config(f, rcfile, nfvdi_conf, "[NFVDI]", true);
+	cfgopts.process_config(disk0_configs, "[PARTITION0]", true);
+	cfgopts.process_config(disk1_configs, "[PARTITION1]", true);
+	cfgopts.process_config(disk2_configs, "[PARTITION2]", true);
+	cfgopts.process_config(disk3_configs, "[PARTITION3]", true);
+	cfgopts.process_config(disk4_configs, "[PARTITION4]", true);
+	cfgopts.process_config(disk5_configs, "[PARTITION5]", true);
+	cfgopts.process_config(disk6_configs, "[PARTITION6]", true);
+	cfgopts.process_config(disk7_configs, "[PARTITION7]", true);
+
+	cfgopts.process_config(arafs_conf, "[HOSTFS]", true);
+	cfgopts.process_config(opengl_conf, "[OPENGL]", true);
+	cfgopts.process_config(eth0_conf, "[ETH0]", true);
+	cfgopts.process_config(eth1_conf, "[ETH1]", true);
+	cfgopts.process_config(eth2_conf, "[ETH2]", true);
+	cfgopts.process_config(eth3_conf, "[ETH3]", true);
+	cfgopts.process_config(lilo_conf, "[LILO]", true);
+	cfgopts.process_config(midi_conf, "[MIDI]", true);
+	cfgopts.process_config(nfcdroms_conf, "[CDROMS]", true);
+	cfgopts.process_config(autozoom_conf, "[AUTOZOOM]", true);
+	cfgopts.process_config(osmesa_conf, "[NFOSMESA]", true);
+	cfgopts.process_config(parallel_conf, "[PARALLEL]", true);
+	cfgopts.process_config(natfeat_conf, "[NATFEATS]", true);
+	cfgopts.process_config(nfvdi_conf, "[NFVDI]", true);
 
 	return true;
 }
 
 bool loadSettings(const char *cfg_file) {
 	preset_cfg();
-	bool ret = decode_ini_file(stderr, cfg_file);
+	bool ret = decode_ini_file(cfg_file);
 	postload_cfg();
 	return ret;
 }
@@ -1403,54 +1275,60 @@ bool saveSettings(const char *fs)
 {
 	presave_cfg();
 
-	if (update_config(fs, global_conf, "[GLOBAL]") < 0) {
+	char home_folder[1024];
+	char data_folder[1024];
+	Host::getHomeFolder(home_folder, sizeof(home_folder));
+	Host::getDataFolder(data_folder, sizeof(data_folder));
+	ConfigOptions cfgopts(fs, home_folder, data_folder);
+
+	if (cfgopts.update_config(global_conf, "[GLOBAL]") < 0) {
 		fprintf(stderr, "Error while writing the '%s' config file.\n", fs);
 		return false;
 	}
-	update_config(fs, startup_conf, "[STARTUP]");
-	update_config(fs, ikbd_conf, "[IKBD]");
-	update_config(fs, hotkeys_conf, "[HOTKEYS]");
-	update_config(fs, jit_conf, "[JIT]");
-	update_config(fs, video_conf, "[VIDEO]");
-	update_config(fs, tos_conf, "[TOS]");
-	update_config(fs, ide_swap ? diskd_configs : diskc_configs, "[IDE0]");
-	update_config(fs, ide_swap ? diskc_configs : diskd_configs, "[IDE1]");
+	cfgopts.update_config(startup_conf, "[STARTUP]");
+	cfgopts.update_config(ikbd_conf, "[IKBD]");
+	cfgopts.update_config(hotkeys_conf, "[HOTKEYS]");
+	cfgopts.update_config(jit_conf, "[JIT]");
+	cfgopts.update_config(video_conf, "[VIDEO]");
+	cfgopts.update_config(tos_conf, "[TOS]");
+	cfgopts.update_config(ide_swap ? diskd_configs : diskc_configs, "[IDE0]");
+	cfgopts.update_config(ide_swap ? diskc_configs : diskd_configs, "[IDE1]");
 
-	update_config(fs, disk0_configs, "[PARTITION0]");
+	cfgopts.update_config(disk0_configs, "[PARTITION0]");
 	if (strlen((char *)disk1_configs->buf))
-		update_config(fs, disk1_configs, "[PARTITION1]");
+		cfgopts.update_config(disk1_configs, "[PARTITION1]");
 	if (strlen((char *)disk2_configs->buf))
-		update_config(fs, disk2_configs, "[PARTITION2]");
+		cfgopts.update_config(disk2_configs, "[PARTITION2]");
 	if (strlen((char *)disk3_configs->buf))
-		update_config(fs, disk3_configs, "[PARTITION3]");
+		cfgopts.update_config(disk3_configs, "[PARTITION3]");
 	if (strlen((char *)disk4_configs->buf))
-		update_config(fs, disk4_configs, "[PARTITION4]");
+		cfgopts.update_config(disk4_configs, "[PARTITION4]");
 	if (strlen((char *)disk5_configs->buf))
-		update_config(fs, disk5_configs, "[PARTITION5]");
+		cfgopts.update_config(disk5_configs, "[PARTITION5]");
 	if (strlen((char *)disk6_configs->buf))
-		update_config(fs, disk6_configs, "[PARTITION6]");
+		cfgopts.update_config(disk6_configs, "[PARTITION6]");
 	if (strlen((char *)disk7_configs->buf))
-		update_config(fs, disk7_configs, "[PARTITION7]");
+		cfgopts.update_config(disk7_configs, "[PARTITION7]");
 
-	update_config(fs, arafs_conf, "[HOSTFS]");
-	update_config(fs, opengl_conf, "[OPENGL]");
+	cfgopts.update_config(arafs_conf, "[HOSTFS]");
+	cfgopts.update_config(opengl_conf, "[OPENGL]");
 
-	update_config(fs, eth0_conf, "[ETH0]");
+	cfgopts.update_config(eth0_conf, "[ETH0]");
 	if (strlen((char *)eth1_conf->buf))
-		update_config(fs, eth1_conf, "[ETH1]");
+		cfgopts.update_config(eth1_conf, "[ETH1]");
 	if (strlen((char *)eth2_conf->buf))
-		update_config(fs, eth2_conf, "[ETH2]");
+		cfgopts.update_config(eth2_conf, "[ETH2]");
 	if (strlen((char *)eth3_conf->buf))
-		update_config(fs, eth3_conf, "[ETH3]");
+		cfgopts.update_config(eth3_conf, "[ETH3]");
 
-	update_config(fs, lilo_conf, "[LILO]");
-	update_config(fs, midi_conf, "[MIDI]");
-	update_config(fs, nfcdroms_conf, "[CDROMS]");
-	update_config(fs, autozoom_conf, "[AUTOZOOM]");
-	update_config(fs, osmesa_conf, "[NFOSMESA]");
-	update_config(fs, parallel_conf, "[PARALLEL]");
-	update_config(fs, natfeat_conf, "[NATFEATS]");
-	update_config(fs, nfvdi_conf, "[NFVDI]");
+	cfgopts.update_config(lilo_conf, "[LILO]");
+	cfgopts.update_config(midi_conf, "[MIDI]");
+	cfgopts.update_config(nfcdroms_conf, "[CDROMS]");
+	cfgopts.update_config(autozoom_conf, "[AUTOZOOM]");
+	cfgopts.update_config(osmesa_conf, "[NFOSMESA]");
+	cfgopts.update_config(parallel_conf, "[PARALLEL]");
+	cfgopts.update_config(natfeat_conf, "[NATFEATS]");
+	cfgopts.update_config(nfvdi_conf, "[NFVDI]");
 
 	return true;
 }
@@ -1471,13 +1349,13 @@ bool check_cfg()
 	return true;
 }
 
-bool decode_switches(FILE *f, int argc, char **argv)
+bool decode_switches(int argc, char **argv)
 {
 	getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
 
 	early_cmdline_check(argc, argv);
 	preset_cfg();
-	decode_ini_file(f, config_file);
+	decode_ini_file(config_file);
 	process_cmdline(argc, argv);
 	postload_cfg();
 
