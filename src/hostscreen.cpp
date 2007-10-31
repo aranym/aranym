@@ -56,6 +56,9 @@
 # include <SDL_syswm.h>
 #endif
 
+#define MIN_WIDTH 640
+#define MIN_HEIGHT 480
+
 #ifdef ENABLE_VBL_UPDATES
 #define MAXIMUM_UPDATE_CACHE 1000
 	static SDL_Rect updateRects[MAXIMUM_UPDATE_CACHE];
@@ -98,7 +101,7 @@ HostScreen::HostScreen(void)
 	lastVidelWidth = lastVidelHeight = lastVidelBpp = -1;
 	DisableOpenGLVdi();
 
-	setWindowSize(320,200,8);
+	setWindowSize(MIN_WIDTH,MIN_HEIGHT,8);
 }
 
 HostScreen::~HostScreen(void) {
@@ -293,6 +296,13 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	if (bx_options.autozoom.fixedsize) {
 		width = bx_options.autozoom.width;
 		height = bx_options.autozoom.height;
+	}
+
+	if (width<MIN_WIDTH) {
+		width=MIN_WIDTH;
+	}
+	if (height<MIN_HEIGHT) {
+		height=MIN_HEIGHT;
 	}
 
 	// Select a correct video mode
@@ -632,7 +642,7 @@ void HostScreen::refresh(void)
 
 	/* Create dummy main surface? */
 	if (!mainSurface) {
-		setWindowSize(320,200,8);
+		setWindowSize(MIN_WIDTH,MIN_HEIGHT,8);
 	}
 
 	if (!mainSurface) {

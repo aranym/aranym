@@ -1,3 +1,7 @@
+2007/10/31 - Patrice
+- Set 640x480 as minimum size.
+
+
 2007/10/28 - Petr
 - cfgopts.*, parameters.*: moving auto conversion of file paths in the config
   file to CfgOpts class.
@@ -8,6 +12,7 @@
 - Moved OpenGL library initialisation from Host to HostScreen where it is needed.
 - Added more information if OpenGL initialisation failes.
 - Added missing header file in ethernet_darwin.cpp.
+
 
 2007/10/05 - Patrice
 - parameters.cpp: Always set OpenGL stuff to disabled if not compiled in.
