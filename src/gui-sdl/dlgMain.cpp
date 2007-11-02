@@ -201,7 +201,7 @@ void Dialog_MainDlg()
 			break;
 
 		case FULLSCREEN:
-			host->hostScreen.toggleFullScreen();
+			bx_options.video.fullscreen = !bx_options.video.fullscreen;
 			closeDialog = true;
 			break;
 
