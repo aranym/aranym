@@ -28,6 +28,8 @@
 #include "sdlgui.h"
 #include "input.h"
 
+SDL_keysym Dialog_PressKeyDlg(void);
+
 static bx_hotkeys_t hotkeys;
 
 enum HOTKEYSDLG {
@@ -102,39 +104,6 @@ static const char *HELP_TEXT = "Define hotkeys for certain functions:\n"
 "\n"
 "Shifter + [Enter] key => Shifter only";
 
-static SGOBJ presskeydlg[] =
-{
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 15,3, NULL },
-	{ SGTEXT, 0, 0, 2,1, 11,1, "Press a key" },
-	{ -1, 0, 0, 0,0, 0,0, NULL }
-};
-
-extern void SDLGui_DrawDialog(SGOBJ *);
-
-SDL_keysym getKey()
-{
-	SDL_keysym keysym;
-	keysym.sym = SDLK_UNKNOWN;
-
-	SDLGui_DrawDialog(presskeydlg);
-	do {
-		SDL_Event e = getEvent();
-		if (e.type == SDL_KEYDOWN) {
-			keysym.sym = e.key.keysym.sym;
-			keysym.mod = (SDLMod)(e.key.keysym.mod & HOTKEYS_MOD_MASK);
-			if (keysym.sym >= SDLK_NUMLOCK && keysym.sym <= SDLK_COMPOSE) {
-				keysym.sym = SDLK_UNKNOWN;
-			}
-		}
-	} while(keysym.sym == SDLK_UNKNOWN);
-
-	// special hack: Enter key = no key needed, just modifiers
-	if (keysym.sym == SDLK_RETURN)
-		keysym.sym = SDLK_UNKNOWN;
-
-	return keysym;
-}
-
 char *displayKeysym(SDL_keysym keysym, char *buffer)
 {
 	*buffer = 0;
@@ -191,25 +160,25 @@ void Dialog_HotkeysDlg()
 		but = SDLGui_DoDialog(hotkeysdlg);
 		switch(but) {
 			case SETUP:
-				hotkeys.setup = getKey();
+				hotkeys.setup = Dialog_PressKeyDlg();
 				break;
 			case QUIT:
-				hotkeys.quit = getKey();
+				hotkeys.quit = Dialog_PressKeyDlg();
 				break;
 			case REBOOT:
-				hotkeys.reboot = getKey();
+				hotkeys.reboot = Dialog_PressKeyDlg();
 				break;
 			case UNGRAB:
-				hotkeys.ungrab = getKey();
+				hotkeys.ungrab = Dialog_PressKeyDlg();
 				break;
 			case DEBUG:
-				hotkeys.debug = getKey();
+				hotkeys.debug = Dialog_PressKeyDlg();
 				break;
 			case SCREENSHOT:
-				hotkeys.screenshot = getKey();
+				hotkeys.screenshot = Dialog_PressKeyDlg();
 				break;
 			case FULLSCREEN:
-				hotkeys.fullscreen = getKey();
+				hotkeys.fullscreen = Dialog_PressKeyDlg();
 				break;
 
 			case HELP:
