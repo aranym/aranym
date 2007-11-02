@@ -67,9 +67,6 @@ typedef struct
   bool blink_state;
 } cursor_state;
 
-#define SCRLOCK	host->hostScreen.lock();
-#define SCRUNLOCK	host->hostScreen.unlock();
-
 bool SDLGui_Init(void);
 int SDLGui_UnInit(void);
 int SDLGui_DoDialog(SGOBJ *dlg);
