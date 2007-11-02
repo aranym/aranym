@@ -1,6 +1,6 @@
 2007/11/02 - Patrice
 - sdlgui: first steps to nonthread stuff: create separate function to init,
-  process and close a dialog.
+  process and close a dialog. Blink and redraw text cursor from main thread.
 
 
 2007/10/31 - Patrice

@@ -41,6 +41,10 @@ static int fontwidth, fontheight;   /* Height and width of the actual font */
 static SDL_Surface *gui_surf = NULL;
 static int gui_x = 0, gui_y = 0; /* gui position */
 
+/* current dialog to draw */
+static SGOBJ *gui_dlg = NULL;
+static cursor_state gui_cursor;
+
 static SDL_Color gui_palette[4] = {
 	{0,0,0,0},
 	{128,128,128,0},
@@ -803,6 +807,16 @@ void SDLGui_setGuiPos(int guix, int guiy)
 
 SDL_Surface *SDLGui_getSurface(void)
 {
+	/* Blink cursor ? */
+	if (++gui_cursor.blink_counter >= 10) {
+		gui_cursor.blink_counter = 0;
+		gui_cursor.blink_state = !gui_cursor.blink_state;
+		/* Redraw dialog */
+		if (gui_dlg != NULL) {
+			SDLGui_DrawCursor(gui_dlg, &gui_cursor);
+		}
+	}
+
 	return gui_surf;
 }
 
@@ -1389,7 +1403,7 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
   return return_rect;
 }
 
-SDL_Event getEvent(SGOBJ *dlg, cursor_state *cursor)
+SDL_Event getEvent(SGOBJ *dlg)
 {
   while(1) {
     SDL_Event evnt;
@@ -1424,15 +1438,6 @@ SDL_Event getEvent(SGOBJ *dlg, cursor_state *cursor)
       // No special event occured.
       // Wait a little to avoid eating CPU.
       SDL_Delay(50);
-      if (cursor != NULL) {
-          cursor->blink_counter++;
-          if (cursor->blink_counter >= 10) {
-            cursor->blink_counter = 0;
-            cursor->blink_state = !cursor->blink_state;
-	    if (dlg != NULL)
-              SDLGui_DrawCursor(dlg, cursor);
-          }
-	}
     }
   }
 }
@@ -1448,8 +1453,6 @@ int SDLGui_DoDialog(SGOBJ *dlg)
   int return_obj = -1;
   int obj;
   int x, y;
-  // int keysym, mod;
-  cursor_state cursor;
 
   // Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here
   bool stillPressed = (SDL_GetMouseState(&x, &y) & SDL_BUTTON(1));
@@ -1463,25 +1466,27 @@ int SDLGui_DoDialog(SGOBJ *dlg)
     return_obj = obj;
   }
 
-  cursor.object = SDLGui_FindEditField(dlg, -1, SG_FIRST_EDITFIELD);
-  cursor.position = (cursor.object != -1) ? strlen(dlg[cursor.object].txt) : 0;
-  cursor.blink_counter = 0;
-  cursor.blink_state = true;
+  gui_dlg = dlg;
+
+  gui_cursor.object = SDLGui_FindEditField(dlg, -1, SG_FIRST_EDITFIELD);
+  gui_cursor.position = (gui_cursor.object != -1) ? strlen(dlg[gui_cursor.object].txt) : 0;
+  gui_cursor.blink_counter = 0;
+  gui_cursor.blink_state = true;
 
   SDLGui_DrawDialog(dlg);
 
   /* The main loop */
   while (return_obj < 0)
   {
-    SDL_Event evnt = getEvent(dlg, &cursor);
+    SDL_Event evnt = getEvent(dlg);
     switch(evnt.type)
       {
       	case SDL_KEYDOWN:
-          return_obj = SDLGui_KeyPress(dlg, evnt.key.keysym.sym, evnt.key.keysym.mod, &cursor);
+          return_obj = SDLGui_KeyPress(dlg, evnt.key.keysym.sym, evnt.key.keysym.mod, &gui_cursor);
       	  break;
 
         case SDL_MOUSEBUTTONDOWN:
-          return_obj = SDLGui_MouseClick(dlg, evnt.button.x, evnt.button.y, &cursor);
+          return_obj = SDLGui_MouseClick(dlg, evnt.button.x, evnt.button.y, &gui_cursor);
           break;
       }
   }
@@ -1492,6 +1497,8 @@ int SDLGui_DoDialog(SGOBJ *dlg)
     // BUG: This should be caller responsibility
     dlg[return_obj].state ^= SG_SELECTED;
   }
+
+  gui_dlg = NULL;
 
   return return_obj;
 }

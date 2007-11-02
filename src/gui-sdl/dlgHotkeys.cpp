@@ -116,7 +116,7 @@ SDL_keysym getKey()
 
 	SDLGui_DrawDialog(presskeydlg);
 	do {
-		SDL_Event e = getEvent(hotkeysdlg, NULL);
+		SDL_Event e = getEvent(hotkeysdlg);
 		if (e.type == SDL_KEYDOWN) {
 			keysym.sym = e.key.keysym.sym;
 			keysym.mod = (SDLMod)(e.key.keysym.mod & HOTKEYS_MOD_MASK);
