@@ -139,14 +139,10 @@ static void Dialog_NetworkDlg_Init(void)
 	safe_strncpy(eth1_mac_addr, eth1->mac_addr, sizeof(eth1_mac_addr));
 }
 
-static void Dialog_NetworkDlg_Close(int but)
+static void Dialog_NetworkDlg_Confirm(void)
 {
 	bx_ethernet_options_t *eth0 = &bx_options.ethernet[0];
 	bx_ethernet_options_t *eth1 = &bx_options.ethernet[1];
-
-	if (but!=APPLY) {
-		return;
-	}
 
 	if (dlg[ETH0_TYP_NONE].state & SG_SELECTED) {
 		*eth0->type = '\0';
@@ -175,11 +171,19 @@ static void Dialog_NetworkDlg_Close(int but)
 	safe_strncpy(eth1->mac_addr, eth1_mac_addr, sizeof(eth1->mac_addr));
 }
 
+static void Dialog_NetworkDlg_Close(void)
+{
+}
+
 void Dialog_NetworkDlg()
 {
 	Dialog_NetworkDlg_Init();
-	int but = SDLGui_DoDialog(dlg);
-	Dialog_NetworkDlg_Close(but);
+
+	if (SDLGui_DoDialog(dlg) == APPLY) {
+		Dialog_NetworkDlg_Confirm();
+	}
+
+	Dialog_NetworkDlg_Close();
 }
 
 /*

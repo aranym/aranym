@@ -45,6 +45,10 @@ static char ide1_size[6], ide1_cyl[6], ide1_head[3], ide1_spt[4];
 static char *eject = "Eject";
 static char *insert = "Insert";
 
+static char floppy_path[80];
+static char ide0_path[80];
+static char ide1_path[80];
+
 #define BAR130G		130000
 #define MAXHEADS	16
 #define MAXSPT		255
@@ -322,7 +326,7 @@ static bool create_disk_image(int disk)
 /*
   Show and process the disc image dialog.
 */
-static void Dialog_DiscDlg_Init(char *floppy_path, char *ide0_path, char *ide1_path)
+static void Dialog_DiscDlg_Init(void)
 {
 	// preload bx settings
 	gui_options = bx_options;
@@ -363,7 +367,7 @@ static void Dialog_DiscDlg_Init(char *floppy_path, char *ide0_path, char *ide1_p
 	UpdateCDROMstatus(1);
 }
 
-static void Dialog_DiscDlg_Close(int but)
+static void Dialog_DiscDlg_Confirm(void)
 {
 	/* Read values from dialog */
 	int cyl, head, spt;
@@ -399,20 +403,19 @@ static void Dialog_DiscDlg_Close(int but)
 	gui_options.atadevice[0][1].isCDROM = getSelected(IDE1_CDROM);
 	gui_options.atadevice[0][1].byteswap = getSelected(IDE1_BYTESWAP);
 
-	/* apply the values */
-	if (but == APPLY)
-		bx_options = gui_options;
+	bx_options = gui_options;
+}
+
+static void Dialog_DiscDlg_Close(void)
+{
 }
 
 void Dialog_DiscDlg(void)
 {
 	int but;
 	char tmpname[MAX_FILENAME_LENGTH];
-	char floppy_path[80] = "";
-	char ide0_path[80] = "";
-	char ide1_path[80] = "";
 
-	Dialog_DiscDlg_Init(floppy_path, ide0_path, ide1_path);
+	Dialog_DiscDlg_Init();
 
 	// note that File_Exists() checks were disabled since they didn't work
 	// on /dev/fd0 or /dev/cdrom if no media were inserted
@@ -524,7 +527,11 @@ void Dialog_DiscDlg(void)
 	}
 	while (but != APPLY && but != CANCEL);
 
-	Dialog_DiscDlg_Close(but);
+	if (but==APPLY) {
+		Dialog_DiscDlg_Confirm();
+	}
+
+	Dialog_DiscDlg_Close();
 }
 
 /*

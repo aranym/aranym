@@ -61,21 +61,25 @@ static void Dialog_KeyboardDlg_Init(void)
 	keyboarddlg[bx_options.ikbd.altgr ? MILAN_ALTGR : ATARI_ALT].state |= SG_SELECTED;
 }
 
-static void Dialog_KeyboardDlg_Close(int but)
+static void Dialog_KeyboardDlg_Confirm(void)
 {
-	if (but!=APPLY) {
-		return;
-	}
-
 	bx_options.ikbd.wheel_eiffel = (keyboarddlg[EIFFEL].state & SG_SELECTED);
 	bx_options.ikbd.altgr = (keyboarddlg[MILAN_ALTGR].state & SG_SELECTED);
+}
+
+static void Dialog_KeyboardDlg_Close(void)
+{
 }
 
 void Dialog_KeyboardDlg()
 {
 	Dialog_KeyboardDlg_Init();
-	int but = SDLGui_DoDialog(keyboarddlg);
-	Dialog_KeyboardDlg_Close(but);
+
+	if (SDLGui_DoDialog(keyboarddlg) == APPLY) {
+		Dialog_KeyboardDlg_Confirm();
+	}
+
+	Dialog_KeyboardDlg_Close();
 }
 
 /*

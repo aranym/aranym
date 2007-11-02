@@ -28,6 +28,8 @@
 #include "sdlgui.h"
 #include "input.h"
 
+static bx_hotkeys_t hotkeys;
+
 enum HOTKEYSDLG {
 	box_main,
 	box_hotkeys,
@@ -157,11 +159,26 @@ char *displayKeysym(SDL_keysym keysym, char *buffer)
 	return buffer;
 }
 
+static void Dialog_HotkeysDlg_Init(void)
+{
+	hotkeys = bx_options.hotkeys;
+}
+
+static void Dialog_HotkeysDlg_Confirm(void)
+{
+	bx_options.hotkeys = hotkeys;
+}
+
+static void Dialog_HotkeysDlg_Close(void)
+{
+}
+
 #define UPDATE_BUTTON(Button) displayKeysym(hotkeys.Button, key_ ## Button)
 void Dialog_HotkeysDlg()
 {
 	int but = 0;
-	bx_hotkeys_t hotkeys = bx_options.hotkeys;
+
+	Dialog_HotkeysDlg_Init();
 	do {
 		// show current GUI hotkey
 		UPDATE_BUTTON(setup);
@@ -200,9 +217,12 @@ void Dialog_HotkeysDlg()
 				break;
 		}
 	} while(but != APPLY && but != CANCEL);
+
 	if (but == APPLY) {
-		bx_options.hotkeys = hotkeys;
+		Dialog_HotkeysDlg_Confirm();
 	}
+
+	Dialog_HotkeysDlg_Close();
 }
 
 /*

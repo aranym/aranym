@@ -57,21 +57,25 @@ static void Dialog_OsDlg_Init(void)
 	osdlg[MCH_FALCON].state = bx_options.tos.cookie_mch == 0x30000 ? SG_SELECTED : 0;
 }
 
-static void Dialog_OsDlg_Close(int but)
+static void Dialog_OsDlg_Confirm(void)
 {
-	if (but!=APPLY) {
-		return;
-	}
-
 	bx_options.tos.redirect_CON = (osdlg[TOSCONSOLE].state & SG_SELECTED);
 	bx_options.tos.cookie_mch = (osdlg[MCH_ARANYM].state & SG_SELECTED) ? 0x50000 : 0x30000;
+}
+
+static void Dialog_OsDlg_Close(void)
+{
 }
 
 void Dialog_OsDlg()
 {
 	Dialog_OsDlg_Init();
-	int but = SDLGui_DoDialog(osdlg);
-	Dialog_OsDlg_Close(but);
+
+	if (SDLGui_DoDialog(osdlg) == APPLY) {
+		Dialog_OsDlg_Confirm();
+	}
+
+	Dialog_OsDlg_Close();
 }
 
 /*

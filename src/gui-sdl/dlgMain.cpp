@@ -142,15 +142,25 @@ void SaveSettings()
 	}
 }
 
+static void Dialog_MainDlg_Init(void)
+{
+	bReboot = bShutdown = false;
+}
+
+static void Dialog_MainDlg_Close(void)
+{
+#ifdef OS_darwin
+	refreshMenuKeys();
+#endif
+}
+
 void Dialog_MainDlg()
 {
-	int retbut;
-
-	bReboot = bShutdown = false;
+	Dialog_MainDlg_Init();
 
 	bool closeDialog = false;
 	do {
-		retbut = SDLGui_DoDialog(maindlg);
+		int retbut = SDLGui_DoDialog(maindlg);
 		switch (retbut) {
 		case ABOUT:
 			SDLGui_Alert(ABOUT_TEXT, ALERT_OK);
@@ -217,9 +227,7 @@ void Dialog_MainDlg()
 	}
 	while (!closeDialog);
 
-#ifdef OS_darwin
-	refreshMenuKeys();
-#endif
+	Dialog_MainDlg_Close();
 }
 
 /*-----------------------------------------------------------------------*/

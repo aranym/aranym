@@ -197,14 +197,10 @@ static void Dialog_VideoDlg_Init(void)
 	sprintf(video_height, "%4d", autozoom->height);
 }
 
-static void Dialog_VideoDlg_Close(int but)
+static void Dialog_VideoDlg_Confirm(void)
 {
 	bx_video_options_t *video = &bx_options.video;
 	bx_autozoom_options_t *autozoom = &bx_options.autozoom;
-
-	if (but!=APPLY) {
-		return;
-	}
 
 	video->fullscreen = videodlg[FULLSCREEN].state & SG_SELECTED;
 
@@ -264,11 +260,19 @@ static void Dialog_VideoDlg_Close(int but)
 	}
 }
 
+static void Dialog_VideoDlg_Close(void)
+{
+}
+
 void Dialog_VideoDlg()
 {
 	Dialog_VideoDlg_Init();
-	int but = SDLGui_DoDialog(videodlg);
-	Dialog_VideoDlg_Close(but);
+
+	if (SDLGui_DoDialog(videodlg) == APPLY) {
+		Dialog_VideoDlg_Confirm();
+	}
+
+	Dialog_VideoDlg_Close();
 }
 
 /*
