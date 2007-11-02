@@ -187,7 +187,6 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
 	/* Do we have to update the file names in the dialog? */
 	bool refreshentries = true;
 	int retbut;
-	int oldcursorstate;
 	/* The actual selection, -1 if none selected */
 	int selection = -1;
 	bool eol = true;
