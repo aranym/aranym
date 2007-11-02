@@ -1,3 +1,8 @@
+2007/11/02 - Patrice
+- sdlgui: first steps to nonthread stuff: create separate function to init,
+  process and close a dialog.
+
+
 2007/10/31 - Patrice
 - Set 640x480 as minimum size.
 
