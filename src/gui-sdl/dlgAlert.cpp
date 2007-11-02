@@ -84,17 +84,26 @@ int FormatTextToBox(char *text, int max_width)
   Show the "alert" dialog:
 */
 static char *orig_t = NULL;
+static int ok_but_idx = -1;
+static const char *gui_alert_text = NULL;
+static alert_type gui_alert_type = ALERT_OK;
 
-static int SDLGui_Alert_Init(const char *text, alert_type type)
+static void SDLGui_Alert_SetParams(const char *text, alert_type type)
 {
-	char *t = (char *)malloc(strlen(text)+1);
+	gui_alert_text = text;
+	gui_alert_type = type;
+}
+
+static void SDLGui_Alert_Init(void)
+{
+	char *t = (char *)malloc(strlen(gui_alert_text)+1);
 	if (orig_t) {
 		free(orig_t);
 		orig_t = NULL;
 	}
 	orig_t = t;
 	int lines;
-	strcpy(t, text);
+	strcpy(t, gui_alert_text);
 	lines = FormatTextToBox(t, obj_text.w);
 	int idx = 1;
 	for(int i=0; i<lines && i<MAX_LINES; i++) {
@@ -105,9 +114,9 @@ static int SDLGui_Alert_Init(const char *text, alert_type type)
 	}
 	obj_but_ok.y = lines+2;
 	obj_but_cancel.y = lines+2;
-	int ok_but_idx = idx;
+	ok_but_idx = idx;
 	alertdlg[idx++] = obj_but_ok;
-	if (type == ALERT_OKCANCEL) {
+	if (gui_alert_type == ALERT_OKCANCEL) {
 		alertdlg[idx++] = obj_but_cancel;
 	}
 	else {
@@ -115,8 +124,6 @@ static int SDLGui_Alert_Init(const char *text, alert_type type)
 	}
 	alertdlg[idx] = obj_null;
 	alertdlg[0].h = lines+4;
-
-	return ok_but_idx;
 }
 
 static void SDLGui_Alert_Close(void)
@@ -129,7 +136,8 @@ static void SDLGui_Alert_Close(void)
 
 bool SDLGui_Alert(const char *text, alert_type type)
 {
-	int ok_but_idx = SDLGui_Alert_Init(text, type);
+	SDLGui_Alert_SetParams(text, type);
+	SDLGui_Alert_Init();
 	bool ret = (SDLGui_DoDialog(alertdlg) == ok_but_idx);
 	SDLGui_Alert_Close();
 	return ret;
