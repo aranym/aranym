@@ -31,12 +31,21 @@ static SGOBJ presskeydlg[] =
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-SDL_keysym Dialog_PressKeyDlg(void)
+static SDL_keysym keysym;
+
+static void Dialog_PressKeyDlg_Init(void)
 {
-	SDL_keysym keysym;
 	keysym.sym = SDLK_UNKNOWN;
+	keysym.scancode = keysym.unicode = 0;
+	keysym.mod = (SDLMod) 0;
 
 	SDLGui_DrawDialog(presskeydlg);
+}
+
+SDL_keysym Dialog_PressKeyDlg(void)
+{
+	Dialog_PressKeyDlg_Init();
+
 	do {
 		SDL_Event e = getEvent();
 		if (e.type == SDL_KEYDOWN) {
