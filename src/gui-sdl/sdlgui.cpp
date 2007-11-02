@@ -1403,7 +1403,7 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
   return return_rect;
 }
 
-SDL_Event getEvent(SGOBJ *dlg)
+SDL_Event getEvent(void)
 {
   while(1) {
     SDL_Event evnt;
@@ -1425,12 +1425,6 @@ SDL_Event getEvent(SGOBJ *dlg)
           e.button.x = (uintptr)evnt.user.data1;
           e.button.y = (uintptr)evnt.user.data2;
 	  return e;
-
-        case SDL_USEREVENT:
-          // a signal that resolution has changed
-	  if (dlg != NULL)
-              SDLGui_DrawDialog(dlg);	// re-draw dialog
-          break;
       }
     }
     else
@@ -1478,7 +1472,7 @@ int SDLGui_DoDialog(SGOBJ *dlg)
   /* The main loop */
   while (return_obj < 0)
   {
-    SDL_Event evnt = getEvent(dlg);
+    SDL_Event evnt = getEvent();
     switch(evnt.type)
       {
       	case SDL_KEYDOWN:

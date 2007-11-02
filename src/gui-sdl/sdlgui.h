@@ -79,7 +79,7 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void);
 #define STATUS_REBOOT	1
 #define STATUS_SHUTDOWN	2
 int GUImainDlg();
-SDL_Event getEvent(SGOBJ *dlg);
+SDL_Event getEvent(void);
 
 typedef enum { ALERT_OK, ALERT_OKCANCEL } alert_type;
 extern bool SDLGui_Alert(const char *, alert_type type);
