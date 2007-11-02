@@ -119,7 +119,7 @@ static SGOBJ videodlg[] =
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-void Dialog_VideoDlg()
+static void Dialog_VideoDlg_Init(void)
 {
 	bx_video_options_t *video = &bx_options.video;
 	bx_autozoom_options_t *autozoom = &bx_options.autozoom;
@@ -195,66 +195,80 @@ void Dialog_VideoDlg()
 	}
 	sprintf(video_width, "%4d", autozoom->width);
 	sprintf(video_height, "%4d", autozoom->height);
+}
 
-	// apply
-	if (SDLGui_DoDialog(videodlg) == APPLY) {
-		video->fullscreen = videodlg[FULLSCREEN].state & SG_SELECTED;
+static void Dialog_VideoDlg_Close(int but)
+{
+	bx_video_options_t *video = &bx_options.video;
+	bx_autozoom_options_t *autozoom = &bx_options.autozoom;
 
-		video->refresh = S50F;
-		if (videodlg[FRAMESKIP_1].state & SG_SELECTED)
-			video->refresh = S25F;
-		else if (videodlg[FRAMESKIP_2].state & SG_SELECTED)
-			video->refresh = S17F;
-		else if (videodlg[FRAMESKIP_5].state & SG_SELECTED)
-			video->refresh = S10F;
-		else if (videodlg[FRAMESKIP_10].state & SG_SELECTED)
-			video->refresh = S05F;
-		else if (videodlg[FRAMESKIP_50].state & SG_SELECTED)
-			video->refresh = S01F;
-
-		video->monitor = -1;
-		if (videodlg[MONITOR_VGA].state & SG_SELECTED)
-			video->monitor = 0;
-		else if (videodlg[MONITOR_TV].state & SG_SELECTED)
-			video->monitor = 1;
-
-		video->boot_color_depth = -1;
-		if (videodlg[COLORDEPTH_1].state & SG_SELECTED)
-			video->boot_color_depth = 1;
-		else if (videodlg[COLORDEPTH_2].state & SG_SELECTED)
-			video->boot_color_depth = 2;
-		else if (videodlg[COLORDEPTH_4].state & SG_SELECTED)
-			video->boot_color_depth = 4;
-		else if (videodlg[COLORDEPTH_8].state & SG_SELECTED)
-			video->boot_color_depth = 8;
-		else if (videodlg[COLORDEPTH_16].state & SG_SELECTED)
-			video->boot_color_depth = 16;
-
-		autozoom->enabled = videodlg[AUTOZOOM_ON].state & SG_SELECTED;
-		autozoom->integercoefs = videodlg[AZ_INTEGER].state & SG_SELECTED;
-		autozoom->fixedsize = videodlg[AZ_FIXEDSIZE].state & SG_SELECTED;
-
-		if (videodlg[RES_640].state & SG_SELECTED) {
-			autozoom->width = 640;
-			autozoom->height= 480;
-		}
-		else if (videodlg[RES_800].state & SG_SELECTED) {
-			autozoom->width = 800;
-			autozoom->height= 600;
-		}
-		else if (videodlg[RES_1024].state & SG_SELECTED) {
-			autozoom->width = 1024;
-			autozoom->height= 768;
-		}
-		else if (videodlg[RES_1280].state & SG_SELECTED) {
-			autozoom->width = 1280;
-			autozoom->height= 1024;
-		}
-		else if (videodlg[RES_CUSTOM].state & SG_SELECTED) {
-			autozoom->width = atoi(video_width);
-			autozoom->height= atoi(video_height);
-		}
+	if (but!=APPLY) {
+		return;
 	}
+
+	video->fullscreen = videodlg[FULLSCREEN].state & SG_SELECTED;
+
+	video->refresh = S50F;
+	if (videodlg[FRAMESKIP_1].state & SG_SELECTED)
+		video->refresh = S25F;
+	else if (videodlg[FRAMESKIP_2].state & SG_SELECTED)
+		video->refresh = S17F;
+	else if (videodlg[FRAMESKIP_5].state & SG_SELECTED)
+		video->refresh = S10F;
+	else if (videodlg[FRAMESKIP_10].state & SG_SELECTED)
+		video->refresh = S05F;
+	else if (videodlg[FRAMESKIP_50].state & SG_SELECTED)
+		video->refresh = S01F;
+
+	video->monitor = -1;
+	if (videodlg[MONITOR_VGA].state & SG_SELECTED)
+		video->monitor = 0;
+	else if (videodlg[MONITOR_TV].state & SG_SELECTED)
+		video->monitor = 1;
+
+	video->boot_color_depth = -1;
+	if (videodlg[COLORDEPTH_1].state & SG_SELECTED)
+		video->boot_color_depth = 1;
+	else if (videodlg[COLORDEPTH_2].state & SG_SELECTED)
+		video->boot_color_depth = 2;
+	else if (videodlg[COLORDEPTH_4].state & SG_SELECTED)
+		video->boot_color_depth = 4;
+	else if (videodlg[COLORDEPTH_8].state & SG_SELECTED)
+		video->boot_color_depth = 8;
+	else if (videodlg[COLORDEPTH_16].state & SG_SELECTED)
+		video->boot_color_depth = 16;
+
+	autozoom->enabled = videodlg[AUTOZOOM_ON].state & SG_SELECTED;
+	autozoom->integercoefs = videodlg[AZ_INTEGER].state & SG_SELECTED;
+	autozoom->fixedsize = videodlg[AZ_FIXEDSIZE].state & SG_SELECTED;
+
+	if (videodlg[RES_640].state & SG_SELECTED) {
+		autozoom->width = 640;
+		autozoom->height= 480;
+	}
+	else if (videodlg[RES_800].state & SG_SELECTED) {
+		autozoom->width = 800;
+		autozoom->height= 600;
+	}
+	else if (videodlg[RES_1024].state & SG_SELECTED) {
+		autozoom->width = 1024;
+		autozoom->height= 768;
+	}
+	else if (videodlg[RES_1280].state & SG_SELECTED) {
+		autozoom->width = 1280;
+		autozoom->height= 1024;
+	}
+	else if (videodlg[RES_CUSTOM].state & SG_SELECTED) {
+		autozoom->width = atoi(video_width);
+		autozoom->height= atoi(video_height);
+	}
+}
+
+void Dialog_VideoDlg()
+{
+	Dialog_VideoDlg_Init();
+	int but = SDLGui_DoDialog(videodlg);
+	Dialog_VideoDlg_Close(but);
 }
 
 /*

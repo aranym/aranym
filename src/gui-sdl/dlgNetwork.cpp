@@ -102,7 +102,7 @@ static SGOBJ dlg[] =
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-void Dialog_NetworkDlg()
+static void Dialog_NetworkDlg_Init(void)
 {
 	bx_ethernet_options_t *eth0 = &bx_options.ethernet[0];
 	bx_ethernet_options_t *eth1 = &bx_options.ethernet[1];
@@ -137,35 +137,49 @@ void Dialog_NetworkDlg()
 	safe_strncpy(eth1_atari_ip, eth1->ip_atari, sizeof(eth1_atari_ip));
 	safe_strncpy(eth1_netmask, eth1->netmask, sizeof(eth1_netmask));
 	safe_strncpy(eth1_mac_addr, eth1->mac_addr, sizeof(eth1_mac_addr));
+}
 
-	// apply
-	if (SDLGui_DoDialog(dlg) == APPLY) {
-		if (dlg[ETH0_TYP_NONE].state & SG_SELECTED) {
-			*eth0->type = '\0';
-		}
-		else {
-			bool eth0_bridge = (dlg[ETH0_TYP_BRIDGE].state & SG_SELECTED);
-			safe_strncpy(eth0->type, eth0_bridge ? "bridge" : "p-t-p", sizeof(eth0->type));
-		}
-		safe_strncpy(eth0->tunnel, eth0_tunnel, sizeof(eth0->tunnel));
-		safe_strncpy(eth0->ip_host, eth0_host_ip, sizeof(eth0->ip_host));
-		safe_strncpy(eth0->ip_atari, eth0_atari_ip, sizeof(eth0->ip_atari));
-		safe_strncpy(eth0->netmask, eth0_netmask, sizeof(eth0->netmask));
-		safe_strncpy(eth0->mac_addr, eth0_mac_addr, sizeof(eth0->mac_addr));
+static void Dialog_NetworkDlg_Close(int but)
+{
+	bx_ethernet_options_t *eth0 = &bx_options.ethernet[0];
+	bx_ethernet_options_t *eth1 = &bx_options.ethernet[1];
 
-		if (dlg[ETH1_TYP_NONE].state & SG_SELECTED) {
-			*eth1->type = '\0';
-		}
-		else {
-			bool eth1_bridge = (dlg[ETH1_TYP_BRIDGE].state & SG_SELECTED);
-			safe_strncpy(eth1->type, eth1_bridge ? "bridge" : "p-t-p", sizeof(eth1->type));
-		}
-		safe_strncpy(eth1->tunnel, eth1_tunnel, sizeof(eth1->tunnel));
-		safe_strncpy(eth1->ip_host, eth1_host_ip, sizeof(eth1->ip_host));
-		safe_strncpy(eth1->ip_atari, eth1_atari_ip, sizeof(eth1->ip_atari));
-		safe_strncpy(eth1->netmask, eth1_netmask, sizeof(eth1->netmask));
-		safe_strncpy(eth1->mac_addr, eth1_mac_addr, sizeof(eth1->mac_addr));
+	if (but!=APPLY) {
+		return;
 	}
+
+	if (dlg[ETH0_TYP_NONE].state & SG_SELECTED) {
+		*eth0->type = '\0';
+	}
+	else {
+		bool eth0_bridge = (dlg[ETH0_TYP_BRIDGE].state & SG_SELECTED);
+		safe_strncpy(eth0->type, eth0_bridge ? "bridge" : "p-t-p", sizeof(eth0->type));
+	}
+	safe_strncpy(eth0->tunnel, eth0_tunnel, sizeof(eth0->tunnel));
+	safe_strncpy(eth0->ip_host, eth0_host_ip, sizeof(eth0->ip_host));
+	safe_strncpy(eth0->ip_atari, eth0_atari_ip, sizeof(eth0->ip_atari));
+	safe_strncpy(eth0->netmask, eth0_netmask, sizeof(eth0->netmask));
+	safe_strncpy(eth0->mac_addr, eth0_mac_addr, sizeof(eth0->mac_addr));
+
+	if (dlg[ETH1_TYP_NONE].state & SG_SELECTED) {
+		*eth1->type = '\0';
+	}
+	else {
+		bool eth1_bridge = (dlg[ETH1_TYP_BRIDGE].state & SG_SELECTED);
+		safe_strncpy(eth1->type, eth1_bridge ? "bridge" : "p-t-p", sizeof(eth1->type));
+	}
+	safe_strncpy(eth1->tunnel, eth1_tunnel, sizeof(eth1->tunnel));
+	safe_strncpy(eth1->ip_host, eth1_host_ip, sizeof(eth1->ip_host));
+	safe_strncpy(eth1->ip_atari, eth1_atari_ip, sizeof(eth1->ip_atari));
+	safe_strncpy(eth1->netmask, eth1_netmask, sizeof(eth1->netmask));
+	safe_strncpy(eth1->mac_addr, eth1_mac_addr, sizeof(eth1->mac_addr));
+}
+
+void Dialog_NetworkDlg()
+{
+	Dialog_NetworkDlg_Init();
+	int but = SDLGui_DoDialog(dlg);
+	Dialog_NetworkDlg_Close(but);
 }
 
 /*

@@ -50,17 +50,28 @@ static SGOBJ osdlg[] =
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-void Dialog_OsDlg()
+static void Dialog_OsDlg_Init(void)
 {
-	// init
 	osdlg[TOSCONSOLE].state = bx_options.tos.redirect_CON ? SG_SELECTED : 0;
 	osdlg[MCH_ARANYM].state = bx_options.tos.cookie_mch == 0x50000 ? SG_SELECTED : 0;
 	osdlg[MCH_FALCON].state = bx_options.tos.cookie_mch == 0x30000 ? SG_SELECTED : 0;
-	// apply
-	if (SDLGui_DoDialog(osdlg) == APPLY) {
-		bx_options.tos.redirect_CON = (osdlg[TOSCONSOLE].state & SG_SELECTED);
-		bx_options.tos.cookie_mch = (osdlg[MCH_ARANYM].state & SG_SELECTED) ? 0x50000 : 0x30000;
+}
+
+static void Dialog_OsDlg_Close(int but)
+{
+	if (but!=APPLY) {
+		return;
 	}
+
+	bx_options.tos.redirect_CON = (osdlg[TOSCONSOLE].state & SG_SELECTED);
+	bx_options.tos.cookie_mch = (osdlg[MCH_ARANYM].state & SG_SELECTED) ? 0x50000 : 0x30000;
+}
+
+void Dialog_OsDlg()
+{
+	Dialog_OsDlg_Init();
+	int but = SDLGui_DoDialog(osdlg);
+	Dialog_OsDlg_Close(but);
 }
 
 /*

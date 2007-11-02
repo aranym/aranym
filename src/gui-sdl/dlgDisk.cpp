@@ -322,14 +322,8 @@ static bool create_disk_image(int disk)
 /*
   Show and process the disc image dialog.
 */
-void Dialog_DiscDlg(void)
+static void Dialog_DiscDlg_Init(char *floppy_path, char *ide0_path, char *ide1_path)
 {
-	int but;
-	char tmpname[MAX_FILENAME_LENGTH];
-	char floppy_path[80] = "";
-	char ide0_path[80] = "";
-	char ide1_path[80] = "";
-
 	// preload bx settings
 	gui_options = bx_options;
 
@@ -367,6 +361,58 @@ void Dialog_DiscDlg(void)
 	UpdateFloppyStatus();
 	UpdateCDROMstatus(0);
 	UpdateCDROMstatus(1);
+}
+
+static void Dialog_DiscDlg_Close(int but)
+{
+	/* Read values from dialog */
+	int cyl, head, spt;
+	safe_strncpy(gui_options.atadevice[0][0].model, ide0_name,
+				 sizeof(gui_options.atadevice[0][0].model));
+	sscanf(ide0_cyl, "%d", &cyl);
+	sscanf(ide0_head, "%d", &head);
+	sscanf(ide0_spt, "%d", &spt);
+	if (cyl > MAXCYLS) cyl = MAXCYLS;
+	if (head > MAXHEADS) head = MAXHEADS;
+	if (spt > MAXSPT) spt = MAXSPT;
+	gui_options.atadevice[0][0].cylinders = cyl;
+	gui_options.atadevice[0][0].heads = head;
+	gui_options.atadevice[0][0].spt = spt;
+	gui_options.atadevice[0][0].present = getSelected(IDE0_PRESENT);
+	gui_options.atadevice[0][0].readonly = getSelected(IDE0_READONLY);
+	gui_options.atadevice[0][0].isCDROM = getSelected(IDE0_CDROM);
+	gui_options.atadevice[0][0].byteswap = getSelected(IDE0_BYTESWAP);
+
+	safe_strncpy(gui_options.atadevice[0][1].model, ide1_name,
+				 sizeof(gui_options.atadevice[0][1].model));
+	sscanf(ide1_cyl, "%d", &cyl);
+	sscanf(ide1_head, "%d", &head);
+	sscanf(ide1_spt, "%d", &spt);
+	if (cyl > MAXCYLS) cyl = MAXCYLS;
+	if (head > MAXHEADS) head = MAXHEADS;
+	if (spt > MAXSPT) spt = MAXSPT;
+	gui_options.atadevice[0][1].cylinders = cyl;
+	gui_options.atadevice[0][1].heads = head;
+	gui_options.atadevice[0][1].spt = spt;
+	gui_options.atadevice[0][1].present = getSelected(IDE1_PRESENT);
+	gui_options.atadevice[0][1].readonly = getSelected(IDE1_READONLY);
+	gui_options.atadevice[0][1].isCDROM = getSelected(IDE1_CDROM);
+	gui_options.atadevice[0][1].byteswap = getSelected(IDE1_BYTESWAP);
+
+	/* apply the values */
+	if (but == APPLY)
+		bx_options = gui_options;
+}
+
+void Dialog_DiscDlg(void)
+{
+	int but;
+	char tmpname[MAX_FILENAME_LENGTH];
+	char floppy_path[80] = "";
+	char ide0_path[80] = "";
+	char ide1_path[80] = "";
+
+	Dialog_DiscDlg_Init(floppy_path, ide0_path, ide1_path);
 
 	// note that File_Exists() checks were disabled since they didn't work
 	// on /dev/fd0 or /dev/cdrom if no media were inserted
@@ -478,43 +524,7 @@ void Dialog_DiscDlg(void)
 	}
 	while (but != APPLY && but != CANCEL);
 
-	/* Read values from dialog */
-	int cyl, head, spt;
-	safe_strncpy(gui_options.atadevice[0][0].model, ide0_name,
-				 sizeof(gui_options.atadevice[0][0].model));
-	sscanf(ide0_cyl, "%d", &cyl);
-	sscanf(ide0_head, "%d", &head);
-	sscanf(ide0_spt, "%d", &spt);
-	if (cyl > MAXCYLS) cyl = MAXCYLS;
-	if (head > MAXHEADS) head = MAXHEADS;
-	if (spt > MAXSPT) spt = MAXSPT;
-	gui_options.atadevice[0][0].cylinders = cyl;
-	gui_options.atadevice[0][0].heads = head;
-	gui_options.atadevice[0][0].spt = spt;
-	gui_options.atadevice[0][0].present = getSelected(IDE0_PRESENT);
-	gui_options.atadevice[0][0].readonly = getSelected(IDE0_READONLY);
-	gui_options.atadevice[0][0].isCDROM = getSelected(IDE0_CDROM);
-	gui_options.atadevice[0][0].byteswap = getSelected(IDE0_BYTESWAP);
-
-	safe_strncpy(gui_options.atadevice[0][1].model, ide1_name,
-				 sizeof(gui_options.atadevice[0][1].model));
-	sscanf(ide1_cyl, "%d", &cyl);
-	sscanf(ide1_head, "%d", &head);
-	sscanf(ide1_spt, "%d", &spt);
-	if (cyl > MAXCYLS) cyl = MAXCYLS;
-	if (head > MAXHEADS) head = MAXHEADS;
-	if (spt > MAXSPT) spt = MAXSPT;
-	gui_options.atadevice[0][1].cylinders = cyl;
-	gui_options.atadevice[0][1].heads = head;
-	gui_options.atadevice[0][1].spt = spt;
-	gui_options.atadevice[0][1].present = getSelected(IDE1_PRESENT);
-	gui_options.atadevice[0][1].readonly = getSelected(IDE1_READONLY);
-	gui_options.atadevice[0][1].isCDROM = getSelected(IDE1_CDROM);
-	gui_options.atadevice[0][1].byteswap = getSelected(IDE1_BYTESWAP);
-
-	/* apply the values */
-	if (but == APPLY)
-		bx_options = gui_options;
+	Dialog_DiscDlg_Close(but);
 }
 
 /*

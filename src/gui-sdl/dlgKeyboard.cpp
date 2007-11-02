@@ -55,16 +55,27 @@ static SGOBJ keyboarddlg[] =
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-void Dialog_KeyboardDlg()
+static void Dialog_KeyboardDlg_Init(void)
 {
-	// init
 	keyboarddlg[bx_options.ikbd.wheel_eiffel ? EIFFEL : ARROWKEYS].state |= SG_SELECTED;
 	keyboarddlg[bx_options.ikbd.altgr ? MILAN_ALTGR : ATARI_ALT].state |= SG_SELECTED;
-	// apply
-	if (SDLGui_DoDialog(keyboarddlg) == APPLY) {
-		bx_options.ikbd.wheel_eiffel = (keyboarddlg[EIFFEL].state & SG_SELECTED);
-		bx_options.ikbd.altgr = (keyboarddlg[MILAN_ALTGR].state & SG_SELECTED);
+}
+
+static void Dialog_KeyboardDlg_Close(int but)
+{
+	if (but!=APPLY) {
+		return;
 	}
+
+	bx_options.ikbd.wheel_eiffel = (keyboarddlg[EIFFEL].state & SG_SELECTED);
+	bx_options.ikbd.altgr = (keyboarddlg[MILAN_ALTGR].state & SG_SELECTED);
+}
+
+void Dialog_KeyboardDlg()
+{
+	Dialog_KeyboardDlg_Init();
+	int but = SDLGui_DoDialog(keyboarddlg);
+	Dialog_KeyboardDlg_Close(but);
 }
 
 /*
