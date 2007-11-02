@@ -919,36 +919,44 @@ void check_event()
 
 	SDL_PumpEvents();
 	while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, eventmask)) {
-		int type = event.type;
-
-		if (type == SDL_KEYDOWN || type == SDL_KEYUP) {
-			process_keyboard_event(event);
-		}
-		else if (type == SDL_MOUSEBUTTONDOWN || type == SDL_MOUSEBUTTONUP
-				 || (type == SDL_MOUSEMOTION && grabbedMouse)) {
-			process_mouse_event(event);
-		}
-		else if (type == SDL_JOYAXISMOTION || type == SDL_JOYBUTTONDOWN
-			|| type == SDL_JOYBUTTONUP || type == SDL_JOYHATMOTION) {
-			process_joystick_event(event);
-		}
-		else if (type == SDL_ACTIVEEVENT) {
-			process_active_event(event);
-		}
-		else if (type == SDL_VIDEORESIZE) {
-			process_resize_event(event);
-		}
+		switch(event.type) {
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+				process_keyboard_event(event);
+				break;
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+			case SDL_MOUSEMOTION:
+				process_mouse_event(event);
+				break;
+			case SDL_JOYBUTTONDOWN:
+			case SDL_JOYBUTTONUP:
+			case SDL_JOYHATMOTION:
+			case SDL_JOYAXISMOTION:
+				process_joystick_event(event);
+				break;
+			case SDL_ACTIVEEVENT:
+				process_active_event(event);
+				break;
+			case SDL_VIDEORESIZE:
+				process_resize_event(event);
+				break;
 #ifdef SDL_GUI
-		else if (type == GUI_RETURN_INFO) {
-			int status = event.user.code;
-			if (status == STATUS_SHUTDOWN)
+			case GUI_RETURN_INFO:
+				switch(event.user.code) {
+					case STATUS_SHUTDOWN:
+						pendingQuit = true;
+						break;
+					case STATUS_REBOOT:
+						RestartAll();
+						break;
+				}
+				break;
+#endif
+			case SDL_QUIT:
 				pendingQuit = true;
-			else if (status == STATUS_REBOOT)
-				RestartAll();
-		}
-#endif /* SDL_GUI */
-		else if (type == SDL_QUIT) {
-			pendingQuit = true;
+				break;
 		}
 	}
 
