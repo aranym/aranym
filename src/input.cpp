@@ -439,6 +439,12 @@ static int open_gui(void * /*ptr*/)
 {
 	bool fullscreen = bx_options.video.fullscreen;
 
+	/* Always ungrab+show mouse */
+	host->hostScreen.lock();
+	SDL_ShowCursor(SDL_ENABLE);
+	SDL_WM_GrabInput(SDL_GRAB_OFF);
+	host->hostScreen.unlock();
+
 	host->hostScreen.openGUI();
 	int status = GUImainDlg();
 
@@ -459,6 +465,16 @@ static int open_gui(void * /*ptr*/)
 		if (bx_options.video.fullscreen && !grabbedMouse)
 			grabTheMouse();
 	}
+
+	/* Restore mouse cursor state */
+	host->hostScreen.lock();
+	if (hiddenMouse) {
+		SDL_ShowCursor(SDL_DISABLE);
+	}
+	if (grabbedMouse) {
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+	}
+	host->hostScreen.unlock();
 
 	return 0;
 }

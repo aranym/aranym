@@ -206,13 +206,6 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
 	File_ShrinkName(dlgpath, path, 38);
 	File_ShrinkName(dlgfname, fname, 32);
 
-	/* Save old mouse cursor state and enable cursor anyway */
-	SCRLOCK;
-	oldcursorstate = SDL_ShowCursor(SDL_QUERY);
-	if (oldcursorstate == SDL_DISABLE)
-		SDL_ShowCursor(SDL_ENABLE);
-	SCRUNLOCK;
-
 	do {
 		if (reloaddir) {
 			if (strlen(path) >= MAX_FILENAME_LENGTH) {
@@ -387,11 +380,6 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
 	}
 	while ((retbut != SGFSDLG_OKAY) && (retbut != SGFSDLG_CANCEL)
 		   && (retbut != -1));
-
-	SCRLOCK;
-	if (oldcursorstate == SDL_DISABLE)
-		SDL_ShowCursor(SDL_DISABLE);
-	SCRUNLOCK;
 
 	{
 		/* if user edited filename, use new one */

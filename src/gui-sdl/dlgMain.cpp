@@ -148,10 +148,6 @@ void Dialog_MainDlg()
 
 	bReboot = bShutdown = false;
 
-	SCRLOCK;
-	SDL_ShowCursor(SDL_ENABLE);
-	SCRUNLOCK;
-
 	bool closeDialog = false;
 	do {
 		retbut = SDLGui_DoDialog(maindlg);
@@ -221,9 +217,6 @@ void Dialog_MainDlg()
 	}
 	while (!closeDialog);
 
-	SCRLOCK;
-	SDL_ShowCursor(SDL_DISABLE);
-	SCRUNLOCK;
 #ifdef OS_darwin
 	refreshMenuKeys();
 #endif
