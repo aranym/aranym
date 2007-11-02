@@ -1,4 +1,6 @@
 2007/11/02 - Patrice
+- midi: send NOTE OFF on all channels before exiting.
+
 - sdlgui: first steps to nonthread stuff: create separate function to init,
   process and close a dialog. Blink and redraw text cursor from main thread.
   Fix fullscreen toggle. Always ungrab+show mouse when opening gui.

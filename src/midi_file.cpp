@@ -47,6 +47,16 @@ MidiFile::~MidiFile(void)
 	D(bug("midi_file: interface destroyed at 0x%06x", getHWoffset()));
 
 	if (fd>=0) {
+		int i, j;
+
+		for (j=0;j<128;j++) {
+			for (i=0;i<16;i++) {
+				WriteData(0x80 + i);
+				WriteData(j);
+				WriteData(0);
+			}
+		}
+	
 		close(fd);
 	}
 }
