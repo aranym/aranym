@@ -88,10 +88,21 @@ static int ok_but_idx = -1;
 static const char *gui_alert_text = NULL;
 static alert_type gui_alert_type = ALERT_OK;
 
-static void SDLGui_Alert_SetParams(const char *text, alert_type type)
+enum {
+	SDLGUI_ALERT_TEXT,
+	SDLGUI_ALERT_TYPE
+};
+
+static void SDLGui_Alert_SetParams(int num_param, void *param)
 {
-	gui_alert_text = text;
-	gui_alert_type = type;
+	switch(num_param) {
+		case SDLGUI_ALERT_TEXT:
+			gui_alert_text = (const char *)param;
+			break;
+		case SDLGUI_ALERT_TYPE:
+			gui_alert_type = *((alert_type *) param);
+			break;
+	}
 }
 
 static void SDLGui_Alert_Init(void)
@@ -136,7 +147,8 @@ static void SDLGui_Alert_Close(void)
 
 bool SDLGui_Alert(const char *text, alert_type type)
 {
-	SDLGui_Alert_SetParams(text, type);
+	SDLGui_Alert_SetParams(SDLGUI_ALERT_TEXT, (void *)text);
+	SDLGui_Alert_SetParams(SDLGUI_ALERT_TYPE, &type);
 	SDLGui_Alert_Init();
 	bool ret = (SDLGui_DoDialog(alertdlg) == ok_but_idx);
 	SDLGui_Alert_Close();

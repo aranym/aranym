@@ -184,10 +184,25 @@ static listentry *gui_file_list = NULL;
 static char gui_file_path[MAX_FILENAME_LENGTH];
 static char gui_file_fname[128];
 
+enum {
+	SDLGUI_FSELECT_PATHNAME,
+	SDLGUI_FSELECT_ALLOWNEW
+};
+
+static void SDLGui_FileSelect_SetParams(int num_param, void *param)
+{
+	switch(num_param) {
+		case SDLGUI_FSELECT_PATHNAME:
+			gui_file_pathandname = (char *)param;
+			break;
+		case SDLGUI_FSELECT_ALLOWNEW:
+			gui_file_allownew = *((bool *) param);
+			break;
+	}
+}
+
 static void SDLGui_FileSelect_SetParams(char *path_and_name, bool bAllowNew)
 {
-	gui_file_pathandname = path_and_name;
-	gui_file_allownew = bAllowNew;
 }
 
 static void SDLGui_FileSelect_Init(void)
@@ -241,7 +256,8 @@ int SDLGui_FileSelect(char *path_and_name, bool bAllowNew)
 	int selection = -1;
 	bool eol = true;
 
-	SDLGui_FileSelect_SetParams(path_and_name, bAllowNew);
+	SDLGui_FileSelect_SetParams(SDLGUI_FSELECT_PATHNAME, path_and_name);
+	SDLGui_FileSelect_SetParams(SDLGUI_FSELECT_ALLOWNEW, &bAllowNew);
 	SDLGui_FileSelect_Init();
 
 	do {
