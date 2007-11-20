@@ -73,7 +73,6 @@ class HostScreen: public DirtyRects
 	bool logo_present;
 
   public:
-	SDL_mutex   *screenLock;
 	uint32 sdl_videoparams;
 	uint32 width, height, bpp;
 
@@ -82,9 +81,6 @@ class HostScreen: public DirtyRects
   public:
 	HostScreen(void);
 	~HostScreen(void);
-
-	void lock(void);
-	void unlock(void);
 
 	void OpenGLUpdate(void);	/* Full screen update with NF software VDI */
 	void EnableOpenGLVdi(void);

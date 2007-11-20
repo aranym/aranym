@@ -72,7 +72,6 @@ HostScreen::HostScreen(void)
 	// the counter init
 	snapCounter = 0;
 
-	screenLock = SDL_CreateMutex();
 #ifdef ENABLE_VBL_UPDATES
 	updateLock = SDL_CreateMutex();
 #endif
@@ -102,8 +101,8 @@ HostScreen::HostScreen(void)
 	setWindowSize(MIN_WIDTH,MIN_HEIGHT,8);
 }
 
-HostScreen::~HostScreen(void) {
-	SDL_DestroyMutex(screenLock);
+HostScreen::~HostScreen(void)
+{
 #ifdef ENABLE_VBL_UPDATES
 	SDL_DestroyMutex(updateLock);
 #endif
@@ -166,21 +165,6 @@ uint32 HostScreen::getHeight(void)
 {
 	return height;
 }
-
-void HostScreen::lock(void) {
-	while (SDL_mutexP(screenLock)==-1) {
-		SDL_Delay(20);
-		fprintf(stderr, "Couldn't lock mutex\n");
-	}
-}
-
-void HostScreen::unlock(void) {
-	while (SDL_mutexV(screenLock)==-1) {
-		SDL_Delay(20);
-		fprintf(stderr, "Couldn't unlock mutex\n");
-	}
-}
-
 
 void HostScreen::makeSnapshot()
 {

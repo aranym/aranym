@@ -443,10 +443,8 @@ void open_GUI(void)
 	cur_fullscreen = bx_options.video.fullscreen;
 
 	/* Always ungrab+show mouse */
-	host->hostScreen.lock();
 	SDL_ShowCursor(SDL_ENABLE);
 	SDL_WM_GrabInput(SDL_GRAB_OFF);
-	host->hostScreen.unlock();
 
 	SDLGui_Open(NULL);
 }
@@ -465,14 +463,12 @@ void close_GUI(void)
 	}
 
 	/* Restore mouse cursor state */
-	host->hostScreen.lock();
 	if (hiddenMouse) {
 		SDL_ShowCursor(SDL_DISABLE);
 	}
 	if (grabbedMouse) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	}
-	host->hostScreen.unlock();
 }
 
 #endif /* SDL_GUI */

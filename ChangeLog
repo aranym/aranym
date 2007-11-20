@@ -1,4 +1,6 @@
 2007/11/20 - Patrice
+- hostscreen: remove mutex and associated lock/unlock functions.
+
 - gui: do not use a thread.
 
 - logo: do not try to endlessly load file if not present.

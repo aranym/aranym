@@ -191,15 +191,9 @@ void do_vbl_irq()
 
 	TriggerVBL();		// generate VBL
 
-	// Thread safety patch
-	host->hostScreen.lock();
-
 	check_event();		// process keyboard and mouse events
 
 	host->hostScreen.refresh();
-
-	// Thread safety patch
-	host->hostScreen.unlock();
 }
 
 /*

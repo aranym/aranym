@@ -126,10 +126,6 @@ int32 VdiDriver::dispatch(uint32 fncode)
 	    return 1;
 	}
 
-
-	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
-	host->hostScreen.lock();
-
 	switch(fncode) {
 		case FVDI_GET_VERSION:
     		ret = FVDIDRV_NFAPI_VERSION;
@@ -266,9 +262,6 @@ int32 VdiDriver::dispatch(uint32 fncode)
 			D(bug("nfvdi: unimplemented function #%d", fncode));
 			break;
 	}
-
-	// Thread safety patch (remove it once the fVDI screen output is in the main thread)
-	host->hostScreen.unlock();
 
 	D(bug("nfvdi: function returning with 0x%08x", ret));
 	return ret;
