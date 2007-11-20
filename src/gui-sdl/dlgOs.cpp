@@ -23,6 +23,7 @@
 
 #include "sysdeps.h"
 #include "sdlgui.h"
+#include "dlgOs.h"
 
 enum OSDLG {
 	box_main,
@@ -50,34 +51,40 @@ static SGOBJ osdlg[] =
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-static void Dialog_OsDlg_Init(void)
+DlgOs::DlgOs(SGOBJ *dlg)
+	: Dialog(dlg)
 {
 	osdlg[TOSCONSOLE].state = bx_options.tos.redirect_CON ? SG_SELECTED : 0;
 	osdlg[MCH_ARANYM].state = bx_options.tos.cookie_mch == 0x50000 ? SG_SELECTED : 0;
 	osdlg[MCH_FALCON].state = bx_options.tos.cookie_mch == 0x30000 ? SG_SELECTED : 0;
 }
 
-static void Dialog_OsDlg_Confirm(void)
+DlgOs::~DlgOs()
+{
+}
+
+int DlgOs::processDialog(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	switch(return_obj) {
+		case APPLY:
+			confirm();
+		case CANCEL:
+			retval = Dialog::GUI_CLOSE;
+			break;
+	}
+
+	return retval;
+}
+
+void DlgOs::confirm(void)
 {
 	bx_options.tos.redirect_CON = (osdlg[TOSCONSOLE].state & SG_SELECTED);
 	bx_options.tos.cookie_mch = (osdlg[MCH_ARANYM].state & SG_SELECTED) ? 0x50000 : 0x30000;
 }
 
-static void Dialog_OsDlg_Close(void)
+Dialog *DlgOsOpen(void)
 {
+	return new DlgOs(osdlg);
 }
-
-void Dialog_OsDlg()
-{
-	Dialog_OsDlg_Init();
-
-	if (SDLGui_DoDialog(osdlg) == APPLY) {
-		Dialog_OsDlg_Confirm();
-	}
-
-	Dialog_OsDlg_Close();
-}
-
-/*
-vim:ts=4:sw=4:
-*/

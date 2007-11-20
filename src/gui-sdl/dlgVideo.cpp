@@ -24,6 +24,7 @@
 #include "sysdeps.h"
 #include "sdlgui.h"
 #include "hostscreen.h"
+#include "dlgVideo.h"
 
 #define S50F	1
 #define S25F	2
@@ -119,7 +120,8 @@ static SGOBJ videodlg[] =
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-static void Dialog_VideoDlg_Init(void)
+DlgVideo::DlgVideo(SGOBJ *dlg)
+	: Dialog(dlg)
 {
 	bx_video_options_t *video = &bx_options.video;
 	bx_autozoom_options_t *autozoom = &bx_options.autozoom;
@@ -197,7 +199,26 @@ static void Dialog_VideoDlg_Init(void)
 	sprintf(video_height, "%4d", autozoom->height);
 }
 
-static void Dialog_VideoDlg_Confirm(void)
+DlgVideo::~DlgVideo()
+{
+}
+
+int DlgVideo::processDialog(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	switch(return_obj) {
+		case APPLY:
+			confirm();
+		case CANCEL:
+			retval = Dialog::GUI_CLOSE;
+			break;
+	}
+
+	return retval;
+}
+
+void DlgVideo::confirm(void)
 {
 	bx_video_options_t *video = &bx_options.video;
 	bx_autozoom_options_t *autozoom = &bx_options.autozoom;
@@ -260,21 +281,7 @@ static void Dialog_VideoDlg_Confirm(void)
 	}
 }
 
-static void Dialog_VideoDlg_Close(void)
+Dialog *DlgVideoOpen(void)
 {
+	return new DlgVideo(videodlg);
 }
-
-void Dialog_VideoDlg()
-{
-	Dialog_VideoDlg_Init();
-
-	if (SDLGui_DoDialog(videodlg) == APPLY) {
-		Dialog_VideoDlg_Confirm();
-	}
-
-	Dialog_VideoDlg_Close();
-}
-
-/*
-vim:ts=4:sw=4:
-*/

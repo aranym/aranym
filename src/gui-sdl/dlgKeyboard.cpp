@@ -23,6 +23,7 @@
 
 #include "sysdeps.h"
 #include "sdlgui.h"
+#include "dlgKeyboard.h"
 
 enum KEYBMOUSEDLG {
 	box_main,
@@ -55,33 +56,39 @@ static SGOBJ keyboarddlg[] =
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-static void Dialog_KeyboardDlg_Init(void)
+DlgKeyboard::DlgKeyboard(SGOBJ *dlg)
+	: Dialog(dlg)
 {
 	keyboarddlg[bx_options.ikbd.wheel_eiffel ? EIFFEL : ARROWKEYS].state |= SG_SELECTED;
 	keyboarddlg[bx_options.ikbd.altgr ? MILAN_ALTGR : ATARI_ALT].state |= SG_SELECTED;
 }
 
-static void Dialog_KeyboardDlg_Confirm(void)
+DlgKeyboard::~DlgKeyboard()
+{
+}
+
+int DlgKeyboard::processDialog(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	switch(return_obj) {
+		case APPLY:
+			confirm();
+		case CANCEL:
+			retval = Dialog::GUI_CLOSE;
+			break;
+	}
+
+	return retval;
+}
+
+void DlgKeyboard::confirm(void)
 {
 	bx_options.ikbd.wheel_eiffel = (keyboarddlg[EIFFEL].state & SG_SELECTED);
 	bx_options.ikbd.altgr = (keyboarddlg[MILAN_ALTGR].state & SG_SELECTED);
 }
 
-static void Dialog_KeyboardDlg_Close(void)
+Dialog *DlgKeyboardOpen(void)
 {
+	return new DlgKeyboard(keyboarddlg);
 }
-
-void Dialog_KeyboardDlg()
-{
-	Dialog_KeyboardDlg_Init();
-
-	if (SDLGui_DoDialog(keyboarddlg) == APPLY) {
-		Dialog_KeyboardDlg_Confirm();
-	}
-
-	Dialog_KeyboardDlg_Close();
-}
-
-/*
-vim:ts=4:sw=4:
-*/

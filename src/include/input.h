@@ -16,8 +16,8 @@ bool grabMouse(bool grab);
 void check_event();
 
 #ifdef SDL_GUI
-bool start_GUI_thread();
-void kill_GUI_thread();
+void open_GUI(void);
+void close_GUI(void);
 #endif
 
 extern SDL_Joystick *sdl_joystick;

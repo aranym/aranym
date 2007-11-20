@@ -14,6 +14,8 @@
 
 #include <SDL.h>
 
+class Dialog;
+
 enum
 {
   SGBOX,
@@ -67,6 +69,14 @@ typedef struct
   bool blink_state;
 } cursor_state;
 
+enum
+{
+  SG_FIRST_EDITFIELD,
+  SG_PREVIOUS_EDITFIELD,
+  SG_NEXT_EDITFIELD,
+  SG_LAST_EDITFIELD
+};
+
 bool SDLGui_Init(void);
 int SDLGui_UnInit(void);
 int SDLGui_DoDialog(SGOBJ *dlg);
@@ -79,7 +89,6 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void);
 #define STATUS_REBOOT	1
 #define STATUS_SHUTDOWN	2
 int GUImainDlg();
-SDL_Event getEvent(void);
 
 typedef enum { ALERT_OK, ALERT_OKCANCEL } alert_type;
 extern bool SDLGui_Alert(const char *, alert_type type);
@@ -89,5 +98,24 @@ SDL_Surface *SDLGui_getSurface(void);
 
 /* dlgHotkeys.cpp */
 char *displayKeysym(SDL_keysym keysym, char *buffer);
+
+/* stuff needed by dialog.cpp */
+int SDLGui_FindEditField(SGOBJ *dlg, int objnum, int mode);
+void SDLGui_DrawDialog(SGOBJ *dlg);
+int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy);
+bool SDLGui_UpdateObjState(SGOBJ *dlg, int clicked_obj, int original_state,
+                           int x, int y);
+void SDLGui_SelectRadioObject(SGOBJ *dlg, int clicked_obj);
+void SDLGui_ClickEditField(SGOBJ *dlg, cursor_state *cursor, int clicked_obj, int x);
+void SDLGui_DrawObject(SGOBJ *dlg, int objnum);
+void SDLGui_RefreshObj(SGOBJ *dlg, int objnum);
+int SDLGui_FindDefaultObj(SGOBJ *dlg);
+void SDLGui_MoveCursor(SGOBJ *dlg, cursor_state *cursor, int mode);
+void SDLGui_DeselectButtons(SGOBJ *dlg);
+
+int SDLGui_DoEvent(const SDL_Event &event);
+void SDLGui_Open(Dialog *new_dlg);
+void SDLGui_Close(void);
+bool SDLGui_isClosed(void);
 
 #endif /* _SDLGUI_H */

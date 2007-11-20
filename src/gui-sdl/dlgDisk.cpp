@@ -25,13 +25,15 @@
  */
 
 #include "config.h"
-#include <cassert>
 #include "sdlgui.h"
 #include "file.h"
 #include "ata.h"
 #include "tools.h"
 #include "hardware.h"			// for getFDC()
 #include "debug.h"
+#include "dlgDisk.h"
+#include "dlgAlert.h"
+#include "dlgFileSelect.h"
 
 bx_options_t gui_options;
 
@@ -297,28 +299,27 @@ bool make_image(long sec, const char *filename)
 	return true;
 }
 
-static bool create_disk_image(int disk)
+void DlgDisk::init_create_disk_image(int disk)
 {
-	const char *path = gui_options.atadevice[0][disk].path;
-	long sizeMB = atoi(disk == 0 ? ide0_size : ide1_size);
+	cdi_path = gui_options.atadevice[0][disk].path;
+	cdi_disk = disk;
+	sizeMB = atoi(disk == 0 ? ide0_size : ide1_size);
 	if (sizeMB > BAR130G)
 		sizeMB = BAR130G;
 	char text[250];
-	bool ret = false;
-	sprintf(text, "Create disk image '%s' with size %ld MB?", path, sizeMB);
-	if (SDLGui_Alert(text, ALERT_OKCANCEL)) {
-		if (File_Exists(path)
-			&& SDLGui_Alert("File Exists. Overwrite?",
-							ALERT_OKCANCEL) == false) {
-			return false;
-		}
-		// create the file
-		int cyl = sizeMB * 2048 / MAXHEADS / MAXSPT;
-		if (cyl > MAXCYLS) cyl = MAXCYLS;
-		long sectors = cyl * MAXHEADS * MAXSPT;
-		ret = make_image(sectors, path);
-		UpdateDiskParameters(disk, true);
-	}
+	sprintf(text, "Create disk image '%s' with size %ld MB?", cdi_path, sizeMB);
+	SDLGui_Open(DlgAlertOpen(text, ALERT_OKCANCEL));
+	state = STATE_CDI0;
+}
+
+bool DlgDisk::create_disk_image(void)
+{
+	// create the file
+	int cyl = sizeMB * 2048 / MAXHEADS / MAXSPT;
+	if (cyl > MAXCYLS) cyl = MAXCYLS;
+	long sectors = cyl * MAXHEADS * MAXSPT;
+	bool ret = make_image(sectors, cdi_path);
+	UpdateDiskParameters(cdi_disk, true);
 	return ret;
 }
 
@@ -326,8 +327,12 @@ static bool create_disk_image(int disk)
 /*
   Show and process the disc image dialog.
 */
-static void Dialog_DiscDlg_Init(void)
+
+DlgDisk::DlgDisk(SGOBJ *dlg)
+	: Dialog(dlg), cdi_path(NULL), state(STATE_MAIN), cdi_disk(-1), sizeMB(0)
 {
+	memset(tmpname, 0, sizeof(tmpname));
+
 	// preload bx settings
 	gui_options = bx_options;
 
@@ -365,9 +370,211 @@ static void Dialog_DiscDlg_Init(void)
 	UpdateFloppyStatus();
 	UpdateCDROMstatus(0);
 	UpdateCDROMstatus(1);
+
+	// note that File_Exists() checks were disabled since they didn't work
+	// on /dev/fd0 or /dev/cdrom if no media were inserted
 }
 
-static void Dialog_DiscDlg_Confirm(void)
+DlgDisk::~DlgDisk()
+{
+}
+
+int DlgDisk::processDialog(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+	switch(state) {
+		case STATE_MAIN:
+			retval = processDialogMain();
+			break;
+		case STATE_FSEL_FD0:
+			retval = processDialogFd0();
+			break;
+		case STATE_FSEL_IDE0:
+			retval = processDialogIde0();
+			break;
+		case STATE_FSEL_IDE1:
+			retval = processDialogIde1();
+			break;
+		case STATE_CDI0:
+			retval = processDialogCdi0();
+			break;
+		default:
+			break;
+	}
+	return retval;
+}
+
+int DlgDisk::processDialogMain(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	switch (return_obj) {
+		case FLP_BROWSE:		/* Choose a new disc A: */
+			strcpy(tmpname, gui_options.floppy.path);
+			SDLGui_Open(DlgFileSelectOpen(tmpname, false));
+			state = STATE_FSEL_FD0;
+			break;
+
+		case IDE0_BROWSE:
+			strcpy(tmpname, gui_options.atadevice[0][0].path);
+			SDLGui_Open(DlgFileSelectOpen(tmpname, true));
+			state = STATE_FSEL_IDE0;
+			break;
+
+		case IDE1_BROWSE:
+			strcpy(tmpname, gui_options.atadevice[0][1].path);
+			SDLGui_Open(DlgFileSelectOpen(tmpname, true));
+			state = STATE_FSEL_IDE1;
+			break;
+
+		case IDE0_GENERATE:
+			init_create_disk_image(0);
+			break;
+
+		case IDE1_GENERATE:
+			init_create_disk_image(1);
+			break;
+
+		case IDE0_CDROM:
+			HideDiskSettings(0, getSelected(IDE0_CDROM));
+			break;
+
+		case IDE1_CDROM:
+			HideDiskSettings(1, getSelected(IDE1_CDROM));
+			break;
+
+		case FLOPPY_MOUNT:
+			if (getFDC()->is_floppy_inserted()) {
+				getFDC()->remove_floppy();
+			} else {
+				if (!getFDC()->insert_floppy()) {
+					// report error
+				}
+			}
+			UpdateFloppyStatus();
+			break;
+
+		case IDE0_MOUNT:
+			RemountCDROM(0);
+			break;
+
+		case IDE1_MOUNT:
+			RemountCDROM(1);
+			break;
+
+		case HELP:
+			SDLGui_Open(DlgAlertOpen(HELP_TEXT, ALERT_OK));
+			break;
+
+		case APPLY:
+			confirm();
+		case CANCEL:
+			retval = Dialog::GUI_CLOSE;
+			break;
+	}
+
+	return retval;
+}
+
+int DlgDisk::processDialogFd0(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	if (0 /*FIXME SDLGui_FileSelect(tmpname, false)*/) {
+		if (!File_DoesFileNameEndWithSlash(tmpname)
+			/*&& File_Exists(tmpname) */ ) {
+			strcpy(gui_options.floppy.path, tmpname);
+			File_ShrinkName(floppy_path, tmpname, discdlg[FLP_PATH].w);
+		} else {
+			floppy_path[0] = 0;
+		}
+	}
+
+	state = STATE_MAIN;
+	return retval;
+}
+
+int DlgDisk::processDialogIde0(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	if (0 /*FIXME SDLGui_FileSelect(tmpname, true)*/) {
+		if (!File_DoesFileNameEndWithSlash(tmpname)
+			/*&& File_Exists(tmpname) */ ) {
+			strcpy(gui_options.atadevice[0][0].path, tmpname);
+			File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
+			UpdateDiskParameters(0, true);
+			setSelected(IDE0_PRESENT, true);
+		} else {
+			ide0_path[0] = 0;
+		}
+	}
+
+	state = STATE_MAIN;
+	return retval;
+}
+
+int DlgDisk::processDialogIde1(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	if (0 /* FIXME SDLGui_FileSelect(tmpname, true)*/) {
+		if (!File_DoesFileNameEndWithSlash(tmpname)
+			/*&& File_Exists(tmpname) */ ) {
+			strcpy(gui_options.atadevice[0][1].path, tmpname);
+			File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
+			UpdateDiskParameters(1, true);
+			setSelected(IDE1_PRESENT, true);
+		} else {
+			ide1_path[0] = 0;
+		}
+	}
+
+	state = STATE_MAIN;
+	return retval;
+}
+
+int DlgDisk::processDialogCdi0(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+	state = STATE_MAIN;
+
+	if (0 /* Result of asking creation of disk image */) {
+		if (File_Exists(cdi_path)) {
+			SDLGui_Open(DlgAlertOpen("File Exists. Overwrite?", ALERT_OKCANCEL));
+			state = STATE_CDI1;
+		} else {
+			/* Tell it like we overwrite */
+			retval = processDialogCdi1();
+		}
+	}
+
+	return retval;
+}
+
+int DlgDisk::processDialogCdi1(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	if (0 /* Result of asking to overwrite disk image */) {
+		char *ide_path = (cdi_disk==0) ? ide0_path : ide1_path;
+		int ide_select = (cdi_disk==0) ? IDE0_PRESENT : IDE1_PRESENT;
+		int ide_numpath = (cdi_disk==0) ? IDE0_PATH : IDE1_PATH;
+
+		if (create_disk_image()) {
+			File_ShrinkName(ide_path, gui_options.atadevice[0][cdi_disk].path,
+							discdlg[ide_numpath].w);
+			setSelected(ide_select, true);
+		} else {
+			ide_path[0] = 0;
+		}
+	}
+
+	state = STATE_MAIN;
+	return retval;
+}
+
+void DlgDisk::confirm(void)
 {
 	/* Read values from dialog */
 	int cyl, head, spt;
@@ -406,134 +613,11 @@ static void Dialog_DiscDlg_Confirm(void)
 	bx_options = gui_options;
 }
 
-static void Dialog_DiscDlg_Close(void)
+void DlgDisk::processResult(void)
 {
 }
 
-void Dialog_DiscDlg(void)
+Dialog *DlgDiskOpen(void)
 {
-	int but;
-	char tmpname[MAX_FILENAME_LENGTH];
-
-	Dialog_DiscDlg_Init();
-
-	// note that File_Exists() checks were disabled since they didn't work
-	// on /dev/fd0 or /dev/cdrom if no media were inserted
-
-	/* Draw and process the dialog */
-	do {
-		but = SDLGui_DoDialog(discdlg);
-		switch (but) {
-		case FLP_BROWSE:		/* Choose a new disc A: */
-			strcpy(tmpname, gui_options.floppy.path);
-			if (SDLGui_FileSelect(tmpname, false)) {
-				if (!File_DoesFileNameEndWithSlash(tmpname)
-					/*&& File_Exists(tmpname) */ ) {
-					strcpy(gui_options.floppy.path, tmpname);
-					File_ShrinkName(floppy_path, tmpname, discdlg[FLP_PATH].w);
-				}
-				else {
-					floppy_path[0] = 0;
-				}
-			}
-			break;
-
-		case IDE0_BROWSE:
-			strcpy(tmpname, gui_options.atadevice[0][0].path);
-			if (SDLGui_FileSelect(tmpname, true)) {
-				if (!File_DoesFileNameEndWithSlash(tmpname)
-					/*&& File_Exists(tmpname) */ ) {
-					strcpy(gui_options.atadevice[0][0].path, tmpname);
-					File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
-					UpdateDiskParameters(0, true);
-					setSelected(IDE0_PRESENT, true);
-				}
-				else {
-					ide0_path[0] = 0;
-				}
-			}
-			break;
-
-		case IDE1_BROWSE:
-			strcpy(tmpname, gui_options.atadevice[0][1].path);
-			if (SDLGui_FileSelect(tmpname, true)) {
-				if (!File_DoesFileNameEndWithSlash(tmpname)
-					/*&& File_Exists(tmpname) */ ) {
-					strcpy(gui_options.atadevice[0][1].path, tmpname);
-					File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
-					UpdateDiskParameters(1, true);
-					setSelected(IDE1_PRESENT, true);
-				}
-				else {
-					ide1_path[0] = 0;
-				}
-			}
-			break;
-
-		case IDE0_GENERATE:
-			if (create_disk_image(0)) {
-				File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path,
-								discdlg[IDE0_PATH].w);
-				setSelected(IDE0_PRESENT, true);
-			}
-			else {
-				ide0_path[0] = 0;
-			}
-			break;
-
-		case IDE1_GENERATE:
-			if (create_disk_image(1)) {
-				File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path,
-								discdlg[IDE1_PATH].w);
-				setSelected(IDE1_PRESENT, true);
-			}
-			else {
-				ide1_path[0] = 0;
-			}
-			break;
-
-		case IDE0_CDROM:
-			HideDiskSettings(0, getSelected(IDE0_CDROM));
-			break;
-
-		case IDE1_CDROM:
-			HideDiskSettings(1, getSelected(IDE1_CDROM));
-			break;
-
-		case FLOPPY_MOUNT:
-			if (getFDC()->is_floppy_inserted()) {
-				getFDC()->remove_floppy();
-			}
-			else {
-				if (!getFDC()->insert_floppy()) {
-					// report error
-				}
-			}
-			UpdateFloppyStatus();
-			break;
-
-		case IDE0_MOUNT:
-			RemountCDROM(0);
-			break;
-
-		case IDE1_MOUNT:
-			RemountCDROM(1);
-			break;
-
-		case HELP:
-			SDLGui_Alert(HELP_TEXT, ALERT_OK);
-			break;
-		}
-	}
-	while (but != APPLY && but != CANCEL);
-
-	if (but==APPLY) {
-		Dialog_DiscDlg_Confirm();
-	}
-
-	Dialog_DiscDlg_Close();
+	return new DlgDisk(discdlg);
 }
-
-/*
-vim:ts=4:sw=4:
-*/

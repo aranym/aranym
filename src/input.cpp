@@ -29,7 +29,8 @@
 #include "main.h"			// for RestartAll()
 #include "ata.h"
 #ifdef SDL_GUI
-#  include "sdlgui.h"
+# include "gui-sdl/sdlgui.h"
+# include "gui-sdl/dialog.h"
 #endif
 
 #ifdef NFVDI_SUPPORT
@@ -431,13 +432,15 @@ static bool mouseOut = false;
 
 #ifdef SDL_GUI
 extern bool isGuiAvailable;	// from main.cpp
-static SDL_Thread *GUIthread = NULL;
-static const int GUI_RETURN_INFO = (SDL_USEREVENT+1);
+static bool cur_fullscreen;
 
-// running in a different thread
-static int open_gui(void * /*ptr*/)
+void open_GUI(void)
 {
-	bool fullscreen = bx_options.video.fullscreen;
+	if (!isGuiAvailable || !SDLGui_isClosed()) {
+		return;
+	}
+
+	cur_fullscreen = bx_options.video.fullscreen;
 
 	/* Always ungrab+show mouse */
 	host->hostScreen.lock();
@@ -445,21 +448,16 @@ static int open_gui(void * /*ptr*/)
 	SDL_WM_GrabInput(SDL_GRAB_OFF);
 	host->hostScreen.unlock();
 
-	host->hostScreen.openGUI();
-	int status = GUImainDlg();
+	SDLGui_Open(NULL);
+}
 
-	// the status is sent to event checking thread by the USEREVENT+1 message
-	SDL_Event ev;
-	ev.type = GUI_RETURN_INFO;
-	ev.user.code = status;	// STATUS_SHUTDOWN or STATUS_REBOOT
-	ev.user.data1 = NULL;
-	SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(GUI_RETURN_INFO));
-
-	host->hostScreen.closeGUI();
+void close_GUI(void)
+{
+	SDLGui_Close();
 
 	// small hack to toggle fullscreen from the SETUP GUI
-	if (bx_options.video.fullscreen != fullscreen) {
-		bx_options.video.fullscreen = fullscreen;
+	if (bx_options.video.fullscreen != cur_fullscreen) {
+		bx_options.video.fullscreen = cur_fullscreen;
 
 		host->hostScreen.toggleFullScreen();
 		if (bx_options.video.fullscreen && !grabbedMouse)
@@ -475,29 +473,8 @@ static int open_gui(void * /*ptr*/)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	}
 	host->hostScreen.unlock();
-
-	return 0;
 }
 
-bool start_GUI_thread()
-{
-	if (isGuiAvailable && !host->hostScreen.isGUIopen()
-#ifdef ENABLE_OPENGL
-		&& !bx_options.opengl.enabled
-#endif
-	) {
-		GUIthread = SDL_CreateThread(open_gui, NULL);
-	}
-	return (GUIthread != NULL);
-}
-
-void kill_GUI_thread()
-{
-	if (GUIthread != NULL) {
-		SDL_KillThread(GUIthread);
-		GUIthread = NULL;
-	}
-}
 #endif /* SDL_GUI */
 
 #define CHECK_HOTKEY(Hotkey) ((bx_options.hotkeys.Hotkey.sym == 0 || sym == bx_options.hotkeys.Hotkey.sym) && masked_mod == bx_options.hotkeys.Hotkey.mod)
@@ -513,13 +490,22 @@ static void process_keyboard_event(const SDL_Event &event)
 		state = keysym.mod;	// May be send by SDL_PushEvent
 		
 #ifdef SDL_GUI
-	if (host->hostScreen.isGUIopen()) {
-		SDL_Event ev;
-		ev.type = SDL_USEREVENT;	// map key down/up event to user event
-		ev.user.code = event.type;
-		ev.user.data1 = (void *)(uintptr)sym;
-		ev.user.data2 = (void *)(uintptr)state;
-		SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
+	if (!SDLGui_isClosed()) {
+		switch (SDLGui_DoEvent(event)) {
+			case Dialog::GUI_CLOSE:
+				close_GUI();
+				break;
+			case Dialog::GUI_REBOOT:
+				close_GUI();
+				RestartAll();
+				break;
+			case Dialog::GUI_SHUTDOWN:
+				close_GUI();
+				pendingQuit = true;
+				break;
+			default:
+				break;
+		}
 		return;	// don't pass the key events to emulation
 	}
 #endif /* SDL_GUI */
@@ -580,7 +566,7 @@ static void process_keyboard_event(const SDL_Event &event)
 			if ( bx_options.hotkeys.setup.mod & KMOD_MODE|KMOD_RALT )
 				getIKBD()->SendKey(0x80 | RALT_ATARI_SCANCODE);
 			
-			start_GUI_thread();
+			open_GUI();
 			send2Atari = false;
 		}
 #endif
@@ -666,15 +652,21 @@ static void process_mouse_event(const SDL_Event &event)
 #endif
 
 #ifdef SDL_GUI
-	if (host->hostScreen.isGUIopen()) {
-		int typ = event.type;
-		if (typ == SDL_MOUSEBUTTONDOWN || typ == SDL_MOUSEBUTTONUP) {
-			SDL_Event ev;
-			ev.type = SDL_USEREVENT;	// map button down/up to user event
-			ev.user.code = typ;
-			ev.user.data1 = (void *)(uintptr)event.button.x;
-			ev.user.data2 = (void *)(uintptr)event.button.y;
-			SDL_PeepEvents(&ev, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
+	if (!SDLGui_isClosed()) {
+		switch (SDLGui_DoEvent(event)) {
+			case Dialog::GUI_CLOSE:
+				close_GUI();
+				break;
+			case Dialog::GUI_REBOOT:
+				close_GUI();
+				RestartAll();
+				break;
+			case Dialog::GUI_SHUTDOWN:
+				close_GUI();
+				pendingQuit = true;
+				break;
+			default:
+				break;
 		}
 		return;	// don't pass the mouse events to emulation
 	}
@@ -901,29 +893,12 @@ void check_event()
 	}
 
 	SDL_Event event;
-	int eventmask = SDL_EVENTMASK(SDL_KEYDOWN)
-					| SDL_EVENTMASK(SDL_KEYUP)
-					| SDL_EVENTMASK(SDL_MOUSEBUTTONDOWN)
-					| SDL_EVENTMASK(SDL_MOUSEBUTTONUP)
-					| SDL_EVENTMASK(SDL_MOUSEMOTION)
-					| SDL_EVENTMASK(SDL_JOYAXISMOTION)
-					| SDL_EVENTMASK(SDL_JOYHATMOTION)
-					| SDL_EVENTMASK(SDL_JOYBUTTONDOWN)
-					| SDL_EVENTMASK(SDL_JOYBUTTONUP)
-					| SDL_EVENTMASK(SDL_ACTIVEEVENT)
-					| SDL_EVENTMASK(SDL_VIDEORESIZE)
-#ifdef SDL_GUI
-					| SDL_EVENTMASK(GUI_RETURN_INFO)
-#endif
-					| SDL_EVENTMASK(SDL_QUIT);
 
-	SDL_PumpEvents();
-	while (SDL_PeepEvents(&event, 1, SDL_GETEVENT, eventmask)) {
+	while (SDL_PollEvent(&event)) {
 		switch(event.type) {
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
 				process_keyboard_event(event);
-				break;
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
@@ -942,18 +917,6 @@ void check_event()
 			case SDL_VIDEORESIZE:
 				process_resize_event(event);
 				break;
-#ifdef SDL_GUI
-			case GUI_RETURN_INFO:
-				switch(event.user.code) {
-					case STATUS_SHUTDOWN:
-						pendingQuit = true;
-						break;
-					case STATUS_REBOOT:
-						RestartAll();
-						break;
-				}
-				break;
-#endif
 			case SDL_QUIT:
 				pendingQuit = true;
 				break;
@@ -964,7 +927,3 @@ void check_event()
 		Quit680x0();	// forces CPU to quit the loop
 	}
 }
-
-/*
-vim:ts=4:sw=4:
-*/

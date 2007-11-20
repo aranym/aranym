@@ -42,7 +42,6 @@ class HostScreen: public DirtyRects
 {
   private:
  	SDL_Surface *mainSurface;		// The main window surface
-  	bool GUIopened;
 
 	int selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height);
 	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
@@ -71,6 +70,7 @@ class HostScreen: public DirtyRects
 	int dirty_w,dirty_h;
 
 	Logo *logo;
+	bool logo_present;
 
   public:
 	SDL_mutex   *screenLock;
@@ -89,14 +89,6 @@ class HostScreen: public DirtyRects
 	void OpenGLUpdate(void);	/* Full screen update with NF software VDI */
 	void EnableOpenGLVdi(void);
 	void DisableOpenGLVdi(void);
-
-#ifdef SDL_GUI
-	// GUI
-	void openGUI();
-	void closeGUI();
-	bool isGUIopen()	{ return GUIopened; }
-	SDL_Surface *getPhysicalSurface() { return mainSurface; }
-#endif
 
 	uint32 getBpp();	/* Bytes per pixel */
 	uint32 getBitsPerPixel(void);

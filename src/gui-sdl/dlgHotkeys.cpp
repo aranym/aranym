@@ -27,10 +27,11 @@
 #include "parameters.h"
 #include "sdlgui.h"
 #include "input.h"
+#include "dlgKeypress.h"
+#include "dlgHotkeys.h"
+#include "dlgAlert.h"
 
-SDL_keysym Dialog_PressKeyDlg(void);
-
-static bx_hotkeys_t hotkeys;
+#define UPDATE_BUTTON(Button) displayKeysym(hotkeys.Button, key_ ## Button)
 
 enum HOTKEYSDLG {
 	box_main,
@@ -118,8 +119,7 @@ char *displayKeysym(SDL_keysym keysym, char *buffer)
 	if (mods & KMOD_RMETA) strcat(buffer, "RM+");
 	if (keysym.sym) {
 		strcat(buffer, SDL_GetKeyName(keysym.sym));
-	}
-	else {
+	} else {
 		// mod keys only, remove last plus sign
 		int len = strlen(buffer);
 		if (len > 0 && buffer[len-1] == '+')
@@ -128,72 +128,150 @@ char *displayKeysym(SDL_keysym keysym, char *buffer)
 	return buffer;
 }
 
-static void Dialog_HotkeysDlg_Init(void)
+DlgHotkeys::DlgHotkeys(SGOBJ *dlg)
+	: Dialog(dlg), state(STATE_MAIN), dlgKeypress(NULL)
 {
 	hotkeys = bx_options.hotkeys;
+
+	// show current GUI hotkey
+	UPDATE_BUTTON(setup);
+	UPDATE_BUTTON(quit);
+	UPDATE_BUTTON(reboot);
+	UPDATE_BUTTON(ungrab);
+	UPDATE_BUTTON(debug);
+	UPDATE_BUTTON(screenshot);
+	UPDATE_BUTTON(fullscreen);
 }
 
-static void Dialog_HotkeysDlg_Confirm(void)
+DlgHotkeys::~DlgHotkeys()
+{
+}
+
+int DlgHotkeys::processDialog(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	switch(return_obj) {
+		case SETUP:
+			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
+			SDLGui_Open(dlgKeypress);
+			state = STATE_SETUP;
+			break;
+		case QUIT:
+			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
+			SDLGui_Open(dlgKeypress);
+			state = STATE_QUIT;
+			break;
+		case REBOOT:
+			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
+			SDLGui_Open(dlgKeypress);
+			state = STATE_REBOOT;
+			break;
+		case UNGRAB:
+			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
+			SDLGui_Open(dlgKeypress);
+			state = STATE_UNGRAB;
+			break;
+		case DEBUG:
+			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
+			SDLGui_Open(dlgKeypress);
+			state = STATE_DEBUG;
+			break;
+		case SCREENSHOT:
+			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
+			SDLGui_Open(dlgKeypress);
+			state = STATE_SCREENSHOT;
+			break;
+		case FULLSCREEN:
+			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
+			SDLGui_Open(dlgKeypress);
+			state = STATE_FULLSCREEN;
+			break;
+
+		case HELP:
+			SDLGui_Open(DlgAlertOpen(HELP_TEXT, ALERT_OK));
+			break;
+
+		case APPLY:
+			confirm();
+		case CANCEL:
+			retval = Dialog::GUI_CLOSE;
+			break;
+	}
+
+	return retval;
+}
+
+void DlgHotkeys::confirm(void)
 {
 	bx_options.hotkeys = hotkeys;
 }
 
-static void Dialog_HotkeysDlg_Close(void)
+void DlgHotkeys::idle(void)
 {
-}
+	// show current GUI hotkey
+	UPDATE_BUTTON(setup);
+	UPDATE_BUTTON(quit);
+	UPDATE_BUTTON(reboot);
+	UPDATE_BUTTON(ungrab);
+	UPDATE_BUTTON(debug);
+	UPDATE_BUTTON(screenshot);
+	UPDATE_BUTTON(fullscreen);
 
-#define UPDATE_BUTTON(Button) displayKeysym(hotkeys.Button, key_ ## Button)
-void Dialog_HotkeysDlg()
+	/* Force redraw */
+	init();
+} 
+
+void DlgHotkeys::processResult(void)
 {
-	int but = 0;
-
-	Dialog_HotkeysDlg_Init();
-	do {
-		// show current GUI hotkey
-		UPDATE_BUTTON(setup);
-		UPDATE_BUTTON(quit);
-		UPDATE_BUTTON(reboot);
-		UPDATE_BUTTON(ungrab);
-		UPDATE_BUTTON(debug);
-		UPDATE_BUTTON(screenshot);
-		UPDATE_BUTTON(fullscreen);
-		but = SDLGui_DoDialog(hotkeysdlg);
-		switch(but) {
-			case SETUP:
-				hotkeys.setup = Dialog_PressKeyDlg();
-				break;
-			case QUIT:
-				hotkeys.quit = Dialog_PressKeyDlg();
-				break;
-			case REBOOT:
-				hotkeys.reboot = Dialog_PressKeyDlg();
-				break;
-			case UNGRAB:
-				hotkeys.ungrab = Dialog_PressKeyDlg();
-				break;
-			case DEBUG:
-				hotkeys.debug = Dialog_PressKeyDlg();
-				break;
-			case SCREENSHOT:
-				hotkeys.screenshot = Dialog_PressKeyDlg();
-				break;
-			case FULLSCREEN:
-				hotkeys.fullscreen = Dialog_PressKeyDlg();
-				break;
-
-			case HELP:
-				SDLGui_Alert(HELP_TEXT, ALERT_OK);
-				break;
-		}
-	} while(but != APPLY && but != CANCEL);
-
-	if (but == APPLY) {
-		Dialog_HotkeysDlg_Confirm();
+	switch(state) {
+		case STATE_SETUP:
+			if (dlgKeypress) {
+				hotkeys.setup = dlgKeypress->getPressedKey();
+				dlgKeypress = NULL;
+			}
+			break;
+		case STATE_QUIT:
+			if (dlgKeypress) {
+				hotkeys.quit = dlgKeypress->getPressedKey();
+				dlgKeypress = NULL;
+			}
+			break;
+		case STATE_REBOOT:
+			if (dlgKeypress) {
+				hotkeys.reboot = dlgKeypress->getPressedKey();
+				dlgKeypress = NULL;
+			}
+			break;
+		case STATE_UNGRAB:
+			if (dlgKeypress) {
+				hotkeys.ungrab = dlgKeypress->getPressedKey();
+				dlgKeypress = NULL;
+			}
+			break;
+		case STATE_DEBUG:
+			if (dlgKeypress) {
+				hotkeys.debug = dlgKeypress->getPressedKey();
+				dlgKeypress = NULL;
+			}
+			break;
+		case STATE_SCREENSHOT:
+			if (dlgKeypress) {
+				hotkeys.screenshot = dlgKeypress->getPressedKey();
+				dlgKeypress = NULL;
+			}
+			break;
+		case STATE_FULLSCREEN:
+			if (dlgKeypress) {
+				hotkeys.fullscreen = dlgKeypress->getPressedKey();
+				dlgKeypress = NULL;
+			}
+			break;
 	}
-
-	Dialog_HotkeysDlg_Close();
+	state = STATE_MAIN;
 }
 
-/*
-vim:ts=4:sw=4:
-*/
+Dialog *DlgHotkeysOpen(void)
+{
+	return new DlgHotkeys(hotkeysdlg);
+}

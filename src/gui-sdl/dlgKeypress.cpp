@@ -21,8 +21,7 @@
 #include "parameters.h"
 #include "sdlgui.h"
 #include "input.h"
-
-void SDLGui_DrawDialog(SGOBJ *);
+#include "dlgKeypress.h"
 
 static SGOBJ presskeydlg[] =
 {
@@ -31,35 +30,50 @@ static SGOBJ presskeydlg[] =
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-static SDL_keysym keysym;
-
-static void Dialog_PressKeyDlg_Init(void)
+DlgKeypress::DlgKeypress(SGOBJ *dlg)
+	: Dialog(dlg)
 {
 	keysym.sym = SDLK_UNKNOWN;
 	keysym.scancode = keysym.unicode = 0;
 	keysym.mod = (SDLMod) 0;
-
-	SDLGui_DrawDialog(presskeydlg);
 }
 
-SDL_keysym Dialog_PressKeyDlg(void)
+DlgKeypress::~DlgKeypress()
 {
-	Dialog_PressKeyDlg_Init();
+}
 
-	do {
-		SDL_Event e = getEvent();
-		if (e.type == SDL_KEYDOWN) {
-			keysym.sym = e.key.keysym.sym;
-			keysym.mod = (SDLMod)(e.key.keysym.mod & HOTKEYS_MOD_MASK);
-			if (keysym.sym >= SDLK_NUMLOCK && keysym.sym <= SDLK_COMPOSE) {
-				keysym.sym = SDLK_UNKNOWN;
-			}
+void DlgKeypress::keyPress(const SDL_Event &event)
+{
+	if (event.type == SDL_KEYDOWN) {
+		keysym.sym = event.key.keysym.sym;
+		keysym.mod = (SDLMod)(event.key.keysym.mod & HOTKEYS_MOD_MASK);
+		if (keysym.sym >= SDLK_NUMLOCK && keysym.sym <= SDLK_COMPOSE) {
+			keysym.sym = SDLK_UNKNOWN;
 		}
-	} while(keysym.sym == SDLK_UNKNOWN);
+	}
+}
 
-	// special hack: Enter key = no key needed, just modifiers
-	if (keysym.sym == SDLK_RETURN)
-		keysym.sym = SDLK_UNKNOWN;
+int DlgKeypress::processDialog(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
 
+	if (keysym.sym != SDLK_UNKNOWN) {
+		// special hack: Enter key = no key needed, just modifiers
+		if (keysym.sym == SDLK_RETURN) {
+			keysym.sym = SDLK_UNKNOWN;
+		}
+		retval = Dialog::GUI_CLOSE;
+	}
+
+	return retval;
+}
+
+SDL_keysym &DlgKeypress::getPressedKey(void)
+{
 	return keysym;
+}
+
+Dialog *DlgKeypressOpen(void)
+{
+	return new DlgKeypress(presskeydlg);
 }

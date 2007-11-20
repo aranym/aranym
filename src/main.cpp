@@ -463,15 +463,11 @@ bool InitAll(void)
 	isGuiAvailable = SDLGui_Init();
 
 	if (isGuiAvailable && startupGUI) {
-		start_GUI_thread();
+		open_GUI();
 		do {
-			host->hostScreen.lock();
 			check_event();			// process mouse & keyboard events
-			host->hostScreen.unlock();
-
-			SDL_Delay(20);			// 50 Hz input events rate is OK
-		}
-		while(host->hostScreen.isGUIopen());
+			SDL_Delay(1);
+		} while(!SDLGui_isClosed());
 	}
 #endif /* SDL_GUI */
 
@@ -537,7 +533,7 @@ void ExitAll(void)
 	D(bug("200 Hz IRQ statistics: max multiple irqs %d, total multiple irq ratio %02.2lf%%, 2xirq ration %02.2lf%%, 3xirq ratio %02.2lf%%, 4xirq ration %02.2lf%%, early irq ratio %02.2lf%%", max_mult_interrupts, multiple_interrupts*100.0 / total_interrupts, multiple_interrupts2*100.0 / total_interrupts, multiple_interrupts3*100.0 / total_interrupts, multiple_interrupts4*100.0 / total_interrupts, early_interrupts * 100.0 / total_interrupts));
 
 #ifdef SDL_GUI
-	kill_GUI_thread();
+	close_GUI();
 	SDLGui_UnInit();
 #endif
 

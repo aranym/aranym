@@ -24,6 +24,7 @@
 #include "sysdeps.h"
 #include "sdlgui.h"
 #include "tools.h" // safe_strncpy
+#include "dlgNetwork.h"
 
 enum DLG {
 	box_main,
@@ -102,7 +103,8 @@ static SGOBJ dlg[] =
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
-static void Dialog_NetworkDlg_Init(void)
+DlgNetwork::DlgNetwork(SGOBJ *dlg)
+	: Dialog(dlg)
 {
 	bx_ethernet_options_t *eth0 = &bx_options.ethernet[0];
 	bx_ethernet_options_t *eth1 = &bx_options.ethernet[1];
@@ -139,7 +141,26 @@ static void Dialog_NetworkDlg_Init(void)
 	safe_strncpy(eth1_mac_addr, eth1->mac_addr, sizeof(eth1_mac_addr));
 }
 
-static void Dialog_NetworkDlg_Confirm(void)
+DlgNetwork::~DlgNetwork()
+{
+}
+
+int DlgNetwork::processDialog(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	switch(return_obj) {
+		case APPLY:
+			confirm();
+		case CANCEL:
+			retval = Dialog::GUI_CLOSE;
+			break;
+	}
+
+	return retval;
+}
+
+void DlgNetwork::confirm(void)
 {
 	bx_ethernet_options_t *eth0 = &bx_options.ethernet[0];
 	bx_ethernet_options_t *eth1 = &bx_options.ethernet[1];
@@ -171,21 +192,7 @@ static void Dialog_NetworkDlg_Confirm(void)
 	safe_strncpy(eth1->mac_addr, eth1_mac_addr, sizeof(eth1->mac_addr));
 }
 
-static void Dialog_NetworkDlg_Close(void)
+Dialog *DlgNetworkOpen(void)
 {
+	return new DlgNetwork(dlg);
 }
-
-void Dialog_NetworkDlg()
-{
-	Dialog_NetworkDlg_Init();
-
-	if (SDLGui_DoDialog(dlg) == APPLY) {
-		Dialog_NetworkDlg_Confirm();
-	}
-
-	Dialog_NetworkDlg_Close();
-}
-
-/*
-vim:ts=4:sw=4:
-*/

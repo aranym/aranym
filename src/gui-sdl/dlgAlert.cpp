@@ -23,6 +23,7 @@
 
 #include "sysdeps.h"
 #include "sdlgui.h"
+#include "dlgAlert.h"
 
 #define MAX_LINES 20
 
@@ -83,38 +84,14 @@ int FormatTextToBox(char *text, int max_width)
 /*
   Show the "alert" dialog:
 */
-static char *orig_t = NULL;
-static int ok_but_idx = -1;
-static const char *gui_alert_text = NULL;
-static alert_type gui_alert_type = ALERT_OK;
 
-enum {
-	SDLGUI_ALERT_TEXT,
-	SDLGUI_ALERT_TYPE
-};
-
-static void SDLGui_Alert_SetParams(int num_param, void *param)
+DlgAlert::DlgAlert(SGOBJ *dlg, const char *text, alert_type type)
+	: Dialog(dlg), orig_t(NULL), ok_but_idx(-1)
 {
-	switch(num_param) {
-		case SDLGUI_ALERT_TEXT:
-			gui_alert_text = (const char *)param;
-			break;
-		case SDLGUI_ALERT_TYPE:
-			gui_alert_type = *((alert_type *) param);
-			break;
-	}
-}
-
-static void SDLGui_Alert_Init(void)
-{
-	char *t = (char *)malloc(strlen(gui_alert_text)+1);
-	if (orig_t) {
-		free(orig_t);
-		orig_t = NULL;
-	}
+	char *t = (char *)malloc(strlen(text)+1);
 	orig_t = t;
 	int lines;
-	strcpy(t, gui_alert_text);
+	strcpy(t, text);
 	lines = FormatTextToBox(t, obj_text.w);
 	int idx = 1;
 	for(int i=0; i<lines && i<MAX_LINES; i++) {
@@ -127,17 +104,16 @@ static void SDLGui_Alert_Init(void)
 	obj_but_cancel.y = lines+2;
 	ok_but_idx = idx;
 	alertdlg[idx++] = obj_but_ok;
-	if (gui_alert_type == ALERT_OKCANCEL) {
+	if (type == ALERT_OKCANCEL) {
 		alertdlg[idx++] = obj_but_cancel;
-	}
-	else {
+	} else {
 		alertdlg[ok_but_idx].x = (alertdlg[0].w - alertdlg[ok_but_idx].w) / 2;
 	}
 	alertdlg[idx] = obj_null;
 	alertdlg[0].h = lines+4;
 }
 
-static void SDLGui_Alert_Close(void)
+DlgAlert::~DlgAlert()
 {
 	if (orig_t) {
 		free(orig_t);
@@ -145,16 +121,16 @@ static void SDLGui_Alert_Close(void)
 	}
 }
 
-bool SDLGui_Alert(const char *text, alert_type type)
+bool DlgAlert::pressedOk(void)
 {
-	SDLGui_Alert_SetParams(SDLGUI_ALERT_TEXT, (void *)text);
-	SDLGui_Alert_SetParams(SDLGUI_ALERT_TYPE, &type);
-	SDLGui_Alert_Init();
-	bool ret = (SDLGui_DoDialog(alertdlg) == ok_but_idx);
-	SDLGui_Alert_Close();
-	return ret;
+	return (return_obj == ok_but_idx);
 }
 
-/*
-vim:ts=4:sw=4:
-*/
+void DlgAlert::processResult(void)
+{
+}
+
+Dialog *DlgAlertOpen(const char *text, alert_type type)
+{
+	return new DlgAlert(alertdlg, text, type);
+}

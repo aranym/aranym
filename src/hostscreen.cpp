@@ -67,7 +67,7 @@
 #endif
 
 HostScreen::HostScreen(void)
-	: DirtyRects(), logo(NULL), refreshCounter(0)
+	: DirtyRects(), logo(NULL), logo_present(true), refreshCounter(0)
 {
 	// the counter init
 	snapCounter = 0;
@@ -76,8 +76,6 @@ HostScreen::HostScreen(void)
 #ifdef ENABLE_VBL_UPDATES
 	updateLock = SDL_CreateMutex();
 #endif
-
-	GUIopened = false;
 
 	mainSurface=NULL;
 
@@ -199,20 +197,6 @@ void HostScreen::toggleFullScreen()
 
 	setWindowSize( width, height, bpp );
 }
-
-#ifdef SDL_GUI
-void HostScreen::openGUI()
-{
-	GUIopened = true;
-}
-
-void HostScreen::closeGUI()
-{
-	forceRefreshNfvdi();
-	GUIopened = false;
-}
-
-#endif /* SDL_GUI */
 
 int HostScreen::selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height)
 {
@@ -516,16 +500,6 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 		}
 	}
 
-#ifdef SDL_GUI
-	if (GUIopened) {
-		// force SDL GUI to redraw the dialog because resolution has changed
-		SDL_Event event;
-		event.type = SDL_USEREVENT;
-		event.user.code = SDL_USEREVENT; // misused this code for signalizing the resolution change. Did that because I knew the code was unique (needed something distinguishable from keyboard and mouse codes that are sent by the same event name from the input checking thread)
-		SDL_PeepEvents(&event, 1, SDL_ADDEVENT, SDL_EVENTMASK(SDL_USEREVENT));
-	}
-#endif /* SDL_GUI */
-
 	resizeDirty(width, height);
 	forceRefreshNfvdi();
 
@@ -656,9 +630,11 @@ void HostScreen::refresh(void)
 		refreshNfvdi();
 	}
 
-	if (GUIopened) {
+#ifdef SDL_GUI
+	if (!SDLGui_isClosed()) {
 		refreshGui();
 	}
+#endif
 
 #ifdef ENABLE_VBL_UPDATES
 	SDL_mutexP(updateLock);
@@ -740,6 +716,9 @@ void HostScreen::refreshVidel(void)
 
 void HostScreen::refreshLogo(void)
 {
+	if (!logo_present) {
+		return;
+	}
 	if (!logo) {
 		logo = new Logo(bx_options.logo_path);
 	}
@@ -754,6 +733,7 @@ void HostScreen::refreshLogo(void)
 		if (!logo_surf) {
 			fprintf(stderr, "Can not load logo from %s file\n",
 				bx_options.logo_path); 
+			logo_present = false;
 			return;
 		}
 	}

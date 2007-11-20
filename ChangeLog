@@ -1,3 +1,9 @@
+2007/11/20 - Patrice
+- gui: do not use a thread.
+
+- logo: do not try to endlessly load file if not present.
+
+
 2007/11/02 - Patrice
 - midi: send NOTE OFF on all channels before exiting.
 

@@ -22,9 +22,18 @@
  */
 
 #include "sysdeps.h"
-#include "sdlgui.h"
 #include "file.h"
 #include "parameters.h"			// load/saveSettings()
+#include "sdlgui.h"
+#include "dlgFileSelect.h"
+#include "dlgMain.h"
+#include "dlgAlert.h"
+#include "dlgOs.h"
+#include "dlgVideo.h"
+#include "dlgKeyboard.h"
+#include "dlgNetwork.h"
+#include "dlgHotkeys.h"
+#include "dlgDisk.h"
 
 #ifdef OS_darwin
 	extern void refreshMenuKeys();
@@ -108,141 +117,128 @@ static const char *HELP_TEXT =
 "Changes must be confirmed with APPLY first. Note that all changes are applied immediately to a running ARAnyM.\n"
 "Some changes require system reboot in order to take effect. It's actually safest to always reboot after any change.";
 
-static bool bReboot;
-static bool bShutdown;
-
-extern void Dialog_DiscDlg();
-extern void Dialog_HotkeysDlg();
-extern void Dialog_KeyboardDlg();
-extern void Dialog_OsDlg();
-extern void Dialog_VideoDlg();
-extern void Dialog_NetworkDlg();
-
-static char path[MAX_FILENAME_LENGTH] = "";
-
-void LoadSettings()
+DlgMain::DlgMain(SGOBJ *dlg)
+	: Dialog(dlg), state(STATE_MAIN), dlgFileSelect(NULL)
 {
-	if (strlen(path) == 0) {
-		strncpy(path, getConfigFile(), sizeof(path));
-		path[sizeof(path) - 1] = '\0';
-	}
-	if (SDLGui_FileSelect(path, false)) {
-		loadSettings(path);
-	}
+	memset(path, 0, sizeof(path));
 }
 
-void SaveSettings()
-{
-	if (strlen(path) == 0) {
-		strncpy(path, getConfigFile(), sizeof(path));
-		path[sizeof(path) - 1] = '\0';
-	}
-	if (SDLGui_FileSelect(path, true)) {
-		saveSettings(path);
-	}
-}
-
-static void Dialog_MainDlg_Init(void)
-{
-	bReboot = bShutdown = false;
-}
-
-static void Dialog_MainDlg_Close(void)
+DlgMain::~DlgMain()
 {
 #ifdef OS_darwin
 	refreshMenuKeys();
 #endif
 }
 
-void Dialog_MainDlg()
+int DlgMain::processDialog(void)
 {
-	Dialog_MainDlg_Init();
+	int retval = Dialog::GUI_CONTINUE;
 
-	bool closeDialog = false;
-	do {
-		int retbut = SDLGui_DoDialog(maindlg);
-		switch (retbut) {
+	switch(return_obj) {
 		case ABOUT:
-			SDLGui_Alert(ABOUT_TEXT, ALERT_OK);
+			SDLGui_Open(DlgAlertOpen(ABOUT_TEXT, ALERT_OK));
 			break;
-
 		case DISCS:
-			Dialog_DiscDlg();
+			SDLGui_Open(DlgDiskOpen());
 			break;
-
 		case KEYBOARD:
-			Dialog_KeyboardDlg();
+			SDLGui_Open(DlgKeyboardOpen());
 			break;
-
 		case HOTKEYS:
-			Dialog_HotkeysDlg();
+			SDLGui_Open(DlgHotkeysOpen());
 			break;
 		case OS:
-			Dialog_OsDlg();
+			SDLGui_Open(DlgOsOpen());
 			break;
 		case VIDEO:
-			Dialog_VideoDlg();
+			SDLGui_Open(DlgVideoOpen());
 			break;
 		case NETWORK:
-			Dialog_NetworkDlg();
+			SDLGui_Open(DlgNetworkOpen());
 			break;
 		case LOAD:
 			LoadSettings();
 			break;
-
 		case SAVE:
 			// make sure users understand which setting they're saving
 			// best by allowing this Save button only after the "Apply" was used.
 			SaveSettings();
 			break;
-
 		case REBOOT:
-			bReboot = true;
-			closeDialog = true;
+			retval = Dialog::GUI_REBOOT;
 			break;
-
 		case SHUTDOWN:
-			bShutdown = true;
-			closeDialog = true;
+			retval = Dialog::GUI_SHUTDOWN;
 			break;
-
 		case FULLSCREEN:
 			bx_options.video.fullscreen = !bx_options.video.fullscreen;
-			closeDialog = true;
+			retval = Dialog::GUI_CLOSE;
 			break;
-
 		case SCREENSHOT:
 			host->hostScreen.makeSnapshot();
-			closeDialog = true;
+			retval = Dialog::GUI_CLOSE;
 			break;
-
 		case HELP:
-			SDLGui_Alert(HELP_TEXT, ALERT_OK);
+			SDLGui_Open(DlgAlertOpen(HELP_TEXT, ALERT_OK));
 			break;
-
 		case CLOSE:
-			closeDialog = true;
+			retval = Dialog::GUI_CLOSE;
 			break;
-		}
 	}
-	while (!closeDialog);
 
-	Dialog_MainDlg_Close();
+	return retval;
 }
 
-/*-----------------------------------------------------------------------*/
-
-int GUImainDlg()
+void DlgMain::LoadSettings(void)
 {
-	Dialog_MainDlg();
-	if (bReboot)
-		return STATUS_REBOOT;
-	else if (bShutdown)
-		return STATUS_SHUTDOWN;
-
-	return 0;
+	if (strlen(path) == 0) {
+		strncpy(path, getConfigFile(), sizeof(path));
+		path[sizeof(path) - 1] = '\0';
+	}
+	dlgFileSelect = (DlgFileSelect *) DlgFileSelectOpen(path, false);
+	SDLGui_Open(dlgFileSelect);
+	state = STATE_LOADSETTINGS;
 }
 
-/*
-vim:ts=4:sw=4:
-*/
+void DlgMain::SaveSettings(void)
+{
+	if (strlen(path) == 0) {
+		strncpy(path, getConfigFile(), sizeof(path));
+		path[sizeof(path) - 1] = '\0';
+	}
+	dlgFileSelect = (DlgFileSelect *) DlgFileSelectOpen(path, true);
+	SDLGui_Open(dlgFileSelect);
+	state = STATE_SAVESETTINGS;
+}
+
+void DlgMain::processResult(void)
+{
+	/* We called either a fileselector, to load/save
+		or an alert box
+	*/
+	switch(state) {
+		case STATE_LOADSETTINGS:
+			if (dlgFileSelect) {
+				/* Load setting if pressed OK in fileselector */
+				if (dlgFileSelect->pressedOk()) {
+					loadSettings(path);
+				}
+			}
+			break;
+		case STATE_SAVESETTINGS:
+			if (dlgFileSelect) {
+				/* Save setting if pressed OK in fileselector */
+				if (dlgFileSelect->pressedOk()) {
+					saveSettings(path);
+				}
+			}
+			break;
+	}
+	dlgFileSelect = NULL;
+	state = STATE_MAIN;
+}
+
+DlgMain *DlgMainOpen(void)
+{
+	return new DlgMain(maindlg);
+}

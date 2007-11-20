@@ -26,24 +26,30 @@
 #include "sdlgui.h"
 #include "file.h"
 #include "tools.h"
-#include "debug.h"
 
 #include <cstdlib>
+#include <stack>
 
 #include "font8.h"
+#include "dialog.h"
+#include "dlgMain.h"
+
+#define DEBUG 0
+#include "debug.h"
 
 #define sdlscrn		gui_surf
 
 static SDL_Surface *fontgfx=NULL;
 static int fontwidth, fontheight;   /* Height and width of the actual font */
 
+static std::stack<Dialog *> dlgStack;
+
 /* gui surface */
 static SDL_Surface *gui_surf = NULL;
 static int gui_x = 0, gui_y = 0; /* gui position */
 
 /* current dialog to draw */
-static SGOBJ *gui_dlg = NULL;
-static cursor_state gui_cursor;
+static Dialog *gui_dlg = NULL;
 
 static SDL_Color gui_palette[4] = {
 	{0,0,0,0},
@@ -73,14 +79,6 @@ enum
   SG_BCKGND_RECT_RIGHT,
   SG_BCKGND_RECT_BOTTOM,
   SG_BCKGND_RECT_END
-};
-
-enum
-{
-  SG_FIRST_EDITFIELD,
-  SG_PREVIOUS_EDITFIELD,
-  SG_NEXT_EDITFIELD,
-  SG_LAST_EDITFIELD
 };
 
 /*-----------------------------------------------------------------------*/
@@ -807,13 +805,13 @@ void SDLGui_setGuiPos(int guix, int guiy)
 
 SDL_Surface *SDLGui_getSurface(void)
 {
-	/* Blink cursor ? */
-	if (++gui_cursor.blink_counter >= 10) {
-		gui_cursor.blink_counter = 0;
-		gui_cursor.blink_state = !gui_cursor.blink_state;
-		/* Redraw dialog */
-		if (gui_dlg != NULL) {
-			SDLGui_DrawCursor(gui_dlg, &gui_cursor);
+	if (gui_dlg) {
+		/* Blink cursor ? */
+		cursor_state *cursor = gui_dlg->getCursor();
+		if (++cursor->blink_counter >= 10) {
+			cursor->blink_counter = 0;
+			cursor->blink_state = !cursor->blink_state;
+			SDLGui_DrawCursor(gui_dlg->getDialog(), cursor);
 		}
 	}
 
@@ -1038,6 +1036,17 @@ void SDLGui_MoveCursor(SGOBJ *dlg, cursor_state *cursor, int mode)
   }
 }
 
+/* Deselect all buttons */
+void SDLGui_DeselectButtons(SGOBJ *dlg)
+{
+	int i = 0;
+	while (dlg[i].type != -1) {
+		if (dlg[i].type == SGBUTTON) {
+			dlg[i].state &= ~SG_SELECTED;
+		}
+		++i;
+	}
+}
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -1061,225 +1070,6 @@ void SDLGui_ClickEditField(SGOBJ *dlg, cursor_state *cursor, int clicked_obj, in
   cursor->blink_state = true;
   cursor->blink_counter = 0;
   SDLGui_DrawCursor(dlg, cursor);
-}
-
-
-/*-----------------------------------------------------------------------*/
-/*
-  Handle mouse clicks.
-*/
-int SDLGui_MouseClick(SGOBJ *dlg, int fx, int fy, cursor_state *cursor)
-{
-  int clicked_obj;
-  int return_obj = -1;
-  int original_state = 0;
-  int x, y;
-
- 	fx -= gui_x;
-	fy -= gui_y;
-   clicked_obj = SDLGui_FindObj(dlg, fx, fy);
-
-  if (clicked_obj >= 0)
-  {
-    original_state = dlg[clicked_obj].state;
-    SDLGui_UpdateObjState(dlg, clicked_obj, original_state, fx, fy);
-
-    if (dlg[clicked_obj].flags & SG_TOUCHEXIT)
-    {
-      return_obj = clicked_obj;
-      clicked_obj = -1;
-    }
-  }
-
-  while (clicked_obj >= 0)
-  {
-    SDL_Event evnt;
-    // SDL_PumpEvents() - not necessary, the main check_event thread calls it
-    if (SDL_PeepEvents(&evnt, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT)))
-    {
-      switch (evnt.user.code)
-      {
-        case SDL_USEREVENT:
-          // a signal that resolution has changed
-          // Restore clicked object original state
-          dlg[clicked_obj].state = original_state;
-
-          // re-draw dialog
-          SDLGui_DrawDialog(dlg);
-
-          // Exit from mouse click handling.
-          clicked_obj = -1;
-          break;
-
-        case SDL_MOUSEBUTTONUP:
-          x = (uintptr)evnt.user.data1-gui_x;
-          y = (uintptr)evnt.user.data2-gui_y;
-          if (SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y))
-          {
-            // true if mouse button is released over clicked object.
-            // If applicable, the object has been selected by
-            // SDLGui_UpdateObjState(). Let's do additional handling here.
-
-            // Exit if object is an SG_EXIT one.
-            if (dlg[clicked_obj].flags & SG_EXIT)
-              return_obj = clicked_obj;
-
-            // If it's a SG_RADIO object, deselect other objects in his group.
-            if (dlg[clicked_obj].flags & SG_RADIO)
-              SDLGui_SelectRadioObject(dlg, clicked_obj);
-
-            if (dlg[clicked_obj].type == SGEDITFIELD)
-              SDLGui_ClickEditField(dlg, cursor, clicked_obj, x);
-          }
-
-          // Exit from mouse click handling.
-          clicked_obj = -1;
-
-          break;
-      }
-    }
-    else
-    {
-      // No special event occured.
-      // Update object state according to mouse coordinates.
-      SDL_GetMouseState(&x, &y);
-      SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x-gui_x, y-gui_y);
-
-      // Wait a little to avoid eating CPU.
-      SDL_Delay(100);
-    }
-  }
-
-  return return_obj;
-}
-
-
-/*-----------------------------------------------------------------------*/
-/*
-  Handle key press.
-*/
-int SDLGui_KeyPress(SGOBJ *dlg, int keysym, int mod, cursor_state *cursor)
-{
-  int return_obj = -1;
-  int obj;
-
-  if (cursor->object != -1)
-  {
-    switch(keysym)
-    {
-      case SDLK_RETURN:
-      case SDLK_KP_ENTER:
-        break;
-
-      case SDLK_BACKSPACE:
-        if (cursor->position > 0)
-        {
-          memmove(&dlg[cursor->object].txt[cursor->position-1],
-                  &dlg[cursor->object].txt[cursor->position],
-                  strlen(&dlg[cursor->object].txt[cursor->position])+1);
-          cursor->position--;
-        }
-        break;
-
-      case SDLK_DELETE:
-        if(cursor->position < (int)strlen(dlg[cursor->object].txt))
-        {
-          memmove(&dlg[cursor->object].txt[cursor->position],
-                  &dlg[cursor->object].txt[cursor->position+1],
-                  strlen(&dlg[cursor->object].txt[cursor->position+1])+1);
-        }
-        break;
-
-      case SDLK_LEFT:
-        if (cursor->position > 0)
-          cursor->position--;
-        break;
-
-      case SDLK_RIGHT:
-        if (cursor->position < (int)strlen(dlg[cursor->object].txt))
-          cursor->position++;
-        break;
-
-      case SDLK_DOWN:
-        SDLGui_MoveCursor(dlg, cursor, SG_NEXT_EDITFIELD);
-        break;
-
-      case SDLK_UP:
-        SDLGui_MoveCursor(dlg, cursor, SG_PREVIOUS_EDITFIELD);
-        break;
-
-      case SDLK_TAB:
-        if (mod & KMOD_SHIFT)
-          SDLGui_MoveCursor(dlg, cursor, SG_PREVIOUS_EDITFIELD);
-        else
-          SDLGui_MoveCursor(dlg, cursor, SG_NEXT_EDITFIELD);
-        break;
-
-      case SDLK_HOME:
-        if (mod & KMOD_CTRL)
-          SDLGui_MoveCursor(dlg, cursor, SG_FIRST_EDITFIELD);
-        else
-          cursor->position = 0;
-        break;
-
-      case SDLK_END:
-        if (mod & KMOD_CTRL)
-          SDLGui_MoveCursor(dlg, cursor, SG_LAST_EDITFIELD);
-        else
-          cursor->position = strlen(dlg[cursor->object].txt);
-        break;
-
-      default:
-        if ((keysym >= SDLK_KP0) && (keysym <= SDLK_KP9))
-        {
-          // map numpad numbers to normal numbers
-          keysym -= (SDLK_KP0 - SDLK_0);
-        }
-        /* If it is a "good" key then insert it into the text field */
-        if ((keysym >= SDLK_SPACE) && (keysym < SDLK_KP0))
-        {
-          if (strlen(dlg[cursor->object].txt) < dlg[cursor->object].w)
-          {
-            memmove(&dlg[cursor->object].txt[cursor->position+1],
-                    &dlg[cursor->object].txt[cursor->position],
-                    strlen(&dlg[cursor->object].txt[cursor->position])+1);
-            if (mod & KMOD_SHIFT)
-              dlg[cursor->object].txt[cursor->position] = toupper(keysym);
-            else
-              dlg[cursor->object].txt[cursor->position] = keysym;
-            cursor->position += 1;
-          }
-        }
-        break;
-    }
-  }
-
-  switch(keysym)
-  {
-    case SDLK_RETURN:
-    case SDLK_KP_ENTER:
-      obj = SDLGui_FindDefaultObj(dlg);
-      if (obj >= 0)
-      {
-        dlg[obj].state ^= SG_SELECTED;
-        SDLGui_DrawObject(dlg, obj);
-        SDLGui_RefreshObj(dlg, obj);
-        if (dlg[obj].flags & (SG_EXIT | SG_TOUCHEXIT))
-        {
-          return_obj = obj;
-          SDL_Delay(300);
-        }
-      }
-      break;
-  }
-
-  // Force cursor display. Should ease text input.
-  cursor->blink_state = true;
-  cursor->blink_counter = 0;
-  // Redraw current edit field...
-  SDLGui_DrawCursor(dlg, cursor);
-
-  return return_obj;
 }
 
 
@@ -1403,96 +1193,80 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
   return return_rect;
 }
 
-SDL_Event getEvent(void)
+/* Process event for a dialog */
+int SDLGui_DoEvent(const SDL_Event &event)
 {
-  while(1) {
-    SDL_Event evnt;
-    if (SDL_PeepEvents(&evnt, 1, SDL_GETEVENT, SDL_EVENTMASK(SDL_USEREVENT)))
-    {
-      SDL_Event e;
-      switch(evnt.user.code)
-      {
-      	case SDL_KEYDOWN:
-	case SDL_KEYUP:
-	  e.type = evnt.user.code;
-          e.key.keysym.sym = (SDLKey)(uintptr)evnt.user.data1;
-          e.key.keysym.mod = (SDLMod)(uintptr)evnt.user.data2;
-	  return e;
+	int retval = Dialog::GUI_CONTINUE;
 
-        case SDL_MOUSEBUTTONDOWN:
-	case SDL_MOUSEBUTTONUP:
-	  e.type = evnt.user.code;
-          e.button.x = (uintptr)evnt.user.data1;
-          e.button.y = (uintptr)evnt.user.data2;
-	  return e;
-      }
-    }
-    else
-    {
-      // No special event occured.
-      // Wait a little to avoid eating CPU.
-      SDL_Delay(50);
-    }
-  }
+	if (gui_dlg) {
+		gui_dlg->idle();
+
+		switch(event.type) {
+			case SDL_KEYDOWN:
+				gui_dlg->keyPress(event);
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				gui_dlg->mouseClick(event, gui_x, gui_y);
+				break;
+		}
+
+		retval = gui_dlg->processDialog();
+
+		if (retval != Dialog::GUI_CONTINUE) {
+			Dialog *prev_dlg = NULL;
+			dlgStack.pop();
+			if (!dlgStack.empty()) {
+				prev_dlg = dlgStack.top();		
+
+				/* Process result of called dialog */
+				prev_dlg->processResult();
+
+				/* Continue displaying GUI with previous dialog */
+				retval = Dialog::GUI_CONTINUE;
+			}
+
+			/* Close current dialog */
+			delete gui_dlg;
+
+			/* Set dialog to previous one */
+			gui_dlg = prev_dlg;
+			if (gui_dlg) {
+				gui_dlg->init();
+			}
+		}
+	}
+
+	return retval;
 }
 
-/*-----------------------------------------------------------------------*/
-/*
-  Show and process a dialog. Returns the button number that has been
-  pressed. Does NOT handle SDL_QUIT - you must handle it before you
-  pass the input event to the SDL GUI.
-*/
-int SDLGui_DoDialog(SGOBJ *dlg)
+/* Open a dialog */
+void SDLGui_Open(Dialog *new_dlg)
 {
-  int return_obj = -1;
-  int obj;
-  int x, y;
+	if (new_dlg==NULL) {
+		/* Open main as default */
+		new_dlg = DlgMainOpen();
+	}
 
-  // Is the left mouse button still pressed? Yes -> Handle TOUCHEXIT objects here
-  bool stillPressed = (SDL_GetMouseState(&x, &y) & SDL_BUTTON(1));
-  obj = SDLGui_FindObj(dlg, x, y);
-  if (stillPressed && (obj >= 0) && (dlg[obj].flags & SG_TOUCHEXIT))
-  {
-    // Mouse button is pressed over a TOUCHEXIT Button
-    // Toogle its state before drawing anything (it has been deselected before).
-    dlg[obj].state ^= SG_SELECTED;
+	dlgStack.push(new_dlg);
 
-    return_obj = obj;
-  }
+	gui_dlg = dlgStack.top();
+	gui_dlg->init();	
+}
 
-  gui_dlg = dlg;
+void SDLGui_Close(void)
+{
+	/* Empty the dialog stack */
+	while (!dlgStack.empty()) {
+		Dialog *dlg = dlgStack.top();
+		delete dlg;
+		dlgStack.pop();
+	}
 
-  gui_cursor.object = SDLGui_FindEditField(dlg, -1, SG_FIRST_EDITFIELD);
-  gui_cursor.position = (gui_cursor.object != -1) ? strlen(dlg[gui_cursor.object].txt) : 0;
-  gui_cursor.blink_counter = 0;
-  gui_cursor.blink_state = true;
+	gui_dlg = NULL;
+}
 
-  SDLGui_DrawDialog(dlg);
-
-  /* The main loop */
-  while (return_obj < 0)
-  {
-    SDL_Event evnt = getEvent();
-    switch(evnt.type)
-      {
-      	case SDL_KEYDOWN:
-          return_obj = SDLGui_KeyPress(dlg, evnt.key.keysym.sym, evnt.key.keysym.mod, &gui_cursor);
-      	  break;
-
-        case SDL_MOUSEBUTTONDOWN:
-          return_obj = SDLGui_MouseClick(dlg, evnt.button.x, evnt.button.y, &gui_cursor);
-          break;
-      }
-  }
-
-  if (dlg[return_obj].type == SGBUTTON)
-  {
-    // Deselect button...
-    // BUG: This should be caller responsibility
-    dlg[return_obj].state ^= SG_SELECTED;
-  }
-
-  gui_dlg = NULL;
-
-  return return_obj;
+bool SDLGui_isClosed(void)
+{
+	return (gui_dlg == NULL);
 }
