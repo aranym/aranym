@@ -1,3 +1,7 @@
+2007/11/22 - Patrice
+- main: forgot to redraw screen when starting with GUI enabled
+
+
 2007/11/20 - Patrice
 - hostscreen: remove mutex and associated lock/unlock functions.
 
