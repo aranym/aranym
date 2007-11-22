@@ -460,6 +460,7 @@ bool InitAll(void)
 		open_GUI();
 		do {
 			check_event();			// process mouse & keyboard events
+			host->hostScreen.refresh();
 			SDL_Delay(1);
 		} while(!SDLGui_isClosed());
 	}
