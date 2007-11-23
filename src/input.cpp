@@ -774,7 +774,7 @@ static void process_mouse_event(const SDL_Event &event)
 #endif
 
 	// send the mouse data packet
-	if (xrel || yrel || lastbut != but) {
+	if ((xrel || yrel || lastbut != but) && grabbedMouse) {
 		if (xrel < -250 || xrel > 250 || yrel < -250 || yrel > 250) {
 			bug("Reseting weird mouse packet: %d, %d, %d", xrel, yrel, but);
 			xrel = yrel = 0;	// reset the values otherwise ikbd gets crazy
@@ -923,3 +923,7 @@ void check_event()
 		Quit680x0();	// forces CPU to quit the loop
 	}
 }
+
+/*
+vim:ts=4:sw=4:
+*/
