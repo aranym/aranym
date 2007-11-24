@@ -34,6 +34,10 @@
 
 #define EINVFN -32
 
+static const uint8 tos_colours[] = { 0,255,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
+#define toTosColors( color ) \
+    ( (color)<(sizeof(tos_colours)/sizeof(*tos_colours)) ? tos_colours[color] : ((color) == 255 ? 15 : (color)) )
+
 /*--- Types ---*/
 
 /*--- Variables ---*/
@@ -1462,7 +1466,7 @@ void SoftVdiDriver::setColor(memptr /*vwk*/, uint32 paletteIndex, uint32 red,
 	color.g = (green*255 + 500) / 1000;
 	color.b = (blue*255 + 500) / 1000;
 
-	SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, &color, paletteIndex, 1);
+	SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, &color, toTosColors(paletteIndex), 1);
 }
 
 int32 SoftVdiDriver::getFbAddr(void)

@@ -1,9 +1,13 @@
+2007/11/24 - Patrice
+- nfvdi_soft: Put back vdi->hw palette mapping.
+
+
 2007/11/23 - Patrice
-- input: do not send mouse motion events to ikbd if mouse not grabbed
+- input: do not send mouse motion events to ikbd if mouse not grabbed.
 
 
 2007/11/22 - Patrice
-- main: forgot to redraw screen when starting with GUI enabled
+- main: forgot to redraw screen when starting with GUI enabled.
 
 
 2007/11/20 - Patrice
