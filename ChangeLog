@@ -1,7 +1,9 @@
+2007/11/25 - Patrice
+- dirty rects: Don't set flag outside boundaries.
+
 2007/11/25 - Andreas
 - configure.ac: Don't clobber srcdir.
 - Makefile.in: append src to srcdir here.
-
 
 2007/11/25 - Petr
 - building system moved to the top-level directory
@@ -12,6 +14,7 @@
 - SDL-GUI fonts: 8x8 font (font8.h) replaced by 8x16 font (font.h)
 - sdlgui.cpp: try to load "font" file from the ARAnyM config folder. Fall back
   to hardwired 8x16 font if not successful.
+
 
 
 2007/11/24 - Patrice

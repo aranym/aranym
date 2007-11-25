@@ -79,7 +79,9 @@ void DirtyRects::setDirtyRect(int x, int y, int w, int h)
 
 	for (y=y1;y<y2;y++) {
 		for(x=x1;x<x2;x++) {
-			dirtyMarker[y*dirtyW+x]=1;
+			if ((x>=0) && (x<dirtyW) && (y>=0) && (y<dirtyH)) {
+				dirtyMarker[y*dirtyW+x]=1;
+			}
 		}
 	}
 }
