@@ -1,0 +1,12 @@
+autom4te.cache
+gen_i386
+obj_i386
+Makefile
+aclocal.m4
+aranym
+aratapif
+config.h
+config.h.in
+config.log
+config.status
+configure
