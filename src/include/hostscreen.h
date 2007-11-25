@@ -107,6 +107,7 @@ class HostScreen: public DirtyRects
 
 	int	refreshCounter;
 	void	refresh(void);
+	void	forceRefreshScreen(void);
 
 	bool	renderVidelSurface;
 	void	setVidelRendering(bool videlRender);

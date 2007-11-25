@@ -469,6 +469,8 @@ void close_GUI(void)
 	if (grabbedMouse) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	}
+
+	host->hostScreen.forceRefreshScreen();
 }
 
 #endif /* SDL_GUI */

@@ -929,6 +929,13 @@ void HostScreen::refreshScreen(void)
 	clearDirtyRects();
 }
 
+void HostScreen::forceRefreshScreen(void)
+{
+	forceRefreshNfvdi();
+	if (mainSurface) {
+		setDirtyRect(0,0, mainSurface->w, mainSurface->h);
+	}
+}
 
 /*
 vim:ts=4:sw=4:
