@@ -8,6 +8,11 @@
   configure.ac, Makefile.in: adapted for new paths
   install-sh, config.*, acinclude.m4, autogen.sh: just copied
   Simply run "./autogen.sh", "./configure && make" in the top-level dir now.
+  
+- SDL-GUI fonts: 8x8 font (font8.h) replaced by 8x16 font (font.h)
+- sdlgui.cpp: try to load "font" file from the ARAnyM config folder. Fall back
+  to hardwired 8x16 font if not successful.
+
 
 2007/11/24 - Patrice
 - nfvdi_soft: Put back vdi->hw palette mapping.
