@@ -1,3 +1,9 @@
+2007/11/25 - Petr
+- building system moved to the top-level directory
+  configure.ac, Makefile.in: adapted for new paths
+  install-sh, config.*, acinclude.m4, autogen.sh: just copied
+  Simply run "./autogen.sh", "./configure && make" in the top-level dir now.
+
 2007/11/24 - Patrice
 - nfvdi_soft: Put back vdi->hw palette mapping.
 
