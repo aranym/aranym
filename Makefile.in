@@ -1,0 +1,556 @@
+# Unix makefile for ARAnyM
+# Inspired in BasiliskII's Makefile
+
+## System specific configuration
+@SET_MAKE@
+SHELL = /bin/sh
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+datadir = @datadir@
+mandir = @mandir@
+man1dir = $(mandir)/man1
+docdir = $(prefix)/share/doc
+srcdir = @srcdir@
+
+DESTDIR =
+CPU_TYPE = @CPU_TYPE@
+
+CC = @CC@
+CXX = @CXX@
+CFLAGS = @CFLAGS@ $(SDL_CFLAGS)
+CXXFLAGS = @CXXFLAGS@ $(SDL_CFLAGS)
+CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I. -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@
+ARCHFLAGS = @ARCHFLAGS@
+WFLAGS = @WFLAGS@
+DEFS = @DEFS@ @DEFINES@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@ $(SDL_LIBS)
+SDL_LIBS = @SDL_LIBS@
+SDL_CONFIG = @SDL_CONFIG@
+SDL_CFLAGS = @SDL_CFLAGS@
+SYSSRCS = @SYSSRCS@
+CPUSRCS = @CPUSRCS@
+GENCPUSRCS = @GENCPUSRCS@
+DSPSRCS = @DSPSRCS@
+MIDISEQSRCS = @MIDISEQSRCS@
+NFCDROMSRCS = @NFCDROMSRCS@
+NFPCISRCS = @NFPCISRCS@
+NFOSMESASRCS = @NFOSMESASRCS@
+NFJPEGSRCS = @NFJPEGSRCS@
+NFVDISRCS = @NFVDISRCS@
+NFCLIPBOARDSRCS = @NFCLIPBOARDSRCS@
+PARALLELX86SRCS = @PARALLELX86SRCS@
+PARALLELPARPORTSRCS = @PARALLELPARPORTSRCS@
+GUISDLSRCS = @GUISDLSRCS@
+DYNGLSRCS = @DYNGLSRCS@
+DBGSP = @DBGSP@
+TAPIF = @TAPIF@
+
+ACLOCAL = aclocal
+AUTOCONF = autoconf
+AUTOHEADER = autoheader
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ -s
+INSTALL_DATA = @INSTALL_DATA@
+
+host_alias = @host_alias@
+host_triplet = @host@
+
+## Files
+SRCS = main.cpp \
+	Unix/main_unix.cpp \
+	Unix/vm_alloc.cpp \
+	Unix/host_clock_unix.cpp \
+	acia.cpp \
+	acsifdc.cpp \
+	aradata.cpp \
+	aranym_exception.cpp \
+	ata.cpp \
+	audio_dma.cpp \
+	audio_crossbar.cpp \
+	blitter.cpp \
+	bootos.cpp \
+	bootos_tos.cpp \
+	bootos_emutos.cpp \
+	bootos_linux.cpp \
+	cdrom.cpp \
+	cfgopts.cpp \
+	dirty_rects.cpp \
+	dsp.cpp \
+	emul_op.cpp \
+	natfeats.cpp \
+	fakeio.cpp \
+	hardware.cpp \
+	host.cpp \
+	host_audio.cpp \
+	host_clock.cpp \
+	hostscreen.cpp \
+	ide.cpp \
+	identify.cpp \
+	ikbd.cpp \
+	input.cpp \
+	logo.cpp \
+	md5.cpp \
+	mfp.cpp \
+	midi.cpp \
+	midi_file.cpp \
+	mmu.cpp \
+	ndebug.cpp \
+	ncr5380.cpp \
+	parallel.cpp \
+	parallel_file.cpp \
+	parameters.cpp \
+	romdiff.cpp \
+	rtc.cpp \
+	tools.cpp \
+	videl.cpp \
+	videl_zoom.cpp \
+	yamaha.cpp \
+	natfeat/nf_base.cpp \
+	natfeat/nf_objs.cpp \
+	natfeat/xhdi.cpp \
+	natfeat/nfaudio.cpp \
+	natfeat/nfbootstrap.cpp \
+	natfeat/nf_basicset.cpp \
+	natfeat/debugprintf.cpp \
+	$(MIDISEQSRCS) \
+	$(NFCDROMSRCS) \
+	$(NFPCISRCS) \
+	$(NFOSMESASRCS) \
+	$(NFJPEGSRCS) \
+	$(NFVDISRCS) \
+	$(NFCLIPBOARDSRCS) \
+	$(PARALLELX86SRCS) \
+	$(PARALLELPARPORTSRCS) \
+	$(SYSSRCS) \
+	$(CPUSRCS) \
+	$(DSPSRCS) \
+	$(LILOSRCS) \
+	$(GUISDLSRCS) \
+	$(DYNGLSRCS)
+
+BUNDLE_RESOURCES = \
+	$(srcdir)/Unix/darwin/busybee.icns \
+	
+BUNDLE_LOCALIZATON_FOLDERS = \
+	$(srcdir)/Unix/darwin/*.lproj
+	
+BUNDLE_CONTENTS = \
+	$(srcdir)/Unix/darwin/Info.plist \
+	$(srcdir)/Unix/darwin/PkgInfo 	
+
+BUNDLE_FRAMEWORKS =  /Library/Frameworks/SDL.framework /Library/Frameworks/SDL_image.framework
+
+APP = aranym
+APP_ARCH = aranym_$(CPU_TYPE)
+APP_STATIC = aranym_static
+APP_LIB = libaranym.a
+APP_BUNDLE = ARAnyM.app
+APP_IFC = aratapif
+TARGET = @TARGET@
+
+## Rules
+.PHONY: install installdirs uninstall mostlyclean clean distclean depend dep $(APP_BUNDLE)
+.SUFFIXES:
+.SUFFIXES: .c .cpp .s .o .h .m .M
+
+all: $(TARGET) $(TAPIF)
+
+OBJ_DIR = obj_@CPU_TYPE@
+$(OBJ_DIR)::
+	@[ -d $(OBJ_DIR) ] || mkdir $(OBJ_DIR) > /dev/null 2>&1
+GEN_DIR = gen_@CPU_TYPE@
+$(GEN_DIR)::
+	@[ -d $(GEN_DIR) ] || mkdir $(GEN_DIR) > /dev/null 2>&1
+
+define SRCS_LIST_TO_OBJS
+	$(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(foreach file, $(GENCPUSRCS) $(SRCS), \
+	$(basename $(notdir $(file))))))
+endef
+
+OBJS = $(SRCS_LIST_TO_OBJS)
+
+SRC_PATHS += $(sort $(GEN_DIR)/ $(foreach file, $(SRCS), $(dir $(file))))
+empty:=
+space:= $(empty) $(empty)
+VPATH += $(subst $(space),:,$(strip $(addprefix $(filter-out ./,$(srcdir)/), $(SRC_PATHS))))
+
+$(APP): $(OBJ_DIR) $(GEN_DIR) $(OBJS)
+	$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJS) $(LIBS)
+
+$(APP_ARCH): $(OBJ_DIR) $(GEN_DIR) $(OBJS)
+	$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJS) $(LIBS)
+
+$(APP_STATIC): $(OBJ_DIR) $(GEN_DIR) $(OBJS)
+	$(CXX) -o $@ -static $(LDFLAGS) $(ARCHFLAGS) $(OBJS) $(LIBS)
+
+$(APP_LIB): $(OBJ_DIR) $(GEN_DIR) $(OBJS)
+	$(LD) -r -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJS) $(LIBS)
+
+$(APP_BUNDLE): $(APP)
+	rm -rf $(APP_BUNDLE)
+	mkdir -p $(APP_BUNDLE)/Contents
+	cp -r $(BUNDLE_CONTENTS) $(APP_BUNDLE)/Contents
+	mkdir -p $(APP_BUNDLE)/Contents/MacOS
+	cp $(APP) $(APP_BUNDLE)/Contents/MacOS
+	#mkdir -p $(APP_BUNDLE)/Contents/ARAnyM
+	mkdir -p $(APP_BUNDLE)/Contents/Resources
+	mkdir -p $(APP_BUNDLE)/Contents/Frameworks
+	for fwFolder in $(BUNDLE_FRAMEWORKS); do \
+	    if test -d $$fwFolder; then \
+		cp -rp $$fwFolder $(APP_BUNDLE)/Contents/Frameworks/; \
+	    fi; \
+	done
+	cp -r $(BUNDLE_RESOURCES) $(APP_BUNDLE)/Contents/Resources
+	for locFolder in $(BUNDLE_LOCALIZATON_FOLDERS); do \
+		cp -R $$locFolder $(APP_BUNDLE)/Contents/Resources/; \
+	done
+	find $(APP_BUNDLE)/Contents/Resources -type d -and \( -name CVS -or -name \*~.nib \) -or -name \*~ -or -name \*.bak | xargs rm -rf
+
+install: $(APP) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz installdirs
+	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
+	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
+	$(INSTALL_PROGRAM) $(APP_IFC) $(DESTDIR)$(bindir)/$(APP_IFC);\
+	$(INSTALL_DATA) $(APP_IFC).1.gz $(DESTDIR)$(man1dir)/$(APP_IFC).1.gz ;\
+	fi
+	$(INSTALL_DATA) $(APP).1.gz $(DESTDIR)$(man1dir)/$(APP).1.gz
+	$(INSTALL_DATA) $(APP)-jit.1.gz $(DESTDIR)$(man1dir)/$(APP)-jit.1.gz
+	$(INSTALL_DATA) $(APP)-mmu.1.gz $(DESTDIR)$(man1dir)/$(APP)-mmu.1.gz
+	$(INSTALL_DATA) $(srcdir)/../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog
+	$(INSTALL_DATA) $(srcdir)/../TODO $(DESTDIR)$(docdir)/$(APP)/TODO
+	$(INSTALL_DATA) $(srcdir)/../AUTHORS $(DESTDIR)$(docdir)/$(APP)/AUTHORS
+	$(INSTALL_DATA) $(srcdir)/../NEWS $(DESTDIR)$(docdir)/$(APP)/NEWS
+	$(INSTALL_DATA) $(srcdir)/../README $(DESTDIR)$(docdir)/$(APP)/README
+	$(INSTALL_DATA) $(srcdir)/../FAQ $(DESTDIR)$(docdir)/$(APP)/FAQ
+	$(INSTALL_DATA) $(srcdir)/../COPYING $(DESTDIR)$(docdir)/$(APP)/COPYING
+	$(INSTALL_DATA) $(srcdir)/../BUGS $(DESTDIR)$(docdir)/$(APP)/BUGS
+	$(INSTALL_DATA) $(srcdir)/../INSTALL $(DESTDIR)$(docdir)/$(APP)/INSTALL
+	$(INSTALL_DATA) $(srcdir)/../doc/config $(DESTDIR)$(docdir)/$(APP)/config
+	$(INSTALL_DATA) $(srcdir)/../atari/newdesk.inf $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
+	$(INSTALL_DATA) $(srcdir)/../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
+	$(INSTALL_DATA) $(srcdir)/../atari/hostfs/bdconfig.sys $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	$(INSTALL_DATA) $(srcdir)/../atari/hostfs/README $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
+	$(INSTALL_DATA) $(srcdir)/../atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
+	$(INSTALL_DATA) $(srcdir)/../atari/network/ethernet/README $(DESTDIR)$(datadir)/$(APP)/atari/network/README
+	$(INSTALL) $(srcdir)/../tools/arabridge $(DESTDIR)$(datadir)/$(APP)/arabridge
+	$(INSTALL) $(srcdir)/../tools/floppy.sh $(DESTDIR)$(datadir)/$(APP)/floppy.sh
+	$(INSTALL_DATA) $(srcdir)/../atari/tools/README $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
+	$(INSTALL_DATA) $(srcdir)/../atari/tools/pc101us.kbd.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
+	$(INSTALL_DATA) $(srcdir)/../atari/sound/README $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
+	
+installdirs:
+	$(SHELL) $(srcdir)/mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/hostfs $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa $(DESTDIR)$(datadir)/$(APP)/atari/network $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
+
+uninstall:
+	rm -f $(DESTDIR)$(bindir)/$(APP)
+	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
+	rm -f $(DESTDIR)$(bindir)/$(APP_IFC);\
+	rm -f $(DESTDIR)$(man1dir)/$(APP_IFC).1.gz ;\
+	fi
+	rm -f $(DESTDIR)$(man1dir)/$(APP).1.gz
+	rm -f $(DESTDIR)$(man1dir)/$(APP)-jit.1.gz
+	rm -f $(DESTDIR)$(man1dir)/$(APP)-mmu.1.gz
+	rm -f $(DESTDIR)$(docdir)/$(APP)/changelog
+	rm -f $(DESTDIR)$(docdir)/$(APP)/TODO
+	rm -f $(DESTDIR)$(docdir)/$(APP)/AUTHORS
+	rm -f $(DESTDIR)$(docdir)/$(APP)/NEWS
+	rm -f $(DESTDIR)$(docdir)/$(APP)/README
+	rm -f $(DESTDIR)$(docdir)/$(APP)/FAQ
+	rm -f $(DESTDIR)$(docdir)/$(APP)/COPYING
+	rm -f $(DESTDIR)$(docdir)/$(APP)/BUGS
+	rm -f $(DESTDIR)$(docdir)/$(APP)/INSTALL
+	rm -f $(DESTDIR)$(docdir)/$(APP)/config
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/newdesk.inf
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/README
+	rm -f $(DESTDIR)$(datadir)/$(APP)/arabridge
+	rm -f $(DESTDIR)$(datadir)/$(APP)/floppy.sh
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/hostfs
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/network
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/tools
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/sound
+	rmdir $(DESTDIR)$(datadir)/$(APP)/atari
+	rmdir $(DESTDIR)$(datadir)/$(APP)
+	rmdir $(DESTDIR)$(docdir)/$(APP)
+
+mostlyclean:
+	rm -r -f $(TARGET) $(APP_LIB) $(APP_ARCH) $(APP_STATIC) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz $(OBJ_DIR)/* core* *.core *~ *.bak
+
+clean: mostlyclean
+	rm -rf $(GEN_DIR)
+
+distclean: clean
+	rm -rf $(OBJ_DIR)
+	rm -f Makefile
+	rm -f config.cache config.log config.status config.h
+	rm -f cmos aranymtest.rc
+	rm -rf autom4te.cache
+
+mrproper: distclean
+	rm -f aclocal.m4 configure config.h.in
+
+bindistdirs:
+	$(SHELL) $(srcdir)/mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
+
+bindist: $(APP) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz bindistdirs
+	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
+	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
+	$(INSTALL_PROGRAM) $(APP_IFC) tmpdist$(bindir)/$(APP_IFC);\
+	$(INSTALL_DATA) $(APP_IFC).1.gz tmpdist$(man1dir)/$(APP_IFC).1.gz ;\
+	fi
+	$(INSTALL_DATA) $(APP).1.gz tmpdist$(man1dir)/$(APP).1.gz
+	$(INSTALL_DATA) $(APP)-jit.1.gz tmpdist$(man1dir)/$(APP)-jit.1.gz
+	$(INSTALL_DATA) $(APP)-mmu.1.gz tmpdist$(man1dir)/$(APP)-mmu.1.gz
+	$(INSTALL_DATA) $(srcdir)/../ChangeLog tmpdist$(docdir)/$(APP)/changelog
+	$(INSTALL_DATA) $(srcdir)/../TODO tmpdist$(docdir)/$(APP)/TODO
+	$(INSTALL_DATA) $(srcdir)/../AUTHORS tmpdist$(docdir)/$(APP)/AUTHORS
+	$(INSTALL_DATA) $(srcdir)/../NEWS tmpdist$(docdir)/$(APP)/NEWS
+	$(INSTALL_DATA) $(srcdir)/../README tmpdist$(docdir)/$(APP)/README
+	$(INSTALL_DATA) $(srcdir)/../FAQ tmpdist$(docdir)/$(APP)/FAQ
+	$(INSTALL_DATA) $(srcdir)/../COPYING tmpdist$(docdir)/$(APP)/COPYING
+	$(INSTALL_DATA) $(srcdir)/../BUGS tmpdist$(docdir)/$(APP)/BUGS
+	$(INSTALL_DATA) $(srcdir)/../INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
+	$(INSTALL_DATA) $(srcdir)/../doc/config tmpdist$(docdir)/$(APP)/config
+	$(INSTALL_DATA) $(srcdir)/../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
+	$(INSTALL_DATA) $(srcdir)/../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
+	$(INSTALL_DATA) $(srcdir)/../atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	$(INSTALL_DATA) $(srcdir)/../atari/hostfs/README tmpdist$(datadir)/$(APP)/atari/hostfs/README
+	$(INSTALL_DATA) $(srcdir)/../atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
+	$(INSTALL_DATA) $(srcdir)/../atari/network/ethernet/README tmpdist$(datadir)/$(APP)/atari/network/README
+	$(INSTALL) $(srcdir)/../tools/arabridge tmpdist$(datadir)/$(APP)/arabridge
+	$(INSTALL) $(srcdir)/../tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
+	$(INSTALL_DATA) $(srcdir)/../atari/tools/README tmpdist$(datadir)/$(APP)/atari/tools/README
+	$(INSTALL_DATA) $(srcdir)/../atari/tools/pc101us.kbd.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
+	$(INSTALL_DATA) $(srcdir)/../atari/sound/README tmpdist$(datadir)/$(APP)/atari/sound/README
+	chmod -R a+r tmpdist
+	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
+	rm -rf tmpdist
+
+devdist: mrproper 
+	cd $(srcdir)/../../ && GZIP=--best tar chozf $(APP).tar.gz aranym
+
+dist: distclean
+	cd $(srcdir)/../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore aranym
+
+depend dep:
+	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' Makefile > Makefile.new
+	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) | sed 's=^[^:]*:=$(OBJ_DIR)/&=' >> Makefile.new
+	mv Makefile.new Makefile
+
+$(OBJ_DIR)/%.o : %.c
+	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o : %.m
+	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o : %.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o : %.M
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/%.o : %.s
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
+
+$(GEN_DIR)/%.o : %.c
+	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) -c $< -o $@
+$(GEN_DIR)/%.o : %.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
+$(GEN_DIR)/%.o : %.s
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(CFLAGS) -c $< -o $@
+
+$(GEN_DIR)/cpuopti: $(GEN_DIR)/cpuopti.o
+	$(CC) $(LDFLAGS) -o $(GEN_DIR)/cpuopti $(GEN_DIR)/cpuopti.o
+$(GEN_DIR)/build68k: $(GEN_DIR)/build68k.o
+	$(CC) $(LDFLAGS) -o $(GEN_DIR)/build68k $(GEN_DIR)/build68k.o
+$(GEN_DIR)/gencpu: $(GEN_DIR)/gencpu.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
+	$(CXX) $(LDFLAGS) -o $(GEN_DIR)/gencpu $(GEN_DIR)/gencpu.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
+$(GEN_DIR)/gencomp: $(GEN_DIR)/gencomp.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
+	$(CXX) $(LDFLAGS) -o $(GEN_DIR)/gencomp $(GEN_DIR)/gencomp.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
+
+$(GEN_DIR)/cpudefs.cpp: $(GEN_DIR)/build68k uae_cpu/table68k
+	$(GEN_DIR)/build68k <$(srcdir)/uae_cpu/table68k > $(GEN_DIR)/cpudefs.cpp
+$(GEN_DIR)/cpuemu.cpp: $(GEN_DIR)/gencpu
+	cd $(GEN_DIR); ./gencpu
+$(GEN_DIR)/compemu.cpp: $(GEN_DIR)/gencomp
+	cd $(GEN_DIR); ./gencomp
+
+$(GEN_DIR)/cpustbl_nf.cpp: $(GEN_DIR)/cpuemu.cpp 
+$(GEN_DIR)/cpustbl.cpp: $(GEN_DIR)/cpuemu.cpp 
+$(GEN_DIR)/cputbl.h: $(GEN_DIR)/cpuemu.cpp
+$(GEN_DIR)/compstbl.cpp: $(GEN_DIR)/compemu.cpp
+$(GEN_DIR)/comptbl.h: $(GEN_DIR)/compemu.cpp
+
+$(OBJ_DIR)/cpustbl_nf.o: $(GEN_DIR)/cpustbl.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -DNOFLAGS -c $< -o $@
+$(OBJ_DIR)/cpustbl.o: $(GEN_DIR)/cpustbl.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpudefs.o: $(GEN_DIR)/cpudefs.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/compstbl.o: $(GEN_DIR)/compstbl.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+
+$(GEN_DIR)/cpustbl.o: $(GEN_DIR)/cpustbl.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
+$(GEN_DIR)/cpudefs.o: $(GEN_DIR)/cpudefs.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/compemu_support.o: compemu_support.cpp codegen_x86.cpp $(GEN_DIR)/comptbl.h
+
+$(OBJ_DIR)/cpuemu1.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu2.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu3.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu4.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu5.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu6.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu7.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu8.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/cpuemu1_nf.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu2_nf.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu3_nf.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu4_nf.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu5_nf.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu6_nf.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu7_nf.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpuemu8_nf.o: $(GEN_DIR)/cpuemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/compemu1.o: $(GEN_DIR)/compemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/compemu2.o: $(GEN_DIR)/compemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/compemu3.o: $(GEN_DIR)/compemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/compemu4.o: $(GEN_DIR)/compemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/compemu5.o: $(GEN_DIR)/compemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/compemu6.o: $(GEN_DIR)/compemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/compemu7.o: $(GEN_DIR)/compemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/compemu8.o: $(GEN_DIR)/compemu.cpp
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+
+$(GEN_DIR)/cpufast.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp.s >$@ || mv $(GEN_DIR)/cputmp.s $@
+	rm -f $(GEN_DIR)/cputmp.s
+$(GEN_DIR)/cpufast1.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp1.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp1.s >$@ || mv $(GEN_DIR)/cputmp1.s $@
+	rm -f $(GEN_DIR)/cputmp1.s
+$(GEN_DIR)/cpufast2.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp2.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp2.s >$@ || mv $(GEN_DIR)/cputmp2.s $@
+	rm -f $(GEN_DIR)/cputmp2.s
+$(GEN_DIR)/cpufast3.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp3.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp3.s >$@ || mv $(GEN_DIR)/cputmp3.s $@
+	rm -f $(GEN_DIR)/cputmp3.s
+$(GEN_DIR)/cpufast4.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp4.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp4.s >$@ || mv $(GEN_DIR)/cputmp4.s $@
+	rm -f $(GEN_DIR)/cputmp4.s
+$(GEN_DIR)/cpufast5.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp5.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp5.s >$@ || mv $(GEN_DIR)/cputmp5.s $@
+	rm -f $(GEN_DIR)/cputmp5.s
+$(GEN_DIR)/cpufast6.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp6.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp6.s >$@ || mv $(GEN_DIR)/cputmp6.s $@
+	rm -f $(GEN_DIR)/cputmp6.s
+$(GEN_DIR)/cpufast7.s: $(GEN_DIR)/cpuemu.cpp $(OBJ_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp7.s
+	$(OBJ_DIR)/cpuopti <$(GEN_DIR)/cputmp7.s >$@ || mv $(GEN_DIR)/cputmp7.s $@
+	rm -f $(GEN_DIR)/cputmp7.s
+$(GEN_DIR)/cpufast8.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp8.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp8.s >$@ || mv $(GEN_DIR)/cputmp8.s $@
+	rm -f $(GEN_DIR)/cputmp8.s
+
+$(GEN_DIR)/cpufast_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DNOFLAGS -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp.s >$@ || mv $(GEN_DIR)/cputmp.s $@
+	rm -f $(GEN_DIR)/cputmp.s
+$(GEN_DIR)/cpufast1_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 -DNOFLAGS -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp1.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp1.s >$@ || mv $(GEN_DIR)/cputmp1.s $@
+	rm -f $(GEN_DIR)/cputmp1.s
+$(GEN_DIR)/cpufast2_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 -DNOFLAGS -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp2.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp2.s >$@ || mv $(GEN_DIR)/cputmp2.s $@
+	rm -f $(GEN_DIR)/cputmp2.s
+$(GEN_DIR)/cpufast3_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 -DNOFLAGS -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp3.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp3.s >$@ || mv $(GEN_DIR)/cputmp3.s $@
+	rm -f $(GEN_DIR)/cputmp3.s
+$(GEN_DIR)/cpufast4_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 -DNOFLAGS -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp4.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp4.s >$@ || mv $(GEN_DIR)/cputmp4.s $@
+	rm -f $(GEN_DIR)/cputmp4.s
+$(GEN_DIR)/cpufast5_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 -DNOFLAGS -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp5.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp5.s >$@ || mv $(GEN_DIR)/cputmp5.s $@
+	rm -f $(GEN_DIR)/cputmp5.s
+$(GEN_DIR)/cpufast6_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 -DNOFLAGS -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp6.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp6.s >$@ || mv $(GEN_DIR)/cputmp6.s $@
+	rm -f $(GEN_DIR)/cputmp6.s
+$(GEN_DIR)/cpufast7_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 -DNOFLAGS -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp7.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp7.s >$@ || mv $(GEN_DIR)/cputmp7.s $@
+	rm -f $(GEN_DIR)/cputmp7.s
+$(GEN_DIR)/cpufast8_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
+	$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 -DNOFLAGS -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp8.s
+	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp8.s >$@ || mv $(GEN_DIR)/cputmp8.s $@
+	rm -f $(GEN_DIR)/cputmp8.s
+
+# For tests
+$(GEN_DIR)/newcpu.s: newcpu.cpp
+	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) $< -o $@
+
+$(GEN_DIR)/memory.s: memory.cpp
+	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) $< -o $@
+
+$(APP_IFC): aratapif.c
+	$(CC) $(LDFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $(APP_IFC) -DHAVE_AFINET $(srcdir)/Unix/aratapif.c
+
+$(APP).1.gz: ../doc/$(APP).1
+	gzip -9 -c $(srcdir)/../doc/$(APP).1 > $(APP).1.gz
+
+$(APP)-jit.1.gz: ../doc/$(APP)-jit.1
+	gzip -9 -c $(srcdir)/../doc/$(APP)-jit.1 > $(APP)-jit.1.gz
+
+$(APP)-mmu.1.gz: ../doc/$(APP)-mmu.1
+	gzip -9 -c $(srcdir)/../doc/$(APP)-mmu.1 > $(APP)-mmu.1.gz
+
+$(APP_IFC).1.gz: ../doc/$(APP_IFC).1
+	gzip -9 -c $(srcdir)/../doc/$(APP_IFC).1 > $(APP_IFC).1.gz
+
+#-------------------------------------------------------------------------
+# DO NOT DELETE THIS LINE -- make depend depends on it.
