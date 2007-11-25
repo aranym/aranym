@@ -2,6 +2,8 @@
 - dirty rects: Don't set flag outside boundaries.
 - hostscreen: remove mutex for vbl update stuff.
 - input: Force screen refresh when closing gui.
+- host_surface: New base class that will hold SDL_Surface used also for texture
+  with OpenGL renderer.
 
 2007/11/25 - Andreas
 - configure.ac: Don't clobber srcdir.
