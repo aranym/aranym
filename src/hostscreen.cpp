@@ -63,7 +63,6 @@
 #define MAXIMUM_UPDATE_CACHE 1000
 	static SDL_Rect updateRects[MAXIMUM_UPDATE_CACHE];
 	static int sdl_rectcount = 0;
-	static SDL_mutex  *updateLock;
 #endif
 
 HostScreen::HostScreen(void)
@@ -71,10 +70,6 @@ HostScreen::HostScreen(void)
 {
 	// the counter init
 	snapCounter = 0;
-
-#ifdef ENABLE_VBL_UPDATES
-	updateLock = SDL_CreateMutex();
-#endif
 
 	mainSurface=NULL;
 
@@ -103,10 +98,6 @@ HostScreen::HostScreen(void)
 
 HostScreen::~HostScreen(void)
 {
-#ifdef ENABLE_VBL_UPDATES
-	SDL_DestroyMutex(updateLock);
-#endif
-
 	// OpenGL stuff
 #ifdef ENABLE_OPENGL
 	if (bx_options.opengl.enabled) {
@@ -621,12 +612,10 @@ void HostScreen::refresh(void)
 #endif
 
 #ifdef ENABLE_VBL_UPDATES
-	SDL_mutexP(updateLock);
 	if (sdl_rectcount > 0) {
 		SDL_UpdateRects(mainSurface, sdl_rectcount, updateRects);
 		sdl_rectcount = 0;
 	}
-	SDL_mutexV(updateLock);
 #endif
 
 	refreshScreen();
@@ -812,11 +801,6 @@ void HostScreen::refreshNfvdi(void)
 		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
-	Uint8 *dirtyRects = ((VdiDriver *) fvdi)->getDirtyRects();
-	if (!dirtyRects) {
-		return;
-	}
-
 	SDL_Rect src_rect = {0,0, nfvdi_surf->w, nfvdi_surf->h};
 	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
 	if (mainSurface->w > nfvdi_surf->w) {
@@ -830,6 +814,11 @@ void HostScreen::refreshNfvdi(void)
 		dst_rect.h = nfvdi_surf->h;
 	} else {
 		src_rect.h = mainSurface->h;
+	}
+
+	Uint8 *dirtyRects = ((VdiDriver *) fvdi)->getDirtyRects();
+	if (!dirtyRects) {
+		return;
 	}
 
 	int dirty_w = ((VdiDriver *) fvdi)->getDirtyWidth();

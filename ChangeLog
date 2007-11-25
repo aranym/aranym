@@ -1,5 +1,6 @@
 2007/11/25 - Patrice
 - dirty rects: Don't set flag outside boundaries.
+- hostscreen: remove mutex for vbl update stuff.
 
 2007/11/25 - Andreas
 - configure.ac: Don't clobber srcdir.
