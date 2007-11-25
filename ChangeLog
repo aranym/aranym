@@ -1,3 +1,8 @@
+2007/11/25 - Andreas
+- configure.ac: Don't clobber srcdir.
+- Makefile.in: append src to srcdir here.
+
+
 2007/11/25 - Petr
 - building system moved to the top-level directory
   configure.ac, Makefile.in: adapted for new paths

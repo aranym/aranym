@@ -12,7 +12,7 @@ datadir = @datadir@
 mandir = @mandir@
 man1dir = $(mandir)/man1
 docdir = $(prefix)/share/doc
-srcdir = @srcdir@
+srcdir = @srcdir@/src
 
 DESTDIR =
 CPU_TYPE = @CPU_TYPE@

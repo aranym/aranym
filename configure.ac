@@ -459,7 +459,7 @@ AC_CACHE_CHECK([whether vm_protect works],
       #define CONFIGURE_TEST_VM_MAP
       #define TEST_VM_PROT_$test_def
 	  $OSdarwinReq
-      #include "$srcdir/Unix/vm_alloc.cpp"
+      #include "$srcdir/src/Unix/vm_alloc.cpp"
     ], ac_cv_vm_protect_works=no, rm -f core,
     dnl When cross-compiling, do not assume anything
     ac_cv_vm_protect_works="guessing no"
@@ -469,7 +469,7 @@ AC_CACHE_CHECK([whether vm_protect works],
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_PROT_RDWR_WRITE
     $OSdarwinReq
-    #include "$srcdir/Unix/vm_alloc.cpp"
+    #include "$srcdir/src/Unix/vm_alloc.cpp"
   ], , ac_cv_vm_protect_works=no,
   dnl When cross-compiling, do not assume anything
   ac_cv_vm_protect_works="guessing no"
@@ -514,7 +514,7 @@ AC_CACHE_CHECK([whether mmap supports MAP_ANON],
     #define HAVE_MMAP_ANON
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_MMAP_ANON
-    #include "$srcdir/Unix/vm_alloc.cpp"
+    #include "$srcdir/src/Unix/vm_alloc.cpp"
   ], ac_cv_mmap_anon=yes, ac_cv_mmap_anon=no,
   dnl When cross-compiling, do not assume anything.
   ac_cv_mmap_anon="guessing no"
@@ -533,7 +533,7 @@ AC_CACHE_CHECK([whether mmap supports MAP_ANONYMOUS],
     #define HAVE_MMAP_ANONYMOUS
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_MMAP_ANON
-    #include "$srcdir/Unix/vm_alloc.cpp"
+    #include "$srcdir/src/Unix/vm_alloc.cpp"
   ], ac_cv_mmap_anonymous=yes, ac_cv_mmap_anonymous=no,
   dnl When cross-compiling, do not assume anything.
   ac_cv_mmap_anonymous="guessing no"
@@ -554,7 +554,7 @@ AC_CACHE_CHECK([whether mprotect works],
     AC_TRY_RUN([
       #define CONFIGURE_TEST_VM_MAP
       #define TEST_VM_PROT_$test_def
-      #include "$srcdir/Unix/vm_alloc.cpp"
+      #include "$srcdir/src/Unix/vm_alloc.cpp"
     ], ac_cv_mprotect_works=no, rm -f core,
     dnl When cross-compiling, do not assume anything
     ac_cv_mprotect_works="guessing no"
@@ -563,7 +563,7 @@ AC_CACHE_CHECK([whether mprotect works],
   AC_TRY_RUN([
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_PROT_RDWR_WRITE
-    #include "$srcdir/Unix/vm_alloc.cpp"
+    #include "$srcdir/src/Unix/vm_alloc.cpp"
   ], , ac_cv_mprotect_works=no,
   dnl When cross-compiling, do not assume anything
   ac_cv_mprotect_works="guessing no"
@@ -591,7 +591,7 @@ AC_CACHE_CHECK([whether we can map Low Memory area 0x0000-0x1000000],
   AC_LANG_CPLUSPLUS
   AC_TRY_RUN([
     $OSdarwinReq
-    #include "$srcdir/Unix/vm_alloc.cpp"
+    #include "$srcdir/src/Unix/vm_alloc.cpp"
     int main(void) { /* returns 0 if we could map the lowmem globals */
       volatile char * lm = 0;
       if (vm_init() < 0) exit(1);
@@ -616,7 +616,7 @@ AC_CACHE_CHECK([whether POSIX shared memory is working],
   AC_TRY_RUN([
     #define HAVE_POSIX_SHM
     $OSdarwinReq
-    #include "$srcdir/Unix/vm_alloc.cpp"
+    #include "$srcdir/src/Unix/vm_alloc.cpp"
     int main(void) { /* returns 0 if we have working POSIX shm */
       if (vm_init() < 0) exit(2);
       char *m1 = (char *)vm_acquire(32768, VM_MAP_DEFAULT | VM_MAP_33BIT);
@@ -640,7 +640,7 @@ AC_CACHE_CHECK([whether 33-bit memory addressing is working],
   AC_LANG_CPLUSPLUS
   AC_TRY_RUN([
     #define USE_33BIT_ADDRESSING 1
-    #include "$srcdir/Unix/vm_alloc.cpp"
+    #include "$srcdir/src/Unix/vm_alloc.cpp"
     int main(void) { /* returns 0 if we have working 33-bit addressing */
       if (sizeof(void *) < 8) exit(1);
       if (vm_init() < 0) exit(2);
@@ -1724,7 +1724,6 @@ fi
 dnl Data directory
 
 APP=aranym
-srcdir="src"
 case "$host_os" in
 	darwin*)
 		if test "x$WITH_FINK" = "xyes"; then
@@ -1733,7 +1732,6 @@ case "$host_os" in
 			TARGET="\$(APP_BUNDLE)"
 		fi
 		ARANYM_DATADIR="\"\\\"\${datadir}/\${APP}\\\"\""
-		srcdir="."
 		;;
 	mingw*) TARGET="\$(APP)"
 		ARANYM_DATADIR="\"\\\"./\${APP}\\\"\""
