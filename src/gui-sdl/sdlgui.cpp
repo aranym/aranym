@@ -30,7 +30,7 @@
 #include <cstdlib>
 #include <stack>
 
-#include "font8.h"
+#include "font.h"
 #include "dialog.h"
 #include "dlgMain.h"
 
@@ -85,11 +85,13 @@ enum
 /*
   Load an 1 plane XBM into a 8 planes SDL_Surface.
 */
-static SDL_Surface *SDLGui_LoadXBM(int w, int h, Uint8 *srcbits)
+static SDL_Surface *SDLGui_LoadXBM(Uint8 *srcbits)
 {
   SDL_Surface *bitmap;
   Uint8 *dstbits;
   int x, y, srcpitch;
+	int w = 128;
+	int h = 256;
 
   /* Allocate the bitmap */
   bitmap = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
@@ -101,20 +103,22 @@ static SDL_Surface *SDLGui_LoadXBM(int w, int h, Uint8 *srcbits)
 
   srcpitch = ((w + 7) / 8);
   dstbits = (Uint8 *)bitmap->pixels;
-  int mask = 1;
+  int mask = 0x80;
+  int charheight = h/16;
 
   /* Copy the pixels */
   for (y = 0 ; y < h ; y++)
   {
     for (x = 0 ; x < w ; x++)
     {
-      dstbits[x] = (srcbits[x / 8] & mask) ? 1 : 0;
-      mask <<= 1;
-      mask |= (mask >> 8);
-      mask &= 0xFF;
+      int ascii = x/8 + (y / charheight) * charheight;
+      int charline = y % charheight;
+      dstbits[x] = (srcbits[ascii + 256*charline] & mask) ? 1 : 0;
+      mask >>= 1;
+      mask |= (mask << 8);
+      mask &= 0x1FF;
     }
     dstbits += bitmap->pitch;
-    srcbits += srcpitch;
   }
 
   return(bitmap);
@@ -126,8 +130,24 @@ static SDL_Surface *SDLGui_LoadXBM(int w, int h, Uint8 *srcbits)
 */
 bool SDLGui_Init()
 {
-  /* Load the font graphics: */
-  fontgfx = SDLGui_LoadXBM(font8_width, font8_height, font8_bits);
+	// Load the font graphics
+	char font_filename[256];
+	unsigned char font_data[4096];
+	getConfFilename("font", font_filename, sizeof(font_filename));
+	FILE *f = fopen(font_filename, "rb");
+	bool font_loaded = false;
+	if (f != NULL) {
+		if (fread(font_data, 1, sizeof(font_data), f) == sizeof(font_data)) {
+			font_loaded = true;
+		}
+		fclose(f);
+	}
+	// If font can't be loaded use the internal one
+	if (! font_loaded) {
+		memcpy(font_data, font_bits, sizeof(font_data));
+	}
+	
+  fontgfx = SDLGui_LoadXBM(font_data);
   if (fontgfx == NULL)
   {
     panicbug("Could not create font data");
@@ -135,7 +155,7 @@ bool SDLGui_Init()
     return false;
   }
 
-	gui_surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 320+8,200+8,8, 0,0,0,0);
+	gui_surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 320+8,400+8,8, 0,0,0,0);
 	if (!gui_surf) {
 		panicbug("Could not create surface for GUI");
 		panicbug("ARAnyM GUI will not be available");
