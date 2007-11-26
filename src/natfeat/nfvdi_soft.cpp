@@ -22,6 +22,7 @@
 #include "cpu_emulation.h"
 #include "parameters.h"
 #include "host.h"
+#include "host_surface.h"
 #include "nfvdi.h"
 #include "nfvdi_soft.h"
 
@@ -132,7 +133,7 @@ int32 SoftVdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 
 	if (surface) {
 		hsPutPixel(x, y, color);
-		setDirtyRect(x,y,1,1);
+		surface->setDirtyRect(x,y,1,1);
 	}
 
 	return 1;
@@ -204,7 +205,7 @@ void SoftVdiDriver::restoreMouseBackground(void)
 		for(uint16 j = 0; j < Mouse.storage.width; j++)
 			hsPutPixel(x + j, y + i, Mouse.storage.background[i][j]);
 
-	setDirtyRect(x,y,16,16);
+	surface->setDirtyRect(x,y,16,16);
 }
 
 void SoftVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width,
@@ -294,16 +295,16 @@ int SoftVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 		x = 0;
 	} else {
 		w = 16;
-		if (x + 16 >= surface->w)
-			w = surface->w - x;
+		if (x + 16 >= surface->getWidth())
+			w = surface->getWidth() - x;
 	}
 	if (y < 0) {
 		h = 16 + y;
 		y = 0;
 	} else {
 		h = 16;
-		if (y + 16 >= surface->h)
-			h = surface->h - y;
+		if (y + 16 >= surface->getHeight())
+			h = surface->getHeight() - y;
 	}
 
 	D2(bug("fVDI: mouse x,y: %d,%d,%d,%d (%x,%x)", x, y, w, h,
@@ -368,8 +369,12 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	if (!surface) {
 		return 1;
 	}
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
+		return 1;
+	}
 
-	if (surface->format->BytesPerPixel == 1) {
+	if (surface->getBpp() == 8) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
@@ -394,21 +399,21 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		}
 
 		/* 8bit greyscale aplha expand */
-		if ( surface->format->BytesPerPixel != 4 ) {
+		if ( surface->getBpp() != 32 ) {
 			bug("fVDI: Only 4byte SDL_Surface color depths supported so far.");
 			return 0;
 		}
 
 		SDL_Surface *asurf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 32,
-				surface->format->Rmask, surface->format->Gmask, surface->format->Bmask, 0xFF000000);
+				sdl_surf->format->Rmask, sdl_surf->format->Gmask, sdl_surf->format->Bmask, 0xFF000000);
 		if ( asurf == NULL ) return 0;
 
 		if (logOp == 1) {
-			D(bug("fVDI: expandArea 8bit: logOp=%d screen=%p, format=%p [%d]", logOp, surface, surface->format, surface->format->BytesPerPixel));
+			D(bug("fVDI: expandArea 8bit: logOp=%d screen=%p, format=%p [%d]", logOp, sdl_surf, sdl_surf->format, sdl_surf->format->BytesPerPixel));
 
 			/* no alpha surface */
-			SDL_Surface *blocksurf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, surface->format->BitsPerPixel,
-					surface->format->Rmask, surface->format->Gmask, surface->format->Bmask, 0xFF000000);
+			SDL_Surface *blocksurf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, sdl_surf->format->BitsPerPixel,
+					sdl_surf->format->Rmask, sdl_surf->format->Gmask, sdl_surf->format->Bmask, 0xFF000000);
 			if ( blocksurf == NULL ) return 0;
 
 			/* fill with the background color */
@@ -458,10 +463,10 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		D(bug("fVDI: %s %x, %d, %d", "8BIT expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
 
 		SDL_Rect destRect = { dx, dy, w, h };
-		SDL_BlitSurface(asurf,NULL,surface,&destRect);
+		SDL_BlitSurface(asurf,NULL,surface->getSdlSurface(),&destRect);
 		SDL_FreeSurface(asurf);
 
-		setDirtyRect(dx,dy,w,h);
+		surface->setDirtyRect(dx,dy,w,h);
 		return 1;
 	}
 
@@ -496,7 +501,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		D2(bug("")); //newline
 	}
 
-	setDirtyRect(dx,dy,w,h);
+	surface->setDirtyRect(dx,dy,w,h);
 	return 1;
 }
 
@@ -536,7 +541,7 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 		return 1;
 	}
 
-	if (surface->format->BytesPerPixel == 1) {
+	if (surface->getBpp() == 8) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
@@ -636,6 +641,10 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	if (!surface) {
 		return 1;
 	}
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
+		return 1;
+	}
 
 	uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *src->bitplanes
 	uint32 pitch  = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *src->pitch
@@ -660,13 +669,13 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 					}
 				}
 			} else {
-				uint16* daddr_base = (uint16*) surface->pixels;
-				daddr_base += dy * (surface->pitch>>1) + dx;
+				uint16* daddr_base = (uint16*) sdl_surf->pixels;
+				daddr_base += dy * (sdl_surf->pitch>>1) + dx;
 				memptr saddr_base = data + sx * 2;
 				for(int32 j = 0; j < h; j++) {
 					uint16* daddr = daddr_base;
 					memptr saddr = saddr_base;
-					daddr_base += surface->pitch / 2;
+					daddr_base += sdl_surf->pitch / 2;
 					saddr_base += pitch;
 					for(int32 i = 0; i < w; i++) {
 						destData = ReadInt16(saddr);
@@ -695,13 +704,13 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 						hsPutPixel(dx + i - sx, dy + j, destData);
 					}
 			} else {
-				uint32* daddr_base = (uint32*) surface->pixels;
-				daddr_base += dy * (surface->pitch>>2) + dx;
+				uint32* daddr_base = (uint32*) sdl_surf->pixels;
+				daddr_base += dy * (sdl_surf->pitch>>2) + dx;
 				memptr saddr_base = data + sx * 4;
 				for(int32 j = 0; j < h; j++) {
 					uint32* daddr = daddr_base;
 					memptr saddr = saddr_base;
-					daddr_base += surface->pitch / 4;
+					daddr_base += sdl_surf->pitch / 4;
 					saddr_base += pitch;
 					for(int32 i = 0; i < w; i++) {
 						destData = ReadInt32(saddr);
@@ -751,7 +760,7 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 			}
 	}
 
-	setDirtyRect(dx,dy,w,h);
+	surface->setDirtyRect(dx,dy,w,h);
 	return 1;
 }
 
@@ -763,6 +772,10 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 	DUNUSED(dest);
 
 	if (!surface) {
+		return 1;
+	}
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
 		return 1;
 	}
 
@@ -810,8 +823,8 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 				D(bug("fVDI: blitArea S->M: bitplane conversion"));
 
 				uint16 bitplanePixels[8];
-				uint32 pitch = surface->pitch;
-				uint8* dataHost = (uint8*)surface->pixels + sy * pitch;
+				uint32 pitch = sdl_surf->pitch;
+				uint8* dataHost = (uint8*)sdl_surf->pixels + sy * pitch;
 
 				for(int32 j = 0; j < h; j++) {
 					uint32 pixelPosition = j * pitch + sx & ~0xf; // div 16
@@ -862,7 +875,7 @@ int32 SoftVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 				hsPutPixel(dx + i, dy + j, destData);
 			}
 
-		setDirtyRect(dx,dy,w,h);
+		surface->setDirtyRect(dx,dy,w,h);
 	}
 
 	return 1;
@@ -946,8 +959,8 @@ bool SoftVdiDriver::clipLine(int& x1, int& y1, int& x2, int& y2, int cliprect[])
 	if (!cliprect) {
 		left   = 0;
 		top    = 0;
-		right  = surface->w -1;
-		bottom = surface->h -1;
+		right  = surface->getWidth() -1;
+		bottom = surface->getHeight() -1;
 	} else {
 		left   = cliprect[0];
 		top    = cliprect[1];
@@ -1105,7 +1118,7 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 		return 1;
 	}
 
-	if (surface->format->BytesPerPixel == 1) {
+	if (surface->getBpp() == 8) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
@@ -1429,14 +1442,18 @@ void SoftVdiDriver::getHwColor(uint16 index, uint32 red, uint32 green,
 	if (!surface) {
 		return;
 	}
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
+		return;
+	}
 
-	if (surface->format->BytesPerPixel == 1) {
+	if (surface->getBpp() == 8) {
 		WriteInt32( hw_value, index );
 	} else {
 		int r = (red*255 + 500) / 1000;
 		int g = (green*255 + 500) / 1000;
 		int b = (blue*255 + 500) / 1000;
-		WriteInt32( hw_value, SDL_MapRGB(surface->format, r,g,b));
+		WriteInt32( hw_value, SDL_MapRGB(sdl_surf->format, r,g,b));
 	}
 }
 
@@ -1457,7 +1474,7 @@ void SoftVdiDriver::setColor(memptr /*vwk*/, uint32 paletteIndex, uint32 red,
 		return;
 	}
 
-	if (surface->format->BytesPerPixel != 1) {
+	if (surface->getBpp() != 8) {
 		return;
 	}
 
@@ -1466,7 +1483,7 @@ void SoftVdiDriver::setColor(memptr /*vwk*/, uint32 paletteIndex, uint32 red,
 	color.g = (green*255 + 500) / 1000;
 	color.b = (blue*255 + 500) / 1000;
 
-	SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, &color, toTosColors(paletteIndex), 1);
+	SDL_SetPalette(surface->getSdlSurface(), SDL_LOGPAL, &color, toTosColors(paletteIndex), 1);
 }
 
 int32 SoftVdiDriver::getFbAddr(void)
@@ -1509,15 +1526,17 @@ uint32 SoftVdiDriver::hsGetPixel( int x, int y )
 {
 	uint32 color = 0;
 
-	if ( x < 0 || x >= surface->w || y < 0 || y >= surface->h )
+	if ( x < 0 || x >= surface->getWidth() || y < 0 || y >= surface->getHeight() )
 		return color;
+
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
 
 	int bpp;
 	uint8 *p;
 
 	/* Get destination format */
-	bpp = surface->format->BytesPerPixel;
-	p = (uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+	bpp = sdl_surf->format->BytesPerPixel;
+	p = (uint8 *)sdl_surf->pixels + y * sdl_surf->pitch + x * bpp;
 	switch(bpp) {
 		case 1:
 			color = (uint32)(*(uint8 *)p);
@@ -1535,15 +1554,17 @@ uint32 SoftVdiDriver::hsGetPixel( int x, int y )
 
 void SoftVdiDriver::hsPutPixel( int x, int y, uint32 color )
 {
-	if ( x < 0 || x >= surface->w || y < 0 || y >= surface->h )
+	if ( x < 0 || x >= surface->getWidth() || y < 0 || y >= surface->getHeight() )
 		return;
+
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
 
 	int bpp;
 	uint8 *p;
 
 	/* Get destination format */
-	bpp = surface->format->BytesPerPixel;
-	p = (uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+	bpp = sdl_surf->format->BytesPerPixel;
+	p = (uint8 *)sdl_surf->pixels + y * sdl_surf->pitch + x * bpp;
 	switch(bpp) {
 		case 1:
 			*p = color;
@@ -1586,19 +1607,23 @@ void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
 	if (!surface) {
 		return;
 	}
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
+		return;
+	}
 
 	/* More variable setup */
-	pixx = surface->format->BytesPerPixel;
-	pixy = surface->pitch;
-	pixel = ((uint8*)surface->pixels) + pixx * (int32)x + pixy * (int32)y;
+	pixx = sdl_surf->format->BytesPerPixel;
+	pixy = sdl_surf->pitch;
+	pixel = ((uint8*)sdl_surf->pixels) + pixx * (int32)x + pixy * (int32)y;
 	pixellast = pixel + pixy*dy;
 
 	// STanda // FIXME here the pattern should be checked out of the loops for performance
 			  // but for now it is good enough (if there is no pattern -> another switch?)
 
 	/* Draw */
-	switch(surface->format->BytesPerPixel) {
-		case 1:
+	switch(surface->getBpp()) {
+		case 8:
 			pixy -= (pixx*dx);
 			switch (logOp) {
 				case 1:
@@ -1646,7 +1671,8 @@ void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
 					break;
 			}
 			break;
-		case 2:
+		case 15:
+		case 16:
 			pixy -= (pixx*dx);
 			//				D2(bug("bix pix: %d, %x, %d", y, pixel, pixy));
 
@@ -1696,7 +1722,7 @@ void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
 					break;
 			}
 			break;
-		case 3:
+		case 24:
 			pixy -= (pixx*dx);
 			switch (logOp) {
 				case 1:
@@ -1794,7 +1820,7 @@ void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
 			break;
 	}  // switch
 
-	setDirtyRect(x,y0,w,h);
+	surface->setDirtyRect(x,y0,w,h);
 }
 
 /**
@@ -1931,6 +1957,7 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 {
 	SDL_Rect srcrect;
 	SDL_Rect dstrect;
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
 
 	srcrect.x = sx;
 	srcrect.y = sy;
@@ -1939,9 +1966,9 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 	srcrect.w = dstrect.w = w;
 	srcrect.h = dstrect.h = h;
 
-	SDL_BlitSurface(surface, &srcrect, surface, &dstrect);
+	SDL_BlitSurface(sdl_surf, &srcrect, sdl_surf, &dstrect);
 
-	setDirtyRect(dx,dy,w,h);
+	surface->setDirtyRect(dx,dy,w,h);
 }
 
 /* Non-alpha line drawing code adapted from routine			 */
@@ -1985,7 +2012,7 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 						hsPutPixel( x1, y1, fgColor );
 					break;
 			}
-			setDirtyRect(x1,y1,1,1);
+			surface->setDirtyRect(x1,y1,1,1);
 		}
 	}
 	if (y1 == y2) {
@@ -1996,6 +2023,11 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 			gfxHLineColor(x2 + !last_pixel, x1, y1, pattern, fgColor, bgColor, logOp);
 			return;
 		}
+	}
+
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
+		return;
 	}
 
 	D2(bug("CLn %3d,%3d,%3d,%3d", x1, x2, y1, y2));
@@ -2010,9 +2042,9 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 	/* More variable setup */
 	dx = sx * dx + 1;
 	dy = sy * dy + 1;
-	pixx = surface->format->BytesPerPixel;
-	pixy = surface->pitch;
-	pixel = ((uint8*)surface->pixels) + pixx * (uint32)x1 + pixy * (uint32)y1;
+	pixx = sdl_surf->format->BytesPerPixel;
+	pixy = sdl_surf->pitch;
+	pixel = ((uint8*)sdl_surf->pixels) + pixx * (uint32)x1 + pixy * (uint32)y1;
 	pixx *= sx;
 	pixy *= sy;
 	if (dx < dy) {
@@ -2025,8 +2057,8 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 	/* Draw */
 	x = !last_pixel;	// 0 if last pixel should be drawn, else 1
 	y = 0;
-	switch(surface->format->BytesPerPixel) {
-		case 1:
+	switch(surface->getBpp()) {
+		case 8:
 			switch (logOp) {
 				case 1:
 					for (; x < dx; x++, pixel += pixx) {
@@ -2077,7 +2109,8 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 					break;
 			}
 			break;
-		case 2:
+		case 15:
+		case 16:
 			switch (logOp) {
 				case 1:
 					for (; x < dx; x++, pixel += pixx) {
@@ -2128,7 +2161,7 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 					break;
 			}
 			break;
-		case 3:
+		case 24:
 			switch (logOp) {
 				case 1:
 					for (; x < dx; x++, pixel += pixx) {
@@ -2232,7 +2265,7 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 			break;
 	}
 
-	setDirtyRect(x1,y1,x2-x1+1,y2-y1+1);
+	surface->setDirtyRect(x1,y1,x2-x1+1,y2-y1+1);
 }
 
 void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
@@ -2257,18 +2290,23 @@ void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
 	if (w<0)
 		return;
 
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
+		return;
+	}
+
 	/* More variable setup */
 	dx=w+1;
-	pixx = surface->format->BytesPerPixel;
-	pixy = surface->pitch;
-	pixel = ((uint8*)surface->pixels) + pixx * (int)x1 + pixy * (int)y;
+	pixx = sdl_surf->format->BytesPerPixel;
+	pixy = sdl_surf->pitch;
+	pixel = ((uint8*)sdl_surf->pixels) + pixx * (int)x1 + pixy * (int)y;
 	ppos = 0;
 
 	D2(bug("HLn %3d,%3d,%3d", x1, x2, y));
 
 	/* Draw */
-	switch(surface->format->BytesPerPixel) {
-		case 1:
+	switch(surface->getBpp()) {
+		case 8:
 			pixellast = pixel + dx;
 			switch (logOp) {
 				case 1:
@@ -2292,7 +2330,8 @@ void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
 					break;
 			}
 			break;
-		case 2:
+		case 15:
+		case 16:
 			pixellast = pixel + dx + dx;
 			switch (logOp) {
 				case 1:
@@ -2316,7 +2355,7 @@ void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
 					break;
 			}
 			break;
-		case 3:
+		case 24:
 			pixellast = pixel + dx + dx + dx;
 			switch (logOp) {
 				case 1:
@@ -2367,7 +2406,7 @@ void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
 			break;
 	}
 
-	setDirtyRect(x1,y,x2-x1+1,1);
+	surface->setDirtyRect(x1,y,x2-x1+1,1);
 }
 
 void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
@@ -2392,20 +2431,25 @@ void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
 	if (h<0)
 		return;
 
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
+		return;
+	}
+
 	ppos = 0;
 
 	D2(bug("VLn %3d,%3d,%3d", x, y1, y2));
 
 	/* More variable setup */
 	dy=h+1;
-	pixx = surface->format->BytesPerPixel;
-	pixy = surface->pitch;
-	pixel = ((uint8*)surface->pixels) + pixx * (int)x + pixy * (int)y1;
+	pixx = sdl_surf->format->BytesPerPixel;
+	pixy = sdl_surf->pitch;
+	pixel = ((uint8*)sdl_surf->pixels) + pixx * (int)x + pixy * (int)y1;
 	pixellast = pixel + pixy*dy;
 
 	/* Draw */
-	switch(surface->format->BytesPerPixel) {
-		case 1:
+	switch(surface->getBpp()) {
+		case 8:
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixy)
@@ -2428,7 +2472,8 @@ void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
 					break;
 			}
 			break;
-		case 2:
+		case 15:
+		case 16:
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixy)
@@ -2451,7 +2496,7 @@ void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
 					break;
 			}
 			break;
-		case 3:
+		case 24:
 			switch (logOp) {
 				case 1:
 					for (; pixel<pixellast; pixel += pixy)
@@ -2499,5 +2544,5 @@ void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
 			break;
 	}
 
-	setDirtyRect(x,y1,1,y2);
+	surface->setDirtyRect(x,y1,1,y2);
 }

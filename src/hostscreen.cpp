@@ -763,13 +763,17 @@ void HostScreen::forceRefreshNfvdi(void)
 #ifdef NFVDI_SUPPORT
 	/* Force nfvdi surface refresh */
 	NF_Base* fvdi = NFGetDriver("fVDI");
-	if (fvdi) {
-		SDL_Surface *nfvdi_surf = ((VdiDriver *) fvdi)->getSurface();
-		if (nfvdi_surf) {
-			((VdiDriver *) fvdi)->setDirtyRect(
-				0,0, nfvdi_surf->w, nfvdi_surf->h);
-		}
+	if (!fvdi) {
+		return;
 	}
+
+	HostSurface *nfvdi_hsurf = ((VdiDriver *) fvdi)->getSurface();
+	if (!nfvdi_hsurf) {
+		return;
+	}
+
+	nfvdi_hsurf->setDirtyRect(0,0,
+		nfvdi_hsurf->getWidth(), nfvdi_hsurf->getHeight());
 #endif
 }
 
@@ -781,7 +785,11 @@ void HostScreen::refreshNfvdi(void)
 		return;
 	}
 
-	SDL_Surface *nfvdi_surf = ((VdiDriver *) fvdi)->getSurface();
+	HostSurface *nfvdi_hsurf = ((VdiDriver *) fvdi)->getSurface();
+	if (!nfvdi_hsurf) {
+		return;
+	}
+	SDL_Surface *nfvdi_surf = nfvdi_hsurf->getSdlSurface();
 	if (!nfvdi_surf) {
 		return;
 	}
@@ -822,13 +830,13 @@ void HostScreen::refreshNfvdi(void)
 		src_rect.h = mainSurface->h;
 	}
 
-	Uint8 *dirtyRects = ((VdiDriver *) fvdi)->getDirtyRects();
+	Uint8 *dirtyRects = nfvdi_hsurf->getDirtyRects();
 	if (!dirtyRects) {
 		return;
 	}
 
-	int dirty_w = ((VdiDriver *) fvdi)->getDirtyWidth();
-	int dirty_h = ((VdiDriver *) fvdi)->getDirtyHeight();
+	int dirty_w = nfvdi_hsurf->getDirtyWidth();
+	int dirty_h = nfvdi_hsurf->getDirtyHeight();
 	for (int y=0; y<dirty_h; y++) {
 		for (int x=0; x<dirty_w; x++) {
 			if (dirtyRects[y * dirty_w + x]) {
@@ -851,7 +859,7 @@ void HostScreen::refreshNfvdi(void)
 		}
 	}
 
-	((VdiDriver *) fvdi)->clearDirtyRects();
+	nfvdi_hsurf->clearDirtyRects();
 #endif
 }
 

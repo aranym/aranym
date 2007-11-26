@@ -76,7 +76,9 @@
 
 /*--- Class ---*/
 
-class VdiDriver : public NF_Base, public DirtyRects
+class HostSurface;
+
+class VdiDriver : public NF_Base
 {
 	public:
 		char *name();
@@ -87,10 +89,10 @@ class VdiDriver : public NF_Base, public DirtyRects
 		virtual ~VdiDriver();
 		virtual void reset(void);
 
-		SDL_Surface *getSurface(void);
+		HostSurface *getSurface(void);
 
 	protected:
-		SDL_Surface *surface;
+		HostSurface *surface;
 
 		struct _Mouse {
 			struct {

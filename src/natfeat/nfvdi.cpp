@@ -21,6 +21,8 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "parameters.h"
+#include "dirty_rects.h"
+#include "host_surface.h"
 #include "nfvdi.h"
 #include "fvdidrv_nfapi.h"	// keep in sync with same file in fVDI CVS
 #include "hostscreen.h"
@@ -268,7 +270,7 @@ int32 VdiDriver::dispatch(uint32 fncode)
 }
 
 VdiDriver::VdiDriver()
-	: DirtyRects(), surface(NULL)
+	: surface(NULL)
 {
 	index_count = crossing_count = point_count = 0;
 	alloc_index = alloc_crossing = alloc_point = NULL;
@@ -289,18 +291,13 @@ VdiDriver::~VdiDriver()
 	}
 
 	if (surface) {
-		SDL_FreeSurface(surface);
+		delete surface;
 	}
 }
 
 void VdiDriver::reset(void)
 {
 	host->hostScreen.setVidelRendering(true);
-
-	if (surface) {
-		SDL_FreeSurface(surface);
-		surface = NULL;
-	}
 }
 
 /*--- Protected functions ---*/
@@ -382,7 +379,7 @@ uint32 VdiDriver::applyBlitLogOperation(int logicalOperation,
 	return destinationData;
 }
 
-SDL_Surface *VdiDriver::getSurface(void)
+HostSurface *VdiDriver::getSurface(void)
 {
 	return surface;
 }
@@ -406,31 +403,30 @@ void VdiDriver::setResolution(int32 width, int32 height, int32 depth)
 
 	/* Recreate surface if needed */
 	if (surface) {
-		if ((surface->format->BitsPerPixel != depth)
-		   || (surface->w != width)
-		   || (surface->h != height))
-		{
-			SDL_FreeSurface(surface);
+		if (surface->getBpp() == depth) {
+			if ((surface->getWidth() != width) || (surface->getHeight() != height)) {
+				surface->resize(width, height);
+			}
+		} else {
+			delete surface;
 			surface = NULL;
 		}
 	}
 	if (surface==NULL) {
-		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width,height,depth ,0,0,0,0);
+		surface = new HostSurface(width,height,depth);
 	}
-
-	resizeDirty(width,height);
 
 	/* TODO: restore palette ? */
 }
 
 int32 VdiDriver::getWidth(void)
 {
-	return (surface ? surface->w : 0);
+	return (surface ? surface->getWidth() : 0);
 }
 
 int32 VdiDriver::getHeight(void)
 {
-	return (surface ? surface->h : 0);
+	return (surface ? surface->getHeight() : 0);
 }
 
 int32 VdiDriver::openWorkstation(void)
@@ -447,7 +443,11 @@ int32 VdiDriver::closeWorkstation(void)
 
 int32 VdiDriver::getBpp(void)
 {
-	return (surface ? surface->format->BitsPerPixel : 0);
+	if (!surface) {
+		return 0;
+	}
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
+	return (sdl_surf ? sdl_surf->format->BitsPerPixel : 0);
 }
 
 // The polygon code needs some arrays of unknown size
