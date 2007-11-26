@@ -26,6 +26,7 @@
 #include "memory.h"
 #include "host.h"
 #include "icio.h"
+#include "host_surface.h"
 #include "videl.h"
 #include "hardware.h"
 #include "parameters.h"
@@ -80,7 +81,9 @@ void VIDEL::handleWrite(uint32 addr, uint8 value)
 
 	if ((addr >= VIDEL_COLOR_REGS_BEGIN && addr < VIDEL_COLOR_REGS_END) ||
 		(addr >= 0xff8240 && addr < 0xff8260)) {
-		updatePalette = true;
+		if (surface) {
+			surface->dirty_flags |= HostSurface::DIRTY_PALETTE;
+		}
 		return;
 	}
 
@@ -190,12 +193,13 @@ int VIDEL::getBpp(void)
 	return bits_per_pixel;
 }
 
-SDL_Surface *VIDEL::getSurface(void)
+HostSurface *VIDEL::getSurface(void)
 {
 	int videlBpp = getBpp();
 	int bpp = (videlBpp<=8) ? 8 : 16;
 	int width = getWidth();
 	int height = getHeight();
+
 	if (width<64) {
 		width = 64;
 	}
@@ -203,18 +207,18 @@ SDL_Surface *VIDEL::getSurface(void)
 		height = 64;
 	}
 
-	/* Recreate surface if needed */
 	if (surface) {
-		if ((prevVidelBpp != bpp) || (prevVidelWidth != width)
-		   || (prevVidelHeight != height))
-		{
+		if (prevVidelBpp == bpp) {
+			if ((prevVidelWidth!=width) || (prevVidelHeight!=height)) {
+				surface->resize(width, height);
+			}
+		} else {
 			delete surface;
 			surface = NULL;
 		}
 	}
 	if (surface==NULL) {
-		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width,height,bpp ,0,0,0,0);
-		updatePalette = true;
+		surface = new HostSurface(width,height,bpp);
 	}
 
 	prevVidelWidth = width;
@@ -263,17 +267,25 @@ void VIDEL::refreshPalette(void)
 		}
 	}
 
-	SDL_SetPalette(surface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0, numColors);
-	updatePalette = false;
+	SDL_SetPalette(surface->getSdlSurface(), SDL_LOGPAL, palette, 0,
+		numColors);
+
+	surface->dirty_flags &= ~HostSurface::DIRTY_PALETTE;
 }
 
 void VIDEL::refreshScreen(void)
 {
+	SDL_Surface *sdl_surf;
+
 	if (!surface) {
 		return;
 	}
+	sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
+		return;
+	}
 
-	if (updatePalette) {
+	if (surface->dirty_flags & HostSurface::DIRTY_PALETTE) {
 		refreshPalette();
 	}
 
@@ -284,15 +296,15 @@ void VIDEL::refreshScreen(void)
 
 	Uint16 *src = (uint16 *) Atari2HostAddr(getVramAddress());
 	int src_pitch = linewidth + lineoffset;
-	int dst_pitch = surface->pitch;
+	int dst_pitch = sdl_surf->pitch;
 	int x,y;
 
 	if (videlBpp==16) {
-		Uint16 *dst = (Uint16 *) surface->pixels;
-		for (y=0; y<surface->h ;y++) {
+		Uint16 *dst = (Uint16 *) sdl_surf->pixels;
+		for (y=0; y<surface->getHeight() ;y++) {
 			Uint16 *src_line = src;
 			Uint16 *dst_line = dst; 
-			for (x=0; x<surface->w; x++) {
+			for (x=0; x<surface->getWidth(); x++) {
 				Uint16 pixel = *src_line++;
 				*dst_line++ = SDL_SwapBE16(pixel);
 			}
@@ -300,9 +312,9 @@ void VIDEL::refreshScreen(void)
 			dst += dst_pitch>>1;
 		}
 	} else {
-		Uint8 *dst = (Uint8 *) surface->pixels;
-		for (y=0; y<surface->h;y++) {
-			convertLineBitplaneToChunky(src, dst, surface->w, videlBpp);
+		Uint8 *dst = (Uint8 *) sdl_surf->pixels;
+		for (y=0; y<surface->getHeight();y++) {
+			convertLineBitplaneToChunky(src, dst, surface->getWidth(), videlBpp);
 
 			src += src_pitch;
 			dst += dst_pitch;

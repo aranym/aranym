@@ -28,6 +28,7 @@
 #include "memory.h"
 #include "logo.h"
 #include "hostscreen.h"
+#include "host_surface.h"
 #include "parameters.h"
 #ifdef SDL_GUI
 # include "gui-sdl/sdlgui.h"
@@ -628,7 +629,12 @@ void HostScreen::setVidelRendering(bool videlRender)
 
 void HostScreen::refreshVidel(void)
 {
-	SDL_Surface *videl_surf = getVIDEL()->getSurface();
+	HostSurface *videl_hsurf = getVIDEL()->getSurface();
+	if (!videl_hsurf) {
+		return;
+	}
+
+	SDL_Surface *videl_surf = videl_hsurf->getSdlSurface();
 
 	/* Display logo if videl not ready */
 	bool displayLogo = true;

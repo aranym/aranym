@@ -22,6 +22,7 @@
 #define VIDELZOOM_H
 
 class VIDEL;
+class HostSurface;
 
 class VidelZoom : public VIDEL
 {
@@ -39,7 +40,7 @@ class VidelZoom : public VIDEL
 
 		void reset(void);
 
-		SDL_Surface *getSurface(void);
+		HostSurface *getSurface(void);
 };
 
 #endif /* VIDELZOOM_H */

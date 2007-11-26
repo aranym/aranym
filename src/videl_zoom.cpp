@@ -25,6 +25,7 @@
 #include "parameters.h"
 #include "host.h"
 #include "icio.h"
+#include "host_surface.h"
 #include "videl.h"
 #include "videl_zoom.h"
 
@@ -64,7 +65,7 @@ void VidelZoom::reset(void)
 	prevWidth = prevHeight = 0;
 }
 
-SDL_Surface *VidelZoom::getSurface(void)
+HostSurface *VidelZoom::getSurface(void)
 {
 	if (!bx_options.autozoom.enabled) {
 		return VIDEL::getSurface();
@@ -97,17 +98,17 @@ SDL_Surface *VidelZoom::getSurface(void)
 
 	/* Recreate surface if needed */
 	if (surface) {
-		if ((prevVidelBpp != bpp) || (prevVidelWidth != zoomWidth)
-		   || (prevVidelHeight != zoomHeight))
-		{
+		if (prevVidelBpp == bpp) {
+			if ((prevVidelWidth!=zoomWidth) || (prevVidelHeight!=zoomHeight)) {
+				surface->resize(zoomWidth, zoomHeight);
+			}
+		} else {
 			delete surface;
 			surface = NULL;
 		}
 	}
 	if (surface==NULL) {
-		surface = SDL_CreateRGBSurface(SDL_SWSURFACE, zoomWidth,zoomHeight,
-			bpp ,0,0,0,0);
-		updatePalette = true;
+		surface = new HostSurface(zoomWidth,zoomHeight,bpp);
 	}
 
 	prevVidelWidth = zoomWidth;
@@ -121,6 +122,8 @@ SDL_Surface *VidelZoom::getSurface(void)
 
 void VidelZoom::refreshScreen(void)
 {
+	SDL_Surface *sdl_surf;
+
 	D(bug("VidelZoom::renderScreen()"));
 	
 	if ((zoomWidth==videlWidth) && (zoomHeight==videlHeight)) {
@@ -131,8 +134,12 @@ void VidelZoom::refreshScreen(void)
 	if (!surface) {
 		return;
 	}
+	sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
+		return;
+	}
 
-	if (updatePalette) {
+	if (surface->dirty_flags & HostSurface::DIRTY_PALETTE) {
 		refreshPalette();
 	}
 
@@ -166,12 +173,12 @@ void VidelZoom::refreshScreen(void)
 
 	Uint16 *src = (uint16 *) Atari2HostAddr(getVramAddress());
 	int src_pitch = linewidth + lineoffset;
-	int dst_pitch = surface->pitch;
+	int dst_pitch = sdl_surf->pitch;
 	int x,y;
 	int srcLine, prevLine = -1;
 
 	if (videlBpp==16) {
-		Uint16 *dst = (Uint16 *) surface->pixels;
+		Uint16 *dst = (Uint16 *) sdl_surf->pixels;
 		for (y=0; y<zoomHeight ;y++) {
 			srcLine = ytable[y];
 
@@ -192,7 +199,7 @@ void VidelZoom::refreshScreen(void)
 	} else {
 		Uint8 chunky[videlWidth];
 
-		Uint8 *dst = (Uint8 *) surface->pixels;
+		Uint8 *dst = (Uint8 *) sdl_surf->pixels;
 		for (y=0; y<zoomHeight ;y++) {
 			srcLine = ytable[y];
 

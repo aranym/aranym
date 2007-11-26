@@ -1,3 +1,7 @@
+2007/11/26 - Patrice
+- videl: use host_surface for rendering.
+
+
 2007/11/26 - Andreas
 - tools.cpp: Include <cstring>.
 

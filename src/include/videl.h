@@ -24,6 +24,7 @@
 #include <SDL.h>
 
 class BASE_IO;
+class HostSurface;
 
 class VIDEL : public BASE_IO
 {
@@ -31,7 +32,7 @@ class VIDEL : public BASE_IO
 		bool useStPalette(void);
 
 	protected:
-		SDL_Surface *surface;
+		HostSurface *surface;
 		bool updatePalette;
 		int prevVidelWidth, prevVidelHeight, prevVidelBpp;
 
@@ -54,7 +55,7 @@ class VIDEL : public BASE_IO
 
 		void handleWrite(uint32 addr, uint8 value);
 
-		virtual SDL_Surface *getSurface(void);
+		virtual HostSurface *getSurface(void);
 };
 
 #endif /* VIDEL_H */
