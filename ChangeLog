@@ -1,3 +1,7 @@
+2007/11/26 - Andreas
+- tools.cpp: Include <cstring>.
+
+
 2007/11/25 - Patrice
 - dirty rects: Don't set flag outside boundaries.
 - hostscreen: remove mutex for vbl update stuff.
@@ -5,9 +9,11 @@
 - host_surface: New base class that will hold SDL_Surface used also for texture
   with OpenGL renderer.
 
+	
 2007/11/25 - Andreas
 - configure.ac: Don't clobber srcdir.
 - Makefile.in: append src to srcdir here.
+
 
 2007/11/25 - Petr
 - building system moved to the top-level directory
