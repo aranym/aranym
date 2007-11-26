@@ -46,7 +46,7 @@ HostSurface::HostSurface(int width, int height, int bpp)
 		0,0,0,0);
 	clip_w = surface ? surface->w : 0;
 	clip_h = surface ? surface->h : 0;
-	dirty_flags = DIRTY_PALETTE|DIRTY_SURFACE|DIRTY_TEXTURE;
+	dirty_flags = DIRTY_PALETTE|DIRTY_SURFACE;
 }
 
 HostSurface::HostSurface(SDL_Surface *surf, int clip_width, int clip_height)
@@ -68,7 +68,7 @@ HostSurface::~HostSurface(void)
 
 /*--- Public functions ---*/
 
-SDL_Surface *HostSurface::getSurface(void)
+SDL_Surface *HostSurface::getSdlSurface(void)
 {
 	return surface;
 }
@@ -91,17 +91,12 @@ void HostSurface::resize(int new_width, int new_height)
 	if (!surface) {
 		recreateSurface = true;
 	} else {
-		/* Only change dimensions if we want a smaller surface */
-		if (surface->w >= new_width) {
-			clip_w = new_width;
-		} else {
+		/* Recreate surface if too small */
+		if ((new_width>surface->w) || (new_height>surface->h)) {
 			recreateSurface = true;
 		}
-		if (surface->h >= new_height) {
-			clip_h = new_height;
-		} else {
-			recreateSurface = true;
-		}
+		clip_w = new_width;
+		clip_h = new_height;
 	}
 
 	if (!recreateSurface) {
@@ -119,7 +114,7 @@ void HostSurface::resize(int new_width, int new_height)
 		pixelFormat.BitsPerPixel = 8;
 	}
 
-	dirty_flags = DIRTY_PALETTE|DIRTY_SURFACE|DIRTY_TEXTURE;
+	dirty_flags = DIRTY_PALETTE|DIRTY_SURFACE;
 
 	surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 		clip_w,clip_h, pixelFormat.BitsPerPixel,

@@ -45,7 +45,7 @@ class HostSurface: public DirtyRects
 
 		virtual ~HostSurface();
 
-		SDL_Surface *getSurface(void);
+		SDL_Surface *getSdlSurface(void);
 
 		int getWidth(void);
 		int getHeight(void);
@@ -53,8 +53,7 @@ class HostSurface: public DirtyRects
 
 		enum {
 			DIRTY_PALETTE = 1<<0,
-			DIRTY_SURFACE = 1<<1,
-			DIRTY_TEXTURE = 1<<2
+			DIRTY_SURFACE = 1<<1
 		};
 };
 
