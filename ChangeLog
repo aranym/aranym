@@ -1,5 +1,6 @@
 2007/11/26 - Andreas
-- Fix compress_path.
+- cfgopts: Fix compress_path.
+- host_surface: Fix double free.
 
 
 2007/11/26 - Patrice
