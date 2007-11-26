@@ -1,6 +1,8 @@
 2007/11/26 - Andreas
 - tools.cpp: Include <cstring>.
 
+- Makefile.in: Fix reference to mkinstalldirs.
+
 
 2007/11/25 - Patrice
 - dirty rects: Don't set flag outside boundaries.
