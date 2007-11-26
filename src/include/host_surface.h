@@ -49,6 +49,7 @@ class HostSurface: public DirtyRects
 
 		int getWidth(void);
 		int getHeight(void);
+		int getBpp(void);
 		void resize(int new_width, int new_height);
 
 		enum {

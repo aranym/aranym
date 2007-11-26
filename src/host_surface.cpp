@@ -83,6 +83,11 @@ int HostSurface::getHeight(void)
 	return clip_h;
 }
 
+int HostSurface::getBpp(void)
+{
+	return (surface ? surface->format->BitsPerPixel : 0);
+}
+
 void HostSurface::resize(int new_width, int new_height)
 {
 	SDL_PixelFormat pixelFormat;
