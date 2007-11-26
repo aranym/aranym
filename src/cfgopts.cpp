@@ -253,7 +253,7 @@ void ConfigOptions::compress_path(char *dest, char *path, unsigned short buf_siz
 	char *replacement = NULL;
 
 	safe_strncpy(dest, config_folder, buf_size);
-
+	prefixLen = strlen(dest);
 	if (prefixLen && strncmp(path, dest, prefixLen) == 0) {
 		replacement = "";
 		D(bug("%s matches %.*s", path, prefixLen, dest));
@@ -280,10 +280,11 @@ void ConfigOptions::compress_path(char *dest, char *path, unsigned short buf_siz
 
 	if (replacement) {
 		int len1 = strlen(replacement);
-		int len2 = strlen(path+prefixLen);
-		memmove(dest+len1, path+prefixLen, len2+1);
-		memcpy(dest, replacement, len1);
+		strcpy(dest, replacement);
+		safe_strncpy(dest+len1, path+prefixLen, buf_size - len1);
 	}
+	else
+		safe_strncpy(dest, path, buf_size);
 }
 
 
