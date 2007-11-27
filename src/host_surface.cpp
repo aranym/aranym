@@ -60,8 +60,10 @@ HostSurface::HostSurface(SDL_Surface *surf, int clip_width, int clip_height)
 
 HostSurface::~HostSurface(void)
 {
-	if (surface)
+	if (surface) {
 		SDL_FreeSurface(surface);
+		surface = NULL;
+	}
 }
 
 /*--- Public functions ---*/
