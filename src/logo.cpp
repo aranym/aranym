@@ -89,5 +89,8 @@ void Logo::load(const char *filename)
 
 HostSurface *Logo::getSurface(void)
 {
+	if (surface) {
+		surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
+	}
 	return surface;
 }

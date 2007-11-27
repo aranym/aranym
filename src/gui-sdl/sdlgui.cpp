@@ -839,6 +839,11 @@ HostSurface *SDLGui_getSurface(void)
 		}
 	}
 
+	if (gui_hsurf) {
+		gui_hsurf->setDirtyRect(0,0,
+			gui_hsurf->getWidth(),gui_hsurf->getHeight());
+	}
+
 	return gui_hsurf;
 }
 
