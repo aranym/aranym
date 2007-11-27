@@ -930,13 +930,8 @@ if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
   AC_DEFINE([BLITTER_MEMMOVE], 1, [Define if you want accelerated blitter output])	dnl required for the SDLBLIT
 fi
 
-dnl Update during vbl ticks
-if [[ "x$WANT_VBLUPDATES" = "xyes" ]]; then
-  AC_DEFINE([ENABLE_VBL_UPDATES], 1, [Define if you want delayed updates in VBL])
-fi
-
-HAVE_ETHERNET=no
 dnl Ethernet card emulation
+HAVE_ETHERNET=no
 if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
   if [[ "x$ac_cv_tun_tap_support" = "xyes" ]]; then
     AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])

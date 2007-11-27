@@ -60,12 +60,6 @@
 #define MIN_WIDTH 640
 #define MIN_HEIGHT 480
 
-#ifdef ENABLE_VBL_UPDATES
-#define MAXIMUM_UPDATE_CACHE 1000
-	static SDL_Rect updateRects[MAXIMUM_UPDATE_CACHE];
-	static int sdl_rectcount = 0;
-#endif
-
 HostScreen::HostScreen(void)
 	: DirtyRects(), logo(NULL), logo_present(true), refreshCounter(0)
 {
@@ -609,13 +603,6 @@ void HostScreen::refresh(void)
 #ifdef SDL_GUI
 	if (!SDLGui_isClosed()) {
 		refreshGui();
-	}
-#endif
-
-#ifdef ENABLE_VBL_UPDATES
-	if (sdl_rectcount > 0) {
-		SDL_UpdateRects(mainSurface, sdl_rectcount, updateRects);
-		sdl_rectcount = 0;
 	}
 #endif
 
