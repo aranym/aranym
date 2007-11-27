@@ -792,51 +792,7 @@ void HostScreen::refreshNfvdi(void)
 		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
-	SDL_Rect src_rect = {0,0, vdi_width, vdi_height};
-	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
-	if (mainSurface->w > vdi_width) {
-		dst_rect.x = (mainSurface->w - vdi_width) >> 1;
-		dst_rect.w = vdi_width;
-	} else {
-		src_rect.w = mainSurface->w;
-	}
-	if (mainSurface->h > vdi_height) {
-		dst_rect.y = (mainSurface->h - vdi_height) >> 1;
-		dst_rect.h = vdi_height;
-	} else {
-		src_rect.h = mainSurface->h;
-	}
-
-	Uint8 *dirtyRects = nfvdi_hsurf->getDirtyRects();
-	if (!dirtyRects) {
-		return;
-	}
-
-	int dirty_w = nfvdi_hsurf->getDirtyWidth();
-	int dirty_h = nfvdi_hsurf->getDirtyHeight();
-	for (int y=0; y<dirty_h; y++) {
-		for (int x=0; x<dirty_w; x++) {
-			if (dirtyRects[y * dirty_w + x]) {
-				SDL_Rect src, dst;
-
-				src.x = src_rect.x + (x<<4);
-				src.y = src_rect.y + (y<<4);
-				src.w = (1<<4);
-				src.h = (1<<4);
-
-				dst.x = dst_rect.x + (x<<4);
-				dst.y = dst_rect.y + (y<<4);
-				dst.w = (1<<4);
-				dst.h = (1<<4);
-
-				SDL_BlitSurface(nfvdi_surf, &src, mainSurface, &dst);
-
-				setDirtyRect(dst.x,dst.y,dst.w,dst.h);
-			}
-		}
-	}
-
-	nfvdi_hsurf->clearDirtyRects();
+	drawSurfaceToScreen(nfvdi_hsurf);
 #endif
 }
 
@@ -879,9 +835,38 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 		src_rect.h = mainSurface->h;
 	}
 
-	SDL_BlitSurface(sdl_surf, &src_rect, mainSurface, &dst_rect);
+	Uint8 *dirtyRects = hsurf->getDirtyRects();
+	if (!dirtyRects) {
+		SDL_BlitSurface(sdl_surf, &src_rect, mainSurface, &dst_rect);
 
-	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
+		setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
+	} else {
+		int dirty_w = hsurf->getDirtyWidth();
+		int dirty_h = hsurf->getDirtyHeight();
+		for (int y=0; y<dirty_h; y++) {
+			for (int x=0; x<dirty_w; x++) {
+				if (dirtyRects[y * dirty_w + x]) {
+					SDL_Rect src, dst;
+
+					src.x = src_rect.x + (x<<4);
+					src.y = src_rect.y + (y<<4);
+					src.w = (1<<4);
+					src.h = (1<<4);
+
+					dst.x = dst_rect.x + (x<<4);
+					dst.y = dst_rect.y + (y<<4);
+					dst.w = (1<<4);
+					dst.h = (1<<4);
+
+					SDL_BlitSurface(sdl_surf, &src, mainSurface, &dst);
+
+					setDirtyRect(dst.x,dst.y,dst.w,dst.h);
+				}
+			}
+		}
+
+		hsurf->clearDirtyRects();
+	}
 
 	/* GUI need to know where it is */
 	if (dst_x) {
