@@ -1,5 +1,5 @@
 2007/11/27 - Patrice
-- sdl_gui: use host_surface for rendering.
+- logo, sdl_gui: use host_surface for rendering.
 
 
 2007/11/26 - Andreas

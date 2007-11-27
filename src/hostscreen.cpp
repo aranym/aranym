@@ -700,16 +700,16 @@ void HostScreen::refreshLogo(void)
 	}
 	if (!logo) {
 		logo = new Logo(bx_options.logo_path);
-	}
-	if (!logo) {
-		return;
+		if (!logo) {
+			return;
+		}
 	}
 
-	SDL_Surface *logo_surf = logo->getSurface();
-	if (!logo_surf) {
+	HostSurface *logo_hsurf = logo->getSurface();
+	if (!logo_hsurf) {
 		logo->load(bx_options.logo_path);
-		logo_surf = logo->getSurface();
-		if (!logo_surf) {
+		logo_hsurf = logo->getSurface();
+		if (!logo_hsurf) {
 			fprintf(stderr, "Can not load logo from %s file\n",
 				bx_options.logo_path); 
 			logo_present = false;
@@ -717,9 +717,17 @@ void HostScreen::refreshLogo(void)
 		}
 	}
 
-	int w = (logo_surf->w < 320) ? 320 : logo_surf->w;
-	int h = (logo_surf->h < 200) ? 200 : logo_surf->h;
-	int bpp = logo_surf->format->BitsPerPixel;
+	SDL_Surface *logo_surf = logo_hsurf->getSdlSurface();
+	if (!logo_surf) {
+		return;
+	}
+
+	int logo_width = logo_hsurf->getWidth();
+	int logo_height = logo_hsurf->getHeight();
+
+	int w = (logo_width < 320) ? 320 : logo_width;
+	int h = (logo_height < 200) ? 200 : logo_height;
+	int bpp = logo_hsurf->getBpp();
 	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
 		setWindowSize(w, h, bpp);
 		lastVidelWidth = w;
@@ -738,17 +746,17 @@ void HostScreen::refreshLogo(void)
 		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
-	SDL_Rect src_rect = {0,0, logo_surf->w, logo_surf->h};
+	SDL_Rect src_rect = {0,0, logo_width, logo_height};
 	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
-	if (mainSurface->w > logo_surf->w) {
-		dst_rect.x = (mainSurface->w - logo_surf->w) >> 1;
-		dst_rect.w = logo_surf->w;
+	if (mainSurface->w > logo_width) {
+		dst_rect.x = (mainSurface->w - logo_width) >> 1;
+		dst_rect.w = logo_width;
 	} else {
 		src_rect.w = mainSurface->w;
 	}
-	if (mainSurface->h > logo_surf->h) {
-		dst_rect.y = (mainSurface->h - logo_surf->h) >> 1;
-		dst_rect.h = logo_surf->h;
+	if (mainSurface->h > logo_height) {
+		dst_rect.y = (mainSurface->h - logo_height) >> 1;
+		dst_rect.h = logo_height;
 	} else {
 		src_rect.h = mainSurface->h;
 	}

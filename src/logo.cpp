@@ -25,6 +25,8 @@
 #include <SDL_image.h>
 #endif
 
+#include "dirty_rects.h"
+#include "host_surface.h"
 #include "logo.h"
  
 /*--- Constructor/destructor ---*/
@@ -38,7 +40,8 @@ Logo::Logo(const char *filename)
 Logo::~Logo()
 {
 	if (surface) {
-		SDL_FreeSurface(surface);
+		delete surface;
+		surface = NULL;
 	}
 }
 
@@ -46,8 +49,10 @@ Logo::~Logo()
 
 void Logo::load(const char *filename)
 {
+	SDL_Surface *sdl_surf;
+
 	if (surface) {
-		SDL_FreeSurface(surface);
+		delete surface;
 		surface = NULL;
 	}
 
@@ -57,24 +62,32 @@ void Logo::load(const char *filename)
 	}
 
 #ifdef HAVE_SDL_IMAGE
-	surface = IMG_Load_RW(rwops, 0);
+	sdl_surf = IMG_Load_RW(rwops, 0);
 #else
-	surface = SDL_LoadBMP_RW(rwops, 0);
+	sdl_surf = SDL_LoadBMP_RW(rwops, 0);
 #endif
 	SDL_FreeRW(rwops);
 
+	if (!sdl_surf) {
+		return;
+	}
+
+	surface = new HostSurface(sdl_surf);
 	if (!surface) {
 		return;
 	}
 
+	/* Set color key */
+	sdl_surf = surface->getSdlSurface();
+
 	/* FIXME: set key for other bpp ? */
-	if (surface->format->BitsPerPixel == 1) {
+	if (sdl_surf->format->BitsPerPixel == 1) {
 		/* Set transparency from first pixel */
-		SDL_SetColorKey(surface, SDL_SRCCOLORKEY|SDL_RLEACCEL, ((Uint8 *)surface->pixels)[0]);
+		SDL_SetColorKey(sdl_surf, SDL_SRCCOLORKEY|SDL_RLEACCEL, ((Uint8 *)sdl_surf->pixels)[0]);
 	}
 }
 
-SDL_Surface *Logo::getSurface(void)
+HostSurface *Logo::getSurface(void)
 {
 	return surface;
 }

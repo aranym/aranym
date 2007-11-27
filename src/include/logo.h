@@ -21,18 +21,20 @@
 #ifndef LOGO_H
 #define LOGO_H 1
 
+class HostSurface;
+
 /*--- Logo class ---*/
 
 class Logo {
 	private:
-		SDL_Surface *surface;
+		HostSurface *surface;
 
 	public:
 		Logo(const char *filename);
 		virtual ~Logo();
 
 		void load(const char *filename);
-		SDL_Surface *getSurface(void);
+		HostSurface *getSurface(void);
 };
 
 #endif /* LOGO_H */
