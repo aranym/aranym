@@ -219,4 +219,6 @@ void VidelZoom::refreshScreen(void)
 			dst += dst_pitch;
 		}
 	}
+
+	surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
 }

@@ -320,6 +320,8 @@ void VIDEL::refreshScreen(void)
 			dst += dst_pitch;
 		}
 	}
+
+	surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
 }
 
 void VIDEL::convertLineBitplaneToChunky(Uint16 *source, Uint8 *dest, int width, int bpp)
