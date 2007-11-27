@@ -673,24 +673,7 @@ void HostScreen::refreshVidel(void)
 		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
-	SDL_Rect src_rect = {0,0, videl_surf->w, videl_surf->h};
-	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
-	if (mainSurface->w > videl_surf->w) {
-		dst_rect.x = (mainSurface->w - videl_surf->w) >> 1;
-		dst_rect.w = videl_surf->w;
-	} else {
-		src_rect.w = mainSurface->w;
-	}
-	if (mainSurface->h > videl_surf->h) {
-		dst_rect.y = (mainSurface->h - videl_surf->h) >> 1;
-		dst_rect.h = videl_surf->h;
-	} else {
-		src_rect.h = mainSurface->h;
-	}
-
-	SDL_BlitSurface(videl_surf, &src_rect, mainSurface, &dst_rect);
-
-	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
+	drawSurfaceToScreen(videl_hsurf);
 }
 
 void HostScreen::refreshLogo(void)
@@ -746,24 +729,7 @@ void HostScreen::refreshLogo(void)
 		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
-	SDL_Rect src_rect = {0,0, logo_width, logo_height};
-	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
-	if (mainSurface->w > logo_width) {
-		dst_rect.x = (mainSurface->w - logo_width) >> 1;
-		dst_rect.w = logo_width;
-	} else {
-		src_rect.w = mainSurface->w;
-	}
-	if (mainSurface->h > logo_height) {
-		dst_rect.y = (mainSurface->h - logo_height) >> 1;
-		dst_rect.h = logo_height;
-	} else {
-		src_rect.h = mainSurface->h;
-	}
-
-	SDL_BlitSurface(logo_surf, &src_rect, mainSurface, &dst_rect);
-
-	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
+	drawSurfaceToScreen(logo_hsurf);
 }
 
 void HostScreen::forceRefreshNfvdi(void)
@@ -877,39 +843,53 @@ void HostScreen::refreshNfvdi(void)
 void HostScreen::refreshGui(void)
 {
 #ifdef SDL_GUI
-	HostSurface *gui_hsurf = SDLGui_getSurface();
-	if (!gui_hsurf) {
+	int gui_x, gui_y;
+
+	drawSurfaceToScreen(SDLGui_getSurface(), &gui_x, &gui_y);
+
+	SDLGui_setGuiPos(gui_x, gui_y);
+#endif /* SDL_GUI */
+}
+
+void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
+{
+	if (!hsurf) {
 		return;
 	}
-	SDL_Surface *gui_surf = gui_hsurf->getSdlSurface();
-	if (!gui_surf) {
+	SDL_Surface *sdl_surf = hsurf->getSdlSurface();
+	if (!sdl_surf) {
 		return;
 	}
 
-	int gui_width = gui_hsurf->getWidth();
-	int gui_height = gui_hsurf->getHeight();
+	int width = hsurf->getWidth();
+	int height = hsurf->getHeight();
 
-	SDL_Rect src_rect = {0,0, gui_width, gui_height};
+	SDL_Rect src_rect = {0,0, width, height};
 	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
-	if (mainSurface->w > gui_width) {
-		dst_rect.x = (mainSurface->w - gui_width) >> 1;
-		dst_rect.w = gui_width;
+	if (mainSurface->w > width) {
+		dst_rect.x = (mainSurface->w - width) >> 1;
+		dst_rect.w = width;
 	} else {
 		src_rect.w = mainSurface->w;
 	}
-	if (mainSurface->h > gui_height) {
-		dst_rect.y = (mainSurface->h - gui_height) >> 1;
-		dst_rect.h = gui_height;
+	if (mainSurface->h > height) {
+		dst_rect.y = (mainSurface->h - height) >> 1;
+		dst_rect.h = height;
 	} else {
 		src_rect.h = mainSurface->h;
 	}
 
-	SDL_BlitSurface(gui_surf, &src_rect, mainSurface, &dst_rect);
+	SDL_BlitSurface(sdl_surf, &src_rect, mainSurface, &dst_rect);
 
 	setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 
-	SDLGui_setGuiPos(dst_rect.x, dst_rect.y);
-#endif /* SDL_GUI */
+	/* GUI need to know where it is */
+	if (dst_x) {
+		*dst_x = dst_rect.x;
+	}
+	if (dst_y) {
+		*dst_y = dst_rect.y;
+	}
 }
 
 void HostScreen::refreshScreen(void)

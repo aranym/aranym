@@ -36,7 +36,9 @@
 #endif
 
 #include "dirty_rects.h"
-#include "logo.h"
+
+class HostSurface;
+class Logo;
 
 class HostScreen: public DirtyRects
 {
@@ -52,6 +54,9 @@ class HostScreen: public DirtyRects
 	void forceRefreshNfvdi(void);
 	void refreshGui(void);
 	void refreshScreen(void);
+
+	void drawSurfaceToScreen(HostSurface *hsurf, int *dst_x = NULL,
+		int *dst_y = NULL);
 
 #ifdef ENABLE_OPENGL
 	// OpenGL stuff

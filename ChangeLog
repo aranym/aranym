@@ -1,5 +1,6 @@
 2007/11/27 - Patrice
 - logo, sdl_gui: use host_surface for rendering.
+- hostscreen: separate function to draw surface to screen.
 
 
 2007/11/26 - Andreas
