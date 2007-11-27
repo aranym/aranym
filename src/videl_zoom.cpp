@@ -23,6 +23,7 @@
 
 #include "sysdeps.h"
 #include "parameters.h"
+#include "hostscreen.h"
 #include "host.h"
 #include "icio.h"
 #include "host_surface.h"
@@ -108,7 +109,7 @@ HostSurface *VidelZoom::getSurface(void)
 		}
 	}
 	if (surface==NULL) {
-		surface = new HostSurface(zoomWidth,zoomHeight,bpp);
+		surface = host->hostScreen.createSurface(zoomWidth,zoomHeight,bpp);
 	}
 
 	prevVidelWidth = zoomWidth;

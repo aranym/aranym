@@ -27,6 +27,8 @@
 #include "file.h"
 #include "tools.h"
 #include "host_surface.h"
+#include "hostscreen.h"
+#include "host.h"
 
 #include <cstdlib>
 #include <stack>
@@ -157,7 +159,7 @@ bool SDLGui_Init()
     return false;
   }
 
-	gui_hsurf = new HostSurface(320+8,400+8,8);
+	gui_hsurf = host->hostScreen.createSurface(320+8,400+8,8);
 	if (!gui_hsurf) {
 		panicbug("Could not create surface for GUI");
 		panicbug("ARAnyM GUI will not be available");

@@ -117,6 +117,10 @@ class HostScreen: public DirtyRects
 	bool	renderVidelSurface;
 	void	setVidelRendering(bool videlRender);
 	int	lastVidelWidth, lastVidelHeight, lastVidelBpp;
+
+	/* Surface creation */
+	HostSurface *createSurface(int width, int height, int bpp);
+	HostSurface *createSurface(SDL_Surface *sdl_surf);
 };
 
 /**

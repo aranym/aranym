@@ -28,6 +28,8 @@
 #include "dirty_rects.h"
 #include "host_surface.h"
 #include "logo.h"
+#include "hostscreen.h"
+#include "host.h"
  
 /*--- Constructor/destructor ---*/
 
@@ -72,7 +74,7 @@ void Logo::load(const char *filename)
 		return;
 	}
 
-	surface = new HostSurface(sdl_surf);
+	surface = host->hostScreen.createSurface(sdl_surf);
 	if (!surface) {
 		return;
 	}

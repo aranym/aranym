@@ -413,7 +413,7 @@ void VdiDriver::setResolution(int32 width, int32 height, int32 depth)
 		}
 	}
 	if (surface==NULL) {
-		surface = new HostSurface(width,height,depth);
+		surface = host->hostScreen.createSurface(width,height,depth);
 	}
 
 	/* TODO: restore palette ? */

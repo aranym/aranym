@@ -24,6 +24,7 @@
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
+#include "hostscreen.h"
 #include "host.h"
 #include "icio.h"
 #include "host_surface.h"
@@ -218,7 +219,7 @@ HostSurface *VIDEL::getSurface(void)
 		}
 	}
 	if (surface==NULL) {
-		surface = new HostSurface(width,height,bpp);
+		surface = host->hostScreen.createSurface(width,height,bpp);
 	}
 
 	prevVidelWidth = width;
