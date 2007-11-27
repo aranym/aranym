@@ -14,6 +14,7 @@
 
 #include <SDL.h>
 
+class HostSurface;
 class Dialog;
 
 enum
@@ -94,7 +95,7 @@ typedef enum { ALERT_OK, ALERT_OKCANCEL } alert_type;
 extern bool SDLGui_Alert(const char *, alert_type type);
 
 void SDLGui_setGuiPos(int guix, int guiy);
-SDL_Surface *SDLGui_getSurface(void);
+HostSurface *SDLGui_getSurface(void);
 
 /* dlgHotkeys.cpp */
 char *displayKeysym(SDL_keysym keysym, char *buffer);

@@ -26,6 +26,7 @@
 #include "sdlgui.h"
 #include "file.h"
 #include "tools.h"
+#include "host_surface.h"
 
 #include <cstdlib>
 #include <stack>
@@ -45,6 +46,7 @@ static int fontwidth, fontheight;   /* Height and width of the actual font */
 static std::stack<Dialog *> dlgStack;
 
 /* gui surface */
+static HostSurface *gui_hsurf = NULL;
 static SDL_Surface *gui_surf = NULL;
 static int gui_x = 0, gui_y = 0; /* gui position */
 
@@ -155,12 +157,14 @@ bool SDLGui_Init()
     return false;
   }
 
-	gui_surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 320+8,400+8,8, 0,0,0,0);
-	if (!gui_surf) {
+	gui_hsurf = new HostSurface(320+8,400+8,8);
+	if (!gui_hsurf) {
 		panicbug("Could not create surface for GUI");
 		panicbug("ARAnyM GUI will not be available");
 		return false;
 	}
+
+	gui_surf = gui_hsurf->getSdlSurface();
 
 	/* Set GUI surface palette */
 	SDL_SetPalette(gui_surf, SDL_LOGPAL, gui_palette, 0, 4);
@@ -182,9 +186,9 @@ bool SDLGui_Init()
 */
 int SDLGui_UnInit()
 {
-	if (gui_surf) {
-		SDL_FreeSurface(gui_surf);
-		gui_surf = NULL;
+	if (gui_hsurf) {
+		delete gui_hsurf;
+		gui_hsurf = NULL;
 	}
 
   if (fontgfx)
@@ -823,7 +827,7 @@ void SDLGui_setGuiPos(int guix, int guiy)
 	gui_y = guiy;
 }
 
-SDL_Surface *SDLGui_getSurface(void)
+HostSurface *SDLGui_getSurface(void)
 {
 	if (gui_dlg) {
 		/* Blink cursor ? */
@@ -835,7 +839,7 @@ SDL_Surface *SDLGui_getSurface(void)
 		}
 	}
 
-	return gui_surf;
+	return gui_hsurf;
 }
 
 /*-----------------------------------------------------------------------*/

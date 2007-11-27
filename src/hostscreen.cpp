@@ -794,9 +794,12 @@ void HostScreen::refreshNfvdi(void)
 		return;
 	}
 
-	int w = (nfvdi_surf->w < 320) ? 320 : nfvdi_surf->w;
-	int h = (nfvdi_surf->h < 200) ? 200 : nfvdi_surf->h;
-	int bpp = nfvdi_surf->format->BitsPerPixel;
+	int vdi_width = nfvdi_hsurf->getWidth();
+	int vdi_height = nfvdi_hsurf->getHeight();
+
+	int w = (vdi_width < 320) ? 320 : vdi_width;
+	int h = (vdi_height < 200) ? 200 : vdi_height;
+	int bpp = nfvdi_hsurf->getBpp();
 	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
 		setWindowSize(w, h, bpp);
 		lastVidelWidth = w;
@@ -815,17 +818,17 @@ void HostScreen::refreshNfvdi(void)
 		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
-	SDL_Rect src_rect = {0,0, nfvdi_surf->w, nfvdi_surf->h};
+	SDL_Rect src_rect = {0,0, vdi_width, vdi_height};
 	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
-	if (mainSurface->w > nfvdi_surf->w) {
-		dst_rect.x = (mainSurface->w - nfvdi_surf->w) >> 1;
-		dst_rect.w = nfvdi_surf->w;
+	if (mainSurface->w > vdi_width) {
+		dst_rect.x = (mainSurface->w - vdi_width) >> 1;
+		dst_rect.w = vdi_width;
 	} else {
 		src_rect.w = mainSurface->w;
 	}
-	if (mainSurface->h > nfvdi_surf->h) {
-		dst_rect.y = (mainSurface->h - nfvdi_surf->h) >> 1;
-		dst_rect.h = nfvdi_surf->h;
+	if (mainSurface->h > vdi_height) {
+		dst_rect.y = (mainSurface->h - vdi_height) >> 1;
+		dst_rect.h = vdi_height;
 	} else {
 		src_rect.h = mainSurface->h;
 	}
@@ -866,22 +869,29 @@ void HostScreen::refreshNfvdi(void)
 void HostScreen::refreshGui(void)
 {
 #ifdef SDL_GUI
-	SDL_Surface *gui_surf = SDLGui_getSurface();
+	HostSurface *gui_hsurf = SDLGui_getSurface();
+	if (!gui_hsurf) {
+		return;
+	}
+	SDL_Surface *gui_surf = gui_hsurf->getSdlSurface();
 	if (!gui_surf) {
 		return;
 	}
 
-	SDL_Rect src_rect = {0,0, gui_surf->w, gui_surf->h};
+	int gui_width = gui_hsurf->getWidth();
+	int gui_height = gui_hsurf->getHeight();
+
+	SDL_Rect src_rect = {0,0, gui_width, gui_height};
 	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
-	if (mainSurface->w > gui_surf->w) {
-		dst_rect.x = (mainSurface->w - gui_surf->w) >> 1;
-		dst_rect.w = gui_surf->w;
+	if (mainSurface->w > gui_width) {
+		dst_rect.x = (mainSurface->w - gui_width) >> 1;
+		dst_rect.w = gui_width;
 	} else {
 		src_rect.w = mainSurface->w;
 	}
-	if (mainSurface->h > gui_surf->h) {
-		dst_rect.y = (mainSurface->h - gui_surf->h) >> 1;
-		dst_rect.h = gui_surf->h;
+	if (mainSurface->h > gui_height) {
+		dst_rect.y = (mainSurface->h - gui_height) >> 1;
+		dst_rect.h = gui_height;
 	} else {
 		src_rect.h = mainSurface->h;
 	}

@@ -1,3 +1,7 @@
+2007/11/27 - Patrice
+- sdl_gui: use host_surface for rendering.
+
+
 2007/11/26 - Andreas
 - cfgopts: Fix compress_path.
 - host_surface: Fix double free.
