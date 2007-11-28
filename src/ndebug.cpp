@@ -83,7 +83,7 @@ bool ndebug::breakpoint[max_breakpoints];
 uaecptr ndebug::breakpoint_address[max_breakpoints];
   
 char ndebug::old_debug_cmd[80] = "                                                                               ";
-static char *strhelp[] = {"Help:\n",
+static const char *strhelp[] = {"Help:\n",
 	" h, ?                 show this help\n",
 	" Q                    quit ARAnyM\n",
 	" R                    reset CPU\n",

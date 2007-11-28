@@ -74,7 +74,7 @@ void Logo::load(const char *filename)
 		return;
 	}
 
-	surface = host->hostScreen.createSurface(sdl_surf);
+	surface = host->video->createSurface(sdl_surf);
 	if (!surface) {
 		return;
 	}

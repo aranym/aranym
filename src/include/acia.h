@@ -79,7 +79,7 @@ class ACIA : public BASE_IO {
 		virtual uae_u8 ReadData();
 		virtual void WriteData(uae_u8);
 
-		void PrintControlRegister(char *devicename, uae_u8 value);
+		void PrintControlRegister(const char *devicename, uae_u8 value);
 };
 
 #endif /* _ACIA_H */

@@ -1,3 +1,10 @@
+2007/11/28 - Petr
+- mkinstalldirs: moved from src/Unix ../..
+- src/Unix: removed the autotools files, use the top-level ones instead.
+- various files: added 'const' before 'char *' to satisfy gcc 4.2. Thanks
+  for patch goes to Thomas Huth.
+
+
 2007/11/28 - Patrice
 - host: rename hostscreen as video, makes it a pointer.
 - hostscreen: clear whole screen when need a complete refresh.

@@ -23,7 +23,7 @@
 
 #include "aranym_exception.h"
 
-AranymException::AranymException(char *fmt, ...)
+AranymException::AranymException(const char *fmt, ...)
 {
 	va_list argptr;
 	

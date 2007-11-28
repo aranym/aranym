@@ -58,9 +58,9 @@ class ConfigOptions
 
 	public:
 		ConfigOptions(const char *, const char *, const char *);
-		int input_config(struct Config_Tag *, char *);
-		int update_config(struct Config_Tag *, char *);
-		int process_config(struct Config_Tag *, char *, bool verbose);
+		int input_config(struct Config_Tag *, const char *);
+		int update_config(struct Config_Tag *, const char *);
+		int process_config(struct Config_Tag *, const char *, bool verbose);
 };
 
 #endif

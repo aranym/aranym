@@ -1286,7 +1286,8 @@ void m68k_mull (uae_u32 /*opcode*/, uae_u32 src, uae_u16 extra)
     }
 #endif
 }
-static char* ccnames[] =
+
+static const char* ccnames[] =
 { "T ","F ","HI","LS","CC","CS","NE","EQ",
   "VC","VS","PL","MI","GE","LT","GT","LE" };
 

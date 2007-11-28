@@ -298,7 +298,7 @@ void ConfigOptions::compress_path(char *dest, char *path, unsigned short buf_siz
 /	  struct Config_Tag configs[]; Configuration structure
 /	  char *header			  ; INI header name (i.e. "[TEST]")
 /-------------------------------------------------------------------<<*/
-int	ConfigOptions::input_config(struct Config_Tag configs[], char *header)
+int	ConfigOptions::input_config(struct Config_Tag configs[], const char *header)
 {
 	struct Config_Tag *ptr;
 	int	count = 0, lineno = 0, temp;
@@ -439,7 +439,7 @@ int	ConfigOptions::input_config(struct Config_Tag configs[], char *header)
 }
 
 
-int ConfigOptions::process_config(struct Config_Tag *conf, char *title, bool verbose)
+int ConfigOptions::process_config(struct Config_Tag *conf, const char *title, bool verbose)
 {
 	int status = input_config(conf, title);
 	if (status >= 0) {
@@ -542,7 +542,7 @@ bool ConfigOptions::write_token(FILE *outfile, struct Config_Tag *ptr)
 /	  struct Config_Tag configs[]; Configuration structure
 /	  char *header			  ; INI header name (i.e. "[TEST]")
 /-------------------------------------------------------------------<<*/
-int	ConfigOptions::update_config(struct Config_Tag configs[], char *header)
+int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header)
 {
 #ifdef OS_darwin
 	static char *tempfilename = "/tmp/aratemp.$$$";

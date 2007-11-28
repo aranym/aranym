@@ -114,7 +114,7 @@ void ACIA::WriteData(uae_u8 value)
 	D(bug("acia: WriteData(0x%02x)",txdr));
 }
 
-void ACIA::PrintControlRegister(char *devicename, uae_u8 value)
+void ACIA::PrintControlRegister(const char *devicename, uae_u8 value)
 {
 	DUNUSED(devicename);
 	/* Clock */

@@ -26,7 +26,7 @@ class AranymException {
 		char errMsg[256];
 
 	public:
-		AranymException(char *fmt, ...);
+		AranymException(const char *fmt, ...);
 		virtual ~AranymException();
 
 		char *getErrorMessage(void);
