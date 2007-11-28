@@ -61,11 +61,9 @@
 #define MIN_HEIGHT 480
 
 HostScreen::HostScreen(void)
-	: DirtyRects(), logo(NULL), logo_present(true), refreshCounter(0)
+	: DirtyRects(), logo(NULL), logo_present(true), clear_screen(true),
+	snapCounter(0), refreshCounter(0)
 {
-	// the counter init
-	snapCounter = 0;
-
 	mainSurface=NULL;
 
 #ifdef ENABLE_OPENGL
@@ -504,6 +502,8 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 			mainSurface->format->Rmask, mainSurface->format->Gmask, mainSurface->format->Bmask,
 			mainSurface->format->Rshift, mainSurface->format->Gshift, mainSurface->format->Bshift,
 			mainSurface->format->Rloss, mainSurface->format->Gloss, mainSurface->format->Bloss));
+
+	clear_screen = true;
 }
 
 void HostScreen::OpenGLUpdate(void)
@@ -598,6 +598,11 @@ void HostScreen::refresh(void)
 		return;
 	}
 	
+	if (clear_screen) {
+		SDL_FillRect(mainSurface, NULL, 0);
+		clear_screen = false;
+	}
+
 	/* Render videl surface ? */
 	if (renderVidelSurface) {
 		refreshVidel();
@@ -920,6 +925,7 @@ void HostScreen::refreshScreen(void)
 
 void HostScreen::forceRefreshScreen(void)
 {
+	clear_screen = true;
 	forceRefreshNfvdi();
 	if (mainSurface) {
 		setDirtyRect(0,0, mainSurface->w, mainSurface->h);

@@ -76,6 +76,7 @@ class HostScreen: public DirtyRects
 
 	Logo *logo;
 	bool logo_present;
+	bool clear_screen;
 
   public:
 	uint32 sdl_videoparams;

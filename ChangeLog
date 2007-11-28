@@ -1,5 +1,6 @@
 2007/11/28 - Patrice
 - host: rename hostscreen as video, makes it a pointer.
+- hostscreen: clear whole screen when need a complete refresh.
 
 
 2007/11/27 - Patrice
