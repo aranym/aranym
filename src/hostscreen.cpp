@@ -84,11 +84,7 @@ HostScreen::HostScreen(void)
 	bx_options.opengl.enabled = false;
 #endif /* !ENABLE_OPENGL */
 
-	renderVidelSurface = true;
-	lastVidelWidth = lastVidelHeight = lastVidelBpp = -1;
-	DisableOpenGLVdi();
-
-	setWindowSize(MIN_WIDTH,MIN_HEIGHT,8);
+	reset();
 }
 
 HostScreen::~HostScreen(void)
@@ -116,6 +112,15 @@ HostScreen::~HostScreen(void)
 	if (logo) {
 		delete logo;
 	}
+}
+
+void HostScreen::reset(void)
+{
+	lastVidelWidth = lastVidelHeight = lastVidelBpp = -1;
+	renderVidelSurface = true;
+	DisableOpenGLVdi();
+
+	setWindowSize(MIN_WIDTH,MIN_HEIGHT,8);
 }
 
 uint32 HostScreen::getBpp(void)

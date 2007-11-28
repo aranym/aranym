@@ -87,6 +87,8 @@ class HostScreen: public DirtyRects
 	HostScreen(void);
 	~HostScreen(void);
 
+	void reset(void);
+
 	void OpenGLUpdate(void);	/* Full screen update with NF software VDI */
 	void EnableOpenGLVdi(void);
 	void DisableOpenGLVdi(void);

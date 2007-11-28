@@ -83,8 +83,8 @@ HostSurface *VidelZoom::getSurface(void)
 		videlHeight = 64;
 	}
 
-	int hostWidth = host->hostScreen.getWidth();
-	int hostHeight = host->hostScreen.getHeight();
+	int hostWidth = host->video->getWidth();
+	int hostHeight = host->video->getHeight();
 
 	zoomWidth = hostWidth;
 	zoomHeight = hostHeight;
@@ -109,7 +109,7 @@ HostSurface *VidelZoom::getSurface(void)
 		}
 	}
 	if (surface==NULL) {
-		surface = host->hostScreen.createSurface(zoomWidth,zoomHeight,bpp);
+		surface = host->video->createSurface(zoomWidth,zoomHeight,bpp);
 	}
 
 	prevVidelWidth = zoomWidth;

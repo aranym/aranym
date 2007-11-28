@@ -1,3 +1,7 @@
+2007/11/28 - Patrice
+- host: rename hostscreen as video, makes it a pointer.
+
+
 2007/11/27 - Patrice
 - logo, sdl_gui: use host_surface for rendering.
 - hostscreen: separate function to draw surface to screen, only update dirtied

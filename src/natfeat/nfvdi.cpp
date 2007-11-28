@@ -297,7 +297,7 @@ VdiDriver::~VdiDriver()
 
 void VdiDriver::reset(void)
 {
-	host->hostScreen.setVidelRendering(true);
+	host->video->setVidelRendering(true);
 }
 
 /*--- Protected functions ---*/
@@ -413,7 +413,7 @@ void VdiDriver::setResolution(int32 width, int32 height, int32 depth)
 		}
 	}
 	if (surface==NULL) {
-		surface = host->hostScreen.createSurface(width,height,depth);
+		surface = host->video->createSurface(width,height,depth);
 	}
 
 	/* TODO: restore palette ? */
@@ -431,13 +431,13 @@ int32 VdiDriver::getHeight(void)
 
 int32 VdiDriver::openWorkstation(void)
 {
-	host->hostScreen.setVidelRendering(false);
+	host->video->setVidelRendering(false);
 	return 1;
 }
 
 int32 VdiDriver::closeWorkstation(void)
 {
-	host->hostScreen.setVidelRendering(true);
+	host->video->setVidelRendering(true);
 	return 1;
 }
 
@@ -786,7 +786,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		return 1;
 	}
 
-	if (host->hostScreen.getBpp() <= 1) {
+	if (host->video->getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
@@ -909,7 +909,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					D2(fprintf(stderr, "fVDI: bmp:"));
 
 					uint32 address = destAddress + ((((dx >> 4) * destPlanes) << 1) + (dy + j) * destPitch);
-					host->hostScreen.bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
+					host->video->bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
 
 					uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
 					for(uint16 i = sx; i < sx + w; i++) {
@@ -927,7 +927,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 							// convert next 16pixels to chunky
 							address = destAddress + ((wordIndex << 1) + (dy + j) * destPitch);
-							host->hostScreen.bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
+							host->video->bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
 							theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 						}
 

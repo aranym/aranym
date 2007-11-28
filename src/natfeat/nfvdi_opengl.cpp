@@ -74,7 +74,7 @@ OpenGLVdiDriver::~OpenGLVdiDriver()
 
 void OpenGLVdiDriver::reset(void)
 {
-	host->hostScreen.DisableOpenGLVdi();
+	host->video->DisableOpenGLVdi();
 	VdiDriver::reset();
 }
 
@@ -82,7 +82,7 @@ void OpenGLVdiDriver::reset(void)
 
 int32 OpenGLVdiDriver::openWorkstation(void)
 {
-	host->hostScreen.EnableOpenGLVdi();
+	host->video->EnableOpenGLVdi();
 
 	if (!bx_options.nfvdi.use_host_mouse_cursor) {
 		if (mouse_tex_obj==0) {
@@ -95,7 +95,7 @@ int32 OpenGLVdiDriver::openWorkstation(void)
 
 int32 OpenGLVdiDriver::closeWorkstation(void)
 {
-	host->hostScreen.DisableOpenGLVdi();
+	host->video->DisableOpenGLVdi();
 
 	if (mouse_tex_obj>0) {
 		gl.DeleteTextures(1, &mouse_tex_obj);
@@ -250,7 +250,7 @@ void OpenGLVdiDriver::saveMouseBackground(int16 x, int16 y, int16 width,
 	Mouse.storage.width = width;
 	Mouse.storage.height = height;
 
-	y = host->hostScreen.getHeight()-(y+height);
+	y = host->video->getHeight()-(y+height);
 	D(bug("save <%d %d %d %d", x, y, width, height));
 	gl.ReadPixels(
 		x, y, width, height,
@@ -322,7 +322,7 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	y -= Mouse.hotspot.y;
 
 	// beware of the edges of the screen
-	int maxx=host->hostScreen.getWidth(), maxy=host->hostScreen.getHeight();
+	int maxx=host->video->getWidth(), maxy=host->video->getHeight();
 
 	x = (x>maxx ? maxx : (x<0 ? 0: x));
 	y = (y>maxy ? maxy : (y<0 ? 0: y));
@@ -433,7 +433,7 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		gl.End();
 	}
 
-	gl.Scissor(dx, host->hostScreen.getHeight() - (dy + h), w, h);
+	gl.Scissor(dx, host->video->getHeight() - (dy + h), w, h);
 	gl.Enable(GL_SCISSOR_TEST);
 	gl.Enable(GL_COLOR_LOGIC_OP);
 	if (logOp == 3) {
@@ -483,7 +483,7 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 	int32 w, int32 h, memptr pattern_addr, uint32 fgColor, uint32 bgColor,
 	uint32 logOp, uint32 /*interior_style*/)
 {
-	if (host->hostScreen.getBpp() <= 1) {
+	if (host->video->getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
@@ -755,13 +755,13 @@ int32 OpenGLVdiDriver::blitArea_S2M(memptr /*vwk*/, memptr /*src*/, int32 sx, in
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 						gl.PixelStorei(GL_PACK_SWAP_BYTES, GL_TRUE);
 #endif
-						gl.ReadPixels(sx,host->hostScreen.getHeight()-(sy+y+1), w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, destAddress);
+						gl.ReadPixels(sx,host->video->getHeight()-(sy+y+1), w,1, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, destAddress);
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 						gl.PixelStorei(GL_PACK_SWAP_BYTES, GL_FALSE);
 #endif
 						break;
 					case 32:
-						gl.ReadPixels(sx,host->hostScreen.getHeight()-(sy+y+1), w,1, GL_BGRA,
+						gl.ReadPixels(sx,host->video->getHeight()-(sy+y+1), w,1, GL_BGRA,
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 							GL_UNSIGNED_INT_8_8_8_8,
 #else
@@ -815,20 +815,20 @@ int32 OpenGLVdiDriver::blitArea_S2S(memptr /*vwk*/, memptr /*src*/, int32 sx,
 
 #if 0
 	gl.RasterPos2i(dx,dy+h-1);
-	gl.CopyPixels(sx,host->hostScreen.getHeight()-(sy+h-1), w,h, GL_COLOR);
+	gl.CopyPixels(sx,host->video->getHeight()-(sy+h-1), w,h, GL_COLOR);
 #else
 	if (sy >= dy) {
-	  if (dy + h == (int32)host->hostScreen.getHeight())
+	  if (dy + h == (int32)host->video->getHeight())
 	    h--;
 	  gl.RasterPos2i(dx,dy+h);
-	  gl.CopyPixels(sx,host->hostScreen.getHeight()-(sy+h), w,h, GL_COLOR);
+	  gl.CopyPixels(sx,host->video->getHeight()-(sy+h), w,h, GL_COLOR);
 	} else {
-	  int srcy = host->hostScreen.getHeight()-(sy+h);
-	  if (dy + h < (int32)host->hostScreen.getHeight()) {
+	  int srcy = host->video->getHeight()-(sy+h);
+	  if (dy + h < (int32)host->video->getHeight()) {
 	    gl.RasterPos2i(dx,dy+h);
 	    gl.CopyPixels(sx,srcy, w,h, GL_COLOR);
 	  } else {
-	    gl.RasterPos2i(dx, host->hostScreen.getHeight() - 1);
+	    gl.RasterPos2i(dx, host->video->getHeight() - 1);
 	    gl.CopyPixels(sx,srcy+1, w,h, GL_COLOR);
 	  }
 	}
@@ -1021,7 +1021,7 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 {
 	int cx1,cy1,cx2,cy2;
 
-	if (host->hostScreen.getBpp() <= 1) {
+	if (host->video->getBpp() <= 1) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
@@ -1031,7 +1031,7 @@ int32 OpenGLVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	cx2=ReadInt32(clip+8);
 	cy2=ReadInt32(clip+12);
 
-	gl.Scissor(cx1,host->hostScreen.getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
+	gl.Scissor(cx1,host->video->getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
 	gl.Enable(GL_SCISSOR_TEST);
 
 	memptr table = 0;
@@ -1146,7 +1146,7 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	cx2=ReadInt32(clip+8);
 	cy2=ReadInt32(clip+12);
 
-	gl.Scissor(cx1,host->hostScreen.getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
+	gl.Scissor(cx1,host->video->getHeight()-(cy2+1),cx2-cx1+1,cy2-cy1+1);
 	gl.Enable(GL_SCISSOR_TEST);
 
 	/* Create tesselator */
@@ -1259,7 +1259,7 @@ int32 OpenGLVdiDriver::drawText(memptr vwk, memptr text, uint32 length,
 	w = ch_w * length;
 	h = ch_h;
 
-	gl.Scissor(cx1,           host->hostScreen.getHeight() - cy2 - 1,
+	gl.Scissor(cx1,           host->video->getHeight() - cy2 - 1,
 		  cx2 - cx1 + 1, cy2 - cy1 + 1);
 	gl.Enable(GL_SCISSOR_TEST);
 

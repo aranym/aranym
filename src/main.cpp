@@ -193,7 +193,7 @@ void do_vbl_irq()
 
 	check_event();		// process keyboard and mouse events
 
-	host->hostScreen.refresh();
+	host->video->refresh();
 }
 
 /*
@@ -460,7 +460,7 @@ bool InitAll(void)
 		open_GUI();
 		do {
 			check_event();			// process mouse & keyboard events
-			host->hostScreen.refresh();
+			host->video->refresh();
 			SDL_Delay(1);
 		} while(!SDLGui_isClosed());
 	}

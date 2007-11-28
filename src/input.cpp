@@ -457,7 +457,7 @@ void close_GUI(void)
 	if (bx_options.video.fullscreen != cur_fullscreen) {
 		bx_options.video.fullscreen = cur_fullscreen;
 
-		host->hostScreen.toggleFullScreen();
+		host->video->toggleFullScreen();
 		if (bx_options.video.fullscreen && !grabbedMouse)
 			grabTheMouse();
 	}
@@ -470,7 +470,7 @@ void close_GUI(void)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	}
 
-	host->hostScreen.forceRefreshScreen();
+	host->video->forceRefreshScreen();
 }
 
 #endif /* SDL_GUI */
@@ -579,17 +579,17 @@ static void process_keyboard_event(const SDL_Event &event)
 #endif
 		else if (CHECK_HOTKEY(ungrab)) {
 			if ( bx_options.video.fullscreen )
-				host->hostScreen.toggleFullScreen();
+				host->video->toggleFullScreen();
 			releaseTheMouse();
 			canGrabMouseAgain = false;	// let it leave our window
 			send2Atari = false;
 		}
 		else if (CHECK_HOTKEY(screenshot)) {
-			host->hostScreen.makeSnapshot();
+			host->video->makeSnapshot();
 			send2Atari = false;
 		}
 		else if (CHECK_HOTKEY(fullscreen)) {
-			host->hostScreen.toggleFullScreen();
+			host->video->toggleFullScreen();
 			if (bx_options.video.fullscreen && !grabbedMouse)
 				grabTheMouse();
 			send2Atari = false;
@@ -791,8 +791,8 @@ static void process_mouse_event(const SDL_Event &event)
 			mouseOut = true;
 
 		// same check but for bottom and right side of our window
-		int hostw = host->hostScreen.getWidth();
-		int hosth = host->hostScreen.getHeight();
+		int hostw = host->video->getWidth();
+		int hosth = host->video->getHeight();
 
 		if ((xrel > 0 && getARADATA()->getAtariMouseX() >= (int32) hostw - 1) ||
 			(yrel > 0 && getARADATA()->getAtariMouseY() >= (int32) hosth - 1))
@@ -873,8 +873,8 @@ static void process_resize_event(const SDL_Event &event)
 		bx_options.autozoom.height = event.resize.h;
 	}
 
-	host->hostScreen.setWindowSize(event.resize.w, event.resize.h,
-		host->hostScreen.getBitsPerPixel());
+	host->video->setWindowSize(event.resize.w, event.resize.h,
+		host->video->getBitsPerPixel());
 }
 
 ///////

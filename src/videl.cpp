@@ -219,7 +219,7 @@ HostSurface *VIDEL::getSurface(void)
 		}
 	}
 	if (surface==NULL) {
-		surface = host->hostScreen.createSurface(width,height,bpp);
+		surface = host->video->createSurface(width,height,bpp);
 	}
 
 	prevVidelWidth = width;
