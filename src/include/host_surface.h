@@ -51,6 +51,8 @@ class HostSurface: public DirtyRects
 		int getHeight(void);
 		int getBpp(void);
 		void resize(int new_width, int new_height);
+		void resize(int new_width, int new_height,
+			int surf_width, int surf_height);
 
 		enum {
 			DIRTY_PALETTE = 1<<0,

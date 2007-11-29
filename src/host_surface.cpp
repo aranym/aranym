@@ -90,6 +90,12 @@ int HostSurface::getBpp(void)
 
 void HostSurface::resize(int new_width, int new_height)
 {
+	resize(new_width,new_height, new_width,new_height);
+}
+
+void HostSurface::resize(int new_width, int new_height,
+	int surf_width, int surf_height)
+{
 	SDL_PixelFormat pixelFormat;
 	bool recreateSurface = false;
 
@@ -97,7 +103,7 @@ void HostSurface::resize(int new_width, int new_height)
 		recreateSurface = true;
 	} else {
 		/* Recreate surface if too small */
-		if ((new_width>surface->w) || (new_height>surface->h)) {
+		if ((surf_width>surface->w) || (surf_height>surface->h)) {
 			recreateSurface = true;
 		}
 		clip_w = new_width;
@@ -122,7 +128,7 @@ void HostSurface::resize(int new_width, int new_height)
 	dirty_flags = DIRTY_PALETTE|DIRTY_SURFACE;
 
 	surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-		clip_w,clip_h, pixelFormat.BitsPerPixel,
+		surf_width,surf_height, pixelFormat.BitsPerPixel,
 		pixelFormat.Rmask, pixelFormat.Gmask,
 		pixelFormat.Bmask, pixelFormat.Amask
 	);

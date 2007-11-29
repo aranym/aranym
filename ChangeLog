@@ -1,3 +1,8 @@
+2007/11/29 - Patrice
+- host surface: add function to set wanted surface size for opengl that may need
+  power of two dimensions.
+
+
 2007/11/29 - Petr
 - various files: more 'const' fixes from Thothy
 
