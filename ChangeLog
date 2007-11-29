@@ -1,3 +1,7 @@
+2007/11/29 - Petr
+- various files: more 'const' fixes from Thothy
+
+
 2007/11/29 - Andreas
 - cfgopts: More fixes for compress_path.
 
