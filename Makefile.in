@@ -89,6 +89,7 @@ SRCS = main.cpp \
 	host_clock.cpp \
 	hostscreen.cpp \
 	host_surface.cpp \
+	host_surface_opengl.cpp \
 	ide.cpp \
 	identify.cpp \
 	ikbd.cpp \

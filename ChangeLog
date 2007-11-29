@@ -1,6 +1,7 @@
 2007/11/29 - Patrice
 - host surface: add function to set wanted surface size for opengl that may need
   power of two dimensions.
+- host surface for OpenGL, to hold texture information.
 
 
 2007/11/29 - Petr
