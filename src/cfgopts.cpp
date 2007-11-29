@@ -250,19 +250,22 @@ void ConfigOptions::compress_path(char *dest, char *path, unsigned short buf_siz
 	}
 
 	size_t prefixLen = 0;
-	char *replacement = NULL;
+	const char *replacement = NULL;
 
 	safe_strncpy(dest, config_folder, buf_size);
 	prefixLen = strlen(dest);
-	if (prefixLen && strncmp(path, dest, prefixLen) == 0) {
+	if (prefixLen && strncmp(path, dest, prefixLen) == 0 &&
+	    (path[prefixLen] == '/' || path[prefixLen] == '\\')) {
 		replacement = "";
+		++prefixLen;
 		D(bug("%s matches %.*s", path, prefixLen, dest));
 	} 
 	else 
 	{
 		safe_strncpy(dest, data_folder, buf_size);
 		prefixLen = strlen(dest);
-		if (prefixLen && strncmp(path, dest, prefixLen) == 0) {
+		if (prefixLen && strncmp(path, dest, prefixLen) == 0 &&
+		    (path[prefixLen] == '/' || path[prefixLen] == '\\')) {
 			replacement = "*";
 			D(bug("%s matches %.*s", path, prefixLen, dest));
 		} 
@@ -271,7 +274,8 @@ void ConfigOptions::compress_path(char *dest, char *path, unsigned short buf_siz
 			/* Check if home prefix matches */
 			safe_strncpy(dest, home_folder, buf_size);
 			prefixLen = strlen(dest);
-			if (prefixLen && strncmp(path, dest, prefixLen) == 0) {
+			if (prefixLen && strncmp(path, dest, prefixLen) == 0 &&
+			    (path[prefixLen] == '/' || path[prefixLen] == '\\')) {
 				replacement = "~";
 				D(bug("%s matches %.*s", path, prefixLen, dest));
 			}
@@ -545,9 +549,9 @@ bool ConfigOptions::write_token(FILE *outfile, struct Config_Tag *ptr)
 int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header)
 {
 #ifdef OS_darwin
-	static char *tempfilename = "/tmp/aratemp.$$$";
+	static const char *tempfilename = "/tmp/aratemp.$$$";
 #else
-	static char *tempfilename = "temp.$$$";
+	static const char *tempfilename = "temp.$$$";
 #endif
 	struct Config_Tag *ptr;
 	int	count = 0, lineno = 0;
