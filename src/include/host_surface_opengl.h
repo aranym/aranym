@@ -31,6 +31,7 @@ class HostSurfaceOpenGL: public HostSurface
 {
 	private:
 		GLenum textureTarget;
+		GLuint textureObject;
 
 		void calcGlDimensions(int *width, int *height);
 
@@ -42,6 +43,9 @@ class HostSurfaceOpenGL: public HostSurface
 		HostSurfaceOpenGL(SDL_Surface *surf);
 
 		virtual ~HostSurfaceOpenGL();
+
+		GLenum getTextureTarget(void);
+		GLuint getTextureObject(void);
 };
 
 #endif /* HOSTSURFACEOPENGL_H */

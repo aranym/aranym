@@ -44,28 +44,29 @@ HostSurfaceOpenGL::HostSurfaceOpenGL(SDL_Surface *surf)
 	: HostSurface(surf)
 {
 	int w=getWidth(), h=getHeight();
-
 	calcGlDimensions(&w, &h);
-
 	resize(getWidth(), getHeight(), w,h);
 
 	D(bug("hs_ogl(): ask %dx%d surface, got %dx%d", getWidth(), getHeight(), w,h));
+
+	gl.GenTextures(1, &textureObject);
 }
 
 HostSurfaceOpenGL::HostSurfaceOpenGL(int width, int height, int bpp)
 	: HostSurface(width, height, bpp)
 {
 	int w=getWidth(), h=getHeight();
-
 	calcGlDimensions(&w, &h);
-
 	resize(getWidth(), getHeight(), w,h);
 
 	D(bug("hs_ogl(): ask %dx%d surface, got %dx%d", getWidth(), getHeight(), w,h));
+
+	gl.GenTextures(1, &textureObject);
 }
 
 HostSurfaceOpenGL::~HostSurfaceOpenGL(void)
 {
+	gl.DeleteTextures(1, &textureObject);
 }
 
 /*--- Private functions ---*/
@@ -134,5 +135,15 @@ void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
 }
 
 /*--- Public functions ---*/
+
+GLenum HostSurfaceOpenGL::getTextureTarget(void)
+{
+	return textureTarget;
+}
+
+GLuint HostSurfaceOpenGL::getTextureObject(void)
+{
+	return textureObject;
+}
 
 #endif /* ENABLE_OPENGL */
