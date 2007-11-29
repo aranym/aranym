@@ -565,16 +565,16 @@ void SDLGui_Draw3DBox(SDL_Rect *coord,
 
   // Draw background
   rect.x = coord->x - widthbackground;
-  rect.y = coord->y - widthbackground;
+  rect.y = coord->y - widthbackground*2;
   rect.w = coord->w + (widthbackground * 2);
-  rect.h = coord->h + (widthbackground * 2);
+  rect.h = coord->h + (widthbackground*2 * 2);
   SDL_FillRect(sdlscrn, &rect, SDLGui_MapColor(backgroundc));
 
   // Update coords
   coord->x -= widthbackground;
-  coord->y -= widthbackground;
+  coord->y -= widthbackground*2;
   coord->w += (widthbackground * 2);
-  coord->h += (widthbackground * 2);
+  coord->h += (widthbackground*2 * 2);
 
   if (widthinbox > 0)
     SDLGui_DrawBoxAround(coord, inboxc, widthinbox);
