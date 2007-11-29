@@ -5,6 +5,7 @@
 
 2007/11/29 - Petr
 - various files: more 'const' fixes from Thothy
+- gui-sdl/sdlgui.cpp: SDLGui_Draw3DBox() corrected for 8x16 font
 
 
 2007/11/29 - Andreas
