@@ -44,9 +44,13 @@ enum
 
 /* Special characters: */
 #define SGCHECKBOX_RADIO_NORMAL   12
-#define SGCHECKBOX_RADIO_SELECTED 13
-#define SGCHECKBOX_NORMAL         14
-#define SGCHECKBOX_SELECTED       15
+#define SGCHECKBOX_RADIO_NORMAl   13
+#define SGCHECKBOX_RADIO_SELECTED 14
+#define SGCHECKBOX_RADIO_SELECTEd 15
+#define SGCHECKBOX_NORMAL         28
+#define SGCHECKBOX_NORMAl         29
+#define SGCHECKBOX_SELECTED       30
+#define SGCHECKBOX_SELECTEd       31
 #define SGARROWUP    1
 #define SGARROWDOWN  2
 #define SGFOLDER     5

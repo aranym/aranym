@@ -2,7 +2,7 @@
  * sdlgui.cpp - a GEM like graphical user interface
  *
  * Copyright (c) 2001 Thomas Huth - taken from his hatari project
- * Copyright (c) 2002-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2002-2007 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -688,24 +688,32 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
 {
   Uint32 grey = SDLGui_MapColor(greyc);
   SDL_Rect coord;
-  char str[2];
+  char str[3];
   int textc;
 
   SDLGui_ObjCoord(cdlg, objnum, &coord);
 
   if (cdlg[objnum].flags & SG_RADIO)
   {
-    if (cdlg[objnum].state & SG_SELECTED)
+    if (cdlg[objnum].state & SG_SELECTED) {
       str[0]=SGCHECKBOX_RADIO_SELECTED;
-    else
+      str[1]=SGCHECKBOX_RADIO_SELECTEd;
+    }
+    else {
       str[0]=SGCHECKBOX_RADIO_NORMAL;
+      str[1]=SGCHECKBOX_RADIO_NORMAl;
+    }
   }
   else
   {
-    if (cdlg[objnum].state & SG_SELECTED)
+    if (cdlg[objnum].state & SG_SELECTED) {
       str[0]=SGCHECKBOX_SELECTED;
-    else
+      str[1]=SGCHECKBOX_SELECTEd;
+    }
+    else {
       str[0]=SGCHECKBOX_NORMAL;
+      str[1]=SGCHECKBOX_NORMAl;
+    }
   }
 
   if (cdlg[objnum].state & SG_DISABLED)
@@ -713,9 +721,9 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
   else
     textc = blackc;
 
-  str[1]='\0';
+  str[2]='\0';
 
-  coord.w = fontwidth;
+  coord.w = fontwidth*2;
   coord.h = fontheight;
 
   if (cdlg[objnum].flags & SG_BUTTON_RIGHT)
@@ -919,7 +927,7 @@ void SDLGui_SelectRadioObject(SGOBJ *dlg, int clicked_obj)
   while (dlg[++obj].flags & SG_RADIO)
   {
     // This code scan every object in the group. This allows to solve cases
-    // where multiple objects where selected in the group by clicking one.
+    // where multiple objects were selected in the group by clicking one.
     if ((obj != clicked_obj) && (dlg[obj].state & SG_SELECTED))
     {
       // Deselect this radio button
