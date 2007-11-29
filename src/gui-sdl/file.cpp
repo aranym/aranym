@@ -253,26 +253,6 @@ void File_RemoveFileNameTrailingSlashes(char *pszFileName)
 
 /*-----------------------------------------------------------------------*/
 /*
-  Does filename end with a .MSA extension? If so, return true
-*/
-bool File_FileNameIsMSA(char *pszFileName)
-{
-  return(File_DoesFileExtensionMatch(pszFileName,".msa"));
-}
-
-
-/*-----------------------------------------------------------------------*/
-/*
-  Does filename end with a .ST extension? If so, return true
-*/
-bool File_FileNameIsST(char *pszFileName)
-{
-  return(File_DoesFileExtensionMatch(pszFileName,".st"));
-}
-
-
-/*-----------------------------------------------------------------------*/
-/*
   Read file from PC into memory, allocate memory for it if need to (pass Address as NULL)
   Also may pass 'unsigned long' if want to find size of file read (may pass as NULL)
 */

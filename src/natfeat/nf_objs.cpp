@@ -170,7 +170,7 @@ void NFReset(void)
 	}
 }
 
-NF_Base *NFGetDriver(char *name)
+NF_Base *NFGetDriver(const char *name)
 {
 	for (unsigned int i=0; i<nf_objs_cnt; i++) {
 		if (strcasecmp(name, nf_objects[i]->name())==0) {

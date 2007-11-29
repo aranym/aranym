@@ -30,7 +30,7 @@
 class NF_Name : public NF_Base
 {
 public:
-	char *name() { return "NF_NAME"; }
+	const char *name() { return "NF_NAME"; }
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);
 };
@@ -38,7 +38,7 @@ public:
 class NF_Version : public NF_Base
 {
 public:
-	char *name() { return "NF_VERSION"; }
+	const char *name() { return "NF_VERSION"; }
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);
 };
@@ -46,7 +46,7 @@ public:
 class NF_Shutdown : public NF_Base
 {
 public:
-	char *name() { return "NF_SHUTDOWN"; }
+	const char *name() { return "NF_SHUTDOWN"; }
 	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);
 };
@@ -54,7 +54,7 @@ public:
 class NF_StdErr : public NF_Base
 {
 public:
-	char *name() { return "NF_STDERR"; }
+	const char *name() { return "NF_STDERR"; }
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);
 };

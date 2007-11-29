@@ -86,7 +86,7 @@ CdromDriver::~CdromDriver(void)
 
 /*--- Public functions ---*/
 
-char *CdromDriver::name()
+const char *CdromDriver::name()
 {
 	return "CDROM";
 }

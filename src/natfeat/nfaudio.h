@@ -21,7 +21,7 @@ class AUDIODriver : public NF_Base
 		AUDIODriver();
 		~AUDIODriver();
 
-		char *name();
+		const char *name();
 		bool isSuperOnly();
 		void reset();
 		int32 dispatch(uint32 fncode);

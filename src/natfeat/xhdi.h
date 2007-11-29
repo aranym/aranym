@@ -75,7 +75,7 @@ protected:
 
 public:
 	void reset();
-	char *name() { return "XHDI"; }
+	const char *name() { return "XHDI"; }
 	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);
 };

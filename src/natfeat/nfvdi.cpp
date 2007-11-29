@@ -46,7 +46,7 @@
 
 /*--- Public functions ---*/
 
-char *VdiDriver::name()
+const char *VdiDriver::name()
 {
 	return "fVDI";
 }

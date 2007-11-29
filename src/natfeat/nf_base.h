@@ -32,7 +32,7 @@ public:
 	NF_Base() {};
 	virtual ~NF_Base() {};
 	virtual void reset() {};
-	virtual char *name() = 0;
+	virtual const char *name() = 0;
 	virtual bool isSuperOnly() = 0;
 	virtual int32 dispatch(uint32 fncode) = 0;
 	uint32 getParameter(int i) { return nf_getparameter(i); }

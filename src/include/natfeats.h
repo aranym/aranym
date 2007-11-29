@@ -66,7 +66,7 @@ static inline void Atari2HostSafeStrncpy( char *dest, memptr source, size_t coun
 #endif
 }
 
-static inline void Host2AtariSafeStrncpy( memptr dest, char *source, size_t count )
+static inline void Host2AtariSafeStrncpy( memptr dest, const char *source, size_t count )
 {
 #if NATFEAT_PHYS_ADDR
 	safe_strncpy((char *)Atari2HostAddr(dest), source, count);

@@ -345,7 +345,7 @@ void presave_opengl()
 BX_DISK_CONFIG(diskc);
 BX_DISK_CONFIG(diskd);
 
-static void set_ide(unsigned int number, char *dev_path, int cylinders, int heads, int spt, int byteswap, bool readonly, const char *model_name)
+static void set_ide(unsigned int number, const char *dev_path, int cylinders, int heads, int spt, int byteswap, bool readonly, const char *model_name)
 {
   // Autodetect ???
   if (cylinders == -1) {

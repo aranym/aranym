@@ -81,7 +81,7 @@ class HostSurface;
 class VdiDriver : public NF_Base
 {
 	public:
-		char *name();
+		const char *name();
 		bool isSuperOnly();
 		int32 dispatch(uint32 fncode);
 

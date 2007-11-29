@@ -35,6 +35,6 @@ extern unsigned int nf_objs_cnt;
 extern void NFCreate(void);
 extern void NFDestroy(void);
 extern void NFReset(void);
-extern NF_Base *NFGetDriver(char *name);
+extern NF_Base *NFGetDriver(const char *name);
 
 #endif /* _NFOBJS_H */

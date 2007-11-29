@@ -8,7 +8,7 @@
 #include <cstring>
 #include <cstdlib>
 
-int get_geometry(char *dev_path, geo_type geo) {
+int get_geometry(const char *dev_path, geo_type geo) {
   int fd;
   int par = -1;
   struct hd_geometry g;

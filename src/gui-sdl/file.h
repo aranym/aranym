@@ -32,8 +32,6 @@ extern bool File_IsRootFileName(char *pszFileName);
 extern char *File_RemoveFileNameDrive(char *pszFileName);
 extern bool File_DoesFileNameEndWithSlash(char *pszFileName);
 extern void File_RemoveFileNameTrailingSlashes(char *pszFileName);
-extern bool File_FileNameIsMSA(char *pszFileName);
-extern bool File_FileNameIsST(char *pszFileName);
 extern void *File_Read(char *pszFileName, void *pAddress, long *pFileSize, char *ppszExts[]);
 extern bool File_Save(char *pszFileName, void *pAddress,long Size,bool bQueryOverwrite);
 extern int File_Length(char *pszFileName);

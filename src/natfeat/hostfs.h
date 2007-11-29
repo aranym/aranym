@@ -127,7 +127,7 @@ class HostFs : public NF_Base
 	/**
 	 * MetaDos DOS driver dispatch functions.
 	 **/
-	char *name() { return "HOSTFS"; }
+	const char *name() { return "HOSTFS"; }
 	bool isSuperOnly() { return true; }
 	int32 dispatch( uint32 emulop );
 

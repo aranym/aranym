@@ -11,7 +11,7 @@
 
 extern char gAranymFilesDirectory[MAXPATHLEN];
 
-int get_geometry(char *dev_path, geo_type geo) {
+int get_geometry(const char *dev_path, geo_type geo) {
   return -1;
 }
 

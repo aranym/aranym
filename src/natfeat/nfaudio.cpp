@@ -108,7 +108,7 @@ void AUDIODriver::reset()
 	locked = false;
 }
 
-char *AUDIODriver::name()
+const char *AUDIODriver::name()
 {
 	return "AUDIO";
 }

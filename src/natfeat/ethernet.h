@@ -78,7 +78,7 @@ public:
 	ETHERNETDriver();
 	~ETHERNETDriver();
 	void reset();
-	char *name() { return "ETHERNET"; }
+	const char *name() { return "ETHERNET"; }
 	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);
 };

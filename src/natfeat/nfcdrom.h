@@ -135,7 +135,7 @@ class CdromDriver : public NF_Base
 		CdromDriver(void);
 		virtual ~CdromDriver(void);
 
-		char *name();
+		const char *name();
 		bool isSuperOnly();
 		int32 dispatch(uint32 fncode);
 };

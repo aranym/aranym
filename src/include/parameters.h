@@ -58,7 +58,7 @@ enum geo_type {
 	geoByteswap
 };
 
-extern int get_geometry(char *, enum geo_type geo);
+extern int get_geometry(const char *, enum geo_type geo);
 
 // External filesystem type
 typedef struct {

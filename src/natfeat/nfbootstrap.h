@@ -30,7 +30,7 @@
 class BootstrapNatFeat : public NF_Base
 {
 public:
-	char *name() { return "BOOTSTRAP"; }
+	const char *name() { return "BOOTSTRAP"; }
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);
 };
