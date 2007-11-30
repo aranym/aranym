@@ -1483,7 +1483,7 @@ void SoftVdiDriver::setColor(memptr /*vwk*/, uint32 paletteIndex, uint32 red,
 	color.g = (green*255 + 500) / 1000;
 	color.b = (blue*255 + 500) / 1000;
 
-	SDL_SetPalette(surface->getSdlSurface(), SDL_LOGPAL, &color, toTosColors(paletteIndex), 1);
+	surface->setPalette(&color, toTosColors(paletteIndex), 1);
 }
 
 int32 SoftVdiDriver::getFbAddr(void)

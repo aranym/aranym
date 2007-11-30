@@ -1,6 +1,6 @@
 2007/11/29 - Patrice
 - host surface: add function to set wanted surface size for opengl that may need
-  power of two dimensions.
+  power of two dimensions. Add function to set palette.
 - host surface for OpenGL, to hold texture information.
 
 

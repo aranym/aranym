@@ -142,6 +142,7 @@ void VidelZoom::refreshScreen(void)
 
 	if (surface->dirty_flags & HostSurface::DIRTY_PALETTE) {
 		refreshPalette();
+		surface->dirty_flags &= ~HostSurface::DIRTY_PALETTE;
 	}
 
 	/* Recalc zoom tables if needed */

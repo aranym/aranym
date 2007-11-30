@@ -168,8 +168,7 @@ bool SDLGui_Init()
 
 	gui_surf = gui_hsurf->getSdlSurface();
 
-	/* Set GUI surface palette */
-	SDL_SetPalette(gui_surf, SDL_LOGPAL, gui_palette, 0, 4);
+	gui_hsurf->setPalette(gui_palette, 0, 4);
 
   /* Set font color 0 as transparent */
   SDL_SetColorKey(fontgfx, SDL_SRCCOLORKEY, 0);

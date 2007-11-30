@@ -268,10 +268,7 @@ void VIDEL::refreshPalette(void)
 		}
 	}
 
-	SDL_SetPalette(surface->getSdlSurface(), SDL_LOGPAL, palette, 0,
-		numColors);
-
-	surface->dirty_flags &= ~HostSurface::DIRTY_PALETTE;
+	surface->setPalette(palette, 0, numColors);
 }
 
 void VIDEL::refreshScreen(void)
@@ -288,6 +285,7 @@ void VIDEL::refreshScreen(void)
 
 	if (surface->dirty_flags & HostSurface::DIRTY_PALETTE) {
 		refreshPalette();
+		surface->dirty_flags &= ~HostSurface::DIRTY_PALETTE;
 	}
 
 	int videlBpp = getBpp();
