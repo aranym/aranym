@@ -48,6 +48,8 @@ class HostSurfaceOpenGL: public HostSurface
 
 		void resize(int width, int height);
 
+		void setPalette(SDL_Color *palette, int first, int count);
+
 		GLenum getTextureTarget(void);
 		GLuint getTextureObject(void);
 };

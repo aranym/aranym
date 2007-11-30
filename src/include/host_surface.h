@@ -55,6 +55,8 @@ class HostSurface: public DirtyRects
 		void resize(int new_width, int new_height,
 			int surf_width, int surf_height);
 
+		virtual void setPalette(SDL_Color *palette, int first, int count);
+
 		enum {
 			DIRTY_PALETTE = 1<<0,
 			DIRTY_SURFACE = 1<<1

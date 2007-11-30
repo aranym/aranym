@@ -135,3 +135,12 @@ void HostSurface::resize(int new_width, int new_height,
 
 	resizeDirty(clip_w, clip_h);
 }
+
+void HostSurface::setPalette(SDL_Color *palette, int first, int count)
+{
+	if (!surface || !palette) {
+		return;
+	}
+
+	SDL_SetPalette(surface, SDL_LOGPAL, palette, first, count);
+}

@@ -154,6 +154,15 @@ void HostSurfaceOpenGL::resize(int width, int height)
 	D(bug("hs_ogl(): ask %dx%d surface, got %dx%d", width,height, w,h));
 }
 
+void HostSurfaceOpenGL::setPalette(SDL_Color *palette, int first, int count)
+{
+	HostSurface::setPalette(palette,first, count);
+
+	/* Reupload palette if needed */
+
+	/* Reupload texture if needed */
+}
+
 GLenum HostSurfaceOpenGL::getTextureTarget(void)
 {
 	return textureTarget;
