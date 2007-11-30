@@ -75,7 +75,7 @@ void HostSurfaceOpenGL::createTexture(void)
 	{
 		use_palette = true;
 	}
-#endif /* GL_EXT_paletted_texture */
+#endif
 }
 
 void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
@@ -158,7 +158,30 @@ void HostSurfaceOpenGL::setPalette(SDL_Color *palette, int first, int count)
 {
 	HostSurface::setPalette(palette,first, count);
 
+	if (!surface) {
+		return;
+	}
+
 	/* Reupload palette if needed */
+
+#ifdef GL_EXT_paletted_texture
+	if ((getBpp()==8) && use_palette) {
+		Uint8 mapP[256*3];
+		Uint8 *pMap = mapP;
+		SDL_Color *palette = surface->format->palette->colors;
+
+		for (int i=0;i<surface->format->palette->ncolors;i++) {
+			*pMap++ = palette[i].r;
+			*pMap++ = palette[i].g;
+			*pMap++ = palette[i].b;
+		}
+
+		gl.BindTexture(textureTarget, textureObject);
+		gl.ColorTableEXT(textureTarget, GL_RGB, 256, 
+			GL_RGB, GL_UNSIGNED_BYTE, mapP);
+		return;
+	}
+#endif
 
 	/* Reupload texture if needed */
 }
