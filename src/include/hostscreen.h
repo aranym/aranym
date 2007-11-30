@@ -53,7 +53,6 @@ class HostScreen: public DirtyRects
 	void refreshNfvdi(void);
 	void forceRefreshNfvdi(void);
 	void refreshGui(void);
-	void refreshScreen(void);
 
 	void drawSurfaceToScreen(HostSurface *hsurf, int *dst_x = NULL,
 		int *dst_y = NULL);
@@ -78,6 +77,9 @@ class HostScreen: public DirtyRects
 	bool logo_present;
 	bool clear_screen;
 
+  protected:
+	virtual void refreshScreen(void);
+
   public:
 	uint32 sdl_videoparams;
 	uint32 width, height, bpp;
@@ -86,7 +88,7 @@ class HostScreen: public DirtyRects
 
   public:
 	HostScreen(void);
-	~HostScreen(void);
+	virtual ~HostScreen(void);
 
 	void reset(void);
 
@@ -122,8 +124,8 @@ class HostScreen: public DirtyRects
 	int	lastVidelWidth, lastVidelHeight, lastVidelBpp;
 
 	/* Surface creation */
-	HostSurface *createSurface(int width, int height, int bpp);
-	HostSurface *createSurface(SDL_Surface *sdl_surf);
+	virtual HostSurface *createSurface(int width, int height, int bpp);
+	virtual HostSurface *createSurface(SDL_Surface *sdl_surf);
 };
 
 /**
