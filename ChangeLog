@@ -1,7 +1,8 @@
-2007/11/29 - Patrice
+2007/11/30 - Patrice
 - host surface: add function to set wanted surface size for opengl that may need
   power of two dimensions. Add function to set palette.
 - host surface for OpenGL, to hold texture information.
+- hostscreen OpenGL backend created.
 
 
 2007/11/29 - Petr
