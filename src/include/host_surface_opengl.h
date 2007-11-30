@@ -44,6 +44,8 @@ class HostSurfaceOpenGL: public HostSurface
 
 		virtual ~HostSurfaceOpenGL();
 
+		void resize(int width, int height);
+
 		GLenum getTextureTarget(void);
 		GLuint getTextureObject(void);
 };

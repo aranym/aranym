@@ -50,7 +50,8 @@ class HostSurface: public DirtyRects
 		int getWidth(void);
 		int getHeight(void);
 		int getBpp(void);
-		void resize(int new_width, int new_height);
+
+		virtual void resize(int new_width, int new_height);
 		void resize(int new_width, int new_height,
 			int surf_width, int surf_height);
 
