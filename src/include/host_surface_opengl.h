@@ -32,7 +32,9 @@ class HostSurfaceOpenGL: public HostSurface
 	private:
 		GLenum textureTarget;
 		GLuint textureObject;
+		bool can_palette, use_palette;
 
+		void createTexture(void);
 		void calcGlDimensions(int *width, int *height);
 
 	public:

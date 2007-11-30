@@ -43,17 +43,13 @@
 HostSurfaceOpenGL::HostSurfaceOpenGL(SDL_Surface *surf)
 	: HostSurface(surf)
 {
-	resize(getWidth(), getHeight());
-
-	gl.GenTextures(1, &textureObject);
+	createTexture();
 }
 
 HostSurfaceOpenGL::HostSurfaceOpenGL(int width, int height, int bpp)
 	: HostSurface(width, height, bpp)
 {
-	resize(getWidth(), getHeight());
-
-	gl.GenTextures(1, &textureObject);
+	createTexture();
 }
 
 HostSurfaceOpenGL::~HostSurfaceOpenGL(void)
@@ -62,6 +58,25 @@ HostSurfaceOpenGL::~HostSurfaceOpenGL(void)
 }
 
 /*--- Private functions ---*/
+
+void HostSurfaceOpenGL::createTexture(void)
+{
+	can_palette = false;
+	use_palette = false;
+	resize(getWidth(), getHeight());
+
+	gl.GenTextures(1, &textureObject);
+
+#ifdef GL_EXT_paletted_texture
+	char *extensions = (char *) gl.GetString(GL_EXTENSIONS);
+
+	if (strstr(extensions, "GL_EXT_paletted_texture") && (getBpp() == 8)
+	    && can_palette)
+	{
+		use_palette = true;
+	}
+#endif /* GL_EXT_paletted_texture */
+}
 
 void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
 {
@@ -87,23 +102,24 @@ void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
 
 	if (strstr(extensions, "GL_ARB_texture_non_power_of_two")) {
 		textureTarget = GL_TEXTURE_2D;
+		can_palette = true;
 	}
 #if defined(GL_ARB_texture_rectangle)
 	else if (strstr(extensions, "GL_ARB_texture_rectangle")) {
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
-		/*palettedTextureEnabled = false;*/
+		can_palette = false;
 	}
 #endif
 #if defined(GL_EXT_texture_rectangle)
 	else if (strstr(extensions, "GL_EXT_texture_rectangle")) {
 		textureTarget = GL_TEXTURE_RECTANGLE_EXT;
-		/*palettedTextureEnabled = false;*/
+		can_palette = false;
 	}
 #endif
 #if defined(GL_NV_texture_rectangle)
 	else if (strstr(extensions, "GL_NV_texture_rectangle")) {
 		textureTarget = GL_TEXTURE_RECTANGLE_NV;
-		/*palettedTextureEnabled = false;*/
+		can_palette = false;
 	}
 #endif
 	else {
@@ -119,6 +135,7 @@ void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
 		h = h1;
 
 		textureTarget = GL_TEXTURE_2D;
+		can_palette = true;
 	}
 
 	/* FIXME: what to do if hw do not support asked size ? */
