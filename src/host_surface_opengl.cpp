@@ -76,6 +76,8 @@ void HostSurfaceOpenGL::createTexture(void)
 		use_palette = true;
 	}
 #endif
+
+	updateTexture();
 }
 
 void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
@@ -184,6 +186,111 @@ void HostSurfaceOpenGL::setPalette(SDL_Color *palette, int first, int count)
 #endif
 
 	/* Reupload texture if needed */
+
+	updateTexture();
+}
+
+void HostSurfaceOpenGL::updateTexture(void)
+{
+	if (!surface) {
+		return;
+	}
+
+	gl.BindTexture(textureTarget, textureObject);
+
+	GLfloat mapR[256], mapG[256], mapB[256], mapA[256];
+
+	GLenum format = GL_RGBA, internalFormat = GL_RGBA;
+	GLenum pixelType = GL_UNSIGNED_BYTE;
+	switch (getBpp()) {
+		case 8:
+			{
+				SDL_Color *palette = surface->format->palette->colors;
+				format = GL_COLOR_INDEX;
+#ifdef GL_EXT_paletted_texture
+				if (use_palette) {
+					Uint8 mapP[256*3];
+					Uint8 *pMap = mapP;
+
+					internalFormat = GL_COLOR_INDEX8_EXT;
+					for (int i=0;i<surface->format->palette->ncolors;i++) {
+						*pMap++ = palette[i].r;
+						*pMap++ = palette[i].g;
+						*pMap++ = palette[i].b;
+					}
+					gl.ColorTableEXT(textureTarget, GL_RGB, 256, 
+						GL_RGB, GL_UNSIGNED_BYTE, mapP);
+				} else
+#endif
+				{
+					memset(mapR, 0, sizeof(mapR));
+					memset(mapG, 0, sizeof(mapG));
+					memset(mapB, 0, sizeof(mapB));
+					memset(mapA, 0, sizeof(mapA));
+					for (int i=0;i<surface->format->palette->ncolors;i++) {
+						mapR[i] = palette[i].r / 255.0;
+						mapG[i] = palette[i].g / 255.0;
+						mapB[i] = palette[i].b / 255.0;
+						mapA[i] = 1.0;
+					}
+					gl.PixelTransferi(GL_MAP_COLOR, GL_TRUE);
+					gl.PixelMapfv(GL_PIXEL_MAP_I_TO_R, 256, mapR);
+					gl.PixelMapfv(GL_PIXEL_MAP_I_TO_G, 256, mapG);
+					gl.PixelMapfv(GL_PIXEL_MAP_I_TO_B, 256, mapB);
+					gl.PixelMapfv(GL_PIXEL_MAP_I_TO_A, 256, mapA);
+				}
+			}
+			break;
+		case 16:
+			pixelType = GL_UNSIGNED_SHORT_5_6_5;
+			/* FIXME: care about endianness ? */
+			break;
+		case 24:
+			/* FIXME: care about endianness ? */
+			break;
+		case 32:
+			/* FIXME: care about endianness ? */
+			break;
+	}
+
+	gl.PixelStorei(GL_UNPACK_ROW_LENGTH, surface->w);
+
+	int x,y;
+	Uint8 *dirtyArray = getDirtyRects();
+	for (y=0; y<getDirtyHeight(); y++) {
+		for (x=0; x<getDirtyWidth(); x++) {
+			if (!dirtyArray[y*getDirtyWidth()+x]) {
+				continue;
+			}
+
+			Uint8 *surfPixels = (Uint8 *) surface->pixels;
+			surfPixels += (y<<4) * surface->pitch;
+			surfPixels += (x<<4) * surface->format->BytesPerPixel;				
+			gl.TexSubImage2D(textureTarget,0, x<<4,y<<4,16,16, format,
+				pixelType, surfPixels
+			);
+		}
+	}
+	clearDirtyRects();
+
+	gl.PixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+
+	switch (surface->format->BitsPerPixel) {
+		case 8:
+			if (!use_palette) {
+				gl.PixelTransferi(GL_MAP_COLOR, GL_FALSE);
+			}
+			break;
+		case 16:
+			/* FIXME: care about endianness ? */
+			break;
+		case 24:
+			/* FIXME: care about endianness ? */
+			break;
+		case 32:
+			/* FIXME: care about endianness ? */
+			break;
+	}
 }
 
 GLenum HostSurfaceOpenGL::getTextureTarget(void)
