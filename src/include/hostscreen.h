@@ -72,6 +72,10 @@ class HostScreen: public DirtyRects
 	bool logo_present;
 	bool clear_screen;
 
+	uint32 sdl_videoparams;
+	uint32 width, height, bpp;
+	uint16 snapCounter; // ALT+PrintScreen to make a snap?
+
   protected:
  	SDL_Surface *mainSurface;		// The main window surface
 
@@ -79,12 +83,6 @@ class HostScreen: public DirtyRects
 	virtual void clearScreen(void);
 	virtual void drawSurfaceToScreen(HostSurface *hsurf, int *dst_x = NULL,
 		int *dst_y = NULL);
-
-  public:
-	uint32 sdl_videoparams;
-	uint32 width, height, bpp;
-
-	uint16 snapCounter; // ALT+PrintScreen to make a snap?
 
   public:
 	HostScreen(void);
