@@ -4,7 +4,8 @@
 
 2007/11/30 - Patrice
 - host surface: add function to set wanted surface size for opengl that may need
-  power of two dimensions. Add function to set palette.
+  power of two dimensions. Add function to set palette. Also save and restore
+  palette when destroying/recreating surface.
 - host surface for OpenGL, to hold texture information.
 - hostscreen: OpenGL backend created. Remove bitsperpixel function, only keep
   bpp that return bit depth.

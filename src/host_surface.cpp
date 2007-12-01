@@ -97,6 +97,8 @@ void HostSurface::resize(int new_width, int new_height,
 	int surf_width, int surf_height)
 {
 	SDL_PixelFormat pixelFormat;
+	SDL_Color palette[256];
+	bool restore_palette = false;
 	bool recreateSurface = false;
 
 	if (!surface) {
@@ -120,6 +122,16 @@ void HostSurface::resize(int new_width, int new_height,
 		/* Save pixel format */
 		memcpy(&pixelFormat, surface->format, sizeof(SDL_PixelFormat));
 
+		/* Save palette ? */
+		if ((surface->format->BitsPerPixel==8) && surface->format->palette) {
+			int i;
+
+			for (i=0; i<256; i++) {
+				memcpy(&palette[i], &(surface->format->palette[i]), sizeof(SDL_Color));
+			}
+			restore_palette = SDL_TRUE;
+		}
+
 		SDL_FreeSurface(surface);
 	} else {
 		pixelFormat.BitsPerPixel = 8;
@@ -132,6 +144,10 @@ void HostSurface::resize(int new_width, int new_height,
 		pixelFormat.Rmask, pixelFormat.Gmask,
 		pixelFormat.Bmask, pixelFormat.Amask
 	);
+
+	if (restore_palette) {
+		setPalette(palette, 0, 256);
+	}
 
 	resizeDirty(clip_w, clip_h);
 }
