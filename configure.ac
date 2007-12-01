@@ -137,7 +137,7 @@ AC_ARG_ENABLE(addressing,
     *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: real, direct, fixed, normal]);;
   esac
 ],
-[ ADDRESSING_TEST_ORDER="real direct normal"
+[ ADDRESSING_TEST_ORDER="direct normal"
 ])
 
 AC_ARG_ENABLE(addr-check,
