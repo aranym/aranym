@@ -115,7 +115,7 @@ HostScreen::~HostScreen(void)
 void HostScreen::reset(void)
 {
 	lastVidelWidth = lastVidelHeight = lastVidelBpp = -1;
-	renderVidelSurface = true;
+	setVidelRendering(true);
 	DisableOpenGLVdi();
 
 	setWindowSize(MIN_WIDTH,MIN_HEIGHT,8);

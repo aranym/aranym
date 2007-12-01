@@ -72,12 +72,6 @@ OpenGLVdiDriver::~OpenGLVdiDriver()
 #endif
 }
 
-void OpenGLVdiDriver::reset(void)
-{
-	host->video->DisableOpenGLVdi();
-	VdiDriver::reset();
-}
-
 /*--- Private functions ---*/
 
 int32 OpenGLVdiDriver::openWorkstation(void)

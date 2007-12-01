@@ -7,6 +7,7 @@
   power of two dimensions. Add function to set palette.
 - host surface for OpenGL, to hold texture information.
 - hostscreen OpenGL backend created.
+- nfvdi: do not need reset function anymore.
 
 
 2007/11/29 - Petr

@@ -39,7 +39,6 @@ class OpenGLVdiDriver : public VdiDriver
 	public:
 		OpenGLVdiDriver();
 		~OpenGLVdiDriver();
-		void reset(void);
 
 	protected:
 		void restoreMouseBackground(void);

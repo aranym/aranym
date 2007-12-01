@@ -36,7 +36,6 @@ class SoftVdiDriver : public VdiDriver
 	public:
 		SoftVdiDriver();
 		~SoftVdiDriver();
-		void reset(void);
 
 	protected:
 		void restoreMouseBackground(void);

@@ -87,7 +87,6 @@ class VdiDriver : public NF_Base
 
 		VdiDriver();
 		virtual ~VdiDriver();
-		virtual void reset(void);
 
 		HostSurface *getSurface(void);
 

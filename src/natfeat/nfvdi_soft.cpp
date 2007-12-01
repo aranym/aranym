@@ -53,11 +53,6 @@ SoftVdiDriver::~SoftVdiDriver()
 {
 }
 
-void SoftVdiDriver::reset(void)
-{
-	VdiDriver::reset();
-}
-
 /*--- Private functions ---*/
 
 int32 SoftVdiDriver::openWorkstation(void)
