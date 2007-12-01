@@ -570,6 +570,7 @@ void HostScreen::refresh(void)
 
 	refreshCounter = 0;
 
+	initScreen();
 	if (clear_screen) {
 		clearScreen();
 		clear_screen = false;
@@ -594,6 +595,10 @@ void HostScreen::refresh(void)
 void HostScreen::setVidelRendering(bool videlRender)
 {
 	renderVidelSurface = videlRender;
+}
+
+void HostScreen::initScreen(void)
+{
 }
 
 void HostScreen::clearScreen(void)

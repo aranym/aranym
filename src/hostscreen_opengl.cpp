@@ -136,6 +136,23 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 	}
 }
 
+void HostScreenOpenGL::initScreen(void)
+{
+	if (!bx_options.opengl.enabled) {
+		return;
+	}
+
+	gl.Viewport(0, 0, mainSurface->w, mainSurface->h);
+
+	gl.MatrixMode(GL_PROJECTION);
+	gl.LoadIdentity();
+	gl.Ortho(0.0, mainSurface->w, mainSurface->h, 0.0, -1.0, 1.0);
+
+	gl.MatrixMode(GL_MODELVIEW);
+	gl.LoadIdentity();
+	/*gl.Translatef(0.375, 0.375, 0.0);*/
+}
+
 void HostScreenOpenGL::clearScreen(void)
 {
 	if (!bx_options.opengl.enabled) {
