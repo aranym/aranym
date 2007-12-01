@@ -599,7 +599,7 @@ void HostScreen::refresh(void)
 	}
 	
 	if (clear_screen) {
-		SDL_FillRect(mainSurface, NULL, 0);
+		clearScreen();
 		clear_screen = false;
 	}
 
@@ -622,6 +622,11 @@ void HostScreen::refresh(void)
 void HostScreen::setVidelRendering(bool videlRender)
 {
 	renderVidelSurface = videlRender;
+}
+
+void HostScreen::clearScreen(void)
+{
+	SDL_FillRect(mainSurface, NULL, 0);
 }
 
 void HostScreen::refreshVidel(void)

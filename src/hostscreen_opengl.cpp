@@ -136,6 +136,17 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 	}
 }
 
+void HostScreenOpenGL::clearScreen(void)
+{
+	if (!bx_options.opengl.enabled) {
+		HostScreen::clearScreen();
+		return;
+	}
+
+	gl.ClearColor(0.0,0.0,0.0,0.0);
+	gl.Clear(GL_COLOR_BUFFER_BIT);
+}
+
 void HostScreenOpenGL::refreshScreen(void)
 {
 	if (!bx_options.opengl.enabled) {

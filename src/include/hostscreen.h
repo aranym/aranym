@@ -76,6 +76,7 @@ class HostScreen: public DirtyRects
  	SDL_Surface *mainSurface;		// The main window surface
 
 	virtual void refreshScreen(void);
+	virtual void clearScreen(void);
 	virtual void drawSurfaceToScreen(HostSurface *hsurf, int *dst_x = NULL,
 		int *dst_y = NULL);
 
