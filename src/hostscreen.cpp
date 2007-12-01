@@ -589,15 +589,6 @@ void HostScreen::refresh(void)
 
 	refreshCounter = 0;
 
-	/* Create dummy main surface? */
-	if (!mainSurface) {
-		setWindowSize(MIN_WIDTH,MIN_HEIGHT,8);
-	}
-
-	if (!mainSurface) {
-		return;
-	}
-	
 	if (clear_screen) {
 		clearScreen();
 		clear_screen = false;
