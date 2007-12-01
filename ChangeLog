@@ -6,7 +6,8 @@
 - host surface: add function to set wanted surface size for opengl that may need
   power of two dimensions. Add function to set palette.
 - host surface for OpenGL, to hold texture information.
-- hostscreen OpenGL backend created.
+- hostscreen: OpenGL backend created. Remove bitsperpixel function, only keep
+  bpp that return bit depth.
 - nfvdi: do not need reset function anymore.
 
 

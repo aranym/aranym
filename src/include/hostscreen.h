@@ -96,8 +96,7 @@ class HostScreen: public DirtyRects
 	void EnableOpenGLVdi(void);
 	void DisableOpenGLVdi(void);
 
-	uint32 getBpp();	/* Bytes per pixel */
-	uint32 getBitsPerPixel(void);
+	uint32 getBpp(void);
 	uint32 getWidth(void);
 	uint32 getHeight(void);
 

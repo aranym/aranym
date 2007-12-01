@@ -123,25 +123,6 @@ void HostScreen::reset(void)
 
 uint32 HostScreen::getBpp(void)
 {
-#ifdef ENABLE_OPENGL
-	if (bx_options.opengl.enabled) {
-		switch(bpp) {
-			case 15:
-			case 16:
-				return 2;
-			case 24:
-				return 3;
-			case 32:
-				return 4;
-		}
-		return 1;
-	}
-#endif
-	return mainSurface->format->BytesPerPixel;
-}
-
-uint32 HostScreen::getBitsPerPixel(void)
-{
 	return (mainSurface ? mainSurface->format->BitsPerPixel : 0);
 }
 

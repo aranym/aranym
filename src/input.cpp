@@ -874,7 +874,7 @@ static void process_resize_event(const SDL_Event &event)
 	}
 
 	host->video->setWindowSize(event.resize.w, event.resize.h,
-		host->video->getBitsPerPixel());
+		host->video->getBpp());
 }
 
 ///////
