@@ -76,6 +76,10 @@ class HostScreen: public DirtyRects
 	uint32 width, height, bpp;
 	uint16 snapCounter; // ALT+PrintScreen to make a snap?
 
+	int	refreshCounter;
+	bool	renderVidelSurface;
+	int	lastVidelWidth, lastVidelHeight, lastVidelBpp;
+
   protected:
  	SDL_Surface *mainSurface;		// The main window surface
 
@@ -99,7 +103,6 @@ class HostScreen: public DirtyRects
 	uint32 getHeight(void);
 
 	void   setWindowSize( uint32 width, uint32 height, uint32 bpp );
-	void   setRendering( bool render );
 
 	/**
 	 * Atari bitplane to chunky conversion helper.
@@ -112,13 +115,10 @@ class HostScreen: public DirtyRects
 	// Toggle Window/FullScreen mode
 	void   toggleFullScreen();
 
-	int	refreshCounter;
 	void	refresh(void);
 	void	forceRefreshScreen(void);
 
-	bool	renderVidelSurface;
 	void	setVidelRendering(bool videlRender);
-	int	lastVidelWidth, lastVidelHeight, lastVidelBpp;
 
 	/* Surface creation */
 	virtual HostSurface *createSurface(int width, int height, int bpp);
