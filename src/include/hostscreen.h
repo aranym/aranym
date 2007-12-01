@@ -43,8 +43,6 @@ class Logo;
 class HostScreen: public DirtyRects
 {
   private:
- 	SDL_Surface *mainSurface;		// The main window surface
-
 	int selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height);
 	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
 
@@ -53,9 +51,6 @@ class HostScreen: public DirtyRects
 	void refreshNfvdi(void);
 	void forceRefreshNfvdi(void);
 	void refreshGui(void);
-
-	void drawSurfaceToScreen(HostSurface *hsurf, int *dst_x = NULL,
-		int *dst_y = NULL);
 
 #ifdef ENABLE_OPENGL
 	// OpenGL stuff
@@ -78,7 +73,11 @@ class HostScreen: public DirtyRects
 	bool clear_screen;
 
   protected:
+ 	SDL_Surface *mainSurface;		// The main window surface
+
 	virtual void refreshScreen(void);
+	virtual void drawSurfaceToScreen(HostSurface *hsurf, int *dst_x = NULL,
+		int *dst_y = NULL);
 
   public:
 	uint32 sdl_videoparams;
