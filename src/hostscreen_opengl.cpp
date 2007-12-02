@@ -142,7 +142,7 @@ int HostScreenOpenGL::getBpp(void)
 	return bpp;
 }
 
-void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
+void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y, int flags)
 {
 	if (!bx_options.opengl.enabled) {
 		HostScreen::drawSurfaceToScreen(hsurf, dst_x, dst_y);
@@ -196,10 +196,22 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 	gl.LoadIdentity();
 	gl.Scalef(txWidth,txHeight,1.0);
 
-	GLfloat targetX = (screen->w-width)*0.5;	
-	GLfloat targetY = (screen->h-height)*0.5;
 	GLfloat targetW = width;
 	GLfloat targetH = height;
+	if (bx_options.autozoom.enabled && (flags==DRAW_RESCALED)) {
+		targetW = screen->w;
+		targetH = screen->h;
+		if (bx_options.autozoom.integercoefs && (screen->w>=width)
+			&& (screen->h>=height))
+		{
+			int coefx = (int) (screen->w / width);
+			int coefy = (int) (screen->h / height);
+			targetW = (GLfloat) (width * coefx);
+			targetH = (GLfloat) (height * coefy);
+		}
+	}
+	GLfloat targetX = (screen->w-targetW)*0.5;	
+	GLfloat targetY = (screen->h-targetH)*0.5;
 
 	gl.MatrixMode(GL_MODELVIEW);
 	gl.LoadIdentity();

@@ -54,6 +54,12 @@ class HostScreen: public DirtyRects
 	static const int MIN_WIDTH = 640;
 	static const int MIN_HEIGHT = 480;
 
+	/* How we want the surface to be rendered on screen */
+	enum {
+		DRAW_CROPPED,	/* Crop if bigger than screen, center it */
+		DRAW_RESCALED	/* Rescale it (only with OpenGL) */
+	};
+
 	SDL_Surface *screen;
 	int new_width, new_height;
 	uint16 snapCounter; // ALT+PrintScreen to make a snap?
@@ -64,7 +70,7 @@ class HostScreen: public DirtyRects
 	virtual void initScreen(void);
 	virtual void clearScreen(void);
 	virtual void drawSurfaceToScreen(HostSurface *hsurf, int *dst_x = NULL,
-		int *dst_y = NULL);
+		int *dst_y = NULL, int flags = DRAW_CROPPED);
 
   public:
 	HostScreen(void);

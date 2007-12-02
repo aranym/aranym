@@ -264,7 +264,11 @@ void HostScreen::refreshVidel(void)
 		SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
-	drawSurfaceToScreen(videl_hsurf);
+	int flags = DRAW_CROPPED;
+	if (bx_options.opengl.enabled && bx_options.autozoom.enabled) {
+		flags = DRAW_RESCALED;
+	}
+	drawSurfaceToScreen(videl_hsurf, NULL, NULL, flags);
 }
 
 void HostScreen::refreshLogo(void)
@@ -398,7 +402,7 @@ void HostScreen::refreshGui(void)
 #endif /* SDL_GUI */
 }
 
-void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
+void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y, int /*flags*/)
 {
 	if (!hsurf) {
 		return;

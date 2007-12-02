@@ -1,5 +1,6 @@
 2007/12/02 - Patrice
 - hostscreen: OpenGL backend done, still small bugs remaining here and there.
+  Use OpenGL to zoom videl surface.
 - nfvdi: disable OpenGL renderer atm, corrupt our compositing layer.
 
 

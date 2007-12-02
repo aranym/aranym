@@ -68,7 +68,7 @@ void VidelZoom::reset(void)
 
 HostSurface *VidelZoom::getSurface(void)
 {
-	if (!bx_options.autozoom.enabled) {
+	if (bx_options.opengl.enabled || !bx_options.autozoom.enabled) {
 		return VIDEL::getSurface();
 	}
 
@@ -127,7 +127,9 @@ void VidelZoom::refreshScreen(void)
 
 	D(bug("VidelZoom::renderScreen()"));
 	
-	if ((zoomWidth==videlWidth) && (zoomHeight==videlHeight)) {
+	if (bx_options.opengl.enabled ||
+	    ((zoomWidth==videlWidth) && (zoomHeight==videlHeight)))
+	{
 		VIDEL::refreshScreen();
 		return;
 	}
