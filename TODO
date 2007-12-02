@@ -94,18 +94,3 @@ that particular programmer but rather who is author of the idea :-)
 - patrice: rework dsp thread synchronization. It seems it may hang sometimes.
 
 - patrice: full automake/autoconf support.
-
-- patrice: CVS branch 'host-video':
-
-  There are currently several subsystem that want to draw stuff on screen:
-       software opengl
-sdlgui yes      no (that's why no sdlgui when OpenGL is enabled)
-videl  yes      yes
-nfvdi  yes      yes
-  Currently, they all draw to the main screen surface, and we must be careful
-  that each of them not walk on other's foot. The goal is to have each of them
-  render in their own surface first. And the host video class will take the
-  result to do the final rendering, depending on which stuff is enabled and need
-  to be shown.
-  On the plus side, we could add other stuff that needs their own screen, like a
-  boot logo, or a debugger.
