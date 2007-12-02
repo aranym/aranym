@@ -33,7 +33,7 @@
 #include "host_surface.h"
 #include "host_surface_opengl.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 /*--- Defines ---*/
@@ -77,6 +77,7 @@ void HostSurfaceOpenGL::createTexture(void)
 	}
 #endif
 
+	first_upload = true;
 	updateTexture();
 }
 
@@ -147,13 +148,21 @@ void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
 
 /*--- Public functions ---*/
 
+void HostSurfaceOpenGL::update(void)
+{
+	updateTexture();
+}
+
 void HostSurfaceOpenGL::resize(int width, int height)
 {
 	int w=width, h=height;
 	calcGlDimensions(&w, &h);
 	HostSurface::resize(width,height, w,h);
 
-	D(bug("hs_ogl(): ask %dx%d surface, got %dx%d", width,height, w,h));
+	D(bug("hs_ogl: 0x%08x: ask %dx%d surface, got %dx%d", this, width,height, w,h));
+
+	first_upload = true;
+	updateTexture();
 }
 
 void HostSurfaceOpenGL::setPalette(SDL_Color *palette, int first, int count)
@@ -253,27 +262,34 @@ void HostSurfaceOpenGL::updateTexture(void)
 			break;
 	}
 
-	gl.PixelStorei(GL_UNPACK_ROW_LENGTH, surface->w);
+	if (first_upload) {
+		/* Complete texture upload the first time, and only parts after */
+		gl.TexImage2D(textureTarget,0, internalFormat, surface->w, surface->h, 0,
+			format, pixelType, surface->pixels
+		);
+		first_upload = false;
+	} else {
+		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, surface->w);
 
-	int x,y;
-	Uint8 *dirtyArray = getDirtyRects();
-	for (y=0; y<getDirtyHeight(); y++) {
-		for (x=0; x<getDirtyWidth(); x++) {
-			if (!dirtyArray[y*getDirtyWidth()+x]) {
-				continue;
+		int x,y;
+		Uint8 *dirtyArray = getDirtyRects();
+		for (y=0; y<getDirtyHeight(); y++) {
+			for (x=0; x<getDirtyWidth(); x++) {
+				if (!dirtyArray[y*getDirtyWidth()+x]) {
+					continue;
+				}
+
+				Uint8 *surfPixels = (Uint8 *) surface->pixels;
+				surfPixels += (y<<4) * surface->pitch;
+				surfPixels += (x<<4) * surface->format->BytesPerPixel;				
+				gl.TexSubImage2D(textureTarget,0, x<<4,y<<4,16,16,
+					format, pixelType, surfPixels);
 			}
-
-			Uint8 *surfPixels = (Uint8 *) surface->pixels;
-			surfPixels += (y<<4) * surface->pitch;
-			surfPixels += (x<<4) * surface->format->BytesPerPixel;				
-			gl.TexSubImage2D(textureTarget,0, x<<4,y<<4,16,16, format,
-				pixelType, surfPixels
-			);
 		}
-	}
-	clearDirtyRects();
+		clearDirtyRects();
 
-	gl.PixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	}
 
 	switch (surface->format->BitsPerPixel) {
 		case 8:

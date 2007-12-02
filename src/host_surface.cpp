@@ -88,6 +88,10 @@ int HostSurface::getBpp(void)
 	return (surface ? surface->format->BitsPerPixel : 0);
 }
 
+void HostSurface::update(void)
+{
+}
+
 void HostSurface::resize(int new_width, int new_height)
 {
 	resize(new_width,new_height, new_width,new_height);

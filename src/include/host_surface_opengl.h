@@ -32,7 +32,7 @@ class HostSurfaceOpenGL: public HostSurface
 	private:
 		GLenum textureTarget;
 		GLuint textureObject;
-		bool can_palette, use_palette;
+		bool can_palette, use_palette, first_upload;
 
 		void createTexture(void);
 		void calcGlDimensions(int *width, int *height);
@@ -46,6 +46,7 @@ class HostSurfaceOpenGL: public HostSurface
 
 		virtual ~HostSurfaceOpenGL();
 
+		void update(void);
 		void resize(int width, int height);
 		void setPalette(SDL_Color *palette, int first, int count);
 		void updateTexture(void);
