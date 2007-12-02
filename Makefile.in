@@ -88,6 +88,7 @@ SRCS = main.cpp \
 	host_audio.cpp \
 	host_clock.cpp \
 	hostscreen.cpp \
+	hostscreen_opengl.cpp \
 	host_surface.cpp \
 	host_surface_opengl.cpp \
 	ide.cpp \
