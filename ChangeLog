@@ -1,3 +1,8 @@
+2007/12/02 - Patrice
+- hostscreen: OpenGL backend done, still small bugs remaining here and there.
+- nfvdi: disable OpenGL renderer atm, corrupt our compositing layer.
+
+
 2007/12/01 - milan
 - configure.ac: real mode addressing removed from default, target for removal
 

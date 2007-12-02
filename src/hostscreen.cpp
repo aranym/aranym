@@ -1,112 +1,58 @@
 /*
- * hostscreen.cpp - host video routines
- *
- * Copyright (c) 2001-2005 STanda of ARAnyM developer team (see AUTHORS)
- *
- * This file is part of the ARAnyM project which builds a new and powerful
- * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
- *
- * ARAnyM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * ARAnyM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with ARAnyM; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
+	Hostscreen, base class
+	Software renderer
 
+	(C) 2007 ARAnyM developer team
 
-#include "sysdeps.h"
-#include "hardware.h"
-#include "cpu_emulation.h"
-#include "memory.h"
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <SDL.h>
+
+#include "dirty_rects.h"
+#include "host_surface.h"
 #include "logo.h"
 #include "hostscreen.h"
-#include "host_surface.h"
-#include "parameters.h"
-#ifdef SDL_GUI
-# include "gui-sdl/sdlgui.h"
-#endif
-#include "main.h"
+#include "parameters.h"	/* bx_options */
+#include "main.h"	/* QuitEmulator */
 
 #ifdef NFVDI_SUPPORT
 # include "nf_objs.h"
 # include "nfvdi.h"
 #endif
 
-#define DEBUG 0
+#ifdef SDL_GUI
+# include "gui-sdl/sdlgui.h"
+#endif
+
+#define DEBUG 1
 #include "debug.h"
-
-#ifdef ENABLE_OPENGL
-#include <SDL_opengl.h>
-#include "dyngl.h"
-#endif
-
-#ifdef OS_cygwin
-# define WIN32 1
-# include <SDL_syswm.h>
-# include <windows.h>
-# undef WIN32
-#else
-# include <SDL_syswm.h>
-#endif
-
-#define MIN_WIDTH 640
-#define MIN_HEIGHT 480
 
 HostScreen::HostScreen(void)
 	: DirtyRects(), logo(NULL), logo_present(true), clear_screen(true),
-	snapCounter(0), refreshCounter(0)
+	refreshCounter(0), screen(NULL), new_width(0), new_height(0),
+	snapCounter(0)
 {
-	mainSurface=NULL;
-
-#ifdef ENABLE_OPENGL
-	// OpenGL stuff
-	SdlGlSurface=NULL;
-	SdlGlTexture=NULL;
-	dirty_rects=NULL;
-	dirty_w=dirty_h=0;
-	npot_texture=rect_texture=SDL_FALSE;
-	rect_target=GL_TEXTURE_2D;
-
-	if (dyngl_load(bx_options.opengl.library)==0) {
-		bx_options.opengl.enabled = false;
-	}
-#else
-	bx_options.opengl.enabled = false;
-#endif /* !ENABLE_OPENGL */
-
-	reset();
 }
 
 HostScreen::~HostScreen(void)
 {
-	// OpenGL stuff
-#ifdef ENABLE_OPENGL
-	if (bx_options.opengl.enabled) {
-		if (dirty_rects) {
-			delete dirty_rects;
-			dirty_rects=NULL;
-		}
-
-		if (mainSurface) {
-			SDL_FreeSurface(mainSurface);
-			mainSurface=NULL;
-		}
-
-		/* TODO: gl pointer not valid anymore at this time */
-// 		if (SdlGlTexture) {
-// 			gl.DeleteTextures(1, &SdlGlTexObj);
-// 			SdlGlTexture=NULL;
-// 		}
-	}
-#endif
 	if (logo) {
 		delete logo;
 	}
@@ -118,345 +64,9 @@ void HostScreen::reset(void)
 	setVidelRendering(true);
 	DisableOpenGLVdi();
 
-	setWindowSize(MIN_WIDTH,MIN_HEIGHT,8);
-}
+	setVideoMode(MIN_WIDTH,MIN_HEIGHT,8);
 
-uint32 HostScreen::getBpp(void)
-{
-	return (mainSurface ? mainSurface->format->BitsPerPixel : 0);
-}
-
-uint32 HostScreen::getWidth(void)
-{
-	return width;
-}
-
-uint32 HostScreen::getHeight(void)
-{
-	return height;
-}
-
-void HostScreen::makeSnapshot()
-{
-	char filename[15];
-	sprintf( filename, "snap%03d.bmp", snapCounter++ );
-
-	SDL_SaveBMP( mainSurface, filename );
-}
-
-
-void HostScreen::toggleFullScreen()
-{
-	bx_options.video.fullscreen = !bx_options.video.fullscreen;
-
-	setWindowSize( width, height, bpp );
-}
-
-int HostScreen::selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height)
-{
-	int i, bestw, besth;
-
-	/* Search the smallest nearest mode */
-	bestw = modes[0]->w;
-	besth = modes[0]->h;
-	for (i=0;modes[i]; ++i) {
-		if ((modes[i]->w >= *width) && (modes[i]->h >= *height)) {
-			if ((modes[i]->w < bestw) || (modes[i]->h < besth)) {
-				bestw = modes[i]->w;
-				besth = modes[i]->h;
-			}			
-		}
-	}
-
-	*width = bestw;
-	*height = besth;
-	D(bug("hostscreen: video mode found: %dx%d",*width,*height));
-
-	return 1;
-}
-
-void HostScreen::searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp )
-{
-	SDL_Rect **modes;
-	SDL_PixelFormat pixelformat;
-	int modeflags;
-
-	/* Search in available modes the best suited */
-	D(bug("hostscreen: video mode asked: %dx%dx%d",*width,*height,*bpp));
-
-	if ((*width == 0) || (*height == 0)) {
-		*width = 640;
-		*height = 480;
-	}
-
-	/* Read available video modes */
-	modeflags = 0 /*SDL_HWSURFACE | SDL_HWPALETTE*/;
-	if (bx_options.video.fullscreen)
-		modeflags |= SDL_FULLSCREEN;
-
-	/*--- Search a video mode with asked bpp ---*/
-	if (*bpp != 0) {
-		pixelformat.BitsPerPixel = *bpp;
-		modes = SDL_ListModes(&pixelformat, modeflags);
-		if ((modes != (SDL_Rect **) 0) && (modes != (SDL_Rect **) -1)) {
-			D(bug("hostscreen: searching a good video mode (any bpp)"));
-			if (selectVideoMode(modes,width,height)) {
-				D(bug("hostscreen: video mode selected: %dx%dx%d",*width,*height,*bpp));
-				return;
-			}
-		}
-	}
-
-	/*--- Search a video mode with any bpp ---*/
-	modes = SDL_ListModes(NULL, modeflags);
-	if ((modes != (SDL_Rect **) 0) && (modes != (SDL_Rect **) -1)) {
-		D(bug("hostscreen: searching a good video mode"));
-		if (selectVideoMode(modes,width,height)) {
-			D(bug("hostscreen: video mode selected: %dx%dx%d",*width,*height,*bpp));
-			return;
-		}
-	}
-
-	if (modes == (SDL_Rect **) 0) {
-		D(bug("hostscreen: No modes available"));
-	}
-
-	if (modes == (SDL_Rect **) -1) {
-		/* Any mode available */
-		D(bug("hostscreen: Any modes available"));
-	}
-
-	D(bug("hostscreen: video mode selected: %dx%dx%d",*width,*height,*bpp));
-}
-
-void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
-{
-	if (bx_options.autozoom.fixedsize) {
-		width = bx_options.autozoom.width;
-		height = bx_options.autozoom.height;
-	}
-
-	if (width<MIN_WIDTH) {
-		width=MIN_WIDTH;
-	}
-	if (height<MIN_HEIGHT) {
-		height=MIN_HEIGHT;
-	}
-
-	// Select a correct video mode
-	searchVideoMode(&width, &height, &bpp);	
-
-	this->width	 = width;
-	this->height = height;
-	this->bpp = bpp;
-
-	// SelectVideoMode();
-	sdl_videoparams = SDL_RESIZABLE /*SDL_HWSURFACE | SDL_HWPALETTE*/;
-	if (bx_options.video.fullscreen)
-		sdl_videoparams |= SDL_FULLSCREEN;
-
-#ifdef ENABLE_OPENGL
-	if (bx_options.opengl.enabled) {
-		int filtering, i, gl_bpp[4]={0,16,24,32};
-
-		sdl_videoparams |= SDL_OPENGL;
-
-		/* Setup at least 15 bits true colour OpenGL context */
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE,5);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
-		SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,15);
-
-		for (i=0;i<4;i++) {
-			SdlGlSurface = SDL_SetVideoMode(width, height, gl_bpp[i], sdl_videoparams);
-			if (SdlGlSurface) {
-				break;
-			}
-		}
-		if (!SdlGlSurface) {
-			fprintf(stderr,"Can not setup %dx%d OpenGL video mode\n",width,height);
-			QuitEmulator();
-		}
-		this->width = width = SdlGlSurface->w;
-		this->height = height = SdlGlSurface->h;
-		this->bpp = bpp = 32;	/* bpp of texture that will be used */
-		bx_options.video.fullscreen = ((SdlGlSurface->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN);
-
-		gl.Viewport(0, 0, width, height);
-
-		/* Projection matrix */
-		gl.MatrixMode(GL_PROJECTION);
-		gl.LoadIdentity();
-		gl.Ortho(0.0, width, height, 0.0, -1.0, 1.0);
-
-		/* Texture matrix */
-		gl.MatrixMode(GL_TEXTURE);
-		gl.LoadIdentity();
-
-		/* Model view matrix */
-		gl.MatrixMode(GL_MODELVIEW);
-		gl.LoadIdentity();
-		gl.Translatef(0.375, 0.375, 0.0);
-
-		/* Setup texturing mode */
-		gl.TexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-		/* Delete previous stuff */
-		if (mainSurface) {
-			SDL_FreeSurface(mainSurface);
-			mainSurface=NULL;
-		}
-
-		if (SdlGlTexture) {
-			gl.DeleteTextures(1, &SdlGlTexObj);
-		}
-
-		/* Full screen OpenGL rendering ? */
-		if (!OpenGLVdi) {
-			GLint MaxTextureSize;
-			char *extensions;
-
-			rect_target=GL_TEXTURE_2D;
-			npot_texture = rect_texture = SDL_FALSE;
-			gl.GetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
-
-			extensions = (char *)gl.GetString(GL_EXTENSIONS);
-
-			/* Check texture rectangle extensions */
-
-#if defined(GL_NV_texture_rectangle)
-			if (strstr(extensions, "GL_NV_texture_rectangle")) {
-				rect_texture = SDL_TRUE;
-				rect_target=GL_TEXTURE_RECTANGLE_NV;
-				gl.GetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_NV, &MaxTextureSize);
-			}
-#endif
-#if defined(GL_EXT_texture_rectangle)
-			if (strstr(extensions, "GL_EXT_texture_rectangle")) {
-				rect_texture = SDL_TRUE;
-				rect_target=GL_TEXTURE_RECTANGLE_EXT;
-				gl.GetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_EXT, &MaxTextureSize);
-			}
-#endif
-#if defined(GL_ARB_texture_rectangle)
-			if (strstr(extensions, "GL_ARB_texture_rectangle")) {
-				rect_texture = SDL_TRUE;
-				rect_target=GL_TEXTURE_RECTANGLE_ARB;
-				gl.GetIntegerv(GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB, &MaxTextureSize);
-			}
-#endif
-
-			/* Check non power of two texture extension */
-			npot_texture = rect_texture;
-			if (strstr(extensions, "GL_ARB_texture_non_power_of_two")) {
-				npot_texture=SDL_TRUE;
-				rect_texture=SDL_FALSE;
-				rect_target=GL_TEXTURE_2D;
-				gl.GetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTextureSize);
-			}
-
-			SdlGlTextureWidth = SdlGlTextureHeight = MaxTextureSize;
-			D(bug("gl: need at least a %dx%d texture",width,height));
-			D(bug("gl: texture is at most a %dx%d texture",MaxTextureSize,MaxTextureSize));
-
-			if (!npot_texture) {
-				/* Calculate the smallest needed texture */
-				if (width<SdlGlTextureWidth) {
-					while (((SdlGlTextureWidth>>1)>width) && (SdlGlTextureWidth>64)) {
-						SdlGlTextureWidth>>=1;
-					}
-				}
-				if (height<SdlGlTextureHeight) {
-					while (((SdlGlTextureHeight>>1)>height) && (SdlGlTextureHeight>64)) {
-						SdlGlTextureHeight>>=1;
-					}
-				}
-			} else {
-				if (width<SdlGlTextureWidth) {
-					if (width>64) {
-						SdlGlTextureWidth=width;
-					} else {
-						SdlGlTextureWidth=64;
-					}
-				}
-				if (height<SdlGlTextureHeight) {
-					if (height>64) {
-						SdlGlTextureHeight=height;
-					} else {
-						SdlGlTextureHeight=64;
-					}
-				}
-			}
-			D(bug("gl: texture will be %dx%d texture",SdlGlTextureWidth,SdlGlTextureHeight));
-		}
-
-		mainSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-			SdlGlTextureWidth,SdlGlTextureHeight,32,
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-			255<<16,255<<8,255,255<<24	/* GL_BGRA little endian */
-#else
-			255<<8,255<<16,255<<24,255	/* GL_BGRA big endian */
-#endif
-		);
-		if (!mainSurface) {
-			fprintf(stderr,"Can not create %dx%dx%d texture\n",SdlGlTextureWidth,SdlGlTextureHeight,bpp);
-			QuitEmulator();
-		}
-		SdlGlTexture = (uint8 *) (mainSurface->pixels);
-
-		if (!OpenGLVdi) {
-			gl.GenTextures(1, &SdlGlTexObj);
-			gl.BindTexture(GL_TEXTURE_2D, SdlGlTexObj);
-
-			filtering = GL_NEAREST;		
-			if (bx_options.opengl.filtered) {
-				filtering = GL_LINEAR;
-			}
-			gl.TexParameteri(rect_target, GL_TEXTURE_MAG_FILTER, filtering); // scale when image bigger than texture
-			gl.TexParameteri(rect_target, GL_TEXTURE_MIN_FILTER, filtering); // scale when image smaller than texture
-
-			gl.TexImage2D(rect_target, 0, GL_RGBA, SdlGlTextureWidth, SdlGlTextureHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, SdlGlTexture);
-
-			D(bug("gl: texture created"));
-
-			/* Activate autozoom if texture smaller than screen */
-			SdlGlWidth = width;
-			SdlGlHeight = height;
-			if ((width>SdlGlTextureWidth) || (height>SdlGlTextureHeight)) {
-				this->width = width = SdlGlTextureWidth;
-				this->height = height = SdlGlTextureHeight;
-				bx_options.autozoom.enabled = true;
-				bx_options.autozoom.integercoefs = false;
-
-				D(bug("gl: autozoom enabled"));
-			} else {
-				bx_options.autozoom.enabled = false;
-				bx_options.autozoom.integercoefs = false;
-				D(bug("gl: autozoom disabled"));
-			}
-
-			/* Create dirty rectangles list */
-			if (dirty_rects)
-				delete dirty_rects;
-		
-			dirty_w=((width|15)+1)>>4;
-			dirty_h=((height|15)+1)>>4;
-			dirty_rects=new SDL_bool[dirty_w*dirty_h];
-			memset(dirty_rects,SDL_FALSE,sizeof(SDL_bool)*dirty_w*dirty_h);
-		}
-	}
-	else
-#endif /* ENABLE_OPENGL */
-	{
-		mainSurface = SDL_SetVideoMode(width, height, bpp, sdl_videoparams);
-		if (mainSurface) {
-			bx_options.video.fullscreen = ((mainSurface->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN);
-		}
-	}
-
-	resizeDirty(width, height);
-	forceRefreshNfvdi();
-
+	/* Set window caption */
 	char buf[sizeof(VERSION_STRING)+128];
 #ifdef SDL_GUI
 	char key[80];
@@ -466,87 +76,85 @@ void HostScreen::setWindowSize( uint32 width, uint32 height, uint32 bpp )
 	snprintf(buf, sizeof(buf), "%s", VERSION_STRING);
 #endif /* SDL_GUI */
 	SDL_WM_SetCaption(buf, "ARAnyM");
-
-	D(bug("Surface Pitch = %d, width = %d, height = %d", surf->pitch, surf->w, surf->h));
-	D(bug("Must Lock? %s", SDL_MUSTLOCK(surf) ? "YES" : "NO"));
-
-	VideoRAMBaseHost = (uint8 *) mainSurface->pixels;
-	InitVMEMBaseDiff(VideoRAMBaseHost, VideoRAMBase);
-	D(bug("VideoRAM starts at %p (%08x)", VideoRAMBaseHost, VideoRAMBase));
-	D(bug("surf->pixels = %x, getVideoSurface() = %x",
-			VideoRAMBaseHost, SDL_GetVideoSurface()->pixels));
-
-	D(bug("Pixel format:bitspp=%d, tmasks r=%04x g=%04x b=%04x"
-			", tshifts r=%d g=%d b=%d"
-			", tlosses r=%d g=%d b=%d",
-			mainSurface->format->BitsPerPixel,
-			mainSurface->format->Rmask, mainSurface->format->Gmask, mainSurface->format->Bmask,
-			mainSurface->format->Rshift, mainSurface->format->Gshift, mainSurface->format->Bshift,
-			mainSurface->format->Rloss, mainSurface->format->Gloss, mainSurface->format->Bloss));
-
-	clear_screen = true;
 }
 
-void HostScreen::OpenGLUpdate(void)
+int HostScreen::getWidth(void)
 {
-#ifdef ENABLE_OPENGL
-	GLfloat tex_width, tex_height;
+	return screen->w;
+}
 
-	if (OpenGLVdi) {
+int HostScreen::getHeight(void)
+{
+	return screen->h;
+}
+
+int HostScreen::getBpp(void)
+{
+	return screen->format->BitsPerPixel;
+}
+
+void HostScreen::makeSnapshot(void)
+{
+	char filename[15];
+	sprintf( filename, "snap%03d.bmp", snapCounter++ );
+
+	SDL_SaveBMP(screen, filename);
+}
+
+void HostScreen::toggleFullScreen(void)
+{
+	bx_options.video.fullscreen = !bx_options.video.fullscreen;
+
+	setVideoMode(getWidth(), getHeight(), getBpp());
+}
+
+void HostScreen::setVideoMode(int width, int height, int bpp)
+{
+	if (bx_options.autozoom.fixedsize) {
+		width = bx_options.autozoom.width;
+		height = bx_options.autozoom.height;
+	}
+	if (width<MIN_WIDTH) {
+		width=MIN_WIDTH;
+	}
+	if (height<MIN_HEIGHT) {
+		height=MIN_HEIGHT;
+	}
+
+	int screenFlags = SDL_HWSURFACE|SDL_HWPALETTE|SDL_RESIZABLE;
+	if (bx_options.video.fullscreen) {
+		screenFlags |= SDL_FULLSCREEN;
+	}
+
+	screen = SDL_SetVideoMode(width, height, bpp, screenFlags);
+	if (screen==NULL) {
+		/* Try with default bpp */
+		screen = SDL_SetVideoMode(width, height, 0, screenFlags);
+	}
+	if (screen==NULL) {
+		/* Try with default resolution */
+		screen = SDL_SetVideoMode(0, 0, 0, screenFlags);
+	}
+	if (screen==NULL) {
+		panicbug(("Can not set video mode\n"));
+		QuitEmulator();
 		return;
 	}
 
-	gl.Enable(rect_target);
-	gl.BindTexture(rect_target, SdlGlTexObj);
+	SDL_SetClipRect(screen, NULL);
 
-	/* Update the texture */
-	{
-		int x,y;
+	bx_options.video.fullscreen = ((screen->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN);
 
-		for (y=0;y<dirty_h;y++) {
-			SDL_bool update_line=SDL_FALSE;
-			for (x=0;x<dirty_w;x++) {
-				if (dirty_rects[y*dirty_w+x]==SDL_TRUE) {
-					update_line=SDL_TRUE;
-					break;
-				}
-			}
-			if (update_line) {
-				gl.TexSubImage2D(rect_target, 0,
-					 0, y<<4,
-					 SdlGlTextureWidth, 16,
-					 GL_BGRA, GL_UNSIGNED_BYTE,
-					 SdlGlTexture + (y<<4)*SdlGlTextureWidth*4
-				);
-			}
-		}
-	}
-	memset(dirty_rects,SDL_FALSE,sizeof(SDL_bool)*dirty_w*dirty_h);
+	new_width = screen->w;
+	new_height = screen->h;
+	resizeDirty(screen->w, screen->h);
+	forceRefreshScreen();
+}
 
-	/* Render the textured quad */
-	tex_width = ((GLfloat)width)/((GLfloat)SdlGlTextureWidth);
-	tex_height = ((GLfloat)height)/((GLfloat)SdlGlTextureHeight);
-	if (rect_target!=GL_TEXTURE_2D) {
-		tex_width = (GLfloat)width;
-		tex_height = (GLfloat)height;
-	}
-
-	gl.Begin(GL_QUADS);
-		gl.TexCoord2f( 0.0, 0.0 );
-		gl.Vertex2i( 0, 0);
-
-		gl.TexCoord2f( tex_width, 0.0 );
-		gl.Vertex2i( SdlGlWidth, 0);
-
-		gl.TexCoord2f( tex_width, tex_height);
-		gl.Vertex2i( SdlGlWidth, SdlGlHeight);
-
-		gl.TexCoord2f( 0.0, tex_height);
-		gl.Vertex2i( 0, SdlGlHeight);
-	gl.End();
-
-	gl.Disable(rect_target);
-#endif
+void HostScreen::resizeWindow(int new_width, int new_height)
+{
+	this->new_width = new_width;
+	this->new_height = new_height;
 }
 
 void HostScreen::EnableOpenGLVdi(void)
@@ -571,7 +179,7 @@ void HostScreen::refresh(void)
 	refreshCounter = 0;
 
 	initScreen();
-	if (clear_screen) {
+	if (clear_screen || bx_options.opengl.enabled) {
 		clearScreen();
 		clear_screen = false;
 	}
@@ -590,6 +198,10 @@ void HostScreen::refresh(void)
 #endif
 
 	refreshScreen();
+
+	if ((new_width!=screen->w) || (new_height!=screen->h)) {
+		setVideoMode(new_width, new_height, getBpp());
+	}
 }
 
 void HostScreen::setVidelRendering(bool videlRender)
@@ -603,7 +215,7 @@ void HostScreen::initScreen(void)
 
 void HostScreen::clearScreen(void)
 {
-	SDL_FillRect(mainSurface, NULL, 0);
+	SDL_FillRect(screen, NULL, 0);
 }
 
 void HostScreen::refreshVidel(void)
@@ -635,21 +247,21 @@ void HostScreen::refreshVidel(void)
 	int h = (videl_surf->h < 200) ? 200 : videl_surf->h;
 	int bpp = videl_surf->format->BitsPerPixel;
 	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
-		setWindowSize(w, h, bpp);
+		setVideoMode(w, h, bpp);
 		lastVidelWidth = w;
 		lastVidelHeight = h;
 		lastVidelBpp = bpp;
 	}
 
 	/* Set palette from videl surface if needed */
-	if ((bpp==8) && (mainSurface->format->BitsPerPixel == 8)) {
+	if (!bx_options.opengl.enabled && (bpp==8) && (getBpp() == 8)) {
 		SDL_Color palette[256];
 		for (int i=0; i<256; i++) {
 			palette[i].r = videl_surf->format->palette->colors[i].r;
 			palette[i].g = videl_surf->format->palette->colors[i].g;
 			palette[i].b = videl_surf->format->palette->colors[i].b;
 		}
-		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
+		SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
 	drawSurfaceToScreen(videl_hsurf);
@@ -691,21 +303,21 @@ void HostScreen::refreshLogo(void)
 	int h = (logo_height < 200) ? 200 : logo_height;
 	int bpp = logo_hsurf->getBpp();
 	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
-		setWindowSize(w, h, bpp);
+		setVideoMode(w, h, bpp);
 		lastVidelWidth = w;
 		lastVidelHeight = h;
 		lastVidelBpp = bpp;
 	}
 
 	/* Set palette from surface */
-	if ((bpp==8) && (mainSurface->format->BitsPerPixel == 8)) {
+	if (!bx_options.opengl.enabled && (bpp==8) && (getBpp() == 8)) {
 		SDL_Color palette[256];
 		for (int i=0; i<256; i++) {
 			palette[i].r = logo_surf->format->palette->colors[i].r;
 			palette[i].g = logo_surf->format->palette->colors[i].g;
 			palette[i].b = logo_surf->format->palette->colors[i].b;
 		}
-		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
+		SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
 	drawSurfaceToScreen(logo_hsurf);
@@ -754,21 +366,21 @@ void HostScreen::refreshNfvdi(void)
 	int h = (vdi_height < 200) ? 200 : vdi_height;
 	int bpp = nfvdi_hsurf->getBpp();
 	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
-		setWindowSize(w, h, bpp);
+		setVideoMode(w, h, bpp);
 		lastVidelWidth = w;
 		lastVidelHeight = h;
 		lastVidelBpp = bpp;
 	}
 
 	/* Set palette from videl surface if needed */
-	if ((bpp==8) && (mainSurface->format->BitsPerPixel == 8)) {
+	if (!bx_options.opengl.enabled && (bpp==8) && (getBpp() == 8)) {
 		SDL_Color palette[256];
 		for (int i=0; i<256; i++) {
 			palette[i].r = nfvdi_surf->format->palette->colors[i].r;
 			palette[i].g = nfvdi_surf->format->palette->colors[i].g;
 			palette[i].b = nfvdi_surf->format->palette->colors[i].b;
 		}
-		SDL_SetPalette(mainSurface, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
+		SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
 	drawSurfaceToScreen(nfvdi_hsurf);
@@ -791,6 +403,8 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 	if (!hsurf) {
 		return;
 	}
+	hsurf->update();
+
 	SDL_Surface *sdl_surf = hsurf->getSdlSurface();
 	if (!sdl_surf) {
 		return;
@@ -800,23 +414,23 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 	int height = hsurf->getHeight();
 
 	SDL_Rect src_rect = {0,0, width, height};
-	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
-	if (mainSurface->w > width) {
-		dst_rect.x = (mainSurface->w - width) >> 1;
+	SDL_Rect dst_rect = {0,0, screen->w, screen->h};
+	if (screen->w > width) {
+		dst_rect.x = (screen->w - width) >> 1;
 		dst_rect.w = width;
 	} else {
-		src_rect.w = mainSurface->w;
+		src_rect.w = screen->w;
 	}
-	if (mainSurface->h > height) {
-		dst_rect.y = (mainSurface->h - height) >> 1;
+	if (screen->h > height) {
+		dst_rect.y = (screen->h - height) >> 1;
 		dst_rect.h = height;
 	} else {
-		src_rect.h = mainSurface->h;
+		src_rect.h = screen->h;
 	}
 
 	Uint8 *dirtyRects = hsurf->getDirtyRects();
 	if (!dirtyRects) {
-		SDL_BlitSurface(sdl_surf, &src_rect, mainSurface, &dst_rect);
+		SDL_BlitSurface(sdl_surf, &src_rect, screen, &dst_rect);
 
 		setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 	} else {
@@ -837,7 +451,7 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 					dst.w = (1<<4);
 					dst.h = (1<<4);
 
-					SDL_BlitSurface(sdl_surf, &src, mainSurface, &dst);
+					SDL_BlitSurface(sdl_surf, &src, screen, &dst);
 
 					setDirtyRect(dst.x,dst.y,dst.w,dst.h);
 				}
@@ -858,17 +472,8 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 
 void HostScreen::refreshScreen(void)
 {
-#ifdef ENABLE_OPENGL
-	if (bx_options.opengl.enabled) {
-		OpenGLUpdate();
-
-		SDL_GL_SwapBuffers();
-		return;
-	}
-#endif	/* ENABLE_OPENGL */
-
-	if ((mainSurface->flags & SDL_DOUBLEBUF)==SDL_DOUBLEBUF) {
-		SDL_Flip(mainSurface);
+	if ((screen->flags & SDL_DOUBLEBUF)==SDL_DOUBLEBUF) {
+		SDL_Flip(screen);
 		return;
 	}
 
@@ -883,11 +488,11 @@ void HostScreen::refreshScreen(void)
 		for (int x=0; x<dirtyW; x++) {
 			if (dirtyMarker[y * dirtyW + x]) {
 				int maxw = 1<<4, maxh = 1<<4;
-				if (mainSurface->w - (x<<4) < (1<<4)) {
-					maxw = mainSurface->w - (x<<4);
+				if (screen->w - (x<<4) < (1<<4)) {
+					maxw = screen->w - (x<<4);
 				}
-				if (mainSurface->h - (y<<4) < (1<<4)) {
-					maxh = mainSurface->h - (y<<4);
+				if (screen->h - (y<<4) < (1<<4)) {
+					maxh = screen->h - (y<<4);
 				}
 
 				update_rects[i].x = x<<4;
@@ -900,7 +505,7 @@ void HostScreen::refreshScreen(void)
 		}
 	}
 
-	SDL_UpdateRects(mainSurface,i,update_rects);
+	SDL_UpdateRects(screen,i,update_rects);
 
 	clearDirtyRects();
 }
@@ -909,8 +514,8 @@ void HostScreen::forceRefreshScreen(void)
 {
 	clear_screen = true;
 	forceRefreshNfvdi();
-	if (mainSurface) {
-		setDirtyRect(0,0, mainSurface->w, mainSurface->h);
+	if (screen) {
+		setDirtyRect(0,0, screen->w, screen->h);
 	}
 }
 

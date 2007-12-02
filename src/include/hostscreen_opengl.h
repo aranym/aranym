@@ -29,6 +29,8 @@ class HostSurface;
 class HostScreenOpenGL: public HostScreen
 {
 	private:
+		void setVideoMode(int width, int height, int bpp);
+
 		void refreshScreen(void);
 		void initScreen(void);
 		void clearScreen(void);
@@ -37,6 +39,9 @@ class HostScreenOpenGL: public HostScreen
 	public:
 		HostScreenOpenGL(void);
 		~HostScreenOpenGL();
+
+		int getBpp(void);
+		void makeSnapshot(void);
 
 		/* Surface creation */
 		HostSurface *createSurface(int width, int height, int bpp);

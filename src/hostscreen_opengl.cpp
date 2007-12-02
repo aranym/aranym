@@ -32,15 +32,18 @@
 #include "hostscreen_opengl.h"
 #include "host_surface.h"
 #include "host_surface_opengl.h"
+#include "parameters.h"
+
+#define DEBUG 0
+#include "debug.h"
 
 HostScreenOpenGL::HostScreenOpenGL(void)
 	: HostScreen()
 {
 	if (dyngl_load(bx_options.opengl.library)==0) {
+		fprintf(stderr, "Can not load OpenGL library: using software rendering mode\n");
 		bx_options.opengl.enabled = false;
 	}
-
-	reset();
 }
 
 HostScreenOpenGL::~HostScreenOpenGL()
@@ -48,6 +51,96 @@ HostScreenOpenGL::~HostScreenOpenGL()
 }
 
 /*--- Public functions ---*/
+
+void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
+{
+	if (!bx_options.opengl.enabled) {
+		HostScreen::setVideoMode(width, height, bpp);
+		return;
+	}
+
+	if (bx_options.autozoom.fixedsize) {
+		width = bx_options.autozoom.width;
+		height = bx_options.autozoom.height;
+	}
+	if (width<MIN_WIDTH) {
+		width=MIN_WIDTH;
+	}
+	if (height<MIN_HEIGHT) {
+		height=MIN_HEIGHT;
+	}
+
+	int i, gl_bpp[4]={0,16,24,32}, screenFlags;
+
+	screenFlags = SDL_OPENGL|SDL_RESIZABLE;
+	if (bx_options.video.fullscreen) {
+		screenFlags |= SDL_FULLSCREEN;
+	}
+
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,5);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
+	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,15);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+
+	for (i=0;i<4;i++) {
+		screen = SDL_SetVideoMode(width, height, gl_bpp[i], screenFlags);
+		if (screen) {
+			break;
+		}
+	}
+	if (screen==NULL) {
+		/* Try with default resolution */
+		for (i=0;i<4;i++) {
+			screen = SDL_SetVideoMode(0, 0, gl_bpp[i], screenFlags);
+			if (screen) {
+				break;
+			}
+		}
+	}
+	if (screen==NULL) {
+		fprintf(stderr, "Can not set OpenGL video mode: using software rendering mode\n");
+		bx_options.opengl.enabled = false;
+		HostScreen::setVideoMode(width, height, bpp);
+		return;
+	}
+
+	bx_options.video.fullscreen = ((screen->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN);
+
+	new_width = screen->w;
+	new_height = screen->h;
+	resizeDirty(screen->w, screen->h);
+	forceRefreshScreen();
+
+	/* TODO: on some platforms, the OpenGL context is destroyed and recreated, and all
+	   texture objects are not valid anymore */
+}
+
+void HostScreenOpenGL::makeSnapshot(void)
+{
+	if (!bx_options.opengl.enabled) {
+		return HostScreen::makeSnapshot();
+	}
+
+	char filename[15];
+	sprintf( filename, "snap%03d.bmp", snapCounter++ );
+
+	/* TODO: use glreadpixels() to retrieve screen memory and save it to disk */
+	fprintf(stderr, "Screenshot disabled in OpenGL mode\n");
+}
+
+int HostScreenOpenGL::getBpp(void)
+{
+	if (!bx_options.opengl.enabled) {
+		return HostScreen::getBpp();
+	}
+
+	int bpp;
+
+	SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &bpp);
+	return bpp;
+}
 
 void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 {
@@ -59,24 +152,26 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 	if (!hsurf) {
 		return;
 	}
+	hsurf->update();
+
 	SDL_Surface *sdl_surf = hsurf->getSdlSurface();
 
 	int width = hsurf->getWidth();
 	int height = hsurf->getHeight();
 
 	SDL_Rect src_rect = {0,0, width, height};
-	SDL_Rect dst_rect = {0,0, mainSurface->w, mainSurface->h};
-	if (mainSurface->w > width) {
-		dst_rect.x = (mainSurface->w - width) >> 1;
+	SDL_Rect dst_rect = {0,0, screen->w, screen->h};
+	if (screen->w > width) {
+		dst_rect.x = (screen->w - width) >> 1;
 		dst_rect.w = width;
 	} else {
-		src_rect.w = mainSurface->w;
+		src_rect.w = screen->w;
 	}
-	if (mainSurface->h > height) {
-		dst_rect.y = (mainSurface->h - height) >> 1;
+	if (screen->h > height) {
+		dst_rect.y = (screen->h - height) >> 1;
 		dst_rect.h = height;
 	} else {
-		src_rect.h = mainSurface->h;
+		src_rect.h = screen->h;
 	}
 
 	/* Init texturing */
@@ -101,8 +196,8 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 	gl.LoadIdentity();
 	gl.Scalef(txWidth,txHeight,1.0);
 
-	GLfloat targetX = (mainSurface->w-width)/2.0;	
-	GLfloat targetY = (mainSurface->h-height)/2.0;
+	GLfloat targetX = (screen->w-width)*0.5;	
+	GLfloat targetY = (screen->h-height)*0.5;
 	GLfloat targetW = width;
 	GLfloat targetH = height;
 
@@ -142,15 +237,15 @@ void HostScreenOpenGL::initScreen(void)
 		return;
 	}
 
-	gl.Viewport(0, 0, mainSurface->w, mainSurface->h);
+	gl.Viewport(0, 0, screen->w, screen->h);
 
 	gl.MatrixMode(GL_PROJECTION);
 	gl.LoadIdentity();
-	gl.Ortho(0.0, mainSurface->w, mainSurface->h, 0.0, -1.0, 1.0);
+	gl.Ortho(0.0, screen->w, screen->h, 0.0, -1.0, 1.0);
 
 	gl.MatrixMode(GL_MODELVIEW);
 	gl.LoadIdentity();
-	/*gl.Translatef(0.375, 0.375, 0.0);*/
+	gl.Translatef(0.375, 0.375, 0.0);
 }
 
 void HostScreenOpenGL::clearScreen(void)
@@ -177,7 +272,7 @@ void HostScreenOpenGL::refreshScreen(void)
 HostSurface *HostScreenOpenGL::createSurface(int width, int height, int bpp)
 {
 	if (!bx_options.opengl.enabled) {
-		return new HostSurface(width, height, bpp);
+		return HostScreen::createSurface(width, height, bpp);
 	}
 
 	return new HostSurfaceOpenGL(width, height, bpp);
@@ -186,7 +281,7 @@ HostSurface *HostScreenOpenGL::createSurface(int width, int height, int bpp)
 HostSurface *HostScreenOpenGL::createSurface(SDL_Surface *sdl_surf)
 {
 	if (!bx_options.opengl.enabled) {
-		return new HostSurface(sdl_surf);
+		return HostScreen::createSurface(sdl_surf);
 	}
 
 	return new HostSurfaceOpenGL(sdl_surf);

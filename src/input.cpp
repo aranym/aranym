@@ -873,8 +873,7 @@ static void process_resize_event(const SDL_Event &event)
 		bx_options.autozoom.height = event.resize.h;
 	}
 
-	host->video->setWindowSize(event.resize.w, event.resize.h,
-		host->video->getBpp());
+	host->video->resizeWindow(event.resize.w, event.resize.h);
 }
 
 ///////

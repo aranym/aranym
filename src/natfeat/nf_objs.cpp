@@ -93,7 +93,7 @@ void NFCreate(void)
 	NFAdd(new AUDIODriver);
 
 #ifdef NFVDI_SUPPORT
-# ifdef ENABLE_OPENGL
+# if 0 /*def ENABLE_OPENGL*/
 	if ((strcmp("opengl", bx_options.natfeats.vdi_driver)==0) && bx_options.opengl.enabled)
 		NFAdd(new OpenGLVdiDriver);
 	else 

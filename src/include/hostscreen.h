@@ -1,39 +1,30 @@
 /*
- * hostscreen.cpp - host video routines
- *
- * Copyright (c) 2001-2003 STanda of ARAnyM developer team (see AUTHORS)
- *
- * This file is part of the ARAnyM project which builds a new and powerful
- * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
- *
- * ARAnyM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * ARAnyM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with ARAnyM; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
+	Hostscreen, base class
+	Software renderer
+
+	(C) 2007 ARAnyM developer team
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #ifndef _HOSTSCREEN_H
 #define _HOSTSCREEN_H
 
-# include <cstdlib>
-# include <cstring>
-
 #include "parameters.h"
 
 #include <SDL.h>
-#include <SDL_thread.h>
-#ifdef ENABLE_OPENGL
-#include <SDL_opengl.h>
-#endif
 
 #include "dirty_rects.h"
 
@@ -43,45 +34,31 @@ class Logo;
 class HostScreen: public DirtyRects
 {
   private:
-	int selectVideoMode(SDL_Rect **modes, uint32 *width, uint32 *height);
-	void searchVideoMode( uint32 *width, uint32 *height, uint32 *bpp );
-
 	void refreshVidel(void);
 	void refreshLogo(void);
 	void refreshNfvdi(void);
 	void forceRefreshNfvdi(void);
 	void refreshGui(void);
 
-#ifdef ENABLE_OPENGL
-	// OpenGL stuff
-	SDL_Surface *SdlGlSurface;
-	GLuint SdlGlTexObj;
-	unsigned int SdlGlTextureWidth;
-	unsigned int SdlGlTextureHeight;
-	uint8 *SdlGlTexture;
-	int SdlGlWidth, SdlGlHeight;
-#endif
-	SDL_bool npot_texture;		/* Use non power of two texture ? */
-	SDL_bool rect_texture;		/* Use rectangle texture ? */
-	int rect_target;
-	SDL_bool OpenGLVdi;			/* Using NF OpenGL VDI renderer ? */
-	SDL_bool *dirty_rects;		/* Dirty rectangles list */
-	int dirty_w,dirty_h;
+	SDL_bool OpenGLVdi;	/* Using NF OpenGL VDI renderer ? */
 
 	Logo *logo;
 	bool logo_present;
 	bool clear_screen;
-
-	uint32 sdl_videoparams;
-	uint32 width, height, bpp;
-	uint16 snapCounter; // ALT+PrintScreen to make a snap?
 
 	int	refreshCounter;
 	bool	renderVidelSurface;
 	int	lastVidelWidth, lastVidelHeight, lastVidelBpp;
 
   protected:
- 	SDL_Surface *mainSurface;		// The main window surface
+	static const int MIN_WIDTH = 640;
+	static const int MIN_HEIGHT = 480;
+
+	SDL_Surface *screen;
+	int new_width, new_height;
+	uint16 snapCounter; // ALT+PrintScreen to make a snap?
+
+	virtual void setVideoMode(int width, int height, int bpp);
 
 	virtual void refreshScreen(void);
 	virtual void initScreen(void);
@@ -94,16 +71,15 @@ class HostScreen: public DirtyRects
 	virtual ~HostScreen(void);
 
 	void reset(void);
+	void resizeWindow(int new_width, int new_height);
 
 	void OpenGLUpdate(void);	/* Full screen update with NF software VDI */
 	void EnableOpenGLVdi(void);
 	void DisableOpenGLVdi(void);
 
-	uint32 getBpp(void);
-	uint32 getWidth(void);
-	uint32 getHeight(void);
-
-	void   setWindowSize( uint32 width, uint32 height, uint32 bpp );
+	int getWidth(void);
+	int getHeight(void);
+	virtual int getBpp(void);
 
 	/**
 	 * Atari bitplane to chunky conversion helper.
@@ -111,10 +87,10 @@ class HostScreen: public DirtyRects
 	void   bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp, uint8 colorValues[16] );
 
 	// Create a BMP file with a snapshot of the screen surface
-	void   makeSnapshot();
+	virtual void makeSnapshot(void);
 
 	// Toggle Window/FullScreen mode
-	void   toggleFullScreen();
+	void   toggleFullScreen(void);
 
 	void	refresh(void);
 	void	forceRefreshScreen(void);

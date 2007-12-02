@@ -22,6 +22,9 @@
 #include "sysdeps.h"
 
 #include "hostscreen.h"
+#ifdef ENABLE_OPENGL
+#include "hostscreen_opengl.h"
+#endif
 #include "host.h"
 
 #define DEBUG 0
@@ -40,7 +43,14 @@ Host::Host()
 #else
 	clock = new HostClockUnix();
 #endif
-	video = new HostScreen();
+
+#ifdef ENABLE_OPENGL
+	if (bx_options.opengl.enabled) {
+		video = new HostScreenOpenGL();
+	} else
+#endif
+		video = new HostScreen();
+	video->reset();
 }
 
 Host::~Host()
