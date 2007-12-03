@@ -257,7 +257,7 @@ void HostScreenOpenGL::initScreen(void)
 
 	gl.MatrixMode(GL_MODELVIEW);
 	gl.LoadIdentity();
-	gl.Translatef(0.375, 0.375, 0.0);
+	/*gl.Translatef(0.375, 0.375, 0.0);*/
 }
 
 void HostScreenOpenGL::clearScreen(void)
