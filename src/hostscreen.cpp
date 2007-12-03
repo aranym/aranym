@@ -230,42 +230,12 @@ void HostScreen::clearScreen(void)
 
 void HostScreen::refreshVidel(void)
 {
-	HostSurface *videl_hsurf = getVIDEL()->getSurface();
-	if (!videl_hsurf) {
-		return;
-	}
-
-	SDL_Surface *videl_surf = videl_hsurf->getSdlSurface();
-	if (!videl_surf) {
-		return;
-	}
-
-	int w = (videl_surf->w < 320) ? 320 : videl_surf->w;
-	int h = (videl_surf->h < 200) ? 200 : videl_surf->h;
-	int bpp = videl_surf->format->BitsPerPixel;
-	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
-		setVideoMode(w, h, bpp);
-		lastVidelWidth = w;
-		lastVidelHeight = h;
-		lastVidelBpp = bpp;
-	}
-
-	/* Set palette from videl surface if needed */
-	if (!bx_options.opengl.enabled && (bpp==8) && (getBpp() == 8)) {
-		SDL_Color palette[256];
-		for (int i=0; i<256; i++) {
-			palette[i].r = videl_surf->format->palette->colors[i].r;
-			palette[i].g = videl_surf->format->palette->colors[i].g;
-			palette[i].b = videl_surf->format->palette->colors[i].b;
-		}
-		SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
-	}
-
 	int flags = DRAW_CROPPED;
 	if (bx_options.opengl.enabled && bx_options.autozoom.enabled) {
 		flags = DRAW_RESCALED;
 	}
-	drawSurfaceToScreen(videl_hsurf, NULL, NULL, flags);
+
+	refreshSurface(getVIDEL()->getSurface(), flags);
 }
 
 void HostScreen::checkSwitchVidelNfvdi(void)
@@ -297,36 +267,7 @@ void HostScreen::refreshLogo(void)
 		}
 	}
 
-	SDL_Surface *logo_surf = logo_hsurf->getSdlSurface();
-	if (!logo_surf) {
-		return;
-	}
-
-	int logo_width = logo_hsurf->getWidth();
-	int logo_height = logo_hsurf->getHeight();
-
-	int w = (logo_width < 320) ? 320 : logo_width;
-	int h = (logo_height < 200) ? 200 : logo_height;
-	int bpp = logo_hsurf->getBpp();
-	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
-		setVideoMode(w, h, bpp);
-		lastVidelWidth = w;
-		lastVidelHeight = h;
-		lastVidelBpp = bpp;
-	}
-
-	/* Set palette from surface */
-	if (!bx_options.opengl.enabled && (bpp==8) && (getBpp() == 8)) {
-		SDL_Color palette[256];
-		for (int i=0; i<256; i++) {
-			palette[i].r = logo_surf->format->palette->colors[i].r;
-			palette[i].g = logo_surf->format->palette->colors[i].g;
-			palette[i].b = logo_surf->format->palette->colors[i].b;
-		}
-		SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
-	}
-
-	drawSurfaceToScreen(logo_hsurf);
+	refreshSurface(logo_hsurf);
 }
 
 void HostScreen::checkSwitchToVidel(void)
@@ -375,40 +316,7 @@ void HostScreen::refreshNfvdi(void)
 		return;
 	}
 
-	HostSurface *nfvdi_hsurf = ((VdiDriver *) fvdi)->getSurface();
-	if (!nfvdi_hsurf) {
-		return;
-	}
-	SDL_Surface *nfvdi_surf = nfvdi_hsurf->getSdlSurface();
-	if (!nfvdi_surf) {
-		return;
-	}
-
-	int vdi_width = nfvdi_hsurf->getWidth();
-	int vdi_height = nfvdi_hsurf->getHeight();
-
-	int w = (vdi_width < 320) ? 320 : vdi_width;
-	int h = (vdi_height < 200) ? 200 : vdi_height;
-	int bpp = nfvdi_hsurf->getBpp();
-	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
-		setVideoMode(w, h, bpp);
-		lastVidelWidth = w;
-		lastVidelHeight = h;
-		lastVidelBpp = bpp;
-	}
-
-	/* Set palette from videl surface if needed */
-	if (!bx_options.opengl.enabled && (bpp==8) && (getBpp() == 8)) {
-		SDL_Color palette[256];
-		for (int i=0; i<256; i++) {
-			palette[i].r = nfvdi_surf->format->palette->colors[i].r;
-			palette[i].g = nfvdi_surf->format->palette->colors[i].g;
-			palette[i].b = nfvdi_surf->format->palette->colors[i].b;
-		}
-		SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
-	}
-
-	drawSurfaceToScreen(nfvdi_hsurf);
+	refreshSurface(((VdiDriver *) fvdi)->getSurface());
 #endif
 }
 
@@ -421,6 +329,43 @@ void HostScreen::refreshGui(void)
 
 	SDLGui_setGuiPos(gui_x, gui_y);
 #endif /* SDL_GUI */
+}
+
+void HostScreen::refreshSurface(HostSurface *hsurf, int flags)
+{
+	if (!hsurf) {
+		return;
+	}
+	SDL_Surface *sdl_surf = hsurf->getSdlSurface();
+	if (!sdl_surf) {
+		return;
+	}
+
+	int width = hsurf->getWidth();
+	int height = hsurf->getHeight();
+
+	int w = (width < 320) ? 320 : width;
+	int h = (height < 200) ? 200 : height;
+	int bpp = hsurf->getBpp();
+	if ((w!=lastVidelWidth) || (h!=lastVidelHeight) || (bpp!=lastVidelBpp)) {
+		setVideoMode(w, h, bpp);
+		lastVidelWidth = w;
+		lastVidelHeight = h;
+		lastVidelBpp = bpp;
+	}
+
+	/* Set screen palette from surface if needed */
+	if (!bx_options.opengl.enabled && (bpp==8) && (getBpp() == 8)) {
+		SDL_Color palette[256];
+		for (int i=0; i<256; i++) {
+			palette[i].r = sdl_surf->format->palette->colors[i].r;
+			palette[i].g = sdl_surf->format->palette->colors[i].g;
+			palette[i].b = sdl_surf->format->palette->colors[i].b;
+		}
+		SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
+	}
+
+	drawSurfaceToScreen(hsurf, NULL, NULL, flags);
 }
 
 void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y, int /*flags*/)

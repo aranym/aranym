@@ -33,6 +33,13 @@ class Logo;
 
 class HostScreen: public DirtyRects
 {
+  protected:
+	/* How we want the surface to be rendered on screen */
+	enum {
+		DRAW_CROPPED,	/* Crop if bigger than screen, center it */
+		DRAW_RESCALED	/* Rescale it (only with OpenGL) */
+	};
+
   private:
 	enum {
 		SCREEN_LOGO,
@@ -45,6 +52,8 @@ class HostScreen: public DirtyRects
 	void refreshNfvdi(void);
 	void forceRefreshNfvdi(void);
 	void refreshGui(void);
+
+	void refreshSurface(HostSurface *hsurf, int flags = DRAW_CROPPED);
 
 	void checkSwitchToVidel(void);
 	void checkSwitchVidelNfvdi(void);
@@ -63,12 +72,6 @@ class HostScreen: public DirtyRects
   protected:
 	static const int MIN_WIDTH = 640;
 	static const int MIN_HEIGHT = 480;
-
-	/* How we want the surface to be rendered on screen */
-	enum {
-		DRAW_CROPPED,	/* Crop if bigger than screen, center it */
-		DRAW_RESCALED	/* Rescale it (only with OpenGL) */
-	};
 
 	SDL_Surface *screen;
 	int new_width, new_height;
