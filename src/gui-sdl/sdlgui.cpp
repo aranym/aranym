@@ -159,7 +159,7 @@ bool SDLGui_Init()
     return false;
   }
 
-	gui_hsurf = host->video->createSurface(320+8,400+8,8);
+	gui_hsurf = host->video->createSurface(320+16,400+16,8);
 	if (!gui_hsurf) {
 		panicbug("Could not create surface for GUI");
 		panicbug("ARAnyM GUI will not be available");
