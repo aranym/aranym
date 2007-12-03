@@ -34,11 +34,20 @@ class Logo;
 class HostScreen: public DirtyRects
 {
   private:
+	enum {
+		SCREEN_LOGO,
+		SCREEN_VIDEL,
+		SCREEN_NFVDI
+	};
+
 	void refreshVidel(void);
 	void refreshLogo(void);
 	void refreshNfvdi(void);
 	void forceRefreshNfvdi(void);
 	void refreshGui(void);
+
+	void checkSwitchToVidel(void);
+	void checkSwitchVidelNfvdi(void);
 
 	SDL_bool OpenGLVdi;	/* Using NF OpenGL VDI renderer ? */
 
@@ -49,6 +58,7 @@ class HostScreen: public DirtyRects
 	int	refreshCounter;
 	bool	renderVidelSurface;
 	int	lastVidelWidth, lastVidelHeight, lastVidelBpp;
+	int	numScreen;
 
   protected:
 	static const int MIN_WIDTH = 640;

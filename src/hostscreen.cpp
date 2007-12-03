@@ -61,6 +61,7 @@ HostScreen::~HostScreen(void)
 void HostScreen::reset(void)
 {
 	lastVidelWidth = lastVidelHeight = lastVidelBpp = -1;
+	numScreen = SCREEN_LOGO;
 	setVidelRendering(true);
 	DisableOpenGLVdi();
 
@@ -184,11 +185,20 @@ void HostScreen::refresh(void)
 		clear_screen = false;
 	}
 
-	/* Render videl surface ? */
-	if (renderVidelSurface) {
-		refreshVidel();
-	} else {
-		refreshNfvdi();
+	/* Render current screen */
+	switch(numScreen) {
+		case SCREEN_LOGO:
+			refreshLogo();
+			checkSwitchToVidel();
+			break;
+		case SCREEN_VIDEL:
+			refreshVidel();
+			checkSwitchVidelNfvdi();
+			break;
+		case SCREEN_NFVDI:
+			refreshNfvdi();
+			checkSwitchVidelNfvdi();
+			break;
 	}
 
 #ifdef SDL_GUI
@@ -226,19 +236,6 @@ void HostScreen::refreshVidel(void)
 	}
 
 	SDL_Surface *videl_surf = videl_hsurf->getSdlSurface();
-
-	/* Display logo if videl not ready */
-	bool displayLogo = true;
-	if (videl_surf) {
-		if ((videl_surf->w > 64) && (videl_surf->h > 64)) {
-			displayLogo = false;
-		}
-	}
-	if (displayLogo) {
-		refreshLogo();
-		return;
-	}
-
 	if (!videl_surf) {
 		return;
 	}
@@ -269,6 +266,11 @@ void HostScreen::refreshVidel(void)
 		flags = DRAW_RESCALED;
 	}
 	drawSurfaceToScreen(videl_hsurf, NULL, NULL, flags);
+}
+
+void HostScreen::checkSwitchVidelNfvdi(void)
+{
+	numScreen = renderVidelSurface ? SCREEN_VIDEL : SCREEN_NFVDI;
 }
 
 void HostScreen::refreshLogo(void)
@@ -325,6 +327,25 @@ void HostScreen::refreshLogo(void)
 	}
 
 	drawSurfaceToScreen(logo_hsurf);
+}
+
+void HostScreen::checkSwitchToVidel(void)
+{
+	/* No logo ? */
+	if (!logo_present) {
+		numScreen = SCREEN_VIDEL;
+		return;
+	}
+
+	/* Wait for Videl surface to be ready */
+	HostSurface *videl_hsurf = getVIDEL()->getSurface();
+	if (!videl_hsurf) {
+		return;
+	}
+
+	if ((videl_hsurf->getWidth()>64) && (videl_hsurf->getHeight()>64)) {
+		numScreen = SCREEN_VIDEL;
+	}
 }
 
 void HostScreen::forceRefreshNfvdi(void)

@@ -1,3 +1,8 @@
+2007/12/03 - Patrice
+- hostscreen: Add selection of screen to display. Could even make it switchable
+  on the fly if needed.
+
+
 2007/12/02 - Patrice
 - hostscreen: OpenGL backend done, still small bugs remaining here and there.
   Use OpenGL to zoom videl surface.
