@@ -1,3 +1,7 @@
+2007/12/04 - Patrice
+- logo: Keep it in a SDL_Surface to redraw it at will.
+
+
 2007/12/03 - Patrice
 - hostscreen: Add selection of screen to display. Could even make it switchable
   on the fly if needed.

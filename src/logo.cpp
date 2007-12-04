@@ -34,13 +34,17 @@
 /*--- Constructor/destructor ---*/
 
 Logo::Logo(const char *filename)
-	: surface(NULL)
+	: logo_surf(NULL), surface(NULL)
 {
 	load(filename);
 }
 
 Logo::~Logo()
 {
+	if (logo_surf) {
+		SDL_FreeSurface(logo_surf);
+		logo_surf = NULL;
+	}
 	if (surface) {
 		delete surface;
 		surface = NULL;
@@ -51,8 +55,6 @@ Logo::~Logo()
 
 void Logo::load(const char *filename)
 {
-	SDL_Surface *sdl_surf;
-
 	if (surface) {
 		delete surface;
 		surface = NULL;
@@ -64,35 +66,50 @@ void Logo::load(const char *filename)
 	}
 
 #ifdef HAVE_SDL_IMAGE
-	sdl_surf = IMG_Load_RW(rwops, 0);
+	logo_surf = IMG_Load_RW(rwops, 0);
 #else
-	sdl_surf = SDL_LoadBMP_RW(rwops, 0);
+	logo_surf = SDL_LoadBMP_RW(rwops, 0);
 #endif
 	SDL_FreeRW(rwops);
 
-	if (!sdl_surf) {
+	if (!logo_surf) {
 		return;
 	}
-
-	surface = host->video->createSurface(sdl_surf);
-	if (!surface) {
-		return;
-	}
-
-	/* Set color key */
-	sdl_surf = surface->getSdlSurface();
 
 	/* FIXME: set key for other bpp ? */
-	if (sdl_surf->format->BitsPerPixel == 1) {
+	if (logo_surf->format->BitsPerPixel == 8) {
 		/* Set transparency from first pixel */
-		SDL_SetColorKey(sdl_surf, SDL_SRCCOLORKEY|SDL_RLEACCEL, ((Uint8 *)sdl_surf->pixels)[0]);
+		SDL_SetColorKey(logo_surf, SDL_SRCCOLORKEY|SDL_RLEACCEL, ((Uint8 *)logo_surf->pixels)[0]);
 	}
+
+	surface = host->video->createSurface(logo_surf->w, logo_surf->h, logo_surf->format->BitsPerPixel);
 }
 
 HostSurface *Logo::getSurface(void)
 {
-	if (surface) {
-		surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
+	if (!surface) {
+		return NULL;
 	}
+
+	Uint8 *dirtyRects = surface->getDirtyRects();
+
+	/* Refresh surface from loaded file if needed */
+	int dirty_w = surface->getDirtyWidth();
+	int dirty_h = surface->getDirtyHeight();
+	for (int y=0; y<dirty_h; y++) {
+		for (int x=0; x<dirty_w; x++) {
+			if (dirtyRects[y * dirty_w + x]) {
+				SDL_Rect src, dst;
+
+				src.x = dst.x = (x<<4);
+				src.y = dst.y = (y<<4);
+				src.w = dst.w = (1<<4);
+				src.h = dst.h = (1<<4);
+
+				SDL_BlitSurface(logo_surf, &src, surface->getSdlSurface(), &dst);
+			}
+		}
+	}
+
 	return surface;
 }

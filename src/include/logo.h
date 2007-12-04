@@ -27,6 +27,7 @@ class HostSurface;
 
 class Logo {
 	private:
+		SDL_Surface *logo_surf;
 		HostSurface *surface;
 
 	public:
