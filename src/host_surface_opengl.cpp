@@ -40,12 +40,6 @@
 
 /*--- Constructor/destructor ---*/
 
-HostSurfaceOpenGL::HostSurfaceOpenGL(SDL_Surface *surf)
-	: HostSurface(surf)
-{
-	createTexture();
-}
-
 HostSurfaceOpenGL::HostSurfaceOpenGL(int width, int height, int bpp)
 	: HostSurface(width, height, bpp)
 {
@@ -67,7 +61,7 @@ void HostSurfaceOpenGL::createTexture(void)
 
 	gl.GenTextures(1, &textureObject);
 
-#ifdef GL_EXT_paletted_texture
+#if defined(GL_EXT_paletted_texture)
 	char *extensions = (char *) gl.GetString(GL_EXTENSIONS);
 
 	if (strstr(extensions, "GL_EXT_paletted_texture") && (getBpp() == 8)
@@ -175,7 +169,7 @@ void HostSurfaceOpenGL::setPalette(SDL_Color *palette, int first, int count)
 
 	/* Reupload palette if needed */
 
-#ifdef GL_EXT_paletted_texture
+#if defined(GL_EXT_paletted_texture)
 	if ((getBpp()==8) && use_palette) {
 		Uint8 mapP[256*3];
 		Uint8 *pMap = mapP;

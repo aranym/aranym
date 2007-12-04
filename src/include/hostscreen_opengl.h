@@ -45,7 +45,6 @@ class HostScreenOpenGL: public HostScreen
 
 		/* Surface creation */
 		HostSurface *createSurface(int width, int height, int bpp);
-		HostSurface *createSurface(SDL_Surface *sdl_surf);
 };
 
 #endif /* HOSTSCREENOPENGL */

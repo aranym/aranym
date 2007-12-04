@@ -494,11 +494,6 @@ HostSurface *HostScreen::createSurface(int width, int height, int bpp)
 	return new HostSurface(width, height, bpp);
 }
 
-HostSurface *HostScreen::createSurface(SDL_Surface *sdl_surf)
-{
-	return new HostSurface(sdl_surf);
-}
-
 /*
 vim:ts=4:sw=4:
 */

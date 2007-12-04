@@ -290,13 +290,4 @@ HostSurface *HostScreenOpenGL::createSurface(int width, int height, int bpp)
 	return new HostSurfaceOpenGL(width, height, bpp);
 }
 
-HostSurface *HostScreenOpenGL::createSurface(SDL_Surface *sdl_surf)
-{
-	if (!bx_options.opengl.enabled) {
-		return HostScreen::createSurface(sdl_surf);
-	}
-
-	return new HostSurfaceOpenGL(sdl_surf);
-}
-
 #endif
