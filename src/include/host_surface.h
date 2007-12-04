@@ -32,16 +32,11 @@ class HostSurface: public DirtyRects
 		int clip_w, clip_h;	/* clipped dimensions */
 
 	public:
-		int dirty_flags;
-
 		/* Create a surface from dimensions, bpp */
 		HostSurface(int width, int height, int bpp);
 
 		/* Create a surface from existing SDL_Surface */
 		HostSurface(SDL_Surface *surf);
-
-		/* Create a surface, but only use a part of it */
-		HostSurface(SDL_Surface *surf, int clip_w, int clip_h);
 
 		virtual ~HostSurface();
 
@@ -57,11 +52,6 @@ class HostSurface: public DirtyRects
 			int surf_width, int surf_height);
 
 		virtual void setPalette(SDL_Color *palette, int first, int count);
-
-		enum {
-			DIRTY_PALETTE = 1<<0,
-			DIRTY_SURFACE = 1<<1
-		};
 };
 
 #endif /* HOSTSURFACE_H */

@@ -82,9 +82,7 @@ void VIDEL::handleWrite(uint32 addr, uint8 value)
 
 	if ((addr >= VIDEL_COLOR_REGS_BEGIN && addr < VIDEL_COLOR_REGS_END) ||
 		(addr >= 0xff8240 && addr < 0xff8260)) {
-		if (surface) {
-			surface->dirty_flags |= HostSurface::DIRTY_PALETTE;
-		}
+		updatePalette = true;		
 		return;
 	}
 
@@ -283,9 +281,9 @@ void VIDEL::refreshScreen(void)
 		return;
 	}
 
-	if (surface->dirty_flags & HostSurface::DIRTY_PALETTE) {
+	if (updatePalette) {
 		refreshPalette();
-		surface->dirty_flags &= ~HostSurface::DIRTY_PALETTE;
+		updatePalette = false;
 	}
 
 	int videlBpp = getBpp();

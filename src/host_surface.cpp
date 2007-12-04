@@ -36,7 +36,6 @@ HostSurface::HostSurface(SDL_Surface *surf)
 	surface = surf;
 	clip_w = surf->w;
 	clip_h = surf->h;
-	dirty_flags = 0;
 }
 
 HostSurface::HostSurface(int width, int height, int bpp)
@@ -46,16 +45,6 @@ HostSurface::HostSurface(int width, int height, int bpp)
 		0,0,0,0);
 	clip_w = surface ? surface->w : 0;
 	clip_h = surface ? surface->h : 0;
-	dirty_flags = DIRTY_PALETTE|DIRTY_SURFACE;
-}
-
-HostSurface::HostSurface(SDL_Surface *surf, int clip_width, int clip_height)
-	: DirtyRects(clip_width, clip_height)
-{
-	surface = surf;
-	clip_w = clip_width;
-	clip_h = clip_height;
-	dirty_flags = 0;
 }
 
 HostSurface::~HostSurface(void)
@@ -140,8 +129,6 @@ void HostSurface::resize(int new_width, int new_height,
 	} else {
 		pixelFormat.BitsPerPixel = 8;
 	}
-
-	dirty_flags = DIRTY_PALETTE|DIRTY_SURFACE;
 
 	surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 		surf_width,surf_height, pixelFormat.BitsPerPixel,

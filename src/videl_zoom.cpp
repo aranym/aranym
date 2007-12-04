@@ -142,9 +142,9 @@ void VidelZoom::refreshScreen(void)
 		return;
 	}
 
-	if (surface->dirty_flags & HostSurface::DIRTY_PALETTE) {
+	if (updatePalette) {
 		refreshPalette();
-		surface->dirty_flags &= ~HostSurface::DIRTY_PALETTE;
+		updatePalette = false;
 	}
 
 	/* Recalc zoom tables if needed */
