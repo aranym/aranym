@@ -143,8 +143,53 @@ void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
 SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 	SDL_PixelFormat *pixelFormat)
 {
-	/* TODO: change pixel format for a native OpenGL one */
-	return HostSurface::createSdlSurface(width,height,pixelFormat);
+	SDL_PixelFormat glPixelFormat;
+	memcpy(&glPixelFormat, pixelFormat, sizeof(SDL_PixelFormat));
+	switch(pixelFormat->BitsPerPixel) {
+		case 15:
+			/* GL_RGB5_A1, byteswap at updateTexture time */
+			glPixelFormat.Rmask = 31<<10;
+			glPixelFormat.Gmask = 31<<5;
+			glPixelFormat.Bmask = 31;
+			glPixelFormat.Amask = 1<<15;
+			break;
+		case 16:
+			/* GL_RGB, 16bits, byteswap at updateTexture time */
+			glPixelFormat.Rmask = 31<<11;
+			glPixelFormat.Gmask = 63<<5;
+			glPixelFormat.Bmask = 31;
+			glPixelFormat.Amask = 0;
+			break;
+		case 24:
+			/* GL_RGB, 24bits */
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+			glPixelFormat.Rmask = 255;
+			glPixelFormat.Gmask = 255<<8;
+			glPixelFormat.Bmask = 255<<16;
+			glPixelFormat.Amask = 0;
+#else
+			glPixelFormat.Rmask = 255<<16;
+			glPixelFormat.Gmask = 255<<8;
+			glPixelFormat.Bmask = 255;
+			glPixelFormat.Amask = 0;
+#endif
+			break;
+		case 32:
+			/* GL_RGBA */
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+			glPixelFormat.Rmask = 255;
+			glPixelFormat.Gmask = 255<<8;
+			glPixelFormat.Bmask = 255<<16;
+			glPixelFormat.Amask = 255<<24;
+#else
+			glPixelFormat.Rmask = 255<<24;
+			glPixelFormat.Gmask = 255<<16;
+			glPixelFormat.Bmask = 255<<8;
+			glPixelFormat.Amask = 255;
+#endif
+			break;
+	}
+	return HostSurface::createSdlSurface(width,height,&glPixelFormat);
 }
 
 /*--- Public functions ---*/
