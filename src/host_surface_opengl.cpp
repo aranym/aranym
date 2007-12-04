@@ -297,10 +297,12 @@ void HostSurfaceOpenGL::updateTexture(void)
 			}
 			break;
 		case 16:
+			format = GL_RGB;
 			pixelType = GL_UNSIGNED_SHORT_5_6_5;
 			/* FIXME: care about endianness ? */
 			break;
 		case 24:
+			format = GL_RGB;
 			/* FIXME: care about endianness ? */
 			break;
 		case 32:
