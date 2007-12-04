@@ -55,6 +55,19 @@ HostSurface::~HostSurface(void)
 	}
 }
 
+/*--- Protected functions ---*/
+
+SDL_Surface *HostSurface::createSdlSurface(int width, int height,
+	SDL_PixelFormat *pixelFormat)
+{
+	D(bug("soft: recreate sdl surface %dx%d", width, height));
+	return SDL_CreateRGBSurface(SDL_SWSURFACE,
+		width,height, pixelFormat->BitsPerPixel,
+		pixelFormat->Rmask, pixelFormat->Gmask,
+		pixelFormat->Bmask, pixelFormat->Amask
+	);
+}
+
 /*--- Public functions ---*/
 
 SDL_Surface *HostSurface::getSdlSurface(void)
@@ -130,11 +143,7 @@ void HostSurface::resize(int new_width, int new_height,
 		pixelFormat.BitsPerPixel = 8;
 	}
 
-	surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-		surf_width,surf_height, pixelFormat.BitsPerPixel,
-		pixelFormat.Rmask, pixelFormat.Gmask,
-		pixelFormat.Bmask, pixelFormat.Amask
-	);
+	surface = createSdlSurface(surf_width,surf_height, &pixelFormat);
 
 	if (restore_palette) {
 		setPalette(palette, 0, 256);

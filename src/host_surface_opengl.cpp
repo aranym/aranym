@@ -140,6 +140,13 @@ void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
 	*height = h;
 }
 
+SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
+	SDL_PixelFormat *pixelFormat)
+{
+	/* TODO: change pixel format for a native OpenGL one */
+	return HostSurface::createSdlSurface(width,height,pixelFormat);
+}
+
 /*--- Public functions ---*/
 
 void HostSurfaceOpenGL::update(void)

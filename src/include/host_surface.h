@@ -31,6 +31,9 @@ class HostSurface: public DirtyRects
 		SDL_Surface *surface;
 		int clip_w, clip_h;	/* clipped dimensions */
 
+		virtual SDL_Surface *createSdlSurface(int width, int height,
+			SDL_PixelFormat *pixelFormat);
+
 	public:
 		/* Create a surface from dimensions, bpp */
 		HostSurface(int width, int height, int bpp);
