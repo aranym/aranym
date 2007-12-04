@@ -285,7 +285,7 @@ void HostSurfaceOpenGL::updateTexture(void)
 		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	}
 
-	switch (surface->format->BitsPerPixel) {
+	switch (getBpp()) {
 		case 8:
 			if (!use_palette) {
 				gl.PixelTransferi(GL_MAP_COLOR, GL_FALSE);
