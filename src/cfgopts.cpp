@@ -84,13 +84,15 @@ ConfigOptions::ConfigOptions(const char *cfgfile, const char *home, const char *
 	
 	safe_strncpy(config_folder, config_file, sizeof(config_folder));
 	char *slash = strrchr(config_folder, '/');
+	char *alt_slash = strrchr(config_folder, '\\');
 	if (slash != NULL) {
 		*slash = '\0';
 	}
+	else if (alt_slash != NULL) {
+		*alt_slash = '\0';
+	}
 	else {
-		slash = strrchr(config_folder, '\\');
-		if (slash != NULL)
-			*slash = '\0';
+		strcpy(config_folder, ".");	// TODO better fix is to add the DIR_SEPARATOR to the *_folder initially
 	}
 }
 
