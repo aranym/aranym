@@ -1,3 +1,7 @@
+2007/12/05 - Jens
+- Fixed building with XCode (adapted to new code structure)
+- ethernet_darwin: Fixed hostscreen references to toggleScreen
+
 2007/12/04 - Patrice
 - logo: Keep it in a SDL_Surface to redraw it at will.
 
