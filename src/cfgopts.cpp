@@ -86,13 +86,13 @@ ConfigOptions::ConfigOptions(const char *cfgfile, const char *home, const char *
 	char *slash = strrchr(config_folder, '/');
 	char *alt_slash = strrchr(config_folder, '\\');
 	if (slash != NULL) {
-		*slash = '\0';
+		slash[1] = '\0';
 	}
 	else if (alt_slash != NULL) {
-		*alt_slash = '\0';
+		alt_slash[1] = '\0';
 	}
 	else {
-		strcpy(config_folder, ".");	// TODO better fix is to add the DIR_SEPARATOR to the *_folder initially
+		config_folder[0] = '\0';
 	}
 }
 
@@ -233,7 +233,6 @@ void ConfigOptions::expand_path(char *dest, const char *path, unsigned short buf
 		return;
 	}
 
-	strcat(dest, DIRSEPARATOR);
 	prefixLen = strlen( dest );
 
 	if ( buf_size >= prefixLen + strlen(path) ) {
@@ -256,29 +255,24 @@ void ConfigOptions::compress_path(char *dest, char *path, unsigned short buf_siz
 
 	safe_strncpy(dest, config_folder, buf_size);
 	prefixLen = strlen(dest);
-	if (prefixLen && strncmp(path, dest, prefixLen) == 0 &&
-	    (path[prefixLen] == '/' || path[prefixLen] == '\\')) {
+	if (prefixLen && strncmp(path, dest, prefixLen) == 0) {
 		replacement = "";
-		++prefixLen;
 		D(bug("%s matches %.*s", path, prefixLen, dest));
 	} 
-	else 
-	{
+	else {
 		safe_strncpy(dest, data_folder, buf_size);
 		prefixLen = strlen(dest);
-		if (prefixLen && strncmp(path, dest, prefixLen) == 0 &&
-		    (path[prefixLen] == '/' || path[prefixLen] == '\\')) {
+		if (prefixLen && strncmp(path, dest, prefixLen) == 0) {
 			replacement = "*";
+			--prefixLen;
 			D(bug("%s matches %.*s", path, prefixLen, dest));
 		} 
-		else 
-		{
-			/* Check if home prefix matches */
+		else {
 			safe_strncpy(dest, home_folder, buf_size);
 			prefixLen = strlen(dest);
-			if (prefixLen && strncmp(path, dest, prefixLen) == 0 &&
-			    (path[prefixLen] == '/' || path[prefixLen] == '\\')) {
+			if (prefixLen && strncmp(path, dest, prefixLen) == 0) {
 				replacement = "~";
+				--prefixLen;
 				D(bug("%s matches %.*s", path, prefixLen, dest));
 			}
 		}
@@ -289,8 +283,9 @@ void ConfigOptions::compress_path(char *dest, char *path, unsigned short buf_siz
 		strcpy(dest, replacement);
 		safe_strncpy(dest+len1, path+prefixLen, buf_size - len1);
 	}
-	else
+	else {
 		safe_strncpy(dest, path, buf_size);
+	}
 }
 
 
