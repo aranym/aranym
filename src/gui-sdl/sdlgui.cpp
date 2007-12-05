@@ -745,7 +745,7 @@ void SDLGui_DrawCheckBox(SGOBJ *cdlg, int objnum)
   SDLGui_ObjCoord(cdlg, objnum, &coord);
 
   if (!(cdlg[objnum].flags&SG_BUTTON_RIGHT))
-    coord.x += (fontwidth * 2);
+    coord.x += (fontwidth * 3); // 2 chars for the box plus 1 space
 
   if (cdlg[objnum].state & SG_DISABLED)
     textc = darkgreyc;
