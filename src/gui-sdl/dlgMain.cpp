@@ -192,8 +192,7 @@ int DlgMain::processDialog(void)
 void DlgMain::LoadSettings(void)
 {
 	if (strlen(path) == 0) {
-		strncpy(path, getConfigFile(), sizeof(path));
-		path[sizeof(path) - 1] = '\0';
+		safe_strncpy(path, getConfigFile(), sizeof(path));
 	}
 	dlgFileSelect = (DlgFileSelect *) DlgFileSelectOpen(path, false);
 	SDLGui_Open(dlgFileSelect);
@@ -203,8 +202,7 @@ void DlgMain::LoadSettings(void)
 void DlgMain::SaveSettings(void)
 {
 	if (strlen(path) == 0) {
-		strncpy(path, getConfigFile(), sizeof(path));
-		path[sizeof(path) - 1] = '\0';
+		safe_strncpy(path, getConfigFile(), sizeof(path));
 	}
 	dlgFileSelect = (DlgFileSelect *) DlgFileSelectOpen(path, true);
 	SDLGui_Open(dlgFileSelect);
