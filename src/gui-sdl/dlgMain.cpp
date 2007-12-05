@@ -24,6 +24,7 @@
 #include "sysdeps.h"
 #include "file.h"
 #include "parameters.h"			// load/saveSettings()
+#include "tools.h"
 #include "sdlgui.h"
 #include "dlgFileSelect.h"
 #include "dlgMain.h"
