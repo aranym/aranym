@@ -1,6 +1,13 @@
+2007/12/05 - Petr
+- cfgopts.cpp: fix for alternate "-c config_file" specified without any path
+- gui-sdl/sdlgui.cpp: added a space between checkbox and text
+- gui-sdl/dlgMain.cpp: use safe_strncpy() wherever possible
+
+
 2007/12/05 - Jens
 - Fixed building with XCode (adapted to new code structure)
 - ethernet_darwin: Fixed hostscreen references to toggleScreen
+
 
 2007/12/04 - Patrice
 - logo: Keep it in a SDL_Surface to redraw it at will.
