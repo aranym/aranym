@@ -79,7 +79,7 @@ static int openAuthorizationContext()
 
 		fullscreen = bx_options.video.fullscreen;
 		if ( fullscreen )
-			host->hostScreen.toggleFullScreen();			
+			host->video->toggleFullScreen();			
 
 		AuthorizationItem authItems = {kAuthorizationRightExecute, 0,// 5
 						NULL, 0};// 6
@@ -102,7 +102,7 @@ static void closeAuthoizationContext()
 		authorizationRef = NULL;
 
 		if ( fullscreen ) {
-			host->hostScreen.toggleFullScreen();
+			host->video->toggleFullScreen();
 		}
 	}
 }
