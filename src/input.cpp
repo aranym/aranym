@@ -1,7 +1,7 @@
 /*
  * input.cpp - handling of keyboard/mouse input
  *
- * Copyright (c) 2001-2006 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2007 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -451,6 +451,10 @@ void open_GUI(void)
 
 void close_GUI(void)
 {
+	if (!isGuiAvailable || SDLGui_isClosed()) {
+		return;
+	}
+
 	SDLGui_Close();
 
 	// small hack to toggle fullscreen from the SETUP GUI

@@ -1,3 +1,7 @@
+2007/12/06 - Petr
+- input.cpp: don't close SDL GUI that was not opened yet
+
+
 2007/12/05 - Petr
 - cfgopts.cpp: fix for alternate "-c config_file" specified without any path
 - gui-sdl/sdlgui.cpp: added a space between checkbox and text
