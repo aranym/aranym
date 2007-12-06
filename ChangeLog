@@ -1,3 +1,7 @@
+2007/12/07 - Stefan
+- darwin/Makefile: Adapted to build files in root directory.
+
+
 2007/12/06 - Petr
 - input.cpp: don't close SDL GUI that was not opened yet
 
