@@ -296,6 +296,8 @@ void VIDEL::refreshScreen(void)
 	int dst_pitch = sdl_surf->pitch;
 	int x,y;
 
+	surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
+
 	if (videlBpp==16) {
 		Uint16 *dst = (Uint16 *) sdl_surf->pixels;
 		for (y=0; y<surface->getHeight() ;y++) {
@@ -317,8 +319,6 @@ void VIDEL::refreshScreen(void)
 			dst += dst_pitch;
 		}
 	}
-
-	surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
 }
 
 void VIDEL::convertLineBitplaneToChunky(Uint16 *source, Uint8 *dest, int width, int bpp)
