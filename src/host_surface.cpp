@@ -107,6 +107,13 @@ void HostSurface::resize(int new_width, int new_height,
 	bool restore_palette = false;
 	bool recreateSurface = false;
 
+	if (surf_width & 15) {
+		surf_width = (surf_width|15)+1;
+	}
+	if (surf_height & 15) {
+		surf_height = (surf_height|15)+1;
+	}
+
 	if (!surface) {
 		recreateSurface = true;
 	} else {
