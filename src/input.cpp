@@ -451,7 +451,7 @@ void open_GUI(void)
 
 void close_GUI(void)
 {
-	if (!isGuiAvailable || SDLGui_isClosed()) {
+	if (!isGuiAvailable /*|| SDLGui_isClosed()*/) {
 		return;
 	}
 
