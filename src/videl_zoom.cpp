@@ -181,6 +181,8 @@ void VidelZoom::refreshScreen(void)
 	int x,y;
 	int srcLine, prevLine = -1;
 
+	surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
+
 	if (videlBpp==16) {
 		Uint16 *dst = (Uint16 *) sdl_surf->pixels;
 		for (y=0; y<zoomHeight ;y++) {
@@ -229,6 +231,4 @@ void VidelZoom::refreshScreen(void)
 			dst += dst_pitch;
 		}
 	}
-
-	surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
 }
