@@ -46,6 +46,7 @@
 
 HostScreen::HostScreen(void)
 	: DirtyRects(), logo(NULL), logo_present(true), clear_screen(true),
+	force_refresh(true),
 	refreshCounter(0), screen(NULL), new_width(0), new_height(0),
 	snapCounter(0)
 {
@@ -149,7 +150,8 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 	new_width = screen->w;
 	new_height = screen->h;
 	resizeDirty(screen->w, screen->h);
-	forceRefreshScreen();
+
+	force_refresh = true;
 }
 
 void HostScreen::resizeWindow(int new_width, int new_height)
@@ -178,6 +180,17 @@ void HostScreen::refresh(void)
 	}
 
 	refreshCounter = 0;
+
+	if (force_refresh) {
+		fprintf(stderr, "force refresh done\n");
+		clear_screen = true;
+		forceRefreshVidel();
+		forceRefreshNfvdi();
+		if (screen) {
+			setDirtyRect(0,0, screen->w, screen->h);
+		}
+		force_refresh = false;
+	}
 
 	initScreen();
 	if (clear_screen || bx_options.opengl.enabled) {
@@ -236,6 +249,21 @@ void HostScreen::refreshVidel(void)
 	}
 
 	refreshSurface(getVIDEL()->getSurface(), flags);
+}
+
+void HostScreen::forceRefreshVidel(void)
+{
+	if (!getVIDEL()) {
+		return;	
+	}
+
+	HostSurface *videl_hsurf = getVIDEL()->getSurface();
+	if (!videl_hsurf) {
+		return;
+	}
+
+	videl_hsurf->setDirtyRect(0,0,
+		videl_hsurf->getWidth(), videl_hsurf->getHeight());
 }
 
 void HostScreen::checkSwitchVidelNfvdi(void)
@@ -482,11 +510,7 @@ void HostScreen::refreshScreen(void)
 
 void HostScreen::forceRefreshScreen(void)
 {
-	clear_screen = true;
-	forceRefreshNfvdi();
-	if (screen) {
-		setDirtyRect(0,0, screen->w, screen->h);
-	}
+	force_refresh = true;
 }
 
 HostSurface *HostScreen::createSurface(int width, int height, int bpp)

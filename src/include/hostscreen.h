@@ -48,6 +48,7 @@ class HostScreen: public DirtyRects
 	};
 
 	void refreshVidel(void);
+	void forceRefreshVidel(void);
 	void refreshLogo(void);
 	void refreshNfvdi(void);
 	void forceRefreshNfvdi(void);
@@ -62,7 +63,7 @@ class HostScreen: public DirtyRects
 
 	Logo *logo;
 	bool logo_present;
-	bool clear_screen;
+	bool clear_screen, force_refresh;
 
 	int	refreshCounter;
 	bool	renderVidelSurface;
