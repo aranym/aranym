@@ -2,6 +2,8 @@
 - hostscreen: make the bitplane2chunky conversion routine static. Remove
   similar routines that are duplicates.
 - host_surface: Fix saving palette on resize.
+- videl: update surface using dirty markers. Ready to implement crc for 16x16
+  blocks.
 
 
 2007/12/07 - Petr

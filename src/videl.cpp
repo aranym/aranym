@@ -297,33 +297,77 @@ void VIDEL::refreshScreen(void)
 	int dst_pitch = sdl_surf->pitch;
 	int x,y;
 
+	/* TODO: calc a crc of each 16x16 block to mark them as dirty or not */
 	surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
+
+	Uint8 *dirtyRects = surface->getDirtyRects();
+	if (!dirtyRects) {
+		return;
+	}
+
+	int dirty_w = surface->getDirtyWidth();
+	int dirty_h = surface->getDirtyHeight();
 
 	if (videlBpp==16) {
 		Uint16 *dst = (Uint16 *) sdl_surf->pixels;
-		for (y=0; y<surface->getHeight() ;y++) {
+		for (y=0; y<dirty_h ;y++) {
 			Uint16 *src_line = src;
 			Uint16 *dst_line = dst; 
-			for (x=0; x<surface->getWidth(); x++) {
-				Uint16 pixel = *src_line++;
-				*dst_line++ = SDL_SwapBE16(pixel);
+			/* Atari screen may not have a multiple of 16 lines */
+			int num_lines = surface->getHeight() - (y<<4);
+			if (num_lines>16) {
+				num_lines=16;
 			}
-			src += src_pitch;
-			dst += dst_pitch>>1;
+			for (x=0; x<dirty_w; x++) {
+				if (dirtyRects[y * dirty_w + x]) {
+					/* Convert 16x16 block */
+					int i,j;
+					Uint16 *src_line1 = src_line;
+					Uint16 *dst_line1 = dst_line;
+					for (j=0;j<num_lines;j++) {
+						Uint16 *src_col = src_line1;
+						Uint16 *dst_col = dst_line1;
+						for (i=0;i<16;i++) {
+							Uint16 pixel = *src_col++;
+							*dst_col++ = SDL_SwapBE16(pixel);
+						}
+						src_line1 += src_pitch;
+						dst_line1 += dst_pitch>>1;
+					}
+				}
+				src_line += 16;
+				dst_line += 16;
+			}
+			src += src_pitch * 16;
+			dst += (dst_pitch>>1) * 16;
 		}
 	} else {
 		Uint8 *dst = (Uint8 *) sdl_surf->pixels;
-		for (y=0; y<surface->getHeight();y++) {
+		for (y=0; y<dirty_h;y++) {
 			Uint16 *src_line = src;
 			Uint8 *dst_line = dst;
-			for (x=0; x<surface->getWidth()>>4; x++) {
-				HostScreen::bitplaneToChunky(src_line, videlBpp, dst_line);
+			/* Atari screen may not have a multiple of 16 lines */
+			int num_lines = surface->getHeight() - (y<<4);
+			if (num_lines>16) {
+				num_lines=16;
+			}
+			for (x=0; x<dirty_w; x++) {
+				if (dirtyRects[y * dirty_w + x]) {
+					/* Convert 16x16 block */
+					int j;
+					Uint16 *src_line1 = src_line;
+					Uint8 *dst_line1 = dst_line;
+					for (j=0;j<num_lines;j++) {
+						HostScreen::bitplaneToChunky(src_line1, videlBpp, dst_line1);
+						src_line1 += src_pitch;
+						dst_line1 += dst_pitch;
+					}
+				}
 				src_line += videlBpp;
 				dst_line += 16;
 			}
-
-			src += src_pitch;
-			dst += dst_pitch;
+			src += src_pitch * 16;
+			dst += dst_pitch * 16;
 		}
 	}
 }
