@@ -1,3 +1,7 @@
+2007/12/07 - Petr
+- cfgopts.cpp: another fix (this time for $HOME without trailing slash)
+
+
 2007/12/07 - Stefan
 - darwin/Makefile: Adapted to build files in root directory.
 

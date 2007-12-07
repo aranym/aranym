@@ -51,9 +51,9 @@ class ConfigOptions
 		bool write_token(FILE *, struct Config_Tag *);
 
 		const char *config_file;
-		char config_folder[1024];
-		const char *home_folder;
-		const char *data_folder;
+		char config_folder[512];
+		char home_folder[512];
+		char data_folder[512];
 		char line[32768];
 
 	public:

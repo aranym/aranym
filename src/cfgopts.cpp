@@ -79,9 +79,20 @@
 ConfigOptions::ConfigOptions(const char *cfgfile, const char *home, const char *data)
 {
 	config_file = cfgfile;
-	home_folder = home;
-	data_folder = data;
+
+	// prepare home_folder with trailing slash
+	safe_strncpy(home_folder, home, sizeof(home_folder));
+	int hflen = strlen(home_folder);
+	if (hflen > 0 && home_folder[hflen-1] != '/' && home_folder[hflen-1] != '\\')
+		strcat(home_folder, "/");
+
+	// prepare data_folder with trailing slash
+	safe_strncpy(data_folder, data, sizeof(data_folder));
+	int dflen = strlen(data_folder);
+	if (dflen > 0 && data_folder[dflen-1] != '/' && data_folder[dflen-1] != '\\')
+		strcat(data_folder, "/");
 	
+	// prepare config_folder with trailing slash
 	safe_strncpy(config_folder, config_file, sizeof(config_folder));
 	char *slash = strrchr(config_folder, '/');
 	char *alt_slash = strrchr(config_folder, '\\');
