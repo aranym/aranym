@@ -904,7 +904,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					D2(fprintf(stderr, "fVDI: bmp:"));
 
 					uint32 address = destAddress + ((((dx >> 4) * destPlanes) << 1) + (dy + j) * destPitch);
-					host->video->bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
+					HostScreen::bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
 
 					uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
 					for(uint16 i = sx; i < sx + w; i++) {
@@ -922,7 +922,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 							// convert next 16pixels to chunky
 							address = destAddress + ((wordIndex << 1) + (dy + j) * destPitch);
-							host->video->bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
+							HostScreen::bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
 							theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 						}
 

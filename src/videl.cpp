@@ -314,34 +314,16 @@ void VIDEL::refreshScreen(void)
 	} else {
 		Uint8 *dst = (Uint8 *) sdl_surf->pixels;
 		for (y=0; y<surface->getHeight();y++) {
-			convertLineBitplaneToChunky(src, dst, surface->getWidth(), videlBpp);
+			Uint16 *src_line = src;
+			Uint8 *dst_line = dst;
+			for (x=0; x<surface->getWidth()>>4; x++) {
+				HostScreen::bitplaneToChunky(src_line, videlBpp, dst_line);
+				src_line += videlBpp;
+				dst_line += 16;
+			}
 
 			src += src_pitch;
 			dst += dst_pitch;
 		}
-	}
-}
-
-void VIDEL::convertLineBitplaneToChunky(Uint16 *source, Uint8 *dest, int width, int bpp)
-{
-	Uint8 pixels[16];
-
-	for (int x=0; x<width>>4; x++) {
-		/* Clear block of pixels */
-		memset(pixels, 0, 16);
-
-		for (int plane=0; plane<bpp; plane++) {
-			Uint16 planeValue = SDL_SwapBE16(source[plane]);
-
-			for (int pixel=0; pixel<16; pixel++) {
-				pixels[pixel] |= (planeValue>>(15-pixel)&1)<<plane;
-			}
-		}
-
-		/* Copy final values in surface */
-		memcpy(dest, pixels, 16);
-
-		source += bpp;
-		dest += 16;
 	}
 }

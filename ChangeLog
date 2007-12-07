@@ -1,3 +1,8 @@
+2007/12/07 - Patrice
+- hostscreen: make the bitplane2chunky conversion routine static. Remove
+  similar routines that are duplicates.
+
+
 2007/12/07 - Petr
 - cfgopts.cpp: another fix (this time for $HOME without trailing slash)
 

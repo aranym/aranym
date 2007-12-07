@@ -102,8 +102,6 @@ class SoftVdiDriver : public VdiDriver
 		void hsGfxBoxColorPattern( int x, int y, int w, int h,
 			uint16 *areaPattern, uint32 fgColor, uint32 bgColor,
 			uint16 logOp );
-		void hsBitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
-			uint8 colorValues[16] );
 		void hsBlitArea( int sx, int sy, int dx, int dy, int w, int h );
 		void hsDrawLine( int x1, int y1, int x2, int y2,
 			uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp,

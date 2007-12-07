@@ -213,9 +213,15 @@ void VidelZoom::refreshScreen(void)
 			if (prevLine == srcLine) {
 				memcpy(dst_line, dst_line-dst_pitch, zoomWidth);
 			} else {
-				convertLineBitplaneToChunky(src_line, chunky, videlWidth, videlBpp);
+				Uint16 *src_col = src_line;
+				Uint8 *dst_col = chunky;
+				for (x=0; x<videlWidth>>4; x++) {
+					HostScreen::bitplaneToChunky(src_col, videlBpp, dst_col);
+					src_col += videlBpp;
+					dst_col += 16;
+				}
 
-				for (int x=0; x<zoomWidth; x++) {
+				for (x=0; x<zoomWidth; x++) {
 					*dst_line++ = chunky[xtable[x]];
 				}
 			}

@@ -41,9 +41,6 @@ class VIDEL : public BASE_IO
 		int getHeight(void);
 		int getBpp(void);
 
-		void convertLineBitplaneToChunky(Uint16 *source, Uint8 *dest,
-			int width, int bpp);
-
 		void refreshPalette(void);
 		virtual void refreshScreen(void);
 
