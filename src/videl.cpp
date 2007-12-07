@@ -218,7 +218,6 @@ HostSurface *VIDEL::getSurface(void)
 	}
 	if (surface==NULL) {
 		surface = host->video->createSurface(width,height,bpp);
-		updatePalette = true;
 	}
 
 	prevVidelWidth = width;
