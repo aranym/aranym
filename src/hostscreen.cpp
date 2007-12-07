@@ -182,7 +182,6 @@ void HostScreen::refresh(void)
 	refreshCounter = 0;
 
 	if (force_refresh) {
-		fprintf(stderr, "force refresh done\n");
 		clear_screen = true;
 		forceRefreshVidel();
 		forceRefreshNfvdi();
