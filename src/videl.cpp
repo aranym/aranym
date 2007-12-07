@@ -285,6 +285,7 @@ void VIDEL::refreshScreen(void)
 	if (updatePalette) {
 		refreshPalette();
 		updatePalette = false;
+		surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
 	}
 
 	int videlBpp = getBpp();

@@ -110,6 +110,7 @@ HostSurface *VidelZoom::getSurface(void)
 	}
 	if (surface==NULL) {
 		surface = host->video->createSurface(zoomWidth,zoomHeight,bpp);
+		updatePalette = true;
 	}
 
 	prevVidelWidth = zoomWidth;
@@ -145,6 +146,7 @@ void VidelZoom::refreshScreen(void)
 	if (updatePalette) {
 		refreshPalette();
 		updatePalette = false;
+		surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
 	}
 
 	/* Recalc zoom tables if needed */
