@@ -139,8 +139,10 @@ void HostSurface::resize(int new_width, int new_height,
 		if ((surface->format->BitsPerPixel==8) && surface->format->palette) {
 			int i;
 
-			for (i=0; i<256; i++) {
-				memcpy(&palette[i], &(surface->format->palette[i]), sizeof(SDL_Color));
+			for (i=0; i<surface->format->palette->ncolors; i++) {
+				palette[i].r = surface->format->palette->colors[i].r;
+				palette[i].g = surface->format->palette->colors[i].g;
+				palette[i].b = surface->format->palette->colors[i].b;
 			}
 			restore_palette = SDL_TRUE;
 		}
