@@ -35,6 +35,7 @@ class VIDEL : public BASE_IO
 		HostSurface *surface;
 		bool updatePalette;
 		int prevVidelWidth, prevVidelHeight, prevVidelBpp;
+		Uint32 *crcList;
 
 		Uint32 getVramAddress(void);
 		int getWidth(void);

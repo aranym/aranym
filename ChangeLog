@@ -3,8 +3,8 @@
   similar routines that are duplicates. Add more stuff to force a refresh at
   proper time.
 - host_surface: Fix saving palette on resize.
-- videl: update surface using dirty markers. Ready to implement crc for 16x16
-  blocks.
+- videl: update surface using dirty markers. Added crc using Adler-32 algorithm
+  for 16x16 blocks.
 
 
 2007/12/07 - Petr

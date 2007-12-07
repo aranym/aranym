@@ -31,6 +31,7 @@
 #include "videl.h"
 #include "hardware.h"
 #include "parameters.h"
+#include "adler32.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -48,13 +49,17 @@
 
 VIDEL::VIDEL(memptr addr, uint32 size)
 	: BASE_IO(addr, size), surface(NULL),
-	prevVidelWidth(-1), prevVidelHeight(-1), prevVidelBpp(-1)
+	prevVidelWidth(-1), prevVidelHeight(-1), prevVidelBpp(-1),
+	crcList(NULL)
 {
 	reset();
 }
 
 VIDEL::~VIDEL(void)
 {
+	if (crcList) {
+		delete crcList;
+	}
 	if (surface) {
 		delete surface;
 	}
@@ -210,14 +215,24 @@ HostSurface *VIDEL::getSurface(void)
 		if (prevVidelBpp == bpp) {
 			if ((prevVidelWidth!=width) || (prevVidelHeight!=height)) {
 				surface->resize(width, height);
+				delete crcList;
+				crcList = NULL;
 			}
 		} else {
 			delete surface;
 			surface = NULL;
+			delete crcList;
+			crcList = NULL;
 		}
 	}
 	if (surface==NULL) {
 		surface = host->video->createSurface(width,height,bpp);
+	}
+	if (crcList==NULL) {
+		int crcWidth = surface->getDirtyWidth();
+		int crcHeight = surface->getDirtyHeight();
+		crcList = new Uint32[crcWidth*crcHeight];
+		memset(crcList, 0, sizeof(Uint32)*crcWidth*crcHeight);
 	}
 
 	prevVidelWidth = width;
@@ -297,9 +312,6 @@ void VIDEL::refreshScreen(void)
 	int dst_pitch = sdl_surf->pitch;
 	int x,y;
 
-	/* TODO: calc a crc of each 16x16 block to mark them as dirty or not */
-	surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
-
 	Uint8 *dirtyRects = surface->getDirtyRects();
 	if (!dirtyRects) {
 		return;
@@ -319,6 +331,11 @@ void VIDEL::refreshScreen(void)
 				num_lines=16;
 			}
 			for (x=0; x<dirty_w; x++) {
+				Uint32 newCrc = calc_adler((Uint8 *)src_line, 2*16, num_lines, src_pitch<<1);
+				if (newCrc != crcList[y*dirty_w+x]) {
+					crcList[y*dirty_w+x] = newCrc;
+					dirtyRects[y * dirty_w + x] = 1;
+				}
 				if (dirtyRects[y * dirty_w + x]) {
 					/* Convert 16x16 block */
 					int i,j;
@@ -352,6 +369,11 @@ void VIDEL::refreshScreen(void)
 				num_lines=16;
 			}
 			for (x=0; x<dirty_w; x++) {
+				Uint32 newCrc = calc_adler((Uint8 *)src_line, 2*videlBpp, num_lines, src_pitch<<1);
+				if (newCrc != crcList[y*dirty_w+x]) {
+					crcList[y*dirty_w+x] = newCrc;
+					dirtyRects[y * dirty_w + x] = 1;
+				}
 				if (dirtyRects[y * dirty_w + x]) {
 					/* Convert 16x16 block */
 					int j;
