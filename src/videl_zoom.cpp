@@ -36,16 +36,20 @@
 #define HW	getHWoffset()
 
 VidelZoom::VidelZoom(memptr addr, uint32 size) :
-	VIDEL(addr, size),
+	VIDEL(addr, size), surface(NULL),
+	zoomWidth(0), zoomHeight(0),
+	prevWidth(0), prevHeight(0), prevBpp(0),
 	xtable(NULL), ytable(NULL)
 {
-	D(bug("VidelZoom::VidelZoom()"));
 	reset();
 }
 
 VidelZoom::~VidelZoom(void)
 {
-	D(bug("VidelZoom::~VidelZoom()"));
+	if (surface) {
+		delete surface;
+		surface =NULL;
+	}
 	if (xtable) {
 		delete xtable;
 		xtable = NULL;
@@ -58,30 +62,19 @@ VidelZoom::~VidelZoom(void)
 
 void VidelZoom::reset(void)
 {
-	D(bug("VidelZoom::reset()"));
 	VIDEL::reset();
-
-	videlWidth = videlHeight = 0;
-	zoomWidth = zoomHeight = 0;
-	prevWidth = prevHeight = 0;
 }
 
 HostSurface *VidelZoom::getSurface(void)
 {
-	if (bx_options.opengl.enabled || !bx_options.autozoom.enabled) {
-		return VIDEL::getSurface();
+	HostSurface *videl_hsurf = VIDEL::getSurface();
+	if (!videl_hsurf) {
+		return NULL;
 	}
 
-	int videlBpp = getBpp();
-	int bpp = (videlBpp<=8) ? 8 : 16;
-	videlWidth = getWidth();
-	videlHeight = getHeight();
-	if (videlWidth<64) {
-		videlWidth = 64;
-	}
-	if (videlHeight<64) {
-		videlHeight = 64;
-	}
+	int videlWidth = videl_hsurf->getWidth();
+	int videlHeight = videl_hsurf->getHeight();
+	int videlBpp = videl_hsurf->getBpp();
 
 	int hostWidth = host->video->getWidth();
 	int hostHeight = host->video->getHeight();
@@ -97,11 +90,33 @@ HostSurface *VidelZoom::getSurface(void)
 		}
 	}
 
+	/* Return non zoomed surface if correct size, or zoom not suitable */
+	if (bx_options.opengl.enabled || !bx_options.autozoom.enabled ||
+		((zoomWidth==videlWidth) && (zoomHeight==videlHeight))) {
+		return videl_hsurf;
+	}
+
+	/* Recalc zoom table if videl or host screen size changes */
+	bool updateZoomTable = (!xtable || !ytable);
+	if (prevVidelBpp!=videlBpp) {
+		updateZoomTable=true;
+		prevVidelBpp=videlBpp;
+	}
+	if (prevVidelWidth!=videlWidth) {
+		updateZoomTable=true;
+		prevVidelWidth=videlWidth;
+	}
+	if (prevVidelHeight!=videlHeight) {
+		updateZoomTable=true;
+		prevVidelHeight=videlHeight;
+	}
+
 	/* Recreate surface if needed */
 	if (surface) {
-		if (prevVidelBpp == bpp) {
-			if ((prevVidelWidth!=zoomWidth) || (prevVidelHeight!=zoomHeight)) {
+		if (prevBpp == videlBpp) {
+			if ((prevWidth!=zoomWidth) || (prevHeight!=zoomHeight)) {
 				surface->resize(zoomWidth, zoomHeight);
+				updateZoomTable = true;
 			}
 		} else {
 			delete surface;
@@ -109,127 +124,151 @@ HostSurface *VidelZoom::getSurface(void)
 		}
 	}
 	if (surface==NULL) {
-		surface = host->video->createSurface(zoomWidth,zoomHeight,bpp);
+		surface = host->video->createSurface(zoomWidth,zoomHeight,videlBpp);
+		updateZoomTable = true;
 	}
 
-	prevVidelWidth = zoomWidth;
-	prevVidelHeight = zoomHeight;
-	prevVidelBpp = bpp;
+	prevWidth = zoomWidth;
+	prevHeight = zoomHeight;
+	prevBpp = videlBpp;
 
+	/* Update zoom tables if needed */
+	if (updateZoomTable) {
+		int i;
+
+		if (xtable) {
+			delete xtable;
+		}
+		xtable = new int[zoomWidth];
+		for (i=0; i<zoomWidth; i++) {
+			xtable[i] = (i*videlWidth)/zoomWidth;
+		}
+
+		if (ytable) {
+			delete ytable;
+		}
+		ytable = new int[zoomHeight];
+		for (i=0; i<zoomHeight; i++) {
+			ytable[i] = (i*videlHeight)/zoomHeight;
+		}
+	}
+
+	/* Refresh dirty parts of non zoomed surface to zoomed surface */
 	refreshScreen();
 
 	return surface;
 }
 
+void VidelZoom::forceRefresh(void)
+{
+	VIDEL::forceRefresh();
+
+	if (!surface) {
+		return;
+	}
+
+	surface->setDirtyRect(0,0,
+		surface->getWidth(), surface->getHeight());
+}
+
 void VidelZoom::refreshScreen(void)
 {
-	SDL_Surface *sdl_surf;
-
-	D(bug("VidelZoom::renderScreen()"));
-	
-	if (bx_options.opengl.enabled ||
-	    ((zoomWidth==videlWidth) && (zoomHeight==videlHeight)))
-	{
-		VIDEL::refreshScreen();
+	HostSurface *videl_hsurf = VIDEL::getSurface();
+	if (!videl_hsurf) {
+		return;
+	}
+	SDL_Surface *videl_surf = videl_hsurf->getSdlSurface();
+	if (!videl_surf) {
 		return;
 	}
 
 	if (!surface) {
 		return;
 	}
-	sdl_surf = surface->getSdlSurface();
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
 	if (!sdl_surf) {
 		return;
 	}
 
-	if (updatePalette) {
-		refreshPalette();
-		updatePalette = false;
-		surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
+	/* Update palette from non zoomed surface */
+	if ((videl_hsurf->getBpp()==8) && (surface->getBpp()==8)) {
+		int i;
+		SDL_Color palette[256];
+		for (i=0;i<256;i++) {
+			palette[i].r = videl_surf->format->palette->colors[i].r;
+			palette[i].g = videl_surf->format->palette->colors[i].g;
+			palette[i].b = videl_surf->format->palette->colors[i].b;
+		}
+		surface->setPalette(palette, 0, 256);
 	}
 
-	/* Recalc zoom tables if needed */
-	if (prevWidth!=zoomWidth) {
-		if (xtable) {
-			delete xtable;
-		}
-		xtable = new int[zoomWidth];
-		for (int i=0; i<zoomWidth; i++) {
-			xtable[i] = (i*videlWidth)/zoomWidth;
-		}
-		prevWidth = zoomWidth;
+	int videlWidth = videl_hsurf->getWidth();
+	int videlHeight = videl_hsurf->getHeight();
+	int videlBpp = videl_hsurf->getBpp();
+
+	Uint8 *dirtyRects = videl_hsurf->getDirtyRects();
+	if (!dirtyRects) {
+		return;
 	}
 
-	if (prevHeight!=zoomHeight) {
-		if (ytable) {
-			delete ytable;
-		}
-		ytable = new int[zoomHeight];
-		for (int i=0; i<zoomHeight; i++) {
-			ytable[i] = (i*videlHeight)/zoomHeight;
-		}
-		prevWidth = zoomHeight;
-	}
+	int dirty_w = videl_hsurf->getDirtyWidth();
+	int dirty_h = videl_hsurf->getDirtyHeight();
 
-	int videlBpp = getBpp();
-
-	int lineoffset = handleReadW(HW + 0x0e) & 0x01ff; // 9 bits
-	int linewidth = handleReadW(HW + 0x10) & 0x03ff; // 10 bits
-
-	Uint16 *src = (uint16 *) Atari2HostAddr(getVramAddress());
-	int src_pitch = linewidth + lineoffset;
-	int dst_pitch = sdl_surf->pitch;
 	int x,y;
-	int srcLine, prevLine = -1;
-
-	surface->setDirtyRect(0,0,surface->getWidth(),surface->getHeight());
-
-	if (videlBpp==16) {
-		Uint16 *dst = (Uint16 *) sdl_surf->pixels;
-		for (y=0; y<zoomHeight ;y++) {
-			srcLine = ytable[y];
-
-			Uint16 *src_line = &src[srcLine*src_pitch];
-			Uint16 *dst_line = dst; 
-
-			if (prevLine == srcLine) {
-				memcpy(dst_line, dst_line-(dst_pitch>>1), zoomWidth<<1);
-			} else {
-				for (x=0; x<zoomWidth; x++) {
-					Uint16 pixel = src_line[xtable[x]];
-					*dst_line++ = SDL_SwapBE16(pixel);
-				}
-			}
-			prevLine = srcLine;
-			dst += dst_pitch>>1;
+	for (y=0;y<dirty_h;y++) {
+		/* Atari screen may not have a multiple of 16 lines */
+		int num_lines = videl_hsurf->getHeight() - (y<<4);
+		if (num_lines>16) {
+			num_lines=16;
 		}
-	} else {
-		Uint8 chunky[videlWidth];
+		for (x=0;x<dirty_w;x++) {
+			if (!dirtyRects[y * dirty_w + x]) {
+				continue;
+			}
 
-		Uint8 *dst = (Uint8 *) sdl_surf->pixels;
-		for (y=0; y<zoomHeight ;y++) {
-			srcLine = ytable[y];
+			/* Zoom 16x16 block */
+			int dst_x1 = ((x<<4) * zoomWidth) / videlWidth;
+			int dst_x2 = (((x+1)<<4) * zoomWidth) / videlWidth;
+			int dst_y1 = ((y<<4) * zoomHeight) / videlHeight;
+			int dst_y2 = (((y<<4)+num_lines) * zoomHeight) / videlHeight;
 
-			Uint16 *src_line = &src[srcLine*src_pitch];
-			Uint8 *dst_line = dst; 
+			int i,j;
 
-			if (prevLine == srcLine) {
-				memcpy(dst_line, dst_line-dst_pitch, zoomWidth);
-			} else {
-				Uint16 *src_col = src_line;
-				Uint8 *dst_col = chunky;
-				for (x=0; x<videlWidth>>4; x++) {
-					HostScreen::bitplaneToChunky(src_col, videlBpp, dst_col);
-					src_col += videlBpp;
-					dst_col += 16;
+			Uint8 *dst = (Uint8 *) sdl_surf->pixels;
+			dst += dst_y1 * sdl_surf->pitch;
+			dst += dst_x1 * (videlBpp>>3);
+
+			if (videlBpp==16) {
+				/* True color, 16 bits surface */
+				Uint16 *dst_line = (Uint16 *) dst;
+				for(j=dst_y1;j<dst_y2;j++) {
+					Uint16 *src_col = (Uint16 *) videl_surf->pixels;
+					src_col += ytable[j] * (videl_surf->pitch>>1); 
+					Uint16 *dst_col = dst_line;
+					for(i=dst_x1;i<dst_x2;i++) {
+						*dst_col++ = src_col[xtable[i]];
+					}
+					dst_line += sdl_surf->pitch >> 1;
 				}
-
-				for (x=0; x<zoomWidth; x++) {
-					*dst_line++ = chunky[xtable[x]];
+			} else {
+				/* Bitplanes, 8 bits surface */
+				Uint8 *dst_line = (Uint8 *) dst;
+				for(j=dst_y1;j<dst_y2;j++) {
+					Uint8 *src_col = (Uint8 *) videl_surf->pixels;
+					src_col += ytable[j] * videl_surf->pitch; 
+					Uint8 *dst_col = dst_line;
+					for(i=dst_x1;i<dst_x2;i++) {
+						*dst_col++ = src_col[xtable[i]];
+					}
+					dst_line += sdl_surf->pitch;
 				}
 			}
-			prevLine = srcLine;
-			dst += dst_pitch;
+
+			surface->setDirtyRect(dst_x1,dst_y1,
+				dst_x2-dst_x1,dst_y2-dst_y1);
 		}
 	}
+
+	/* Mark original surface as updated */
+	videl_hsurf->clearDirtyRects();
 }

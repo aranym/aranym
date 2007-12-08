@@ -1,5 +1,6 @@
 2007/12/08 - Patrice
 - main: Move OS init at the end of initialization
+- videl, videl_zoom: Zoomed surface also with partial updates: fast.
 
 
 2007/12/07 - Patrice

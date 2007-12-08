@@ -256,13 +256,7 @@ void HostScreen::forceRefreshVidel(void)
 		return;	
 	}
 
-	HostSurface *videl_hsurf = getVIDEL()->getSurface();
-	if (!videl_hsurf) {
-		return;
-	}
-
-	videl_hsurf->setDirtyRect(0,0,
-		videl_hsurf->getWidth(), videl_hsurf->getHeight());
+	getVIDEL()->forceRefresh();
 }
 
 void HostScreen::checkSwitchVidelNfvdi(void)

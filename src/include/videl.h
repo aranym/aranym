@@ -29,21 +29,19 @@ class HostSurface;
 class VIDEL : public BASE_IO
 {
 	private:
-		bool useStPalette(void);
-
-	protected:
 		HostSurface *surface;
-		bool updatePalette;
 		int prevVidelWidth, prevVidelHeight, prevVidelBpp;
+		bool updatePalette;
 		Uint32 *crcList;
 
+		bool useStPalette(void);
 		Uint32 getVramAddress(void);
 		int getWidth(void);
 		int getHeight(void);
 		int getBpp(void);
 
 		void refreshPalette(void);
-		virtual void refreshScreen(void);
+		void refreshScreen(void);
 
 	public:
 		VIDEL(memptr, uint32);
@@ -54,6 +52,7 @@ class VIDEL : public BASE_IO
 		void handleWrite(uint32 addr, uint8 value);
 
 		virtual HostSurface *getSurface(void);
+		virtual void forceRefresh(void);
 };
 
 #endif /* VIDEL_H */

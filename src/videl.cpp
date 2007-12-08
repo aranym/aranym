@@ -284,6 +284,16 @@ void VIDEL::refreshPalette(void)
 	surface->setPalette(palette, 0, numColors);
 }
 
+void VIDEL::forceRefresh(void)
+{
+	if (!surface) {
+		return;
+	}
+
+	surface->setDirtyRect(0,0,
+		surface->getWidth(), surface->getHeight());
+}
+
 void VIDEL::refreshScreen(void)
 {
 	SDL_Surface *sdl_surf;

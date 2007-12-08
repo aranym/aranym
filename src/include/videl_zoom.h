@@ -27,9 +27,10 @@ class HostSurface;
 class VidelZoom : public VIDEL
 {
 	private:
-		int videlWidth, videlHeight;	/* source size */
-		int zoomWidth, zoomHeight;	/* final size */
-		int prevWidth, prevHeight;
+		HostSurface *surface;
+		int zoomWidth, zoomHeight;
+		int prevVidelWidth, prevVidelHeight, prevVidelBpp;
+		int prevWidth, prevHeight, prevBpp;
 		int *xtable, *ytable;
 
 		void refreshScreen(void);
@@ -41,6 +42,7 @@ class VidelZoom : public VIDEL
 		void reset(void);
 
 		HostSurface *getSurface(void);
+		void forceRefresh(void);
 };
 
 #endif /* VIDELZOOM_H */
