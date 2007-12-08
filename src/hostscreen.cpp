@@ -183,6 +183,7 @@ void HostScreen::refresh(void)
 
 	if (force_refresh) {
 		clear_screen = true;
+		forceRefreshLogo();
 		forceRefreshVidel();
 		forceRefreshNfvdi();
 		if (screen) {
@@ -289,6 +290,20 @@ void HostScreen::refreshLogo(void)
 	}
 
 	refreshSurface(logo_hsurf);
+}
+
+void HostScreen::forceRefreshLogo(void)
+{
+	if (!logo) {
+		return;
+	}
+	HostSurface *logo_hsurf = logo->getSurface();
+	if (!logo_hsurf) {
+		return;
+	}
+
+	logo_hsurf->setDirtyRect(0,0,
+		logo_hsurf->getWidth(), logo_hsurf->getHeight());
 }
 
 void HostScreen::checkSwitchToVidel(void)

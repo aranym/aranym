@@ -50,6 +50,7 @@ class HostScreen: public DirtyRects
 	void refreshVidel(void);
 	void forceRefreshVidel(void);
 	void refreshLogo(void);
+	void forceRefreshLogo(void);
 	void refreshNfvdi(void);
 	void forceRefreshNfvdi(void);
 	void refreshGui(void);
