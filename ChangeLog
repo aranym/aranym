@@ -1,3 +1,7 @@
+2007/12/08 - Patrice
+- main: Move OS init at the end of initialization
+
+
 2007/12/07 - Patrice
 - hostscreen: make the bitplane2chunky conversion routine static. Remove
   similar routines that are duplicates. Add more stuff to force a refresh at
