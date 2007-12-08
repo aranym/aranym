@@ -94,3 +94,6 @@ that particular programmer but rather who is author of the idea :-)
 - patrice: rework dsp thread synchronization. It seems it may hang sometimes.
 
 - patrice: full automake/autoconf support.
+
+- patrice: recreate texture objects when OpenGL enabled, and context has been
+  destroyed (happens on win32 on video mode change).
