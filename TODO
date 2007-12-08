@@ -97,3 +97,8 @@ that particular programmer but rather who is author of the idea :-)
 
 - patrice: recreate texture objects when OpenGL enabled, and context has been
   destroyed (happens on win32 on video mode change).
+
+- patrice: C++-ize the input layer, get rid of various keytables hacks.
+
+- patrice: fvdi aranym.sys driver (m68k side) must follow the host surface
+  R,G,B,A organization.
