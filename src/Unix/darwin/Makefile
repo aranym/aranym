@@ -17,31 +17,31 @@ ACLOCAL_FLAGS = "-I $(sdlm4dir)/"
 
 .PHONY: universal i386 ppc clean clean_i386 clean_ppc touch
 
-
+	
 #	The universal target builds the x86 executable, then the ppc executable and finally merges both into an universal binary which is then put into the application bundle.
 universal: $(makedir)/Makefile_i386 $(makedir)/Makefile_ppc $(makedir)/config.h
-	$(MAKE) -C $(makedir) -f Makefile_i386 aranym_i386
-	$(MAKE) -C $(makedir) -f Makefile_ppc aranym_powerpc
+	$(MAKE) -f $(makedir)/Makefile_i386 aranym_i386
+	$(MAKE) -f $(makedir)/Makefile_ppc aranym_powerpc
 	#	create the universal binary from the ppc and i386 versions
 	lipo -create $(makedir)/aranym_powerpc $(makedir)/aranym_i386 -output $(makedir)/aranym
 	#	now just build the bundle containing the just build universal binary
-	$(MAKE) -C $(makedir) -f Makefile_ppc
+	$(MAKE) -f $(makedir)/Makefile_ppc
 
 
 #	The i386 target builds the x86 executable and puts it into the application bundle.
 i386: $(makedir)/Makefile_i386
 	cp $(makedir)/config_i386.h $(makedir)/config.h
-	$(MAKE) -C $(makedir) -f Makefile_i386 aranym_i386
+	$(MAKE) -f $(makedir)/Makefile_i386 aranym_i386
 	mv aranym_i386 aranym
-	$(MAKE) -C $(makedir) -f Makefile_i386
+	$(MAKE) -f $(makedir)/Makefile_i386
 
 
 #	The ppc target builds the x86 executable and puts it into the application bundle.
 ppc: $(makedir)/Makefile_ppc
 	cp $(makedir)/config_ppc.h $(makedir)/config.h
-	$(MAKE) -C $(makedir) -f Makefile_ppc aranym_powerpc
+	$(MAKE) -f $(makedir)/Makefile_ppc aranym_powerpc
 	mv aranym_powerpc aranym
-	$(MAKE) -C $(makedir) -f Makefile_ppc
+	$(MAKE) -f $(makedir)/Makefile_ppc
 
 
 #	The clean target removes all build files.
@@ -51,7 +51,7 @@ clean: clean_i386 clean_ppc
 #	The clean_i386 target removes all build files related to the x86 binary and the application bundle.
 clean_i386:
 	if test -f $(makedir)/Makefile_i386; then \
-		$(MAKE) -C $(makedir) -f Makefile_i386 clean; \
+		$(MAKE) -f $(makedir)/Makefile_i386 clean; \
 		rm -f $(makedir)/Makefile_i386; \
 	fi
 	rm -f $(makedir)/configure_i386
@@ -62,7 +62,7 @@ clean_i386:
 #	The clean_ppc target removes all build files related to the ppc binary and the application bundle.
 clean_ppc:
 	if test -f $(makedir)/Makefile_ppc; then \
-		$(MAKE) -C $(makedir) -f Makefile_ppc clean; \
+		$(MAKE) -f $(makedir)/Makefile_ppc clean; \
 		rm -f $(makedir)/Makefile_ppc; \
 	fi
 	rm -f $(makedir)/configure_ppc
@@ -91,7 +91,7 @@ $(makedir)/config.h: $(makedir)/config_i386.h $(makedir)/config_ppc.h
 $(makedir)/config_i386.h: $(makedir)/configure.ac $(makedir)/autogen.sh $(makedir)/acinclude.m4 sdl.m4 $(makedir)/config.guess
 	cd $(makedir)/; NO_CONFIGURE=yes ACLOCAL_FLAGS=$(ACLOCAL_FLAGS) ./autogen.sh;
 	cd $(makedir)/; ./configure $(CONFIGURE_OPTIONS_i386)
-	$(MAKE) -C $(makedir) -f Makefile depend
+	$(MAKE) -f $(makedir)/Makefile depend
 	mv $(makedir)/configure $(makedir)/configure_i386
 	mv $(makedir)/config.log $(makedir)/config_i386.log
 	mv $(makedir)/config.h $(makedir)/config_i386.h
@@ -101,7 +101,7 @@ $(makedir)/config_i386.h: $(makedir)/configure.ac $(makedir)/autogen.sh $(makedi
 $(makedir)/config_ppc.h: $(makedir)/configure.ac $(makedir)/autogen.sh $(makedir)/acinclude.m4 sdl.m4 $(makedir)/config.guess
 	cd $(makedir)/; NO_CONFIGURE=yes ACLOCAL_FLAGS=$(ACLOCAL_FLAGS) ./autogen.sh;
 	cd $(makedir)/; ./configure $(CONFIGURE_OPTIONS_ppc)
-	$(MAKE) -C $(makedir) -f Makefile depend
+	$(MAKE) -f $(makedir)/Makefile depend
 	mv $(makedir)/configure $(makedir)/configure_ppc
 	mv $(makedir)/config.log $(makedir)/config_ppc.log
 	#mv $(makedir)/config.h $(makedir)/config_ppc.h

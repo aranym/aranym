@@ -1727,6 +1727,7 @@ case "$host_os" in
 			TARGET="\$(APP_BUNDLE)"
 		fi
 		ARANYM_DATADIR="\"\\\"\${datadir}/\${APP}\\\"\""
+		srcdir="../../.."
 		;;
 	mingw*) TARGET="\$(APP)"
 		ARANYM_DATADIR="\"\\\"./\${APP}\\\"\""

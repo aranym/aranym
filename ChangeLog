@@ -1,3 +1,14 @@
+2007/12/08 - Stefan
+- darwin/Makefile: Fixed to Makefile to allow a direct jump to errors in XCode.
+- Makefile.in: Added $(makefile) to hold the name of the current Makefile. This 
+  is needed for depend to append the dependencies to the right file. Added 
+  $(makedir) to hold the path to the config.h and other files. This is needed 
+  because for the darwin target make is started from a different folder.
+- configure.ac: Added again a srcdir definition for darwin.
+- darwin/aranym.xcodeprj: Updated the XCode project files.
+- darwin/info.plist: Udated version information.
+
+
 2007/12/08 - Patrice
 - main: Move OS init at the end of initialization
 - videl, videl_zoom: Zoomed surface also with partial updates: fast.
