@@ -384,9 +384,6 @@ bool InitAll(void)
 	if (!InitMEM())
 		return false;
 
-	if (! InitOS())
-		return false;
-
 	// work around a bug fix in Debian's libsdl1.2-dev - BTS #317010
 	putenv("SDL_DISABLE_LOCK_KEYS=1");
 
@@ -484,6 +481,9 @@ bool InitAll(void)
 		return false;
 	}
 #endif
+
+	if (! InitOS())
+		return false;
 
 	return true;
 }
