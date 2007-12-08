@@ -456,7 +456,7 @@ bool InitAll(void)
 	if (isGuiAvailable && startupGUI) {
 		open_GUI();
 		do {
-			check_event();			// process mouse & keyboard events
+			check_event();	// process mouse & keyboard events
 			host->video->refresh();
 			SDL_Delay(1);
 		} while(!SDLGui_isClosed());
@@ -485,6 +485,7 @@ bool InitAll(void)
 	if (! InitOS())
 		return false;
 
+	host->video->bootDone();
 	return true;
 }
 
@@ -565,6 +566,8 @@ void RestartAll()
 
 	// CPU init
 	Restart680x0();
+
+	host->video->bootDone();
 }
 
 /*

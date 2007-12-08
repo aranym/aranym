@@ -62,7 +62,7 @@ HostScreen::~HostScreen(void)
 void HostScreen::reset(void)
 {
 	lastVidelWidth = lastVidelHeight = lastVidelBpp = -1;
-	numScreen = SCREEN_LOGO;
+	numScreen = SCREEN_BOOT;
 	setVidelRendering(true);
 	DisableOpenGLVdi();
 
@@ -200,6 +200,9 @@ void HostScreen::refresh(void)
 
 	/* Render current screen */
 	switch(numScreen) {
+		case SCREEN_BOOT:
+			/* Wait till GUI or reset is done */
+			break;
 		case SCREEN_LOGO:
 			refreshLogo();
 			checkSwitchToVidel();
@@ -519,6 +522,11 @@ void HostScreen::refreshScreen(void)
 void HostScreen::forceRefreshScreen(void)
 {
 	force_refresh = true;
+}
+
+void HostScreen::bootDone(void)
+{
+	numScreen = SCREEN_LOGO;
 }
 
 HostSurface *HostScreen::createSurface(int width, int height, int bpp)

@@ -42,6 +42,7 @@ class HostScreen: public DirtyRects
 
   private:
 	enum {
+		SCREEN_BOOT,
 		SCREEN_LOGO,
 		SCREEN_VIDEL,
 		SCREEN_NFVDI
@@ -118,6 +119,8 @@ class HostScreen: public DirtyRects
 	void	forceRefreshScreen(void);
 
 	void	setVidelRendering(bool videlRender);
+
+	void bootDone(void);
 
 	/* Surface creation */
 	virtual HostSurface *createSurface(int width, int height, int bpp);
