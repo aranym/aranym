@@ -134,7 +134,7 @@ class OSMesaDriver : public NF_Base
 #endif
 
 	public:
-		char *name();
+		const char *name();
 		bool isSuperOnly();
 		int32 dispatch(uint32 fncode);
 

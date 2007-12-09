@@ -62,7 +62,7 @@ class JpegDriver : public NF_Base
 		JpegDriver();
 		virtual ~JpegDriver();
 
-		char *name();
+		const char *name();
 		bool isSuperOnly();
 		int32 dispatch(uint32 fncode);
 };

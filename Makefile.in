@@ -293,7 +293,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -r -f $(TARGET) $(APP_LIB) $(APP_ARCH) $(APP_STATIC) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz $(OBJ_DIR)/* core* *.core *~ *.bak
+	rm -r -f $(APP) $(APP_BUNDLE) $(APP_ARCH) $(APP_LIB) $(APP_STATIC) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz $(OBJ_DIR)/* core* *.core *~ *.bak
 
 clean: mostlyclean
 	rm -rf $(GEN_DIR)

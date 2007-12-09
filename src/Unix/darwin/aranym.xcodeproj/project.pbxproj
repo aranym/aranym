@@ -29,7 +29,7 @@
 		F83A876A0D09F3D800102461 /* mkinstalldirs */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = mkinstalldirs; path = ../../../mkinstalldirs; sourceTree = SOURCE_ROOT; };
 		F83B57260C8B006200BA68D4 /* README_ethernet.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = README_ethernet.txt; sourceTree = "<group>"; };
 		F83B57270C8B006200BA68D4 /* SDLHotkeysRefresh.M */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SDLHotkeysRefresh.M; sourceTree = "<group>"; };
-		F83E65B60D09FFF5004FF434 /* ARAnyM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARAnyM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F83E65B60D09FFF5004FF434 /* aranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = aranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F84337D90C661D3F005E7B99 /* aranym.desktop */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = aranym.desktop; path = ../../../aranym.desktop; sourceTree = SOURCE_ROOT; };
 		F84337DA0C661D3F005E7B99 /* aranym.spec */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = aranym.spec; path = ../../../aranym.spec; sourceTree = SOURCE_ROOT; };
 		F84337DC0C661D3F005E7B99 /* CONFIGVARS */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CONFIGVARS; sourceTree = "<group>"; };
@@ -1180,7 +1180,7 @@
 				F84341010C664F5D005E7B99 /* AppKit.framework */,
 				F8433E730C66278D005E7B99 /* SDL_image.framework */,
 				F8433E740C66278D005E7B99 /* SDL.framework */,
-				F83E65B60D09FFF5004FF434 /* ARAnyM.app */,
+				F83E65B60D09FFF5004FF434 /* aranym.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1202,7 +1202,7 @@
 			);
 			name = ARAnyM;
 			productName = ARAnyM2;
-			productReference = F83E65B60D09FFF5004FF434 /* ARAnyM.app */;
+			productReference = F83E65B60D09FFF5004FF434 /* aranym.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1280,6 +1280,7 @@
 		F84340500C664932005E7B99 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1295,7 +1296,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = ARAnyM;
+				PRODUCT_NAME = aranym;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -1304,6 +1305,7 @@
 		F84340510C664932005E7B99 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)";
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1318,7 +1320,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = ARAnyM;
+				PRODUCT_NAME = aranym;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};

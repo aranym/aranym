@@ -66,7 +66,7 @@ JpegDriver::~JpegDriver()
 
 /*--- Public functions ---*/
 
-char *JpegDriver::name()
+const char *JpegDriver::name()
 {
 	return "JPEG";
 }

@@ -58,7 +58,7 @@ static char *safe_strncpy(char *dst, const char *src, size_t size)
     return strncpy(dst,src,size-1);
 }
 
-static int set_ip_using(const char *name, int c, const char *ip, const char *text)
+static int set_ip_using(const char *name, unsigned long c, const char *ip, const char *text)
 {
     struct ifreq ifr;
     struct sockaddr_in sin;

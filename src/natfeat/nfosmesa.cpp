@@ -85,7 +85,7 @@ OSMesaDriver::~OSMesaDriver()
 
 /*--- Public functions ---*/
 
-char *OSMesaDriver::name()
+const char *OSMesaDriver::name()
 {
 	return "OSMESA";
 }

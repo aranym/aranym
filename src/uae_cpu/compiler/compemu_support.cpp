@@ -5065,7 +5065,7 @@ void compiler_exit(void)
 		if (!count)
 			break;
 		dp = table68k + opcode_nums[i];
-		for (lookup = lookuptab; lookup->mnemo != dp->mnemo; lookup++)
+		for (lookup = lookuptab; lookup->mnemo != (instrmnem)dp->mnemo; lookup++)
 			;
 		panicbug("%03d: %04x %10lu %s", i, opcode_nums[i], count, lookup->name);
 	}
@@ -6169,7 +6169,7 @@ void build_comp(void)
     struct comptbl* tbl=op_smalltbl_0_comp_ff;
     struct comptbl* nftbl=op_smalltbl_0_comp_nf;
     int count;
-	int cpu_level = 4;			// 68040
+	unsigned int cpu_level = 4;			// 68040
     struct cputbl *nfctbl = op_smalltbl_0_nf;
 
 #ifdef NATMEM_OFFSET
@@ -6222,7 +6222,7 @@ void build_comp(void)
 		cpuop_func *nfcf;
 		int isaddx,cflow;
 
-		if (table68k[opcode].mnemo == i_ILLG || table68k[opcode].clev > cpu_level)
+		if ((instrmnem)table68k[opcode].mnemo == i_ILLG || table68k[opcode].clev > cpu_level)
 			continue;
 
 		if (table68k[opcode].handler != -1) {

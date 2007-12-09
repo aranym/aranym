@@ -46,6 +46,9 @@ int dyngl_load(char *filename)
 			lib_loaded = 1;
 		}
 	}
+#else
+	/* Just to make the compiler not complain about an unused filename parameter. */
+	filename = filename;
 #endif
 
 	if (!lib_loaded) {

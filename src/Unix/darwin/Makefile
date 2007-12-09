@@ -23,7 +23,7 @@ universal: $(makedir)/Makefile_i386 $(makedir)/Makefile_ppc $(makedir)/config.h
 	$(MAKE) -f $(makedir)/Makefile_i386 aranym_i386
 	$(MAKE) -f $(makedir)/Makefile_ppc aranym_powerpc
 	#	create the universal binary from the ppc and i386 versions
-	lipo -create $(makedir)/aranym_powerpc $(makedir)/aranym_i386 -output $(makedir)/aranym
+	lipo -create aranym_powerpc aranym_i386 -output aranym
 	#	now just build the bundle containing the just build universal binary
 	$(MAKE) -f $(makedir)/Makefile_ppc
 
@@ -46,6 +46,7 @@ ppc: $(makedir)/Makefile_ppc
 
 #	The clean target removes all build files.
 clean: clean_i386 clean_ppc
+	rm -f aranym
 
 
 #	The clean_i386 target removes all build files related to the x86 binary and the application bundle.

@@ -1,3 +1,27 @@
+2007/12/09 - Stefan
+- darwin/Makefile: The architecture dependend binaries were build inside the 
+  darwin directory, but for the universal binary they were taken from the main 
+  directory ($(makedir)) and the universal binary got stored there, too. For 
+  the application bundle then a universal binary was taken from the darwin 
+  folder again. The build didn't fail if there still were older binaries at 
+  both locations. Anyway the application bundle contained a wrong binary.
+- darwin/aranym.xcodeprj: As now the application bundle is build again as
+  src/Unix/darwin/ARAnyM.app, the XCode project doesn't need a custom location 
+  for the build product directory any more.
+- Makefile.in: For the target mostlyclean now instead of TARGET both APP and 
+  APP_BUNLDE will be deleted.
+- src/dyngl.c: Fixed compiler warning about unused parameter.
+- src/Unix/aratapif.c: Fixed compiler warning about type mismatch.
+- src/uae_cpu/compiler/compemu_support.cpp: Fixed compiler warnings about type 
+  mismatches.
+- src/uae_cpu/compiler/codegen_x86.cpp: Fixed compiler warning about type 
+  mismatch.
+- src/natfeat/nfosmesa.h: Fixed return type of name() method.
+- src/natfeat/nfosmesa.cpp: Fixed return type of name() method.
+- src/natfeat/nfjpeg.h: Fixed return type of name() method.
+- src/natfeat/nfjpeg.cpp: Fixed return type of name() method.
+
+
 2007/12/08 - Stefan
 - darwin/Makefile: Fixed to Makefile to allow a direct jump to errors in XCode.
 - Makefile.in: Added $(makefile) to hold the name of the current Makefile. This 
