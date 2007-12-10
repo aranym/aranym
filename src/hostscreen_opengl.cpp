@@ -193,7 +193,7 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 		txHeight /= (GLfloat) sdl_surf->h;
 	}
 	gl.MatrixMode(GL_TEXTURE);
-	gl.LoadIdentity();
+	gl.PushMatrix();
 	gl.Scalef(txWidth,txHeight,1.0);
 
 	GLfloat targetW = width;
@@ -214,7 +214,7 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 	GLfloat targetY = (screen->h-targetH)*0.5;
 
 	gl.MatrixMode(GL_MODELVIEW);
-	gl.LoadIdentity();
+	gl.PushMatrix();
 	gl.Translatef(targetX, targetY, 0.0);
 	gl.Scalef(targetW, targetH, 1.0);
 
@@ -231,6 +231,11 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 		gl.TexCoord2f(0.0, 1.0);
 		gl.Vertex2f(0.0, 1.0);
 	gl.End();
+
+	gl.MatrixMode(GL_TEXTURE);
+	gl.PopMatrix();
+	gl.MatrixMode(GL_MODELVIEW);
+	gl.PopMatrix();
 
 	gl.Disable(textureTarget);
 
@@ -255,9 +260,12 @@ void HostScreenOpenGL::initScreen(void)
 	gl.LoadIdentity();
 	gl.Ortho(0.0, screen->w, screen->h, 0.0, -1.0, 1.0);
 
+	gl.MatrixMode(GL_TEXTURE);
+	gl.LoadIdentity();
+
 	gl.MatrixMode(GL_MODELVIEW);
 	gl.LoadIdentity();
-	/*gl.Translatef(0.375, 0.375, 0.0);*/
+	gl.Translatef(0.375, 0.375, 0.0);
 }
 
 void HostScreenOpenGL::clearScreen(void)
