@@ -2,6 +2,7 @@
 - sdlgui: Use SDL_GetTicks() to blink cursor at a fixed rate.
 - main: No need to check which driver it is for fullscreen state. We read it when
   setting video mode.
+- hostscreen: Allow screenshot in OpenGL mode.
 
 
 2007/12/09 - Stefan

@@ -126,8 +126,32 @@ void HostScreenOpenGL::makeSnapshot(void)
 	char filename[15];
 	sprintf( filename, "snap%03d.bmp", snapCounter++ );
 
-	/* TODO: use glreadpixels() to retrieve screen memory and save it to disk */
-	fprintf(stderr, "Screenshot disabled in OpenGL mode\n");
+	HostSurface *sshot_hsurf = createSurface(getWidth(), getHeight(), 32);
+	if (!sshot_hsurf) {
+		return;
+	}
+	SDL_Surface *sdl_surf = sshot_hsurf->getSdlSurface();
+	if (sdl_surf) {
+		int i;
+		Uint8 *dst = (Uint8 *) sdl_surf->pixels;
+
+		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, sdl_surf->w);
+		for (i=0;i<screen->h;i++) {
+			gl.ReadPixels(0,screen->h-i-1,screen->w,1,GL_BGRA,
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+				GL_UNSIGNED_INT_8_8_8_8_REV,
+#else
+				GL_UNSIGNED_INT_8_8_8_8,
+#endif
+				dst);
+			dst += sdl_surf->pitch;
+		}
+		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+
+		SDL_SaveBMP(sdl_surf, filename);
+	}
+
+	delete sshot_hsurf;
 }
 
 int HostScreenOpenGL::getBpp(void)
