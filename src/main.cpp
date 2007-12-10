@@ -401,14 +401,6 @@ bool InitAll(void)
 	}
 	atexit(SDL_Quit);
 
-	// check video output device and if it's a framebuffer
-	// then enforce full screen
-	char driverName[32];
-	SDL_VideoDriverName( driverName, sizeof(driverName)-1 );
-	D(bug("Video driver name: %s", driverName));
-	if ( strstr( driverName, "fb" ) )		// fullscreen on framebuffer
-		bx_options.video.fullscreen = true;
-
 	// set preferred window position
 	const char *wpos = bx_options.video.window_pos;
 	if (strlen(wpos) > 0) {
