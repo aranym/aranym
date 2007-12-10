@@ -1,3 +1,7 @@
+2007/12/09 - Patrice
+- sdlgui: Use SDL_GetTicks() to blink cursor at a fixed rate.
+
+
 2007/12/09 - Stefan
 - darwin/Makefile: The architecture dependend binaries were build inside the 
   darwin directory, but for the universal binary they were taken from the main 

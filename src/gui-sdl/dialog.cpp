@@ -26,7 +26,7 @@ Dialog::Dialog(SGOBJ *new_dlg)
 	/* Init cursor position in dialog */
 	cursor.object = SDLGui_FindEditField(dlg, -1, SG_FIRST_EDITFIELD);
 	cursor.position = (cursor.object != -1) ? strlen(dlg[cursor.object].txt) : 0;
-	cursor.blink_counter = 0;
+	cursor.blink_counter = SDL_GetTicks();
 	cursor.blink_state = true;
 }
 
@@ -215,7 +215,7 @@ void Dialog::keyPress(const SDL_Event &event)
 
 	// Force cursor display. Should ease text input.
 	cursor.blink_state = true;
-	cursor.blink_counter = 0;
+	cursor.blink_counter = SDL_GetTicks();
 }
 
 void Dialog::idle(void)

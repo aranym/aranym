@@ -841,8 +841,9 @@ HostSurface *SDLGui_getSurface(void)
 	if (gui_dlg) {
 		/* Blink cursor ? */
 		cursor_state *cursor = gui_dlg->getCursor();
-		if (++cursor->blink_counter >= 10) {
-			cursor->blink_counter = 0;
+		Uint32 cur_ticks = SDL_GetTicks();
+		if (cur_ticks-cursor->blink_counter >= 500) {
+			cursor->blink_counter = cur_ticks;
 			cursor->blink_state = !cursor->blink_state;
 			SDLGui_DrawCursor(gui_dlg->getDialog(), cursor);
 		}

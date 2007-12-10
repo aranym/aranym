@@ -70,7 +70,7 @@ typedef struct
 {
   int object;
   int position;
-  int blink_counter;
+  Uint32 blink_counter;
   bool blink_state;
 } cursor_state;
 
