@@ -150,7 +150,6 @@ void HostScreenOpenGL::makeSnapshot(void)
 		int i;
 		Uint8 *dst = (Uint8 *) sdl_surf->pixels;
 
-		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, sdl_surf->w);
 		for (i=0;i<screen->h;i++) {
 			gl.ReadPixels(0,screen->h-i-1,screen->w,1,GL_BGRA,
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
@@ -161,12 +160,11 @@ void HostScreenOpenGL::makeSnapshot(void)
 				dst);
 			dst += sdl_surf->pitch;
 		}
-		gl.PixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
 		SDL_SaveBMP(sdl_surf, filename);
 	}
 
-	delete sshot_hsurf;
+	destroySurface(sshot_hsurf);
 }
 
 int HostScreenOpenGL::getBpp(void)
