@@ -58,7 +58,7 @@ class HostScreen: public DirtyRects
 
 	Logo *logo;
 	bool logo_present;
-	bool clear_screen, force_refresh;
+	bool clear_screen, force_refresh, do_screenshot;
 
 	int	refreshCounter;
 	bool	renderVidelSurface;
@@ -74,6 +74,9 @@ class HostScreen: public DirtyRects
 	uint16 snapCounter; // ALT+PrintScreen to make a snap?
 
 	virtual void setVideoMode(int width, int height, int bpp);
+
+	// Create a BMP file with a snapshot of the screen surface
+	virtual void makeSnapshot(void);
 
 	virtual void refreshScreen(void);
 	virtual void initScreen(void);
@@ -102,8 +105,7 @@ class HostScreen: public DirtyRects
 	static void bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 		uint8 colorValues[16] );
 
-	// Create a BMP file with a snapshot of the screen surface
-	virtual void makeSnapshot(void);
+	void doScreenshot(void);
 
 	// Toggle Window/FullScreen mode
 	void   toggleFullScreen(void);

@@ -589,7 +589,7 @@ static void process_keyboard_event(const SDL_Event &event)
 			send2Atari = false;
 		}
 		else if (CHECK_HOTKEY(screenshot)) {
-			host->video->makeSnapshot();
+			host->video->doScreenshot();
 			send2Atari = false;
 		}
 		else if (CHECK_HOTKEY(fullscreen)) {

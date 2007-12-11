@@ -176,7 +176,7 @@ int DlgMain::processDialog(void)
 			retval = Dialog::GUI_CLOSE;
 			break;
 		case SCREENSHOT:
-			host->video->makeSnapshot();
+			host->video->doScreenshot();
 			retval = Dialog::GUI_CLOSE;
 			break;
 		case HELP:

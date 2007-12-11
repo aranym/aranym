@@ -46,7 +46,7 @@
 
 HostScreen::HostScreen(void)
 	: DirtyRects(), logo(NULL), logo_present(true), clear_screen(true),
-	force_refresh(true),
+	force_refresh(true), do_screenshot(false),
 	refreshCounter(0), screen(NULL), new_width(0), new_height(0),
 	snapCounter(0)
 {
@@ -93,6 +93,11 @@ int HostScreen::getHeight(void)
 int HostScreen::getBpp(void)
 {
 	return screen->format->BitsPerPixel;
+}
+
+void HostScreen::doScreenshot(void)
+{
+	do_screenshot = true;
 }
 
 void HostScreen::makeSnapshot(void)
@@ -222,6 +227,11 @@ void HostScreen::refresh(void)
 		refreshGui();
 	}
 #endif
+
+	if (do_screenshot) {
+		makeSnapshot();
+		do_screenshot = false;
+	}
 
 	refreshScreen();
 
