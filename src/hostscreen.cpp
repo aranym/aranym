@@ -246,12 +246,7 @@ void HostScreen::clearScreen(void)
 
 void HostScreen::refreshVidel(void)
 {
-	int flags = DRAW_CROPPED;
-	if (bx_options.opengl.enabled && bx_options.autozoom.enabled) {
-		flags = DRAW_RESCALED;
-	}
-
-	refreshSurface(getVIDEL()->getSurface(), flags);
+	refreshSurface(getVIDEL()->getSurface());
 }
 
 void HostScreen::forceRefreshVidel(void)
@@ -370,7 +365,7 @@ void HostScreen::refreshGui(void)
 #endif /* SDL_GUI */
 }
 
-void HostScreen::refreshSurface(HostSurface *hsurf, int flags)
+void HostScreen::refreshSurface(HostSurface *hsurf)
 {
 	if (!hsurf) {
 		return;
@@ -404,10 +399,10 @@ void HostScreen::refreshSurface(HostSurface *hsurf, int flags)
 		SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
 	}
 
-	drawSurfaceToScreen(hsurf, NULL, NULL, flags);
+	drawSurfaceToScreen(hsurf);
 }
 
-void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y, int /*flags*/)
+void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 {
 	if (!hsurf) {
 		return;

@@ -33,13 +33,6 @@ class Logo;
 
 class HostScreen: public DirtyRects
 {
-  protected:
-	/* How we want the surface to be rendered on screen */
-	enum {
-		DRAW_CROPPED,	/* Crop if bigger than screen, center it */
-		DRAW_RESCALED	/* Rescale it (only with OpenGL) */
-	};
-
   private:
 	enum {
 		SCREEN_BOOT,
@@ -56,7 +49,7 @@ class HostScreen: public DirtyRects
 	void forceRefreshNfvdi(void);
 	void refreshGui(void);
 
-	void refreshSurface(HostSurface *hsurf, int flags = DRAW_CROPPED);
+	void refreshSurface(HostSurface *hsurf);
 
 	void checkSwitchToVidel(void);
 	void checkSwitchVidelNfvdi(void);
@@ -85,8 +78,8 @@ class HostScreen: public DirtyRects
 	virtual void refreshScreen(void);
 	virtual void initScreen(void);
 	virtual void clearScreen(void);
-	virtual void drawSurfaceToScreen(HostSurface *hsurf, int *dst_x = NULL,
-		int *dst_y = NULL, int flags = DRAW_CROPPED);
+	virtual void drawSurfaceToScreen(HostSurface *hsurf,
+		int *dst_x = NULL, int *dst_y = NULL);
 
   public:
 	HostScreen(void);

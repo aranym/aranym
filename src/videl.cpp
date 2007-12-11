@@ -241,6 +241,10 @@ HostSurface *VIDEL::getSurface(void)
 
 	refreshScreen();
 
+	if (bx_options.opengl.enabled && bx_options.autozoom.enabled) {
+		surface->setParam(HostSurface::SURF_DRAW, HostSurface::DRAW_RESCALE);
+	}
+	
 	return surface;
 }
 

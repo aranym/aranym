@@ -181,7 +181,7 @@ int HostScreenOpenGL::getBpp(void)
 	return bpp;
 }
 
-void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y, int flags)
+void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 {
 	if (!bx_options.opengl.enabled) {
 		HostScreen::drawSurfaceToScreen(hsurf, dst_x, dst_y);
@@ -237,7 +237,10 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 
 	GLfloat targetW = width;
 	GLfloat targetH = height;
-	if (bx_options.autozoom.enabled && (flags==DRAW_RESCALED)) {
+	if (bx_options.autozoom.enabled
+	    && (hsurf->getParam(HostSurface::SURF_DRAW)
+	      == HostSurface::DRAW_RESCALE))
+	{
 		targetW = screen->w;
 		targetH = screen->h;
 		if (bx_options.autozoom.integercoefs && (screen->w>=width)

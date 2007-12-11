@@ -30,14 +30,6 @@
 
 /*--- Constructor/destructor ---*/
 
-HostSurface::HostSurface(SDL_Surface *surf)
-	: DirtyRects(surf->w, surf->h)
-{
-	surface = surf;
-	clip_w = surf->w;
-	clip_h = surf->h;
-}
-
 HostSurface::HostSurface(int width, int height, int bpp)
 	: DirtyRects(width, height)
 {
@@ -45,6 +37,9 @@ HostSurface::HostSurface(int width, int height, int bpp)
 		0,0,0,0);
 	clip_w = surface ? surface->w : 0;
 	clip_h = surface ? surface->h : 0;
+
+	setParam(SURF_DRAW, DRAW_CROP_AND_CENTER);
+	setParam(SURF_ALPHA, 100);
 }
 
 HostSurface::~HostSurface(void)
@@ -168,4 +163,28 @@ void HostSurface::setPalette(SDL_Color *palette, int first, int count)
 	}
 
 	SDL_SetPalette(surface, SDL_LOGPAL, palette, first, count);
+}
+
+int HostSurface::getParam(int num_param)
+{
+	switch (num_param) {
+		case SURF_DRAW:
+			return draw_mode;
+		case SURF_ALPHA:
+			return alpha_coef;
+	}
+
+	return 0;
+}
+
+void HostSurface::setParam(int num_param, int value)
+{
+	switch (num_param) {
+		case SURF_DRAW:
+			draw_mode = value;
+			break;
+		case SURF_ALPHA:
+			alpha_coef = value;
+			break;
+	}
 }

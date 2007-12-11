@@ -31,15 +31,25 @@ class HostSurface: public DirtyRects
 		SDL_Surface *surface;
 		int clip_w, clip_h;	/* clipped dimensions */
 
+		int draw_mode;
+		int alpha_coef;
+
 		virtual SDL_Surface *createSdlSurface(int width, int height,
 			SDL_PixelFormat *pixelFormat);
 
 	public:
+		enum {
+			SURF_DRAW,	/* drawing mode */
+			SURF_ALPHA	/* alpha coefficient */
+		};
+
+		enum {
+			DRAW_CROP_AND_CENTER,
+			DRAW_RESCALE
+		};
+
 		/* Create a surface from dimensions, bpp */
 		HostSurface(int width, int height, int bpp);
-
-		/* Create a surface from existing SDL_Surface */
-		HostSurface(SDL_Surface *surf);
 
 		virtual ~HostSurface();
 
@@ -55,6 +65,9 @@ class HostSurface: public DirtyRects
 			int surf_width, int surf_height);
 
 		virtual void setPalette(SDL_Color *palette, int first, int count);
+
+		int getParam(int num_param);
+		void setParam(int num_param, int value);
 };
 
 #endif /* HOSTSURFACE_H */

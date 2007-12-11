@@ -39,7 +39,8 @@ class HostScreenOpenGL: public HostScreen
 		void refreshScreen(void);
 		void initScreen(void);
 		void clearScreen(void);
-		void drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y, int flags);
+		void drawSurfaceToScreen(HostSurface *hsurf,
+			int *dst_x, int *dst_y);
 
 	public:
 		HostScreenOpenGL(void);
