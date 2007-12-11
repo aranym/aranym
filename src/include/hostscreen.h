@@ -124,6 +124,7 @@ class HostScreen: public DirtyRects
 
 	/* Surface creation */
 	virtual HostSurface *createSurface(int width, int height, int bpp);
+	virtual void destroySurface(HostSurface *hsurf);
 };
 
 #endif

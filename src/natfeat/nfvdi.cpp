@@ -291,7 +291,7 @@ VdiDriver::~VdiDriver()
 	}
 
 	if (surface) {
-		delete surface;
+		host->video->destroySurface(surface);
 	}
 }
 

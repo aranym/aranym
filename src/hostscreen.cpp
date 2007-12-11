@@ -534,6 +534,11 @@ HostSurface *HostScreen::createSurface(int width, int height, int bpp)
 	return new HostSurface(width, height, bpp);
 }
 
+void HostScreen::destroySurface(HostSurface *hsurf)
+{
+	delete hsurf;
+}
+
 /**
  * Performs conversion from the TOS's bitplane word order (big endian) data
  * into the native chunky color index.

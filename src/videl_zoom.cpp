@@ -47,16 +47,13 @@ VidelZoom::VidelZoom(memptr addr, uint32 size) :
 VidelZoom::~VidelZoom(void)
 {
 	if (surface) {
-		delete surface;
-		surface =NULL;
+		host->video->destroySurface(surface);
 	}
 	if (xtable) {
 		delete xtable;
-		xtable = NULL;
 	}
 	if (ytable) {
 		delete ytable;
-		ytable = NULL;
 	}
 }
 

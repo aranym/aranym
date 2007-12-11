@@ -61,7 +61,7 @@ VIDEL::~VIDEL(void)
 		delete crcList;
 	}
 	if (surface) {
-		delete surface;
+		host->video->destroySurface(surface);
 	}
 }
 

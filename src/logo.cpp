@@ -43,11 +43,9 @@ Logo::~Logo()
 {
 	if (logo_surf) {
 		SDL_FreeSurface(logo_surf);
-		logo_surf = NULL;
 	}
 	if (surface) {
-		delete surface;
-		surface = NULL;
+		host->video->destroySurface(surface);
 	}
 }
 

@@ -319,7 +319,24 @@ HostSurface *HostScreenOpenGL::createSurface(int width, int height, int bpp)
 		return HostScreen::createSurface(width, height, bpp);
 	}
 
-	return new HostSurfaceOpenGL(width, height, bpp);
+	HostSurfaceOpenGL *hsurf = new HostSurfaceOpenGL(width, height, bpp);
+	if (hsurf) {
+		surfList.push_back(hsurf);
+	}
+	return hsurf;
+}
+
+void HostScreenOpenGL::destroySurface(HostSurface *hsurf)
+{
+	if (!bx_options.opengl.enabled) {
+		HostScreen::destroySurface(hsurf);
+		return;
+	}
+
+	if (hsurf) {
+		surfList.remove((HostSurfaceOpenGL *) hsurf);
+	}
+	delete hsurf;
 }
 
 #endif

@@ -188,7 +188,7 @@ bool SDLGui_Init()
 int SDLGui_UnInit()
 {
 	if (gui_hsurf) {
-		delete gui_hsurf;
+		host->video->destroySurface(gui_hsurf);
 		gui_hsurf = NULL;
 	}
 
