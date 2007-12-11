@@ -53,6 +53,9 @@ class HostSurfaceOpenGL: public HostSurface
 		void setPalette(SDL_Color *palette, int first, int count);
 		void updateTexture(void);
 
+		void createTextureObject(void);
+		void destroyTextureObject(void);
+
 		GLenum getTextureTarget(void);
 		GLuint getTextureObject(void);
 };

@@ -48,7 +48,7 @@ HostSurfaceOpenGL::HostSurfaceOpenGL(int width, int height, int bpp)
 
 HostSurfaceOpenGL::~HostSurfaceOpenGL(void)
 {
-	gl.DeleteTextures(1, &textureObject);
+	destroyTextureObject();
 }
 
 /*--- Private functions ---*/
@@ -59,20 +59,7 @@ void HostSurfaceOpenGL::createTexture(void)
 	use_palette = false;
 	resize(getWidth(), getHeight());
 
-	gl.GenTextures(1, &textureObject);
-
-#if defined(GL_EXT_paletted_texture)
-	char *extensions = (char *) gl.GetString(GL_EXTENSIONS);
-
-	if (strstr(extensions, "GL_EXT_paletted_texture") && (getBpp() == 8)
-	    && can_palette)
-	{
-		use_palette = true;
-	}
-#endif
-
-	first_upload = true;
-	updateTexture();
+	createTextureObject();
 }
 
 void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
@@ -355,6 +342,29 @@ void HostSurfaceOpenGL::updateTexture(void)
 			/* FIXME: care about endianness ? */
 			break;
 	}
+}
+
+void HostSurfaceOpenGL::createTextureObject(void)
+{
+	gl.GenTextures(1, &textureObject);
+
+#if defined(GL_EXT_paletted_texture)
+	char *extensions = (char *) gl.GetString(GL_EXTENSIONS);
+
+	if (strstr(extensions, "GL_EXT_paletted_texture") && (getBpp() == 8)
+	    && can_palette)
+	{
+		use_palette = true;
+	}
+#endif
+
+	first_upload = true;
+	updateTexture();
+}
+
+void HostSurfaceOpenGL::destroyTextureObject(void)
+{
+	gl.DeleteTextures(1, &textureObject);
 }
 
 GLenum HostSurfaceOpenGL::getTextureTarget(void)

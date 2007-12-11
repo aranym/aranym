@@ -84,6 +84,17 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 
+	/* Tell all surfaces their texture will be destroyed (should only
+	   happen on win32 though).
+	*/
+#if defined(WIN32)
+	std::list<HostSurfaceOpenGL *>::iterator it;
+
+	for (it=surfList.begin(); it!=surfList.end(); ++it) {
+		(*it)->destroyTextureObject();
+	}
+#endif
+
 	for (i=0;i<4;i++) {
 		screen = SDL_SetVideoMode(width, height, gl_bpp[i], screenFlags);
 		if (screen) {
@@ -106,15 +117,19 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 		return;
 	}
 
+	/* Now tell surfaces to recreate their texture */
+#if defined(WIN32)
+	for (it=surfList.begin(); it!=surfList.end(); ++it) {
+		(*it)->createTextureObject();
+	}
+#endif
+
 	bx_options.video.fullscreen = ((screen->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN);
 
 	new_width = screen->w;
 	new_height = screen->h;
 	resizeDirty(screen->w, screen->h);
 	forceRefreshScreen();
-
-	/* TODO: on some platforms, the OpenGL context is destroyed and recreated, and all
-	   texture objects are not valid anymore */
 }
 
 void HostScreenOpenGL::makeSnapshot(void)
