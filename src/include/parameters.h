@@ -136,6 +136,7 @@ typedef struct {
   bool enabled;
   bool filtered;
   char library[512];
+  int gui_alpha;
 } bx_opengl_options_t;
 
 // Ethernet options

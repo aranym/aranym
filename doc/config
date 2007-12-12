@@ -163,6 +163,9 @@ Enabled = No
 # Use linear filtering on the atari screen
 Filtered = No
 
+# Alpha pourcentage of GUI (from 0 to 100 pourcent)
+GuiAlpha = 100
+
 # If you don't want to use default GL library, set this value to your
 #  favorite libGL file.
 Library =

@@ -170,6 +170,9 @@ bool SDLGui_Init()
 
 	gui_hsurf->setPalette(gui_palette, 0, 4);
 
+	gui_hsurf->setParam(HostSurface::SURF_ALPHA, bx_options.opengl.gui_alpha);
+	gui_hsurf->setParam(HostSurface::SURF_USE_ALPHA, 1);
+
   /* Set font color 0 as transparent */
   SDL_SetColorKey(fontgfx, SDL_SRCCOLORKEY, 0);
 
