@@ -221,7 +221,19 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
  	gl.TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, filtering);
  	gl.TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP);
  	gl.TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP);
- 	gl.TexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	bool use_alpha = (hsurf->getParam(HostSurface::SURF_USE_ALPHA) != 0);
+	if (use_alpha) {
+	 	gl.TexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+		gl.Enable(GL_BLEND);
+		gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	} else {
+	 	gl.TexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+		gl.Enable(GL_BLEND);
+		gl.BlendFunc(GL_ONE, GL_ZERO);
+	}
 
 	/* Texture coordinates */
 	GLfloat txWidth = width, txHeight = height;
@@ -258,6 +270,9 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 	gl.Translatef(targetX, targetY, 0.0);
 	gl.Scalef(targetW, targetH, 1.0);
 
+	if (use_alpha) {
+		gl.Color4f(1.0,1.0,1.0,hsurf->getParam(HostSurface::SURF_ALPHA)/100.0);
+	}
 	gl.Begin(GL_QUADS);
 		gl.TexCoord2f(0.0, 0.0);
 		gl.Vertex2f(0.0, 0.0);
@@ -277,6 +292,7 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 	gl.MatrixMode(GL_MODELVIEW);
 	gl.PopMatrix();
 
+	gl.Disable(GL_BLEND);
 	gl.Disable(textureTarget);
 
 	/* GUI need to know where it is */
