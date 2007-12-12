@@ -32,6 +32,7 @@ class HostSurface: public DirtyRects
 		int clip_w, clip_h;	/* clipped dimensions */
 
 		int draw_mode;
+		int use_alpha;
 		int alpha_coef;
 
 		virtual SDL_Surface *createSdlSurface(int width, int height,
@@ -40,7 +41,8 @@ class HostSurface: public DirtyRects
 	public:
 		enum {
 			SURF_DRAW,	/* drawing mode */
-			SURF_ALPHA	/* alpha coefficient */
+			SURF_USE_ALPHA,	/* use alpha coef */
+			SURF_ALPHA	/* set alpha coefficient */
 		};
 
 		enum {

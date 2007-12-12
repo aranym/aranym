@@ -39,6 +39,7 @@ HostSurface::HostSurface(int width, int height, int bpp)
 	clip_h = surface ? surface->h : 0;
 
 	setParam(SURF_DRAW, DRAW_CROP_AND_CENTER);
+	setParam(SURF_USE_ALPHA, 0);
 	setParam(SURF_ALPHA, 100);
 }
 
@@ -172,6 +173,8 @@ int HostSurface::getParam(int num_param)
 			return draw_mode;
 		case SURF_ALPHA:
 			return alpha_coef;
+		case SURF_USE_ALPHA:
+			return use_alpha;
 	}
 
 	return 0;
@@ -185,6 +188,9 @@ void HostSurface::setParam(int num_param, int value)
 			break;
 		case SURF_ALPHA:
 			alpha_coef = value;
+			break;
+		case SURF_USE_ALPHA:
+			use_alpha = value;
 			break;
 	}
 }

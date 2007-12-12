@@ -1,3 +1,7 @@
+2007/12/12 - Patrice
+- hostsurface: add alpha property :-).
+
+
 2007/12/11 - Patrice
 - hostsurface/hostscreen: Need to keep track of created surfaces in a list.
   Tell surfaces when to recreate OpenGL texture objects (for sure happens on win32
