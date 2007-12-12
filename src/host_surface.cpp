@@ -56,7 +56,6 @@ HostSurface::~HostSurface(void)
 SDL_Surface *HostSurface::createSdlSurface(int width, int height,
 	SDL_PixelFormat *pixelFormat)
 {
-	D(bug("soft: recreate sdl surface %dx%d", width, height));
 	return SDL_CreateRGBSurface(SDL_SWSURFACE,
 		width,height, pixelFormat->BitsPerPixel,
 		pixelFormat->Rmask, pixelFormat->Gmask,
@@ -90,18 +89,18 @@ void HostSurface::update(void)
 {
 }
 
-void HostSurface::resize(int new_width, int new_height)
+void HostSurface::resize(int new_width, int new_height, bool force_recreate)
 {
-	resize(new_width,new_height, new_width,new_height);
+	resize(new_width,new_height, new_width,new_height, force_recreate);
 }
 
 void HostSurface::resize(int new_width, int new_height,
-	int surf_width, int surf_height)
+	int surf_width, int surf_height, bool force_recreate)
 {
 	SDL_PixelFormat pixelFormat;
 	SDL_Color palette[256];
 	bool restore_palette = false;
-	bool recreateSurface = false;
+	bool recreateSurface = force_recreate;
 
 	if (surf_width & 15) {
 		surf_width = (surf_width|15)+1;

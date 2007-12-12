@@ -1,5 +1,7 @@
 2007/12/12 - Patrice
 - hostsurface: add alpha property :-). And alpha setting for GUI.
+  Add parameter to force SDL Surface recreation, so OpenGL can use a format that
+  suits texturing formats.
 
 
 2007/12/11 - Patrice

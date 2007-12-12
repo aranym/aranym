@@ -62,9 +62,11 @@ class HostSurface: public DirtyRects
 		int getBpp(void);
 
 		virtual void update(void);
-		virtual void resize(int new_width, int new_height);
+		virtual void resize(int new_width, int new_height,
+			bool force_recreate = false);
 		void resize(int new_width, int new_height,
-			int surf_width, int surf_height);
+			int surf_width, int surf_height,
+			bool force_recreate = false);
 
 		virtual void setPalette(SDL_Color *palette, int first, int count);
 

@@ -57,7 +57,7 @@ void HostSurfaceOpenGL::createTexture(void)
 {
 	can_palette = false;
 	use_palette = false;
-	resize(getWidth(), getHeight());
+	resize(getWidth(), getHeight(), true);
 
 	createTextureObject();
 }
@@ -186,13 +186,11 @@ void HostSurfaceOpenGL::update(void)
 	updateTexture();
 }
 
-void HostSurfaceOpenGL::resize(int width, int height)
+void HostSurfaceOpenGL::resize(int width, int height, bool force_recreate)
 {
 	int w=width, h=height;
 	calcGlDimensions(&w, &h);
-	HostSurface::resize(width,height, w,h);
-
-	D(bug("hs_ogl: 0x%08x: ask %dx%d surface, got %dx%d", this, width,height, w,h));
+	HostSurface::resize(width,height, w,h, force_recreate);
 
 	first_upload = true;
 	updateTexture();
