@@ -1296,7 +1296,8 @@ void SDLGui_Open(Dialog *new_dlg)
 	dlgStack.push(new_dlg);
 
 	gui_dlg = dlgStack.top();
-	gui_dlg->init();	
+	gui_dlg->init();
+	gui_dlg->idle();	
 }
 
 void SDLGui_Close(void)
