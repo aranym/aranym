@@ -21,7 +21,7 @@
 #include "dialog.h"
 
 Dialog::Dialog(SGOBJ *new_dlg)
-	: dlg(new_dlg), return_obj(-1)
+	: dlg(new_dlg), return_obj(-1), last_clicked_obj(-1)
 {
 	/* Init cursor position in dialog */
 	cursor.object = SDLGui_FindEditField(dlg, -1, SG_FIRST_EDITFIELD);
@@ -71,39 +71,52 @@ void Dialog::mouseClick(const SDL_Event &event, int gui_x, int gui_y)
 	int y = event.button.y - gui_y;
 
 	clicked_obj = SDLGui_FindObj(dlg, x, y);
+	if (clicked_obj<0) {
+		return;
+	}
 
-	if (clicked_obj >= 0) {
-		original_state = dlg[clicked_obj].state;
+	/* Read current state, to restore it if needed */
+	original_state = dlg[clicked_obj].state;
+
+	/* Memorize object on mouse button pressed event */
+	if (event.type == SDL_MOUSEBUTTONDOWN) {
 		SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y);
+		last_clicked_obj = clicked_obj;
+		last_state = original_state;
 
+		/* Except for TOUCHEXIT objects which must be activated on mouse button pressed */
 		if (dlg[clicked_obj].flags & SG_TOUCHEXIT) {
+			SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y);
+
 			return_obj = clicked_obj;
-			clicked_obj = -1;
+			last_clicked_obj = -1;
 		}
+
+		return;
 	}
 
-	if ((event.type == SDL_MOUSEBUTTONUP) && (clicked_obj>=0)) {
-		if (SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y)) {
-			// true if mouse button is released over clicked object.
-			// If applicable, the object has been selected by
-			// SDLGui_UpdateObjState(). Let's do additional handling here.
-
-			// Exit if object is an SG_EXIT one.
-			if (dlg[clicked_obj].flags & SG_EXIT)
-				return_obj = clicked_obj;
-
-			// If it's a SG_RADIO object, deselect other objects in his group.
-			if (dlg[clicked_obj].flags & SG_RADIO)
-				SDLGui_SelectRadioObject(dlg, clicked_obj);
-
-			if (dlg[clicked_obj].type == SGEDITFIELD)
-				SDLGui_ClickEditField(dlg, &cursor, clicked_obj, x);
+	/* Compare with object when releasing mouse button */
+	if (clicked_obj == last_clicked_obj) {
+		// Exit if object is an SG_EXIT one.
+		if (dlg[clicked_obj].flags & SG_EXIT) {
+			/* Hum, HACK for checkbox CDROM in diskdlg */
+			if (dlg[clicked_obj].type != SGCHECKBOX) {
+				/* Restore original state before exiting dialog */
+				SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y);
+			}
+			return_obj = clicked_obj;
 		}
-	}
 
-	// No special event occured.
-	// Update object state according to mouse coordinates.
-	SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y);
+		// If it's a SG_RADIO object, deselect other objects in his group.
+		if (dlg[clicked_obj].flags & SG_RADIO)
+			SDLGui_SelectRadioObject(dlg, clicked_obj);
+
+		if (dlg[clicked_obj].type == SGEDITFIELD)
+			SDLGui_ClickEditField(dlg, &cursor, clicked_obj, x);
+	} else if (last_clicked_obj>=0) {
+		/* We released mouse on a different object, restore state of mouse-press object */
+		SDLGui_UpdateObjState(dlg, last_clicked_obj, last_state, x, y);
+	}
 }
 
 void Dialog::keyPress(const SDL_Event &event)

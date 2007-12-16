@@ -11,6 +11,7 @@
   bigger.
 - gui: fix disk related dialog, writing missing parts. Also fix test cursor updates
   by always redrawing dialog, then cursor above it.
+  Fix mouse up/down button press events, to properly update object states.
 
 
 2007/12/12 - Patrice
