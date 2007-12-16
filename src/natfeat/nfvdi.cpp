@@ -295,6 +295,11 @@ VdiDriver::~VdiDriver()
 	}
 }
 
+void VdiDriver::reset()
+{
+	host->video->setVidelRendering(true);
+}
+
 /*--- Protected functions ---*/
 
 void VdiDriver::chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp,

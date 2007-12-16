@@ -84,6 +84,7 @@ class VdiDriver : public NF_Base
 		const char *name();
 		bool isSuperOnly();
 		int32 dispatch(uint32 fncode);
+		void reset();
 
 		VdiDriver();
 		virtual ~VdiDriver();
