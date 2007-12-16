@@ -12,6 +12,7 @@
 - gui: fix disk related dialog, writing missing parts. Also fix test cursor updates
   by always redrawing dialog, then cursor above it.
   Fix mouse up/down button press events, to properly update object states.
+  Do not wait for an event to refresh file list in selector.
 
 
 2007/12/12 - Patrice

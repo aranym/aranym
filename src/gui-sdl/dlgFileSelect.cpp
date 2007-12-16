@@ -177,7 +177,7 @@ static listentry *gui_file_list = NULL;
 DlgFileSelect::DlgFileSelect(SGOBJ *dlg, char *new_path_and_name, bool bAllowNew)
 	: Dialog(dlg), path_and_name(new_path_and_name)
 	, reloaddir(true), refreshentries(true), selection(-1), ypos(0), eol(true)
-	, pressed_ok(false)
+	, pressed_ok(false), redraw(true)
 {
 	gui_file_list = NULL;
 
@@ -214,71 +214,14 @@ void DlgFileSelect::confirm(void)
 
 void DlgFileSelect::idle(void)
 {
-	bool redraw = false;
-
 	if (reloaddir) {
-		if (strlen(file_path) >= MAX_FILENAME_LENGTH) {
-			fprintf(stderr, "SDLGui_FileSelect: Path name too long!\n");
-			return;
-		}
-
-		free_list(gui_file_list);
-
-		/* Load directory entries: */
-		gui_file_list = create_list(file_path);
-		if (gui_file_list == NULL) {
-			fprintf(stderr, "SDLGui_FileSelect: Path not found.\n");
-			/* reset path and reload entries */
-			strcpy(file_path, "/");
-			strcpy(dlgpath, file_path);
-			gui_file_list = create_list(file_path);
-			if (gui_file_list == NULL)
-				/* we're really lost if even root is unreadable */
-				return;
-		}
-		reloaddir = false;
-		refreshentries = true;
-		redraw = true;
+		refreshEntries();
 	}
 
-	if (refreshentries) {
-		struct listentry *temp = gui_file_list;
-		int i;
-		for (i = 0; i < ypos; i++)
-			temp = temp->next;
-
-		/* Copy entries to dialog: */
-		for (i = 0; i < ENTRY_COUNT; i++) {
-			if (temp != NULL) {
-				char tempstr[MAX_FILENAME_LENGTH];
-				/* Prepare entries: */
-				strcpy(tempstr, "  ");
-				strcat(tempstr, temp->filename);
-				File_ShrinkName(dlgfilenames[i], tempstr,
-					ENTRY_LENGTH);
-				/* Mark folders: */
-				if (temp->directory)
-					dlgfilenames[i][0] = SGFOLDER;
-				fsdlg[SGFSDLG_FIRSTENTRY + i].flags =
-					(SG_SELECTABLE | SG_EXIT | SG_RADIO);
-				temp = temp->next;
-			} else {
-				/* Clear entry */
-				dlgfilenames[i][0] = 0;
-				fsdlg[SGFSDLG_FIRSTENTRY + i].flags = 0;
-			}
-			fsdlg[SGFSDLG_FIRSTENTRY + i].state = 0;
-		}
-
-		eol = (temp == NULL);
-
-		refreshentries = false;
-		redraw = true;
-	}
-
-	/* Force redraw */
+	/* Force redraw ? */
 	if (redraw) {
 		init();
+		redraw = false;
 	}
 }
 
@@ -396,7 +339,74 @@ int DlgFileSelect::processDialog(void)
 		}
 	}
 
+	if (reloaddir) {
+		refreshEntries();
+	}
+
 	return retval;
+}
+
+void DlgFileSelect::refreshEntries(void)
+{
+	if (reloaddir) {
+		if (strlen(file_path) >= MAX_FILENAME_LENGTH) {
+			fprintf(stderr, "SDLGui_FileSelect: Path name too long!\n");
+			return;
+		}
+
+		free_list(gui_file_list);
+
+		/* Load directory entries: */
+		gui_file_list = create_list(file_path);
+		if (gui_file_list == NULL) {
+			fprintf(stderr, "SDLGui_FileSelect: Path not found.\n");
+			/* reset path and reload entries */
+			strcpy(file_path, "/");
+			strcpy(dlgpath, file_path);
+			gui_file_list = create_list(file_path);
+			if (gui_file_list == NULL)
+				/* we're really lost if even root is unreadable */
+				return;
+		}
+		reloaddir = false;
+		refreshentries = true;
+		redraw = true;
+	}
+
+	if (refreshentries) {
+		struct listentry *temp = gui_file_list;
+		int i;
+		for (i = 0; i < ypos; i++)
+			temp = temp->next;
+
+		/* Copy entries to dialog: */
+		for (i = 0; i < ENTRY_COUNT; i++) {
+			if (temp != NULL) {
+				char tempstr[MAX_FILENAME_LENGTH];
+				/* Prepare entries: */
+				strcpy(tempstr, "  ");
+				strcat(tempstr, temp->filename);
+				File_ShrinkName(dlgfilenames[i], tempstr,
+					ENTRY_LENGTH);
+				/* Mark folders: */
+				if (temp->directory)
+					dlgfilenames[i][0] = SGFOLDER;
+				fsdlg[SGFSDLG_FIRSTENTRY + i].flags =
+					(SG_SELECTABLE | SG_EXIT | SG_RADIO);
+				temp = temp->next;
+			} else {
+				/* Clear entry */
+				dlgfilenames[i][0] = 0;
+				fsdlg[SGFSDLG_FIRSTENTRY + i].flags = 0;
+			}
+			fsdlg[SGFSDLG_FIRSTENTRY + i].state = 0;
+		}
+
+		eol = (temp == NULL);
+
+		refreshentries = false;
+		redraw = true;
+	}
 }
 
 bool DlgFileSelect::pressedOk(void)

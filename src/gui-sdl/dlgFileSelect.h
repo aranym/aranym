@@ -38,11 +38,12 @@ class DlgFileSelect: public Dialog
 
 		/* The actual selection, -1 if none selected */
 		int selection, ypos;
-		bool eol, pressed_ok;
+		bool eol, pressed_ok, redraw;
 
 		void confirm(void);
  		void idle(void);
  		void processResult(void);
+		void refreshEntries(void);
  
 	public:
 		DlgFileSelect(SGOBJ *dlg, char *new_path_and_name, bool bAllowNew);
