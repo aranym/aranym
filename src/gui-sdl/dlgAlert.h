@@ -37,12 +37,13 @@ class DlgAlert: public Dialog
 		char *orig_t;
  		int ok_but_idx;
  
-		bool pressedOk(void);
 		void processResult(void);
  
 	public:
 		DlgAlert(SGOBJ *dlg, const char *text, alert_type type);
 		~DlgAlert();
+
+		bool pressedOk(void);
 };
 
 Dialog *DlgAlertOpen(const char *text, alert_type type);
