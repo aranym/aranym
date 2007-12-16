@@ -47,7 +47,7 @@ cursor_state *Dialog::getCursor(void)
 
 void Dialog::init(void)
 {
-	SDLGui_DrawDialog(dlg);
+	/*SDLGui_DrawDialog(dlg);*/
 
 	return_obj = -1;
 }
