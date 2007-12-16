@@ -214,7 +214,7 @@ void DlgFileSelect::confirm(void)
 
 void DlgFileSelect::idle(void)
 {
-	if (reloaddir) {
+	if (reloaddir || refreshentries) {
 		refreshEntries();
 	}
 
@@ -339,7 +339,7 @@ int DlgFileSelect::processDialog(void)
 		}
 	}
 
-	if (reloaddir) {
+	if (reloaddir || refreshentries) {
 		refreshEntries();
 	}
 
