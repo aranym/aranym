@@ -411,19 +411,19 @@ int DlgDisk::processDialogMain(void)
 	switch (return_obj) {
 		case FLP_BROWSE:		/* Choose a new disc A: */
 			strcpy(tmpname, gui_options.floppy.path);
-			SDLGui_Open(DlgFileSelectOpen(tmpname, false));
+			SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, false));
 			state = STATE_FSEL_FD0;
 			break;
 
 		case IDE0_BROWSE:
 			strcpy(tmpname, gui_options.atadevice[0][0].path);
-			SDLGui_Open(DlgFileSelectOpen(tmpname, true));
+			SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, true));
 			state = STATE_FSEL_IDE0;
 			break;
 
 		case IDE1_BROWSE:
 			strcpy(tmpname, gui_options.atadevice[0][1].path);
-			SDLGui_Open(DlgFileSelectOpen(tmpname, true));
+			SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, true));
 			state = STATE_FSEL_IDE1;
 			break;
 
@@ -480,7 +480,7 @@ int DlgDisk::processDialogFd0(void)
 {
 	int retval = Dialog::GUI_CONTINUE;
 
-	if (0 /*FIXME SDLGui_FileSelect(tmpname, false)*/) {
+	if (dlgFileSelect && dlgFileSelect->pressedOk()) {
 		if (!File_DoesFileNameEndWithSlash(tmpname)
 			/*&& File_Exists(tmpname) */ ) {
 			strcpy(gui_options.floppy.path, tmpname);
@@ -498,7 +498,7 @@ int DlgDisk::processDialogIde0(void)
 {
 	int retval = Dialog::GUI_CONTINUE;
 
-	if (0 /*FIXME SDLGui_FileSelect(tmpname, true)*/) {
+	if (dlgFileSelect && dlgFileSelect->pressedOk()) {
 		if (!File_DoesFileNameEndWithSlash(tmpname)
 			/*&& File_Exists(tmpname) */ ) {
 			strcpy(gui_options.atadevice[0][0].path, tmpname);
@@ -518,7 +518,7 @@ int DlgDisk::processDialogIde1(void)
 {
 	int retval = Dialog::GUI_CONTINUE;
 
-	if (0 /* FIXME SDLGui_FileSelect(tmpname, true)*/) {
+	if (dlgFileSelect && dlgFileSelect->pressedOk()) {
 		if (!File_DoesFileNameEndWithSlash(tmpname)
 			/*&& File_Exists(tmpname) */ ) {
 			strcpy(gui_options.atadevice[0][1].path, tmpname);
