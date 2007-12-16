@@ -334,6 +334,7 @@ int DlgFileSelect::processDialog(void)
 		case SGFSDLG_OKAY:
 			pressed_ok = true;
 			confirm();
+			// passthrough
 		case SGFSDLG_CANCEL:
 			retval = Dialog::GUI_CLOSE;
 			break;
