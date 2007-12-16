@@ -49,11 +49,12 @@ class DlgDisk: public Dialog
 		void confirm(void);
 
 		int processDialogMain(void);
-		int processDialogFd0(void);
-		int processDialogIde0(void);
-		int processDialogIde1(void);
 		int processDialogCdi0(void);
 		int processDialogCdi1(void);
+
+		void processResultFd0(void);
+		void processResultIde0(void);
+		void processResultIde1(void);
 
 		void init_create_disk_image(int disk);
 		bool create_disk_image(void);

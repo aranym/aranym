@@ -30,10 +30,12 @@
 #include "ata.h"
 #include "tools.h"
 #include "hardware.h"			// for getFDC()
-#include "debug.h"
 #include "dlgDisk.h"
 #include "dlgAlert.h"
 #include "dlgFileSelect.h"
+
+#define DEBUG 0
+#include "debug.h"
 
 bx_options_t gui_options;
 
@@ -308,7 +310,8 @@ void DlgDisk::init_create_disk_image(int disk)
 		sizeMB = BAR130G;
 	char text[250];
 	sprintf(text, "Create disk image '%s' with size %ld MB?", cdi_path, sizeMB);
-	SDLGui_Open(DlgAlertOpen(text, ALERT_OKCANCEL));
+	dlgAlert = (DlgAlert *) DlgAlertOpen(text, ALERT_OKCANCEL);
+	SDLGui_Open(dlgAlert);
 	state = STATE_CDI0;
 }
 
@@ -386,19 +389,11 @@ int DlgDisk::processDialog(void)
 		case STATE_MAIN:
 			retval = processDialogMain();
 			break;
-		case STATE_FSEL_FD0:
-			retval = processDialogFd0();
-			break;
-		case STATE_FSEL_IDE0:
-			retval = processDialogIde0();
-			break;
-		case STATE_FSEL_IDE1:
-			retval = processDialogIde1();
-			break;
 		case STATE_CDI0:
 			retval = processDialogCdi0();
 			break;
-		default:
+		case STATE_CDI1:
+			retval = processDialogCdi1();
 			break;
 	}
 	return retval;
@@ -476,31 +471,72 @@ int DlgDisk::processDialogMain(void)
 	return retval;
 }
 
-int DlgDisk::processDialogFd0(void)
+int DlgDisk::processDialogCdi0(void)
 {
+	D(bug("disk: dialog create disk image, step 1"));
+
 	int retval = Dialog::GUI_CONTINUE;
+	state = STATE_MAIN;
+
+	if (dlgAlert && dlgAlert->pressedOk()) {
+		if (File_Exists(cdi_path)) {
+			dlgAlert = (DlgAlert *) DlgAlertOpen("File Exists. Overwrite?", ALERT_OKCANCEL);
+			SDLGui_Open(dlgAlert);
+		}
+		state = STATE_CDI1;
+	}
+
+	return retval;
+}
+
+int DlgDisk::processDialogCdi1(void)
+{
+	D(bug("disk: dialog create disk image, step 2"));
+
+	int retval = Dialog::GUI_CONTINUE;
+	state = STATE_MAIN;
+
+	if (dlgAlert && dlgAlert->pressedOk()) {
+		char *ide_path = (cdi_disk==0) ? ide0_path : ide1_path;
+		int ide_select = (cdi_disk==0) ? IDE0_PRESENT : IDE1_PRESENT;
+		int ide_numpath = (cdi_disk==0) ? IDE0_PATH : IDE1_PATH;
+
+		if (create_disk_image()) {
+			File_ShrinkName(ide_path, gui_options.atadevice[0][cdi_disk].path,
+					discdlg[ide_numpath].w);
+			setSelected(ide_select, true);
+		} else {
+			ide_path[0] = 0;
+		}
+	}
+
+	return retval;
+}
+
+void DlgDisk::processResultFd0(void)
+{
+	D(bug("disk: result fd0"));
 
 	if (dlgFileSelect && dlgFileSelect->pressedOk()) {
 		if (!File_DoesFileNameEndWithSlash(tmpname)
-			/*&& File_Exists(tmpname) */ ) {
+		   /*&& File_Exists(tmpname) */ )
+		{
 			strcpy(gui_options.floppy.path, tmpname);
 			File_ShrinkName(floppy_path, tmpname, discdlg[FLP_PATH].w);
 		} else {
 			floppy_path[0] = 0;
 		}
 	}
-
-	state = STATE_MAIN;
-	return retval;
 }
 
-int DlgDisk::processDialogIde0(void)
+void DlgDisk::processResultIde0(void)
 {
-	int retval = Dialog::GUI_CONTINUE;
+	D(bug("disk: result ide0"));
 
 	if (dlgFileSelect && dlgFileSelect->pressedOk()) {
 		if (!File_DoesFileNameEndWithSlash(tmpname)
-			/*&& File_Exists(tmpname) */ ) {
+		    /*&& File_Exists(tmpname) */ )
+		{
 			strcpy(gui_options.atadevice[0][0].path, tmpname);
 			File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
 			UpdateDiskParameters(0, true);
@@ -509,69 +545,24 @@ int DlgDisk::processDialogIde0(void)
 			ide0_path[0] = 0;
 		}
 	}
-
-	state = STATE_MAIN;
-	return retval;
 }
 
-int DlgDisk::processDialogIde1(void)
+void DlgDisk::processResultIde1(void)
 {
-	int retval = Dialog::GUI_CONTINUE;
+	D(bug("disk: result ide1"));
 
 	if (dlgFileSelect && dlgFileSelect->pressedOk()) {
 		if (!File_DoesFileNameEndWithSlash(tmpname)
-			/*&& File_Exists(tmpname) */ ) {
+		    /*&& File_Exists(tmpname) */ )
+		{
 			strcpy(gui_options.atadevice[0][1].path, tmpname);
 			File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
-			UpdateDiskParameters(1, true);
+			UpdateDiskParameters(0, true);
 			setSelected(IDE1_PRESENT, true);
 		} else {
 			ide1_path[0] = 0;
 		}
 	}
-
-	state = STATE_MAIN;
-	return retval;
-}
-
-int DlgDisk::processDialogCdi0(void)
-{
-	int retval = Dialog::GUI_CONTINUE;
-	state = STATE_MAIN;
-
-	if (0 /* Result of asking creation of disk image */) {
-		if (File_Exists(cdi_path)) {
-			SDLGui_Open(DlgAlertOpen("File Exists. Overwrite?", ALERT_OKCANCEL));
-			state = STATE_CDI1;
-		} else {
-			/* Tell it like we overwrite */
-			retval = processDialogCdi1();
-		}
-	}
-
-	return retval;
-}
-
-int DlgDisk::processDialogCdi1(void)
-{
-	int retval = Dialog::GUI_CONTINUE;
-
-	if (0 /* Result of asking to overwrite disk image */) {
-		char *ide_path = (cdi_disk==0) ? ide0_path : ide1_path;
-		int ide_select = (cdi_disk==0) ? IDE0_PRESENT : IDE1_PRESENT;
-		int ide_numpath = (cdi_disk==0) ? IDE0_PATH : IDE1_PATH;
-
-		if (create_disk_image()) {
-			File_ShrinkName(ide_path, gui_options.atadevice[0][cdi_disk].path,
-							discdlg[ide_numpath].w);
-			setSelected(ide_select, true);
-		} else {
-			ide_path[0] = 0;
-		}
-	}
-
-	state = STATE_MAIN;
-	return retval;
 }
 
 void DlgDisk::confirm(void)
@@ -615,6 +606,34 @@ void DlgDisk::confirm(void)
 
 void DlgDisk::processResult(void)
 {
+	D(bug("disk: process result, state=%d", state));
+
+	switch(state) {
+		case STATE_FSEL_FD0:
+			processResultFd0();
+			dlgFileSelect = NULL;
+			state = STATE_MAIN;
+			break;
+		case STATE_FSEL_IDE0:
+			processResultIde0();
+			dlgFileSelect = NULL;
+			state = STATE_MAIN;
+			break;
+		case STATE_FSEL_IDE1:
+			processResultIde1();
+			dlgFileSelect = NULL;
+			state = STATE_MAIN;
+			break;
+		case STATE_CDI0:
+		case STATE_CDI1:
+			/* Will process it on next processDialog */
+			break;
+		default:
+			dlgFileSelect = NULL;
+			dlgAlert = NULL;
+			state = STATE_MAIN;
+			break;
+	}
 }
 
 Dialog *DlgDiskOpen(void)
