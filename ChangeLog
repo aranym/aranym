@@ -9,6 +9,8 @@
 2007/12/16 - Patrice
 - hostscreen: only update visible part of surface. Dirty rects and surface may be
   bigger.
+- gui: fix disk related dialog, writing missing parts. Also fix test cursor updates
+  by always redrawing dialog, then cursor above it.
 
 
 2007/12/12 - Patrice
