@@ -449,9 +449,9 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 		setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 	} else {
 		int dirty_w = hsurf->getDirtyWidth();
-		int dirty_h = hsurf->getDirtyHeight();
-		for (int y=0; y<dirty_h; y++) {
-			for (int x=0; x<dirty_w; x++) {
+		/*int dirty_h = hsurf->getDirtyHeight();*/
+		for (int y=0; y<height>>4; y++) {
+			for (int x=0; x<width>>4; x++) {
 				if (dirtyRects[y * dirty_w + x]) {
 					SDL_Rect src, dst;
 

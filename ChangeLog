@@ -1,3 +1,8 @@
+2007/12/16 - Patrice
+- hostscreen: only update visible part of surface. Dirty rects and surface may be
+  bigger.
+
+
 2007/12/12 - Patrice
 - hostsurface: add alpha property :-). And alpha setting for GUI.
   Add parameter to force SDL Surface recreation, so OpenGL can use a format that
