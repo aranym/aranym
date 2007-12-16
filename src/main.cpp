@@ -450,7 +450,7 @@ bool InitAll(void)
 		do {
 			check_event();	// process mouse & keyboard events
 			host->video->refresh();
-			SDL_Delay(1);
+			SDL_Delay(20);
 		} while(!SDLGui_isClosed());
 	}
 #endif /* SDL_GUI */
@@ -541,10 +541,15 @@ void RestartAll()
 {
 	lastTicks = 0;
 
-	// memory init
+	// memory init should be added here?
 
-	// NF reset provided by the RESET instruction hook
-	// HW reset provided by the RESET instruction hook
+	/*
+	 * Emulated Atari hardware and virtual hardware provided by NativeFeatures
+	 * is initialized by the RESET instruction in the AtariReset() handler
+	 * in the aranym_glue.cpp so it doesn't have to be initialized here.
+	 * The RESET instruction is at beginning on every operating system (TOS
+	 * and EmuTOS for sure, and it is added in our integrated LILO as well)
+	 */
 
 	// Host reset
 	host->reset();
