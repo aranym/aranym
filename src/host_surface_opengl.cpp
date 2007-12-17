@@ -132,6 +132,7 @@ SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 {
 	SDL_PixelFormat glPixelFormat;
 	memcpy(&glPixelFormat, pixelFormat, sizeof(SDL_PixelFormat));
+#if 0
 	switch(pixelFormat->BitsPerPixel) {
 		case 15:
 			/* GL_RGB5_A1, byteswap at updateTexture time */
@@ -176,6 +177,7 @@ SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 #endif
 			break;
 	}
+#endif
 	return HostSurface::createSdlSurface(width,height,&glPixelFormat);
 }
 

@@ -1,5 +1,7 @@
 2007/12/17 - Patrice
 - gui: process current dialog if a touchexit object is currently pressed.
+- opengl: disable changing surface format for a compatible texture format, till
+  the fvdi driver is fixed.
 
 
 2007/12/16 - Petr
