@@ -21,7 +21,7 @@
 #include "dialog.h"
 
 Dialog::Dialog(SGOBJ *new_dlg)
-	: dlg(new_dlg), return_obj(-1), last_clicked_obj(-1)
+	: dlg(new_dlg), return_obj(-1), last_clicked_obj(-1), touchExitPressed(false)
 {
 	/* Init cursor position in dialog */
 	cursor.object = SDLGui_FindEditField(dlg, -1, SG_FIRST_EDITFIELD);
@@ -70,6 +70,8 @@ void Dialog::mouseClick(const SDL_Event &event, int gui_x, int gui_y)
 	int x = event.button.x - gui_x;
 	int y = event.button.y - gui_y;
 
+	touchExitPressed = false;
+
 	clicked_obj = SDLGui_FindObj(dlg, x, y);
 	if (clicked_obj<0) {
 		return;
@@ -86,10 +88,11 @@ void Dialog::mouseClick(const SDL_Event &event, int gui_x, int gui_y)
 
 		/* Except for TOUCHEXIT objects which must be activated on mouse button pressed */
 		if (dlg[clicked_obj].flags & SG_TOUCHEXIT) {
-			SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y);
+			/*SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y);*/
 
 			return_obj = clicked_obj;
 			last_clicked_obj = -1;
+			touchExitPressed = true;
 		}
 
 		return;
@@ -239,3 +242,7 @@ void Dialog::processResult(void)
 {
 }
 
+bool Dialog::isTouchExitPressed(void)
+{
+	return touchExitPressed;
+}

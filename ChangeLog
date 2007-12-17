@@ -1,3 +1,7 @@
+2007/12/17 - Patrice
+- gui: process current dialog if a touchexit object is currently pressed.
+
+
 2007/12/16 - Petr
 - main.cpp: SDL_Delay() in the POSG (Power On Setup GUI) increased from 1 to
   20 in order to minimize the host CPU load.

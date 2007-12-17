@@ -33,6 +33,7 @@ class Dialog {
 		cursor_state cursor;
 		int return_obj;
 		int last_clicked_obj, last_state;
+		bool touchExitPressed;
 
 	public:
 		enum {
@@ -56,6 +57,7 @@ class Dialog {
 		virtual int processDialog(void);
 
 		virtual void processResult(void);
+		bool isTouchExitPressed(void);
 };
 
 #endif /* DIALOG_H */

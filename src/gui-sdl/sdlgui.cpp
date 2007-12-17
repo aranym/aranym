@@ -842,17 +842,22 @@ void SDLGui_setGuiPos(int guix, int guiy)
 HostSurface *SDLGui_getSurface(void)
 {
 	if (gui_dlg) {
-		cursor_state *cursor = gui_dlg->getCursor();
-
-		SDLGui_DrawDialog(gui_dlg->getDialog());
-		SDLGui_DrawCursor(gui_dlg->getDialog(), cursor);
+		/* Process a TOUCHEXIT object ? */
+		if (gui_dlg->isTouchExitPressed()) {
+			/*int retval =*/ gui_dlg->processDialog();
+		}
 
 		/* Blink cursor ? */
+		cursor_state *cursor = gui_dlg->getCursor();
 		Uint32 cur_ticks = SDL_GetTicks();
 		if (cur_ticks-cursor->blink_counter >= 500) {
 			cursor->blink_counter = cur_ticks;
 			cursor->blink_state = !cursor->blink_state;
 		}
+
+		/* Redraw updated dialog */
+		SDLGui_DrawDialog(gui_dlg->getDialog());
+		SDLGui_DrawCursor(gui_dlg->getDialog(), cursor);
 	}
 
 	if (gui_hsurf) {
