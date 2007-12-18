@@ -172,14 +172,14 @@ SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 			/* FVDI driver is hardcoded to ARGB, so try to use a
 			   compatible texture format if available */
 
-			bool has_ext_bgra = false;
 #ifdef GL_EXT_bgra
 			const char *extensions = (const char *) gl.GetString(GL_EXTENSIONS);
-			has_ext_bgra = (strstr(extensions, "GL_EXT_bgra") != NULL);
-#endif
+			bool has_ext_bgra = (strstr(extensions, "GL_EXT_bgra") != NULL);
+
 			if (has_ext_bgra) {
 				textureFormat = GL_BGRA_EXT;
 			}
+#endif
 
 #if 0
 # if SDL_BYTEORDER == SDL_LIL_ENDIAN
