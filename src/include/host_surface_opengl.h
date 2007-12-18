@@ -30,7 +30,7 @@ class HostSurface;
 class HostSurfaceOpenGL: public HostSurface
 {
 	private:
-		GLenum textureTarget;
+		GLenum textureTarget, textureFormat;
 		GLuint textureObject;
 		bool can_palette, use_palette, first_upload;
 

@@ -1,3 +1,8 @@
+2007/12/18 - Patrice
+- opengl: Use BGRA texture format if available, till FVDI driver can cope with
+  whatever format we could use.
+
+
 2007/12/17 - Patrice
 - gui: process current dialog if a touchexit object is currently pressed.
 - opengl: disable changing surface format for a compatible texture format, till

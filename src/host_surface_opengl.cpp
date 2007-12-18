@@ -132,8 +132,12 @@ SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 {
 	SDL_PixelFormat glPixelFormat;
 	memcpy(&glPixelFormat, pixelFormat, sizeof(SDL_PixelFormat));
-#if 0
+
+	textureFormat = GL_RGBA;
 	switch(pixelFormat->BitsPerPixel) {
+		case 8:
+			textureFormat = GL_COLOR_INDEX;
+			break;
 		case 15:
 			/* GL_RGB5_A1, byteswap at updateTexture time */
 			glPixelFormat.Rmask = 31<<10;
@@ -143,6 +147,7 @@ SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 			break;
 		case 16:
 			/* GL_RGB, 16bits, byteswap at updateTexture time */
+			textureFormat = GL_RGB;
 			glPixelFormat.Rmask = 31<<11;
 			glPixelFormat.Gmask = 63<<5;
 			glPixelFormat.Bmask = 31;
@@ -150,6 +155,7 @@ SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 			break;
 		case 24:
 			/* GL_RGB, 24bits */
+			textureFormat = GL_RGB;
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 			glPixelFormat.Rmask = 255;
 			glPixelFormat.Gmask = 255<<8;
@@ -163,21 +169,34 @@ SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 #endif
 			break;
 		case 32:
-			/* GL_RGBA */
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+			/* FVDI driver is hardcoded to ARGB, so try to use a
+			   compatible texture format if available */
+
+			bool has_ext_bgra = false;
+#ifdef GL_EXT_bgra
+			const char *extensions = (const char *) gl.GetString(GL_EXTENSIONS);
+			has_ext_bgra = (strstr(extensions, "GL_EXT_bgra") != NULL);
+#endif
+			if (has_ext_bgra) {
+				textureFormat = GL_BGRA_EXT;
+			}
+
+#if 0
+# if SDL_BYTEORDER == SDL_LIL_ENDIAN
 			glPixelFormat.Rmask = 255;
 			glPixelFormat.Gmask = 255<<8;
 			glPixelFormat.Bmask = 255<<16;
 			glPixelFormat.Amask = 255<<24;
-#else
+# else
 			glPixelFormat.Rmask = 255<<24;
 			glPixelFormat.Gmask = 255<<16;
 			glPixelFormat.Bmask = 255<<8;
 			glPixelFormat.Amask = 255;
+# endif
 #endif
 			break;
 	}
-#endif
+
 	return HostSurface::createSdlSurface(width,height,&glPixelFormat);
 }
 
@@ -242,13 +261,12 @@ void HostSurfaceOpenGL::updateTexture(void)
 
 	GLfloat mapR[256], mapG[256], mapB[256], mapA[256];
 
-	GLenum format = GL_RGBA, internalFormat = GL_RGBA;
+	GLenum internalFormat = GL_RGBA;
 	GLenum pixelType = GL_UNSIGNED_BYTE;
 	switch (getBpp()) {
 		case 8:
 			{
 				SDL_Color *palette = surface->format->palette->colors;
-				format = GL_COLOR_INDEX;
 #ifdef GL_EXT_paletted_texture
 				if (use_palette) {
 					Uint8 mapP[256*3];
@@ -284,12 +302,10 @@ void HostSurfaceOpenGL::updateTexture(void)
 			}
 			break;
 		case 16:
-			format = GL_RGB;
 			pixelType = GL_UNSIGNED_SHORT_5_6_5;
 			/* FIXME: care about endianness ? */
 			break;
 		case 24:
-			format = GL_RGB;
 			/* FIXME: care about endianness ? */
 			break;
 		case 32:
@@ -300,7 +316,7 @@ void HostSurfaceOpenGL::updateTexture(void)
 	if (first_upload) {
 		/* Complete texture upload the first time, and only parts after */
 		gl.TexImage2D(textureTarget,0, internalFormat, surface->w, surface->h, 0,
-			format, pixelType, surface->pixels
+			textureFormat, pixelType, surface->pixels
 		);
 		first_upload = false;
 	} else {
@@ -318,7 +334,7 @@ void HostSurfaceOpenGL::updateTexture(void)
 				surfPixels += (y<<4) * surface->pitch;
 				surfPixels += (x<<4) * surface->format->BytesPerPixel;				
 				gl.TexSubImage2D(textureTarget,0, x<<4,y<<4,16,16,
-					format, pixelType, surfPixels);
+					textureFormat, pixelType, surfPixels);
 			}
 		}
 		clearDirtyRects();
