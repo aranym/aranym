@@ -161,7 +161,7 @@ APP_IFC = aratapif
 TARGET = @TARGET@
 
 ## Rules
-.PHONY: install installdirs uninstall mostlyclean clean distclean depend dep $(APP_BUNDLE)
+.PHONY: install installdirs uninstall mostlyclean clean distclean depend $(APP_BUNDLE)
 .SUFFIXES:
 .SUFFIXES: .c .cpp .s .o .h .m .M
 
@@ -352,10 +352,8 @@ devdist: mrproper
 dist: distclean
 	cd $(srcdir)/../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore aranym
 
-depend dep:
-	sed -n '1,/^# DO NOT DELETE THIS LINE -- make depend depends on it./p' $(makefile) > $(makefile).new
-	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) | sed 's=^[^:]*:=$(OBJ_DIR)/&=' >> $(makefile).new
-	mv $(makefile).new $(makefile)
+depend:
+	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) > .depend
 
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
@@ -560,5 +558,7 @@ $(APP)-mmu.1.gz: ../doc/$(APP)-mmu.1
 $(APP_IFC).1.gz: ../doc/$(APP_IFC).1
 	gzip -9 -c $(srcdir)/../doc/$(APP_IFC).1 > $(APP_IFC).1.gz
 
-#-------------------------------------------------------------------------
-# DO NOT DELETE THIS LINE -- make depend depends on it.
+# Include dependencies
+ifneq ($(wildcard .depend),)
+include .depend
+endif
