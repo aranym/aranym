@@ -14,8 +14,9 @@ datadir = @datadir@
 mandir = @mandir@
 man1dir = $(mandir)/man1
 docdir = $(prefix)/share/doc
-makedir = @srcdir@
-srcdir = $(makedir)/src
+builddir = @builddir@
+top_srcdir = @top_srcdir@
+srcdir = $(top_srcdir)/src
 
 DESTDIR =
 CPU_TYPE = @CPU_TYPE@
@@ -24,7 +25,7 @@ CC = @CC@
 CXX = @CXX@
 CFLAGS = @CFLAGS@ $(SDL_CFLAGS)
 CXXFLAGS = @CXXFLAGS@ $(SDL_CFLAGS)
-CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I. -I$(makedir) -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@
+CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I$(builddir) -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@
 ARCHFLAGS = @ARCHFLAGS@
 WFLAGS = @WFLAGS@
 DEFS = @DEFS@ @DEFINES@
@@ -301,12 +302,12 @@ clean: mostlyclean
 distclean: clean
 	rm -rf $(OBJ_DIR)
 	rm -f $(makefile)
-	rm -f $(makedir)/config.cache $(makedir)/config.log $(makedir)/config.status $(makedir)/config.h
+	rm -f $(builddir)/config.cache $(builddir)/config.log $(builddir)/config.status $(builddir)/config.h
 	rm -f cmos aranymtest.rc
-	rm -rf $(makedir)/autom4te.cache
+	rm -rf $(top_srcdir)/autom4te.cache
 
 mrproper: distclean
-	rm -f $(makedir)/aclocal.m4 $(makedir)/configure $(makedir)/config.h.in
+	rm -f $(top_srcdir)/aclocal.m4 $(top_srcdir)/configure $(top_srcdir)/config.h.in
 
 bindistdirs:
 	$(SHELL) $(srcdir)/../mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)

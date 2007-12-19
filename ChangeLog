@@ -1,5 +1,7 @@
 2007/12/19 - Andreas
-- Makefile.in: Fix compilation outside source directory.
+- Makefile.in: Fix compilation outside source directory.  Use standard
+  autoconf variables builddir and top_srcdir.
+- darwin/Makefile: Change makedir to builddir.
 
 
 2007/12/18 - Patrice
