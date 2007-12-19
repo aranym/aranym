@@ -1,3 +1,7 @@
+2007/12/19 - Andreas
+- Makefile.in: Fix compilation outside source directory.
+
+
 2007/12/18 - Patrice
 - opengl: Use BGRA texture format if available, till FVDI driver can cope with
   whatever format we could use.
