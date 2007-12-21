@@ -1,3 +1,8 @@
+2007/12/21 - Patrice
+- opengl: Always destroy/recreate texture, as most platforms need it anyway,
+  like MacOSX and win32.
+
+
 2007/12/19 - Patrice
 - Makefile.in: Generate dependencies in .depend file, included at end of
   Makefile. Remove dep (useless?) target.
