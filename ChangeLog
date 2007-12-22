@@ -1,3 +1,8 @@
+2007/12/21 - Andreas
+- main_unix: Unconditionally call ndebug::init before parsing command
+  line.
+
+
 2007/12/21 - Patrice
 - opengl: Always destroy/recreate texture, as most platforms need it anyway,
   like MacOSX and win32.

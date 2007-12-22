@@ -264,12 +264,15 @@ int main(int argc, char **argv)
 	// remember program name
 	program_name = argv[0];
 
+#ifdef NEWDEBUG
+	ndebug::init();
+#endif
+
 	// parse command line switches
 	if (!decode_switches(argc, argv))
 		exit(-1);
 
 #ifdef NEWDEBUG
-	if (bx_options.startup.debugger) ndebug::init();
 	signal(SIGINT, setactvdebug);
 #endif
 
