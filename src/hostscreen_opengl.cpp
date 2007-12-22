@@ -143,21 +143,20 @@ void HostScreenOpenGL::makeSnapshot(void)
 	}
 	SDL_Surface *sdl_surf = sshot_hsurf->getSdlSurface();
 	if (sdl_surf) {
+#ifdef GL_EXT_bgra
 		int i;
 		Uint8 *dst = (Uint8 *) sdl_surf->pixels;
 
 		for (i=0;i<screen->h;i++) {
-			gl.ReadPixels(0,screen->h-i-1,screen->w,1,GL_BGRA,
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-				GL_UNSIGNED_INT_8_8_8_8_REV,
-#else
-				GL_UNSIGNED_INT_8_8_8_8,
-#endif
-				dst);
+			gl.ReadPixels(0,screen->h-i-1,screen->w,1,GL_BGRA_EXT,
+				GL_UNSIGNED_INT_8_8_8_8_REV, dst);
 			dst += sdl_surf->pitch;
 		}
 
 		SDL_SaveBMP(sdl_surf, filename);
+#else
+		fprintf(stderr, "screenshot: Sorry, BGRA texture format not supported\n");
+#endif
 	}
 
 	destroySurface(sshot_hsurf);

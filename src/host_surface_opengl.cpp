@@ -310,6 +310,11 @@ void HostSurfaceOpenGL::updateTexture(void)
 			break;
 		case 32:
 			/* FIXME: care about endianness ? */
+#ifdef GL_EXT_bgra
+			if (textureFormat == GL_BGRA_EXT) {
+				pixelType = GL_UNSIGNED_INT_8_8_8_8_REV;
+			}
+#endif
 			break;
 	}
 

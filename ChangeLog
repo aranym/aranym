@@ -1,3 +1,7 @@
+2007/12/22 - Patrice
+- opengl: Always use reversed pixel type for BGRA texture format.
+
+
 2007/12/21 - Andreas
 - main_unix: Unconditionally call ndebug::init before parsing command
   line.
