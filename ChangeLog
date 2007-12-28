@@ -1,3 +1,7 @@
+2007/12/29 - Andreas
+- Makefile.in: Fix dependency generation.
+
+
 2007/12/28 - Petr
 - data/wm_icon.bmp: added a 32x32 BMP version of new ARAnyM icon created by
   Anders Eriksson (thanks!)
