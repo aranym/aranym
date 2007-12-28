@@ -102,10 +102,10 @@ static uint32 lastTicks = 0;
 
 #if RTC_TIMER
 static SDL_Thread *RTCthread = NULL;
-static bool quit_rtc_loop = false;
-#else
-SDL_TimerID my_timer_id = NULL;
+static volatile bool using_rtc_timer = false;
+static volatile bool quit_rtc_loop = false;
 #endif
+SDL_TimerID my_timer_id = NULL;
 
 #if DEBUG
 static int early_interrupts = 0;
@@ -232,8 +232,10 @@ void invoke200HzInterrupt()
 #endif
 
 #if RTC_TIMER
-	// do not generate multiple interrupts, let it synchronize over time
-	count = 1;
+	if (using_rtc_timer) {
+		// do not generate multiple interrupts, let it synchronize over time
+		count = 1;
+	}
 #endif
 
 	int milliseconds = (count * ms_ticks);
@@ -255,36 +257,39 @@ void invoke200HzInterrupt()
 
 #if RTC_TIMER
 static int rtc_timer_thread(void * /*ptr*/) {
-	int fd, retval;
-	unsigned long data;
-	// struct timeval tv;
-
-	fd = open ("/dev/rtc", O_RDONLY);
+	int fd = open ("/dev/rtc", O_RDONLY);
 
 	if (fd == -1) {
-		perror("/dev/rtc");
-		exit(errno);
+		perror("ARAnyM RTC Timer: /dev/rtc");
+		return 1;
 	}
 
-	retval = ioctl(fd, RTC_IRQP_SET, 256); // 256 Hz
+	int retval = ioctl(fd, RTC_IRQP_SET, 256); // 256 Hz
 	if (retval == -1) {
-		perror("ioctl");
-		exit(errno);
+		perror("ARAnyM RTC Timer: ioctl(256 Hz)");
+		close(fd);
+		return 2;
 	}
 
 	/* Enable periodic interrupts */
 	retval = ioctl(fd, RTC_PIE_ON, 0);
 	if (retval == -1) {
-		perror("ioctl");
-		exit(errno);
+		perror("ARAnyM RTC Timer; ioctl(PIE_ON)");
+		close(fd);
+		return 3;
 	}
 
+	using_rtc_timer = true;
+
 	while(! quit_rtc_loop) {
+		unsigned long data;
+
 		/* This blocks */
-		retval = read(fd, &data, sizeof(unsigned long));
+		retval = read(fd, &data, sizeof(data));
 		if (retval == -1) {
-			perror("read");
-			exit(errno);
+			perror("ARAnyM RTC Timer: read");
+			close(fd);
+			return 4;
 		}
 		TriggerInternalIRQ();
 	}
@@ -292,8 +297,7 @@ static int rtc_timer_thread(void * /*ptr*/) {
 	/* Disable periodic interrupts */
 	retval = ioctl(fd, RTC_PIE_OFF, 0);
 	if (retval == -1) {
-		perror("ioctl");
-		exit(errno);
+		perror("ARAnyM RTC Timer: ioctl(PIE_OFF)");
 	}
 
 	close(fd);
@@ -301,7 +305,16 @@ static int rtc_timer_thread(void * /*ptr*/) {
 	return 0;
 }
 
-#else
+static void KillRTCTimer(void)
+{
+	if (RTCthread != NULL) {
+		quit_rtc_loop = true;
+		SDL_Delay(50);	// give it a time to safely finish the timer thread
+		SDL_KillThread(RTCthread);
+		RTCthread = NULL;
+	}
+}
+#endif
 
 /*
  * my_callback_function() is called every 10 miliseconds (~ 100 Hz)
@@ -311,7 +324,6 @@ Uint32 my_callback_function(Uint32 /*interval*/, void * /*param*/)
 	TriggerInternalIRQ();
 	return 10;					// come back in 10 milliseconds
 }
-#endif
 
 /*
  * Initialize the Operating System - Linux, TOS 4.04 or EmuTOS
@@ -478,9 +490,7 @@ bool InitAll(void)
 #if NFCDROM_SUPPORT
 	sdlInitParams |= SDL_INIT_CDROM;
 #endif
-#if !RTC_TIMER
 	sdlInitParams |= SDL_INIT_TIMER;
-#endif
 	if (SDL_Init(sdlInitParams) != 0) {
 		panicbug("SDL initialization failed: %s", SDL_GetError());
 		return false;
@@ -553,12 +563,22 @@ bool InitAll(void)
 	// timer init
 #if RTC_TIMER
 	RTCthread = SDL_CreateThread(rtc_timer_thread, NULL);
-	infoprint("Using RTC");
-#else
+	if (RTCthread != NULL) {
+		SDL_Delay(50); // give the timer thread time to initialize
+	}
+
+	if (using_rtc_timer) {
+		infoprint("Using RTC Timer");
+	}
+	else {
+		KillRTCTimer();
+#endif
 	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
 	if (my_timer_id == NULL) {
 		panicbug("SDL Timer does not work!");
 		return false;
+	}
+#if RTC_TIMER
 	}
 #endif
 
@@ -592,19 +612,13 @@ void ExitAll(void)
 
 	// Exit Time Manager
 #if RTC_TIMER
-	if (RTCthread != NULL) {
-		quit_rtc_loop = true;
-		SDL_Delay(100);	// give it a time to safely finish the timer thread
-		SDL_KillThread(RTCthread);
-		RTCthread = NULL;
-	}
-#else
+	KillRTCTimer();
+#endif
 	if (my_timer_id) {
 		SDL_RemoveTimer(my_timer_id);
 		my_timer_id = NULL;
 		SDL_Delay(100);	// give it a time to safely finish the timer thread
 	}
-#endif
 
 	D(bug("200 Hz IRQ statistics: max multiple irqs %d, total multiple irq ratio %02.2lf%%, 2xirq ration %02.2lf%%, 3xirq ratio %02.2lf%%, 4xirq ration %02.2lf%%, early irq ratio %02.2lf%%", max_mult_interrupts, multiple_interrupts*100.0 / total_interrupts, multiple_interrupts2*100.0 / total_interrupts, multiple_interrupts3*100.0 / total_interrupts, multiple_interrupts4*100.0 / total_interrupts, early_interrupts * 100.0 / total_interrupts));
 
