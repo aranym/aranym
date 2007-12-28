@@ -1223,45 +1223,47 @@ static bool decode_ini_file(const char *rcfile)
 
 	infoprint("Using config file: '%s'", rcfile);
 
+	bool verbose = false;
+
 	char home_folder[1024];
 	char data_folder[1024];
 	Host::getHomeFolder(home_folder, sizeof(home_folder));
 	Host::getDataFolder(data_folder, sizeof(data_folder));
 	ConfigOptions cfgopts(rcfile, home_folder, data_folder);
 
-	cfgopts.process_config(global_conf, "[GLOBAL]", true);
-	cfgopts.process_config(startup_conf, "[STARTUP]", true);
-	cfgopts.process_config(ikbd_conf, "[IKBD]", true);
-	cfgopts.process_config(hotkeys_conf, "[HOTKEYS]", true);
-	cfgopts.process_config(jit_conf, "[JIT]", true);
-	cfgopts.process_config(video_conf, "[VIDEO]", true);
-	cfgopts.process_config(tos_conf, "[TOS]", true);
-	cfgopts.process_config(ide_swap ? diskd_configs : diskc_configs, "[IDE0]", true);
-	cfgopts.process_config(ide_swap ? diskc_configs : diskd_configs, "[IDE1]", true);
+	cfgopts.process_config(global_conf, "[GLOBAL]", verbose);
+	cfgopts.process_config(startup_conf, "[STARTUP]", verbose);
+	cfgopts.process_config(ikbd_conf, "[IKBD]", verbose);
+	cfgopts.process_config(hotkeys_conf, "[HOTKEYS]", verbose);
+	cfgopts.process_config(jit_conf, "[JIT]", verbose);
+	cfgopts.process_config(video_conf, "[VIDEO]", verbose);
+	cfgopts.process_config(tos_conf, "[TOS]", verbose);
+	cfgopts.process_config(ide_swap ? diskd_configs : diskc_configs, "[IDE0]", verbose);
+	cfgopts.process_config(ide_swap ? diskc_configs : diskd_configs, "[IDE1]", verbose);
 
-	cfgopts.process_config(disk0_configs, "[PARTITION0]", true);
-	cfgopts.process_config(disk1_configs, "[PARTITION1]", true);
-	cfgopts.process_config(disk2_configs, "[PARTITION2]", true);
-	cfgopts.process_config(disk3_configs, "[PARTITION3]", true);
-	cfgopts.process_config(disk4_configs, "[PARTITION4]", true);
-	cfgopts.process_config(disk5_configs, "[PARTITION5]", true);
-	cfgopts.process_config(disk6_configs, "[PARTITION6]", true);
-	cfgopts.process_config(disk7_configs, "[PARTITION7]", true);
+	cfgopts.process_config(disk0_configs, "[PARTITION0]", verbose);
+	cfgopts.process_config(disk1_configs, "[PARTITION1]", verbose);
+	cfgopts.process_config(disk2_configs, "[PARTITION2]", verbose);
+	cfgopts.process_config(disk3_configs, "[PARTITION3]", verbose);
+	cfgopts.process_config(disk4_configs, "[PARTITION4]", verbose);
+	cfgopts.process_config(disk5_configs, "[PARTITION5]", verbose);
+	cfgopts.process_config(disk6_configs, "[PARTITION6]", verbose);
+	cfgopts.process_config(disk7_configs, "[PARTITION7]", verbose);
 
-	cfgopts.process_config(arafs_conf, "[HOSTFS]", true);
-	cfgopts.process_config(opengl_conf, "[OPENGL]", true);
-	cfgopts.process_config(eth0_conf, "[ETH0]", true);
-	cfgopts.process_config(eth1_conf, "[ETH1]", true);
-	cfgopts.process_config(eth2_conf, "[ETH2]", true);
-	cfgopts.process_config(eth3_conf, "[ETH3]", true);
-	cfgopts.process_config(lilo_conf, "[LILO]", true);
-	cfgopts.process_config(midi_conf, "[MIDI]", true);
-	cfgopts.process_config(nfcdroms_conf, "[CDROMS]", true);
-	cfgopts.process_config(autozoom_conf, "[AUTOZOOM]", true);
-	cfgopts.process_config(osmesa_conf, "[NFOSMESA]", true);
-	cfgopts.process_config(parallel_conf, "[PARALLEL]", true);
-	cfgopts.process_config(natfeat_conf, "[NATFEATS]", true);
-	cfgopts.process_config(nfvdi_conf, "[NFVDI]", true);
+	cfgopts.process_config(arafs_conf, "[HOSTFS]", verbose);
+	cfgopts.process_config(opengl_conf, "[OPENGL]", verbose);
+	cfgopts.process_config(eth0_conf, "[ETH0]", verbose);
+	cfgopts.process_config(eth1_conf, "[ETH1]", verbose);
+	cfgopts.process_config(eth2_conf, "[ETH2]", verbose);
+	cfgopts.process_config(eth3_conf, "[ETH3]", verbose);
+	cfgopts.process_config(lilo_conf, "[LILO]", verbose);
+	cfgopts.process_config(midi_conf, "[MIDI]", verbose);
+	cfgopts.process_config(nfcdroms_conf, "[CDROMS]", verbose);
+	cfgopts.process_config(autozoom_conf, "[AUTOZOOM]", verbose);
+	cfgopts.process_config(osmesa_conf, "[NFOSMESA]", verbose);
+	cfgopts.process_config(parallel_conf, "[PARALLEL]", verbose);
+	cfgopts.process_config(natfeat_conf, "[NATFEATS]", verbose);
+	cfgopts.process_config(nfvdi_conf, "[NFVDI]", verbose);
 
 	return true;
 }
