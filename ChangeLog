@@ -5,6 +5,10 @@
 - Makefile.in: copy the new icon to the data folder upon installation
 - parameters.cpp, rtc.cpp: less verbosity at start up
 
+- main.cpp: RTC timer is probed and if it fails then a safe fallback
+  to SDL timer occurs...
+- configure.ac: RTC timer is enabled by default on Linux platform
+
 
 2007/12/22 - Patrice
 - opengl: Always use reversed pixel type for BGRA texture format.

@@ -100,7 +100,7 @@ AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per s
 
 AC_ARG_ENABLE(lilo,            [  --enable-lilo           enable Linux-m68k loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
 
-AC_ARG_ENABLE(rtctimer,        [  --enable-rtctimer       enable Linux /dev/rtc as source timer (default=no)], WANT_RTCTIMER="$enableval", WANT_RTCTIMER="no")
+AC_ARG_ENABLE(rtctimer,        [  --enable-rtctimer       enable Linux /dev/rtc as source timer (default=yes)], WANT_RTCTIMER="$enableval", WANT_RTCTIMER="yes")
 
 AC_ARG_ENABLE(parallelx86,     [  --enable-parallelx86    enable Linux X86 hw access for parallel port (default=no)], [WANT_PARALLELX86=$enableval], [WANT_PARALLELX86=no])
 
