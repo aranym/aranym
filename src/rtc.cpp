@@ -108,7 +108,7 @@ bool RTC::load()
 			ret = true;
 		}
 		fclose(f);
-		infoprint("NVRAM loaded from '%s'", nvram_filename);
+		if (false /*verbose*/) infoprint("NVRAM loaded from '%s'", nvram_filename);
 	}
 	else {
 		panicbug("NVRAM not found at '%s'", nvram_filename);
