@@ -248,6 +248,7 @@ install: $(APP) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).
 	$(INSTALL_DATA) $(srcdir)/../atari/tools/README $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
 	$(INSTALL_DATA) $(srcdir)/../atari/tools/pc101us.kbd.bz2 $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
 	$(INSTALL_DATA) $(srcdir)/../atari/sound/README $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
+	$(INSTALL_DATA) $(srcdir)/../data/wm_icon.bmp $(DESTDIR)$(datadir)/$(APP)/wm_icon.bmp
 	
 installdirs:
 	$(SHELL) $(srcdir)/../mkinstalldirs $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir)/$(APP) $(DESTDIR)$(datadir)/$(APP)/atari $(DESTDIR)$(datadir)/$(APP)/atari/hostfs $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa $(DESTDIR)$(datadir)/$(APP)/atari/network $(DESTDIR)$(datadir)/$(APP)/atari/tools $(DESTDIR)$(datadir)/$(APP)/atari/sound $(DESTDIR)$(docdir)/$(APP)
@@ -282,6 +283,7 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/sound/README
+	rm -f $(DESTDIR)$(datadir)/$(APP)/wm_icon.bmp
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/hostfs
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/nfcdrom
 	rmdir $(DESTDIR)$(datadir)/$(APP)/atari/nfjpeg
@@ -342,6 +344,7 @@ bindist: $(APP) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).
 	$(INSTALL_DATA) $(srcdir)/../atari/tools/README tmpdist$(datadir)/$(APP)/atari/tools/README
 	$(INSTALL_DATA) $(srcdir)/../atari/tools/pc101us.kbd.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
 	$(INSTALL_DATA) $(srcdir)/../atari/sound/README tmpdist$(datadir)/$(APP)/atari/sound/README
+	$(INSTALL_DATA) $(srcdir)/../data/wm_icon.bmp tmpdist$(datadir)/$(APP)/wm_icon.bmp
 	chmod -R a+r tmpdist
 	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
 	rm -rf tmpdist
