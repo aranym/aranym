@@ -1,3 +1,11 @@
+2007/12/28 - Petr
+- data/wm_icon.bmp: added a 32x32 BMP version of new ARAnyM icon created by
+  Anders Eriksson (thanks!)
+- main.cpp: set the new icon in the window manager
+- Makefile.in: copy the new icon to the data folder upon installation
+- parameters.cpp, rtc.cpp: less verbosity at start up
+
+
 2007/12/22 - Patrice
 - opengl: Always use reversed pixel type for BGRA texture format.
 
