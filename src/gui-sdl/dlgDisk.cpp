@@ -40,11 +40,11 @@
 bx_options_t gui_options;
 
 // floppy
-static char ide0_name[22];		// size of this array defines also the GUI edit size
-static char ide1_name[22];
+static char ide0_name[41];		// size of this array defines also the GUI edit field length
+static char ide1_name[41];
 
-static char ide0_size[6], ide0_cyl[6], ide0_head[3], ide0_spt[4];
-static char ide1_size[6], ide1_cyl[6], ide1_head[3], ide1_spt[4];
+static char ide0_size[7], ide0_cyl[6], ide0_head[3], ide0_spt[4];
+static char ide1_size[7], ide1_cyl[6], ide1_head[3], ide1_spt[4];
 
 static char *eject = "Eject";
 static char *insert = "Insert";
@@ -61,14 +61,18 @@ static char ide1_path[80];
 /* The disks dialog: */
 enum DISCDLG {
 	box_main,
+	
 	box_floppy,
 	text_floppy,
+	spacer_mount,
 	FLOPPY_MOUNT,
 	FLP_BROWSE,
 	FLP_PATH,
+
 	box_ide0,
 	text_ide0,
 	IDE0_NAME,
+	spacer_name0,
 	IDE0_MOUNT,
 	IDE0_BROWSE,
 	IDE0_PATH,
@@ -76,17 +80,22 @@ enum DISCDLG {
 	IDE0_CDROM,
 	IDE0_READONLY,
 	IDE0_BYTESWAP,
-	text_chs0,
+	text_geom0,
+	text_cyls0,
 	IDE0_CYL,
+	text_heads0,
 	IDE0_HEAD,
+	text_spts0,
 	IDE0_SEC,
 	text_size0,
 	IDE0_SIZE,
 	text_size0mb,
 	IDE0_GENERATE,
+
 	box_ide1,
 	text_ide1,
 	IDE1_NAME,
+	spacer_name1,
 	IDE1_MOUNT,
 	IDE1_BROWSE,
 	IDE1_PATH,
@@ -94,62 +103,79 @@ enum DISCDLG {
 	IDE1_CDROM,
 	IDE1_READONLY,
 	IDE1_BYTESWAP,
-	text_chs1,
+	text_geom1,
+	text_cyls1,
 	IDE1_CYL,
+	text_heads1,
 	IDE1_HEAD,
+	text_spts1,
 	IDE1_SEC,
 	text_size1,
 	IDE1_SIZE,
 	text_size1mb,
 	IDE1_GENERATE,
+
 	HELP,
 	APPLY,
 	CANCEL
 };
 
 static SGOBJ discdlg[] = {
-	{SGBOX, SG_BACKGROUND, 0, 0, 0, 40, 25, NULL},
-	{SGBOX, 0, 0, 1, 2, 38, 3, NULL},
-	{SGTEXT, 0, 0, 2, 1, 14, 1, "Floppy disk A:"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 30, 2, 8, 1, NULL},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 4, 5, 1, "Path:"},
-	{SGTEXT, 0, 0, 8, 4, 30, 1, NULL},
-	{SGBOX, 0, 0, 1, 7, 38, 6, NULL},
-	{SGTEXT, 0, 0, 2, 6, 6, 1, "IDE0:"},
-	{SGEDITFIELD, 0, 0, 8, 6, sizeof(ide0_name) - 1, 1, ide0_name},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 30, 6, 8, 1, NULL},
+	{SGBOX, SG_BACKGROUND, 0, 0, 0, 76, 25, NULL},
+
+	{SGBOX, 0, 0, 1, 2, 74, 2, NULL},
+	{SGTEXT, 0, 0, 2, 1, 16, 1, " Floppy disk A: "},
+	{SGTEXT, 0, 0, 27, 1, 1, 1, " "},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 18, 1, 9, 1, NULL},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 3, 5, 1, "Path:"},
+	{SGTEXT, 0, 0, 8, 3, 67, 1, NULL},
+
+	{SGBOX, 0, 0, 1, 7, 74, 6, NULL},
+	{SGTEXT, 0, 0, 2, 6, 17, 1, " Hard disk IDE0:"},
+	{SGEDITFIELD, 0, 0, 19, 6, sizeof(ide0_name) - 1, 1, ide0_name},
+	{SGTEXT, 0, 0, 59, 6, 1, 1, " "},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 66, 6, 8, 1, NULL},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 8, 5, 1, "Path:"},
-	{SGTEXT, 0, 0, 8, 8, 30, 1, NULL},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 9, 8, 1, "Present"},
-	{SGCHECKBOX, SG_SELECTABLE | SG_EXIT, 0, 28, 10, 8, 1, "CDROM"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 11, 8, 1, "ReadOnly"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 12, 8, 1, "ByteSwap"},
-	{SGTEXT, 0, 0, 2, 10, 10, 1, "Geo C/H/S:"},
-	{SGEDITFIELD, 0, 0, 12, 10, 5, 1, ide0_cyl},
-	{SGEDITFIELD, 0, 0, 19, 10, 2, 1, ide0_head},
-	{SGEDITFIELD, 0, 0, 24, 10, 3, 1, ide0_spt},
-	{SGTEXT, 0, 0, 2, 12, 5, 1, "Size:"},
-	{SGEDITFIELD, 0, 0, 8, 12, 5, 1, ide0_size},
-	{SGTEXT, 0, 0, 14, 12, 2, 1, "MB"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 17, 12, 10, 1, "Generate"},
-	{SGBOX, 0, 0, 1, 15, 38, 6, NULL},
-	{SGTEXT, 0, 0, 2, 14, 6, 1, "IDE1:"},
-	{SGEDITFIELD, 0, 0, 8, 14, sizeof(ide1_name) - 1, 1, ide1_name},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 30, 14, 8, 1, NULL},
+	{SGTEXT, 0, 0, 8, 8, 66, 1, NULL},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 9, 8, 1, "Present"},
+	{SGCHECKBOX, SG_SELECTABLE | SG_EXIT, 0, 63, 10, 8, 1, "is CDROM"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 11, 8, 1, "ReadOnly"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 12, 8, 1, "ByteSwap"},
+	{SGTEXT, 0, 0, 2, 10, 8, 1, "Geometry"},
+	{SGTEXT, 0, 0, 12, 10, 10, 1, "Cylinders:"},
+	{SGEDITFIELD, 0, 0, 22, 10, 5, 1, ide0_cyl},
+	{SGTEXT, 0, 0, 29, 10, 6, 1, "Heads:"},
+	{SGEDITFIELD, 0, 0, 35, 10, 2, 1, ide0_head},
+	{SGTEXT, 0, 0, 39, 10, 18, 1, "Sectors per track:"},
+	{SGEDITFIELD, 0, 0, 57, 10, 3, 1, ide0_spt},
+	{SGTEXT, 0, 0, 2, 12, 10, 1, "Disk Size:"},
+	{SGEDITFIELD, 0, 0, 12, 12, 6, 1, ide0_size},
+	{SGTEXT, 0, 0, 19, 12, 2, 1, "MB"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 31, 12, 21, 1, "Generate Disk Image"},
+
+	{SGBOX, 0, 0, 1, 15, 74, 6, NULL},
+	{SGTEXT, 0, 0, 2, 14, 17, 1, " Hard disk IDE1:"},
+	{SGEDITFIELD, 0, 0, 19, 14, sizeof(ide1_name) - 1, 1, ide1_name},
+	{SGTEXT, 0, 0, 59, 14, 1, 1, " "},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 66, 14, 8, 1, NULL},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 16, 5, 1, "Path:"},
-	{SGTEXT, 0, 0, 8, 16, 30, 1, NULL},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 17, 8, 1, "Present"},
-	{SGCHECKBOX, SG_SELECTABLE | SG_EXIT, 0, 28, 18, 8, 1, "CDROM"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 19, 8, 1, "ReadOnly"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 28, 20, 8, 1, "ByteSwap"},
-	{SGTEXT, 0, 0, 2, 18, 10, 1, "Geo C/H/S:"},
-	{SGEDITFIELD, 0, 0, 12, 18, 5, 1, ide1_cyl},
-	{SGEDITFIELD, 0, 0, 19, 18, 2, 1, ide1_head},
-	{SGEDITFIELD, 0, 0, 24, 18, 3, 1, ide1_spt},
-	{SGTEXT, 0, 0, 2, 20, 5, 1, "Size:"},
-	{SGEDITFIELD, 0, 0, 8, 20, 5, 1, ide1_size},
-	{SGTEXT, 0, 0, 14, 20, 2, 1, "MB"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 17, 20, 10, 1, "Generate"},
+	{SGTEXT, 0, 0, 8, 16, 66, 1, NULL},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 17, 8, 1, "Present"},
+	{SGCHECKBOX, SG_SELECTABLE | SG_EXIT, 0, 63, 18, 8, 1, "is CDROM"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 19, 8, 1, "ReadOnly"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 20, 8, 1, "ByteSwap"},
+	{SGTEXT, 0, 0, 2, 18, 8, 1, "Geometry"},
+	{SGTEXT, 0, 0, 12, 18, 10, 1, "Cylinders:"},
+	{SGEDITFIELD, 0, 0, 22, 18, 5, 1, ide1_cyl},
+	{SGTEXT, 0, 0, 29, 18, 6, 1, "Heads:"},
+	{SGEDITFIELD, 0, 0, 35, 18, 2, 1, ide1_head},
+	{SGTEXT, 0, 0, 39, 18, 18, 1, "Sectors per track:"},
+	{SGEDITFIELD, 0, 0, 57, 18, 3, 1, ide1_spt},
+	{SGTEXT, 0, 0, 2, 20, 10, 1, "Disk Size:"},
+	{SGEDITFIELD, 0, 0, 12, 20, 6, 1, ide1_size},
+	{SGTEXT, 0, 0, 19, 20, 2, 1, "MB"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 31, 20, 21, 1, "Generate Disk Image"},
+
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 23, 6, 1, "Help"},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, 20, 23, 8, 1, "Apply"},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 30, 23, 8, 1, "Cancel"},
@@ -159,9 +185,9 @@ static SGOBJ discdlg[] = {
 static const char *HELP_TEXT =
 	"For creating new disk image click on the [Path] and select a file (or type in a new filename).\n"
 	"\n"
-	"Then set the desired [Size:] of the new disk in MegaBytes.\n"
+	"Then set the desired [Disk Size:] in MegaBytes.\n"
 	"\n"
-	"At last click on Generate and the disk image will be created.\n"
+	"At last click on [Generate Disk Image] and the disk image will be created.\n"
 	"\n" "Now you can reboot to your OS and partition this new disk.";
 
 void setState(int index, int bits, bool set)
@@ -258,7 +284,7 @@ static void UpdateDiskParameters(int disk, bool updateCHS)
 	}
 
 	// output
-	sprintf(disk == 0 ? ide0_size : ide1_size, "%5d", sizeMB);
+	sprintf(disk == 0 ? ide0_size : ide1_size, "%6d", sizeMB);
 	sprintf(disk == 0 ? ide0_cyl : ide1_cyl, "%5d", cyl);
 	sprintf(disk == 0 ? ide0_head : ide1_head, "%2d", head);
 	sprintf(disk == 0 ? ide0_spt : ide1_spt, "%3d", spt);
@@ -557,7 +583,7 @@ void DlgDisk::processResultIde1(void)
 		{
 			strcpy(gui_options.atadevice[0][1].path, tmpname);
 			File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
-			UpdateDiskParameters(0, true);
+			UpdateDiskParameters(1, true);
 			setSelected(IDE1_PRESENT, true);
 		} else {
 			ide1_path[0] = 0;
