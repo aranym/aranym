@@ -39,15 +39,15 @@ enum OSDLG {
 
 static SGOBJ osdlg[] =
 {
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL },
-	{ SGBOX, 0, 0, 1,2, 38,3, NULL },
-	{ SGTEXT, 0, 0, 2,3, 12,1, "TOS patches:" },
-	{ SGCHECKBOX, SG_SELECTABLE, 0, 15,2, 22,1, "CON: redirect > stdout" },
-	{ SGTEXT, 0, 0, 15,4, 5,1, "_MCH:" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 21,4, 6,1, "ARAnyM" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 31,4, 6,1, "Falcon" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8,23, 8,1, "Apply" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28,23, 8,1, "Cancel" },
+	{ SGBOX, SG_BACKGROUND, 0, 0,0, 50,10, NULL },
+	{ SGBOX, 0, 0, 1,2, 48,4, NULL },
+	{ SGTEXT, 0, 0, 2,1, 13,1, " TOS patches " },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_BUTTON_RIGHT, 0, 2,3, 42+3,1, "BIOS CON: output redirected to Host stdout" },
+	{ SGTEXT, 0, 0, 2,5, 18,1, "_MCH Cookie value:" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 21,5, 6,1, "ARAnyM" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 32,5, 6,1, "Falcon" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8,8, 8,1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28,8, 8,1, "Cancel" },
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
