@@ -41,23 +41,25 @@
 #define SGFSDLG_OKAY       27
 #define SGFSDLG_CANCEL     28
 
+#define DLG_WIDTH			40
+
 #define ENTRY_COUNT (SGFSDLG_LASTENTRY - SGFSDLG_FIRSTENTRY + 1)
-#define ENTRY_LENGTH 35
+#define ENTRY_LENGTH		(DLG_WIDTH-5)
 
 
-static char dlgpath[ENTRY_LENGTH+4], dlgfname[ENTRY_LENGTH-2];	/* File and path name in the dialog */
+static char dlgpath[DLG_WIDTH-1], dlgfname[ENTRY_LENGTH-2];	/* File and path name in the dialog */
 static char dlgfilenames[ENTRY_COUNT][ENTRY_LENGTH + 1];
 
 /* The dialog data: */
 static SGOBJ fsdlg[] = {
-	{SGBOX, SG_BACKGROUND, 0, 0, 0, 40, 25, NULL},
-	{SGTEXT, 0, 0, 13, 1, 13, 1, "Choose a file"},
+	{SGBOX, SG_BACKGROUND, 0, 0, 0, DLG_WIDTH, 25, NULL},
+	{SGTEXT, 0, 0, (DLG_WIDTH-13)/2, 1, 13, 1, "Choose a file"},
 	{SGTEXT, 0, 0, 1, 2, 7, 1, "Folder:"},
 	{SGTEXT, 0, 0, 1, 3, sizeof(dlgpath)-1, 1, dlgpath},
 	{SGTEXT, 0, 0, 1, 4, 6, 1, "File:"},
-	{SGTEXT, 0, 0, 7, 4, sizeof(dlgfname)-2, 1, dlgfname},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 31, 1, 4, 1, ".."},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 36, 1, 3, 1, "/"},
+	{SGTEXT, 0, 0, 7, 4, sizeof(dlgfname)-1, 1, dlgfname},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, DLG_WIDTH-9, 1, 4, 1, ".."},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, DLG_WIDTH-4, 1, 3, 1, "/"},
 	{SGBOX, 0, 0, 1, 6, ENTRY_LENGTH+3, 15, NULL},
 	{SGBOX, 0, 0, ENTRY_LENGTH+3, 6, 1, 15, NULL},
 	{SGTEXT, 0, 0, 2, 6, ENTRY_LENGTH, 1, dlgfilenames[0]},
@@ -79,9 +81,9 @@ static SGOBJ fsdlg[] = {
 	/* Arrow up */
 	{SGBUTTON, SG_SELECTABLE | SG_TOUCHEXIT, 0, ENTRY_LENGTH+3, 20, 1, 1, "\x02"},
 	/* Arrow down */
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, 10, 23, 8, 1,
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, (DLG_WIDTH-8-8)/3, 23, 8, 1,
 	 "OK"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 24, 23, 8, 1, "Cancel"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, (DLG_WIDTH-8-8)*2/3+8, 23, 8, 1, "Cancel"},
 	{-1, 0, 0, 0, 0, 0, 0, NULL}
 };
 
