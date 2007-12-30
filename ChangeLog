@@ -1,3 +1,7 @@
+2007/12/30 - Xavier
+- tools/build-cygwin.sh: updated to fit the new building system.
+
+
 2007/12/30 - Petr
 - gui-sdl/*: ARAnyM SETUP is 76 columns wide now. Main, Alert, FileSelect and
   Disk dialogs were enlarged to full width. Couple more smaller dialogs

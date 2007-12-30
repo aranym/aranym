@@ -1,12 +1,12 @@
 #!/bin/bash
 #
 # Easy ARAnyM compilation under Cygwin
-# (c) 2003-2005 Xavier Joubert for the ARAnyM team
+# (c) 2003-2007 Xavier Joubert for the ARAnyM team
 #
 #
 # This script allows to easily build ARAnyM under Cygwin. The problem
 # is that SDL needs to be slightly modified under Cygwin to allow to use
-# it for real Cygwin applications (instead of MinGW32 applications).
+# it to build real Cygwin applications (instead of MinGW32 applications).
 # This modification is a dirty hack (see comments below)...
 #
 # To use this, simply create a directory where everything will be
@@ -19,14 +19,14 @@
 # flag set - if not, "chmod +x build-cygwin.sh").
 #
 # Untar SDL sources in this directory (They are avaible at :
-# http://www.libsdl.org/download-1.2.php ). I used SDL 1.2.8, but it should
+# http://www.libsdl.org/download-1.2.php ). I used SDL 1.2.12, but it should
 # work with newer releases as they will be available (CVS won't work !).
 # Please edit the SDL_SOURCES variable below to reflect the path where
 # SDL sources lie.
 #
 # If you want to compile ARAnyM with --enable-nfjpeg (NatFeat jpeg
 # decoder), untar SDL_image sources next to SDL sources (They are available
-# at : http://www.libsdl.org/projects/SDL_image/ ). I used SDL_image 1.2.4,
+# at : http://www.libsdl.org/projects/SDL_image/ ). I used SDL_image 1.2.6,
 # but it should work with newer releases as they will be available (CVS
 # won't work !). Please edit SDL_IMAGE_SOURCES variable to reflect the path
 # where SDL_image sources lie. Set this variable to blank if you don't want
@@ -38,7 +38,9 @@
 # the path where ARAnyM sources lie.
 #
 # Now you can run "./build-cygwin.sh" to run the build ! You'll get your
-# binary after a few minutes (depending on your system).
+# binary after a few minutes (depending on your system). If you get errors
+# about "\r", please run "dos2unix build-cygwin.sh" to convert line endings
+# from DOS style to unix style.
 #
 # Any parameter given to build-cygwin.sh will be transmitted to ARAnyM's
 # configure script, so you can run "./build-cygwin.sh --enable-fullmmu"
@@ -47,16 +49,14 @@
 # of configure options for ARAnyM.
 #
 # If you happen to modify some sources, you can run "./build-cygwin.sh"
-# again which will simply run "make" in the correct directory
-# (aranym-build/src/Unix). Please note that configure options will be
-# ignored in this case !
+# again which will simply run "make" in the correct directory (aranym-build).
+# Please note that configure options will be ignored in this case !
 #
-# If you want to re-configure, simply
-# "rm aranym-build/src/Unix/Makefile" and run build-cygwin.sh again.
+# If you want to re-configure, simply "rm aranym-build/Makefile" and run
+# build-cygwin.sh again.
 #
-# If you modify aranym-build/src/Unix/configure.ac, build-cygwin.sh
-# will automaticaly re-configure sources. Don't forget to give any
-# configure options you need !
+# If you modify aranym-build/configure.ac, build-cygwin.sh will automaticaly
+# re-configure sources. Don't forget to give any configure options you need !
 #
 # If you want a clean rebuild from original sources, simply "rm -r
 # aranym-build/" and run build-cygwin.sh again.
@@ -68,6 +68,7 @@
 # - xorg-x11-bin (for the makedepend binary)
 # - cvs, autoconf and automake (if you want to use CVS version, or if
 #   you modify configure.ac)
+# - cygutils (for the dos2unix tool)
 #
 # Questions about building ARAnyM should go to the developper mailing
 # list. See http://aranym.sourceforge.net/development.html for
@@ -76,8 +77,8 @@
 
 #----------------------------------------------
 # Edit this to suit your configuration !
-SDL_SOURCES=${PWD}/SDL-1.2.11
-SDL_IMAGE_SOURCES=${PWD}/SDL_image-1.2.5
+SDL_SOURCES=${PWD}/SDL-1.2.12
+SDL_IMAGE_SOURCES=${PWD}/SDL_image-1.2.6
 ARANYM_SOURCES=${PWD}/aranym
 #----------------------------------------------
 
@@ -203,16 +204,7 @@ if [ ! -z ${SDL_IMAGE_SOURCES} -a \
 fi
 
 echo ${LINE2}
-if [ ! -d ${ARANYM_BUILD} ] ; then
-  echo -n "Copying sources... "
-  cp -r -p ${ARANYM_SOURCES} ${ARANYM_BUILD}
-  check_return "Unable to copy ${ARANYM_SOURCES} to ${ARANYM_BUILD}."
-  echo "done."
-  echo ${LINE}
-fi
-
-cd ${ARANYM_BUILD}/src/Unix
-check_return "${ARANYM_BUILD} doesn't contains ARAnyM sources."
+cd ${ARANYM_SOURCES}
 
 if [ configure.ac -nt configure ] ; then
   # This is needed for CVS sources only
@@ -237,10 +229,18 @@ if [ configure.ac -nt configure ] ; then
   echo ${LINE}
 fi
 
-if [ configure.ac -nt Makefile ] ; then
-  echo "Running \"./configure $@\"..."
+if [ ! -d ${ARANYM_BUILD} ] ; then
+  mkdir -p ${ARANYM_BUILD}
+  check_return "Unable to create ${ARANYM_BUILD}."
+fi
+
+cd ${ARANYM_BUILD}
+check_return "Unable to access ${ARANYM_BUILD}."
+
+if [ ${ARANYM_SOURCES}/configure.ac -nt Makefile ] ; then
+  echo "Running \"configure $@\"..."
   PATH=${SDL_PREFIX}/bin:${PATH} \
-  ./configure "$@"
+  ${ARANYM_SOURCES}/configure "$@"
   check_return "Unable to configure ARAnyM."
   echo "done."
   echo ${LINE}
@@ -253,7 +253,7 @@ if [ configure.ac -nt Makefile ] ; then
 else
   if [ ! -z "$*" ] ; then
     echo "$0: WARNING: configure options ignored. if you want to re-configure, please run :" 1>&2
-    echo "rm ${ARANYM_BUILD}/src/Unix/Makefile && $0 $@" 1>&2
+    echo "rm ${ARANYM_BUILD}/Makefile && $0 $@" 1>&2
     echo ${LINE}
   fi
 fi
@@ -265,4 +265,4 @@ echo "done."
 
 echo ${LINE2}
 
-echo "Congratulations ! Your home made ARAnyM binary is available in \"${ARANYM_BUILD}/src/Unix/\"."
+echo "Congratulations ! Your home made ARAnyM binary is available in \"${ARANYM_BUILD}/\"."
