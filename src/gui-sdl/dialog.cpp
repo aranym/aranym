@@ -69,7 +69,10 @@ void Dialog::mouseClick(const SDL_Event &event, int gui_x, int gui_y)
 
 	int x = event.button.x - gui_x;
 	int y = event.button.y - gui_y;
-
+	
+	if (touchExitPressed && event.type == SDL_MOUSEBUTTONUP && return_obj != -1) {
+		SDLGui_DeselectAndRedraw(dlg, return_obj);
+	}
 	touchExitPressed = false;
 
 	clicked_obj = SDLGui_FindObj(dlg, x, y);
