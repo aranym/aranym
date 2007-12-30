@@ -1,7 +1,7 @@
 /*
  * dlgAlert.cpp - AES-like AlertBox 
  *
- * Copyright (c) 2004-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2004-2007 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -25,17 +25,18 @@
 #include "sdlgui.h"
 #include "dlgAlert.h"
 
+#define DLG_WIDTH 40
 #define MAX_LINES 20
 
 /* The "Alert"-dialog: */
 SGOBJ alertdlg[1/*BACKGROUND*/ + MAX_LINES/*text*/ + 1/*OK*/ + 1/*Cancel*/ + 1/*NULL*/] =
 {
-  { SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL }
+  { SGBOX, SG_BACKGROUND, 0, 0,0, DLG_WIDTH,25, NULL }
 };
 
-SGOBJ obj_text = { SGTEXT, 0, 0, 1,1, 38,1, NULL };
-SGOBJ obj_but_ok = { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 5,5, 8,1, "OK" };
-SGOBJ obj_but_cancel = { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 24,5, 8,1, "Cancel" };
+SGOBJ obj_text = { SGTEXT, 0, 0, 1,1, DLG_WIDTH-2,1, NULL };
+SGOBJ obj_but_ok = { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, (DLG_WIDTH-8-8)/3,5, 8,1, "OK" };
+SGOBJ obj_but_cancel = { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, (DLG_WIDTH-8-8)*2/3+8,5, 8,1, "Cancel" };
 SGOBJ obj_null = { -1, 0, 0, 0,0, 0,0, NULL };
 
 /*
