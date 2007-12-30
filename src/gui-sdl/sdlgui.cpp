@@ -72,6 +72,7 @@ enum {
 // Stores current dialog coordinates
 static SDL_Rect DialogRect = {0, 0, 0, 0};
 
+#if 0
 // Used by SDLGui_Get[First|Next]BackgroundRect()
 static SDL_Rect BackgroundRect = {0, 0, 0, 0};
 static int BackgroundRectCounter;
@@ -84,6 +85,7 @@ enum
   SG_BCKGND_RECT_BOTTOM,
   SG_BCKGND_RECT_END
 };
+#endif
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -574,9 +576,9 @@ void SDLGui_Draw3DBox(SDL_Rect *coord,
 
   // Update coords
   coord->x -= widthbackground;
-  coord->y -= widthbackground*2;
+  coord->y -= widthbackground*5/2;
   coord->w += (widthbackground * 2);
-  coord->h += (widthbackground*2 * 2);
+  coord->h += (widthbackground*5/2 * 2);
 
   if (widthinbox > 0)
     SDLGui_DrawBoxAround(coord, inboxc, widthinbox);
