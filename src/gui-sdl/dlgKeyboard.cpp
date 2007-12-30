@@ -1,7 +1,7 @@
 /*
  * dlgKeyboard.cpp - Keyboard dialog 
  *
- * Copyright (c) 2004-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2004-2007 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -42,17 +42,20 @@ enum KEYBMOUSEDLG {
 /* The keyboard dialog: */
 static SGOBJ keyboarddlg[] =
 {
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL },
-	{ SGBOX, 0, 0, 1,2, 38,3, NULL },
-	{ SGTEXT, 0, 0, 2,3, 17,1, "Host mouse wheel:" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 20,2, 20,1, "Arrow keys" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 20,4, 20,1, "Eiffel scancodes" },
-	{ SGBOX, 0, 0, 1,6, 38,3, NULL },
-	{ SGTEXT, 0, 0, 2,7, 17,1, "Host AltGr key:" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 20,6, 20,1, "Atari Alt" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 20,8, 20,1, "Milan AltGr" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8,23, 8,1, "Apply" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28,23, 8,1, "Cancel" },
+	{ SGBOX, SG_BACKGROUND, 0, 0,0, 42,13, NULL },
+
+	{ SGBOX, 0, 0, 2,2, 38,2, NULL },
+	{ SGTEXT, 0, 0, 3,1, 18,1, " Host mouse wheel " },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 3,3, 10+3,1, "Arrow keys" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 19,3, 16+3,1, "Eiffel scancodes" },
+
+	{ SGBOX, 0, 0, 2,7, 38,2, NULL },
+	{ SGTEXT, 0, 0, 3,6, 16,1, " Host AltGr key " },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 3,8, 9+3,1, "Atari Alt" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 19,8, 11+3,1, "Milan AltGr" },
+
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 7,11, 8,1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28,11, 8,1, "Cancel" },
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
