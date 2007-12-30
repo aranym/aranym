@@ -1,7 +1,7 @@
 /*
  * dlgFileselect.cpp - dialog for selecting files (fileselector box)
  *
- * Copyright (c) 2003-2005 ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2003-2007 ARAnyM dev team (see AUTHORS)
  *
  * originally taken from the hatari project, thanks Thothy!
  *
@@ -45,7 +45,7 @@
 #define ENTRY_LENGTH 35
 
 
-static char dlgpath[39], dlgfname[33];	/* File and path name in the dialog */
+static char dlgpath[ENTRY_LENGTH+4], dlgfname[ENTRY_LENGTH-2];	/* File and path name in the dialog */
 static char dlgfilenames[ENTRY_COUNT][ENTRY_LENGTH + 1];
 
 /* The dialog data: */
@@ -53,13 +53,13 @@ static SGOBJ fsdlg[] = {
 	{SGBOX, SG_BACKGROUND, 0, 0, 0, 40, 25, NULL},
 	{SGTEXT, 0, 0, 13, 1, 13, 1, "Choose a file"},
 	{SGTEXT, 0, 0, 1, 2, 7, 1, "Folder:"},
-	{SGTEXT, 0, 0, 1, 3, 38, 1, dlgpath},
+	{SGTEXT, 0, 0, 1, 3, sizeof(dlgpath)-1, 1, dlgpath},
 	{SGTEXT, 0, 0, 1, 4, 6, 1, "File:"},
-	{SGTEXT, 0, 0, 7, 4, 31, 1, dlgfname},
+	{SGTEXT, 0, 0, 7, 4, sizeof(dlgfname)-2, 1, dlgfname},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 31, 1, 4, 1, ".."},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 36, 1, 3, 1, "/"},
-	{SGBOX, 0, 0, 1, 6, 38, 15, NULL},
-	{SGBOX, 0, 0, 38, 6, 1, 15, NULL},
+	{SGBOX, 0, 0, 1, 6, ENTRY_LENGTH+3, 15, NULL},
+	{SGBOX, 0, 0, ENTRY_LENGTH+3, 6, 1, 15, NULL},
 	{SGTEXT, 0, 0, 2, 6, ENTRY_LENGTH, 1, dlgfilenames[0]},
 	{SGTEXT, 0, 0, 2, 7, ENTRY_LENGTH, 1, dlgfilenames[1]},
 	{SGTEXT, 0, 0, 2, 8, ENTRY_LENGTH, 1, dlgfilenames[2]},
@@ -75,9 +75,9 @@ static SGOBJ fsdlg[] = {
 	{SGTEXT, 0, 0, 2, 18, ENTRY_LENGTH, 1, dlgfilenames[12]},
 	{SGTEXT, 0, 0, 2, 19, ENTRY_LENGTH, 1, dlgfilenames[13]},
 	{SGTEXT, 0, 0, 2, 20, ENTRY_LENGTH, 1, dlgfilenames[14]},
-	{SGBUTTON, SG_SELECTABLE | SG_TOUCHEXIT, 0, 38, 6, 1, 1, "\x01"},
+	{SGBUTTON, SG_SELECTABLE | SG_TOUCHEXIT, 0, ENTRY_LENGTH+3, 6, 1, 1, "\x01"},
 	/* Arrow up */
-	{SGBUTTON, SG_SELECTABLE | SG_TOUCHEXIT, 0, 38, 20, 1, 1, "\x02"},
+	{SGBUTTON, SG_SELECTABLE | SG_TOUCHEXIT, 0, ENTRY_LENGTH+3, 20, 1, 1, "\x02"},
 	/* Arrow down */
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, 10, 23, 8, 1,
 	 "OK"},
@@ -189,8 +189,8 @@ DlgFileSelect::DlgFileSelect(SGOBJ *dlg, char *new_path_and_name, bool bAllowNew
 		getcwd(file_path, sizeof(file_path));
 		File_AddSlashToEndFileName(file_path);
 	}
-	File_ShrinkName(dlgpath, file_path, 38);
-	File_ShrinkName(dlgfname, file_fname, 32);
+	File_ShrinkName(dlgpath, file_path, sizeof(dlgpath)-1);
+	File_ShrinkName(dlgfname, file_fname, sizeof(dlgfname)-1);
 }
 
 DlgFileSelect::~DlgFileSelect()
@@ -204,8 +204,8 @@ DlgFileSelect::~DlgFileSelect()
 void DlgFileSelect::confirm(void)
 {
 	/* if user edited filename, use new one */
-	char dlgfname2[33];
-	File_ShrinkName(dlgfname2, file_fname, 32);
+	char dlgfname2[ENTRY_LENGTH-2];
+	File_ShrinkName(dlgfname2, file_fname, sizeof(dlgfname2)-1);
 	if (strcmp(dlgfname, dlgfname2) != 0)
 		strcpy(file_fname, dlgfname);
 
@@ -240,7 +240,7 @@ int DlgFileSelect::processDialog(void)
 				File_AddSlashToEndFileName(file_path);
 				reloaddir = true;
 				/* Copy the path name to the dialog */
-				File_ShrinkName(dlgpath, file_path, 38);
+				File_ShrinkName(dlgpath, file_path, sizeof(dlgpath)-1);
 				/* Remove old selection */
 				selection = -1;
 				file_fname[0] = 0;
@@ -326,7 +326,7 @@ int DlgFileSelect::processDialog(void)
 			File_AddSlashToEndFileName(file_path);
 			reloaddir = true;
 			/* Copy the path name to the dialog */
-			File_ShrinkName(dlgpath, file_path, 38);
+			File_ShrinkName(dlgpath, file_path, sizeof(dlgpath)-1);
 			selection = -1;	/* Remove old selection */
 			// gui_file_fname[0] = 0;
 			dlgfname[0] = 0;
@@ -335,7 +335,7 @@ int DlgFileSelect::processDialog(void)
 			/* Select a file */
 			selection = return_obj - SGFSDLG_FIRSTENTRY + ypos;
 			strcpy(file_fname, temp->filename);
-			File_ShrinkName(dlgfname, file_fname, 32);
+			File_ShrinkName(dlgfname, file_fname, sizeof(dlgfname)-1);
 		}
 	}
 
