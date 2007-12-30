@@ -25,7 +25,7 @@
 #include "sdlgui.h"
 #include "dlgAlert.h"
 
-#define DLG_WIDTH 40
+#define DLG_WIDTH 76
 #define MAX_LINES 20
 
 /* The "Alert"-dialog: */
