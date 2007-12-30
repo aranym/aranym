@@ -117,6 +117,7 @@ void SDLGui_RefreshObj(SGOBJ *dlg, int objnum);
 int SDLGui_FindDefaultObj(SGOBJ *dlg);
 void SDLGui_MoveCursor(SGOBJ *dlg, cursor_state *cursor, int mode);
 void SDLGui_DeselectButtons(SGOBJ *dlg);
+void SDLGui_DeselectAndRedraw(SGOBJ *dlg, int obj);
 
 int SDLGui_DoEvent(const SDL_Event &event);
 void SDLGui_Open(Dialog *new_dlg);

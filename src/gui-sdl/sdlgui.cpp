@@ -941,12 +941,10 @@ void SDLGui_SelectRadioObject(SGOBJ *dlg, int clicked_obj)
   {
     // This code scan every object in the group. This allows to solve cases
     // where multiple objects were selected in the group by clicking one.
-    if ((obj != clicked_obj) && (dlg[obj].state & SG_SELECTED))
+    if (obj != clicked_obj)
     {
-      // Deselect this radio button
-      dlg[obj].state &= ~SG_SELECTED;
-      SDLGui_DrawObject(dlg, obj);
-      SDLGui_RefreshObj(dlg, obj);
+		// Deselect this radio button
+		SDLGui_DeselectAndRedraw(dlg, obj);
     }
   }
 }
@@ -987,6 +985,15 @@ bool SDLGui_UpdateObjState(SGOBJ *dlg, int clicked_obj, int original_state,
   return (obj == clicked_obj);
 }
 
+void SDLGui_DeselectAndRedraw(SGOBJ *dlg, int obj)
+{
+    if (dlg[obj].flags & SG_SELECTABLE)
+    {
+		dlg[obj].state &= ~SG_SELECTED;
+		SDLGui_DrawObject(dlg, obj);
+		SDLGui_RefreshObj(dlg, obj);
+    }
+}
 
 /*-----------------------------------------------------------------------*/
 /*
