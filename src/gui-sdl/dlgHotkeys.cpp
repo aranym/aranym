@@ -67,8 +67,8 @@ static char key_fullscreen[30];
 /* The hotkeys dialog: */
 static SGOBJ hotkeysdlg[] =
 {
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 40,22, NULL },
-	{ SGBOX, 0, 0, 1,2, 38,16, NULL },
+	{ SGBOX, SG_BACKGROUND, 0, 0,0, 40,21, NULL },
+	{ SGBOX, 0, 0, 1,2, 38,15, NULL },
 	{ SGTEXT, 0, 0, 12,1, 16,1, " Hotkeys Editor " },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 3, 11,1, "Setup" },
 	{ SGTEXT, 0, 0, 14,3, 25,1, key_setup },
@@ -84,9 +84,9 @@ static SGOBJ hotkeysdlg[] =
 	{ SGTEXT, 0, 0, 14,13, 25,1, key_screenshot },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 15, 11,1, "Fullscreen" },
 	{ SGTEXT, 0, 0, 14,15, 25,1, key_fullscreen },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2,20, 6,1, "Help" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 20,20, 8,1, "Apply" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 30,20, 8,1, "Cancel" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2,19, 6,1, "Help" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 20,19, 8,1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 30,19, 8,1, "Cancel" },
 	{ -1, 0, 0, 0,0, 0,0, NULL }
 };
 
