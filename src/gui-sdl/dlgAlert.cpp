@@ -91,24 +91,53 @@ DlgAlert::DlgAlert(SGOBJ *dlg, const char *text, alert_type type)
 {
 	char *t = (char *)malloc(strlen(text)+1);
 	orig_t = t;
-	int lines;
 	strcpy(t, text);
-	lines = FormatTextToBox(t, obj_text.w);
+	int max_linelen = 0;
+	// break long text into '\0' terminated array of strings
+	int lines = MIN(FormatTextToBox(t, obj_text.w), MAX_LINES);
+	
+	// build the dialog, find the longest line
 	int idx = 1;
-	for(int i=0; i<lines && i<MAX_LINES; i++) {
+	for(int i=0; i<lines; i++) {
 		obj_text.y = i+1;
 		obj_text.txt = t;
 		alertdlg[idx++] = obj_text;
-		t += strlen(t)+1;
+		int str_len = strlen(t);
+		max_linelen = MAX(str_len, max_linelen);
+		t += str_len + 1;
 	}
+	
+	// compute smallest possible dialog width
+	int dlg_width = obj_but_ok.w + 2;
+	if (type == ALERT_OKCANCEL) {
+		dlg_width += obj_but_cancel.w + 2;
+	}
+	dlg_width = MAX(max_linelen+2, dlg_width);
+	
+	// update dialog width
+	alertdlg[0].w = dlg_width;
+	for(int i=0; i<lines; i++) {
+		alertdlg[1+i].w = max_linelen;
+	}
+	
+	// update OK/Cancel buttons placement
 	obj_but_ok.y = lines+2;
 	obj_but_cancel.y = lines+2;
+	if (type == ALERT_OKCANCEL) {
+		int butwidth = obj_but_ok.w + obj_but_cancel.w;
+		int space = alertdlg[0].w - butwidth;
+		obj_but_ok.x = space / 3;
+		obj_but_cancel.x = space * 2/3 + obj_but_ok.w;
+	}
+	else {
+		obj_but_ok.x = (alertdlg[0].w - obj_but_ok.w) / 2;
+	}
+	
+	// add OK/Cancel buttons to dialog
 	ok_but_idx = idx;
 	alertdlg[idx++] = obj_but_ok;
 	if (type == ALERT_OKCANCEL) {
 		alertdlg[idx++] = obj_but_cancel;
-	} else {
-		alertdlg[ok_but_idx].x = (alertdlg[0].w - alertdlg[ok_but_idx].w) / 2;
 	}
 	alertdlg[idx] = obj_null;
 	alertdlg[0].h = lines+4;

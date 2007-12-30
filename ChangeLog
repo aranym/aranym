@@ -5,6 +5,8 @@
 - gui-sdl/dlgDisk.cpp: Fixed entering of large disk image sizes (> 99 GB).
   Fixed updating of IDE1 values.
 
+- gui-sdl/dlgAlert.cpp: dialog width is flexible now.
+
 
 2007/12/29 - Andreas
 - Makefile.in: Fix dependency generation.
