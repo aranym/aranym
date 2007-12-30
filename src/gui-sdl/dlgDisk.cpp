@@ -177,8 +177,8 @@ static SGOBJ discdlg[] = {
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 31, 20, 21, 1, "Generate Disk Image"},
 
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 23, 6, 1, "Help"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, 20, 23, 8, 1, "Apply"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 30, 23, 8, 1, "Cancel"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, 54, 23, 8, 1, "Apply"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 66, 23, 8, 1, "Cancel"},
 	{-1, 0, 0, 0, 0, 0, 0, NULL}
 };
 
@@ -469,7 +469,7 @@ int DlgDisk::processDialogMain(void)
 				getFDC()->remove_floppy();
 			} else {
 				if (!getFDC()->insert_floppy()) {
-					// report error
+					SDLGui_Open(DlgAlertOpen("Error: Inserting floppy failed", ALERT_OK));
 				}
 			}
 			UpdateFloppyStatus();
