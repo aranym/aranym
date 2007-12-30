@@ -33,7 +33,7 @@ class Dialog {
 		cursor_state cursor;
 		int return_obj;
 		int last_clicked_obj, last_state;
-		bool touchExitPressed;
+		int touch_exit_obj;
 
 	public:
 		enum {

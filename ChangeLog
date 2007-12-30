@@ -1,11 +1,14 @@
 2007/12/30 - Petr
 - gui-sdl/*: ARAnyM SETUP is 76 columns wide now. Main, Alert, FileSelect and
-  Disk dialogs were enlarged to full width.
+  Disk dialogs were enlarged to full width. Couple more smaller dialogs
+  were updated to look better.
 
 - gui-sdl/dlgDisk.cpp: Fixed entering of large disk image sizes (> 99 GB).
   Fixed updating of IDE1 values.
 
 - gui-sdl/dlgAlert.cpp: dialog width is flexible now.
+
+- gui-sdl/dialog.{cpp,h}: redrawing of released touch exit button fixed.
 
 
 2007/12/29 - Andreas
