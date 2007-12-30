@@ -159,7 +159,7 @@ bool SDLGui_Init()
     return false;
   }
 
-	gui_hsurf = host->video->createSurface(320+16,400+16,8);
+	gui_hsurf = host->video->createSurface(76*8+16,25*16+16,8);
 	if (!gui_hsurf) {
 		panicbug("Could not create surface for GUI");
 		panicbug("ARAnyM GUI will not be available");
@@ -1122,6 +1122,7 @@ void SDLGui_ClickEditField(SGOBJ *dlg, cursor_state *cursor, int clicked_obj, in
   SDLGui_DrawCursor(dlg, cursor);
 }
 
+#if 0
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -1242,6 +1243,8 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
 
   return return_rect;
 }
+
+#endif
 
 /* Process event for a dialog */
 int SDLGui_DoEvent(const SDL_Event &event)
