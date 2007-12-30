@@ -94,8 +94,9 @@ DlgAlert::DlgAlert(SGOBJ *dlg, const char *text, alert_type type)
 	strcpy(t, text);
 	int max_linelen = 0;
 	// break long text into '\0' terminated array of strings
-	int lines = MIN(FormatTextToBox(t, obj_text.w), MAX_LINES);
-	
+	int lines = FormatTextToBox(t, obj_text.w);
+	if (lines > MAX_LINES)
+		lines = MAX_LINES;
 	// build the dialog, find the longest line
 	int idx = 1;
 	for(int i=0; i<lines; i++) {
@@ -103,7 +104,8 @@ DlgAlert::DlgAlert(SGOBJ *dlg, const char *text, alert_type type)
 		obj_text.txt = t;
 		alertdlg[idx++] = obj_text;
 		int str_len = strlen(t);
-		max_linelen = MAX(str_len, max_linelen);
+		if (str_len > max_linelen)
+			max_linelen = str_len;
 		t += str_len + 1;
 	}
 	
@@ -112,7 +114,8 @@ DlgAlert::DlgAlert(SGOBJ *dlg, const char *text, alert_type type)
 	if (type == ALERT_OKCANCEL) {
 		dlg_width += obj_but_cancel.w + 2;
 	}
-	dlg_width = MAX(max_linelen+2, dlg_width);
+	if (max_linelen+2 > dlg_width)
+		dlg_width = max_linelen+2;
 	
 	// update dialog width
 	alertdlg[0].w = dlg_width;
