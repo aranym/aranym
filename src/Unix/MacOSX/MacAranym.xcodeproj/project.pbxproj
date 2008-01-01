@@ -296,7 +296,6 @@
 		B439AC720C5B2FD00046EFC9 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DDD0A652B51009733EB /* memory.cpp */; };
 		B439AC730C5B2FD00046EFC9 /* newcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DDF0A652B51009733EB /* newcpu.cpp */; };
 		B439AC740C5B2FD00046EFC9 /* readcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DE20A652B51009733EB /* readcpu.cpp */; };
-		B439AC750C5B2FD00046EFC9 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC60A652B51009733EB /* debug.cpp */; };
 		B439AC760C5B2FD00046EFC9 /* dsp_cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CE70A652B50009733EB /* dsp_cpu.cpp */; };
 		B439AC770C5B2FD00046EFC9 /* sdlgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF70A652B50009733EB /* sdlgui.cpp */; };
 		B439AC780C5B2FD00046EFC9 /* dlgFileSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF00A652B50009733EB /* dlgFileSelect.cpp */; };
@@ -362,6 +361,7 @@
 		B47272CA0C6BBF1300A1379D /* README_ethernet.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = B47270900C6BB62700A1379D /* README_ethernet.txt */; };
 		B49164700C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
 		B49164710C5406D900CFB5B0 /* dlgNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */; };
+		B4A1F1440D2AB709004220C2 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC60A652B51009733EB /* debug.cpp */; };
 		B4A9E9C50C5B33AC00C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
 		B4A9EBEE0C5B374A00C156C3 /* ethernet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D6F0A652B51009733EB /* ethernet.cpp */; };
 		B4A9EC060C5B3C1400C156C3 /* ethernet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D6F0A652B51009733EB /* ethernet.cpp */; };
@@ -1890,6 +1890,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B4A1F1440D2AB709004220C2 /* debug.cpp in Sources */,
 				B4A9EBEE0C5B374A00C156C3 /* ethernet.cpp in Sources */,
 				B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */,
 				B439AC340C5B2FD00046EFC9 /* cpuemu.cpp in Sources */,
@@ -1957,7 +1958,6 @@
 				B439AC720C5B2FD00046EFC9 /* memory.cpp in Sources */,
 				B439AC730C5B2FD00046EFC9 /* newcpu.cpp in Sources */,
 				B439AC740C5B2FD00046EFC9 /* readcpu.cpp in Sources */,
-				B439AC750C5B2FD00046EFC9 /* debug.cpp in Sources */,
 				B439AC760C5B2FD00046EFC9 /* dsp_cpu.cpp in Sources */,
 				B439AC770C5B2FD00046EFC9 /* sdlgui.cpp in Sources */,
 				B439AC780C5B2FD00046EFC9 /* dlgFileSelect.cpp in Sources */,
@@ -2060,11 +2060,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = ppc;
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE  ENABLE_VBL_UPDATES ENABLE_TUNTAP";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE  ENABLE_VBL_UPDATES ENABLE_TUNTAP NEWDEBUG";
 				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-ethernet=yes --enable-vblupdates=yes";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.5 beta+cvs";
+				CURRENT_PROJECT_VERSION = 0.9.6;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
@@ -2247,11 +2247,11 @@
 		17E8B5B60ABC88C600BBFD59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE  ENABLE_VBL_UPDATES ENABLE_TUNTAP";
+				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE  ENABLE_VBL_UPDATES ENABLE_TUNTAP NEWDEBUG";
 				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-vblupdates=yes";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.5 beta+cvs";
+				CURRENT_PROJECT_VERSION = 0.9.6;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
