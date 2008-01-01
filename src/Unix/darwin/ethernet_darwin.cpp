@@ -164,19 +164,19 @@ bool TunTapEthernetHandler::open() {
 	
 	D(bug("TunTap(%d): open('%s')", ethX, devName));
 	
-	int auth = openAuthorizationContext();
-	if (auth) {
-		::close(fd);
-		panicbug("TunTap(%d): Authorization failed'%s'", ethX, devName);
-		return false;	
-	}
 	fd = tapOpen( devName );
 	if (fd < 0) {
 		panicbug("TunTap(%d): NO_NET_DRIVER_WARN '%s': %s", ethX, devName, strerror(errno));
 		if (ethX == MAX_ETH - 1) closeAuthoizationContext();
 		return false;
 	}
-
+	int auth = openAuthorizationContext();
+	if (auth) {
+		::close(fd);
+		panicbug("TunTap(%d): Authorization failed'%s'", ethX, devName);
+		return false;	
+	}
+	
 	bool failed = true;
 	{
 		// the arguments _need_ to be placed into the child process
