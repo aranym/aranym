@@ -1,3 +1,17 @@
+2008/01/01 - Jens
+- Makefile.in - Additional Include path, else
+  the darwin build doesn't find config.h (may be
+  an issue with MACOSX 10.5)
+- parameters.cpp - Default search for logo in application bundle
+  on MacOS
+- input.cpp - don't use mouse grabing if setup gui
+  is open, because the mouse was hidden and was
+  not usable in the Setup GUI
+- xcodeproj - SDL Image added, copy logo from data
+  to application bundle.
+- logo.png - added because it is necessary for the
+  application bundle
+
 2007/12/30 - Xavier
 - tools/build-cygwin.sh: updated to fit the new building system.
 
