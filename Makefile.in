@@ -141,7 +141,7 @@ SRCS = main.cpp \
 	$(DYNGLSRCS)
 
 BUNDLE_RESOURCES = \
-	$(srcdir)/Unix/darwin/busybee.icns \
+	$(srcdir)/Unix/darwin/busybee.icns $(top_srcdir)/data/logo.png \
 	
 BUNDLE_LOCALIZATON_FOLDERS = \
 	$(srcdir)/Unix/darwin/*.lproj

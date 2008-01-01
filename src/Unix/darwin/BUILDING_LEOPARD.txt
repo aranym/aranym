@@ -1,0 +1,6 @@
+Leopard (MacOSX 10.5) requires a small patch to enable the Makefile build.
+The Linker will try to link with crt1.10.5 which is not available in the 10.4u SDK.
+This requires the creation of a symbolic link
+
+sudo ln -s /Developer/SDKs/MacOSX10.4u.sdk/usr/lib/crt1.o /Developer/SDKs/MacOSX10.4u.sdk/usr/lib/crt1.10.5.o 
+
