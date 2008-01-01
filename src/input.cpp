@@ -445,7 +445,7 @@ void open_GUI(void)
 	/* Always ungrab+show mouse */
 	SDL_ShowCursor(SDL_ENABLE);
 	SDL_WM_GrabInput(SDL_GRAB_OFF);
-
+	
 	SDLGui_Open(NULL);
 }
 
@@ -811,7 +811,13 @@ static void process_active_event(const SDL_Event &event)
 
 		// if it's mouse focus event
 		if (event.active.state == SDL_APPMOUSEFOCUS) {
-
+			
+			// Disable grab, if Setup GUI is open
+			// because else the mouse goes invisible if the window is reentered
+			if (!SDLGui_isClosed()) {
+				return;
+			}
+			
 			// if we can grab the mouse automatically
 			// and if the Atari mouse driver works
 			if (bx_options.autoMouseGrab && getARADATA()->isAtariMouseDriver()) {
