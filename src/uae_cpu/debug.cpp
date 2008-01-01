@@ -237,7 +237,8 @@ void debug (void)
 	}
 #ifdef NEWDEBUG
 	ndebug::run();
-#else
+#endif
+#ifdef UAEDEBUG
 	char input[80];
 	uaecptr nextpc,nxdis,nxmem;
 
@@ -492,7 +493,7 @@ S_argh:
 			break;
 		}
 	}
-#endif /* NEWDEBUG */
+#endif /* UAEDEBUG */
 }
 
 /*
