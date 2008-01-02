@@ -2,6 +2,10 @@
 - parameters.*: logo_path removed from the configuration file
 - hostscreen.cpp: logo is stored in the data folder
 - logo.h: LOGO_FILENAME could be redefined at compile time, if required...
+- include "version.h" only where required
+- generate "include/version_date.h" from the ChangeLog and include it in
+  version.h to get better idea what CVS version was used for building
+  a binary.
 
 
 2008/01/01 - Jens
