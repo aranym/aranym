@@ -1,7 +1,7 @@
 /*
  * parameters.h - parameter init/load/save code - header file
  *
- * Copyright (c) 2001-2006 ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2001-2008 ARAnyM developer team (see AUTHORS)
  *
  * Authors:
  *  MJ		Milan Jurik
@@ -263,7 +263,6 @@ typedef struct {
   bool			gmtime;
   bx_hotkeys_t		hotkeys;
   bool			newHardDriveSupport;
-  char			logo_path[512];
 } bx_options_t;
 
 extern bx_options_t bx_options;

@@ -21,6 +21,10 @@
 #ifndef LOGO_H
 #define LOGO_H 1
 
+#ifndef LOGO_FILENAME
+#define LOGO_FILENAME	"logo.png"
+#endif
+
 class HostSurface;
 
 /*--- Logo class ---*/

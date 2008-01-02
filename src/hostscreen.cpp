@@ -2,7 +2,7 @@
 	Hostscreen, base class
 	Software renderer
 
-	(C) 2007 ARAnyM developer team
+	(C) 2007-2008 ARAnyM developer team
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -275,11 +275,14 @@ void HostScreen::checkSwitchVidelNfvdi(void)
 
 void HostScreen::refreshLogo(void)
 {
+	char path[1024];
+	getDataFilename(LOGO_FILENAME, path, sizeof(path));
+
 	if (!logo_present) {
 		return;
 	}
 	if (!logo) {
-		logo = new Logo(bx_options.logo_path);
+		logo = new Logo(path);
 		if (!logo) {
 			return;
 		}
@@ -287,11 +290,10 @@ void HostScreen::refreshLogo(void)
 
 	HostSurface *logo_hsurf = logo->getSurface();
 	if (!logo_hsurf) {
-		logo->load(bx_options.logo_path);
+		logo->load(path);
 		logo_hsurf = logo->getSurface();
 		if (!logo_hsurf) {
-			fprintf(stderr, "Can not load logo from %s file\n",
-				bx_options.logo_path); 
+			panicbug("Can not load logo from %s file\n", path); 
 			logo_present = false;
 			return;
 		}

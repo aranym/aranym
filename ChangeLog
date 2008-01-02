@@ -1,3 +1,9 @@
+2008/01/02 - Petr
+- parameters.*: logo_path removed from the configuration file
+- hostscreen.cpp: logo is stored in the data folder
+- logo.h: LOGO_FILENAME could be redefined at compile time, if required...
+
+
 2008/01/01 - Jens
 - Makefile.in - Additional Include path, else the darwin build doesn't 
   find config.h (may be an issue with MACOSX 10.5)

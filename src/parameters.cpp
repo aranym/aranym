@@ -1,7 +1,7 @@
 /*
  * parameters.cpp - parameter init/load/save code
  *
- * Copyright (c) 2001-2007 ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2001-2008 ARAnyM developer team (see AUTHORS)
  *
  * Authors:
  *  MJ		Milan Jurik
@@ -166,7 +166,6 @@ struct Config_Tag global_conf[]={
 	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
 	{ "EpsMax", Int_Tag, &bx_options.cpu.eps_max, 0, 0},
 #endif
-	{ "Logo", Path_Tag, bx_options.logo_path, sizeof(bx_options.logo_path), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -186,15 +185,6 @@ void preset_global()
 #ifdef ENABLE_EPSLIMITER
 	bx_options.cpu.eps_enabled = false;
 	bx_options.cpu.eps_max = 20;
-#endif
-#ifdef OS_darwin
-  CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-  CFURLGetFileSystemRepresentation(url, true, (UInt8 *)bx_options.logo_path, MAXPATHLEN);
-  CFRelease(url);
-  strcat(bx_options.logo_path, DIRSEPARATOR);
-  strcat(bx_options.logo_path,  "Contents/Resources/logo.png");
-#else
-  strcpy(bx_options.logo_path, "logo.bmp");
 #endif
 }
 
