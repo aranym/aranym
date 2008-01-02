@@ -29,6 +29,7 @@
 #include "host_surface.h"
 #include "logo.h"
 #include "hostscreen.h"
+#include "version.h"
 #include "parameters.h"	/* bx_options */
 #include "main.h"	/* QuitEmulator */
 

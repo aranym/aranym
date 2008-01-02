@@ -25,7 +25,6 @@
 #define _NF_BASICSET_H
 
 #include "nf_base.h"
-#include "version.h"
 
 class NF_Name : public NF_Base
 {

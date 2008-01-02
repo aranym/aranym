@@ -35,6 +35,7 @@
 #include "hardware.h"
 #include "parameters.h"
 #include "newcpu.h"
+#include "version.h"
 
 #define DEBUG 0
 #include "debug.h"

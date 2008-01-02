@@ -29,7 +29,6 @@
 #define PARAMETERS_H
 
 #include "sysdeps.h"
-#include "version.h"
 #include <SDL_keyboard.h>
 
 #ifndef ARANYMHOME

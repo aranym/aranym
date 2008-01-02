@@ -25,7 +25,6 @@
 #define _NF_BOOTSTRAP_H
 
 #include "nf_base.h"
-#include "version.h"
 
 class BootstrapNatFeat : public NF_Base
 {

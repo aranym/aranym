@@ -23,6 +23,7 @@
 
 #include "cpu_emulation.h"
 #include "nf_basicset.h"
+#include "version.h"
 
 #define DEBUG 0
 #include "debug.h"

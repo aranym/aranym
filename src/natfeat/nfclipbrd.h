@@ -25,7 +25,6 @@
 #define _NF_CLIPBRD_H
 
 #include "nf_base.h"
-#include "version.h"
 
 class ClipbrdNatFeat : public NF_Base
 {
