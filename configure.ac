@@ -59,8 +59,6 @@ AC_ARG_ENABLE(blitmemmove,     [  --enable-blitmemmove    enable Blitter memmove
 
 AC_ARG_ENABLE(blitsdlblit,     [  --enable-blitsdlblit    enable SDL blitting routine EXPERIMENTAL UNSUPPORTED BUGGY (default=no)], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
 
-AC_ARG_ENABLE(vblupdates,      [  --enable-vblupdates     enable SDL update are only done during vbl ticks (default=no)], [WANT_VBLUPDATES=$enableval], [WANT_VBLUPDATES=no])
-
 AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support (default=yes)], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
 
 AC_ARG_ENABLE(ctrlkey,
