@@ -767,7 +767,7 @@ void HostFs::transformFileName( char* dest, const char* source )
 	}
 
 	// Get file name (strip off file extension)
-	char *dot = strrchr( source, '.' );
+	char *dot = (char *)strrchr( source, '.' );
 	// ignore leading dot
 	if (dot == source)
 		dot = NULL;
@@ -2378,7 +2378,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	drv->fsDevDrv = filesys_devdrv;
 	drv->mountPoint = strdup( fmountPoint );
 
-	int dnum = -1;
+	int16 dnum = -1;
 	if ( strlen( fmountPoint ) == 2 && fmountPoint[1] == ':' ) {
 		// The mountPoint is of a "X:" format: (BetaDOS mapping)
 		dnum = tolower(fmountPoint[0])-'a';
