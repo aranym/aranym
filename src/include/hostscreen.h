@@ -53,6 +53,7 @@ class HostScreen: public DirtyRects
 
 	void checkSwitchToVidel(void);
 	void checkSwitchVidelNfvdi(void);
+	void alphaBlendLogo(bool init);
 
 	SDL_bool OpenGLVdi;	/* Using NF OpenGL VDI renderer ? */
 
