@@ -1,3 +1,10 @@
+2008/01/04 - Petr
+- hostscreen.cpp: alpha blend the logo onto VIDEL screen for half of second
+  upon boot when OpenGL video is enabled.
+
+- data/logo.png: updated, in different color, with white background (for now)
+
+
 2008/01/04 - Patrice
 - host_surface: Add constructor to create surface with a given SDL_PixelFormat.
   The logo needs to keep its alpha.

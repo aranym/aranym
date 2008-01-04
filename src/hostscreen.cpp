@@ -211,10 +211,12 @@ void HostScreen::refresh(void)
 			break;
 		case SCREEN_LOGO:
 			refreshLogo();
+			alphaBlendLogo(true);
 			checkSwitchToVidel();
 			break;
 		case SCREEN_VIDEL:
 			refreshVidel();
+			alphaBlendLogo(false);
 			checkSwitchVidelNfvdi();
 			break;
 		case SCREEN_NFVDI:
@@ -317,6 +319,30 @@ void HostScreen::forceRefreshLogo(void)
 		logo_hsurf->getWidth(), logo_hsurf->getHeight());
 }
 
+void HostScreen::alphaBlendLogo(bool init)
+{
+	static int logo_opacity = 100;
+
+	if (init) {
+		logo_opacity = 100;
+		if (logo != NULL) {
+			logo->getSurface()->setParam(HostSurface::SURF_USE_ALPHA, 1);
+		}
+	}
+	else {
+		if (bx_options.opengl.enabled && logo != NULL && logo_opacity > 0) {
+			HostSurface *logo_hsurf = logo->getSurface();
+			logo_hsurf->setParam(HostSurface::SURF_ALPHA, logo_opacity);
+			logo_hsurf->setDirtyRect(0, 0, logo_hsurf->getWidth(), logo_hsurf->getHeight());
+			drawSurfaceToScreen(logo_hsurf);
+
+			logo_opacity -= 5 * bx_options.video.refresh;
+			if (logo_opacity <= 0) {
+				getVIDEL()->getSurface()->setDirtyRect(0, 0, logo_hsurf->getWidth(), logo_hsurf->getHeight());
+			}
+		}
+	}
+}
 void HostScreen::checkSwitchToVidel(void)
 {
 	/* No logo ? */
