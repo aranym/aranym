@@ -1160,15 +1160,6 @@ AC_EGREP_CPP(xyes,
 #endif
 ], [AC_MSG_RESULT(yes); HAVE_GCC30=yes], AC_MSG_RESULT(no))
 
-dnl Set "-fomit-frame-pointer" on i386 GCC 2.7 or higher.
-dnl Also set "-fno-exceptions" for C++ because exception handling requires
-dnl the frame pointer.
-dnl No RTTI
-if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
-  CFLAGS="$CFLAGS -fomit-frame-pointer"
-  CXXFLAGS="$CXXFLAGS -fomit-frame-pointer"
-fi
-
 dnl (gb) Do not merge constants since it breaks fpu/fpu_x86.cpp.
 dnl As of 2001/08/02, this affects the following compilers:
 dnl Official: probably gcc-3.1 (mainline CVS)

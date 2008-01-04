@@ -1,6 +1,8 @@
 2008/01/04 - Patrice
 - host_surface: Add constructor to create surface with a given SDL_PixelFormat.
   The logo needs to keep its alpha.
+- configure.ac: Remove '-fomit-frame-pointer' option, prevent exceptions from
+  being processed.
 
 
 2008/01/02 - Petr
