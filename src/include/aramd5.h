@@ -47,9 +47,9 @@ public:
 	bool compareSum(md5byte const *buf, unsigned long size, const unsigned char digest[16]);
 	void printSum(const unsigned char digest[16]);
 
-	bool computeSum(FILE *f, unsigned char digest[16]);
-	bool compareSum(FILE *f, const unsigned char digest[16]);
-	bool printSum(FILE *f);
+	bool computeSum(std::FILE *f, unsigned char digest[16]);
+	bool compareSum(std::FILE *f, const unsigned char digest[16]);
+	bool printSum(std::FILE *f);
 
 protected:
 	void MD5Init();

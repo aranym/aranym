@@ -29,6 +29,8 @@
 
 # include <cstring>
 
+using namespace std;
+
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 void
 byteSwap(UWORD32 *buf, unsigned words)
