@@ -46,6 +46,12 @@ HostSurfaceOpenGL::HostSurfaceOpenGL(int width, int height, int bpp)
 	createTexture();
 }
 
+HostSurfaceOpenGL::HostSurfaceOpenGL(int width, int height, SDL_PixelFormat *pixelFormat)
+	: HostSurface(width, height, pixelFormat)
+{
+	createTexture();
+}
+
 HostSurfaceOpenGL::~HostSurfaceOpenGL(void)
 {
 	destroyTextureObject();
@@ -178,21 +184,17 @@ SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 
 			if (has_ext_bgra) {
 				textureFormat = GL_BGRA_EXT;
-			}
-#endif
 
-#if 0
-# if SDL_BYTEORDER == SDL_LIL_ENDIAN
-			glPixelFormat.Rmask = 255;
-			glPixelFormat.Gmask = 255<<8;
-			glPixelFormat.Bmask = 255<<16;
-			glPixelFormat.Amask = 255<<24;
-# else
-			glPixelFormat.Rmask = 255<<24;
-			glPixelFormat.Gmask = 255<<16;
-			glPixelFormat.Bmask = 255<<8;
-			glPixelFormat.Amask = 255;
-# endif
+				/* Only change format if some alpha was requested
+				   till fvdi fixed */
+				if (pixelFormat->Amask) {
+					/* FIXME: is it the same on big endian ? */
+					glPixelFormat.Rmask = 255<<16;
+					glPixelFormat.Gmask = 255<<8;
+					glPixelFormat.Bmask = 255;
+					glPixelFormat.Amask = 255<<24;
+				}
+			}
 #endif
 			break;
 	}

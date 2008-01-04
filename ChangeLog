@@ -1,3 +1,8 @@
+2008/01/04 - Patrice
+- host_surface: Add constructor to create surface with a given SDL_PixelFormat.
+  The logo needs to keep its alpha.
+
+
 2008/01/02 - Petr
 - parameters.*: logo_path removed from the configuration file
 - hostscreen.cpp: logo is stored in the data folder

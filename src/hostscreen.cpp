@@ -542,6 +542,11 @@ HostSurface *HostScreen::createSurface(int width, int height, int bpp)
 	return new HostSurface(width, height, bpp);
 }
 
+HostSurface *HostScreen::createSurface(int width, int height, SDL_PixelFormat *pixelFormat)
+{
+	return new HostSurface(width, height, pixelFormat);
+}
+
 void HostScreen::destroySurface(HostSurface *hsurf)
 {
 	delete hsurf;

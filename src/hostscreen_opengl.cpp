@@ -353,6 +353,19 @@ HostSurface *HostScreenOpenGL::createSurface(int width, int height, int bpp)
 	return hsurf;
 }
 
+HostSurface *HostScreenOpenGL::createSurface(int width, int height, SDL_PixelFormat *pixelFormat)
+{
+	if (!bx_options.opengl.enabled) {
+		return HostScreen::createSurface(width, height, pixelFormat);
+	}
+
+	HostSurfaceOpenGL *hsurf = new HostSurfaceOpenGL(width, height, pixelFormat);
+	if (hsurf) {
+		surfList.push_back(hsurf);
+	}
+	return hsurf;
+}
+
 void HostScreenOpenGL::destroySurface(HostSurface *hsurf)
 {
 	if (!bx_options.opengl.enabled) {

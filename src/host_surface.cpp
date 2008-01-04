@@ -43,6 +43,22 @@ HostSurface::HostSurface(int width, int height, int bpp)
 	setParam(SURF_ALPHA, 100);
 }
 
+HostSurface::HostSurface(int width, int height, SDL_PixelFormat *pixelFormat)
+	: DirtyRects(width, height)
+{
+	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height,
+		pixelFormat->BitsPerPixel,
+		pixelFormat->Rmask, pixelFormat->Gmask,
+		pixelFormat->Bmask, pixelFormat->Amask
+	);
+	clip_w = surface ? surface->w : 0;
+	clip_h = surface ? surface->h : 0;
+
+	setParam(SURF_DRAW, DRAW_CROP_AND_CENTER);
+	setParam(SURF_USE_ALPHA, 0);
+	setParam(SURF_ALPHA, 100);
+}
+
 HostSurface::~HostSurface(void)
 {
 	if (surface) {

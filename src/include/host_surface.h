@@ -53,6 +53,9 @@ class HostSurface: public DirtyRects
 		/* Create a surface from dimensions, bpp */
 		HostSurface(int width, int height, int bpp);
 
+		/* Create a surface from dimensions, and a given pixel format */
+		HostSurface(int width, int height, SDL_PixelFormat *pixelFormat);
+
 		virtual ~HostSurface();
 
 		SDL_Surface *getSdlSurface(void);

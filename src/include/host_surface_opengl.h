@@ -43,6 +43,9 @@ class HostSurfaceOpenGL: public HostSurface
 		/* Create a surface from dimensions, bpp */
 		HostSurfaceOpenGL(int width, int height, int bpp);
 
+		/* Create a surface from dimensions, and a given pixel format */
+		HostSurfaceOpenGL(int width, int height, SDL_PixelFormat *pixelFormat);
+
 		/* Create a surface from existing SDL_Surface */
 		HostSurfaceOpenGL(SDL_Surface *surf);
 

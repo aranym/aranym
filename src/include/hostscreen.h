@@ -119,6 +119,7 @@ class HostScreen: public DirtyRects
 
 	/* Surface creation */
 	virtual HostSurface *createSurface(int width, int height, int bpp);
+	virtual HostSurface *createSurface(int width, int height, SDL_PixelFormat *pixelFormat);
 	virtual void destroySurface(HostSurface *hsurf);
 };
 
