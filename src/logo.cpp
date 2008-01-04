@@ -80,12 +80,17 @@ void Logo::load(const char *filename)
 		SDL_SetColorKey(logo_surf, SDL_SRCCOLORKEY|SDL_RLEACCEL, ((Uint8 *)logo_surf->pixels)[0]);
 	}
 
-	surface = host->video->createSurface(logo_surf->w, logo_surf->h, logo_surf->format->BitsPerPixel);
+	surface = host->video->createSurface(logo_surf->w, logo_surf->h, logo_surf->format);
 }
 
 HostSurface *Logo::getSurface(void)
 {
 	if (!surface) {
+		return NULL;
+	}
+
+	SDL_Surface *sdl_surf = surface->getSdlSurface();
+	if (!sdl_surf) {
 		return NULL;
 	}
 
@@ -104,6 +109,7 @@ HostSurface *Logo::getSurface(void)
 				src.w = dst.w = (1<<4);
 				src.h = dst.h = (1<<4);
 
+				SDL_FillRect(surface->getSdlSurface(), &dst, sdl_surf->format->Amask);
 				SDL_BlitSurface(logo_surf, &src, surface->getSdlSurface(), &dst);
 			}
 		}
