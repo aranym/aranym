@@ -201,7 +201,7 @@ void * vm_acquire(size_t size, int options)
 	next_address = (char *)addr + size;
 	
 	// Since I don't know the standard behavior of mmap(), zero-fill here
-	if (memset(addr, 0, size) != addr)
+	if (std::memset(addr, 0, size) != addr)
 		return VM_MAP_FAILED;
 
 #else
@@ -210,7 +210,7 @@ void * vm_acquire(size_t size, int options)
 		return VM_MAP_FAILED;
 
 	// Zero newly allocated memory
-	if (memset(addr, 0, size) != addr)
+	if (std::memset(addr, 0, size) != addr)
 		return VM_MAP_FAILED;
 #else
 	if ((addr = calloc(size, 1)) == 0)
@@ -249,7 +249,7 @@ bool vm_acquire_fixed(void * addr, size_t size, int options)
 		return false;
 
 	// Since I don't know the standard behavior of mmap(), zero-fill here
-	if (memset(addr, 0, size) != addr)
+	if (std::memset(addr, 0, size) != addr)
 		return false;
 #else
 #ifdef HAVE_WIN32_VM
