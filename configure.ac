@@ -570,30 +570,6 @@ AC_TRANSLATE_DEFINE(HAVE_MMAP_VM, $have_mmap_vm,
 
 fi dnl HAVE_MMAP_VM
 
-dnl Check if we can mmap 16 megabytes from 0x0000
-AC_CACHE_CHECK([whether we can map Low Memory area 0x0000-0x1000000],
-  ac_cv_can_map_lm, [
-  AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_RUN([
-    $OSdarwinReq
-    #include "$srcdir/src/Unix/vm_alloc.cpp"
-    int main(void) { /* returns 0 if we could map the lowmem globals */
-      volatile char * lm = 0;
-      if (vm_init() < 0) exit(1);
-      if (vm_acquire_fixed(0, 0x1000000) == false) exit(1);
-      lm[0] = 'z';
-      if (vm_release((char *)lm, 0x1000000) < 0) exit(1);
-      vm_exit(); exit(0);
-    }
-  ], ac_cv_can_map_lm=yes, ac_cv_can_map_lm=no,
-  dnl When cross-compiling, do not assume anything.
-  ac_cv_can_map_lm="guessing no"
-  )
-  AC_LANG_RESTORE
-  ]
-)
-
 dnl Check if we have POSIX shared memory support
 AC_CACHE_CHECK([whether POSIX shared memory is working],
   ac_cv_have_posix_shm, [
