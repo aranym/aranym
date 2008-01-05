@@ -222,8 +222,6 @@ typedef struct _CDROM_TOC_SESSION_DATA {
 #define CD_FRAMESIZE 2048 
 #endif
 
-#include <stdio.h>
-
 #ifdef OS_darwin
 static kern_return_t FindEjectableCDMedia( io_iterator_t *mediaIterator,
 					   mach_port_t *masterPort )
