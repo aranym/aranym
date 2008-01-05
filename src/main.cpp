@@ -42,9 +42,6 @@
 #include "parameters.h"
 #include "host.h"			// for the HostScreen
 #include "parameters.h"
-#ifdef HEARTBEAT
-#  include "version.h"		// for heartBeat
-#endif
 #include "natfeat/nf_objs.h"
 #include "bootos_tos.h"
 #include "bootos_emutos.h"
@@ -150,45 +147,9 @@ void ClearInterruptFlag(uint32 flag)
 	}
 }
 
-#ifdef HEARTBEAT
-/*
- * called in VBL
- * indicates that the ARAnyM is alive and kicking
- */
-void heartBeat()
-{
-	if (bx_options.video.fullscreen)
-		return;	// think of different heart beat indicator
-
-	static int vblCounter = 0;
-	if (++vblCounter == 50) {
-		vblCounter = 0;
-
-		static char beats[] = "\\|/-\\|/-";
-		static unsigned int beat_idx = 0;
-		char buf[sizeof(VERSION_STRING)+128];
-#ifdef SDL_GUI
-		char key[80];
-		displayKeysym(bx_options.hotkeys.setup, key);
-		snprintf(buf, sizeof(buf), "%s (press %s key for SETUP) %c", VERSION_STRING, key, beats[beat_idx++]);
-#else
-		snprintf(buf, sizeof(buf), "%s %c", VERSION_STRING, beats[beat_idx++]);
-#endif /* SDL_GUI */
-		if (beat_idx == strlen(beats))
-			beat_idx = 0;
-
-		SDL_WM_SetCaption(buf, NULL);
-	}
-}
-#endif
-
 /* VBL is fixed at 50 Hz in ARAnyM */
 void do_vbl_irq()
 {
-#ifdef HEARTBEAT
-	heartBeat();
-#endif
-
 	TriggerVBL();		// generate VBL
 
 	check_event();		// process keyboard and mouse events
