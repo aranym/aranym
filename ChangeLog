@@ -9,6 +9,8 @@
 - logo.cpp: set the USE_ALPHA
 - hostscreen.cpp: don't crash if logo.png not found
 - Makefile.in: install logo.png
+- version_date.h: removed from src/include, moved to root (next to Makefile)
+- autogen.sh: touch version_date.h so that make depend doesn't fail
 
 
 2008/01/04 - Petr
