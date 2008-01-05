@@ -16,7 +16,7 @@ enum {
   FILEFILTER_TOSROM,
   FILEFILTER_MAPFILE,
   FILEFILTER_YMFILE,
-  FILEFILTER_MEMORYFILE,
+  FILEFILTER_MEMORYFILE
 };
 
 #if defined(__BEOS__) || defined(OS_solaris) || defined(OS_mingw)
