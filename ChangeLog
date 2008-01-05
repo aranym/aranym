@@ -1,7 +1,9 @@
 2008/01/05 - Petr
 - acsifdc.cpp: alloca() replaced by std::vector thanks to Blaine's suggestion
-- hostscreen.cpp: variable array size is C99, not C++ - replaced by
-  std::vector
+- hostscreen.cpp: variable array size is C99, not C++ - replaced by vector
+- logo.cpp: set the USE_ALPHA
+- hostscreen.cpp: don't crash if logo.png not found
+- Makefile.in: install logo.png
 
 
 2008/01/04 - Petr
