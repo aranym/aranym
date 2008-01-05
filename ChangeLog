@@ -1,3 +1,7 @@
+2008/01/05 - Andreas
+- Makefile.in: Make sure version_date.h is up-to-date.
+
+
 2008/01/05 - milan
 - real adressing mode removed from code
 - Sun Studio supported

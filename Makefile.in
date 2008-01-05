@@ -165,7 +165,7 @@ TARGET = @TARGET@
 .SUFFIXES:
 .SUFFIXES: .c .cpp .s .o .h .m .M
 
-all: $(TARGET) $(TAPIF)
+all: version_date.h $(TARGET) $(TAPIF)
 
 OBJ_DIR = obj_@CPU_TYPE@
 $(OBJ_DIR)::
@@ -179,8 +179,8 @@ define SRCS_LIST_TO_OBJS
 	$(basename $(notdir $(file))))))
 endef
 
-version_date.h: ChangeLog
-	sed '/\(^20[0-9][0-9]\/[0-9]*\/[0-9]*\).*/{s//\/* generated from ChangeLog *\/\n#define VERSION_DATE "\1"\n/};q' <ChangeLog > $@
+version_date.h: $(top_srcdir)/ChangeLog
+	sed '/\(^20[0-9][0-9]\/[0-9]*\/[0-9]*\).*/{s//\/* generated from ChangeLog *\/\n#define VERSION_DATE "\1"\n/};q' < $(top_srcdir)/ChangeLog > $@
 
 OBJS = $(SRCS_LIST_TO_OBJS)
 
@@ -361,7 +361,7 @@ devdist: mrproper
 dist: distclean
 	cd $(srcdir)/../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore aranym
 
-depend:
+depend: version_date.h
 	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) | sed 's,^[^ ],$$(OBJ_DIR)/&,' > .depend
 
 $(OBJ_DIR)/%.o : %.c
