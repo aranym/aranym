@@ -46,8 +46,8 @@ static char ide1_name[41];
 static char ide0_size[7], ide0_cyl[6], ide0_head[3], ide0_spt[4];
 static char ide1_size[7], ide1_cyl[6], ide1_head[3], ide1_spt[4];
 
-static char *eject = "Eject";
-static char *insert = "Insert";
+static const char *eject = "Eject";
+static const char *insert = "Insert";
 
 static char floppy_path[80];
 static char ide0_path[80];

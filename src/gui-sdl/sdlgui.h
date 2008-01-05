@@ -63,7 +63,7 @@ typedef struct
   int state;		/* Object state */
   int x, y;             /* The offset to the upper left corner */
   unsigned int w, h;             /* Width and height */
-  char *txt;            /* Text string */
+  const char *txt;            /* Text string */
 }  SGOBJ;
 
 typedef struct

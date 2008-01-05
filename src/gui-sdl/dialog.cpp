@@ -143,7 +143,7 @@ void Dialog::keyPress(const SDL_Event &event)
 
 			case SDLK_BACKSPACE:
 				if (cursor.position > 0) {
-					memmove(&dlg[cursor.object].txt[cursor.position-1],
+					memmove((void *)&dlg[cursor.object].txt[cursor.position-1],
 						&dlg[cursor.object].txt[cursor.position],
 						strlen(&dlg[cursor.object].txt[cursor.position])+1);
 					cursor.position--;
@@ -152,7 +152,7 @@ void Dialog::keyPress(const SDL_Event &event)
 
 			case SDLK_DELETE:
 				if(cursor.position < (int)strlen(dlg[cursor.object].txt)) {
-					memmove(&dlg[cursor.object].txt[cursor.position],
+					memmove((void *)&dlg[cursor.object].txt[cursor.position],
 						&dlg[cursor.object].txt[cursor.position+1],
 						strlen(&dlg[cursor.object].txt[cursor.position+1])+1);
 				}
@@ -202,11 +202,12 @@ void Dialog::keyPress(const SDL_Event &event)
 				}
 				/* If it is a "good" key then insert it into the text field */
 				if ((keysym >= SDLK_SPACE) && (keysym < SDLK_KP0)) {
+					char *dlgtxt = (char *)dlg[cursor.object].txt;
 					if (strlen(dlg[cursor.object].txt) < dlg[cursor.object].w) {
-						memmove(&dlg[cursor.object].txt[cursor.position+1],
+						memmove(&dlgtxt[cursor.position+1],
 							&dlg[cursor.object].txt[cursor.position],
 							strlen(&dlg[cursor.object].txt[cursor.position])+1);
-						dlg[cursor.object].txt[cursor.position] =
+						dlgtxt[cursor.position] =
 							(mod & KMOD_SHIFT) ? toupper(keysym) : keysym;
 						cursor.position++;
 					}
