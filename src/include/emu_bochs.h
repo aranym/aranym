@@ -32,8 +32,6 @@ extern "C" {
 
 
 // moje triky
-#define put(a)
-#define settype(a)
 #define BX_DEBUG(a)	printf a
 #define BX_PANIC(a)	printf a
 #define BX_INFO(a)	printf a

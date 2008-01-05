@@ -1,5 +1,7 @@
 2008/01/05 - milan
 - real adressing mode removed from code
+- Sun Studio supported
+
 
 2008/01/05 - Petr
 - acsifdc.cpp: alloca() replaced by std::vector thanks to Blaine's suggestion
