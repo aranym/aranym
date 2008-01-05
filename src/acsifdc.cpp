@@ -31,6 +31,7 @@
 
 #include "sysdeps.h"
 #include <cassert>
+#include <vector>
 
 #include "hardware.h"
 #include "cpu_emulation.h"
@@ -350,10 +351,10 @@ bool ACSIFDC::is_floppy_inserted()
 bool ACSIFDC::read_file(int device, long offset, memptr address, int secsize, int count)
 {
 	if (lseek(device, offset, SEEK_SET) < 0) return false;
-	void *buffer = alloca(secsize);
+	std::vector<uint8> buffer(secsize);
 	for(int i=0; i<count; i++) {
-		if (::read(device, buffer, secsize) != secsize) return false;
-		memcpy(Atari2HostAddr(address), buffer, secsize);
+		if (::read(device, &buffer[0], secsize) != secsize) return false;
+		memcpy(Atari2HostAddr(address), &buffer[0], secsize);
 		address += secsize;
 	}
 	return true;
@@ -362,11 +363,11 @@ bool ACSIFDC::read_file(int device, long offset, memptr address, int secsize, in
 bool ACSIFDC::write_file(int device, long offset, memptr address, int secsize, int count)
 {
 	if (lseek(device, offset, SEEK_SET) < 0) return false;
-	void *buffer = alloca(secsize);
+	std::vector<uint8> buffer(secsize);
 	for(int i=0; i<count; i++) {
-		memcpy(buffer, Atari2HostAddr(address), secsize);
+		memcpy(&buffer[0], Atari2HostAddr(address), secsize);
 		address += secsize;
-		if (::write(device, buffer, secsize) != secsize) return false;
+		if (::write(device, &buffer[0], secsize) != secsize) return false;
 	}
 	return true;
 }

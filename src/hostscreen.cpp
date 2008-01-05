@@ -24,6 +24,7 @@
 #endif
 
 #include <SDL.h>
+#include <vector>
 
 #include "dirty_rects.h"
 #include "host_surface.h"
@@ -525,7 +526,7 @@ void HostScreen::refreshScreen(void)
 	}
 
 	/* Only update dirtied rects */
-	SDL_Rect update_rects[dirtyW*dirtyH];
+	std::vector<SDL_Rect> update_rects(dirtyW*dirtyH);
 	int i = 0;
 	for (int y=0; y<dirtyH; y++) {
 		for (int x=0; x<dirtyW; x++) {
@@ -548,7 +549,7 @@ void HostScreen::refreshScreen(void)
 		}
 	}
 
-	SDL_UpdateRects(screen,i,update_rects);
+	SDL_UpdateRects(screen, i, &update_rects[0]);
 
 	clearDirtyRects();
 }

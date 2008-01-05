@@ -1,3 +1,9 @@
+2008/01/05 - Petr
+- acsifdc.cpp: alloca() replaced by std::vector thanks to Blaine's suggestion
+- hostscreen.cpp: variable array size is C99, not C++ - replaced by
+  std::vector
+
+
 2008/01/04 - Petr
 - hostscreen.cpp: alpha blend the logo onto VIDEL screen for half of second
   upon boot when OpenGL video is enabled.
