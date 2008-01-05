@@ -59,7 +59,6 @@ if [ x"$NO_CONFIGURE" = "x" ]; then
     ./configure "$@" || exit 1
        echo
        echo $_echo_n "Creating dependencies... $_echo_c" ;
-       touch -t 200101010000 version_date.h
        $MAKE depend >/dev/null
 else
        echo "Don't forget to 'make depend' after configure..."
