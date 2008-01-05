@@ -10,3 +10,4 @@ config.h.in
 config.log
 config.status
 configure
+version_date.h

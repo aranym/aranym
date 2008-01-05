@@ -20,6 +20,11 @@
 #define VERSION_H
 
 #include "version_date.h"
+#ifdef VERSION_DATE
+#define CVS_DATE	" (CVS " VERSION_DATE ")"
+#else
+#define CVS_DATE	"CVS"
+#endif
 
 #define VER_MAJOR	0
 #define VER_MINOR	9
@@ -29,7 +34,7 @@
 //#define VER_STATUS
 //#define VER_STATUS	"alpha"
 //#define VER_STATUS	"beta"
-#define VER_STATUS	"beta+" " (CVS " VERSION_DATE ")"
+#define VER_STATUS	"beta+" CVS_DATE
 #endif
 
 #define str(x)		_stringify (x)
