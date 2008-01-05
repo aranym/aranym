@@ -180,7 +180,8 @@ define SRCS_LIST_TO_OBJS
 endef
 
 version_date.h: $(top_srcdir)/ChangeLog
-	sed '/\(^20[0-9][0-9]\/[0-9]*\/[0-9]*\).*/{s//\/* generated from ChangeLog *\/\n#define VERSION_DATE "\1"\n/};q' < $(top_srcdir)/ChangeLog > $@
+	echo '/* generated from ChangeLog */\n' > $@
+	sed 's/^\(20[0-9][0-9]\/[0-9]*\/[0-9]*\).*/#define VERSION_DATE "\1"/;q' < ChangeLog >> $@
 
 OBJS = $(SRCS_LIST_TO_OBJS)
 
