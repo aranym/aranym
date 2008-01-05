@@ -173,8 +173,6 @@ AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distributed dis
 
 AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation (default=yes)], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
 
-AC_ARG_ENABLE(purec,           [  --enable-purec          enable corrupted stack format (default=no)], [WANT_PUREC=$enableval], [WANT_PUREC=no])
-
 AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
 
 dnl Host OS type (host is build if not cross-compiling).
@@ -817,10 +815,6 @@ MMUSRCS="uae_cpu/cpummu.cpp"
 dnl Full MMU
 if [[ "x$WANT_MMU" = "xyes" ]]; then
     AC_DEFINE([FULLMMU], 1, [Define if using full MMU])
-else
-    if [[ "x$WANT_PUREC" = "xyes" ]]; then
-        AC_DEFINE([PUREC], 1, [Define if PureC hack needed])
-    fi
 fi
 
 dnl Small ATC
