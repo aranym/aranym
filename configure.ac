@@ -128,7 +128,6 @@ AC_ARG_ENABLE(addressing,
 [  --enable-addressing=AM  specify the addressing mode to use (default=fastest)],
 [ case "$enableval" in
     direct)	ADDRESSING_TEST_ORDER="direct";;
-    banks)	ADDRESSING_TEST_ORDER="banks";;
     normal)	ADDRESSING_TEST_ORDER="normal";;
     fixed)	ADDRESSING_TEST_ORDER="fixed";;
     *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: direct, fixed, normal]);;
@@ -1041,10 +1040,6 @@ for am in $ADDRESSING_TEST_ORDER; do
     fi
     ADDRESSING_MODE="direct"
     DEFINES="$DEFINES -DDIRECT_ADDRESSING"
-    break
-    ;;
-  banks)
-    ADDRESSING_MODE="memory banks"
     break
     ;;
   fixed)
