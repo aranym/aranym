@@ -42,6 +42,7 @@
 
 # include <cerrno>
 # include <csignal>
+# include <signal.h>
 # include <cstdlib>
 
 #ifndef HAVE_SIGHANDLER_T
