@@ -75,9 +75,9 @@ void HostScreen::reset(void)
 #ifdef SDL_GUI
 	char key[80];
 	displayKeysym(bx_options.hotkeys.setup, key);
-	snprintf(buf, sizeof(buf), "%s (press %s key for SETUP)", VERSION_STRING, key);
+	snprintf(buf, sizeof(buf), "%s  (Press the [%s] key for SETUP)", VERSION_STRING, key);
 #else
-	snprintf(buf, sizeof(buf), "%s", VERSION_STRING);
+	safe_strncpy(buf, VERSION_STRING, sizeof(buf));
 #endif /* SDL_GUI */
 	SDL_WM_SetCaption(buf, "ARAnyM");
 }
