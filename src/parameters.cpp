@@ -1341,17 +1341,6 @@ bool saveSettings(const char *fs)
 
 bool check_cfg()
 {
-#if REAL_ADDRESSING
-# if defined(CPU_i386) && defined(OS_linux)
-	if (bx_options.fastram > (128 - 16))
-	{
-		panicbug("Maximum Fast RAM size for real addressing on x86/Linux is 112 MB");
-		panicbug("If you need bigger Fast RAM, you must recompile ARAnyM");
-		panicbug("Use ./configure --enable-addressing=direct");
-		return false;
-	}
-# endif
-#endif
 	return true;
 }
 

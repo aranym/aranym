@@ -188,10 +188,6 @@
 #endif
 
 /* Atari and host address space are distinct */
-#ifndef REAL_ADDRESSING
-#define REAL_ADDRESSING 0
-#endif
-
 #ifndef DIRECT_ADDRESSING
 #define DIRECT_ADDRESSING 0
 #endif
@@ -409,13 +405,9 @@ static inline uae_u32 do_byteswap_16(uae_u32 v)
 
 #undef NOT_MALLOC
 
-#if REAL_ADDRESSING
-# define NOT_MALLOC
-#endif
-
 #undef KNOWN_ALLOC
 
-#if REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING
+#if DIRECT_ADDRESSING || FIXED_ADDRESSING
 # define KNOWN_ALLOC	1
 #else
 # define KNOWN_ALLOC	0

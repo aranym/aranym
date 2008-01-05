@@ -105,7 +105,7 @@ void segmentationfault(int)
 
 static void allocate_all_memory()
 {
-#if REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING
+#if DIRECT_ADDRESSING || FIXED_ADDRESSING
 	// Initialize VM system
 	vm_init();
 
@@ -134,38 +134,15 @@ static void allocate_all_memory()
 #  endif /* HW_SISEGV */
 # endif /* EXTENDED_SIGSEGV */
 #else
-# if REAL_ADDRESSING
-	// Flag: RAM and ROM are contigously allocated from address 0
-	bool memory_mapped_from_zero = false;
-	
-	// Probably all OSes have problems
-	// when trying to map a too big chunk of memory starting at address 0
-	
-	// Try to allocate all memory from 0x0000, if it is not known to crash
-	if (vm_acquire_fixed(0, RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd) == true) {
-		D(bug("Could allocate RAM and ROM from 0x0000"));
-		memory_mapped_from_zero = true;
+	RAMBaseHost = (uint8*)vm_acquire(RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd);
+	if (RAMBaseHost == VM_MAP_FAILED) {
+		panicbug("Not enough free memory.");
+		QuitEmulator();
 	}
 
-	if (memory_mapped_from_zero) {
-		RAMBaseHost = (uint8 *)0;
-		ROMBaseHost = RAMBaseHost + ROMBase;
-		HWBaseHost = RAMBaseHost + HWBase;
-		FastRAMBaseHost = RAMBaseHost + FastRAMBase;
-	}
-	else
-# endif
-	{
-		RAMBaseHost = (uint8*)vm_acquire(RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd);
-		if (RAMBaseHost == VM_MAP_FAILED) {
-			panicbug("Not enough free memory.");
-			QuitEmulator();
-		}
-
-		ROMBaseHost = RAMBaseHost + ROMBase;
-		HWBaseHost = RAMBaseHost + HWBase;
-		FastRAMBaseHost = RAMBaseHost + FastRAMBase;
-	}
+	ROMBaseHost = RAMBaseHost + ROMBase;
+	HWBaseHost = RAMBaseHost + HWBase;
+	FastRAMBaseHost = RAMBaseHost + FastRAMBase;
 #endif
 	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
 	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
@@ -179,7 +156,7 @@ static void allocate_all_memory()
 	D(bug("RAMEnd needed"));
 #  endif
 # endif /* EXTENDED_SIGSEGV */
-#endif /* REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING */
+#endif /* DIRECT_ADDRESSING || FIXED_ADDRESSING */
 }
 
 #ifdef EXTENDED_SIGSEGV
@@ -320,7 +297,7 @@ void QuitEmulator(void)
 	ExitAll();
 
 	// Free ROM/RAM areas
-#if REAL_ADDRESSING || DIRECT_ADDRESSING || FIXED_ADDRESSING
+#if DIRECT_ADDRESSING || FIXED_ADDRESSING
 	if (RAMBaseHost != VM_MAP_FAILED) {
 #ifdef RAMENDNEEDED
 		vm_release(RAMBaseHost + RAMSize + ROMSize + HWSize + FastRAMSize, RAMEnd);

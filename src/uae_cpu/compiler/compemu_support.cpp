@@ -5519,10 +5519,10 @@ void get_n_addr(int address, int dest, int tmp)
 	f=dest;
 	}
 
-#if REAL_ADDRESSING
-	mov_l_rr(dest, address);
-#elif FIXED_ADDRESSING
+#if FIXED_ADDRESSING
 	lea_l_brr(dest,address,MEMBaseDiff);
+#else
+# error "Only fixed adressing mode supported"
 #endif
 	forget_about(tmp);
 }

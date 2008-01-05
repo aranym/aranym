@@ -127,12 +127,11 @@ dnl Addressing modes.
 AC_ARG_ENABLE(addressing,
 [  --enable-addressing=AM  specify the addressing mode to use (default=fastest)],
 [ case "$enableval" in
-    real) 	ADDRESSING_TEST_ORDER="real";;
     direct)	ADDRESSING_TEST_ORDER="direct";;
     banks)	ADDRESSING_TEST_ORDER="banks";;
     normal)	ADDRESSING_TEST_ORDER="normal";;
     fixed)	ADDRESSING_TEST_ORDER="fixed";;
-    *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: real, direct, fixed, normal]);;
+    *)		AC_MSG_ERROR([--enable-addressing takes only one of the following values: direct, fixed, normal]);;
   esac
 ],
 [ ADDRESSING_TEST_ORDER="direct normal"
@@ -200,7 +199,6 @@ AC_DEFINE_UNQUOTED([OS_TYPE], "$OS_TYPE", [Define OS type])
 dnl Target CPU type.
 ARCHFLAGS=
 HAVE_I386=no
-HAVE_M68K=no
 HAVE_SPARC=no
 HAVE_POWERPC=no
 HAVE_X86_64=no
@@ -216,7 +214,6 @@ case "$host_cpu" in
 		LDFLAGS="$LDFLAGS $ISYSROOT $ARCHFLAGS"
 	fi
 	;;
-  m68k* ) CPU_TYPE=m68k HAVE_M68K=yes;;
   sparc* ) CPU_TYPE=sparc HAVE_SPARC=yes;;
   powerpc* )
 	CPU_TYPE=powerpc
@@ -303,14 +300,6 @@ typedef void * caddr_t;
 
 dnl Darwin seems to define mach_task_self() instead of task_self().
 AC_CHECK_FUNCS(mach_task_self task_self)
-
-CAN_NATIVE_M68K=no
-dnl Use 68k CPU natively?
-WANT_NATIVE_M68K=no
-if [[ "x$HAVE_M68K" = "xyes" -a "x$CAN_NATIVE_M68K" = "xyes" ]]; then
-  AC_DEFINE(ENABLE_NATIVE_M68K, 1, [Define if using native 68k mode.])
-  WANT_NATIVE_M68K=yes
-fi
 
 AC_DEFINE([DIRSEPARATOR], "/", [Default directory separator])
 
@@ -1038,98 +1027,73 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
 fi
 
 dnl Determine the addressing mode to use
-if [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
-  ADDRESSING_MODE="real"
-else
-  ADDRESSING_MODE=""
-  AC_MSG_CHECKING([for the addressing mode to use])
-  for am in $ADDRESSING_TEST_ORDER; do
-    case $am in
-    real)
-      if [[ "x$HAVE_MMAP_VM" = "xno" -a "x$HAVE_MACH_VM" = "xno" ]]; then
-        continue
-      fi
-      dnl Requires ability to mmap() Low Memory globals
-      if [[ "x$ac_cv_can_map_lm" = "xno" ]]; then
-        continue
-      fi
-      dnl Problems with Solaris
-      if [[ "x$OS_TYPE" = "xsolaris" ]]; then
-        continue
-      fi
-      dnl Problems with Irix
-      if [[ "x$OS_TYPE" = "xirix" ]]; then
-        continue
-      fi
-      dnl Real addressing will probably work.
-      ADDRESSING_MODE="real"
-      DEFINES="$DEFINES -DREAL_ADDRESSING"
+ADDRESSING_MODE=""
+AC_MSG_CHECKING([for the addressing mode to use])
+for am in $ADDRESSING_TEST_ORDER; do
+  case $am in
+  direct)
+    if [[ "x$HAVE_MMAP_VM" = "xno" -a "x$HAVE_MACH_VM" = "xno" ]]; then
+      continue
+    fi
+    dnl Problems with Solaris
+    if [[ "x$OS_TYPE" = "xsolaris" ]]; then
+      continue
+    fi
+    ADDRESSING_MODE="direct"
+    DEFINES="$DEFINES -DDIRECT_ADDRESSING"
+    break
+    ;;
+  banks)
+    ADDRESSING_MODE="memory banks"
+    break
+    ;;
+  fixed)
+    if [[ "x$HAVE_MMAP_VM" = "xno" -a "x$HAVE_MACH_VM" = "xno" ]]; then
+      continue
+    fi
+    if [[ "x$OS_TYPE" = "xlinux" -a "x$HAVE_I386" ]]; then
+      ADDRESSING_MODE="fixed (0x51000000)"
+      DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
-      ;;
-    direct)
-      if [[ "x$HAVE_MMAP_VM" = "xno" -a "x$HAVE_MACH_VM" = "xno" ]]; then
-        continue
-      fi
-      dnl Problems with Solaris
-      if [[ "x$OS_TYPE" = "xsolaris" ]]; then
-        continue
-      fi
-      ADDRESSING_MODE="direct"
-      DEFINES="$DEFINES -DDIRECT_ADDRESSING"
+    fi
+    if [[ "x$OS_TYPE" = "xfreebsd" -a "x$HAVE_I386" ]]; then
+      ADDRESSING_MODE="fixed (0x51000000)"
+      DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
-      ;;
-    banks)
-      ADDRESSING_MODE="memory banks"
+    fi
+    if [[ "x$OS_TYPE" = "xopenbsd" -a "x$HAVE_I386" ]]; then
+      ADDRESSING_MODE="fixed (0x51000000)"
+      DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
-      ;;
-    fixed)
-      if [[ "x$HAVE_MMAP_VM" = "xno" -a "x$HAVE_MACH_VM" = "xno" ]]; then
-        continue
-      fi
-      if [[ "x$OS_TYPE" = "xlinux" -a "x$HAVE_I386" ]]; then
-        ADDRESSING_MODE="fixed (0x51000000)"
-        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
-        break
-      fi
-      if [[ "x$OS_TYPE" = "xfreebsd" -a "x$HAVE_I386" ]]; then
-        ADDRESSING_MODE="fixed (0x51000000)"
-        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
-        break
-      fi
-      if [[ "x$OS_TYPE" = "xopenbsd" -a "x$HAVE_I386" ]]; then
-        ADDRESSING_MODE="fixed (0x51000000)"
-        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
-        break
-      fi
-      if [[ "x$OS_TYPE" = "xdarwin" -a "x$HAVE_I386" ]]; then
-        ADDRESSING_MODE="fixed (0x51000000)"
-        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
-        break
-      fi
-      if [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
-        ADDRESSING_MODE="fixed (0x51000000)"
-        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
-        break
-      fi
-      if [[ "x$OS_TYPE" = "xsolaris" -a "x$HAVE=I386" ]]; then
-        ADDRESSING_MODE="fixed (0x51000000)"
-        DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
-        break
-      fi
-      ;;
-    normal)
-      ADDRESSING_MODE="normal"
-      DEFINES="$DEFINES -DNORMAL_ADDRESSING"
+    fi
+    if [[ "x$OS_TYPE" = "xdarwin" -a "x$HAVE_I386" ]]; then
+      ADDRESSING_MODE="fixed (0x51000000)"
+      DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
-      ;;
-    *)
-      AC_MSG_ERROR([Internal configure.in script error for $am addressing mode])
-    esac
-  done
-  AC_MSG_RESULT($ADDRESSING_MODE)
-  if [[ "x$ADDRESSING_MODE" = "x" ]]; then
-    AC_MSG_ERROR([Sorry, no suitable addressing mode in $ADDRESSING_TEST_ORDER])
-  fi
+    fi
+    if [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
+      ADDRESSING_MODE="fixed (0x51000000)"
+      DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
+      break
+    fi
+    if [[ "x$OS_TYPE" = "xsolaris" -a "x$HAVE=I386" ]]; then
+      ADDRESSING_MODE="fixed (0x51000000)"
+      DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
+      break
+    fi
+    ;;
+  normal)
+    ADDRESSING_MODE="normal"
+    DEFINES="$DEFINES -DNORMAL_ADDRESSING"
+    break
+    ;;
+  *)
+    AC_MSG_ERROR([Internal configure.in script error for $am addressing mode])
+  esac
+done
+AC_MSG_RESULT($ADDRESSING_MODE)
+if [[ "x$ADDRESSING_MODE" = "x" ]]; then
+  AC_MSG_ERROR([Sorry, no suitable addressing mode in $ADDRESSING_TEST_ORDER])
 fi
 
 dnl Check for GAS.
@@ -1271,10 +1235,6 @@ elif [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xy
     esac
     ;;
   esac
-elif [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then
-  dnl Native m68k, no emulation
-  CPUINCLUDES="-I\$(srcdir)/native_cpu"
-  CPUSRCS="asm_support.s"
 fi
 
 dnl JIT sources if available
@@ -1400,12 +1360,10 @@ if [[ "x$WANT_SPCFLAGS_EXCL" = "xyes" ]]; then
   DEFINES="$DEFINES -DENABLE_EXCLUSIVE_SPCFLAGS"
 fi
 
-dnl UAE CPU sources for all non-m68k-native architectures.
-if [[ "x$WANT_NATIVE_M68K" = "xno" ]]; then
-  CPUINCLUDES="-I\$(srcdir)/uae_cpu"
-  CPUSRCS="$CPUSRCS uae_cpu/aranym_glue.cpp uae_cpu/memory.cpp uae_cpu/newcpu.cpp uae_cpu/readcpu.cpp $JITSRCS $FPUSRCS $MMUSRCS"
-  GENCPUSRCS="$GENCPUSRCS cpudefs.cpp cpustbl.cpp $GENJITSRCS"
-fi
+dnl UAE CPU sources for all architectures.
+CPUINCLUDES="-I\$(srcdir)/uae_cpu"
+CPUSRCS="$CPUSRCS uae_cpu/aranym_glue.cpp uae_cpu/memory.cpp uae_cpu/newcpu.cpp uae_cpu/readcpu.cpp $JITSRCS $FPUSRCS $MMUSRCS"
+GENCPUSRCS="$GENCPUSRCS cpudefs.cpp cpustbl.cpp $GENJITSRCS"
 
 dnl Remove the "-g" option if set for GCC.
 if [[ "x$HAVE_GCC27" = "xyes" ]]; then

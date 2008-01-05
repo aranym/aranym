@@ -108,16 +108,12 @@ extern uintptr pc_offset, read_offset, write_offset;
 # endif
 #endif
 
-#if REAL_ADDRESSING
-const uintptr MEMBaseDiff = 0;
-#else
 extern uintptr MEMBaseDiff;
 extern uintptr ROMBaseDiff;
 extern uintptr FastRAMBaseDiff;
 # define InitMEMBaseDiff(va, ra)	(MEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 # define InitROMBaseDiff(va, ra)        (ROMBaseDiff = (uintptr)(va) - (uintptr)(ra))
 # define InitFastRAMBaseDiff(va, ra)        (FastRAMBaseDiff = (uintptr)(va) - (uintptr)(ra))
-#endif /* REAL_ADDRESSING */
 
 #ifdef FIXED_VIDEORAM
 #define InitVMEMBaseDiff(va, ra)	(VMEMBaseDiff = (uintptr)(va) - (uintptr)(ra))
