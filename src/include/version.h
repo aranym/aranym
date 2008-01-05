@@ -21,7 +21,7 @@
 
 #include "version_date.h"
 #ifdef VERSION_DATE
-#define CVS_DATE	" (CVS " VERSION_DATE ")"
+#define CVS_DATE	"CVS " VERSION_DATE
 #else
 #define CVS_DATE	"CVS"
 #endif
