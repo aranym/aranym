@@ -81,6 +81,10 @@ void Logo::load(const char *filename)
 	}
 
 	surface = host->video->createSurface(logo_surf->w, logo_surf->h, logo_surf->format);
+
+	if (surface != NULL) {
+		surface->setParam(HostSurface::SURF_USE_ALPHA, 1);
+	}
 }
 
 HostSurface *Logo::getSurface(void)
@@ -117,3 +121,7 @@ HostSurface *Logo::getSurface(void)
 
 	return surface;
 }
+
+/*
+vim:ts=4:sw=4:
+*/
