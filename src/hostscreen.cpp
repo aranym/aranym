@@ -326,19 +326,18 @@ void HostScreen::alphaBlendLogo(bool init)
 
 	if (init) {
 		logo_opacity = 100;
-		if (logo != NULL) {
-			logo->getSurface()->setParam(HostSurface::SURF_USE_ALPHA, 1);
-		}
 	}
 	else {
 		if (bx_options.opengl.enabled && logo != NULL && logo_opacity > 0) {
 			HostSurface *logo_hsurf = logo->getSurface();
-			logo_hsurf->setParam(HostSurface::SURF_ALPHA, logo_opacity);
-			logo_hsurf->setDirtyRect(0, 0, logo_hsurf->getWidth(), logo_hsurf->getHeight());
-			drawSurfaceToScreen(logo_hsurf);
+			if (logo_hsurf != NULL) {
+				logo_hsurf->setParam(HostSurface::SURF_ALPHA, logo_opacity);
+				logo_hsurf->setDirtyRect(0, 0, logo_hsurf->getWidth(), logo_hsurf->getHeight());
+				drawSurfaceToScreen(logo_hsurf);
+			}
 
 			logo_opacity -= 5 * bx_options.video.refresh;
-			if (logo_opacity <= 0) {
+			if (logo_opacity <= 0 && getVIDEL() != NULL && getVIDEL()->getSurface() != NULL && logo_hsurf != NULL) {
 				getVIDEL()->getSurface()->setDirtyRect(0, 0, logo_hsurf->getWidth(), logo_hsurf->getHeight());
 			}
 		}
