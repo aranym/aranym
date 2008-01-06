@@ -1,8 +1,8 @@
 # Unix makefile for ARAnyM
 # Inspired in BasiliskII's Makefile
 
-makefile := $(word $(words $(MAKEFILE_LIST)), $(MAKEFILE_LIST))
-     
+#makefile := $(word $(words $(MAKEFILE_LIST)), $(MAKEFILE_LIST))
+
 ## System specific configuration
 @SET_MAKE@
 SHELL = /bin/sh
@@ -19,13 +19,16 @@ top_srcdir = @top_srcdir@
 srcdir = $(top_srcdir)/src
 
 DESTDIR =
-CPU_TYPE = @CPU_TYPE@
+ARCH := @CPU_TYPE@
+DEPEND := $(builddir)/depend_$(ARCH)
+makefile := $(builddir)/Makefile
+
 
 CC = @CC@
 CXX = @CXX@
 CFLAGS = @CFLAGS@ $(SDL_CFLAGS)
 CXXFLAGS = @CXXFLAGS@ $(SDL_CFLAGS)
-CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I$(builddir) -I$(top_srcdir) -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@
+CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I$(builddir) -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@
 ARCHFLAGS = @ARCHFLAGS@
 WFLAGS = @WFLAGS@
 DEFS = @DEFS@ @DEFINES@
@@ -141,7 +144,8 @@ SRCS = main.cpp \
 	$(DYNGLSRCS)
 
 BUNDLE_RESOURCES = \
-	$(srcdir)/Unix/darwin/busybee.icns $(top_srcdir)/data/logo.png \
+	$(srcdir)/Unix/darwin/busybee.icns \
+	$(top_srcdir)/data/logo.png
 	
 BUNDLE_LOCALIZATON_FOLDERS = \
 	$(srcdir)/Unix/darwin/*.lproj
@@ -153,7 +157,7 @@ BUNDLE_CONTENTS = \
 BUNDLE_FRAMEWORKS =  /Library/Frameworks/SDL.framework /Library/Frameworks/SDL_image.framework
 
 APP = aranym
-APP_ARCH = aranym_$(CPU_TYPE)
+APP_ARCH = aranym_$(ARCH)
 APP_STATIC = aranym_static
 APP_LIB = libaranym.a
 APP_BUNDLE = ARAnyM.app
@@ -165,12 +169,12 @@ TARGET = @TARGET@
 .SUFFIXES:
 .SUFFIXES: .c .cpp .s .o .h .m .M
 
-all: version_date.h $(TARGET) $(TAPIF)
+all: $(builddir)/version_date.h $(TARGET) $(TAPIF)
 
-OBJ_DIR = obj_@CPU_TYPE@
+OBJ_DIR = obj_$(ARCH)
 $(OBJ_DIR)::
 	@[ -d $(OBJ_DIR) ] || mkdir $(OBJ_DIR) > /dev/null 2>&1
-GEN_DIR = gen_@CPU_TYPE@
+GEN_DIR = gen_$(ARCH)
 $(GEN_DIR)::
 	@[ -d $(GEN_DIR) ] || mkdir $(GEN_DIR) > /dev/null 2>&1
 
@@ -179,9 +183,9 @@ define SRCS_LIST_TO_OBJS
 	$(basename $(notdir $(file))))))
 endef
 
-version_date.h: $(top_srcdir)/ChangeLog
-	echo '/* generated from ChangeLog */\n' > $@
-	sed 's/^\(20[0-9][0-9]\/[0-9]*\/[0-9]*\).*/#define VERSION_DATE "\1"/;q' < ChangeLog >> $@
+$(builddir)/version_date.h: $(top_srcdir)/ChangeLog
+	echo '/* generated from ChangeLog */' > $@
+	sed -E 's/^(20[0-9][0-9]\/[0-9]*\/[0-9]*).*/#define VERSION_DATE "\1"/;q' < $(top_srcdir)/ChangeLog >> $@
 
 OBJS = $(SRCS_LIST_TO_OBJS)
 
@@ -315,7 +319,7 @@ distclean: clean
 	rm -rf $(top_srcdir)/autom4te.cache
 
 mrproper: distclean
-	rm -f $(top_srcdir)/aclocal.m4 $(top_srcdir)/configure $(top_srcdir)/config.h.in
+	rm -f $(top_srcdir)/aclocal.m4 $(builddir)/configure $(top_srcdir)/config.h.in
 
 bindistdirs:
 	$(SHELL) $(srcdir)/../mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
@@ -362,8 +366,8 @@ devdist: mrproper
 dist: distclean
 	cd $(srcdir)/../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore aranym
 
-depend: version_date.h
-	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) | sed 's,^[^ ],$$(OBJ_DIR)/&,' > .depend
+depend: $(builddir)/version_date.h
+	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) | sed 's,^[^ ],$$(OBJ_DIR)/&,' > $(DEPEND)
 
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
@@ -569,6 +573,6 @@ $(APP_IFC).1.gz: ../doc/$(APP_IFC).1
 	gzip -9 -c $(srcdir)/../doc/$(APP_IFC).1 > $(APP_IFC).1.gz
 
 # Include dependencies
-ifneq ($(wildcard .depend),)
-include .depend
+ifneq ($(wildcard $(DEPEND)),)
+include $(DEPEND)
 endif

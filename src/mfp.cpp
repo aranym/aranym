@@ -543,8 +543,15 @@ int MFP::doInterrupt()
         }
         if(irq_inservice >= i) {
                 /* Still busy. We shouldn't come here. */
-                panicbug( "mfp_do_interrupt called when "
+				
+				/*	Running MagiC this happens all the time. 
+					The panicbug log makes the whole console output unusable.
+					Thus it is commented out.
+                
+				panicbug( "mfp_do_interrupt called when "
                         "another higher priority interrupt is running\n") ;
+				*/
+			
                 TriggerMFP(false);
                 return 0 ;
         }

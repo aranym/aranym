@@ -35,8 +35,9 @@
 #define DEBUG 1
 #include "debug.h"
 
-# include <cstdarg>
-# include <cstdlib>
+#include <cstdarg>
+#include <cstdlib>
+#include <cerrno>
 
 #ifndef HAVE_GNU_SOURCE
 
@@ -60,8 +61,8 @@ extern "C" char *strdup(const char *s)
 }
 #endif
 
-static termios savetty;
-
+termios ndebug::savetty;
+bool ndebug::issavettyvalid = false;
 unsigned int ndebug::rowlen = 78;
 //unsigned int ndebug::dbsize = 1000;
 unsigned int ndebug::warnlen = 10;
@@ -921,6 +922,9 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 }
 
 int ndebug::icanon(FILE *f, bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
+	if (!issavettyvalid)
+		return(0);
+	
 	struct termios newtty;
 	char buffer[1];
 	int count;
@@ -1002,6 +1006,9 @@ int ndebug::icanon(FILE *f, bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
 }
 
 int ndebug::dm(FILE *f, bool, uaecptr, uaecptr &, uaecptr &nxmem) {
+	if (!issavettyvalid)
+		return(0);
+
 	struct termios newtty;
 	char buffer[1];
 	int count;
@@ -1171,13 +1178,17 @@ void ndebug::init()
 	for (unsigned int i = 0; i < max_breakpoints; i++)
 		breakpoint[i] = false;
 	if (tcgetattr(0, &savetty) == -1) {
-		fprintf(stderr, "tcgetattr error!\n");
-		exit(-1);
+		fprintf(stderr, "tcgetattr error: %d!\n", errno);
+	} else {
+		issavettyvalid = true;
 	}
 }
 
 void ndebug::nexit() {
-	tcsetattr(0, TCSAFLUSH, &savetty);
+	if (issavettyvalid)
+		tcsetattr(0, TCSAFLUSH, &savetty);
+
+	issavettyvalid = false;
 }
 
 void ndebug::dumpmem(FILE *f, VOLATILE uaecptr addr, uaecptr * nxmem, unsigned int lns)

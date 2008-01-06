@@ -205,7 +205,7 @@ case "$host_cpu" in
 	HAVE_I386=yes
 	if [[ "x$OS_TYPE" = "xdarwin" ]]; then
 		ARCHFLAGS="-arch i386"
-		ISYSROOT="-isysroot /Developer/SDKs/MacOSX10.4u.sdk"
+		ISYSROOT="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk"
 		dnl Add the ARCHFLAGS here to let configure check for the target and not host capabilities.
 		CPPFLAGS="$CPPFLAGS $ISYSROOT $ARCHFLAGS"
 		LDFLAGS="$LDFLAGS $ISYSROOT $ARCHFLAGS"
@@ -217,7 +217,7 @@ case "$host_cpu" in
 	HAVE_POWERPC=yes
 	if [[ "x$OS_TYPE" = "xdarwin" ]]; then
 		ARCHFLAGS="-arch ppc"
-		ISYSROOT=
+		ISYSROOT="-mmacosx-version-min=10.3"
 		dnl Add the ARCHFLAGS here to let configure check for the target and not host capabilities.
 		CPPFLAGS="$CPPFLAGS $ISYSROOT $ARCHFLAGS"
 		LDFLAGS="$LDFLAGS $ISYSROOT $ARCHFLAGS"
@@ -1639,7 +1639,7 @@ case "$host_os" in
 			TARGET="\$(APP_BUNDLE)"
 		fi
 		ARANYM_DATADIR="\"\\\"\${datadir}/\${APP}\\\"\""
-		srcdir="../../.."
+		srcdir="."
 		;;
 	mingw*) TARGET="\$(APP)"
 		ARANYM_DATADIR="\"\\\"./\${APP}\\\"\""

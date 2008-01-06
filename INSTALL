@@ -66,7 +66,7 @@ variables at the top of Makefile inside the darwin folder. After that run make
 again.
 
 If everything went OK, you got an executable named "ARAnyM.app" inside the
-src/Unix folder.
+src/Unix/darwin folder.
 
 This application expects its default configuration inside the current user's 
 ~/Library/Preferences/org.aranym.amcfg file. Inside that config file a path 

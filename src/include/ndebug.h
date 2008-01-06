@@ -40,6 +40,8 @@ typedef enum {EQUAL_value_test_8, EQUAL_value_test_16, EQUAL_value_test_32, CHAN
 const unsigned int max_breakpoints = 256;
 
 class ndebug {
+  static termios savetty;
+  static bool issavettyvalid;
   static unsigned int rowlen;
   static const unsigned int dbsize = 1000;
   static unsigned int warnlen;
