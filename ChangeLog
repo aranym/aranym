@@ -5,6 +5,8 @@
 2008/01/05 - milan
 - real adressing mode removed from code
 - Sun Studio supported
+- C++-izing standard includes here and there, adding std namespace
+- removing GNU extensions (sed in Makefile.in, -Wall in configure.ac)
 
 
 2008/01/05 - Petr
