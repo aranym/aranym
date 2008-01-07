@@ -12,21 +12,27 @@
   Added DEPEND to use architecture dependent depend files. Commented out the 
   makefile definiton with WORD and WORDS, as we now have architecture specific 
   depend files. Instead now makefile is defined to $(builddir)/Makefile. 
+
 - darwin/Makefile: Added targets depend{,_i386,_ppc} to generate dependencies 
   and distclean{,_i386,_ppc} to have clean and distclean targets similar to 
   the Makefile. Changed usage of make again to use the -C option. Thus now the 
   targets are build in the same way then for other systems. This has been 
   necessary because the builddir now is fixed to "." and can't be changed. On 
   the other hand it's possible now, as we have the dependencies in other files.
+
 - configure.ac: Added the option -mmacosx-version-min to ISYSROOT, this should 
   fix the build on Leopard without the crt1.o workaround. Changed the srcdir 
   for darwin back to ".", as now make is used with the -C option.
+
 - INSTALL: Fixed the path description to the executable.
+
 - mfp.cpp: Commented out the panicbug "mfp_do_interrupt called when another 
   higher priority interrupt is running", as it is issued continuously when 
   MagiC runs.
+
 - ndebug.{cpp,h}: Added issavettyvalid and thus fixed ndebug in case the 
   terminal is not supporting tcgetattr().
+
 - darwin/aranym.xcodeproj/project.pbxproj: Updated the Xcode project file to 
   contain new files and to use SCM/CVS. Also cleaned up some settings.
 
@@ -56,12 +62,14 @@
 2008/01/04 - Petr
 - hostscreen.cpp: alpha blend the logo onto VIDEL screen for half of second
   upon boot when OpenGL video is enabled.
+
 - data/logo.png: updated, in different color, with white background (for now)
 
 
 2008/01/04 - Patrice
 - host_surface: Add constructor to create surface with a given SDL_PixelFormat.
   The logo needs to keep its alpha.
+
 - configure.ac: Remove '-fomit-frame-pointer' option, prevent exceptions from
   being processed.
 
@@ -79,15 +87,21 @@
 2008/01/01 - Jens
 - Makefile.in - Additional Include path, else the darwin build doesn't 
   find config.h (may be an issue with MACOSX 10.5)
+
 - parameters.cpp - Default search for logo in application bundle
   on MacOS
+
 - input.cpp - don't use mouse grabing if setup gui is open, because the 
   mouse was hidden and was not usable in the Setup GUI
+
 - xcodeproj - SDL Image added, copy logo from data to application bundle. 
   Debugging disabled, because NDEBUG is not working, if Aranym is started 
   from an application bundle in Leopard (tcgetattr = -1)
+
 - logo.png - added because it is necessary for the application bundle
+
 - ethernet_darwin.cpp - check first that the device is available (TUNTAP)
+
 - debug.cpp - Fixed compilation error if debug is disabled
 
 
@@ -99,9 +113,12 @@
 - gui-sdl/*: ARAnyM SETUP is 76 columns wide now. Main, Alert, FileSelect and
   Disk dialogs were enlarged to full width. Couple more smaller dialogs
   were updated to look better.
+
 - gui-sdl/dlgDisk.cpp: Fixed entering of large disk image sizes (> 99 GB).
   Fixed updating of IDE1 values.
+
 - gui-sdl/dlgAlert.cpp: dialog width is flexible now.
+
 - gui-sdl/dialog.{cpp,h}: redrawing of released touch exit button fixed.
 
 
@@ -112,11 +129,16 @@
 2007/12/28 - Petr
 - data/wm_icon.bmp: added a 32x32 BMP version of new ARAnyM icon created by
   Anders Eriksson (thanks!)
+
 - main.cpp: set the new icon in the window manager
+
 - Makefile.in: copy the new icon to the data folder upon installation
+
 - parameters.cpp, rtc.cpp: less verbosity at start up
+
 - main.cpp: RTC timer is probed and if it fails then a safe fallback
   to SDL timer occurs...
+
 - configure.ac: RTC timer is enabled by default on Linux platform
 
 
@@ -165,10 +187,11 @@
 
 
 2007/12/16 - Patrice
-- hostscreen: only update visible part of surface. Dirty rects and surface may be
-  bigger.
-- gui: fix disk related dialog, writing missing parts. Also fix test cursor updates
-  by always redrawing dialog, then cursor above it.
+- hostscreen: only update visible part of surface. Dirty rects and surface
+  may be bigger.
+
+- gui: fix disk related dialog, writing missing parts. Also fix test cursor
+  updates by always redrawing dialog, then cursor above it.
   Fix mouse up/down button press events, to properly update object states.
   Do not wait for an event to refresh file list in selector.
 
@@ -181,16 +204,18 @@
 
 2007/12/11 - Patrice
 - hostsurface/hostscreen: Need to keep track of created surfaces in a list.
-  Tell surfaces when to recreate OpenGL texture objects (for sure happens on win32
-  do not know about other platforms that may require it).
+  Tell surfaces when to recreate OpenGL texture objects (for sure happens
+  on win32 - do not know about other platforms that may require it).
   Store surface parameter inside surface.
   Only do screenshot once rendering is done.
 
 
 2007/12/10 - Patrice
 - sdlgui: Use SDL_GetTicks() to blink cursor at a fixed rate.
-- main: No need to check which driver it is for fullscreen state. We read it when
-  setting video mode.
+
+- main: No need to check which driver it is for fullscreen state. We read it
+  when setting video mode.
+
 - hostscreen: Allow screenshot in OpenGL mode.
 
 
@@ -201,38 +226,54 @@
   the application bundle then a universal binary was taken from the darwin 
   folder again. The build didn't fail if there still were older binaries at 
   both locations. Anyway the application bundle contained a wrong binary.
+
 - darwin/aranym.xcodeprj: As now the application bundle is build again as
   src/Unix/darwin/ARAnyM.app, the XCode project doesn't need a custom location 
   for the build product directory any more.
+
 - Makefile.in: For the target mostlyclean now instead of TARGET both APP and 
   APP_BUNLDE will be deleted.
+
 - src/dyngl.c: Fixed compiler warning about unused parameter.
+
 - src/Unix/aratapif.c: Fixed compiler warning about type mismatch.
+
 - src/uae_cpu/compiler/compemu_support.cpp: Fixed compiler warnings about type 
   mismatches.
+
 - src/uae_cpu/compiler/codegen_x86.cpp: Fixed compiler warning about type 
   mismatch.
+
 - src/natfeat/nfosmesa.h: Fixed return type of name() method.
+
 - src/natfeat/nfosmesa.cpp: Fixed return type of name() method.
+
 - src/natfeat/nfjpeg.h: Fixed return type of name() method.
+
 - src/natfeat/nfjpeg.cpp: Fixed return type of name() method.
 
 
 2007/12/08 - Stefan
 - darwin/Makefile: Fixed the Makefile to allow a direct jump to errors in Xcode.
+
 - Makefile.in: Added $(makefile) to hold the name of the current Makefile. This 
   is needed for depend to append the dependencies to the right file. Added 
   $(makedir) to hold the path to the config.h and other files. This is needed 
   because for the darwin target make is started from a different folder.
+
 - configure.ac: Added again a srcdir definition for darwin.
+
 - darwin/aranym.xcodeprj: Updated the Xcode project files.
+
 - darwin/info.plist: Udated version information.
 
 
 2007/12/08 - Patrice
 - main: Move OS init at the end of initialization
+
 - hostscreen: add a BOOT screen (empty), used if starting with GUI, and while
   processing reset
+
 - videl, videl_zoom: Zoomed surface also with partial updates: fast.
 
 
@@ -240,7 +281,9 @@
 - hostscreen: make the bitplane2chunky conversion routine static. Remove
   similar routines that are duplicates. Add more stuff to force a refresh at
   proper time.
+
 - host_surface: Fix saving palette on resize.
+
 - videl: update surface using dirty markers. Added crc using Adler-32 algorithm
   for 16x16 blocks.
 
@@ -291,9 +334,12 @@
 - host surface: add function to set wanted surface size for opengl that may need
   power of two dimensions. Add function to set palette. Also save and restore
   palette when destroying/recreating surface.
+
 - host surface for OpenGL, to hold texture information.
+
 - hostscreen: OpenGL backend created. Remove bitsperpixel function, only keep
   bpp that return bit depth.
+
 - nfvdi: do not need reset function anymore.
 
 
