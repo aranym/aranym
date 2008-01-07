@@ -19,7 +19,7 @@ ACLOCAL_FLAGS = "-I $(sdlm4dir)/"
 
 	
 #	The universal target builds the x86 executable, then the ppc executable and finally merges both into an universal binary which is then put into the application bundle.
-universal: $(builddir)/depend_i386 $(builddir)/depend_powerpc $(builddir)/config.h
+universal: $(builddir)/depend_i386 $(builddir)/depend_powerpc
 	$(MAKE) -C $(builddir) -f Makefile_i386 aranym_i386
 	$(MAKE) -C $(builddir) -f Makefile_ppc aranym_powerpc
 	#	create the universal binary from the ppc and i386 versions
@@ -31,7 +31,6 @@ universal: $(builddir)/depend_i386 $(builddir)/depend_powerpc $(builddir)/config
 
 #	The i386 target builds the x86 executable and puts it into the application bundle.
 i386: $(builddir)/depend_i386
-	cp -p $(builddir)/config_i386.h $(builddir)/config.h
 	$(MAKE) -C $(builddir) -f Makefile_i386 aranym_i386
 	cp -p $(builddir)/aranym_i386 $(builddir)/aranym
 	$(MAKE) -C $(builddir) -f Makefile_i386
@@ -41,7 +40,6 @@ i386: $(builddir)/depend_i386
 
 #	The ppc target builds the powerpc executable and puts it into the application bundle.
 ppc: $(builddir)/depend_powerpc
-	cp -p $(builddir)/config_ppc.h $(builddir)/config.h
 	$(MAKE) -C $(builddir) -f Makefile_ppc aranym_powerpc
 	cp -p $(builddir)/aranym_powerpc $(builddir)/aranym
 	$(MAKE) -C $(builddir) -f Makefile_ppc
@@ -91,6 +89,7 @@ distclean_i386:
 	fi
 	rm -f $(builddir)/configure_i386
 	rm -f $(builddir)/config_i386.h
+	rm -f $(builddir)/config_tmp.h
 
 
 #	The clean_ppc target removes all build files related to the ppc binary and the application bundle.
@@ -101,6 +100,7 @@ distclean_ppc:
 	fi
 	rm -f $(builddir)/configure_ppc
 	rm -f $(builddir)/config_ppc.h
+	rm -f $(builddir)/config_tmp.h
 
 
 #	This target touches both makefiles to avoid another configure run if something has been changed in the Makefile.in file.
@@ -109,15 +109,18 @@ touch:
 	touch $(builddir)/Makefile_ppc 
 
 
-#	After configuration for x86 and ppc binaries, this target combines both configurations into the config.h file. 
-$(builddir)/config.h: $(builddir)/config_i386.h $(builddir)/config_ppc.h
-	echo "#if CPU_powerpc" > $(builddir)/config.h
-	cat $(builddir)/config_ppc.h >> $(builddir)/config.h
-	echo "#elif CPU_i386" >> $(builddir)/config.h
-	cat $(builddir)/config_i386.h >> $(builddir)/config.h
-	echo "#else" >> $(builddir)/config.h
-	echo "    #error Unsupported CPU type" >> $(builddir)/config.h
-	echo "#endif" >> $(builddir)/config.h
+#	This target combines both configurations into one config_tmp.h file. 
+$(builddir)/config_tmp.h:
+	echo "#ifndef CONFIG_H" > $@
+	echo "    #define CONFIG_H" > $@
+	echo "    #if CPU_powerpc" > $@
+	echo "        #include \"config_ppc.h\"" >> $@
+	echo "    #elif CPU_i386" >> $@
+	echo "        #include \"config_i386.h\"" >> $@
+	echo "    #else" >> $@
+	echo "        #error Unsupported CPU type" >> $@
+	echo "    #endif" >> $@
+	echo "#endif" >> $@
 
 
 #	This target calls autogen.sh, configure and make depend and renames the generic config* files as config*_i386* to avoid overwriting if configuration for the ppc binary is done.
@@ -138,16 +141,18 @@ $(builddir)/config_ppc.h: $(builddir)/configure.ac $(builddir)/autogen.sh $(buil
 	#mv $(builddir)/config.h $(builddir)/config_ppc.h
 	# 10.3.9 compatibility:
 	cat $(builddir)/config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\/* #undef HAVE_SYS_STATVFS_H *\//' > $(builddir)/config_ppc.h
-	rm $(builddir)/config.h
+	rm -f $(builddir)/config.h
 
 
 #	This target calls make to buid the dependency file for x86.
-$(builddir)/depend_i386: $(builddir)/Makefile_i386
+$(builddir)/depend_i386: $(builddir)/Makefile_i386 $(builddir)/config_tmp.h 
+	cp $(builddir)/config_tmp.h $(builddir)/config.h
 	$(MAKE) -C $(builddir) -f Makefile_i386 depend
 
 
 #	This target calls make to buid the dependency file for powerpc.
-$(builddir)/depend_powerpc: $(builddir)/Makefile_ppc
+$(builddir)/depend_powerpc: $(builddir)/Makefile_ppc $(builddir)/config_tmp.h
+	cp $(builddir)/config_tmp.h $(builddir)/config.h
 	$(MAKE) -C $(builddir) -f Makefile_ppc depend
 
 
