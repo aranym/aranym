@@ -347,7 +347,6 @@
 		F8E9A5690D312735001E4457 /* tools.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = tools.h; path = ../../include/tools.h; sourceTree = SOURCE_ROOT; };
 		F8E9A56A0D312735001E4457 /* toserror.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = toserror.h; path = ../../include/toserror.h; sourceTree = SOURCE_ROOT; };
 		F8E9A56B0D312735001E4457 /* version.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = version.h; path = ../../include/version.h; sourceTree = SOURCE_ROOT; };
-		F8E9A56C0D312735001E4457 /* version_date.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = version_date.h; path = ../../include/version_date.h; sourceTree = SOURCE_ROOT; };
 		F8E9A56D0D312735001E4457 /* videl.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = videl.h; path = ../../include/videl.h; sourceTree = SOURCE_ROOT; };
 		F8E9A56E0D312735001E4457 /* videl_zoom.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = videl_zoom.h; path = ../../include/videl_zoom.h; sourceTree = SOURCE_ROOT; };
 		F8E9A56F0D312735001E4457 /* yamaha.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = yamaha.h; path = ../../include/yamaha.h; sourceTree = SOURCE_ROOT; };
@@ -512,13 +511,9 @@
 		F8E9A6230D312738001E4457 /* strings */ = {isa = PBXFileReference; lastKnownFileType = file; name = strings; path = build/aranym.build/aranym.pbxindex/strings.pbxstrings/strings; sourceTree = SOURCE_ROOT; };
 		F8E9A6240D312738001E4457 /* subclasses.pbxbtree */ = {isa = PBXFileReference; lastKnownFileType = file; name = subclasses.pbxbtree; path = build/aranym.build/aranym.pbxindex/subclasses.pbxbtree; sourceTree = SOURCE_ROOT; };
 		F8E9A6250D312738001E4457 /* symbols0.pbxsymbols */ = {isa = PBXFileReference; lastKnownFileType = file; name = symbols0.pbxsymbols; path = build/aranym.build/aranym.pbxindex/symbols0.pbxsymbols; sourceTree = SOURCE_ROOT; };
-		F8E9A6280D312738001E4457 /* ARAnyM.dep */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = ARAnyM.dep; path = build/aranym.build/Development/ARAnyM.build/ARAnyM.dep; sourceTree = SOURCE_ROOT; };
-		F8E9A6290D312738001E4457 /* Script-F84340E10C6649D1005E7B99.sh */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.sh; name = "Script-F84340E10C6649D1005E7B99.sh"; path = "build/aranym.build/Development/ARAnyM.build/Script-F84340E10C6649D1005E7B99.sh"; sourceTree = SOURCE_ROOT; };
 		F8E9A62A0D312738001E4457 /* BUILDING_LEOPARD.txt */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = BUILDING_LEOPARD.txt; sourceTree = SOURCE_ROOT; };
 		F8E9A62B0D312738001E4457 /* busybee.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = busybee.icns; sourceTree = SOURCE_ROOT; };
 		F8E9A62C0D312738001E4457 /* busybee112-glossy.xcf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "busybee112-glossy.xcf"; sourceTree = SOURCE_ROOT; };
-		F8E9A62D0D312738001E4457 /* depend_i386 */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = depend_i386; sourceTree = SOURCE_ROOT; };
-		F8E9A62E0D312738001E4457 /* depend_powerpc */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = depend_powerpc; sourceTree = SOURCE_ROOT; };
 		F8E9A6300D312738001E4457 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/aranym.nib; sourceTree = "<group>"; };
 		F8E9A6310D312738001E4457 /* ethernet_darwin.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = ethernet_darwin.cpp; sourceTree = SOURCE_ROOT; };
 		F8E9A6320D312738001E4457 /* ethernet_darwin.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = ethernet_darwin.h; sourceTree = SOURCE_ROOT; };
@@ -1133,7 +1128,6 @@
 				F8E9A5690D312735001E4457 /* tools.h */,
 				F8E9A56A0D312735001E4457 /* toserror.h */,
 				F8E9A56B0D312735001E4457 /* version.h */,
-				F8E9A56C0D312735001E4457 /* version_date.h */,
 				F8E9A56D0D312735001E4457 /* videl.h */,
 				F8E9A56E0D312735001E4457 /* videl_zoom.h */,
 				F8E9A56F0D312735001E4457 /* yamaha.h */,
@@ -1373,8 +1367,6 @@
 				F8E9A62A0D312738001E4457 /* BUILDING_LEOPARD.txt */,
 				F8E9A62B0D312738001E4457 /* busybee.icns */,
 				F8E9A62C0D312738001E4457 /* busybee112-glossy.xcf */,
-				F8E9A62D0D312738001E4457 /* depend_i386 */,
-				F8E9A62E0D312738001E4457 /* depend_powerpc */,
 				F8E9A62F0D312738001E4457 /* aranym.nib */,
 				F8E9A6310D312738001E4457 /* ethernet_darwin.cpp */,
 				F8E9A6320D312738001E4457 /* ethernet_darwin.h */,
@@ -1453,8 +1445,6 @@
 		F8E9A6270D312738001E4457 /* ARAnyM.build */ = {
 			isa = PBXGroup;
 			children = (
-				F8E9A6280D312738001E4457 /* ARAnyM.dep */,
-				F8E9A6290D312738001E4457 /* Script-F84340E10C6649D1005E7B99.sh */,
 			);
 			name = ARAnyM.build;
 			path = build/aranym.build/Development/ARAnyM.build;

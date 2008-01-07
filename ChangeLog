@@ -1,4 +1,12 @@
 2008/01/07 - Stefan
+- darwin/Makefile: There was an error in the generation of the config_tmp.h 
+  file, I used '>' for redirecting the first three lines instead of '>>', thus 
+  of course the first two lines where lost.
+
+- darwin/aranym.xcodeproj/project.pbxproj: Removed some orphan file references. 
+  
+
+2008/01/07 - Stefan
 - darwin/Makefile: Fixed a dependency problem between the depend targets and
   the config.h file. Now an intermediate file config_tmp.h is generated, which 
   the depend targets copy into config.h. The config_tmp.h now has an inclusion 

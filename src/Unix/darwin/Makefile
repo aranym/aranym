@@ -112,8 +112,8 @@ touch:
 #	This target combines both configurations into one config_tmp.h file. 
 $(builddir)/config_tmp.h:
 	echo "#ifndef CONFIG_H" > $@
-	echo "    #define CONFIG_H" > $@
-	echo "    #if CPU_powerpc" > $@
+	echo "    #define CONFIG_H" >> $@
+	echo "    #if CPU_powerpc" >> $@
 	echo "        #include \"config_ppc.h\"" >> $@
 	echo "    #elif CPU_i386" >> $@
 	echo "        #include \"config_i386.h\"" >> $@
