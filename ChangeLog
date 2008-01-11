@@ -2,6 +2,8 @@
 - Makefile.in: Remove unknown option from sed call.  More complete
   dependency generation.
 
+- natfeat/nfvdi: Remove misplaced std::.
+
 
 2008/01/07 - Stefan
 - darwin/Makefile: There was an error in the generation of the config_tmp.h 

@@ -487,7 +487,7 @@ bool VdiDriver::AllocCrossings(int n)
 			tmp = new(std::nothrow) int16[count];
 		}
 		if (tmp) {
-			std::memcpy(tmp, alloc_crossing, crossing_count * sizeof(*alloc_crossing));
+			memcpy(tmp, alloc_crossing, crossing_count * sizeof(*alloc_crossing));
 			delete[] alloc_crossing;
 			alloc_crossing = tmp;
 			crossing_count = count;
