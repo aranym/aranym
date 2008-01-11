@@ -1,3 +1,7 @@
+2008/01/11 - Andreas
+- Makefile.in: Remove unknown option from sed call.
+
+
 2008/01/07 - Stefan
 - darwin/Makefile: There was an error in the generation of the config_tmp.h 
   file, I used '>' for redirecting the first three lines instead of '>>', thus 

@@ -185,7 +185,7 @@ endef
 
 $(builddir)/version_date.h: $(top_srcdir)/ChangeLog
 	echo '/* generated from ChangeLog */' > $@
-	sed -E 's/^(20[0-9][0-9]\/[0-9]*\/[0-9]*).*/#define VERSION_DATE "\1"/;q' < $(top_srcdir)/ChangeLog >> $@
+	sed 's/^\(20[0-9][0-9]\/[0-9]*\/[0-9]*\).*/#define VERSION_DATE "\1"/;q' < $(top_srcdir)/ChangeLog >> $@
 
 OBJS = $(SRCS_LIST_TO_OBJS)
 
