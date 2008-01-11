@@ -1,5 +1,6 @@
 2008/01/11 - Andreas
-- Makefile.in: Remove unknown option from sed call.
+- Makefile.in: Remove unknown option from sed call.  More complete
+  dependency generation.
 
 
 2008/01/07 - Stefan

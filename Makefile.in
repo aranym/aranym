@@ -143,6 +143,13 @@ SRCS = main.cpp \
 	$(GUISDLSRCS) \
 	$(DYNGLSRCS)
 
+GENSRCS = \
+	uae_cpu/build68k.c \
+	uae_cpu/cpuopti.c \
+	uae_cpu/gencpu.c \
+	uae_cpu/readcpu.cpp \
+	uae_cpu/compiler/gencomp.c
+
 BUNDLE_RESOURCES = \
 	$(srcdir)/Unix/darwin/busybee.icns \
 	$(top_srcdir)/data/logo.png
@@ -179,8 +186,7 @@ $(GEN_DIR)::
 	@[ -d $(GEN_DIR) ] || mkdir $(GEN_DIR) > /dev/null 2>&1
 
 define SRCS_LIST_TO_OBJS
-	$(addprefix $(OBJ_DIR)/, $(addsuffix .o, $(foreach file, $(GENCPUSRCS) $(SRCS), \
-	$(basename $(notdir $(file))))))
+	$(patsubst %,$(OBJ_DIR)/%.o, $(basename $(notdir $(GENCPUSRCS) $(SRCS))))
 endef
 
 $(builddir)/version_date.h: $(top_srcdir)/ChangeLog
@@ -189,7 +195,7 @@ $(builddir)/version_date.h: $(top_srcdir)/ChangeLog
 
 OBJS = $(SRCS_LIST_TO_OBJS)
 
-SRC_PATHS += $(sort $(GEN_DIR)/ $(foreach file, $(SRCS), $(dir $(file))))
+SRC_PATHS += $(sort $(GEN_DIR)/ $(dir $(SRCS)))
 empty:=
 space:= $(empty) $(empty)
 VPATH += $(subst $(space),:,$(strip $(addprefix $(filter-out ./,$(srcdir)/), $(SRC_PATHS))))
@@ -367,7 +373,10 @@ dist: distclean
 	cd $(srcdir)/../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore aranym
 
 depend: $(builddir)/version_date.h
-	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(SRCS)) | sed 's,^[^ ],$$(OBJ_DIR)/&,' > $(DEPEND)
+	$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(filter %.c,$(SRCS))) | sed 's,^[^ ],$$(OBJ_DIR)/&,' > $(DEPEND)
+	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(filter %.cpp,$(SRCS))) | sed 's,^[^ ],$$(OBJ_DIR)/&,' >> $(DEPEND)
+	$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(addprefix $(srcdir)/,$(filter %.c,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
+	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(addprefix $(srcdir)/,$(filter %.cpp,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
 
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
