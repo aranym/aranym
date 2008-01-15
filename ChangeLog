@@ -1,6 +1,14 @@
 2008/01/15 - Petr
 - xhdi.cpp: fseek->fseeko for 64bit file offsets. Thanks Roman Zippel.
 
+- emu_bochs.h: removed snprintf redefinition to fix MINGW32 compile.
+  Also corrected debug functions.
+
+- hostfs.cpp: added some fake #define for missing statfs flags
+
+- Makefile.in: the GEN_DIR source files are compiled without the SDL_CFLAGS
+  now to fix building under MINGW32
+
 
 2008/01/11 - Andreas
 - Makefile.in: Remove unknown option from sed call.  More complete
