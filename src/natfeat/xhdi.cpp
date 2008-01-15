@@ -206,7 +206,7 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 	}
 
 	off_t offset = (off_t)recno * XHDI_BLOCK_SIZE;
-	fseek(f, offset, SEEK_SET);
+	fseeko(f, offset, SEEK_SET);
 	for(int i=0; i<count; i++) {
 		uint8 tempbuf[XHDI_BLOCK_SIZE];
 		if (writing) {
