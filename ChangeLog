@@ -1,3 +1,12 @@
+2008/01/16 - Petr
+- xhdi.cpp: fseeko->fseek for MINGW32
+
+- hostfs.cpp: added missing POSIX functions in MINGW32 (mostly
+  fake/empty/error returning). ARAnyM compiles under MINGW32 now, and even
+  runs fine, it seems. The POSIX emulation should be improved, though. Just
+  follow the "FIXME" notes...
+
+
 2008/01/15 - Petr
 - xhdi.cpp: fseek->fseeko for 64bit file offsets. Thanks Roman Zippel.
 
