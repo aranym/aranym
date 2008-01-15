@@ -26,7 +26,9 @@ makefile := $(builddir)/Makefile
 
 CC = @CC@
 CXX = @CXX@
+CFLAGS1 = @CFLAGS@
 CFLAGS = @CFLAGS@ $(SDL_CFLAGS)
+CXXFLAGS1 = @CXXFLAGS@
 CXXFLAGS = @CXXFLAGS@ $(SDL_CFLAGS)
 CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I$(builddir) -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@
 ARCHFLAGS = @ARCHFLAGS@
@@ -375,8 +377,8 @@ dist: distclean
 depend: $(builddir)/version_date.h
 	$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(filter %.c,$(SRCS))) | sed 's,^[^ ],$$(OBJ_DIR)/&,' > $(DEPEND)
 	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(filter %.cpp,$(SRCS))) | sed 's,^[^ ],$$(OBJ_DIR)/&,' >> $(DEPEND)
-	$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(addprefix $(srcdir)/,$(filter %.c,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
-	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(addprefix $(srcdir)/,$(filter %.cpp,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
+	$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS1) $(addprefix $(srcdir)/,$(filter %.c,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
+	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS1) $(addprefix $(srcdir)/,$(filter %.cpp,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
 
 $(OBJ_DIR)/%.o : %.c
 	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
@@ -390,9 +392,9 @@ $(OBJ_DIR)/%.o : %.s
 	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
 
 $(GEN_DIR)/%.o : %.c
-	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS1) -c $< -o $@
 $(GEN_DIR)/%.o : %.cpp
-	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS1) -c $< -o $@
 $(GEN_DIR)/%.o : %.s
 	$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(CFLAGS) -c $< -o $@
 
