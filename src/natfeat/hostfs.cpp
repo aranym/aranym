@@ -61,6 +61,25 @@
 
 #include "../../atari/hostfs/hostfs_nfapi.h"	/* XFS_xx and DEV_xx enum */
 
+#ifdef __MINGW32__
+// FIXME!!!
+#define S_IXOTH	0
+#define S_IWOTH	0
+#define S_IROTH	0
+#define S_IXGRP	0
+#define S_IWGRP 0
+#define S_IRGRP 0
+#define S_ISVTX 0
+#define S_ISGID 0
+#define S_ISUID 0
+#define S_ISLNK(a) 0
+#define S_IFLNK 0
+#define O_NONBLOCK 0
+#define O_NOCTTY 0
+#define S_IRWXG 0
+#define S_IRWXO 0
+#define _PC_LINK_MAX 2
+#endif
 
 // please remember to leave this define _after_ the reqired system headers!!!
 // some systems does define this to some important value for them....
