@@ -61,8 +61,8 @@
 
 #include "../../atari/hostfs/hostfs_nfapi.h"	/* XFS_xx and DEV_xx enum */
 
+// TODO FIXME the following POSIX emulation for MINGW32/WinAPI should be moved elsewhere...
 #ifdef __MINGW32__
-// FIXME!!!
 #define S_IXOTH	0
 #define S_IWOTH	0
 #define S_IROTH	0
@@ -79,7 +79,89 @@
 #define S_IRWXG 0
 #define S_IRWXO 0
 #define _PC_LINK_MAX 2
-#endif
+
+static inline int readlink(const char *path, char *buf, size_t bufsiz)
+	{ errno = ENOSYS; return -1; }
+static inline int symlink(const char *oldpath, const char *newpath)
+	{ errno = ENOSYS; return -1; }
+static inline long pathconf(const char *file_name, int name)
+	{ errno = ENOSYS; return -1; }
+static inline int truncate(const char *file_name, off_t name)
+	{ errno = ENOSYS; return -1; } // FIXME truncate has to be there somewhere
+static inline int lstat(const char *file_name, struct stat *buf)
+	{ return stat(file_name, buf); }
+
+struct statfs
+{
+  long f_type;                  /* type of filesystem (see below) */
+  long f_bsize;                 /* optimal transfer block size */
+  long f_blocks;                /* total data blocks in file system */
+  long f_bfree;                 /* free blocks in fs */
+  long f_bavail;                /* free blocks avail to non-superuser */
+  long f_files;                 /* total file nodes in file system */
+  long f_ffree;                 /* free file nodes in fs */
+  long f_fsid;                  /* file system id */
+  long f_namelen;               /* maximum length of filenames */
+  long f_spare[6];              /* spare for later */
+};
+
+/* linux-compatible values for fs type */
+#define MSDOS_SUPER_MAGIC     0x4d44
+#define NTFS_SUPER_MAGIC      0x5346544E
+
+/**
+ * @author Prof. A Olowofoyeku (The African Chief)
+ * @author Frank Heckenbach
+ * @see http://gd.tuwien.ac.at/gnu/mingw/os-hacks.h
+ */
+int statfs(const char *path, struct statfs *buf)
+{
+  char tmp[MAX_PATH], resolved_path[MAX_PATH];
+  int retval = 0;
+
+  errno = 0;
+
+  // FIXME add realpath (the strcpy is just a hack!)
+  // realpath(path, resolved_path);
+  strcpy(resolved_path, path);
+
+  long sectors_per_cluster, bytes_per_sector;
+  if(!GetDiskFreeSpaceA(resolved_path, (DWORD *)&sectors_per_cluster,
+                        (DWORD *)&bytes_per_sector, (DWORD *)&buf->f_bavail,
+                        (DWORD *)&buf->f_blocks))
+  {
+    errno = ENOENT;
+    retval = -1;
+  }
+  else {
+    buf->f_bsize = sectors_per_cluster * bytes_per_sector;
+    buf->f_files = buf->f_blocks;
+    buf->f_ffree = buf->f_bavail;
+    buf->f_bfree = buf->f_bavail;
+  }
+
+  /* get the FS volume information */
+  if(strspn(":", resolved_path) > 0)
+    resolved_path[3] = '\0';    /* we want only the root */
+  if(GetVolumeInformation
+     (resolved_path, NULL, 0, (DWORD *)&buf->f_fsid, (DWORD *)&buf->f_namelen, NULL, tmp,
+      MAX_PATH))
+  {
+    if(strcasecmp("NTFS", tmp) == 0)
+    {
+      buf->f_type = NTFS_SUPER_MAGIC;
+    }
+    else {
+      buf->f_type = MSDOS_SUPER_MAGIC;
+    }
+  }
+  else {
+    errno = ENOENT;
+    retval = -1;
+  }
+  return retval;
+}
+#endif // __MINGW32__
 
 // please remember to leave this define _after_ the reqired system headers!!!
 // some systems does define this to some important value for them....
@@ -1775,9 +1857,13 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, memptr xattrp )
 	/* UWORD uid	   */  WriteInt16( xattrp + 12, statBuf.st_uid );	 // FIXME: this is Linux's one
 	/* UWORD gid	   */  WriteInt16( xattrp + 14, statBuf.st_gid );	 // FIXME: this is Linux's one
 	/* LONG	 size	   */  WriteInt32( xattrp + 16, statBuf.st_size );
+#ifdef __MINGW32__
+	/* LONG	 blksize   */  WriteInt32( xattrp + 20, 512 ); // FIXME: I just made up the number
+#else
 	/* LONG	 blksize   */  WriteInt32( xattrp + 20, statBuf.st_blksize );
-#if defined(OS_beos)
-	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, 0 );
+#endif
+#if defined(OS_beos) || defined (__MINGW32__)
+	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, 0 ); // FIXME: should be possible to find out for MINGW32
 #else
 	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, statBuf.st_blocks );
 #endif
@@ -1838,7 +1924,7 @@ int32 HostFs::xfs_stat64( XfsCookie *fc, memptr statp )
 
 	/* LLONG hi size   */  WriteInt32( statp + 72, ( statBuf.st_size >> 32 ) & 0xffffffffUL );
 	/* LLONG lo size   */  WriteInt32( statp + 76,   statBuf.st_size & 0xffffffffUL );
-#if defined(OS_beos)
+#if defined(OS_beos) || defined(__MINGW32__)
 	/* LLONG hi blocks */  WriteInt32( statp + 80,   0 );
 	/* LLONG lo blocks */  WriteInt32( statp + 84,   0 );
 	/* ULONG    blksize*/  WriteInt32( statp + 88,   0 );

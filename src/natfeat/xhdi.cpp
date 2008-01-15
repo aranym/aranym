@@ -31,6 +31,10 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifdef __MINGW32__
+#  define fseeko(a,b,c)	fseek(a,b,c)
+#endif
+
 #include <SDL_endian.h>
 
 #define XHDI_BLOCK_SIZE	512
