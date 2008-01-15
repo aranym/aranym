@@ -25,20 +25,14 @@ extern "C" {
 #  define ssize_t int
 #endif
 
-// win32 has snprintf though with different name.
-#define snprintf _snprintf
-
 #endif
 
-
-// moje triky
-#define BX_DEBUG(a)	printf a
-#define BX_PANIC(a)	printf a
-#define BX_INFO(a)	printf a
+#define BX_DEBUG(a)	D2(panicbug(a))
+#define BX_PANIC(a)	panicbug(a)
+#define BX_INFO(a)	infoprint(a)
 #define BX_ASSERT(x) do {if (!(x)) BX_PANIC(("failed assertion \"%s\" at %s:%d\n", #x, __FILE__, __LINE__));} while (0)
 #define BX_INSERTED	true
 #define BX_EJECTED	false
-// konec mych triku
 
 #define bx_ptr_t void *
 
