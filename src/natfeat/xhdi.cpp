@@ -1,7 +1,7 @@
 /*
  * xhdi.cpp - XHDI like disk driver interface
  *
- * Copyright (c) 2002-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2002-2008 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -31,7 +31,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef __MINGW32__
+#ifndef HAVE_FSEEKO
 #  define fseeko(a,b,c)	fseek(a,b,c)
 #endif
 
@@ -46,8 +46,29 @@
 #define EACCDN	-36	/* access denied, device is reserved */
 #define E_OK	0
 
+XHDIDriver::XHDIDriver()
+{
+	init_disks();
+}
+
+XHDIDriver::~XHDIDriver()
+{
+	close_disks();
+}
+
 void XHDIDriver::reset()
 {
+	close_disks();
+	init_disks();
+}
+
+void XHDIDriver::init_disks()
+{
+	// init all disks
+	for(unsigned i=0; i<sizeof(disks)/sizeof(disks[0]); i++) {
+		disks[i].file = NULL;
+	}
+
 	// setup disks array with copied disks and partitions values so that
 	// user's changes in SETUP GUI don't affect the pending disk operations
 	for(int i=0; i<DISKS; i++) {
@@ -58,7 +79,22 @@ void XHDIDriver::reset()
 	}
 }
 
-void XHDIDriver::copy_atadevice_settings(bx_atadevice_options_t *src, disk_t *dest)
+void XHDIDriver::close_disks()
+{
+	// close all open disks
+	for(unsigned i=0; i<sizeof(disks)/sizeof(disks[0]); i++) {
+		disk_t *disk = &disks[i];
+		if (disk->file != NULL) {
+#ifdef HAVE_FSYNC
+			fsync(fileno(disk->file));
+#endif
+			fclose(disk->file);
+			disk->file = NULL;
+		}
+	}
+}
+
+void XHDIDriver::copy_atadevice_settings(const bx_atadevice_options_t *src, disk_t *dest)
 {
 	safe_strncpy(dest->path, src->path, sizeof(dest->path));
 	safe_strncpy(dest->name, src->model, sizeof(dest->name));
@@ -71,7 +107,7 @@ void XHDIDriver::copy_atadevice_settings(bx_atadevice_options_t *src, disk_t *de
 	setDiskSizeInBlocks(dest);
 }
 
-void XHDIDriver::copy_scsidevice_settings(int index, bx_scsidevice_options_t *src, disk_t *dest)
+void XHDIDriver::copy_scsidevice_settings(int index, const bx_scsidevice_options_t *src, disk_t *dest)
 {
 	safe_strncpy(dest->path, src->path, sizeof(dest->path));
 	sprintf(dest->name, "PARTITION%d", index);
@@ -152,9 +188,15 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 		return EACCDN;
 	}
 
-	FILE *f = fopen(disk->path, writing ? "r+b" : "rb");
+	FILE *f = disk->file;
 	if (f == NULL) {
-		return EDRVNR;
+		f = fopen(disk->path, writing ? "r+b" : "rb");
+		if (f != NULL) {
+			disk->file = f;
+		}
+		else {
+			return EDRVNR;
+		}
 	}
 
 	// uint8 *hostbuf = Atari2HostAddr(buf);
@@ -233,7 +275,7 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 		}
 		buf += sizeof(tempbuf);
 	}
-	fclose(f);
+
 	return E_OK;
 }
 
