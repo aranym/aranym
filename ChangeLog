@@ -1,3 +1,8 @@
+2008/01/18 - Petr
+- xhdi.cpp: fix recently introduced read-only problem ("error writing").
+  Also improve error messages and disable all partitions at init time.
+
+
 2008/01/17 - Petr
 - xhdi.cpp: don't fopen()/fclose() on each transferred sector. Should
   speed things up a lot. Also force data flush on ARAnyM exit.
