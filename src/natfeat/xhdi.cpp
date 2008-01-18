@@ -66,6 +66,7 @@ void XHDIDriver::init_disks()
 {
 	// init all disks
 	for(unsigned i=0; i<sizeof(disks)/sizeof(disks[0]); i++) {
+		disks[i].present = false;
 		disks[i].file = NULL;
 	}
 
@@ -190,7 +191,10 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 
 	FILE *f = disk->file;
 	if (f == NULL) {
-		f = fopen(disk->path, writing ? "r+b" : "rb");
+		// TODO FIXME - if opening the IDE disk drives here then block the ATA emu layer
+		// until the disk->path is closed here again! Otherwise bad data loss might occur
+		// if both the direct PARTITION access and the ATA emu layer start writing to the same disk
+		f = fopen(disk->path, disk->readonly ? "rb" : "r+b");
 		if (f != NULL) {
 			disk->file = f;
 		}
@@ -260,13 +264,13 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 			if (! disk->byteswap)
 				byteSwapBuf(tempbuf, sizeof(tempbuf));
 			if (fwrite(tempbuf, sizeof(tempbuf), 1, f) != 1) {
-				panicbug("error writing");
+				panicbug("nfXHDI: Error writing to device %u.%u (record=%ld)", major, minor, recno+i);
 				break;
 			}
 		}
 		else {
 			if (fread(tempbuf, sizeof(tempbuf), 1, f) != 1) {
-				panicbug("error reading");
+				panicbug("nfXHDI: error reading device %u.%u (record=%ld)", major, minor, recno+i);
 				break;
 			}
 			if (! disk->byteswap)
