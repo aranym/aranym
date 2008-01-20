@@ -1,3 +1,7 @@
+2008/01/20 - Petr
+- gui-sdl: added Partition setup (in dlgPartition.cpp)
+
+
 2008/01/18 - Petr
 - xhdi.cpp: fix recently introduced read-only problem ("error writing").
   Also improve error messages and disable all partitions at init time.
@@ -1572,7 +1576,7 @@
 
 2006/06/25 - Petr
 - hostscreen.cpp: ignore window positioning on OS_darwin - that one does not
-  offer any SDL_SysWMinfo struct. Patch suggested by Philipp Donzé, thanks.
+  offer any SDL_SysWMinfo struct. Patch suggested by Philipp Donzï¿½, thanks.
 
 
 2006/06/05 - johan
@@ -5078,7 +5082,7 @@ libGL library ARAnyM will use.
 
 
 2002/12/29 - Petr
-- videl: Sébastien Briais sent a patch that allows virtual screen on VIDEL
+- videl: Sï¿½bastien Briais sent a patch that allows virtual screen on VIDEL
   by emulating the 'linewidth' and 'lineoffset' VIDEL registers.
 
 - videl: the 'od_posledni_zmeny' variable translated to English, at last.
