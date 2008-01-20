@@ -93,7 +93,9 @@ enum PARTITIONDLG {
 	text_size3mb,
 	PART3_GENERATE,
 
-	MAP_IDE,
+	text_ide,
+	MAP_IDE0,
+	MAP_IDE1,
 	
 	HELP,
 	APPLY,
@@ -108,7 +110,7 @@ static int PARTS_BYTESWAP[] = { PART0_BYTESWAP, PART1_BYTESWAP, PART2_BYTESWAP, 
 static SGOBJ partitiondlg[] = {
 	{SGBOX, SG_BACKGROUND, 0, 0, 0, 76, 25, NULL},
 
-	{SGTEXT, 0, 0, 18, 1, 37, 1, "Direct Access to Host Disk Partitions"},
+	{SGTEXT, 0, 0, 16, 1, 42, 1, "XHDI Direct Access to Host Disk Partitions"},
 
 	{SGBOX, 0, 0, 1, 3, 74, 3, NULL},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 3, 6, 1, "SCSI0:"},
@@ -154,7 +156,9 @@ static SGOBJ partitiondlg[] = {
 	{SGTEXT, 0, 0, 58, 17, 2, 1, "MB"},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 63, 17, 11, 1, "Create Img"},
 
-	{SGCHECKBOX, SG_SELECTABLE, 0, 2, 20, 24, 1, "Map also IDE disk drives"},
+	{SGTEXT, 0, SG_DISABLED, 2, 20, 32, 1, "Map IDE disk drives as XHDI IDE:"},
+	{SGCHECKBOX, SG_SELECTABLE, SG_SELECTED | SG_DISABLED, 36, 20, 16, 1, "IDE0 (Master)"},
+	{SGCHECKBOX, SG_SELECTABLE, SG_SELECTED | SG_DISABLED, 54, 20, 15, 1, "IDE1 (Slave)"},
 
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 23, 6, 1, "Help"},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, 54, 23, 8, 1, "Apply"},
@@ -199,12 +203,12 @@ static void UpdateDiskParameters(int disk)
 		return;
 	}
 
-	partitiondlg[dlgpath_idx].state &= ~SG_DISABLED;
+	setState(dlgpath_idx, SG_DISABLED, false);
 
 	struct stat buf;
 	if (stat(fname, &buf) != 0) {
 		strcpy(part_size[disk], "");
-		partitiondlg[dlgpath_idx].state |= SG_DISABLED;
+		setState(dlgpath_idx, SG_DISABLED, true);
 		return;
 	}
 
