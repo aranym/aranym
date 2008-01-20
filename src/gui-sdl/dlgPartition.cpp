@@ -150,7 +150,7 @@ static SGOBJ partitiondlg[] = {
 	{SGCHECKBOX, SG_SELECTABLE, 0, 14, 17, 8, 1, "ReadOnly"},
 	{SGCHECKBOX, SG_SELECTABLE, 0, 27, 17, 8, 1, "ByteSwap"},
 	{SGTEXT, 0, 0, 41, 17, 10, 1, "Disk Size:"},
-	{SGEDITFIELD, 0, 0, 51, 5, 6, 1, part_size[3]},
+	{SGEDITFIELD, 0, 0, 51, 17, 6, 1, part_size[3]},
 	{SGTEXT, 0, 0, 58, 17, 2, 1, "MB"},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 63, 17, 11, 1, "Create Img"},
 
@@ -165,7 +165,7 @@ static SGOBJ partitiondlg[] = {
 static const char *HELP_TEXT =
 	"For creating new partition image click on the [SCSIx] and select a file (or type in a new filename).\n"
 	"\n"
-	"Then set the desired [Disk Size:] in MegaBytes.\n"
+	"Then set the desired partition size in MegaBytes.\n"
 	"\n"
 	"At last click on [Create Img] and the partition image will be created.";
 
@@ -187,24 +187,31 @@ static bool getSelected(int index)
 	return (partitiondlg[index].state & SG_SELECTED);
 }
 
-static off_t DiskImageSize(const char *fname)
-{
-	struct stat buf;
-	if (stat(fname, &buf) != 0) {
-		// error reading file
-		return 0;
-	}
-	if (!S_ISREG(buf.st_mode)) {
-		// not regular file (perhaps block device?)
-		return 0;
-	}
-	return buf.st_size;
-}
-
 static void UpdateDiskParameters(int disk)
 {
-	const char *fname = gui_options.disks[disk].path;
-	off_t size = DiskImageSize(fname);
+	char *fname = gui_options.disks[disk].path;
+	int dlgpath_idx = PARTS_PATH[disk];
+
+	File_ShrinkName(part_path[disk], fname,	partitiondlg[dlgpath_idx].w);
+
+	if (fname == NULL || strlen(fname) == 0) {
+		strcpy(part_size[disk], "");
+		return;
+	}
+
+	partitiondlg[dlgpath_idx].state &= ~SG_DISABLED;
+
+	struct stat buf;
+	if (stat(fname, &buf) != 0) {
+		strcpy(part_size[disk], "");
+		partitiondlg[dlgpath_idx].state |= SG_DISABLED;
+		return;
+	}
+
+	off_t size = 0;
+	if (S_ISREG(buf.st_mode)) {
+		size = buf.st_size;
+	}
 	int sizeMB = ((size / 1024) + 512) / 1024;
 
 	// output
@@ -226,7 +233,7 @@ void DlgPartition::init_create_disk_image(int disk)
 extern bool make_image(long sec, const char *filename);
 bool DlgPartition::create_disk_image(void)
 {
-	// create the file
+	D(bug("partition: creating disk image %ld MB", sizeMB));
 	long sectors = sizeMB * 2048;
 	bool ret = make_image(sectors, cdi_path);
 	UpdateDiskParameters(cdi_disk);
@@ -248,7 +255,6 @@ DlgPartition::DlgPartition(SGOBJ *dlg)
 
 	/* Set up dialog to actual values: */
 	for(int disk = 0; disk < PARTS; disk++) {
-		File_ShrinkName(part_path[disk], gui_options.disks[disk].path, partitiondlg[PARTS_PATH[disk]].w);
 		partitiondlg[PARTS_PATH[disk]].txt = part_path[disk];
 		UpdateDiskParameters(disk);
 		setSelected(PARTS_PRESENT[disk], gui_options.disks[disk].present);
@@ -336,7 +342,7 @@ int DlgPartition::processDialogMain(void)
 
 int DlgPartition::processDialogCdi0(void)
 {
-	D(bug("disk: dialog create disk image, step 1"));
+	D(bug("partition: dialog create disk image, step 1"));
 
 	int retval = Dialog::GUI_CONTINUE;
 	state = STATE_MAIN;
@@ -346,6 +352,9 @@ int DlgPartition::processDialogCdi0(void)
 			dlgAlert = (DlgAlert *) DlgAlertOpen("File Exists. Overwrite?", ALERT_OKCANCEL);
 			SDLGui_Open(dlgAlert);
 		}
+		else {
+			dlgAlert = NULL;
+		}
 		state = STATE_CDI1;
 	}
 
@@ -354,18 +363,15 @@ int DlgPartition::processDialogCdi0(void)
 
 int DlgPartition::processDialogCdi1(void)
 {
-	D(bug("disk: dialog create disk image, step 2"));
+	D(bug("partition: dialog create disk image, step 2"));
 
 	int retval = Dialog::GUI_CONTINUE;
 	state = STATE_MAIN;
 
-	if (dlgAlert && dlgAlert->pressedOk()) {
-		char *path = part_path[cdi_disk];
+	if (!dlgAlert || dlgAlert->pressedOk()) {
 		int present = PARTS_PRESENT[cdi_disk];
-		int numpath = PARTS_PATH[cdi_disk];
 
 		if (create_disk_image()) {
-			File_ShrinkName(path, gui_options.disks[cdi_disk].path,	partitiondlg[numpath].w);
 			setSelected(present, true);
 		} else {
 			part_path[cdi_disk][0] = 0;
@@ -375,7 +381,7 @@ int DlgPartition::processDialogCdi1(void)
 	return retval;
 }
 
-void DlgPartition::processResultPart(int disk)
+void DlgPartition::processResultFsel(int disk)
 {
 	D(bug("disk: result part"));
 
@@ -383,8 +389,7 @@ void DlgPartition::processResultPart(int disk)
 		if (!File_DoesFileNameEndWithSlash(tmpname)
 		    /*&& File_Exists(tmpname) */ )
 		{
-			strcpy(gui_options.disks[disk].path, tmpname);
-			File_ShrinkName(part_path[disk], tmpname, partitiondlg[PARTS_PATH[disk]].w);
+			safe_strncpy(gui_options.disks[disk].path, tmpname, sizeof(gui_options.disks[0].path));
 			UpdateDiskParameters(disk);
 			setSelected(PARTS_PRESENT[disk], true);
 		} else {
@@ -407,11 +412,11 @@ void DlgPartition::confirm(void)
 
 void DlgPartition::processResult(void)
 {
-	D(bug("disk: process result, state=%d", state));
+	D(bug("partition: process result, state=%d", state));
 
 	switch(state) {
 		case STATE_FSEL:
-			processResultPart(cdi_disk);
+			processResultFsel(cdi_disk);
 			dlgFileSelect = NULL;
 			state = STATE_MAIN;
 			break;
