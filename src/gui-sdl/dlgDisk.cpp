@@ -505,6 +505,9 @@ int DlgDisk::processDialogCdi0(void)
 			dlgAlert = (DlgAlert *) DlgAlertOpen("File Exists. Overwrite?", ALERT_OKCANCEL);
 			SDLGui_Open(dlgAlert);
 		}
+		else {
+			dlgAlert = NULL;
+		}
 		state = STATE_CDI1;
 	}
 
@@ -518,7 +521,7 @@ int DlgDisk::processDialogCdi1(void)
 	int retval = Dialog::GUI_CONTINUE;
 	state = STATE_MAIN;
 
-	if (dlgAlert && dlgAlert->pressedOk()) {
+	if (!dlgAlert || dlgAlert->pressedOk()) {
 		char *ide_path = (cdi_disk==0) ? ide0_path : ide1_path;
 		int ide_select = (cdi_disk==0) ? IDE0_PRESENT : IDE1_PRESENT;
 		int ide_numpath = (cdi_disk==0) ? IDE0_PATH : IDE1_PATH;
