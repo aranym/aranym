@@ -368,10 +368,12 @@ DlgDisk::DlgDisk(SGOBJ *dlg)
 	/* Set up dialog to actual values: */
 	// floppy
 	File_ShrinkName(floppy_path, gui_options.floppy.path, discdlg[FLP_PATH].w);
+	setState(FLP_PATH, SG_DISABLED, ! File_Exists(gui_options.floppy.path));
 	discdlg[FLP_PATH].txt = floppy_path;
 
 	// IDE0
 	File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path, discdlg[IDE0_PATH].w);
+	setState(IDE0_PATH, SG_DISABLED, ! File_Exists(gui_options.atadevice[0][0].path));
 	discdlg[IDE0_PATH].txt = ide0_path;
 	safe_strncpy(ide0_name, gui_options.atadevice[0][0].model, sizeof(ide0_name));
 	UpdateDiskParameters(0, false);
@@ -383,6 +385,7 @@ DlgDisk::DlgDisk(SGOBJ *dlg)
 
 	// IDE1
 	File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path, discdlg[IDE1_PATH].w);
+	setState(IDE1_PATH, SG_DISABLED, ! File_Exists(gui_options.atadevice[0][1].path));
 	discdlg[IDE1_PATH].txt = ide1_path;
 	safe_strncpy(ide1_name, gui_options.atadevice[0][1].model, sizeof(ide1_name));
 	UpdateDiskParameters(1, false);
@@ -528,6 +531,7 @@ int DlgDisk::processDialogCdi1(void)
 
 		if (create_disk_image()) {
 			File_ShrinkName(ide_path, gui_options.atadevice[0][cdi_disk].path, discdlg[ide_numpath].w);
+			setState(ide_numpath, SG_DISABLED, ! File_Exists(gui_options.atadevice[0][cdi_disk].path));
 			setSelected(ide_select, true);
 		} else {
 			ide_path[0] = 0;
@@ -547,6 +551,7 @@ void DlgDisk::processResultFd0(void)
 		{
 			strcpy(gui_options.floppy.path, tmpname);
 			File_ShrinkName(floppy_path, tmpname, discdlg[FLP_PATH].w);
+			setState(FLP_PATH, SG_DISABLED, ! File_Exists(gui_options.floppy.path));
 		} else {
 			floppy_path[0] = 0;
 		}
@@ -563,6 +568,7 @@ void DlgDisk::processResultIde0(void)
 		{
 			strcpy(gui_options.atadevice[0][0].path, tmpname);
 			File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
+			setState(IDE0_PATH, SG_DISABLED, ! File_Exists(gui_options.atadevice[0][0].path));
 			UpdateDiskParameters(0, true);
 			setSelected(IDE0_PRESENT, true);
 		} else {
@@ -581,6 +587,7 @@ void DlgDisk::processResultIde1(void)
 		{
 			strcpy(gui_options.atadevice[0][1].path, tmpname);
 			File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
+			setState(IDE1_PATH, SG_DISABLED, ! File_Exists(gui_options.atadevice[0][1].path));
 			UpdateDiskParameters(1, true);
 			setSelected(IDE1_PRESENT, true);
 		} else {
