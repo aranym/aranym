@@ -371,11 +371,9 @@ DlgDisk::DlgDisk(SGOBJ *dlg)
 	discdlg[FLP_PATH].txt = floppy_path;
 
 	// IDE0
-	File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path,
-					discdlg[IDE0_PATH].w);
+	File_ShrinkName(ide0_path, gui_options.atadevice[0][0].path, discdlg[IDE0_PATH].w);
 	discdlg[IDE0_PATH].txt = ide0_path;
-	safe_strncpy(ide0_name, gui_options.atadevice[0][0].model,
-				 sizeof(ide0_name));
+	safe_strncpy(ide0_name, gui_options.atadevice[0][0].model, sizeof(ide0_name));
 	UpdateDiskParameters(0, false);
 	setSelected(IDE0_PRESENT, gui_options.atadevice[0][0].present);
 	setSelected(IDE0_CDROM, gui_options.atadevice[0][0].isCDROM);
@@ -384,11 +382,9 @@ DlgDisk::DlgDisk(SGOBJ *dlg)
 	HideDiskSettings(0, gui_options.atadevice[0][0].isCDROM);
 
 	// IDE1
-	File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path,
-					discdlg[IDE1_PATH].w);
+	File_ShrinkName(ide1_path, gui_options.atadevice[0][1].path, discdlg[IDE1_PATH].w);
 	discdlg[IDE1_PATH].txt = ide1_path;
-	safe_strncpy(ide1_name, gui_options.atadevice[0][1].model,
-				 sizeof(ide1_name));
+	safe_strncpy(ide1_name, gui_options.atadevice[0][1].model, sizeof(ide1_name));
 	UpdateDiskParameters(1, false);
 	setSelected(IDE1_PRESENT, gui_options.atadevice[0][1].present);
 	setSelected(IDE1_READONLY, gui_options.atadevice[0][1].readonly);
@@ -528,8 +524,7 @@ int DlgDisk::processDialogCdi1(void)
 		int ide_numpath = (cdi_disk==0) ? IDE0_PATH : IDE1_PATH;
 
 		if (create_disk_image()) {
-			File_ShrinkName(ide_path, gui_options.atadevice[0][cdi_disk].path,
-					discdlg[ide_numpath].w);
+			File_ShrinkName(ide_path, gui_options.atadevice[0][cdi_disk].path, discdlg[ide_numpath].w);
 			setSelected(ide_select, true);
 		} else {
 			ide_path[0] = 0;
@@ -595,8 +590,7 @@ void DlgDisk::confirm(void)
 {
 	/* Read values from dialog */
 	int cyl, head, spt;
-	safe_strncpy(gui_options.atadevice[0][0].model, ide0_name,
-				 sizeof(gui_options.atadevice[0][0].model));
+	safe_strncpy(gui_options.atadevice[0][0].model, ide0_name, sizeof(gui_options.atadevice[0][0].model));
 	sscanf(ide0_cyl, "%d", &cyl);
 	sscanf(ide0_head, "%d", &head);
 	sscanf(ide0_spt, "%d", &spt);
@@ -611,8 +605,7 @@ void DlgDisk::confirm(void)
 	gui_options.atadevice[0][0].isCDROM = getSelected(IDE0_CDROM);
 	gui_options.atadevice[0][0].byteswap = getSelected(IDE0_BYTESWAP);
 
-	safe_strncpy(gui_options.atadevice[0][1].model, ide1_name,
-				 sizeof(gui_options.atadevice[0][1].model));
+	safe_strncpy(gui_options.atadevice[0][1].model, ide1_name, sizeof(gui_options.atadevice[0][1].model));
 	sscanf(ide1_cyl, "%d", &cyl);
 	sscanf(ide1_head, "%d", &head);
 	sscanf(ide1_spt, "%d", &spt);
