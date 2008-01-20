@@ -33,6 +33,7 @@
 #include "dlgVideo.h"
 #include "dlgKeyboard.h"
 #include "dlgNetwork.h"
+#include "dlgPartition.h"
 #include "dlgHotkeys.h"
 #include "dlgDisk.h"
 
@@ -52,6 +53,7 @@ enum MAINDLG {
 	OS,
 	VIDEO,
 	NETWORK,
+	PARTITIONS,
 	text_conffile,
 	LOAD,
 	SAVE,
@@ -76,6 +78,7 @@ SGOBJ maindlg[] = {
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 11, 18, 1, "Operating System"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 3, 18, 1, "Video"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 5, 18, 1, "Networking"},
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 7, 18, 1, "Partitions"},
 	
 	{SGTEXT, 0, 0, 22, 15, 12, 1, "Config file:"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 35, 15, 6, 1, "Load"},
@@ -158,6 +161,9 @@ int DlgMain::processDialog(void)
 			break;
 		case NETWORK:
 			SDLGui_Open(DlgNetworkOpen());
+			break;
+		case PARTITIONS:
+			SDLGui_Open(DlgPartitionOpen());
 			break;
 		case LOAD:
 			LoadSettings();
