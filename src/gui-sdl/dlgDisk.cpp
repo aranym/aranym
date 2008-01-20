@@ -37,7 +37,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-bx_options_t gui_options;
+static bx_options_t gui_options;
 
 // floppy
 static char ide0_name[41];		// size of this array defines also the GUI edit field length
@@ -190,7 +190,7 @@ static const char *HELP_TEXT =
 	"At last click on [Generate Disk Image] and the disk image will be created.\n"
 	"\n" "Now you can reboot to your OS and partition this new disk.";
 
-void setState(int index, int bits, bool set)
+static void setState(int index, int bits, bool set)
 {
 	if (set)
 		discdlg[index].state |= bits;
@@ -198,12 +198,12 @@ void setState(int index, int bits, bool set)
 		discdlg[index].state &= ~bits;
 }
 
-void setSelected(int index, bool set)
+static void setSelected(int index, bool set)
 {
 	setState(index, SG_SELECTED, set);
 }
 
-bool getSelected(int index)
+static bool getSelected(int index)
 {
 	return (discdlg[index].state & SG_SELECTED);
 }
