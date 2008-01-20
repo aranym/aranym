@@ -51,7 +51,7 @@ class DlgPartition: public Dialog
 		int processDialogCdi0(void);
 		int processDialogCdi1(void);
 
-		void processResultPart(int disk);
+		void processResultFsel(int disk);
 
 		void init_create_disk_image(int disk);
 		bool create_disk_image(void);
