@@ -250,75 +250,6 @@ void File_RemoveFileNameTrailingSlashes(char *pszFileName)
   }
 }
 
-
-/*-----------------------------------------------------------------------*/
-/*
-  Read file from PC into memory, allocate memory for it if need to (pass Address as NULL)
-  Also may pass 'unsigned long' if want to find size of file read (may pass as NULL)
-*/
-void *File_Read(const char *pszFileName, void *pAddress, long *pFileSize, char *ppszExts[])
-{
-	DUNUSED(ppszExts);
-  FILE *DiscFile;
-  void *pFile=NULL;
-  long FileSize=0;
-
-  /* Open our file */
-  DiscFile = fopen(pszFileName, "rb");
-  if (DiscFile!=NULL) {
-    /* Find size of TOS image - 192k or 256k */
-    fseek(DiscFile, 0, SEEK_END);
-    FileSize = ftell(DiscFile);
-    fseek(DiscFile, 0, SEEK_SET);
-    /* Find pointer to where to load, allocate memory if pass NULL */
-    if (pAddress)
-      pFile = pAddress;
-    else
-      pFile = malloc(FileSize);
-    /* Read in... */
-    if (pFile)
-      fread((char *)pFile, 1, FileSize, DiscFile);
-
-    fclose(DiscFile);
-  }
-  /* Store size of file we read in (or 0 if failed) */
-  if (pFileSize)
-    *pFileSize = FileSize;
-
-  return(pFile);        /* Return to where read in/allocated */
-}
-
-
-/*-----------------------------------------------------------------------*/
-/*
-  Save file to PC, return false if errors
-*/
-bool File_Save(char *pszFileName, void *pAddress,unsigned long Size,bool bQueryOverwrite)
-{
-  FILE *DiscFile;
-  bool bRet=false;
-
-  /* Check if need to ask user if to overwrite */
-  if (bQueryOverwrite) {
-    /* If file exists, ask if OK to overwrite */
-    if (!File_QueryOverwrite(pszFileName))
-      return(false);
-  }
-
-  /* Create our file */
-  DiscFile = fopen(pszFileName, "wb");
-  if (DiscFile!=NULL) {
-    /* Write data, set success flag */
-    if ( fwrite(pAddress, 1, Size, DiscFile)==Size )
-      bRet = true;
-
-    fclose(DiscFile);
-  }
-
-  return(bRet);
-}
-
-
 /*-----------------------------------------------------------------------*/
 /*
   Return size of file, -1 if error
@@ -389,40 +320,6 @@ bool File_QueryOverwrite(char *pszFileName)
 
   return(true);
 }
-
-
-/*-----------------------------------------------------------------------*/
-/*
-  Try filename with various extensions and check if file exists - if so return correct name
-*/
-bool File_FindPossibleExtFileName(char *pszFileName, char *ppszExts[])
-{
-  char szSrcDir[256], szSrcName[128], szSrcExt[32];
-  char szTempFileName[MAX_FILENAME_LENGTH];
-  int i=0;
-
-  /* Split filename into parts */
-  File_splitpath(pszFileName, szSrcDir, szSrcName, szSrcExt);
-
-  /* Scan possible extensions */
-  while(ppszExts[i]) {
-    /* Re-build with new file extension */
-    File_makepath(szTempFileName, szSrcDir, szSrcName, ppszExts[i]);
-    /* Does this file exist? */
-    if (File_Exists(szTempFileName)) {
-      /* Copy name for return */
-      strcpy(pszFileName,szTempFileName);
-      return(true);
-    }
-
-    /* Next one */
-    i++;
-  }
-
-  /* No, none of the files exist */
-  return(false);
-}
-
 
 /*-----------------------------------------------------------------------*/
 /*
