@@ -1,5 +1,11 @@
 2008/01/20 - Petr
-- gui-sdl: added Partition setup (in dlgPartition.cpp)
+- gui-sdl: added Partition setup (in dlgPartition.cpp) - allows editing
+  SCSI0 - SCSI3 (ARAnyM allows up to 8 SCSI drives = host partitions)
+
+- dlgDisk.cpp: fixed creating disk image. And when file is not found
+  the filename field is disabled (visual guidance for the user)
+
+- file.cpp: some unused functions removed.
 
 
 2008/01/18 - Petr
