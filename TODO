@@ -4,7 +4,6 @@ Things to do (written by Joy, volunteers ask in the mailing list)
 Fix bugs:
 - change default Ungrab combination to Right Control
 - "-d" cmdline option doesn't work (doesn't win over config file settings)
-- [PARTITION] settings into SETUP GUI ASAP
 - [HOSTFS] settings into SETUP GUI ASAP
 - [ETHx] update with DNS IP address (requires FreeMiNT update)
 - colon as filename case sensitivity flag in HostFS - see Xavier's msg in ML
@@ -14,7 +13,6 @@ Fix bugs:
 - improve the whole mouse grab/ungrab - auto grab could grab mouse
   automagically when it enters aranym window only if the window is on top
 - correct postal address of GPL
-- Disk mngmt: don't show the short path in the editable field - if someone edits it the "..." shortened version gets stored to configuration.
 - don't store empty config entries (ETH2,3,4; DISK2,3,4,5,6,7; HOSFSA-Z, ..)
 
 Feature requests:
@@ -29,8 +27,6 @@ TODO in keyboard support:
 - editable keyboard layout (need WYSIWYG - impossible in 320x200)
 
 TODO in GUI-SDL:
-- change GUI font loading routine - load standard TOS font (2048/4096 bytes)
-  directly (instead of some MS Windows bitmap)
 - fileselector: sorting by file type (folders first) and then by file .ext
 - edit field: allow upper case and generally fix keyboard input in SDL
 - create other dialogs for editing the rest of config file settings
