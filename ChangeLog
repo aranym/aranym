@@ -1,3 +1,7 @@
+2008/01/23 - Petr
+- dlgPartition.cpp: added missing PartID edit field
+
+
 2008/01/20 - Petr
 - gui-sdl: added Partition setup (in dlgPartition.cpp) - allows editing
   SCSI0 - SCSI3 (ARAnyM allows up to 8 SCSI drives = host partitions)
