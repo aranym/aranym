@@ -40,6 +40,7 @@ static bx_options_t gui_options;
 
 #define PARTS	4
 
+static char part_id[PARTS][3+1];
 static char part_size[PARTS][7];
 static char part_path[PARTS][80];
 
@@ -52,6 +53,8 @@ enum PARTITIONDLG {
 	box_part0,
 	PART0_BROWSE,
 	PART0_PATH,
+	text_id0,
+	PART0_ID,
 	PART0_PRESENT,
 	PART0_READONLY,
 	PART0_BYTESWAP,
@@ -63,6 +66,8 @@ enum PARTITIONDLG {
 	box_part1,
 	PART1_BROWSE,
 	PART1_PATH,
+	text_id1,
+	PART1_ID,
 	PART1_PRESENT,
 	PART1_READONLY,
 	PART1_BYTESWAP,
@@ -74,6 +79,8 @@ enum PARTITIONDLG {
 	box_part2,
 	PART2_BROWSE,
 	PART2_PATH,
+	text_id2,
+	PART2_ID,
 	PART2_PRESENT,
 	PART2_READONLY,
 	PART2_BYTESWAP,
@@ -85,6 +92,8 @@ enum PARTITIONDLG {
 	box_part3,
 	PART3_BROWSE,
 	PART3_PATH,
+	text_id3,
+	PART3_ID,
 	PART3_PRESENT,
 	PART3_READONLY,
 	PART3_BYTESWAP,
@@ -115,46 +124,54 @@ static SGOBJ partitiondlg[] = {
 	{SGBOX, 0, 0, 1, 3, 74, 3, NULL},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 3, 6, 1, "SCSI0:"},
 	{SGTEXT, 0, 0, 9, 3, 65, 1, NULL},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 2, 5, 8, 1, "Present"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 14, 5, 8, 1, "ReadOnly"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 27, 5, 8, 1, "ByteSwap"},
-	{SGTEXT, 0, 0, 41, 5, 10, 1, "Disk Size:"},
-	{SGEDITFIELD, 0, 0, 51, 5, 6, 1, part_size[0]},
-	{SGTEXT, 0, 0, 58, 5, 2, 1, "MB"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 63, 5, 11, 1, "Create Img"},
+	{SGTEXT, 0, 0, 2, 5, 7, 1, "PartID:"},
+	{SGEDITFIELD, 0, 0, 9, 5, 3, 1, part_id[0]},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 14, 5, 8, 1, "Present"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 26, 5, 8, 1, "ReadOnly"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 39, 5, 8, 1, "ByteSwap"},
+	{SGTEXT, 0, 0, 52, 5, 5, 1, "Size:"},
+	{SGEDITFIELD, 0, 0, 57, 5, 6, 1, part_size[0]},
+	{SGTEXT, 0, 0, 64, 5, 2, 1, "MB"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 67, 5, 7, 1, "Create"},
 
 	{SGBOX, 0, 0, 1, 7, 74, 3, NULL},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 7, 6, 1, "SCSI1:"},
 	{SGTEXT, 0, 0, 9, 7, 65, 1, NULL},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 2, 9, 8, 1, "Present"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 14, 9, 8, 1, "ReadOnly"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 27, 9, 8, 1, "ByteSwap"},
-	{SGTEXT, 0, 0, 41, 9, 10, 1, "Disk Size:"},
-	{SGEDITFIELD, 0, 0, 51, 9, 6, 1, part_size[1]},
-	{SGTEXT, 0, 0, 58, 9, 2, 1, "MB"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 63, 9, 11, 1, "Create Img"},
+	{SGTEXT, 0, 0, 2, 9, 7, 1, "PartID:"},
+	{SGEDITFIELD, 0, 0, 9, 9, 3, 1, part_id[1]},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 14, 9, 8, 1, "Present"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 26, 9, 8, 1, "ReadOnly"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 39, 9, 8, 1, "ByteSwap"},
+	{SGTEXT, 0, 0, 52, 9, 5, 1, "Size:"},
+	{SGEDITFIELD, 0, 0, 57, 9, 6, 1, part_size[1]},
+	{SGTEXT, 0, 0, 64, 9, 2, 1, "MB"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 67, 9, 7, 1, "Create"},
 
 	{SGBOX, 0, 0, 1, 11, 74, 3, NULL},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 11, 6, 1, "SCSI2:"},
 	{SGTEXT, 0, 0, 9, 11, 65, 1, NULL},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 2, 13, 8, 1, "Present"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 14, 13, 8, 1, "ReadOnly"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 27, 13, 8, 1, "ByteSwap"},
-	{SGTEXT, 0, 0, 41, 13, 10, 1, "Disk Size:"},
-	{SGEDITFIELD, 0, 0, 51, 13, 6, 1, part_size[2]},
-	{SGTEXT, 0, 0, 58, 13, 2, 1, "MB"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 63, 13, 11, 1, "Create Img"},
+	{SGTEXT, 0, 0, 2, 13, 7, 1, "PartID:"},
+	{SGEDITFIELD, 0, 0, 9, 13, 3, 1, part_id[2]},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 14, 13, 8, 1, "Present"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 26, 13, 8, 1, "ReadOnly"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 39, 13, 8, 1, "ByteSwap"},
+	{SGTEXT, 0, 0, 52, 13, 5, 1, "Size:"},
+	{SGEDITFIELD, 0, 0, 57, 13, 6, 1, part_size[2]},
+	{SGTEXT, 0, 0, 64, 13, 2, 1, "MB"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 67, 13, 7, 1, "Create"},
 
 	{SGBOX, 0, 0, 1, 15, 74, 3, NULL},
 	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 15, 6, 1, "SCSI3:"},
 	{SGTEXT, 0, 0, 9, 15, 65, 1, NULL},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 2, 17, 8, 1, "Present"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 14, 17, 8, 1, "ReadOnly"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 27, 17, 8, 1, "ByteSwap"},
-	{SGTEXT, 0, 0, 41, 17, 10, 1, "Disk Size:"},
-	{SGEDITFIELD, 0, 0, 51, 17, 6, 1, part_size[3]},
-	{SGTEXT, 0, 0, 58, 17, 2, 1, "MB"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 63, 17, 11, 1, "Create Img"},
+	{SGTEXT, 0, 0, 2, 17, 7, 1, "PartID:"},
+	{SGEDITFIELD, 0, 0, 9, 17, 3, 1, part_id[3]},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 14, 17, 8, 1, "Present"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 26, 17, 8, 1, "ReadOnly"},
+	{SGCHECKBOX, SG_SELECTABLE, 0, 39, 17, 8, 1, "ByteSwap"},
+	{SGTEXT, 0, 0, 52, 17, 5, 1, "Size:"},
+	{SGEDITFIELD, 0, 0, 57, 17, 6, 1, part_size[3]},
+	{SGTEXT, 0, 0, 64, 17, 2, 1, "MB"},
+	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 67, 17, 7, 1, "Create"},
 
 	{SGTEXT, 0, SG_DISABLED, 2, 20, 32, 1, "Map IDE disk drives as XHDI IDE:"},
 	{SGCHECKBOX, SG_SELECTABLE, SG_SELECTED | SG_DISABLED, 36, 20, 16, 1, "IDE0 (Master)"},
@@ -198,6 +215,8 @@ static void UpdateDiskParameters(int disk)
 
 	File_ShrinkName(part_path[disk], fname,	partitiondlg[dlgpath_idx].w);
 
+	strncpy(part_id[disk], gui_options.disks[disk].partID, sizeof(part_id[disk]));
+
 	if (fname == NULL || strlen(fname) == 0) {
 		strcpy(part_size[disk], "");
 		return;
@@ -211,7 +230,7 @@ static void UpdateDiskParameters(int disk)
 		setState(dlgpath_idx, SG_DISABLED, true);
 		return;
 	}
-
+	
 	off_t size = 0;
 	if (S_ISREG(buf.st_mode)) {
 		size = buf.st_size;
@@ -406,6 +425,7 @@ void DlgPartition::confirm(void)
 {
 	/* Read values from dialog */
 	for(int disk = 0; disk < PARTS; disk++) {
+		strncpy(gui_options.disks[disk].partID, part_id[disk], sizeof(gui_options.disks[disk].partID));
 		gui_options.disks[disk].present = getSelected(PARTS_PRESENT[disk]);
 		gui_options.disks[disk].readonly = getSelected(PARTS_READONLY[disk]);
 		gui_options.disks[disk].byteswap = getSelected(PARTS_BYTESWAP[disk]);
