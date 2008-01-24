@@ -103,6 +103,7 @@ typedef struct {
 typedef struct {
   bool redirect_CON;
   long cookie_mch;
+  long cookie_akp;
 } bx_tos_options_t;
 
 // Video output options
