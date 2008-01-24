@@ -1,3 +1,12 @@
+2008/01/24 - Petr
+- rtc: patch() now can optionally set also the system language and keyboard
+  layout.
+
+- parameters: new command line switch -k <ISO country code> for setting up
+  the NVRAM keyboard layout. TODO rewrite to an array of all supported
+  ISO codes.
+ 
+
 2008/01/23 - Petr
 - dlgPartition.cpp: added missing PartID edit field
 
