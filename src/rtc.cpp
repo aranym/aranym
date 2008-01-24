@@ -40,7 +40,8 @@ uint8 nvram[64]={48,255,21,255,23,255,1,25,3,33,42,14,112,128,
 		0,0,0,0,0,0,0,0,17,46,32,1,255,0,0,56,135,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,224,31};
 
-#define NVRAM_KEYBOARD_LANGUAGE	21
+#define NVRAM_SYSTEM_LANGUAGE	20
+#define NVRAM_KEYBOARD_LAYOUT	21
 
 /*
 int byte15th = (colors & 7) | (80:40) << 3 | (VGA : TV) << 4 | (PAL : NTSC) << 5| overscan << 6 | STcompatible << 7);
@@ -92,6 +93,14 @@ void RTC::patch()
 		}
 		nvram[29] &= ~0x07;
 		nvram[29] |= res;		// the booting resolution should be set on a working copy only
+	}
+	int language = bx_options.tos.cookie_akp & 0xff;
+	int keyboard = (bx_options.tos.cookie_akp >> 8) & 0xff;
+	if (language != -1) {
+		nvram[NVRAM_SYSTEM_LANGUAGE] = language; 
+	}
+	if (keyboard != -1) {
+		nvram[NVRAM_KEYBOARD_LAYOUT] = keyboard; 
 	}
 
 	setChecksum();
@@ -206,7 +215,7 @@ void RTC::setData(uint8 value)
 nvram_t RTC::getNvramKeyboard()
 {
 	/* Return keyboard language setting */
-	return (nvram_t) nvram[NVRAM_KEYBOARD_LANGUAGE];
+	return (nvram_t) nvram[NVRAM_KEYBOARD_LAYOUT];
 }
 
 /* the checksum is over all bytes except the checksum bytes
