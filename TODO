@@ -15,21 +15,12 @@ Fix bugs:
 - correct postal address of GPL
 - don't store empty config entries (ETH2,3,4; DISK2,3,4,5,6,7; HOSFSA-Z, ..)
 
-Feature requests:
-- update ARAnyM NVRAM before booting the OS with the current host locale.
-  Could help with non-English keyboards to be usable out-of-the-box.
-
 TODO generally:
 - configurable insertion of floppy on bootup (perhaps also IDE CD?)
 
 TODO in keyboard support:
 - loadable keyboard layout (similar to hatari)
 - editable keyboard layout (need WYSIWYG - impossible in 320x200)
-
-TODO in GUI-SDL:
-- fileselector: sorting by file type (folders first) and then by file .ext
-- edit field: allow upper case and generally fix keyboard input in SDL
-- create other dialogs for editing the rest of config file settings
 
 TODO in TOS patches and utilities:
 - automatic updater of BDCONFIG.SYS
@@ -63,9 +54,6 @@ that particular programmer but rather who is author of the idea :-)
 
   Extra cool idea: PRIMARY selection on X11 could be stored to IKBD buffer
   directly so it would simulate typing.
-
-- Petr: ARAnyM should test if SDL timers work OK at startup and if not, stop
-       booting and exit gracefully with a loud warning (e.g. on NetBSD).
 
 - Petr: emulating a serial port compatible with MiNT/HSMODEM
 
