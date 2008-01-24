@@ -28,15 +28,26 @@
 
 /* NVRAM keyboard setting */
 typedef enum {
-	NVRAM_KBD_US=0,
-	NVRAM_KBD_DE,
-	NVRAM_KBD_FR,
-	NVRAM_KBD_UK,
-	NVRAM_KBD_ES,
-	NVRAM_KBD_IT,
-	NVRAM_KBD_SE,
-	NVRAM_KBD_CHFR,
-	NVRAM_KBD_CHDE
+	COUNTRY_US,	// USA
+	COUNTRY_DE,	// Germany
+	COUNTRY_FR,	// France
+	COUNTRY_UK,	// United Kingdom
+	COUNTRY_ES,	// Spain
+	COUNTRY_IT,	// Italy
+	COUNTRY_SE,	// Sweden
+	COUNTRY_SF,	// Switzerland (French)
+	COUNTRY_SG,	// Switzerland (German)
+	COUNTRY_TR,	// Turkey
+	COUNTRY_FI,	// Finland
+	COUNTRY_NO,	// Norway
+	COUNTRY_DK,	// Denmark
+	COUNTRY_SA,	// Saudi Arabia
+	COUNTRY_NL,	// Holland
+	COUNTRY_CZ,	// Czech Republic
+	COUNTRY_HU,	// Hungary
+// the following entries are from EmuTOS
+	COUNTRY_SK,	// Slovak Republic
+	COUNTRY_GR	// Greek
 } nvram_t;
 
 class RTC : public BASE_IO {
