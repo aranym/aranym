@@ -37,7 +37,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-# include <cstdlib>
+#include <cstdlib>
 
 #ifdef OS_darwin
 #  include <CoreFoundation/CoreFoundation.h>
@@ -266,6 +266,7 @@ void preset_tos()
 {
   bx_options.tos.redirect_CON = false;
   bx_options.tos.cookie_mch = 0x00050000; // ARAnyM
+  bx_options.tos.cookie_akp = -1;
 }
 
 void postload_tos()
@@ -1067,6 +1068,7 @@ int process_cmdline(int argc, char **argv)
 #endif
 							 "P:" /* position of the window */
 							 "S"  /* swap IDE drives */
+							 "k:" /* keyboard layout */
 							 "h"  /* help */
 							 "V"  /* version */,
 							 long_options, (int *) 0)) != EOF) {
@@ -1161,6 +1163,21 @@ int process_cmdline(int argc, char **argv)
 				break;
 #endif
 
+			case 'k':
+				{
+					const char *n = optarg;
+					if (strcasecmp(n, "de") == 0) {
+						bx_options.tos.cookie_akp = 0x00000101;
+					}
+					if (strcasecmp(n, "fr") == 0) {
+						bx_options.tos.cookie_akp = 0x00000202;
+					}
+					else if (strcasecmp(n, "cz") == 0) {
+						bx_options.tos.cookie_akp = 0x00000f0f;
+					}
+				}
+				break;
+				
 			default:
 				usage (EXIT_FAILURE);
 		}
