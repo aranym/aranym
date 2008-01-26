@@ -1,10 +1,19 @@
+2008/01/26 - Petr
+- parameters.cpp: "--locale <CC>" or "-k <CC>" where <CC> is one of 18
+  supported ISO 3166-1 alpha-2 codes.
+
+- gui-sdl/*: various little improvements to layout or Help texts
+
+- "GuiAlpha" setting removed - it was a nice demo of OpenGL capabilities
+  but wasn't really useful.
+
+
 2008/01/24 - Petr
 - rtc: patch() now can optionally set also the system language and keyboard
   layout.
 
 - parameters: new command line switch -k <ISO country code> for setting up
-  the NVRAM keyboard layout. TODO rewrite to an array of all supported
-  ISO codes.
+  the NVRAM keyboard layout.
  
 
 2008/01/23 - Petr
