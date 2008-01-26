@@ -28,6 +28,7 @@ AutoGrabMouse = Yes
 # UTC (GMT) or localtime? Set GMT for Linux-m68k or FreeMiNT with timezones
 GMTime = No
 
+
 # Hotkeys: invoke certain ARAnyM functions by pressing a key combination
 # Format: function = key code : modifiers combination
 [HOTKEYS]
@@ -129,7 +130,7 @@ ModelName = Master
 
 
 # Direct partitions configuration
-# Range: PARTITION0-PARTITION7
+# Range: PARTITION0-PARTITION7 is mapped to SCSI0-SCSI7
 [PARTITION0]
 Path = 
 Present = No
@@ -159,12 +160,10 @@ Enabled = No
 # Use linear filtering on the atari screen
 Filtered = No
 
-# Alpha pourcentage of GUI (from 0 to 100 pourcent)
-GuiAlpha = 100
-
 # If you don't want to use default GL library, set this value to your
 #  favorite libGL file.
 Library =
+
 
 # Networking (FreeMiNT with aranym.xif)
 # Range: ETH0-ETH3
