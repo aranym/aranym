@@ -153,13 +153,13 @@ bool SDLGui_Init()
 		memcpy(font_data, font_bits, sizeof(font_data));
 	}
 	
-  fontgfx = SDLGui_LoadXBM(font_data);
-  if (fontgfx == NULL)
-  {
-    panicbug("Could not create font data");
-    panicbug("ARAnyM GUI will not be available");
-    return false;
-  }
+	fontgfx = SDLGui_LoadXBM(font_data);
+	if (fontgfx == NULL)
+	{
+		panicbug("Could not create font data");
+		panicbug("ARAnyM GUI will not be available");
+		return false;
+	}
 
 	gui_hsurf = host->video->createSurface(76*8+16,25*16+16,8);
 	if (!gui_hsurf) {
@@ -172,17 +172,17 @@ bool SDLGui_Init()
 
 	gui_hsurf->setPalette(gui_palette, 0, 4);
 
-	gui_hsurf->setParam(HostSurface::SURF_ALPHA, bx_options.opengl.gui_alpha);
-	gui_hsurf->setParam(HostSurface::SURF_USE_ALPHA, 1);
+//	gui_hsurf->setParam(HostSurface::SURF_ALPHA, bx_options.opengl.gui_alpha);
+//	gui_hsurf->setParam(HostSurface::SURF_USE_ALPHA, 1);
 
-  /* Set font color 0 as transparent */
-  SDL_SetColorKey(fontgfx, SDL_SRCCOLORKEY, 0);
+	/* Set font color 0 as transparent */
+	SDL_SetColorKey(fontgfx, SDL_SRCCOLORKEY, 0);
 
-  /* Get the font width and height: */
-  fontwidth = fontgfx->w/16;
-  fontheight = fontgfx->h/16;
+	/* Get the font width and height: */
+	fontwidth = fontgfx->w/16;
+	fontheight = fontgfx->h/16;
 
-  return true;
+	return true;
 }
 
 
@@ -197,13 +197,13 @@ int SDLGui_UnInit()
 		gui_hsurf = NULL;
 	}
 
-  if (fontgfx)
-  {
-    SDL_FreeSurface(fontgfx);
-    fontgfx = NULL;
-  }
+	if (fontgfx)
+	{
+		SDL_FreeSurface(fontgfx);
+		fontgfx = NULL;
+	}
 
-  return 0;
+	return 0;
 }
 
 
