@@ -13,11 +13,12 @@ Bug: Videlity Configure Tool does not work (hangs during launching)
 Reason:
   Dirty delay loop - while(clock() == certain_value). This may not work
   even under multitasking system and does not work in current ARAnyM where
-  TimerC interrupts come in pairs (100 Hz host interrupt).
+  TimerC interrupts come in pairs (100 Hz host interrupt) unless RTC
+  source clock is used.
 Solution:
   General solution is to get a more precise host timer interrupt (at least
-  200 Hz). Specific (and suggested) solution is to stop using Videlity and
-  replace it with BlowUP030 or something similar.
+  200 Hz, with the Linux RTC). Specific (and suggested) solution is to stop
+  using Videlity and replace it with BlowUP030 or something similar.
 
 
 Platform dependent known bugs and limitations:

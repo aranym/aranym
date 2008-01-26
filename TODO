@@ -15,9 +15,6 @@ Fix bugs:
 - correct postal address of GPL
 - don't store empty config entries (ETH2,3,4; DISK2,3,4,5,6,7; HOSFSA-Z, ..)
 
-TODO generally:
-- configurable insertion of floppy on bootup (perhaps also IDE CD?)
-
 TODO in keyboard support:
 - loadable keyboard layout (similar to hatari)
 - editable keyboard layout (need WYSIWYG - impossible in 320x200)
