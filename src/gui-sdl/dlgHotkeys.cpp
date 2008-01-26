@@ -67,7 +67,7 @@ static char key_fullscreen[30];
 /* The hotkeys dialog: */
 static SGOBJ hotkeysdlg[] =
 {
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 40,21, NULL },
+	{ SGBOX, SG_BACKGROUND, 0, 0,0, 42,21, NULL },
 	{ SGBOX, 0, 0, 1,2, 38,15, NULL },
 	{ SGTEXT, 0, 0, 12,1, 16,1, " Hotkeys Editor " },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 3, 11,1, "Setup" },
@@ -92,13 +92,13 @@ static SGOBJ hotkeysdlg[] =
 
 static const char *HELP_TEXT = "Define hotkeys for certain functions:\n"
 "\n"
-"Setup .... you are using it right now\n"
-"Quit ..... quits ARAnyM\n"
-"Reboot ... restarts virtual machine\n"
-"Ungrab ... release mouse and keyboard\n"
-"Debug .... internal debugger\n"
-"Screenshot save screen image to file\n"
-"Fullscreen switch from/to window mode\n"
+"Setup ...... you are using it right now\n"
+"Quit ....... quit ARAnyM\n"
+"Reboot ..... restart virtual machine\n"
+"Ungrab ..... release mouse and keyboard\n"
+"Debug ...... invoke internal debugger\n"
+"Screenshot.. save screen image to file\n"
+"Fullscreen.. switch from/to window mode\n"
 "\n"
 "LS = Left Shift, LC = Left Ctrl,\n"
 "RA = Right Alt, RM = Right Meta.\n"
