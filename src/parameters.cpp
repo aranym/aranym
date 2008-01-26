@@ -109,7 +109,7 @@ static struct option const long_options[] =
 #endif
   {"swap-ide", no_argument, 0, 'S'},
   {"emutos", no_argument, 0, 'e'},
-  {"locale", no_argument, 0, 'k'},
+  {"locale", required_argument, 0, 'k'},
 #ifdef ENABLE_LILO
   {"lilo", no_argument, 0, 'l'},
 #endif
@@ -310,7 +310,6 @@ void presave_video()
 struct Config_Tag opengl_conf[]={
 	{ "Enabled", Bool_Tag, &bx_options.opengl.enabled, 0, 0},
 	{ "Filtered", Bool_Tag, &bx_options.opengl.filtered, 0, 0},
-	{ "GuiAlpha", Byte_Tag, &bx_options.opengl.gui_alpha, 0, 0},
 	{ "Library", Path_Tag, bx_options.opengl.library, sizeof(bx_options.opengl.library), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
@@ -319,7 +318,6 @@ void preset_opengl()
 {
   bx_options.opengl.enabled = false;
   bx_options.opengl.filtered = false;
-  bx_options.opengl.gui_alpha = 100;
   strcpy(bx_options.opengl.library, "");
 }
 
