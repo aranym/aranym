@@ -71,12 +71,12 @@ static char eth1_mac_addr[18];
 
 static SGOBJ dlg[] =
 {
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 40,25, NULL },
+	{ SGBOX, SG_BACKGROUND, 0, 0,0, 44,25, NULL },
 	{ SGTEXT, 0, 0, 1,2, 5,1, "ETH0:" },
 	{ SGEDITFIELD, 0, 0, 7,2, MIN(sizeof(eth0_tunnel)-1, 5),1, eth0_tunnel },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 14,2, 6,1, "None" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 22,2, 7,1, "P-t-p" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 31,2, 8,1, "Bridge" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 23,2, 7,1, "P-t-p" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 33,2, 8,1, "Bridge" },
 	{ SGTEXT, 0, 0, 4,4, 8,1, "Host IP:" },
 	{ SGEDITFIELD, 0, 0, 14,4, sizeof(eth0_host_ip)-1,1, eth0_host_ip },
 	{ SGTEXT, 0, 0, 4,6, 9,1, "Atari IP:" },
@@ -88,8 +88,8 @@ static SGOBJ dlg[] =
 	{ SGTEXT, 0, 0, 1,12, 7,1, "ETH1:" },
 	{ SGEDITFIELD, 0, 0, 7,12, MIN(sizeof(eth1_tunnel)-1, 5),1, eth1_tunnel },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 14,12, 6,1, "None" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 21,12, 8,1, "P-t-p" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 30,12, 8,1, "Bridge" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 23,12, 8,1, "P-t-p" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 33,12, 8,1, "Bridge" },
 	{ SGTEXT, 0, 0, 4,14, 8,1, "Host IP:" },
 	{ SGEDITFIELD, 0, 0, 14,14, sizeof(eth1_host_ip)-1,1, eth1_host_ip },
 	{ SGTEXT, 0, 0, 4,16, 9,1, "Atari IP:" },
