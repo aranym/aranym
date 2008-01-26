@@ -109,6 +109,7 @@ static struct option const long_options[] =
 #endif
   {"swap-ide", no_argument, 0, 'S'},
   {"emutos", no_argument, 0, 'e'},
+  {"locale", no_argument, 0, 'k'},
 #ifdef ENABLE_LILO
   {"lilo", no_argument, 0, 'l'},
 #endif
@@ -912,6 +913,7 @@ Options:\n\
   -s, --save                 save configuration file\n\
   -S, --swap-ide             swap IDE drives\n\
   -P <X,Y> or <center>       set window position\n\
+  -k, --locale <XY>          set NVRAM keyboard layout and language\n\
   -h, --help                 display this help and exit\n\
   -V, --version              output version information and exit\n\
 ");
@@ -1165,15 +1167,22 @@ int process_cmdline(int argc, char **argv)
 
 			case 'k':
 				{
-					const char *n = optarg;
-					if (strcasecmp(n, "de") == 0) {
-						bx_options.tos.cookie_akp = 0x00000101;
+					char countries[][3] = {{"us"},{"de"},{"fr"},{"uk"},{"es"},{"it"},{"se"},{"ch"},
+							{"cd"},{"tr"},{"fi"},{"no"},{"dk"},{"sa"},{"nl"},{"cz"},{"hu"},{"sk"},{"gr"}};
+					bx_options.tos.cookie_akp = -1;
+					for(unsigned i=0; i<sizeof(countries)/sizeof(countries[0]); i++) {
+						if (strcasecmp(optarg, countries[i]) == 0) {
+							bx_options.tos.cookie_akp = i << 8 | i;
+							break;
+						}
 					}
-					if (strcasecmp(n, "fr") == 0) {
-						bx_options.tos.cookie_akp = 0x00000202;
-					}
-					else if (strcasecmp(n, "cz") == 0) {
-						bx_options.tos.cookie_akp = 0x00000f0f;
+					if (bx_options.tos.cookie_akp == -1) {
+						fprintf(stderr, "Error '%s', use one of:", optarg);
+						for(unsigned i=0; i<sizeof(countries)/sizeof(countries[0]); i++) {
+							fprintf(stderr, " %s", countries[i]);
+						}
+						fprintf(stderr, "\n");
+						exit(0);
 					}
 				}
 				break;
