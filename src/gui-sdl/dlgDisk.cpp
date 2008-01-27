@@ -53,10 +53,15 @@ static char floppy_path[80];
 static char ide0_path[80];
 static char ide1_path[80];
 
-#define BAR130G		130000
 #define MAXHEADS	16
 #define MAXSPT		255
 #define MAXCYLS		65535
+
+#define BAR130G		(MAXHEADS * MAXSPT * MAXCYLS / 2048)
+
+#define MaxSPT		63
+#define MaxCYLS		16383
+#define BAR8G		(MAXHEADS * MaxSPT * MaxCYLS / 2048)
 
 /* The disks dialog: */
 enum DISCDLG {
@@ -271,9 +276,11 @@ static void UpdateDiskParameters(int disk, bool updateCHS)
 	if (updateCHS) {
 		if (size > 0 && sizeMB <= BAR130G) {
 			head = MAXHEADS;
-			spt = MAXSPT;
+			spt = (sizeMB <= BAR8G) ? MaxSPT : MAXSPT;
 			int divisor = 512 * head * spt;	// 512 is sector size
 			cyl = size / divisor;
+			if (size % divisor)
+				cyl++;
 		}
 		else {
 			head = spt = cyl = 0;
@@ -332,8 +339,11 @@ void DlgDisk::init_create_disk_image(int disk)
 	cdi_path = gui_options.atadevice[0][disk].path;
 	cdi_disk = disk;
 	sizeMB = atoi(disk == 0 ? ide0_size : ide1_size);
-	if (sizeMB > BAR130G)
+	if (sizeMB > BAR130G) {
+		dlgAlert = (DlgAlert *) DlgAlertOpen("Max IDE disk size is 130 GB", ALERT_OK);
+		SDLGui_Open(dlgAlert);
 		sizeMB = BAR130G;
+	}
 	char text[250];
 	sprintf(text, "Create disk image '%s' with size %ld MB?", cdi_path, sizeMB);
 	dlgAlert = (DlgAlert *) DlgAlertOpen(text, ALERT_OKCANCEL);
@@ -343,10 +353,11 @@ void DlgDisk::init_create_disk_image(int disk)
 
 bool DlgDisk::create_disk_image(void)
 {
+	int maxspt = (sizeMB <= BAR8G) ? MaxSPT : MAXSPT;
 	// create the file
-	int cyl = sizeMB * 2048 / MAXHEADS / MAXSPT;
+	int cyl = sizeMB * 2048 / MAXHEADS / maxspt;
 	if (cyl > MAXCYLS) cyl = MAXCYLS;
-	long sectors = cyl * MAXHEADS * MAXSPT;
+	long sectors = cyl * MAXHEADS * maxspt;
 	bool ret = make_image(sectors, cdi_path);
 	UpdateDiskParameters(cdi_disk, true);
 	return ret;
