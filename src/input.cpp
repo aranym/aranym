@@ -486,7 +486,7 @@ static void process_keyboard_event(const SDL_Event &event)
 	SDLKey sym = keysym.sym;
 	int state;
 	
-	if (keysym.mod == 0)
+	if ((keysym.mod & HOTKEYS_MOD_MASK) == 0)
 		state  = SDL_GetModState(); // keysym.mod does not deliver single mod key presses for some reason
 	else
 		state = keysym.mod;	// May be send by SDL_PushEvent
