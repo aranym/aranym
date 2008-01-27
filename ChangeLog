@@ -1,3 +1,11 @@
+2008/01/27 - Petr
+- input.cpp: fix hotkeys (or generally all modifiers) when NumLock is enabled
+
+- sdl-gui/dlgDisk.cpp: restore original 63 Sectors-Per-Track for IDE disks
+  smaller than 8 GB. This fixes C/H/S auto-detection for disk images created
+  with ARAnyM 0.9.5beta or older.
+
+
 2008/01/26 - Petr
 - parameters.cpp: "--locale <CC>" or "-k <CC>" where <CC> is one of 18
   supported ISO 3166-1 alpha-2 codes.
