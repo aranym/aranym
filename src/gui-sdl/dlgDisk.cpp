@@ -340,8 +340,7 @@ void DlgDisk::init_create_disk_image(int disk)
 	cdi_disk = disk;
 	sizeMB = atoi(disk == 0 ? ide0_size : ide1_size);
 	if (sizeMB > BAR130G) {
-		dlgAlert = (DlgAlert *) DlgAlertOpen("Max IDE disk size is 130 GB", ALERT_OK);
-		SDLGui_Open(dlgAlert);
+		panicbug("Warning: max IDE disk size is 130 GB");
 		sizeMB = BAR130G;
 	}
 	char text[250];
