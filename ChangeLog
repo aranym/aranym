@@ -1,3 +1,8 @@
+2008/01/27 - Andreas
+- uae_cpu/fpu/mathlib.h: Fix fast_fgetexp to compute unbiased exponent as
+  signed value.
+
+
 2008/01/27 - Petr
 - input.cpp: fix hotkeys (or generally all modifiers) when NumLock is enabled
 

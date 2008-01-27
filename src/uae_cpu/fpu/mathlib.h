@@ -629,10 +629,10 @@ PRIVATE inline fpu_register FFPU fast_fgetexp(fpu_register const & r)
 {
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
 	fp_declare_init_shape(sxp, r, extended);
-	return (sxp->ieee.exponent - FP_EXTENDED_EXP_BIAS);
+	return ((int) sxp->ieee.exponent - FP_EXTENDED_EXP_BIAS);
 #else
 	fp_declare_init_shape(sxp, r, double);
-	return (sxp->ieee.exponent - FP_DOUBLE_EXP_BIAS);
+	return ((int) sxp->ieee.exponent - FP_DOUBLE_EXP_BIAS);
 #endif
 }
 
