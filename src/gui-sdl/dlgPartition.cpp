@@ -186,7 +186,7 @@ static SGOBJ partitiondlg[] = {
 static const char *HELP_TEXT =
 	"For creating new partition image click on the [SCSIx] and select a file (or type in a new filename).\n"
 	"Then set the desired partition size in MegaBytes.\n"
-	"At last click on [Create Img] and the partition image will be created.\n"
+	"At last click on [Create] and the partition image will be created.\n"
 	"\n"
 	"PartID can be one of GEM, BGM, RAW, F32, LNX, SWP or $XX where XX is the HEX code of partition type (example: $83 for Linux Ext2)";
 
