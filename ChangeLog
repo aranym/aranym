@@ -1,3 +1,7 @@
+2008/01/29 - Petr
+- sed script in Makefile.in is wrong, needs to be fixed
+
+
 *** CVS tagged as ARANYM_0_9_6_BETA
 
 2008/01/28 - Petr
@@ -11,6 +15,8 @@
 - aranym.spec: modified for icon, desktop file and new build root
 
 - Makefile.in: removed strip from 'make install' (Debian bug #436479)
+
+- doc/aranym.1: document the -k <CC> command line option
 
 - README, NEWS, AUTHORS, TODO, version.h: updated for new release
 
