@@ -210,5 +210,8 @@ Bill Allombert
 Roman Zippel
 - MMU optimized (MMU translations cached for nice speed up)
 
+David Bolt <davjam@davjam.org>
+- aranym.spec improvements
+
 Anders Eriksson
 - ARAnyM icons and logo
