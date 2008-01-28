@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=ARAnyM
+Comment=Virtual Machine for running Atari 32-bit operating systems and applications
+Exec=aranym
+Icon=aranym
+Terminal=false
+Type=Application
+Category=System;Emulator
