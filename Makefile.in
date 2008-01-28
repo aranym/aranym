@@ -323,7 +323,7 @@ distclean: clean
 	rm -rf $(OBJ_DIR)
 	rm -f $(makefile)
 	rm -f $(builddir)/config.cache $(builddir)/config.log $(builddir)/config.status $(builddir)/config.h
-	rm -f cmos aranymtest.rc
+	rm -f $(DEPEND)
 	rm -rf $(top_srcdir)/autom4te.cache
 
 mrproper: distclean
