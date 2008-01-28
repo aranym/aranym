@@ -2,7 +2,6 @@ Things to do (written by Joy, volunteers ask in the mailing list)
 -----------------------------------------------------------------
 
 Fix bugs:
-- change default Ungrab combination to Right Control
 - "-d" cmdline option doesn't work (doesn't win over config file settings)
 - [HOSTFS] settings into SETUP GUI ASAP
 - [ETHx] update with DNS IP address (requires FreeMiNT update)

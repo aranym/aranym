@@ -1,11 +1,6 @@
 The ARAnyM core, glue and additional features were written or adapted from
 the projects mentioned below by the following main ARAnyM developers:
 
-Ctirad Fertr <phanatic@volny.cz>
-- the main idea of new Atari machine
-- deep user testing
-- VIDEL color fixes
-
 Milan Jurik <M.Jurik xylab.cz>
 - main framework from Basilisk and building system (autoconf stuff)
 - continuous updates and syncing with UAE CPU core
@@ -76,6 +71,22 @@ Andreas Schwab
 - complete PMMU revision and fixing, got Linux/m68k working
 - important IEEE/UAE FPU fixes
 
+Stefan Kuhr
+- Mac OS X port - many improvements (too many to list them here)
+- nfvdi OpenGL fixes
+- HostFS fix for MAGXDESK
+- an icon for Darwin
+
+Philipp Donze
+- Mac OS X fixes, new project, universal (ppc+intel) binaries
+- various small fixes
+
+Jens Heitmann
+- JIT for Mac OS X on Intel
+- ethernet for Mac OS X
+- delayed screen updates
+- 64bit fixes
+
 ---
 
 ARAnyM source code consists of several parts. Some were taken from other
@@ -137,6 +148,11 @@ This is the list of people who have contributed to project
 
 Thanks go to :-
 
+Ctirad Fertr <phanatic@volny.cz>
+- the main idea of new Atari machine
+- deep user testing
+- VIDEL color fixes
+
 Francois LE COAT
 - for the Solaris port
 - for work on MacOSX port
@@ -176,9 +192,6 @@ Carsten Gaschler
 Matti Levänen
 - for BeOS port
 
-Stefan Kuhr
-- for Mac OS X port improvements
-
 Carlo Baiocco
 - new Mac OS X port (src/MacOSX/*)
 - various bugfixes (floppy, parameters, memory management)
@@ -189,10 +202,6 @@ Laurent Vogel
 Konrad Kokoszkiewicz
 - many hints and small fixes
 
-Philipp Donze
-- Mac OS X fixes, new project, universal (ppc+intel) binaries
-- various small fixes
-
 Bill Allombert
 - first real buildd (ARAnyM as Debian build machine)
 - FPU fixes
@@ -201,3 +210,5 @@ Bill Allombert
 Roman Zippel
 - MMU optimized (MMU translations cached for nice speed up)
 
+Anders Eriksson
+- ARAnyM icons and logo
