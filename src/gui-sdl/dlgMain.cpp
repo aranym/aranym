@@ -1,7 +1,7 @@
 /*
  * dlgMain.cpp - Main Setup dialog 
  *
- * Copyright (c) 2002-2007 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2002-2008 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -36,6 +36,7 @@
 #include "dlgPartition.h"
 #include "dlgHotkeys.h"
 #include "dlgDisk.h"
+#include "bootos.h" // bootOs ptr
 
 #ifdef OS_darwin
 	extern void refreshMenuKeys();
@@ -123,10 +124,20 @@ static const char *HELP_TEXT =
 "Changes must be confirmed with APPLY first. Note that all changes are applied immediately to a running ARAnyM.\n"
 "Some changes require system reboot in order to take effect. It's actually safest to always reboot after any change.";
 
+static void setState(int index, int bits, bool set)
+{
+	if (set)
+		maindlg[index].state |= bits;
+	else
+		maindlg[index].state &= ~bits;
+}
+
 DlgMain::DlgMain(SGOBJ *dlg)
 	: Dialog(dlg), state(STATE_MAIN), dlgFileSelect(NULL)
 {
 	memset(path, 0, sizeof(path));
+	// if no bootOs available then disable the Reboot button
+	setState(REBOOT, SG_DISABLED, bootOs == NULL);
 }
 
 DlgMain::~DlgMain()
@@ -174,7 +185,8 @@ int DlgMain::processDialog(void)
 			SaveSettings();
 			break;
 		case REBOOT:
-			retval = Dialog::GUI_REBOOT;
+			if (bootOs != NULL)
+				retval = Dialog::GUI_REBOOT;
 			break;
 		case SHUTDOWN:
 			retval = Dialog::GUI_SHUTDOWN;
@@ -249,3 +261,7 @@ DlgMain *DlgMainOpen(void)
 {
 	return new DlgMain(maindlg);
 }
+
+/*
+vim:ts=4:sw=4:
+*/
