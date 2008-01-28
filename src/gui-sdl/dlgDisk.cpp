@@ -60,8 +60,7 @@ static char ide1_path[80];
 #define BAR130G		(MAXHEADS * MAXSPT * MAXCYLS / 2048)
 
 #define MaxSPT		63
-#define MaxCYLS		16383
-#define BAR8G		(MAXHEADS * MaxSPT * MaxCYLS / 2048)
+#define BAR32G		(MAXHEADS * MaxSPT * MAXCYLS / 2048)
 
 /* The disks dialog: */
 enum DISCDLG {
@@ -276,7 +275,7 @@ static void UpdateDiskParameters(int disk, bool updateCHS)
 	if (updateCHS) {
 		if (size > 0 && sizeMB <= BAR130G) {
 			head = MAXHEADS;
-			spt = (sizeMB <= BAR8G) ? MaxSPT : MAXSPT;
+			spt = (sizeMB <= BAR32G) ? MaxSPT : MAXSPT;
 			int divisor = 512 * head * spt;	// 512 is sector size
 			cyl = size / divisor;
 			if (size % divisor)
@@ -352,7 +351,7 @@ void DlgDisk::init_create_disk_image(int disk)
 
 bool DlgDisk::create_disk_image(void)
 {
-	int maxspt = (sizeMB <= BAR8G) ? MaxSPT : MAXSPT;
+	int maxspt = (sizeMB <= BAR32G) ? MaxSPT : MAXSPT;
 	// create the file
 	int cyl = sizeMB * 2048 / MAXHEADS / maxspt;
 	if (cyl > MAXCYLS) cyl = MAXCYLS;

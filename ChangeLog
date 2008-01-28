@@ -1,3 +1,8 @@
+2008/01/28 - Petr
+- sdl-gui/dlgDisk.cpp: the <= 0.9.5 IDE disk size limit was actually 32 GB,
+  not 8 GB. Fixed for maximal backwards compatibility.
+
+
 2008/01/27 - Andreas
 - uae_cpu/fpu/mathlib.h: Fix fast_fgetexp to compute unbiased exponent as
   signed value.
