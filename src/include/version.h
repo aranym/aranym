@@ -28,13 +28,13 @@
 
 #define VER_MAJOR	0
 #define VER_MINOR	9
-#define VER_MICRO	5
+#define VER_MICRO	6
 
 #ifndef VER_STATUS
 //#define VER_STATUS
 //#define VER_STATUS	"alpha"
-//#define VER_STATUS	"beta"
-#define VER_STATUS	"beta+" CVS_DATE
+#define VER_STATUS	"beta"
+//#define VER_STATUS	"beta+" CVS_DATE
 #endif
 
 #define str(x)		_stringify (x)

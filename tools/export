@@ -3,7 +3,7 @@
 
 VER_MAJOR=0
 VER_MINOR=9
-VER_MICRO=5
+VER_MICRO=6
 VER_STATUS=beta
 #
 VERSION=$VER_MAJOR"."$VER_MINOR"."$VER_MICRO
@@ -55,8 +55,8 @@ fi
 #	exit 1
 #fi
 #
-cd aranym/src/Unix
+cd aranym
 ./autogen.sh
 make distclean
-cd ../../../ && mv aranym $FOLDER && GZIP=--best tar chozf $FNAME --exclude=autogen.sh --exclude=CVS $FOLDER
+cd .. && mv aranym $FOLDER && GZIP=--best tar chozf $FNAME --exclude=autogen.sh --exclude=CVS $FOLDER
 
