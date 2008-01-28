@@ -1,6 +1,18 @@
+*** CVS tagged as ARANYM_0_9_6_BETA
+
 2008/01/28 - Petr
 - sdl-gui/dlgDisk.cpp: the <= 0.9.5 IDE disk size limit was actually 32 GB,
   not 8 GB. Fixed for maximal backwards compatibility.
+
+- sdl-gui/dlgMain.cpp: disable the "Reboot" button if no OS available
+
+- contrib/ folder added with 32x32 + 48x48 ARAnyM icons and a desktop file
+
+- aranym.spec: modified for icon, desktop file and new build root
+
+- Makefile.in: removed strip from 'make install' (Debian bug #436479)
+
+- README, NEWS, AUTHORS, TODO, version.h: updated for new release
 
 
 2008/01/27 - Andreas
@@ -61,10 +73,10 @@
 
 
 2008/01/16 - Petr
-- xhdi.cpp: fseeko->fseek for MINGW32
+- xhdi.cpp: fseeko->fseek for MinGW
 
-- hostfs.cpp: added missing POSIX functions in MINGW32 (mostly
-  fake/empty/error returning). ARAnyM compiles under MINGW32 now, and even
+- hostfs.cpp: added missing POSIX functions in MinGW (mostly
+  fake/empty/error returning). ARAnyM compiles under MinGW now, and even
   runs fine, it seems. The POSIX emulation should be improved, though. Just
   follow the "FIXME" notes...
 
@@ -72,13 +84,13 @@
 2008/01/15 - Petr
 - xhdi.cpp: fseek->fseeko for 64bit file offsets. Thanks Roman Zippel.
 
-- emu_bochs.h: removed snprintf redefinition to fix MINGW32 compile.
+- emu_bochs.h: removed snprintf redefinition to fix MinGW compile.
   Also corrected debug functions.
 
 - hostfs.cpp: added some fake #define for missing statfs flags
 
 - Makefile.in: the GEN_DIR source files are compiled without the SDL_CFLAGS
-  now to fix building under MINGW32
+  now to fix building under MinGW
 
 
 2008/01/11 - Andreas
@@ -1204,7 +1216,7 @@
 
 
 2006/12/26 - Patrice
-- mingw32: sigaction() does not exists.
+- MinGW: sigaction() does not exists.
 - cygwin: sometimes, audio callback is called before host is defined.
 - misc: only include <cassert> when needed
 
@@ -1490,7 +1502,7 @@
 
 
 2006/09/14 - Standa
-- main.cpp: hack for cygwin vs. mingw32 SDL_put(get)env mismatch workaround
+- main.cpp: hack for cygwin vs. MinGW SDL_put(get)env mismatch workaround
   added.
 
 
@@ -1588,7 +1600,7 @@
 
 
 2006/07/17 - Patrice
-- mingw does not have mkdir() with permissions.
+- MinGW does not have mkdir() with permissions.
 
 
 2006/07/13 - Standa
@@ -1601,7 +1613,7 @@
 
 
 2006/07/12 - Patrice
-- mingw does not have gettimeofday() function.
+- MinGW does not have gettimeofday() function.
 
 
 2006/07/10 - Petr

@@ -1,20 +1,25 @@
-2008/01/2x - version 0.9.6beta released
+2008/01/28 - version 0.9.6beta released
  
- Main features: major graphics output overhaul, two video backends - software
- and OpenGL renderer. Faster graphics output on all platforms.
- Massive Mac OS X port improvements, MacIntel supported, fat binaries
+ Main change: major graphics output overhaul, two video backends - software
+ and OpenGL renderer. Faster graphics output on all platforms. Try enabling
+ the OpenGL output in the [OPENGL] section of the config file (beware, might
+ not work on some platforms, tested on Linux only).
+
+ Massive Mac OS X port improvements: MacIntel supported, fat binaries
  available, JIT working (on x86), networking working, and more.
 
- o IDE disks now up to 130 GB large (removed 8 GB barrier)
+ o IDE disks now up to 130 GB large (removed 32 GB barrier)
  o SCSI/partitions no longer limited to 2 GB, and made up to 4x faster
- o new logo, new program icon, new desktop icons thanks to Anders
- o networking fixes: now works after reboot, new Setup dialog added
+ o new ARAnyM logo at startup, new window manager, menu and desktop icons
+ o networking fixes: now works after reboot, new Setup config dialog added
  o HostFS fixes: Dreadlabel() for MAGXDESK
  o SDL-GUI: 8x16 font, 80 columns, improved old dialogs and added new ones
- o MinGW32 compilable (native MS Windows binary, contrary to Cygwin one)
+ o MinGW compilable (native MS Windows binary, contrary to Cygwin one)
  o RTC timer on Linux host for more precise MFP timer interrupts
+   (if it errors out try running "sudo sysctl -w dev.rtc.max-user-freq=1024")
  o new command line option "--locale CC" where CC is ISO country code
    (example: "--locale DE" will preset NVRAM to german keyboard layout)
+ o one more FPU bug (visible in frexp()) fixed
 
 
 2007/07/09 - version 0.9.5beta released
