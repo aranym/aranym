@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.9.5beta released on 2007/07/09
+      version 0.9.6beta released on 2008/01/28
 
 
  1) License
@@ -91,7 +91,7 @@ Alt+Pause      - enter integrated debugger (only if started with "-D")
 
 PrintScreen    - create a screenshot in actual directory
 
-Alt+Ctrl+Shift  - release the keyboard/mouse input focus so you can use
+Alt+Ctrl+Shift - release the keyboard/mouse input focus so you can use
                  your keyboard and mouse in other host applications.
 
 Scroll Lock    - switch between windowed and fullscreen mode
