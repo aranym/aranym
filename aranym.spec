@@ -1,7 +1,7 @@
 # generic defines used by all distributions.
 #
 %define name	aranym
-%define ver	0.9.5beta
+%define ver	0.9.6beta
 %define _rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -106,7 +106,7 @@ Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 %{__rm} -rf %{realname}
 [ -d "%{buildroot}" ] && %{__rm} -rf %{buildroot}
 
-%setup -q -n %{realname}/src/Unix
+%setup -q -n %{realname}
 #%patch0
 
 %build
@@ -149,9 +149,9 @@ install aratapif %{buildroot}%{_bindir}
 # add a desktop menu entry
 #
 %if %{_suse}
-#mkdir -p %{buildroot}/%{_icondir}
-#install -m644 ../../aranym.png %{buildroot}/%{_icondir}/
-install -D -m644 ../../aranym.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
+mkdir -p %{buildroot}/%{_icondir}
+install -m644 contrib/icon-32.png %{buildroot}/%{_icondir}/aranym.png
+install -D -m644 contrib/ARAnyM.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
 %suse_update_desktop_file -i aranym
 %endif
 
@@ -160,8 +160,8 @@ mkdir -p %{buildroot}%{_menudir}
 cat > %{buildroot}%{_menudir}/%{name} <<EOF
 ?package(%{name}): \
    command="%{_bindir}/aranym" \
-   icon="emulators_section.png" \
-   title="Aranym" \
+   icon="aranym.png" \
+   title="ARAnyM" \
    longtitle="%{summary}" \
    needs="x11" \
    section="More Applications/Emulators"
@@ -169,9 +169,9 @@ EOF
 %endif
 
 %if %{_fedora}
-#mkdir -p %{buildroot}/%{_icondir}
-#install -m644 ../../aranym.png %{buildroot}/%{_icondir}/
-install -D -m644 ../../aranym.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
+mkdir -p %{buildroot}/%{_icondir}
+install -m644 contrib/icon-32.png %{buildroot}/%{_icondir}/aranym.png
+install -D -m644 contrib/ARAnyM.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
 desktop-file-install \
  --delete-original \
  --vendor fedora \
@@ -217,12 +217,12 @@ desktop-file-install \
 # now for the desktop menu
 #
 %if %{_suse}
-#%{_icondir}/aranym.png
+%{_icondir}/aranym.png
 %attr(0644,root,root) %{_datadir}/applications/*
 %endif
 
 %if %{_fedora}
-#%{_icondir}/aranym.png
+%{_icondir}/aranym.png
 %attr(0644,root,root) %{_datadir}/applications/*
 %endif
 
@@ -231,6 +231,10 @@ desktop-file-install \
 %endif
 
 %changelog
+* Mon Jan 28 2008 Petr Stehlik <pstehlik@sophics.cz>
+The right icon added. Desktop file updated. Build system root changed.
+New release. Version increased. Other changes in NEWS file.
+
 * Mon Jul 09 2007 Petr Stehlik <pstehlik@sophics.cz>
 New release. Version increased. Other changes in NEWS file.
 
