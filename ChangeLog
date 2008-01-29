@@ -1,3 +1,7 @@
+2008/01/29 - Andreas
+- uae_cpu/fpu/types.h: Use long double also on ia64.
+
+
 2008/01/29 - Petr
 - sed script in Makefile.in is wrong, needs to be fixed
 
