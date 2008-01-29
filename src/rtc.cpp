@@ -94,13 +94,10 @@ void RTC::patch()
 		nvram[29] &= ~0x07;
 		nvram[29] |= res;		// the booting resolution should be set on a working copy only
 	}
-	int language = bx_options.tos.cookie_akp & 0xff;
-	int keyboard = (bx_options.tos.cookie_akp >> 8) & 0xff;
-	if (language != -1) {
-		nvram[NVRAM_SYSTEM_LANGUAGE] = language; 
-	}
-	if (keyboard != -1) {
-		nvram[NVRAM_KEYBOARD_LAYOUT] = keyboard; 
+
+	if (bx_options.tos.cookie_akp != -1) {
+		nvram[NVRAM_SYSTEM_LANGUAGE] = bx_options.tos.cookie_akp & 0xff;
+		nvram[NVRAM_KEYBOARD_LAYOUT] = (bx_options.tos.cookie_akp >> 8) & 0xff;
 	}
 
 	setChecksum();
