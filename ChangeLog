@@ -1,9 +1,13 @@
 2008/01/29 - Petr
 - sed script in Makefile.in is wrong, needs to be fixed
+
 - aranym.spec: fixed _icondir for Fedora (thanks Martin for bugreport)
+
 - natfeat/xhdi.cpp: fixed two bugs that can be serious if you access
   a block of data beginning with the simulated root sector (thanks Roman
   for a bug report).
+
+- rtc.cpp: fixed wrong check for "don't touch my --locale" (thanks Martin)
 
 
 *** CVS tagged as ARANYM_0_9_6_BETA
