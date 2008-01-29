@@ -1,3 +1,7 @@
+2008/01/29 - Jens
+- MacAranym.xcodeproj: Added version_date.h and dlgPartition.cpp
+  to build process
+
 2008/01/29 - Andreas
 - uae_cpu/fpu/types.h: Use long double also on ia64.
 
