@@ -203,59 +203,58 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 		}
 	}
 
-	// uint8 *hostbuf = Atari2HostAddr(buf);
+	off_t offset = (off_t)recno * XHDI_BLOCK_SIZE;
 
 	if (disk->sim_root) {
-		assert(sizeof(rootsector) == XHDI_BLOCK_SIZE);
-		if (recno == 0 && !writing) {
-			// simulate the root sector
-			rootsector sector;
-			memset(&sector, 0, sizeof(rootsector));
+		// correct the offset to the partition
+		offset -= XHDI_BLOCK_SIZE;
 
-			sector.hd_siz = SDL_SwapBE32(disk->size_blocks);
+		if (recno == 0 && count > 0) {
+			if (!writing) {
+				// simulate the root sector
+				assert(sizeof(rootsector) == XHDI_BLOCK_SIZE);
+				rootsector sector;
+				memset(&sector, 0, sizeof(rootsector));
 
-			sector.part[0].flg = 1;
-			if (disk->partID[0] == '$') {
-				sector.part[0].id[0] = 0;
-				sector.part[0].id[1] = 'D';
-				char str[3] = {disk->partID[1], disk->partID[2], 0};
-				sector.part[0].id[2] = strtol(str, NULL, 16);
+				sector.hd_siz = SDL_SwapBE32(disk->size_blocks);
+
+				sector.part[0].flg = 1;
+				if (disk->partID[0] == '$') {
+					sector.part[0].id[0] = 0;
+					sector.part[0].id[1] = 'D';
+					char str[3] = {disk->partID[1], disk->partID[2], 0};
+					sector.part[0].id[2] = strtol(str, NULL, 16);
+				}
+				else {
+					sector.part[0].id[0] = disk->partID[0];
+					sector.part[0].id[1] = disk->partID[1];
+					sector.part[0].id[2] = disk->partID[2];
+				}
+				int start_sect = 1;
+				sector.part[0].st = SDL_SwapBE32(start_sect);
+				sector.part[0].siz = SDL_SwapBE32(disk->size_blocks - start_sect);
+
+				// zero out the other three partitions in PTBL
+				for(int i=1; i<4; i++) {
+					sector.part[i].flg = 0;
+					sector.part[i].id[0] = 0;
+					sector.part[i].id[1] = 0;
+					sector.part[i].id[2] = 0;
+					sector.part[i].st = 0;
+					sector.part[i].siz = 0;
+				}
+
+				Host2Atari_memcpy(buf, &sector, sizeof(sector));
 			}
-			else {
-				sector.part[0].id[0] = disk->partID[0];
-				sector.part[0].id[1] = disk->partID[1];
-				sector.part[0].id[2] = disk->partID[2];
-			}
-			int start_sect = 1;
-			sector.part[0].st = SDL_SwapBE32(start_sect);
-			sector.part[0].siz = SDL_SwapBE32(disk->size_blocks - start_sect);
-
-			// zero out the other three partitions in PTBL
-			for(int i=1; i<4; i++) {
-				sector.part[i].flg = 0;
-				sector.part[i].id[0] = 0;
-				sector.part[i].id[1] = 0;
-				sector.part[i].id[2] = 0;
-				sector.part[i].st = 0;
-				sector.part[i].siz = 0;
-			}
-
-			// memcpy(hostbuf, &sector, sizeof(sector));
-			Host2Atari_memcpy(buf, &sector, sizeof(sector));
-
 			// correct the count and buffer position
 			count--;
-			// hostbuf+=XHDI_BLOCK_SIZE;
 			buf+=XHDI_BLOCK_SIZE;
 			if (count == 0) {
-				return E_OK;
+				return writing ? EACCDN : E_OK;
 			}
 		}
-		// correct the start sector to the partition
-		recno--;
 	}
 
-	off_t offset = (off_t)recno * XHDI_BLOCK_SIZE;
 	fseeko(f, offset, SEEK_SET);
 	for(int i=0; i<count; i++) {
 		uint8 tempbuf[XHDI_BLOCK_SIZE];
