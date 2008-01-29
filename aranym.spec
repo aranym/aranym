@@ -76,6 +76,7 @@ BuildRequires:	update-desktop-files
  %define	_fedora_version		%(cat /etc/fedora-release|cut -f3 -d" ")
  %define	_distribution		Fedora Core %{_fedora_version}
  %define	rel			%{_rel}.fc%{_fedora_version}
+ %define	_icondir	%{_datadir}/pixmaps/
 BuildRequires:	desktop-file-utils
 Requires:	SDL >= 1.2.0
 BuildRequires:	SDL-devel >= 1.2.0
