@@ -232,7 +232,7 @@ desktop-file-install \
 %endif
 
 %changelog
-* Mon Jan 29 2008 Petr Stehlik <pstehlik@sophics.cz>
+* Tue Jan 29 2008 Petr Stehlik <pstehlik@sophics.cz>
 Desktop file corrected and renamed to lowercase.
 _icondir defined for Fedora. For other changes see ChangeLog.
 
