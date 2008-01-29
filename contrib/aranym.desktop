@@ -6,4 +6,4 @@ Exec=aranym
 Icon=aranym
 Terminal=false
 Type=Application
-Category=System;Emulator
+Categories=System;Emulator
