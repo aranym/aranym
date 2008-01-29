@@ -1,7 +1,7 @@
 # generic defines used by all distributions.
 #
 %define name	aranym
-%define ver	0.9.6beta
+%define ver	0.9.6beta2
 %define _rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -152,7 +152,7 @@ install aratapif %{buildroot}%{_bindir}
 %if %{_suse}
 mkdir -p %{buildroot}/%{_icondir}
 install -m644 contrib/icon-32.png %{buildroot}/%{_icondir}/aranym.png
-install -D -m644 contrib/ARAnyM.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
+install -D -m644 contrib/aranym.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
 %suse_update_desktop_file -i aranym
 %endif
 
@@ -172,7 +172,7 @@ EOF
 %if %{_fedora}
 mkdir -p %{buildroot}/%{_icondir}
 install -m644 contrib/icon-32.png %{buildroot}/%{_icondir}/aranym.png
-install -D -m644 contrib/ARAnyM.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
+install -D -m644 contrib/aranym.desktop %{buildroot}/%{_datadir}/applications/aranym.desktop
 desktop-file-install \
  --delete-original \
  --vendor fedora \
@@ -232,6 +232,10 @@ desktop-file-install \
 %endif
 
 %changelog
+* Mon Jan 29 2008 Petr Stehlik <pstehlik@sophics.cz>
+Desktop file corrected and renamed to lowercase.
+_icondir defined for Fedora. For other changes see ChangeLog.
+
 * Mon Jan 28 2008 Petr Stehlik <pstehlik@sophics.cz>
 The right icon added. Desktop file updated. Build system root changed.
 New release. Version increased. Other changes in NEWS file.
