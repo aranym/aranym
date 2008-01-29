@@ -1,4 +1,4 @@
-2008/01/28 - version 0.9.6beta released
+2008/01/29 - version 0.9.6beta2 released
  
  Main change: major graphics output overhaul, two video backends - software
  and OpenGL renderer. Faster graphics output on all platforms. Try enabling
