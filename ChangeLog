@@ -1,3 +1,7 @@
+2008/01/30 - Petr
+- aranym.spec: SDL_image added to "Requires" and "BuildRequires"
+
+
 2008/01/29 - Petr
 - include/*.h, ethernet_cygwin.cpp: removed the $Id expandable CVS keyword
 - template.cpp: unused, removed
