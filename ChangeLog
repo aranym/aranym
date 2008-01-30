@@ -1,3 +1,7 @@
+2008/01/30 - Jens
+- MacAranym.xcodeproj: grep added to seperate lines with a
+  leading date before for building version_date.h
+  
 2008/01/30 - Petr
 - aranym.spec: SDL_image added to "Requires" and "BuildRequires"
 
