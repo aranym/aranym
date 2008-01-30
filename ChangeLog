@@ -1,6 +1,10 @@
 2008/01/30 - Jens
 - MacAranym.xcodeproj: grep added to seperate lines with a
-  leading date before for building version_date.h
+  leading date before for building version_date.h; ENABLE_VBL_UPDATES
+  removed, LOGO_FILENAME added
+- parameters_Macos.cpp: getDataFolder() now returns application bundle
+  directory
+- aranym.icns: new icon file
   
 2008/01/30 - Petr
 - aranym.spec: SDL_image added to "Requires" and "BuildRequires"

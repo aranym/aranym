@@ -43,8 +43,13 @@ char *HostFilesys::getConfFolder(char *buffer, unsigned int bufsize)
 
 char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 {
+	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+	CFURLGetFileSystemRepresentation(url, true, (UInt8 *)buffer, bufsize);
+	CFRelease(url);
+  
  	//printf("Data folder ---------> %s\n", gAranymFilesDirectory);
-	return safe_strncpy(buffer, gAranymFilesDirectory, bufsize);
+	return buffer;
+//	return safe_strncpy(buffer, gAranymFilesDirectory, bufsize);
 }
 
 int HostFilesys::makeDir(char *filename, int perm)
