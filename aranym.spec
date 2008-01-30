@@ -50,8 +50,10 @@
  %if %suse_version >= 1020
   %define	_distribution	openSUSE %{_suse_version}
  %endif
-Requires:	SDL >= 1.2.0
-BuildRequires:	SDL-devel >= 1.2.0
+Requires:	SDL >= 1.2.10
+Requires:	SDL_image >= 1.2.5
+BuildRequires:	SDL-devel >= 1.2.10
+BuildRequires:	SDL_image-devel >= 1.2.5
 BuildRequires:	update-desktop-files
 %endif
 
@@ -64,8 +66,10 @@ BuildRequires:	update-desktop-files
  %define	_distribution		Mandriva %{_mandriva_version}
  %define	rel			%{_rel}.mdv
  %define	group			Emulators
-#Requires:	libSDL >= 1.2.0
-#BuildRequires:	libSDL-devel >= 1.2.0
+Requires:	SDL >= 1.2.10
+Requires:	SDL_image >= 1.2.5
+BuildRequires:	SDL-devel >= 1.2.10
+BuildRequires:	SDL_image-devel >= 1.2.5
 %endif
 
 # building on a Fedora Core Linux system. not sure if there's a release string, but create one anyway
@@ -77,9 +81,11 @@ BuildRequires:	update-desktop-files
  %define	_distribution		Fedora Core %{_fedora_version}
  %define	rel			%{_rel}.fc%{_fedora_version}
  %define	_icondir	%{_datadir}/pixmaps/
+Requires:	SDL >= 1.2.10
+Requires:	SDL_image >= 1.2.5
+BuildRequires:	SDL-devel >= 1.2.10
+BuildRequires:	SDL_image-devel >= 1.2.5
 BuildRequires:	desktop-file-utils
-Requires:	SDL >= 1.2.0
-BuildRequires:	SDL-devel >= 1.2.0
 %endif
 
 Name:		%{name}
@@ -232,6 +238,11 @@ desktop-file-install \
 %endif
 
 %changelog
+* Wed Jan 30 2008 Petr Stehlik <pstehlik@sophics.cz>
+Added SDL_image to Requires:
+Bumped the minimal SDL version to 1.2.10
+Enabled the Requires: for mandriva (still untested)
+
 * Tue Jan 29 2008 Petr Stehlik <pstehlik@sophics.cz>
 Desktop file corrected and renamed to lowercase.
 _icondir defined for Fedora. For other changes see ChangeLog.
