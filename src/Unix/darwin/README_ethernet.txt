@@ -22,8 +22,7 @@ FW_INTERFACE : the interface which is your normal MAC network device
                may be en0 for a wired RJ45 and en1 for a WLAN connection
 NAMESERVER	 : Point this to your normal name server
 
-Copy the file into the directory ~/Library/Application Support/Aranym,
-if the Aranym directory is not existent simply create a new one.
+Copy the file into the directory where your "config" file is located.
 
 3. Configuring MacAranym
 ------------------------

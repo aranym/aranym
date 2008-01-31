@@ -1,3 +1,9 @@
+2008/01/31 - Jens
+ethernet_darwin.cpp: Changed search path for aratapif.sh to the
+config dir. I think this is a good location for a file that
+has to be edited by the user and it makes it possible to have
+a configuration that meets with the config file.
+
 2008/01/30 - Jens
 - MacAranym.xcodeproj: grep added to seperate lines with a
   leading date before for building version_date.h; ENABLE_VBL_UPDATES

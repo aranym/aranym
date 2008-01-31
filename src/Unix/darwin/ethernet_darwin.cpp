@@ -110,12 +110,13 @@ static void closeAuthoizationContext()
 static int executeScriptAsRoot(char *application, char *args[]) {
     OSStatus execStatus;
 	char app[MAXPATHLEN];
-		
+		/*
 	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
 	CFURLGetFileSystemRepresentation(url, true, (UInt8 *)app, MAXPATHLEN);
 	printf("TunTap: Binary directory '%s'\n", app);
-	CFRelease(url);
+	CFRelease(url);*/
 	//Host::getDataFolder(app, sizeof(app));
+	Host::getConfFolder(app, sizeof(app));
 	strcat(app, DIRSEPARATOR);
 	strcat(app, application);
 	args[0] = app;
