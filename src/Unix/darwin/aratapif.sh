@@ -15,17 +15,57 @@ IP_ATARI=$3
 NETMASK=$4
 MTU=$5
 
-FW_INTERFACE=en1
-FWNATD_PORT=8668
-IPFW_RULENUM=00200
-
 # optional dns forwarding
 DNS_FORWARD=1
-DNSFW_RULENUM=00100
+NAMESERVER=
+FW_INTERFACE=
+
+FWNATD_PORT=8668
 DNSFWNATD_PORT=8669
-NAMESERVER=172.16.1.2
+DNSFW_RULENUM=00100
+IPFW_RULENUM=00200
+
+if [ "$FW_INTERFACE" == "" ]
+then
+	ifconfig -u -a inet >/tmp/ifchk 2>/dev/null
+	
+	IF=""
+	while read -r line
+    do
+        case "$line" in
+          en[0-9]*\:*)
+			IF=`expr "$line" : '\(en[0-9]*\):.*'`
+            ;;
+          *inet*[0-9]*.[0-9]*.[0-9]*.[0-9]*)
+          	if [ "$IF" != "" ]
+          	then
+	          	FW_INTERFACE=$IF
+				break;
+			fi
+          	;;
+          *)
+          	IF=""
+          	;;
+        esac
+    done < /tmp/ifchk
+	echo $FW_INTERFACE - $ADDR
+fi
+
+if [ "$NAMESERVER" == "" ]
+then
+	while read -r line
+    do
+    	dnsserver=`expr "$line" : 'nameserver.\([0-9]*\.[0-9]*\.[0-9]*\.[0-9]\).*'`
+    	if [ "$dnsserver" != "" ]
+    	then
+    		NAMESERVER=$dnsserver
+    	fi
+ 	done < /etc/resolv.conf
+fi
 
 # no need to change anything below this line
+echo "Interface: " $FW_INTERFACE
+echo "Nameserver: " $NAMESERVER
 
 # bring the interface up
 /sbin/ifconfig $DEVICE $IP_HOST netmask $NETMASK mtu $MTU up
