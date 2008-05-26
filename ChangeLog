@@ -1,3 +1,12 @@
+2008/05/26 - Patrice
+Reworked audio DMA emulation:
+- Moved audio conversion stuff in another file, so it can be used by other
+  audio related functions (existing or future).
+- Reduce fragment packet size, so the MFP interrupt triggers more often.
+- HostAudio reset was deleting callbacks, so no more audio was working after
+  that.
+
+
 2008/02/05 - Jens
 aratapif.sh - Expanded shell script that tries to
 detect Interface and Nameserver parameters automatically, 

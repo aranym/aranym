@@ -29,10 +29,10 @@
 
 /*--- Defines ---*/
 
-#define AUDIO_FREQ		22050
+#define AUDIO_FREQ	22050
 #define AUDIO_FORMAT	AUDIO_S16SYS
 #define AUDIO_CHANNELS	2
-#define	AUDIO_SAMPLES	1024
+#define	AUDIO_SAMPLES	64
 
 /*--- SDL callback function ---*/
 
@@ -43,6 +43,9 @@ extern "C" {
 		if (!host) {
 			return;
 		}
+
+		/* SDL 1.3 will require the application to clear the buffer */
+		//memset(stream, 0, len);
 
 		for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
 			if (host->audio.callbacks[i]) {
@@ -99,6 +102,7 @@ HostAudio::~HostAudio()
 
 void HostAudio::reset(void)
 {
+/*
 	SDL_LockAudio();
 
 	for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
@@ -107,6 +111,7 @@ void HostAudio::reset(void)
 	}
 
 	SDL_UnlockAudio();
+*/
 }
 
 void HostAudio::AddCallback(audio_callback_f callback, void *userdata)

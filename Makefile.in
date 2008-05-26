@@ -79,6 +79,7 @@ SRCS = main.cpp \
 	aradata.cpp \
 	aranym_exception.cpp \
 	ata.cpp \
+	audio_conv.cpp \
 	audio_dma.cpp \
 	audio_crossbar.cpp \
 	blitter.cpp \

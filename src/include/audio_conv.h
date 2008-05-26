@@ -1,5 +1,5 @@
 /*
-	Audio DMA emulation
+	Audio format conversions
 
 	ARAnyM (C) 2005 Patrice Mandin
 
@@ -18,36 +18,29 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef AUDIODMA_H
-#define AUDIODMA_H
+#ifndef AUDIOCONV_H
+#define AUDIOCONV_H
 
-#include "icio.h"
+#include <SDL.h>
 
-/*--- AUDIODMA class ---*/
-
-class AUDIODMA : public BASE_IO {
+class AudioConv {
 	private:
-		int freqs[4];
-		uint32	current;
-		uint16	mode;
+		SDL_AudioCVT	cvt;
+		Uint8 *tmpBuf;
+		int srcRate, srcChan, srcOffset, srcSkip;
+		int dstRate, tmpBufLen;
 
-		void updateCurrent(void);
-		void updateControl(void);
+		int rescaleFreq8(Uint8 *source, int *src_len, Uint8 *dest, int dst_len);
+		int rescaleFreq16(Uint16 *source, int *src_len, Uint16 *dest, int dst_len);
 
 	public:
-		AUDIODMA(memptr, uint32);
-		~AUDIODMA();
-		void reset();
+		AudioConv(void);
+		~AudioConv();
 
-		virtual uae_u8 handleRead(uaecptr addr);
-		virtual void handleWrite(uaecptr addr, uae_u8 value);
-
-		void updateMode(void);
-
-		/* Only for audio callback */
-		uint16	control;
-		uint32	start, end;
-		int	start_tic;
+		void setConversion(Uint16 src_fmt, Uint8 src_chan, int src_rate,
+			int src_offset, int src_skip,
+			Uint16 dst_fmt, Uint8 dst_chan, int dst_rate);
+		void doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_len);
 };
 
-#endif /* AUDIODMA_H */
+#endif /* AUDIOCONV_H */
