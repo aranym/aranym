@@ -41,8 +41,6 @@
 
 IKBD::IKBD(memptr addr, uint32 size) : ACIA(addr, size)
 {
-	rwLock = SDL_CreateMutex();
-
 	D(bug("ikbd: interface created at 0x%06x", getHWoffset()));
 
 	inbufferlen = DEFAULT_INBUFFERLEN;
@@ -56,8 +54,6 @@ IKBD::IKBD(memptr addr, uint32 size) : ACIA(addr, size)
 
 IKBD::~IKBD()
 {
-	SDL_DestroyMutex(rwLock);
-
 	delete outbuffer;
 	outbuffer = NULL;
 	delete inbuffer;
@@ -98,9 +94,7 @@ uint8 IKBD::ReadStatus()
 
 void IKBD::WriteControl(uint8 value)
 {
-	SDL_LockMutex(rwLock);
 	cr = value;
-	SDL_UnlockMutex(rwLock);
 
 	D(bug("ikbd: WriteControl(0x%02x)",cr));
 
@@ -111,8 +105,6 @@ void IKBD::WriteControl(uint8 value)
 
 uint8 IKBD::ReadData()
 {
-	SDL_LockMutex(rwLock);
-
 	if (inread != inwrite) {
 
 		rxdr = inbuffer[inread++];
@@ -136,8 +128,6 @@ uint8 IKBD::ReadData()
 		} 
 	}
 
-	SDL_UnlockMutex(rwLock);
-
 	return rxdr;
 }
 
@@ -150,8 +140,6 @@ void IKBD::WriteData(uint8 value)
 {
 	if (outbuffer==NULL)
 		return;
-
-	SDL_LockMutex(rwLock);
 
 	outbuffer[outwrite++] = txdr = value;
 	D(bug("ikbd: WriteData(0x%02x)",txdr));
@@ -331,8 +319,6 @@ void IKBD::WriteData(uint8 value)
 			outwrite = 0;
 			break;
 	}
-
-	SDL_UnlockMutex(rwLock);
 }
 
 /*--- Functions called to transmit an input event from host to IKBD ---*/
@@ -375,9 +361,7 @@ void IKBD::SendMouseMotion(int relx, int rely, int buttons)
 		}
 
 		/* Merge with the previous mouse packet ? */
-		SDL_LockMutex(rwLock);
 		MergeMousePacket(&movex, &movey, buttons);
-		SDL_UnlockMutex(rwLock);
 
 		/* Send the packet */
 		intype = IKBD_PACKET_MOUSE;
@@ -521,8 +505,6 @@ void IKBD::send(uint8 value)
 	if (inbuffer == NULL)
 		return;
 
-	SDL_LockMutex(rwLock);
-
 	/* Add new byte to IKBD buffer */
 	D(bug("ikbd: send(0x%02x) at position %d",value,inwrite));
 	inbuffer[inwrite++] = value;
@@ -563,8 +545,6 @@ void IKBD::send(uint8 value)
 	sr |= (1<<ACIA_SR_RXFULL);
 
 	ThrowInterrupt();
-
-	SDL_UnlockMutex(rwLock);
 }
 
 void IKBD::ThrowInterrupt(void)

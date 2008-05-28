@@ -1,3 +1,7 @@
+2008/05/28 - Patrice
+- ikbd: Remove useless mutex, as everything is running in same thread.
+
+
 2008/05/26 - Patrice
 Reworked audio DMA emulation:
 - Moved audio conversion stuff in another file, so it can be used by other

@@ -71,9 +71,6 @@ class IKBD: public ACIA {
 		int inwrite, inread;
 		ikbd_packet_t intype;	/* Latest type of packet in buffer */
 
-		// Read/Write lock
-		SDL_mutex   *rwLock;	
-
 		uint8 int2bcd(int a);
 		void ThrowInterrupt(void);
 		void MergeMousePacket(int *relx, int *rely, int buttons);
