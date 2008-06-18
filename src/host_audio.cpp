@@ -32,7 +32,7 @@
 #define AUDIO_FREQ	22050
 #define AUDIO_FORMAT	AUDIO_S16SYS
 #define AUDIO_CHANNELS	2
-#define	AUDIO_SAMPLES	64
+#define	AUDIO_SAMPLES	1024
 
 /*--- SDL callback function ---*/
 

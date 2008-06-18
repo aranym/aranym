@@ -1,3 +1,7 @@
+2008/06/18 - Patrice
+- Revert 20080526 audio dma changes, introduced too many regressions :-(.
+
+
 2008/05/28 - Patrice
 - ikbd: Remove useless mutex, as everything is running in same thread.
 

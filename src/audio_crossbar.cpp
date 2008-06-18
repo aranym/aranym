@@ -236,7 +236,7 @@ void CROSSBAR::handleWrite(uaecptr addr, uae_u8 value)
 			break;
 		case 0x05:
 			intfreqdiv = value & FREQ_PREDIV_MASK;
-			getAUDIODMA()->updateMode();
+			getAUDIODMA()->updateFreq();
 			break;
 		case 0x06:
 			rec_tracks = value & REC_TRACKS_MASK;
