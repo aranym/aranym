@@ -84,7 +84,9 @@ HostAudio::HostAudio()
 		if (SDL_AudioDriverName(name, 31)) {
 			D(bug("HostAudio: device %s opened", name));
 		}
-		D(bug("HostAudio: %d Hz, 0x%04x format, %d channels", obtained.freq, obtained.format, obtained.channels));
+		D(bug("HostAudio: %d Hz, 0x%04x format, %d channels, %d samples, %d bytes",
+			obtained.freq, obtained.format,
+			obtained.channels, obtained.samples, obtained.size));
 	}
 #endif
 
