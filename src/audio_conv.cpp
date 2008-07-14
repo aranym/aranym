@@ -119,18 +119,25 @@ void AudioConv::doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_
 		return;
 	}
 
-	D(bug("audioconv: 0x%08x, %d -> 0x%08x, %d", source, *src_len, dest, *dst_len));
+	D(bug("audioconv: from 0x%08x, %d -> 0x%08x, %d", source, *src_len, dest, *dst_len));
 
 	/* Calc needed buffer size */
-	if (tmpBufLen< *dst_len) {
-		tmpBuf = (Uint8 *) realloc(tmpBuf, *dst_len);
-		tmpBufLen = *dst_len;
-		D(bug("audioconv: realloc tmpbuf, len: %d", *dst_len));
+	int neededBufSize = *dst_len;
+	if (srcRate > dstRate) {
+		neededBufSize = (neededBufSize * srcRate) / dstRate;
+	}
+
+	if (tmpBufLen<neededBufSize) {
+		tmpBuf = (Uint8 *) realloc(tmpBuf, neededBufSize);
+		tmpBufLen = neededBufSize;
+		D(bug("audioconv: realloc tmpbuf, len: %d", neededBufSize));
 	}
 
 	/* First convert according to freq rates in a temp buffer */
-	int dstConvertedLen = 0, neededBufSize = (int) (*dst_len / cvt.len_ratio);
-	if (neededBufSize > tmpBufLen) {
+	int dstConvertedLen = 0;
+
+	neededBufSize = (int) (*dst_len / cvt.len_ratio);
+	if (neededBufSize>tmpBufLen) {
 		neededBufSize = tmpBufLen;
 	}
 
@@ -145,11 +152,13 @@ void AudioConv::doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_
 
 	/* Then convert to final format */
 	cvt.buf = tmpBuf;
-	cvt.len = (int) (dstConvertedLen / cvt.len_ratio);
+	cvt.len = dstConvertedLen;
 	SDL_ConvertAudio(&cvt);
 
 	SDL_MixAudio(dest, cvt.buf, cvt.len_cvt, SDL_MIX_MAXVOLUME);
 
 	/* Set converted length */
 	*dst_len = cvt.len_cvt;
+
+	D(bug("audioconv: to 0x%08x, %d -> 0x%08x, %d", source, *src_len, dest, *dst_len));
 }

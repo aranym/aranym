@@ -24,6 +24,7 @@
 #include "memory.h"
 #include "host.h"
 #include "audio_dma.h"
+#include "audio_conv.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -75,111 +76,33 @@
 
 extern "C" {
 	static SDL_audiostatus playing;
-	static SDL_AudioCVT	cvt;
+	static AudioConv *audioConv;
 
-	static Uint16	format;
-	static int		channels, freq, offset, skip;
 	static uint32	start_replay, current_replay, end_replay;
-
-	static void	*tmp_buf;
-	static int	tmp_buf_len;
-
-	static int resize_8bit(Sint8 *dest, int dst_len)
-	{
-		uint32	src;
-		int j,k, hostfreq;
-
-//		D(bug("audiodma: resize 8bit"));		
-		src = current_replay + offset*channels;
-		j = k = 0;
-		hostfreq = host->audio.obtained.freq;
-		while (((current_replay+j*skip)<end_replay) && (dst_len>0)) {
-			j = (k * freq) / hostfreq;
-			for (int i=0;i<channels;i++) {
-				*dest++ = ReadInt8(src + i + j*skip);
-				dst_len--;
-			}
-			k++;
-		}
-		current_replay += j*skip;
-		return k*channels;
-	}
 	
-	static int resize_16bit(Sint16 *dest, int dst_len)
+	static void audio_callback(void * /*userdata*/, uint8 * stream, int len)
 	{
-		uint32	src;
-		int j,k, hostfreq;
-		
-//		D(bug("audiodma: resize 16bit"));		
-		src = current_replay + offset*channels;
-		j = k = 0;
-		hostfreq = host->audio.obtained.freq;
-		while (((current_replay+j*skip)<end_replay) && (dst_len>0)) {
-			j = (k * freq) / hostfreq;
-			for (int i=0;i<channels;i++) {
-				*dest++ = ReadInt16(src + (i<<1) + j*skip);
-				dst_len -= 2;
-			}
-			k++;
-		}
-		current_replay += j*skip;
-		return (k*channels)<<1;
-	}
-	
-	static void audio_callback(void *userdata, uint8 * stream, int len)
-	{
-		DUNUSED(userdata);
 		Uint8 *dest;
-		int dest_len, trigger_interrupt;
+		int dest_len, trigger_interrupt = 0;
 
-		if ((playing!=SDL_AUDIO_PLAYING) || (format==0) || (channels==0)
-			|| (freq==0) || (start_replay==0) || (end_replay==0))
+		if ((playing!=SDL_AUDIO_PLAYING) || (start_replay==0) || (end_replay==0))
 			return;
 
-//		D(bug("audiodma: %d to fill, from %d Hz to %d Hz", len, freq, hostAudio->obtained.freq));
-
-		/* Allocate needed temp buffer */
-		if (tmp_buf_len<len) {
-			if (tmp_buf) {
-				free(tmp_buf);
-			}
-			tmp_buf_len = len*cvt.len_mult;
-			tmp_buf = malloc(tmp_buf_len);
-//			D(bug("audiodma: %d allocated for temp buffer", tmp_buf_len));
-		}
-
-		trigger_interrupt = 0;
-		dest = (Uint8 *)tmp_buf;
-		dest_len = (int) (len / cvt.len_ratio);
+		dest = stream;
+		dest_len = len;
 		while (dest_len>0) {
-			int converted_len;
+			int src_len = end_replay-current_replay;
+			int dst_len = dest_len;
 
-//			D(bug("audiodma: replay from 0x%08x to 0x%08x via 0x%08x", start_replay, end_replay, current_replay));
-//			D(bug("audiodma: buffer 0x%08x, len %d", dest, dest_len));
+			audioConv->doConversion(Atari2HostAddr(current_replay), &src_len, dest, &dst_len);
 
-			/* Resize Atari buffer using offset, skip and freq */
-			switch(format & 0xff) {
-				case 8:
-					converted_len = resize_8bit((Sint8 *)dest, dest_len);
-					break;
-				case 16:
-					converted_len = resize_16bit((Sint16 *)dest, dest_len);
-					break;
-				default:
-					return;
-			}
-
-//			D(bug("audiodma: %d converted from %d", converted_len, dest_len));
-
-			/* Go to next part */
-			dest_len -= converted_len;
-			dest += converted_len;
+			dest_len -= dst_len;
+			dest += dst_len;
+			current_replay += src_len;
 
 			/* End of audio frame ? */
 			if (current_replay<end_replay)
 				continue;
-
-//			D(bug("audiodma: end of frame"));
 				
 			if (getAUDIODMA()->control & CTRL_PLAYBACK_ENABLE) {
 				if (getAUDIODMA()->control & CTRL_PLAYBACK_REPEAT) {
@@ -191,12 +114,14 @@ extern "C" {
 					getAUDIODMA()->control &= ~CTRL_PLAYBACK_ENABLE;
 					playing = SDL_AUDIO_STOPPED;
 					D(bug("audiodma: playback stop"));
-					memset(dest, 0x80, dest_len);
+					if (dest_len>0) {
+						memset(dest, 0x80, dest_len);
+					}
 					break;
 				}
 			}
 
-			/* Trigger MFP interrupt if needed */
+			/* Need to trigger MFP interrupt ? */
 			if (getAUDIODMA()->control & CTRL_TIMERA_PLAYBACK_END) {
 				trigger_interrupt = 1;
 				D(bug("audiodma: MFP Timer A interrupt to trigger"));
@@ -216,13 +141,6 @@ extern "C" {
 				D(bug("audiodma: MFP I7 interrupt triggered"));
 			}
 		}
-		
-		/* Convert Atari buffer to host format */
-		cvt.buf = (Uint8 *)tmp_buf;
-		cvt.len = (int) (len / cvt.len_ratio);
-		SDL_ConvertAudio(&cvt);
-
-		SDL_MixAudio(stream, cvt.buf, len, SDL_MIX_MAXVOLUME);
 	}
 };
 
@@ -236,7 +154,11 @@ AUDIODMA::AUDIODMA(memptr addr, uint32 size) : BASE_IO(addr, size)
 	freqs[MODE_FREQ1>>MODE_FREQ] = 12292;	/* 25.175MHz / (256 * 8) */
 	freqs[MODE_FREQ2>>MODE_FREQ] = 24585;	/* 25.175MHz / (256 * 4) */
 	freqs[MODE_FREQ3>>MODE_FREQ] = 49170;	/* 25.175MHz / (256 * 2) */
-	tmp_buf=NULL;
+
+	SDL_LockAudio();
+	audioConv = new AudioConv();
+	SDL_UnlockAudio();
+
 	reset();
 
 	host->audio.AddCallback(audio_callback, NULL);
@@ -246,6 +168,12 @@ AUDIODMA::~AUDIODMA()
 {
 	D(bug("audiodma: interface destroyed at 0x%06x", getHWoffset()));
 	host->audio.RemoveCallback(audio_callback);
+
+	SDL_LockAudio();
+	delete audioConv;
+	audioConv = NULL;
+	SDL_UnlockAudio();
+
 	reset();
 }
 
@@ -256,14 +184,7 @@ void AUDIODMA::reset()
 	start_tic = SDL_GetTicks();
 	start = current = end = control = mode = 0;
 	playing = SDL_AUDIO_STOPPED;
-	format = channels = freq = 0;
 	start_replay = current_replay = end_replay = 0;
-	offset = skip = 0;
-	tmp_buf_len = 0;
-	if (tmp_buf) {
-		free(tmp_buf);
-		tmp_buf=NULL;
-	}
 	D(bug("audiodma: reset"));
 }
 
@@ -513,7 +434,8 @@ void AUDIODMA::updateControl(void)
 
 void AUDIODMA::updateMode(void)
 {
-	int prediv;
+	int channels, freq, offset, skip, prediv;
+	Uint16	format;
 
 	SDL_LockAudio();
 
@@ -548,14 +470,9 @@ void AUDIODMA::updateMode(void)
 	D(bug("audiodma: mode: format 0x%04x, %d channels, offset %d, skip %d, %d freq",
 		format, channels, offset, skip, freq));
 
-	SDL_BuildAudioCVT(&cvt,
-		format,
-		channels,
-		host->audio.obtained.freq,
-		host->audio.obtained.format,
-		host->audio.obtained.channels,
-		host->audio.obtained.freq
-	);
+	audioConv->setConversion(format, channels, freq, offset, skip,
+		host->audio.obtained.format, host->audio.obtained.channels,
+		host->audio.obtained.freq);
 
 	SDL_UnlockAudio();
 }
