@@ -353,16 +353,12 @@ void AUDIODMA::handleWrite(uaecptr addr, uae_u8 value)
 		case 0x00:
 			control &= 0x00ff;
 			control |= value<<8;
-			SDL_LockAudio();
 			updateControl();
-			SDL_UnlockAudio();
 			break;
 		case 0x01:
 			control &= 0xff00;
 			control |= value;
-			SDL_LockAudio();
 			updateControl();
-			SDL_UnlockAudio();
 			break;
 		case 0x03:
 			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT) {
@@ -403,16 +399,12 @@ void AUDIODMA::handleWrite(uaecptr addr, uae_u8 value)
 		case 0x20:
 			mode &= 0x00ff;
 			mode |= value<<8;
-			SDL_LockAudio();
 			updateMode();
-			SDL_UnlockAudio();
 			break;
 		case 0x21:
 			mode &= 0xff00;
 			mode |= value;
-			SDL_LockAudio();
 			updateMode();
-			SDL_UnlockAudio();
 			break;
 	}
 
@@ -499,6 +491,8 @@ void AUDIODMA::updateCurrent(void)
 
 void AUDIODMA::updateControl(void)
 {
+	SDL_LockAudio();
+
 	if ((control & CTRL_PLAYBACK_ENABLE)==CTRL_PLAYBACK_ENABLE) {
 		/* Start replay ? */
 		if (playing == SDL_AUDIO_STOPPED) {
@@ -513,10 +507,16 @@ void AUDIODMA::updateControl(void)
 			playing = SDL_AUDIO_STOPPED;
 		}
 	}
+
+	SDL_UnlockAudio();
 }
 
 void AUDIODMA::updateMode(void)
 {
+	int prediv;
+
+	SDL_LockAudio();
+
 	switch (mode & (MODE_FORMAT_MASK<<MODE_FORMAT)) {
 		case MODE_FORMAT_8STEREO:
 			format = AUDIO_S8;
@@ -538,7 +538,12 @@ void AUDIODMA::updateMode(void)
 	skip = ((mode>>MODE_PLAY_TRACK) & MODE_PLAY_TRACK_MASK)+1;
 	skip *= ((format & 0xff)>>3)*channels;
 
-	updateFreq();
+	prediv = getCROSSBAR()->getIntPrediv();
+	if (prediv == 0) {
+		freq = freqs[(mode>>MODE_FREQ) & MODE_FREQ_MASK];
+	} else {
+		freq = getCROSSBAR()->getIntFreq() / (256 * (prediv+1));
+	}
 
 	D(bug("audiodma: mode: format 0x%04x, %d channels, offset %d, skip %d, %d freq",
 		format, channels, offset, skip, freq));
@@ -551,17 +556,6 @@ void AUDIODMA::updateMode(void)
 		host->audio.obtained.channels,
 		host->audio.obtained.freq
 	);
-}
 
-void AUDIODMA::updateFreq(void)
-{
-	int prediv;
-
-	prediv = getCROSSBAR()->getIntPrediv();
-	if (prediv == 0) {
-		freq = freqs[(mode>>MODE_FREQ) & MODE_FREQ_MASK];
-	} else {
-		freq = getCROSSBAR()->getIntFreq() / (256 * (prediv+1));
-	}
-	D(bug("audiodma:  freq %d Hz", freq));
+	SDL_UnlockAudio();
 }

@@ -1,3 +1,7 @@
+2008/07/14 - Patrice
+- Little cleanup in audio DMA emulation, to try to fix it again.
+
+
 2008/06/18 - Patrice
 - Revert 20080526 audio dma changes, introduced too many regressions :-(.
 

@@ -33,7 +33,6 @@ class AUDIODMA : public BASE_IO {
 
 		void updateCurrent();
 		void updateControl();
-		void updateMode();
 
 	public:
 		AUDIODMA(memptr, uint32);
@@ -43,7 +42,7 @@ class AUDIODMA : public BASE_IO {
 		virtual uae_u8 handleRead(uaecptr addr);
 		virtual void handleWrite(uaecptr addr, uae_u8 value);
 
-		void updateFreq(void);
+		void updateMode(void);
 
 		/* Only for audio callback */
 		uint16	control;
