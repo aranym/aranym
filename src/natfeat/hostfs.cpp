@@ -2128,7 +2128,7 @@ int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 
 	XfsFsFile *newFsFile;
 
-	if ( !fname || !*fname || (*fname == '.' && !fname[1]) ) {
+	if ( !*fname || (*fname == '.' && !fname[1]) ) {
 		newFsFile = dir->index;
 		newFsFile->refCount++;
 	} else if ( *fname == '.' && fname[1] == '.' && !fname[2] ) {
