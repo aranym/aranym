@@ -205,10 +205,16 @@ case $ac_cv_c_float_format in
 	if test $ac_cv_c_bigendian = no; then
 	    fbigend=1
 	fi
+	if test $ac_cv_c_bigendian = universal; then
+	    fbigend=WORDS_BIGENDIAN
+	fi
 	;;
     'IEEE (little-endian)' )
 	if test $ac_cv_c_bigendian = yes; then
 	    fbigend=0
+	fi
+	if test $ac_cv_c_bigendian = universal; then
+	    fbigend='!WORDS_BIGENDIAN'
 	fi
 	;;
     'VAX D-float' )
