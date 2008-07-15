@@ -21,18 +21,12 @@
 #include "sysdeps.h"
 #include "host_audio.h"
 #include "host.h"
+#include "parameters.h"
 
 #define DEBUG 0
 #include "debug.h"
 
 #include <SDL.h>
-
-/*--- Defines ---*/
-
-#define AUDIO_FREQ	22050
-#define AUDIO_FORMAT	AUDIO_S16SYS
-#define AUDIO_CHANNELS	2
-#define	AUDIO_SAMPLES	1024
 
 /*--- SDL callback function ---*/
 
@@ -66,10 +60,10 @@ HostAudio::HostAudio()
 		userdatas[i]=NULL;
 	}
 
-	desired.freq = AUDIO_FREQ;
-	desired.format = AUDIO_FORMAT;
-	desired.channels = AUDIO_CHANNELS;
-	desired.samples = AUDIO_SAMPLES;
+	desired.freq = bx_options.audio.freq;
+	desired.format = (bx_options.audio.bits == 8) ? AUDIO_S8 : AUDIO_S16SYS;
+	desired.channels = bx_options.audio.chans;
+	desired.samples = bx_options.audio.samples;
 	desired.callback = UpdateAudio;
 	desired.userdata = NULL;
 

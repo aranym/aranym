@@ -896,6 +896,28 @@ void presave_ikbd()
 }
 
 /*************************************************************************/
+struct Config_Tag audio_conf[]={
+	{ "Frequency", Int_Tag, &bx_options.audio.freq, 0, 0},
+	{ "Channels", Int_Tag, &bx_options.audio.chans, 0, 0},
+	{ "Bits", Int_Tag, &bx_options.audio.bits, 0, 0},
+	{ "Samples", Int_Tag, &bx_options.audio.samples, 0, 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+void preset_audio() {
+  bx_options.audio.freq = 22050;
+  bx_options.audio.chans = 2;
+  bx_options.audio.bits = 16;
+  bx_options.audio.samples = 1024;
+}
+
+void postload_audio() {
+}
+
+void presave_audio() {
+}
+
+/*************************************************************************/
 void usage (int status) {
   printf ("Usage: %s [OPTIONS]\n", program_name);
   printf ("\
@@ -954,6 +976,7 @@ void preset_cfg() {
   preset_parallel();
   preset_natfeat();
   preset_nfvdi();
+  preset_audio();
 }
 
 void postload_cfg() {
@@ -977,6 +1000,7 @@ void postload_cfg() {
   postload_parallel();
   postload_natfeat();
   postload_nfvdi();
+  postload_audio();
 }
 
 void presave_cfg() {
@@ -1000,6 +1024,7 @@ void presave_cfg() {
   presave_parallel();
   presave_natfeat();
   presave_nfvdi();
+  presave_audio();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -1290,6 +1315,7 @@ static bool decode_ini_file(const char *rcfile)
 	cfgopts.process_config(parallel_conf, "[PARALLEL]", verbose);
 	cfgopts.process_config(natfeat_conf, "[NATFEATS]", verbose);
 	cfgopts.process_config(nfvdi_conf, "[NFVDI]", verbose);
+	cfgopts.process_config(audio_conf, "[AUDIO]", verbose);
 
 	return true;
 }
@@ -1359,6 +1385,7 @@ bool saveSettings(const char *fs)
 	cfgopts.update_config(parallel_conf, "[PARALLEL]");
 	cfgopts.update_config(natfeat_conf, "[NATFEATS]");
 	cfgopts.update_config(nfvdi_conf, "[NFVDI]");
+	cfgopts.update_config(audio_conf, "[AUDIO]");
 
 	return true;
 }

@@ -267,3 +267,15 @@ Vdi = soft
 [NFVDI]
 # Tell Aranym whether to use host mouse cursor, or standard Atari cursor
 UseHostMouseCursor = No
+
+
+[AUDIO]
+# Host audio device settings
+#  Frequency
+Frequency = 22050
+#  Number of channels (2 for stereo, 1 for mono)
+Channels = 2
+#  Bits per channel (8 or 16)
+Bits = 16
+#  Size of buffer in samples
+Samples = 1024

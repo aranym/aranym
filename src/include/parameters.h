@@ -226,6 +226,14 @@ typedef struct {
 	SDL_keysym	screenshot;
 } bx_hotkeys_t;
 
+// Audio
+typedef struct {
+	uint32 freq;
+	uint32 chans;
+	uint32 bits;
+	uint32 samples;
+} bx_audio_options_t;
+
 #define DISKS	8
 
 // Options 
@@ -252,6 +260,7 @@ typedef struct {
   bx_parallel_options_t parallel;
   bx_natfeat_options_t natfeats;
   bx_nfvdi_options_t	nfvdi;
+  bx_audio_options_t	audio;
   char			tos_path[512];
   char			emutos_path[512];
   char			bootstrap_path[512];
