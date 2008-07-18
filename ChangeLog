@@ -4,6 +4,7 @@
   TCC: was using wrong registers as both source and destination (emulation, disasm)
   TFR: was using wrong registers as source (disasm only).
   AND: was using wrong registers as source (emulation, disasm).
+  EOR: was using wrong registers as source (emulation, disasm).
 
 
 2008/07/15 - Patrice
