@@ -2384,11 +2384,17 @@ static void dsp_add(void)
 		case 3:
 			srcname="y";
 			break;
-		case DSP_REG_X0:
-		case DSP_REG_X1:
-		case DSP_REG_Y0:
-		case DSP_REG_Y1:
-			srcname=registers_name[srcreg];
+		case 4:
+			srcname=registers_name[DSP_REG_X0];
+			break;
+		case 5:
+			srcname=registers_name[DSP_REG_Y0];
+			break;
+		case 6:
+			srcname=registers_name[DSP_REG_X1];
+			break;
+		case 7:
+			srcname=registers_name[DSP_REG_Y1];
 			break;
 		default:
 			srcname="";
@@ -2436,16 +2442,30 @@ static void dsp_addr(void)
 
 static void dsp_and(void)
 {
-	uint32 numreg;
+	uint32 srcreg,dstreg;
 
-	numreg = DSP_REG_A+((cur_inst>>3) & 1);
+	switch((cur_inst>>4) & BITMASK(2)) {
+		case 1:
+			srcreg=DSP_REG_Y0;
+			break;
+		case 2:
+			srcreg=DSP_REG_X1;
+			break;
+		case 3:
+			srcreg=DSP_REG_Y1;
+			break;
+		case 0:
+		default:
+			srcreg=DSP_REG_X0;
+	}
+	dstreg = DSP_REG_A+((cur_inst>>3) & 1);
 
-	registers_changed[numreg]=1;
+	registers_changed[dstreg]=1;
 
 	fprintf(stderr,"Dsp: 0x%04x: and %s,%s %s\n",
 		getDSP()->pc,
-		registers_name[DSP_REG_X0+((cur_inst>>4) & BITMASK(2))],
-		registers_name[numreg],
+		registers_name[srcreg],
+		registers_name[dstreg],
 		parallelmove_name
 	);
 }
