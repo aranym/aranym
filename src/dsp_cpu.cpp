@@ -4365,7 +4365,20 @@ static void dsp_or(void)
 {
 	uint32 srcreg, dstreg;
 
-	srcreg = DSP_REG_X0+((cur_inst>>4) & BITMASK(2));
+	switch((cur_inst>>4) & BITMASK(2)) {
+		case 1:
+			srcreg=DSP_REG_Y0;
+			break;
+		case 2:
+			srcreg=DSP_REG_X1;
+			break;
+		case 3:
+			srcreg=DSP_REG_Y1;
+			break;
+		case 0:
+		default:
+			srcreg=DSP_REG_X0;
+	}
 	dstreg = DSP_REG_A1+((cur_inst>>3) & 1);
 
 	getDSP()->registers[dstreg] |= getDSP()->registers[srcreg];
