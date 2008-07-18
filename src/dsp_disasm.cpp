@@ -599,11 +599,11 @@ static int registers_tcc[16][2]={
 
 	{DSP_REG_X0,DSP_REG_A},
 	{DSP_REG_X0,DSP_REG_B},
-	{DSP_REG_X1,DSP_REG_A},
-	{DSP_REG_X1,DSP_REG_B},
-
 	{DSP_REG_Y0,DSP_REG_A},
 	{DSP_REG_Y0,DSP_REG_B},
+
+	{DSP_REG_X1,DSP_REG_A},
+	{DSP_REG_X1,DSP_REG_B},
 	{DSP_REG_Y1,DSP_REG_A},
 	{DSP_REG_Y1,DSP_REG_B}
 };
@@ -1926,7 +1926,7 @@ static void dsp_tcc(void)
 
 	dsp_calc_cc((cur_inst>>12) & BITMASK(4), ccname);
 	src1reg = registers_tcc[(cur_inst>>3) & BITMASK(4)][0];
-	dst1reg = registers_tcc[(cur_inst>>3) & BITMASK(4)][0];
+	dst1reg = registers_tcc[(cur_inst>>3) & BITMASK(4)][1];
 
 	registers_changed[dst1reg]=1;
 	if (cur_inst & (1<<16)) {
@@ -3040,8 +3040,23 @@ static void dsp_tfr(void)
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	dstreg = (cur_inst>>3) & 1;
 
-	if (srcreg==0) {
-		srcreg = DSP_REG_A+(dstreg ^ 1);
+	switch(srcreg) {
+		case 4:
+			srcreg = DSP_REG_X0;
+			break;
+		case 5:
+			srcreg = DSP_REG_Y0;
+			break;
+		case 6:
+			srcreg = DSP_REG_X1;
+			break;
+		case 7:
+			srcreg = DSP_REG_Y1;
+			break;
+		case 0:
+		default:
+			srcreg = DSP_REG_A+(dstreg ^ 1);
+			break;
 	}
 
 	registers_changed[DSP_REG_A+dstreg]=1;

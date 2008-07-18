@@ -566,11 +566,11 @@ static int registers_tcc[16][2]={
 
 	{DSP_REG_X0,DSP_REG_A},
 	{DSP_REG_X0,DSP_REG_B},
-	{DSP_REG_X1,DSP_REG_A},
-	{DSP_REG_X1,DSP_REG_B},
-
 	{DSP_REG_Y0,DSP_REG_A},
 	{DSP_REG_Y0,DSP_REG_B},
+
+	{DSP_REG_X1,DSP_REG_A},
+	{DSP_REG_X1,DSP_REG_B},
 	{DSP_REG_Y1,DSP_REG_A},
 	{DSP_REG_Y1,DSP_REG_B}
 };
@@ -2647,7 +2647,7 @@ static void dsp_tcc(void)
 
 	if (dsp_calc_cc(cc_code)) {
 		regsrc1 = registers_tcc[(cur_inst>>3) & BITMASK(4)][0];
-		regdest1 = registers_tcc[(cur_inst>>3) & BITMASK(4)][0];
+		regdest1 = registers_tcc[(cur_inst>>3) & BITMASK(4)][1];
 
 		/* Read S1 */
 		if ((regsrc1 == DSP_REG_A) || (regsrc1 == DSP_REG_B)) {

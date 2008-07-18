@@ -1,6 +1,9 @@
 2008/07/18 - Patrice
 - dsp56k: Starts commiting fixes in emulation, coming from Hatari.
   JSSET,JSCLR where pushing wrong return address on the stack.
+  TCC: was using wrong registers in both source and destination (emulation, disasm)
+  TFR: was using wrong registers in source (disasm only).
+
 
 2008/07/15 - Patrice
 - Add configuration for host audio device. Some machines only support 48 KHz as
