@@ -1,3 +1,7 @@
+2008/07/18 - Patrice
+- dsp56k: Starts commiting fixes in emulation, coming from Hatari.
+  JSSET,JSCLR where pushing wrong return address on the stack.
+
 2008/07/15 - Patrice
 - Add configuration for host audio device. Some machines only support 48 KHz as
 hardware frequency for example, so 22.05 KHz is not suited.

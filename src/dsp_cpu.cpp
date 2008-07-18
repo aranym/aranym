@@ -1951,7 +1951,7 @@ static void dsp_jclr(void)
 			break;
 	}
 
-	cur_inst_len++;
+	++cur_inst_len;
 
 	if ((value & (1<<numbit))==0) {
 		newpc = read_memory(DSP_SPACE_P, getDSP()->pc+1);
@@ -2073,9 +2073,9 @@ static void dsp_jsclr(void)
 			break;
 	}
 
-	cur_inst_len++;
+	++cur_inst_len;
 	if ((value & (1<<numbit))==0) {
-		dsp_stack_push(getDSP()->pc+cur_inst_len+1, getDSP()->registers[DSP_REG_SR]);
+		dsp_stack_push(getDSP()->pc+cur_inst_len, getDSP()->registers[DSP_REG_SR]);
 
 		newpc = read_memory(DSP_SPACE_P, getDSP()->pc+1);
 		getDSP()->pc = newpc;
@@ -2118,7 +2118,7 @@ static void dsp_jset(void)
 			break;
 	}
 
-	cur_inst_len++;
+	++cur_inst_len;
 	if (value & (1<<numbit)) {
 		newpc = read_memory(DSP_SPACE_P, getDSP()->pc+1);
 
@@ -2177,9 +2177,9 @@ static void dsp_jsset(void)
 			break;
 	}
 
-	cur_inst_len++;
+	++cur_inst_len;
 	if (value & (1<<numbit)) {
-		dsp_stack_push(getDSP()->pc+cur_inst_len+1, getDSP()->registers[DSP_REG_SR]);
+		dsp_stack_push(getDSP()->pc+cur_inst_len, getDSP()->registers[DSP_REG_SR]);
 
 		newpc = read_memory(DSP_SPACE_P, getDSP()->pc+1);
 		getDSP()->pc = newpc;
