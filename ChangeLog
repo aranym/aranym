@@ -3,6 +3,7 @@
   JSSET,JSCLR where pushing wrong return address on the stack.
   TCC: was using wrong registers as both source and destination (emulation, disasm)
   TFR: was using wrong registers as source (disasm only).
+  ADD,SUB: was using wrong registers as source (disasm only).
   AND,EOR,OR: was using wrong registers as source (emulation, disasm).
 
 

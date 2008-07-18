@@ -3031,11 +3031,17 @@ static void dsp_sub(void)
 		case 3:
 			srcname="y";
 			break;
-		case DSP_REG_X0:
-		case DSP_REG_X1:
-		case DSP_REG_Y0:
-		case DSP_REG_Y1:
-			srcname=registers_name[srcreg];
+		case 4:
+			srcname=registers_name[DSP_REG_X0];
+			break;
+		case 5:
+			srcname=registers_name[DSP_REG_Y0];
+			break;
+		case 6:
+			srcname=registers_name[DSP_REG_X1];
+			break;
+		case 7:
+			srcname=registers_name[DSP_REG_Y1];
 			break;
 		default:
 			srcname="";
