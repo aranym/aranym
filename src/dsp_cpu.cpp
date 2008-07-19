@@ -1265,14 +1265,19 @@ static void dsp_update_rn_modulo(uint32 numreg, int16 modifier)
 
 	hibound = lobound + modulo;
 
-	/* FIXME: deal with the case where abs(modifier)>bufsize, where Rn jump to next/previous buffer */
-
 	r_reg = (int16) (getDSP()->registers[DSP_REG_R0+numreg] & BITMASK(16));
-	r_reg += modifier;
-	while (r_reg>hibound) {
-		r_reg -= modulo+1;
+	while (modifier>=bufsize) {
+		r_reg += bufsize;
+		modifier -= bufsize;
 	}
-	while (r_reg<lobound) {
+	while (modifier<=-bufsize) {
+		r_reg -= bufsize;
+		modifier += bufsize;
+	}
+	r_reg += modifier;
+	if (r_reg>hibound) {
+		r_reg -= modulo+1;
+	} else if (r_reg<lobound) {
 		r_reg += modulo+1;
 	}
 
