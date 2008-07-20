@@ -115,11 +115,11 @@ static inline int mmu_match_ttr(uaecptr addr, int super, int data)
 
 	if (data) {
 		res = mmu_do_match_ttr(regs.dtt0, addr, super);
-		if (res != TTR_NO_MATCH)
+		if (res == TTR_NO_MATCH)
 			res = mmu_do_match_ttr(regs.dtt1, addr, super);
 	} else {
 		res = mmu_do_match_ttr(regs.itt0, addr, super);
-		if (res != TTR_NO_MATCH)
+		if (res == TTR_NO_MATCH)
 			res = mmu_do_match_ttr(regs.itt1, addr, super);
 	}
 	return res;
