@@ -89,10 +89,10 @@ static void hideMouse(bool hide)
 
 void InputInit()
 {
-	// warp mouse to center of Atari 320x200 screen and grab it
-	if (! bx_options.video.fullscreen)
-		SDL_WarpMouse(320/2, 200/2);
 	if (bx_options.startup.grabMouseAllowed) {
+		// warp mouse to center of Atari 320x200 screen and grab it
+		if (! bx_options.video.fullscreen)
+			SDL_WarpMouse(320/2, 200/2);
 		grabMouse(true);
 		// hide mouse unconditionally
 		hideMouse(true);

@@ -1,3 +1,7 @@
+2008/07/21 - Patrice
+- input: Warp mouse to center of screen only if mouse grabbed.
+
+
 2008/07/20 - Patrice
 - mmu: Wrong check for address in TTR or not, reported by François Revol, who
   tries to port Haiku (BeOS clone) to Atari.
