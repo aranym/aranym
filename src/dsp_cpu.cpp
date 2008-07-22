@@ -43,9 +43,6 @@
 #define DSP_DISASM_HOSTWRITE 0	/* Host port write */
 #define DSP_DISASM_INTER 0		/* Interrupts */
 
-/* Prevent DSP from accessing non-present memory */
-#define DSP_CHECK_MEM_ACCESS 1
-
 /**********************************
  *	Defines
  **********************************/
@@ -897,26 +894,36 @@ static uint32 read_memory_disasm(int space, uint16 address)
 	switch(space) {
 		case DSP_SPACE_X:
 		case DSP_SPACE_Y:
-			/* Internal RAM or ROM ? */
+			/* Internal RAM? */
+			if (adress<0x100) {
+				return getDSP()->ramint[space][address] & BITMASK(24);
+			}
+			/* Internal ROM? */
 			if ((getDSP()->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
-				(address>=0x100) && (address<0x200)) {
+				(address<0x200)) {
 				return getDSP()->rom[space][address] & BITMASK(24);
 			}
-			
 			/* Peripheral address ? */
 			if (address >= 0xffc0) {
 				return getDSP()->periph[space][address-0xffc0] & BITMASK(24);
 			}
-
-			/* Now continue with common code, no break here */
+			/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */
+			if (space == DSP_SPACE_X) {
+				address += DSP_RAMSIZE>>1;
+			}
+			/* Falcon: External RAM, map X,Y to P */
+			space = DSP_SPACE_P;
+			break;
 		case DSP_SPACE_P:
-			if (address<=0x8000) {
-				return getDSP()->ram[space][address] & BITMASK(24);
+			/* Internal RAM? */
+			if (adress<0x200) {
+				return getDSP()->ramint[space][address] & BITMASK(24);
 			}
 			break;
 	}
 
-	return 0xdead;
+	/* External RAM, mask address to available ram size */
+	return getDSP()->ram[space][address & (DSP_RAMSIZE-1)] & BITMASK(24);
 }
 #endif
 
@@ -927,12 +934,15 @@ static uint32 read_memory(int space, uint16 address)
 	switch(space) {
 		case DSP_SPACE_X:
 		case DSP_SPACE_Y:
-			/* Internal RAM or ROM ? */
+			/* Internal RAM ?*/
+			if (address<0x100) {
+				return getDSP()->ramint[space][address] & BITMASK(24);
+			}
+			/* Internal ROM ?*/
 			if ((getDSP()->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
-				(address>=0x100) && (address<0x200)) {
+				(address<0x200)) {
 				return getDSP()->rom[space][address] & BITMASK(24);
 			}
-			
 			/* Peripheral address ? */
 			if (address >= 0xffc0) {
 
@@ -956,59 +966,51 @@ static uint32 read_memory(int space, uint16 address)
 
 				return getDSP()->periph[space][address-0xffc0] & BITMASK(24);
 			}
-
-			/* Now continue with common code, no break here */
+			/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */
+			if (space == DSP_SPACE_X) {
+				address += DSP_RAMSIZE>>1;
+			}
+			/* Falcon: External RAM, map X,Y to P */
+			space = DSP_SPACE_P;
+			break;
 		case DSP_SPACE_P:
-#if DSP_CHECK_MEM_ACCESS
-			if (address<0x8000) {
-#endif
-				return getDSP()->ram[space][address] & BITMASK(24);
-#if DSP_CHECK_MEM_ACCESS
-			} else {
-				D(bug("Dsp: Read at 0x%04x without mapped memory",address));
-#if DSP_DISASM_STATE
-				D(bug("Dsp: state = DSP_HALT"));
-#endif
-				getDSP()->state = DSP_HALT;
-
-				SDL_SemWait(getDSP()->dsp56k_sem);
-
-				return 0xdead;
-#endif /* DSP_CHECK_MEM_ACCESS */
+			/* Internal RAM ?*/
+			if (address<0x200) {
+				return getDSP()->ramint[space][address] & BITMASK(24);
 			}
 			break;
 	}
 
-	return 0xdead;
+	/* External RAM, mask address to available ram size */
+	return getDSP()->ram[space][address & (DSP_RAMSIZE-1)] & BITMASK(24);
 }
 
 static void write_memory(int space, uint32 address, uint32 value)
 {
-#ifdef DSP_DISASM
-#if DSP_DISASM_MEM
-	uint32 curvalue;
-#endif
-#endif
-
 	address &= BITMASK(16);
 	value &= BITMASK(24);
 
 #ifdef DSP_DISASM
 #if DSP_DISASM_MEM
-	curvalue = read_memory_disasm(space, address);
+	uint32 curvalue = read_memory_disasm(space, address);
+	uint16 orig_addr = address;
+	uint16 orig_space = space;
 #endif
 #endif
 
 	switch(space) {
 		case DSP_SPACE_X:
-			/* Internal RAM or ROM ? */
-			if ((address >= 0x100) && (address <= 0x200)) {
-				if (getDSP()->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) {
-					/* Can not write to rom */
-					return;
-				}
+			/* Internal RAM ? */
+			if (address<0x100) {
+				getDSP()->ramint[space][address] = value;
+				break;
 			}
-
+			/* Internal ROM ?*/
+			if ((getDSP()->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
+				(address<0x200)) {
+				/* Can not write to ROM space */
+				return;
+			}
 			/* Peripheral space ? */
 			if ((address >= 0xffc0) && (address <= 0xffff)) {
 				switch(address-0xffc0) {
@@ -1037,83 +1039,47 @@ static void write_memory(int space, uint32 address, uint32 value)
 						getDSP()->periph[space][address-0xffc0] = value;
 						break;
 				}
+				break;
 			}
-
-#if DSP_CHECK_MEM_ACCESS
-			if ((address<0x8000) || (address>=0xffc0)) {
-#endif
-				getDSP()->ram[space][address] = value;
-#if DSP_CHECK_MEM_ACCESS
-			} else {
-				D(bug("Dsp: Write at 0x%04x without mapped memory",address));
-#if DSP_DISASM_STATE
-				D(bug("Dsp: state = DSP_HALT"));
-#endif
-				getDSP()->state = DSP_HALT;
-				SDL_SemWait(getDSP()->dsp56k_sem);
-				return;
-#endif
+			/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */
+			if (space == DSP_SPACE_X) {
+				address += DSP_RAMSIZE>>1;
 			}
-			/* x:0x0000-0x01ff is internal ram/rom */
-			/* x:0x0200-0x3fff = p:0x4200-0x7fff */
-			if ((address >= 0x200) && (address <= 0x3fff)) {
-				getDSP()->ram[DSP_SPACE_P][address+0x4000] = value;
-			}
+			/* Falcon: External RAM, map X,Y to P */
+			space = DSP_SPACE_P;
+			/* External RAM, mask address to available ram size */
+			getDSP()->ram[space][address & (DSP_RAMSIZE-1)] = value;
 			break;
 		case DSP_SPACE_Y:
-			if ((address >= 0x100) && (address <= 0x200)) {
-				if (getDSP()->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) {
-					/* Can not write to rom */
-					return;
-				}
+			/* Internal RAM ? */
+			if (address<0x100) {
+				getDSP()->ramint[space][address] = value;
+				break;
 			}
-
+			/* Internal ROM ?*/
+			if ((getDSP()->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
+				(address<0x200)) {
+				/* Can not write to ROM space */
+				return;
+			}
+			/* Peripheral space ? */
 			if ((address >= 0xffc0) && (address <= 0xffff)) {
 				getDSP()->periph[space][address-0xffc0] = value;
+				break;
 			}
-
-#if DSP_CHECK_MEM_ACCESS
-			if ((address<0x8000) || (address>=0xffc0)) {
-#endif
-				getDSP()->ram[space][address] = value;
-#if DSP_CHECK_MEM_ACCESS
-			} else {
-				D(bug("Dsp: Write at 0x%04x without mapped memory",address));
-#if DSP_DISASM_STATE
-				D(bug("Dsp: state = DSP_HALT"));
-#endif
-				getDSP()->state = DSP_HALT;
-				SDL_SemWait(getDSP()->dsp56k_sem);
-				return;
-#endif
-			}
-			/* y:0x0000-0x01ff is internal ram/rom */
-			/* y:0x0200-0x3fff = p:0x0200-0x3fff */
-			if ((address >= 0x200) && (address <= 0x3fff)) {
-				getDSP()->ram[DSP_SPACE_P][address] = value;
-			}
+			/* Falcon: External RAM, map X,Y to P */
+			space = DSP_SPACE_P;
+			/* External RAM, mask address to available ram size */
+			getDSP()->ram[space][address & (DSP_RAMSIZE-1)] = value;
 			break;
 		case DSP_SPACE_P:
-			getDSP()->ram[space][address] = value;
-#if DSP_CHECK_MEM_ACCESS
-			if (address>=0x8000) {
-				D(bug("Dsp: Write at 0x%04x without mapped memory",address));
-#if DSP_DISASM_STATE
-				D(bug("Dsp: state = DSP_HALT"));
-#endif
-				getDSP()->state = DSP_HALT;
-				SDL_SemWait(getDSP()->dsp56k_sem);
-				return;
+			/* Internal RAM ?*/
+			if (address<0x200) {
+				getDSP()->ramint[space][address] = value;
+				break;
 			}
-#endif
-			/* p:0x0000-0x01ff is internal ram */
-			/* p:0x0200-0x3fff = y:0x200-0x3fff */
-			/* p:0x4200-0x7fff = x:0x200-0x3fff */
-			if ((address >= 0x200) && (address <= 0x3fff)) {
-				getDSP()->ram[DSP_SPACE_Y][address] = value;
-			} else if ((address >= 0x4200) && (address <= 0x7fff)) {
-				getDSP()->ram[DSP_SPACE_X][address-0x4000] = value;
-			}
+			/* External RAM, mask address to available ram size */
+			getDSP()->ram[space][address & (DSP_RAMSIZE-1)] = value;
 			break;
 	}
 
@@ -1121,13 +1087,13 @@ static void write_memory(int space, uint32 address, uint32 value)
 #if DSP_DISASM_MEM
 	switch(space) {
 		case DSP_SPACE_P:
-			fprintf(stderr,"Dsp: Mem: p:0x%04x:0x%06x -> 0x%06x\n", address, curvalue, read_memory_disasm(space, address));
+			fprintf(stderr,"Dsp: Mem: p:0x%04x:0x%06x -> 0x%06x\n", orig_addr, curvalue, read_memory_disasm(orig_space, orig_addr));
 			break;
 		case DSP_SPACE_X:
-			fprintf(stderr,"Dsp: Mem: x:0x%04x:0x%06x -> 0x%06x\n", address, curvalue, read_memory_disasm(space, address));
+			fprintf(stderr,"Dsp: Mem: x:0x%04x:0x%06x -> 0x%06x\n", orig_addr, curvalue, read_memory_disasm(orig_space, orig_addr));
 			break;
 		case DSP_SPACE_Y:
-			fprintf(stderr,"Dsp: Mem: y:0x%04x:0x%06x -> 0x%06x\n", address, curvalue, read_memory_disasm(space, address));
+			fprintf(stderr,"Dsp: Mem: y:0x%04x:0x%06x -> 0x%06x\n", orig_addr, curvalue, read_memory_disasm(orig_space, orig_addr));
 			break;
 	}
 #endif

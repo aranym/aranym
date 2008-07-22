@@ -132,11 +132,14 @@ class DSP : public BASE_IO {
 		/* stack[0=ssh], stack[1=ssl] */
 		uint16	stack[2][15];
 
-		/* ram[0] is x:, ram[1] is y:, ram[2] is p: */
+		/* External ram[0] is x:, ram[1] is y:, ram[2] is p: */
 		uint32	ram[3][DSP_RAMSIZE];
 
 		/* rom[0] is x:, rom[1] is y: */
 		uint32	rom[2][512];
+
+		/* Internal ram[0] is x:, ram[1] is y:, ram[2] is p: */
+		uint32	ramint[3][512];
 
 		/* peripheral space, [x|y]:0xffc0-0xffff */
 		uint32	periph[2][64];
