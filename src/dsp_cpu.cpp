@@ -895,7 +895,7 @@ static uint32 read_memory_disasm(int space, uint16 address)
 		case DSP_SPACE_X:
 		case DSP_SPACE_Y:
 			/* Internal RAM? */
-			if (adress<0x100) {
+			if (address<0x100) {
 				return getDSP()->ramint[space][address] & BITMASK(24);
 			}
 			/* Internal ROM? */
@@ -916,7 +916,7 @@ static uint32 read_memory_disasm(int space, uint16 address)
 			break;
 		case DSP_SPACE_P:
 			/* Internal RAM? */
-			if (adress<0x200) {
+			if (address<0x200) {
 				return getDSP()->ramint[space][address] & BITMASK(24);
 			}
 			break;
