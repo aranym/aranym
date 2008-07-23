@@ -1,3 +1,7 @@
+2008/07/23 - Patrice
+- dsp56k: Fix disasm to match memory mapping changes.
+
+
 2008/07/22 - Patrice
 - dsp56k: Change memory mapping to match what happens on Falcon.
 

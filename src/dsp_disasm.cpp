@@ -170,6 +170,8 @@ void dsp56k_disasm_reg_compare(void)
  *	Opcode disassembler
  **********************************/
 
+static uint32 read_memory(uint32 currPc);
+
 typedef void (*dsp_emul_t)(void);
 
 static void opcode8h_0(void);
@@ -657,13 +659,7 @@ void dsp56k_disasm(void)
 {
 	uint32 value;
 
-	cur_inst = getDSP()->ram[DSP_SPACE_P][getDSP()->pc];
-
-#if 0
-	if (getDSP()->pc == 0x728) {
-		D(bug("Dsp: Disasm: instruction = 0x%06x",cur_inst));
-	}
-#endif
+	cur_inst = read_memory(getDSP()->pc);
 
 	strcpy(parallelmove_name, "");
 
@@ -683,6 +679,19 @@ void dsp56k_disasm(void)
 			opcodes_alu80ff[value]();
 		}
 	}
+}
+
+static uint32 read_memory(uint32 currPc)
+{
+	uint32 value;
+
+	if (currPc<0x200) {
+		value = getDSP()->ramint[DSP_SPACE_P][currPc];
+	} else {
+		value = getDSP()->ram[DSP_SPACE_P][currPc];
+	}
+
+	return value & BITMASK(24);
 }
 
 /**********************************
@@ -743,11 +752,11 @@ static int dsp_calc_ea(uint32 ea_mode, char *dest)
 			switch ((ea_mode >> 2) & 1) {
 				case 0:
 					/* Absolute address */
-					sprintf(dest, ea_names[value], getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]);
+					sprintf(dest, ea_names[value], read_memory(getDSP()->pc+1));
 					break;
 				case 1:
 					/* Immediate value */
-					sprintf(dest, ea_names[8], getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]);
+					sprintf(dest, ea_names[8], read_memory(getDSP()->pc+1));
 					retour = 1;
 					break;
 			}
@@ -1145,7 +1154,7 @@ static void dsp_do_0(void)
 	fprintf(stderr,"Dsp: 0x%04x: do %s,p:0x%04x\n",
 		getDSP()->pc,
 		name,
-		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1] & BITMASK(16)
+		read_memory(getDSP()->pc+1)
 	);
 }
 
@@ -1154,7 +1163,7 @@ static void dsp_do_2(void)
 	fprintf(stderr,"Dsp: 0x%04x: do #0x%04x,p:0x%04x\n",
 		getDSP()->pc,
 		((cur_inst>>8) & BITMASK(8))|((cur_inst & BITMASK(4))<<8),
-		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1] & BITMASK(16)
+		read_memory(getDSP()->pc+1)
 	);
 }
 
@@ -1175,7 +1184,7 @@ static void dsp_do_4(void)
 	fprintf(stderr,"Dsp: 0x%04x: do %s,p:0x%04x\n", 
 		getDSP()->pc,
 		name,
-		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1] & BITMASK(16)
+		read_memory(getDSP()->pc+1)
 	);
 }
 
@@ -1184,7 +1193,7 @@ static void dsp_do_c(void)
 	fprintf(stderr,"Dsp: 0x%04x: do %s,p:0x%04x\n",
 		getDSP()->pc,
 		registers_name[(cur_inst>>8) & BITMASK(6)],
-		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1] & BITMASK(16)
+		read_memory(getDSP()->pc+1)
 	);
 }
 
@@ -1267,7 +1276,7 @@ static void dsp_jclr(void)
 		getDSP()->pc,
 		numbit,
 		srcname,
-		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]
+		read_memory(getDSP()->pc+1)
 	);
 }
 
@@ -1356,7 +1365,7 @@ static void dsp_jsclr(void)
 		getDSP()->pc,
 		numbit,
 		srcname,
-		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]
+		read_memory(getDSP()->pc+1)
 	);
 }
 
@@ -1409,7 +1418,7 @@ static void dsp_jset(void)
 		getDSP()->pc,
 		numbit,
 		srcname,
-		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]
+		read_memory(getDSP()->pc+1)
 	);
 }
 
@@ -1475,7 +1484,7 @@ static void dsp_jsset(void)
 		getDSP()->pc,
 		numbit,
 		srcname,
-		getDSP()->ram[DSP_SPACE_P][getDSP()->pc+1]
+		read_memory(getDSP()->pc+1)
 	);
 }
 
