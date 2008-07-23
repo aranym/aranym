@@ -412,7 +412,7 @@ void DSP::handleWrite(memptr addr, uint8 value)
 
 			switch(state) {
 				case DSP_BOOTING:
-					ram[DSP_SPACE_P][bootstrap_pos] = bootstrap_accum;
+					ramint[DSP_SPACE_P][bootstrap_pos] = bootstrap_accum;
 /*					D(bug("Dsp: bootstrap: p:0x%04x: 0x%06x written", bootstrap_pos, bootstrap_accum));*/
 					bootstrap_pos++;
 					if (bootstrap_pos == 0x200) {
