@@ -1924,11 +1924,24 @@ static void dsp_jclr(void)
 	++cur_inst_len;
 
 	if ((value & (1<<numbit))==0) {
+		int pollingLoop, i;
+
 		newpc = read_memory(DSP_SPACE_P, getDSP()->pc+1);
 
-		/* Polling loop ? */
-		if (newpc == getDSP()->pc) {
+		/* Polling loop if jump to same PC as current JCLR instruction */
+		pollingLoop = (newpc == getDSP()->pc);
+		if (!pollingLoop && (newpc<getDSP()->pc)) {
+			/* or if only NOPs from jump address to current JCLR instruction */
+			pollingLoop = 1;
+			for (i=newpc; i<getDSP()->pc; i++) {
+				if (read_memory(DSP_SPACE_P, i) != 0) {
+					pollingLoop=0;
+					break;
+				}			
+			}
+		}
 
+		if (pollingLoop) {
 			/* Are we waiting for host port ? */
 			if ((memspace==DSP_SPACE_X) && (addr==0xffc0+DSP_HOST_HSR)) {
 				/* Wait for host to write */
