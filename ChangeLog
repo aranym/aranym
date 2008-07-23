@@ -1,6 +1,7 @@
 2008/07/23 - Patrice
 - dsp56k: Fix disasm to match memory mapping changes.
-  Change detection of polling loop on host port, to take into account programs that have some NOPs before JCLR.
+  Change detection of polling loop on host port, to take into account programs
+  that have some NOPs before JCLR.
 
 
 2008/07/22 - Patrice
