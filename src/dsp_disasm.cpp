@@ -55,7 +55,7 @@ static uint32 registers_changed[64];
 static uint32 pc_save;
 #endif
 
-static char *registers_name[64]={
+static const char *registers_name[64]={
 	"","","","",
 	"x0","x1","y0","y1",
 	"a0","b0","a2","b2",
@@ -610,7 +610,7 @@ static int registers_tcc[16][2]={
 	{DSP_REG_Y1,DSP_REG_B}
 };
 
-static char *registers_lmove[8]={
+static const char *registers_lmove[8]={
 	"a10",
 	"b10",
 	"x",
@@ -621,7 +621,7 @@ static char *registers_lmove[8]={
 	"ba"
 };
 
-static char *ea_names[9]={
+static const char *ea_names[9]={
 	"(r%d)-n%d",	/* 000xxx */
 	"(r%d)+n%d",	/* 001xxx */
 	"(r%d)-",		/* 010xxx */
@@ -633,7 +633,7 @@ static char *ea_names[9]={
 	"0x%06x"		/* 110100 */
 };
 
-static char *cc_name[16]={
+static const char *cc_name[16]={
 	"cc",
 	"ge",
 	"ne",
@@ -884,7 +884,7 @@ static void dsp_undefined(void)
 
 static void dsp_andi(void)
 {
-	char *regname;
+	const char *regname;
 
 	switch(cur_inst & BITMASK(2)) {
 		case 0:
@@ -1534,7 +1534,8 @@ static void dsp_movec_7(void)
 
 static void dsp_movec_9(void)
 {
-	char *spacename,srcname[16],dstname[16];
+	const char *spacename;
+	char srcname[16],dstname[16];
 	uint32 numreg, addr;
 
 	/* x:aa,D1 */
@@ -1578,7 +1579,8 @@ static void dsp_movec_b(void)
 
 static void dsp_movec_d(void)
 {
-	char *spacename, srcname[16], dstname[16], addr_name[16];
+	const char *spacename;
+	char srcname[16], dstname[16], addr_name[16];
 	uint32 numreg, ea_mode;
 	int retour;
 
@@ -1816,7 +1818,7 @@ static void dsp_norm(void)
 
 static void dsp_ori(void)
 {
-	char *regname;
+	const char *regname;
 
 	switch(cur_inst & BITMASK(2)) {
 		case 0:
@@ -2354,7 +2356,7 @@ static void dsp_abs(void)
 
 static void dsp_adc(void)
 {
-	char *srcname;
+	const char *srcname;
 	uint32 numreg;
 
 	if (cur_inst & (1<<4)) {
@@ -2376,7 +2378,7 @@ static void dsp_adc(void)
 
 static void dsp_add(void)
 {
-	char *srcname;
+	const char *srcname;
 	uint32 srcreg, dstreg;
 	
 	srcreg = (cur_inst>>4) & BITMASK(3);
@@ -2652,7 +2654,7 @@ static void dsp_lsr(void)
 
 static void dsp_mac(void)
 {
-	char *sign_name;
+	const char *sign_name;
 	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
@@ -2710,7 +2712,7 @@ static void dsp_mac(void)
 
 static void dsp_macr(void)
 {
-	char *sign_name;
+	const char *sign_name;
 	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
@@ -2779,7 +2781,7 @@ static void dsp_move_nopm(void)
 
 static void dsp_mpy(void)
 {
-	char *sign_name;
+	const char *sign_name;
 	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
@@ -2837,7 +2839,7 @@ static void dsp_mpy(void)
 
 static void dsp_mpyr(void)
 {
-	char *sign_name;
+	const char *sign_name;
 	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
@@ -3000,7 +3002,7 @@ static void dsp_ror(void)
 
 static void dsp_sbc(void)
 {
-	char *srcname;
+	const char *srcname;
 	uint32 numreg;
 
 	if (cur_inst & (1<<4)) {
@@ -3023,7 +3025,7 @@ static void dsp_sbc(void)
 
 static void dsp_sub(void)
 {
-	char *srcname;
+	const char *srcname;
 	uint32 srcreg, dstreg;
 	
 	srcreg = (cur_inst>>4) & BITMASK(3);
