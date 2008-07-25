@@ -809,6 +809,7 @@ static void dsp_postexecute_interrupts(void)
 static void dsp_ccr_extension(uint32 *reg0, uint32 *reg1, uint32 * /*reg2*/)
 {
 	uint32 scaling, value, numbits;
+	int sr_extension = 1<<DSP_SR_E;
 
 	scaling = (getDSP()->registers[DSP_REG_SR]>>DSP_SR_S0) & BITMASK(2);
 	value = (*reg0) & 0xff;
@@ -830,9 +831,12 @@ static void dsp_ccr_extension(uint32 *reg0, uint32 *reg1, uint32 * /*reg2*/)
 			return;
 			break;
 	}
+	if ((value==0) || (value==(uint32)BITMASK(numbits))) {
+		sr_extension = 0;
+	}
 
 	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_E);
-	getDSP()->registers[DSP_REG_SR] |= ((value!=0) && (value!=(uint32)(BITMASK(numbits))))<<DSP_SR_E;
+	getDSP()->registers[DSP_REG_SR] |= sr_extension;
 }
 
 static void dsp_ccr_unnormalized(uint32 *reg0, uint32 *reg1, uint32 *reg2)
