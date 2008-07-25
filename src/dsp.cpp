@@ -520,19 +520,5 @@ void DSP::dsp2host(void)
 #endif	/* DSP_EMULATION */
 
 /*
-	2002-09-20:PM
-		Constructor/destructor for DSP C++ class
-	2002-08-28:PM
-		BUG:host port read not working with thread
-	2002-08-27:PM
-		BUG: Fixes in thread support
-		Host port transfer routines moved in dsp.cpp
-	2002-08-26:PM
-		Added thread support
-	2002-07-31:PM
-		FIX:host port TRDY bit now correctly set
-	2002-07-22:PM
-		FIX:mu-law generator added, periph init also moved to reset function
-	2002-07-19:PM
-		FIX:stack and registers init moved to reset function
+vim:ts=4:sw=4:
 */

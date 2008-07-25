@@ -90,10 +90,7 @@ typedef void (*dsp_emul_t)(void);
 static void dsp_execute_instruction(void);
 static void dsp_postexecute_update_pc(void);
 static void dsp_postexecute_interrupts(void);
-/*
-static void dsp_host2dsp(void);
-static void dsp_dsp2host(void);
-*/
+
 static void dsp_ccr_extension(uint32 *reg0, uint32 *reg1, uint32 *reg2);
 static void dsp_ccr_unnormalized(uint32 *reg0, uint32 *reg1, uint32 *reg2);
 static void dsp_ccr_negative(uint32 *reg0, uint32 *reg1, uint32 *reg2);
@@ -4702,48 +4699,6 @@ static void dsp_tst(void)
 
 	getDSP()->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_V);
 }
-
-/*
-	2002-09-20:PM
-		BUG: Bit-reversed addressing not working
-		BUG: host port transfer not done when necessary when using thread
-	2002-08-27:PM
-		BUG: Fixes in thread support
-		Host port transfer routines moved in getDSP()->cpp
-	2002-08-26:PM
-		Added thread support
-	2002-08-08:PM
-		Added some casts to avoid warnings
-		BUG:host receive interrupt not raised
-		BUG:mul56 operation fixed
-	2002-08-01:PM
-		FIX:Finished ccr bits stuff
-	2002-07-31:PM
-		FIX:Nearly finished ccr bits stuff
-		FIX:host port TRDY bit now correctly set
-		BUG:host port transfer routines not called when DSP not running
-		BUG:when disassembly memory access, host port flags were cbanged
-		BUG:pm_2 (register update) wrong calc of eamode
-	2002-07-30:PM
-		BUG:added stack check when pushing/popping values
-		BUG:move(parallel,c,m) to register were not masked
-	2002-07-29:PM
-		BUG:corrected div routine
-	2002-07-26:PM
-		BUG:bad detection of rom space in read_memory
-		BUG:lua updated register with previous value, not the new one
-		BUG:added missing '\n' in disasm output
-	2002-07-25:PM
-		FIX:replaced D(bug()) by fprintf() for disasm
-	2002-07-22:PM
-		FIX:removed sub56 operation in tst()
-	2002-07-19:PM
-		BUG:movec_b and movec_d operations permuted
-		BUG:pm_5: wrong bit number used for write flag
-		BUG:div: did not save the result
-	2002-07-18:PM
-		FIX:modified ccr stuff to test arbitrary accumulator, not only A and B
-*/
 
 /*
 vim:ts=4:sw=4:
