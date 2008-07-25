@@ -1,5 +1,6 @@
 2008/07/25 - Patrice
-- dsp56k: Wrong calculation of E (extension) bit in SR.
+- dsp56k: Wrong calculation of E (extension) bit in SR. Also wrong calculation
+  of CC given SR due to missing masking.
 
 
 2008/07/23 - Patrice

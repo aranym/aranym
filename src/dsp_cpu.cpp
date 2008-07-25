@@ -1336,7 +1336,7 @@ static int dsp_calc_cc(uint32 cc_code)
 
 	value = getDSP()->registers[DSP_REG_SR] & BITMASK(8);
 	value |= (CCR_BIT(value,DSP_SR_N) ^ CCR_BIT(value, DSP_SR_V))<<DSP_SR_NV;
-	value |= (CCR_BIT(value,DSP_SR_Z) | ((~CCR_BIT(value,DSP_SR_U)) & (~CCR_BIT(value,DSP_SR_E))))<<DSP_SR_ZUE;
+	value |= ((CCR_BIT(value,DSP_SR_Z) | ((~CCR_BIT(value,DSP_SR_U)) & (~CCR_BIT(value,DSP_SR_E)))) & 1)<<DSP_SR_ZUE;
 	value |= (CCR_BIT(value,DSP_SR_Z) | CCR_BIT(value, DSP_SR_NV))<<DSP_SR_ZNV;
 	
 	return (uint32)(CCR_BIT(value,cc_code_map[cc_code & BITMASK(3)]))==((cc_code>>3) & 1);
