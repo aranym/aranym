@@ -264,8 +264,6 @@ uint8 DSP::handleRead(memptr addr)
 
 	addr -= getHWoffset();
 
-/*	D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr+HW_DSP, value, showPC()));*/
-
 	/* Whenever the host want to read something on host port, we test if a
 	   transfer is needed */
 	dsp2host();
@@ -322,6 +320,7 @@ uint8 DSP::handleRead(memptr addr)
 			break;
 	}
 
+	D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr+0xffa200, value, showPC()));
 	return value;
 #else
 	return 0xff;	// this value prevents TOS from hanging in the DSP init code */
@@ -333,7 +332,7 @@ void DSP::handleWrite(memptr addr, uint8 value)
 #if DSP_EMULATION
 	addr -= getHWoffset();
 
-/*	D(bug("HWput_b(0x%08x,0x%02x) at 0x%08x", addr+HW_DSP, value, showPC()));*/
+	D(bug("HWput_b(0x%08x,0x%02x) at 0x%08x", addr+0xffa200, value, showPC()));
 
 	switch(addr) {
 		case CPU_HOST_ICR:
