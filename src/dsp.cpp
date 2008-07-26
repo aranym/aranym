@@ -31,7 +31,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-# include <cmath>
+#include <cmath>
 
 #include <SDL.h>
 #include <SDL_thread.h>
@@ -55,7 +55,7 @@ DSP::DSP(memptr address, uint32 size) : BASE_IO(address, size)
 #define DSP_DISASM_STATE 0		/* State changes */
 
 /* Execute DSP instructions till the DSP waits for a read/write */
-#define DSP_HOST_FORCEEXEC 0
+#define DSP_HOST_FORCEEXEC 1
 
 /* Constructor and  destructor for DSP class */
 void DSP::init(void)
@@ -63,6 +63,7 @@ void DSP::init(void)
 	int i;
 
 	memset(ram, 0,sizeof(ram));
+	memset(ramint, 0,sizeof(ramint));
 
 	/* Initialize Y:rom[0x0100-0x01ff] with a sin table */
 	{
@@ -141,9 +142,6 @@ void DSP::init(void)
 	dsp56k_sem = NULL;
 
 	state = DSP_HALT;
-#if DSP_DISASM_STATE
-	D(bug("Dsp: state = HALT"));
-#endif
 }
 
 DSP::~DSP(void)
@@ -158,12 +156,6 @@ void DSP::reset(void)
 
 	/* Kill existing thread and semaphore */
 	shutdown();
-
-	/* Pause thread */
-	state = DSP_BOOTING;
-#if DSP_DISASM_STATE
-	D(bug("Dsp: state = BOOTING"));
-#endif
 
 	/* Memory */
 	memset(periph, 0,sizeof(periph));
@@ -213,18 +205,10 @@ void DSP::shutdown(void)
 	if (dsp56k_thread != NULL) {
 
 		/* Stop thread */
-		state = DSP_STOPTHREAD;
-#if DSP_DISASM_STATE
-		D(bug("Dsp: state = STOPTHREAD"));
-#endif
-
-		/* Release semaphore, if thread waiting for it */
-		if (SDL_SemValue(dsp56k_sem)==0) {
-			SDL_SemPost(dsp56k_sem);
-		}
+		setState(DSP_STOPTHREAD);
 
 		/* Wait for the thread to finish */
-		while (state != DSP_STOPPEDTHREAD) {
+		while (state != DSP_HALT) {
 			SDL_Delay(1);
 		}
 
@@ -247,8 +231,68 @@ inline void DSP::force_exec(void)
 {
 #if DSP_HOST_FORCEEXEC
 	while (state == DSP_RUNNING) {
+		SDL_Delay(1);
 	}
 #endif
+}
+
+/* Change state of DSP emulation thread */
+void DSP::setState(uint8 newState, int useSemaphore)
+{
+	if (state == newState) {
+		return;
+	}
+
+#if DSP_DISASM_STATE
+	uint8 oldState = state;
+#endif
+	state = newState;
+
+	switch(newState) {
+		case DSP_BOOTING:
+#if DSP_DISASM_STATE
+			fprintf(stderr, "Dsp: state = DSP_BOOTING\n");
+#endif
+			SDL_SemWait(dsp56k_sem);
+			break;
+		case DSP_RUNNING:
+#if DSP_DISASM_STATE
+			if (oldState == DSP_BOOTING) {
+				fprintf(stderr, "Dsp: bootstrap done\n");
+			}
+			fprintf(stderr, "Dsp: state = DSP_RUNNING\n");
+#endif
+			SDL_SemPost(dsp56k_sem);
+			break;
+		case DSP_WAITHOSTWRITE:
+#if DSP_DISASM_STATE
+			fprintf(stderr, "Dsp: state = DSP_WAITHOSTWRITE\n");
+#endif
+			SDL_SemWait(dsp56k_sem);
+			break;
+		case DSP_WAITHOSTREAD:
+#if DSP_DISASM_STATE
+			fprintf(stderr, "Dsp: state = DSP_WAITHOSTREAD\n");
+#endif
+			SDL_SemWait(dsp56k_sem);
+			break;
+		case DSP_HALT:
+#if DSP_DISASM_STATE
+			fprintf(stderr, "Dsp: state = DSP_HALT\n");
+#endif
+			if (useSemaphore) {
+				SDL_SemWait(dsp56k_sem);
+			}
+			break;
+		case DSP_STOPTHREAD:
+#if DSP_DISASM_STATE
+			fprintf(stderr, "Dsp: state = DSP_STOPTHREAD\n");
+#endif
+			SDL_SemPost(dsp56k_sem);
+			break;
+		default:
+			break;
+	}
 }
 
 #endif /* DSP_EMULATION */
@@ -307,14 +351,7 @@ uint8 DSP::handleRead(memptr addr)
 
 			/* Wake up DSP if it was waiting our read */
 			if (state==DSP_WAITHOSTREAD) {
-#if DSP_DISASM_STATE
-				D(bug("Dsp: state = DSP_RUNNING"));
-#endif
-				state = DSP_RUNNING;
-
-				if (SDL_SemValue(dsp56k_sem)==0) {
-					SDL_SemPost(dsp56k_sem);
-				}
+				setState(DSP_RUNNING);
 			}
 
 			break;
@@ -411,29 +448,17 @@ void DSP::handleWrite(memptr addr, uint8 value)
 
 			switch(state) {
 				case DSP_BOOTING:
+					D(bug("Dsp: bootstrap p:0x%04x = 0x%06x", bootstrap_pos, bootstrap_accum));
 					ramint[DSP_SPACE_P][bootstrap_pos] = bootstrap_accum;
-/*					D(bug("Dsp: bootstrap: p:0x%04x: 0x%06x written", bootstrap_pos, bootstrap_accum));*/
 					bootstrap_pos++;
 					if (bootstrap_pos == 0x200) {
-#if DSP_DISASM_STATE
-						D(bug("Dsp: bootstrap done"));
-#endif
-						state = DSP_RUNNING;
-
-						SDL_SemPost(dsp56k_sem);
+						setState(DSP_RUNNING);
 					}		
 					bootstrap_accum = 0;
 					break;
 				case DSP_WAITHOSTWRITE:
 					/* Wake up DSP if it was waiting our write */
-#if DSP_DISASM_STATE
-					D(bug("Dsp: state = DSP_RUNNING"));
-#endif
-					state = DSP_RUNNING;
-
-					if (SDL_SemValue(dsp56k_sem)==0) {
-						SDL_SemPost(dsp56k_sem);
-					}
+					setState(DSP_RUNNING);
 					break;
 			}
 

@@ -35,7 +35,6 @@
 #define DSP_WAITHOSTREAD	3	/* Dsp waits for host to read data */
 #define DSP_HALT			4	/* Dsp is halted */
 #define DSP_STOPTHREAD		5	/* Stop emulation thread */
-#define DSP_STOPPEDTHREAD	6	/* Dsp thread stopped and finished */
 
 /* Host port, CPU side */
 #define CPU_HOST_ICR	0x00
@@ -124,6 +123,7 @@ class DSP : public BASE_IO {
 
 		/* DSP state */
 		uint8	state;
+		void setState(uint8 newState, int useSemaphore = 0);
 
 		/* Registers */
 		uint16	pc;

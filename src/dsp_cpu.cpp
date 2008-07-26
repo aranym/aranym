@@ -32,13 +32,11 @@
 #include "debug.h"
 
 #include <SDL.h>
-#include <SDL_thread.h>
 
 /* More disasm infos, if wanted */
 #define DSP_DISASM_INST 0		/* Instructions */
-#define DSP_DISASM_REG 0		/* Registers changes */
+#define DSP_DISASM_REG 0	/* Registers changes */
 #define DSP_DISASM_MEM 0		/* Memory changes */
-#define DSP_DISASM_STATE 0		/* State changes */
 #define DSP_DISASM_HOSTREAD 0	/* Host port read */
 #define DSP_DISASM_HOSTWRITE 0	/* Host port write */
 #define DSP_DISASM_INTER 0		/* Interrupts */
@@ -614,14 +612,13 @@ static int registers_mask[64]={
 
 int dsp56k_do_execute(void *)
 {
-	/* Wait upload of bootstrap code */
-	SDL_SemWait(getDSP()->dsp56k_sem);
+	getDSP()->setState(DSP_BOOTING);
 
 	while(getDSP()->state != DSP_STOPTHREAD) {
 		dsp_execute_instruction();
 	}
 
-	getDSP()->state = DSP_STOPPEDTHREAD;
+	getDSP()->setState(DSP_HALT);
 	return 0;
 }
 
@@ -1109,11 +1106,7 @@ static void dsp_stack_push(uint32 curpc, uint32 cursr)
 	if (getDSP()->registers[DSP_REG_SP]==0x0f) {
 		/* Stack full, raise interrupt */
 		D(bug("Dsp: Interrupt: Stack error (overflow)"));
-#if DSP_DISASM_STATE
-		D(bug("Dsp: state = DSP_HALT"));
-#endif
-		getDSP()->state = DSP_HALT;
-		SDL_SemWait(getDSP()->dsp56k_sem);
+		getDSP()->setState(DSP_HALT, 1);
 		return;
 	}
 
@@ -1130,11 +1123,7 @@ static void dsp_stack_pop(uint32 *newpc, uint32 *newsr)
 	if (getDSP()->registers[DSP_REG_SP]==0x00) {
 		/* Stack empty, raise interrupt */
 		D(bug("Dsp: Interrupt: Stack error (underflow)"));
-#if DSP_DISASM_STATE
-		D(bug("Dsp: state = DSP_HALT"));
-#endif
-		getDSP()->state = DSP_HALT;
-		SDL_SemWait(getDSP()->dsp56k_sem);
+		getDSP()->setState(DSP_HALT, 1);
 		return;
 	}
 
@@ -1947,20 +1936,12 @@ static void dsp_jclr(void)
 			if ((memspace==DSP_SPACE_X) && (addr==0xffc0+DSP_HOST_HSR)) {
 				/* Wait for host to write */
 				if (numbit==DSP_HOST_HSR_HRDF) {
-#if DSP_DISASM_STATE
-					D(bug("Dsp: state = DSP_WAITHOSTWRITE"));
-#endif
-					getDSP()->state = DSP_WAITHOSTWRITE;
-					SDL_SemWait(getDSP()->dsp56k_sem);
+					getDSP()->setState(DSP_WAITHOSTWRITE);
 				}
 
 				/* Wait for host to read */
 				if (numbit==DSP_HOST_HSR_HTDE) {
-#if DSP_DISASM_STATE
-					D(bug("Dsp: state = DSP_WAITHOSTREAD"));
-#endif
-					getDSP()->state = DSP_WAITHOSTREAD;
-					SDL_SemWait(getDSP()->dsp56k_sem);
+					getDSP()->setState(DSP_WAITHOSTREAD);
 				}
 			}
 		}
@@ -1988,11 +1969,7 @@ static void dsp_jmp(void)
 
 	/* Infinite loop ? */
 	if (newpc == getDSP()->pc) {
-#if DSP_DISASM_STATE
-		D(bug("Dsp: state = DSP_HALT"));
-#endif
-		getDSP()->state = DSP_HALT;
-		SDL_SemWait(getDSP()->dsp56k_sem);
+		getDSP()->setState(DSP_HALT, 1);
 		return;
 	}
 
@@ -2610,8 +2587,7 @@ static void dsp_rts(void)
 
 static void dsp_stop(void)
 {
-	getDSP()->state = DSP_HALT;
-	SDL_SemWait(getDSP()->dsp56k_sem);
+	getDSP()->setState(DSP_HALT, 1);
 }
 
 static void dsp_swi(void)
@@ -2665,8 +2641,7 @@ static void dsp_tcc(void)
 
 static void dsp_wait(void)
 {
-	getDSP()->state = DSP_HALT;
-	SDL_SemWait(getDSP()->dsp56k_sem);
+	getDSP()->setState(DSP_HALT, 1);
 }
 
 /**********************************
