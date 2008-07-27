@@ -36,9 +36,7 @@
 #include "parallel_parport.h"
 #endif
 
-#ifdef DSP_EMULATION
 #include "dsp.h"
-#endif
 
 #define DEBUG 0
 #include "debug.h"
