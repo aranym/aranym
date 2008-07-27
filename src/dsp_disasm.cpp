@@ -1855,7 +1855,6 @@ static void dsp_rep(void)
 
 	opcodes_rep[value]();
 
-	registers_changed[DSP_REG_LA]=1;
 	registers_changed[DSP_REG_LC]=1;
 }
 
