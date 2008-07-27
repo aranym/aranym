@@ -691,10 +691,16 @@ static void dsp_postexecute_update_pc(void)
 				getDSP()->loop_rep = 0;
 				getDSP()->registers[DSP_REG_LC] = getDSP()->registers[DSP_REG_LCSAVE];
 			}
+#ifdef DSP_DISASM
+			dsp56k_disasm_force_reg_changed(DSP_REG_LC);
+#endif
 		} else {
 			/* Init LC at right value */
 			if (getDSP()->registers[DSP_REG_LC] == 0) {
 				getDSP()->registers[DSP_REG_LC] = 0x010000;
+#ifdef DSP_DISASM
+				dsp56k_disasm_force_reg_changed(DSP_REG_LC);
+#endif
 			}
 			pc_on_rep = 0;
 		}
@@ -726,6 +732,9 @@ static void dsp_postexecute_update_pc(void)
 				/* Loop one more time */
 				getDSP()->pc = getDSP()->stack[0][getDSP()->registers[DSP_REG_SSH]];
 			}
+#ifdef DSP_DISASM
+			dsp56k_disasm_force_reg_changed(DSP_REG_LC);
+#endif
 		}
 
 		if (getDSP()->pc == getDSP()->registers[DSP_REG_LA]) {

@@ -28,4 +28,7 @@ void dsp56k_disasm(void);
 void dsp56k_disasm_reg_read(void);
 void dsp56k_disasm_reg_compare(void);
 
+/* Function to mark register as changed */
+void dsp56k_disasm_force_reg_changed(int num_dsp_reg);
+
 #endif

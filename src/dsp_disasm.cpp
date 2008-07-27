@@ -681,6 +681,11 @@ void dsp56k_disasm(void)
 	}
 }
 
+void dsp56k_disasm_force_reg_changed(int num_dsp_reg)
+{
+	registers_changed[num_dsp_reg]=1;
+}
+
 static uint32 read_memory(uint32 currPc)
 {
 	uint32 value;
