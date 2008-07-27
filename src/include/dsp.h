@@ -105,16 +105,17 @@ class DSP : public BASE_IO {
 	
 	public:
 		DSP(memptr, uint32);
+		~DSP();
+
+		virtual void reset(void);
 		virtual uint8 handleRead(memptr addr);
 		virtual void handleWrite(memptr, uint8);
 
 #if DSP_EMULATION
 		/* Constructor, destructor */
 		void init(void);
-		~DSP();
 
 		/* Setup functions */
-		void reset(void);
 		void shutdown(void);
 
 		/* Host port transfer */

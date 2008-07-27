@@ -107,11 +107,9 @@ void YAMAHA::handleWrite(memptr addr, uint8 value) {
 					break;
 				case 14:
 					parallel->setStrobe((value >> 5) & 0x01);
-#ifdef DSP_EMULATION
 					if (value & (1<<4)) {
 						getDSP()->reset();
 					}
-#endif
 					break;
 				case 15:
 					parallel->setData(value);

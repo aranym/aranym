@@ -43,23 +43,6 @@
 DSP::DSP(memptr address, uint32 size) : BASE_IO(address, size)
 {
 #if DSP_EMULATION
-	init();
-#endif
-}
-
-#if DSP_EMULATION
-
-/* More disasm infos, if wanted */
-#define DSP_DISASM_HOSTREAD 0	/* Dsp->Host transfer */
-#define DSP_DISASM_HOSTWRITE 0	/* Host->Dsp transfer */
-#define DSP_DISASM_STATE 0		/* State changes */
-
-/* Execute DSP instructions till the DSP waits for a read/write */
-#define DSP_HOST_FORCEEXEC 1
-
-/* Constructor and  destructor for DSP class */
-void DSP::init(void)
-{
 	int i;
 
 	memset(ram, 0,sizeof(ram));
@@ -142,16 +125,20 @@ void DSP::init(void)
 	dsp56k_sem = NULL;
 
 	state = DSP_HALT;
+#endif
 }
 
 DSP::~DSP(void)
 {
+#if DSP_EMULATION
 	shutdown();
+#endif
 }
 
 /* Other functions to init/shutdown dsp emulation */
 void DSP::reset(void)
 {
+#if DSP_EMULATION
 	int i;
 
 	/* Kill existing thread and semaphore */
@@ -198,7 +185,18 @@ void DSP::reset(void)
 	if (dsp56k_thread == NULL) {
 		dsp56k_thread = SDL_CreateThread(dsp56k_do_execute, NULL);
 	}
+#endif
 }
+
+#if DSP_EMULATION
+
+/* More disasm infos, if wanted */
+#define DSP_DISASM_HOSTREAD 0	/* Dsp->Host transfer */
+#define DSP_DISASM_HOSTWRITE 0	/* Host->Dsp transfer */
+#define DSP_DISASM_STATE 0		/* State changes */
+
+/* Execute DSP instructions till the DSP waits for a read/write */
+#define DSP_HOST_FORCEEXEC 1
 
 void DSP::shutdown(void)
 {
