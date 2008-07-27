@@ -224,13 +224,15 @@ void DSP::shutdown(void)
 
 /**********************************
  *	Force execution of DSP, till something
- *  to read from/write to host port
+ *  to read from/write to host port, timeout after 1 second
  **********************************/
 
 inline void DSP::force_exec(void)
 {
 #if DSP_HOST_FORCEEXEC
-	while (state == DSP_RUNNING) {
+	Uint32 start = SDL_GetTicks();
+
+	while ((state == DSP_RUNNING) && (SDL_GetTicks()-start<1000)) {
 		SDL_Delay(1);
 	}
 #endif
