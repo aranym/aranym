@@ -1,3 +1,8 @@
+2008/07/28 - Patrice
+- dsp56k: Preliminary work to make a plain C only implementation of DSP emulation,
+  to ease merging with Hatari.
+
+
 2008/07/26 - Patrice
 - dsp56k: Reworked dsp thread pause/unpause using semaphores. Also enable force
   execution of dsp instructions till it read/write to the host port, for code
