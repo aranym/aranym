@@ -283,10 +283,11 @@ void dsp_core_set_state_sem(dsp_core_t *dsp_core, uint8 new_state, int use_semap
 	}
 }
 
-/* Force execution of DSP instructinos, till cpu has read/written host port
-	Should not be needed at all
+/* Force execution of DSP instructions, till cpu has read/written host port
+	Should not be needed at all, as it slows down host cpu emulation
 */
 
+#if DSP_HOST_FORCEEXEC
 static void dsp_core_force_exec(dsp_core_t *dsp_core)
 {
 	Uint32 start = SDL_GetTicks();
@@ -295,6 +296,7 @@ static void dsp_core_force_exec(dsp_core_t *dsp_core)
 		SDL_Delay(1);
 	}
 }
+#endif
 
 static void dsp_core_hostport_update_trdy(dsp_core_t *dsp_core)
 {
