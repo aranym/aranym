@@ -39,7 +39,7 @@
 #define DSP_DISASM_STATE 0		/* State changes */
 
 /* Execute DSP instructions till the DSP waits for a read/write */
-#define DSP_HOST_FORCEEXEC 1
+#define DSP_HOST_FORCEEXEC 0
 
 /* Init DSP emulation */
 void dsp_core_init(dsp_core_t *dsp_core)
