@@ -1917,6 +1917,11 @@ static void dsp_jclr(void)
 				}			
 			}
 		}
+		if (!pollingLoop && (newpc+2 == dsp_core->pc)) {
+			/* or programs that re-set host port operation (Papa was a bladerunner/Eko) */
+			pollingLoop = (read_memory(DSP_SPACE_P, newpc) == 0x08f4a0)	/* movep #0x000001,x:0xffe0 */
+				&& (read_memory(DSP_SPACE_P, newpc+1) == 0x000001);
+		}
 
 		if (pollingLoop) {
 			/* Are we waiting for host port ? */
