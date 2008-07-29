@@ -1,6 +1,6 @@
 /*
 	DSP M56001 emulation
-	Host/Emulator <-> DSP glue
+	Core of DSP emulation
 
 	(C) 2003-2008 ARAnyM developer team
 
@@ -23,6 +23,10 @@
 #define DSP_CORE_H
 
 #include <SDL.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define DSP_RAMSIZE 32768
 
@@ -102,6 +106,7 @@
 typedef struct {
 	SDL_Thread	*thread;	/* Thread in which DSP emulation runs */
 	SDL_sem		*semaphore;	/* Semaphore used to pause/unpause thread */
+	SDL_mutex	*mutex;		/* Mutex for read/writes through host port */
 
 	/* DSP state */
 	uint8	state;
@@ -136,21 +141,25 @@ typedef struct {
 	uint16	bootstrap_pos;
 } dsp_core_t;
 
+/* Emulator call these to init/stop/reset DSP emulation */
 void dsp_core_init(dsp_core_t *dsp_core);
 void dsp_core_shutdown(dsp_core_t *dsp_core);
 void dsp_core_reset(dsp_core_t *dsp_core);
 
-void dsp_core_set_state(dsp_core_t *dsp_core, uint8 new_state);
-void dsp_core_set_state_sem(dsp_core_t *dsp_core, uint8 new_state, int use_semaphore);
-
-void dsp_core_force_exec(dsp_core_t *dsp_core);
-
+/* host port read/write by emulator, addr is 0-7, not 0xffa200-0xffa207 */
 uint8 dsp_core_read_host(dsp_core_t *dsp_core, uint8 addr);
 void dsp_core_write_host(dsp_core_t *dsp_core, uint8 addr, uint8 value);
 
-void dsp_core_host2dsp(dsp_core_t *dsp_core);
-void dsp_core_dsp2host(dsp_core_t *dsp_core);
+/* dsp_cpu call these to signal state change */
+void dsp_core_set_state(dsp_core_t *dsp_core, uint8 new_state);
+void dsp_core_set_state_sem(dsp_core_t *dsp_core, uint8 new_state, int use_semaphore);
 
-void dsp_core_hostport_update_trdy(dsp_core_t *dsp_core);
+/* dsp_cpu call these to read/write host port */
+void dsp_core_hostport_dspread(dsp_core_t *dsp_core);
+void dsp_core_hostport_dspwrite(dsp_core_t *dsp_core);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* DSP_CORE_H */

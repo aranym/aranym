@@ -832,11 +832,11 @@ dnl DSP
 DSPSRCS=""
 if [[ "x$WANT_DSP" = "xyes" ]]; then
     AC_DEFINE([DSP_EMULATION], 1, [Define if using DSP])
-    DSPSRCS="dsp_cpu.cpp"
+    DSPSRCS="dsp_core.c dsp_cpu.c"
     dnl DSP disassembler
     if [[ "x$WANT_DSP_DISASM" = "xyes" ]]; then
         AC_DEFINE([DSP_DISASM], 1, [Define if DSP disassembly])
-        DSPSRCS="$DSPSRCS dsp_disasm.cpp"
+        DSPSRCS="$DSPSRCS dsp_disasm.c"
     fi
 fi
 

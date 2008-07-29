@@ -29,11 +29,9 @@
 #define DEBUG 0
 
 /* More disasm infos, if wanted */
-#define DSP_DISASM_INST 1		/* Instructions */
-#define DSP_DISASM_REG 1	/* Registers changes */
+#define DSP_DISASM_INST 0		/* Instructions */
+#define DSP_DISASM_REG 0	/* Registers changes */
 #define DSP_DISASM_MEM 0		/* Memory changes */
-#define DSP_DISASM_HOSTREAD 0	/* Host port read */
-#define DSP_DISASM_HOSTWRITE 0	/* Host port write */
 #define DSP_DISASM_INTER 0		/* Interrupts */
 
 #if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
@@ -956,15 +954,7 @@ static uint32 read_memory(int space, uint16 address)
 			if (address >= 0xffc0) {
 
 				if ((space==DSP_SPACE_X) && (address==0xffc0+DSP_HOST_HRX)) {
-					/* Read available data from host for the DSP */
-					dsp_core_host2dsp(dsp_core);
-
-					/* Clear HRDF bit to say that DSP has read */
-					dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] &= BITMASK(8)-(1<<DSP_HOST_HSR_HRDF);
-#if DSP_DISASM_HOSTREAD
-					fprintf(stderr, "Dsp: (H->D): Dsp HRDF cleared\n");
-#endif
-					dsp_core_hostport_update_trdy(dsp_core);
+					dsp_core_hostport_dspread(dsp_core);
 				}
 
 				return dsp_core->periph[space][address-0xffc0] & BITMASK(24);
@@ -1012,13 +1002,8 @@ static void write_memory_raw(int space, uint32 address, uint32 value)
 				switch(address-0xffc0) {
 					case DSP_HOST_HTX:
 						dsp_core->periph[space][DSP_HOST_HTX] = value;
-						/* Clear HTDE bit to say that DSP has written */
-						dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] &= BITMASK(8)-(1<<DSP_HOST_HSR_HTDE);
-#if DSP_DISASM_HOSTWRITE
-						fprintf(stderr, "Dsp: (D->H): Dsp HTDE cleared\n");
-#endif
-						/* Write available data from DSP for the host */
-						dsp_core_dsp2host(dsp_core);
+
+						dsp_core_hostport_dspwrite(dsp_core);
 						break;
 					case DSP_HOST_HCR:
 						dsp_core->periph[space][DSP_HOST_HCR] = value;

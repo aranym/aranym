@@ -1,3 +1,7 @@
+2008/07/29 - Patrice
+- dsp56k: Implementation of DSP emulation in plain C.
+
+
 2008/07/28 - Patrice
 - dsp56k: Preliminary work to make a plain C only implementation of DSP emulation,
   to ease merging with Hatari.

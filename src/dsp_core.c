@@ -127,6 +127,7 @@ void dsp_core_init(dsp_core_t *dsp_core)
 
 	dsp_core->thread = NULL;
 	dsp_core->semaphore = NULL;
+	dsp_core->mutex = NULL;
 
 	dsp_core->state = DSP_HALT;
 }
@@ -155,6 +156,12 @@ void dsp_core_shutdown(dsp_core_t *dsp_core)
 	if (dsp_core->semaphore != NULL) {
 		SDL_DestroySemaphore(dsp_core->semaphore);
 		dsp_core->semaphore = NULL;
+	}
+
+	/* Destroy mutex */
+	if (dsp_core->mutex) {
+		SDL_DestroyMutex(dsp_core->mutex);
+		dsp_core->mutex = NULL;
 	}
 }
 
@@ -200,11 +207,13 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 	fprintf(stderr, "Dsp: reset done\n");
 #endif
 
-	/* Create thread and semaphore if needed */
+	/* Create thread, semaphore, mutex if needed */
 	if (dsp_core->semaphore == NULL) {
 		dsp_core->semaphore = SDL_CreateSemaphore(0);
 	}
-
+	if (dsp_core->mutex == NULL) {
+		dsp_core->mutex = SDL_CreateMutex();
+	}
 	if (dsp_core->thread == NULL) {
 		dsp_core->thread = SDL_CreateThread(dsp56k_do_execute, dsp_core);
 	}
@@ -223,7 +232,7 @@ void dsp_core_set_state_sem(dsp_core_t *dsp_core, uint8 new_state, int use_semap
 	}
 
 #if DSP_DISASM_STATE
-	uint8 old_state = state;
+	uint8 old_state = dsp_core->state;
 #endif
 	dsp_core->state = new_state;
 
@@ -278,13 +287,24 @@ void dsp_core_set_state_sem(dsp_core_t *dsp_core, uint8 new_state, int use_semap
 	Should not be needed at all
 */
 
-void dsp_core_force_exec(dsp_core_t *dsp_core)
+static void dsp_core_force_exec(dsp_core_t *dsp_core)
 {
 	Uint32 start = SDL_GetTicks();
 
 	while ((dsp_core->state == DSP_RUNNING) && (SDL_GetTicks()-start<1000)) {
 		SDL_Delay(1);
 	}
+}
+
+static void dsp_core_hostport_update_trdy(dsp_core_t *dsp_core)
+{
+	int trdy;
+
+	/* Clear/set TRDY bit */
+	dsp_core->hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TRDY);
+	trdy = (dsp_core->hostport[CPU_HOST_ISR]>>CPU_HOST_ISR_TXDE)
+		& ~(dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR]>>DSP_HOST_HSR_HRDF);
+	dsp_core->hostport[CPU_HOST_ISR] |= (trdy & 1)<< CPU_HOST_ISR_TRDY;
 }
 
 /* Host port transfer ? (dsp->host) */
@@ -331,33 +351,82 @@ void dsp_core_host2dsp(dsp_core_t *dsp_core)
 	dsp_core->periph[DSP_SPACE_X][DSP_HOST_HRX] |= dsp_core->hostport[CPU_HOST_TXM]<<8;
 	dsp_core->periph[DSP_SPACE_X][DSP_HOST_HRX] |= dsp_core->hostport[CPU_HOST_TXH]<<16;
 #if DSP_DISASM_HOSTREAD
-	fprintf(stderr, "Dsp: (H->D): Transfer 0x%06x\n", dsp_core->periph[DSP_SPACE_X][DSP_HOST_HRX]));
+	fprintf(stderr, "Dsp: (H->D): Transfer 0x%06x\n", dsp_core->periph[DSP_SPACE_X][DSP_HOST_HRX]);
 #endif
 
 	/* Set HRDF bit to say that DSP can read */
 	dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] |= 1<<DSP_HOST_HSR_HRDF;
 #if DSP_DISASM_HOSTREAD
-	fprintf(stderr, "Dsp: (H->D): Dsp HRDF set\n"));
+	fprintf(stderr, "Dsp: (H->D): Dsp HRDF set\n");
 #endif
 
 	/* Set TXDE bit to say that host can write */
 	dsp_core->hostport[CPU_HOST_ISR] |= 1<<CPU_HOST_ISR_TXDE;
 # if DSP_DISASM_HOSTREAD
-	fprintf(stderr, "Dsp: (H->D): Host TXDE set\n"));
+	fprintf(stderr, "Dsp: (H->D): Host TXDE set\n");
 # endif
 
 	dsp_core_hostport_update_trdy(dsp_core);
 }
 
-void dsp_core_hostport_update_trdy(dsp_core_t *dsp_core)
+void dsp_core_hostport_dspread(dsp_core_t *dsp_core)
 {
-	int trdy;
+	SDL_LockMutex(dsp_core->mutex);
 
-	/* Clear/set TRDY bit */
-	dsp_core->hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TRDY);
-	trdy = (dsp_core->hostport[CPU_HOST_ISR]>>CPU_HOST_ISR_TXDE)
-		& ~(dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR]>>DSP_HOST_HSR_HRDF);
-	dsp_core->hostport[CPU_HOST_ISR] |= (trdy & 1)<< CPU_HOST_ISR_TRDY;
+	/* Clear HRDF bit to say that DSP has read */
+	dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] &= 0xff-(1<<DSP_HOST_HSR_HRDF);
+#if DSP_DISASM_HOSTREAD
+	fprintf(stderr, "Dsp: (H->D): Dsp HRDF cleared\n");
+#endif
+	dsp_core_hostport_update_trdy(dsp_core);
+	dsp_core_host2dsp(dsp_core);
+
+	SDL_UnlockMutex(dsp_core->mutex);
+}
+
+void dsp_core_hostport_dspwrite(dsp_core_t *dsp_core)
+{
+	SDL_LockMutex(dsp_core->mutex);
+
+	/* Clear HTDE bit to say that DSP has written */
+	dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] &= 0xff-(1<<DSP_HOST_HSR_HTDE);
+#if DSP_DISASM_HOSTWRITE
+	fprintf(stderr, "Dsp: (D->H): Dsp HTDE cleared\n");
+#endif
+
+	dsp_core_dsp2host(dsp_core);
+
+	SDL_UnlockMutex(dsp_core->mutex);
+}
+
+static void dsp_core_hostport_cpuread(dsp_core_t *dsp_core)
+{
+	SDL_LockMutex(dsp_core->mutex);
+
+	/* Clear RXDF bit to say that CPU has read */
+	dsp_core->hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_RXDF);
+#if DSP_DISASM_HOSTWRITE
+	fprintf(stderr, "Dsp: (D->H): Host RXDF cleared\n");
+#endif
+	dsp_core_dsp2host(dsp_core);
+
+	SDL_UnlockMutex(dsp_core->mutex);
+}
+
+static void dsp_core_hostport_cpuwrite(dsp_core_t *dsp_core)
+{
+	SDL_LockMutex(dsp_core->mutex);
+
+	/* Clear TXDE to say that CPU has written */
+	dsp_core->hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TXDE);
+#if DSP_DISASM_HOSTREAD
+	fprintf(stderr, "Dsp: (H->D): Host TXDE cleared\n");
+#endif
+
+	dsp_core_hostport_update_trdy(dsp_core);
+	dsp_core_host2dsp(dsp_core);
+
+	SDL_UnlockMutex(dsp_core->mutex);
 }
 
 /* Read/writes on host port */
@@ -388,12 +457,7 @@ uint8 dsp_core_read_host(dsp_core_t *dsp_core, uint8 addr)
 			value = dsp_core->hostport[addr];
 
 			if (dsp_core->state!=DSP_BOOTING) {
-				/* Clear RXDF bit to say that CPU has read */
-				dsp_core->hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_RXDF);
-#if DSP_DISASM_HOSTWRITE
-				fprintf(stderr, "Dsp: (D->H): Host RXDF cleared\n");
-#endif
-				dsp_core_dsp2host(dsp_core);
+				dsp_core_hostport_cpuread(dsp_core);
 			}
 
 			/* Wake up DSP if it was waiting our read */
@@ -453,14 +517,7 @@ void dsp_core_write_host(dsp_core_t *dsp_core, uint8 addr, uint8 value)
 			dsp_core->hostport[CPU_HOST_TXL]=value;
 
 			if (dsp_core->state!=DSP_BOOTING) {
-				/* Clear TXDE to say that host has written */
-				dsp_core->hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TXDE);
-#if DSP_DISASM_HOSTREAD
-				fprintf(stderr, "Dsp: (H->D): Host TXDE cleared"\n);
-#endif
-
-				dsp_core_hostport_update_trdy(dsp_core);
-				dsp_core_host2dsp(dsp_core);
+				dsp_core_hostport_cpuwrite(dsp_core);
 			}
 
 			switch(dsp_core->state) {

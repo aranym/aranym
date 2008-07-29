@@ -1,137 +1,44 @@
 /*
- * dsp.cpp - Atari DSP56001 emulation code
- *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
- * 
- * This file is part of the ARAnyM project which builds a new and powerful
- * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
- *
- * ARAnyM is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * ARAnyM is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with ARAnyM; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
+	DSP M56001 emulation
+	Dummy emulation, Aranym glue
+
+	(C) 2001-2008 ARAnyM developer team
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "dsp.h"
-#include "dsp_cpu.h"
 
 #define DEBUG 0
 #include "debug.h"
 
-#include <cmath>
-
-#include <SDL.h>
-#include <SDL_thread.h>
-
-#ifndef M_PI
-#define M_PI	3.141592653589793238462643383279502
-#endif
-
 DSP::DSP(memptr address, uint32 size) : BASE_IO(address, size)
 {
 #if DSP_EMULATION
-	int i;
-
-	memset(ram, 0,sizeof(ram));
-	memset(ramint, 0,sizeof(ramint));
-
-	/* Initialize Y:rom[0x0100-0x01ff] with a sin table */
-	{
-		float src;
-		int32 dest;
-
-		for (i=0;i<256;i++) {
-			src = (((float) i)*M_PI)/128.0;
-			dest = (int32) (sin(src) * 8388608.0); /* 1<<23 */
-			if (dest>8388607) {
-				dest = 8388607;
-			} else if (dest<-8388608) {
-				dest = -8388608;
-			}
-			rom[DSP_SPACE_Y][0x100+i]=dest & 0x00ffffff;
-		}
-	}
-
-	/* Initialize X:rom[0x0100-0x017f] with a mu-law table */
-	{
-		const uint16 mulaw_base[8]={
-			0x7d7c, 0x3e7c, 0x1efc, 0x0f3c, 0x075c, 0x036c, 0x0174, 0x0078
-		};
-
-		uint32 value, offset, position;
-		int j;
-
-		position = 0x0100;
-		offset = 0x040000;
-		for(i=0;i<8;i++) {
-			value = mulaw_base[i]<<8;
-
-			for (j=0;j<16;j++) {
-				rom[DSP_SPACE_X][position++]=value;
-				value -= offset;
-			}
-
-			offset >>= 1;
-		}
-	}
-
-	/* Initialize X:rom[0x0180-0x01ff] with a a-law table */
-	{
-		const int32 multiply_base[8]={
-			0x1580, 0x0ac0, 0x5600, 0x2b00,
-			0x1580, 0x0058, 0x0560, 0x02b0
-		};
-		const int32 multiply_col[4]={0x10, 0x01, 0x04, 0x02};
-		const int32 multiply_line[4]={0x40, 0x04, 0x10, 0x08};
-		const int32 base_values[4]={0, -1, 2, 1};
-		uint32 pos=0x0180;
-		
-		for (i=0;i<8;i++) {
-			int32 alawbase, j;
-
-			alawbase = multiply_base[i]<<8;
-			for (j=0;j<4;j++) {
-				int32 alawbase1, k;
-				
-				alawbase1 = alawbase + ((base_values[j]*multiply_line[i & 3])<<12);
-
-				for (k=0;k<4;k++) {
-					int32 alawbase2;
-
-					alawbase2 = alawbase1 + ((base_values[k]*multiply_col[i & 3])<<12);
-
-					rom[DSP_SPACE_X][pos++]=alawbase2;
-				}
-			}
-		}
-	}
-	
-	D(bug("Dsp: power-on done"));
-
-	dsp56k_thread = NULL;
-	dsp56k_sem = NULL;
-
-	state = DSP_HALT;
+	dsp_core_init(&dsp_core);
 #endif
 }
 
 DSP::~DSP(void)
 {
 #if DSP_EMULATION
-	shutdown();
+	dsp_core_shutdown(&dsp_core);
 #endif
 }
 
@@ -139,163 +46,9 @@ DSP::~DSP(void)
 void DSP::reset(void)
 {
 #if DSP_EMULATION
-	int i;
-
-	/* Kill existing thread and semaphore */
-	shutdown();
-
-	/* Memory */
-	memset(periph, 0,sizeof(periph));
-	memset(stack, 0,sizeof(stack));
-	memset(registers, 0,sizeof(registers));
-
-	bootstrap_pos = bootstrap_accum = 0;
-	
-	/* Registers */
-	pc = 0x0000;
-	registers[DSP_REG_OMR]=0x02;
-	for (i=0;i<8;i++) {
-		registers[DSP_REG_M0+i]=0x00ffff;
-	}
-
-	/* host port init, dsp side */
-	periph[DSP_SPACE_X][DSP_HOST_HSR]=(1<<DSP_HOST_HSR_HTDE);
-
-	/* host port init, cpu side */
-	hostport[CPU_HOST_CVR]=0x12;
-	hostport[CPU_HOST_ISR]=(1<<CPU_HOST_ISR_TRDY)|(1<<CPU_HOST_ISR_TXDE);
-	hostport[CPU_HOST_IVR]=0x0f;
-
-	/* Other hardware registers */
-	periph[DSP_SPACE_X][DSP_IPR]=0;
-	periph[DSP_SPACE_X][DSP_BCR]=0xffff;
-
-	/* Misc */
-	loop_rep = 0;
-	last_loop_inst = 0;
-	first_host_write = 1;
-
-	D(bug("Dsp: reset done"));
-
-	/* Create thread and semaphore if needed */
-	if (dsp56k_sem == NULL) {
-		dsp56k_sem = SDL_CreateSemaphore(0);
-	}
-
-	if (dsp56k_thread == NULL) {
-		dsp56k_thread = SDL_CreateThread(dsp56k_do_execute, NULL);
-	}
+	dsp_core_reset(&dsp_core);
 #endif
 }
-
-#if DSP_EMULATION
-
-/* More disasm infos, if wanted */
-#define DSP_DISASM_HOSTREAD 0	/* Dsp->Host transfer */
-#define DSP_DISASM_HOSTWRITE 0	/* Host->Dsp transfer */
-#define DSP_DISASM_STATE 0		/* State changes */
-
-/* Execute DSP instructions till the DSP waits for a read/write */
-#define DSP_HOST_FORCEEXEC 1
-
-void DSP::shutdown(void)
-{
-	if (dsp56k_thread != NULL) {
-
-		/* Stop thread */
-		setState(DSP_STOPTHREAD);
-
-		/* Wait for the thread to finish */
-		while (state != DSP_HALT) {
-			SDL_Delay(1);
-		}
-
-		dsp56k_thread = NULL;
-	}
-
-	/* Destroy the semaphore */
-	if (dsp56k_sem != NULL) {
-		SDL_DestroySemaphore(dsp56k_sem);
-		dsp56k_sem = NULL;
-	}
-}
-
-/**********************************
- *	Force execution of DSP, till something
- *  to read from/write to host port, timeout after 1 second
- **********************************/
-
-inline void DSP::force_exec(void)
-{
-#if DSP_HOST_FORCEEXEC
-	Uint32 start = SDL_GetTicks();
-
-	while ((state == DSP_RUNNING) && (SDL_GetTicks()-start<1000)) {
-		SDL_Delay(1);
-	}
-#endif
-}
-
-/* Change state of DSP emulation thread */
-void DSP::setState(uint8 newState, int useSemaphore)
-{
-	if (state == newState) {
-		return;
-	}
-
-#if DSP_DISASM_STATE
-	uint8 oldState = state;
-#endif
-	state = newState;
-
-	switch(newState) {
-		case DSP_BOOTING:
-#if DSP_DISASM_STATE
-			fprintf(stderr, "Dsp: state = DSP_BOOTING\n");
-#endif
-			SDL_SemWait(dsp56k_sem);
-			break;
-		case DSP_RUNNING:
-#if DSP_DISASM_STATE
-			if (oldState == DSP_BOOTING) {
-				fprintf(stderr, "Dsp: bootstrap done\n");
-			}
-			fprintf(stderr, "Dsp: state = DSP_RUNNING\n");
-#endif
-			SDL_SemPost(dsp56k_sem);
-			break;
-		case DSP_WAITHOSTWRITE:
-#if DSP_DISASM_STATE
-			fprintf(stderr, "Dsp: state = DSP_WAITHOSTWRITE\n");
-#endif
-			SDL_SemWait(dsp56k_sem);
-			break;
-		case DSP_WAITHOSTREAD:
-#if DSP_DISASM_STATE
-			fprintf(stderr, "Dsp: state = DSP_WAITHOSTREAD\n");
-#endif
-			SDL_SemWait(dsp56k_sem);
-			break;
-		case DSP_HALT:
-#if DSP_DISASM_STATE
-			fprintf(stderr, "Dsp: state = DSP_HALT\n");
-#endif
-			if (useSemaphore) {
-				SDL_SemWait(dsp56k_sem);
-			}
-			break;
-		case DSP_STOPTHREAD:
-#if DSP_DISASM_STATE
-			fprintf(stderr, "Dsp: state = DSP_STOPTHREAD\n");
-#endif
-			SDL_SemPost(dsp56k_sem);
-			break;
-		default:
-			break;
-	}
-}
-
-#endif /* DSP_EMULATION */
 
 /**********************************
  *	Hardware address read/write by CPU
@@ -303,245 +56,25 @@ void DSP::setState(uint8 newState, int useSemaphore)
 
 uint8 DSP::handleRead(memptr addr)
 {
+	uint8 value;
 #if DSP_EMULATION
-	uint8 value=0;
-
-	addr -= getHWoffset();
-
-	/* Whenever the host want to read something on host port, we test if a
-	   transfer is needed */
-	dsp2host();
-
-	switch(addr) {
-		case CPU_HOST_ICR:
-			value = hostport[CPU_HOST_ICR];
-			break;
-		case CPU_HOST_CVR:
-			value = hostport[CPU_HOST_CVR];
-			break;
-		case CPU_HOST_ISR:
-			value = hostport[CPU_HOST_ISR];
-			break;
-		case CPU_HOST_IVR:
-			value = hostport[CPU_HOST_IVR];
-			break;
-		case CPU_HOST_RX0:
-			force_exec();
-			value = 0;
-			break;
-		case CPU_HOST_RXH:
-			force_exec();
-			value = hostport[CPU_HOST_RXH];
-			break;
-		case CPU_HOST_RXM:
-			force_exec();
-			value = hostport[CPU_HOST_RXM];
-			break;
-		case CPU_HOST_RXL:
-			force_exec();
-			value = hostport[CPU_HOST_RXL];
-
-			if (state!=DSP_BOOTING) {
-				/* Clear RXDF bit to say that CPU has read */
-				hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_RXDF);
-#if DSP_DISASM_HOSTWRITE
-				D(bug("Dsp: (D->H): Host RXDF cleared"));
-#endif
-			}
-
-			/* Wake up DSP if it was waiting our read */
-			if (state==DSP_WAITHOSTREAD) {
-				setState(DSP_RUNNING);
-			}
-
-			break;
-	}
-
-	D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr+0xffa200, value, showPC()));
-	return value;
+	value = dsp_core_read_host(&dsp_core, addr-getHWoffset());
 #else
-	return 0xff;	// this value prevents TOS from hanging in the DSP init code */
-#endif	/* DSP_EMULATION */
+	/* this value prevents TOS from hanging in the DSP init code */
+	value = 0xff;
+#endif
+
+	D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr, value, showPC()));
+	return value;
 }
 
 void DSP::handleWrite(memptr addr, uint8 value)
 {
+	D(bug("HWput_b(0x%08x,0x%02x) at 0x%08x", addr, value, showPC()));
 #if DSP_EMULATION
-	addr -= getHWoffset();
-
-	D(bug("HWput_b(0x%08x,0x%02x) at 0x%08x", addr+0xffa200, value, showPC()));
-
-	switch(addr) {
-		case CPU_HOST_ICR:
-			hostport[CPU_HOST_ICR]=value & 0xfb;
-			/* Set HF1 and HF0 accordingly on the host side */
-			periph[DSP_SPACE_X][DSP_HOST_HSR] &=
-					0xff-((1<<DSP_HOST_HSR_HF1)|(1<<DSP_HOST_HSR_HF0));
-			periph[DSP_SPACE_X][DSP_HOST_HSR] |=
-					hostport[CPU_HOST_ICR] & ((1<<DSP_HOST_HSR_HF1)|(1<<DSP_HOST_HSR_HF0));
-			break;
-		case CPU_HOST_CVR:
-			hostport[CPU_HOST_CVR]=value & 0x9f;
-			/* if bit 7=1, host command */
-			if (value & (1<<7)) {
-				periph[DSP_SPACE_X][DSP_HOST_HSR] |= 1<<DSP_HOST_HSR_HCP;
-			}
-			break;
-		case CPU_HOST_ISR:
-			/* Read only */
-			break;
-		case CPU_HOST_IVR:
-			hostport[CPU_HOST_IVR]=value;
-			break;
-		case CPU_HOST_TX0:
-			force_exec();
-
-			if (first_host_write) {
-				first_host_write = 0;
-				bootstrap_accum = 0;
-			}
-			break;
-		case CPU_HOST_TXH:
-			force_exec();
-
-			if (first_host_write) {
-				first_host_write = 0;
-				bootstrap_accum = 0;
-			}
-			hostport[CPU_HOST_TXH]=value;
-			bootstrap_accum |= value<<16;
-			break;
-		case CPU_HOST_TXM:
-			force_exec();
-
-			if (first_host_write) {
-				first_host_write = 0;
-				hostport[CPU_HOST_TXH]=value;	/* FIXME: is it correct ? */
-				bootstrap_accum = 0;
-			}
-			hostport[CPU_HOST_TXM]=value;
-			bootstrap_accum |= value<<8;
-			break;
-		case CPU_HOST_TXL:
-			force_exec();
-
-			if (first_host_write) {
-				first_host_write = 0;
-				hostport[CPU_HOST_TXH]=value;	/* FIXME: is it correct ? */
-				hostport[CPU_HOST_TXM]=value;	/* FIXME: is it correct ? */
-				bootstrap_accum = 0;
-			}
-			hostport[CPU_HOST_TXL]=value;
-			bootstrap_accum |= value;
-
-			first_host_write = 1;
-
-			if (state!=DSP_BOOTING) {
-				/* Clear TXDE to say that host has written */
-				hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TXDE);
-#if DSP_DISASM_HOSTREAD
-				D(bug("Dsp: (H->D): Host TXDE cleared"));
+	dsp_core_write_host(&dsp_core, addr-getHWoffset(), value);
 #endif
-
-				host2dsp();
-			}
-
-			switch(state) {
-				case DSP_BOOTING:
-					D(bug("Dsp: bootstrap p:0x%04x = 0x%06x", bootstrap_pos, bootstrap_accum));
-					ramint[DSP_SPACE_P][bootstrap_pos] = bootstrap_accum;
-					bootstrap_pos++;
-					if (bootstrap_pos == 0x200) {
-						setState(DSP_RUNNING);
-					}		
-					bootstrap_accum = 0;
-					break;
-				case DSP_WAITHOSTWRITE:
-					/* Wake up DSP if it was waiting our write */
-					setState(DSP_RUNNING);
-					break;
-			}
-
-			break;
-	}
-#endif	/* DSP_EMULATION */
 }
-
-#if DSP_EMULATION
-
-/**********************************
- *	Host transfer
- **********************************/
-
-void DSP::host2dsp(void)
-{
-	int trdy;
-
-	/* Host port transfer ? (host->dsp) */
-	if (
-		((hostport[CPU_HOST_ISR] & (1<<CPU_HOST_ISR_TXDE))==0) &&
-		((periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HRDF))==0)
-		) {
-
-		periph[DSP_SPACE_X][DSP_HOST_HRX] = hostport[CPU_HOST_TXL];
-		periph[DSP_SPACE_X][DSP_HOST_HRX] |= hostport[CPU_HOST_TXM]<<8;
-		periph[DSP_SPACE_X][DSP_HOST_HRX] |= hostport[CPU_HOST_TXH]<<16;
-
-#if DSP_DISASM_HOSTREAD
-		D(bug("Dsp: (H->D): Transfer 0x%06x",periph[DSP_SPACE_X][DSP_HOST_HRX]));
-#endif
-
-		/* Set HRDF bit to say that DSP can read */
-		periph[DSP_SPACE_X][DSP_HOST_HSR] |= 1<<DSP_HOST_HSR_HRDF;
-#if DSP_DISASM_HOSTREAD
-		D(bug("Dsp: (H->D): Dsp HRDF set"));
-#endif
-
-		/* Set TXDE bit to say that host can write */
-		hostport[CPU_HOST_ISR] |= 1<<CPU_HOST_ISR_TXDE;
-#if DSP_DISASM_HOSTREAD
-		D(bug("Dsp: (H->D): Host TXDE set"));
-#endif
-
-		/* Clear/set TRDY bit */
-		hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TRDY);
-		trdy = (hostport[CPU_HOST_ISR]>>CPU_HOST_ISR_TXDE) & 1;
-		trdy &= !((periph[DSP_SPACE_X][DSP_HOST_HSR]>>DSP_HOST_HSR_HRDF) & 1);
-		hostport[CPU_HOST_ISR] |= (trdy & 1)<< CPU_HOST_ISR_TRDY;
-	}
-}
-
-void DSP::dsp2host(void)
-{
-	/* Host port transfer ? (dsp->host) */
-	if (
-		((hostport[CPU_HOST_ISR] & (1<<CPU_HOST_ISR_RXDF))==0) &&
-		((periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HTDE))==0)
-		) {
-
-		hostport[CPU_HOST_RXL] = periph[DSP_SPACE_X][DSP_HOST_HTX];
-		hostport[CPU_HOST_RXM] = periph[DSP_SPACE_X][DSP_HOST_HTX]>>8;
-		hostport[CPU_HOST_RXH] = periph[DSP_SPACE_X][DSP_HOST_HTX]>>16;
-
-#if DSP_DISASM_HOSTWRITE
-		D(bug("Dsp: (D->H): Transfer 0x%06x",periph[DSP_SPACE_X][DSP_HOST_HTX]));
-#endif
-
-		/* Set HTDE bit to say that DSP can write */
-		periph[DSP_SPACE_X][DSP_HOST_HSR] |= 1<<DSP_HOST_HSR_HTDE;
-#if DSP_DISASM_HOSTWRITE
-		D(bug("Dsp: (D->H): Dsp HTDE set"));
-#endif
-
-		/* Set RXDF bit to say that host can read */
-		hostport[CPU_HOST_ISR] |= 1<<CPU_HOST_ISR_RXDF;
-#if DSP_DISASM_HOSTWRITE
-		D(bug("Dsp: (D->H): Host RXDF set"));
-#endif
-	}
-}
-
-#endif	/* DSP_EMULATION */
 
 /*
 vim:ts=4:sw=4:
