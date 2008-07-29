@@ -34,6 +34,8 @@
 #define DSP_DISASM_MEM 0		/* Memory changes */
 #define DSP_DISASM_INTER 0		/* Interrupts */
 
+#define DSP_COUNT_IPS 0	/* Count instruction per seconds */
+
 #if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
 # define write_memory(x,y,z) write_memory_disasm(x,y,z)
 #else
@@ -608,14 +610,30 @@ static dsp_core_t *dsp_core;
 
 int dsp56k_do_execute(void *th_dsp_core)
 {
+	Uint32 start_time, num_inst;
+
 	dsp_core = th_dsp_core;
 #ifdef DSP_DISASM
 	dsp56k_disasm_init(dsp_core);
 #endif
 	dsp_core_set_state(dsp_core, DSP_BOOTING);
 
+	start_time = SDL_GetTicks();
+	num_inst = 0;
 	while(dsp_core->state != DSP_STOPTHREAD) {
 		dsp_execute_instruction();
+#if DSP_COUNT_IPS
+		++num_inst;
+		if ((num_inst & 63) == 0) {
+			/* Evaluate time after <N> instructions have been executed to avoid asking too frequently */
+			Uint32 cur_time = SDL_GetTicks();
+			if (cur_time-start_time>1000) {
+				fprintf(stderr, "Dsp: %d i/s\n", (num_inst*1000)/(cur_time-start_time));
+				start_time=cur_time;
+				num_inst=0;
+			}
+		}
+#endif
 	}
 
 	dsp_core_set_state(dsp_core, DSP_HALT);
