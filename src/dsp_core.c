@@ -531,7 +531,7 @@ void dsp_core_write_host(dsp_core_t *dsp_core, uint8 addr, uint8 value)
 #if DEBUG
 					fprintf(stderr, "Dsp: bootstrap p:0x%04x = 0x%06x",
 						dsp_core->bootstrap_pos,
-						dsp_core->ramint[DSP_SPACE_P][dsp_core->bootstrap_pos]));
+						dsp_core->ramint[DSP_SPACE_P][dsp_core->bootstrap_pos]);
 #endif
 					if (++dsp_core->bootstrap_pos == 0x200) {
 						dsp_core_set_state(dsp_core, DSP_RUNNING);
