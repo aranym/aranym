@@ -23,6 +23,7 @@
 #define DSP_CORE_H
 
 #include <SDL.h>
+#include <SDL_thread.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -109,36 +110,36 @@ typedef struct {
 	SDL_mutex	*mutex;		/* Mutex for read/writes through host port */
 
 	/* DSP state */
-	uint8	state;
+	int	state;
 
 	/* Registers */
-	uint16	pc;
-	uint32	registers[64];
+	Uint16	pc;
+	Uint32	registers[64];
 
 	/* stack[0=ssh], stack[1=ssl] */
-	uint16	stack[2][15];
+	Uint16	stack[2][15];
 
 	/* External ram[0] is x:, ram[1] is y:, ram[2] is p: */
-	uint32	ram[3][DSP_RAMSIZE];
+	Uint32	ram[3][DSP_RAMSIZE];
 
 	/* rom[0] is x:, rom[1] is y: */
-	uint32	rom[2][512];
+	Uint32	rom[2][512];
 
 	/* Internal ram[0] is x:, ram[1] is y:, ram[2] is p: */
-	uint32	ramint[3][512];
+	Uint32	ramint[3][512];
 
 	/* peripheral space, [x|y]:0xffc0-0xffff */
-	uint32	periph[2][64];
+	Uint32	periph[2][64];
 
 	/* host port, CPU side */
-	uint8 hostport[8];
+	Uint8 hostport[8];
 
 	/* Misc */
-	uint32 loop_rep;		/* executing rep ? */
-	uint32 last_loop_inst;	/* executing the last instruction in DO ? */
+	Uint32 loop_rep;		/* executing rep ? */
+	Uint32 last_loop_inst;	/* executing the last instruction in DO ? */
 
 	/* For bootstrap routine */
-	uint16	bootstrap_pos;
+	Uint16	bootstrap_pos;
 } dsp_core_t;
 
 /* Emulator call these to init/stop/reset DSP emulation */
@@ -147,12 +148,12 @@ void dsp_core_shutdown(dsp_core_t *dsp_core);
 void dsp_core_reset(dsp_core_t *dsp_core);
 
 /* host port read/write by emulator, addr is 0-7, not 0xffa200-0xffa207 */
-uint8 dsp_core_read_host(dsp_core_t *dsp_core, uint8 addr);
-void dsp_core_write_host(dsp_core_t *dsp_core, uint8 addr, uint8 value);
+Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr);
+void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value);
 
 /* dsp_cpu call these to signal state change */
-void dsp_core_set_state(dsp_core_t *dsp_core, uint8 new_state);
-void dsp_core_set_state_sem(dsp_core_t *dsp_core, uint8 new_state, int use_semaphore);
+void dsp_core_set_state(dsp_core_t *dsp_core, int new_state);
+void dsp_core_set_state_sem(dsp_core_t *dsp_core, int new_state, int use_semaphore);
 
 /* dsp_cpu call these to read/write host port */
 void dsp_core_hostport_dspread(dsp_core_t *dsp_core);
