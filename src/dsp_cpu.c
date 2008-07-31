@@ -34,7 +34,7 @@
 #define DSP_DISASM_MEM 0		/* Memory changes */
 #define DSP_DISASM_INTER 0		/* Interrupts */
 
-#define DSP_COUNT_IPS 0	/* Count instruction per seconds */
+#define DSP_COUNT_IPS 1	/* Count instruction per seconds */
 
 #if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
 # define write_memory(x,y,z) write_memory_disasm(x,y,z)
@@ -970,12 +970,16 @@ static uint32 read_memory(int space, uint16 address)
 			}
 			/* Peripheral address ? */
 			if (address >= 0xffc0) {
+				uint32 value;
 
+				SDL_LockMutex(dsp_core->mutex);
 				if ((space==DSP_SPACE_X) && (address==0xffc0+DSP_HOST_HRX)) {
 					dsp_core_hostport_dspread(dsp_core);
 				}
+				value = dsp_core->periph[space][address-0xffc0] & BITMASK(24);
+				SDL_UnlockMutex(dsp_core->mutex);
 
-				return dsp_core->periph[space][address-0xffc0] & BITMASK(24);
+				return value;
 			}
 			/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */
 			if (space == DSP_SPACE_X) {
@@ -1017,6 +1021,7 @@ static void write_memory_raw(int space, uint32 address, uint32 value)
 			}
 			/* Peripheral space ? */
 			if ((address >= 0xffc0) && (address <= 0xffff)) {
+				SDL_LockMutex(dsp_core->mutex);
 				switch(address-0xffc0) {
 					case DSP_HOST_HTX:
 						dsp_core->periph[space][DSP_HOST_HTX] = value;
@@ -1038,6 +1043,7 @@ static void write_memory_raw(int space, uint32 address, uint32 value)
 						dsp_core->periph[space][address-0xffc0] = value;
 						break;
 				}
+				SDL_UnlockMutex(dsp_core->mutex);
 				return;
 			}
 			/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */

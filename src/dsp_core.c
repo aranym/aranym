@@ -373,8 +373,6 @@ void dsp_core_host2dsp(dsp_core_t *dsp_core)
 
 void dsp_core_hostport_dspread(dsp_core_t *dsp_core)
 {
-	SDL_LockMutex(dsp_core->mutex);
-
 	/* Clear HRDF bit to say that DSP has read */
 	dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] &= 0xff-(1<<DSP_HOST_HSR_HRDF);
 #if DSP_DISASM_HOSTREAD
@@ -382,14 +380,10 @@ void dsp_core_hostport_dspread(dsp_core_t *dsp_core)
 #endif
 	dsp_core_hostport_update_trdy(dsp_core);
 	dsp_core_host2dsp(dsp_core);
-
-	SDL_UnlockMutex(dsp_core->mutex);
 }
 
 void dsp_core_hostport_dspwrite(dsp_core_t *dsp_core)
 {
-	SDL_LockMutex(dsp_core->mutex);
-
 	/* Clear HTDE bit to say that DSP has written */
 	dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] &= 0xff-(1<<DSP_HOST_HSR_HTDE);
 #if DSP_DISASM_HOSTWRITE
@@ -397,28 +391,20 @@ void dsp_core_hostport_dspwrite(dsp_core_t *dsp_core)
 #endif
 
 	dsp_core_dsp2host(dsp_core);
-
-	SDL_UnlockMutex(dsp_core->mutex);
 }
 
 static void dsp_core_hostport_cpuread(dsp_core_t *dsp_core)
 {
-	SDL_LockMutex(dsp_core->mutex);
-
 	/* Clear RXDF bit to say that CPU has read */
 	dsp_core->hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_RXDF);
 #if DSP_DISASM_HOSTWRITE
 	fprintf(stderr, "Dsp: (D->H): Host RXDF cleared\n");
 #endif
 	dsp_core_dsp2host(dsp_core);
-
-	SDL_UnlockMutex(dsp_core->mutex);
 }
 
 static void dsp_core_hostport_cpuwrite(dsp_core_t *dsp_core)
 {
-	SDL_LockMutex(dsp_core->mutex);
-
 	/* Clear TXDE to say that CPU has written */
 	dsp_core->hostport[CPU_HOST_ISR] &= 0xff-(1<<CPU_HOST_ISR_TXDE);
 #if DSP_DISASM_HOSTREAD
@@ -427,8 +413,6 @@ static void dsp_core_hostport_cpuwrite(dsp_core_t *dsp_core)
 
 	dsp_core_hostport_update_trdy(dsp_core);
 	dsp_core_host2dsp(dsp_core);
-
-	SDL_UnlockMutex(dsp_core->mutex);
 }
 
 /* Read/writes on host port */
@@ -437,6 +421,7 @@ uint8 dsp_core_read_host(dsp_core_t *dsp_core, uint8 addr)
 {
 	uint8 value = 0;
 
+	SDL_LockMutex(dsp_core->mutex);
 	switch(addr) {
 		case CPU_HOST_ICR:
 		case CPU_HOST_CVR:
@@ -469,12 +454,14 @@ uint8 dsp_core_read_host(dsp_core_t *dsp_core, uint8 addr)
 
 			break;
 	}
+	SDL_UnlockMutex(dsp_core->mutex);
 
 	return value;
 }
 
 void dsp_core_write_host(dsp_core_t *dsp_core, uint8 addr, uint8 value)
 {
+	SDL_LockMutex(dsp_core->mutex);
 	switch(addr) {
 		case CPU_HOST_ICR:
 			dsp_core->hostport[CPU_HOST_ICR]=value & 0xfb;
@@ -501,16 +488,11 @@ void dsp_core_write_host(dsp_core_t *dsp_core, uint8 addr, uint8 value)
 			/* Read only */
 			break;
 		case CPU_HOST_TXH:
-#if DSP_HOST_FORCEEXEC
-			dsp_core_force_exec(dsp_core);
-#endif
-			dsp_core->hostport[CPU_HOST_TXH]=value;
-			break;
 		case CPU_HOST_TXM:
 #if DSP_HOST_FORCEEXEC
 			dsp_core_force_exec(dsp_core);
 #endif
-			dsp_core->hostport[CPU_HOST_TXM]=value;
+			dsp_core->hostport[addr]=value;
 			break;
 		case CPU_HOST_TXL:
 #if DSP_HOST_FORCEEXEC
@@ -545,6 +527,7 @@ void dsp_core_write_host(dsp_core_t *dsp_core, uint8 addr, uint8 value)
 
 			break;
 	}
+	SDL_UnlockMutex(dsp_core->mutex);
 }
 
 /*
