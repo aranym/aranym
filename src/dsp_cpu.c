@@ -34,7 +34,7 @@
 #define DSP_DISASM_MEM 0		/* Memory changes */
 #define DSP_DISASM_INTER 0		/* Interrupts */
 
-#define DSP_COUNT_IPS 1	/* Count instruction per seconds */
+#define DSP_COUNT_IPS 0	/* Count instruction per seconds */
 
 #if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
 # define write_memory(x,y,z) write_memory_disasm(x,y,z)
