@@ -285,9 +285,11 @@ static void dsp_core_force_exec(dsp_core_t *dsp_core)
 {
 	Uint32 start = SDL_GetTicks();
 
+	SDL_UnlockMutex(dsp_core->mutex);
 	while ((dsp_core->state == DSP_RUNNING) && (SDL_GetTicks()-start<1000)) {
 		SDL_Delay(1);
 	}
+	SDL_LockMutex(dsp_core->mutex);
 }
 #endif
 
