@@ -507,7 +507,7 @@ void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 						(dsp_core->hostport[CPU_HOST_TXM]<<8) |
 						dsp_core->hostport[CPU_HOST_TXL];
 #if DEBUG
-					fprintf(stderr, "Dsp: bootstrap p:0x%04x = 0x%06x",
+					fprintf(stderr, "Dsp: bootstrap p:0x%04x = 0x%06x\n",
 						dsp_core->bootstrap_pos,
 						dsp_core->ramint[DSP_SPACE_P][dsp_core->bootstrap_pos]);
 #endif
