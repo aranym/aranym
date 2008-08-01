@@ -19,7 +19,12 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "sysdeps.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <string.h>
+
 #include "dsp_core.h"
 #include "dsp_cpu.h"
 #include "dsp_disasm.h"
@@ -40,7 +45,7 @@
  **********************************/
 
 /* Current instruction */
-static uint32 cur_inst;
+static Uint32 cur_inst;
 
 static dsp_core_t *dsp_core;
 
@@ -53,10 +58,10 @@ void dsp56k_disasm_init(dsp_core_t *my_dsp_core)
  *	Register change
  **********************************/
 
-static uint32 registers_save[64];
-static uint32 registers_changed[64];
+static Uint32 registers_save[64];
+static Uint32 registers_changed[64];
 #if DSP_DISASM_REG_PC
-static uint32 pc_save;
+static Uint32 pc_save;
 #endif
 
 static const char *registers_name[64]={
@@ -174,7 +179,7 @@ void dsp56k_disasm_reg_compare(void)
  *	Opcode disassembler
  **********************************/
 
-static uint32 read_memory(uint32 currPc);
+static Uint32 read_memory(Uint32 currPc);
 
 typedef void (*dsp_emul_t)(void);
 
@@ -186,8 +191,8 @@ static void opcode8h_8(void);
 static void opcode8h_a(void);
 static void opcode8h_b(void);
 
-static int dsp_calc_ea(uint32 ea_mode, char *dest);
-static void dsp_calc_cc(uint32 cc_mode, char *dest);
+static int dsp_calc_ea(Uint32 ea_mode, char *dest);
+static void dsp_calc_cc(Uint32 cc_mode, char *dest);
 static void dsp_undefined(void);
 
 /* Instructions without parallel moves */
@@ -661,7 +666,7 @@ static char parallelmove_name[64];
 
 void dsp56k_disasm(void)
 {
-	uint32 value;
+	Uint32 value;
 
 	cur_inst = read_memory(dsp_core->pc);
 
@@ -690,9 +695,9 @@ void dsp56k_disasm_force_reg_changed(int num_dsp_reg)
 	registers_changed[num_dsp_reg]=1;
 }
 
-static uint32 read_memory(uint32 currPc)
+static Uint32 read_memory(Uint32 currPc)
 {
-	uint32 value;
+	Uint32 value;
 
 	if (currPc<0x200) {
 		value = dsp_core->ramint[DSP_SPACE_P][currPc];
@@ -707,7 +712,7 @@ static uint32 read_memory(uint32 currPc)
  *	Conditions code calculation
  **********************************/
 
-static void dsp_calc_cc(uint32 cc_mode, char *dest)
+static void dsp_calc_cc(Uint32 cc_mode, char *dest)
 {
 	strcpy(dest, cc_name[cc_mode & BITMASK(4)]);
 }
@@ -716,7 +721,7 @@ static void dsp_calc_cc(uint32 cc_mode, char *dest)
  *	Effective address calculation
  **********************************/
 
-static int dsp_calc_ea(uint32 ea_mode, char *dest)
+static int dsp_calc_ea(Uint32 ea_mode, char *dest)
 {
 	int value, retour, numreg;
 
@@ -776,7 +781,7 @@ static int dsp_calc_ea(uint32 ea_mode, char *dest)
 
 static void opcode8h_0(void)
 {
-	uint32 value;
+	Uint32 value;
 
 	if (cur_inst <= 0x00008c) {
 		switch(cur_inst) {
@@ -856,7 +861,7 @@ static void opcode8h_6(void)
 
 static void opcode8h_8(void)
 {
-	uint32 value;
+	Uint32 value;
 
 	value = (cur_inst >> 12) & BITMASK(4);
 	opcodes_0809[value]();
@@ -864,7 +869,7 @@ static void opcode8h_8(void)
 
 static void opcode8h_a(void)
 {
-	uint32 value;
+	Uint32 value;
 	
 	value = (cur_inst >> 11) & (BITMASK(2)<<3);
 	value |= (cur_inst >> 5) & BITMASK(3);
@@ -874,7 +879,7 @@ static void opcode8h_a(void)
 
 static void opcode8h_b(void)
 {
-	uint32 value;
+	Uint32 value;
 	
 	value = (cur_inst >> 11) & (BITMASK(2)<<3);
 	value |= (cur_inst >> 5) & BITMASK(3);
@@ -923,7 +928,7 @@ static void dsp_andi(void)
 static void dsp_bchg(void)
 {
 	char name[16], addr_name[16];
-	uint32 memspace, value, numbit;
+	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -971,7 +976,7 @@ static void dsp_bchg(void)
 static void dsp_bclr(void)
 {
 	char name[16], addr_name[16];
-	uint32 memspace, value, numbit;
+	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -1019,7 +1024,7 @@ static void dsp_bclr(void)
 static void dsp_bset(void)
 {
 	char name[16], addr_name[16];
-	uint32 memspace, value, numbit;
+	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -1067,7 +1072,7 @@ static void dsp_bset(void)
 static void dsp_btst(void)
 {
 	char name[16], addr_name[16];
-	uint32 memspace, value, numbit;
+	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -1114,7 +1119,7 @@ static void dsp_btst(void)
 
 static void dsp_div(void)
 {
-	uint32 srcreg=DSP_REG_NULL, destreg;
+	Uint32 srcreg=DSP_REG_NULL, destreg;
 	
 	switch((cur_inst>>4) & BITMASK(2)) {
 		case 0:
@@ -1138,7 +1143,7 @@ static void dsp_div(void)
 
 static void dsp_do(void)
 {
-	uint32 value;
+	Uint32 value;
 
 	value = (cur_inst>>12) & (BITMASK(2)<<2);
 	value |= (cur_inst>>6) & 1<<1;
@@ -1179,7 +1184,7 @@ static void dsp_do_2(void)
 static void dsp_do_4(void)
 {
 	char addr_name[16], name[16];
-	uint32 ea_mode;
+	Uint32 ea_mode;
 	
 	ea_mode = (cur_inst>>8) & BITMASK(6);
 	dsp_calc_ea(ea_mode, addr_name);
@@ -1219,7 +1224,7 @@ static void dsp_illegal(void)
 static void dsp_jcc(void)
 {
 	char cond_name[16], addr_name[16];
-	uint32 cc_code=0;
+	Uint32 cc_code=0;
 	
 	switch((cur_inst >> 16) & BITMASK(8)) {
 		case 0x0a:
@@ -1239,7 +1244,7 @@ static void dsp_jcc(void)
 static void dsp_jclr(void)
 {
 	char srcname[16], addr_name[16];
-	uint32 memspace, value, numbit;
+	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -1308,7 +1313,7 @@ static void dsp_jmp(void)
 static void dsp_jscc(void)
 {
 	char cond_name[16], addr_name[16];
-	uint32 cc_code=0;
+	Uint32 cc_code=0;
 	
 	switch((cur_inst >> 16) & BITMASK(8)) {
 		case 0x0b:
@@ -1328,7 +1333,7 @@ static void dsp_jscc(void)
 static void dsp_jsclr(void)
 {
 	char srcname[16], addr_name[16];
-	uint32 memspace, value, numbit;
+	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -1381,7 +1386,7 @@ static void dsp_jsclr(void)
 static void dsp_jset(void)
 {
 	char srcname[16], addr_name[16];
-	uint32 memspace, value, numbit;
+	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -1447,7 +1452,7 @@ static void dsp_jsr(void)
 static void dsp_jsset(void)
 {
 	char srcname[16], addr_name[16];
-	uint32 memspace, value, numbit;
+	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -1510,7 +1515,7 @@ static void dsp_lua(void)
 
 static void dsp_movec(void)
 {
-	uint32 value;
+	Uint32 value;
 	
 	value = (cur_inst>>13) & (1<<3);
 	value |= (cur_inst>>12) & (1<<2);
@@ -1522,7 +1527,7 @@ static void dsp_movec(void)
 
 static void dsp_movec_7(void)
 {
-	uint32 numreg1, numreg2;
+	Uint32 numreg1, numreg2;
 
 	/* S1,D2 */
 	/* S2,D1 */
@@ -1545,7 +1550,7 @@ static void dsp_movec_9(void)
 {
 	const char *spacename;
 	char srcname[16],dstname[16];
-	uint32 numreg, addr;
+	Uint32 numreg, addr;
 
 	/* x:aa,D1 */
 	/* S1,x:aa */
@@ -1576,7 +1581,7 @@ static void dsp_movec_9(void)
 
 static void dsp_movec_b(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	/* #xx,D1 */
 
@@ -1590,7 +1595,7 @@ static void dsp_movec_d(void)
 {
 	const char *spacename;
 	char srcname[16], dstname[16], addr_name[16];
-	uint32 numreg, ea_mode;
+	Uint32 numreg, ea_mode;
 	int retour;
 
 	/* x:ea,D1 */
@@ -1630,7 +1635,7 @@ static void dsp_movec_d(void)
 static void dsp_movem(void)
 {
 	char addr_name[16], srcname[16], dstname[16];
-	uint32 ea_mode, numreg;
+	Uint32 ea_mode, numreg;
 
 	if (cur_inst & (1<<14)) {
 		/* S,p:ea */
@@ -1662,7 +1667,7 @@ static void dsp_movem(void)
 
 static void dsp_movep(void)
 {
-	uint32 value;
+	Uint32 value;
 	
 	value = (cur_inst>>6) & BITMASK(2);
 
@@ -1672,7 +1677,7 @@ static void dsp_movep(void)
 static void dsp_movep_0(void)
 {
 	char srcname[16]="",dstname[16]="";
-	uint32 addr, memspace, numreg;
+	Uint32 addr, memspace, numreg;
 
 	/* S,x:pp */
 	/* x:pp,D */
@@ -1712,7 +1717,7 @@ static void dsp_movep_0(void)
 static void dsp_movep_1(void)
 {
 	char srcname[16]="",dstname[16]="",name[16]="";
-	uint32 addr, memspace; 
+	Uint32 addr, memspace; 
 
 	/* p:ea,x:pp */
 	/* x:pp,p:ea */
@@ -1751,7 +1756,7 @@ static void dsp_movep_1(void)
 static void dsp_movep_2(void)
 {
 	char srcname[16]="",dstname[16]="",name[16]="";
-	uint32 addr, memspace, easpace, retour; 
+	Uint32 addr, memspace, easpace, retour; 
 
 	/* x:ea,x:pp */
 	/* y:ea,x:pp */
@@ -1814,7 +1819,7 @@ static void dsp_nop(void)
 
 static void dsp_norm(void)
 {
-	uint32 srcreg, destreg;
+	Uint32 srcreg, destreg;
 
 	srcreg = DSP_REG_R0+((cur_inst>>8) & BITMASK(3));
 	destreg = DSP_REG_A+((cur_inst>>3) & 1);
@@ -1856,7 +1861,7 @@ static void dsp_ori(void)
 
 static void dsp_rep(void)
 {
-	uint32 value;
+	Uint32 value;
 
 	value = (cur_inst>>12) & (BITMASK(2)<<2);
 	value |= (cur_inst>>6) & (1<<1);
@@ -1941,7 +1946,7 @@ static void dsp_swi(void)
 static void dsp_tcc(void)
 {
 	char ccname[16];
-	uint32 src1reg, dst1reg, src2reg, dst2reg;
+	Uint32 src1reg, dst1reg, src2reg, dst2reg;
 
 	dsp_calc_cc((cur_inst>>12) & BITMASK(4), ccname);
 	src1reg = registers_tcc[(cur_inst>>3) & BITMASK(4)][0];
@@ -1982,7 +1987,7 @@ static void dsp_wait(void)
 
 static void dsp_pm(void)
 {
-	uint32 value;
+	Uint32 value;
 
 	value = (cur_inst >> 20) & BITMASK(4);
 
@@ -1992,7 +1997,7 @@ static void dsp_pm(void)
 static void dsp_pm_0(void)
 {
 	char space_name[16], addr_name[16];
-	uint32 memspace, numreg1, numreg2;
+	Uint32 memspace, numreg1, numreg2;
 /*
 	0000 100d 00mm mrrr S,x:ea	x0,D
 	0000 100d 10mm mrrr S,y:ea	y0,D
@@ -2033,7 +2038,7 @@ static void dsp_pm_1(void)
 */
 
 	char addr_name[16];
-	uint32 memspace, write_flag, retour, s1reg, s2reg, d1reg, d2reg;
+	Uint32 memspace, write_flag, retour, s1reg, s2reg, d1reg, d2reg;
 
 	memspace = (cur_inst>>14) & 1;
 	write_flag = (cur_inst>>15) & 1;
@@ -2133,7 +2138,7 @@ static void dsp_pm_1(void)
 static void dsp_pm_2(void)
 {
 	char addr_name[16];
-	uint32 numreg1, numreg2;
+	Uint32 numreg1, numreg2;
 /*
 	0010 0000 0000 0000 nop
 	0010 0000 010m mrrr R update
@@ -2167,7 +2172,7 @@ static void dsp_pm_2(void)
 static void dsp_pm_4(void)
 {
 	char addr_name[16];
-	uint32 value, retour, ea_mode, memspace;
+	Uint32 value, retour, ea_mode, memspace;
 /*
 	0100 l0ll w0aa aaaa l:aa,D
 						S,l:aa
@@ -2266,7 +2271,7 @@ static void dsp_pm_4(void)
 static void dsp_pm_8(void)
 {
 	char addr1_name[16], addr2_name[16];
-	uint32 ea_mode1, ea_mode2, numreg1, numreg2;
+	Uint32 ea_mode1, ea_mode2, numreg1, numreg2;
 /*
 	1wmm eeff WrrM MRRR x:ea,D1		y:ea,D2	
 						x:ea,D1		S2,y:ea
@@ -2350,7 +2355,7 @@ static void dsp_pm_8(void)
 
 static void dsp_abs(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 	
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -2365,7 +2370,7 @@ static void dsp_abs(void)
 static void dsp_adc(void)
 {
 	const char *srcname;
-	uint32 numreg;
+	Uint32 numreg;
 
 	if (cur_inst & (1<<4)) {
 		srcname="y";
@@ -2387,7 +2392,7 @@ static void dsp_adc(void)
 static void dsp_add(void)
 {
 	const char *srcname;
-	uint32 srcreg, dstreg;
+	Uint32 srcreg, dstreg;
 	
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	dstreg = (cur_inst>>3) & 1;
@@ -2431,7 +2436,7 @@ static void dsp_add(void)
 
 static void dsp_addl(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = (cur_inst>>3) & 1;
 
@@ -2446,7 +2451,7 @@ static void dsp_addl(void)
 
 static void dsp_addr(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = (cur_inst>>3) & 1;
 
@@ -2461,7 +2466,7 @@ static void dsp_addr(void)
 
 static void dsp_and(void)
 {
-	uint32 srcreg,dstreg;
+	Uint32 srcreg,dstreg;
 
 	switch((cur_inst>>4) & BITMASK(2)) {
 		case 1:
@@ -2491,7 +2496,7 @@ static void dsp_and(void)
 
 static void dsp_asl(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -2506,7 +2511,7 @@ static void dsp_asl(void)
 
 static void dsp_asr(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -2521,7 +2526,7 @@ static void dsp_asr(void)
 
 static void dsp_clr(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -2536,7 +2541,7 @@ static void dsp_clr(void)
 
 static void dsp_cmp(void)
 {
-	uint32 srcreg, dstreg;
+	Uint32 srcreg, dstreg;
 	
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	dstreg = (cur_inst>>3) & 1;
@@ -2569,7 +2574,7 @@ static void dsp_cmp(void)
 
 static void dsp_cmpm(void)
 {
-	uint32 srcreg, dstreg;
+	Uint32 srcreg, dstreg;
 	
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	dstreg = (cur_inst>>3) & 1;
@@ -2602,7 +2607,7 @@ static void dsp_cmpm(void)
 
 static void dsp_eor(void)
 {
-	uint32 srcreg, dstreg;
+	Uint32 srcreg, dstreg;
 
 	switch((cur_inst>>4) & BITMASK(2)) {
 		case 1:
@@ -2632,7 +2637,7 @@ static void dsp_eor(void)
 
 static void dsp_lsl(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -2647,7 +2652,7 @@ static void dsp_lsl(void)
 
 static void dsp_lsr(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -2663,7 +2668,7 @@ static void dsp_lsr(void)
 static void dsp_mac(void)
 {
 	const char *sign_name;
-	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
+	Uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
 		sign_name="-";
@@ -2721,7 +2726,7 @@ static void dsp_mac(void)
 static void dsp_macr(void)
 {
 	const char *sign_name;
-	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
+	Uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
 		sign_name="-";
@@ -2790,7 +2795,7 @@ static void dsp_move_nopm(void)
 static void dsp_mpy(void)
 {
 	const char *sign_name;
-	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
+	Uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
 		sign_name="-";
@@ -2848,7 +2853,7 @@ static void dsp_mpy(void)
 static void dsp_mpyr(void)
 {
 	const char *sign_name;
-	uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
+	Uint32 src1reg=DSP_REG_NULL, src2reg=DSP_REG_NULL, dstreg;
 
 	if (cur_inst & (1<<2)) {
 		sign_name="-";
@@ -2905,7 +2910,7 @@ static void dsp_mpyr(void)
 
 static void dsp_neg(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -2920,7 +2925,7 @@ static void dsp_neg(void)
 
 static void dsp_not(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -2935,7 +2940,7 @@ static void dsp_not(void)
 
 static void dsp_or(void)
 {
-	uint32 srcreg, dstreg;
+	Uint32 srcreg, dstreg;
 
 	switch((cur_inst>>4) & BITMASK(2)) {
 		case 1:
@@ -2965,7 +2970,7 @@ static void dsp_or(void)
 
 static void dsp_rnd(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -2980,7 +2985,7 @@ static void dsp_rnd(void)
 
 static void dsp_rol(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -2995,7 +3000,7 @@ static void dsp_rol(void)
 
 static void dsp_ror(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = DSP_REG_A+((cur_inst>>3) & 1);
 
@@ -3011,7 +3016,7 @@ static void dsp_ror(void)
 static void dsp_sbc(void)
 {
 	const char *srcname;
-	uint32 numreg;
+	Uint32 numreg;
 
 	if (cur_inst & (1<<4)) {
 		srcname="y";
@@ -3034,7 +3039,7 @@ static void dsp_sbc(void)
 static void dsp_sub(void)
 {
 	const char *srcname;
-	uint32 srcreg, dstreg;
+	Uint32 srcreg, dstreg;
 	
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	dstreg = (cur_inst>>3) & 1;
@@ -3078,7 +3083,7 @@ static void dsp_sub(void)
 
 static void dsp_subl(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = (cur_inst>>3) & 1;
 
@@ -3093,7 +3098,7 @@ static void dsp_subl(void)
 
 static void dsp_subr(void)
 {
-	uint32 numreg;
+	Uint32 numreg;
 
 	numreg = (cur_inst>>3) & 1;
 
@@ -3108,7 +3113,7 @@ static void dsp_subr(void)
 
 static void dsp_tfr(void)
 {
-	uint32 srcreg, dstreg;
+	Uint32 srcreg, dstreg;
 	
 	srcreg = (cur_inst>>4) & BITMASK(3);
 	dstreg = (cur_inst>>3) & 1;
