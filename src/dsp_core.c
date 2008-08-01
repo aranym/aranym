@@ -228,7 +228,7 @@ void dsp_core_set_state_sem(dsp_core_t *dsp_core, int new_state, int use_semapho
 	}
 
 #if DSP_DISASM_STATE
-	uint8 old_state = dsp_core->state;
+	int old_state = dsp_core->state;
 #endif
 	dsp_core->state = new_state;
 
