@@ -23,6 +23,8 @@
 #include "config.h"
 #endif
 
+#include <string.h>
+
 #include "math.h"
 #include "dsp_core.h"
 #include "dsp_cpu.h"
