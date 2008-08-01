@@ -57,6 +57,8 @@ void DSP::reset(void)
 uint8 DSP::handleRead(memptr addr)
 {
 	uint8 value;
+	static uint8 prev_value = 0;
+	static memptr prev_addr=0;
 #if DSP_EMULATION
 	value = dsp_core_read_host(&dsp_core, addr-getHWoffset());
 #else
@@ -64,7 +66,11 @@ uint8 DSP::handleRead(memptr addr)
 	value = 0xff;
 #endif
 
-	D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr, value, showPC()));
+	if ((value!=prev_value) || (addr!=prev_addr)) {
+		D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr, value, showPC()));
+		prev_value = value;
+		prev_addr = addr;
+	}
 	return value;
 }
 
