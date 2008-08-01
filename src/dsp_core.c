@@ -140,10 +140,7 @@ void dsp_core_shutdown(dsp_core_t *dsp_core)
 		/* Stop thread */
 		dsp_core_set_state(dsp_core, DSP_STOPTHREAD);
 
-		/* Wait for the thread to finish */
-		while (dsp_core->state != DSP_HALT) {
-			SDL_Delay(1);
-		}
+		SDL_WaitThread(dsp_core->thread, NULL);
 
 		dsp_core->thread = NULL;
 	}
