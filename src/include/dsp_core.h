@@ -109,8 +109,8 @@ typedef struct {
 	SDL_sem		*semaphore;	/* Semaphore used to pause/unpause thread */
 	SDL_mutex	*mutex;		/* Mutex for read/writes through host port */
 
-	/* DSP state */
-	int	state;
+	/* DSP executing instructions ? */
+	int running;
 
 	/* Registers */
 	Uint16	pc;

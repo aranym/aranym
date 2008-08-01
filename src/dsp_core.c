@@ -41,12 +41,16 @@
 #define DSP_DISASM_STATE 0		/* State changes */
 
 /* Execute DSP instructions till the DSP waits for a read/write */
-#define DSP_HOST_FORCEEXEC 0
+#define DSP_HOST_FORCEEXEC 1
 
 /* Init DSP emulation */
 void dsp_core_init(dsp_core_t *dsp_core)
 {
 	int i;
+
+#if DEBUG
+	fprintf(stderr, "Dsp: core init\n");
+#endif
 
 	memset(dsp_core->ram, 0,sizeof(dsp_core->ram));
 	memset(dsp_core->ramint, 0,sizeof(dsp_core->ramint));
@@ -117,36 +121,32 @@ void dsp_core_init(dsp_core_t *dsp_core)
 		}
 	}
 	
-#if DEBUG
-	fprintf(stderr, "Dsp: power-on done\n");
-#endif
-
 	dsp_core->thread = NULL;
 	dsp_core->semaphore = NULL;
 	dsp_core->mutex = NULL;
 
-	dsp_core->state = DSP_HALT;
+	dsp_core->running = 0;
 }
 
 /* Shutdown DSP emulation */
 void dsp_core_shutdown(dsp_core_t *dsp_core)
 {
 #if DEBUG
-	fprintf(stderr, "Dsp: shutdown\n");
+	fprintf(stderr, "Dsp: core shutdown\n");
 #endif
 
-	if (dsp_core->thread != NULL) {
+	dsp_core->running = 0;
 
-		/* Stop thread */
-		dsp_core_set_state(dsp_core, DSP_STOPTHREAD);
-
+	if (dsp_core->thread) {
+		if (SDL_SemValue(dsp_core->semaphore)==0) {
+			SDL_SemPost(dsp_core->semaphore);
+		}
 		SDL_WaitThread(dsp_core->thread, NULL);
-
 		dsp_core->thread = NULL;
 	}
 
 	/* Destroy the semaphore */
-	if (dsp_core->semaphore != NULL) {
+	if (dsp_core->semaphore) {
 		SDL_DestroySemaphore(dsp_core->semaphore);
 		dsp_core->semaphore = NULL;
 	}
@@ -162,6 +162,10 @@ void dsp_core_shutdown(dsp_core_t *dsp_core)
 void dsp_core_reset(dsp_core_t *dsp_core)
 {
 	int i;
+
+#if DEBUG
+	fprintf(stderr, "Dsp: core reset\n");
+#endif
 
 	/* Kill existing thread and semaphore */
 	dsp_core_shutdown(dsp_core);
@@ -212,70 +216,6 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 	}
 }
 
-/* Change state of DSP emulation thread */
-void dsp_core_set_state(dsp_core_t *dsp_core, int new_state)
-{
-	dsp_core_set_state_sem(dsp_core, new_state, 0);
-}
-
-void dsp_core_set_state_sem(dsp_core_t *dsp_core, int new_state, int use_semaphore)
-{
-	if (dsp_core->state == new_state) {
-		return;
-	}
-
-#if DSP_DISASM_STATE
-	int old_state = dsp_core->state;
-#endif
-	dsp_core->state = new_state;
-
-	switch(new_state) {
-		case DSP_BOOTING:
-#if DSP_DISASM_STATE
-			fprintf(stderr, "Dsp: state = DSP_BOOTING\n");
-#endif
-			SDL_SemWait(dsp_core->semaphore);
-			break;
-		case DSP_RUNNING:
-#if DSP_DISASM_STATE
-			if (old_state == DSP_BOOTING) {
-				fprintf(stderr, "Dsp: bootstrap done\n");
-			}
-			fprintf(stderr, "Dsp: state = DSP_RUNNING\n");
-#endif
-			SDL_SemPost(dsp_core->semaphore);
-			break;
-		case DSP_WAITHOSTWRITE:
-#if DSP_DISASM_STATE
-			fprintf(stderr, "Dsp: state = DSP_WAITHOSTWRITE\n");
-#endif
-			SDL_SemWait(dsp_core->semaphore);
-			break;
-		case DSP_WAITHOSTREAD:
-#if DSP_DISASM_STATE
-			fprintf(stderr, "Dsp: state = DSP_WAITHOSTREAD\n");
-#endif
-			SDL_SemWait(dsp_core->semaphore);
-			break;
-		case DSP_HALT:
-#if DSP_DISASM_STATE
-			fprintf(stderr, "Dsp: state = DSP_HALT\n");
-#endif
-			if (use_semaphore) {
-				SDL_SemWait(dsp_core->semaphore);
-			}
-			break;
-		case DSP_STOPTHREAD:
-#if DSP_DISASM_STATE
-			fprintf(stderr, "Dsp: state = DSP_STOPTHREAD\n");
-#endif
-			SDL_SemPost(dsp_core->semaphore);
-			break;
-		default:
-			break;
-	}
-}
-
 /* Force execution of DSP instructions, till cpu has read/written host port
 	Should not be needed at all, as it slows down host cpu emulation
 */
@@ -285,11 +225,12 @@ static void dsp_core_force_exec(dsp_core_t *dsp_core)
 {
 	Uint32 start = SDL_GetTicks();
 
-	SDL_UnlockMutex(dsp_core->mutex);
-	while ((dsp_core->state == DSP_RUNNING) && (SDL_GetTicks()-start<1000)) {
+	while (dsp_core->running						/* DSP thread running */
+		&& (SDL_SemValue(dsp_core->semaphore)!=0)	/* and executing instructions */
+		&& (SDL_GetTicks()-start<200))
+	{
 		SDL_Delay(1);
 	}
-	SDL_LockMutex(dsp_core->mutex);
 }
 #endif
 
@@ -414,40 +355,28 @@ static void dsp_core_hostport_cpuwrite(dsp_core_t *dsp_core)
 
 Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 {
-	Uint8 value = 0;
-
-	SDL_LockMutex(dsp_core->mutex);
+#if DSP_HOST_FORCEEXEC
 	switch(addr) {
-		case CPU_HOST_ICR:
-		case CPU_HOST_CVR:
-		case CPU_HOST_ISR:
-		case CPU_HOST_IVR:
-			value = dsp_core->hostport[addr];
-			break;
-		case CPU_HOST_RX0:
 		case CPU_HOST_RXH:
 		case CPU_HOST_RXM:
-#if DSP_HOST_FORCEEXEC
-			dsp_core_force_exec(dsp_core);
-#endif
-			value = dsp_core->hostport[addr];
-			break;
 		case CPU_HOST_RXL:
-#if DSP_HOST_FORCEEXEC
 			dsp_core_force_exec(dsp_core);
-#endif
-			value = dsp_core->hostport[addr];
-
-			if (dsp_core->state!=DSP_BOOTING) {
-				dsp_core_hostport_cpuread(dsp_core);
-			}
-
-			/* Wake up DSP if it was waiting our read */
-			if (dsp_core->state==DSP_WAITHOSTREAD) {
-				dsp_core_set_state(dsp_core, DSP_RUNNING);
-			}
-
 			break;
+	}
+#endif
+
+	SDL_LockMutex(dsp_core->mutex);
+	Uint8 value = dsp_core->hostport[addr];
+	if (addr == CPU_HOST_RXL) {
+		dsp_core_hostport_cpuread(dsp_core);
+
+		/* Wake up DSP if it was waiting our read */
+#if DSP_DISASM_STATE
+		fprintf(stderr, "Dsp: WAIT_HOSTREAD done\n");
+#endif
+		if (SDL_SemValue(dsp_core->semaphore)==0) {
+			SDL_SemPost(dsp_core->semaphore);
+		}
 	}
 	SDL_UnlockMutex(dsp_core->mutex);
 
@@ -456,6 +385,16 @@ Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 
 void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 {
+#if DSP_HOST_FORCEEXEC
+	switch(addr) {
+		case CPU_HOST_TXH:
+		case CPU_HOST_TXM:
+		case CPU_HOST_TXL:
+			dsp_core_force_exec(dsp_core);
+			break;
+	}
+#endif
+
 	SDL_LockMutex(dsp_core->mutex);
 	switch(addr) {
 		case CPU_HOST_ICR:
@@ -474,52 +413,45 @@ void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 			}
 			break;
 		case CPU_HOST_ISR:
-			/* Read only */
-			break;
-		case CPU_HOST_IVR:
-			dsp_core->hostport[CPU_HOST_IVR]=value;
-			break;
 		case CPU_HOST_TX0:
 			/* Read only */
 			break;
+		case CPU_HOST_IVR:
 		case CPU_HOST_TXH:
 		case CPU_HOST_TXM:
-#if DSP_HOST_FORCEEXEC
-			dsp_core_force_exec(dsp_core);
-#endif
 			dsp_core->hostport[addr]=value;
 			break;
 		case CPU_HOST_TXL:
-#if DSP_HOST_FORCEEXEC
-			dsp_core_force_exec(dsp_core);
-#endif
 			dsp_core->hostport[CPU_HOST_TXL]=value;
 
-			if (dsp_core->state!=DSP_BOOTING) {
-				dsp_core_hostport_cpuwrite(dsp_core);
-			}
-
-			switch(dsp_core->state) {
-				case DSP_BOOTING:
-					dsp_core->ramint[DSP_SPACE_P][dsp_core->bootstrap_pos] =
-						(dsp_core->hostport[CPU_HOST_TXH]<<16) |
-						(dsp_core->hostport[CPU_HOST_TXM]<<8) |
-						dsp_core->hostport[CPU_HOST_TXL];
+			if (!dsp_core->running) {
+				dsp_core->ramint[DSP_SPACE_P][dsp_core->bootstrap_pos] =
+					(dsp_core->hostport[CPU_HOST_TXH]<<16) |
+					(dsp_core->hostport[CPU_HOST_TXM]<<8) |
+					dsp_core->hostport[CPU_HOST_TXL];
 #if DEBUG
-					fprintf(stderr, "Dsp: bootstrap p:0x%04x = 0x%06x\n",
-						dsp_core->bootstrap_pos,
-						dsp_core->ramint[DSP_SPACE_P][dsp_core->bootstrap_pos]);
+				fprintf(stderr, "Dsp: bootstrap p:0x%04x = 0x%06x\n",
+					dsp_core->bootstrap_pos,
+					dsp_core->ramint[DSP_SPACE_P][dsp_core->bootstrap_pos]);
 #endif
-					if (++dsp_core->bootstrap_pos == 0x200) {
-						dsp_core_set_state(dsp_core, DSP_RUNNING);
-					}		
-					break;
-				case DSP_WAITHOSTWRITE:
-					/* Wake up DSP if it was waiting our write */
-					dsp_core_set_state(dsp_core, DSP_RUNNING);
-					break;
-			}
+				if (++dsp_core->bootstrap_pos == 0x200) {
+#if DSP_DISASM_STATE
+					fprintf(stderr, "Dsp: WAIT_BOOTSTRAP done\n");
+#endif
+					dsp_core->running = 1;
+					SDL_SemPost(dsp_core->semaphore);
+				}		
+			} else {
+				dsp_core_hostport_cpuwrite(dsp_core);
 
+				/* Wake up DSP if it was waiting our write */
+#if DSP_DISASM_STATE
+				fprintf(stderr, "Dsp: WAIT_HOSTWRITE done\n");
+#endif
+				if (SDL_SemValue(dsp_core->semaphore)==0) {
+					SDL_SemPost(dsp_core->semaphore);
+				}
+			}
 			break;
 	}
 	SDL_UnlockMutex(dsp_core->mutex);

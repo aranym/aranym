@@ -32,12 +32,13 @@
 #define DEBUG 0
 
 /* More disasm infos, if wanted */
-#define DSP_DISASM_INST 0		/* Instructions */
+#define DSP_DISASM_INST 0	/* Instructions */
 #define DSP_DISASM_REG 0	/* Registers changes */
-#define DSP_DISASM_MEM 0		/* Memory changes */
-#define DSP_DISASM_INTER 0		/* Interrupts */
+#define DSP_DISASM_MEM 0	/* Memory changes */
+#define DSP_DISASM_INTER 0	/* Interrupts */
+#define DSP_DISASM_STATE 0	/* State change */
 
-#define DSP_COUNT_IPS 1	/* Count instruction per seconds */
+#define DSP_COUNT_IPS 0		/* Count instruction per seconds */
 
 #if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
 # define write_memory(x,y,z) write_memory_disasm(x,y,z)
@@ -92,10 +93,12 @@ static void dsp_ccr_unnormalized(Uint32 *reg0, Uint32 *reg1);
 static void dsp_ccr_negative(Uint32 *reg0);
 static void dsp_ccr_zero(Uint32 *reg0, Uint32 *reg1, Uint32 *reg2);
 
-static Uint32 read_memory_disasm(int space, Uint16 address);
 static Uint32 read_memory(int space, Uint16 address);
 static void write_memory_raw(int space, Uint32 address, Uint32 value);
+#if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
+static Uint32 read_memory_disasm(int space, Uint16 address);
 static void write_memory_disasm(int space, Uint32 address, Uint32 value);
+#endif
 
 static void dsp_stack_push(Uint32 curpc, Uint32 cursr);
 static void dsp_stack_pop(Uint32 *curpc, Uint32 *cursr);
@@ -619,11 +622,15 @@ int dsp56k_do_execute(void *th_dsp_core)
 #ifdef DSP_DISASM
 	dsp56k_disasm_init(dsp_core);
 #endif
-	dsp_core_set_state(dsp_core, DSP_BOOTING);
+
+#if DSP_DISASM_STATE
+	fprintf(stderr, "Dsp: WAIT_BOOTSTRAP\n");
+#endif
+	SDL_SemWait(dsp_core->semaphore);
 
 	start_time = SDL_GetTicks();
 	num_inst = 0;
-	while(dsp_core->state != DSP_STOPTHREAD) {
+	while(dsp_core->running) {
 		dsp_execute_instruction();
 #if DSP_COUNT_IPS
 		++num_inst;
@@ -639,7 +646,9 @@ int dsp56k_do_execute(void *th_dsp_core)
 #endif
 	}
 
-	dsp_core_set_state(dsp_core, DSP_HALT);
+#if DSP_DISASM_STATE
+	fprintf(stderr, "Dsp: SHUTDOWN\n");
+#endif
 	return 0;
 }
 
@@ -679,7 +688,7 @@ static void dsp_execute_instruction(void)
 	}
 
 	/* Don't update the PC if we are halted */
-	if (dsp_core->state == DSP_RUNNING) {
+	/*if (dsp_core->state == DSP_RUNNING)*/ {
 		dsp_postexecute_update_pc();
 	}
 
@@ -916,6 +925,7 @@ static void dsp_ccr_zero(Uint32 *reg0, Uint32 *reg1, Uint32 *reg2)
  *	Read/Write memory functions
  **********************************/
 
+#if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
 static Uint32 read_memory_disasm(int space, Uint16 address)
 {
 	address &= BITMASK(16);
@@ -954,6 +964,7 @@ static Uint32 read_memory_disasm(int space, Uint16 address)
 	/* External RAM, mask address to available ram size */
 	return dsp_core->ram[space][address & (DSP_RAMSIZE-1)] & BITMASK(24);
 }
+#endif
 
 static Uint32 read_memory(int space, Uint16 address)
 {
@@ -1089,6 +1100,7 @@ static void write_memory_raw(int space, Uint32 address, Uint32 value)
 	dsp_core->ram[space][address & (DSP_RAMSIZE-1)] = value;
 }
 
+#if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
 static void write_memory_disasm(int space, Uint32 address, Uint32 value)
 {
 	address &= BITMASK(16);
@@ -1110,6 +1122,7 @@ static void write_memory_disasm(int space, Uint32 address, Uint32 value)
 			break;
 	}
 }
+#endif
 
 /**********************************
  *	Stack push/pop
@@ -1119,8 +1132,10 @@ static void dsp_stack_push(Uint32 curpc, Uint32 cursr)
 {
 	if (dsp_core->registers[DSP_REG_SP]==0x0f) {
 		/* Stack full, raise interrupt */
-		fprintf(stderr, "Dsp: Interrupt: Stack error (overflow)\n");
-		dsp_core_set_state_sem(dsp_core, DSP_HALT, 1);
+#if DSP_DISASM_STATE
+		fprintf(stderr, "Dsp: Stack error (overflow)\n");
+#endif
+		SDL_SemWait(dsp_core->semaphore);
 		return;
 	}
 
@@ -1136,8 +1151,10 @@ static void dsp_stack_pop(Uint32 *newpc, Uint32 *newsr)
 {
 	if (dsp_core->registers[DSP_REG_SP]==0x00) {
 		/* Stack empty, raise interrupt */
-		fprintf(stderr, "Dsp: Interrupt: Stack error (underflow)\n");
-		dsp_core_set_state_sem(dsp_core, DSP_HALT, 1);
+#if DSP_DISASM_STATE
+		fprintf(stderr, "Dsp: Stack error (underflow)\n");
+#endif
+		SDL_SemWait(dsp_core->semaphore);
 		return;
 	}
 
@@ -1955,12 +1972,18 @@ static void dsp_jclr(void)
 			if ((memspace==DSP_SPACE_X) && (addr==0xffc0+DSP_HOST_HSR)) {
 				/* Wait for host to write */
 				if (numbit==DSP_HOST_HSR_HRDF) {
-					dsp_core_set_state(dsp_core, DSP_WAITHOSTWRITE);
+#if DSP_DISASM_STATE
+					fprintf(stderr, "Dsp: WAIT_HOSTWRITE\n");
+#endif
+					SDL_SemWait(dsp_core->semaphore);
 				}
 
 				/* Wait for host to read */
 				if (numbit==DSP_HOST_HSR_HTDE) {
-					dsp_core_set_state(dsp_core, DSP_WAITHOSTREAD);
+#if DSP_DISASM_STATE
+					fprintf(stderr, "Dsp: WAIT_HOSTREAD\n");
+#endif
+					SDL_SemWait(dsp_core->semaphore);
 				}
 			}
 		}
@@ -1988,7 +2011,10 @@ static void dsp_jmp(void)
 
 	/* Infinite loop ? */
 	if (newpc == dsp_core->pc) {
-		dsp_core_set_state_sem(dsp_core, DSP_HALT, 1);
+#if DSP_DISASM_STATE
+		fprintf(stderr, "Dsp: JMP instruction, infinite loop\n");
+#endif
+		SDL_SemWait(dsp_core->semaphore);
 		return;
 	}
 
@@ -2606,7 +2632,10 @@ static void dsp_rts(void)
 
 static void dsp_stop(void)
 {
-	dsp_core_set_state_sem(dsp_core, DSP_HALT, 1);
+#if DSP_DISASM_STATE
+	fprintf(stderr, "Dsp: STOP instruction\n");
+#endif
+	SDL_SemWait(dsp_core->semaphore);
 }
 
 static void dsp_swi(void)
@@ -2660,7 +2689,10 @@ static void dsp_tcc(void)
 
 static void dsp_wait(void)
 {
-	dsp_core_set_state_sem(dsp_core, DSP_HALT, 1);
+#if DSP_DISASM_STATE
+	fprintf(stderr, "Dsp: WAIT instruction\n");
+#endif
+	SDL_SemWait(dsp_core->semaphore);
 }
 
 /**********************************
