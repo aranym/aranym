@@ -102,7 +102,7 @@ typedef struct {
 	SDL_mutex	*mutex;		/* Mutex for read/writes through host port */
 
 	/* DSP executing instructions ? */
-	int running;
+	volatile int running;
 
 	/* Registers */
 	Uint16	pc;
@@ -121,10 +121,10 @@ typedef struct {
 	Uint32	ramint[3][512];
 
 	/* peripheral space, [x|y]:0xffc0-0xffff */
-	Uint32	periph[2][64];
+	volatile Uint32	periph[2][64];
 
 	/* host port, CPU side */
-	Uint8 hostport[8];
+	volatile Uint8 hostport[8];
 
 	/* Misc */
 	Uint32 loop_rep;		/* executing rep ? */
