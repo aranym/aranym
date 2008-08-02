@@ -374,9 +374,7 @@ Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 #if DSP_DISASM_STATE
 		fprintf(stderr, "Dsp: WAIT_HOSTREAD done\n");
 #endif
-		if (SDL_SemValue(dsp_core->semaphore)==0) {
-			SDL_SemPost(dsp_core->semaphore);
-		}
+		SDL_SemPost(dsp_core->semaphore);
 	}
 	SDL_UnlockMutex(dsp_core->mutex);
 
@@ -448,9 +446,7 @@ void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 #if DSP_DISASM_STATE
 				fprintf(stderr, "Dsp: WAIT_HOSTWRITE done\n");
 #endif
-				if (SDL_SemValue(dsp_core->semaphore)==0) {
-					SDL_SemPost(dsp_core->semaphore);
-				}
+				SDL_SemPost(dsp_core->semaphore);
 			}
 			break;
 	}
