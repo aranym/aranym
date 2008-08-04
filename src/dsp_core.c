@@ -355,7 +355,7 @@ static void dsp_core_hostport_cpuwrite(dsp_core_t *dsp_core)
 
 Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 {
-#if DSP_HOST_FORCEEXEC
+#if 0 /* DSP_HOST_FORCEEXEC */
 	switch(addr) {
 		case CPU_HOST_RXH:
 		case CPU_HOST_RXM:
