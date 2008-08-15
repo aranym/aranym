@@ -284,6 +284,7 @@ extern char emutos_path[512];
 extern bool startupGUI;
 extern bool boot_emutos;
 extern bool boot_lilo;
+extern bool halt_on_reboot;
 
 void usage(int);
 extern bool check_cfg();

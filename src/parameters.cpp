@@ -129,6 +129,7 @@ bool startupGUI = false;
 
 bool boot_emutos = false;
 bool boot_lilo = false;
+bool halt_on_reboot = false;
 bool ide_swap = false;
 uint32 FastRAMSize;
 
@@ -945,6 +946,7 @@ Options:\n\
 #endif
 #ifdef ENABLE_LILO
   printf("  -l, --lilo                 boot a linux kernel\n");
+  printf("  -H, --halt                 linux kernel halts on reboot\n");
 #endif
 #ifndef FixedSizeFastRAM
   printf("  -F, --fastram SIZE         FastRAM size (in MB)\n");
@@ -1070,6 +1072,7 @@ int process_cmdline(int argc, char **argv)
 							 "e"  /* boot emutos */
 #ifdef ENABLE_LILO
 							 "l"  /* boot lilo */
+							 "H"  /* halt on reboot */
 #endif
 #ifdef DEBUGGER
 							 "D"  /* debugger */
@@ -1126,6 +1129,10 @@ int process_cmdline(int argc, char **argv)
 #ifdef ENABLE_LILO
 			case 'l':
 				boot_lilo = true;
+				break;
+
+			case 'H':
+				halt_on_reboot = true;
 				break;
 #endif
 

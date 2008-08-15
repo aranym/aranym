@@ -1,7 +1,7 @@
 /*
 	ROM / OS loader, Linux/m68k
 
-	ARAnyM (C) 2005-2006 Patrice Mandin
+	ARAnyM (C) 2005-2008 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -214,16 +214,46 @@ LinuxBootOs::LinuxBootOs(void) throw (AranymException)
 	ROMBaseHost[0x0002] = 0x4e;		/* jmp <abs.addr> */
 	ROMBaseHost[0x0003] = 0xf9;
 
-	/* set up a minimal OS for successful Linux/m68k reboot */
-	ROMBaseHost[0x0030] = 0x46;		/* move.w #$2700,sr */
-	ROMBaseHost[0x0031] = 0xfc;
-	ROMBaseHost[0x0032] = 0x27;
-	ROMBaseHost[0x0033] = 0x00;
-	ROMBaseHost[0x0034] = 0x4e;		/* reset */
-	ROMBaseHost[0x0035] = 0x70;
-	ROMBaseHost[0x0036] = M68K_EMUL_RESET >> 8;
-	ROMBaseHost[0x0037] = M68K_EMUL_RESET & 0xff;
-
+	if (!halt_on_reboot) {
+		/* set up a minimal OS for successful Linux/m68k reboot */
+		ROMBaseHost[0x0030] = 0x46;		/* move.w #$2700,sr */
+		ROMBaseHost[0x0031] = 0xfc;
+		ROMBaseHost[0x0032] = 0x27;
+		ROMBaseHost[0x0033] = 0x00;
+		ROMBaseHost[0x0034] = 0x4e;		/* reset */
+		ROMBaseHost[0x0035] = 0x70;
+		ROMBaseHost[0x0036] = M68K_EMUL_RESET >> 8;
+		ROMBaseHost[0x0037] = M68K_EMUL_RESET & 0xff;
+	}
+	else {
+		/* code that shuts ARAnyM down when Linux/m68k tries to reboot */
+		ROMBaseHost[0x0030] = 0x48;		/* pea.l NF_SHUTDOWN(pc) */
+		ROMBaseHost[0x0031] = 0x7a;
+		ROMBaseHost[0x0032] = 0x00;
+		ROMBaseHost[0x0033] = 0x0c;
+		ROMBaseHost[0x0034] = 0x59;		/* subq.l #4,sp */
+		ROMBaseHost[0x0035] = 0x8f;
+		ROMBaseHost[0x0036] = 0x73;		/* NF_ID */
+		ROMBaseHost[0x0037] = 0x00;
+		ROMBaseHost[0x0038] = 0x2f;		/* move.l d0,-(sp) */
+		ROMBaseHost[0x0039] = 0x00;
+		ROMBaseHost[0x003a] = 0x59;		/* subq.l #4,sp */
+		ROMBaseHost[0x003b] = 0x8f;
+		ROMBaseHost[0x003c] = 0x73;		/* NF_CALL */
+		ROMBaseHost[0x003d] = 0x01;
+		ROMBaseHost[0x003e] = 'N';		/* "NF_SHUTDOWN" */
+		ROMBaseHost[0x003f] = 'F';
+		ROMBaseHost[0x0040] = '_';
+		ROMBaseHost[0x0041] = 'S';
+		ROMBaseHost[0x0042] = 'H';
+		ROMBaseHost[0x0043] = 'U';
+		ROMBaseHost[0x0044] = 'T';
+		ROMBaseHost[0x0045] = 'D';
+		ROMBaseHost[0x0046] = 'O';
+		ROMBaseHost[0x0047] = 'W';
+		ROMBaseHost[0x0048] = 'N';
+		ROMBaseHost[0x0049] = 0;
+	}
 	init();
 }
 
@@ -379,7 +409,7 @@ int LinuxBootOs::checkKernel(void)
 	unsigned long min_addr=0xffffffff, max_addr=0;
 	unsigned long kernel_size, mem_ptr;
 	int i;
-	char *kname, *kernel_name="vmlinux";
+	const char *kname, *kernel_name="vmlinux";
 
 	kexec_elf = (Elf32_Ehdr *) kernel;
 	if (memcmp( &kexec_elf->e_ident[EI_MAG0], ELFMAG, SELFMAG ) == 0) {
