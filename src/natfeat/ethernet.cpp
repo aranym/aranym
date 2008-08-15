@@ -202,7 +202,7 @@ int ETHERNETDriver::get_params(GET_PAR which)
 	int ethX = getParameter(0);
 	memptr name_ptr = getParameter(1);
 	uint32 name_maxlen = getParameter(2);
-	char *text = NULL;
+	const char *text = NULL;
 
 	D(bug("Ethernet: getPAR(%d) for eth%d to buffer at %p of size %d",
 			which, ethX, name_ptr, name_maxlen));

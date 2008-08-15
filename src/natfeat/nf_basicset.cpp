@@ -39,7 +39,7 @@ int32 NF_Name::dispatch(uint32 fncode)
 	if (! ValidAddr(name_ptr, true, name_maxlen))
 		BUS_ERROR(name_ptr);
 
-	char *text;
+	const char *text;
 	switch(fncode) {
 		case 0:/* get_pure_name(char *name, uint32 max_len) */
 			text = NAME_STRING;
