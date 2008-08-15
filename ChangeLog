@@ -1,10 +1,19 @@
+2008/08/15 - Petr
+- bootos_linux.cpp: ARAnyM can shut down instead of rebooting when linux-m68k
+  kernel reboots. Added for Stephen who says installing Debian-m68k is easier
+  this way. Enable the shutdown/halt by "--halt" command line option.
+
+- various files: GCC 4.2.3's warning about empty 'if' body when there is
+  just D(bug()) fixed by adding curly brackets. Also "text" is const char*.
+
+
 2008/07/29 - Patrice
 - dsp56k: Implementation of DSP emulation in plain C.
 
 
 2008/07/28 - Patrice
-- dsp56k: Preliminary work to make a plain C only implementation of DSP emulation,
-  to ease merging with Hatari.
+- dsp56k: Preliminary work to make a plain C only implementation of DSP
+  emulation, to ease merging with Hatari.
 
 
 2008/07/26 - Patrice
