@@ -151,7 +151,7 @@ int TunTapEthernetHandler::recv(uint8 *buf, int len) {
 
 int TunTapEthernetHandler::send(const uint8 *buf, int len) {
 	int res = write(fd, buf, len);
-	if (res < 0) D(bug("TunTap(%d): WARNING: Couldn't transmit packet", ethX));
+	if (res < 0) { D(bug("TunTap(%d): WARNING: Couldn't transmit packet", ethX)); }
 	return res;
 }
 

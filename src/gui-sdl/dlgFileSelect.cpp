@@ -152,8 +152,9 @@ struct listentry *create_list(char *path)
 		*prev = newentry;
 	}
 
-	if (closedir(dd) != 0)
+	if (closedir(dd) != 0) {
 		D(bug("Error on closedir."));
+	}
 
 	return list;
 }
