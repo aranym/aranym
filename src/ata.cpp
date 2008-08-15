@@ -1520,15 +1520,17 @@ if ( quantumsMax == 0)
       // b4: DRV
       // b3..0 HD3..HD0
       {
-      if ( (value & 0xa0) != 0xa0 ) // 1x1xxxxx
+      if ( (value & 0xa0) != 0xa0 ) { // 1x1xxxxx
         D(bug("IO write f00019 (%02x): not 1x1xxxxxb", (unsigned) value));
+      }
 #if DEBUG
       Bit32u drvsel = 
 #endif
       BX_HD_THIS channels[channel].drive_select = (value >> 4) & 0x01;
       WRITE_HEAD_NO(channel,value & 0xf);
-      if (BX_SELECTED_CONTROLLER(channel).lba_mode == 0 && ((value >> 6) & 1) == 1)
+      if (BX_SELECTED_CONTROLLER(channel).lba_mode == 0 && ((value >> 6) & 1) == 1) {
         D(bug("enabling LBA mode"));
+      }
       WRITE_LBA_MODE(channel,(value >> 6) & 1);
       if (!BX_SELECTED_IS_PRESENT(channel)) {
         D(panicbug("device set to %d which does not exist",drvsel));
@@ -1553,8 +1555,9 @@ if ( quantumsMax == 0)
       switch (value) {
 
         case 0x10: // CALIBRATE DRIVE
-	  if (!BX_SELECTED_IS_HD(channel))
+	  if (!BX_SELECTED_IS_HD(channel)) {
 		D(bug("calibrate drive issued to non-disk"));
+	  }
 
           // FIXME Maybe we should signal an error in case of cdrom
           // if (!BX_SELECTED_IS_PRESENT(channel) || !BX_SELECTED_IS_HD(channel))
