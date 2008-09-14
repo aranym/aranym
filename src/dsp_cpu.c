@@ -1870,9 +1870,6 @@ static void dsp_enddo(void)
 	Uint32 newpc;
 
 	dsp_stack_pop(&newpc, &dsp_core->registers[DSP_REG_SR]);
-	dsp_core->pc = dsp_core->registers[DSP_REG_LA];
-	cur_inst_len = 0;
-
 	dsp_stack_pop(&dsp_core->registers[DSP_REG_LA], &dsp_core->registers[DSP_REG_LC]);
 }
 
@@ -2585,7 +2582,7 @@ static void dsp_rep_5(void)
 	/* y:ea */
 
 	dsp_calc_ea((cur_inst>>8) & BITMASK(6),&value);
-	dsp_core->registers[DSP_REG_LC]= value;
+	dsp_core->registers[DSP_REG_LC]= read_memory((cur_inst>>6) & 1, value);
 }
 
 static void dsp_rep_d(void)
@@ -2834,8 +2831,6 @@ static void dsp_pm_0(void)
 
 	tmp_parmove_start[1] = 0;
 	tmp_parmove_len[1] = 3;
-
-	tmp_parmove_type[0]=0;
 }
 
 static void dsp_pm_1(void)
@@ -3155,7 +3150,6 @@ static void dsp_pm_4x(int immediat, Uint32 l_addr)
 			tmp_parmove_start[1]=0;
 			tmp_parmove_len[1]=3;
 		}
-		tmp_parmove_len[0]=1;
 
 		tmp_parmove_type[1]=0;
 	} else {

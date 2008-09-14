@@ -1,6 +1,11 @@
 2008/09/14 - Patrice
 - sdlgui: Make a loop, so we can call processDialog of a caller, following an
   alert.
+- dsp56k fixes, from Laurent Sallafranque:
+  -REP [x|y]:ea was not reading right value for LC register.
+  -ENDDO must continue with executing following instruction, not jumping to end
+  of loop.
+  -Parallel moves: Some fixes, for _0, _4x.
 
 
 2008/09/14 - Andreas
