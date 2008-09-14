@@ -1,3 +1,7 @@
+2008/09/14 - Andreas
+- acinclude.m4: fix name of cache variables to match *_cv_*.
+
+
 2008/08/15 - Petr
 - bootos_linux.cpp: ARAnyM can shut down instead of rebooting when linux-m68k
   kernel reboots. Added for Stephen who says installing Debian-m68k is easier
