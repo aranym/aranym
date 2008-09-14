@@ -1259,6 +1259,7 @@ SDL_Rect *SDLGui_GetNextBackgroundRect(void)
 int SDLGui_DoEvent(const SDL_Event &event)
 {
 	int retval = Dialog::GUI_CONTINUE;
+	int num_dialogs=1;	/* Number of processDialog to call */
 
 	if (gui_dlg) {
 		gui_dlg->idle();
@@ -1273,28 +1274,31 @@ int SDLGui_DoEvent(const SDL_Event &event)
 				break;
 		}
 
-		retval = gui_dlg->processDialog();
+		while (num_dialogs-->0) {
+			retval = gui_dlg->processDialog();
 
-		if (retval != Dialog::GUI_CONTINUE) {
-			Dialog *prev_dlg = NULL;
-			dlgStack.pop();
-			if (!dlgStack.empty()) {
-				prev_dlg = dlgStack.top();		
+			if (retval != Dialog::GUI_CONTINUE) {
+				Dialog *prev_dlg = NULL;
+				dlgStack.pop();
+				if (!dlgStack.empty()) {
+					prev_dlg = dlgStack.top();		
 
-				/* Process result of called dialog */
-				prev_dlg->processResult();
+					/* Process result of called dialog */
+					prev_dlg->processResult();
 
-				/* Continue displaying GUI with previous dialog */
-				retval = Dialog::GUI_CONTINUE;
-			}
+					/* Continue displaying GUI with previous dialog */
+					retval = Dialog::GUI_CONTINUE;
+				}
 
-			/* Close current dialog */
-			delete gui_dlg;
+				/* Close current dialog */
+				delete gui_dlg;
 
-			/* Set dialog to previous one */
-			gui_dlg = prev_dlg;
-			if (gui_dlg) {
-				gui_dlg->init();
+				/* Set dialog to previous one */
+				gui_dlg = prev_dlg;
+				if (gui_dlg) {
+					gui_dlg->init();
+					++num_dialogs; /* Need to process result in the caller dialog */
+				}
 			}
 		}
 	}

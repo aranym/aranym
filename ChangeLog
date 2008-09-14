@@ -1,3 +1,8 @@
+2008/09/14 - Patrice
+- sdlgui: Make a loop, so we can call processDialog of a caller, following an
+  alert.
+
+
 2008/09/14 - Andreas
 - acinclude.m4: fix name of cache variables to match *_cv_*.
 
