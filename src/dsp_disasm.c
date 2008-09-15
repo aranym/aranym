@@ -2199,7 +2199,7 @@ static void dsp_pm_4(void)
 		if (cur_inst & (1<<14)) {
 			retour = dsp_calc_ea(ea_mode, addr_name);	
 		} else {
-			sprintf(addr_name,"0x%04x", value);
+			sprintf(addr_name,"0x%04x", ea_mode);
 			retour = 0;
 		}
 
