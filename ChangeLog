@@ -1,6 +1,7 @@
 2008/09/15 - Patrice
 - dsp56k fixes:
   -LUA instruction must not change source register.
+  -Parallel moves: disasm for dsp_pm_4, fixes in dsp_pm_1.
 
 
 2008/09/14 - Patrice

@@ -2922,18 +2922,18 @@ static void dsp_pm_1(void)
 	/* D2 */
 	if (memspace) {
 		/* Y: */
-		numreg = DSP_REG_Y0 + ((cur_inst>>18) & 1);
+		numreg = DSP_REG_X0 + ((cur_inst>>18) & 1);
 	} else {
 		/* X: */
-		numreg = DSP_REG_X0 + ((cur_inst>>16) & 1);
+		numreg = DSP_REG_Y0 + ((cur_inst>>16) & 1);
 	}	
 	tmp_parmove_src[1][1] &= BITMASK(registers_mask[numreg]);
 	tmp_parmove_dest[1][1].host_pointer=&dsp_core->registers[numreg];
 
-	tmp_parmove_start[0]=1;
-	tmp_parmove_len[0]=1;
+	tmp_parmove_start[1]=1;
+	tmp_parmove_len[1]=1;
 
-	tmp_parmove_type[0]=0;
+	tmp_parmove_type[1]=0;
 }
 
 static void dsp_pm_2(void)
