@@ -2192,16 +2192,21 @@ static void dsp_jsset(void)
 
 static void dsp_lua(void)
 {
-	Uint32 value, srcreg, dstreg;
-	
-	dsp_calc_ea((cur_inst>>8) & BITMASK(5), &value);
+	Uint32 value, srcreg, dstreg, srcsave, srcnew;
+
 	srcreg = (cur_inst>>8) & BITMASK(3);
+
+	srcsave = dsp_core->registers[DSP_REG_R0+srcreg];
+	dsp_calc_ea((cur_inst>>8) & BITMASK(5), &value);
+	srcnew = dsp_core->registers[DSP_REG_R0+srcreg];
+	dsp_core->registers[DSP_REG_R0+srcreg] = srcsave;
+
 	dstreg = cur_inst & BITMASK(3);
 	
 	if (cur_inst & (1<<3)) {
 		dsp_core->registers[DSP_REG_N0+dstreg] = dsp_core->registers[DSP_REG_N0+srcreg];
 	} else {
-		dsp_core->registers[DSP_REG_R0+dstreg] = dsp_core->registers[DSP_REG_R0+srcreg];
+		dsp_core->registers[DSP_REG_R0+dstreg] = srcnew;
 	}
 }
 

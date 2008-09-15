@@ -1,3 +1,8 @@
+2008/09/15 - Patrice
+- dsp56k fixes:
+  -LUA instruction must not change source register.
+
+
 2008/09/14 - Patrice
 - sdlgui: Make a loop, so we can call processDialog of a caller, following an
   alert.
