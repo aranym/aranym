@@ -1,3 +1,8 @@
+2008/09/16 - Patrice
+- dsp56k fixes:
+  -Parallel moves: B,A does not transfer full 56 bits.
+
+
 2008/09/15 - Patrice
 - dsp56k fixes:
   -LUA instruction must not change source register.
