@@ -2204,7 +2204,7 @@ static void dsp_lua(void)
 	dstreg = cur_inst & BITMASK(3);
 	
 	if (cur_inst & (1<<3)) {
-		dsp_core->registers[DSP_REG_N0+dstreg] = dsp_core->registers[DSP_REG_N0+srcreg];
+		dsp_core->registers[DSP_REG_N0+dstreg] = srcnew;
 	} else {
 		dsp_core->registers[DSP_REG_R0+dstreg] = srcnew;
 	}
