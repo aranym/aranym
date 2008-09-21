@@ -1743,7 +1743,7 @@ static void dsp_btst(void)
 
 static void dsp_div(void)
 {
-	Uint32 srcreg, destreg, source, dest[3], newcarry, cursign;
+	Uint32 srcreg, destreg, source, dest[3];
 	Uint16 newsr;
 
 	srcreg = DSP_REG_NULL;
@@ -1759,41 +1759,35 @@ static void dsp_div(void)
 	dest[0] = dsp_core->registers[DSP_REG_A2+(destreg & 1)];
 	dest[1] = dsp_core->registers[DSP_REG_A1+(destreg & 1)];
 	dest[2] = dsp_core->registers[DSP_REG_A0+(destreg & 1)];
-	newcarry = 0;
-
-	newsr = dsp_asl56(dest);
-	dest[2] |= (dsp_core->registers[DSP_REG_SR]>>DSP_SR_C) & 1;
 
 	if (((dest[0]>>7) & 1) ^ ((source>>23) & 1)) {
 		/* D += S */
+		newsr = dsp_asl56(dest);
 		dest[1] += source;
 		if ((dest[1]>>24) & BITMASK(8)) {
-			cursign = (dest[0]>>7) & 1;
-
 			++dest[0];
+			dest[0] &= BITMASK(8);
 			dest[1] &= BITMASK(24);
-
-			newcarry =(cursign != ((dest[0]>>7) & 1)) && (cursign==1);
 		}
 	} else {
 		/* D -= S */
+		newsr = dsp_asl56(dest);
 		dest[1] -= source;
 		if ((dest[1]>>24) & BITMASK(8)) {
-			cursign = (dest[0]>>7) & 1;
-
 			--dest[0];
+			dest[0] &= BITMASK(8);
 			dest[1] &= BITMASK(24);
-
-			newcarry =(cursign != ((dest[0]>>7) & 1)) && (cursign==0);
 		}
 	}
+
+	dest[2] |= (dsp_core->registers[DSP_REG_SR]>>DSP_SR_C) & 1;
 
 	dsp_core->registers[DSP_REG_A2+(destreg & 1)] = dest[0];
 	dsp_core->registers[DSP_REG_A1+(destreg & 1)] = dest[1];
 	dsp_core->registers[DSP_REG_A0+(destreg & 1)] = dest[2];
 
 	dsp_core->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_V));
-	dsp_core->registers[DSP_REG_SR] |= (newcarry<<DSP_SR_C);
+	dsp_core->registers[DSP_REG_SR] |= (1-((dest[0]>>7) & 1))<<DSP_SR_C;
 	dsp_core->registers[DSP_REG_SR] |= newsr & (1<<DSP_SR_L);
 	dsp_core->registers[DSP_REG_SR] |= newsr & (1<<DSP_SR_V);
 }
