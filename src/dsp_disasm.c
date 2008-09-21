@@ -702,7 +702,7 @@ static Uint32 read_memory(Uint32 currPc)
 	if (currPc<0x200) {
 		value = dsp_core->ramint[DSP_SPACE_P][currPc];
 	} else {
-		value = dsp_core->ram[DSP_SPACE_P][currPc];
+		value = dsp_core->ram[DSP_SPACE_P][currPc & (DSP_RAMSIZE-1)];
 	}
 
 	return value & BITMASK(24);

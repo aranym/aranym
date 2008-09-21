@@ -1,6 +1,7 @@
 2008/09/21 - Patrice
-- dsp56k fixes, from Laurent Sallafranque:
-  -DIV instruction calculation.
+- dsp56k fixes:
+  -DIV instruction calculation (from Laurent Sallafranque).
+  -disasm: mask out address bits to 32K, to read current instruction.
 
 
 2008/09/16 - Patrice
