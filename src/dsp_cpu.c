@@ -4185,8 +4185,8 @@ static void dsp_mac(void)
 	dsp_ccr_negative(&dest[0]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	dsp_core->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
-	dsp_core->registers[DSP_REG_SR] |= newsr;
+	dsp_core->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_V);
+	dsp_core->registers[DSP_REG_SR] |= newsr & 0xfe;
 }
 
 static void dsp_macr(void)
@@ -4227,8 +4227,8 @@ static void dsp_macr(void)
 	dsp_ccr_negative(&dest[0]);
 	dsp_ccr_zero(&dest[0], &dest[1], &dest[2]);
 
-	dsp_core->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_V)|(1<<DSP_SR_C));
-	dsp_core->registers[DSP_REG_SR] |= newsr;
+	dsp_core->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_V);
+	dsp_core->registers[DSP_REG_SR] |= newsr & 0xfe;
 }
 
 static void dsp_move(void)
