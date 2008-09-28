@@ -1,3 +1,7 @@
+2008/09/28 - Andreas
+- uae_cpu/table68k: Make EMULOP privileged.
+
+
 2008/09/27 - Patrice
 - dsp56k fixes:
   -MAC/MACR should not change Carry bit (from Laurent Sallafranque).
