@@ -3466,17 +3466,8 @@ static Uint16 dsp_add56(Uint32 *source, Uint32 *dest)
 	/* overflow if we go below -256.0 or above +256.0 */
 	overflow = (((dest[0] & 0xffffff00)!=0) && ((dest[0] & 0xffffff00)!=0xffffff00));
 
-	if (overflow) {
-		carry = 1;
-	} else {
-		if (carry) {
-			/* Carry set if we go from negative to positive value */
-			carry = ( ((dest[0]>>7) & 1)==0);
-		} else {
-			/* Carry set if we go from positive to negative value */
-			carry = ( ((dest[0]>>7) & 1)==1);
-		}
-	}
+	/* set carry if msb changed, clear otherwise */
+	carry ^= (dest[0]>>7) & 1;
 
 	dest[2] &= BITMASK(24);
 	dest[1] &= BITMASK(24);
@@ -3521,17 +3512,8 @@ static Uint16 dsp_sub56(Uint32 *source, Uint32 *dest)
 	/* overflow if we go below -256.0 or above +256.0 */
 	overflow = (((dest[0] & 0xffffff00)!=0) && ((dest[0] & 0xffffff00)!=0xffffff00));
 
-	if (overflow) {
-		carry = 1;
-	} else {
-		if (carry) {
-			/* Carry set if we go from negative to positive value */
-			carry = ( ((dest[0]>>7) & 1)==0);
-		} else {
-			/* Carry set if we go from positive to negative value */
-			carry = ( ((dest[0]>>7) & 1)==1);
-		}
-	}
+	/* set carry if msb changed, clear otherwise */
+	carry ^= (dest[0]>>7) & 1;
 
 	dest[2] &= BITMASK(24);
 	dest[1] &= BITMASK(24);
