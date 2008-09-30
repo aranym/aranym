@@ -29,11 +29,11 @@
 #include "dsp_disasm.h"
 #endif
 
-#define DEBUG 0
+#define DEBUG 1
 
 /* More disasm infos, if wanted */
-#define DSP_DISASM_INST 0	/* Instructions */
-#define DSP_DISASM_REG 0	/* Registers changes */
+#define DSP_DISASM_INST 1	/* Instructions */
+#define DSP_DISASM_REG 1	/* Registers changes */
 #define DSP_DISASM_MEM 0	/* Memory changes */
 #define DSP_DISASM_INTER 0	/* Interrupts */
 #define DSP_DISASM_STATE 0	/* State change */
@@ -3437,15 +3437,13 @@ static Uint16 dsp_add56(Uint32 *source, Uint32 *dest)
 	Uint32 src;
 
 	/* Add source to dest: D = D+S */
-	dest[2] &= BITMASK(24);
+	/*dest[2] &= BITMASK(24);
 	dest[1] &= BITMASK(24);
-	dest[0] &= BITMASK(8);
+	dest[0] &= BITMASK(8);*/
 
-	carry = (dest[0]>>7) & 1;
-
-	if (dest[0] & (1<<7)) {
+	/*if (dest[0] & (1<<7)) {
 		dest[0] |= 0xffffff00;
-	}
+	}*/
 
 	dest[2] += source[2] & BITMASK(24);
 
@@ -3455,9 +3453,9 @@ static Uint16 dsp_add56(Uint32 *source, Uint32 *dest)
 	}
 
 	src = source[0] & BITMASK(8);
-	if (src & (1<<7)) {
+	/*if (src & (1<<7)) {
 		src |= 0xffffff00;
-	}
+	}*/
 	dest[0] += src;
 	if ((dest[1]>>24) & BITMASK(8)) {
 		dest[0]++;
@@ -3466,8 +3464,8 @@ static Uint16 dsp_add56(Uint32 *source, Uint32 *dest)
 	/* overflow if we go below -256.0 or above +256.0 */
 	overflow = (((dest[0] & 0xffffff00)!=0) && ((dest[0] & 0xffffff00)!=0xffffff00));
 
-	/* set carry if msb changed, clear otherwise */
-	carry ^= (dest[0]>>7) & 1;
+	/* set carry from the virtual 56th bit */
+	carry = (dest[0]>>8) & 1;
 
 	dest[2] &= BITMASK(24);
 	dest[1] &= BITMASK(24);
@@ -3483,15 +3481,13 @@ static Uint16 dsp_sub56(Uint32 *source, Uint32 *dest)
 
 	/* Substract source from dest: D = D-S */
 
-	dest[2] &= BITMASK(24);
+	/*dest[2] &= BITMASK(24);
 	dest[1] &= BITMASK(24);
-	dest[0] &= BITMASK(8);
+	dest[0] &= BITMASK(8);*/
 
-	carry = (dest[0]>>7) & 1;
-
-	if (dest[0] & (1<<7)) {
+	/*if (dest[0] & (1<<7)) {
 		dest[0] |= 0xffffff00;
-	}
+	}*/
 
 	dest[2] -= source[2] & BITMASK(24);
 
@@ -3501,9 +3497,9 @@ static Uint16 dsp_sub56(Uint32 *source, Uint32 *dest)
 	}
 
 	src = source[0] & BITMASK(8);
-	if (src & (1<<7)) {
+	/*if (src & (1<<7)) {
 		src |= 0xffffff00;
-	}
+	}*/
 	dest[0] -= src;
 	if ((dest[1]>>24) & BITMASK(8)) {
 		dest[0]--;
@@ -3512,8 +3508,10 @@ static Uint16 dsp_sub56(Uint32 *source, Uint32 *dest)
 	/* overflow if we go below -256.0 or above +256.0 */
 	overflow = (((dest[0] & 0xffffff00)!=0) && ((dest[0] & 0xffffff00)!=0xffffff00));
 
-	/* set carry if msb changed, clear otherwise */
-	carry ^= (dest[0]>>7) & 1;
+	/* set carry from the virtual 56th bit */
+	carry = (dest[0]>>8) & 1;
+
+	fprintf(stderr,"sub56: 0x%08x:%08x:%08x\n", dest[0],dest[1],dest[2]);	
 
 	dest[2] &= BITMASK(24);
 	dest[1] &= BITMASK(24);

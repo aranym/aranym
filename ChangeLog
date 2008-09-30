@@ -1,5 +1,7 @@
 2008/09/30 - Patrice
-- dsp56k: disasm: Mark all instructions that may change SR.
+- dsp56k:
+  disasm: Mark all instructions that may change SR.
+  core: Try again to fix carry bit computation.
 
 
 2008/09/28 - Patrice
