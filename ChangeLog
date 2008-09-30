@@ -1,4 +1,8 @@
-2008/09/27 - Patrice
+2008/09/30 - Patrice
+- dsp56k: disasm: Mark all instructions that may change SR.
+
+
+2008/09/28 - Patrice
 - dsp56k fixes:
   SUB/ADD/CMP: Simply set carry bit if MSB changed, clear otherwise.
 
