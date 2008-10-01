@@ -29,11 +29,11 @@
 #include "dsp_disasm.h"
 #endif
 
-#define DEBUG 1
+#define DEBUG 0
 
 /* More disasm infos, if wanted */
-#define DSP_DISASM_INST 1	/* Instructions */
-#define DSP_DISASM_REG 1	/* Registers changes */
+#define DSP_DISASM_INST 0	/* Instructions */
+#define DSP_DISASM_REG 0	/* Registers changes */
 #define DSP_DISASM_MEM 0	/* Memory changes */
 #define DSP_DISASM_INTER 0	/* Interrupts */
 #define DSP_DISASM_STATE 0	/* State change */
