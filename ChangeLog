@@ -1,3 +1,7 @@
+2008/10/06 - Patrice
+- dsp56k: Recode sub/add on 56bits in a simpler way.
+
+
 2008/09/30 - Patrice
 - dsp56k:
   disasm: Mark all instructions that may change SR.

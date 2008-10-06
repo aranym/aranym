@@ -3434,32 +3434,11 @@ static Uint16 dsp_asr56(Uint32 *dest)
 static Uint16 dsp_add56(Uint32 *source, Uint32 *dest)
 {
 	Uint16 overflow, carry;
-	Uint32 src;
 
 	/* Add source to dest: D = D+S */
-	/*dest[2] &= BITMASK(24);
-	dest[1] &= BITMASK(24);
-	dest[0] &= BITMASK(8);*/
-
-	/*if (dest[0] & (1<<7)) {
-		dest[0] |= 0xffffff00;
-	}*/
-
-	dest[2] += source[2] & BITMASK(24);
-
-	dest[1] += source[1] & BITMASK(24);
-	if ((dest[2]>>24) & BITMASK(8)) {
-		dest[1]++;
-	}
-
-	src = source[0] & BITMASK(8);
-	/*if (src & (1<<7)) {
-		src |= 0xffffff00;
-	}*/
-	dest[0] += src;
-	if ((dest[1]>>24) & BITMASK(8)) {
-		dest[0]++;
-	}
+	dest[2] += source[2];
+	dest[1] += source[1]+((dest[2]>>24) & 1);
+	dest[0] += source[0]+((dest[1]>>24) & 1);
 
 	/* overflow if we go below -256.0 or above +256.0 */
 	overflow = (((dest[0] & 0xffffff00)!=0) && ((dest[0] & 0xffffff00)!=0xffffff00));
@@ -3477,41 +3456,17 @@ static Uint16 dsp_add56(Uint32 *source, Uint32 *dest)
 static Uint16 dsp_sub56(Uint32 *source, Uint32 *dest)
 {
 	Uint16 overflow, carry;
-	Uint32 src;
 
 	/* Substract source from dest: D = D-S */
-
-	/*dest[2] &= BITMASK(24);
-	dest[1] &= BITMASK(24);
-	dest[0] &= BITMASK(8);*/
-
-	/*if (dest[0] & (1<<7)) {
-		dest[0] |= 0xffffff00;
-	}*/
-
-	dest[2] -= source[2] & BITMASK(24);
-
-	dest[1] -= source[1] & BITMASK(24);
-	if ((dest[2]>>24) & BITMASK(8)) {
-		dest[1]--;
-	}
-
-	src = source[0] & BITMASK(8);
-	/*if (src & (1<<7)) {
-		src |= 0xffffff00;
-	}*/
-	dest[0] -= src;
-	if ((dest[1]>>24) & BITMASK(8)) {
-		dest[0]--;
-	}
+	dest[2] -= source[2];
+	dest[1] -= source[1]+((dest[2]>>24) & 1);
+	dest[0] -= source[0]+((dest[1]>>24) & 1);
 
 	/* overflow if we go below -256.0 or above +256.0 */
 	overflow = (((dest[0] & 0xffffff00)!=0) && ((dest[0] & 0xffffff00)!=0xffffff00));
 
 	/* set carry from the virtual 56th bit */
 	carry = (dest[0]>>8) & 1;
-
-	fprintf(stderr,"sub56: 0x%08x:%08x:%08x\n", dest[0],dest[1],dest[2]);	
 
 	dest[2] &= BITMASK(24);
 	dest[1] &= BITMASK(24);
