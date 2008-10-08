@@ -1580,7 +1580,7 @@ static void dsp_bchg(void)
 
 static void dsp_bclr(void)
 {
-	Uint32 memspace, addr, value, numreg, newcarry, numbit;
+	Uint32 memspace, addr, value, numreg, newcarry, numbit, srcreg;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -1617,7 +1617,7 @@ static void dsp_bclr(void)
 			break;
 		case 3:
 			/* bclr #n,R */
-			numreg = value;
+			srcreg = numreg = value;
 			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
 				numreg = DSP_REG_A1+(numreg & 1);
 			}
@@ -1625,8 +1625,8 @@ static void dsp_bclr(void)
 			newcarry = (value>>numbit) & 1;
 			value &= 0xffffffff-(1<<numbit);
 			dsp_core->registers[numreg] = value;
-			if (((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) && (numbit==23)) {
-				dsp_core->registers[DSP_REG_A2+(numreg & 1)]=0x00;
+			if (((srcreg==DSP_REG_A) || (srcreg==DSP_REG_B)) && (numbit==23)) {
+				dsp_core->registers[DSP_REG_A2+(srcreg & 1)]=0x00;
 			}
 			break;
 	}
@@ -1638,7 +1638,7 @@ static void dsp_bclr(void)
 
 static void dsp_bset(void)
 {
-	Uint32 memspace, addr, value, numreg, newcarry, numbit;
+	Uint32 memspace, addr, value, numreg, newcarry, numbit, srcreg;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -1675,7 +1675,7 @@ static void dsp_bset(void)
 			break;
 		case 3:
 			/* bset #n,R */
-			numreg = value;
+			srcreg = numreg = value;
 			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
 				numreg = DSP_REG_A1+(numreg & 1);
 			}
@@ -1683,8 +1683,8 @@ static void dsp_bset(void)
 			newcarry = (value>>numbit) & 1;
 			value |= (1<<numbit);
 			dsp_core->registers[numreg] = value;
-			if (((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) && (numbit==23)) {
-				dsp_core->registers[DSP_REG_A2+(numreg & 1)]=0xff;
+			if (((srcreg==DSP_REG_A) || (srcreg==DSP_REG_B)) && (numbit==23)) {
+				dsp_core->registers[DSP_REG_A2+(srcreg & 1)]=0xff;
 			}
 			break;
 	}
