@@ -128,7 +128,6 @@ typedef struct {
 
 	/* Misc */
 	Uint32 loop_rep;		/* executing rep ? */
-	Uint32 last_loop_inst;	/* executing the last instruction in DO ? */
 
 	/* For bootstrap routine */
 	Uint16	bootstrap_pos;

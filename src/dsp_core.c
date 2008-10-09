@@ -54,7 +54,7 @@ void dsp_core_init(dsp_core_t *dsp_core)
 
 	memset(dsp_core->ram, 0,sizeof(dsp_core->ram));
 	memset(dsp_core->ramint, 0,sizeof(dsp_core->ramint));
-	memset(dsp_core->hostport, 0,sizeof(dsp_core->hostport));
+	memset((Uint8 *) dsp_core->hostport, 0,sizeof(dsp_core->hostport));
 
 	/* Initialize Y:rom[0x0100-0x01ff] with a sin table */
 	for (i=0;i<256;i++) {
@@ -198,7 +198,6 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 
 	/* Misc */
 	dsp_core->loop_rep = 0;
-	dsp_core->last_loop_inst = 0;
 
 #if DEBUG
 	fprintf(stderr, "Dsp: reset done\n");

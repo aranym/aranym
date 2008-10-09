@@ -746,9 +746,7 @@ static void dsp_postexecute_update_pc(void)
 	if (dsp_core->registers[DSP_REG_SR] & (1<<DSP_SR_LF)) {
 
 		/* Did we execute the last instruction in loop ? */
-		if (dsp_core->last_loop_inst) {		
-			dsp_core->last_loop_inst = 0;
-
+		if (dsp_core->pc == dsp_core->registers[DSP_REG_LA]+1) {		
 			--dsp_core->registers[DSP_REG_LC];
 			dsp_core->registers[DSP_REG_LC] &= BITMASK(16);
 
@@ -765,11 +763,6 @@ static void dsp_postexecute_update_pc(void)
 #ifdef DSP_DISASM
 			dsp56k_disasm_force_reg_changed(DSP_REG_LC);
 #endif
-		}
-
-		if (dsp_core->pc == dsp_core->registers[DSP_REG_LA]) {
-			/* We are executing the last loop instruction */
-			dsp_core->last_loop_inst = 1;
 		}
 	}
 }
