@@ -236,10 +236,10 @@ typedef struct {
 
 // Joysticks
 typedef struct {
-	uint32	ikbd0;
-	uint32	ikbd1;
-	uint32	joypada;
-	uint32	joypadb;	
+	int32	ikbd0;
+	int32	ikbd1;
+	int32	joypada;
+	int32	joypadb;	
 } bx_joysticks_options_t;
 
 #define DISKS	8
