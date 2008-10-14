@@ -279,3 +279,12 @@ Channels = 2
 Bits = 16
 #  Size of buffer in samples
 Samples = 1024
+
+
+[JOYSTICKS]
+# Joysticks settings
+#  <Atari joystick name> = <SDL joystick number>
+Ikbd0 = -1
+Ikbd1 = 0
+JoypadA = -1
+JoypadB = -1

@@ -919,6 +919,28 @@ void presave_audio() {
 }
 
 /*************************************************************************/
+struct Config_Tag joysticks_conf[]={
+	{ "Ikbd0", Int_Tag, &bx_options.joysticks.ikbd0, 0, 0},
+	{ "Ikbd1", Int_Tag, &bx_options.joysticks.ikbd1, 0, 0},
+	{ "JoypadA", Int_Tag, &bx_options.joysticks.joypada, 0, 0},
+	{ "JoypadB", Int_Tag, &bx_options.joysticks.joypadb, 0, 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+void preset_joysticks() {
+	bx_options.joysticks.ikbd0 = -1;	/* This one is wired to mouse */
+	bx_options.joysticks.ikbd1 = 0;
+	bx_options.joysticks.joypada = -1;
+	bx_options.joysticks.joypadb = -1;
+}
+
+void postload_joysticks() {
+}
+
+void presave_joysticks() {
+}
+
+/*************************************************************************/
 void usage (int status) {
   printf ("Usage: %s [OPTIONS]\n", program_name);
   printf ("\
@@ -979,6 +1001,7 @@ void preset_cfg() {
   preset_natfeat();
   preset_nfvdi();
   preset_audio();
+  preset_joysticks();
 }
 
 void postload_cfg() {
@@ -1003,6 +1026,7 @@ void postload_cfg() {
   postload_natfeat();
   postload_nfvdi();
   postload_audio();
+  postload_joysticks();
 }
 
 void presave_cfg() {
@@ -1027,6 +1051,7 @@ void presave_cfg() {
   presave_natfeat();
   presave_nfvdi();
   presave_audio();
+  presave_joysticks();
 }
 
 void early_cmdline_check(int argc, char **argv) {
@@ -1323,6 +1348,7 @@ static bool decode_ini_file(const char *rcfile)
 	cfgopts.process_config(natfeat_conf, "[NATFEATS]", verbose);
 	cfgopts.process_config(nfvdi_conf, "[NFVDI]", verbose);
 	cfgopts.process_config(audio_conf, "[AUDIO]", verbose);
+	cfgopts.process_config(joysticks_conf, "[JOYSTICKS]", verbose);
 
 	return true;
 }
@@ -1393,6 +1419,7 @@ bool saveSettings(const char *fs)
 	cfgopts.update_config(natfeat_conf, "[NATFEATS]");
 	cfgopts.update_config(nfvdi_conf, "[NFVDI]");
 	cfgopts.update_config(audio_conf, "[AUDIO]");
+	cfgopts.update_config(joysticks_conf, "[JOYSTICKS]");
 
 	return true;
 }

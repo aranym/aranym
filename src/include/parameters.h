@@ -234,6 +234,14 @@ typedef struct {
 	uint32 samples;
 } bx_audio_options_t;
 
+// Joysticks
+typedef struct {
+	uint32	ikbd0;
+	uint32	ikbd1;
+	uint32	joypada;
+	uint32	joypadb;	
+} bx_joysticks_options_t;
+
 #define DISKS	8
 
 // Options 
@@ -261,6 +269,7 @@ typedef struct {
   bx_natfeat_options_t natfeats;
   bx_nfvdi_options_t	nfvdi;
   bx_audio_options_t	audio;
+  bx_joysticks_options_t	joysticks;
   char			tos_path[512];
   char			emutos_path[512];
   char			bootstrap_path[512];
