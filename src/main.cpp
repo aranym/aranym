@@ -473,14 +473,6 @@ bool InitAll(void)
 		}
 	}
 
-	// Check if at least one joystick present, open it
-	if (SDL_NumJoysticks()>0) {
-		sdl_joystick=SDL_JoystickOpen(0);
-		if (!sdl_joystick) {
-			panicbug("Could not open joystick #0");
-		}
-	}
-
 	host = new Host();
 
 	// For InterruptFlag controling
@@ -561,13 +553,6 @@ void ExitAll(void)
 
 	/* Pause audio before killing hw then host */
 	SDL_PauseAudio(SDL_TRUE);
-
- 	/* Close opened joystick */
- 	if (SDL_NumJoysticks()>0) {
- 		if (SDL_JoystickOpened(0)) {
- 			SDL_JoystickClose(sdl_joystick);
- 		}
- 	}
 
 	InputExit();
 

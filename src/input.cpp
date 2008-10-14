@@ -43,6 +43,31 @@
 
 #include <SDL.h>
 
+/* Joysticks */
+
+enum {
+	ARANYM_JOY_IKBD0=0,
+	ARANYM_JOY_IKBD1,
+	ARANYM_JOY_JOYPADA,
+	ARANYM_JOY_JOYPADB
+};
+
+#define OPEN_JOYSTICK(host_number, array_number) \
+	if (host_number>=0) {	\
+		sdl_joysticks[array_number] = \
+			SDL_JoystickOpen(host_number);	\
+		if (!sdl_joysticks[array_number]) {	\
+			fprintf(stderr, "Could not open joystick %d\n",	\
+				host_number);	\
+		}	\
+	}
+
+SDL_Joystick *sdl_joysticks[4]={
+	NULL, NULL, NULL, NULL
+};
+
+
+
 /*
  * Four different types of keyboard translation:
  *
@@ -99,6 +124,12 @@ void InputInit()
 	}
 	// capslockState (yes, 'false' is correct)
 	capslockState = false;
+
+	/* Open joysticks */
+	OPEN_JOYSTICK(bx_options.joysticks.ikbd0, ARANYM_JOY_IKBD0);
+	OPEN_JOYSTICK(bx_options.joysticks.ikbd1, ARANYM_JOY_IKBD1);
+	OPEN_JOYSTICK(bx_options.joysticks.joypada, ARANYM_JOY_JOYPADA);
+	OPEN_JOYSTICK(bx_options.joysticks.joypadb, ARANYM_JOY_JOYPADB);
 }
 
 void InputReset()
@@ -112,6 +143,14 @@ void InputExit()
 {
 	grabMouse(false);	// release mouse
 	hideMouse(false);	// show it
+
+	/* Close joysticks */
+	int i;
+	for (i=0; i<4; i++) {
+		if (sdl_joysticks[i]) {
+			SDL_JoystickClose(sdl_joysticks[i]);
+		}
+	}
 }
 
 bool grabMouse(bool grab)
@@ -851,20 +890,36 @@ static void process_active_event(const SDL_Event &event)
 
 /*--- Joystick event ---*/
 
-SDL_Joystick *sdl_joystick;
-
 static void process_joystick_event(const SDL_Event &event)
 {
 	switch(event.type) {
 		case SDL_JOYAXISMOTION:
-			getIKBD()->SendJoystickAxis(1, event.jaxis.axis, event.jaxis.value);
+			if (event.jaxis.which==bx_options.joysticks.ikbd0) {
+				getIKBD()->SendJoystickAxis(0, event.jaxis.axis, event.jaxis.value);
+			} else if (event.jaxis.which==bx_options.joysticks.ikbd1) {
+				getIKBD()->SendJoystickAxis(1, event.jaxis.axis, event.jaxis.value);
+			} else {
+				/* TODO: joypads */
+			}
 			break;		
 		case SDL_JOYHATMOTION:
-			getIKBD()->SendJoystickHat(1, event.jhat.value);
+			if (event.jaxis.which==bx_options.joysticks.ikbd0) {
+				getIKBD()->SendJoystickHat(0, event.jhat.value);
+			} else if (event.jaxis.which==bx_options.joysticks.ikbd1) {
+				getIKBD()->SendJoystickHat(1, event.jhat.value);
+			} else {
+				/* TODO: joypads */
+			}
 			break;		
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYBUTTONUP:
-			getIKBD()->SendJoystickButton(1, event.jbutton.state==SDL_PRESSED);
+			if (event.jaxis.which==bx_options.joysticks.ikbd0) {
+				getIKBD()->SendJoystickButton(0, event.jbutton.state==SDL_PRESSED);
+			} else if (event.jaxis.which==bx_options.joysticks.ikbd1) {
+				getIKBD()->SendJoystickButton(1, event.jbutton.state==SDL_PRESSED);
+			} else {
+				/* TODO: joypads */
+			}
 			break;		
 	}
 }
