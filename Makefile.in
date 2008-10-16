@@ -106,6 +106,7 @@ SRCS = main.cpp \
 	identify.cpp \
 	ikbd.cpp \
 	input.cpp \
+	joypads.cpp \
 	logo.cpp \
 	md5.cpp \
 	mfp.cpp \

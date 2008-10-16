@@ -1,3 +1,7 @@
+2008/10/16 - Patrice
+- Started joypads emulation.
+
+
 2008/10/14 - Patrice
 - Add section in configuration files to map host joysticks to Atari joysticks.
 - Use this section to open correct joysticks now, at least for IKBD.

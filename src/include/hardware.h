@@ -37,6 +37,7 @@
 #include "ide.h"
 #include "audio_dma.h"
 #include "audio_crossbar.h"
+#include "joypads.h"
 
 extern Parallel *parallel;
 
@@ -57,6 +58,7 @@ ACSIFDC *getFDC(void);
 IDE *getIDE(void);
 AUDIODMA *getAUDIODMA(void);
 CROSSBAR *getCROSSBAR(void);
+JOYPADS *getJOYPADS(void);
 
 extern uae_u32 HWget_l(uaecptr addr);
 extern uae_u16 HWget_w(uaecptr addr);

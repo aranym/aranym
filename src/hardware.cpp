@@ -37,6 +37,7 @@
 #include "midi_sequencer.h"
 #include "videl.h"
 #include "videl_zoom.h"
+#include "joypads.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -57,9 +58,10 @@ YAMAHA *yamaha;
 ARADATA *aradata;
 AUDIODMA *audiodma;
 CROSSBAR *crossbar;
+JOYPADS *joypads;
 
 enum {iMFP = 0, iMMU, iIKBD, iMIDI, iFDC, iRTC, iIDE, iDSP, iBLITTER, iVIDEL,
-	  iYAMAHA, iARADATA, iAUDIODMA, iCROSSBAR, iSCC, iCARTRIDGE, iPADDLE,
+	  iYAMAHA, iARADATA, iAUDIODMA, iCROSSBAR, iSCC, iCARTRIDGE, iJOYPADS,
 	  /* the iITEMS must be the last one in the enum */
 	  iITEMS};
 
@@ -87,9 +89,9 @@ void HWInit()
 	arhw[iARADATA] = aradata = new ARADATA(0xf90000, 18);
 	arhw[iAUDIODMA] = audiodma = new AUDIODMA(0xff8900, 0x22);
 	arhw[iCROSSBAR] = crossbar = new CROSSBAR(0xff8930, 0x14);
+	arhw[iJOYPADS] = joypads = new JOYPADS(0xff9200, 0x24);
 
 	arhw[iSCC] = new BASE_IO(0xff8c80, 0x16);
-	arhw[iPADDLE] = new BASE_IO(0xff9200, 0x24);
 	arhw[iCARTRIDGE] = new BASE_IO(0xfa0000, 0x20000);
 }
 //	{"DMA/SCSI", 0xff8700, 0x16, &fake_io},
@@ -135,6 +137,7 @@ ACSIFDC *getFDC()	{ return fdc; }
 IDE *getIDE()		{ return ide; }
 AUDIODMA *getAUDIODMA()	{ return audiodma; }
 CROSSBAR *getCROSSBAR()	{ return crossbar; }
+JOYPADS *getJOYPADS()	{ return joypads; }
 
 uae_u32 HWget_l (uaecptr addr) {
 	D(bug("HWget_l %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));
