@@ -179,14 +179,70 @@ void JOYPADS::handleWrite(uaecptr addr, uae_u8 value)
 
 void JOYPADS::sendJoystickAxis(int numjoy, int numaxis, int value)
 {
+	switch(numaxis) {
+		case 0:
+			host_state[numjoy] &= ~((1<<JP_LEFT)|(1<<JP_RIGHT));
+			if (value<-JOYSTICK_THRESHOLD) {
+				host_state[numjoy] |= 1<<JP_LEFT;
+			}
+			if (value>JOYSTICK_THRESHOLD) {
+				host_state[numjoy] |= 1<<JP_RIGHT;
+			}
+			break;
+		case 1:
+			host_state[numjoy] &= ~((1<<JP_UP)|(1<<JP_DOWN));
+			if (value<-JOYSTICK_THRESHOLD) {
+				host_state[numjoy] |= 1<<JP_UP;
+			}
+			if (value>JOYSTICK_THRESHOLD) {
+				host_state[numjoy] |= 1<<JP_DOWN;
+			}
+			break;
+	}
 }
 
 void JOYPADS::sendJoystickHat(int numjoy, int value)
 {
+	host_state[numjoy] &= ~((1<<JP_UP)|(1<<JP_DOWN)|(1<<JP_LEFT)|(1<<JP_RIGHT));
+
+	if (value & SDL_HAT_LEFT) host_state[numjoy] |= 1<<JP_LEFT;
+	if (value & SDL_HAT_RIGHT) host_state[numjoy] |= 1<<JP_RIGHT;
+	if (value & SDL_HAT_UP) host_state[numjoy] |= 1<<JP_UP;
+	if (value & SDL_HAT_DOWN) host_state[numjoy] |= 1<<JP_DOWN;
 }
 
 void JOYPADS::sendJoystickButton(int numjoy, int which, int pressed)
 {
+	int numbit = JP_UNDEF0;
+
+	/* TODO: configurable mapping for host->atari joypad buttons, in config file */
+
+	/* Get bit to clear/set */
+	switch(which) {
+		case 0:		numbit = JP_FIRE1;	break;
+		case 1:		numbit = JP_FIRE0;	break;
+		case 2:		numbit = JP_FIRE2;	break;
+		case 3:		numbit = JP_PAUSE;	break;
+		case 4:		numbit = JP_OPTION;	break;
+		case 5:		numbit = JP_KP0;	break;
+		case 6:		numbit = JP_KP1;	break;
+		case 7:		numbit = JP_KP2;	break;
+		case 8:		numbit = JP_KP3;	break;
+		case 9:		numbit = JP_KP4;	break;
+		case 10:	numbit = JP_KP5;	break;
+		case 11:	numbit = JP_KP6;	break;
+		case 12:	numbit = JP_KP7;	break;
+		case 13:	numbit = JP_KP8;	break;
+		case 14:	numbit = JP_KP9;	break;
+		case 15:	numbit = JP_KPMULT;	break;
+		case 16:	numbit = JP_KPNUM;	break;
+	}
+
+	if (pressed) {
+		host_state[numjoy] |= 1<<numbit;
+	} else {
+		host_state[numjoy] &= ~(1<<numbit);
+	}
 }
 
 
