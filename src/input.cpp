@@ -898,8 +898,10 @@ static void process_joystick_event(const SDL_Event &event)
 				getIKBD()->SendJoystickAxis(0, event.jaxis.axis, event.jaxis.value);
 			} else if (event.jaxis.which==bx_options.joysticks.ikbd1) {
 				getIKBD()->SendJoystickAxis(1, event.jaxis.axis, event.jaxis.value);
-			} else {
-				/* TODO: joypads */
+			} else if (event.jaxis.which==bx_options.joysticks.joypada) {
+				getJOYPADS()->sendJoystickAxis(0, event.jaxis.axis, event.jaxis.value);
+			} else if (event.jaxis.which==bx_options.joysticks.joypadb) {
+				getJOYPADS()->sendJoystickAxis(1, event.jaxis.axis, event.jaxis.value);
 			}
 			break;		
 		case SDL_JOYHATMOTION:
@@ -907,18 +909,26 @@ static void process_joystick_event(const SDL_Event &event)
 				getIKBD()->SendJoystickHat(0, event.jhat.value);
 			} else if (event.jaxis.which==bx_options.joysticks.ikbd1) {
 				getIKBD()->SendJoystickHat(1, event.jhat.value);
-			} else {
-				/* TODO: joypads */
+			} else if (event.jaxis.which==bx_options.joysticks.joypada) {
+				getJOYPADS()->sendJoystickHat(0, event.jhat.value);
+			} else if (event.jaxis.which==bx_options.joysticks.joypadb) {
+				getJOYPADS()->sendJoystickHat(1, event.jhat.value);
 			}
 			break;		
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYBUTTONUP:
 			if (event.jaxis.which==bx_options.joysticks.ikbd0) {
-				getIKBD()->SendJoystickButton(0, event.jbutton.state==SDL_PRESSED);
+				getIKBD()->SendJoystickButton(0,
+					event.jbutton.state==SDL_PRESSED);
 			} else if (event.jaxis.which==bx_options.joysticks.ikbd1) {
-				getIKBD()->SendJoystickButton(1, event.jbutton.state==SDL_PRESSED);
-			} else {
-				/* TODO: joypads */
+				getIKBD()->SendJoystickButton(1,
+					event.jbutton.state==SDL_PRESSED);
+			} else if (event.jaxis.which==bx_options.joysticks.joypada) {
+				getJOYPADS()->sendJoystickButton(0, event.jbutton.button,
+					event.jbutton.state==SDL_PRESSED);
+			} else if (event.jaxis.which==bx_options.joysticks.joypadb) {
+				getJOYPADS()->sendJoystickButton(1, event.jbutton.button,
+					event.jbutton.state==SDL_PRESSED);
 			}
 			break;		
 	}

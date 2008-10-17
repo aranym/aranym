@@ -27,7 +27,7 @@ class JOYPADS : public BASE_IO
 {
 	private:
 		Uint16	mask;
-		Uint32	joypad_state[2];
+		Uint32	host_state[2];
 
 	public:
 		JOYPADS(memptr, uint32);
@@ -36,6 +36,10 @@ class JOYPADS : public BASE_IO
 
 		virtual uae_u8 handleRead(uaecptr addr);
 		virtual void handleWrite(uaecptr addr, uae_u8 value);
+
+		void sendJoystickAxis(int numjoy, int numaxis, int value);
+		void sendJoystickHat(int numjoy, int value);
+		void sendJoystickButton(int numjoy, int which, int pressed);
 };
 
 #endif /* JOYPADS_H */
