@@ -1,3 +1,8 @@
+2008/10/18 - Patrice
+- Joypad emulation seems to be working. TODO: Teamtap emulation, and button mapping
+  from config file.
+
+
 2008/10/16 - Patrice
 - Started joypads emulation.
 
