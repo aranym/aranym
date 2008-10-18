@@ -39,6 +39,29 @@ enum {
 	JP_KPNUM,	JP_KP9,		JP_KP6,		JP_KP3,
 };
 
+/* multiplexer mask, num joypad, shift, mask */
+const int JOYPADS::multiplexer0[8][4]={
+	{0xfffe,	0,	0,	3},
+	{0xfffd,	0,	2,	3},
+	{0xfffb,	0,	4,	3},
+	{0xfff7,	0,	6,	3},
+	{0xffef,	1,	-2,	3<<2},
+	{0xffdf,	1,	0,	3<<2},
+	{0xffbf,	1,	2,	3<<2},
+	{0xff7f,	1,	4,	3<<2},
+};
+
+const int JOYPADS::multiplexer1[8][4]={
+	{0xfffe,	0,	8,	15},
+	{0xfffd,	0,	12,	15},
+	{0xfffb,	0,	16,	15},
+	{0xfff7,	0,	20,	15},
+	{0xffef,	1,	4,	15<<4},
+	{0xffdf,	1,	8,	15<<4},
+	{0xffbf,	1,	12,	15<<4},
+	{0xff7f,	1,	16,	15<<4},
+};
+
 JOYPADS::JOYPADS(memptr addr, uint32 size) : BASE_IO(addr, size)
 {
 	D(bug("joypads: interface created at 0x%06x", getHWoffset()));
@@ -62,103 +85,37 @@ void JOYPADS::reset()
 
 uae_u8 JOYPADS::handleRead(uaecptr addr)
 {
-	Uint32 state = 0, state_mask = 0;
-	int shift = 0;
+	Uint32 state = 0;
+	int state_mask = 0, state_shift = 0, i;
 	uae_u8 value = 0xff;
 
 	switch (addr-getHWoffset()) {
 		case 0x01:
-			switch(mask) {
-				case 0xfffe:
-					state = host_state[0];
-					state_mask = 3;
+			for (i=0; i<8; i++) {
+				if (multiplexer0[i][0] == mask) {
+					state = host_state[multiplexer0[i][1]];
+					state_shift = multiplexer0[i][2];
+					state_mask = multiplexer0[i][3];
 					break;
-				case 0xfffd:
-					state = host_state[0];
-					shift = 2;
-					state_mask = 3;
-					break;
-				case 0xfffb:
-					state = host_state[0];
-					shift = 4;
-					state_mask = 3;
-					break;
-				case 0xfff7:
-					state = host_state[0];
-					shift = 6;
-					state_mask = 3;
-					break;
-				case 0xffef:
-					state = host_state[1];
-					shift = -2;
-					state_mask = 3<<2;
-					break;
-				case 0xffdf:
-					state = host_state[1];
-					state_mask = 3<<2;
-					break;
-				case 0xffbf:
-					state = host_state[1];
-					shift = 2;
-					state_mask = 3<<2;
-					break;
-				case 0xff7f:
-					state = host_state[1];
-					shift = 4;
-					state_mask = 3<<2;
-					break;
+				}
 			}
 			break;
 		case 0x02:
-			switch(mask) {
-				case 0xfffe:
-					state = host_state[0];
-					shift = 8;
-					state_mask = 15;
+			for (i=0; i<8; i++) {
+				if (multiplexer1[i][0] == mask) {
+					state = host_state[multiplexer1[i][1]];
+					state_shift = multiplexer1[i][2];
+					state_mask = multiplexer1[i][3];
 					break;
-				case 0xfffd:
-					state = host_state[0];
-					shift = 12;
-					state_mask = 15;
-					break;
-				case 0xfffb:
-					state = host_state[0];
-					shift = 16;
-					state_mask = 15;
-					break;
-				case 0xfff7:
-					state = host_state[0];
-					shift = 20;
-					state_mask = 15;
-					break;
-				case 0xffef:
-					state = host_state[1];
-					shift = 4;
-					state_mask = 15<<4;
-					break;
-				case 0xffdf:
-					state = host_state[1];
-					shift = 8;
-					state_mask = 15<<4;
-					break;
-				case 0xffbf:
-					state = host_state[1];
-					shift = 12;
-					state_mask = 15<<4;
-					break;
-				case 0xff7f:
-					state = host_state[1];
-					shift = 16;
-					state_mask = 15<<4;
-					break;
+				}
 			}
 			break;
 	}
 
-	if (shift<0) {
-		value = ~((state<<(-shift)) & state_mask);
+	if (state_shift<0) {
+		value = ~((state<<(-state_shift)) & state_mask);
 	} else {
-		value = ~((state>>shift) & state_mask);
+		value = ~((state>>state_shift) & state_mask);
 	}	
 
 	D(bug("joypads: Read 0x%02x from 0x%08x",value,addr));
