@@ -24,7 +24,7 @@
 #include "memory.h"
 #include "joypads.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #define JOYSTICK_THRESHOLD	16384
@@ -62,8 +62,9 @@ void JOYPADS::reset()
 
 uae_u8 JOYPADS::handleRead(uaecptr addr)
 {
-	Uint32 state = 0, state_mask = 0xffffffff;
+	Uint32 state = 0, state_mask = 0;
 	int shift = 0;
+	uae_u8 value = 0xff;
 
 	switch (addr-getHWoffset()) {
 		case 0x01:
@@ -107,6 +108,7 @@ uae_u8 JOYPADS::handleRead(uaecptr addr)
 					state_mask = 3<<2;
 					break;
 			}
+			break;
 		case 0x02:
 			switch(mask) {
 				case 0xfffe:
@@ -150,16 +152,16 @@ uae_u8 JOYPADS::handleRead(uaecptr addr)
 					state_mask = 15<<4;
 					break;
 			}
+			break;
 	}
 
-	uae_u8 value = 0xff;
 	if (shift<0) {
-		value = ~((state<<(-shift)) & mask);
+		value = ~((state<<(-shift)) & state_mask);
 	} else {
-		value = ~((state>>shift) & mask);
+		value = ~((state>>shift) & state_mask);
 	}	
-	D(bug("joypads: Read 0x%02x from 0x%08x",value,addr));
 
+	D(bug("joypads: Read 0x%02x from 0x%08x",value,addr));
 	return value;
 }
 
@@ -199,6 +201,8 @@ void JOYPADS::sendJoystickAxis(int numjoy, int numaxis, int value)
 			}
 			break;
 	}
+
+	D(bug("joypad[%d]=0x%08x", numjoy, host_state[numjoy]));
 }
 
 void JOYPADS::sendJoystickHat(int numjoy, int value)
@@ -209,6 +213,8 @@ void JOYPADS::sendJoystickHat(int numjoy, int value)
 	if (value & SDL_HAT_RIGHT) host_state[numjoy] |= 1<<JP_RIGHT;
 	if (value & SDL_HAT_UP) host_state[numjoy] |= 1<<JP_UP;
 	if (value & SDL_HAT_DOWN) host_state[numjoy] |= 1<<JP_DOWN;
+
+	D(bug("joypad[%d]=0x%08x", numjoy, host_state[numjoy]));
 }
 
 void JOYPADS::sendJoystickButton(int numjoy, int which, int pressed)
@@ -243,6 +249,8 @@ void JOYPADS::sendJoystickButton(int numjoy, int which, int pressed)
 	} else {
 		host_state[numjoy] &= ~(1<<numbit);
 	}
+
+	D(bug("joypad[%d]=0x%08x", numjoy, host_state[numjoy]));
 }
 
 
