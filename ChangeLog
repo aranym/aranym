@@ -1,3 +1,7 @@
+2008/10/19 - Patrice
+- dsp56k: Fixes in L:xxx,register parallel move. Need to check the read now.
+
+
 2008/10/18 - Patrice
 - Joypad emulation seems to be working. TODO: Teamtap emulation, and button mapping
   from config file.

@@ -3074,69 +3074,32 @@ static void dsp_pm_4x(int immediat, Uint32 l_addr)
 	if (cur_inst & (1<<15)) {
 		/* Write D */
 
-		/* S1 */
+		/* Sources */
 		value = read_memory(DSP_SPACE_X,l_addr);
-		tmp_parmove_src[0][0] = 0x000000;
-		if (value & (1<<23)) {
-			tmp_parmove_src[0][0] = 0x0000ff;
-		}
+		tmp_parmove_src[0][0] = (value & (1<<23) ? 0xff : 0);
 		tmp_parmove_src[0][1] = value & BITMASK(registers_mask[registers_lmove[numreg][0]]);
 		tmp_parmove_src[0][2] = 0x000000;
-
-		/* S2 */
 		value = read_memory(DSP_SPACE_Y,l_addr);
-		tmp_parmove_src[1][0] = 0x000000;
-		if (value & (1<<23)) {
-			tmp_parmove_src[1][0] = 0x0000ff;
-		}
-		tmp_parmove_src[1][1] = value & BITMASK(registers_mask[registers_lmove[numreg][1]]);
-		tmp_parmove_src[1][2] = 0x000000;
 
-		/* D1 */
-		tmp_parmove_dest[0][0].host_pointer = NULL;
-		tmp_parmove_start[0]=1;
-		tmp_parmove_len[0]=1;
-		if (numreg >= 4) {
-			tmp_parmove_dest[0][0].host_pointer = &dsp_core->registers[DSP_REG_A2+(numreg & 1)];
-			tmp_parmove_start[0]=0;
-			tmp_parmove_len[0]=2;
-		}
-		numreg2 = registers_lmove[numreg][0];
-		if ((numreg2 == DSP_REG_A) || (numreg2 == DSP_REG_B)) {
-			tmp_parmove_dest[0][1].host_pointer = &dsp_core->registers[DSP_REG_A1+(numreg2 & 1)];
+		if (registers_lmove[numreg][0]==registers_lmove[numreg][1]) {
+			/* Write to 56bit accumulator, setup a single transfer as 56 bit */
+			tmp_parmove_src[0][2] = value & BITMASK(registers_mask[registers_lmove[numreg][1]]);
 		} else {
-			tmp_parmove_dest[0][1].host_pointer = &dsp_core->registers[numreg2];
-		}
-		if (numreg >= 6) {
-			tmp_parmove_dest[0][2].host_pointer = &dsp_core->registers[DSP_REG_A0+(numreg & 1)];
-			tmp_parmove_start[0]=0;
-			tmp_parmove_len[0]=3;
+			/* Writes to 24bit registers, setup second 24 bit transfer */
+			tmp_parmove_src[1][0] = (value & (1<<23) ? 0xff : 0);
+			tmp_parmove_src[1][1] = value & BITMASK(registers_mask[registers_lmove[numreg][1]]);
+			tmp_parmove_src[1][2] = 0x000000;
 		}
 
+		/* Destinations */
+		dsp_pm_writereg(registers_lmove[numreg][0], 0);
 		tmp_parmove_type[0]=0;
 
-		/* D2 */
-		tmp_parmove_dest[1][0].host_pointer = NULL;
-		tmp_parmove_start[1]=1;
-		tmp_parmove_len[1]=1;
-		if (numreg >= 4) {
-			tmp_parmove_dest[1][0].host_pointer = &dsp_core->registers[DSP_REG_A2+(numreg & 1)];
-			tmp_parmove_start[1]=0;
-			tmp_parmove_len[1]=2;
+		if (registers_lmove[numreg][0]!=registers_lmove[numreg][1]) {
+			/* Two 24 or 56 bits registers */
+			dsp_pm_writereg(registers_lmove[numreg][1], 1);
+			tmp_parmove_type[1]=0;
 		}
-		numreg2 = registers_lmove[numreg][1];
-		if ((numreg2 == DSP_REG_A) || (numreg2 == DSP_REG_B)) {
-			tmp_parmove_dest[1][1].host_pointer = &dsp_core->registers[DSP_REG_A1+(numreg2 & 1)];
-		} else {
-			tmp_parmove_dest[1][1].host_pointer = &dsp_core->registers[numreg2];
-		}
-		if (numreg >= 6) {
-			tmp_parmove_dest[1][2].host_pointer = &dsp_core->registers[DSP_REG_A0+(numreg & 1)];
-			tmp_parmove_start[1]=0;
-			tmp_parmove_len[1]=3;
-		}
-
-		tmp_parmove_type[1]=0;
 	} else {
 		/* Read S */
 
