@@ -3103,27 +3103,24 @@ static void dsp_pm_4x(int immediat, Uint32 l_addr)
 	} else {
 		/* Read S */
 
-		/* S1 */
-		numreg2 = registers_lmove[numreg][0];
-		if (numreg>=4) {
-			/* A, B, AB, BA */
+		/* Sources */
+		if (numreg<4) {
+			/* Two 24 bits tranfers */
+			tmp_parmove_src[0][1] = dsp_core->registers[registers_lmove[numreg][0]];
+			tmp_parmove_src[1][1] = dsp_core->registers[registers_lmove[numreg][1]];
+		} else if (numreg<6) {
+			/* Single accumulator transfer */
+			numreg2 = registers_lmove[numreg][0];
 			dsp_pm_read_accu24(numreg2, &tmp_parmove_src[0][1]); 
+			tmp_parmove_src[1][1] = dsp_core->registers[DSP_REG_A0+(numreg2 & 1)];
 		} else {
-			tmp_parmove_src[0][1] = dsp_core->registers[numreg2];
+			/* Two accumulators tranfers */
+			dsp_pm_read_accu24(registers_lmove[numreg][0], &tmp_parmove_src[0][1]); 
+			dsp_pm_read_accu24(registers_lmove[numreg][1], &tmp_parmove_src[1][1]); 
 		}
-		
-		/* S2 */
-		numreg2 = registers_lmove[numreg][1];
-		if (numreg>=4) {
-			/* A, B, AB, BA */
-			dsp_pm_read_accu24(numreg2, &tmp_parmove_src[1][1]); 
-		} else {
-			tmp_parmove_src[1][1] = dsp_core->registers[numreg2];
-		}
-		
+				
 		/* D1 */
 		tmp_parmove_dest[0][1].dsp_address=l_addr;
-
 		tmp_parmove_start[0]=1;
 		tmp_parmove_len[0]=1;
 		
@@ -3132,7 +3129,6 @@ static void dsp_pm_4x(int immediat, Uint32 l_addr)
 
 		/* D2 */
 		tmp_parmove_dest[1][1].dsp_address=l_addr;
-
 		tmp_parmove_start[1]=1;
 		tmp_parmove_len[1]=1;
 

@@ -1,5 +1,5 @@
 2008/10/19 - Patrice
-- dsp56k: Fixes in L:xxx,register parallel move. Need to check the read now.
+- dsp56k: Fixes in L:xxx,register parallel move, both directions.
 
 
 2008/10/18 - Patrice
