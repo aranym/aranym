@@ -1,5 +1,6 @@
 2008/10/19 - Patrice
 - dsp56k: Fixes in L:xxx,register parallel move, both directions.
+- TOS: Remove patch that disable DMA audio if joypad ports not detected.
 
 
 2008/10/18 - Patrice
