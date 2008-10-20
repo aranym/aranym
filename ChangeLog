@@ -1,3 +1,7 @@
+2008/10/20 - Patrice
+- dsp56k: Fixes in register,L:xxx when limiting occurs.
+
+
 2008/10/19 - Patrice
 - dsp56k: Fixes in L:xxx,register parallel move, both directions.
 - TOS: Remove patch that disable DMA audio if joypad ports not detected.

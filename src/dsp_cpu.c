@@ -173,7 +173,7 @@ static void dsp_movep_2(void);
 static void dsp_parmove_read(void);
 static void dsp_parmove_write(void);
 
-static void dsp_pm_read_accu24(int numreg, Uint32 *dest);
+static int dsp_pm_read_accu24(int numreg, Uint32 *dest);
 static void dsp_pm_writereg(int numreg, int position);
 
 static void dsp_pm_0(void);
@@ -2730,9 +2730,10 @@ static void dsp_parmove_write(void)
 	}
 }
 
-static void dsp_pm_read_accu24(int numreg, Uint32 *dest)
+static int dsp_pm_read_accu24(int numreg, Uint32 *dest)
 {
 	Uint32 scaling, value, numbits;
+	int got_limited=0;
 
 	/* Read an accumulator, stores it limited */
 
@@ -2763,11 +2764,15 @@ static void dsp_pm_read_accu24(int numreg, Uint32 *dest)
 		/* Limited to maximum negative value */
 		*dest=0x00800000;
 		dsp_core->registers[DSP_REG_SR] |= (1<<DSP_SR_L);
+		got_limited=1;
 	} else {
 		/* Limited to maximal positive value */
 		*dest=0x007fffff;
 		dsp_core->registers[DSP_REG_SR] |= (1<<DSP_SR_L);
+		got_limited=1;
 	}	
+
+	return got_limited;
 }
 
 static void dsp_pm_writereg(int numreg, int position)
@@ -3111,8 +3116,13 @@ static void dsp_pm_4x(int immediat, Uint32 l_addr)
 		} else if (numreg<6) {
 			/* Single accumulator transfer */
 			numreg2 = registers_lmove[numreg][0];
-			dsp_pm_read_accu24(numreg2, &tmp_parmove_src[0][1]); 
-			tmp_parmove_src[1][1] = dsp_core->registers[DSP_REG_A0+(numreg2 & 1)];
+			if (dsp_pm_read_accu24(numreg2, &tmp_parmove_src[0][1])) {
+				/* Was limited, set lower part */
+				tmp_parmove_src[1][1] = (tmp_parmove_src[0][1] & (1<<23) ? 0 : 0xffffff);
+			} else {
+				/* Not limited */
+				tmp_parmove_src[1][1] = dsp_core->registers[DSP_REG_A0+(numreg2 & 1)];
+			}
 		} else {
 			/* Two accumulators tranfers */
 			dsp_pm_read_accu24(registers_lmove[numreg][0], &tmp_parmove_src[0][1]); 
