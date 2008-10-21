@@ -35,7 +35,10 @@ NativeTypeMapper<void*> memptrMapper;
 
 char *safe_strncpy(char *dest, const char *src, size_t size)
 {
-	strncpy(dest, src, size);
-	dest[size-1] = '\0';
+	if (dest == NULL) return NULL;
+	if (size > 0) {
+		strncpy(dest, src != NULL ? src : "", size);
+		dest[size-1] = '\0';
+	}
 	return dest;
 }
