@@ -923,7 +923,11 @@ struct Config_Tag joysticks_conf[]={
 	{ "Ikbd0", Int_Tag, &bx_options.joysticks.ikbd0, 0, 0},
 	{ "Ikbd1", Int_Tag, &bx_options.joysticks.ikbd1, 0, 0},
 	{ "JoypadA", Int_Tag, &bx_options.joysticks.joypada, 0, 0},
+	{ "JoypadAButtons", String_Tag, &bx_options.joysticks.joypada_mapping,
+		sizeof(bx_options.joysticks.joypada_mapping), 0},
 	{ "JoypadB", Int_Tag, &bx_options.joysticks.joypadb, 0, 0},
+	{ "JoypadBButtons", String_Tag, &bx_options.joysticks.joypadb_mapping,
+		sizeof(bx_options.joysticks.joypadb_mapping), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -932,6 +936,12 @@ void preset_joysticks() {
 	bx_options.joysticks.ikbd1 = 0;
 	bx_options.joysticks.joypada = -1;
 	bx_options.joysticks.joypadb = -1;
+	safe_strncpy(bx_options.joysticks.joypada_mapping,
+		"0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16",
+		sizeof(bx_options.joysticks.joypada_mapping));
+	safe_strncpy(bx_options.joysticks.joypadb_mapping,
+		"0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16",
+		sizeof(bx_options.joysticks.joypadb_mapping));
 }
 
 void postload_joysticks() {

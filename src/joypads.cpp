@@ -62,9 +62,51 @@ const int JOYPADS::multiplexer1[8][4]={
 	{0xff7f,	1,	16,	15<<4},
 };
 
+/* Buttons, for mapping */
+const int JOYPADS::buttons[17]={
+	JP_FIRE0,	JP_FIRE1,	JP_FIRE2,	JP_PAUSE,
+	JP_OPTION,	JP_KP0,		JP_KP1,		JP_KP2,
+	JP_KP3,		JP_KP4,		JP_KP5,		JP_KP6,
+	JP_KP7,		JP_KP8,		JP_KP9,		JP_KPMULT,
+	JP_KPNUM
+};
+
 JOYPADS::JOYPADS(memptr addr, uint32 size) : BASE_IO(addr, size)
 {
 	D(bug("joypads: interface created at 0x%06x", getHWoffset()));
+
+	/* Read button mappings for joypads */
+	int i, tmp[17];
+
+	for (i=0; i<17; i++) {
+		joypada_mapping[i] = joypadb_mapping[i] = i;
+	}
+
+	sscanf(bx_options.joysticks.joypada_mapping,
+		"%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+		&tmp[0], &tmp[1], &tmp[2], &tmp[3], &tmp[4], &tmp[5],
+		&tmp[6], &tmp[7], &tmp[8], &tmp[9], &tmp[10], &tmp[11],
+		&tmp[12], &tmp[13], &tmp[14], &tmp[15], &tmp[16]
+	);
+
+	for (i=0; i<17; i++) {
+		if ((tmp[i]>=0) && tmp[i]<17) {
+			joypada_mapping[tmp[i]]=i;
+		}
+	}
+
+	sscanf(bx_options.joysticks.joypadb_mapping,
+		"%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+		&tmp[0], &tmp[1], &tmp[2], &tmp[3], &tmp[4], &tmp[5],
+		&tmp[6], &tmp[7], &tmp[8], &tmp[9], &tmp[10], &tmp[11],
+		&tmp[12], &tmp[13], &tmp[14], &tmp[15], &tmp[16]
+	);
+
+	for (i=0; i<17; i++) {
+		if ((tmp[i]>=0) && tmp[i]<17) {
+			joypadb_mapping[tmp[i]]=i;
+		}
+	}
 
 	reset();
 }
@@ -177,28 +219,11 @@ void JOYPADS::sendJoystickHat(int numjoy, int value)
 void JOYPADS::sendJoystickButton(int numjoy, int which, int pressed)
 {
 	int numbit = JP_UNDEF0;
-
-	/* TODO: configurable mapping for host->atari joypad buttons, in config file */
+	int *maptable = (numjoy==0 ? joypada_mapping : joypadb_mapping);
 
 	/* Get bit to clear/set */
-	switch(which) {
-		case 0:		numbit = JP_FIRE1;	break;
-		case 1:		numbit = JP_FIRE0;	break;
-		case 2:		numbit = JP_FIRE2;	break;
-		case 3:		numbit = JP_PAUSE;	break;
-		case 4:		numbit = JP_OPTION;	break;
-		case 5:		numbit = JP_KP0;	break;
-		case 6:		numbit = JP_KP1;	break;
-		case 7:		numbit = JP_KP2;	break;
-		case 8:		numbit = JP_KP3;	break;
-		case 9:		numbit = JP_KP4;	break;
-		case 10:	numbit = JP_KP5;	break;
-		case 11:	numbit = JP_KP6;	break;
-		case 12:	numbit = JP_KP7;	break;
-		case 13:	numbit = JP_KP8;	break;
-		case 14:	numbit = JP_KP9;	break;
-		case 15:	numbit = JP_KPMULT;	break;
-		case 16:	numbit = JP_KPNUM;	break;
+	if ((which>=0) && (which<17)) {
+		numbit = buttons[maptable[which]];
 	}
 
 	if (pressed) {

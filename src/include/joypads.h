@@ -29,6 +29,11 @@ class JOYPADS : public BASE_IO
 		static const int multiplexer0[8][4];	/* on 0xff9200 */
 		static const int multiplexer1[8][4];	/* on 0xff9202 */
 
+		static const int buttons[17];
+
+		int joypada_mapping[17];
+		int joypadb_mapping[17];
+
 		Uint16	mask;
 		Uint32	host_state[2];
 
