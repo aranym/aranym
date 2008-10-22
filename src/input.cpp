@@ -57,7 +57,7 @@ enum {
 		sdl_joysticks[array_number] = \
 			SDL_JoystickOpen(host_number);	\
 		if (!sdl_joysticks[array_number]) {	\
-			fprintf(stderr, "Could not open joystick %d\n",	\
+			panicbug("Could not open joystick %d",	\
 				host_number);	\
 		}	\
 	}
@@ -227,8 +227,7 @@ static int keyboardTable[0x80] = {
 
 static int keysymToAtari(SDL_keysym keysym)
 {
- 
-    //fprintf (stdout, "scancode: %x - sym: %x - char: %s\n", keysym.scancode, keysym.sym, SDL_GetKeyName (keysym.sym));
+    // panicbug("scancode: %x - sym: %x - char: %s", keysym.scancode, keysym.sym, SDL_GetKeyName (keysym.sym));
 
 	int sym = keysym.scancode;
 
@@ -265,7 +264,7 @@ static int keysymToAtari(SDL_keysym keysym)
 	}
 	for (int i = 0; i < 0x73; i++) {
 		if (keyboardTable[i] == sym) {
-//		fprintf (stdout, "scancode mac:%x - scancode atari: %x\n", keysym.scancode, i);
+//			panicbug ("scancode mac:%x - scancode atari: %x", keysym.scancode, i);
 			return i;
 		}
 	}
@@ -424,13 +423,16 @@ static int keysymToAtari(SDL_keysym keysym)
 		case SDLK_F11:	return 0x62;	/* F11 => Help */
 		case SDLK_F12:	return 0x61;	/* F12 => Undo */
 		case SDLK_HOME:	return 0x47;	/* Home */
-		case SDLK_END:	return 0x60;	/* End => "<>" on German Atari kbd */
+		case SDLK_END:	return 0x4f;	/* Milan's scancode for End */
 		case SDLK_UP:	return 0x48;	/* Arrow Up */
 		case SDLK_LEFT:	return 0x4b;	/* Arrow Left */
 		case SDLK_RIGHT:	return 0x4d;	/* Arrow Right */
 		case SDLK_DOWN:	return 0x50;	/* Arrow Down */
 		case SDLK_INSERT:	return 0x52;	/* Insert */
 		case SDLK_DELETE:	return 0x53;	/* Delete */
+
+		// a key that is out of the fixed offset matrix
+		case SDLK_LESS: return 0x60;	/* a '<>' key next to short left Shift */
 
 		// keys not found on original Atari keyboard
 		case SDLK_RCTRL:	return 0x1d;	/* map right Control to Atari control */
