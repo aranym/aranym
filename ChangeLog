@@ -12,8 +12,8 @@
 
 
 2008/10/18 - Patrice
-- Joypad emulation seems to be working. TODO: Teamtap emulation, and button mapping
-  from config file.
+- Joypad emulation seems to be working. TODO: Teamtap emulation, and button
+  mapping from config file.
 
 
 2008/10/16 - Patrice
@@ -78,6 +78,7 @@
 2008/09/14 - Patrice
 - sdlgui: Make a loop, so we can call processDialog of a caller, following an
   alert.
+
 - dsp56k fixes, from Laurent Sallafranque:
   -REP [x|y]:ea was not reading right value for LC register.
   -ENDDO must continue with executing following instruction, not jumping to end
@@ -146,15 +147,16 @@
 2008/07/18 - Patrice
 - dsp56k: Starts commiting fixes in emulation, coming from Hatari.
   JSSET,JSCLR where pushing wrong return address on the stack.
-  TCC: was using wrong registers as both source and destination (emulation, disasm)
+  TCC: was using wrong registers as both source and destination (emulation,
+       disasm)
   TFR: was using wrong registers as source (disasm only).
   ADD,SUB: was using wrong registers as source (disasm only).
   AND,EOR,OR: was using wrong registers as source (emulation, disasm).
 
 
 2008/07/15 - Patrice
-- Add configuration for host audio device. Some machines only support 48 KHz as
-hardware frequency for example, so 22.05 KHz is not suited.
+- Add configuration for host audio device. Some machines only support 48 KHz
+  as hardware frequency for example, so 22.05 KHz is not suited.
 
 
 2008/07/15 - Andreas
@@ -183,22 +185,23 @@ Reworked audio DMA emulation:
 
 
 2008/02/05 - Jens
-aratapif.sh - Expanded shell script that tries to
-detect Interface and Nameserver parameters automatically, 
-if it is not manually set.
+- aratapif.sh - Expanded shell script that tries to detect Interface and
+  Nameserver parameters automatically, if it is not manually set.
 
 2008/01/31 - Jens
-ethernet_darwin.cpp: Changed search path for aratapif.sh to the
-config dir. I think this is a good location for a file that
-has to be edited by the user and it makes it possible to have
-a configuration that meets with the config file.
+- ethernet_darwin.cpp: Changed search path for aratapif.sh to the config dir.
+  I think this is a good location for a file that has to be edited by the user
+  and it makes it possible to have a configuration that meets with the config
+  file.
 
 2008/01/30 - Jens
 - MacAranym.xcodeproj: grep added to seperate lines with a
   leading date before for building version_date.h; ENABLE_VBL_UPDATES
   removed, LOGO_FILENAME added
+
 - parameters_Macos.cpp: getDataFolder() now returns application bundle
   directory
+
 - aranym.icns: new icon file
   
 2008/01/30 - Petr
