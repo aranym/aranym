@@ -1495,7 +1495,7 @@ static void dsp_andi(void)
 
 static void dsp_bchg(void)
 {
-	Uint32 memspace, addr, value, numreg, newcarry, numbit;
+	Uint32 memspace, addr, value, numreg, newcarry, numbit, srcreg;
 	
 	memspace = (cur_inst>>6) & 1;
 	value = (cur_inst>>8) & BITMASK(6);
@@ -1544,7 +1544,7 @@ static void dsp_bchg(void)
 			break;
 		case 3:
 			/* bchg #n,R */
-			numreg = value;
+			srcreg = numreg = value;
 			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
 				numreg = DSP_REG_A1+(numreg & 1);
 			}
@@ -1556,12 +1556,8 @@ static void dsp_bchg(void)
 				value += (1<<numbit);
 			}
 			dsp_core->registers[numreg] = value;
-			if (((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) && (numbit==23)) {
-				if (newcarry) {
-					dsp_core->registers[DSP_REG_A2+(numreg & 1)]=0x00;
-				} else  {
-					dsp_core->registers[DSP_REG_A2+(numreg & 1)]=0xff;
-				}
+			if (((srcreg==DSP_REG_A) || (srcreg==DSP_REG_B)) && (numbit==23)) {
+				dsp_core->registers[DSP_REG_A2+(srcreg & 1)]= (newcarry ? 0x00 : 0xff);
 			}
 			break;
 	}
@@ -4021,8 +4017,8 @@ static void dsp_lsl(void)
 
 	newcarry = (dsp_core->registers[DSP_REG_A1+numreg]>>23) & 1;
 
-	dsp_core->registers[DSP_REG_A1+numreg] &= BITMASK(24);
 	dsp_core->registers[DSP_REG_A1+numreg] <<= 1;
+	dsp_core->registers[DSP_REG_A1+numreg] &= BITMASK(24);
 
 	dsp_core->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
 	dsp_core->registers[DSP_REG_SR] |= newcarry;
@@ -4038,8 +4034,8 @@ static void dsp_lsr(void)
 
 	newcarry = dsp_core->registers[DSP_REG_A1+numreg] & 1;
 
-	dsp_core->registers[DSP_REG_A1+numreg] &= BITMASK(24);
 	dsp_core->registers[DSP_REG_A1+numreg] >>= 1;
+	/*dsp_core->registers[DSP_REG_A1+numreg] &= BITMASK(24);*/
 
 	dsp_core->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
 	dsp_core->registers[DSP_REG_SR] |= newcarry;
