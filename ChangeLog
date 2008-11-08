@@ -1,3 +1,17 @@
+
+*** CVS tagged as ARANYM_0_9_7_BETA
+
+2008/11/08 - Petr
+- videl.cpp: fixes ST-Low detection by converting binary OR to logical OR,
+  found thanks to compile warning of the new GCC 4.3.2
+
+- input.cpp: fixes releasing Alt key when entering SDL GUI by correcting
+  the binary operator precedence (& > |)
+
+- few more files: removing some new GCC 4.3.2 warnings
+
+
+
 2008/10/22 - Patrice
 - dsp56k: Fixes for LSL,BCHG instructions.
 
@@ -201,11 +215,13 @@ Reworked audio DMA emulation:
 - aratapif.sh - Expanded shell script that tries to detect Interface and
   Nameserver parameters automatically, if it is not manually set.
 
+
 2008/01/31 - Jens
 - ethernet_darwin.cpp: Changed search path for aratapif.sh to the config dir.
   I think this is a good location for a file that has to be edited by the user
   and it makes it possible to have a configuration that meets with the config
   file.
+
 
 2008/01/30 - Jens
 - MacAranym.xcodeproj: grep added to seperate lines with a
@@ -217,6 +233,7 @@ Reworked audio DMA emulation:
 
 - aranym.icns: new icon file
   
+
 2008/01/30 - Petr
 - aranym.spec: SDL_image added to "Requires" and "BuildRequires"
 

@@ -1,3 +1,22 @@
+2008/11/08 - version 0.9.7beta released
+
+ Mostly small fixes at various places plus a lot of work went into
+ improving the DSP56001 emulation. Also the sound DMA emulation is improved
+ to a point where GSXB driver should be unnecessary.
+
+ o improved automatic network setup on Mac
+ o reworked audio DMA emulation. Also added configurable host sound frequency
+ o one MMU bug fixed (regarding TTR)
+ o special support for halting ARAnyM on linux-m68k reboot (--halt)
+ o SDL GUI fixed (was losing events after alerts)
+ o EMULOP is now privileged so if some old ARAnyM TSR starts crashing this is why
+ o joypads are now emulated
+ o joysticks and joypads can be configured in the config file
+ o '<>' and 'End' keys' scancodes made Atari compatible
+
+ Check the doc/config example file for the new [JOYSTICKS] and [AUDIO] sections.
+
+
 2008/01/29 - version 0.9.6beta2 released
  
  Main change: major graphics output overhaul, two video backends - software
