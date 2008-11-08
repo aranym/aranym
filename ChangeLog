@@ -8,7 +8,8 @@
 - input.cpp: fixes releasing Alt key when entering SDL GUI by correcting
   the binary operator precedence (& > |)
 
-- few more files: removing some new GCC 4.3.2 warnings
+- main.cpp, ethernet_linux.cpp, sdlgui.cpp, hostfs.cpp, fpu_ieee.cpp:
+  removing some new GCC 4.3.2 warnings
 
 
 

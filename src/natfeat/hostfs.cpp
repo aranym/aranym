@@ -1,7 +1,7 @@
 /*
  * hostfs.cpp - HostFS routines
  *
- * Copyright (c) 2001-2005 STanda of ARAnyM development team (see AUTHORS)
+ * Copyright (c) 2001-2008 STanda of ARAnyM development team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -804,7 +804,7 @@ int16 HostFs::flagsHost2Mint(int flags)
 	int16 res = 0; /* default read only */
 
 	/* exclusive */
-	if (!(flags & O_WRONLY|O_RDWR))
+	if (!(flags & (O_WRONLY|O_RDWR)))
 		res = 0;
 	if (flags & O_WRONLY)
 		res = 1; /* write only/ kludge to avoid files being created */
@@ -1653,7 +1653,7 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 		const char *slash = &pathname[strlen(pathname)];
 		while ( --slash >= pathname &&
 				*slash != '/' &&
-				*slash != '\\' );
+				*slash != '\\' ) ;
 
 		// get the path part (in front of the slash)
 		// and prepend it to the link taget (if fits)
@@ -1671,7 +1671,7 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 		slash = &target[strlen(target)];
 		while ( --slash >= target &&
 				*slash != '/' &&
-				*slash != '\\' );
+				*slash != '\\' ) ;
 		slash++;
 
 		if ( slash > target ) {

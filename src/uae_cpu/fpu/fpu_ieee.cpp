@@ -1,7 +1,7 @@
 /*
  * fpu_ieee.cpp - the IEEE FPU
  *
- * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2008 Milan Jurik of ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -285,10 +285,7 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 {
 	// is it zero?
 	if ((wrd1 & 0x7fff0000) == 0 && wrd2 == 0 && wrd3 == 0)
-		if (wrd1 & 0x80000000)
-			return -0.0;
-		else
-			return 0.0;
+		return (wrd1 & 0x80000000) ? -0.0 : 0.0;
 
 	fpu_register result;
 #if USE_QUAD_DOUBLE
@@ -1784,20 +1781,20 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				fpu_debug(("FMUL %.04f\n",(double)src));
 				get_dest_flags(FPU registers[reg]);
 				get_source_flags(src);
-				if(fl_dest.in_range && fl_source.in_range) {
+				if (fl_dest.in_range && fl_source.in_range) {
 					if ((extra & 0x7f) == 0x63)
 						FPU registers[reg] = (float)(FPU registers[reg] * src);
 					else
 						FPU registers[reg] = (double)(FPU registers[reg] * src);
 				}
 				else if (fl_dest.nan || fl_source.nan || 
-						 fl_dest.zero && fl_source.infinity || 
-						 fl_dest.infinity && fl_source.zero ) {
+						 (fl_dest.zero && fl_source.infinity) || 
+						 (fl_dest.infinity && fl_source.zero) ) {
 					make_nan( FPU registers[reg] );
 				}
 				else if (fl_dest.zero || fl_source.zero ) {
-					if (fl_dest.negative && !fl_source.negative ||
-						!fl_dest.negative && fl_source.negative)  {
+					if ( (fl_dest.negative && !fl_source.negative) ||
+						(!fl_dest.negative && fl_source.negative) )  {
 						make_zero_negative(FPU registers[reg]);
 					}
 					else {
@@ -1805,8 +1802,8 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 					}
 				}
 				else {
-					if( fl_dest.negative && !fl_source.negative ||
-						!fl_dest.negative && fl_source.negative)  {
+					if ( (fl_dest.negative && !fl_source.negative) ||
+						(!fl_dest.negative && fl_source.negative) )  {
 						make_inf_negative(FPU registers[reg]);
 					}
 					else {
@@ -1990,17 +1987,17 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			fpu_debug(("FMUL %.04f\n",(double)src));
 			get_dest_flags(FPU registers[reg]);
 			get_source_flags(src);
-			if(fl_dest.in_range && fl_source.in_range) {
+			if (fl_dest.in_range && fl_source.in_range) {
 				FPU registers[reg] *= src;
 			}
 			else if (fl_dest.nan || fl_source.nan || 
-					 fl_dest.zero && fl_source.infinity || 
-					 fl_dest.infinity && fl_source.zero ) {
+					 (fl_dest.zero && fl_source.infinity) || 
+					 (fl_dest.infinity && fl_source.zero) ) {
 				make_nan( FPU registers[reg] );
 			}
 			else if (fl_dest.zero || fl_source.zero ) {
-				if (fl_dest.negative && !fl_source.negative ||
-					!fl_dest.negative && fl_source.negative)  {
+				if ( (fl_dest.negative && !fl_source.negative) ||
+					(!fl_dest.negative && fl_source.negative) )  {
 					make_zero_negative(FPU registers[reg]);
 				}
 				else {
@@ -2008,8 +2005,8 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				}
 			}
 			else {
-				if( fl_dest.negative && !fl_source.negative ||
-					!fl_dest.negative && fl_source.negative)  {
+				if ( (fl_dest.negative && !fl_source.negative) ||
+					(!fl_dest.negative && fl_source.negative) )  {
 					make_inf_negative(FPU registers[reg]);
 				}
 				else {

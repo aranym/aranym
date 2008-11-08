@@ -901,7 +901,7 @@ int SDLGui_FindObj(SGOBJ *dlg, int fx, int fy)
   
   // Search end object in dialog
   i = 0;
-  while (dlg[i++].type != -1);
+  while (dlg[i++].type != -1) ;
   end = i;
 
   // Now check each object
@@ -934,7 +934,7 @@ void SDLGui_SelectRadioObject(SGOBJ *dlg, int clicked_obj)
 
   // Find first radio object in this group
   obj = clicked_obj;
-  while (dlg[--obj].flags & SG_RADIO);
+  while (dlg[--obj].flags & SG_RADIO) ;
 
   // Update state
   while (dlg[++obj].flags & SG_RADIO)

@@ -1,7 +1,7 @@
 /*
  * main.cpp - startup/shutdown code
  *
- * Copyright (c) 2001-2006 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2008 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -444,7 +444,7 @@ bool InitAll(void)
 		return false;
 
 	// work around a bug fix in Debian's libsdl1.2-dev - BTS #317010
-	putenv("SDL_DISABLE_LOCK_KEYS=1");
+	putenv((char*)"SDL_DISABLE_LOCK_KEYS=1");
 
  	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK
 		| SDL_INIT_NOPARACHUTE;
@@ -464,7 +464,7 @@ bool InitAll(void)
 	const char *wpos = bx_options.video.window_pos;
 	if (strlen(wpos) > 0) {
 		if (strncasecmp(wpos, "center", strlen("center")) == 0) {
-			SDL_putenv("SDL_VIDEO_CENTERED=1");
+			SDL_putenv((char*)"SDL_VIDEO_CENTERED=1");
 		}
 		else {
 			static char var[64];

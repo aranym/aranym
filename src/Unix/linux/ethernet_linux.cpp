@@ -1,7 +1,7 @@
 /**
  * Ethernet Emulation using tuntap driver in Linux
  *
- * Standa and Joy of ARAnyM team (c) 2004-2005
+ * Standa and Joy of ARAnyM team (c) 2004-2008
  *
  * GPL
  */
@@ -83,12 +83,12 @@ bool TunTapEthernetHandler::open() {
 		// the arguments _need_ to be placed into the child process
 		// memory (otherwise this does not work here)
 		char *args[] = {
-			TAP_INIT,
+			(char*)TAP_INIT,
 			bx_options.ethernet[ethX].tunnel,
 			bx_options.ethernet[ethX].ip_host,
 			bx_options.ethernet[ethX].ip_atari,
 			bx_options.ethernet[ethX].netmask,
-			TAP_MTU, NULL
+			(char*)TAP_MTU, NULL
 		};
 		int result;
 		result = execvp( TAP_INIT, args );
