@@ -1,7 +1,7 @@
 /*
  * input.cpp - handling of keyboard/mouse input
  *
- * Copyright (c) 2001-2007 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2008 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -606,7 +606,7 @@ static void process_keyboard_event(const SDL_Event &event)
 				getIKBD()->SendKey(0x80 | 0x1d);
 			if ( bx_options.hotkeys.setup.mod & KMOD_LALT )
 				getIKBD()->SendKey(0x80 | 0x38);
-			if ( bx_options.hotkeys.setup.mod & KMOD_MODE|KMOD_RALT )
+			if ( bx_options.hotkeys.setup.mod & (KMOD_MODE|KMOD_RALT) )
 				getIKBD()->SendKey(0x80 | RALT_ATARI_SCANCODE);
 			
 			open_GUI();
