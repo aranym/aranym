@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.9.6beta2 released on 2008/01/29
+      version 0.9.7beta released on 2008/11/08
 
 
  1) License
@@ -38,7 +38,7 @@ where TOS/GEM applications could continue to live forever.
    o 68040 and 68881/2 FPU
    o 14 MB ST-RAM and up to 3824 MB (configurable) of FastRAM
    o VIDEL, Blitter, MFP, ACIA, IKBD for highest possible compatibility
-   o Sound (compatible with Atari XBIOS Sound subsystem, incl. TimerA DMA IRQ)
+   o Sound (compatible with Atari Falcon DMA Sound)
    o Atari floppy DD/HD for connecting floppy image or real floppy drive
    o two IDE channels for connecting disk images, harddrives or CD-ROMs
    o extended keyboard and mouse support (including mouse wheel)

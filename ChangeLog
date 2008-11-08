@@ -11,6 +11,9 @@
 - main.cpp, ethernet_linux.cpp, sdlgui.cpp, hostfs.cpp, fpu_ieee.cpp:
   removing some new GCC 4.3.2 warnings
 
+- aranym.1: "--halt" documented
+
+- README, NEWS, AUTHORS, version.h, aranym.spec: updated for new release
 
 
 2008/10/22 - Patrice

@@ -1,7 +1,7 @@
 # generic defines used by all distributions.
 #
 %define name	aranym
-%define ver	0.9.6beta2
+%define ver	0.9.7beta
 %define _rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -238,6 +238,9 @@ desktop-file-install \
 %endif
 
 %changelog
+* Sat Nov 08 2008 Petr Stehlik <pstehlik@sophics.cz>
+New ARAnyM release.
+
 * Wed Jan 30 2008 Petr Stehlik <pstehlik@sophics.cz>
 Added SDL_image to Requires:
 Bumped the minimal SDL version to 1.2.10

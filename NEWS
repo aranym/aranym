@@ -8,7 +8,7 @@
  o reworked audio DMA emulation. Also added configurable host sound frequency
  o one MMU bug fixed (regarding TTR)
  o special support for halting ARAnyM on linux-m68k reboot (--halt)
- o SDL GUI fixed (was losing events after alerts)
+ o SDL GUI fixed (missing events after alerts)
  o EMULOP is now privileged so if some old ARAnyM TSR starts crashing this is why
  o joypads are now emulated
  o joysticks and joypads can be configured in the config file

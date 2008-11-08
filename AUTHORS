@@ -55,6 +55,8 @@ Patrice Mandin <pmandin@caramail.com>
 - close examination of our code and finding obvious and not-so-obvious
   bugs (IDE, parameters handling, TOS patches)
 - MIDI output
+- DMA Sound
+- joysticks and joypads
 
 Xavier Joubert
 - for Windows/cygwin improvements
@@ -70,6 +72,7 @@ Andreas Schwab
 - LILO fixes, no longer needs /usr/src/linux/include for compiling
 - complete PMMU revision and fixing, got Linux/m68k working
 - important IEEE/UAE FPU fixes
+- various configure & build fixes
 
 Stefan Kuhr
 - Mac OS X port - many improvements (too many to list them here)
