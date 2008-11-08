@@ -1,7 +1,7 @@
 /*
 	Falcon VIDEL emulation
 
-	(C) 2001-2007 ARAnyM developer team
+	(C) 2001-2008 ARAnyM developer team
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ bool VIDEL::useStPalette(void)
 		// bpp == 4
 		int hreg = handleReadW(HW + 0x82); // Too lame!
 		// Better way how to make out ST LOW mode wanted
-		if (hreg == 0x10 | hreg == 0x17 | hreg == 0x3e) {
+		if (hreg == 0x10 || hreg == 0x17 || hreg == 0x3e) {
 			useStPal = true;
 		}
 	} else if (st_shift == 0x100) {
