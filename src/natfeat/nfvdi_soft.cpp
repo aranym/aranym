@@ -1,7 +1,7 @@
 /*
 	NatFeat VDI driver, software
 
-	ARAnyM (C) 2001-2007 Standa Opichal and others, see the AUTHORS file
+	ARAnyM (C) 2001-2008 Standa Opichal and others, see the AUTHORS file
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -822,7 +822,7 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 				uint8* dataHost = (uint8*)sdl_surf->pixels + sy * pitch;
 
 				for(int32 j = 0; j < h; j++) {
-					uint32 pixelPosition = j * pitch + sx & ~0xf; // div 16
+					uint32 pixelPosition = j * pitch + (sx & ~0xf); // div 16
 					chunkyToBitplane(dataHost + pixelPosition, planes, bitplanePixels);
 					for(uint32 d = 0; d < planes; d++)
 						WriteInt16(destAddress + (((dx >> 4) * planes) + d) * 2 + (dy + j) * destPitch, bitplanePixels[d]);
@@ -831,7 +831,7 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 						uint8 bitNo = i & 0xf;
 						if (bitNo == 0) {
 							uint32 wordIndex = ((dx + i - sx) >> 4) * planes;
-							uint32 pixelPosition = j * pitch + i & ~0xf; // div 16
+							uint32 pixelPosition = j * pitch + (i & ~0xf); // div 16
 							chunkyToBitplane(dataHost + pixelPosition, planes, bitplanePixels);
 							for(uint32 d = 0; d < planes; d++)
 								WriteInt16(destAddress + (wordIndex + d) * 2 + (dy + j) * destPitch, bitplanePixels[d]);
