@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl Written in 1999 by Christian Bauer et al.
 dnl Adapted for ARAnyM by Milan Jurik
 
-AC_INIT(aranym,0.9,aranym@bobek.sh.cvut.cz,aranym)
+AC_INIT(aranym,0.9,aranym@lists.bobek.cz,aranym)
 AC_PREREQ(2.52)
 AC_CONFIG_HEADER(config.h)
 
