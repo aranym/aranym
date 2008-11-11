@@ -33,8 +33,8 @@
 #ifndef VER_STATUS
 //#define VER_STATUS
 //#define VER_STATUS	"alpha"
-#define VER_STATUS	"beta"
-//#define VER_STATUS	"beta+" CVS_DATE
+//#define VER_STATUS	"beta"
+#define VER_STATUS	"beta+" CVS_DATE
 #endif
 
 #define str(x)		_stringify (x)
