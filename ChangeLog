@@ -1,3 +1,7 @@
+2008/11/09 - Petr
+- nfvdi_soft.cpp: removed GCC 4.3.2 warning
+- configure.ac: corrected mailing list address
+
 
 *** CVS tagged as ARANYM_0_9_7_BETA
 
