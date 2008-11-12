@@ -114,7 +114,6 @@
 		17798F4A0A6530B9009733EB /* newcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DDF0A652B51009733EB /* newcpu.cpp */; };
 		17798F4B0A6530C0009733EB /* readcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DE20A652B51009733EB /* readcpu.cpp */; };
 		17798F540A653123009733EB /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC60A652B51009733EB /* debug.cpp */; };
-		17798F550A653128009733EB /* dsp_cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CE70A652B50009733EB /* dsp_cpu.cpp */; };
 		17798F570A653142009733EB /* sdlgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF70A652B50009733EB /* sdlgui.cpp */; };
 		17798F580A65314F009733EB /* dlgFileSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF00A652B50009733EB /* dlgFileSelect.cpp */; };
 		17798F590A653154009733EB /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF40A652B50009733EB /* file.cpp */; };
@@ -199,7 +198,6 @@
 		17BCD82F0B20F6BF00432CE1 /* cpuemu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AAE3630A666BC100301447 /* cpuemu.cpp */; };
 		17BCD8300B20F6BF00432CE1 /* cpustbl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AAE3640A666BC100301447 /* cpustbl.cpp */; };
 		17BCD8310B20F6BF00432CE1 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC60A652B51009733EB /* debug.cpp */; };
-		17BCD8320B20F6BF00432CE1 /* dsp_cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CE70A652B50009733EB /* dsp_cpu.cpp */; };
 		17BCD8330B20F6BF00432CE1 /* sdlgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF70A652B50009733EB /* sdlgui.cpp */; };
 		17BCD8340B20F6BF00432CE1 /* dlgFileSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF00A652B50009733EB /* dlgFileSelect.cpp */; };
 		17BCD8350B20F6BF00432CE1 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF40A652B50009733EB /* file.cpp */; };
@@ -227,6 +225,22 @@
 		17CDFE620B2196CD001BABB0 /* fpu_uae.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DD00A652B51009733EB /* fpu_uae.cpp */; };
 		17CDFE630B2196D8001BABB0 /* fpu_uae.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DD00A652B51009733EB /* fpu_uae.cpp */; };
 		17D5D2590AC70DBD003D0FE9 /* midi_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17D5D2580AC70DBD003D0FE9 /* midi_file.cpp */; };
+		17EC07E30ECB762900100ED7 /* dsp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07DF0ECB762900100ED7 /* dsp_core.c */; };
+		17EC07E40ECB762900100ED7 /* dsp_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E00ECB762900100ED7 /* dsp_cpu.c */; };
+		17EC07E70ECB762900100ED7 /* dsp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07DF0ECB762900100ED7 /* dsp_core.c */; };
+		17EC07E80ECB762900100ED7 /* dsp_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E00ECB762900100ED7 /* dsp_cpu.c */; };
+		17EC07E90ECB762900100ED7 /* dsp_disasm.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E10ECB762900100ED7 /* dsp_disasm.c */; };
+		17EC07EA0ECB762900100ED7 /* dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E20ECB762900100ED7 /* dsp.cpp */; };
+		17EC07EB0ECB762900100ED7 /* dsp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07DF0ECB762900100ED7 /* dsp_core.c */; };
+		17EC07EC0ECB762900100ED7 /* dsp_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E00ECB762900100ED7 /* dsp_cpu.c */; };
+		17EC07ED0ECB762900100ED7 /* dsp_disasm.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E10ECB762900100ED7 /* dsp_disasm.c */; };
+		17EC07EE0ECB762900100ED7 /* dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E20ECB762900100ED7 /* dsp.cpp */; };
+		17EC08D30ECB829E00100ED7 /* audio_conv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC08D20ECB829E00100ED7 /* audio_conv.cpp */; };
+		17EC08D40ECB829E00100ED7 /* audio_conv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC08D20ECB829E00100ED7 /* audio_conv.cpp */; };
+		17EC08D50ECB829E00100ED7 /* audio_conv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC08D20ECB829E00100ED7 /* audio_conv.cpp */; };
+		17EC08D70ECB82B200100ED7 /* joypads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC080A0ECB774200100ED7 /* joypads.cpp */; };
+		17EC08D80ECB82B700100ED7 /* joypads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC080A0ECB774200100ED7 /* joypads.cpp */; };
+		17EC08D90ECB82BA00100ED7 /* joypads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC080A0ECB774200100ED7 /* joypads.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		B41F6DAA0C646F0E00868C14 /* MacAranym JIT IEEE.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */; };
 		B428FAF70C7BA7100039CA66 /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = B428FAF50C7BA7100039CA66 /* aranym.nib */; };
@@ -296,7 +310,6 @@
 		B439AC720C5B2FD00046EFC9 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DDD0A652B51009733EB /* memory.cpp */; };
 		B439AC730C5B2FD00046EFC9 /* newcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DDF0A652B51009733EB /* newcpu.cpp */; };
 		B439AC740C5B2FD00046EFC9 /* readcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DE20A652B51009733EB /* readcpu.cpp */; };
-		B439AC760C5B2FD00046EFC9 /* dsp_cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CE70A652B50009733EB /* dsp_cpu.cpp */; };
 		B439AC770C5B2FD00046EFC9 /* sdlgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF70A652B50009733EB /* sdlgui.cpp */; };
 		B439AC780C5B2FD00046EFC9 /* dlgFileSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF00A652B50009733EB /* dlgFileSelect.cpp */; };
 		B439AC790C5B2FD00046EFC9 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF40A652B50009733EB /* file.cpp */; };
@@ -512,8 +525,6 @@
 		17798CDE0A652B50009733EB /* bootos.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = bootos.cpp; path = ../../bootos.cpp; sourceTree = SOURCE_ROOT; };
 		17798CDF0A652B50009733EB /* cdrom.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = cdrom.cpp; path = ../../cdrom.cpp; sourceTree = SOURCE_ROOT; };
 		17798CE00A652B50009733EB /* cfgopts.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = cfgopts.cpp; path = ../../cfgopts.cpp; sourceTree = SOURCE_ROOT; };
-		17798CE70A652B50009733EB /* dsp_cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = dsp_cpu.cpp; path = ../../dsp_cpu.cpp; sourceTree = SOURCE_ROOT; };
-		17798CE80A652B50009733EB /* dsp_disasm.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = dsp_disasm.cpp; path = ../../dsp_disasm.cpp; sourceTree = SOURCE_ROOT; };
 		17798CE90A652B50009733EB /* dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = dsp.cpp; path = ../../dsp.cpp; sourceTree = SOURCE_ROOT; };
 		17798CEA0A652B50009733EB /* emul_op.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = emul_op.cpp; path = ../../emul_op.cpp; sourceTree = SOURCE_ROOT; };
 		17798CEB0A652B50009733EB /* fakeio.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = fakeio.cpp; path = ../../fakeio.cpp; sourceTree = SOURCE_ROOT; };
@@ -788,6 +799,14 @@
 		17E683EA0C90E38900A8BE0B /* INSTALL */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = INSTALL; path = ../../../INSTALL; sourceTree = SOURCE_ROOT; };
 		17E8B58B0ABC82DD00BBFD59 /* cpuemu_i386.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu_i386.cpp; path = build/MacAranym.build/cpuemu_i386.cpp; sourceTree = "<group>"; };
 		17E8B58C0ABC82DD00BBFD59 /* cpuemu_ppc.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu_ppc.cpp; path = build/MacAranym.build/cpuemu_ppc.cpp; sourceTree = "<group>"; };
+		17EC07DF0ECB762900100ED7 /* dsp_core.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dsp_core.c; path = ../../dsp_core.c; sourceTree = SOURCE_ROOT; };
+		17EC07E00ECB762900100ED7 /* dsp_cpu.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dsp_cpu.c; path = ../../dsp_cpu.c; sourceTree = SOURCE_ROOT; };
+		17EC07E10ECB762900100ED7 /* dsp_disasm.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dsp_disasm.c; path = ../../dsp_disasm.c; sourceTree = SOURCE_ROOT; };
+		17EC07E20ECB762900100ED7 /* dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = dsp.cpp; path = ../../dsp.cpp; sourceTree = SOURCE_ROOT; };
+		17EC08040ECB76EF00100ED7 /* dsp_core.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = dsp_core.h; sourceTree = "<group>"; };
+		17EC08050ECB76FD00100ED7 /* joypads.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = joypads.h; sourceTree = "<group>"; };
+		17EC080A0ECB774200100ED7 /* joypads.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = joypads.cpp; path = ../../joypads.cpp; sourceTree = "<group>"; };
+		17EC08D20ECB829E00100ED7 /* audio_conv.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = audio_conv.cpp; path = ../../audio_conv.cpp; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -938,6 +957,7 @@
 				17798CD50A652B50009733EB /* aradata.cpp */,
 				17798CD60A652B50009733EB /* aranym_exception.cpp */,
 				17798CD70A652B50009733EB /* ata.cpp */,
+				17EC08D20ECB829E00100ED7 /* audio_conv.cpp */,
 				17798CD80A652B50009733EB /* audio_crossbar.cpp */,
 				17798CD90A652B50009733EB /* audio_dma.cpp */,
 				17798CDA0A652B50009733EB /* blitter.cpp */,
@@ -948,9 +968,11 @@
 				17798CDF0A652B50009733EB /* cdrom.cpp */,
 				17798CE00A652B50009733EB /* cfgopts.cpp */,
 				175909550CA453990089CF9F /* dirty_rects.cpp */,
-				17798CE70A652B50009733EB /* dsp_cpu.cpp */,
-				17798CE80A652B50009733EB /* dsp_disasm.cpp */,
 				17798CE90A652B50009733EB /* dsp.cpp */,
+				17EC07DF0ECB762900100ED7 /* dsp_core.c */,
+				17EC07E00ECB762900100ED7 /* dsp_cpu.c */,
+				17EC07E10ECB762900100ED7 /* dsp_disasm.c */,
+				17EC07E20ECB762900100ED7 /* dsp.cpp */,
 				170C2B830BB872920026484E /* dyngl_gl.c */,
 				170C2B840BB872920026484E /* dyngl_glext.c */,
 				170C2B850BB872920026484E /* dyngl.c */,
@@ -965,6 +987,7 @@
 				17798CFF0A652B50009733EB /* identify.cpp */,
 				17798D000A652B50009733EB /* ikbd.cpp */,
 				17798D390A652B50009733EB /* input.cpp */,
+				17EC080A0ECB774200100ED7 /* joypads.cpp */,
 				17C0AFFC0CBB0A85000D2916 /* logo.cpp */,
 				17798D5E0A652B50009733EB /* main.cpp */,
 				17798D5F0A652B50009733EB /* md5.cpp */,
@@ -1037,6 +1060,7 @@
 				17798D110A652B50009733EB /* cfgopts.h */,
 				17798D120A652B50009733EB /* debug.h */,
 				17798D130A652B50009733EB /* dsp.h */,
+				17EC08040ECB76EF00100ED7 /* dsp_core.h */,
 				17798D140A652B50009733EB /* dsp_cpu.h */,
 				17798D150A652B50009733EB /* dsp_disasm.h */,
 				17798D160A652B50009733EB /* emu_bochs.h */,
@@ -1053,6 +1077,7 @@
 				17798D220A652B50009733EB /* identify.h */,
 				17798D230A652B50009733EB /* ikbd.h */,
 				17798D240A652B50009733EB /* input.h */,
+				17EC08050ECB76FD00100ED7 /* joypads.h */,
 				17798D250A652B50009733EB /* main.h */,
 				17798D260A652B50009733EB /* mfp.h */,
 				17798D270A652B50009733EB /* midi.h */,
@@ -1583,7 +1608,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\t\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nCHANGELOG_FILE=$SOURCE_DIR/../ChangeLog\nVERSIONDATE_FILE=$DERIVED_FILES_DIR/version_date.h\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\ncd \"$SOURCE_DIR/..\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Generate configure script\nif [ -f autogen.sh ]; then\n\texport NO_CONFIGURE=yes\n\t./autogen.sh\nfi\n\n# Configure system for all build architectures\necho \"\" > \"$DERIVED_FILES_DIR/config.h\"\nfor ARCH in $ARCHS ; do\n\tCPU_TYPE=$(eval echo $(echo \\$CPU_TYPE_$ARCH))\n\techo \"Running $CONFIG_EXEC for $ARCH architecture / $CPU_TYPE\"\n\t./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-darwin || exit 1\n\n\tif [ \"$ARCH\" = \"ppc\" ]; then\n\t\t# 10.3.9 compatibility:\n\t\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_$ARCH.h\n\t\trm config.h\n\telse\n\t\tmv config.h config_$ARCH.h\n\tfi\n\tcat  >> \"$DERIVED_FILES_DIR/config.h\" << EOF\n#ifdef $CPU_TYPE\n#include \"config_$ARCH.h\"\n#endif\n\nEOF\n\tmv config_$ARCH.h \"$DERIVED_FILES_DIR\"\ndone\nmv Makefile \"$DERIVED_FILES_DIR\"\n\n# Create version_date.h\necho '/* generated from ChangeLog */' > $VERSIONDATE_FILE\ngrep '^20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]' $CHANGELOG_FILE | sed 's/^\\(20[0-9][0-9]\\/[0-9]*\\/[0-9]*\\).*/#define VERSION_DATE \"\\1\"/;q'  >> $VERSIONDATE_FILE\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
+			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\t\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nCHANGELOG_FILE=$SOURCE_DIR/../ChangeLog\nVERSIONDATE_FILE=$DERIVED_FILES_DIR/version_date.h\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\ncd \"$SOURCE_DIR/..\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Generate configure script\nif [ -f autogen.sh ]; then\n\texport NO_CONFIGURE=yes\n\t./autogen.sh\nfi\n\n# Configure system for all build architectures\necho \"\" > \"$DERIVED_FILES_DIR/config.h\"\nfor ARCH in $ARCHS ; do\n\tCPU_TYPE=$(eval echo $(echo \\$CPU_TYPE_$ARCH))\n\techo \"Running $CONFIG_EXEC for $ARCH architecture / $CPU_TYPE\"\n\t./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-darwin || exit 1\n\n\tif [ \"$ARCH\" = \"ppc\" ]; then\n\t\t# 10.3.9 compatibility:\n\t\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_$ARCH.h\n\t\trm config.h\n\telse\n\t\tmv config.h config_$ARCH.h\n\tfi\n\tcat  >> \"$DERIVED_FILES_DIR/config.h\" << EOF\n#ifdef $CPU_TYPE\n#include \"config_$ARCH.h\"\n#endif\n\nEOF\n\tmv config_$ARCH.h \"$DERIVED_FILES_DIR\"\ndone\nmv Makefile \"$DERIVED_FILES_DIR\"\n\n# Create version_date.h\necho '/* generated from ChangeLog */' > $VERSIONDATE_FILE\ngrep -m 1 '^20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]' $CHANGELOG_FILE | sed 's/^\\(20[0-9][0-9]\\/[0-9]*\\/[0-9]*\\).*/#define VERSION_DATE \"\\1\"/;q'  >> $VERSIONDATE_FILE\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
 		};
 		17AAB32E0B20AFF50016FB8D /* Build CPU source files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1621,7 +1646,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nCHANGELOG_FILE=$SOURCE_DIR/../ChangeLog\nVERSIONDATE_FILE=$DERIVED_FILES_DIR/version_date.h\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/..\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Generate configure script\nif [ -f autogen.sh ]; then\n\texport NO_CONFIGURE=yes\n\t./autogen.sh\nfi\n\n# Configure system for all build architectures\necho \"\" > \"$DERIVED_FILES_DIR/config.h\"\nfor ARCH in $ARCHS ; do\n\tCPU_TYPE=$(eval echo $(echo \\$CPU_TYPE_$ARCH))\n\techo \"Running $CONFIG_EXEC for $ARCH architecture / $CPU_TYPE\"\n\t./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-darwin || exit 1\n\n\tif [ \"$ARCH\" = \"ppc\" ]; then\n\t\t# 10.3.9 compatibility:\n\t\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_$ARCH.h\n\t\trm config.h\n\telse\n\t\tmv config.h config_$ARCH.h\n\tfi\n\tcat  >> \"$DERIVED_FILES_DIR/config.h\" << EOF\n#ifdef $CPU_TYPE\n#include \"config_$ARCH.h\"\n#endif\n\nEOF\n\tmv config_$ARCH.h \"$DERIVED_FILES_DIR\"\ndone\nmv Makefile \"$DERIVED_FILES_DIR\"\n\n# Create version_date.h\necho '/* generated from ChangeLog */' > $VERSIONDATE_FILE\ngrep '^20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]' $CHANGELOG_FILE | sed 's/^\\(20[0-9][0-9]\\/[0-9]*\\/[0-9]*\\).*/#define VERSION_DATE \"\\1\"/;q'  >> $VERSIONDATE_FILE\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
+			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nCHANGELOG_FILE=$SOURCE_DIR/../ChangeLog\nVERSIONDATE_FILE=$DERIVED_FILES_DIR/version_date.h\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/..\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Generate configure script\nif [ -f autogen.sh ]; then\n\texport NO_CONFIGURE=yes\n\t./autogen.sh\nfi\n\n# Configure system for all build architectures\necho \"\" > \"$DERIVED_FILES_DIR/config.h\"\nfor ARCH in $ARCHS ; do\n\tCPU_TYPE=$(eval echo $(echo \\$CPU_TYPE_$ARCH))\n\techo \"Running $CONFIG_EXEC for $ARCH architecture / $CPU_TYPE\"\n\t./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-darwin || exit 1\n\n\tif [ \"$ARCH\" = \"ppc\" ]; then\n\t\t# 10.3.9 compatibility:\n\t\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_$ARCH.h\n\t\trm config.h\n\telse\n\t\tmv config.h config_$ARCH.h\n\tfi\n\tcat  >> \"$DERIVED_FILES_DIR/config.h\" << EOF\n#ifdef $CPU_TYPE\n#include \"config_$ARCH.h\"\n#endif\n\nEOF\n\tmv config_$ARCH.h \"$DERIVED_FILES_DIR\"\ndone\nmv Makefile \"$DERIVED_FILES_DIR\"\n\n# Create version_date.h\necho '/* generated from ChangeLog */' > $VERSIONDATE_FILE\ngrep -m 1 '^20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]' $CHANGELOG_FILE | sed 's/^\\(20[0-9][0-9]\\/[0-9]*\\/[0-9]*\\).*/#define VERSION_DATE \"\\1\"/;q'  >> $VERSIONDATE_FILE\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
 		};
 		17BCD78A0B20F64F00432CE1 /* Build CPU source files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1659,7 +1684,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nCHANGELOG_FILE=$SOURCE_DIR/../ChangeLog\nVERSIONDATE_FILE=$DERIVED_FILES_DIR/version_date.h\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/..\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Generate configure script\nif [ -f autogen.sh ]; then\n\texport NO_CONFIGURE=yes\n\t./autogen.sh\nfi\n\n# Configure system for all build architectures\necho \"\" > \"$DERIVED_FILES_DIR/config.h\"\nfor ARCH in $ARCHS ; do\n\tCPU_TYPE=$(eval echo $(echo \\$CPU_TYPE_$ARCH))\n\techo \"Running $CONFIG_EXEC for $ARCH architecture / $CPU_TYPE\"\n\t./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-darwin || exit 1\n\n\tif [ \"$ARCH\" = \"ppc\" ]; then\n\t\t# 10.3.9 compatibility:\n\t\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_$ARCH.h\n\t\trm config.h\n\telse\n\t\tmv config.h config_$ARCH.h\n\tfi\n\tcat  >> \"$DERIVED_FILES_DIR/config.h\" << EOF\n#ifdef $CPU_TYPE\n#include \"config_$ARCH.h\"\n#endif\n\nEOF\n\tmv config_$ARCH.h \"$DERIVED_FILES_DIR\"\ndone\nmv Makefile \"$DERIVED_FILES_DIR\"\n\n# Create version_date.h\necho '/* generated from ChangeLog */' > $VERSIONDATE_FILE\ngrep '^20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]' $CHANGELOG_FILE | sed 's/^\\(20[0-9][0-9]\\/[0-9]*\\/[0-9]*\\).*/#define VERSION_DATE \"\\1\"/;q'  >> $VERSIONDATE_FILE\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
+			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nCHANGELOG_FILE=$SOURCE_DIR/../ChangeLog\nVERSIONDATE_FILE=$DERIVED_FILES_DIR/version_date.h\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/..\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Generate configure script\nif [ -f autogen.sh ]; then\n\texport NO_CONFIGURE=yes\n\t./autogen.sh\nfi\n\n# Configure system for all build architectures\necho \"\" > \"$DERIVED_FILES_DIR/config.h\"\nfor ARCH in $ARCHS ; do\n\tCPU_TYPE=$(eval echo $(echo \\$CPU_TYPE_$ARCH))\n\techo \"Running $CONFIG_EXEC for $ARCH architecture / $CPU_TYPE\"\n\t./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-darwin || exit 1\n\n\tif [ \"$ARCH\" = \"ppc\" ]; then\n\t\t# 10.3.9 compatibility:\n\t\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_$ARCH.h\n\t\trm config.h\n\telse\n\t\tmv config.h config_$ARCH.h\n\tfi\n\tcat  >> \"$DERIVED_FILES_DIR/config.h\" << EOF\n#ifdef $CPU_TYPE\n#include \"config_$ARCH.h\"\n#endif\n\nEOF\n\tmv config_$ARCH.h \"$DERIVED_FILES_DIR\"\ndone\nmv Makefile \"$DERIVED_FILES_DIR\"\n\n# Create version_date.h\necho '/* generated from ChangeLog */' > $VERSIONDATE_FILE\ngrep -m 1 '^20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]' $CHANGELOG_FILE | sed 's/^\\(20[0-9][0-9]\\/[0-9]*\\/[0-9]*\\).*/#define VERSION_DATE \"\\1\"/;q'  >> $VERSIONDATE_FILE\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
 		};
 		B439AC310C5B2FD00046EFC9 /* Build CPU source files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1754,7 +1779,6 @@
 				17BCD82F0B20F6BF00432CE1 /* cpuemu.cpp in Sources */,
 				17BCD8300B20F6BF00432CE1 /* cpustbl.cpp in Sources */,
 				17BCD8310B20F6BF00432CE1 /* debug.cpp in Sources */,
-				17BCD8320B20F6BF00432CE1 /* dsp_cpu.cpp in Sources */,
 				17BCD8330B20F6BF00432CE1 /* sdlgui.cpp in Sources */,
 				17BCD8340B20F6BF00432CE1 /* dlgFileSelect.cpp in Sources */,
 				17BCD8350B20F6BF00432CE1 /* file.cpp in Sources */,
@@ -1785,6 +1809,12 @@
 				B44B01C60D0744D30017F23B /* dlgKeypress.cpp in Sources */,
 				B471E7C20D2A88750021DFA7 /* adler32.c in Sources */,
 				B475E5A80D4FA41500C8607E /* dlgPartition.cpp in Sources */,
+				17EC07E70ECB762900100ED7 /* dsp_core.c in Sources */,
+				17EC07E80ECB762900100ED7 /* dsp_cpu.c in Sources */,
+				17EC07E90ECB762900100ED7 /* dsp_disasm.c in Sources */,
+				17EC07EA0ECB762900100ED7 /* dsp.cpp in Sources */,
+				17EC08D40ECB829E00100ED7 /* audio_conv.cpp in Sources */,
+				17EC08D80ECB82B700100ED7 /* joypads.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1856,7 +1886,6 @@
 				17798F4A0A6530B9009733EB /* newcpu.cpp in Sources */,
 				17798F4B0A6530C0009733EB /* readcpu.cpp in Sources */,
 				17798F540A653123009733EB /* debug.cpp in Sources */,
-				17798F550A653128009733EB /* dsp_cpu.cpp in Sources */,
 				17798F570A653142009733EB /* sdlgui.cpp in Sources */,
 				17798F580A65314F009733EB /* dlgFileSelect.cpp in Sources */,
 				17798F590A653154009733EB /* file.cpp in Sources */,
@@ -1890,6 +1919,10 @@
 				B44B01C50D0744D30017F23B /* dlgKeypress.cpp in Sources */,
 				B471E7C30D2A88750021DFA7 /* adler32.c in Sources */,
 				B475E5A70D4FA41500C8607E /* dlgPartition.cpp in Sources */,
+				17EC07E30ECB762900100ED7 /* dsp_core.c in Sources */,
+				17EC07E40ECB762900100ED7 /* dsp_cpu.c in Sources */,
+				17EC08D30ECB829E00100ED7 /* audio_conv.cpp in Sources */,
+				17EC08D70ECB82B200100ED7 /* joypads.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1965,7 +1998,6 @@
 				B439AC720C5B2FD00046EFC9 /* memory.cpp in Sources */,
 				B439AC730C5B2FD00046EFC9 /* newcpu.cpp in Sources */,
 				B439AC740C5B2FD00046EFC9 /* readcpu.cpp in Sources */,
-				B439AC760C5B2FD00046EFC9 /* dsp_cpu.cpp in Sources */,
 				B439AC770C5B2FD00046EFC9 /* sdlgui.cpp in Sources */,
 				B439AC780C5B2FD00046EFC9 /* dlgFileSelect.cpp in Sources */,
 				B439AC790C5B2FD00046EFC9 /* file.cpp in Sources */,
@@ -2002,6 +2034,12 @@
 				B44B01C70D0744D30017F23B /* dlgKeypress.cpp in Sources */,
 				B471E7C10D2A88750021DFA7 /* adler32.c in Sources */,
 				B475E5A90D4FA41500C8607E /* dlgPartition.cpp in Sources */,
+				17EC07EB0ECB762900100ED7 /* dsp_core.c in Sources */,
+				17EC07EC0ECB762900100ED7 /* dsp_cpu.c in Sources */,
+				17EC07ED0ECB762900100ED7 /* dsp_disasm.c in Sources */,
+				17EC07EE0ECB762900100ED7 /* dsp.cpp in Sources */,
+				17EC08D50ECB829E00100ED7 /* audio_conv.cpp in Sources */,
+				17EC08D90ECB82BA00100ED7 /* joypads.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2069,10 +2107,10 @@
 			buildSettings = {
 				ARCHS = ppc;
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" ";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-ethernet=yes --enable-vblupdates=yes";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-ethernet=yes --enable-vblupdates=yes --enable-debug=no";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.6beta2+CVS";
+				CURRENT_PROJECT_VERSION = "0.9.7beta+CVS";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
@@ -2128,7 +2166,7 @@
 				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-ethernet=yes --enable-vblupdates=yes --enable-debug=no";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.6beta2+CVS";
+				CURRENT_PROJECT_VERSION = "0.9.7beta+CVS";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
@@ -2259,7 +2297,7 @@
 				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-vblupdates=yes";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.6beta2+CVS";
+				CURRENT_PROJECT_VERSION = "0.9.7beta+CVS";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
