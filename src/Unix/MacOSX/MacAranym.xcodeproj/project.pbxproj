@@ -230,11 +230,9 @@
 		17EC07E70ECB762900100ED7 /* dsp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07DF0ECB762900100ED7 /* dsp_core.c */; };
 		17EC07E80ECB762900100ED7 /* dsp_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E00ECB762900100ED7 /* dsp_cpu.c */; };
 		17EC07E90ECB762900100ED7 /* dsp_disasm.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E10ECB762900100ED7 /* dsp_disasm.c */; };
-		17EC07EA0ECB762900100ED7 /* dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E20ECB762900100ED7 /* dsp.cpp */; };
 		17EC07EB0ECB762900100ED7 /* dsp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07DF0ECB762900100ED7 /* dsp_core.c */; };
 		17EC07EC0ECB762900100ED7 /* dsp_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E00ECB762900100ED7 /* dsp_cpu.c */; };
 		17EC07ED0ECB762900100ED7 /* dsp_disasm.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E10ECB762900100ED7 /* dsp_disasm.c */; };
-		17EC07EE0ECB762900100ED7 /* dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E20ECB762900100ED7 /* dsp.cpp */; };
 		17EC08D30ECB829E00100ED7 /* audio_conv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC08D20ECB829E00100ED7 /* audio_conv.cpp */; };
 		17EC08D40ECB829E00100ED7 /* audio_conv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC08D20ECB829E00100ED7 /* audio_conv.cpp */; };
 		17EC08D50ECB829E00100ED7 /* audio_conv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC08D20ECB829E00100ED7 /* audio_conv.cpp */; };
@@ -1812,7 +1810,6 @@
 				17EC07E70ECB762900100ED7 /* dsp_core.c in Sources */,
 				17EC07E80ECB762900100ED7 /* dsp_cpu.c in Sources */,
 				17EC07E90ECB762900100ED7 /* dsp_disasm.c in Sources */,
-				17EC07EA0ECB762900100ED7 /* dsp.cpp in Sources */,
 				17EC08D40ECB829E00100ED7 /* audio_conv.cpp in Sources */,
 				17EC08D80ECB82B700100ED7 /* joypads.cpp in Sources */,
 			);
@@ -2037,7 +2034,6 @@
 				17EC07EB0ECB762900100ED7 /* dsp_core.c in Sources */,
 				17EC07EC0ECB762900100ED7 /* dsp_cpu.c in Sources */,
 				17EC07ED0ECB762900100ED7 /* dsp_disasm.c in Sources */,
-				17EC07EE0ECB762900100ED7 /* dsp.cpp in Sources */,
 				17EC08D50ECB829E00100ED7 /* audio_conv.cpp in Sources */,
 				17EC08D90ECB82BA00100ED7 /* joypads.cpp in Sources */,
 			);
