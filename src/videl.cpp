@@ -320,6 +320,9 @@ void VIDEL::refreshScreen(void)
 
 	int lineoffset = handleReadW(HW + 0x0e) & 0x01ff; // 9 bits
 	int linewidth = handleReadW(HW + 0x10) & 0x03ff; // 10 bits
+	if (handleReadW(HW + 0x64) & 15) {
+		lineoffset += videlBpp;
+	}
 
 	Uint16 *src = (uint16 *) Atari2HostAddr(getVramAddress());
 	int src_pitch = linewidth + lineoffset;
