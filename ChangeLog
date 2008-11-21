@@ -1,3 +1,7 @@
+2008/11/21 - Patrice
+- Hardware scrolling quite OK now :-).
+
+
 2008/11/20 - Patrice
 - videl: Change lineoffset if hwscroll register not 0. Still needs pixel-precise
 position, and scrolling for 16bpp mode.

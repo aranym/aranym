@@ -582,9 +582,12 @@ void HostScreen::destroySurface(HostSurface *hsurf)
  * Performs conversion from the TOS's bitplane word order (big endian) data
  * into the native chunky color index.
  */
-void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp, uint8 colorValues[16] )
+void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
+	uint8 colorValues[16], int horiz_shift)
 {
-	uint32 a, b, c, d, x;
+	uint32 a=0, b=0, c=0, d=0, x;
+	uint32 *source = (uint32 *) atariBitplaneData;
+	uint16 scrolled[8];
 
 	/* Obviously the different cases can be broken out in various
 	 * ways to lessen the amount of work needed for <8 bit modes.
@@ -595,26 +598,38 @@ void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp, uint8 
 	 * enough to worry about. The palette lookup is much slower than
 	 * this code, though, so it would be nice to do something about it.
 	 */
-	if (bpp >= 4) {
-		d = *(uint32 *)&atariBitplaneData[0];
-		c = *(uint32 *)&atariBitplaneData[2];
-		if (bpp == 4) {
-			a = b = 0;
-		} else {
-			b = *(uint32 *)&atariBitplaneData[4];
-			a = *(uint32 *)&atariBitplaneData[6];
+	if (horiz_shift) {
+		/* Shift the source to deal with horizontal scrolling */
+		int i;
+		for (i=0; i<bpp; i++) {
+			x = (SDL_SwapBE16(atariBitplaneData[i])<<16)
+				|SDL_SwapBE16(atariBitplaneData[i+bpp]);
+			scrolled[i] = SDL_SwapBE16((x<<horiz_shift)>>16);
 		}
-	} else {
-		a = b = c = 0;
-		if (bpp == 2) {
-			d = *(uint32 *)&atariBitplaneData[0];
-		} else {
+		source = (uint32 *) scrolled;
+	}
+
+	switch(bpp) {
+		case 8:
+			d = *source++;
+			c = *source++;
+			b = *source++;
+			a = *source++;
+			break;
+		case 4:
+			d = *source++;
+			c = *source++;
+			break;
+		case 2:
+			d = *source++;
+			break;
+		default:
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-			d = atariBitplaneData[0]<<16;
+			d = *source<<16;
 #else
-			d = atariBitplaneData[0];
+			d = *source;
 #endif
-		}
+			break;
 	}
 
 	x = a;

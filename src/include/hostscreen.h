@@ -104,7 +104,7 @@ class HostScreen: public DirtyRects
 	 * Atari bitplane to chunky conversion helper.
 	 **/
 	static void bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
-		uint8 colorValues[16] );
+		uint8 colorValues[16], int horiz_shift = 0);
 
 	void doScreenshot(void);
 

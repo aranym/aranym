@@ -96,6 +96,8 @@ void VIDEL::handleWrite(uint32 addr, uint8 value)
 		// writing to st_shift changed scn_width and vid_mode
 		// BASE_IO::handleWrite(HW+0x10, 0x0028);
 		// BASE_IO::handleWrite(HW+0xc2, 0x0008);
+	} else if (((addr & ~1) == HW+0x64) || ((addr & ~1) == HW+0x0e) || ((addr & ~1) == HW+0x10)) {
+		forceRefresh();
 	} else if ((addr & ~1) == HW+0x66) {
 		D(bug("VIDEL f_shift: %06x = %d ($%02x)", addr, value, value));
 		// IMPORTANT:
@@ -319,7 +321,8 @@ void VIDEL::refreshScreen(void)
 
 	int lineoffset = handleReadW(HW + 0x0e);
 	int linewidth = handleReadW(HW + 0x10) & 0x03ff; // 10 bits
-	if (handleReadW(HW + 0x64) & 15) {
+	int hscroll = handleReadW(HW + 0x64) & 15;
+	if (hscroll) {
 		lineoffset += videlBpp;
 	}
 
@@ -396,7 +399,7 @@ void VIDEL::refreshScreen(void)
 					Uint16 *src_line1 = src_line;
 					Uint8 *dst_line1 = dst_line;
 					for (j=0;j<num_lines;j++) {
-						HostScreen::bitplaneToChunky(src_line1, videlBpp, dst_line1);
+						HostScreen::bitplaneToChunky(src_line1, videlBpp, dst_line1, hscroll);
 						src_line1 += src_pitch;
 						dst_line1 += dst_pitch;
 					}
