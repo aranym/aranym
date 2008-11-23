@@ -1,7 +1,7 @@
 /*
 	Parallel port emulation, Linux /dev/parport driver
 
-	ARAnyM (C) 2005 Patrice Mandin
+	ARAnyM (C) 2005-2008 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -37,12 +37,12 @@ ParallelParport::ParallelParport(void)
 	D(bug("ParallelParport: interface created"));
 	handle = open(bx_options.parallel.parport,O_RDWR);
 	if (handle<0) {
-		fprintf(stderr, "ParallelParport: Can not open device %s\n", bx_options.parallel.parport);
+		panicbug("ParallelParport: Can not open device %s", bx_options.parallel.parport);
 		return;
 	}
 
 	if (ioctl(handle, PPCLAIM)<0) {
-		fprintf(stderr, "ParallelParport: Can not claim access to parport device\n");
+		panicbug("ParallelParport: Can not claim access to parport device");
 		close(handle);
 		handle=-1;
 		return;
@@ -55,7 +55,7 @@ ParallelParport::~ParallelParport(void)
 	if (handle>=0) {
 		setDirection(1);
 		if (ioctl(handle, PPRELEASE)<0) {
-			fprintf(stderr, "ParallelParport: Can not release parport device\n");
+			panicbug("ParallelParport: Can not release parport device");
 		}
 		close(handle);
 		handle=-1;
@@ -80,7 +80,7 @@ void ParallelParport::setDirection(bool out)
 
 	datadir = out ? 0 : 1;
 	if (ioctl(handle, PPDATADIR, &datadir)<0) {
-		fprintf(stderr, "ParallelParport: Can not set direction\n");
+		panicbug("ParallelParport: Can not set direction");
 	}
 }
 
@@ -91,7 +91,7 @@ uint8 ParallelParport::getData()
 	D(bug("ParallelParport: getData"));
 	if (handle>=0) {
 		if (ioctl(handle, PPRDATA, &value)<0) {
-			fprintf(stderr, "ParallelParport: Error reading data from device\n");
+			panicbug("ParallelParport: Error reading data from device");
 		}
 	}
 	return value;
@@ -102,7 +102,7 @@ void ParallelParport::setData(uint8 value)
 	D(bug("ParallelParport: setData"));
 	if (handle>=0) {
 		if (ioctl(handle, PPWDATA, &value)<0) {
-			fprintf(stderr, "ParallelParport: Error writing data to device\n");
+			panicbug("ParallelParport: Error writing data to device");
 		}
 	}
 }
@@ -113,9 +113,9 @@ uint8 ParallelParport::getBusy()
 
 	value=0;
 	D(bug("ParallelParport: getBusy"));
-	if (handle<0) {
+	if (handle>=0) {
 		if (ioctl(handle, PPRSTATUS, &value)<0) {
-			fprintf(stderr, "ParallelParport: Can not read BUSY line\n");
+			panicbug("ParallelParport: Can not read BUSY line");
 		}
 	}
 	return ((value & PARPORT_STATUS_BUSY)!=0);
@@ -133,6 +133,6 @@ void ParallelParport::setStrobe(bool high)
 	frob.mask = PARPORT_CONTROL_STROBE;
 	frob.val = high ? PARPORT_CONTROL_STROBE : 0;
 	if (ioctl(handle, PPFCONTROL, &frob)<0) {
-		fprintf(stderr, "ParallelParport: Can not set STROBE line\n");
+		panicbug("ParallelParport: Can not set STROBE line");
 	}
 }
