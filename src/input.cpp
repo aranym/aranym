@@ -194,8 +194,22 @@ void releaseTheMouse()
 	if (getARADATA()->isAtariMouseDriver()) {
 		int x = getARADATA()->getAtariMouseX(); 
 		int y = getARADATA()->getAtariMouseY();
-		SDL_WarpMouse(x, y);
 		D(bug("Mouse left our window at [%d,%d]", x, y));
+
+		// set the host mouse pointer to the expected place
+		// but move it in the original direction by 1 pixel
+		// to avoid an immediate and very annoying autograb...
+		if (x == 0) {
+			x = -1;
+		}
+		else if (y == 0) {
+			y = -1;
+		}
+		else {
+			x++;
+			y++;
+		}
+		SDL_WarpMouse(x, y);
 	}
 	else {
 		D(bug("Mouse left our window"));

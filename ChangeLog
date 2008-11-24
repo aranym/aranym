@@ -1,15 +1,21 @@
+2008/11/24 - Petr
+- input.cpp: fixed a very annoying unexpected mouse autograb when leaving
+  ARAnyM window with the mouse pointer faster (the SDL_WarpMouse simply
+  set the mouse pointer position back to ARAnyM window and that caused
+  immediate autograb).
+
+
 2008/11/23 - Petr
 - parallel_parport.cpp: fixed check for valid handle in getBusy()
 
 
 2008/11/21 - Patrice
-
 - Hardware scrolling quite OK now :-).
 
 
 2008/11/20 - Patrice
-- videl: Change lineoffset if hwscroll register not 0. Still needs pixel-precise
-position, and scrolling for 16bpp mode.
+- videl: Change lineoffset if hwscroll register not 0. Still needs
+  pixel-precise position, and scrolling for 16bpp mode.
 
 
 2008/11/09 - Petr
