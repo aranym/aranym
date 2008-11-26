@@ -1732,7 +1732,7 @@ static void dsp_btst(void)
 
 static void dsp_div(void)
 {
-	Uint32 srcreg, destreg, source, dest[3];
+	Uint32 srcreg, destreg, source[3], dest[3];
 	Uint16 newsr;
 
 	srcreg = DSP_REG_NULL;
@@ -1744,29 +1744,25 @@ static void dsp_div(void)
 	}
 	destreg = DSP_REG_A+((cur_inst>>3) & 1);
 
-	source = dsp_core->registers[srcreg];
+	source[0] = 0;
+    source[1] = dsp_core->registers[srcreg];
+    if (source[1] & (1<<23)) {
+        source[0] = 0xff;
+    }
+    source[2] = 0;
+
 	dest[0] = dsp_core->registers[DSP_REG_A2+(destreg & 1)];
 	dest[1] = dsp_core->registers[DSP_REG_A1+(destreg & 1)];
 	dest[2] = dsp_core->registers[DSP_REG_A0+(destreg & 1)];
 
-	if (((dest[0]>>7) & 1) ^ ((source>>23) & 1)) {
+	if (((dest[0]>>7) & 1) ^ ((source[1]>>23) & 1)) {
 		/* D += S */
 		newsr = dsp_asl56(dest);
-		dest[1] += source;
-		if ((dest[1]>>24) & BITMASK(8)) {
-			++dest[0];
-			dest[0] &= BITMASK(8);
-			dest[1] &= BITMASK(24);
-		}
+		dsp_add56(source, dest);
 	} else {
 		/* D -= S */
 		newsr = dsp_asl56(dest);
-		dest[1] -= source;
-		if ((dest[1]>>24) & BITMASK(8)) {
-			--dest[0];
-			dest[0] &= BITMASK(8);
-			dest[1] &= BITMASK(24);
-		}
+		dsp_sub56(source, dest);
 	}
 
 	dest[2] |= (dsp_core->registers[DSP_REG_SR]>>DSP_SR_C) & 1;
@@ -2664,8 +2660,8 @@ static void dsp_tcc(void)
 
 		/* S2,D2 transfer */
 		if (cur_inst & (1<<16)) {
-			regsrc2 = DSP_REG_R0+(cur_inst & BITMASK(3));
-			regdest2 = DSP_REG_R0+((cur_inst>>8) & BITMASK(3));
+			regsrc2 = DSP_REG_R0+((cur_inst>>8) & BITMASK(3));
+			regdest2 = DSP_REG_R0+(cur_inst & BITMASK(3));
 
 			dsp_core->registers[regdest2] = dsp_core->registers[regsrc2];
 		}
@@ -3399,7 +3395,7 @@ static Uint16 dsp_add56(Uint32 *source, Uint32 *dest)
 	dest[0] += source[0]+((dest[1]>>24) & 1);
 
 	/* overflow if we go below -256.0 or above +256.0 */
-	overflow = (((dest[0] & 0xffffff00)!=0) && ((dest[0] & 0xffffff00)!=0xffffff00));
+	overflow = (((dest[0] & 0xff)!=0) && ((dest[0] & 0xff)!=0xff));
 
 	/* set carry from the virtual 56th bit */
 	carry = (dest[0]>>8) & 1;
@@ -3421,7 +3417,7 @@ static Uint16 dsp_sub56(Uint32 *source, Uint32 *dest)
 	dest[0] -= source[0]+((dest[1]>>24) & 1);
 
 	/* overflow if we go below -256.0 or above +256.0 */
-	overflow = (((dest[0] & 0xffffff00)!=0) && ((dest[0] & 0xffffff00)!=0xffffff00));
+	overflow = (((dest[0] & 0xff)!=0) && ((dest[0] & 0xff)!=0xff));
 
 	/* set carry from the virtual 56th bit */
 	carry = (dest[0]>>8) & 1;
@@ -4013,12 +4009,12 @@ static void dsp_lsl(void)
 {
 	Uint32 numreg, newcarry;
 
-	numreg = (cur_inst>>3) & 1;
+	numreg = DSP_REG_A1+((cur_inst>>3) & 1);
 
-	newcarry = (dsp_core->registers[DSP_REG_A1+numreg]>>23) & 1;
+	newcarry = (dsp_core->registers[numreg]>>23) & 1;
 
-	dsp_core->registers[DSP_REG_A1+numreg] <<= 1;
-	dsp_core->registers[DSP_REG_A1+numreg] &= BITMASK(24);
+	dsp_core->registers[numreg] <<= 1;
+	dsp_core->registers[numreg] &= BITMASK(24);
 
 	dsp_core->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
 	dsp_core->registers[DSP_REG_SR] |= newcarry;
@@ -4030,12 +4026,12 @@ static void dsp_lsr(void)
 {
 	Uint32 numreg, newcarry;
 
-	numreg = (cur_inst>>3) & 1;
+	numreg = DSP_REG_A1+((cur_inst>>3) & 1);
 
-	newcarry = dsp_core->registers[DSP_REG_A1+numreg] & 1;
+	newcarry = dsp_core->registers[numreg] & 1;
 
-	dsp_core->registers[DSP_REG_A1+numreg] >>= 1;
-	/*dsp_core->registers[DSP_REG_A1+numreg] &= BITMASK(24);*/
+	dsp_core->registers[numreg] >>= 1;
+	/*dsp_core->registers[numreg] &= BITMASK(24);*/
 
 	dsp_core->registers[DSP_REG_SR] &= BITMASK(16)-((1<<DSP_SR_C)|(1<<DSP_SR_N)|(1<<DSP_SR_Z)|(1<<DSP_SR_V));
 	dsp_core->registers[DSP_REG_SR] |= newcarry;

@@ -1,3 +1,11 @@
+2008/11/26 - Patrice
+- dsp56k: More fixes from Laurent Sallafranque.
+  Fix calculation of overflow bit in add56/sub56.
+  Fix accumulator to use for LSL/LSR.
+  Fix registers S2,D2 for TCC instruction.
+  Fix for DIV instruction.
+
+
 2008/11/24 - Petr
 - input.cpp: fixed a very annoying unexpected mouse autograb when leaving
   ARAnyM window with the mouse pointer faster (the SDL_WarpMouse simply
