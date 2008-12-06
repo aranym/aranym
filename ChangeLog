@@ -1,3 +1,7 @@
+2008/12/06 - milan
+- Makefile.in: ungzipped man pages
+
+
 2008/11/26 - Patrice
 - dsp56k: More fixes from Laurent Sallafranque.
   Fix calculation of overflow bit in add56/sub56.

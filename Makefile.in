@@ -236,15 +236,15 @@ $(APP_BUNDLE): $(APP)
 	done
 	find $(APP_BUNDLE)/Contents/Resources -type d -and \( -name CVS -or -name \*~.nib \) -or -name \*~ -or -name \*.bak | xargs rm -rf
 
-install: $(APP) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz installdirs
+install: $(APP) $(TAPIF) doc/$(APP).1 doc/$(APP)-jit.1 doc/$(APP)-mmu.1 doc/$(APP_IFC).1 installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
 	$(INSTALL_PROGRAM) $(APP_IFC) $(DESTDIR)$(bindir)/$(APP_IFC);\
-	$(INSTALL_DATA) $(APP_IFC).1.gz $(DESTDIR)$(man1dir)/$(APP_IFC).1.gz ;\
+	$(INSTALL_DATA) doc/$(APP_IFC).1 $(DESTDIR)$(man1dir)/$(APP_IFC).1 ;\
 	fi
-	$(INSTALL_DATA) $(APP).1.gz $(DESTDIR)$(man1dir)/$(APP).1.gz
-	$(INSTALL_DATA) $(APP)-jit.1.gz $(DESTDIR)$(man1dir)/$(APP)-jit.1.gz
-	$(INSTALL_DATA) $(APP)-mmu.1.gz $(DESTDIR)$(man1dir)/$(APP)-mmu.1.gz
+	$(INSTALL_DATA) doc/$(APP).1 $(DESTDIR)$(man1dir)/$(APP).1
+	$(INSTALL_DATA) doc/$(APP)-jit.1 $(DESTDIR)$(man1dir)/$(APP)-jit.1
+	$(INSTALL_DATA) doc/$(APP)-mmu.1 $(DESTDIR)$(man1dir)/$(APP)-mmu.1
 	$(INSTALL_DATA) $(srcdir)/../ChangeLog $(DESTDIR)$(docdir)/$(APP)/changelog
 	$(INSTALL_DATA) $(srcdir)/../TODO $(DESTDIR)$(docdir)/$(APP)/TODO
 	$(INSTALL_DATA) $(srcdir)/../AUTHORS $(DESTDIR)$(docdir)/$(APP)/AUTHORS
@@ -276,11 +276,11 @@ uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
 	rm -f $(DESTDIR)$(bindir)/$(APP_IFC);\
-	rm -f $(DESTDIR)$(man1dir)/$(APP_IFC).1.gz ;\
+	rm -f $(DESTDIR)$(man1dir)/$(APP_IFC).1 ;\
 	fi
-	rm -f $(DESTDIR)$(man1dir)/$(APP).1.gz
-	rm -f $(DESTDIR)$(man1dir)/$(APP)-jit.1.gz
-	rm -f $(DESTDIR)$(man1dir)/$(APP)-mmu.1.gz
+	rm -f $(DESTDIR)$(man1dir)/$(APP).1
+	rm -f $(DESTDIR)$(man1dir)/$(APP)-jit.1
+	rm -f $(DESTDIR)$(man1dir)/$(APP)-mmu.1
 	rm -f $(DESTDIR)$(docdir)/$(APP)/changelog
 	rm -f $(DESTDIR)$(docdir)/$(APP)/TODO
 	rm -f $(DESTDIR)$(docdir)/$(APP)/AUTHORS
@@ -316,7 +316,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -r -f $(APP) $(APP_BUNDLE) $(APP_ARCH) $(APP_LIB) $(APP_STATIC) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz $(OBJ_DIR)/* core* *.core *~ *.bak
+	rm -r -f $(APP) $(APP_BUNDLE) $(APP_ARCH) $(APP_LIB) $(APP_STATIC) $(TAPIF) $(OBJ_DIR)/* core* *.core *~ *.bak
 
 clean: mostlyclean
 	rm -rf $(GEN_DIR)
@@ -334,15 +334,15 @@ mrproper: distclean
 bindistdirs:
 	$(SHELL) $(srcdir)/../mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
-bindist: $(APP) $(TAPIF) $(APP).1.gz $(APP)-jit.1.gz $(APP)-mmu.1.gz $(APP_IFC).1.gz bindistdirs
+bindist: $(APP) $(TAPIF) doc/$(APP).1 doc/$(APP)-jit.1 doc/$(APP)-mmu.1 doc/$(APP_IFC).1 bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
 	$(INSTALL_PROGRAM) $(APP_IFC) tmpdist$(bindir)/$(APP_IFC);\
-	$(INSTALL_DATA) $(APP_IFC).1.gz tmpdist$(man1dir)/$(APP_IFC).1.gz ;\
+	$(INSTALL_DATA) doc/$(APP_IFC).1 tmpdist$(man1dir)/$(APP_IFC).1 ;\
 	fi
-	$(INSTALL_DATA) $(APP).1.gz tmpdist$(man1dir)/$(APP).1.gz
-	$(INSTALL_DATA) $(APP)-jit.1.gz tmpdist$(man1dir)/$(APP)-jit.1.gz
-	$(INSTALL_DATA) $(APP)-mmu.1.gz tmpdist$(man1dir)/$(APP)-mmu.1.gz
+	$(INSTALL_DATA) doc/$(APP).1 tmpdist$(man1dir)/$(APP).1
+	$(INSTALL_DATA) doc/$(APP)-jit.1 tmpdist$(man1dir)/$(APP)-jit.1
+	$(INSTALL_DATA) doc/$(APP)-mmu.1 tmpdist$(man1dir)/$(APP)-mmu.1
 	$(INSTALL_DATA) $(srcdir)/../ChangeLog tmpdist$(docdir)/$(APP)/changelog
 	$(INSTALL_DATA) $(srcdir)/../TODO tmpdist$(docdir)/$(APP)/TODO
 	$(INSTALL_DATA) $(srcdir)/../AUTHORS tmpdist$(docdir)/$(APP)/AUTHORS
@@ -572,18 +572,6 @@ $(GEN_DIR)/memory.s: memory.cpp
 
 $(APP_IFC): aratapif.c
 	$(CC) $(LDFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $(APP_IFC) -DHAVE_AFINET $(srcdir)/Unix/aratapif.c
-
-$(APP).1.gz: ../doc/$(APP).1
-	gzip -9 -c $(srcdir)/../doc/$(APP).1 > $(APP).1.gz
-
-$(APP)-jit.1.gz: ../doc/$(APP)-jit.1
-	gzip -9 -c $(srcdir)/../doc/$(APP)-jit.1 > $(APP)-jit.1.gz
-
-$(APP)-mmu.1.gz: ../doc/$(APP)-mmu.1
-	gzip -9 -c $(srcdir)/../doc/$(APP)-mmu.1 > $(APP)-mmu.1.gz
-
-$(APP_IFC).1.gz: ../doc/$(APP_IFC).1
-	gzip -9 -c $(srcdir)/../doc/$(APP_IFC).1 > $(APP_IFC).1.gz
 
 # Include dependencies
 ifneq ($(wildcard $(DEPEND)),)
