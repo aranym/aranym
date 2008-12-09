@@ -15,7 +15,7 @@
 # source function library
 # . /etc/rc.d/init.d/functions
 
-# TO CHANGE!!!
+# CHANGE THIS TO YOUR 'id'
 USER=joy
 
 TAPS=tap0
@@ -26,6 +26,7 @@ LOCK=/var/lock/subsys/arabridge
 
 # make sure grep in ifconfig output works
 LC_ALL=C
+export LC_ALL
 
 # defaultroute's nif
 DR_NIF=$(/sbin/route -n 2>/dev/null | awk '/^0\.0\.0\.0/ {print $8}')
