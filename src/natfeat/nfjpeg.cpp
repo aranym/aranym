@@ -163,6 +163,9 @@ int32 JpegDriver::get_image_info(memptr jpeg_ptr)
 
 	if (images[tmp->handle].src == NULL) {
 		/* Damn, we need to decode it with SDL_image */
+		// for debugging only
+		panicbug("nfjpeg:decode_image - InPointer = $%08x", tmp->InPointer);
+
 		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize))) {
 			return EINVFN;
 		}
@@ -331,7 +334,7 @@ SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, ui
 	surface = IMG_Load_RW(src, 0);
 	SDL_FreeRW(src);
 	if (surface==NULL) {
-		D(bug("nfjpeg: load_image() failed in IMG_Load_RW(): %s", IMG_GetError()));
+		panicbug("nfjpeg: load_image() failed in IMG_Load_RW(): %s", IMG_GetError());
 		return SDL_FALSE;
 	}
 
