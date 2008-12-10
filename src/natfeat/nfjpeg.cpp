@@ -325,11 +325,13 @@ SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, ui
 	/* Load image from memory */
 	src = SDL_RWFromMem(buffer, size);
 	if (src==NULL) {
+		D(bug("nfjpeg: load_image() failed in SDL_RWFromMem()"));
 		return SDL_FALSE;
 	}
 	surface = IMG_Load_RW(src, 0);
 	SDL_FreeRW(src);
 	if (surface==NULL) {
+		D(bug("nfjpeg: load_image() failed in IMG_Load_RW()"));
 		return SDL_FALSE;
 	}
 
