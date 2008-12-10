@@ -66,12 +66,11 @@ int cookie_present(unsigned long cookie, unsigned long *value)
 
 	while (*cookie_jar != 0) {
 		if (*cookie_jar == cookie) {
-			*value = cookie_jar[1];
+			if (value) *value = cookie_jar[1];
 			return 1;
 		}
 
 		cookie_jar+=2;
-/*		Cconws(".");*/
 	}
 	return 0;
 }
