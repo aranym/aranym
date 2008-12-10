@@ -121,7 +121,7 @@ void install_driver(unsigned long resident_length)
 	/* Check if NF is present for NFJPEG */
 	nfOps = nf_init();
 	if (!nfOps) {
-		Cconws("__NF cookie not present on this system\r\n");
+		Cconws("Native Features not present on this system\r\n");
 		press_any_key();
 		return;
 	}
