@@ -331,7 +331,7 @@ SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, ui
 	surface = IMG_Load_RW(src, 0);
 	SDL_FreeRW(src);
 	if (surface==NULL) {
-		D(bug("nfjpeg: load_image() failed in IMG_Load_RW()"));
+		D(bug("nfjpeg: load_image() failed in IMG_Load_RW(): %s", IMG_GetError()));
 		return SDL_FALSE;
 	}
 
