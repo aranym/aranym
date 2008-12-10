@@ -1,3 +1,15 @@
+2008/12/10 - Petr - fixing NFJPEG driver (with help of Andreas, see below)
+- atari/natfeat.c: don't check for __NF cookie as FreeMiNT removes it so NF
+  drivers could not be started after MiNT
+
+- atari/nfpci/nfpci_cookie.c: do not store value to NULL pointer!
+
+- atari/nfpci/nfpci.c, atari/nfjpeg/nfjpeg.c: bump version, remove mention
+  about __NF cookie
+
+- atari/nfjpeg/Makefile: don't complain when removing non-existing files
+
+
 2008/12/10 - Andreas
 - jpgdh.h: Use fixed sized types.
 - nfjpeg.cpp: Use fixed sized types.
