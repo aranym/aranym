@@ -51,7 +51,7 @@
 #endif
 
 #define DRIVER_NAME	"ARAnyM host PCI driver"
-#define VERSION	"v0.3"
+#define VERSION	"v0.4"
 
 /*--- Types ---*/
 
@@ -152,7 +152,7 @@ void install_driver(unsigned long resident_length)
 	/* Check if NF is present for PCI */
 	nfOps = nf_init();
 	if (!nfOps) {
-		Cconws("__NF cookie not present on this system\r\n");
+		Cconws("Native Features not present on this system\r\n");
 		press_any_key();
 		return;
 	}	
