@@ -1,5 +1,6 @@
 2008/12/10 - Andreas
 - jpgdh.h: Use fixed sized types.
+- nfjpeg.cpp: Use fixed sized types.
 
 
 2008/12/06 - milan

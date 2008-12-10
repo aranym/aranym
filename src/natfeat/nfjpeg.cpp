@@ -264,10 +264,10 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 			break;
 		case 2:	/* R5G6B5 (big endian) */
 			for (y=0; y<height; y++) {
-				unsigned short *dst_line;
+				uint16 *dst_line;
 
 				src_line = src;
-				dst_line = (unsigned short *)dest;
+				dst_line = (uint16 *)dest;
 				for (x=0;x<width;x++) {
 					read_rgb(format, src_line, &r, &g, &b);
 					*dst_line++ = SDL_SwapBE16(((r>>3)<<11)|((g>>2)<<5)|(b>>3));
@@ -298,10 +298,10 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 			break;
 		case 4:	/* FIXME A8R8G8B8 or R8G8B8A8 or something else ? */
 			for (y=0; y<height; y++) {
-				unsigned long *dst_line;
+				uint32 *dst_line;
 
 				src_line = src;
-				dst_line = (unsigned long *)dest;
+				dst_line = (uint32 *)dest;
 				for (x=0;x<width;x++) {
 					read_rgb(format, src_line, &r, &g, &b);
 					*dst_line++ = SDL_SwapBE32((r<<16)|(g<<8)|b);
@@ -383,7 +383,7 @@ SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, ui
 
 void JpegDriver::read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, int *b)
 {
-	unsigned long color;
+	uint32 color;
 
 	color = 0;
 	switch(format->BytesPerPixel) {
@@ -397,9 +397,9 @@ void JpegDriver::read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, in
 			break;
 		case 2:
 			{
-				unsigned short *tmp;
+				uint16 *tmp;
 				
-				tmp = (unsigned short *)src;
+				tmp = (uint16 *)src;
 				color = *tmp;
 			}
 			break;
@@ -417,9 +417,9 @@ void JpegDriver::read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, in
 			break;
 		case 4:
 			{
-				unsigned long *tmp;
+				uint32 *tmp;
 				
-				tmp = (unsigned long *)src;
+				tmp = (uint32 *)src;
 				color = *tmp;
 			}
 			break;
