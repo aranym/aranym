@@ -1,17 +1,14 @@
 /*
- * $Header$
- *
  * ARAnyM native features interface.
+ * (c) 2005-2008 ARAnyM development team
+ *
  * In 2006 updated with FreeMiNT headers and code.
+ * In 2008 converted from "__NF" cookie to direct usage of NF instructions
  *
  **/
 
 /*
- * $Id$
- * 
- * This file belongs to FreeMiNT. It's not in the original MiNT 1.12
- * distribution.
- * 
+ * Copied from FreeMiNT source tree where Native Features were added recently
  * 
  * Copyright 2003 Frank Naumann <fnaumann@freemint.de>
  * All rights reserved.
@@ -34,9 +31,6 @@
  * Author: Frank Naumann <fnaumann@freemint.de>
  * Started: 2003-12-13
  * 
- * please send suggestions, patches or bug reports to me or
- * the MiNT mailing list
- * 
  */
 
 # include <compiler.h>
@@ -47,17 +41,6 @@
 # ifdef ARANYM
 
 
-/** @deprecated Use the nf_init() function instead and the 'struct nf_ops'
- */
-
-/* NatFeat opcodes */
-long _NF_getid = 0x73004e75L;
-long _NF_call  = 0x73014e75L;
-
-/** end of @deprecated
- */
-
-
 static unsigned long nf_get_id_instr = 0x73004e75UL;
 static unsigned long nf_call_instr = 0x73014e75UL;
 
@@ -65,34 +48,9 @@ static struct nf_ops _nf_ops = { (void*)&nf_get_id_instr, (void*)&nf_call_instr 
 static struct nf_ops *nf_ops = 0UL; 
 
 
-/* the following routine assumes it is running in a supervisor mode
- * and not under FreeMiNT */
-
-struct cookie
-{
-	long tag;
-	long value;
-};
-
-static inline
-unsigned long get_cookie (unsigned long tag)
-{
-	struct cookie *cookie = *(struct cookie **)0x5a0;
-	if (!cookie) return 0;
-
-	while (cookie->tag) {
-		if (cookie->tag == tag) return cookie->value;
-		cookie++;
-	}
-
-	return 0;
-}
-
 static inline int
 detect_native_features(void) {
-	if (!get_cookie(0x5f5f4e46UL /* '__NF' */)) {
-		return 0;
-	}
+	// TODO: set illegal instruction vector, test 0x7300 instruction
 	return 1;
 }
 
