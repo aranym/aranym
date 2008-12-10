@@ -50,7 +50,7 @@
 #endif
 
 #define DRIVER_NAME	"ARAnyM host JPEG driver"
-#define VERSION	"v0.3"
+#define VERSION	"v0.4"
 
 #define CALLJPEGROUTINE(jpgd_ptr,func_ptr)	\
 __extension__	\
