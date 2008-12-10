@@ -163,9 +163,6 @@ int32 JpegDriver::get_image_info(memptr jpeg_ptr)
 
 	if (images[tmp->handle].src == NULL) {
 		/* Damn, we need to decode it with SDL_image */
-		// for debugging only
-		panicbug("nfjpeg:decode_image - InPointer = $%08x", tmp->InPointer);
-
 		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize))) {
 			return EINVFN;
 		}
