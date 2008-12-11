@@ -1,4 +1,9 @@
-2008/12/10 - Petr - fixing NFJPEG driver (with help of Andreas, see below)
+2008/12/11 - Petr
+- configure.ac: disable jit-fpu by default since it's too buggy. Thanks to
+  Anders Eriksson and Magnus Hansson for providing a simple test case.
+
+
+2008/12/10 - Petr
 - atari/natfeat.c: don't check for __NF cookie as FreeMiNT removes it so NF
   drivers could not be started after MiNT
 
@@ -11,7 +16,7 @@
 
 
 2008/12/10 - Andreas
-- jpgdh.h: Use fixed sized types.
+- jpgdh.h: Use fixed sized types - fixes NFJPEG on 64bit host.
 - nfjpeg.cpp: Use fixed sized types.
 
 

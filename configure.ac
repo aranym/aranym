@@ -158,14 +158,7 @@ dnl JIT compiler options.
 AC_ARG_ENABLE(jit-compiler,    [  --enable-jit-compiler   enable JIT compiler (default=no)], [WANT_JIT=$enableval], [WANT_JIT=no])
 
 AC_ARG_ENABLE(jit-fpu,
-[  --enable-jit-fpu        enable JIT compiler for FPU instructions (default=yes)],
-[WANT_JIT_FPU=$enableval],
-[ if [[ "x$WANT_JIT" = "xyes" ]]; then
-    WANT_JIT_FPU=yes
-      else
-    WANT_JIT_FPU=no
-  fi
-])
+[  --enable-jit-fpu        enable JIT compiler for FPU instructions (default=no)], [WANT_JIT_FPU=$enableval], [WANT_JIT_FPU=no])
 
 AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code disassemblers (default=no)], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
 
