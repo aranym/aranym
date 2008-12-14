@@ -1,3 +1,7 @@
+2008/12/14 - Petr
+- atari/*: added proper NatFeat detection with illegal vector handling etc.
+
+
 2008/12/11 - Petr
 - configure.ac: disable jit-fpu by default since it's too buggy. Thanks to
   Anders Eriksson and Magnus Hansson for providing a simple test case.
