@@ -2,7 +2,7 @@
 TARGET = nfcdrom.bos
 
 COBJS = nfcdrom.c ../natfeat/natfeat.c
-SOBJS = entry.S
+SOBJS = entry.S ../natfeat/natfeat_asm.S
 
 include ../CONFIGVARS
 
@@ -19,4 +19,4 @@ $(TARGET):	$(COBJECTS) $(SOBJECTS)
 	${STRIP} $(TARGET)
 
 clean:
-	rm $(COBJECTS) $(SOBJECTS) $(TARGET)
+	rm -f $(COBJECTS) $(SOBJECTS) $(TARGET)

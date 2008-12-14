@@ -3,7 +3,7 @@ TARGET = nfstderr.bos
 TARGET1 = print.prg
 
 COBJS = nfstderrbos.c ../natfeat/natfeat.c ../nfpci/nfpci_cookie.c
-SOBJS = entry.S
+SOBJS = entry.S ../natfeat/natfeat_asm.S
 
 include ../CONFIGVARS
 

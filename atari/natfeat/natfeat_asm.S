@@ -9,7 +9,7 @@
 
 /*
  * Copied from FreeMiNT source tree where Native Features were added recently
- * 
+ *
  * Copyright 2003 Frank Naumann <fnaumann@freemint.de>
  * All rights reserved.
  * 
@@ -31,88 +31,46 @@
  * Author: Frank Naumann <fnaumann@freemint.de>
  * Started: 2003-12-13
  * 
+ * please send suggestions, patches or bug reports to me or
+ * the MiNT mailing list
+ * 
  */
-
-# include <compiler.h>
-# include <mint/osbind.h>
-# include "nf_ops.h"
-
 
 #define ARANYM 1
 # ifdef ARANYM
 
+	.text
 
-static unsigned long nf_get_id_instr = 0x73004e75UL;
-static unsigned long nf_call_instr = 0x73014e75UL;
+	.globl	_detect_native_features
 
-static struct nf_ops _nf_ops = { (void*)&nf_get_id_instr, (void*)&nf_call_instr }; 
-static struct nf_ops *nf_ops = 0UL; 
+/* 
+ * NatFeats test (routine retuns TRUE/FALSE (1/0) in D0)
+ */
+_detect_native_features:
 
-extern int detect_native_features(void);
+	clr.l	d0			// assume no NatFeats available
+	move.l	sp,a1			// save the ssp
+	move.l	(0x0010).w,a0		// illegal instruction vector
+	move.l	#fail_natfeat,(0x0010).w
 
-struct nf_ops *
-nf_init(void)
-{
-	if (Supexec(detect_native_features()))
-	{
-		nf_ops = &_nf_ops;
-		return nf_ops;
-	}
-	
-	return 0UL;
-}
+	nop				// flush pipelines (for 68040+)
 
+	pea	(nf_version_name).w(pc)
+	subq.l	#4,sp
+	dc.w	0x7300			// Jump to NATFEAT_ID
+	tst.l	d0
+	beq.s	fail_natfeat
+	moveq	#1,d0			// NatFeats detected
 
-const char *
-nf_name(void)
-{
-	static char buf[64] = "Unknown emulator";
-	
-	if (nf_ops)
-	{
-		static int done = 0;
-		
-		if (!done)
-		{
-			long nfid_name = nf_ops->get_id("NF_NAME");
-			
-			if (nfid_name)
-				nf_ops->call(nfid_name, buf, sizeof(buf));
-			
-			done = 1;
-		}
-	}
-        
-	return buf;
-}
+fail_natfeat:
+	move.l	a1,sp
+	move.l	a0,(0x0010).w
 
-int
-nf_debug(const char *msg)
-{
-	if (nf_ops)
-	{
-		long nfid_stderr = nf_ops->get_id("NF_STDERR");
-		
-		if (nfid_stderr)
-		{
-			nf_ops->call(nfid_stderr, msg);
-			return 1;
-		}
-	}
-	
-	return 0;
-}
+	nop				// flush pipelines (for 68040+)
 
-void
-nf_shutdown(void)
-{
-	if (nf_ops)
-	{
-		long shutdown_id = nf_ops->get_id("NF_SHUTDOWN");
-		
-		if (shutdown_id)
-        		nf_ops->call(shutdown_id);
-	}
-}
+	rts
+
+nf_version_name:
+	.ascii	"NF_VERSION\0"
 
 # endif

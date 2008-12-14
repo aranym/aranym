@@ -2,7 +2,7 @@
 TARGET = nfpci.prg
 
 COBJS = nfpci.c nfpci_cookie.c ../natfeat/natfeat.c
-SOBJS = entry.S nfpci_bios.S nfpci_xbios.S
+SOBJS = entry.S nfpci_bios.S nfpci_xbios.S ../natfeat/natfeat_asm.S
 
 include ../CONFIGVARS
 
@@ -20,4 +20,4 @@ $(TARGET):	$(COBJECTS) $(SOBJECTS)
 	${STRIP} $(TARGET)
 
 clean:
-	rm $(COBJECTS) $(SOBJECTS) $(TARGET)
+	rm -f $(COBJECTS) $(SOBJECTS) $(TARGET)

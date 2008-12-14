@@ -2,7 +2,7 @@
 TARGET = nfjpeg.prg
 
 COBJS = nfjpeg.c ../natfeat/natfeat.c ../nfpci/nfpci_cookie.c
-SOBJS = entry.S nfjpeg_functions.S
+SOBJS = entry.S nfjpeg_functions.S ../natfeat/natfeat_asm.S
 
 include ../CONFIGVARS
 

@@ -7,4 +7,7 @@ HEADER = \
 COBJS = \
 	natfeat.c
 
-SRCFILES = $(HEADER) $(COBJS)
+SOBJS = \
+	natfeat_asm.S
+
+SRCFILES = $(HEADER) $(COBJS) $(SOBJS)
