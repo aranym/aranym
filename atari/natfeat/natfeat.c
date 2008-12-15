@@ -53,7 +53,7 @@ extern int detect_native_features(void);
 struct nf_ops *
 nf_init(void)
 {
-	if (Supexec(detect_native_features()))
+	if (Supexec(detect_native_features))
 	{
 		nf_ops = &_nf_ops;
 		return nf_ops;
