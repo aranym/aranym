@@ -53,7 +53,7 @@ while ($line = <FILE>) {
 
 		chomp($line);
 
-		print "\t$return_type (*$function_name)$parameters\n";
+		print "\t$return_type (STDCALL *$function_name)$parameters\n";
 
 		$linecount++;
 	}

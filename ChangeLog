@@ -2,7 +2,7 @@
 - More dsp56k fixes
   Immediate value for REP is 12bit wide.
   Fix REP and DO instruction parameter decoding.
-
+- OpenGL: Use __stdcall convention on Win32.
 
 2008/12/14 - Petr
 - atari/*: added proper NatFeat detection with illegal vector handling etc.

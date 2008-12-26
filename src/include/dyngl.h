@@ -40,6 +40,12 @@ typedef int64_t GLint64EXT;
 typedef uint64_t GLuint64EXT;
 #endif
 
+#ifdef WIN32
+#define STDCALL __stdcall
+#else
+#define STDCALL
+#endif
+
 /*--- Structures ---*/
 
 typedef struct {
