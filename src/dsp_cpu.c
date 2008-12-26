@@ -153,14 +153,14 @@ static void dsp_swi(void);
 static void dsp_tcc(void);
 static void dsp_wait(void);
 
-static void dsp_do_0(void);
-static void dsp_do_2(void);
-static void dsp_do_4(void);
-static void dsp_do_c(void);
-static void dsp_rep_1(void);
-static void dsp_rep_3(void);
-static void dsp_rep_5(void);
-static void dsp_rep_d(void);
+static void dsp_do_ea(void);
+static void dsp_do_aa(void);
+static void dsp_do_imm(void);
+static void dsp_do_reg(void);
+static void dsp_rep_aa(void);
+static void dsp_rep_ea(void);
+static void dsp_rep_imm(void);
+static void dsp_rep_reg(void);
 static void dsp_movec_7(void);
 static void dsp_movec_9(void);
 static void dsp_movec_b(void);
@@ -468,47 +468,47 @@ static dsp_emul_t opcodes_alu80ff[4]={
 };
 
 static dsp_emul_t opcodes_do[16]={
-	dsp_do_0,
-	dsp_undefined,
-	dsp_do_2,
-	dsp_undefined,
-
-	dsp_do_4,
-	dsp_undefined,
-	dsp_do_2,
+	dsp_do_ea,
+	dsp_do_ea,
+	dsp_do_imm,
 	dsp_undefined,
 
-	dsp_undefined,
-	dsp_undefined,
-	dsp_do_2,
+	dsp_do_aa,
+	dsp_do_aa,
+	dsp_do_imm,
 	dsp_undefined,
 
-	dsp_do_c,
 	dsp_undefined,
-	dsp_do_2,
+	dsp_undefined,
+	dsp_do_imm,
+	dsp_undefined,
+
+	dsp_do_reg,
+	dsp_undefined,
+	dsp_do_imm,
 	dsp_undefined
 };
 
 static dsp_emul_t opcodes_rep[16]={
+	dsp_rep_aa,
+	dsp_rep_aa,
+	dsp_rep_imm,
 	dsp_undefined,
-	dsp_rep_1,
+
+	dsp_rep_ea,
+	dsp_rep_ea,
+	dsp_rep_imm,
 	dsp_undefined,
-	dsp_rep_3,
 
 	dsp_undefined,
-	dsp_rep_5,
 	dsp_undefined,
-	dsp_rep_3,
+	dsp_rep_imm,
+	dsp_undefined,
 
+	dsp_rep_reg,
 	dsp_undefined,
-	dsp_undefined,
-	dsp_undefined,
-	dsp_rep_3,
-
-	dsp_undefined,
-	dsp_rep_d,
-	dsp_undefined,
-	dsp_rep_3
+	dsp_rep_imm,
+	dsp_undefined
 };
 
 static dsp_emul_t opcodes_movec[16]={
@@ -1777,6 +1777,15 @@ static void dsp_div(void)
 	dsp_core->registers[DSP_REG_SR] |= newsr & (1<<DSP_SR_V);
 }
 
+/*
+	DO instruction parameter encoding
+
+	xxxxxxxx 00xxxxxx 0Yxxxxxx	aa
+	xxxxxxxx 01xxxxxx 0Yxxxxxx	ea
+	xxxxxxxx YYxxxxxx 10xxxxxx	imm
+	xxxxxxxx 11xxxxxx 00xxxxxx	reg
+*/
+
 static void dsp_do(void)
 {
 	Uint32 value;
@@ -1790,14 +1799,13 @@ static void dsp_do(void)
 
 	dsp_core->registers[DSP_REG_SR] |= (1<<DSP_SR_LF);
 
-	value = (cur_inst>>12) & (BITMASK(2)<<2);
-	value |= (cur_inst>>6) & 1<<1;
-	value |= (cur_inst>>5) & 1;
+	value = ((cur_inst>>14) & BITMASK(2))<<2;
+	value |= (cur_inst>>6) & BITMASK(2);
 
 	opcodes_do[value]();
 }
 
-static void dsp_do_0(void)
+static void dsp_do_aa(void)
 {
 	Uint32 memspace, addr;
 
@@ -1809,14 +1817,15 @@ static void dsp_do_0(void)
 	dsp_core->registers[DSP_REG_LC] = read_memory(memspace, addr) & BITMASK(16);
 }
 
-static void dsp_do_2(void)
+static void dsp_do_imm(void)
 {
 	/* #xx */
-	dsp_core->registers[DSP_REG_LC] = (cur_inst>>8) & BITMASK(8);
-	dsp_core->registers[DSP_REG_LC] |= (cur_inst & BITMASK(4))<<8;
+
+	dsp_core->registers[DSP_REG_LC] = ((cur_inst>>8) & BITMASK(8))
+		+ ((cur_inst & BITMASK(4))<<8);
 }
 
-static void dsp_do_4(void)
+static void dsp_do_ea(void)
 {
 	Uint32 memspace, ea_mode, addr;
 
@@ -1829,7 +1838,7 @@ static void dsp_do_4(void)
 	dsp_core->registers[DSP_REG_LC] = read_memory(memspace, addr) & BITMASK(16);
 }
 
-static void dsp_do_c(void)
+static void dsp_do_reg(void)
 {
 	Uint32 numreg;
 
@@ -2528,22 +2537,30 @@ static void dsp_ori(void)
 	}
 }
 
+/*
+	REP instruction parameter encoding
+
+	xxxxxxxx 00xxxxxx 0Yxxxxxx	aa
+	xxxxxxxx 01xxxxxx 0Yxxxxxx	ea
+	xxxxxxxx YYxxxxxx 10xxxxxx	imm
+	xxxxxxxx 11xxxxxx 00xxxxxx	reg
+*/
+
 static void dsp_rep(void)
 {
 	Uint32 value;
 
 	dsp_core->registers[DSP_REG_LCSAVE] = dsp_core->registers[DSP_REG_LC];
 
-	value = (cur_inst>>12) & (BITMASK(2)<<2);
-	value |= (cur_inst>>6) & (1<<1);
-	value |= (cur_inst>>5) & 1;
+	value = ((cur_inst>>14) & BITMASK(2))<<2;
+	value |= (cur_inst>>6) & BITMASK(2);
 
 	opcodes_rep[value]();
 	pc_on_rep = 1;		/* Not decrement LC at first time */
 	dsp_core->loop_rep = 1;	/* We are now running rep */
 }
 
-static void dsp_rep_1(void)
+static void dsp_rep_aa(void)
 {
 	/* x:aa */
 	/* y:aa */
@@ -2551,14 +2568,15 @@ static void dsp_rep_1(void)
 	dsp_core->registers[DSP_REG_LC]=read_memory((cur_inst>>6) & 1,(cur_inst>>8) & BITMASK(6));
 }
 
-static void dsp_rep_3(void)
+static void dsp_rep_imm(void)
 {
 	/* #xxx */
 
-	dsp_core->registers[DSP_REG_LC]= (cur_inst>>8) & BITMASK(8);
+	dsp_core->registers[DSP_REG_LC] = ((cur_inst>>8) & BITMASK(8))
+		+ ((cur_inst & BITMASK(4))<<8);
 }
 
-static void dsp_rep_5(void)
+static void dsp_rep_ea(void)
 {
 	Uint32 value;
 
@@ -2569,7 +2587,7 @@ static void dsp_rep_5(void)
 	dsp_core->registers[DSP_REG_LC]= read_memory((cur_inst>>6) & 1, value);
 }
 
-static void dsp_rep_d(void)
+static void dsp_rep_reg(void)
 {
 	Uint32 numreg;
 
