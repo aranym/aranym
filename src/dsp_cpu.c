@@ -467,48 +467,28 @@ static dsp_emul_t opcodes_alu80ff[4]={
 	dsp_macr
 };
 
-static dsp_emul_t opcodes_do[16]={
-	dsp_do_ea,
-	dsp_do_ea,
-	dsp_do_imm,
-	dsp_undefined,
-
-	dsp_do_aa,
+static dsp_emul_t opcodes_do[8]={
 	dsp_do_aa,
 	dsp_do_imm,
-	dsp_undefined,
+	dsp_do_ea,
+	dsp_do_imm,
 
-	dsp_undefined,
 	dsp_undefined,
 	dsp_do_imm,
-	dsp_undefined,
-
 	dsp_do_reg,
-	dsp_undefined,
-	dsp_do_imm,
-	dsp_undefined
+	dsp_do_imm
 };
 
-static dsp_emul_t opcodes_rep[16]={
-	dsp_rep_aa,
+static dsp_emul_t opcodes_rep[8]={
 	dsp_rep_aa,
 	dsp_rep_imm,
-	dsp_undefined,
-
-	dsp_rep_ea,
 	dsp_rep_ea,
 	dsp_rep_imm,
-	dsp_undefined,
 
-	dsp_undefined,
 	dsp_undefined,
 	dsp_rep_imm,
-	dsp_undefined,
-
 	dsp_rep_reg,
-	dsp_undefined,
-	dsp_rep_imm,
-	dsp_undefined
+	dsp_rep_imm
 };
 
 static dsp_emul_t opcodes_movec[16]={
@@ -1780,10 +1760,10 @@ static void dsp_div(void)
 /*
 	DO instruction parameter encoding
 
-	xxxxxxxx 00xxxxxx 0Yxxxxxx	aa
-	xxxxxxxx 01xxxxxx 0Yxxxxxx	ea
-	xxxxxxxx YYxxxxxx 10xxxxxx	imm
-	xxxxxxxx 11xxxxxx 00xxxxxx	reg
+	xxxxxxxx 00xxxxxx 0xxxxxxx	aa
+	xxxxxxxx 01xxxxxx 0xxxxxxx	ea
+	xxxxxxxx YYxxxxxx 1xxxxxxx	imm
+	xxxxxxxx 11xxxxxx 0xxxxxxx	reg
 */
 
 static void dsp_do(void)
@@ -1799,8 +1779,8 @@ static void dsp_do(void)
 
 	dsp_core->registers[DSP_REG_SR] |= (1<<DSP_SR_LF);
 
-	value = ((cur_inst>>14) & BITMASK(2))<<2;
-	value |= (cur_inst>>6) & BITMASK(2);
+	value = ((cur_inst>>14) & BITMASK(2))<<1;
+	value |= (cur_inst>>7) & 1;
 
 	opcodes_do[value]();
 }
@@ -2540,10 +2520,10 @@ static void dsp_ori(void)
 /*
 	REP instruction parameter encoding
 
-	xxxxxxxx 00xxxxxx 0Yxxxxxx	aa
-	xxxxxxxx 01xxxxxx 0Yxxxxxx	ea
-	xxxxxxxx YYxxxxxx 10xxxxxx	imm
-	xxxxxxxx 11xxxxxx 00xxxxxx	reg
+	xxxxxxxx 00xxxxxx 0xxxxxxx	aa
+	xxxxxxxx 01xxxxxx 0xxxxxxx	ea
+	xxxxxxxx YYxxxxxx 1xxxxxxx	imm
+	xxxxxxxx 11xxxxxx 0xxxxxxx	reg
 */
 
 static void dsp_rep(void)
@@ -2552,8 +2532,8 @@ static void dsp_rep(void)
 
 	dsp_core->registers[DSP_REG_LCSAVE] = dsp_core->registers[DSP_REG_LC];
 
-	value = ((cur_inst>>14) & BITMASK(2))<<2;
-	value |= (cur_inst>>6) & BITMASK(2);
+	value = ((cur_inst>>14) & BITMASK(2))<<1;
+	value |= (cur_inst>>7) & 1;
 
 	opcodes_rep[value]();
 	pc_on_rep = 1;		/* Not decrement LC at first time */
