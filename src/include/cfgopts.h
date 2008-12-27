@@ -38,7 +38,9 @@ struct Config_Tag {
 	char		stat;				/* internal flag for update_config */
 };
 
+#ifndef MAX_PATH
 #define MAX_PATH	1024
+#endif
 
 class ConfigOptions
 {
