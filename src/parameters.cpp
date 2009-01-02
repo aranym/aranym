@@ -162,7 +162,6 @@ struct Config_Tag global_conf[]={
 	{ "Bootstrap", Path_Tag, bx_options.bootstrap_path, sizeof(bx_options.bootstrap_path), 0},
 	{ "BootstrapArgs", String_Tag, bx_options.bootstrap_args, sizeof(bx_options.bootstrap_args), 0},
 	{ "BootDrive", Char_Tag, &bx_options.bootdrive, 0, 0},
-	{ "AutoGrabMouse", Bool_Tag, &bx_options.autoMouseGrab, 0, 0},
 	{ "GMTime", Bool_Tag, &bx_options.gmtime, 0, 0},
 #ifdef ENABLE_EPSLIMITER
 	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
@@ -176,7 +175,6 @@ void preset_global()
   strcpy(bx_options.tos_path, TOS_FILENAME);
   strcpy(bx_options.emutos_path, EMUTOS_FILENAME);
   strcpy(bx_options.bootstrap_path, FREEMINT_FILENAME);
-  bx_options.autoMouseGrab = true;
   bx_options.gmtime = false;	// use localtime by default
   strcpy(bx_options.floppy.path, "");
 #ifdef FixedSizeFastRAM

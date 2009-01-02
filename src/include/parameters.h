@@ -278,7 +278,6 @@ typedef struct {
   char			bootstrap_args[512];
   char			bootdrive;
   uint32		fastram;
-  bool			autoMouseGrab;
   bool			gmtime;
   bx_hotkeys_t		hotkeys;
   bool			newHardDriveSupport;

@@ -22,9 +22,6 @@ BootstrapArgs =
 # default boot drive for FreeMiNT
 BootDrive =
 
-# grab mouse to ARAnyM window when the mouse enters the window rectangle
-AutoGrabMouse = Yes
-
 # UTC (GMT) or localtime? Set GMT for Linux-m68k or FreeMiNT with timezones
 GMTime = No
 
