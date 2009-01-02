@@ -1,7 +1,7 @@
 /*
  * input.cpp - handling of keyboard/mouse input
  *
- * Copyright (c) 2001-2008 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2009 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -99,6 +99,85 @@ SDL_Joystick *sdl_joysticks[4]={
 static bool grabbedMouse = false;
 static bool hiddenMouse = false;
 static bool capslockState = false;
+static bool ignoreMouseMotionEvent = false;
+static SDL_Cursor *aranym_cursor = NULL;
+
+static const char *arrow[] = {
+  /* width height num_colors chars_per_pixel */
+  "    32    32        3            1",
+  /* colors */
+  "X c #000000",
+  ". c #ffffff",
+  "  c None",
+  /* pixels */
+  "X                               ",
+  "XX                              ",
+  "X.X                             ",
+  "X..X                            ",
+  "X...X                           ",
+  "X....X                          ",
+  "X.....X                         ",
+  "X......X                        ",
+  "X.......X                       ",
+  "X........X                      ",
+  "X.....XXXXX                     ",
+  "X..X..X                         ",
+  "X.X X..X                        ",
+  "XX  X..X                        ",
+  "X    X..X                       ",
+  "     X..X                       ",
+  "      X..X                      ",
+  "      X..X                      ",
+  "       XX                       ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "                                ",
+  "0,0"
+};
+
+static SDL_Cursor *init_system_cursor(const char *image[])
+{
+  int i, row, col;
+  Uint8 data[4*32];
+  Uint8 mask[4*32];
+  int hot_x, hot_y;
+
+  i = -1;
+  for ( row=0; row<32; ++row ) {
+    for ( col=0; col<32; ++col ) {
+      if ( col % 8 ) {
+        data[i] <<= 1;
+        mask[i] <<= 1;
+      } else {
+        ++i;
+        data[i] = mask[i] = 0;
+      }
+      switch (image[4+row][col]) {
+        case 'X':
+          data[i] |= 0x01;
+          mask[i] |= 0x01;
+          break;
+        case '.':
+          mask[i] |= 0x01;
+          break;
+        case ' ':
+          break;
+      }
+    }
+  }
+  sscanf(image[4+row], "%d,%d", &hot_x, &hot_y);
+  return SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y);
+}
 
 static void hideMouse(bool hide)
 {
@@ -114,6 +193,8 @@ static void hideMouse(bool hide)
 
 void InputInit()
 {
+	aranym_cursor = init_system_cursor(arrow);
+	SDL_SetCursor(aranym_cursor);
 	if (bx_options.startup.grabMouseAllowed) {
 		// warp mouse to center of Atari 320x200 screen and grab it
 		if (! bx_options.video.fullscreen)
@@ -151,6 +232,8 @@ void InputExit()
 			SDL_JoystickClose(sdl_joysticks[i]);
 		}
 	}
+
+	SDL_FreeCursor(aranym_cursor);
 }
 
 bool grabMouse(bool grab)
@@ -160,6 +243,7 @@ bool grabMouse(bool grab)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 		grabbedMouse = true;
 		hideMouse(true);
+		ignoreMouseMotionEvent = true;
 	}
 	else if (!grab && current != SDL_GRAB_OFF) {
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
@@ -175,11 +259,11 @@ void grabTheMouse()
 #if DEBUG
 	int x,y;
 	SDL_GetMouseState(&x, &y);
-	D(bug("Mouse entered our window at [%d,%d]", x, y));
+	D(bug("Mouse grab at window position [%d,%d]", x, y));
 #endif
 	hideMouse(true);
 	if (false) {	// are we able to sync TOS and host mice? 
-		// sync the position of ST mouse with the X mouse cursor (or vice-versa?)
+		// sync the position of ST mouse with the host mouse cursor position
 	}
 	else {
 		// we got to grab the mouse completely, otherwise they'd be out of sync
@@ -189,6 +273,7 @@ void grabTheMouse()
 
 void releaseTheMouse()
 {
+	D(bug("Releasing the mouse grab"));
 	grabMouse(false);	// release mouse
 	hideMouse(false);	// show it
 	if (getARADATA()->isAtariMouseDriver()) {
@@ -210,9 +295,6 @@ void releaseTheMouse()
 			y++;
 		}
 		SDL_WarpMouse(x, y);
-	}
-	else {
-		D(bug("Mouse left our window"));
 	}
 }
 
@@ -471,7 +553,7 @@ static int keysymToAtari(SDL_keysym keysym)
 			}
 
 			// offset is defined so pass the scancode directly
-			return scanPC - offset;
+			return (scanPC > offset) ? scanPC - offset : 0;
 		}
 	}
 }
@@ -698,8 +780,8 @@ static void process_keyboard_event(const SDL_Event &event)
 
 static void process_mouse_event(const SDL_Event &event)
 {
-	bool mouse_exit = false;
 #ifdef NFVDI_SUPPORT
+	bool mouse_exit = false;
 	static NF_Base* fvdi = NULL;
 	bool fvdi_events = false;
 
@@ -729,96 +811,110 @@ static void process_mouse_event(const SDL_Event &event)
 	}
 #endif /* SDL_GUI */
 
+	if (!grabbedMouse) {
+		if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+			D(bug("Left mouse click in our window => grab the mouse"));
+			grabTheMouse();
+		}
+		return;
+	}
+
 	int xrel = 0;
 	int yrel = 0;
 	int lastbut = but;
-	if (event.type == SDL_MOUSEBUTTONDOWN) {
-		// eve.type/state/button
-		if (event.button.button == SDL_BUTTON_RIGHT) {
-			if (grabbedMouse)
+	if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) {
+		bool clicked = (event.type == SDL_MOUSEBUTTONDOWN);
+		int releaseKeyMask = (clicked ? 0x00 : 0x80);
+		switch(event.button.button) {
+			case SDL_BUTTON_LEFT:
+				if (clicked)
+					but |= 2;
+				else
+					but &= ~2;
+				break;
+
+			case SDL_BUTTON_RIGHT:
+				if (clicked)
 					but |= 1;
-		}
-		else if (event.button.button == SDL_BUTTON_LEFT) {
-			if (grabbedMouse)
-				but |= 2;
-			else
-				grabTheMouse();
-		}
-		else if (event.button.button == 4) {	/* mouse wheel Up */
-#ifdef NFVDI_SUPPORT
-			if (fvdi != NULL && fvdi->dispatch(0xc00100ff) == 0)
-				return;
-#endif
+				else
+					but &= ~1;
+				break;
 
-			if (bx_options.ikbd.wheel_eiffel) {
-				getIKBD()->SendKey(0xF6);
-				getIKBD()->SendKey(0x05);
-				getIKBD()->SendKey(0x00);
-				getIKBD()->SendKey(0x00);
-				getIKBD()->SendKey(0x00);
-				getIKBD()->SendKey(0x00);
-				getIKBD()->SendKey(0x00);
-				getIKBD()->SendKey(0x59);
-			}
-			else {
-				getIKBD()->SendKey(0x48);	// press keyUp
-			}
-			return;
-		}
-		else if (event.button.button == 5) {	/* mouse wheel Down */
-#ifdef NFVDI_SUPPORT
-			if (fvdi != NULL && fvdi->dispatch(0xc0010001) == 0)
+			case SDL_BUTTON_MIDDLE:
+				if (bx_options.ikbd.wheel_eiffel) {
+					D(bug("Middle mouse button"));
+					getIKBD()->SendKey(0x37 | releaseKeyMask);
+				}
 				return;
-#endif
 
-			if (bx_options.ikbd.wheel_eiffel) {
-				getIKBD()->SendKey(0xF6);
-				getIKBD()->SendKey(0x05);
-				getIKBD()->SendKey(0x00);
-				getIKBD()->SendKey(0x00);
-				getIKBD()->SendKey(0x00);
-				getIKBD()->SendKey(0x00);
-				getIKBD()->SendKey(0x00);
-				getIKBD()->SendKey(0x5A);
-			}
-			else {
-				getIKBD()->SendKey(0x50);	// press keyDown
-			}
-			return;
-		}
-	}
-	else if (event.type == SDL_MOUSEBUTTONUP) {
-		if (event.button.button == SDL_BUTTON_RIGHT)
-			but &= ~1;
-		else if (event.button.button == SDL_BUTTON_LEFT)
-			but &= ~2;
-		else if (event.button.button == 4) {	/* mouse wheel Up */
-			if (!bx_options.ikbd.wheel_eiffel)
-				getIKBD()->SendKey(0xc8);	// release keyUp
-			return;
-		}
-		else if (event.button.button == 5) {	/* mouse wheel Down */
-			if (!bx_options.ikbd.wheel_eiffel)
-				getIKBD()->SendKey(0xd0);	// release keyDown
-			return;
+			case SDL_BUTTON_WHEELUP:
+#ifdef NFVDI_SUPPORT
+				if (clicked && fvdi != NULL && fvdi->dispatch(0xc00100ff) == 0)
+					return;
+#endif
+				if (bx_options.ikbd.wheel_eiffel) {
+					if (clicked) {
+						getIKBD()->SendKey(0xF6);
+						getIKBD()->SendKey(0x05);
+						getIKBD()->SendKey(0x00);
+						getIKBD()->SendKey(0x00);
+						getIKBD()->SendKey(0x00);
+						getIKBD()->SendKey(0x00);
+						getIKBD()->SendKey(0x00);
+						getIKBD()->SendKey(0x59);
+					}
+				}
+				else {
+					getIKBD()->SendKey(0x48 | releaseKeyMask);	// keyUp
+				}
+				return;
+
+			case SDL_BUTTON_WHEELDOWN:
+#ifdef NFVDI_SUPPORT
+				if (clicked && fvdi != NULL && fvdi->dispatch(0xc0010001) == 0)
+					return;
+#endif
+				if (bx_options.ikbd.wheel_eiffel) {
+					if (clicked) {
+						getIKBD()->SendKey(0xF6);
+						getIKBD()->SendKey(0x05);
+						getIKBD()->SendKey(0x00);
+						getIKBD()->SendKey(0x00);
+						getIKBD()->SendKey(0x00);
+						getIKBD()->SendKey(0x00);
+						getIKBD()->SendKey(0x00);
+						getIKBD()->SendKey(0x5A);
+					}
+				}
+				else {
+					getIKBD()->SendKey(0x50 | releaseKeyMask);	// keyDown
+				}
+				return;
+
+			default:
+				D(bug("Unknown mouse button: %d", event.button.button));
 		}
 	}
 	else if (event.type == SDL_MOUSEMOTION) {
 		SDL_MouseMotionEvent eve = event.motion;
-		xrel = eve.xrel;
-		yrel = eve.yrel;
+		if (!ignoreMouseMotionEvent) {
+			xrel = eve.xrel;
+			yrel = eve.yrel;
+		}
+		else ignoreMouseMotionEvent = false;
 
 #ifdef NFVDI_SUPPORT
 		if (fvdi != NULL) {
 			if (fvdi->dispatch(0x80008000 | (eve.x << 16) | (eve.y)) == 0)
 				fvdi_events = true;
 		}
-#endif
+
 		// Can't use the method below to get out of the window
 		// if the events are reported directly, since it only
 		// works with hidden mouse pointer.
 		// So, define top left corner as exit point.
 		mouse_exit = (eve.x == 0) && (eve.y == 0);
+#endif
 	}
 
 #ifdef NFVDI_SUPPORT
@@ -828,6 +924,13 @@ static void process_mouse_event(const SDL_Event &event)
 	}
 
 	if (fvdi_events) {
+#if DEBUG
+		static bool reported = false;
+		if (!reported) {
+			D(bug("Using nfvdi direct mouse support"));
+			reported = true;
+		}
+#endif
 		if (!bx_options.video.fullscreen && mouse_exit)
 			mouseOut = true;
 		return;
@@ -835,11 +938,13 @@ static void process_mouse_event(const SDL_Event &event)
 #endif
 
 	// send the mouse data packet
-	if ((xrel || yrel || lastbut != but) && grabbedMouse) {
+	if (xrel || yrel || lastbut != but) {
+#if 1
 		if (xrel < -250 || xrel > 250 || yrel < -250 || yrel > 250) {
 			bug("Reseting weird mouse packet: %d, %d, %d", xrel, yrel, but);
 			xrel = yrel = 0;	// reset the values otherwise ikbd gets crazy
 		}
+#endif
 		getIKBD()->SendMouseMotion(xrel, yrel, but);
 	}
 
@@ -861,47 +966,48 @@ static void process_mouse_event(const SDL_Event &event)
 
 static void process_active_event(const SDL_Event &event)
 {
-	// if we have input focus
-	if (SDL_GetAppState() & SDL_APPINPUTFOCUS) {
+	int state = event.active.state;
+	uint32 ticks = SDL_GetTicks();
 
-		// if it's mouse focus event
-		if (event.active.state == SDL_APPMOUSEFOCUS) {
+	if (state & SDL_APPACTIVE) {
+		D(bug("%d: ARAnyM window is being %s", ticks, event.active.gain ? "restored" : "minimized"));
+	}
+
+	if (state & SDL_APPINPUTFOCUS) {
+		D(bug("%d: ARAnyM window is %s input focus", ticks, event.active.gain ? "gaining" : "losing"));
+	}
+
+	// if it's mouse focus event
+	if (state & SDL_APPMOUSEFOCUS) {
+		D(bug("%d: Mouse pointer is %s ARAnyM window", ticks, event.active.gain ? "entering" : "leaving"));
+		bool allowMouseGrab = true;
 #ifdef SDL_GUI
-			// Disable grab, if Setup GUI is open
-			// because else the mouse goes invisible if the window is reentered
-			if (!SDLGui_isClosed()) {
-				return;
-			}
+		// Disable grab, if Setup GUI is open
+		// because else the mouse goes invisible if the window is reentered
+		allowMouseGrab = SDLGui_isClosed();
 #endif
+		if (allowMouseGrab) {
 			// if we can grab the mouse automatically
 			// and if the Atari mouse driver works
-			if (bx_options.autoMouseGrab && getARADATA()->isAtariMouseDriver()) {
-
-				// if the mouse has just left our window
+			if (getARADATA()->isAtariMouseDriver()) {
+				// if the mouse pointer is leaving our window
 				if (!event.active.gain) {
 					// allow grabbing it when it will be returning
 					canGrabMouseAgain = true;
 				}
-				// if the mouse is entering our window
+				// if the mouse pointer is entering our window
 				else {
 					// if grabbing the mouse is allowed
 					if (canGrabMouseAgain) {
 						// then grab it
-						grabTheMouse();
+						/// TODO FIXME
+						/// disabled until proper appl_tplay mouse position syncing is implemented
+						/// grabTheMouse();
 					}
 				}
 			}
 		}
 	}
-
-#if DEBUG
-	if (event.active.state == SDL_APPMOUSEFOCUS) {
-		D(bug("We %s mouse focus", event.active.gain ? "got" : "lost"));
-	}
-	else if (event.active.state == SDL_APPINPUTFOCUS) {
-		D(bug("We %s input focus", event.active.gain ? "got" : "lost"));
-	}
-#endif
 }
 
 /*--- Joystick event ---*/
@@ -1016,6 +1122,5 @@ void check_event()
 	}
 }
 
-/*
-vim:ts=4:sw=4:
-*/
+// don't remove this modeline with intended formatting for vim:ts=4:sw=4:
+
