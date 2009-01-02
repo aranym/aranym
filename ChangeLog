@@ -1,3 +1,20 @@
+2009/01/02 - Petr
+- parameters, doc/config: removed "AutoGrabMouse" config option
+- input.cpp: mouse handling clean up. Long time tired by automatic grabbing.
+  - fixed possible negative Atari scancode
+  - disabled (temporarily) auto mouse grab when mouse enters the window -
+    will be re-enabled once new proper appl_tplay() based ARAnyM Tools
+    accessory is finished (and XaAES gets appl_tplay implementation). After
+    this the AutoGrabMouse config will no longer be needed.
+  - added ARAnyM SDL mouse cursor (simple white arrow, to be improved), this
+    is to be easily distinguishable from the Atari GEM mouse cursor (for 
+    some unknown reason the standard SDL mouse cursor is identical to Atari
+    GEM mouse cursor so you never knew if you had input grabbed or not).
+  - probably managed to remove the warnings about weird mouse motion
+    packets (the initial mouse motion after mouse grab needs to be ignored).
+  - middle mouse button added (only when Eiffel mode is enabled)
+
+
 2008/12/26 - Patrice
 - More dsp56k fixes
   Immediate value for REP is 12bit wide.
