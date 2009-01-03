@@ -1,7 +1,7 @@
 /*
  * ikbd.cpp - IKBD 6301 emulation code
  *
- * Copyright (c) 2001-2006 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2009 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -73,6 +73,7 @@ void IKBD::reset()
 	/* Default: mouse on port 0 enabled */
 	mouse_enabled = SDL_TRUE;
 	mouserel_enabled = SDL_TRUE;
+	yaxis_reversed = false;
 	mousex = mousey = mouseb = 0;
 	
 	/* Default: joystick on port 0 disabled */
@@ -168,10 +169,12 @@ void IKBD::WriteData(uint8 value)
 					break;
 				case 0x0f:
 					D(bug("ikbd: Set Y origin bottom"));
+					yaxis_reversed = true;
 					outwrite = 0;
 					break;
 				case 0x10:
 					D(bug("ikbd: Set Y origin top"));
+					yaxis_reversed = false;
 					outwrite = 0;
 					break;
 				case 0x11:
@@ -367,7 +370,7 @@ void IKBD::SendMouseMotion(int relx, int rely, int buttons)
 		intype = IKBD_PACKET_MOUSE;
 		send(0xf8 | (buttons & 3));
 		send(movex);
-		send(movey);
+		send(yaxis_reversed ? -movey : movey);
 
 	} while (relx && rely);
 }
@@ -564,6 +567,4 @@ void IKBD::ThrowInterrupt(void)
 	getMFP()->setGPIPbit(0x10, 0);
 }
 
-/*
-vim:ts=4:sw=4:
-*/
+// don't remove this modeline with intended formatting for vim:ts=4:sw=4:

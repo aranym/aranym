@@ -1,3 +1,7 @@
+2009/01/03 - Petr
+- ikbd: added support for reversing mouse Y-axis (IKBD opcodes 0x0f, 0x10)
+
+
 2009/01/02 - Petr
 - parameters, doc/config: removed "AutoGrabMouse" config option
 - input.cpp: mouse handling clean up. Long time tired by automatic grabbing.

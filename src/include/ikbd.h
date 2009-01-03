@@ -1,7 +1,7 @@
 /*
  * ikbd.h - IKBD 6301 emulation code - declaration
  *
- * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2009 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -54,6 +54,7 @@ class IKBD: public ACIA {
 		int mouse_enabled;
 		int mouserel_enabled;
 		int mousex, mousey, mouseb;
+		bool yaxis_reversed;
 		
 		/* IKBD joysticks state */
 		int joy_enabled[2];
@@ -96,3 +97,5 @@ class IKBD: public ACIA {
 };
 
 #endif /* _IKBD_H */
+
+// don't remove this modeline with intended formatting for vim:ts=4:sw=4:
