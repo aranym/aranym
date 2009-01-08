@@ -1,3 +1,7 @@
+2009/01/08 - Patrice
+- dsp56k: Cleanup for MOVEC instruction parameter decoding
+
+
 2009/01/03 - Petr
 - ikbd: added support for reversing mouse Y-axis (IKBD opcodes 0x0f, 0x10)
 
@@ -24,6 +28,7 @@
   Immediate value for REP is 12bit wide.
   Fix REP and DO instruction parameter decoding.
 - OpenGL: Use __stdcall convention on Win32.
+
 
 2008/12/14 - Petr
 - atari/*: added proper NatFeat detection with illegal vector handling etc.

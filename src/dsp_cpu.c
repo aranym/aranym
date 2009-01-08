@@ -161,10 +161,10 @@ static void dsp_rep_aa(void);
 static void dsp_rep_ea(void);
 static void dsp_rep_imm(void);
 static void dsp_rep_reg(void);
-static void dsp_movec_7(void);
-static void dsp_movec_9(void);
-static void dsp_movec_b(void);
-static void dsp_movec_d(void);
+static void dsp_movec_aa(void);
+static void dsp_movec_ea(void);
+static void dsp_movec_imm(void);
+static void dsp_movec_reg(void);
 static void dsp_movep_0(void);
 static void dsp_movep_1(void);
 static void dsp_movep_2(void);
@@ -491,26 +491,16 @@ static dsp_emul_t opcodes_rep[8]={
 	dsp_rep_imm
 };
 
-static dsp_emul_t opcodes_movec[16]={
+static dsp_emul_t opcodes_movec[8]={
 	dsp_undefined,
 	dsp_undefined,
 	dsp_undefined,
-	dsp_undefined,
+	dsp_movec_reg,
 
-	dsp_undefined,
-	dsp_undefined,
-	dsp_undefined,
-	dsp_movec_7,
-
-	dsp_undefined,
-	dsp_movec_9,
-	dsp_undefined,
-	dsp_movec_b,
-
-	dsp_undefined,
-	dsp_movec_d,
-	dsp_undefined,
-	dsp_movec_b
+	dsp_movec_aa,
+	dsp_movec_imm,
+	dsp_movec_ea,
+	dsp_movec_imm
 };
 
 static dsp_emul_t opcodes_movep[4]={
@@ -2178,19 +2168,26 @@ static void dsp_lua(void)
 	}
 }
 
+/*
+	MOVEC instruction parameter encoding
+
+	xxxxxxx0 x1xxxxxx 1xxxxxxx	reg
+	xxxxxxx1 x0xxxxxx 0xxxxxxx	aa
+	xxxxxxx1 x1xxxxxx 0xxxxxxx	ea
+	xxxxxxx1 xYxxxxxx 1xxxxxxx	#xx
+*/
 static void dsp_movec(void)
 {
 	Uint32 value;
-	
-	value = (cur_inst>>13) & (1<<3);
-	value |= (cur_inst>>12) & (1<<2);
-	value |= (cur_inst>>6) & (1<<1);
-	value |= (cur_inst>>5) & 1;
+
+	value = ((cur_inst>>16) & 1)<<2;
+	value |= ((cur_inst>>14) & 1)<<1;
+	value |= (cur_inst>>7) & 1;
 
 	opcodes_movec[value]();
 }
 
-static void dsp_movec_7(void)
+static void dsp_movec_reg(void)
 {
 	Uint32 numreg1, numreg2, value;
 
@@ -2227,7 +2224,7 @@ static void dsp_movec_7(void)
 	}
 }
 
-static void dsp_movec_9(void)
+static void dsp_movec_aa(void)
 {
 	Uint32 numreg, addr, memspace;
 
@@ -2252,7 +2249,7 @@ static void dsp_movec_9(void)
 	}
 }
 
-static void dsp_movec_b(void)
+static void dsp_movec_imm(void)
 {
 	Uint32 numreg;
 
@@ -2262,7 +2259,7 @@ static void dsp_movec_b(void)
 	dsp_core->registers[numreg] = (cur_inst>>8) & BITMASK(8);
 }
 
-static void dsp_movec_d(void)
+static void dsp_movec_ea(void)
 {
 	Uint32 numreg, addr, memspace, ea_mode;
 	int retour;
