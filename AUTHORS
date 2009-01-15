@@ -40,7 +40,7 @@ Didier MEQUIGNON <didier.mequignon@wanadoo.fr>
 - audio support in ARAnyM
 - Atari XBIOS sound driver (atari/sound/*)
 
-Patrice Mandin <pmandin@caramail.com>
+Patrice Mandin <patmandin@gmail.com>
 - Natfeat host CD-ROM driver
 - Minimal NCR5380 scsi emulation
 - Linux kernel loader
