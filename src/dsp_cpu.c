@@ -1372,11 +1372,11 @@ static void opcode8h_0(void)
 
 static void opcode8h_1(void)
 {
-	switch(cur_inst & 0xfff8c7) {
-		case 0x018040:
+	switch(cur_inst & 0xfff000) {
+		case 0x018000:
 			dsp_div();
 			break;
-		case 0x01c805:
+		case 0x01d000:
 			dsp_norm();
 			break;
 	}

@@ -1,3 +1,7 @@
+2009/01/24 - Patrice
+- dsp56k: Fix decoding for NORM instruction (thanks to Matthias Alles).
+
+
 2009/01/08 - Patrice
 - dsp56k: Cleanup for MOVEC instruction parameter decoding
 
