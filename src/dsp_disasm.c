@@ -49,7 +49,6 @@ static Uint32 cur_inst;
 
 /* Previous instruction */
 static Uint32 prev_inst_pc = 0x10000;	/* Init to an invalid value */
-static Uint32 prev_number = 0;
 
 static dsp_core_t *dsp_core;
 
@@ -673,15 +672,9 @@ void dsp56k_disasm(void)
 	Uint32 value;
 
 	if (prev_inst_pc == dsp_core->pc){
-		prev_number++;
 		return;
 	}
 	prev_inst_pc = dsp_core->pc;
-
-	if (prev_number > 0) {
-		fprintf(stderr,"\tRepeated : %d times\n", prev_number);
-		prev_number = 0;
-	}
 
 	cur_inst = read_memory(dsp_core->pc);
 
