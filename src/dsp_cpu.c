@@ -3382,44 +3382,87 @@ static Uint16 dsp_asr56(Uint32 *dest)
 
 static Uint16 dsp_add56(Uint32 *source, Uint32 *dest)
 {
-	Uint16 overflow, carry;
+	Uint16 overflow, carry, flg_s, flg_d, flg_r;
+	Uint32 not_dest[3];
+
+	flg_s = (source[0]>>7) & 1;
+	flg_d = (dest[0]>>7) & 1;
+
+	not_dest[2] = ((Uint32)(~dest[2])) & BITMASK(24);
+	not_dest[1] = ((Uint32)(~dest[1])) & BITMASK(24);
+	not_dest[0] = ((Uint32)(~dest[0])) & BITMASK(8);
 
 	/* Add source to dest: D = D+S */
 	dest[2] += source[2];
 	dest[1] += source[1]+((dest[2]>>24) & 1);
 	dest[0] += source[0]+((dest[1]>>24) & 1);
 
-	/* overflow if we go below -256.0 or above +256.0 */
-	overflow = (((dest[0] & 0xff)!=0) && ((dest[0] & 0xff)!=0xff));
-
-	/* set carry from the virtual 56th bit */
-	carry = (dest[0]>>8) & 1;
-
 	dest[2] &= BITMASK(24);
 	dest[1] &= BITMASK(24);
 	dest[0] &= BITMASK(8);
+
+	flg_r = (dest[0]>>7) & 1;
+
+	/*set overflow*/
+	overflow = (flg_s ^ flg_r) & (flg_d ^ flg_r);
+
+	/* set carry :    carry (for a add) = ~dest < source */
+	carry = 0;
+
+	if (not_dest[0] < source[0]) {
+		carry = 1;
+	} else if (not_dest[0] == source[0]) {
+		if (not_dest[1] < source[1]) {
+			carry = 1;
+		} else if (not_dest[1] == source[1]) {
+			if (not_dest[2] < source[2]) {
+				carry = 1;
+			}
+		}
+	}
 
 	return (overflow<<DSP_SR_L)|(overflow<<DSP_SR_V)|(carry<<DSP_SR_C);
 }
 
 static Uint16 dsp_sub56(Uint32 *source, Uint32 *dest)
 {
-	Uint16 overflow, carry;
+	Uint16 overflow, carry, flg_s, flg_d, flg_r;
+	Uint32 dest_save[3];
+
+	dest_save[0] = dest[0];
+	dest_save[1] = dest[1];
+	dest_save[2] = dest[2];
 
 	/* Substract source from dest: D = D-S */
 	dest[2] -= source[2];
 	dest[1] -= source[1]+((dest[2]>>24) & 1);
 	dest[0] -= source[0]+((dest[1]>>24) & 1);
 
-	/* overflow if we go below -256.0 or above +256.0 */
-	overflow = (((dest[0] & 0xff)!=0) && ((dest[0] & 0xff)!=0xff));
-
-	/* set carry from the virtual 56th bit */
-	carry = (dest[0]>>8) & 1;
-
 	dest[2] &= BITMASK(24);
 	dest[1] &= BITMASK(24);
 	dest[0] &= BITMASK(8);
+
+	flg_s = (source[0]>>7) & 1;
+	flg_d = (dest_save[0]>>7) & 1;
+	flg_r = (dest[0]>>7) & 1;
+
+ 	/*set overflow*/
+	overflow = (flg_s ^ flg_d) & (flg_r ^ flg_d);
+
+	/* set carry :    carry (for a sub) = dest < source */
+	carry = 0;
+
+	if (dest_save[0] < source[0]) {
+		carry = 1;
+	} else if (dest_save[0] == source[0]) {
+		if (dest_save[1] < source[1]) {
+			carry = 1;
+		} else if (dest_save[1] == source[1]) {
+			if (dest_save[2] < source[2]){
+				carry = 1;
+			}
+		}
+	}
 
 	return (overflow<<DSP_SR_L)|(overflow<<DSP_SR_V)|(carry<<DSP_SR_C);
 }

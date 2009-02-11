@@ -1,7 +1,9 @@
 2009/02/11 - Patrice
-- dsp56k: disasm: Avoid repeating n times same instruction.
-  And replace some sprintf() by strcpy() to avoid some warning.
+- dsp56k: More fixes from Laurent Sallafranque.
+  disasm: Avoid repeating n times same instruction.
+  disasm: Replace some sprintf() by strcpy() to avoid some warning.
   Fix parallel move not using right register as S2.
+  Fix carry computation in add56/sub56.
 
 
 2009/01/24 - Patrice
