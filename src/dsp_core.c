@@ -184,6 +184,12 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 		dsp_core->registers[DSP_REG_M0+i]=0x00ffff;
 	}
 
+	/* Interruptions */
+	dsp_core->interrupt_state = DSP_INTERRUPT_NONE;
+	dsp_core->interrupt_instr_fetch = -1;
+	dsp_core->interrupt_save_pc = -1;
+	dsp_core->swi_inter = 0;
+
 	/* host port init, dsp side */
 	dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR]=(1<<DSP_HOST_HSR_HTDE);
 

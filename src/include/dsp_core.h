@@ -96,6 +96,10 @@ extern "C" {
 #define DSP_HOST_HSR_HF1	0x04
 #define DSP_HOST_HSR_DMA	0x07
 
+#define DSP_INTERRUPT_NONE      0x0
+#define DSP_INTERRUPT_FAST      0x1
+#define DSP_INTERRUPT_LONG      0x2
+
 typedef struct {
 	SDL_Thread	*thread;	/* Thread in which DSP emulation runs */
 	SDL_sem		*semaphore;	/* Semaphore used to pause/unpause thread */
@@ -128,9 +132,16 @@ typedef struct {
 
 	/* Misc */
 	Uint32 loop_rep;		/* executing rep ? */
+	Uint32 swi_inter;		/* SWI interruption ? */
 
 	/* For bootstrap routine */
 	Uint16	bootstrap_pos;
+
+	/* Interruptions */
+	Uint16	interrupt_state;
+	Uint32  interrupt_instr_fetch;
+	Uint32  interrupt_save_pc;
+	
 } dsp_core_t;
 
 /* Emulator call these to init/stop/reset DSP emulation */
