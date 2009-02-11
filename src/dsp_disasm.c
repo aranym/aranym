@@ -47,6 +47,10 @@
 /* Current instruction */
 static Uint32 cur_inst;
 
+/* Previous instruction */
+static Uint32 prev_inst_pc = 0x10000;	/* Init to an invalid value */
+static Uint32 prev_number = 0;
+
 static dsp_core_t *dsp_core;
 
 void dsp56k_disasm_init(dsp_core_t *my_dsp_core)
@@ -667,6 +671,17 @@ static char parallelmove_name[64];
 void dsp56k_disasm(void)
 {
 	Uint32 value;
+
+	if (prev_inst_pc == dsp_core->pc){
+		prev_number++;
+		return;
+	}
+	prev_inst_pc = dsp_core->pc;
+
+	if (prev_number > 0) {
+		fprintf(stderr,"\tRepeated : %d times\n", prev_number);
+		prev_number = 0;
+	}
 
 	cur_inst = read_memory(dsp_core->pc);
 
@@ -1294,7 +1309,7 @@ static void dsp_jclr(void)
 			break;
 		case 3:
 			/* jclr #n,R,p:xx */
-			sprintf(srcname, registers_name[value]);
+			strcpy(srcname, registers_name[value]);
 			break;
 	}
 
@@ -1383,7 +1398,7 @@ static void dsp_jsclr(void)
 			break;
 		case 3:
 			/* jsclr #n,R,p:xx */
-			sprintf(srcname, registers_name[value]);
+			strcpy(srcname, registers_name[value]);
 			break;
 	}
 
@@ -1436,7 +1451,7 @@ static void dsp_jset(void)
 			break;
 		case 3:
 			/* jset #n,R,p:xx */
-			sprintf(srcname, registers_name[value]);
+			strcpy(srcname, registers_name[value]);
 			break;
 	}
 
@@ -1502,7 +1517,7 @@ static void dsp_jsset(void)
 			break;
 		case 3:
 			/* jsset #n,R,p:xx */
-			sprintf(srcname, registers_name[value]);
+			strcpy(srcname, registers_name[value]);
 			break;
 	}
 

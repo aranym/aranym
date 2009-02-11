@@ -1,3 +1,8 @@
+2009/02/11 - Patrice
+- dsp56k: disasm: Avoid repeating n times same instruction.
+  And replace some sprintf() by strcpy() to avoid some warning.
+
+
 2009/01/24 - Patrice
 - dsp56k: Fix decoding for NORM instruction (thanks to Matthias Alles).
 
